@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "knowledgeBaseVersion": "0.12.0",
-  "checkedAtUtc": "2026-10-08T16:40:43.2182738Z",
+  "checkedAtUtc": "2026-10-08T16:56:04.2197325Z",
   "status": "passed",
   "scope": "documentation_structure_only",
   "registryCounts": {
@@ -12,7 +12,7 @@
     "sources": 55
   },
   "markdownFiles": 158,
-  "localLinksChecked": 1431,
+  "localLinksChecked": 1433,
   "registryReferencesChecked": 704,
   "publicCandidateFilesScanned": 315,
   "issues": [],
@@ -363,11 +363,11 @@
     },
     {
       "path": "docs/显示与帧执行实现记录.en.md",
-      "sha256": "AC489EA82B43420DAC09FB4A9EDBA5954D38E3D52857042C4A8FB6FD0A499B24"
+      "sha256": "75F403D51DF193C57C1C8C781E9FA7FEA25862E369E67A1B43D31F38AA51387B"
     },
     {
       "path": "docs/显示与帧执行实现记录.md",
-      "sha256": "E1401B6F1851F5A66AE27EF244F580322262342800545D592EC63AB252CD8502"
+      "sha256": "95A65D3CE20BADF64CBCEEBC580E9F899E8E8A9B5EE0FF10498D252FFB6A6830"
     },
     {
       "path": "docs/渲染引擎与运行时.en.md",
@@ -967,7 +967,7 @@
     },
     {
       "path": "evidence/display-frame-review.json",
-      "sha256": "E364930B565EF12EE0A55D29A73648A7DC0D95FD52B8841141B4F8AA091F8D4A"
+      "sha256": "34510779967B22C92E1930AEAAD87A81C02E2C9A94715C86C018138C5770FEEC"
     },
     {
       "path": "evidence/display-frame-verification.json",
@@ -2327,11 +2327,11 @@
     },
     {
       "path": "registry/来源.en.json",
-      "sha256": "7C490F874ACA9A64420C76427DF3E657031E9D239EC4E63451D6BB49A0D54045"
+      "sha256": "F4378138456902EC695CA36DEAE7DD7BAF9C8D22A39C651F4317FC8FF0B8AF8E"
     },
     {
       "path": "registry/来源.json",
-      "sha256": "91E485E480E664E3D400059025F505ED318AB53ECF95B2E9A8BEC6E0882AB15F"
+      "sha256": "48025F2C0DD151F1526B6D3C032B7EEA9CB56B7D1CC6D41ACFDF9E83BE0C5D34"
     },
     {
       "path": "registry/需求.en.json",

@@ -5,7 +5,7 @@
   "evidencePolicy": "Machine data, embedded source, historical code and upstream legal originals retain their identities; paired reading versions explain them.",
   "semanticReview": {
     "status": "reviewed_with_scope",
-    "method": "Author self-review of the complete 17 changed bilingual pairs, new record/example, public contract/plan wording, registry facts and current English critical comments; scoped independent implementation review is separately recorded. Final independent branch review is subsequent.",
+    "method": "Author public-content and translation self-review plus independent review of changed bilingual semantic scope at commit 7608bdfef3d89a0a66c3304c766ea4b9d669b521; untouched historical pairs retain prior review, without fresh translation. Subsequent link-order/review metadata correction is author-reviewed; its scoped independent re-review remains pending.",
     "scope": "Public engineering wording, complete language coverage and preservation of technical evidence bounds. Structural gates alone cannot certify meaning, authorship, licensing or publication authorization.",
     "report": "verification/display-frame-review.json"
   },
@@ -35,7 +35,7 @@
       "zh": "DOCUMENTATION.md",
       "en": "DOCUMENTATION.en.md",
       "zhSha256": "8dbbbd09618f5d68e128144ca453c2a443ae3a3f01b296af83d6605188fdb380",
-      "enSha256": "c8df1cfbd514248d5fe15e9c04aad60cda051c175eb7420cb1244b4ca4b8f285",
+      "enSha256": "c52a49dc83accfcbd4e89f477da22b2c1ef66a93f6231c5f020bcd8d00e19d55",
       "kind": "public_reading"
     },
     {
@@ -336,8 +336,8 @@
       "zh": "knowledge-base/docs/显示与帧执行实现记录.md",
       "en": "knowledge-base/docs/显示与帧执行实现记录.en.md",
       "kind": "public_reading",
-      "zhSha256": "e1401b6f1851f5a66ae27ef244f580322262342800545d592ec63ab252cd8502",
-      "enSha256": "ac489ea82b43420dac09fb4a9edba5954d38e3d52857042c4a8fb6fd0a499b24"
+      "zhSha256": "95a65d3ce20badf64cbceebc580e9f899e8e8a9b5ee0ff10498d252ffb6a6830",
+      "enSha256": "75f403d51df193c57c1c8c781e9fa7fea25862e369e67a1b43d31f38aa51387b"
     },
     {
       "zh": "knowledge-base/docs/渲染引擎与运行时.md",
@@ -669,8 +669,8 @@
     {
       "source": "knowledge-base/registry/来源.json",
       "target": "knowledge-base/registry/来源.en.json",
-      "sourceSha256": "91e485e480e664e3d400059025f505ed318ab53ecf95b2e9a8bec6e0882ab15f",
-      "targetSha256": "7c490f874aca9a64420c76427df3e657031e9d239ec4e63451d6bb49a0d54045"
+      "sourceSha256": "48025f2c0dd151f1526b6d3c032b7eea9cb56b7d1cc6d41acfdf9e83be0c5d34",
+      "targetSha256": "eae362660089aaa18299625667df9c360ac06460dabed51efe00357495e364dc"
     },
     {
       "source": "knowledge-base/当前版本.json",

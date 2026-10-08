@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "createdAtUtc": "2026-10-08T16:41:20.711Z",
+  "createdAtUtc": "2026-10-08T16:57:22.051Z",
   "repository": "https://github.com/cnedwin/Egret_rebuild",
   "knowledgeBaseVersion": "0.12.0",
   "status": "verified_local_development_preview",
@@ -133,8 +133,8 @@
     },
     {
       "path": "DOCUMENTATION.en.md",
-      "sha256": "c8df1cfbd514248d5fe15e9c04aad60cda051c175eb7420cb1244b4ca4b8f285",
-      "bytes": 16099,
+      "sha256": "c52a49dc83accfcbd4e89f477da22b2c1ef66a93f6231c5f020bcd8d00e19d55",
+      "bytes": 16094,
       "gitMode": "100644"
     },
     {
@@ -553,14 +553,14 @@
     },
     {
       "path": "knowledge-base/docs/显示与帧执行实现记录.en.md",
-      "sha256": "ac489ea82b43420dac09fb4a9edba5954d38e3d52857042c4a8fb6fd0a499b24",
-      "bytes": 3192,
+      "sha256": "75f403d51df193c57c1c8c781e9fa7fea25862e369e67a1b43d31f38aa51387b",
+      "bytes": 3914,
       "gitMode": "100644"
     },
     {
       "path": "knowledge-base/docs/显示与帧执行实现记录.md",
-      "sha256": "e1401b6f1851f5a66ae27ef244f580322262342800545d592ec63ab252cd8502",
-      "bytes": 2601,
+      "sha256": "95a65d3ce20badf64cbceebc580e9f899e8e8a9b5ee0ff10498d252ffb6a6830",
+      "bytes": 3176,
       "gitMode": "100644"
     },
     {
@@ -1639,8 +1639,8 @@
     },
     {
       "path": "knowledge-base/evidence/display-frame-review.json",
-      "sha256": "e364930b565ef12ee0a55d29a73648a7dc0d95fd52b8841141b4f8aa091f8d4a",
-      "bytes": 15268,
+      "sha256": "34510779967b22c92e1930aeaad87a81c02e2c9a94715c86c018138c5770feec",
+      "bytes": 17088,
       "gitMode": "100644"
     },
     {
@@ -3679,14 +3679,14 @@
     },
     {
       "path": "knowledge-base/registry/来源.en.json",
-      "sha256": "7c490f874aca9a64420c76427df3e657031e9d239ec4e63451d6bb49a0d54045",
-      "bytes": 62579,
+      "sha256": "eae362660089aaa18299625667df9c360ac06460dabed51efe00357495e364dc",
+      "bytes": 62715,
       "gitMode": "100644"
     },
     {
       "path": "knowledge-base/registry/来源.json",
-      "sha256": "91e485e480e664e3d400059025f505ed318ab53ecf95b2e9a8bec6e0882ab15f",
-      "bytes": 56841,
+      "sha256": "48025f2c0dd151f1526b6d3c032b7eea9cb56b7d1cc6d41acfdf9e83be0c5d34",
+      "bytes": 56938,
       "gitMode": "100644"
     },
     {
@@ -3769,14 +3769,14 @@
     },
     {
       "path": "knowledge-base/核验记录.json",
-      "sha256": "2b049967e293cd7ab3312eaf1e19e04fabfc7b9a79f2c8a0ed6b7e2c6427d008",
+      "sha256": "03a05c2b1cb90b5abbbfddb51a0b2c1b384e10213d41090cc7f62ca1b239e8c2",
       "bytes": 102510,
       "gitMode": "100644"
     },
     {
       "path": "localization.json",
-      "sha256": "051ad5cb0e292ace5302c5297898717e56264c0fd5e863b885bb41a2db7ffd2b",
-      "bytes": 38775,
+      "sha256": "e46f78d5c23066fe326d400ee79a0d4899d8a45bea6434326dc5d76bd671dc59",
+      "bytes": 38852,
       "gitMode": "100644"
     },
     {
@@ -4081,8 +4081,8 @@
     },
     {
       "path": "source-origin.json",
-      "sha256": "4a3093bb6319ffdac28f770512537f91932102a36efee6638e31adeabef3d3aa",
-      "bytes": 63543,
+      "sha256": "9c2ff02a9809fb71fc832eb5a1da5c26db5afce2219ccac63dcf22e34ad3708c",
+      "bytes": 64016,
       "gitMode": "100644"
     },
     {
@@ -4327,8 +4327,8 @@
     },
     {
       "path": "verification/display-frame-review.json",
-      "sha256": "d2c593926a697c11be6738f7168e8d0e85dbd285f19524b3d9ac3f7a201b20be",
-      "bytes": 15140,
+      "sha256": "21bc582dc40cc687c8517049d3322cdd609d34860c01a782f5ae802004a22601",
+      "bytes": 16960,
       "gitMode": "100644"
     },
     {

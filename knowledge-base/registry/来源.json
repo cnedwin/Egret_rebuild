@@ -977,7 +977,7 @@
       "id": "S055",
       "title": "显示与帧及Canvas有限独立审阅",
       "type": "independent_ai_code_and_contract_review",
-      "scope": "跨realm修正后有限独立实现审阅；作者公开表达与翻译自审另行标明。",
+      "scope": "跨realm修正后有限独立实现审阅及最终分支的变更双语语义/证据身份审阅；作者公开表达与翻译自审另行标明，本次元数据有限复审尚待完成。",
       "limit": "不验收GPU、Native、实体手机、性能、完整UI/文字/纹理/动画/3D、完整迁移、CI或完整产品；浏览器仅为桌面观察，不是通用分配上限。",
       "researchCheckedAt": "2026-10-09",
       "artifacts": [

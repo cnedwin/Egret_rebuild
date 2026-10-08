@@ -111,7 +111,7 @@ Before every push, review public content and translation meaning, update paired 
 | [Display and Frame Implementation Plan](knowledge-base/docs/显示与帧执行实现计划.md) | [English](knowledge-base/docs/显示与帧执行实现计划.en.md) |
 | [Display and Frame Implementation Record](knowledge-base/docs/显示与帧执行实现记录.md) | [English](knowledge-base/docs/显示与帧执行实现记录.en.md) |
 
-| [Canvas Rectangle Example](examples/canvas-scene/README.en.md) | [简体中文](examples/canvas-scene/README.md) |
+| [Canvas Rectangle Example](examples/canvas-scene/README.md) | [English](examples/canvas-scene/README.en.md) |
 
 ## Shared registry state
 

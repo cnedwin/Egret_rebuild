@@ -185,7 +185,7 @@
   ],
   "publicationReview": {
     "status": "author_self_review_with_scope",
-    "scope": "All 17 integrated bilingual pairs, new record/example pairs, contract/plan public wording, registry identity/status/numeric parity, English critical comments and attribution. Final independent branch review remains separate.",
+    "scope": "Author public/translation self-review plus independent changed semantic scope review at the exact recorded prior commit; current link-order correction and review-record curation are author-reviewed, with scoped metadata re-review pending. Unchanged historical reading bodies are not freshly translated.",
     "reviewedDocumentHashes": [
       {
         "path": "AGENTS.en.md",
@@ -197,7 +197,7 @@
       },
       {
         "path": "DOCUMENTATION.en.md",
-        "sha256": "c8df1cfbd514248d5fe15e9c04aad60cda051c175eb7420cb1244b4ca4b8f285"
+        "sha256": "c52a49dc83accfcbd4e89f477da22b2c1ef66a93f6231c5f020bcd8d00e19d55"
       },
       {
         "path": "DOCUMENTATION.md",
@@ -317,11 +317,11 @@
       },
       {
         "path": "knowledge-base/docs/显示与帧执行实现记录.en.md",
-        "sha256": "ac489ea82b43420dac09fb4a9edba5954d38e3d52857042c4a8fb6fd0a499b24"
+        "sha256": "75f403d51df193c57c1c8c781e9fa7fea25862e369e67a1b43d31f38aa51387b"
       },
       {
         "path": "knowledge-base/docs/显示与帧执行实现记录.md",
-        "sha256": "e1401b6f1851f5a66ae27ef244f580322262342800545d592ec63ab252cd8502"
+        "sha256": "95a65d3ce20badf64cbceebc580e9f899e8e8a9b5ee0ff10498d252ffb6a6830"
       },
       {
         "path": "knowledge-base/docs/核心框架实现记录.en.md",
@@ -372,7 +372,38 @@
         "sha256": "5ff29a37678e52fb6deba246b732a01c0edc217959486a5df72a61e4db1aa32b"
       }
     ],
-    "note": "Reviewed changed prose and bilingual factual scope; unchanged bodies retain historical review. New contract/plan keep technical choices with editorial wording and LF normalization. No independent translation review is inferred."
+    "note": "Original implementation heads and prior review history remain exact. Final branch review binds its recorded commit/tree; subsequent metadata is not retroactively independently reviewed."
   },
-  "limitations": "No GPU, Native, physical phone, device/performance benchmark, full UI/textures/animation/3D, complete migration, CI or full-product acceptance. Browser results are desktop observations, not universal allocation limits."
+  "limitations": "No GPU, Native, physical phone, device/performance benchmark, full UI/textures/animation/3D, complete migration, CI or full-product acceptance. Browser results are desktop observations, not universal allocation limits.",
+  "finalBranchReview": {
+    "date": "2026-10-09",
+    "reviewedCommit": "7608bdfef3d89a0a66c3304c766ea4b9d669b521",
+    "reviewedTree": "78b9f721f0011696225dbfe0b5561280f08410ed",
+    "task3Verdict": "PASS WITH ONE MINOR DOCUMENTATION NIT",
+    "wholeBranchVerdict": "READY FOR BOUNDED DRAFT SUBMISSION",
+    "severityCounts": {
+      "P0": 0,
+      "P1": 0,
+      "P2": 0,
+      "P3": 1,
+      "blockers": 0
+    },
+    "scope": "Independent whole-branch source/contracts/tests/tooling and changed bilingual semantic scope review; inspected original saved gate/browser logs. Reviewed 122 source/document/prior-review/final-log identities and both public/KB evidence projections with zero mismatches.",
+    "sourceIdentity": "Reviewed package/source/tests/tools/lockfile bytes remain unchanged in this narrow metadata correction; the later metadata commit is not the reviewed commit.",
+    "finding": {
+      "priority": "P3",
+      "path": "DOCUMENTATION.en.md",
+      "reviewedLine": 114,
+      "description": "Canvas example linked English then Chinese contrary to Chinese/English column headings.",
+      "status": "corrected_by_link_order_swap",
+      "correctionScope": "Documentation metadata only; both existing reading versions and link targets remain.",
+      "scopedMetadataRereview": "pending"
+    },
+    "limits": "No test/build/browser repeat or fresh translation of all 90 untouched pairs; no main/production/full-product/GPU/Native/device/performance/UI/3D/migration/CI approval. Root-owned scoped metadata re-review and remote verification remain subsequent.",
+    "privateRawReview": {
+      "identity": "final-review.md",
+      "sha256": "3f10466708860469925274dfa5ab98a8aace436a226b170fe7403225891a56bb",
+      "status": "identity_only_not_distributed"
+    }
+  }
 }

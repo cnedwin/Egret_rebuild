@@ -977,7 +977,7 @@
       "id": "S055",
       "title": "Scoped display/frame and Canvas independent review",
       "type": "independent_ai_code_and_contract_review",
-      "scope": "Independent implementation review with cross-realm correction; author publication self-review separately identified.",
+      "scope": "Scoped independent implementation review after the cross-realm correction plus final branch review of changed bilingual semantics/evidence identities; author public/translation self-review is separate and this metadata scoped re-review remains pending.",
       "limit": "No GPU, Native, physical phone, device/performance benchmark, full UI/textures/animation/3D, complete migration, CI or full-product acceptance. Browser results are desktop observations, not universal allocation limits.",
       "researchCheckedAt": "2026-10-09",
       "artifacts": [
@@ -988,7 +988,7 @@
   ],
   "_localization": {
     "canonicalSource": "来源.json",
-    "canonicalSha256": "91e485e480e664e3d400059025f505ed318ab53ecf95b2e9a8bec6e0882ab15f",
+    "canonicalSha256": "48025f2c0dd151f1526b6d3c032b7eea9cb56b7d1cc6d41acfdf9e83be0c5d34",
     "role": "read_only_translation",
     "language": "en"
   }
