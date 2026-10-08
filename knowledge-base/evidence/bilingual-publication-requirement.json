@@ -1,0 +1,14 @@
+{
+  "recordedAt": "2026-10-08",
+  "authority": "project_owner_instruction",
+  "requirement": "R019",
+  "repository": "https://github.com/cnedwin/Egret_rebuild",
+  "requiredBeforeEveryPush": [
+    "Public-content review",
+    "Complete Chinese and English reading documentation and registry views",
+    "English comments for critical core code",
+    "Publication and applicable core verification"
+  ],
+  "sourceEvidencePolicy": "Original machine evidence, code snapshots and upstream licenses retain their identities; language companions explain them.",
+  "publicationAcceptance": "Actual repository result only; local preparation is not remote success."
+}

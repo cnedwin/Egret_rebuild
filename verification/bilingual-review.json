@@ -1,0 +1,1202 @@
+{
+  "schemaVersion": 1,
+  "revision": "0.10.0",
+  "checkedAtUtc": "2026-10-08T13:36:18.756Z",
+  "status": "passed_with_stated_scope",
+  "method": "AI-assisted translation self-audits, independent bounded AI-assisted cross-reviews, exact current file checks and integration review. No external community review or project-owner line-by-line review is claimed.",
+  "coverage": {
+    "translatedAssignments": 82,
+    "additionalPairs": [
+      "DOCUMENTATION.md / DOCUMENTATION.en.md",
+      "LICENSE.zh-CN.md / LICENSE"
+    ],
+    "registryReadOnlyViews": 6,
+    "criticalCommentFiles": 19
+  },
+  "independentReviews": [
+    {
+      "scope": "design cross review",
+      "recordSha256": "21e1501c60c59d3fb015ee9752aef7d12186ecbe465c1c8fafe0e435ae2f0208",
+      "schemaVersion": 1,
+      "reviewType": "Independent bounded bilingual semantic review of design assignment",
+      "reviewedPairs": [
+        {
+          "source": "knowledge-base/docs/产品需求说明书.md",
+          "target": "knowledge-base/docs/产品需求说明书.en.md",
+          "sourceSha256": "16c1e98051f83d1e1d781903323662e2ef5b971962a409e59f8b84b054cb0d18",
+          "targetSha256": "7bd21ba21ebe1f91fd533991a4a281a98913668b825fb355afa25b5a95033d05",
+          "reviewedSections": [
+            "Opening objectives and authority/status boundaries",
+            "Legacy-project journey and formal delivery",
+            "Nonfunctional acceptance and measurement definitions",
+            "Final status, native extension, attribution and public-code-contract sections"
+          ],
+          "result": "No necessary semantic correction found within the stated review scope."
+        },
+        {
+          "source": "knowledge-base/docs/公共API设计与命名规范.md",
+          "target": "knowledge-base/docs/公共API设计与命名规范.en.md",
+          "sourceSha256": "e31fb8810fbb904f97974ab3250d084ae55f7caecf088e2b763ab1d33f856b52",
+          "targetSha256": "931303983c5dc8d2bc57110e20220de0d3c625507dc3d7b6f5555edb8df1cbd7",
+          "reviewedSections": [
+            "Full source and English target; source sample code retained verbatim with English cleanup explanation"
+          ],
+          "result": "No necessary semantic correction found within the stated review scope."
+        },
+        {
+          "source": "knowledge-base/docs/图形后端编译与原生Runtime选型.md",
+          "target": "knowledge-base/docs/图形后端编译与原生Runtime选型.en.md",
+          "sourceSha256": "191d3773e2e2195ca637dd8ac508bbbf30318f6652e10fdf53603c0a9817464d",
+          "targetSha256": "b9287237630ebce96861248ef82dab0c8dba9bf8ffb8fc90f7638b93a107cbbf",
+          "reviewedSections": [
+            "Opening candidate design and evidence boundaries",
+            "Compilation and debugging pipeline",
+            "Native graphics and script VMs",
+            "Selection constraints for independent implementation",
+            "Final migration and independent-origin requirements"
+          ],
+          "result": "No necessary semantic correction found within the stated review scope."
+        },
+        {
+          "source": "knowledge-base/docs/工程规划.md",
+          "target": "knowledge-base/docs/工程规划.en.md",
+          "sourceSha256": "47e08d5ac79f4582fa12335910bcb6669ad3734082344befd48220a72d42316b",
+          "targetSha256": "e045e4366f10ea2689c57fd50c7ab741475b87ca1a1525bafa0bcf009f80b176",
+          "reviewedSections": [
+            "Delivery boundaries and order",
+            "Executed research and evidence gates"
+          ],
+          "result": "No necessary semantic correction found within the stated review scope."
+        },
+        {
+          "source": "knowledge-base/docs/技术白皮书.md",
+          "target": "knowledge-base/docs/技术白皮书.en.md",
+          "sourceSha256": "724ae9985febe9a11d3d388892fa5a3f2ba2c040c454e808c3b2e9e48130b147",
+          "targetSha256": "9ae069c2cd15e8315e09e6563369c6c476ee7d5fce137ce774c7b3240fabde96",
+          "reviewedSections": [
+            "Design objectives and levels of evidence",
+            "AI engineering and legacy migration",
+            "Tradeoffs and next-round gates"
+          ],
+          "result": "No necessary semantic correction found within the stated review scope."
+        },
+        {
+          "source": "knowledge-base/docs/旧工程迁移.md",
+          "target": "knowledge-base/docs/旧工程迁移.en.md",
+          "sourceSha256": "3ed3ade1b44ae592ed20e4c41b5b18df3ca1d8104a820fbf85cd06601b11e8f6",
+          "targetSha256": "d948ed13b33cd7e24c4377546b9ec904a621c43d10e2c626ba174b6cba1b411b",
+          "reviewedSections": [
+            "Full source and English target"
+          ],
+          "result": "No necessary semantic correction found within the stated review scope."
+        },
+        {
+          "source": "knowledge-base/docs/核心优势与验证.md",
+          "target": "knowledge-base/docs/核心优势与验证.en.md",
+          "sourceSha256": "93c99619e6ae2182974e9b2515c0a416f93abce59c3fdef62a9d49614835e82f",
+          "targetSha256": "b1fab660ca881f5373d13316c28a80d4fb1b918a66315d4754ec45a7c4507e6c",
+          "reviewedSections": [
+            "Full source and English target"
+          ],
+          "result": "No necessary semantic correction found within the stated review scope."
+        }
+      ],
+      "count": 7,
+      "necessaryCorrections": [],
+      "optionalClarity": [
+        {
+          "target": "knowledge-base/docs/技术白皮书.en.md",
+          "section": "Design objectives and levels of evidence / Resources row",
+          "existing": "failed retries",
+          "suggestion": "retries after failure",
+          "reason": "Clearer correspondence to 失败重试; surrounding source/target both retain failed-stage/retry scope."
+        }
+      ],
+      "checks": {
+        "migration": "R008/V006 perfect execution remains a delivery objective, conditioned on complete comparisons in a support matrix; continued editing, real publishing and updates remain obligations; full-denominator rejection and human/AI costs preserved.",
+        "status": "proposed/untested/not_started and the bounded independently implemented headless subset stay distinct from full GPU/native/CI/product acceptance.",
+        "provenance": "Independent Egret specifications/core remain distinct from third-party research-chain execution and explicit dependencies.",
+        "evidence": "Historical 26+7, second-round 71 and bounded reference-chain checks retain limits and do not establish performance advantages.",
+        "technical": "Ownership/cancellation/Scope/lease/event reentrancy rules retained; candidate example is explicitly uncompiled beyond the implemented subset. Backend and compiler recommendations retain version, hardware, host and provider limits.",
+        "competition": "No new unsupported competitive accusation observed in checked sections."
+      },
+      "limits": "This was a bounded textual translation review, not a new research refresh, execution, license opinion, full implementation audit or exhaustive review of all 15 design pairs. No other agent targets were edited.",
+      "verifiedAt": "2026-10-08T13:31:46.870Z"
+    },
+    {
+      "scope": "research cross review",
+      "recordSha256": "4ff401e3a0257d935204277b150e10535ee8c32a95636416d53476fdd8801c95",
+      "schemaVersion": 1,
+      "reviewType": "Independent bounded bilingual research cross-review",
+      "status": "pass_with_stated_scope",
+      "checkedAtUtc": "2026-10-08T13:34:43.552919+00:00",
+      "identityCoveragePairs": 40,
+      "semanticReadingPairs": 15,
+      "semanticReviewBoundaries": "14 full source/target readings plus one bounded adoption-plan pair reading; first-round research review received exact-name spot checks only. Other pairs received automated identity/structural checks. No exhaustive semantic review of all 40 pairs is claimed.",
+      "necessaryCorrections": [],
+      "resolvedCorrectionGroups": [
+        {
+          "id": "RC001",
+          "target": "knowledge-base/docs/第三轮审计.en.md",
+          "issue": "Inserted spaces altered the integration execution UUID.",
+          "resolution": "Exact d642177d-b007-4c0e-80a2-0f85e150d0c0 restored.",
+          "verified": true
+        },
+        {
+          "id": "RC002",
+          "target": "knowledge-base/evidence/asset-reference-pre-review-implementation-report.en.md",
+          "issue": "Inserted spaces altered twelve author execution UUID literals.",
+          "resolution": "All twelve exact source UUIDs restored; fresh all-pair UUID multiset check passes.",
+          "verified": true
+        },
+        {
+          "id": "RC003",
+          "target": "knowledge-base/experiments/nested-ui-probe/README.en.md",
+          "issue": "Two plaintext a1 node identifiers were split to a 1.",
+          "resolution": "Both identifier mentions restored to a1.",
+          "verified": true
+        },
+        {
+          "id": "RC004",
+          "target": "knowledge-base/evidence/asset-reference-pre-review-implementation-report.en.md",
+          "issue": "A historical local permission account became an invented present requirement to use a particular escalation.",
+          "resolution": "Past initial startup restriction and later authorized completed local runs restored; no current permission requirement.",
+          "verified": true
+        },
+        {
+          "id": "RC005",
+          "target": "knowledge-base/evidence/asset-reference-pre-review-implementation-report.en.md",
+          "issue": "Final concern needed explicit pre-review timing for then-pending review/rerun obligations.",
+          "resolution": "At this pre-review snapshot / were still required wording restores historical status.",
+          "verified": true
+        },
+        {
+          "id": "RC006",
+          "target": "knowledge-base/docs/开源参考实现与采用方案.en.md",
+          "issue": "API name texImage2D was split to texImage 2D.",
+          "resolution": "Exact API name restored.",
+          "verified": true
+        },
+        {
+          "id": "RC007",
+          "target": "knowledge-base/docs/第一轮研究核查.en.md",
+          "issue": "Organization name W3C was split to W 3C in two paragraphs.",
+          "resolution": "Exact organization name restored in both contexts.",
+          "verified": true
+        }
+      ],
+      "reviewFindings": [
+        "Reviewed research execution counts and failure chains retain original scope; supplemental reviews/reruns do not inflate main-case counts.",
+        "Reviewed lifecycle contracts preserve GPU invalidation versus final CPU ownership, generation/fence constraints, late/cancel behavior and nonempty fixed-frame recovery limits.",
+        "Independent first-party headless core and mature third-party reference-chain capabilities remain separately attributed.",
+        "Reviewed event studies retain living-session in-memory consumption, fair-retry limits, state-reset duplication and absence of persistent crash-safe exactly-once.",
+        "Reviewed competitors retain specific version/date/preview boundaries and engineering inference without endorsing performance superiority or upstream support.",
+        "Reviewed product statements retain proposed decisions, untested advantage hypotheses, incomplete acceptance and full R008/V006 migration/editing/real-publication obligations."
+      ],
+      "limits": [
+        "No browsing, new factual research, experimental reruns, code edits, source edits or machine-evidence rewrites.",
+        "This cross-review validates translation meaning within the explicitly read scopes and literal identity/structure on 40 pairs; it is not product, performance, security, legal or human acceptance.",
+        "Historical repeated README content was not reread semantically; all assigned historical pairs were included in literal/structural/hash checks.",
+        "Original English code-review/red-provenance documents and the upstream legal original were checked against their assigned Chinese companions for literal/structure identity only; the legal original remains authoritative."
+      ],
+      "documents": [
+        {
+          "source": "knowledge-base/docs/Shaders与Playground产品技术启发.md",
+          "target": "knowledge-base/docs/Shaders与Playground产品技术启发.en.md",
+          "sourceBytes": 7751,
+          "targetBytes": 10203,
+          "sourceSha256": "f2e4a0ee1ad2f39cb4ab96bb1d1c021900d80ddbeaf1c519cd22baf379c4b1ca",
+          "targetSha256": "18c664e2976915a3f05f994c35b4377b28c79b63a4de1056dbfba256540e9666",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Automated literal identity/structure only; no prose semantic review claimed in this bounded cross-review."
+        },
+        {
+          "source": "knowledge-base/docs/开源参考实现与采用方案.md",
+          "target": "knowledge-base/docs/开源参考实现与采用方案.en.md",
+          "sourceBytes": 14982,
+          "targetBytes": 18210,
+          "sourceSha256": "643811272940106f5a756767286376d7539e2f202ff0d45ee0cc8112a94f35e9",
+          "targetSha256": "4fe3c979204828ee6e7b51a2365597ad25ea4f68772da846c4cfceca68fe564a",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Bounded source/target reading: version/provenance, executed-chain attribution, mechanism corrections, focused validation and current status. Returned target output omitted part of the middle adoption table; this report makes no full semantic review claim for that table. Exact texImage2D identity separately checked."
+        },
+        {
+          "source": "knowledge-base/docs/开源实现优先与验证分工.md",
+          "target": "knowledge-base/docs/开源实现优先与验证分工.en.md",
+          "sourceBytes": 4898,
+          "targetBytes": 6636,
+          "sourceSha256": "a510c4f6a3f8f8cd56a54fe6f31c04db59eaae7fbd1e785c7cc1fb3768e000d8",
+          "targetSha256": "8b39600d2a57fd8ed7631a86e03e35735d6783d941ed769c4f5be2aee00d24cf",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Full pair: independent core versus explicit dependencies, research/integration/product evidence separation, rights attribution, unchanged bounded historical outcomes."
+        },
+        {
+          "source": "knowledge-base/docs/技术验证记录.md",
+          "target": "knowledge-base/docs/技术验证记录.en.md",
+          "sourceBytes": 7404,
+          "targetBytes": 9323,
+          "sourceSha256": "6921463975a08e52b21ed21f5e5780bb6598de2f998ce6bb370b0d8846e9310c",
+          "targetSha256": "862715e216fc5f407dedcf30fd05cd86c6d5ee956c653ea78a75a7c79db14e28",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Full pair: first-round historical evidence, actual counts and failure sequences, fixed-region costs, graphics/secure-context bounds, restored source history, no final technical approval."
+        },
+        {
+          "source": "knowledge-base/docs/核心框架实现记录.md",
+          "target": "knowledge-base/docs/核心框架实现记录.en.md",
+          "sourceBytes": 5544,
+          "targetBytes": 7151,
+          "sourceSha256": "d55847d10566474ee787f09d607b0d8e4963086f2c7f9bc60450fbd8913563c0",
+          "targetSha256": "bde8304eac2d247a8b6ad5465cc7ef4c30a7eb3ea78335307b5c78d7bfd7f7c7",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Full pair: actual three-package headless subset, 44 behavior checks, 28 initial failures, compiler attribution, no GPU/CI/performance acceptance, shutdown isolation and final migration."
+        },
+        {
+          "source": "knowledge-base/docs/核心框架证据缺口与研究清单.md",
+          "target": "knowledge-base/docs/核心框架证据缺口与研究清单.en.md",
+          "sourceBytes": 25136,
+          "targetBytes": 27636,
+          "sourceSha256": "d23f02aa0b155d31cec6b5c4d418a90dac572b9f6170e5253cdfee52e24446db",
+          "targetSha256": "79ab63f6da18c61e726af15b8a3f5112ca663f4f4250c4eb3e8df3bb70d19cb7",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Automated literal identity/structure only; no prose semantic review claimed in this bounded cross-review."
+        },
+        {
+          "source": "knowledge-base/docs/竞品演进与生态.md",
+          "target": "knowledge-base/docs/竞品演进与生态.en.md",
+          "sourceBytes": 10273,
+          "targetBytes": 11819,
+          "sourceSha256": "4ab7a2fe1dc7c42274dbb390ee07e3bd25385502466ddd84231ba050e6ac9a3d",
+          "targetSha256": "d046ac24cc4ad99966d7e7bb4549b9227d864b7be02de4b72de7bf00c7a25b1c",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Full source/target pair: version and source-date boundaries, previews versus releases, no installations/comparative performance, engineering inference, host matrices, migration obligation."
+        },
+        {
+          "source": "knowledge-base/docs/第一轮审计.md",
+          "target": "knowledge-base/docs/第一轮审计.en.md",
+          "sourceBytes": 4965,
+          "targetBytes": 6167,
+          "sourceSha256": "29847a9c90385e45c70ab156303b7eb9219fda25c33fb2b0507645f9a60f94d1",
+          "targetSha256": "4a6f7d3c39a4b34ae1f9bd9a03abc084d72cf41bd2c20e181831429e55ca8504",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Full pair: independent AI review versus human/product acceptance, model counterexamples, historical source restoration, failure chains, proposed/untested states."
+        },
+        {
+          "source": "knowledge-base/docs/第一轮研究核查.md",
+          "target": "knowledge-base/docs/第一轮研究核查.en.md",
+          "sourceBytes": 13555,
+          "targetBytes": 14407,
+          "sourceSha256": "17f253c1827389295f1c33f690fe8c2275f13cab1d87368f8b188b97aaa5370e",
+          "targetSha256": "0dc41b7f8117277ee8692b4620b317feaf3b6e70ad69faa5b0645c6b7e92c971",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Automated literal identity/structure only; no prose semantic review claimed in this bounded cross-review."
+        },
+        {
+          "source": "knowledge-base/docs/第三轮审计.md",
+          "target": "knowledge-base/docs/第三轮审计.en.md",
+          "sourceBytes": 6714,
+          "targetBytes": 8207,
+          "sourceSha256": "e3bcba1d9dee86182f07e4c369a7685f9805357cc98325a339263e09f2bdeb26",
+          "targetSha256": "c975d4023a4fd9cd082fb446d3541ed6f79bfd03d241cfc20e5953d59b2ec5ee",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Full pair: 17-check scope, correction chains, lifecycle errors, UUID, repeated-report counts, ownership, recovery, retained history, excluded product acceptance."
+        },
+        {
+          "source": "knowledge-base/docs/第三轮集成计划.md",
+          "target": "knowledge-base/docs/第三轮集成计划.en.md",
+          "sourceBytes": 3509,
+          "targetBytes": 4440,
+          "sourceSha256": "29b9c6cdd327a67d72aec31e603d2423978fa200128322d140f17f5146a60159",
+          "targetSha256": "2c44b5b33d14d7b0431cc70872fbc1cf90572453aba5681c9d41f80748bf350d",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Automated literal identity/structure only; no prose semantic review claimed in this bounded cross-review."
+        },
+        {
+          "source": "knowledge-base/docs/第三轮集成记录.md",
+          "target": "knowledge-base/docs/第三轮集成记录.en.md",
+          "sourceBytes": 9173,
+          "targetBytes": 10787,
+          "sourceSha256": "581a6af83b9f016b48fb4b653a15d3221c9aca14c503fae0fb5197b353be1bf6",
+          "targetSha256": "3b8ff8f8705f927d55cd60b93d8ee881c4deedeae23d1a66563998d5eb79a892",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Automated literal identity/structure only; no prose semantic review claimed in this bounded cross-review."
+        },
+        {
+          "source": "knowledge-base/docs/第二轮审计.md",
+          "target": "knowledge-base/docs/第二轮审计.en.md",
+          "sourceBytes": 4881,
+          "targetBytes": 6091,
+          "sourceSha256": "35ae40a98d1b2b179d13d6174bcd6d7abb896cee37780906efe56dda30f067c2",
+          "targetSha256": "38828a2c8f04cef256d2ddaa1612bfc1cf6d21caa10451a203ffdb5cf4a3070c",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Full pair: CPU reproduction versus browser reruns, fences and array counterexamples, independent graphics reference, state reset, bounded outcomes and historical scope."
+        },
+        {
+          "source": "knowledge-base/docs/第二轮验证计划.md",
+          "target": "knowledge-base/docs/第二轮验证计划.en.md",
+          "sourceBytes": 3105,
+          "targetBytes": 4013,
+          "sourceSha256": "d259ebc9e70c0f3d528dbb15d2b5f5499968b6e78424475b88fe90d2b1270aa6",
+          "targetSha256": "3be4b613e5e06c1d6521e4585f16ccffef52a8ad9b4840621b9cc60e90cf64c2",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Automated literal identity/structure only; no prose semantic review claimed in this bounded cross-review."
+        },
+        {
+          "source": "knowledge-base/docs/第二轮验证记录.md",
+          "target": "knowledge-base/docs/第二轮验证记录.en.md",
+          "sourceBytes": 10425,
+          "targetBytes": 12421,
+          "sourceSha256": "6e50d9a9d27a55c4732dbcb9815aef67c734934fa21bd45adc43c8500aefe931",
+          "targetSha256": "eb985a0cb7fa6337fa48526e963e530a3cf191e5d938a044648f029bea49e2fe",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Full pair: 71 cases include boundary/negative controls, event/resource/UI/batch/GPU execution and omissions, source preservation, editor-draft status, migration obligation."
+        },
+        {
+          "source": "knowledge-base/evidence/asset-reference-initial-code-review.md",
+          "target": "knowledge-base/evidence/asset-reference-initial-code-review.zh-CN.md",
+          "sourceBytes": 4305,
+          "targetBytes": 3923,
+          "sourceSha256": "b7423f7055f946e0b96862140c262cd77afb0482170575dc0750788e91846ebc",
+          "targetSha256": "d22c3c78bc03c831e9cf1950af8f89c6d3b3ceda637a17dc1ae7e95d188879ae",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Automated literal identity/structure only; no prose semantic review claimed in this bounded cross-review."
+        },
+        {
+          "source": "knowledge-base/evidence/asset-reference-pre-review-implementation-report.md",
+          "target": "knowledge-base/evidence/asset-reference-pre-review-implementation-report.en.md",
+          "sourceBytes": 14583,
+          "targetBytes": 14977,
+          "sourceSha256": "a19d12931d8efd88a0bc6b93806eae8674b45dedeeec48fa06cd0646da009a74",
+          "targetSha256": "cd55c23f615cf06bb55d1f7342ec321c88ee16f3335907602721ce862dc35bb2",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Full pair: historical pre-review snapshot, 12 author executions and exact UUIDs/hashes, ownership/recovery, third-party mechanisms, no invented present approval requirement."
+        },
+        {
+          "source": "knowledge-base/evidence/asset-reference-red-provenance.md",
+          "target": "knowledge-base/evidence/asset-reference-red-provenance.zh-CN.md",
+          "sourceBytes": 847,
+          "targetBytes": 890,
+          "sourceSha256": "55d5dab2cbfb1c38090ec7c7923876d9c19cbde9752a2112b59d6c599c25ee24",
+          "targetSha256": "1f9b9eb1ff948551ba3fc584e8d0c08eaa34c433799602be54f4f8294ccd9c55",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Automated literal identity/structure only; no prose semantic review claimed in this bounded cross-review."
+        },
+        {
+          "source": "knowledge-base/experiments/asset-reference-probe/README.md",
+          "target": "knowledge-base/experiments/asset-reference-probe/README.en.md",
+          "sourceBytes": 7043,
+          "targetBytes": 7772,
+          "sourceSha256": "0ccab8a2c84f81e2343f400cf3447b855f1ea4868e701237dd655b904c923fb5",
+          "targetSha256": "a577ecba1361c99cc5de7b2a36dabca6e2d90d2e2ec8db3c1190d85b9fe85e16",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Automated literal identity/structure only; no prose semantic review claimed in this bounded cross-review."
+        },
+        {
+          "source": "knowledge-base/experiments/asset-reference-probe/THIRD_PARTY_NOTICES.md",
+          "target": "knowledge-base/experiments/asset-reference-probe/THIRD_PARTY_NOTICES.en.md",
+          "sourceBytes": 1499,
+          "targetBytes": 1600,
+          "sourceSha256": "b591da14a37c9d22b0e0c4ec5766c8cf81adbcae9dff18150de148705c8b396a",
+          "targetSha256": "7c294d6a90d32cbfe6564c04cd33d8bb7e8a7fd6193b271f2559c3cb330229b8",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Automated literal identity/structure only; no prose semantic review claimed in this bounded cross-review."
+        },
+        {
+          "source": "knowledge-base/experiments/asset-reference-probe/assets/RiggedSimple/LICENSE.md",
+          "target": "knowledge-base/experiments/asset-reference-probe/assets/RiggedSimple/LICENSE.zh-CN.md",
+          "sourceBytes": 781,
+          "targetBytes": 1034,
+          "sourceSha256": "4343fbd97e5ecfc4c872a85cb1d755a3006f8848e15135fd6c4534839909bdbb",
+          "targetSha256": "2b0b36c31c479d7a73ac33f10883878792ed7ac4d82c4cd9bc10f2cd61491f9a",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Automated literal identity/structure only; no prose semantic review claimed in this bounded cross-review."
+        },
+        {
+          "source": "knowledge-base/experiments/asset-reference-probe/history/green-final/README.md",
+          "target": "knowledge-base/experiments/asset-reference-probe/history/green-final/README.en.md",
+          "sourceBytes": 4890,
+          "targetBytes": 5378,
+          "sourceSha256": "06f7d60a08a4eecdf0ba66f1abd663002c102ffc8fb77bb228f178144c49210a",
+          "targetSha256": "0dbbb107ef7de650f0a2f2dfb7aca3fac8c4dbd49934f3bfd402db507774568b",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Automated literal identity/structure only; no prose semantic review claimed in this bounded cross-review."
+        },
+        {
+          "source": "knowledge-base/experiments/asset-reference-probe/history/pre-review-fix/README.md",
+          "target": "knowledge-base/experiments/asset-reference-probe/history/pre-review-fix/README.en.md",
+          "sourceBytes": 4890,
+          "targetBytes": 5378,
+          "sourceSha256": "06f7d60a08a4eecdf0ba66f1abd663002c102ffc8fb77bb228f178144c49210a",
+          "targetSha256": "0dbbb107ef7de650f0a2f2dfb7aca3fac8c4dbd49934f3bfd402db507774568b",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Automated literal identity/structure only; no prose semantic review claimed in this bounded cross-review."
+        },
+        {
+          "source": "knowledge-base/experiments/asset-reference-probe/history/review-demo-smoke-oracle-caught/README.md",
+          "target": "knowledge-base/experiments/asset-reference-probe/history/review-demo-smoke-oracle-caught/README.en.md",
+          "sourceBytes": 4890,
+          "targetBytes": 5378,
+          "sourceSha256": "06f7d60a08a4eecdf0ba66f1abd663002c102ffc8fb77bb228f178144c49210a",
+          "targetSha256": "0dbbb107ef7de650f0a2f2dfb7aca3fac8c4dbd49934f3bfd402db507774568b",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Automated literal identity/structure only; no prose semantic review claimed in this bounded cross-review."
+        },
+        {
+          "source": "knowledge-base/experiments/asset-reference-probe/history/review-demo-smoke-oracle-red/README.md",
+          "target": "knowledge-base/experiments/asset-reference-probe/history/review-demo-smoke-oracle-red/README.en.md",
+          "sourceBytes": 4890,
+          "targetBytes": 5378,
+          "sourceSha256": "06f7d60a08a4eecdf0ba66f1abd663002c102ffc8fb77bb228f178144c49210a",
+          "targetSha256": "0dbbb107ef7de650f0a2f2dfb7aca3fac8c4dbd49934f3bfd402db507774568b",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Automated literal identity/structure only; no prose semantic review claimed in this bounded cross-review."
+        },
+        {
+          "source": "knowledge-base/experiments/asset-reference-probe/history/review-final-frozen/README.md",
+          "target": "knowledge-base/experiments/asset-reference-probe/history/review-final-frozen/README.en.md",
+          "sourceBytes": 7003,
+          "targetBytes": 7772,
+          "sourceSha256": "d90475f65e474ac4f29d00abda3fdcffb128fe4529871377467dcb39521bcf67",
+          "targetSha256": "a577ecba1361c99cc5de7b2a36dabca6e2d90d2e2ec8db3c1190d85b9fe85e16",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Automated literal identity/structure only; no prose semantic review claimed in this bounded cross-review."
+        },
+        {
+          "source": "knowledge-base/experiments/asset-reference-probe/history/review-lifecycle-final/README.md",
+          "target": "knowledge-base/experiments/asset-reference-probe/history/review-lifecycle-final/README.en.md",
+          "sourceBytes": 4890,
+          "targetBytes": 5378,
+          "sourceSha256": "06f7d60a08a4eecdf0ba66f1abd663002c102ffc8fb77bb228f178144c49210a",
+          "targetSha256": "0dbbb107ef7de650f0a2f2dfb7aca3fac8c4dbd49934f3bfd402db507774568b",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Automated literal identity/structure only; no prose semantic review claimed in this bounded cross-review."
+        },
+        {
+          "source": "knowledge-base/experiments/asset-reference-probe/history/review-lifecycle-green/README.md",
+          "target": "knowledge-base/experiments/asset-reference-probe/history/review-lifecycle-green/README.en.md",
+          "sourceBytes": 4890,
+          "targetBytes": 5378,
+          "sourceSha256": "06f7d60a08a4eecdf0ba66f1abd663002c102ffc8fb77bb228f178144c49210a",
+          "targetSha256": "0dbbb107ef7de650f0a2f2dfb7aca3fac8c4dbd49934f3bfd402db507774568b",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Automated literal identity/structure only; no prose semantic review claimed in this bounded cross-review."
+        },
+        {
+          "source": "knowledge-base/experiments/asset-reference-probe/history/review-lifecycle-red/README.md",
+          "target": "knowledge-base/experiments/asset-reference-probe/history/review-lifecycle-red/README.en.md",
+          "sourceBytes": 4890,
+          "targetBytes": 5378,
+          "sourceSha256": "06f7d60a08a4eecdf0ba66f1abd663002c102ffc8fb77bb228f178144c49210a",
+          "targetSha256": "0dbbb107ef7de650f0a2f2dfb7aca3fac8c4dbd49934f3bfd402db507774568b",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Automated literal identity/structure only; no prose semantic review claimed in this bounded cross-review."
+        },
+        {
+          "source": "knowledge-base/experiments/asset-reference-probe/history/review-r2-green-r1-red/README.md",
+          "target": "knowledge-base/experiments/asset-reference-probe/history/review-r2-green-r1-red/README.en.md",
+          "sourceBytes": 4890,
+          "targetBytes": 5378,
+          "sourceSha256": "06f7d60a08a4eecdf0ba66f1abd663002c102ffc8fb77bb228f178144c49210a",
+          "targetSha256": "0dbbb107ef7de650f0a2f2dfb7aca3fac8c4dbd49934f3bfd402db507774568b",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Automated literal identity/structure only; no prose semantic review claimed in this bounded cross-review."
+        },
+        {
+          "source": "knowledge-base/experiments/asset-reference-probe/history/review-restart-first-frame-red/README.md",
+          "target": "knowledge-base/experiments/asset-reference-probe/history/review-restart-first-frame-red/README.en.md",
+          "sourceBytes": 4890,
+          "targetBytes": 5378,
+          "sourceSha256": "06f7d60a08a4eecdf0ba66f1abd663002c102ffc8fb77bb228f178144c49210a",
+          "targetSha256": "0dbbb107ef7de650f0a2f2dfb7aca3fac8c4dbd49934f3bfd402db507774568b",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Automated literal identity/structure only; no prose semantic review claimed in this bounded cross-review."
+        },
+        {
+          "source": "knowledge-base/experiments/asset-reference-probe/history/review-restart-normal-green/README.md",
+          "target": "knowledge-base/experiments/asset-reference-probe/history/review-restart-normal-green/README.en.md",
+          "sourceBytes": 4890,
+          "targetBytes": 5378,
+          "sourceSha256": "06f7d60a08a4eecdf0ba66f1abd663002c102ffc8fb77bb228f178144c49210a",
+          "targetSha256": "0dbbb107ef7de650f0a2f2dfb7aca3fac8c4dbd49934f3bfd402db507774568b",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Automated literal identity/structure only; no prose semantic review claimed in this bounded cross-review."
+        },
+        {
+          "source": "knowledge-base/experiments/async-resource-probe/README.md",
+          "target": "knowledge-base/experiments/async-resource-probe/README.en.md",
+          "sourceBytes": 6333,
+          "targetBytes": 6592,
+          "sourceSha256": "cf897dac941c09802da090f2e1adf1501f47a0e1faaccb264f5bed976da5dac8",
+          "targetSha256": "3cf9c977279f2a443735fac3627ebc44283f1c84b51130061ec90cc1664ca5b2",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Full pair: manually interleaved resource research, distinct leases/tasks/device epochs, release/fence semantics, genuine old-policy failures, no real GPU/decoding/thread-safety acceptance."
+        },
+        {
+          "source": "knowledge-base/experiments/batch-state-probe/README.md",
+          "target": "knowledge-base/experiments/batch-state-probe/README.en.md",
+          "sourceBytes": 1433,
+          "targetBytes": 1674,
+          "sourceSha256": "fe168148b1a7116df2c59715f44c2defab040e5c34a5d3ab734fad1f37b7706e",
+          "targetSha256": "5a8491f1d9f0b5bebf80be245faf608c32719aabfb0ed6f6cb4f2ef9c7395dca",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Full pair: actual independent state consumption, texture-only and sparse-color failures, bounded rectangles/alpha, excluded complete-engine/GPU performance."
+        },
+        {
+          "source": "knowledge-base/experiments/browser-probe/README.md",
+          "target": "knowledge-base/experiments/browser-probe/README.en.md",
+          "sourceBytes": 668,
+          "targetBytes": 741,
+          "sourceSha256": "e4e4776e03dbc96b876cf9b49f86f7ecdcd8537fa5588d0019bfb3c66028d20a",
+          "targetSha256": "5ed893a79c87520f96ca5fb66721495b94ba5b378d2bfe6a83d00861fc097dce",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Automated literal identity/structure only; no prose semantic review claimed in this bounded cross-review."
+        },
+        {
+          "source": "knowledge-base/experiments/browser-probe/history/attempt-1/README.md",
+          "target": "knowledge-base/experiments/browser-probe/history/attempt-1/README.en.md",
+          "sourceBytes": 293,
+          "targetBytes": 427,
+          "sourceSha256": "8721768be70b15999fb685c0ca7455d8e54277fa376254955894182c0ce19b89",
+          "targetSha256": "5af830b0fc06ad802f99c1f2fdf807b3886b99072bda4cd85db1dcd31a1a1e82",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Automated literal identity/structure only; no prose semantic review claimed in this bounded cross-review."
+        },
+        {
+          "source": "knowledge-base/experiments/contract-probe/README.md",
+          "target": "knowledge-base/experiments/contract-probe/README.en.md",
+          "sourceBytes": 1669,
+          "targetBytes": 1929,
+          "sourceSha256": "332a18ab5c923c4c2c94a08aa22abdcbb335d45712741030b03243f6ede4d42c",
+          "targetSha256": "4d9addf27d5fe1d88e749739f6a923e0b2ae77e855902e8f6b9362b554c6f05f",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Automated literal identity/structure only; no prose semantic review claimed in this bounded cross-review."
+        },
+        {
+          "source": "knowledge-base/experiments/mixed-scene-probe/README.md",
+          "target": "knowledge-base/experiments/mixed-scene-probe/README.en.md",
+          "sourceBytes": 2671,
+          "targetBytes": 2956,
+          "sourceSha256": "606a420b9d9d44b497496d41d80eac5e5dcee8061f39740a92ee84320536b216",
+          "targetSha256": "25d12263275030b91d11e32e1fd0bc5320b5e22b38face87100794c285d2ca8c",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Full pair: actual procedural WebGL2 scene/pixel tolerances, independent reference versus shared-builder history, nonempty recovery, excluded assets/hosts/performance."
+        },
+        {
+          "source": "knowledge-base/experiments/nested-ui-probe/README.md",
+          "target": "knowledge-base/experiments/nested-ui-probe/README.en.md",
+          "sourceBytes": 7973,
+          "targetBytes": 8606,
+          "sourceSha256": "31df39e29cad377b96a741d91e7dbf509093c4d050b409231a2c58276c122966",
+          "targetSha256": "cbbf4ccf7326fcf7ba59d55c1f363003c6e855594e840ad5c2c81cda852f5e8d",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Full pair: finite layout budgets, actual whole-tree costs, independent oracle, a1 identity, invalid input and unsafe-isolation failures, no real text/performance claims."
+        },
+        {
+          "source": "knowledge-base/experiments/reliable-event-probe/README.md",
+          "target": "knowledge-base/experiments/reliable-event-probe/README.en.md",
+          "sourceBytes": 5219,
+          "targetBytes": 5395,
+          "sourceSha256": "c0cd5c390992bb38a535aea1a099f9d4235c1e0537c0d7d0e2868e4435a95aa0",
+          "targetSha256": "eb83831329299262b8929c555fb4f8d1800a020c65a4752a3321184ea488be91",
+          "automatedChecks": {
+            "uuidLiteralIdentity": true,
+            "longHashLiteralIdentity": true,
+            "referenceIdMultisetIdentity": true,
+            "externalUrlIdentity": true,
+            "headingLevelCounts": true,
+            "tableRowCounts": true,
+            "fenceCounts": true
+          },
+          "semanticReadingScope": "Full pair: ordered one-time in-memory consumption, fair retry conditions, no persistent exactly-once, state-reset side effects, ACK identity, bounded outbox versus total memory."
+        }
+      ]
+    },
+    {
+      "scope": "core publication review",
+      "recordSha256": "d0639482eb4a7f13ebc078395fda77744aab3dfe9fd1f6087f1eda04fcc5a378",
+      "schemaVersion": 1,
+      "reviewKind": "independent_bounded_publication_and_comment_review",
+      "status": "reviewed_with_scope",
+      "date": "2026-10-08",
+      "reviewedFiles": [
+        {
+          "path": "tools/check-publication.mjs",
+          "sha256": "3a23d7ca84233e3339107fcdb617795c5cee8fd503f3ddcac223f37508cc6b38"
+        },
+        {
+          "path": "tools/prepush.mjs",
+          "sha256": "8ba8600f86c5a0722f9eb2a6ae030a353e8034c36d2e5af3288165fd3c864aa4"
+        },
+        {
+          "path": ".githooks/pre-push",
+          "sha256": "372e3377f8d29c40a68ac54ec55124abdea50d761366d93eaeb97eb898f04561"
+        },
+        {
+          "path": "knowledge-base/tools/Validate-KnowledgeBase.ps1",
+          "sha256": "43109ca92145e7a7a79c8f9fef93062b8bab0d413650e96a92678f8476377711"
+        },
+        {
+          "path": "tests/publication/check-publication.test.mjs",
+          "sha256": "ff5b1e45e710f5842aa2615d55b8f87d6fe8256fb6a8fe85cfff2192710f0161"
+        },
+        {
+          "path": "tests/publication/knowledge-base-check-only.test.mjs",
+          "sha256": "969b2df98420781875316ec9c0dcbb24ae4e3698466d4a2ea592b9dfcb581a09"
+        },
+        {
+          "path": "verification/english-comment-provenance.json",
+          "sha256": "ffec1f123f588e5765cdb54991f4a082cd225e0764738880402b61378134b855"
+        },
+        {
+          "path": "LICENSE",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+        },
+        {
+          "path": "LICENSE.zh-CN.md",
+          "sha256": "3b7770d86d5df0f804661c104c7bbed9b1eda0a9ba59cfd891b298483a45941f"
+        },
+        {
+          "path": "packages/contracts/src/Disposable.ts",
+          "sha256": "76d74cd41b6e136ea840c7d8d05273520ce7d41031a7820dd4ddabc73be947db"
+        },
+        {
+          "path": "packages/contracts/src/CancellationSignal.ts",
+          "sha256": "6a9e5f07b549ec50c2a5c50915309e8de6fba2d943f59a0d7b54b079e14584b3"
+        },
+        {
+          "path": "packages/contracts/src/HostAdapter.ts",
+          "sha256": "3c8289a85e04e34be3782156244cc253792eff1b41629758d54cd1692c64c2ae"
+        },
+        {
+          "path": "packages/contracts/src/Diagnostic.ts",
+          "sha256": "bb788eed680e77497845d9ca95621683c616c773c13a61b42bcabad608c10461"
+        },
+        {
+          "path": "packages/runtime/src/CancellationController.ts",
+          "sha256": "3cfdb217804b282c4a422420ce5efa63ced25a6bb215bff254e7f947c4942e28"
+        },
+        {
+          "path": "packages/runtime/src/Scope.ts",
+          "sha256": "29e9d5da9232ed8347b2a829e069d33daabb1bad296798492a45c7950f43e8ea"
+        },
+        {
+          "path": "packages/runtime/src/DisplayObject.ts",
+          "sha256": "d64dde4b35ca2cf929ae14a2f99b59f7e0efbb02cb5a363ff0ff6975b5aadebd"
+        },
+        {
+          "path": "packages/runtime/src/DisplayObjectContainer.ts",
+          "sha256": "f0cdb820b26b06d304fd925e81367776a8f2c4824670be44da47d97953aa173e"
+        },
+        {
+          "path": "packages/runtime/src/displayTreeState.ts",
+          "sha256": "8aaf5f5dfc8d62f3b1bc4effe819e7718e3ed72fcf0a8fc25e3b08410f980e50"
+        },
+        {
+          "path": "packages/runtime/src/ownership.ts",
+          "sha256": "8c8c40e465002882dac1bf054fa49248c99df62da337cf75f50168f0a6748c62"
+        },
+        {
+          "path": "packages/runtime/src/Event.ts",
+          "sha256": "de5671dcddbde4637c22b5ea2bff9ebb520c7aed503608e670d0efc08cf9539c"
+        },
+        {
+          "path": "packages/runtime/src/EventDispatcher.ts",
+          "sha256": "141051a7aede922c0d8d73aa2b509c75cbe209118ba0bb48b3869765b9c5a82d"
+        },
+        {
+          "path": "packages/runtime/src/Stage.ts",
+          "sha256": "08eb1599d9c75c70add22558f28e214ec31fe4305ccdf2638a8f7d35ec61bb0f"
+        },
+        {
+          "path": "packages/runtime/src/EgretError.ts",
+          "sha256": "f647ab0f675a5e0d460f1e7b04bce603d06998096f460371035f23826eed7f08"
+        },
+        {
+          "path": "packages/runtime/src/diagnostics.ts",
+          "sha256": "c330f5d9083d84ee5b23b947d0d8534e7050a92f8b76a7e5259a1bad92395294"
+        },
+        {
+          "path": "packages/engine/src/Engine.ts",
+          "sha256": "471f78e5f01bfdbb0492d6be3f1f3c5ed9daa7cc8e20068c47fef49e21acac56"
+        },
+        {
+          "path": "packages/engine/src/createEngine.ts",
+          "sha256": "f0ae30646b03bdd9539e54223a98519e8afed8bee696dc378586c8128924e9d1"
+        },
+        {
+          "path": "packages/engine/src/surfaceOwnership.ts",
+          "sha256": "604df51eb03f8dbb7965100e06667c09bb311f0e26e0ee752b2404c899e5a320"
+        },
+        {
+          "path": "packages/engine/src/closeHost.ts",
+          "sha256": "9fac806cc0d19265ec6956cc19305a9ff2ae03ff0e49700d64c39be88ba3244f"
+        }
+      ],
+      "findings": [
+        {
+          "id": "CPR-001",
+          "priority": "P2",
+          "path": "packages/contracts/src/Disposable.ts",
+          "line": 6,
+          "problem": "The comment 'Returns a lease' above release(): void reads as producing a lease value, whereas this API releases/returns the held lease to its provider.",
+          "requestedChange": "Use 'Releases a lease; resource ownership and disposal remain with its provider.' and refresh provenance offsets/current hashes.",
+          "status": "resolved_and_reverified",
+          "resolution": "Releasable now says 'Releases a lease'; refreshed insertion offsets and hashes reconstruct exact preserved baseline bytes."
+        }
+      ],
+      "checks": [
+        {
+          "check": "Publication/CheckOnly regression tests",
+          "result": "passed",
+          "count": 11,
+          "command": "node --test tests/publication/check-publication.test.mjs tests/publication/knowledge-base-check-only.test.mjs"
+        },
+        {
+          "check": "Comment-only exact byte restoration",
+          "result": "passed",
+          "sourceFiles": 19,
+          "basis": "Each current hash and baseline hash matched; removing recorded insertions at recorded offsets reconstructed preserved 0.9.0 bytes."
+        },
+        {
+          "check": "Original root license preservation",
+          "result": "passed",
+          "basis": "LICENSE bytes equal preserved public-candidate-0.9.0/LICENSE."
+        },
+        {
+          "check": "License Chinese reading translation",
+          "result": "reviewed_complete_with_scope",
+          "basis": "All nine clauses, definitions, four redistribution conditions, patent termination, disclaimers, added-liability terms, appendix, and original notice template are represented. Original English authority and informational translation status are explicit."
+        },
+        {
+          "check": "Critical lifecycle/event/display-tree/host comments",
+          "result": "reviewed_no_unresolved_findings",
+          "basis": "Ownership, reverse cleanup, cancellation, reentrancy, synchronous events, state authority, failure continuation, safe host return, deadline versus completion, and surface quarantine comments match the implementation. CPR-001 is corrected."
+        },
+        {
+          "check": "Push path and read-only knowledge-base checking",
+          "result": "reviewed",
+          "basis": "Hook executes shared node prepush entry; child failures stop the sequence. PowerShell 7 is invoked explicitly. CheckOnly guards the sole report-writing call; regression verifies unchanged tracked evidence."
+        },
+        {
+          "check": "Source-gate new-file coverage",
+          "result": "reviewed_and_regression_passed",
+          "basis": "The checker now requires each non-index packages/*/src/*.ts file in criticalComments; a new negative regression creates an unlisted core source and verifies rejection."
+        },
+        {
+          "check": "Opaque document identifier occurrence parity",
+          "result": "reviewed_and_regression_passed",
+          "basis": "Paired reading documents compare sorted occurrence multisets for complete UUID, SHA40, and SHA64 tokens, including duplicates. The new regression retains one UUID occurrence while damaging a second and confirms rejection after source/target hashes are refreshed. Missing paired files already fail their existing checks; informational legal translations retain their distinct projection role."
+        }
+      ],
+      "limitations": [
+        "Limited file-level engineering and translation review, without granting product, performance, security, originality, or legal acceptance.",
+        "No network, Git write/authentication, upstream installation, GPU/native/production-host execution, or new dependencies used.",
+        "Structural publication tests do not establish translation completeness/meaning or authorization; those remain author/reviewer responsibilities.",
+        "Full-current-tree publication/pre-push execution and cross-agent document integration remain the integration author's responsibility; regression fixtures and exact comment-only restoration were independently executed."
+      ],
+      "verdict": "No unresolved necessary correctness, English-contract, or license-translation findings within the reviewed files, including the added opaque identifier occurrence gate."
+    }
+  ],
+  "publicEditorialProjections": [
+    {
+      "path": "knowledge-base/evidence/asset-reference-pre-review-implementation-report.md",
+      "priorSha256": "ed4e62e5ddb51fa95c071731263ecd89e3341a174e8a5c0ad1d8870fb4d1baae",
+      "currentSha256": "a19d12931d8efd88a0bc6b93806eae8674b45dedeeec48fa06cd0646da009a74",
+      "scope": "Public engineering wording replaces private task handoff; every run ID, outcome, code sample, API, uncertainty and source identity remains."
+    },
+    {
+      "path": "knowledge-base/CHANGELOG.md",
+      "priorSha256": "e0c4aa2ee920450e3233fc70e2b19270eb4770c945202864c2a0ae3246cd3c62",
+      "currentSha256": "745d66602d8abade686641f5df1ceb630d19f887c9cb2509df434d31be636723",
+      "scope": "Replace internal role name with its engineering responsibility; evidence scope unchanged."
+    },
+    {
+      "path": "knowledge-base/evidence/asset-reference-initial-code-review.md",
+      "priorSha256": "b2ec64266416ace0ef4d31f4e1092c664d1e6bcf7c45dd9b012852e5799f5a0d",
+      "currentSha256": "b7423f7055f946e0b96862140c262cd77afb0482170575dc0750788e91846ebc",
+      "scope": "Replace internal role name with its engineering responsibility; evidence scope unchanged."
+    }
+  ],
+  "resolvedNecessaryCorrections": [
+    {
+      "path": "knowledge-base/docs/第三轮审计.en.md",
+      "issue": "Inserted spaces altered execution UUIDs",
+      "uuidLiteralsRestored": 1,
+      "beforeSha256": "362172c8d1f950a2c945e6e9dec0bb9275462a1f97b684ba51fe9f34cf36c67e",
+      "afterSha256": "c975d4023a4fd9cd082fb446d3541ed6f79bfd03d241cfc20e5953d59b2ec5ee",
+      "outcome": "Exact source UUID literals restored; conclusions unchanged."
+    },
+    {
+      "path": "knowledge-base/evidence/asset-reference-pre-review-implementation-report.en.md",
+      "issue": "Inserted spaces altered execution UUIDs",
+      "uuidLiteralsRestored": 11,
+      "beforeSha256": "b0066ee8b4161b7619d6188d151df9724f03bd5cc5d1758288fb2ceb7a90f786",
+      "afterSha256": "dd47d3e6004c4ceebf19bd0ef5198bb39825e04dbd19677caa7c149cab6c36d2",
+      "outcome": "Exact source UUID literals restored; conclusions unchanged.",
+      "duplicateOccurrenceFollowup": {
+        "issue": "One UUID already existed in a filename while its table occurrence remained spaced",
+        "beforeSha256": "8dad052d2eae5f81c441395beb0fb3c5f1b8b913f25cade7c93de1bb6a51c1b2",
+        "afterSha256": "cd55c23f615cf06bb55d1f7342ec321c88ee16f3335907602721ce862dc35bb2",
+        "sourceAndTargetOccurrenceCount": 14,
+        "result": "Exact occurrence multiset restored; permanent gate regression added."
+      }
+    },
+    {
+      "path": "knowledge-base/experiments/nested-ui-probe/README.en.md",
+      "issue": "Two node identifiers split by whitespace",
+      "beforeSha256": "141b536145fd4df1f0cd47546329a3ad3187065d04e0312cbabb75c3dea1a577",
+      "afterSha256": "cbbf4ccf7326fcf7ba59d55c1f363003c6e855594e840ad5c2c81cda852f5e8d",
+      "outcome": "Source identifier a1 restored."
+    },
+    {
+      "path": "packages/contracts/src/Disposable.ts",
+      "issue": "Ambiguous release(): void English contract",
+      "beforeSha256": "fd9ee9cb2378a987f7af9faff2788db489505c87e78c62c35ba3fdd88e6dbf36",
+      "afterSha256": "76d74cd41b6e136ea840c7d8d05273520ce7d41031a7820dd4ddabc73be947db",
+      "outcome": "Releases a lease wording; exact baseline restoration still verified."
+    },
+    {
+      "path": "knowledge-base/docs/开源参考实现与采用方案.en.md",
+      "issue": "Inserted spaces altered a technical identifier",
+      "beforeSha256": "ee9cb9f90e808a958a943f913096a1a0c9348940bcff02b5c47b2099b1e17cad",
+      "afterSha256": "4fe3c979204828ee6e7b51a2365597ad25ea4f68772da846c4cfceca68fe564a",
+      "outcome": "Exact source identifier texImage2D restored."
+    },
+    {
+      "path": "knowledge-base/docs/第一轮研究核查.en.md",
+      "issue": "Inserted spaces altered a technical identifier",
+      "beforeSha256": "639fb60e9acceb77d0d1a86777bfb1a79a9978b9062b39c5e2210eea29ab0791",
+      "afterSha256": "0dc41b7f8117277ee8692b4620b317feaf3b6e70ad69faa5b0645c6b7e92c971",
+      "outcome": "Exact source identifier W3C restored."
+    },
+    {
+      "path": "knowledge-base/evidence/asset-reference-pre-review-implementation-report.en.md",
+      "issue": "Historical environment restriction rendered as a current escalation requirement",
+      "outcome": "Final two bullets now preserve the past snapshot, authorized local reruns and non-behavioral startup restriction; no new approval requirement."
+    }
+  ],
+  "remainingNecessaryCorrections": [],
+  "unchangedScope": [
+    "Original test outcomes and reviewed historical identity hashes",
+    "Sixteen proposed decisions and eight untested hypotheses",
+    "Full migration and continued editing/publication remain delivery objectives",
+    "No new rendering/native/phone/performance/creator/CI product acceptance"
+  ],
+  "limitations": [
+    "Automated matching does not certify all prose meaning or all licensing/secret risks.",
+    "Independent semantic reviews are limited to the exact full/section scopes listed, not every paragraph of all documents.",
+    "Historical input hashes identify earlier bytes; current language/comment/public wording projections have their own identities.",
+    "Local publication preparation does not establish remote commit/PR success."
+  ]
+}

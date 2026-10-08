@@ -1,0 +1,762 @@
+{
+  "schemaVersion": "1.2-bilingual-public-projection",
+  "date": "2026-10-08",
+  "artifact": "egret-rebuild-local-preview",
+  "version": "0.0.0",
+  "supportLevel": "experimental",
+  "scope": "DOM-free cancellation, synchronous ownership Scope, display tree, typed synchronous events, headless Engine lifecycle only",
+  "publication": {
+    "state": "development preview; local candidate export snapshot on 2026-10-08",
+    "snapshotDate": "2026-10-08",
+    "statusScope": "The export-action flags below describe packaging at this historical snapshot, not subsequent repository/PR state.",
+    "targetRemote": "https://github.com/cnedwin/Egret_rebuild",
+    "targetRepositoryVisibility": "public; repository metadata verified 2026-10-08",
+    "exportInitializedGit": false,
+    "exportUploadedCode": false,
+    "exportPublishedNpm": false,
+    "firstPartyCodeLicense": "Apache-2.0",
+    "firstPartyDocumentationLicense": "Apache-2.0",
+    "licenseBasis": "Existing target repository main LICENSE; exact original bytes retained.",
+    "repositoryLicenseGitBlob": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64",
+    "thirdPartyLicenseRule": "Each dependency, asset and research file retains its applicable upstream declaration."
+  },
+  "prototypeOrigin": {
+    "identity": "egret-core-framework-prototype/source-origin.json",
+    "sha256": "f24be42b6ef3d6564e5892f0c4edc7c779bda11b0508025bd784fb06a334fba3",
+    "schemaVersion": "1",
+    "artifact": "egret-core-framework-prototype",
+    "version": "0.0.0",
+    "status": "identity-only/not-distributed",
+    "projectionRule": "The 0.9.0 export preserved the tested prototype source bytes. Revision 0.10.0 adds recorded English-only comments to 19 source files, with exact restoration proof, and independently authored publication tooling. Current identities are listed separately; historical specification/review identities remain unchanged.",
+    "historicalProjectionRule": "Code/tests/examples/tools/manifests/lock/config are byte-identical whitelist exports; package READMEs and root documentation are public projections."
+  },
+  "firstParty": {
+    "declaredProcess": "AI-assisted TypeScript authored from the recorded first-party lifecycle/API specifications; tests use independently defined expected behavior.",
+    "authorDisclosure": "AI-assisted implementation from the recorded first-party specifications and task inputs. The declaration describes the observed workflow and bounded review evidence; it does not guarantee all model training sources or global originality.",
+    "modelDisclosure": "Codex assisted the implementation. The exact model version is not recorded in the underlying artifact.",
+    "originalInputSpecifications": [
+      {
+        "identity": "knowledge-base-0.7.0/docs/工程技术架构与项目结构.md",
+        "sha256": "5f92ce5512986be1672a013ce5bbc9c694d9f83baad45f4ce2faa25a4fa2a0b8",
+        "role": "design contract; no implementation code",
+        "status": "identity-only/not-distributed",
+        "originalLogicalPathIdentityOnly": "outputs/白鹭引擎重构工程知识库/docs/工程技术架构与项目结构.md",
+        "currentPublicSuccessor": "knowledge-base/docs/工程技术架构与项目结构.md",
+        "note": "Historical input hash identifies the original 0.7.0 design contract; the 0.9.0 public successor is separately versioned and is not claimed to have this hash."
+      },
+      {
+        "identity": "knowledge-base-0.7.0/docs/公共API设计与命名规范.md",
+        "sha256": "7a29bc506b78865c53d53e8cf75d4ed5837d30171370d764700416d1d08fa5f4",
+        "role": "design contract; no implementation code",
+        "status": "identity-only/not-distributed",
+        "originalLogicalPathIdentityOnly": "outputs/白鹭引擎重构工程知识库/docs/公共API设计与命名规范.md",
+        "currentPublicSuccessor": "knowledge-base/docs/公共API设计与命名规范.md",
+        "note": "Historical input hash identifies the original 0.7.0 design contract; the 0.9.0 public successor is separately versioned and is not claimed to have this hash."
+      },
+      {
+        "identity": "knowledge-base-0.7.0/docs/代码规范与质量门禁.md",
+        "sha256": "7a36ade21783d215b346a9d7596144845f13176727bc1c20a7f82daa775b5aac",
+        "role": "design contract; no implementation code",
+        "status": "identity-only/not-distributed",
+        "originalLogicalPathIdentityOnly": "outputs/白鹭引擎重构工程知识库/docs/代码规范与质量门禁.md",
+        "currentPublicSuccessor": "knowledge-base/docs/代码规范与质量门禁.md",
+        "note": "Historical input hash identifies the original 0.7.0 design contract; the 0.9.0 public successor is separately versioned and is not claimed to have this hash."
+      }
+    ],
+    "internalInputs": [
+      {
+        "identityOnly": "work/core-framework/task-1-brief.md",
+        "sha256": "23adcb56d47141c81bb59507a878b2db89347ce74f718812cc7d4ab17617b502",
+        "status": "identity-only/not-distributed",
+        "role": "original implementation task brief"
+      },
+      {
+        "identityOnly": "work/core-framework/code-review-initial.json",
+        "sha256": "a7e3da67bc507c9ea961b082162fb14a515d51a3b243ec6ea0c5bca1173e222c",
+        "status": "identity-only/not-distributed",
+        "role": "initial scoped code review"
+      },
+      {
+        "identityOnly": "work/core-framework/review-counterexamples-initial.mjs",
+        "sha256": "d73503aabb0cd9059ac4b6d1e46267eb1bff720a8387420afa049f323aab9808",
+        "status": "identity-only/not-distributed",
+        "role": "same-session first-party review counterexamples used to write narrow regression tests; no competitor implementation input"
+      },
+      {
+        "identityOnly": "work/core-framework/fix-1-verify.log",
+        "sha256": "d2c02d0443afea85a1f56d8e98a11777f625bfad9bd011f632ba526f38428d3c",
+        "status": "identity-only/not-distributed",
+        "role": "recorded prototype fix-1 execution log"
+      }
+    ],
+    "implementationCodeSources": [],
+    "originalInputBoundary": "Historical/competitor implementation code and private historical engine bundles were excluded from the recorded core implementation inputs.",
+    "currentFirstPartyLicense": "Apache-2.0 under the existing target repository configuration"
+  },
+  "runtimeDependencies": {
+    "thirdParty": [],
+    "workspace": {
+      "contracts": [],
+      "runtime": [
+        "@egret/contracts"
+      ],
+      "engine": [
+        "@egret/contracts",
+        "@egret/runtime"
+      ]
+    }
+  },
+  "developmentTools": [
+    {
+      "name": "typescript",
+      "version": "7.0.2",
+      "license": "Apache-2.0",
+      "role": "development compiler",
+      "patched": false,
+      "distribution": "not-vendored; obtain through pinned installation or host runtime",
+      "originalObservedInstallation": true,
+      "repository": "https://github.com/microsoft/TypeScript",
+      "installedDeclarationLocations": {
+        "notice": "node_modules/typescript/NOTICE.txt",
+        "license": "node_modules/typescript/LICENSE",
+        "status": "expected after dependency installation; not files distributed in this export"
+      }
+    },
+    {
+      "name": "@typescript/typescript-win32-x64",
+      "version": "7.0.2",
+      "license": "Apache-2.0",
+      "role": "TypeScript native compiler for current host",
+      "patched": false,
+      "distribution": "not-vendored; obtain through pinned installation or host runtime",
+      "originalObservedInstallation": true,
+      "installedDeclarationLocations": {
+        "notice": "node_modules/.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/NOTICE.txt",
+        "license": "node_modules/.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/LICENSE",
+        "status": "expected after dependency installation; not files distributed in this export"
+      }
+    },
+    {
+      "name": "pnpm",
+      "version": "11.25.0",
+      "license": "MIT",
+      "role": "host-provided package manager; not bundled first-party code",
+      "patched": false,
+      "distribution": "not-vendored; obtain through pinned installation or host runtime",
+      "originalObservedInstallation": "host runtime"
+    },
+    {
+      "name": "Node.js",
+      "version": "24.19.0",
+      "license": "MIT and upstream third-party notices",
+      "role": "host-provided test/tool/example runtime; not a core dependency",
+      "patched": false,
+      "distribution": "not-vendored; obtain through pinned installation or host runtime",
+      "originalObservedInstallation": "host runtime"
+    }
+  ],
+  "dependencyLock": {
+    "path": "pnpm-lock.yaml",
+    "sha256": "f58343405f8b75488966415da04a69edd5cbf01a32076ff08b75132fa476877c",
+    "note": "Lock records upstream optional architectures; only TypeScript and win32-x64 compiler installed on this host. Lifecycle scripts disabled."
+  },
+  "hostCloseClarification": "Only successful close resolution proves safe surface return. Normal or late rejection keeps quarantine; no force-release/recovery override in this slice.",
+  "researchBoundary": {
+    "knowledgeBaseTarget": "knowledge-base/; public 0.9.0 copy is completed by parent integration",
+    "threeJsRole": "Three r186 is an explicitly identified third-party research execution dependency in the knowledge base; it is not a dependency of the three core packages and its renderer is not counted as first-party core.",
+    "threeJsCommit": "9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8",
+    "assetRole": "Rigged Simple — Cesium (2017), CC-BY-4.0, remains an attributed research asset under the knowledge-base notices.",
+    "actualResearchNotices": "knowledge-base/experiments/asset-reference-probe/THIRD_PARTY_NOTICES.md"
+  },
+  "recordedPrototypeVerification": {
+    "phase": "fix-1",
+    "behaviorTests": 44,
+    "behaviorPasses": 44,
+    "negativeTypeAssertions": 11,
+    "boundaryFiles": 66,
+    "evidence": {
+      "identityOnly": "work/core-framework/fix-1-verify.log",
+      "sha256": "d2c02d0443afea85a1f56d8e98a11777f625bfad9bd011f632ba526f38428d3c",
+      "status": "identity-only/not-distributed"
+    },
+    "scope": "CPU and simulated headless host slice; historical prototype verification, not a fresh candidate-workspace run"
+  },
+  "recordedReviewFixes": {
+    "phase": "fix-1",
+    "initialSourceOriginSha256": "267f93fc846d1ed68a65bd933df24fd098c1cc65021743b1c84473bd8fb8d4ca",
+    "initialFirstPartyFileCount": 52,
+    "addressedFindings": [
+      "R1",
+      "R2",
+      "R3",
+      "R4",
+      "R5"
+    ],
+    "regressionTestsAdded": 8,
+    "sourceCodeAdded": [
+      "packages/runtime/src/displayTreeState.ts"
+    ],
+    "productScopeChanged": false,
+    "evidenceStatus": "Internal review and regression inputs are represented above as identity-only/not-distributed records."
+  },
+  "candidateVerification": {
+    "status": "not run in this export",
+    "dependencyInstallation": false,
+    "productTests": false,
+    "hashExportVerified": true,
+    "followup": "Parent integration verifies a fresh workspace and creates the complete release manifest."
+  },
+  "knownLimitations": [
+    "Experimental headless lifecycle/display-tree/event slice, not a complete engine or product acceptance.",
+    "No GPU, real browser/minigame/native host, GPU completion fence, shared-device acceptance or performance measurements.",
+    "No resource fetching/texture loading, coordinates/layout, Sprite.graphics, text/animation/EUI/3D, Rust, migration tool, editor or Agent service.",
+    "CI and publishing workflows are not configured or accepted by this export.",
+    "Source declarations and hashes are bounded review evidence, not a full originality, rights, security or license-compliance audit."
+  ],
+  "files": [
+    {
+      "path": ".githooks/pre-push",
+      "originRole": "New first-party bilingual documentation or publication tooling",
+      "sha256": "372e3377f8d29c40a68ac54ec55124abdea50d761366d93eaeb97eb898f04561",
+      "bytes": 97
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "27e4dfdb22f3796b475c100f56d0345a87066358dd324c276f8ad4aa72c7c6d5",
+      "bytes": 97,
+      "originRole": "new public contributor documentation/configuration"
+    },
+    {
+      "path": "ACKNOWLEDGEMENTS.en.md",
+      "originRole": "New first-party bilingual documentation or publication tooling",
+      "sha256": "725d6842da9cfb409e286bd85d37fbda12548c0801b3980fbaf73ca8d76e0f9c",
+      "bytes": 2328
+    },
+    {
+      "path": "ACKNOWLEDGEMENTS.md",
+      "sha256": "dbddeacb70dbb09d10797878507c86dcc74ee85647bad10b599222a17c809e1f",
+      "bytes": 1808,
+      "originRole": "Bilingual public documentation projection",
+      "previousPublicSha256": "e0cc549b5582267a366d1d8b1bc7fc782f2a1f1b4fd6da00a4b38e40d8f9f377"
+    },
+    {
+      "path": "AGENTS.en.md",
+      "originRole": "New first-party bilingual documentation or publication tooling",
+      "sha256": "7c2716d3a678406ce905b8cd7fd9ef3552bca4e37b8e9456b63b871e4170e0c1",
+      "bytes": 3292
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "f3551dd36ebc3023f8c846f0cdd876b7204c214c7c041e6496271d20c091046c",
+      "bytes": 2438,
+      "originRole": "Bilingual public documentation projection",
+      "previousPublicSha256": "d133cdcd7d1f41fe0ce26bee63568cd0c4f23c6e6e7f9828d0768e95f53a05b4"
+    },
+    {
+      "path": "CONTRIBUTING.en.md",
+      "originRole": "New first-party bilingual documentation or publication tooling",
+      "sha256": "cfd1f60cfae8c262a8897e78b542e7f3036c3d492b5bbab79bdd80be80677e4d",
+      "bytes": 4250
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "sha256": "373de5c518c0208d972ceef4c331d8ae81853102ca6aee8dbd1f90064c57bec8",
+      "bytes": 3231,
+      "originRole": "Bilingual public documentation projection",
+      "previousPublicSha256": "da6292f0408cc88f776b7d113924b364dd045b94d3a7541e85d71e1964ed4dae"
+    },
+    {
+      "path": "DOCUMENTATION.en.md",
+      "originRole": "New first-party bilingual documentation or publication tooling",
+      "sha256": "ef35dafcd765aeacdce5c0d14362dc5f30319b84dd3d1693d9d6a769f7162f99",
+      "bytes": 13840
+    },
+    {
+      "path": "DOCUMENTATION.md",
+      "originRole": "New first-party bilingual documentation or publication tooling",
+      "sha256": "22f3073e3a0096efc4c92fce0aed95a81bdbaa6b1e50ed6432a1ed597c86a8d4",
+      "bytes": 13596
+    },
+    {
+      "path": "LICENSE.zh-CN.md",
+      "originRole": "New first-party bilingual documentation or publication tooling",
+      "sha256": "3b7770d86d5df0f804661c104c7bbed9b1eda0a9ba59cfd891b298483a45941f",
+      "bytes": 9428
+    },
+    {
+      "path": "PUBLICATION.en.md",
+      "originRole": "New first-party bilingual documentation or publication tooling",
+      "sha256": "c027cc00e307fc3053c4ac3c150659d034f758e004af3394e06353280aa3d7bf",
+      "bytes": 3033
+    },
+    {
+      "path": "PUBLICATION.md",
+      "sha256": "cf5858ee0a62ef72fc9d8309566e15a2d5de8bc9c91545c718a95adff24aaed2",
+      "bytes": 2285,
+      "originRole": "Bilingual public documentation projection",
+      "previousPublicSha256": "3347cb4d8fef1e8298f9dee869a21894162a9082a834b4784094d642fd9fd388"
+    },
+    {
+      "path": "README.en.md",
+      "originRole": "New first-party bilingual documentation or publication tooling",
+      "sha256": "199156443d499d5012f1224263a1a3ee9994e5ba38ee067bceeb2ad865ae8167",
+      "bytes": 3717
+    },
+    {
+      "path": "README.md",
+      "sha256": "7a1d72019db7cb6075d7c3a3bd4075f7c069d527b6e31d992a69333cb126b6c3",
+      "bytes": 2857,
+      "originRole": "Bilingual public documentation projection",
+      "previousPublicSha256": "7ec80b8575a700b6a2628eb0322f2e770bb2284859f68ec5e0eb6530154a6699"
+    },
+    {
+      "path": "examples/headless.mjs",
+      "sha256": "bbb09be9a9ab1b93fbe5af723612e324e71e14b27434f4a953ee0b12a60ddccf",
+      "bytes": 1752,
+      "originalSha256": "bbb09be9a9ab1b93fbe5af723612e324e71e14b27434f4a953ee0b12a60ddccf",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "package.json",
+      "sha256": "dc8b4a1df35b654d52a366010430083495daf807144aa8882b01a0b82fb45234",
+      "bytes": 565,
+      "originalSha256": "dc8b4a1df35b654d52a366010430083495daf807144aa8882b01a0b82fb45234",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/contracts/README.en.md",
+      "originRole": "New first-party bilingual documentation or publication tooling",
+      "sha256": "4b7aedc3f9f8f9648353f4acb1c5a110387d0139b1213d6978fab74485400864",
+      "bytes": 1156
+    },
+    {
+      "path": "packages/contracts/README.md",
+      "sha256": "349d9ca4178f9b2043345d54167dfb93e3ee326ccbd4d41fd52cc85c3757fd9e",
+      "bytes": 940,
+      "originalSha256": "f631cb1809f3160b76b5b4451c8820c264f269da2b64842c96abeaae702607ad",
+      "originRole": "Bilingual public documentation projection",
+      "change": "Preserves package responsibilities and lifecycle semantics; removes internal review history wording and adds contributor/source/license links.",
+      "previousPublicSha256": "06e85d777edb4894a27fec9060e2384b4581df25e4a38d618e39ab091147dc9c"
+    },
+    {
+      "path": "packages/contracts/package.json",
+      "sha256": "fceaef2ae55a77347ce9f99acd2165d36e991d89c76bf0480ff5048f3e7a94a1",
+      "bytes": 179,
+      "originalSha256": "fceaef2ae55a77347ce9f99acd2165d36e991d89c76bf0480ff5048f3e7a94a1",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/contracts/src/CancellationSignal.ts",
+      "sha256": "6a9e5f07b549ec50c2a5c50915309e8de6fba2d943f59a0d7b54b079e14584b3",
+      "bytes": 507,
+      "originalSha256": "a4e778a2bee503ec70249f861f60dc46718dc64e182448d9d5a3b43a10f1f34e",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "a4e778a2bee503ec70249f861f60dc46718dc64e182448d9d5a3b43a10f1f34e"
+    },
+    {
+      "path": "packages/contracts/src/Diagnostic.ts",
+      "sha256": "bb788eed680e77497845d9ca95621683c616c773c13a61b42bcabad608c10461",
+      "bytes": 459,
+      "originalSha256": "93aeef7a51e372dc1418bd382d3371ec91044a1bc48de0b308cc6d5007db89a3",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "93aeef7a51e372dc1418bd382d3371ec91044a1bc48de0b308cc6d5007db89a3"
+    },
+    {
+      "path": "packages/contracts/src/Disposable.ts",
+      "sha256": "76d74cd41b6e136ea840c7d8d05273520ce7d41031a7820dd4ddabc73be947db",
+      "bytes": 399,
+      "originalSha256": "75cc8c7125bc0a7d1641c32825e884311da13dba48fa4822a53465e67129504c",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "75cc8c7125bc0a7d1641c32825e884311da13dba48fa4822a53465e67129504c"
+    },
+    {
+      "path": "packages/contracts/src/HostAdapter.ts",
+      "sha256": "3c8289a85e04e34be3782156244cc253792eff1b41629758d54cd1692c64c2ae",
+      "bytes": 840,
+      "originalSha256": "dd095653a2ee93e20a44e0ab504ef7edf991bde982e2bb924d2fb21fe072da79",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "dd095653a2ee93e20a44e0ab504ef7edf991bde982e2bb924d2fb21fe072da79"
+    },
+    {
+      "path": "packages/contracts/src/index.ts",
+      "sha256": "85f4a29e7e04334ab941dfe7a848edacc3a597dc5621820366c7cadd257eda13",
+      "bytes": 287,
+      "originalSha256": "85f4a29e7e04334ab941dfe7a848edacc3a597dc5621820366c7cadd257eda13",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/contracts/tsconfig.json",
+      "sha256": "65830141c9e37d6d5a604ae796c5fe8b9258040f9e1f29547c0b238829b989d6",
+      "bytes": 135,
+      "originalSha256": "65830141c9e37d6d5a604ae796c5fe8b9258040f9e1f29547c0b238829b989d6",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/engine/README.en.md",
+      "originRole": "New first-party bilingual documentation or publication tooling",
+      "sha256": "77fa6a7eacbb0c3d386524d6c9ed5fec9f3e91bf393b95a6c3b2498c5ae6b83f",
+      "bytes": 1484
+    },
+    {
+      "path": "packages/engine/README.md",
+      "sha256": "efddfc15d95e601711bf37b22d9956b5a43e553c4100e9927c05fce70899ba99",
+      "bytes": 1177,
+      "originalSha256": "2b39a8a5f988a0c4d7271d30da7f8c04a735149e00b6f0f28f2c59940e5842f0",
+      "originRole": "Bilingual public documentation projection",
+      "change": "Preserves package responsibilities and lifecycle semantics; removes internal review history wording and adds contributor/source/license links.",
+      "previousPublicSha256": "d990d8fa688a458975306d039b066b4a0052af3045e2a8de739f0969fc2a7554"
+    },
+    {
+      "path": "packages/engine/package.json",
+      "sha256": "26b7c45f629f7c8a7d41c466fdd06741163a2afd9b6002075c6341530ed2e663",
+      "bytes": 266,
+      "originalSha256": "26b7c45f629f7c8a7d41c466fdd06741163a2afd9b6002075c6341530ed2e663",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/engine/src/Engine.ts",
+      "sha256": "471f78e5f01bfdbb0492d6be3f1f3c5ed9daa7cc8e20068c47fef49e21acac56",
+      "bytes": 4019,
+      "originalSha256": "d5b4fcfc5bcf921d6b75aa4a33d7e71412595e8e377e5ff9b186b19ec6868f58",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "d5b4fcfc5bcf921d6b75aa4a33d7e71412595e8e377e5ff9b186b19ec6868f58"
+    },
+    {
+      "path": "packages/engine/src/closeHost.ts",
+      "sha256": "9fac806cc0d19265ec6956cc19305a9ff2ae03ff0e49700d64c39be88ba3244f",
+      "bytes": 2307,
+      "originalSha256": "3b392c336949001716d7da445d80c4ac0625b45582dbdaec2af9c20f46d5f333",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "3b392c336949001716d7da445d80c4ac0625b45582dbdaec2af9c20f46d5f333"
+    },
+    {
+      "path": "packages/engine/src/createEngine.ts",
+      "sha256": "f0ae30646b03bdd9539e54223a98519e8afed8bee696dc378586c8128924e9d1",
+      "bytes": 1178,
+      "originalSha256": "6298922aa970b883fd5f84a098a44d5d4654736446709856381416f182e0aaf3",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "6298922aa970b883fd5f84a098a44d5d4654736446709856381416f182e0aaf3"
+    },
+    {
+      "path": "packages/engine/src/index.ts",
+      "sha256": "45f2377ffe6e180815d68b8b2dcbddaca8eaa167c142a356d130da8ce008e2f0",
+      "bytes": 595,
+      "originalSha256": "45f2377ffe6e180815d68b8b2dcbddaca8eaa167c142a356d130da8ce008e2f0",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/engine/src/surfaceOwnership.ts",
+      "sha256": "604df51eb03f8dbb7965100e06667c09bb311f0e26e0ee752b2404c899e5a320",
+      "bytes": 579,
+      "originalSha256": "6b12fb7fe691212777ffcc031ef2f534b1c665d1f9df7617f0dac2574331acac",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "6b12fb7fe691212777ffcc031ef2f534b1c665d1f9df7617f0dac2574331acac"
+    },
+    {
+      "path": "packages/engine/tsconfig.json",
+      "sha256": "ac07062d5460bb112739e3ef98e2f16f7479b1f4a18c7add69c46c2880ac68a4",
+      "bytes": 207,
+      "originalSha256": "ac07062d5460bb112739e3ef98e2f16f7479b1f4a18c7add69c46c2880ac68a4",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/runtime/README.en.md",
+      "originRole": "New first-party bilingual documentation or publication tooling",
+      "sha256": "88752546b92c8c859b1c0296f4307db2d6b79cf38f378bac3d0e67bfdb533768",
+      "bytes": 1765
+    },
+    {
+      "path": "packages/runtime/README.md",
+      "sha256": "6795d431e8747f242539050112c18b0176dc6cc4237f19ecbff1034cc8a00641",
+      "bytes": 1302,
+      "originalSha256": "dadf19b00a845d7e8ed154644f2214b720d7acd03f4450a2e9a002be5d085911",
+      "originRole": "Bilingual public documentation projection",
+      "change": "Preserves package responsibilities and lifecycle semantics; removes internal review history wording and adds contributor/source/license links.",
+      "previousPublicSha256": "49356bf05a322aecf1be156eeed65baff15797a7d719766a678d928b068e3a76"
+    },
+    {
+      "path": "packages/runtime/package.json",
+      "sha256": "546d482c0bd990164d79acaec52953245314df6d50117c85b6c6ec5856f4f7ee",
+      "bytes": 234,
+      "originalSha256": "546d482c0bd990164d79acaec52953245314df6d50117c85b6c6ec5856f4f7ee",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/runtime/src/CancellationController.ts",
+      "sha256": "3cfdb217804b282c4a422420ce5efa63ced25a6bb215bff254e7f947c4942e28",
+      "bytes": 2414,
+      "originalSha256": "d2bbfd7d23269df59651d628e8f4c448be120fb46e1e5307d718aec43c8c7515",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "d2bbfd7d23269df59651d628e8f4c448be120fb46e1e5307d718aec43c8c7515"
+    },
+    {
+      "path": "packages/runtime/src/DisplayObject.ts",
+      "sha256": "d64dde4b35ca2cf929ae14a2f99b59f7e0efbb02cb5a363ff0ff6975b5aadebd",
+      "bytes": 1224,
+      "originalSha256": "a5744fe971a6490e54eda1b6cd7aa2ff18f8dd8e172eca83e458b89a42febe39",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "a5744fe971a6490e54eda1b6cd7aa2ff18f8dd8e172eca83e458b89a42febe39"
+    },
+    {
+      "path": "packages/runtime/src/DisplayObjectContainer.ts",
+      "sha256": "f0cdb820b26b06d304fd925e81367776a8f2c4824670be44da47d97953aa173e",
+      "bytes": 4629,
+      "originalSha256": "14ad9af6c95917b94641fba630adc26b707aa2fedc17707627a87b55dd1e6682",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "14ad9af6c95917b94641fba630adc26b707aa2fedc17707627a87b55dd1e6682"
+    },
+    {
+      "path": "packages/runtime/src/EgretError.ts",
+      "sha256": "f647ab0f675a5e0d460f1e7b04bce603d06998096f460371035f23826eed7f08",
+      "bytes": 652,
+      "originalSha256": "9a4ef5c97c118c3ddc91f895741cfa259cbb3906d5943f733ee5e07f2ed8a8dc",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "9a4ef5c97c118c3ddc91f895741cfa259cbb3906d5943f733ee5e07f2ed8a8dc"
+    },
+    {
+      "path": "packages/runtime/src/Event.ts",
+      "sha256": "de5671dcddbde4637c22b5ea2bff9ebb520c7aed503608e670d0efc08cf9539c",
+      "bytes": 3379,
+      "originalSha256": "066015292830169f2ff718f6617ba55392f3666289922a0098eabb8210b493b5",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "066015292830169f2ff718f6617ba55392f3666289922a0098eabb8210b493b5"
+    },
+    {
+      "path": "packages/runtime/src/EventDispatcher.ts",
+      "sha256": "141051a7aede922c0d8d73aa2b509c75cbe209118ba0bb48b3869765b9c5a82d",
+      "bytes": 6498,
+      "originalSha256": "2d1d6613d83ea9e904c1e4074db7b466911f3689e8c81e60d63d96481c0e6008",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "2d1d6613d83ea9e904c1e4074db7b466911f3689e8c81e60d63d96481c0e6008"
+    },
+    {
+      "path": "packages/runtime/src/Scope.ts",
+      "sha256": "29e9d5da9232ed8347b2a829e069d33daabb1bad296798492a45c7950f43e8ea",
+      "bytes": 4700,
+      "originalSha256": "840ef7f714e80f2eccca974dfca972dc2e94ecbe74da688f7ebe4c3d9b7ceebd",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "840ef7f714e80f2eccca974dfca972dc2e94ecbe74da688f7ebe4c3d9b7ceebd"
+    },
+    {
+      "path": "packages/runtime/src/Stage.ts",
+      "sha256": "08eb1599d9c75c70add22558f28e214ec31fe4305ccdf2638a8f7d35ec61bb0f",
+      "bytes": 1019,
+      "originalSha256": "35ee9c782ba437e9dcd96c29891415f13151fa2e995ac0d40274813abb92f280",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "35ee9c782ba437e9dcd96c29891415f13151fa2e995ac0d40274813abb92f280"
+    },
+    {
+      "path": "packages/runtime/src/diagnostics.ts",
+      "sha256": "c330f5d9083d84ee5b23b947d0d8534e7050a92f8b76a7e5259a1bad92395294",
+      "bytes": 601,
+      "originalSha256": "bb8668e84ec9703f9f9b0380efa37c93f876b38c8ffb2ed2aa716f3efc32346d",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "bb8668e84ec9703f9f9b0380efa37c93f876b38c8ffb2ed2aa716f3efc32346d"
+    },
+    {
+      "path": "packages/runtime/src/displayTreeState.ts",
+      "sha256": "8aaf5f5dfc8d62f3b1bc4effe819e7718e3ed72fcf0a8fc25e3b08410f980e50",
+      "bytes": 3363,
+      "originalSha256": "e6606b65ba3cdd5b18691121bdb028186eda6c4f2d8fe836bec3f8a1a9a61ff9",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "e6606b65ba3cdd5b18691121bdb028186eda6c4f2d8fe836bec3f8a1a9a61ff9"
+    },
+    {
+      "path": "packages/runtime/src/index.ts",
+      "sha256": "3af52ebe93ac933d989ceb0f5abadd31e72f9436fda1d2206b3e71d7f1216310",
+      "bytes": 796,
+      "originalSha256": "3af52ebe93ac933d989ceb0f5abadd31e72f9436fda1d2206b3e71d7f1216310",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/runtime/src/ownership.ts",
+      "sha256": "8c8c40e465002882dac1bf054fa49248c99df62da337cf75f50168f0a6748c62",
+      "bytes": 3239,
+      "originalSha256": "0fbd5497c87995998c3d080d4909b3caa9738ec8ee5743120c86e9cdcceeaeab",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "0fbd5497c87995998c3d080d4909b3caa9738ec8ee5743120c86e9cdcceeaeab"
+    },
+    {
+      "path": "packages/runtime/tsconfig.json",
+      "sha256": "ed31ec963ca62cee11d41071686c8a3dc58554155e120f52d1747254087f1bac",
+      "bytes": 181,
+      "originalSha256": "ed31ec963ca62cee11d41071686c8a3dc58554155e120f52d1747254087f1bac",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "sha256": "f58343405f8b75488966415da04a69edd5cbf01a32076ff08b75132fa476877c",
+      "bytes": 8033,
+      "originalSha256": "f58343405f8b75488966415da04a69edd5cbf01a32076ff08b75132fa476877c",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "pnpm-workspace.yaml",
+      "sha256": "f51d3d153b0f3cdbb82186bd1c3eea9066f4e3a15828985952feeee965a75534",
+      "bytes": 51,
+      "originalSha256": "f51d3d153b0f3cdbb82186bd1c3eea9066f4e3a15828985952feeee965a75534",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "tests/cancellation-scope.test.mjs",
+      "sha256": "32a1a3c47fa41ebfd122be8fa06370e51a4f0854a2ab69be5da48966b96e9566",
+      "bytes": 4803,
+      "originalSha256": "32a1a3c47fa41ebfd122be8fa06370e51a4f0854a2ab69be5da48966b96e9566",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "tests/display-tree.test.mjs",
+      "sha256": "6302c03f672ec4878e7bff6fffb4c6bf53ff4b5ce31d1ef5b0485e597b9bbbfe",
+      "bytes": 6453,
+      "originalSha256": "6302c03f672ec4878e7bff6fffb4c6bf53ff4b5ce31d1ef5b0485e597b9bbbfe",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "tests/engine.test.mjs",
+      "sha256": "36a8e472bf868528394c98f16fa85ec664991fa76158d272723973b60a89bcde",
+      "bytes": 9096,
+      "originalSha256": "36a8e472bf868528394c98f16fa85ec664991fa76158d272723973b60a89bcde",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "tests/events.test.mjs",
+      "sha256": "4e75d12b5aee9f927425a1a65c401616de18347b1402ec86075bbb5247951d3d",
+      "bytes": 6360,
+      "originalSha256": "4e75d12b5aee9f927425a1a65c401616de18347b1402ec86075bbb5247951d3d",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "tests/helpers.mjs",
+      "sha256": "20e7dd30f54b3a81d35f666c8370e7f014e4559c68222727bc88fd377efc1af7",
+      "bytes": 997,
+      "originalSha256": "20e7dd30f54b3a81d35f666c8370e7f014e4559c68222727bc88fd377efc1af7",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "tests/integration.test.mjs",
+      "sha256": "54716569f5744b00dcb32a512d122fdb3b91f158b1e5446a5d394b3f201eb933",
+      "bytes": 843,
+      "originalSha256": "54716569f5744b00dcb32a512d122fdb3b91f158b1e5446a5d394b3f201eb933",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "tests/publication/check-publication.test.mjs",
+      "originRole": "New first-party bilingual documentation or publication tooling",
+      "sha256": "ff5b1e45e710f5842aa2615d55b8f87d6fe8256fb6a8fe85cfff2192710f0161",
+      "bytes": 5687
+    },
+    {
+      "path": "tests/publication/knowledge-base-check-only.test.mjs",
+      "originRole": "New first-party bilingual documentation or publication tooling",
+      "sha256": "969b2df98420781875316ec9c0dcbb24ae4e3698466d4a2ea592b9dfcb581a09",
+      "bytes": 2379
+    },
+    {
+      "path": "tests/review-regressions.test.mjs",
+      "sha256": "b56d24957fc95c6068bb215f4a1b2aca310760831e79c89c27dd5724c8e67b17",
+      "bytes": 8232,
+      "originalSha256": "b56d24957fc95c6068bb215f4a1b2aca310760831e79c89c27dd5724c8e67b17",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "tests/types/negative.ts",
+      "sha256": "f2aba4d444432063b862b42822b392b82d09c8d91458cc80f5478f136115ce7b",
+      "bytes": 1655,
+      "originalSha256": "f2aba4d444432063b862b42822b392b82d09c8d91458cc80f5478f136115ce7b",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "tests/types/positive.ts",
+      "sha256": "1041d77568560fb1d08fa3a4dbb86cb1e77cc48dace50884b5173c4459713aeb",
+      "bytes": 1262,
+      "originalSha256": "1041d77568560fb1d08fa3a4dbb86cb1e77cc48dace50884b5173c4459713aeb",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "tests/types/tsconfig.json",
+      "sha256": "88a3194ab9d7990646c7957e96e8d059ee16e79fe88373543a763da38a84dae1",
+      "bytes": 197,
+      "originalSha256": "88a3194ab9d7990646c7957e96e8d059ee16e79fe88373543a763da38a84dae1",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "tools/build.mjs",
+      "sha256": "0f04552d3592aa613d3c6fc4114559a3669ad764d0f5321d1c049a568701e6c4",
+      "bytes": 455,
+      "originalSha256": "0f04552d3592aa613d3c6fc4114559a3669ad764d0f5321d1c049a568701e6c4",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "tools/check-boundaries.mjs",
+      "sha256": "e7994ad6962e55fba9b481d50377ede30729b345e6a901e2089b235edfde9491",
+      "bytes": 3353,
+      "originalSha256": "e7994ad6962e55fba9b481d50377ede30729b345e6a901e2089b235edfde9491",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "tools/check-publication.mjs",
+      "originRole": "New first-party bilingual documentation or publication tooling",
+      "sha256": "3a23d7ca84233e3339107fcdb617795c5cee8fd503f3ddcac223f37508cc6b38",
+      "bytes": 6364
+    },
+    {
+      "path": "tools/check-types.mjs",
+      "sha256": "332d2c161ceb9ec7d75429c89a3d2c95af24f2cf5eed68b92b09532d1ce691a4",
+      "bytes": 2031,
+      "originalSha256": "332d2c161ceb9ec7d75429c89a3d2c95af24f2cf5eed68b92b09532d1ce691a4",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "tools/prepush.mjs",
+      "originRole": "New first-party bilingual documentation or publication tooling",
+      "sha256": "8ba8600f86c5a0722f9eb2a6ae030a353e8034c36d2e5af3288165fd3c864aa4",
+      "bytes": 1025
+    },
+    {
+      "path": "tools/test.mjs",
+      "sha256": "6d8fdbf59b3c9d1a4aab917ae9ab8167818c0716a6219f5f91c5893bb2c4eb53",
+      "bytes": 514,
+      "originalSha256": "6d8fdbf59b3c9d1a4aab917ae9ab8167818c0716a6219f5f91c5893bb2c4eb53",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "tools/verify.mjs",
+      "sha256": "9c789b762d598c72040992d8ffb9041f75180d39b7556761365ef0998d5b0b4a",
+      "bytes": 525,
+      "originalSha256": "9c789b762d598c72040992d8ffb9041f75180d39b7556761365ef0998d5b0b4a",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "tsconfig.base.json",
+      "sha256": "b7a31fb9f93a93e20bfdcf33c135acb45cb3a6895a8b3e7006bd85214ddc1008",
+      "bytes": 446,
+      "originalSha256": "b7a31fb9f93a93e20bfdcf33c135acb45cb3a6895a8b3e7006bd85214ddc1008",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "tsconfig.json",
+      "sha256": "e07fc831f31dc9ea9ecb612be734f4b533e32d7dbbb246abffaa8b23111076aa",
+      "bytes": 155,
+      "originalSha256": "e07fc831f31dc9ea9ecb612be734f4b533e32d7dbbb246abffaa8b23111076aa",
+      "originRole": "byte-identical prototype whitelist export"
+    }
+  ],
+  "fileListScope": "Current export-owned root/package/code files except this source-origin.json, LICENSE and verification records. The exact repository export manifest covers this record and the bilingual knowledge-base collection.",
+  "repositoryIntegration": {
+    "checkedAtUtc": "2026-10-08T12:24:40.073Z",
+    "priorPublicProjectionSha256": "aef303142fcb02d05095c48fe37a24170559061dc7c98a6f38b1d226de9aac3a",
+    "scope": "Repository README/packaging integration and fresh unchanged-core verification; prior export action flags retain their historical scope.",
+    "verification": "verification/headless-verification.json",
+    "knowledgeBaseVersion": "0.9.0",
+    "bilingualRevision": {
+      "knowledgeBaseVersion": "0.10.0",
+      "previousPublicSourceOriginSha256": "db5b485469601ea38372e10ca6017064428a06525cdcd79d87d543f70e78ab5d",
+      "runtimeChanges": "English comments only; exact prior source restoration verified",
+      "documentation": "Complete paired reading versions and six canonical-state translation views",
+      "publicationTooling": "Independent structural/parity/link/opaque-ID/critical-comment checks and non-writing KB pre-push validation",
+      "commentProof": "verification/english-comment-provenance.json",
+      "currentVerification": "verification/bilingual-publication-verification.json",
+      "review": "verification/bilingual-review.json"
+    }
+  }
+}

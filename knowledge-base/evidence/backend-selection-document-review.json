@@ -1,0 +1,218 @@
+{
+  "schemaVersion": 1,
+  "reviewDate": "2026-10-08",
+  "reviewType": "independent_bounded_document_semantic_and_hash_review",
+  "knowledgeBaseVersion": "0.6.0",
+  "designDocumentVersion": "0.5_candidate",
+  "verdict": "passed_with_stated_scope",
+  "necessaryCorrections": [],
+  "scope": {
+    "reviewedTargetFileCount": 16,
+    "reviewedFileRoot": "outputs/白鹭引擎重构工程知识库",
+    "method": "Read the frozen new selection design, registries and metadata; compare changed candidate/architecture paragraphs to preserved 0.5.0 documents, and inspect unchanged wording only for conflict with the new design. Consult the four recorded public source-research files for necessary facts rather than repeating every source search.",
+    "knowledgeBaseModifiedByReviewer": false,
+    "runtimeBuildBrowserCompilerOrValidatorExecutedByReviewer": false,
+    "newRuntimeExperimentsThisRevision": false,
+    "executablesOrDependenciesDownloadedByReviewer": false,
+    "devicePerformanceOrProductionHostAcceptanceValidated": false,
+    "original17CheckReportRerun": false,
+    "decisionAdoptionOrApprovalGateCreated": false,
+    "finalFreezeCorrection": "Only the runtime document's temporal wording changed after the first frozen review. It was re-read, and all 16 refreshed target hashes matched; the other 15 target hashes remained unchanged."
+  },
+  "reviewedFileHashes": [
+    {
+      "path": "README.md",
+      "sha256": "627fce4ef3f247974e49c70125bfafde76ae6b8d93b0749496bd2c8e411580cb",
+      "matchedFrozenManifest": true
+    },
+    {
+      "path": "CHANGELOG.md",
+      "sha256": "13854caddeb8a571c0fb432ae2a4ca7e9de55047697f23429d078564907921de",
+      "matchedFrozenManifest": true
+    },
+    {
+      "path": "当前版本.json",
+      "sha256": "84bb966f76ce482901aae662380bd5c1b76d8758a52f3d42f154a54a684cbdb0",
+      "matchedFrozenManifest": true
+    },
+    {
+      "path": "docs/图形后端编译与原生Runtime选型.md",
+      "sha256": "613882d5f765a429f0416f2eb6d0dff1919236b8f38b9c13a025683186912edc",
+      "matchedFrozenManifest": true
+    },
+    {
+      "path": "docs/技术白皮书.md",
+      "sha256": "98ba3de72327f43626eafdb99aa8023d7ef8fb51b7987380e4afffa3cddf3d2d",
+      "matchedFrozenManifest": true
+    },
+    {
+      "path": "docs/产品需求说明书.md",
+      "sha256": "262e491f76dcf5853d11b94c7f197c4566ccd91a310df62fd55a6ce223843e6f",
+      "matchedFrozenManifest": true
+    },
+    {
+      "path": "docs/工程规划.md",
+      "sha256": "b623ffd038ac85b7ffe09d168b4d7e17fc6108813ab78f3dd989acf770a172e1",
+      "matchedFrozenManifest": true
+    },
+    {
+      "path": "docs/技术架构.md",
+      "sha256": "cff85eeedec62c815b032a045ef2afe1dc6304f7042e0b771074aa47a8988a8f",
+      "matchedFrozenManifest": true
+    },
+    {
+      "path": "docs/渲染引擎与运行时.md",
+      "sha256": "12f13bea7e6cde76afc35f3be503ac089a2f2c01683ed5ad3eb0a0c7fd28807e",
+      "matchedFrozenManifest": true
+    },
+    {
+      "path": "docs/决策与开放问题.md",
+      "sha256": "8d002422199c5ae639d3f9ad7d9326404cbfd22539cc963897ae254e4e33d108",
+      "matchedFrozenManifest": true
+    },
+    {
+      "path": "docs/核心优势与验证.md",
+      "sha256": "aabe57ef9a9753bcf6df8044fcb2aae88264769ebeaea2f3f69820109fb4dbe9",
+      "matchedFrozenManifest": true
+    },
+    {
+      "path": "registry/需求.json",
+      "sha256": "21ca538657a2df3bc03da019d935236f3ff3ef4f89f1c286996d1fd190b4a97e",
+      "matchedFrozenManifest": true
+    },
+    {
+      "path": "registry/决策.json",
+      "sha256": "e7e18bbc6c5a0ecd3fdb9e7cb61a752f05d146ab19ba15888371ca9a06f184ab",
+      "matchedFrozenManifest": true
+    },
+    {
+      "path": "registry/假设.json",
+      "sha256": "c5ba3285dad5befb8c271f4a68593892a6663a3e171b403f23eefdb350a7186d",
+      "matchedFrozenManifest": true
+    },
+    {
+      "path": "registry/交付.json",
+      "sha256": "eed05b6dfaf868a975be86d41ee90750e9137ee0526a7f1c4071ffb09d138e1e",
+      "matchedFrozenManifest": true
+    },
+    {
+      "path": "registry/来源.json",
+      "sha256": "e2c267003b67729312ada1bc06bd9ccea6592ef8f0fa2a4d00877396e0a5be6b",
+      "matchedFrozenManifest": true
+    }
+  ],
+  "resolvedFindings": [
+    {
+      "id": "BA001",
+      "status": "resolved",
+      "target": "docs/图形后端编译与原生Runtime选型.md",
+      "line": 43,
+      "resolution": "Browser 2D uses the host JS environment; native 2D must carry the selected VM or use a verified host VM. Module pruning is profile-specific and does not remove necessary script execution.",
+      "additionalLocation": "docs/产品需求说明书.md"
+    },
+    {
+      "id": "BA002",
+      "status": "resolved",
+      "target": "docs/图形后端编译与原生Runtime选型.md",
+      "line": 53,
+      "resolution": "Explicit TS -> JS/source map -> browser/native VM chain. Go compiler implementation is distinguished from game execution, and native/shader/resource compilation and VM cache are separate. TS7 release/API/Vite8 facts are attributed to recorded official source research and vendor measurements are not treated as Egret benchmarks."
+    },
+    {
+      "id": "BA003",
+      "status": "resolved",
+      "target": "docs/图形后端编译与原生Runtime选型.md",
+      "line": 81,
+      "resolution": "Rust wgpu 30.0.1 is separated from wgpu-native C release 29.0.1.1; current Dawn-main D3D11 is not asserted for a release/binary or accepted Egret host. Owned/borrowed device, same-device/import/state, access synchronization, fence, submission/release/shutdown and fallback copies are explicit."
+    },
+    {
+      "id": "BA004",
+      "status": "resolved",
+      "target": "docs/渲染引擎与运行时.md",
+      "line": 3,
+      "resolution": "The 0.6.0 header now says prior execution rather than execution in this revision. New metadata and appended scope explicitly keep this revision source research only, with no new or rerun runtime experiment."
+    }
+  ],
+  "suggestionDispositions": [
+    {
+      "id": "BAS001",
+      "status": "addressed_as_candidate_contract",
+      "resolution": "Browser Canvas and native text provider are separate; native shaping/font fallback/IME/cache and WebView capabilities are explicitly scoped, without selecting or validating a font library."
+    },
+    {
+      "id": "BAS002",
+      "status": "addressed_as_candidate_contract",
+      "resolution": "ORT CPU upload/readback default, explicit IO binding, before-first-session device agreement, input/output location, owner, resource completion/release, loss/epoch and CPU fallback copy cost are stated. No zero-copy or net-gain claim."
+    },
+    {
+      "id": "BAS003",
+      "status": "addressed_as_migration_inventory",
+      "resolution": "Legacy shader/filter/postprocess coordinates, color/premultiplication, masks and order require conversion/equivalence and fixed visual regression. Mature renderer material limitations cannot be hidden by deleting required effects."
+    },
+    {
+      "id": "BAS004",
+      "status": "addressed_with_stated_coverage",
+      "resolution": "Recoverable compressed sources/URI-hash/generation parameters, memory budget and offline source availability are distinct from retaining all decoded data. Complete 2D skeleton goldens, full 3D characters and complex UI remain tasks for the next integration; the recorded 17 checks do not cover them."
+    }
+  ],
+  "semanticChecks": [
+    {
+      "check": "authority",
+      "result": "passed",
+      "detail": "R013/R014 record founder research/extension goals. D001-D015 remain proposed with empty acceptance metadata; H001-H008 remain untested. No technical choice becomes adopted because it was researched."
+    },
+    {
+      "check": "product_status",
+      "result": "passed",
+      "detail": "V002-V006 remain product planned/not_started and acceptance not_run; V001 is research_baseline_partial/in_progress. V008 is documentation only."
+    },
+    {
+      "check": "migration",
+      "result": "passed",
+      "detail": "R008 remains a mandatory first complete release requirement. V006 still depends on V001-V005 and requires full behavior/visual/resource/platform comparison, continued editing/undo, real publishing and update; import/compile success is only intermediate."
+    },
+    {
+      "check": "renderer_ownership_and_abstraction",
+      "result": "passed",
+      "detail": "One selected main-surface backend composes UI/2D/3D; multiple surfaces or forced host composition are explicit boundaries. Stable semantics do not imply generic Three/Babylon material/TSL object conversion or universal native sharing."
+    },
+    {
+      "check": "host_support",
+      "result": "passed",
+      "detail": "Browser support is conditional and is not copied to MiniGame SDK/iframe/WebView/native SDK/Steam. Native VM directory/version/link observations remain static and do not identify actual shipped or executing VM."
+    },
+    {
+      "check": "performance",
+      "result": "passed",
+      "detail": "Rust, WebGPU, native TypeScript compiler and GPU AI names do not prove Egret frame-rate, energy, thermal or package benefit. Vendor measurements retain attribution and equivalent workload/quality/device tests remain future."
+    },
+    {
+      "check": "historical_execution_scope",
+      "result": "passed",
+      "detail": "Previous 17 desktop WebGL2 reference checks remain the existing bounded report. This source-selection revision did not rerun them, increase their count, add WebGPU coverage or claim full skeletal/UI/character/host/performance acceptance."
+    },
+    {
+      "check": "cross_document_consistency",
+      "result": "passed",
+      "detail": "New design, 0.5 candidate whitepaper/PRD/planning, README/current version, architectural notes and five registries retain the same candidate and product boundaries."
+    }
+  ],
+  "sourceEvidenceConsulted": [
+    "evidence/backend-ts-research.json",
+    "evidence/backend-native-research.json",
+    "evidence/backend-host-ai-research.json",
+    "evidence/backend-graphics-research.json"
+  ],
+  "initialReviewPreservation": {
+    "initialReportJsonSha256": "7ba1c91c2ac801401d4a45df57029d41c6c04e8c96df10daa84d502e3282293e",
+    "initialReportMarkdownSha256": "30fd55aa4dbfa8ca0444bfb844a42f9124b8c7f3058a00519225e788ead6ef9a",
+    "initialReportBytesStillMatch": true,
+    "initialAuthoringDraftBytesIndependentlyRetained": false,
+    "limitation": "Initial authoring draft bytes were not independently retained. Initial findings are document-review observations, not runtime or byte-reproduction evidence. No cause is inferred for the unsuccessful later reconstruction. This final review is bound only to the actual frozen files and SHA256 values listed above.",
+    "initialFindingReportNotOverwritten": true
+  },
+  "limitations": [
+    "This is a bounded document and exact-file hash review, not a new engine, browser, native compiler, VM, GPU-AI, performance, migration or production-host test.",
+    "Supporting facts were checked against the recorded official research and relevant independently read primary interfaces; the full 17/30/32-source inventories were not exhaustively re-researched.",
+    "Passing this review does not adopt D decisions, validate H advantages, or certify future host/library/device support."
+  ]
+}

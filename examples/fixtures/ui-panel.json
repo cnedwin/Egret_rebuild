@@ -1,0 +1,4 @@
+{
+  "title": "Egret CPU asset example",
+  "items": ["shared acquisition", "scoped lease", "generation reload"]
+}

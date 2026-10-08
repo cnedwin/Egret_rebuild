@@ -1,0 +1,490 @@
+{
+  "verdict": "needs_fixes",
+  "necessaryCorrections": [
+    {
+      "id": "R1",
+      "severity": "Important",
+      "title": "Scope registration commits stale ownership and state after reentry",
+      "locations": [
+        {
+          "path": "packages/runtime/src/Scope.ts",
+          "line": 62
+        },
+        {
+          "path": "packages/runtime/src/ownership.ts",
+          "line": 54
+        },
+        {
+          "path": "packages/runtime/src/DisplayObject.ts",
+          "line": 20
+        }
+      ],
+      "trigger": "A normal DisplayObject subclass overrides protected assertUsable and reenters another Scope.use on the same node, or closes the original Scope during binding preflight.",
+      "impact": "Both Scopes can accept the same value; the outer call overwrites Engine/owner binding while both cleanup lists retain it. Closing during preflight still accepts the node into a closed and untracked Scope, leaking it past Engine shutdown.",
+      "observed": {
+        "bothUsesAccepted": true,
+        "mountToInnerEngine": "ENGINE_MISMATCH",
+        "innerScopeDisposesOuterOwnedValue": true,
+        "closedScopeUseAccepted": true,
+        "lateNodeDisposedAfterEngineClose": false
+      },
+      "correction": "Separate callback-capable preflight from a callback-free commit; revalidate Scope and Engine state, all Engine bindings, and root ownership immediately before committing. Guard same-value recursive registration and preserve the existing late-value and foreign-owner cleanup rules.",
+      "evidence": [
+        "scope-ownership-reentry",
+        "scope-close-during-registration"
+      ],
+      "basis": "Explicit Scope owner uniqueness, cross-Engine binding, closing rejection and late-value cleanup contracts"
+    },
+    {
+      "id": "R2",
+      "severity": "Important",
+      "title": "Mount commits into a disposed Stage after old-parent removal reentry",
+      "locations": [
+        {
+          "path": "packages/runtime/src/DisplayObjectContainer.ts",
+          "line": 23
+        }
+      ],
+      "trigger": "A public container subclass calls Engine.dispose from its removeChild override while addChild reparents a live child to the Engine Stage.",
+      "impact": "The Stage finishes disposal before addChild commits, but addChild succeeds with one live child attached to the disposed Stage after the Engine closes.",
+      "observed": {
+        "mounting": "accepted",
+        "stageDisposed": true,
+        "stageChildren": 1,
+        "childDisposed": false,
+        "childParentIsClosedStage": true
+      },
+      "correction": "Use internal non-virtual tree mutation operations after complete validation; keep user callbacks outside the atomic commit. If callbacks remain, revalidate terminal state, Engine state and both trees before mutation and prevent partial detach/binding on failure.",
+      "evidence": [
+        "mount-reentry-closes-engine"
+      ],
+      "basis": "Explicit atomic mounting, no mounting while closing, and terminal-node contracts"
+    },
+    {
+      "id": "R3",
+      "severity": "Important",
+      "title": "A still-open Scope leaks a new value rejected by its closing Engine",
+      "locations": [
+        {
+          "path": "packages/runtime/src/Scope.ts",
+          "line": 60
+        },
+        {
+          "path": "packages/engine/src/Engine.ts",
+          "line": 71
+        }
+      ],
+      "trigger": "During reverse Engine Scope shutdown, a newer Scope abort listener hands an already acquired unowned Releasable to an older Scope that has not entered closing yet.",
+      "impact": "Engine.assertOpen rejects before the value is registered or released; later Scope cleanup cannot find it.",
+      "observed": {
+        "registration": "ENGINE_CLOSED",
+        "released": 0,
+        "olderState": "closed"
+      },
+      "correction": "Treat a Scope whose Engine is closing as closed for acceptance and retain safe late-value cleanup, or introduce a two-phase internal shutdown that closes every Scope to acceptance before callbacks run. Preserve old-value ordering and foreign owner/Engine protection.",
+      "evidence": [
+        "engine-closing-other-scope-late-result"
+      ],
+      "basis": "Closing/late-value resource cleanup contract and reasonable expectation that Scope.use rejection during Engine shutdown still provides the same cleanup exit"
+    },
+    {
+      "id": "R4",
+      "severity": "Important",
+      "title": "Failed cancellation registration leaves a live unreachable subscription",
+      "locations": [
+        {
+          "path": "packages/runtime/src/EventDispatcher.ts",
+          "line": 68
+        }
+      ],
+      "trigger": "An injected CancellationSignal.addEventListener throws after on inserts the subscription into its local Set.",
+      "impact": "on reports failure and returns no unsubscribe, but a subsequent event still invokes the handler.",
+      "observed": {
+        "registration": "adapter add failed",
+        "calls": 1
+      },
+      "correction": "Roll back local subscription state on any signal registration or post-registration check failure; attempt adapter rollback separately while preserving the primary error and any rollback error.",
+      "evidence": [
+        "signal-add-throws-retains-listener"
+      ],
+      "basis": "Independent unsubscribe semantics and reasonable failed-call atomicity for an injected cancellation port without a no-throw guarantee"
+    },
+    {
+      "id": "R5",
+      "severity": "Important",
+      "title": "Listener removal failure skips child cleanup and the entire host shutdown",
+      "locations": [
+        {
+          "path": "packages/runtime/src/EventDispatcher.ts",
+          "line": 65
+        },
+        {
+          "path": "packages/runtime/src/EventDispatcher.ts",
+          "line": 120
+        },
+        {
+          "path": "packages/runtime/src/DisplayObject.ts",
+          "line": 28
+        },
+        {
+          "path": "packages/runtime/src/DisplayObjectContainer.ts",
+          "line": 63
+        },
+        {
+          "path": "packages/engine/src/Engine.ts",
+          "line": 72
+        }
+      ],
+      "trigger": "A Stage subscription uses a CancellationSignal whose removeEventListener throws when Engine.dispose clears listeners.",
+      "impact": "Stage is marked terminal but its children remain live. Engine rejects with the raw error before host.stop, host.close or the close deadline runs; repeat disposal returns the same failed result and cannot resume cleanup.",
+      "observed": {
+        "closeFailure": "adapter remove failed",
+        "trace": [],
+        "childDisposed": false,
+        "stageDisposed": true
+      },
+      "correction": "Isolate each listener removal failure and continue remaining listener and child cleanup; collect diagnostics. Engine must aggregate Scope/Stage cleanup failures and still run host.stop and bounded host.close, rejecting with EgretError cause/cleanupErrors afterward. Keep successful host close as the only surface-release condition.",
+      "evidence": [
+        "signal-remove-throws-during-engine-close"
+      ],
+      "basis": "Explicit continue-cleanup-after-failure, bounded Engine shutdown, stable EgretError and safe-surface-return contracts"
+    }
+  ],
+  "minorFindings": [],
+  "specCompliance": {
+    "verdict": "needs_fixes",
+    "summary": "The scoped names, package roles, pure-core type baseline, cancellation ordering, whole-dispatch event snapshots and success-only surface release are present. Reentry breaks ownership atomicity and terminal-state rejection; closing acceptance and cleanup failures have resource cleanup gaps.",
+    "necessaryCorrectionIds": [
+      "R1",
+      "R2",
+      "R3",
+      "R4",
+      "R5"
+    ]
+  },
+  "codeQuality": {
+    "verdict": "needs_fixes",
+    "strengths": [
+      "Three real package responsibilities with contracts/runtime/engine dependency direction and no third-party runtime dependency",
+      "Unique close Promise cached before lifecycle callbacks and headless host ownership kept distinct",
+      "Whole-dispatch candidate snapshots, once removal before invocation and finally restoration",
+      "Behavior tests import the built public package and use independent literal expected traces"
+    ],
+    "summary": "Callback-capable operations separate validation from commit without revalidation, and a listener-cleanup exception can bypass the remaining Stage and host teardown. Required failures are demonstrated through normal public interfaces.",
+    "necessaryCorrectionIds": [
+      "R1",
+      "R2",
+      "R3",
+      "R4",
+      "R5"
+    ]
+  },
+  "reviewedFileHashes": [
+    {
+      "path": ".gitignore",
+      "sha256": "b7b3d3eb8531dbfafa6e72ffaad4c579156a5b9be03490556054fff7ed37844e"
+    },
+    {
+      "path": "README.md",
+      "sha256": "57b0fc55162877063408d6b15de3191748102dd55a99ac4b3d40001deebeb3df"
+    },
+    {
+      "path": "examples/headless.mjs",
+      "sha256": "bbb09be9a9ab1b93fbe5af723612e324e71e14b27434f4a953ee0b12a60ddccf"
+    },
+    {
+      "path": "package.json",
+      "sha256": "dc8b4a1df35b654d52a366010430083495daf807144aa8882b01a0b82fb45234"
+    },
+    {
+      "path": "packages/contracts/README.md",
+      "sha256": "f631cb1809f3160b76b5b4451c8820c264f269da2b64842c96abeaae702607ad"
+    },
+    {
+      "path": "packages/contracts/package.json",
+      "sha256": "fceaef2ae55a77347ce9f99acd2165d36e991d89c76bf0480ff5048f3e7a94a1"
+    },
+    {
+      "path": "packages/contracts/src/CancellationSignal.ts",
+      "sha256": "a4e778a2bee503ec70249f861f60dc46718dc64e182448d9d5a3b43a10f1f34e"
+    },
+    {
+      "path": "packages/contracts/src/Diagnostic.ts",
+      "sha256": "93aeef7a51e372dc1418bd382d3371ec91044a1bc48de0b308cc6d5007db89a3"
+    },
+    {
+      "path": "packages/contracts/src/Disposable.ts",
+      "sha256": "75cc8c7125bc0a7d1641c32825e884311da13dba48fa4822a53465e67129504c"
+    },
+    {
+      "path": "packages/contracts/src/HostAdapter.ts",
+      "sha256": "dd095653a2ee93e20a44e0ab504ef7edf991bde982e2bb924d2fb21fe072da79"
+    },
+    {
+      "path": "packages/contracts/src/index.ts",
+      "sha256": "85f4a29e7e04334ab941dfe7a848edacc3a597dc5621820366c7cadd257eda13"
+    },
+    {
+      "path": "packages/contracts/tsconfig.json",
+      "sha256": "65830141c9e37d6d5a604ae796c5fe8b9258040f9e1f29547c0b238829b989d6"
+    },
+    {
+      "path": "packages/engine/README.md",
+      "sha256": "a06dff12bb89be61fbed2b5b50c902a926b21359541b4aca80fe9c3589ae0ce5"
+    },
+    {
+      "path": "packages/engine/package.json",
+      "sha256": "26b7c45f629f7c8a7d41c466fdd06741163a2afd9b6002075c6341530ed2e663"
+    },
+    {
+      "path": "packages/engine/src/Engine.ts",
+      "sha256": "60cea6a6abedd69fe5a80cd131d9c3654072e716f2fc7fe6897991b871558d4b"
+    },
+    {
+      "path": "packages/engine/src/closeHost.ts",
+      "sha256": "3b392c336949001716d7da445d80c4ac0625b45582dbdaec2af9c20f46d5f333"
+    },
+    {
+      "path": "packages/engine/src/createEngine.ts",
+      "sha256": "6298922aa970b883fd5f84a098a44d5d4654736446709856381416f182e0aaf3"
+    },
+    {
+      "path": "packages/engine/src/index.ts",
+      "sha256": "45f2377ffe6e180815d68b8b2dcbddaca8eaa167c142a356d130da8ce008e2f0"
+    },
+    {
+      "path": "packages/engine/src/surfaceOwnership.ts",
+      "sha256": "6b12fb7fe691212777ffcc031ef2f534b1c665d1f9df7617f0dac2574331acac"
+    },
+    {
+      "path": "packages/engine/tsconfig.json",
+      "sha256": "ac07062d5460bb112739e3ef98e2f16f7479b1f4a18c7add69c46c2880ac68a4"
+    },
+    {
+      "path": "packages/runtime/README.md",
+      "sha256": "dfbbc3bca79cafe8eaf2f8dee2fe59cdc75a54f8cb8f9fa8ae2230dd3ef9a4c9"
+    },
+    {
+      "path": "packages/runtime/package.json",
+      "sha256": "546d482c0bd990164d79acaec52953245314df6d50117c85b6c6ec5856f4f7ee"
+    },
+    {
+      "path": "packages/runtime/src/CancellationController.ts",
+      "sha256": "d2bbfd7d23269df59651d628e8f4c448be120fb46e1e5307d718aec43c8c7515"
+    },
+    {
+      "path": "packages/runtime/src/DisplayObject.ts",
+      "sha256": "f7e4a0d1edfa8eff83d37ba04a06bb67c461a3a67af4f76d7e7cc9ef448ee9ac"
+    },
+    {
+      "path": "packages/runtime/src/DisplayObjectContainer.ts",
+      "sha256": "312c28515cdf4a8158ae625a034ce9799ebb4780fe7008fa2b932b6e0457b100"
+    },
+    {
+      "path": "packages/runtime/src/EgretError.ts",
+      "sha256": "9a4ef5c97c118c3ddc91f895741cfa259cbb3906d5943f733ee5e07f2ed8a8dc"
+    },
+    {
+      "path": "packages/runtime/src/Event.ts",
+      "sha256": "066015292830169f2ff718f6617ba55392f3666289922a0098eabb8210b493b5"
+    },
+    {
+      "path": "packages/runtime/src/EventDispatcher.ts",
+      "sha256": "e09c0a6062be650a12113fc5fec776cf4364ccff19cc8cbea75ed53255712569"
+    },
+    {
+      "path": "packages/runtime/src/Scope.ts",
+      "sha256": "d0405aca91cbfc66198420b47d39198b64631831c7f752b0fb92ef1697104d4a"
+    },
+    {
+      "path": "packages/runtime/src/Stage.ts",
+      "sha256": "a29cb0316ede13fa0cfa6023a3c9e09c985d5590945adf6d81b6ebd32a678462"
+    },
+    {
+      "path": "packages/runtime/src/diagnostics.ts",
+      "sha256": "bb8668e84ec9703f9f9b0380efa37c93f876b38c8ffb2ed2aa716f3efc32346d"
+    },
+    {
+      "path": "packages/runtime/src/index.ts",
+      "sha256": "3af52ebe93ac933d989ceb0f5abadd31e72f9436fda1d2206b3e71d7f1216310"
+    },
+    {
+      "path": "packages/runtime/src/ownership.ts",
+      "sha256": "2733b2f30721451ad0fa1ef6389d67561f902a4162ad4c28cce68bb446c38e4e"
+    },
+    {
+      "path": "packages/runtime/tsconfig.json",
+      "sha256": "ed31ec963ca62cee11d41071686c8a3dc58554155e120f52d1747254087f1bac"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "sha256": "f58343405f8b75488966415da04a69edd5cbf01a32076ff08b75132fa476877c"
+    },
+    {
+      "path": "pnpm-workspace.yaml",
+      "sha256": "f51d3d153b0f3cdbb82186bd1c3eea9066f4e3a15828985952feeee965a75534"
+    },
+    {
+      "path": "source-origin.json",
+      "sha256": "267f93fc846d1ed68a65bd933df24fd098c1cc65021743b1c84473bd8fb8d4ca"
+    },
+    {
+      "path": "tests/cancellation-scope.test.mjs",
+      "sha256": "32a1a3c47fa41ebfd122be8fa06370e51a4f0854a2ab69be5da48966b96e9566"
+    },
+    {
+      "path": "tests/display-tree.test.mjs",
+      "sha256": "6302c03f672ec4878e7bff6fffb4c6bf53ff4b5ce31d1ef5b0485e597b9bbbfe"
+    },
+    {
+      "path": "tests/engine.test.mjs",
+      "sha256": "36a8e472bf868528394c98f16fa85ec664991fa76158d272723973b60a89bcde"
+    },
+    {
+      "path": "tests/events.test.mjs",
+      "sha256": "4e75d12b5aee9f927425a1a65c401616de18347b1402ec86075bbb5247951d3d"
+    },
+    {
+      "path": "tests/helpers.mjs",
+      "sha256": "20e7dd30f54b3a81d35f666c8370e7f014e4559c68222727bc88fd377efc1af7"
+    },
+    {
+      "path": "tests/integration.test.mjs",
+      "sha256": "54716569f5744b00dcb32a512d122fdb3b91f158b1e5446a5d394b3f201eb933"
+    },
+    {
+      "path": "tests/types/negative.ts",
+      "sha256": "f2aba4d444432063b862b42822b392b82d09c8d91458cc80f5478f136115ce7b"
+    },
+    {
+      "path": "tests/types/positive.ts",
+      "sha256": "1041d77568560fb1d08fa3a4dbb86cb1e77cc48dace50884b5173c4459713aeb"
+    },
+    {
+      "path": "tests/types/tsconfig.json",
+      "sha256": "88a3194ab9d7990646c7957e96e8d059ee16e79fe88373543a763da38a84dae1"
+    },
+    {
+      "path": "tools/build.mjs",
+      "sha256": "0f04552d3592aa613d3c6fc4114559a3669ad764d0f5321d1c049a568701e6c4"
+    },
+    {
+      "path": "tools/check-boundaries.mjs",
+      "sha256": "e7994ad6962e55fba9b481d50377ede30729b345e6a901e2089b235edfde9491"
+    },
+    {
+      "path": "tools/check-types.mjs",
+      "sha256": "332d2c161ceb9ec7d75429c89a3d2c95af24f2cf5eed68b92b09532d1ce691a4"
+    },
+    {
+      "path": "tools/test.mjs",
+      "sha256": "6d8fdbf59b3c9d1a4aab917ae9ab8167818c0716a6219f5f91c5893bb2c4eb53"
+    },
+    {
+      "path": "tools/verify.mjs",
+      "sha256": "9c789b762d598c72040992d8ffb9041f75180d39b7556761365ef0998d5b0b4a"
+    },
+    {
+      "path": "tsconfig.base.json",
+      "sha256": "b7a31fb9f93a93e20bfdcf33c135acb45cb3a6895a8b3e7006bd85214ddc1008"
+    },
+    {
+      "path": "tsconfig.json",
+      "sha256": "e07fc831f31dc9ea9ecb612be734f4b533e32d7dbbb246abffaa8b23111076aa"
+    }
+  ],
+  "checks": [
+    {
+      "name": "frozen source snapshot",
+      "method": "Read all authored/manifest snapshot content, with pnpm-lock.yaml read separately because the package only records its hash; rehash all input files",
+      "status": "passed",
+      "fileCount": 53,
+      "hashMismatches": 0,
+      "evidence": "work/core-framework/review-inputs-initial.json"
+    },
+    {
+      "name": "requirements and implementation report",
+      "method": "Read frozen brief, report and the three original first-party specifications; recorded requirement hashes matched current files",
+      "status": "reviewed",
+      "hostCloseClarification": "Only successful resolution proves safe surface return; normal and late rejection stay quarantined, with no override"
+    },
+    {
+      "name": "root independent verification",
+      "method": "Read existing root verification evidence; did not repeat the full pipeline",
+      "status": "passed_in_record",
+      "behaviorTests": 36,
+      "behaviorPasses": 36,
+      "negativeTypeAssertions": 11,
+      "headlessExample": "passed_in_record",
+      "strictBuildAndCoreBoundary": "passed_in_record",
+      "evidence": "work/core-framework/root-verification-results.json"
+    },
+    {
+      "name": "reviewer narrow counterexamples",
+      "method": "Execute saved source through Node --input-type=module stdin from the product root, importing only public @egret/engine",
+      "status": "failed_requirements_reproduced",
+      "executionCount": 1,
+      "caseCount": 6,
+      "failedRequirementCount": 6,
+      "exitCode": 1,
+      "runtime": "node",
+      "cwd": "outputs/白鹭引擎核心框架原型",
+      "source": "work/core-framework/review-counterexamples-initial.mjs",
+      "sourceSha256": "d73503aabb0cd9059ac4b6d1e46267eb1bff720a8387420afa049f323aab9808",
+      "output": "work/core-framework/review-counterexamples-initial.log",
+      "outputSha256": "97630e56335f8bd69ad67e2825543e1e6e183173ddf7eab98f1d630e08140339"
+    }
+  ],
+  "scope": {
+    "phase": "initial",
+    "artifactRoot": "outputs/白鹭引擎核心框架原型",
+    "reviewInput": "work/core-framework/review-inputs-initial.json",
+    "reviewPackage": "work/core-framework/review-package-initial.md",
+    "gitRepository": false,
+    "fullNewFileSnapshotUsedAsDiff": true,
+    "productOrKnowledgeBaseModified": false,
+    "reviewerSubagentsSpawned": false,
+    "finalPassFilesCreated": false,
+    "acceptance": "Code-limited first lifecycle/display-tree/headless Engine slice only; no product or full-engine acceptance"
+  },
+  "declinedToJudge": [
+    {
+      "behavior": "GPU execution, borrowed-device completion fences, graphics/assets/animation/layout/coordinate behavior",
+      "reason": "Explicitly outside this task and not present in the headless implementation"
+    },
+    {
+      "behavior": "Real browser/minigame/native hosts, VM, performance and energy",
+      "reason": "No corresponding implementation or execution evidence; injected host tests cannot certify a platform"
+    },
+    {
+      "behavior": "Complete architecture/API, nine-package scope, project/toolchain/editor/Agent service and distribution",
+      "reason": "The frozen task deliberately commits only three actual private package responsibilities and the lifecycle slice"
+    },
+    {
+      "behavior": "Historic Egret compatibility, full migration, release authorization and product acceptance",
+      "reason": "No acceptance fixtures or authorization for those claims; naming and compilation are insufficient"
+    },
+    {
+      "behavior": "Exhaustive originality and license compliance",
+      "reason": "Reviewed declarations, source, manifests/lockfile and hashes; no global source comparison or legal audit"
+    },
+    {
+      "behavior": "Standalone formatter/lint, CI and comprehensive security audit",
+      "reason": "Not configured or claimed complete in the scoped task; local checks must not be promoted to full gate acceptance"
+    },
+    {
+      "behavior": "Private-field tampering, reflection to obtain internal factory tokens or structurally invalid HostAdapter calls such as close returning void",
+      "reason": "Outside normal documented contract use; all necessary findings instead use public APIs, normal subclasses or minimum-protocol CancellationSignal adapters"
+    }
+  ],
+  "publicationProjection": {
+    "kind": "portable_public_copy",
+    "originalReportSha256": "a7e3da67bc507c9ea961b082162fb14a515d51a3b243ec6ea0c5bca1173e222c",
+    "originalRetainedInInternalMaterials": true,
+    "changedStringFields": [
+      "checks[3].runtime",
+      "checks[3].cwd"
+    ],
+    "replacements": "Workspace absolute prefixes removed; host Node executable path replaced with node. Source/test/review hashes, observed results and verdict unchanged."
+  }
+}

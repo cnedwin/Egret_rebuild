@@ -1,0 +1,14 @@
+{
+  "status": "passed",
+  "checkedAtUtc": "2026-10-08T12:29:24.628Z",
+  "knowledgeBaseVersion": "0.9.0",
+  "currentHashes": 494,
+  "archivedHashes": 487,
+  "unchangedPriorArtifacts": 428,
+  "declaredEditorialReports": 5,
+  "originalPrototypeVerifiedHashes": 143,
+  "originalAuthoredInventory": 54,
+  "originalInputSpecifications": 3,
+  "technicalStatusesAndResultsRetained": true,
+  "scope": "Local editorial, registry, source identity and historical verification integrity; no new product acceptance"
+}

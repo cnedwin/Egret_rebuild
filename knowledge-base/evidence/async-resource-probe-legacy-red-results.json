@@ -1,0 +1,163 @@
+{
+  "schemaVersion": 1,
+  "experiment": "async-resource-probe-legacy-red",
+  "checkedAtUtc": "2026-10-08T06:02:51.130Z",
+  "environment": {
+    "node": "v24.19.0",
+    "platform": "win32",
+    "architecture": "x64",
+    "realGpu": false
+  },
+  "counts": {
+    "total": 7,
+    "passed": 0,
+    "failed": 7
+  },
+  "results": [
+    {
+      "name": "One release preserves the other lease acquired by the same owner",
+      "status": "failed",
+      "observations": {
+        "breaks": "Replacing independent leases with an owner Set destroys a live resource",
+        "checkpoints": [
+          {
+            "label": "two-acquires",
+            "state": {
+              "leaseCount": 1,
+              "cpuState": "decoded",
+              "gpuState": "resident",
+              "resident": true,
+              "cpuData": "pixels",
+              "deviceEpoch": 1,
+              "resourceGeneration": 1,
+              "error": null
+            }
+          },
+          {
+            "label": "one-release",
+            "state": null
+          }
+        ]
+      },
+      "error": "Got unwanted exception.\nActual message: \"Resource unavailable\""
+    },
+    {
+      "name": "Lease count records repeated acquisition by one owner",
+      "status": "failed",
+      "observations": {
+        "breaks": "Counting distinct owners undercounts references",
+        "checkpoints": [
+          {
+            "label": "three-leases",
+            "state": {
+              "leaseCount": 2,
+              "cpuState": "empty",
+              "gpuState": "empty",
+              "resident": false,
+              "cpuData": null,
+              "deviceEpoch": 1,
+              "resourceGeneration": 1,
+              "error": null
+            }
+          }
+        ]
+      },
+      "error": "Expected values to be strictly equal:\n\n2 !== 3\n"
+    },
+    {
+      "name": "Canceling one lease keeps another same-owner lease usable",
+      "status": "failed",
+      "observations": {
+        "breaks": "Owner-wide cancel removes an unrelated acquisition",
+        "checkpoints": [
+          {
+            "label": "cancel-one",
+            "state": null
+          }
+        ]
+      },
+      "error": "Got unwanted exception.\nActual message: \"Resource unavailable\""
+    },
+    {
+      "name": "CPU decode completion during device loss remains reusable",
+      "status": "failed",
+      "observations": {
+        "breaks": "Device epoch incorrectly invalidates CPU decode",
+        "checkpoints": []
+      },
+      "error": "Expected values to be strictly equal:\n\nfalse !== true\n"
+    },
+    {
+      "name": "CPU success cannot report GPU residency before upload success",
+      "status": "failed",
+      "observations": {
+        "breaks": "Combined decode and upload completion exposes unavailable GPU data",
+        "checkpoints": [
+          {
+            "label": "CPU-only",
+            "state": {
+              "leaseCount": 1,
+              "cpuState": "decoded",
+              "gpuState": "resident",
+              "resident": true,
+              "cpuData": "pixels",
+              "deviceEpoch": 1,
+              "resourceGeneration": 1,
+              "error": null
+            }
+          }
+        ]
+      },
+      "error": "Expected values to be strictly equal:\n\ntrue !== false\n"
+    },
+    {
+      "name": "Device restoration requires asynchronous reupload of preserved CPU data",
+      "status": "failed",
+      "observations": {
+        "breaks": "Synchronous rebuild falsely reports resident",
+        "checkpoints": [
+          {
+            "label": "device-restored-before-upload",
+            "state": {
+              "leaseCount": 1,
+              "cpuState": "decoded",
+              "gpuState": "resident",
+              "resident": true,
+              "cpuData": "pixels",
+              "deviceEpoch": 2,
+              "resourceGeneration": 1,
+              "error": null
+            }
+          }
+        ]
+      },
+      "error": "Expected values to be strictly equal:\n\ntrue !== false\n"
+    },
+    {
+      "name": "Upload OOM is attributable and never marks a resource resident",
+      "status": "failed",
+      "observations": {
+        "breaks": "GPU errors are dropped or interpreted as successful upload",
+        "checkpoints": []
+      },
+      "error": "Expected values to be strictly equal:\n\nfalse !== true\n"
+    }
+  ],
+  "sourceHashes": [
+    {
+      "path": "experiments/async-resource-probe/history/pre-fence-audit/run.mjs",
+      "sha256": "05af4be8544af05834913dacdc76f8a893a151e897713691ea0196f91d20b430"
+    },
+    {
+      "path": "experiments/async-resource-probe/../contract-probe/model.mjs",
+      "sha256": "941b13b6cd13949af8f661817e5ad587017d9181f484ac4d0ad3be99307c6b7b"
+    }
+  ],
+  "limitations": [
+    "Finite manually ordered callback model, not production Egret.",
+    "No actual CPU decoding, GPU uploads, browser/native device testing, performance, allocation size, worker scheduling, or full thread-safety proof.",
+    "Fence completion is injected; this does not validate a real driver fence.",
+    "Legacy adapter only exposes actual previous-model policies for seven targeted counterexamples; it is not an alternate implementation."
+  ],
+  "sourceArchiveNote": "Test source was archived before the fence audit; hash and original observations are unchanged."
+}

@@ -1,0 +1,431 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-10-08",
+  "authority": "用户在本次项目讨论中确认的目标；实现与验收另查交付登记册",
+  "items": [
+    {
+      "id": "R001",
+      "title": "AI新创作者",
+      "statement": "首阶段主要服务依靠AI制作游戏的新创作者；既有手游开发经验者进入AI创作的机会也纳入测试，不据此排除无开发经验者。",
+      "status": "confirmed",
+      "sourceIds": [
+        "S001"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V003",
+        "V005"
+      ],
+      "decisionIds": [
+        "D011",
+        "D012"
+      ],
+      "doc": "docs/设计理念与定位.md"
+    },
+    {
+      "id": "R002",
+      "title": "复杂2D与轻量3D",
+      "statement": "首期兼顾复杂UI的2D游戏与轻量3D游戏；具体规模、画质和设备预算待定义。",
+      "status": "confirmed",
+      "sourceIds": [
+        "S001"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V002",
+        "V004",
+        "V005"
+      ],
+      "decisionIds": [
+        "D002",
+        "D004",
+        "D007",
+        "D008"
+      ],
+      "doc": "docs/设计理念与定位.md"
+    },
+    {
+      "id": "R003",
+      "title": "渲染运行时核心",
+      "statement": "渲染引擎和运行时是项目最核心部分，寻求适合当代与未来两三年持续迭代的方案。",
+      "status": "confirmed",
+      "sourceIds": [
+        "S001"
+      ],
+      "deliveryIds": [
+        "V002"
+      ],
+      "decisionIds": [
+        "D001",
+        "D003",
+        "D005",
+        "D006",
+        "D010",
+        "D012"
+      ],
+      "doc": "docs/技术架构.md"
+    },
+    {
+      "id": "R004",
+      "title": "混合表现能力",
+      "statement": "支持3D场景、角色、特效，同时高效实现复杂2D UI、骨骼动画和序列帧动画。",
+      "status": "confirmed",
+      "sourceIds": [
+        "S001"
+      ],
+      "deliveryIds": [
+        "V002",
+        "V004"
+      ],
+      "decisionIds": [
+        "D002",
+        "D004",
+        "D007",
+        "D008",
+        "D009"
+      ],
+      "doc": "docs/渲染引擎与运行时.md"
+    },
+    {
+      "id": "R005",
+      "title": "效率差异化",
+      "statement": "延续精简高性能、加载、底包、复杂UI、功耗与发热方面的历史优势，形成当代优势；具体领先幅度与阈值需共同样本验证。",
+      "status": "confirmed",
+      "sourceIds": [
+        "S001",
+        "S002"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V002",
+        "V004",
+        "V005"
+      ],
+      "decisionIds": [
+        "D001",
+        "D003",
+        "D006",
+        "D007",
+        "D009",
+        "D010"
+      ],
+      "doc": "docs/核心优势与验证.md"
+    },
+    {
+      "id": "R006",
+      "title": "AI原生工具链",
+      "statement": "结合Agent、Skills、MCP等生态，帮助开发者降本增效、释放创造力；具体接口、编辑器和模型选择待验证。",
+      "status": "confirmed",
+      "sourceIds": [
+        "S001"
+      ],
+      "deliveryIds": [
+        "V003",
+        "V005",
+        "V006"
+      ],
+      "decisionIds": [
+        "D011",
+        "D012"
+      ],
+      "doc": "docs/AI创作与工程接口.md"
+    },
+    {
+      "id": "R007",
+      "title": "制作与平台交付",
+      "statement": "延续编码、UI、场景、资源、动画和平台发布的一体化价值，适应浏览器、微信、抖音、Meta Instant Games、Discord、Telegram与原生环境；首批顺序和支持矩阵未确定。",
+      "status": "confirmed",
+      "sourceIds": [
+        "S001",
+        "S002",
+        "S008"
+      ],
+      "deliveryIds": [
+        "V004",
+        "V005"
+      ],
+      "decisionIds": [
+        "D005",
+        "D009",
+        "D012"
+      ],
+      "doc": "docs/产品组成.md"
+    },
+    {
+      "id": "R008",
+      "title": "旧工程一键AI迁移",
+      "statement": "最终实现一键导入原白鹭工程，结合AI Agent自动转换到全新引擎，尽量无需人工修改和干预，实现移植后完美运行；完整迁移与对照验收属于正式交付。",
+      "status": "confirmed",
+      "sourceIds": [
+        "S001"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V002",
+        "V003",
+        "V004",
+        "V005",
+        "V006"
+      ],
+      "decisionIds": [
+        "D001",
+        "D006",
+        "D007",
+        "D008",
+        "D009",
+        "D012"
+      ],
+      "doc": "docs/旧工程迁移.md"
+    },
+    {
+      "id": "R009",
+      "title": "持续知识库与社区",
+      "statement": "建立可持续维护的结构化知识库，持续迭代设计理念、技术架构、产品组成、核心优势及交付目标，并支持更多开源社区参与者。",
+      "status": "confirmed",
+      "sourceIds": [
+        "S001"
+      ],
+      "deliveryIds": [
+        "V007"
+      ],
+      "decisionIds": [
+        "D012"
+      ],
+      "doc": "docs/知识库维护.md"
+    },
+    {
+      "id": "R010",
+      "title": "研究迭代并独立定位",
+      "statement": "研究Cocos、Laya、Godot近两年的迭代过程与行业生态变化，借鉴问题解决思路，形成白鹭独立定位和差异化优势。",
+      "status": "confirmed",
+      "sourceIds": [
+        "S001"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V007"
+      ],
+      "decisionIds": [
+        "D001",
+        "D002",
+        "D003",
+        "D004",
+        "D005",
+        "D006",
+        "D007",
+        "D008",
+        "D009",
+        "D010",
+        "D011",
+        "D012"
+      ],
+      "doc": "docs/竞品演进与生态.md"
+    },
+    {
+      "id": "R011",
+      "title": "渐进设计与研究验证自审",
+      "statement": "逐步细化、调研、推敲和技术验证，形成技术白皮书、产品需求说明书与工程规划；逻辑清晰，避免幻觉，实施自我审计与验证，持续迭代证据和设计。",
+      "status": "confirmed",
+      "sourceIds": [
+        "S001"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V007",
+        "V008"
+      ],
+      "decisionIds": [
+        "D012"
+      ],
+      "doc": "docs/技术验证记录.md"
+    },
+    {
+      "id": "R012",
+      "title": "成熟开源实现优先与分层验证",
+      "statement": "当前环境无法实际验证或从零探索代价过高时，优先调查GitHub成熟实现及修复记录；渲染与运行时参考范围扩展到Three.js、Babylon.js、PlayCanvas等。采用已确定的算法和机制，实验集中验证白鹭适配、差异化与真实设备收益，避免重复造轮子。 执行受R015边界约束：成熟原理优先研究，公共库明确依赖，白鹭核心独立实现。",
+      "status": "confirmed",
+      "sourceIds": [
+        "S001"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V002",
+        "V004",
+        "V007",
+        "V008"
+      ],
+      "decisionIds": [
+        "D002",
+        "D003",
+        "D004",
+        "D005",
+        "D007",
+        "D008",
+        "D009",
+        "D010",
+        "D012"
+      ],
+      "doc": "docs/开源实现优先与验证分工.md"
+    },
+    {
+      "id": "R013",
+      "title": "快速编译调试与持续迭代",
+      "statement": "优化复杂工程的编译、预览和调试等待，研究稳定新版TypeScript及可替换构建链路，使人工与AI连续修改能快速反馈。历史30秒以内不直接作为新工程已验收阈值。",
+      "status": "confirmed",
+      "sourceIds": [
+        "S033",
+        "S035"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V003",
+        "V005",
+        "V006",
+        "V008"
+      ],
+      "decisionIds": [
+        "D011",
+        "D012",
+        "D013"
+      ],
+      "doc": "docs/图形后端编译与原生Runtime选型.md"
+    },
+    {
+      "id": "R014",
+      "title": "原生SDK与跨平台扩展研究",
+      "statement": "延续原生App和嵌入SDK Runtime路线，研究Rust/C++、脚本VM与第三方库更新；保留未来PC/Steam、D3D11/12、Vulkan、Metal与GPU AI的扩展空间。具体语言库、首发桌面范围和性能收益仍待取舍验证。",
+      "status": "confirmed",
+      "sourceIds": [
+        "S033",
+        "S036",
+        "S037"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V002",
+        "V005",
+        "V008"
+      ],
+      "decisionIds": [
+        "D005",
+        "D006",
+        "D012",
+        "D014",
+        "D015"
+      ],
+      "doc": "docs/图形后端编译与原生Runtime选型.md"
+    },
+    {
+      "id": "R015",
+      "title": "核心独立实现与社区开源可信度",
+      "statement": "白鹭核心依据自有需求和规格独立设计实现；标准与开放项目提供研究依据，公共基础设施作为明确依赖接入并保留版本、来源、声明和修改记录。",
+      "status": "confirmed",
+      "sourceIds": [
+        "S038"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V002",
+        "V003",
+        "V004",
+        "V005",
+        "V006",
+        "V007",
+        "V008"
+      ],
+      "decisionIds": [
+        "D001",
+        "D002",
+        "D003",
+        "D004",
+        "D005",
+        "D006",
+        "D007",
+        "D008",
+        "D009",
+        "D010",
+        "D011",
+        "D012",
+        "D013",
+        "D014",
+        "D015",
+        "D016"
+      ],
+      "doc": "docs/独立实现与第三方依赖规范.md"
+    },
+    {
+      "id": "R016",
+      "title": "完整现代工程架构与白鹭风格代码规范",
+      "statement": "重新制定完整工程技术架构和代码规范；命名习惯保留白鹭引擎风格，项目结构和API允许更合理现代，开发者有亲切感且不呈现旧式项目形态。",
+      "status": "confirmed",
+      "sourceIds": [
+        "S042"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V002",
+        "V003",
+        "V004",
+        "V005",
+        "V006",
+        "V007",
+        "V008"
+      ],
+      "decisionIds": [
+        "D016"
+      ],
+      "doc": "docs/工程技术架构与项目结构.md"
+    },
+    {
+      "id": "R017",
+      "title": "开始自主核心实现并核查证据缺口",
+      "statement": "尝试开始编写核心框架和逻辑，明确仍缺的证据支撑与需要研究的对象。",
+      "status": "confirmed",
+      "sourceIds": [
+        "S045"
+      ],
+      "deliveryIds": [
+        "V002",
+        "V009",
+        "V007",
+        "V010"
+      ],
+      "decisionIds": [
+        "D016"
+      ],
+      "doc": "docs/核心框架实现记录.md"
+    },
+    {
+      "id": "R018",
+      "title": "从开发初期公开协作与规范表达",
+      "statement": "代码、设计过程、文档及知识库从开发初期采用公开协作；公开表达专业客观，保护不适合公开的交流和资料，保留研究出处与鸣谢，展示白鹭的独立设计与创新。",
+      "status": "confirmed",
+      "sourceIds": [
+        "S049"
+      ],
+      "deliveryIds": [
+        "V007",
+        "V008",
+        "V009"
+      ],
+      "decisionIds": [],
+      "doc": "docs/开源协作与公开表达规范.md"
+    },
+    {
+      "id": "R019",
+      "title": "中英文公开材料与推送前检查",
+      "statement": "每次推送GitHub前补全关键代码英文注释，整理可公开的所有文档和知识库，并为阅读文档及共同登记状态提供完整中文与英文版本。完成首批核心源码、文档及知识库后提交指定公开仓库。",
+      "status": "confirmed",
+      "sourceIds": [
+        "S051"
+      ],
+      "deliveryIds": [
+        "V007",
+        "V008",
+        "V009"
+      ],
+      "decisionIds": [],
+      "doc": "docs/双语文档与推送前检查.md"
+    }
+  ]
+}

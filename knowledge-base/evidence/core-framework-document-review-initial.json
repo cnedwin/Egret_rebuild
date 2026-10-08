@@ -1,0 +1,165 @@
+{
+  "reviewId": "core-framework-integration-preflight",
+  "date": "2026-10-08",
+  "verdict": "necessary_corrections_before_integration",
+  "summary": "三项必要修订：漏替换的当前状态；最终验证与终审hash绑定；继承的本轮执行标记。新记录的headless/GPU、原型/完整验收和历史证据边界整体明确。",
+  "necessaryCorrections": [
+    {
+      "id": "IP001",
+      "priority": 1,
+      "title": "精确替换遗漏导致0.8.0文档继续声称V002未开始",
+      "scriptPath": "work/core-framework/integrate-kb.mjs",
+      "scriptLines": [
+        99,
+        105
+      ],
+      "affectedPaths": [
+        "docs/技术白皮书.md:3",
+        "docs/技术白皮书.md:11",
+        "docs/工程规划.md:3",
+        "docs/工程规划.md:62",
+        "docs/产品需求说明书.md:11"
+      ],
+      "evidence": "按脚本99-105行的实际替换在内存投影，技术白皮书第11行仍是V002–V006的产品实现均为not_started；工程规划第3行仍是完整V002–V006产品implementation仍为not_started，第62行仍是当前尚无对应源码目录；白皮书第3行把本次写成仅规范细化、未新增或重跑程序。PRD第11行需求权威仍仅R001—R016，脚本同时新增confirmed R017。",
+      "whyNecessary": "V002登记册拟变为in_progress/partial_independent_headless_core，且已有36/36真实headless运行。当前文档升级为0.7候选稿/知识库0.8.0后，未加历史限定的not_started/尚无源码/本次未运行与新状态矛盾。",
+      "requiredChange": "定点改这些实际句子：V002已有contracts/runtime/engine三个职责包的局部自主headless核心，完整renderer与acceptance未完成；V003—V006仍not_started。白皮书把0.7.0仅规范细化的叙述标为历史，并链接0.8.0实现记录，保留原17/71研究数量和范围。工程规划明确三包已建、其余包未建。PRD将R017列为启动局部工程工作的确认要求，不升级产品范围或技术候选。",
+      "verification": "生成后逐句核对上述位置，并检查当前主文档中不再存在未限定历史的V002为not_started、全部源码目录不存在或本次完全未执行程序；保持D/H候选及完整V006义务。"
+    },
+    {
+      "id": "IP002",
+      "priority": 2,
+      "title": "最终复跑与终审一致的断言缺少hash门禁",
+      "scriptPath": "work/core-framework/integrate-kb.mjs",
+      "scriptLines": [
+        9,
+        11,
+        48,
+        50
+      ],
+      "affectedPaths": [
+        "docs/核心框架实现记录.md",
+        "evidence/core-framework-verification.json",
+        "evidence/core-framework-code-review-final.json"
+      ],
+      "evidence": "第11行guard只检查test.status、review.verdict及necessaryCorrections为空；第50行拟生成集成验证执行方最终复跑绑定的代码hash与终审一致。现有root-verification-results是11:14:06的36/36运行，正式终审尚未完成。guard不会验证最终review输入hash与test记录对应，也不会发现审阅修订后保留旧test结果。",
+      "whyNecessary": "作者报告的implementation_ready_for_independent_review是正确的阶段记录，不应改写；但未来passed终审标志本身不足以支撑最终交付字节与复跑一致。若正式审阅改代码，旧36/36不能绑定新文件。",
+      "requiredChange": "在整合前验证最终审阅覆盖的自写源码/配置/测试hash与最后根run中的相应记录一致，并验证交付目录对应字节。审阅若有代码修订，根重新运行后更新验证记录再核验绑定。可将hash校验加入guard，或先保存根的显式比对证据并据其生成这一断言；没有比对证据时删除一致性宣称。",
+      "verification": "最终review、最终集成验证与交付文件三者在受审范围内匹配，才复制证据及生成一致性句子；不得以作者阶段报告或test.status单项替代。"
+    },
+    {
+      "id": "IP003",
+      "priority": 2,
+      "title": "0.8.0继承本轮无新运行的宽泛元数据",
+      "scriptPath": "work/core-framework/integrate-kb.mjs",
+      "scriptLines": [
+        92,
+        97
+      ],
+      "affectedPaths": [
+        "当前版本.json:newExperimentsRunThisRevision"
+      ],
+      "evidence": "0.7.0当前版本的newExperimentsRunThisRevision为false；92-97行改为0.8.0并新增headlessTestsRun/strictBuildRun=true，但保留原字段false。",
+      "whyNecessary": "宽泛的本轮新增执行标记与0.8.0新增核心构建、测试及示例运行并存，会使只消费版本摘要的读者将本轮误判为仅文档更新。",
+      "requiredChange": "明确字段口径：若newExperimentsRunThisRevision表示本轮全部新增程序验证，应改为true并写headless范围；若专指旧research probes，则改为或显式标注researchProbesRunThisRevision=false，同时保留coreFrameworkImplementation内实际strict/headless执行为true。浏览器/GPU/native/性能/迁移执行仍为false。",
+      "verification": "0.8.0摘要可直接区分新增CPU核心验证、未重跑旧研究与未运行生产宿主，不出现同一宽泛口径下的true/false冲突。"
+    }
+  ],
+  "confirmedBoundaries": [
+    "root-verification-results记录36 tests/36 passes/0 failures和退出0；其GPU、browser、native、performance及migration标志均为false。",
+    "拟生成核心实现记录明确三个实际职责包、无GPU/纹理/布局/VM/AI服务/迁移器；headless host.close不是GPU fence。V009是engineering_prototype，V002正式acceptance仍not_run，V003—V006未开始。",
+    "作者task-1-results的implementation_ready_for_independent_review与根36/36通过并不矛盾；无需把作者历史阶段报告改成正式终审通过。",
+    "0.7.0 preservation摘要是474个原hash匹配、475个文件复制；CHANGELOG称474个原摘要匹配没有计数误称，本预审未重新验证全部历史文件hash。",
+    "整合脚本新增历史review绑定，保留原JSON与原研究数量，不把旧17项/71项扩成新的产品或性能覆盖。G001研究时未实现的原始边界有顶端整合注释，不需改写原始gap JSON。",
+    "给定终审尚未完成，脚本读取终审并要求passed的guard应保留；本预审不将其待完成本身列为文档缺陷。"
+  ],
+  "scope": {
+    "kind": "bounded_static_document_integration_preflight",
+    "readFiles": [
+      "work/core-framework/integrate-kb.mjs",
+      "outputs/白鹭引擎重构工程知识库/docs/核心框架首段实现计划.md",
+      "work/core-framework/root-verification-results.json",
+      "work/core-framework/task-1-results.json",
+      "outputs/白鹭引擎重构工程知识库/当前版本.json",
+      "outputs/白鹭引擎重构工程知识库/README.md",
+      "outputs/白鹭引擎重构工程知识库/docs/交付计划.md",
+      "outputs/白鹭引擎重构工程知识库/docs/产品需求说明书.md",
+      "outputs/白鹭引擎重构工程知识库/docs/技术白皮书.md",
+      "outputs/白鹭引擎重构工程知识库/docs/工程规划.md",
+      "work/knowledge-base-0.7.0-preservation.json",
+      "work/core-framework/review-inputs-initial.json"
+    ],
+    "operations": [
+      "read actual draft generation text and proposed registry writes",
+      "project exact three-main-document string replacements in memory only",
+      "read recorded run/preservation results",
+      "capture selected input hashes",
+      "write this preflight JSON and Markdown in work only"
+    ],
+    "integrationScriptExecuted": false,
+    "productExecuted": false,
+    "productCodeReadOrReviewed": false,
+    "knowledgeBaseModified": false,
+    "publicBrowsing": false,
+    "subagentsSpawned": false,
+    "historicalAllFileHashCheckRun": false,
+    "finalRenderedDocumentsReviewed": false,
+    "codeReviewAcceptance": false,
+    "approvalAuthority": "none; corrections concern documentation/evidence consistency only",
+    "postIntegrationRequired": "Root generates documents after corrections, completes actual code review and final run/hash binding, then validates links/registries/history/new outputs."
+  },
+  "inputHashes": [
+    {
+      "path": "work/core-framework/integrate-kb.mjs",
+      "sha256": "daa600458b95729d37face4a343533230dc7cb86c159c52efb84b25b4c27750a"
+    },
+    {
+      "path": "work/core-framework/root-verification-results.json",
+      "sha256": "b2b952e8aaf0376ce719eab90f089836d3d24b22ddfbe26550142625e25c5f4f"
+    },
+    {
+      "path": "work/core-framework/task-1-results.json",
+      "sha256": "d3fe38624cdbafa5eb38b18950f7bf93db76a26c1f5ab268bbb9e656a6c71722"
+    },
+    {
+      "path": "outputs/白鹭引擎重构工程知识库/docs/核心框架首段实现计划.md",
+      "sha256": "b22cab345e51fecfbb367b1697b5601b364fe894fd642b70d8667079108d193e"
+    },
+    {
+      "path": "outputs/白鹭引擎重构工程知识库/当前版本.json",
+      "sha256": "65320c8cc02d919c26bffe08a40a6989769671fa0f28e5844c27f94f1a31a92c"
+    },
+    {
+      "path": "outputs/白鹭引擎重构工程知识库/README.md",
+      "sha256": "f4fa9af580083b7c4136e9139c068206dfec23697546f7754e67de8fe2cb46ca"
+    },
+    {
+      "path": "outputs/白鹭引擎重构工程知识库/docs/交付计划.md",
+      "sha256": "8202a63fc8180b8eb6b307176fc2f827770bbb50f4ad5294ec1670f6d5049d42"
+    },
+    {
+      "path": "outputs/白鹭引擎重构工程知识库/docs/产品需求说明书.md",
+      "sha256": "63b539a3ef34f67bed5a4eef41b7b5fa3ca1f9a82de0801c3e11e0b54311b520"
+    },
+    {
+      "path": "outputs/白鹭引擎重构工程知识库/docs/技术白皮书.md",
+      "sha256": "570688f0a7ddfc1758ddfec121d61912372db553d3ac080fac89080b6606b460"
+    },
+    {
+      "path": "outputs/白鹭引擎重构工程知识库/docs/工程规划.md",
+      "sha256": "39d4f53684c4bcb5e14be9e92b2cdb6f52643d18f4b32d3a2ce2a587bb651542"
+    },
+    {
+      "path": "work/knowledge-base-0.7.0-preservation.json",
+      "sha256": "328d402182b2dbd6b67027a473ebb89ba859b8c5b105ecb28787b6ec0bb09db2"
+    }
+  ],
+  "publicEditorialProjection": {
+    "originalKnowledgeBaseVersion": "0.8.0",
+    "originalReportSha256": "fd1e41db1f1ca54ddf0317b53c2067587e7ad46dc239c836e8108607d2294637",
+    "changedStringFields": [
+      "necessaryCorrections[1].evidence",
+      "necessaryCorrections[1].verification"
+    ],
+    "scope": "Professional wording and publication context only; findings, outcomes, counters, source identities and technical conclusions retained. Restricted original execution materials are not part of the public source distribution."
+  }
+}

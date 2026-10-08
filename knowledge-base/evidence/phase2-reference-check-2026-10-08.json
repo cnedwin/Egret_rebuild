@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-10-08",
+  "method": "Read via web research tool; page status and date boundaries retained.",
+  "items": [
+    {
+      "url": "https://registry.khronos.org/webgl/specs/latest/2.0/",
+      "access": "read",
+      "pageVersionDate": "2026-06-30",
+      "status": "Editors Draft / work in progress",
+      "limit": "Latest path mutable; not claimed final approved standard."
+    },
+    {
+      "url": "https://registry.khronos.org/webgl/specs/2.0.0/",
+      "access": "read",
+      "pageVersion": "2.0.0",
+      "pageVersionDate": "2017-04-11",
+      "status": "Status section also identifies Editors Draft / work in progress",
+      "limit": "Versioned URL does not by itself prove final ratification."
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/blendFuncSeparate",
+      "access": "read",
+      "scope": "API reference for separate RGB/alpha blend factors",
+      "limit": "Documentation, no platform acceptance."
+    },
+    {
+      "url": "https://gpuweb.github.io/gpuweb/#dom-gpudevice-lost",
+      "access": "tool_internal_error",
+      "scope": "Attempted device-loss reference",
+      "limit": "Access failure does not indicate missing API/support."
+    },
+    {
+      "url": "https://registry.khronos.org/OpenGL-Refpages/es3.0/html/glBlendFuncSeparate.xhtml",
+      "access": "tool_internal_error",
+      "scope": "Attempted API reference",
+      "limit": "Access failure does not indicate missing API/support."
+    }
+  ]
+}

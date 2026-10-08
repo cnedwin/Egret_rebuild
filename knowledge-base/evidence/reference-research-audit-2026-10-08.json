@@ -1,0 +1,260 @@
+{
+  "schemaVersion": 1,
+  "checkedAtUtc": "2026-10-08T07:16:45.225Z",
+  "knowledgeBaseVersion": "0.4.0",
+  "designDocumentVersion": "0.3_candidate",
+  "status": "source_metadata_and_document_boundaries_checked",
+  "scope": "Pinned primary-source research, bounded independent AI rereading, artifact/status integration; no source execution or performance acceptance.",
+  "method": {
+    "officialSourceStaticReview": true,
+    "pinnedVersionMetadataChecked": true,
+    "independentSourceReread": true,
+    "localResearchReportCopiesByteCompared": true,
+    "pixiCachedSourceSha256Compared": 5,
+    "completeUpstreamSourceHashAudit": false,
+    "installedUpstream": false,
+    "ranUpstream": false,
+    "ranUpstreamTests": false,
+    "newProbesRun": false,
+    "previousProbesRerun": false,
+    "actualChineseFontsLoaded": false,
+    "mobileAcceptanceRun": false
+  },
+  "counts": {
+    "repositories": 5,
+    "distinctSnapshots": 7,
+    "sourceFileEntries": 39,
+    "uniquePinnedSourceFiles": 39,
+    "findings": 28,
+    "independentSourceFilesReread": 8,
+    "independentReleaseTagChecks": 6
+  },
+  "reports": [
+    {
+      "report": "evidence/reference-render-lifecycle.json",
+      "sha256": "46834f477aac316ee2afab4d61c424260751177a965bad6c2aebb53aeb57a83b",
+      "sourceEntries": 12,
+      "findings": 8,
+      "sourceExecution": false,
+      "upstreamTestFilesRead": 0,
+      "upstreamTestsExecuted": false
+    },
+    {
+      "report": "evidence/reference-text-ui.json",
+      "sha256": "52df3c6dfd8f25ba506472e5bee562d0cbedcb621f68de50869b66954737b7c6",
+      "sourceEntries": 10,
+      "findings": 8,
+      "sourceExecution": false,
+      "upstreamTestFilesRead": 2,
+      "upstreamTestsExecuted": false
+    },
+    {
+      "report": "evidence/reference-assets-animation.json",
+      "sha256": "3d907b4678bf605407b453580ac1914cf31b4b933e5aae23e0b565ec6ceb2329",
+      "sourceEntries": 12,
+      "findings": 8,
+      "sourceExecution": false,
+      "upstreamTestFilesRead": 0,
+      "upstreamTestsExecuted": false
+    },
+    {
+      "report": "evidence/reference-pixi-text.json",
+      "sha256": "c787bfe21d6d416abccf1be5f3949cb2144bb4679e061efa277fc5673af96cf8",
+      "sourceEntries": 5,
+      "findings": 4,
+      "sourceExecution": false,
+      "upstreamTestFilesRead": 0,
+      "upstreamTestsExecuted": false
+    }
+  ],
+  "versionIndex": [
+    {
+      "repo": "mrdoob/three.js",
+      "ref": "r180",
+      "commitSha": "0af9729d0c143a86a1d725d6e2c3ad83301f3f34",
+      "license": "MIT",
+      "licenseUrl": "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/LICENSE",
+      "researchGroups": [
+        "render-lifecycle",
+        "assets-animation"
+      ],
+      "sourceFiles": [
+        "src/renderers/WebGLRenderer.js",
+        "src/renderers/webgl/WebGLRenderLists.js",
+        "src/renderers/webgl/WebGLState.js",
+        "src/renderers/webgpu/WebGPURenderer.js",
+        "LICENSE",
+        "examples/jsm/loaders/GLTFLoader.js",
+        "examples/jsm/loaders/KTX2Loader.js",
+        "src/animation/AnimationMixer.js"
+      ]
+    },
+    {
+      "repo": "BabylonJS/Babylon.js",
+      "ref": "9.29.0",
+      "commitSha": "cbe5bb36998fdde6bd93d76e67813ff571a535db",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/license.md",
+      "researchGroups": [
+        "render-lifecycle",
+        "text-ui"
+      ],
+      "sourceFiles": [
+        "packages/dev/core/src/Engines/abstractEngine.pure.ts",
+        "packages/dev/core/src/Engines/thinEngine.pure.ts",
+        "packages/dev/core/src/Engines/webgpuEngine.pure.ts",
+        "packages/dev/core/src/Rendering/renderingGroup.ts",
+        "packages/dev/gui/src/2D/advancedDynamicTexture.ts",
+        "packages/dev/gui/src/2D/controls/textBlock.pure.ts",
+        "packages/dev/gui/src/2D/controls/control.pure.ts",
+        "packages/dev/core/src/Materials/Textures/dynamicTexture.pure.ts",
+        "packages/dev/core/src/Engines/Extensions/engine.dynamicTexture.pure.ts",
+        "packages/dev/gui/test/unit/inputText.test.ts"
+      ]
+    },
+    {
+      "repo": "playcanvas/engine",
+      "ref": "v2.23.0",
+      "commitSha": "cfef43d306b2b55a2c0742e4994221f6d2463957",
+      "license": "MIT",
+      "licenseUrl": "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/LICENSE",
+      "researchGroups": [
+        "render-lifecycle",
+        "assets-animation"
+      ],
+      "sourceFiles": [
+        "src/platform/graphics/webgl/webgl-graphics-device.js",
+        "src/platform/graphics/webgpu/webgpu-graphics-device.js",
+        "src/platform/graphics/render-pass.js",
+        "src/scene/layer.js",
+        "LICENSE",
+        "src/framework/parsers/glb-parser.js",
+        "src/framework/components/anim/component.js",
+        "src/framework/parsers/glb-container-resource.js"
+      ]
+    },
+    {
+      "repo": "playcanvas/engine",
+      "ref": "v2.23.1",
+      "commitSha": "c3eb40348be7e80617164e4f2fea0b139ad42ebb",
+      "license": "MIT",
+      "licenseUrl": "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/LICENSE",
+      "researchGroups": [
+        "text-ui"
+      ],
+      "sourceFiles": [
+        "src/framework/font/canvas-font.js",
+        "src/framework/components/element/text-element.js",
+        "examples/src/examples/user-interface/text-emojis.example.mjs",
+        "test/framework/components/element/text-element.test.mjs"
+      ]
+    },
+    {
+      "repo": "DragonBones/DragonBonesJS",
+      "ref": "master snapshot (2025-05-24)",
+      "commitSha": "64b6c69ae35777c2404be68c9192e2c56906079e",
+      "license": "MIT",
+      "licenseUrl": "https://github.com/DragonBones/DragonBonesJS/blob/64b6c69ae35777c2404be68c9192e2c56906079e/LICENSE",
+      "researchGroups": [
+        "assets-animation"
+      ],
+      "sourceFiles": [
+        "LICENSE",
+        "DragonBones/src/dragonBones/armature/Slot.ts"
+      ]
+    },
+    {
+      "repo": "BabylonJS/Babylon.js",
+      "ref": "8.26.0",
+      "commitSha": "09876696f9942657ec9da5a72ec16c9d3de54365",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://github.com/BabylonJS/Babylon.js/blob/09876696f9942657ec9da5a72ec16c9d3de54365/license.md",
+      "researchGroups": [
+        "assets-animation"
+      ],
+      "sourceFiles": [
+        "license.md",
+        "packages/dev/core/src/Bones/skeleton.ts"
+      ]
+    },
+    {
+      "repo": "pixijs/pixijs",
+      "ref": "v8.22.0",
+      "commitSha": "5b41ee37fd36c61e089113345a8f12cf1c3323cf",
+      "license": "MIT",
+      "licenseUrl": "https://github.com/pixijs/pixijs/blob/5b41ee37fd36c61e089113345a8f12cf1c3323cf/LICENSE",
+      "researchGroups": [
+        "pixi-text"
+      ],
+      "sourceFiles": [
+        "src/scene/text/shared/AbstractTextSystem.ts",
+        "src/scene/text/canvas/CanvasTextMetrics.ts",
+        "src/scene/text/canvas/CanvasTextGenerator.ts",
+        "src/scene/text-html/HTMLTextSystem.ts",
+        "src/scene/text/canvas/CanvasTextPipe.ts"
+      ]
+    }
+  ],
+  "independentReview": "evidence/reference-independent-audit.json",
+  "reviewedDocuments": [
+    {
+      "path": "docs/开源参考实现与采用方案.md",
+      "sha256": "a040debad9bf917341142cce751100fa37c4406a4bb9457f66cb81428791598b"
+    },
+    {
+      "path": "docs/开源实现优先与验证分工.md",
+      "sha256": "24c9bbf50af74fe458f6f6a680458d26095804e090d9fd1391ee5b44f41a9182"
+    },
+    {
+      "path": "docs/工程规划.md",
+      "sha256": "14ab36a15eb817e8df394856215511649919e155a15cc2a72a9bb5b4814e95f9"
+    }
+  ],
+  "corrections": [
+    {
+      "topic": "text_normalization",
+      "scope": "Original raw business and input text remain authoritative; NFC normalization is an explicit optional policy, not an unconditional cache input. Internal work markdown wording is not published.",
+      "status": "resolved_in_formal_documents"
+    },
+    {
+      "topic": "required_extension",
+      "scope": "Three r180 warn fact limited to extensionsUsed/default branch with required name and no plugin. Required KHR_texture_basisu missing KTX2Loader may throw. Egret strict preflight rejection is product policy.",
+      "status": "boundary_preserved"
+    },
+    {
+      "topic": "state_reset",
+      "scope": "Existing duplicate-effects counterexample used a new consumer instance within a single Node process, not an actual OS crash.",
+      "status": "engineering_wording_corrected"
+    }
+  ],
+  "previousBaseline": {
+    "version": "0.3.0",
+    "fileHashesMatched": 142,
+    "unchangedExperimentFiles": 69,
+    "unchangedPriorEvidenceFiles": 36,
+    "existing71MainChecksNotRerun": true,
+    "coverageNotExpanded": true
+  },
+  "states": {
+    "referenceBaseline": "selected_reference_baseline_not_integrated",
+    "decisions": "proposed",
+    "hypotheses": "untested",
+    "V002ToV006Implementation": "not_started",
+    "productAcceptance": "not_run",
+    "R008": "full_migration_edit_and_real_publish_required",
+    "V006Dependencies": [
+      "V001",
+      "V002",
+      "V003",
+      "V004",
+      "V005"
+    ]
+  },
+  "limits": [
+    "Pinned source describes upstream mechanics only, not Egret integration or measurable advantage.",
+    "Historical Three r180 and Babylon8.26 snapshots are explicit baselines, not latest-version evaluations.",
+    "Font correctness, CJK wrapping, emoji/fallback and IME remain host-specific integration and actual-device tasks.",
+    "Reference shader, deeper interpolation/controller code and every dependency/license were not exhaustively inspected.",
+    "Independent review is an AI static review, not human approval or engine/security certification."
+  ]
+}

@@ -1,0 +1,153 @@
+{
+  "schemaVersion": 1,
+  "checkedAtUtc": "2026-10-08T09:55:51.952Z",
+  "knowledgeBaseVersion": "0.6.1",
+  "designDocumentVersion": "0.5.1_candidate",
+  "status": "policy_document_and_artifact_integrity_passed",
+  "reviewedDocumentHashes": [
+    {
+      "path": "当前版本.json",
+      "sha256": "cd385778afca5982b7b24dbcbc71258d9ba7882856a69cc92997ff00c3850bcf"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "sha256": "84723dbb70935f5de58fa28f0246dba626b9a6ddfa6e7d57e211c57b755d4d0a"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "sha256": "6f1e98d90c206c275d6622354efd13c47fe6f6ae31e0d2dff1668b74403dbb80"
+    },
+    {
+      "path": "README.md",
+      "sha256": "e33789824ed577ca7d2d4500bfa737ad6f06244a761e43fb655eeaa781169629"
+    },
+    {
+      "path": "docs/产品需求说明书.md",
+      "sha256": "8de7e78cdcb578795317e0f05b221f8eebe65cbede55c40c60dcc57641c633c9"
+    },
+    {
+      "path": "docs/产品组成.md",
+      "sha256": "fcc0742a2e246ced0ab73089a901caaf5539779c65d52c0b0d51d6c615fd1646"
+    },
+    {
+      "path": "docs/工程规划.md",
+      "sha256": "6458976f733667193896b57f7774666e2512918b9ad4690b47ed46eb0d4b7d8b"
+    },
+    {
+      "path": "docs/技术白皮书.md",
+      "sha256": "fedd0b85b30fe707145fc5bafe87155691a21ccf70127598ce2e634aa840e693"
+    },
+    {
+      "path": "docs/技术架构.md",
+      "sha256": "5beb611802cad4c814bea5853f5c9537a41cb6ec924604388d3ce9ae5fff7154"
+    },
+    {
+      "path": "docs/开源参考实现与采用方案.md",
+      "sha256": "226427d95099c4d112e55fae96be5282a77455f693ee96bf75b22659d8bee975"
+    },
+    {
+      "path": "docs/开源实现优先与验证分工.md",
+      "sha256": "95b45941ba4e1a3aa8de72094f2087198fd5fc425990346e65cc1e35e7ef96c8"
+    },
+    {
+      "path": "docs/社区参与.md",
+      "sha256": "fe0e4337b0a7dbd6781da36eb6084abda0c963359ee35c41806c29568407a3d0"
+    },
+    {
+      "path": "docs/图形后端编译与原生Runtime选型.md",
+      "sha256": "3501500d63cf0da49fde1c972770572524a226ff10d8b799a5c332acc533cb84"
+    },
+    {
+      "path": "docs/渲染引擎与运行时.md",
+      "sha256": "8da0350a074e98d2f218e49e366532bcab9bc62d54238533134d45acab5c2d76"
+    },
+    {
+      "path": "docs/知识库维护.md",
+      "sha256": "99480f113fe3307398e94be9bc410086ea0fc0d1e72c6e8e031955e97bd1d23d"
+    },
+    {
+      "path": "registry/交付.json",
+      "sha256": "f48d4b962399c65851d53764bf43ddff0f92d8eb4814a757878c3657a3516a55"
+    },
+    {
+      "path": "registry/决策.json",
+      "sha256": "04816064f1bb2eb0f8aa1824d3512279eeaed93de3d6313ded6f8332b52cb64c"
+    },
+    {
+      "path": "registry/来源.json",
+      "sha256": "25bdd3905223cdc57bbd26ca5c334c05794e390e5e7a7a6af854bcc830cff00e"
+    },
+    {
+      "path": "registry/需求.json",
+      "sha256": "6750b3689c9cacb44c07fd9bea0a27135e75011a26c848c55338a91ac89a6371"
+    },
+    {
+      "path": "templates/RFC提案.md",
+      "sha256": "c20ac7be195a7a9be5c8dae8f639495b85249e0bf69665010fc7cd071a33403c"
+    },
+    {
+      "path": "docs/独立实现与第三方依赖规范.md",
+      "sha256": "431a5b0163d4eb4fd2fba512c1bef8b98372e280b17fd9cbacee9e4a6c879139"
+    },
+    {
+      "path": "templates/实现来源记录.md",
+      "sha256": "6d881fc4a245a20a802b67610f0d60b340cbe2df6fc67f6e72428ecf9815d280"
+    },
+    {
+      "path": "evidence/code-origin-founder-context.json",
+      "sha256": "6733370568fd8f453385a7f43626521cbbcf77dcfb2096407d29ba810f2b7e07"
+    },
+    {
+      "path": "evidence/code-origin-research-audit.json",
+      "sha256": "8cfca7bd445c16d27144fcc9c5aab8fd228d6ffe534481e0bec0142c781333d0"
+    }
+  ],
+  "newResearchHashes": [
+    {
+      "path": "evidence/code-origin-founder-context.json",
+      "sha256": "6733370568fd8f453385a7f43626521cbbcf77dcfb2096407d29ba810f2b7e07"
+    },
+    {
+      "path": "evidence/code-origin-research-audit.json",
+      "sha256": "8cfca7bd445c16d27144fcc9c5aab8fd228d6ffe534481e0bec0142c781333d0"
+    },
+    {
+      "path": "evidence/code-origin-policy-review.json",
+      "sha256": "f2f00184b045280a18ac2b24a68b86833ea28630f90f48990213adc67aca4717"
+    }
+  ],
+  "initialObservationReport": {
+    "artifact": "evidence/code-origin-research-audit.json",
+    "sha256": "8cfca7bd445c16d27144fcc9c5aab8fd228d6ffe534481e0bec0142c781333d0",
+    "observationsKnowledgeBaseVersion": "0.6.0",
+    "unchangedFromReviewer": true
+  },
+  "baseline": {
+    "version": "0.6.0",
+    "hashesMatched": 453,
+    "priorResearchFilesUnchanged": 410
+  },
+  "method": {
+    "policyRevisionOnly": true,
+    "independentDocumentReview": true,
+    "limitedLocalDependencyManifestCheck": true,
+    "sourceImplementationModified": false,
+    "newOrRerunExperiment": false,
+    "fullSourceSimilarityAudit": false,
+    "productionLicenseReview": false
+  },
+  "states": {
+    "R015": "confirmed_user_instruction",
+    "technicalChoices": "proposed",
+    "advantageHypotheses": "untested",
+    "V002_V006_implementation": "not_started",
+    "V002_V006_acceptance": "not_run",
+    "migration": "complete_migration_continued_edit_and_actual_publish_required"
+  },
+  "limits": [
+    "Document and local file integrity only; not proof that existing authored code is independent or that future code is free from copying.",
+    "Public dependency use is allowed with explicit attribution; no production library is selected by this revision.",
+    "Prior Three-chain results remain third-party research evidence, not independent-core implementation or a rerun.",
+    "Initial conflict observations bind preserved 0.6.0 text."
+  ]
+}

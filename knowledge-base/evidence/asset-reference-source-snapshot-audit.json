@@ -1,0 +1,1536 @@
+[
+  {
+    "report": "asset-reference-cleanup-green-7f7d5599-3060-4885-8ab7-5493263ed3eb.json",
+    "runId": "7f7d5599-3060-4885-8ab7-5493263ed3eb",
+    "label": "cleanup-green",
+    "reportSha256": "efbb022831829ebde2dd0a44a0cf40760862cd57fd676f0d8e9b24ef68860842",
+    "checked": 17,
+    "mismatches": 0,
+    "sources": [
+      {
+        "path": "reference-chain.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/cleanup-partial/reference-chain.mjs",
+        "expected": "b1bf2b83be022e46810c2c3341fa37bd08ed372c0fcd09a4726b81e177e26f79",
+        "actual": "b1bf2b83be022e46810c2c3341fa37bd08ed372c0fcd09a4726b81e177e26f79",
+        "matches": true
+      },
+      {
+        "path": "ui-pass.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/cleanup-partial/ui-pass.mjs",
+        "expected": "3c95423e6a3d03e39adb146bcd354211789b16a4ee586fd567de58a159481b00",
+        "actual": "3c95423e6a3d03e39adb146bcd354211789b16a4ee586fd567de58a159481b00",
+        "matches": true
+      },
+      {
+        "path": "integration-tests.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/cleanup-partial/integration-tests.mjs",
+        "expected": "914506fd03047afb6b3ebbfcea616ca0d788a2c26cc932ac5123947cad56c7c9",
+        "actual": "914506fd03047afb6b3ebbfcea616ca0d788a2c26cc932ac5123947cad56c7c9",
+        "matches": true
+      },
+      {
+        "path": "probe.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/cleanup-partial/probe.js",
+        "expected": "586bbbf6a5c654fd9466950bd827baeb4219c80ff9c2f7c2f2b66a0453fe3b61",
+        "actual": "586bbbf6a5c654fd9466950bd827baeb4219c80ff9c2f7c2f2b66a0453fe3b61",
+        "matches": true
+      },
+      {
+        "path": "index.html",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/cleanup-partial/index.html",
+        "expected": "6d4e4b854eaaefb22534832754a2c2d9ef3077acbaa4c44af39b8d0e380ba818",
+        "actual": "6d4e4b854eaaefb22534832754a2c2d9ef3077acbaa4c44af39b8d0e380ba818",
+        "matches": true
+      },
+      {
+        "path": "server.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/cleanup-partial/server.mjs",
+        "expected": "45a873ef3b4417f174684c84d4be25beb2e1fee6099e59a1cad55ea2bf2ca027",
+        "actual": "45a873ef3b4417f174684c84d4be25beb2e1fee6099e59a1cad55ea2bf2ca027",
+        "matches": true
+      },
+      {
+        "path": "run-headless.cjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/cleanup-partial/run-headless.cjs",
+        "expected": "2db7aa7442dd5645bbaf44f19f8be9873e62702c04af59709df28165f7b5640c",
+        "actual": "2db7aa7442dd5645bbaf44f19f8be9873e62702c04af59709df28165f7b5640c",
+        "matches": true
+      },
+      {
+        "path": "sources.json",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/sources.json",
+        "expected": "3eeec51b8536e99103464b5848b975c105d980261be072b52db3669767f88997",
+        "actual": "3eeec51b8536e99103464b5848b975c105d980261be072b52db3669767f88997",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/build/three.core.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/build/three.core.js",
+        "expected": "9edde002b066a9a05676a6127f67735b62baf399bdea529f2f7e31657da769e6",
+        "actual": "9edde002b066a9a05676a6127f67735b62baf399bdea529f2f7e31657da769e6",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/build/three.module.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/build/three.module.js",
+        "expected": "9052042d676cb0fdc1ddfefe193053f34b7ac0513a616fdac4535d49987812ea",
+        "actual": "9052042d676cb0fdc1ddfefe193053f34b7ac0513a616fdac4535d49987812ea",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/loaders/GLTFLoader.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/loaders/GLTFLoader.js",
+        "expected": "131c0f78c01d19368ae495caa65b3adaa10487810a36a05bb5901b769a35ac16",
+        "actual": "131c0f78c01d19368ae495caa65b3adaa10487810a36a05bb5901b769a35ac16",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/utils/BufferGeometryUtils.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/utils/BufferGeometryUtils.js",
+        "expected": "9fb63427ce6641fa14fd0baff9cc4d1b5f9c3d85fd084bf2e90e803c44ec1797",
+        "actual": "9fb63427ce6641fa14fd0baff9cc4d1b5f9c3d85fd084bf2e90e803c44ec1797",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/utils/SkeletonUtils.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/utils/SkeletonUtils.js",
+        "expected": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f",
+        "actual": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/LICENSE",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/LICENSE",
+        "expected": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+        "actual": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/RiggedSimple.gltf",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/RiggedSimple.gltf",
+        "expected": "dad924deb693a8d00e566ccc495042183cbc8c927c56d976ae760077321bca39",
+        "actual": "dad924deb693a8d00e566ccc495042183cbc8c927c56d976ae760077321bca39",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/LICENSE.md",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/LICENSE.md",
+        "expected": "4343fbd97e5ecfc4c872a85cb1d755a3006f8848e15135fd6c4534839909bdbb",
+        "actual": "4343fbd97e5ecfc4c872a85cb1d755a3006f8848e15135fd6c4534839909bdbb",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/metadata.json",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/metadata.json",
+        "expected": "ba12c1f9a24124bdfbd171528db2eece6edbb7c75a7192dadfb043212067c664",
+        "actual": "ba12c1f9a24124bdfbd171528db2eece6edbb7c75a7192dadfb043212067c664",
+        "matches": true
+      }
+    ]
+  },
+  {
+    "report": "asset-reference-cleanup-green-final-75fcf3b9-4422-4ad8-8a73-dba283749037.json",
+    "runId": "75fcf3b9-4422-4ad8-8a73-dba283749037",
+    "label": "cleanup-green-final",
+    "reportSha256": "90d93e277987699172ac049a71c018d7b64b6818c00bb16453bf13da62a0bc56",
+    "checked": 17,
+    "mismatches": 0,
+    "sources": [
+      {
+        "path": "reference-chain.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/cleanup-green-final/reference-chain.mjs",
+        "expected": "2527e55344d0c59762598e6fdd1e746d150469f5812b6611c20e9cd3c3ba2652",
+        "actual": "2527e55344d0c59762598e6fdd1e746d150469f5812b6611c20e9cd3c3ba2652",
+        "matches": true
+      },
+      {
+        "path": "ui-pass.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/cleanup-green-final/ui-pass.mjs",
+        "expected": "3c95423e6a3d03e39adb146bcd354211789b16a4ee586fd567de58a159481b00",
+        "actual": "3c95423e6a3d03e39adb146bcd354211789b16a4ee586fd567de58a159481b00",
+        "matches": true
+      },
+      {
+        "path": "integration-tests.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/cleanup-green-final/integration-tests.mjs",
+        "expected": "914506fd03047afb6b3ebbfcea616ca0d788a2c26cc932ac5123947cad56c7c9",
+        "actual": "914506fd03047afb6b3ebbfcea616ca0d788a2c26cc932ac5123947cad56c7c9",
+        "matches": true
+      },
+      {
+        "path": "probe.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/cleanup-green-final/probe.js",
+        "expected": "586bbbf6a5c654fd9466950bd827baeb4219c80ff9c2f7c2f2b66a0453fe3b61",
+        "actual": "586bbbf6a5c654fd9466950bd827baeb4219c80ff9c2f7c2f2b66a0453fe3b61",
+        "matches": true
+      },
+      {
+        "path": "index.html",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/cleanup-green-final/index.html",
+        "expected": "6d4e4b854eaaefb22534832754a2c2d9ef3077acbaa4c44af39b8d0e380ba818",
+        "actual": "6d4e4b854eaaefb22534832754a2c2d9ef3077acbaa4c44af39b8d0e380ba818",
+        "matches": true
+      },
+      {
+        "path": "server.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/cleanup-green-final/server.mjs",
+        "expected": "45a873ef3b4417f174684c84d4be25beb2e1fee6099e59a1cad55ea2bf2ca027",
+        "actual": "45a873ef3b4417f174684c84d4be25beb2e1fee6099e59a1cad55ea2bf2ca027",
+        "matches": true
+      },
+      {
+        "path": "run-headless.cjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/cleanup-green-final/run-headless.cjs",
+        "expected": "2db7aa7442dd5645bbaf44f19f8be9873e62702c04af59709df28165f7b5640c",
+        "actual": "2db7aa7442dd5645bbaf44f19f8be9873e62702c04af59709df28165f7b5640c",
+        "matches": true
+      },
+      {
+        "path": "sources.json",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/sources.json",
+        "expected": "3eeec51b8536e99103464b5848b975c105d980261be072b52db3669767f88997",
+        "actual": "3eeec51b8536e99103464b5848b975c105d980261be072b52db3669767f88997",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/build/three.core.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/build/three.core.js",
+        "expected": "9edde002b066a9a05676a6127f67735b62baf399bdea529f2f7e31657da769e6",
+        "actual": "9edde002b066a9a05676a6127f67735b62baf399bdea529f2f7e31657da769e6",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/build/three.module.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/build/three.module.js",
+        "expected": "9052042d676cb0fdc1ddfefe193053f34b7ac0513a616fdac4535d49987812ea",
+        "actual": "9052042d676cb0fdc1ddfefe193053f34b7ac0513a616fdac4535d49987812ea",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/loaders/GLTFLoader.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/loaders/GLTFLoader.js",
+        "expected": "131c0f78c01d19368ae495caa65b3adaa10487810a36a05bb5901b769a35ac16",
+        "actual": "131c0f78c01d19368ae495caa65b3adaa10487810a36a05bb5901b769a35ac16",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/utils/BufferGeometryUtils.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/utils/BufferGeometryUtils.js",
+        "expected": "9fb63427ce6641fa14fd0baff9cc4d1b5f9c3d85fd084bf2e90e803c44ec1797",
+        "actual": "9fb63427ce6641fa14fd0baff9cc4d1b5f9c3d85fd084bf2e90e803c44ec1797",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/utils/SkeletonUtils.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/utils/SkeletonUtils.js",
+        "expected": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f",
+        "actual": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/LICENSE",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/LICENSE",
+        "expected": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+        "actual": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/RiggedSimple.gltf",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/RiggedSimple.gltf",
+        "expected": "dad924deb693a8d00e566ccc495042183cbc8c927c56d976ae760077321bca39",
+        "actual": "dad924deb693a8d00e566ccc495042183cbc8c927c56d976ae760077321bca39",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/LICENSE.md",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/LICENSE.md",
+        "expected": "4343fbd97e5ecfc4c872a85cb1d755a3006f8848e15135fd6c4534839909bdbb",
+        "actual": "4343fbd97e5ecfc4c872a85cb1d755a3006f8848e15135fd6c4534839909bdbb",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/metadata.json",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/metadata.json",
+        "expected": "ba12c1f9a24124bdfbd171528db2eece6edbb7c75a7192dadfb043212067c664",
+        "actual": "ba12c1f9a24124bdfbd171528db2eece6edbb7c75a7192dadfb043212067c664",
+        "matches": true
+      }
+    ]
+  },
+  {
+    "report": "asset-reference-cleanup-red-559adc7d-2b23-427c-baca-c6ccaf46a903.json",
+    "runId": "559adc7d-2b23-427c-baca-c6ccaf46a903",
+    "label": "cleanup-red",
+    "reportSha256": "533aecd2fd8c076ed8465e0446a37d86cb27814f4e78343ed51c9fdefa4c1f01",
+    "checked": 17,
+    "mismatches": 0,
+    "sources": [
+      {
+        "path": "reference-chain.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/cleanup-red/reference-chain.mjs",
+        "expected": "b993796a676943b4b642498f0c2df1f2f0c87965cfe33686329b2cd86fb3e7b7",
+        "actual": "b993796a676943b4b642498f0c2df1f2f0c87965cfe33686329b2cd86fb3e7b7",
+        "matches": true
+      },
+      {
+        "path": "ui-pass.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/cleanup-red/ui-pass.mjs",
+        "expected": "3c95423e6a3d03e39adb146bcd354211789b16a4ee586fd567de58a159481b00",
+        "actual": "3c95423e6a3d03e39adb146bcd354211789b16a4ee586fd567de58a159481b00",
+        "matches": true
+      },
+      {
+        "path": "integration-tests.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/cleanup-red/integration-tests.mjs",
+        "expected": "914506fd03047afb6b3ebbfcea616ca0d788a2c26cc932ac5123947cad56c7c9",
+        "actual": "914506fd03047afb6b3ebbfcea616ca0d788a2c26cc932ac5123947cad56c7c9",
+        "matches": true
+      },
+      {
+        "path": "probe.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/cleanup-red/probe.js",
+        "expected": "586bbbf6a5c654fd9466950bd827baeb4219c80ff9c2f7c2f2b66a0453fe3b61",
+        "actual": "586bbbf6a5c654fd9466950bd827baeb4219c80ff9c2f7c2f2b66a0453fe3b61",
+        "matches": true
+      },
+      {
+        "path": "index.html",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/cleanup-red/index.html",
+        "expected": "6d4e4b854eaaefb22534832754a2c2d9ef3077acbaa4c44af39b8d0e380ba818",
+        "actual": "6d4e4b854eaaefb22534832754a2c2d9ef3077acbaa4c44af39b8d0e380ba818",
+        "matches": true
+      },
+      {
+        "path": "server.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/cleanup-red/server.mjs",
+        "expected": "45a873ef3b4417f174684c84d4be25beb2e1fee6099e59a1cad55ea2bf2ca027",
+        "actual": "45a873ef3b4417f174684c84d4be25beb2e1fee6099e59a1cad55ea2bf2ca027",
+        "matches": true
+      },
+      {
+        "path": "run-headless.cjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/cleanup-red/run-headless.cjs",
+        "expected": "2db7aa7442dd5645bbaf44f19f8be9873e62702c04af59709df28165f7b5640c",
+        "actual": "2db7aa7442dd5645bbaf44f19f8be9873e62702c04af59709df28165f7b5640c",
+        "matches": true
+      },
+      {
+        "path": "sources.json",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/sources.json",
+        "expected": "3eeec51b8536e99103464b5848b975c105d980261be072b52db3669767f88997",
+        "actual": "3eeec51b8536e99103464b5848b975c105d980261be072b52db3669767f88997",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/build/three.core.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/build/three.core.js",
+        "expected": "9edde002b066a9a05676a6127f67735b62baf399bdea529f2f7e31657da769e6",
+        "actual": "9edde002b066a9a05676a6127f67735b62baf399bdea529f2f7e31657da769e6",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/build/three.module.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/build/three.module.js",
+        "expected": "9052042d676cb0fdc1ddfefe193053f34b7ac0513a616fdac4535d49987812ea",
+        "actual": "9052042d676cb0fdc1ddfefe193053f34b7ac0513a616fdac4535d49987812ea",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/loaders/GLTFLoader.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/loaders/GLTFLoader.js",
+        "expected": "131c0f78c01d19368ae495caa65b3adaa10487810a36a05bb5901b769a35ac16",
+        "actual": "131c0f78c01d19368ae495caa65b3adaa10487810a36a05bb5901b769a35ac16",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/utils/BufferGeometryUtils.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/utils/BufferGeometryUtils.js",
+        "expected": "9fb63427ce6641fa14fd0baff9cc4d1b5f9c3d85fd084bf2e90e803c44ec1797",
+        "actual": "9fb63427ce6641fa14fd0baff9cc4d1b5f9c3d85fd084bf2e90e803c44ec1797",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/utils/SkeletonUtils.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/utils/SkeletonUtils.js",
+        "expected": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f",
+        "actual": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/LICENSE",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/LICENSE",
+        "expected": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+        "actual": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/RiggedSimple.gltf",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/RiggedSimple.gltf",
+        "expected": "dad924deb693a8d00e566ccc495042183cbc8c927c56d976ae760077321bca39",
+        "actual": "dad924deb693a8d00e566ccc495042183cbc8c927c56d976ae760077321bca39",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/LICENSE.md",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/LICENSE.md",
+        "expected": "4343fbd97e5ecfc4c872a85cb1d755a3006f8848e15135fd6c4534839909bdbb",
+        "actual": "4343fbd97e5ecfc4c872a85cb1d755a3006f8848e15135fd6c4534839909bdbb",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/metadata.json",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/metadata.json",
+        "expected": "ba12c1f9a24124bdfbd171528db2eece6edbb7c75a7192dadfb043212067c664",
+        "actual": "ba12c1f9a24124bdfbd171528db2eece6edbb7c75a7192dadfb043212067c664",
+        "matches": true
+      }
+    ]
+  },
+  {
+    "report": "asset-reference-extended-green-04c27d26-3633-4d2e-8941-874126b94237.json",
+    "runId": "04c27d26-3633-4d2e-8941-874126b94237",
+    "label": "extended-green",
+    "reportSha256": "4c4408adad6e5a84944cd92a3bbb60f94c1043749a4eab6af0e5549ffeb13eed",
+    "checked": 17,
+    "mismatches": 0,
+    "sources": [
+      {
+        "path": "reference-chain.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/extended-green/reference-chain.mjs",
+        "expected": "2527e55344d0c59762598e6fdd1e746d150469f5812b6611c20e9cd3c3ba2652",
+        "actual": "2527e55344d0c59762598e6fdd1e746d150469f5812b6611c20e9cd3c3ba2652",
+        "matches": true
+      },
+      {
+        "path": "ui-pass.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/extended-green/ui-pass.mjs",
+        "expected": "3c95423e6a3d03e39adb146bcd354211789b16a4ee586fd567de58a159481b00",
+        "actual": "3c95423e6a3d03e39adb146bcd354211789b16a4ee586fd567de58a159481b00",
+        "matches": true
+      },
+      {
+        "path": "integration-tests.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/extended-green/integration-tests.mjs",
+        "expected": "c083c6b21ea8bcaf7a7e4ff4f66b801ca288a0123904e3e9a92b99e75bbf8257",
+        "actual": "c083c6b21ea8bcaf7a7e4ff4f66b801ca288a0123904e3e9a92b99e75bbf8257",
+        "matches": true
+      },
+      {
+        "path": "probe.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/extended-green/probe.js",
+        "expected": "586bbbf6a5c654fd9466950bd827baeb4219c80ff9c2f7c2f2b66a0453fe3b61",
+        "actual": "586bbbf6a5c654fd9466950bd827baeb4219c80ff9c2f7c2f2b66a0453fe3b61",
+        "matches": true
+      },
+      {
+        "path": "index.html",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/extended-green/index.html",
+        "expected": "6d4e4b854eaaefb22534832754a2c2d9ef3077acbaa4c44af39b8d0e380ba818",
+        "actual": "6d4e4b854eaaefb22534832754a2c2d9ef3077acbaa4c44af39b8d0e380ba818",
+        "matches": true
+      },
+      {
+        "path": "server.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/extended-green/server.mjs",
+        "expected": "45a873ef3b4417f174684c84d4be25beb2e1fee6099e59a1cad55ea2bf2ca027",
+        "actual": "45a873ef3b4417f174684c84d4be25beb2e1fee6099e59a1cad55ea2bf2ca027",
+        "matches": true
+      },
+      {
+        "path": "run-headless.cjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/extended-green/run-headless.cjs",
+        "expected": "2db7aa7442dd5645bbaf44f19f8be9873e62702c04af59709df28165f7b5640c",
+        "actual": "2db7aa7442dd5645bbaf44f19f8be9873e62702c04af59709df28165f7b5640c",
+        "matches": true
+      },
+      {
+        "path": "sources.json",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/sources.json",
+        "expected": "3eeec51b8536e99103464b5848b975c105d980261be072b52db3669767f88997",
+        "actual": "3eeec51b8536e99103464b5848b975c105d980261be072b52db3669767f88997",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/build/three.core.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/build/three.core.js",
+        "expected": "9edde002b066a9a05676a6127f67735b62baf399bdea529f2f7e31657da769e6",
+        "actual": "9edde002b066a9a05676a6127f67735b62baf399bdea529f2f7e31657da769e6",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/build/three.module.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/build/three.module.js",
+        "expected": "9052042d676cb0fdc1ddfefe193053f34b7ac0513a616fdac4535d49987812ea",
+        "actual": "9052042d676cb0fdc1ddfefe193053f34b7ac0513a616fdac4535d49987812ea",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/loaders/GLTFLoader.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/loaders/GLTFLoader.js",
+        "expected": "131c0f78c01d19368ae495caa65b3adaa10487810a36a05bb5901b769a35ac16",
+        "actual": "131c0f78c01d19368ae495caa65b3adaa10487810a36a05bb5901b769a35ac16",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/utils/BufferGeometryUtils.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/utils/BufferGeometryUtils.js",
+        "expected": "9fb63427ce6641fa14fd0baff9cc4d1b5f9c3d85fd084bf2e90e803c44ec1797",
+        "actual": "9fb63427ce6641fa14fd0baff9cc4d1b5f9c3d85fd084bf2e90e803c44ec1797",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/utils/SkeletonUtils.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/utils/SkeletonUtils.js",
+        "expected": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f",
+        "actual": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/LICENSE",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/LICENSE",
+        "expected": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+        "actual": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/RiggedSimple.gltf",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/RiggedSimple.gltf",
+        "expected": "dad924deb693a8d00e566ccc495042183cbc8c927c56d976ae760077321bca39",
+        "actual": "dad924deb693a8d00e566ccc495042183cbc8c927c56d976ae760077321bca39",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/LICENSE.md",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/LICENSE.md",
+        "expected": "4343fbd97e5ecfc4c872a85cb1d755a3006f8848e15135fd6c4534839909bdbb",
+        "actual": "4343fbd97e5ecfc4c872a85cb1d755a3006f8848e15135fd6c4534839909bdbb",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/metadata.json",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/metadata.json",
+        "expected": "ba12c1f9a24124bdfbd171528db2eece6edbb7c75a7192dadfb043212067c664",
+        "actual": "ba12c1f9a24124bdfbd171528db2eece6edbb7c75a7192dadfb043212067c664",
+        "matches": true
+      }
+    ]
+  },
+  {
+    "report": "asset-reference-green-final-5e478aac-c48a-4c2b-85f0-cf0053255da7.json",
+    "runId": "5e478aac-c48a-4c2b-85f0-cf0053255da7",
+    "label": "green-final",
+    "reportSha256": "797177c7d08e5e9ca0924e1d6bb789a2df8e096563bf4cfeac53068bf0a69cfa",
+    "checked": 17,
+    "mismatches": 0,
+    "sources": [
+      {
+        "path": "reference-chain.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/green-final/reference-chain.mjs",
+        "expected": "2527e55344d0c59762598e6fdd1e746d150469f5812b6611c20e9cd3c3ba2652",
+        "actual": "2527e55344d0c59762598e6fdd1e746d150469f5812b6611c20e9cd3c3ba2652",
+        "matches": true
+      },
+      {
+        "path": "ui-pass.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/green-final/ui-pass.mjs",
+        "expected": "3c95423e6a3d03e39adb146bcd354211789b16a4ee586fd567de58a159481b00",
+        "actual": "3c95423e6a3d03e39adb146bcd354211789b16a4ee586fd567de58a159481b00",
+        "matches": true
+      },
+      {
+        "path": "integration-tests.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/green-final/integration-tests.mjs",
+        "expected": "c083c6b21ea8bcaf7a7e4ff4f66b801ca288a0123904e3e9a92b99e75bbf8257",
+        "actual": "c083c6b21ea8bcaf7a7e4ff4f66b801ca288a0123904e3e9a92b99e75bbf8257",
+        "matches": true
+      },
+      {
+        "path": "probe.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/green-final/probe.js",
+        "expected": "e344c9e9edb72416765b8d49f75df8a55acf045c7ab01c85e29c5a2a3f4fe150",
+        "actual": "e344c9e9edb72416765b8d49f75df8a55acf045c7ab01c85e29c5a2a3f4fe150",
+        "matches": true
+      },
+      {
+        "path": "index.html",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/green-final/index.html",
+        "expected": "6d4e4b854eaaefb22534832754a2c2d9ef3077acbaa4c44af39b8d0e380ba818",
+        "actual": "6d4e4b854eaaefb22534832754a2c2d9ef3077acbaa4c44af39b8d0e380ba818",
+        "matches": true
+      },
+      {
+        "path": "server.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/green-final/server.mjs",
+        "expected": "45a873ef3b4417f174684c84d4be25beb2e1fee6099e59a1cad55ea2bf2ca027",
+        "actual": "45a873ef3b4417f174684c84d4be25beb2e1fee6099e59a1cad55ea2bf2ca027",
+        "matches": true
+      },
+      {
+        "path": "run-headless.cjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/green-final/run-headless.cjs",
+        "expected": "2db7aa7442dd5645bbaf44f19f8be9873e62702c04af59709df28165f7b5640c",
+        "actual": "2db7aa7442dd5645bbaf44f19f8be9873e62702c04af59709df28165f7b5640c",
+        "matches": true
+      },
+      {
+        "path": "sources.json",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/sources.json",
+        "expected": "3eeec51b8536e99103464b5848b975c105d980261be072b52db3669767f88997",
+        "actual": "3eeec51b8536e99103464b5848b975c105d980261be072b52db3669767f88997",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/build/three.core.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/build/three.core.js",
+        "expected": "9edde002b066a9a05676a6127f67735b62baf399bdea529f2f7e31657da769e6",
+        "actual": "9edde002b066a9a05676a6127f67735b62baf399bdea529f2f7e31657da769e6",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/build/three.module.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/build/three.module.js",
+        "expected": "9052042d676cb0fdc1ddfefe193053f34b7ac0513a616fdac4535d49987812ea",
+        "actual": "9052042d676cb0fdc1ddfefe193053f34b7ac0513a616fdac4535d49987812ea",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/loaders/GLTFLoader.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/loaders/GLTFLoader.js",
+        "expected": "131c0f78c01d19368ae495caa65b3adaa10487810a36a05bb5901b769a35ac16",
+        "actual": "131c0f78c01d19368ae495caa65b3adaa10487810a36a05bb5901b769a35ac16",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/utils/BufferGeometryUtils.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/utils/BufferGeometryUtils.js",
+        "expected": "9fb63427ce6641fa14fd0baff9cc4d1b5f9c3d85fd084bf2e90e803c44ec1797",
+        "actual": "9fb63427ce6641fa14fd0baff9cc4d1b5f9c3d85fd084bf2e90e803c44ec1797",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/utils/SkeletonUtils.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/utils/SkeletonUtils.js",
+        "expected": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f",
+        "actual": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/LICENSE",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/LICENSE",
+        "expected": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+        "actual": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/RiggedSimple.gltf",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/RiggedSimple.gltf",
+        "expected": "dad924deb693a8d00e566ccc495042183cbc8c927c56d976ae760077321bca39",
+        "actual": "dad924deb693a8d00e566ccc495042183cbc8c927c56d976ae760077321bca39",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/LICENSE.md",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/LICENSE.md",
+        "expected": "4343fbd97e5ecfc4c872a85cb1d755a3006f8848e15135fd6c4534839909bdbb",
+        "actual": "4343fbd97e5ecfc4c872a85cb1d755a3006f8848e15135fd6c4534839909bdbb",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/metadata.json",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/metadata.json",
+        "expected": "ba12c1f9a24124bdfbd171528db2eece6edbb7c75a7192dadfb043212067c664",
+        "actual": "ba12c1f9a24124bdfbd171528db2eece6edbb7c75a7192dadfb043212067c664",
+        "matches": true
+      }
+    ]
+  },
+  {
+    "report": "asset-reference-green-first-0176f626-604f-44fe-8b95-6bc74e695b05.json",
+    "runId": "0176f626-604f-44fe-8b95-6bc74e695b05",
+    "label": "green-first",
+    "reportSha256": "2212b22e2b3e8ab4a2d72a96680f44c21e568cfafad092e78d37e0f93a20f510",
+    "checked": 17,
+    "mismatches": 0,
+    "sources": [
+      {
+        "path": "reference-chain.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/first-green/reference-chain.mjs",
+        "expected": "b993796a676943b4b642498f0c2df1f2f0c87965cfe33686329b2cd86fb3e7b7",
+        "actual": "b993796a676943b4b642498f0c2df1f2f0c87965cfe33686329b2cd86fb3e7b7",
+        "matches": true
+      },
+      {
+        "path": "ui-pass.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/first-green/ui-pass.mjs",
+        "expected": "3c95423e6a3d03e39adb146bcd354211789b16a4ee586fd567de58a159481b00",
+        "actual": "3c95423e6a3d03e39adb146bcd354211789b16a4ee586fd567de58a159481b00",
+        "matches": true
+      },
+      {
+        "path": "integration-tests.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/first-green/integration-tests.mjs",
+        "expected": "0c0080b137feaeca81e0533e4d45b1ca000e5710a006163dcd5e5f708c7f24d3",
+        "actual": "0c0080b137feaeca81e0533e4d45b1ca000e5710a006163dcd5e5f708c7f24d3",
+        "matches": true
+      },
+      {
+        "path": "probe.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/first-green/probe.js",
+        "expected": "586bbbf6a5c654fd9466950bd827baeb4219c80ff9c2f7c2f2b66a0453fe3b61",
+        "actual": "586bbbf6a5c654fd9466950bd827baeb4219c80ff9c2f7c2f2b66a0453fe3b61",
+        "matches": true
+      },
+      {
+        "path": "index.html",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/first-green/index.html",
+        "expected": "6d4e4b854eaaefb22534832754a2c2d9ef3077acbaa4c44af39b8d0e380ba818",
+        "actual": "6d4e4b854eaaefb22534832754a2c2d9ef3077acbaa4c44af39b8d0e380ba818",
+        "matches": true
+      },
+      {
+        "path": "server.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/first-green/server.mjs",
+        "expected": "45a873ef3b4417f174684c84d4be25beb2e1fee6099e59a1cad55ea2bf2ca027",
+        "actual": "45a873ef3b4417f174684c84d4be25beb2e1fee6099e59a1cad55ea2bf2ca027",
+        "matches": true
+      },
+      {
+        "path": "run-headless.cjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/first-green/run-headless.cjs",
+        "expected": "2db7aa7442dd5645bbaf44f19f8be9873e62702c04af59709df28165f7b5640c",
+        "actual": "2db7aa7442dd5645bbaf44f19f8be9873e62702c04af59709df28165f7b5640c",
+        "matches": true
+      },
+      {
+        "path": "sources.json",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/sources.json",
+        "expected": "3eeec51b8536e99103464b5848b975c105d980261be072b52db3669767f88997",
+        "actual": "3eeec51b8536e99103464b5848b975c105d980261be072b52db3669767f88997",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/build/three.core.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/build/three.core.js",
+        "expected": "9edde002b066a9a05676a6127f67735b62baf399bdea529f2f7e31657da769e6",
+        "actual": "9edde002b066a9a05676a6127f67735b62baf399bdea529f2f7e31657da769e6",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/build/three.module.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/build/three.module.js",
+        "expected": "9052042d676cb0fdc1ddfefe193053f34b7ac0513a616fdac4535d49987812ea",
+        "actual": "9052042d676cb0fdc1ddfefe193053f34b7ac0513a616fdac4535d49987812ea",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/loaders/GLTFLoader.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/loaders/GLTFLoader.js",
+        "expected": "131c0f78c01d19368ae495caa65b3adaa10487810a36a05bb5901b769a35ac16",
+        "actual": "131c0f78c01d19368ae495caa65b3adaa10487810a36a05bb5901b769a35ac16",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/utils/BufferGeometryUtils.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/utils/BufferGeometryUtils.js",
+        "expected": "9fb63427ce6641fa14fd0baff9cc4d1b5f9c3d85fd084bf2e90e803c44ec1797",
+        "actual": "9fb63427ce6641fa14fd0baff9cc4d1b5f9c3d85fd084bf2e90e803c44ec1797",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/utils/SkeletonUtils.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/utils/SkeletonUtils.js",
+        "expected": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f",
+        "actual": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/LICENSE",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/LICENSE",
+        "expected": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+        "actual": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/RiggedSimple.gltf",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/RiggedSimple.gltf",
+        "expected": "dad924deb693a8d00e566ccc495042183cbc8c927c56d976ae760077321bca39",
+        "actual": "dad924deb693a8d00e566ccc495042183cbc8c927c56d976ae760077321bca39",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/LICENSE.md",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/LICENSE.md",
+        "expected": "4343fbd97e5ecfc4c872a85cb1d755a3006f8848e15135fd6c4534839909bdbb",
+        "actual": "4343fbd97e5ecfc4c872a85cb1d755a3006f8848e15135fd6c4534839909bdbb",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/metadata.json",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/metadata.json",
+        "expected": "ba12c1f9a24124bdfbd171528db2eece6edbb7c75a7192dadfb043212067c664",
+        "actual": "ba12c1f9a24124bdfbd171528db2eece6edbb7c75a7192dadfb043212067c664",
+        "matches": true
+      }
+    ]
+  },
+  {
+    "report": "asset-reference-mutation-eager-release-ce803cdf-4986-4cf0-ae0b-c3da3d7db3cd.json",
+    "runId": "ce803cdf-4986-4cf0-ae0b-c3da3d7db3cd",
+    "label": "mutation-eager-release",
+    "reportSha256": "a7e19284c010c78ef11d10c9f1864796be74609ef85b4c8217f4ad1fa2e4e040",
+    "checked": 17,
+    "mismatches": 0,
+    "sources": [
+      {
+        "path": "reference-chain.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/mutation-eager-release/reference-chain.mjs",
+        "expected": "3c3505479ffdb6e85e8539be121f17a6465947c518a2dfc5e09fd78cca76c30a",
+        "actual": "3c3505479ffdb6e85e8539be121f17a6465947c518a2dfc5e09fd78cca76c30a",
+        "matches": true
+      },
+      {
+        "path": "ui-pass.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/mutation-eager-release/ui-pass.mjs",
+        "expected": "3c95423e6a3d03e39adb146bcd354211789b16a4ee586fd567de58a159481b00",
+        "actual": "3c95423e6a3d03e39adb146bcd354211789b16a4ee586fd567de58a159481b00",
+        "matches": true
+      },
+      {
+        "path": "integration-tests.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/mutation-eager-release/integration-tests.mjs",
+        "expected": "c083c6b21ea8bcaf7a7e4ff4f66b801ca288a0123904e3e9a92b99e75bbf8257",
+        "actual": "c083c6b21ea8bcaf7a7e4ff4f66b801ca288a0123904e3e9a92b99e75bbf8257",
+        "matches": true
+      },
+      {
+        "path": "probe.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/mutation-eager-release/probe.js",
+        "expected": "586bbbf6a5c654fd9466950bd827baeb4219c80ff9c2f7c2f2b66a0453fe3b61",
+        "actual": "586bbbf6a5c654fd9466950bd827baeb4219c80ff9c2f7c2f2b66a0453fe3b61",
+        "matches": true
+      },
+      {
+        "path": "index.html",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/mutation-eager-release/index.html",
+        "expected": "6d4e4b854eaaefb22534832754a2c2d9ef3077acbaa4c44af39b8d0e380ba818",
+        "actual": "6d4e4b854eaaefb22534832754a2c2d9ef3077acbaa4c44af39b8d0e380ba818",
+        "matches": true
+      },
+      {
+        "path": "server.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/mutation-eager-release/server.mjs",
+        "expected": "45a873ef3b4417f174684c84d4be25beb2e1fee6099e59a1cad55ea2bf2ca027",
+        "actual": "45a873ef3b4417f174684c84d4be25beb2e1fee6099e59a1cad55ea2bf2ca027",
+        "matches": true
+      },
+      {
+        "path": "run-headless.cjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/mutation-eager-release/run-headless.cjs",
+        "expected": "2db7aa7442dd5645bbaf44f19f8be9873e62702c04af59709df28165f7b5640c",
+        "actual": "2db7aa7442dd5645bbaf44f19f8be9873e62702c04af59709df28165f7b5640c",
+        "matches": true
+      },
+      {
+        "path": "sources.json",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/sources.json",
+        "expected": "3eeec51b8536e99103464b5848b975c105d980261be072b52db3669767f88997",
+        "actual": "3eeec51b8536e99103464b5848b975c105d980261be072b52db3669767f88997",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/build/three.core.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/build/three.core.js",
+        "expected": "9edde002b066a9a05676a6127f67735b62baf399bdea529f2f7e31657da769e6",
+        "actual": "9edde002b066a9a05676a6127f67735b62baf399bdea529f2f7e31657da769e6",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/build/three.module.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/build/three.module.js",
+        "expected": "9052042d676cb0fdc1ddfefe193053f34b7ac0513a616fdac4535d49987812ea",
+        "actual": "9052042d676cb0fdc1ddfefe193053f34b7ac0513a616fdac4535d49987812ea",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/loaders/GLTFLoader.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/loaders/GLTFLoader.js",
+        "expected": "131c0f78c01d19368ae495caa65b3adaa10487810a36a05bb5901b769a35ac16",
+        "actual": "131c0f78c01d19368ae495caa65b3adaa10487810a36a05bb5901b769a35ac16",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/utils/BufferGeometryUtils.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/utils/BufferGeometryUtils.js",
+        "expected": "9fb63427ce6641fa14fd0baff9cc4d1b5f9c3d85fd084bf2e90e803c44ec1797",
+        "actual": "9fb63427ce6641fa14fd0baff9cc4d1b5f9c3d85fd084bf2e90e803c44ec1797",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/utils/SkeletonUtils.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/utils/SkeletonUtils.js",
+        "expected": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f",
+        "actual": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/LICENSE",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/LICENSE",
+        "expected": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+        "actual": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/RiggedSimple.gltf",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/RiggedSimple.gltf",
+        "expected": "dad924deb693a8d00e566ccc495042183cbc8c927c56d976ae760077321bca39",
+        "actual": "dad924deb693a8d00e566ccc495042183cbc8c927c56d976ae760077321bca39",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/LICENSE.md",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/LICENSE.md",
+        "expected": "4343fbd97e5ecfc4c872a85cb1d755a3006f8848e15135fd6c4534839909bdbb",
+        "actual": "4343fbd97e5ecfc4c872a85cb1d755a3006f8848e15135fd6c4534839909bdbb",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/metadata.json",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/metadata.json",
+        "expected": "ba12c1f9a24124bdfbd171528db2eece6edbb7c75a7192dadfb043212067c664",
+        "actual": "ba12c1f9a24124bdfbd171528db2eece6edbb7c75a7192dadfb043212067c664",
+        "matches": true
+      }
+    ]
+  },
+  {
+    "report": "asset-reference-mutation-ignore-required-24a48ab4-155c-437f-a3d4-a5c5e34526c2.json",
+    "runId": "24a48ab4-155c-437f-a3d4-a5c5e34526c2",
+    "label": "mutation-ignore-required",
+    "reportSha256": "2a64fb382beaebc6d1ebf5f44fe88560e323acb31ab543003b0846e0dcb4fcd8",
+    "checked": 17,
+    "mismatches": 0,
+    "sources": [
+      {
+        "path": "reference-chain.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/mutation-ignore-required/reference-chain.mjs",
+        "expected": "ad57f6b7b53215f38980aa736518f27f586f71df86da60ea01c17c07336e00cc",
+        "actual": "ad57f6b7b53215f38980aa736518f27f586f71df86da60ea01c17c07336e00cc",
+        "matches": true
+      },
+      {
+        "path": "ui-pass.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/mutation-ignore-required/ui-pass.mjs",
+        "expected": "3c95423e6a3d03e39adb146bcd354211789b16a4ee586fd567de58a159481b00",
+        "actual": "3c95423e6a3d03e39adb146bcd354211789b16a4ee586fd567de58a159481b00",
+        "matches": true
+      },
+      {
+        "path": "integration-tests.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/mutation-ignore-required/integration-tests.mjs",
+        "expected": "c083c6b21ea8bcaf7a7e4ff4f66b801ca288a0123904e3e9a92b99e75bbf8257",
+        "actual": "c083c6b21ea8bcaf7a7e4ff4f66b801ca288a0123904e3e9a92b99e75bbf8257",
+        "matches": true
+      },
+      {
+        "path": "probe.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/mutation-ignore-required/probe.js",
+        "expected": "586bbbf6a5c654fd9466950bd827baeb4219c80ff9c2f7c2f2b66a0453fe3b61",
+        "actual": "586bbbf6a5c654fd9466950bd827baeb4219c80ff9c2f7c2f2b66a0453fe3b61",
+        "matches": true
+      },
+      {
+        "path": "index.html",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/mutation-ignore-required/index.html",
+        "expected": "6d4e4b854eaaefb22534832754a2c2d9ef3077acbaa4c44af39b8d0e380ba818",
+        "actual": "6d4e4b854eaaefb22534832754a2c2d9ef3077acbaa4c44af39b8d0e380ba818",
+        "matches": true
+      },
+      {
+        "path": "server.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/mutation-ignore-required/server.mjs",
+        "expected": "45a873ef3b4417f174684c84d4be25beb2e1fee6099e59a1cad55ea2bf2ca027",
+        "actual": "45a873ef3b4417f174684c84d4be25beb2e1fee6099e59a1cad55ea2bf2ca027",
+        "matches": true
+      },
+      {
+        "path": "run-headless.cjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/mutation-ignore-required/run-headless.cjs",
+        "expected": "2db7aa7442dd5645bbaf44f19f8be9873e62702c04af59709df28165f7b5640c",
+        "actual": "2db7aa7442dd5645bbaf44f19f8be9873e62702c04af59709df28165f7b5640c",
+        "matches": true
+      },
+      {
+        "path": "sources.json",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/sources.json",
+        "expected": "3eeec51b8536e99103464b5848b975c105d980261be072b52db3669767f88997",
+        "actual": "3eeec51b8536e99103464b5848b975c105d980261be072b52db3669767f88997",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/build/three.core.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/build/three.core.js",
+        "expected": "9edde002b066a9a05676a6127f67735b62baf399bdea529f2f7e31657da769e6",
+        "actual": "9edde002b066a9a05676a6127f67735b62baf399bdea529f2f7e31657da769e6",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/build/three.module.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/build/three.module.js",
+        "expected": "9052042d676cb0fdc1ddfefe193053f34b7ac0513a616fdac4535d49987812ea",
+        "actual": "9052042d676cb0fdc1ddfefe193053f34b7ac0513a616fdac4535d49987812ea",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/loaders/GLTFLoader.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/loaders/GLTFLoader.js",
+        "expected": "131c0f78c01d19368ae495caa65b3adaa10487810a36a05bb5901b769a35ac16",
+        "actual": "131c0f78c01d19368ae495caa65b3adaa10487810a36a05bb5901b769a35ac16",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/utils/BufferGeometryUtils.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/utils/BufferGeometryUtils.js",
+        "expected": "9fb63427ce6641fa14fd0baff9cc4d1b5f9c3d85fd084bf2e90e803c44ec1797",
+        "actual": "9fb63427ce6641fa14fd0baff9cc4d1b5f9c3d85fd084bf2e90e803c44ec1797",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/utils/SkeletonUtils.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/utils/SkeletonUtils.js",
+        "expected": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f",
+        "actual": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/LICENSE",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/LICENSE",
+        "expected": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+        "actual": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/RiggedSimple.gltf",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/RiggedSimple.gltf",
+        "expected": "dad924deb693a8d00e566ccc495042183cbc8c927c56d976ae760077321bca39",
+        "actual": "dad924deb693a8d00e566ccc495042183cbc8c927c56d976ae760077321bca39",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/LICENSE.md",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/LICENSE.md",
+        "expected": "4343fbd97e5ecfc4c872a85cb1d755a3006f8848e15135fd6c4534839909bdbb",
+        "actual": "4343fbd97e5ecfc4c872a85cb1d755a3006f8848e15135fd6c4534839909bdbb",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/metadata.json",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/metadata.json",
+        "expected": "ba12c1f9a24124bdfbd171528db2eece6edbb7c75a7192dadfb043212067c664",
+        "actual": "ba12c1f9a24124bdfbd171528db2eece6edbb7c75a7192dadfb043212067c664",
+        "matches": true
+      }
+    ]
+  },
+  {
+    "report": "asset-reference-mutation-no-reset-dd3cbf40-bff5-405c-b092-9ba3b1512be0.json",
+    "runId": "dd3cbf40-bff5-405c-b092-9ba3b1512be0",
+    "label": "mutation-no-reset",
+    "reportSha256": "23a7cce516f5ceb762a1529b24f03799dd06e35ea028c7f21d304b55ef33ac97",
+    "checked": 17,
+    "mismatches": 0,
+    "sources": [
+      {
+        "path": "reference-chain.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/mutation-no-reset/reference-chain.mjs",
+        "expected": "2e9cffca9e1eb3e639a1aa262736bfa9602043761ee71d0e11accea602955685",
+        "actual": "2e9cffca9e1eb3e639a1aa262736bfa9602043761ee71d0e11accea602955685",
+        "matches": true
+      },
+      {
+        "path": "ui-pass.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/mutation-no-reset/ui-pass.mjs",
+        "expected": "3c95423e6a3d03e39adb146bcd354211789b16a4ee586fd567de58a159481b00",
+        "actual": "3c95423e6a3d03e39adb146bcd354211789b16a4ee586fd567de58a159481b00",
+        "matches": true
+      },
+      {
+        "path": "integration-tests.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/mutation-no-reset/integration-tests.mjs",
+        "expected": "c083c6b21ea8bcaf7a7e4ff4f66b801ca288a0123904e3e9a92b99e75bbf8257",
+        "actual": "c083c6b21ea8bcaf7a7e4ff4f66b801ca288a0123904e3e9a92b99e75bbf8257",
+        "matches": true
+      },
+      {
+        "path": "probe.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/mutation-no-reset/probe.js",
+        "expected": "586bbbf6a5c654fd9466950bd827baeb4219c80ff9c2f7c2f2b66a0453fe3b61",
+        "actual": "586bbbf6a5c654fd9466950bd827baeb4219c80ff9c2f7c2f2b66a0453fe3b61",
+        "matches": true
+      },
+      {
+        "path": "index.html",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/mutation-no-reset/index.html",
+        "expected": "6d4e4b854eaaefb22534832754a2c2d9ef3077acbaa4c44af39b8d0e380ba818",
+        "actual": "6d4e4b854eaaefb22534832754a2c2d9ef3077acbaa4c44af39b8d0e380ba818",
+        "matches": true
+      },
+      {
+        "path": "server.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/mutation-no-reset/server.mjs",
+        "expected": "45a873ef3b4417f174684c84d4be25beb2e1fee6099e59a1cad55ea2bf2ca027",
+        "actual": "45a873ef3b4417f174684c84d4be25beb2e1fee6099e59a1cad55ea2bf2ca027",
+        "matches": true
+      },
+      {
+        "path": "run-headless.cjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/mutation-no-reset/run-headless.cjs",
+        "expected": "2db7aa7442dd5645bbaf44f19f8be9873e62702c04af59709df28165f7b5640c",
+        "actual": "2db7aa7442dd5645bbaf44f19f8be9873e62702c04af59709df28165f7b5640c",
+        "matches": true
+      },
+      {
+        "path": "sources.json",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/sources.json",
+        "expected": "3eeec51b8536e99103464b5848b975c105d980261be072b52db3669767f88997",
+        "actual": "3eeec51b8536e99103464b5848b975c105d980261be072b52db3669767f88997",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/build/three.core.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/build/three.core.js",
+        "expected": "9edde002b066a9a05676a6127f67735b62baf399bdea529f2f7e31657da769e6",
+        "actual": "9edde002b066a9a05676a6127f67735b62baf399bdea529f2f7e31657da769e6",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/build/three.module.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/build/three.module.js",
+        "expected": "9052042d676cb0fdc1ddfefe193053f34b7ac0513a616fdac4535d49987812ea",
+        "actual": "9052042d676cb0fdc1ddfefe193053f34b7ac0513a616fdac4535d49987812ea",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/loaders/GLTFLoader.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/loaders/GLTFLoader.js",
+        "expected": "131c0f78c01d19368ae495caa65b3adaa10487810a36a05bb5901b769a35ac16",
+        "actual": "131c0f78c01d19368ae495caa65b3adaa10487810a36a05bb5901b769a35ac16",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/utils/BufferGeometryUtils.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/utils/BufferGeometryUtils.js",
+        "expected": "9fb63427ce6641fa14fd0baff9cc4d1b5f9c3d85fd084bf2e90e803c44ec1797",
+        "actual": "9fb63427ce6641fa14fd0baff9cc4d1b5f9c3d85fd084bf2e90e803c44ec1797",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/utils/SkeletonUtils.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/utils/SkeletonUtils.js",
+        "expected": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f",
+        "actual": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/LICENSE",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/LICENSE",
+        "expected": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+        "actual": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/RiggedSimple.gltf",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/RiggedSimple.gltf",
+        "expected": "dad924deb693a8d00e566ccc495042183cbc8c927c56d976ae760077321bca39",
+        "actual": "dad924deb693a8d00e566ccc495042183cbc8c927c56d976ae760077321bca39",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/LICENSE.md",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/LICENSE.md",
+        "expected": "4343fbd97e5ecfc4c872a85cb1d755a3006f8848e15135fd6c4534839909bdbb",
+        "actual": "4343fbd97e5ecfc4c872a85cb1d755a3006f8848e15135fd6c4534839909bdbb",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/metadata.json",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/metadata.json",
+        "expected": "ba12c1f9a24124bdfbd171528db2eece6edbb7c75a7192dadfb043212067c664",
+        "actual": "ba12c1f9a24124bdfbd171528db2eece6edbb7c75a7192dadfb043212067c664",
+        "matches": true
+      }
+    ]
+  },
+  {
+    "report": "asset-reference-mutation-no-ui-restore-5adc55f4-6335-431c-b198-25617d40d8b9.json",
+    "runId": "5adc55f4-6335-431c-b198-25617d40d8b9",
+    "label": "mutation-no-ui-restore",
+    "reportSha256": "d7101abb2c8f6021b36bbe325be97f9a87c102943a8671f94f6b34d9c8fcb1d0",
+    "checked": 17,
+    "mismatches": 0,
+    "sources": [
+      {
+        "path": "reference-chain.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/mutation-no-ui-restore/reference-chain.mjs",
+        "expected": "9d8a0d72f8d4ad7b3d92f6508b5dc1cc8c4c22aaab719acf2f407cc113dc1fa5",
+        "actual": "9d8a0d72f8d4ad7b3d92f6508b5dc1cc8c4c22aaab719acf2f407cc113dc1fa5",
+        "matches": true
+      },
+      {
+        "path": "ui-pass.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/mutation-no-ui-restore/ui-pass.mjs",
+        "expected": "3c95423e6a3d03e39adb146bcd354211789b16a4ee586fd567de58a159481b00",
+        "actual": "3c95423e6a3d03e39adb146bcd354211789b16a4ee586fd567de58a159481b00",
+        "matches": true
+      },
+      {
+        "path": "integration-tests.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/mutation-no-ui-restore/integration-tests.mjs",
+        "expected": "c083c6b21ea8bcaf7a7e4ff4f66b801ca288a0123904e3e9a92b99e75bbf8257",
+        "actual": "c083c6b21ea8bcaf7a7e4ff4f66b801ca288a0123904e3e9a92b99e75bbf8257",
+        "matches": true
+      },
+      {
+        "path": "probe.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/mutation-no-ui-restore/probe.js",
+        "expected": "586bbbf6a5c654fd9466950bd827baeb4219c80ff9c2f7c2f2b66a0453fe3b61",
+        "actual": "586bbbf6a5c654fd9466950bd827baeb4219c80ff9c2f7c2f2b66a0453fe3b61",
+        "matches": true
+      },
+      {
+        "path": "index.html",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/mutation-no-ui-restore/index.html",
+        "expected": "6d4e4b854eaaefb22534832754a2c2d9ef3077acbaa4c44af39b8d0e380ba818",
+        "actual": "6d4e4b854eaaefb22534832754a2c2d9ef3077acbaa4c44af39b8d0e380ba818",
+        "matches": true
+      },
+      {
+        "path": "server.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/mutation-no-ui-restore/server.mjs",
+        "expected": "45a873ef3b4417f174684c84d4be25beb2e1fee6099e59a1cad55ea2bf2ca027",
+        "actual": "45a873ef3b4417f174684c84d4be25beb2e1fee6099e59a1cad55ea2bf2ca027",
+        "matches": true
+      },
+      {
+        "path": "run-headless.cjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/mutation-no-ui-restore/run-headless.cjs",
+        "expected": "2db7aa7442dd5645bbaf44f19f8be9873e62702c04af59709df28165f7b5640c",
+        "actual": "2db7aa7442dd5645bbaf44f19f8be9873e62702c04af59709df28165f7b5640c",
+        "matches": true
+      },
+      {
+        "path": "sources.json",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/sources.json",
+        "expected": "3eeec51b8536e99103464b5848b975c105d980261be072b52db3669767f88997",
+        "actual": "3eeec51b8536e99103464b5848b975c105d980261be072b52db3669767f88997",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/build/three.core.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/build/three.core.js",
+        "expected": "9edde002b066a9a05676a6127f67735b62baf399bdea529f2f7e31657da769e6",
+        "actual": "9edde002b066a9a05676a6127f67735b62baf399bdea529f2f7e31657da769e6",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/build/three.module.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/build/three.module.js",
+        "expected": "9052042d676cb0fdc1ddfefe193053f34b7ac0513a616fdac4535d49987812ea",
+        "actual": "9052042d676cb0fdc1ddfefe193053f34b7ac0513a616fdac4535d49987812ea",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/loaders/GLTFLoader.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/loaders/GLTFLoader.js",
+        "expected": "131c0f78c01d19368ae495caa65b3adaa10487810a36a05bb5901b769a35ac16",
+        "actual": "131c0f78c01d19368ae495caa65b3adaa10487810a36a05bb5901b769a35ac16",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/utils/BufferGeometryUtils.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/utils/BufferGeometryUtils.js",
+        "expected": "9fb63427ce6641fa14fd0baff9cc4d1b5f9c3d85fd084bf2e90e803c44ec1797",
+        "actual": "9fb63427ce6641fa14fd0baff9cc4d1b5f9c3d85fd084bf2e90e803c44ec1797",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/utils/SkeletonUtils.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/utils/SkeletonUtils.js",
+        "expected": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f",
+        "actual": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/LICENSE",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/LICENSE",
+        "expected": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+        "actual": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/RiggedSimple.gltf",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/RiggedSimple.gltf",
+        "expected": "dad924deb693a8d00e566ccc495042183cbc8c927c56d976ae760077321bca39",
+        "actual": "dad924deb693a8d00e566ccc495042183cbc8c927c56d976ae760077321bca39",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/LICENSE.md",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/LICENSE.md",
+        "expected": "4343fbd97e5ecfc4c872a85cb1d755a3006f8848e15135fd6c4534839909bdbb",
+        "actual": "4343fbd97e5ecfc4c872a85cb1d755a3006f8848e15135fd6c4534839909bdbb",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/metadata.json",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/metadata.json",
+        "expected": "ba12c1f9a24124bdfbd171528db2eece6edbb7c75a7192dadfb043212067c664",
+        "actual": "ba12c1f9a24124bdfbd171528db2eece6edbb7c75a7192dadfb043212067c664",
+        "matches": true
+      }
+    ]
+  },
+  {
+    "report": "asset-reference-red-3966c2c1-6a8d-4e80-a47c-5112b35b5bfa.json",
+    "runId": "3966c2c1-6a8d-4e80-a47c-5112b35b5bfa",
+    "label": "red",
+    "reportSha256": "7e5af9e51df97cf765cd1a3493a39338854d5272632206f7842ea4f33b1a4f4d",
+    "checked": 16,
+    "mismatches": 0,
+    "sources": [
+      {
+        "path": "reference-chain.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/red-favicon-noise/reference-chain.mjs",
+        "expected": "0436f3a3bb26d9c53a7ac881a965a3a3a94976b6a63272c454d77010f6dafb22",
+        "actual": "0436f3a3bb26d9c53a7ac881a965a3a3a94976b6a63272c454d77010f6dafb22",
+        "matches": true
+      },
+      {
+        "path": "integration-tests.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/red-favicon-noise/integration-tests.mjs",
+        "expected": "0c0080b137feaeca81e0533e4d45b1ca000e5710a006163dcd5e5f708c7f24d3",
+        "actual": "0c0080b137feaeca81e0533e4d45b1ca000e5710a006163dcd5e5f708c7f24d3",
+        "matches": true
+      },
+      {
+        "path": "probe.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/red-favicon-noise/probe.js",
+        "expected": "586bbbf6a5c654fd9466950bd827baeb4219c80ff9c2f7c2f2b66a0453fe3b61",
+        "actual": "586bbbf6a5c654fd9466950bd827baeb4219c80ff9c2f7c2f2b66a0453fe3b61",
+        "matches": true
+      },
+      {
+        "path": "index.html",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/red-favicon-noise/index.html",
+        "expected": "181238ec7d1790c1511290bb7ca201c64eff508f9e7306e5e509730251cd107e",
+        "actual": "181238ec7d1790c1511290bb7ca201c64eff508f9e7306e5e509730251cd107e",
+        "matches": true
+      },
+      {
+        "path": "server.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/red-favicon-noise/server.mjs",
+        "expected": "45a873ef3b4417f174684c84d4be25beb2e1fee6099e59a1cad55ea2bf2ca027",
+        "actual": "45a873ef3b4417f174684c84d4be25beb2e1fee6099e59a1cad55ea2bf2ca027",
+        "matches": true
+      },
+      {
+        "path": "run-headless.cjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/red-favicon-noise/run-headless.cjs",
+        "expected": "2db7aa7442dd5645bbaf44f19f8be9873e62702c04af59709df28165f7b5640c",
+        "actual": "2db7aa7442dd5645bbaf44f19f8be9873e62702c04af59709df28165f7b5640c",
+        "matches": true
+      },
+      {
+        "path": "sources.json",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/sources.json",
+        "expected": "3eeec51b8536e99103464b5848b975c105d980261be072b52db3669767f88997",
+        "actual": "3eeec51b8536e99103464b5848b975c105d980261be072b52db3669767f88997",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/build/three.core.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/build/three.core.js",
+        "expected": "9edde002b066a9a05676a6127f67735b62baf399bdea529f2f7e31657da769e6",
+        "actual": "9edde002b066a9a05676a6127f67735b62baf399bdea529f2f7e31657da769e6",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/build/three.module.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/build/three.module.js",
+        "expected": "9052042d676cb0fdc1ddfefe193053f34b7ac0513a616fdac4535d49987812ea",
+        "actual": "9052042d676cb0fdc1ddfefe193053f34b7ac0513a616fdac4535d49987812ea",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/loaders/GLTFLoader.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/loaders/GLTFLoader.js",
+        "expected": "131c0f78c01d19368ae495caa65b3adaa10487810a36a05bb5901b769a35ac16",
+        "actual": "131c0f78c01d19368ae495caa65b3adaa10487810a36a05bb5901b769a35ac16",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/utils/BufferGeometryUtils.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/utils/BufferGeometryUtils.js",
+        "expected": "9fb63427ce6641fa14fd0baff9cc4d1b5f9c3d85fd084bf2e90e803c44ec1797",
+        "actual": "9fb63427ce6641fa14fd0baff9cc4d1b5f9c3d85fd084bf2e90e803c44ec1797",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/utils/SkeletonUtils.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/utils/SkeletonUtils.js",
+        "expected": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f",
+        "actual": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/LICENSE",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/LICENSE",
+        "expected": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+        "actual": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/RiggedSimple.gltf",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/RiggedSimple.gltf",
+        "expected": "dad924deb693a8d00e566ccc495042183cbc8c927c56d976ae760077321bca39",
+        "actual": "dad924deb693a8d00e566ccc495042183cbc8c927c56d976ae760077321bca39",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/LICENSE.md",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/LICENSE.md",
+        "expected": "4343fbd97e5ecfc4c872a85cb1d755a3006f8848e15135fd6c4534839909bdbb",
+        "actual": "4343fbd97e5ecfc4c872a85cb1d755a3006f8848e15135fd6c4534839909bdbb",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/metadata.json",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/metadata.json",
+        "expected": "ba12c1f9a24124bdfbd171528db2eece6edbb7c75a7192dadfb043212067c664",
+        "actual": "ba12c1f9a24124bdfbd171528db2eece6edbb7c75a7192dadfb043212067c664",
+        "matches": true
+      }
+    ]
+  },
+  {
+    "report": "asset-reference-red-clean-4852e532-7bff-40a8-b13e-dcc29cdb4022.json",
+    "runId": "4852e532-7bff-40a8-b13e-dcc29cdb4022",
+    "label": "red-clean",
+    "reportSha256": "caac7088fb9c15198587e8df8e59ace9ebabe5e509eea6e4d86839b9123e0158",
+    "checked": 16,
+    "mismatches": 0,
+    "sources": [
+      {
+        "path": "reference-chain.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/red/reference-chain.mjs",
+        "expected": "0436f3a3bb26d9c53a7ac881a965a3a3a94976b6a63272c454d77010f6dafb22",
+        "actual": "0436f3a3bb26d9c53a7ac881a965a3a3a94976b6a63272c454d77010f6dafb22",
+        "matches": true
+      },
+      {
+        "path": "integration-tests.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/red/integration-tests.mjs",
+        "expected": "0c0080b137feaeca81e0533e4d45b1ca000e5710a006163dcd5e5f708c7f24d3",
+        "actual": "0c0080b137feaeca81e0533e4d45b1ca000e5710a006163dcd5e5f708c7f24d3",
+        "matches": true
+      },
+      {
+        "path": "probe.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/red/probe.js",
+        "expected": "586bbbf6a5c654fd9466950bd827baeb4219c80ff9c2f7c2f2b66a0453fe3b61",
+        "actual": "586bbbf6a5c654fd9466950bd827baeb4219c80ff9c2f7c2f2b66a0453fe3b61",
+        "matches": true
+      },
+      {
+        "path": "index.html",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/red/index.html",
+        "expected": "6d4e4b854eaaefb22534832754a2c2d9ef3077acbaa4c44af39b8d0e380ba818",
+        "actual": "6d4e4b854eaaefb22534832754a2c2d9ef3077acbaa4c44af39b8d0e380ba818",
+        "matches": true
+      },
+      {
+        "path": "server.mjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/red/server.mjs",
+        "expected": "45a873ef3b4417f174684c84d4be25beb2e1fee6099e59a1cad55ea2bf2ca027",
+        "actual": "45a873ef3b4417f174684c84d4be25beb2e1fee6099e59a1cad55ea2bf2ca027",
+        "matches": true
+      },
+      {
+        "path": "run-headless.cjs",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/history/red/run-headless.cjs",
+        "expected": "2db7aa7442dd5645bbaf44f19f8be9873e62702c04af59709df28165f7b5640c",
+        "actual": "2db7aa7442dd5645bbaf44f19f8be9873e62702c04af59709df28165f7b5640c",
+        "matches": true
+      },
+      {
+        "path": "sources.json",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/sources.json",
+        "expected": "3eeec51b8536e99103464b5848b975c105d980261be072b52db3669767f88997",
+        "actual": "3eeec51b8536e99103464b5848b975c105d980261be072b52db3669767f88997",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/build/three.core.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/build/three.core.js",
+        "expected": "9edde002b066a9a05676a6127f67735b62baf399bdea529f2f7e31657da769e6",
+        "actual": "9edde002b066a9a05676a6127f67735b62baf399bdea529f2f7e31657da769e6",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/build/three.module.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/build/three.module.js",
+        "expected": "9052042d676cb0fdc1ddfefe193053f34b7ac0513a616fdac4535d49987812ea",
+        "actual": "9052042d676cb0fdc1ddfefe193053f34b7ac0513a616fdac4535d49987812ea",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/loaders/GLTFLoader.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/loaders/GLTFLoader.js",
+        "expected": "131c0f78c01d19368ae495caa65b3adaa10487810a36a05bb5901b769a35ac16",
+        "actual": "131c0f78c01d19368ae495caa65b3adaa10487810a36a05bb5901b769a35ac16",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/utils/BufferGeometryUtils.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/utils/BufferGeometryUtils.js",
+        "expected": "9fb63427ce6641fa14fd0baff9cc4d1b5f9c3d85fd084bf2e90e803c44ec1797",
+        "actual": "9fb63427ce6641fa14fd0baff9cc4d1b5f9c3d85fd084bf2e90e803c44ec1797",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/examples/jsm/utils/SkeletonUtils.js",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/examples/jsm/utils/SkeletonUtils.js",
+        "expected": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f",
+        "actual": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f",
+        "matches": true
+      },
+      {
+        "path": "vendor/three/r186/LICENSE",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/vendor/three/r186/LICENSE",
+        "expected": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+        "actual": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/RiggedSimple.gltf",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/RiggedSimple.gltf",
+        "expected": "dad924deb693a8d00e566ccc495042183cbc8c927c56d976ae760077321bca39",
+        "actual": "dad924deb693a8d00e566ccc495042183cbc8c927c56d976ae760077321bca39",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/LICENSE.md",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/LICENSE.md",
+        "expected": "4343fbd97e5ecfc4c872a85cb1d755a3006f8848e15135fd6c4534839909bdbb",
+        "actual": "4343fbd97e5ecfc4c872a85cb1d755a3006f8848e15135fd6c4534839909bdbb",
+        "matches": true
+      },
+      {
+        "path": "assets/RiggedSimple/metadata.json",
+        "snapshot": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/assets/RiggedSimple/metadata.json",
+        "expected": "ba12c1f9a24124bdfbd171528db2eece6edbb7c75a7192dadfb043212067c664",
+        "actual": "ba12c1f9a24124bdfbd171528db2eece6edbb7c75a7192dadfb043212067c664",
+        "matches": true
+      }
+    ]
+  }
+]

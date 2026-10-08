@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "experiment": "independent_batch_state_probe",
+  "checkedAtUtc": "2026-10-08T06:02:15.678Z",
+  "environment": {
+    "node": "v24.19.0",
+    "platform": "win32"
+  },
+  "counts": {
+    "total": 8,
+    "passed": 5,
+    "failed": 3
+  },
+  "results": [
+    {
+      "name": "Clip changes cannot borrow another batch clip",
+      "status": "failed",
+      "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  [\n+   1,\n    0,\n    0,\n    1,\n    1,\n    0,\n...\n    1,\n-   1,\n-   1,\n    0,\n    0,\n-   1,\n-   1,\n    0,\n    0,\n-   1,\n-   1,\n    0,\n    0,\n-   1,\n-   1,\n    0,\n    0,\n-   1,\n    0,\n    0,\n-   1,\n-   1,\n    0,\n    0,\n-   1,\n-   1,\n    0,\n    0,\n-   1,\n-   1,\n    0,\n    0,\n    1,\n-   1,\n-   1,\n    0,\n    0,\n    1,\n    1,\n    0,\n...\n    0,\n-   1,\n-   1,\n    0,\n    0,\n-   1,\n-   1,\n    0,\n    0,\n-   1,\n-   1,\n    0,\n    0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0,\n    1,\n-   1,\n-   1,\n    0,\n    0,\n    1,\n    1,\n    0,\n...\n    0,\n-   1,\n-   1,\n    0,\n    0,\n-   1,\n-   1,\n    0,\n    0,\n-   1,\n-   1,\n    0,\n    0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0,\n    1,\n-   1,\n-   1,\n    0,\n    0,\n    1,\n    1,\n    0,\n...\n    0,\n-   1,\n-   1,\n    0,\n    0,\n-   1,\n-   1,\n    0,\n    0,\n-   1,\n-   1,\n    0,\n    0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0,\n    1,\n-   1,\n-   1,\n    0,\n    0,\n    1,\n    1,\n    0,\n...\n    0,\n-   1,\n-   1,\n    0,\n    0,\n-   1,\n-   1,\n    0,\n    0,\n-   1,\n-   1,\n    0,\n    0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0,\n    1,\n-   1,\n-   1,\n    0,\n    0,\n    1,\n    1,\n    0,\n...\n    0,\n-   1,\n-   1,\n    0,\n    0,\n-   1,\n-   1,\n    0,\n    0,\n-   1,\n-   1,\n    0,\n    0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0,\n    1,\n-   1,\n-   1,\n    0,\n    0,\n    1,\n    1,\n    0,\n...\n    0,\n-   1,\n-   1,\n    0,\n    0,\n-   1,\n-   1,\n    0,\n    0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0,\n    1,\n-   1,\n    0,\n    0,\n    1,\n    1,\n-   1,\n    0,\n    0,\n    1,\n    1,\n    0,\n...\n    1,\n-   1,\n    0,\n    0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0,\n+   0\n-   1\n  ]\n"
+    },
+    {
+      "name": "Additive and straight alpha cannot share one pipeline",
+      "status": "failed",
+      "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n  [\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75,\n+   0.25,\n    0.5,\n-   0.5,\n    0,\n    0.75\n  ]\n"
+    },
+    {
+      "name": "Texture boundaries affect actual sampled color",
+      "status": "passed",
+      "observations": {}
+    },
+    {
+      "name": "Compatible adjacent geometry can share a draw batch without reordering",
+      "status": "passed",
+      "observations": {}
+    },
+    {
+      "name": "Vertex capacity splits geometry without changing output",
+      "status": "passed",
+      "observations": {}
+    },
+    {
+      "name": "Unsupported pipeline and malformed clip are rejected before batching",
+      "status": "failed",
+      "error": "Missing expected exception."
+    },
+    {
+      "name": "Seeded independent batch consumer equals full per-command oracle",
+      "status": "passed",
+      "observations": {
+        "scenes": 100,
+        "commandsPerScene": 24,
+        "seed": 20261008,
+        "reference": "independent_pixel_first_per_command"
+      }
+    },
+    {
+      "name": "Global texture sort still has a transparent-order counterexample",
+      "status": "passed",
+      "observations": {
+        "original": [
+          0.125,
+          0.05,
+          0.5,
+          0.875
+        ],
+        "incorrect": [
+          0.25,
+          0.025,
+          0.5,
+          0.875
+        ]
+      }
+    }
+  ],
+  "sourceHashes": [
+    {
+      "path": "model.mjs",
+      "sha256": "48908967c96f8b7376d50d45b170a27fbe91ad0d23293297d76f0c7c74656012"
+    },
+    {
+      "path": "run.mjs",
+      "sha256": "fded4a468c3df5b9ebe1e6cc46dcae902e04e2b8eb019feedd038cb2ccd886ef"
+    }
+  ],
+  "limitations": [
+    "Finite rectangle, single-texel, straight/additive alpha model only.",
+    "Independent CPU consumer uses batch header state; no arbitrary mask/filter/stencil or full material system.",
+    "No GPU timing, engine performance or production host acceptance."
+  ]
+}

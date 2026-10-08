@@ -1,0 +1,123 @@
+{
+  "checkedAtUtc": "2026-10-08T08:46:02.669Z",
+  "scope": "Finite reference-chain code/source review and root fresh replay, authorizing local KB integration only; no production architecture approval or product acceptance.",
+  "canIntegrate": true,
+  "rootRunId": "d642177d-b007-4c0e-80a2-0f85e150d0c0",
+  "counts": {
+    "executed": 17,
+    "passed": 17,
+    "failed": 0
+  },
+  "currentSourceHashesMatched": 19,
+  "reviewedSourceFilesMatched": 10,
+  "reviewVerdicts": {
+    "spec": "pass_with_stated_scope",
+    "quality": "acceptable_with_stated_limits"
+  },
+  "previous04HashesMatched": 150,
+  "retainedReports": 47,
+  "retainedSourceHashEntriesMatched": 835,
+  "knowledgeBaseVersion": "0.5.0",
+  "designDocumentVersion": "0.4_candidate",
+  "reviewedDocumentHashes": [
+    {
+      "path": "README.md",
+      "sha256": "b039a9def71747e7b260ed9a3e42a60e0f603434e326f6e7f143fad35404d7fa"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "sha256": "70021cbeccfa51ace79901ac009caf36809faf2732d20911224467b88ac5195d"
+    },
+    {
+      "path": "当前版本.json",
+      "sha256": "f70487213abf2b1678ac6fcab1e42f7d38bd8d3d418d3fdc9098a46471a18b96"
+    },
+    {
+      "path": "registry/需求.json",
+      "sha256": "3cd34bbe9ffb9b5d093cd8d9c15f561b06b43187a44bdd6699bff33b4fedcdc8"
+    },
+    {
+      "path": "registry/决策.json",
+      "sha256": "73c868316a5a6cbde7e821fb6dbb32ddd8975914dbb9f664a058fccc39f33190"
+    },
+    {
+      "path": "registry/假设.json",
+      "sha256": "560b55fff736a542a895ece4f2605a016e260491cb5594ff4df8c30ac3aefdd6"
+    },
+    {
+      "path": "registry/交付.json",
+      "sha256": "5b213dd8b648ba2600beb8a801eb424d64062cd65383a2a6da33b9b801538e65"
+    },
+    {
+      "path": "registry/来源.json",
+      "sha256": "6af82466b29285ea2a6605ad945f028489ad8867f749979c7849ce6d6faacf66"
+    },
+    {
+      "path": "docs/技术白皮书.md",
+      "sha256": "e46488f159596660b3744455fcc56e23eb24ed33232df10569779a750d505d8c"
+    },
+    {
+      "path": "docs/产品需求说明书.md",
+      "sha256": "553d5ad60cd6204e628641a0a993cc0e4581c19dece4d5b7ea2f70795703a8cf"
+    },
+    {
+      "path": "docs/工程规划.md",
+      "sha256": "8e3710a13821154fc976e31023820c6fdc1c348dae64573443880d0f7c1cfdb9"
+    },
+    {
+      "path": "docs/交付计划.md",
+      "sha256": "8202a63fc8180b8eb6b307176fc2f827770bbb50f4ad5294ec1670f6d5049d42"
+    },
+    {
+      "path": "docs/开源参考实现与采用方案.md",
+      "sha256": "44b940444e7c86cad7471567e3bfc6d806cc86866f00234a15f9bbe300c593b1"
+    },
+    {
+      "path": "docs/技术架构.md",
+      "sha256": "71284a59dd919e40bb5d863e48a20b0560cab0bacacc1f6ffc3b687cb94245e3"
+    },
+    {
+      "path": "docs/渲染引擎与运行时.md",
+      "sha256": "9e72e17909dc547441fcdb038d0396da8b92067c1f2ba33131252837137913cb"
+    },
+    {
+      "path": "docs/第三轮集成计划.md",
+      "sha256": "07ebe6b1c7d5f0cb426f48827971d7f03c6676cfe5f29e9693654c6eb719aa15"
+    },
+    {
+      "path": "docs/第三轮集成记录.md",
+      "sha256": "63ca2d183b133e3995e1b4ed28febf250b6971cfa702a03634712ca4092638e6"
+    },
+    {
+      "path": "docs/第三轮审计.md",
+      "sha256": "f9246218ef0fad90414e25eb8c4868c392b27f07f568c510b9562a21093f94ee"
+    }
+  ],
+  "documentationReview": {
+    "status": "passed_with_stated_scope",
+    "artifact": "evidence/asset-reference-document-review.json",
+    "initialArtifact": "evidence/asset-reference-document-review-initial.json",
+    "reviewedFiles": 18,
+    "independentAIReviewOnly": true
+  },
+  "method": {
+    "freshBrowserReferenceRun": true,
+    "codeReviewReadOnly": true,
+    "sourceReviewReadOnly": true,
+    "oldExperimentsRerun": false,
+    "upstreamTestSuiteRun": false,
+    "enginePerformanceAcceptance": false,
+    "phoneOrProductionHostAcceptance": false,
+    "creatorOrMigrationAcceptance": false
+  },
+  "historicalReviewBinding": {
+    "artifact": "evidence/reference-independent-audit.json",
+    "knowledgeBaseVersion": "0.4.0",
+    "meaning": "Old reviewedDocumentHashes bind preserved 0.4.0 bytes, not current 0.5.0 prose"
+  },
+  "limits": [
+    "Finite single-asset reference chain only; no production decision or supported performance hypothesis.",
+    "Hash/structure/source reviews do not prove complete licensing/security or heap retention.",
+    "47 retained reports/835 source entries include repeats and copies; counts are not added to main17cases."
+  ]
+}

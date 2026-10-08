@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "reviewStage": "initial independent review",
+  "scope": "Added reference chain against preserved 0.4.0 baseline; actual authored code, tests, server, runner, source audit and historical evidence. Static read-only review and Node metadata/hash verification only; reviewer did not execute third-party/browser code.",
+  "specCompliance": {"verdict": "changes_required", "reason": "The tested chain meets the main asset, sharing, handoff, text and restore requirements, but the demo can violate single-frame ownership and late-owner disposal. Initialization failure can strand already-owned renderer/UI resources."},
+  "quality": {"verdict": "changes_required", "reason": "Two bounded lifecycle corrections are necessary before accepting the reference implementation. Green evidence is valid for its executed cases, which omit these paths."},
+  "necessaryCorrections": [
+    {
+      "id": "R1",
+      "priority": "P2",
+      "path": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/probe.js",
+      "line": 12,
+      "relatedLines": [13],
+      "title": "Own a pending demo start and invalidate it on stop/pagehide",
+      "trigger": "Click the demo button twice before createReferenceChain resolves, or dispatch pagehide while the first load is pending.",
+      "evidence": "demoChain is assigned only after await; both clicks see no owner and each creates a renderer on the same canvas and schedules RAF. The second assignment loses the first chain without disposing it. Both tick closures read the global demoChain and overwrite the single raf id. Stop cancels only one loop; the other can read null and throw. pagehide similarly sees no chain during loading and does not invalidate the pending result.",
+      "correction": "Represent pending ownership explicitly, use an AbortController/generation guard through loading and pagehide, prevent duplicate starts, dispose any stale result, and tie the sole RAF to its captured active owner. Handle creation failure and restore button state. Keep this a small demo lifecycle fix.",
+      "validation": "Add observable regressions for two starts before resolution and pagehide during a delayed real load. Assert one active owner/RAF at most, stale owner cleanup, no post-stop scheduling and no page errors. Exercise the actual demo handler, not only createReferenceChain."
+    },
+    {
+      "id": "R2",
+      "priority": "P2",
+      "path": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/reference-chain.mjs",
+      "line": 27,
+      "relatedPaths": [{"path": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/ui-pass.mjs", "lines": [6, 15, 37]}],
+      "title": "Clean up the resources already acquired when initialization rejects",
+      "trigger": "After a real asset parses and renderer construction succeeds, UI shader compilation/linking or initial Canvas text setup throws.",
+      "evidence": "createUIPass runs before the owner dispose function/listeners are installed and without a catch/finally cleanup. Its own shader helper throws without deleting a failed shader; init and initial setText have no rollback for shader/program/VAO/texture already allocated. Rejection leaves the caller with no chain to dispose while the renderer's canvas context listeners remain attached. Renderer construction errors also bypass parsed-bundle cleanup.",
+      "correction": "Add bounded transactional initialization cleanup for the resources this adapter owns: parsed bundle, successfully constructed renderer, and partial UI allocation. Preserve the original failure and remove renderer listeners via its public dispose when construction completed. Make createUIPass unwind its own partial allocations. No exhaustive upstream parser/OOM framework is requested.",
+      "validation": "Use one controlled UI initialization failure after a real parse/renderer allocation; observe parsed resource disposal, renderer cleanup/listener removal and deletion of partial UI resources, while retaining the original rejection reason. Include an early failed shader cleanup assertion."
+    }
+  ],
+  "reviewedFileHashes": [
+    {"path":"reference-chain.mjs","sha256":"2527e55344d0c59762598e6fdd1e746d150469f5812b6611c20e9cd3c3ba2652"},
+    {"path":"ui-pass.mjs","sha256":"3c95423e6a3d03e39adb146bcd354211789b16a4ee586fd567de58a159481b00"},
+    {"path":"integration-tests.mjs","sha256":"c083c6b21ea8bcaf7a7e4ff4f66b801ca288a0123904e3e9a92b99e75bbf8257"},
+    {"path":"probe.js","sha256":"e344c9e9edb72416765b8d49f75df8a55acf045c7ab01c85e29c5a2a3f4fe150"},
+    {"path":"index.html","sha256":"6d4e4b854eaaefb22534832754a2c2d9ef3077acbaa4c44af39b8d0e380ba818"},
+    {"path":"server.mjs","sha256":"45a873ef3b4417f174684c84d4be25beb2e1fee6099e59a1cad55ea2bf2ca027"},
+    {"path":"run-headless.cjs","sha256":"2db7aa7442dd5645bbaf44f19f8be9873e62702c04af59709df28165f7b5640c"},
+    {"path":"README.md","sha256":"06f7d60a08a4eecdf0ba66f1abd663002c102ffc8fb77bb228f178144c49210a"}
+  ],
+  "evidenceVerification": {
+    "currentRunId": "352277fd-10d5-499e-80c4-dbe024495e5c",
+    "currentCounts": {"executed":12,"passed":12,"failed":0},
+    "currentPageErrors": 0,
+    "currentConsoleDiagnostics": 0,
+    "currentSourceHashesRecomputed": 17,
+    "currentSourceHashMismatches": 0,
+    "historicalReportsRehashed": 12,
+    "historicalSnapshotHashesRecomputed": 202,
+    "historicalHashMismatches": 0,
+    "mutationFailuresVerifiedFromReports": [
+      {"label":"mutation-eager-release","test":"last-release-lifecycle","reason":"Shared assets disposed before last release"},
+      {"label":"mutation-ignore-required","test":"required-extension-policy","reason":"Wrong rejection: Unsupported required extension accepted"},
+      {"label":"mutation-no-reset","test":"ui-three-handoff","reason":"GL error 1282"},
+      {"label":"mutation-no-ui-restore","test":"actual-context-restore","reason":"Restored Canvas text UI differs or blank"}
+    ],
+    "executionBoundary": "Existing browser reports were inspected and their current/historical source hashes recomputed. This independent reviewer did not rerun browser tests. Root's fresh replay is an additional run, not extra main cases."
+  },
+  "acceptedWithinScope": [
+    "Actual GLTFLoader, SkeletonUtils, AnimationMixer and renderer usage; no replacement parser or skinning algorithm.",
+    "Instances share geometry/material and hold independent skeleton/mixer state; final release clears owner bundle and instance roots. No heap/GC proof is claimed.",
+    "Lost-context geometry/skeleton dispose events invalidate GPU allocations while retaining CPU geometry, scene and animation ownership. They are distinct from final releaseShared.",
+    "Restore tests require nonblank mesh and bright native-text pixels plus exact fixed-frame comparisons; equal blank frames cannot pass.",
+    "UI sets its framebuffer/VAO/program/blend/depth/scissor/viewport/sampler dependencies; renderer reset precedes re-entry. Evidence covers this fixed sample, not all upstream material states.",
+    "Raw text/style/resolution/epoch cache and native Canvas calls are tested without claiming font identity, coverage or shaping implementation.",
+    "Required-extension preflight rejects unlisted required names and unknown optional names are independently tested. Asset itself has no required extensions.",
+    "Server binds 127.0.0.1, uses exact file whitelist, random report token, fixed destination and request size cap; runner uses preinstalled Playwright, records source hashes and preserves unique run reports."
+  ],
+  "nonblockingConcerns": [
+    "requiredProfile is a configured loader allowlist, not an executed compatibility matrix. All listed extensions beyond the no-extension asset remain unaccepted; preserve this distinction in KB conclusions.",
+    "run-headless writes the enriched report before demo startup. Any later page errors affect process exit but are not serialized again into that already-written JSON. Regression work for R1 should make demo evidence explicit or label the main report as integration-only.",
+    "Historical snapshot verification establishes byte correspondence, not a new runtime replay of every mutation. The no-reset mutant was rejected by GL error, not by differing 3D pixels; do not misstate that oracle.",
+    "Texture recovery beyond the current untextured mesh, full UI/state matrices, multi-scene glTF, arbitrary parser failures, repeated device loss and heap retention were not demonstrated."
+  ],
+  "notCovered": ["phones", "performance", "power", "production host", "full UI", "2D bones", "KTX2", "font coverage", "IME", "complete migration", "Gate D", "Gate H", "product completion"]
+}

@@ -1,0 +1,200 @@
+{
+  "schemaVersion": 1,
+  "reviewStage": "independent_document_semantic_status_review",
+  "reviewedAtUtc": "2026-10-08 08:56:00 UTC",
+  "knowledgeBaseVersion": "0.5.0",
+  "designDocumentVersion": "0.4_candidate",
+  "verdict": "changes_required",
+  "scope": "Read-only semantic, status and traceability consistency review of all 18 current documents/registries listed by the integration audit; finite-reference-chain local integration only.",
+  "rootRunId": "d642177d-b007-4c0e-80a2-0f85e150d0c0",
+  "necessaryCorrections": [
+    {
+      "id": "DOC-R1",
+      "severity": "necessary_status_correction",
+      "path": "docs/渲染引擎与运行时.md",
+      "line": 46,
+      "currentClaim": "当前研究程序只覆盖有限模型合同和局部像素/上下文行为，未包含完整复杂 UI、3D 资产、骨骼、实际跨语言桥接或性能计时。",
+      "issue": "未限定历史轮次的当前口径仍把3D资产与骨骼列为未包含项，与同页第60行及第三轮真实glTF加权蒙皮圆柱已执行的事实冲突；不能让已有真实资产研究被写成尚未发生。",
+      "supportingLocations": [
+        {
+          "path": "docs/渲染引擎与运行时.md",
+          "line": 60,
+          "meaning": "本轮成熟实现基线声明真实glTF参考链已执行"
+        },
+        {
+          "path": "docs/第三轮集成记录.md",
+          "line": 11,
+          "meaning": "RiggedSimple真实glTF圆柱含1skin、2joint、1clip"
+        },
+        {
+          "path": "docs/第三轮集成记录.md",
+          "line": 23,
+          "meaning": "实际蒙皮网格与动画姿态/非空像素检查通过"
+        }
+      ],
+      "requiredCorrection": "明确区分历史有限模型与当前已执行的固定蒙皮圆柱参考链；未覆盖项改为完整复杂UI、完整3D角色/场景、完整2D骨骼、实际跨语言桥接与性能计时。保持下表完整原型门槛未完成及产品状态不变。",
+      "suggestedReplacement": "下表是完整运行时原型的候选验收计划，并非本轮已完成的实验。当前研究包括有限模型合同、局部像素/上下文行为及已执行的固定glTF蒙皮圆柱参考链，尚未包含完整复杂UI、完整3D角色/场景、完整2D骨骼、实际跨语言桥接或性能计时。模型漏洞、修复与复验保留在第一轮和第二轮验证/审计记录，第三轮真实资产结果见第三轮集成记录与审计；这些局部研究不能替代以下门槛。"
+    }
+  ],
+  "reviewedFileHashes": [
+    {
+      "path": "README.md",
+      "sha256": "b039a9def71747e7b260ed9a3e42a60e0f603434e326f6e7f143fad35404d7fa",
+      "matchesIntegrationAudit": true
+    },
+    {
+      "path": "CHANGELOG.md",
+      "sha256": "70021cbeccfa51ace79901ac009caf36809faf2732d20911224467b88ac5195d",
+      "matchesIntegrationAudit": true
+    },
+    {
+      "path": "当前版本.json",
+      "sha256": "f70487213abf2b1678ac6fcab1e42f7d38bd8d3d418d3fdc9098a46471a18b96",
+      "matchesIntegrationAudit": true
+    },
+    {
+      "path": "registry/需求.json",
+      "sha256": "3cd34bbe9ffb9b5d093cd8d9c15f561b06b43187a44bdd6699bff33b4fedcdc8",
+      "matchesIntegrationAudit": true
+    },
+    {
+      "path": "registry/决策.json",
+      "sha256": "73c868316a5a6cbde7e821fb6dbb32ddd8975914dbb9f664a058fccc39f33190",
+      "matchesIntegrationAudit": true
+    },
+    {
+      "path": "registry/假设.json",
+      "sha256": "560b55fff736a542a895ece4f2605a016e260491cb5594ff4df8c30ac3aefdd6",
+      "matchesIntegrationAudit": true
+    },
+    {
+      "path": "registry/交付.json",
+      "sha256": "5b213dd8b648ba2600beb8a801eb424d64062cd65383a2a6da33b9b801538e65",
+      "matchesIntegrationAudit": true
+    },
+    {
+      "path": "registry/来源.json",
+      "sha256": "6af82466b29285ea2a6605ad945f028489ad8867f749979c7849ce6d6faacf66",
+      "matchesIntegrationAudit": true
+    },
+    {
+      "path": "docs/技术白皮书.md",
+      "sha256": "e46488f159596660b3744455fcc56e23eb24ed33232df10569779a750d505d8c",
+      "matchesIntegrationAudit": true
+    },
+    {
+      "path": "docs/产品需求说明书.md",
+      "sha256": "553d5ad60cd6204e628641a0a993cc0e4581c19dece4d5b7ea2f70795703a8cf",
+      "matchesIntegrationAudit": true
+    },
+    {
+      "path": "docs/工程规划.md",
+      "sha256": "8e3710a13821154fc976e31023820c6fdc1c348dae64573443880d0f7c1cfdb9",
+      "matchesIntegrationAudit": true
+    },
+    {
+      "path": "docs/交付计划.md",
+      "sha256": "8202a63fc8180b8eb6b307176fc2f827770bbb50f4ad5294ec1670f6d5049d42",
+      "matchesIntegrationAudit": true
+    },
+    {
+      "path": "docs/开源参考实现与采用方案.md",
+      "sha256": "44b940444e7c86cad7471567e3bfc6d806cc86866f00234a15f9bbe300c593b1",
+      "matchesIntegrationAudit": true
+    },
+    {
+      "path": "docs/技术架构.md",
+      "sha256": "71284a59dd919e40bb5d863e48a20b0560cab0bacacc1f6ffc3b687cb94245e3",
+      "matchesIntegrationAudit": true
+    },
+    {
+      "path": "docs/渲染引擎与运行时.md",
+      "sha256": "fa4f5b0141d1839ac450ea8beb031835ac9f40ad168d5b85d63a4f5f19c99ffc",
+      "matchesIntegrationAudit": true
+    },
+    {
+      "path": "docs/第三轮集成计划.md",
+      "sha256": "07ebe6b1c7d5f0cb426f48827971d7f03c6676cfe5f29e9693654c6eb719aa15",
+      "matchesIntegrationAudit": true
+    },
+    {
+      "path": "docs/第三轮集成记录.md",
+      "sha256": "63ca2d183b133e3995e1b4ed28febf250b6971cfa702a03634712ca4092638e6",
+      "matchesIntegrationAudit": true
+    },
+    {
+      "path": "docs/第三轮审计.md",
+      "sha256": "f9246218ef0fad90414e25eb8c4868c392b27f07f568c510b9562a21093f94ee",
+      "matchesIntegrationAudit": true
+    }
+  ],
+  "hashBinding": {
+    "listedFileCount": 18,
+    "reviewedFileCount": 18,
+    "matchedIntegrationAuditHashes": 18,
+    "unmatched": [],
+    "meaning": "These hashes bind the current bytes read for this review. A corrected file requires a targeted rereview and a new hash; no final root structure check is claimed."
+  },
+  "acceptedWithinScope": [
+    {
+      "topic": "Versions and status",
+      "conclusion": "KB0.5.0 and the three 0.4 candidate documents agree. Existing finite code is explicitly separated from complete V002-V006 product implementation not_started and acceptance not_run; D001-D012 remain proposed and H001-H007 untested."
+    },
+    {
+      "topic": "Formal migration obligation",
+      "conclusion": "R008/V006 remains mandatory for the first complete release, including independent new project, continued editing, undo, actual target publishing and updates. V006 depends on V001-V005."
+    },
+    {
+      "topic": "Actual finite execution",
+      "conclusion": "The final root report identity/counts are 17 executed, 17 passed, 0 failed, with 0 page errors and 0 console diagnostics. The normal demo smoke passed separately and is not added to the main case denominator."
+    },
+    {
+      "topic": "Sources and asset identity",
+      "conclusion": "Current r186 execution is separate from historical r180 static research. The asset is the untextured two-joint RiggedSimple skinned cylinder, Cesium 2017, CC-BY-4.0, with attribution and source pointers; it is not called a full character."
+    },
+    {
+      "topic": "Static files and compression",
+      "conclusion": "Nine pinned source files and the five detected JS-module closure remain distinct from the six-file dependency-plus-asset compression total. Raw 2313137, gzip9 461988 and Brotli11 350491 bytes are local estimates excluding authored code, HTML/tool metadata and license/metadata files; no package/network/performance comparison is claimed."
+    },
+    {
+      "topic": "Text, graphics and restoration limits",
+      "conclusion": "Canvas native-call, original-text, cache/fontEpoch and finite-pixel checks are not upgraded to font identity/coverage, CJK wrapping, IME or mobile-performance evidence. The 3D skin does not establish 2D slot/attachment/constraint/clipping semantics."
+    },
+    {
+      "topic": "Unsupported capability and acceptance",
+      "conclusion": "No KTX2/Basis/Draco/meshopt execution, complete UI/character, WebGPU scene, phone, production host, AI creator or migration acceptance is claimed. Context restoration pixels are not equated with playable interaction or business-event restoration."
+    },
+    {
+      "topic": "Historical counts and evidence authority",
+      "conclusion": "Forty-seven retained reports and 835 source-hash entries are explicitly identified as including repeats/copies, not new cases. Historical source snapshot audits with 202 and 188 entries remain separate. Old reviewed-document hashes bind the preserved 0.4.0 baseline, while current hashes bind 0.5.0."
+    },
+    {
+      "topic": "Failure and metadata retention",
+      "conclusion": "Initial code review, original red/green runs, cleanup failure, mutations, lifecycle regressions and smoke-oracle correction are retained. The Markdown position normalization is limited to local metadata with original bytes kept internally; cases/counts/source/results are not described as rewritten."
+    }
+  ],
+  "supportingArtifactsRead": [
+    "evidence/asset-reference-integration-audit.json",
+    "evidence/asset-reference-probe-results.json",
+    "evidence/asset-reference-code-review.json",
+    "evidence/asset-reference-source-audit.json",
+    "evidence/asset-reference-file-footprint.json",
+    "evidence/asset-reference-report-integrity.json"
+  ],
+  "method": {
+    "all18TargetFilesRead": true,
+    "sourceAuditOrCodeAuditRedone": false,
+    "thirdPartyCodeExecuted": false,
+    "browserRun": false,
+    "validatorRun": false,
+    "baselineBytesRehashed": false,
+    "rootFinalStructureCheckOwnedByRoot": true,
+    "pendingDocumentationReviewTreatedAsExpectedFinalization": true
+  },
+  "limits": [
+    "This document review reads existing reports and their stated boundaries; it does not independently execute the code, upstream tests, browser, private Egret projects or product acceptance.",
+    "No complete licensing/security, GC/heap retention, performance, host/device, AI workflow or migration finding is established by this review.",
+    "The preserved-baseline and historical-source integrity conclusions retain the separate audit authorities; this review does not rehash those baselines.",
+    "Only the necessary current-status contradiction is requested for correction; no cosmetic wording or design approval is requested."
+  ]
+}

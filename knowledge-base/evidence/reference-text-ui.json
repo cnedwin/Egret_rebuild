@@ -1,0 +1,287 @@
+{
+  "checkedAt": "2026-10-08 06:52:48 UTC",
+  "repositories": [
+    {
+      "repo": "playcanvas/engine",
+      "ref": "v2.23.1",
+      "commitSha": "c3eb40348be7e80617164e4f2fea0b139ad42ebb",
+      "license": "MIT",
+      "licenseUrl": "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/LICENSE",
+      "refEvidenceUrl": "https://api.github.com/repos/playcanvas/engine/git/tags/a6350b9d7dea3cf7a4fdc1d9d0cd5b59706f94c4",
+      "releaseUrl": "https://github.com/playcanvas/engine/releases/tag/v2.23.1",
+      "sourceFiles": [
+        {
+          "path": "src/framework/font/canvas-font.js",
+          "functions": [
+            "CanvasFont.createTextures",
+            "CanvasFont.updateTextures",
+            "CanvasFont._renderAtlas",
+            "CanvasFont._getTextMetrics",
+            "Atlas.upload"
+          ],
+          "evidenceUrl": "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/src/framework/font/canvas-font.js",
+          "kind": "implementation"
+        },
+        {
+          "path": "src/framework/components/element/text-element.js",
+          "functions": [
+            "TextElement._updateText",
+            "TextElement._updateMeshes",
+            "TextElement._onFontRender",
+            "TextElement._calculateCharsPerTexture",
+            "TextElement.font setter"
+          ],
+          "evidenceUrl": "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/src/framework/components/element/text-element.js",
+          "kind": "implementation"
+        },
+        {
+          "path": "examples/src/examples/user-interface/text-emojis.example.mjs",
+          "functions": [
+            "CanvasFont construction",
+            "post",
+            "reaction prewarm"
+          ],
+          "evidenceUrl": "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/examples/src/examples/user-interface/text-emojis.example.mjs#L88-L103",
+          "kind": "official example"
+        },
+        {
+          "path": "test/framework/components/element/text-element.test.mjs",
+          "functions": [
+            "CanvasFont event lifecycle tests",
+            "bitmap atlas mesh color test",
+            "localized font swap test",
+            "render range page visibility test"
+          ],
+          "evidenceUrl": "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/test/framework/components/element/text-element.test.mjs",
+          "kind": "unit test"
+        }
+      ]
+    },
+    {
+      "repo": "BabylonJS/Babylon.js",
+      "ref": "9.29.0",
+      "commitSha": "cbe5bb36998fdde6bd93d76e67813ff571a535db",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/license.md",
+      "refEvidenceUrl": "https://api.github.com/repos/BabylonJS/Babylon.js/git/tags/475b91128ca7a3ee76c9a1e525e1b06bcf831deb",
+      "releaseUrl": "https://github.com/BabylonJS/Babylon.js/releases/tag/9.29.0",
+      "sourceFiles": [
+        {
+          "path": "packages/dev/gui/src/2D/advancedDynamicTexture.ts",
+          "functions": [
+            "AdvancedDynamicTexture._checkUpdate",
+            "AdvancedDynamicTexture._render",
+            "AdvancedDynamicTexture.invalidateRect",
+            "AdvancedDynamicTexture._onResize"
+          ],
+          "evidenceUrl": "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/gui/src/2D/advancedDynamicTexture.ts",
+          "kind": "implementation"
+        },
+        {
+          "path": "packages/dev/gui/src/2D/controls/textBlock.pure.ts",
+          "functions": [
+            "TextBlock._processMeasures",
+            "TextBlock._drawText",
+            "TextBlock._parseLineWordWrap",
+            "TextBlock._parseHTMLText"
+          ],
+          "evidenceUrl": "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/gui/src/2D/controls/textBlock.pure.ts",
+          "kind": "implementation"
+        },
+        {
+          "path": "packages/dev/gui/src/2D/controls/control.pure.ts",
+          "functions": [
+            "Control._GetFontOffset",
+            "Control._prepareFont",
+            "Control._resetFontCache",
+            "Control._render"
+          ],
+          "evidenceUrl": "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/gui/src/2D/controls/control.pure.ts",
+          "kind": "implementation"
+        },
+        {
+          "path": "packages/dev/core/src/Materials/Textures/dynamicTexture.pure.ts",
+          "functions": [
+            "DynamicTexture.drawText",
+            "DynamicTexture.update"
+          ],
+          "evidenceUrl": "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/core/src/Materials/Textures/dynamicTexture.pure.ts",
+          "kind": "implementation"
+        },
+        {
+          "path": "packages/dev/core/src/Engines/Extensions/engine.dynamicTexture.pure.ts",
+          "functions": [
+            "ThinEngine.prototype.updateDynamicTexture"
+          ],
+          "evidenceUrl": "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/core/src/Engines/Extensions/engine.dynamicTexture.pure.ts",
+          "kind": "WebGL upload implementation"
+        },
+        {
+          "path": "packages/dev/gui/test/unit/inputText.test.ts",
+          "functions": [
+            "InputText processKey tests",
+            "InputText _onPasteText tests"
+          ],
+          "evidenceUrl": "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/gui/test/unit/inputText.test.ts",
+          "kind": "unit test"
+        }
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "TXT-01",
+      "claim": "中文 Web 基线可直接采用成熟 Canvas2D 文字路线；PlayCanvas 缓存单个符号，Babylon GUI 绘制整行文字，两者缓存粒度不同。",
+      "evidenceUrls": [
+        "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/src/framework/font/canvas-font.js#L257-L260",
+        "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/src/framework/font/canvas-font.js#L299-L343",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/gui/src/2D/controls/textBlock.pure.ts#L426-L452",
+        "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/examples/src/examples/user-interface/text-emojis.example.mjs#L88-L103"
+      ],
+      "mechanism": "源码事实：CanvasFont 使用 string.getSymbols 后逐符号 measureText/fillText，写入带 xadvance/offset/map 的 bitmap 图集；TextBlock._drawText 把已经断行的完整行传给 strokeText/fillText。二者都调用浏览器 Canvas 字体栅格化，但逐符号路线不等于整行 shaping；TextElement 的 rtlReorder/unicodeConverter 是注册扩展点。",
+      "recommendation": "白鹭建议（推断）：保留浏览器 Canvas2D 作为首版中文正确性基线。高复用的数字、短标签可借用 glyph atlas 机制；对话、混合语言、连字和复杂方向文本优先整行/整段 Canvas 缓存。先通过适配层复用成熟实现及契约；不要先自研字体栅格化或 shaping。现阶段无需引入额外 HarfBuzz/Troika，只在整行浏览器方案不能满足跨平台排版一致性时再评估成熟实现。",
+      "limits": [
+        "未运行中文字体或手机实测，不能据此排序帧率、功耗、输入延迟。",
+        "CanvasFont 与 Babylon GUI 有各自引擎依赖，不能将它们描述成可直接粘贴进 Egret 的零适配模块。",
+        "逐符号 draw 与整行 draw 的视觉等价性只对已验收语言和字体成立。"
+      ]
+    },
+    {
+      "id": "TXT-02",
+      "claim": "CanvasFont 添加新字符会重建已有图集，而不是仅把缺字增量插入原页。",
+      "evidenceUrls": [
+        "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/src/framework/font/canvas-font.js#L169-L206",
+        "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/src/framework/font/canvas-font.js#L281-L366",
+        "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/src/framework/font/canvas-font.js#L61-L115",
+        "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/src/framework/components/element/text-element.js#L1482-L1487"
+      ],
+      "mechanism": "源码事实：updateTextures 发现缺字后把旧符号与新符号合并调用 _renderAtlas；后者重测所有符号，clear 旧页并重新布局，上传所有保留页，最后 fire('render')。Atlas.upload 会读取全页像素并遍历透明像素的邻域填色；TextElement._onFontRender 重新应用 font，刷新 metadata 和 meshes。",
+      "recommendation": "白鹭建议（推断）：采用其多页图集和 render 通知契约；把同一轮出现的缺字合并后提交，进入场景前预热常用文案与数字。图集对象应带 atlasGeneration，重建后使引用旧 UV/advance 的布局缓存失效。大中文聊天库需分场景/字体/分辨率预算与生命周期，不能不断调用 updateTextures 累积无限字符，也不能宣称该函数已实现 append-only 或 LRU。",
+      "limits": [
+        "合并提交和预热能减少触发次数的结论来自调用结构；节省多少毫秒未测。",
+        "当前实现没有证明有字形淘汰或增量局部上传机制。",
+        "重建是否导致可见卡顿、图集页大小如何选，需要真机冷启动和新增汉字突发测试。"
+      ]
+    },
+    {
+      "id": "TXT-03",
+      "claim": "字体加载状态和字体版本必须进入缓存失效契约，单独 CSS font 字符串不足以区分加载前 fallback 与加载后字体。",
+      "evidenceUrls": [
+        "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/src/framework/font/canvas-font.js#L169-L184",
+        "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/src/framework/font/canvas-font.js#L324-L343",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/gui/src/2D/controls/control.pure.ts#L2854-L2872",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/gui/src/2D/controls/control.pure.ts#L1500-L1503",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/gui/src/2D/controls/textBlock.pure.ts#L369-L382",
+        "https://drafts.csswg.org/css-font-loading/#font-face-set-load"
+      ],
+      "mechanism": "源码事实：CanvasFont.createTextures 的是否重建条件是字符集合比较，未比较 fontName/fontWeight/fontSize/color 或 FontFace 状态；直接改属性后以同字符调用 createTextures 不会强制重建。Babylon Control._FontHeightSizes 按 CSS font 字符串全局缓存，_GetFontOffset 直接返回已有项；_resetFontCache 只设置 _fontSet 并 dirty，不清该静态字典。CSS Font Loading 的 load 提供显式异步等待。",
+      "recommendation": "白鹭建议（推断）：FontFace 加载/注册成功后再进行首批 measure 和 atlas 构建；失败按产品定义的 fallback 完成一次明确重排。维护 fontAssetId/contentHash、fontEpoch、fallbackChainVersion、CSS family/style/weight/stretch/size、DPI/resolutionBucket；字体成功加载、替换、fallback 链变化时同时使 metrics、layout、raster、atlas 缓存失效。复用 Babylon 时避免加载前填入其静态度量缓存；动态同名字体替换要采用版本化 family 或经过审查的供应商适配，不能假设 markAsDirty 或重建控件已经清掉全局旧度量。",
+      "limits": [
+        "这是对审查文件的缓存条件分析，没有证明整个引擎所有模块均无字体事件处理。",
+        "白鹭缓存字段是建议契约，不是两家引擎现有的统一 API。",
+        "字体加载完成与最终 glyph coverage 是两个验收条件。"
+      ]
+    },
+    {
+      "id": "TXT-04",
+      "claim": "图集缺字与字体文件缺字是两类问题；CanvasFont 不能仅靠 data.chars 证明实际中文 glyph 存在。",
+      "evidenceUrls": [
+        "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/src/framework/components/element/text-element.js#L1045-L1074",
+        "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/src/framework/components/element/text-element.js#L1623-L1643",
+        "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/src/framework/font/canvas-font.js#L197-L201",
+        "https://drafts.csswg.org/css-font-loading/#font-face-set-check",
+        "https://developer.mozilla.org/en-US/docs/Web/API/FontFaceSet/load"
+      ],
+      "mechanism": "源码事实：TextElement 找不到图集条目时，对部分控制字符用零宽数据，否则替换为空格或图集首字符；debug 警告按 missingChars 去重。CanvasFont 是否已有字取决于 data.chars[char]，条目来自浏览器绘制结果，未做字体 cmap/实际字形覆盖检查。CSS check 允许在指定字体不存在或 unicode-range 不匹配时返回 true；load(font,text) 的 text 是匹配 unicode-range，不验证逐 glyph 覆盖。",
+      "recommendation": "白鹭建议（推断）：分别记录 atlasMiss、fontLoadFailure、fontCoverageMissing。显式声明可接受 fallback 链并准备中文、繁体、扩展汉字、标点、emoji 样本；对关键 UI 使用受控字体资源及离线覆盖清单。图集缺字先补字再显示；字体缺字应进入 fallback 或可识别的替代符号策略，不接受默默变空格/首字的结果，也不把 document.fonts.check=true 当作字体安装或全字覆盖验收。",
+      "limits": [
+        "本轮未读取实际字体二进制，因此未证明任何具体字体覆盖简体、繁体或扩展区。",
+        "debug 警告不保证发行构建可观测；产品监控需要适配层显式记录。",
+        "系统 fallback 的外观与度量仍需各浏览器和设备验收。"
+      ]
+    },
+    {
+      "id": "TXT-05",
+      "claim": "PlayCanvas 有现成 CJK 断行处理；Babylon 默认 WordWrap 按空格拆词，不足以作为中文长段落的默认断行策略。",
+      "evidenceUrls": [
+        "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/src/framework/components/element/text-element.js#L109-L122",
+        "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/src/framework/components/element/text-element.js#L844-L860",
+        "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/src/framework/components/element/text-element.js#L1233-L1241",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/gui/src/2D/controls/textBlock.pure.ts#L631-L648",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/gui/src/2D/controls/textBlock.pure.ts#L539-L574"
+      ],
+      "mechanism": "源码事实：PlayCanvas 通过 CJK_CHAR、NO_LINE_BREAK_CJK_CHAR 和几个边界方法更新 wordStartIndex，支持部分 CJK 字符边界与禁则。Babylon 的 wordDivider 默认为空格，_parseLineWordWrap 默认 split(wordDivider)，按测量后的词串断行；提供 wordSplittingFunction 和 TextWrapping.HTML。HTML 路线把隐藏 DOM 的 Range.getClientRects 当作浏览器断行结果，允许 adjustWordWrappingHTMLElement 配置 CSS。",
+      "recommendation": "白鹭建议（推断）：复用现有 CJK 规则和浏览器 HTML/CSS 换行能力建立基线；为简体/繁体/日文标点、拉丁数字混排、无空格长串留验收集。若用自定义 wordSplittingFunction，必须同时审查 wordDivider 的重新插入语义，不能简单返回逐字数组后仍插入空格。需要完整 Unicode 断行时接成熟断行库，不另起实现 Unicode line-breaking 算法。",
+      "limits": [
+        "PlayCanvas 的范围正则和禁则清单不能等同于完整 Unicode UAX #14 或所有 CJK 扩展覆盖。",
+        "Babylon HTML 模式需要 DOM，包含 layout/Range 成本；不能据源码认定比纯 Canvas 更快。",
+        "HTML Range 循环按 code point 遍历但 idx 每次加 1，Range 索引为 UTF-16；补充平面汉字/emoji 是否正确需专门核验，未在本轮确认运行缺陷。"
+      ]
+    },
+    {
+      "id": "TXT-06",
+      "claim": "PlayCanvas 以字体图集页创建文字 mesh；共享一个字体对象并不自动证明整屏文字只有一个 draw call。",
+      "evidenceUrls": [
+        "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/src/framework/components/element/text-element.js#L650-L728",
+        "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/src/framework/components/element/text-element.js#L1900-L1907",
+        "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/src/framework/components/element/text-element.js#L1623-L1648",
+        "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/test/framework/components/element/text-element.test.mjs#L1514-L1535",
+        "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/test/framework/components/element/text-element.test.mjs#L2290-L2307"
+      ],
+      "mechanism": "源码事实：TextElement 按 charactersPerTexture 和 _meshInfo 分配四顶点字形数据，每个用到的图集页绑定对应纹理并创建 MeshInstance；无字符页跳过。测试刻意用小图集触发多个 mesh，并验证 tint/opacity 更新到每个页；render range 测试验证不用页可隐藏。",
+      "recommendation": "白鹭建议（推断）：批次统计应同时看 atlasPage、fontMaterial、mask/stencil、blend、clip、drawOrder 和 element 数量；复用现有批次器时保持视觉顺序。优先共享兼容字体/图集并控制页数量，普通单色 tint 在材质/顶点路径处理，避免每个颜色复制一套灰度字形。保留彩色 emoji 的彩色图集，不假定可被灰度 tint 策略替代。",
+      "limits": [
+        "本轮未审查 PlayCanvas 的全局 BatchManager，也未捕获 GPU draw call；仅证明 TextElement 自身按页创建 mesh 的结构。",
+        "单色着色优化与彩色 emoji 的结果必须视觉验收。",
+        "中文图集分页会怎样影响整屏批次，需真机场景统计。"
+      ]
+    },
+    {
+      "id": "TXT-07",
+      "claim": "Babylon GUI 具备 dirty rectangle 与控件位图缓存，但其 WebGL 动态纹理更新仍上传整个 Canvas source。",
+      "evidenceUrls": [
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/gui/src/2D/advancedDynamicTexture.ts#L548-L584",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/gui/src/2D/advancedDynamicTexture.ts#L850-L915",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/gui/src/2D/controls/control.pure.ts#L2259-L2266",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/core/src/Materials/Textures/dynamicTexture.pure.ts#L206-L220",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/core/src/Engines/Extensions/engine.dynamicTexture.pure.ts#L43-L75",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/core/src/Materials/Textures/dynamicTexture.pure.ts#L234-L265"
+      ],
+      "mechanism": "源码事实：ADT 在 host/root 不脏时退出；把多个无效矩形合并成一个包围矩形，用它局部 clear/render。Control.useBitmapCache 在未脏时 putImageData，脏时 getImageData 缓存控件区域。随后 DynamicTexture.update 传完整 _canvas 到 engine.updateDynamicTexture；审查的 WebGL 实现调用 texImage2D(source)，没有脏矩形参数。DynamicTexture.drawText 的 update 默认 true，也提供 false。",
+      "recommendation": "白鹭建议（推断）：直接采用 dirty 标记、矩形合并和共享 UI Canvas 契约。对同一纹理多条 drawText 使用 update=false 后合并一次 update；按更新频率/区域划分 UI texture 的选择交由设备数据决定。useBitmapCache 只用于少变控件并测 readback 成本；不要把 CPU 脏区优化报告成局部 GPU texSubImage2D。WebGL 先稳定作为基线，WebGPU 另行验证上传路径。",
+      "limits": [
+        "完整上传结论限定于该版本审查的 WebGL ThinEngine 扩展，未审查 WebGPU/NativeEngine 路径。",
+        "dirty rectangle 是包围矩形，两个相距很远的小改动也可能覆盖大区域。",
+        "少一次调用不直接等于少一次内部复制；浏览器驱动开销与 GPU 成本未测。"
+      ]
+    },
+    {
+      "id": "TXT-08",
+      "claim": "文字清晰度和 DPI 需要显式分辨率预算；不能无限按 devicePixelRatio 放大所有中文图集和 UI 纹理。",
+      "evidenceUrls": [
+        "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/src/framework/font/canvas-font.js#L16-L35",
+        "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/src/framework/font/canvas-font.js#L149-L158",
+        "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/examples/src/examples/user-interface/text-emojis.example.mjs#L88-L102",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/gui/src/2D/advancedDynamicTexture.ts#L197-L208",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/gui/src/2D/advancedDynamicTexture.ts#L717-L754"
+      ],
+      "mechanism": "源码事实：CanvasFont 图集默认 512×512、每边固定上限 4096、位图与 mipmap 采样；fontSize/glyphSize 显式确定字形像素尺度。官方 emoji 示例以 64 px 构建字体，32 px 显示。Babylon renderScale 改变纹理尺寸；adjustToEngineHardwareScalingLevel 路径同时按 hardware scaling 与 GPU maxTextureSize 限制比例，resize 后标脏/重排。",
+      "recommendation": "白鹭建议（推断）：区分逻辑字号与栅格像素字号，用受预算约束的 resolutionBucket，而非每个浮动 scale 生成新缓存；DPI/屏幕尺寸/缩放桶变化同时失效 raster 与 layout 相关项。读设备 maxTextureSize 和内存预算，控制页数、缩放桶和 UI texture 面积。用像素数估算底层 RGBA 负载 4×宽×高，缩放 r 后面积约 r²；实际 CPU/GPU 占用仍测量。",
+      "limits": [
+        "4096 是 CanvasFont 源码常量，不证明所有目标手机支持同样尺寸。",
+        "栅格字号/显示字号比例的清晰度与功耗最优值未测。",
+        "RGBA 像素负载公式不包含 Canvas 私有拷贝、mipmap、驱动对齐及布局/网格内存。"
+      ]
+    }
+  ],
+  "openQuestions": [
+    "真机冷启动：受控中文字体首次下载、解码、首屏测量/图集建立和 UI 可交互时间分别是多少？",
+    "新增汉字突发：每轮出现 1/10/100 个新字符时的图集重建、CPU readback、GPU upload 和 P95 帧耗时；合理预热范围与提交节奏是多少？",
+    "语种正确性：简/繁体、CJK 扩展区、中文禁则、emoji ZWJ/肤色/变体选择符、混合 RTL 与输入法 composition 的矩阵；本轮未运行。",
+    "字体生命周期：加载失败、慢加载 fallback 后成功、同名字体替换、locale 变化、DPI/页面缩放变化时是否清除所有 metrics/layout/raster/UV 缓存？",
+    "UI 更新频率：单一全屏 ADT 与按静态/频繁变化区域拆纹理，CPU绘制、GPU上传、draw calls和内存何者占优？需设备实测。",
+    "Babylon HTML Range 的 UTF-16 索引、PC CJK 范围与禁则在补充平面汉字/组合 emoji 样本下表现如何？",
+    "测试边界：只读取现有测试，未运行；PlayCanvas text-element.test 有生命周期、多页mesh、locale换字和renderRange断言，但该文件未见中文/日文真实样本；Babylon inputText.test 为键盘/粘贴行为，不能推出中文 IME 或 TextBlock glyph/DPI 通过。",
+    "许可证：源码许可证已读取；复用实现须保留相应开源声明，字体文件本身的许可需要独立确认。"
+  ]
+}

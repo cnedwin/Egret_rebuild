@@ -1,0 +1,14 @@
+{
+  "recordedAt": "2026-10-08",
+  "instruction": "现在尝试开始写一些核心框架和逻辑，并核查仍缺哪些证据支撑或研究对象。",
+  "authority": "user_instruction",
+  "authorizes": "reversible_local_core_subset_implementation_and_evidence_research",
+  "doesNotAccept": [
+    "entire_candidate_architecture",
+    "performance_advantage",
+    "full_renderer",
+    "production_hosts",
+    "migration_completion",
+    "public_release"
+  ]
+}

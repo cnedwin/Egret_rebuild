@@ -1,0 +1,186 @@
+{
+  "schemaVersion": 1,
+  "title": "历史白鹭命名与接口静态研究摘要",
+  "checkedAt": "2026-10-08",
+  "scope": {
+    "sourceScope": "Eight selected historical engine source files and previously saved EUI static evidence; no extraction, execution, build or performance measurement.",
+    "retainedStyle": "Keep familiar class names, display-list organization, image/text/animation vocabulary, PascalCase types and camelCase members.",
+    "modernDirection": "Modernize module boundaries, explicit ownership, typed events, resource leases, lifecycle, schema versions and diagnostics; keep legacy compatibility isolated and test semantics.",
+    "versionBoundary": "All proposed interfaces are candidates. Exact old-version compatibility and production performance are unverified.",
+    "criticalCorrection": "Width/height behavior differs by version/subclass; selected snapshot uses explicit dimensions or original bounds."
+  },
+  "sourceKind": "user_provided_historical_archive",
+  "archiveVersionVerified": false,
+  "newUniqueSourceEntriesRead": 8,
+  "existingEuiEvidenceUsed": true,
+  "observations": [
+    {
+      "id": "N01",
+      "fact": "Classes use PascalCase and public members use camelCase; namespace egret appears in the eight chosen files.",
+      "paths": [
+        "egret-core/src/egret/display/DisplayObject.ts",
+        "egret-core/src/egret/display/Sprite.ts",
+        "egret-core/src/egret/events/EventDispatcher.ts"
+      ],
+      "ranges": [
+        "30-125",
+        "30-86",
+        "31-140"
+      ]
+    },
+    {
+      "id": "N02",
+      "fact": "Sprite is a DisplayObjectContainer with graphics; Bitmap is a DisplayObject with a Texture property.",
+      "paths": [
+        "egret-core/src/egret/display/Sprite.ts",
+        "egret-core/src/egret/display/Bitmap.ts"
+      ],
+      "ranges": [
+        "45-86",
+        "61-150"
+      ]
+    },
+    {
+      "id": "N03",
+      "fact": "The selected DisplayObject snapshot reads width/height from explicit values or original bounds; its setters assign explicit values, not scaleX/scaleY directly.",
+      "paths": [
+        "egret-core/src/egret/display/DisplayObject.ts"
+      ],
+      "ranges": [
+        "857-929"
+      ],
+      "limitation": "Do not generalize to other archived subtrees, versions or subclasses."
+    },
+    {
+      "id": "N04",
+      "fact": "Listener registration has thisObject, capture and priority; registration returns void; once is a separate method; removal compares listener and thisObject in a capture-specific table.",
+      "paths": [
+        "egret-core/src/egret/events/EventDispatcher.ts"
+      ],
+      "ranges": [
+        "131-225"
+      ]
+    },
+    {
+      "id": "N05",
+      "fact": "Event notification calls listeners before once-list removal; dispatchEventWith obtains and releases pooled Event objects.",
+      "paths": [
+        "egret-core/src/egret/events/EventDispatcher.ts"
+      ],
+      "ranges": [
+        "261-290",
+        "314-319"
+      ],
+      "limitation": "Reentrant and mutation behavior has not been executed or proven compatible."
+    },
+    {
+      "id": "N06",
+      "fact": "removeChild processing detaches parent/stage links and returns the same child; selected path does not implement a terminal disposal operation.",
+      "paths": [
+        "egret-core/src/egret/display/DisplayObjectContainer.ts"
+      ],
+      "ranges": [
+        "430-479"
+      ]
+    },
+    {
+      "id": "N07",
+      "fact": "TouchEvent exposes TOUCH_BEGIN/END/CANCEL/TAP constants, stage/local coordinates and touchPointID; it extends Event.",
+      "paths": [
+        "egret-core/src/egret/events/TouchEvent.ts"
+      ],
+      "ranges": [
+        "79-166",
+        "224-320"
+      ]
+    },
+    {
+      "id": "N08",
+      "fact": "MovieClip exposes play, stop, nextFrame, prevFrame, gotoAndPlay, gotoAndStop, frame-rate and current-frame properties.",
+      "paths": [
+        "egret-core/src/extension/game/display/MovieClip.ts"
+      ],
+      "ranges": [
+        "390-455",
+        "662-724"
+      ]
+    },
+    {
+      "id": "N09",
+      "fact": "Previously saved EUI source evidence records three invalidation/validation phases and depth queues, with UIComponent, Validator, DataGroup and Skin identifiers.",
+      "paths": [
+        "egret/packages/eui/src/core/UIComponent.ts",
+        "egret/packages/eui/src/core/Validator.ts",
+        "egret/packages/eui/src/components/DataGroup.ts",
+        "egret/packages/eui/src/components/Skin.ts"
+      ],
+      "ranges": [
+        "467-635",
+        "49-90",
+        "44-47",
+        "47"
+      ],
+      "limitation": "Existing selective static evidence, not newly read source or a runtime measurement."
+    },
+    {
+      "id": "N10",
+      "fact": "DisplayObject and DisplayObjectContainer contain static frame and stage event lists and public/internal dollar-prefixed fields.",
+      "paths": [
+        "egret-core/src/egret/display/DisplayObject.ts",
+        "egret-core/src/egret/display/DisplayObjectContainer.ts",
+        "egret-core/src/egret/events/EventDispatcher.ts"
+      ],
+      "ranges": [
+        "134-150",
+        "2176-2180",
+        "50-54",
+        "113"
+      ]
+    }
+  ],
+  "candidateRecommendations": {
+    "retain": [
+      "DisplayObject",
+      "DisplayObjectContainer",
+      "Sprite as drawable container",
+      "Bitmap as textured image",
+      "TextField",
+      "MovieClip",
+      "Stage",
+      "display-list verbs",
+      "PascalCase types",
+      "camelCase members",
+      "EUI layout-stage concepts"
+    ],
+    "modernize": [
+      "ESM entry points",
+      "explicit App services",
+      "typed option objects",
+      "cancellable subscriptions",
+      "separate detach and disposal",
+      "stable serialized IDs",
+      "explicit resource leases",
+      "versioned schemas and diagnostics",
+      "isolated compatibility package"
+    ],
+    "avoid": [
+      "changing Sprite into image-only object",
+      "collapsing layout size with transformed bounds",
+      "exposing mutable children arrays",
+      "global current App",
+      "public dollar-prefixed internals",
+      "pooled mutable public events without lifetime contract",
+      "rewriting old behavior silently"
+    ],
+    "lifecycle": "removeChild detaches; disposal is terminal and idempotent; attachment scope differs from object scope; shared assets use independent leases; GPU reclamation may be deferred.",
+    "eventCancellation": "on returns an independent subscription; cancellation is idempotent and integrates with signal; an already cancelled signal registers nothing; new once semantics remove before invoking; legacy once/reentry needs a separately tested compatibility contract.",
+    "propagation": "Display-tree events retain capture/target/bubble and cancellation; non-tree service signals are a separate semantic category.",
+    "resourceApiBoundary": "RES methods were not read in this turn. app.assets typed load/acquire is a candidate architecture suggestion, not a verified one-to-one conversion rule."
+  },
+  "limitations": [
+    "私有原包绝对路径与源码正文不进入公开候选。",
+    "只读八个历史条目及既有EUI静态记录；没有解压、构建、执行或性能测试。",
+    "快照不是最新版本或子树共构建版本证明，尺寸/事件等须按具体版本核查。"
+  ],
+  "productImplementation": false
+}

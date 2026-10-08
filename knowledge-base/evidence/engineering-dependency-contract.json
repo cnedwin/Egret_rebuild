@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "knowledgeBaseVersion": "0.7.0",
+  "checkedAtUtc": "2026-10-08T10:38:43.056Z",
+  "status": "candidate_graph_acyclic",
+  "scope": "Only proposed graph metadata topology and prohibited edges checked; no repository imports, exports, bundling or implementation checked.",
+  "publicPackages": [
+    "@egret/engine",
+    "@egret/project",
+    "@egret/cli"
+  ],
+  "workspacePackages": [
+    "contracts",
+    "runtime",
+    "graphics",
+    "hosts",
+    "engine",
+    "project",
+    "toolchain",
+    "cli",
+    "legacy"
+  ],
+  "dependencyGraph": {
+    "contracts": [],
+    "runtime": [
+      "contracts"
+    ],
+    "graphics": [
+      "contracts"
+    ],
+    "hosts": [
+      "contracts"
+    ],
+    "engine": [
+      "runtime",
+      "graphics",
+      "hosts",
+      "contracts"
+    ],
+    "project": [
+      "contracts"
+    ],
+    "legacy": [
+      "project",
+      "contracts"
+    ],
+    "toolchain": [
+      "project",
+      "contracts",
+      "legacy"
+    ],
+    "cli": [
+      "project",
+      "toolchain"
+    ],
+    "editor": [
+      "project",
+      "toolchain",
+      "engine"
+    ],
+    "mcpServer": [
+      "project",
+      "toolchain"
+    ],
+    "preview": [
+      "engine"
+    ]
+  },
+  "topologicalOrder": [
+    "contracts",
+    "runtime",
+    "graphics",
+    "hosts",
+    "engine",
+    "project",
+    "legacy",
+    "toolchain",
+    "cli",
+    "editor",
+    "mcpServer",
+    "preview"
+  ],
+  "nodes": 12,
+  "repositoryImportsChecked": false,
+  "packageExportsChecked": false,
+  "productTestsRun": false
+}

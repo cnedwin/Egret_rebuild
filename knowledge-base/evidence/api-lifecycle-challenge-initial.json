@@ -1,0 +1,109 @@
+{
+  "reviewId": "api-lifecycle-challenge-initial",
+  "reviewedAt": "2026-10-08T10:36:36.430Z",
+  "kind": "bounded_candidate_contract_counterexample_review",
+  "status": "requires_contract_clarification",
+  "scope": {
+    "filesRead": [
+      "docs/公共API设计与命名规范.md",
+      "docs/代码规范与质量门禁.md",
+      "docs/工程技术架构与项目结构.md"
+    ],
+    "sourceCodeRead": false,
+    "productCodeExecuted": false,
+    "testsExecuted": false,
+    "knowledgeBaseModified": false,
+    "method": "Read three candidate documents; reason through adversarial lifecycle, ownership and event counterexamples. This is document reasoning, not implementation or runtime validation."
+  },
+  "reviewedFileHashes": [
+    {
+      "path": "docs/公共API设计与命名规范.md",
+      "sha256": "bed85eaf785e8d4a732de69625173ef4a968b284919ff4d2e2ee1ad6909bab3e"
+    },
+    {
+      "path": "docs/代码规范与质量门禁.md",
+      "sha256": "7a36ade21783d215b346a9d7596144845f13176727bc1c20a7f82daa775b5aac"
+    },
+    {
+      "path": "docs/工程技术架构与项目结构.md",
+      "sha256": "f12423b23ac68302024975f00ad7b951c59a00784f3975db585bc5b5eac0935b"
+    }
+  ],
+  "findings": [
+    {
+      "id": "ACL001",
+      "severity": "required_clarification",
+      "topic": "Cross-host cancellation signal has no public contract",
+      "location": "公共API设计与命名规范.md / 异步资源与所有权、Scope与关闭顺序、事件合同",
+      "counterexample": "The public API excludes full DOM/Node declarations but exposes signal in acquire, on and Scope. No CancellationSignal type, notification timing, already-aborted registration or abort-listener exception behavior is defined. An abort listener throwing could interrupt Scope cleanup if propagated synchronously.",
+      "minimalRevision": "Define one contracts-layer portable cancellation type and its observable fields/notification semantics; document the /web adaptation of AbortSignal. State that notification is at most once, already-aborted registration is handled consistently, and listener failures cannot prevent remaining notifications or Scope cleanup.",
+      "validationNeeded": "Later contract cases for already-aborted, abort-vs-success, listener removal and throwing cancellation listeners."
+    },
+    {
+      "id": "ACL002",
+      "severity": "required_clarification",
+      "topic": "Scope.use during closing can release an already-owned value early",
+      "location": "公共API设计与命名规范.md / Scope与关闭顺序",
+      "counterexample": "Register texture lease first and Bitmap second. During synchronous abort notification, a callback calls scope.use(the same lease). The closing rule says clean a value not owned by another owner; this includes a value already owned by this Scope. The lease can then release before Bitmap removal, violating the specified reverse order and borrowing lifetime.",
+      "minimalRevision": "In closing/closed, only a newly passed unowned value is immediately cleaned. A value already owned by this Scope is rejected without additional cleanup and remains in the existing reverse-order cleanup path. Other-owner values are rejected without disposal. Specify disposal cleanup errors and diagnostic listener errors cannot escape to stop the final closed transition.",
+      "validationNeeded": "Later case where an abort listener reenters use with both an already-owned lease and a newly completed unowned lease."
+    },
+    {
+      "id": "ACL003",
+      "severity": "required_clarification",
+      "topic": "Recursive container cleanup needs a stable effective owner boundary",
+      "location": "公共API设计与命名规范.md / Scope与关闭顺序",
+      "counterexample": "Scope A owns a root container; an intermediate child container is unowned; grandchildren are owned by A and B. Comparing each recursive container's immediate owner may protect or destroy different descendants. 'Different Scope' is undefined for an unowned recursion frame or for direct disposal of an unowned root.",
+      "minimalRevision": "Carry the initiating effective owner boundary throughout recursive disposal. Define the direct-unowned-root case explicitly; owned descendants outside that boundary are detached and diagnosed, and their descendants are not recursively destroyed. Continue siblings and finish the root even when child cleanup reports errors.",
+      "validationNeeded": "Later owned-root → unowned-middle → same-owner/other-owner descendants, plus direct-unowned-root disposal."
+    },
+    {
+      "id": "ACL004",
+      "severity": "required_clarification",
+      "topic": "Event snapshot and target ordering are still ambiguous",
+      "location": "公共API设计与命名规范.md / 事件合同",
+      "counterexample": "A capture handler adds a target or bubble listener before that phase starts. 'Fixed candidate list at the start' could mean the whole dispatch or each phase, giving different same-dispatch behavior. Capture and non-capture target handlers also lack an explicit relative order, and independent propagation controls are named without their exact stopping boundary.",
+      "minimalRevision": "Freeze propagation path and all node/phase subscription candidate lists at the start of the entire dispatch, while removed subscriptions are checked at invocation. State the target capture/non-capture ordering, finite priority/default, and precisely whether stopPropagation retains current-node listeners versus stopImmediatePropagation. Declare descriptor bubbles/cancelable defaults. Reject redispatch of the same active Event object or define separate dispatch frames.",
+      "validationNeeded": "Later cross-phase additions, target ordering, removal, once reentry, stop flags and active-object redispatch cases."
+    },
+    {
+      "id": "ACL005",
+      "severity": "required_clarification",
+      "topic": "Multiple Engine isolation lacks object/resource affinity and surface arbitration",
+      "location": "公共API设计与命名规范.md / 导入与初始化、Scope与关闭顺序；工程技术架构与项目结构.md / 渲染与后端职责",
+      "counterexample": "A Bitmap constructed from Engine A's Texture is mounted to Engine B, or two Engine instances acquire the same surface. Per-Scope uniqueness does not prevent cross-Engine resources or concurrent reconfiguration of one surface. Sharing a borrowed GPUDevice does not by itself establish surface, submission or epoch coordination.",
+      "minimalRevision": "Define a first-binding Engine affinity for unbound display objects, a fixed service/Engine affinity for acquired resources, and rejection of cross-Engine mount or Scope adoption without an explicit supported transfer. Require exclusive surface ownership unless a host adapter declares a shared coordinated mode; borrowed-device owner retains submission/epoch/lifetime arbitration.",
+      "validationNeeded": "Later two-Engine node/resource misuse, repeated surface acquisition and coordinated borrowed-device closure/recovery."
+    },
+    {
+      "id": "ACL006",
+      "severity": "required_clarification",
+      "topic": "Async Engine cleanup can overwrite the original failure",
+      "location": "公共API设计与命名规范.md / 拟议调用外观、Scope与关闭顺序；代码规范与质量门禁.md / 错误与诊断",
+      "counterexample": "In the example, acquire throws, then await engine.dispose() rejects on the explicitly supported bounded shutdown timeout. The catch never rethrows the acquire failure, contradicting the code rule that cleanup cannot silently overwrite an original failure. Reentrant or concurrent engine.dispose calls also have no shared-result contract.",
+      "minimalRevision": "Make Engine.dispose logically idempotent: concurrent/reentrant calls observe the same close operation/result and cannot start duplicate destruction. In the example preserve the original failure and attach or aggregate the secondary close error. State the timeout result and whether completion is failed/closed or remains an explicitly quarantined state.",
+      "validationNeeded": "Later original operation failure plus shutdown timeout, concurrent close calls and close callbacks reentering dispose."
+    }
+  ],
+  "nonBlockingNotes": [
+    {
+      "topic": "Ownership transfer is mentioned but no transfer operation is defined",
+      "recommendation": "Mark transfer as not provided in the initial stable candidate; until a transfer contract is designed, callers detach or recreate objects while the original Scope remains the owner. No new transfer API is required for this document revision."
+    },
+    {
+      "topic": "Lease-backed Texture is a borrow contract, not implicit per-Bitmap acquisition",
+      "recommendation": "The present borrowing design is coherent if the creator keeps its lease alive until every borrower stops using it. State that use after the creator's lease release is illegal; the raw shared Texture alone cannot identify which lease a borrower relied on, so per-lease misuse diagnostics are not yet proved. Do not silently add reference counts to Bitmap."
+    }
+  ],
+  "retainedContracts": [
+    "Cancellation affects only an acquire request that has not reached successful delivery; it does not revoke a successfully delivered lease.",
+    "Independent lease IDs can share download/decode while retaining independent release responsibility.",
+    "Registering lease then Bitmap gives the intended reverse cleanup order when no reentrant early disposal occurs.",
+    "Same-Scope deduplication and cross-Scope rejection are coherent for open scopes with one ownership registry.",
+    "Detach does not destroy; logical release and in-flight GPU physical reclamation are correctly separated.",
+    "Fixed event candidate snapshot with invocation-time removed checks and once deactivation before callback handles common mutation/reentry cases once snapshot extent is fixed.",
+    "A thrown synchronous handler may abort the dispatch with finally restoring internal state; this is an explicit candidate behavior, not an inferred legacy compatibility guarantee.",
+    "Single device owner, borrowed-device non-destruction and instance-local Stage/clock/resource services are appropriate boundaries."
+  ],
+  "conclusion": "Six bounded contract clarifications are needed before these APIs can be implemented consistently. No product behavior, performance, compatibility, compilation or test pass is asserted."
+}

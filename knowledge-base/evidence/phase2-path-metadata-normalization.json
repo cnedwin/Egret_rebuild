@@ -1,0 +1,194 @@
+{
+  "schemaVersion": 1,
+  "checkedAtUtc": "2026-10-08T06:19:32.716Z",
+  "scope": "public_candidate_path_metadata",
+  "normalizedFields": 37,
+  "changes": [
+    {
+      "report": "evidence/nested-ui-probe-audit-red-results.json",
+      "field": "/results/14/error/stack",
+      "normalization": "stack_local_position_to_knowledge_base_relative"
+    },
+    {
+      "report": "evidence/nested-ui-probe-audit-red-results.json",
+      "field": "/results/15/error/stack",
+      "normalization": "stack_local_position_to_knowledge_base_relative"
+    },
+    {
+      "report": "evidence/nested-ui-probe-red-results.json",
+      "field": "/results/0/error/stack",
+      "normalization": "stack_local_position_to_knowledge_base_relative"
+    },
+    {
+      "report": "evidence/nested-ui-probe-red-results.json",
+      "field": "/results/1/error/stack",
+      "normalization": "stack_local_position_to_knowledge_base_relative"
+    },
+    {
+      "report": "evidence/nested-ui-probe-red-results.json",
+      "field": "/results/2/error/stack",
+      "normalization": "stack_local_position_to_knowledge_base_relative"
+    },
+    {
+      "report": "evidence/nested-ui-probe-red-results.json",
+      "field": "/results/3/error/stack",
+      "normalization": "stack_local_position_to_knowledge_base_relative"
+    },
+    {
+      "report": "evidence/nested-ui-probe-red-results.json",
+      "field": "/results/4/error/stack",
+      "normalization": "stack_local_position_to_knowledge_base_relative"
+    },
+    {
+      "report": "evidence/nested-ui-probe-red-results.json",
+      "field": "/results/5/error/stack",
+      "normalization": "stack_local_position_to_knowledge_base_relative"
+    },
+    {
+      "report": "evidence/nested-ui-probe-red-results.json",
+      "field": "/results/6/error/stack",
+      "normalization": "stack_local_position_to_knowledge_base_relative"
+    },
+    {
+      "report": "evidence/nested-ui-probe-red-results.json",
+      "field": "/results/7/error/stack",
+      "normalization": "stack_local_position_to_knowledge_base_relative"
+    },
+    {
+      "report": "evidence/nested-ui-probe-red-results.json",
+      "field": "/results/8/error/stack",
+      "normalization": "stack_local_position_to_knowledge_base_relative"
+    },
+    {
+      "report": "evidence/nested-ui-probe-red-results.json",
+      "field": "/results/9/error/stack",
+      "normalization": "stack_local_position_to_knowledge_base_relative"
+    },
+    {
+      "report": "evidence/nested-ui-probe-red-results.json",
+      "field": "/results/10/error/stack",
+      "normalization": "stack_local_position_to_knowledge_base_relative"
+    },
+    {
+      "report": "evidence/nested-ui-probe-red-results.json",
+      "field": "/results/11/error/stack",
+      "normalization": "stack_local_position_to_knowledge_base_relative"
+    },
+    {
+      "report": "evidence/nested-ui-probe-red-results.json",
+      "field": "/results/12/error/stack",
+      "normalization": "stack_local_position_to_knowledge_base_relative"
+    },
+    {
+      "report": "evidence/nested-ui-probe-red-results.json",
+      "field": "/results/13/error/stack",
+      "normalization": "stack_local_position_to_knowledge_base_relative"
+    },
+    {
+      "report": "evidence/nested-ui-probe-red-results.json",
+      "field": "/results/15/error/stack",
+      "normalization": "stack_local_position_to_knowledge_base_relative"
+    },
+    {
+      "report": "evidence/nested-ui-probe-unsafe-isolation-results.json",
+      "field": "/results/2/error/stack",
+      "normalization": "stack_local_position_to_knowledge_base_relative"
+    },
+    {
+      "report": "evidence/nested-ui-probe-unsafe-isolation-results.json",
+      "field": "/results/17/error/stack",
+      "normalization": "stack_local_position_to_knowledge_base_relative"
+    },
+    {
+      "report": "evidence/reliable-event-probe-pre-metadata-results.json",
+      "field": "/environment/executable",
+      "normalization": "absolute_local_position_to_basename"
+    },
+    {
+      "report": "evidence/reliable-event-probe-pre-metadata-results.json",
+      "field": "/sourceHashes/0/path",
+      "normalization": "absolute_local_position_to_basename"
+    },
+    {
+      "report": "evidence/reliable-event-probe-pre-metadata-results.json",
+      "field": "/sourceHashes/1/path",
+      "normalization": "absolute_local_position_to_basename"
+    },
+    {
+      "report": "evidence/reliable-event-probe-red-input-results.json",
+      "field": "/environment/executable",
+      "normalization": "absolute_local_position_to_basename"
+    },
+    {
+      "report": "evidence/reliable-event-probe-red-input-results.json",
+      "field": "/sourceHashes/0/path",
+      "normalization": "absolute_local_position_to_basename"
+    },
+    {
+      "report": "evidence/reliable-event-probe-red-input-results.json",
+      "field": "/sourceHashes/1/path",
+      "normalization": "absolute_local_position_to_basename"
+    },
+    {
+      "report": "evidence/reliable-event-probe-red-input-results.json",
+      "field": "/sourceSnapshots/0/path",
+      "normalization": "absolute_local_position_to_basename"
+    },
+    {
+      "report": "evidence/reliable-event-probe-red-input-results.json",
+      "field": "/sourceSnapshots/1/path",
+      "normalization": "absolute_local_position_to_basename"
+    },
+    {
+      "report": "evidence/reliable-event-probe-red-results.json",
+      "field": "/environment/executable",
+      "normalization": "absolute_local_position_to_basename"
+    },
+    {
+      "report": "evidence/reliable-event-probe-red-results.json",
+      "field": "/sourceHashes/0/path",
+      "normalization": "absolute_local_position_to_basename"
+    },
+    {
+      "report": "evidence/reliable-event-probe-red-results.json",
+      "field": "/sourceHashes/1/path",
+      "normalization": "absolute_local_position_to_basename"
+    },
+    {
+      "report": "evidence/reliable-event-probe-red-results.json",
+      "field": "/sourceSnapshots/0/path",
+      "normalization": "absolute_local_position_to_basename"
+    },
+    {
+      "report": "evidence/reliable-event-probe-red-results.json",
+      "field": "/sourceSnapshots/1/path",
+      "normalization": "absolute_local_position_to_basename"
+    },
+    {
+      "report": "evidence/reliable-event-probe-verification-results.json",
+      "field": "/environment/executable",
+      "normalization": "absolute_local_position_to_basename"
+    },
+    {
+      "report": "evidence/reliable-event-probe-verification-results.json",
+      "field": "/sourceHashes/0/path",
+      "normalization": "absolute_local_position_to_basename"
+    },
+    {
+      "report": "evidence/reliable-event-probe-verification-results.json",
+      "field": "/sourceHashes/1/path",
+      "normalization": "absolute_local_position_to_basename"
+    },
+    {
+      "report": "evidence/reliable-event-probe-verification-results.json",
+      "field": "/sourceHashes/2/path",
+      "normalization": "absolute_local_position_to_basename"
+    },
+    {
+      "report": "evidence/reliable-event-probe-verification-results.json",
+      "field": "/sourceSnapshots/0/path",
+      "normalization": "absolute_local_position_to_basename"
+    }
+  ],
+  "note": "Originals retained privately. Source text/SHA256, test inputs, numeric observations, error messages, statuses and counts unchanged; stack and metadata location strings normalized."
+}

@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "stage": "curated_source_candidate",
+  "knowledgeBaseVersion": "0.9.0",
+  "date": "2026-10-08",
+  "repository": "https://github.com/cnedwin/Egret_rebuild",
+  "remoteBaseCommit": "3c1dabb8bfc57d00a0d2ed69a7270141ccdab1bf",
+  "licenses": {
+    "firstPartyCode": "Apache-2.0",
+    "firstPartyDocumentation": "Apache-2.0",
+    "authority": "Existing repository root LICENSE",
+    "remoteGitBlobSha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64",
+    "thirdParty": "Retain upstream files, statements and asset attribution; root license does not relabel them"
+  },
+  "includeFamilies": [
+    "Explicit core source/config/test/example/tool inventory",
+    "Curated knowledge-base docs/registries/templates/proposals/evidence/experiments/tools",
+    "Third-party research files with their existing statements"
+  ],
+  "excludedFamilies": [
+    "Private historical archives",
+    "Internal retained history/snapshots",
+    "Raw conversations and private execution briefs",
+    "Local credentials and platform SDK configuration",
+    "Installed dependencies/stores",
+    "Build output and caches"
+  ],
+  "historicalBindings": {
+    "implementationInputs": "0.7.0 specification identities retained, distinct from current 0.9.0 prose",
+    "previousDocumentReview": "Hashes identify their retained original version, not edited current files",
+    "editorialOriginalVersion": "0.8.0",
+    "baselineAuditSha256": "ea8e881bc611c69a76e83f793127e3f928a06329ba17f22d57924b70ea789b82"
+  },
+  "originalMaterials": "Restricted identities may be retained as provenance; this export does not claim that raw internal execution material is distributed.",
+  "integrity": "The root candidate export manifest and fresh verification record bind the final selected files.",
+  "uploaded": false,
+  "legalOrOriginalityGuarantee": false,
+  "publicationStatusScope": "Prepared locally on 2026-10-08 before repository submission; this snapshot flag is not the later branch/PR state."
+}

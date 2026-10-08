@@ -1,0 +1,9 @@
+node_modules/
+packages/*/dist/
+*.tsbuildinfo
+.pnpm-store/
+work/
+.env
+.env.*
+!.env.example
+*.log

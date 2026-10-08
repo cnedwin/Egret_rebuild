@@ -1,0 +1,37 @@
+{
+  "checkedAtUtc": "2026-10-08T07:53:35.475Z",
+  "scope": "Bounded static ESM import/re-export closure scan; not a full parser or runtime verification.",
+  "status": "all_detected_static_dependencies_present",
+  "results": [
+    {
+      "path": "vendor/three/r186/build/three.core.js",
+      "staticImportOrReexportSpecifiers": []
+    },
+    {
+      "path": "vendor/three/r186/build/three.module.js",
+      "staticImportOrReexportSpecifiers": [
+        "./three.core.js"
+      ]
+    },
+    {
+      "path": "vendor/three/r186/examples/jsm/loaders/GLTFLoader.js",
+      "staticImportOrReexportSpecifiers": [
+        "three",
+        "../utils/BufferGeometryUtils.js",
+        "../utils/SkeletonUtils.js"
+      ]
+    },
+    {
+      "path": "vendor/three/r186/examples/jsm/utils/BufferGeometryUtils.js",
+      "staticImportOrReexportSpecifiers": [
+        "three"
+      ]
+    },
+    {
+      "path": "vendor/three/r186/examples/jsm/utils/SkeletonUtils.js",
+      "staticImportOrReexportSpecifiers": [
+        "three"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,747 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-10-08T11:38:42.319Z",
+  "status": "passed",
+  "artifactRoot": "outputs/白鹭引擎核心框架原型",
+  "command": "node tools/verify.mjs",
+  "nodeVersion": "v24.19.0",
+  "compilerVersion": "7.0.2",
+  "packageManagerVersion": "11.25.0",
+  "verificationScope": "Strict build, type fixtures, package boundaries, headless behavior tests and example; exact pipeline is in tools/verify.mjs",
+  "testSummary": {
+    "tests": 44,
+    "passes": 44,
+    "failures": 0,
+    "cancelled": 0,
+    "skipped": 0
+  },
+  "commandExitCode": 0,
+  "output": "VERIFY build\nVERIFY check-boundaries\nBoundary check PASS: three private workspace packages, actual exports resolution, 66 source/build/declaration files, core without DOM/Node globals.\nVERIFY check-types\ntests/types/invalid.generated.ts(6,20): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.\ntests/types/invalid.generated.ts(7,24): error TS2345: Argument of type '(event: Event<string>) => void' is not assignable to parameter of type '(event: Event<number>) => unknown'.\n  Types of parameters 'event' and 'event' are incompatible.\n    Type 'Event<number>' is not assignable to type 'Event<string>'.\n      The types of 'type[PAYLOAD_TYPE]' are incompatible between these types.\n        Type '(payload: number) => number' is not assignable to type '(payload: string) => string'.\n          Types of parameters 'payload' and 'payload' are incompatible.\n            Type 'string' is not assignable to type 'number'.\ntests/types/invalid.generated.ts(8,24): error TS2345: Argument of type '() => Promise<void>' is not assignable to parameter of type 'never'.\ntests/types/invalid.generated.ts(10,24): error TS2345: Argument of type '(event: Event<number>) => number | Promise<void>' is not assignable to parameter of type 'never'.\ntests/types/invalid.generated.ts(11,7): error TS2375: Type 'EventType<number>' is not assignable to type 'EventType<string | number>' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.\n  Types of property '[PAYLOAD_TYPE]' are incompatible.\n    Type '(payload: number) => number' is not assignable to type '(payload: string | number) => string | number'.\n      Types of parameters 'payload' and 'payload' are incompatible.\n        Type 'string | number' is not assignable to type 'number'.\n          Type 'string' is not assignable to type 'number'.\ntests/types/invalid.generated.ts(13,6): error TS2540: Cannot assign to 'parent' because it is a read-only property.\ntests/types/invalid.generated.ts(14,1): error TS2584: Cannot find name 'document'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.\ntests/types/invalid.generated.ts(15,1): error TS2591: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.\ntests/types/invalid.generated.ts(17,1): error TS2673: Constructor of class 'Engine' is private and only accessible within the class declaration.\ntests/types/invalid.generated.ts(18,1): error TS2673: Constructor of class 'Stage' is private and only accessible within the class declaration.\ntests/types/invalid.generated.ts(19,1): error TS2673: Constructor of class 'Scope' is private and only accessible within the class declaration.\nType fixtures PASS: positive + 11 checked negative assertions (11 actual compiler errors).\nVERIFY test\n✔ abort snapshots listeners, skips removals/additions and survives throws/reentry (0.9173ms)\n✔ already cancelled signal does not replay and diagnostics cannot break notification (0.2173ms)\n✔ Scope closes before abort, deduplicates and cleans in reverse despite errors (0.898ms)\n✔ Scope closing use keeps queued order and disposes only new unowned late values (0.66ms)\n✔ Scope cannot take another owner and a failing late cleanup remains associated (0.2897ms)\n✔ a fulfilled async value after cancellation has a synchronous cleanup exit (0.1788ms)\n✔ child sorting/reparenting is stable and detach keeps a reusable live object (0.8889ms)\n✔ cycles and invalid child/index requests leave the existing tree unchanged (0.3189ms)\n✔ cross-Engine mounting and Scope binding preflight entire subtree atomically (0.8036ms)\n✔ owner boundary passes through unowned container and detaches foreign subtree (0.3392ms)\n✔ unowned root only cleans unowned descendants and failing child cannot stop siblings (0.37ms)\n✔ disposed nodes cannot be mounted, subscribed or dispatched again (0.1385ms)\n✔ Engine Stage remains a root and cannot become another node's child (0.1475ms)\n✔ unbound container rejects children from different Engines without partial binding (0.1911ms)\n✔ asynchronous startup reserves surface before host.start finishes (1.2371ms)\n✔ startup failure attempts cleanup and keeps original cause plus cleanup errors (0.6045ms)\n✔ dispose caches one Promise before synchronous reentry and rejects new work (0.4706ms)\n✔ scope and stage cleanup precede stop/close, failed stop does not prevent close (0.2173ms)\n✔ deadline rejects but keeps exclusive surface until late host completion (0.3091ms)\n✔ default deadline is 1000ms, late close rejection is observed and quarantines surface (0.2845ms)\n✔ shutdown timeout validates positive finite integers before claiming surface (0.2939ms)\n✔ onDiagnostic errors cannot interrupt Engine cleanup after scope failures (0.2364ms)\n✔ startup failure cleanup has the same deadline and reserves late host work (0.3772ms)\n✔ failed host close never proves successful surface return (0.2561ms)\n✔ diagnostic reentry returns the cached Engine close Promise (0.1694ms)\n✔ JavaScript callers cannot bypass factory-only Engine/Scope/Stage construction (0.0974ms)\n✔ tree dispatch snapshots all stages, priority and listener edits before target (1.6887ms)\n✔ once is removed before nested dispatch of a new event (0.1368ms)\n✔ stopPropagation at target preserves both target groups (0.1618ms)\n✔ stopPropagation on ancestor completes that node and stopImmediate stops its remainder (0.1235ms)\n✔ bubbles false still captures and preventDefault honors cancelable (0.1719ms)\n✔ active Event reentry is rejected and throwing handlers restore state (0.3122ms)\n✔ subscription cancellation is independent and already-aborted signal does not subscribe (0.1864ms)\n✔ priority rejects nonfinite and fractional inputs before registration (0.1137ms)\n✔ runtime rejects a Promise-returning handler and observes its rejection (0.1721ms)\n✔ public package headless example joins events, Scope, display tree and Engine shutdown (73.6501ms)\n✔ R1 Scope blocks same-value ownership reentry before binding commit (1.4244ms)\n✔ R1 Scope closing during callback preflight rejects and cleans its late value (0.1702ms)\n✔ R2 atomic reparenting uses internal detach without old-parent override callbacks (0.4952ms)\n✔ R3 open older Scope still cleans an unowned late value while Engine is closing (0.1832ms)\n✔ R4 failed signal registration rolls back unreachable handler and retains adapter errors (0.371ms)\n✔ R4 failed post-registration cancellation check also rolls back the local handler (0.1347ms)\n✔ R5 all listener failures and children finish before host close with aggregated causes (0.3617ms)\n✔ R5 listener failure still reaches bounded host close and retains ownership until success (0.3629ms)\nℹ tests 44\nℹ suites 0\nℹ pass 44\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 175.4857\nAll prototype verification gates PASS.\n",
+  "stderr": "",
+  "fileHashes": [
+    {
+      "path": ".gitignore",
+      "sha256": "b7b3d3eb8531dbfafa6e72ffaad4c579156a5b9be03490556054fff7ed37844e",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "examples/headless.mjs",
+      "sha256": "bbb09be9a9ab1b93fbe5af723612e324e71e14b27434f4a953ee0b12a60ddccf",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "package.json",
+      "sha256": "dc8b4a1df35b654d52a366010430083495daf807144aa8882b01a0b82fb45234",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "packages/contracts/dist/CancellationSignal.d.ts",
+      "sha256": "de07a29ca782483a61562b7780431e67bf00f4f249322b2c9aa0a871182ce10c",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/contracts/dist/CancellationSignal.d.ts.map",
+      "sha256": "165bc80e082da8f3defdea94608ddc869a767dc2a87c0f574b08bc88173b1cb6",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/contracts/dist/CancellationSignal.js",
+      "sha256": "0ba72776d85f6252d292be929a5ed5d43ea666e9b10f7213767c76dcfddce2a1",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/contracts/dist/CancellationSignal.js.map",
+      "sha256": "424c6a3311981942e091b3863e085c7a7134932729629c69ca5d7d68ae2a3e9a",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/contracts/dist/Diagnostic.d.ts",
+      "sha256": "f2815ba9b74d3cdd155f0ec84b9f9ae1456f1e86e9a4cdb6fdc8c8e54ab3d7cf",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/contracts/dist/Diagnostic.d.ts.map",
+      "sha256": "fc88723c22b58c836e02e2e5e2038040641762c8a1893c3afc30fa46c3d280e3",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/contracts/dist/Diagnostic.js",
+      "sha256": "a38eb3e97581ece3660868f46fcd8b34aea184df46900204937c7ea51d4adfe2",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/contracts/dist/Diagnostic.js.map",
+      "sha256": "b9c5fb74f2e5e648cabdb17132da2912cdf582f3aa41c5feca3c4523f834ee65",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/contracts/dist/Disposable.d.ts",
+      "sha256": "697614b2db950a1824b64915a1f83abae028a1cdcbd9ff23201d2ee7b4a45bf6",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/contracts/dist/Disposable.d.ts.map",
+      "sha256": "9a3ddd26369a1932e5b05db11b9e9b4ad85948ad412706db506c799650d61dcd",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/contracts/dist/Disposable.js",
+      "sha256": "bf9cac95b81b32c1f32f2483191bd7585903379bec2e1dbae270d0e401e37504",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/contracts/dist/Disposable.js.map",
+      "sha256": "04900f05c549d0050221fdf328db47fd9c61e90e2da457e14a3ff08af8f0b611",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/contracts/dist/HostAdapter.d.ts",
+      "sha256": "11408b333915112df5bd7f7c32753f9a81a45fff876925a0777424a397794462",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/contracts/dist/HostAdapter.d.ts.map",
+      "sha256": "6cbd819b7b992a98bbf3bfedbadbe5d946e20a56055441489a78255503515274",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/contracts/dist/HostAdapter.js",
+      "sha256": "4f45b15956110abad55ffb3278fe67ea56f92251208883ee55e341353bc98035",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/contracts/dist/HostAdapter.js.map",
+      "sha256": "f93c6d4fda55a79919a8c1b8cabb63b9796bc3780eaa29bf0c8f7e6699a1b10e",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/contracts/dist/index.d.ts",
+      "sha256": "caba88dc88b97f2e42bd64f13f4c0132dfab1c0b3a14322cbb47f9729c0d53a0",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/contracts/dist/index.d.ts.map",
+      "sha256": "d21c9328c2fedddabf5ad2daf7eb67f0ff481e8e7a6c91f02bb2779dc3e6b9be",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/contracts/dist/index.js",
+      "sha256": "827c148a2159c5d098f9fe33185b555382ad63931193dda5f41f6af38a6a4445",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/contracts/dist/index.js.map",
+      "sha256": "e235ed7144a63976ff7e2cf2bd4087c7ad7210fc76fccf6829deaa2728798dbf",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/contracts/package.json",
+      "sha256": "fceaef2ae55a77347ce9f99acd2165d36e991d89c76bf0480ff5048f3e7a94a1",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "packages/contracts/README.md",
+      "sha256": "f631cb1809f3160b76b5b4451c8820c264f269da2b64842c96abeaae702607ad",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "packages/contracts/src/CancellationSignal.ts",
+      "sha256": "a4e778a2bee503ec70249f861f60dc46718dc64e182448d9d5a3b43a10f1f34e",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "packages/contracts/src/Diagnostic.ts",
+      "sha256": "93aeef7a51e372dc1418bd382d3371ec91044a1bc48de0b308cc6d5007db89a3",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "packages/contracts/src/Disposable.ts",
+      "sha256": "75cc8c7125bc0a7d1641c32825e884311da13dba48fa4822a53465e67129504c",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "packages/contracts/src/HostAdapter.ts",
+      "sha256": "dd095653a2ee93e20a44e0ab504ef7edf991bde982e2bb924d2fb21fe072da79",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "packages/contracts/src/index.ts",
+      "sha256": "85f4a29e7e04334ab941dfe7a848edacc3a597dc5621820366c7cadd257eda13",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "packages/contracts/tsconfig.json",
+      "sha256": "65830141c9e37d6d5a604ae796c5fe8b9258040f9e1f29547c0b238829b989d6",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "packages/engine/dist/closeHost.d.ts",
+      "sha256": "477f2871413d4dd5046464f7404faef15d9cf13c14f03150503a873ba4279371",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/engine/dist/closeHost.d.ts.map",
+      "sha256": "1cec5be9ad1334275965db3982ac8d5d17a4802ce5baa4ca66cdf23d823e392f",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/engine/dist/closeHost.js",
+      "sha256": "10821af0971cc05784060c02a4fb1247833c747cc189075a8d58a05f859bf053",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/engine/dist/closeHost.js.map",
+      "sha256": "d4527d822535c05e4607196f229c10e12f1ac4491c57d768e17f1729932586ee",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/engine/dist/createEngine.d.ts",
+      "sha256": "92fcc0362067bc5cf672fc9bf06996eb0104fe89350432d6b6709cb91ae15ceb",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/engine/dist/createEngine.d.ts.map",
+      "sha256": "71dabdcbcdbe2dd0ff309e7a5b7d054097a63c0fd2e8152ff730fdaad9a1a845",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/engine/dist/createEngine.js",
+      "sha256": "716b827ce73fc1d1fa058f0ba4f6b68666491f75936bdc27980545caefa5f2a2",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/engine/dist/createEngine.js.map",
+      "sha256": "155b5e8cbd64fe2d47af1b2c642a2e673b921979d300f761a455b46fe4b799ed",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/engine/dist/Engine.d.ts",
+      "sha256": "f6bfab25d94c0fdf7fae932ffd6ae1580aa33b8c99ce31880a5228c38f80655d",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/engine/dist/Engine.d.ts.map",
+      "sha256": "bc0d32a25338fc762473f994074076c6715965f43b726e7a5ddc851bfdd5d20b",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/engine/dist/Engine.js",
+      "sha256": "acdec1893ad1bef5e026819add0a7051f935469e6d73174230053e6d650a9efa",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/engine/dist/Engine.js.map",
+      "sha256": "bbc512d1641d81b3dc3ec35fad6217a47236d29b3c2e920816b85d4dadffe25f",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/engine/dist/index.d.ts",
+      "sha256": "2c530a7ef698a72f3889585cade955b690bdd25fe6d8ca5a5e7b7877bf763702",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/engine/dist/index.d.ts.map",
+      "sha256": "cce4434b8c7f1841f80f19864a172ab1b42a267d7983b6b236a67bacda92ed43",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/engine/dist/index.js",
+      "sha256": "aa6776c9e324a5f932a36130868babc5e9afe68013d1292871a9f3c546d3761f",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/engine/dist/index.js.map",
+      "sha256": "9369b19e38f029cfd2013b0582c6ec46a60b6d1afa760ecb8b6f082f49b89f4a",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/engine/dist/surfaceOwnership.d.ts",
+      "sha256": "4457e2434b33bb8cb2ab732157eba78f84c166478232ce8da0c511800074cb3b",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/engine/dist/surfaceOwnership.d.ts.map",
+      "sha256": "a6ccbdd468d8321bcfe23c29390c79c7ea776489c007048a64c184e2695b6907",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/engine/dist/surfaceOwnership.js",
+      "sha256": "14d50ba4046ce6f7f8b354af49c53abe7646020b14411a659cbd6aa9ff59cd97",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/engine/dist/surfaceOwnership.js.map",
+      "sha256": "cf135e81bd4730efb23b6640d49af00d1f92edf1011f4502993e2396ec3dbb55",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/engine/package.json",
+      "sha256": "26b7c45f629f7c8a7d41c466fdd06741163a2afd9b6002075c6341530ed2e663",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "packages/engine/README.md",
+      "sha256": "2b39a8a5f988a0c4d7271d30da7f8c04a735149e00b6f0f28f2c59940e5842f0",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "packages/engine/src/closeHost.ts",
+      "sha256": "3b392c336949001716d7da445d80c4ac0625b45582dbdaec2af9c20f46d5f333",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "packages/engine/src/createEngine.ts",
+      "sha256": "6298922aa970b883fd5f84a098a44d5d4654736446709856381416f182e0aaf3",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "packages/engine/src/Engine.ts",
+      "sha256": "d5b4fcfc5bcf921d6b75aa4a33d7e71412595e8e377e5ff9b186b19ec6868f58",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "packages/engine/src/index.ts",
+      "sha256": "45f2377ffe6e180815d68b8b2dcbddaca8eaa167c142a356d130da8ce008e2f0",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "packages/engine/src/surfaceOwnership.ts",
+      "sha256": "6b12fb7fe691212777ffcc031ef2f534b1c665d1f9df7617f0dac2574331acac",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "packages/engine/tsconfig.json",
+      "sha256": "ac07062d5460bb112739e3ef98e2f16f7479b1f4a18c7add69c46c2880ac68a4",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "packages/runtime/dist/CancellationController.d.ts",
+      "sha256": "dde3846e95b0305aa03824d1631e184ea69b1283f9d85cc63d107c4af4a7a244",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/CancellationController.d.ts.map",
+      "sha256": "7cc60792c6c4918eae7d3dba93435f939ec9002ca5530686cb20e8b610c8c8c3",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/CancellationController.js",
+      "sha256": "349a647320ed87580d4449e3fdb301dfb7ceaf6884d2cdb0e9ea301238bb4d4e",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/CancellationController.js.map",
+      "sha256": "9258b2a2459ea6098f077bfab35700f8701e70695eb5d68600fa14344384ede7",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/diagnostics.d.ts",
+      "sha256": "85d3079ff62e0bf3df95281a5a2917e021310c52acc7d662ee859986e5d86a03",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/diagnostics.d.ts.map",
+      "sha256": "b7cfe3b7a16d4cb50391dc0771b33e7b7d657809cc7f81dfda09c53030eb074a",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/diagnostics.js",
+      "sha256": "ce3993f3f430ad7e23dd46870252f483c2851e609131a40045493a2d7f2776f8",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/diagnostics.js.map",
+      "sha256": "23715a42586de2466086dca428145aefe8fac45f908d70ddad33615755e0e7d5",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/DisplayObject.d.ts",
+      "sha256": "729c5dbd9b7d69a2ef782bfb25e5254f22685999d4e07e469a1cb52c16eca6f2",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/DisplayObject.d.ts.map",
+      "sha256": "8bcd0dd635b26c7dd35d9b6bbc7ea546f7070e61c2c9d00044721e2f553822af",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/DisplayObject.js",
+      "sha256": "5da4a24e5e9cdc9585dcf133450e4476d6f8b3167a5f3fd54152882855dfa3f4",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/DisplayObject.js.map",
+      "sha256": "0b5f1ee25c9991a3edddf91e2459715775e668022b762d8ea02050dd81baafff",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/DisplayObjectContainer.d.ts",
+      "sha256": "6f6b104efe9a4cea5f272c378fb2f61f16f69a4749ca21faadd00052ccb808d4",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/DisplayObjectContainer.d.ts.map",
+      "sha256": "9e4a3b9a0a549d5148554f9625402f864074beaf0984da60ea1667ae0157ec95",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/DisplayObjectContainer.js",
+      "sha256": "79364ac077abbd8003e4da1866c9823ef93ecdffbf338572784dc06756c4814c",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/DisplayObjectContainer.js.map",
+      "sha256": "a51e50193630d64089f4ee1ef21ba927cb67897471dfe77ab6b0d56d586066c4",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/displayTreeState.d.ts",
+      "sha256": "c05f55a512dbbbb30f3ef8f790298e67564a1185dd1f3e5ee829441e193fc5aa",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/displayTreeState.d.ts.map",
+      "sha256": "5fac25e35321d1ed5383b76d2df2c83a42f83b8f4bff2a4b3d060c745b94bed1",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/displayTreeState.js",
+      "sha256": "3fc84f52a0eb26bed486f055d5fe544896dcfa60fa78ab883f2870c3ed67c33f",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/displayTreeState.js.map",
+      "sha256": "e4f8c061cf3914d09efe178bf74e63b9cf799f2e232dc25c0b872e0c9624a4a3",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/EgretError.d.ts",
+      "sha256": "64a9381cf216c798abb4edbfa2297920a772d98da3d6e6c252d5b6b53d77beb6",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/EgretError.d.ts.map",
+      "sha256": "3cb31c2daafb9650156c4cfc08c133b328819dbca009bfeabf74c9d0bfd541ec",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/EgretError.js",
+      "sha256": "9b1feaa223e899da4e94e96b5302cb3c4af5ca782632430b8206cc1de2013aca",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/EgretError.js.map",
+      "sha256": "107387eeb8598462315b055904ee7ff5cbce995a60187b210ff6a0ff07e8998f",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/Event.d.ts",
+      "sha256": "7f05541d95f70a8111cbf013c0b66c8e47e57b266d7ae797ce555a05d5de66ea",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/Event.d.ts.map",
+      "sha256": "07342a1112b3049138476f14a8a4427cf63cdc6e7b893599229d5cdb48bfaf9a",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/Event.js",
+      "sha256": "5541d72206df1b90ef9abafdbd8d81ec73bbfb8a8f7e03da0b2e86f4b816683e",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/Event.js.map",
+      "sha256": "093778ecb837112805b9f776ba002f4e32bd9fd7e1ff437fceb823c1f32ab848",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/EventDispatcher.d.ts",
+      "sha256": "3f80aa6eca4a184c762f80f20c7f73fa82afc0b08698cba16233e70719e8d1f4",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/EventDispatcher.d.ts.map",
+      "sha256": "76805d0b28dbecc37780171be81dfb8ad4ad673f9fb0f5e825c904f1755fb577",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/EventDispatcher.js",
+      "sha256": "8fd34c349f894242ff7dab7f29b0dde0c99559b03ab0cc1c328d9a69c93be493",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/EventDispatcher.js.map",
+      "sha256": "37a780e3fe85f7132c2d4bd76bc1ba68cb6be63f68a69cc29a41bf0a36477b42",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/index.d.ts",
+      "sha256": "067c5c572592a28f3575afdeab12a184da9cc6fa7b41ff6c5194f3837d160307",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/index.d.ts.map",
+      "sha256": "fa3c7722aa4f33fd0bfde57bfeeb6ba28fa54b7fe17eca3863c7a43c2fb26a44",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/index.js",
+      "sha256": "0b70939e3fc0a1fee580eba503879a868ac3d0df01969f6a9b371de9002494cf",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/index.js.map",
+      "sha256": "863890e2c7bd2c40a890e459bb3bab83514c164985290924901b145ee4b0a616",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/ownership.d.ts",
+      "sha256": "df181bf16c80cb01b15158573a1793c437dfa020574fcd34954a2169e286d8fa",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/ownership.d.ts.map",
+      "sha256": "e598bc718c9072f8ad01e4a02cf91b255675b8adcfd13cc2f4c2ca460875e98b",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/ownership.js",
+      "sha256": "7457b2b2185abe08bdf86db41c73f5055a2b343e351369dc07933d31301afbc2",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/ownership.js.map",
+      "sha256": "7b0bc99f3d5db2136c72ef01c397c6ac2482c9ea5f4bb17671dd89c7b91b67d5",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/Scope.d.ts",
+      "sha256": "ef354fe82d450d7ff40235703990594cb81bf0e794a70e3963fd53d5030acb6f",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/Scope.d.ts.map",
+      "sha256": "a571e48ad275639af25bfa012bb85a8482bb027f61f838a2acee105dfbdc4a29",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/Scope.js",
+      "sha256": "52a994e56ec6f2c8a451473cbb1894cb84788b20eb6accd93a7a728126538dbc",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/Scope.js.map",
+      "sha256": "41b65595dafef410369e4a73f5e45a868f6796934f73270fc24ac4a68b61efb7",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/Stage.d.ts",
+      "sha256": "9a6d6c21647cb3312694b35ee59098f258f355f30ab69c0132df0d48d3b53dc0",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/Stage.d.ts.map",
+      "sha256": "f392c4af38197f48938afced32cf3b806a1f59d35ad4c6c1886d41ad8c15d065",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/Stage.js",
+      "sha256": "4815d51664350a78b7c5bf9e30eeb08f2611bf6b6a7ee0aaa47feca8c827c897",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/dist/Stage.js.map",
+      "sha256": "07c00df0682df9e39ea1f77fd605e4d7a2dd8be6d0169e638bb542e7e1329df2",
+      "kind": "derived_build"
+    },
+    {
+      "path": "packages/runtime/package.json",
+      "sha256": "546d482c0bd990164d79acaec52953245314df6d50117c85b6c6ec5856f4f7ee",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "packages/runtime/README.md",
+      "sha256": "dadf19b00a845d7e8ed154644f2214b720d7acd03f4450a2e9a002be5d085911",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "packages/runtime/src/CancellationController.ts",
+      "sha256": "d2bbfd7d23269df59651d628e8f4c448be120fb46e1e5307d718aec43c8c7515",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "packages/runtime/src/diagnostics.ts",
+      "sha256": "bb8668e84ec9703f9f9b0380efa37c93f876b38c8ffb2ed2aa716f3efc32346d",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "packages/runtime/src/DisplayObject.ts",
+      "sha256": "a5744fe971a6490e54eda1b6cd7aa2ff18f8dd8e172eca83e458b89a42febe39",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "packages/runtime/src/DisplayObjectContainer.ts",
+      "sha256": "14ad9af6c95917b94641fba630adc26b707aa2fedc17707627a87b55dd1e6682",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "packages/runtime/src/displayTreeState.ts",
+      "sha256": "e6606b65ba3cdd5b18691121bdb028186eda6c4f2d8fe836bec3f8a1a9a61ff9",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "packages/runtime/src/EgretError.ts",
+      "sha256": "9a4ef5c97c118c3ddc91f895741cfa259cbb3906d5943f733ee5e07f2ed8a8dc",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "packages/runtime/src/Event.ts",
+      "sha256": "066015292830169f2ff718f6617ba55392f3666289922a0098eabb8210b493b5",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "packages/runtime/src/EventDispatcher.ts",
+      "sha256": "2d1d6613d83ea9e904c1e4074db7b466911f3689e8c81e60d63d96481c0e6008",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "packages/runtime/src/index.ts",
+      "sha256": "3af52ebe93ac933d989ceb0f5abadd31e72f9436fda1d2206b3e71d7f1216310",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "packages/runtime/src/ownership.ts",
+      "sha256": "0fbd5497c87995998c3d080d4909b3caa9738ec8ee5743120c86e9cdcceeaeab",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "packages/runtime/src/Scope.ts",
+      "sha256": "840ef7f714e80f2eccca974dfca972dc2e94ecbe74da688f7ebe4c3d9b7ceebd",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "packages/runtime/src/Stage.ts",
+      "sha256": "35ee9c782ba437e9dcd96c29891415f13151fa2e995ac0d40274813abb92f280",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "packages/runtime/tsconfig.json",
+      "sha256": "ed31ec963ca62cee11d41071686c8a3dc58554155e120f52d1747254087f1bac",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "sha256": "f58343405f8b75488966415da04a69edd5cbf01a32076ff08b75132fa476877c",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "pnpm-workspace.yaml",
+      "sha256": "f51d3d153b0f3cdbb82186bd1c3eea9066f4e3a15828985952feeee965a75534",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "README.md",
+      "sha256": "6b3579e316a686d789681a2f47dc87eb6d5970451f84858abd6a347386475d50",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "source-origin.json",
+      "sha256": "f24be42b6ef3d6564e5892f0c4edc7c779bda11b0508025bd784fb06a334fba3",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "tests/cancellation-scope.test.mjs",
+      "sha256": "32a1a3c47fa41ebfd122be8fa06370e51a4f0854a2ab69be5da48966b96e9566",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "tests/display-tree.test.mjs",
+      "sha256": "6302c03f672ec4878e7bff6fffb4c6bf53ff4b5ce31d1ef5b0485e597b9bbbfe",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "tests/engine.test.mjs",
+      "sha256": "36a8e472bf868528394c98f16fa85ec664991fa76158d272723973b60a89bcde",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "tests/events.test.mjs",
+      "sha256": "4e75d12b5aee9f927425a1a65c401616de18347b1402ec86075bbb5247951d3d",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "tests/helpers.mjs",
+      "sha256": "20e7dd30f54b3a81d35f666c8370e7f014e4559c68222727bc88fd377efc1af7",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "tests/integration.test.mjs",
+      "sha256": "54716569f5744b00dcb32a512d122fdb3b91f158b1e5446a5d394b3f201eb933",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "tests/review-regressions.test.mjs",
+      "sha256": "b56d24957fc95c6068bb215f4a1b2aca310760831e79c89c27dd5724c8e67b17",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "tests/types/negative.ts",
+      "sha256": "f2aba4d444432063b862b42822b392b82d09c8d91458cc80f5478f136115ce7b",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "tests/types/positive.ts",
+      "sha256": "1041d77568560fb1d08fa3a4dbb86cb1e77cc48dace50884b5173c4459713aeb",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "tests/types/tsconfig.json",
+      "sha256": "88a3194ab9d7990646c7957e96e8d059ee16e79fe88373543a763da38a84dae1",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "tools/build.mjs",
+      "sha256": "0f04552d3592aa613d3c6fc4114559a3669ad764d0f5321d1c049a568701e6c4",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "tools/check-boundaries.mjs",
+      "sha256": "e7994ad6962e55fba9b481d50377ede30729b345e6a901e2089b235edfde9491",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "tools/check-types.mjs",
+      "sha256": "332d2c161ceb9ec7d75429c89a3d2c95af24f2cf5eed68b92b09532d1ce691a4",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "tools/test.mjs",
+      "sha256": "6d8fdbf59b3c9d1a4aab917ae9ab8167818c0716a6219f5f91c5893bb2c4eb53",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "tools/verify.mjs",
+      "sha256": "9c789b762d598c72040992d8ffb9041f75180d39b7556761365ef0998d5b0b4a",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "tsconfig.base.json",
+      "sha256": "b7a31fb9f93a93e20bfdcf33c135acb45cb3a6895a8b3e7006bd85214ddc1008",
+      "kind": "authored_or_dependency_manifest"
+    },
+    {
+      "path": "tsconfig.json",
+      "sha256": "e07fc831f31dc9ea9ecb612be734f4b533e32d7dbbb246abffaa8b23111076aa",
+      "kind": "authored_or_dependency_manifest"
+    }
+  ],
+  "productScope": "Independently authored TS cancellation/Scope/events/display-tree/headless Engine only",
+  "gpuExecuted": false,
+  "nativeRuntimeExecuted": false,
+  "browserRuntimeExecuted": false,
+  "ciConfigured": false,
+  "performanceBenchmark": false,
+  "originalEgretCompatibilityAcceptance": false,
+  "migrationAcceptance": false,
+  "sourceOriginAcceptance": "author_declaration_and_scoped_review_not_exhaustive_originality_or_license_proof"
+}

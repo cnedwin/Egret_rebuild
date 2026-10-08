@@ -1,0 +1,204 @@
+{
+  "schemaVersion": 1,
+  "knowledgeBaseVersion": "0.11.0",
+  "supportLevel": "experimental",
+  "status": "passed_scoped_cpu_checks",
+  "scope": "DOM-free CPU asset references, sharing, pending-acquire cancellation, independently releasable Engine-bound leases, generation routing, callback reentry, and Scope/Engine closure.",
+  "tools": {
+    "node": "24.19.0",
+    "pnpm": "11.25.0",
+    "typescript": "7.0.2",
+    "dependencyInstallation": "Fresh offline frozen-lockfile install from the existing local store, with dependency lifecycle scripts disabled; no new dependencies."
+  },
+  "behavior": {
+    "total": 73,
+    "passed": 73,
+    "failed": 0,
+    "baseline": 44,
+    "assetFoundation": 14,
+    "assetInterleavings": 15
+  },
+  "types": {
+    "positiveFixture": "passed",
+    "checkedNegativeAssertions": 19
+  },
+  "boundaries": {
+    "packages": 3,
+    "sourceBuildDeclarationFiles": 78,
+    "domNodeGlobalsInCore": false
+  },
+  "publication": {
+    "tests": 11,
+    "passed": 11,
+    "readingPairs": 86,
+    "registryViews": 6,
+    "criticalSourceFiles": 23,
+    "prepush": "passed",
+    "knowledgeBase": "passed",
+    "hookInstalled": false
+  },
+  "examples": {
+    "headless": "passed",
+    "assets": {
+      "result": "passed",
+      "provider": "Actual asynchronous filesystem JSON loading outside the pure core",
+      "loads": 2,
+      "cleanupAttempts": 2,
+      "generations": [
+        1,
+        2
+      ]
+    }
+  },
+  "review": {
+    "report": "verification/asset-core-review.json",
+    "scope": "Independent finite code/contract review and affected-document bilingual cross-review",
+    "initialFinding": "AR1 callback invocation via mutable function.call",
+    "correction": "Reflect.apply preserves captured callable and provider receiver; two mechanism-specific regressions observed RED then GREEN"
+  },
+  "testProvenance": {
+    "initial": "14 foundation and 12 interleaving tests were written first and observed failing at API absence; this does not independently prove each deeper branch was RED.",
+    "oracleCorrection": "First new-suite run had 68 of 70 passing because two new predicates ignored the legacy primary-error cause. They were reconciled to cause plus cleanupErrors; production aggregation was not changed.",
+    "mechanismRegressions": [
+      {
+        "name": "Adapter getter throwing EgretError must diagnose ASSET_SIGNAL_FAILED",
+        "redExit": 1,
+        "greenExit": 0
+      },
+      {
+        "name": "Captured load callback ignores mutable own call property",
+        "redExit": 1,
+        "greenExit": 0
+      },
+      {
+        "name": "Captured disposer ignores mutable own call property",
+        "redExit": 1,
+        "greenExit": 0
+      }
+    ]
+  },
+  "verifiedFiles": [
+    {
+      "path": "packages/contracts/src/Diagnostic.ts",
+      "sha256": "dd24a34a911fd333cea3a799675465a5e871d2a47cd551648dbc245cece8d25f"
+    },
+    {
+      "path": "packages/runtime/src/AssetRef.ts",
+      "sha256": "48963664a8a048697a962f1c3d56826333e65e3bbf05d1524d7c30b049a10ab7"
+    },
+    {
+      "path": "packages/runtime/src/AssetLease.ts",
+      "sha256": "6c411c75c2737f4229e459f559efc75375b15c65af65e3791227abe416e24a21"
+    },
+    {
+      "path": "packages/runtime/src/assetState.ts",
+      "sha256": "044c1aceef34403be1b1297794d3d3e390182a84d2876ce2d3392a4c2e5a6920"
+    },
+    {
+      "path": "packages/runtime/src/AssetManager.ts",
+      "sha256": "31e52919bfa43df548fa661a9d46c5d8b2fcb7259addfe119ef4367fa25f462e"
+    },
+    {
+      "path": "packages/runtime/src/index.ts",
+      "sha256": "82adc2ead33bd530c7ad18557237d816b019424987ecc48601ebdfedf2a5ec8a"
+    },
+    {
+      "path": "packages/engine/src/Engine.ts",
+      "sha256": "e386470f8e13a17e9960a594452d22d0c88f67b8d3863de03c4b5727ac22bccf"
+    },
+    {
+      "path": "packages/engine/src/index.ts",
+      "sha256": "8b138bad7220763fbeb5ff43775303decfd0dfe370fdd4459917b45330597f94"
+    },
+    {
+      "path": "tools/check-boundaries.mjs",
+      "sha256": "9b8e0c6195504b91c4758fa9a243de2f60bf40a8fd51ecfe5a8b65c6ca1e9b62"
+    },
+    {
+      "path": "tests/assets-interleavings.test.mjs",
+      "sha256": "3cbad2d481f4ca2eb0563c7c85c09bbfe033f314c07626ca0e9358e3d7ed1bc7"
+    },
+    {
+      "path": "tests/types/positive.ts",
+      "sha256": "b4874675e952018fb3b87875b81bcb27bba96e69fc1cd4808fa9747ab4dd1f7a"
+    },
+    {
+      "path": "tests/types/negative.ts",
+      "sha256": "bf36f78201c71c3a1f19bccb2117e3540a9a6c943dd9fb2f08794cf8a8230e6a"
+    },
+    {
+      "path": "examples/assets.mjs",
+      "sha256": "95b13275ec0847c12face88ae01a9b247be5dd7a3f93d92f8e759a7ba50510ef"
+    },
+    {
+      "path": "examples/fixtures/ui-panel.json",
+      "sha256": "2b471ff37fe1c89005968ff6f6076d176f7917f6e16dd22e0c8e04e040d8c5ef"
+    },
+    {
+      "path": "tests/assets.test.mjs",
+      "sha256": "c8ef247cade909292d848d20ec2d1ae55a984c1d2d6bd03e1c0120c9162b0719"
+    },
+    {
+      "path": "knowledge-base/docs/资源核心合同.md",
+      "sha256": "415fc15e0cc81840c855043a74195479df97a636c0196466f5efcc2ff49e9bae"
+    },
+    {
+      "path": "knowledge-base/docs/资源核心合同.en.md",
+      "sha256": "84de4f170e5bd75dd35928ea4c78b94f009f488db36da2624ddc3a4b63f8c647"
+    }
+  ],
+  "logIdentities": [
+    {
+      "identity": "final-prepush.log",
+      "sha256": "02072c806227f072ed431bf49e8f19ded7e839c4e1ad3190c064046527c82ba9",
+      "status": "identity_only_not_distributed"
+    },
+    {
+      "identity": "integration-example-final.log",
+      "sha256": "3ee05d88e620fcd1d2e8179f9ac60fd865de20f1bd936247602bf0334d15c4ff",
+      "status": "identity_only_not_distributed"
+    },
+    {
+      "identity": "initial-red.log",
+      "sha256": "af9fb741cb5e6fc13b048663b06fa08a48fb200209bc2c44a226e9ee2c5dd369",
+      "status": "identity_only_not_distributed"
+    },
+    {
+      "identity": "signal-egret-error-red.log",
+      "sha256": "f4fe4ce4435f40ba55875181f37ea8aa24bad9f9d8b1175e37e8f0de5f27cf9d",
+      "status": "identity_only_not_distributed"
+    },
+    {
+      "identity": "signal-egret-error-green.log",
+      "sha256": "ed42c3f803dda52665b0da732770802b63087239fc0eca0ef51b5e92c5f9137e",
+      "status": "identity_only_not_distributed"
+    },
+    {
+      "identity": "callback-capture-red.log",
+      "sha256": "89639cba1c13b7cae2463e1d86d88be3f81cff582d9b69f2dbaa0bfdb53bee5b",
+      "status": "identity_only_not_distributed"
+    },
+    {
+      "identity": "callback-capture-green.log",
+      "sha256": "8f27b34f58d334690739f5e6bae6d183df3369e7bb91db5ee3d90d43aeb95a24",
+      "status": "identity_only_not_distributed"
+    }
+  ],
+  "acceptance": {
+    "fullProduct": "not_run",
+    "gpu": "not_run",
+    "productionHost": "not_run",
+    "physicalProviderShutdown": "not_proven",
+    "performance": "not_run",
+    "ci": "not_run",
+    "migration": "not_run",
+    "remoteSubmission": "not_performed_this_revision"
+  },
+  "limitations": [
+    "Not GPU uploads, fences, device recovery, format decoders, networking, budgets, LRU or full resource product acceptance.",
+    "Synchronous manager dispose retires local demand; provider Promise completion and physical work stoppage are outside this proof.",
+    "One disposer invocation is one cleanup attempt, not proof that an external disposer succeeded.",
+    "Node headless verification only; no browser Native performance CI or remote publication was executed.",
+    "No Git repository or remote operations. Existing sealed candidate untouched."
+  ]
+}

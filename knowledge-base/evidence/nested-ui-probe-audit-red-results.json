@@ -1,0 +1,1270 @@
+{
+  "schemaVersion": 1,
+  "experiment": "nested-ui-probe",
+  "checkedAtUtc": "2026-10-08T06:10:07.450Z",
+  "mode": "production-research-model",
+  "environment": {
+    "node": "v24.19.0",
+    "platform": "win32",
+    "arch": "x64",
+    "execution": "CPU-only deterministic research model; no external dependencies"
+  },
+  "counts": {
+    "total": 18,
+    "passed": 16,
+    "failed": 2
+  },
+  "results": [
+    {
+      "name": "nested intrinsic sizes and padded world coordinates",
+      "status": "passed",
+      "observations": {
+        "catches": "missing ancestor aggregation or incorrect coordinate composition",
+        "incremental": {
+          "sourceCloneNodes": 0,
+          "mutationLookupVisits": 0,
+          "validationNodes": 8,
+          "dependencyValidationNodes": 16,
+          "dependencyValidationEdges": 14,
+          "dirtyPropagationVisits": 0,
+          "dimensionEvaluations": 16,
+          "dimensionDependencyReads": 14,
+          "childPlacementEvaluations": 7,
+          "worldEvaluations": 8,
+          "worldWrites": 8,
+          "clipIntersections": 0,
+          "snapshotNodes": 8
+        },
+        "fullOracle": {
+          "dimensionEvaluations": 16,
+          "worldEvaluations": 8,
+          "childPlacementEvaluations": 7
+        },
+        "sampledHitWork": {
+          "queries": 6,
+          "boundsChecks": 43
+        },
+        "nodes": 8,
+        "snapshot": {
+          "nodes": [
+            {
+              "id": "root",
+              "parent": null,
+              "x": 0,
+              "y": 0,
+              "width": 32,
+              "height": 75,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "a",
+              "parent": "root",
+              "x": 4,
+              "y": 4,
+              "width": 24,
+              "height": 29,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "a1",
+              "parent": "a",
+              "x": 6,
+              "y": 6,
+              "width": 20,
+              "height": 10,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "a2",
+              "parent": "a",
+              "x": 6,
+              "y": 19,
+              "width": 20,
+              "height": 12,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "b",
+              "parent": "root",
+              "x": 4,
+              "y": 39,
+              "width": 22,
+              "height": 21,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "b1",
+              "parent": "b",
+              "x": 5,
+              "y": 40,
+              "width": 20,
+              "height": 8,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "b2",
+              "parent": "b",
+              "x": 5,
+              "y": 50,
+              "width": 20,
+              "height": 9,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "tail",
+              "parent": "root",
+              "x": 4,
+              "y": 66,
+              "width": 20,
+              "height": 5,
+              "active": true,
+              "clip": null
+            }
+          ],
+          "work": {
+            "sourceCloneNodes": 0,
+            "mutationLookupVisits": 0,
+            "validationNodes": 8,
+            "dependencyValidationNodes": 16,
+            "dependencyValidationEdges": 14,
+            "dirtyPropagationVisits": 0,
+            "dimensionEvaluations": 16,
+            "dimensionDependencyReads": 14,
+            "childPlacementEvaluations": 7,
+            "worldEvaluations": 8,
+            "worldWrites": 8,
+            "clipIntersections": 0,
+            "snapshotNodes": 8
+          }
+        }
+      }
+    },
+    {
+      "name": "static flush performs no dimension or world evaluation",
+      "status": "passed",
+      "observations": {
+        "catches": "unconditional full layout on unchanged source",
+        "incremental": {
+          "sourceCloneNodes": 0,
+          "mutationLookupVisits": 0,
+          "validationNodes": 0,
+          "dependencyValidationNodes": 0,
+          "dependencyValidationEdges": 0,
+          "dirtyPropagationVisits": 0,
+          "dimensionEvaluations": 0,
+          "dimensionDependencyReads": 0,
+          "childPlacementEvaluations": 0,
+          "worldEvaluations": 0,
+          "worldWrites": 0,
+          "clipIntersections": 0,
+          "snapshotNodes": 8
+        },
+        "fullOracle": {
+          "dimensionEvaluations": 16,
+          "worldEvaluations": 8,
+          "childPlacementEvaluations": 7
+        },
+        "sampledHitWork": {
+          "queries": 6,
+          "boundsChecks": 43
+        },
+        "nodes": 8,
+        "snapshot": {
+          "nodes": [
+            {
+              "id": "root",
+              "parent": null,
+              "x": 0,
+              "y": 0,
+              "width": 32,
+              "height": 75,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "a",
+              "parent": "root",
+              "x": 4,
+              "y": 4,
+              "width": 24,
+              "height": 29,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "a1",
+              "parent": "a",
+              "x": 6,
+              "y": 6,
+              "width": 20,
+              "height": 10,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "a2",
+              "parent": "a",
+              "x": 6,
+              "y": 19,
+              "width": 20,
+              "height": 12,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "b",
+              "parent": "root",
+              "x": 4,
+              "y": 39,
+              "width": 22,
+              "height": 21,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "b1",
+              "parent": "b",
+              "x": 5,
+              "y": 40,
+              "width": 20,
+              "height": 8,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "b2",
+              "parent": "b",
+              "x": 5,
+              "y": 50,
+              "width": 20,
+              "height": 9,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "tail",
+              "parent": "root",
+              "x": 4,
+              "y": 66,
+              "width": 20,
+              "height": 5,
+              "active": true,
+              "clip": null
+            }
+          ],
+          "work": {
+            "sourceCloneNodes": 0,
+            "mutationLookupVisits": 0,
+            "validationNodes": 0,
+            "dependencyValidationNodes": 0,
+            "dependencyValidationEdges": 0,
+            "dirtyPropagationVisits": 0,
+            "dimensionEvaluations": 0,
+            "dimensionDependencyReads": 0,
+            "childPlacementEvaluations": 0,
+            "worldEvaluations": 0,
+            "worldWrites": 0,
+            "clipIntersections": 0,
+            "snapshotNodes": 8
+          }
+        }
+      }
+    },
+    {
+      "name": "sparse leaf height propagates through ancestors and shifts following siblings",
+      "status": "passed",
+      "observations": {
+        "catches": "subtree-only invalidation loses ancestor and sibling effects",
+        "incremental": {
+          "sourceCloneNodes": 8,
+          "mutationLookupVisits": 3,
+          "validationNodes": 8,
+          "dependencyValidationNodes": 16,
+          "dependencyValidationEdges": 14,
+          "dirtyPropagationVisits": 6,
+          "dimensionEvaluations": 6,
+          "dimensionDependencyReads": 10,
+          "childPlacementEvaluations": 5,
+          "worldEvaluations": 8,
+          "worldWrites": 8,
+          "clipIntersections": 0,
+          "snapshotNodes": 8
+        },
+        "fullOracle": {
+          "dimensionEvaluations": 16,
+          "worldEvaluations": 8,
+          "childPlacementEvaluations": 7
+        },
+        "sampledHitWork": {
+          "queries": 6,
+          "boundsChecks": 44
+        },
+        "nodes": 8,
+        "snapshot": {
+          "nodes": [
+            {
+              "id": "root",
+              "parent": null,
+              "x": 0,
+              "y": 0,
+              "width": 32,
+              "height": 85,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "a",
+              "parent": "root",
+              "x": 4,
+              "y": 4,
+              "width": 24,
+              "height": 39,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "a1",
+              "parent": "a",
+              "x": 6,
+              "y": 6,
+              "width": 20,
+              "height": 20,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "a2",
+              "parent": "a",
+              "x": 6,
+              "y": 29,
+              "width": 20,
+              "height": 12,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "b",
+              "parent": "root",
+              "x": 4,
+              "y": 49,
+              "width": 22,
+              "height": 21,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "b1",
+              "parent": "b",
+              "x": 5,
+              "y": 50,
+              "width": 20,
+              "height": 8,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "b2",
+              "parent": "b",
+              "x": 5,
+              "y": 60,
+              "width": 20,
+              "height": 9,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "tail",
+              "parent": "root",
+              "x": 4,
+              "y": 76,
+              "width": 20,
+              "height": 5,
+              "active": true,
+              "clip": null
+            }
+          ],
+          "work": {
+            "sourceCloneNodes": 8,
+            "mutationLookupVisits": 3,
+            "validationNodes": 8,
+            "dependencyValidationNodes": 16,
+            "dependencyValidationEdges": 14,
+            "dirtyPropagationVisits": 6,
+            "dimensionEvaluations": 6,
+            "dimensionDependencyReads": 10,
+            "childPlacementEvaluations": 5,
+            "worldEvaluations": 8,
+            "worldWrites": 8,
+            "clipIntersections": 0,
+            "snapshotNodes": 8
+          }
+        }
+      }
+    },
+    {
+      "name": "fixed parent clips size propagation while later sibling placement still changes",
+      "status": "passed",
+      "observations": {
+        "catches": "fixed size incorrectly treated as isolating children and positions",
+        "incremental": {
+          "sourceCloneNodes": 5,
+          "mutationLookupVisits": 3,
+          "validationNodes": 5,
+          "dependencyValidationNodes": 10,
+          "dependencyValidationEdges": 4,
+          "dirtyPropagationVisits": 2,
+          "dimensionEvaluations": 2,
+          "dimensionDependencyReads": 0,
+          "childPlacementEvaluations": 2,
+          "worldEvaluations": 5,
+          "worldWrites": 2,
+          "clipIntersections": 0,
+          "snapshotNodes": 5
+        },
+        "fullOracle": {
+          "dimensionEvaluations": 10,
+          "worldEvaluations": 5,
+          "childPlacementEvaluations": 4
+        },
+        "sampledHitWork": {
+          "queries": 6,
+          "boundsChecks": 22
+        },
+        "nodes": 5,
+        "snapshot": {
+          "nodes": [
+            {
+              "id": "root",
+              "parent": null,
+              "x": 0,
+              "y": 0,
+              "width": 40,
+              "height": 60,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "fixed",
+              "parent": "root",
+              "x": 0,
+              "y": 0,
+              "width": 40,
+              "height": 50,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "one",
+              "parent": "fixed",
+              "x": 0,
+              "y": 0,
+              "width": 20,
+              "height": 20,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "two",
+              "parent": "fixed",
+              "x": 0,
+              "y": 20,
+              "width": 20,
+              "height": 10,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "tail",
+              "parent": "root",
+              "x": 0,
+              "y": 50,
+              "width": 20,
+              "height": 10,
+              "active": true,
+              "clip": null
+            }
+          ],
+          "work": {
+            "sourceCloneNodes": 5,
+            "mutationLookupVisits": 3,
+            "validationNodes": 5,
+            "dependencyValidationNodes": 10,
+            "dependencyValidationEdges": 4,
+            "dirtyPropagationVisits": 2,
+            "dimensionEvaluations": 2,
+            "dimensionDependencyReads": 0,
+            "childPlacementEvaluations": 2,
+            "worldEvaluations": 5,
+            "worldWrites": 2,
+            "clipIntersections": 0,
+            "snapshotNodes": 5
+          }
+        }
+      }
+    },
+    {
+      "name": "hidden child leaves flow and disables descendant hit",
+      "status": "passed",
+      "observations": {
+        "catches": "visibility changes fail to invalidate ancestors or hit state",
+        "hidden": {
+          "sourceCloneNodes": 8,
+          "mutationLookupVisits": 2,
+          "validationNodes": 8,
+          "dependencyValidationNodes": 16,
+          "dependencyValidationEdges": 12,
+          "dirtyPropagationVisits": 4,
+          "dimensionEvaluations": 4,
+          "dimensionDependencyReads": 8,
+          "childPlacementEvaluations": 5,
+          "worldEvaluations": 8,
+          "worldWrites": 8,
+          "clipIntersections": 0,
+          "snapshotNodes": 8
+        },
+        "restored": {
+          "sourceCloneNodes": 8,
+          "mutationLookupVisits": 2,
+          "validationNodes": 8,
+          "dependencyValidationNodes": 16,
+          "dependencyValidationEdges": 14,
+          "dirtyPropagationVisits": 4,
+          "dimensionEvaluations": 4,
+          "dimensionDependencyReads": 10,
+          "childPlacementEvaluations": 5,
+          "worldEvaluations": 8,
+          "worldWrites": 8,
+          "clipIntersections": 0,
+          "snapshotNodes": 8
+        }
+      }
+    },
+    {
+      "name": "insert and remove update flow and node identity",
+      "status": "passed",
+      "observations": {
+        "catches": "structure edits leave stale rectangles or cached aggregates",
+        "inserted": {
+          "sourceCloneNodes": 8,
+          "mutationLookupVisits": 2,
+          "validationNodes": 9,
+          "dependencyValidationNodes": 18,
+          "dependencyValidationEdges": 16,
+          "dirtyPropagationVisits": 6,
+          "dimensionEvaluations": 6,
+          "dimensionDependencyReads": 12,
+          "childPlacementEvaluations": 6,
+          "worldEvaluations": 9,
+          "worldWrites": 8,
+          "clipIntersections": 0,
+          "snapshotNodes": 9
+        },
+        "removed": {
+          "sourceCloneNodes": 9,
+          "mutationLookupVisits": 6,
+          "validationNodes": 8,
+          "dependencyValidationNodes": 16,
+          "dependencyValidationEdges": 14,
+          "dirtyPropagationVisits": 6,
+          "dimensionEvaluations": 4,
+          "dimensionDependencyReads": 10,
+          "childPlacementEvaluations": 5,
+          "worldEvaluations": 8,
+          "worldWrites": 7,
+          "clipIntersections": 0,
+          "snapshotNodes": 8
+        }
+      }
+    },
+    {
+      "name": "reparent updates old and new ancestor chains plus world positions",
+      "status": "passed",
+      "observations": {
+        "catches": "reparent invalidates only destination or keeps old world transform",
+        "incremental": {
+          "sourceCloneNodes": 8,
+          "mutationLookupVisits": 11,
+          "validationNodes": 8,
+          "dependencyValidationNodes": 16,
+          "dependencyValidationEdges": 14,
+          "dirtyPropagationVisits": 8,
+          "dimensionEvaluations": 8,
+          "dimensionDependencyReads": 14,
+          "childPlacementEvaluations": 7,
+          "worldEvaluations": 8,
+          "worldWrites": 7,
+          "clipIntersections": 0,
+          "snapshotNodes": 8
+        },
+        "fullOracle": {
+          "dimensionEvaluations": 16,
+          "worldEvaluations": 8,
+          "childPlacementEvaluations": 7
+        },
+        "sampledHitWork": {
+          "queries": 6,
+          "boundsChecks": 46
+        },
+        "nodes": 8,
+        "snapshot": {
+          "nodes": [
+            {
+              "id": "root",
+              "parent": null,
+              "x": 0,
+              "y": 0,
+              "width": 32,
+              "height": 74,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "a",
+              "parent": "root",
+              "x": 4,
+              "y": 4,
+              "width": 24,
+              "height": 14,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "a1",
+              "parent": "a",
+              "x": 6,
+              "y": 6,
+              "width": 20,
+              "height": 10,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "b",
+              "parent": "root",
+              "x": 4,
+              "y": 24,
+              "width": 22,
+              "height": 35,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "a2",
+              "parent": "b",
+              "x": 5,
+              "y": 25,
+              "width": 20,
+              "height": 12,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "b1",
+              "parent": "b",
+              "x": 5,
+              "y": 39,
+              "width": 20,
+              "height": 8,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "b2",
+              "parent": "b",
+              "x": 5,
+              "y": 49,
+              "width": 20,
+              "height": 9,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "tail",
+              "parent": "root",
+              "x": 4,
+              "y": 65,
+              "width": 20,
+              "height": 5,
+              "active": true,
+              "clip": null
+            }
+          ],
+          "work": {
+            "sourceCloneNodes": 8,
+            "mutationLookupVisits": 11,
+            "validationNodes": 8,
+            "dependencyValidationNodes": 16,
+            "dependencyValidationEdges": 14,
+            "dirtyPropagationVisits": 8,
+            "dimensionEvaluations": 8,
+            "dimensionDependencyReads": 14,
+            "childPlacementEvaluations": 7,
+            "worldEvaluations": 8,
+            "worldWrites": 7,
+            "clipIntersections": 0,
+            "snapshotNodes": 8
+          }
+        }
+      }
+    },
+    {
+      "name": "external glyph-width fixture changes text line count and ancestor height",
+      "status": "passed",
+      "observations": {
+        "catches": "measurement input change fails to propagate text height",
+        "incremental": {
+          "sourceCloneNodes": 3,
+          "mutationLookupVisits": 2,
+          "validationNodes": 3,
+          "dependencyValidationNodes": 6,
+          "dependencyValidationEdges": 4,
+          "dirtyPropagationVisits": 4,
+          "dimensionEvaluations": 4,
+          "dimensionDependencyReads": 4,
+          "childPlacementEvaluations": 2,
+          "worldEvaluations": 3,
+          "worldWrites": 3,
+          "clipIntersections": 0,
+          "snapshotNodes": 3
+        },
+        "fullOracle": {
+          "dimensionEvaluations": 6,
+          "worldEvaluations": 3,
+          "childPlacementEvaluations": 2
+        },
+        "sampledHitWork": {
+          "queries": 6,
+          "boundsChecks": 16
+        },
+        "nodes": 3,
+        "snapshot": {
+          "nodes": [
+            {
+              "id": "root",
+              "parent": null,
+              "x": 0,
+              "y": 0,
+              "width": 20,
+              "height": 37,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "text",
+              "parent": "root",
+              "x": 0,
+              "y": 0,
+              "width": 12,
+              "height": 30,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "tail",
+              "parent": "root",
+              "x": 0,
+              "y": 32,
+              "width": 20,
+              "height": 5,
+              "active": true,
+              "clip": null
+            }
+          ],
+          "work": {
+            "sourceCloneNodes": 3,
+            "mutationLookupVisits": 2,
+            "validationNodes": 3,
+            "dependencyValidationNodes": 6,
+            "dependencyValidationEdges": 4,
+            "dirtyPropagationVisits": 4,
+            "dimensionEvaluations": 4,
+            "dimensionDependencyReads": 4,
+            "childPlacementEvaluations": 2,
+            "worldEvaluations": 3,
+            "worldWrites": 3,
+            "clipIntersections": 0,
+            "snapshotNodes": 3
+          }
+        },
+        "measurementScope": "External synthetic advance widths; no font, shaping, CJK, emoji or IME execution."
+      }
+    },
+    {
+      "name": "acyclic explicit dimension reference invalidates dependent width",
+      "status": "passed",
+      "observations": {
+        "catches": "referenced dimension change keeps stale dependent cache",
+        "incremental": {
+          "sourceCloneNodes": 3,
+          "mutationLookupVisits": 2,
+          "validationNodes": 3,
+          "dependencyValidationNodes": 6,
+          "dependencyValidationEdges": 5,
+          "dirtyPropagationVisits": 5,
+          "dimensionEvaluations": 5,
+          "dimensionDependencyReads": 5,
+          "childPlacementEvaluations": 2,
+          "worldEvaluations": 3,
+          "worldWrites": 3,
+          "clipIntersections": 0,
+          "snapshotNodes": 3
+        },
+        "fullOracle": {
+          "dimensionEvaluations": 6,
+          "worldEvaluations": 3,
+          "childPlacementEvaluations": 2
+        },
+        "sampledHitWork": {
+          "queries": 6,
+          "boundsChecks": 16
+        },
+        "nodes": 3,
+        "snapshot": {
+          "nodes": [
+            {
+              "id": "root",
+              "parent": null,
+              "x": 0,
+              "y": 0,
+              "width": 80,
+              "height": 15,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "basis",
+              "parent": "root",
+              "x": 0,
+              "y": 0,
+              "width": 40,
+              "height": 10,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "dependent",
+              "parent": "root",
+              "x": 0,
+              "y": 10,
+              "width": 80,
+              "height": 5,
+              "active": true,
+              "clip": null
+            }
+          ],
+          "work": {
+            "sourceCloneNodes": 3,
+            "mutationLookupVisits": 2,
+            "validationNodes": 3,
+            "dependencyValidationNodes": 6,
+            "dependencyValidationEdges": 5,
+            "dirtyPropagationVisits": 5,
+            "dimensionEvaluations": 5,
+            "dimensionDependencyReads": 5,
+            "childPlacementEvaluations": 2,
+            "worldEvaluations": 3,
+            "worldWrites": 3,
+            "clipIntersections": 0,
+            "snapshotNodes": 3
+          }
+        }
+      }
+    },
+    {
+      "name": "illegal dimension dependency cycle is rejected without state change",
+      "status": "passed",
+      "observations": {
+        "catches": "cyclic reference commits before dependency validation",
+        "rejection": "a1.width -> root.width -> a.width -> a1.width",
+        "stateUnchanged": true
+      }
+    },
+    {
+      "name": "reparent to descendant is rejected atomically",
+      "status": "passed",
+      "observations": {
+        "catches": "tree cycle edits source before checking ancestry",
+        "stateUnchanged": true
+      }
+    },
+    {
+      "name": "nested rectangular clipping preserves half-open hit edges",
+      "status": "passed",
+      "observations": {
+        "catches": "hit test ignores inherited clip or includes right and bottom boundaries",
+        "clipped": {
+          "sourceCloneNodes": 0,
+          "mutationLookupVisits": 0,
+          "validationNodes": 3,
+          "dependencyValidationNodes": 6,
+          "dependencyValidationEdges": 0,
+          "dirtyPropagationVisits": 0,
+          "dimensionEvaluations": 6,
+          "dimensionDependencyReads": 0,
+          "childPlacementEvaluations": 2,
+          "worldEvaluations": 3,
+          "worldWrites": 3,
+          "clipIntersections": 1,
+          "snapshotNodes": 3
+        },
+        "unclipped": {
+          "sourceCloneNodes": 3,
+          "mutationLookupVisits": 2,
+          "validationNodes": 3,
+          "dependencyValidationNodes": 6,
+          "dependencyValidationEdges": 0,
+          "dirtyPropagationVisits": 2,
+          "dimensionEvaluations": 2,
+          "dimensionDependencyReads": 0,
+          "childPlacementEvaluations": 2,
+          "worldEvaluations": 3,
+          "worldWrites": 2,
+          "clipIntersections": 0,
+          "snapshotNodes": 3
+        }
+      }
+    },
+    {
+      "name": "full invalidation records complete recomputation",
+      "status": "passed",
+      "observations": {
+        "catches": "full fallback undercounts work or skips dirty leaves",
+        "incremental": {
+          "sourceCloneNodes": 0,
+          "mutationLookupVisits": 0,
+          "validationNodes": 0,
+          "dependencyValidationNodes": 0,
+          "dependencyValidationEdges": 0,
+          "dirtyPropagationVisits": 0,
+          "dimensionEvaluations": 16,
+          "dimensionDependencyReads": 14,
+          "childPlacementEvaluations": 7,
+          "worldEvaluations": 8,
+          "worldWrites": 0,
+          "clipIntersections": 0,
+          "snapshotNodes": 8
+        },
+        "fullOracle": {
+          "dimensionEvaluations": 16,
+          "worldEvaluations": 8,
+          "childPlacementEvaluations": 7
+        },
+        "sampledHitWork": {
+          "queries": 6,
+          "boundsChecks": 43
+        },
+        "nodes": 8,
+        "snapshot": {
+          "nodes": [
+            {
+              "id": "root",
+              "parent": null,
+              "x": 0,
+              "y": 0,
+              "width": 32,
+              "height": 75,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "a",
+              "parent": "root",
+              "x": 4,
+              "y": 4,
+              "width": 24,
+              "height": 29,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "a1",
+              "parent": "a",
+              "x": 6,
+              "y": 6,
+              "width": 20,
+              "height": 10,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "a2",
+              "parent": "a",
+              "x": 6,
+              "y": 19,
+              "width": 20,
+              "height": 12,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "b",
+              "parent": "root",
+              "x": 4,
+              "y": 39,
+              "width": 22,
+              "height": 21,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "b1",
+              "parent": "b",
+              "x": 5,
+              "y": 40,
+              "width": 20,
+              "height": 8,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "b2",
+              "parent": "b",
+              "x": 5,
+              "y": 50,
+              "width": 20,
+              "height": 9,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "tail",
+              "parent": "root",
+              "x": 4,
+              "y": 66,
+              "width": 20,
+              "height": 5,
+              "active": true,
+              "clip": null
+            }
+          ],
+          "work": {
+            "sourceCloneNodes": 0,
+            "mutationLookupVisits": 0,
+            "validationNodes": 0,
+            "dependencyValidationNodes": 0,
+            "dependencyValidationEdges": 0,
+            "dirtyPropagationVisits": 0,
+            "dimensionEvaluations": 16,
+            "dimensionDependencyReads": 14,
+            "childPlacementEvaluations": 7,
+            "worldEvaluations": 8,
+            "worldWrites": 0,
+            "clipIntersections": 0,
+            "snapshotNodes": 8
+          }
+        }
+      }
+    },
+    {
+      "name": "invalid insert and invalid glyph widths preserve source state",
+      "status": "passed",
+      "observations": {
+        "catches": "invalid input partly commits source or dirty state",
+        "stateUnchanged": true
+      }
+    },
+    {
+      "name": "sparse glyph-width arrays are rejected atomically before NaN geometry",
+      "status": "failed",
+      "error": {
+        "message": "Missing expected exception.",
+        "stack": "AssertionError [ERR_ASSERTION]: Missing expected exception.\n    at Object.fn (<knowledge-base>/experiments/nested-ui-probe/run.mjs:209:10)\n    at <knowledge-base>/experiments/nested-ui-probe/run.mjs:257:97\n    at ModuleJob.run (node:internal/modules/esm/module_job:439:25)\n    at async node:internal/modules/esm/loader:643:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+      },
+      "observations": {
+        "catches": "array hole bypasses glyph validation and contaminates measurements"
+      }
+    },
+    {
+      "name": "explicit numerical and node budgets reject overflow inputs atomically",
+      "status": "failed",
+      "error": {
+        "message": "Missing expected exception.",
+        "stack": "AssertionError [ERR_ASSERTION]: Missing expected exception.\n    at Object.fn (<knowledge-base>/experiments/nested-ui-probe/run.mjs:214:10)\n    at <knowledge-base>/experiments/nested-ui-probe/run.mjs:257:97\n    at ModuleJob.run (node:internal/modules/esm/module_job:439:25)\n    at async node:internal/modules/esm/loader:643:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+      },
+      "observations": {
+        "catches": "finite operands overflow content size or an unchecked dependency bound"
+      }
+    },
+    {
+      "name": "arbitrary subtree isolation has a demonstrated ancestor and sibling counterexample",
+      "status": "passed",
+      "observations": {
+        "catches": "negative control fails to expose missing upward propagation",
+        "wrongStrategyRejected": true,
+        "stale": [
+          {
+            "id": "root",
+            "incorrect": {
+              "id": "root",
+              "parent": null,
+              "x": 0,
+              "y": 0,
+              "width": 32,
+              "height": 75,
+              "active": true,
+              "clip": null
+            },
+            "correct": {
+              "id": "root",
+              "parent": null,
+              "x": 0,
+              "y": 0,
+              "width": 32,
+              "height": 85,
+              "active": true,
+              "clip": null
+            }
+          },
+          {
+            "id": "b",
+            "incorrect": {
+              "id": "b",
+              "parent": "root",
+              "x": 4,
+              "y": 39,
+              "width": 22,
+              "height": 21,
+              "active": true,
+              "clip": null
+            },
+            "correct": {
+              "id": "b",
+              "parent": "root",
+              "x": 4,
+              "y": 49,
+              "width": 22,
+              "height": 21,
+              "active": true,
+              "clip": null
+            }
+          },
+          {
+            "id": "b1",
+            "incorrect": {
+              "id": "b1",
+              "parent": "b",
+              "x": 5,
+              "y": 40,
+              "width": 20,
+              "height": 8,
+              "active": true,
+              "clip": null
+            },
+            "correct": {
+              "id": "b1",
+              "parent": "b",
+              "x": 5,
+              "y": 50,
+              "width": 20,
+              "height": 8,
+              "active": true,
+              "clip": null
+            }
+          },
+          {
+            "id": "b2",
+            "incorrect": {
+              "id": "b2",
+              "parent": "b",
+              "x": 5,
+              "y": 50,
+              "width": 20,
+              "height": 9,
+              "active": true,
+              "clip": null
+            },
+            "correct": {
+              "id": "b2",
+              "parent": "b",
+              "x": 5,
+              "y": 60,
+              "width": 20,
+              "height": 9,
+              "active": true,
+              "clip": null
+            }
+          },
+          {
+            "id": "tail",
+            "incorrect": {
+              "id": "tail",
+              "parent": "root",
+              "x": 4,
+              "y": 66,
+              "width": 20,
+              "height": 5,
+              "active": true,
+              "clip": null
+            },
+            "correct": {
+              "id": "tail",
+              "parent": "root",
+              "x": 4,
+              "y": 76,
+              "width": 20,
+              "height": 5,
+              "active": true,
+              "clip": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "seeded sequence compares structure rectangles clip and hits after every edit",
+      "status": "passed",
+      "observations": {
+        "catches": "mixed edits leave caches inconsistent outside hand fixtures",
+        "seed": 20261008,
+        "editSteps": 100,
+        "extraHitComparisons": 1200,
+        "work": {
+          "dimensionEvaluations": 532,
+          "worldEvaluations": 800,
+          "validationNodes": 980,
+          "childPlacementEvaluations": 504
+        }
+      }
+    }
+  ],
+  "sourceHashes": [
+    {
+      "path": "experiments/nested-ui-probe/model.mjs",
+      "sha256": "3b5ad204870d9085742ea64a01a9dcc3fc93d0e5cc81f3420ebf65ccb401d48a"
+    },
+    {
+      "path": "experiments/nested-ui-probe/run.mjs",
+      "sha256": "fb6cc9bbd485d1f79f8caaa237839bca0d5a4b23ab1561b2330ce8c50fcb8860"
+    }
+  ],
+  "limitations": [
+    "Finite vertical layout semantics only, not EUI compatibility.",
+    "Text widths are an external synthetic fixture, not real font/shaping/CJK/IME validation.",
+    "No timing, FPS, device, GPU, or performance-advantage claims.",
+    "Mutation validation traverses the entire source and dependency graphs; changed frames traverse all nodes for world state, with cached dimension recomputation.",
+    "Arbitrary subtree isolation is explicitly invalid when content-size ancestors or flow siblings depend on it."
+  ],
+  "sourceSnapshots": [
+    {
+      "path": "experiments/nested-ui-probe/model.mjs",
+      "source": "const axes = ['width', 'height'];\nconst key = (id, axis) => `${id}:${axis}`;\nconst zeroWork = () => ({ sourceCloneNodes: 0, mutationLookupVisits: 0, validationNodes: 0, dependencyValidationNodes: 0, dependencyValidationEdges: 0, dirtyPropagationVisits: 0, dimensionEvaluations: 0, dimensionDependencyReads: 0, childPlacementEvaluations: 0, worldEvaluations: 0, worldWrites: 0, clipIntersections: 0, snapshotNodes: 0 });\nconst finite = n => typeof n === 'number' && Number.isFinite(n) && n >= 0;\n\n// Experimental vertical-flow model. Transaction validation is deliberately full-tree;\n// dimension caches and dependency-driven invalidation are incremental.\nexport class NestedUI {\n  constructor(tree) {\n    this.tree = structuredClone(tree);\n    this.work = zeroWork();\n    const graph = this.validate(this.tree);\n    Object.assign(this, graph);\n    this.dimensions = new Map();\n    this.local = new Map();\n    this.rectangles = new Map();\n    this.order = [];\n    this.dirty = new Set(graph.dependencies.keys());\n    this.arrange = new Set(this.index.keys());\n    this.needsWorld = true;\n    this.lastHitWork = { boundsChecks: 0 };\n  }\n  source() { return structuredClone(this.tree); }\n  validate(tree) {\n    const index = new Map(), parents = new Map(), seenObjects = new Set();\n    const collect = (n, parent) => {\n      this.work.validationNodes++;\n      if (!n || typeof n !== 'object') throw new Error('Node must be an object');\n      if (seenObjects.has(n)) throw new Error('Tree object cycle or duplicate object');\n      seenObjects.add(n);\n      if (typeof n.id !== 'string' || !n.id || n.id.includes(':')) throw new Error('Node ID must be nonempty and exclude colon');\n      if (index.has(n.id)) throw new Error(`Duplicate node ID ${n.id}`);\n      index.set(n.id, n); parents.set(n.id, parent);\n      const allowed = new Set(['id', 'width', 'height', 'padding', 'gap', 'visible', 'clip', 'text', 'children']);\n      for (const property of Object.keys(n)) if (!allowed.has(property)) throw new Error(`Unsupported property ${property}`);\n      for (const p of ['padding', 'gap']) if (n[p] !== undefined && !finite(n[p])) throw new Error(`Invalid ${p}`);\n      for (const p of ['visible', 'clip']) if (n[p] !== undefined && typeof n[p] !== 'boolean') throw new Error(`Invalid ${p}`);\n      if (n.children !== undefined && !Array.isArray(n.children)) throw new Error('children must be array');\n      if (n.text) {\n        if ((n.children ?? []).length) throw new Error('Text fixture must be a leaf');\n        const t = n.text;\n        if (!Array.isArray(t.glyphWidths) || t.glyphWidths.some(w => !finite(w)) || !finite(t.wrapWidth) || t.wrapWidth === 0 || !finite(t.lineHeight) || t.lineHeight === 0)\n          throw new Error('Invalid text glyph-width fixture');\n      }\n      for (const child of n.children ?? []) collect(child, n.id);\n    };\n    collect(tree, null);\n    const dependencies = new Map(), reverse = new Map();\n    for (const [id, n] of index) for (const axis of axes) {\n      const spec = n[axis] ?? 'content';\n      let deps;\n      if (finite(spec)) deps = [];\n      else if (spec === 'content') deps = n.text ? [] : (n.children ?? []).filter(c => c.visible !== false).map(c => key(c.id, axis));\n      else if (spec && typeof spec === 'object' && typeof spec.ref === 'string' && index.has(spec.ref) && finite(spec.factor ?? 1) && Object.keys(spec).every(p => ['ref', 'factor'].includes(p))) deps = [key(spec.ref, axis)];\n      else throw new Error(`Invalid ${axis} size or missing reference at ${id}`);\n      dependencies.set(key(id, axis), deps);\n      for (const d of deps) {\n        if (!reverse.has(d)) reverse.set(d, new Set());\n        reverse.get(d).add(key(id, axis));\n      }\n    }\n    const state = new Map();\n    const visit = k => {\n      if (state.get(k) === 1) throw new Error(`Dimension dependency cycle at ${k}`);\n      if (state.get(k) === 2) return;\n      this.work.dependencyValidationNodes++;\n      state.set(k, 1);\n      for (const d of dependencies.get(k)) { this.work.dependencyValidationEdges++; visit(d); }\n      state.set(k, 2);\n    };\n    for (const k of dependencies.keys()) visit(k);\n    return { index, parents, dependencies, reverse };\n  }\n  transact(edit) {\n    // Build a candidate before touching the committed source/caches/dirty sets.\n    const candidate = structuredClone(this.tree);\n    this.work.sourceCloneNodes += this.index.size;\n    const lookup = id => {\n      let result;\n      const walk = n => {\n        this.work.mutationLookupVisits++;\n        if (n.id === id) result = n;\n        for (const c of n.children ?? []) if (!result) walk(c);\n      };\n      walk(candidate);\n      if (!result) throw new Error(`Missing node ${id}`);\n      return result;\n    };\n    const changed = edit(candidate, lookup);\n    const graph = this.validate(candidate);\n    const pending = [];\n    for (const id of changed) for (const axis of axes) pending.push(key(id, axis));\n    const visited = new Set();\n    while (pending.length) {\n      const k = pending.pop(); if (visited.has(k)) continue;\n      visited.add(k); this.work.dirtyPropagationVisits++;\n      if (graph.dependencies.has(k)) this.dirty.add(k);\n      for (const r of this.reverse.get(k) ?? []) pending.push(r);\n      for (const r of graph.reverse.get(k) ?? []) pending.push(r);\n      const id = k.slice(0, k.lastIndexOf(':'));\n      this.arrange.add(id);\n      if (this.parents.get(id)) this.arrange.add(this.parents.get(id));\n      if (graph.parents.get(id)) this.arrange.add(graph.parents.get(id));\n    }\n    this.tree = candidate; Object.assign(this, graph); this.needsWorld = true;\n    for (const k of this.dimensions.keys()) if (!graph.dependencies.has(k)) this.dimensions.delete(k);\n    for (const k of this.dirty) if (!graph.dependencies.has(k)) this.dirty.delete(k);\n    for (const id of this.local.keys()) if (!graph.index.has(id)) this.local.delete(id);\n    for (const id of this.rectangles.keys()) if (!graph.index.has(id)) this.rectangles.delete(id);\n  }\n  patch(id, fields) {\n    this.transact((_tree, lookup) => {\n      const n = lookup(id);\n      if (Object.keys(fields).some(k => k === 'id' || k === 'children')) throw new Error('Use structure operations for ID and children');\n      Object.assign(n, structuredClone(fields)); return [id];\n    });\n  }\n  insert(parent, node, at = 0) {\n    this.transact((_tree, lookup) => {\n      const p = lookup(parent), children = p.children ?? [];\n      if (!Number.isInteger(at) || at < 0 || at > children.length) throw new Error('Invalid insert index');\n      p.children = children; children.splice(at, 0, structuredClone(node));\n      const added = [];\n      (function collect(n) { added.push(n.id); for (const c of n.children ?? []) collect(c); })(node);\n      return [parent, ...added];\n    });\n  }\n  remove(id) {\n    this.transact((_tree, lookup) => {\n      if (id === this.tree.id) throw new Error('Cannot remove root');\n      const n = lookup(id), p = lookup(this.parents.get(id));\n      p.children.splice(p.children.indexOf(n), 1);\n      const removed = [];\n      (function collect(c) { removed.push(c.id); for (const child of c.children ?? []) collect(child); })(n);\n      return [p.id, ...removed];\n    });\n  }\n  reparent(id, parent, at = 0) {\n    this.transact((_tree, lookup) => {\n      if (id === this.tree.id) throw new Error('Cannot reparent root');\n      const n = lookup(id), target = lookup(parent);\n      let ancestor = parent;\n      while (ancestor !== null) {\n        if (ancestor === id) throw new Error('Cannot reparent to self or descendant: tree cycle');\n        ancestor = this.parents.get(ancestor);\n      }\n      const old = lookup(this.parents.get(id));\n      old.children.splice(old.children.indexOf(n), 1);\n      target.children ??= [];\n      if (!Number.isInteger(at) || at < 0 || at > target.children.length) throw new Error('Invalid reparent index');\n      target.children.splice(at, 0, n); return [id, old.id, target.id];\n    });\n  }\n  invalidateAll() {\n    for (const k of this.dependencies.keys()) this.dirty.add(k);\n    for (const id of this.index.keys()) this.arrange.add(id);\n    this.needsWorld = true;\n  }\n  measure(k) {\n    if (!this.dirty.has(k) && this.dimensions.has(k)) return this.dimensions.get(k);\n    const sep = k.lastIndexOf(':'), id = k.slice(0, sep), axis = k.slice(sep + 1), n = this.index.get(id), spec = n[axis] ?? 'content';\n    this.work.dimensionEvaluations++;\n    const dep = d => { this.work.dimensionDependencyReads++; return this.measure(d); };\n    let value;\n    if (typeof spec === 'number') value = spec;\n    else if (typeof spec === 'object') value = dep(key(spec.ref, axis)) * (spec.factor ?? 1);\n    else if (n.text) {\n      // External measured advances are the input. This is greedy fixture wrapping,\n      // without font discovery, Unicode shaping or line-breaking semantics.\n      let line = 0, widest = 0, count = 1;\n      for (const advance of n.text.glyphWidths) {\n        if (line !== 0 && line + advance > n.text.wrapWidth) { widest = Math.max(widest, line); count++; line = 0; }\n        line += advance;\n      }\n      value = (axis === 'width' ? Math.max(widest, line) : count * n.text.lineHeight) + 2 * (n.padding ?? 0);\n    } else {\n      const children = (n.children ?? []).filter(c => c.visible !== false);\n      if (axis === 'width') {\n        value = 0;\n        for (const c of children) value = Math.max(value, dep(key(c.id, 'width')));\n      } else {\n        value = Math.max(0, children.length - 1) * (n.gap ?? 0);\n        for (const c of children) value += dep(key(c.id, 'height'));\n      }\n      value += 2 * (n.padding ?? 0);\n    }\n    this.dimensions.set(k, value); this.dirty.delete(k); return value;\n  }\n  flush() {\n    // Only dirty dimensions are evaluated; untouched cached branches are reused.\n    for (const k of [...this.dirty]) this.measure(k);\n    if (this.needsWorld) {\n      const order = [];\n      const place = (n, x, y, inheritedActive, inheritedClip) => {\n        this.work.worldEvaluations++;\n        const width = this.dimensions.get(key(n.id, 'width')), height = this.dimensions.get(key(n.id, 'height'));\n        let clip = inheritedClip;\n        if (n.clip) {\n          if (clip === null) clip = { x, y, width, height };\n          else {\n            this.work.clipIntersections++;\n            const left = Math.max(clip.x, x), top = Math.max(clip.y, y);\n            clip = { x: left, y: top, width: Math.max(0, Math.min(clip.x + clip.width, x + width) - left), height: Math.max(0, Math.min(clip.y + clip.height, y + height) - top) };\n          }\n        }\n        const rect = { id: n.id, parent: this.parents.get(n.id), x, y, width, height, active: inheritedActive && n.visible !== false, clip };\n        const old = this.rectangles.get(n.id);\n        if (!old || JSON.stringify(old) !== JSON.stringify(rect)) { this.rectangles.set(n.id, rect); this.work.worldWrites++; }\n        order.push(n.id);\n        const children = n.children ?? [];\n        if (this.arrange.has(n.id)) {\n          let cursor = n.padding ?? 0, visibleCount = 0;\n          for (const c of children) {\n            this.work.childPlacementEvaluations++;\n            if (c.visible !== false && visibleCount++ > 0) cursor += n.gap ?? 0;\n            this.local.set(c.id, { x: n.padding ?? 0, y: cursor });\n            if (c.visible !== false) cursor += this.dimensions.get(key(c.id, 'height'));\n          }\n        }\n        for (const c of children) {\n          const local = this.local.get(c.id);\n          place(c, x + local.x, y + local.y, rect.active, clip);\n        }\n      };\n      place(this.tree, 0, 0, true, null);\n      this.order = order; this.arrange.clear(); this.needsWorld = false;\n    }\n    this.work.snapshotNodes += this.order.length;\n    const result = { nodes: this.order.map(id => structuredClone(this.rectangles.get(id))), work: { ...this.work } };\n    this.work = zeroWork(); return result;\n  }\n  hit(x, y) {\n    if (this.needsWorld || this.dirty.size) throw new Error('Flush pending changes before hit testing');\n    if (!Number.isFinite(x) || !Number.isFinite(y)) throw new Error('Invalid hit coordinates');\n    this.lastHitWork = { boundsChecks: 0 };\n    for (let i = this.order.length - 1; i >= 0; i--) {\n      this.lastHitWork.boundsChecks++;\n      const r = this.rectangles.get(this.order[i]);\n      if (!r.active || x < r.x || y < r.y || x >= r.x + r.width || y >= r.y + r.height) continue;\n      const c = r.clip;\n      if (c && (x < c.x || y < c.y || x >= c.x + c.width || y >= c.y + c.height)) continue;\n      return r.id;\n    }\n    return null;\n  }\n}\n"
+    },
+    {
+      "path": "experiments/nested-ui-probe/run.mjs",
+      "source": "import assert from 'node:assert/strict';\nimport fs from 'node:fs';\nimport path from 'node:path';\nimport crypto from 'node:crypto';\nimport { fileURLToPath } from 'node:url';\nimport { NestedUI as SafeUI } from './model.mjs';\n\nconst unsafeIsolation = process.argv.includes('--unsafe-isolation');\n// A test-only mutation of the invalidation strategy, not a production option.\n// Reproduce the real broken cached model rather than merely editing expected output.\nconst NestedUI = unsafeIsolation ? class extends SafeUI {\n  patch(id, fields) {\n    super.patch(id, fields);\n    if (id !== 'a1') return;\n    const keep = new Set(['a', 'a1', 'a2']);\n    for (const k of [...this.dirty]) if (!keep.has(k.slice(0, k.lastIndexOf(':')))) this.dirty.delete(k);\n    for (const k of [...this.arrange]) if (!keep.has(k)) this.arrange.delete(k);\n  }\n} : SafeUI;\n\nconst dir = path.dirname(fileURLToPath(import.meta.url));\nconst leaf = (id, height, width = 20, extra = {}) => ({ id, width, height, ...extra });\nconst box = (id, children, extra = {}) => ({ id, width: 'content', height: 'content', children, ...extra });\nconst fixture = () => box('root', [\n  box('a', [leaf('a1', 10), leaf('a2', 12)], { padding: 2, gap: 3 }),\n  box('b', [leaf('b1', 8), leaf('b2', 9)], { padding: 1, gap: 2 }),\n  leaf('tail', 5)\n], { padding: 4, gap: 6 });\n\n// Test-only full oracle: rebuild a flat source index, solve two complete dimension\n// graphs, then flatten world rectangles. It never calls model measurement/layout/hit.\nfunction oracle(tree) {\n  const all = [], index = new Map(), parents = new Map();\n  const flatten = (n, p = null) => {\n    all.push(n); index.set(n.id, n); parents.set(n.id, p);\n    for (const c of n.children ?? []) flatten(c, n);\n  };\n  flatten(tree);\n  const sizes = new Map(all.map(n => [n.id, {}]));\n  const fullWork = { dimensionEvaluations: 0, worldEvaluations: 0, childPlacementEvaluations: 0 };\n  const textBox = n => {\n    const lines = [0];\n    for (const width of n.text.glyphWidths) {\n      if (lines.at(-1) > 0 && lines.at(-1) + width > n.text.wrapWidth) lines.push(0);\n      lines[lines.length - 1] += width;\n    }\n    return { width: Math.max(...lines), height: lines.length * n.text.lineHeight };\n  };\n  for (const axis of ['width', 'height']) {\n    const pending = new Set(all.map(n => n.id));\n    while (pending.size) {\n      let progress = false;\n      for (const id of [...pending]) {\n        const n = index.get(id), spec = n[axis] ?? 'content', children = (n.children ?? []).filter(c => c.visible !== false);\n        const deps = typeof spec === 'object' ? [spec.ref] : spec === 'content' ? children.map(c => c.id) : [];\n        if (deps.some(d => pending.has(d))) continue;\n        let size;\n        if (typeof spec === 'number') size = spec;\n        else if (typeof spec === 'object') size = sizes.get(spec.ref)[axis] * (spec.factor ?? 1);\n        else if (n.text) size = textBox(n)[axis] + 2 * (n.padding ?? 0);\n        else if (axis === 'width') size = Math.max(0, ...children.map(c => sizes.get(c.id).width)) + 2 * (n.padding ?? 0);\n        else size = children.reduce((sum, c) => sum + sizes.get(c.id).height, 0) + Math.max(0, children.length - 1) * (n.gap ?? 0) + 2 * (n.padding ?? 0);\n        sizes.get(id)[axis] = size; pending.delete(id); progress = true; fullWork.dimensionEvaluations++;\n      }\n      assert.ok(progress, 'oracle source dependencies must be acyclic');\n    }\n  }\n  const nodes = [];\n  const intersect = (a, b) => a === null ? b : {\n    x: Math.max(a.x, b.x), y: Math.max(a.y, b.y),\n    width: Math.max(0, Math.min(a.x + a.width, b.x + b.width) - Math.max(a.x, b.x)),\n    height: Math.max(0, Math.min(a.y + a.height, b.y + b.height) - Math.max(a.y, b.y))\n  };\n  const place = (n, x, y, active, ancestorClip) => {\n    const size = sizes.get(n.id), bounds = { x, y, ...size }, effectiveActive = active && n.visible !== false;\n    const clip = n.clip ? intersect(ancestorClip, bounds) : ancestorClip;\n    nodes.push({ id: n.id, parent: parents.get(n.id)?.id ?? null, ...bounds, active: effectiveActive, clip });\n    fullWork.worldEvaluations++;\n    let cy = y + (n.padding ?? 0);\n    let placed = 0;\n    for (const child of n.children ?? []) {\n      if (child.visible !== false && placed++ > 0) cy += n.gap ?? 0;\n      place(child, x + (n.padding ?? 0), cy, effectiveActive, clip);\n      if (child.visible !== false) cy += sizes.get(child.id).height;\n      fullWork.childPlacementEvaluations++;\n    }\n  };\n  place(tree, 0, 0, true, null);\n  return { nodes, work: fullWork };\n}\nfunction oracleHit(nodes, x, y) {\n  for (const n of [...nodes].reverse()) {\n    if (!n.active) continue;\n    const r = n.clip ? {\n      left: Math.max(n.x, n.clip.x), top: Math.max(n.y, n.clip.y),\n      right: Math.min(n.x + n.width, n.clip.x + n.clip.width), bottom: Math.min(n.y + n.height, n.clip.y + n.clip.height)\n    } : { left: n.x, top: n.y, right: n.x + n.width, bottom: n.y + n.height };\n    if (x >= r.left && y >= r.top && x < r.right && y < r.bottom) return n.id;\n  }\n  return null;\n}\nconst byId = (snapshot, id) => snapshot.nodes.find(n => n.id === id);\nfunction compare(model) {\n  const got = model.flush(), want = oracle(model.source());\n  assert.deepEqual(got.nodes, want.nodes, 'cached incremental rectangles must match independent source oracle');\n  let boundsChecks = 0;\n  for (const p of [[0, 0], [6, 6], [12, 20], [31, 32], [80, 100], [-1, -1]]) {\n    assert.equal(model.hit(...p), oracleHit(want.nodes, ...p), `hit ${p}`);\n    boundsChecks += model.lastHitWork?.boundsChecks ?? 0;\n  }\n  return { incremental: got.work, fullOracle: want.work, sampledHitWork: { queries: 6, boundsChecks }, nodes: got.nodes.length, snapshot: got };\n}\n\nconst tests = [];\nconst test = (name, catches, fn) => tests.push({ name, catches, fn });\ntest('nested intrinsic sizes and padded world coordinates', 'missing ancestor aggregation or incorrect coordinate composition', () => {\n  const model = new NestedUI(fixture()), result = compare(model);\n  assert.equal(byId(result.snapshot, 'root').height, 75);\n  assert.equal(byId(result.snapshot, 'a').height, 29);\n  assert.equal(byId(result.snapshot, 'a2').y, 19);\n  assert.equal(byId(result.snapshot, 'tail').y, 66);\n  return result;\n});\ntest('static flush performs no dimension or world evaluation', 'unconditional full layout on unchanged source', () => {\n  const m = new NestedUI(fixture()); compare(m); const result = compare(m);\n  assert.equal(result.incremental.dimensionEvaluations, 0);\n  assert.equal(result.incremental.worldEvaluations, 0);\n  return result;\n});\ntest('sparse leaf height propagates through ancestors and shifts following siblings', 'subtree-only invalidation loses ancestor and sibling effects', () => {\n  const m = new NestedUI(fixture()); compare(m); m.patch('a1', { height: 20 }); const result = compare(m);\n  assert.equal(byId(result.snapshot, 'root').height, 85);\n  assert.equal(byId(result.snapshot, 'a2').y, 29);\n  assert.equal(byId(result.snapshot, 'b').y, 49);\n  assert.ok(result.incremental.dimensionEvaluations < result.fullOracle.dimensionEvaluations);\n  return result;\n});\ntest('fixed parent clips size propagation while later sibling placement still changes', 'fixed size incorrectly treated as isolating children and positions', () => {\n  const tree = box('root', [box('fixed', [leaf('one', 10), leaf('two', 10)], { width: 40, height: 50 }), leaf('tail', 10)]);\n  const m = new NestedUI(tree); compare(m); m.patch('one', { height: 20 }); const r = compare(m);\n  assert.equal(byId(r.snapshot, 'root').height, 60); assert.equal(byId(r.snapshot, 'two').y, 20);\n  return r;\n});\ntest('hidden child leaves flow and disables descendant hit', 'visibility changes fail to invalidate ancestors or hit state', () => {\n  const m = new NestedUI(fixture()); compare(m); m.patch('a', { visible: false }); const r = compare(m);\n  assert.equal(byId(r.snapshot, 'root').height, 40); assert.equal(byId(r.snapshot, 'a1').active, false);\n  m.patch('a', { visible: true }); const restored = compare(m);\n  assert.equal(byId(restored.snapshot, 'root').height, 75);\n  return { hidden: r.incremental, restored: restored.incremental };\n});\ntest('insert and remove update flow and node identity', 'structure edits leave stale rectangles or cached aggregates', () => {\n  const m = new NestedUI(fixture()); compare(m); m.insert('a', leaf('new', 7), 1); const added = compare(m);\n  assert.equal(byId(added.snapshot, 'a').height, 39);\n  m.remove('new'); const removed = compare(m);\n  assert.equal(byId(removed.snapshot, 'a').height, 29); assert.equal(byId(removed.snapshot, 'new'), undefined);\n  return { inserted: added.incremental, removed: removed.incremental };\n});\ntest('reparent updates old and new ancestor chains plus world positions', 'reparent invalidates only destination or keeps old world transform', () => {\n  const m = new NestedUI(fixture()); compare(m); m.reparent('a2', 'b', 0); const r = compare(m);\n  assert.equal(byId(r.snapshot, 'a').height, 14); assert.equal(byId(r.snapshot, 'b').height, 35);\n  assert.equal(byId(r.snapshot, 'a2').parent, 'b'); assert.equal(byId(r.snapshot, 'a2').y, 25);\n  return r;\n});\ntest('external glyph-width fixture changes text line count and ancestor height', 'measurement input change fails to propagate text height', () => {\n  const text = box('text', [], { text: { glyphWidths: [6, 6, 6], wrapWidth: 12, lineHeight: 10 } });\n  const m = new NestedUI(box('root', [text, leaf('tail', 5)], { gap: 2 })); compare(m);\n  m.patch('text', { text: { glyphWidths: [6, 6, 6, 6, 6], wrapWidth: 12, lineHeight: 10 } }); const r = compare(m);\n  assert.equal(byId(r.snapshot, 'text').height, 30); assert.equal(byId(r.snapshot, 'tail').y, 32);\n  return { ...r, measurementScope: 'External synthetic advance widths; no font, shaping, CJK, emoji or IME execution.' };\n});\ntest('acyclic explicit dimension reference invalidates dependent width', 'referenced dimension change keeps stale dependent cache', () => {\n  const m = new NestedUI(box('root', [leaf('basis', 10, 30), leaf('dependent', 5, { ref: 'basis', factor: 2 })])); compare(m);\n  m.patch('basis', { width: 40 }); const r = compare(m);\n  assert.equal(byId(r.snapshot, 'dependent').width, 80); assert.equal(byId(r.snapshot, 'root').width, 80); return r;\n});\ntest('illegal dimension dependency cycle is rejected without state change', 'cyclic reference commits before dependency validation', () => {\n  const m = new NestedUI(fixture()); compare(m); const before = m.source(), snapshot = m.flush();\n  assert.throws(() => m.patch('a1', { width: { ref: 'root' } }), /cycle/i);\n  assert.deepEqual(m.source(), before); assert.deepEqual(m.flush().nodes, snapshot.nodes);\n  return { rejection: 'a1.width -> root.width -> a.width -> a1.width', stateUnchanged: true };\n});\ntest('reparent to descendant is rejected atomically', 'tree cycle edits source before checking ancestry', () => {\n  const m = new NestedUI(fixture()); compare(m); const before = m.source(), snapshot = m.flush();\n  assert.throws(() => m.reparent('a', 'a1', 0), /descendant|cycle/i);\n  assert.deepEqual(m.source(), before); assert.deepEqual(m.flush().nodes, snapshot.nodes);\n  return { stateUnchanged: true };\n});\ntest('nested rectangular clipping preserves half-open hit edges', 'hit test ignores inherited clip or includes right and bottom boundaries', () => {\n  const m = new NestedUI(box('root', [box('inner', [leaf('overflow', 30, 30)], { width: 15, height: 10, clip: true, padding: 2 })], { width: 20, height: 20, clip: true }));\n  const r = compare(m);\n  assert.equal(m.hit(3, 3), 'overflow'); assert.equal(m.hit(14, 9), 'overflow');\n  assert.equal(m.hit(15, 9), 'root'); assert.equal(m.hit(3, 10), 'root'); assert.equal(m.hit(20, 1), null);\n  m.patch('inner', { clip: false }); const changed = compare(m); assert.equal(m.hit(16, 12), 'overflow');\n  return { clipped: r.incremental, unclipped: changed.incremental };\n});\ntest('full invalidation records complete recomputation', 'full fallback undercounts work or skips dirty leaves', () => {\n  const m = new NestedUI(fixture()); compare(m); m.invalidateAll(); const r = compare(m);\n  assert.equal(r.incremental.dimensionEvaluations, r.fullOracle.dimensionEvaluations);\n  assert.equal(r.incremental.worldEvaluations, r.nodes); return r;\n});\ntest('invalid insert and invalid glyph widths preserve source state', 'invalid input partly commits source or dirty state', () => {\n  const m = new NestedUI(fixture()); compare(m); const before = m.source();\n  assert.throws(() => m.insert('a', leaf('a1', 10), 0), /duplicate/i);\n  assert.throws(() => m.patch('a1', { text: { glyphWidths: [-1], wrapWidth: 10, lineHeight: 10 } }), /glyph|text/i);\n  assert.deepEqual(m.source(), before); compare(m); return { stateUnchanged: true };\n});\ntest('sparse glyph-width arrays are rejected atomically before NaN geometry', 'array hole bypasses glyph validation and contaminates measurements', () => {\n  const m = new NestedUI(fixture()); compare(m); const before = m.source(), rectangles = m.flush().nodes;\n  assert.throws(() => m.patch('a1', { text: { glyphWidths: new Array(1), wrapWidth: 12, lineHeight: 10 } }), /dense|glyph/i);\n  assert.deepEqual(m.source(), before); assert.deepEqual(m.flush().nodes, rectangles);\n  return { rejectedInput: 'glyphWidths = new Array(1)', stateUnchanged: true };\n});\ntest('explicit numerical and node budgets reject overflow inputs atomically', 'finite operands overflow content size or an unchecked dependency bound', () => {\n  assert.throws(() => new NestedUI(box('root', [leaf('a', 1e308), leaf('b', 1e308)])), /budget/i);\n  const m = new NestedUI(fixture()); compare(m); const before = m.source(), rectangles = m.flush().nodes;\n  assert.throws(() => m.patch('a1', { height: 1e308 }), /budget/i);\n  assert.throws(() => m.patch('a1', { width: { ref: 'a2', factor: 9 } }), /budget/i);\n  assert.throws(() => m.patch('a1', { text: { glyphWidths: [1], wrapWidth: 1e308, lineHeight: 10 } }), /budget/i);\n  assert.throws(() => new NestedUI(box('root', Array.from({ length: 128 }, (_, i) => leaf(`n${i}`, 1)))), /budget/i);\n  assert.deepEqual(m.source(), before); assert.deepEqual(m.flush().nodes, rectangles);\n  return { rejectedOverflowPair: [1e308, 1e308], inputBudget: { maxNodes: 128, scalarMax: 1e6, referenceFactorMax: 8, glyphCountMax: 4096 }, stateUnchanged: true };\n});\ntest('arbitrary subtree isolation has a demonstrated ancestor and sibling counterexample', 'negative control fails to expose missing upward propagation', () => {\n  const tree = fixture(), before = oracle(tree), next = structuredClone(tree); next.children[0].children[0].height = 20;\n  const correct = oracle(next), isolated = structuredClone(before.nodes);\n  // Deliberately wrong: replacing only a subtree leaves root and later branches stale.\n  for (const n of correct.nodes.filter(n => n.id === 'a' || n.parent === 'a')) isolated[isolated.findIndex(old => old.id === n.id)] = n;\n  assert.notDeepEqual(isolated, correct.nodes);\n  const stale = isolated.filter(n => JSON.stringify(n) !== JSON.stringify(correct.nodes.find(c => c.id === n.id))).map(n => ({ id: n.id, incorrect: n, correct: correct.nodes.find(c => c.id === n.id) }));\n  assert.ok(stale.some(n => n.id === 'root')); assert.ok(stale.some(n => n.id === 'b'));\n  return { wrongStrategyRejected: true, stale };\n});\ntest('seeded sequence compares structure rectangles clip and hits after every edit', 'mixed edits leave caches inconsistent outside hand fixtures', () => {\n  const m = new NestedUI(fixture()); compare(m); let seed = 20261008, checks = 0;\n  const random = () => { seed = (1664525 * seed + 1013904223) >>> 0; return seed; };\n  const totalWork = { dimensionEvaluations: 0, worldEvaluations: 0, validationNodes: 0, childPlacementEvaluations: 0 };\n  for (let i = 0; i < 100; i++) {\n    const source = m.source(), ids = [];\n    (function collect(n) { if (!n.children?.length) ids.push(n.id); for (const c of n.children ?? []) collect(c); })(source);\n    const id = ids[random() % ids.length];\n    if (i % 5 === 0) m.patch(id, { visible: random() % 2 === 0 });\n    else if (i % 5 === 1) m.patch(id, { height: 1 + random() % 35 });\n    else if (i % 5 === 2) m.patch(i % 2 ? 'a' : 'b', { padding: random() % 6, gap: random() % 5, clip: random() % 2 === 0 });\n    else if (i % 5 === 3) m.reparent(id, i % 2 ? 'a' : 'b', 0);\n    else { m.insert('a', leaf(`insert-${i}`, 1 + random() % 15), 0); m.remove(id); }\n    const r = compare(m); for (const k of Object.keys(totalWork)) totalWork[k] += r.incremental[k];\n    for (let p = 0; p < 12; p++) {\n      const x = random() % 50, y = random() % 200;\n      assert.equal(m.hit(x, y), oracleHit(r.snapshot.nodes, x, y)); checks++;\n    }\n  }\n  return { seed: 20261008, editSteps: 100, extraHitComparisons: checks, work: totalWork };\n});\n\nconst results = [];\nfor (const t of tests) {\n  try { results.push({ name: t.name, status: 'passed', observations: { catches: t.catches, ...t.fn() } }); }\n  catch (error) { results.push({ name: t.name, status: 'failed', error: { message: error.message, stack: error.stack }, observations: { catches: t.catches } }); }\n}\nconst sourcePaths = ['model.mjs', 'run.mjs'];\nconst sourceHashes = sourcePaths.map(p => ({ path: `experiments/nested-ui-probe/${p}`, sha256: crypto.createHash('sha256').update(fs.readFileSync(path.join(dir, p))).digest('hex') }));\nconst report = {\n  schemaVersion: 1, experiment: 'nested-ui-probe', checkedAtUtc: new Date().toISOString(),\n  mode: unsafeIsolation ? 'deliberately-unsafe-subtree-isolation-negative-control' : 'production-research-model',\n  environment: { node: process.version, platform: process.platform, arch: process.arch, execution: 'CPU-only deterministic research model; no external dependencies' },\n  counts: { total: results.length, passed: results.filter(r => r.status === 'passed').length, failed: results.filter(r => r.status === 'failed').length },\n  results, sourceHashes,\n  limitations: ['Finite vertical layout semantics only, not EUI compatibility.', 'Text widths are an external synthetic fixture, not real font/shaping/CJK/IME validation.', 'No timing, FPS, device, GPU, or performance-advantage claims.', 'Mutation validation traverses the entire source and dependency graphs; changed frames traverse all nodes for world state, with cached dimension recomputation.', 'Arbitrary subtree isolation is explicitly invalid when content-size ancestors or flow siblings depend on it.']\n};\nconst red = process.argv.includes('--red');\nconst auditRed = process.argv.includes('--audit-red');\nif (red || auditRed || unsafeIsolation) report.sourceSnapshots = sourcePaths.map(p => ({ path: `experiments/nested-ui-probe/${p}`, source: fs.readFileSync(path.join(dir, p), 'utf8') }));\nconst output = path.resolve(dir, '../../evidence', unsafeIsolation ? 'nested-ui-probe-unsafe-isolation-results.json' : auditRed ? 'nested-ui-probe-audit-red-results.json' : red ? 'nested-ui-probe-red-results.json' : 'nested-ui-probe-results.json');\nfs.writeFileSync(output, JSON.stringify(report, null, 2) + '\\n');\nconsole.log(JSON.stringify({ output, counts: report.counts, failed: results.filter(r => r.status === 'failed').map(r => ({ name: r.name, message: r.error.message })) }, null, 2));\nprocess.exitCode = report.counts.failed ? 1 : 0;\n"
+    }
+  ],
+  "metadataNormalization": {
+    "changed": "local_position_metadata_and_stack_paths_only",
+    "sourceBytesAndHashesUnchanged": true,
+    "testValuesStatusCountsAndErrorMessagesUnchanged": true,
+    "originalRetainedPrivately": true
+  }
+}

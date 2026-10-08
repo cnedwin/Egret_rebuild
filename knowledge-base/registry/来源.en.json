@@ -1,0 +1,971 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-10-08",
+  "authority": "Source grouping and applicable boundaries; researchCheckedAt is the project's research-check date, not a unified publication date",
+  "items": [
+    {
+      "id": "S001",
+      "title": "User-confirmed project requirements",
+      "type": "user_confirmation",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "User confirmations in this Egret project conversation enter R001 through R012; R012 establishes the research/engineering principle of prioritizing open-source implementations.",
+      "limit": "Does not approve specific selections, establish functionality, confirm team/budget, or authorize public release.",
+      "urls": [],
+      "doc": "docs/设计理念与定位.md"
+    },
+    {
+      "id": "S002",
+      "title": "Founder's historical account",
+      "type": "founder_historical_account",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "Experience with API migration, historical efficiency, complex UI, Runtime partnerships, and an independently developed integrated toolchain.",
+      "limit": "Historical competitive comparisons and partnership scope do not establish present-day measurements or deployment rights.",
+      "urls": [],
+      "doc": "docs/历史资产与研究边界.md"
+    },
+    {
+      "id": "S003",
+      "title": "Egret public API design explanation",
+      "type": "official_repository",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "Official design intent of TypeScript APIs resembling AS3.",
+      "limit": "The public repository does not establish the completeness/latest state of the user's private projects; review applicable license scope separately.",
+      "urls": [
+        "https://github.com/egret-labs/egret-core#typescript"
+      ],
+      "doc": "docs/历史资产与研究边界.md"
+    },
+    {
+      "id": "S004",
+      "title": "Cocos production products and Alpha engineering tools",
+      "type": "official_release_and_source",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "Creator3.8.8; Cocos4alpha.34, CLIalpha.42, and corresponding command source.",
+      "limit": "Manage maturity separately; do not extrapolate complete production-platform matrices or creation success rates.",
+      "urls": [
+        "https://www.cocos.com/creator-download",
+        "https://github.com/cocos/cocos4/releases/tag/4.0.0-alpha.34",
+        "https://github.com/cocos/cocos-cli/releases/tag/0.0.1-alpha.42",
+        "https://github.com/cocos/cocos-cli/blob/main/docs/en/commands.md"
+      ],
+      "doc": "docs/竞品演进与生态.md"
+    },
+    {
+      "id": "S005",
+      "title": "Cocos rendering, UI, bridging, and resource evolution",
+      "type": "official_documentation",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "3.8 pipeline migration, UI batching, historical JSB costs, resource lifecycle, and shader variants.",
+      "limit": "Historical defects/old maturity levels are not current unfixed problems; no cross-engine measurements.",
+      "urls": [
+        "https://docs.cocos.com/creator/3.8/manual/zh/render-pipeline/overview.html",
+        "https://docs.cocos.com/creator/3.8/manual/en/ui-system/components/engine/ui-batch.html",
+        "https://docs.cocos.com/creator/3.8/manual/en/advanced-topics/jsb-optimizations.html",
+        "https://docs.cocos.com/creator/3.8/manual/en/asset/release-manager.html",
+        "https://docs.cocos.com/creator/3.8/manual/zh/shader/effect-inspector.html"
+      ],
+      "doc": "docs/竞品演进与生态.md"
+    },
+    {
+      "id": "S006",
+      "title": "Laya rendering adaptation and AI tools over the last two years",
+      "type": "official_release_and_source",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "3.3.0/3.3.1 refactoring, 3.4.1 mainline, CLI, and AgentSkills.",
+      "limit": "Repaired items and official conditional performance statements cannot be treated as current defects or universal advantages.",
+      "urls": [
+        "https://github.com/layabox/LayaAir/releases/tag/v3.3.0",
+        "https://github.com/layabox/LayaAir/releases/tag/v3.3.1",
+        "https://github.com/layabox/LayaAir/releases/tag/v3.4.1",
+        "https://github.com/layabox/layaair-cli",
+        "https://github.com/layabox/layaair-skills",
+        "https://www.layaair.com/3.x/doc/basics/ide/projectsettings/webgpu/"
+      ],
+      "doc": "docs/竞品演进与生态.md"
+    },
+    {
+      "id": "S007",
+      "title": "Godot production rendering engineering and version evolution",
+      "type": "official_release_documentation_and_source",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "4.7.2 production boundaries; UID, 4.6 interfaces/embedding/physics, and modern native/Web differences.",
+      "limit": "Native shader-compilation optimizations do not extrapolate to Web; community MCP is not an official AI product; no independent performance measurement.",
+      "urls": [
+        "https://github.com/godotengine/godot/releases/tag/4.7.2-stable",
+        "https://godotengine.org/article/uid-changes-coming-to-godot-4-4/",
+        "https://godotengine.org/releases/4.6/",
+        "https://docs.godotengine.org/en/4.7/tutorials/rendering/renderers.html",
+        "https://docs.godotengine.org/en/4.7/tutorials/export/exporting_for_web.html",
+        "https://docs.godotengine.org/en/4.7/tutorials/performance/pipeline_compilations.html",
+        "https://docs.godotengine.org/en/4.7/tutorials/performance/using_servers.html",
+        "https://docs.godotengine.org/en/4.7/tutorials/migrating/upgrading_to_godot_4.html"
+      ],
+      "doc": "docs/竞品演进与生态.md"
+    },
+    {
+      "id": "S008",
+      "title": "Target hosts and browser ecosystem",
+      "type": "official_platform_documentation",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "InstantGames lifecycle, Discord proxies, Telegram viewport/state, Douyin adaptation, and browser WebGPU milestones.",
+      "limit": "Test host-client capabilities separately; complete WeChat/Douyin graphics/WASM coverage is unverified, and browser versions do not replace OS/GPU/host capabilities.",
+      "urls": [
+        "https://developers.facebook.com/documentation/games/build/quick-start",
+        "https://docs.discord.com/developers/activities/development-guides/networking",
+        "https://github.com/discord/embedded-app-sdk/blob/main/README.md",
+        "https://core.telegram.org/bots/webapps",
+        "https://partner.open-douyin.com/docs/resource/zh-CN/mini-game/develop/guide/game-engine/cocos-laya-egret",
+        "https://webkit.org/blog/17333/webkit-features-in-safari-26-0/",
+        "https://bugs.webkit.org/show_bug.cgi?format=multiple&id=299237",
+        "https://developer.chrome.com/blog/new-in-webgpu-146"
+      ],
+      "doc": "docs/竞品演进与生态.md"
+    },
+    {
+      "id": "S009",
+      "title": "Professional graphics/runtime references",
+      "type": "primary_technical_reference",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "Frame graphs, tile bandwidth, Android scheduling/thermal hints, asynchronous pipelines, Dawn, KTX2, text shaping, and skeletal-clipping costs.",
+      "limit": "Reference mechanisms do not establish Egret benefits; native providers and third-party components are neither selected nor authorized for integration.",
+      "urls": [
+        "https://google.github.io/filament/notes/framegraph.html",
+        "https://developer.arm.com/community/arm-community-blogs/b/mobile-graphics-and-gaming-blog/posts/vulkan-subpasses-the-good-the-bad-and-the-ugly",
+        "https://developer.android.com/games/optimize/adpf",
+        "https://developer.android.com/games/sdk/frame-pacing",
+        "https://gpuweb.github.io/types/interfaces/GPUDevice",
+        "https://github.com/google/dawn/blob/main/docs/dawn/overview.md",
+        "https://registry.khronos.org/KTX/specs/2.0/ktxspec.v2.html",
+        "https://harfbuzz.github.io/what-is-harfbuzz.html",
+        "https://eu.esotericsoftware.com/spine-clipping"
+      ],
+      "doc": "docs/渲染引擎与运行时.md"
+    },
+    {
+      "id": "S010",
+      "title": "MCP tool specification",
+      "type": "official_protocol",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "Tool discovery, invocation, and structure in version 2025-06-18.",
+      "limit": "The protocol cannot replace project correctness, permissions, recovery, or measured creation workflows.",
+      "urls": [
+        "https://modelcontextprotocol.io/specification/2025-06-18/server/tools"
+      ],
+      "doc": "docs/AI创作与工程接口.md"
+    },
+    {
+      "id": "S011",
+      "title": "Static research summary of original Egret projects",
+      "type": "private_archive_static_review",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "Original engineering package supplied by the user; inventory of version branches/modules, EUI updates/reuse, resource tools, and historical adapters.",
+      "limit": "Original packages and line-level evidence are outside public candidate directories; not built or executed, and completeness of all products is unproven.",
+      "urls": [],
+      "doc": "docs/历史资产与研究边界.md"
+    },
+    {
+      "id": "S012",
+      "title": "Static research summary of additional Runtime",
+      "type": "private_archive_static_review",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "Subsequent Runtime supplied by the user; static mechanisms for bridging, display lists, GLES, resources, and Harmony projects.",
+      "limit": "Does not establish all-platform completeness/current buildability/performance advantages/licenses; source and signing configuration are not public.",
+      "urls": [],
+      "doc": "docs/历史资产与研究边界.md"
+    },
+    {
+      "id": "S013",
+      "title": "AI creation competitive reference",
+      "type": "official_product_statement",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "Official GDevelop Agent descriptions establish direct competition in AI project modification.",
+      "limit": "Complete workflows/reliability were not personally tested; no inference of market success.",
+      "urls": [
+        "https://gdevelop.io/blog/make-games-with-ai-agent-gdevelop-automated-prompt"
+      ],
+      "doc": "docs/竞品演进与生态.md"
+    },
+    {
+      "id": "S014",
+      "title": "First-round official research refresh and conflict records",
+      "type": "official_sources_refreshed",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "12 key claims and 27 official sources; checked Cocos/Laya/Godot versions/evolution, CLI/AI tools, Web backends, and interoperability; see research JSON for individual versions/dates.",
+      "limit": "All are documentary/source statements, without competitor execution or cross-engine performance tests; retain Laya date conflicts and IDE items not reverified; failed access is not interpreted as missing capabilities.",
+      "urls": [
+        "https://www.cocos.com/creator-download",
+        "https://github.com/cocos/cocos4/releases/tag/4.0.0-alpha.34",
+        "https://github.com/cocos/cocos-cli/releases/tag/0.0.1-alpha.42",
+        "https://github.com/layabox/LayaAir/releases/tag/v3.4.1",
+        "https://godotengine.org/article/maintenance-release-godot-4-7-2/",
+        "https://godotengine.org/download/archive/4.7.2-stable/",
+        "https://godotengine.org/download/windows/",
+        "https://github.com/godotengine/godot/releases/tag/4.7.2-stable",
+        "https://docs.godotengine.org/en/4.7/tutorials/export/exporting_for_web.html",
+        "https://docs.godotengine.org/en/4.7/tutorials/rendering/renderers.html",
+        "https://docs.godotengine.org/en/4.7/tutorials/performance/pipeline_compilations.html",
+        "https://www.layaair.com/3.x/doc/basics/architecture/",
+        "https://gpuweb.github.io/types/interfaces/GPUDevice",
+        "https://gpuweb.github.io/gpuweb/explainer/",
+        "https://emscripten.org/docs/porting/connecting_cpp_and_javascript/Interacting-with-code.html",
+        "https://emscripten.org/docs/porting/connecting_cpp_and_javascript/embind.html",
+        "https://github.com/cocos/cocos-cli/blob/0.0.1-alpha.42/readme.md",
+        "https://github.com/cocos/cocos-cli/blob/main/docs/en/commands.md",
+        "https://layaair.com/3.x/doc/guides/roadmap/ai/",
+        "https://github.com/layabox/layaair-cli",
+        "https://github.com/layabox/layaair-skills",
+        "https://layaair.com/3.x/doc/basics/developmentenvironment/ide-mcp/",
+        "https://layaair.com/3.3/doc/basics/developmentEnvironment/CodingMCP/readme.html",
+        "https://layaair.com/3.x/doc/services/",
+        "https://github.com/layabox/LayaAir/releases/tag/v3.3.0",
+        "https://github.com/layabox/LayaAir/releases/tag/v3.4.0",
+        "https://www.layaair.com/3.x/doc/basics/ide/projectsettings/webgpu/"
+      ],
+      "artifacts": [
+        "docs/第一轮研究核查.md",
+        "evidence/research-refresh-2026-10-08.json"
+      ],
+      "doc": "docs/第一轮研究核查.md"
+    },
+    {
+      "id": "S015",
+      "title": "Partial architecture-contract experiments and audit repairs",
+      "type": "authored_research_model_execution",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "Node24.19.0; fixed-region layout, ordered commands, simplified mirrors, and resource state; initial 17 passed, first added group 17 passed/7 failed, corrected 24 passed, lease group 24 passed/2 failed, final 26 passed. Source digests and failure history for each version are retained and independently reproduced by an AI reviewer.",
+      "limit": "Research models are not production engines; no reliable event recovery, independent batch-state execution, complete per-owner leases, actual cross-language/binary bridging, or asynchronous GPU reconstruction. Operation counts are not performance/user metrics.",
+      "urls": [],
+      "artifacts": [
+        "evidence/contract-probe-results.json",
+        "evidence/contract-probe-audit-red-results.json",
+        "evidence/contract-probe-audit-red-2-results.json",
+        "experiments/contract-probe/README.md"
+      ],
+      "doc": "docs/技术验证记录.md"
+    },
+    {
+      "id": "S016",
+      "title": "Local desktop-browser graphics APIs and pixel experiments",
+      "type": "local_browser_graphics_execution",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "Edge154.0.4258.62 temporary headless profile; WebGL2 depth/transparency/scissor/order counterexamples/context recovery and WebGPU clear/readback. First 6 passed/1 failed; after timing repair, 7 passed. Both results and source digests remain.",
+      "limit": "32×32 simple geometry and clears; renderer strings lack hardware certification; no actual 3D assets, skeletons/fonts, GPU timing, mobile/mini-game/native hosts, power, or WebGPU device-loss tests.",
+      "urls": [],
+      "artifacts": [
+        "evidence/browser-probe-results.json",
+        "evidence/browser-probe-first-attempt.json",
+        "evidence/browser-probe.png",
+        "experiments/browser-probe/README.md"
+      ],
+      "doc": "docs/技术验证记录.md"
+    },
+    {
+      "id": "S017",
+      "title": "Official debugging reference for WebGL context-recovery timing",
+      "type": "official_specification_and_source",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "Khronos WEBGL_lose_context and Chromium public source allowing recovery after event dispatch support the explanation of delaying recovery requests in this test.",
+      "limit": "Reading Chromium HEAD is not an exact binary call trace of current Edge; results fit the explanation without proving a unique root cause across all browsers.",
+      "urls": [
+        "https://registry.khronos.org/webgl/extensions/WEBGL_lose_context/",
+        "https://chromium.googlesource.com/chromium/src/+/HEAD/third_party/blink/renderer/modules/webgl/webgl_rendering_context_base.cc"
+      ],
+      "doc": "docs/技术验证记录.md"
+    },
+    {
+      "id": "S018",
+      "title": "Separate single-instance must-deliver events from graphics recovery",
+      "type": "authored_research_model_execution",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "Event program: 13 passed/0 failed; 11 failing items became passing, negative controls remain, and item 13 characterizes state reset in a new instance within the same process. Additional 9 author-verification items and independent read-only replay exist.",
+      "limit": "Only single-instance synchronous in-memory effects and watermarks; no persistent transactions, real IPC, or crash-safe exactly-once. Passing boundary characterization does not mean the risk is repaired.",
+      "urls": [],
+      "artifacts": [
+        "evidence/reliable-event-probe-results.json",
+        "evidence/reliable-event-probe-red-results.json",
+        "evidence/reliable-event-probe-red-input-results.json",
+        "evidence/reliable-event-probe-verification-results.json",
+        "experiments/reliable-event-probe/README.md"
+      ],
+      "doc": "docs/第二轮验证记录.md"
+    },
+    {
+      "id": "S019",
+      "title": "Independent leases and staged asynchronous resource contracts",
+      "type": "authored_research_model_execution",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "Per-acquisition leases, shared resource tasks, CPU/GPU stages, late/failure/cancellation handling, and explicit deviceEpoch fences: 25 passed/0 failed. Retained all 7 failures of the preceding old model and fence-audit 24 passed/1 failed.",
+      "limit": "Manual asynchronous scheduling, without actual GPU/drivers; the old model is first-round research ResourceModel, not legacy Egret source. Release rules after device loss need real-backend verification.",
+      "urls": [],
+      "artifacts": [
+        "evidence/async-resource-probe-results.json",
+        "evidence/async-resource-probe-legacy-red-results.json",
+        "evidence/async-resource-probe-audit-red-results.json",
+        "experiments/async-resource-probe/README.md"
+      ],
+      "doc": "docs/第二轮验证记录.md"
+    },
+    {
+      "id": "S020",
+      "title": "Nested-UI dependencies, clipped hit testing, and full comparisons",
+      "type": "authored_research_model_execution",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "18 passed/0 failed; add/remove/reattach/hide, dimension dependencies, clipped hit tests, 100-step seeded editing, and 1200 extra hit comparisons. Sparse-array/overflow audit counterexamples initially had 16 passed/2 failed.",
+      "limit": "Limited vertical trees and external glyph-width fixtures, with research input budgets such as 128 nodes. Still copies/validates/traverses world coordinates over the entire tree; does not establish font/EUI or performance advantages.",
+      "urls": [],
+      "artifacts": [
+        "evidence/nested-ui-probe-results.json",
+        "evidence/nested-ui-probe-red-results.json",
+        "evidence/nested-ui-probe-audit-red-results.json",
+        "evidence/nested-ui-probe-unsafe-isolation-results.json",
+        "experiments/nested-ui-probe/README.md"
+      ],
+      "doc": "docs/第二轮验证记录.md"
+    },
+    {
+      "id": "S021",
+      "title": "Independent batch shared-state consumption and counterexamples",
+      "type": "authored_research_model_execution",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "8 passed/0 failed; texture/clip/pipeline shared state is actually executed by batch consumers against independent per-command pixel references, using 100 seeded scenes of 24 commands. Texture-only batching: 5 passed/3 failed; sparse-color audit: 7 passed/1 failed.",
+      "limit": "Limited rectangles, single texels, straight/additive modes; no arbitrary masks, complete materials, or CPU/GPU performance comparisons.",
+      "urls": [],
+      "artifacts": [
+        "evidence/batch-state-probe-results.json",
+        "evidence/batch-state-probe-red-results.json",
+        "evidence/batch-state-probe-audit-red-results.json",
+        "experiments/batch-state-probe/README.md"
+      ],
+      "doc": "docs/第二轮验证记录.md"
+    },
+    {
+      "id": "S022",
+      "title": "Local WebGL mixed graphics and independent pixel reference",
+      "type": "local_browser_graphics_execution",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "Edge154.0.4258.62 actual execution: 7 passed/0 failed; 256×192 perspective cube, UI, two rigid bone segments, atlas, and context reconstruction. 6 commands produce actual 3draw; maximum error over 196608 channels is 1, tolerance 3.",
+      "limit": "Generated fixtures and English textures; hardware path uncertified. No complete character/skeleton/text quality, WebGPU scenes, mobile/mini-game/native hosts, timing/energy, or migration.",
+      "urls": [],
+      "artifacts": [
+        "evidence/mixed-scene-probe-results.json",
+        "evidence/mixed-scene-probe-empty-results.json",
+        "evidence/mixed-scene-probe-strict-empty-results.json",
+        "evidence/mixed-scene-probe-shared-builder-results.json",
+        "evidence/mixed-scene-probe.png",
+        "experiments/mixed-scene-probe/README.md"
+      ],
+      "doc": "docs/第二轮验证记录.md"
+    },
+    {
+      "id": "S023",
+      "title": "Second-round graphics specification status and access boundaries",
+      "type": "official_reference_checked",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "Khronos version page and latest WebGL2 page were readable; both pages were editor's drafts. MDN blend-function references were readable; dates and access errors were recorded individually.",
+      "limit": "Specifications/documentation explain mechanisms, not products/platforms; two access-tool errors are not interpreted as missing capabilities; version pages are not final approved standards.",
+      "urls": [
+        "https://registry.khronos.org/webgl/specs/2.0.0/",
+        "https://registry.khronos.org/webgl/specs/latest/2.0/",
+        "https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/blendFuncSeparate"
+      ],
+      "artifacts": [
+        "evidence/phase2-reference-check-2026-10-08.json"
+      ],
+      "doc": "docs/第二轮验证记录.md"
+    },
+    {
+      "id": "S024",
+      "title": "Second-round independent AI audit and evidence integration",
+      "type": "independent_AI_research_review",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "Independent read-only review, counterexamples, in-memory replay of four CPU programs' 64 items, historical failing chains, GPU source digests, and independent-reference checks; author repairs/reruns, with separate version/location-metadata and structural-gate checks.",
+      "limit": "Not human approval; reviewers did not add browser execution or run legacy projects and cannot establish complete products or advantages.",
+      "urls": [],
+      "artifacts": [
+        "docs/第二轮审计.md",
+        "evidence/design-audit-phase2-2026-10-08.json",
+        "evidence/phase2-path-metadata-normalization.json"
+      ],
+      "doc": "docs/第二轮审计.md"
+    },
+    {
+      "id": "S025",
+      "title": "Mature rendering and device-lifecycle source",
+      "type": "pinned_official_source_static_review",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "Fixed-SHA source for Three r180, Babylon9.29.0, and PlayCanvas2.23.0; frame entry, lists, state caches, pass attachments, device recovery, and ownership.",
+      "limit": "Upstream was not executed; manuals/PRs have separate dates. Mechanisms do not establish Egret integration, mobile performance, energy, or host certification.",
+      "urls": [
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/src/renderers/WebGLRenderer.js",
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/src/renderers/webgl/WebGLRenderLists.js",
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/src/renderers/webgl/WebGLState.js",
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/src/renderers/webgpu/WebGPURenderer.js",
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/LICENSE",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/core/src/Engines/abstractEngine.pure.ts",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/core/src/Engines/thinEngine.pure.ts",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/core/src/Engines/webgpuEngine.pure.ts",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/core/src/Rendering/renderingGroup.ts",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/license.md",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/platform/graphics/webgl/webgl-graphics-device.js",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/platform/graphics/webgpu/webgpu-graphics-device.js",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/platform/graphics/render-pass.js",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/scene/layer.js",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/LICENSE"
+      ],
+      "artifacts": [
+        "evidence/reference-render-lifecycle.json"
+      ],
+      "doc": "docs/开源参考实现与采用方案.md"
+    },
+    {
+      "id": "S026",
+      "title": "Mature text/UI source and test boundaries",
+      "type": "pinned_official_source_static_review",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "Fixed-SHA PlayCanvas2.23.1 and Babylon9.29.0 text/atlas/GUI/upload paths and tests read; atlas reconstruction, whole-paragraph drawing, caching, and CPU dirty regions.",
+      "limit": "Reading tests is not execution; no Chinese/IME/font-coverage/mobile acceptance. fontEpoch and similar items are Egret suggestions; do not apply NFC to business text by default.",
+      "urls": [
+        "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/src/framework/font/canvas-font.js",
+        "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/src/framework/components/element/text-element.js",
+        "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/examples/src/examples/user-interface/text-emojis.example.mjs#L88-L103",
+        "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/test/framework/components/element/text-element.test.mjs",
+        "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/LICENSE",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/gui/src/2D/advancedDynamicTexture.ts",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/gui/src/2D/controls/textBlock.pure.ts",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/gui/src/2D/controls/control.pure.ts",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/core/src/Materials/Textures/dynamicTexture.pure.ts",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/core/src/Engines/Extensions/engine.dynamicTexture.pure.ts",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/gui/test/unit/inputText.test.ts",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/license.md"
+      ],
+      "artifacts": [
+        "evidence/reference-text-ui.json"
+      ],
+      "doc": "docs/开源参考实现与采用方案.md"
+    },
+    {
+      "id": "S027",
+      "title": "Mature resource-import and animation source",
+      "type": "pinned_official_source_static_review",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "Fixed-SHA Three r180, Babylon8.26.0, PlayCanvas2.23.0, and DragonBonesJS, totaling 12 code/license files; glTF/KTX2, shared containers, skeletons, and animation instances.",
+      "limit": "Keep Babylon8.26 and 9.29 separate. Complete blending/constraint/shader paths were not read and sources were not executed. DragonBones Slot does not establish complete Spine capability; Spine received only additional official-document/license reading.",
+      "urls": [
+        "https://github.com/DragonBones/DragonBonesJS/blob/64b6c69ae35777c2404be68c9192e2c56906079e/LICENSE",
+        "https://github.com/DragonBones/DragonBonesJS/blob/64b6c69ae35777c2404be68c9192e2c56906079e/DragonBones/src/dragonBones/armature/Slot.ts",
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/LICENSE",
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/GLTFLoader.js",
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/KTX2Loader.js",
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/src/animation/AnimationMixer.js",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/LICENSE",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/framework/parsers/glb-parser.js",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/framework/components/anim/component.js",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/framework/parsers/glb-container-resource.js",
+        "https://github.com/BabylonJS/Babylon.js/blob/09876696f9942657ec9da5a72ec16c9d3de54365/license.md",
+        "https://github.com/BabylonJS/Babylon.js/blob/09876696f9942657ec9da5a72ec16c9d3de54365/packages/dev/core/src/Bones/skeleton.ts"
+      ],
+      "artifacts": [
+        "evidence/reference-assets-animation.json"
+      ],
+      "doc": "docs/开源参考实现与采用方案.md"
+    },
+    {
+      "id": "S028",
+      "title": "Pixi text, batch caches, and recovery",
+      "type": "pinned_official_source_static_review",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "Pixi8.22.0 fixed-SHA five source files and MIT license; Canvas text, ordinary batching, recovery of pooled sources; repair records for PR12170 and 12194.",
+      "limit": "Five file SHA256 values are traceable; the stencil backend was studied only through PRs/release notes, without reading its actual implementation. No Chinese, performance, or recovery measurements.",
+      "urls": [
+        "https://github.com/pixijs/pixijs/blob/5b41ee37fd36c61e089113345a8f12cf1c3323cf/src/scene/text/shared/AbstractTextSystem.ts",
+        "https://github.com/pixijs/pixijs/blob/5b41ee37fd36c61e089113345a8f12cf1c3323cf/src/scene/text/canvas/CanvasTextMetrics.ts",
+        "https://github.com/pixijs/pixijs/blob/5b41ee37fd36c61e089113345a8f12cf1c3323cf/src/scene/text/canvas/CanvasTextGenerator.ts",
+        "https://github.com/pixijs/pixijs/blob/5b41ee37fd36c61e089113345a8f12cf1c3323cf/src/scene/text-html/HTMLTextSystem.ts",
+        "https://github.com/pixijs/pixijs/blob/5b41ee37fd36c61e089113345a8f12cf1c3323cf/src/scene/text/canvas/CanvasTextPipe.ts",
+        "https://github.com/pixijs/pixijs/blob/5b41ee37fd36c61e089113345a8f12cf1c3323cf/LICENSE"
+      ],
+      "artifacts": [
+        "evidence/reference-pixi-text.json"
+      ],
+      "doc": "docs/开源参考实现与采用方案.md"
+    },
+    {
+      "id": "S029",
+      "title": "Open-source reference integration and independent read-only AI audit",
+      "type": "independent_AI_source_review_and_integration",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "Reviewed key source/tag mappings, separating original-source facts, Egret proposals, adaptation requirements, and unknown performance; retained original reports and NFC wording corrections, and established reuse/verification responsibilities.",
+      "limit": "Not human approval or code-execution acceptance; no new probes, upstream installation, or performance experiments this round. Original two-round results do not gain coverage.",
+      "urls": [],
+      "artifacts": [
+        "evidence/reference-independent-audit.json",
+        "evidence/reference-research-audit-2026-10-08.json",
+        "docs/开源实现优先与验证分工.md"
+      ],
+      "doc": "docs/开源参考实现与采用方案.md"
+    },
+    {
+      "id": "S030",
+      "title": "Fixed sources and file checks for the real-asset reference chain",
+      "type": "pinned_official_sources_and_local_integrity_review",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "Three r186 code commit9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8 and fixed RiggedSimple asset; 9 files' Git blob/SHA256/size, 5-module ESM closure, licenses, and local file-compression estimates.",
+      "limit": "r180 remains historical research. Static checks and independent compression estimates do not establish actual release packages, network transfer, or performance. The asset is a Cesium2017 CC-BY-4.0 skinned cylinder, not a complete character; KTX2/Draco/meshopt were not loaded.",
+      "urls": [
+        "https://github.com/mrdoob/three.js/tree/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8",
+        "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/RiggedSimple/glTF-Embedded/RiggedSimple.gltf"
+      ],
+      "artifacts": [
+        "experiments/asset-reference-probe/sources.json",
+        "experiments/asset-reference-probe/THIRD_PARTY_NOTICES.md",
+        "evidence/asset-reference-source-selection.json",
+        "evidence/asset-reference-dependencies.json",
+        "evidence/asset-reference-source-audit.json",
+        "evidence/asset-reference-file-footprint.json"
+      ],
+      "doc": "docs/第三轮集成记录.md"
+    },
+    {
+      "id": "S031",
+      "title": "Real skeletal-asset mixed rendering and lifecycle execution",
+      "type": "local_browser_real_asset_reference_execution",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "Edge154.0.4258.62 new test profile; actual GLTFLoader, SkeletonUtils, AnimationMixer, and same-context text UI. Current main checks are 17/17, with zero page errors/console diagnostics. Retained the failing behavioral version, recovery-cleanup failure, four mutations, and post-review repairs.",
+      "limit": "Limited to fixed assets and desktop WebGL2 adaptation. System-font smoke tests do not establish CJK coverage, IME, or performance; context-recovery pixels do not constitute work-interaction acceptance. No mobile/mini-game/native, production complex UI, complete 2D skeletons, compressed assets, WebGPU scenes, AI creation, or migration acceptance.",
+      "urls": [],
+      "artifacts": [
+        "evidence/asset-reference-probe-results.json",
+        "evidence/asset-reference-probe.png",
+        "experiments/asset-reference-probe/README.md",
+        "docs/第三轮集成记录.md"
+      ],
+      "doc": "docs/第三轮集成记录.md"
+    },
+    {
+      "id": "S032",
+      "title": "Third-round independent AI review and historical-source integrity",
+      "type": "independent_AI_code_source_review_and_local_integration_verification",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "Sources and code received separate independent reviews. The author added failing regressions and repairs, then the coordinating reviewer freshly reran identical final source. Execution sources of all retained reports were checked hash by hash; 0.4.0 and earlier baselines remain.",
+      "limit": "Not human approval. Upstream test suites were not run, nor complete legal/security audits, proof of GC heap-leak freedom, or product-device acceptance. Structural checks do not replace code review or actual execution.",
+      "urls": [],
+      "artifacts": [
+        "evidence/asset-reference-source-audit.json",
+        "evidence/asset-reference-code-review.json",
+        "evidence/asset-reference-report-integrity.json",
+        "evidence/asset-reference-integration-audit.json",
+        "docs/第三轮审计.md"
+      ],
+      "doc": "docs/第三轮审计.md"
+    },
+    {
+      "id": "S033",
+      "title": "Founder's additional backend, compilation, and native-extension intent",
+      "type": "user_confirmed_context",
+      "scope": "Canvas-to-WebGL, WASM exploration, and historical compilation-optimization experience; intent to research native App/SDK and future desktop, graphics APIs, and GPU AI.",
+      "limit": "Historical efficiency is a user statement; new-technology adoption, numerical budgets, and an initial Steam release are unapproved.",
+      "urls": [],
+      "artifacts": [
+        "evidence/backend-founder-context.json"
+      ],
+      "researchCheckedAt": "2026-10-08",
+      "doc": "docs/图形后端编译与原生Runtime选型.md"
+    },
+    {
+      "id": "S034",
+      "title": "Official research on dual graphics backends and Canvas boundaries",
+      "type": "official_documentation_research",
+      "scope": "Three WebGPU/WebGL2 fallback, material migration, and experimental boundaries; mutually exclusive HTML contexts and conflicting Pixi documentation versions.",
+      "limit": "No new WebGPU scene, shader, or host tests; benefits in materials are not Egret performance.",
+      "urls": [
+        "https://threejs.org/manual/pages/webgpurenderer",
+        "https://html.spec.whatwg.org/multipage/canvas.html#dom-canvas-getcontext",
+        "https://pixijs.com/blog/8.16.0"
+      ],
+      "artifacts": [
+        "evidence/backend-graphics-research.json"
+      ],
+      "researchCheckedAt": "2026-10-08",
+      "doc": "docs/图形后端编译与原生Runtime选型.md"
+    },
+    {
+      "id": "S035",
+      "title": "Current TypeScript7 and fast-iteration toolchain",
+      "type": "official_release_package_and_tool_documentation_research",
+      "scope": "Stable TS7.0.2, official Go-native release, unstable APIs, TS6 tool compatibility, Vite8/Oxc/Rolldown, and migration boundaries.",
+      "limit": "Not installed or measured for Egret; vendor build figures of 8 to 12 times belong only to its measurements, and 7.1 plans are not actual delivery.",
+      "urls": [
+        "https://github.com/microsoft/TypeScript/releases",
+        "https://registry.npmjs.org/typescript/latest",
+        "https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/",
+        "https://github.com/microsoft/typescript-go/blob/main/README.md",
+        "https://github.com/microsoft/typescript-go/discussions/4576",
+        "https://github.com/microsoft/TypeScript/issues/63703",
+        "https://vite.dev/blog/announcing-vite8",
+        "https://vite.dev/guide/features#typescript",
+        "https://esbuild.github.io/content-types/#typescript",
+        "https://www.typescriptlang.org/tsconfig/#incremental",
+        "https://www.typescriptlang.org/docs/handbook/project-references.html",
+        "https://esbuild.github.io/api/#sourcemap",
+        "https://www.typescriptlang.org/docs/handbook/release-notes/typescript-6-0.html",
+        "https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-0.html",
+        "https://oxc.rs/docs/guide/usage/transformer/typescript",
+        "https://vite.dev/guide/api-hmr",
+        "https://github.com/microsoft/TypeScript/issues/64589"
+      ],
+      "artifacts": [
+        "evidence/backend-ts-research.json"
+      ],
+      "researchCheckedAt": "2026-10-08",
+      "doc": "docs/图形后端编译与原生Runtime选型.md"
+    },
+    {
+      "id": "S036",
+      "title": "Rust native Runtime graphics libraries and script-VM research",
+      "type": "official_source_and_private_static_research_summary",
+      "scope": "Rust/C++ and FFI, wgpu/Dawn/bgfx/ANGLE, V8/JSC/JSVM, interpreter candidates, and conditional relationships in private headers/CMake.",
+      "limit": "Private-package entries received read-only checks without builds. Directory versions do not establish binaries or executing VMs; Dawn mainline D3D11 does not constitute specified-release acceptance. Package size, performance, iOS modes, and Harmony library support are unaccepted.",
+      "urls": [
+        "https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html",
+        "https://doc.rust-lang.org/book/ch16-03-shared-state.html",
+        "https://doc.rust-lang.org/nomicon/ffi.html",
+        "https://cxx.rs/",
+        "https://github.com/gfx-rs/wgpu",
+        "https://github.com/gfx-rs/wgpu/releases/tag/v30.0.1",
+        "https://github.com/gfx-rs/wgpu-native/releases",
+        "https://docs.rs/wgpu/30.0.1/wgpu/struct.Device.html",
+        "https://dawn.googlesource.com/dawn/+/refs/heads/main/README.md",
+        "https://raw.githubusercontent.com/google/dawn/main/src/dawn/native/CMakeLists.txt",
+        "https://raw.githubusercontent.com/google/dawn/main/src/dawn/native/d3d11/PhysicalDeviceD3D11.cpp",
+        "https://raw.githubusercontent.com/google/dawn/main/include/dawn/native/D3D11Backend.h",
+        "https://raw.githubusercontent.com/google/dawn/main/docs/dawn/features/shared_texture_memory.md",
+        "https://github.com/google/dawn/releases",
+        "https://bkaradzic.github.io/bgfx/overview.html",
+        "https://bkaradzic.github.io/bgfx/bgfx.html",
+        "https://chromium.googlesource.com/angle/angle/+/main/README.md",
+        "https://v8.dev/docs/embed",
+        "https://v8.dev/docs/version-numbers",
+        "https://v8.dev/blog/jitless",
+        "https://raw.githubusercontent.com/v8/v8/main/docs/wasm/architecture.md",
+        "https://bellard.org/quickjs/",
+        "https://bellard.org/quickjs/quickjs.html",
+        "https://developer.apple.com/documentation/javascriptcore",
+        "https://docs.webkit.org/Deep%20Dive/JSC/JavaScriptCore.html",
+        "https://github.com/facebook/hermes",
+        "https://reactnative.dev/docs/hermes",
+        "https://developer.apple.com/app-store/review/guidelines/",
+        "https://developer.apple.com/support/alternative-browser-engines/",
+        "https://raw.githubusercontent.com/openharmony/docs/master/zh-cn/application-dev/napi/jsvm-introduction.md"
+      ],
+      "artifacts": [
+        "evidence/backend-native-research.json"
+      ],
+      "researchCheckedAt": "2026-10-08",
+      "doc": "docs/图形后端编译与原生Runtime选型.md"
+    },
+    {
+      "id": "S037",
+      "title": "Current browser/host matrices and GPU AI capabilities",
+      "type": "official_standard_vendor_sdk_and_host_documentation_research",
+      "scope": "GPUWeb status in 2026-10, mini-game/iframe/WebView boundaries, ORT/WebNN, and vendor super-resolution versions/hardware conditions.",
+      "limit": "All observed fields are empty. Do not estimate penetration, treat compute as TensorCore/NPU/DLSS, or treat AI as evidence of net savings.",
+      "urls": [
+        "https://github.com/gpuweb/gpuweb/wiki/Implementation-Status",
+        "https://developer.chrome.com/docs/web-platform/webgpu/overview",
+        "https://developer.chrome.com/docs/web-platform/webgpu/troubleshooting-tips",
+        "https://webkit.org/blog/17333/webkit-features-in-safari-26-0/",
+        "https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Releases/141",
+        "https://raw.githubusercontent.com/wechat-miniprogram/minigame-api-typings/master/types/wx/lib.wx.api.d.ts",
+        "https://github.com/wechat-miniprogram/minigame-api-typings",
+        "https://partner.open-douyin.com/docs/resource/zh-CN/mini-game/develop/guide/basic-function/render",
+        "https://partner.open-douyin.com/docs/resource/zh-CN/mini-app/develop/api/canvas/v2/Canvas/Canvas.getContext",
+        "https://github.com/facebook/meta-instant-games-unity-plugin",
+        "https://docs.discord.com/developers/activities/how-activities-work",
+        "https://docs.discord.com/developers/activities/development-guides/networking",
+        "https://core.telegram.org/api/bots/webapps",
+        "https://core.telegram.org/bots/webapps",
+        "https://www.w3.org/TR/WGSL/",
+        "https://github.com/gpuweb/gpuweb/blob/main/proposals/subgroup-matrix.md",
+        "https://dawn.googlesource.com/dawn/+/refs/heads/main/src/dawn/tests/end2end/SubgroupMatrixTests.cpp",
+        "https://www.w3.org/TR/2026/CRD-webnn-20260910/",
+        "https://webmachinelearning.github.io/webnn-status/",
+        "https://onnxruntime.ai/docs/tutorials/web/",
+        "https://onnxruntime.ai/docs/tutorials/web/ep-webgpu.html",
+        "https://github.com/microsoft/onnxruntime/blob/main/js/web/docs/webgpu-operators.md",
+        "https://developer.nvidia.com/rtx/dlss",
+        "https://raw.githubusercontent.com/NVIDIA/DLSS/main/doc/DLSS_Programming_Guide_Release.pdf",
+        "https://gpuopen.com/amd-fsr-sdk/",
+        "https://gpuopen.com/learn/amd-fsr-sdk-2-3-blog/",
+        "https://gpuopen.com/amd-fsr-upscaling/",
+        "https://gpuopen.com/learn/amd-fsr4-gpuopen-release/",
+        "https://raw.githubusercontent.com/intel/xess/main/doc/xess_sr_developer_guide_english.md",
+        "https://developer.apple.com/metal/capabilities/",
+        "https://github.com/gfx-rs/wgpu",
+        "https://partner.steamgames.com/doc/steamhardware/recommendations"
+      ],
+      "artifacts": [
+        "evidence/backend-host-ai-research.json"
+      ],
+      "researchCheckedAt": "2026-10-08",
+      "doc": "docs/图形后端编译与原生Runtime选型.md"
+    },
+    {
+      "id": "S038",
+      "title": "Founder confirmation of independent core and third-party boundaries",
+      "type": "founder_instruction",
+      "scope": "Design and implement Egret core independently from its own requirements/specifications; standards and open projects supply research foundations, while public infrastructure enters as explicit dependencies retaining versions, sources, notices, and modifications.",
+      "limit": "Confirms implementation principles and open-source intent, without establishing an existing independent core, code rights, performance leadership, or open-source publication. Permission for public dependencies does not automatically select a library.",
+      "artifacts": [
+        "evidence/code-origin-founder-context.json"
+      ],
+      "researchCheckedAt": "2026-10-08",
+      "doc": "docs/独立实现与第三方依赖规范.md"
+    },
+    {
+      "id": "S039",
+      "title": "Independent review of existing reference-chain attribution and policy documents",
+      "type": "independent_local_artifact_and_document_review",
+      "scope": "Document checks of existing Three research dependencies, source records, and core-implementation/public-dependency boundaries.",
+      "limit": "Limited file/declaration checks. Code sources, release notices, and production-dependency choices are reviewed separately; this record adds no execution experiments.",
+      "artifacts": [
+        "evidence/code-origin-research-audit.json",
+        "evidence/code-origin-policy-review.json"
+      ],
+      "researchCheckedAt": "2026-10-08",
+      "doc": "docs/独立实现与第三方依赖规范.md"
+    },
+    {
+      "id": "S040",
+      "title": "Official Shaders effect-component/AI-tool materials and fixed source",
+      "type": "official_documentation_and_fixed_source_static_research",
+      "scope": "10/6 open-source announcement, software/content boundaries, parameterized components, and MCP/CLI; six key source files at fixed v4.0.2 commit.",
+      "limit": "200+ is an official presentation figure, not independently inventoried; no primary proof of authorship by Evan. WebGPU-only and DOM/canvas boundaries do not establish Egret pass interoperability, performance, or mini-game compatibility; not installed or executed.",
+      "urls": [
+        "https://shaders.com/updates/shaders-is-open-source",
+        "https://shaders.com/docs/guide/mcp",
+        "https://shaders.com/docs/guide/cli",
+        "https://github.com/shader-effects-inc/shaders/tree/9435282c29d3505c67eef427470c8d835095a199"
+      ],
+      "artifacts": [
+        "evidence/shaders-reference-research.json"
+      ],
+      "researchCheckedAt": "2026-10-08",
+      "doc": "docs/Shaders与Playground产品技术启发.md"
+    },
+    {
+      "id": "S041",
+      "title": "Current Google Playground/Unity Spark capabilities and future plans",
+      "type": "official_product_documentation_and_announcement_research",
+      "scope": "10/7 launch, source ZIP and draft/public versions in current help materials; Spark plans for professional 3D, runtime, and asset ecosystems.",
+      "limit": "Separate current Playground from future Spark; export does not establish platform open source, self-hosting, or project round trips. No generation/execution/export measurements; does not establish that competitors lack unpublished capabilities.",
+      "urls": [
+        "https://blog.google/innovation-and-ai/technology/ai/playground-experimental-gaming-platform/",
+        "https://playground.google/helpcenter",
+        "https://unity.com/news/google-and-unity-partner-on-new-ai-gaming-platform-for-the-next-era-of-interactive-entertainment",
+        "https://unity.com/spark",
+        "https://unity.com/blog/why-we-built-unity-spark"
+      ],
+      "artifacts": [
+        "evidence/playground-reference-research.json"
+      ],
+      "researchCheckedAt": "2026-10-08",
+      "doc": "docs/Shaders与Playground产品技术启发.md"
+    },
+    {
+      "id": "S042",
+      "title": "Founder requirement for modern engineering architecture/APIs and Egret naming",
+      "type": "founder_instruction",
+      "scope": "Fully redefine technical architecture/code standards, retain Egret naming habits, and modernize project structure/APIs while preserving familiarity.",
+      "limit": "Confirms goals without automatically accepting specific selections/code gates or establishing implementation.",
+      "artifacts": [
+        "evidence/engineering-norm-founder-context.json"
+      ],
+      "researchCheckedAt": "2026-10-08",
+      "doc": "docs/工程技术架构与项目结构.md"
+    },
+    {
+      "id": "S043",
+      "title": "Targeted static checks of historical Egret naming and interfaces",
+      "type": "selected_historical_source_static_research_public_safe_summary",
+      "scope": "Eight historical source entries and existing EUI records; Sprite/Bitmap roles, dimensions, events, removeChild, and naming.",
+      "limit": "Not proof of complete/latest versions or runtime compatibility; do not copy source text or publish original-package paths; not built or executed.",
+      "artifacts": [
+        "evidence/egret-naming-contract-summary.json"
+      ],
+      "researchCheckedAt": "2026-10-08",
+      "doc": "docs/公共API设计与命名规范.md"
+    },
+    {
+      "id": "S044",
+      "title": "Official modern language/module/FFI/engineering-tool materials",
+      "type": "official_language_and_tool_documentation_research",
+      "scope": "TS modules/strict settings, Rust unsafe/FFI/panic/Cargo, and workspace/format/lint mechanisms.",
+      "limit": "Mechanism descriptions inform candidate policies. New tool versions were not selected or installed, repository configuration was not generated, and API samples were not compiled; benefits are unproven.",
+      "urls": [
+        "https://www.typescriptlang.org/docs/handbook/modules/reference.html",
+        "https://www.typescriptlang.org/tsconfig/",
+        "https://doc.rust-lang.org/nomicon/ffi.html",
+        "https://doc.rust-lang.org/cargo/reference/workspaces.html",
+        "https://pnpm.io/workspaces",
+        "https://prettier.io/docs/configuration",
+        "https://eslint.org/docs/latest/use/configure/configuration-files",
+        "https://typescript-eslint.io/getting-started/typed-linting"
+      ],
+      "artifacts": [
+        "evidence/engineering-language-tooling-research.json"
+      ],
+      "researchCheckedAt": "2026-10-08",
+      "doc": "docs/代码规范与质量门禁.md"
+    },
+    {
+      "id": "S045",
+      "title": "Founder requirements to start core implementation and evidence checks",
+      "type": "founder_instruction",
+      "scope": "Begin implementing core framework/logic and investigate evidence gaps and research subjects.",
+      "limit": "Does not accept the complete technical-candidate set, authorize public release, or predict performance/full-product success.",
+      "researchCheckedAt": "2026-10-08",
+      "artifacts": [
+        "evidence/core-framework-founder-context.json"
+      ],
+      "doc": "docs/核心框架实现记录.md"
+    },
+    {
+      "id": "S046",
+      "title": "Fixed development tools and independent-core execution evidence",
+      "type": "local_tool_metadata_and_reproducible_subset_execution",
+      "scope": "TS7.0.2 installed version/license, strict compilation, package/type, and headless behavioral verification.",
+      "limit": "CPU/simulated-host subset; no GPU/browser/native or performance results.",
+      "researchCheckedAt": "2026-10-08",
+      "urls": [
+        "https://www.typescriptlang.org/download/",
+        "https://registry.npmjs.org/typescript/latest"
+      ],
+      "artifacts": [
+        "evidence/core-framework-tooling.json",
+        "evidence/core-framework-verification.json",
+        "evidence/core-framework-implementation.json"
+      ],
+      "doc": "docs/核心框架实现记录.md"
+    },
+    {
+      "id": "S047",
+      "title": "Targeted checks of core evidence gaps and official research paths",
+      "type": "bounded_evidence_gap_audit_official_entry_points",
+      "scope": "Eight research/verification gaps, existing narrow-research indexes, and official standards/main-repository entry points.",
+      "limit": "Some checks cover entry points only, rather than additional complete fixed-SHA source reading. Dawn/JSC fetching limitations remain; next-step verification was not executed.",
+      "researchCheckedAt": "2026-10-08",
+      "urls": [
+        "https://dom.spec.whatwg.org/#interface-abortsignal",
+        "https://github.com/harfbuzz/harfbuzz/blob/main/src/hb-shape.cc",
+        "https://harfbuzz.github.io/working-with-harfbuzz-clusters.html",
+        "https://freetype.org/freetype2/docs/reference/ft2-character_mapping.html",
+        "https://github.com/pixijs/pixijs/blob/5b41ee37fd36c61e089113345a8f12cf1c3323cf/src/scene/text/canvas/CanvasTextMetrics.ts",
+        "https://www.unicode.org/reports/tr14/",
+        "https://www.unicode.org/reports/tr29/",
+        "https://www.w3.org/TR/webgpu/",
+        "https://registry.khronos.org/webgl/specs/latest/2.0/",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/core/src/Engines/webgpuEngine.pure.ts",
+        "https://threejs.org/manual/pages/webgpurenderer",
+        "https://developer.playcanvas.com/user-manual/graphics/advanced-rendering/device-loss/",
+        "https://docs.rs/wgpu/30.0.1/wgpu/struct.Device.html",
+        "https://github.com/google/dawn/blob/main/include/dawn/native/D3D11Backend.h",
+        "https://github.com/google/dawn/blob/main/docs/dawn/features/shared_texture_memory.md",
+        "https://v8.dev/docs/embed",
+        "https://developer.apple.com/documentation/javascriptcore",
+        "https://github.com/egret-labs/egret-core/blob/master/src/egret/events/EventDispatcher.ts",
+        "https://github.com/egret-labs/egret-core/tree/master/src/extension/eui",
+        "https://modelcontextprotocol.io/specification/2025-06-18/server/tools",
+        "https://modelcontextprotocol.io/specification/2025-06-18/basic/utilities/cancellation",
+        "https://www.w3.org/TR/uievents/#events-compositionevents",
+        "https://harfbuzz.github.io/what-does-harfbuzz-do.html"
+      ],
+      "artifacts": [
+        "evidence/core-evidence-gaps.json"
+      ],
+      "doc": "docs/核心框架证据缺口与研究清单.md"
+    },
+    {
+      "id": "S048",
+      "title": "Independent code/integration review evidence for the core slice",
+      "type": "independent_AI_scoped_code_and_document_review",
+      "scope": "Initial review of all new core files, necessary revisions, limited final review, and input hashes; three consistency corrections from document pre-review and bounded post-generation checks are listed separately.",
+      "limit": "Limited code-quality/specification and document-evidence consistency checks, without authority to grant product/performance/originality/license acceptance.",
+      "researchCheckedAt": "2026-10-08",
+      "artifacts": [
+        "evidence/core-framework-code-review-initial.json",
+        "evidence/core-framework-code-review-final.json",
+        "evidence/core-framework-document-review-initial.json",
+        "evidence/core-framework-document-review-final.json"
+      ],
+      "doc": "docs/核心框架实现记录.md"
+    },
+    {
+      "id": "S049",
+      "title": "Early public collaboration and community communication requirements",
+      "type": "project_owner_instruction",
+      "scope": "Use public collaboration for code, design processes, documentation, and the knowledge base from early development. Communicate professionally/objectively, protect communication/materials unsuitable for publication, retain research references/acknowledgements, and demonstrate Egret's independent design/innovation.",
+      "limit": "Confirms public-development direction and communication standards; repository accounts, licenses, and actual publication status are registered separately, without changing technical/product acceptance.",
+      "researchCheckedAt": "2026-10-08",
+      "artifacts": [
+        "evidence/public-collaboration-requirement.json"
+      ],
+      "doc": "docs/开源协作与公开表达规范.md"
+    },
+    {
+      "id": "S050",
+      "title": "Public-material editing and release-boundary checks",
+      "type": "editorial_and_local_release_boundary_review",
+      "scope": "Sources/acknowledgements, document expression, release boundaries for current code and third-party research files, and public projections.",
+      "limit": "Text and release preparation, continuing the project's designated repository's existing Apache-2.0 configuration. Existing test counts/source identities remain; no new platform/performance/migration conclusions accepted.",
+      "researchCheckedAt": "2026-10-08",
+      "artifacts": [
+        "evidence/public-community-editorial.json",
+        "evidence/public-release-boundary-audit.json",
+        "evidence/public-release-projection.json"
+      ],
+      "doc": "docs/开源协作与公开表达规范.md"
+    },
+    {
+      "id": "S051",
+      "title": "Bilingual public materials and initial GitHub submission requirements",
+      "type": "project_owner_instruction",
+      "scope": "Before every GitHub push, complete English comments for critical code, organize all publishable documents/knowledge-base content, and provide complete Chinese/English reading documents and shared registered-status views. After completing initial core source, documentation, and the knowledge base, submit to the designated public repository.",
+      "limit": "Establishes bilingual/pre-push steps without expanding technical implementation, performance, migration, or host acceptance. Actual submission depends on verified authorization for remote writes.",
+      "researchCheckedAt": "2026-10-08",
+      "artifacts": [
+        "evidence/bilingual-publication-requirement.json"
+      ],
+      "doc": "docs/双语文档与推送前检查.md"
+    },
+    {
+      "id": "S052",
+      "title": "CPU asset contract and independent implementation evidence",
+      "type": "first_party_specification_and_execution",
+      "scope": "Typed references, shared acquisition, pending-only cancellation, generations, leases, and Scope/Engine cleanup.",
+      "limit": "Only the CPU service subset; no GPU upload/fence, decoder, production host, performance, or migration acceptance. The earlier 25 manual research cases retain their original scope.",
+      "researchCheckedAt": "2026-10-08",
+      "artifacts": [
+        "evidence/asset-core-verification.json"
+      ],
+      "doc": "docs/资源核心合同.md"
+    },
+    {
+      "id": "S053",
+      "title": "Scoped independent CPU asset-core review",
+      "type": "independent_ai_code_and_contract_review",
+      "scope": "Current core code, failure interleavings, tests, and implementation/specification consistency.",
+      "limit": "An independent scoped AI review and recorded regressions; no external community review, original-author guarantee, or complete product acceptance.",
+      "researchCheckedAt": "2026-10-08",
+      "artifacts": [
+        "evidence/asset-core-review.json"
+      ],
+      "doc": "docs/资源核心实现记录.md"
+    }
+  ],
+  "_localization": {
+    "canonicalSource": "来源.json",
+    "canonicalSha256": "6a1ab3c56d0a46f5555400c2d4e7deae6a329a5a6f2cf9c8378c32b11c3d85fb",
+    "role": "read_only_translation",
+    "language": "en"
+  }
+}

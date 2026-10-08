@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "recordedAtUtc": "2026-10-08T09:48:20.823Z",
+  "source": "direct_founder_instruction_in_current_conversation",
+  "scope": "confirmed_engineering_and_community_requirement",
+  "statement": "白鹭公开协作，核心按自身需求与规格独立设计实现；研究开放项目的机制与经验，通用基础设施以明确依赖接入并保留原有归属，以可验证的改进发展产品。",
+  "implementationRuleConfirmed": true,
+  "technicalLibrarySelectionApproved": false,
+  "publicRepositoryPublished": false,
+  "licenseSelected": false,
+  "performanceGainVerified": false,
+  "publicEditorialProjection": {
+    "originalKnowledgeBaseVersion": "0.8.0",
+    "originalReportSha256": "6733370568fd8f453385a7f43626521cbbcf77dcfb2096407d29ba810f2b7e07",
+    "changedStringFields": [
+      "statement"
+    ],
+    "scope": "Professional wording and publication context only; findings, outcomes, counters, source identities and technical conclusions retained. Restricted original execution materials are not part of the public source distribution."
+  }
+}

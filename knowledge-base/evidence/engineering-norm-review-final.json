@@ -1,0 +1,195 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-10-08T10:41:33.861Z",
+  "knowledgeBaseVersion": "0.7.0",
+  "reviewer": "independent_AI_engineering_norm_review",
+  "verdict": "passed_with_stated_scope",
+  "necessaryCorrections": [],
+  "reviewedFileHashes": [
+    {
+      "path": "docs/工程技术架构与项目结构.md",
+      "sha256": "5f92ce5512986be1672a013ce5bbc9c694d9f83baad45f4ce2faa25a4fa2a0b8"
+    },
+    {
+      "path": "docs/公共API设计与命名规范.md",
+      "sha256": "7a29bc506b78865c53d53e8cf75d4ed5837d30171370d764700416d1d08fa5f4"
+    },
+    {
+      "path": "docs/代码规范与质量门禁.md",
+      "sha256": "7a36ade21783d215b346a9d7596144845f13176727bc1c20a7f82daa775b5aac"
+    },
+    {
+      "path": "docs/技术架构.md",
+      "sha256": "8ac6ba1273ac02796b81dd7f86cc43bd3a5dc3c584c0d592ea6802a4855485d4"
+    },
+    {
+      "path": "docs/渲染引擎与运行时.md",
+      "sha256": "c8ad1bf0d041465400486cdd349db7d1751710b92af587ee817cebb5b94e1e90"
+    },
+    {
+      "path": "docs/技术白皮书.md",
+      "sha256": "570688f0a7ddfc1758ddfec121d61912372db553d3ac080fac89080b6606b460"
+    },
+    {
+      "path": "docs/产品需求说明书.md",
+      "sha256": "63b539a3ef34f67bed5a4eef41b7b5fa3ca1f9a82de0801c3e11e0b54311b520"
+    },
+    {
+      "path": "docs/工程规划.md",
+      "sha256": "39d4f53684c4bcb5e14be9e92b2cdb6f52643d18f4b32d3a2ce2a587bb651542"
+    },
+    {
+      "path": "当前版本.json",
+      "sha256": "65320c8cc02d919c26bffe08a40a6989769671fa0f28e5844c27f94f1a31a92c"
+    },
+    {
+      "path": "README.md",
+      "sha256": "f4fa9af580083b7c4136e9139c068206dfec23697546f7754e67de8fe2cb46ca"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "sha256": "fca91f575c8ac23be839f3478e2fa731337841e7a3e05c023572209ac37cb244"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "sha256": "d2ed73627c2e79ddc04739d89de41969e365037d95fa2ace0448b5e4332889d9"
+    },
+    {
+      "path": "registry/需求.json",
+      "sha256": "28789d8aaf6fa07dffb0bab16633ac4d71cbab7337f4eb5a7172df35b5450df7"
+    },
+    {
+      "path": "registry/决策.json",
+      "sha256": "932dc256d5589280c45c68cd504d61fc82f8eedc6ba53c4d8cf5ca9183e70f57"
+    },
+    {
+      "path": "registry/交付.json",
+      "sha256": "048a7031d741707f1a60a412e56e0781b15a269121038aed766e99997b5f0748"
+    },
+    {
+      "path": "registry/来源.json",
+      "sha256": "d69de92a94f5d4b67a83ffdb9ee64acebafa3a9afdb514d74964fe9bbf71fcdd"
+    }
+  ],
+  "resolvedInitialFindings": [
+    {
+      "id": "N001",
+      "status": "resolved_in_candidate_documents",
+      "path": "docs/工程规划.md",
+      "resolution": "The current candidate directory authority is explicit and the early parallel directory sketch is retired."
+    },
+    {
+      "id": "N002",
+      "status": "resolved_in_candidate_documents",
+      "path": "docs/公共API设计与命名规范.md",
+      "resolution": "The cleanup-failure branch retains the primary error in cause and records cleanupErrors; the sample remains uncompiled."
+    }
+  ],
+  "checks": [
+    {
+      "id": "original_snapshot_preserved",
+      "result": true,
+      "detail": "Initial review hashes remain bound to its frozen 16-file input snapshot."
+    },
+    {
+      "id": "bounded_change_set",
+      "result": true,
+      "detail": "Five changed files were reread; the other eleven files match the initial reviewed bytes."
+    },
+    {
+      "id": "objective_candidate_authority",
+      "result": true,
+      "detail": "R016 remains the confirmed objective; D001-D016 remain unaccepted candidates."
+    },
+    {
+      "id": "product_and_migration_boundary",
+      "result": true,
+      "detail": "V002-V006 remain not_started/not_run; complete migration, continued editing, publication and update are preserved."
+    },
+    {
+      "id": "core_origin_and_native_candidate",
+      "result": true,
+      "detail": "Independent-core policy and narrow optional native/WASM comparison remain intact, without language/VM/graphics-library acceptance."
+    },
+    {
+      "id": "versions_and_execution_flags",
+      "result": true,
+      "detail": "KB/design versions and unexecuted product/benchmark/acceptance flags stay consistent."
+    },
+    {
+      "id": "N001_directory_authority_resolved",
+      "result": true,
+      "detail": "The plan now points to the nine-package/three-public-identity structure, and explicitly retires early directory names as a competing current proposal."
+    },
+    {
+      "id": "N002_primary_failure_preserved",
+      "result": true,
+      "detail": "The candidate example catches shutdown failure separately and retains the original failure through EgretError.cause with related cleanup errors."
+    },
+    {
+      "id": "additional_lifecycle_clarifications",
+      "result": true,
+      "detail": "DOM-free cancellation, closing-use ownership, root-owner recursive cleanup, no first-stage ownership transfer and shared close result are explicit candidate contracts."
+    },
+    {
+      "id": "event_instance_and_surface_boundaries",
+      "result": true,
+      "detail": "The revised event snapshot, Engine affinity, active-event reentry and surface/device arbitration rules are coherent with the ownership and scheduler architecture."
+    },
+    {
+      "id": "initial_and_historical_binding_metadata",
+      "result": true,
+      "detail": "Current metadata labels initial reviews against the retained selected-file snapshot, and retains older version bindings. Root separately validates preserved artifact bytes."
+    },
+    {
+      "id": "documentation_artifact_registration",
+      "result": true,
+      "detail": "V007/V008 register local review and candidate dependency-contract artifacts; these do not change product implementation or acceptance states. Final report production and final structural validation remain root integration steps."
+    }
+  ],
+  "semanticObservations": [
+    "Nine TS workspace packages, three public identities and the declared acyclic dependencies remain coherent; declarations are not actual package import/build or CI evidence.",
+    "Sprite/Bitmap/removeChild naming remains tied to familiar Egret semantics, while modern width/time/event/disposal changes are explicitly candidate rules requiring compatibility comparison.",
+    "The twelve checked conditions support only this bounded specification and registry consistency review, not exhaustiveness or runnable lifecycle correctness.",
+    "H001-H008 remains consistently declared untested in the eleven unchanged reviewed documents. The hypothesis registry itself remains outside this exact 16-file review.",
+    "Candidate sample code is not compiled; npm scope availability, actual target exports/tree shaking, device behavior and product performance are unverified."
+  ],
+  "scope": {
+    "fileCount": 16,
+    "kind": "bounded_semantic_document_rereview",
+    "inputSnapshot": "work/engineering-norm-review-final-inputs.json",
+    "previousReview": "work/engineering-norm-review-initial.json",
+    "changedPaths": [
+      "docs/工程技术架构与项目结构.md",
+      "docs/公共API设计与命名规范.md",
+      "docs/工程规划.md",
+      "当前版本.json",
+      "registry/交付.json"
+    ],
+    "unchangedPreviouslyReviewedFileCount": 11,
+    "operations": [
+      "compare frozen initial and current SHA256",
+      "reread five changed documents/registry fields",
+      "recheck in-memory registry and specification consistency",
+      "write final review to work only"
+    ],
+    "excluded": [
+      "knowledge-base edits",
+      "source implementation",
+      "tool/dependency installation",
+      "API compilation",
+      "actual dependency import or CI execution",
+      "product/runtime/benchmark tests",
+      "historical artifact hash verification",
+      "private archive source re-read",
+      "hypothesis registry read"
+    ],
+    "sourceCodeOriginAcceptance": false,
+    "apiCompilationRun": false,
+    "actualDependencyGraphCheckRun": false,
+    "ciRun": false,
+    "productExperimentsRun": false,
+    "performanceConclusion": false,
+    "reviewerApprovalAuthority": "none_independent_AI_review_only"
+  }
+}

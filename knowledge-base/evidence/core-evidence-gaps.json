@@ -1,0 +1,231 @@
+{
+  "schemaVersion": 1,
+  "auditDate": "2026-10-08",
+  "title": "核心框架小切片的优先证据缺口",
+  "authority": "后续研究与验证建议；不接受D001-D016、不变更V001-V006交付状态",
+  "scope": {
+    "authorizedSlice": "纯TypeScript Scope、取消、同步事件、显示树与无GPU Engine生命周期",
+    "knowledgeBaseModified": false,
+    "productCodeWritten": false,
+    "newExperimentsRun": false,
+    "subagentsSpawned": false,
+    "publicResearchRule": "只看官方文档、标准与主仓库；竞品实现用于机制研究，不复制、转写或伪装为自主核心",
+    "sourceReadBoundary": "本次阅读既有证据索引与候选文档；实时浏览主要核对官方文档和仓库文件入口。打开GitHub文件页不等同逐行审阅实现；本次没有新增固定SHA完整源码审读。"
+  },
+  "baseline": {
+    "knowledgeBaseVersion": "0.7.0",
+    "readEvidence": [
+      "README.md",
+      "registry/交付.json",
+      "registry/决策.json",
+      "docs/工程技术架构与项目结构.md",
+      "docs/公共API设计与命名规范.md",
+      "docs/图形后端编译与原生Runtime选型.md",
+      "docs/旧工程迁移.md",
+      "docs/AI创作与工程接口.md",
+      "evidence/api-lifecycle-challenge-final.json",
+      "evidence/engineering-norm-review-final.json",
+      "evidence/reference-pixi-text.json",
+      "evidence/reference-text-ui.json",
+      "evidence/reference-render-lifecycle.json",
+      "evidence/backend-graphics-research.json",
+      "evidence/backend-native-research.json",
+      "evidence/asset-reference-probe-results.json",
+      "evidence/reliable-event-probe-results.json",
+      "evidence/async-resource-probe-results.json",
+      "evidence/nested-ui-probe-results.json",
+      "evidence/browser-probe-results.json"
+    ],
+    "currentConclusion": "候选合同有文档级反例复审；真实glTF+Canvas UI研究链17/17通过，限定本地桌面WebGL2。现有证据不包含完整新核心、WebGPU产品后端、原生SDK/VM、真实IME、AI任务或完整旧工程验收。",
+    "notRepeated": "不重做已记录的Canvas整行缓存、UI painter order、owner/epoch、恢复来源与迟到任务的一般原理研究；下一批只补尚未闭合的合同、真实输入与执行证据。"
+  },
+  "categories": [
+    {"id": "now", "title": "可现在写", "meaning": "已有合同足以独立实现并以CPU用例验证，不等手机或原生选型"},
+    {"id": "source", "title": "下一步需公开源码/标准", "meaning": "先固定版本、读窄路径及测试，形成自有规格，不能用网页入口代替已读源码"},
+    {"id": "sample", "title": "真实样本/目标宿主", "meaning": "先取得可运行输入及宿主责任边界，公开引擎文档不能替代"},
+    {"id": "device", "title": "必须实机", "meaning": "实际声明宿主、系统、设备和发布构建的正确性与成本证据"}
+  ],
+  "items": [
+    {
+      "id": "G001",
+      "priority": 1,
+      "category": "now",
+      "question": "候选Scope、取消、事件、显示树与Engine合同能否成为可编译且在重入、异常与迟到结果下自洽的自有核心？",
+      "researchObjects": [
+        {"name": "本项目候选合同与六组反例", "repositoryPath": "docs/公共API设计与命名规范.md；evidence/api-lifecycle-challenge-final.json", "url": null, "inspection": "本次已读"},
+        {"name": "WHATWG AbortSignal使用语义", "repositoryPath": null, "url": "https://dom.spec.whatwg.org/#interface-abortsignal", "inspection": "本次核对官方标准入口；仅作为浏览器适配约束，新显示树事件不冒充DOM完全兼容"}
+      ],
+      "existingEvidence": ["evidence/api-lifecycle-challenge-final.json", "evidence/engineering-norm-review-final.json", "evidence/async-resource-probe-results.json"],
+      "insufficiency": "六组反例在文档中已解决，但复审明确未编译、未运行。已有异步资源与可靠队列模型也不是这套公共Scope/同步事件实现。",
+      "minimalValidation": [
+        "纯核心以无DOM/无Node环境类型声明编译；浏览器类型用单独fixture验证标准AbortSignal可接入。导入不启动时钟或注册全局对象。",
+        "覆盖Scope逆序清理、abort回调重入、同owner/外owner/新迟到值、清理异常后继续、取消前后登记竞态与监听异常。",
+        "覆盖整次派发快照、跨阶段新增/删除、once重入、两种stop、抛错后状态复原、活跃Event重派拒绝；显示树环/重挂载、外owner子树、跨Engine拒绝与失败原子性。",
+        "用可控无GPU host覆盖启动失败回滚、同一关闭Promise、关闭重入/失败、重复关闭结果不变；只报告此切片实现结果。"
+      ],
+      "decisionTriggered": "缩小D016的未执行部分，冻结第一批公开声明与无GPU状态机；失败时改自有合同/实现，不等字体或GPU选型。",
+      "doesNotProve": "旧Egret事件兼容、真实GPU完成条件、跨VM/线程或完整引擎可用。"
+    },
+    {
+      "id": "G002",
+      "priority": 2,
+      "category": "source",
+      "question": "TextProvider究竟共享哪一层：原文、段落布局、glyph run还是像素？如何表达UTF-16索引、cluster、fallback、断行和字体代际，避免Canvas与原生各自猜测？",
+      "researchObjects": [
+        {"name": "HarfBuzz shaping与cluster", "repositoryPath": "harfbuzz/harfbuzz: src/hb-shape.cc、src/hb-buffer.cc；对应测试目录待固定SHA后选取", "url": "https://github.com/harfbuzz/harfbuzz/blob/main/src/hb-shape.cc", "inspection": "只核对文件入口；尚未逐行审读或锁SHA"},
+        {"name": "HarfBuzz cluster官方合同", "repositoryPath": null, "url": "https://harfbuzz.github.io/working-with-harfbuzz-clusters.html", "inspection": "本次已读官方说明；glyph cluster不自动等于编辑器光标/Unicode grapheme合同"},
+        {"name": "FreeType字符覆盖与栅格边界", "repositoryPath": "freetype/freetype: src/base/ftobjs.c、include/freetype/freetype.h", "url": "https://freetype.org/freetype2/docs/reference/ft2-character_mapping.html", "inspection": "本次已读API说明；ftobjs.c只核对入口，未审实现"},
+        {"name": "Pixi已有固定版本文本链", "repositoryPath": "pixijs/pixijs@5b41ee37fd36c61e089113345a8f12cf1c3323cf: src/scene/text/canvas/CanvasTextMetrics.ts、CanvasTextGenerator.ts；src/scene/text/shared/AbstractTextSystem.ts", "url": "https://github.com/pixijs/pixijs/blob/5b41ee37fd36c61e089113345a8f12cf1c3323cf/src/scene/text/canvas/CanvasTextMetrics.ts", "inspection": "既有reference-pixi-text记录已读；本次未重读源码"},
+        {"name": "Unicode断行与grapheme", "repositoryPath": null, "url": "https://www.unicode.org/reports/tr14/", "additionalUrl": "https://www.unicode.org/reports/tr29/", "inspection": "本次核对标准入口；下一批锁对应版本和测试数据"}
+      ],
+      "existingEvidence": ["evidence/reference-pixi-text.json", "evidence/reference-text-ui.json", "evidence/asset-reference-probe-results.json"],
+      "insufficiency": "既有Pixi/PlayCanvas/Babylon窄源码研究支持整行Canvas基线与fontEpoch缓存；未读实际字体、未跑HarfBuzz/FreeType，也未定义跨provider索引/塑形/断行合同。系统字体一句smoke不能证明这些。",
+      "minimalValidation": [
+        "固定HarfBuzz/FreeType版本与SHA，仅读shape/buffer/charmap/相应测试，写自有TextProvider输入输出与不承诺清单，不复制实现。",
+        "用授权固定字体和一个小型金样集比较原文、UTF-16范围、glyph/cluster、advance、断行：简繁CJK/扩展汉字、e+combining、emoji ZWJ、阿拉伯混排、空格/换行。",
+        "明确fallback/font coverage、bidi/断行与编辑光标分别由谁负责；字体替换使metrics/layout/raster/UV失效。先做CLI/桌面功能对照，实机输入另见G007。"
+      ],
+      "decisionTriggered": "决定D007/V004的可替换TextProvider边界、Canvas段落缓存与原生字体依赖；只有需求和证据要求统一排版时才扩大到共享shaping。",
+      "doesNotProve": "所有系统同像素、IME正确、中文图集预算或手机文字性能。"
+    },
+    {
+      "id": "G003",
+      "priority": 3,
+      "category": "source",
+      "question": "首版BackendCaps与恢复ready的充分条件是什么；WebGL2和WebGPU在哪些格式、MSAA、alpha/颜色、外部资源和GPU-only内容上必须分开？",
+      "researchObjects": [
+        {"name": "WebGPU设备能力与丢失规范", "repositoryPath": null, "url": "https://www.w3.org/TR/webgpu/", "inspection": "本次核对规范；device实际features/limits与adapter分开，lost后的对象不可继续用"},
+        {"name": "WebGL2规范", "repositoryPath": null, "url": "https://registry.khronos.org/webgl/specs/latest/2.0/", "inspection": "本次核对规范入口；下一批读具体格式/恢复章节"},
+        {"name": "Babylon已研究基线补格式/外部资源路径", "repositoryPath": "BabylonJS/Babylon.js@cbe5bb36998fdde6bd93d76e67813ff571a535db: packages/dev/core/src/Engines/webgpuEngine.pure.ts、thinEngine.pure.ts、abstractEngine.pure.ts", "url": "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/core/src/Engines/webgpuEngine.pure.ts", "inspection": "既有reference-render-lifecycle已读窄路径；本次未新增源码审读"},
+        {"name": "Three固定基线及现行迁移限制", "repositoryPath": "mrdoob/three.js@0af9729d0c143a86a1d725d6e2c3ad83301f3f34: src/renderers/webgpu/WebGPURenderer.js；下一批同SHA核对WebGPUBackend/WebGLBackend与格式映射", "url": "https://threejs.org/manual/pages/webgpurenderer", "inspection": "本次核对现行官方手册；不得将现行手册等同r180全部行为"},
+        {"name": "PlayCanvas恢复与格式映射", "repositoryPath": "playcanvas/engine@cfef43d306b2b55a2c0742e4994221f6d2463957: src/platform/graphics/webgpu/webgpu-graphics-device.js、webgl/webgl-graphics-device.js；补邻接texture/render-target实现", "url": "https://developer.playcanvas.com/user-manual/graphics/advanced-rendering/device-loss/", "inspection": "本次核对官方恢复文档；固定源码窄审阅来自既有索引"}
+      ],
+      "existingEvidence": ["evidence/reference-render-lifecycle.json", "evidence/backend-graphics-research.json", "evidence/asset-reference-probe-results.json"],
+      "insufficiency": "已有owner/epoch、CPU来源、异步恢复取消与WebGL真实context-loss验证；未穷尽两后端格式/采样/颜色或外部纹理实现，未运行自主WebGPU。Three参考版本与现行手册口径也不同。",
+      "minimalValidation": [
+        "不重读所有renderer；沿固定基线补format/MSAA/alpha/外部资源/restore cache依赖的公开路径与现有测试，逐项输出supported、unsupported、待探测和fallback条件。",
+        "写自有ResourceDescriptor/PassDescriptor/恢复拓扑；每类资源声明CPU保留、重载、生成器或明确丢弃，ready必须包含重填内容与首帧可呈现。",
+        "对必需效果建立小型金样：半透明UI、nested clip、离屏filter/cache、MSAA resolve、截图readback；先验证资源拒绝/代际模型，真实后端与loss见G008。"
+      ],
+      "decisionTriggered": "限定D002-D005与D010的首版后端profile、canvas重建/fallback政策及恢复事件含义；保持自主后端与竞品研究链分开。",
+      "doesNotProve": "WebGPU更快、真实驱动重置可恢复、小游戏支持或双后端全功能等价。"
+    },
+    {
+      "id": "G004",
+      "priority": 4,
+      "category": "sample",
+      "question": "首个原生SDK宿主到底交出什么surface/device/线程与VM；它要求借用已有D3D11/Metal/Vulkan设备，还是允许SDK自建设备？",
+      "researchObjects": [
+        {"name": "首个授权目标App的最小SDK宿主", "repositoryPath": "待取得：宿主窗口/surface创建、render-thread callback、device/queue导出、外部纹理、退出/前后台示例；版本与源码授权一起登记", "url": null, "inspection": "没有已确认首批宿主或真实样本；不能用当前Windows环境替用户作首发平台决定"},
+        {"name": "wgpu互操作合同", "repositoryPath": "gfx-rs/wgpu: wgpu/src/api/device.rs、wgpu-hal对应目标后端；采用时锁release SHA", "url": "https://docs.rs/wgpu/30.0.1/wgpu/struct.Device.html", "inspection": "本次已核对30.0.1公开API；不是SDK借用device实现证明，Rust库与wgpu-native版本分别锁定"},
+        {"name": "Dawn借用设备与共享纹理", "repositoryPath": "google/dawn: include/dawn/native/D3D11Backend.h、docs/dawn/features/shared_texture_memory.md、目标backend/tests", "url": "https://github.com/google/dawn/blob/main/include/dawn/native/D3D11Backend.h", "additionalUrl": "https://github.com/google/dawn/blob/main/docs/dawn/features/shared_texture_memory.md", "inspection": "本次D3D11头文件入口抓取失败；既有索引仅主线静态观察。shared_texture_memory文档入口可取，下一批固定revision/二进制核对"},
+        {"name": "目标VM嵌入合同", "repositoryPath": "v8/v8: include/v8-array-buffer.h、include/v8-isolate.h、include/v8-microtask-queue.h；Apple目标按系统JavaScriptCore公开API；其他宿主VM仅在宿主要求时补", "url": "https://v8.dev/docs/embed", "additionalUrl": "https://developer.apple.com/documentation/javascriptcore", "inspection": "本次已核对V8嵌入说明；Apple页面仅动态入口，未审具体API。没有构建或VM性能排序"}
+      ],
+      "existingEvidence": ["evidence/backend-native-research.json", "docs/工程技术架构与项目结构.md"],
+      "insufficiency": "已有wgpu/Dawn与V8/JSC/其他候选静态研究，没有实际宿主。Dawn主线D3D11条目未绑定所列发布二进制，内部旧V8/JSVM目录也未证明实际运行版本；尚无shared-device、VM任务队列与FFI证据。",
+      "minimalValidation": [
+        "先取得一个真实host contract：owned/borrowed、API/backend、surface/resize、线程、queue提交、fence/完成、纹理导入/复制、loss/退出谁负责；明确VM与动态更新要求。",
+        "据该host只比较wgpu/Dawn有关公开接口，冻结依赖headers+库+构建参数；D3D11必须时优先验证Dawn具体revision，现代Rust路径重点验证wgpu。尚不接受双库生产支持。",
+        "画出一次TS批量更新/原生回调/Promise jobs/GC/ArrayBuffer借用/取消/退出的所有权表，并约定一个薄宿主示例与诊断；实际构建运行计入G008。"
+      ],
+      "decisionTriggered": "决定D006/D014的主图形依赖、一个主VM、窄ABI与借用device支持级别；需要复制时明确成本，禁止以unsafe接口存在承诺通用零拷贝。",
+      "doesNotProve": "SDK可发布、绑定安全、平台许可、VM包体/启动/吞吐或跨版本snapshot兼容。"
+    },
+    {
+      "id": "G005",
+      "priority": 5,
+      "category": "sample",
+      "question": "哪些真实旧Egret语义必须保持，哪些由compat或确定转换处理，才能最终交付R008完整迁移而不是保留相似名字？",
+      "researchObjects": [
+        {"name": "授权可运行旧工程及旧发布产物", "repositoryPath": "待V001建立样本清单：egretProperties.json、tsconfig/构建脚本、EUI/EXML皮肤、RES配置、DragonBones数据与atlas、自定义GLSL/滤镜、业务/平台代码；原工程只读快照", "url": null, "inspection": "真实完整工程和旧行为回放尚未齐；不从私有历史源码存在推导工程可运行"},
+        {"name": "Egret公共语义定点对照", "repositoryPath": "egret-labs/egret-core: src/egret/events/EventDispatcher.ts、src/egret/display/DisplayObject.ts、src/egret/display/DisplayObjectContainer.ts、src/extension/eui；以样本使用版本锁SHA", "url": "https://github.com/egret-labs/egret-core/blob/master/src/egret/events/EventDispatcher.ts", "additionalUrl": "https://github.com/egret-labs/egret-core/tree/master/src/extension/eui", "inspection": "本次只核对官方仓库入口；next按样本版本审读，master不能替旧实际版本"}
+      ],
+      "existingEvidence": ["docs/旧工程迁移.md", "evidence/egret-naming-contract-summary.json", "evidence/nested-ui-probe-results.json", "registry/交付.json"],
+      "insufficiency": "命名/历史条目静态核查、128节点有限布局模型和参考glTF链都没有EUI、RES、DragonBones完整旧新行为对照。新once/尺寸/实例语义与旧版差异明确存在，但未量出真实迁移代价。",
+      "minimalValidation": [
+        "首批最少取得一个可运行复杂EUI/EXML+RES工程及一个含旧2D骨骼/自定义shader/平台接口的代表工程；可由同工程覆盖，但完整玩法流程必须保留。登记版本、扩展、权限、资源哈希与旧构建。",
+        "固定输入、时钟、种子、网络录制，保存事件顺序、尺寸/坐标/布局、视觉/遮罩/字体、骨骼事件、资源/存档和发布基线；旧工程不能运行时明确阻塞。",
+        "先拿边界金样反查核心API，再形成确定规则与compat清单；最终漏斗仍覆盖导入→转换→构建→完整运行→对照→继续编辑→真实发布/更新，报告全分母、拒绝项、人工与AI成本。"
+      ],
+      "decisionTriggered": "冻结D012/D016的兼容差异和V006首批支持矩阵，确定核心语义是否需调整；局部通过不缩小最终迁移交付。",
+      "doesNotProve": "全版本兼容、一键迁移已实现或零人工成功。"
+    },
+    {
+      "id": "G006",
+      "priority": 6,
+      "category": "sample",
+      "question": "新创作者能否通过AI连续完成真实作品修改，诊断、取消和撤销足够可理解且保留原玩法；什么才算任务成功？",
+      "researchObjects": [
+        {"name": "首批AI新创作者与代表作品任务", "repositoryPath": "待建立自有fixtures：复杂UI+轻量3D同一作品、需求与验收oracle、工程版本/对象ID、连续修改序列及人工观察记录", "url": null, "inspection": "尚无已运行的V003/V005任务样本；不预设已验证MVP、费用或可接受人工量"},
+        {"name": "MCP工具与取消协议", "repositoryPath": "先沿知识库现有2025-06-18协议做独立版本适配；选客户端时再确认其支持版本", "url": "https://modelcontextprotocol.io/specification/2025-06-18/server/tools", "additionalUrl": "https://modelcontextprotocol.io/specification/2025-06-18/basic/utilities/cancellation", "inspection": "本次核对指定版本官方文档；不称其为最新，也不把协议取消通知当事务回滚"}
+      ],
+      "existingEvidence": ["docs/AI创作与工程接口.md", "registry/交付.json", "docs/公共API设计与命名规范.md"],
+      "insufficiency": "稳定ID/版本前提/异步诊断/有限修复目前是设计；没有真实新创作者连续任务、独立玩法oracle、模型/工具成本或撤销/冲突证据。技术类型检查不证明意图满足。",
+      "minimalValidation": [
+        "一份固定作品连续做：改面板布局、改角色资源/动画、改规则、引入可诊断错误并修复、重命名/移动后再定位、取消迟到构建、并发版本冲突、撤销并继续编辑；每项有原功能保护断言。",
+        "在少量真实AI新创作者中跑探索试验，逐任务记录完整成功/失败、人工接管原因/分钟、修复轮数、等待、调用用量与费用；不能从小样本外推市场成功率。",
+        "机器返回taskId/version/status/diff/diagnostics/artifacts/acceptance，运行时试玩状态与工程事实分开；取消不允许旧产物覆盖新版本，撤销后复验玩法与资源。"
+      ],
+      "decisionTriggered": "决定D011与V003的首批命令、诊断粒度和恢复/撤销合同，形成V005创作者验收任务与预算基线；将难以理解的生命周期反馈改为用户能行动的说明。",
+      "doesNotProve": "AI能自主做任何游戏、规模化创作成功率、免费/低成本或无需人工。"
+    },
+    {
+      "id": "G007",
+      "priority": 7,
+      "category": "device",
+      "question": "选定文字方案在声明宿主上是否真的显示/输入正确，并在字体冷加载、新字突发、DPI变化和恢复时保持可交互？",
+      "researchObjects": [
+        {"name": "实际首批浏览器/小平台/原生HostServices文字与IME", "repositoryPath": "G004/G006收敛后登记OS/设备/宿主/SDK/字体版本及输入法；至少含首批Web宿主与首个native目标，其他平台不自动声称支持", "url": "https://www.w3.org/TR/uievents/#events-compositionevents", "inspection": "官方测试参照链接；本次未审读或运行IME测试"},
+        {"name": "真实字体和文字金样", "repositoryPath": "G002授权字体二进制/coverage清单与金样；Pixi CanvasTextPipe恢复机制、HarfBuzz/FreeType或系统provider作为可声明依赖", "url": "https://harfbuzz.github.io/what-does-harfbuzz-do.html", "inspection": "本次官方说明已读；是否采用依赖仍待合同与实机结果"}
+      ],
+      "existingEvidence": ["evidence/reference-text-ui.json", "evidence/reference-pixi-text.json", "evidence/asset-reference-probe-results.json"],
+      "insufficiency": "Canvas系统字体smoke仅测一段文字与缓存/epoch；没有受控简繁/CJK覆盖、真实composition、caret/selection、移动DPI或缓存/上传预算。HarfBuzz shaping也不会替宿主管IME。",
+      "minimalValidation": [
+        "G002金样在发布构建上视觉/断行与coverage对照；实际输入法跑compositionstart/update/end、取消、选择/光标、剪贴板、emoji/补充平面编辑、键盘遮挡与页面切换。",
+        "跑慢加载fallback→成功、同名字体替换、locale/DPI切换、context/device恢复；断言metrics/layout/raster/atlas均更新，无乱码/空格替代。",
+        "分别测冷字体首交互、每轮1/10/100新字符、CPU布局/栅格、上传字节、缓存峰值和P95帧时；阈值先由真实样本设定，不能用仓库常量代替设备能力。"
+      ],
+      "decisionTriggered": "接受或缩小D007文字/输入支持矩阵，选择系统/Canvas/成熟原生provider、分辨率与缓存预算；不达标则限定字体/语言或更换provider并复测。",
+      "doesNotProve": "其他输入法/宿主、任意字体、功耗领先或完整跨平台同像素。"
+    },
+    {
+      "id": "G008",
+      "priority": 8,
+      "category": "device",
+      "question": "同一复杂UI+轻量3D作品在真实WebGL2/WebGPU和首个原生SDK+VM上能否正确启动、恢复、关闭并持续运行；后端和跨界成本是否值得？",
+      "researchObjects": [
+        {"name": "自主后端与声明宿主的混合金样", "repositoryPath": "G003最小效果集+G005/G006代表作品；Babylon/Three/PlayCanvas只作固定版本机制或行为对照，不冒充自主产品执行链", "url": "https://www.w3.org/TR/webgpu/", "inspection": "已有桌面WebGL2参考链，未运行自主WebGPU产品"},
+        {"name": "一个主图形候选与目标VM的薄SDK构建", "repositoryPath": "G004锁定的wgpu或Dawn、目标后端与一个主VM；真正需要作取舍时才为另一候选建同功能薄对照，不新增多VM全支持", "url": "https://docs.rs/wgpu/30.0.1/wgpu/struct.Device.html", "additionalUrl": "https://v8.dev/docs/embed", "inspection": "无原生构建/包体/VM/FFI或borrowed device实测"}
+      ],
+      "existingEvidence": ["evidence/asset-reference-probe-results.json", "evidence/browser-probe-results.json", "evidence/backend-native-research.json", "evidence/reference-render-lifecycle.json"],
+      "insufficiency": "17/17链限定headless桌面WebGL2 640×400 DPR1，没有时间/功耗、WebGPU、生产小平台或native SDK。模拟fence与静态VM研究不证明真实在途完成、GC/ArrayBuffer寿命或设备共享。",
+      "minimalValidation": [
+        "在已声明系统/宿主/设备与发布构建中取得adapter和device实际能力，跑同内容同画质金样：颜色/alpha、嵌套clip、filter/cache、MSAA、readback、恢复后首帧。禁用WebGPU/请求失败/格式不支持时明确降级或拒绝。",
+        "WebGL强制context-loss与WebGPU受控device销毁分开记录，均不能冒充真实驱动失效；另跑前后台/resize/反复挂载、恢复失败、恢复中退出、旧promise拒收和持续内存。驱动失效无法复现时保留未验证项。",
+        "原生host验证owned/borrowed提交与纹理同步、真实fence完成后释放、宿主先关闭、loss重建；同作品覆盖VM Promise jobs、GC、ArrayBuffer借用、异常诊断与退出期间回调。",
+        "记录发布包净增、冷启动/首交互、CPU/GPU帧时分布、跨界调用/字节、上传/提交量、内存峰值与热稳定持续运行；有可校准方法才报告能源。VM比较保持host API/构建模式/脚本相同，禁止套用供应商hello-world数字。"
+      ],
+      "decisionTriggered": "以证据接受首批D005/D006/D010/D014支持范围、主图形库/VM与必要的ABI调整；没有性能净收益时不下沉WASM/Rust热点或开启额外后端增强。",
+      "doesNotProve": "所有设备/平台、所有driver-loss、商业性能优势或V006迁移完成。"
+    }
+  ],
+  "executionOrder": {
+    "immediate": ["G001"],
+    "parallelNext": ["G002", "G003"],
+    "collectBeforeSelecting": ["G004", "G005", "G006"],
+    "afterImplementationAndTargetsExist": ["G007", "G008"],
+    "nonBlockingRule": "G002-G008不阻塞已授权纯TS核心切片；不得提前把拟研究对象引入核心产品。"
+  },
+  "retrievalLimits": [
+    "Dawn官方googlesource D3D11Backend.h以及GitHub同文件本次抓取失败，保留失败记录，未把索引中主线观察升级为release能力。",
+    "JavaScriptCore官方入口为动态页面，本次只取得入口信息，未声称已读具体API。",
+    "部分公开仓库页只核对路径；所有下一批源码研究需固定SHA、实际读窄文件与测试并分别记录读/运行状态。",
+    "已浏览MCP指定2025-06-18版本作为现有设计参照，不声称最新协议或客户端兼容。",
+    "所有最小验证都是下一步建议，本次未执行；没有性能、支持或迁移验收升级。"
+  ],
+  "principalRisks": [
+    "真实旧工程晚到会使新事件/尺寸/字体/动画合同返工；G005应与核心切片并行建立金样。",
+    "首批宿主未确认时过早选图形库或VM，会把借用device、输入法与打包限制藏到后期。",
+    "把参考链17项或无GPU测试当产品验收，会掩盖自主renderer、完整迁移和AI连续任务缺口。"
+  ]
+}

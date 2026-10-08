@@ -1,0 +1,295 @@
+{
+  "schemaVersion": 1,
+  "auditedAtUtc": "2026-10-08T09:42:36Z",
+  "scope": "只读核查现行来源政策、采用措辞与 asset-reference-probe 的本地公共依赖标签；不审计法律结论。",
+  "knowledgeBase": "白鹭引擎重构工程知识库",
+  "userBoundary": [
+    "白鹭面向社区开源，核心实现独立编写。",
+    "竞品源码用于理解原理和实现方式；不得复制、改名或让 AI 改写竞品代码形成白鹭核心。",
+    "允许明确引用公共第三方库，须如实披露实现归属；封装第三方完整 renderer 不等于自主核心。",
+    "现有 Three 参考链保持历史研究用途与归属，不升级为生产选型。"
+  ],
+  "actionsPerformed": [
+    "读取文档和源码",
+    "列出实验 vendor 文件",
+    "将 9 个本地文件的 SHA256 与字节数同 sources.json 记录比较"
+  ],
+  "actionsNotPerformed": [
+    "修改知识库",
+    "修改实验源码或历史证据",
+    "运行实验",
+    "联网刷新上游",
+    "跨代码相似性审计",
+    "法律或许可证全量审计"
+  ],
+  "inspectedFiles": [
+    "docs/开源实现优先与验证分工.md",
+    "docs/开源参考实现与采用方案.md",
+    "CONTRIBUTING.md",
+    "registry/来源.json",
+    "experiments/asset-reference-probe/README.md",
+    "experiments/asset-reference-probe/THIRD_PARTY_NOTICES.md",
+    "experiments/asset-reference-probe/sources.json",
+    "experiments/asset-reference-probe/reference-chain.mjs",
+    "experiments/asset-reference-probe/ui-pass.mjs",
+    "experiments/asset-reference-probe/index.html",
+    "experiments/asset-reference-probe/server.mjs",
+    "experiments/asset-reference-probe/vendor/three/r186/LICENSE",
+    "experiments/asset-reference-probe/assets/RiggedSimple/LICENSE.md",
+    "experiments/asset-reference-probe/assets/RiggedSimple/metadata.json"
+  ],
+  "directlyObserved": [
+    {
+      "id": "O1",
+      "kind": "policy_conflict",
+      "file": "docs/开源实现优先与验证分工.md",
+      "lineRanges": [
+        [
+          13,
+          20
+        ],
+        [
+          28,
+          34
+        ]
+      ],
+      "excerpts": [
+        "直接复用优先",
+        "借鉴局部实现并保留出处",
+        "才进行原创算法/原型研究",
+        "局部代码复用",
+        "复制代码保留适用版权与许可"
+      ],
+      "observation": "规则将阅读竞品、第三方依赖和白鹭核心实现放入同一复用流程，并把原创开发放到没有成熟实现的末位。",
+      "recommendation": "研究成熟机制优先；白鹭核心按自有需求、标准与独立设计编写。竞品代码复用和 AI 改写不作为核心实现路径。公共第三方依赖单独登记，允许成熟算法和标准原理进入设计。",
+      "additionalLocations": [
+        {
+          "lines": [
+            16
+          ],
+          "issue": "采用修复未区分竞品代码移植、独立实现修正和第三方依赖升级。",
+          "change": "竞品修复用于提取失效条件和回归需求；核心独立实现修正；显式第三方依赖可跟进其上游修复。"
+        },
+        {
+          "lines": [
+            34
+          ],
+          "issue": "只对适配和产品效果建立回归，未覆盖独立编写核心的正确性验证。",
+          "change": "新增白鹭独立实现仍需合同、失败输入及必要正确性回归，不以成熟机制免除实现验证。"
+        }
+      ]
+    },
+    {
+      "id": "O2",
+      "kind": "policy_conflict",
+      "file": "docs/开源参考实现与采用方案.md",
+      "lineRanges": [
+        [
+          29,
+          46
+        ],
+        [
+          68,
+          76
+        ]
+      ],
+      "excerpts": [
+        "第一条参考集成链优先使用Three的成熟renderer/glTF loader/动画；通过白鹭接口适配",
+        "此前采用方式尚未明确区分参考研究和生产依赖，需要补充实现归属与维护范围",
+        "这些能力无需从零重写",
+        "采用已有实现与上游修复记录"
+      ],
+      "observation": "此前研究方案的采用方式表述较宽，需要明确参考实验、公共依赖与自主实现各自的角色。",
+      "recommendation": "Three当前链保留为研究对照；机制、状态失效条件与资产行为用于形成自有规格。公共依赖作为单独方案评估，参考实验与生产选型分别登记；各层实现归属明确。",
+      "additionalLocations": [
+        {
+          "lines": [
+            37
+          ],
+          "issue": "复用或适配位图/字形图集机制语义不清。",
+          "change": "写为研究图集原理、独立编写白鹭实现，或明确引用具名公共库；不摘取竞品局部代码。"
+        },
+        {
+          "lines": [
+            39
+          ],
+          "issue": "直接采用成熟附件寿命规则容易与采用源码混淆。",
+          "change": "明确采用标准及通用规则，源码只用于机制对照；按独立设计实现。"
+        },
+        {
+          "lines": [
+            41,
+            42
+          ],
+          "issue": "动画实现优先和 DragonBones 可裁剪运行组件候选未清楚分开自主核心与外部库。",
+          "change": "区分语义研究、独立核心实现和显式第三方库候选，并写清实际提供者。"
+        },
+        {
+          "lines": [
+            70
+          ],
+          "issue": "完整库作为候选本身并非禁止项，问题是实现归属和产品状态。",
+          "change": "保留公共库引用可能性；说明第三方提供能力、具名依赖、明确边界与未选定状态。"
+        }
+      ]
+    },
+    {
+      "id": "O3",
+      "kind": "missing_policy",
+      "file": "CONTRIBUTING.md",
+      "lineRanges": [
+        [
+          16,
+          20
+        ]
+      ],
+      "observation": "此前AI贡献条款未充分说明实现归属和独立规格，需要补充明确的核心与第三方依赖边界。",
+      "recommendation": "增加实现来源记录：白鹭核心按自有规格独立设计编写；公共基础设施保留单独路径、原有归属、版本、用途、修改和适用声明。贡献者说明输入、参考机制与验证；作者记录、代码评审和发行声明分别维护。"
+    },
+    {
+      "id": "O4",
+      "kind": "explicit_public_research_dependency",
+      "file": "experiments/asset-reference-probe/README.md",
+      "lineRanges": [
+        [
+          3,
+          3
+        ],
+        [
+          26,
+          38
+        ],
+        [
+          48,
+          52
+        ]
+      ],
+      "observation": "文档明确固定复用 Three 的 loader、SkeletonUtils、AnimationMixer，并说明由 Three 恢复渲染资源；历史快照和上游依赖保持分开。它是外部库参考链，不是已独立完成的白鹭核心。",
+      "codeEvidence": [
+        {
+          "file": "experiments/asset-reference-probe/index.html",
+          "lines": [
+            2
+          ],
+          "meaning": "importmap 将 three 和 three/addons 映射到本地 vendor。"
+        },
+        {
+          "file": "experiments/asset-reference-probe/reference-chain.mjs",
+          "lines": [
+            1,
+            2,
+            3,
+            16,
+            30,
+            40
+          ],
+          "meaning": "直接导入并实例化上游 GLTFLoader、WebGLRenderer、SkeletonUtils.clone 和 AnimationMixer。"
+        }
+      ],
+      "recommendation": "保留既有源码、来源和运行证据；在现行索引或解释中标记仅研究用途、能力由 Three 提供。有限适配检查不证明白鹭自主核心完成，不据此升级为生产选型。"
+    },
+    {
+      "id": "O5",
+      "kind": "manifest_boundary",
+      "file": "experiments/asset-reference-probe/sources.json",
+      "lineRanges": [
+        [
+          4,
+          15
+        ],
+        [
+          16,
+          107
+        ]
+      ],
+      "observation": "9 个文件有固定 commit、公开来源 URL、Git blob、SHA256 和大小；本次本地重新计算的 SHA256/大小全部与登记一致。清单没有把研究依赖与拟进入产品的依赖设置为不同状态。",
+      "recommendation": "后续登记增加 originKind、role、usageScope、implementationOwner、productAdoptionStatus；本链标 research_only / not_selected。不要改写历史登记的取证事实，追加当前政策边界即可。",
+      "limit": "一致性只证明本地文件与本地记录吻合；未联网验证登记 URL 当时下载内容，也未证明原创性或法律合规。"
+    },
+    {
+      "id": "O6",
+      "kind": "registry_boundary",
+      "file": "registry/来源.json",
+      "lineRanges": [
+        [
+          392,
+          490
+        ],
+        [
+          493,
+          558
+        ]
+      ],
+      "sourceIds": [
+        "S025",
+        "S026",
+        "S027",
+        "S028",
+        "S029",
+        "S030",
+        "S031",
+        "S032"
+      ],
+      "observation": "S025-S028 是固定上游机制阅读；S030-S032 是真实公共依赖参考链、运行和审阅记录。已有边界能区分阅读与执行，但没有当前代码来源政策、研究用途及生产采用状态字段。S029 的建立复用及验证分工仍连接旧策略。",
+      "recommendation": "保留历史身份及结果，在当前规范明确参考研究、显式公共依赖和独立核心实现的角色。旧的采用表述按新规范澄清，已有研究运行继续保留原有实现归属和用途。"
+    }
+  ],
+  "publicResearchDependencies": [
+    {
+      "name": "Three.js",
+      "classification": "本实验的公共第三方研究依赖",
+      "implementationOwner": "three.js authors",
+      "recordedVersion": "r186",
+      "recordedCommit": "9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8",
+      "recordedLicense": "MIT",
+      "folder": "experiments/asset-reference-probe/vendor/three/r186",
+      "files": [
+        "build/three.core.js",
+        "build/three.module.js",
+        "examples/jsm/loaders/GLTFLoader.js",
+        "examples/jsm/utils/BufferGeometryUtils.js",
+        "examples/jsm/utils/SkeletonUtils.js",
+        "LICENSE"
+      ],
+      "localManifestHashAndSizeMatches": 6,
+      "productStatusForThisAudit": "仅研究；不据此认定生产选型",
+      "importantBoundary": "公共库并非一律禁用；如完整 renderer 今后作为显式依赖，必须如实归属于 Three，不能经封装宣称白鹭自主核心。"
+    },
+    {
+      "name": "RiggedSimple",
+      "classification": "公开第三方测试资产，非代码 vendor",
+      "implementationOwner": "Cesium (2017)",
+      "recordedCommit": "edc7c9e67c639d230715049ee31f9a96a6babbbe",
+      "recordedLicense": "CC-BY-4.0",
+      "folder": "experiments/asset-reference-probe/assets/RiggedSimple",
+      "files": [
+        "RiggedSimple.gltf",
+        "LICENSE.md",
+        "metadata.json"
+      ],
+      "localManifestHashAndSizeMatches": 3,
+      "productStatusForThisAudit": "研究资产；不认定为白鹭原创资产或已决定随产品分发"
+    }
+  ],
+  "needsVerification": [
+    "本次没有跨竞品源码逐段相似性比对、实现提交历史或 AI 输入追溯，不能确认现有 authored modules 是否全部独立形成。",
+    "来源清单中的代码阅读、哈希一致性、测试成功及独立 AI 审阅均不能单独证明无复制或无派生。",
+    "白鹭最终核心边界和任何公共库的产品依赖清单尚需逐项记录；当前研究依赖不能自动获得产品采用状态。",
+    "最终公开代码、资产与依赖的许可证覆盖及分发要求需在发布范围确定后另行核查，本报告不提供法律结论。"
+  ],
+  "recommendedCurrentPolicyText": "成熟知识与标准优先研究。白鹭核心按自有需求和规格设计实现；公共基础设施以明确依赖接入，记录版本、用途、路径、修改和适用声明。第三方提供的renderer等能力保持其原有归属。现有Three参考链保留研究用途与历史结果，生产选型单独评估；来源、代码评审和发行声明分别维护。",
+  "publicEditorialProjection": {
+    "originalKnowledgeBaseVersion": "0.8.0",
+    "originalReportSha256": "8cfca7bd445c16d27144fcc9c5aab8fd228d6ffe534481e0bec0142c781333d0",
+    "changedStringFields": [
+      "directlyObserved[1].observation",
+      "directlyObserved[1].recommendation",
+      "recommendedCurrentPolicyText",
+      "directlyObserved[1].excerpts[1]",
+      "directlyObserved[2].observation",
+      "directlyObserved[2].recommendation",
+      "directlyObserved[5].recommendation"
+    ],
+    "scope": "Professional wording and publication context only; findings, outcomes, counters, source identities and technical conclusions retained. Restricted original execution materials are not part of the public source distribution."
+  }
+}

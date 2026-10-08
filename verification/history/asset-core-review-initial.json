@@ -1,0 +1,241 @@
+{
+  "schemaVersion": 1,
+  "reviewedAtUtc": "2026-10-08T14:14:00.511Z",
+  "scope": "Independent CPU asset acquisition/lease contract and whole-slice public-facade review.",
+  "authority": "Existing repository resource contract and pre-existing Scope/Engine snapshot semantics. GPU/backend, physical cancellation, performance and publication are outside this review.",
+  "status": "necessary-fix-required",
+  "findings": [
+    {
+      "id": "AR1",
+      "severity": "P2",
+      "status": "open",
+      "title": "Callback invocation reads mutable function.call after registration",
+      "file": "packages/runtime/src/AssetManager.ts",
+      "relevantCode": [
+        "load.call(provider, ref as unknown as AssetRef<T>, context)",
+        "dispose.call(provider, value as T)"
+      ],
+      "contract": "register fixes provider callbacks at registration time.",
+      "reproduction": "callback-capture-counterexample.mjs: register ordinary load/dispose functions; define their own call properties after registration while preserving function identity; acquire and release through @egret/engine.",
+      "actual": {
+        "value": 2,
+        "trace": [
+          "replacement-call-load",
+          "replacement-call-dispose"
+        ]
+      },
+      "expected": {
+        "value": 1,
+        "trace": [
+          "registered-load",
+          "registered-dispose:1"
+        ]
+      },
+      "effect": "The registered loader and disposer are never invoked, so postregistration mutation can silently replace resource behavior and skip cleanup.",
+      "rationale": "This changes only user-owned properties on registered callback objects and does not patch global intrinsics.",
+      "recommendation": "Invoke captured callables through an intrinsic invocation operation and preserve provider receiver binding. Add a narrow regression for loader/disposer own call property mutation."
+    }
+  ],
+  "verifiedBeforeFinding": {
+    "command": "node tools/verify.mjs",
+    "exitCode": 0,
+    "behaviorTests": {
+      "total": 71,
+      "passed": 71,
+      "failed": 0
+    },
+    "negativeTypeAssertions": 19,
+    "actualNegativeCompilerDiagnostics": 19,
+    "boundaryFiles": 78,
+    "examples": {
+      "headless": "PASS",
+      "realAsyncAssets": {
+        "status": "PASS",
+        "loads": 2,
+        "cleanups": 2
+      }
+    },
+    "independentReentryProbes": {
+      "total": 14,
+      "passed": 14,
+      "failed": 0,
+      "unhandledInternalRejections": 0
+    }
+  },
+  "reviewedFiles": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "f3551dd36ebc3023f8c846f0cdd876b7204c214c7c041e6496271d20c091046c",
+      "bytes": 2438
+    },
+    {
+      "path": "README.md",
+      "sha256": "a41d2a267bcc2fbeb4e76591d4e01122ca3dd6f2a690f4a617bab79c0f1b3257",
+      "bytes": 3037
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "sha256": "373de5c518c0208d972ceef4c331d8ae81853102ca6aee8dbd1f90064c57bec8",
+      "bytes": 3231
+    },
+    {
+      "path": "knowledge-base/docs/资源核心合同.md",
+      "sha256": "415fc15e0cc81840c855043a74195479df97a636c0196466f5efcc2ff49e9bae",
+      "bytes": 5670
+    },
+    {
+      "path": "packages/runtime/src/AssetRef.ts",
+      "sha256": "48963664a8a048697a962f1c3d56826333e65e3bbf05d1524d7c30b049a10ab7",
+      "bytes": 1818
+    },
+    {
+      "path": "packages/runtime/src/AssetLease.ts",
+      "sha256": "6c411c75c2737f4229e459f559efc75375b15c65af65e3791227abe416e24a21",
+      "bytes": 2170
+    },
+    {
+      "path": "packages/runtime/src/AssetManager.ts",
+      "sha256": "59d846ed4c7fee0271a6710a278ceaa92c1d4287c230da3c37ba0bfa13150d36",
+      "bytes": 13115
+    },
+    {
+      "path": "packages/runtime/src/assetState.ts",
+      "sha256": "044c1aceef34403be1b1297794d3d3e390182a84d2876ce2d3392a4c2e5a6920",
+      "bytes": 1515
+    },
+    {
+      "path": "packages/runtime/src/Scope.ts",
+      "sha256": "29e9d5da9232ed8347b2a829e069d33daabb1bad296798492a45c7950f43e8ea",
+      "bytes": 4700
+    },
+    {
+      "path": "packages/runtime/src/ownership.ts",
+      "sha256": "8c8c40e465002882dac1bf054fa49248c99df62da337cf75f50168f0a6748c62",
+      "bytes": 3239
+    },
+    {
+      "path": "packages/runtime/src/CancellationController.ts",
+      "sha256": "3cfdb217804b282c4a422420ce5efa63ced25a6bb215bff254e7f947c4942e28",
+      "bytes": 2414
+    },
+    {
+      "path": "packages/runtime/src/diagnostics.ts",
+      "sha256": "c330f5d9083d84ee5b23b947d0d8534e7050a92f8b76a7e5259a1bad92395294",
+      "bytes": 601
+    },
+    {
+      "path": "packages/runtime/src/EgretError.ts",
+      "sha256": "f647ab0f675a5e0d460f1e7b04bce603d06998096f460371035f23826eed7f08",
+      "bytes": 652
+    },
+    {
+      "path": "packages/runtime/src/index.ts",
+      "sha256": "82adc2ead33bd530c7ad18557237d816b019424987ecc48601ebdfedf2a5ec8a",
+      "bytes": 1130
+    },
+    {
+      "path": "packages/contracts/src/Diagnostic.ts",
+      "sha256": "dd24a34a911fd333cea3a799675465a5e871d2a47cd551648dbc245cece8d25f",
+      "bytes": 470
+    },
+    {
+      "path": "packages/engine/src/Engine.ts",
+      "sha256": "e386470f8e13a17e9960a594452d22d0c88f67b8d3863de03c4b5727ac22bccf",
+      "bytes": 4368
+    },
+    {
+      "path": "packages/engine/src/closeHost.ts",
+      "sha256": "9fac806cc0d19265ec6956cc19305a9ff2ae03ff0e49700d64c39be88ba3244f",
+      "bytes": 2307
+    },
+    {
+      "path": "packages/engine/src/index.ts",
+      "sha256": "8b138bad7220763fbeb5ff43775303decfd0dfe370fdd4459917b45330597f94",
+      "bytes": 800
+    },
+    {
+      "path": "packages/runtime/package.json",
+      "sha256": "546d482c0bd990164d79acaec52953245314df6d50117c85b6c6ec5856f4f7ee",
+      "bytes": 234
+    },
+    {
+      "path": "packages/engine/package.json",
+      "sha256": "26b7c45f629f7c8a7d41c466fdd06741163a2afd9b6002075c6341530ed2e663",
+      "bytes": 266
+    },
+    {
+      "path": "package.json",
+      "sha256": "dc8b4a1df35b654d52a366010430083495daf807144aa8882b01a0b82fb45234",
+      "bytes": 565
+    },
+    {
+      "path": "tests/assets.test.mjs",
+      "sha256": "c8ef247cade909292d848d20ec2d1ae55a984c1d2d6bd03e1c0120c9162b0719",
+      "bytes": 11438
+    },
+    {
+      "path": "tests/assets-interleavings.test.mjs",
+      "sha256": "3cbad2d481f4ca2eb0563c7c85c09bbfe033f314c07626ca0e9358e3d7ed1bc7",
+      "bytes": 10859
+    },
+    {
+      "path": "tests/helpers.mjs",
+      "sha256": "20e7dd30f54b3a81d35f666c8370e7f014e4559c68222727bc88fd377efc1af7",
+      "bytes": 997
+    },
+    {
+      "path": "tests/types/positive.ts",
+      "sha256": "b4874675e952018fb3b87875b81bcb27bba96e69fc1cd4808fa9747ab4dd1f7a",
+      "bytes": 2147
+    },
+    {
+      "path": "tests/types/negative.ts",
+      "sha256": "bf36f78201c71c3a1f19bccb2117e3540a9a6c943dd9fb2f08794cf8a8230e6a",
+      "bytes": 3038
+    },
+    {
+      "path": "tests/types/tsconfig.json",
+      "sha256": "88a3194ab9d7990646c7957e96e8d059ee16e79fe88373543a763da38a84dae1",
+      "bytes": 197
+    },
+    {
+      "path": "tsconfig.base.json",
+      "sha256": "b7a31fb9f93a93e20bfdcf33c135acb45cb3a6895a8b3e7006bd85214ddc1008",
+      "bytes": 446
+    },
+    {
+      "path": "tools/check-boundaries.mjs",
+      "sha256": "9b8e0c6195504b91c4758fa9a243de2f60bf40a8fd51ecfe5a8b65c6ca1e9b62",
+      "bytes": 3452
+    },
+    {
+      "path": "tools/check-types.mjs",
+      "sha256": "332d2c161ceb9ec7d75429c89a3d2c95af24f2cf5eed68b92b09532d1ce691a4",
+      "bytes": 2031
+    },
+    {
+      "path": "tools/test.mjs",
+      "sha256": "6d8fdbf59b3c9d1a4aab917ae9ab8167818c0716a6219f5f91c5893bb2c4eb53",
+      "bytes": 514
+    },
+    {
+      "path": "tools/verify.mjs",
+      "sha256": "9c789b762d598c72040992d8ffb9041f75180d39b7556761365ef0998d5b0b4a",
+      "bytes": 525
+    },
+    {
+      "path": "examples/assets.mjs",
+      "sha256": "95b13275ec0847c12face88ae01a9b247be5dd7a3f93d92f8e759a7ba50510ef",
+      "bytes": 2360
+    }
+  ],
+  "reviewLimits": [
+    "Passing finite behavioral checks does not establish global correctness or originality.",
+    "No competitor implementation or prior probe implementation was read or copied.",
+    "Load completion and one disposal attempt do not prove provider physical work stopped or disposal succeeded.",
+    "Initial missing-API RED is not evidence that every specific lifecycle mechanism independently failed before implementation.",
+    "Callback-capture mismatch has a current failing independent reproduction; required production regression/fix has not yet been reviewed."
+  ],
+  "historicalScope": "Initial review before AR1 correction; these hashes and results are not asserted to identify current source.",
+  "projection": "Public projection omits internal execution paths; original review identity is retained separately."
+}

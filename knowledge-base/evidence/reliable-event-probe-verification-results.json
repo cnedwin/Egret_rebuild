@@ -1,0 +1,208 @@
+{
+  "schemaVersion": 1,
+  "experiment": "reliable-event-probe-verification",
+  "checkedAtUtc": "2026-10-08T06:04:42.330Z",
+  "environment": {
+    "runtime": "v24.19.0",
+    "executable": "node.exe",
+    "platform": "win32",
+    "architecture": "x64",
+    "scope": "source replay and six targeted behavioral mutations"
+  },
+  "counts": {
+    "total": 9,
+    "passed": 9,
+    "failed": 0
+  },
+  "results": [
+    {
+      "name": "hashes, counts and preserved-source replay: reliable-event-probe-red-results.json",
+      "status": "passed",
+      "observations": {
+        "matchingHashes": true,
+        "correctCounts": true,
+        "originalCounts": {
+          "total": 11,
+          "passed": 1,
+          "failed": 10
+        },
+        "replayed": true
+      }
+    },
+    {
+      "name": "hashes, counts and preserved-source replay: reliable-event-probe-red-input-results.json",
+      "status": "passed",
+      "observations": {
+        "matchingHashes": true,
+        "correctCounts": true,
+        "originalCounts": {
+          "total": 12,
+          "passed": 1,
+          "failed": 11
+        },
+        "replayed": true
+      }
+    },
+    {
+      "name": "hashes, counts and preserved-source replay: reliable-event-probe-results.json",
+      "status": "passed",
+      "observations": {
+        "matchingHashes": true,
+        "correctCounts": true,
+        "originalCounts": {
+          "total": 13,
+          "passed": 13,
+          "failed": 0
+        },
+        "replayed": false
+      }
+    },
+    {
+      "name": "mutation: duplicate side effect",
+      "status": "passed",
+      "observations": {
+        "mutantSHA256": "e3107e34d7b274016628efaf86a147a8671ea81507a24b08a5acbb40bceaf543",
+        "exitCode": 1,
+        "failedTests": [
+          {
+            "name": "lost ACK causes retransmission with one actual side effect",
+            "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n  [\n    'sound-A',\n+   'sound-A'\n  ]\n"
+          },
+          {
+            "name": "graphics epoch recovery keeps required outbox and consumer watermark",
+            "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n  [\n    'sound-A',\n+   'sound-A',\n    'sound-B'\n  ]\n"
+          }
+        ]
+      }
+    },
+    {
+      "name": "mutation: consume sequence gap",
+      "status": "passed",
+      "observations": {
+        "mutantSHA256": "69494368f976bf397b37860c5d1e79fa05c5d1fa9e5251ee659beecc35648ebe",
+        "exitCode": 1,
+        "failedTests": [
+          {
+            "name": "missing sequence blocks effects until the gap is filled",
+            "error": "Expected values to be strictly equal:\n\n'consumed' !== 'gap'\n"
+          }
+        ]
+      }
+    },
+    {
+      "name": "mutation: drop outbox on send",
+      "status": "passed",
+      "observations": {
+        "mutantSHA256": "af02194f2f782349c46639a35642bdb0c2bc5fad0f9ff266d4b6057a30e16c4d",
+        "exitCode": 1,
+        "failedTests": [
+          {
+            "name": "dropped delivery stays pending and is recovered by resend",
+            "error": "Expected values to be strictly equal:\n\n0 !== 1\n"
+          },
+          {
+            "name": "lost ACK causes retransmission with one actual side effect",
+            "error": "The expression evaluated to a falsy value:\n\n  assert.ok(resent)\n"
+          },
+          {
+            "name": "graphics epoch recovery keeps required outbox and consumer watermark",
+            "error": "Expected values to be strictly equal:\n\n0 !== 2\n"
+          },
+          {
+            "name": "ACK identity rejects stale producer stream and consumer sessions",
+            "error": "Expected values to be strictly equal:\n\n0 !== 1\n"
+          },
+          {
+            "name": "ACK cannot skip unsent accepted events",
+            "error": "Expected values to be strictly equal:\n\n0 !== 1\n"
+          },
+          {
+            "name": "malformed event and ACK are rejected without consumption or eviction",
+            "error": "Expected values to be strictly equal:\n\n0 !== 1\n"
+          },
+          {
+            "name": "caller mutations cannot rewrite accepted or transmitted events",
+            "error": "Expected values to be strictly equal:\n\n0 !== 1\n"
+          }
+        ]
+      }
+    },
+    {
+      "name": "mutation: ignore queue capacity",
+      "status": "passed",
+      "observations": {
+        "mutantSHA256": "6eb23d5e1fa5f9778f122d579d5fe5b2d55889df97c05226bc6cf69a2cb099dc",
+        "exitCode": 1,
+        "failedTests": [
+          {
+            "name": "bounded outbox rejects new events without losing accepted events or a sequence",
+            "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ {\n+   consumerSession: 'c1',\n+   effect: 'sound-C',\n+   eventID: 'p1/audio/3',\n+   producerSession: 'p1',\n+   sequence: 3,\n+   streamId: 'audio',\n+   version: 1\n+ }\n- null\n"
+          }
+        ]
+      }
+    },
+    {
+      "name": "mutation: clear event state on graphics recovery",
+      "status": "passed",
+      "observations": {
+        "mutantSHA256": "333f3ffac46034cd913c8894581a5a9e40bde806a19ac8249766cc66838e5748",
+        "exitCode": 1,
+        "failedTests": [
+          {
+            "name": "graphics epoch recovery keeps required outbox and consumer watermark",
+            "error": "Expected values to be strictly equal:\n\n0 !== 1\n"
+          }
+        ]
+      }
+    },
+    {
+      "name": "mutation: accept wrong session ACK",
+      "status": "passed",
+      "observations": {
+        "mutantSHA256": "ec868e19975f0eacb29f3d1c439259c2127d63b84b7bb48626dcaa1c2f2ab1de",
+        "exitCode": 1,
+        "failedTests": [
+          {
+            "name": "ACK identity rejects stale producer stream and consumer sessions",
+            "error": "Expected values to be strictly equal:\n\ntrue !== false\n"
+          },
+          {
+            "name": "malformed event and ACK are rejected without consumption or eviction",
+            "error": "Expected values to be strictly equal:\n\ntrue !== false\n"
+          }
+        ]
+      }
+    }
+  ],
+  "sourceHashes": [
+    {
+      "path": "model.mjs",
+      "sha256": "0dfb7788bce8493c7079f7e27decc966d8d0349c66459758f634dbba59bcdc17"
+    },
+    {
+      "path": "run.mjs",
+      "sha256": "c728fdda0afb3934f26a77513394a8228b165863bd53ae0b4883a5d26cce16f8"
+    },
+    {
+      "path": "verify.mjs",
+      "sha256": "9f4b9c7a4059e8960a16ff615136e56bb813caab7e623ecb2e3784573e39bc7b"
+    }
+  ],
+  "sourceSnapshots": [
+    {
+      "path": "verify.mjs",
+      "sha256": "9f4b9c7a4059e8960a16ff615136e56bb813caab7e623ecb2e3784573e39bc7b",
+      "source": "import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';\nimport { createHash } from 'node:crypto';\nimport { resolve } from 'node:path';\nimport { spawnSync } from 'node:child_process';\nimport { fileURLToPath } from 'node:url';\nconst base = resolve('outputs/白鹭引擎重构工程知识库');\nconst dir = resolve(base, 'experiments/reliable-event-probe');\nconst model = readFileSync(resolve(dir, 'model.mjs'), 'utf8');\nconst run = readFileSync(resolve(dir, 'run.mjs'), 'utf8');\nconst hash = x => createHash('sha256').update(x).digest('hex');\nconst results = [];\nfor (const name of ['reliable-event-probe-red-results.json', 'reliable-event-probe-red-input-results.json', 'reliable-event-probe-results.json']) {\n  const report = JSON.parse(readFileSync(resolve(base, 'evidence', name), 'utf8'));\n  const matchingHashes = report.sourceHashes.every(x => hash(report.sourceSnapshots?.find(s => s.path === x.path)?.source ?? readFileSync(x.path, 'utf8')) === x.sha256);\n  const correctCounts = report.counts.total === report.results.length && report.counts.passed === report.results.filter(x => x.status === 'passed').length && report.counts.failed === report.results.filter(x => x.status === 'failed').length;\n  if (!matchingHashes || !correctCounts) throw new Error(name + ' report mismatch');\n  if (report.sourceSnapshots) {\n    const redDir = resolve('work/reliable-event-probe', name.replace('.json', ''));\n    mkdirSync(redDir, { recursive: true });\n    for (const item of report.sourceSnapshots) writeFileSync(resolve(redDir, item.path.endsWith('model.mjs') ? 'model.mjs' : 'run.mjs'), item.source);\n    const replayPath = resolve(redDir, 'replay.json');\n    const replay = spawnSync(process.execPath, [resolve(redDir, 'run.mjs'), '--output=' + replayPath], { encoding: 'utf8' });\n    const observed = JSON.parse(readFileSync(replayPath, 'utf8'));\n    if (replay.status !== 1 || JSON.stringify(observed.counts) !== JSON.stringify(report.counts) || observed.results.some((x,i) => x.status !== report.results[i].status)) throw new Error(name + ' replay mismatch');\n  }\n  results.push({ name: 'hashes, counts and preserved-source replay: ' + name, status: 'passed', observations: { matchingHashes, correctCounts, originalCounts: report.counts, replayed: !!report.sourceSnapshots } });\n}\nconst mutations = [\n  ['duplicate side effect', \"if (event.sequence <= this.watermark) return { status: 'duplicate', ack: this.ack() };\", \"if (event.sequence <= this.watermark) { this.effects.push(event.effect); return { status: 'duplicate', ack: this.ack() }; }\"],\n  ['consume sequence gap', \"if (event.sequence !== this.watermark + 1) return { status: 'gap', expected: this.watermark + 1 };\", '// gap guard removed'],\n  ['drop outbox on send', 'return structuredClone(this.outbox);', 'const copy = structuredClone(this.outbox); this.outbox = []; return copy;'],\n  ['ignore queue capacity', 'if (this.outbox.length >= this.capacity) return null;', '// capacity guard removed'],\n  ['clear event state on graphics recovery', 'restoreGraphics(epoch) { this.graphicsEpoch = epoch; }', 'restoreGraphics(epoch) { this.graphicsEpoch = epoch; this.outbox = []; this.watermark = 0; }'],\n  ['accept wrong session ACK', 'if (!this.sameIdentity(ack) || !Number.isSafeInteger(ack.watermark)', 'if (!Number.isSafeInteger(ack.watermark)'],\n];\nfor (let i = 0; i < mutations.length; i++) {\n  const [name, oldText, newText] = mutations[i];\n  if (!model.includes(oldText)) throw new Error('missing mutation target ' + name);\n  const mutantDir = resolve('work/reliable-event-probe', 'mutation-' + i);\n  mkdirSync(mutantDir, { recursive: true });\n  writeFileSync(resolve(mutantDir, 'model.mjs'), model.replace(oldText, newText));\n  writeFileSync(resolve(mutantDir, 'run.mjs'), run);\n  const replayPath = resolve(mutantDir, 'replay.json');\n  const execution = spawnSync(process.execPath, [resolve(mutantDir, 'run.mjs'), '--output=' + replayPath], { encoding: 'utf8' });\n  const observed = JSON.parse(readFileSync(replayPath, 'utf8'));\n  const killed = execution.status === 1 && observed.counts.failed > 0;\n  results.push({ name: 'mutation: ' + name, status: killed ? 'passed' : 'failed', observations: { mutantSHA256: hash(model.replace(oldText, newText)), exitCode: execution.status, failedTests: observed.results.filter(x => x.status === 'failed').map(x => ({ name: x.name, error: x.error })) } });\n}\nconst output = resolve(base, 'evidence/reliable-event-probe-verification-results.json');\nconst verificationPath = fileURLToPath(import.meta.url);\nconst verificationSource = readFileSync(verificationPath, 'utf8');\nconst report = { schemaVersion: 1, experiment: 'reliable-event-probe-verification', checkedAtUtc: new Date().toISOString(), environment: { runtime: process.version, executable: process.execPath, platform: process.platform, architecture: process.arch, scope: 'source replay and six targeted behavioral mutations' }, counts: { total: results.length, passed: results.filter(x => x.status === 'passed').length, failed: results.filter(x => x.status === 'failed').length }, results, sourceHashes: [...['model.mjs', 'run.mjs'].map(name => ({ path: resolve(dir, name), sha256: hash(readFileSync(resolve(dir, name), 'utf8')) })), { path: verificationPath, sha256: hash(verificationSource) }], sourceSnapshots: [{ path: verificationPath, sha256: hash(verificationSource), source: verificationSource }], limitations: ['Mutations target six known failure modes only; this is not exhaustive mutation coverage or independent audit.', 'Red source replay reproduces preserved in-memory models, not production engine or network execution.'] };\nwriteFileSync(output, JSON.stringify(report, null, 2) + '\\n');\nconsole.log(JSON.stringify({ output, counts: report.counts, results: results.map(x => ({ name: x.name, status: x.status, failures: x.observations.failedTests?.map(t => t.name) })) }, null, 2));\nif (report.counts.failed) process.exitCode = 1;\n"
+    }
+  ],
+  "limitations": [
+    "Mutations target six known failure modes only; this is not exhaustive mutation coverage or independent audit.",
+    "Red source replay reproduces preserved in-memory models, not production engine or network execution."
+  ],
+  "metadataNormalization": {
+    "changed": "local_position_metadata_and_stack_paths_only",
+    "sourceBytesAndHashesUnchanged": true,
+    "testValuesStatusCountsAndErrorMessagesUnchanged": true,
+    "originalRetainedPrivately": true
+  }
+}

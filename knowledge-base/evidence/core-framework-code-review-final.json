@@ -1,0 +1,463 @@
+{
+  "verdict": "passed_with_stated_scope",
+  "necessaryCorrections": [],
+  "minorFindings": [],
+  "correctionDispositions": [
+    {
+      "id": "R1",
+      "initialSeverity": "Important",
+      "disposition": "corrected",
+      "locations": [
+        {
+          "path": "packages/runtime/src/Scope.ts",
+          "line": 45
+        },
+        {
+          "path": "packages/runtime/src/Scope.ts",
+          "line": 53
+        },
+        {
+          "path": "packages/runtime/src/ownership.ts",
+          "line": 55
+        }
+      ],
+      "basis": "Global same-value guard spans callback-capable preflight; owner and Scope/Engine acceptance are rechecked, followed by current internal-tree validation and callback-free binding/owner/list commit. The guard is removed in finally.",
+      "behaviorEvidence": [
+        "R1 Scope blocks same-value ownership reentry before binding commit",
+        "R1 Scope closing during callback preflight rejects and cleans its late value"
+      ],
+      "result": "Both directly required reentry regressions passed in root independent verification"
+    },
+    {
+      "id": "R2",
+      "initialSeverity": "Important",
+      "disposition": "corrected",
+      "locations": [
+        {
+          "path": "packages/runtime/src/DisplayObjectContainer.ts",
+          "line": 26
+        },
+        {
+          "path": "packages/runtime/src/displayTreeState.ts",
+          "line": 44
+        },
+        {
+          "path": "packages/runtime/src/displayTreeState.ts",
+          "line": 54
+        }
+      ],
+      "basis": "Final validation reads actual internal parent/children/terminal/root state. Internal non-virtual detach/attach cannot enter the old parent's public removeChild override between checking and committing.",
+      "contractRuling": "Accepted correction: the existing contract has no implicit mount/remove notification. Successful mount into a live Stage followed by normal shutdown is the proper regression result when the old override is no longer invoked; no new callback requirement is imposed.",
+      "behaviorEvidence": [
+        "R2 atomic reparenting uses internal detach without old-parent override callbacks"
+      ],
+      "result": "Direct regression passed with overrideCalls=0, live Stage mount and complete later shutdown"
+    },
+    {
+      "id": "R3",
+      "initialSeverity": "Important",
+      "disposition": "corrected",
+      "locations": [
+        {
+          "path": "packages/runtime/src/Scope.ts",
+          "line": 64
+        }
+      ],
+      "basis": "Scope acceptance treats a closing Engine as rejection even before the Scope itself closes, while checking foreign owner/Engine first, preserving old-value order and cleaning new unowned values before rejection.",
+      "behaviorEvidence": [
+        "R3 open older Scope still cleans an unowned late value while Engine is closing"
+      ],
+      "result": "Direct regression passed with ENGINE_CLOSED and exactly one release"
+    },
+    {
+      "id": "R4",
+      "initialSeverity": "Important",
+      "disposition": "corrected",
+      "locations": [
+        {
+          "path": "packages/runtime/src/EventDispatcher.ts",
+          "line": 71
+        }
+      ],
+      "basis": "Signal add/post-check failures first deactivate/delete local subscription, then independently attempt adapter rollback. EVENT_SUBSCRIPTION_FAILED retains original cause and rollback cleanupErrors.",
+      "behaviorEvidence": [
+        "R4 failed signal registration rolls back unreachable handler and retains adapter errors",
+        "R4 failed post-registration cancellation check also rolls back the local handler"
+      ],
+      "result": "Both direct regressions passed; failed on calls leave no live unreachable handler"
+    },
+    {
+      "id": "R5",
+      "initialSeverity": "Important",
+      "disposition": "corrected",
+      "locations": [
+        {
+          "path": "packages/runtime/src/EventDispatcher.ts",
+          "line": 133
+        },
+        {
+          "path": "packages/runtime/src/DisplayObjectContainer.ts",
+          "line": 65
+        },
+        {
+          "path": "packages/engine/src/Engine.ts",
+          "line": 71
+        }
+      ],
+      "basis": "Listener cleanup is isolated item by item; container cleanup continues through children; Engine isolates Scope/Stage failures before host stop and bounded close. Existing success-only surface release remains unchanged.",
+      "behaviorEvidence": [
+        "R5 all listener failures and children finish before host close with aggregated causes",
+        "R5 listener failure still reaches bounded host close and retains ownership until success"
+      ],
+      "result": "Both direct regressions passed with ordered causes, child/sibling cleanup, host stop/close, bounded deadline and continued quarantine until successful host completion"
+    }
+  ],
+  "specCompliance": {
+    "verdict": "passed_with_stated_scope",
+    "summary": "All R1-R5 necessary corrections were resolved within the original cancellation/Scope/events/display-tree/headless Engine slice. No unresolved necessary correction or directly introduced regression was found in the scoped fix review.",
+    "necessaryCorrectionIds": [],
+    "fullProductAcceptance": false
+  },
+  "codeQuality": {
+    "verdict": "passed_with_stated_scope",
+    "summary": "The repair separates callback-capable preflight from callback-free state validation/commit, centralizes actual tree authority, performs local subscription rollback before failing adapter cleanup, and contains cleanup exceptions without skipping host teardown.",
+    "necessaryCorrectionIds": [],
+    "minorFindingIds": [],
+    "comprehensiveSecurityOrLicenseAudit": false
+  },
+  "reviewedFileHashes": [
+    {
+      "path": ".gitignore",
+      "sha256": "b7b3d3eb8531dbfafa6e72ffaad4c579156a5b9be03490556054fff7ed37844e"
+    },
+    {
+      "path": "README.md",
+      "sha256": "6b3579e316a686d789681a2f47dc87eb6d5970451f84858abd6a347386475d50"
+    },
+    {
+      "path": "examples/headless.mjs",
+      "sha256": "bbb09be9a9ab1b93fbe5af723612e324e71e14b27434f4a953ee0b12a60ddccf"
+    },
+    {
+      "path": "package.json",
+      "sha256": "dc8b4a1df35b654d52a366010430083495daf807144aa8882b01a0b82fb45234"
+    },
+    {
+      "path": "packages/contracts/README.md",
+      "sha256": "f631cb1809f3160b76b5b4451c8820c264f269da2b64842c96abeaae702607ad"
+    },
+    {
+      "path": "packages/contracts/package.json",
+      "sha256": "fceaef2ae55a77347ce9f99acd2165d36e991d89c76bf0480ff5048f3e7a94a1"
+    },
+    {
+      "path": "packages/contracts/src/CancellationSignal.ts",
+      "sha256": "a4e778a2bee503ec70249f861f60dc46718dc64e182448d9d5a3b43a10f1f34e"
+    },
+    {
+      "path": "packages/contracts/src/Diagnostic.ts",
+      "sha256": "93aeef7a51e372dc1418bd382d3371ec91044a1bc48de0b308cc6d5007db89a3"
+    },
+    {
+      "path": "packages/contracts/src/Disposable.ts",
+      "sha256": "75cc8c7125bc0a7d1641c32825e884311da13dba48fa4822a53465e67129504c"
+    },
+    {
+      "path": "packages/contracts/src/HostAdapter.ts",
+      "sha256": "dd095653a2ee93e20a44e0ab504ef7edf991bde982e2bb924d2fb21fe072da79"
+    },
+    {
+      "path": "packages/contracts/src/index.ts",
+      "sha256": "85f4a29e7e04334ab941dfe7a848edacc3a597dc5621820366c7cadd257eda13"
+    },
+    {
+      "path": "packages/contracts/tsconfig.json",
+      "sha256": "65830141c9e37d6d5a604ae796c5fe8b9258040f9e1f29547c0b238829b989d6"
+    },
+    {
+      "path": "packages/engine/README.md",
+      "sha256": "2b39a8a5f988a0c4d7271d30da7f8c04a735149e00b6f0f28f2c59940e5842f0"
+    },
+    {
+      "path": "packages/engine/package.json",
+      "sha256": "26b7c45f629f7c8a7d41c466fdd06741163a2afd9b6002075c6341530ed2e663"
+    },
+    {
+      "path": "packages/engine/src/Engine.ts",
+      "sha256": "d5b4fcfc5bcf921d6b75aa4a33d7e71412595e8e377e5ff9b186b19ec6868f58"
+    },
+    {
+      "path": "packages/engine/src/closeHost.ts",
+      "sha256": "3b392c336949001716d7da445d80c4ac0625b45582dbdaec2af9c20f46d5f333"
+    },
+    {
+      "path": "packages/engine/src/createEngine.ts",
+      "sha256": "6298922aa970b883fd5f84a098a44d5d4654736446709856381416f182e0aaf3"
+    },
+    {
+      "path": "packages/engine/src/index.ts",
+      "sha256": "45f2377ffe6e180815d68b8b2dcbddaca8eaa167c142a356d130da8ce008e2f0"
+    },
+    {
+      "path": "packages/engine/src/surfaceOwnership.ts",
+      "sha256": "6b12fb7fe691212777ffcc031ef2f534b1c665d1f9df7617f0dac2574331acac"
+    },
+    {
+      "path": "packages/engine/tsconfig.json",
+      "sha256": "ac07062d5460bb112739e3ef98e2f16f7479b1f4a18c7add69c46c2880ac68a4"
+    },
+    {
+      "path": "packages/runtime/README.md",
+      "sha256": "dadf19b00a845d7e8ed154644f2214b720d7acd03f4450a2e9a002be5d085911"
+    },
+    {
+      "path": "packages/runtime/package.json",
+      "sha256": "546d482c0bd990164d79acaec52953245314df6d50117c85b6c6ec5856f4f7ee"
+    },
+    {
+      "path": "packages/runtime/src/CancellationController.ts",
+      "sha256": "d2bbfd7d23269df59651d628e8f4c448be120fb46e1e5307d718aec43c8c7515"
+    },
+    {
+      "path": "packages/runtime/src/DisplayObject.ts",
+      "sha256": "a5744fe971a6490e54eda1b6cd7aa2ff18f8dd8e172eca83e458b89a42febe39"
+    },
+    {
+      "path": "packages/runtime/src/DisplayObjectContainer.ts",
+      "sha256": "14ad9af6c95917b94641fba630adc26b707aa2fedc17707627a87b55dd1e6682"
+    },
+    {
+      "path": "packages/runtime/src/EgretError.ts",
+      "sha256": "9a4ef5c97c118c3ddc91f895741cfa259cbb3906d5943f733ee5e07f2ed8a8dc"
+    },
+    {
+      "path": "packages/runtime/src/Event.ts",
+      "sha256": "066015292830169f2ff718f6617ba55392f3666289922a0098eabb8210b493b5"
+    },
+    {
+      "path": "packages/runtime/src/EventDispatcher.ts",
+      "sha256": "2d1d6613d83ea9e904c1e4074db7b466911f3689e8c81e60d63d96481c0e6008"
+    },
+    {
+      "path": "packages/runtime/src/Scope.ts",
+      "sha256": "840ef7f714e80f2eccca974dfca972dc2e94ecbe74da688f7ebe4c3d9b7ceebd"
+    },
+    {
+      "path": "packages/runtime/src/Stage.ts",
+      "sha256": "35ee9c782ba437e9dcd96c29891415f13151fa2e995ac0d40274813abb92f280"
+    },
+    {
+      "path": "packages/runtime/src/diagnostics.ts",
+      "sha256": "bb8668e84ec9703f9f9b0380efa37c93f876b38c8ffb2ed2aa716f3efc32346d"
+    },
+    {
+      "path": "packages/runtime/src/displayTreeState.ts",
+      "sha256": "e6606b65ba3cdd5b18691121bdb028186eda6c4f2d8fe836bec3f8a1a9a61ff9"
+    },
+    {
+      "path": "packages/runtime/src/index.ts",
+      "sha256": "3af52ebe93ac933d989ceb0f5abadd31e72f9436fda1d2206b3e71d7f1216310"
+    },
+    {
+      "path": "packages/runtime/src/ownership.ts",
+      "sha256": "0fbd5497c87995998c3d080d4909b3caa9738ec8ee5743120c86e9cdcceeaeab"
+    },
+    {
+      "path": "packages/runtime/tsconfig.json",
+      "sha256": "ed31ec963ca62cee11d41071686c8a3dc58554155e120f52d1747254087f1bac"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "sha256": "f58343405f8b75488966415da04a69edd5cbf01a32076ff08b75132fa476877c"
+    },
+    {
+      "path": "pnpm-workspace.yaml",
+      "sha256": "f51d3d153b0f3cdbb82186bd1c3eea9066f4e3a15828985952feeee965a75534"
+    },
+    {
+      "path": "source-origin.json",
+      "sha256": "f24be42b6ef3d6564e5892f0c4edc7c779bda11b0508025bd784fb06a334fba3"
+    },
+    {
+      "path": "tests/cancellation-scope.test.mjs",
+      "sha256": "32a1a3c47fa41ebfd122be8fa06370e51a4f0854a2ab69be5da48966b96e9566"
+    },
+    {
+      "path": "tests/display-tree.test.mjs",
+      "sha256": "6302c03f672ec4878e7bff6fffb4c6bf53ff4b5ce31d1ef5b0485e597b9bbbfe"
+    },
+    {
+      "path": "tests/engine.test.mjs",
+      "sha256": "36a8e472bf868528394c98f16fa85ec664991fa76158d272723973b60a89bcde"
+    },
+    {
+      "path": "tests/events.test.mjs",
+      "sha256": "4e75d12b5aee9f927425a1a65c401616de18347b1402ec86075bbb5247951d3d"
+    },
+    {
+      "path": "tests/helpers.mjs",
+      "sha256": "20e7dd30f54b3a81d35f666c8370e7f014e4559c68222727bc88fd377efc1af7"
+    },
+    {
+      "path": "tests/integration.test.mjs",
+      "sha256": "54716569f5744b00dcb32a512d122fdb3b91f158b1e5446a5d394b3f201eb933"
+    },
+    {
+      "path": "tests/review-regressions.test.mjs",
+      "sha256": "b56d24957fc95c6068bb215f4a1b2aca310760831e79c89c27dd5724c8e67b17"
+    },
+    {
+      "path": "tests/types/negative.ts",
+      "sha256": "f2aba4d444432063b862b42822b392b82d09c8d91458cc80f5478f136115ce7b"
+    },
+    {
+      "path": "tests/types/positive.ts",
+      "sha256": "1041d77568560fb1d08fa3a4dbb86cb1e77cc48dace50884b5173c4459713aeb"
+    },
+    {
+      "path": "tests/types/tsconfig.json",
+      "sha256": "88a3194ab9d7990646c7957e96e8d059ee16e79fe88373543a763da38a84dae1"
+    },
+    {
+      "path": "tools/build.mjs",
+      "sha256": "0f04552d3592aa613d3c6fc4114559a3669ad764d0f5321d1c049a568701e6c4"
+    },
+    {
+      "path": "tools/check-boundaries.mjs",
+      "sha256": "e7994ad6962e55fba9b481d50377ede30729b345e6a901e2089b235edfde9491"
+    },
+    {
+      "path": "tools/check-types.mjs",
+      "sha256": "332d2c161ceb9ec7d75429c89a3d2c95af24f2cf5eed68b92b09532d1ce691a4"
+    },
+    {
+      "path": "tools/test.mjs",
+      "sha256": "6d8fdbf59b3c9d1a4aab917ae9ab8167818c0716a6219f5f91c5893bb2c4eb53"
+    },
+    {
+      "path": "tools/verify.mjs",
+      "sha256": "9c789b762d598c72040992d8ffb9041f75180d39b7556761365ef0998d5b0b4a"
+    },
+    {
+      "path": "tsconfig.base.json",
+      "sha256": "b7a31fb9f93a93e20bfdcf33c135acb45cb3a6895a8b3e7006bd85214ddc1008"
+    },
+    {
+      "path": "tsconfig.json",
+      "sha256": "e07fc831f31dc9ea9ecb612be734f4b533e32d7dbbb246abffaa8b23111076aa"
+    }
+  ],
+  "checks": [
+    {
+      "name": "scoped repair inputs",
+      "status": "reviewed",
+      "diff": "work/core-framework/review-diff-fix-1.md",
+      "input": "work/core-framework/review-diff-fix-1.json",
+      "changedFiles": 13,
+      "finalAuthoredManifestFiles": 55,
+      "coverage": "R1-R5 changes, updated source origin, added regressions and directly affected cleanup/binding/tree behavior only"
+    },
+    {
+      "name": "frozen input identity",
+      "status": "passed",
+      "method": "Rehash every final input in both live artifact root and preserved internal fix-1 snapshot",
+      "hashCount": 55,
+      "liveMismatchCount": 0,
+      "snapshotMismatchCount": 0
+    },
+    {
+      "name": "source origin identity",
+      "status": "passed_with_evidence_limits",
+      "source": "outputs/白鹭引擎核心框架原型/source-origin.json",
+      "inventoryFileCountExcludingSelf": 54,
+      "inventoryMismatchCount": 0,
+      "reviewFixesDisclosure": "Preserves initial source identity and registers the same-session first-party initial counterexamples, R1-R5 repairs and eight regressions",
+      "evidenceLimit": "Declaration and hashes are inspectable provenance evidence, not exhaustive originality or license proof"
+    },
+    {
+      "name": "root independent full verification",
+      "status": "passed_in_record_and_hashes_current",
+      "record": "work/core-framework/root-verification-results.json",
+      "checkedAt": "2026-10-08T11:38:42.319Z",
+      "command": "node tools/verify.mjs",
+      "commandExitCode": 0,
+      "tests": 44,
+      "passes": 44,
+      "failures": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "initialBehaviorTestsRetained": 36,
+      "addedRegressionTests": 8,
+      "negativeTypeAssertions": 11,
+      "actualUnsuppressedCompilerErrors": 11,
+      "coreBoundaryFiles": 66,
+      "strictBuild": "passed_in_record",
+      "actualExports": "passed_in_record",
+      "headlessSubprocessExample": "passed_in_record",
+      "sourceBuildHashesRechecked": 143,
+      "hashMismatchCount": 0,
+      "reviewerRepeatedFullPipeline": false
+    },
+    {
+      "name": "direct regression expectations and red/green evidence",
+      "status": "passed_in_record_and_source_reviewed",
+      "testSource": "outputs/白鹭引擎核心框架原型/tests/review-regressions.test.mjs",
+      "red": "work/core-framework/fix-1-red-clean.log",
+      "redTests": 8,
+      "redPasses": 0,
+      "redFailures": 8,
+      "green": "work/core-framework/fix-1-green-regressions.log",
+      "greenTests": 8,
+      "greenPasses": 8,
+      "greenFailures": 0,
+      "expectedOutcomes": "Hand-derived public API/subclass/adapter results, including R2 non-virtual-detach ruling",
+      "additionalReviewerRuntimeRuns": 0,
+      "reason": "Current independent root execution and matching source/build hashes already prove the direct cases; scoped reading found no remaining specific doubt requiring a new run"
+    },
+    {
+      "name": "surface return invariant",
+      "status": "preserved",
+      "closeHostAndSurfaceOwnershipChanged": false,
+      "rule": "Only successful HostAdapter.close resolution releases the surface; timeout or normal/late rejection does not; no recovery override",
+      "evidence": "Unchanged closeHost/surfaceOwnership source plus retained original tests and R5 bounded-close regression"
+    }
+  ],
+  "scope": {
+    "phase": "final_fix_1_scoped_review",
+    "artifactRoot": "outputs/白鹭引擎核心框架原型",
+    "frozenSnapshotRoot": "outputs/白鹭引擎重构工程内部资料/code-review-snapshots/core-framework-fix-1",
+    "initialReview": "work/core-framework/code-review-initial.json",
+    "repairReport": "work/core-framework/task-1-fix-1-report.md",
+    "repairResult": "work/core-framework/task-1-fix-1-report.json",
+    "gitRepository": false,
+    "fullNewFileSnapshotUsedForInitialReview": true,
+    "followupReviewLimitedTo": "R1-R5 necessary corrections and directly affected regressions",
+    "newUnrelatedBoundaryAudit": false,
+    "productOrKnowledgeBaseModifiedByReviewer": false,
+    "reviewerSubagentsSpawned": false,
+    "fullPipelineRepeatedByReviewer": false,
+    "acceptance": "Code-limited first lifecycle/display-tree/headless Engine slice at the 55 recorded input hashes; not full-engine, platform or product acceptance"
+  },
+  "declinedToJudge": [
+    {
+      "behavior": "GPU, borrowed-device completion fences, graphics/assets/animation/layout/coordinates and real browser/minigame/native/VM performance or energy",
+      "reason": "Outside the brief and lacking implementation/execution evidence in the headless slice"
+    },
+    {
+      "behavior": "Full architecture/API, project/toolchain/editor/Agent services, historic Egret compatibility, migration, release authorization and product acceptance",
+      "reason": "Beyond the original lifecycle/display-tree/headless Engine scope and this R1-R5 fix review"
+    },
+    {
+      "behavior": "Exhaustive originality/license compliance, standalone formatter/lint, CI and comprehensive security audit",
+      "reason": "No corresponding full audit or configured-gate evidence; declarations, hashes and local verification have narrower meaning"
+    },
+    {
+      "behavior": "Private-field tampering, reflection to obtain factory tokens and structurally invalid HostAdapter calls",
+      "reason": "Outside normal documented interface use and the directly affected regressions"
+    },
+    {
+      "behavior": "Physical listener removal from an external signal adapter that rejects removeEventListener",
+      "reason": "The adapter owns that physical fact; core guarantees local inactivity and retained errors, which are now reviewed and verified"
+    }
+  ]
+}

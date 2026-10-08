@@ -1,0 +1,247 @@
+{
+  "schemaVersion": 2,
+  "reviewStage": "final scoped independent rereview",
+  "reviewedAtUtc": "2026-10-08T08:43:25.594Z",
+  "scope": "All ten frozen authored files, R1/R2 corrections, first-RAF stop/restart unpack transition, runner post-report smoke oracle, existing whole-chain conclusions, actual saved reports and source metadata. Read-only code inspection and Node metadata verification; no browser, third-party execution, installs or production edits.",
+  "specCompliance": {
+    "verdict": "pass_with_stated_scope",
+    "reason": "R1 and R2 are resolved with targeted real-boundary regressions. Required limited reference-chain behavior is supported by the reviewed code and actual 17-case reports."
+  },
+  "quality": {
+    "verdict": "acceptable_with_stated_limits",
+    "reason": "Lifecycle corrections and runner failure propagation are coherent, bounded and covered by actual negative evidence. No remaining necessary correction found in this scoped rereview."
+  },
+  "necessaryCorrections": [],
+  "initialReviewPreserved": [
+    "work/phase3-code-review-initial.json",
+    "work/phase3-code-review-initial.md"
+  ],
+  "reviewedFileHashes": [
+    {
+      "path": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/reference-chain.mjs",
+      "sha256": "0916f7a2fbaca068cec883655704acf2af4e705b409bfa66fd26982f429492a2",
+      "packageMatches": true
+    },
+    {
+      "path": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/ui-pass.mjs",
+      "sha256": "be7e284b84437b2a0530615474e79a63c14563a09277e9e3f5e06e5476ecfcdb",
+      "packageMatches": true
+    },
+    {
+      "path": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/integration-tests.mjs",
+      "sha256": "8526b1201f88609dd94688b12e850fe1392e10a4923161b75c411ee9ab0bb840",
+      "packageMatches": true
+    },
+    {
+      "path": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/demo-controller.mjs",
+      "sha256": "1c3cbd57fa1aae7b91c7937bd18ff883934cf0b1073e4eef4e8e77057779ccb3",
+      "packageMatches": true
+    },
+    {
+      "path": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/lifecycle-tests.mjs",
+      "sha256": "ec2332950e4111af14da5c8769d14a9cad3a32a84ab80dc3a7397f04b6f571ae",
+      "packageMatches": true
+    },
+    {
+      "path": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/probe.js",
+      "sha256": "087a61a099dabf89be77091140f16be9d589bda7b2e2091c524c34f377fa9f18",
+      "packageMatches": true
+    },
+    {
+      "path": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/index.html",
+      "sha256": "6d4e4b854eaaefb22534832754a2c2d9ef3077acbaa4c44af39b8d0e380ba818",
+      "packageMatches": true
+    },
+    {
+      "path": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/server.mjs",
+      "sha256": "00217aef9148ffc630131ed66b2bd2be9d9b1037c62df43dd6ed94c5d4e80a07",
+      "packageMatches": true
+    },
+    {
+      "path": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/run-headless.cjs",
+      "sha256": "c6cf2e2d422939cb03492529a08589cd74ff12492a40453251d1913c5a4ec930",
+      "packageMatches": true
+    },
+    {
+      "path": "outputs/白鹭引擎重构工程知识库/experiments/asset-reference-probe/README.md",
+      "sha256": "d90475f65e474ac4f29d00abda3fdcffb128fe4529871377467dcb39521bcf67",
+      "packageMatches": true
+    }
+  ],
+  "resolvedFindings": [
+    {
+      "id": "R1",
+      "status": "resolved",
+      "paths": [
+        "demo-controller.mjs:19",
+        "demo-controller.mjs:7",
+        "demo-controller.mjs:33",
+        "demo-controller.mjs:53",
+        "probe.js:10"
+      ],
+      "reason": "Pending ticket and disabled button prevent duplicate creation, generation and AbortSignal invalidate pending pagehide/stop results, candidate cleanup rejects stale ownership, captured owner/generation govern the single RAF, and handler failure restores the retry UI. Real DOM handler regressions show one initial parse/context/RAF, zero post-stop listeners/RAF, and zero late allocations after pagehide."
+    },
+    {
+      "id": "R2",
+      "status": "resolved",
+      "paths": [
+        "reference-chain.mjs:20",
+        "reference-chain.mjs:59",
+        "ui-pass.mjs:7",
+        "ui-pass.mjs:9",
+        "ui-pass.mjs:44"
+      ],
+      "reason": "Adapter initialization catch disposes completed UI/renderer acquisitions and parsed bundle while preserving original rejection. UI tracks pending shaders and unwinds partial program/VAO/texture. Controlled shader and Canvas text failures after real parsing and renderer creation show geometry/material dispose once, zero context listeners, zero tracked partial UI allocations and GL NO_ERROR."
+    },
+    {
+      "id": "restart-unpack",
+      "status": "resolved",
+      "paths": [
+        "reference-chain.mjs:24",
+        "lifecycle-tests.mjs:63"
+      ],
+      "reason": "Before constructing a renderer on a reused canvas context, reset PBO binding and unpack alignment/row/image/skip/flip/premultiply state. Actual first-RAF pending stop/restart red case produced GL 1282 with premultiply true; current controlled-frame-delivery regression performs three real starts and has GL NO_ERROR, one maximum RAF and no stopped listeners/RAF. The earlier normal-restart run with red in its label actually passed and is not treated as failing evidence."
+    },
+    {
+      "id": "runner-smoke-truthfulness",
+      "status": "resolved",
+      "paths": [
+        "run-headless.cjs:14",
+        "run-headless.cjs:18",
+        "run-headless.cjs:24"
+      ],
+      "reason": "Runner captures startup and stopped demo diagnostics, requires one running owner and actual frames, checks caught errors, then serializes final page/console evidence and explicit runnerOutcome. Any integration, page, console or demo failure returns exit 1. Separate negative control retains 17/17 main cases but reports demoSmoke failure and exit 1; no inflation of case counts."
+    }
+  ],
+  "evidenceVerification": {
+    "currentRunId": "d642177d-b007-4c0e-80a2-0f85e150d0c0",
+    "currentLabel": "root-final-verification",
+    "currentCounts": {
+      "executed": 17,
+      "passed": 17,
+      "failed": 0
+    },
+    "currentRunnerOutcome": {
+      "exitCode": 0,
+      "integrationPassed": true,
+      "pageErrorCount": 0,
+      "consoleDiagnosticCount": 0,
+      "demoSmokePassed": true
+    },
+    "currentDemoSmoke": {
+      "executed": true,
+      "startup": {
+        "status": "running",
+        "pending": false,
+        "activeOwners": 1,
+        "rafScheduled": true,
+        "frames": 62,
+        "lastError": null
+      },
+      "afterStop": {
+        "status": "idle",
+        "pending": false,
+        "activeOwners": 0,
+        "rafScheduled": false,
+        "frames": 74,
+        "lastError": null
+      },
+      "failures": []
+    },
+    "currentPageErrors": 0,
+    "currentConsoleDiagnostics": 0,
+    "currentSourceHashesRecomputed": 19,
+    "currentSourceHashMismatches": [],
+    "frozenAuthorRun": "c1306944-2db1-4478-ad91-a5461d025b59",
+    "currentMatchesFrozenPackage": true,
+    "historicalReportsRehashed": 12,
+    "historicalSnapshotHashesRecomputed": 202,
+    "historicalHashMismatches": 0,
+    "originalMutationFailures": [
+      {
+        "label": "mutation-eager-release",
+        "test": "last-release-lifecycle",
+        "reason": "Shared assets disposed before last release"
+      },
+      {
+        "label": "mutation-ignore-required",
+        "test": "required-extension-policy",
+        "reason": "Wrong rejection: Unsupported required extension accepted"
+      },
+      {
+        "label": "mutation-no-reset",
+        "test": "ui-three-handoff",
+        "reason": "GL error 1282"
+      },
+      {
+        "label": "mutation-no-ui-restore",
+        "test": "actual-context-restore",
+        "reason": "Restored Canvas text UI differs or blank"
+      }
+    ],
+    "reviewRegressions": {
+      "initialFiveCaseRed": "5500f2ec-f3b9-4e03-ad51-5385e6dce28e",
+      "initialFiveCaseCounts": {
+        "executed": 17,
+        "passed": 12,
+        "failed": 5
+      },
+      "firstFrameRestartRed": "14bb641e-a278-4f7d-bb14-61e4c434a7cb",
+      "firstFrameRestartCounts": {
+        "executed": 17,
+        "passed": 16,
+        "failed": 1
+      },
+      "normalRestartActuallyPassed": "9275ecfb-2f09-49a1-8b37-5de91d6b71e0",
+      "oldRunnerMissedCaughtError": "83adff66-ac59-42cd-898d-202a7438e572",
+      "strictRunnerCaughtError": "70af4474-64fd-4c2f-ac0c-48e58f64dcdf",
+      "strictRunnerMainCounts": {
+        "executed": 17,
+        "passed": 17,
+        "failed": 0
+      },
+      "strictRunnerExitCode": 1
+    },
+    "executionBoundary": "Reviewer inspected saved browser reports, actual production/tests and negative-control runner logic; no independent browser execution performed. Old runner report has no serialized exit code; its missed failure is corroborated by its source oracle and execution record. Original 12-report/202-hash audit rechecked; expanded integrity independently rechecked for 47 retained reports and 835 matching source entries. Current 19 source hashes and ten package hashes independently recomputed.",
+    "expandedIntegrity": {
+      "reports": 47,
+      "sourceHashEntriesRecomputed": 835,
+      "errors": [],
+      "source": "work/phase3-report-integrity.json",
+      "boundary": "Retained copies and repeated reports included; entries are not unique files or main cases. Independently rechecked saved report counts and at least one exact matching source snapshot for each entry."
+    }
+  },
+  "acceptedWithinScope": [
+    "Actual GLTFLoader, SkeletonUtils, AnimationMixer and renderer usage; no replacement parser or skinning algorithm.",
+    "Instances share geometry/material and hold independent skeleton/mixer state; final release clears owner bundle and instance roots. No heap/GC proof is claimed.",
+    "Lost-context geometry/skeleton dispose events invalidate GPU allocations while retaining CPU geometry, scene and animation ownership. They are distinct from final releaseShared.",
+    "Restore tests require nonblank mesh and bright native-text pixels plus exact fixed-frame comparisons; equal blank frames cannot pass.",
+    "UI sets its framebuffer/VAO/program/blend/depth/scissor/viewport/sampler dependencies; renderer reset precedes re-entry. Evidence covers this fixed sample, not all upstream material states.",
+    "Raw text/style/resolution/epoch cache and native Canvas calls are tested without claiming font identity, coverage or shaping implementation.",
+    "Required-extension preflight rejects unlisted required names and unknown optional names are independently tested. Asset itself has no required extensions.",
+    "Server binds 127.0.0.1, uses exact file whitelist, random report token, fixed destination and request size cap; runner uses preinstalled Playwright, records source hashes and preserves unique run reports."
+  ],
+  "nonblockingConcerns": [
+    "requiredProfile remains a configured loader allowlist, not an executed extension compatibility matrix. The asset has no extensionsRequired. Draco/KTX2/meshopt paths are not configured or accepted.",
+    "Fault injection gates real parse completion and observes real DOM/GL allocation/disposal behavior; it does not validate upstream parser, skinning, animation or shader correctness from scratch. Constructor-internal partial allocation before successful return and arbitrary parser failures remain outside bounded rollback proof.",
+    "Runner smoke uses a 250 ms startup window and can fail conservatively on a slower machine; this is an environment-specific correctness smoke threshold, not a performance result. Screenshot and smoke are supplementary to 17 cases.",
+    "Five new cases, one refined restart subscenario and runner negative controls are separate evidence roles. Do not add repeated runs/subscenarios/smoke results to the main 17-case total.",
+    "No GC/heap proof of all external retention, all texture recovery, material/state matrix, real font identity/coverage, or repeated device-loss matrix is established. Original nonblank restore and exact fixed-time sample conclusions remain bounded.",
+    "Final knowledge-base/report integration is owned by root/implementer. Acceptance here is for the ten hashed files and inspected evidence, not unreviewed future documentation."
+  ],
+  "notCovered": [
+    "phones",
+    "performance",
+    "power",
+    "production host",
+    "full UI",
+    "2D bones",
+    "KTX2",
+    "font coverage",
+    "IME",
+    "complete migration",
+    "Gate D",
+    "Gate H",
+    "product completion"
+  ]
+}

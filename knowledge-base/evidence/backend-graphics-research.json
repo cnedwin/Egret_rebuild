@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-10-08",
+  "scope": "Primary documentation research only; no renderer or shader execution.",
+  "sources": [
+    {
+      "url": "https://threejs.org/manual/pages/webgpurenderer",
+      "fact": "WebGPU renderer has WebGL2 fallback and TSL output paths; custom material/postprocessing migration boundaries and experimental status remain explicit."
+    },
+    {
+      "url": "https://html.spec.whatwg.org/multipage/canvas.html#dom-canvas-getcontext",
+      "fact": "A canvas already initialized with another context type cannot obtain an independent second type."
+    },
+    {
+      "url": "https://pixijs.com/8.x/guides/components/renderers",
+      "fact": "Current guide recommends WebGL for production and labels WebGPU experimental; its Canvas coming-soon row conflicts with the later Canvas release description."
+    },
+    {
+      "url": "https://pixijs.com/blog/8.16.0",
+      "fact": "Official release describes an experimental Canvas renderer. Conflicting older guide row is not adopted as current Canvas status."
+    }
+  ],
+  "proposalBoundary": "Backend policy, shared ownership, profile pruning and performance benefits are Egret candidates, not executed capabilities."
+}

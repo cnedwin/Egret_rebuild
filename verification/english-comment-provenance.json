@@ -1,0 +1,310 @@
+{
+  "schemaVersion": 1,
+  "revision": "0.10.0",
+  "kind": "English documentation comments only",
+  "baseline": "public preview 0.9.0",
+  "runtimeBehaviorChanges": false,
+  "files": [
+    {
+      "path": "packages/contracts/src/Disposable.ts",
+      "baselineSha256": "75cc8c7125bc0a7d1641c32825e884311da13dba48fa4822a53465e67129504c",
+      "currentSha256": "76d74cd41b6e136ea840c7d8d05273520ce7d41031a7820dd4ddabc73be947db",
+      "commentInsertions": [
+        {
+          "offset": 0,
+          "text": "/** Synchronous terminal cleanup. Scope catches failures and continues cleanup. */\n"
+        },
+        {
+          "offset": 135,
+          "text": "/** Releases a lease; resource ownership and disposal remain with its provider. */\n"
+        },
+        {
+          "offset": 270,
+          "text": "/** Scope prefers dispose() when a value implements both cleanup protocols. */\n"
+        }
+      ],
+      "restoration": "exact_baseline_bytes"
+    },
+    {
+      "path": "packages/contracts/src/CancellationSignal.ts",
+      "baselineSha256": "a4e778a2bee503ec70249f861f60dc46718dc64e182448d9d5a3b43a10f1f34e",
+      "currentSha256": "6a9e5f07b549ec50c2a5c50915309e8de6fba2d943f59a0d7b54b079e14584b3",
+      "commentInsertions": [
+        {
+          "offset": 123,
+          "text": "/** One-way cancellation state. A late subscriber must inspect aborted itself. */\n"
+        }
+      ],
+      "restoration": "exact_baseline_bytes"
+    },
+    {
+      "path": "packages/contracts/src/HostAdapter.ts",
+      "baselineSha256": "dd095653a2ee93e20a44e0ab504ef7edf991bde982e2bb924d2fb21fe072da79",
+      "currentSha256": "3c8289a85e04e34be3782156244cc253792eff1b41629758d54cd1692c64c2ae",
+      "commentInsertions": [
+        {
+          "offset": 111,
+          "text": "  /** Stable identity used to prevent concurrent engines borrowing one surface. */\n"
+        },
+        {
+          "offset": 222,
+          "text": "  /** Startup may be asynchronous; createEngine returns only after it succeeds. */\n"
+        },
+        {
+          "offset": 339,
+          "text": "  /** Stops new work synchronously; close still proves completion of pending work. */\n"
+        }
+      ],
+      "restoration": "exact_baseline_bytes"
+    },
+    {
+      "path": "packages/contracts/src/Diagnostic.ts",
+      "baselineSha256": "93aeef7a51e372dc1418bd382d3371ec91044a1bc48de0b308cc6d5007db89a3",
+      "currentSha256": "bb788eed680e77497845d9ca95621683c616c773c13a61b42bcabad608c10461",
+      "commentInsertions": [
+        {
+          "offset": 311,
+          "text": "/** Observation only: throwing cannot change cleanup or cancellation progress. */\n"
+        }
+      ],
+      "restoration": "exact_baseline_bytes"
+    },
+    {
+      "path": "packages/runtime/src/CancellationController.ts",
+      "baselineSha256": "d2bbfd7d23269df59651d628e8f4c448be120fb46e1e5307d718aec43c8c7515",
+      "currentSha256": "3cfdb217804b282c4a422420ce5efa63ced25a6bb215bff254e7f947c4942e28",
+      "commentInsertions": [
+        {
+          "offset": 1365,
+          "text": "    // Snapshot listeners; removals take effect through active flags during callbacks.\n"
+        },
+        {
+          "offset": 1921,
+          "text": "/** Owns the mutable signal; consumers receive the read-only cancellation port. */\n"
+        }
+      ],
+      "restoration": "exact_baseline_bytes"
+    },
+    {
+      "path": "packages/runtime/src/Scope.ts",
+      "baselineSha256": "840ef7f714e80f2eccca974dfca972dc2e94ecbe74da688f7ebe4c3d9b7ceebd",
+      "currentSha256": "29e9d5da9232ed8347b2a829e069d33daabb1bad296798492a45c7950f43e8ea",
+      "commentInsertions": [
+        {
+          "offset": 1760,
+          "text": "  /** Accept one cleanup owner after callback-free validation of the current tree. */\n"
+        },
+        {
+          "offset": 3413,
+          "text": "      // A late unowned value must be cleaned up; a foreign owner stays authoritative.\n"
+        },
+        {
+          "offset": 3936,
+          "text": "  /** Cancel first, then clean up in reverse acquisition order despite failures. */\n"
+        }
+      ],
+      "restoration": "exact_baseline_bytes"
+    },
+    {
+      "path": "packages/runtime/src/DisplayObject.ts",
+      "baselineSha256": "a5744fe971a6490e54eda1b6cd7aa2ff18f8dd8e172eca83e458b89a42febe39",
+      "currentSha256": "d64dde4b35ca2cf929ae14a2f99b59f7e0efbb02cb5a363ff0ff6975b5aadebd",
+      "commentInsertions": [
+        {
+          "offset": 1017,
+          "text": "  /** Mark terminal before removing listeners, so callback reentry sees disposal. */\n"
+        }
+      ],
+      "restoration": "exact_baseline_bytes"
+    },
+    {
+      "path": "packages/runtime/src/DisplayObjectContainer.ts",
+      "baselineSha256": "14ad9af6c95917b94641fba630adc26b707aa2fedc17707627a87b55dd1e6682",
+      "currentSha256": "f0cdb820b26b06d304fd925e81367776a8f2c4824670be44da47d97953aa173e",
+      "commentInsertions": [
+        {
+          "offset": 629,
+          "text": "/** Ordered display children with atomic reparenting and ownership-aware cleanup. */\n"
+        },
+        {
+          "offset": 996,
+          "text": "  /** Subclass hooks run in preflight; final binding and reparenting use internal state. */\n"
+        },
+        {
+          "offset": 2080,
+          "text": "  /** Detach without disposing or transferring the cleanup owner. */\n"
+        },
+        {
+          "offset": 3896,
+          "text": "      // Detach a foreign-owned subtree intact; its Scope remains responsible for it.\n"
+        }
+      ],
+      "restoration": "exact_baseline_bytes"
+    },
+    {
+      "path": "packages/runtime/src/displayTreeState.ts",
+      "baselineSha256": "e6606b65ba3cdd5b18691121bdb028186eda6c4f2d8fe836bec3f8a1a9a61ff9",
+      "currentSha256": "8aaf5f5dfc8d62f3b1bc4effe819e7718e3ed72fcf0a8fc25e3b08410f980e50",
+      "commentInsertions": [
+        {
+          "offset": 1151,
+          "text": "/** Return a snapshot so callers cannot mutate the authoritative child list. */\n"
+        },
+        {
+          "offset": 2446,
+          "text": "/** Caller has completed validation; mutation has no subclass callbacks. */\n"
+        }
+      ],
+      "restoration": "exact_baseline_bytes"
+    },
+    {
+      "path": "packages/runtime/src/ownership.ts",
+      "baselineSha256": "0fbd5497c87995998c3d080d4909b3caa9738ec8ee5743120c86e9cdcceeaeab",
+      "currentSha256": "8c8c40e465002882dac1bf054fa49248c99df62da337cf75f50168f0a6748c62",
+      "commentInsertions": [
+        {
+          "offset": 641,
+          "text": "// Cleanup ownership and engine affinity are separate lifetime identities.\n"
+        },
+        {
+          "offset": 2838,
+          "text": "/** Commit only values returned by callback-free validation, without intervening hooks. */\n"
+        }
+      ],
+      "restoration": "exact_baseline_bytes"
+    },
+    {
+      "path": "packages/runtime/src/Event.ts",
+      "baselineSha256": "066015292830169f2ff718f6617ba55392f3666289922a0098eabb8210b493b5",
+      "currentSha256": "de5671dcddbde4637c22b5ea2bff9ebb520c7aed503608e670d0efc08cf9539c",
+      "commentInsertions": [
+        {
+          "offset": 492,
+          "text": "/** Matching uses descriptor object identity; equal key strings do not alias types. */\n"
+        },
+        {
+          "offset": 1305,
+          "text": "/** One typed payload with synchronous dispatch state; concurrent reuse is rejected. */\n"
+        },
+        {
+          "offset": 3121,
+          "text": "/** Keep target/defaultPrevented for inspection; clear transient dispatch pointers. */\n"
+        }
+      ],
+      "restoration": "exact_baseline_bytes"
+    },
+    {
+      "path": "packages/runtime/src/EventDispatcher.ts",
+      "baselineSha256": "2d1d6613d83ea9e904c1e4074db7b466911f3689e8c81e60d63d96481c0e6008",
+      "currentSha256": "141051a7aede922c0d8d73aa2b509c75cbe209118ba0bb48b3869765b9c5a82d",
+      "commentInsertions": [
+        {
+          "offset": 1021,
+          "text": "/** Synchronous typed listeners with a frozen route and per-dispatch candidates. */\n"
+        },
+        {
+          "offset": 1339,
+          "text": "  /** Async handlers are excluded by types and rejected if returned at runtime. */\n"
+        },
+        {
+          "offset": 3719,
+          "text": "  /** Snapshot the route before callbacks; removals remain visible through active flags. */\n"
+        },
+        {
+          "offset": 5003,
+          "text": "          // Remove once-listeners before invocation to prevent reentrant duplicates.\n"
+        }
+      ],
+      "restoration": "exact_baseline_bytes"
+    },
+    {
+      "path": "packages/runtime/src/Stage.ts",
+      "baselineSha256": "35ee9c782ba437e9dcd96c29891415f13151fa2e995ac0d40274813abb92f280",
+      "currentSha256": "08eb1599d9c75c70add22558f28e214ec31fe4305ccdf2638a8f7d35ec61bb0f",
+      "commentInsertions": [
+        {
+          "offset": 847,
+          "text": "  // A Stage is an engine root and cannot become another display node's child.\n"
+        }
+      ],
+      "restoration": "exact_baseline_bytes"
+    },
+    {
+      "path": "packages/runtime/src/EgretError.ts",
+      "baselineSha256": "9a4ef5c97c118c3ddc91f895741cfa259cbb3906d5943f733ee5e07f2ed8a8dc",
+      "currentSha256": "f647ab0f675a5e0d460f1e7b04bce603d06998096f460371035f23826eed7f08",
+      "commentInsertions": [
+        {
+          "offset": 492,
+          "text": "    // Copy and freeze the list without replacing the original failure cause.\n"
+        }
+      ],
+      "restoration": "exact_baseline_bytes"
+    },
+    {
+      "path": "packages/runtime/src/diagnostics.ts",
+      "baselineSha256": "bb8668e84ec9703f9f9b0380efa37c93f876b38c8ffb2ed2aa716f3efc32346d",
+      "currentSha256": "c330f5d9083d84ee5b23b947d0d8534e7050a92f8b76a7e5259a1bad92395294",
+      "commentInsertions": [
+        {
+          "offset": 266,
+          "text": "    // Freeze the diagnostic envelope; application-owned cause objects stay borrowed.\n"
+        }
+      ],
+      "restoration": "exact_baseline_bytes"
+    },
+    {
+      "path": "packages/engine/src/Engine.ts",
+      "baselineSha256": "d5b4fcfc5bcf921d6b75aa4a33d7e71412595e8e377e5ff9b186b19ec6868f58",
+      "currentSha256": "471f78e5f01bfdbb0492d6be3f1f3c5ed9daa7cc8e20068c47fef49e21acac56",
+      "commentInsertions": [
+        {
+          "offset": 2370,
+          "text": "  /** Every caller shares one close promise, including reentrant cleanup callbacks. */\n"
+        },
+        {
+          "offset": 2997,
+          "text": "  // Scope cleanup precedes Stage cleanup, stop and the asynchronous host close.\n"
+        }
+      ],
+      "restoration": "exact_baseline_bytes"
+    },
+    {
+      "path": "packages/engine/src/createEngine.ts",
+      "baselineSha256": "6298922aa970b883fd5f84a098a44d5d4654736446709856381416f182e0aaf3",
+      "currentSha256": "f0ae30646b03bdd9539e54223a98519e8afed8bee696dc378586c8128924e9d1",
+      "commentInsertions": [
+        {
+          "offset": 207,
+          "text": "/** Reserve the surface before startup; failed startup uses the normal close path. */\n"
+        }
+      ],
+      "restoration": "exact_baseline_bytes"
+    },
+    {
+      "path": "packages/engine/src/surfaceOwnership.ts",
+      "baselineSha256": "6b12fb7fe691212777ffcc031ef2f534b1c665d1f9df7617f0dac2574331acac",
+      "currentSha256": "604df51eb03f8dbb7965100e06667c09bb311f0e26e0ee752b2404c899e5a320",
+      "commentInsertions": [
+        {
+          "offset": 318,
+          "text": "  // Token identity prevents an old release closure clearing a later reservation.\n"
+        }
+      ],
+      "restoration": "exact_baseline_bytes"
+    },
+    {
+      "path": "packages/engine/src/closeHost.ts",
+      "baselineSha256": "3b392c336949001716d7da445d80c4ac0625b45582dbdaec2af9c20f46d5f333",
+      "currentSha256": "9fac806cc0d19265ec6956cc19305a9ff2ae03ff0e49700d64c39be88ba3244f",
+      "commentInsertions": [
+        {
+          "offset": 761,
+          "text": "    // Caller deadline and physical host completion are independent states.\n"
+        }
+      ],
+      "restoration": "exact_baseline_bytes"
+    }
+  ],
+  "scope": "Exact recorded insertions restore every edited source to its preserved baseline. Current build/type/behavior checks are recorded separately."
+}

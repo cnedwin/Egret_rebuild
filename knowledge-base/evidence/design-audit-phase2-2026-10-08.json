@@ -1,0 +1,274 @@
+{
+  "schemaVersion": 1,
+  "checkedAtUtc": "2026-10-08T06:36:58.256Z",
+  "scope": "second_round_bounded_research_and_candidate_design",
+  "reviewers": {
+    "author": "root_AI_agent_and_research_agents",
+    "independentReviewer": "separate_read_only_AI_review_agent",
+    "humanApproval": false
+  },
+  "method": "Independent source review, counterexamples and in-memory CPU/red-chain replay; report/source hash checks and GPU oracle falsification. No independent additional browser run or historical engine execution.",
+  "status": "identified_bounded_findings_fixed_and_retested_with_coverage_limits",
+  "findingGroups": [
+    {
+      "topic": "fence_requires_captured_explicit_device_epoch",
+      "disposition": "fixed_and_retested",
+      "before": {
+        "passed": 24,
+        "failed": 1
+      },
+      "after": {
+        "passed": 25,
+        "failed": 0
+      },
+      "evidence": [
+        "evidence/async-resource-probe-audit-red-results.json",
+        "evidence/async-resource-probe-results.json"
+      ]
+    },
+    {
+      "topic": "dense_glyph_own_indices_and_finite_accumulation_budget",
+      "disposition": "fixed_with_explicit_research_input_budget",
+      "before": {
+        "passed": 16,
+        "failed": 2
+      },
+      "after": {
+        "passed": 18,
+        "failed": 0
+      },
+      "evidence": [
+        "evidence/nested-ui-probe-audit-red-results.json",
+        "evidence/nested-ui-probe-results.json"
+      ]
+    },
+    {
+      "topic": "dense_color_own_indices",
+      "disposition": "fixed_and_retested",
+      "before": {
+        "passed": 7,
+        "failed": 1
+      },
+      "after": {
+        "passed": 8,
+        "failed": 0
+      },
+      "evidence": [
+        "evidence/batch-state-probe-audit-red-results.json",
+        "evidence/batch-state-probe-results.json"
+      ]
+    },
+    {
+      "topic": "GPU_oracle_shared_builder",
+      "disposition": "independent_per_command_reference_and_actual_browser_rerun",
+      "before": {
+        "passed": 7,
+        "failed": 0,
+        "independentOracle": false
+      },
+      "after": {
+        "passed": 7,
+        "failed": 0,
+        "independentOracle": true
+      },
+      "evidence": [
+        "evidence/mixed-scene-probe-shared-builder-results.json",
+        "evidence/mixed-scene-probe-results.json"
+      ]
+    },
+    {
+      "topic": "empty_scene_restore_tautology",
+      "disposition": "author_added_nonblank_guard_before_renderer_implementation",
+      "before": {
+        "passed": 1,
+        "failed": 6
+      },
+      "afterStrictEmpty": {
+        "passed": 0,
+        "failed": 7
+      },
+      "evidence": [
+        "evidence/mixed-scene-probe-empty-results.json",
+        "evidence/mixed-scene-probe-strict-empty-results.json"
+      ]
+    },
+    {
+      "topic": "event_red_green_claim_precision",
+      "disposition": "clarified_11_failures_turn_green_negative_control_retained_restart_boundary_separate",
+      "evidence": [
+        "experiments/reliable-event-probe/README.md",
+        "evidence/reliable-event-probe-results.json"
+      ]
+    },
+    {
+      "topic": "path_metadata_and_decoded_JSON_marker_check",
+      "disposition": "raw_private_records_retained_before_normalization_and_validator_positive_negative_fixtures_executed",
+      "evidence": [
+        "evidence/phase2-path-metadata-normalization.json",
+        "docs/第二轮验证记录.md"
+      ]
+    }
+  ],
+  "independentAdditionalCoverage": {
+    "cpuMainChecks": {
+      "passed": 64,
+      "failed": 0
+    },
+    "nestedUI": {
+      "attemptedEdits": 1000,
+      "acceptedEdits": 852,
+      "rejectedEdits": 148,
+      "fullReferenceComparisons": 143,
+      "hitComparisons": 2860
+    },
+    "oracleFalsification": {
+      "correctConsumerChannelsOverTolerance": 0,
+      "oldTextureOnlyBuilderChannelsOverTolerance": 130304,
+      "totalChannels": 196608
+    },
+    "browserAdditionalRun": false
+  },
+  "currentAuthorReports": [
+    {
+      "report": "evidence/reliable-event-probe-results.json",
+      "checkedAtUtc": "2026-10-08T06:27:15.464Z",
+      "counts": {
+        "total": 13,
+        "passed": 13,
+        "failed": 0
+      },
+      "sourceHashes": [
+        {
+          "path": "model.mjs",
+          "sha256": "0dfb7788bce8493c7079f7e27decc966d8d0349c66459758f634dbba59bcdc17"
+        },
+        {
+          "path": "run.mjs",
+          "sha256": "d60b5d7b9ff18b8982babd7495135cb64733b8d0d3c0b4f377a7201ad1b04e89"
+        }
+      ],
+      "coverage": "bounded_research_only"
+    },
+    {
+      "report": "evidence/async-resource-probe-results.json",
+      "checkedAtUtc": "2026-10-08T06:27:15.545Z",
+      "counts": {
+        "total": 25,
+        "passed": 25,
+        "failed": 0
+      },
+      "sourceHashes": [
+        {
+          "path": "experiments/async-resource-probe/run.mjs",
+          "sha256": "30ef9fcfeefd03188a1203d2ff1c066408efc5a2115bfd4687eda210acd1ef80"
+        },
+        {
+          "path": "experiments/async-resource-probe/model.mjs",
+          "sha256": "6c8f978e68f342441a1d0355dbf8a4e564d7022338d50751ed6dc64b474fe932"
+        }
+      ],
+      "coverage": "bounded_research_only"
+    },
+    {
+      "report": "evidence/nested-ui-probe-results.json",
+      "checkedAtUtc": "2026-10-08T06:27:15.496Z",
+      "counts": {
+        "total": 18,
+        "passed": 18,
+        "failed": 0
+      },
+      "sourceHashes": [
+        {
+          "path": "experiments/nested-ui-probe/model.mjs",
+          "sha256": "7c2d61a0bb03eebdc8ea5a8c08fcb38056625780a8e3641463ff6a9195aab9dd"
+        },
+        {
+          "path": "experiments/nested-ui-probe/run.mjs",
+          "sha256": "3f0c19dfdb325c4a06191aebe3a5b06c6e50ec798b35980e0b848be4882234e4"
+        }
+      ],
+      "coverage": "bounded_research_only"
+    },
+    {
+      "report": "evidence/batch-state-probe-results.json",
+      "checkedAtUtc": "2026-10-08T06:27:15.592Z",
+      "counts": {
+        "total": 8,
+        "passed": 8,
+        "failed": 0
+      },
+      "sourceHashes": [
+        {
+          "path": "model.mjs",
+          "sha256": "a51a8457d628bce403454c6aa34b5338b05ae60966743f877583d7644bc7127a"
+        },
+        {
+          "path": "run.mjs",
+          "sha256": "7ee38e8dbdbde0ba87b08d85054de69ed4959c3757ba972b4268de0655282c2d"
+        }
+      ],
+      "coverage": "bounded_research_only"
+    },
+    {
+      "report": "evidence/mixed-scene-probe-results.json",
+      "checkedAtUtc": "2026-10-08T06:15:21.680Z",
+      "counts": {
+        "total": 7,
+        "passed": 7,
+        "failed": 0
+      },
+      "sourceHashes": [
+        {
+          "path": "index.html",
+          "sha256": "90284db8016857d7dc7bcb47aa95622d137d7c95df581431f9dfb61dff211524"
+        },
+        {
+          "path": "probe.js",
+          "sha256": "0062eb55d6b41d2b3797fbca440a982af991fca9e403e75a8d72c3d782805861"
+        },
+        {
+          "path": "renderer.mjs",
+          "sha256": "119725bb1bcfe6d82b1b41dc9e60fbbcdd842456bebdcdf4adc988918ccb9413"
+        },
+        {
+          "path": "server.mjs",
+          "sha256": "dab09427142c6ad6e0866f37df0c85eb8540f2912b4184093ff9e5d328f29b7f"
+        },
+        {
+          "path": "../batch-state-probe/model.mjs",
+          "sha256": "a51a8457d628bce403454c6aa34b5338b05ae60966743f877583d7644bc7127a"
+        },
+        {
+          "path": "run-headless.cjs",
+          "sha256": "6767b6eabc1c2ae3266c31810f53d85d3c74806684511c6d156f7d807566ea6f"
+        }
+      ],
+      "coverage": "bounded_research_only"
+    }
+  ],
+  "limitations": [
+    "Single-instance event memory is not durable exactly-once.",
+    "Resource tasks/fences manually scheduled; actual driver policy unverified.",
+    "UI fixture dimensions, explicit input budget, full-tree validation/world traversal remain.",
+    "Procedural mesh/rigid bones/color atlas/generated English texture only; no imported real game assets.",
+    "No production engine, actual bridge, mobile/mini-game/native host, performance/power/package, creator or migration acceptance.",
+    "AI review does not replace human approval or final acceptance."
+  ],
+  "documentation": "docs/第二轮审计.md",
+  "finalIndependentIntegrationReview": {
+    "currentEventSourceHashesMatched": 2,
+    "currentEventInMemoryReplay": {
+      "passed": 13,
+      "failed": 0
+    },
+    "documentationCorrection": "Test13 creates a second in-memory instance within the same Node process; no OS process restart/crash was executed."
+  },
+  "authorAdditionalRegression": {
+    "firstContract": {
+      "passed": 26,
+      "failed": 0,
+      "reportOverwritten": false
+    },
+    "scope": "Read-only in-memory replay; not added to second-round main71."
+  }
+}

@@ -1,0 +1,522 @@
+{
+  "checkedAt": "2026-10-08T06:47:40Z",
+  "scope": "新白鹭 UI2D+轻量3D：TS逻辑+专门UI2D执行+专门3D执行，共享资源/后端/帧调度。D001–D012 仍为 proposed；已有71局部probe不视为生产或性能验收。只核对12个主要实现源码文件、三个许可证、相关PR与官方手册，未安装或执行参考仓库代码。",
+  "repositories": [
+    {
+      "repo": "mrdoob/three.js",
+      "ref": "r180",
+      "commitSha": "0af9729d0c143a86a1d725d6e2c3ad83301f3f34",
+      "releaseUrl": "https://github.com/mrdoob/three.js/releases/tag/r180",
+      "versionNote": "选择已发布稳定基线 r180（2025-09-03），并非 2026-10-08 最新版本；引用当前官网手册时单独标注，不反推 r180 的完整功能状态。",
+      "license": {
+        "id": "MIT",
+        "url": "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/LICENSE",
+        "read": true,
+        "reuseObligations": "复制或实质性借用代码时保留版权及许可声明。"
+      },
+      "sourceFiles": [
+        {
+          "path": "src/renderers/WebGLRenderer.js",
+          "functions": [
+            "setAnimationLoop",
+            "renderScene",
+            "onContextLost",
+            "onContextRestore",
+            "resetState"
+          ],
+          "lineRanges": [
+            [
+              1495,
+              1502
+            ],
+            [
+              1823,
+              1847
+            ],
+            [
+              1012,
+              1042
+            ],
+            [
+              3348,
+              3362
+            ]
+          ],
+          "url": "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/src/renderers/WebGLRenderer.js"
+        },
+        {
+          "path": "src/renderers/webgl/WebGLRenderLists.js",
+          "functions": [
+            "painterSortStable",
+            "reversePainterSortStable",
+            "WebGLRenderList.push",
+            "WebGLRenderList.sort",
+            "WebGLRenderList.finish"
+          ],
+          "lineRanges": [
+            [
+              1,
+              47
+            ],
+            [
+              107,
+              153
+            ],
+            [
+              155,
+              175
+            ]
+          ],
+          "url": "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/src/renderers/webgl/WebGLRenderLists.js"
+        },
+        {
+          "path": "src/renderers/webgl/WebGLState.js",
+          "functions": [
+            "setBlending",
+            "reset"
+          ],
+          "lineRanges": [
+            [
+              618,
+              660
+            ],
+            [
+              1185,
+              1260
+            ]
+          ],
+          "url": "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/src/renderers/webgl/WebGLState.js"
+        },
+        {
+          "path": "src/renderers/webgpu/WebGPURenderer.js",
+          "functions": [
+            "constructor"
+          ],
+          "lineRanges": [
+            [
+              20,
+              76
+            ]
+          ],
+          "url": "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/src/renderers/webgpu/WebGPURenderer.js"
+        }
+      ]
+    },
+    {
+      "repo": "BabylonJS/Babylon.js",
+      "ref": "9.29.0",
+      "commitSha": "cbe5bb36998fdde6bd93d76e67813ff571a535db",
+      "releaseUrl": "https://github.com/BabylonJS/Babylon.js/releases/tag/9.29.0",
+      "versionNote": "2026-10-01 release；9.29.0 的三个 engine.ts 入口已转为 re-export，主要实现位于 .pure.ts。入口检查未计入 12 个主要实现文件。",
+      "license": {
+        "id": "Apache-2.0",
+        "url": "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/license.md",
+        "read": true,
+        "reuseObligations": "再分发时附许可、保留适用归属声明、显著标识修改；若实际借用的发行物含 NOTICE，按许可证保留相应归属。"
+      },
+      "sourceFiles": [
+        {
+          "path": "packages/dev/core/src/Engines/abstractEngine.pure.ts",
+          "functions": [
+            "_processFrame",
+            "_renderLoop",
+            "_renderFrame",
+            "runRenderLoop",
+            "_restoreEngineAfterContextLost",
+            "_rebuildGraphicsResources",
+            "_rebuildRenderTargetWrappers"
+          ],
+          "lineRanges": [
+            [
+              1029,
+              1115
+            ],
+            [
+              659,
+              736
+            ]
+          ],
+          "url": "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/core/src/Engines/abstractEngine.pure.ts"
+        },
+        {
+          "path": "packages/dev/core/src/Engines/thinEngine.pure.ts",
+          "functions": [
+            "constructor context-lost handlers",
+            "wipeCaches"
+          ],
+          "lineRanges": [
+            [
+              335,
+              359
+            ],
+            [
+              2805,
+              2851
+            ]
+          ],
+          "url": "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/core/src/Engines/thinEngine.pure.ts"
+        },
+        {
+          "path": "packages/dev/core/src/Engines/webgpuEngine.pure.ts",
+          "functions": [
+            "initAsync device.lost handler",
+            "applyStates",
+            "wipeCaches",
+            "_draw",
+            "updateWrappedWebGPUTexture"
+          ],
+          "lineRanges": [
+            [
+              811,
+              836
+            ],
+            [
+              1090,
+              1115
+            ],
+            [
+              1391,
+              1428
+            ],
+            [
+              2660,
+              2707
+            ],
+            [
+              3903,
+              3920
+            ]
+          ],
+          "url": "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/core/src/Engines/webgpuEngine.pure.ts"
+        },
+        {
+          "path": "packages/dev/core/src/Rendering/renderingGroup.ts",
+          "functions": [
+            "render",
+            "_RenderSorted",
+            "defaultTransparentSortCompare",
+            "backToFrontSortCompare"
+          ],
+          "lineRanges": [
+            [
+              148,
+              198
+            ],
+            [
+              249,
+              338
+            ]
+          ],
+          "url": "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/core/src/Rendering/renderingGroup.ts"
+        }
+      ]
+    },
+    {
+      "repo": "playcanvas/engine",
+      "ref": "v2.23.0",
+      "commitSha": "cfef43d306b2b55a2c0742e4994221f6d2463957",
+      "releaseUrl": "https://github.com/playcanvas/engine/releases/tag/v2.23.0",
+      "versionNote": "2026-10-01 release；只借鉴 Engine 源码，未将 Editor 的许可或产品能力视为 Engine 许可或能力。",
+      "license": {
+        "id": "MIT",
+        "url": "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/LICENSE",
+        "read": true,
+        "reuseObligations": "复制或实质性借用代码时保留版权及许可声明。"
+      },
+      "sourceFiles": [
+        {
+          "path": "src/platform/graphics/webgl/webgl-graphics-device.js",
+          "functions": [
+            "context-lost handlers",
+            "loseContext",
+            "restoreContext",
+            "endRenderPass",
+            "setBlendState",
+            "setDepthState"
+          ],
+          "lineRanges": [
+            [
+              234,
+              292
+            ],
+            [
+              1198,
+              1243
+            ],
+            [
+              1603,
+              1657
+            ],
+            [
+              2955,
+              2986
+            ],
+            [
+              3047,
+              3068
+            ]
+          ],
+          "url": "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/platform/graphics/webgl/webgl-graphics-device.js"
+        },
+        {
+          "path": "src/platform/graphics/webgpu/webgpu-graphics-device.js",
+          "functions": [
+            "initFromGpuDevice",
+            "createDevice",
+            "handleDeviceLost",
+            "clearDeviceState",
+            "restoreContext",
+            "destroy",
+            "setBlendState",
+            "setDepthState",
+            "startRenderPass",
+            "endRenderPass"
+          ],
+          "lineRanges": [
+            [
+              90,
+              151
+            ],
+            [
+              442,
+              475
+            ],
+            [
+              628,
+              658
+            ],
+            [
+              750,
+              794
+            ],
+            [
+              904,
+              998
+            ],
+            [
+              1483,
+              1498
+            ],
+            [
+              1620,
+              1678
+            ]
+          ],
+          "url": "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/platform/graphics/webgpu/webgpu-graphics-device.js"
+        },
+        {
+          "path": "src/platform/graphics/render-pass.js",
+          "functions": [
+            "ColorAttachmentOps",
+            "DepthStencilAttachmentOps",
+            "allocateAttachments",
+            "render"
+          ],
+          "lineRanges": [
+            [
+              65,
+              125
+            ],
+            [
+              250,
+              290
+            ],
+            [
+              375,
+              400
+            ]
+          ],
+          "url": "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/platform/graphics/render-pass.js"
+        },
+        {
+          "path": "src/scene/layer.js",
+          "functions": [
+            "sortManual",
+            "sortMaterialMesh",
+            "sortBackToFront",
+            "_calculateSortDistances",
+            "sortVisible"
+          ],
+          "lineRanges": [
+            [
+              26,
+              47
+            ],
+            [
+              127,
+              158
+            ],
+            [
+              975,
+              995
+            ],
+            [
+              1019,
+              1049
+            ]
+          ],
+          "url": "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/scene/layer.js"
+        }
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "RL001",
+      "claim": "UI2D 与轻量 3D 可共用一个帧入口；不同执行器无需各自持有独立 RAF。",
+      "evidenceUrls": [
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/core/src/Engines/abstractEngine.pure.ts#L1029-L1115",
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/src/renderers/WebGLRenderer.js#L1495-L1502"
+      ],
+      "mechanism": "Babylon _processFrame 统一执行 beginFrame→各 render callback→endFrame；_renderLoop 仅在 active callbacks 存在且 frameHandler 未排队时申请下一帧；runRenderLoop 对相同 callback 去重。Three setAnimationLoop 接受一个 callback，null 会停止普通动画循环，并同时交给 XR。",
+      "recommendation": "可立即确定接口责任：FrameScheduler 为唯一帧时钟及 present/submit 的拥有者；TS 逻辑只产生更新，UI2D/3D 执行阶段依次消费一份 FramePlan。dirty、动画、视频、资源上传和恢复完成分别产生帧请求。将后台/丢失/销毁作为显式帧门控。",
+      "limits": [
+        "这是参考源码中的调度组织方式；不是白鹭已实现或通过验收的证明。",
+        "没有新白鹭 workload 数据，不能由单一 RAF 推导更低 CPU、掉帧或功耗。",
+        "XR、视频与持续动画是否必须继续驱动更新属于产品策略，不能简单用 UI dirty 代替。"
+      ]
+    },
+    {
+      "id": "RL002",
+      "claim": "共享抽象可成立，但 WebGL 与 WebGPU 的执行、缓存与生命周期不能预设功能和成本相同。",
+      "evidenceUrls": [
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/src/renderers/webgpu/WebGPURenderer.js#L20-L76",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/core/src/Engines/webgpuEngine.pure.ts#L3903-L3920",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/platform/graphics/webgpu/webgpu-graphics-device.js#L1483-L1498",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/platform/graphics/webgpu/webgpu-graphics-device.js#L750-L794",
+        "https://threejs.org/manual/pages/webgpurenderer"
+      ],
+      "mechanism": "Three r180 WebGPURenderer 在构造时选择 WebGPUBackend 或 WebGL fallback backend，并非旧 WebGLRenderer 简单换 API；Babylon WebGPU draw 获取 cacheRenderPipeline 与 bindGroups 后 setPipeline；PlayCanvas WebGPU blend/depth 变化设置 pipelineDirty。PlayCanvas 只对自身拥有的 native device 注册 lost 自动恢复，host 注入 device 默认保留销毁和恢复责任。当前 Three 官网手册还列出 ShaderMaterial/RawShaderMaterial/onBeforeCompile 与 EffectComposer 的迁移限制（手册为核对日现行页面，不宣称完整对应 r180）。",
+      "recommendation": "立即确定 BackendCaps、ResourceDescriptor、PassDescriptor 与所有权接口；第一条可交付执行链优先 WebGL2，WebGPU 为独立实现与独立验收项（这是本研究建议，仍为 proposed）。不要让业务侧依赖 native GL/GPU handle。shader、颜色空间、alpha、格式、采样数、深度/模板和 feature limits 在创建资源前完成协商。",
+      "limits": [
+        "底层实现差异不证明某后端在目标手机更快或更省电。",
+        "官网文档持续更新；后续升级需复核具体 API 和能力，不能把这里的 release snapshot 当永久承诺。",
+        "本次未审阅所有 shader compiler、pipeline key 和格式映射实现；不能宣称已证明双后端视觉等价。"
+      ]
+    },
+    {
+      "id": "RL003",
+      "claim": "半透明混合需要视觉顺序；3D 不透明/透明队列与 UI 绘制顺序应分域处理。",
+      "evidenceUrls": [
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/src/renderers/webgl/WebGLRenderLists.js#L1-L47",
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/src/renderers/webgl/WebGLRenderLists.js#L107-L153",
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/src/renderers/WebGLRenderer.js#L1823-L1837",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/core/src/Rendering/renderingGroup.ts#L249-L338",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/scene/layer.js#L26-L47",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/scene/layer.js#L127-L158",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/scene/layer.js#L1019-L1049",
+        "https://developer.playcanvas.com/user-manual/graphics/transparency/"
+      ],
+      "mechanism": "Three 不透明按 groupOrder→renderOrder→material.id→z 正序→id；透明/透射按 groupOrder→renderOrder→z 逆序→id，队列绘制为 opaque→transmissive→transparent。Babylon 透明先 alphaIndex 后包围球中心到相机距离，支持自定义比较；PlayCanvas 默认 opaque material/mesh 排序，transparent back-to-front，另有 drawOrder 手工排序。普通 alpha 混合对先后顺序不交换；对象级距离排序也无法保证相交/自交网格每片段正确。",
+      "recommendation": "无需再做探索证明的一般事实：不能为减少 state change 任意重排相互重叠的半透明 UI。UI2D 保留 display-list/painter order，只合并相邻且状态相容项；3D 在独立层/段内进行 opaque 及 transparent 排序，再由 FramePlan 显式合成 UI/3D 层。不要把屏幕 UI 塞进统一 3D 距离排序。",
+      "limits": [
+        "对象级排序不是通用透明正确性解法；相交透明网格、深度写入、alpha test 和 OIT 必须单独定义。",
+        "UI 是否遮挡 3D、世界内 UI、mask/stencil 的排序屏障需要白鹭产品语义决定。",
+        "这些事实不提供新白鹭可合批比例、draw-call 减少量或速度提升幅度。"
+      ]
+    },
+    {
+      "id": "RL004",
+      "claim": "共享 WebGL context 必须维护一致的状态缓存；外部执行器更改状态后原缓存会失效。",
+      "evidenceUrls": [
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/src/renderers/webgl/WebGLState.js#L618-L660",
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/src/renderers/WebGLRenderer.js#L3348-L3362",
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/src/renderers/webgl/WebGLState.js#L1185-L1260",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/core/src/Engines/thinEngine.pure.ts#L2805-L2851",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/platform/graphics/webgl/webgl-graphics-device.js#L2955-L2986",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/platform/graphics/webgl/webgl-graphics-device.js#L3047-L3068"
+      ],
+      "mechanism": "Three setBlending 和 PlayCanvas setBlendState/setDepthState 通过 tracked current state 跳过重复 API 调用；Three resetState 明确用于单个 context 被多个库共享，会清 state/bindingStates 及 render-target 跟踪；Babylon wipeCaches(true) 明确面向共享 context 并重置 program、texture、depth/stencil/alpha、pixelStore 与 vertex binding 等。",
+      "recommendation": "可立即采纳的架构约束：UI2D 与 3D 通过同一 SharedDeviceState 写 GL；其状态集至少包含 framebuffer/target、viewport/scissor、program/VAO/buffers、texture units/samplers、blend及premultipliedAlpha、depth/stencil、color mask、pixelStore。若临时接成熟引擎，交接协议必须双方 invalidation/restore，不能只在初始化 reset 一次。",
+      "limits": [
+        "仅调用一个第三方 reset 方法不等于已经同步了另一个引擎的缓存。",
+        "全量 reset 有调用开销；最小边界集合与是否保存/恢复 native state 应通过真实 workload 决定。",
+        "本次未验证多个完整引擎同时共享一个 device 的所有嵌套 rendering/extension 场景。"
+      ]
+    },
+    {
+      "id": "RL005",
+      "claim": "renderpass 的 load/store/resolve/discard 应由附件依赖和用途决定；tile 架构优化不能转写为手机省电结论。",
+      "evidenceUrls": [
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/platform/graphics/render-pass.js#L65-L125",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/platform/graphics/render-pass.js#L250-L290",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/platform/graphics/render-pass.js#L375-L400",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/platform/graphics/webgl/webgl-graphics-device.js#L1603-L1657",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/platform/graphics/webgpu/webgpu-graphics-device.js#L1620-L1678",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/core/src/Engines/webgpuEngine.pure.ts#L1090-L1115"
+      ],
+      "mechanism": "PlayCanvas 用 ColorAttachmentOps/DepthStencilAttachmentOps 声明 store/resolve 等；单采样颜色输出默认 store，MSAA 是否 store 取决于是否 resolve，外部 depthBuffer 默认保留。GL endRenderPass 只将不需 store/resolve 的附件 invalidate，且全尺寸 clearRect 时才执行 invalidateFramebuffer；WebGPU start/end 通过 pass descriptor 开始/结束 encoder。Babylon WebGPU 主颜色附件明确 Store，因为多 camera viewport 或 scissors 会对同一颜色附件开启多次 pass，Discard 会破坏结果。",
+      "recommendation": "先定义语义后再优化：PassDescriptor 标出 read/write、load/clear、store/resolve、target、viewport/scissor 和最后消费者。UI cache target、3D 输出到 UI 的纹理、截图或后续 pass 会读取的颜色必须保留；只对确认无后续读取的临时 depth/stencil/MSAA attachment 允许 discard。render target 池在依赖图和失效后重绘语义确定后再实现。",
+      "limits": [
+        "源码中 tiled-architecture 注释表达优化意图；不能推出目标手机 GPU 带宽、tile merge、温度或电池改善。",
+        "省带宽、减少 pass 或 API call 是可测机制指标，不等于能耗验收。",
+        "dirty rect、部分 clear、多 camera 和透明 canvas 可能使默认 discard 策略错误，必须做视觉回归。"
+      ]
+    },
+    {
+      "id": "RL006",
+      "claim": "恢复必须按资源所有权重建；宿主自建或外部资源不能期望参考引擎替宿主自动恢复。",
+      "evidenceUrls": [
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/src/renderers/WebGLRenderer.js#L1012-L1042",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/core/src/Engines/abstractEngine.pure.ts#L659-L736",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/core/src/Engines/webgpuEngine.pure.ts#L2660-L2707",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/platform/graphics/webgpu/webgpu-graphics-device.js#L750-L794",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/platform/graphics/webgpu/webgpu-graphics-device.js#L943-L998",
+        "https://github.com/mrdoob/three.js/pull/31755"
+      ],
+      "mechanism": "Three lost 标记会阻止 render，restore 重新 initGLContext；Babylon 清 cache→effects→buffers→textures→RT wrappers→清 cache，并明确跳过 host-owned External texture 附件；host 在 onContextRestoredObservable 重新提供句柄。其 updateWrappedWebGPUTexture 要求同尺寸、刷新 views，并改变 uniqueId 使 bind-group cache 失效。PlayCanvas 丢失时清 command/pipeline/cache，恢复 texture、格式、compute、bindings和 CPU-authored commands；host 注入 native device 则 host 负责恢复。Three 已合并 PR31755（a480a68b0c863841355796a1e37eab4187de8ac7，2025-08-26）修复 generation 创建新 GPU texture 后仍复用 bind-group cache 的问题。",
+      "recommendation": "SharedResourceRegistry 明确 owner、descriptor、CPU/source reload或regenerator、restore callback、deviceEpoch 和 dispose。native handle、view、bind group、pipeline、target 均绑定 epoch；更换句柄时递增资源 generation 并失效依赖缓存。恢复状态机为 lost→recreating→repopulating→ready/failed，ready 前暂停 GPU 提交；恢复事件不应只表示 adapter/context 创建完成。",
+      "limits": [
+        "这是新白鹭应实现的责任契约；此次未执行其恢复流程。",
+        "不能复制 Babylon 的整个恢复顺序为固定标准，UI 图集、video、外部 native texture 与插件依赖可能需要不同拓扑。",
+        "没有手机也可先实现 epoch/依赖缓存和恢复接口；真实浏览器 context/device-loss 仍是设备验收项。"
+      ]
+    },
+    {
+      "id": "RL007",
+      "claim": "资源对象重建不等于像素、GPU-only 状态或异步结果恢复；旧 generation 的结果必须拒收。",
+      "evidenceUrls": [
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/platform/graphics/webgl/webgl-graphics-device.js#L1198-L1243",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/platform/graphics/webgpu/webgpu-graphics-device.js#L943-L998",
+        "https://developer.playcanvas.com/user-manual/graphics/advanced-rendering/device-loss/"
+      ],
+      "mechanism": "PlayCanvas GL loseContext 对 pending readbackCopies 调用 fail，避免调用者把复用缓冲区旧值误当新读数；WebGPU clearDeviceState 清记录命令与 pipeline cache。官网恢复手册区分 CPU-backed 数据可重传、RT 只重建但原像素消失、storage/运行时 lightmap/环境/GPU-only history 需重新写入或生成；异步 reads 采用 generation 校验。",
+      "recommendation": "把 UI render-to-texture/cache-as-bitmap、文字/图片图集、3D thumbnail、离屏滤镜和生成贴图的内容恢复列为独立工作：保留权威源或生成器，并在 deviceEpoch 切换后 dirty 全部相关 cache、再请求一帧。readback/compute/network触发上传都携带 epoch；过期 promise 完成时不得更新新资源。失败或长时间无 restore 时由 HTML/宿主界面提示恢复，不能依赖已停止的 canvas。",
+      "limits": [
+        "CPU 副本、reload URL、重新生成各有内存、网络、延迟代价；不会默认所有资源永久双份。",
+        "不是所有 loss 都能恢复，也不能承诺恢复时间上界或数据无损。",
+        "手册为核对日现行官方说明；具体新白鹭资源恢复覆盖率和停顿须实现后验收。"
+      ]
+    },
+    {
+      "id": "RL008",
+      "claim": "资源恢复登记通常保留强引用；显式销毁和异步恢复取消是必要生命周期约束。",
+      "evidenceUrls": [
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/platform/graphics/webgpu/webgpu-graphics-device.js#L117-L151",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/platform/graphics/webgpu/webgpu-graphics-device.js#L442-L475",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/platform/graphics/webgpu/webgpu-graphics-device.js#L628-L645",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/platform/graphics/webgpu/webgpu-graphics-device.js#L904-L938",
+        "https://github.com/playcanvas/engine/pull/9397",
+        "https://github.com/playcanvas/engine/pull/9396"
+      ],
+      "mechanism": "PlayCanvas _bindGroups/_bindGroupFormats/_computes/_drawCommands 为恢复持有 Set 强引用，并要求 owner.destroy 注销。destroy 清 pending resources/caches/listeners/canvas config，只销毁拥有的 native device。handleDeviceLost 在异步 await 后检查 destroyed。PR9397（9623a9bb40468559e81e139407e92201d99b4de2，2026-09-16）修复 teardown 发生于 requestAdapter/requestDevice 途中后又创建/恢复资源的问题；PR9396 将相关 cleanup/cancellation backport 到 2.22。",
+      "recommendation": "任何进入 SharedResourceRegistry 的对象都必须有可重复且幂等的 unregister/dispose；Scene/UI mount owner、renderer owner 与 native device owner 分离。销毁递增 lifecycle generation、取消排队 GPU 工作与恢复任务；await 创建返回后再检查 owner/epoch，若过期立即释放新取得 device/资源，禁止再发 restored。可直接用 PR 中列举的 interleaving 作为白鹭生命周期设计用例。",
+      "limits": [
+        "强引用登记不是自动泄漏，但若业务丢弃对象而不销毁，GC 不会替它从 registry 移除。",
+        "本次只审阅 PR metadata/diff 与 tagged 实现，未运行上游测试，更未证明白鹭的 teardown 正确。",
+        "恢复取消和幂等 dispose 可无手机先验证；driver reset、后台切换、反复挂载的长期内存曲线仍须设备测试。"
+      ]
+    }
+  ],
+  "openQuestions": [
+    "FramePlan 的 UI/3D compositing 顺序、world-space UI、mask/stencil 屏障、透明背景与截图定义需结合白鹭产品语义决定；可在接口层先推进。",
+    "主线 WebGL2 与 WebGPU 后端分别支持哪些 texture/RT formats、MSAA、颜色空间、premultiplied alpha、video/external resource？不能由参考引擎 backend 同名接口直接推断等价。",
+    "资源恢复策略按 resource class 分配 CPU 保留、源地址重载或生成器；需要产品定义可接受停顿、内存预算和 GPU-only 历史丢失处理。",
+    "哪些第三方 renderer/插件允许直接使用 native API？若允许，状态缓存失效边界、资源owner和nested rendering必须写进适配合同。",
+    "源码可确定的顺序、缓存一致性、owner/epoch和附件生命周期约束无需等待手机；小型桌面浏览器 conformance 可以先验收语义，但不替代手机性能。",
+    "目标 iOS/Android/小游戏宿主应实测：半透明/clip/filter/多pass像素一致性、后台/前台与多次loss恢复、restore失败、destroy/recovery竞态、readback拒绝和dirty重绘、资源占用及长期内存。",
+    "性能与功耗留给目标设备：同一内容与画质下的CPU/GPU帧时分布、提交/切换/上传量、内存与峰值、启动/恢复延迟、热稳定后的持续FPS及可校准的能耗指标。不可由Github源码、tile注释、官方benchmark或71局部probe推出竞争领先。",
+    "Three r180 是明确的历史稳定基线；若决定采纳更新 release 或直接适配整个成熟引擎，须对对应SHA重新核对这些路径/机制，不将本研究当最新全功能评测。"
+  ]
+}
+
