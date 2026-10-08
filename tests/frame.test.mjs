@@ -1,3 +1,4 @@
+import { spawnSync } from 'node:child_process';
 import {host as makeHost} from './helpers.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -109,4 +110,54 @@ test('all public structural mutations reject detached bound nodes while closing'
  let engine;const p=new egret.Sprite(),a=new egret.Sprite(),b=new egret.Sprite();p.addChild(a);p.addChild(b);
  engine=await egret.createEngine({host:makeHost({renderFrame(){const closing=engine.dispose();assert.throws(()=>p.removeChild(a),{code:'ENGINE_CLOSED'});assert.throws(()=>p.setChildIndex(b,0),{code:'ENGINE_CLOSED'});return undefined;}}).adapter});engine.stage.addChild(p);engine.stage.removeChild(p);engine.renderFrame({width:1,height:1});await engine.dispose();p.dispose();
 });
+
+
+test('foreign native and thenable backend rejections are observed without async submission', () => {
+  // An isolated real process makes an unhandled rejection observable without
+  // allowing node:test's own rejection tracking to obscure the frame outcome.
+  const source = `
+    import vm from 'node:vm';
+    import { createEngine } from '@egret/engine';
+    import { host } from './tests/helpers.mjs';
+    const unhandled = [];
+    process.on('unhandledRejection', cause => unhandled.push(cause.message));
+    const diagnostics = [];
+    let closing;
+    let stopped = false;
+    let thenableObserved = false;
+    let calls = 0;
+    const adapter = host({
+      renderFrame() {
+        calls++;
+        if (calls === 1) {
+          closing = engine.dispose();
+          if (stopped || engine.stage.isDisposed) throw Error('premature cleanup');
+          return vm.runInNewContext('Promise.reject(new Error("foreign rejection"))');
+        }
+        return { then(resolve, reject) { reject(Error('thenable rejection')); } };
+      },
+      stop() { stopped = true; }
+    }).adapter;
+    const engine = await createEngine({host: adapter, onDiagnostic(d) { diagnostics.push(d); }});
+    let code;
+    try { engine.renderFrame({width:1,height:1}); } catch(error) { code = error.code; }
+    await closing;
+    const other = await createEngine({host: host({renderFrame() {
+      return {then(resolve,reject) {thenableObserved=true;reject(Error('thenable rejection'));}};
+    }}).adapter});
+    let thenableCode;
+    try { other.renderFrame({width:1,height:1}); } catch(error) {thenableCode=error.code;}
+    const nextId = other.captureFrame({width:1,height:1}).frameId;
+    await new Promise(resolve => setImmediate(resolve));
+    await other.dispose();
+    console.log(JSON.stringify({code,thenableCode,nextId,stopped,thenableObserved,diagnostic:diagnostics[0].code,phase:diagnostics[0].phase,unhandled}));
+  `;
+  const result = spawnSync(process.execPath, ['--input-type=module', '--eval', source], {encoding:'utf8'});
+  assert.equal(result.status, 0, result.stderr);
+  assert.deepEqual(JSON.parse(result.stdout), {
+    code:'FRAME_RENDER_FAILED', thenableCode:'FRAME_RENDER_FAILED', nextId:2,
+    stopped:true, thenableObserved:true, diagnostic:'FRAME_RENDER_FAILED', phase:'graphics', unhandled:[]
+  });
+});
+
 
