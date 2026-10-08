@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "createdAtUtc": "2026-10-08T17:00:28.462Z",
+  "createdAtUtc": "2026-10-08T17:14:03.293Z",
   "repository": "https://github.com/cnedwin/Egret_rebuild",
   "knowledgeBaseVersion": "0.12.0",
   "status": "verified_local_development_preview",
@@ -1639,8 +1639,8 @@
     },
     {
       "path": "knowledge-base/evidence/display-frame-review.json",
-      "sha256": "34510779967b22c92e1930aeaad87a81c02e2c9a94715c86c018138c5770feec",
-      "bytes": 17088,
+      "sha256": "988685fdf9eb4f942acb44b1205e166ac2643d75706d3617c436b7b668cd79d6",
+      "bytes": 19645,
       "gitMode": "100644"
     },
     {
@@ -3769,14 +3769,14 @@
     },
     {
       "path": "knowledge-base/核验记录.json",
-      "sha256": "fb7dd6354c4df839bffd444f03f66b7e7b93a798a72ed8bbfb86b7c0e27fbaee",
+      "sha256": "4952a4b00a9097a60f1ede3379ffb059f755fae1c6211aa91f006c581de59003",
       "bytes": 102510,
       "gitMode": "100644"
     },
     {
       "path": "localization.json",
-      "sha256": "e46f78d5c23066fe326d400ee79a0d4899d8a45bea6434326dc5d76bd671dc59",
-      "bytes": 38852,
+      "sha256": "2a56ca1c8cef6ec2cb44ab6199c6215ff01ddda3ac89a3bab24779ef1ff1e1db",
+      "bytes": 38947,
       "gitMode": "100644"
     },
     {
@@ -4081,8 +4081,8 @@
     },
     {
       "path": "source-origin.json",
-      "sha256": "9c2ff02a9809fb71fc832eb5a1da5c26db5afce2219ccac63dcf22e34ad3708c",
-      "bytes": 64016,
+      "sha256": "19df20f3f3c4ec50c59f0b0858188f4f94d9a17bbe81b1a46a155efc6e8c8eb9",
+      "bytes": 64485,
       "gitMode": "100644"
     },
     {
@@ -4327,8 +4327,8 @@
     },
     {
       "path": "verification/display-frame-review.json",
-      "sha256": "21bc582dc40cc687c8517049d3322cdd609d34860c01a782f5ae802004a22601",
-      "bytes": 16960,
+      "sha256": "1478997988fd5f608032d42619ec690bf9680332516f4a1630ebe39ca0e60ba2",
+      "bytes": 19517,
       "gitMode": "100644"
     },
     {

@@ -185,7 +185,7 @@
   ],
   "publicationReview": {
     "status": "author_self_review_with_scope",
-    "scope": "Author public/translation self-review plus independent changed semantic scope review at the exact recorded prior commit; current link-order correction and review-record curation are author-reviewed, with scoped metadata re-review pending. Unchanged historical reading bodies are not freshly translated.",
+    "scope": "Author public/translation self-review plus independent changed semantic scope review at 7608bdf and completed narrow metadata correction re-review at 3f40d106dda454d8805aacc78cb27b7980a360d1. Untouched historical pairs are not freshly translated; this later faithful verdict attestation records the result without claiming review of future substantive changes.",
     "reviewedDocumentHashes": [
       {
         "path": "AGENTS.en.md",
@@ -372,7 +372,7 @@
         "sha256": "5ff29a37678e52fb6deba246b732a01c0edc217959486a5df72a61e4db1aa32b"
       }
     ],
-    "note": "Original implementation heads and prior review history remain exact. Final branch review binds its recorded commit/tree; subsequent metadata is not retroactively independently reviewed."
+    "note": "Original implementation heads/history and whole-branch reviewed commit/tree remain exact. Narrow correction PASS binds its exact later head/tree; source-gate reuse is distinct from new execution. Remote checks remain pending."
   },
   "limitations": "No GPU, Native, physical phone, device/performance benchmark, full UI/textures/animation/3D, complete migration, CI or full-product acceptance. Browser results are desktop observations, not universal allocation limits.",
   "projection": {
@@ -401,13 +401,69 @@
       "description": "Canvas example linked English then Chinese contrary to Chinese/English column headings.",
       "status": "corrected_by_link_order_swap",
       "correctionScope": "Documentation metadata only; both existing reading versions and link targets remain.",
-      "scopedMetadataRereview": "pending"
+      "scopedMetadataRereview": "PASS at 3f40d106dda454d8805aacc78cb27b7980a360d1; P3 resolved"
     },
-    "limits": "No test/build/browser repeat or fresh translation of all 90 untouched pairs; no main/production/full-product/GPU/Native/device/performance/UI/3D/migration/CI approval. Root-owned scoped metadata re-review and remote verification remain subsequent.",
+    "limits": "No test/build/browser repeat or fresh translation of all 90 historical pairs; no main/production/full-product/GPU/Native/device/performance/UI/3D/migration/CI approval. Narrow correction re-review completed at the metadataRereview head/tree; remote verification remains subsequent.",
     "privateRawReview": {
       "identity": "final-review.md",
       "sha256": "3f10466708860469925274dfa5ab98a8aace436a226b170fe7403225891a56bb",
       "status": "identity_only_not_distributed"
     }
+  },
+  "metadataRereview": {
+    "date": "2026-10-09",
+    "verdict": "PASS",
+    "readiness": "Ready for bounded draft submission remains valid",
+    "reviewedCommit": "3f40d106dda454d8805aacc78cb27b7980a360d1",
+    "reviewedTree": "bea7f32c80a70f7c5822f156f99a574230299438",
+    "scope": "Independent limited re-review of the 11 metadata correction paths, not another whole-branch/code review.",
+    "severityCounts": {
+      "P0": 0,
+      "P1": 0,
+      "P2": 0,
+      "P3": 0,
+      "blockers": 0
+    },
+    "previousP3": "resolved",
+    "checks": {
+      "unchangedReviewedPaths": 728,
+      "unchangedPackageSources": 34,
+      "currentValidationHashesIndependentlyChecked": 590,
+      "currentValidationHashMismatches": 0,
+      "reviewEvidenceProjectionExactMatch": true,
+      "privateFinalReviewReceiptHashMatches": true,
+      "changedLocalizationDocumentHashesMatch": true,
+      "sourceRegistryCanonicalHashMatches": true,
+      "savedPublicationTestsRead": {
+        "tests": 12,
+        "pass": 12
+      },
+      "savedStructuralLogRead": {
+        "pairs": 90,
+        "registryViews": 6,
+        "criticalSources": 30,
+        "issues": 0
+      },
+      "savedKBLogRead": {
+        "records": 109,
+        "markdown": 158,
+        "links": 1433,
+        "references": 704,
+        "issues": 0
+      },
+      "fourMetadataLogHashesIndependentlyMatched": true,
+      "gitCandidateReceiptInspected": {
+        "files": 739,
+        "hashesSizesModesMatch": true
+      }
+    },
+    "execution": "No tests, full core gates, browser or validator rerun by the independent re-reviewer; read-only hashes/projection/Git-state checks and saved-log inspection only.",
+    "privateReport": {
+      "identity": "final-metadata-review.md",
+      "sha256": "cdeb98e1642afc2ee3b35f97923706fe0794eef1d9f652f0dd079225d665cd84",
+      "status": "identity_only_not_distributed"
+    },
+    "attestation": "This author-recorded faithful verdict attestation is subsequent to the exact reviewed commit. The reviewer permits recording the completed result without recursive review; this is not independent approval of future substantive changes.",
+    "limitations": "Earlier bounded desktop Canvas/allocation and unaccepted GPU/Native/phone/performance/full UI/3D/migration/CI/full-product scopes remain. Remote upload/audit and canonical KB synchronization remain subsequent."
   }
 }

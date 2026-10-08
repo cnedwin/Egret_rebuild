@@ -5,7 +5,7 @@
   "evidencePolicy": "Machine data, embedded source, historical code and upstream legal originals retain their identities; paired reading versions explain them.",
   "semanticReview": {
     "status": "reviewed_with_scope",
-    "method": "Author public-content and translation self-review plus independent review of changed bilingual semantic scope at commit 7608bdfef3d89a0a66c3304c766ea4b9d669b521; untouched historical pairs retain prior review, without fresh translation. Subsequent link-order/review metadata correction is author-reviewed; its scoped independent re-review remains pending.",
+    "method": "Author public-content and translation self-review plus independent review of changed bilingual semantics at 7608bdfef3d89a0a66c3304c766ea4b9d669b521 and completed limited metadata re-review at 3f40d106dda454d8805aacc78cb27b7980a360d1. Untouched historical pairs retain prior review without fresh translation. This subsequent author attestation faithfully records the completed PASS and does not claim independent review of future substantive changes.",
     "scope": "Public engineering wording, complete language coverage and preservation of technical evidence bounds. Structural gates alone cannot certify meaning, authorship, licensing or publication authorization.",
     "report": "verification/display-frame-review.json"
   },

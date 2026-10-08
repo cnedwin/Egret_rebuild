@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "knowledgeBaseVersion": "0.12.0",
-  "checkedAtUtc": "2026-10-08T16:59:59.6993704Z",
+  "checkedAtUtc": "2026-10-08T17:13:09.3008428Z",
   "status": "passed",
   "scope": "documentation_structure_only",
   "registryCounts": {
@@ -967,7 +967,7 @@
     },
     {
       "path": "evidence/display-frame-review.json",
-      "sha256": "34510779967B22C92E1930AEAAD87A81C02E2C9A94715C86C018138C5770FEEC"
+      "sha256": "988685FDF9EB4F942ACB44B1205E166AC2643D75706D3617C436B7B668CD79D6"
     },
     {
       "path": "evidence/display-frame-verification.json",

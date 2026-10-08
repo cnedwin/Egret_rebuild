@@ -385,8 +385,8 @@
     {
       "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
       "path": "localization.json",
-      "sha256": "e46f78d5c23066fe326d400ee79a0d4899d8a45bea6434326dc5d76bd671dc59",
-      "bytes": 38852,
+      "sha256": "2a56ca1c8cef6ec2cb44ab6199c6215ff01ddda3ac89a3bab24779ef1ff1e1db",
+      "bytes": 38947,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50"
     },
     {
@@ -1130,7 +1130,7 @@
       "preservedInputs": "verification/history/comment-source-binding-0.10.0.json",
       "scope": "Original 0.10 proof retains original hash and 19-source identity; current critical sources are bound by localization.json."
     },
-    "independentProcess": "Prior scoped implementation reviews plus final whole-branch review of exact commit 7608bdfef3d89a0a66c3304c766ea4b9d669b521 and changed bilingual semantics. Author public/translation self-review is separate; narrow followup metadata re-review and remote verification remain pending.",
+    "independentProcess": "Scoped implementation reviews, whole-branch source/changed-semantics review at 7608bdfef3d89a0a66c3304c766ea4b9d669b521, and completed limited 11-path metadata re-review PASS at 3f40d106dda454d8805aacc78cb27b7980a360d1. Author public/translation self-review is separate. This faithful result attestation does not claim review of future substantive changes; remote verification remains subsequent.",
     "remoteSubmission": "not_performed_this_revision",
     "limitations": "No GPU, Native, physical phone, device/performance benchmark, full UI/textures/animation/3D, complete migration, CI or full-product acceptance. Browser results are desktop observations, not universal allocation limits.",
     "currentPublication": {
@@ -1146,7 +1146,15 @@
       "reviewedCommit": "7608bdfef3d89a0a66c3304c766ea4b9d669b521",
       "reviewedTree": "78b9f721f0011696225dbfe0b5561280f08410ed",
       "verdict": "READY FOR BOUNDED DRAFT SUBMISSION",
-      "metadataCorrectionRereview": "pending"
+      "metadataCorrectionRereview": "PASS at 3f40d106dda454d8805aacc78cb27b7980a360d1"
+    },
+    "metadataRereview": {
+      "report": "verification/display-frame-review.json",
+      "reviewedCommit": "3f40d106dda454d8805aacc78cb27b7980a360d1",
+      "reviewedTree": "bea7f32c80a70f7c5822f156f99a574230299438",
+      "verdict": "PASS",
+      "p3Resolved": true,
+      "faithfulAttestationOnly": true
     }
   }
 }
