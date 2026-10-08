@@ -2,9 +2,16 @@
 
 English | [简体中文](README.md)
 
+
+## 0.12.0 display and frame candidate scope
+
+The successor work package is defined by the [display and frame contract](docs/显示与帧执行合同.en.md) and [implementation plan](docs/显示与帧执行实现计划.en.md): display transforms, inherited visibility/alpha and local rectangle clipping, Sprite-owned Graphics rectangle fills, and immutable CPU frame capture/submission. The implemented first execution adapter is Canvas through the separate @egret/engine/web entry; the core root retains its DOM-free boundary. Bounded implementation checks passed: 97/97 core behavior tests, 25 negative type diagnostics and real desktop Canvas pixels/pointer interaction. Scoped independent review passed after the recorded cross-realm rejection correction. Remote publication is tracked separately. Final scoped results belong in the [implementation record](docs/显示与帧执行实现记录.en.md) and [verification](evidence/display-frame-verification.json).
+
+This work package does not establish complete text/texture/animation/UI/3D execution, GPU or Native support, target-device performance, editors, Agent services, or complete migration. Earlier headless, CPU asset and third-party research records retain their original versions, counts, hashes and scope; their results are not new display-frame acceptance.
+
 Egret Rebuild serves new creators who primarily use AI to make games. Its first phase covers both 2D games with complex UI and lightweight 3D games. The rendering engine and runtime are central. One-click import of legacy Egret projects, automatic Agent conversion, minimal manual intervention, and perfect execution after migration are formal delivery requirements.
 
-Version: 0.11.0 · Updated: October 8, 2026 · Stage: public collaboration and development-preview preparation. The technical white paper, PRD, and engineering plan are each candidate version 0.7.
+Version: 0.12.0 candidate · Updated: October 9, 2026 · Stage: public collaboration and development-preview preparation. The technical white paper, PRD, and engineering plan are each candidate version 0.7.
 
 Egret uses public collaboration from early development. This directory provides continuously maintained design, source, decision, and verification records. Independent contract models and local browser graphics research programs have already run. The complete engine, workbench, production hosts, performance, and migration have not passed acceptance. V002 contains a partial independently developed headless core; V003–V006 product implementation has not started. Local research results do not establish product usability or a performance lead. The local public repository candidate contains core source and the knowledge base. Its project repository is [cnedwin/Egret_rebuild](https://github.com/cnedwin/Egret_rebuild), continuing the existing Apache-2.0 configuration. Consult release records for this candidate's submission and review status; maintenance responsibilities are being clarified. Historical materials are retained according to their respective permissions; public copies retain versions and source identity. Following R012, the third round used Three r186 as an explicit third-party research dependency, loaded a real glTF skinned cylinder, and integrated Canvas text UI. Current main checks pass 17/17. Research code exists; full-product implementation and acceptance statuses remain separate, and existing experimental coverage does not expand.
 
@@ -58,3 +65,5 @@ Following R016, this round redefined candidate engineering structure, public API
 Private original project packages, internal source evidence, and original plan snapshots are stored outside this directory and excluded from the current public copy. Contributors do not need access to private source to participate in the currently listed documentation, architecture, and experiment proposals.
 
 Before every push, follow the [bilingual documentation and pre-push checks](docs/双语文档与推送前检查.en.md), synchronize Chinese and English reading versions and shared registered statuses, and add English comments to critical code.
+
+V011 is the current display/frame and desktop Canvas rectangle slice; V002 full acceptance, V003–V006 and R008/V006 remain unaccepted. See the [implementation record](docs/显示与帧执行实现记录.en.md).

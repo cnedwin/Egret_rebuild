@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "version": "0.11.0",
-  "updatedAt": "2026-10-08",
+  "version": "0.12.0",
+  "updatedAt": "2026-10-09",
   "title": "白鹭引擎重构工程",
-  "stage": "independent_cpu_asset_core",
+  "stage": "independent_rectangle_display_frame_canvas_prototype",
   "publication": "development_preview",
   "registries": {
     "requirements": "registry/需求.json",
@@ -25,7 +25,7 @@
     "acceptance": "reproducible_test_reports",
     "summaryStatus": "deliverable_registry"
   },
-  "engineImplementation": "partial_independent_headless_core",
+  "engineImplementation": "partial_independent_display_frame_canvas_core",
   "engineBenchmarksRun": false,
   "creatorTaskTestsRun": false,
   "migrationAcceptanceRun": false,
@@ -60,7 +60,10 @@
     "publicCollaboration": "docs/开源协作与公开表达规范.md",
     "bilingualPublication": "docs/双语文档与推送前检查.md",
     "cpuAssetContract": "docs/资源核心合同.md",
-    "cpuAssetImplementation": "docs/资源核心实现记录.md"
+    "cpuAssetImplementation": "docs/资源核心实现记录.md",
+    "displayFrameContract": "docs/显示与帧执行合同.md",
+    "displayFramePlan": "docs/显示与帧执行实现计划.md",
+    "displayFrameRecord": "docs/显示与帧执行实现记录.md"
   },
   "architectureContractProbesRun": true,
   "browserApiPixelProbesRun": true,
@@ -172,6 +175,10 @@
     {
       "knowledgeBaseVersion": "0.10.0",
       "scope": "The earlier bilingual publication verification, comment restoration identities, and export manifest bind the preserved 0.10.0 bytes. Resource-core code and verification have separate current identities."
+    },
+    {
+      "knowledgeBaseVersion": "0.11.0",
+      "scope": "Resource-core evidence and sealed export identities remain historical; 0.12 display/frame evidence binds current sources separately."
     }
   ],
   "selectionResearchOnlyThisRevision": false,
@@ -192,7 +199,7 @@
   },
   "engineeringSpecificationOnlyThisRevision": false,
   "userDesignObjectiveConfirmedThisRevision": true,
-  "newExperimentScopeThisRevision": "Independent CPU asset acquisition/lease implementation tests; full renderer, host, performance and migration acceptance remain unrun.",
+  "newExperimentScopeThisRevision": "Independent display/frame CPU tests and desktop Canvas pixel/pointer acceptance; no GPU/Native/device/performance/full UI/migration/CI acceptance.",
   "existingResearchExperimentsRerunThisRevision": false,
   "coreFrameworkImplementation": {
     "artifactRoot": "outputs/白鹭引擎核心框架原型",
@@ -207,7 +214,7 @@
   },
   "publicDevelopmentFromInception": true,
   "documentationLicense": "Apache-2.0",
-  "publicRepositoryCandidate": "outputs/白鹭引擎核心资源工程",
+  "publicRepositoryCandidate": "outputs/白鹭引擎核心渲染工程",
   "publicationPolicy": "docs/开源协作与公开表达规范.md",
   "acknowledgements": "ACKNOWLEDGEMENTS.md",
   "contributorInstructions": "AGENTS.md",
@@ -224,5 +231,20 @@
     "review": "evidence/asset-core-review.json",
     "physicalProviderShutdownProven": false,
     "gpuUploadImplemented": false
+  },
+  "renderingImplementation": {
+    "deliverable": "V011",
+    "state": "bounded_rectangle_cpu_canvas_verified",
+    "supportLevel": "experimental",
+    "verification": "evidence/display-frame-verification.json",
+    "review": "evidence/display-frame-review.json",
+    "cpuTestsRun": true,
+    "desktopCanvasPixelsRun": true,
+    "fullUIAcceptanceRun": false,
+    "gpuAcceptanceRun": false,
+    "nativeAcceptanceRun": false,
+    "devicePerformanceRun": false,
+    "fullMigrationAcceptanceRun": false,
+    "ciRun": false
   }
 }

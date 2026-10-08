@@ -1,0 +1,103 @@
+{
+  "version": "0.10.0",
+  "proof": "verification/english-comment-provenance.json",
+  "proofSha256": "ffec1f123f588e5765cdb54991f4a082cd225e0764738880402b61378134b855",
+  "scope": "Exact first-party commented source inputs for the original restoration proof; never current 0.12 source identity.",
+  "sources": [
+    {
+      "originalPath": "packages/contracts/src/Disposable.ts",
+      "snapshotPath": "verification/history/comment-source-0.10.0/packages/contracts/src/Disposable.ts",
+      "sha256": "76d74cd41b6e136ea840c7d8d05273520ce7d41031a7820dd4ddabc73be947db"
+    },
+    {
+      "originalPath": "packages/contracts/src/CancellationSignal.ts",
+      "snapshotPath": "verification/history/comment-source-0.10.0/packages/contracts/src/CancellationSignal.ts",
+      "sha256": "6a9e5f07b549ec50c2a5c50915309e8de6fba2d943f59a0d7b54b079e14584b3"
+    },
+    {
+      "originalPath": "packages/contracts/src/HostAdapter.ts",
+      "snapshotPath": "verification/history/comment-source-0.10.0/packages/contracts/src/HostAdapter.ts",
+      "sha256": "3c8289a85e04e34be3782156244cc253792eff1b41629758d54cd1692c64c2ae"
+    },
+    {
+      "originalPath": "packages/contracts/src/Diagnostic.ts",
+      "snapshotPath": "verification/history/comment-source-0.10.0/packages/contracts/src/Diagnostic.ts",
+      "sha256": "bb788eed680e77497845d9ca95621683c616c773c13a61b42bcabad608c10461"
+    },
+    {
+      "originalPath": "packages/runtime/src/CancellationController.ts",
+      "snapshotPath": "verification/history/comment-source-0.10.0/packages/runtime/src/CancellationController.ts",
+      "sha256": "3cfdb217804b282c4a422420ce5efa63ced25a6bb215bff254e7f947c4942e28"
+    },
+    {
+      "originalPath": "packages/runtime/src/Scope.ts",
+      "snapshotPath": "verification/history/comment-source-0.10.0/packages/runtime/src/Scope.ts",
+      "sha256": "29e9d5da9232ed8347b2a829e069d33daabb1bad296798492a45c7950f43e8ea"
+    },
+    {
+      "originalPath": "packages/runtime/src/DisplayObject.ts",
+      "snapshotPath": "verification/history/comment-source-0.10.0/packages/runtime/src/DisplayObject.ts",
+      "sha256": "d64dde4b35ca2cf929ae14a2f99b59f7e0efbb02cb5a363ff0ff6975b5aadebd"
+    },
+    {
+      "originalPath": "packages/runtime/src/DisplayObjectContainer.ts",
+      "snapshotPath": "verification/history/comment-source-0.10.0/packages/runtime/src/DisplayObjectContainer.ts",
+      "sha256": "f0cdb820b26b06d304fd925e81367776a8f2c4824670be44da47d97953aa173e"
+    },
+    {
+      "originalPath": "packages/runtime/src/displayTreeState.ts",
+      "snapshotPath": "verification/history/comment-source-0.10.0/packages/runtime/src/displayTreeState.ts",
+      "sha256": "8aaf5f5dfc8d62f3b1bc4effe819e7718e3ed72fcf0a8fc25e3b08410f980e50"
+    },
+    {
+      "originalPath": "packages/runtime/src/ownership.ts",
+      "snapshotPath": "verification/history/comment-source-0.10.0/packages/runtime/src/ownership.ts",
+      "sha256": "8c8c40e465002882dac1bf054fa49248c99df62da337cf75f50168f0a6748c62"
+    },
+    {
+      "originalPath": "packages/runtime/src/Event.ts",
+      "snapshotPath": "verification/history/comment-source-0.10.0/packages/runtime/src/Event.ts",
+      "sha256": "de5671dcddbde4637c22b5ea2bff9ebb520c7aed503608e670d0efc08cf9539c"
+    },
+    {
+      "originalPath": "packages/runtime/src/EventDispatcher.ts",
+      "snapshotPath": "verification/history/comment-source-0.10.0/packages/runtime/src/EventDispatcher.ts",
+      "sha256": "141051a7aede922c0d8d73aa2b509c75cbe209118ba0bb48b3869765b9c5a82d"
+    },
+    {
+      "originalPath": "packages/runtime/src/Stage.ts",
+      "snapshotPath": "verification/history/comment-source-0.10.0/packages/runtime/src/Stage.ts",
+      "sha256": "08eb1599d9c75c70add22558f28e214ec31fe4305ccdf2638a8f7d35ec61bb0f"
+    },
+    {
+      "originalPath": "packages/runtime/src/EgretError.ts",
+      "snapshotPath": "verification/history/comment-source-0.10.0/packages/runtime/src/EgretError.ts",
+      "sha256": "f647ab0f675a5e0d460f1e7b04bce603d06998096f460371035f23826eed7f08"
+    },
+    {
+      "originalPath": "packages/runtime/src/diagnostics.ts",
+      "snapshotPath": "verification/history/comment-source-0.10.0/packages/runtime/src/diagnostics.ts",
+      "sha256": "c330f5d9083d84ee5b23b947d0d8534e7050a92f8b76a7e5259a1bad92395294"
+    },
+    {
+      "originalPath": "packages/engine/src/Engine.ts",
+      "snapshotPath": "verification/history/comment-source-0.10.0/packages/engine/src/Engine.ts",
+      "sha256": "471f78e5f01bfdbb0492d6be3f1f3c5ed9daa7cc8e20068c47fef49e21acac56"
+    },
+    {
+      "originalPath": "packages/engine/src/createEngine.ts",
+      "snapshotPath": "verification/history/comment-source-0.10.0/packages/engine/src/createEngine.ts",
+      "sha256": "f0ae30646b03bdd9539e54223a98519e8afed8bee696dc378586c8128924e9d1"
+    },
+    {
+      "originalPath": "packages/engine/src/surfaceOwnership.ts",
+      "snapshotPath": "verification/history/comment-source-0.10.0/packages/engine/src/surfaceOwnership.ts",
+      "sha256": "604df51eb03f8dbb7965100e06667c09bb311f0e26e0ee752b2404c899e5a320"
+    },
+    {
+      "originalPath": "packages/engine/src/closeHost.ts",
+      "snapshotPath": "verification/history/comment-source-0.10.0/packages/engine/src/closeHost.ts",
+      "sha256": "9fac806cc0d19265ec6956cc19305a9ff2ae03ff0e49700d64c39be88ba3244f"
+    }
+  ]
+}

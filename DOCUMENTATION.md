@@ -2,6 +2,13 @@
 
 [English](DOCUMENTATION.en.md) | 简体中文
 
+
+## 0.12.0 显示与帧候选范围
+
+后续工作包按[显示与帧合同](knowledge-base/docs/显示与帧执行合同.md)及[实现计划](knowledge-base/docs/显示与帧执行实现计划.md)推进：显示变换、继承可见性/透明度与本地矩形裁剪、Sprite 所属 Graphics 的矩形填充，以及不可变 CPU 帧捕获/提交。首个已实现执行适配器为独立 @egret/engine/web 入口的 Canvas，核心根入口保留无 DOM 边界。限定实现检查已通过：97/97核心行为测试、25项负类型诊断及真实桌面Canvas像素/指针交互。跨realm拒绝修正后有限独立审阅通过；远端发布另行记录。最终限定结果由[实现记录](knowledge-base/docs/显示与帧执行实现记录.md)和[验证](verification/display-frame-verification.json)承载。
+
+本包不验收完整文本/纹理/动画/UI/3D 执行、GPU 或 Native 支持、目标设备性能、编辑器、Agent 服务或完整迁移。此前 headless、CPU 资源与第三方研究记录保留原版本、数量、hash 和范围，不转为新显示帧验收。
+
 本索引列出全部公开阅读文档的中文和英文版本。技术方案的候选状态、来源、失败记录及验收范围在两个版本中一致。中文登记册是共同状态的权威来源，英文JSON是带原文摘要的只读翻译视图。
 
 原始测试记录、源代码快照、图片与hash是共享证据，保留其原始身份；不另造改变含义的数据版本。上游资产的英文许可保持原文，中文译文明确标注为非约束性说明。第一方代码与文档采用仓库既有Apache-2.0，第三方适用各自声明。
@@ -99,6 +106,12 @@
 | [资源核心合同](knowledge-base/docs/资源核心合同.md) | [English](knowledge-base/docs/资源核心合同.en.md) |
 
 | [资源核心实现记录](knowledge-base/docs/资源核心实现记录.md) | [English](knowledge-base/docs/资源核心实现记录.en.md) |
+
+| [显示与帧执行合同](knowledge-base/docs/显示与帧执行合同.md) | [English](knowledge-base/docs/显示与帧执行合同.en.md) |
+| [显示与帧执行实现计划](knowledge-base/docs/显示与帧执行实现计划.md) | [English](knowledge-base/docs/显示与帧执行实现计划.en.md) |
+| [显示与帧执行实现记录](knowledge-base/docs/显示与帧执行实现记录.md) | [English](knowledge-base/docs/显示与帧执行实现记录.en.md) |
+
+| [Canvas矩形示例](examples/canvas-scene/README.md) | [English](examples/canvas-scene/README.en.md) |
 
 ## 共同登记状态
 

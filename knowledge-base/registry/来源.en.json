@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-08",
+  "updatedAt": "2026-10-09",
   "authority": "Source grouping and applicable boundaries; researchCheckedAt is the project's research-check date, not a unified publication date",
   "items": [
     {
@@ -960,11 +960,35 @@
         "evidence/asset-core-review.json"
       ],
       "doc": "docs/资源核心实现记录.md"
+    },
+    {
+      "id": "S054",
+      "title": "Display/frame specification and execution evidence",
+      "type": "first_party_specification_and_execution",
+      "scope": "Independent rectangle CPU display/frame and desktop Canvas pixel/pointer checks.",
+      "limit": "No GPU, Native, physical phone, device/performance benchmark, full UI/textures/animation/3D, complete migration, CI or full-product acceptance. Browser results are desktop observations, not universal allocation limits.",
+      "researchCheckedAt": "2026-10-09",
+      "artifacts": [
+        "evidence/display-frame-verification.json"
+      ],
+      "doc": "docs/显示与帧执行合同.md"
+    },
+    {
+      "id": "S055",
+      "title": "Scoped display/frame and Canvas independent review",
+      "type": "independent_ai_code_and_contract_review",
+      "scope": "Independent implementation review with cross-realm correction; author publication self-review separately identified.",
+      "limit": "No GPU, Native, physical phone, device/performance benchmark, full UI/textures/animation/3D, complete migration, CI or full-product acceptance. Browser results are desktop observations, not universal allocation limits.",
+      "researchCheckedAt": "2026-10-09",
+      "artifacts": [
+        "evidence/display-frame-review.json"
+      ],
+      "doc": "docs/显示与帧执行实现记录.md"
     }
   ],
   "_localization": {
     "canonicalSource": "来源.json",
-    "canonicalSha256": "6a1ab3c56d0a46f5555400c2d4e7deae6a329a5a6f2cf9c8378c32b11c3d85fb",
+    "canonicalSha256": "91e485e480e664e3d400059025f505ed318ab53ecf95b2e9a8bec6e0882ab15f",
     "role": "read_only_translation",
     "language": "en"
   }

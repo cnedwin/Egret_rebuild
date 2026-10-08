@@ -2,6 +2,15 @@
 
 English | [简体中文](CHANGELOG.md)
 
+
+## 0.12.0 display and frame candidate scope
+
+The successor work package is defined by the [display and frame contract](docs/显示与帧执行合同.en.md) and [implementation plan](docs/显示与帧执行实现计划.en.md): display transforms, inherited visibility/alpha and local rectangle clipping, Sprite-owned Graphics rectangle fills, and immutable CPU frame capture/submission. The implemented first execution adapter is Canvas through the separate @egret/engine/web entry; the core root retains its DOM-free boundary. Bounded implementation checks passed: 97/97 core behavior tests, 25 negative type diagnostics and real desktop Canvas pixels/pointer interaction. Scoped independent review passed after the recorded cross-realm rejection correction. Remote publication is tracked separately. Final scoped results belong in the [implementation record](docs/显示与帧执行实现记录.en.md) and [verification](evidence/display-frame-verification.json).
+
+0.12.0 (2026-10-09) adds the display/frame contract, plan, implementation record and V011/S054/S055; bounded rectangle CPU snapshots and Canvas execution passed. Current evidence binds source identities; publication and archives are recorded separately. Earlier 0.11.0 entries retain historical identities.
+
+This work package does not establish complete text/texture/animation/UI/3D execution, GPU or Native support, target-device performance, editors, Agent services, or complete migration. Earlier headless, CPU asset and third-party research records retain their original versions, counts, hashes and scope; their results are not new display-frame acceptance.
+
 ## 0.11.0 October 8, 2026
 
 Added the independent [CPU asset core](docs/资源核心实现记录.en.md) under V010, based on a separate [asset contract](docs/资源核心合同.en.md). Typed references, shared acquisition, pending-only cancellation, independent leases, generation isolation, and Scope/Engine closure are implemented. Final core verification passes 73 behavioral checks, 19 negative type assertions, and package boundaries; both examples pass.

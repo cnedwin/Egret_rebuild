@@ -82,7 +82,7 @@ export async function checkPublication(inputRoot){
   if(body!==undefined&&!comments.some(s=>!han.test(s)&&(s.match(/\b[A-Za-z]{3,}\b/g)??[]).length>=3))issues.push(`missing English comment: ${item.path}`);
  }
  const critical=new Set((inventory.criticalComments??[]).map(x=>x.path));
- for(const f of files.filter(x=>/^packages\/[^/]+\/src\/.*\.ts$/.test(x)&&!x.endsWith('/index.ts'))){
+ for(const f of files.filter(x=>(/^packages\/[^/]+\/src\/.*\.ts$/.test(x)||/^packages\/engine\/web\/.*\.ts$/.test(x))&&!x.endsWith('/index.ts'))){
   if(!critical.has(f))issues.push(`unlisted critical source: ${f}`);
  }
  return {documents:inventory.documents?.length??0,registryViews:inventory.registries?.length??0,criticalSourceFiles:inventory.criticalComments?.length??0,issues};

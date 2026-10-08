@@ -2,6 +2,15 @@
 
 English | [简体中文](公共API设计与命名规范.md)
 
+
+## 0.12.0 display and frame candidate scope
+
+The successor work package is defined by the [display and frame contract](显示与帧执行合同.en.md) and [implementation plan](显示与帧执行实现计划.en.md): display transforms, inherited visibility/alpha and local rectangle clipping, Sprite-owned Graphics rectangle fills, and immutable CPU frame capture/submission. The implemented first execution adapter is Canvas through the separate @egret/engine/web entry; the core root retains its DOM-free boundary. Bounded implementation checks passed: 97/97 core behavior tests, 25 negative type diagnostics and real desktop Canvas pixels/pointer interaction. Scoped independent review passed after the recorded cross-realm rejection correction. Remote publication is tracked separately. Final scoped results belong in the [implementation record](显示与帧执行实现记录.en.md) and [verification](../evidence/display-frame-verification.json).
+
+The display contract owns concrete interfaces and error codes. x/y, scaleX/scaleY, rotation, alpha, visible, clipRect and the Graphics rectangle subset do not establish compatibility with legacy scrollRect, Texture, TextField, TouchEvent or the complete display API. frameId numbers successful captures within one engine; it is not a persistent project ID or asset generation.
+
+This work package does not establish complete text/texture/animation/UI/3D execution, GPU or Native support, target-device performance, editors, Agent services, or complete migration. Earlier headless, CPU asset and third-party research records retain their original versions, counts, hashes and scope; their results are not new display-frame acceptance.
+
 Version: 0.1 candidate specification · Knowledge base 0.9.0 · Updated: October 8, 2026.
 
 This specification preserves Egret's display-list, stage, event, and animation language in new projects while adopting modularity, explicit instances, and verifiable lifecycles. R016 confirms the objective of redefining complete architecture and standards; D016 carries the candidate design. Package names, methods, and complete examples have not had a stable release or complete acceptance. The [first core-slice record](核心框架实现记录.en.md) lists the compiled and verified subset. See [engineering technical architecture](工程技术架构与项目结构.en.md) for engineering boundaries and [code standards](代码规范与质量门禁.en.md) for implementation requirements.

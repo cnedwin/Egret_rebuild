@@ -124,6 +124,7 @@ test('foreign native and thenable backend rejections are observed without async 
     const diagnostics = [];
     let closing;
     let stopped = false;
+    let beforeCleanup;
     let thenableObserved = false;
     let calls = 0;
     const adapter = host({
@@ -131,7 +132,7 @@ test('foreign native and thenable backend rejections are observed without async 
         calls++;
         if (calls === 1) {
           closing = engine.dispose();
-          if (stopped || engine.stage.isDisposed) throw Error('premature cleanup');
+          beforeCleanup = {stopped, disposed:engine.stage.isDisposed};
           return vm.runInNewContext('Promise.reject(new Error("foreign rejection"))');
         }
         return { then(resolve, reject) { reject(Error('thenable rejection')); } };
@@ -150,13 +151,13 @@ test('foreign native and thenable backend rejections are observed without async 
     const nextId = other.captureFrame({width:1,height:1}).frameId;
     await new Promise(resolve => setImmediate(resolve));
     await other.dispose();
-    console.log(JSON.stringify({code,thenableCode,nextId,stopped,thenableObserved,diagnostic:diagnostics[0].code,phase:diagnostics[0].phase,unhandled}));
+    console.log(JSON.stringify({code,thenableCode,nextId,stopped,beforeCleanup,thenableObserved,diagnostic:diagnostics[0].code,phase:diagnostics[0].phase,unhandled}));
   `;
   const result = spawnSync(process.execPath, ['--input-type=module', '--eval', source], {encoding:'utf8'});
   assert.equal(result.status, 0, result.stderr);
   assert.deepEqual(JSON.parse(result.stdout), {
     code:'FRAME_RENDER_FAILED', thenableCode:'FRAME_RENDER_FAILED', nextId:2,
-    stopped:true, thenableObserved:true, diagnostic:'FRAME_RENDER_FAILED', phase:'graphics', unhandled:[]
+    stopped:true, beforeCleanup:{stopped:false,disposed:false}, thenableObserved:true, diagnostic:'FRAME_RENDER_FAILED', phase:'graphics', unhandled:[]
   });
 });
 

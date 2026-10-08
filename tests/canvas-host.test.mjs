@@ -68,7 +68,7 @@ test('stable copy survives mutation of previously read fields',async()=>{
   const f=fixture(),host=createCanvasHost({canvas:f.canvas});host.start();
   const v=structuredClone(frame());Object.defineProperty(v.commands[0],'clips',{get(){v.commands[0].matrix.tx=999;v.commands[0].rect.width=999;return [];}});
   host.renderFrame(v);
-  assert.deepEqual(f.calls.find(c=>c[0]==='setTransform' && c[1]===1 && c[5]===0),['setTransform',1,0,0,1,0,0]);
+  assert.deepEqual(f.calls.filter(c=>c[0]==='setTransform').at(-1),['setTransform',1,0,0,1,0,0]);
   assert.deepEqual(f.calls.filter(c=>c[0]==='fillRect').at(-1),['fillRect',0,0,10,10]);await host.close();
 });
 test('one supplied canvas excludes two engines and engine retains host error cause',async()=>{

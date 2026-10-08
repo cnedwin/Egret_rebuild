@@ -1,14 +1,14 @@
 {
-  "schemaVersion": "1.3-independent-cpu-assets",
-  "date": "2026-10-08",
+  "schemaVersion": "1.4-independent-display-frame-canvas",
+  "date": "2026-10-09",
   "artifact": "egret-rebuild-local-preview",
   "version": "0.0.0",
   "supportLevel": "experimental",
-  "scope": "DOM-free cancellation, Scope, display tree, typed synchronous events, headless Engine lifecycle and CPU asset acquisition/leases",
+  "scope": "DOM-free lifecycle/CPU assets plus bounded rectangle display/frame capture and separate desktop Canvas web execution",
   "publication": {
     "state": "development preview; local candidate export snapshot on 2026-10-08",
     "snapshotDate": "2026-10-08",
-    "statusScope": "The export-action flags below describe packaging at this historical snapshot, not subsequent repository/PR state.",
+    "statusScope": "Historical first-export snapshot: fields in this publication object retain their original 2026-10-08 action scope; current local candidate is separately recorded in renderingRevision.",
     "targetRemote": "https://github.com/cnedwin/Egret_rebuild",
     "targetRepositoryVisibility": "public; repository metadata verified 2026-10-08",
     "exportInitializedGit": false,
@@ -247,14 +247,14 @@
     {
       "path": "AGENTS.en.md",
       "originRole": "New first-party bilingual documentation or publication tooling",
-      "sha256": "7c2716d3a678406ce905b8cd7fd9ef3552bca4e37b8e9456b63b871e4170e0c1",
-      "bytes": 3292,
+      "sha256": "a48070115ccdb0aede63831d4a23f43b44e0a50b50f15bb5727c4c6d715aef14",
+      "bytes": 3673,
       "previousRevisionSha256": "7c2716d3a678406ce905b8cd7fd9ef3552bca4e37b8e9456b63b871e4170e0c1"
     },
     {
       "path": "AGENTS.md",
-      "sha256": "f3551dd36ebc3023f8c846f0cdd876b7204c214c7c041e6496271d20c091046c",
-      "bytes": 2438,
+      "sha256": "3005ab1c405f7a8c6140db7b0fbd7e79e02bbea8b392ad92ba680957abf594af",
+      "bytes": 2756,
       "originRole": "Bilingual public documentation projection",
       "previousPublicSha256": "d133cdcd7d1f41fe0ce26bee63568cd0c4f23c6e6e7f9828d0768e95f53a05b4",
       "previousRevisionSha256": "f3551dd36ebc3023f8c846f0cdd876b7204c214c7c041e6496271d20c091046c"
@@ -277,15 +277,15 @@
     {
       "path": "DOCUMENTATION.en.md",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
-      "sha256": "7498b6262af93dce72b48ace3640b705bcd20c6ed26831479e6fafb395f03f94",
-      "bytes": 14112,
+      "sha256": "c8df1cfbd514248d5fe15e9c04aad60cda051c175eb7420cb1244b4ca4b8f285",
+      "bytes": 16099,
       "previousRevisionSha256": "ef35dafcd765aeacdce5c0d14362dc5f30319b84dd3d1693d9d6a769f7162f99"
     },
     {
       "path": "DOCUMENTATION.md",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
-      "sha256": "2e60710807f0c75ffa1c1336a511ac78dbed95ad16ec9308f3a810948022032b",
-      "bytes": 13868,
+      "sha256": "8dbbbd09618f5d68e128144ca453c2a443ae3a3f01b296af83d6605188fdb380",
+      "bytes": 15534,
       "previousRevisionSha256": "22f3073e3a0096efc4c92fce0aed95a81bdbaa6b1e50ed6432a1ed597c86a8d4"
     },
     {
@@ -298,14 +298,14 @@
     {
       "path": "PUBLICATION.en.md",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
-      "sha256": "211dd3d67ab9305701079fcc28789cc6234d5aedac51397ef7e22bb6bdab392a",
-      "bytes": 3697,
+      "sha256": "585c1919a7eadcf7e9c64f55956586788d930ace161fc0f7df56fba73e2f6cc1",
+      "bytes": 5090,
       "previousRevisionSha256": "c027cc00e307fc3053c4ac3c150659d034f758e004af3394e06353280aa3d7bf"
     },
     {
       "path": "PUBLICATION.md",
-      "sha256": "c590a821317ab1e58e6be2ea756c9ec0fcea709d91eeae1064c6720b175edf46",
-      "bytes": 2800,
+      "sha256": "35b9df6a3dd31b41918a45eb31195fb9f74a363456e7840595000f97c30163ed",
+      "bytes": 3895,
       "originRole": "First-party CPU asset revision or synchronized public documentation",
       "previousPublicSha256": "3347cb4d8fef1e8298f9dee869a21894162a9082a834b4784094d642fd9fd388",
       "previousRevisionSha256": "cf5858ee0a62ef72fc9d8309566e15a2d5de8bc9c91545c718a95adff24aaed2"
@@ -313,14 +313,14 @@
     {
       "path": "README.en.md",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
-      "sha256": "0c548db8569207b3b258fc467906bcf38af5bd3c4e9afe56943e376c2829275f",
-      "bytes": 3688,
+      "sha256": "bbe14f788ea8aa7875785eca37bb08adf4dfbfb5d78c8dc6657484f38d500c8c",
+      "bytes": 5645,
       "previousRevisionSha256": "199156443d499d5012f1224263a1a3ee9994e5ba38ee067bceeb2ad865ae8167"
     },
     {
       "path": "README.md",
-      "sha256": "a41d2a267bcc2fbeb4e76591d4e01122ca3dd6f2a690f4a617bab79c0f1b3257",
-      "bytes": 3037,
+      "sha256": "2a2d1916c4926bca34a4e9a0e45b5c974064ee13593f627733f360d827e302c5",
+      "bytes": 4606,
       "originRole": "First-party CPU asset revision or synchronized public documentation",
       "previousPublicSha256": "7ec80b8575a700b6a2628eb0322f2e770bb2284859f68ec5e0eb6530154a6699",
       "previousRevisionSha256": "7a1d72019db7cb6075d7c3a3bd4075f7c069d527b6e31d992a69333cb126b6c3"
@@ -329,13 +329,50 @@
       "path": "examples/assets.mjs",
       "sha256": "95b13275ec0847c12face88ae01a9b247be5dd7a3f93d92f8e759a7ba50510ef",
       "bytes": 2360,
-      "originRole": "New independently authored CPU asset core/test/example"
+      "originRole": "New independently authored CPU asset core/test/example",
+      "previousRevisionSha256": "95b13275ec0847c12face88ae01a9b247be5dd7a3f93d92f8e759a7ba50510ef"
+    },
+    {
+      "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
+      "path": "examples/canvas-scene/README.en.md",
+      "sha256": "01755ea0b44331170271d7a0c769834dbc9fce4569bc3d99568f3a891ba55a3d",
+      "bytes": 1020,
+      "previousRevisionSha256": "d5c28dd594b51978ce409d5ce6ab2abc9f71a8c05da550b340b8366b7d5bd521"
+    },
+    {
+      "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
+      "path": "examples/canvas-scene/README.md",
+      "sha256": "bf8ea4ece2b97ebc6501d55c81d8ee5b634d9e1ad2c6c88101f38b585637829f",
+      "bytes": 869,
+      "previousRevisionSha256": "dc5628984c21398001c9d5ec6230b2aeb0213951047678b396dc15d79bda1834"
+    },
+    {
+      "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
+      "path": "examples/canvas-scene/favicon.svg",
+      "sha256": "eef37ae8616115924b957ca699b5f4b5d05851d077d6ebaa3509e3de93523176",
+      "bytes": 169,
+      "previousRevisionSha256": "eef37ae8616115924b957ca699b5f4b5d05851d077d6ebaa3509e3de93523176"
+    },
+    {
+      "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
+      "path": "examples/canvas-scene/index.html",
+      "sha256": "adb71b35dba2d9cb557240888a15fd35f4944cbe79b3cbda40335fcd56c0df63",
+      "bytes": 933,
+      "previousRevisionSha256": "adb71b35dba2d9cb557240888a15fd35f4944cbe79b3cbda40335fcd56c0df63"
+    },
+    {
+      "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
+      "path": "examples/canvas-scene/scene.mjs",
+      "sha256": "b6b39ee5cb6591f1abcb027ed6c6f186c9e7a2bde92b474e3d075b021ca8e4a1",
+      "bytes": 946,
+      "previousRevisionSha256": "b6b39ee5cb6591f1abcb027ed6c6f186c9e7a2bde92b474e3d075b021ca8e4a1"
     },
     {
       "path": "examples/fixtures/ui-panel.json",
       "sha256": "2b471ff37fe1c89005968ff6f6076d176f7917f6e16dd22e0c8e04e040d8c5ef",
       "bytes": 113,
-      "originRole": "New independently authored CPU asset core/test/example"
+      "originRole": "New independently authored CPU asset core/test/example",
+      "previousRevisionSha256": "2b471ff37fe1c89005968ff6f6076d176f7917f6e16dd22e0c8e04e040d8c5ef"
     },
     {
       "path": "examples/headless.mjs",
@@ -344,6 +381,13 @@
       "originalSha256": "bbb09be9a9ab1b93fbe5af723612e324e71e14b27434f4a953ee0b12a60ddccf",
       "originRole": "byte-identical prototype whitelist export",
       "previousRevisionSha256": "bbb09be9a9ab1b93fbe5af723612e324e71e14b27434f4a953ee0b12a60ddccf"
+    },
+    {
+      "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
+      "path": "localization.json",
+      "sha256": "051ad5cb0e292ace5302c5297898717e56264c0fd5e863b885bb41a2db7ffd2b",
+      "bytes": 38775,
+      "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50"
     },
     {
       "path": "package.json",
@@ -356,14 +400,14 @@
     {
       "path": "packages/contracts/README.en.md",
       "originRole": "New first-party bilingual documentation or publication tooling",
-      "sha256": "4b7aedc3f9f8f9648353f4acb1c5a110387d0139b1213d6978fab74485400864",
-      "bytes": 1156,
+      "sha256": "ac8a3e151ea797dbad13f5074192721de58162d727b1f1bbbdd1b7d548a51c88",
+      "bytes": 3240,
       "previousRevisionSha256": "4b7aedc3f9f8f9648353f4acb1c5a110387d0139b1213d6978fab74485400864"
     },
     {
       "path": "packages/contracts/README.md",
-      "sha256": "349d9ca4178f9b2043345d54167dfb93e3ee326ccbd4d41fd52cc85c3757fd9e",
-      "bytes": 940,
+      "sha256": "64b1311f9991abce8024627c86c767419118c175c09d45b5d37c2b1a0924b5a9",
+      "bytes": 2677,
       "originalSha256": "f631cb1809f3160b76b5b4451c8820c264f269da2b64842c96abeaae702607ad",
       "originRole": "Bilingual public documentation projection",
       "change": "Preserves package responsibilities and lifecycle semantics; removes internal review history wording and adds contributor/source/license links.",
@@ -389,8 +433,8 @@
     },
     {
       "path": "packages/contracts/src/Diagnostic.ts",
-      "sha256": "dd24a34a911fd333cea3a799675465a5e871d2a47cd551648dbc245cece8d25f",
-      "bytes": 470,
+      "sha256": "ce61e4d90319f55febc2782ca5e1a7329984cf6cfdf14955cc3a20dbdd5920ad",
+      "bytes": 485,
       "originalSha256": "93aeef7a51e372dc1418bd382d3371ec91044a1bc48de0b308cc6d5007db89a3",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
       "previousPublicSha256": "93aeef7a51e372dc1418bd382d3371ec91044a1bc48de0b308cc6d5007db89a3",
@@ -415,9 +459,16 @@
       "previousRevisionSha256": "3c8289a85e04e34be3782156244cc253792eff1b41629758d54cd1692c64c2ae"
     },
     {
+      "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
+      "path": "packages/contracts/src/RenderFrame2D.ts",
+      "sha256": "853ac3e712082cf67e442043044b0da0ca577bb2d6a68d3c5981ac203fcd1e60",
+      "bytes": 1248,
+      "previousRevisionSha256": "853ac3e712082cf67e442043044b0da0ca577bb2d6a68d3c5981ac203fcd1e60"
+    },
+    {
       "path": "packages/contracts/src/index.ts",
-      "sha256": "85f4a29e7e04334ab941dfe7a848edacc3a597dc5621820366c7cadd257eda13",
-      "bytes": 287,
+      "sha256": "9a4771c7479eaf70e1b27f2678e0f16e633ee85b8a413508c486dcd111471fbc",
+      "bytes": 440,
       "originalSha256": "85f4a29e7e04334ab941dfe7a848edacc3a597dc5621820366c7cadd257eda13",
       "originRole": "byte-identical prototype whitelist export",
       "previousRevisionSha256": "85f4a29e7e04334ab941dfe7a848edacc3a597dc5621820366c7cadd257eda13"
@@ -433,14 +484,14 @@
     {
       "path": "packages/engine/README.en.md",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
-      "sha256": "5883049a7b04849806d8d810af10f33871e64dff5502561513df9488be5c9b60",
-      "bytes": 1556,
+      "sha256": "e633384dc915242c394834f6d86e0aa2128707c44e5e09f5d5fa9b24b9cbd3a8",
+      "bytes": 3808,
       "previousRevisionSha256": "77fa6a7eacbb0c3d386524d6c9ed5fec9f3e91bf393b95a6c3b2498c5ae6b83f"
     },
     {
       "path": "packages/engine/README.md",
-      "sha256": "c61586d644569bb4cab5bfc548313db43670e712a1174b9099d761a0c0f859d0",
-      "bytes": 1248,
+      "sha256": "4382b97f1d7b255a2810cecd8a76e0b625c2e03de8cb9cedcd1c92157ea39ead",
+      "bytes": 3093,
       "originalSha256": "2b39a8a5f988a0c4d7271d30da7f8c04a735149e00b6f0f28f2c59940e5842f0",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
       "change": "Preserves package responsibilities and lifecycle semantics; removes internal review history wording and adds contributor/source/license links.",
@@ -449,16 +500,16 @@
     },
     {
       "path": "packages/engine/package.json",
-      "sha256": "26b7c45f629f7c8a7d41c466fdd06741163a2afd9b6002075c6341530ed2e663",
-      "bytes": 266,
+      "sha256": "11cd51161a3f37fceeea5bdcf6878c35af5b7d6557fba3c0fafabfe6954efa0b",
+      "bytes": 398,
       "originalSha256": "26b7c45f629f7c8a7d41c466fdd06741163a2afd9b6002075c6341530ed2e663",
       "originRole": "byte-identical prototype whitelist export",
       "previousRevisionSha256": "26b7c45f629f7c8a7d41c466fdd06741163a2afd9b6002075c6341530ed2e663"
     },
     {
       "path": "packages/engine/src/Engine.ts",
-      "sha256": "e386470f8e13a17e9960a594452d22d0c88f67b8d3863de03c4b5727ac22bccf",
-      "bytes": 4368,
+      "sha256": "565d2f2701d5f1c7f653a5833f435b649f68975bf650400003bbdd86ecb909a0",
+      "bytes": 8607,
       "originalSha256": "d5b4fcfc5bcf921d6b75aa4a33d7e71412595e8e377e5ff9b186b19ec6868f58",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
       "previousPublicSha256": "d5b4fcfc5bcf921d6b75aa4a33d7e71412595e8e377e5ff9b186b19ec6868f58",
@@ -475,8 +526,8 @@
     },
     {
       "path": "packages/engine/src/createEngine.ts",
-      "sha256": "f0ae30646b03bdd9539e54223a98519e8afed8bee696dc378586c8128924e9d1",
-      "bytes": 1178,
+      "sha256": "32011ff9c7bbc65e0bdf455a21fcac2e975cd14f9065c3c7c9589bbb74c56774",
+      "bytes": 1705,
       "originalSha256": "6298922aa970b883fd5f84a098a44d5d4654736446709856381416f182e0aaf3",
       "originRole": "English comment-only projection; exact baseline restoration proven",
       "previousPublicSha256": "6298922aa970b883fd5f84a098a44d5d4654736446709856381416f182e0aaf3",
@@ -484,8 +535,8 @@
     },
     {
       "path": "packages/engine/src/index.ts",
-      "sha256": "8b138bad7220763fbeb5ff43775303decfd0dfe370fdd4459917b45330597f94",
-      "bytes": 800,
+      "sha256": "610b29b05ca80e16c602d68af2ad1a71be4027cb4c5731816c177eb415e3b3f4",
+      "bytes": 1002,
       "originalSha256": "45f2377ffe6e180815d68b8b2dcbddaca8eaa167c142a356d130da8ce008e2f0",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
       "previousRevisionSha256": "45f2377ffe6e180815d68b8b2dcbddaca8eaa167c142a356d130da8ce008e2f0"
@@ -508,16 +559,44 @@
       "previousRevisionSha256": "ac07062d5460bb112739e3ef98e2f16f7479b1f4a18c7add69c46c2880ac68a4"
     },
     {
+      "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
+      "path": "packages/engine/tsconfig.web.json",
+      "sha256": "ed3119d70f5e94a243c2375a62c09ac95d60454fa4fb6577013029e7571c4d68",
+      "bytes": 284,
+      "previousRevisionSha256": "ed3119d70f5e94a243c2375a62c09ac95d60454fa4fb6577013029e7571c4d68"
+    },
+    {
+      "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
+      "path": "packages/engine/web/CanvasHost.ts",
+      "sha256": "ae6c2f46bd3e43b44e8a915a5b4fb9c1cbebab6b5f14b93178b7bd7eb5f0c7cb",
+      "bytes": 6500,
+      "previousRevisionSha256": "ae6c2f46bd3e43b44e8a915a5b4fb9c1cbebab6b5f14b93178b7bd7eb5f0c7cb"
+    },
+    {
+      "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
+      "path": "packages/engine/web/copyCanvasFrame.ts",
+      "sha256": "274069cd40f81ddbb9aa298f4119be2cf8e4791d17c0c2b2652033a0d4957637",
+      "bytes": 3989,
+      "previousRevisionSha256": "274069cd40f81ddbb9aa298f4119be2cf8e4791d17c0c2b2652033a0d4957637"
+    },
+    {
+      "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
+      "path": "packages/engine/web/index.ts",
+      "sha256": "1c06c610493ff706ed07983a2bdd826aaf8a2b3af8c88563ad99e1324f2a7e4e",
+      "bytes": 122,
+      "previousRevisionSha256": "1c06c610493ff706ed07983a2bdd826aaf8a2b3af8c88563ad99e1324f2a7e4e"
+    },
+    {
       "path": "packages/runtime/README.en.md",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
-      "sha256": "bea2154ff97ec27739bdbb5d9659e97aa50fb2a5cf331e18f5ef5043bd2e54aa",
-      "bytes": 1993,
+      "sha256": "97eeca38ec5f73641b226f5e3e724580232040fc1acd0e4cb8e9b692d20e9214",
+      "bytes": 4160,
       "previousRevisionSha256": "88752546b92c8c859b1c0296f4307db2d6b79cf38f378bac3d0e67bfdb533768"
     },
     {
       "path": "packages/runtime/README.md",
-      "sha256": "0b4aeaeaa923187057ceb6da95238cbaa6192f155ad4dcffe1036598b06330e0",
-      "bytes": 1515,
+      "sha256": "5ff29a37678e52fb6deba246b732a01c0edc217959486a5df72a61e4db1aa32b",
+      "bytes": 3276,
       "originalSha256": "dadf19b00a845d7e8ed154644f2214b720d7acd03f4450a2e9a002be5d085911",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
       "change": "Preserves package responsibilities and lifecycle semantics; removes internal review history wording and adds contributor/source/license links.",
@@ -536,19 +615,22 @@
       "path": "packages/runtime/src/AssetLease.ts",
       "sha256": "6c411c75c2737f4229e459f559efc75375b15c65af65e3791227abe416e24a21",
       "bytes": 2170,
-      "originRole": "New independently authored CPU asset core/test/example"
+      "originRole": "New independently authored CPU asset core/test/example",
+      "previousRevisionSha256": "6c411c75c2737f4229e459f559efc75375b15c65af65e3791227abe416e24a21"
     },
     {
       "path": "packages/runtime/src/AssetManager.ts",
       "sha256": "31e52919bfa43df548fa661a9d46c5d8b2fcb7259addfe119ef4367fa25f462e",
       "bytes": 13239,
-      "originRole": "New independently authored CPU asset core/test/example"
+      "originRole": "New independently authored CPU asset core/test/example",
+      "previousRevisionSha256": "31e52919bfa43df548fa661a9d46c5d8b2fcb7259addfe119ef4367fa25f462e"
     },
     {
       "path": "packages/runtime/src/AssetRef.ts",
       "sha256": "48963664a8a048697a962f1c3d56826333e65e3bbf05d1524d7c30b049a10ab7",
       "bytes": 1818,
-      "originRole": "New independently authored CPU asset core/test/example"
+      "originRole": "New independently authored CPU asset core/test/example",
+      "previousRevisionSha256": "48963664a8a048697a962f1c3d56826333e65e3bbf05d1524d7c30b049a10ab7"
     },
     {
       "path": "packages/runtime/src/CancellationController.ts",
@@ -561,8 +643,8 @@
     },
     {
       "path": "packages/runtime/src/DisplayObject.ts",
-      "sha256": "d64dde4b35ca2cf929ae14a2f99b59f7e0efbb02cb5a363ff0ff6975b5aadebd",
-      "bytes": 1224,
+      "sha256": "f66c3aaecf255601969603b359ac42bcd4db6d2ed17750727f0f4f5816152e70",
+      "bytes": 3430,
       "originalSha256": "a5744fe971a6490e54eda1b6cd7aa2ff18f8dd8e172eca83e458b89a42febe39",
       "originRole": "English comment-only projection; exact baseline restoration proven",
       "previousPublicSha256": "a5744fe971a6490e54eda1b6cd7aa2ff18f8dd8e172eca83e458b89a42febe39",
@@ -570,8 +652,8 @@
     },
     {
       "path": "packages/runtime/src/DisplayObjectContainer.ts",
-      "sha256": "f0cdb820b26b06d304fd925e81367776a8f2c4824670be44da47d97953aa173e",
-      "bytes": 4629,
+      "sha256": "36b2f5e42d5654a03765c292bedf42f094fde122967a17c00b3e4180d1e2a72c",
+      "bytes": 4736,
       "originalSha256": "14ad9af6c95917b94641fba630adc26b707aa2fedc17707627a87b55dd1e6682",
       "originRole": "English comment-only projection; exact baseline restoration proven",
       "previousPublicSha256": "14ad9af6c95917b94641fba630adc26b707aa2fedc17707627a87b55dd1e6682",
@@ -605,6 +687,13 @@
       "previousRevisionSha256": "141051a7aede922c0d8d73aa2b509c75cbe209118ba0bb48b3869765b9c5a82d"
     },
     {
+      "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
+      "path": "packages/runtime/src/Graphics.ts",
+      "sha256": "e84deaaefeec9e9bbe25d1447aba980ebefa5c981af73d71a611fe45898443a9",
+      "bytes": 1270,
+      "previousRevisionSha256": "e84deaaefeec9e9bbe25d1447aba980ebefa5c981af73d71a611fe45898443a9"
+    },
+    {
       "path": "packages/runtime/src/Scope.ts",
       "sha256": "29e9d5da9232ed8347b2a829e069d33daabb1bad296798492a45c7950f43e8ea",
       "bytes": 4700,
@@ -612,6 +701,13 @@
       "originRole": "English comment-only projection; exact baseline restoration proven",
       "previousPublicSha256": "840ef7f714e80f2eccca974dfca972dc2e94ecbe74da688f7ebe4c3d9b7ceebd",
       "previousRevisionSha256": "29e9d5da9232ed8347b2a829e069d33daabb1bad296798492a45c7950f43e8ea"
+    },
+    {
+      "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
+      "path": "packages/runtime/src/Sprite.ts",
+      "sha256": "a3175515cdeedc283199870cd683e541acf208f04330c63c3f5f5eee2e328bba",
+      "bytes": 442,
+      "previousRevisionSha256": "a3175515cdeedc283199870cd683e541acf208f04330c63c3f5f5eee2e328bba"
     },
     {
       "path": "packages/runtime/src/Stage.ts",
@@ -626,7 +722,8 @@
       "path": "packages/runtime/src/assetState.ts",
       "sha256": "044c1aceef34403be1b1297794d3d3e390182a84d2876ce2d3392a4c2e5a6920",
       "bytes": 1515,
-      "originRole": "New independently authored CPU asset core/test/example"
+      "originRole": "New independently authored CPU asset core/test/example",
+      "previousRevisionSha256": "044c1aceef34403be1b1297794d3d3e390182a84d2876ce2d3392a4c2e5a6920"
     },
     {
       "path": "packages/runtime/src/diagnostics.ts",
@@ -647,9 +744,23 @@
       "previousRevisionSha256": "8aaf5f5dfc8d62f3b1bc4effe819e7718e3ed72fcf0a8fc25e3b08410f980e50"
     },
     {
+      "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
+      "path": "packages/runtime/src/displayVisualState.ts",
+      "sha256": "0bee8a7e5136f59c3301ec4d829bceaf5a01aff6f0d770dd6a2952ed31110f21",
+      "bytes": 1785,
+      "previousRevisionSha256": "0bee8a7e5136f59c3301ec4d829bceaf5a01aff6f0d770dd6a2952ed31110f21"
+    },
+    {
+      "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
+      "path": "packages/runtime/src/frameCapture.ts",
+      "sha256": "37ac4db4273ddca728622fd2db1226c1d104e056c40fd3bcbfbadeae1c75e921",
+      "bytes": 3071,
+      "previousRevisionSha256": "37ac4db4273ddca728622fd2db1226c1d104e056c40fd3bcbfbadeae1c75e921"
+    },
+    {
       "path": "packages/runtime/src/index.ts",
-      "sha256": "82adc2ead33bd530c7ad18557237d816b019424987ecc48601ebdfedf2a5ec8a",
-      "bytes": 1130,
+      "sha256": "51700665e52ddabfbce7359ee7e08747bee348a46cc0c1ba3a936a901f21e4b8",
+      "bytes": 1269,
       "originalSha256": "3af52ebe93ac933d989ceb0f5abadd31e72f9436fda1d2206b3e71d7f1216310",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
       "previousRevisionSha256": "3af52ebe93ac933d989ceb0f5abadd31e72f9436fda1d2206b3e71d7f1216310"
@@ -691,13 +802,15 @@
       "path": "tests/assets-interleavings.test.mjs",
       "sha256": "3cbad2d481f4ca2eb0563c7c85c09bbfe033f314c07626ca0e9358e3d7ed1bc7",
       "bytes": 10859,
-      "originRole": "New independently authored CPU asset core/test/example"
+      "originRole": "New independently authored CPU asset core/test/example",
+      "previousRevisionSha256": "3cbad2d481f4ca2eb0563c7c85c09bbfe033f314c07626ca0e9358e3d7ed1bc7"
     },
     {
       "path": "tests/assets.test.mjs",
       "sha256": "c8ef247cade909292d848d20ec2d1ae55a984c1d2d6bd03e1c0120c9162b0719",
       "bytes": 11438,
-      "originRole": "New independently authored CPU asset core/test/example"
+      "originRole": "New independently authored CPU asset core/test/example",
+      "previousRevisionSha256": "c8ef247cade909292d848d20ec2d1ae55a984c1d2d6bd03e1c0120c9162b0719"
     },
     {
       "path": "tests/cancellation-scope.test.mjs",
@@ -706,6 +819,13 @@
       "originalSha256": "32a1a3c47fa41ebfd122be8fa06370e51a4f0854a2ab69be5da48966b96e9566",
       "originRole": "byte-identical prototype whitelist export",
       "previousRevisionSha256": "32a1a3c47fa41ebfd122be8fa06370e51a4f0854a2ab69be5da48966b96e9566"
+    },
+    {
+      "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
+      "path": "tests/canvas-host.test.mjs",
+      "sha256": "58dd8c20b9b4208f2de7e0b056d9075bddb06c8f03dae65bad29c4f93a91e43e",
+      "bytes": 6559,
+      "previousRevisionSha256": "58dd8c20b9b4208f2de7e0b056d9075bddb06c8f03dae65bad29c4f93a91e43e"
     },
     {
       "path": "tests/display-tree.test.mjs",
@@ -732,6 +852,13 @@
       "previousRevisionSha256": "4e75d12b5aee9f927425a1a65c401616de18347b1402ec86075bbb5247951d3d"
     },
     {
+      "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
+      "path": "tests/frame.test.mjs",
+      "sha256": "af55b8cace7bd33713b007dbc46ed74d5d9c6280be1b7210662902eb251cc1cb",
+      "bytes": 11675,
+      "previousRevisionSha256": "af55b8cace7bd33713b007dbc46ed74d5d9c6280be1b7210662902eb251cc1cb"
+    },
+    {
       "path": "tests/helpers.mjs",
       "sha256": "20e7dd30f54b3a81d35f666c8370e7f014e4559c68222727bc88fd377efc1af7",
       "bytes": 997,
@@ -750,8 +877,8 @@
     {
       "path": "tests/publication/check-publication.test.mjs",
       "originRole": "New first-party bilingual documentation or publication tooling",
-      "sha256": "ff5b1e45e710f5842aa2615d55b8f87d6fe8256fb6a8fe85cfff2192710f0161",
-      "bytes": 5687,
+      "sha256": "0a0dec05c056fb0fb2515cdd3d739de88f18f9578257902339c6840214cd8827",
+      "bytes": 6905,
       "previousRevisionSha256": "ff5b1e45e710f5842aa2615d55b8f87d6fe8256fb6a8fe85cfff2192710f0161"
     },
     {
@@ -770,9 +897,16 @@
       "previousRevisionSha256": "b56d24957fc95c6068bb215f4a1b2aca310760831e79c89c27dd5724c8e67b17"
     },
     {
+      "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
+      "path": "tests/types/dom-free.ts",
+      "sha256": "c3801687ad3896fbdbfb3518c63b13afaebb42df455c0230e7f2a0e374264ed4",
+      "bytes": 300,
+      "previousRevisionSha256": "c3801687ad3896fbdbfb3518c63b13afaebb42df455c0230e7f2a0e374264ed4"
+    },
+    {
       "path": "tests/types/negative.ts",
-      "sha256": "bf36f78201c71c3a1f19bccb2117e3540a9a6c943dd9fb2f08794cf8a8230e6a",
-      "bytes": 3038,
+      "sha256": "90c48447b08872d893675a8a5701e3a75c99d32f63dec9f8e3db4570907dbde2",
+      "bytes": 3634,
       "originalSha256": "f2aba4d444432063b862b42822b392b82d09c8d91458cc80f5478f136115ce7b",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
       "previousRevisionSha256": "f2aba4d444432063b862b42822b392b82d09c8d91458cc80f5478f136115ce7b"
@@ -786,12 +920,33 @@
       "previousRevisionSha256": "1041d77568560fb1d08fa3a4dbb86cb1e77cc48dace50884b5173c4459713aeb"
     },
     {
+      "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
+      "path": "tests/types/tsconfig.dom-free.json",
+      "sha256": "24bc13fae1f9d98b5d2dc212c9fb4f1f926aeb956f706d8269acbd617c900b49",
+      "bytes": 56,
+      "previousRevisionSha256": "24bc13fae1f9d98b5d2dc212c9fb4f1f926aeb956f706d8269acbd617c900b49"
+    },
+    {
       "path": "tests/types/tsconfig.json",
       "sha256": "88a3194ab9d7990646c7957e96e8d059ee16e79fe88373543a763da38a84dae1",
       "bytes": 197,
       "originalSha256": "88a3194ab9d7990646c7957e96e8d059ee16e79fe88373543a763da38a84dae1",
       "originRole": "byte-identical prototype whitelist export",
       "previousRevisionSha256": "88a3194ab9d7990646c7957e96e8d059ee16e79fe88373543a763da38a84dae1"
+    },
+    {
+      "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
+      "path": "tests/types/tsconfig.web.json",
+      "sha256": "ebd9c73f69f0a3ee587bf6a07a49a33218cdea845d3a243c2df22a89fb18568d",
+      "bytes": 94,
+      "previousRevisionSha256": "ebd9c73f69f0a3ee587bf6a07a49a33218cdea845d3a243c2df22a89fb18568d"
+    },
+    {
+      "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
+      "path": "tests/types/web.ts",
+      "sha256": "fdc424582345dcc53465c8eb141a909fb17a663927eae9c3f1a7b9b37bd14bd3",
+      "bytes": 621,
+      "previousRevisionSha256": "fdc424582345dcc53465c8eb141a909fb17a663927eae9c3f1a7b9b37bd14bd3"
     },
     {
       "path": "tools/build.mjs",
@@ -802,9 +957,16 @@
       "previousRevisionSha256": "0f04552d3592aa613d3c6fc4114559a3669ad764d0f5321d1c049a568701e6c4"
     },
     {
+      "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
+      "path": "tools/canvas-browser-checks.mjs",
+      "sha256": "f65dfbe34f3ab535149e00634767080e6a7ebef5f462de0ae1315d0a8ff94ac7",
+      "bytes": 5125,
+      "previousRevisionSha256": "f65dfbe34f3ab535149e00634767080e6a7ebef5f462de0ae1315d0a8ff94ac7"
+    },
+    {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "9b8e0c6195504b91c4758fa9a243de2f60bf40a8fd51ecfe5a8b65c6ca1e9b62",
-      "bytes": 3452,
+      "sha256": "16140a5abf47954f42fefbfdf2074b6ce15feb095c566f0cf005f1ac3d43e478",
+      "bytes": 4984,
       "originalSha256": "e7994ad6962e55fba9b481d50377ede30729b345e6a901e2089b235edfde9491",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
       "previousRevisionSha256": "e7994ad6962e55fba9b481d50377ede30729b345e6a901e2089b235edfde9491"
@@ -812,14 +974,14 @@
     {
       "path": "tools/check-publication.mjs",
       "originRole": "New first-party bilingual documentation or publication tooling",
-      "sha256": "3a23d7ca84233e3339107fcdb617795c5cee8fd503f3ddcac223f37508cc6b38",
-      "bytes": 6364,
+      "sha256": "887dc3f118f413e515f4786507b445cdabf4c04a9aa5d67408f3a5dd20311293",
+      "bytes": 6409,
       "previousRevisionSha256": "3a23d7ca84233e3339107fcdb617795c5cee8fd503f3ddcac223f37508cc6b38"
     },
     {
       "path": "tools/check-types.mjs",
-      "sha256": "332d2c161ceb9ec7d75429c89a3d2c95af24f2cf5eed68b92b09532d1ce691a4",
-      "bytes": 2031,
+      "sha256": "a5416d2424e8f194d8025e364442c7882936c42cd2df9667676f912b99a25939",
+      "bytes": 3488,
       "originalSha256": "332d2c161ceb9ec7d75429c89a3d2c95af24f2cf5eed68b92b09532d1ce691a4",
       "originRole": "byte-identical prototype whitelist export",
       "previousRevisionSha256": "332d2c161ceb9ec7d75429c89a3d2c95af24f2cf5eed68b92b09532d1ce691a4"
@@ -832,12 +994,26 @@
       "previousRevisionSha256": "8ba8600f86c5a0722f9eb2a6ae030a353e8034c36d2e5af3288165fd3c864aa4"
     },
     {
+      "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
+      "path": "tools/serve-canvas.mjs",
+      "sha256": "8bd33b635a183f706cc2556eae6e557f46bff47fcb2c623d0839bde93f2f1e62",
+      "bytes": 1057,
+      "previousRevisionSha256": "8bd33b635a183f706cc2556eae6e557f46bff47fcb2c623d0839bde93f2f1e62"
+    },
+    {
       "path": "tools/test.mjs",
       "sha256": "6d8fdbf59b3c9d1a4aab917ae9ab8167818c0716a6219f5f91c5893bb2c4eb53",
       "bytes": 514,
       "originalSha256": "6d8fdbf59b3c9d1a4aab917ae9ab8167818c0716a6219f5f91c5893bb2c4eb53",
       "originRole": "byte-identical prototype whitelist export",
       "previousRevisionSha256": "6d8fdbf59b3c9d1a4aab917ae9ab8167818c0716a6219f5f91c5893bb2c4eb53"
+    },
+    {
+      "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
+      "path": "tools/verify-canvas.mjs",
+      "sha256": "4810b9e185e93817236fd2c523ee4d549117744cb7b102967ce2380804b531ba",
+      "bytes": 3850,
+      "previousRevisionSha256": "4810b9e185e93817236fd2c523ee4d549117744cb7b102967ce2380804b531ba"
     },
     {
       "path": "tools/verify.mjs",
@@ -857,14 +1033,14 @@
     },
     {
       "path": "tsconfig.json",
-      "sha256": "e07fc831f31dc9ea9ecb612be734f4b533e32d7dbbb246abffaa8b23111076aa",
-      "bytes": 155,
+      "sha256": "63d6eb1da2841bf4163d44f0831899a772b49cbb2605ddd7ddabfd60fea8863b",
+      "bytes": 250,
       "originalSha256": "e07fc831f31dc9ea9ecb612be734f4b533e32d7dbbb246abffaa8b23111076aa",
       "originRole": "byte-identical prototype whitelist export",
       "previousRevisionSha256": "e07fc831f31dc9ea9ecb612be734f4b533e32d7dbbb246abffaa8b23111076aa"
     }
   ],
-  "fileListScope": "Current export-owned root/package/code/configuration files, excluding source-origin itself, original LICENSE and verification records. Full export manifest covers current metadata and bilingual knowledge-base files. Historical fields retain their original evidence versions.",
+  "fileListScope": "Current export-owned root/package/code/configuration files excluding source-origin itself, original LICENSE, verification and KB; full export manifest binds every curated file. Prior revisions and proof hashes retain historical scopes.",
   "repositoryIntegration": {
     "checkedAtUtc": "2026-10-08T12:24:40.073Z",
     "priorPublicProjectionSha256": "aef303142fcb02d05095c48fe37a24170559061dc7c98a6f38b1d226de9aac3a",
@@ -915,5 +1091,55 @@
     "review": "verification/asset-core-review.json",
     "historicalCommentProof": "verification/english-comment-provenance.json binds the preserved 0.10.0 comment-only source. Current comment/source identities are in localization.json.",
     "remoteSubmission": "not_performed_this_revision"
+  },
+  "renderingRevision": {
+    "knowledgeBaseVersion": "0.12.0",
+    "date": "2026-10-09",
+    "authorship": "AI-assisted independently authored first-party TypeScript from the first-party display/frame contract; no private old engine or competitor implementation input. This bounded process statement does not guarantee global originality or model training sources.",
+    "inputs": [
+      {
+        "path": "knowledge-base/docs/显示与帧执行合同.md",
+        "sha256": "2107887b923c3a9963b44a7a54ac4e30ca5ddb869599536742e517d778912270"
+      },
+      {
+        "path": "knowledge-base/docs/显示与帧执行合同.en.md",
+        "sha256": "e8a6539c6eb877107bbc9428ac86e4aec633a093ec182648b49999e140356247"
+      },
+      {
+        "path": "knowledge-base/docs/显示与帧执行实现计划.md",
+        "sha256": "7d83b3b0bfe84b4819a1c4ef608631693db101cc31359f05218ab361b329aa11"
+      },
+      {
+        "path": "knowledge-base/docs/显示与帧执行实现计划.en.md",
+        "sha256": "6cf2091ed8680f5fcdecdb4454dd3ff39888c13dfb5f413e701a8b5be464b5f1"
+      }
+    ],
+    "implementationReview": "verification/display-frame-review.json",
+    "verification": "verification/display-frame-verification.json",
+    "codeDependenciesAdded": [],
+    "previousExport": {
+      "path": "verification/history/export-0.11.0.json",
+      "sha256": "8ebd57b9a7dcf8491352a9c5637b87884a7dea4591d41cc0e847e1bbca3e67ac"
+    },
+    "previousSourceOrigin": {
+      "path": "verification/history/source-origin-0.11.0.json",
+      "sha256": "394aadeb0e3e2d3a7488ec16277f25a6ba92e95dc154e236d2d715fda2d6b98d"
+    },
+    "historicalCommentProof": {
+      "path": "verification/english-comment-provenance.json",
+      "preservedInputs": "verification/history/comment-source-binding-0.10.0.json",
+      "scope": "Original 0.10 proof retains original hash and 19-source identity; current critical sources are bound by localization.json."
+    },
+    "independentProcess": "Scoped independent implementation review is separate from author translation/publication self-review; final branch review is subsequent.",
+    "remoteSubmission": "not_performed_this_revision",
+    "limitations": "No GPU, Native, physical phone, device/performance benchmark, full UI/textures/animation/3D, complete migration, CI or full-product acceptance. Browser results are desktop observations, not universal allocation limits.",
+    "currentPublication": {
+      "previewVersion": "0.12.0",
+      "date": "2026-10-09",
+      "state": "verified_local_development_preview",
+      "remoteSubmission": "not_performed_this_revision",
+      "packageVersion": "0.0.0",
+      "packageVersionScope": "Experimental private workspace package identities remain unchanged; preview and knowledge-base revision are 0.12.0."
+    }
   }
 }

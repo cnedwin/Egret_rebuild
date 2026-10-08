@@ -2,6 +2,13 @@
 
 English | [简体中文](DOCUMENTATION.md)
 
+
+## 0.12.0 display and frame candidate scope
+
+The successor work package is defined by the [display and frame contract](knowledge-base/docs/显示与帧执行合同.en.md) and [implementation plan](knowledge-base/docs/显示与帧执行实现计划.en.md): display transforms, inherited visibility/alpha and local rectangle clipping, Sprite-owned Graphics rectangle fills, and immutable CPU frame capture/submission. The implemented first execution adapter is Canvas through the separate @egret/engine/web entry; the core root retains its DOM-free boundary. Bounded implementation checks passed: 97/97 core behavior tests, 25 negative type diagnostics and real desktop Canvas pixels/pointer interaction. Scoped independent review passed after the recorded cross-realm rejection correction. Remote publication is tracked separately. Final scoped results belong in the [implementation record](knowledge-base/docs/显示与帧执行实现记录.en.md) and [verification](verification/display-frame-verification.json).
+
+This work package does not establish complete text/texture/animation/UI/3D execution, GPU or Native support, target-device performance, editors, Agent services, or complete migration. Earlier headless, CPU asset and third-party research records retain their original versions, counts, hashes and scope; their results are not new display-frame acceptance.
+
 This index lists Chinese and English versions of every public reading document. Both versions preserve proposed technical status, sources, failure records and acceptance scope. The Chinese registries are the authority for shared state; English JSON files are read-only translations bound to their canonical source hashes.
 
 Original test records, source snapshots, images and hashes are shared evidence and retain their identities. No alternate data is manufactured for translation. Upstream asset licenses retain their English originals, with Chinese translations explicitly marked as non-binding explanations. First-party code and documentation use the repository’s existing Apache-2.0 license; third parties retain their applicable declarations.
@@ -99,6 +106,12 @@ Before every push, review public content and translation meaning, update paired 
 | [资源核心合同](knowledge-base/docs/资源核心合同.md) | [English](knowledge-base/docs/资源核心合同.en.md) |
 
 | [资源核心实现记录](knowledge-base/docs/资源核心实现记录.md) | [English](knowledge-base/docs/资源核心实现记录.en.md) |
+
+| [Display and Frame Execution Contract](knowledge-base/docs/显示与帧执行合同.md) | [English](knowledge-base/docs/显示与帧执行合同.en.md) |
+| [Display and Frame Implementation Plan](knowledge-base/docs/显示与帧执行实现计划.md) | [English](knowledge-base/docs/显示与帧执行实现计划.en.md) |
+| [Display and Frame Implementation Record](knowledge-base/docs/显示与帧执行实现记录.md) | [English](knowledge-base/docs/显示与帧执行实现记录.en.md) |
+
+| [Canvas Rectangle Example](examples/canvas-scene/README.en.md) | [简体中文](examples/canvas-scene/README.md) |
 
 ## Shared registry state
 

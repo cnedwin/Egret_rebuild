@@ -1,26 +1,87 @@
 {
   "schemaVersion": 1,
-  "createdAtUtc": "2026-10-08T14:22:48.548Z",
+  "createdAtUtc": "2026-10-08T16:41:20.711Z",
   "repository": "https://github.com/cnedwin/Egret_rebuild",
-  "knowledgeBaseVersion": "0.11.0",
+  "knowledgeBaseVersion": "0.12.0",
   "status": "verified_local_development_preview",
-  "purpose": "Independent CPU asset acquisition/leases on the preserved headless core, with bilingual public knowledge base",
-  "selfHashRule": "Excludes this manifest; verified archive receipt binds its bytes.",
+  "purpose": "Independent bounded rectangle display/frame and separate desktop Canvas execution with bilingual public knowledge base",
+  "selfHashRule": "Excludes this manifest; external archive receipt binds its bytes.",
   "selection": {
-    "scope": "Preserved curated 0.10.0 paths plus explicit independently authored CPU assets, shipped tests/example, bilingual specification/records and scoped evidence",
-    "baselineManifestSha256": "bd28ccb8d5b33a47fd1043134bfd30ab21da7f4b2fd506de9c4cb0c55dc127d5"
+    "scope": "Exact sealed 0.11 curated file inventory plus explicitly reviewed rendering/specification/test/example/browser-tool/evidence/history additions",
+    "baselineManifestSha256": "8ebd57b9a7dcf8491352a9c5637b87884a7dea4591d41cc0e847e1bbca3e67ac",
+    "explicitAddedFiles": [
+      "examples/canvas-scene/README.en.md",
+      "examples/canvas-scene/README.md",
+      "examples/canvas-scene/favicon.svg",
+      "examples/canvas-scene/index.html",
+      "examples/canvas-scene/scene.mjs",
+      "knowledge-base/docs/显示与帧执行合同.en.md",
+      "knowledge-base/docs/显示与帧执行合同.md",
+      "knowledge-base/docs/显示与帧执行实现计划.en.md",
+      "knowledge-base/docs/显示与帧执行实现计划.md",
+      "knowledge-base/docs/显示与帧执行实现记录.en.md",
+      "knowledge-base/docs/显示与帧执行实现记录.md",
+      "knowledge-base/evidence/display-frame-review.json",
+      "knowledge-base/evidence/display-frame-verification.json",
+      "packages/contracts/src/RenderFrame2D.ts",
+      "packages/engine/tsconfig.web.json",
+      "packages/engine/web/CanvasHost.ts",
+      "packages/engine/web/copyCanvasFrame.ts",
+      "packages/engine/web/index.ts",
+      "packages/runtime/src/Graphics.ts",
+      "packages/runtime/src/Sprite.ts",
+      "packages/runtime/src/displayVisualState.ts",
+      "packages/runtime/src/frameCapture.ts",
+      "tests/canvas-host.test.mjs",
+      "tests/frame.test.mjs",
+      "tests/types/dom-free.ts",
+      "tests/types/tsconfig.dom-free.json",
+      "tests/types/tsconfig.web.json",
+      "tests/types/web.ts",
+      "tools/canvas-browser-checks.mjs",
+      "tools/serve-canvas.mjs",
+      "tools/verify-canvas.mjs",
+      "verification/display-frame-review.json",
+      "verification/display-frame-verification.json",
+      "verification/history/comment-source-0.10.0/packages/contracts/src/CancellationSignal.ts",
+      "verification/history/comment-source-0.10.0/packages/contracts/src/Diagnostic.ts",
+      "verification/history/comment-source-0.10.0/packages/contracts/src/Disposable.ts",
+      "verification/history/comment-source-0.10.0/packages/contracts/src/HostAdapter.ts",
+      "verification/history/comment-source-0.10.0/packages/engine/src/Engine.ts",
+      "verification/history/comment-source-0.10.0/packages/engine/src/closeHost.ts",
+      "verification/history/comment-source-0.10.0/packages/engine/src/createEngine.ts",
+      "verification/history/comment-source-0.10.0/packages/engine/src/surfaceOwnership.ts",
+      "verification/history/comment-source-0.10.0/packages/runtime/src/CancellationController.ts",
+      "verification/history/comment-source-0.10.0/packages/runtime/src/DisplayObject.ts",
+      "verification/history/comment-source-0.10.0/packages/runtime/src/DisplayObjectContainer.ts",
+      "verification/history/comment-source-0.10.0/packages/runtime/src/EgretError.ts",
+      "verification/history/comment-source-0.10.0/packages/runtime/src/Event.ts",
+      "verification/history/comment-source-0.10.0/packages/runtime/src/EventDispatcher.ts",
+      "verification/history/comment-source-0.10.0/packages/runtime/src/Scope.ts",
+      "verification/history/comment-source-0.10.0/packages/runtime/src/Stage.ts",
+      "verification/history/comment-source-0.10.0/packages/runtime/src/diagnostics.ts",
+      "verification/history/comment-source-0.10.0/packages/runtime/src/displayTreeState.ts",
+      "verification/history/comment-source-0.10.0/packages/runtime/src/ownership.ts",
+      "verification/history/comment-source-binding-0.10.0.json",
+      "verification/history/export-0.11.0.json",
+      "verification/history/knowledge-base-validation-0.11.0.json",
+      "verification/history/source-origin-0.11.0.json"
+    ]
   },
   "reviewBinding": {
-    "report": "verification/asset-core-review.json",
-    "verification": "verification/asset-core-verification.json",
+    "report": "verification/display-frame-review.json",
+    "verification": "verification/display-frame-verification.json",
     "sourceOrigin": "source-origin.json"
   },
   "omitted": [
-    "Historical private engine archives",
-    "Internal execution briefs and private logs",
-    "node_modules, dist and incremental build state"
+    ".git",
+    "node_modules",
+    "dist",
+    "incremental build state",
+    "private work and raw logs/traces/screenshots",
+    "private original engine archives and credentials"
   ],
-  "limitations": "No GPU, production host, native, performance, CI, complete migration or remote submission acceptance is inferred.",
+  "limitations": "No GPU, Native, phone/device/performance, full UI/text/texture/animation/3D, CI, full migration, full-product or remote acceptance.",
   "files": [
     {
       "path": ".githooks/pre-push",
@@ -48,14 +109,14 @@
     },
     {
       "path": "AGENTS.en.md",
-      "sha256": "7c2716d3a678406ce905b8cd7fd9ef3552bca4e37b8e9456b63b871e4170e0c1",
-      "bytes": 3292,
+      "sha256": "a48070115ccdb0aede63831d4a23f43b44e0a50b50f15bb5727c4c6d715aef14",
+      "bytes": 3673,
       "gitMode": "100644"
     },
     {
       "path": "AGENTS.md",
-      "sha256": "f3551dd36ebc3023f8c846f0cdd876b7204c214c7c041e6496271d20c091046c",
-      "bytes": 2438,
+      "sha256": "3005ab1c405f7a8c6140db7b0fbd7e79e02bbea8b392ad92ba680957abf594af",
+      "bytes": 2756,
       "gitMode": "100644"
     },
     {
@@ -72,14 +133,14 @@
     },
     {
       "path": "DOCUMENTATION.en.md",
-      "sha256": "7498b6262af93dce72b48ace3640b705bcd20c6ed26831479e6fafb395f03f94",
-      "bytes": 14112,
+      "sha256": "c8df1cfbd514248d5fe15e9c04aad60cda051c175eb7420cb1244b4ca4b8f285",
+      "bytes": 16099,
       "gitMode": "100644"
     },
     {
       "path": "DOCUMENTATION.md",
-      "sha256": "2e60710807f0c75ffa1c1336a511ac78dbed95ad16ec9308f3a810948022032b",
-      "bytes": 13868,
+      "sha256": "8dbbbd09618f5d68e128144ca453c2a443ae3a3f01b296af83d6605188fdb380",
+      "bytes": 15534,
       "gitMode": "100644"
     },
     {
@@ -96,32 +157,62 @@
     },
     {
       "path": "PUBLICATION.en.md",
-      "sha256": "211dd3d67ab9305701079fcc28789cc6234d5aedac51397ef7e22bb6bdab392a",
-      "bytes": 3697,
+      "sha256": "585c1919a7eadcf7e9c64f55956586788d930ace161fc0f7df56fba73e2f6cc1",
+      "bytes": 5090,
       "gitMode": "100644"
     },
     {
       "path": "PUBLICATION.md",
-      "sha256": "c590a821317ab1e58e6be2ea756c9ec0fcea709d91eeae1064c6720b175edf46",
-      "bytes": 2800,
+      "sha256": "35b9df6a3dd31b41918a45eb31195fb9f74a363456e7840595000f97c30163ed",
+      "bytes": 3895,
       "gitMode": "100644"
     },
     {
       "path": "README.en.md",
-      "sha256": "0c548db8569207b3b258fc467906bcf38af5bd3c4e9afe56943e376c2829275f",
-      "bytes": 3688,
+      "sha256": "bbe14f788ea8aa7875785eca37bb08adf4dfbfb5d78c8dc6657484f38d500c8c",
+      "bytes": 5645,
       "gitMode": "100644"
     },
     {
       "path": "README.md",
-      "sha256": "a41d2a267bcc2fbeb4e76591d4e01122ca3dd6f2a690f4a617bab79c0f1b3257",
-      "bytes": 3037,
+      "sha256": "2a2d1916c4926bca34a4e9a0e45b5c974064ee13593f627733f360d827e302c5",
+      "bytes": 4606,
       "gitMode": "100644"
     },
     {
       "path": "examples/assets.mjs",
       "sha256": "95b13275ec0847c12face88ae01a9b247be5dd7a3f93d92f8e759a7ba50510ef",
       "bytes": 2360,
+      "gitMode": "100644"
+    },
+    {
+      "path": "examples/canvas-scene/README.en.md",
+      "sha256": "01755ea0b44331170271d7a0c769834dbc9fce4569bc3d99568f3a891ba55a3d",
+      "bytes": 1020,
+      "gitMode": "100644"
+    },
+    {
+      "path": "examples/canvas-scene/README.md",
+      "sha256": "bf8ea4ece2b97ebc6501d55c81d8ee5b634d9e1ad2c6c88101f38b585637829f",
+      "bytes": 869,
+      "gitMode": "100644"
+    },
+    {
+      "path": "examples/canvas-scene/favicon.svg",
+      "sha256": "eef37ae8616115924b957ca699b5f4b5d05851d077d6ebaa3509e3de93523176",
+      "bytes": 169,
+      "gitMode": "100644"
+    },
+    {
+      "path": "examples/canvas-scene/index.html",
+      "sha256": "adb71b35dba2d9cb557240888a15fd35f4944cbe79b3cbda40335fcd56c0df63",
+      "bytes": 933,
+      "gitMode": "100644"
+    },
+    {
+      "path": "examples/canvas-scene/scene.mjs",
+      "sha256": "b6b39ee5cb6591f1abcb027ed6c6f186c9e7a2bde92b474e3d075b021ca8e4a1",
+      "bytes": 946,
       "gitMode": "100644"
     },
     {
@@ -150,26 +241,26 @@
     },
     {
       "path": "knowledge-base/AGENTS.en.md",
-      "sha256": "ffff3b9e4e867a259b1a1c38151016d772970e7abfc678c3b5d0e108c9be6c83",
-      "bytes": 2178,
+      "sha256": "adcfaf55ed65876cd51e2889ecc63c8cbf9d76b476fac7452a16c025effaafa7",
+      "bytes": 2417,
       "gitMode": "100644"
     },
     {
       "path": "knowledge-base/AGENTS.md",
-      "sha256": "303355516e907a4b66f222bcea850fcc7e8d1be52550df5c7efaf07cbfc509b4",
-      "bytes": 1627,
+      "sha256": "68f0651c29825ce6b5c3df33a74fa27b4faee8ad02d838ad67ee3e25cd7ee5f7",
+      "bytes": 1800,
       "gitMode": "100644"
     },
     {
       "path": "knowledge-base/CHANGELOG.en.md",
-      "sha256": "ef77017fee7bd1e54747aabbc3811013bb22780b9f32b97e6dbfdec8b2e2fdf6",
-      "bytes": 15671,
+      "sha256": "d3605bd3ff93bd8eb7dc26977e756041fad93599ccc2a4092b43ab35e27c86be",
+      "bytes": 17302,
       "gitMode": "100644"
     },
     {
       "path": "knowledge-base/CHANGELOG.md",
-      "sha256": "c9ea8ec03a26944de2d94da1a660fddf26197bd144158ce1cfe9528afcb52f30",
-      "bytes": 12084,
+      "sha256": "69faf8511d3e8a506e305592b6da7319769e9201381bd59d8de8f604bafe5615",
+      "bytes": 13380,
       "gitMode": "100644"
     },
     {
@@ -186,14 +277,14 @@
     },
     {
       "path": "knowledge-base/README.en.md",
-      "sha256": "75f709080c97f467cf08055b7a4e07c152d80f7d1fad1b87ff511b733d09b83f",
-      "bytes": 10948,
+      "sha256": "47f4726314ebd7a8f370f75849e37440c13a6184f497f3263c1cd7e3a5d37c45",
+      "bytes": 12495,
       "gitMode": "100644"
     },
     {
       "path": "knowledge-base/README.md",
-      "sha256": "8cd8846618af72c98da1d29596e4e119eedd6922e1ad3f40f99d4637da47c271",
-      "bytes": 8508,
+      "sha256": "197983a93332579e50d686db254ac3638de0434311a1ff5ad0bcacf98471bdbc",
+      "bytes": 9731,
       "gitMode": "100644"
     },
     {
@@ -222,14 +313,14 @@
     },
     {
       "path": "knowledge-base/docs/交付计划.en.md",
-      "sha256": "ef6c803631c8e236de20afe337a1a39d9092e6063d2dc0ac16c835717835848c",
-      "bytes": 7743,
+      "sha256": "ce866d4709e40e9b2f75a7bec9eca53d2259420156d5eab32a88cc6ce1251d44",
+      "bytes": 9054,
       "gitMode": "100644"
     },
     {
       "path": "knowledge-base/docs/交付计划.md",
-      "sha256": "fe8aed50143760bd9740e52d4440bc2300d25ddbfb8baae594459f0054c4b53b",
-      "bytes": 5816,
+      "sha256": "4bea702fd99d48302793e959251014a5c51277b0c5649fba043dd881392c2639",
+      "bytes": 6845,
       "gitMode": "100644"
     },
     {
@@ -258,26 +349,26 @@
     },
     {
       "path": "knowledge-base/docs/代码规范与质量门禁.en.md",
-      "sha256": "8cc5a36f2c5af6ba2853202c4795c7739fa36f3e5329efc749ae71f8cc7cf1e0",
-      "bytes": 16184,
+      "sha256": "258906f6848ab97adf73614c06f9e0ad6a7d312b3240b40d7c7c8b77d48f472c",
+      "bytes": 17883,
       "gitMode": "100644"
     },
     {
       "path": "knowledge-base/docs/代码规范与质量门禁.md",
-      "sha256": "6aa8c81ca0300f85ebd4fc1deba111a4abec6c9bb2212bf64dd35148d17136cf",
-      "bytes": 12649,
+      "sha256": "afea89b2f1f71d99a3cf873a09aa1016ad864c1e5f10badd46ddff2a8b979cd6",
+      "bytes": 13992,
       "gitMode": "100644"
     },
     {
       "path": "knowledge-base/docs/公共API设计与命名规范.en.md",
-      "sha256": "6c937a9e90a081faa887455e3f927b8e563516f2b1ec5c7fb9a940b1680a3017",
-      "bytes": 19265,
+      "sha256": "dc97cdce381fd019abb44695b1890e8cee3f0e9a49d87f1d342cceaf6887172b",
+      "bytes": 20954,
       "gitMode": "100644"
     },
     {
       "path": "knowledge-base/docs/公共API设计与命名规范.md",
-      "sha256": "71b5e15e64d5a8a83d5d8f938eb9b65806f6ccb3559e23793591f8657b4aa8e0",
-      "bytes": 15355,
+      "sha256": "dbcf97ac0410074a4c19a9e628ff38ae025b26f4c17812439d6f4afaca08825a",
+      "bytes": 16691,
       "gitMode": "100644"
     },
     {
@@ -306,14 +397,14 @@
     },
     {
       "path": "knowledge-base/docs/双语文档与推送前检查.en.md",
-      "sha256": "edf88fd16d03c9e01a2b37efc2f7e60328a71a4aa7837bded8749ccdb5e1770f",
-      "bytes": 5138,
+      "sha256": "4a4438ab93952be59bef607ef8b81c6564e8cb225b4a56fd4f3455269a9055d3",
+      "bytes": 7224,
       "gitMode": "100644"
     },
     {
       "path": "knowledge-base/docs/双语文档与推送前检查.md",
-      "sha256": "7eadf0fb84b9fd241598de1c475953b6b64dafbe5fd817d80a91f24fa4bb09c0",
-      "bytes": 3922,
+      "sha256": "5c23c9ac479627828aa8cdc3ccf127954700b48e71f507556798708735075c62",
+      "bytes": 5567,
       "gitMode": "100644"
     },
     {
@@ -330,26 +421,26 @@
     },
     {
       "path": "knowledge-base/docs/工程技术架构与项目结构.en.md",
-      "sha256": "a1560e445fbc3de98752e79a47989b59a6fd6cacce3375ebc1ed93739e87df88",
-      "bytes": 22342,
+      "sha256": "63e51a8182e3aedc9ad0e7424a75de4aead09c5521eeb4c8d9fee17ed1744336",
+      "bytes": 23653,
       "gitMode": "100644"
     },
     {
       "path": "knowledge-base/docs/工程技术架构与项目结构.md",
-      "sha256": "3a3b76b962e3335dfabbb94c326f66f98377580ba5dc49d8c0f3372286aa3665",
-      "bytes": 18424,
+      "sha256": "cae517d833f6c7a87171524e90050a83d57c943409306f79ffe587d5394c93ce",
+      "bytes": 19452,
       "gitMode": "100644"
     },
     {
       "path": "knowledge-base/docs/工程规划.en.md",
-      "sha256": "7ee3abf1decea5d3f33f0b85eb8775643561b01bfce558a884d5b1085179f99a",
-      "bytes": 27468,
+      "sha256": "aaab252800a13774c65700b360a03f6955ba8fa6976161fe899a02533c26c705",
+      "bytes": 28779,
       "gitMode": "100644"
     },
     {
       "path": "knowledge-base/docs/工程规划.md",
-      "sha256": "cb14a9f6f75c470f1d479a5b1171c93302529c7b932411ff63c02d2da2612b9d",
-      "bytes": 22020,
+      "sha256": "183e980c3df8a21cefeaf74e72994dc5b250b6191e86219f1ba77f40676e7618",
+      "bytes": 23049,
       "gitMode": "100644"
     },
     {
@@ -437,6 +528,42 @@
       "gitMode": "100644"
     },
     {
+      "path": "knowledge-base/docs/显示与帧执行合同.en.md",
+      "sha256": "e8a6539c6eb877107bbc9428ac86e4aec633a093ec182648b49999e140356247",
+      "bytes": 12205,
+      "gitMode": "100644"
+    },
+    {
+      "path": "knowledge-base/docs/显示与帧执行合同.md",
+      "sha256": "2107887b923c3a9963b44a7a54ac4e30ca5ddb869599536742e517d778912270",
+      "bytes": 10494,
+      "gitMode": "100644"
+    },
+    {
+      "path": "knowledge-base/docs/显示与帧执行实现计划.en.md",
+      "sha256": "6cf2091ed8680f5fcdecdb4454dd3ff39888c13dfb5f413e701a8b5be464b5f1",
+      "bytes": 8524,
+      "gitMode": "100644"
+    },
+    {
+      "path": "knowledge-base/docs/显示与帧执行实现计划.md",
+      "sha256": "7d83b3b0bfe84b4819a1c4ef608631693db101cc31359f05218ab361b329aa11",
+      "bytes": 7409,
+      "gitMode": "100644"
+    },
+    {
+      "path": "knowledge-base/docs/显示与帧执行实现记录.en.md",
+      "sha256": "ac489ea82b43420dac09fb4a9edba5954d38e3d52857042c4a8fb6fd0a499b24",
+      "bytes": 3192,
+      "gitMode": "100644"
+    },
+    {
+      "path": "knowledge-base/docs/显示与帧执行实现记录.md",
+      "sha256": "e1401b6f1851f5a66ae27ef244f580322262342800545d592ec63ab252cd8502",
+      "bytes": 2601,
+      "gitMode": "100644"
+    },
+    {
       "path": "knowledge-base/docs/术语表.en.md",
       "sha256": "9c6d023e504860648e474597ca6a1617f793e8517e38363580b6a6fa0761325c",
       "bytes": 2249,
@@ -462,26 +589,26 @@
     },
     {
       "path": "knowledge-base/docs/核心框架实现记录.en.md",
-      "sha256": "bde8304eac2d247a8b6ad5465cc7ef4c30a7eb3ea78335307b5c78d7bfd7f7c7",
-      "bytes": 7151,
+      "sha256": "2a45f666ece8859b515700d4f2eef5a303e1932de7458a47cf9efcc632f57bee",
+      "bytes": 8761,
       "gitMode": "100644"
     },
     {
       "path": "knowledge-base/docs/核心框架实现记录.md",
-      "sha256": "d55847d10566474ee787f09d607b0d8e4963086f2c7f9bc60450fbd8913563c0",
-      "bytes": 5544,
+      "sha256": "51df1f871057f4a12744525e464139faef8b2965b52356632701b3b470182904",
+      "bytes": 6802,
       "gitMode": "100644"
     },
     {
       "path": "knowledge-base/docs/核心框架证据缺口与研究清单.en.md",
-      "sha256": "79ab63f6da18c61e726af15b8a3f5112ca663f4f4250c4eb3e8df3bb70d19cb7",
-      "bytes": 27636,
+      "sha256": "8bb1c09e194225ce576db4457868f4155c27afbfe2790e5837a8a81542ab47c7",
+      "bytes": 28947,
       "gitMode": "100644"
     },
     {
       "path": "knowledge-base/docs/核心框架证据缺口与研究清单.md",
-      "sha256": "d23f02aa0b155d31cec6b5c4d418a90dac572b9f6170e5253cdfee52e24446db",
-      "bytes": 25136,
+      "sha256": "aca242a3788e6cc142b53bdfc7ab10a9280ec8ce0815b49c9f59f1c7b2a1c538",
+      "bytes": 25928,
       "gitMode": "100644"
     },
     {
@@ -498,14 +625,14 @@
     },
     {
       "path": "knowledge-base/docs/渲染引擎与运行时.en.md",
-      "sha256": "e496d9f012aab84da075b50ba930f5e4e529654bd7f63d0206a1548a633d87ea",
-      "bytes": 14432,
+      "sha256": "d3ff4754b0cd07cec0767d0025bf3ec200a9f7f77fee21bd1e4d6f9c6d7b71cb",
+      "bytes": 15743,
       "gitMode": "100644"
     },
     {
       "path": "knowledge-base/docs/渲染引擎与运行时.md",
-      "sha256": "fb041ecb0956277f011cdc41df76556767a67a4e231c05934daa1f354d7d9ec5",
-      "bytes": 11484,
+      "sha256": "b4b8bb85e6de4c446fc5074de0867379bdc3237412fdbd98c60dcaf588bc059a",
+      "bytes": 12513,
       "gitMode": "100644"
     },
     {
@@ -1508,6 +1635,18 @@
       "path": "knowledge-base/evidence/design-audit-phase2-2026-10-08.json",
       "sha256": "76b897cc4da013fbdc080f53049e5e729a9cf5fb8466eccddbd36e9c49fb50b9",
       "bytes": 8603,
+      "gitMode": "100644"
+    },
+    {
+      "path": "knowledge-base/evidence/display-frame-review.json",
+      "sha256": "e364930b565ef12ee0a55d29a73648a7dc0d95fd52b8841141b4f8aa091f8d4a",
+      "bytes": 15268,
+      "gitMode": "100644"
+    },
+    {
+      "path": "knowledge-base/evidence/display-frame-verification.json",
+      "sha256": "841db0bc60ae6dedb3cecd24c7b6b9a6cbee4cde8bba698d32e0366cf8510276",
+      "bytes": 13359,
       "gitMode": "100644"
     },
     {
@@ -3504,14 +3643,14 @@
     },
     {
       "path": "knowledge-base/registry/交付.en.json",
-      "sha256": "bbd782d928214d94266075ec18f1367769d5663987736cf50865844c818a97bf",
-      "bytes": 22464,
+      "sha256": "ceb1c5b6101078004376855ee7310c772fdad28e2c79ca350bda0cf49c445d9c",
+      "bytes": 23859,
       "gitMode": "100644"
     },
     {
       "path": "knowledge-base/registry/交付.json",
-      "sha256": "82a6e8ba0644dba371986dd8890414d8d012e5ced630c3282f7a09aff3353b61",
-      "bytes": 20878,
+      "sha256": "6c11abf9ccd8120923b58df083d4c7f8bdfbee22e7df381bc7648830ba8a95ae",
+      "bytes": 22256,
       "gitMode": "100644"
     },
     {
@@ -3540,26 +3679,26 @@
     },
     {
       "path": "knowledge-base/registry/来源.en.json",
-      "sha256": "5cd55ba6b7e5d14a09444a5b0037706c1826618fe535ef02ba1db5b35edb165b",
-      "bytes": 61213,
+      "sha256": "7c490f874aca9a64420c76427df3e657031e9d239ec4e63451d6bb49a0d54045",
+      "bytes": 62579,
       "gitMode": "100644"
     },
     {
       "path": "knowledge-base/registry/来源.json",
-      "sha256": "6a1ab3c56d0a46f5555400c2d4e7deae6a329a5a6f2cf9c8378c32b11c3d85fb",
-      "bytes": 55625,
+      "sha256": "91e485e480e664e3d400059025f505ed318ab53ecf95b2e9a8bec6e0882ab15f",
+      "bytes": 56841,
       "gitMode": "100644"
     },
     {
       "path": "knowledge-base/registry/需求.en.json",
-      "sha256": "0918a85bfb69471e0dc3e4ccfe18cc1bae5af9b1ebd8dfd868cf4144ffaf2182",
-      "bytes": 13600,
+      "sha256": "b6c6b9f925623fd7dfcd512660743f255451be4af316efdc3f638a11d03c12f7",
+      "bytes": 13696,
       "gitMode": "100644"
     },
     {
       "path": "knowledge-base/registry/需求.json",
-      "sha256": "39b14a97a497470934ed87d6afd685044828434ea31e9f5ff644ffc4686e22b9",
-      "bytes": 11739,
+      "sha256": "47a5f7f803e64986c7170f200c8cdbd5a0e020899560bf417b399c2eae2da593",
+      "bytes": 11835,
       "gitMode": "100644"
     },
     {
@@ -3618,26 +3757,26 @@
     },
     {
       "path": "knowledge-base/当前版本.en.json",
-      "sha256": "4d68c1cec4b392243b223dc53e5d5805bb64589ee8871ed2d4fe7532faf93cbb",
-      "bytes": 12100,
+      "sha256": "ac0b15bcdccb11273ffdf2a62d675caf5d4e4b1309b9f365223567c9ade2a143",
+      "bytes": 13076,
       "gitMode": "100644"
     },
     {
       "path": "knowledge-base/当前版本.json",
-      "sha256": "5e8cf74643b9240f9cab2901f15c413e680b329ca39bed01d5053a4647bdf139",
-      "bytes": 11885,
+      "sha256": "6305a5627a2b5c10887f24f531df4c5cc4cbd1c9b1439e8e05edc062555961ee",
+      "bytes": 12861,
       "gitMode": "100644"
     },
     {
       "path": "knowledge-base/核验记录.json",
-      "sha256": "5946477d9b5c55c7babd12fd11b274fee68a5d60def40c1d317ffae1d42ae624",
-      "bytes": 103653,
+      "sha256": "2b049967e293cd7ab3312eaf1e19e04fabfc7b9a79f2c8a0ed6b7e2c6427d008",
+      "bytes": 102510,
       "gitMode": "100644"
     },
     {
       "path": "localization.json",
-      "sha256": "aaabcd6f6cdc83299c5eb323068f3568abb28cec73a59470f199926986dc72cd",
-      "bytes": 36291,
+      "sha256": "051ad5cb0e292ace5302c5297898717e56264c0fd5e863b885bb41a2db7ffd2b",
+      "bytes": 38775,
       "gitMode": "100644"
     },
     {
@@ -3648,14 +3787,14 @@
     },
     {
       "path": "packages/contracts/README.en.md",
-      "sha256": "4b7aedc3f9f8f9648353f4acb1c5a110387d0139b1213d6978fab74485400864",
-      "bytes": 1156,
+      "sha256": "ac8a3e151ea797dbad13f5074192721de58162d727b1f1bbbdd1b7d548a51c88",
+      "bytes": 3240,
       "gitMode": "100644"
     },
     {
       "path": "packages/contracts/README.md",
-      "sha256": "349d9ca4178f9b2043345d54167dfb93e3ee326ccbd4d41fd52cc85c3757fd9e",
-      "bytes": 940,
+      "sha256": "64b1311f9991abce8024627c86c767419118c175c09d45b5d37c2b1a0924b5a9",
+      "bytes": 2677,
       "gitMode": "100644"
     },
     {
@@ -3672,8 +3811,8 @@
     },
     {
       "path": "packages/contracts/src/Diagnostic.ts",
-      "sha256": "dd24a34a911fd333cea3a799675465a5e871d2a47cd551648dbc245cece8d25f",
-      "bytes": 470,
+      "sha256": "ce61e4d90319f55febc2782ca5e1a7329984cf6cfdf14955cc3a20dbdd5920ad",
+      "bytes": 485,
       "gitMode": "100644"
     },
     {
@@ -3689,9 +3828,15 @@
       "gitMode": "100644"
     },
     {
+      "path": "packages/contracts/src/RenderFrame2D.ts",
+      "sha256": "853ac3e712082cf67e442043044b0da0ca577bb2d6a68d3c5981ac203fcd1e60",
+      "bytes": 1248,
+      "gitMode": "100644"
+    },
+    {
       "path": "packages/contracts/src/index.ts",
-      "sha256": "85f4a29e7e04334ab941dfe7a848edacc3a597dc5621820366c7cadd257eda13",
-      "bytes": 287,
+      "sha256": "9a4771c7479eaf70e1b27f2678e0f16e633ee85b8a413508c486dcd111471fbc",
+      "bytes": 440,
       "gitMode": "100644"
     },
     {
@@ -3702,26 +3847,26 @@
     },
     {
       "path": "packages/engine/README.en.md",
-      "sha256": "5883049a7b04849806d8d810af10f33871e64dff5502561513df9488be5c9b60",
-      "bytes": 1556,
+      "sha256": "e633384dc915242c394834f6d86e0aa2128707c44e5e09f5d5fa9b24b9cbd3a8",
+      "bytes": 3808,
       "gitMode": "100644"
     },
     {
       "path": "packages/engine/README.md",
-      "sha256": "c61586d644569bb4cab5bfc548313db43670e712a1174b9099d761a0c0f859d0",
-      "bytes": 1248,
+      "sha256": "4382b97f1d7b255a2810cecd8a76e0b625c2e03de8cb9cedcd1c92157ea39ead",
+      "bytes": 3093,
       "gitMode": "100644"
     },
     {
       "path": "packages/engine/package.json",
-      "sha256": "26b7c45f629f7c8a7d41c466fdd06741163a2afd9b6002075c6341530ed2e663",
-      "bytes": 266,
+      "sha256": "11cd51161a3f37fceeea5bdcf6878c35af5b7d6557fba3c0fafabfe6954efa0b",
+      "bytes": 398,
       "gitMode": "100644"
     },
     {
       "path": "packages/engine/src/Engine.ts",
-      "sha256": "e386470f8e13a17e9960a594452d22d0c88f67b8d3863de03c4b5727ac22bccf",
-      "bytes": 4368,
+      "sha256": "565d2f2701d5f1c7f653a5833f435b649f68975bf650400003bbdd86ecb909a0",
+      "bytes": 8607,
       "gitMode": "100644"
     },
     {
@@ -3732,14 +3877,14 @@
     },
     {
       "path": "packages/engine/src/createEngine.ts",
-      "sha256": "f0ae30646b03bdd9539e54223a98519e8afed8bee696dc378586c8128924e9d1",
-      "bytes": 1178,
+      "sha256": "32011ff9c7bbc65e0bdf455a21fcac2e975cd14f9065c3c7c9589bbb74c56774",
+      "bytes": 1705,
       "gitMode": "100644"
     },
     {
       "path": "packages/engine/src/index.ts",
-      "sha256": "8b138bad7220763fbeb5ff43775303decfd0dfe370fdd4459917b45330597f94",
-      "bytes": 800,
+      "sha256": "610b29b05ca80e16c602d68af2ad1a71be4027cb4c5731816c177eb415e3b3f4",
+      "bytes": 1002,
       "gitMode": "100644"
     },
     {
@@ -3755,15 +3900,39 @@
       "gitMode": "100644"
     },
     {
+      "path": "packages/engine/tsconfig.web.json",
+      "sha256": "ed3119d70f5e94a243c2375a62c09ac95d60454fa4fb6577013029e7571c4d68",
+      "bytes": 284,
+      "gitMode": "100644"
+    },
+    {
+      "path": "packages/engine/web/CanvasHost.ts",
+      "sha256": "ae6c2f46bd3e43b44e8a915a5b4fb9c1cbebab6b5f14b93178b7bd7eb5f0c7cb",
+      "bytes": 6500,
+      "gitMode": "100644"
+    },
+    {
+      "path": "packages/engine/web/copyCanvasFrame.ts",
+      "sha256": "274069cd40f81ddbb9aa298f4119be2cf8e4791d17c0c2b2652033a0d4957637",
+      "bytes": 3989,
+      "gitMode": "100644"
+    },
+    {
+      "path": "packages/engine/web/index.ts",
+      "sha256": "1c06c610493ff706ed07983a2bdd826aaf8a2b3af8c88563ad99e1324f2a7e4e",
+      "bytes": 122,
+      "gitMode": "100644"
+    },
+    {
       "path": "packages/runtime/README.en.md",
-      "sha256": "bea2154ff97ec27739bdbb5d9659e97aa50fb2a5cf331e18f5ef5043bd2e54aa",
-      "bytes": 1993,
+      "sha256": "97eeca38ec5f73641b226f5e3e724580232040fc1acd0e4cb8e9b692d20e9214",
+      "bytes": 4160,
       "gitMode": "100644"
     },
     {
       "path": "packages/runtime/README.md",
-      "sha256": "0b4aeaeaa923187057ceb6da95238cbaa6192f155ad4dcffe1036598b06330e0",
-      "bytes": 1515,
+      "sha256": "5ff29a37678e52fb6deba246b732a01c0edc217959486a5df72a61e4db1aa32b",
+      "bytes": 3276,
       "gitMode": "100644"
     },
     {
@@ -3798,14 +3967,14 @@
     },
     {
       "path": "packages/runtime/src/DisplayObject.ts",
-      "sha256": "d64dde4b35ca2cf929ae14a2f99b59f7e0efbb02cb5a363ff0ff6975b5aadebd",
-      "bytes": 1224,
+      "sha256": "f66c3aaecf255601969603b359ac42bcd4db6d2ed17750727f0f4f5816152e70",
+      "bytes": 3430,
       "gitMode": "100644"
     },
     {
       "path": "packages/runtime/src/DisplayObjectContainer.ts",
-      "sha256": "f0cdb820b26b06d304fd925e81367776a8f2c4824670be44da47d97953aa173e",
-      "bytes": 4629,
+      "sha256": "36b2f5e42d5654a03765c292bedf42f094fde122967a17c00b3e4180d1e2a72c",
+      "bytes": 4736,
       "gitMode": "100644"
     },
     {
@@ -3827,9 +3996,21 @@
       "gitMode": "100644"
     },
     {
+      "path": "packages/runtime/src/Graphics.ts",
+      "sha256": "e84deaaefeec9e9bbe25d1447aba980ebefa5c981af73d71a611fe45898443a9",
+      "bytes": 1270,
+      "gitMode": "100644"
+    },
+    {
       "path": "packages/runtime/src/Scope.ts",
       "sha256": "29e9d5da9232ed8347b2a829e069d33daabb1bad296798492a45c7950f43e8ea",
       "bytes": 4700,
+      "gitMode": "100644"
+    },
+    {
+      "path": "packages/runtime/src/Sprite.ts",
+      "sha256": "a3175515cdeedc283199870cd683e541acf208f04330c63c3f5f5eee2e328bba",
+      "bytes": 442,
       "gitMode": "100644"
     },
     {
@@ -3857,9 +4038,21 @@
       "gitMode": "100644"
     },
     {
+      "path": "packages/runtime/src/displayVisualState.ts",
+      "sha256": "0bee8a7e5136f59c3301ec4d829bceaf5a01aff6f0d770dd6a2952ed31110f21",
+      "bytes": 1785,
+      "gitMode": "100644"
+    },
+    {
+      "path": "packages/runtime/src/frameCapture.ts",
+      "sha256": "37ac4db4273ddca728622fd2db1226c1d104e056c40fd3bcbfbadeae1c75e921",
+      "bytes": 3071,
+      "gitMode": "100644"
+    },
+    {
       "path": "packages/runtime/src/index.ts",
-      "sha256": "82adc2ead33bd530c7ad18557237d816b019424987ecc48601ebdfedf2a5ec8a",
-      "bytes": 1130,
+      "sha256": "51700665e52ddabfbce7359ee7e08747bee348a46cc0c1ba3a936a901f21e4b8",
+      "bytes": 1269,
       "gitMode": "100644"
     },
     {
@@ -3888,8 +4081,8 @@
     },
     {
       "path": "source-origin.json",
-      "sha256": "394aadeb0e3e2d3a7488ec16277f25a6ba92e95dc154e236d2d715fda2d6b98d",
-      "bytes": 50485,
+      "sha256": "4a3093bb6319ffdac28f770512537f91932102a36efee6638e31adeabef3d3aa",
+      "bytes": 63543,
       "gitMode": "100644"
     },
     {
@@ -3911,6 +4104,12 @@
       "gitMode": "100644"
     },
     {
+      "path": "tests/canvas-host.test.mjs",
+      "sha256": "58dd8c20b9b4208f2de7e0b056d9075bddb06c8f03dae65bad29c4f93a91e43e",
+      "bytes": 6559,
+      "gitMode": "100644"
+    },
+    {
       "path": "tests/display-tree.test.mjs",
       "sha256": "6302c03f672ec4878e7bff6fffb4c6bf53ff4b5ce31d1ef5b0485e597b9bbbfe",
       "bytes": 6453,
@@ -3929,6 +4128,12 @@
       "gitMode": "100644"
     },
     {
+      "path": "tests/frame.test.mjs",
+      "sha256": "af55b8cace7bd33713b007dbc46ed74d5d9c6280be1b7210662902eb251cc1cb",
+      "bytes": 11675,
+      "gitMode": "100644"
+    },
+    {
       "path": "tests/helpers.mjs",
       "sha256": "20e7dd30f54b3a81d35f666c8370e7f014e4559c68222727bc88fd377efc1af7",
       "bytes": 997,
@@ -3942,8 +4147,8 @@
     },
     {
       "path": "tests/publication/check-publication.test.mjs",
-      "sha256": "ff5b1e45e710f5842aa2615d55b8f87d6fe8256fb6a8fe85cfff2192710f0161",
-      "bytes": 5687,
+      "sha256": "0a0dec05c056fb0fb2515cdd3d739de88f18f9578257902339c6840214cd8827",
+      "bytes": 6905,
       "gitMode": "100644"
     },
     {
@@ -3959,9 +4164,15 @@
       "gitMode": "100644"
     },
     {
+      "path": "tests/types/dom-free.ts",
+      "sha256": "c3801687ad3896fbdbfb3518c63b13afaebb42df455c0230e7f2a0e374264ed4",
+      "bytes": 300,
+      "gitMode": "100644"
+    },
+    {
       "path": "tests/types/negative.ts",
-      "sha256": "bf36f78201c71c3a1f19bccb2117e3540a9a6c943dd9fb2f08794cf8a8230e6a",
-      "bytes": 3038,
+      "sha256": "90c48447b08872d893675a8a5701e3a75c99d32f63dec9f8e3db4570907dbde2",
+      "bytes": 3634,
       "gitMode": "100644"
     },
     {
@@ -3971,9 +4182,27 @@
       "gitMode": "100644"
     },
     {
+      "path": "tests/types/tsconfig.dom-free.json",
+      "sha256": "24bc13fae1f9d98b5d2dc212c9fb4f1f926aeb956f706d8269acbd617c900b49",
+      "bytes": 56,
+      "gitMode": "100644"
+    },
+    {
       "path": "tests/types/tsconfig.json",
       "sha256": "88a3194ab9d7990646c7957e96e8d059ee16e79fe88373543a763da38a84dae1",
       "bytes": 197,
+      "gitMode": "100644"
+    },
+    {
+      "path": "tests/types/tsconfig.web.json",
+      "sha256": "ebd9c73f69f0a3ee587bf6a07a49a33218cdea845d3a243c2df22a89fb18568d",
+      "bytes": 94,
+      "gitMode": "100644"
+    },
+    {
+      "path": "tests/types/web.ts",
+      "sha256": "fdc424582345dcc53465c8eb141a909fb17a663927eae9c3f1a7b9b37bd14bd3",
+      "bytes": 621,
       "gitMode": "100644"
     },
     {
@@ -3983,21 +4212,27 @@
       "gitMode": "100644"
     },
     {
+      "path": "tools/canvas-browser-checks.mjs",
+      "sha256": "f65dfbe34f3ab535149e00634767080e6a7ebef5f462de0ae1315d0a8ff94ac7",
+      "bytes": 5125,
+      "gitMode": "100644"
+    },
+    {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "9b8e0c6195504b91c4758fa9a243de2f60bf40a8fd51ecfe5a8b65c6ca1e9b62",
-      "bytes": 3452,
+      "sha256": "16140a5abf47954f42fefbfdf2074b6ce15feb095c566f0cf005f1ac3d43e478",
+      "bytes": 4984,
       "gitMode": "100644"
     },
     {
       "path": "tools/check-publication.mjs",
-      "sha256": "3a23d7ca84233e3339107fcdb617795c5cee8fd503f3ddcac223f37508cc6b38",
-      "bytes": 6364,
+      "sha256": "887dc3f118f413e515f4786507b445cdabf4c04a9aa5d67408f3a5dd20311293",
+      "bytes": 6409,
       "gitMode": "100644"
     },
     {
       "path": "tools/check-types.mjs",
-      "sha256": "332d2c161ceb9ec7d75429c89a3d2c95af24f2cf5eed68b92b09532d1ce691a4",
-      "bytes": 2031,
+      "sha256": "a5416d2424e8f194d8025e364442c7882936c42cd2df9667676f912b99a25939",
+      "bytes": 3488,
       "gitMode": "100644"
     },
     {
@@ -4007,9 +4242,21 @@
       "gitMode": "100644"
     },
     {
+      "path": "tools/serve-canvas.mjs",
+      "sha256": "8bd33b635a183f706cc2556eae6e557f46bff47fcb2c623d0839bde93f2f1e62",
+      "bytes": 1057,
+      "gitMode": "100644"
+    },
+    {
       "path": "tools/test.mjs",
       "sha256": "6d8fdbf59b3c9d1a4aab917ae9ab8167818c0716a6219f5f91c5893bb2c4eb53",
       "bytes": 514,
+      "gitMode": "100644"
+    },
+    {
+      "path": "tools/verify-canvas.mjs",
+      "sha256": "4810b9e185e93817236fd2c523ee4d549117744cb7b102967ce2380804b531ba",
+      "bytes": 3850,
       "gitMode": "100644"
     },
     {
@@ -4026,8 +4273,8 @@
     },
     {
       "path": "tsconfig.json",
-      "sha256": "e07fc831f31dc9ea9ecb612be734f4b533e32d7dbbb246abffaa8b23111076aa",
-      "bytes": 155,
+      "sha256": "63d6eb1da2841bf4163d44f0831899a772b49cbb2605ddd7ddabfd60fea8863b",
+      "bytes": 250,
       "gitMode": "100644"
     },
     {
@@ -4079,6 +4326,18 @@
       "gitMode": "100644"
     },
     {
+      "path": "verification/display-frame-review.json",
+      "sha256": "d2c593926a697c11be6738f7168e8d0e85dbd285f19524b3d9ac3f7a201b20be",
+      "bytes": 15140,
+      "gitMode": "100644"
+    },
+    {
+      "path": "verification/display-frame-verification.json",
+      "sha256": "e2fd7d295e24ff44433893c4c43b56bc0e69934b232045390953fc7d56e6f427",
+      "bytes": 13225,
+      "gitMode": "100644"
+    },
+    {
       "path": "verification/english-comment-provenance.json",
       "sha256": "ffec1f123f588e5765cdb54991f4a082cd225e0764738880402b61378134b855",
       "bytes": 12255,
@@ -4097,15 +4356,153 @@
       "gitMode": "100644"
     },
     {
+      "path": "verification/history/comment-source-0.10.0/packages/contracts/src/CancellationSignal.ts",
+      "sha256": "6a9e5f07b549ec50c2a5c50915309e8de6fba2d943f59a0d7b54b079e14584b3",
+      "bytes": 507,
+      "gitMode": "100644"
+    },
+    {
+      "path": "verification/history/comment-source-0.10.0/packages/contracts/src/Diagnostic.ts",
+      "sha256": "bb788eed680e77497845d9ca95621683c616c773c13a61b42bcabad608c10461",
+      "bytes": 459,
+      "gitMode": "100644"
+    },
+    {
+      "path": "verification/history/comment-source-0.10.0/packages/contracts/src/Disposable.ts",
+      "sha256": "76d74cd41b6e136ea840c7d8d05273520ce7d41031a7820dd4ddabc73be947db",
+      "bytes": 399,
+      "gitMode": "100644"
+    },
+    {
+      "path": "verification/history/comment-source-0.10.0/packages/contracts/src/HostAdapter.ts",
+      "sha256": "3c8289a85e04e34be3782156244cc253792eff1b41629758d54cd1692c64c2ae",
+      "bytes": 840,
+      "gitMode": "100644"
+    },
+    {
+      "path": "verification/history/comment-source-0.10.0/packages/engine/src/Engine.ts",
+      "sha256": "471f78e5f01bfdbb0492d6be3f1f3c5ed9daa7cc8e20068c47fef49e21acac56",
+      "bytes": 4019,
+      "gitMode": "100644"
+    },
+    {
+      "path": "verification/history/comment-source-0.10.0/packages/engine/src/closeHost.ts",
+      "sha256": "9fac806cc0d19265ec6956cc19305a9ff2ae03ff0e49700d64c39be88ba3244f",
+      "bytes": 2307,
+      "gitMode": "100644"
+    },
+    {
+      "path": "verification/history/comment-source-0.10.0/packages/engine/src/createEngine.ts",
+      "sha256": "f0ae30646b03bdd9539e54223a98519e8afed8bee696dc378586c8128924e9d1",
+      "bytes": 1178,
+      "gitMode": "100644"
+    },
+    {
+      "path": "verification/history/comment-source-0.10.0/packages/engine/src/surfaceOwnership.ts",
+      "sha256": "604df51eb03f8dbb7965100e06667c09bb311f0e26e0ee752b2404c899e5a320",
+      "bytes": 579,
+      "gitMode": "100644"
+    },
+    {
+      "path": "verification/history/comment-source-0.10.0/packages/runtime/src/CancellationController.ts",
+      "sha256": "3cfdb217804b282c4a422420ce5efa63ced25a6bb215bff254e7f947c4942e28",
+      "bytes": 2414,
+      "gitMode": "100644"
+    },
+    {
+      "path": "verification/history/comment-source-0.10.0/packages/runtime/src/DisplayObject.ts",
+      "sha256": "d64dde4b35ca2cf929ae14a2f99b59f7e0efbb02cb5a363ff0ff6975b5aadebd",
+      "bytes": 1224,
+      "gitMode": "100644"
+    },
+    {
+      "path": "verification/history/comment-source-0.10.0/packages/runtime/src/DisplayObjectContainer.ts",
+      "sha256": "f0cdb820b26b06d304fd925e81367776a8f2c4824670be44da47d97953aa173e",
+      "bytes": 4629,
+      "gitMode": "100644"
+    },
+    {
+      "path": "verification/history/comment-source-0.10.0/packages/runtime/src/EgretError.ts",
+      "sha256": "f647ab0f675a5e0d460f1e7b04bce603d06998096f460371035f23826eed7f08",
+      "bytes": 652,
+      "gitMode": "100644"
+    },
+    {
+      "path": "verification/history/comment-source-0.10.0/packages/runtime/src/Event.ts",
+      "sha256": "de5671dcddbde4637c22b5ea2bff9ebb520c7aed503608e670d0efc08cf9539c",
+      "bytes": 3379,
+      "gitMode": "100644"
+    },
+    {
+      "path": "verification/history/comment-source-0.10.0/packages/runtime/src/EventDispatcher.ts",
+      "sha256": "141051a7aede922c0d8d73aa2b509c75cbe209118ba0bb48b3869765b9c5a82d",
+      "bytes": 6498,
+      "gitMode": "100644"
+    },
+    {
+      "path": "verification/history/comment-source-0.10.0/packages/runtime/src/Scope.ts",
+      "sha256": "29e9d5da9232ed8347b2a829e069d33daabb1bad296798492a45c7950f43e8ea",
+      "bytes": 4700,
+      "gitMode": "100644"
+    },
+    {
+      "path": "verification/history/comment-source-0.10.0/packages/runtime/src/Stage.ts",
+      "sha256": "08eb1599d9c75c70add22558f28e214ec31fe4305ccdf2638a8f7d35ec61bb0f",
+      "bytes": 1019,
+      "gitMode": "100644"
+    },
+    {
+      "path": "verification/history/comment-source-0.10.0/packages/runtime/src/diagnostics.ts",
+      "sha256": "c330f5d9083d84ee5b23b947d0d8534e7050a92f8b76a7e5259a1bad92395294",
+      "bytes": 601,
+      "gitMode": "100644"
+    },
+    {
+      "path": "verification/history/comment-source-0.10.0/packages/runtime/src/displayTreeState.ts",
+      "sha256": "8aaf5f5dfc8d62f3b1bc4effe819e7718e3ed72fcf0a8fc25e3b08410f980e50",
+      "bytes": 3363,
+      "gitMode": "100644"
+    },
+    {
+      "path": "verification/history/comment-source-0.10.0/packages/runtime/src/ownership.ts",
+      "sha256": "8c8c40e465002882dac1bf054fa49248c99df62da337cf75f50168f0a6748c62",
+      "bytes": 3239,
+      "gitMode": "100644"
+    },
+    {
+      "path": "verification/history/comment-source-binding-0.10.0.json",
+      "sha256": "04289d8f6f2e60de5a71d880f010302daed9f410fd3e92693c420cebc44960c4",
+      "bytes": 5316,
+      "gitMode": "100644"
+    },
+    {
       "path": "verification/history/export-0.10.0.json",
       "sha256": "bd28ccb8d5b33a47fd1043134bfd30ab21da7f4b2fd506de9c4cb0c55dc127d5",
       "bytes": 153954,
       "gitMode": "100644"
     },
     {
+      "path": "verification/history/export-0.11.0.json",
+      "sha256": "8ebd57b9a7dcf8491352a9c5637b87884a7dea4591d41cc0e847e1bbca3e67ac",
+      "bytes": 157596,
+      "gitMode": "100644"
+    },
+    {
+      "path": "verification/history/knowledge-base-validation-0.11.0.json",
+      "sha256": "5946477d9b5c55c7babd12fd11b274fee68a5d60def40c1d317ffae1d42ae624",
+      "bytes": 103653,
+      "gitMode": "100644"
+    },
+    {
       "path": "verification/history/source-origin-0.10.0.json",
       "sha256": "3b29b2949da2c22e5461fdc85ca9f37771135b0b3de036a4288ef6fb8b15de5e",
       "bytes": 38599,
+      "gitMode": "100644"
+    },
+    {
+      "path": "verification/history/source-origin-0.11.0.json",
+      "sha256": "394aadeb0e3e2d3a7488ec16277f25a6ba92e95dc154e236d2d715fda2d6b98d",
+      "bytes": 50485,
       "gitMode": "100644"
     },
     {

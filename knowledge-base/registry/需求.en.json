@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-08",
+  "updatedAt": "2026-10-09",
   "authority": "Goals confirmed by the user in this project discussion; see the delivery registry separately for implementation and acceptance",
   "items": [
     {
@@ -53,7 +53,8 @@
         "S001"
       ],
       "deliveryIds": [
-        "V002"
+        "V002",
+        "V011"
       ],
       "decisionIds": [
         "D001",
@@ -232,7 +233,8 @@
       "deliveryIds": [
         "V001",
         "V007",
-        "V008"
+        "V008",
+        "V011"
       ],
       "decisionIds": [
         "D012"
@@ -331,7 +333,8 @@
         "V005",
         "V006",
         "V007",
-        "V008"
+        "V008",
+        "V011"
       ],
       "decisionIds": [
         "D001",
@@ -369,7 +372,8 @@
         "V005",
         "V006",
         "V007",
-        "V008"
+        "V008",
+        "V011"
       ],
       "decisionIds": [
         "D016"
@@ -388,7 +392,8 @@
         "V002",
         "V009",
         "V007",
-        "V010"
+        "V010",
+        "V011"
       ],
       "decisionIds": [
         "D016"
@@ -422,7 +427,8 @@
       "deliveryIds": [
         "V007",
         "V008",
-        "V009"
+        "V009",
+        "V011"
       ],
       "decisionIds": [],
       "doc": "docs/双语文档与推送前检查.md"
@@ -430,7 +436,7 @@
   ],
   "_localization": {
     "canonicalSource": "需求.json",
-    "canonicalSha256": "39b14a97a497470934ed87d6afd685044828434ea31e9f5ff644ffc4686e22b9",
+    "canonicalSha256": "47a5f7f803e64986c7170f200c8cdbd5a0e020899560bf417b399c2eae2da593",
     "role": "read_only_translation",
     "language": "en"
   }

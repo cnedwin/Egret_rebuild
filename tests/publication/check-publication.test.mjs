@@ -31,4 +31,21 @@ test('publication rejects a document link escaping the public root',()=>fixture(
 test('publication rejects removal of reviewed English critical comments',()=>fixture(async(root,m)=>{const b='export const closed = false;\n';await writeFile(path.join(root,'src/core.ts'),b);m.criticalComments[0].sha256=sha(b);await writeFile(path.join(root,'localization.json'),JSON.stringify(m));assert.ok((await checkPublication(root)).issues.some(x=>x.includes('English comment')));}));
 test('publication does not mistake English code after a Chinese comment for English documentation',()=>fixture(async(root,m)=>{const b='/** 关闭合同。 */\nexport const closed = false;\n';await writeFile(path.join(root,'src/core.ts'),b);m.criticalComments[0].sha256=sha(b);await writeFile(path.join(root,'localization.json'),JSON.stringify(m));assert.ok((await checkPublication(root)).issues.some(x=>x.includes('English comment')));}));
 test('publication requires review of newly added core source files',()=>fixture(async root=>{await mkdir(path.join(root,'packages/new/src'),{recursive:true});await writeFile(path.join(root,'packages/new/src/NewOwner.ts'),'export class NewOwner {}\n');assert.ok((await checkPublication(root)).issues.some(x=>x.includes('unlisted critical source')));}));
+test('publication requires exact approved web source registration and accepts its current English-comment hash',()=>fixture(async(root,m)=>{
+ const relative='packages/engine/web/CanvasHost.ts';
+ const body='/** Canvas execution preserves ordered frame commands. */\nexport const active = true;\n';
+ await mkdir(path.join(root,'packages/engine/web'),{recursive:true});
+ await writeFile(path.join(root,relative),body);
+ assert.ok((await checkPublication(root)).issues.includes(`unlisted critical source: ${relative}`));
+ m.criticalComments.push({path:relative,sha256:sha(body)});
+ await writeFile(path.join(root,'localization.json'),JSON.stringify(m));
+ assert.deepEqual((await checkPublication(root)).issues,[]);
+ await writeFile(path.join(root,relative),body+'// Changed source identity.\n');
+ assert.ok((await checkPublication(root)).issues.includes(`hash stale: ${relative}`));
+ const uncommented='export const active = true;\n';
+ await writeFile(path.join(root,relative),uncommented);
+ m.criticalComments.at(-1).sha256=sha(uncommented);
+ await writeFile(path.join(root,'localization.json'),JSON.stringify(m));
+ assert.ok((await checkPublication(root)).issues.includes(`missing English comment: ${relative}`));
+}));
 test('publication preserves every execution identifier occurrence, including duplicates',()=>fixture(async(root,m)=>{const id='5e478aac-c48a-4c2b-85f0-cf0053255da7',zh=`# 运行记录\n${id}\n${id}\n`,en=`# Runs\n${id}\n5e 478aac-c 48a-4c 2b-85f0-cf 0053255da7\n`;await writeFile(path.join(root,'README.md'),zh);await writeFile(path.join(root,'README.en.md'),en);m.documents[0].zhSha256=sha(zh);m.documents[0].enSha256=sha(en);await writeFile(path.join(root,'localization.json'),JSON.stringify(m));assert.ok((await checkPublication(root)).issues.some(x=>x.includes('opaque identifier')));}));

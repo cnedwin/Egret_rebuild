@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-08",
+  "updatedAt": "2026-10-09",
   "authority": "Delivery status summary; code, artifacts, and reproducible acceptance evidence separately govern implementation and testing",
   "items": [
     {
@@ -131,7 +131,8 @@
         "implementation": "independent_ts_cpu_asset_subset",
         "acceptance": "full_product_not_run",
         "evidence": "evidence/asset-core-verification.json"
-      }
+      },
+      "boundedProgress": "V009 lifecycle, V010 CPU assets and V011 rectangle display/frame plus desktop Canvas are implemented prototypes; full V002 acceptance remains unrun."
     },
     {
       "id": "V003",
@@ -556,11 +557,46 @@
         "evidence/asset-core-review.json"
       ],
       "doc": "docs/资源核心实现记录.md"
+    },
+    {
+      "id": "V011",
+      "kind": "engineering_prototype",
+      "status": "implemented",
+      "requirementIds": [
+        "R003",
+        "R011",
+        "R015",
+        "R016",
+        "R017",
+        "R019"
+      ],
+      "dependsOn": [
+        "V010"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "independent_rectangle_display_frame_canvas_subset",
+      "acceptance": "bounded_cpu_desktop_canvas_not_full_product",
+      "acceptanceCriteria": [
+        "Immutable CPU frames, transform/alpha/clip and synchronous shutdown barrier",
+        "Whole-frame Canvas validation/copy/reset and terminal close",
+        "97 behavior checks, 25 negative diagnostics and real desktop pixels/pointer",
+        "Scoped independent review and complete bilingual evidence"
+      ],
+      "artifacts": [
+        "docs/显示与帧执行合同.md",
+        "docs/显示与帧执行实现计划.md",
+        "docs/显示与帧执行实现记录.md",
+        "evidence/display-frame-verification.json",
+        "evidence/display-frame-review.json"
+      ],
+      "doc": "docs/显示与帧执行实现记录.md",
+      "title": "Display/frame and Canvas rectangle engineering prototype"
     }
   ],
   "_localization": {
     "canonicalSource": "交付.json",
-    "canonicalSha256": "82a6e8ba0644dba371986dd8890414d8d012e5ced630c3282f7a09aff3353b61",
+    "canonicalSha256": "6c11abf9ccd8120923b58df083d4c7f8bdfbee22e7df381bc7648830ba8a95ae",
     "role": "read_only_translation",
     "language": "en"
   }

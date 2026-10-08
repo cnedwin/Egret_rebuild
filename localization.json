@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "revision": "0.11.0",
+  "revision": "0.12.0",
   "canonicalState": "Chinese registries; English JSON is a read-only translation",
   "evidencePolicy": "Machine data, embedded source, historical code and upstream legal originals retain their identities; paired reading versions explain them.",
   "semanticReview": {
     "status": "reviewed_with_scope",
-    "method": "Full translation and author self-audit for new reading documents; independent scoped cross-review of affected current documents and code is recorded separately. Unchanged bilingual documents retain historical reviews.",
+    "method": "Author self-review of the complete 17 changed bilingual pairs, new record/example, public contract/plan wording, registry facts and current English critical comments; scoped independent implementation review is separately recorded. Final independent branch review is subsequent.",
     "scope": "Public engineering wording, complete language coverage and preservation of technical evidence bounds. Structural gates alone cannot certify meaning, authorship, licensing or publication authorization.",
-    "report": "verification/asset-core-review.json"
+    "report": "verification/display-frame-review.json"
   },
   "documents": [
     {
@@ -20,8 +20,8 @@
     {
       "zh": "AGENTS.md",
       "en": "AGENTS.en.md",
-      "zhSha256": "f3551dd36ebc3023f8c846f0cdd876b7204c214c7c041e6496271d20c091046c",
-      "enSha256": "7c2716d3a678406ce905b8cd7fd9ef3552bca4e37b8e9456b63b871e4170e0c1",
+      "zhSha256": "3005ab1c405f7a8c6140db7b0fbd7e79e02bbea8b392ad92ba680957abf594af",
+      "enSha256": "a48070115ccdb0aede63831d4a23f43b44e0a50b50f15bb5727c4c6d715aef14",
       "kind": "public_reading"
     },
     {
@@ -34,9 +34,16 @@
     {
       "zh": "DOCUMENTATION.md",
       "en": "DOCUMENTATION.en.md",
-      "zhSha256": "2e60710807f0c75ffa1c1336a511ac78dbed95ad16ec9308f3a810948022032b",
-      "enSha256": "7498b6262af93dce72b48ace3640b705bcd20c6ed26831479e6fafb395f03f94",
+      "zhSha256": "8dbbbd09618f5d68e128144ca453c2a443ae3a3f01b296af83d6605188fdb380",
+      "enSha256": "c8df1cfbd514248d5fe15e9c04aad60cda051c175eb7420cb1244b4ca4b8f285",
       "kind": "public_reading"
+    },
+    {
+      "zh": "examples/canvas-scene/README.md",
+      "en": "examples/canvas-scene/README.en.md",
+      "kind": "public_reading",
+      "zhSha256": "bf8ea4ece2b97ebc6501d55c81d8ee5b634d9e1ad2c6c88101f38b585637829f",
+      "enSha256": "01755ea0b44331170271d7a0c769834dbc9fce4569bc3d99568f3a891ba55a3d"
     },
     {
       "zh": "knowledge-base/ACKNOWLEDGEMENTS.md",
@@ -48,15 +55,15 @@
     {
       "zh": "knowledge-base/AGENTS.md",
       "en": "knowledge-base/AGENTS.en.md",
-      "zhSha256": "303355516e907a4b66f222bcea850fcc7e8d1be52550df5c7efaf07cbfc509b4",
-      "enSha256": "ffff3b9e4e867a259b1a1c38151016d772970e7abfc678c3b5d0e108c9be6c83",
+      "zhSha256": "68f0651c29825ce6b5c3df33a74fa27b4faee8ad02d838ad67ee3e25cd7ee5f7",
+      "enSha256": "adcfaf55ed65876cd51e2889ecc63c8cbf9d76b476fac7452a16c025effaafa7",
       "kind": "public_reading"
     },
     {
       "zh": "knowledge-base/CHANGELOG.md",
       "en": "knowledge-base/CHANGELOG.en.md",
-      "zhSha256": "c9ea8ec03a26944de2d94da1a660fddf26197bd144158ce1cfe9528afcb52f30",
-      "enSha256": "ef77017fee7bd1e54747aabbc3811013bb22780b9f32b97e6dbfdec8b2e2fdf6",
+      "zhSha256": "69faf8511d3e8a506e305592b6da7319769e9201381bd59d8de8f604bafe5615",
+      "enSha256": "d3605bd3ff93bd8eb7dc26977e756041fad93599ccc2a4092b43ab35e27c86be",
       "kind": "public_reading"
     },
     {
@@ -67,24 +74,10 @@
       "kind": "public_reading"
     },
     {
-      "zh": "knowledge-base/docs/AI创作与工程接口.md",
-      "en": "knowledge-base/docs/AI创作与工程接口.en.md",
-      "zhSha256": "4797cd969198b7ddc600505ee0e37645b26848af3ec217bbd3d7b428f7cffd8d",
-      "enSha256": "8190bd54fa6f6ae5855ec66be8738b78722d968fbcf2744acc10c36296b1ceaf",
-      "kind": "public_reading"
-    },
-    {
-      "zh": "knowledge-base/docs/Shaders与Playground产品技术启发.md",
-      "en": "knowledge-base/docs/Shaders与Playground产品技术启发.en.md",
-      "zhSha256": "f2e4a0ee1ad2f39cb4ab96bb1d1c021900d80ddbeaf1c519cd22baf379c4b1ca",
-      "enSha256": "18c664e2976915a3f05f994c35b4377b28c79b63a4de1056dbfba256540e9666",
-      "kind": "public_reading"
-    },
-    {
-      "zh": "knowledge-base/docs/交付计划.md",
-      "en": "knowledge-base/docs/交付计划.en.md",
-      "zhSha256": "fe8aed50143760bd9740e52d4440bc2300d25ddbfb8baae594459f0054c4b53b",
-      "enSha256": "ef6c803631c8e236de20afe337a1a39d9092e6063d2dc0ac16c835717835848c",
+      "zh": "knowledge-base/docs/产品需求说明书.md",
+      "en": "knowledge-base/docs/产品需求说明书.en.md",
+      "zhSha256": "16c1e98051f83d1e1d781903323662e2ef5b971962a409e59f8b84b054cb0d18",
+      "enSha256": "7bd21ba21ebe1f91fd533991a4a281a98913668b825fb355afa25b5a95033d05",
       "kind": "public_reading"
     },
     {
@@ -95,220 +88,10 @@
       "kind": "public_reading"
     },
     {
-      "zh": "knowledge-base/docs/产品需求说明书.md",
-      "en": "knowledge-base/docs/产品需求说明书.en.md",
-      "zhSha256": "16c1e98051f83d1e1d781903323662e2ef5b971962a409e59f8b84b054cb0d18",
-      "enSha256": "7bd21ba21ebe1f91fd533991a4a281a98913668b825fb355afa25b5a95033d05",
-      "kind": "public_reading"
-    },
-    {
       "zh": "knowledge-base/docs/代码规范与质量门禁.md",
       "en": "knowledge-base/docs/代码规范与质量门禁.en.md",
-      "zhSha256": "6aa8c81ca0300f85ebd4fc1deba111a4abec6c9bb2212bf64dd35148d17136cf",
-      "enSha256": "8cc5a36f2c5af6ba2853202c4795c7739fa36f3e5329efc749ae71f8cc7cf1e0",
-      "kind": "public_reading"
-    },
-    {
-      "zh": "knowledge-base/docs/公共API设计与命名规范.md",
-      "en": "knowledge-base/docs/公共API设计与命名规范.en.md",
-      "zhSha256": "71b5e15e64d5a8a83d5d8f938eb9b65806f6ccb3559e23793591f8657b4aa8e0",
-      "enSha256": "6c937a9e90a081faa887455e3f927b8e563516f2b1ec5c7fb9a940b1680a3017",
-      "kind": "public_reading"
-    },
-    {
-      "zh": "knowledge-base/docs/决策与开放问题.md",
-      "en": "knowledge-base/docs/决策与开放问题.en.md",
-      "zhSha256": "01f891ee53add2588f539dd4add20c89badd20b05cd5dee8cb5e938369409d1d",
-      "enSha256": "1667683b99bf989a7c014b30e01297c277c028d7f5f93a0afe884374687b6aec",
-      "kind": "public_reading"
-    },
-    {
-      "zh": "knowledge-base/docs/历史资产与研究边界.md",
-      "en": "knowledge-base/docs/历史资产与研究边界.en.md",
-      "zhSha256": "6fe5c4d0c0420403c0a5c04286074b1f0d42c43ad97e674005b3dcc34cb85e2c",
-      "enSha256": "f2b0e7b62f0b057dd2b1ac73bef650cd9c8ca8acb9e7a30fa38326f75253a42d",
-      "kind": "public_reading"
-    },
-    {
-      "zh": "knowledge-base/docs/双语文档与推送前检查.md",
-      "en": "knowledge-base/docs/双语文档与推送前检查.en.md",
-      "zhSha256": "7eadf0fb84b9fd241598de1c475953b6b64dafbe5fd817d80a91f24fa4bb09c0",
-      "enSha256": "edf88fd16d03c9e01a2b37efc2f7e60328a71a4aa7837bded8749ccdb5e1770f",
-      "kind": "public_reading"
-    },
-    {
-      "zh": "knowledge-base/docs/图形后端编译与原生Runtime选型.md",
-      "en": "knowledge-base/docs/图形后端编译与原生Runtime选型.en.md",
-      "zhSha256": "191d3773e2e2195ca637dd8ac508bbbf30318f6652e10fdf53603c0a9817464d",
-      "enSha256": "b9287237630ebce96861248ef82dab0c8dba9bf8ffb8fc90f7638b93a107cbbf",
-      "kind": "public_reading"
-    },
-    {
-      "zh": "knowledge-base/docs/工程技术架构与项目结构.md",
-      "en": "knowledge-base/docs/工程技术架构与项目结构.en.md",
-      "zhSha256": "3a3b76b962e3335dfabbb94c326f66f98377580ba5dc49d8c0f3372286aa3665",
-      "enSha256": "a1560e445fbc3de98752e79a47989b59a6fd6cacce3375ebc1ed93739e87df88",
-      "kind": "public_reading"
-    },
-    {
-      "zh": "knowledge-base/docs/工程规划.md",
-      "en": "knowledge-base/docs/工程规划.en.md",
-      "zhSha256": "cb14a9f6f75c470f1d479a5b1171c93302529c7b932411ff63c02d2da2612b9d",
-      "enSha256": "7ee3abf1decea5d3f33f0b85eb8775643561b01bfce558a884d5b1085179f99a",
-      "kind": "public_reading"
-    },
-    {
-      "zh": "knowledge-base/docs/开源协作与公开表达规范.md",
-      "en": "knowledge-base/docs/开源协作与公开表达规范.en.md",
-      "zhSha256": "ffdf038379eda55831a4e9c7c36d60ff0071fcb66932e4ec7cfa53378ded20b9",
-      "enSha256": "7712da86e892c1368e6ae61f14110db30f2a06e69e37bf398e5a7e3741790be8",
-      "kind": "public_reading"
-    },
-    {
-      "zh": "knowledge-base/docs/开源参考实现与采用方案.md",
-      "en": "knowledge-base/docs/开源参考实现与采用方案.en.md",
-      "zhSha256": "643811272940106f5a756767286376d7539e2f202ff0d45ee0cc8112a94f35e9",
-      "enSha256": "4fe3c979204828ee6e7b51a2365597ad25ea4f68772da846c4cfceca68fe564a",
-      "kind": "public_reading"
-    },
-    {
-      "zh": "knowledge-base/docs/开源实现优先与验证分工.md",
-      "en": "knowledge-base/docs/开源实现优先与验证分工.en.md",
-      "zhSha256": "a510c4f6a3f8f8cd56a54fe6f31c04db59eaae7fbd1e785c7cc1fb3768e000d8",
-      "enSha256": "8b39600d2a57fd8ed7631a86e03e35735d6783d941ed769c4f5be2aee00d24cf",
-      "kind": "public_reading"
-    },
-    {
-      "zh": "knowledge-base/docs/技术架构.md",
-      "en": "knowledge-base/docs/技术架构.en.md",
-      "zhSha256": "47327ac1430f8868bd2d800a3b9541c15dba394527444b7530df639b53dc336c",
-      "enSha256": "3aeeea4ea951de5862920cfbf26a08adf86591c9bfebf1b08c436d0ce45e4470",
-      "kind": "public_reading"
-    },
-    {
-      "zh": "knowledge-base/docs/技术白皮书.md",
-      "en": "knowledge-base/docs/技术白皮书.en.md",
-      "zhSha256": "724ae9985febe9a11d3d388892fa5a3f2ba2c040c454e808c3b2e9e48130b147",
-      "enSha256": "9ae069c2cd15e8315e09e6563369c6c476ee7d5fce137ce774c7b3240fabde96",
-      "kind": "public_reading"
-    },
-    {
-      "zh": "knowledge-base/docs/技术验证记录.md",
-      "en": "knowledge-base/docs/技术验证记录.en.md",
-      "zhSha256": "6921463975a08e52b21ed21f5e5780bb6598de2f998ce6bb370b0d8846e9310c",
-      "enSha256": "862715e216fc5f407dedcf30fd05cd86c6d5ee956c653ea78a75a7c79db14e28",
-      "kind": "public_reading"
-    },
-    {
-      "zh": "knowledge-base/docs/旧工程迁移.md",
-      "en": "knowledge-base/docs/旧工程迁移.en.md",
-      "zhSha256": "3ed3ade1b44ae592ed20e4c41b5b18df3ca1d8104a820fbf85cd06601b11e8f6",
-      "enSha256": "d948ed13b33cd7e24c4377546b9ec904a621c43d10e2c626ba174b6cba1b411b",
-      "kind": "public_reading"
-    },
-    {
-      "zh": "knowledge-base/docs/术语表.md",
-      "en": "knowledge-base/docs/术语表.en.md",
-      "zhSha256": "5b8fc68ce65eb32b9eace4b57ef0427c5ace446878b052f29304bd0822ca99c1",
-      "enSha256": "9c6d023e504860648e474597ca6a1617f793e8517e38363580b6a6fa0761325c",
-      "kind": "public_reading"
-    },
-    {
-      "zh": "knowledge-base/docs/核心优势与验证.md",
-      "en": "knowledge-base/docs/核心优势与验证.en.md",
-      "zhSha256": "93c99619e6ae2182974e9b2515c0a416f93abce59c3fdef62a9d49614835e82f",
-      "enSha256": "b1fab660ca881f5373d13316c28a80d4fb1b918a66315d4754ec45a7c4507e6c",
-      "kind": "public_reading"
-    },
-    {
-      "zh": "knowledge-base/docs/核心框架实现记录.md",
-      "en": "knowledge-base/docs/核心框架实现记录.en.md",
-      "zhSha256": "d55847d10566474ee787f09d607b0d8e4963086f2c7f9bc60450fbd8913563c0",
-      "enSha256": "bde8304eac2d247a8b6ad5465cc7ef4c30a7eb3ea78335307b5c78d7bfd7f7c7",
-      "kind": "public_reading"
-    },
-    {
-      "zh": "knowledge-base/docs/核心框架证据缺口与研究清单.md",
-      "en": "knowledge-base/docs/核心框架证据缺口与研究清单.en.md",
-      "zhSha256": "d23f02aa0b155d31cec6b5c4d418a90dac572b9f6170e5253cdfee52e24446db",
-      "enSha256": "79ab63f6da18c61e726af15b8a3f5112ca663f4f4250c4eb3e8df3bb70d19cb7",
-      "kind": "public_reading"
-    },
-    {
-      "zh": "knowledge-base/docs/核心框架首段实现计划.md",
-      "en": "knowledge-base/docs/核心框架首段实现计划.en.md",
-      "zhSha256": "f7925dc616d9db32123e6dc4502d9e02e359807237d5ce7fa145df3a37325c13",
-      "enSha256": "7fd4188eedc4449bdf83d0e57bbc1df95d692f2b5802f332afc1d26180f318dd",
-      "kind": "public_reading"
-    },
-    {
-      "zh": "knowledge-base/docs/渲染引擎与运行时.md",
-      "en": "knowledge-base/docs/渲染引擎与运行时.en.md",
-      "zhSha256": "fb041ecb0956277f011cdc41df76556767a67a4e231c05934daa1f354d7d9ec5",
-      "enSha256": "e496d9f012aab84da075b50ba930f5e4e529654bd7f63d0206a1548a633d87ea",
-      "kind": "public_reading"
-    },
-    {
-      "zh": "knowledge-base/docs/独立实现与第三方依赖规范.md",
-      "en": "knowledge-base/docs/独立实现与第三方依赖规范.en.md",
-      "zhSha256": "ead6d244a07de2ba9eb67769a0edd2b8263bf4e51c0aeb542c3b8e9199c6dc98",
-      "enSha256": "3a6531fa44fb35cbf95117ec7de02baa7375b66a2111baa46bf4f6984ae78205",
-      "kind": "public_reading"
-    },
-    {
-      "zh": "knowledge-base/docs/知识库维护.md",
-      "en": "knowledge-base/docs/知识库维护.en.md",
-      "zhSha256": "b4936c54ce196be33788a195e0d53d616ecee3ca8b506b0325a3ca227b82a6bb",
-      "enSha256": "f4493d264fa04fa7a902d1323ba653cc1a535757cfc702d740fbba42a4579292",
-      "kind": "public_reading"
-    },
-    {
-      "zh": "knowledge-base/docs/社区参与.md",
-      "en": "knowledge-base/docs/社区参与.en.md",
-      "zhSha256": "278077c9944b2257f9099db943a3c420317deb8364ada5713f01a9db1086741c",
-      "enSha256": "e8a4338d548f08e27ebc5f8a248b8169eeedc1005cafd82886d5458fa4976ae7",
-      "kind": "public_reading"
-    },
-    {
-      "zh": "knowledge-base/docs/竞品演进与生态.md",
-      "en": "knowledge-base/docs/竞品演进与生态.en.md",
-      "zhSha256": "4ab7a2fe1dc7c42274dbb390ee07e3bd25385502466ddd84231ba050e6ac9a3d",
-      "enSha256": "d046ac24cc4ad99966d7e7bb4549b9227d864b7be02de4b72de7bf00c7a25b1c",
-      "kind": "public_reading"
-    },
-    {
-      "zh": "knowledge-base/docs/第一轮审计.md",
-      "en": "knowledge-base/docs/第一轮审计.en.md",
-      "zhSha256": "29847a9c90385e45c70ab156303b7eb9219fda25c33fb2b0507645f9a60f94d1",
-      "enSha256": "4a6f7d3c39a4b34ae1f9bd9a03abc084d72cf41bd2c20e181831429e55ca8504",
-      "kind": "public_reading"
-    },
-    {
-      "zh": "knowledge-base/docs/第一轮研究核查.md",
-      "en": "knowledge-base/docs/第一轮研究核查.en.md",
-      "zhSha256": "17f253c1827389295f1c33f690fe8c2275f13cab1d87368f8b188b97aaa5370e",
-      "enSha256": "0dc41b7f8117277ee8692b4620b317feaf3b6e70ad69faa5b0645c6b7e92c971",
-      "kind": "public_reading"
-    },
-    {
-      "zh": "knowledge-base/docs/第三轮审计.md",
-      "en": "knowledge-base/docs/第三轮审计.en.md",
-      "zhSha256": "e3bcba1d9dee86182f07e4c369a7685f9805357cc98325a339263e09f2bdeb26",
-      "enSha256": "c975d4023a4fd9cd082fb446d3541ed6f79bfd03d241cfc20e5953d59b2ec5ee",
-      "kind": "public_reading"
-    },
-    {
-      "zh": "knowledge-base/docs/第三轮集成计划.md",
-      "en": "knowledge-base/docs/第三轮集成计划.en.md",
-      "zhSha256": "29b9c6cdd327a67d72aec31e603d2423978fa200128322d140f17f5146a60159",
-      "enSha256": "2c44b5b33d14d7b0431cc70872fbc1cf90572453aba5681c9d41f80748bf350d",
-      "kind": "public_reading"
-    },
-    {
-      "zh": "knowledge-base/docs/第三轮集成记录.md",
-      "en": "knowledge-base/docs/第三轮集成记录.en.md",
-      "zhSha256": "581a6af83b9f016b48fb4b653a15d3221c9aca14c503fae0fb5197b353be1bf6",
-      "enSha256": "3b8ff8f8705f927d55cd60b93d8ee881c4deedeae23d1a66563998d5eb79a892",
+      "zhSha256": "afea89b2f1f71d99a3cf873a09aa1016ad864c1e5f10badd46ddff2a8b979cd6",
+      "enSha256": "258906f6848ab97adf73614c06f9e0ad6a7d312b3240b40d7c7c8b77d48f472c",
       "kind": "public_reading"
     },
     {
@@ -333,10 +116,241 @@
       "kind": "public_reading"
     },
     {
+      "zh": "knowledge-base/docs/第三轮集成计划.md",
+      "en": "knowledge-base/docs/第三轮集成计划.en.md",
+      "zhSha256": "29b9c6cdd327a67d72aec31e603d2423978fa200128322d140f17f5146a60159",
+      "enSha256": "2c44b5b33d14d7b0431cc70872fbc1cf90572453aba5681c9d41f80748bf350d",
+      "kind": "public_reading"
+    },
+    {
+      "zh": "knowledge-base/docs/第三轮集成记录.md",
+      "en": "knowledge-base/docs/第三轮集成记录.en.md",
+      "zhSha256": "581a6af83b9f016b48fb4b653a15d3221c9aca14c503fae0fb5197b353be1bf6",
+      "enSha256": "3b8ff8f8705f927d55cd60b93d8ee881c4deedeae23d1a66563998d5eb79a892",
+      "kind": "public_reading"
+    },
+    {
+      "zh": "knowledge-base/docs/第三轮审计.md",
+      "en": "knowledge-base/docs/第三轮审计.en.md",
+      "zhSha256": "e3bcba1d9dee86182f07e4c369a7685f9805357cc98325a339263e09f2bdeb26",
+      "enSha256": "c975d4023a4fd9cd082fb446d3541ed6f79bfd03d241cfc20e5953d59b2ec5ee",
+      "kind": "public_reading"
+    },
+    {
+      "zh": "knowledge-base/docs/第一轮审计.md",
+      "en": "knowledge-base/docs/第一轮审计.en.md",
+      "zhSha256": "29847a9c90385e45c70ab156303b7eb9219fda25c33fb2b0507645f9a60f94d1",
+      "enSha256": "4a6f7d3c39a4b34ae1f9bd9a03abc084d72cf41bd2c20e181831429e55ca8504",
+      "kind": "public_reading"
+    },
+    {
+      "zh": "knowledge-base/docs/第一轮研究核查.md",
+      "en": "knowledge-base/docs/第一轮研究核查.en.md",
+      "zhSha256": "17f253c1827389295f1c33f690fe8c2275f13cab1d87368f8b188b97aaa5370e",
+      "enSha256": "0dc41b7f8117277ee8692b4620b317feaf3b6e70ad69faa5b0645c6b7e92c971",
+      "kind": "public_reading"
+    },
+    {
+      "zh": "knowledge-base/docs/独立实现与第三方依赖规范.md",
+      "en": "knowledge-base/docs/独立实现与第三方依赖规范.en.md",
+      "zhSha256": "ead6d244a07de2ba9eb67769a0edd2b8263bf4e51c0aeb542c3b8e9199c6dc98",
+      "enSha256": "3a6531fa44fb35cbf95117ec7de02baa7375b66a2111baa46bf4f6984ae78205",
+      "kind": "public_reading"
+    },
+    {
+      "zh": "knowledge-base/docs/工程规划.md",
+      "en": "knowledge-base/docs/工程规划.en.md",
+      "zhSha256": "183e980c3df8a21cefeaf74e72994dc5b250b6191e86219f1ba77f40676e7618",
+      "enSha256": "aaab252800a13774c65700b360a03f6955ba8fa6976161fe899a02533c26c705",
+      "kind": "public_reading"
+    },
+    {
+      "zh": "knowledge-base/docs/工程技术架构与项目结构.md",
+      "en": "knowledge-base/docs/工程技术架构与项目结构.en.md",
+      "zhSha256": "cae517d833f6c7a87171524e90050a83d57c943409306f79ffe587d5394c93ce",
+      "enSha256": "63e51a8182e3aedc9ad0e7424a75de4aead09c5521eeb4c8d9fee17ed1744336",
+      "kind": "public_reading"
+    },
+    {
+      "zh": "knowledge-base/docs/公共API设计与命名规范.md",
+      "en": "knowledge-base/docs/公共API设计与命名规范.en.md",
+      "zhSha256": "dbcf97ac0410074a4c19a9e628ff38ae025b26f4c17812439d6f4afaca08825a",
+      "enSha256": "dc97cdce381fd019abb44695b1890e8cee3f0e9a49d87f1d342cceaf6887172b",
+      "kind": "public_reading"
+    },
+    {
+      "zh": "knowledge-base/docs/核心框架实现记录.md",
+      "en": "knowledge-base/docs/核心框架实现记录.en.md",
+      "zhSha256": "51df1f871057f4a12744525e464139faef8b2965b52356632701b3b470182904",
+      "enSha256": "2a45f666ece8859b515700d4f2eef5a303e1932de7458a47cf9efcc632f57bee",
+      "kind": "public_reading"
+    },
+    {
+      "zh": "knowledge-base/docs/核心框架首段实现计划.md",
+      "en": "knowledge-base/docs/核心框架首段实现计划.en.md",
+      "zhSha256": "f7925dc616d9db32123e6dc4502d9e02e359807237d5ce7fa145df3a37325c13",
+      "enSha256": "7fd4188eedc4449bdf83d0e57bbc1df95d692f2b5802f332afc1d26180f318dd",
+      "kind": "public_reading"
+    },
+    {
+      "zh": "knowledge-base/docs/核心框架证据缺口与研究清单.md",
+      "en": "knowledge-base/docs/核心框架证据缺口与研究清单.en.md",
+      "zhSha256": "aca242a3788e6cc142b53bdfc7ab10a9280ec8ce0815b49c9f59f1c7b2a1c538",
+      "enSha256": "8bb1c09e194225ce576db4457868f4155c27afbfe2790e5837a8a81542ab47c7",
+      "kind": "public_reading"
+    },
+    {
+      "zh": "knowledge-base/docs/核心优势与验证.md",
+      "en": "knowledge-base/docs/核心优势与验证.en.md",
+      "zhSha256": "93c99619e6ae2182974e9b2515c0a416f93abce59c3fdef62a9d49614835e82f",
+      "enSha256": "b1fab660ca881f5373d13316c28a80d4fb1b918a66315d4754ec45a7c4507e6c",
+      "kind": "public_reading"
+    },
+    {
+      "zh": "knowledge-base/docs/技术白皮书.md",
+      "en": "knowledge-base/docs/技术白皮书.en.md",
+      "zhSha256": "724ae9985febe9a11d3d388892fa5a3f2ba2c040c454e808c3b2e9e48130b147",
+      "enSha256": "9ae069c2cd15e8315e09e6563369c6c476ee7d5fce137ce774c7b3240fabde96",
+      "kind": "public_reading"
+    },
+    {
+      "zh": "knowledge-base/docs/技术架构.md",
+      "en": "knowledge-base/docs/技术架构.en.md",
+      "zhSha256": "47327ac1430f8868bd2d800a3b9541c15dba394527444b7530df639b53dc336c",
+      "enSha256": "3aeeea4ea951de5862920cfbf26a08adf86591c9bfebf1b08c436d0ce45e4470",
+      "kind": "public_reading"
+    },
+    {
+      "zh": "knowledge-base/docs/技术验证记录.md",
+      "en": "knowledge-base/docs/技术验证记录.en.md",
+      "zhSha256": "6921463975a08e52b21ed21f5e5780bb6598de2f998ce6bb370b0d8846e9310c",
+      "enSha256": "862715e216fc5f407dedcf30fd05cd86c6d5ee956c653ea78a75a7c79db14e28",
+      "kind": "public_reading"
+    },
+    {
+      "zh": "knowledge-base/docs/交付计划.md",
+      "en": "knowledge-base/docs/交付计划.en.md",
+      "zhSha256": "4bea702fd99d48302793e959251014a5c51277b0c5649fba043dd881392c2639",
+      "enSha256": "ce866d4709e40e9b2f75a7bec9eca53d2259420156d5eab32a88cc6ce1251d44",
+      "kind": "public_reading"
+    },
+    {
+      "zh": "knowledge-base/docs/竞品演进与生态.md",
+      "en": "knowledge-base/docs/竞品演进与生态.en.md",
+      "zhSha256": "4ab7a2fe1dc7c42274dbb390ee07e3bd25385502466ddd84231ba050e6ac9a3d",
+      "enSha256": "d046ac24cc4ad99966d7e7bb4549b9227d864b7be02de4b72de7bf00c7a25b1c",
+      "kind": "public_reading"
+    },
+    {
+      "zh": "knowledge-base/docs/旧工程迁移.md",
+      "en": "knowledge-base/docs/旧工程迁移.en.md",
+      "zhSha256": "3ed3ade1b44ae592ed20e4c41b5b18df3ca1d8104a820fbf85cd06601b11e8f6",
+      "enSha256": "d948ed13b33cd7e24c4377546b9ec904a621c43d10e2c626ba174b6cba1b411b",
+      "kind": "public_reading"
+    },
+    {
+      "zh": "knowledge-base/docs/决策与开放问题.md",
+      "en": "knowledge-base/docs/决策与开放问题.en.md",
+      "zhSha256": "01f891ee53add2588f539dd4add20c89badd20b05cd5dee8cb5e938369409d1d",
+      "enSha256": "1667683b99bf989a7c014b30e01297c277c028d7f5f93a0afe884374687b6aec",
+      "kind": "public_reading"
+    },
+    {
+      "zh": "knowledge-base/docs/开源参考实现与采用方案.md",
+      "en": "knowledge-base/docs/开源参考实现与采用方案.en.md",
+      "zhSha256": "643811272940106f5a756767286376d7539e2f202ff0d45ee0cc8112a94f35e9",
+      "enSha256": "4fe3c979204828ee6e7b51a2365597ad25ea4f68772da846c4cfceca68fe564a",
+      "kind": "public_reading"
+    },
+    {
+      "zh": "knowledge-base/docs/开源实现优先与验证分工.md",
+      "en": "knowledge-base/docs/开源实现优先与验证分工.en.md",
+      "zhSha256": "a510c4f6a3f8f8cd56a54fe6f31c04db59eaae7fbd1e785c7cc1fb3768e000d8",
+      "enSha256": "8b39600d2a57fd8ed7631a86e03e35735d6783d941ed769c4f5be2aee00d24cf",
+      "kind": "public_reading"
+    },
+    {
+      "zh": "knowledge-base/docs/开源协作与公开表达规范.md",
+      "en": "knowledge-base/docs/开源协作与公开表达规范.en.md",
+      "zhSha256": "ffdf038379eda55831a4e9c7c36d60ff0071fcb66932e4ec7cfa53378ded20b9",
+      "enSha256": "7712da86e892c1368e6ae61f14110db30f2a06e69e37bf398e5a7e3741790be8",
+      "kind": "public_reading"
+    },
+    {
+      "zh": "knowledge-base/docs/历史资产与研究边界.md",
+      "en": "knowledge-base/docs/历史资产与研究边界.en.md",
+      "zhSha256": "6fe5c4d0c0420403c0a5c04286074b1f0d42c43ad97e674005b3dcc34cb85e2c",
+      "enSha256": "f2b0e7b62f0b057dd2b1ac73bef650cd9c8ca8acb9e7a30fa38326f75253a42d",
+      "kind": "public_reading"
+    },
+    {
       "zh": "knowledge-base/docs/设计理念与定位.md",
       "en": "knowledge-base/docs/设计理念与定位.en.md",
       "zhSha256": "27223fa2579f726dd53d7e9d9529e6c0a36256bf7bce9c2b2a2cc32832d75e69",
       "enSha256": "009c06dc2c8dcec30b959c7f753f0a4d53573e9995a34177a5428509773a67a1",
+      "kind": "public_reading"
+    },
+    {
+      "zh": "knowledge-base/docs/社区参与.md",
+      "en": "knowledge-base/docs/社区参与.en.md",
+      "zhSha256": "278077c9944b2257f9099db943a3c420317deb8364ada5713f01a9db1086741c",
+      "enSha256": "e8a4338d548f08e27ebc5f8a248b8169eeedc1005cafd82886d5458fa4976ae7",
+      "kind": "public_reading"
+    },
+    {
+      "zh": "knowledge-base/docs/术语表.md",
+      "en": "knowledge-base/docs/术语表.en.md",
+      "zhSha256": "5b8fc68ce65eb32b9eace4b57ef0427c5ace446878b052f29304bd0822ca99c1",
+      "enSha256": "9c6d023e504860648e474597ca6a1617f793e8517e38363580b6a6fa0761325c",
+      "kind": "public_reading"
+    },
+    {
+      "zh": "knowledge-base/docs/双语文档与推送前检查.md",
+      "en": "knowledge-base/docs/双语文档与推送前检查.en.md",
+      "zhSha256": "5c23c9ac479627828aa8cdc3ccf127954700b48e71f507556798708735075c62",
+      "enSha256": "4a4438ab93952be59bef607ef8b81c6564e8cb225b4a56fd4f3455269a9055d3",
+      "kind": "public_reading"
+    },
+    {
+      "zh": "knowledge-base/docs/图形后端编译与原生Runtime选型.md",
+      "en": "knowledge-base/docs/图形后端编译与原生Runtime选型.en.md",
+      "zhSha256": "191d3773e2e2195ca637dd8ac508bbbf30318f6652e10fdf53603c0a9817464d",
+      "enSha256": "b9287237630ebce96861248ef82dab0c8dba9bf8ffb8fc90f7638b93a107cbbf",
+      "kind": "public_reading"
+    },
+    {
+      "zh": "knowledge-base/docs/显示与帧执行合同.md",
+      "en": "knowledge-base/docs/显示与帧执行合同.en.md",
+      "kind": "public_reading",
+      "zhSha256": "2107887b923c3a9963b44a7a54ac4e30ca5ddb869599536742e517d778912270",
+      "enSha256": "e8a6539c6eb877107bbc9428ac86e4aec633a093ec182648b49999e140356247"
+    },
+    {
+      "zh": "knowledge-base/docs/显示与帧执行实现计划.md",
+      "en": "knowledge-base/docs/显示与帧执行实现计划.en.md",
+      "kind": "public_reading",
+      "zhSha256": "7d83b3b0bfe84b4819a1c4ef608631693db101cc31359f05218ab361b329aa11",
+      "enSha256": "6cf2091ed8680f5fcdecdb4454dd3ff39888c13dfb5f413e701a8b5be464b5f1"
+    },
+    {
+      "zh": "knowledge-base/docs/显示与帧执行实现记录.md",
+      "en": "knowledge-base/docs/显示与帧执行实现记录.en.md",
+      "kind": "public_reading",
+      "zhSha256": "e1401b6f1851f5a66ae27ef244f580322262342800545d592ec63ab252cd8502",
+      "enSha256": "ac489ea82b43420dac09fb4a9edba5954d38e3d52857042c4a8fb6fd0a499b24"
+    },
+    {
+      "zh": "knowledge-base/docs/渲染引擎与运行时.md",
+      "en": "knowledge-base/docs/渲染引擎与运行时.en.md",
+      "zhSha256": "b4b8bb85e6de4c446fc5074de0867379bdc3237412fdbd98c60dcaf588bc059a",
+      "enSha256": "d3ff4754b0cd07cec0767d0025bf3ec200a9f7f77fee21bd1e4d6f9c6d7b71cb",
+      "kind": "public_reading"
+    },
+    {
+      "zh": "knowledge-base/docs/知识库维护.md",
+      "en": "knowledge-base/docs/知识库维护.en.md",
+      "zhSha256": "b4936c54ce196be33788a195e0d53d616ecee3ca8b506b0325a3ca227b82a6bb",
+      "enSha256": "f4493d264fa04fa7a902d1323ba653cc1a535757cfc702d740fbba42a4579292",
       "kind": "public_reading"
     },
     {
@@ -352,6 +366,20 @@
       "kind": "public_reading",
       "zhSha256": "b3098d546d432fbce7822b28d273c47c7d6cef6eb2590c5e0e51d1d275151db4",
       "enSha256": "1fd006acc70d11991cf9c8fa531edb59ac089cca7408fffb645b0559626a8d9f"
+    },
+    {
+      "zh": "knowledge-base/docs/AI创作与工程接口.md",
+      "en": "knowledge-base/docs/AI创作与工程接口.en.md",
+      "zhSha256": "4797cd969198b7ddc600505ee0e37645b26848af3ec217bbd3d7b428f7cffd8d",
+      "enSha256": "8190bd54fa6f6ae5855ec66be8738b78722d968fbcf2744acc10c36296b1ceaf",
+      "kind": "public_reading"
+    },
+    {
+      "zh": "knowledge-base/docs/Shaders与Playground产品技术启发.md",
+      "en": "knowledge-base/docs/Shaders与Playground产品技术启发.en.md",
+      "zhSha256": "f2e4a0ee1ad2f39cb4ab96bb1d1c021900d80ddbeaf1c519cd22baf379c4b1ca",
+      "enSha256": "18c664e2976915a3f05f994c35b4377b28c79b63a4de1056dbfba256540e9666",
+      "kind": "public_reading"
     },
     {
       "zh": "knowledge-base/evidence/asset-reference-initial-code-review.zh-CN.md",
@@ -538,22 +566,8 @@
     {
       "zh": "knowledge-base/README.md",
       "en": "knowledge-base/README.en.md",
-      "zhSha256": "8cd8846618af72c98da1d29596e4e119eedd6922e1ad3f40f99d4637da47c271",
-      "enSha256": "75f709080c97f467cf08055b7a4e07c152d80f7d1fad1b87ff511b733d09b83f",
-      "kind": "public_reading"
-    },
-    {
-      "zh": "knowledge-base/templates/ADR决策记录.md",
-      "en": "knowledge-base/templates/ADR决策记录.en.md",
-      "zhSha256": "853a6748b11c8ba9ed06fcc60a40e62bce269d503e64e4658d18e98867aace49",
-      "enSha256": "af42f958b85d21664db7c8740f82a6a17bce0129d3515d544fd178b68147b79a",
-      "kind": "public_reading"
-    },
-    {
-      "zh": "knowledge-base/templates/RFC提案.md",
-      "en": "knowledge-base/templates/RFC提案.en.md",
-      "zhSha256": "7e9cd696bc8867552e3bdf2dd930d0b8933b8c28c214cc73ed73fd192ea8853b",
-      "enSha256": "e204b22ebdfd065ef226e73c632935af447edb42f2f9128cebd1cafcbd961544",
+      "zhSha256": "197983a93332579e50d686db254ac3638de0434311a1ff5ad0bcacf98471bdbc",
+      "enSha256": "47f4726314ebd7a8f370f75849e37440c13a6184f497f3263c1cd7e3a5d37c45",
       "kind": "public_reading"
     },
     {
@@ -571,6 +585,20 @@
       "kind": "public_reading"
     },
     {
+      "zh": "knowledge-base/templates/ADR决策记录.md",
+      "en": "knowledge-base/templates/ADR决策记录.en.md",
+      "zhSha256": "853a6748b11c8ba9ed06fcc60a40e62bce269d503e64e4658d18e98867aace49",
+      "enSha256": "af42f958b85d21664db7c8740f82a6a17bce0129d3515d544fd178b68147b79a",
+      "kind": "public_reading"
+    },
+    {
+      "zh": "knowledge-base/templates/RFC提案.md",
+      "en": "knowledge-base/templates/RFC提案.en.md",
+      "zhSha256": "7e9cd696bc8867552e3bdf2dd930d0b8933b8c28c214cc73ed73fd192ea8853b",
+      "enSha256": "e204b22ebdfd065ef226e73c632935af447edb42f2f9128cebd1cafcbd961544",
+      "kind": "public_reading"
+    },
+    {
       "zh": "LICENSE.zh-CN.md",
       "en": "LICENSE",
       "zhSha256": "3b7770d86d5df0f804661c104c7bbed9b1eda0a9ba59cfd891b298483a45941f",
@@ -580,36 +608,36 @@
     {
       "zh": "packages/contracts/README.md",
       "en": "packages/contracts/README.en.md",
-      "zhSha256": "349d9ca4178f9b2043345d54167dfb93e3ee326ccbd4d41fd52cc85c3757fd9e",
-      "enSha256": "4b7aedc3f9f8f9648353f4acb1c5a110387d0139b1213d6978fab74485400864",
+      "zhSha256": "64b1311f9991abce8024627c86c767419118c175c09d45b5d37c2b1a0924b5a9",
+      "enSha256": "ac8a3e151ea797dbad13f5074192721de58162d727b1f1bbbdd1b7d548a51c88",
       "kind": "public_reading"
     },
     {
       "zh": "packages/engine/README.md",
       "en": "packages/engine/README.en.md",
-      "zhSha256": "c61586d644569bb4cab5bfc548313db43670e712a1174b9099d761a0c0f859d0",
-      "enSha256": "5883049a7b04849806d8d810af10f33871e64dff5502561513df9488be5c9b60",
+      "zhSha256": "4382b97f1d7b255a2810cecd8a76e0b625c2e03de8cb9cedcd1c92157ea39ead",
+      "enSha256": "e633384dc915242c394834f6d86e0aa2128707c44e5e09f5d5fa9b24b9cbd3a8",
       "kind": "public_reading"
     },
     {
       "zh": "packages/runtime/README.md",
       "en": "packages/runtime/README.en.md",
-      "zhSha256": "0b4aeaeaa923187057ceb6da95238cbaa6192f155ad4dcffe1036598b06330e0",
-      "enSha256": "bea2154ff97ec27739bdbb5d9659e97aa50fb2a5cf331e18f5ef5043bd2e54aa",
+      "zhSha256": "5ff29a37678e52fb6deba246b732a01c0edc217959486a5df72a61e4db1aa32b",
+      "enSha256": "97eeca38ec5f73641b226f5e3e724580232040fc1acd0e4cb8e9b692d20e9214",
       "kind": "public_reading"
     },
     {
       "zh": "PUBLICATION.md",
       "en": "PUBLICATION.en.md",
-      "zhSha256": "c590a821317ab1e58e6be2ea756c9ec0fcea709d91eeae1064c6720b175edf46",
-      "enSha256": "211dd3d67ab9305701079fcc28789cc6234d5aedac51397ef7e22bb6bdab392a",
+      "zhSha256": "35b9df6a3dd31b41918a45eb31195fb9f74a363456e7840595000f97c30163ed",
+      "enSha256": "585c1919a7eadcf7e9c64f55956586788d930ace161fc0f7df56fba73e2f6cc1",
       "kind": "public_reading"
     },
     {
       "zh": "README.md",
       "en": "README.en.md",
-      "zhSha256": "a41d2a267bcc2fbeb4e76591d4e01122ca3dd6f2a690f4a617bab79c0f1b3257",
-      "enSha256": "0c548db8569207b3b258fc467906bcf38af5bd3c4e9afe56943e376c2829275f",
+      "zhSha256": "2a2d1916c4926bca34a4e9a0e45b5c974064ee13593f627733f360d827e302c5",
+      "enSha256": "bbe14f788ea8aa7875785eca37bb08adf4dfbfb5d78c8dc6657484f38d500c8c",
       "kind": "public_reading"
     }
   ],
@@ -617,8 +645,8 @@
     {
       "source": "knowledge-base/registry/需求.json",
       "target": "knowledge-base/registry/需求.en.json",
-      "sourceSha256": "39b14a97a497470934ed87d6afd685044828434ea31e9f5ff644ffc4686e22b9",
-      "targetSha256": "0918a85bfb69471e0dc3e4ccfe18cc1bae5af9b1ebd8dfd868cf4144ffaf2182"
+      "sourceSha256": "47a5f7f803e64986c7170f200c8cdbd5a0e020899560bf417b399c2eae2da593",
+      "targetSha256": "b6c6b9f925623fd7dfcd512660743f255451be4af316efdc3f638a11d03c12f7"
     },
     {
       "source": "knowledge-base/registry/决策.json",
@@ -635,20 +663,20 @@
     {
       "source": "knowledge-base/registry/交付.json",
       "target": "knowledge-base/registry/交付.en.json",
-      "sourceSha256": "82a6e8ba0644dba371986dd8890414d8d012e5ced630c3282f7a09aff3353b61",
-      "targetSha256": "bbd782d928214d94266075ec18f1367769d5663987736cf50865844c818a97bf"
+      "sourceSha256": "6c11abf9ccd8120923b58df083d4c7f8bdfbee22e7df381bc7648830ba8a95ae",
+      "targetSha256": "ceb1c5b6101078004376855ee7310c772fdad28e2c79ca350bda0cf49c445d9c"
     },
     {
       "source": "knowledge-base/registry/来源.json",
       "target": "knowledge-base/registry/来源.en.json",
-      "sourceSha256": "6a1ab3c56d0a46f5555400c2d4e7deae6a329a5a6f2cf9c8378c32b11c3d85fb",
-      "targetSha256": "5cd55ba6b7e5d14a09444a5b0037706c1826618fe535ef02ba1db5b35edb165b"
+      "sourceSha256": "91e485e480e664e3d400059025f505ed318ab53ecf95b2e9a8bec6e0882ab15f",
+      "targetSha256": "7c490f874aca9a64420c76427df3e657031e9d239ec4e63451d6bb49a0d54045"
     },
     {
       "source": "knowledge-base/当前版本.json",
       "target": "knowledge-base/当前版本.en.json",
-      "sourceSha256": "5e8cf74643b9240f9cab2901f15c413e680b329ca39bed01d5053a4647bdf139",
-      "targetSha256": "4d68c1cec4b392243b223dc53e5d5805bb64589ee8871ed2d4fe7532faf93cbb"
+      "sourceSha256": "6305a5627a2b5c10887f24f531df4c5cc4cbd1c9b1439e8e05edc062555961ee",
+      "targetSha256": "ac0b15bcdccb11273ffdf2a62d675caf5d4e4b1309b9f365223567c9ade2a143"
     }
   ],
   "criticalComments": [
@@ -658,7 +686,7 @@
     },
     {
       "path": "packages/contracts/src/Diagnostic.ts",
-      "sha256": "dd24a34a911fd333cea3a799675465a5e871d2a47cd551648dbc245cece8d25f"
+      "sha256": "ce61e4d90319f55febc2782ca5e1a7329984cf6cfdf14955cc3a20dbdd5920ad"
     },
     {
       "path": "packages/contracts/src/Disposable.ts",
@@ -667,6 +695,34 @@
     {
       "path": "packages/contracts/src/HostAdapter.ts",
       "sha256": "3c8289a85e04e34be3782156244cc253792eff1b41629758d54cd1692c64c2ae"
+    },
+    {
+      "path": "packages/contracts/src/RenderFrame2D.ts",
+      "sha256": "853ac3e712082cf67e442043044b0da0ca577bb2d6a68d3c5981ac203fcd1e60"
+    },
+    {
+      "path": "packages/engine/src/Engine.ts",
+      "sha256": "565d2f2701d5f1c7f653a5833f435b649f68975bf650400003bbdd86ecb909a0"
+    },
+    {
+      "path": "packages/engine/src/closeHost.ts",
+      "sha256": "9fac806cc0d19265ec6956cc19305a9ff2ae03ff0e49700d64c39be88ba3244f"
+    },
+    {
+      "path": "packages/engine/src/createEngine.ts",
+      "sha256": "32011ff9c7bbc65e0bdf455a21fcac2e975cd14f9065c3c7c9589bbb74c56774"
+    },
+    {
+      "path": "packages/engine/src/surfaceOwnership.ts",
+      "sha256": "604df51eb03f8dbb7965100e06667c09bb311f0e26e0ee752b2404c899e5a320"
+    },
+    {
+      "path": "packages/engine/web/CanvasHost.ts",
+      "sha256": "ae6c2f46bd3e43b44e8a915a5b4fb9c1cbebab6b5f14b93178b7bd7eb5f0c7cb"
+    },
+    {
+      "path": "packages/engine/web/copyCanvasFrame.ts",
+      "sha256": "274069cd40f81ddbb9aa298f4119be2cf8e4791d17c0c2b2652033a0d4957637"
     },
     {
       "path": "packages/runtime/src/AssetLease.ts",
@@ -681,28 +737,16 @@
       "sha256": "48963664a8a048697a962f1c3d56826333e65e3bbf05d1524d7c30b049a10ab7"
     },
     {
-      "path": "packages/runtime/src/assetState.ts",
-      "sha256": "044c1aceef34403be1b1297794d3d3e390182a84d2876ce2d3392a4c2e5a6920"
-    },
-    {
       "path": "packages/runtime/src/CancellationController.ts",
       "sha256": "3cfdb217804b282c4a422420ce5efa63ced25a6bb215bff254e7f947c4942e28"
     },
     {
-      "path": "packages/runtime/src/diagnostics.ts",
-      "sha256": "c330f5d9083d84ee5b23b947d0d8534e7050a92f8b76a7e5259a1bad92395294"
-    },
-    {
       "path": "packages/runtime/src/DisplayObject.ts",
-      "sha256": "d64dde4b35ca2cf929ae14a2f99b59f7e0efbb02cb5a363ff0ff6975b5aadebd"
+      "sha256": "f66c3aaecf255601969603b359ac42bcd4db6d2ed17750727f0f4f5816152e70"
     },
     {
       "path": "packages/runtime/src/DisplayObjectContainer.ts",
-      "sha256": "f0cdb820b26b06d304fd925e81367776a8f2c4824670be44da47d97953aa173e"
-    },
-    {
-      "path": "packages/runtime/src/displayTreeState.ts",
-      "sha256": "8aaf5f5dfc8d62f3b1bc4effe819e7718e3ed72fcf0a8fc25e3b08410f980e50"
+      "sha256": "36b2f5e42d5654a03765c292bedf42f094fde122967a17c00b3e4180d1e2a72c"
     },
     {
       "path": "packages/runtime/src/EgretError.ts",
@@ -717,32 +761,44 @@
       "sha256": "141051a7aede922c0d8d73aa2b509c75cbe209118ba0bb48b3869765b9c5a82d"
     },
     {
-      "path": "packages/runtime/src/ownership.ts",
-      "sha256": "8c8c40e465002882dac1bf054fa49248c99df62da337cf75f50168f0a6748c62"
+      "path": "packages/runtime/src/Graphics.ts",
+      "sha256": "e84deaaefeec9e9bbe25d1447aba980ebefa5c981af73d71a611fe45898443a9"
     },
     {
       "path": "packages/runtime/src/Scope.ts",
       "sha256": "29e9d5da9232ed8347b2a829e069d33daabb1bad296798492a45c7950f43e8ea"
     },
     {
+      "path": "packages/runtime/src/Sprite.ts",
+      "sha256": "a3175515cdeedc283199870cd683e541acf208f04330c63c3f5f5eee2e328bba"
+    },
+    {
       "path": "packages/runtime/src/Stage.ts",
       "sha256": "08eb1599d9c75c70add22558f28e214ec31fe4305ccdf2638a8f7d35ec61bb0f"
     },
     {
-      "path": "packages/engine/src/closeHost.ts",
-      "sha256": "9fac806cc0d19265ec6956cc19305a9ff2ae03ff0e49700d64c39be88ba3244f"
+      "path": "packages/runtime/src/assetState.ts",
+      "sha256": "044c1aceef34403be1b1297794d3d3e390182a84d2876ce2d3392a4c2e5a6920"
     },
     {
-      "path": "packages/engine/src/createEngine.ts",
-      "sha256": "f0ae30646b03bdd9539e54223a98519e8afed8bee696dc378586c8128924e9d1"
+      "path": "packages/runtime/src/diagnostics.ts",
+      "sha256": "c330f5d9083d84ee5b23b947d0d8534e7050a92f8b76a7e5259a1bad92395294"
     },
     {
-      "path": "packages/engine/src/Engine.ts",
-      "sha256": "e386470f8e13a17e9960a594452d22d0c88f67b8d3863de03c4b5727ac22bccf"
+      "path": "packages/runtime/src/displayTreeState.ts",
+      "sha256": "8aaf5f5dfc8d62f3b1bc4effe819e7718e3ed72fcf0a8fc25e3b08410f980e50"
     },
     {
-      "path": "packages/engine/src/surfaceOwnership.ts",
-      "sha256": "604df51eb03f8dbb7965100e06667c09bb311f0e26e0ee752b2404c899e5a320"
+      "path": "packages/runtime/src/displayVisualState.ts",
+      "sha256": "0bee8a7e5136f59c3301ec4d829bceaf5a01aff6f0d770dd6a2952ed31110f21"
+    },
+    {
+      "path": "packages/runtime/src/frameCapture.ts",
+      "sha256": "37ac4db4273ddca728622fd2db1226c1d104e056c40fd3bcbfbadeae1c75e921"
+    },
+    {
+      "path": "packages/runtime/src/ownership.ts",
+      "sha256": "8c8c40e465002882dac1bf054fa49248c99df62da337cf75f50168f0a6748c62"
     }
   ]
 }

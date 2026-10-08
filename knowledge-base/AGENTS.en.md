@@ -14,3 +14,5 @@ This project uses public collaboration from early development. Before contributi
 - This file applies to code, documentation, comments, Issues, and PRs. It grants no account permissions and expands no authorization for external publication, message sending, or asset use.
 
 Before every push, follow the [bilingual documentation and pre-push checks](docs/双语文档与推送前检查.en.md), synchronize Chinese and English reading versions and shared registered statuses, and add English comments to critical code.
+
+Current 0.12.0 V011 covers only the display/frame and desktop Canvas rectangle prototype; full-product acceptance remains separate. Rendering changes require the real-browser gate documented by the example in addition to default prepush.
