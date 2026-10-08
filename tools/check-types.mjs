@@ -34,3 +34,27 @@ try {
   rmSync(invalid, { force: true });
   rmSync(invalidConfig, { force: true });
 }
+
+for (const config of ['tests/types/tsconfig.web.json', 'tests/types/tsconfig.dom-free.json']) {
+  const check = spawnSync(process.execPath, [compiler, '--project', config], { cwd: root, encoding: 'utf8' });
+  process.stdout.write(check.stdout ?? '');
+  process.stderr.write(check.stderr ?? '');
+  if (check.error) throw check.error;
+  if (check.status !== 0) process.exit(check.status ?? 1);
+}
+console.log('Web consumer and DOM-free root consumer fixtures PASS.');
+const webRaw = readFileSync(path.join(root, 'tests/types/web.ts'), 'utf8');
+const webInvalid = path.join(root, 'tests/types/web-invalid.generated.ts');
+const webConfig = path.join(root, 'tests/types/web-invalid.generated.json');
+try {
+  writeFileSync(webInvalid, webRaw.replace(/^.*@ts-expect-error.*\r?\n/gm, ''));
+  writeFileSync(webConfig, JSON.stringify({extends:'./tsconfig.web.json',include:['web-invalid.generated.ts']}));
+  const check = spawnSync(process.execPath, [compiler, '--project', webConfig], {cwd:root,encoding:'utf8'});
+  if (check.error) throw check.error;
+  process.stdout.write(check.stdout ?? '');
+  const count = (check.stdout?.match(/error TS\d+:/g) ?? []).length;
+  if (check.status === 0 || count !== 2) throw Error(`Web negative fixture expected 2 actual diagnostics; got ${count}`);
+  console.log('Web negative fixtures PASS: 2 actual diagnostics. Total negative assertions: 25.');
+} finally {
+  rmSync(webInvalid,{force:true});rmSync(webConfig,{force:true});
+}

@@ -1,8 +1,17 @@
 {
   "files": [],
   "references": [
-    { "path": "./packages/contracts" },
-    { "path": "./packages/runtime" },
-    { "path": "./packages/engine" }
+    {
+      "path": "./packages/contracts"
+    },
+    {
+      "path": "./packages/runtime"
+    },
+    {
+      "path": "./packages/engine"
+    },
+    {
+      "path": "./packages/engine/tsconfig.web.json"
+    }
   ]
 }

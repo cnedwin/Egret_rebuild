@@ -27,11 +27,12 @@ for (const [name, allowed] of Object.entries(expected)) {
     const result = spawnSync(process.execPath, ["--input-type=module", "--eval", `await import(${JSON.stringify(dependency)});`], { cwd: dir, encoding: "utf8" });
     if (result.status !== 0) throw new Error(`${name}: ESM dependency resolution failed: ${result.stderr}`);
   }
-  for (const file of [...files(path.join(dir, "src")), ...files(path.join(dir, "dist"))]) {
+  for (const file of [...files(path.join(dir, "src")), ...files(path.join(dir, "dist")), ...(name === 'engine' ? files(path.join(dir, 'web')) : [])]) {
     if (!file.endsWith(".ts") && !file.endsWith(".js")) continue;
     const raw = readFileSync(file, "utf8");
     const code = raw.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/[^\n]*/g, "");
-    if (forbidden.test(code)) throw new Error(`${path.relative(root, file)}: host ambient dependency`);
+    const web = name === 'engine' && (file.startsWith(path.join(dir, 'web') + path.sep) || file.startsWith(path.join(dir, 'dist', 'web') + path.sep));
+    if ((web ? /\b(?:process|Buffer|require)\b|["']node:/ : forbidden).test(code)) throw new Error(`${path.relative(root, file)}: host ambient dependency`);
     for (const match of code.matchAll(/(?:from\s*|import\s*\(|import\s*)["']([^"']+)["']/g)) {
       const imported = match[1];
       if (!imported) continue;
@@ -46,10 +47,22 @@ for (const [name, allowed] of Object.entries(expected)) {
   const references = (tsconfig.references ?? []).map((entry) => entry.path).sort();
   const expectedReferences = allowed.map((dependency) => `../${dependency.slice("@egret/".length)}`).sort();
   if (JSON.stringify(references) !== JSON.stringify(expectedReferences)) throw new Error(`${name}: project references mismatch`);
+  if (name === 'engine') {
+    const webConfig = JSON.parse(readFileSync(path.join(dir, 'tsconfig.web.json'), 'utf8'));
+    if (webConfig.extends !== '../../tsconfig.base.json' || webConfig.compilerOptions.rootDir !== 'web' || webConfig.compilerOptions.outDir !== 'dist/web' || JSON.stringify(webConfig.compilerOptions.lib) !== JSON.stringify(['ES2022', 'DOM']) || JSON.stringify(webConfig.include) !== JSON.stringify(['web/**/*.ts'])) throw new Error('engine: approved web compilation boundary mismatch');
+    const webReferences = webConfig.references.map(entry => entry.path).sort();
+    if (JSON.stringify(webReferences) !== JSON.stringify(expectedReferences)) throw new Error('engine: web dependency references mismatch');
+    for (const file of files(path.join(dir, 'src'))) {
+      if (/['"][^'"]*(?:\/web\/|\/web['"])/.test(readFileSync(file, 'utf8'))) throw new Error('engine: root imports web subtree');
+    }
+  }
 }
 const facade = await import("@egret/engine");
+const webFacade = await import('@egret/engine/web');
+if (JSON.stringify(Object.keys(webFacade)) !== JSON.stringify(['createCanvasHost'])) throw new Error('web facade leaks internal ports');
+if ('createCanvasHost' in facade) throw new Error('root facade leaks Canvas entry');
 for (const internal of ["collectFrameCommands", "createScope", "createStage", "constructEngine", "createAssetManager", "createAssetLease", "revokeAssetLease", "assertAssetRef", "assertAssetType", "reportDiagnostic", "bind", "engineOf", "ownerOf"]) {
   if (internal in facade) throw new Error(`Internal lifecycle port leaked: ${internal}`);
 }
-console.log(`Boundary check PASS: three private workspace packages, actual exports resolution, ${inspected} source/build/declaration files, core without DOM/Node globals.`);
+console.log(`Boundary check PASS: three private workspace packages, actual exports resolution, ${inspected} source/build/declaration files, DOM-free core and exact DOM-only web subtree without Node imports/globals.`);
 
