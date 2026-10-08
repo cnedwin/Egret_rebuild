@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "knowledgeBaseVersion": "0.12.0",
-  "checkedAtUtc": "2026-10-08T16:56:04.2197325Z",
+  "checkedAtUtc": "2026-10-08T16:59:59.6993704Z",
   "status": "passed",
   "scope": "documentation_structure_only",
   "registryCounts": {
@@ -2327,7 +2327,7 @@
     },
     {
       "path": "registry/来源.en.json",
-      "sha256": "F4378138456902EC695CA36DEAE7DD7BAF9C8D22A39C651F4317FC8FF0B8AF8E"
+      "sha256": "EAE362660089AAA18299625667DF9C360AC06460DABED51EFE00357495E364DC"
     },
     {
       "path": "registry/来源.json",

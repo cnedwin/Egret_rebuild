@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "createdAtUtc": "2026-10-08T16:57:22.051Z",
+  "createdAtUtc": "2026-10-08T17:00:28.462Z",
   "repository": "https://github.com/cnedwin/Egret_rebuild",
   "knowledgeBaseVersion": "0.12.0",
   "status": "verified_local_development_preview",
@@ -3769,7 +3769,7 @@
     },
     {
       "path": "knowledge-base/核验记录.json",
-      "sha256": "03a05c2b1cb90b5abbbfddb51a0b2c1b384e10213d41090cc7f62ca1b239e8c2",
+      "sha256": "fb7dd6354c4df839bffd444f03f66b7e7b93a798a72ed8bbfb86b7c0e27fbaee",
       "bytes": 102510,
       "gitMode": "100644"
     },
