@@ -11,6 +11,9 @@
       "path": "./packages/engine"
     },
     {
+      "path": "./packages/engine/tsconfig.rendering.json"
+    },
+    {
       "path": "./packages/engine/tsconfig.web.json"
     }
   ]

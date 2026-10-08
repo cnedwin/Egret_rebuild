@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "scope": "Current opt-in entry comment-only source restoration; independent of unchanged sealed 0.10 comment proof.",
+  "entry": "packages/engine/web/webgpu.ts",
+  "acceptedSourceCommit": "956e2f9894dc8e27291ffd0210a6cd8b4e651eab",
+  "acceptedSourceSha256": "1caffdcab8f13c6142ba060edb6b84bf82179dc705660e30b992a4f8d6ed902a",
+  "currentSourceSha256": "bf0e57d689d4ae60f3a25a11835e3d08aead7549c2c1b72a7cdbdf91da8c0e05",
+  "addedEnglishComment": "// Opt-in WebGPU exports keep the default engine and Canvas entries GPU-free.",
+  "restoration": "Removing this one exact leading comment restores the accepted source bytes.",
+  "sourceBehaviorChanged": false,
+  "sourceRestoreVerified": true,
+  "changedNativeInventory": [
+    {
+      "path": "packages/engine/dist/web/webgpu.d.ts.map",
+      "acceptedSha256": "ba99d42283681affbc61da5c1dc462d7c892a68b7709bc1e420b677f17b1e39f",
+      "currentSha256": "2f0192f3fb16255c3982540409b5226935e26379da1f385ea3ad1bc0cda6b06d"
+    },
+    {
+      "path": "packages/engine/dist/web/webgpu.js",
+      "acceptedSha256": "2379a0fdf86304e76cba38e486c6d6c14c74336439e510b043da65622f4b9b74",
+      "currentSha256": "f92b6a0672bd7f13159f4df4947cd4513aa57164b76d7eea457c5e046f375844"
+    },
+    {
+      "path": "packages/engine/dist/web/webgpu.js.map",
+      "acceptedSha256": "fda07c67bb9fd2c2590c250a3151c46c2509df50685ad2603071fda785cd9f47",
+      "currentSha256": "2e2a2d807be1277c9ef9a4fe992c1458869bd2dd05a130b28f6b4d09cf085357"
+    },
+    {
+      "path": "packages/engine/web/webgpu.ts",
+      "acceptedSha256": "1caffdcab8f13c6142ba060edb6b84bf82179dc705660e30b992a4f8d6ed902a",
+      "currentSha256": "bf0e57d689d4ae60f3a25a11835e3d08aead7549c2c1b72a7cdbdf91da8c0e05"
+    },
+    {
+      "path": "tools/check-publication.mjs",
+      "acceptedSha256": "ee7dd33224964093dc7d4eafa6d4f156aee28343be76448a0b3099f5a76774b6",
+      "currentSha256": "22decff2b21a8c3027617978934b9a498b27e42d14926b48efa36e708b9ef35d"
+    }
+  ],
+  "unchangedNativeInventoryPaths": 228,
+  "finalNativeBinding": "observed_PASS_at_1aa_pending_independent_binding_review",
+  "publicationReview": "pending_independent_review",
+  "emittedBarrel": {
+    "path": "packages/engine/dist/web/webgpu.js",
+    "acceptedSha256": "2379a0fdf86304e76cba38e486c6d6c14c74336439e510b043da65622f4b9b74",
+    "currentSha256": "f92b6a0672bd7f13159f4df4947cd4513aa57164b76d7eea457c5e046f375844",
+    "restoredSha256": "2379a0fdf86304e76cba38e486c6d6c14c74336439e510b043da65622f4b9b74",
+    "commentOnlyRestorationVerified": true,
+    "scope": "Removing the exact emitted comment line restores the accepted JS bytes; generated source maps retain their explicitly listed changed hashes. The declaration bytes and other production runtime artifacts match the accepted inventory."
+  },
+  "finalNativeExecution": {
+    "sourceCommit": "1aa0248a1ff6d8e54c42d631072223bb50483814",
+    "executedAt": "2026-10-08T21:23:54.294Z",
+    "resultSha256": "b5a8fa4adbfc559cedfc5a4da8397a31c1778502511240216bfd3004914a0933",
+    "artifactBinding": "verification/webgpu-final-artifact-binding.json"
+  },
+  "_projection": {
+    "canonicalSource": "verification/webgpu-entry-comment-proof.json",
+    "canonicalSha256": "55b7698f64f4edac41250eed705a619b88d947ab5966e29b78b37e7ac3e9ecb0",
+    "role": "public_knowledge_base_projection",
+    "scope": "Same actual scoped public record and pending correction review; shared numeric identities are not separately translated."
+  }
+}

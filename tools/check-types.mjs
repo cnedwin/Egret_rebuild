@@ -53,8 +53,9 @@ try {
   if (check.error) throw check.error;
   process.stdout.write(check.stdout ?? '');
   const count = (check.stdout?.match(/error TS\d+:/g) ?? []).length;
-  if (check.status === 0 || count !== 2) throw Error(`Web negative fixture expected 2 actual diagnostics; got ${count}`);
-  console.log('Web negative fixtures PASS: 2 actual diagnostics. Total negative assertions: 25.');
+  const expected = (webRaw.match(/@ts-expect-error/g) ?? []).length;
+  if (check.status === 0 || count !== expected) throw Error(`Web negative fixture expected ${expected} actual diagnostics; got ${count}`);
+  console.log(`Web negative fixtures PASS: ${count} actual diagnostics. Total negative assertions: ${(raw.match(/@ts-expect-error/g) ?? []).length + expected}.`);
 } finally {
   rmSync(webInvalid,{force:true});rmSync(webConfig,{force:true});
 }

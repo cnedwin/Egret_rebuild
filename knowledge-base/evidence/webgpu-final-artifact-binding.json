@@ -1,0 +1,1427 @@
+{
+  "schemaVersion": 1,
+  "executionSourceCommit": "1aa0248a1ff6d8e54c42d631072223bb50483814",
+  "executionTree": "512ceea916a67c4e51949fbceee148da29018c70",
+  "executedAt": "2026-10-08T21:23:54.294Z",
+  "nativeResultSha256": "b5a8fa4adbfc559cedfc5a4da8397a31c1778502511240216bfd3004914a0933",
+  "scope": "Read-only comparison in the metadata/prose-only successor. The execution commit stays fixed; no later Git commit identity is substituted for execution. All 233 inventoried files are unchanged, including the example README pair. No browser gate was rerun by this metadata writer.",
+  "inventoryCount": 233,
+  "unchangedCount": 233,
+  "changedDocumentation": [],
+  "mismatches": [],
+  "allInventoriedBytesUnchanged": true,
+  "files": [
+    {
+      "path": "examples/webgpu/README.en.md",
+      "nativeSha256": "2e2cbc10dcd4453724ea19164a46ad070dad2e60bc6f587660dd76e36712f71c",
+      "currentSha256": "2e2cbc10dcd4453724ea19164a46ad070dad2e60bc6f587660dd76e36712f71c",
+      "equal": true
+    },
+    {
+      "path": "examples/webgpu/README.md",
+      "nativeSha256": "498d8c385d045de9e43a5125a9eeb85c6d229d0a5af1d265378681dac25c42fe",
+      "currentSha256": "498d8c385d045de9e43a5125a9eeb85c6d229d0a5af1d265378681dac25c42fe",
+      "equal": true
+    },
+    {
+      "path": "examples/webgpu/fixtures.mjs",
+      "nativeSha256": "58d9c04eee8f32dab50f49ff01f686085132d390a0b3e936e2860865a0a07a6f",
+      "currentSha256": "58d9c04eee8f32dab50f49ff01f686085132d390a0b3e936e2860865a0a07a6f",
+      "equal": true
+    },
+    {
+      "path": "examples/webgpu/index.html",
+      "nativeSha256": "7d93185fd2da56aaf9869654c55e73ff97b4bd861468e09559c55edef00b9b95",
+      "currentSha256": "7d93185fd2da56aaf9869654c55e73ff97b4bd861468e09559c55edef00b9b95",
+      "equal": true
+    },
+    {
+      "path": "examples/webgpu/main.mjs",
+      "nativeSha256": "9a0020fea2712839d6acc30e72387396db1ccf4ecd5b0e96ca5758bb89db773a",
+      "currentSha256": "9a0020fea2712839d6acc30e72387396db1ccf4ecd5b0e96ca5758bb89db773a",
+      "equal": true
+    },
+    {
+      "path": "package.json",
+      "nativeSha256": "dc8b4a1df35b654d52a366010430083495daf807144aa8882b01a0b82fb45234",
+      "currentSha256": "dc8b4a1df35b654d52a366010430083495daf807144aa8882b01a0b82fb45234",
+      "equal": true
+    },
+    {
+      "path": "packages/contracts/dist/CancellationSignal.d.ts",
+      "nativeSha256": "879eb0ae6c8b5b305930f8770298f286259992a69b6653a25ea24b1944fe0a45",
+      "currentSha256": "879eb0ae6c8b5b305930f8770298f286259992a69b6653a25ea24b1944fe0a45",
+      "equal": true
+    },
+    {
+      "path": "packages/contracts/dist/CancellationSignal.d.ts.map",
+      "nativeSha256": "c71fa69c75e8a87a53216384a6eb82cc5530a44b0b8ece5e3b9892708df252d1",
+      "currentSha256": "c71fa69c75e8a87a53216384a6eb82cc5530a44b0b8ece5e3b9892708df252d1",
+      "equal": true
+    },
+    {
+      "path": "packages/contracts/dist/CancellationSignal.js",
+      "nativeSha256": "0ba72776d85f6252d292be929a5ed5d43ea666e9b10f7213767c76dcfddce2a1",
+      "currentSha256": "0ba72776d85f6252d292be929a5ed5d43ea666e9b10f7213767c76dcfddce2a1",
+      "equal": true
+    },
+    {
+      "path": "packages/contracts/dist/CancellationSignal.js.map",
+      "nativeSha256": "424c6a3311981942e091b3863e085c7a7134932729629c69ca5d7d68ae2a3e9a",
+      "currentSha256": "424c6a3311981942e091b3863e085c7a7134932729629c69ca5d7d68ae2a3e9a",
+      "equal": true
+    },
+    {
+      "path": "packages/contracts/dist/Diagnostic.d.ts",
+      "nativeSha256": "6f1d73cb7d31a3bf11427f6b856eb1b2ea0cb28eefbc9b67c0518652ee612c59",
+      "currentSha256": "6f1d73cb7d31a3bf11427f6b856eb1b2ea0cb28eefbc9b67c0518652ee612c59",
+      "equal": true
+    },
+    {
+      "path": "packages/contracts/dist/Diagnostic.d.ts.map",
+      "nativeSha256": "e98708bd82ac130ab8134256c1d93519179a48250192198835c2d296380cfe18",
+      "currentSha256": "e98708bd82ac130ab8134256c1d93519179a48250192198835c2d296380cfe18",
+      "equal": true
+    },
+    {
+      "path": "packages/contracts/dist/Diagnostic.js",
+      "nativeSha256": "a38eb3e97581ece3660868f46fcd8b34aea184df46900204937c7ea51d4adfe2",
+      "currentSha256": "a38eb3e97581ece3660868f46fcd8b34aea184df46900204937c7ea51d4adfe2",
+      "equal": true
+    },
+    {
+      "path": "packages/contracts/dist/Diagnostic.js.map",
+      "nativeSha256": "b9c5fb74f2e5e648cabdb17132da2912cdf582f3aa41c5feca3c4523f834ee65",
+      "currentSha256": "b9c5fb74f2e5e648cabdb17132da2912cdf582f3aa41c5feca3c4523f834ee65",
+      "equal": true
+    },
+    {
+      "path": "packages/contracts/dist/Disposable.d.ts",
+      "nativeSha256": "989546b49c6a87bfc04487d6fe166aeea81650049efbbd7615476d36021b88c5",
+      "currentSha256": "989546b49c6a87bfc04487d6fe166aeea81650049efbbd7615476d36021b88c5",
+      "equal": true
+    },
+    {
+      "path": "packages/contracts/dist/Disposable.d.ts.map",
+      "nativeSha256": "e536a0b701f49659c1516968d7ee7b69de1f8ec5c3ca556a54af4479414c2d2b",
+      "currentSha256": "e536a0b701f49659c1516968d7ee7b69de1f8ec5c3ca556a54af4479414c2d2b",
+      "equal": true
+    },
+    {
+      "path": "packages/contracts/dist/Disposable.js",
+      "nativeSha256": "bf9cac95b81b32c1f32f2483191bd7585903379bec2e1dbae270d0e401e37504",
+      "currentSha256": "bf9cac95b81b32c1f32f2483191bd7585903379bec2e1dbae270d0e401e37504",
+      "equal": true
+    },
+    {
+      "path": "packages/contracts/dist/Disposable.js.map",
+      "nativeSha256": "04900f05c549d0050221fdf328db47fd9c61e90e2da457e14a3ff08af8f0b611",
+      "currentSha256": "04900f05c549d0050221fdf328db47fd9c61e90e2da457e14a3ff08af8f0b611",
+      "equal": true
+    },
+    {
+      "path": "packages/contracts/dist/HostAdapter.d.ts",
+      "nativeSha256": "2830519734a7957ffa6aa70998f01f87f1d00f80bafcc4fc114133b5c38d5458",
+      "currentSha256": "2830519734a7957ffa6aa70998f01f87f1d00f80bafcc4fc114133b5c38d5458",
+      "equal": true
+    },
+    {
+      "path": "packages/contracts/dist/HostAdapter.d.ts.map",
+      "nativeSha256": "49481c7f1b2109f44111c8e05c0f68d303414c7c863016ff706a6ea796fde164",
+      "currentSha256": "49481c7f1b2109f44111c8e05c0f68d303414c7c863016ff706a6ea796fde164",
+      "equal": true
+    },
+    {
+      "path": "packages/contracts/dist/HostAdapter.js",
+      "nativeSha256": "4f45b15956110abad55ffb3278fe67ea56f92251208883ee55e341353bc98035",
+      "currentSha256": "4f45b15956110abad55ffb3278fe67ea56f92251208883ee55e341353bc98035",
+      "equal": true
+    },
+    {
+      "path": "packages/contracts/dist/HostAdapter.js.map",
+      "nativeSha256": "f93c6d4fda55a79919a8c1b8cabb63b9796bc3780eaa29bf0c8f7e6699a1b10e",
+      "currentSha256": "f93c6d4fda55a79919a8c1b8cabb63b9796bc3780eaa29bf0c8f7e6699a1b10e",
+      "equal": true
+    },
+    {
+      "path": "packages/contracts/dist/RenderFrame2D.d.ts",
+      "nativeSha256": "a7dfc4741c35a0699fd172b24a9a1e70535a2a96d6fd7fe0b15a9522f9f2a3b9",
+      "currentSha256": "a7dfc4741c35a0699fd172b24a9a1e70535a2a96d6fd7fe0b15a9522f9f2a3b9",
+      "equal": true
+    },
+    {
+      "path": "packages/contracts/dist/RenderFrame2D.d.ts.map",
+      "nativeSha256": "1d4cb7f96fa627dad727b1400201553ebf0ab0527945f6e7a55049c2870a5621",
+      "currentSha256": "1d4cb7f96fa627dad727b1400201553ebf0ab0527945f6e7a55049c2870a5621",
+      "equal": true
+    },
+    {
+      "path": "packages/contracts/dist/RenderFrame2D.js",
+      "nativeSha256": "b1edd5d4c849156c65259ad05fc23cb3fca60d31592552fe3dbb0399dd999590",
+      "currentSha256": "b1edd5d4c849156c65259ad05fc23cb3fca60d31592552fe3dbb0399dd999590",
+      "equal": true
+    },
+    {
+      "path": "packages/contracts/dist/RenderFrame2D.js.map",
+      "nativeSha256": "98e141b7a9910383e1fe1e6608856bc98674dadadec45a53d0ce7ee1d1c0b875",
+      "currentSha256": "98e141b7a9910383e1fe1e6608856bc98674dadadec45a53d0ce7ee1d1c0b875",
+      "equal": true
+    },
+    {
+      "path": "packages/contracts/dist/index.d.ts",
+      "nativeSha256": "cf5d0bffccaee9dd233717280ec7cf250c2f04f97a9461f989d4d0b011f2eff5",
+      "currentSha256": "cf5d0bffccaee9dd233717280ec7cf250c2f04f97a9461f989d4d0b011f2eff5",
+      "equal": true
+    },
+    {
+      "path": "packages/contracts/dist/index.d.ts.map",
+      "nativeSha256": "a9f24ac1338525702365f1aee084e23c6e953208dd02a913908e220c93ae036e",
+      "currentSha256": "a9f24ac1338525702365f1aee084e23c6e953208dd02a913908e220c93ae036e",
+      "equal": true
+    },
+    {
+      "path": "packages/contracts/dist/index.js",
+      "nativeSha256": "827c148a2159c5d098f9fe33185b555382ad63931193dda5f41f6af38a6a4445",
+      "currentSha256": "827c148a2159c5d098f9fe33185b555382ad63931193dda5f41f6af38a6a4445",
+      "equal": true
+    },
+    {
+      "path": "packages/contracts/dist/index.js.map",
+      "nativeSha256": "e235ed7144a63976ff7e2cf2bd4087c7ad7210fc76fccf6829deaa2728798dbf",
+      "currentSha256": "e235ed7144a63976ff7e2cf2bd4087c7ad7210fc76fccf6829deaa2728798dbf",
+      "equal": true
+    },
+    {
+      "path": "packages/contracts/src/CancellationSignal.ts",
+      "nativeSha256": "6a9e5f07b549ec50c2a5c50915309e8de6fba2d943f59a0d7b54b079e14584b3",
+      "currentSha256": "6a9e5f07b549ec50c2a5c50915309e8de6fba2d943f59a0d7b54b079e14584b3",
+      "equal": true
+    },
+    {
+      "path": "packages/contracts/src/Diagnostic.ts",
+      "nativeSha256": "ce61e4d90319f55febc2782ca5e1a7329984cf6cfdf14955cc3a20dbdd5920ad",
+      "currentSha256": "ce61e4d90319f55febc2782ca5e1a7329984cf6cfdf14955cc3a20dbdd5920ad",
+      "equal": true
+    },
+    {
+      "path": "packages/contracts/src/Disposable.ts",
+      "nativeSha256": "76d74cd41b6e136ea840c7d8d05273520ce7d41031a7820dd4ddabc73be947db",
+      "currentSha256": "76d74cd41b6e136ea840c7d8d05273520ce7d41031a7820dd4ddabc73be947db",
+      "equal": true
+    },
+    {
+      "path": "packages/contracts/src/HostAdapter.ts",
+      "nativeSha256": "3c8289a85e04e34be3782156244cc253792eff1b41629758d54cd1692c64c2ae",
+      "currentSha256": "3c8289a85e04e34be3782156244cc253792eff1b41629758d54cd1692c64c2ae",
+      "equal": true
+    },
+    {
+      "path": "packages/contracts/src/RenderFrame2D.ts",
+      "nativeSha256": "853ac3e712082cf67e442043044b0da0ca577bb2d6a68d3c5981ac203fcd1e60",
+      "currentSha256": "853ac3e712082cf67e442043044b0da0ca577bb2d6a68d3c5981ac203fcd1e60",
+      "equal": true
+    },
+    {
+      "path": "packages/contracts/src/index.ts",
+      "nativeSha256": "9a4771c7479eaf70e1b27f2678e0f16e633ee85b8a413508c486dcd111471fbc",
+      "currentSha256": "9a4771c7479eaf70e1b27f2678e0f16e633ee85b8a413508c486dcd111471fbc",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/Engine.d.ts",
+      "nativeSha256": "f97bbc71a36c62768b3f5fb06258bba51bcc2be95eb08258db0071510024acb2",
+      "currentSha256": "f97bbc71a36c62768b3f5fb06258bba51bcc2be95eb08258db0071510024acb2",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/Engine.d.ts.map",
+      "nativeSha256": "21f6219a3caffb6fe6d16079a27b00e8ca2e2106a0e55ae642278dcf333077a8",
+      "currentSha256": "21f6219a3caffb6fe6d16079a27b00e8ca2e2106a0e55ae642278dcf333077a8",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/Engine.js",
+      "nativeSha256": "f0ca19eade5906066934c3f11e02988106b3a9ad4df5032689c0de20a1854ccb",
+      "currentSha256": "f0ca19eade5906066934c3f11e02988106b3a9ad4df5032689c0de20a1854ccb",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/Engine.js.map",
+      "nativeSha256": "a560a6a3803948cfa205a6b716e08175d77163b397b584c67aede8bb5df0b559",
+      "currentSha256": "a560a6a3803948cfa205a6b716e08175d77163b397b584c67aede8bb5df0b559",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/closeHost.d.ts",
+      "nativeSha256": "477f2871413d4dd5046464f7404faef15d9cf13c14f03150503a873ba4279371",
+      "currentSha256": "477f2871413d4dd5046464f7404faef15d9cf13c14f03150503a873ba4279371",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/closeHost.d.ts.map",
+      "nativeSha256": "64b6f8158575f650acc2aaa8a7c3f0278b4ea4e3151ea77cd1dad46f35525fee",
+      "currentSha256": "64b6f8158575f650acc2aaa8a7c3f0278b4ea4e3151ea77cd1dad46f35525fee",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/closeHost.js",
+      "nativeSha256": "4a486e51396da8014487febfa29b465e8351023dd2169bd568f66f22383b83a7",
+      "currentSha256": "4a486e51396da8014487febfa29b465e8351023dd2169bd568f66f22383b83a7",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/closeHost.js.map",
+      "nativeSha256": "b4f2ee40ee2a60e952f6780fc0417115c9c19020be342619cf68fbfb2a7fd211",
+      "currentSha256": "b4f2ee40ee2a60e952f6780fc0417115c9c19020be342619cf68fbfb2a7fd211",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/createEngine.d.ts",
+      "nativeSha256": "52df9ef4a105e19b7d2927e76015d6e759c15f44c63d9e662217a067e1085ea4",
+      "currentSha256": "52df9ef4a105e19b7d2927e76015d6e759c15f44c63d9e662217a067e1085ea4",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/createEngine.d.ts.map",
+      "nativeSha256": "09ab719a201e115e364da567bac905a8edc398d6e90ed973388d813568bbee0f",
+      "currentSha256": "09ab719a201e115e364da567bac905a8edc398d6e90ed973388d813568bbee0f",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/createEngine.js",
+      "nativeSha256": "6b15ff97d1adb844bc074999d22a2bb584764c23a6fd7760694fce1c7bfcf479",
+      "currentSha256": "6b15ff97d1adb844bc074999d22a2bb584764c23a6fd7760694fce1c7bfcf479",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/createEngine.js.map",
+      "nativeSha256": "399cb756a43348c2b3e62d1098d837034cc259f73ffe8e733df2203d2fd4a219",
+      "currentSha256": "399cb756a43348c2b3e62d1098d837034cc259f73ffe8e733df2203d2fd4a219",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/index.d.ts",
+      "nativeSha256": "aee5b115808bb4793d264dc8b2913d71b5a7689be1743f6b5e94f9e8e1b3665c",
+      "currentSha256": "aee5b115808bb4793d264dc8b2913d71b5a7689be1743f6b5e94f9e8e1b3665c",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/index.d.ts.map",
+      "nativeSha256": "b80ffbde4941c5607a02cdcedf8cf69c89c41d7efe9c9701ec89578e0a219242",
+      "currentSha256": "b80ffbde4941c5607a02cdcedf8cf69c89c41d7efe9c9701ec89578e0a219242",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/index.js",
+      "nativeSha256": "762f448c469eeae66f63b62ab4f22473f8ba42bad61db02a32ed4a8ac16588ee",
+      "currentSha256": "762f448c469eeae66f63b62ab4f22473f8ba42bad61db02a32ed4a8ac16588ee",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/index.js.map",
+      "nativeSha256": "8371a4b0be358fd4dad0e6da21a12a125d83748d89e08ac655823656267b04da",
+      "currentSha256": "8371a4b0be358fd4dad0e6da21a12a125d83748d89e08ac655823656267b04da",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/rendering/copyFrame2D.d.ts",
+      "nativeSha256": "2dfaf40d296f12392088cf96d2d6aea0bc05da93e8ffaf4c6b8de782b6470d45",
+      "currentSha256": "2dfaf40d296f12392088cf96d2d6aea0bc05da93e8ffaf4c6b8de782b6470d45",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/rendering/copyFrame2D.d.ts.map",
+      "nativeSha256": "811d658aa6222d41266ac989b195119ea62aa0886f88e86b96f0e904c0219823",
+      "currentSha256": "811d658aa6222d41266ac989b195119ea62aa0886f88e86b96f0e904c0219823",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/rendering/copyFrame2D.js",
+      "nativeSha256": "9784dab5919e3638a1895392ad3063bf0c4cee856f9a1c6fbd6562a676dbe3a4",
+      "currentSha256": "9784dab5919e3638a1895392ad3063bf0c4cee856f9a1c6fbd6562a676dbe3a4",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/rendering/copyFrame2D.js.map",
+      "nativeSha256": "2581c591f54ffe004071a79db106a4bdb82bc44f80096389654c8a852628162e",
+      "currentSha256": "2581c591f54ffe004071a79db106a4bdb82bc44f80096389654c8a852628162e",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/rendering/packedOrientation.d.ts",
+      "nativeSha256": "73588c79070ba0cff71cfd9df1dfa90ca59e201cfc6ee31eca2a92dd199884fe",
+      "currentSha256": "73588c79070ba0cff71cfd9df1dfa90ca59e201cfc6ee31eca2a92dd199884fe",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/rendering/packedOrientation.d.ts.map",
+      "nativeSha256": "d3a9926b3ec2de8bff7f1a399d47e11c1dac21a318da247956d92faf92a3095b",
+      "currentSha256": "d3a9926b3ec2de8bff7f1a399d47e11c1dac21a318da247956d92faf92a3095b",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/rendering/packedOrientation.js",
+      "nativeSha256": "7fcd748d3707a25e6211380c5089720c5242c57a0799ef512a331a0c5b2690f9",
+      "currentSha256": "7fcd748d3707a25e6211380c5089720c5242c57a0799ef512a331a0c5b2690f9",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/rendering/packedOrientation.js.map",
+      "nativeSha256": "a05b631e026dc1ec4baf031273baed87c024474c77d66bcf84bed1b16b457dcd",
+      "currentSha256": "a05b631e026dc1ec4baf031273baed87c024474c77d66bcf84bed1b16b457dcd",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/rendering/prepareRectangles2D.d.ts",
+      "nativeSha256": "cc485f6d65674a95ab15f9732707326f91c49973f7b3e13539d0c3d6e6f42f2b",
+      "currentSha256": "cc485f6d65674a95ab15f9732707326f91c49973f7b3e13539d0c3d6e6f42f2b",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/rendering/prepareRectangles2D.d.ts.map",
+      "nativeSha256": "384e92a3a2ff3767225300872653a32358f92bba00002034bc2b002e1b522372",
+      "currentSha256": "384e92a3a2ff3767225300872653a32358f92bba00002034bc2b002e1b522372",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/rendering/prepareRectangles2D.js",
+      "nativeSha256": "ec3f3ceff5501fd65517fa9850a3cf42e0f8505e431a474d93f471789b56048a",
+      "currentSha256": "ec3f3ceff5501fd65517fa9850a3cf42e0f8505e431a474d93f471789b56048a",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/rendering/prepareRectangles2D.js.map",
+      "nativeSha256": "54821c254f13d0800616cd57c1c33e74fb0601e3716ebe79ea70e848b52b2283",
+      "currentSha256": "54821c254f13d0800616cd57c1c33e74fb0601e3716ebe79ea70e848b52b2283",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/surfaceOwnership.d.ts",
+      "nativeSha256": "4457e2434b33bb8cb2ab732157eba78f84c166478232ce8da0c511800074cb3b",
+      "currentSha256": "4457e2434b33bb8cb2ab732157eba78f84c166478232ce8da0c511800074cb3b",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/surfaceOwnership.d.ts.map",
+      "nativeSha256": "4d73a1c2c311b5a20348285708b61a4d69eb191e0e055f1b1f7dd9be21b4d4f2",
+      "currentSha256": "4d73a1c2c311b5a20348285708b61a4d69eb191e0e055f1b1f7dd9be21b4d4f2",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/surfaceOwnership.js",
+      "nativeSha256": "e37243cf059c239fb8a56beddcd0020c2f9a0df80db1017012443e72748f75be",
+      "currentSha256": "e37243cf059c239fb8a56beddcd0020c2f9a0df80db1017012443e72748f75be",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/surfaceOwnership.js.map",
+      "nativeSha256": "98a1bffa40fafcf62d340c8d1eead4610be48998c53d53b1519649c9ed3185cf",
+      "currentSha256": "98a1bffa40fafcf62d340c8d1eead4610be48998c53d53b1519649c9ed3185cf",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/web/CanvasHost.d.ts",
+      "nativeSha256": "5ef87bbbe841a336c181ceac1f089b1f3e5cd1075f58c65a7447abf20c65676e",
+      "currentSha256": "5ef87bbbe841a336c181ceac1f089b1f3e5cd1075f58c65a7447abf20c65676e",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/web/CanvasHost.d.ts.map",
+      "nativeSha256": "a4d6bdf1606b1c2ec3ba9095aa11175f4aea60d08f2ca02797895bd00efe5d5f",
+      "currentSha256": "a4d6bdf1606b1c2ec3ba9095aa11175f4aea60d08f2ca02797895bd00efe5d5f",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/web/CanvasHost.js",
+      "nativeSha256": "c00aced85812c645c5cdeec1ef7da7b6f3475c295841ff68524c4a039a4825ce",
+      "currentSha256": "c00aced85812c645c5cdeec1ef7da7b6f3475c295841ff68524c4a039a4825ce",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/web/CanvasHost.js.map",
+      "nativeSha256": "17cebcdbb34200398cc52d67cadd15d14ac3f43d67acac766e41ddc06394da15",
+      "currentSha256": "17cebcdbb34200398cc52d67cadd15d14ac3f43d67acac766e41ddc06394da15",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/web/WebGPUHost.d.ts",
+      "nativeSha256": "43debb8e08f85ebf9c38a802a879bf0e0f4934937d0e66f20caf74755719341a",
+      "currentSha256": "43debb8e08f85ebf9c38a802a879bf0e0f4934937d0e66f20caf74755719341a",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/web/WebGPUHost.d.ts.map",
+      "nativeSha256": "b72658007a1d1e4ff64f499eeead350dfd36e1603babc32438c92503cd620244",
+      "currentSha256": "b72658007a1d1e4ff64f499eeead350dfd36e1603babc32438c92503cd620244",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/web/WebGPUHost.js",
+      "nativeSha256": "cefe4a8c04338078172aa90574004b6056ee77acb28e2a740c8595cc9ec1baee",
+      "currentSha256": "cefe4a8c04338078172aa90574004b6056ee77acb28e2a740c8595cc9ec1baee",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/web/WebGPUHost.js.map",
+      "nativeSha256": "88ae709b87b9baaa136727a47103dd0ab612420cf735cecdbc0c92ebd93ab740",
+      "currentSha256": "88ae709b87b9baaa136727a47103dd0ab612420cf735cecdbc0c92ebd93ab740",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/web/copyCanvasFrame.d.ts",
+      "nativeSha256": "f0340c970b73d01bd70dbd2df6b07ac02887d2eac5b4097039c9a99565445ef2",
+      "currentSha256": "f0340c970b73d01bd70dbd2df6b07ac02887d2eac5b4097039c9a99565445ef2",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/web/copyCanvasFrame.d.ts.map",
+      "nativeSha256": "07b27e1719dcea23cd717ed1c1d26aabf02efaa97da6a1cbc6772441b53cf02f",
+      "currentSha256": "07b27e1719dcea23cd717ed1c1d26aabf02efaa97da6a1cbc6772441b53cf02f",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/web/copyCanvasFrame.js",
+      "nativeSha256": "97c32c84d998fa6c732264bd1d68333d970b35982e4d5e1964706377e4b879b0",
+      "currentSha256": "97c32c84d998fa6c732264bd1d68333d970b35982e4d5e1964706377e4b879b0",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/web/copyCanvasFrame.js.map",
+      "nativeSha256": "5ba6212f7e29cb1a5f315a0a1d3d627c532b428e358a774753132a10d2bb3a82",
+      "currentSha256": "5ba6212f7e29cb1a5f315a0a1d3d627c532b428e358a774753132a10d2bb3a82",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/web/index.d.ts",
+      "nativeSha256": "8633bffa640fd23f9c3a6b6c1683ba447ea875e5822ddc9cc5cbd265316f0300",
+      "currentSha256": "8633bffa640fd23f9c3a6b6c1683ba447ea875e5822ddc9cc5cbd265316f0300",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/web/index.d.ts.map",
+      "nativeSha256": "7773a22ec1385583d57f37c8c8d9f542b637eaf8f5bdb8bcf98088f4c5b4ebff",
+      "currentSha256": "7773a22ec1385583d57f37c8c8d9f542b637eaf8f5bdb8bcf98088f4c5b4ebff",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/web/index.js",
+      "nativeSha256": "5df04a30354456e0d8a316ba156a4a8b9b43f5ff7c8601ac2e0b41af4c7fd27d",
+      "currentSha256": "5df04a30354456e0d8a316ba156a4a8b9b43f5ff7c8601ac2e0b41af4c7fd27d",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/web/index.js.map",
+      "nativeSha256": "48030504975916d928be76e2711156b20a0207bcaecf0c6d54c7afe16ef6c4d5",
+      "currentSha256": "48030504975916d928be76e2711156b20a0207bcaecf0c6d54c7afe16ef6c4d5",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/web/webgpu.d.ts",
+      "nativeSha256": "91f926d2bf7ecf5669c62bc4ece87096c0400b2afc6da09bdb5eac6b389885a6",
+      "currentSha256": "91f926d2bf7ecf5669c62bc4ece87096c0400b2afc6da09bdb5eac6b389885a6",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/web/webgpu.d.ts.map",
+      "nativeSha256": "2f0192f3fb16255c3982540409b5226935e26379da1f385ea3ad1bc0cda6b06d",
+      "currentSha256": "2f0192f3fb16255c3982540409b5226935e26379da1f385ea3ad1bc0cda6b06d",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/web/webgpu.js",
+      "nativeSha256": "f92b6a0672bd7f13159f4df4947cd4513aa57164b76d7eea457c5e046f375844",
+      "currentSha256": "f92b6a0672bd7f13159f4df4947cd4513aa57164b76d7eea457c5e046f375844",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/web/webgpu.js.map",
+      "nativeSha256": "2e2a2d807be1277c9ef9a4fe992c1458869bd2dd05a130b28f6b4d09cf085357",
+      "currentSha256": "2e2a2d807be1277c9ef9a4fe992c1458869bd2dd05a130b28f6b4d09cf085357",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/web/webgpuLifetime.d.ts",
+      "nativeSha256": "d9bac5b7b95d54755a7453694afa51afe836d1896da014e6f65fe2a61875ccf3",
+      "currentSha256": "d9bac5b7b95d54755a7453694afa51afe836d1896da014e6f65fe2a61875ccf3",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/web/webgpuLifetime.d.ts.map",
+      "nativeSha256": "066b609665e4150d151f43d7c15170c4c3b466f28093c7594d8e95a4ce30fa56",
+      "currentSha256": "066b609665e4150d151f43d7c15170c4c3b466f28093c7594d8e95a4ce30fa56",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/web/webgpuLifetime.js",
+      "nativeSha256": "8e1e537fc1ae15776cad8b88206ac61f65e3f603abbc078fa965e07223239a4c",
+      "currentSha256": "8e1e537fc1ae15776cad8b88206ac61f65e3f603abbc078fa965e07223239a4c",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/web/webgpuLifetime.js.map",
+      "nativeSha256": "28f98cf8c4899bf0fe94883c1e6523a78a48f2ddd27bbcdef348deb3aaf0858a",
+      "currentSha256": "28f98cf8c4899bf0fe94883c1e6523a78a48f2ddd27bbcdef348deb3aaf0858a",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/web/webgpuPass.d.ts",
+      "nativeSha256": "71b0eef43d5b04cb7c13fe4c8a84c2e7cbcbacc4891fb8680b87cc3b10293840",
+      "currentSha256": "71b0eef43d5b04cb7c13fe4c8a84c2e7cbcbacc4891fb8680b87cc3b10293840",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/web/webgpuPass.d.ts.map",
+      "nativeSha256": "f56bf1d38c69a185c2e6880b3fc21831893cce0c6f8b1a633f45fdb28fb9e7b0",
+      "currentSha256": "f56bf1d38c69a185c2e6880b3fc21831893cce0c6f8b1a633f45fdb28fb9e7b0",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/web/webgpuPass.js",
+      "nativeSha256": "02915eb021880ed938b8d665bc8492eb46123db2d80413ce04f65dc21f93fcd7",
+      "currentSha256": "02915eb021880ed938b8d665bc8492eb46123db2d80413ce04f65dc21f93fcd7",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/dist/web/webgpuPass.js.map",
+      "nativeSha256": "b276b00184443f73b60f9f61f99bfd98650240e1987d9b52ee174f3372f4c6c4",
+      "currentSha256": "b276b00184443f73b60f9f61f99bfd98650240e1987d9b52ee174f3372f4c6c4",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/node_modules/robust-predicates/esm/incircle.js",
+      "nativeSha256": "784e4c897b00289869c9a9e51e0281ac550853e399a8df664afaf29494fe85b5",
+      "currentSha256": "784e4c897b00289869c9a9e51e0281ac550853e399a8df664afaf29494fe85b5",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/node_modules/robust-predicates/esm/insphere.js",
+      "nativeSha256": "6782ad663d713b0da8d0710d88123a89ad388a6359c4bc81ed89ac5f682a12ea",
+      "currentSha256": "6782ad663d713b0da8d0710d88123a89ad388a6359c4bc81ed89ac5f682a12ea",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/node_modules/robust-predicates/esm/orient2d.js",
+      "nativeSha256": "ba1af2b1ea71924fa2e0a3e50b8972d3a83ab9a9f406dd73e851c9763a8eb741",
+      "currentSha256": "ba1af2b1ea71924fa2e0a3e50b8972d3a83ab9a9f406dd73e851c9763a8eb741",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/node_modules/robust-predicates/esm/orient3d.js",
+      "nativeSha256": "6e122bc0c0b461d0cdf37e2caa458a823556630a20b044069e57391641acd97a",
+      "currentSha256": "6e122bc0c0b461d0cdf37e2caa458a823556630a20b044069e57391641acd97a",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/node_modules/robust-predicates/esm/util.js",
+      "nativeSha256": "7b6ed8737cbee96fb413a312e6aaadd84ce9e9594847949f7b4bc8b3dac2cd14",
+      "currentSha256": "7b6ed8737cbee96fb413a312e6aaadd84ce9e9594847949f7b4bc8b3dac2cd14",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/node_modules/robust-predicates/index.js",
+      "nativeSha256": "1e26fb2e616a0fa84dadb3a15633d9743671884d82f1abb124e20292fd0ab86d",
+      "currentSha256": "1e26fb2e616a0fa84dadb3a15633d9743671884d82f1abb124e20292fd0ab86d",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/node_modules/robust-predicates/package.json",
+      "nativeSha256": "55881c0db678074120592e7de7cc2418c265e2ec6cbb51f9c02794db2ee20813",
+      "currentSha256": "55881c0db678074120592e7de7cc2418c265e2ec6cbb51f9c02794db2ee20813",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/package.json",
+      "nativeSha256": "d49f766cd3c4c6866b7e9f3746dbaa317b3588b8ffd3ce96a563e2921c8d6080",
+      "currentSha256": "d49f766cd3c4c6866b7e9f3746dbaa317b3588b8ffd3ce96a563e2921c8d6080",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/rendering/copyFrame2D.ts",
+      "nativeSha256": "28e29667b474a244103eab0fab11fd373b62079073d2a2bea2cc9bfd0bda882d",
+      "currentSha256": "28e29667b474a244103eab0fab11fd373b62079073d2a2bea2cc9bfd0bda882d",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/rendering/packedOrientation.ts",
+      "nativeSha256": "fdcedb1464a03dd39c6da6cd8a77596d6be33b95b0ba63ac907859a0e02c181b",
+      "currentSha256": "fdcedb1464a03dd39c6da6cd8a77596d6be33b95b0ba63ac907859a0e02c181b",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/rendering/prepareRectangles2D.ts",
+      "nativeSha256": "5003eef853f6982c9b7f5f36999279688e7b6aa4184e88ff5673af2ad02aa74f",
+      "currentSha256": "5003eef853f6982c9b7f5f36999279688e7b6aa4184e88ff5673af2ad02aa74f",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/src/Engine.ts",
+      "nativeSha256": "565d2f2701d5f1c7f653a5833f435b649f68975bf650400003bbdd86ecb909a0",
+      "currentSha256": "565d2f2701d5f1c7f653a5833f435b649f68975bf650400003bbdd86ecb909a0",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/src/closeHost.ts",
+      "nativeSha256": "9fac806cc0d19265ec6956cc19305a9ff2ae03ff0e49700d64c39be88ba3244f",
+      "currentSha256": "9fac806cc0d19265ec6956cc19305a9ff2ae03ff0e49700d64c39be88ba3244f",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/src/createEngine.ts",
+      "nativeSha256": "32011ff9c7bbc65e0bdf455a21fcac2e975cd14f9065c3c7c9589bbb74c56774",
+      "currentSha256": "32011ff9c7bbc65e0bdf455a21fcac2e975cd14f9065c3c7c9589bbb74c56774",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/src/index.ts",
+      "nativeSha256": "610b29b05ca80e16c602d68af2ad1a71be4027cb4c5731816c177eb415e3b3f4",
+      "currentSha256": "610b29b05ca80e16c602d68af2ad1a71be4027cb4c5731816c177eb415e3b3f4",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/src/surfaceOwnership.ts",
+      "nativeSha256": "604df51eb03f8dbb7965100e06667c09bb311f0e26e0ee752b2404c899e5a320",
+      "currentSha256": "604df51eb03f8dbb7965100e06667c09bb311f0e26e0ee752b2404c899e5a320",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/web/CanvasHost.ts",
+      "nativeSha256": "ae6c2f46bd3e43b44e8a915a5b4fb9c1cbebab6b5f14b93178b7bd7eb5f0c7cb",
+      "currentSha256": "ae6c2f46bd3e43b44e8a915a5b4fb9c1cbebab6b5f14b93178b7bd7eb5f0c7cb",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/web/WebGPUHost.ts",
+      "nativeSha256": "f07f59068f1c65f1247500ca8665747bb957d99e07286b16e3d6d08be3da51bc",
+      "currentSha256": "f07f59068f1c65f1247500ca8665747bb957d99e07286b16e3d6d08be3da51bc",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/web/copyCanvasFrame.ts",
+      "nativeSha256": "274069cd40f81ddbb9aa298f4119be2cf8e4791d17c0c2b2652033a0d4957637",
+      "currentSha256": "274069cd40f81ddbb9aa298f4119be2cf8e4791d17c0c2b2652033a0d4957637",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/web/index.ts",
+      "nativeSha256": "1c06c610493ff706ed07983a2bdd826aaf8a2b3af8c88563ad99e1324f2a7e4e",
+      "currentSha256": "1c06c610493ff706ed07983a2bdd826aaf8a2b3af8c88563ad99e1324f2a7e4e",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/web/webgpu.ts",
+      "nativeSha256": "bf0e57d689d4ae60f3a25a11835e3d08aead7549c2c1b72a7cdbdf91da8c0e05",
+      "currentSha256": "bf0e57d689d4ae60f3a25a11835e3d08aead7549c2c1b72a7cdbdf91da8c0e05",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/web/webgpuLifetime.ts",
+      "nativeSha256": "1af60adbf879049962c1d6913ee241a6d32ebcb1e9ecdd5a3733ebbb7ee8f287",
+      "currentSha256": "1af60adbf879049962c1d6913ee241a6d32ebcb1e9ecdd5a3733ebbb7ee8f287",
+      "equal": true
+    },
+    {
+      "path": "packages/engine/web/webgpuPass.ts",
+      "nativeSha256": "780bb10de89b894ea01b6ae4122281a7c2b3c32e3435bed6d1e071be4969a5a5",
+      "currentSha256": "780bb10de89b894ea01b6ae4122281a7c2b3c32e3435bed6d1e071be4969a5a5",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/AssetLease.d.ts",
+      "nativeSha256": "832d8437faac88e2160deed2a2c037ad5404d1ab3ae9f5d4d39adcb838113dd6",
+      "currentSha256": "832d8437faac88e2160deed2a2c037ad5404d1ab3ae9f5d4d39adcb838113dd6",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/AssetLease.d.ts.map",
+      "nativeSha256": "3584b5d5d297d393d3071b27a3fb10ccd6f9d5f6e12ddc08146f67eeade5fc26",
+      "currentSha256": "3584b5d5d297d393d3071b27a3fb10ccd6f9d5f6e12ddc08146f67eeade5fc26",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/AssetLease.js",
+      "nativeSha256": "e1ae2bf476f92825330e9cfda3e27d5c332f5c5c72f8ae6a0d7ea9b90c73652b",
+      "currentSha256": "e1ae2bf476f92825330e9cfda3e27d5c332f5c5c72f8ae6a0d7ea9b90c73652b",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/AssetLease.js.map",
+      "nativeSha256": "88eff7c353cdfad930b9a1fa2417a96b80fa14db8c184d555ff1bbe8bcdd4f7f",
+      "currentSha256": "88eff7c353cdfad930b9a1fa2417a96b80fa14db8c184d555ff1bbe8bcdd4f7f",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/AssetManager.d.ts",
+      "nativeSha256": "baf1ba0e5d012df4c5edd61aae63e98ecaa970ce93d9f89c365b51d67a002fa1",
+      "currentSha256": "baf1ba0e5d012df4c5edd61aae63e98ecaa970ce93d9f89c365b51d67a002fa1",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/AssetManager.d.ts.map",
+      "nativeSha256": "ecb3e22ca3d4f833835d3f52bc4ccddf9e981137f5d8c928c5b7b4b5b11cfa7e",
+      "currentSha256": "ecb3e22ca3d4f833835d3f52bc4ccddf9e981137f5d8c928c5b7b4b5b11cfa7e",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/AssetManager.js",
+      "nativeSha256": "5ed26965cb1df2af9607063c3aa90a8906284a82f675ca1d9b5e53da1f3be38a",
+      "currentSha256": "5ed26965cb1df2af9607063c3aa90a8906284a82f675ca1d9b5e53da1f3be38a",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/AssetManager.js.map",
+      "nativeSha256": "7054bff75fab39a66397e3f0a522097520442e721d892b42c1aec38260245eee",
+      "currentSha256": "7054bff75fab39a66397e3f0a522097520442e721d892b42c1aec38260245eee",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/AssetRef.d.ts",
+      "nativeSha256": "70269fb27fab57ef723cbf110b319b6eaf25cb6fafea6a4f7298b502da74f038",
+      "currentSha256": "70269fb27fab57ef723cbf110b319b6eaf25cb6fafea6a4f7298b502da74f038",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/AssetRef.d.ts.map",
+      "nativeSha256": "9fbba0024a783065a8ef354a5cd5e57a2f021aaacb12e9cc9b7c5c2c9e271328",
+      "currentSha256": "9fbba0024a783065a8ef354a5cd5e57a2f021aaacb12e9cc9b7c5c2c9e271328",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/AssetRef.js",
+      "nativeSha256": "71f8764d8e825d946a308f6d75528bff9e2622780fb0625a8c662e202e46f024",
+      "currentSha256": "71f8764d8e825d946a308f6d75528bff9e2622780fb0625a8c662e202e46f024",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/AssetRef.js.map",
+      "nativeSha256": "8fe3d1f3da079f28d2d6d0f1031f9affdf9b0c8db2fa4bbb411c8d010ef65689",
+      "currentSha256": "8fe3d1f3da079f28d2d6d0f1031f9affdf9b0c8db2fa4bbb411c8d010ef65689",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/CancellationController.d.ts",
+      "nativeSha256": "3830c9f09cfcf3e65045ec15d15e40ec0c135643094052de87a391ab9e2c39d3",
+      "currentSha256": "3830c9f09cfcf3e65045ec15d15e40ec0c135643094052de87a391ab9e2c39d3",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/CancellationController.d.ts.map",
+      "nativeSha256": "abaeeb7f5409fc16413391e5dcb786740a38dbc84de2b5104d5f123b45ddd145",
+      "currentSha256": "abaeeb7f5409fc16413391e5dcb786740a38dbc84de2b5104d5f123b45ddd145",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/CancellationController.js",
+      "nativeSha256": "c838a0901bb3e609d6d1bdcd01231cc4f3a3b362efe2430aca29282e3b56a09c",
+      "currentSha256": "c838a0901bb3e609d6d1bdcd01231cc4f3a3b362efe2430aca29282e3b56a09c",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/CancellationController.js.map",
+      "nativeSha256": "3d879dcd54418c5a632bcccf6dfa8c9a39b3afc5d116821ab35fa9b9756b9cdc",
+      "currentSha256": "3d879dcd54418c5a632bcccf6dfa8c9a39b3afc5d116821ab35fa9b9756b9cdc",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/DisplayObject.d.ts",
+      "nativeSha256": "55c92cf4af3916d8025390df068720a67141276655b30db988e140f2d08d9549",
+      "currentSha256": "55c92cf4af3916d8025390df068720a67141276655b30db988e140f2d08d9549",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/DisplayObject.d.ts.map",
+      "nativeSha256": "e3abb5441a80e977bd02591d8f106f45787b056a2d79f3defcdc9fd2ada129c7",
+      "currentSha256": "e3abb5441a80e977bd02591d8f106f45787b056a2d79f3defcdc9fd2ada129c7",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/DisplayObject.js",
+      "nativeSha256": "003a4f30eb5d5a5d7ff980134dd1b38e1c4a57da7cf08baabfbcfd3d96bb47b5",
+      "currentSha256": "003a4f30eb5d5a5d7ff980134dd1b38e1c4a57da7cf08baabfbcfd3d96bb47b5",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/DisplayObject.js.map",
+      "nativeSha256": "44f2d57e472c9a439676fe2cbd83559d25c4d40189cb2148a6ccc3a7248ee86b",
+      "currentSha256": "44f2d57e472c9a439676fe2cbd83559d25c4d40189cb2148a6ccc3a7248ee86b",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/DisplayObjectContainer.d.ts",
+      "nativeSha256": "1a27dcaacce60c1925d969f4a3addd2597893c368027b071a3208b0bbbbd3356",
+      "currentSha256": "1a27dcaacce60c1925d969f4a3addd2597893c368027b071a3208b0bbbbd3356",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/DisplayObjectContainer.d.ts.map",
+      "nativeSha256": "72e51c0c380c89bf38458514566e4e58185b5294259a126f58d2f31524711b5b",
+      "currentSha256": "72e51c0c380c89bf38458514566e4e58185b5294259a126f58d2f31524711b5b",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/DisplayObjectContainer.js",
+      "nativeSha256": "a589b9b8e66172327a4d1cd5f3d7ad1c51c9d66a69e623d78fcbed2a33359ac8",
+      "currentSha256": "a589b9b8e66172327a4d1cd5f3d7ad1c51c9d66a69e623d78fcbed2a33359ac8",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/DisplayObjectContainer.js.map",
+      "nativeSha256": "8ed8ed7d7a8854794b16b7104d401894a0014f964a90e63a2777a094f8055403",
+      "currentSha256": "8ed8ed7d7a8854794b16b7104d401894a0014f964a90e63a2777a094f8055403",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/EgretError.d.ts",
+      "nativeSha256": "64a9381cf216c798abb4edbfa2297920a772d98da3d6e6c252d5b6b53d77beb6",
+      "currentSha256": "64a9381cf216c798abb4edbfa2297920a772d98da3d6e6c252d5b6b53d77beb6",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/EgretError.d.ts.map",
+      "nativeSha256": "26592ad229efd174761811118d8c3a1e6f3b1cdd8e5983a1d1763d8354a41965",
+      "currentSha256": "26592ad229efd174761811118d8c3a1e6f3b1cdd8e5983a1d1763d8354a41965",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/EgretError.js",
+      "nativeSha256": "34693e8147cb8142260471f4f80897ebd59a409486026ab0931b6f7523cf2f9f",
+      "currentSha256": "34693e8147cb8142260471f4f80897ebd59a409486026ab0931b6f7523cf2f9f",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/EgretError.js.map",
+      "nativeSha256": "cc0c3f749099daf55ab8f5c3da8d00458630d85e67c8229d273da3b0a57bc053",
+      "currentSha256": "cc0c3f749099daf55ab8f5c3da8d00458630d85e67c8229d273da3b0a57bc053",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/Event.d.ts",
+      "nativeSha256": "07783b2abf657e3f04642a169bd85f2738335023fa1fa0223039a17e8a2633c0",
+      "currentSha256": "07783b2abf657e3f04642a169bd85f2738335023fa1fa0223039a17e8a2633c0",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/Event.d.ts.map",
+      "nativeSha256": "d43e42ed89f22fe37445e13efc2d6b3070ffa2db54bf4673759cfb9257140922",
+      "currentSha256": "d43e42ed89f22fe37445e13efc2d6b3070ffa2db54bf4673759cfb9257140922",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/Event.js",
+      "nativeSha256": "d6b60b43d3768d67424d907410c832594b554d870185c6f9d871f62853edce7a",
+      "currentSha256": "d6b60b43d3768d67424d907410c832594b554d870185c6f9d871f62853edce7a",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/Event.js.map",
+      "nativeSha256": "ff1d9335305de8eb0336c46d868ff680e70441aeec7f12ddd02cd7984be7441a",
+      "currentSha256": "ff1d9335305de8eb0336c46d868ff680e70441aeec7f12ddd02cd7984be7441a",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/EventDispatcher.d.ts",
+      "nativeSha256": "73b159b933d690296533289205eebd340cd76a5951bab57543aa83acf0c3d636",
+      "currentSha256": "73b159b933d690296533289205eebd340cd76a5951bab57543aa83acf0c3d636",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/EventDispatcher.d.ts.map",
+      "nativeSha256": "9150137c1afff4e98ca6d8af0179dad1225dafbfa3984c5ed8a6e13fc57c2e3f",
+      "currentSha256": "9150137c1afff4e98ca6d8af0179dad1225dafbfa3984c5ed8a6e13fc57c2e3f",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/EventDispatcher.js",
+      "nativeSha256": "18d3f37061dc31805caa41e4c2e818033fb06e39bdbaa48d944894467b7d8b0f",
+      "currentSha256": "18d3f37061dc31805caa41e4c2e818033fb06e39bdbaa48d944894467b7d8b0f",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/EventDispatcher.js.map",
+      "nativeSha256": "175400fbb8be254aebe4c4239ec82be2571d64a45ba0ee9be6351dc4f3fabea7",
+      "currentSha256": "175400fbb8be254aebe4c4239ec82be2571d64a45ba0ee9be6351dc4f3fabea7",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/Graphics.d.ts",
+      "nativeSha256": "7a85b42e6dddedbb38f5386f5770abfd3200b2df9e06c3ccad8fa7a9afcda1b9",
+      "currentSha256": "7a85b42e6dddedbb38f5386f5770abfd3200b2df9e06c3ccad8fa7a9afcda1b9",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/Graphics.d.ts.map",
+      "nativeSha256": "ba35b95c159b2f7e516f6ae7d0734e14de5c6d18c98c956f4a43ea5fa9a5ae65",
+      "currentSha256": "ba35b95c159b2f7e516f6ae7d0734e14de5c6d18c98c956f4a43ea5fa9a5ae65",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/Graphics.js",
+      "nativeSha256": "7509d31b2f5ea16d776cba4b9fa182cf9908b4ae263c4d64a745cf1920969d55",
+      "currentSha256": "7509d31b2f5ea16d776cba4b9fa182cf9908b4ae263c4d64a745cf1920969d55",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/Graphics.js.map",
+      "nativeSha256": "de2a4fdba9cb14b3ad9bc4f6fa46b3c9341dcc9ce2965f9be40da5575d20ce90",
+      "currentSha256": "de2a4fdba9cb14b3ad9bc4f6fa46b3c9341dcc9ce2965f9be40da5575d20ce90",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/Scope.d.ts",
+      "nativeSha256": "d0b2bcc07f40b39d9aabaf8f3222f6b7795a9d3dd0176fad1f87e2474ea43d93",
+      "currentSha256": "d0b2bcc07f40b39d9aabaf8f3222f6b7795a9d3dd0176fad1f87e2474ea43d93",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/Scope.d.ts.map",
+      "nativeSha256": "07d26161bc56ecb2150a549bc20631167bcf99efef1b06ed84bb9ac374eb5e38",
+      "currentSha256": "07d26161bc56ecb2150a549bc20631167bcf99efef1b06ed84bb9ac374eb5e38",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/Scope.js",
+      "nativeSha256": "31a0afe539959332d668467fc88b67f4e7afa567a80980a2cd3ca0afbc9fb245",
+      "currentSha256": "31a0afe539959332d668467fc88b67f4e7afa567a80980a2cd3ca0afbc9fb245",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/Scope.js.map",
+      "nativeSha256": "37869b37eb547dd44c573bd2d6fb5a3e36958a4d726c69fcc21daf91e1aa4a5d",
+      "currentSha256": "37869b37eb547dd44c573bd2d6fb5a3e36958a4d726c69fcc21daf91e1aa4a5d",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/Sprite.d.ts",
+      "nativeSha256": "441f96533f1c2ba3922b4fcce500ea57210481b04583cae06ee2f257f37a98bc",
+      "currentSha256": "441f96533f1c2ba3922b4fcce500ea57210481b04583cae06ee2f257f37a98bc",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/Sprite.d.ts.map",
+      "nativeSha256": "6a33a060bbc3b3f3bb8bbe3add8d75f29c8f63cb8656ec3e545e11f7e8ce0a4c",
+      "currentSha256": "6a33a060bbc3b3f3bb8bbe3add8d75f29c8f63cb8656ec3e545e11f7e8ce0a4c",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/Sprite.js",
+      "nativeSha256": "75d96bf10122f2371ee9dcb5369336bfc9295dba8a8d350f49af19745a67cd24",
+      "currentSha256": "75d96bf10122f2371ee9dcb5369336bfc9295dba8a8d350f49af19745a67cd24",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/Sprite.js.map",
+      "nativeSha256": "172d4bef4ee0b79c8ed30eac7698db29bd6459ee18f5ff0199be5fbd86baae08",
+      "currentSha256": "172d4bef4ee0b79c8ed30eac7698db29bd6459ee18f5ff0199be5fbd86baae08",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/Stage.d.ts",
+      "nativeSha256": "9a6d6c21647cb3312694b35ee59098f258f355f30ab69c0132df0d48d3b53dc0",
+      "currentSha256": "9a6d6c21647cb3312694b35ee59098f258f355f30ab69c0132df0d48d3b53dc0",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/Stage.d.ts.map",
+      "nativeSha256": "04977a0c403335acd0fc7284be91ceddd70f37d18344515fc93e1b07dbe416a4",
+      "currentSha256": "04977a0c403335acd0fc7284be91ceddd70f37d18344515fc93e1b07dbe416a4",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/Stage.js",
+      "nativeSha256": "27c2e3d0f2032ba870bc861ebcfd7073fa49c312a7a542d5b1c2e91a4e5cc8d8",
+      "currentSha256": "27c2e3d0f2032ba870bc861ebcfd7073fa49c312a7a542d5b1c2e91a4e5cc8d8",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/Stage.js.map",
+      "nativeSha256": "4cc29066a8559e3200051a9964be95d675482b173d457b890164785cd7d33ef7",
+      "currentSha256": "4cc29066a8559e3200051a9964be95d675482b173d457b890164785cd7d33ef7",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/assetState.d.ts",
+      "nativeSha256": "daa71107f0cd3f24d4cb33ac8c2fcf5eff15c18955c84d0262cafaa0c3335b69",
+      "currentSha256": "daa71107f0cd3f24d4cb33ac8c2fcf5eff15c18955c84d0262cafaa0c3335b69",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/assetState.d.ts.map",
+      "nativeSha256": "c3ed50595e1511ad894281aebd253c2db9e8a52d10164a69588f82e0bae9c963",
+      "currentSha256": "c3ed50595e1511ad894281aebd253c2db9e8a52d10164a69588f82e0bae9c963",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/assetState.js",
+      "nativeSha256": "6d4fc648b36a420fc1f9f183dff16d7a199a52282978c55bcff86ac0dde822af",
+      "currentSha256": "6d4fc648b36a420fc1f9f183dff16d7a199a52282978c55bcff86ac0dde822af",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/assetState.js.map",
+      "nativeSha256": "94ab3bd40c004d7bf3b81d0658113f2e207e9b9dca8dd1302f2cc88f6c2da0a8",
+      "currentSha256": "94ab3bd40c004d7bf3b81d0658113f2e207e9b9dca8dd1302f2cc88f6c2da0a8",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/diagnostics.d.ts",
+      "nativeSha256": "85d3079ff62e0bf3df95281a5a2917e021310c52acc7d662ee859986e5d86a03",
+      "currentSha256": "85d3079ff62e0bf3df95281a5a2917e021310c52acc7d662ee859986e5d86a03",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/diagnostics.d.ts.map",
+      "nativeSha256": "c0944b2af30b44f941286cee28768a545971ae7a9af1f2fde3b1f36a816fd60c",
+      "currentSha256": "c0944b2af30b44f941286cee28768a545971ae7a9af1f2fde3b1f36a816fd60c",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/diagnostics.js",
+      "nativeSha256": "32711ffa07c5bfcedc4775756d3180d1c6969086d082be623d6bd1a40eab796f",
+      "currentSha256": "32711ffa07c5bfcedc4775756d3180d1c6969086d082be623d6bd1a40eab796f",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/diagnostics.js.map",
+      "nativeSha256": "c14bc3d9bcde2fe1827b4fff7bc5fbfb4420e22be0dca1970a53997be389fd79",
+      "currentSha256": "c14bc3d9bcde2fe1827b4fff7bc5fbfb4420e22be0dca1970a53997be389fd79",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/displayTreeState.d.ts",
+      "nativeSha256": "5bc9fb837a5f479a5ae1989c42ef1d8d372b22a11e3c3abd0dace0c86a398079",
+      "currentSha256": "5bc9fb837a5f479a5ae1989c42ef1d8d372b22a11e3c3abd0dace0c86a398079",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/displayTreeState.d.ts.map",
+      "nativeSha256": "ea372063f51c33796e417d5b529b1feb259aa490dcc530a1875f4e434af9da76",
+      "currentSha256": "ea372063f51c33796e417d5b529b1feb259aa490dcc530a1875f4e434af9da76",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/displayTreeState.js",
+      "nativeSha256": "43c0f895bd384591b6dd25f6a36d0f627f9de599751a3a1b1118138ea7682a85",
+      "currentSha256": "43c0f895bd384591b6dd25f6a36d0f627f9de599751a3a1b1118138ea7682a85",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/displayTreeState.js.map",
+      "nativeSha256": "9c90eee86b40d376ad25b5463e70be559ca862f7da76ff398f102268d4681b5f",
+      "currentSha256": "9c90eee86b40d376ad25b5463e70be559ca862f7da76ff398f102268d4681b5f",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/displayVisualState.d.ts",
+      "nativeSha256": "1d09268019460d67eecc90797f9f166a0c66865d3297b09ab89afa9450f4d59a",
+      "currentSha256": "1d09268019460d67eecc90797f9f166a0c66865d3297b09ab89afa9450f4d59a",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/displayVisualState.d.ts.map",
+      "nativeSha256": "27ce21c092187c58b47405218e29d768411f58c261a589633266c157773a946c",
+      "currentSha256": "27ce21c092187c58b47405218e29d768411f58c261a589633266c157773a946c",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/displayVisualState.js",
+      "nativeSha256": "afb80cbb823d490923ef2c4ca24ce988c9b2317e5c5bc0772ab11e7db188fccb",
+      "currentSha256": "afb80cbb823d490923ef2c4ca24ce988c9b2317e5c5bc0772ab11e7db188fccb",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/displayVisualState.js.map",
+      "nativeSha256": "147f24288ecce0b64c274ce1d18bc08b6800aa25feddbebeb838741ec265576a",
+      "currentSha256": "147f24288ecce0b64c274ce1d18bc08b6800aa25feddbebeb838741ec265576a",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/frameCapture.d.ts",
+      "nativeSha256": "edf59011f2d1061d782468d77253b9815396e0d95e9017467837b39aed10e0b3",
+      "currentSha256": "edf59011f2d1061d782468d77253b9815396e0d95e9017467837b39aed10e0b3",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/frameCapture.d.ts.map",
+      "nativeSha256": "8a37b30d670efb0f9cfb05aa04edd579457fe15b1d4aa81d0f2c446ec238add1",
+      "currentSha256": "8a37b30d670efb0f9cfb05aa04edd579457fe15b1d4aa81d0f2c446ec238add1",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/frameCapture.js",
+      "nativeSha256": "83f2d01de46a31a15684b5e563ed6f35f51a528e81eb89c0612b853ebe41b101",
+      "currentSha256": "83f2d01de46a31a15684b5e563ed6f35f51a528e81eb89c0612b853ebe41b101",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/frameCapture.js.map",
+      "nativeSha256": "a68a33469d556464ffa02ebb7bce7d75ec6fca82dff409de9c6c81e4f8cca1ad",
+      "currentSha256": "a68a33469d556464ffa02ebb7bce7d75ec6fca82dff409de9c6c81e4f8cca1ad",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/index.d.ts",
+      "nativeSha256": "1544d56bafc5be174f818e1462c2d199cfa23d9700951481b24d3fb79f27c259",
+      "currentSha256": "1544d56bafc5be174f818e1462c2d199cfa23d9700951481b24d3fb79f27c259",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/index.d.ts.map",
+      "nativeSha256": "fcf59024040719c3de8399ec78aec63b51490f50c0d9a4d1d60e09b322ab6a3b",
+      "currentSha256": "fcf59024040719c3de8399ec78aec63b51490f50c0d9a4d1d60e09b322ab6a3b",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/index.js",
+      "nativeSha256": "f9872201377f7fa280847d9e7b9bc8c716b62f94cd6e8d2bc502c54df505081d",
+      "currentSha256": "f9872201377f7fa280847d9e7b9bc8c716b62f94cd6e8d2bc502c54df505081d",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/index.js.map",
+      "nativeSha256": "fd00cfa780565a35014a8591016ee5eb77791351d0c41347574a6cc0d67306f2",
+      "currentSha256": "fd00cfa780565a35014a8591016ee5eb77791351d0c41347574a6cc0d67306f2",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/ownership.d.ts",
+      "nativeSha256": "2a16ba777ccf5b0d9d2587fd99d423c32da5a88fd5917fb77850acc8e60effef",
+      "currentSha256": "2a16ba777ccf5b0d9d2587fd99d423c32da5a88fd5917fb77850acc8e60effef",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/ownership.d.ts.map",
+      "nativeSha256": "e8dc81ac37b97c56ec01489b878a2263c7b29595e2cf34f55165880e528b21eb",
+      "currentSha256": "e8dc81ac37b97c56ec01489b878a2263c7b29595e2cf34f55165880e528b21eb",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/ownership.js",
+      "nativeSha256": "1306dd8594817a05590359c57c97d06aafff894a3ad1a997937f2658ae151b30",
+      "currentSha256": "1306dd8594817a05590359c57c97d06aafff894a3ad1a997937f2658ae151b30",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/dist/ownership.js.map",
+      "nativeSha256": "eafb1672272e98b39a765a3f6c40b1aa8824e0eadeaf55db63e5896295a7c0ca",
+      "currentSha256": "eafb1672272e98b39a765a3f6c40b1aa8824e0eadeaf55db63e5896295a7c0ca",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/src/AssetLease.ts",
+      "nativeSha256": "6c411c75c2737f4229e459f559efc75375b15c65af65e3791227abe416e24a21",
+      "currentSha256": "6c411c75c2737f4229e459f559efc75375b15c65af65e3791227abe416e24a21",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/src/AssetManager.ts",
+      "nativeSha256": "31e52919bfa43df548fa661a9d46c5d8b2fcb7259addfe119ef4367fa25f462e",
+      "currentSha256": "31e52919bfa43df548fa661a9d46c5d8b2fcb7259addfe119ef4367fa25f462e",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/src/AssetRef.ts",
+      "nativeSha256": "48963664a8a048697a962f1c3d56826333e65e3bbf05d1524d7c30b049a10ab7",
+      "currentSha256": "48963664a8a048697a962f1c3d56826333e65e3bbf05d1524d7c30b049a10ab7",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/src/CancellationController.ts",
+      "nativeSha256": "3cfdb217804b282c4a422420ce5efa63ced25a6bb215bff254e7f947c4942e28",
+      "currentSha256": "3cfdb217804b282c4a422420ce5efa63ced25a6bb215bff254e7f947c4942e28",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/src/DisplayObject.ts",
+      "nativeSha256": "f66c3aaecf255601969603b359ac42bcd4db6d2ed17750727f0f4f5816152e70",
+      "currentSha256": "f66c3aaecf255601969603b359ac42bcd4db6d2ed17750727f0f4f5816152e70",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/src/DisplayObjectContainer.ts",
+      "nativeSha256": "36b2f5e42d5654a03765c292bedf42f094fde122967a17c00b3e4180d1e2a72c",
+      "currentSha256": "36b2f5e42d5654a03765c292bedf42f094fde122967a17c00b3e4180d1e2a72c",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/src/EgretError.ts",
+      "nativeSha256": "f647ab0f675a5e0d460f1e7b04bce603d06998096f460371035f23826eed7f08",
+      "currentSha256": "f647ab0f675a5e0d460f1e7b04bce603d06998096f460371035f23826eed7f08",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/src/Event.ts",
+      "nativeSha256": "de5671dcddbde4637c22b5ea2bff9ebb520c7aed503608e670d0efc08cf9539c",
+      "currentSha256": "de5671dcddbde4637c22b5ea2bff9ebb520c7aed503608e670d0efc08cf9539c",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/src/EventDispatcher.ts",
+      "nativeSha256": "141051a7aede922c0d8d73aa2b509c75cbe209118ba0bb48b3869765b9c5a82d",
+      "currentSha256": "141051a7aede922c0d8d73aa2b509c75cbe209118ba0bb48b3869765b9c5a82d",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/src/Graphics.ts",
+      "nativeSha256": "e84deaaefeec9e9bbe25d1447aba980ebefa5c981af73d71a611fe45898443a9",
+      "currentSha256": "e84deaaefeec9e9bbe25d1447aba980ebefa5c981af73d71a611fe45898443a9",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/src/Scope.ts",
+      "nativeSha256": "29e9d5da9232ed8347b2a829e069d33daabb1bad296798492a45c7950f43e8ea",
+      "currentSha256": "29e9d5da9232ed8347b2a829e069d33daabb1bad296798492a45c7950f43e8ea",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/src/Sprite.ts",
+      "nativeSha256": "a3175515cdeedc283199870cd683e541acf208f04330c63c3f5f5eee2e328bba",
+      "currentSha256": "a3175515cdeedc283199870cd683e541acf208f04330c63c3f5f5eee2e328bba",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/src/Stage.ts",
+      "nativeSha256": "08eb1599d9c75c70add22558f28e214ec31fe4305ccdf2638a8f7d35ec61bb0f",
+      "currentSha256": "08eb1599d9c75c70add22558f28e214ec31fe4305ccdf2638a8f7d35ec61bb0f",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/src/assetState.ts",
+      "nativeSha256": "044c1aceef34403be1b1297794d3d3e390182a84d2876ce2d3392a4c2e5a6920",
+      "currentSha256": "044c1aceef34403be1b1297794d3d3e390182a84d2876ce2d3392a4c2e5a6920",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/src/diagnostics.ts",
+      "nativeSha256": "c330f5d9083d84ee5b23b947d0d8534e7050a92f8b76a7e5259a1bad92395294",
+      "currentSha256": "c330f5d9083d84ee5b23b947d0d8534e7050a92f8b76a7e5259a1bad92395294",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/src/displayTreeState.ts",
+      "nativeSha256": "8aaf5f5dfc8d62f3b1bc4effe819e7718e3ed72fcf0a8fc25e3b08410f980e50",
+      "currentSha256": "8aaf5f5dfc8d62f3b1bc4effe819e7718e3ed72fcf0a8fc25e3b08410f980e50",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/src/displayVisualState.ts",
+      "nativeSha256": "0bee8a7e5136f59c3301ec4d829bceaf5a01aff6f0d770dd6a2952ed31110f21",
+      "currentSha256": "0bee8a7e5136f59c3301ec4d829bceaf5a01aff6f0d770dd6a2952ed31110f21",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/src/frameCapture.ts",
+      "nativeSha256": "37ac4db4273ddca728622fd2db1226c1d104e056c40fd3bcbfbadeae1c75e921",
+      "currentSha256": "37ac4db4273ddca728622fd2db1226c1d104e056c40fd3bcbfbadeae1c75e921",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/src/index.ts",
+      "nativeSha256": "51700665e52ddabfbce7359ee7e08747bee348a46cc0c1ba3a936a901f21e4b8",
+      "currentSha256": "51700665e52ddabfbce7359ee7e08747bee348a46cc0c1ba3a936a901f21e4b8",
+      "equal": true
+    },
+    {
+      "path": "packages/runtime/src/ownership.ts",
+      "nativeSha256": "8c8c40e465002882dac1bf054fa49248c99df62da337cf75f50168f0a6748c62",
+      "currentSha256": "8c8c40e465002882dac1bf054fa49248c99df62da337cf75f50168f0a6748c62",
+      "equal": true
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "nativeSha256": "ed9759a4ae0d1ca6e2d707fd1a324d1eff3b326cb2a8c827eecf14e3ebfb53d4",
+      "currentSha256": "ed9759a4ae0d1ca6e2d707fd1a324d1eff3b326cb2a8c827eecf14e3ebfb53d4",
+      "equal": true
+    },
+    {
+      "path": "tools/build.mjs",
+      "nativeSha256": "0f04552d3592aa613d3c6fc4114559a3669ad764d0f5321d1c049a568701e6c4",
+      "currentSha256": "0f04552d3592aa613d3c6fc4114559a3669ad764d0f5321d1c049a568701e6c4",
+      "equal": true
+    },
+    {
+      "path": "tools/canvas-browser-checks.mjs",
+      "nativeSha256": "f65dfbe34f3ab535149e00634767080e6a7ebef5f462de0ae1315d0a8ff94ac7",
+      "currentSha256": "f65dfbe34f3ab535149e00634767080e6a7ebef5f462de0ae1315d0a8ff94ac7",
+      "equal": true
+    },
+    {
+      "path": "tools/check-boundaries.mjs",
+      "nativeSha256": "40a9a8360e6a1a060c75e5adfe47865de28a49fa45929e5be9b3c97f8da30cbe",
+      "currentSha256": "40a9a8360e6a1a060c75e5adfe47865de28a49fa45929e5be9b3c97f8da30cbe",
+      "equal": true
+    },
+    {
+      "path": "tools/check-publication.mjs",
+      "nativeSha256": "22decff2b21a8c3027617978934b9a498b27e42d14926b48efa36e708b9ef35d",
+      "currentSha256": "22decff2b21a8c3027617978934b9a498b27e42d14926b48efa36e708b9ef35d",
+      "equal": true
+    },
+    {
+      "path": "tools/check-types.mjs",
+      "nativeSha256": "d4ee3359c0a357d03eaeb774021e952a29c9624b8394e2f0466168ba898d75a4",
+      "currentSha256": "d4ee3359c0a357d03eaeb774021e952a29c9624b8394e2f0466168ba898d75a4",
+      "equal": true
+    },
+    {
+      "path": "tools/prepush.mjs",
+      "nativeSha256": "8ba8600f86c5a0722f9eb2a6ae030a353e8034c36d2e5af3288165fd3c864aa4",
+      "currentSha256": "8ba8600f86c5a0722f9eb2a6ae030a353e8034c36d2e5af3288165fd3c864aa4",
+      "equal": true
+    },
+    {
+      "path": "tools/serve-canvas.mjs",
+      "nativeSha256": "8bd33b635a183f706cc2556eae6e557f46bff47fcb2c623d0839bde93f2f1e62",
+      "currentSha256": "8bd33b635a183f706cc2556eae6e557f46bff47fcb2c623d0839bde93f2f1e62",
+      "equal": true
+    },
+    {
+      "path": "tools/test.mjs",
+      "nativeSha256": "6d8fdbf59b3c9d1a4aab917ae9ab8167818c0716a6219f5f91c5893bb2c4eb53",
+      "currentSha256": "6d8fdbf59b3c9d1a4aab917ae9ab8167818c0716a6219f5f91c5893bb2c4eb53",
+      "equal": true
+    },
+    {
+      "path": "tools/verify-canvas.mjs",
+      "nativeSha256": "4810b9e185e93817236fd2c523ee4d549117744cb7b102967ce2380804b531ba",
+      "currentSha256": "4810b9e185e93817236fd2c523ee4d549117744cb7b102967ce2380804b531ba",
+      "equal": true
+    },
+    {
+      "path": "tools/verify-webgpu.mjs",
+      "nativeSha256": "99e85364bbb2619f8e83e9877e68acce7443bc23b320fe19f7cd953c8b5b9b26",
+      "currentSha256": "99e85364bbb2619f8e83e9877e68acce7443bc23b320fe19f7cd953c8b5b9b26",
+      "equal": true
+    },
+    {
+      "path": "tools/verify.mjs",
+      "nativeSha256": "9c789b762d598c72040992d8ffb9041f75180d39b7556761365ef0998d5b0b4a",
+      "currentSha256": "9c789b762d598c72040992d8ffb9041f75180d39b7556761365ef0998d5b0b4a",
+      "equal": true
+    },
+    {
+      "path": "tools/webgpu-oracle.mjs",
+      "nativeSha256": "c58cc871e0996469eaad28b7d088534b3b9164c44678227b796088ce6fa3e741",
+      "currentSha256": "c58cc871e0996469eaad28b7d088534b3b9164c44678227b796088ce6fa3e741",
+      "equal": true
+    },
+    {
+      "path": "tsconfig.json",
+      "nativeSha256": "01ad6c8c6e7a8c86c99baf969ec73d9dd386fc7d8c5e412ee01b6e5dc248f10a",
+      "currentSha256": "01ad6c8c6e7a8c86c99baf969ec73d9dd386fc7d8c5e412ee01b6e5dc248f10a",
+      "equal": true
+    }
+  ],
+  "compilerSupplementalHashes": {
+    "nodeExecutable": "3602f2bb1a10f2cbab4c36886218a33c1ab3db87290e73b033c46c77147d0237",
+    "node_modules/typescript/lib/tsc.js": "cbdfbf11c26ed00dfc073155e316a42d6d6d8a387be61006b82fa9aa93ac572e",
+    "node_modules/typescript/package.json": "3722b30210616a13a3213ded11575ba6b2dbab10c32a5ef67afca8513e27017e",
+    "node_modules/typescript/bin/tsc": "2219f428a7e55aaf1f7ad85b9b0f0cf5078aeb76ccc9a7c6036c92d48f492ffd"
+  },
+  "wgslSha256": "71d623c069fad3d84b50ff17f2fabaad30f149b5faeb4677d63c1aaf9907b2a6",
+  "independentCorrectionBindingReview": "pending",
+  "_projection": {
+    "canonicalSource": "verification/webgpu-final-artifact-binding.json",
+    "canonicalSha256": "a09385610df763f1e8ff226a9bc0325174deedacedc9e80427689d3562c23753",
+    "role": "public_knowledge_base_projection",
+    "scope": "Same actual scoped public record and pending correction review; shared numeric identities are not separately translated."
+  }
+}

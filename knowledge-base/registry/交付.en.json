@@ -592,11 +592,49 @@
       ],
       "doc": "docs/显示与帧执行实现记录.md",
       "title": "Display/frame and Canvas rectangle engineering prototype"
+    },
+    {
+      "id": "V012",
+      "title": "WebGPU rectangle engineering prototype",
+      "kind": "engineering_prototype",
+      "status": "implemented",
+      "requirementIds": [
+        "R003",
+        "R011",
+        "R015",
+        "R016",
+        "R017",
+        "R019"
+      ],
+      "dependsOn": [
+        "V011"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "independent_browser_webgpu_rectangle_subset",
+      "acceptance": "accepted_desktop_build_subset_final_publication_pending",
+      "acceptanceCriteria": [
+        "Immutable public frame input and synchronous opt-in WebGPU execution",
+        "Bounded copying/intersection/float32 packing with unchanged Canvas compatibility",
+        "177 recorded core checks, 28 negative diagnostics and 123 boundary files",
+        "42 frames, 1709 raw checks, 84 screenshots, 6808 composition checks, 8 intended negatives, 0 unexpected errors",
+        "Scoped independent implementation reviews; final branch/public bilingual/source-native binding remains pending"
+      ],
+      "artifacts": [
+        "docs/WebGPU矩形执行合同.md",
+        "docs/WebGPU矩形实施计划.md",
+        "docs/WebGPU矩形实现证据.md",
+        "evidence/webgpu-verification.json",
+        "evidence/webgpu-review.json",
+        "evidence/webgpu-source-evidence.json"
+      ],
+      "doc": "docs/WebGPU矩形实现证据.md",
+      "limit": "Bounded desktop browser rectangles only; Native SDK, phones, acceleration/performance, text/texture/UI/animation/3D, migration/editor/Agent loop, CI and full product remain unaccepted. Final source/native/publication binding is pending."
     }
   ],
   "_localization": {
     "canonicalSource": "交付.json",
-    "canonicalSha256": "6c11abf9ccd8120923b58df083d4c7f8bdfbee22e7df381bc7648830ba8a95ae",
+    "canonicalSha256": "4d0d32a65a23744dc7fde8fc070a6752131794b52c62563cce791dadb825ab5b",
     "role": "read_only_translation",
     "language": "en"
   }

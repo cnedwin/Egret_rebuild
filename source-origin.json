@@ -1,10 +1,10 @@
 {
-  "schemaVersion": "1.4-independent-display-frame-canvas",
+  "schemaVersion": "1.5-independent-browser-webgpu-rectangles",
   "date": "2026-10-09",
   "artifact": "egret-rebuild-local-preview",
   "version": "0.0.0",
   "supportLevel": "experimental",
-  "scope": "DOM-free lifecycle/CPU assets plus bounded rectangle display/frame capture and separate desktop Canvas web execution",
+  "scope": "DOM-free lifecycle/CPU assets and rectangle display/frame capture, separate Canvas and opt-in bounded browser WebGPU execution",
   "publication": {
     "state": "development preview; local candidate export snapshot on 2026-10-08",
     "snapshotDate": "2026-10-08",
@@ -65,25 +65,25 @@
     ],
     "internalInputs": [
       {
-        "identityOnly": "work/core-framework/task-1-brief.md",
+        "identityOnly": "core-foundation-implementation-brief",
         "sha256": "23adcb56d47141c81bb59507a878b2db89347ce74f718812cc7d4ab17617b502",
         "status": "identity-only/not-distributed",
         "role": "original implementation task brief"
       },
       {
-        "identityOnly": "work/core-framework/code-review-initial.json",
+        "identityOnly": "core-foundation-initial-review",
         "sha256": "a7e3da67bc507c9ea961b082162fb14a515d51a3b243ec6ea0c5bca1173e222c",
         "status": "identity-only/not-distributed",
         "role": "initial scoped code review"
       },
       {
-        "identityOnly": "work/core-framework/review-counterexamples-initial.mjs",
+        "identityOnly": "core-foundation-regression-counterexamples",
         "sha256": "d73503aabb0cd9059ac4b6d1e46267eb1bff720a8387420afa049f323aab9808",
         "status": "identity-only/not-distributed",
         "role": "same-session first-party review counterexamples used to write narrow regression tests; no competitor implementation input"
       },
       {
-        "identityOnly": "work/core-framework/fix-1-verify.log",
+        "identityOnly": "core-foundation-fix-verification",
         "sha256": "d2c02d0443afea85a1f56d8e98a11777f625bfad9bd011f632ba526f38428d3c",
         "status": "identity-only/not-distributed",
         "role": "recorded prototype fix-1 execution log"
@@ -94,7 +94,20 @@
     "currentFirstPartyLicense": "Apache-2.0 under the existing target repository configuration"
   },
   "runtimeDependencies": {
-    "thirdParty": [],
+    "thirdParty": [
+      {
+        "name": "robust-predicates",
+        "version": "3.0.3",
+        "license": "Unlicense",
+        "publicEntry": "orient2d from robust-predicates",
+        "role": "Foundational orientation sign in private DOM-free rectangle preparation/packing",
+        "patched": false,
+        "sourceCopiedToFirstParty": false,
+        "repository": "https://github.com/mourner/robust-predicates",
+        "licensePath": "third-party/robust-predicates-3.0.3.LICENSE",
+        "scope": "External engine dependency; root and Canvas import graphs remain free of GPU and this dependency."
+      }
+    ],
     "workspace": {
       "contracts": [],
       "runtime": [
@@ -157,8 +170,8 @@
   ],
   "dependencyLock": {
     "path": "pnpm-lock.yaml",
-    "sha256": "f58343405f8b75488966415da04a69edd5cbf01a32076ff08b75132fa476877c",
-    "note": "Lock records upstream optional architectures; only TypeScript and win32-x64 compiler installed on this host. Lifecycle scripts disabled."
+    "sha256": "ed9759a4ae0d1ca6e2d707fd1a324d1eff3b326cb2a8c827eecf14e3ebfb53d4",
+    "note": "Exact robust-predicates 3.0.3 and fixed tool versions recorded in the lock. Installation disabled lifecycle scripts; observed installed artifacts and browser requests have separate evidence."
   },
   "hostCloseClarification": "Only successful close resolution proves safe surface return. Normal or late rejection keeps quarantine; no force-release/recovery override in this slice.",
   "researchBoundary": {
@@ -208,11 +221,10 @@
     "historicalScope": "Initial prototype export actions only; current 0.11.0 checks are recorded separately in resourceCoreRevision."
   },
   "knownLimitations": [
-    "Experimental CPU lifecycle/display-tree/event/asset service slice; not a complete renderer or full-product acceptance.",
-    "No GPU, real browser/minigame/native host, GPU completion fence, shared-device acceptance or performance measurements.",
-    "No built-in network provider, texture/format decoder, GPU upload/residency, coordinates/layout, Sprite.graphics, text/animation/EUI/3D, Rust, migration tool, editor or Agent service.",
-    "CI and publishing workflows are not configured or accepted by this export.",
-    "Source declarations and hashes are bounded review evidence, not a full originality, rights, security or license-compliance audit."
+    "Bounded desktop browser rectangles only; Native SDK, phones, acceleration/performance, text/texture/UI/animation/3D, migration/editor/Agent loop, CI and full product remain unaccepted. Final source/native/publication binding is pending.",
+    "Experimental interfaces and cooperative exclusive borrowed-device/context lease.",
+    "Single-sample external edges and separately clipped adjacent commands are not universally watertight or byte-identical to Canvas.",
+    "Source disclosure is bounded evidence; no global originality, rights, security or compliance certification."
   ],
   "files": [
     {
@@ -231,61 +243,61 @@
     },
     {
       "path": "ACKNOWLEDGEMENTS.en.md",
-      "originRole": "New first-party bilingual documentation or publication tooling",
-      "sha256": "725d6842da9cfb409e286bd85d37fbda12548c0801b3980fbaf73ca8d76e0f9c",
-      "bytes": 2328,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
+      "sha256": "bdd7757cd3fd7a934af67b7f1500fd1725191d29db1e39a507c09b11d991de9c",
+      "bytes": 3552,
       "previousRevisionSha256": "725d6842da9cfb409e286bd85d37fbda12548c0801b3980fbaf73ca8d76e0f9c"
     },
     {
       "path": "ACKNOWLEDGEMENTS.md",
-      "sha256": "dbddeacb70dbb09d10797878507c86dcc74ee85647bad10b599222a17c809e1f",
-      "bytes": 1808,
-      "originRole": "Bilingual public documentation projection",
+      "sha256": "337f4eaf27bbe18f6410dd126370d4f779804ecb14c69e4ed783b4b27cd48c12",
+      "bytes": 2845,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousPublicSha256": "e0cc549b5582267a366d1d8b1bc7fc782f2a1f1b4fd6da00a4b38e40d8f9f377",
       "previousRevisionSha256": "dbddeacb70dbb09d10797878507c86dcc74ee85647bad10b599222a17c809e1f"
     },
     {
       "path": "AGENTS.en.md",
-      "originRole": "New first-party bilingual documentation or publication tooling",
-      "sha256": "a48070115ccdb0aede63831d4a23f43b44e0a50b50f15bb5727c4c6d715aef14",
-      "bytes": 3673,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
+      "sha256": "7e4ccd840b8b23896f9d9e92fe8173693ef37e415d3cebbebb3bfafded8158c5",
+      "bytes": 7777,
       "previousRevisionSha256": "7c2716d3a678406ce905b8cd7fd9ef3552bca4e37b8e9456b63b871e4170e0c1"
     },
     {
       "path": "AGENTS.md",
-      "sha256": "3005ab1c405f7a8c6140db7b0fbd7e79e02bbea8b392ad92ba680957abf594af",
-      "bytes": 2756,
-      "originRole": "Bilingual public documentation projection",
+      "sha256": "accf974fc110e8b0c52fa689847f741e79a259287cae2fee7954e6fb8dae362e",
+      "bytes": 6304,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousPublicSha256": "d133cdcd7d1f41fe0ce26bee63568cd0c4f23c6e6e7f9828d0768e95f53a05b4",
       "previousRevisionSha256": "f3551dd36ebc3023f8c846f0cdd876b7204c214c7c041e6496271d20c091046c"
     },
     {
       "path": "CONTRIBUTING.en.md",
-      "originRole": "New first-party bilingual documentation or publication tooling",
-      "sha256": "cfd1f60cfae8c262a8897e78b542e7f3036c3d492b5bbab79bdd80be80677e4d",
-      "bytes": 4250,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
+      "sha256": "ea91269863610b03cc682a3656d77b55325631c6b897efb0c6bcb534d5ac5fee",
+      "bytes": 7991,
       "previousRevisionSha256": "cfd1f60cfae8c262a8897e78b542e7f3036c3d492b5bbab79bdd80be80677e4d"
     },
     {
       "path": "CONTRIBUTING.md",
-      "sha256": "373de5c518c0208d972ceef4c331d8ae81853102ca6aee8dbd1f90064c57bec8",
-      "bytes": 3231,
-      "originRole": "Bilingual public documentation projection",
+      "sha256": "f99648a81f0de5bf1ac285f86a6a13db9b6457c48708e66b74e0010369b2263d",
+      "bytes": 6425,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousPublicSha256": "da6292f0408cc88f776b7d113924b364dd045b94d3a7541e85d71e1964ed4dae",
       "previousRevisionSha256": "373de5c518c0208d972ceef4c331d8ae81853102ca6aee8dbd1f90064c57bec8"
     },
     {
       "path": "DOCUMENTATION.en.md",
-      "originRole": "First-party CPU asset revision or synchronized public documentation",
-      "sha256": "c52a49dc83accfcbd4e89f477da22b2c1ef66a93f6231c5f020bcd8d00e19d55",
-      "bytes": 16094,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
+      "sha256": "4921b952a38aa70c692db7b37cda758e6e58942ea097761ee72d36f42a6ae31b",
+      "bytes": 19331,
       "previousRevisionSha256": "ef35dafcd765aeacdce5c0d14362dc5f30319b84dd3d1693d9d6a769f7162f99"
     },
     {
       "path": "DOCUMENTATION.md",
-      "originRole": "First-party CPU asset revision or synchronized public documentation",
-      "sha256": "8dbbbd09618f5d68e128144ca453c2a443ae3a3f01b296af83d6605188fdb380",
-      "bytes": 15534,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
+      "sha256": "421ba91329f03b9ace090842a7eeaabce268c8cce6ec89d7ccd05b6b15e44bfd",
+      "bytes": 18326,
       "previousRevisionSha256": "22f3073e3a0096efc4c92fce0aed95a81bdbaa6b1e50ed6432a1ed597c86a8d4"
     },
     {
@@ -296,32 +308,38 @@
       "previousRevisionSha256": "3b7770d86d5df0f804661c104c7bbed9b1eda0a9ba59cfd891b298483a45941f"
     },
     {
+      "path": "NOTICE",
+      "sha256": "f2848b11594eae241795326a4cc60a9bfc9d75e17ff407cddded202f765e1651",
+      "bytes": 491,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope."
+    },
+    {
       "path": "PUBLICATION.en.md",
-      "originRole": "First-party CPU asset revision or synchronized public documentation",
-      "sha256": "585c1919a7eadcf7e9c64f55956586788d930ace161fc0f7df56fba73e2f6cc1",
-      "bytes": 5090,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
+      "sha256": "83a435e68aa8560b1df5294c2d5aef50f362f1fb5ec4dc3ec3da08c72b3c9a9a",
+      "bytes": 7991,
       "previousRevisionSha256": "c027cc00e307fc3053c4ac3c150659d034f758e004af3394e06353280aa3d7bf"
     },
     {
       "path": "PUBLICATION.md",
-      "sha256": "35b9df6a3dd31b41918a45eb31195fb9f74a363456e7840595000f97c30163ed",
-      "bytes": 3895,
-      "originRole": "First-party CPU asset revision or synchronized public documentation",
+      "sha256": "4335de06d1b8eb358d49301cb3c826af4dfa6d7bfeac5d0536f7864140b4a81f",
+      "bytes": 6332,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousPublicSha256": "3347cb4d8fef1e8298f9dee869a21894162a9082a834b4784094d642fd9fd388",
       "previousRevisionSha256": "cf5858ee0a62ef72fc9d8309566e15a2d5de8bc9c91545c718a95adff24aaed2"
     },
     {
       "path": "README.en.md",
-      "originRole": "First-party CPU asset revision or synchronized public documentation",
-      "sha256": "bbe14f788ea8aa7875785eca37bb08adf4dfbfb5d78c8dc6657484f38d500c8c",
-      "bytes": 5645,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
+      "sha256": "f40ec41ca699cd0b9138fbdf4a268080038f583ae11e78c4f37093a6b7095f57",
+      "bytes": 9344,
       "previousRevisionSha256": "199156443d499d5012f1224263a1a3ee9994e5ba38ee067bceeb2ad865ae8167"
     },
     {
       "path": "README.md",
-      "sha256": "2a2d1916c4926bca34a4e9a0e45b5c974064ee13593f627733f360d827e302c5",
-      "bytes": 4606,
-      "originRole": "First-party CPU asset revision or synchronized public documentation",
+      "sha256": "cee280b670fe7cfc795c2724de3bc6ccfd26373a872381b953a2aad40bb26151",
+      "bytes": 7819,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousPublicSha256": "7ec80b8575a700b6a2628eb0322f2e770bb2284859f68ec5e0eb6530154a6699",
       "previousRevisionSha256": "7a1d72019db7cb6075d7c3a3bd4075f7c069d527b6e31d992a69333cb126b6c3"
     },
@@ -383,10 +401,40 @@
       "previousRevisionSha256": "bbb09be9a9ab1b93fbe5af723612e324e71e14b27434f4a953ee0b12a60ddccf"
     },
     {
-      "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
+      "path": "examples/webgpu/README.en.md",
+      "sha256": "2e2cbc10dcd4453724ea19164a46ad070dad2e60bc6f587660dd76e36712f71c",
+      "bytes": 4237,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope."
+    },
+    {
+      "path": "examples/webgpu/README.md",
+      "sha256": "498d8c385d045de9e43a5125a9eeb85c6d229d0a5af1d265378681dac25c42fe",
+      "bytes": 3630,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope."
+    },
+    {
+      "path": "examples/webgpu/fixtures.mjs",
+      "sha256": "58d9c04eee8f32dab50f49ff01f686085132d390a0b3e936e2860865a0a07a6f",
+      "bytes": 18880,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope."
+    },
+    {
+      "path": "examples/webgpu/index.html",
+      "sha256": "7d93185fd2da56aaf9869654c55e73ff97b4bd861468e09559c55edef00b9b95",
+      "bytes": 892,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope."
+    },
+    {
+      "path": "examples/webgpu/main.mjs",
+      "sha256": "9a0020fea2712839d6acc30e72387396db1ccf4ecd5b0e96ca5758bb89db773a",
+      "bytes": 479,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope."
+    },
+    {
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "path": "localization.json",
-      "sha256": "2a56ca1c8cef6ec2cb44ab6199c6215ff01ddda3ac89a3bab24779ef1ff1e1db",
-      "bytes": 38947,
+      "sha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
+      "bytes": 42821,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50"
     },
     {
@@ -483,28 +531,46 @@
     },
     {
       "path": "packages/engine/README.en.md",
-      "originRole": "First-party CPU asset revision or synchronized public documentation",
-      "sha256": "e633384dc915242c394834f6d86e0aa2128707c44e5e09f5d5fa9b24b9cbd3a8",
-      "bytes": 3808,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
+      "sha256": "4a1fba94711cf91b22cd90c641012b842ef7c7fa0be969fc996464f80ebaeae7",
+      "bytes": 7518,
       "previousRevisionSha256": "77fa6a7eacbb0c3d386524d6c9ed5fec9f3e91bf393b95a6c3b2498c5ae6b83f"
     },
     {
       "path": "packages/engine/README.md",
-      "sha256": "4382b97f1d7b255a2810cecd8a76e0b625c2e03de8cb9cedcd1c92157ea39ead",
-      "bytes": 3093,
+      "sha256": "ca89388b72916ad819a058cffcd591d7e975130418c01ad827a572f8f1da0be5",
+      "bytes": 6346,
       "originalSha256": "2b39a8a5f988a0c4d7271d30da7f8c04a735149e00b6f0f28f2c59940e5842f0",
-      "originRole": "First-party CPU asset revision or synchronized public documentation",
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "change": "Preserves package responsibilities and lifecycle semantics; removes internal review history wording and adds contributor/source/license links.",
       "previousPublicSha256": "d990d8fa688a458975306d039b066b4a0052af3045e2a8de739f0969fc2a7554",
       "previousRevisionSha256": "efddfc15d95e601711bf37b22d9956b5a43e553c4100e9927c05fce70899ba99"
     },
     {
       "path": "packages/engine/package.json",
-      "sha256": "11cd51161a3f37fceeea5bdcf6878c35af5b7d6557fba3c0fafabfe6954efa0b",
-      "bytes": 398,
+      "sha256": "d49f766cd3c4c6866b7e9f3746dbaa317b3588b8ffd3ce96a563e2921c8d6080",
+      "bytes": 537,
       "originalSha256": "26b7c45f629f7c8a7d41c466fdd06741163a2afd9b6002075c6341530ed2e663",
-      "originRole": "byte-identical prototype whitelist export",
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousRevisionSha256": "26b7c45f629f7c8a7d41c466fdd06741163a2afd9b6002075c6341530ed2e663"
+    },
+    {
+      "path": "packages/engine/rendering/copyFrame2D.ts",
+      "sha256": "28e29667b474a244103eab0fab11fd373b62079073d2a2bea2cc9bfd0bda882d",
+      "bytes": 5741,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope."
+    },
+    {
+      "path": "packages/engine/rendering/packedOrientation.ts",
+      "sha256": "fdcedb1464a03dd39c6da6cd8a77596d6be33b95b0ba63ac907859a0e02c181b",
+      "bytes": 313,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope."
+    },
+    {
+      "path": "packages/engine/rendering/prepareRectangles2D.ts",
+      "sha256": "5003eef853f6982c9b7f5f36999279688e7b6aa4184e88ff5673af2ad02aa74f",
+      "bytes": 9322,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope."
     },
     {
       "path": "packages/engine/src/Engine.ts",
@@ -559,10 +625,16 @@
       "previousRevisionSha256": "ac07062d5460bb112739e3ef98e2f16f7479b1f4a18c7add69c46c2880ac68a4"
     },
     {
-      "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
+      "path": "packages/engine/tsconfig.rendering.json",
+      "sha256": "f5a7e4fe1d79c140d9472417b8ddfbd0104929a982cdf61dae247735f1b6f13a",
+      "bytes": 307,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope."
+    },
+    {
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "path": "packages/engine/tsconfig.web.json",
-      "sha256": "ed3119d70f5e94a243c2375a62c09ac95d60454fa4fb6577013029e7571c4d68",
-      "bytes": 284,
+      "sha256": "df259ef242d8a166dd6d67722424496b896ed65c0730090d4a160527e05ba20f",
+      "bytes": 325,
       "previousRevisionSha256": "ed3119d70f5e94a243c2375a62c09ac95d60454fa4fb6577013029e7571c4d68"
     },
     {
@@ -571,6 +643,12 @@
       "sha256": "ae6c2f46bd3e43b44e8a915a5b4fb9c1cbebab6b5f14b93178b7bd7eb5f0c7cb",
       "bytes": 6500,
       "previousRevisionSha256": "ae6c2f46bd3e43b44e8a915a5b4fb9c1cbebab6b5f14b93178b7bd7eb5f0c7cb"
+    },
+    {
+      "path": "packages/engine/web/WebGPUHost.ts",
+      "sha256": "f07f59068f1c65f1247500ca8665747bb957d99e07286b16e3d6d08be3da51bc",
+      "bytes": 38285,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope."
     },
     {
       "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
@@ -585,6 +663,24 @@
       "sha256": "1c06c610493ff706ed07983a2bdd826aaf8a2b3af8c88563ad99e1324f2a7e4e",
       "bytes": 122,
       "previousRevisionSha256": "1c06c610493ff706ed07983a2bdd826aaf8a2b3af8c88563ad99e1324f2a7e4e"
+    },
+    {
+      "path": "packages/engine/web/webgpu.ts",
+      "sha256": "bf0e57d689d4ae60f3a25a11835e3d08aead7549c2c1b72a7cdbdf91da8c0e05",
+      "bytes": 313,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope."
+    },
+    {
+      "path": "packages/engine/web/webgpuLifetime.ts",
+      "sha256": "1af60adbf879049962c1d6913ee241a6d32ebcb1e9ecdd5a3733ebbb7ee8f287",
+      "bytes": 1657,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope."
+    },
+    {
+      "path": "packages/engine/web/webgpuPass.ts",
+      "sha256": "780bb10de89b894ea01b6ae4122281a7c2b3c32e3435bed6d1e071be4969a5a5",
+      "bytes": 5118,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope."
     },
     {
       "path": "packages/runtime/README.en.md",
@@ -784,10 +880,10 @@
     },
     {
       "path": "pnpm-lock.yaml",
-      "sha256": "f58343405f8b75488966415da04a69edd5cbf01a32076ff08b75132fa476877c",
-      "bytes": 8033,
+      "sha256": "ed9759a4ae0d1ca6e2d707fd1a324d1eff3b326cb2a8c827eecf14e3ebfb53d4",
+      "bytes": 8290,
       "originalSha256": "f58343405f8b75488966415da04a69edd5cbf01a32076ff08b75132fa476877c",
-      "originRole": "byte-identical prototype whitelist export",
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousRevisionSha256": "f58343405f8b75488966415da04a69edd5cbf01a32076ff08b75132fa476877c"
     },
     {
@@ -813,6 +909,12 @@
       "previousRevisionSha256": "c8ef247cade909292d848d20ec2d1ae55a984c1d2d6bd03e1c0120c9162b0719"
     },
     {
+      "path": "tests/boundaries.test.mjs",
+      "sha256": "7fab4a4c490d4823a1cbd3d8721eb87d8c6a2401e60a7068be245975abf538bc",
+      "bytes": 5799,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope."
+    },
+    {
       "path": "tests/cancellation-scope.test.mjs",
       "sha256": "32a1a3c47fa41ebfd122be8fa06370e51a4f0854a2ab69be5da48966b96e9566",
       "bytes": 4803,
@@ -821,10 +923,10 @@
       "previousRevisionSha256": "32a1a3c47fa41ebfd122be8fa06370e51a4f0854a2ab69be5da48966b96e9566"
     },
     {
-      "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "path": "tests/canvas-host.test.mjs",
-      "sha256": "58dd8c20b9b4208f2de7e0b056d9075bddb06c8f03dae65bad29c4f93a91e43e",
-      "bytes": 6559,
+      "sha256": "c5f1edf0316c46c2141c7bc309f05b9545a4022611429cac2414af60f4669f32",
+      "bytes": 7785,
       "previousRevisionSha256": "58dd8c20b9b4208f2de7e0b056d9075bddb06c8f03dae65bad29c4f93a91e43e"
     },
     {
@@ -859,6 +961,18 @@
       "previousRevisionSha256": "af55b8cace7bd33713b007dbc46ed74d5d9c6280be1b7210662902eb251cc1cb"
     },
     {
+      "path": "tests/geometry-webgpu-numeric.test.mjs",
+      "sha256": "4ab922fdcc92b79712674ec328f166dc439534822ee988fa9cf32b655ef9b4a9",
+      "bytes": 5428,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope."
+    },
+    {
+      "path": "tests/geometry-webgpu.test.mjs",
+      "sha256": "d43d4a3ff503a773f094cb56ec55600f734d45e1ebadf3c4a5d8a9a67d9625a9",
+      "bytes": 13221,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope."
+    },
+    {
       "path": "tests/helpers.mjs",
       "sha256": "20e7dd30f54b3a81d35f666c8370e7f014e4559c68222727bc88fd377efc1af7",
       "bytes": 997,
@@ -876,9 +990,9 @@
     },
     {
       "path": "tests/publication/check-publication.test.mjs",
-      "originRole": "New first-party bilingual documentation or publication tooling",
-      "sha256": "0a0dec05c056fb0fb2515cdd3d739de88f18f9578257902339c6840214cd8827",
-      "bytes": 6905,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
+      "sha256": "837efc414e2679109905d0413868b83152f4f75a89d9aa10674f1b4200f24c17",
+      "bytes": 11504,
       "previousRevisionSha256": "ff5b1e45e710f5842aa2615d55b8f87d6fe8256fb6a8fe85cfff2192710f0161"
     },
     {
@@ -942,11 +1056,35 @@
       "previousRevisionSha256": "ebd9c73f69f0a3ee587bf6a07a49a33218cdea845d3a243c2df22a89fb18568d"
     },
     {
-      "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "path": "tests/types/web.ts",
-      "sha256": "fdc424582345dcc53465c8eb141a909fb17a663927eae9c3f1a7b9b37bd14bd3",
-      "bytes": 621,
+      "sha256": "d905c0f8fe70795f5fe2f580aaad4595dadf878f09b76ffa0af0e777a52078e9",
+      "bytes": 1474,
       "previousRevisionSha256": "fdc424582345dcc53465c8eb141a909fb17a663927eae9c3f1a7b9b37bd14bd3"
+    },
+    {
+      "path": "tests/webgpu-host.test.mjs",
+      "sha256": "7598ef8704504c4133754fc5bb7ce34422867bf0ad59d97c5bfb083c04a0eecb",
+      "bytes": 44256,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope."
+    },
+    {
+      "path": "tests/webgpu-oracle.test.mjs",
+      "sha256": "74d07c9a7eb721a6d3cc4fd9c509d5516911f357c7e72a368c5734f2f592c4f1",
+      "bytes": 1105,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope."
+    },
+    {
+      "path": "tests/webgpu-pass.test.mjs",
+      "sha256": "abdfac0fa59a7298a8b2520049f75cc79f9c656b34b247d44f72439b5212c00b",
+      "bytes": 3279,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope."
+    },
+    {
+      "path": "third-party/robust-predicates-3.0.3.LICENSE",
+      "sha256": "88d9b4eb60579c191ec391ca04c16130572d7eedc4a86daa58bf28c6e14c9bcd",
+      "bytes": 1210,
+      "originRole": "Exact unmodified upstream Unlicense notice for robust-predicates 3.0.3"
     },
     {
       "path": "tools/build.mjs",
@@ -965,25 +1103,25 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "16140a5abf47954f42fefbfdf2074b6ce15feb095c566f0cf005f1ac3d43e478",
-      "bytes": 4984,
+      "sha256": "40a9a8360e6a1a060c75e5adfe47865de28a49fa45929e5be9b3c97f8da30cbe",
+      "bytes": 7135,
       "originalSha256": "e7994ad6962e55fba9b481d50377ede30729b345e6a901e2089b235edfde9491",
-      "originRole": "First-party CPU asset revision or synchronized public documentation",
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousRevisionSha256": "e7994ad6962e55fba9b481d50377ede30729b345e6a901e2089b235edfde9491"
     },
     {
       "path": "tools/check-publication.mjs",
-      "originRole": "New first-party bilingual documentation or publication tooling",
-      "sha256": "887dc3f118f413e515f4786507b445cdabf4c04a9aa5d67408f3a5dd20311293",
-      "bytes": 6409,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
+      "sha256": "22decff2b21a8c3027617978934b9a498b27e42d14926b48efa36e708b9ef35d",
+      "bytes": 8147,
       "previousRevisionSha256": "3a23d7ca84233e3339107fcdb617795c5cee8fd503f3ddcac223f37508cc6b38"
     },
     {
       "path": "tools/check-types.mjs",
-      "sha256": "a5416d2424e8f194d8025e364442c7882936c42cd2df9667676f912b99a25939",
-      "bytes": 3488,
+      "sha256": "d4ee3359c0a357d03eaeb774021e952a29c9624b8394e2f0466168ba898d75a4",
+      "bytes": 3638,
       "originalSha256": "332d2c161ceb9ec7d75429c89a3d2c95af24f2cf5eed68b92b09532d1ce691a4",
-      "originRole": "byte-identical prototype whitelist export",
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousRevisionSha256": "332d2c161ceb9ec7d75429c89a3d2c95af24f2cf5eed68b92b09532d1ce691a4"
     },
     {
@@ -1016,12 +1154,24 @@
       "previousRevisionSha256": "4810b9e185e93817236fd2c523ee4d549117744cb7b102967ce2380804b531ba"
     },
     {
+      "path": "tools/verify-webgpu.mjs",
+      "sha256": "99e85364bbb2619f8e83e9877e68acce7443bc23b320fe19f7cd953c8b5b9b26",
+      "bytes": 21474,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope."
+    },
+    {
       "path": "tools/verify.mjs",
       "sha256": "9c789b762d598c72040992d8ffb9041f75180d39b7556761365ef0998d5b0b4a",
       "bytes": 525,
       "originalSha256": "9c789b762d598c72040992d8ffb9041f75180d39b7556761365ef0998d5b0b4a",
       "originRole": "byte-identical prototype whitelist export",
       "previousRevisionSha256": "9c789b762d598c72040992d8ffb9041f75180d39b7556761365ef0998d5b0b4a"
+    },
+    {
+      "path": "tools/webgpu-oracle.mjs",
+      "sha256": "c58cc871e0996469eaad28b7d088534b3b9164c44678227b796088ce6fa3e741",
+      "bytes": 1407,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope."
     },
     {
       "path": "tsconfig.base.json",
@@ -1033,14 +1183,14 @@
     },
     {
       "path": "tsconfig.json",
-      "sha256": "63d6eb1da2841bf4163d44f0831899a772b49cbb2605ddd7ddabfd60fea8863b",
-      "bytes": 250,
+      "sha256": "01ad6c8c6e7a8c86c99baf969ec73d9dd386fc7d8c5e412ee01b6e5dc248f10a",
+      "bytes": 321,
       "originalSha256": "e07fc831f31dc9ea9ecb612be734f4b533e32d7dbbb246abffaa8b23111076aa",
-      "originRole": "byte-identical prototype whitelist export",
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousRevisionSha256": "e07fc831f31dc9ea9ecb612be734f4b533e32d7dbbb246abffaa8b23111076aa"
     }
   ],
-  "fileListScope": "Current export-owned root/package/code/configuration files excluding source-origin itself, original LICENSE, verification and KB; full export manifest binds every curated file. Prior revisions and proof hashes retain historical scopes.",
+  "fileListScope": "Current explicit source-owned root/package/code/configuration inventory; source-origin itself, original LICENSE, export manifest, verification and KB are separate. Identities are provisional review inputs, not final export approval. Historical original/previous hashes retain their original scope.",
   "repositoryIntegration": {
     "checkedAtUtc": "2026-10-08T12:24:40.073Z",
     "priorPublicProjectionSha256": "aef303142fcb02d05095c48fe37a24170559061dc7c98a6f38b1d226de9aac3a",
@@ -1155,6 +1305,114 @@
       "verdict": "PASS",
       "p3Resolved": true,
       "faithfulAttestationOnly": true
+    }
+  },
+  "historicalKnownLimitations": [
+    "Experimental CPU lifecycle/display-tree/event/asset service slice; not a complete renderer or full-product acceptance.",
+    "No GPU, real browser/minigame/native host, GPU completion fence, shared-device acceptance or performance measurements.",
+    "No built-in network provider, texture/format decoder, GPU upload/residency, coordinates/layout, Sprite.graphics, text/animation/EUI/3D, Rust, migration tool, editor or Agent service.",
+    "CI and publishing workflows are not configured or accepted by this export.",
+    "Source declarations and hashes are bounded review evidence, not a full originality, rights, security or license-compliance audit."
+  ],
+  "webgpuRevision": {
+    "knowledgeBaseVersion": "0.13.0",
+    "date": "2026-10-09",
+    "protocol": "0.6",
+    "state": "reviewable_local_checkpoint",
+    "authorship": "AI-assisted independently authored first-party copying, bounded geometry, packing, WGSL and host coordination from the recorded first-party contract. The public orient2d dependency and consulted standards retain upstream roles; this disclosure does not certify model training sources or global originality.",
+    "inputs": [
+      {
+        "path": "knowledge-base/docs/WebGPU矩形执行合同.md",
+        "sha256": "9d9f8225a4bd79ed2ae703dae0586772188f3758e84b0845bbfd1b0c2d71e6a9",
+        "scope": "Current curated public input; pending independent public-semantic binding"
+      },
+      {
+        "path": "knowledge-base/docs/WebGPU矩形执行合同.en.md",
+        "sha256": "606b9e39f8fff71652fd7b1ea9907bdc98237100e4d46e2c939a587f0ef58113",
+        "scope": "Current curated public input; pending independent public-semantic binding"
+      },
+      {
+        "path": "knowledge-base/docs/WebGPU矩形实施计划.md",
+        "sha256": "5617099275ab33da5914e03d9b20caf4df4c6fbabc1579ad35d1a03308c87673",
+        "scope": "Current curated public input; pending independent public-semantic binding"
+      },
+      {
+        "path": "knowledge-base/docs/WebGPU矩形实施计划.en.md",
+        "sha256": "296a211e3d67e80e822ab1d5cfb03cac924a9097e5f56791ba86cffc2c140131",
+        "scope": "Current curated public input; pending independent public-semantic binding"
+      },
+      {
+        "path": "knowledge-base/docs/WebGPU矩形实现证据.md",
+        "sha256": "555950a5e149671b1b5f39cf3afd653bbf4b47bcb5e6faa3f90f9e9942862ee5",
+        "scope": "Current curated public input; pending independent public-semantic binding"
+      },
+      {
+        "path": "knowledge-base/docs/WebGPU矩形实现证据.en.md",
+        "sha256": "5b164f1de778435c5f35591642e12833ec8151907ea83309b017705b4ad1bd57",
+        "scope": "Current curated public input; pending independent public-semantic binding"
+      },
+      {
+        "path": "knowledge-base/evidence/webgpu-source-evidence.json",
+        "sha256": "a0f2f3b3f4d895a38e935edfffa66d37b1177b28c235759db1ee5f64c8b6b5df",
+        "scope": "Current curated public input; pending independent public-semantic binding"
+      },
+      {
+        "path": "verification/webgpu-verification.json",
+        "sha256": "485f4d9b199414dbd96418d63ae357041dade814daa97b899f0cebbe327ac50d",
+        "scope": "Current curated public input; pending independent public-semantic binding"
+      },
+      {
+        "path": "verification/webgpu-review.json",
+        "sha256": "16218d1dfa48d91da108ce69f2f4a4a3620d2a8e4cae95dc436a2450330ca726",
+        "scope": "Current curated public input; pending independent public-semantic binding"
+      },
+      {
+        "path": "verification/webgpu-final-artifact-binding.json",
+        "sha256": "a09385610df763f1e8ff226a9bc0325174deedacedc9e80427689d3562c23753",
+        "scope": "Current final-native identity comparison/projection; pending independent correction/native-binding review"
+      },
+      {
+        "path": "knowledge-base/evidence/webgpu-final-artifact-binding.json",
+        "sha256": "0d136024979e95744997413e2b0b1e315fb0415f03d65563c821250b589695b6",
+        "scope": "Current final-native identity comparison/projection; pending independent correction/native-binding review"
+      }
+    ],
+    "implementationReview": "verification/webgpu-review.json",
+    "verification": "verification/webgpu-verification.json",
+    "codeDependenciesAdded": [
+      "robust-predicates@3.0.3"
+    ],
+    "acceptedImplementationCommit": "956e2f9894dc8e27291ffd0210a6cd8b4e651eab",
+    "finalSourceNativeBinding": "actual_1aa_native_artifacts_independently_reviewed_publication_pending",
+    "publicSemanticReview": "reviewed_with_scope_operational_quality_pending",
+    "finalPrepush": "pending_current_metadata_refresh_and_prepush",
+    "export": "not_performed",
+    "archive": "not_performed",
+    "remoteSubmission": "not_performed_this_revision",
+    "canonicalKnowledgeBaseSync": "not_performed_this_revision",
+    "previousExport": {
+      "path": "verification/history/export-0.12.0.json",
+      "sha256": "119dde63f08bf7b75ca9a4ae679f4607c023f0307a59bdbbc3ead69ea3c93fc2"
+    },
+    "previousSourceOrigin": {
+      "path": "verification/history/source-origin-0.12.0.json",
+      "sha256": "19df20f3f3c4ec50c59f0b0858188f4f94d9a17bbe81b1a46a155efc6e8c8eb9"
+    },
+    "historicalCommentProof": {
+      "path": "verification/english-comment-provenance.json",
+      "scope": "Unchanged sealed 0.10 restoration proof; no current GPU attestation implied."
+    },
+    "limitations": "Bounded desktop browser rectangles only; Native SDK, phones, acceleration/performance, text/texture/UI/animation/3D, migration/editor/Agent loop, CI and full product remain unaccepted. Independent correction/native-binding review and publication binding remain pending.",
+    "commentOnlyEntryProof": "verification/webgpu-entry-comment-proof.json",
+    "finalNativeSourceCommit": "1aa0248a1ff6d8e54c42d631072223bb50483814",
+    "finalNativeExecutedAt": "2026-10-08T21:23:54.294Z",
+    "finalNativeResultSha256": "b5a8fa4adbfc559cedfc5a4da8397a31c1778502511240216bfd3004914a0933",
+    "finalNativeArtifactBinding": "verification/webgpu-final-artifact-binding.json",
+    "operationalReview": {
+      "canonicalSource": "verification/webgpu-review.json",
+      "canonicalSha256": "16218d1dfa48d91da108ce69f2f4a4a3620d2a8e4cae95dc436a2450330ca726",
+      "reviewedCheckpoint": "9d046bfff0c3bbee4d5a9dd7623d2da8c8a9229e",
+      "scope": "Factual integration of the actual scoped 9d checkpoint correction and 1aa native-artifact review. This attestation is authored operational metadata; the supplied reviewers did not review these subsequently generated attestation bytes or execute the browser gate. Semantic meaning acceptance is separate from pending quality/digest/prepush/publication closure."
     }
   }
 }

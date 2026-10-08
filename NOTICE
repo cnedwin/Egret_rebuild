@@ -1,0 +1,9 @@
+First-party code and documentation: Apache-2.0; see LICENSE.
+
+robust-predicates 3.0.3 by Vladimir Agafonkin
+https://github.com/mourner/robust-predicates
+License: Unlicense. The unmodified license text is retained in
+third-party/robust-predicates-3.0.3.LICENSE and the installed package.
+Used through its public package root for orient2d in private DOM-free
+rectangle preparation. This dependency does not establish native GPU,
+browser bundle-size, performance or complete-engine acceptance.

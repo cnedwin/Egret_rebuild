@@ -592,6 +592,44 @@
       ],
       "doc": "docs/显示与帧执行实现记录.md",
       "title": "显示与帧及Canvas矩形工程原型"
+    },
+    {
+      "id": "V012",
+      "title": "WebGPU矩形工程原型",
+      "kind": "engineering_prototype",
+      "status": "implemented",
+      "requirementIds": [
+        "R003",
+        "R011",
+        "R015",
+        "R016",
+        "R017",
+        "R019"
+      ],
+      "dependsOn": [
+        "V011"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "independent_browser_webgpu_rectangle_subset",
+      "acceptance": "accepted_desktop_build_subset_final_publication_pending",
+      "acceptanceCriteria": [
+        "不可变公共帧输入及同步opt-in WebGPU执行",
+        "有界复制/交点/float32打包及原样Canvas兼容性",
+        "已记录177项核心检查、28项负向诊断及123个边界文件",
+        "42帧、1709项原始检查、84张截图、6808项合成检查、8项预期反例、0项意外错误",
+        "有限独立实现审阅；最终分支/公开双语/源码与原生绑定仍待完成"
+      ],
+      "artifacts": [
+        "docs/WebGPU矩形执行合同.md",
+        "docs/WebGPU矩形实施计划.md",
+        "docs/WebGPU矩形实现证据.md",
+        "evidence/webgpu-verification.json",
+        "evidence/webgpu-review.json",
+        "evidence/webgpu-source-evidence.json"
+      ],
+      "doc": "docs/WebGPU矩形实现证据.md",
+      "limit": "仅限定桌面浏览器矩形；Native SDK、手机、加速/性能、文字/纹理/UI/动画/3D、迁移/编辑器/Agent闭环、CI与完整产品未验收。最终源码/native/公开交付绑定尚待完成。"
     }
   ]
 }

@@ -984,11 +984,47 @@
         "evidence/display-frame-review.json"
       ],
       "doc": "docs/显示与帧执行实现记录.md"
+    },
+    {
+      "id": "S056",
+      "title": "WebGPU rectangle contract and recorded execution",
+      "type": "first_party_specification_and_recorded_execution",
+      "scope": "Protocol 0.6, bounded CPU/mock checks, public production readback and desktop screenshot composition; earlier F4 failures retained.",
+      "limit": "Bounded desktop browser rectangles only; Native SDK, phones, acceleration/performance, text/texture/UI/animation/3D, migration/editor/Agent loop, CI and full product remain unaccepted. Final source/native/publication binding is pending.",
+      "researchCheckedAt": "2026-10-09",
+      "artifacts": [
+        "evidence/webgpu-verification.json"
+      ],
+      "doc": "docs/WebGPU矩形实现证据.md"
+    },
+    {
+      "id": "S057",
+      "title": "robust-predicates and consulted WebGPU/WGSL materials",
+      "type": "explicit_foundational_dependency_and_primary_documentation",
+      "scope": "Exact 3.0.3 public orient2d/Unlicense, audited npm integrity and installed declarations; consulted primary API references retain dates/access failures.",
+      "limit": "Bounded desktop browser rectangles only; Native SDK, phones, acceleration/performance, text/texture/UI/animation/3D, migration/editor/Agent loop, CI and full product remain unaccepted. Final source/native/publication binding is pending.",
+      "researchCheckedAt": "2026-10-09",
+      "artifacts": [
+        "evidence/webgpu-source-evidence.json"
+      ],
+      "doc": "docs/WebGPU矩形执行合同.md"
+    },
+    {
+      "id": "S058",
+      "title": "Scoped WebGPU implementation review",
+      "type": "independent_ai_scoped_implementation_review",
+      "scope": "Accepted copying/preparation and integrated R1–R4 closure; numeric correction and complete native harness/artifact review at the recorded accepted source. Final public review is pending.",
+      "limit": "Bounded desktop browser rectangles only; Native SDK, phones, acceleration/performance, text/texture/UI/animation/3D, migration/editor/Agent loop, CI and full product remain unaccepted. Final source/native/publication binding is pending.",
+      "researchCheckedAt": "2026-10-09",
+      "artifacts": [
+        "evidence/webgpu-review.json"
+      ],
+      "doc": "docs/WebGPU矩形实现证据.md"
     }
   ],
   "_localization": {
     "canonicalSource": "来源.json",
-    "canonicalSha256": "48025f2c0dd151f1526b6d3c032b7eea9cb56b7d1cc6d41acfdf9e83be0c5d34",
+    "canonicalSha256": "5e27f56dbe9b44b0656419dacf63f034a0e3a1e7e7e688ff83b3f00adabb8771",
     "role": "read_only_translation",
     "language": "en"
   }

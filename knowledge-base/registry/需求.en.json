@@ -54,7 +54,8 @@
       ],
       "deliveryIds": [
         "V002",
-        "V011"
+        "V011",
+        "V012"
       ],
       "decisionIds": [
         "D001",
@@ -234,7 +235,8 @@
         "V001",
         "V007",
         "V008",
-        "V011"
+        "V011",
+        "V012"
       ],
       "decisionIds": [
         "D012"
@@ -334,7 +336,8 @@
         "V006",
         "V007",
         "V008",
-        "V011"
+        "V011",
+        "V012"
       ],
       "decisionIds": [
         "D001",
@@ -373,7 +376,8 @@
         "V006",
         "V007",
         "V008",
-        "V011"
+        "V011",
+        "V012"
       ],
       "decisionIds": [
         "D016"
@@ -393,7 +397,8 @@
         "V009",
         "V007",
         "V010",
-        "V011"
+        "V011",
+        "V012"
       ],
       "decisionIds": [
         "D016"
@@ -428,7 +433,8 @@
         "V007",
         "V008",
         "V009",
-        "V011"
+        "V011",
+        "V012"
       ],
       "decisionIds": [],
       "doc": "docs/双语文档与推送前检查.md"
@@ -436,7 +442,7 @@
   ],
   "_localization": {
     "canonicalSource": "需求.json",
-    "canonicalSha256": "47a5f7f803e64986c7170f200c8cdbd5a0e020899560bf417b399c2eae2da593",
+    "canonicalSha256": "5dd2db500096aec3d3f9c2bbf620989cb6ccdb92073d571d67ffd6dd4f70a7d2",
     "role": "read_only_translation",
     "language": "en"
   }

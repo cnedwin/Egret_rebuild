@@ -984,6 +984,42 @@
         "evidence/display-frame-review.json"
       ],
       "doc": "docs/显示与帧执行实现记录.md"
+    },
+    {
+      "id": "S056",
+      "title": "WebGPU矩形合同与实际执行记录",
+      "type": "first_party_specification_and_recorded_execution",
+      "scope": "0.6协议、有界CPU/mock检查、公共生产目标读回与桌面截图合成；保留早期F4失败。",
+      "limit": "仅限定桌面浏览器矩形；Native SDK、手机、加速/性能、文字/纹理/UI/动画/3D、迁移/编辑器/Agent闭环、CI与完整产品未验收。最终源码/native/公开交付绑定尚待完成。",
+      "researchCheckedAt": "2026-10-09",
+      "artifacts": [
+        "evidence/webgpu-verification.json"
+      ],
+      "doc": "docs/WebGPU矩形实现证据.md"
+    },
+    {
+      "id": "S057",
+      "title": "robust-predicates与已查阅WebGPU/WGSL资料",
+      "type": "explicit_foundational_dependency_and_primary_documentation",
+      "scope": "精确3.0.3公共orient2d/Unlicense、已审计npm完整性及安装声明；一手API资料保留日期与访问失败。",
+      "limit": "仅限定桌面浏览器矩形；Native SDK、手机、加速/性能、文字/纹理/UI/动画/3D、迁移/编辑器/Agent闭环、CI与完整产品未验收。最终源码/native/公开交付绑定尚待完成。",
+      "researchCheckedAt": "2026-10-09",
+      "artifacts": [
+        "evidence/webgpu-source-evidence.json"
+      ],
+      "doc": "docs/WebGPU矩形执行合同.md"
+    },
+    {
+      "id": "S058",
+      "title": "WebGPU有限独立实现审阅",
+      "type": "independent_ai_scoped_implementation_review",
+      "scope": "帧复制/准备与整合R1–R4已闭环；已记录源码的数值修正及完整native工具/产物审阅通过，最终公开审阅待完成。",
+      "limit": "仅限定桌面浏览器矩形；Native SDK、手机、加速/性能、文字/纹理/UI/动画/3D、迁移/编辑器/Agent闭环、CI与完整产品未验收。最终源码/native/公开交付绑定尚待完成。",
+      "researchCheckedAt": "2026-10-09",
+      "artifacts": [
+        "evidence/webgpu-review.json"
+      ],
+      "doc": "docs/WebGPU矩形实现证据.md"
     }
   ]
 }

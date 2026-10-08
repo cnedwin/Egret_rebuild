@@ -1,11 +1,19 @@
-import {readFile,readdir,stat} from 'node:fs/promises';
+import {readFile,readdir,stat,lstat} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 const sha=b=>createHash('sha256').update(b).digest('hex');
 const han=/\p{Script=Han}/u;
 const identity=s=>/^(?:https?:\/\/|[RDHVS]\d{3}$|(?:outputs|docs|knowledge-base|registry|experiments|evidence|templates|proposals|work|packages|tests|tools|verification)\/)/.test(s)||/\.(?:md|json|mjs|ts|png|gltf|bin|zip)(?:$|#)/.test(s);
-const ignored=new Set(['node_modules','dist','.git','pnpm-store']);
+const ignored=new Set(['.superpowers','.agents','.codex','.git','work','node_modules','dist','build','pnpm-store','.pnpm-store','private','raw-logs','traces','screenshots','counterexample-trees']);
+// Exact sealed research artifacts are exceptions only to generated build paths.
+const sealedVendor=new Map([
+ ['knowledge-base/experiments/asset-reference-probe/vendor/three/r186/build/three.core.js','9edde002b066a9a05676a6127f67735b62baf399bdea529f2f7e31657da769e6'],
+ ['knowledge-base/experiments/asset-reference-probe/vendor/three/r186/build/three.module.js','9052042d676cb0fdc1ddfefe193053f34b7ac0513a616fdac4535d49987812ea']
+]);
+const validPath=p=>typeof p==='string'&&p.length>0&&!p.includes('\\')&&!p.includes(':')&&!p.startsWith('/')&&p.split('/').every(x=>x&&x!=='.'&&x!=='..'&&!/[.\s]$/.test(x));
+const excluded=p=>p.split('/').some(x=>ignored.has(x.toLowerCase())||/^\.env(?:\.|$)/i.test(x))&&!sealedVendor.has(p);
+const preservedAncestor=p=>[...sealedVendor.keys()].some(x=>x===p||x.startsWith(p+'/'));
 
 /** Compare structured authority, allowing translation only of human prose strings. */
 function parity(a,b,location,issues){
@@ -27,20 +35,29 @@ function parity(a,b,location,issues){
 export async function checkPublication(inputRoot){
  const root=path.resolve(inputRoot),issues=[],files=[];
  async function walk(dir){for(const e of await readdir(dir,{withFileTypes:true})){
-  if(ignored.has(e.name)||e.name.endsWith('.tsbuildinfo'))continue;
   const full=path.join(dir,e.name),rel=path.relative(root,full).replaceAll('\\','/');
+  if((excluded(rel)&&!preservedAncestor(rel))||e.name.toLowerCase().endsWith('.tsbuildinfo'))continue;
   if(e.isSymbolicLink()){issues.push(`outside or symbolic file: ${rel}`);continue;}
-  if(e.isDirectory())await walk(full);else files.push(rel);
+  if(e.isDirectory())await walk(full);else {
+   files.push(rel);
+   if(sealedVendor.has(rel)&&sha(await readFile(full))!==sealedVendor.get(rel))issues.push(`sealed vendor hash stale: ${rel}`);
+  }
  }}
  await walk(root);
  const inventory=JSON.parse(await readFile(path.join(root,'localization.json'),'utf8'));
  if(inventory.schemaVersion!==1||inventory.semanticReview?.status!=='reviewed_with_scope')issues.push('missing scoped semantic review record');
  const paired=new Set(),seen=new Set();
  async function verifyFile(rel,hash){
+  if(!validPath(rel)){issues.push(`invalid listed path: ${rel}`);return;}
+  if(excluded(rel)||rel.toLowerCase().endsWith('.tsbuildinfo')){issues.push(`excluded listed file: ${rel}`);return;}
   const full=path.resolve(root,rel);
   if(!full.startsWith(root+path.sep)){issues.push(`outside: ${rel}`);return;}
   if(seen.has(rel))issues.push(`duplicate listed file: ${rel}`);seen.add(rel);
-  try{const bytes=await readFile(full);if(sha(bytes)!==hash)issues.push(`hash stale: ${rel}`);return bytes.toString('utf8');}
+  try{
+   let current=root;
+   for(const component of rel.split('/')){current=path.join(current,component);if((await lstat(current)).isSymbolicLink()){issues.push(`outside or symbolic file: ${rel}`);return;}}
+   const bytes=await readFile(full);if(sha(bytes)!==hash)issues.push(`hash stale: ${rel}`);return bytes.toString('utf8');
+  }
   catch{issues.push(`missing: ${rel}`);}
  }
  for(const item of inventory.documents??[]){
@@ -55,6 +72,8 @@ export async function checkPublication(inputRoot){
     const target=m[1].replace(/^<|>$/g,'').split('#')[0];if(!target||/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(target))continue;
     const dest=path.resolve(path.dirname(path.join(root,rel)),decodeURIComponent(target));
     if(!dest.startsWith(root+path.sep)){issues.push(`outside link: ${rel} -> ${target}`);continue;}
+    const destRel=path.relative(root,dest).replaceAll('\\','/');
+    if(excluded(destRel)||destRel.toLowerCase().endsWith('.tsbuildinfo')){issues.push(`excluded link: ${rel} -> ${target}`);continue;}
     try{if(!(await stat(dest)).isFile())issues.push(`missing linked file: ${rel} -> ${target}`);}catch{issues.push(`missing link: ${rel} -> ${target}`);}
    }
   }
@@ -82,7 +101,7 @@ export async function checkPublication(inputRoot){
   if(body!==undefined&&!comments.some(s=>!han.test(s)&&(s.match(/\b[A-Za-z]{3,}\b/g)??[]).length>=3))issues.push(`missing English comment: ${item.path}`);
  }
  const critical=new Set((inventory.criticalComments??[]).map(x=>x.path));
- for(const f of files.filter(x=>(/^packages\/[^/]+\/src\/.*\.ts$/.test(x)||/^packages\/engine\/web\/.*\.ts$/.test(x))&&!x.endsWith('/index.ts'))){
+ for(const f of files.filter(x=>(/^packages\/[^/]+\/src\/.*\.ts$/.test(x)||/^packages\/engine\/(?:web|rendering)\/.*\.ts$/.test(x))&&!x.endsWith('/index.ts'))){
   if(!critical.has(f))issues.push(`unlisted critical source: ${f}`);
  }
  return {documents:inventory.documents?.length??0,registryViews:inventory.registries?.length??0,criticalSourceFiles:inventory.criticalComments?.length??0,issues};

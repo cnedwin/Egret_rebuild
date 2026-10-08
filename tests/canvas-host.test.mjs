@@ -85,4 +85,23 @@ test('root and web imports do not read DOM globals or start a scheduler',()=>{
   });
 });
 
+test('Canvas retains custom command/clip iterators and getter fault identity',async()=>{
+  const {EgretError}=await import('@egret/engine');
+  const f=fixture(),host=createCanvasHost({canvas:f.canvas});host.start();
+  const v=frame(),alternate=structuredClone(v.commands[0]);alternate.color=0x00ff00;
+  alternate.clips[Symbol.iterator]=function*(){yield {matrix:{...matrix},rect:{x:3,y:4,width:5,height:6}};};
+  v.commands[Symbol.iterator]=function*(){yield alternate;};
+  host.renderFrame(v);
+  assert.ok(f.calls.some(c=>c[0]==='rect'&&c[1]===3&&c[2]===4&&c[3]===5&&c[4]===6));
+  assert.ok(f.calls.some(c=>c[0]==='fillStyle'&&c[1]==='#00ff00'));
+  for(const cause of [Error('getter'),new EgretError('TEST_GETTER')]){
+    const bad=frame();Object.defineProperty(bad,'width',{get(){throw cause;}});const before=f.calls.length;
+    assert.throws(()=>host.renderFrame(bad),e=>cause instanceof EgretError?e===cause:e.code==='CANVAS_RENDER_FAILED'&&e.cause===cause);
+    assert.equal(f.calls.length,before);
+  }
+  assert.throws(()=>host.renderFrame({...frame(),clearAlpha:2}),code('CANVAS_FRAME_INVALID'));
+  assert.throws(()=>host.renderFrame({...frame(),width:16777217}),code('CANVAS_BACKING_LIMIT'));
+  await host.close();
+});
+
 

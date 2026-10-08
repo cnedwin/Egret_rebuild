@@ -1,0 +1,238 @@
+{
+  "schemaVersion": 1,
+  "previewVersion": "0.13.0",
+  "reviewKind": "curated_actual_scoped_independent_ai_reviews",
+  "independentExternalCommunityReview": false,
+  "implementation": {
+    "acceptedThrough": "956e2f9894dc8e27291ffd0210a6cd8b4e651eab",
+    "copyAndPreparation": "accepted",
+    "integratedHostPassLifetime": "accepted_after_R1_R4_closure",
+    "numericCorrection": "SPEC_PASS_QUALITY_PASS",
+    "completeBoundedNativeGate": "SPEC_PASS_QUALITY_PASS"
+  },
+  "receipts": [
+    {
+      "identity": "copy-preparation-initial",
+      "sha256": "dc0537daf62b90fd23260cdc42af385430b41571fafc32d8253d2e83bf7a5198",
+      "bytes": 10587,
+      "status": "identity_only_not_distributed"
+    },
+    {
+      "identity": "copy-preparation-correction",
+      "sha256": "8893b146e220e98b32d9b112c112137f8b00a5cc1b12a025e158ecdceb843f43",
+      "bytes": 5000,
+      "status": "identity_only_not_distributed"
+    },
+    {
+      "identity": "integrated-host-pass-initial",
+      "sha256": "2ded291244dfd7235b170d0cc18731f7092e480ee3927c1a38b0becd84530633",
+      "bytes": 14434,
+      "status": "identity_only_not_distributed"
+    },
+    {
+      "identity": "integrated-r1-r4-closure",
+      "sha256": "920988cbf9b47f4ef117b75689deaed2dc62b71a6c1a45534bf3b4f1689bdc48",
+      "bytes": 10968,
+      "status": "identity_only_not_distributed"
+    },
+    {
+      "identity": "numeric-correction-review",
+      "sha256": "06d3297946e23286b2cf20d7f4b8f3f52e25641e6a68c3ddd05458bdf6637ca9",
+      "bytes": 8034,
+      "status": "identity_only_not_distributed"
+    },
+    {
+      "identity": "complete-native-bounded-native-review",
+      "sha256": "44646d844f948f21deb86317216456f472c653aaf077e8b306da3ab6968a91b1",
+      "bytes": 11514,
+      "status": "identity_only_not_distributed"
+    }
+  ],
+  "closure": [
+    {
+      "id": "R1",
+      "result": "closed",
+      "change": "Bind only the unbound readback ticket reserved by that precise preflight attempt."
+    },
+    {
+      "id": "R2",
+      "result": "closed",
+      "change": "Distinguish exception occurrence from arbitrary thrown value, including undefined; track attempted configuration for cleanup."
+    },
+    {
+      "id": "R3",
+      "result": "closed",
+      "change": "Use private origin signals for classification; public EgretError objects remain external causes."
+    },
+    {
+      "id": "R4",
+      "result": "closed",
+      "change": "Record unsafe cleanup proof even when a prior rendering failure exists."
+    }
+  ],
+  "numericScope": "Only the canonical t===1 complementary-weight branch changes; strict-interior bits, envelope, topology, copier, pass and Canvas remain protected.",
+  "limits": "Scoped independent AI source/artifact review, not reviewer execution of the native gate, external community review, rights certification or full-product acceptance.",
+  "publicationCheckpoint": {
+    "wholeBranchReview": "SPEC_PASS_native_artifacts_PASS_operational_quality_pending",
+    "publicBilingualSemanticReview": "SPEC_PASS_reviewed_with_scope_operational_quality_pending",
+    "authorSelfReview": "completed_metadata_correction_self_review_only",
+    "requiredPrepush": "pending_current_metadata_refresh_and_prepush",
+    "freeze": "not_performed",
+    "remoteSubmission": "not_performed",
+    "canonicalKnowledgeBaseSync": "not_performed",
+    "finalNativeBinding": "actual_1aa_native_artifacts_independently_reviewed_publication_pending",
+    "selfReviewScope": "Retained prior complete reading at the reviewed 1aa checkpoint; reviewed all 42 changed introductory paragraphs in 21 CN/EN pairs, with exact full-byte preservation of every other paragraph, link, API block and normative section. Reviewed current metadata delta, actual final-native evidence correspondence and unchanged loaded-artifact identities. This is author self-review; independent correction/native-binding review, operational semantic attestation and publication remain pending."
+  },
+  "initialCompletePairReview": {
+    "status": "SPEC_PASS_QUALITY_PASS",
+    "scope": "Independent meaning/provenance review of exactly six finalized draft bytes before integration. The integrated checkpoint note, KB-local links and populated projection paths are later changes requiring continuation review; this does not supply overall semantic review or publication approval.",
+    "receipt": {
+      "identity": "initial-complete-contract-plan-evidence-meaning-review",
+      "sha256": "8a623387e999f4dab88a12e746c543076c6903128be8a1d36fb325e4611668d9",
+      "bytes": 9349,
+      "status": "identity_only_not_distributed"
+    },
+    "reviewedDraftFiles": [
+      {
+        "path": "knowledge-base/docs/WebGPU矩形执行合同.md",
+        "sha256": "e5f813d284edee966ecbe264e549442f42423d96096dc90512e5ee6e6d80a11f"
+      },
+      {
+        "path": "knowledge-base/docs/WebGPU矩形执行合同.en.md",
+        "sha256": "62630a3afdf863e9fac28ada95479e0248ad71f374555304f2bc9c2aef091489"
+      },
+      {
+        "path": "knowledge-base/docs/WebGPU矩形实施计划.md",
+        "sha256": "ae743e80a7c93972f5715510f3d6718991d1e7e72b3031cb1d66c3b018231de1"
+      },
+      {
+        "path": "knowledge-base/docs/WebGPU矩形实施计划.en.md",
+        "sha256": "2fe975e7ed2bbe74f34aac516343ca5a4b0f7f3de034e2c2225b3b1c4322d1af"
+      },
+      {
+        "path": "knowledge-base/docs/WebGPU矩形实现证据.md",
+        "sha256": "e14a8a89da4f99dc91f2b0b4061e1e092d8f4c46c48193de412f5c43e03d152b"
+      },
+      {
+        "path": "knowledge-base/docs/WebGPU矩形实现证据.en.md",
+        "sha256": "9a55c7dbf056f112fe094194781eee2c6b19406cda876dc566c03decbf54dca8"
+      }
+    ]
+  },
+  "checkpointReviews": {
+    "reviewedCommit": "1aa0248a1ff6d8e54c42d631072223bb50483814",
+    "wholeBranch": {
+      "runtimeSourceSpecification": "PASS",
+      "runtimeSourceQuality": "PASS",
+      "overallCheckpoint": "NEEDS_FIXES",
+      "receipt": {
+        "identity": "whole-branch-checkpoint-review",
+        "sha256": "7c3747683a4662caac1acf9a3faab50c946576b07867806ca3c436dc512ffff1",
+        "bytes": 13966,
+        "status": "identity_only_not_distributed"
+      },
+      "findings": [
+        {
+          "priority": "P2",
+          "description": "Current version scope excluded the bounded WebGPU experiment.",
+          "authorDisposition": "corrected_in_metadata_successor",
+          "independentClosure": "closed_by_actual_scoped_correction_review",
+          "closureReceipt": {
+            "identity": "whole-branch-correction-native-artifact-closure",
+            "sha256": "8d0ce70e38e30666cd556db382066ede95136f98a3857f879cf62945c4181c52",
+            "bytes": 13334,
+            "status": "identity_only_not_distributed"
+          }
+        }
+      ]
+    },
+    "publicMeaning": {
+      "specification": "PASS",
+      "quality": "MINOR_CORRECTIONS_REQUIRED",
+      "receipt": {
+        "identity": "integrated-public-checkpoint-meaning-review",
+        "sha256": "e0e4c8fc4d9ada0ae2fef2084a6e8ec469a1666c24cef7842832823eaa8b04e5",
+        "bytes": 20869,
+        "status": "identity_only_not_distributed"
+      },
+      "findings": [
+        {
+          "priority": "Minor",
+          "description": "Neutral attribution needed in the current source-evidence projection.",
+          "authorDisposition": "corrected_in_metadata_successor",
+          "independentClosure": "closed_by_actual_scoped_correction_review",
+          "closureReceipt": {
+            "identity": "integrated-public-correction-meaning-closure",
+            "sha256": "9e5642e41816b7c958c702197b3d7573ea32155f805e118a6acdc5670eb60eb6",
+            "bytes": 24417,
+            "status": "identity_only_not_distributed"
+          }
+        },
+        {
+          "priority": "Minor",
+          "description": "Current version experiment scope contradicted the bounded native evidence.",
+          "authorDisposition": "corrected_in_metadata_successor",
+          "independentClosure": "closed_by_actual_scoped_correction_review",
+          "closureReceipt": {
+            "identity": "integrated-public-correction-meaning-closure",
+            "sha256": "9e5642e41816b7c958c702197b3d7573ea32155f805e118a6acdc5670eb60eb6",
+            "bytes": 24417,
+            "status": "identity_only_not_distributed"
+          }
+        }
+      ]
+    },
+    "scope": "Actual independent source/artifact checkpoint reviews before the final native execution. Finding dispositions are author corrections, not reviewer closure or reviewer execution of the browser gate."
+  },
+  "finalNativeExecution": {
+    "sourceCommit": "1aa0248a1ff6d8e54c42d631072223bb50483814",
+    "executedAt": "2026-10-08T21:23:54.294Z",
+    "resultSha256": "b5a8fa4adbfc559cedfc5a4da8397a31c1778502511240216bfd3004914a0933",
+    "observedExecutionStatus": "PASS",
+    "independentBindingReview": "PASS_scoped_native_artifact_review",
+    "scope": "Execution author ran the actual browser gate; reviewers reviewed artifacts and source separately."
+  },
+  "operationalAttestation": {
+    "reviewedCheckpoint": "9d046bfff0c3bbee4d5a9dd7623d2da8c8a9229e",
+    "nativeExecutionCheckpoint": "1aa0248a1ff6d8e54c42d631072223bb50483814",
+    "meaningSpecification": "PASS",
+    "meaningQuality": "MINOR_CORRECTIONS_REQUIRED",
+    "wholeBranchSpecification": "PASS",
+    "wholeBranchRuntimeNativeQuality": "PASS",
+    "wholeBranchMetadataQuality": "NEEDS_FIXES",
+    "nativeArtifactBinding": "PASS",
+    "scopedReviewReceipts": [
+      {
+        "identity": "integrated-public-correction-meaning-closure",
+        "sha256": "9e5642e41816b7c958c702197b3d7573ea32155f805e118a6acdc5670eb60eb6",
+        "bytes": 24417,
+        "status": "identity_only_not_distributed"
+      },
+      {
+        "identity": "whole-branch-correction-native-artifact-closure",
+        "sha256": "8d0ce70e38e30666cd556db382066ede95136f98a3857f879cf62945c4181c52",
+        "bytes": 13334,
+        "status": "identity_only_not_distributed"
+      }
+    ],
+    "originalFindingsClosed": true,
+    "newFindingStatus": {
+      "meaning": "minor_operational_metadata_pending",
+      "wholeBranch": "minor_operational_metadata_pending"
+    },
+    "operationalQuality": {
+      "status": "pending_metadata_refresh_and_quality_closure",
+      "findingIdentity": "current-version-English-KB-validation-hash-stale"
+    },
+    "authorReviewScope": "Retained prior complete reading at the reviewed 1aa checkpoint plus all 42 changed introductory paragraphs in 21 CN/EN pairs; exact unaffected reading bytes, links, API blocks and normative sections preserved. Current metadata/evidence correspondence and unchanged native loaded artifacts were checked at 9d.",
+    "authorRuling": "The semantic status reviewed_with_scope records actual independent bilingual meaning SPEC PASS. Both original findings are independently closed at 9d. The new stale English KB validation identity remains open; overall metadata quality, subsequent attestation-byte review, required prepush and publication are pending. No reviewer executed the browser gate and no future approval is inferred.",
+    "scope": "Factual integration of the actual scoped 9d checkpoint correction and 1aa native-artifact review. This attestation is authored operational metadata; the supplied reviewers did not review these subsequently generated attestation bytes or execute the browser gate. Semantic meaning acceptance is separate from pending quality/digest/prepush/publication closure.",
+    "reviewerExecutedBrowser": false
+  },
+  "_projection": {
+    "canonicalSource": "verification/webgpu-review.json",
+    "canonicalSha256": "16218d1dfa48d91da108ce69f2f4a4a3620d2a8e4cae95dc436a2450330ca726",
+    "role": "public_knowledge_base_projection",
+    "scope": "Factual integration of the actual scoped 9d checkpoint correction and 1aa native-artifact review. This attestation is authored operational metadata; the supplied reviewers did not review these subsequently generated attestation bytes or execute the browser gate. Semantic meaning acceptance is separate from pending quality/digest/prepush/publication closure."
+  }
+}

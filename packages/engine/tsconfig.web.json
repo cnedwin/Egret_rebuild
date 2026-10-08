@@ -1,6 +1,6 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": { "rootDir": "web", "outDir": "dist/web", "lib": ["ES2022", "DOM"], "tsBuildInfoFile": "tsconfig.web.tsbuildinfo" },
-  "references": [{ "path": "../contracts" }, { "path": "../runtime" }],
+  "references": [{ "path": "../contracts" }, { "path": "../runtime" }, { "path": "./tsconfig.rendering.json" }],
   "include": ["web/**/*.ts"]
 }

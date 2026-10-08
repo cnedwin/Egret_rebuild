@@ -26,6 +26,9 @@ importers:
       '@egret/runtime':
         specifier: workspace:*
         version: link:../runtime
+      robust-predicates:
+        specifier: 3.0.3
+        version: 3.0.3
 
   packages/runtime:
     dependencies:
@@ -155,6 +158,9 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  robust-predicates@3.0.3:
+    resolution: {integrity: sha512-NS3levdsRIUOmiJ8FZWCP7LG3QpJyrs/TE0Zpf1yvZu8cAJJ6QMW92H1c7kWpdIHo8RvmLxN/o2JXTKHp74lUA==}
+
   typescript@7.0.2:
     resolution: {integrity: sha512-8FYau96o3NKOhbjKi/qNvG/W5jhzxkbdm5sj9AbZ/5T5sWqn3hJgLfGx27sRKZWTvyzCP8dLRBTf5tBTSRVUNA==}
     engines: {node: '>=16.20.0'}
@@ -221,6 +227,8 @@ snapshots:
 
   '@typescript/typescript-win32-x64@7.0.2':
     optional: true
+
+  robust-predicates@3.0.3: {}
 
   typescript@7.0.2:
     optionalDependencies:

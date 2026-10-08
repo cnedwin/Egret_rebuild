@@ -2,8 +2,16 @@
 
 English | [简体中文](DOCUMENTATION.md)
 
+## 0.13.0 WebGPU rectangle checkpoint — October 9, 2026
 
-## 0.12.0 display and frame candidate scope
+The opt-in `@egret/engine/webgpu` entry executes immutable `RenderFrame2D` rectangle commands synchronously. The root stays DOM-free; `@egret/engine/web` stays Canvas-only and requests no WebGPU or robust-predicates modules. DOM-free preparation uses the exact foundational dependency robust-predicates 3.0.3 through public `orient2d`, under Unlicense. Copying, bounded intersection construction, packing, WGSL and host lifetime are independently authored first-party code. See the [complete 0.6 contract](knowledge-base/docs/WebGPU矩形执行合同.en.md), [implementation plan](knowledge-base/docs/WebGPU矩形实施计划.en.md) and [bounded evidence](knowledge-base/docs/WebGPU矩形实现证据.en.md).
+
+The accepted desktop build records 177/177 CPU/mock/core tests, 28 expected negative type diagnostics and 123 boundary files. Its separate real WebGPU gate records 42 frames, 1709 raw assertions, 84 screenshots, 6808 composition assertions, eight intended negatives and zero unexpected errors. Seven negatives mutate copied production code; one is synthetic assertion-only. These recorded results and scoped independent implementation review belong to the accepted source identities in [verification](verification/webgpu-verification.json) and [review](verification/webgpu-review.json); they are not fresh execution by document integration.
+
+This experimental checkpoint was recorded before the final native run at 2026-10-08T21:23:54.294Z; its core/headless and desktop Canvas results are separately recorded. The subsequent final comment-build browser WebGPU run at `1aa0248a1ff6d8e54c42d631072223bb50483814`, 2026-10-08T21:23:54.294Z, exited 0 and recorded PASS: 42 frames, 1709 raw assertions, 84 PNG screenshots, 6808 composition assertions, eight intended negatives and zero unexpected errors. Seven negatives mutate copied production code; one is synthetic. All 233 inventoried source/build/tool/dependency identities remained equal before and after that execution and match this metadata-only successor. The execution was performed by its verification author; independent correction/native-binding closure, final semantic attestation and publication remain pending. Browser WebGPU is separate from a Native app/SDK. Screenshot composition does not certify physical scanout, acceleration, phones or performance. Textures/text/UI/animation/3D, editor/Agent creation, CI, complete migration and full-product acceptance remain open; R008/V006 and V003 retain their existing obligations. Historical 0.9–0.12 records below keep their original dates, identities and result scopes.
+
+
+## Historical 0.12.0 display and frame candidate scope
 
 The successor work package is defined by the [display and frame contract](knowledge-base/docs/显示与帧执行合同.en.md) and [implementation plan](knowledge-base/docs/显示与帧执行实现计划.en.md): display transforms, inherited visibility/alpha and local rectangle clipping, Sprite-owned Graphics rectangle fills, and immutable CPU frame capture/submission. The implemented first execution adapter is Canvas through the separate @egret/engine/web entry; the core root retains its DOM-free boundary. Bounded implementation checks passed: 97/97 core behavior tests, 25 negative type diagnostics and real desktop Canvas pixels/pointer interaction. Scoped independent review passed after the recorded cross-realm rejection correction. Remote publication is tracked separately. Final scoped results belong in the [implementation record](knowledge-base/docs/显示与帧执行实现记录.en.md) and [verification](verification/display-frame-verification.json).
 
@@ -112,6 +120,11 @@ Before every push, review public content and translation meaning, update paired 
 | [Display and Frame Implementation Record](knowledge-base/docs/显示与帧执行实现记录.md) | [English](knowledge-base/docs/显示与帧执行实现记录.en.md) |
 
 | [Canvas Rectangle Example](examples/canvas-scene/README.md) | [English](examples/canvas-scene/README.en.md) |
+
+| [WebGPU Rectangle Execution Contract](knowledge-base/docs/WebGPU矩形执行合同.md) | [English](knowledge-base/docs/WebGPU矩形执行合同.en.md) |
+| [WebGPU Rectangle Implementation Plan](knowledge-base/docs/WebGPU矩形实施计划.md) | [English](knowledge-base/docs/WebGPU矩形实施计划.en.md) |
+| [WebGPU Rectangle Implementation Evidence](knowledge-base/docs/WebGPU矩形实现证据.md) | [English](knowledge-base/docs/WebGPU矩形实现证据.en.md) |
+| [WebGPU Rectangle Example](examples/webgpu/README.md) | [English](examples/webgpu/README.en.md) |
 
 ## Shared registry state
 

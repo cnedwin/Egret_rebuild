@@ -49,3 +49,56 @@ test('publication requires exact approved web source registration and accepts it
  assert.ok((await checkPublication(root)).issues.includes(`missing English comment: ${relative}`));
 }));
 test('publication preserves every execution identifier occurrence, including duplicates',()=>fixture(async(root,m)=>{const id='5e478aac-c48a-4c2b-85f0-cf0053255da7',zh=`# 运行记录\n${id}\n${id}\n`,en=`# Runs\n${id}\n5e 478aac-c 48a-4c 2b-85f0-cf 0053255da7\n`;await writeFile(path.join(root,'README.md'),zh);await writeFile(path.join(root,'README.en.md'),en);m.documents[0].zhSha256=sha(zh);m.documents[0].enSha256=sha(en);await writeFile(path.join(root,'localization.json'),JSON.stringify(m));assert.ok((await checkPublication(root)).issues.some(x=>x.includes('opaque identifier')));}));
+
+const privateNames=['.superpowers','.SUPERPOWERS','.agents','.AGENTS','.codex','.CODEX','.git','.GIT','work','WORK','node_modules','NODE_MODULES','dist','DIST','build','BUILD','pnpm-store','.pnpm-store','private','raw-logs','traces','screenshots','counterexample-trees'];
+test('publication discovery excludes private execution and generated trees including Windows case aliases',()=>fixture(async root=>{
+ for(const name of privateNames){await mkdir(path.join(root,name),{recursive:true});await writeFile(path.join(root,name,'private.md'),'# Private ledger\n');}
+ assert.deepEqual((await checkPublication(root)).issues,[]);
+}));
+test('publication inventory cannot override private path exclusions for documents, registries or comments',()=>fixture(async(root,m)=>{
+ for(const name of privateNames){
+  const body='/** Private execution must stay outside public inventory. */\n';
+  await mkdir(path.join(root,name),{recursive:true});
+  for(const ext of ['md','en.md','ts'])await writeFile(path.join(root,name,`private.${ext}`),body);
+  const source=JSON.stringify({items:[]}),target=JSON.stringify({items:[],_localization:{canonicalSource:'private.json',canonicalSha256:sha(source),role:'read_only_translation',language:'en'}});
+  await writeFile(path.join(root,name,'private.json'),source);await writeFile(path.join(root,name,'private.en.json'),target);
+  const current=structuredClone(m);
+  current.documents.push({zh:`${name}/private.md`,en:`${name}/private.en.md`,zhSha256:sha(body),enSha256:sha(body)});
+  current.registries.push({source:`${name}/private.json`,target:`${name}/private.en.json`,sourceSha256:sha(source),targetSha256:sha(target)});
+  current.criticalComments.push({path:`${name}/private.ts`,sha256:sha(body)});
+  await writeFile(path.join(root,'localization.json'),JSON.stringify(current));
+  const result=await checkPublication(root);
+  assert.ok(result.issues.filter(x=>x.startsWith('excluded listed file:')).length===5,`${name}: ${JSON.stringify(result.issues)}`);
+ }
+}));
+test('publication rejects alias and traversal spellings before referenced inventory access',()=>fixture(async(root,m)=>{
+ for(const p of ['.SUPERPOWERS\\private.md','docs/../README.md','README.md.','README.md:stream']){
+  const current=structuredClone(m);current.documents[0].zh=p;
+  await writeFile(path.join(root,'localization.json'),JSON.stringify(current));
+  assert.ok((await checkPublication(root)).issues.some(x=>x.startsWith('invalid listed path:')),p);
+ }
+}));
+test('publication rejects public prose links into private trees even when target exists',()=>fixture(async(root,m)=>{
+ await mkdir(path.join(root,'.SUPERPOWERS'));await writeFile(path.join(root,'.SUPERPOWERS','ledger.md'),'# Private\n');
+ const body='# Project\n[Ledger](.SUPERPOWERS/ledger.md)\n';await writeFile(path.join(root,'README.en.md'),body);m.documents[0].enSha256=sha(body);
+ await writeFile(path.join(root,'localization.json'),JSON.stringify(m));
+ assert.ok((await checkPublication(root)).issues.some(x=>x.startsWith('excluded link:')));
+}));
+test('publication preserves ordinary public AGENTS language pairs',()=>fixture(async(root,m)=>{
+ const zh='# 协作\n',en='# Collaboration\n';await writeFile(path.join(root,'AGENTS.md'),zh);await writeFile(path.join(root,'AGENTS.en.md'),en);
+ m.documents.push({zh:'AGENTS.md',en:'AGENTS.en.md',zhSha256:sha(zh),enSha256:sha(en)});
+ await writeFile(path.join(root,'localization.json'),JSON.stringify(m));assert.deepEqual((await checkPublication(root)).issues,[]);
+}));
+test('publication retains only the two exact sealed Three vendor builds and detects altered bytes',()=>fixture(async(root,m)=>{
+ const prefix='knowledge-base/experiments/asset-reference-probe/vendor/three/r186/build/';
+ for(const name of ['three.core.js','three.module.js']){
+  const p=prefix+name,body=await readFile(new URL('../../'+p,import.meta.url));await mkdir(path.dirname(path.join(root,p)),{recursive:true});await writeFile(path.join(root,p),body);
+ }
+ assert.deepEqual((await checkPublication(root)).issues,[]);
+ const p=prefix+'three.core.js';await writeFile(path.join(root,p),'altered historical build');
+ assert.ok((await checkPublication(root)).issues.includes(`sealed vendor hash stale: ${p}`));
+ const unknown=prefix+'new.md';await writeFile(path.join(root,unknown),'generated private output');
+ m.documents.push({zh:unknown,en:unknown,zhSha256:sha('generated private output'),enSha256:sha('generated private output')});
+ await writeFile(path.join(root,'localization.json'),JSON.stringify(m));
+ assert.ok((await checkPublication(root)).issues.includes(`excluded listed file: ${unknown}`));
+}));

@@ -38,7 +38,7 @@
 | HarfBuzz | 已读shaping/cluster官方说明，源码只核对入口；版本与SHA尚未固定，尚未运行或采用依赖 | [仓库入口](https://github.com/harfbuzz/harfbuzz/blob/main/src/hb-shape.cc)、[cluster说明](https://harfbuzz.github.io/working-with-harfbuzz-clusters.html)、[职责说明](https://harfbuzz.github.io/what-does-harfbuzz-do.html)；[G002/G007记录](evidence/core-evidence-gaps.json) |
 | FreeType | 已读字符覆盖API说明，实现入口尚待固定版本审读；尚未运行或采用依赖 | [字符映射API](https://freetype.org/freetype2/docs/reference/ft2-character_mapping.html)；[G002记录](evidence/core-evidence-gaps.json) |
 | Unicode | UAX #14断行与UAX #29字素边界入口已核对；对应版本与测试数据待固定 | [UAX #14](https://www.unicode.org/reports/tr14/)、[UAX #29](https://www.unicode.org/reports/tr29/)；[G002记录](evidence/core-evidence-gaps.json) |
-| WebGPU、WGSL与WebGL | 官方API、能力与设备丢失说明及规范入口研究；资料的具体访问与已读范围按记录保留，尚无白鹭WebGPU后端验收 | [WebGPU规范](https://www.w3.org/TR/webgpu/)、[GPUWeb API](https://gpuweb.github.io/types/interfaces/GPUDevice)、[explainer](https://gpuweb.github.io/gpuweb/explainer/)、[WGSL规范](https://www.w3.org/TR/WGSL/)、[WebGL2规范](https://registry.khronos.org/webgl/specs/latest/2.0/)；[首轮记录](evidence/research-refresh-2026-10-08.json)、[图形研究](evidence/backend-graphics-research.json)、[GPU/宿主资料](evidence/backend-host-ai-research.json)、[G003记录](evidence/core-evidence-gaps.json) |
+| WebGPU、WGSL与WebGL | 官方API、能力与设备丢失说明及规范入口研究；资料的具体访问与已读范围按记录保留，历史记录当时未验收WebGPU；当前矩形范围另见新增证据 | [WebGPU规范](https://www.w3.org/TR/webgpu/)、[GPUWeb API](https://gpuweb.github.io/types/interfaces/GPUDevice)、[explainer](https://gpuweb.github.io/gpuweb/explainer/)、[WGSL规范](https://www.w3.org/TR/WGSL/)、[WebGL2规范](https://registry.khronos.org/webgl/specs/latest/2.0/)；[首轮记录](evidence/research-refresh-2026-10-08.json)、[图形研究](evidence/backend-graphics-research.json)、[GPU/宿主资料](evidence/backend-host-ai-research.json)、[G003记录](evidence/core-evidence-gaps.json) |
 | glTF / Khronos | glTF扩展规则、真实资产格式与加载边界的研究依据 | [glTF 2.0规范](https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#specifying-extensions)；[资源动画研究](evidence/reference-assets-animation.json) |
 | WHATWG与W3C输入事件 | AbortSignal与composition/IME的接口研究入口，实际宿主适配待验证 | [AbortSignal](https://dom.spec.whatwg.org/#interface-abortsignal)、[composition事件](https://www.w3.org/TR/uievents/#events-compositionevents)；[G001/G007记录](evidence/core-evidence-gaps.json) |
 | MCP | 按2025-06-18版工具与取消协议研究工程接口；协议与白鹭事务合同分别管理 | [工具规范](https://modelcontextprotocol.io/specification/2025-06-18/server/tools)、[取消规范](https://modelcontextprotocol.io/specification/2025-06-18/basic/utilities/cancellation)；[G006记录](evidence/core-evidence-gaps.json) |
@@ -53,7 +53,7 @@
 | pnpm | 11.25.0；宿主提供的包管理工具，记录为MIT，未修改；原型lockfile固定依赖 | [workspace文档](https://pnpm.io/workspaces)；[原型配置](evidence/core-framework-implementation.json)、[lockfile](evidence/core-framework-implementation.json)、[来源记录](evidence/core-framework-implementation.json) |
 | Node.js | 24.19.0；开发、测试和显式headless示例的宿主运行时，来源记录保留MIT及上游第三方声明范围 | [官方文档入口](https://nodejs.org/api/)；[工具核对](evidence/core-framework-tooling.json)、[原型来源记录](evidence/core-framework-implementation.json) |
 
-Node.js链接用于官方文档导航；实际版本依据来自本地工具记录。三个核心包当前没有第三方运行时依赖，开发工具身份与自主运行时代码分别登记。
+Node.js链接用于官方文档导航；实际版本依据来自本地工具记录。contracts/runtime没有第三方运行时依赖；engine的WebGPU准备层现在显式依赖robust-predicates 3.0.3，开发工具身份与自主运行时代码分别登记。
 
 ## 已研究的候选与待继续验证的对象
 
@@ -62,3 +62,9 @@ Node.js链接用于官方文档导航；实际版本依据来自本地工具记�
 历史白鹭资料仅按授权的来源种类、命名/行为摘要与迁移问题记录，见[命名合同摘要](evidence/egret-naming-contract-summary.json)。公开的[Egret仓库入口](https://github.com/egret-labs/egret-core/blob/master/src/egret/events/EventDispatcher.ts)可供后续按样本版本研究；该可变入口不替代实际历史版本，也不列为新核心依赖。
 
 每次新增实际依赖、研究对象或分发资产时，同步更新本页、[实现来源记录](templates/实现来源记录.md)与适用第三方声明。第一方源码与文档沿用指定仓库既有Apache-2.0许可，第三方材料按自身声明分发；本页的鸣谢不替代第三方原有声明与发行权利复核。
+
+## WebGPU基础依赖与标准
+
+Vladimir Agafonkin的[robust-predicates](https://github.com/mourner/robust-predicates/tree/v3.0.3) 3.0.3通过公共 `orient2d` 提供已表示binary64坐标的方向判断；它保持明确归属的外部依赖并适用[Unlicense](https://raw.githubusercontent.com/mourner/robust-predicates/v3.0.3/LICENSE)，其源码未移植入第一方模块。精确40820字节npm产物、SRI、已安装manifest/类型/许可及6模块73171字节安装ESM图分别记录，与浏览器实际请求区分；这些数字不是实际传输或tree-shaken包体。
+
+GPUWeb的canvas配置/current texture、queue、buffer及device错误API资料和W3C WGSL文献，为独立编写的pass与生命周期合同提供依据。读取日期、实际URL、完整规范获取限制及此前类型/latest抓取失败保留于[来源证据](evidence/webgpu-source-evidence.json)。真实浏览器门禁另列；鸣谢不表示上游背书或手机/性能/Native SDK验收。

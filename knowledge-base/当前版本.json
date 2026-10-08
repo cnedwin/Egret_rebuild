@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "version": "0.12.0",
+  "version": "0.13.0",
   "updatedAt": "2026-10-09",
   "title": "白鹭引擎重构工程",
-  "stage": "independent_rectangle_display_frame_canvas_prototype",
+  "stage": "independent_browser_webgpu_rectangle_checkpoint",
   "publication": "development_preview",
   "registries": {
     "requirements": "registry/需求.json",
@@ -25,7 +25,7 @@
     "acceptance": "reproducible_test_reports",
     "summaryStatus": "deliverable_registry"
   },
-  "engineImplementation": "partial_independent_display_frame_canvas_core",
+  "engineImplementation": "partial_independent_cpu_canvas_webgpu_rectangles",
   "engineBenchmarksRun": false,
   "creatorTaskTestsRun": false,
   "migrationAcceptanceRun": false,
@@ -63,7 +63,10 @@
     "cpuAssetImplementation": "docs/资源核心实现记录.md",
     "displayFrameContract": "docs/显示与帧执行合同.md",
     "displayFramePlan": "docs/显示与帧执行实现计划.md",
-    "displayFrameRecord": "docs/显示与帧执行实现记录.md"
+    "displayFrameRecord": "docs/显示与帧执行实现记录.md",
+    "webgpuRectangleContract": "docs/WebGPU矩形执行合同.md",
+    "webgpuRectanglePlan": "docs/WebGPU矩形实施计划.md",
+    "webgpuRectangleEvidence": "docs/WebGPU矩形实现证据.md"
   },
   "architectureContractProbesRun": true,
   "browserApiPixelProbesRun": true,
@@ -199,7 +202,7 @@
   },
   "engineeringSpecificationOnlyThisRevision": false,
   "userDesignObjectiveConfirmedThisRevision": true,
-  "newExperimentScopeThisRevision": "Independent display/frame CPU tests and desktop Canvas pixel/pointer acceptance; no GPU/Native/device/performance/full UI/migration/CI acceptance.",
+  "newExperimentScopeThisRevision": "Historical bounded browser WebGPU acceptance at 956; current local CPU/mock/core and desktop Canvas checks; final browser WebGPU run at 1aa0248 on 2026-10-08T21:23:54.294Z observed PASS and unchanged artifacts reviewed at 9d046bf. Scoped bilingual meaning SPEC PASS; operational metadata quality, required prepush and publication remain pending. No Native SDK, physical-device/performance, full UI/3D, editor, migration or CI acceptance.",
   "existingResearchExperimentsRerunThisRevision": false,
   "coreFrameworkImplementation": {
     "artifactRoot": "outputs/白鹭引擎核心框架原型",
@@ -246,5 +249,39 @@
     "devicePerformanceRun": false,
     "fullMigrationAcceptanceRun": false,
     "ciRun": false
+  },
+  "webgpuImplementation": {
+    "deliverable": "V012",
+    "state": "accepted_desktop_build_final_publication_pending",
+    "supportLevel": "experimental",
+    "protocol": "0.6",
+    "verification": "evidence/webgpu-verification.json",
+    "review": "evidence/webgpu-review.json",
+    "sourceEvidence": "evidence/webgpu-source-evidence.json",
+    "acceptedSourceCommit": "956e2f9894dc8e27291ffd0210a6cd8b4e651eab",
+    "cpuMockCoreTests": 177,
+    "negativeTypeDiagnostics": 28,
+    "boundaryFiles": 123,
+    "desktopWebGPUFrames": 42,
+    "rawAssertions": 1709,
+    "screenshots": 84,
+    "compositionAssertions": 6808,
+    "intendedNegatives": 8,
+    "unexpectedErrors": 0,
+    "browserWebGPUAcceptedAtRecordedBuild": true,
+    "finalSourceNativeBinding": "actual_1aa_native_artifacts_independently_reviewed_publication_pending",
+    "publicSemanticReview": "reviewed_with_scope_operational_quality_pending",
+    "finalPrepush": "pending_current_metadata_refresh_and_prepush",
+    "physicalPhoneAcceptanceRun": false,
+    "performanceAcceptanceRun": false,
+    "fullUIAcceptanceRun": false,
+    "fullMigrationAcceptanceRun": false,
+    "ciRun": false,
+    "remoteSubmission": "not_performed_this_revision",
+    "nativeSdkAcceptanceRun": false,
+    "finalNativeSourceCommit": "1aa0248a1ff6d8e54c42d631072223bb50483814",
+    "finalNativeExecutedAt": "2026-10-08T21:23:54.294Z",
+    "finalNativeResultSha256": "b5a8fa4adbfc559cedfc5a4da8397a31c1778502511240216bfd3004914a0933",
+    "finalNativeArtifactBinding": "evidence/webgpu-final-artifact-binding.json"
   }
 }
