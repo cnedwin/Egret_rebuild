@@ -1,3 +1,5 @@
+import type { FrameOptions2D, RenderFrame2D } from '@egret/contracts';
+import { collectFrameCommands } from '@egret/runtime';
 import type { Diagnostic, DiagnosticHandler, HostAdapter } from "@egret/contracts";
 import { EgretError, createScope, createStage, createAssetManager, reportDiagnostic } from "@egret/runtime";
 import type { AssetManager, Scope, Stage } from "@egret/runtime";
@@ -10,11 +12,16 @@ export interface EngineOptions {
   readonly onDiagnostic?: DiagnosticHandler;
 }
 
-export let constructEngine: (options: EngineOptions, timeoutMs: number, releaseSurface: () => void) => Engine;
+export let constructEngine: (options: EngineOptions, timeoutMs: number, releaseSurface: () => void, renderer:((frame:RenderFrame2D)=>unknown)|undefined) => Engine;
 const CREATION_TOKEN: unique symbol = Symbol("egret.engineFactory");
 
 /** One headless run. Construct with createEngine(), not directly. */
 export class Engine {
+  private frameBusy=false;
+  private nextFrameId=1;
+  private frameIdle:Promise<void>|undefined;
+  private releaseFrame:(()=>void)|undefined;
+  private readonly renderer:((frame:RenderFrame2D)=>unknown)|undefined;
   private currentState: "open" | "closing" | "closed" = "open";
   private readonly scopes = new Set<Scope>();
   private readonly cleanupErrors: unknown[] = [];
@@ -27,9 +34,9 @@ export class Engine {
   public readonly stage: Stage;
   public readonly assets: AssetManager;
 
-  private constructor(options: EngineOptions, timeoutMs: number, releaseSurface: () => void, token: typeof CREATION_TOKEN) {
+  private constructor(options: EngineOptions, timeoutMs: number, releaseSurface: () => void, renderer:((frame:RenderFrame2D)=>unknown)|undefined, token: typeof CREATION_TOKEN) {
     if (token !== CREATION_TOKEN) throw new EgretError("ENGINE_FACTORY_REQUIRED");
-    this.host = options.host;
+    this.host = options.host; this.renderer=renderer;
     this.timeoutMs = timeoutMs;
     this.onDiagnostic = options.onDiagnostic;
     this.releaseSurface = releaseSurface;
@@ -47,9 +54,43 @@ export class Engine {
   }
 
   static {
-    constructEngine = (options, timeoutMs, releaseSurface): Engine => new Engine(options, timeoutMs, releaseSurface, CREATION_TOKEN);
+    constructEngine = (options, timeoutMs, releaseSurface, renderer): Engine => new Engine(options, timeoutMs, releaseSurface, renderer, CREATION_TOKEN);
   }
 
+  public captureFrame(options:FrameOptions2D):RenderFrame2D { return this.executeFrame(options,false); }
+  public renderFrame(options:FrameOptions2D):RenderFrame2D { return this.executeFrame(options,true); }
+  /** Busy precedes all external reads; cleanup waits for the finally barrier. */
+  private executeFrame(options:FrameOptions2D,render:boolean):RenderFrame2D {
+    this.context.assertOpen();
+    if(this.frameBusy) throw new EgretError('FRAME_REENTRANT');
+    this.frameBusy=true;
+    this.frameIdle=new Promise<void>(resolve=>{this.releaseFrame=resolve;});
+    try {
+      if(render&&this.renderer===undefined) throw new EgretError('RENDERER_REQUIRED');
+      let width:number,height:number,clearColor:number,clearAlpha:number;
+      try { width=options.width; height=options.height; const color=options.clearColor,alpha=options.clearAlpha; clearColor=color===undefined?0:color; clearAlpha=alpha===undefined?0:alpha;
+        // Null is invalid rather than an omitted optional value.
+        const rawColor=clearColor,rawAlpha=clearAlpha;
+        if(typeof width!=='number'||!Number.isFinite(width)||width<=0||typeof height!=='number'||!Number.isFinite(height)||height<=0||typeof rawColor!=='number'||!Number.isInteger(rawColor)||rawColor<0||rawColor>0xffffff||typeof rawAlpha!=='number'||!Number.isFinite(rawAlpha)||rawAlpha<0||rawAlpha>1) throw new EgretError('INVALID_FRAME_OPTIONS');
+      } catch(cause) { if(cause instanceof EgretError) throw cause; throw new EgretError('INVALID_FRAME_OPTIONS',{cause}); }
+      this.context.assertOpen();
+      const commands=collectFrameCommands(this.stage);
+      this.context.assertOpen();
+      if(!Number.isSafeInteger(this.nextFrameId)||this.nextFrameId<=0) throw new EgretError('FRAME_ID_EXHAUSTED');
+      const frame=Object.freeze({frameId:this.nextFrameId++,width,height,clearColor,clearAlpha,commands});
+      if(render) {
+        try {
+          const result=Reflect.apply(this.renderer!,this.host,[frame]);
+          if(result!==undefined) {
+            // Observe native async failures while rejecting the asynchronous port.
+            if(result instanceof Promise) void Reflect.apply(Promise.prototype.then,result,[undefined,()=>{}]);
+            throw new EgretError('INVALID_RENDERER');
+          }
+        } catch(cause) { this.context.report({code:'FRAME_RENDER_FAILED',phase:'graphics',severity:'error',cause}); throw new EgretError('FRAME_RENDER_FAILED',{cause}); }
+      }
+      return frame;
+    } finally { this.frameBusy=false; const release=this.releaseFrame; this.releaseFrame=undefined; this.frameIdle=undefined; release?.(); }
+  }
   public createScope(): Scope {
     this.context.assertOpen();
     const scope = createScope(this.context, (closed): void => { this.scopes.delete(closed); });
@@ -72,6 +113,7 @@ export class Engine {
   // Scope and Stage cleanup precede CPU assets, stop and asynchronous host close.
   private async runClose(): Promise<void> {
     try {
+      if(this.frameIdle !== undefined) await this.frameIdle;
       for (const scope of [...this.scopes].reverse()) {
         try { scope.dispose(); }
         catch (cause) {
@@ -100,3 +142,7 @@ export class Engine {
     }
   }
 }
+
+
+
+

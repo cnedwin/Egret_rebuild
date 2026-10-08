@@ -52,3 +52,15 @@ new AssetLease();
 // @ts-expect-error Internal manager factory is not a facade API.
 import { createAssetManager } from "@egret/engine";
 void broadType; void broadRef;
+
+import type {RenderFrame2D, RenderHostAdapter} from '@egret/engine';
+declare const capturedFrame:RenderFrame2D;
+// @ts-expect-error Frames are immutable headers.
+capturedFrame.width=10;
+// @ts-expect-error Commands are readonly snapshots.
+capturedFrame.commands.push(capturedFrame.commands[0]!);
+// @ts-expect-error Geometry is immutable.
+capturedFrame.commands[0]!.matrix.tx=1;
+declare const baseRenderHost:RenderHostAdapter;
+// @ts-expect-error Async rendering cannot satisfy the synchronous submission port.
+const asyncRenderHost:RenderHostAdapter={...baseRenderHost,async renderFrame(){}};

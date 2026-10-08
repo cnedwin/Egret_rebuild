@@ -48,7 +48,8 @@ for (const [name, allowed] of Object.entries(expected)) {
   if (JSON.stringify(references) !== JSON.stringify(expectedReferences)) throw new Error(`${name}: project references mismatch`);
 }
 const facade = await import("@egret/engine");
-for (const internal of ["createScope", "createStage", "constructEngine", "createAssetManager", "createAssetLease", "revokeAssetLease", "assertAssetRef", "assertAssetType", "reportDiagnostic", "bind", "engineOf", "ownerOf"]) {
+for (const internal of ["collectFrameCommands", "createScope", "createStage", "constructEngine", "createAssetManager", "createAssetLease", "revokeAssetLease", "assertAssetRef", "assertAssetType", "reportDiagnostic", "bind", "engineOf", "ownerOf"]) {
   if (internal in facade) throw new Error(`Internal lifecycle port leaked: ${internal}`);
 }
 console.log(`Boundary check PASS: three private workspace packages, actual exports resolution, ${inspected} source/build/declaration files, core without DOM/Node globals.`);
+

@@ -17,3 +17,6 @@ export type { AssetProvider, AssetAcquireOptions, AssetLoadContext } from "./Ass
 export { AssetLease } from "./AssetLease.js";
 export { createAssetType, createAssetRef } from "./AssetRef.js";
 export type { AssetType, AssetRef } from "./AssetRef.js";
+export { Sprite } from './Sprite.js';
+export { Graphics } from './Graphics.js';
+export { collectFrameCommands } from './frameCapture.js';

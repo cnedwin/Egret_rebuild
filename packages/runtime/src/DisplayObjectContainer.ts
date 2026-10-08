@@ -38,6 +38,7 @@ export class DisplayObjectContainer extends DisplayObject {
 
   /** Detach without disposing or transferring the cleanup owner. */
   public removeChild<T extends DisplayObject>(child: T): T {
+    engineOf(this)?.assertOpen(); assertLive(this); assertLive(child);
     removeNode(this, child);
     return child;
   }
@@ -53,6 +54,7 @@ export class DisplayObjectContainer extends DisplayObject {
     this.assertUsable();
     assertLive(this);
     this.validateIndex(index);
+    engineOf(this)?.assertOpen();
     setNodeIndex(this, child, index);
   }
 
@@ -101,3 +103,4 @@ export class DisplayObjectContainer extends DisplayObject {
     if (failures.length !== 0) throw new EgretError("DISPLAY_TREE_CLEANUP_FAILED", { cause: failures[0], cleanupErrors: failures.slice(1) });
   }
 }
+

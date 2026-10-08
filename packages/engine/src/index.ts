@@ -6,3 +6,5 @@ export type { EgretErrorOptions, EventType, EventTypeOptions, EventPhase, EventL
 export type { CancellationListener, CancellationSignal, Disposable, Releasable, ScopeValue, Diagnostic, DiagnosticHandler, HostAdapter } from "@egret/contracts";
 export { AssetManager, AssetLease, createAssetType, createAssetRef } from "@egret/runtime";
 export type { AssetProvider, AssetAcquireOptions, AssetLoadContext, AssetType, AssetRef } from "@egret/runtime";
+export { Sprite, Graphics } from '@egret/runtime';
+export type { Matrix2D, Rectangle2D, ClipRectangle2D, RectangleCommand2D, FrameOptions2D, RenderFrame2D, RenderHostAdapter } from '@egret/contracts';
