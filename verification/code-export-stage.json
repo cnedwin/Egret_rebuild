@@ -1,0 +1,802 @@
+{
+  "schemaVersion": "1.0",
+  "date": "2026-10-08",
+  "target": "outputs/白鹭引擎开源仓库候选",
+  "sourceOriginSha256": "f24be42b6ef3d6564e5892f0c4edc7c779bda11b0508025bd784fb06a334fba3",
+  "repository": {
+    "url": "https://github.com/cnedwin/Egret_rebuild",
+    "visibility": "public",
+    "existingLicense": "Apache-2.0",
+    "licenseGitBlob": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64",
+    "candidateUploadPerformed": false
+  },
+  "copiedFiles": [
+    {
+      "path": "examples/headless.mjs",
+      "sha256": "bbb09be9a9ab1b93fbe5af723612e324e71e14b27434f4a953ee0b12a60ddccf",
+      "bytes": 1752,
+      "originalSha256": "bbb09be9a9ab1b93fbe5af723612e324e71e14b27434f4a953ee0b12a60ddccf",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "package.json",
+      "sha256": "dc8b4a1df35b654d52a366010430083495daf807144aa8882b01a0b82fb45234",
+      "bytes": 565,
+      "originalSha256": "dc8b4a1df35b654d52a366010430083495daf807144aa8882b01a0b82fb45234",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/contracts/package.json",
+      "sha256": "fceaef2ae55a77347ce9f99acd2165d36e991d89c76bf0480ff5048f3e7a94a1",
+      "bytes": 179,
+      "originalSha256": "fceaef2ae55a77347ce9f99acd2165d36e991d89c76bf0480ff5048f3e7a94a1",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/contracts/src/CancellationSignal.ts",
+      "sha256": "a4e778a2bee503ec70249f861f60dc46718dc64e182448d9d5a3b43a10f1f34e",
+      "bytes": 425,
+      "originalSha256": "a4e778a2bee503ec70249f861f60dc46718dc64e182448d9d5a3b43a10f1f34e",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/contracts/src/Diagnostic.ts",
+      "sha256": "93aeef7a51e372dc1418bd382d3371ec91044a1bc48de0b308cc6d5007db89a3",
+      "bytes": 377,
+      "originalSha256": "93aeef7a51e372dc1418bd382d3371ec91044a1bc48de0b308cc6d5007db89a3",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/contracts/src/Disposable.ts",
+      "sha256": "75cc8c7125bc0a7d1641c32825e884311da13dba48fa4822a53465e67129504c",
+      "bytes": 154,
+      "originalSha256": "75cc8c7125bc0a7d1641c32825e884311da13dba48fa4822a53465e67129504c",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/contracts/src/HostAdapter.ts",
+      "sha256": "dd095653a2ee93e20a44e0ab504ef7edf991bde982e2bb924d2fb21fe072da79",
+      "bytes": 588,
+      "originalSha256": "dd095653a2ee93e20a44e0ab504ef7edf991bde982e2bb924d2fb21fe072da79",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/contracts/src/index.ts",
+      "sha256": "85f4a29e7e04334ab941dfe7a848edacc3a597dc5621820366c7cadd257eda13",
+      "bytes": 287,
+      "originalSha256": "85f4a29e7e04334ab941dfe7a848edacc3a597dc5621820366c7cadd257eda13",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/contracts/tsconfig.json",
+      "sha256": "65830141c9e37d6d5a604ae796c5fe8b9258040f9e1f29547c0b238829b989d6",
+      "bytes": 135,
+      "originalSha256": "65830141c9e37d6d5a604ae796c5fe8b9258040f9e1f29547c0b238829b989d6",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/engine/package.json",
+      "sha256": "26b7c45f629f7c8a7d41c466fdd06741163a2afd9b6002075c6341530ed2e663",
+      "bytes": 266,
+      "originalSha256": "26b7c45f629f7c8a7d41c466fdd06741163a2afd9b6002075c6341530ed2e663",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/engine/src/Engine.ts",
+      "sha256": "d5b4fcfc5bcf921d6b75aa4a33d7e71412595e8e377e5ff9b186b19ec6868f58",
+      "bytes": 3851,
+      "originalSha256": "d5b4fcfc5bcf921d6b75aa4a33d7e71412595e8e377e5ff9b186b19ec6868f58",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/engine/src/closeHost.ts",
+      "sha256": "3b392c336949001716d7da445d80c4ac0625b45582dbdaec2af9c20f46d5f333",
+      "bytes": 2231,
+      "originalSha256": "3b392c336949001716d7da445d80c4ac0625b45582dbdaec2af9c20f46d5f333",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/engine/src/createEngine.ts",
+      "sha256": "6298922aa970b883fd5f84a098a44d5d4654736446709856381416f182e0aaf3",
+      "bytes": 1092,
+      "originalSha256": "6298922aa970b883fd5f84a098a44d5d4654736446709856381416f182e0aaf3",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/engine/src/index.ts",
+      "sha256": "45f2377ffe6e180815d68b8b2dcbddaca8eaa167c142a356d130da8ce008e2f0",
+      "bytes": 595,
+      "originalSha256": "45f2377ffe6e180815d68b8b2dcbddaca8eaa167c142a356d130da8ce008e2f0",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/engine/src/surfaceOwnership.ts",
+      "sha256": "6b12fb7fe691212777ffcc031ef2f534b1c665d1f9df7617f0dac2574331acac",
+      "bytes": 497,
+      "originalSha256": "6b12fb7fe691212777ffcc031ef2f534b1c665d1f9df7617f0dac2574331acac",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/engine/tsconfig.json",
+      "sha256": "ac07062d5460bb112739e3ef98e2f16f7479b1f4a18c7add69c46c2880ac68a4",
+      "bytes": 207,
+      "originalSha256": "ac07062d5460bb112739e3ef98e2f16f7479b1f4a18c7add69c46c2880ac68a4",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/runtime/package.json",
+      "sha256": "546d482c0bd990164d79acaec52953245314df6d50117c85b6c6ec5856f4f7ee",
+      "bytes": 234,
+      "originalSha256": "546d482c0bd990164d79acaec52953245314df6d50117c85b6c6ec5856f4f7ee",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/runtime/src/CancellationController.ts",
+      "sha256": "d2bbfd7d23269df59651d628e8f4c448be120fb46e1e5307d718aec43c8c7515",
+      "bytes": 2244,
+      "originalSha256": "d2bbfd7d23269df59651d628e8f4c448be120fb46e1e5307d718aec43c8c7515",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/runtime/src/DisplayObject.ts",
+      "sha256": "a5744fe971a6490e54eda1b6cd7aa2ff18f8dd8e172eca83e458b89a42febe39",
+      "bytes": 1139,
+      "originalSha256": "a5744fe971a6490e54eda1b6cd7aa2ff18f8dd8e172eca83e458b89a42febe39",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/runtime/src/DisplayObjectContainer.ts",
+      "sha256": "14ad9af6c95917b94641fba630adc26b707aa2fedc17707627a87b55dd1e6682",
+      "bytes": 4297,
+      "originalSha256": "14ad9af6c95917b94641fba630adc26b707aa2fedc17707627a87b55dd1e6682",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/runtime/src/EgretError.ts",
+      "sha256": "9a4ef5c97c118c3ddc91f895741cfa259cbb3906d5943f733ee5e07f2ed8a8dc",
+      "bytes": 574,
+      "originalSha256": "9a4ef5c97c118c3ddc91f895741cfa259cbb3906d5943f733ee5e07f2ed8a8dc",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/runtime/src/Event.ts",
+      "sha256": "066015292830169f2ff718f6617ba55392f3666289922a0098eabb8210b493b5",
+      "bytes": 3117,
+      "originalSha256": "066015292830169f2ff718f6617ba55392f3666289922a0098eabb8210b493b5",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/runtime/src/EventDispatcher.ts",
+      "sha256": "2d1d6613d83ea9e904c1e4074db7b466911f3689e8c81e60d63d96481c0e6008",
+      "bytes": 6153,
+      "originalSha256": "2d1d6613d83ea9e904c1e4074db7b466911f3689e8c81e60d63d96481c0e6008",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/runtime/src/Scope.ts",
+      "sha256": "840ef7f714e80f2eccca974dfca972dc2e94ecbe74da688f7ebe4c3d9b7ceebd",
+      "bytes": 4443,
+      "originalSha256": "840ef7f714e80f2eccca974dfca972dc2e94ecbe74da688f7ebe4c3d9b7ceebd",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/runtime/src/Stage.ts",
+      "sha256": "35ee9c782ba437e9dcd96c29891415f13151fa2e995ac0d40274813abb92f280",
+      "bytes": 940,
+      "originalSha256": "35ee9c782ba437e9dcd96c29891415f13151fa2e995ac0d40274813abb92f280",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/runtime/src/diagnostics.ts",
+      "sha256": "bb8668e84ec9703f9f9b0380efa37c93f876b38c8ffb2ed2aa716f3efc32346d",
+      "bytes": 515,
+      "originalSha256": "bb8668e84ec9703f9f9b0380efa37c93f876b38c8ffb2ed2aa716f3efc32346d",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/runtime/src/displayTreeState.ts",
+      "sha256": "e6606b65ba3cdd5b18691121bdb028186eda6c4f2d8fe836bec3f8a1a9a61ff9",
+      "bytes": 3207,
+      "originalSha256": "e6606b65ba3cdd5b18691121bdb028186eda6c4f2d8fe836bec3f8a1a9a61ff9",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/runtime/src/index.ts",
+      "sha256": "3af52ebe93ac933d989ceb0f5abadd31e72f9436fda1d2206b3e71d7f1216310",
+      "bytes": 796,
+      "originalSha256": "3af52ebe93ac933d989ceb0f5abadd31e72f9436fda1d2206b3e71d7f1216310",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/runtime/src/ownership.ts",
+      "sha256": "0fbd5497c87995998c3d080d4909b3caa9738ec8ee5743120c86e9cdcceeaeab",
+      "bytes": 3073,
+      "originalSha256": "0fbd5497c87995998c3d080d4909b3caa9738ec8ee5743120c86e9cdcceeaeab",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/runtime/tsconfig.json",
+      "sha256": "ed31ec963ca62cee11d41071686c8a3dc58554155e120f52d1747254087f1bac",
+      "bytes": 181,
+      "originalSha256": "ed31ec963ca62cee11d41071686c8a3dc58554155e120f52d1747254087f1bac",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "sha256": "f58343405f8b75488966415da04a69edd5cbf01a32076ff08b75132fa476877c",
+      "bytes": 8033,
+      "originalSha256": "f58343405f8b75488966415da04a69edd5cbf01a32076ff08b75132fa476877c",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "pnpm-workspace.yaml",
+      "sha256": "f51d3d153b0f3cdbb82186bd1c3eea9066f4e3a15828985952feeee965a75534",
+      "bytes": 51,
+      "originalSha256": "f51d3d153b0f3cdbb82186bd1c3eea9066f4e3a15828985952feeee965a75534",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "tests/cancellation-scope.test.mjs",
+      "sha256": "32a1a3c47fa41ebfd122be8fa06370e51a4f0854a2ab69be5da48966b96e9566",
+      "bytes": 4803,
+      "originalSha256": "32a1a3c47fa41ebfd122be8fa06370e51a4f0854a2ab69be5da48966b96e9566",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "tests/display-tree.test.mjs",
+      "sha256": "6302c03f672ec4878e7bff6fffb4c6bf53ff4b5ce31d1ef5b0485e597b9bbbfe",
+      "bytes": 6453,
+      "originalSha256": "6302c03f672ec4878e7bff6fffb4c6bf53ff4b5ce31d1ef5b0485e597b9bbbfe",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "tests/engine.test.mjs",
+      "sha256": "36a8e472bf868528394c98f16fa85ec664991fa76158d272723973b60a89bcde",
+      "bytes": 9096,
+      "originalSha256": "36a8e472bf868528394c98f16fa85ec664991fa76158d272723973b60a89bcde",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "tests/events.test.mjs",
+      "sha256": "4e75d12b5aee9f927425a1a65c401616de18347b1402ec86075bbb5247951d3d",
+      "bytes": 6360,
+      "originalSha256": "4e75d12b5aee9f927425a1a65c401616de18347b1402ec86075bbb5247951d3d",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "tests/helpers.mjs",
+      "sha256": "20e7dd30f54b3a81d35f666c8370e7f014e4559c68222727bc88fd377efc1af7",
+      "bytes": 997,
+      "originalSha256": "20e7dd30f54b3a81d35f666c8370e7f014e4559c68222727bc88fd377efc1af7",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "tests/integration.test.mjs",
+      "sha256": "54716569f5744b00dcb32a512d122fdb3b91f158b1e5446a5d394b3f201eb933",
+      "bytes": 843,
+      "originalSha256": "54716569f5744b00dcb32a512d122fdb3b91f158b1e5446a5d394b3f201eb933",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "tests/review-regressions.test.mjs",
+      "sha256": "b56d24957fc95c6068bb215f4a1b2aca310760831e79c89c27dd5724c8e67b17",
+      "bytes": 8232,
+      "originalSha256": "b56d24957fc95c6068bb215f4a1b2aca310760831e79c89c27dd5724c8e67b17",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "tests/types/negative.ts",
+      "sha256": "f2aba4d444432063b862b42822b392b82d09c8d91458cc80f5478f136115ce7b",
+      "bytes": 1655,
+      "originalSha256": "f2aba4d444432063b862b42822b392b82d09c8d91458cc80f5478f136115ce7b",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "tests/types/positive.ts",
+      "sha256": "1041d77568560fb1d08fa3a4dbb86cb1e77cc48dace50884b5173c4459713aeb",
+      "bytes": 1262,
+      "originalSha256": "1041d77568560fb1d08fa3a4dbb86cb1e77cc48dace50884b5173c4459713aeb",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "tests/types/tsconfig.json",
+      "sha256": "88a3194ab9d7990646c7957e96e8d059ee16e79fe88373543a763da38a84dae1",
+      "bytes": 197,
+      "originalSha256": "88a3194ab9d7990646c7957e96e8d059ee16e79fe88373543a763da38a84dae1",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "tools/build.mjs",
+      "sha256": "0f04552d3592aa613d3c6fc4114559a3669ad764d0f5321d1c049a568701e6c4",
+      "bytes": 455,
+      "originalSha256": "0f04552d3592aa613d3c6fc4114559a3669ad764d0f5321d1c049a568701e6c4",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "tools/check-boundaries.mjs",
+      "sha256": "e7994ad6962e55fba9b481d50377ede30729b345e6a901e2089b235edfde9491",
+      "bytes": 3353,
+      "originalSha256": "e7994ad6962e55fba9b481d50377ede30729b345e6a901e2089b235edfde9491",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "tools/check-types.mjs",
+      "sha256": "332d2c161ceb9ec7d75429c89a3d2c95af24f2cf5eed68b92b09532d1ce691a4",
+      "bytes": 2031,
+      "originalSha256": "332d2c161ceb9ec7d75429c89a3d2c95af24f2cf5eed68b92b09532d1ce691a4",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "tools/test.mjs",
+      "sha256": "6d8fdbf59b3c9d1a4aab917ae9ab8167818c0716a6219f5f91c5893bb2c4eb53",
+      "bytes": 514,
+      "originalSha256": "6d8fdbf59b3c9d1a4aab917ae9ab8167818c0716a6219f5f91c5893bb2c4eb53",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "tools/verify.mjs",
+      "sha256": "9c789b762d598c72040992d8ffb9041f75180d39b7556761365ef0998d5b0b4a",
+      "bytes": 525,
+      "originalSha256": "9c789b762d598c72040992d8ffb9041f75180d39b7556761365ef0998d5b0b4a",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "tsconfig.base.json",
+      "sha256": "b7a31fb9f93a93e20bfdcf33c135acb45cb3a6895a8b3e7006bd85214ddc1008",
+      "bytes": 446,
+      "originalSha256": "b7a31fb9f93a93e20bfdcf33c135acb45cb3a6895a8b3e7006bd85214ddc1008",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "tsconfig.json",
+      "sha256": "e07fc831f31dc9ea9ecb612be734f4b533e32d7dbbb246abffaa8b23111076aa",
+      "bytes": 155,
+      "originalSha256": "e07fc831f31dc9ea9ecb612be734f4b533e32d7dbbb246abffaa8b23111076aa",
+      "originRole": "byte-identical prototype whitelist export"
+    }
+  ],
+  "projectedFiles": [
+    {
+      "path": "packages/contracts/README.md",
+      "sha256": "06e85d777edb4894a27fec9060e2384b4581df25e4a38d618e39ab091147dc9c",
+      "bytes": 900,
+      "originalSha256": "f631cb1809f3160b76b5b4451c8820c264f269da2b64842c96abeaae702607ad",
+      "originRole": "public documentation projection",
+      "change": "Preserves package responsibilities and lifecycle semantics; removes internal review history wording and adds contributor/source/license links."
+    },
+    {
+      "path": "packages/engine/README.md",
+      "sha256": "d990d8fa688a458975306d039b066b4a0052af3045e2a8de739f0969fc2a7554",
+      "bytes": 1137,
+      "originalSha256": "2b39a8a5f988a0c4d7271d30da7f8c04a735149e00b6f0f28f2c59940e5842f0",
+      "originRole": "public documentation projection",
+      "change": "Preserves package responsibilities and lifecycle semantics; removes internal review history wording and adds contributor/source/license links."
+    },
+    {
+      "path": "packages/runtime/README.md",
+      "sha256": "49356bf05a322aecf1be156eeed65baff15797a7d719766a678d928b068e3a76",
+      "bytes": 1262,
+      "originalSha256": "dadf19b00a845d7e8ed154644f2214b720d7acd03f4450a2e9a002be5d085911",
+      "originRole": "public documentation projection",
+      "change": "Preserves package responsibilities and lifecycle semantics; removes internal review history wording and adds contributor/source/license links."
+    },
+    {
+      "path": "README.md",
+      "sha256": "d4afc0a47a13a601593327ff62fcecf53e494a6b8c39efd551c618935aee759f",
+      "bytes": 2465,
+      "originRole": "new public contributor documentation/configuration"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "sha256": "da6292f0408cc88f776b7d113924b364dd045b94d3a7541e85d71e1964ed4dae",
+      "bytes": 2296,
+      "originRole": "new public contributor documentation/configuration"
+    },
+    {
+      "path": "ACKNOWLEDGEMENTS.md",
+      "sha256": "e0cc549b5582267a366d1d8b1bc7fc782f2a1f1b4fd6da00a4b38e40d8f9f377",
+      "bytes": 1758,
+      "originRole": "new public contributor documentation/configuration"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "d133cdcd7d1f41fe0ce26bee63568cd0c4f23c6e6e7f9828d0768e95f53a05b4",
+      "bytes": 1509,
+      "originRole": "new public contributor documentation/configuration"
+    },
+    {
+      "path": "PUBLICATION.md",
+      "sha256": "d8ffcf54ab1657181c876b1591f4d82207fb2ed3b48ac9944980b0a478b0a120",
+      "bytes": 1765,
+      "originRole": "new public contributor documentation/configuration"
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "27e4dfdb22f3796b475c100f56d0345a87066358dd324c276f8ad4aa72c7c6d5",
+      "bytes": 97,
+      "originRole": "new public contributor documentation/configuration"
+    },
+    {
+      "path": "source-origin.json",
+      "sha256": "aef303142fcb02d05095c48fe37a24170559061dc7c98a6f38b1d226de9aac3a",
+      "bytes": 30645,
+      "originRole": "public source-origin projection",
+      "originalSha256": "f24be42b6ef3d6564e5892f0c4edc7c779bda11b0508025bd784fb06a334fba3",
+      "change": "Retains historical specification hashes and review/brief/log identities without publishing internal files; updates target repository/current license and explicitly separates historical from fresh verification."
+    }
+  ],
+  "copiedFileCount": 49,
+  "projectedFileCount": 10,
+  "ownedFileCount": 59,
+  "originalFileCheck": [
+    {
+      "path": ".gitignore",
+      "expected": "b7b3d3eb8531dbfafa6e72ffaad4c579156a5b9be03490556054fff7ed37844e",
+      "actual": "b7b3d3eb8531dbfafa6e72ffaad4c579156a5b9be03490556054fff7ed37844e",
+      "matches": true
+    },
+    {
+      "path": "README.md",
+      "expected": "6b3579e316a686d789681a2f47dc87eb6d5970451f84858abd6a347386475d50",
+      "actual": "6b3579e316a686d789681a2f47dc87eb6d5970451f84858abd6a347386475d50",
+      "matches": true
+    },
+    {
+      "path": "examples/headless.mjs",
+      "expected": "bbb09be9a9ab1b93fbe5af723612e324e71e14b27434f4a953ee0b12a60ddccf",
+      "actual": "bbb09be9a9ab1b93fbe5af723612e324e71e14b27434f4a953ee0b12a60ddccf",
+      "matches": true
+    },
+    {
+      "path": "package.json",
+      "expected": "dc8b4a1df35b654d52a366010430083495daf807144aa8882b01a0b82fb45234",
+      "actual": "dc8b4a1df35b654d52a366010430083495daf807144aa8882b01a0b82fb45234",
+      "matches": true
+    },
+    {
+      "path": "packages/contracts/README.md",
+      "expected": "f631cb1809f3160b76b5b4451c8820c264f269da2b64842c96abeaae702607ad",
+      "actual": "f631cb1809f3160b76b5b4451c8820c264f269da2b64842c96abeaae702607ad",
+      "matches": true
+    },
+    {
+      "path": "packages/contracts/package.json",
+      "expected": "fceaef2ae55a77347ce9f99acd2165d36e991d89c76bf0480ff5048f3e7a94a1",
+      "actual": "fceaef2ae55a77347ce9f99acd2165d36e991d89c76bf0480ff5048f3e7a94a1",
+      "matches": true
+    },
+    {
+      "path": "packages/contracts/src/CancellationSignal.ts",
+      "expected": "a4e778a2bee503ec70249f861f60dc46718dc64e182448d9d5a3b43a10f1f34e",
+      "actual": "a4e778a2bee503ec70249f861f60dc46718dc64e182448d9d5a3b43a10f1f34e",
+      "matches": true
+    },
+    {
+      "path": "packages/contracts/src/Diagnostic.ts",
+      "expected": "93aeef7a51e372dc1418bd382d3371ec91044a1bc48de0b308cc6d5007db89a3",
+      "actual": "93aeef7a51e372dc1418bd382d3371ec91044a1bc48de0b308cc6d5007db89a3",
+      "matches": true
+    },
+    {
+      "path": "packages/contracts/src/Disposable.ts",
+      "expected": "75cc8c7125bc0a7d1641c32825e884311da13dba48fa4822a53465e67129504c",
+      "actual": "75cc8c7125bc0a7d1641c32825e884311da13dba48fa4822a53465e67129504c",
+      "matches": true
+    },
+    {
+      "path": "packages/contracts/src/HostAdapter.ts",
+      "expected": "dd095653a2ee93e20a44e0ab504ef7edf991bde982e2bb924d2fb21fe072da79",
+      "actual": "dd095653a2ee93e20a44e0ab504ef7edf991bde982e2bb924d2fb21fe072da79",
+      "matches": true
+    },
+    {
+      "path": "packages/contracts/src/index.ts",
+      "expected": "85f4a29e7e04334ab941dfe7a848edacc3a597dc5621820366c7cadd257eda13",
+      "actual": "85f4a29e7e04334ab941dfe7a848edacc3a597dc5621820366c7cadd257eda13",
+      "matches": true
+    },
+    {
+      "path": "packages/contracts/tsconfig.json",
+      "expected": "65830141c9e37d6d5a604ae796c5fe8b9258040f9e1f29547c0b238829b989d6",
+      "actual": "65830141c9e37d6d5a604ae796c5fe8b9258040f9e1f29547c0b238829b989d6",
+      "matches": true
+    },
+    {
+      "path": "packages/engine/README.md",
+      "expected": "2b39a8a5f988a0c4d7271d30da7f8c04a735149e00b6f0f28f2c59940e5842f0",
+      "actual": "2b39a8a5f988a0c4d7271d30da7f8c04a735149e00b6f0f28f2c59940e5842f0",
+      "matches": true
+    },
+    {
+      "path": "packages/engine/package.json",
+      "expected": "26b7c45f629f7c8a7d41c466fdd06741163a2afd9b6002075c6341530ed2e663",
+      "actual": "26b7c45f629f7c8a7d41c466fdd06741163a2afd9b6002075c6341530ed2e663",
+      "matches": true
+    },
+    {
+      "path": "packages/engine/src/Engine.ts",
+      "expected": "d5b4fcfc5bcf921d6b75aa4a33d7e71412595e8e377e5ff9b186b19ec6868f58",
+      "actual": "d5b4fcfc5bcf921d6b75aa4a33d7e71412595e8e377e5ff9b186b19ec6868f58",
+      "matches": true
+    },
+    {
+      "path": "packages/engine/src/closeHost.ts",
+      "expected": "3b392c336949001716d7da445d80c4ac0625b45582dbdaec2af9c20f46d5f333",
+      "actual": "3b392c336949001716d7da445d80c4ac0625b45582dbdaec2af9c20f46d5f333",
+      "matches": true
+    },
+    {
+      "path": "packages/engine/src/createEngine.ts",
+      "expected": "6298922aa970b883fd5f84a098a44d5d4654736446709856381416f182e0aaf3",
+      "actual": "6298922aa970b883fd5f84a098a44d5d4654736446709856381416f182e0aaf3",
+      "matches": true
+    },
+    {
+      "path": "packages/engine/src/index.ts",
+      "expected": "45f2377ffe6e180815d68b8b2dcbddaca8eaa167c142a356d130da8ce008e2f0",
+      "actual": "45f2377ffe6e180815d68b8b2dcbddaca8eaa167c142a356d130da8ce008e2f0",
+      "matches": true
+    },
+    {
+      "path": "packages/engine/src/surfaceOwnership.ts",
+      "expected": "6b12fb7fe691212777ffcc031ef2f534b1c665d1f9df7617f0dac2574331acac",
+      "actual": "6b12fb7fe691212777ffcc031ef2f534b1c665d1f9df7617f0dac2574331acac",
+      "matches": true
+    },
+    {
+      "path": "packages/engine/tsconfig.json",
+      "expected": "ac07062d5460bb112739e3ef98e2f16f7479b1f4a18c7add69c46c2880ac68a4",
+      "actual": "ac07062d5460bb112739e3ef98e2f16f7479b1f4a18c7add69c46c2880ac68a4",
+      "matches": true
+    },
+    {
+      "path": "packages/runtime/README.md",
+      "expected": "dadf19b00a845d7e8ed154644f2214b720d7acd03f4450a2e9a002be5d085911",
+      "actual": "dadf19b00a845d7e8ed154644f2214b720d7acd03f4450a2e9a002be5d085911",
+      "matches": true
+    },
+    {
+      "path": "packages/runtime/package.json",
+      "expected": "546d482c0bd990164d79acaec52953245314df6d50117c85b6c6ec5856f4f7ee",
+      "actual": "546d482c0bd990164d79acaec52953245314df6d50117c85b6c6ec5856f4f7ee",
+      "matches": true
+    },
+    {
+      "path": "packages/runtime/src/CancellationController.ts",
+      "expected": "d2bbfd7d23269df59651d628e8f4c448be120fb46e1e5307d718aec43c8c7515",
+      "actual": "d2bbfd7d23269df59651d628e8f4c448be120fb46e1e5307d718aec43c8c7515",
+      "matches": true
+    },
+    {
+      "path": "packages/runtime/src/DisplayObject.ts",
+      "expected": "a5744fe971a6490e54eda1b6cd7aa2ff18f8dd8e172eca83e458b89a42febe39",
+      "actual": "a5744fe971a6490e54eda1b6cd7aa2ff18f8dd8e172eca83e458b89a42febe39",
+      "matches": true
+    },
+    {
+      "path": "packages/runtime/src/DisplayObjectContainer.ts",
+      "expected": "14ad9af6c95917b94641fba630adc26b707aa2fedc17707627a87b55dd1e6682",
+      "actual": "14ad9af6c95917b94641fba630adc26b707aa2fedc17707627a87b55dd1e6682",
+      "matches": true
+    },
+    {
+      "path": "packages/runtime/src/EgretError.ts",
+      "expected": "9a4ef5c97c118c3ddc91f895741cfa259cbb3906d5943f733ee5e07f2ed8a8dc",
+      "actual": "9a4ef5c97c118c3ddc91f895741cfa259cbb3906d5943f733ee5e07f2ed8a8dc",
+      "matches": true
+    },
+    {
+      "path": "packages/runtime/src/Event.ts",
+      "expected": "066015292830169f2ff718f6617ba55392f3666289922a0098eabb8210b493b5",
+      "actual": "066015292830169f2ff718f6617ba55392f3666289922a0098eabb8210b493b5",
+      "matches": true
+    },
+    {
+      "path": "packages/runtime/src/EventDispatcher.ts",
+      "expected": "2d1d6613d83ea9e904c1e4074db7b466911f3689e8c81e60d63d96481c0e6008",
+      "actual": "2d1d6613d83ea9e904c1e4074db7b466911f3689e8c81e60d63d96481c0e6008",
+      "matches": true
+    },
+    {
+      "path": "packages/runtime/src/Scope.ts",
+      "expected": "840ef7f714e80f2eccca974dfca972dc2e94ecbe74da688f7ebe4c3d9b7ceebd",
+      "actual": "840ef7f714e80f2eccca974dfca972dc2e94ecbe74da688f7ebe4c3d9b7ceebd",
+      "matches": true
+    },
+    {
+      "path": "packages/runtime/src/Stage.ts",
+      "expected": "35ee9c782ba437e9dcd96c29891415f13151fa2e995ac0d40274813abb92f280",
+      "actual": "35ee9c782ba437e9dcd96c29891415f13151fa2e995ac0d40274813abb92f280",
+      "matches": true
+    },
+    {
+      "path": "packages/runtime/src/diagnostics.ts",
+      "expected": "bb8668e84ec9703f9f9b0380efa37c93f876b38c8ffb2ed2aa716f3efc32346d",
+      "actual": "bb8668e84ec9703f9f9b0380efa37c93f876b38c8ffb2ed2aa716f3efc32346d",
+      "matches": true
+    },
+    {
+      "path": "packages/runtime/src/displayTreeState.ts",
+      "expected": "e6606b65ba3cdd5b18691121bdb028186eda6c4f2d8fe836bec3f8a1a9a61ff9",
+      "actual": "e6606b65ba3cdd5b18691121bdb028186eda6c4f2d8fe836bec3f8a1a9a61ff9",
+      "matches": true
+    },
+    {
+      "path": "packages/runtime/src/index.ts",
+      "expected": "3af52ebe93ac933d989ceb0f5abadd31e72f9436fda1d2206b3e71d7f1216310",
+      "actual": "3af52ebe93ac933d989ceb0f5abadd31e72f9436fda1d2206b3e71d7f1216310",
+      "matches": true
+    },
+    {
+      "path": "packages/runtime/src/ownership.ts",
+      "expected": "0fbd5497c87995998c3d080d4909b3caa9738ec8ee5743120c86e9cdcceeaeab",
+      "actual": "0fbd5497c87995998c3d080d4909b3caa9738ec8ee5743120c86e9cdcceeaeab",
+      "matches": true
+    },
+    {
+      "path": "packages/runtime/tsconfig.json",
+      "expected": "ed31ec963ca62cee11d41071686c8a3dc58554155e120f52d1747254087f1bac",
+      "actual": "ed31ec963ca62cee11d41071686c8a3dc58554155e120f52d1747254087f1bac",
+      "matches": true
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "expected": "f58343405f8b75488966415da04a69edd5cbf01a32076ff08b75132fa476877c",
+      "actual": "f58343405f8b75488966415da04a69edd5cbf01a32076ff08b75132fa476877c",
+      "matches": true
+    },
+    {
+      "path": "pnpm-workspace.yaml",
+      "expected": "f51d3d153b0f3cdbb82186bd1c3eea9066f4e3a15828985952feeee965a75534",
+      "actual": "f51d3d153b0f3cdbb82186bd1c3eea9066f4e3a15828985952feeee965a75534",
+      "matches": true
+    },
+    {
+      "path": "tests/cancellation-scope.test.mjs",
+      "expected": "32a1a3c47fa41ebfd122be8fa06370e51a4f0854a2ab69be5da48966b96e9566",
+      "actual": "32a1a3c47fa41ebfd122be8fa06370e51a4f0854a2ab69be5da48966b96e9566",
+      "matches": true
+    },
+    {
+      "path": "tests/display-tree.test.mjs",
+      "expected": "6302c03f672ec4878e7bff6fffb4c6bf53ff4b5ce31d1ef5b0485e597b9bbbfe",
+      "actual": "6302c03f672ec4878e7bff6fffb4c6bf53ff4b5ce31d1ef5b0485e597b9bbbfe",
+      "matches": true
+    },
+    {
+      "path": "tests/engine.test.mjs",
+      "expected": "36a8e472bf868528394c98f16fa85ec664991fa76158d272723973b60a89bcde",
+      "actual": "36a8e472bf868528394c98f16fa85ec664991fa76158d272723973b60a89bcde",
+      "matches": true
+    },
+    {
+      "path": "tests/events.test.mjs",
+      "expected": "4e75d12b5aee9f927425a1a65c401616de18347b1402ec86075bbb5247951d3d",
+      "actual": "4e75d12b5aee9f927425a1a65c401616de18347b1402ec86075bbb5247951d3d",
+      "matches": true
+    },
+    {
+      "path": "tests/helpers.mjs",
+      "expected": "20e7dd30f54b3a81d35f666c8370e7f014e4559c68222727bc88fd377efc1af7",
+      "actual": "20e7dd30f54b3a81d35f666c8370e7f014e4559c68222727bc88fd377efc1af7",
+      "matches": true
+    },
+    {
+      "path": "tests/integration.test.mjs",
+      "expected": "54716569f5744b00dcb32a512d122fdb3b91f158b1e5446a5d394b3f201eb933",
+      "actual": "54716569f5744b00dcb32a512d122fdb3b91f158b1e5446a5d394b3f201eb933",
+      "matches": true
+    },
+    {
+      "path": "tests/review-regressions.test.mjs",
+      "expected": "b56d24957fc95c6068bb215f4a1b2aca310760831e79c89c27dd5724c8e67b17",
+      "actual": "b56d24957fc95c6068bb215f4a1b2aca310760831e79c89c27dd5724c8e67b17",
+      "matches": true
+    },
+    {
+      "path": "tests/types/negative.ts",
+      "expected": "f2aba4d444432063b862b42822b392b82d09c8d91458cc80f5478f136115ce7b",
+      "actual": "f2aba4d444432063b862b42822b392b82d09c8d91458cc80f5478f136115ce7b",
+      "matches": true
+    },
+    {
+      "path": "tests/types/positive.ts",
+      "expected": "1041d77568560fb1d08fa3a4dbb86cb1e77cc48dace50884b5173c4459713aeb",
+      "actual": "1041d77568560fb1d08fa3a4dbb86cb1e77cc48dace50884b5173c4459713aeb",
+      "matches": true
+    },
+    {
+      "path": "tests/types/tsconfig.json",
+      "expected": "88a3194ab9d7990646c7957e96e8d059ee16e79fe88373543a763da38a84dae1",
+      "actual": "88a3194ab9d7990646c7957e96e8d059ee16e79fe88373543a763da38a84dae1",
+      "matches": true
+    },
+    {
+      "path": "tools/build.mjs",
+      "expected": "0f04552d3592aa613d3c6fc4114559a3669ad764d0f5321d1c049a568701e6c4",
+      "actual": "0f04552d3592aa613d3c6fc4114559a3669ad764d0f5321d1c049a568701e6c4",
+      "matches": true
+    },
+    {
+      "path": "tools/check-boundaries.mjs",
+      "expected": "e7994ad6962e55fba9b481d50377ede30729b345e6a901e2089b235edfde9491",
+      "actual": "e7994ad6962e55fba9b481d50377ede30729b345e6a901e2089b235edfde9491",
+      "matches": true
+    },
+    {
+      "path": "tools/check-types.mjs",
+      "expected": "332d2c161ceb9ec7d75429c89a3d2c95af24f2cf5eed68b92b09532d1ce691a4",
+      "actual": "332d2c161ceb9ec7d75429c89a3d2c95af24f2cf5eed68b92b09532d1ce691a4",
+      "matches": true
+    },
+    {
+      "path": "tools/test.mjs",
+      "expected": "6d8fdbf59b3c9d1a4aab917ae9ab8167818c0716a6219f5f91c5893bb2c4eb53",
+      "actual": "6d8fdbf59b3c9d1a4aab917ae9ab8167818c0716a6219f5f91c5893bb2c4eb53",
+      "matches": true
+    },
+    {
+      "path": "tools/verify.mjs",
+      "expected": "9c789b762d598c72040992d8ffb9041f75180d39b7556761365ef0998d5b0b4a",
+      "actual": "9c789b762d598c72040992d8ffb9041f75180d39b7556761365ef0998d5b0b4a",
+      "matches": true
+    },
+    {
+      "path": "tsconfig.base.json",
+      "expected": "b7a31fb9f93a93e20bfdcf33c135acb45cb3a6895a8b3e7006bd85214ddc1008",
+      "actual": "b7a31fb9f93a93e20bfdcf33c135acb45cb3a6895a8b3e7006bd85214ddc1008",
+      "matches": true
+    },
+    {
+      "path": "tsconfig.json",
+      "expected": "e07fc831f31dc9ea9ecb612be734f4b533e32d7dbbb246abffaa8b23111076aa",
+      "actual": "e07fc831f31dc9ea9ecb612be734f4b533e32d7dbbb246abffaa8b23111076aa",
+      "matches": true
+    }
+  ],
+  "originalOriginUnchanged": true,
+  "originalSpecificationIdentities": [
+    {
+      "identity": "knowledge-base-0.7.0/docs/工程技术架构与项目结构.md",
+      "sha256": "5f92ce5512986be1672a013ce5bbc9c694d9f83baad45f4ce2faa25a4fa2a0b8",
+      "role": "design contract; no implementation code",
+      "status": "identity-only/not-distributed",
+      "originalLogicalPathIdentityOnly": "outputs/白鹭引擎重构工程知识库/docs/工程技术架构与项目结构.md",
+      "currentPublicSuccessor": "knowledge-base/docs/工程技术架构与项目结构.md",
+      "note": "Historical input hash identifies the original 0.7.0 design contract; the 0.9.0 public successor is separately versioned and is not claimed to have this hash."
+    },
+    {
+      "identity": "knowledge-base-0.7.0/docs/公共API设计与命名规范.md",
+      "sha256": "7a29bc506b78865c53d53e8cf75d4ed5837d30171370d764700416d1d08fa5f4",
+      "role": "design contract; no implementation code",
+      "status": "identity-only/not-distributed",
+      "originalLogicalPathIdentityOnly": "outputs/白鹭引擎重构工程知识库/docs/公共API设计与命名规范.md",
+      "currentPublicSuccessor": "knowledge-base/docs/公共API设计与命名规范.md",
+      "note": "Historical input hash identifies the original 0.7.0 design contract; the 0.9.0 public successor is separately versioned and is not claimed to have this hash."
+    },
+    {
+      "identity": "knowledge-base-0.7.0/docs/代码规范与质量门禁.md",
+      "sha256": "7a36ade21783d215b346a9d7596144845f13176727bc1c20a7f82daa775b5aac",
+      "role": "design contract; no implementation code",
+      "status": "identity-only/not-distributed",
+      "originalLogicalPathIdentityOnly": "outputs/白鹭引擎重构工程知识库/docs/代码规范与质量门禁.md",
+      "currentPublicSuccessor": "knowledge-base/docs/代码规范与质量门禁.md",
+      "note": "Historical input hash identifies the original 0.7.0 design contract; the 0.9.0 public successor is separately versioned and is not claimed to have this hash."
+    }
+  ],
+  "limitations": [
+    "No code, test, tool, manifest, lock or tsconfig changes; three package READMEs are documented projections.",
+    "No knowledge-base copy, node_modules, dist, tsbuildinfo or internal work copy.",
+    "No dependency installation, pnpm execution, product tests, git initialization, upload or npm publication.",
+    "Parent supplies existing LICENSE original bytes, public 0.9.0 knowledge-base copy, fresh-workspace validation and the total release manifest.",
+    "Prototype 44/44 and 11 negative type assertions remain historical headless results; GPU/Native/true-host/performance/CI remain outside acceptance.",
+    "Source record excludes itself from its files list; this report and parent manifest provide its SHA."
+  ],
+  "futureLinksAwaitingParent": [],
+  "unexpectedMissingLinks": [],
+  "forbiddenOwnedFileCount": 0,
+  "originalPrototypeFilesUnchanged": true,
+  "originalKnowledgeBaseEdited": false,
+  "sourceOriginProjectionHash": "aef303142fcb02d05095c48fe37a24170559061dc7c98a6f38b1d226de9aac3a",
+  "frozenOwnedFiles": true
+}

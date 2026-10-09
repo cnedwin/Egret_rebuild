@@ -1,0 +1,677 @@
+{
+  "checkedAt": "2026-10-08T06:56:37Z",
+  "scope": "仅用于开发新白鹭候选资源与动画设计；所有D设计为proposed、H假设未验证。旧迁移R008保留正式最终scope并继续编辑发布；本调查不改变旧scope、知识库或已确认材料，不声明完整引擎或宿主验收。",
+  "inspection": {
+    "primaryFileCount": 12,
+    "primaryCodeFileCount": 8,
+    "licenseFileCount": 4,
+    "method": "官方GitHub固定commit源码静态核对 + 2D补充官方文档/许可页；Git tree返回blob SHA；未安装/执行来源代码。",
+    "spineSupplement": "仅核对官方文档与许可，不计为已锁定源码实现或推荐已通过验证的runtime。",
+    "versionBoundary": "Babylon仅核对8.26.0快照；若其他分组使用9.29.0，两组证据各自锁定，不把文件、API或许可年份混写为同一版本。Three r180有意锁旧tag，未宣称最新。"
+  },
+  "repositories": [
+    {
+      "repo": "DragonBones/DragonBonesJS",
+      "ref": "master snapshot (2025-05-24)",
+      "commitSha": "64b6c69ae35777c2404be68c9192e2c56906079e",
+      "repoUrl": "https://github.com/DragonBones/DragonBonesJS",
+      "refResolutionEvidence": "https://api.github.com/repos/DragonBones/DragonBonesJS/git/trees/64b6c69ae35777c2404be68c9192e2c56906079e?recursive=1",
+      "license": {
+        "spdx": "MIT",
+        "path": "LICENSE",
+        "url": "https://github.com/DragonBones/DragonBonesJS/blob/64b6c69ae35777c2404be68c9192e2c56906079e/LICENSE",
+        "checked": true,
+        "obligations": "复制或分发实质性代码须保留版权及许可声明；不提供担保。",
+        "dependencyScope": "只核对本仓库许可证；额外解码器、WASM、工具、素材、字体和编辑器不自动继承本许可。"
+      },
+      "sourceFiles": [
+        {
+          "path": "LICENSE",
+          "url": "https://github.com/DragonBones/DragonBonesJS/blob/64b6c69ae35777c2404be68c9192e2c56906079e/LICENSE",
+          "blobSha": "985d022249fb02760569fd2332fd32ff3c1be5b4",
+          "lineCount": 21,
+          "functions": []
+        },
+        {
+          "path": "DragonBones/src/dragonBones/armature/Slot.ts",
+          "url": "https://github.com/DragonBones/DragonBonesJS/blob/64b6c69ae35777c2404be68c9192e2c56906079e/DragonBones/src/dragonBones/armature/Slot.ts",
+          "blobSha": "63b67e894bd0ce63245249256ca260d8b025f555",
+          "lineCount": 1316,
+          "functions": [
+            {
+              "name": "Slot._onClear",
+              "startLine": 261,
+              "endLine": 330,
+              "url": "https://github.com/DragonBones/DragonBonesJS/blob/64b6c69ae35777c2404be68c9192e2c56906079e/DragonBones/src/dragonBones/armature/Slot.ts#L261-L330",
+              "rangeType": "evidenceExcerpt"
+            },
+            {
+              "name": "Slot renderer adapter abstract methods",
+              "startLine": 332,
+              "endLine": 348,
+              "url": "https://github.com/DragonBones/DragonBonesJS/blob/64b6c69ae35777c2404be68c9192e2c56906079e/DragonBones/src/dragonBones/armature/Slot.ts#L332-L348",
+              "rangeType": "evidenceExcerpt"
+            },
+            {
+              "name": "Slot._updateDisplayData",
+              "startLine": 383,
+              "endLine": 510,
+              "url": "https://github.com/DragonBones/DragonBonesJS/blob/64b6c69ae35777c2404be68c9192e2c56906079e/DragonBones/src/dragonBones/armature/Slot.ts#L383-L510",
+              "rangeType": "evidenceExcerpt"
+            },
+            {
+              "name": "Slot.update",
+              "startLine": 678,
+              "endLine": 805,
+              "url": "https://github.com/DragonBones/DragonBonesJS/blob/64b6c69ae35777c2404be68c9192e2c56906079e/DragonBones/src/dragonBones/armature/Slot.ts#L678-L805",
+              "rangeType": "evidenceExcerpt"
+            },
+            {
+              "name": "Slot.replaceRawDisplayData",
+              "startLine": 813,
+              "endLine": 839,
+              "url": "https://github.com/DragonBones/DragonBonesJS/blob/64b6c69ae35777c2404be68c9192e2c56906079e/DragonBones/src/dragonBones/armature/Slot.ts#L813-L839",
+              "rangeType": "evidenceExcerpt"
+            },
+            {
+              "name": "Slot.displayList get/set",
+              "startLine": 1146,
+              "endLine": 1160,
+              "url": "https://github.com/DragonBones/DragonBonesJS/blob/64b6c69ae35777c2404be68c9192e2c56906079e/DragonBones/src/dragonBones/armature/Slot.ts#L1146-L1160",
+              "rangeType": "evidenceExcerpt"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "repo": "mrdoob/three.js",
+      "ref": "r180",
+      "commitSha": "0af9729d0c143a86a1d725d6e2c3ad83301f3f34",
+      "repoUrl": "https://github.com/mrdoob/three.js",
+      "refResolutionEvidence": "https://api.github.com/repos/mrdoob/three.js/git/trees/0af9729d0c143a86a1d725d6e2c3ad83301f3f34?recursive=1",
+      "license": {
+        "spdx": "MIT",
+        "path": "LICENSE",
+        "url": "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/LICENSE",
+        "checked": true,
+        "obligations": "复制或分发实质性代码须保留版权及许可声明；不提供担保。",
+        "dependencyScope": "只核对本仓库许可证；额外解码器、WASM、工具、素材、字体和编辑器不自动继承本许可。"
+      },
+      "sourceFiles": [
+        {
+          "path": "LICENSE",
+          "url": "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/LICENSE",
+          "blobSha": "cf781430404b0ae0ba7d8dea3457a3515dd7c9b9",
+          "lineCount": 22,
+          "functions": []
+        },
+        {
+          "path": "examples/jsm/loaders/GLTFLoader.js",
+          "url": "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/GLTFLoader.js",
+          "blobSha": "38f8c14fb500631f01d39cd54c202eefddcf0987",
+          "lineCount": 4891,
+          "functions": [
+            {
+              "name": "GLTFLoader.register/unregister",
+              "startLine": 377,
+              "endLine": 403,
+              "url": "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/GLTFLoader.js#L377-L403",
+              "rangeType": "evidenceExcerpt"
+            },
+            {
+              "name": "GLTFLoader.parse",
+              "startLine": 424,
+              "endLine": 552,
+              "url": "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/GLTFLoader.js#L424-L552",
+              "rangeType": "evidenceExcerpt"
+            },
+            {
+              "name": "GLTFTextureBasisUExtension.loadTexture",
+              "startLine": 1534,
+              "endLine": 1565,
+              "url": "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/GLTFLoader.js#L1534-L1565",
+              "rangeType": "evidenceExcerpt"
+            },
+            {
+              "name": "GLTFParser._invokeOne/_invokeAll",
+              "startLine": 2904,
+              "endLine": 2934,
+              "url": "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/GLTFLoader.js#L2904-L2934",
+              "rangeType": "evidenceExcerpt"
+            },
+            {
+              "name": "GLTFParser.getDependency",
+              "startLine": 2948,
+              "endLine": 3046,
+              "url": "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/GLTFLoader.js#L2948-L3046",
+              "rangeType": "evidenceExcerpt"
+            },
+            {
+              "name": "GLTFParser.loadSkin",
+              "startLine": 4063,
+              "endLine": 4124,
+              "url": "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/GLTFLoader.js#L4063-L4124",
+              "rangeType": "evidenceExcerpt"
+            },
+            {
+              "name": "GLTFParser.loadAnimation",
+              "startLine": 4135,
+              "endLine": 4224,
+              "url": "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/GLTFLoader.js#L4135-L4224",
+              "rangeType": "evidenceExcerpt"
+            }
+          ]
+        },
+        {
+          "path": "examples/jsm/loaders/KTX2Loader.js",
+          "url": "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/KTX2Loader.js",
+          "blobSha": "363d48c19e5db1beb928c4b3e7d51bd534005f08",
+          "lineCount": 1229,
+          "functions": [
+            {
+              "name": "KTX2Loader.setWorkerLimit",
+              "startLine": 184,
+              "endLine": 189,
+              "url": "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/KTX2Loader.js#L184-L189",
+              "rangeType": "evidenceExcerpt"
+            },
+            {
+              "name": "KTX2Loader.detectSupport",
+              "startLine": 223,
+              "endLine": 255,
+              "url": "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/KTX2Loader.js#L223-L255",
+              "rangeType": "evidenceExcerpt"
+            },
+            {
+              "name": "KTX2Loader.init",
+              "startLine": 259,
+              "endLine": 327,
+              "url": "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/KTX2Loader.js#L259-L327",
+              "rangeType": "evidenceExcerpt"
+            },
+            {
+              "name": "KTX2Loader.parse",
+              "startLine": 370,
+              "endLine": 392,
+              "url": "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/KTX2Loader.js#L370-L392",
+              "rangeType": "evidenceExcerpt"
+            },
+            {
+              "name": "KTX2Loader._createTextureFrom",
+              "startLine": 394,
+              "endLine": 426,
+              "url": "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/KTX2Loader.js#L394-L426",
+              "rangeType": "evidenceExcerpt"
+            },
+            {
+              "name": "KTX2Loader._createTexture",
+              "startLine": 434,
+              "endLine": 469,
+              "url": "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/KTX2Loader.js#L434-L469",
+              "rangeType": "evidenceExcerpt"
+            },
+            {
+              "name": "KTX2Loader.dispose",
+              "startLine": 475,
+              "endLine": 482,
+              "url": "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/KTX2Loader.js#L475-L482",
+              "rangeType": "evidenceExcerpt"
+            },
+            {
+              "name": "BasisWorker.getTranscoderFormat",
+              "startLine": 866,
+              "endLine": 889,
+              "url": "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/KTX2Loader.js#L866-L889",
+              "rangeType": "evidenceExcerpt"
+            }
+          ]
+        },
+        {
+          "path": "src/animation/AnimationMixer.js",
+          "url": "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/src/animation/AnimationMixer.js",
+          "blobSha": "6451e06ea8ae00d7b5e026b414e83f7c1b216b45",
+          "lineCount": 855,
+          "functions": [
+            {
+              "name": "AnimationMixer.clipAction",
+              "startLine": 551,
+              "endLine": 610,
+              "url": "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/src/animation/AnimationMixer.js#L551-L610",
+              "rangeType": "evidenceExcerpt"
+            },
+            {
+              "name": "AnimationMixer.update",
+              "startLine": 670,
+              "endLine": 704,
+              "url": "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/src/animation/AnimationMixer.js#L670-L704",
+              "rangeType": "evidenceExcerpt"
+            },
+            {
+              "name": "AnimationMixer.uncacheRoot",
+              "startLine": 795,
+              "endLine": 829,
+              "url": "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/src/animation/AnimationMixer.js#L795-L829",
+              "rangeType": "evidenceExcerpt"
+            },
+            {
+              "name": "AnimationMixer.uncacheAction",
+              "startLine": 839,
+              "endLine": 850,
+              "url": "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/src/animation/AnimationMixer.js#L839-L850",
+              "rangeType": "evidenceExcerpt"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "repo": "playcanvas/engine",
+      "ref": "v2.23.0",
+      "commitSha": "cfef43d306b2b55a2c0742e4994221f6d2463957",
+      "repoUrl": "https://github.com/playcanvas/engine",
+      "refResolutionEvidence": "https://api.github.com/repos/playcanvas/engine/git/trees/cfef43d306b2b55a2c0742e4994221f6d2463957?recursive=1",
+      "license": {
+        "spdx": "MIT",
+        "path": "LICENSE",
+        "url": "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/LICENSE",
+        "checked": true,
+        "obligations": "复制或分发实质性代码须保留版权及许可声明；不提供担保。",
+        "dependencyScope": "只核对本仓库许可证；额外解码器、WASM、工具、素材、字体和编辑器不自动继承本许可。"
+      },
+      "sourceFiles": [
+        {
+          "path": "LICENSE",
+          "url": "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/LICENSE",
+          "blobSha": "7f478db6d47a259cd70f74b1e69d8ce407fd0912",
+          "lineCount": 20,
+          "functions": []
+        },
+        {
+          "path": "src/framework/parsers/glb-parser.js",
+          "url": "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/framework/parsers/glb-parser.js",
+          "blobSha": "6ac1a1c782de6dfa892848bace1387b5e389c9c4",
+          "lineCount": 1870,
+          "functions": [
+            {
+              "name": "GlbResources.destroy",
+              "startLine": 94,
+              "endLine": 101,
+              "url": "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/framework/parsers/glb-parser.js#L94-L101",
+              "rangeType": "evidenceExcerpt"
+            },
+            {
+              "name": "createSkins",
+              "startLine": 995,
+              "endLine": 1006,
+              "url": "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/framework/parsers/glb-parser.js#L995-L1006",
+              "rangeType": "evidenceExcerpt"
+            },
+            {
+              "name": "createMaterials",
+              "startLine": 1030,
+              "endLine": 1049,
+              "url": "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/framework/parsers/glb-parser.js#L1030-L1049",
+              "rangeType": "evidenceExcerpt"
+            },
+            {
+              "name": "createAnimations",
+              "startLine": 1100,
+              "endLine": 1118,
+              "url": "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/framework/parsers/glb-parser.js#L1100-L1118",
+              "rangeType": "evidenceExcerpt"
+            },
+            {
+              "name": "createResources",
+              "startLine": 1240,
+              "endLine": 1315,
+              "url": "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/framework/parsers/glb-parser.js#L1240-L1315",
+              "rangeType": "evidenceExcerpt"
+            },
+            {
+              "name": "createImages processAsync hook",
+              "startLine": 1364,
+              "endLine": 1519,
+              "url": "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/framework/parsers/glb-parser.js#L1364-L1519",
+              "rangeType": "evidenceExcerpt"
+            },
+            {
+              "name": "GlbParser.parse",
+              "startLine": 1835,
+              "endLine": 1860,
+              "url": "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/framework/parsers/glb-parser.js#L1835-L1860",
+              "rangeType": "evidenceExcerpt"
+            }
+          ]
+        },
+        {
+          "path": "src/framework/components/anim/component.js",
+          "url": "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/framework/components/anim/component.js",
+          "blobSha": "0a43b1e68a7ea1a7c0e92488660c9146f365b99e",
+          "lineCount": 870,
+          "functions": [
+            {
+              "name": "AnimComponent._addLayer",
+              "startLine": 349,
+              "endLine": 371,
+              "url": "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/framework/components/anim/component.js#L349-L371",
+              "rangeType": "evidenceExcerpt"
+            },
+            {
+              "name": "AnimComponent.loadStateGraph",
+              "startLine": 442,
+              "endLine": 459,
+              "url": "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/framework/components/anim/component.js#L442-L459",
+              "rangeType": "evidenceExcerpt"
+            },
+            {
+              "name": "AnimComponent.removeStateGraph",
+              "startLine": 517,
+              "endLine": 528,
+              "url": "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/framework/components/anim/component.js#L517-L528",
+              "rangeType": "evidenceExcerpt"
+            },
+            {
+              "name": "AnimComponent.assignAnimation",
+              "startLine": 646,
+              "endLine": 683,
+              "url": "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/framework/components/anim/component.js#L646-L683",
+              "rangeType": "evidenceExcerpt"
+            },
+            {
+              "name": "AnimComponent.update",
+              "startLine": 850,
+              "endLine": 858,
+              "url": "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/framework/components/anim/component.js#L850-L858",
+              "rangeType": "evidenceExcerpt"
+            }
+          ]
+        },
+        {
+          "path": "src/framework/parsers/glb-container-resource.js",
+          "url": "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/framework/parsers/glb-container-resource.js",
+          "blobSha": "00aa6fca48faab86590db55f2f27afa10722757b",
+          "lineCount": 423,
+          "functions": [
+            {
+              "name": "GlbContainerResource.instantiateRenderEntity",
+              "startLine": 96,
+              "endLine": 246,
+              "url": "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/framework/parsers/glb-container-resource.js#L96-L246",
+              "rangeType": "evidenceExcerpt"
+            },
+            {
+              "name": "GlbContainerResource.destroy",
+              "startLine": 371,
+              "endLine": 419,
+              "url": "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/framework/parsers/glb-container-resource.js#L371-L419",
+              "rangeType": "evidenceExcerpt"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "repo": "BabylonJS/Babylon.js",
+      "ref": "8.26.0",
+      "commitSha": "09876696f9942657ec9da5a72ec16c9d3de54365",
+      "repoUrl": "https://github.com/BabylonJS/Babylon.js",
+      "refResolutionEvidence": "https://api.github.com/repos/BabylonJS/Babylon.js/git/trees/09876696f9942657ec9da5a72ec16c9d3de54365?recursive=1",
+      "license": {
+        "spdx": "Apache-2.0",
+        "path": "license.md",
+        "url": "https://github.com/BabylonJS/Babylon.js/blob/09876696f9942657ec9da5a72ec16c9d3de54365/license.md",
+        "checked": true,
+        "obligations": "附许可证、标记修改、保留适用版权/专利/署名；如上游分发含NOTICE则保留适用通知；专利授权有条款边界。",
+        "dependencyScope": "只核对本仓库许可证；额外解码器、WASM、工具、素材、字体和编辑器不自动继承本许可。"
+      },
+      "sourceFiles": [
+        {
+          "path": "license.md",
+          "url": "https://github.com/BabylonJS/Babylon.js/blob/09876696f9942657ec9da5a72ec16c9d3de54365/license.md",
+          "blobSha": "7853ac1b7b32819fb9b2182d65649e3f7d488566",
+          "lineCount": 72,
+          "functions": []
+        },
+        {
+          "path": "packages/dev/core/src/Bones/skeleton.ts",
+          "url": "https://github.com/BabylonJS/Babylon.js/blob/09876696f9942657ec9da5a72ec16c9d3de54365/packages/dev/core/src/Bones/skeleton.ts",
+          "blobSha": "04bee67d44bbeb1584b6a643cc76b4de5c66c115",
+          "lineCount": 947,
+          "functions": [
+            {
+              "name": "Skeleton.getTransformMatrices",
+              "startLine": 185,
+              "endLine": 202,
+              "url": "https://github.com/BabylonJS/Babylon.js/blob/09876696f9942657ec9da5a72ec16c9d3de54365/packages/dev/core/src/Bones/skeleton.ts#L185-L202",
+              "rangeType": "evidenceExcerpt"
+            },
+            {
+              "name": "Skeleton._computeTransformMatrices",
+              "startLine": 485,
+              "endLine": 510,
+              "url": "https://github.com/BabylonJS/Babylon.js/blob/09876696f9942657ec9da5a72ec16c9d3de54365/packages/dev/core/src/Bones/skeleton.ts#L485-L510",
+              "rangeType": "evidenceExcerpt"
+            },
+            {
+              "name": "Skeleton.prepare",
+              "startLine": 516,
+              "endLine": 628,
+              "url": "https://github.com/BabylonJS/Babylon.js/blob/09876696f9942657ec9da5a72ec16c9d3de54365/packages/dev/core/src/Bones/skeleton.ts#L516-L628",
+              "rangeType": "evidenceExcerpt"
+            },
+            {
+              "name": "Skeleton.dispose",
+              "startLine": 713,
+              "endLine": 735,
+              "url": "https://github.com/BabylonJS/Babylon.js/blob/09876696f9942657ec9da5a72ec16c9d3de54365/packages/dev/core/src/Bones/skeleton.ts#L713-L735",
+              "rangeType": "evidenceExcerpt"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "RAA01",
+      "claim": "glTF 2.0应沿用成熟的插件分派与异步依赖缓存机制，避免重新设计一套导入算法。",
+      "evidenceUrls": [
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/GLTFLoader.js#L377-L403",
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/GLTFLoader.js#L477-L524",
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/GLTFLoader.js#L2904-L3046",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/framework/parsers/glb-parser.js#L1030-L1049",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/framework/parsers/glb-parser.js#L1833-L1857"
+      ],
+      "mechanism": "Three GLTFLoader.register/unregister存回调；parse按parser实例创建命名plugin；_invokeOne依次尝试plugin后内置parser，_invokeAll收集多方结果；getDependency以type:index缓存Promise。PlayCanvas GlbParser.parse分开buffer/image/texture及createResources阶段，material/node/animation等有preprocess/process/postprocess或processAsync注入点。",
+      "recommendation": "成熟实现可采用：先组合现成Three glTFLoader + AnimationMixer打通真实资产参考链，保留插件注册、命名扩展、依赖图和Promise去重；如生产后端替换，再由薄适配层把运行时资源映射到自身资产IR/句柄，避免先全重写解析器。D-glTF-plugins = proposed。",
+      "limits": [
+        "Three加载器直接构造Three对象，PlayCanvas导入器直接构造PlayCanvas对象；都不能无适配替换新白鹭资源系统。",
+        "Three r180对未知extensionsRequired在此分支仅console.warn，并非严格拒绝；候选导入策略须显式声明支持名单，对required缺失返回可诊断错误。",
+        "这里只核对具体实现入口，不代表全部glTF扩展、异常资产、稀疏accessor、压缩网格或坐标/材质一致性已验收。"
+      ],
+      "designStatus": "proposed",
+      "hypothesisStatus": "unverified"
+    },
+    {
+      "id": "RAA02",
+      "claim": "KTX2/Basis应以编码类型、设备压缩能力、透明通道及尺寸约束共同选择转码目标。",
+      "evidenceUrls": [
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/KTX2Loader.js#L223-L255",
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/KTX2Loader.js#L626-L654",
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/KTX2Loader.js#L756-L889",
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/GLTFLoader.js#L1534-L1565"
+      ],
+      "mechanism": "detectSupport分别读取WebGL压缩纹理扩展或WebGPU feature；BasisWorker识别ETC1S/UASTC/UASTC_HDR，getTranscoderFormat过滤unsupported capability、alpha及PVRTC的power-of-two条件，再选择转码/engine格式；末尾有RGBA32或RGBA_HALF兜底。KHR_texture_basisu插件调用已注入KTX2Loader，required但未提供loader时抛错，optional时让fallback路径继续。",
+      "recommendation": "成熟算法可采用：复用目标选择表和转码接口，构建平台capability adapter；候选资源记录实际目标、mip/层/face、色彩空间、预乘alpha及压缩失败原因。D-texture-targets = proposed。",
+      "limits": [
+        "不能按手机品牌或OS静态承诺ASTC/ETC2；需实际GPU/API/宿主能力。",
+        "源码选择表不是目标机最优性能证明，ETC1S/UASTC大小、alpha与fallback内存峰值需测试。",
+        "Basis wrapper/WASM、ktx-parse、ZSTDDecoder等第三方依赖的版本/许可未逐项核对，仓库MIT不能替代完整SBOM。"
+      ],
+      "designStatus": "proposed",
+      "hypothesisStatus": "unverified"
+    },
+    {
+      "id": "RAA03",
+      "claim": "转码后台任务应限制并发、复用服务、对可转移buffer去重，并把decoder生命周期与已创建纹理生命周期分开。",
+      "evidenceUrls": [
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/KTX2Loader.js#L97-L99",
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/KTX2Loader.js#L184-L189",
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/KTX2Loader.js#L259-L327",
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/KTX2Loader.js#L370-L392",
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/KTX2Loader.js#L434-L482"
+      ],
+      "mechanism": "KTX2Loader.init仅建立一次transcoderPending，创建worker blob URL，并为每worker复制WASM字节再transfer；setWorkerLimit暴露最大worker数；_createTexture把ArrayBuffer经transfer list发给pool，WeakMap按buffer保存Promise避免同一已转移buffer重复transfer；dispose只调用workerPool.dispose并revokeObjectURL。源码提醒多个活跃loader会增加网络/内存成本。",
+      "recommendation": "成熟机制可采用：每适用设备上下文复用转码服务，缓存任务而非重复发送已detach的buffer；候选增加明确队列预算、退出/晚到任务处理和capability维度缓存键。纹理由资源所有者在最后引用释放后销毁。D-decoder-service = proposed。",
+      "limits": [
+        "本次未读取WorkerPool实现，不能声称它对取消、重试、pending reject或退出竞态有完整语义。",
+        "WeakMap缓存只按buffer对象身份；不是按文件内容hash或跨进程共享缓存，跨不同设备能力也不能盲目沿用首个输出。",
+        "调用KTX2Loader.dispose不等于销毁已返回的Texture或其GPU资源；宿主若缺Worker/Blob/WASM须提供适配降级。"
+      ],
+      "designStatus": "proposed",
+      "hypothesisStatus": "unverified"
+    },
+    {
+      "id": "RAA04",
+      "claim": "共享资源与可变实例应有独立所有权；卸载容器前必须处理仍在使用它的实例。",
+      "evidenceUrls": [
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/framework/parsers/glb-container-resource.js#L96-L135",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/framework/parsers/glb-container-resource.js#L232-L246",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/framework/parsers/glb-container-resource.js#L371-L419",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/framework/parsers/glb-parser.js#L94-L101"
+      ],
+      "mechanism": "instantiateRenderEntity克隆场景Entity层级，为实例新建MeshInstance、MorphInstance，但传入同一mesh/material；新建实例化VertexBuffer显式标记随实例销毁；骨骼层级创建后经SkinInstanceCache绑定。GlbContainerResource.destroy对其animations/textures/materials/renders等子asset执行registry.remove + asset.unload，随后清引用。GlbResources.destroy以render.meshes=null降低mesh引用。",
+      "recommendation": "适配需测：采用资源容器拥有共享mesh/material/texture、实例拥有node/pose/morph/绑定的分层；新白鹭候选AssetHandle acquire/release仅在最后引用离开后卸载，定义container、external texture、clone和default material的所有者；先解除实例绑定再卸载容器。D-resource-ownership = proposed。",
+      "limits": [
+        "这里没有验证Asset.unload、MeshInstance.destroy或SkinInstanceCache的完整实现，不能宣称上游覆盖全部共享资源释放竞态。",
+        "容器destroy显式卸载子asset，不等于它会等待活跃实例自动停用；调用顺序及外部注入资源ownership必须在适配合同中明确。",
+        "重复载入卸载是否无泄漏、GPU资源是否归零、WebGL/WebGPU context loss恢复都未实机测。"
+      ],
+      "designStatus": "proposed",
+      "hypothesisStatus": "unverified"
+    },
+    {
+      "id": "RAA05",
+      "claim": "3D骨骼蒙皮可参考glTF joint/inverse-bind导入与Babylon按脏状态更新骨骼矩阵的成熟实现。",
+      "evidenceUrls": [
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/GLTFLoader.js#L4063-L4124",
+        "https://github.com/BabylonJS/Babylon.js/blob/09876696f9942657ec9da5a72ec16c9d3de54365/packages/dev/core/src/Bones/skeleton.ts#L185-L202",
+        "https://github.com/BabylonJS/Babylon.js/blob/09876696f9942657ec9da5a72ec16c9d3de54365/packages/dev/core/src/Bones/skeleton.ts#L485-L510",
+        "https://github.com/BabylonJS/Babylon.js/blob/09876696f9942657ec9da5a72ec16c9d3de54365/packages/dev/core/src/Bones/skeleton.ts#L516-L628",
+        "https://github.com/BabylonJS/Babylon.js/blob/09876696f9942657ec9da5a72ec16c9d3de54365/packages/dev/core/src/Bones/skeleton.ts#L713-L735"
+      ],
+      "mechanism": "Three loadSkin并行取joints与inverseBindMatrices accessor，构建bones及boneInverses后Skeleton。Babylon _computeTransformMatrices根据parent的final矩阵生成骨骼final矩阵，再与absolute inverse bind相乘写入Float32Array；prepare以renderId防同帧重复，按dirty及初始skin矩阵路径更新，能力/选项允许时写入RawTexture。Skeleton.dispose停动画、从scene/container移除并释放自身transform texture。",
+      "recommendation": "成熟算法可采用：借鉴joint顺序、inverse-bind映射、TypedArray矩阵缓存及每帧/dirty更新；把uniform/骨骼纹理上传封装成候选renderer adapter，不重造基础矩阵算法。D-skinning = proposed。",
+      "limits": [
+        "只核对导入与CPU矩阵准备，没有读取最终GPU蒙皮shader，不能声称完整GPU路径/权重上限/每顶点4或8权重已适配。",
+        "矩阵乘法约定、坐标轴、非均匀/负缩放、bind姿态、共享skeleton与每实例pose隔离须用资产金样验证。",
+        "骨骼数量、矩阵纹理与uniform性能及目标手机帧率无法由源码证明。"
+      ],
+      "designStatus": "proposed",
+      "hypothesisStatus": "unverified"
+    },
+    {
+      "id": "RAA06",
+      "claim": "低层动画播放采用动作与属性绑定缓存；释放角色时须显式停止动作并解除根对象缓存。",
+      "evidenceUrls": [
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/GLTFLoader.js#L4135-L4224",
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/src/animation/AnimationMixer.js#L551-L610",
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/src/animation/AnimationMixer.js#L670-L704",
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/src/animation/AnimationMixer.js#L787-L850"
+      ],
+      "mechanism": "GLTFParser.loadAnimation从channels/samplers/accessors生成tracks并返回AnimationClip。AnimationMixer.clipAction按clip/root/blendMode复用动作并复用绑定原型；update以deltaTime*timeScale推进活跃action，再apply活跃property binding。uncacheRoot解除相关action并restoreOriginalState、删除bindings，uncacheAction可只删除特定action；注释要求先stop相关动作或stopAllAction。",
+      "recommendation": "成熟算法可采用：采用clip/track/action/binding分层，按实例root绑定；候选发布标准销毁流程stop -> uncacheRoot -> release asset handles，避免角色离场后mixer仍持有node。D-animation-mixer = proposed。",
+      "limits": [
+        "本次未读取AnimationAction/PropertyMixer/Interpolant完整实现，crossfade、additive、CUBICSPLINE边界与事件时序仍需单独核对。",
+        "动画缓存释放不会替代geometry/material/texture释放；共享clip不能承载每实例可变播放状态。",
+        "update成本、混合精度、确定性和目标机多角色上限未测。"
+      ],
+      "designStatus": "proposed",
+      "hypothesisStatus": "unverified"
+    },
+    {
+      "id": "RAA07",
+      "claim": "角色动画控制层可借鉴PlayCanvas AnimComponent的状态图、层、遮罩与参数接口，独立于glTF片段导入。",
+      "evidenceUrls": [
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/framework/components/anim/component.js#L349-L371",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/framework/components/anim/component.js#L442-L459",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/framework/components/anim/component.js#L517-L528",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/framework/components/anim/component.js#L626-L683",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/framework/components/anim/component.js#L850-L858"
+      ],
+      "mechanism": "_addLayer为每层创建AnimComponentBinder、AnimEvaluator、AnimController并注入states/transitions/参数/trigger访问器，传入rootBone/entity、mask、weight及blendType。loadStateGraph重建parameters/layers；assignAnimation把track绑到state或blend-tree node，无stateGraph时可创建默认单状态图；update逐层推进并清已消费trigger；removeStateGraph清层、参数、targets并unbind。",
+      "recommendation": "适配需测：沿用声明式状态图和运行时分层，候选统一clip播放器与controller接口，状态图资源与实例状态分开；素材兼容以状态转换、layer mask、权重与trigger金样验证。D-animation-controller = proposed。",
+      "limits": [
+        "本次只读取component入口，没有读取controller、layer和binder深层算法，不能声称完整状态机/混合树语义已移植。",
+        "该文件明确blend trees不支持自动animation asset assignment；候选工具导出合同须定义显式绑定。",
+        "root motion、事件重入、暂停恢复、负时间、大deltaTime和热替换语义未验证；不等于完整动画编辑器。"
+      ],
+      "designStatus": "proposed",
+      "hypothesisStatus": "unverified"
+    },
+    {
+      "id": "RAA08",
+      "claim": "2D骨骼须使用独立runtime/adapter合同；slot、attachments/显示替换、constraints与clipping不能由3D skin自动替代。",
+      "evidenceUrls": [
+        "https://github.com/DragonBones/DragonBonesJS/blob/64b6c69ae35777c2404be68c9192e2c56906079e/DragonBones/src/dragonBones/armature/Slot.ts#L332-L348",
+        "https://github.com/DragonBones/DragonBonesJS/blob/64b6c69ae35777c2404be68c9192e2c56906079e/DragonBones/src/dragonBones/armature/Slot.ts#L383-L453",
+        "https://github.com/DragonBones/DragonBonesJS/blob/64b6c69ae35777c2404be68c9192e2c56906079e/DragonBones/src/dragonBones/armature/Slot.ts#L678-L738",
+        "https://github.com/DragonBones/DragonBonesJS/blob/64b6c69ae35777c2404be68c9192e2c56906079e/DragonBones/src/dragonBones/armature/Slot.ts#L813-L839",
+        "https://github.com/DragonBones/DragonBonesJS/blob/64b6c69ae35777c2404be68c9192e2c56906079e/DragonBones/src/dragonBones/armature/Slot.ts#L1146-L1160",
+        "https://github.com/DragonBones/DragonBonesJS/blob/64b6c69ae35777c2404be68c9192e2c56906079e/LICENSE",
+        "https://esotericsoftware.com/spine-pixi",
+        "https://esotericsoftware.com/spine-runtimes-license",
+        "https://us.esotericsoftware.com/spine-editor-license"
+      ],
+      "mechanism": "DragonBones Slot保留displayIndex/displayList、rawDisplayData/geometry/texture替换、atlas旋转/裁切pivot、blend/color/zOrder dirty、mesh dirty更新及子armature等接口；渲染更新与dispose为抽象adapter方法，证明它超出3D joint palette语义。官方spine-pixi文档提供独立core骨架与资产/实例/AnimationState分层，要求runtime与Editor导出major.minor一致；该文档是能力声明，本次未读取Spine源码或验收全部功能。",
+      "recommendation": "适配需测：DragonBonesJS锁定MIT快照作为2D候选优先做完整runtime加renderer adapter；Spine可作为授权条件明确的另一路adapter候选，不能将公开源码视为MIT/Apache式自由复用。新白鹭的2D兼容验收独立列slot draw order、attachment/skin替换、加权mesh变形、IK/transform/path constraints、clipping、atlas裁切旋转、事件/混合、子骨架、共享数据释放。D-2D-skeleton = proposed。",
+      "limits": [
+        "Slot.ts只能证实接口和部分调度，不证明DragonBones具有全部Spine constraints或clipping，也不证明格式可无损互转。",
+        "Spine Runtimes是专有许可：官方2025-04-05条款将集成授权连接到Editor许可第2节，SDK/游戏工具的用户创建或修改含runtime的产品涉及自身Editor许可要求；另一路许可也有每用户及版权/许可附带条件。需按引擎分发模式核实，不能笼统称为免费开源。",
+        "官方spine-pixi对WebGL/WebGPU完整特性的声明未被本次独立验证；Canvas模式有slot objects/tint black/blend modes限制。",
+        "本次没有安装、构建或执行任何来源代码；2D视觉、蒙皮、约束、遮罩与各宿主验收全未执行。"
+      ],
+      "designStatus": "proposed",
+      "hypothesisStatus": "unverified"
+    }
+  ],
+  "openQuestions": [
+    {
+      "id": "H-RAA01",
+      "status": "unverified",
+      "question": "选定新白鹭host matrix之后，Worker、Blob URL、WASM、fetch/CORS、压缩纹理扩展和transfer是否可用？降级路径和资源峰值是多少？",
+      "verification": "每目标宿主做capability probe；KTX2资产覆盖ETC1S/UASTC、alpha、POT/NPOT、mip/array/cube、失败/取消，记录decode/upload时长与CPU/GPU峰值。"
+    },
+    {
+      "id": "H-RAA02",
+      "status": "unverified",
+      "question": "资源容器、实例、外部纹理、动画缓存的last-owner释放是否可靠？",
+      "verification": "两个以上实例共享资产，分别退出/复入，外部贴图注入，加载中取消；重复100次后核对live handles、workers、GPU/CPU曲线，context loss/recovery单独测。次数为候选测试设计，不是既有结果。"
+    },
+    {
+      "id": "H-RAA03",
+      "status": "unverified",
+      "question": "导入与动画是否保持美术语义？",
+      "verification": "DCC导出金样对比材质/UV/坐标、joints/inverse-bind、非均匀/负缩放、linear/step/cubic、morph、循环/混合/事件、state/layer/mask/trigger；required extension缺失须诊断失败。"
+    },
+    {
+      "id": "H-RAA04",
+      "status": "unverified",
+      "question": "2D业务究竟要兼容DragonBones哪些版本，Spine哪些major.minor？约束与clipping是否在MVP scope？",
+      "verification": "先列用户资产支持合同，再跑slot/skin/attachment/draw-order/mesh/constraints/clipping/atlas/事件矩阵；不能用3D动画通过代替2D验收。"
+    },
+    {
+      "id": "H-RAA05",
+      "status": "unverified",
+      "question": "Basis等依赖和Spine引擎/SDK分发许可如何闭合？",
+      "verification": "形成精确版本SBOM及版权/许可证/NOTICE包；核实Spine集成主体、引擎最终用户许可模式和导出版本，最终法律判断需按实际分发方案完成。"
+    },
+    {
+      "id": "H-RAA06",
+      "status": "unverified",
+      "question": "中低端目标手机在真实角色数量、骨骼/mesh/材质、UI、过绘与热加载压力下能达到什么预算？",
+      "verification": "确定硬件、OS、浏览器/小游戏宿主、场景金样及帧/内存/下载预算；记录帧时P50/P95/P99、首次可交互、热加载卡顿和内存。源码与上游功能文档不能证明该结论。"
+    }
+  ]
+}

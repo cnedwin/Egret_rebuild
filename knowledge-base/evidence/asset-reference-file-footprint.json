@@ -1,0 +1,64 @@
+{
+  "checkedAtUtc": "2026-10-08T07:58:50.946Z",
+  "scope": "Local reference ESM and asset file sizes plus independent per-file compression; no final game build, cold-start, network or runtime benchmark.",
+  "productionBuild": false,
+  "minified": false,
+  "treeShaken": false,
+  "compressionIsLocalEstimate": true,
+  "files": [
+    {
+      "path": "experiments/asset-reference-probe/vendor/three/r186/build/three.core.js",
+      "kind": "unminified_reference_esm",
+      "rawBytes": 1458113,
+      "gzipLevel9Bytes": 286903,
+      "brotliQuality11Bytes": 208954
+    },
+    {
+      "path": "experiments/asset-reference-probe/vendor/three/r186/build/three.module.js",
+      "kind": "unminified_reference_esm",
+      "rawBytes": 662772,
+      "gzipLevel9Bytes": 131133,
+      "brotliQuality11Bytes": 104418
+    },
+    {
+      "path": "experiments/asset-reference-probe/vendor/three/r186/examples/jsm/loaders/GLTFLoader.js",
+      "kind": "unminified_reference_esm",
+      "rawBytes": 117570,
+      "gzipLevel9Bytes": 25938,
+      "brotliQuality11Bytes": 21540
+    },
+    {
+      "path": "experiments/asset-reference-probe/vendor/three/r186/examples/jsm/utils/BufferGeometryUtils.js",
+      "kind": "unminified_reference_esm",
+      "rawBytes": 37712,
+      "gzipLevel9Bytes": 8685,
+      "brotliQuality11Bytes": 7466
+    },
+    {
+      "path": "experiments/asset-reference-probe/vendor/three/r186/examples/jsm/utils/SkeletonUtils.js",
+      "kind": "unminified_reference_esm",
+      "rawBytes": 11535,
+      "gzipLevel9Bytes": 3200,
+      "brotliQuality11Bytes": 2788
+    },
+    {
+      "path": "experiments/asset-reference-probe/assets/RiggedSimple/RiggedSimple.gltf",
+      "kind": "embedded_test_asset",
+      "rawBytes": 25435,
+      "gzipLevel9Bytes": 6129,
+      "brotliQuality11Bytes": 5325
+    }
+  ],
+  "totals": {
+    "rawBytes": 2313137,
+    "gzipLevel9Bytes": 461988,
+    "brotliQuality11Bytes": 350491
+  },
+  "limits": [
+    "Browser direct ESM acquisition includes the unminified module files; this is a correctness reference chain.",
+    "The local compressed-byte sum is not an observed network transfer or an approved package budget.",
+    "Authored adapters, HTML and tool metadata are excluded from these dependency totals.",
+    "No comparison with Cocos/Laya/Godot or old Egret packages is performed.",
+    "A production build must measure pruning, target host packaging, decoder assets, loading and equivalent content before adoption."
+  ]
+}

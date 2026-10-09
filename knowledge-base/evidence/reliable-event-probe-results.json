@@ -1,0 +1,196 @@
+{
+  "schemaVersion": 1,
+  "experiment": "reliable-event-probe",
+  "checkedAtUtc": "2026-10-08T06:27:15.464Z",
+  "environment": {
+    "runtime": "v24.19.0",
+    "executable": "node",
+    "platform": "win32",
+    "architecture": "x64",
+    "scope": "single-process synchronous in-memory model"
+  },
+  "counts": {
+    "total": 13,
+    "passed": 13,
+    "failed": 0
+  },
+  "results": [
+    {
+      "name": "invalid producer inputs cannot create a permanently blocked accepted event",
+      "status": "passed",
+      "breakCaught": "accepting non-events or ambiguous identities into the reliable stream",
+      "observations": {
+        "invalidCapacities": 3,
+        "invalidIdentities": 3,
+        "invalidEffects": 4,
+        "firstAcceptedSequence": 1
+      }
+    },
+    {
+      "name": "old graphics snapshot permanently skips a dropped required event",
+      "status": "passed",
+      "breakCaught": "treating snapshot sequence as event consumption proof",
+      "observations": {
+        "droppedEvent": "sound-A",
+        "effects": [],
+        "newGraphicsEpoch": 2,
+        "eventRecovered": false
+      }
+    },
+    {
+      "name": "dropped delivery stays pending and is recovered by resend",
+      "status": "passed",
+      "breakCaught": "removing an event on send before confirmation",
+      "observations": {
+        "effects": [
+          "sound-A"
+        ],
+        "outstanding": 0
+      }
+    },
+    {
+      "name": "lost ACK causes retransmission with one actual side effect",
+      "status": "passed",
+      "breakCaught": "executing a duplicate event again",
+      "observations": {
+        "deliveries": 2,
+        "effects": [
+          "sound-A"
+        ],
+        "outstanding": 0
+      }
+    },
+    {
+      "name": "missing sequence blocks effects until the gap is filled",
+      "status": "passed",
+      "breakCaught": "consuming sequence two before sequence one",
+      "observations": {
+        "effects": [
+          "sound-A",
+          "sound-B"
+        ],
+        "watermark": 2
+      }
+    },
+    {
+      "name": "graphics epoch recovery keeps required outbox and consumer watermark",
+      "status": "passed",
+      "breakCaught": "resetting reliable state during visual recovery",
+      "observations": {
+        "graphicsEpoch": 2,
+        "watermark": 2,
+        "effects": [
+          "sound-A",
+          "sound-B"
+        ]
+      }
+    },
+    {
+      "name": "bounded outbox rejects new events without losing accepted events or a sequence",
+      "status": "passed",
+      "breakCaught": "dropping accepted events to make room or advancing sequence on rejection",
+      "observations": {
+        "rejected": 1,
+        "effects": [
+          "sound-A",
+          "sound-B",
+          "sound-C"
+        ],
+        "nextAcceptedSequence": 3
+      }
+    },
+    {
+      "name": "ACK identity rejects stale producer stream and consumer sessions",
+      "status": "passed",
+      "breakCaught": "letting a foreign ACK evict current events",
+      "observations": {
+        "rejectedIdentities": 3,
+        "effects": [
+          "sound-A"
+        ],
+        "outstanding": 0
+      }
+    },
+    {
+      "name": "ACK cannot skip unsent accepted events",
+      "status": "passed",
+      "breakCaught": "trusting an impossible future cumulative ACK",
+      "observations": {
+        "effects": [
+          "sound-A"
+        ],
+        "outstanding": 0,
+        "impossibleACKsRejected": 2
+      }
+    },
+    {
+      "name": "malformed event and ACK are rejected without consumption or eviction",
+      "status": "passed",
+      "breakCaught": "changing state before all envelope fields are validated",
+      "observations": {
+        "invalidEvents": 6,
+        "invalidACKs": 5,
+        "effects": [
+          "sound-A"
+        ],
+        "outstanding": 1
+      }
+    },
+    {
+      "name": "caller mutations cannot rewrite accepted or transmitted events",
+      "status": "passed",
+      "breakCaught": "sharing mutable envelope objects with the transport",
+      "observations": {
+        "effects": [
+          "sound-A"
+        ]
+      }
+    },
+    {
+      "name": "duplicate cumulative ACK preserves newer unconfirmed events",
+      "status": "passed",
+      "breakCaught": "evicting every queued event for an old valid ACK",
+      "observations": {
+        "effects": [
+          "sound-A",
+          "sound-B"
+        ],
+        "outstanding": 1
+      }
+    },
+    {
+      "name": "consumer memory reset demonstrates duplicate side effects without durable commit",
+      "status": "passed",
+      "breakCaught": "mistaking in-memory watermark deduplication for crash-safe exactly-once execution",
+      "observations": {
+        "sameEventID": "p1/audio/1",
+        "observedEffects": [
+          "sound-A",
+          "sound-A"
+        ],
+        "actualSideEffectCountAcrossStateReset": 2,
+        "crashSafeExactlyOnce": false,
+        "resetMethod": "new in-memory instance, not OS process crash"
+      }
+    }
+  ],
+  "sourceHashes": [
+    {
+      "path": "model.mjs",
+      "sha256": "0dfb7788bce8493c7079f7e27decc966d8d0349c66459758f634dbba59bcdc17"
+    },
+    {
+      "path": "run.mjs",
+      "sha256": "d60b5d7b9ff18b8982babd7495135cb64733b8d0d3c0b4f377a7201ad1b04e89"
+    }
+  ],
+  "limitations": [
+    "No network, IPC, WASM, graphics/audio engine or real device execution.",
+    "No durable transaction coupling between side effects and consumer watermark; process crash may lose accepted events or cause duplicate effects.",
+    "Delivery is eventual only if transport retries fairly and an active consumer eventually accepts; permanent packet loss is not overcome.",
+    "Outbox is count-bounded; producer must handle explicit refusal. Consumer intentionally discards out-of-order events and waits for resend.",
+    "ACK validation is structural and session scoped, without authentication against hostile peers.",
+    "Graphics epoch differs from event stream lifetime. Consumer process restart and session rebind are not recovery operations modeled here.",
+    "Consumer side effect is an in-memory array append, assumed synchronous and atomic with watermark advancement. External side effects and exceptions require another contract."
+  ]
+}

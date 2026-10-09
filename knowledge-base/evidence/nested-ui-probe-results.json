@@ -1,0 +1,1260 @@
+{
+  "schemaVersion": 1,
+  "experiment": "nested-ui-probe",
+  "checkedAtUtc": "2026-10-08T06:27:15.496Z",
+  "mode": "production-research-model",
+  "environment": {
+    "node": "v24.19.0",
+    "platform": "win32",
+    "arch": "x64",
+    "execution": "CPU-only deterministic research model; no external dependencies"
+  },
+  "counts": {
+    "total": 18,
+    "passed": 18,
+    "failed": 0
+  },
+  "results": [
+    {
+      "name": "nested intrinsic sizes and padded world coordinates",
+      "status": "passed",
+      "observations": {
+        "catches": "missing ancestor aggregation or incorrect coordinate composition",
+        "incremental": {
+          "sourceCloneNodes": 0,
+          "mutationLookupVisits": 0,
+          "validationNodes": 8,
+          "dependencyValidationNodes": 16,
+          "dependencyValidationEdges": 14,
+          "dirtyPropagationVisits": 0,
+          "dimensionEvaluations": 16,
+          "dimensionDependencyReads": 14,
+          "childPlacementEvaluations": 7,
+          "worldEvaluations": 8,
+          "worldWrites": 8,
+          "clipIntersections": 0,
+          "snapshotNodes": 8
+        },
+        "fullOracle": {
+          "dimensionEvaluations": 16,
+          "worldEvaluations": 8,
+          "childPlacementEvaluations": 7
+        },
+        "sampledHitWork": {
+          "queries": 6,
+          "boundsChecks": 43
+        },
+        "nodes": 8,
+        "snapshot": {
+          "nodes": [
+            {
+              "id": "root",
+              "parent": null,
+              "x": 0,
+              "y": 0,
+              "width": 32,
+              "height": 75,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "a",
+              "parent": "root",
+              "x": 4,
+              "y": 4,
+              "width": 24,
+              "height": 29,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "a1",
+              "parent": "a",
+              "x": 6,
+              "y": 6,
+              "width": 20,
+              "height": 10,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "a2",
+              "parent": "a",
+              "x": 6,
+              "y": 19,
+              "width": 20,
+              "height": 12,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "b",
+              "parent": "root",
+              "x": 4,
+              "y": 39,
+              "width": 22,
+              "height": 21,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "b1",
+              "parent": "b",
+              "x": 5,
+              "y": 40,
+              "width": 20,
+              "height": 8,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "b2",
+              "parent": "b",
+              "x": 5,
+              "y": 50,
+              "width": 20,
+              "height": 9,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "tail",
+              "parent": "root",
+              "x": 4,
+              "y": 66,
+              "width": 20,
+              "height": 5,
+              "active": true,
+              "clip": null
+            }
+          ],
+          "work": {
+            "sourceCloneNodes": 0,
+            "mutationLookupVisits": 0,
+            "validationNodes": 8,
+            "dependencyValidationNodes": 16,
+            "dependencyValidationEdges": 14,
+            "dirtyPropagationVisits": 0,
+            "dimensionEvaluations": 16,
+            "dimensionDependencyReads": 14,
+            "childPlacementEvaluations": 7,
+            "worldEvaluations": 8,
+            "worldWrites": 8,
+            "clipIntersections": 0,
+            "snapshotNodes": 8
+          }
+        }
+      }
+    },
+    {
+      "name": "static flush performs no dimension or world evaluation",
+      "status": "passed",
+      "observations": {
+        "catches": "unconditional full layout on unchanged source",
+        "incremental": {
+          "sourceCloneNodes": 0,
+          "mutationLookupVisits": 0,
+          "validationNodes": 0,
+          "dependencyValidationNodes": 0,
+          "dependencyValidationEdges": 0,
+          "dirtyPropagationVisits": 0,
+          "dimensionEvaluations": 0,
+          "dimensionDependencyReads": 0,
+          "childPlacementEvaluations": 0,
+          "worldEvaluations": 0,
+          "worldWrites": 0,
+          "clipIntersections": 0,
+          "snapshotNodes": 8
+        },
+        "fullOracle": {
+          "dimensionEvaluations": 16,
+          "worldEvaluations": 8,
+          "childPlacementEvaluations": 7
+        },
+        "sampledHitWork": {
+          "queries": 6,
+          "boundsChecks": 43
+        },
+        "nodes": 8,
+        "snapshot": {
+          "nodes": [
+            {
+              "id": "root",
+              "parent": null,
+              "x": 0,
+              "y": 0,
+              "width": 32,
+              "height": 75,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "a",
+              "parent": "root",
+              "x": 4,
+              "y": 4,
+              "width": 24,
+              "height": 29,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "a1",
+              "parent": "a",
+              "x": 6,
+              "y": 6,
+              "width": 20,
+              "height": 10,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "a2",
+              "parent": "a",
+              "x": 6,
+              "y": 19,
+              "width": 20,
+              "height": 12,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "b",
+              "parent": "root",
+              "x": 4,
+              "y": 39,
+              "width": 22,
+              "height": 21,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "b1",
+              "parent": "b",
+              "x": 5,
+              "y": 40,
+              "width": 20,
+              "height": 8,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "b2",
+              "parent": "b",
+              "x": 5,
+              "y": 50,
+              "width": 20,
+              "height": 9,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "tail",
+              "parent": "root",
+              "x": 4,
+              "y": 66,
+              "width": 20,
+              "height": 5,
+              "active": true,
+              "clip": null
+            }
+          ],
+          "work": {
+            "sourceCloneNodes": 0,
+            "mutationLookupVisits": 0,
+            "validationNodes": 0,
+            "dependencyValidationNodes": 0,
+            "dependencyValidationEdges": 0,
+            "dirtyPropagationVisits": 0,
+            "dimensionEvaluations": 0,
+            "dimensionDependencyReads": 0,
+            "childPlacementEvaluations": 0,
+            "worldEvaluations": 0,
+            "worldWrites": 0,
+            "clipIntersections": 0,
+            "snapshotNodes": 8
+          }
+        }
+      }
+    },
+    {
+      "name": "sparse leaf height propagates through ancestors and shifts following siblings",
+      "status": "passed",
+      "observations": {
+        "catches": "subtree-only invalidation loses ancestor and sibling effects",
+        "incremental": {
+          "sourceCloneNodes": 8,
+          "mutationLookupVisits": 3,
+          "validationNodes": 8,
+          "dependencyValidationNodes": 16,
+          "dependencyValidationEdges": 14,
+          "dirtyPropagationVisits": 6,
+          "dimensionEvaluations": 6,
+          "dimensionDependencyReads": 10,
+          "childPlacementEvaluations": 5,
+          "worldEvaluations": 8,
+          "worldWrites": 8,
+          "clipIntersections": 0,
+          "snapshotNodes": 8
+        },
+        "fullOracle": {
+          "dimensionEvaluations": 16,
+          "worldEvaluations": 8,
+          "childPlacementEvaluations": 7
+        },
+        "sampledHitWork": {
+          "queries": 6,
+          "boundsChecks": 44
+        },
+        "nodes": 8,
+        "snapshot": {
+          "nodes": [
+            {
+              "id": "root",
+              "parent": null,
+              "x": 0,
+              "y": 0,
+              "width": 32,
+              "height": 85,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "a",
+              "parent": "root",
+              "x": 4,
+              "y": 4,
+              "width": 24,
+              "height": 39,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "a1",
+              "parent": "a",
+              "x": 6,
+              "y": 6,
+              "width": 20,
+              "height": 20,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "a2",
+              "parent": "a",
+              "x": 6,
+              "y": 29,
+              "width": 20,
+              "height": 12,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "b",
+              "parent": "root",
+              "x": 4,
+              "y": 49,
+              "width": 22,
+              "height": 21,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "b1",
+              "parent": "b",
+              "x": 5,
+              "y": 50,
+              "width": 20,
+              "height": 8,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "b2",
+              "parent": "b",
+              "x": 5,
+              "y": 60,
+              "width": 20,
+              "height": 9,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "tail",
+              "parent": "root",
+              "x": 4,
+              "y": 76,
+              "width": 20,
+              "height": 5,
+              "active": true,
+              "clip": null
+            }
+          ],
+          "work": {
+            "sourceCloneNodes": 8,
+            "mutationLookupVisits": 3,
+            "validationNodes": 8,
+            "dependencyValidationNodes": 16,
+            "dependencyValidationEdges": 14,
+            "dirtyPropagationVisits": 6,
+            "dimensionEvaluations": 6,
+            "dimensionDependencyReads": 10,
+            "childPlacementEvaluations": 5,
+            "worldEvaluations": 8,
+            "worldWrites": 8,
+            "clipIntersections": 0,
+            "snapshotNodes": 8
+          }
+        }
+      }
+    },
+    {
+      "name": "fixed parent clips size propagation while later sibling placement still changes",
+      "status": "passed",
+      "observations": {
+        "catches": "fixed size incorrectly treated as isolating children and positions",
+        "incremental": {
+          "sourceCloneNodes": 5,
+          "mutationLookupVisits": 3,
+          "validationNodes": 5,
+          "dependencyValidationNodes": 10,
+          "dependencyValidationEdges": 4,
+          "dirtyPropagationVisits": 2,
+          "dimensionEvaluations": 2,
+          "dimensionDependencyReads": 0,
+          "childPlacementEvaluations": 2,
+          "worldEvaluations": 5,
+          "worldWrites": 2,
+          "clipIntersections": 0,
+          "snapshotNodes": 5
+        },
+        "fullOracle": {
+          "dimensionEvaluations": 10,
+          "worldEvaluations": 5,
+          "childPlacementEvaluations": 4
+        },
+        "sampledHitWork": {
+          "queries": 6,
+          "boundsChecks": 22
+        },
+        "nodes": 5,
+        "snapshot": {
+          "nodes": [
+            {
+              "id": "root",
+              "parent": null,
+              "x": 0,
+              "y": 0,
+              "width": 40,
+              "height": 60,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "fixed",
+              "parent": "root",
+              "x": 0,
+              "y": 0,
+              "width": 40,
+              "height": 50,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "one",
+              "parent": "fixed",
+              "x": 0,
+              "y": 0,
+              "width": 20,
+              "height": 20,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "two",
+              "parent": "fixed",
+              "x": 0,
+              "y": 20,
+              "width": 20,
+              "height": 10,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "tail",
+              "parent": "root",
+              "x": 0,
+              "y": 50,
+              "width": 20,
+              "height": 10,
+              "active": true,
+              "clip": null
+            }
+          ],
+          "work": {
+            "sourceCloneNodes": 5,
+            "mutationLookupVisits": 3,
+            "validationNodes": 5,
+            "dependencyValidationNodes": 10,
+            "dependencyValidationEdges": 4,
+            "dirtyPropagationVisits": 2,
+            "dimensionEvaluations": 2,
+            "dimensionDependencyReads": 0,
+            "childPlacementEvaluations": 2,
+            "worldEvaluations": 5,
+            "worldWrites": 2,
+            "clipIntersections": 0,
+            "snapshotNodes": 5
+          }
+        }
+      }
+    },
+    {
+      "name": "hidden child leaves flow and disables descendant hit",
+      "status": "passed",
+      "observations": {
+        "catches": "visibility changes fail to invalidate ancestors or hit state",
+        "hidden": {
+          "sourceCloneNodes": 8,
+          "mutationLookupVisits": 2,
+          "validationNodes": 8,
+          "dependencyValidationNodes": 16,
+          "dependencyValidationEdges": 12,
+          "dirtyPropagationVisits": 4,
+          "dimensionEvaluations": 4,
+          "dimensionDependencyReads": 8,
+          "childPlacementEvaluations": 5,
+          "worldEvaluations": 8,
+          "worldWrites": 8,
+          "clipIntersections": 0,
+          "snapshotNodes": 8
+        },
+        "restored": {
+          "sourceCloneNodes": 8,
+          "mutationLookupVisits": 2,
+          "validationNodes": 8,
+          "dependencyValidationNodes": 16,
+          "dependencyValidationEdges": 14,
+          "dirtyPropagationVisits": 4,
+          "dimensionEvaluations": 4,
+          "dimensionDependencyReads": 10,
+          "childPlacementEvaluations": 5,
+          "worldEvaluations": 8,
+          "worldWrites": 8,
+          "clipIntersections": 0,
+          "snapshotNodes": 8
+        }
+      }
+    },
+    {
+      "name": "insert and remove update flow and node identity",
+      "status": "passed",
+      "observations": {
+        "catches": "structure edits leave stale rectangles or cached aggregates",
+        "inserted": {
+          "sourceCloneNodes": 8,
+          "mutationLookupVisits": 2,
+          "validationNodes": 9,
+          "dependencyValidationNodes": 18,
+          "dependencyValidationEdges": 16,
+          "dirtyPropagationVisits": 6,
+          "dimensionEvaluations": 6,
+          "dimensionDependencyReads": 12,
+          "childPlacementEvaluations": 6,
+          "worldEvaluations": 9,
+          "worldWrites": 8,
+          "clipIntersections": 0,
+          "snapshotNodes": 9
+        },
+        "removed": {
+          "sourceCloneNodes": 9,
+          "mutationLookupVisits": 6,
+          "validationNodes": 8,
+          "dependencyValidationNodes": 16,
+          "dependencyValidationEdges": 14,
+          "dirtyPropagationVisits": 6,
+          "dimensionEvaluations": 4,
+          "dimensionDependencyReads": 10,
+          "childPlacementEvaluations": 5,
+          "worldEvaluations": 8,
+          "worldWrites": 7,
+          "clipIntersections": 0,
+          "snapshotNodes": 8
+        }
+      }
+    },
+    {
+      "name": "reparent updates old and new ancestor chains plus world positions",
+      "status": "passed",
+      "observations": {
+        "catches": "reparent invalidates only destination or keeps old world transform",
+        "incremental": {
+          "sourceCloneNodes": 8,
+          "mutationLookupVisits": 11,
+          "validationNodes": 8,
+          "dependencyValidationNodes": 16,
+          "dependencyValidationEdges": 14,
+          "dirtyPropagationVisits": 8,
+          "dimensionEvaluations": 8,
+          "dimensionDependencyReads": 14,
+          "childPlacementEvaluations": 7,
+          "worldEvaluations": 8,
+          "worldWrites": 7,
+          "clipIntersections": 0,
+          "snapshotNodes": 8
+        },
+        "fullOracle": {
+          "dimensionEvaluations": 16,
+          "worldEvaluations": 8,
+          "childPlacementEvaluations": 7
+        },
+        "sampledHitWork": {
+          "queries": 6,
+          "boundsChecks": 46
+        },
+        "nodes": 8,
+        "snapshot": {
+          "nodes": [
+            {
+              "id": "root",
+              "parent": null,
+              "x": 0,
+              "y": 0,
+              "width": 32,
+              "height": 74,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "a",
+              "parent": "root",
+              "x": 4,
+              "y": 4,
+              "width": 24,
+              "height": 14,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "a1",
+              "parent": "a",
+              "x": 6,
+              "y": 6,
+              "width": 20,
+              "height": 10,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "b",
+              "parent": "root",
+              "x": 4,
+              "y": 24,
+              "width": 22,
+              "height": 35,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "a2",
+              "parent": "b",
+              "x": 5,
+              "y": 25,
+              "width": 20,
+              "height": 12,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "b1",
+              "parent": "b",
+              "x": 5,
+              "y": 39,
+              "width": 20,
+              "height": 8,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "b2",
+              "parent": "b",
+              "x": 5,
+              "y": 49,
+              "width": 20,
+              "height": 9,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "tail",
+              "parent": "root",
+              "x": 4,
+              "y": 65,
+              "width": 20,
+              "height": 5,
+              "active": true,
+              "clip": null
+            }
+          ],
+          "work": {
+            "sourceCloneNodes": 8,
+            "mutationLookupVisits": 11,
+            "validationNodes": 8,
+            "dependencyValidationNodes": 16,
+            "dependencyValidationEdges": 14,
+            "dirtyPropagationVisits": 8,
+            "dimensionEvaluations": 8,
+            "dimensionDependencyReads": 14,
+            "childPlacementEvaluations": 7,
+            "worldEvaluations": 8,
+            "worldWrites": 7,
+            "clipIntersections": 0,
+            "snapshotNodes": 8
+          }
+        }
+      }
+    },
+    {
+      "name": "external glyph-width fixture changes text line count and ancestor height",
+      "status": "passed",
+      "observations": {
+        "catches": "measurement input change fails to propagate text height",
+        "incremental": {
+          "sourceCloneNodes": 3,
+          "mutationLookupVisits": 2,
+          "validationNodes": 3,
+          "dependencyValidationNodes": 6,
+          "dependencyValidationEdges": 4,
+          "dirtyPropagationVisits": 4,
+          "dimensionEvaluations": 4,
+          "dimensionDependencyReads": 4,
+          "childPlacementEvaluations": 2,
+          "worldEvaluations": 3,
+          "worldWrites": 3,
+          "clipIntersections": 0,
+          "snapshotNodes": 3
+        },
+        "fullOracle": {
+          "dimensionEvaluations": 6,
+          "worldEvaluations": 3,
+          "childPlacementEvaluations": 2
+        },
+        "sampledHitWork": {
+          "queries": 6,
+          "boundsChecks": 16
+        },
+        "nodes": 3,
+        "snapshot": {
+          "nodes": [
+            {
+              "id": "root",
+              "parent": null,
+              "x": 0,
+              "y": 0,
+              "width": 20,
+              "height": 37,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "text",
+              "parent": "root",
+              "x": 0,
+              "y": 0,
+              "width": 12,
+              "height": 30,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "tail",
+              "parent": "root",
+              "x": 0,
+              "y": 32,
+              "width": 20,
+              "height": 5,
+              "active": true,
+              "clip": null
+            }
+          ],
+          "work": {
+            "sourceCloneNodes": 3,
+            "mutationLookupVisits": 2,
+            "validationNodes": 3,
+            "dependencyValidationNodes": 6,
+            "dependencyValidationEdges": 4,
+            "dirtyPropagationVisits": 4,
+            "dimensionEvaluations": 4,
+            "dimensionDependencyReads": 4,
+            "childPlacementEvaluations": 2,
+            "worldEvaluations": 3,
+            "worldWrites": 3,
+            "clipIntersections": 0,
+            "snapshotNodes": 3
+          }
+        },
+        "measurementScope": "External synthetic advance widths; no font, shaping, CJK, emoji or IME execution."
+      }
+    },
+    {
+      "name": "acyclic explicit dimension reference invalidates dependent width",
+      "status": "passed",
+      "observations": {
+        "catches": "referenced dimension change keeps stale dependent cache",
+        "incremental": {
+          "sourceCloneNodes": 3,
+          "mutationLookupVisits": 2,
+          "validationNodes": 3,
+          "dependencyValidationNodes": 6,
+          "dependencyValidationEdges": 5,
+          "dirtyPropagationVisits": 5,
+          "dimensionEvaluations": 5,
+          "dimensionDependencyReads": 5,
+          "childPlacementEvaluations": 2,
+          "worldEvaluations": 3,
+          "worldWrites": 3,
+          "clipIntersections": 0,
+          "snapshotNodes": 3
+        },
+        "fullOracle": {
+          "dimensionEvaluations": 6,
+          "worldEvaluations": 3,
+          "childPlacementEvaluations": 2
+        },
+        "sampledHitWork": {
+          "queries": 6,
+          "boundsChecks": 16
+        },
+        "nodes": 3,
+        "snapshot": {
+          "nodes": [
+            {
+              "id": "root",
+              "parent": null,
+              "x": 0,
+              "y": 0,
+              "width": 80,
+              "height": 15,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "basis",
+              "parent": "root",
+              "x": 0,
+              "y": 0,
+              "width": 40,
+              "height": 10,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "dependent",
+              "parent": "root",
+              "x": 0,
+              "y": 10,
+              "width": 80,
+              "height": 5,
+              "active": true,
+              "clip": null
+            }
+          ],
+          "work": {
+            "sourceCloneNodes": 3,
+            "mutationLookupVisits": 2,
+            "validationNodes": 3,
+            "dependencyValidationNodes": 6,
+            "dependencyValidationEdges": 5,
+            "dirtyPropagationVisits": 5,
+            "dimensionEvaluations": 5,
+            "dimensionDependencyReads": 5,
+            "childPlacementEvaluations": 2,
+            "worldEvaluations": 3,
+            "worldWrites": 3,
+            "clipIntersections": 0,
+            "snapshotNodes": 3
+          }
+        }
+      }
+    },
+    {
+      "name": "illegal dimension dependency cycle is rejected without state change",
+      "status": "passed",
+      "observations": {
+        "catches": "cyclic reference commits before dependency validation",
+        "rejection": "a1.width -> root.width -> a.width -> a1.width",
+        "stateUnchanged": true
+      }
+    },
+    {
+      "name": "reparent to descendant is rejected atomically",
+      "status": "passed",
+      "observations": {
+        "catches": "tree cycle edits source before checking ancestry",
+        "stateUnchanged": true
+      }
+    },
+    {
+      "name": "nested rectangular clipping preserves half-open hit edges",
+      "status": "passed",
+      "observations": {
+        "catches": "hit test ignores inherited clip or includes right and bottom boundaries",
+        "clipped": {
+          "sourceCloneNodes": 0,
+          "mutationLookupVisits": 0,
+          "validationNodes": 3,
+          "dependencyValidationNodes": 6,
+          "dependencyValidationEdges": 0,
+          "dirtyPropagationVisits": 0,
+          "dimensionEvaluations": 6,
+          "dimensionDependencyReads": 0,
+          "childPlacementEvaluations": 2,
+          "worldEvaluations": 3,
+          "worldWrites": 3,
+          "clipIntersections": 1,
+          "snapshotNodes": 3
+        },
+        "unclipped": {
+          "sourceCloneNodes": 3,
+          "mutationLookupVisits": 2,
+          "validationNodes": 3,
+          "dependencyValidationNodes": 6,
+          "dependencyValidationEdges": 0,
+          "dirtyPropagationVisits": 2,
+          "dimensionEvaluations": 2,
+          "dimensionDependencyReads": 0,
+          "childPlacementEvaluations": 2,
+          "worldEvaluations": 3,
+          "worldWrites": 2,
+          "clipIntersections": 0,
+          "snapshotNodes": 3
+        }
+      }
+    },
+    {
+      "name": "full invalidation records complete recomputation",
+      "status": "passed",
+      "observations": {
+        "catches": "full fallback undercounts work or skips dirty leaves",
+        "incremental": {
+          "sourceCloneNodes": 0,
+          "mutationLookupVisits": 0,
+          "validationNodes": 0,
+          "dependencyValidationNodes": 0,
+          "dependencyValidationEdges": 0,
+          "dirtyPropagationVisits": 0,
+          "dimensionEvaluations": 16,
+          "dimensionDependencyReads": 14,
+          "childPlacementEvaluations": 7,
+          "worldEvaluations": 8,
+          "worldWrites": 0,
+          "clipIntersections": 0,
+          "snapshotNodes": 8
+        },
+        "fullOracle": {
+          "dimensionEvaluations": 16,
+          "worldEvaluations": 8,
+          "childPlacementEvaluations": 7
+        },
+        "sampledHitWork": {
+          "queries": 6,
+          "boundsChecks": 43
+        },
+        "nodes": 8,
+        "snapshot": {
+          "nodes": [
+            {
+              "id": "root",
+              "parent": null,
+              "x": 0,
+              "y": 0,
+              "width": 32,
+              "height": 75,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "a",
+              "parent": "root",
+              "x": 4,
+              "y": 4,
+              "width": 24,
+              "height": 29,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "a1",
+              "parent": "a",
+              "x": 6,
+              "y": 6,
+              "width": 20,
+              "height": 10,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "a2",
+              "parent": "a",
+              "x": 6,
+              "y": 19,
+              "width": 20,
+              "height": 12,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "b",
+              "parent": "root",
+              "x": 4,
+              "y": 39,
+              "width": 22,
+              "height": 21,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "b1",
+              "parent": "b",
+              "x": 5,
+              "y": 40,
+              "width": 20,
+              "height": 8,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "b2",
+              "parent": "b",
+              "x": 5,
+              "y": 50,
+              "width": 20,
+              "height": 9,
+              "active": true,
+              "clip": null
+            },
+            {
+              "id": "tail",
+              "parent": "root",
+              "x": 4,
+              "y": 66,
+              "width": 20,
+              "height": 5,
+              "active": true,
+              "clip": null
+            }
+          ],
+          "work": {
+            "sourceCloneNodes": 0,
+            "mutationLookupVisits": 0,
+            "validationNodes": 0,
+            "dependencyValidationNodes": 0,
+            "dependencyValidationEdges": 0,
+            "dirtyPropagationVisits": 0,
+            "dimensionEvaluations": 16,
+            "dimensionDependencyReads": 14,
+            "childPlacementEvaluations": 7,
+            "worldEvaluations": 8,
+            "worldWrites": 0,
+            "clipIntersections": 0,
+            "snapshotNodes": 8
+          }
+        }
+      }
+    },
+    {
+      "name": "invalid insert and invalid glyph widths preserve source state",
+      "status": "passed",
+      "observations": {
+        "catches": "invalid input partly commits source or dirty state",
+        "stateUnchanged": true
+      }
+    },
+    {
+      "name": "sparse glyph-width arrays are rejected atomically before NaN geometry",
+      "status": "passed",
+      "observations": {
+        "catches": "array hole bypasses glyph validation and contaminates measurements",
+        "rejectedInput": "glyphWidths = new Array(1)",
+        "stateUnchanged": true
+      }
+    },
+    {
+      "name": "explicit numerical and node budgets reject overflow inputs atomically",
+      "status": "passed",
+      "observations": {
+        "catches": "finite operands overflow content size or an unchecked dependency bound",
+        "rejectedOverflowPair": [
+          1e+308,
+          1e+308
+        ],
+        "inputBudget": {
+          "maxNodes": 128,
+          "scalarMax": 1000000,
+          "referenceFactorMax": 8,
+          "glyphCountMax": 4096
+        },
+        "stateUnchanged": true
+      }
+    },
+    {
+      "name": "arbitrary subtree isolation has a demonstrated ancestor and sibling counterexample",
+      "status": "passed",
+      "observations": {
+        "catches": "negative control fails to expose missing upward propagation",
+        "wrongStrategyRejected": true,
+        "stale": [
+          {
+            "id": "root",
+            "incorrect": {
+              "id": "root",
+              "parent": null,
+              "x": 0,
+              "y": 0,
+              "width": 32,
+              "height": 75,
+              "active": true,
+              "clip": null
+            },
+            "correct": {
+              "id": "root",
+              "parent": null,
+              "x": 0,
+              "y": 0,
+              "width": 32,
+              "height": 85,
+              "active": true,
+              "clip": null
+            }
+          },
+          {
+            "id": "b",
+            "incorrect": {
+              "id": "b",
+              "parent": "root",
+              "x": 4,
+              "y": 39,
+              "width": 22,
+              "height": 21,
+              "active": true,
+              "clip": null
+            },
+            "correct": {
+              "id": "b",
+              "parent": "root",
+              "x": 4,
+              "y": 49,
+              "width": 22,
+              "height": 21,
+              "active": true,
+              "clip": null
+            }
+          },
+          {
+            "id": "b1",
+            "incorrect": {
+              "id": "b1",
+              "parent": "b",
+              "x": 5,
+              "y": 40,
+              "width": 20,
+              "height": 8,
+              "active": true,
+              "clip": null
+            },
+            "correct": {
+              "id": "b1",
+              "parent": "b",
+              "x": 5,
+              "y": 50,
+              "width": 20,
+              "height": 8,
+              "active": true,
+              "clip": null
+            }
+          },
+          {
+            "id": "b2",
+            "incorrect": {
+              "id": "b2",
+              "parent": "b",
+              "x": 5,
+              "y": 50,
+              "width": 20,
+              "height": 9,
+              "active": true,
+              "clip": null
+            },
+            "correct": {
+              "id": "b2",
+              "parent": "b",
+              "x": 5,
+              "y": 60,
+              "width": 20,
+              "height": 9,
+              "active": true,
+              "clip": null
+            }
+          },
+          {
+            "id": "tail",
+            "incorrect": {
+              "id": "tail",
+              "parent": "root",
+              "x": 4,
+              "y": 66,
+              "width": 20,
+              "height": 5,
+              "active": true,
+              "clip": null
+            },
+            "correct": {
+              "id": "tail",
+              "parent": "root",
+              "x": 4,
+              "y": 76,
+              "width": 20,
+              "height": 5,
+              "active": true,
+              "clip": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "seeded sequence compares structure rectangles clip and hits after every edit",
+      "status": "passed",
+      "observations": {
+        "catches": "mixed edits leave caches inconsistent outside hand fixtures",
+        "seed": 20261008,
+        "editSteps": 100,
+        "extraHitComparisons": 1200,
+        "work": {
+          "dimensionEvaluations": 532,
+          "worldEvaluations": 800,
+          "validationNodes": 980,
+          "childPlacementEvaluations": 504
+        }
+      }
+    }
+  ],
+  "sourceHashes": [
+    {
+      "path": "experiments/nested-ui-probe/model.mjs",
+      "sha256": "7c2d61a0bb03eebdc8ea5a8c08fcb38056625780a8e3641463ff6a9195aab9dd"
+    },
+    {
+      "path": "experiments/nested-ui-probe/run.mjs",
+      "sha256": "3f0c19dfdb325c4a06191aebe3a5b06c6e50ec798b35980e0b848be4882234e4"
+    }
+  ],
+  "limitations": [
+    "Finite vertical layout semantics only, not EUI compatibility.",
+    "Text widths are an external synthetic fixture, not real font/shaping/CJK/IME validation.",
+    "No timing, FPS, device, GPU, or performance-advantage claims.",
+    "Mutation validation traverses the entire source and dependency graphs; changed frames traverse all nodes for world state, with cached dimension recomputation.",
+    "Arbitrary subtree isolation is explicitly invalid when content-size ancestors or flow siblings depend on it.",
+    "Supported input budget: <=128 nodes, scalar dimensions/padding/gap/text inputs <=1e6, reference factors <=8, <=4096 dense glyph advances. No general guarantee for arbitrary finite inputs, fractional rounding, or extreme recursion."
+  ]
+}

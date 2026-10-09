@@ -1,0 +1,469 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-10-08",
+  "scope": "Public documentation and attribution editorial revision",
+  "baselineVersion": "0.8.0",
+  "targetVersion": "0.9.0",
+  "documentationEdits": [
+    {
+      "file": "docs/技术白皮书.md",
+      "beforeSha256": "8be3bfc71bd2b1f661352099a07f9c5d5eb3cb6af468dc711bf3226e9bc90e02",
+      "afterSha256": "7f65d0af97cdf644ce7ebd3573f3eaf8b01f2e85f276f302cf88cec96440fe29",
+      "editTypes": [
+        "项目决策表述",
+        "公平比较与目标定位",
+        "实现来源规范化"
+      ],
+      "replacementCount": 5,
+      "externalUrlsPreserved": true,
+      "externalUrlCount": 5
+    },
+    {
+      "file": "docs/产品需求说明书.md",
+      "beforeSha256": "40b6c46615bbb586bd3a4c52fc3a9999c07903a6c301a69f5c0eac5a26301a90",
+      "afterSha256": "3daabdd6504af6e21ce472f07314d90fe78ee4668a6c7eb83522cf0665cfcf17",
+      "editTypes": [
+        "项目决策表述",
+        "第一天开源方向"
+      ],
+      "replacementCount": 4,
+      "externalUrlsPreserved": true,
+      "externalUrlCount": 0
+    },
+    {
+      "file": "docs/设计理念与定位.md",
+      "beforeSha256": "84aca967b755310678dfa375b3b77b9b91a738027347738e891fc4ff075127f1",
+      "afterSha256": "158e3a2373f863f0d7c4e8f51beca44cc77e8995b3536416ca0bc222a9e098ad",
+      "editTypes": [
+        "公平比较与目标定位",
+        "第一天开源方向"
+      ],
+      "replacementCount": 2,
+      "externalUrlsPreserved": true,
+      "externalUrlCount": 0
+    },
+    {
+      "file": "docs/代码规范与质量门禁.md",
+      "beforeSha256": "74bbdffa8d020bb4167fc712b3f99df995344b2b75d398bfdc60a612fc1e5993",
+      "afterSha256": "245549c618504efb99dd94bc149502f9225c1c55fbb155a40042f1cab44a5dd7",
+      "editTypes": [
+        "实现来源规范化"
+      ],
+      "replacementCount": 1,
+      "externalUrlsPreserved": true,
+      "externalUrlCount": 5
+    },
+    {
+      "file": "docs/工程规划.md",
+      "beforeSha256": "f38a38e4adff6f8ee11d224ddb1363aa752145b3cc04f27b86d8af784fc4804b",
+      "afterSha256": "c5593aac10c87e5c9369bc7cc0c1b66bbc476adc6e4b14488b64d19677e1df08",
+      "editTypes": [
+        "实现来源规范化",
+        "第一天开源方向"
+      ],
+      "replacementCount": 2,
+      "externalUrlsPreserved": true,
+      "externalUrlCount": 0
+    },
+    {
+      "file": "docs/工程技术架构与项目结构.md",
+      "beforeSha256": "78e7eb6cf305d0b0bfc25204421a7446dc8532ab5466391c11b1bc235b9938b4",
+      "afterSha256": "d9bca29e3b1065909a0dc3451bb8cad3c48c0c8e24eb657602542ad40974c67e",
+      "editTypes": [
+        "实现来源规范化",
+        "当前实现状态与来源",
+        "去内部工作记录",
+        "当前实现状态"
+      ],
+      "replacementCount": 4,
+      "externalUrlsPreserved": true,
+      "externalUrlCount": 0
+    },
+    {
+      "file": "docs/核心框架实现记录.md",
+      "beforeSha256": "2934e80fa9c654a1d658e9aa13681384fa161d5734eecf1175eaa17e601c590c",
+      "afterSha256": "478e4aaae0cd6cd99d49f7a471931af1069de7f9898961c416c6419a729f8662",
+      "editTypes": [
+        "第一天开源方向",
+        "项目决策表述",
+        "去内部调度词",
+        "实现来源规范化"
+      ],
+      "replacementCount": 7,
+      "externalUrlsPreserved": true,
+      "externalUrlCount": 0
+    },
+    {
+      "file": "docs/核心框架证据缺口与研究清单.md",
+      "beforeSha256": "6342b327b358c1668cf50e52f4d6919a798073025e5d1c3e2b049f8ea08e4e49",
+      "afterSha256": "ad9eafb4b540a28f84947fedff016371c65ff31b76601988eec55644ca950894",
+      "editTypes": [
+        "去内部调度词",
+        "去内部工作记录",
+        "当前实现状态与历史边界"
+      ],
+      "replacementCount": 3,
+      "externalUrlsPreserved": true,
+      "externalUrlCount": 26
+    },
+    {
+      "file": "docs/公共API设计与命名规范.md",
+      "beforeSha256": "0d169f7b1176018fdcd123f0fc5901159e7fdf073d904df361419e066dfc98e1",
+      "afterSha256": "76451696d8baa65305a6de8ee4cd508609971cb250329a479e4bba39097ec7fb",
+      "editTypes": [
+        "当前实现状态",
+        "当前实现状态与完整示例边界"
+      ],
+      "replacementCount": 2,
+      "externalUrlsPreserved": true,
+      "externalUrlCount": 1
+    },
+    {
+      "file": "docs/核心框架首段实现计划.md",
+      "beforeSha256": "b22cab345e51fecfbb367b1697b5601b364fe894fd642b70d8667079108d193e",
+      "afterSha256": "b8ac5c2035ffa167797e3214005900f27b90d3a68bb518086c3300ff6c94f7a0",
+      "editTypes": [
+        "去内部执行指令",
+        "当前实现状态",
+        "实现来源规范化",
+        "第一天开源方向与去内部工作记录",
+        "去内部调度词",
+        "去内部调度与授权叙事"
+      ],
+      "replacementCount": 7,
+      "externalUrlsPreserved": true,
+      "externalUrlCount": 0
+    },
+    {
+      "file": "docs/核心优势与验证.md",
+      "beforeSha256": "aabe57ef9a9753bcf6df8044fcb2aae88264769ebeaea2f3f69820109fb4dbe9",
+      "afterSha256": "f8d4e8b3acb0e7e46667e10bab9cfb64ed9c42f82c301c5506032f252ad64ee9",
+      "editTypes": [
+        "当前实现状态",
+        "删减私人身份叙事并保留来源",
+        "删减历史合作叙事并保留技术经验"
+      ],
+      "replacementCount": 4,
+      "externalUrlsPreserved": true,
+      "externalUrlCount": 0
+    },
+    {
+      "file": "docs/图形后端编译与原生Runtime选型.md",
+      "beforeSha256": "3501500d63cf0da49fde1c972770572524a226ff10d8b799a5c332acc533cb84",
+      "afterSha256": "52b6b920af93176cd3be165a9889c718ca386fbf9bd6ab557b49d905a565e038",
+      "editTypes": [
+        "删减私人身份叙事并保留来源",
+        "删减内部对话纠错叙事"
+      ],
+      "replacementCount": 2,
+      "externalUrlsPreserved": true,
+      "externalUrlCount": 15
+    },
+    {
+      "file": "docs/Shaders与Playground产品技术启发.md",
+      "beforeSha256": "121701f00e0fed5d7f4815d36ee693c57158604d930c0527d8c3c12b6a8e843f",
+      "afterSha256": "b6b5edaa5de8072ae8f4289dfa68b01b6c2ba24abcf32461ac8d03dde3f14e59",
+      "editTypes": [
+        "实现来源与参考定位",
+        "项目验收表述"
+      ],
+      "replacementCount": 2,
+      "externalUrlsPreserved": true,
+      "externalUrlCount": 12
+    },
+    {
+      "file": "docs/交付计划.md",
+      "beforeSha256": "d84b4cb7c9eda554d940713c559acee612583a46d69779c63ef554a9a8029b0e",
+      "afterSha256": "943c8622107f393ab5e6be2583bb4c8e8805521dad55b241d45d19403233fc13",
+      "editTypes": [
+        "项目决策表述",
+        "第一天开源方向"
+      ],
+      "replacementCount": 3,
+      "externalUrlsPreserved": true,
+      "externalUrlCount": 0
+    },
+    {
+      "file": "docs/产品组成.md",
+      "beforeSha256": "fcc0742a2e246ced0ab73089a901caaf5539779c65d52c0b0d51d6c615fd1646",
+      "afterSha256": "c821d4185d8f6f0457d23f5b15fe53977aefb1ffc3a834b987009231fc96672a",
+      "editTypes": [
+        "第一天开源方向"
+      ],
+      "replacementCount": 1,
+      "externalUrlsPreserved": true,
+      "externalUrlCount": 0
+    },
+    {
+      "file": "docs/决策与开放问题.md",
+      "beforeSha256": "8d002422199c5ae639d3f9ad7d9326404cbfd22539cc963897ae254e4e33d108",
+      "afterSha256": "2a7e47aeeac2e683dfaeec6aba06ea419b1c728e443c428b8a6cd95e7212100a",
+      "editTypes": [
+        "项目决策表述",
+        "当前决策数量",
+        "第一天开源方向"
+      ],
+      "replacementCount": 5,
+      "externalUrlsPreserved": true,
+      "externalUrlCount": 0
+    },
+    {
+      "file": "docs/竞品演进与生态.md",
+      "beforeSha256": "6a16b1dcdfdb052f4f29dc1ec00d13a3d992d43308f812bcb37019333372f1c4",
+      "afterSha256": "78f4cfc7bb01892c4baf2ab58ea1465cce2507d9eab623d2428ba315a4185736",
+      "editTypes": [
+        "项目决策表述",
+        "当前实现状态"
+      ],
+      "replacementCount": 2,
+      "externalUrlsPreserved": true,
+      "externalUrlCount": 32
+    },
+    {
+      "file": "docs/技术架构.md",
+      "beforeSha256": "8ac6ba1273ac02796b81dd7f86cc43bd3a5dc3c584c0d592ea6802a4855485d4",
+      "afterSha256": "d9f9ef2ce25c4ef2de7708a7f2a33bde7017c4bd46de8b75544f3098120bc72a",
+      "editTypes": [
+        "公平比较与目标定位",
+        "当前实现状态"
+      ],
+      "replacementCount": 3,
+      "externalUrlsPreserved": true,
+      "externalUrlCount": 4
+    },
+    {
+      "file": "docs/渲染引擎与运行时.md",
+      "beforeSha256": "c8ad1bf0d041465400486cdd349db7d1751710b92af587ee817cebb5b94e1e90",
+      "afterSha256": "ae0d367ae8d479054cb79f8e5b163ce70c57081baa2f43cc1cde66918fd2d5ab",
+      "editTypes": [
+        "当前实现状态",
+        "项目决策表述"
+      ],
+      "replacementCount": 3,
+      "externalUrlsPreserved": true,
+      "externalUrlCount": 5
+    },
+    {
+      "file": "docs/旧工程迁移.md",
+      "beforeSha256": "1492c585b0e964c6d427e21db962aa0f0cdbf6ca3d5c6baeb9f052b496092246",
+      "afterSha256": "0f302d94dcb299625de652ca93eceb5a082c5269559c291085b0f2a07c0f26bc",
+      "editTypes": [
+        "项目决策表述"
+      ],
+      "replacementCount": 1,
+      "externalUrlsPreserved": true,
+      "externalUrlCount": 0
+    },
+    {
+      "file": "docs/第一轮审计.md",
+      "beforeSha256": "50637663971e65dba43319f6802ffc5e48f2ab4501948ff5e0220ba8441d8cf3",
+      "afterSha256": "3039d60442aa3ed0e8473a3e441ca6227e8b4fed2533dda629235dd46fd5621f",
+      "editTypes": [
+        "历史记录去内部调度词"
+      ],
+      "replacementCount": 2,
+      "externalUrlsPreserved": true,
+      "externalUrlCount": 0
+    },
+    {
+      "file": "docs/技术验证记录.md",
+      "beforeSha256": "8041089383c7bcb3617029bf82ca91748f1345afdd03de2587a4873b9a0f4e0f",
+      "afterSha256": "a86bfed14aa133365341dceb82213971b07142fd28bb77554f6518fc32f5d006",
+      "editTypes": [
+        "历史记录去内部调度词"
+      ],
+      "replacementCount": 1,
+      "externalUrlsPreserved": true,
+      "externalUrlCount": 2
+    },
+    {
+      "file": "docs/第二轮验证计划.md",
+      "beforeSha256": "241fd8457be351ec04d67e68dbc84ab134578023fb8402312fc8f316f0a7a2a1",
+      "afterSha256": "8b398a2478f9e29a33ce17b198bee9d078892491a673872ea8252d22e707d4ae",
+      "editTypes": [
+        "历史记录去内部授权叙事",
+        "历史记录去内部调度词"
+      ],
+      "replacementCount": 3,
+      "externalUrlsPreserved": true,
+      "externalUrlCount": 0
+    },
+    {
+      "file": "docs/第一轮研究核查.md",
+      "beforeSha256": "af4c39daeb3f16e83fa73aa3420b70bf8d5b5a819ca5d8cafaec32f0f9e72325",
+      "afterSha256": "b4267a17ece586065733c9b1f92affe87b025afc298da74b5bacbaab503c924c",
+      "editTypes": [
+        "历史研究去内部执行叙事"
+      ],
+      "replacementCount": 1,
+      "externalUrlsPreserved": true,
+      "externalUrlCount": 27
+    },
+    {
+      "file": "docs/第二轮审计.md",
+      "beforeSha256": "a770ca86ee49aa2463a8961b71ebe279654e136d41ff4772874cb96383092b9b",
+      "afterSha256": "9a0a10377588b2d5ffd7dfb00261632fb99274796b62d25880b41309c34967d3",
+      "editTypes": [
+        "历史记录去内部批准叙事"
+      ],
+      "replacementCount": 1,
+      "externalUrlsPreserved": true,
+      "externalUrlCount": 0
+    },
+    {
+      "file": "docs/第三轮审计.md",
+      "beforeSha256": "f9246218ef0fad90414e25eb8c4868c392b27f07f568c510b9562a21093f94ee",
+      "afterSha256": "a55af1500ca41f769b5b1d012b0ca2bcea52fa12e3bdf62c4bd6a9659ea885d8",
+      "editTypes": [
+        "历史记录去内部调度词"
+      ],
+      "replacementCount": 3,
+      "externalUrlsPreserved": true,
+      "externalUrlCount": 0
+    },
+    {
+      "file": "docs/第三轮集成记录.md",
+      "beforeSha256": "63ca2d183b133e3995e1b4ed28febf250b6971cfa702a03634712ca4092638e6",
+      "afterSha256": "abb9b7f556089e56b834f6ed00864dd3250d5172adfc4c8221a29d071fbde2c4",
+      "editTypes": [
+        "历史记录去内部调度词"
+      ],
+      "replacementCount": 2,
+      "externalUrlsPreserved": true,
+      "externalUrlCount": 0
+    }
+  ],
+  "sourcePolicyEdits": [
+    {
+      "path": "docs/独立实现与第三方依赖规范.md",
+      "changeType": "rewritten",
+      "beforeSha256": "431a5b0163d4eb4fd2fba512c1bef8b98372e280b17fd9cbacee9e4a6c879139",
+      "afterSha256": "4338297c0613664bba6b7799e83916c0b7d61b3e18eac9dc7edd3fb71b46262f",
+      "originalUrlsPreserved": true
+    },
+    {
+      "path": "docs/开源参考实现与采用方案.md",
+      "changeType": "rewritten",
+      "beforeSha256": "226427d95099c4d112e55fae96be5282a77455f693ee96bf75b22659d8bee975",
+      "afterSha256": "701de1a58f2e637c0ce60996eed1895987fa7160fe4452ee5d5d228f9c151440",
+      "originalUrlsPreserved": true
+    },
+    {
+      "path": "docs/开源实现优先与验证分工.md",
+      "changeType": "rewritten",
+      "beforeSha256": "95b45941ba4e1a3aa8de72094f2087198fd5fc425990346e65cc1e35e7ef96c8",
+      "afterSha256": "ed495845f3d732b0310bd59cacc3caffbf91968d4e3e9a90319e31ebc766fff3",
+      "originalUrlsPreserved": true
+    },
+    {
+      "path": "templates/实现来源记录.md",
+      "changeType": "rewritten",
+      "beforeSha256": "6d881fc4a245a20a802b67610f0d60b340cbe2df6fc67f6e72428ecf9815d280",
+      "afterSha256": "8dfbcd60518fc4ff19516d22a5899eb6af8a6832de8622b2ed18c8044b7d1873",
+      "originalUrlsPreserved": true
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "changeType": "rewritten",
+      "beforeSha256": "fca91f575c8ac23be839f3478e2fa731337841e7a3e05c023572209ac37cb244",
+      "afterSha256": "844849b0a58ff0e47fc415b27dc7a67c5dc98db8e80ec741263356f02b960d5c",
+      "originalUrlsPreserved": true
+    },
+    {
+      "path": "ACKNOWLEDGEMENTS.md",
+      "changeType": "added",
+      "beforeSha256": null,
+      "afterSha256": "5dfb0d2cdbd5d14ce474ee4d4d28929b1708c59f65292b903801dfe0eaf8a042",
+      "originalUrlsPreserved": true
+    }
+  ],
+  "reportHashScope": "These after hashes bind the editorial freeze before the subsequent repository/license/link/version metadata integration.",
+  "evidenceProjections": [
+    {
+      "path": "evidence/code-origin-founder-context.json",
+      "originalSha256": "6733370568fd8f453385a7f43626521cbbcf77dcfb2096407d29ba810f2b7e07",
+      "publicSha256": "b6dc9a77914179d3b5dc7fe2892c5efb335daa1964946ee31062ade9d1a517e4",
+      "changedStringFields": [
+        "statement"
+      ]
+    },
+    {
+      "path": "evidence/code-origin-policy-review.json",
+      "originalSha256": "f2f00184b045280a18ac2b24a68b86833ea28630f90f48990213adc67aca4717",
+      "publicSha256": "cff67faf8295f60d7e6a530c1a6fcc5b79c9abfe06d34c69bdb6f8a2140dced8",
+      "changedStringFields": [
+        "findings[1].observation",
+        "findings[4].observation",
+        "findings[4].conclusion",
+        "limits[1]"
+      ]
+    },
+    {
+      "path": "evidence/code-origin-research-audit.json",
+      "originalSha256": "8cfca7bd445c16d27144fcc9c5aab8fd228d6ffe534481e0bec0142c781333d0",
+      "publicSha256": "29616a16bc8377da2178f724ee2cbba3b89b783cd8b1a0add3656d6bd1467f1b",
+      "changedStringFields": [
+        "directlyObserved[1].observation",
+        "directlyObserved[1].recommendation",
+        "recommendedCurrentPolicyText",
+        "directlyObserved[1].excerpts[1]",
+        "directlyObserved[2].observation",
+        "directlyObserved[2].recommendation",
+        "directlyObserved[5].recommendation"
+      ]
+    },
+    {
+      "path": "evidence/core-framework-document-review-initial.json",
+      "originalSha256": "fd1e41db1f1ca54ddf0317b53c2067587e7ad46dc239c836e8108607d2294637",
+      "publicSha256": "73fa53005268ccc6d8cd7656e7a479abe6d7199be042d69766a1ca434dfa4dee",
+      "changedStringFields": [
+        "necessaryCorrections[1].evidence",
+        "necessaryCorrections[1].verification"
+      ]
+    },
+    {
+      "path": "evidence/core-framework-document-review-final.json",
+      "originalSha256": "df255000a3501432c7153d67b086c3434df923c6564d2added338f5b55c1b3ac",
+      "publicSha256": "3d8ea191f88f0475e379dd6e96a3a3c77604bcfbd15e95a3f9ce1f256ed36e60",
+      "changedStringFields": [
+        "boundedChecks[2].explanation",
+        "scope.nextVerificationOwner"
+      ]
+    }
+  ],
+  "preserved": [
+    "External research sources and versions",
+    "Review findings and failed/fixed history",
+    "Third-party runtime identity in research",
+    "Technical status and acceptance limits"
+  ],
+  "productBehaviorModified": false,
+  "experimentsRerun": false,
+  "subsequentMetadataIntegration": {
+    "files": [
+      "ACKNOWLEDGEMENTS.md",
+      "CONTRIBUTING.md",
+      "docs/独立实现与第三方依赖规范.md",
+      "docs/产品需求说明书.md",
+      "CHANGELOG.md"
+    ],
+    "repository": "cnedwin/Egret_rebuild",
+    "license": "Apache-2.0",
+    "links": "Self-contained knowledge-base evidence targets",
+    "historicalResultsRetained": true
+  },
+  "replayInstructionEdits": [
+    {
+      "path": "experiments/reliable-event-probe/README.md",
+      "beforeSha256": "376092aa98f5283d5e8764a33fae2b050886d0d07dc0df23d5d76bdc48942379",
+      "afterSha256": "933ddedfe9f078300611c6bbf28ff5437145886e68b89abadf48e8cee0494db8",
+      "scope": "Replay command location only; experiment source, historical source snapshots and reported results unchanged"
+    },
+    {
+      "path": "experiments/async-resource-probe/README.md",
+      "beforeSha256": "7bb2f8eb08c1ce27a154481977161b9912da0b9e461618166ddbb7520dc7daee",
+      "afterSha256": "84b2fc348a6d0af9ff75fc4a0797fb9d1a5d068ce79f126af3ebb65e62aef5d8",
+      "scope": "Replay command location only; experiment source, historical source snapshots and reported results unchanged"
+    }
+  ]
+}

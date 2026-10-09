@@ -1,0 +1,478 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-08",
+  "classification": "local_candidate_source_research_summary",
+  "scope": {
+    "privateSourceReadOnly": true,
+    "selectedEntriesStreamedOnly": true,
+    "archiveWholeExtraction": false,
+    "privateSourceExecuted": false,
+    "buildOrBenchmarkRun": false,
+    "dependenciesInstalled": false,
+    "productOrKBEdits": false,
+    "publicSources": "Official project/platform documents, source and release pages only. Tool cache may predate retrieval; main/trunk is moving."
+  },
+  "recommendationStatus": "Candidate architecture and selection hypotheses; no adopted implementation decision or measured performance claim",
+  "sources": [
+    {
+      "id": "R01",
+      "url": "https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html",
+      "kind": "official_language_docs",
+      "fact": "Ownership rules are checked by the Rust compiler; ownership features do not impose runtime ownership checking. C++ RAII is explicitly noted as a related lifetime mechanism.",
+      "limit": "Not a Rust vs C++ Egret benchmark.",
+      "retrievedAt": "2026-10-08"
+    },
+    {
+      "id": "R04",
+      "url": "https://doc.rust-lang.org/book/ch16-03-shared-state.html",
+      "kind": "official_language_docs",
+      "fact": "Rust type and ownership rules constrain sharing and synchronization, with Mutex/Arc examples; deadlocks remain possible.",
+      "limit": "Does not automatically secure C++/FFI/native GPU state or guarantee no runtime bugs.",
+      "retrievedAt": "2026-10-08"
+    },
+    {
+      "id": "R02",
+      "url": "https://doc.rust-lang.org/nomicon/ffi.html",
+      "kind": "official_language_docs",
+      "fact": "FFI requires ABI, layout, ownership, callback/thread and unwinding contracts; repr(C) is available for C layouts.",
+      "limit": "Rust safety does not automatically cover C++ code or unsafe raw GPU/VM interfaces.",
+      "retrievedAt": "2026-10-08"
+    },
+    {
+      "id": "R03",
+      "url": "https://cxx.rs/",
+      "kind": "project_docs",
+      "fact": "CXX uses declared interfaces and generated Rust/C++ bridges to check types and signatures, with standard types supported within a constrained common subset.",
+      "limit": "An implementation option for internal interfaces; not a stable distributable cross-compiler SDK ABI or an automatic whole-program safety proof.",
+      "retrievedAt": "2026-10-08"
+    },
+    {
+      "id": "G01",
+      "url": "https://github.com/gfx-rs/wgpu",
+      "kind": "official_project_repository",
+      "fact": "Native Vulkan, Metal, D3D12 and OpenGL; wasm WebGL2/WebGPU; first-class vs downlevel/best-effort support distinguished. No direct D3D11 in listed native backends; C bindings provided separately by wgpu-native.",
+      "limit": "Documented support does not establish Harmony or Egret compatibility or performance; main/trunk may move.",
+      "retrievedAt": "2026-10-08"
+    },
+    {
+      "id": "G02",
+      "url": "https://github.com/gfx-rs/wgpu/releases/tag/v30.0.1",
+      "kind": "official_release",
+      "fact": "Release page displayed v30.0.1 as Latest at retrieval; release commit 40f4a34ebaf56f9a046231f54125ad046239d3f3; page displayed 22 Aug 02:57 without year in extracted text.",
+      "limit": "Registry highest version not independently checked; no binary downloaded, hash or build verified.",
+      "retrievedAt": "2026-10-08"
+    },
+    {
+      "id": "G03",
+      "url": "https://github.com/gfx-rs/wgpu-native/releases",
+      "kind": "official_release_list",
+      "fact": "Separate C binding release list displayed v29.0.1.1 as Latest; release commit 6aed50955d934ac36049ba8d002034841633ae02.",
+      "limit": "Must pin headers plus library together; wgpu 30 Rust version cannot be treated as available equivalent C package version.",
+      "retrievedAt": "2026-10-08"
+    },
+    {
+      "id": "G04",
+      "url": "https://docs.rs/wgpu/30.0.1/wgpu/struct.Device.html",
+      "kind": "project_api_docs",
+      "fact": "as_hal and create_texture_from_hal are unsafe interop hooks with lifetime, same-device, descriptor and state requirements. Raw resources may not be destroyed while referenced/in use by GPU.",
+      "limit": "Docs retrieval used latest URL which displayed 30.0.1; versioned URL provided for future pinning. No SDK device-sharing test.",
+      "retrievedAt": "2026-10-08"
+    },
+    {
+      "id": "G05",
+      "url": "https://dawn.googlesource.com/dawn/+/refs/heads/main/README.md",
+      "kind": "official_project_repository",
+      "fact": "Dawn implements WebGPU C/C++ headers, native APIs and wire client/server, with Tint for WGSL. README lists D3D12, Metal, Vulkan, OpenGL.",
+      "limit": "README omits direct D3D11 present in current source; use source and revision-qualified tests for exact capability.",
+      "retrievedAt": "2026-10-08"
+    },
+    {
+      "id": "G06",
+      "url": "https://raw.githubusercontent.com/google/dawn/main/src/dawn/native/CMakeLists.txt",
+      "kind": "official_project_source_mirror",
+      "fact": "DAWN_ENABLE_D3D11 includes direct D3D11 backend source and public D3D11Backend.h; D3D12, Metal and Vulkan have separate build gates.",
+      "limit": "Static main-source observation only; does not prove a particular release built or passed CTS.",
+      "retrievedAt": "2026-10-08"
+    },
+    {
+      "id": "G07",
+      "url": "https://raw.githubusercontent.com/google/dawn/main/src/dawn/native/d3d11/PhysicalDeviceD3D11.cpp",
+      "kind": "official_project_source_mirror",
+      "fact": "SupportsFeatureLevel checks Core against >= D3D_FEATURE_LEVEL_11_1 and Compatibility against >=11_0; TODO remains for comparing feature levels. Existing ID3D11Device is reused when supplied.",
+      "limit": "Current main source, not independently pinned to displayed release. Do not label all D3D11 capabilities complete or infer current production maturity.",
+      "retrievedAt": "2026-10-08"
+    },
+    {
+      "id": "G08",
+      "url": "https://raw.githubusercontent.com/google/dawn/main/include/dawn/native/D3D11Backend.h",
+      "kind": "official_project_source_mirror",
+      "fact": "RequestAdapterOptionsD3D11Device accepts existing ID3D11Device; imported ID3D11Texture2D must originate from same ID3D11Device as WGPUDevice.",
+      "limit": "Dawn-native extension, not portable standard WebGPU API.",
+      "retrievedAt": "2026-10-08"
+    },
+    {
+      "id": "G09",
+      "url": "https://raw.githubusercontent.com/google/dawn/main/docs/dawn/features/shared_texture_memory.md",
+      "kind": "official_project_docs_mirror",
+      "fact": "External shared textures have feature/descriptor constraints and require BeginAccess/EndAccess; fences synchronize external and Dawn GPU work.",
+      "limit": "Per-memory-type constraints, including 2D single sample/mip/layer in retrieved doc; not universal zero-copy.",
+      "retrievedAt": "2026-10-08"
+    },
+    {
+      "id": "G10",
+      "url": "https://github.com/google/dawn/releases",
+      "kind": "official_release_list",
+      "fact": "Displayed latest v20261006.214603 at revision 2dca9f30b7c1e56307280679473d6f35a3c71a41; release explicitly calls GitHub native binaries best-effort, unsigned and not guaranteed, and identifies dawn.googlesource.com as official Git source.",
+      "limit": "Pinned revision source fetch failed; static main findings are not asserted for the release. Artifact size is not shipped Egret package size.",
+      "retrievedAt": "2026-10-08"
+    },
+    {
+      "id": "G11",
+      "url": "https://bkaradzic.github.io/bgfx/overview.html",
+      "kind": "official_project_docs",
+      "fact": "Documents D3D11/D3D12/Metal/Vulkan/GL/GLES/WebGL and C/C++ interfaces. Retrieved docs identify 1.146.9292.",
+      "limit": "Rolling doc version not independently established as latest tagged release. Harmony support not listed/verified.",
+      "retrievedAt": "2026-10-08"
+    },
+    {
+      "id": "G12",
+      "url": "https://bkaradzic.github.io/bgfx/bgfx.html",
+      "kind": "official_project_api_docs",
+      "fact": "PlatformData accepts external context/device and D3D12 queue; getInternalData and overrideInternal exist for advanced render-thread interop.",
+      "limit": "Thread constraints and backend-specific ownership require integration tests; cannot assume host sharing by passing any pointer.",
+      "retrievedAt": "2026-10-08"
+    },
+    {
+      "id": "G13",
+      "url": "https://chromium.googlesource.com/angle/angle/+/main/README.md",
+      "kind": "official_project_repository",
+      "fact": "GLES/EGL translation; support tables cover D3D11, Vulkan, Metal. Metal ES2/3 rows complete, ES3.1 row not marked complete; no D3D12 table column.",
+      "limit": "Intro says Metal future while support table says complete: retain this document discrepancy. Compatibility translation is not automatic performance gain.",
+      "retrievedAt": "2026-10-08"
+    },
+    {
+      "id": "J01",
+      "url": "https://v8.dev/docs/embed",
+      "kind": "official_project_docs",
+      "fact": "V8 embedding targets C++; isolates, contexts, handle scopes and GC must be managed explicitly; doc sample last tested with 13.1.",
+      "limit": "Sample version is not current latest V8; replacing a prebuilt binary is not a full port.",
+      "retrievedAt": "2026-10-08"
+    },
+    {
+      "id": "J02",
+      "url": "https://v8.dev/docs/version-numbers",
+      "kind": "official_project_docs",
+      "fact": "Embedding version guidance follows supported branch corresponding to stable Chrome; numerically greatest tag is not automatically the supported choice.",
+      "limit": "Latest stable Chrome/V8 branch not independently resolved in this task; no target version recommendation as current fact.",
+      "retrievedAt": "2026-10-08"
+    },
+    {
+      "id": "J03",
+      "url": "https://v8.dev/blog/jitless",
+      "kind": "official_project_historical_article",
+      "publicationDate": "2019-03-13",
+      "fact": "Jitless executes JS without runtime executable-memory allocation; disabling JIT changes performance. Historical post motivates restricted platforms including iOS.",
+      "limit": "Historical measurements not used as current speed forecasts; historical 'Wasm unsupported' is no longer universal current fact.",
+      "retrievedAt": "2026-10-08"
+    },
+    {
+      "id": "J04",
+      "url": "https://raw.githubusercontent.com/v8/v8/main/docs/wasm/architecture.md",
+      "kind": "official_project_source_mirror",
+      "fact": "Current source documentation describes DrumBrake Wasm interpreter for jitless mode.",
+      "limit": "Exact V8 build flags, target CPU/OS and interpreter availability/performance remain to be verified.",
+      "retrievedAt": "2026-10-08"
+    },
+    {
+      "id": "J05",
+      "url": "https://bellard.org/quickjs/",
+      "kind": "official_project_site",
+      "fact": "Official site displayed release 2026-06-04; small embeddable interpreter, ES2025, reference counting with cycle removal.",
+      "limit": "Author's hello-world size/startup and benchmark improvement not asserted for Egret; no superiority ranking.",
+      "retrievedAt": "2026-10-08"
+    },
+    {
+      "id": "J06",
+      "url": "https://bellard.org/quickjs/quickjs.html",
+      "kind": "official_project_docs",
+      "fact": "C embedding supports memory/stack limits and interrupt handler. Bytecode is version-specific and must not come from untrusted sources; bytecode AOT does not imply native machine code.",
+      "limit": "Embedding must supply browser/host APIs and Promise jobs; no current Egret migration or compatibility test.",
+      "retrievedAt": "2026-10-08"
+    },
+    {
+      "id": "J07",
+      "url": "https://developer.apple.com/documentation/javascriptcore",
+      "kind": "official_platform_docs",
+      "fact": "Apple exposes JavaScriptCore framework and C API for embedding JavaScript.",
+      "limit": "Retrieved document is JS-rendered/minimal; no blanket claim that third-party embedded JSC receives Safari's JIT permissions.",
+      "retrievedAt": "2026-10-08"
+    },
+    {
+      "id": "J08",
+      "url": "https://docs.webkit.org/Deep%20Dive/JSC/JavaScriptCore.html",
+      "kind": "official_project_docs",
+      "fact": "JSC architecture includes lexer/parser, LLInt and multiple JIT tiers.",
+      "limit": "Engine architecture does not establish JIT entitlement or Egret SDK availability on every target.",
+      "retrievedAt": "2026-10-08"
+    },
+    {
+      "id": "J09",
+      "url": "https://github.com/facebook/hermes",
+      "kind": "official_project_repository",
+      "fact": "Hermes focuses on React Native startup with ahead-of-time optimization and compact bytecode; releases are aligned to React Native versions.",
+      "limit": "No general game-logic speed ranking and no claim every current/static Hermes branch is always interpreter-only.",
+      "retrievedAt": "2026-10-08"
+    },
+    {
+      "id": "J10",
+      "url": "https://reactnative.dev/docs/hermes",
+      "kind": "official_framework_docs",
+      "documentUpdated": "2026-08-12",
+      "fact": "React Native builds bundle Hermes; source warns that merely seeing HermesInternal does not prove optimized bytecode is loaded and asks release before/after benchmarks.",
+      "limit": "React Native startup gains cannot transfer automatically to Egret.",
+      "retrievedAt": "2026-10-08"
+    },
+    {
+      "id": "P01",
+      "url": "https://developer.apple.com/app-store/review/guidelines/",
+      "kind": "official_platform_policy",
+      "fact": "2.5.2 constrains downloaded code; 2.5.6 governs web browsing engines; 4.7 allows specified HTML5/JS mini apps/games with additional requirements including native API permission under 4.7.2.",
+      "limit": "VM being interpreted does not itself establish approval; browser-engine exceptions cannot be assumed for a game Runtime SDK.",
+      "retrievedAt": "2026-10-08"
+    },
+    {
+      "id": "P02",
+      "url": "https://developer.apple.com/support/alternative-browser-engines/",
+      "kind": "official_platform_policy",
+      "fact": "Alternative browser engine entitlement has market/product/security qualification requirements.",
+      "limit": "Not general-purpose permission for custom V8 game JIT; product/legal release review still required.",
+      "retrievedAt": "2026-10-08"
+    },
+    {
+      "id": "P03",
+      "url": "https://raw.githubusercontent.com/openharmony/docs/master/zh-cn/application-dev/napi/jsvm-introduction.md",
+      "kind": "official_platform_docs_mirror",
+      "fact": "JSVM-API is C99 and covers JS/Native engine lifecycle/execution/interaction; APIs are not concurrency safe; ArkTS/Native uses Node-API separately.",
+      "limit": "OpenHarmony document is not automatic HarmonyOS NEXT SDK/device validation; underlying system VM version must be identified at runtime later.",
+      "retrievedAt": "2026-10-08"
+    },
+    {
+      "id": "private_archive_context",
+      "kind": "private_static_observation_pointer",
+      "role": "S012",
+      "fact": "Selected private archive entries were read statically. Full entry paths and hashes remain in internal research, not the publication candidate."
+    }
+  ],
+  "privateSourceSummary": [
+    "建议保持创作者侧 TS/JS API，先封装现有 C++ 原生运行时，再用 Rust 替换边界清楚的新模块；语言更换本身不构成性能提升证据。",
+    "内部档案角色 S012 显示 V8 与 JSVM 适配路径并存，默认构建选择 JSVM；第三方版本标记和链接关系仅经静态核对，实际运行与性能尚未验证。",
+    "GPU 后端候选分层比较：现有 GLES 可先评估 ANGLE 兼容路径，现代路径比较 wgpu 与 Dawn，需要直接 D3D11 覆盖时同时比较 bgfx；以固定版本、相同混合场景与宿主共享设备验收决定。",
+    "NativeSDK 与 NativeApp 共用核心，分别声明设备拥有或借用模式；TS 到原生采用批量版本协议、有限缓冲、generation/epoch/lease/fence 和错误恢复。",
+    "V8 升级作为兼容与维护专项；iOS 系统 JSC、V8 jitless、QuickJS 和 Hermes 均是待测候选，运行模式与商店准入分别核验。",
+    "此结论只提出 0.6 候选设计，不新增产品实现或验证通过声明；证据在内部资料中保存。"
+  ],
+  "languageDecision": {
+    "inference": "Retain/wrap validated C++ first; add Rust modules at explicit owned-data boundaries. Choose Rust for new lifetime-sensitive modules or a wgpu pilot when team/build evidence supports it; rewrite only modules whose behavior and measured cost justify replacement.",
+    "rustBenefits": "Compile-time ownership/borrowing and typed contracts can reduce some memory/lifetime/data-race classes in safe Rust; may help AI-generated implementation review. Existing C++/FFI/unsafe and GPU resource state still need explicit contracts.",
+    "noAutomaticPerformance": "C++ and Rust both support ahead-of-time native code and non-GC ownership. Language substitution alone does not reduce draw calls, overdraw, CPU layout, texture upload, JS GC, bridge crossings or device synchronization. Data layout, algorithms, allocations, release optimizations and target builds decide costs.",
+    "firstModules": [
+      "Packet decoder/validation with bounded counts and lengths",
+      "Resource handles/generation/epoch bookkeeping and lifecycle ownership",
+      "Asset transforms and deterministic offline pipelines",
+      "Compact geometry/deformation kernels after profiling"
+    ],
+    "retainInitially": [
+      "V8/JSVM C++ embedding and generated bindings",
+      "Platform shell, input/IME, audio/video and host SDK adapters",
+      "Existing proven rendering/text paths as comparison and fallback"
+    ],
+    "evidence": [
+      "R01",
+      "R04",
+      "R02",
+      "R03",
+      "private_archive_context",
+      "private_archive_context"
+    ]
+  },
+  "gpuBackendComparison": [
+    {
+      "name": "wgpu",
+      "implementation": "Rust; wgpu-native separate C API",
+      "D3D11": "No direct listed backend; possible GLES via ANGLE is extra translation/dependency, not equivalent direct native D3D11",
+      "D3D12": "yes",
+      "Vulkan": "yes",
+      "Metal": "yes",
+      "fit": "Rust-first modern backend candidate; common WebGPU-style resource/pipeline model helps cross-host contracts",
+      "interop": "Unsafe HAL/native hooks, exact device/queue, lifetime and resource state required",
+      "risk": "C API release may lag Rust release; Harmony OS/window/toolchain/support not verified; downlevel GL limits differ",
+      "sources": [
+        "G01",
+        "G02",
+        "G03",
+        "G04"
+      ]
+    },
+    {
+      "name": "Dawn",
+      "implementation": "C++; WebGPU C/C++ API plus native extensions",
+      "D3D11": "Direct backend in current main source; Core >=11_1 and Compatibility >=11_0 checks; omitted by README and stale support doc",
+      "D3D12": "yes",
+      "Vulkan": "yes",
+      "Metal": "yes",
+      "fit": "C++ continuation and WebGPU-style native backend candidate; explicit host-device import useful to SDK exploration",
+      "interop": "Existing D3D11 device accepted; shared texture feature/BeginAccess/EndAccess/fences are backend extensions",
+      "risk": "Do not equate current main with nightly release or blanket maturity; fix revision and test CTS/capabilities",
+      "sources": [
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10"
+      ]
+    },
+    {
+      "name": "bgfx",
+      "implementation": "C++; C99 API available",
+      "D3D11": "yes documented",
+      "D3D12": "yes documented",
+      "Vulkan": "yes documented",
+      "Metal": "yes documented",
+      "fit": "C++ engine renderer candidate when D3D11 reach and broad backend coverage matter; engine supplies scene/UI/text/material semantics",
+      "interop": "External device/context/queue fields and advanced native interop; render-thread restrictions",
+      "risk": "Shader/command model adapter required; not source-identical WebGPU architecture; Harmony not verified",
+      "sources": [
+        "G11",
+        "G12"
+      ]
+    },
+    {
+      "name": "ANGLE",
+      "implementation": "C++; GLES/EGL translation",
+      "D3D11": "yes via GLES",
+      "D3D12": "not listed; not assume",
+      "Vulkan": "yes via GLES",
+      "Metal": "ES2/3 support table complete; exact feature tier must be tested",
+      "fit": "Compatibility/transition candidate for existing GLES Renderer; lowers first-port scope",
+      "interop": "Native texture/context sharing is extension/backend-specific and must be tested",
+      "risk": "Preserves old GLES state model; cannot automatically provide a modern engine/RHI or improve speed",
+      "sources": [
+        "G13",
+        "private_archive_context"
+      ]
+    }
+  ],
+  "vmComparison": [
+    {
+      "name": "V8",
+      "candidate": "Desktop/Android script-heavy baseline and compatibility anchor, after supported version port; Harmony optional private branch",
+      "strength": "Existing bindings and broad JS/Wasm ecosystem; JIT-enabled paths can be evaluated where permitted",
+      "cost": "C++ API/handles/GC/tasks/ICU/build flags/snapshot/ABI port and maintenance",
+      "iOS": "Test jitless as a separate mode; do not assume browser entitlement/JIT or old Wasm impossibility. Native compute kernels may be preferable to interpreted Wasm where allowed.",
+      "sources": [
+        "J01",
+        "J02",
+        "J03",
+        "J04"
+      ]
+    },
+    {
+      "name": "QuickJS",
+      "candidate": "Small interpreter/noJIT and package budget experiment; not default performance replacement",
+      "strength": "C embedding, ES2025, memory/stack/interrupt hooks",
+      "cost": "New host bindings, jobs, finalization and package/bytecode strategy; peak script throughput unknown",
+      "iOS": "Interpreter candidate; approval is separate from VM choice",
+      "sources": [
+        "J05",
+        "J06",
+        "P01"
+      ]
+    },
+    {
+      "name": "JavaScriptCore",
+      "candidate": "Apple-platform system framework baseline; compare with V8 jitless on identical host APIs",
+      "strength": "Apple framework integration and C API",
+      "cost": "Host wrappers and OS-version behavior; not universal platform single VM",
+      "iOS": "Do not assume embedded JSC gets Safari JIT; benchmark actual device/build permission profile",
+      "sources": [
+        "J07",
+        "J08",
+        "P01"
+      ]
+    },
+    {
+      "name": "Hermes",
+      "candidate": "Cold-start/memory experiment for mostly packaged game bundles",
+      "strength": "AOT optimization/bytecode for RN startup",
+      "cost": "Version-coupled bytecode/compiler, separate JS/host compatibility, debugger and tooling port",
+      "iOS": "Current branches/modes differ; no blanket 'Hermes has no JIT ever' statement",
+      "sources": [
+        "J09",
+        "J10"
+      ]
+    },
+    {
+      "name": "JSVM",
+      "candidate": "Harmony platform adapter baseline retained for validation",
+      "strength": "Existing default branch; stable platform C99 API",
+      "cost": "System API/version/thread rules and jobs/GC integration; separate ArkTS Node-API layer",
+      "iOS": "not applicable",
+      "sources": [
+        "P03",
+        "private_archive_context"
+      ]
+    }
+  ],
+  "layeredCandidate": {
+    "publicContract": "Creator-facing TS/JS APIs plus versioned scene/asset/material/animation/HostCaps schema. Rust/C++/VM/backend choices remain behind it.",
+    "layers": [
+      "TS semantic scene/UI/animation/resource orchestration and AI/editor command APIs",
+      "Versioned bulk render/resource/event packets and native host contract",
+      "Replaceable VM adapter with job scheduling, error, GC/root, buffer ownership and host capabilities",
+      "Backend-neutral RHI/render graph consuming ready handles with ordered UI/2D+3D passes",
+      "One native GPU device/queue/surface owner for a host; tested adapter for shared host resources",
+      "Platform shells: embeddable NativeSDK, standalone NativeApp, desktop platform/packaging adapter"
+    ],
+    "sdkModes": [
+      "Owned mode: SDK owns device/surface/queue; host owns app window/lifecycle and calls agreed frame entry",
+      "Borrowed mode: host owns compatible device/queue/targets; SDK uses documented lease/import and state/sync boundary; if unsupported reject or explicit offscreen copy fallback"
+    ],
+    "abiRules": [
+      "External native SDK uses versioned C ABI, opaque handles and POD or byte slices; never public C++ STL objects, Rust Vec/trait objects, v8::Local handles or native implementation types",
+      "Internal CXX may help generated Rust/C++ interop but does not substitute for stable SDK contract",
+      "Allocator ownership and create/destroy must remain same side; errors/status and callbacks are explicit; no panic/C++ exception unwinds across SDK ABI"
+    ],
+    "packetRules": [
+      "Batch updates by frame/island/resource class; no sync per-property getter or setter across JS/native hot path",
+      "Header includes protocol version, byte length/count, frame sequence, scene/device epoch and target capabilities",
+      "Reject oversized/truncated/overflow/misaligned inputs before pointer casts; bounded queue/inflight bytes with backpressure and explicit dropped-state recovery",
+      "Handles carry id+generation; scene/device epochs invalidate stale callbacks; recreated native scene is snapshot+delta mirror, with one authoritative semantic state",
+      "JS ArrayBuffer borrowed only for call lifetime or explicit pinned backing-store lease; async/GPU use needs owned copy or retained lease until completion",
+      "Fence-backed resource retirement and release acknowledgements; an epoch check does not prove all outstanding GPU or foreign-thread use has completed",
+      "Source/API compatibility includes event order, transforms, hit tests, layout, clipping, text/IME, resource races and disposal, not only TypeScript typings"
+    ]
+  },
+  "validationPlan": {
+    "status": "Proposed future gates only; no new probe or product implementation in this task",
+    "sequence": [
+      "Inventory delivered app runtime/build settings; close dependency/source/binary provenance and establish currently working C++ reference",
+      "Freeze TS semantics and versioned host/packet contracts; replay old project's behavior and mixed UI2D/light3D reference scenes",
+      "Change one axis per comparison: VM version or VM implementation, GPU backend, or Rust module; keep rollback path and asset/quality parity",
+      "Measure complex UI (CJK/emoji/IME/virtual lists/nested masks), 2D skeleton/frame animation and light3D mixed scene; test resource replacement/unload/background/device loss",
+      "SDK gates: owned/borrowed device, host update order, single queue owner, imports/fences, host teardown under GPU load, no callback after shutdown; desktop keyboard/controller/windows/resize and platform integration",
+      "Record release build/device/OS/driver/VM/backend versions; cold/warm startup, JS+layout/preparation/bridge/GC costs, CPU/GPU frame p50/p95/p99, input latency, package/memory/VRAM/peak transient upload, 20-30min sustained stability",
+      "Acceptance thresholds chosen after baseline and product device profile; no speed multiplier or timeline invented"
+    ]
+  },
+  "unknowns": [
+    "Final target OS/minimum GPU profile and D3D11 requirement",
+    "Team Rust proficiency and target toolchain maturity",
+    "Exact modern V8 supported branch and target-pinned port",
+    "Dawn D3D11 latest main commit, CTS results and release equality",
+    "Harmony port of all four GPU choices",
+    "Cross-VM browser API and old Egret semantic compatibility",
+    "Whether SDK hosts allow device import or require copy/composite",
+    "Package/runtime/thermal delta under equal assets/quality"
+  ]
+}

@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "experiment": "local_mixed_scene_graphics_probe",
+  "runId": "520c0cf4-2b78-4183-b9aa-9dd00ca8e630",
+  "checkedAtUtc": "2026-10-08T06:06:02.439Z",
+  "environment": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36 Edg/154.0.0.0",
+    "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+  },
+  "counts": {
+    "total": 7,
+    "passed": 1,
+    "failed": 6
+  },
+  "results": [
+    {
+      "name": "实际UI几何合批像素等于独立CPU参考",
+      "status": "failed",
+      "error": "GPU reference mismatches 147456, max 179"
+    },
+    {
+      "name": "裁剪错误分批产生实际GPU像素反例",
+      "status": "failed",
+      "error": "Correct clip consumer failed"
+    },
+    {
+      "name": "混合模式错误分批产生实际GPU像素反例",
+      "status": "failed",
+      "error": "Correct blend consumer failed"
+    },
+    {
+      "name": "程序3D网格经过透视变换且与UI在同一目标合成",
+      "status": "failed",
+      "error": "Perspective cube not observed at expected central interior"
+    },
+    {
+      "name": "两段CPU骨骼几何在两个确定帧改变像素覆盖",
+      "status": "failed",
+      "error": "Bone pose failed to change expected geometry coverage"
+    },
+    {
+      "name": "序列帧图集切换两个确定帧且采样正确",
+      "status": "failed",
+      "error": "Atlas frame selection was incorrect"
+    },
+    {
+      "name": "混合场景重建后保持指定帧像素",
+      "status": "passed",
+      "observations": {
+        "comparedChannels": 196608,
+        "tolerance": 3,
+        "differences": 0
+      }
+    }
+  ],
+  "limitations": [
+    "Authored procedural mesh, rigid two-bone sprite geometry, generated glyph texture and 3x1 color atlas only.",
+    "No actual character/model import, PBR/light/shadow, full skeleton constraints/attachments/skin or arbitrary masks.",
+    "Only local desktop WebGL2; no WebGPU scene backend, mini-game/native host, mobile, FPS/timing/power or migration acceptance.",
+    "Not a production engine/runtime, studio or scene/asset format implementation."
+  ],
+  "sourceHashes": [
+    {
+      "path": "index.html",
+      "sha256": "90284db8016857d7dc7bcb47aa95622d137d7c95df581431f9dfb61dff211524"
+    },
+    {
+      "path": "probe.js",
+      "sha256": "5269d0b27c9111877ac8a33635cef7850fcb96b58283c569dfc8ef7c8ad7795a"
+    },
+    {
+      "path": "renderer.mjs",
+      "sha256": "86feb6c779b26c8e7d799aa91f76cce475ce84a6af231cb274ca0927f0314869"
+    },
+    {
+      "path": "server.mjs",
+      "sha256": "dab09427142c6ad6e0866f37df0c85eb8540f2912b4184093ff9e5d328f29b7f"
+    },
+    {
+      "path": "../batch-state-probe/model.mjs",
+      "sha256": "3726545b07af0c527201c70ac6f5c2ba05107a6a4337c1acbcd6b7cb2336fc44"
+    },
+    {
+      "path": "run-headless.cjs",
+      "sha256": "6767b6eabc1c2ae3266c31810f53d85d3c74806684511c6d156f7d807566ea6f"
+    }
+  ],
+  "browserVersion": "154.0.4258.62",
+  "launchMode": "installed_edge_fresh_test_profile",
+  "pageErrors": [],
+  "consoleDiagnostics": []
+}

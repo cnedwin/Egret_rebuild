@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-10-08",
+  "scope": "官方语言/模块/unsafe/FFI/workspace与工具配置资料；设计规则参考，无安装/配置/编译或运行。",
+  "sources": [
+    {
+      "url": "https://www.typescriptlang.org/docs/handbook/modules/reference.html",
+      "supports": "ESM/type-only导出、package exports、paths不改变输出与workspace真实解析；不能作为包体收益证据。"
+    },
+    {
+      "url": "https://www.typescriptlang.org/tsconfig/",
+      "supports": "strict/noUncheckedIndexedAccess/exactOptionalPropertyTypes/verbatimModuleSyntax选项；目标环境和编译器配置仍需实际匹配。"
+    },
+    {
+      "url": "https://doc.rust-lang.org/book/ch20-01-unsafe-rust.html",
+      "supports": "unsafe操作与安全封装边界，不提供跨语言线程/GPU正确性保证。"
+    },
+    {
+      "url": "https://doc.rust-lang.org/nomicon/ffi.html",
+      "supports": "FFI布局、所有权和异常/ABI边界。"
+    },
+    {
+      "url": "https://doc.rust-lang.org/std/panic/fn.catch_unwind.html",
+      "supports": "unwind捕获不处理abort，不是本机故障隔离。"
+    },
+    {
+      "url": "https://doc.rust-lang.org/cargo/reference/workspaces.html",
+      "supports": "共享Cargo工作区与配置机制。"
+    },
+    {
+      "url": "https://pnpm.io/workspaces",
+      "supports": "workspace机制，具体工具选型和版本待锁定。"
+    },
+    {
+      "url": "https://prettier.io/docs/configuration",
+      "supports": "自动格式的仓库配置机制，未创建配置。"
+    },
+    {
+      "url": "https://eslint.org/docs/latest/use/configure/configuration-files",
+      "supports": "lint配置与文件作用范围，未运行。"
+    },
+    {
+      "url": "https://typescript-eslint.io/getting-started/typed-linting",
+      "supports": "类型信息相关lint机制，额外检查成本计入开发链。"
+    }
+  ],
+  "testsRun": false,
+  "installed": false,
+  "configured": false,
+  "compilerVersionSelectedThisRevision": false
+}

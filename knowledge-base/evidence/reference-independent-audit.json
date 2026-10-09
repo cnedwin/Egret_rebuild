@@ -1,0 +1,193 @@
+{
+  "schemaVersion": 1,
+  "checkedAtUtc": "2026-10-08 07:10:31 UTC",
+  "scope": "Bounded independent static review of the two open-source reference/adoption documents and four research JSON files; not a comprehensive source audit.",
+  "reviewer": "separate_read_only_AI_review_agent",
+  "status": "no_blocking_findings_within_reviewed_reference_scope",
+  "reviewedDocuments": [
+    "docs/开源参考实现与采用方案.md",
+    "docs/开源实现优先与验证分工.md",
+    "docs/工程规划.md"
+  ],
+  "reviewedResearch": [
+    "evidence/reference-render-lifecycle.json",
+    "evidence/reference-text-ui.json",
+    "evidence/reference-pixi-text.json",
+    "evidence/reference-assets-animation.json"
+  ],
+  "method": {
+    "documentReview": "Compared source facts, proposed Egret recommendations, version boundaries and unexecuted acceptance claims.",
+    "sourceReview": "Re-read eight pinned source files through the GitHub connector; re-resolved six annotated release tags to commit SHA.",
+    "ranReferenceEngines": false,
+    "installedReferenceCode": false,
+    "ranNewProbes": false,
+    "launchedBrowser": false,
+    "sourceFilesReread": [
+      "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/src/framework/font/canvas-font.js",
+      "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/core/src/Engines/Extensions/engine.dynamicTexture.pure.ts",
+      "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/src/renderers/WebGLRenderer.js",
+      "https://github.com/pixijs/pixijs/blob/5b41ee37fd36c61e089113345a8f12cf1c3323cf/src/scene/text/shared/AbstractTextSystem.ts",
+      "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/gui/src/2D/controls/control.pure.ts",
+      "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/core/src/Engines/thinEngine.pure.ts",
+      "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/GLTFLoader.js",
+      "https://github.com/pixijs/pixijs/blob/5b41ee37fd36c61e089113345a8f12cf1c3323cf/src/scene/text/canvas/CanvasTextPipe.ts"
+    ]
+  },
+  "versionChecks": [
+    {
+      "repo": "playcanvas/engine",
+      "tag": "v2.23.0",
+      "commitSha": "cfef43d306b2b55a2c0742e4994221f6d2463957",
+      "tagObject": "6542866f8148f4b93bd9e60578f93690546b7fbd",
+      "matches": true
+    },
+    {
+      "repo": "playcanvas/engine",
+      "tag": "v2.23.1",
+      "commitSha": "c3eb40348be7e80617164e4f2fea0b139ad42ebb",
+      "tagObject": "a6350b9d7dea3cf7a4fdc1d9d0cd5b59706f94c4",
+      "matches": true
+    },
+    {
+      "repo": "BabylonJS/Babylon.js",
+      "tag": "9.29.0",
+      "commitSha": "cbe5bb36998fdde6bd93d76e67813ff571a535db",
+      "tagObject": "475b91128ca7a3ee76c9a1e525e1b06bcf831deb",
+      "matches": true
+    },
+    {
+      "repo": "BabylonJS/Babylon.js",
+      "tag": "8.26.0",
+      "commitSha": "09876696f9942657ec9da5a72ec16c9d3de54365",
+      "tagObject": "775e9ca84ae54a48e3d3dad2f56af93cd6814cd5",
+      "matches": true
+    },
+    {
+      "repo": "mrdoob/three.js",
+      "tag": "r180",
+      "commitSha": "0af9729d0c143a86a1d725d6e2c3ad83301f3f34",
+      "tagObject": "9e8635e2031c25859dc47ba07e72230dccb2682a",
+      "matches": true
+    },
+    {
+      "repo": "pixijs/pixijs",
+      "tag": "v8.22.0",
+      "commitSha": "5b41ee37fd36c61e089113345a8f12cf1c3323cf",
+      "tagObject": "636c2375d0753b0f2c51b54a1298811802fb5252",
+      "matches": true
+    }
+  ],
+  "confirmedSourceFacts": [
+    {
+      "id": "IRA001",
+      "topic": "PlayCanvas CanvasFont rebuild",
+      "status": "confirmed_for_pinned_v2.23.1",
+      "fact": "updateTextures combines old and new characters when a missing character exists; _renderAtlas remeasures, clears/repositions glyphs, uploads every retained atlas page and emits render. This is not append-only placement or proof of LRU.",
+      "lines": "canvas-font.js:193-206,281-366"
+    },
+    {
+      "id": "IRA002",
+      "topic": "Babylon dirty rectangle versus GPU upload",
+      "status": "confirmed_for_pinned_9.29.0_WebGL_extension",
+      "fact": "The inspected ThinEngine dynamic-texture implementation calls texImage2D with the full source and exposes no dirty-rectangle upload argument. CPU dirty-region drawing does not prove local GPU upload; no claim for uninspected WebGPU or native paths.",
+      "lines": "engine.dynamicTexture.pure.ts:43-75"
+    },
+    {
+      "id": "IRA003",
+      "topic": "Font-load generations",
+      "status": "upstream_cache_facts_confirmed_Egret_generation_contract_is_recommendation",
+      "fact": "Babylon caches _FontHeightSizes by CSS font string; _resetFontCache marks a control dirty without clearing that global map. Pixi managed text textures use styleKey and usageCount. fontEpoch/fontAsset/contentHash invalidation is an Egret proposal, not a verified common upstream API.",
+      "lines": "control.pure.ts:1500-1503,2854-2872; AbstractTextSystem.ts:185-233"
+    },
+    {
+      "id": "IRA004",
+      "topic": "Shared WebGL state handoff",
+      "status": "reset_apis_confirmed_bilateral_handoff_is_derived_Egret_constraint",
+      "fact": "Three resetState resets its tracked render target, WebGL state and binding states. Babylon wipeCaches(bruteForce) explicitly targets shared-context use and invalidates its caches. One library reset does not synchronize another library's independent cache; both need a defined handoff.",
+      "lines": "WebGLRenderer.js:3349-3362; thinEngine.pure.ts:2805-2851"
+    },
+    {
+      "id": "IRA005",
+      "topic": "Unknown required glTF extension",
+      "status": "confirmed_with_precise_branch_boundary",
+      "fact": "Three r180 iterates extensionsUsed; its default branch warns when the same name is in extensionsRequired and has no registered plugin. This is not a universal rule for every required-extension error: required KHR_texture_basisu without an injected KTX2Loader throws.",
+      "lines": "GLTFLoader.js:493-530,1547-1565"
+    },
+    {
+      "id": "IRA006",
+      "topic": "Pooled text restoration",
+      "status": "confirmed_for_pinned_Pixi_v8.22.0",
+      "fact": "CanvasTextPipe subscribes to contextChange, unloads managed texts and regenerates them on the next render because pooled canvases are reused. This does not prove actual Egret font availability or restoration.",
+      "lines": "CanvasTextPipe.ts:27-59"
+    }
+  ],
+  "findings": [
+    {
+      "id": "IRA-F01",
+      "severity": "wording_correction",
+      "origin": "work/reference-text-ui.md:106,110",
+      "issue": "NFC text as an unconditional cache-key input could silently change original business/input text.",
+      "disposition": "resolved_in_formal_adoption_document",
+      "resolution": "The formal document requires raw text authority, forbids unilateral normalization and preserves original text if an explicit normalization policy is needed.",
+      "remainingNote": "If the work markdown is published later, align its NFC wording with the formal policy."
+    }
+  ],
+  "formalDocumentChecks": {
+    "separatePlayCanvasVersions": true,
+    "separateBabylonVersions": true,
+    "noLatestOrPerformanceRanking": true,
+    "componentsNotClaimedIntegrated": true,
+    "defaultsSeparatedFromFinalProductionSelection": true,
+    "unsupportedRequiredExtensionRejectionLabeledEgretPolicy": true,
+    "loaderContainerAndInstanceOwnershipSeparated": true,
+    "decoderDisposeNotClaimedTextureDispose": true,
+    "DragonBonesSlotNotClaimedCompleteSpineCompatibility": true,
+    "existing71ChecksNotRerunOrExpanded": true,
+    "D001ToD012RemainProposed": true,
+    "H001ToH007RemainUntested": true,
+    "R008MigrationPreserved": true,
+    "threeFirstChainRationaleNotPerformanceClaim": true,
+    "historicalThreeVersionRequiresMaintenanceReviewBeforeIntegration": true,
+    "webAndNativeProvidersSeparated": true,
+    "requiredExtensionWarningExactBranchRetained": true,
+    "animationInspectedEntryPointsSeparatedFromUnreadDeepAlgorithms": true,
+    "enginePlanNewAdoptionTableHasConcreteIntegrationExitConditions": true,
+    "sourceEntryCountsNotImplementationCompletion": true
+  },
+  "necessaryRemainingCorrections": [],
+  "boundaries": [
+    "No reference engine, upstream test, new probe, real-font/CJK/emoji/IME matrix or actual asset was executed.",
+    "Source APIs and browser Canvas support do not establish text correctness across fonts, devices or non-DOM hosts.",
+    "No mobile/mini-game/native host, performance, power, memory, package size, GPU capture or integration acceptance is claimed.",
+    "Asset ownership, animation and compression conclusions are scoped to inspected entry points; deeper WorkerPool, shader and controller implementations were not independently expanded in this review.",
+    "License text and recorded obligations remain preliminary reuse evidence; dependencies, fonts, assets, decoder binaries and actual distribution models need their own review.",
+    "This AI review is not human approval, final production selection or comprehensive security/source audit."
+  ],
+  "followupDocumentReview": {
+    "checkedAtUtc": "2026-10-08T07:16:14.739Z",
+    "scope": "Updated adoption rationale and new engineering-plan adoption/next-task table only; no new source fetch or old-probe replay.",
+    "status": "no_blocking_findings",
+    "reviewedDocumentHashes": "To be recorded by the integrating author against final document bytes."
+  },
+  "metadataNormalization": {
+    "kind": "report_position_only",
+    "changedField": "reviewedResearch",
+    "rule": "work report positions replaced by identical public evidence positions",
+    "originalPreserved": true,
+    "allReportBytesCompared": true
+  },
+  "reviewedDocumentHashes": [
+    {
+      "path": "docs/开源参考实现与采用方案.md",
+      "sha256": "a040debad9bf917341142cce751100fa37c4406a4bb9457f66cb81428791598b"
+    },
+    {
+      "path": "docs/开源实现优先与验证分工.md",
+      "sha256": "24c9bbf50af74fe458f6f6a680458d26095804e090d9fd1391ee5b44f41a9182"
+    },
+    {
+      "path": "docs/工程规划.md",
+      "sha256": "14ab36a15eb817e8df394856215511649919e155a15cc2a72a9bb5b4814e95f9"
+    }
+  ]
+}

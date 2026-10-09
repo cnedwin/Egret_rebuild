@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "experiment": "reliable-event-probe",
+  "checkedAtUtc": "2026-10-08T06:00:52.452Z",
+  "environment": {
+    "runtime": "v24.19.0",
+    "executable": "node.exe",
+    "platform": "win32",
+    "architecture": "x64",
+    "scope": "single-process synchronous in-memory model"
+  },
+  "counts": {
+    "total": 11,
+    "passed": 1,
+    "failed": 10
+  },
+  "results": [
+    {
+      "name": "old graphics snapshot permanently skips a dropped required event",
+      "status": "passed",
+      "breakCaught": "treating snapshot sequence as event consumption proof",
+      "observations": {
+        "droppedEvent": "sound-A",
+        "effects": [],
+        "newGraphicsEpoch": 2,
+        "eventRecovered": false
+      }
+    },
+    {
+      "name": "dropped delivery stays pending and is recovered by resend",
+      "status": "failed",
+      "breakCaught": "removing an event on send before confirmation",
+      "error": "Expected values to be strictly equal:\n\n0 !== 1\n"
+    },
+    {
+      "name": "lost ACK causes retransmission with one actual side effect",
+      "status": "failed",
+      "breakCaught": "executing a duplicate event again",
+      "error": "The expression evaluated to a falsy value:\n\n  assert.ok(resent)\n"
+    },
+    {
+      "name": "missing sequence blocks effects until the gap is filled",
+      "status": "failed",
+      "breakCaught": "consuming sequence two before sequence one",
+      "error": "Expected values to be strictly equal:\n\n'consumed' !== 'gap'\n"
+    },
+    {
+      "name": "graphics epoch recovery keeps required outbox and consumer watermark",
+      "status": "failed",
+      "breakCaught": "resetting reliable state during visual recovery",
+      "error": "Expected values to be strictly equal:\n\n0 !== 1\n"
+    },
+    {
+      "name": "bounded outbox rejects new events without losing accepted events or a sequence",
+      "status": "failed",
+      "breakCaught": "dropping accepted events to make room or advancing sequence on rejection",
+      "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ {\n+   consumerSession: 'c1',\n+   effect: 'sound-C',\n+   eventID: 'p1/audio/3',\n+   producerSession: 'p1',\n+   sequence: 3,\n+   streamId: 'audio',\n+   version: 1\n+ }\n- null\n"
+    },
+    {
+      "name": "ACK identity rejects stale producer stream and consumer sessions",
+      "status": "failed",
+      "breakCaught": "letting a foreign ACK evict current events",
+      "error": "Expected values to be strictly equal:\n\ntrue !== false\n"
+    },
+    {
+      "name": "ACK cannot skip unsent accepted events",
+      "status": "failed",
+      "breakCaught": "trusting an impossible future cumulative ACK",
+      "error": "Expected values to be strictly equal:\n\ntrue !== false\n"
+    },
+    {
+      "name": "malformed event and ACK are rejected without consumption or eviction",
+      "status": "failed",
+      "breakCaught": "changing state before all envelope fields are validated",
+      "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'consumed'\n- 'invalid'\n"
+    },
+    {
+      "name": "caller mutations cannot rewrite accepted or transmitted events",
+      "status": "failed",
+      "breakCaught": "sharing mutable envelope objects with the transport",
+      "error": "Expected values to be strictly equal:\n\n0 !== 1\n"
+    },
+    {
+      "name": "duplicate cumulative ACK preserves newer unconfirmed events",
+      "status": "failed",
+      "breakCaught": "evicting every queued event for an old valid ACK",
+      "error": "Expected values to be strictly equal:\n\n0 !== 1\n"
+    }
+  ],
+  "sourceHashes": [
+    {
+      "path": "model.mjs",
+      "sha256": "809ceea1c2544a05970af8f444ce721c66f5ab29f6ccb1f6e07749d26bbd5fd2"
+    },
+    {
+      "path": "run.mjs",
+      "sha256": "0f667ddccd5e69751862d8b9074f41d77a7fc885f950e8c01ccbd8d00b89ea65"
+    }
+  ],
+  "limitations": [
+    "No network, IPC, WASM, graphics/audio engine or real device execution.",
+    "No durable transaction coupling between side effects and consumer watermark; process crash may lose accepted events or cause duplicate effects.",
+    "Delivery is eventual only if transport retries fairly and an active consumer eventually accepts; permanent packet loss is not overcome.",
+    "Outbox is count-bounded; producer must handle explicit refusal. Consumer intentionally discards out-of-order events and waits for resend.",
+    "ACK validation is structural and session scoped, without authentication against hostile peers.",
+    "Graphics epoch differs from event stream lifetime. Consumer process restart and session rebind are not recovery operations modeled here.",
+    "Consumer side effect is an in-memory array append, assumed synchronous and atomic with watermark advancement. External side effects and exceptions require another contract."
+  ],
+  "sourceSnapshots": [
+    {
+      "path": "model.mjs",
+      "sha256": "809ceea1c2544a05970af8f444ce721c66f5ab29f6ccb1f6e07749d26bbd5fd2",
+      "source": "// RED fixture: the former graphics-only design cannot promise event recovery.\nexport class LegacyGraphicsMirror {\n  constructor() { this.epoch = 1; this.next = 1; this.effects = []; }\n  receive(packet) {\n    if (packet.epoch !== this.epoch || packet.sequence !== this.next) return false;\n    this.effects.push(...packet.events);\n    this.next++;\n    return true;\n  }\n  restore(snapshot) { this.epoch = snapshot.epoch; this.next = snapshot.next; }\n}\n\n// Intentionally incomplete behavioral baseline; replaced only after observed RED.\nexport class ReliableEventProbe {\n  constructor({ capacity = 3, producerSession = 'p1', streamId = 'audio', consumerSession = 'c1' } = {}) {\n    Object.assign(this, { capacity, producerSession, streamId, consumerSession });\n    this.sequence = 0; this.outbox = []; this.effects = []; this.watermark = 0; this.graphicsEpoch = 1;\n  }\n  append(effect) {\n    const event = { version: 1, producerSession: this.producerSession, streamId: this.streamId,\n      consumerSession: this.consumerSession, sequence: ++this.sequence,\n      eventID: `${this.producerSession}/${this.streamId}/${this.sequence}`, effect };\n    this.outbox.push(event); return structuredClone(event);\n  }\n  pending() { const result = structuredClone(this.outbox); this.outbox = []; return result; }\n  receive(event) { this.effects.push(event.effect); this.watermark = event.sequence; return { status: 'consumed', ack: { ...event, watermark: this.watermark } }; }\n  acknowledge() { this.outbox = []; return true; }\n  restoreGraphics(epoch) { this.graphicsEpoch = epoch; this.outbox = []; this.watermark = 0; }\n}\n"
+    },
+    {
+      "path": "run.mjs",
+      "sha256": "0f667ddccd5e69751862d8b9074f41d77a7fc885f950e8c01ccbd8d00b89ea65",
+      "source": "import assert from 'node:assert/strict';\nimport { readFileSync, writeFileSync } from 'node:fs';\nimport { createHash } from 'node:crypto';\nimport { fileURLToPath } from 'node:url';\nimport { LegacyGraphicsMirror, ReliableEventProbe } from './model.mjs';\n\nconst results = [];\nfunction test(name, breakCaught, fn) {\n  try { const observations = fn(); results.push({ name, status: 'passed', breakCaught, observations }); }\n  catch (error) { results.push({ name, status: 'failed', breakCaught, error: error.message }); }\n}\nconst probe = (options = {}) => new ReliableEventProbe(options);\n\ntest('old graphics snapshot permanently skips a dropped required event', 'treating snapshot sequence as event consumption proof', () => {\n  const old = new LegacyGraphicsMirror();\n  const dropped = { epoch: 1, sequence: 1, events: ['sound-A'] };\n  assert.equal(old.receive({ epoch: 1, sequence: 2, events: ['sound-B'] }), false);\n  old.restore({ epoch: 2, next: 3, visual: 'latest-frame' });\n  assert.equal(old.receive(dropped), false);\n  assert.deepEqual(old.effects, []);\n  return { droppedEvent: 'sound-A', effects: old.effects, newGraphicsEpoch: old.epoch, eventRecovered: false };\n});\n\ntest('dropped delivery stays pending and is recovered by resend', 'removing an event on send before confirmation', () => {\n  const p = probe(); p.append('sound-A'); p.pending();\n  assert.equal(p.outbox.length, 1);\n  const resend = p.pending(); assert.equal(resend.length, 1);\n  const reply = p.receive(resend[0]); p.acknowledge(reply.ack);\n  assert.deepEqual(p.effects, ['sound-A']); assert.equal(p.outbox.length, 0);\n  return { effects: p.effects, outstanding: p.outbox.length };\n});\n\ntest('lost ACK causes retransmission with one actual side effect', 'executing a duplicate event again', () => {\n  const p = probe(); p.append('sound-A'); const [first] = p.pending();\n  p.receive(first); const [resent] = p.pending(); assert.ok(resent);\n  assert.equal(resent.eventID, first.eventID);\n  const reply = p.receive(resent); assert.equal(reply.status, 'duplicate');\n  p.acknowledge(reply.ack); assert.deepEqual(p.effects, ['sound-A']);\n  return { deliveries: 2, effects: p.effects, outstanding: p.outbox.length };\n});\n\ntest('missing sequence blocks effects until the gap is filled', 'consuming sequence two before sequence one', () => {\n  const p = probe(); p.append('sound-A'); p.append('sound-B'); const [a, b] = p.pending();\n  assert.equal(p.receive(b).status, 'gap'); assert.deepEqual(p.effects, []);\n  p.receive(a); p.receive(b); assert.deepEqual(p.effects, ['sound-A', 'sound-B']);\n  assert.equal(p.watermark, 2); return { effects: p.effects, watermark: p.watermark };\n});\n\ntest('graphics epoch recovery keeps required outbox and consumer watermark', 'resetting reliable state during visual recovery', () => {\n  const p = probe(); p.append('sound-A'); p.append('sound-B'); const [a, b] = p.pending();\n  p.receive(a); p.restoreGraphics(2);\n  assert.equal(p.watermark, 1); assert.equal(p.outbox.length, 2);\n  assert.equal(p.receive(a).status, 'duplicate'); p.receive(b);\n  assert.deepEqual(p.effects, ['sound-A', 'sound-B']);\n  return { graphicsEpoch: p.graphicsEpoch, watermark: p.watermark, effects: p.effects };\n});\n\ntest('bounded outbox rejects new events without losing accepted events or a sequence', 'dropping accepted events to make room or advancing sequence on rejection', () => {\n  const p = probe({ capacity: 2 }); p.append('sound-A'); p.append('sound-B');\n  assert.equal(p.append('sound-C'), null); assert.equal(p.outbox.length, 2);\n  const [a, b] = p.pending(); p.receive(a); const reply = p.receive(b); p.acknowledge(reply.ack);\n  const c = p.append('sound-C'); assert.equal(c.sequence, 3);\n  const [sent] = p.pending(); p.receive(sent); assert.deepEqual(p.effects, ['sound-A', 'sound-B', 'sound-C']);\n  return { rejected: 1, effects: p.effects, nextAcceptedSequence: c.sequence };\n});\n\ntest('ACK identity rejects stale producer stream and consumer sessions', 'letting a foreign ACK evict current events', () => {\n  const p = probe(); p.append('sound-A'); const [a] = p.pending(); const { ack } = p.receive(a);\n  for (const field of ['producerSession', 'streamId', 'consumerSession']) {\n    assert.equal(p.acknowledge({ ...ack, [field]: 'old-session' }), false);\n    assert.equal(p.outbox.length, 1);\n  }\n  assert.equal(p.acknowledge(ack), true); assert.equal(p.outbox.length, 0);\n  return { rejectedIdentities: 3, effects: p.effects, outstanding: p.outbox.length };\n});\n\ntest('ACK cannot skip unsent accepted events', 'trusting an impossible future cumulative ACK', () => {\n  const p = probe(); const a = p.append('sound-A');\n  const forged = { ...a, watermark: 1 };\n  assert.equal(p.acknowledge(forged), false); assert.equal(p.outbox.length, 1);\n  p.pending(); const { ack } = p.receive(a); assert.equal(p.acknowledge({ ...ack, watermark: 2 }), false);\n  assert.equal(p.outbox.length, 1); p.acknowledge(ack);\n  return { effects: p.effects, outstanding: p.outbox.length, impossibleACKsRejected: 2 };\n});\n\ntest('malformed event and ACK are rejected without consumption or eviction', 'changing state before all envelope fields are validated', () => {\n  const p = probe(); p.append('sound-A'); const [a] = p.pending();\n  for (const malformed of [{ ...a, version: 9 }, { ...a, sequence: 0 }, { ...a, eventID: 'wrong' }, { ...a, effect: '' }, { ...a, consumerSession: 'old' }, { ...a, streamId: 'other' }]) {\n    assert.equal(p.receive(malformed).status, 'invalid'); assert.deepEqual(p.effects, []); assert.equal(p.watermark, 0);\n  }\n  assert.equal(p.acknowledge({ ...a, watermark: Number.NaN }), false); assert.equal(p.outbox.length, 1);\n  const { ack } = p.receive(a);\n  for (const malformed of [{ ...ack, version: 9 }, { ...ack, eventID: 'wrong' }, { ...ack, watermark: -1 }, { ...ack, watermark: 0.5 }]) {\n    assert.equal(p.acknowledge(malformed), false); assert.equal(p.outbox.length, 1);\n  }\n  return { invalidEvents: 6, invalidACKs: 5, effects: p.effects, outstanding: p.outbox.length };\n});\n\ntest('caller mutations cannot rewrite accepted or transmitted events', 'sharing mutable envelope objects with the transport', () => {\n  const p = probe(); const a = p.append('sound-A'); a.effect = 'tampered';\n  const first = p.pending(); first[0].effect = 'tampered';\n  const retry = p.pending(); assert.equal(retry.length, 1); p.receive(retry[0]);\n  assert.deepEqual(p.effects, ['sound-A']); return { effects: p.effects };\n});\n\ntest('duplicate cumulative ACK preserves newer unconfirmed events', 'evicting every queued event for an old valid ACK', () => {\n  const p = probe(); p.append('sound-A'); const [a] = p.pending(); const { ack } = p.receive(a); p.acknowledge(ack);\n  p.append('sound-B'); p.acknowledge(ack); assert.equal(p.outbox.length, 1);\n  const [b] = p.pending(); p.receive(b); assert.deepEqual(p.effects, ['sound-A', 'sound-B']);\n  return { effects: p.effects, outstanding: p.outbox.length };\n});\n\nconst sources = ['model.mjs', 'run.mjs'].map(name => {\n  const path = fileURLToPath(new URL(name, import.meta.url)); const source = readFileSync(path, 'utf8');\n  return { path, sha256: createHash('sha256').update(source).digest('hex'), source };\n});\nconst report = {\n  schemaVersion: 1, experiment: 'reliable-event-probe', checkedAtUtc: new Date().toISOString(),\n  environment: { runtime: process.version, executable: process.execPath, platform: process.platform, architecture: process.arch, scope: 'single-process synchronous in-memory model' },\n  counts: { total: results.length, passed: results.filter(x => x.status === 'passed').length, failed: results.filter(x => x.status === 'failed').length }, results,\n  sourceHashes: sources.map(({ path, sha256 }) => ({ path, sha256 })),\n  limitations: ['No network, IPC, WASM, graphics/audio engine or real device execution.', 'No durable transaction coupling between side effects and consumer watermark; process crash may lose accepted events or cause duplicate effects.', 'Delivery is eventual only if transport retries fairly and an active consumer eventually accepts; permanent packet loss is not overcome.', 'Outbox is count-bounded; producer must handle explicit refusal. Consumer intentionally discards out-of-order events and waits for resend.', 'ACK validation is structural and session scoped, without authentication against hostile peers.', 'Graphics epoch differs from event stream lifetime. Consumer process restart and session rebind are not recovery operations modeled here.', 'Consumer side effect is an in-memory array append, assumed synchronous and atomic with watermark advancement. External side effects and exceptions require another contract.'],\n};\nif (process.argv.includes('--preserve-sources')) report.sourceSnapshots = sources;\nconst output = process.argv.find(x => x.startsWith('--output='))?.slice(9) ?? fileURLToPath(new URL('../../evidence/reliable-event-probe-results.json', import.meta.url));\nwriteFileSync(output, JSON.stringify(report, null, 2) + '\\n');\nconsole.log(JSON.stringify({ output, counts: report.counts, failures: results.filter(x => x.status === 'failed').map(x => ({ name: x.name, error: x.error })) }, null, 2));\nif (report.counts.failed) process.exitCode = 1;\n"
+    }
+  ],
+  "metadataNormalization": {
+    "changed": "local_position_metadata_and_stack_paths_only",
+    "sourceBytesAndHashesUnchanged": true,
+    "testValuesStatusCountsAndErrorMessagesUnchanged": true,
+    "originalRetainedPrivately": true
+  }
+}

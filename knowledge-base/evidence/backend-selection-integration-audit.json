@@ -1,0 +1,170 @@
+{
+  "schemaVersion": 1,
+  "checkedAtUtc": "2026-10-08T09:37:50.225Z",
+  "knowledgeBaseVersion": "0.6.0",
+  "designDocumentVersion": "0.5_candidate",
+  "status": "candidate_research_semantic_and_artifact_review_passed",
+  "reviewedDocumentHashes": [
+    {
+      "path": "README.md",
+      "sha256": "627fce4ef3f247974e49c70125bfafde76ae6b8d93b0749496bd2c8e411580cb",
+      "matchedFrozenManifest": true
+    },
+    {
+      "path": "CHANGELOG.md",
+      "sha256": "13854caddeb8a571c0fb432ae2a4ca7e9de55047697f23429d078564907921de",
+      "matchedFrozenManifest": true
+    },
+    {
+      "path": "当前版本.json",
+      "sha256": "84bb966f76ce482901aae662380bd5c1b76d8758a52f3d42f154a54a684cbdb0",
+      "matchedFrozenManifest": true
+    },
+    {
+      "path": "docs/图形后端编译与原生Runtime选型.md",
+      "sha256": "613882d5f765a429f0416f2eb6d0dff1919236b8f38b9c13a025683186912edc",
+      "matchedFrozenManifest": true
+    },
+    {
+      "path": "docs/技术白皮书.md",
+      "sha256": "98ba3de72327f43626eafdb99aa8023d7ef8fb51b7987380e4afffa3cddf3d2d",
+      "matchedFrozenManifest": true
+    },
+    {
+      "path": "docs/产品需求说明书.md",
+      "sha256": "262e491f76dcf5853d11b94c7f197c4566ccd91a310df62fd55a6ce223843e6f",
+      "matchedFrozenManifest": true
+    },
+    {
+      "path": "docs/工程规划.md",
+      "sha256": "b623ffd038ac85b7ffe09d168b4d7e17fc6108813ab78f3dd989acf770a172e1",
+      "matchedFrozenManifest": true
+    },
+    {
+      "path": "docs/技术架构.md",
+      "sha256": "cff85eeedec62c815b032a045ef2afe1dc6304f7042e0b771074aa47a8988a8f",
+      "matchedFrozenManifest": true
+    },
+    {
+      "path": "docs/渲染引擎与运行时.md",
+      "sha256": "12f13bea7e6cde76afc35f3be503ac089a2f2c01683ed5ad3eb0a0c7fd28807e",
+      "matchedFrozenManifest": true
+    },
+    {
+      "path": "docs/决策与开放问题.md",
+      "sha256": "8d002422199c5ae639d3f9ad7d9326404cbfd22539cc963897ae254e4e33d108",
+      "matchedFrozenManifest": true
+    },
+    {
+      "path": "docs/核心优势与验证.md",
+      "sha256": "aabe57ef9a9753bcf6df8044fcb2aae88264769ebeaea2f3f69820109fb4dbe9",
+      "matchedFrozenManifest": true
+    },
+    {
+      "path": "registry/需求.json",
+      "sha256": "21ca538657a2df3bc03da019d935236f3ff3ef4f89f1c286996d1fd190b4a97e",
+      "matchedFrozenManifest": true
+    },
+    {
+      "path": "registry/决策.json",
+      "sha256": "e7e18bbc6c5a0ecd3fdb9e7cb61a752f05d146ab19ba15888371ca9a06f184ab",
+      "matchedFrozenManifest": true
+    },
+    {
+      "path": "registry/假设.json",
+      "sha256": "c5ba3285dad5befb8c271f4a68593892a6663a3e171b403f23eefdb350a7186d",
+      "matchedFrozenManifest": true
+    },
+    {
+      "path": "registry/交付.json",
+      "sha256": "eed05b6dfaf868a975be86d41ee90750e9137ee0526a7f1c4071ffb09d138e1e",
+      "matchedFrozenManifest": true
+    },
+    {
+      "path": "registry/来源.json",
+      "sha256": "e2c267003b67729312ada1bc06bd9ccea6592ef8f0fa2a4d00877396e0a5be6b",
+      "matchedFrozenManifest": true
+    }
+  ],
+  "newResearchHashes": [
+    {
+      "path": "evidence/backend-founder-context.json",
+      "sha256": "289c0c7d80fc86375fee5b122ce7a622ef6d632051abd2aab729d0ccdb784017"
+    },
+    {
+      "path": "evidence/backend-graphics-research.json",
+      "sha256": "89249beaea683c5380fee3a3bc37de00fa41b529fc78b945a5b1aa5fdc1fc6df"
+    },
+    {
+      "path": "evidence/backend-ts-research.json",
+      "sha256": "f7e3cfa75c28fc635431cd25abb9983b78860a67997d447633dfafcdee250567"
+    },
+    {
+      "path": "evidence/backend-native-research.json",
+      "sha256": "6b8c5cfd2b737be9fa9560c468a9ce8235e8a5e44a230505ac979fb26760c15b"
+    },
+    {
+      "path": "evidence/backend-host-ai-research.json",
+      "sha256": "a47856521877a3b8b65cee62a0374bf4629321623cc26b7386fee6e58a8c3b96"
+    },
+    {
+      "path": "evidence/backend-authoring-audit-preservation.json",
+      "sha256": "ef03aa813c2298cec032d805ee955b5cfd443f7cd5a57a8b9449b17ad6474617"
+    },
+    {
+      "path": "evidence/backend-selection-document-review.json",
+      "sha256": "7001f98aaac3354e7f3b8ba25e1f41823a36573d44e9d49570965da49d05e9a3"
+    }
+  ],
+  "independentReview": "evidence/backend-selection-document-review.json",
+  "previousBaseline": {
+    "version": "0.5.0",
+    "fileHashesMatched": 444,
+    "preservedPriorResearchFiles": 402
+  },
+  "initialReports": [
+    {
+      "fileName": "backend-architecture-audit-initial.json",
+      "sha256": "7ba1c91c2ac801401d4a45df57029d41c6c04e8c96df10daa84d502e3282293e",
+      "originalDraftBytesRetained": false
+    },
+    {
+      "fileName": "backend-architecture-audit-initial.md",
+      "sha256": "30fd55aa4dbfa8ca0444bfb844a42f9124b8c7f3058a00519225e788ead6ef9a",
+      "originalDraftBytesRetained": false
+    }
+  ],
+  "existingRuntimeReport": {
+    "artifact": "evidence/asset-reference-probe-results.json",
+    "runId": "d642177d-b007-4c0e-80a2-0f85e150d0c0",
+    "counts": {
+      "executed": 17,
+      "passed": 17,
+      "failed": 0
+    },
+    "rerunThisRevision": false,
+    "coverageExpanded": false
+  },
+  "method": {
+    "officialDocumentationAndReleaseResearch": true,
+    "privateArchiveSelectedEntryStaticReview": true,
+    "newProgramOrShaderRun": false,
+    "compilerOrRuntimeInstalled": false,
+    "buildOrBenchmarkRun": false,
+    "deviceOrHostAcceptance": false,
+    "independentSemanticReviewOnly": true
+  },
+  "states": {
+    "decisions": "proposed",
+    "hypotheses": "untested",
+    "completeProductImplementation": "not_started",
+    "productAcceptance": "not_run",
+    "R008": "full_migration_continued_edit_and_actual_publish_required"
+  },
+  "limits": [
+    "Candidate design and source facts only; no claimed performance or device/host support.",
+    "Moving main-source capability is not a selected release/binary acceptance.",
+    "Initial review observations are preserved, but initial authoring draft bytes were not independently retained.",
+    "Private entry paths and bytes stay in internal research; public source summary is deliberately narrower."
+  ]
+}

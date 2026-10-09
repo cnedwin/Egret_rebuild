@@ -1,0 +1,15 @@
+{
+  "checkedAtUtc": "2026-10-08T08:42:41.740Z",
+  "scope": "Public Markdown local-position metadata normalization only; original byte-exact report preserved internally.",
+  "runtimeReportsChanged": false,
+  "executionSourcesChanged": false,
+  "changes": [
+    {
+      "artifact": "evidence/asset-reference-pre-review-implementation-report.md",
+      "originalSha256": "5d5a2a69369807430fcaa0f6c7722bdf293d8e6809cde168f7cd6d9cf4cc6ba0",
+      "publicSha256": "ed4e62e5ddb51fa95c071731263ecd89e3341a174e8a5c0ad1d8870fb4d1baae",
+      "transformation": "Only exact local workspace/node/Playwright position strings replaced with reproducible placeholders; no case, scope, count or runtime evidence modified.",
+      "originalPreserved": "internal phase3-original-metadata archive"
+    }
+  ]
+}

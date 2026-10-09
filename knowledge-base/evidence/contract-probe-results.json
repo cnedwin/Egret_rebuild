@@ -1,0 +1,203 @@
+{
+  "schemaVersion": 1,
+  "experiment": "architecture_contract_probe",
+  "checkedAtUtc": "2026-10-08T05:50:15.876Z",
+  "status": "passed",
+  "seed": 20261008,
+  "environment": {
+    "node": "v24.19.0",
+    "platform": "win32",
+    "architecture": "x64"
+  },
+  "counts": {
+    "total": 26,
+    "passed": 26,
+    "failed": 0
+  },
+  "results": [
+    {
+      "name": "UI incremental result equals independent full oracle for 200 seeded frames",
+      "status": "passed",
+      "observations": {
+        "frames": 200,
+        "objects": 1024,
+        "seed": 20261008
+      }
+    },
+    {
+      "name": "UI unchanged frame performs no layout work",
+      "status": "passed",
+      "observations": {}
+    },
+    {
+      "name": "UI isolated height change updates following siblings but not other regions",
+      "status": "passed",
+      "observations": {
+        "sparseWork": {
+          "changedRegions": 1,
+          "propertyWrites": 1,
+          "aggregateReads": 128,
+          "placementWrites": 128
+        },
+        "fullReferenceRegionCount": 8,
+        "note": "Work counts, not timing or engine speedups; dirty parent still reads 128 siblings."
+      }
+    },
+    {
+      "name": "UI repeated invalidation coalesces state without losing final dimensions",
+      "status": "passed",
+      "observations": {}
+    },
+    {
+      "name": "UI fully dirty workload remains correct and is not claimed cheap",
+      "status": "passed",
+      "observations": {
+        "changedRegions": 8,
+        "propertyWrites": 1024,
+        "aggregateReads": 1024,
+        "placementWrites": 1024
+      }
+    },
+    {
+      "name": "Adjacent batches retain command order before the same CPU repaint",
+      "status": "passed",
+      "observations": {
+        "scenes": 80,
+        "dimensions": [
+          12,
+          12
+        ],
+        "limitation": "Flattened order plus same per-command CPU painter; does not independently verify shared per-batch pipeline/clip execution."
+      }
+    },
+    {
+      "name": "Global texture sorting provides a falsifying transparent-order counterexample",
+      "status": "passed",
+      "observations": {
+        "originalFirstPixel": [
+          0.125,
+          0.25,
+          0.5
+        ],
+        "wronglySortedFirstPixel": [
+          0.125,
+          0.5,
+          0.25
+        ]
+      }
+    },
+    {
+      "name": "Clip-state changes create batch boundaries even for equal texture",
+      "status": "passed",
+      "observations": {}
+    },
+    {
+      "name": "Mirror duplicate packet does not replay consumed event",
+      "status": "passed",
+      "observations": {}
+    },
+    {
+      "name": "Mirror invalid command rolls back entire packet and event",
+      "status": "passed",
+      "observations": {}
+    },
+    {
+      "name": "Mirror stale generation cannot mutate reused ID",
+      "status": "passed",
+      "observations": {}
+    },
+    {
+      "name": "Mirror sequence gap stops incremental application until a new-epoch snapshot",
+      "status": "passed",
+      "observations": {}
+    },
+    {
+      "name": "Mirror incompatible protocol changes no state",
+      "status": "passed",
+      "observations": {}
+    },
+    {
+      "name": "Mirror rejects malformed packet headers before changing state",
+      "status": "passed",
+      "observations": {}
+    },
+    {
+      "name": "Mirror rejects missing command generations and malformed events atomically",
+      "status": "passed",
+      "observations": {}
+    },
+    {
+      "name": "Mirror malformed snapshot cannot partially change a stopped mirror",
+      "status": "passed",
+      "observations": {}
+    },
+    {
+      "name": "Mirror rejects inconsistent or duplicate snapshot identities before commit",
+      "status": "passed",
+      "observations": {}
+    },
+    {
+      "name": "Bounded queue applies backpressure without silently dropping events",
+      "status": "passed",
+      "observations": {}
+    },
+    {
+      "name": "Released resource rejects stale asynchronous completion after ID reuse",
+      "status": "passed",
+      "observations": {}
+    },
+    {
+      "name": "Shared resource keeps GPU residency until last owner and completed fence",
+      "status": "passed",
+      "observations": {}
+    },
+    {
+      "name": "Device loss rebuilds owned GPU projection without inventing a new resource identity",
+      "status": "passed",
+      "observations": {}
+    },
+    {
+      "name": "Old device completion cannot resurrect residency while the device is lost",
+      "status": "passed",
+      "observations": {}
+    },
+    {
+      "name": "Old device completion remains stale after a new device rebuild",
+      "status": "passed",
+      "observations": {}
+    },
+    {
+      "name": "Reacquiring a fence-retained resource rejects the canceled ownership task",
+      "status": "passed",
+      "observations": {}
+    },
+    {
+      "name": "Late release of an old lease cannot release the same owner new lease",
+      "status": "passed",
+      "observations": {}
+    },
+    {
+      "name": "An old lease cannot use a resource after ownership has been renewed",
+      "status": "passed",
+      "observations": {}
+    }
+  ],
+  "sourceHashes": [
+    {
+      "path": "model.mjs",
+      "sha256": "941b13b6cd13949af8f661817e5ad587017d9181f484ac4d0ad3be99307c6b7b"
+    },
+    {
+      "path": "run.mjs",
+      "sha256": "82dcfceb8a91f814f44ff11f80a30e491e69e4e9cd979df9397a5a841146925d"
+    }
+  ],
+  "limitations": [
+    "Research model, not production engine code.",
+    "No actual JS/C++/WASM crossing, GPU timing, mobile or host performance measurement.",
+    "No fonts/skeleton animation, complete EUI layout or old-project migration acceptance.",
+    "Graphics-state snapshots do not recover missing reliable events; acknowledged outbox and consumption watermarks are not implemented.",
+    "Batch flattening plus the same painter verifies command ordering, not shared per-batch state.",
+    "Resource completion is a combined load/upload callback; separate CPU decode and asynchronous GPU rebuild are not implemented."
+  ]
+}

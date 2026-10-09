@@ -1,0 +1,517 @@
+{
+  "schemaVersion": 1,
+  "knowledgeBaseVersion": "0.11.0",
+  "scope": "Independent scoped code review and bounded cross-author bilingual-document review; author translation self-review is separate.",
+  "code": {
+    "schemaVersion": 1,
+    "reviewedAtUtc": "2026-10-08T14:16:15.219Z",
+    "scope": "Independent CPU asset acquisition/lease contract and whole-slice public-facade review.",
+    "authority": "Existing repository resource contract and pre-existing Scope/Engine snapshot semantics. GPU/backend, physical cancellation, performance and publication are outside this review.",
+    "status": "no-open-necessary-findings-in-reviewed-scope",
+    "findings": [
+      {
+        "id": "AR1",
+        "severity": "P2",
+        "status": "fixed-and-independently-verified",
+        "title": "Callback invocation reads mutable function.call after registration",
+        "file": "packages/runtime/src/AssetManager.ts",
+        "relevantCode": [
+          "load.call(provider, ref as unknown as AssetRef<T>, context)",
+          "dispose.call(provider, value as T)"
+        ],
+        "contract": "register fixes provider callbacks at registration time.",
+        "reproduction": "callback-capture-counterexample.mjs: register ordinary load/dispose functions; define their own call properties after registration while preserving function identity; acquire and release through @egret/engine.",
+        "actual": {
+          "value": 2,
+          "trace": [
+            "replacement-call-load",
+            "replacement-call-dispose"
+          ]
+        },
+        "expected": {
+          "value": 1,
+          "trace": [
+            "registered-load",
+            "registered-dispose:1"
+          ]
+        },
+        "effect": "The registered loader and disposer are never invoked, so postregistration mutation can silently replace resource behavior and skip cleanup.",
+        "rationale": "This changes only user-owned properties on registered callback objects and does not patch global intrinsics.",
+        "recommendation": "Invoke captured callables through an intrinsic invocation operation and preserve provider receiver binding. Add a narrow regression for loader/disposer own call property mutation.",
+        "resolution": {
+          "code": "Reflect.apply invokes captured callables with their original provider receiver; registered callable own .call properties are no longer read.",
+          "shippedRegressions": [
+            "captured loader ignores a later own call property while retaining its provider receiver",
+            "captured disposer ignores a later own call property while retaining its provider receiver"
+          ],
+          "independentlyObserved": {
+            "value": 1,
+            "trace": [
+              "registered-load",
+              "registered-dispose:1"
+            ],
+            "exitCode": 0
+          },
+          "redEvidence": "callback-capture-red.json records the independently observed pre-fix failure. Production regression RED/GREEN logs are separately retained by the implementation run."
+        }
+      }
+    ],
+    "reviewedFiles": [
+      {
+        "path": "AGENTS.md",
+        "sha256": "f3551dd36ebc3023f8c846f0cdd876b7204c214c7c041e6496271d20c091046c",
+        "bytes": 2438
+      },
+      {
+        "path": "README.md",
+        "sha256": "a41d2a267bcc2fbeb4e76591d4e01122ca3dd6f2a690f4a617bab79c0f1b3257",
+        "bytes": 3037
+      },
+      {
+        "path": "CONTRIBUTING.md",
+        "sha256": "373de5c518c0208d972ceef4c331d8ae81853102ca6aee8dbd1f90064c57bec8",
+        "bytes": 3231
+      },
+      {
+        "path": "knowledge-base/docs/资源核心合同.md",
+        "sha256": "415fc15e0cc81840c855043a74195479df97a636c0196466f5efcc2ff49e9bae",
+        "bytes": 5670
+      },
+      {
+        "path": "packages/runtime/src/AssetRef.ts",
+        "sha256": "48963664a8a048697a962f1c3d56826333e65e3bbf05d1524d7c30b049a10ab7",
+        "bytes": 1818
+      },
+      {
+        "path": "packages/runtime/src/AssetLease.ts",
+        "sha256": "6c411c75c2737f4229e459f559efc75375b15c65af65e3791227abe416e24a21",
+        "bytes": 2170
+      },
+      {
+        "path": "packages/runtime/src/AssetManager.ts",
+        "sha256": "31e52919bfa43df548fa661a9d46c5d8b2fcb7259addfe119ef4367fa25f462e",
+        "bytes": 13239
+      },
+      {
+        "path": "packages/runtime/src/assetState.ts",
+        "sha256": "044c1aceef34403be1b1297794d3d3e390182a84d2876ce2d3392a4c2e5a6920",
+        "bytes": 1515
+      },
+      {
+        "path": "packages/runtime/src/Scope.ts",
+        "sha256": "29e9d5da9232ed8347b2a829e069d33daabb1bad296798492a45c7950f43e8ea",
+        "bytes": 4700
+      },
+      {
+        "path": "packages/runtime/src/ownership.ts",
+        "sha256": "8c8c40e465002882dac1bf054fa49248c99df62da337cf75f50168f0a6748c62",
+        "bytes": 3239
+      },
+      {
+        "path": "packages/runtime/src/CancellationController.ts",
+        "sha256": "3cfdb217804b282c4a422420ce5efa63ced25a6bb215bff254e7f947c4942e28",
+        "bytes": 2414
+      },
+      {
+        "path": "packages/runtime/src/diagnostics.ts",
+        "sha256": "c330f5d9083d84ee5b23b947d0d8534e7050a92f8b76a7e5259a1bad92395294",
+        "bytes": 601
+      },
+      {
+        "path": "packages/runtime/src/EgretError.ts",
+        "sha256": "f647ab0f675a5e0d460f1e7b04bce603d06998096f460371035f23826eed7f08",
+        "bytes": 652
+      },
+      {
+        "path": "packages/runtime/src/index.ts",
+        "sha256": "82adc2ead33bd530c7ad18557237d816b019424987ecc48601ebdfedf2a5ec8a",
+        "bytes": 1130
+      },
+      {
+        "path": "packages/contracts/src/Diagnostic.ts",
+        "sha256": "dd24a34a911fd333cea3a799675465a5e871d2a47cd551648dbc245cece8d25f",
+        "bytes": 470
+      },
+      {
+        "path": "packages/engine/src/Engine.ts",
+        "sha256": "e386470f8e13a17e9960a594452d22d0c88f67b8d3863de03c4b5727ac22bccf",
+        "bytes": 4368
+      },
+      {
+        "path": "packages/engine/src/closeHost.ts",
+        "sha256": "9fac806cc0d19265ec6956cc19305a9ff2ae03ff0e49700d64c39be88ba3244f",
+        "bytes": 2307
+      },
+      {
+        "path": "packages/engine/src/index.ts",
+        "sha256": "8b138bad7220763fbeb5ff43775303decfd0dfe370fdd4459917b45330597f94",
+        "bytes": 800
+      },
+      {
+        "path": "packages/runtime/package.json",
+        "sha256": "546d482c0bd990164d79acaec52953245314df6d50117c85b6c6ec5856f4f7ee",
+        "bytes": 234
+      },
+      {
+        "path": "packages/engine/package.json",
+        "sha256": "26b7c45f629f7c8a7d41c466fdd06741163a2afd9b6002075c6341530ed2e663",
+        "bytes": 266
+      },
+      {
+        "path": "package.json",
+        "sha256": "dc8b4a1df35b654d52a366010430083495daf807144aa8882b01a0b82fb45234",
+        "bytes": 565
+      },
+      {
+        "path": "tests/assets.test.mjs",
+        "sha256": "c8ef247cade909292d848d20ec2d1ae55a984c1d2d6bd03e1c0120c9162b0719",
+        "bytes": 11438
+      },
+      {
+        "path": "tests/assets-interleavings.test.mjs",
+        "sha256": "3cbad2d481f4ca2eb0563c7c85c09bbfe033f314c07626ca0e9358e3d7ed1bc7",
+        "bytes": 10859
+      },
+      {
+        "path": "tests/helpers.mjs",
+        "sha256": "20e7dd30f54b3a81d35f666c8370e7f014e4559c68222727bc88fd377efc1af7",
+        "bytes": 997
+      },
+      {
+        "path": "tests/types/positive.ts",
+        "sha256": "b4874675e952018fb3b87875b81bcb27bba96e69fc1cd4808fa9747ab4dd1f7a",
+        "bytes": 2147
+      },
+      {
+        "path": "tests/types/negative.ts",
+        "sha256": "bf36f78201c71c3a1f19bccb2117e3540a9a6c943dd9fb2f08794cf8a8230e6a",
+        "bytes": 3038
+      },
+      {
+        "path": "tests/types/tsconfig.json",
+        "sha256": "88a3194ab9d7990646c7957e96e8d059ee16e79fe88373543a763da38a84dae1",
+        "bytes": 197
+      },
+      {
+        "path": "tsconfig.base.json",
+        "sha256": "b7a31fb9f93a93e20bfdcf33c135acb45cb3a6895a8b3e7006bd85214ddc1008",
+        "bytes": 446
+      },
+      {
+        "path": "tools/check-boundaries.mjs",
+        "sha256": "9b8e0c6195504b91c4758fa9a243de2f60bf40a8fd51ecfe5a8b65c6ca1e9b62",
+        "bytes": 3452
+      },
+      {
+        "path": "tools/check-types.mjs",
+        "sha256": "332d2c161ceb9ec7d75429c89a3d2c95af24f2cf5eed68b92b09532d1ce691a4",
+        "bytes": 2031
+      },
+      {
+        "path": "tools/test.mjs",
+        "sha256": "6d8fdbf59b3c9d1a4aab917ae9ab8167818c0716a6219f5f91c5893bb2c4eb53",
+        "bytes": 514
+      },
+      {
+        "path": "tools/verify.mjs",
+        "sha256": "9c789b762d598c72040992d8ffb9041f75180d39b7556761365ef0998d5b0b4a",
+        "bytes": 525
+      },
+      {
+        "path": "examples/assets.mjs",
+        "sha256": "95b13275ec0847c12face88ae01a9b247be5dd7a3f93d92f8e759a7ba50510ef",
+        "bytes": 2360
+      }
+    ],
+    "evidenceFiles": [
+      {
+        "path": "final-full-verify.log",
+        "sha256": "e8f109fbfba5632882c6d69c566cbfc3bc58bd152faaa3ee6025bab12954cc78",
+        "bytes": 11947
+      },
+      {
+        "path": "final-headless-example.log",
+        "sha256": "ad50f6dd89dd73ed852cb8f9813a810e39d1744070a1c3ba4466b8a8b6af74d9",
+        "bytes": 318
+      },
+      {
+        "path": "final-assets-example.log",
+        "sha256": "6ce0bb76b31042d0bd10c7d26693a2ae03e7e9a6baa6db0784ad723602ae9f04",
+        "bytes": 266
+      },
+      {
+        "path": "final-counterexamples.log",
+        "sha256": "8d1ce0e8bf16783ed7f1e70aa8e6055058bdefece6f7e6b86e6ad42090a08db6",
+        "bytes": 2866
+      },
+      {
+        "path": "final-callback-capture.log",
+        "sha256": "ee06e1c8d617eb877742d5c68092bebddedb8193f716fa20c9b9558fe1c7c071",
+        "bytes": 85
+      },
+      {
+        "path": "asset-counterexamples.mjs",
+        "sha256": "8a9e7c9a57663cf5cbe208335edc29c75bde33dbd38f6e2bfbed6b7d243af7cb",
+        "bytes": 13227
+      },
+      {
+        "path": "callback-capture-counterexample.mjs",
+        "sha256": "46e034f32ca195865712e3eb93bf75fb02cdad72b05c358443bbd113f7fc7d1e",
+        "bytes": 1275
+      },
+      {
+        "path": "callback-capture-red.json",
+        "sha256": "0d4773cb804863d61ae5b39d7061bbb07838ae2ea6a942142e66b3adf6408c3b",
+        "bytes": 836
+      },
+      {
+        "path": "asset-code-review-initial.json",
+        "sha256": "5a4504c7828fc294161c21d4716087ec0e99ac08c7521754a7a82bee188716d4",
+        "bytes": 9258
+      }
+    ],
+    "reviewLimits": [
+      "Passing finite behavioral checks does not establish global correctness or originality.",
+      "No competitor implementation or prior probe implementation was read or copied.",
+      "Load completion and one disposal attempt do not prove provider physical work stopped or disposal succeeded.",
+      "Initial missing-API RED is not evidence that every specific lifecycle mechanism independently failed before implementation.",
+      "The callback-capture mismatch has an independently observed RED and final GREEN reproduction; the reviewed intrinsic invocation and two shipped regressions close AR1 within this scope."
+    ],
+    "initialReview": {
+      "path": "asset-code-review-initial.json",
+      "sha256": "5a4504c7828fc294161c21d4716087ec0e99ac08c7521754a7a82bee188716d4",
+      "scope": "Preserved pre-fix source identity and AR1 reproduction; its 71-test verification and 14-probe logs remain unchanged."
+    },
+    "verification": {
+      "command": "node tools/verify.mjs",
+      "exitCode": 0,
+      "behaviorTests": {
+        "total": 73,
+        "passed": 73,
+        "failed": 0
+      },
+      "negativeTypeAssertions": 19,
+      "actualNegativeCompilerDiagnostics": 19,
+      "boundaryFiles": 78,
+      "examples": {
+        "headless": "PASS",
+        "realAsyncAssets": {
+          "status": "PASS",
+          "loads": 2,
+          "cleanups": 2
+        }
+      },
+      "independentReentryProbes": {
+        "total": 15,
+        "passed": 15,
+        "failed": 0,
+        "unhandledInternalRejections": 0
+      },
+      "callbackCaptureClosure": {
+        "exitCode": 0,
+        "expectedRegisteredLoaderAndDisposer": true
+      }
+    },
+    "polishFindings": [],
+    "evidenceFilesScope": "Evidence paths are identity-only records for internal execution logs, not distributed public file links. Shipped regressions and reproduction commands are public."
+  },
+  "documents": {
+    "schemaVersion": "1",
+    "date": "2026-10-08",
+    "reviewKind": "independent-cross-author-public-document-review",
+    "status": "all-document-findings-addressed; bounded-cross-author-review-complete",
+    "artifactRoot": "outputs/白鹭引擎核心资源工程",
+    "scope": "Read-only semantic parity, public wording, and state/evidence-boundary review of other-author root/package/knowledge-base/plan/API documentation and the Chinese resource specification. No implementation verification execution.",
+    "reviewedFiles": [
+      {
+        "path": "README.md",
+        "sha256": "a41d2a267bcc2fbeb4e76591d4e01122ca3dd6f2a690f4a617bab79c0f1b3257"
+      },
+      {
+        "path": "README.en.md",
+        "sha256": "0c548db8569207b3b258fc467906bcf38af5bd3c4e9afe56943e376c2829275f"
+      },
+      {
+        "path": "PUBLICATION.md",
+        "sha256": "c590a821317ab1e58e6be2ea756c9ec0fcea709d91eeae1064c6720b175edf46"
+      },
+      {
+        "path": "PUBLICATION.en.md",
+        "sha256": "211dd3d67ab9305701079fcc28789cc6234d5aedac51397ef7e22bb6bdab392a"
+      },
+      {
+        "path": "packages/runtime/README.md",
+        "sha256": "0b4aeaeaa923187057ceb6da95238cbaa6192f155ad4dcffe1036598b06330e0"
+      },
+      {
+        "path": "packages/runtime/README.en.md",
+        "sha256": "bea2154ff97ec27739bdbb5d9659e97aa50fb2a5cf331e18f5ef5043bd2e54aa"
+      },
+      {
+        "path": "packages/engine/README.md",
+        "sha256": "c61586d644569bb4cab5bfc548313db43670e712a1174b9099d761a0c0f859d0"
+      },
+      {
+        "path": "packages/engine/README.en.md",
+        "sha256": "5883049a7b04849806d8d810af10f33871e64dff5502561513df9488be5c9b60"
+      },
+      {
+        "path": "knowledge-base/README.md",
+        "sha256": "8cd8846618af72c98da1d29596e4e119eedd6922e1ad3f40f99d4637da47c271"
+      },
+      {
+        "path": "knowledge-base/README.en.md",
+        "sha256": "75f709080c97f467cf08055b7a4e07c152d80f7d1fad1b87ff511b733d09b83f"
+      },
+      {
+        "path": "knowledge-base/docs/工程规划.md",
+        "sha256": "cb14a9f6f75c470f1d479a5b1171c93302529c7b932411ff63c02d2da2612b9d"
+      },
+      {
+        "path": "knowledge-base/docs/工程规划.en.md",
+        "sha256": "7ee3abf1decea5d3f33f0b85eb8775643561b01bfce558a884d5b1085179f99a"
+      },
+      {
+        "path": "knowledge-base/docs/资源核心合同.md",
+        "sha256": "415fc15e0cc81840c855043a74195479df97a636c0196466f5efcc2ff49e9bae"
+      },
+      {
+        "path": "knowledge-base/docs/公共API设计与命名规范.md",
+        "sha256": "71b5e15e64d5a8a83d5d8f938eb9b65806f6ccb3559e23793591f8657b4aa8e0"
+      },
+      {
+        "path": "knowledge-base/docs/公共API设计与命名规范.en.md",
+        "sha256": "6c937a9e90a081faa887455e3f927b8e563516f2b1ec5c7fb9a940b1680a3017"
+      }
+    ],
+    "authorshipSeparation": {
+      "independentReviewSet": "The 15 files above were authored or updated by another author. This review task did not modify them.",
+      "excludedSelfAuthoredFiles": [
+        "knowledge-base/docs/资源核心合同.en.md",
+        "knowledge-base/docs/资源核心实现记录.md",
+        "knowledge-base/docs/资源核心实现记录.en.md"
+      ],
+      "selfReviewRecord": "work/core-resources/public-docs-review.json",
+      "selfReviewBoundary": "Translation self-review is distinct and is not counted as independent review of these three files. Their package-role correction was made separately at the coordinating author's request."
+    },
+    "findings": [
+      {
+        "id": "CDR001",
+        "classification": "necessary",
+        "status": "addressed-and-reread",
+        "paths": [
+          "README.md",
+          "README.en.md"
+        ],
+        "lines": [
+          19,
+          19
+        ],
+        "issue": "The initial pair said providers supply host work as well as networking/decoding, blurring the asset provider boundary with HostAdapter lifecycle ownership.",
+        "recommendation": "Describe the service as managing CPU results while appropriate providers supply network/decoding work; omit generic host work.",
+        "verifiedCorrection": "Both final reviewed versions now omit host work and retain the GPU/rendering/real-host limitations."
+      },
+      {
+        "id": "CDR002",
+        "classification": "necessary",
+        "status": "addressed-and-reread",
+        "paths": [
+          "PUBLICATION.md",
+          "PUBLICATION.en.md"
+        ],
+        "lines": [
+          27,
+          27
+        ],
+        "issue": "The initial final paragraph called the current bilingual revision 0.10.0 under a current 0.11.0 asset-core section.",
+        "recommendation": "Label 0.10.0 as the historical bilingual revision without rewriting its original identity.",
+        "verifiedCorrection": "Both final reviewed versions explicitly identify historical 0.10.0; the preceding current section distinguishes new CPU code from the first unchanged-byte export."
+      },
+      {
+        "id": "CDR003",
+        "classification": "necessary",
+        "status": "addressed-and-reread",
+        "paths": [
+          "knowledge-base/docs/工程规划.md",
+          "knowledge-base/docs/工程规划.en.md"
+        ],
+        "lines": [
+          9,
+          9
+        ],
+        "issue": "The initial English 'next implemented core slice' added implementation status beyond the Chinese 'next core slice' while actual final execution was pending.",
+        "recommendation": "Remove implemented and leave actual state to the implementation and verification records.",
+        "verifiedCorrection": "The final English wording is 'The next core slice'; the V010/V004/GPU/decoder/performance boundaries match Chinese."
+      },
+      {
+        "id": "CDR004",
+        "classification": "minor",
+        "status": "addressed-and-reread",
+        "paths": [
+          "knowledge-base/README.md",
+          "knowledge-base/README.en.md"
+        ],
+        "lines": [
+          58,
+          58
+        ],
+        "issue": "Future-publication authorization wording is inherited from the earlier candidate even though the same document says the project already uses public collaboration and a public repository.",
+        "recommendation": "For current public reading, describe ongoing contribution scope and authorized content rather than implying a new general approval is needed. Keep private original materials outside the public tree.",
+        "boundary": "This is editorial consistency only; the sentence is not treated as new authorization or a blocking permission requirement.",
+        "verifiedCorrection": "Both reviewed versions now say private original materials are outside this directory and excluded from the current public copy, without adding a general future approval requirement."
+      },
+      {
+        "id": "CDR005",
+        "classification": "minor",
+        "status": "addressed-and-reread",
+        "paths": [
+          "README.md",
+          "README.en.md"
+        ],
+        "lines": [
+          17,
+          17
+        ],
+        "issue": "The summary correctly says invalidation leaves old leases usable, but it omits the release/manager-closure limit stated in the linked contract.",
+        "recommendation": "Optionally add that old leases remain usable until release or manager closure. The linked specification already supplies this limit.",
+        "verifiedCorrection": "Both reviewed versions explicitly limit old lease usability to release or manager closure."
+      }
+    ],
+    "observations": [
+      "No reviewed current-service description still claims that CPU asset acquisition or all resource services are absent. Missing graphics execution and frame scheduling remain accurately scoped.",
+      "Pending-only acquisition cancellation, delivered-lease lifetime, future-generation invalidation, and Scope-before-manager-before-host ordering are consistent across the reviewed summaries and specification.",
+      "The specification explicitly revokes delivered leases on manager closure, requires per-successful-load cleanup ownership, and describes synchronous disposal as one attempt rather than proof of physical task completion.",
+      "Bilingual versions retain the same API names, V010/V009/V002/V004/R008/V006 boundaries, experimental status, licenses, tool versions, and historical numerical evidence.",
+      "Research counts25/17/64/7 and first-core44/11 are presented as bounded historical evidence. No new resource behavior/type pass count appears in the reviewed files.",
+      "GPU, production hosts/mobile, fonts/text, decoder/network-provider product acceptance, performance, and full migration remain outside the CPU slice. No remote-merge/npm-release/CI completion is asserted for the current local revision.",
+      "No private chat, task handoff, raw deliberation, credentials, or external workspace file links were found in the reviewed public text.",
+      "The updated public API pair explicitly labels the complete Bitmap/TouchEvent example as unimplemented/uncompiled and links the separately scoped CPU asset contract/record; neither language still calls the CPU asset service entirely absent. Its typed-reference, pending-only signal, Scope late-result and shutdown laws retain semantic parity."
+    ],
+    "finalizationChecks": [
+      "Create the actual bounded verification/review reports before final public validation and link checks; this review has not independently executed implementation tests.",
+      "The separately self-reviewed implementation-record pair now states observed73/19/78 post-fix local results and bounded histories. This does not expand the independent15-file cross-review set.",
+      "Any later edits require fresh hashes; this report binds only the exact reviewed snapshots above."
+    ],
+    "limitations": [
+      "No core build, type assertions, behavior suite, example execution, source-origin validation, or product acceptance was run by this document review task.",
+      "Only the 15 named files were cross-reviewed. The three self-authored resource reading files are expressly excluded from independent-review claims.",
+      "Public wording and semantic parity review does not establish global originality, source-rights completeness, third-party license compliance, or product performance."
+    ]
+  },
+  "translation": {
+    "newPairs": [
+      "knowledge-base/docs/资源核心合同.md",
+      "knowledge-base/docs/资源核心实现记录.md"
+    ],
+    "method": "Complete AI-assisted translation and author self-review; implementation snippet independently compiled against built declarations. This is not external community or human-owner review."
+  },
+  "historicalInitialReview": {
+    "path": "verification/history/asset-core-review-initial.json",
+    "sha256": "d1f4f9eb926c49c374696e5fe4e2575f58d6297d5c595da9c5d6ce5ed02faea3",
+    "originalIdentitySha256": "5a4504c7828fc294161c21d4716087ec0e99ac08c7521754a7a82bee188716d4"
+  },
+  "limits": [
+    "Unchanged bilingual content retains the preceding revision review.",
+    "No full rendering/device/native/performance/migration acceptance or global originality certification."
+  ]
+}

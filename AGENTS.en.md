@@ -1,0 +1,38 @@
+# Agent collaboration agreement
+
+English | [简体中文](AGENTS.md)
+
+## 0.13.0 WebGPU rectangle checkpoint — October 9, 2026
+
+The opt-in `@egret/engine/webgpu` entry executes immutable `RenderFrame2D` rectangle commands synchronously. The root stays DOM-free; `@egret/engine/web` stays Canvas-only and requests no WebGPU or robust-predicates modules. DOM-free preparation uses the exact foundational dependency robust-predicates 3.0.3 through public `orient2d`, under Unlicense. Copying, bounded intersection construction, packing, WGSL and host lifetime are independently authored first-party code. See the [complete 0.6 contract](knowledge-base/docs/WebGPU矩形执行合同.en.md), [implementation plan](knowledge-base/docs/WebGPU矩形实施计划.en.md) and [bounded evidence](knowledge-base/docs/WebGPU矩形实现证据.en.md).
+
+The accepted desktop build records 177/177 CPU/mock/core tests, 28 expected negative type diagnostics and 123 boundary files. Its separate real WebGPU gate records 42 frames, 1709 raw assertions, 84 screenshots, 6808 composition assertions, eight intended negatives and zero unexpected errors. Seven negatives mutate copied production code; one is synthetic assertion-only. These recorded results and scoped independent implementation review belong to the accepted source identities in [verification](verification/webgpu-verification.json) and [review](verification/webgpu-review.json); they are not fresh execution by document integration.
+
+This experimental checkpoint was recorded before the final native run at 2026-10-08T21:23:54.294Z; its core/headless and desktop Canvas results are separately recorded. The subsequent final comment-build browser WebGPU run at `1aa0248a1ff6d8e54c42d631072223bb50483814`, 2026-10-08T21:23:54.294Z, exited 0 and recorded PASS: 42 frames, 1709 raw assertions, 84 PNG screenshots, 6808 composition assertions, eight intended negatives and zero unexpected errors. Seven negatives mutate copied production code; one is synthetic. All 233 inventoried source/build/tool/dependency identities remained equal before and after that execution and match this metadata-only successor. The execution was performed by its verification author; independent correction/native-binding closure, final semantic attestation and publication remain pending. Browser WebGPU is separate from a Native app/SDK. Screenshot composition does not certify physical scanout, acceleration, phones or performance. Textures/text/UI/animation/3D, editor/Agent creation, CI, complete migration and full-product acceptance remain open; R008/V006 and V003 retain their existing obligations. Historical 0.9–0.12 records below keep their original dates, identities and result scopes.
+
+This repository contains an independently developed core slice and a public knowledge base. Read README, CONTRIBUTING, source-origin.json, and the relevant specifications first. Complete work within the current scope authorized by the user.
+
+- Design the independent core from the specifications. Record sources, versions, and verification separately for research, third-party dependencies, Egret adapters, and independent code.
+- engine depends on runtime/contracts; runtime depends only on contracts; contracts has no package dependencies. Public examples and behavioral tests use built artifacts through the `@egret/engine` entry point. Preserve package exports, strict configuration, and the core boundary that excludes DOM/Node environment globals.
+- Private geometry unit tests may import built `engine/dist/rendering` helpers directly; public behavior tests still use public entries. The rendering composite is DOM-free and references contracts only. Engine's exact external `robust-predicates` 3.0.3 root import is restricted to rendering and is separate from the internal package DAG and project references.
+- Update specifications, source records, and necessary regressions when public behavior changes. State the actual execution environment and unverified items, and retain counterexamples and repair records.
+- Disclose AI participation according to the materials actually used, the generated scope, and author review. Retain only the necessary publishable summaries of private materials; credentials and personal data must not enter the repository.
+- Use fixed tools and the lockfile; disable lifecycle scripts during installation. Explain the reasons and effects of changes to versions, dependencies, licenses, or publication settings separately.
+- Continue using Apache-2.0 for first-party code and documentation. Retain third-party copyright, licenses, NOTICE files, and asset attribution. Do not rewrite historical identity hashes for a public projection.
+- Pushes, releases, deployments, and repository administration require actual user authorization. Local file generation or verification does not establish that remote publication is complete.
+
+The prototype's 44/44 behavioral checks and 11 negative type assertions are a recorded headless baseline. GPU, Native, real hosts, performance, and CI require their own acceptance. The Three execution chain in the knowledge base is third-party research and does not replace verification of the independent core.
+
+## Bilingual and public-content checks before every push
+
+Before every push to GitHub, organize all publishable documentation and knowledge-base content, maintain complete Chinese and English reading versions, and add English comments to critical code. Generate English registry views from the authoritative Chinese records, keeping IDs, statuses, numbers, and sources consistent; retain the original identity of raw evidence, code snapshots, and upstream licenses. After reviewing sources, attribution, publishable content, and translation meaning, run `node tools/prepush.mjs`, which includes bilingual checks and core verification. Machine checks do not replace the author's review of publication authorization and translation meaning.
+
+After cloning locally, run `git config --local core.hooksPath .githooks` to enable the repository's push hook; it runs the same checks. CI and contributors must run this command, and must fix failures rather than bypass the hook. This agreement applies to all subsequent pushes. See the [bilingual policy](knowledge-base/docs/双语文档与推送前检查.en.md).
+
+The bounded 0.12.0 display/frame and separate Canvas implementation passed 97/97 behavior checks and 25 negative type diagnostics; the original 44 remain historical. Rendering changes separately require `node tools/verify-canvas.mjs --playwright <installed-playwright-module> --channel msedge --output <private-output-directory>`; default prepush does not include a real browser.
+
+## Browser gates and publication inventory
+
+`node tools/prepush.mjs` remains mandatory before every push and checks publication structure, core/type/boundaries, headless behavior and KB structure. It does not launch a browser. Rendering changes additionally use `node tools/verify-canvas.mjs --playwright <installed-playwright-module> --channel msedge --output <private-output-directory>` and the separate `node tools/verify-webgpu.mjs --playwright <installed-playwright-module> --channel msedge --output <private-output-directory>` as affected. Use the accepted pinned dependencies; preserve default browser launch with no extra flags. Recorded unchanged-build evidence may be retained with explicit identity comparison.
+
+Discovery and registered inventory paths exclude private execution/dependency/generated trees case-insensitively on Windows. Listings cannot override exclusions. Public AGENTS documents remain valid. Only the exact two sealed Three r186 research build paths/hashes remain exceptions. Structural checks do not create translation meaning or public review approval.

@@ -1,0 +1,442 @@
+{
+  "title": "新 Egret 的 TypeScript 与构建工具链选择",
+  "checked_at_utc": "2026-10-08T09:05:35Z",
+  "checked_date": "2026-10-08",
+  "scope": "仅官方 TypeScript/Microsoft 仓库、博客、文档与一手构建工具文档；未安装工具、未运行项目、未测量 Egret。",
+  "conclusion": "推荐新项目使用稳定 TypeScript 7.0.2 的 CLI/LSP，保留可替换编译器适配层；快速预览使用独立转译/打包路径，完整类型检查并行进行。需要旧 Compiler API 的编辑器插件和分析工具继续由 TypeScript 6 兼容适配器承接。原生重写已正式发布，不能再称主线 tsgo preview。",
+  "status": {
+    "typescript_latest_stable": {
+      "version": "7.0.2",
+      "package": "typescript",
+      "binary": "tsc",
+      "evidence": [
+        "S1",
+        "S2"
+      ],
+      "release_announcement_date": "2026-07-08",
+      "github_imported_release_date": "2026-08-20",
+      "note": "7.0 官方公告发表于 7 月 8 日；GitHub 7.0.2 release 标示 8 月 20 日，并注明原始 tag 发布在 typescript-go；日期不能混为同一事件。"
+    },
+    "compiler": {
+      "implementation": "Go 原生编译器",
+      "production_status": "正式发布",
+      "evidence": [
+        "S3"
+      ]
+    },
+    "old_preview": {
+      "package": "@typescript/native-preview",
+      "historical_binary": "tsgo",
+      "status": "历史 preview 包，不作为新项目主线推荐",
+      "repo_archived_at": "2026-09-01",
+      "current_command_from_7_0_rc": "tsc",
+      "evidence": [
+        "S4",
+        "S5"
+      ],
+      "unknown": "本轮未成功读取 native-preview 当前 npm dist-tag；不宣称包已删除或确切最后版本。"
+    },
+    "compiler_api": {
+      "status": "旧 TypeScript Compiler API 不能视为兼容；7.0.2 已发布 unstable 新接口，但未稳定",
+      "observed_exports": [
+        "typescript/unstable/sync",
+        "typescript/unstable/async",
+        "typescript/unstable/ast"
+      ],
+      "evidence": [
+        "S2",
+        "S6"
+      ],
+      "caveat": "7.0 发布公告中“无 API”描述属于发布时点；当前包实际暴露 unstable 路径，因此应表述为“无稳定的旧 API 兼容接口”。"
+    },
+    "typescript_7_1": {
+      "status": "未核实正式稳定发布；当前 latest 仍为 7.0.2",
+      "planned_beta_date": "2026-10-06",
+      "planned_stable_date": "2026-11-24",
+      "evidence": [
+        "S1",
+        "S2",
+        "S6"
+      ],
+      "caveat": "计划表不等于实际发布。本轮 beta/next 包读取失败，不能断言 beta 已发或未发；稳定 API 也不能因计划日期而视为已交付。"
+    },
+    "typescript_6": {
+      "latest_6_x_release_observed": "6.0.3",
+      "purpose": "依赖旧 Compiler API 的兼容工具或迁移回退",
+      "evidence": [
+        "S1",
+        "S3"
+      ],
+      "note": "@typescript/typescript6 兼容包由官方公布；本轮未成功读取其当前 latest，因此不提供未经核实的包补丁锁定命令。"
+    },
+    "vite": {
+      "stable_major_verified": "8",
+      "release_date": "2026-03-12",
+      "transform": "Oxc",
+      "bundle": "Rolldown",
+      "evidence": [
+        "S7",
+        "S8"
+      ],
+      "note": "未核实 Vite 最新补丁；不可把当前 Vite 8 描述成旧 esbuild + Rollup 双构建器架构。"
+    }
+  },
+  "stage_separation": [
+    {
+      "stage": "transpile",
+      "meaning": "去除 TS 类型、转换语言语法为 JS；可按文件进行",
+      "candidate": "Vite 8 / Oxc，或独立 esbuild 适配器",
+      "evidence": [
+        "S8",
+        "S9"
+      ]
+    },
+    {
+      "stage": "bundle",
+      "meaning": "模块解析、依赖图、tree-shaking、分包、压缩、资源输出",
+      "candidate": "Web 首选评估 Vite 8 / Rolldown；小游戏发布经平台适配器输出",
+      "evidence": [
+        "S7"
+      ],
+      "status": "工程建议，不是已验证 Egret 支持"
+    },
+    {
+      "stage": "typecheck",
+      "meaning": "项目范围静态类型与引用一致性检查",
+      "candidate": "TypeScript 7.0.2 tsc，独立后台/CI",
+      "evidence": [
+        "S3",
+        "S8"
+      ]
+    },
+    {
+      "stage": "incremental/watch",
+      "meaning": "监听修改，复用依赖与缓存，只处理受影响项目",
+      "candidate": "长期进程、项目引用、独立缓存；避免每次改动重启全工程",
+      "evidence": [
+        "S10",
+        "S11"
+      ],
+      "status": "工程建议"
+    },
+    {
+      "stage": "editor language service",
+      "meaning": "补全、诊断、跳转、重命名；与构建 CLI 属于不同验收项",
+      "candidate": "TypeScript 7 LSP；需旧插件的模块走兼容适配器",
+      "evidence": [
+        "S3",
+        "S6"
+      ]
+    },
+    {
+      "stage": "native build",
+      "meaning": "目标平台宿主、原生 SDK、链接、签名与包体生成",
+      "candidate": "继续由 iOS/Android/其他原生工具链负责",
+      "status": "边界解释；TS 原生编译器不等于把游戏 TS 变为原生机器码。具体宿主仍未知。"
+    }
+  ],
+  "vendor_performance_only": {
+    "source": "S3",
+    "measurement_owner": "TypeScript 团队",
+    "measurement_type": "官方给出的公开代码库构建对比，非独立测试，非 Egret 项目",
+    "examples": [
+      {
+        "codebase": "vscode",
+        "ts6_seconds": 125.7,
+        "ts7_seconds": 10.6,
+        "speedup": 11.9
+      },
+      {
+        "codebase": "sentry",
+        "ts6_seconds": 139.8,
+        "ts7_seconds": 15.7,
+        "speedup": 8.9
+      }
+    ],
+    "general_claim": "官方称完整构建通常约 8–12 倍提速。",
+    "cannot_infer": [
+      "Egret 复杂工程一定少于 30 秒",
+      "整个发布流程都快 10 倍",
+      "小游戏/原生游戏运行帧率提升",
+      "任意电脑或 CI 都有同样结果"
+    ],
+    "illustrative_math": "若旧 180 秒中 TS 占 120 秒，其他步骤占 60 秒，即使 TS 快 10 倍，总耗时仍是 12+60=72 秒。此为假设示例，不是 Egret 测量。"
+  },
+  "recommendations": [
+    {
+      "id": "R1",
+      "recommendation": "新引擎公共 API 保持 TypeScript；采用显式类型、ES Modules 和受支持的 TS6/7 语义子集；当前执行器固定 7.0.2，并显式配置 strict、types、rootDir、moduleResolution 和各目标环境。",
+      "rationale": "保持 API 对 AI 和人类开发者可预测；不将语言语义与特定二进制或 unstable AST 绑死。",
+      "status": "建议"
+    },
+    {
+      "id": "R2",
+      "recommendation": "Web 预览首先评估 Vite 8 / Oxc / Rolldown；转译和运行尽快完成，后台单独执行类型检查。小游戏/原生平台通过导出适配器处理，预览与发布共享资产/模块规则。",
+      "rationale": "减少 AI 生成或改代码之后等待完整检查的时间；导出仍须通过完整验证。",
+      "evidence": [
+        "S7",
+        "S8"
+      ],
+      "status": "建议，未实测"
+    },
+    {
+      "id": "R3",
+      "recommendation": "把 TypeScript 7 的采用当作已发布产品的兼容性试验，而非等待 tsgo preview；保留稳定编译器接口，能切回 TS6 兼容执行器；旧 Compiler API 工具隔离在 TS6 工具进程中，不进入游戏包；暂不以 unstable/sync 或 unstable/async 为不可替换的引擎基础。",
+      "evidence": [
+        "S2",
+        "S6"
+      ],
+      "status": "建议"
+    },
+    {
+      "id": "R4",
+      "recommendation": "按 engine/runtime、editor、game、platform adapters 划分项目引用；游戏编辑优先消费已构建引擎包和 .d.ts；watch 长驻，缓存按工具版本、目标平台与配置隔离。",
+      "evidence": [
+        "S10",
+        "S11"
+      ],
+      "status": "建议"
+    },
+    {
+      "id": "R5",
+      "recommendation": "先用代表性大小工程建立 cold preview、warm edit-to-frame、diagnostics、production bundle、native package 五组测量；建议将复杂工程 cold preview p95 <30s 作为候选目标，warm 反馈另设更短目标，不能把厂商数字当验收结果。",
+      "status": "建议目标，未测量"
+    },
+    {
+      "id": "R6",
+      "recommendation": "发布前要求完整类型检查、API 声明验证和目标运行测试；预览错误应回到原 TS/生成输入的精确位置，便于 AI 修复闭环。",
+      "evidence": [
+        "S12"
+      ],
+      "status": "建议"
+    }
+  ],
+  "compatibility_risks": [
+    {
+      "risk": "旧工程配置",
+      "detail": "TS7 对 TS6 已弃用构造报错，包括 ES5 target、AMD/UMD/System、旧 node/classic moduleResolution、baseUrl；新项目不要直接继承老 Egret 构建配置。",
+      "evidence": [
+        "S3",
+        "S13"
+      ]
+    },
+    {
+      "risk": "decorators",
+      "detail": "legacy 和标准 decorators 语义不同；标准方案与 emitDecoratorMetadata 不兼容。esbuild 不支持 emitDecoratorMetadata；Vite8/Oxc 仅部分支持，类型推断不了时可能回退 Object。",
+      "evidence": [
+        "S9",
+        "S14",
+        "S15"
+      ]
+    },
+    {
+      "risk": "namespaces / const enum / type imports",
+      "detail": "按文件转译与全项目编译语义有差异。启用 isolatedModules、显式 import type；Oxc 的 namespace 支持不完整，公共 API 优先 ESM 与普通可序列化结构。",
+      "evidence": [
+        "S8",
+        "S9",
+        "S15"
+      ]
+    },
+    {
+      "risk": "plugin / compiler API",
+      "detail": "旧 tsserver 插件或使用 Compiler API 的代码生成、文档、lint 工具不能按 tsc 可用推断兼容；7.1 API 计划仍不代表稳定交付。",
+      "evidence": [
+        "S2",
+        "S6"
+      ]
+    },
+    {
+      "risk": "source maps",
+      "detail": "存在多层转换、生成脚本、原生桥接时，需要验证断点、异常栈和错误位置映射；能生成 map 不等于全链映射正确。",
+      "evidence": [
+        "S12"
+      ],
+      "status": "工程推断及验证建议"
+    },
+    {
+      "risk": "hot reload",
+      "detail": "模块更新不会自动迁移游戏场景或对象状态；需要 Egret 自己定义 accept/dispose/invalidate 边界、清理事件/定时器和资源，不能保持时重启场景。",
+      "evidence": [
+        "S16"
+      ],
+      "status": "由 HMR API 边界推导的工程要求"
+    },
+    {
+      "risk": "generated .d.ts / cache determinism",
+      "detail": "SDK 发布需比较声明输出、下游消费与缓存复用；官方仓库存在相关回归报告，报告不能当作所有项目都会出现的证明。",
+      "evidence": [
+        "S17"
+      ],
+      "status": "具体风险线索，不是 Egret 已发生问题"
+    }
+  ],
+  "unknowns": [
+    "旧 Egret 的 <30s 数字未获得原始项目、硬件、缓存状态和步骤定义，本轮不能独立确认。",
+    "新引擎复杂工程规模、典型 AI 代码量、资产导入成本、shader/纹理预处理、目标设备与原生宿主尚未知。",
+    "没有运行任何编译或包体测试；没有确认 TS7、Vite8 或 esbuild 对全部目标小游戏 SDK 和原生平台的实际兼容。",
+    "未验证最新 Vite 补丁、TypeScript 7.1 beta 实际发布日期、native-preview dist-tag 与 @typescript/typescript6 当前包 latest。",
+    "发现 GitHub v7.0.2 标签下根 package.json 显示旧 JS 工具链及 version 6.0.0，与已发布 npm 7.0.2 包不同。以发布包确认版本/导出，不用该根源码文件证明包内容；原因未核实。",
+    "具体 editor LSP 支持应按所选编辑器/插件当前版本验收；未因 7 月公告的将来计划假定所有编辑器已默认内置。"
+  ],
+  "sources": [
+    {
+      "id": "S1",
+      "url": "https://github.com/microsoft/TypeScript/releases",
+      "publisher": "Microsoft TypeScript",
+      "authority": "官方发布列表",
+      "checked": "2026-10-08",
+      "quote": "TypeScript 7.0.2",
+      "supports": "最新 stable 标记；TS6.0.3；release 时间"
+    },
+    {
+      "id": "S2",
+      "url": "https://registry.npmjs.org/typescript/latest",
+      "publisher": "Microsoft 发布的 typescript 包",
+      "authority": "包注册表一手发布元数据",
+      "checked": "2026-10-08",
+      "quote": "\"version\":\"7.0.2\"",
+      "supports": "latest 7.0.2、tsc、平台包和 unstable 导出"
+    },
+    {
+      "id": "S3",
+      "url": "https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/",
+      "publisher": "TypeScript team / Daniel Rosenwasser",
+      "authority": "官方发布公告",
+      "published": "2026-07-08",
+      "checked": "2026-10-08",
+      "quote": "TypeScript 7, a 10x faster native port of TypeScript!",
+      "supports": "Go 原生版正式发布；厂商性能数据；TS6 并行兼容；LSP；TS7 迁移"
+    },
+    {
+      "id": "S4",
+      "url": "https://github.com/microsoft/typescript-go/blob/main/README.md",
+      "publisher": "Microsoft TypeScript",
+      "authority": "历史 staging 仓库状态",
+      "checked": "2026-10-08",
+      "quote": "This Repo Is Closed",
+      "supports": "repo 已于 2026-09-01 archived；7.0 RC 起命令 tsc；其下 parity 表应作为旧 preview 说明"
+    },
+    {
+      "id": "S5",
+      "url": "https://github.com/microsoft/typescript-go/discussions/4576",
+      "publisher": "Ryan Cavanaugh / TypeScript maintainer",
+      "authority": "维护者直接答复",
+      "published": "2026-07-09",
+      "checked": "2026-10-08",
+      "quote": "tsgo as a name is effectively gone.",
+      "supports": "名称 tsgo 退出主线与仓库迁回"
+    },
+    {
+      "id": "S6",
+      "url": "https://github.com/microsoft/TypeScript/issues/63703",
+      "publisher": "Daniel Rosenwasser / TypeScript",
+      "authority": "官方迭代计划，非发布凭证",
+      "published": "2026-07-31",
+      "checked": "2026-10-08",
+      "quote": "Stabilize API",
+      "supports": "7.1 API 稳定计划；Beta/RC/stable 计划日期"
+    },
+    {
+      "id": "S7",
+      "url": "https://vite.dev/blog/announcing-vite8",
+      "publisher": "Vite",
+      "authority": "官方发布公告",
+      "published": "2026-03-12",
+      "checked": "2026-10-08",
+      "quote": "stable release of Vite 8",
+      "supports": "Vite8 已 stable；Rolldown/Oxc 当前架构"
+    },
+    {
+      "id": "S8",
+      "url": "https://vite.dev/guide/features#typescript",
+      "publisher": "Vite",
+      "authority": "官方功能文档",
+      "checked": "2026-10-08",
+      "quote": "does NOT perform type checking",
+      "supports": "转译/检查分离；Oxc；isolatedModules；target 和 metadata 注意事项"
+    },
+    {
+      "id": "S9",
+      "url": "https://esbuild.github.io/content-types/#typescript",
+      "publisher": "esbuild",
+      "authority": "官方文档",
+      "checked": "2026-10-08",
+      "quote": "Files are compiled independently",
+      "supports": "独立转译限制；装饰器 metadata 不支持；type-only imports"
+    },
+    {
+      "id": "S10",
+      "url": "https://www.typescriptlang.org/tsconfig/#incremental",
+      "publisher": "TypeScript",
+      "authority": "官方配置文档",
+      "checked": "2026-10-08",
+      "quote": "Incremental",
+      "supports": ".tsbuildinfo、缓存、skipLibCheck 精度代价"
+    },
+    {
+      "id": "S11",
+      "url": "https://www.typescriptlang.org/docs/handbook/project-references.html",
+      "publisher": "TypeScript",
+      "authority": "官方文档",
+      "checked": "2026-10-08",
+      "quote": "Build out-of-date projects in the correct order",
+      "supports": "项目拆分、.d.ts 边界、tsc -b"
+    },
+    {
+      "id": "S12",
+      "url": "https://esbuild.github.io/api/#sourcemap",
+      "publisher": "esbuild",
+      "authority": "官方文档",
+      "checked": "2026-10-08",
+      "quote": "Source maps",
+      "supports": "源码/产物位置映射；sourcefile"
+    },
+    {
+      "id": "S13",
+      "url": "https://www.typescriptlang.org/docs/handbook/release-notes/typescript-6-0.html",
+      "publisher": "TypeScript",
+      "authority": "官方 TS6 变更文档",
+      "checked": "2026-10-08",
+      "quote": "TypeScript 6.0",
+      "supports": "迁移中间基线、配置默认与弃用"
+    },
+    {
+      "id": "S14",
+      "url": "https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-0.html",
+      "publisher": "TypeScript",
+      "authority": "官方语义文档",
+      "checked": "2026-10-08",
+      "quote": "Differences with Experimental Legacy Decorators",
+      "supports": "legacy/标准 decorators 不同语义；标准方案无 parameter decorators / metadata"
+    },
+    {
+      "id": "S15",
+      "url": "https://oxc.rs/docs/guide/usage/transformer/typescript",
+      "publisher": "Oxc",
+      "authority": "官方转译器文档",
+      "checked": "2026-10-08",
+      "quote": "Partial Namespace Support",
+      "supports": "decorator metadata Object 回退；isolatedModules；namespace 差异"
+    },
+    {
+      "id": "S16",
+      "url": "https://vite.dev/guide/api-hmr",
+      "publisher": "Vite",
+      "authority": "官方 HMR 文档",
+      "checked": "2026-10-08",
+      "quote": "hot.dispose",
+      "supports": "HMR 边界、持久副作用清理、invalidate"
+    },
+    {
+      "id": "S17",
+      "url": "https://github.com/microsoft/TypeScript/issues/64589",
+      "publisher": "Microsoft TypeScript repository",
+      "authority": "用户回归报告/维护团队跟进，不能当所有项目的结论",
+      "published": "2026-10-02",
+      "checked": "2026-10-08",
+      "quote": "declaration emit prints union members in a different order",
+      "supports": "7.0.2 声明输出和缓存稳定性具体测试线索；issue Closed，未核实 stable patch 是否包含修复"
+    }
+  ]
+}

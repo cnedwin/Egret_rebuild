@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "reviewId": "core-framework-document-review-final",
+  "reviewedAt": "2026-10-08T11:47:52.6832070Z",
+  "knowledgeBaseVersion": "0.8.0",
+  "verdict": "passed_with_stated_scope",
+  "necessaryCorrections": [],
+  "reviewedFileHashes": [
+    {
+      "path": "docs/技术白皮书.md",
+      "sha256": "8be3bfc71bd2b1f661352099a07f9c5d5eb3cb6af468dc711bf3226e9bc90e02"
+    },
+    {
+      "path": "docs/工程规划.md",
+      "sha256": "f38a38e4adff6f8ee11d224ddb1363aa752145b3cc04f27b86d8af784fc4804b"
+    },
+    {
+      "path": "docs/产品需求说明书.md",
+      "sha256": "40b6c46615bbb586bd3a4c52fc3a9999c07903a6c301a69f5c0eac5a26301a90"
+    },
+    {
+      "path": "README.md",
+      "sha256": "0b4f4e72f4b8a5170c0fd7a40dd151c79bea39a604133e0ddf7ccdb62b6cc419"
+    },
+    {
+      "path": "docs/交付计划.md",
+      "sha256": "d84b4cb7c9eda554d940713c559acee612583a46d69779c63ef554a9a8029b0e"
+    },
+    {
+      "path": "当前版本.json",
+      "sha256": "fa14b82a7466cb1094dffce0cd504291eaf4d4e50aac495d7914f654c0096822"
+    },
+    {
+      "path": "docs/核心框架实现记录.md",
+      "sha256": "2934e80fa9c654a1d658e9aa13681384fa161d5734eecf1175eaa17e601c590c"
+    },
+    {
+      "path": "registry/交付.json",
+      "sha256": "d2a82aa6e04af3d59b0e512460526186e5a614bf05d04423f4fcab01b27e6573"
+    },
+    {
+      "path": "evidence/core-framework-verification.json",
+      "sha256": "015935b51ccdad426a3508798af6315d98b64f2b7453736d32aa7cc0acd3fa2c"
+    },
+    {
+      "path": "evidence/core-framework-code-review-final.json",
+      "sha256": "04d78ba574b8bf5a4c34e5ef8bf20caa0e438efb1356aca85416d6a64e7d7182"
+    }
+  ],
+  "inputHashes": [
+    {
+      "path": "work/core-framework/integrate-kb.mjs",
+      "sha256": "5eef728e92afe08a7d2c279d11ac01a9aac954820e2fa929122e1633a3eb554a"
+    },
+    {
+      "path": "work/core-framework/integration-preflight.json",
+      "sha256": "fd1e41db1f1ca54ddf0317b53c2067587e7ad46dc239c836e8108607d2294637"
+    }
+  ],
+  "previousReview": "evidence/core-framework-document-review-initial.json",
+  "resolvedInitialFindings": [
+    {
+      "id": "IP001",
+      "status": "resolved_in_generated_documents",
+      "evidence": "白皮书3/11明确0.7.0未执行与0.8.0新增headless，V002局部实现/正式未验收、V003–V006未开始；工程规划3/62明确三个真实职责包；PRD3/11确认R017只启动局部核心，范围不升级。README与交付计划同步V002状态及完整迁移义务。",
+      "remainingBoundary": "完整renderer、AI创作、生产宿主、迁移及优势假设没有接受。"
+    },
+    {
+      "id": "IP002",
+      "status": "resolved_by_pre_write_hash_gate_and_bound_reports",
+      "evidence": "整合脚本14–22行在首个copy/write之前，对143个最终run文件摘要与交付目录字节逐一匹配，并将55个终审输入摘要与run对应记录匹配；guard失败即抛错。实际已生成0.8.0。此次仅重比对已保存JSON：55项review/run全部匹配，work与KB的运行/终审报告副本hash相同。",
+      "recordedRootRun": {
+        "checkedAt": "2026-10-08T11:38:42.319Z",
+        "tests": 44,
+        "passes": 44,
+        "failures": 0,
+        "recordedFileHashes": 143,
+        "reviewedSourceHashes": 55,
+        "reviewToRunHashMismatches": 0
+      },
+      "gateExecutionAuthority": "根报告该修订脚本已经执行；本复审核对脚本顺序及生成证据，未重新执行script或重哈希产品目录。",
+      "remainingBoundary": "终审仍为55个受审hash的限定代码复审，不变成全引擎/平台/产品验收；作者初始阶段证据保持原样。"
+    },
+    {
+      "id": "IP003",
+      "status": "resolved_in_current_metadata",
+      "evidence": "当前版本newExperimentsRunThisRevision=true；newExperimentScopeThisRevision仅独立headless CPU/type/package验证，明示no GPU/native/browser/performance/migration。existingResearchExperimentsRerunThisRevision=false；coreFrameworkImplementation.headlessTestsRun/strictBuildRun=true。",
+      "remainingBoundary": "engineBenchmarksRun、creatorTaskTestsRun、migrationAcceptanceRun、productionHostAcceptanceRun保持false。"
+    }
+  ],
+  "boundedChecks": [
+    {
+      "id": "state_and_scope",
+      "result": "passed",
+      "evidence": "V002=in_progress/partial_independent_headless_core/acceptance not_run；V003–V006=planned/not_started/not_run；V009=implemented，acceptance明确headless_subset_verified_not_full_product。生成主文档仍标D001–D016 proposed、H001–H008 untested。"
+    },
+    {
+      "id": "headless_not_gpu",
+      "result": "passed",
+      "evidence": "核心实现记录44/44对应CPU/模拟host；明确host.close不是GPU完成栅栏，无GPU/browser/native/CI/benchmark或迁移执行。"
+    },
+    {
+      "id": "reference_targets_in_core_record",
+      "result": "passed_with_intentional_pre_registration",
+      "checkedLocalTargetCount": 9,
+      "existingTargets": 8,
+      "unexpectedMissingTargets": [],
+      "intentionalMissingTarget": "evidence/core-framework-document-review-final.json",
+      "explanation": "这是本复审报告随后由集成流程保存的预登记目标，未将其暂不存在当作代码/文档缺陷；其余本次核心记录中的本地目标存在。"
+    }
+  ],
+  "scope": {
+    "kind": "bounded_generated_document_rereview",
+    "limit": "仅复核IP001–IP003和直接相关生成状态/报告范围；不扩展为全量文档、代码或来源审计。",
+    "reviewedParts": [
+      "docs/技术白皮书.md:3,11",
+      "docs/工程规划.md:3,62",
+      "docs/产品需求说明书.md:3,11",
+      "README.md及docs/交付计划.md中的当前状态与迁移义务段落",
+      "当前版本.json本轮执行标记/范围",
+      "docs/核心框架实现记录.md中的范围、44/44、绑定、关闭/来源边界与报告链接",
+      "registry/交付.json中V002–V006与V009状态",
+      "evidence/core-framework-verification.json状态/范围及143摘要列表",
+      "evidence/core-framework-code-review-final.json结论/范围及55摘要列表",
+      "work/core-framework/integrate-kb.mjs:10–32前置门禁"
+    ],
+    "reviewedFileHashMeaning": "全文件hash绑定上述限定阅读时的当前字节；不表示全文重新语义审阅。",
+    "operations": [
+      "read generated target paragraphs and narrow metadata/evidence",
+      "compare 55 review/run hash entries and copied report bytes",
+      "inspect gate order before first mutation",
+      "check nine local targets in core record only",
+      "hash the ten reviewed KB files and two work inputs",
+      "write final reports in work only"
+    ],
+    "knowledgeBaseModified": false,
+    "productCodeReadOrReviewed": false,
+    "productCodeRehashed": false,
+    "productExecuted": false,
+    "integrationScriptExecutedByThisReviewer": false,
+    "publicBrowsing": false,
+    "subagentsSpawned": false,
+    "allHistoricalHashesChecked": false,
+    "fullStructureValidationRun": false,
+    "productAcceptance": false,
+    "performanceConclusion": false,
+    "codeReviewAcceptanceByThisReviewer": false,
+    "sourceOriginAcceptance": false,
+    "approvalAuthority": "none; generated-document consistency only",
+    "nextVerificationOwner": "集成流程保存本报告后执行原结构验证与全历史hash检查；不计入本次passed范围。"
+  },
+  "publicEditorialProjection": {
+    "originalKnowledgeBaseVersion": "0.8.0",
+    "originalReportSha256": "df255000a3501432c7153d67b086c3434df923c6564d2added338f5b55c1b3ac",
+    "changedStringFields": [
+      "boundedChecks[2].explanation",
+      "scope.nextVerificationOwner"
+    ],
+    "scope": "Professional wording and publication context only; findings, outcomes, counters, source identities and technical conclusions retained. Restricted original execution materials are not part of the public source distribution."
+  }
+}

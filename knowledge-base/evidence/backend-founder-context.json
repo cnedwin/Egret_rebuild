@@ -1,0 +1,21 @@
+{
+  "checkedAt": "2026-10-08",
+  "type": "direct_user_statement",
+  "facts": [
+    {
+      "subject": "historical_renderer",
+      "statement": "Initially Canvas, then WebGL when device reach warranted; explored WASM hybrid.",
+      "evidence": "Founder account; historical mechanisms and performance not independently rerun."
+    },
+    {
+      "subject": "historical_iteration",
+      "statement": "Complex project compilation reduced from minutes to under 30 seconds through repeated compiler work.",
+      "evidence": "Founder account; hardware, cache and timed stages unspecified. Not a new product threshold."
+    },
+    {
+      "subject": "native_direction",
+      "statement": "Native App and embedded SDK Runtime remain relevant; investigate Rust, VM/library updates, future Steam/PC and D3D11/D3D12/Vulkan/Metal and GPU AI.",
+      "evidence": "Research and extension intent; not approval of a language/library, first-release desktop scope or performance claim."
+    }
+  ]
+}

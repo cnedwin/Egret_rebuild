@@ -1,0 +1,227 @@
+{
+  "schemaVersion": 1,
+  "revision": "0.10.0",
+  "status": "passed",
+  "checkedAtUtc": "2026-10-08T13:37:33.769Z",
+  "environment": {
+    "node": "v24.19.0",
+    "typescript": "7.0.2",
+    "packageManager": "11.25.0",
+    "system": "Windows; current local environment only",
+    "dependencies": "Existing frozen-lockfile dependency installation; no new install performed this revision"
+  },
+  "documentPairs": 84,
+  "registryReadOnlyViews": 6,
+  "criticalCommentFiles": 19,
+  "checks": {
+    "publicationRegressions": {
+      "executed": 11,
+      "passed": 11,
+      "failed": 0
+    },
+    "coreBehavior": {
+      "executed": 44,
+      "passed": 44,
+      "failed": 0
+    },
+    "negativeTypeAssertions": 11,
+    "positiveTypeFixture": true,
+    "boundaryFiles": 66,
+    "headlessExample": true,
+    "knowledgeBaseStructure": "passed",
+    "prepushDoesNotRewriteEvidence": true,
+    "independentReviewHashes": "matched"
+  },
+  "commands": [
+    "node tools/prepush.mjs",
+    "pwsh -NoProfile -File knowledge-base/tools/Validate-KnowledgeBase.ps1"
+  ],
+  "exitCodes": [
+    0,
+    0
+  ],
+  "sourceInventory": [
+    {
+      "path": "packages/contracts/src/CancellationSignal.ts",
+      "sha256": "6a9e5f07b549ec50c2a5c50915309e8de6fba2d943f59a0d7b54b079e14584b3",
+      "bytes": 507,
+      "originalSha256": "a4e778a2bee503ec70249f861f60dc46718dc64e182448d9d5a3b43a10f1f34e",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "a4e778a2bee503ec70249f861f60dc46718dc64e182448d9d5a3b43a10f1f34e"
+    },
+    {
+      "path": "packages/contracts/src/Diagnostic.ts",
+      "sha256": "bb788eed680e77497845d9ca95621683c616c773c13a61b42bcabad608c10461",
+      "bytes": 459,
+      "originalSha256": "93aeef7a51e372dc1418bd382d3371ec91044a1bc48de0b308cc6d5007db89a3",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "93aeef7a51e372dc1418bd382d3371ec91044a1bc48de0b308cc6d5007db89a3"
+    },
+    {
+      "path": "packages/contracts/src/Disposable.ts",
+      "sha256": "76d74cd41b6e136ea840c7d8d05273520ce7d41031a7820dd4ddabc73be947db",
+      "bytes": 399,
+      "originalSha256": "75cc8c7125bc0a7d1641c32825e884311da13dba48fa4822a53465e67129504c",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "75cc8c7125bc0a7d1641c32825e884311da13dba48fa4822a53465e67129504c"
+    },
+    {
+      "path": "packages/contracts/src/HostAdapter.ts",
+      "sha256": "3c8289a85e04e34be3782156244cc253792eff1b41629758d54cd1692c64c2ae",
+      "bytes": 840,
+      "originalSha256": "dd095653a2ee93e20a44e0ab504ef7edf991bde982e2bb924d2fb21fe072da79",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "dd095653a2ee93e20a44e0ab504ef7edf991bde982e2bb924d2fb21fe072da79"
+    },
+    {
+      "path": "packages/contracts/src/index.ts",
+      "sha256": "85f4a29e7e04334ab941dfe7a848edacc3a597dc5621820366c7cadd257eda13",
+      "bytes": 287,
+      "originalSha256": "85f4a29e7e04334ab941dfe7a848edacc3a597dc5621820366c7cadd257eda13",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/engine/src/Engine.ts",
+      "sha256": "471f78e5f01bfdbb0492d6be3f1f3c5ed9daa7cc8e20068c47fef49e21acac56",
+      "bytes": 4019,
+      "originalSha256": "d5b4fcfc5bcf921d6b75aa4a33d7e71412595e8e377e5ff9b186b19ec6868f58",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "d5b4fcfc5bcf921d6b75aa4a33d7e71412595e8e377e5ff9b186b19ec6868f58"
+    },
+    {
+      "path": "packages/engine/src/closeHost.ts",
+      "sha256": "9fac806cc0d19265ec6956cc19305a9ff2ae03ff0e49700d64c39be88ba3244f",
+      "bytes": 2307,
+      "originalSha256": "3b392c336949001716d7da445d80c4ac0625b45582dbdaec2af9c20f46d5f333",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "3b392c336949001716d7da445d80c4ac0625b45582dbdaec2af9c20f46d5f333"
+    },
+    {
+      "path": "packages/engine/src/createEngine.ts",
+      "sha256": "f0ae30646b03bdd9539e54223a98519e8afed8bee696dc378586c8128924e9d1",
+      "bytes": 1178,
+      "originalSha256": "6298922aa970b883fd5f84a098a44d5d4654736446709856381416f182e0aaf3",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "6298922aa970b883fd5f84a098a44d5d4654736446709856381416f182e0aaf3"
+    },
+    {
+      "path": "packages/engine/src/index.ts",
+      "sha256": "45f2377ffe6e180815d68b8b2dcbddaca8eaa167c142a356d130da8ce008e2f0",
+      "bytes": 595,
+      "originalSha256": "45f2377ffe6e180815d68b8b2dcbddaca8eaa167c142a356d130da8ce008e2f0",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/engine/src/surfaceOwnership.ts",
+      "sha256": "604df51eb03f8dbb7965100e06667c09bb311f0e26e0ee752b2404c899e5a320",
+      "bytes": 579,
+      "originalSha256": "6b12fb7fe691212777ffcc031ef2f534b1c665d1f9df7617f0dac2574331acac",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "6b12fb7fe691212777ffcc031ef2f534b1c665d1f9df7617f0dac2574331acac"
+    },
+    {
+      "path": "packages/runtime/src/CancellationController.ts",
+      "sha256": "3cfdb217804b282c4a422420ce5efa63ced25a6bb215bff254e7f947c4942e28",
+      "bytes": 2414,
+      "originalSha256": "d2bbfd7d23269df59651d628e8f4c448be120fb46e1e5307d718aec43c8c7515",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "d2bbfd7d23269df59651d628e8f4c448be120fb46e1e5307d718aec43c8c7515"
+    },
+    {
+      "path": "packages/runtime/src/DisplayObject.ts",
+      "sha256": "d64dde4b35ca2cf929ae14a2f99b59f7e0efbb02cb5a363ff0ff6975b5aadebd",
+      "bytes": 1224,
+      "originalSha256": "a5744fe971a6490e54eda1b6cd7aa2ff18f8dd8e172eca83e458b89a42febe39",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "a5744fe971a6490e54eda1b6cd7aa2ff18f8dd8e172eca83e458b89a42febe39"
+    },
+    {
+      "path": "packages/runtime/src/DisplayObjectContainer.ts",
+      "sha256": "f0cdb820b26b06d304fd925e81367776a8f2c4824670be44da47d97953aa173e",
+      "bytes": 4629,
+      "originalSha256": "14ad9af6c95917b94641fba630adc26b707aa2fedc17707627a87b55dd1e6682",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "14ad9af6c95917b94641fba630adc26b707aa2fedc17707627a87b55dd1e6682"
+    },
+    {
+      "path": "packages/runtime/src/EgretError.ts",
+      "sha256": "f647ab0f675a5e0d460f1e7b04bce603d06998096f460371035f23826eed7f08",
+      "bytes": 652,
+      "originalSha256": "9a4ef5c97c118c3ddc91f895741cfa259cbb3906d5943f733ee5e07f2ed8a8dc",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "9a4ef5c97c118c3ddc91f895741cfa259cbb3906d5943f733ee5e07f2ed8a8dc"
+    },
+    {
+      "path": "packages/runtime/src/Event.ts",
+      "sha256": "de5671dcddbde4637c22b5ea2bff9ebb520c7aed503608e670d0efc08cf9539c",
+      "bytes": 3379,
+      "originalSha256": "066015292830169f2ff718f6617ba55392f3666289922a0098eabb8210b493b5",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "066015292830169f2ff718f6617ba55392f3666289922a0098eabb8210b493b5"
+    },
+    {
+      "path": "packages/runtime/src/EventDispatcher.ts",
+      "sha256": "141051a7aede922c0d8d73aa2b509c75cbe209118ba0bb48b3869765b9c5a82d",
+      "bytes": 6498,
+      "originalSha256": "2d1d6613d83ea9e904c1e4074db7b466911f3689e8c81e60d63d96481c0e6008",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "2d1d6613d83ea9e904c1e4074db7b466911f3689e8c81e60d63d96481c0e6008"
+    },
+    {
+      "path": "packages/runtime/src/Scope.ts",
+      "sha256": "29e9d5da9232ed8347b2a829e069d33daabb1bad296798492a45c7950f43e8ea",
+      "bytes": 4700,
+      "originalSha256": "840ef7f714e80f2eccca974dfca972dc2e94ecbe74da688f7ebe4c3d9b7ceebd",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "840ef7f714e80f2eccca974dfca972dc2e94ecbe74da688f7ebe4c3d9b7ceebd"
+    },
+    {
+      "path": "packages/runtime/src/Stage.ts",
+      "sha256": "08eb1599d9c75c70add22558f28e214ec31fe4305ccdf2638a8f7d35ec61bb0f",
+      "bytes": 1019,
+      "originalSha256": "35ee9c782ba437e9dcd96c29891415f13151fa2e995ac0d40274813abb92f280",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "35ee9c782ba437e9dcd96c29891415f13151fa2e995ac0d40274813abb92f280"
+    },
+    {
+      "path": "packages/runtime/src/diagnostics.ts",
+      "sha256": "c330f5d9083d84ee5b23b947d0d8534e7050a92f8b76a7e5259a1bad92395294",
+      "bytes": 601,
+      "originalSha256": "bb8668e84ec9703f9f9b0380efa37c93f876b38c8ffb2ed2aa716f3efc32346d",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "bb8668e84ec9703f9f9b0380efa37c93f876b38c8ffb2ed2aa716f3efc32346d"
+    },
+    {
+      "path": "packages/runtime/src/displayTreeState.ts",
+      "sha256": "8aaf5f5dfc8d62f3b1bc4effe819e7718e3ed72fcf0a8fc25e3b08410f980e50",
+      "bytes": 3363,
+      "originalSha256": "e6606b65ba3cdd5b18691121bdb028186eda6c4f2d8fe836bec3f8a1a9a61ff9",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "e6606b65ba3cdd5b18691121bdb028186eda6c4f2d8fe836bec3f8a1a9a61ff9"
+    },
+    {
+      "path": "packages/runtime/src/index.ts",
+      "sha256": "3af52ebe93ac933d989ceb0f5abadd31e72f9436fda1d2206b3e71d7f1216310",
+      "bytes": 796,
+      "originalSha256": "3af52ebe93ac933d989ceb0f5abadd31e72f9436fda1d2206b3e71d7f1216310",
+      "originRole": "byte-identical prototype whitelist export"
+    },
+    {
+      "path": "packages/runtime/src/ownership.ts",
+      "sha256": "8c8c40e465002882dac1bf054fa49248c99df62da337cf75f50168f0a6748c62",
+      "bytes": 3239,
+      "originalSha256": "0fbd5497c87995998c3d080d4909b3caa9738ec8ee5743120c86e9cdcceeaeab",
+      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "previousPublicSha256": "0fbd5497c87995998c3d080d4909b3caa9738ec8ee5743120c86e9cdcceeaeab"
+    }
+  ],
+  "verificationOutputSha256": "a3b780759504cf27c3b6d59ede0d08930674dbf5a88b79d1d5f17d9b9d62f469",
+  "scope": "Complete bilingual structural/parity/link/opaque-identifier checks, publication regressions and unchanged headless behavior after English-only comments; current hash bindings checked",
+  "notRun": [
+    "GPU/browser/minigame/native production hosts",
+    "Phone/font/power/thermal/performance acceptance",
+    "Creator and full migration acceptance",
+    "CI and other operating systems",
+    "Remote commit or pull request acceptance"
+  ]
+}

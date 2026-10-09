@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-10-08",
+  "source": "direct_user_instruction",
+  "statement": "工程技术架构和代码规范需要重新制定完整方案；命名习惯保留白鹭风格，项目结构和API允许更合理现代，兼顾亲切感与现代维护。",
+  "scope": "确认设计目标，不接受本轮具体包/API/语言选型，不证明规范已实现。"
+}

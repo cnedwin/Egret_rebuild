@@ -1,0 +1,350 @@
+{
+  "schemaVersion": 1,
+  "checkedAtUtc": "2026-10-08T08:02:16.702Z",
+  "scope": "Independent bounded source/reproducibility review of Task1; no engine, third-party module or asset execution.",
+  "specCompliance": {
+    "verdict": "pass_with_runtime_boundary",
+    "reason": "Recomputed the nine file hashes and sizes, pinned-source metadata, five-file static ESM closure, asset structure, notices and six-file local compression. This does not grant product acceptance or Gate D."
+  },
+  "quality": {
+    "verdict": "acceptable_with_stated_limits",
+    "reason": "Sources are immutable by commit and match Git blob bytes; attribution and file-footprint limits are explicit. Static and compression evidence can be independently reproduced."
+  },
+  "fileChecks": [
+    {
+      "path": "vendor/three/r186/build/three.core.js",
+      "actualBytes": 1458113,
+      "sha256": "9edde002b066a9a05676a6127f67735b62baf399bdea529f2f7e31657da769e6",
+      "gitBlobSha": "0a1d6cb9ef3cabc97a50bd02394c85e8d1c513c2",
+      "sha256Matches": true,
+      "gitBlobMatches": true,
+      "sizeMatches": true,
+      "pinnedSourceMatches": true
+    },
+    {
+      "path": "vendor/three/r186/build/three.module.js",
+      "actualBytes": 662772,
+      "sha256": "9052042d676cb0fdc1ddfefe193053f34b7ac0513a616fdac4535d49987812ea",
+      "gitBlobSha": "c52087acfabae80efabb8cc05e3a1d96e35a1426",
+      "sha256Matches": true,
+      "gitBlobMatches": true,
+      "sizeMatches": true,
+      "pinnedSourceMatches": true
+    },
+    {
+      "path": "vendor/three/r186/examples/jsm/loaders/GLTFLoader.js",
+      "actualBytes": 117570,
+      "sha256": "131c0f78c01d19368ae495caa65b3adaa10487810a36a05bb5901b769a35ac16",
+      "gitBlobSha": "cd95b20593264ba8b503f8152484c456be64b1af",
+      "sha256Matches": true,
+      "gitBlobMatches": true,
+      "sizeMatches": true,
+      "pinnedSourceMatches": true
+    },
+    {
+      "path": "vendor/three/r186/examples/jsm/utils/BufferGeometryUtils.js",
+      "actualBytes": 37712,
+      "sha256": "9fb63427ce6641fa14fd0baff9cc4d1b5f9c3d85fd084bf2e90e803c44ec1797",
+      "gitBlobSha": "a167e11b0558954a00960dc3cad00ead6476fbe7",
+      "sha256Matches": true,
+      "gitBlobMatches": true,
+      "sizeMatches": true,
+      "pinnedSourceMatches": true
+    },
+    {
+      "path": "vendor/three/r186/examples/jsm/utils/SkeletonUtils.js",
+      "actualBytes": 11535,
+      "sha256": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f",
+      "gitBlobSha": "836c2e2bf2be3c5c5fd6b65ed260f84b3d589258",
+      "sha256Matches": true,
+      "gitBlobMatches": true,
+      "sizeMatches": true,
+      "pinnedSourceMatches": true
+    },
+    {
+      "path": "vendor/three/r186/LICENSE",
+      "actualBytes": 1081,
+      "sha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+      "gitBlobSha": "8ada2a5f982916b0ba4b7a0aa7de347587e745d7",
+      "sha256Matches": true,
+      "gitBlobMatches": true,
+      "sizeMatches": true,
+      "pinnedSourceMatches": true
+    },
+    {
+      "path": "assets/RiggedSimple/RiggedSimple.gltf",
+      "actualBytes": 25435,
+      "sha256": "dad924deb693a8d00e566ccc495042183cbc8c927c56d976ae760077321bca39",
+      "gitBlobSha": "66ce6107f8653fb324f17edd0e23405bf7b4a84f",
+      "sha256Matches": true,
+      "gitBlobMatches": true,
+      "sizeMatches": true,
+      "pinnedSourceMatches": true
+    },
+    {
+      "path": "assets/RiggedSimple/LICENSE.md",
+      "actualBytes": 781,
+      "sha256": "4343fbd97e5ecfc4c872a85cb1d755a3006f8848e15135fd6c4534839909bdbb",
+      "gitBlobSha": "2a98e37252702a3dd4ddfa0d4e8d4c2e33e4641c",
+      "sha256Matches": true,
+      "gitBlobMatches": true,
+      "sizeMatches": true,
+      "pinnedSourceMatches": true
+    },
+    {
+      "path": "assets/RiggedSimple/metadata.json",
+      "actualBytes": 652,
+      "sha256": "ba12c1f9a24124bdfbd171528db2eece6edbb7c75a7192dadfb043212067c664",
+      "gitBlobSha": "09910327d943d6239e8875a86f164382f6d5d8f0",
+      "sha256Matches": true,
+      "gitBlobMatches": true,
+      "sizeMatches": true,
+      "pinnedSourceMatches": true
+    }
+  ],
+  "dependencyChecks": [
+    {
+      "path": "vendor/three/r186/build/three.core.js",
+      "detectedStaticSpecifiers": [],
+      "evidenceMatches": true,
+      "resolutions": [],
+      "dynamicImportCallTokens": 0
+    },
+    {
+      "path": "vendor/three/r186/build/three.module.js",
+      "detectedStaticSpecifiers": [
+        "./three.core.js"
+      ],
+      "evidenceMatches": true,
+      "resolutions": [
+        {
+          "specifier": "./three.core.js",
+          "resolvedPath": "vendor/three/r186/build/three.core.js",
+          "exists": true
+        }
+      ],
+      "dynamicImportCallTokens": 0
+    },
+    {
+      "path": "vendor/three/r186/examples/jsm/loaders/GLTFLoader.js",
+      "detectedStaticSpecifiers": [
+        "three",
+        "../utils/BufferGeometryUtils.js",
+        "../utils/SkeletonUtils.js"
+      ],
+      "evidenceMatches": true,
+      "resolutions": [
+        {
+          "specifier": "three",
+          "resolvedPath": "vendor/three/r186/build/three.module.js",
+          "exists": true
+        },
+        {
+          "specifier": "../utils/BufferGeometryUtils.js",
+          "resolvedPath": "vendor/three/r186/examples/jsm/utils/BufferGeometryUtils.js",
+          "exists": true
+        },
+        {
+          "specifier": "../utils/SkeletonUtils.js",
+          "resolvedPath": "vendor/three/r186/examples/jsm/utils/SkeletonUtils.js",
+          "exists": true
+        }
+      ],
+      "dynamicImportCallTokens": 0
+    },
+    {
+      "path": "vendor/three/r186/examples/jsm/utils/BufferGeometryUtils.js",
+      "detectedStaticSpecifiers": [
+        "three"
+      ],
+      "evidenceMatches": true,
+      "resolutions": [
+        {
+          "specifier": "three",
+          "resolvedPath": "vendor/three/r186/build/three.module.js",
+          "exists": true
+        }
+      ],
+      "dynamicImportCallTokens": 0
+    },
+    {
+      "path": "vendor/three/r186/examples/jsm/utils/SkeletonUtils.js",
+      "detectedStaticSpecifiers": [
+        "three"
+      ],
+      "evidenceMatches": true,
+      "resolutions": [
+        {
+          "specifier": "three",
+          "resolvedPath": "vendor/three/r186/build/three.module.js",
+          "exists": true
+        }
+      ],
+      "dynamicImportCallTokens": 0
+    }
+  ],
+  "importMap": {
+    "imports": {
+      "three": "./vendor/three/r186/build/three.module.js",
+      "three/addons/": "./vendor/three/r186/examples/jsm/"
+    }
+  },
+  "tagCommitConsistency": {
+    "tag": "r186",
+    "manifestCommit": "9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8",
+    "sourceSelectionReleaseCommit": "9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8",
+    "allSixThreeFilesSameCommit": true,
+    "tagMappingBoundary": "Consistent with recorded fixed r186 tag-resolution evidence; no new remote tag-resolution request performed in this independent local review."
+  },
+  "assetChecks": {
+    "embeddedBuffers": 1,
+    "embeddedDataUri": true,
+    "decodedBufferBytes": 11136,
+    "declaredBufferBytes": 11136,
+    "externalBufferOrImageUris": [],
+    "images": 0,
+    "textures": 0,
+    "extensionsUsed": [],
+    "extensionsRequired": [],
+    "scenes": 1,
+    "nodes": 5,
+    "meshes": 1,
+    "skins": 1,
+    "skinJoints": [
+      3,
+      4
+    ],
+    "jointNames": [
+      "Bone",
+      "Bone.001"
+    ],
+    "skinnedMeshNodes": [
+      {
+        "index": 2,
+        "mesh": 0,
+        "skin": 0
+      }
+    ],
+    "jointAttribute": 1,
+    "weightAttribute": 4,
+    "animationClips": 1,
+    "channels": 3,
+    "samplers": 3,
+    "animationTargets": [
+      {
+        "node": 4,
+        "path": "translation"
+      },
+      {
+        "node": 4,
+        "path": "rotation"
+      },
+      {
+        "node": 4,
+        "path": "scale"
+      }
+    ],
+    "keyframesPerSampler": [
+      50,
+      50,
+      50
+    ],
+    "interpolation": [
+      "LINEAR",
+      "LINEAR",
+      "LINEAR"
+    ],
+    "decodedFirstTime": 0.04166661947965622,
+    "decodedLastTime": 2.0833330154418945,
+    "rotationOutputIsNonConstant": true,
+    "vertices": 160,
+    "indexCount": 564,
+    "primitiveMode": 4,
+    "triangles": 188,
+    "runtimeBoneCountAndDuration": "Not measured; structural counts and decoded keyframe times only."
+  },
+  "licenseAndAttributionChecks": {
+    "mitLicensePreserved": true,
+    "assetLicensePreserved": true,
+    "metadataAttribution": {
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/legalcode",
+      "artist": "Cesium",
+      "year": "2017",
+      "owner": "Cesium",
+      "what": "Everything",
+      "text": "Creative Commons Attribution 4.0 International",
+      "spdx": "CC-BY-4.0",
+      "icon": "https://licensebuttons.net/l/by/4.0/88x31.png"
+    },
+    "noticeIncludesAttributionAndLicense": true,
+    "noticeIncludesPinnedCommits": true,
+    "noticeIncludesChangeStatus": true,
+    "visiblePageAttribution": true
+  },
+  "compressionChecks": [
+    {
+      "path": "experiments/asset-reference-probe/vendor/three/r186/build/three.core.js",
+      "rawBytes": 1458113,
+      "gzipLevel9Bytes": 286903,
+      "brotliQuality11Bytes": 208954,
+      "evidenceMatches": true
+    },
+    {
+      "path": "experiments/asset-reference-probe/vendor/three/r186/build/three.module.js",
+      "rawBytes": 662772,
+      "gzipLevel9Bytes": 131133,
+      "brotliQuality11Bytes": 104418,
+      "evidenceMatches": true
+    },
+    {
+      "path": "experiments/asset-reference-probe/vendor/three/r186/examples/jsm/loaders/GLTFLoader.js",
+      "rawBytes": 117570,
+      "gzipLevel9Bytes": 25938,
+      "brotliQuality11Bytes": 21540,
+      "evidenceMatches": true
+    },
+    {
+      "path": "experiments/asset-reference-probe/vendor/three/r186/examples/jsm/utils/BufferGeometryUtils.js",
+      "rawBytes": 37712,
+      "gzipLevel9Bytes": 8685,
+      "brotliQuality11Bytes": 7466,
+      "evidenceMatches": true
+    },
+    {
+      "path": "experiments/asset-reference-probe/vendor/three/r186/examples/jsm/utils/SkeletonUtils.js",
+      "rawBytes": 11535,
+      "gzipLevel9Bytes": 3200,
+      "brotliQuality11Bytes": 2788,
+      "evidenceMatches": true
+    },
+    {
+      "path": "experiments/asset-reference-probe/assets/RiggedSimple/RiggedSimple.gltf",
+      "rawBytes": 25435,
+      "gzipLevel9Bytes": 6129,
+      "brotliQuality11Bytes": 5325,
+      "evidenceMatches": true
+    }
+  ],
+  "compressionTotals": {
+    "rawBytes": 2313137,
+    "gzipLevel9Bytes": 461988,
+    "brotliQuality11Bytes": 350491
+  },
+  "footprintBoundary": {
+    "includedFiles": 6,
+    "nineSourceFileRawTotal": 2315651,
+    "excluded": "three LICENSE, asset LICENSE.md, metadata.json, authored adapters, HTML, tool metadata; these are not included in the 6-file dependency+asset totals.",
+    "meaning": "Unminified, non-tree-shaken raw files and independently compressed gzip level 9 / Brotli quality 11 byte sums; not network transfer, final package, cold-start, memory, frame-time or production build evidence."
+  },
+  "findings": [],
+  "notRun": [
+    "No browser/module loading or rendering",
+    "No engine, old Egret code, npm installation or upstream script execution",
+    "No production/minified/tree-shaken build",
+    "No mobile, language, performance or equivalent-engine benchmark",
+    "No full legal/security audit",
+    "No product acceptance; joint/clip/byte counts are structural evidence only"
+  ],
+  "methodBoundary": "Regex bounded static-import/re-export scan is not a complete ECMAScript parser; no detected dynamic import call tokens in the five third-party JS files. Decoded glTF data is parsed only, not loaded by an engine."
+}

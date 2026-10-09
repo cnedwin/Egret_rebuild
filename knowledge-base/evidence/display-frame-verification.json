@@ -1,0 +1,463 @@
+{
+  "schemaVersion": 1,
+  "version": "0.12.0",
+  "date": "2026-10-09",
+  "scope": "Independent rectangle display/frame and desktop Canvas prototype",
+  "supportLevel": "experimental",
+  "core": {
+    "tests": 97,
+    "pass": 97,
+    "fail": 0,
+    "negativeDiagnostics": 25,
+    "rootNegativeDiagnostics": 23,
+    "webNegativeDiagnostics": 2,
+    "boundaryFiles": 102,
+    "positiveTypes": true,
+    "rootDOMFreeConsumer": true,
+    "webConsumer": true
+  },
+  "browser": {
+    "browser": "154.0.4258.62",
+    "playwright": "1.62.1",
+    "channel": "msedge",
+    "headless": true,
+    "deviceScaleFactor": 1,
+    "pointerPixelsChanged": true,
+    "checks": [
+      {
+        "name": "literal overlap",
+        "actual": [
+          64,
+          0,
+          128,
+          255
+        ],
+        "expected": [
+          64,
+          0,
+          128,
+          255
+        ]
+      },
+      {
+        "name": "incoming state reset",
+        "actual": [
+          64,
+          0,
+          128,
+          255
+        ],
+        "expected": [
+          64,
+          0,
+          128,
+          255
+        ]
+      },
+      {
+        "name": "ancestor alpha",
+        "actual": [
+          0,
+          64,
+          0,
+          255
+        ],
+        "expected": [
+          0,
+          64,
+          0,
+          255
+        ]
+      },
+      {
+        "name": "translated rotated scaled",
+        "actual": [
+          255,
+          0,
+          0,
+          255
+        ],
+        "expected": [
+          255,
+          0,
+          0,
+          255
+        ]
+      },
+      {
+        "name": "transform outside",
+        "actual": [
+          0,
+          0,
+          0,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          0,
+          255
+        ]
+      },
+      {
+        "name": "rotated clip inside",
+        "actual": [
+          0,
+          255,
+          0,
+          255
+        ],
+        "expected": [
+          0,
+          255,
+          0,
+          255
+        ]
+      },
+      {
+        "name": "rotated clip outside",
+        "actual": [
+          0,
+          0,
+          0,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          0,
+          255
+        ]
+      },
+      {
+        "name": "sibling clip isolation",
+        "actual": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "name": "frame clearing",
+        "actual": [
+          0,
+          0,
+          0,
+          255
+        ],
+        "expected": [
+          0,
+          0,
+          0,
+          255
+        ]
+      },
+      {
+        "name": "invalid before mutation"
+      },
+      {
+        "name": "terminal close"
+      },
+      {
+        "name": "DPR ceil dimensions and pixels",
+        "dimensions": [
+          16,
+          13
+        ],
+        "actual": [
+          255,
+          0,
+          0,
+          255
+        ]
+      },
+      {
+        "name": "native narrow allocation probe",
+        "requested": [
+          32768,
+          1
+        ],
+        "assigned": [
+          32768,
+          1
+        ],
+        "contextLost": false,
+        "pixels": [
+          255,
+          0,
+          0,
+          255
+        ]
+      },
+      {
+        "name": "native narrow allocation probe",
+        "requested": [
+          65536,
+          1
+        ],
+        "assigned": [
+          65536,
+          1
+        ],
+        "contextLost": true,
+        "error": {
+          "code": "CANVAS_CONTEXT_LOST",
+          "message": "CANVAS_CONTEXT_LOST"
+        }
+      }
+    ],
+    "counterexample": {
+      "failed": true,
+      "message": "literal overlap: 0,0,0,0 != 64,0,128,255"
+    },
+    "unexpectedErrors": [],
+    "limits": "Desktop Canvas only; no device, GPU or performance conclusion"
+  },
+  "sources": [
+    {
+      "path": "packages/contracts/src/CancellationSignal.ts",
+      "sha256": "6a9e5f07b549ec50c2a5c50915309e8de6fba2d943f59a0d7b54b079e14584b3"
+    },
+    {
+      "path": "packages/contracts/src/Diagnostic.ts",
+      "sha256": "ce61e4d90319f55febc2782ca5e1a7329984cf6cfdf14955cc3a20dbdd5920ad"
+    },
+    {
+      "path": "packages/contracts/src/Disposable.ts",
+      "sha256": "76d74cd41b6e136ea840c7d8d05273520ce7d41031a7820dd4ddabc73be947db"
+    },
+    {
+      "path": "packages/contracts/src/HostAdapter.ts",
+      "sha256": "3c8289a85e04e34be3782156244cc253792eff1b41629758d54cd1692c64c2ae"
+    },
+    {
+      "path": "packages/contracts/src/RenderFrame2D.ts",
+      "sha256": "853ac3e712082cf67e442043044b0da0ca577bb2d6a68d3c5981ac203fcd1e60"
+    },
+    {
+      "path": "packages/contracts/src/index.ts",
+      "sha256": "9a4771c7479eaf70e1b27f2678e0f16e633ee85b8a413508c486dcd111471fbc"
+    },
+    {
+      "path": "packages/engine/src/Engine.ts",
+      "sha256": "565d2f2701d5f1c7f653a5833f435b649f68975bf650400003bbdd86ecb909a0"
+    },
+    {
+      "path": "packages/engine/src/closeHost.ts",
+      "sha256": "9fac806cc0d19265ec6956cc19305a9ff2ae03ff0e49700d64c39be88ba3244f"
+    },
+    {
+      "path": "packages/engine/src/createEngine.ts",
+      "sha256": "32011ff9c7bbc65e0bdf455a21fcac2e975cd14f9065c3c7c9589bbb74c56774"
+    },
+    {
+      "path": "packages/engine/src/index.ts",
+      "sha256": "610b29b05ca80e16c602d68af2ad1a71be4027cb4c5731816c177eb415e3b3f4"
+    },
+    {
+      "path": "packages/engine/src/surfaceOwnership.ts",
+      "sha256": "604df51eb03f8dbb7965100e06667c09bb311f0e26e0ee752b2404c899e5a320"
+    },
+    {
+      "path": "packages/engine/web/CanvasHost.ts",
+      "sha256": "ae6c2f46bd3e43b44e8a915a5b4fb9c1cbebab6b5f14b93178b7bd7eb5f0c7cb"
+    },
+    {
+      "path": "packages/engine/web/copyCanvasFrame.ts",
+      "sha256": "274069cd40f81ddbb9aa298f4119be2cf8e4791d17c0c2b2652033a0d4957637"
+    },
+    {
+      "path": "packages/engine/web/index.ts",
+      "sha256": "1c06c610493ff706ed07983a2bdd826aaf8a2b3af8c88563ad99e1324f2a7e4e"
+    },
+    {
+      "path": "packages/runtime/src/AssetLease.ts",
+      "sha256": "6c411c75c2737f4229e459f559efc75375b15c65af65e3791227abe416e24a21"
+    },
+    {
+      "path": "packages/runtime/src/AssetManager.ts",
+      "sha256": "31e52919bfa43df548fa661a9d46c5d8b2fcb7259addfe119ef4367fa25f462e"
+    },
+    {
+      "path": "packages/runtime/src/AssetRef.ts",
+      "sha256": "48963664a8a048697a962f1c3d56826333e65e3bbf05d1524d7c30b049a10ab7"
+    },
+    {
+      "path": "packages/runtime/src/CancellationController.ts",
+      "sha256": "3cfdb217804b282c4a422420ce5efa63ced25a6bb215bff254e7f947c4942e28"
+    },
+    {
+      "path": "packages/runtime/src/DisplayObject.ts",
+      "sha256": "f66c3aaecf255601969603b359ac42bcd4db6d2ed17750727f0f4f5816152e70"
+    },
+    {
+      "path": "packages/runtime/src/DisplayObjectContainer.ts",
+      "sha256": "36b2f5e42d5654a03765c292bedf42f094fde122967a17c00b3e4180d1e2a72c"
+    },
+    {
+      "path": "packages/runtime/src/EgretError.ts",
+      "sha256": "f647ab0f675a5e0d460f1e7b04bce603d06998096f460371035f23826eed7f08"
+    },
+    {
+      "path": "packages/runtime/src/Event.ts",
+      "sha256": "de5671dcddbde4637c22b5ea2bff9ebb520c7aed503608e670d0efc08cf9539c"
+    },
+    {
+      "path": "packages/runtime/src/EventDispatcher.ts",
+      "sha256": "141051a7aede922c0d8d73aa2b509c75cbe209118ba0bb48b3869765b9c5a82d"
+    },
+    {
+      "path": "packages/runtime/src/Graphics.ts",
+      "sha256": "e84deaaefeec9e9bbe25d1447aba980ebefa5c981af73d71a611fe45898443a9"
+    },
+    {
+      "path": "packages/runtime/src/Scope.ts",
+      "sha256": "29e9d5da9232ed8347b2a829e069d33daabb1bad296798492a45c7950f43e8ea"
+    },
+    {
+      "path": "packages/runtime/src/Sprite.ts",
+      "sha256": "a3175515cdeedc283199870cd683e541acf208f04330c63c3f5f5eee2e328bba"
+    },
+    {
+      "path": "packages/runtime/src/Stage.ts",
+      "sha256": "08eb1599d9c75c70add22558f28e214ec31fe4305ccdf2638a8f7d35ec61bb0f"
+    },
+    {
+      "path": "packages/runtime/src/assetState.ts",
+      "sha256": "044c1aceef34403be1b1297794d3d3e390182a84d2876ce2d3392a4c2e5a6920"
+    },
+    {
+      "path": "packages/runtime/src/diagnostics.ts",
+      "sha256": "c330f5d9083d84ee5b23b947d0d8534e7050a92f8b76a7e5259a1bad92395294"
+    },
+    {
+      "path": "packages/runtime/src/displayTreeState.ts",
+      "sha256": "8aaf5f5dfc8d62f3b1bc4effe819e7718e3ed72fcf0a8fc25e3b08410f980e50"
+    },
+    {
+      "path": "packages/runtime/src/displayVisualState.ts",
+      "sha256": "0bee8a7e5136f59c3301ec4d829bceaf5a01aff6f0d770dd6a2952ed31110f21"
+    },
+    {
+      "path": "packages/runtime/src/frameCapture.ts",
+      "sha256": "37ac4db4273ddca728622fd2db1226c1d104e056c40fd3bcbfbadeae1c75e921"
+    },
+    {
+      "path": "packages/runtime/src/index.ts",
+      "sha256": "51700665e52ddabfbce7359ee7e08747bee348a46cc0c1ba3a936a901f21e4b8"
+    },
+    {
+      "path": "packages/runtime/src/ownership.ts",
+      "sha256": "8c8c40e465002882dac1bf054fa49248c99df62da337cf75f50168f0a6748c62"
+    }
+  ],
+  "logs": [
+    {
+      "identity": "task-1-red.log",
+      "sha256": "0b98180e08b12cf082d6da2d05f3b7a4401ba4894c662577154caa941335eb3d",
+      "status": "identity_only_private_log_not_distributed"
+    },
+    {
+      "identity": "task-1-red-empty-clips.log",
+      "sha256": "732fa18240c8a42c3d87cb8ad754a728a340695f267bc00d6ef2e498903664a8",
+      "status": "identity_only_private_log_not_distributed"
+    },
+    {
+      "identity": "task-1-red-stable.log",
+      "sha256": "e9b412ad5aa431b9464b3592e53c33d77ca6cff851432d1ec4eaa29dc234b20e",
+      "status": "identity_only_private_log_not_distributed"
+    },
+    {
+      "identity": "task-1-fix1-red.log",
+      "sha256": "4f2d5a0d0c81243ad57b11c9960de58a18192e2c982dde23ffc2f02ba0cacb6c",
+      "status": "identity_only_private_log_not_distributed"
+    },
+    {
+      "identity": "task-1-fix1-green.log",
+      "sha256": "7d737f085451c4b3b530e2d2d9eddcecdc90aa1ba110ec23e5b0ed236eac8ada",
+      "status": "identity_only_private_log_not_distributed"
+    },
+    {
+      "identity": "runs/task-2-red.log",
+      "sha256": "d4b76c047e13385a39b5a20d20d9279d5bf0591dd10ee339551837d1e7b7ba6d",
+      "status": "identity_only_private_log_not_distributed"
+    },
+    {
+      "identity": "runs/task-2-browser.log",
+      "sha256": "ea0f7487eb103b69db7f63714bb7455062c642ae925cc1c4e02c239a00e471fe",
+      "status": "identity_only_private_log_not_distributed"
+    },
+    {
+      "identity": "runs/task-2-core-green.log",
+      "sha256": "0a8ee091bfe21dd5db7bf43ee58e3f8b9abde4c1a28acee4197f28cd57e7d38f",
+      "status": "identity_only_private_log_not_distributed"
+    },
+    {
+      "identity": "runs/task-2-browser-allocation-red.log",
+      "sha256": "fde64b8406ce167ec27424e72b9cf01c60801627b6594ced0d53b53ebdaee1ab",
+      "status": "identity_only_private_log_not_distributed"
+    },
+    {
+      "identity": "runs/task-3-focused-green.log",
+      "sha256": "551c6b2aea27cb44dbfe1cc2b6cd7214e4534078a441a342e1cc8b8632e24b6b",
+      "status": "identity_only_private_log_not_distributed"
+    },
+    {
+      "identity": "runs/task-3-web-registration-red.log",
+      "sha256": "f7f656be65d5fe128751d0ea906ecaf0bc4f7a1f28036bab6336301c7a6d41d4",
+      "status": "identity_only_private_log_not_distributed"
+    },
+    {
+      "identity": "runs/task-3-cleanup-output-red.log",
+      "sha256": "6bef44243117bf8d74f710c30688277ad43398faebe33d9179c1fba04d718d42",
+      "status": "identity_only_private_log_not_distributed"
+    },
+    {
+      "identity": "runs/task-3-final-transform-red.log",
+      "sha256": "67e8e44aadb883c531e43aaeca399395dd4a310230b43ee6ecb9b6f961c3adb0",
+      "status": "identity_only_private_log_not_distributed"
+    },
+    {
+      "identity": "runs/task-3-prepush.log",
+      "sha256": "7e22e9464483cbec68fdd7862bbabad1f8bc69f0b38a9a9d7cd883fe3249306d",
+      "status": "identity_only_private_log_not_distributed"
+    },
+    {
+      "identity": "runs/task-3-assets.log",
+      "sha256": "3ee05d88e620fcd1d2e8179f9ac60fd865de20f1bd936247602bf0334d15c4ff",
+      "status": "identity_only_private_log_not_distributed"
+    },
+    {
+      "identity": "runs/task-3-browser.log",
+      "sha256": "ea0f7487eb103b69db7f63714bb7455062c642ae925cc1c4e02c239a00e471fe",
+      "status": "identity_only_private_log_not_distributed"
+    }
+  ],
+  "redGreenScope": "Feature-level red and selected counterexamples; later adversarial assertions were not all independently fail-first.",
+  "limitations": "No GPU, Native, physical phone, device/performance benchmark, full UI/textures/animation/3D, complete migration, CI or full-product acceptance. Browser results are desktop observations, not universal allocation limits.",
+  "defaultPrepushIncludesBrowser": false,
+  "browserCommand": "node tools/verify-canvas.mjs --playwright <installed-playwright-module> --channel msedge --output <private-output-directory>",
+  "remoteSubmission": "not_performed_this_revision",
+  "projection": {
+    "role": "Public knowledge-base projection",
+    "original": "verification/display-frame-verification.json"
+  },
+  "publicationRegressions": {
+    "focusedTests": 35,
+    "passed": 35,
+    "controlledCounterexamples": [
+      "omitted exact web registration",
+      "independently observed premature cleanup",
+      "final primitive transform mutation"
+    ],
+    "counterexampleFailuresExpected": true,
+    "productionRendererChanged": false
+  }
+}

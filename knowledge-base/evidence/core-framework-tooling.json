@@ -1,0 +1,21 @@
+{
+  "checkedAt": "2026-10-08",
+  "node": "v24.19.0",
+  "pnpm": "11.25.0",
+  "typescript": "7.0.2",
+  "compilerPackages": [
+    "typescript",
+    "@typescript/typescript-win32-x64"
+  ],
+  "compilerLicense": "Apache-2.0",
+  "installedWithLifecycleScripts": false,
+  "installScope": "local_prototype_and_work_store",
+  "officialDocumentation": "https://www.typescriptlang.org/download/",
+  "metadataEndpoint": "https://registry.npmjs.org/typescript/latest",
+  "versionPinnedInLockfile": true,
+  "actualCompilerVersionCommand": "node node_modules/typescript/bin/tsc --version",
+  "observed": "Version 7.0.2",
+  "environmentLimitation": "pnpm exec in sandbox attempted package-manager self-management and failed realpath EPERM; direct local tsc invocation passed without modifying global configuration.",
+  "benchmark": false,
+  "comprehensiveToolchainAcceptance": false
+}

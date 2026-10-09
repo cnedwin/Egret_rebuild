@@ -1,0 +1,516 @@
+{
+  "checked_date": "2026-10-08",
+  "scope": "newEgret target complex2DUI+light3D+AIcreators; documentationonly; no browser experiment, no oldcodeexecution, no KB/productchange",
+  "evidence_legend": {
+    "documented": "Official specification/vendorSDK/repository confirms narrowly stated capability.",
+    "observed": "No host/device/runtime measurements supplied or performed in this task; all host observed fields intentionally empty.",
+    "unverified": "No official support guarantee found or exact device/client/backend/shader/model integration not tested."
+  },
+  "browser_matrix": [
+    {
+      "browser": "Chromium",
+      "documented": "Mac/Windowsx86x64/ChromeOS113;AndroidARM/Qualcomm/Intel Android12+121,Imagination Android16+139;LinuxIntelGen12+144,NVIDIA535.183.01+Wayland147",
+      "experimental": "OtherLinux flags;WindowsARM64 unsafeWebGPUflag;SamsungXclipseAndroid12+TBD",
+      "caveats": "securecontext,adapteravailability,driverblocklists,hardwareacceleration;ChromeiOS cannot inheritAndroid/Desktop table",
+      "sources": [
+        "S01",
+        "S02",
+        "S03"
+      ],
+      "observed": []
+    },
+    {
+      "browser": "Firefox",
+      "documented": "Windows141;AppleSiliconmacOS26+145,allsupportedmacOS147",
+      "experimental": "OtherMac/LinuxNightly;AndroidBeta/Nightly gfx.webgpu.ignore-blocklist;Linux2026expectation is roadmap, not stable-release proof",
+      "sources": [
+        "S01",
+        "S05"
+      ],
+      "observed": []
+    },
+    {
+      "browser": "Safari",
+      "documented": "Safari26 defaultenabledonmacOSTahoe26,iOS26,iPadOS26,visionOS26",
+      "unverified": "Safari26onoldermacOS mustnotsilently inheritnewOSguarantee;embeddedWKWebViewhostrequires separateverification",
+      "sources": [
+        "S01",
+        "S04"
+      ],
+      "observed": []
+    }
+  ],
+  "host_matrix": [
+    {
+      "host": "Browser",
+      "documented": "Version/OS/adapter gates per browser matrix.",
+      "webgpu": "documented_conditional",
+      "baseline": "WebGL2 wherecontextavailable;WebGL1/Canvas2D featurepolicy must beexplicit;computeAIuseWASM/remote fallback",
+      "unverified": "Actualusercoverage,cost,f16/subgroups/limits/device-loss/performance",
+      "observed": [],
+      "sources": [
+        "S01",
+        "S03",
+        "S15"
+      ]
+    },
+    {
+      "host": "WeChatMiniGame",
+      "documented": "OfficialgeneratedAPItypings expose2d/webgl/webgl2 onCanvas.",
+      "webgpu": "unverified_no_public_api_found",
+      "baseline": "Usewxhostadapter andactualWebGL2 featureprobe;SDKversion/OS/deviceextensionquery",
+      "unverified": "WebGPUpublicAPI,mobile/desktopSDK matrix,AIruntimeassetloading",
+      "observed": [],
+      "sources": [
+        "S06",
+        "S07"
+      ]
+    },
+    {
+      "host": "DouyinMiniGame",
+      "documented": "Singlepresentedcanvas+multipleoffscreen;2d andWebGL(base1.31.0+);ETC2/ASTCAndroid/iOS.",
+      "webgpu": "unverified_no_public_api_found",
+      "baseline": "HostWebGL;WebGL2supportunverifiedinretrievedMiniGame docs",
+      "unverified": "WebGPU,WebGL2 versionmatrix;MiniApp4.10.0WebGL2mustnot beappliedtoMiniGame",
+      "observed": [],
+      "sources": [
+        "S08",
+        "S09"
+      ]
+    },
+    {
+      "host": "MetaInstantGames",
+      "documented": "FBInstant8.0 officialUnityplugin requiresUnity2022+ WebGLbuild;NEZPHTML/CSSoverlay.",
+      "webgpu": "unverified_no_host_guarantee_found",
+      "baseline": "WebGLhostintegration;probeactualcontainer",
+      "unverified": "WebGPU acrossMessenger/FacebookOS/client andSDK;officialplugin licenseREADMErequiresreview",
+      "observed": [],
+      "sources": [
+        "S10"
+      ]
+    },
+    {
+      "host": "DiscordActivities",
+      "documented": "Desktop/mobile/webiframe;EmbeddedAppSDKpostMessage;proxy/CSP.",
+      "webgpu": "unverified_no_host_guarantee_found",
+      "baseline": "Browser renderer with actualiframecapabilityprobe;remapmodelassetURLs viahostproxy",
+      "unverified": "Clientversion/OSGPUcapability,workers/WASMthread/securecontext/resourcepolicies",
+      "observed": [],
+      "sources": [
+        "S11",
+        "S12"
+      ]
+    },
+    {
+      "host": "TelegramMiniApps",
+      "documented": "HTML5webview;client-specificdebugging.",
+      "webgpu": "unverified_no_host_guarantee_found",
+      "baseline": "WebGL2onlyafteractualwebviewprobe;WASM/remoteAI",
+      "unverified": "iOS/Android/desktopclientandwebviewversion/adapter availability",
+      "observed": [],
+      "sources": [
+        "S13",
+        "S14"
+      ]
+    },
+    {
+      "host": "NativeAppSDK",
+      "documented": "NativewgpuVulkan/Metal/D3D12 backendoptions;vendorSDKs separatenativeAPIs.",
+      "webgpu": "native_abstraction_not_browser_api",
+      "baseline": "SelectnativeorWebViewruntime explicitly;nativeplugin interfaceforvendorSR/resources/synchronization",
+      "unverified": "ChosenSDK binarysize,sharedrenderresources,OS/hardwarevendorintegration",
+      "observed": [],
+      "sources": [
+        "S23",
+        "S24",
+        "S25",
+        "S29",
+        "S30",
+        "S31"
+      ]
+    },
+    {
+      "host": "FutureSteam",
+      "documented": "Distribution/Steamworksintegration;ValveVulkanrecommendationandProtonDXtranslation.",
+      "webgpu": "not_a_graphics_api",
+      "baseline": "NativegraphicsAPI/buildpackagechosen byengine;SteamDeck separatelyvalidate",
+      "unverified": "Deck/ProtonvendorSRavailabilityandperformance;genericWindowsSteamclaimsnotportable",
+      "observed": [],
+      "sources": [
+        "S32"
+      ]
+    }
+  ],
+  "ai_and_upscale": [
+    {
+      "option": "WebGPUcompute",
+      "class": "portable_standard_plus_optional_features",
+      "documented": "WGSLcompute/storagebuffers/textures;shader-f16/subgroups optionalfeaturegates;modelkernel/ops/precision/memorymustmatch",
+      "limits": "No portablevendorDLL/nativehandle/tensorcoreorDLSSentrypoint promised;subgroupmatrixisproposal/Chromiumexperimental",
+      "sources": [
+        "S15",
+        "S16",
+        "S17",
+        "S20",
+        "S22"
+      ]
+    },
+    {
+      "option": "WebNN",
+      "class": "experimental_inference_graph_api",
+      "documented": "CRD2026-09-10;CPU/GPU/NPUaccelerationbehindimplementation/OS/runtime/operatorchoices",
+      "limits": "DistinctfromWebGPU;not allhosts/browser support;currentabstractacceleratorselection notguaranteedNPUdevice",
+      "sources": [
+        "S18",
+        "S19"
+      ]
+    },
+    {
+      "option": "ONNXRuntimeWeb",
+      "class": "githubfirst_practical_candidate",
+      "documented": "WASMCPUallops;WebGPU/WebGL/WebNNsubsets;IOBindingcankeepdataonGPU",
+      "limits": "Oldbrowsercompatibilitytable isstaleagainstS01;targetmodel+hostvalidate;lightmodelsWASMmaybepreferable",
+      "sources": [
+        "S20",
+        "S21",
+        "S22"
+      ]
+    },
+    {
+      "option": "DLSS4.5",
+      "class": "native_vendor_sdk",
+      "documented": "RTXGPU+driver;DX11/DX12/Vulkanintegration;MFGRTX50/RTXPROBlackwell",
+      "limits": "NVIDIA SDK integration+resources+featurequeries/licensing;notgenericbrowserWebGPU",
+      "sources": [
+        "S23",
+        "S24"
+      ]
+    },
+    {
+      "option": "FSR",
+      "class": "versioned_native_sdk",
+      "documented": "SDK2.3June2026 shipsMLUpscaling4.1.1forRX7000/RX9000discrete,DX12Win10/11SM6.6;otherhardwareanalysisFSR3.1.5",
+      "limits": "MLframegeneration/rayregenerationstillRX9000;RadianceCaching0.9technicalpreview;2025RX9000-onlyrulehistorical;signedDLLrequired",
+      "sources": [
+        "S25",
+        "S26",
+        "S27",
+        "S28"
+      ]
+    },
+    {
+      "option": "XeSS-SR",
+      "class": "native_vendor_sdk",
+      "documented": "AItemporalSR;DX12crossvendorSM6.4/DP4a;Inteloptimizedpath;DX11Arc+;Vulkan1.1 extensionquery",
+      "limits": "SRandFGrequirementsnotinterchangeable;nativeSDKbinary/API;notbrowserWebGPUdespitecomputeshaders",
+      "sources": [
+        "S29"
+      ]
+    },
+    {
+      "option": "MetalFX",
+      "class": "native_vendor_sdk",
+      "documented": "NativeMetalspatial/temporal/frameinterpolation/denoisedscalerhaveGPUfamilygates",
+      "limits": "CheckApplecapability/support APIs;notgenericWebGPUfeature",
+      "sources": [
+        "S30"
+      ]
+    }
+  ],
+  "recommendations": [
+    {
+      "status": "inference",
+      "text": "Graphicscapabilitycontract mustrecordhost/clientSDK,OS,GPUadapter,features/limits,compressionformat,shadercompiler/modelcoverage andfallback;browseravailabilityalone cannotauthorizehostbackend."
+    },
+    {
+      "status": "inference",
+      "text": "ForcomplexUI2D+light3D,prioritizebatching,atlases,glyphcaches,clipping/filters,resourcebudgets andresolutionpolicy;heavySRisconditional3Doption,notUIfoundation."
+    },
+    {
+      "status": "inference",
+      "text": "Renderlight3Datadjustableresolution,upscale3Dfirst,thencompositetext/UIatnativeoutputresolution toprotectsmallglyphs;keepAIinferencejobsbudgeted so sharingGPU doesnotstarveframeproduction."
+    },
+    {
+      "status": "inference",
+      "text": "Comparefullcost:GPUframetime,inference/upload/readback/warmup,modeldownloadandRAM/VRAM,battery/thermals,cachehit/fallback/cloudserving. AIneednot netreducecost."
+    },
+    {
+      "status": "inference",
+      "text": "Considercreatortimeassetgeneration/compression outsidecriticalframepath;runtimeAI choosesWASM/WebGPU/WebNN/native/remote viaindependentprovider ratherthanbind engine renderer toAIvendor."
+    }
+  ],
+  "sources": [
+    {
+      "id": "S01",
+      "title": "GPUWeb Implementation Status",
+      "url": "https://github.com/gpuweb/gpuweb/wiki/Implementation-Status",
+      "checked_date": "2026-10-08",
+      "source_updated": "2026-10-02",
+      "kind": "official_working_group_status",
+      "use": "Current browser platform/version/flag matrix; not a host SDK guarantee."
+    },
+    {
+      "id": "S02",
+      "title": "Chrome WebGPU overview",
+      "url": "https://developer.chrome.com/docs/web-platform/webgpu/overview",
+      "checked_date": "2026-10-08",
+      "kind": "official_vendor_documentation",
+      "use": "Chrome113 desktop requirements and Chrome121 Android12 ARM/Qualcomm initial release."
+    },
+    {
+      "id": "S03",
+      "title": "Chrome WebGPU troubleshooting",
+      "url": "https://developer.chrome.com/docs/web-platform/webgpu/troubleshooting-tips",
+      "checked_date": "2026-10-08",
+      "published": "2024-02-07",
+      "source_updated": "2025-10-17",
+      "kind": "official_vendor_documentation",
+      "use": "Secure context, hardware acceleration, blocked adapter, null adapter; Linux initial flag description is older than S01."
+    },
+    {
+      "id": "S04",
+      "title": "WebKit Features in Safari26.0",
+      "url": "https://webkit.org/blog/17333/webkit-features-in-safari-26-0/",
+      "checked_date": "2026-10-08",
+      "published": "2025-09-15",
+      "kind": "shipped_release",
+      "use": "Shipping WebGPU; WGSL, compute. Default OS bounds from S01."
+    },
+    {
+      "id": "S05",
+      "title": "Firefox141 release",
+      "url": "https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Releases/141",
+      "checked_date": "2026-10-08",
+      "published": "2025-07-22",
+      "kind": "shipped_release",
+      "use": "Windows shipment; current other platforms from S01."
+    },
+    {
+      "id": "S06",
+      "title": "WeChat MiniGame official API typings",
+      "url": "https://raw.githubusercontent.com/wechat-miniprogram/minigame-api-typings/master/types/wx/lib.wx.api.d.ts",
+      "checked_date": "2026-10-08",
+      "kind": "official_sdk_source",
+      "location": "lines736-749",
+      "use": "Canvas.getContext union2d/webgl/webgl2; webgpu search has no match. Absence is not proof of impossibility."
+    },
+    {
+      "id": "S07",
+      "title": "WeChat API typings generation policy",
+      "url": "https://github.com/wechat-miniprogram/minigame-api-typings",
+      "checked_date": "2026-10-08",
+      "kind": "official_repo",
+      "use": "lib.wx.api.d.ts generated alongside official docs."
+    },
+    {
+      "id": "S08",
+      "title": "Douyin MiniGame rendering",
+      "url": "https://partner.open-douyin.com/docs/resource/zh-CN/mini-game/develop/guide/basic-function/render",
+      "checked_date": "2026-10-08",
+      "source_updated": "2025-06-16",
+      "kind": "official_sdk_documentation",
+      "use": "Single presented canvas plus offscreen canvases;2d and webgl with base library1.31.0+; ETC2/ASTC Android/iOS."
+    },
+    {
+      "id": "S09",
+      "title": "Douyin MiniApp Canvas.getContext",
+      "url": "https://partner.open-douyin.com/docs/resource/zh-CN/mini-app/develop/api/canvas/v2/Canvas/Canvas.getContext",
+      "checked_date": "2026-10-08",
+      "kind": "official_sdk_documentation_wrong_product_for_minigame",
+      "use": "MiniAPP WebGL2 from base library4.10.0; do not copy to MiniGAME."
+    },
+    {
+      "id": "S10",
+      "title": "Meta Instant Games Unity Plugin",
+      "url": "https://github.com/facebook/meta-instant-games-unity-plugin",
+      "checked_date": "2026-10-08",
+      "kind": "official_sdk_repo",
+      "use": "FBInstant8.0, Unity2022+, WebGL build target; platform/social SDK and overlay APIs. No documented WebGPU guarantee."
+    },
+    {
+      "id": "S11",
+      "title": "Discord How Activities Work",
+      "url": "https://docs.discord.com/developers/activities/how-activities-work",
+      "checked_date": "2026-10-08",
+      "kind": "official_sdk_documentation",
+      "use": "Desktop/mobile/web iframe; EmbeddedAppSDK postMessage; no WebGPU guarantee."
+    },
+    {
+      "id": "S12",
+      "title": "Discord Networking",
+      "url": "https://docs.discord.com/developers/activities/development-guides/networking",
+      "checked_date": "2026-10-08",
+      "kind": "official_sdk_documentation",
+      "use": "Proxy URL mappings and CSP restrictions apply to downloading AI model/assets; no GPU guarantee."
+    },
+    {
+      "id": "S13",
+      "title": "Telegram Mini Apps client protocol",
+      "url": "https://core.telegram.org/api/bots/webapps",
+      "checked_date": "2026-10-08",
+      "kind": "official_sdk_documentation",
+      "use": "HTML5 apps opened by clients in a webview; no universal graphics backend guarantee."
+    },
+    {
+      "id": "S14",
+      "title": "Telegram Mini Apps JS API and debugging",
+      "url": "https://core.telegram.org/bots/webapps",
+      "checked_date": "2026-10-08",
+      "kind": "official_sdk_documentation",
+      "use": "Client-specific webview inspection guidance; no WebGPU guarantee."
+    },
+    {
+      "id": "S15",
+      "title": "WGSL",
+      "url": "https://www.w3.org/TR/WGSL/",
+      "checked_date": "2026-10-08",
+      "kind": "standards_document",
+      "use": "Compute shader language; f16/subgroups require feature support and request. Current WGSL has no subgroup_matrix entry."
+    },
+    {
+      "id": "S16",
+      "title": "WebGPU subgroup matrix proposal",
+      "url": "https://github.com/gpuweb/gpuweb/blob/main/proposals/subgroup-matrix.md",
+      "checked_date": "2026-10-08",
+      "kind": "proposal",
+      "use": "Cooperative matrix access remains proposal, not portable baseline."
+    },
+    {
+      "id": "S17",
+      "title": "Dawn experimental subgroup matrix tests",
+      "url": "https://dawn.googlesource.com/dawn/+/refs/heads/main/src/dawn/tests/end2end/SubgroupMatrixTests.cpp",
+      "checked_date": "2026-10-08",
+      "kind": "experimental_implementation_source",
+      "use": "ChromiumExperimentalSubgroupMatrix feature and experimental WGSL enable name; not stable-host entitlement."
+    },
+    {
+      "id": "S18",
+      "title": "WebNN",
+      "url": "https://www.w3.org/TR/2026/CRD-webnn-20260910/",
+      "checked_date": "2026-10-08",
+      "published": "2026-09-10",
+      "kind": "candidate_recommendation_draft",
+      "use": "Dedicated neural inference graph API, distinct from WebGPU. DeviceType enum removed, abstract accelerator selection; no automatic NPU guarantee."
+    },
+    {
+      "id": "S19",
+      "title": "WebNN implementation status",
+      "url": "https://webmachinelearning.github.io/webnn-status/",
+      "checked_date": "2026-10-08",
+      "kind": "official_working_group_status",
+      "use": "Experimental implementations:LiteRT Windows/ChromeOS/Android/Linux, WindowsML Windows, CoreML macOS; operation support differs."
+    },
+    {
+      "id": "S20",
+      "title": "ONNX Runtime Web tutorial",
+      "url": "https://onnxruntime.ai/docs/tutorials/web/",
+      "checked_date": "2026-10-08",
+      "kind": "official_repo_documentation",
+      "use": "WASM all operators,WebGPU/WebGL/WebNN only subsets; offloading can reduce cloud serving costs but does not guarantee net cost."
+    },
+    {
+      "id": "S21",
+      "title": "ONNX Runtime Web WebGPU",
+      "url": "https://onnxruntime.ai/docs/tutorials/web/ep-webgpu.html",
+      "checked_date": "2026-10-08",
+      "kind": "official_repo_documentation",
+      "use": "Small lightweight models may chooseWASM; IO binding keepsGPU dataGPU; browser platform passage is older than S01."
+    },
+    {
+      "id": "S22",
+      "title": "ONNX Runtime WebGPU operator table",
+      "url": "https://github.com/microsoft/onnxruntime/blob/main/js/web/docs/webgpu-operators.md",
+      "checked_date": "2026-10-08",
+      "kind": "official_repo_source",
+      "use": "Operator/opset gaps and constraints must match model."
+    },
+    {
+      "id": "S23",
+      "title": "NVIDIA DLSS",
+      "url": "https://developer.nvidia.com/rtx/dlss",
+      "checked_date": "2026-10-08",
+      "source_updated": "2026-09",
+      "kind": "official_vendor_sdk_documentation",
+      "use": "DLSS4.5; RTXTensorCores via SDK; MFG RTX50/RTXPROBlackwell; Streamline integration; noWebGPU API."
+    },
+    {
+      "id": "S24",
+      "title": "NVIDIA DLSS programming guide",
+      "url": "https://raw.githubusercontent.com/NVIDIA/DLSS/main/doc/DLSS_Programming_Guide_Release.pdf",
+      "checked_date": "2026-10-08",
+      "published": "2026-03-31",
+      "kind": "official_sdk_guide",
+      "use": "RTXGPU+driver;Windows/Linux; nativeDX11/DX12/Vulkan integration. PDF search-index extract checked, directopenfailed."
+    },
+    {
+      "id": "S25",
+      "title": "AMD FSR SDK2.3",
+      "url": "https://gpuopen.com/amd-fsr-sdk/",
+      "checked_date": "2026-10-08",
+      "release_date": "2026-06",
+      "kind": "shipped_sdk",
+      "use": "FSRUpscaling4.1.1 ML RX9000/RX7000 discrete,Windows10/11 DX12 SM6.6; otherhardware analyticalFSR3.1.5; signedDLLs mandatory. RadianceCaching0.9 technicalpreview."
+    },
+    {
+      "id": "S26",
+      "title": "AMD FSR4.1 RDNA3 support SDK2.3 announcement",
+      "url": "https://gpuopen.com/learn/amd-fsr-sdk-2-3-blog/",
+      "checked_date": "2026-10-08",
+      "published": "2026-06-24",
+      "kind": "shipped_release",
+      "use": "RX7000 support shipped; not future roadmap."
+    },
+    {
+      "id": "S27",
+      "title": "AMD FSR Upscaling",
+      "url": "https://gpuopen.com/amd-fsr-upscaling/",
+      "checked_date": "2026-10-08",
+      "release_date": "2026-06",
+      "kind": "official_vendor_sdk_documentation",
+      "use": "4.1.1 constraints; 1080pworking set~81MB,4K~318MB vendorapproximation showsnonzero memoryoverhead."
+    },
+    {
+      "id": "S28",
+      "title": "AMD FSR4 original announcement",
+      "url": "https://gpuopen.com/learn/amd-fsr4-gpuopen-release/",
+      "checked_date": "2026-10-08",
+      "published": "2025-08-20",
+      "source_updated": "2025-11-24",
+      "kind": "historical_release",
+      "use": "4.0.2 RX9000-only was truehistorically; superseded4.1.1 RX7000 support."
+    },
+    {
+      "id": "S29",
+      "title": "Intel XeSS-SR Developer Guide2.0",
+      "url": "https://raw.githubusercontent.com/intel/xess/main/doc/xess_sr_developer_guide_english.md",
+      "checked_date": "2026-10-08",
+      "kind": "official_vendor_sdk_guide",
+      "use": "AItemporalSR;Win10/11x64;DX12IntelIrisXe+ orotherSM6.4/DP4a;DX11Arc+;Vulkan1.1 featurequery. UI after SR;inputcolor/motion/depth/jitter."
+    },
+    {
+      "id": "S30",
+      "title": "Apple MetalFX feature table",
+      "url": "https://developer.apple.com/metal/capabilities/",
+      "checked_date": "2026-10-08",
+      "source_updated": "2026-02-05",
+      "kind": "official_vendor_documentation",
+      "use": "Spatial,temporal,denoised/frameinterpolation havedifferentGPUfamily requirements; nativeMetalFX querysupport."
+    },
+    {
+      "id": "S31",
+      "title": "wgpu",
+      "url": "https://github.com/gfx-rs/wgpu",
+      "checked_date": "2026-10-08",
+      "kind": "official_repo",
+      "use": "NativeVulkan/Metal/D3D12;WasmWebGPU/WebGL2 withbest-effort/downlevel bounds. Rendererabstraction notDLSSentitlement."
+    },
+    {
+      "id": "S32",
+      "title": "Steam Deck and Steam Machine recommendations",
+      "url": "https://partner.steamgames.com/doc/steamhardware/recommendations",
+      "checked_date": "2026-10-08",
+      "kind": "official_platform_documentation",
+      "use": "Valve recommendsVulkan;ProtonDirectX→Vulkan. Steamdistribution doesnotchoosegraphicsAPI."
+    }
+  ]
+}

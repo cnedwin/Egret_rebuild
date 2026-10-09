@@ -1,0 +1,449 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-10-09",
+  "authority": "Goals confirmed by the user in this project discussion; see the delivery registry separately for implementation and acceptance",
+  "items": [
+    {
+      "id": "R001",
+      "title": "New AI creators",
+      "statement": "The first stage primarily serves new creators who use AI to make games. Opportunities for experienced mobile-game developers entering AI creation are also tested, without excluding people with no development experience.",
+      "status": "confirmed",
+      "sourceIds": [
+        "S001"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V003",
+        "V005"
+      ],
+      "decisionIds": [
+        "D011",
+        "D012"
+      ],
+      "doc": "docs/设计理念与定位.md"
+    },
+    {
+      "id": "R002",
+      "title": "Complex 2D and lightweight 3D",
+      "statement": "The initial phase covers both 2D games with complex UI and lightweight 3D games; specific scale, quality, and device budgets remain to be defined.",
+      "status": "confirmed",
+      "sourceIds": [
+        "S001"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V002",
+        "V004",
+        "V005"
+      ],
+      "decisionIds": [
+        "D002",
+        "D004",
+        "D007",
+        "D008"
+      ],
+      "doc": "docs/设计理念与定位.md"
+    },
+    {
+      "id": "R003",
+      "title": "Rendering and runtime core",
+      "statement": "The rendering engine and runtime are the project's central components, seeking an approach suitable for the present and continuous iteration over the next two to three years.",
+      "status": "confirmed",
+      "sourceIds": [
+        "S001"
+      ],
+      "deliveryIds": [
+        "V002",
+        "V011",
+        "V012"
+      ],
+      "decisionIds": [
+        "D001",
+        "D003",
+        "D005",
+        "D006",
+        "D010",
+        "D012"
+      ],
+      "doc": "docs/技术架构.md"
+    },
+    {
+      "id": "R004",
+      "title": "Mixed presentation capabilities",
+      "statement": "Support 3D scenes, characters, and effects while efficiently delivering complex 2D UI, skeletal animation, and frame-sequence animation.",
+      "status": "confirmed",
+      "sourceIds": [
+        "S001"
+      ],
+      "deliveryIds": [
+        "V002",
+        "V004"
+      ],
+      "decisionIds": [
+        "D002",
+        "D004",
+        "D007",
+        "D008",
+        "D009"
+      ],
+      "doc": "docs/渲染引擎与运行时.md"
+    },
+    {
+      "id": "R005",
+      "title": "Efficiency differentiation",
+      "statement": "Carry forward historical strengths in compact high-performance execution, loading, base runtime packages, complex UI, power, and heat to establish contemporary advantages; specific leads and thresholds require verification with shared samples.",
+      "status": "confirmed",
+      "sourceIds": [
+        "S001",
+        "S002"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V002",
+        "V004",
+        "V005"
+      ],
+      "decisionIds": [
+        "D001",
+        "D003",
+        "D006",
+        "D007",
+        "D009",
+        "D010"
+      ],
+      "doc": "docs/核心优势与验证.md"
+    },
+    {
+      "id": "R006",
+      "title": "AI-native toolchain",
+      "statement": "Combine Agent, Skills, MCP, and related ecosystems to help developers reduce cost, improve efficiency, and release creativity; specific interfaces, editors, and model choices await verification.",
+      "status": "confirmed",
+      "sourceIds": [
+        "S001"
+      ],
+      "deliveryIds": [
+        "V003",
+        "V005",
+        "V006"
+      ],
+      "decisionIds": [
+        "D011",
+        "D012"
+      ],
+      "doc": "docs/AI创作与工程接口.md"
+    },
+    {
+      "id": "R007",
+      "title": "Creation and platform delivery",
+      "statement": "Continue the integrated value of coding, UI, scenes, resources, animation, and platform publication for browsers, WeChat, Douyin, Meta Instant Games, Discord, Telegram, and native environments; initial order and support matrices are undetermined.",
+      "status": "confirmed",
+      "sourceIds": [
+        "S001",
+        "S002",
+        "S008"
+      ],
+      "deliveryIds": [
+        "V004",
+        "V005"
+      ],
+      "decisionIds": [
+        "D005",
+        "D009",
+        "D012"
+      ],
+      "doc": "docs/产品组成.md"
+    },
+    {
+      "id": "R008",
+      "title": "One-click AI migration of legacy projects",
+      "statement": "Ultimately enable one-click import of original Egret projects and automatic conversion to the new engine through AI Agents, minimizing manual edits and intervention and achieving perfect execution after migration; complete migration and comparison acceptance are formal deliverables.",
+      "status": "confirmed",
+      "sourceIds": [
+        "S001"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V002",
+        "V003",
+        "V004",
+        "V005",
+        "V006"
+      ],
+      "decisionIds": [
+        "D001",
+        "D006",
+        "D007",
+        "D008",
+        "D009",
+        "D012"
+      ],
+      "doc": "docs/旧工程迁移.md"
+    },
+    {
+      "id": "R009",
+      "title": "Continuing knowledge base and community",
+      "statement": "Establish a sustainably maintained structured knowledge base, continuously iterating design principles, technical architecture, product composition, core advantages, and delivery goals, and supporting more open-source community participants.",
+      "status": "confirmed",
+      "sourceIds": [
+        "S001"
+      ],
+      "deliveryIds": [
+        "V007"
+      ],
+      "decisionIds": [
+        "D012"
+      ],
+      "doc": "docs/知识库维护.md"
+    },
+    {
+      "id": "R010",
+      "title": "Iteration research and independent positioning",
+      "statement": "Study the last two years of iteration in Cocos, Laya, and Godot and changes in the industry ecosystem; learn problem-solving approaches to establish Egret's independent positioning and differentiated strengths.",
+      "status": "confirmed",
+      "sourceIds": [
+        "S001"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V007"
+      ],
+      "decisionIds": [
+        "D001",
+        "D002",
+        "D003",
+        "D004",
+        "D005",
+        "D006",
+        "D007",
+        "D008",
+        "D009",
+        "D010",
+        "D011",
+        "D012"
+      ],
+      "doc": "docs/竞品演进与生态.md"
+    },
+    {
+      "id": "R011",
+      "title": "Progressive design, research verification, and self-audit",
+      "statement": "Gradually refine, research, deliberate, and technically verify the technical white paper, product requirements document, and engineering plan; maintain clear logic, avoid hallucinations, conduct self-audit and verification, and continuously iterate evidence and design.",
+      "status": "confirmed",
+      "sourceIds": [
+        "S001"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V007",
+        "V008",
+        "V011",
+        "V012"
+      ],
+      "decisionIds": [
+        "D012"
+      ],
+      "doc": "docs/技术验证记录.md"
+    },
+    {
+      "id": "R012",
+      "title": "Mature open-source implementations first, with layered verification",
+      "statement": "When current environments cannot provide actual verification or exploration from scratch is too costly, first investigate mature GitHub implementations and repair records; expand rendering/runtime references to Three.js, Babylon.js, PlayCanvas, and others. Adopt established algorithms and mechanisms, focusing experiments on Egret adapters, differentiation, and real-device benefits to avoid redundant work. Execution is constrained by R015: research mature principles first, declare public libraries as explicit dependencies, and implement Egret core independently.",
+      "status": "confirmed",
+      "sourceIds": [
+        "S001"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V002",
+        "V004",
+        "V007",
+        "V008"
+      ],
+      "decisionIds": [
+        "D002",
+        "D003",
+        "D004",
+        "D005",
+        "D007",
+        "D008",
+        "D009",
+        "D010",
+        "D012"
+      ],
+      "doc": "docs/开源实现优先与验证分工.md"
+    },
+    {
+      "id": "R013",
+      "title": "Fast compilation, debugging, and continuous iteration",
+      "statement": "Optimize compilation, preview, and debugging waits for complex projects; study stable new TypeScript releases and replaceable build pipelines for rapid feedback during continuous human/AI edits. The historical time of under 30 seconds is not directly an accepted threshold for new projects.",
+      "status": "confirmed",
+      "sourceIds": [
+        "S033",
+        "S035"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V003",
+        "V005",
+        "V006",
+        "V008"
+      ],
+      "decisionIds": [
+        "D011",
+        "D012",
+        "D013"
+      ],
+      "doc": "docs/图形后端编译与原生Runtime选型.md"
+    },
+    {
+      "id": "R014",
+      "title": "Native SDK and cross-platform extension research",
+      "statement": "Continue native App and embedded SDK Runtime paths; research Rust/C++, script VMs, and third-party library updates. Preserve extension room for future PC/Steam, D3D11/12, Vulkan, Metal, and GPU AI. Specific languages/libraries, initial desktop scope, and performance benefits still require tradeoff verification.",
+      "status": "confirmed",
+      "sourceIds": [
+        "S033",
+        "S036",
+        "S037"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V002",
+        "V005",
+        "V008"
+      ],
+      "decisionIds": [
+        "D005",
+        "D006",
+        "D012",
+        "D014",
+        "D015"
+      ],
+      "doc": "docs/图形后端编译与原生Runtime选型.md"
+    },
+    {
+      "id": "R015",
+      "title": "Independent core implementation and open-source community trust",
+      "statement": "Design and implement Egret core independently from its own requirements and specifications; standards and open projects supply research foundations, while public infrastructure enters as explicit dependencies with versions, sources, notices, and modification records retained.",
+      "status": "confirmed",
+      "sourceIds": [
+        "S038"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V002",
+        "V003",
+        "V004",
+        "V005",
+        "V006",
+        "V007",
+        "V008",
+        "V011",
+        "V012"
+      ],
+      "decisionIds": [
+        "D001",
+        "D002",
+        "D003",
+        "D004",
+        "D005",
+        "D006",
+        "D007",
+        "D008",
+        "D009",
+        "D010",
+        "D011",
+        "D012",
+        "D013",
+        "D014",
+        "D015",
+        "D016"
+      ],
+      "doc": "docs/独立实现与第三方依赖规范.md"
+    },
+    {
+      "id": "R016",
+      "title": "Complete modern engineering architecture and Egret-style code standards",
+      "statement": "Redefine complete engineering architecture and code standards; retain Egret-style naming habits while allowing more rational modern project structure and APIs, giving developers familiarity without an old-style project form.",
+      "status": "confirmed",
+      "sourceIds": [
+        "S042"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V002",
+        "V003",
+        "V004",
+        "V005",
+        "V006",
+        "V007",
+        "V008",
+        "V011",
+        "V012"
+      ],
+      "decisionIds": [
+        "D016"
+      ],
+      "doc": "docs/工程技术架构与项目结构.md"
+    },
+    {
+      "id": "R017",
+      "title": "Start independent core implementation and investigate evidence gaps",
+      "statement": "Attempt to start writing the core framework and logic, identifying missing supporting evidence and subjects requiring research.",
+      "status": "confirmed",
+      "sourceIds": [
+        "S045"
+      ],
+      "deliveryIds": [
+        "V002",
+        "V009",
+        "V007",
+        "V010",
+        "V011",
+        "V012"
+      ],
+      "decisionIds": [
+        "D016"
+      ],
+      "doc": "docs/核心框架实现记录.md"
+    },
+    {
+      "id": "R018",
+      "title": "Public collaboration and professional communication from early development",
+      "statement": "Use public collaboration for code, design processes, documentation, and the knowledge base from early development. Communicate professionally and objectively; protect communication and materials unsuitable for publication; retain research references and acknowledgements; demonstrate Egret's independent design and innovation.",
+      "status": "confirmed",
+      "sourceIds": [
+        "S049"
+      ],
+      "deliveryIds": [
+        "V007",
+        "V008",
+        "V009"
+      ],
+      "decisionIds": [],
+      "doc": "docs/开源协作与公开表达规范.md"
+    },
+    {
+      "id": "R019",
+      "title": "Chinese/English public materials and pre-push checks",
+      "statement": "Before every GitHub push, complete English comments for critical code, organize all publishable documents and knowledge-base content, and provide complete Chinese and English reading documents and shared registered-status views. After completing the initial core source, documentation, and knowledge base, submit to the designated public repository.",
+      "status": "confirmed",
+      "sourceIds": [
+        "S051"
+      ],
+      "deliveryIds": [
+        "V007",
+        "V008",
+        "V009",
+        "V011",
+        "V012"
+      ],
+      "decisionIds": [],
+      "doc": "docs/双语文档与推送前检查.md"
+    }
+  ],
+  "_localization": {
+    "canonicalSource": "需求.json",
+    "canonicalSha256": "5dd2db500096aec3d3f9c2bbf620989cb6ccdb92073d571d67ffd6dd4f70a7d2",
+    "role": "read_only_translation",
+    "language": "en"
+  }
+}

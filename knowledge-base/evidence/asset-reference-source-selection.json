@@ -1,0 +1,574 @@
+{
+  "schema_version": 1,
+  "checked_at_utc": "2026-10-08T07:47:36Z",
+  "checked_date_local": "2026-10-08",
+  "timezone": "Asia/Kuala_Lumpur",
+  "purpose": "新白鹭真实资产参考链 Phase 3 来源选型；只提供固定来源与静态证据，供父代理后续获取和集成。",
+  "actions": {
+    "code_or_assets_saved_locally": false,
+    "remote_code_or_assets_executed": false,
+    "knowledge_base_modified": false,
+    "gate_D_approved": false
+  },
+  "boundaries": [
+    "仅读取官方 GitHub/API/源码与许可；未下载到本地、未运行引擎、未加载资产。",
+    "读取8个唯一源码/许可/资产核心文件；目录、release、tag和commit元数据另列。utils仅核实目录条目的路径/大小/git blob，不读取其内容。",
+    "维护状态仅代表核查当日仓库非归档、近期有推送且存在稳定 release；不代表官方长期支持承诺。",
+    "不据此宣称中文、手机、生产性能或资产加载成功；D仍须父代理按实际验收证据判断。",
+    "Git blob SHA不是原始文件的SHA-256；父代理下载时应另计算SHA-256，不得互换。"
+  ],
+  "three": {
+    "repository": "mrdoob/three.js",
+    "repository_url": "https://github.com/mrdoob/three.js",
+    "maintenance": {
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-10-08T07:42:12Z",
+      "default_branch": "dev",
+      "metadata_url": "https://api.github.com/repos/mrdoob/three.js"
+    },
+    "release": {
+      "tag": "r186",
+      "draft": false,
+      "prerelease": false,
+      "published_at": "2026-09-24T14:35:44Z",
+      "release_url": "https://github.com/mrdoob/three.js/releases/tag/r186",
+      "latest_api_url": "https://api.github.com/repos/mrdoob/three.js/releases/latest",
+      "tag_ref_api_url": "https://api.github.com/repos/mrdoob/three.js/git/ref/tags/r186",
+      "annotated_tag_object_sha": "48dd7be01263658aad497fd72e09d1e4c6213461",
+      "annotated_tag_object_api_url": "https://api.github.com/repos/mrdoob/three.js/git/tags/48dd7be01263658aad497fd72e09d1e4c6213461",
+      "commit_sha": "9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8",
+      "commit_url": "https://github.com/mrdoob/three.js/commit/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8",
+      "note": "r186 是核查时 API 指明的 latest 非预发布；annotated tag object SHA与代码 commit SHA必须区分。旧r180不能继续写为当前最新。"
+    },
+    "license": {
+      "spdx": "MIT",
+      "copyright": "Copyright © 2010-2026 three.js authors",
+      "source_url": "https://github.com/mrdoob/three.js/blob/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/LICENSE",
+      "download_url": "https://raw.githubusercontent.com/mrdoob/three.js/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/LICENSE",
+      "git_blob_sha": "8ada2a5f982916b0ba4b7a0aa7de347587e745d7",
+      "integration_requirement": "复制/实质部分分发须保留版权与许可告示；源码/构建头也标MIT。"
+    },
+    "browser_esm": {
+      "revision": "186",
+      "verified_core_static_imports": [],
+      "verified_core_dynamic_import_call_count": 0,
+      "verified_module_static_imports": [
+        "./three.core.js"
+      ],
+      "verified_module_export_sources": [
+        "./three.core.js"
+      ],
+      "animation_mixer_exported_by_core": true,
+      "animation_mixer_reexported_by_module": true,
+      "require_preserving_module_core_same_directory": true,
+      "bare_three_requires_import_map_or_bundler": true,
+      "proposed_import_map": {
+        "imports": {
+          "three": "./vendor/three/r186/build/three.module.js",
+          "three/addons/": "./vendor/three/r186/examples/jsm/"
+        }
+      },
+      "note": "浏览器ESM可用的静态依赖链已确认；未运行浏览器。直接使用AnimationMixer时从three导入即可，无需把src/animation/AnimationMixer.js作为单文件运行时另接入。",
+      "runtime_files": [
+        {
+          "repository_path": "build/three.core.js",
+          "git_blob_sha": "0a1d6cb9ef3cabc97a50bd02394c85e8d1c513c2",
+          "size_bytes": 1458113,
+          "download_url": "https://raw.githubusercontent.com/mrdoob/three.js/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/build/three.core.js",
+          "source_url": "https://github.com/mrdoob/three.js/blob/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/build/three.core.js",
+          "suggested_local_path": "vendor/three/r186/build/three.core.js",
+          "content_inspected": true,
+          "static_dependencies_verified": []
+        },
+        {
+          "repository_path": "build/three.module.js",
+          "git_blob_sha": "c52087acfabae80efabb8cc05e3a1d96e35a1426",
+          "size_bytes": 662772,
+          "download_url": "https://raw.githubusercontent.com/mrdoob/three.js/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/build/three.module.js",
+          "source_url": "https://github.com/mrdoob/three.js/blob/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/build/three.module.js",
+          "suggested_local_path": "vendor/three/r186/build/three.module.js",
+          "content_inspected": true,
+          "static_dependencies_verified": [
+            "./three.core.js"
+          ]
+        },
+        {
+          "repository_path": "examples/jsm/loaders/GLTFLoader.js",
+          "git_blob_sha": "cd95b20593264ba8b503f8152484c456be64b1af",
+          "size_bytes": 117570,
+          "download_url": "https://raw.githubusercontent.com/mrdoob/three.js/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/examples/jsm/loaders/GLTFLoader.js",
+          "source_url": "https://github.com/mrdoob/three.js/blob/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/examples/jsm/loaders/GLTFLoader.js",
+          "suggested_local_path": "vendor/three/r186/examples/jsm/loaders/GLTFLoader.js",
+          "content_inspected": true,
+          "static_dependencies_verified": [
+            "three",
+            "../utils/BufferGeometryUtils.js",
+            "../utils/SkeletonUtils.js"
+          ]
+        },
+        {
+          "repository_path": "examples/jsm/utils/BufferGeometryUtils.js",
+          "git_blob_sha": "a167e11b0558954a00960dc3cad00ead6476fbe7",
+          "size_bytes": 37712,
+          "download_url": "https://raw.githubusercontent.com/mrdoob/three.js/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/examples/jsm/utils/BufferGeometryUtils.js",
+          "source_url": "https://github.com/mrdoob/three.js/blob/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/examples/jsm/utils/BufferGeometryUtils.js",
+          "suggested_local_path": "vendor/three/r186/examples/jsm/utils/BufferGeometryUtils.js",
+          "content_inspected": false,
+          "static_dependencies_verified": null
+        },
+        {
+          "repository_path": "examples/jsm/utils/SkeletonUtils.js",
+          "git_blob_sha": "836c2e2bf2be3c5c5fd6b65ed260f84b3d589258",
+          "size_bytes": 11535,
+          "download_url": "https://raw.githubusercontent.com/mrdoob/three.js/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/examples/jsm/utils/SkeletonUtils.js",
+          "source_url": "https://github.com/mrdoob/three.js/blob/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/examples/jsm/utils/SkeletonUtils.js",
+          "suggested_local_path": "vendor/three/r186/examples/jsm/utils/SkeletonUtils.js",
+          "content_inspected": false,
+          "static_dependencies_verified": null
+        }
+      ],
+      "transitive_utils_import_audit_pending": true,
+      "transitive_utils_note": "GLTFLoader的两个utils必须保持同一r186 SHA和相对目录。其文件存在性、大小与git blob已确认，内容及传递imports未在8文件额度内审查；父代理下载后需检查并补齐传递依赖。",
+      "release_build_changes": [
+        "r186 移除 minified builds（#33893）；不要沿用three.module.min.js/three.core.min.js路径。",
+        "r186 CommonJS build已弃用（#33891）；本链选浏览器ESM。"
+      ]
+    },
+    "loader": {
+      "path": "examples/jsm/loaders/GLTFLoader.js",
+      "git_blob_sha": "cd95b20593264ba8b503f8152484c456be64b1af",
+      "source_url": "https://github.com/mrdoob/three.js/blob/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/examples/jsm/loaders/GLTFLoader.js",
+      "all_static_imports": [
+        {
+          "specifier": "three",
+          "names": [
+            "AnimationClip",
+            "Bone",
+            "Box3",
+            "BufferAttribute",
+            "BufferGeometry",
+            "ClampToEdgeWrapping",
+            "Color",
+            "ColorManagement",
+            "DirectionalLight",
+            "DoubleSide",
+            "FileLoader",
+            "FrontSide",
+            "Group",
+            "ImageBitmapLoader",
+            "InstancedMesh",
+            "InterleavedBuffer",
+            "InterleavedBufferAttribute",
+            "Interpolant",
+            "InterpolateDiscrete",
+            "InterpolateLinear",
+            "Line",
+            "LineBasicMaterial",
+            "LineLoop",
+            "LineSegments",
+            "LinearFilter",
+            "LinearMipmapLinearFilter",
+            "LinearMipmapNearestFilter",
+            "LinearSRGBColorSpace",
+            "Loader",
+            "LoaderUtils",
+            "Material",
+            "MathUtils",
+            "Matrix4",
+            "Mesh",
+            "MeshBasicMaterial",
+            "MeshPhysicalMaterial",
+            "MeshStandardMaterial",
+            "MirroredRepeatWrapping",
+            "NearestFilter",
+            "NearestMipmapLinearFilter",
+            "NearestMipmapNearestFilter",
+            "NumberKeyframeTrack",
+            "Object3D",
+            "OrthographicCamera",
+            "PerspectiveCamera",
+            "PointLight",
+            "Points",
+            "PointsMaterial",
+            "PropertyBinding",
+            "Quaternion",
+            "QuaternionKeyframeTrack",
+            "RepeatWrapping",
+            "Skeleton",
+            "SkinnedMesh",
+            "Sphere",
+            "SpotLight",
+            "Texture",
+            "TextureLoader",
+            "TriangleFanDrawMode",
+            "TriangleStripDrawMode",
+            "Vector2",
+            "Vector3",
+            "VectorKeyframeTrack",
+            "SRGBColorSpace",
+            "InstancedBufferAttribute"
+          ],
+          "line": 1
+        },
+        {
+          "specifier": "../utils/BufferGeometryUtils.js",
+          "names": [
+            "toTrianglesDrawMode"
+          ],
+          "line": 68
+        },
+        {
+          "specifier": "../utils/SkeletonUtils.js",
+          "names": [
+            "clone"
+          ],
+          "line": 69
+        }
+      ],
+      "r186_release_changes": [
+        {
+          "summary": "修复 EXT_mesh_gpu_instancing 自定义实例属性在节点间共享",
+          "pr": 33927
+        },
+        {
+          "summary": "无 skin attributes 时跳过 skinning",
+          "pr": 33988
+        },
+        {
+          "summary": "修复含 rotation 的 KHR_texture_transform",
+          "pr": 34033
+        }
+      ],
+      "latest_path_history": [
+        {
+          "sha": "07abea59aa700eed861f23ede39eaf3d892c93a4",
+          "date": "2026-08-08T09:39:27Z",
+          "summary": "Gaussian Splat renderer / loader using TSL for WebGPU/WebGL + glTF import (#33950)",
+          "url": "https://github.com/mrdoob/three.js/commit/07abea59aa700eed861f23ede39eaf3d892c93a4"
+        },
+        {
+          "sha": "490f2a7cbc241f4a775a0f65d90c73520531f426",
+          "date": "2026-07-14T08:50:35Z",
+          "summary": "GLTFLoader: Fix KHR_texture_transform support when rotation is specified (#34033)",
+          "url": "https://github.com/mrdoob/three.js/commit/490f2a7cbc241f4a775a0f65d90c73520531f426"
+        },
+        {
+          "sha": "ab12bf3088703864e955860d4aa618b811175fe4",
+          "date": "2026-07-09T08:16:37Z",
+          "summary": "GLTFLoader: Skip skinning without skin attributes (#33988)",
+          "url": "https://github.com/mrdoob/three.js/commit/ab12bf3088703864e955860d4aa618b811175fe4"
+        },
+        {
+          "sha": "5de29ca87de9a937c69813c48e01172c04b6e097",
+          "date": "2026-07-02T11:13:37Z",
+          "summary": "GLTFLoader: Fix EXT_mesh_gpu_instancing custom instance attributes shared across nodes (#33927)",
+          "url": "https://github.com/mrdoob/three.js/commit/5de29ca87de9a937c69813c48e01172c04b6e097"
+        },
+        {
+          "sha": "1bc073e857f4b467be083be66568598d2481eee1",
+          "date": "2026-06-29T11:21:18Z",
+          "summary": "BufferGeometryUtils: Let `toTrianglesDrawMode()`modify geometries in-place. (#33878)",
+          "url": "https://github.com/mrdoob/three.js/commit/1bc073e857f4b467be083be66568598d2481eee1"
+        }
+      ],
+      "observed_extra_dependency": "当前源码还导入SkeletonUtils.clone；不能照旧版清单只复制GLTFLoader与BufferGeometryUtils。",
+      "optional_decoders": "DRACO/KTX2/Meshopt属于需要时设置的可选解码器；选中RiggedSimple embedded没有extensionsUsed/Required，故静态资产内容不要求这些解码器。"
+    },
+    "animation_mixer": {
+      "path": "src/animation/AnimationMixer.js",
+      "git_blob_sha": "60272b79c8c000b9f156adea6a4274c7aeeac595",
+      "size_bytes": 19624,
+      "source_url": "https://github.com/mrdoob/three.js/blob/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/src/animation/AnimationMixer.js",
+      "download_url": "https://raw.githubusercontent.com/mrdoob/three.js/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/src/animation/AnimationMixer.js",
+      "static_imports": [
+        "./AnimationAction.js",
+        "../core/EventDispatcher.js",
+        "../math/interpolants/LinearInterpolant.js",
+        "./PropertyBinding.js",
+        "./PropertyMixer.js",
+        "./AnimationClip.js",
+        "../constants.js"
+      ],
+      "latest_path_history": [
+        {
+          "sha": "90d2cdd024e35a4f9f377de2484e15f212a4c48c",
+          "date": "2025-12-24T03:28:14Z",
+          "summary": "DEVTOOLS access to AnimationMixer + Loaders (#32616)",
+          "url": "https://github.com/mrdoob/three.js/commit/90d2cdd024e35a4f9f377de2484e15f212a4c48c"
+        },
+        {
+          "sha": "df8b3e1ae9d21235815d0b01f98b5c05c12bbfe7",
+          "date": "2025-09-12T20:30:16Z",
+          "summary": "Update AnimationMixer.js",
+          "url": "https://github.com/mrdoob/three.js/commit/df8b3e1ae9d21235815d0b01f98b5c05c12bbfe7"
+        },
+        {
+          "sha": "b948e1f23b4ee59fd270ce7987d1d7fb9899fca6",
+          "date": "2025-03-06T16:43:55Z",
+          "summary": "Docs: fix some typos (#30664)",
+          "url": "https://github.com/mrdoob/three.js/commit/b948e1f23b4ee59fd270ce7987d1d7fb9899fca6"
+        },
+        {
+          "sha": "1eabccd84b1a0050f9d1c57c941004ff263e63e4",
+          "date": "2025-02-27T17:33:31Z",
+          "summary": "Docs: Fix some typing (#30626)",
+          "url": "https://github.com/mrdoob/three.js/commit/1eabccd84b1a0050f9d1c57c941004ff263e63e4"
+        },
+        {
+          "sha": "ba08cab76a91a1f7975fb4712ccfe98e9ea38888",
+          "date": "2025-02-27T15:53:00Z",
+          "summary": "Docs: More JSDoc. (#30624)",
+          "url": "https://github.com/mrdoob/three.js/commit/ba08cab76a91a1f7975fb4712ccfe98e9ea38888"
+        }
+      ],
+      "latest_change_boundary": "固定r186的路径限定历史，最近条目为2025-12-24 DEVTOOLS access to AnimationMixer + Loaders (#32616)。当前源码构造器含__THREE_DEVTOOLS__观察事件。未逐版本做完整差异归因，不声称2026无任何相关动画系统变化。",
+      "relevant_api_methods": [
+        "clipAction",
+        "existingAction",
+        "stopAllAction",
+        "update",
+        "setTime",
+        "getRoot",
+        "uncacheClip",
+        "uncacheRoot",
+        "uncacheAction"
+      ],
+      "integration_notes": [
+        "创建mixer时root应是实际加载的gltf.scene。",
+        "GLTFLoader返回的animations交给clipAction(...).play()；逐帧以秒调用update(delta)。",
+        "销毁时stopAllAction()并uncacheRoot(root)；骨骼/几何/材质资源销毁仍由应用负责。"
+      ],
+      "integration_notes_status": "基于已读取源码方法与注释的集成建议，未执行。"
+    }
+  },
+  "asset": {
+    "repository": "KhronosGroup/glTF-Sample-Assets",
+    "repository_url": "https://github.com/KhronosGroup/glTF-Sample-Assets",
+    "model": "RiggedSimple",
+    "display_name": "Rigged Simple",
+    "asset_type": "轻量圆柱蒙皮网格；真实glTF皮肤与骨骼关键帧动画；不是具象人物角色。",
+    "pinned_commit_sha": "edc7c9e67c639d230715049ee31f9a96a6babbbe",
+    "pinned_commit_date": "2026-10-02T14:45:07Z",
+    "commit_url": "https://github.com/KhronosGroup/glTF-Sample-Assets/commit/edc7c9e67c639d230715049ee31f9a96a6babbbe",
+    "branch_metadata_url": "https://api.github.com/repos/KhronosGroup/glTF-Sample-Assets/branches/main",
+    "selected_variant": "glTF-Embedded",
+    "selected_path": "Models/RiggedSimple/glTF-Embedded/RiggedSimple.gltf",
+    "source_url": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/RiggedSimple/glTF-Embedded/RiggedSimple.gltf",
+    "download_url": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/RiggedSimple/glTF-Embedded/RiggedSimple.gltf",
+    "suggested_local_path": "assets/RiggedSimple/RiggedSimple.gltf",
+    "size_bytes": 25435,
+    "git_blob_sha": "66ce6107f8653fb324f17edd0e23405bf7b4a84f",
+    "resources": {
+      "embedded_buffers": 1,
+      "embedded_buffer_byte_length": 11136,
+      "embedded_uri_scheme": "data:application/octet-stream;base64,",
+      "external_resources": [],
+      "images": 0,
+      "textures": 0,
+      "extensions_used": [],
+      "extensions_required": []
+    },
+    "content_counts": {
+      "scenes": 1,
+      "nodes": 5,
+      "meshes": 1,
+      "mesh_primitives": 1,
+      "skins": 1,
+      "skin_joints": 2,
+      "joint_node_indices": [
+        3,
+        4
+      ],
+      "joint_node_names": [
+        "Bone",
+        "Bone.001"
+      ],
+      "inferred_three_bone_count": 2,
+      "inferred_three_bone_count_status": "由skin.joints及GLTFLoader创建Bone的静态逻辑推断；非运行时实例计数。",
+      "animation_clips": 1,
+      "animation_has_name": false,
+      "animation_channels": 3,
+      "animation_samplers": 3,
+      "animated_node_indices": [
+        4
+      ],
+      "animated_paths": [
+        "translation",
+        "rotation",
+        "scale"
+      ],
+      "keyframes_per_sampler": 50,
+      "interpolation": "LINEAR",
+      "time_accessor_index": 5,
+      "time_min_seconds": 0.04166661947965622,
+      "time_max_seconds": 2.083333015441895,
+      "expected_clip_duration_seconds": 2.083333015441895,
+      "expected_clip_duration_status": "按glTF最后关键帧及Loader/AnimationClip逻辑推断，未实际加载。",
+      "vertices": 160,
+      "index_count": 564,
+      "primitive_mode": 4,
+      "triangles": 188
+    },
+    "count_evidence": {
+      "animation_clips": "animations.length=1",
+      "animation_channels": "animations[0].channels.length=3; 三条都target node 4，分别translation/rotation/scale",
+      "joints": "skins[0].joints=[3,4]; nodes[3].name=Bone; nodes[4].name=Bone.001",
+      "real_skinning": "nodes[2]有mesh=0和skin=0；meshes[0].primitives[0].attributes含JOINTS_0=1和WEIGHTS_0=4",
+      "vertices": "POSITION accessor3.count=160",
+      "triangles": "primitive.mode=4(TRIANGLES)，indices accessor0.count=564，564/3=188",
+      "keyframes_and_time": "animations[0].samplers均input accessor5；accessor5.count=50/min/max如上；rotation输出accessor7的范围非恒定。",
+      "resources": "buffers仅1条data URI，byteLength=11136；无images/textures/extensionsUsed/extensionsRequired键。"
+    },
+    "license": {
+      "spdx": "CC-BY-4.0",
+      "name": "Creative Commons Attribution 4.0 International",
+      "artist": "Cesium",
+      "owner": "Cesium",
+      "year": "2017",
+      "scope": "Everything",
+      "license_source_url": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/RiggedSimple/LICENSE.md",
+      "license_download_url": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/RiggedSimple/LICENSE.md",
+      "license_git_blob_sha": "2a98e37252702a3dd4ddfa0d4e8d4c2e33e4641c",
+      "metadata_source_url": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/RiggedSimple/metadata.json",
+      "metadata_download_url": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/RiggedSimple/metadata.json",
+      "metadata_git_blob_sha": "09910327d943d6239e8875a86f164382f6d5d8f0",
+      "full_license_link": "https://creativecommons.org/licenses/by/4.0/legalcode",
+      "license_file_scope": "目录树模型关联的text/image/binary与metadocumentation均为CC-BY-4.0；排除logos及trademarks。",
+      "attribution_text": "Rigged Simple — Cesium (2017), CC BY 4.0. Source: KhronosGroup/glTF-Sample-Assets at edc7c9e67c639d230715049ee31f9a96a6babbbe.",
+      "integration_requirement": "随本地资产保留LICENSE.md和metadata.json；在可见归属/NOTICE中记录Cesium (2017)、CC BY 4.0及固定来源，修改时注明。完整条款链接来自模型许可文件，未另展开法律解释。",
+      "note": "不可标为CC0，也不把仓库级许可代替资产级许可。"
+    },
+    "alternative_external_variant_metadata_only": [
+      {
+        "path": "Models/RiggedSimple/glTF/RiggedSimple.gltf",
+        "size_bytes": 10567,
+        "git_blob_sha": "a8f3cabe330dc4fbd512d826969d5d065c1b9f58",
+        "download_url": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/RiggedSimple/glTF/RiggedSimple.gltf",
+        "content_inspected": false
+      },
+      {
+        "path": "Models/RiggedSimple/glTF/RiggedSimple0.bin",
+        "size_bytes": 11136,
+        "git_blob_sha": "dd3200d6ed19b94fab18fadaa622f099afad587b",
+        "download_url": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/RiggedSimple/glTF/RiggedSimple0.bin",
+        "content_inspected": false
+      }
+    ],
+    "selection_reason": "最少资源请求、骨骼/蒙皮/动画结构直接可查且很小，适合证明真实glTF加载与Mixer链路；无法据此验证复杂角色、表情、多个动作、重定向或手机性能。"
+  },
+  "core_files_inspected": [
+    {
+      "repository": "mrdoob/three.js",
+      "path": "LICENSE",
+      "commit_sha": "9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8",
+      "source_url": "https://github.com/mrdoob/three.js/blob/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/LICENSE",
+      "inspection": "固定SHA全文读取；module最初局部后补全文。"
+    },
+    {
+      "repository": "mrdoob/three.js",
+      "path": "build/three.module.js",
+      "commit_sha": "9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8",
+      "source_url": "https://github.com/mrdoob/three.js/blob/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/build/three.module.js",
+      "inspection": "固定SHA全文读取；module最初局部后补全文。"
+    },
+    {
+      "repository": "mrdoob/three.js",
+      "path": "build/three.core.js",
+      "commit_sha": "9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8",
+      "source_url": "https://github.com/mrdoob/three.js/blob/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/build/three.core.js",
+      "inspection": "GitHub blob API全文读取成功；contents API因>1MiB返回空，raw通用fetch受大小限制；已换blob而未落地。"
+    },
+    {
+      "repository": "mrdoob/three.js",
+      "path": "examples/jsm/loaders/GLTFLoader.js",
+      "commit_sha": "9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8",
+      "source_url": "https://github.com/mrdoob/three.js/blob/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/examples/jsm/loaders/GLTFLoader.js",
+      "inspection": "固定SHA全文读取；module最初局部后补全文。"
+    },
+    {
+      "repository": "mrdoob/three.js",
+      "path": "src/animation/AnimationMixer.js",
+      "commit_sha": "9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8",
+      "source_url": "https://github.com/mrdoob/three.js/blob/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/src/animation/AnimationMixer.js",
+      "inspection": "固定SHA全文读取；module最初局部后补全文。"
+    },
+    {
+      "repository": "KhronosGroup/glTF-Sample-Assets",
+      "path": "Models/RiggedSimple/metadata.json",
+      "commit_sha": "edc7c9e67c639d230715049ee31f9a96a6babbbe",
+      "source_url": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/RiggedSimple/metadata.json",
+      "inspection": "固定SHA全文读取；module最初局部后补全文。"
+    },
+    {
+      "repository": "KhronosGroup/glTF-Sample-Assets",
+      "path": "Models/RiggedSimple/LICENSE.md",
+      "commit_sha": "edc7c9e67c639d230715049ee31f9a96a6babbbe",
+      "source_url": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/RiggedSimple/LICENSE.md",
+      "inspection": "固定SHA全文读取；module最初局部后补全文。"
+    },
+    {
+      "repository": "KhronosGroup/glTF-Sample-Assets",
+      "path": "Models/RiggedSimple/glTF-Embedded/RiggedSimple.gltf",
+      "commit_sha": "edc7c9e67c639d230715049ee31f9a96a6babbbe",
+      "source_url": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/RiggedSimple/glTF-Embedded/RiggedSimple.gltf",
+      "inspection": "固定SHA全文读取；module最初局部后补全文。"
+    }
+  ],
+  "acquisition_plan": {
+    "performed": false,
+    "method": "父代理可按runtime_files固定raw URLs写入建议目录，保持build和examples/jsm相对结构。连同three LICENSE、RiggedSimple embedded/asset LICENSE.md/metadata.json留存；随后审查utils传递import并做浏览器加载。无需从默认dev或main分支运行文件。",
+    "proposed_files": [
+      {
+        "url": "https://raw.githubusercontent.com/mrdoob/three.js/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/build/three.core.js",
+        "path": "vendor/three/r186/build/three.core.js"
+      },
+      {
+        "url": "https://raw.githubusercontent.com/mrdoob/three.js/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/build/three.module.js",
+        "path": "vendor/three/r186/build/three.module.js"
+      },
+      {
+        "url": "https://raw.githubusercontent.com/mrdoob/three.js/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/examples/jsm/loaders/GLTFLoader.js",
+        "path": "vendor/three/r186/examples/jsm/loaders/GLTFLoader.js"
+      },
+      {
+        "url": "https://raw.githubusercontent.com/mrdoob/three.js/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/examples/jsm/utils/BufferGeometryUtils.js",
+        "path": "vendor/three/r186/examples/jsm/utils/BufferGeometryUtils.js"
+      },
+      {
+        "url": "https://raw.githubusercontent.com/mrdoob/three.js/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/examples/jsm/utils/SkeletonUtils.js",
+        "path": "vendor/three/r186/examples/jsm/utils/SkeletonUtils.js"
+      },
+      {
+        "url": "https://raw.githubusercontent.com/mrdoob/three.js/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/LICENSE",
+        "path": "vendor/three/r186/LICENSE"
+      },
+      {
+        "url": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/RiggedSimple/glTF-Embedded/RiggedSimple.gltf",
+        "path": "assets/RiggedSimple/RiggedSimple.gltf"
+      },
+      {
+        "url": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/RiggedSimple/LICENSE.md",
+        "path": "assets/RiggedSimple/LICENSE.md"
+      },
+      {
+        "url": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/RiggedSimple/metadata.json",
+        "path": "assets/RiggedSimple/metadata.json"
+      }
+    ],
+    "source_reference_only_file": {
+      "url": "https://raw.githubusercontent.com/mrdoob/three.js/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/src/animation/AnimationMixer.js",
+      "path": "src/animation/AnimationMixer.js",
+      "note": "源码审阅记录，不要求单独加入运行时。"
+    },
+    "pending_verification": [
+      "下载文件实际字节与新计算SHA-256",
+      "utils传递imports与本地ESM模块闭包",
+      "同源HTTP服务下loader完成/无网络缺失",
+      "实际gltf.animations、SkinnedMesh/skeleton.bones计数",
+      "AnimationMixer逐帧更新引起骨骼/顶点变化",
+      "资源清理行为",
+      "任务约定的验收Gate，尤其D"
+    ]
+  }
+}

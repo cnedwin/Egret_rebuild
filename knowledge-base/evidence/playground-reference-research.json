@@ -1,0 +1,57 @@
+{
+  "subject": "Google Playground / Unity Spark 对白鹭重构的产品参考",
+  "checked_on": "2026-10-08",
+  "scope": "仅官方公开材料；未登录、订阅、创作、下载导出包、运行示例或外部发布。",
+  "sources": [
+    {"id":"G1","url":"https://blog.google/innovation-and-ai/technology/ai/playground-experimental-gaming-platform/","title":"Introducing Playground: Create and play custom games","published_on":"2026-10-07","checked_on":"2026-10-08","relevant_lines":"267-286","type":"Google 官方发布"},
+    {"id":"U1","url":"https://unity.com/news/google-and-unity-partner-on-new-ai-gaming-platform-for-the-next-era-of-interactive-entertainment","title":"Google and Unity Partner on New AI Gaming Platform for the Next Era of Interactive Entertainment","published_on":"2026-10-07","checked_on":"2026-10-08","relevant_lines":"5-32","type":"Unity 官方发布；含前瞻声明"},
+    {"id":"U2","url":"https://unity.com/spark","title":"Unity Spark: AI Game Maker with a Real Editor (closed beta)","published_on":null,"checked_on":"2026-10-08","relevant_lines":"0-29","type":"Unity 产品页"},
+    {"id":"U3","url":"https://unity.com/blog/why-we-built-unity-spark","title":"Why we built Unity Spark","published_on":"2026-10-07","checked_on":"2026-10-08","relevant_lines":"11-18","type":"Unity CEO 官方博客"},
+    {"id":"G2","url":"https://playground.google/helpcenter","title":"Help Center - Playground","published_on":null,"checked_on":"2026-10-08","relevant_lines":"21-31,42-48,62,70-106,129-158,198-209","type":"Google 当前产品帮助；页面未展示发布日期"},
+    {"id":"G3","url":"https://playground.google/terms","title":"Playground Additional Terms of Service","last_modified":"2026-09-20","checked_on":"2026-10-08","relevant_lines":"17-25,30,41,48","type":"Google 官方条款"},
+    {"id":"G4","url":"https://playground.google/community-guidelines","title":"Community Guidelines","published_on":null,"checked_on":"2026-10-08","relevant_lines":"9-15,32-38","type":"Google 官方社区规则"}
+  ],
+  "official_claims": [
+    {"id":"C01","status":"announced_available","claim":"Playground 已于10月7日上线实验平台；自然语言生成并修改游戏。","sources":["G1","U1"]},
+    {"id":"C02","status":"announced_available","claim":"可从空白、starter prompts 或引导流程开始，生成后试玩；Google 博客确认 remix starter prompts。","sources":["G1"]},
+    {"id":"C03","status":"documented_current_not_tested","claim":"美国18岁以上；游玩免费；免费创作分批候补，Google One AI 订阅可立即创作并提高每周额度。创作需Google账号，相关社交功能用Play Games档案。","sources":["G2","G3"]},
+    {"id":"C04","status":"documented_current_not_tested","claim":"导出ZIP包含完整HTML、JavaScript、CSS、生成素材。","sources":["G2"]},
+    {"id":"C05","status":"documented_current_not_tested","claim":"可修改草稿或已发布游戏；修改暂存私有草稿，旧公开版继续可玩，再发布需明确操作。","sources":["G2"]},
+    {"id":"C06","status":"documented_current_not_tested","claim":"PNG/JPG参考图被AI转为风格化素材；原图不直接嵌入，视频不支持。","sources":["G2"]},
+    {"id":"C07","status":"documented_current_not_tested","claim":"支持停止生成；成功编译可玩才扣额度，失败或超时退款。","sources":["G2"]},
+    {"id":"C08","status":"documented_current_not_tested","claim":"回合与实时多人处于early preview；排行榜仅限公开单人游戏。","sources":["G2"]},
+    {"id":"C09","status":"documented_current_not_tested","claim":"Draft/Private/Unlisted/Listed控制可见性；公开需安全检查；支持关注创作者。","sources":["G2"]},
+    {"id":"C10","status":"announced_available","claim":"浏览器跨设备游玩、分享链接、Explore社区目录；评分与游玩活动参与推荐。","sources":["G1"]},
+    {"id":"C11","status":"future_plan","claim":"Spark尚在测试；closed beta即将到来，Unity公告计划今年晚些时候推出扩展创作体验。当前落地页为Coming Soon/候补并列展示demo。","sources":["G1","U1","U2"]},
+    {"id":"C12","status":"future_product_claim_not_tested","claim":"Spark计划带来专业机制、高保真3D及Unity runtime；CEO博客称直接连接Unity Asset Store、采用艺术家制作资产并支持打磨创意。","sources":["G1","U1","U3"]},
+    {"id":"C13","status":"future_distribution_claim","claim":"Unity公告称Google会在其网络突出展示优秀作品；不是已验证的曝光量、收入或各渠道实际分发成果。","sources":["U1"]},
+    {"id":"C14","status":"terms_boundary","claim":"Google不主张用户游戏所有权，保留其提供功能、服务与资产的权利；公开作品可能在其他Google产品被发现。","sources":["G3"]}
+  ],
+  "unknowns": [
+    {"topic":"current_engine","finding":"HTML/JS/CSS导出有官方依据；当前Playground所用渲染引擎、模型、agent循环、编译/执行实现未获这组公开资料证明。不能把未来Unity runtime陈述挪到当前平台。"},
+    {"topic":"source_and_project_editing","finding":"对话式持续编辑和源码ZIP导出已确认；IDE式源码编辑、可视化工程结构、导出后重导入和双向同步未确认。不能说平台没有这些能力。"},
+    {"topic":"Unity_and_third_party_import","finding":"这组官方资料未证明Playground导出包可直接导入Unity或第三方引擎；Spark工程文件/源码导出、转Unity Editor工作流也未确认。普通Unity导入导出文档不构成Spark证据。"},
+    {"topic":"remix_scope","finding":"官方明确remix starter prompts；未确认任意社区已发布游戏一键remix、素材许可继承及版本谱系。不能从starter prompt外推这些功能。"},
+    {"topic":"open_source","finding":"未取得平台/引擎核心源码仓库或开源许可证；用户游戏导出、技术概述、Google不主张游戏所有权，均不等于平台开源。"},
+    {"topic":"performance_and_maintainability","finding":"未实测复杂2D UI、轻量3D混排、持续20轮修改、离线运行、自部署、跨端性能或旧Egret迁移。编译可玩不等于需求/玩法/回归正确。"},
+    {"topic":"geography_and_pricing","finding":"当前官方上线范围是美国18+；各其他国家时间、具体订阅档位额度及Spark价格在本研究中未核实。不得把可浏览文档等同当地可创作。"},
+    {"topic":"third_party_distribution","finding":"条款提及第三方服务与其他Google产品，不足证明已开放第三方引擎接入API、通用作品导入或现成变现分成。"}
+  ],
+  "inferences_for_egret": [
+    {"type":"competitive_risk","finding":"AI新创作者与Playground目标重叠；仅包装提示词、生成demo、浏览器试玩或源码导出，已有直接竞争压力。依据已公布能力，非市场份额预测。"},
+    {"type":"competitive_risk","finding":"资产、创作、发布、发现、社交反馈与未来专业工具连成一条路，可能影响新创作者入口选择。Google实际分发效果与Spark转化仍未知。"},
+    {"type":"lesson","finding":"把首次可玩作为入门完成标志，以starter/引导减少空白页负担；允许小步指令修改，并让用户立即试玩确认。"},
+    {"type":"lesson","finding":"把生成任务、私有草稿、稳定公开版拆开；取消/失败成本可理解、再发布可控。白鹭可将编译可玩进一步扩展为具体操作验收与回归。"},
+    {"type":"lesson","finding":"出口与进阶路径从第一版设计：创作者随时拿到工程，由浅入深进入UI树、状态与资源编辑；资产许可与来源随工程保存。"},
+    {"type":"differentiation_hypothesis","finding":"聚焦复杂2D UI与轻量3D共存：AI修改可定位到面板/组件/状态/资源，数十轮后仍可维护；必须以同题长期修改实验证明，不能声称竞品做不到。"},
+    {"type":"differentiation_hypothesis","finding":"开源独立核心的价值应落在可本地构建、自部署、模型可换、格式可迁移及无账号仍保有项目；这些是白鹭拟建立的能力，非现状确认。"},
+    {"type":"differentiation_hypothesis","finding":"旧Egret完整AI迁移应围绕项目资产、UI、脚本、事件、平台接口及行为验收形成可审计流水线；这组竞品材料未证明或否定相关能力。"},
+    {"type":"scope_advice","finding":"先闭合创作→试玩→局部修改→保留/导出→分享反馈，社区与分发按验证扩展；不能因大厂专业3D计划而让白鹭首阶段同时重造通用3D引擎、资产市场和社交平台。"}
+  ],
+  "suggested_experiments_not_performed": [
+    "同一复杂2D UI+轻量3D题目：首次可玩后连续修改20轮，统计需求完成、误改、回归失败、人工修复与耗时。",
+    "取得授权测试账号后检查源码ZIP依赖、离线可运行性、二次编辑、重导入及发布依赖；本次未执行。",
+    "以真实授权旧Egret项目迁移，对齐截图、操作路径、状态变迁、资源与目标平台行为，不以编译通过作为完整迁移。"
+  ],
+  "search_boundaries": "官方博客、公告、产品页、Help Center、Terms、Community Guidelines；针对Spark编辑/导出、Playground remix/开源等官方域名搜索未得到补充证明。缺少搜索结果不证明产品缺少能力。"
+}

@@ -1,0 +1,186 @@
+{
+  "schemaVersion": 1,
+  "title": "Shaders 与 Playground 产品技术启发有限文件审阅",
+  "reviewedAtUtc": "2026-10-08 10:12:25 UTC",
+  "knowledgeBaseVersion": "0.6.2",
+  "reviewerRole": "Agent独立于知识库本轮整合编辑；本agent前一阶段参与Playground研究记录编写，本轮是对八文件整合的一致性审阅，不能代替该研究的另一人重做来源核查。",
+  "verdict": "passed_with_stated_scope",
+  "scope": {
+    "mode": "read_only_finite_document_review",
+    "filesCount": 8,
+    "filesOnly": [
+      "docs/Shaders与Playground产品技术启发.md",
+      "evidence/shaders-reference-research.json",
+      "evidence/playground-reference-research.json",
+      "当前版本.json",
+      "README.md",
+      "CHANGELOG.md",
+      "registry/来源.json",
+      "registry/决策.json"
+    ],
+    "focus": "事实/未来计划/建议/未测试边界；源码导出与持续编辑竞争基线；Shaders归属、WebGPU-only与device/pass边界；R015及候选状态。",
+    "researchExpanded": false,
+    "upstreamSourcesReopened": false,
+    "knowledgeBaseModified": false,
+    "productExecuted": false,
+    "experimentsRun": false,
+    "installed": false,
+    "loggedIn": false,
+    "subscribed": false,
+    "exportedGame": false,
+    "publishedExternally": false
+  },
+  "reviewedFileHashes": [
+    {
+      "path": "docs/Shaders与Playground产品技术启发.md",
+      "sha256": "121701f00e0fed5d7f4815d36ee693c57158604d930c0527d8c3c12b6a8e843f"
+    },
+    {
+      "path": "evidence/shaders-reference-research.json",
+      "sha256": "1ee430a9fc37b04c73016c5b85c1419b03fcbf799a5dcf57b7190b763a4479f9"
+    },
+    {
+      "path": "evidence/playground-reference-research.json",
+      "sha256": "970d31b0ffbb4f9befe84ca7d6a3931a334f623fdb249e8591197a6f2e612b29"
+    },
+    {
+      "path": "当前版本.json",
+      "sha256": "361c5e5524081252f8c4056dca43638d9339682b11cfb0763d6ea8ce456fe432"
+    },
+    {
+      "path": "README.md",
+      "sha256": "95ec0ed26ed48674c44adfb558e7d3d3a25e82baa9a34110789b56cca200fbef"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "sha256": "dd1971cb4822b2522afcc8c446b8d3aa1e0ab965827e0d403012a3183f8c9d89"
+    },
+    {
+      "path": "registry/来源.json",
+      "sha256": "60238aabd14107de38ed11be0fb34680493233eb5140795e547812a51eb6a17e"
+    },
+    {
+      "path": "registry/决策.json",
+      "sha256": "873f09479fbc020c917c85555144d8b8275699526ce087eb5611e6cb7e676056"
+    }
+  ],
+  "checks": [
+    {
+      "id": "N01",
+      "verdict": "pass",
+      "topic": "当前Playground与Spark未来能力",
+      "locations": [
+        "docs/Shaders与Playground产品技术启发.md 已核实的范围",
+        "evidence/playground-reference-research.json C11/C12/current_engine",
+        "registry/来源.json S041",
+        "CHANGELOG.md 0.6.2"
+      ],
+      "finding": "当前生成/修改/浏览器试玩与计划中的Spark专业3D/Unity runtime分开；当前Playground引擎被明确留为未知，没有未来能力挪用。"
+    },
+    {
+      "id": "N02",
+      "verdict": "pass",
+      "topic": "源码导出与持续修改竞争基线",
+      "locations": [
+        "docs/Shaders与Playground产品技术启发.md 从首次可玩走向持续创作",
+        "evidence/playground-reference-research.json C04/C05",
+        "README.md 第一批需要共同解决的问题"
+      ],
+      "finding": "明确HTML/JS/CSS/生成资产ZIP、草稿与旧公开版分开、持续编辑是已有官方依据的竞争基线，没有写成白鹭独有能力。"
+    },
+    {
+      "id": "N03",
+      "verdict": "pass",
+      "topic": "源码导出不等于平台开源或工程往返",
+      "locations": [
+        "docs/Shaders与Playground产品技术启发.md 已核实的范围",
+        "evidence/playground-reference-research.json open_source/source_and_project_editing/Unity_and_third_party_import",
+        "registry/来源.json S041"
+      ],
+      "finding": "离线、自部署、重导入、Unity与第三方工程互通未被误报为已证实；unknown未写成竞品没有。"
+    },
+    {
+      "id": "N04",
+      "verdict": "pass",
+      "topic": "Shaders作者与开源/内容边界",
+      "locations": [
+        "docs/Shaders与Playground产品技术启发.md 已核实的范围/效果应成为工程资产",
+        "evidence/shaders-reference-research.json authorship/counts/O1",
+        "registry/来源.json S040",
+        "CHANGELOG.md 0.6.2"
+      ],
+      "finding": "Evan You归属无一手证据保持未知；Simon/Shader Effects Inc.归属与200+展示口径分别说明；MIT软件与编辑器/Pro内容边界未混为全开源。"
+    },
+    {
+      "id": "N05",
+      "verdict": "pass",
+      "topic": "WebGPU-only与device注入/pass互操作",
+      "locations": [
+        "docs/Shaders与Playground产品技术启发.md 已核实的范围/效果应成为工程资产",
+        "evidence/shaders-reference-research.json C2-C5/O3-O5/boundaries",
+        "registry/来源.json S040"
+      ],
+      "finding": "固定v4.0.2没有WebGL回退；compute/RTT/final pass不是单pass或性能结论；GPUDevice共享/注入未外推到已有pass、render target、调度或最终呈现互操作。仅核对所含静态证据摘要，本轮未重读上游源码或执行。"
+    },
+    {
+      "id": "N06",
+      "verdict": "pass",
+      "topic": "R015与提案效力",
+      "locations": [
+        "docs/Shaders与Playground产品技术启发.md 效果应成为工程资产/末段",
+        "当前版本.json codeOriginPolicy",
+        "README.md 如何判断一条记录的效力",
+        "registry/来源.json S038/S040/S041",
+        "registry/决策.json D001-D015/D009/D011/D012"
+      ],
+      "finding": "自主核心独立实现、公共库明确归属的规则持续保留；不接受Shaders作为自主渲染内核。D001-D015仍proposed、acceptedAt/reviewer为空；相关研究只附到D009/D011/D012，不越级批准。"
+    },
+    {
+      "id": "N07",
+      "verdict": "pass",
+      "topic": "研究与历史测试/产品实现边界",
+      "locations": [
+        "docs/Shaders与Playground产品技术启发.md 首段/差异化必须落到可比较的任务",
+        "evidence/shaders-reference-research.json validation",
+        "evidence/playground-reference-research.json scope/suggested_experiments_not_performed",
+        "当前版本.json",
+        "README.md",
+        "CHANGELOG.md 0.6.2"
+      ],
+      "finding": "本轮未运行与先前已有参考链执行分开；当前版本仍engineImplementation not_started，核心性能/创作者/迁移/生产宿主验收false，newExperimentsRunThisRevision false；未将静态研究提升为运行、性能或完整产品证据。"
+    },
+    {
+      "id": "N08",
+      "verdict": "pass",
+      "topic": "候选差异化与后续验证",
+      "locations": [
+        "docs/Shaders与Playground产品技术启发.md 差异化必须落到可比较的任务",
+        "evidence/playground-reference-research.json inferences_for_egret",
+        "registry/决策.json relatedResearch"
+      ],
+      "finding": "复杂UI+轻量3D多轮维护、工程自主性、旧Egret迁移被表达为白鹭拟建立并待任务验证的能力；没有竞品无法实现断言，也没有新增确认工期/预算/交付。"
+    },
+    {
+      "id": "N09",
+      "verdict": "pass",
+      "topic": "版本与来源接线",
+      "locations": [
+        "当前版本.json",
+        "README.md",
+        "CHANGELOG.md 0.6.2",
+        "registry/来源.json S040/S041",
+        "registry/决策.json D009/D011/D012"
+      ],
+      "finding": "八文件整合均指向KB0.6.2与本轮两份研究记录；Shaders记录的KB0.6.1是研究时由parent提供的上下文，不被当作当前KB版本。主设计文档仍0.5.1候选的声明在八文件中一致。"
+    }
+  ],
+  "necessaryCorrections": [],
+  "nonblockingNotes": [
+    "本轮是八文件声明和整合边界核对，没有验证CHANGELOG所述459个历史摘要、历史快照完整性或历史实验计数。",
+    "没有读取registry/需求.json、registry/假设.json、registry/交付.json或R015规范全文；对其状态只核对指定文件声明，不能称登记册全量审计。",
+    "Playground官方事实已在前阶段公开资料核查；本轮未重新浏览。Shaders技术事实本轮只核对证据JSON固定提交/文件范围与文档措辞，不能当上游实现重新审计。",
+    "报告八文件SHA256只固定本轮所读字节；不证明未纳入范围的知识库文件、代码归属、许可合规或产品功能。"
+  ],
+  "conclusion": "在上述有限范围内，没有发现需要更正的事实越界、未来计划误报、测试越级或R015核心规则变化；无需修改知识库。",
+  "validationStatement": "Only local file reading, JSON parsing and SHA256 hashing for document review. No product, package, engine, browser demo, source experiment or test suite was run."
+}

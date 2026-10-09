@@ -1,0 +1,247 @@
+{
+  "runId": "5e478aac-c48a-4c2b-85f0-cf0053255da7",
+  "createdAt": "2026-10-08T08:12:57.516Z",
+  "counts": {
+    "executed": 12,
+    "passed": 12,
+    "failed": 0
+  },
+  "results": [
+    {
+      "id": "real-skinned-animation",
+      "input": "RiggedSimple; fixed seconds 0 and 0.7",
+      "expected": "1 skinned mesh, 2 bones, >1000 colored pixels and changed pose/pixels",
+      "breakCaught": "Dropping real loader, scene normalization, or mixer update",
+      "status": "passed",
+      "actual": {
+        "bones": 2,
+        "beforeColored": 7311,
+        "afterColored": 7214,
+        "changedBytes": 29150
+      }
+    },
+    {
+      "id": "independent-shared-instances",
+      "input": "2 instances; pose offsets 0 / 0.7",
+      "expected": "Shared geometry/material, distinct skeleton/bones/mixers and distinct sampled poses",
+      "breakCaught": "Sharing skeleton or mixer instance",
+      "status": "passed",
+      "actual": {
+        "geometryShared": true,
+        "materialShared": true,
+        "independentPose": true
+      }
+    },
+    {
+      "id": "last-release-lifecycle",
+      "input": "Acquire twice, release first, render second, release last",
+      "expected": "No first-release shared dispose; second visible; exactly 1 final geometry/material dispose; released roots/mixers null",
+      "breakCaught": "Eager shared disposal or retained instance roots",
+      "status": "passed",
+      "actual": {
+        "firstReleaseSharedDisposes": 0,
+        "finalGeometryDisposes": 1,
+        "finalMaterialDisposes": 1
+      }
+    },
+    {
+      "id": "ui-three-handoff",
+      "input": "Clean frame 0.7; 12 UI/3D frame handoffs; no-UI 0.7",
+      "expected": "Exact 3D-region byte equality, nonblank Canvas UI region, gl.NO_ERROR",
+      "breakCaught": "Missing renderer.resetState or incomplete explicit UI GL state",
+      "status": "passed",
+      "actual": {
+        "handoffs": 12,
+        "threeRegionEqual": true,
+        "uiColored": 12288,
+        "nativeTextBrightPixels": 743,
+        "glError": 0
+      }
+    },
+    {
+      "id": "native-text-cache-epoch",
+      "input": "Exact raw string \"白鹭 é 👩‍💻  \"; same style/resolution then epoch 1",
+      "expected": "Native measureText/fillText preserve raw; same cache reused; epoch regenerates Canvas texture",
+      "breakCaught": "Normalizing raw text or omitting fontEpoch from cache key",
+      "status": "passed",
+      "actual": {
+        "raw": "白鹭 é 👩‍💻  ",
+        "measureCalls": 4,
+        "fillCalls": 4,
+        "epochRegenerated": true,
+        "styleRegenerated": true,
+        "resolutionRegenerated": true,
+        "rasterWidth": 400
+      }
+    },
+    {
+      "id": "required-extension-policy",
+      "input": "Real asset JSON plus Egret_unknown_required in extensionsRequired",
+      "expected": "Rejected before loader success with unsupported required extension",
+      "breakCaught": "Ignoring required extension policy",
+      "status": "passed",
+      "actual": {
+        "message": "Unsupported required extension: Egret_unknown_required"
+      }
+    },
+    {
+      "id": "optional-extension-policy",
+      "input": "Real asset JSON plus Egret_unknown_optional only in extensionsUsed",
+      "expected": "Ignored optional extension still displays real skinned asset",
+      "breakCaught": "Over-rejecting optional extensions",
+      "status": "passed",
+      "actual": {
+        "colored": 7214
+      }
+    },
+    {
+      "id": "actual-context-restore",
+      "input": "WEBGL_lose_context; render 0.7, lose, restore, render 0.7",
+      "expected": "Lost render rejects; fixed mesh AND UI pixels return exactly, UI regenerated",
+      "breakCaught": "Missing lost guard, UI resource recreation, or source text regeneration",
+      "status": "passed",
+      "actual": {
+        "meshEqual": true,
+        "uiEqual": true,
+        "nativeTextBrightPixels": 568,
+        "regenerated": true,
+        "status": "ready",
+        "cleanupError": 0
+      }
+    },
+    {
+      "id": "disposed-owner",
+      "input": "Acquire, render, dispose twice; render/acquire after disposal",
+      "expected": "Reject post-dispose operations, no instance/bundle/UI roots; no restore listener effect",
+      "breakCaught": "Leaving owner roots or listeners alive",
+      "status": "passed",
+      "actual": {
+        "status": "disposed",
+        "instances": 0,
+        "rootsCleared": true
+      }
+    },
+    {
+      "id": "aborted-initialization",
+      "input": "Abort immediately while embedded asset fetch/parse initializes",
+      "expected": "Creation rejects AbortError; no ready chain",
+      "breakCaught": "Ignoring cancellation during initialization",
+      "status": "passed",
+      "actual": {
+        "message": "signal is aborted without reason"
+      }
+    },
+    {
+      "id": "aborted-ready-owner",
+      "input": "Abort signal after loaded chain renders",
+      "expected": "Ready owner disposes and further render rejects",
+      "breakCaught": "Ignoring cancellation after ownership becomes ready",
+      "status": "passed",
+      "actual": {
+        "status": "disposed"
+      }
+    },
+    {
+      "id": "late-parsed-owner-abort",
+      "input": "Abort after the real GLTFLoader resolves parsed asset, before renderer allocation",
+      "expected": "Reject AbortError, dispose parsed geometry once, zero WebGL allocation",
+      "breakCaught": "Ignoring late initialization ownership invalidation",
+      "status": "passed",
+      "actual": {
+        "message": "Asset owner aborted",
+        "realParsed": true,
+        "geometryDisposals": 1,
+        "webglAllocations": 0
+      }
+    }
+  ],
+  "environment": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36 Edg/154.0.0.0",
+    "webgl": "WebGL2",
+    "canvas": [
+      640,
+      400
+    ],
+    "devicePixelRatio": 1
+  },
+  "limits": [
+    "Desktop browser integration reference only",
+    "No timing, power, mobile, production-host, full 2D or engine migration acceptance",
+    "System-font Canvas smoke test does not establish CJK coverage, IME correctness or text performance"
+  ],
+  "label": "green-final",
+  "browserVersion": "154.0.4258.62",
+  "launchMode": "installed_edge_fresh_test_profile",
+  "pageErrors": [],
+  "consoleDiagnostics": [],
+  "sourceHashes": [
+    {
+      "path": "reference-chain.mjs",
+      "sha256": "2527e55344d0c59762598e6fdd1e746d150469f5812b6611c20e9cd3c3ba2652"
+    },
+    {
+      "path": "ui-pass.mjs",
+      "sha256": "3c95423e6a3d03e39adb146bcd354211789b16a4ee586fd567de58a159481b00"
+    },
+    {
+      "path": "integration-tests.mjs",
+      "sha256": "c083c6b21ea8bcaf7a7e4ff4f66b801ca288a0123904e3e9a92b99e75bbf8257"
+    },
+    {
+      "path": "probe.js",
+      "sha256": "e344c9e9edb72416765b8d49f75df8a55acf045c7ab01c85e29c5a2a3f4fe150"
+    },
+    {
+      "path": "index.html",
+      "sha256": "6d4e4b854eaaefb22534832754a2c2d9ef3077acbaa4c44af39b8d0e380ba818"
+    },
+    {
+      "path": "server.mjs",
+      "sha256": "45a873ef3b4417f174684c84d4be25beb2e1fee6099e59a1cad55ea2bf2ca027"
+    },
+    {
+      "path": "run-headless.cjs",
+      "sha256": "2db7aa7442dd5645bbaf44f19f8be9873e62702c04af59709df28165f7b5640c"
+    },
+    {
+      "path": "sources.json",
+      "sha256": "3eeec51b8536e99103464b5848b975c105d980261be072b52db3669767f88997"
+    },
+    {
+      "path": "vendor/three/r186/build/three.core.js",
+      "sha256": "9edde002b066a9a05676a6127f67735b62baf399bdea529f2f7e31657da769e6"
+    },
+    {
+      "path": "vendor/three/r186/build/three.module.js",
+      "sha256": "9052042d676cb0fdc1ddfefe193053f34b7ac0513a616fdac4535d49987812ea"
+    },
+    {
+      "path": "vendor/three/r186/examples/jsm/loaders/GLTFLoader.js",
+      "sha256": "131c0f78c01d19368ae495caa65b3adaa10487810a36a05bb5901b769a35ac16"
+    },
+    {
+      "path": "vendor/three/r186/examples/jsm/utils/BufferGeometryUtils.js",
+      "sha256": "9fb63427ce6641fa14fd0baff9cc4d1b5f9c3d85fd084bf2e90e803c44ec1797"
+    },
+    {
+      "path": "vendor/three/r186/examples/jsm/utils/SkeletonUtils.js",
+      "sha256": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f"
+    },
+    {
+      "path": "vendor/three/r186/LICENSE",
+      "sha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc"
+    },
+    {
+      "path": "assets/RiggedSimple/RiggedSimple.gltf",
+      "sha256": "dad924deb693a8d00e566ccc495042183cbc8c927c56d976ae760077321bca39"
+    },
+    {
+      "path": "assets/RiggedSimple/LICENSE.md",
+      "sha256": "4343fbd97e5ecfc4c872a85cb1d755a3006f8848e15135fd6c4534839909bdbb"
+    },
+    {
+      "path": "assets/RiggedSimple/metadata.json",
+      "sha256": "ba12c1f9a24124bdfbd171528db2eece6edbb7c75a7192dadfb043212067c664"
+    }
+  ]
+}

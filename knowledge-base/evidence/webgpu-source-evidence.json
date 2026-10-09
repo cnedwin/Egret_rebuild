@@ -1,0 +1,185 @@
+{
+  "schemaVersion": 1,
+  "checkedOn": "2026-10-09",
+  "scope": "Curated consulted-primary-source and dependency provenance. The source register originated in design 0.4; current implementation status is separate.",
+  "historicalRegisterReceipt": {
+    "identity": "historical-design-source-register-0.4",
+    "sha256": "ec256c679db5d0b12271f3e209bde22527f0123e1e27e914a4c48121421cc5b7",
+    "bytes": 19164,
+    "status": "identity_only_not_distributed"
+  },
+  "primarySources": [
+    {
+      "url": "https://github.com/mourner/robust-predicates/tags",
+      "kind": "maintainer version list read",
+      "version": "latest visible tag v3.0.3, 2026-03-22, short commit 8bed7fa",
+      "supports": "Pinned candidate identity",
+      "limits": "GitHub visible latest is not verified npm dist-tag latest"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/mourner/robust-predicates/v3.0.3/package.json",
+      "kind": "tagged maintainer metadata read",
+      "version": "3.0.3",
+      "supports": "ESM, public root export, declared index.d.ts, Unlicense, no runtime dependency entries",
+      "limits": "Declared artifacts are not installed/typechecked in this design"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/mourner/robust-predicates/v3.0.3/README.md",
+      "kind": "tagged maintainer public API documentation read",
+      "version": "v3.0.3",
+      "supports": "orient2d signature, downward-y convention, robust sign, approximate determinant magnitude",
+      "limits": "Not an exact intersection constructor or arbitrary finite-number proof; no implementation source copied"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/mourner/robust-predicates/v3.0.3/LICENSE",
+      "kind": "tagged license read",
+      "version": "v3.0.3 Unlicense",
+      "supports": "Upstream license declaration to retain"
+    },
+    {
+      "url": "https://gpuweb.github.io/types/interfaces/GPUCanvasContext.html",
+      "kind": "primary generated API reference read",
+      "version": "live page accessed 2026-10-09",
+      "supports": "configure/unconfigure and current texture may be reused until expiry; texture acquisition is not allocation proof"
+    },
+    {
+      "url": "https://gpuweb.github.io/types/interfaces/GPUCanvasConfiguration.html",
+      "kind": "primary generated API reference read",
+      "version": "live page accessed 2026-10-09",
+      "supports": "Actual format, srgb colorSpace, premultiplied alphaMode, custom usage must include render attachment"
+    },
+    {
+      "url": "https://gpuweb.github.io/types/interfaces/GPUQueue.html",
+      "kind": "primary generated API reference read",
+      "version": "live page accessed 2026-10-09",
+      "supports": "Submission schedules queue work, completion snapshot, map-before-fence relation",
+      "limits": "No physical presentation guarantee"
+    },
+    {
+      "url": "https://gpuweb.github.io/types/interfaces/GPUDevice.html",
+      "kind": "primary generated API reference read",
+      "version": "live page accessed 2026-10-09",
+      "supports": "Device queue/limits/lost, pipeline creation, scoped and uncaptured errors, own destruction consequences",
+      "limits": "Conservative close quarantine and exclusive borrowed lease are application policy"
+    },
+    {
+      "url": "https://gpuweb.github.io/types/interfaces/GPUBuffer.html",
+      "kind": "primary generated API reference read",
+      "version": "live page accessed 2026-10-09",
+      "supports": "Mapping, mapped range, unmap and destroy lifecycle"
+    },
+    {
+      "url": "https://gpuweb.github.io/types/interfaces/GPUTexelCopyBufferLayout.html",
+      "kind": "primary generated API reference read",
+      "version": "live page accessed 2026-10-09",
+      "supports": "Texture-buffer row pitch layout; full padded rows used conservatively"
+    },
+    {
+      "url": "https://www.w3.org/TR/WGSL/",
+      "kind": "W3C publication identity read",
+      "version": "Candidate Recommendation Draft 21 September 2026",
+      "immutableUrl": "https://www.w3.org/TR/2026/CRD-WGSL-20260921/",
+      "supports": "WGSL publication/version authority",
+      "limits": "Planned first-party shader has not been compiled or run"
+    },
+    {
+      "url": "https://registry.npmjs.org/robust-predicates/3.0.3",
+      "kind": "official exact-version registry response, recorded artifact audit",
+      "version": "3.0.3",
+      "supports": "Exact tarball URL, SRI and manifest identity",
+      "limits": "See recorded exact-version artifact audit; no latest dist-tag claim"
+    },
+    {
+      "url": "https://registry.npmjs.org/robust-predicates/-/robust-predicates-3.0.3.tgz",
+      "kind": "official exact-version tarball, recorded artifact audit",
+      "version": "3.0.3",
+      "sha256": "54952e6a8c9e69e404f9be09bfb92a68482cf77702283399a44a689d67ba661c",
+      "bytes": 40820,
+      "integrity": "sha512-NS3levdsRIUOmiJ8FZWCP7LG3QpJyrs/TE0Zpf1yvZu8cAJJ6QMW92H1c7kWpdIHo8RvmLxN/o2JXTKHp74lUA==",
+      "supports": "SRI verified; type declaration, manifest and license presence",
+      "limits": "No install/runtime execution or browser transfer-size evidence"
+    }
+  ],
+  "accessFailures": [
+    {
+      "url": "https://www.w3.org/TR/webgpu/",
+      "result": "tool content-length limit; full document not retrieved",
+      "effect": "Targeted primary GPUWeb references used; no full-spec audit claimed"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/mourner/robust-predicates/v3.0.3/index.d.ts",
+      "result": "cache miss",
+      "effect": "Historical web-tool failure. Root exact-version official artifact audit now supplies registry/type/license/SRI evidence; no npm-latest claim."
+    },
+    {
+      "url": "https://registry.npmjs.org/robust-predicates/latest",
+      "result": "not accessible via web tool",
+      "effect": "Historical web-tool failure. Root exact-version official artifact audit now supplies registry/type/license/SRI evidence; no npm-latest claim."
+    },
+    {
+      "url": "https://www.npmjs.com/package/robust-predicates",
+      "result": "403",
+      "effect": "Historical web-tool failure. Root exact-version official artifact audit now supplies registry/type/license/SRI evidence; no npm-latest claim."
+    }
+  ],
+  "current": {
+    "protocol": "0.6",
+    "implementation": "verification/webgpu-verification.json",
+    "dependencyVersion": "3.0.3",
+    "dependencyLicense": "Unlicense",
+    "dependencyRole": "Public orient2d sign only; first-party copying/intersection/packing/WGSL/host remain separate.",
+    "artifactAudit": {
+      "timestamp": "2026-10-08T17:08:34.467Z",
+      "package": "robust-predicates",
+      "version": "3.0.3",
+      "registryURL": "https://registry.npmjs.org/robust-predicates/3.0.3",
+      "registrySha256": "2d1ceadf8c643e755296da8b87d7e58c07cb4b4508d254f5ac0cb1cf7ab3494e",
+      "tarballURL": "https://registry.npmjs.org/robust-predicates/-/robust-predicates-3.0.3.tgz",
+      "bytes": 40820,
+      "sha256": "54952e6a8c9e69e404f9be09bfb92a68482cf77702283399a44a689d67ba661c",
+      "integrity": "sha512-NS3levdsRIUOmiJ8FZWCP7LG3QpJyrs/TE0Zpf1yvZu8cAJJ6QMW92H1c7kWpdIHo8RvmLxN/o2JXTKHp74lUA==",
+      "registryIntegrityMatches": true,
+      "license": "Unlicense",
+      "licenseSha256": "88d9b4eb60579c191ec391ca04c16130572d7eedc4a86daa58bf28c6e14c9bcd",
+      "manifestSha256": "55881c0db678074120592e7de7cc2418c265e2ec6cbb51f9c02794db2ee20813",
+      "typesSha256": "5e038e34ef4ee190e45fdd4545cb1932a1c244c76c87ba40a9a301a73ec94dae",
+      "declaredTypesPresent": true,
+      "publicOrient2dDeclaration": [
+        "export function orient2d("
+      ],
+      "moduleType": "module",
+      "exports": "./index.js",
+      "runtimeDependencies": {},
+      "archiveMembers": [
+        "package/LICENSE",
+        "package/esm/incircle.js",
+        "package/umd/incircle.js",
+        "package/umd/incircle.min.js",
+        "package/index.js",
+        "package/esm/insphere.js",
+        "package/umd/insphere.js",
+        "package/umd/insphere.min.js",
+        "package/esm/orient2d.js",
+        "package/umd/orient2d.js",
+        "package/umd/orient2d.min.js",
+        "package/esm/orient3d.js",
+        "package/umd/orient3d.js",
+        "package/umd/orient3d.min.js",
+        "package/umd/predicates.js",
+        "package/umd/predicates.min.js",
+        "package/esm/util.js",
+        "package/package.json",
+        "package/README.md",
+        "package/index.d.ts"
+      ],
+      "installed": false,
+      "packageCodeExecuted": false,
+      "sourceCopiedToProduct": false,
+      "npmLatestChecked": false,
+      "scope": "Exact official npm artifact integrity, delivered manifest/type/license existence; no runtime/numeric/browser/bundle-size acceptance."
+    },
+    "installedEvidenceScope": "Actual installed and emitted local bytes, not native browser request logs or tree-shaken bundle size; no npm-latest check."
+  },
+  "authorship": "AI-assisted first-party design and implementation from first-party contracts and documented standard/API research; bounded source disclosure does not certify all training sources or global originality.",
+  "limits": "Reading scope and access failures remain historical. Full WebGPU specification retrieval was not completed; exact-version artifact audit does not establish npm-latest or browser transfer size."
+}

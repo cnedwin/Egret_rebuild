@@ -1,0 +1,498 @@
+{
+  "status": "implementation_ready_for_independent_review",
+  "task": "Task 1 lifecycle and display-tree slice",
+  "date": "2026-10-08",
+  "outputDirectory": "outputs/白鹭引擎核心框架原型",
+  "repository": "not a Git repository; no initialization, commit, remote or publication",
+  "versions": {
+    "node": "24.19.0",
+    "pnpm": "11.25.0",
+    "typescript": "7.0.2"
+  },
+  "finalVerification": {
+    "command": "node tools/verify.mjs",
+    "cwd": "outputs/白鹭引擎核心框架原型",
+    "exitCode": 0,
+    "log": "work/core-framework/verify-03.log",
+    "fullBuild": "passed --build --force",
+    "actualWorkspaceExports": "passed ESM imports from each package",
+    "boundaryFiles": 63,
+    "typePositive": 1,
+    "typeNegativeAssertions": 11,
+    "unsuppressedTypeErrors": 11,
+    "tests": 36,
+    "pass": 36,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "coreLib": [
+      "ES2022"
+    ],
+    "coreTypes": []
+  },
+  "exampleVerification": {
+    "command": "node examples/headless.mjs",
+    "exitCode": 0,
+    "log": "work/core-framework/headless-01.log",
+    "defaultAllowed": false,
+    "scopeState": "closed",
+    "nodeAndStageDisposal": true,
+    "pendingTimers": 0
+  },
+  "redGreenEvidence": [
+    {
+      "red": "red-01-initial.log",
+      "reason": "28 actual behavior assertions failed against a loadable public package baseline; no missing module errors",
+      "fail": 28,
+      "green": "green-01.log",
+      "greenCount": 31
+    },
+    {
+      "red": "red-02-edge-contracts.log",
+      "reason": "async handler, Stage root and bounded startup cleanup",
+      "fail": 3,
+      "green": "green-01.log"
+    },
+    {
+      "red": "red-04-construction-types-corrected.log",
+      "reason": "3 direct constructor type misuses incorrectly accepted",
+      "fail": 3,
+      "green": "types-green-01.log"
+    },
+    {
+      "red": "red-05-mixed-engine-parent.log",
+      "reason": "unbound parent accepted a child from another Engine",
+      "fail": 1,
+      "green": "green-02.log",
+      "greenCount": 32
+    },
+    {
+      "red": "red-06-promise-union-type.log",
+      "reason": "handler Promise union incorrectly accepted",
+      "fail": 1,
+      "green": "verify-02.log"
+    },
+    {
+      "red": "red-07-headless-integration.log",
+      "reason": "hand-derived headless integration behavior fails against the same loadable baseline",
+      "fail": 1,
+      "green": "verify-02.log"
+    },
+    {
+      "red": "red-08-close-failure-quarantine.log",
+      "reason": "normal/startup/late rejection falsely released a surface",
+      "fail": 3,
+      "green": "verify-02.log",
+      "greenCount": 34
+    },
+    {
+      "red": "red-09-runtime-factory-guards.log",
+      "reason": "JavaScript bypassed TS-only private constructors; diagnostic reentry already passed",
+      "fail": 1,
+      "alreadyPassingSupplemental": 1,
+      "green": "verify-03.log",
+      "greenCount": 36
+    }
+  ],
+  "implementationCorrections": [
+    "Initial build log path ../../.. was outside intended relative work directory; corrected to ../../work before executing compiler; no files written there",
+    "build-01: TS2367 readonly signal control-flow narrowing prevented recheck; use a boolean accessor function. Cascading missing runtime declarations disappeared after runtime built.",
+    "red-03-construction-types contained one wrongly annotated positive fixture (ScopeValue union release); narrowed fixture with satisfies before corrected constructor RED.",
+    "verify-01: boundary tool used CJS require.resolve with ESM import-only exports; changed actual boundary check to Node ESM import from each package directory.",
+    "One multi-file factory-guard patch failed README line matching; patch was retried after confirming no partial code mutation."
+  ],
+  "rulings": [
+    {
+      "issue": "Scope/Stage/Engine construction",
+      "decision": "factory-only class construction, TS-private and JavaScript token guard",
+      "reason": "Engine owns stage/scope and surface reservation; direct constructors bypass lifecycle",
+      "costIfWrong": "Consumers requiring raw construction need an explicit future supported factory or API contract"
+    },
+    {
+      "issue": "mounting unbound containers with bound descendants",
+      "decision": "derive the Engine from the related subtree and atomically preflight both trees before adopting binding",
+      "reason": "No transient mixed-Engine display tree or early detach",
+      "costIfWrong": "An unbound parent becomes bound when it adopts an already-bound child; documented lifetime binding remains irreversible"
+    },
+    {
+      "issue": "host close rejection and surface ownership",
+      "decision": "only successful host close resolves ownership; rejection keeps quarantine",
+      "reason": "Parent review clarification from original actual-completion/borrowed-resource safety contract, not Promise settlement",
+      "costIfWrong": "A failed host cannot restart that same surface; there is no recovery override in this scope"
+    }
+  ],
+  "review": {
+    "selfReview": "completed against brief and three specs; high-risk cases checked; parent/root independent review pending",
+    "parentPreliminaryFinding": "surface close rejection release",
+    "parentFindingDisposition": "fixed RED→GREEN; public HostAdapter contract documents only safe resolution releases ownership",
+    "deferredMinors": []
+  },
+  "sourceOriginFile": "outputs/白鹭引擎核心框架原型/source-origin.json",
+  "sourceOriginSha256": "267f93fc846d1ed68a65bd933df24fd098c1cc65021743b1c84473bd8fb8d4ca",
+  "sourceFiles": [
+    {
+      "path": ".gitignore",
+      "sha256": "b7b3d3eb8531dbfafa6e72ffaad4c579156a5b9be03490556054fff7ed37844e",
+      "bytes": 56
+    },
+    {
+      "path": "README.md",
+      "sha256": "57b0fc55162877063408d6b15de3191748102dd55a99ac4b3d40001deebeb3df",
+      "bytes": 5694
+    },
+    {
+      "path": "examples/headless.mjs",
+      "sha256": "bbb09be9a9ab1b93fbe5af723612e324e71e14b27434f4a953ee0b12a60ddccf",
+      "bytes": 1752
+    },
+    {
+      "path": "package.json",
+      "sha256": "dc8b4a1df35b654d52a366010430083495daf807144aa8882b01a0b82fb45234",
+      "bytes": 565
+    },
+    {
+      "path": "packages/contracts/README.md",
+      "sha256": "f631cb1809f3160b76b5b4451c8820c264f269da2b64842c96abeaae702607ad",
+      "bytes": 709
+    },
+    {
+      "path": "packages/contracts/package.json",
+      "sha256": "fceaef2ae55a77347ce9f99acd2165d36e991d89c76bf0480ff5048f3e7a94a1",
+      "bytes": 179
+    },
+    {
+      "path": "packages/contracts/src/CancellationSignal.ts",
+      "sha256": "a4e778a2bee503ec70249f861f60dc46718dc64e182448d9d5a3b43a10f1f34e",
+      "bytes": 425
+    },
+    {
+      "path": "packages/contracts/src/Diagnostic.ts",
+      "sha256": "93aeef7a51e372dc1418bd382d3371ec91044a1bc48de0b308cc6d5007db89a3",
+      "bytes": 377
+    },
+    {
+      "path": "packages/contracts/src/Disposable.ts",
+      "sha256": "75cc8c7125bc0a7d1641c32825e884311da13dba48fa4822a53465e67129504c",
+      "bytes": 154
+    },
+    {
+      "path": "packages/contracts/src/HostAdapter.ts",
+      "sha256": "dd095653a2ee93e20a44e0ab504ef7edf991bde982e2bb924d2fb21fe072da79",
+      "bytes": 588
+    },
+    {
+      "path": "packages/contracts/src/index.ts",
+      "sha256": "85f4a29e7e04334ab941dfe7a848edacc3a597dc5621820366c7cadd257eda13",
+      "bytes": 287
+    },
+    {
+      "path": "packages/contracts/tsconfig.json",
+      "sha256": "65830141c9e37d6d5a604ae796c5fe8b9258040f9e1f29547c0b238829b989d6",
+      "bytes": 135
+    },
+    {
+      "path": "packages/engine/README.md",
+      "sha256": "a06dff12bb89be61fbed2b5b50c902a926b21359541b4aca80fe9c3589ae0ce5",
+      "bytes": 924
+    },
+    {
+      "path": "packages/engine/package.json",
+      "sha256": "26b7c45f629f7c8a7d41c466fdd06741163a2afd9b6002075c6341530ed2e663",
+      "bytes": 266
+    },
+    {
+      "path": "packages/engine/src/Engine.ts",
+      "sha256": "60cea6a6abedd69fe5a80cd131d9c3654072e716f2fc7fe6897991b871558d4b",
+      "bytes": 3443
+    },
+    {
+      "path": "packages/engine/src/closeHost.ts",
+      "sha256": "3b392c336949001716d7da445d80c4ac0625b45582dbdaec2af9c20f46d5f333",
+      "bytes": 2231
+    },
+    {
+      "path": "packages/engine/src/createEngine.ts",
+      "sha256": "6298922aa970b883fd5f84a098a44d5d4654736446709856381416f182e0aaf3",
+      "bytes": 1092
+    },
+    {
+      "path": "packages/engine/src/index.ts",
+      "sha256": "45f2377ffe6e180815d68b8b2dcbddaca8eaa167c142a356d130da8ce008e2f0",
+      "bytes": 595
+    },
+    {
+      "path": "packages/engine/src/surfaceOwnership.ts",
+      "sha256": "6b12fb7fe691212777ffcc031ef2f534b1c665d1f9df7617f0dac2574331acac",
+      "bytes": 497
+    },
+    {
+      "path": "packages/engine/tsconfig.json",
+      "sha256": "ac07062d5460bb112739e3ef98e2f16f7479b1f4a18c7add69c46c2880ac68a4",
+      "bytes": 207
+    },
+    {
+      "path": "packages/runtime/README.md",
+      "sha256": "dfbbc3bca79cafe8eaf2f8dee2fe59cdc75a54f8cb8f9fa8ae2230dd3ef9a4c9",
+      "bytes": 994
+    },
+    {
+      "path": "packages/runtime/package.json",
+      "sha256": "546d482c0bd990164d79acaec52953245314df6d50117c85b6c6ec5856f4f7ee",
+      "bytes": 234
+    },
+    {
+      "path": "packages/runtime/src/CancellationController.ts",
+      "sha256": "d2bbfd7d23269df59651d628e8f4c448be120fb46e1e5307d718aec43c8c7515",
+      "bytes": 2244
+    },
+    {
+      "path": "packages/runtime/src/DisplayObject.ts",
+      "sha256": "f7e4a0d1edfa8eff83d37ba04a06bb67c461a3a67af4f76d7e7cc9ef448ee9ac",
+      "bytes": 1462
+    },
+    {
+      "path": "packages/runtime/src/DisplayObjectContainer.ts",
+      "sha256": "312c28515cdf4a8158ae625a034ce9799ebb4780fe7008fa2b932b6e0457b100",
+      "bytes": 3523
+    },
+    {
+      "path": "packages/runtime/src/EgretError.ts",
+      "sha256": "9a4ef5c97c118c3ddc91f895741cfa259cbb3906d5943f733ee5e07f2ed8a8dc",
+      "bytes": 574
+    },
+    {
+      "path": "packages/runtime/src/Event.ts",
+      "sha256": "066015292830169f2ff718f6617ba55392f3666289922a0098eabb8210b493b5",
+      "bytes": 3117
+    },
+    {
+      "path": "packages/runtime/src/EventDispatcher.ts",
+      "sha256": "e09c0a6062be650a12113fc5fec776cf4364ccff19cc8cbea75ed53255712569",
+      "bytes": 4927
+    },
+    {
+      "path": "packages/runtime/src/Scope.ts",
+      "sha256": "d0405aca91cbfc66198420b47d39198b64631831c7f752b0fb92ef1697104d4a",
+      "bytes": 3348
+    },
+    {
+      "path": "packages/runtime/src/Stage.ts",
+      "sha256": "a29cb0316ede13fa0cfa6023a3c9e09c985d5590945adf6d81b6ebd32a678462",
+      "bytes": 860
+    },
+    {
+      "path": "packages/runtime/src/diagnostics.ts",
+      "sha256": "bb8668e84ec9703f9f9b0380efa37c93f876b38c8ffb2ed2aa716f3efc32346d",
+      "bytes": 515
+    },
+    {
+      "path": "packages/runtime/src/index.ts",
+      "sha256": "3af52ebe93ac933d989ceb0f5abadd31e72f9436fda1d2206b3e71d7f1216310",
+      "bytes": 796
+    },
+    {
+      "path": "packages/runtime/src/ownership.ts",
+      "sha256": "2733b2f30721451ad0fa1ef6389d67561f902a4162ad4c28cce68bb446c38e4e",
+      "bytes": 2527
+    },
+    {
+      "path": "packages/runtime/tsconfig.json",
+      "sha256": "ed31ec963ca62cee11d41071686c8a3dc58554155e120f52d1747254087f1bac",
+      "bytes": 181
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "sha256": "f58343405f8b75488966415da04a69edd5cbf01a32076ff08b75132fa476877c",
+      "bytes": 8033
+    },
+    {
+      "path": "pnpm-workspace.yaml",
+      "sha256": "f51d3d153b0f3cdbb82186bd1c3eea9066f4e3a15828985952feeee965a75534",
+      "bytes": 51
+    },
+    {
+      "path": "tests/cancellation-scope.test.mjs",
+      "sha256": "32a1a3c47fa41ebfd122be8fa06370e51a4f0854a2ab69be5da48966b96e9566",
+      "bytes": 4803
+    },
+    {
+      "path": "tests/display-tree.test.mjs",
+      "sha256": "6302c03f672ec4878e7bff6fffb4c6bf53ff4b5ce31d1ef5b0485e597b9bbbfe",
+      "bytes": 6453
+    },
+    {
+      "path": "tests/engine.test.mjs",
+      "sha256": "36a8e472bf868528394c98f16fa85ec664991fa76158d272723973b60a89bcde",
+      "bytes": 9096
+    },
+    {
+      "path": "tests/events.test.mjs",
+      "sha256": "4e75d12b5aee9f927425a1a65c401616de18347b1402ec86075bbb5247951d3d",
+      "bytes": 6360
+    },
+    {
+      "path": "tests/helpers.mjs",
+      "sha256": "20e7dd30f54b3a81d35f666c8370e7f014e4559c68222727bc88fd377efc1af7",
+      "bytes": 997
+    },
+    {
+      "path": "tests/integration.test.mjs",
+      "sha256": "54716569f5744b00dcb32a512d122fdb3b91f158b1e5446a5d394b3f201eb933",
+      "bytes": 843
+    },
+    {
+      "path": "tests/types/negative.ts",
+      "sha256": "f2aba4d444432063b862b42822b392b82d09c8d91458cc80f5478f136115ce7b",
+      "bytes": 1655
+    },
+    {
+      "path": "tests/types/positive.ts",
+      "sha256": "1041d77568560fb1d08fa3a4dbb86cb1e77cc48dace50884b5173c4459713aeb",
+      "bytes": 1262
+    },
+    {
+      "path": "tests/types/tsconfig.json",
+      "sha256": "88a3194ab9d7990646c7957e96e8d059ee16e79fe88373543a763da38a84dae1",
+      "bytes": 197
+    },
+    {
+      "path": "tools/build.mjs",
+      "sha256": "0f04552d3592aa613d3c6fc4114559a3669ad764d0f5321d1c049a568701e6c4",
+      "bytes": 455
+    },
+    {
+      "path": "tools/check-boundaries.mjs",
+      "sha256": "e7994ad6962e55fba9b481d50377ede30729b345e6a901e2089b235edfde9491",
+      "bytes": 3353
+    },
+    {
+      "path": "tools/check-types.mjs",
+      "sha256": "332d2c161ceb9ec7d75429c89a3d2c95af24f2cf5eed68b92b09532d1ce691a4",
+      "bytes": 2031
+    },
+    {
+      "path": "tools/test.mjs",
+      "sha256": "6d8fdbf59b3c9d1a4aab917ae9ab8167818c0716a6219f5f91c5893bb2c4eb53",
+      "bytes": 514
+    },
+    {
+      "path": "tools/verify.mjs",
+      "sha256": "9c789b762d598c72040992d8ffb9041f75180d39b7556761365ef0998d5b0b4a",
+      "bytes": 525
+    },
+    {
+      "path": "tsconfig.base.json",
+      "sha256": "b7a31fb9f93a93e20bfdcf33c135acb45cb3a6895a8b3e7006bd85214ddc1008",
+      "bytes": 446
+    },
+    {
+      "path": "tsconfig.json",
+      "sha256": "e07fc831f31dc9ea9ecb612be734f4b533e32d7dbbb246abffaa8b23111076aa",
+      "bytes": 155
+    }
+  ],
+  "logs": [
+    {
+      "file": "work/core-framework/build-01.log",
+      "sha256": "663faa6e4a6174f0c6e95d6857bd5c388d904652c71dc26e626e7fa8943fd95c"
+    },
+    {
+      "file": "work/core-framework/build-02.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "work/core-framework/build-03.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "work/core-framework/build-04.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "work/core-framework/green-01.log",
+      "sha256": "a3f91c8586e06a0e350b837346ada7706715cdad6c0c315fceefe754d59ada1d"
+    },
+    {
+      "file": "work/core-framework/green-02.log",
+      "sha256": "dd246460c9e818eac2d22416945873497e7c0d3845bf8e958a8e674a6d202ff0"
+    },
+    {
+      "file": "work/core-framework/headless-01.log",
+      "sha256": "d4ca860ed2b6ccb64286fb45fb72fefc831b091eb0c1ca8c51d294438256e906"
+    },
+    {
+      "file": "work/core-framework/red-01-initial.log",
+      "sha256": "d2ffdfdf359a49c6fffab6e9644b168fe6a78df0d2617dcb574e27039a366850"
+    },
+    {
+      "file": "work/core-framework/red-02-edge-contracts.log",
+      "sha256": "c2a4c8b5742779dc57de37c6755e85ff38449dae3b0bbab566f7a6de013f6ddd"
+    },
+    {
+      "file": "work/core-framework/red-03-construction-types.log",
+      "sha256": "01f11bd9a7c89598a8e9a9148e699a34fc6f3bc1e138dd8a99b442c6ba10ee31"
+    },
+    {
+      "file": "work/core-framework/red-04-construction-types-corrected.log",
+      "sha256": "3d9d8925dc00be14d28de6e371d8706f62b70cea562f41200a993e255801a085"
+    },
+    {
+      "file": "work/core-framework/red-05-mixed-engine-parent.log",
+      "sha256": "41f8b5eca59917a67631fd872caaac1923c0a59cca876da23210b56357049450"
+    },
+    {
+      "file": "work/core-framework/red-06-promise-union-type.log",
+      "sha256": "9c67af097d5aeab51b742365d5bb331b32e3316bc3dc1689f70fa43014b6ddc0"
+    },
+    {
+      "file": "work/core-framework/red-07-headless-integration.log",
+      "sha256": "8615ec23b834e57482e4a73ac739f74e1cdbbe964d034c7193970d6c148f0930"
+    },
+    {
+      "file": "work/core-framework/red-08-close-failure-quarantine.log",
+      "sha256": "3065d6f87a67075bd0d1e1dbe8349580a80c8bf54a19a8c4ace7e93e5378da47"
+    },
+    {
+      "file": "work/core-framework/red-09-runtime-factory-guards.log",
+      "sha256": "8984e0fac8058074a5fbc204ef7dff06f2b566d9587c04cca153a3975055f98d"
+    },
+    {
+      "file": "work/core-framework/types-green-01.log",
+      "sha256": "bcc454c519d04bc0ef4d1401d7377d55e76ba1b7f7289cd72b45ede7d8f0ad3f"
+    },
+    {
+      "file": "work/core-framework/verify-01.log",
+      "sha256": "2e70024565d84a74031cf940c58ff6f5fbf7563277f9bffb450e71b9d46297fe"
+    },
+    {
+      "file": "work/core-framework/verify-02.log",
+      "sha256": "e8bb7696c1924b6a16b80a31dadd5cad0e398a4edf11ef72ffb55c1dba0aa331"
+    },
+    {
+      "file": "work/core-framework/verify-03.log",
+      "sha256": "06f54fc042aba06ccb2984899b4264dab053b5ffa1a8c51665b488b1ec8ec634"
+    }
+  ],
+  "limitations": [
+    "Only the lifecycle/display-tree subset; not full architecture, engine or product acceptance",
+    "No graphics/GPU, real browser/minigame/native host, borrowed-device fence, assets.acquire/texture loading, Sprite.graphics, layout, transforms, animation, EUI, scene3d, Rust, migrations, editor, Agent service or publication",
+    "Host safe close completion is a port contract; headless tests cannot certify real GPU or platform completion",
+    "No recovery/force-release for a rejected host close; same surface stays quarantined",
+    "No standalone formatter/linter installed; strict compiler and behavior/boundary tests are the exercised gates",
+    "Diagnostic observer throws are caught to protect lifecycle, not recursively reported back to the same failing observer; original cause remains authoritative",
+    "Scope local cleanup failures are reported individually through diagnostics; Engine aggregates errors collected during its own close into cause/cleanupErrors",
+    "Independent review and knowledge-base integration belong to parent; this worker does not claim their completion"
+  ],
+  "publicationProjection": {
+    "kind": "portable_public_copy",
+    "originalReportSha256": "d3fe38624cdbafa5eb38b18950f7bf93db76a26c1f5ab268bbb9e656a6c71722",
+    "originalRetainedInInternalMaterials": true,
+    "changedStringFields": [
+      "outputDirectory",
+      "finalVerification.command",
+      "finalVerification.cwd",
+      "exampleVerification.command"
+    ],
+    "replacements": "Workspace absolute prefixes removed; host Node executable path replaced with node. Source/test/review hashes, observed results and verdict unchanged."
+  }
+}

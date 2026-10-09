@@ -1,0 +1,3 @@
+#!/bin/sh
+# Enable with: git config --local core.hooksPath .githooks
+exec node tools/prepush.mjs

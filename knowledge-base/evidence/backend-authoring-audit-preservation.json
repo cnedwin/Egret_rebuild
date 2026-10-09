@@ -1,0 +1,8 @@
+{
+  "initialReviewRetained": true,
+  "initialAuthoringDraftBytesIndependentlyRetained": false,
+  "initialReviewMeaning": "Document-review observations, not runtime or original-draft byte reproduction evidence.",
+  "initialReviewFilesStoredInternally": true,
+  "existing05BaselineMatched": 444,
+  "method": "Final semantic review will bind actual frozen publication-candidate files; existing execution reports are preserved separately."
+}

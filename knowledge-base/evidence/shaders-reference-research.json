@@ -1,0 +1,392 @@
+{
+  "title": "Shaders 官方来源与固定源码研究：对白鹭的候选机制启发",
+  "local_paths": {
+    "report": "work/shaders-reference-research.md",
+    "data": "work/shaders-reference-research.json"
+  },
+  "checked_at": "2026-10-08T10:04:00Z",
+  "checked_at_local": "2026-10-08 18:04 Asia/Kuala_Lumpur",
+  "knowledge_base_context": "KB0.6.1 (provided by parent; not inspected or changed)",
+  "repository": "shader-effects-inc/shaders",
+  "commit": "9435282c29d3505c67eef427470c8d835095a199",
+  "release": "v4.0.2",
+  "commit_date": "2026-10-07T22:43:03Z",
+  "research_scope": "One-party official announcement/docs and website-linked official GitHub repository; 6 key source files selected. No package installed, no component executed, no implementation copied, no product edited.",
+  "authorship": {
+    "observation": "Official announcement signed Simon (Founder), licensor/copyright Shader Effects Inc.; repository metadata points to Simon Le Marchant / marchantweb.",
+    "unknown": "No primary evidence found within checked official material establishes Evan You as author/founder/maintainer. A repost or endorsement, if any, was not verified.",
+    "safe_wording": "Shaders（Shader Effects Inc.；官方公告署名 Simon）"
+  },
+  "counts": {
+    "observation": "Homepage/repo 200+, docs nearly 200, official navigation 190+; base components differ from composed presets and complete sections.",
+    "unknown": "Exact public component inventory was not verified; framework wrappers must not be multiplied into effect count. Pro preset homepage 750+ conflicts with announcement/repo 1,000+."
+  },
+  "documents": [
+    {
+      "id": "D1",
+      "url": "https://shaders.com/updates/shaders-is-open-source",
+      "source_date": "2026-10-06",
+      "scope": "announcement",
+      "observation": "Official announcement signed Simon (Founder); rendering engine, components, framework bindings opened under MIT; design/code export free; Pro benefits remain.",
+      "checked_at": "2026-10-08T10:04:00Z",
+      "commit": null
+    },
+    {
+      "id": "D2",
+      "url": "https://shaders.com/",
+      "source_date": null,
+      "scope": "homepage snapshot",
+      "observation": "200+ base components; current homepage lists 750+ Pro presets while announcement/repo lists 1,000+; do not treat these marketing counts as one exact inventory.",
+      "checked_at": "2026-10-08T10:04:00Z",
+      "commit": null
+    },
+    {
+      "id": "D3",
+      "url": "https://shaders.com/docs/guide",
+      "source_date": null,
+      "scope": "getting-started docs",
+      "observation": "Nearly 200 components; framework effects targeting browser WebGPU, transparent canvas when unavailable; editor free but not open source.",
+      "checked_at": "2026-10-08T10:04:00Z",
+      "commit": null
+    },
+    {
+      "id": "D4",
+      "url": "https://shaders.com/license",
+      "source_date": "2026-10-06",
+      "scope": "official licensing split; not independent legal advice",
+      "observation": "Software MIT; platform/presets/collections/sections separately licensed. Free-designated content exists; Pro content requires active plan to open/export. Content redistribution/component-library/competing-tool restrictions matter.",
+      "checked_at": "2026-10-08T10:04:00Z",
+      "commit": null
+    },
+    {
+      "id": "D5",
+      "url": "https://shaders.com/docs/guide/composing-effects",
+      "source_date": null,
+      "scope": "composition docs",
+      "observation": "Children are ordered layers; nesting controls effect scope.",
+      "checked_at": "2026-10-08T10:04:00Z",
+      "commit": null
+    },
+    {
+      "id": "D6",
+      "url": "https://shaders.com/docs/guide/performance",
+      "source_date": null,
+      "scope": "mechanism only, not verified benchmark",
+      "observation": "Neighbor-reading filters, map drivers and mask sources may add RTT passes; nesting adds dependent passes; runtime vs compile-time props distinguished.",
+      "checked_at": "2026-10-08T10:04:00Z",
+      "commit": null
+    },
+    {
+      "id": "D7",
+      "url": "https://shaders.com/docs/guide/mcp",
+      "source_date": null,
+      "scope": "MCP capability documentation; no server invocation",
+      "observation": "Free accounts can retrieve own saved shaders; Pro adds curated library and KB. Agent receives framework code, thumbnails/context and SDF workflow described; no live tool schema read.",
+      "checked_at": "2026-10-08T10:04:00Z",
+      "commit": null
+    },
+    {
+      "id": "D8",
+      "url": "https://shaders.com/docs/guide/cli",
+      "source_date": null,
+      "scope": "CLI docs; not run",
+      "observation": "Description search supports JSON output; installs full composition into framework component files with lock tracking; protects hand-edited files.",
+      "checked_at": "2026-10-08T10:04:00Z",
+      "commit": null
+    },
+    {
+      "id": "D9",
+      "url": "https://shaders.com/docs/guide/agent-skill",
+      "source_date": null,
+      "scope": "agent docs; skill not installed or invoked",
+      "observation": "Agent reference teaches components, composition and CLI; exact prop defaults/ranges are fetched from source docs; skill is reference material, not account connection.",
+      "checked_at": "2026-10-08T10:04:00Z",
+      "commit": null
+    },
+    {
+      "id": "G1",
+      "url": "https://github.com/shader-effects-inc/shaders/commit/9435282c29d3505c67eef427470c8d835095a199",
+      "source_date": "2026-10-07T22:43:03Z",
+      "scope": "official linked public repository fixed head metadata",
+      "observation": "v4.0.2 release; author Simon Le Marchant / marchantweb.",
+      "checked_at": "2026-10-08T10:04:00Z",
+      "commit": "9435282c29d3505c67eef427470c8d835095a199"
+    },
+    {
+      "id": "G2",
+      "url": "https://api.github.com/repos/shader-effects-inc/shaders/commits?per_page=100",
+      "source_date": null,
+      "scope": "14 public commit metadata entries observed at check time",
+      "observation": "All observed public entries author Simon Le Marchant or marchantweb; absence does not prove no outside collaboration.",
+      "checked_at": "2026-10-08T10:04:00Z",
+      "commit": null
+    }
+  ],
+  "key_source_files": [
+    {
+      "id": "C1",
+      "path": "packages/core/src/std/lower.ts",
+      "lines": [
+        "1-9",
+        "114-169",
+        "269-295",
+        "386-528"
+      ],
+      "purpose": "defineShader DSL, props metadata, lowering, generator vs pointwise/gather filter",
+      "observations": [
+        "defineShader aliases defineStd; object fields classify generator/filter/warp/shape/custom.",
+        "props include default, transform, ui, compileTime and recompile threshold rules.",
+        "WGSL gather filter lowers through defineRttFilter; generator lowers through lowerWgsl or fragment builder."
+      ],
+      "url": "https://github.com/shader-effects-inc/shaders/blob/9435282c29d3505c67eef427470c8d835095a199/packages/core/src/std/lower.ts",
+      "commit": "9435282c29d3505c67eef427470c8d835095a199",
+      "source_date": "2026-10-07T22:43:03Z",
+      "checked_at": "2026-10-08T10:04:00Z",
+      "scope": "static selected source inspection; not executed",
+      "blob_sha": "c9beb8159e08145bfb95eab22832167027ff0c4e"
+    },
+    {
+      "id": "C2",
+      "path": "packages/core/src/gpu/composer.ts",
+      "lines": [
+        "1-20",
+        "207-235",
+        "467-488",
+        "1665-1737"
+      ],
+      "purpose": "CompositionIR, multiple GPU passes and structural hash inputs",
+      "observations": [
+        "CompositionIR has computeSteps, rttPasses in leaves-to-root order and final fullscreen canvas pass.",
+        "convertToTexture creates an RTT boundary; map-source cache avoids a duplicate boundary for one node/prop.",
+        "structural hash inputs include parent, revision, visible, mask, RTT, compile-time props and other composition structure."
+      ],
+      "url": "https://github.com/shader-effects-inc/shaders/blob/9435282c29d3505c67eef427470c8d835095a199/packages/core/src/gpu/composer.ts",
+      "commit": "9435282c29d3505c67eef427470c8d835095a199",
+      "source_date": "2026-10-07T22:43:03Z",
+      "checked_at": "2026-10-08T10:04:00Z",
+      "scope": "static selected source inspection; not executed",
+      "blob_sha": "f65cb9579a9b1d0ce1d4a489389b1decca07cd60"
+    },
+    {
+      "id": "C3",
+      "path": "packages/core/src/gpu/root.ts",
+      "lines": [
+        "5-24",
+        "96-165",
+        "181-205",
+        "251-294",
+        "310-330"
+      ],
+      "purpose": "device/root ownership, explicit WebGPU-only requirement, canvas context",
+      "observations": [
+        "Default root promise is page-wide; injected GPUDevice is adopted via TypeGPU and cached per device.",
+        "Every renderer still configures its own HTMLCanvasElement context.",
+        "Cleanup must not destroy shared/injected device; callbacks are unsubscribed separately.",
+        "A lost injected device routes to the shared default WebGPU device; this is not WebGL fallback."
+      ],
+      "url": "https://github.com/shader-effects-inc/shaders/blob/9435282c29d3505c67eef427470c8d835095a199/packages/core/src/gpu/root.ts",
+      "commit": "9435282c29d3505c67eef427470c8d835095a199",
+      "source_date": "2026-10-07T22:43:03Z",
+      "checked_at": "2026-10-08T10:04:00Z",
+      "scope": "static selected source inspection; not executed",
+      "blob_sha": "22a98399589a542fd664025efd6af36b39cc3a5f"
+    },
+    {
+      "id": "C4",
+      "path": "packages/core/src/gpu/index.ts",
+      "lines": [
+        "1-18",
+        "153-172",
+        "295-321",
+        "2859-2863",
+        "2911-2985",
+        "3209-3214"
+      ],
+      "purpose": "renderer shell, DOM dependencies, initialization, no WebGL path",
+      "observations": [
+        "Requires HTMLCanvasElement; supports gpu device/adapter injection and observeElement=false.",
+        "initialize rejects context; getRendererType always returns webgpu even though return type retains webgl for source compatibility.",
+        "Renderer includes own RAF/frame loop, window pointer events, CSS/DOM measurements, sizing, canvas context and final output lifecycle.",
+        "Disabling observers skips ResizeObserver and IntersectionObserver, but is not proof of a worker/OffscreenCanvas or host-pass adapter."
+      ],
+      "url": "https://github.com/shader-effects-inc/shaders/blob/9435282c29d3505c67eef427470c8d835095a199/packages/core/src/gpu/index.ts",
+      "commit": "9435282c29d3505c67eef427470c8d835095a199",
+      "source_date": "2026-10-07T22:43:03Z",
+      "checked_at": "2026-10-08T10:04:00Z",
+      "scope": "static selected source inspection; not executed",
+      "blob_sha": "c272eab5423f67f93344013899ca2d7088a4c113"
+    },
+    {
+      "id": "C5",
+      "path": "packages/js/src/createShader.ts",
+      "lines": [
+        "59-101",
+        "272-284",
+        "301-346",
+        "483-519"
+      ],
+      "purpose": "plain-JS canvas API, custom definitions, update and lifecycle",
+      "observations": [
+        "createShader(canvas,preset,options) builds a component registry; custom definitions may be supplied via options.components.",
+        "Passes options.gpu and observeElement to renderer.initialize while sizing via canvas style/getBoundingClientRect.",
+        "update sends known prop values to updateUniformValue; resize,pause,resume,destroy manage canvas renderer lifecycle.",
+        "Device-loss recovery is bounded in this wrapper; current preset shadow records updates for rebuilding."
+      ],
+      "url": "https://github.com/shader-effects-inc/shaders/blob/9435282c29d3505c67eef427470c8d835095a199/packages/js/src/createShader.ts",
+      "commit": "9435282c29d3505c67eef427470c8d835095a199",
+      "source_date": "2026-10-07T22:43:03Z",
+      "checked_at": "2026-10-08T10:04:00Z",
+      "scope": "static selected source inspection; not executed",
+      "blob_sha": "42b898a36661663f92c32160f690b09ce58fb881"
+    },
+    {
+      "id": "C6",
+      "path": "packages/shaders/src/cli/install.ts",
+      "lines": [
+        "45-55",
+        "95-111",
+        "199-268",
+        "350-355"
+      ],
+      "purpose": "server code response, install output, provenance hashes and local-edit guard",
+      "observations": [
+        "CodeResponse includes id,title,format,code,import,kind,updated_at and optional project/collection.",
+        "fetchCode requests shader source by id and framework from shaders.com.",
+        "writeComponentFile hashes current and incoming source; locally edited files require force to overwrite.",
+        "Lock entry includes file,framework,hash,updatedAt,installedAt and optional source."
+      ],
+      "url": "https://github.com/shader-effects-inc/shaders/blob/9435282c29d3505c67eef427470c8d835095a199/packages/shaders/src/cli/install.ts",
+      "commit": "9435282c29d3505c67eef427470c8d835095a199",
+      "source_date": "2026-10-07T22:43:03Z",
+      "checked_at": "2026-10-08T10:04:00Z",
+      "scope": "static selected source inspection; not executed",
+      "blob_sha": "7243ee499814562b54460ffd2b4851160a975898"
+    }
+  ],
+  "observations": [
+    {
+      "id": "O1",
+      "claim": "Open source and free commercial software does not make Pro presets/sections/editor source all free/open.",
+      "sources": [
+        "D1",
+        "D3",
+        "D4"
+      ]
+    },
+    {
+      "id": "O2",
+      "claim": "A shader definition combines reusable effect role, props and GPU body, with editor metadata and compile-trigger information.",
+      "sources": [
+        "C1"
+      ]
+    },
+    {
+      "id": "O3",
+      "claim": "Components compose as a layer tree; compositor generates an ordered pass representation; pointwise analytic combination and RTT/compute coexist.",
+      "sources": [
+        "D5",
+        "D6",
+        "C1",
+        "C2"
+      ]
+    },
+    {
+      "id": "O4",
+      "claim": "The selected runtime is WebGPU-only; no WebGL fallback is implemented. Transparent-canvas failure is host fallback behavior, not an alternate renderer.",
+      "sources": [
+        "D3",
+        "C3",
+        "C4"
+      ]
+    },
+    {
+      "id": "O5",
+      "claim": "Device injection and shared default device are real; canvas context/final output ownership remains in the renderer.",
+      "sources": [
+        "C3",
+        "C4",
+        "C5"
+      ]
+    },
+    {
+      "id": "O6",
+      "claim": "AI workflow supplies references, precise props, exports, previews/context and tracked source installation, rather than relying on free-form shader invention.",
+      "sources": [
+        "D7",
+        "D8",
+        "D9",
+        "C6"
+      ]
+    }
+  ],
+  "inferences": [
+    {
+      "id": "I1",
+      "candidate": "White Egret can independently design an effect descriptor shared by editor, runtime and agent tools.",
+      "reason": "A single semantic description can reduce divergence between properties shown to people and properties available to agents.",
+      "sources": [
+        "C1",
+        "D9"
+      ],
+      "status": "candidate; not an approved architecture change"
+    },
+    {
+      "id": "I2",
+      "candidate": "An effect compiler can expose pass count, intermediate textures, runtime props and rebuild triggers to both editor and agents.",
+      "reason": "Observed source separates tree semantics, compile-time triggers, compute/RTT/final passes; this can make costs inspectable without promising a performance number.",
+      "sources": [
+        "C1",
+        "C2",
+        "D6"
+      ],
+      "status": "candidate; own implementation required"
+    },
+    {
+      "id": "I3",
+      "candidate": "Own AI asset/effect workflow can return schema, examples, preview and generated source plus provenance/hash, preserving manual edits.",
+      "reason": "CLI and reference design make generation reviewable and updates deliberate.",
+      "sources": [
+        "D7",
+        "D8",
+        "D9",
+        "C6"
+      ],
+      "status": "candidate; own service and permissions required"
+    },
+    {
+      "id": "I4",
+      "candidate": "A later isolated decorative/editor-preview adapter trial could evaluate Shaders as an explicitly attributed third-party library.",
+      "reason": "The package exposes plain JS canvas effects and GPUDevice injection; these are concrete entry points, but not verified in White Egret.",
+      "sources": [
+        "C3",
+        "C4",
+        "C5"
+      ],
+      "status": "not run or authorized as implementation"
+    }
+  ],
+  "boundaries": [
+    "Core engine and core renderer remain independently authored under the White Egret rule; do not copy this compositor, DSL compiler, runtime shell or shader implementation into first-party core.",
+    "Using an MIT third-party package would need explicit provenance, version/license notice and a dependency boundary; this task installs nothing.",
+    "Pro presets/sections are separately licensed creative content; do not convert their exports into White Egret's public component/preset library.",
+    "GPUDevice injection does not prove compatibility with White Egret's existing passes, render targets, depth/stencil, scheduling or final presentation ownership.",
+    "WebGL support would require independent backend/lowering/effect constraints or explicit capability degradation. WGSL translation alone does not prove every compute/RTT/media effect is portable.",
+    "No source-backed claim that Shaders can replace a game core renderer is warranted from this inspection; game batching, scene graph, texture atlas, text, skeletal animation, host-pass interop and target platform behavior were not evaluated.",
+    "Official performance estimates and marketing claims were not treated as benchmarks or White Egret performance evidence."
+  ],
+  "unknowns": [
+    "Exact Evan You involvement and exact unique component count.",
+    "Hosted MCP tool schemas, authorization policy behavior and internal server implementation; only docs reviewed.",
+    "Host render target/pass integration contract, Worker/OffscreenCanvas support and non-browser/minigame platform integration.",
+    "White Egret device-loss/final-canvas scheduling interoperability, browser coverage and effects under actual game frame budgets.",
+    "Cross-backend behavior for every effect, visual parity, GPU memory/time, startup and interaction latency."
+  ],
+  "validation": {
+    "tests_run": false,
+    "component_runtime_executed": false,
+    "installed": false,
+    "performance_measured": false,
+    "product_changes": false,
+    "statement": "Only static source/document inspection. No test results, runtime compatibility or performance conclusions."
+  }
+}

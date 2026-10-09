@@ -1,0 +1,709 @@
+{
+  "schemaVersion": 1,
+  "report": "docs/第一轮研究核查.md",
+  "checkedAt": "2026-10-08",
+  "timezone": "Asia/Kuala_Lumpur",
+  "stage": "read_only_official_research",
+  "method": "官方页面live读取和交叉核验；本文件记录观察摘要，不是完整网页归档。",
+  "reviewedPriorFiles": [
+    "docs/竞品演进与生态.md",
+    "registry/来源.json",
+    "work/cocos-evolution.json",
+    "work/laya-evolution.json",
+    "work/godot-evolution.json"
+  ],
+  "scopeLimits": [
+    "不执行历史源码",
+    "不修改来源登记册或README",
+    "不安装或运行竞品引擎/CLI/MCP",
+    "不建立性能排名或独立AI完成率",
+    "当前主分支文档与锁版本资料分别标识",
+    "工具Internal Error不视为服务器404或产品不存在"
+  ],
+  "claims": [
+    {
+      "claimKey": "research-01",
+      "title": "Creator正式版快照",
+      "checkedAt": "2026-10-08",
+      "sourceFact": "Creator下载首项3.8.8，2025-12-16。",
+      "sourceFactClassification": "official_page_supported",
+      "inference": "产品/编辑器/运行时/工具版本分别锁定。",
+      "inferenceClassification": "engineering_recommendation",
+      "sourceKeys": [
+        "cocos_creator_download"
+      ],
+      "changeFromPriorResearch": "retained",
+      "boundary": "仅下载页面快照，非二进制或所有渠道审计。",
+      "runtimeTested": false,
+      "benchmark": null
+    },
+    {
+      "claimKey": "research-02",
+      "title": "Cocos预览版边界",
+      "checkedAt": "2026-10-08",
+      "sourceFact": "Cocos4 alpha.34和CLI alpha.42官方release存在并标Latest。",
+      "sourceFactClassification": "official_page_supported",
+      "inference": "Alpha接口可研究，不能外推稳定生产和完整平台矩阵。",
+      "inferenceClassification": "engineering_recommendation",
+      "sourceKeys": [
+        "cocos4_alpha34",
+        "cocos_cli_alpha42"
+      ],
+      "changeFromPriorResearch": "retained",
+      "boundary": "日期文本不含年份；Latest为页面标记。",
+      "runtimeTested": false,
+      "benchmark": null
+    },
+    {
+      "claimKey": "research-03",
+      "title": "Laya引擎发行与IDE核验分开",
+      "checkedAt": "2026-10-08",
+      "sourceFact": "LayaAir3.4.1 Engine Library发行页可读并标Latest。",
+      "sourceFactClassification": "official_page_supported",
+      "inference": "IDE3.4.1/官网8月29日降为旧研究待重验。",
+      "inferenceClassification": "engineering_recommendation",
+      "sourceKeys": [
+        "laya341_release"
+      ],
+      "changeFromPriorResearch": "narrowed_verification",
+      "boundary": "官网动态入口未抽取版本；GitHub月份日不含年份，不表示IDE版本不存在。",
+      "runtimeTested": false,
+      "benchmark": null
+    },
+    {
+      "claimKey": "research-04",
+      "title": "Godot稳定版快照",
+      "checkedAt": "2026-10-08",
+      "sourceFact": "4.7.2 stable，官网维护公告/归档日期2026-08-18，与当前下载及GitHub一致。",
+      "sourceFactClassification": "official_page_supported",
+      "inference": "后续失败访问记录不得覆盖本轮成功证据。",
+      "inferenceClassification": "engineering_recommendation",
+      "sourceKeys": [
+        "godot472_release",
+        "godot472_archive",
+        "godot_windows_current",
+        "godot472_github"
+      ],
+      "changeFromPriorResearch": "retained",
+      "boundary": "没有安装和运行Godot，本轮没有取得Godot404。",
+      "runtimeTested": false,
+      "benchmark": null
+    },
+    {
+      "claimKey": "research-05",
+      "title": "Godot版本化Web范围",
+      "checkedAt": "2026-10-08",
+      "sourceFact": "4.7 Web文档说明WASM+WebGL2 Compatibility，无WebGPU，Godot4 C#不能Web导出。",
+      "sourceFactClassification": "official_page_supported",
+      "inference": "独立管理Web能力范围，不能推断永久技术限制。",
+      "inferenceClassification": "engineering_recommendation",
+      "sourceKeys": [
+        "godot47_web"
+      ],
+      "changeFromPriorResearch": "retained",
+      "boundary": "文档当前版本边界，未测试任何目标宿主。",
+      "runtimeTested": false,
+      "benchmark": null
+    },
+    {
+      "claimKey": "research-06",
+      "title": "共享抽象与能力路径",
+      "checkedAt": "2026-10-08",
+      "sourceFact": "Godot和Laya官方文档有多驱动抽象及独立兼容路径/平台适配层。",
+      "sourceFactClassification": "official_page_supported",
+      "inference": "共用语义而按能力选择路径；后端回退与宿主适配分别验收。",
+      "inferenceClassification": "engineering_recommendation",
+      "sourceKeys": [
+        "godot47_renderers",
+        "laya3x_architecture"
+      ],
+      "changeFromPriorResearch": "expanded",
+      "boundary": "共享抽象不能证明功能/画面/性能一致。",
+      "runtimeTested": false,
+      "benchmark": null
+    },
+    {
+      "claimKey": "research-07",
+      "title": "Godot预编译范围",
+      "checkedAt": "2026-10-08",
+      "sourceFact": "4.7文档把ubershader、预编译和shader baker限于现代渲染路径，不适用Web Compatibility。",
+      "sourceFactClassification": "official_page_supported",
+      "inference": "验证拆开着色器生成/管线就绪/首次使用/首帧成本。",
+      "inferenceClassification": "engineering_recommendation",
+      "sourceKeys": [
+        "godot47_pipeline"
+      ],
+      "changeFromPriorResearch": "retained",
+      "boundary": "不能据原生优化宣称Web获得相同收益。",
+      "runtimeTested": false,
+      "benchmark": null
+    },
+    {
+      "claimKey": "research-08",
+      "title": "WebGPU设备能力与失效",
+      "checkedAt": "2026-10-08",
+      "sourceFact": "GPUDevice有features/limits/lost Promise；官方explainer说明实际device能力与adapter上限分开并说明device loss。",
+      "sourceFactClassification": "official_page_supported",
+      "inference": "运行时保存重建描述及设备代次，实际能力重新选择路径。",
+      "inferenceClassification": "engineering_recommendation",
+      "sourceKeys": [
+        "gpuweb_device_api",
+        "gpuweb_explainer"
+      ],
+      "changeFromPriorResearch": "expanded",
+      "boundary": "规范全文此次访问失败；接口参考/explainer可读，不替代规范完整审计。",
+      "runtimeTested": false,
+      "benchmark": null
+    },
+    {
+      "claimKey": "research-09",
+      "title": "异步管线状态",
+      "checkedAt": "2026-10-08",
+      "sourceFact": "异步管线Promise提供就绪/失败接口，并避免编译阻塞queue timeline。",
+      "sourceFactClassification": "official_page_supported",
+      "inference": "按缓存键/设备代次管理异步结果，分开记录就绪和使用。",
+      "inferenceClassification": "engineering_recommendation",
+      "sourceKeys": [
+        "gpuweb_device_api"
+      ],
+      "changeFromPriorResearch": "expanded",
+      "boundary": "未测编译耗时/卡顿；不得承诺零成本、固定时长或首帧全部就绪。",
+      "runtimeTested": false,
+      "benchmark": null
+    },
+    {
+      "claimKey": "research-10",
+      "title": "JS/WASM桥接边界",
+      "checkedAt": "2026-10-08",
+      "sourceFact": "Emscripten有JS/C++互操作、显式导出与绑定；内存增长会使旧视图失效，Embind memory view寿命需自己管理。",
+      "sourceFactClassification": "official_page_supported",
+      "inference": "设计对象所有权、批量布局、视图刷新与销毁协议，再测实际桥接成本。",
+      "inferenceClassification": "engineering_recommendation",
+      "sourceKeys": [
+        "emscripten_interop",
+        "emscripten_embind"
+      ],
+      "changeFromPriorResearch": "expanded",
+      "boundary": "当前dev文档；免复制堆视图不代表GPU端或端到端零复制，未运行编译器。",
+      "runtimeTested": false,
+      "benchmark": null
+    },
+    {
+      "claimKey": "research-11",
+      "title": "Cocos CLI与MCP公开入口",
+      "checkedAt": "2026-10-08",
+      "sourceFact": "alpha42 README可直接支持create/build/import/info/MCP/Simulator；main commands文档仅部分覆盖。",
+      "sourceFactClassification": "official_page_supported",
+      "inference": "接口存在与自主连续创作/视觉验收分别验证。",
+      "inferenceClassification": "engineering_recommendation",
+      "sourceKeys": [
+        "cocos_cli_tag_readme",
+        "cocos_cli_main_commands"
+      ],
+      "changeFromPriorResearch": "supporting_source_corrected",
+      "boundary": "未运行CLI、模拟器或MCP；锁版本README优先于main的功能覆盖。",
+      "runtimeTested": false,
+      "benchmark": null
+    },
+    {
+      "claimKey": "research-12",
+      "title": "Laya AI接口分层",
+      "checkedAt": "2026-10-08",
+      "sourceFact": "AI路线/CLI/Skills/IDE-MCP官方资料支持知识、IDE动作、命令工程三个层次。",
+      "sourceFactClassification": "official_page_supported",
+      "inference": "锁版本并独立验收玩法、视觉、失败恢复，不把validate/build通过当游戏正确。",
+      "inferenceClassification": "engineering_recommendation",
+      "sourceKeys": [
+        "laya_ai_roadmap",
+        "laya_cli_repo",
+        "laya_skills_repo",
+        "laya_ide_mcp",
+        "laya_coding_mcp",
+        "laya340_release"
+      ],
+      "changeFromPriorResearch": "expanded",
+      "boundary": "云端Key、订阅和插件条件存在；未测云服务可调用性/工具列表/AI完成率。",
+      "runtimeTested": false,
+      "benchmark": null
+    }
+  ],
+  "sources": [
+    {
+      "key": "cocos_creator_download",
+      "title": "Creator 下载和更新说明",
+      "url": "https://www.cocos.com/creator-download",
+      "authority": "official",
+      "checkedAt": "2026-10-08",
+      "version": "3.8.8",
+      "publishedDate": "2025-12-16",
+      "accessStatus": "readable",
+      "observation": "首项3.8.8；明确日期16 Dec 2025。",
+      "observationType": "paraphrase",
+      "runtimeTested": false
+    },
+    {
+      "key": "cocos4_alpha34",
+      "title": "Cocos4 Alpha发行",
+      "url": "https://github.com/cocos/cocos4/releases/tag/4.0.0-alpha.34",
+      "authority": "official",
+      "checkedAt": "2026-10-08",
+      "version": "4.0.0-alpha.34",
+      "publishedDate": null,
+      "accessStatus": "readable",
+      "observation": "发行标题和Latest可读；页面日期20 Sep 12:10无年份。",
+      "observationType": "paraphrase",
+      "runtimeTested": false
+    },
+    {
+      "key": "cocos_cli_alpha42",
+      "title": "Cocos CLI Alpha发行",
+      "url": "https://github.com/cocos/cocos-cli/releases/tag/0.0.1-alpha.42",
+      "authority": "official",
+      "checkedAt": "2026-10-08",
+      "version": "0.0.1-alpha.42",
+      "publishedDate": null,
+      "accessStatus": "readable",
+      "observation": "发行标题和Latest可读；页面日期20 Sep 12:13无年份。",
+      "observationType": "paraphrase",
+      "runtimeTested": false
+    },
+    {
+      "key": "laya341_release",
+      "title": "LayaAir 3.4.1发行",
+      "url": "https://github.com/layabox/LayaAir/releases/tag/v3.4.1",
+      "authority": "official",
+      "checkedAt": "2026-10-08",
+      "version": "3.4.1",
+      "publishedDate": null,
+      "accessStatus": "readable",
+      "observation": "Engine Library发行，Latest；31 Aug 07:18未显示年份；包含IDE更新条目。",
+      "observationType": "paraphrase",
+      "runtimeTested": false
+    },
+    {
+      "key": "godot472_release",
+      "title": "Godot 4.7.2官方维护公告",
+      "url": "https://godotengine.org/article/maintenance-release-godot-4-7-2/",
+      "authority": "official",
+      "checkedAt": "2026-10-08",
+      "version": "4.7.2 stable",
+      "publishedDate": "2026-08-18",
+      "accessStatus": "readable",
+      "observation": "官网公告含明确日期及维护版本说明。",
+      "observationType": "paraphrase",
+      "runtimeTested": false
+    },
+    {
+      "key": "godot472_archive",
+      "title": "Godot 4.7.2下载归档",
+      "url": "https://godotengine.org/download/archive/4.7.2-stable/",
+      "authority": "official",
+      "checkedAt": "2026-10-08",
+      "version": "4.7.2 stable",
+      "publishedDate": "2026-08-18",
+      "accessStatus": "readable",
+      "observation": "归档版本和日期与公告相符。",
+      "observationType": "paraphrase",
+      "runtimeTested": false
+    },
+    {
+      "key": "godot_windows_current",
+      "title": "Godot Windows当前下载页",
+      "url": "https://godotengine.org/download/windows/",
+      "authority": "official",
+      "checkedAt": "2026-10-08",
+      "version": "4.7.2",
+      "publishedDate": null,
+      "accessStatus": "readable",
+      "observation": "当前下载入口为4.7.2，展示发行日期18 August 2026。",
+      "observationType": "paraphrase",
+      "runtimeTested": false
+    },
+    {
+      "key": "godot472_github",
+      "title": "Godot官方仓库release",
+      "url": "https://github.com/godotengine/godot/releases/tag/4.7.2-stable",
+      "authority": "official",
+      "checkedAt": "2026-10-08",
+      "version": "4.7.2-stable",
+      "publishedDate": null,
+      "accessStatus": "readable",
+      "observation": "Latest，维护发行正文；18 Aug 16:12未显示年份，年份不由此推断。",
+      "observationType": "paraphrase",
+      "runtimeTested": false
+    },
+    {
+      "key": "godot47_web",
+      "title": "Godot 4.7 Web导出文档",
+      "url": "https://docs.godotengine.org/en/4.7/tutorials/export/exporting_for_web.html",
+      "authority": "official",
+      "checkedAt": "2026-10-08",
+      "version": "4.7",
+      "publishedDate": null,
+      "accessStatus": "readable",
+      "observation": "WASM+WebGL2 Compatibility；当前不支持WebGPU；Godot4 C#不能Web导出。",
+      "observationType": "paraphrase",
+      "runtimeTested": false
+    },
+    {
+      "key": "godot47_renderers",
+      "title": "Godot 4.7渲染层次",
+      "url": "https://docs.godotengine.org/en/4.7/tutorials/rendering/renderers.html",
+      "authority": "official",
+      "checkedAt": "2026-10-08",
+      "version": "4.7",
+      "publishedDate": null,
+      "accessStatus": "readable",
+      "observation": "RenderingDevice与多现代驱动，Compatibility与OpenGL分别描述；回退可能改变效果。",
+      "observationType": "paraphrase",
+      "runtimeTested": false
+    },
+    {
+      "key": "godot47_pipeline",
+      "title": "Godot 4.7管线编译",
+      "url": "https://docs.godotengine.org/en/4.7/tutorials/performance/pipeline_compilations.html",
+      "authority": "official",
+      "checkedAt": "2026-10-08",
+      "version": "4.7",
+      "publishedDate": null,
+      "accessStatus": "readable",
+      "observation": "预编译/ubershader/shader baker作用范围明确不含Compatibility Web。",
+      "observationType": "paraphrase",
+      "runtimeTested": false
+    },
+    {
+      "key": "laya3x_architecture",
+      "title": "Laya 3.x架构",
+      "url": "https://www.layaair.com/3.x/doc/basics/architecture/",
+      "authority": "official",
+      "checkedAt": "2026-10-08",
+      "version": "current 3.x",
+      "publishedDate": null,
+      "accessStatus": "readable",
+      "observation": "RenderDriver与PAL分层，2D/3D pass共用设备抽象；页面更新2026-07-16。",
+      "observationType": "paraphrase",
+      "runtimeTested": false
+    },
+    {
+      "key": "gpuweb_device_api",
+      "title": "GPUWeb GPUDevice接口",
+      "url": "https://gpuweb.github.io/types/interfaces/GPUDevice",
+      "authority": "official",
+      "checkedAt": "2026-10-08",
+      "version": "current API reference",
+      "publishedDate": null,
+      "accessStatus": "readable",
+      "observation": "features、limits、lost Promise与异步管线接口支持对应机制。",
+      "observationType": "paraphrase",
+      "runtimeTested": false
+    },
+    {
+      "key": "gpuweb_explainer",
+      "title": "GPUWeb官方explainer",
+      "url": "https://gpuweb.github.io/gpuweb/explainer/",
+      "authority": "official",
+      "checkedAt": "2026-10-08",
+      "version": "current explainer",
+      "publishedDate": null,
+      "accessStatus": "readable",
+      "observation": "能力选择、设备丢失和canvas/device解耦；属于设计说明而非规范全文。",
+      "observationType": "paraphrase",
+      "runtimeTested": false
+    },
+    {
+      "key": "emscripten_interop",
+      "title": "Emscripten代码互操作",
+      "url": "https://emscripten.org/docs/porting/connecting_cpp_and_javascript/Interacting-with-code.html",
+      "authority": "official",
+      "checkedAt": "2026-10-08",
+      "version": "6.0.12-git dev documentation",
+      "publishedDate": null,
+      "accessStatus": "readable",
+      "observation": "导出/调用/类型转换；WASM内存增长会使已有视图失效。",
+      "observationType": "paraphrase",
+      "runtimeTested": false
+    },
+    {
+      "key": "emscripten_embind",
+      "title": "Emscripten Embind",
+      "url": "https://emscripten.org/docs/porting/connecting_cpp_and_javascript/embind.html",
+      "authority": "official",
+      "checkedAt": "2026-10-08",
+      "version": "6.0.12-git dev documentation",
+      "publishedDate": null,
+      "accessStatus": "readable",
+      "observation": "绑定C++和JS；手动对象销毁，memory view有效性与寿命不代管。",
+      "observationType": "paraphrase",
+      "runtimeTested": false
+    },
+    {
+      "key": "cocos_cli_tag_readme",
+      "title": "Cocos CLI锁版本README",
+      "url": "https://github.com/cocos/cocos-cli/blob/0.0.1-alpha.42/readme.md",
+      "authority": "official",
+      "checkedAt": "2026-10-08",
+      "version": "0.0.1-alpha.42",
+      "publishedDate": null,
+      "accessStatus": "readable",
+      "observation": "create/build/import/info/MCP server及simulator preview；模拟器单独构建。",
+      "observationType": "paraphrase",
+      "runtimeTested": false
+    },
+    {
+      "key": "cocos_cli_main_commands",
+      "title": "Cocos CLI main命令文档",
+      "url": "https://github.com/cocos/cocos-cli/blob/main/docs/en/commands.md",
+      "authority": "official",
+      "checkedAt": "2026-10-08",
+      "version": "main mutable",
+      "publishedDate": null,
+      "accessStatus": "readable",
+      "observation": "create/build/start-mcp-server/wizard；范围窄于锁tag README。",
+      "observationType": "paraphrase",
+      "runtimeTested": false
+    },
+    {
+      "key": "laya_ai_roadmap",
+      "title": "Laya AI开发路线",
+      "url": "https://layaair.com/3.x/doc/guides/roadmap/ai/",
+      "authority": "official",
+      "checkedAt": "2026-10-08",
+      "version": "current 3.x",
+      "publishedDate": null,
+      "accessStatus": "readable",
+      "observation": "CodingMCP、IDE-MCP、CLI及一体化协同分层；更新2026-08-07。",
+      "observationType": "paraphrase",
+      "runtimeTested": false
+    },
+    {
+      "key": "laya_cli_repo",
+      "title": "LayaAir官方CLI",
+      "url": "https://github.com/layabox/layaair-cli",
+      "authority": "official",
+      "checkedAt": "2026-10-08",
+      "version": "current main",
+      "publishedDate": null,
+      "accessStatus": "readable",
+      "observation": "create/build/validate/run、脚本方法、版本匹配；匹配失败会警告并回退最新安装版。",
+      "observationType": "paraphrase",
+      "runtimeTested": false
+    },
+    {
+      "key": "laya_skills_repo",
+      "title": "LayaAir官方Skills",
+      "url": "https://github.com/layabox/layaair-skills",
+      "authority": "official",
+      "checkedAt": "2026-10-08",
+      "version": "current master",
+      "publishedDate": null,
+      "accessStatus": "readable",
+      "observation": "CLI与IDE插件开发两个skill目录/说明公开；未执行或安装。",
+      "observationType": "paraphrase",
+      "runtimeTested": false
+    },
+    {
+      "key": "laya_ide_mcp",
+      "title": "Laya IDE MCP使用指南",
+      "url": "https://layaair.com/3.x/doc/basics/developmentenvironment/ide-mcp/",
+      "authority": "official",
+      "checkedAt": "2026-10-08",
+      "version": "current 3.x",
+      "publishedDate": null,
+      "accessStatus": "readable",
+      "observation": "商店插件订阅与按项目导入，本地端口和云端API Key配置；不能视为开箱独立验收。",
+      "observationType": "paraphrase",
+      "runtimeTested": false
+    },
+    {
+      "key": "laya_coding_mcp",
+      "title": "Laya 3.3 CodingMCP指南",
+      "url": "https://layaair.com/3.3/doc/basics/developmentEnvironment/CodingMCP/readme.html",
+      "authority": "official",
+      "checkedAt": "2026-10-08",
+      "version": "3.3 documentation",
+      "publishedDate": null,
+      "accessStatus": "readable",
+      "observation": "3.3.6+入口，版本化API知识查询；与IDE动作接口分开。",
+      "observationType": "paraphrase",
+      "runtimeTested": false
+    },
+    {
+      "key": "laya_history_overview",
+      "title": "Laya官方发展历程",
+      "url": "https://layaair.com/3.x/doc/services/",
+      "authority": "official",
+      "checkedAt": "2026-10-08",
+      "version": "current overview",
+      "publishedDate": null,
+      "accessStatus": "readable",
+      "observation": "正文写3.3=2025-01-04，3.4=2026-02-02；更新2026-07-10，与GitHub显示月份日不相符。",
+      "observationType": "paraphrase",
+      "runtimeTested": false
+    },
+    {
+      "key": "laya330_release",
+      "title": "Laya 3.3.0官方release",
+      "url": "https://github.com/layabox/LayaAir/releases/tag/v3.3.0",
+      "authority": "official",
+      "checkedAt": "2026-10-08",
+      "version": "3.3.0",
+      "publishedDate": null,
+      "accessStatus": "readable",
+      "observation": "页面显示05 Aug 06:10，未显示年份；包含2D架构与UI更新。",
+      "observationType": "paraphrase",
+      "runtimeTested": false
+    },
+    {
+      "key": "laya340_release",
+      "title": "Laya 3.4.0官方release",
+      "url": "https://github.com/layabox/LayaAir/releases/tag/v3.4.0",
+      "authority": "official",
+      "checkedAt": "2026-10-08",
+      "version": "3.4.0",
+      "publishedDate": null,
+      "accessStatus": "readable",
+      "observation": "页面显示12 Jun 13:42，未显示年份；新增CLI/Skills能力有正文直接支持。",
+      "observationType": "paraphrase",
+      "runtimeTested": false
+    },
+    {
+      "key": "laya_webgpu_config",
+      "title": "Laya WebGPU配置",
+      "url": "https://www.layaair.com/3.x/doc/basics/ide/projectsettings/webgpu/",
+      "authority": "official",
+      "checkedAt": "2026-10-08",
+      "version": "current 3.x",
+      "publishedDate": null,
+      "accessStatus": "readable",
+      "observation": "官方说IDE内置预览不支持WebGPU，需发布并在支持的外部浏览器测试；更新2026-07-15。",
+      "observationType": "paraphrase",
+      "runtimeTested": false
+    }
+  ],
+  "accessAttempts": [
+    {
+      "url": "https://www.w3.org/TR/webgpu/",
+      "status": "tool_internal_error",
+      "checkedAt": "2026-10-08",
+      "httpStatusObserved": null,
+      "interpretation": "未取得规范正文，不能据此判断页面不存在。"
+    },
+    {
+      "url": "https://www.w3.org/TR/webgpu/#dom-gpudevice-lost",
+      "status": "tool_internal_error",
+      "checkedAt": "2026-10-08",
+      "httpStatusObserved": null,
+      "interpretation": "锚点访问亦失败；机制由官方接口参考与explainer支持。"
+    },
+    {
+      "url": "https://gpuweb.github.io/gpuweb/",
+      "status": "open_tool_internal_error_search_excerpt_available",
+      "checkedAt": "2026-10-08",
+      "httpStatusObserved": null,
+      "interpretation": "官方搜索摘要有内容；未将摘要当规范全文审计。"
+    },
+    {
+      "url": "https://gpuweb.github.io/types/interfaces/GPUAdapter",
+      "status": "tool_internal_error",
+      "checkedAt": "2026-10-08",
+      "httpStatusObserved": null,
+      "interpretation": "能力事实由GPUDevice参考和官方explainer核验。"
+    },
+    {
+      "url": "https://github.com/cocos/cocos-cli/blob/0.0.1-alpha.42/docs/en/commands.md",
+      "status": "tool_internal_error",
+      "checkedAt": "2026-10-08",
+      "httpStatusObserved": null,
+      "interpretation": "相同tag README成功读取，未认为接口缺失。"
+    },
+    {
+      "url": "https://layaair.com/#/engineDownload",
+      "resolvedUrl": "https://layaair.com/",
+      "status": "one_line_dynamic_page",
+      "checkedAt": "2026-10-08",
+      "httpStatusObserved": null,
+      "interpretation": "只读到标题，IDE版本及官网日期未重验。"
+    },
+    {
+      "url": "https://www.layaair.com/3.x/doc/guides/roadmap/ai/",
+      "status": "tool_internal_error",
+      "checkedAt": "2026-10-08",
+      "httpStatusObserved": null,
+      "recoveredBy": "https://layaair.com/3.x/doc/guides/roadmap/ai/"
+    },
+    {
+      "url": "https://layaair.com/3.x/doc/basics/developmentenvironment/ide-mcp/",
+      "status": "first_click_failed_then_direct_readable",
+      "checkedAt": "2026-10-08",
+      "httpStatusObserved": null,
+      "interpretation": "直接读取成功；失败与成功分别保留。"
+    },
+    {
+      "url": "https://www.layaair.com/3.x/doc/released/3.4.1",
+      "status": "tool_internal_error",
+      "checkedAt": "2026-10-08",
+      "httpStatusObserved": null,
+      "interpretation": "候选路径未读到；不能当作版本不存在。"
+    },
+    {
+      "url": "https://docs.godotengine.org/en/4.7/tutorials/export/exporting_for_web.html",
+      "status": "readable",
+      "checkedAt": "2026-10-08",
+      "httpStatusObserved": null,
+      "interpretation": "本轮明确读到4.7标题及Web后端正文；不继承未取得的404叙事。"
+    }
+  ],
+  "discrepancies": [
+    {
+      "topic": "Laya IDE版本与官网更新日期",
+      "priorClaim": "引擎与IDE3.4.1，官网2026-08-29，GitHub8月31日。",
+      "freshEvidence": "Engine Library版本与Latest可确认；动态官网未抽取下载/日期；GitHub文本31 Aug 07:18无年份。",
+      "status": "partial_reverification_not_disproof",
+      "recommendedCorrection": "保留引擎已确认；IDE与官网精确日期注明旧研究记录、本轮待重验。",
+      "sourceKeys": [
+        "laya341_release"
+      ]
+    },
+    {
+      "topic": "Laya历史发行日期",
+      "priorClaim": "3.3于2025年8月，3.4.0于2026年6月。",
+      "freshEvidence": "官方services分别写3.3=2025-01-04和3.4=2026-02-02；GitHub版本页面显示05 Aug和12 Jun而文本未含年份。",
+      "status": "official_source_date_conflict",
+      "recommendedCorrection": "保留两个官方来源口径，明确版本线/预览/正式事件身份未解决，不静默改日期。",
+      "sourceKeys": [
+        "laya_history_overview",
+        "laya330_release",
+        "laya340_release"
+      ]
+    },
+    {
+      "topic": "Cocos CLI能力引用覆盖",
+      "priorClaim": "CLI创建、构建、预览和MCP仅引用main commands.md。",
+      "freshEvidence": "main文档部分覆盖；alpha42 README直接支持这些入口及模拟器单独构建。",
+      "status": "citation_support_expanded",
+      "recommendedCorrection": "补锁tag README；保留公开入口结论但不推导自主创作或验收。",
+      "sourceKeys": [
+        "cocos_cli_tag_readme",
+        "cocos_cli_main_commands"
+      ]
+    }
+  ],
+  "nextVerification": [
+    "竞品最小工程与真实工具列表",
+    "多后端功能/画面矩阵及失败回退",
+    "设备丢失重建和异步结果失效",
+    "JS/WASM内存增长、对象寿命与数据复制",
+    "目标宿主真机交付",
+    "AI多轮修改、玩法/视觉验收与恢复"
+  ],
+  "selfReview": {
+    "primarySourcesOnly": true,
+    "sourceInstructionsExecuted": false,
+    "historicalCodeExecuted": false,
+    "enginesTested": false,
+    "performanceRankingProduced": false,
+    "priorClaimsSilentlyOverwritten": false,
+    "officialDateConflictsPreserved": true,
+    "implementationVerified": false
+  }
+}

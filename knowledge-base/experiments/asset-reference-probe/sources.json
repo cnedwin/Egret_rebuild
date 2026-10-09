@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "checkedAtUtc": "2026-10-08T07:53:03.173Z",
+  "scope": "Exact fixed-commit public source and glTF sample bytes; no build or install scripts.",
+  "three": {
+    "tag": "r186",
+    "commitSha": "9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8",
+    "license": "MIT"
+  },
+  "asset": {
+    "name": "RiggedSimple",
+    "commitSha": "edc7c9e67c639d230715049ee31f9a96a6babbbe",
+    "license": "CC-BY-4.0",
+    "attribution": "Rigged Simple — Cesium (2017), CC BY 4.0. Source: KhronosGroup/glTF-Sample-Assets at edc7c9e67c639d230715049ee31f9a96a6babbbe."
+  },
+  "files": [
+    {
+      "url": "https://raw.githubusercontent.com/mrdoob/three.js/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/build/three.core.js",
+      "path": "vendor/three/r186/build/three.core.js",
+      "commitSha": "9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8",
+      "gitBlobSha": "0a1d6cb9ef3cabc97a50bd02394c85e8d1c513c2",
+      "expectedBytes": 1458113,
+      "sourceUrl": "https://github.com/mrdoob/three.js/blob/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/build/three.core.js",
+      "bytes": 1458113,
+      "sha256": "9edde002b066a9a05676a6127f67735b62baf399bdea529f2f7e31657da769e6"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/mrdoob/three.js/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/build/three.module.js",
+      "path": "vendor/three/r186/build/three.module.js",
+      "commitSha": "9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8",
+      "gitBlobSha": "c52087acfabae80efabb8cc05e3a1d96e35a1426",
+      "expectedBytes": 662772,
+      "sourceUrl": "https://github.com/mrdoob/three.js/blob/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/build/three.module.js",
+      "bytes": 662772,
+      "sha256": "9052042d676cb0fdc1ddfefe193053f34b7ac0513a616fdac4535d49987812ea"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/mrdoob/three.js/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/examples/jsm/loaders/GLTFLoader.js",
+      "path": "vendor/three/r186/examples/jsm/loaders/GLTFLoader.js",
+      "commitSha": "9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8",
+      "gitBlobSha": "cd95b20593264ba8b503f8152484c456be64b1af",
+      "expectedBytes": 117570,
+      "sourceUrl": "https://github.com/mrdoob/three.js/blob/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/examples/jsm/loaders/GLTFLoader.js",
+      "bytes": 117570,
+      "sha256": "131c0f78c01d19368ae495caa65b3adaa10487810a36a05bb5901b769a35ac16"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/mrdoob/three.js/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/examples/jsm/utils/BufferGeometryUtils.js",
+      "path": "vendor/three/r186/examples/jsm/utils/BufferGeometryUtils.js",
+      "commitSha": "9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8",
+      "gitBlobSha": "a167e11b0558954a00960dc3cad00ead6476fbe7",
+      "expectedBytes": 37712,
+      "sourceUrl": "https://github.com/mrdoob/three.js/blob/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/examples/jsm/utils/BufferGeometryUtils.js",
+      "bytes": 37712,
+      "sha256": "9fb63427ce6641fa14fd0baff9cc4d1b5f9c3d85fd084bf2e90e803c44ec1797"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/mrdoob/three.js/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/examples/jsm/utils/SkeletonUtils.js",
+      "path": "vendor/three/r186/examples/jsm/utils/SkeletonUtils.js",
+      "commitSha": "9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8",
+      "gitBlobSha": "836c2e2bf2be3c5c5fd6b65ed260f84b3d589258",
+      "expectedBytes": 11535,
+      "sourceUrl": "https://github.com/mrdoob/three.js/blob/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/examples/jsm/utils/SkeletonUtils.js",
+      "bytes": 11535,
+      "sha256": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/mrdoob/three.js/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/LICENSE",
+      "path": "vendor/three/r186/LICENSE",
+      "commitSha": "9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8",
+      "gitBlobSha": "8ada2a5f982916b0ba4b7a0aa7de347587e745d7",
+      "expectedBytes": null,
+      "sourceUrl": "https://github.com/mrdoob/three.js/blob/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8/LICENSE",
+      "bytes": 1081,
+      "sha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/RiggedSimple/glTF-Embedded/RiggedSimple.gltf",
+      "path": "assets/RiggedSimple/RiggedSimple.gltf",
+      "commitSha": "edc7c9e67c639d230715049ee31f9a96a6babbbe",
+      "gitBlobSha": "66ce6107f8653fb324f17edd0e23405bf7b4a84f",
+      "expectedBytes": 25435,
+      "sourceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/RiggedSimple/glTF-Embedded/RiggedSimple.gltf",
+      "bytes": 25435,
+      "sha256": "dad924deb693a8d00e566ccc495042183cbc8c927c56d976ae760077321bca39"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/RiggedSimple/LICENSE.md",
+      "path": "assets/RiggedSimple/LICENSE.md",
+      "commitSha": "edc7c9e67c639d230715049ee31f9a96a6babbbe",
+      "gitBlobSha": "2a98e37252702a3dd4ddfa0d4e8d4c2e33e4641c",
+      "expectedBytes": null,
+      "sourceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/RiggedSimple/LICENSE.md",
+      "bytes": 781,
+      "sha256": "4343fbd97e5ecfc4c872a85cb1d755a3006f8848e15135fd6c4534839909bdbb"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/RiggedSimple/metadata.json",
+      "path": "assets/RiggedSimple/metadata.json",
+      "commitSha": "edc7c9e67c639d230715049ee31f9a96a6babbbe",
+      "gitBlobSha": "09910327d943d6239e8875a86f164382f6d5d8f0",
+      "expectedBytes": null,
+      "sourceUrl": "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/RiggedSimple/metadata.json",
+      "bytes": 652,
+      "sha256": "ba12c1f9a24124bdfbd171528db2eece6edbb7c75a7192dadfb043212067c664"
+    }
+  ]
+}

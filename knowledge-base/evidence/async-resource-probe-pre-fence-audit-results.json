@@ -1,0 +1,854 @@
+{
+  "schemaVersion": 1,
+  "experiment": "async-resource-probe-pre-fence-audit",
+  "checkedAtUtc": "2026-10-08T06:06:13.836Z",
+  "environment": {
+    "node": "v24.19.0",
+    "platform": "win32",
+    "architecture": "x64",
+    "realGpu": false
+  },
+  "counts": {
+    "total": 24,
+    "passed": 24,
+    "failed": 0
+  },
+  "results": [
+    {
+      "name": "One release preserves the other lease acquired by the same owner",
+      "status": "passed",
+      "observations": {
+        "breaks": "Replacing independent leases with an owner Set destroys a live resource",
+        "checkpoints": [
+          {
+            "label": "two-acquires",
+            "state": {
+              "resourceGeneration": 1,
+              "leaseCount": 2,
+              "ownerLeaseCounts": {
+                "scene": 2
+              },
+              "cpuState": "decoded",
+              "cpuData": "pixels",
+              "gpuState": "resident",
+              "resident": true,
+              "decodeTaskId": null,
+              "uploadTaskId": null,
+              "deviceEpoch": 1,
+              "deviceLost": false,
+              "residentEpoch": 1,
+              "lastUse": 0,
+              "completedFrame": 0,
+              "error": null
+            }
+          },
+          {
+            "label": "one-release",
+            "state": {
+              "resourceGeneration": 1,
+              "leaseCount": 1,
+              "ownerLeaseCounts": {
+                "scene": 1
+              },
+              "cpuState": "decoded",
+              "cpuData": "pixels",
+              "gpuState": "resident",
+              "resident": true,
+              "decodeTaskId": null,
+              "uploadTaskId": null,
+              "deviceEpoch": 1,
+              "deviceLost": false,
+              "residentEpoch": 1,
+              "lastUse": 0,
+              "completedFrame": 0,
+              "error": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Lease count records repeated acquisition by one owner",
+      "status": "passed",
+      "observations": {
+        "breaks": "Counting distinct owners undercounts references",
+        "checkpoints": [
+          {
+            "label": "three-leases",
+            "state": {
+              "resourceGeneration": 1,
+              "leaseCount": 3,
+              "ownerLeaseCounts": {
+                "scene": 2,
+                "overlay": 1
+              },
+              "cpuState": "empty",
+              "cpuData": null,
+              "gpuState": "empty",
+              "resident": false,
+              "decodeTaskId": null,
+              "uploadTaskId": null,
+              "deviceEpoch": 1,
+              "deviceLost": false,
+              "residentEpoch": null,
+              "lastUse": 0,
+              "completedFrame": 0,
+              "error": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Canceling one lease keeps another same-owner lease usable",
+      "status": "passed",
+      "observations": {
+        "breaks": "Owner-wide cancel removes an unrelated acquisition",
+        "checkpoints": [
+          {
+            "label": "cancel-one",
+            "state": {
+              "resourceGeneration": 1,
+              "leaseCount": 1,
+              "ownerLeaseCounts": {
+                "scene": 1
+              },
+              "cpuState": "decoded",
+              "cpuData": "pixels",
+              "gpuState": "resident",
+              "resident": true,
+              "decodeTaskId": null,
+              "uploadTaskId": null,
+              "deviceEpoch": 1,
+              "deviceLost": false,
+              "residentEpoch": 1,
+              "lastUse": 0,
+              "completedFrame": 0,
+              "error": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "CPU decode completion during device loss remains reusable",
+      "status": "passed",
+      "observations": {
+        "breaks": "Device epoch incorrectly invalidates CPU decode",
+        "checkpoints": [
+          {
+            "label": "decoded-while-device-lost",
+            "state": {
+              "resourceGeneration": 1,
+              "leaseCount": 1,
+              "ownerLeaseCounts": {
+                "scene": 1
+              },
+              "cpuState": "decoded",
+              "cpuData": "pixels",
+              "gpuState": "lost",
+              "resident": false,
+              "decodeTaskId": null,
+              "uploadTaskId": null,
+              "deviceEpoch": 2,
+              "deviceLost": true,
+              "residentEpoch": null,
+              "lastUse": 0,
+              "completedFrame": 0,
+              "error": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "CPU success cannot report GPU residency before upload success",
+      "status": "passed",
+      "observations": {
+        "breaks": "Combined decode and upload completion exposes unavailable GPU data",
+        "checkpoints": [
+          {
+            "label": "CPU-only",
+            "state": {
+              "resourceGeneration": 1,
+              "leaseCount": 1,
+              "ownerLeaseCounts": {
+                "scene": 1
+              },
+              "cpuState": "decoded",
+              "cpuData": "pixels",
+              "gpuState": "empty",
+              "resident": false,
+              "decodeTaskId": null,
+              "uploadTaskId": null,
+              "deviceEpoch": 1,
+              "deviceLost": false,
+              "residentEpoch": null,
+              "lastUse": 0,
+              "completedFrame": 0,
+              "error": null
+            }
+          },
+          {
+            "label": "upload-pending",
+            "state": {
+              "resourceGeneration": 1,
+              "leaseCount": 1,
+              "ownerLeaseCounts": {
+                "scene": 1
+              },
+              "cpuState": "decoded",
+              "cpuData": "pixels",
+              "gpuState": "uploading",
+              "resident": false,
+              "decodeTaskId": null,
+              "uploadTaskId": 2,
+              "deviceEpoch": 1,
+              "deviceLost": false,
+              "residentEpoch": null,
+              "lastUse": 0,
+              "completedFrame": 0,
+              "error": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Device restoration requires asynchronous reupload of preserved CPU data",
+      "status": "passed",
+      "observations": {
+        "breaks": "Synchronous rebuild falsely reports resident",
+        "checkpoints": [
+          {
+            "label": "device-restored-before-upload",
+            "state": {
+              "resourceGeneration": 1,
+              "leaseCount": 1,
+              "ownerLeaseCounts": {
+                "scene": 1
+              },
+              "cpuState": "decoded",
+              "cpuData": "pixels",
+              "gpuState": "lost",
+              "resident": false,
+              "decodeTaskId": null,
+              "uploadTaskId": null,
+              "deviceEpoch": 2,
+              "deviceLost": false,
+              "residentEpoch": null,
+              "lastUse": 0,
+              "completedFrame": 0,
+              "error": null
+            }
+          },
+          {
+            "label": "reupload-pending",
+            "state": {
+              "resourceGeneration": 1,
+              "leaseCount": 1,
+              "ownerLeaseCounts": {
+                "scene": 1
+              },
+              "cpuState": "decoded",
+              "cpuData": "pixels",
+              "gpuState": "uploading",
+              "resident": false,
+              "decodeTaskId": null,
+              "uploadTaskId": 3,
+              "deviceEpoch": 2,
+              "deviceLost": false,
+              "residentEpoch": null,
+              "lastUse": 0,
+              "completedFrame": 0,
+              "error": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Upload OOM is attributable and never marks a resource resident",
+      "status": "passed",
+      "observations": {
+        "breaks": "GPU errors are dropped or interpreted as successful upload",
+        "checkpoints": [
+          {
+            "label": "OOM",
+            "state": {
+              "resourceGeneration": 1,
+              "leaseCount": 1,
+              "ownerLeaseCounts": {
+                "scene": 1
+              },
+              "cpuState": "decoded",
+              "cpuData": "pixels",
+              "gpuState": "upload_failed",
+              "resident": false,
+              "decodeTaskId": null,
+              "uploadTaskId": null,
+              "deviceEpoch": 1,
+              "deviceLost": false,
+              "residentEpoch": null,
+              "lastUse": 0,
+              "completedFrame": 0,
+              "error": {
+                "stage": "upload",
+                "code": "OOM",
+                "taskId": 2,
+                "resourceGeneration": 1,
+                "deviceEpoch": 1
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Released handle cannot consume or release a reacquired lease behind a fence",
+      "status": "passed",
+      "observations": {
+        "breaks": "Stale handle removes a new acquisition",
+        "checkpoints": [
+          {
+            "label": "reacquired",
+            "state": {
+              "resourceGeneration": 1,
+              "leaseCount": 1,
+              "ownerLeaseCounts": {
+                "scene": 1
+              },
+              "cpuState": "decoded",
+              "cpuData": "pixels",
+              "gpuState": "resident",
+              "resident": true,
+              "decodeTaskId": null,
+              "uploadTaskId": null,
+              "deviceEpoch": 1,
+              "deviceLost": false,
+              "residentEpoch": 1,
+              "lastUse": 7,
+              "completedFrame": 0,
+              "error": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Final release retains resource until its actual use fence completes",
+      "status": "passed",
+      "observations": {
+        "breaks": "Collection frees a resource still in flight",
+        "checkpoints": [
+          {
+            "label": "fence-not-yet-complete",
+            "state": {
+              "resourceGeneration": 1,
+              "leaseCount": 0,
+              "ownerLeaseCounts": {},
+              "cpuState": "decoded",
+              "cpuData": "pixels",
+              "gpuState": "resident",
+              "resident": true,
+              "decodeTaskId": null,
+              "uploadTaskId": null,
+              "deviceEpoch": 1,
+              "deviceLost": false,
+              "residentEpoch": 1,
+              "lastUse": 9,
+              "completedFrame": 8,
+              "error": null
+            }
+          },
+          {
+            "label": "fence-complete",
+            "state": null
+          }
+        ]
+      }
+    },
+    {
+      "name": "Old device fence cannot free an in-flight resource on the new device",
+      "status": "passed",
+      "observations": {
+        "breaks": "Frame numbers collide across device epochs",
+        "checkpoints": [
+          {
+            "label": "stale-device-fence",
+            "state": {
+              "resourceGeneration": 1,
+              "leaseCount": 0,
+              "ownerLeaseCounts": {},
+              "cpuState": "decoded",
+              "cpuData": "pixels",
+              "gpuState": "resident",
+              "resident": true,
+              "decodeTaskId": null,
+              "uploadTaskId": null,
+              "deviceEpoch": 2,
+              "deviceLost": false,
+              "residentEpoch": 2,
+              "lastUse": 2,
+              "completedFrame": 0,
+              "error": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Stale upload completion is rejected both during loss and after restore",
+      "status": "passed",
+      "observations": {
+        "breaks": "Old upload resurrects residency after epoch changes",
+        "checkpoints": [
+          {
+            "label": "stale-upload-rejected",
+            "state": {
+              "resourceGeneration": 1,
+              "leaseCount": 1,
+              "ownerLeaseCounts": {
+                "scene": 1
+              },
+              "cpuState": "decoded",
+              "cpuData": "pixels",
+              "gpuState": "uploading",
+              "resident": false,
+              "decodeTaskId": null,
+              "uploadTaskId": 3,
+              "deviceEpoch": 2,
+              "deviceLost": false,
+              "residentEpoch": null,
+              "lastUse": 0,
+              "completedFrame": 0,
+              "error": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Shared CPU task survives cancel of its initiating lease when another remains",
+      "status": "passed",
+      "observations": {
+        "breaks": "Cancel ties a shared task to one caller",
+        "checkpoints": [
+          {
+            "label": "remaining-owner",
+            "state": {
+              "resourceGeneration": 1,
+              "leaseCount": 1,
+              "ownerLeaseCounts": {
+                "overlay": 1
+              },
+              "cpuState": "decoded",
+              "cpuData": "pixels",
+              "gpuState": "resident",
+              "resident": true,
+              "decodeTaskId": null,
+              "uploadTaskId": null,
+              "deviceEpoch": 1,
+              "deviceLost": false,
+              "residentEpoch": 1,
+              "lastUse": 0,
+              "completedFrame": 0,
+              "error": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Final cancel invalidates an old decode completion after reacquisition",
+      "status": "passed",
+      "observations": {
+        "breaks": "Canceled decode can complete into a new resource generation",
+        "checkpoints": [
+          {
+            "label": "old-decode-rejected",
+            "state": {
+              "resourceGeneration": 2,
+              "leaseCount": 1,
+              "ownerLeaseCounts": {
+                "scene": 1
+              },
+              "cpuState": "decoding",
+              "cpuData": null,
+              "gpuState": "empty",
+              "resident": false,
+              "decodeTaskId": 2,
+              "uploadTaskId": null,
+              "deviceEpoch": 1,
+              "deviceLost": false,
+              "residentEpoch": null,
+              "lastUse": 0,
+              "completedFrame": 0,
+              "error": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Final cancel invalidates upload after loss and reacquisition",
+      "status": "passed",
+      "observations": {
+        "breaks": "Reacquisition reaccepts canceled upload tasks",
+        "checkpoints": [
+          {
+            "label": "cancelled-upload-rejected",
+            "state": {
+              "resourceGeneration": 2,
+              "leaseCount": 1,
+              "ownerLeaseCounts": {
+                "scene": 1
+              },
+              "cpuState": "empty",
+              "cpuData": null,
+              "gpuState": "empty",
+              "resident": false,
+              "decodeTaskId": null,
+              "uploadTaskId": null,
+              "deviceEpoch": 2,
+              "deviceLost": false,
+              "residentEpoch": null,
+              "lastUse": 0,
+              "completedFrame": 0,
+              "error": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Upload retry uses a new task and rejects a late prior success",
+      "status": "passed",
+      "observations": {
+        "breaks": "Retry reuses task identity and accepts outdated success",
+        "checkpoints": [
+          {
+            "label": "retry-complete",
+            "state": {
+              "resourceGeneration": 1,
+              "leaseCount": 1,
+              "ownerLeaseCounts": {
+                "scene": 1
+              },
+              "cpuState": "decoded",
+              "cpuData": "pixels",
+              "gpuState": "resident",
+              "resident": true,
+              "decodeTaskId": null,
+              "uploadTaskId": null,
+              "deviceEpoch": 1,
+              "deviceLost": false,
+              "residentEpoch": 1,
+              "lastUse": 0,
+              "completedFrame": 0,
+              "error": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Decode failure is retained with task identity and explicit retry",
+      "status": "passed",
+      "observations": {
+        "breaks": "Decode errors lose stage identity or permit upload",
+        "checkpoints": [
+          {
+            "label": "decode-failed",
+            "state": {
+              "resourceGeneration": 1,
+              "leaseCount": 1,
+              "ownerLeaseCounts": {
+                "scene": 1
+              },
+              "cpuState": "decode_failed",
+              "cpuData": null,
+              "gpuState": "empty",
+              "resident": false,
+              "decodeTaskId": null,
+              "uploadTaskId": null,
+              "deviceEpoch": 1,
+              "deviceLost": false,
+              "residentEpoch": null,
+              "lastUse": 0,
+              "completedFrame": 0,
+              "error": {
+                "stage": "decode",
+                "code": "BAD_FORMAT",
+                "taskId": 1,
+                "resourceGeneration": 1
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Duplicate callbacks cannot replace successful CPU or GPU results",
+      "status": "passed",
+      "observations": {
+        "breaks": "Duplicate result mutates a terminal task",
+        "checkpoints": [
+          {
+            "label": "duplicates-rejected",
+            "state": {
+              "resourceGeneration": 1,
+              "leaseCount": 1,
+              "ownerLeaseCounts": {
+                "scene": 1
+              },
+              "cpuState": "decoded",
+              "cpuData": "pixels",
+              "gpuState": "resident",
+              "resident": true,
+              "decodeTaskId": null,
+              "uploadTaskId": null,
+              "deviceEpoch": 1,
+              "deviceLost": false,
+              "residentEpoch": 1,
+              "lastUse": 0,
+              "completedFrame": 0,
+              "error": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Released lease cannot start CPU or GPU work for remaining owners",
+      "status": "passed",
+      "observations": {
+        "breaks": "Work-start trusts resource identity instead of active lease",
+        "checkpoints": [
+          {
+            "label": "stale-start-denied",
+            "state": {
+              "resourceGeneration": 1,
+              "leaseCount": 1,
+              "ownerLeaseCounts": {
+                "overlay": 1
+              },
+              "cpuState": "decoded",
+              "cpuData": "pixels",
+              "gpuState": "empty",
+              "resident": false,
+              "decodeTaskId": null,
+              "uploadTaskId": null,
+              "deviceEpoch": 1,
+              "deviceLost": false,
+              "residentEpoch": null,
+              "lastUse": 0,
+              "completedFrame": 0,
+              "error": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Resource identity is independent of lease owner and other resource IDs",
+      "status": "passed",
+      "observations": {
+        "breaks": "Completion or release crosses resource records",
+        "checkpoints": [
+          {
+            "label": "other-still-usable",
+            "state": {
+              "resourceGeneration": 1,
+              "leaseCount": 1,
+              "ownerLeaseCounts": {
+                "scene": 1
+              },
+              "cpuState": "decoded",
+              "cpuData": "pixels",
+              "gpuState": "resident",
+              "resident": true,
+              "decodeTaskId": null,
+              "uploadTaskId": null,
+              "deviceEpoch": 1,
+              "deviceLost": false,
+              "residentEpoch": 1,
+              "lastUse": 1,
+              "completedFrame": 0,
+              "error": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Device restoration cannot upload before an unfinished CPU task completes",
+      "status": "passed",
+      "observations": {
+        "breaks": "Restore promotes undecoded resources",
+        "checkpoints": [
+          {
+            "label": "CPU-result-after-restore",
+            "state": {
+              "resourceGeneration": 1,
+              "leaseCount": 1,
+              "ownerLeaseCounts": {
+                "scene": 1
+              },
+              "cpuState": "decoded",
+              "cpuData": "pixels",
+              "gpuState": "lost",
+              "resident": false,
+              "decodeTaskId": null,
+              "uploadTaskId": null,
+              "deviceEpoch": 2,
+              "deviceLost": false,
+              "residentEpoch": null,
+              "lastUse": 0,
+              "completedFrame": 0,
+              "error": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Repeated losses reject both earlier upload epochs while preserving CPU",
+      "status": "passed",
+      "observations": {
+        "breaks": "Only one preceding epoch is invalidated",
+        "checkpoints": [
+          {
+            "label": "third-epoch-resident",
+            "state": {
+              "resourceGeneration": 1,
+              "leaseCount": 1,
+              "ownerLeaseCounts": {
+                "scene": 1
+              },
+              "cpuState": "decoded",
+              "cpuData": "pixels",
+              "gpuState": "resident",
+              "resident": true,
+              "decodeTaskId": null,
+              "uploadTaskId": null,
+              "deviceEpoch": 3,
+              "deviceLost": false,
+              "residentEpoch": 3,
+              "lastUse": 0,
+              "completedFrame": 0,
+              "error": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Malformed completion leaves the current task pending for a valid result",
+      "status": "passed",
+      "observations": {
+        "breaks": "Invalid result advances a task or corrupts state",
+        "checkpoints": [
+          {
+            "label": "valid-result-accepted",
+            "state": {
+              "resourceGeneration": 1,
+              "leaseCount": 1,
+              "ownerLeaseCounts": {
+                "scene": 1
+              },
+              "cpuState": "decoded",
+              "cpuData": "pixels",
+              "gpuState": "resident",
+              "resident": true,
+              "decodeTaskId": null,
+              "uploadTaskId": null,
+              "deviceEpoch": 1,
+              "deviceLost": false,
+              "residentEpoch": 1,
+              "lastUse": 0,
+              "completedFrame": 0,
+              "error": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Invalid frame values cannot poison fence or last-use tracking",
+      "status": "passed",
+      "observations": {
+        "breaks": "NaN or negative frame permits premature collection",
+        "checkpoints": [
+          {
+            "label": "valid-fence-still-pending",
+            "state": {
+              "resourceGeneration": 1,
+              "leaseCount": 0,
+              "ownerLeaseCounts": {},
+              "cpuState": "decoded",
+              "cpuData": "pixels",
+              "gpuState": "resident",
+              "resident": true,
+              "decodeTaskId": null,
+              "uploadTaskId": null,
+              "deviceEpoch": 1,
+              "deviceLost": false,
+              "residentEpoch": 1,
+              "lastUse": 4,
+              "completedFrame": 3,
+              "error": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Unissued lease and task fields cannot act on an active resource",
+      "status": "passed",
+      "observations": {
+        "breaks": "Partial identity checks accept malformed capabilities",
+        "checkpoints": [
+          {
+            "label": "invalid-identities-denied",
+            "state": {
+              "resourceGeneration": 1,
+              "leaseCount": 1,
+              "ownerLeaseCounts": {
+                "scene": 1
+              },
+              "cpuState": "decoded",
+              "cpuData": "pixels",
+              "gpuState": "uploading",
+              "resident": false,
+              "decodeTaskId": null,
+              "uploadTaskId": 2,
+              "deviceEpoch": 1,
+              "deviceLost": false,
+              "residentEpoch": null,
+              "lastUse": 0,
+              "completedFrame": 0,
+              "error": null
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "sourceHashes": [
+    {
+      "path": "experiments/async-resource-probe/history/pre-fence-audit/run.mjs",
+      "sha256": "05af4be8544af05834913dacdc76f8a893a151e897713691ea0196f91d20b430"
+    },
+    {
+      "path": "experiments/async-resource-probe/history/pre-fence-audit/model.mjs",
+      "sha256": "4d355f09e04c3587ac091cec77db40ba53e036e2f8df478c336b174735013644"
+    }
+  ],
+  "limitations": [
+    "Finite manually ordered callback model, not production Egret.",
+    "No actual CPU decoding, GPU uploads, browser/native device testing, performance, allocation size, worker scheduling, or full thread-safety proof.",
+    "Fence completion is injected; this does not validate a real driver fence.",
+    "Legacy adapter only exposes actual previous-model policies for seven targeted counterexamples; it is not an alternate implementation."
+  ]
+}

@@ -1,0 +1,221 @@
+{
+  "schemaVersion": 1,
+  "reviewStage": "independent_document_semantic_status_targeted_rereview",
+  "reviewedAtUtc": "2026-10-08 08:59:24 UTC",
+  "knowledgeBaseVersion": "0.5.0",
+  "designDocumentVersion": "0.4_candidate",
+  "verdict": "passed_with_stated_scope",
+  "scope": "Final bounded document conclusion combines the full initial semantic/status review of 18 targets with a targeted rereview of the corrected runtime paragraph. Seventeen unchanged files retain their initial semantic review; only the corrected target has a new hash and new paragraph review.",
+  "rootRunId": "d642177d-b007-4c0e-80a2-0f85e150d0c0",
+  "necessaryCorrections": [],
+  "reviewedFileHashes": [
+    {
+      "path": "README.md",
+      "sha256": "b039a9def71747e7b260ed9a3e42a60e0f603434e326f6e7f143fad35404d7fa",
+      "matchesInitialReview": true,
+      "reviewBasis": "initial_semantic_review_carried_forward_unchanged"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "sha256": "70021cbeccfa51ace79901ac009caf36809faf2732d20911224467b88ac5195d",
+      "matchesInitialReview": true,
+      "reviewBasis": "initial_semantic_review_carried_forward_unchanged"
+    },
+    {
+      "path": "当前版本.json",
+      "sha256": "f70487213abf2b1678ac6fcab1e42f7d38bd8d3d418d3fdc9098a46471a18b96",
+      "matchesInitialReview": true,
+      "reviewBasis": "initial_semantic_review_carried_forward_unchanged"
+    },
+    {
+      "path": "registry/需求.json",
+      "sha256": "3cd34bbe9ffb9b5d093cd8d9c15f561b06b43187a44bdd6699bff33b4fedcdc8",
+      "matchesInitialReview": true,
+      "reviewBasis": "initial_semantic_review_carried_forward_unchanged"
+    },
+    {
+      "path": "registry/决策.json",
+      "sha256": "73c868316a5a6cbde7e821fb6dbb32ddd8975914dbb9f664a058fccc39f33190",
+      "matchesInitialReview": true,
+      "reviewBasis": "initial_semantic_review_carried_forward_unchanged"
+    },
+    {
+      "path": "registry/假设.json",
+      "sha256": "560b55fff736a542a895ece4f2605a016e260491cb5594ff4df8c30ac3aefdd6",
+      "matchesInitialReview": true,
+      "reviewBasis": "initial_semantic_review_carried_forward_unchanged"
+    },
+    {
+      "path": "registry/交付.json",
+      "sha256": "5b213dd8b648ba2600beb8a801eb424d64062cd65383a2a6da33b9b801538e65",
+      "matchesInitialReview": true,
+      "reviewBasis": "initial_semantic_review_carried_forward_unchanged"
+    },
+    {
+      "path": "registry/来源.json",
+      "sha256": "6af82466b29285ea2a6605ad945f028489ad8867f749979c7849ce6d6faacf66",
+      "matchesInitialReview": true,
+      "reviewBasis": "initial_semantic_review_carried_forward_unchanged"
+    },
+    {
+      "path": "docs/技术白皮书.md",
+      "sha256": "e46488f159596660b3744455fcc56e23eb24ed33232df10569779a750d505d8c",
+      "matchesInitialReview": true,
+      "reviewBasis": "initial_semantic_review_carried_forward_unchanged"
+    },
+    {
+      "path": "docs/产品需求说明书.md",
+      "sha256": "553d5ad60cd6204e628641a0a993cc0e4581c19dece4d5b7ea2f70795703a8cf",
+      "matchesInitialReview": true,
+      "reviewBasis": "initial_semantic_review_carried_forward_unchanged"
+    },
+    {
+      "path": "docs/工程规划.md",
+      "sha256": "8e3710a13821154fc976e31023820c6fdc1c348dae64573443880d0f7c1cfdb9",
+      "matchesInitialReview": true,
+      "reviewBasis": "initial_semantic_review_carried_forward_unchanged"
+    },
+    {
+      "path": "docs/交付计划.md",
+      "sha256": "8202a63fc8180b8eb6b307176fc2f827770bbb50f4ad5294ec1670f6d5049d42",
+      "matchesInitialReview": true,
+      "reviewBasis": "initial_semantic_review_carried_forward_unchanged"
+    },
+    {
+      "path": "docs/开源参考实现与采用方案.md",
+      "sha256": "44b940444e7c86cad7471567e3bfc6d806cc86866f00234a15f9bbe300c593b1",
+      "matchesInitialReview": true,
+      "reviewBasis": "initial_semantic_review_carried_forward_unchanged"
+    },
+    {
+      "path": "docs/技术架构.md",
+      "sha256": "71284a59dd919e40bb5d863e48a20b0560cab0bacacc1f6ffc3b687cb94245e3",
+      "matchesInitialReview": true,
+      "reviewBasis": "initial_semantic_review_carried_forward_unchanged"
+    },
+    {
+      "path": "docs/渲染引擎与运行时.md",
+      "sha256": "9e72e17909dc547441fcdb038d0396da8b92067c1f2ba33131252837137913cb",
+      "matchesInitialReview": false,
+      "reviewBasis": "targeted_rereview_of_DOC_R1_correction"
+    },
+    {
+      "path": "docs/第三轮集成计划.md",
+      "sha256": "07ebe6b1c7d5f0cb426f48827971d7f03c6676cfe5f29e9693654c6eb719aa15",
+      "matchesInitialReview": true,
+      "reviewBasis": "initial_semantic_review_carried_forward_unchanged"
+    },
+    {
+      "path": "docs/第三轮集成记录.md",
+      "sha256": "63ca2d183b133e3995e1b4ed28febf250b6971cfa702a03634712ca4092638e6",
+      "matchesInitialReview": true,
+      "reviewBasis": "initial_semantic_review_carried_forward_unchanged"
+    },
+    {
+      "path": "docs/第三轮审计.md",
+      "sha256": "f9246218ef0fad90414e25eb8c4868c392b27f07f568c510b9562a21093f94ee",
+      "matchesInitialReview": true,
+      "reviewBasis": "initial_semantic_review_carried_forward_unchanged"
+    }
+  ],
+  "hashBinding": {
+    "listedFileCount": 18,
+    "reviewedFileCount": 18,
+    "initialSemanticReviewCarriedForwardFileCount": 17,
+    "targetedRereviewFileCount": 1,
+    "unchangedHashMatchesInitial": 17,
+    "changedTargets": [
+      "docs/渲染引擎与运行时.md"
+    ],
+    "unexpectedChanges": [],
+    "meaning": "All 18 final hashes were recomputed. Seventeen are unchanged from the initial review; the runtime target binds the corrected bytes. The previous integration-audit hash for that target is historical until root finalizes that audit, so that expected update is not an error. Final root structure/integration checks are outside this rereview."
+  },
+  "acceptedWithinScope": [
+    {
+      "topic": "Versions and status",
+      "conclusion": "KB0.5.0 and the three 0.4 candidate documents agree. Existing finite code is explicitly separated from complete V002-V006 product implementation not_started and acceptance not_run; D001-D012 remain proposed and H001-H007 untested."
+    },
+    {
+      "topic": "Formal migration obligation",
+      "conclusion": "R008/V006 remains mandatory for the first complete release, including independent new project, continued editing, undo, actual target publishing and updates. V006 depends on V001-V005."
+    },
+    {
+      "topic": "Actual finite execution",
+      "conclusion": "The final root report identity/counts are 17 executed, 17 passed, 0 failed, with 0 page errors and 0 console diagnostics. The normal demo smoke passed separately and is not added to the main case denominator."
+    },
+    {
+      "topic": "Sources and asset identity",
+      "conclusion": "Current r186 execution is separate from historical r180 static research. The asset is the untextured two-joint RiggedSimple skinned cylinder, Cesium 2017, CC-BY-4.0, with attribution and source pointers; it is not called a full character."
+    },
+    {
+      "topic": "Static files and compression",
+      "conclusion": "Nine pinned source files and the five detected JS-module closure remain distinct from the six-file dependency-plus-asset compression total. Raw 2313137, gzip9 461988 and Brotli11 350491 bytes are local estimates excluding authored code, HTML/tool metadata and license/metadata files; no package/network/performance comparison is claimed."
+    },
+    {
+      "topic": "Text, graphics and restoration limits",
+      "conclusion": "Canvas native-call, original-text, cache/fontEpoch and finite-pixel checks are not upgraded to font identity/coverage, CJK wrapping, IME or mobile-performance evidence. The 3D skin does not establish 2D slot/attachment/constraint/clipping semantics."
+    },
+    {
+      "topic": "Unsupported capability and acceptance",
+      "conclusion": "No KTX2/Basis/Draco/meshopt execution, complete UI/character, WebGPU scene, phone, production host, AI creator or migration acceptance is claimed. Context restoration pixels are not equated with playable interaction or business-event restoration."
+    },
+    {
+      "topic": "Historical counts and evidence authority",
+      "conclusion": "Forty-seven retained reports and 835 source-hash entries are explicitly identified as including repeats/copies, not new cases. Historical source snapshot audits with 202 and 188 entries remain separate. Old reviewed-document hashes bind the preserved 0.4.0 baseline, while current hashes bind 0.5.0."
+    },
+    {
+      "topic": "Failure and metadata retention",
+      "conclusion": "Initial code review, original red/green runs, cleanup failure, mutations, lifecycle regressions and smoke-oracle correction are retained. The Markdown position normalization is limited to local metadata with original bytes kept internally; cases/counts/source/results are not described as rewritten."
+    }
+  ],
+  "supportingArtifactsRead": [
+    "evidence/asset-reference-integration-audit.json",
+    "evidence/asset-reference-probe-results.json",
+    "evidence/asset-reference-code-review.json",
+    "evidence/asset-reference-source-audit.json",
+    "evidence/asset-reference-file-footprint.json",
+    "evidence/asset-reference-report-integrity.json"
+  ],
+  "method": {
+    "sourceAuditOrCodeAuditRedone": false,
+    "thirdPartyCodeExecuted": false,
+    "browserRun": false,
+    "validatorRun": false,
+    "baselineBytesRehashed": false,
+    "rootFinalStructureCheckOwnedByRoot": true,
+    "pendingDocumentationReviewTreatedAsExpectedFinalization": true,
+    "all18TargetFilesReadDuringInitialReview": true,
+    "targetedParagraphRereadDuringFinalReview": true,
+    "all18FinalHashesRecomputed": true,
+    "unchangedFilesSemanticReviewReusedFromInitial": 17,
+    "integrationAuditFinalHashUpdateOwnedByRoot": true
+  },
+  "limits": [
+    "This document review reads existing reports and their stated boundaries; it does not independently execute the code, upstream tests, browser, private Egret projects or product acceptance.",
+    "No complete licensing/security, GC/heap retention, performance, host/device, AI workflow or migration finding is established by this review.",
+    "The preserved-baseline and historical-source integrity conclusions retain the separate audit authorities; this review does not rehash those baselines.",
+    "Only DOC-R1 was changed and rereviewed; the other 17 files keep their initial semantic review because their SHA256 bytes did not change. No cosmetic wording or design approval was requested."
+  ],
+  "initialReviewPreserved": {
+    "verdict": "changes_required",
+    "necessaryCorrectionCount": 1,
+    "jsonFileName": "phase3-document-review-initial.json",
+    "jsonSha256": "6f0ac8968d719c54512c681a56da60fd340982adebc58c2aa231f0a4c5557f97",
+    "markdownFileName": "phase3-document-review-initial.md",
+    "markdownSha256": "4a141ab7eb94f770af0a512441223246ce4a47395aa3783b2a42c5de05f83cbd",
+    "unchangedBeforeRereview": true,
+    "meaning": "The initial JSON and Markdown matched their preserved copies before this final report was updated; the initial finding is retained rather than overwritten."
+  },
+  "resolvedFindings": [
+    {
+      "id": "DOC-R1",
+      "status": "resolved",
+      "path": "docs/渲染引擎与运行时.md",
+      "line": 46,
+      "initialSha256": "fa4f5b0141d1839ac450ea8beb031835ac9f40ad168d5b85d63a4f5f19c99ffc",
+      "finalSha256": "9e72e17909dc547441fcdb038d0396da8b92067c1f2ba33131252837137913cb",
+      "resolution": "The paragraph now explicitly includes the already executed fixed glTF skinned-cylinder reference chain, and limits missing work to complete complex UI, complete 3D character/scene, complete 2D skeleton, actual cross-language bridging and performance timing. Historical model review pointers stay with rounds one/two and current asset results point to round three.",
+      "reviewBoundary": "Read the corrected paragraph with the surrounding P1/P2/P3 gates and current-reference summary. Product state, mandatory V006 scope and prototype exit conditions were not relaxed."
+    }
+  ]
+}

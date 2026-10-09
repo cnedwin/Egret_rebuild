@@ -1,0 +1,136 @@
+{
+  "schemaVersion": 1,
+  "experiment": "browser_graphics_probe",
+  "runId": "5ab0ef14-c28b-4ecf-98e2-fe24f438f0f0",
+  "checkedAtUtc": "2026-10-08T05:33:05.839Z",
+  "environment": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36 Edg/154.0.0.0",
+    "secureContext": true,
+    "crossOriginIsolated": false,
+    "sharedArrayBufferPresent": false,
+    "webgpuInterfacePresent": true,
+    "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+    "webglRenderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 Laptop GPU (0x00002C58) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "webglVendor": "Google Inc. (NVIDIA)",
+    "hardwareClassification": "renderer_string_not_hardware_certification"
+  },
+  "counts": {
+    "passed": 7,
+    "failed": 0,
+    "unsupported": 0,
+    "inconclusive": 0
+  },
+  "results": [
+    {
+      "name": "WebGL2上下文",
+      "status": "passed",
+      "observations": {
+        "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+      }
+    },
+    {
+      "name": "深度测试保留近处不透明图元",
+      "status": "passed",
+      "observations": [
+        25,
+        51,
+        204,
+        255
+      ]
+    },
+    {
+      "name": "透明UI按顺序叠加的像素",
+      "status": "passed",
+      "observations": [
+        70,
+        140,
+        51,
+        255
+      ]
+    },
+    {
+      "name": "矩形裁剪不影响范围外像素",
+      "status": "passed",
+      "observations": [
+        25,
+        51,
+        204,
+        255
+      ]
+    },
+    {
+      "name": "交换透明绘制顺序得到可检测反例",
+      "status": "passed",
+      "observations": {
+        "original": [
+          70,
+          140,
+          51,
+          255
+        ],
+        "reversed": [
+          134,
+          77,
+          51,
+          255
+        ]
+      }
+    },
+    {
+      "name": "上下文丢失后重建图形资源",
+      "status": "passed",
+      "observations": [
+        70,
+        140,
+        51,
+        255
+      ]
+    },
+    {
+      "name": "WebGPU设备与清屏读回",
+      "status": "passed",
+      "observations": {
+        "pixel": [
+          64,
+          127,
+          191,
+          255
+        ],
+        "hardware": "not_certified"
+      }
+    }
+  ],
+  "limitations": [
+    "One local desktop browser session only.",
+    "API and pixel observations do not certify hardware acceleration, mobile, mini-game hosts, real scenes or production support.",
+    "No frame-time, power, package-size, text/skeleton or old-project migration acceptance."
+  ],
+  "sourceHashes": [
+    {
+      "path": "server.mjs",
+      "sha256": "1b6134c4c2a0980db76c30db536ebdde002d2b3edb492167176e6812534d2c56"
+    },
+    {
+      "path": "index.html",
+      "sha256": "5d007e36abcab014d06f3a9206cb7ea8d573dcae8eae0779cd2e0a413469ba13"
+    },
+    {
+      "path": "probe.js",
+      "sha256": "13a8463cc3852b95eefb2a9351d2b9be225894b9215359f9295d560f0a9bdbc8"
+    },
+    {
+      "path": "run-headless.cjs",
+      "sha256": "760393373aeab4ca8e893726cfc566a0f0b92e5f1aa09d06ace8dffc7f033973"
+    }
+  ],
+  "executionMode": "headless_local_graphics_lab",
+  "browserLaunchMode": "installed_edge_fresh_test_profile",
+  "browserVersion": "154.0.4258.62",
+  "pageErrors": [],
+  "consoleDiagnostics": [
+    {
+      "type": "error",
+      "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    }
+  ]
+}

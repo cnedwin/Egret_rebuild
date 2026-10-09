@@ -1,0 +1,134 @@
+{
+  "checkedAt": "2026-10-08",
+  "scope": "Pinned PixiJS text pipeline source and merged PR inspection; no PixiJS execution or font benchmark.",
+  "repositories": [
+    {
+      "repo": "pixijs/pixijs",
+      "ref": "v8.22.0",
+      "commitSha": "5b41ee37fd36c61e089113345a8f12cf1c3323cf",
+      "versionNote": "Explicit snapshot; release/tag source three files compared with full SHA contents and matched.",
+      "license": {
+        "id": "MIT",
+        "url": "https://github.com/pixijs/pixijs/blob/5b41ee37fd36c61e089113345a8f12cf1c3323cf/LICENSE",
+        "read": true,
+        "reuseObligations": "Retain applicable copyright and license when code is copied."
+      },
+      "sourceFiles": [
+        {
+          "path": "src/scene/text/shared/AbstractTextSystem.ts",
+          "url": "https://github.com/pixijs/pixijs/blob/5b41ee37fd36c61e089113345a8f12cf1c3323cf/src/scene/text/shared/AbstractTextSystem.ts",
+          "sha256": "236a620fadb87e81055367ba0c027663e8fb039d2edeed2c2cdc4129e1ede6d0",
+          "read": true
+        },
+        {
+          "path": "src/scene/text/canvas/CanvasTextMetrics.ts",
+          "url": "https://github.com/pixijs/pixijs/blob/5b41ee37fd36c61e089113345a8f12cf1c3323cf/src/scene/text/canvas/CanvasTextMetrics.ts",
+          "sha256": "e514cfe27532824f01ec6c3a38dd48ea110c5d1297ffcd9e378bcaf1433a7a5d",
+          "read": true
+        },
+        {
+          "path": "src/scene/text/canvas/CanvasTextGenerator.ts",
+          "url": "https://github.com/pixijs/pixijs/blob/5b41ee37fd36c61e089113345a8f12cf1c3323cf/src/scene/text/canvas/CanvasTextGenerator.ts",
+          "sha256": "a2b4ced5a46013bd2590814e728a75ec6739e7c4fe0c1b7ef839bf33538a9c3e",
+          "read": true
+        },
+        {
+          "path": "src/scene/text-html/HTMLTextSystem.ts",
+          "url": "https://github.com/pixijs/pixijs/blob/5b41ee37fd36c61e089113345a8f12cf1c3323cf/src/scene/text-html/HTMLTextSystem.ts",
+          "sha256": "e65f4037e5bdce7198a197caad4fc8064b1a3877786f565cc8a332d95b54aa62",
+          "read": true
+        },
+        {
+          "path": "src/scene/text/canvas/CanvasTextPipe.ts",
+          "url": "https://github.com/pixijs/pixijs/blob/5b41ee37fd36c61e089113345a8f12cf1c3323cf/src/scene/text/canvas/CanvasTextPipe.ts",
+          "sha256": "50b09b14b48517c9e17ba7304da651c651c02e4db6b0bd791fa984726d11c316",
+          "read": true
+        }
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "PX001",
+      "claim": "Canvas text uses browser measurement and rasterization, then manages reusable textures; it is a mature implementation baseline rather than synthetic glyphWidths.",
+      "evidenceUrls": [
+        "https://github.com/pixijs/pixijs/blob/5b41ee37fd36c61e089113345a8f12cf1c3323cf/src/scene/text/canvas/CanvasTextMetrics.ts#L288-L399",
+        "https://github.com/pixijs/pixijs/blob/5b41ee37fd36c61e089113345a8f12cf1c3323cf/src/scene/text/canvas/CanvasTextGenerator.ts#L680-L773",
+        "https://github.com/pixijs/pixijs/blob/5b41ee37fd36c61e089113345a8f12cf1c3323cf/src/scene/text/shared/AbstractTextSystem.ts#L174-L233"
+      ],
+      "mechanism": "measureText uses text/style/wrap cache; zero spacing path draws whole strings through fillText/strokeText; texture management uses styleKey and usageCount; spacing fallback may split graphemes.",
+      "recommendation": "Web UI baseline: host Canvas text layout/raster provider, reusable run/paragraph texture cache; fixed numeric labels may use a separate bitmap atlas. Include font asset/load generation, locale/direction and resolution in Egret cache invalidation.",
+      "limits": [
+        "Canvas text is not guaranteed identical across OS fonts or hosts.",
+        "The current source key does not itself prove all Egret font-load identities covered.",
+        "Nonzero letter/word spacing paths may split text; full shaping/line-break quality remains a product concern.",
+        "Do not adopt the source comment about up to40percent faster measurement as Egret benchmark."
+      ]
+    },
+    {
+      "id": "PX002",
+      "claim": "Pooled text sources can be reused after upload and are not a persistent recovery source; text textures are explicitly regenerated on context change.",
+      "evidenceUrls": [
+        "https://github.com/pixijs/pixijs/blob/5b41ee37fd36c61e089113345a8f12cf1c3323cf/src/scene/text/canvas/CanvasTextPipe.ts#L27-L59",
+        "https://github.com/pixijs/pixijs/blob/5b41ee37fd36c61e089113345a8f12cf1c3323cf/src/scene/text-html/HTMLTextSystem.ts#L197-L223",
+        "https://github.com/pixijs/pixijs/pull/12170"
+      ],
+      "mechanism": "CanvasTextPipe registers contextChange and unloads managed texts. HTMLTextSystem initiates texture source upload before returning temporary image/canvas pools.",
+      "recommendation": "Store text+style+font dependencies as regenerator authority, invalidate texture/mask caches by device generation; do not retain every raster image forever or rely on reused canvas content.",
+      "limits": [
+        "Merged PR Sept7 2026 is upstream maintenance evidence, not a local run.",
+        "Regenerated text still depends on available fonts and the actual host provider.",
+        "Fixed-frame synthetic restoration from the prior probe does not cover these cases."
+      ]
+    },
+    {
+      "id": "PX003",
+      "claim": "Canvas text quads enter the normal batch pipe while renderer-specific text state is indexed by renderer identity.",
+      "evidenceUrls": [
+        "https://github.com/pixijs/pixijs/blob/5b41ee37fd36c61e089113345a8f12cf1c3323cf/src/scene/text/canvas/CanvasTextPipe.ts#L62-L134"
+      ],
+      "mechanism": "addRenderable adds batchableText to renderer.renderPipes.batch; texture references are refreshed on style/resolution changes and per-renderer GPU state is maintained.",
+      "recommendation": "Integrate text output into the normal ordered UI batch path, with texture and clip/material barriers; keep shaping/rasterization outside unchanged frame work. Manage the resource in the shared Egret registry.",
+      "limits": [
+        "This is code organization, not proof of no per-frame cost or arbitrary cross-engine state sharing.",
+        "Text cache area, upload volume, draw count and quality must be measured with real content."
+      ]
+    },
+    {
+      "id": "PX004",
+      "claim": "Per-target stencil and mask-stack metadata must die with their backend render target; global uid-keyed records previously leaked.",
+      "evidenceUrls": [
+        "https://github.com/pixijs/pixijs/pull/12194",
+        "https://github.com/pixijs/pixijs/releases/tag/v8.21.0"
+      ],
+      "mechanism": "Merged PR moved per-render-target state to GlRenderTarget/GpuRenderTarget; release notes list the fix.",
+      "recommendation": "Make render-target cache entries, stencil bookkeeping and mask stack lifetimes explicit owner dependencies; releasing target invalidates every associated entry.",
+      "limits": [
+        "PR and release inspected; backend stencil implementation was not directly read in this Pixi source subset.",
+        "Initial guessed source paths returned404, recorded as path discovery failure, not absent functionality."
+      ]
+    }
+  ],
+  "accessLimits": [
+    {
+      "path": "src/scene/text/TextPipe.ts",
+      "status": "GitHub404",
+      "disposition": "Resolved to canvas/CanvasTextPipe.ts via tagged init.ts."
+    },
+    {
+      "path": "src/rendering/renderers/gl/stencil/GlStencilSystem.ts",
+      "status": "GitHub404",
+      "disposition": "No mechanism claim from missing path; stencil claim limited to inspected merged PR."
+    },
+    {
+      "path": "src/rendering/renderers/gl/renderTarget/GlRenderTarget.ts",
+      "status": "GitHub404",
+      "disposition": "Same boundary as stencil path."
+    }
+  ],
+  "openQuestions": [
+    "Host text provider and font-loading APIs in each launch platform.",
+    "Real CJK/emoji/input quality, cache/upload budget and mobile power.",
+    "Integration and dependency footprint of the chosen component subset."
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "name": "@egret/engine",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./webgpu": {
+      "types": "./dist/web/webgpu.d.ts",
+      "import": "./dist/web/webgpu.js"
+    },
+    "./web": {
+      "types": "./dist/web/index.d.ts",
+      "import": "./dist/web/index.js"
+    }
+  },
+  "dependencies": {
+    "@egret/contracts": "workspace:*",
+    "@egret/runtime": "workspace:*",
+    "robust-predicates": "3.0.3"
+  }
+}

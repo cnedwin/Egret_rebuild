@@ -1,0 +1,469 @@
+{
+  "schemaVersion": 1,
+  "version": "0.12.0",
+  "date": "2026-10-09",
+  "verdict": "PASS within scoped implementation review",
+  "reviewers": "Independent AI contract/code reviewers; publication translation meaning and public content author self-review",
+  "implementationHeads": [
+    "44809b3dce322dcd968956ab35e3f8cbb808b542",
+    "3fb74f525379ca830c095f265c69ffa293f1ea45"
+  ],
+  "scope": "Display/frame contract, cross-realm native Promise correction, Canvas validation/execution and preserved boundaries. Canvas review inspected saved real-browser log; did not repeat full suite or screenshot inspection.",
+  "historicalFindings": [
+    {
+      "finding": "Unobserved foreign-realm native Promise rejection",
+      "status": "corrected_and_scoped_rereview_pass"
+    },
+    {
+      "finding": "Premature-cleanup assertion could be swallowed",
+      "status": "nonblocking_test_oracle_strengthened_in_publication"
+    },
+    {
+      "finding": "Stable-copy transform selected initial reset",
+      "status": "nonblocking_test_oracle_strengthened_in_publication"
+    }
+  ],
+  "sources": [
+    {
+      "path": "packages/contracts/src/CancellationSignal.ts",
+      "sha256": "6a9e5f07b549ec50c2a5c50915309e8de6fba2d943f59a0d7b54b079e14584b3"
+    },
+    {
+      "path": "packages/contracts/src/Diagnostic.ts",
+      "sha256": "ce61e4d90319f55febc2782ca5e1a7329984cf6cfdf14955cc3a20dbdd5920ad"
+    },
+    {
+      "path": "packages/contracts/src/Disposable.ts",
+      "sha256": "76d74cd41b6e136ea840c7d8d05273520ce7d41031a7820dd4ddabc73be947db"
+    },
+    {
+      "path": "packages/contracts/src/HostAdapter.ts",
+      "sha256": "3c8289a85e04e34be3782156244cc253792eff1b41629758d54cd1692c64c2ae"
+    },
+    {
+      "path": "packages/contracts/src/RenderFrame2D.ts",
+      "sha256": "853ac3e712082cf67e442043044b0da0ca577bb2d6a68d3c5981ac203fcd1e60"
+    },
+    {
+      "path": "packages/contracts/src/index.ts",
+      "sha256": "9a4771c7479eaf70e1b27f2678e0f16e633ee85b8a413508c486dcd111471fbc"
+    },
+    {
+      "path": "packages/engine/src/Engine.ts",
+      "sha256": "565d2f2701d5f1c7f653a5833f435b649f68975bf650400003bbdd86ecb909a0"
+    },
+    {
+      "path": "packages/engine/src/closeHost.ts",
+      "sha256": "9fac806cc0d19265ec6956cc19305a9ff2ae03ff0e49700d64c39be88ba3244f"
+    },
+    {
+      "path": "packages/engine/src/createEngine.ts",
+      "sha256": "32011ff9c7bbc65e0bdf455a21fcac2e975cd14f9065c3c7c9589bbb74c56774"
+    },
+    {
+      "path": "packages/engine/src/index.ts",
+      "sha256": "610b29b05ca80e16c602d68af2ad1a71be4027cb4c5731816c177eb415e3b3f4"
+    },
+    {
+      "path": "packages/engine/src/surfaceOwnership.ts",
+      "sha256": "604df51eb03f8dbb7965100e06667c09bb311f0e26e0ee752b2404c899e5a320"
+    },
+    {
+      "path": "packages/engine/web/CanvasHost.ts",
+      "sha256": "ae6c2f46bd3e43b44e8a915a5b4fb9c1cbebab6b5f14b93178b7bd7eb5f0c7cb"
+    },
+    {
+      "path": "packages/engine/web/copyCanvasFrame.ts",
+      "sha256": "274069cd40f81ddbb9aa298f4119be2cf8e4791d17c0c2b2652033a0d4957637"
+    },
+    {
+      "path": "packages/engine/web/index.ts",
+      "sha256": "1c06c610493ff706ed07983a2bdd826aaf8a2b3af8c88563ad99e1324f2a7e4e"
+    },
+    {
+      "path": "packages/runtime/src/AssetLease.ts",
+      "sha256": "6c411c75c2737f4229e459f559efc75375b15c65af65e3791227abe416e24a21"
+    },
+    {
+      "path": "packages/runtime/src/AssetManager.ts",
+      "sha256": "31e52919bfa43df548fa661a9d46c5d8b2fcb7259addfe119ef4367fa25f462e"
+    },
+    {
+      "path": "packages/runtime/src/AssetRef.ts",
+      "sha256": "48963664a8a048697a962f1c3d56826333e65e3bbf05d1524d7c30b049a10ab7"
+    },
+    {
+      "path": "packages/runtime/src/CancellationController.ts",
+      "sha256": "3cfdb217804b282c4a422420ce5efa63ced25a6bb215bff254e7f947c4942e28"
+    },
+    {
+      "path": "packages/runtime/src/DisplayObject.ts",
+      "sha256": "f66c3aaecf255601969603b359ac42bcd4db6d2ed17750727f0f4f5816152e70"
+    },
+    {
+      "path": "packages/runtime/src/DisplayObjectContainer.ts",
+      "sha256": "36b2f5e42d5654a03765c292bedf42f094fde122967a17c00b3e4180d1e2a72c"
+    },
+    {
+      "path": "packages/runtime/src/EgretError.ts",
+      "sha256": "f647ab0f675a5e0d460f1e7b04bce603d06998096f460371035f23826eed7f08"
+    },
+    {
+      "path": "packages/runtime/src/Event.ts",
+      "sha256": "de5671dcddbde4637c22b5ea2bff9ebb520c7aed503608e670d0efc08cf9539c"
+    },
+    {
+      "path": "packages/runtime/src/EventDispatcher.ts",
+      "sha256": "141051a7aede922c0d8d73aa2b509c75cbe209118ba0bb48b3869765b9c5a82d"
+    },
+    {
+      "path": "packages/runtime/src/Graphics.ts",
+      "sha256": "e84deaaefeec9e9bbe25d1447aba980ebefa5c981af73d71a611fe45898443a9"
+    },
+    {
+      "path": "packages/runtime/src/Scope.ts",
+      "sha256": "29e9d5da9232ed8347b2a829e069d33daabb1bad296798492a45c7950f43e8ea"
+    },
+    {
+      "path": "packages/runtime/src/Sprite.ts",
+      "sha256": "a3175515cdeedc283199870cd683e541acf208f04330c63c3f5f5eee2e328bba"
+    },
+    {
+      "path": "packages/runtime/src/Stage.ts",
+      "sha256": "08eb1599d9c75c70add22558f28e214ec31fe4305ccdf2638a8f7d35ec61bb0f"
+    },
+    {
+      "path": "packages/runtime/src/assetState.ts",
+      "sha256": "044c1aceef34403be1b1297794d3d3e390182a84d2876ce2d3392a4c2e5a6920"
+    },
+    {
+      "path": "packages/runtime/src/diagnostics.ts",
+      "sha256": "c330f5d9083d84ee5b23b947d0d8534e7050a92f8b76a7e5259a1bad92395294"
+    },
+    {
+      "path": "packages/runtime/src/displayTreeState.ts",
+      "sha256": "8aaf5f5dfc8d62f3b1bc4effe819e7718e3ed72fcf0a8fc25e3b08410f980e50"
+    },
+    {
+      "path": "packages/runtime/src/displayVisualState.ts",
+      "sha256": "0bee8a7e5136f59c3301ec4d829bceaf5a01aff6f0d770dd6a2952ed31110f21"
+    },
+    {
+      "path": "packages/runtime/src/frameCapture.ts",
+      "sha256": "37ac4db4273ddca728622fd2db1226c1d104e056c40fd3bcbfbadeae1c75e921"
+    },
+    {
+      "path": "packages/runtime/src/index.ts",
+      "sha256": "51700665e52ddabfbce7359ee7e08747bee348a46cc0c1ba3a936a901f21e4b8"
+    },
+    {
+      "path": "packages/runtime/src/ownership.ts",
+      "sha256": "8c8c40e465002882dac1bf054fa49248c99df62da337cf75f50168f0a6748c62"
+    }
+  ],
+  "privateReportReceipts": [
+    {
+      "identity": "task-1-report.md",
+      "sha256": "da73e98963f7449a87b3af2cd1ec9f094550c43ebdacf777f4f63847b5bf09a2",
+      "status": "identity_only_private_log_not_distributed"
+    },
+    {
+      "identity": "task-1-review.md",
+      "sha256": "841fef55505f4188f04e5064b5e18be47e702ab24eb345d5af1c46e2632fc8e8",
+      "status": "identity_only_private_log_not_distributed"
+    },
+    {
+      "identity": "task-2-report.md",
+      "sha256": "2344ac863dc45e971c1e2345fad3852ad579a5dd7e8a34199a15573b6fdbd8b2",
+      "status": "identity_only_private_log_not_distributed"
+    },
+    {
+      "identity": "task-2-review.md",
+      "sha256": "45ad97a4cd5ef6ec151216ee3bf5136f9a878f2b1ba89b3599433a90b8ec5017",
+      "status": "identity_only_private_log_not_distributed"
+    }
+  ],
+  "publicationReview": {
+    "status": "author_self_review_with_scope",
+    "scope": "Author public/translation self-review plus independent changed semantic scope review at 7608bdf and completed narrow metadata correction re-review at 3f40d106dda454d8805aacc78cb27b7980a360d1. Untouched historical pairs are not freshly translated; this later faithful verdict attestation records the result without claiming review of future substantive changes.",
+    "reviewedDocumentHashes": [
+      {
+        "path": "AGENTS.en.md",
+        "sha256": "a48070115ccdb0aede63831d4a23f43b44e0a50b50f15bb5727c4c6d715aef14"
+      },
+      {
+        "path": "AGENTS.md",
+        "sha256": "3005ab1c405f7a8c6140db7b0fbd7e79e02bbea8b392ad92ba680957abf594af"
+      },
+      {
+        "path": "DOCUMENTATION.en.md",
+        "sha256": "c52a49dc83accfcbd4e89f477da22b2c1ef66a93f6231c5f020bcd8d00e19d55"
+      },
+      {
+        "path": "DOCUMENTATION.md",
+        "sha256": "8dbbbd09618f5d68e128144ca453c2a443ae3a3f01b296af83d6605188fdb380"
+      },
+      {
+        "path": "PUBLICATION.en.md",
+        "sha256": "585c1919a7eadcf7e9c64f55956586788d930ace161fc0f7df56fba73e2f6cc1"
+      },
+      {
+        "path": "PUBLICATION.md",
+        "sha256": "35b9df6a3dd31b41918a45eb31195fb9f74a363456e7840595000f97c30163ed"
+      },
+      {
+        "path": "README.en.md",
+        "sha256": "bbe14f788ea8aa7875785eca37bb08adf4dfbfb5d78c8dc6657484f38d500c8c"
+      },
+      {
+        "path": "README.md",
+        "sha256": "2a2d1916c4926bca34a4e9a0e45b5c974064ee13593f627733f360d827e302c5"
+      },
+      {
+        "path": "examples/canvas-scene/README.en.md",
+        "sha256": "01755ea0b44331170271d7a0c769834dbc9fce4569bc3d99568f3a891ba55a3d"
+      },
+      {
+        "path": "examples/canvas-scene/README.md",
+        "sha256": "bf8ea4ece2b97ebc6501d55c81d8ee5b634d9e1ad2c6c88101f38b585637829f"
+      },
+      {
+        "path": "knowledge-base/AGENTS.en.md",
+        "sha256": "adcfaf55ed65876cd51e2889ecc63c8cbf9d76b476fac7452a16c025effaafa7"
+      },
+      {
+        "path": "knowledge-base/AGENTS.md",
+        "sha256": "68f0651c29825ce6b5c3df33a74fa27b4faee8ad02d838ad67ee3e25cd7ee5f7"
+      },
+      {
+        "path": "knowledge-base/CHANGELOG.en.md",
+        "sha256": "d3605bd3ff93bd8eb7dc26977e756041fad93599ccc2a4092b43ab35e27c86be"
+      },
+      {
+        "path": "knowledge-base/CHANGELOG.md",
+        "sha256": "69faf8511d3e8a506e305592b6da7319769e9201381bd59d8de8f604bafe5615"
+      },
+      {
+        "path": "knowledge-base/README.en.md",
+        "sha256": "47f4726314ebd7a8f370f75849e37440c13a6184f497f3263c1cd7e3a5d37c45"
+      },
+      {
+        "path": "knowledge-base/README.md",
+        "sha256": "197983a93332579e50d686db254ac3638de0434311a1ff5ad0bcacf98471bdbc"
+      },
+      {
+        "path": "knowledge-base/docs/交付计划.en.md",
+        "sha256": "ce866d4709e40e9b2f75a7bec9eca53d2259420156d5eab32a88cc6ce1251d44"
+      },
+      {
+        "path": "knowledge-base/docs/交付计划.md",
+        "sha256": "4bea702fd99d48302793e959251014a5c51277b0c5649fba043dd881392c2639"
+      },
+      {
+        "path": "knowledge-base/docs/代码规范与质量门禁.en.md",
+        "sha256": "258906f6848ab97adf73614c06f9e0ad6a7d312b3240b40d7c7c8b77d48f472c"
+      },
+      {
+        "path": "knowledge-base/docs/代码规范与质量门禁.md",
+        "sha256": "afea89b2f1f71d99a3cf873a09aa1016ad864c1e5f10badd46ddff2a8b979cd6"
+      },
+      {
+        "path": "knowledge-base/docs/公共API设计与命名规范.en.md",
+        "sha256": "dc97cdce381fd019abb44695b1890e8cee3f0e9a49d87f1d342cceaf6887172b"
+      },
+      {
+        "path": "knowledge-base/docs/公共API设计与命名规范.md",
+        "sha256": "dbcf97ac0410074a4c19a9e628ff38ae025b26f4c17812439d6f4afaca08825a"
+      },
+      {
+        "path": "knowledge-base/docs/双语文档与推送前检查.en.md",
+        "sha256": "4a4438ab93952be59bef607ef8b81c6564e8cb225b4a56fd4f3455269a9055d3"
+      },
+      {
+        "path": "knowledge-base/docs/双语文档与推送前检查.md",
+        "sha256": "5c23c9ac479627828aa8cdc3ccf127954700b48e71f507556798708735075c62"
+      },
+      {
+        "path": "knowledge-base/docs/工程技术架构与项目结构.en.md",
+        "sha256": "63e51a8182e3aedc9ad0e7424a75de4aead09c5521eeb4c8d9fee17ed1744336"
+      },
+      {
+        "path": "knowledge-base/docs/工程技术架构与项目结构.md",
+        "sha256": "cae517d833f6c7a87171524e90050a83d57c943409306f79ffe587d5394c93ce"
+      },
+      {
+        "path": "knowledge-base/docs/工程规划.en.md",
+        "sha256": "aaab252800a13774c65700b360a03f6955ba8fa6976161fe899a02533c26c705"
+      },
+      {
+        "path": "knowledge-base/docs/工程规划.md",
+        "sha256": "183e980c3df8a21cefeaf74e72994dc5b250b6191e86219f1ba77f40676e7618"
+      },
+      {
+        "path": "knowledge-base/docs/显示与帧执行合同.en.md",
+        "sha256": "e8a6539c6eb877107bbc9428ac86e4aec633a093ec182648b49999e140356247"
+      },
+      {
+        "path": "knowledge-base/docs/显示与帧执行合同.md",
+        "sha256": "2107887b923c3a9963b44a7a54ac4e30ca5ddb869599536742e517d778912270"
+      },
+      {
+        "path": "knowledge-base/docs/显示与帧执行实现计划.en.md",
+        "sha256": "6cf2091ed8680f5fcdecdb4454dd3ff39888c13dfb5f413e701a8b5be464b5f1"
+      },
+      {
+        "path": "knowledge-base/docs/显示与帧执行实现计划.md",
+        "sha256": "7d83b3b0bfe84b4819a1c4ef608631693db101cc31359f05218ab361b329aa11"
+      },
+      {
+        "path": "knowledge-base/docs/显示与帧执行实现记录.en.md",
+        "sha256": "75f403d51df193c57c1c8c781e9fa7fea25862e369e67a1b43d31f38aa51387b"
+      },
+      {
+        "path": "knowledge-base/docs/显示与帧执行实现记录.md",
+        "sha256": "95a65d3ce20badf64cbceebc580e9f899e8e8a9b5ee0ff10498d252ffb6a6830"
+      },
+      {
+        "path": "knowledge-base/docs/核心框架实现记录.en.md",
+        "sha256": "2a45f666ece8859b515700d4f2eef5a303e1932de7458a47cf9efcc632f57bee"
+      },
+      {
+        "path": "knowledge-base/docs/核心框架实现记录.md",
+        "sha256": "51df1f871057f4a12744525e464139faef8b2965b52356632701b3b470182904"
+      },
+      {
+        "path": "knowledge-base/docs/核心框架证据缺口与研究清单.en.md",
+        "sha256": "8bb1c09e194225ce576db4457868f4155c27afbfe2790e5837a8a81542ab47c7"
+      },
+      {
+        "path": "knowledge-base/docs/核心框架证据缺口与研究清单.md",
+        "sha256": "aca242a3788e6cc142b53bdfc7ab10a9280ec8ce0815b49c9f59f1c7b2a1c538"
+      },
+      {
+        "path": "knowledge-base/docs/渲染引擎与运行时.en.md",
+        "sha256": "d3ff4754b0cd07cec0767d0025bf3ec200a9f7f77fee21bd1e4d6f9c6d7b71cb"
+      },
+      {
+        "path": "knowledge-base/docs/渲染引擎与运行时.md",
+        "sha256": "b4b8bb85e6de4c446fc5074de0867379bdc3237412fdbd98c60dcaf588bc059a"
+      },
+      {
+        "path": "packages/contracts/README.en.md",
+        "sha256": "ac8a3e151ea797dbad13f5074192721de58162d727b1f1bbbdd1b7d548a51c88"
+      },
+      {
+        "path": "packages/contracts/README.md",
+        "sha256": "64b1311f9991abce8024627c86c767419118c175c09d45b5d37c2b1a0924b5a9"
+      },
+      {
+        "path": "packages/engine/README.en.md",
+        "sha256": "e633384dc915242c394834f6d86e0aa2128707c44e5e09f5d5fa9b24b9cbd3a8"
+      },
+      {
+        "path": "packages/engine/README.md",
+        "sha256": "4382b97f1d7b255a2810cecd8a76e0b625c2e03de8cb9cedcd1c92157ea39ead"
+      },
+      {
+        "path": "packages/runtime/README.en.md",
+        "sha256": "97eeca38ec5f73641b226f5e3e724580232040fc1acd0e4cb8e9b692d20e9214"
+      },
+      {
+        "path": "packages/runtime/README.md",
+        "sha256": "5ff29a37678e52fb6deba246b732a01c0edc217959486a5df72a61e4db1aa32b"
+      }
+    ],
+    "note": "Original implementation heads/history and whole-branch reviewed commit/tree remain exact. Narrow correction PASS binds its exact later head/tree; source-gate reuse is distinct from new execution. Remote checks remain pending."
+  },
+  "limitations": "No GPU, Native, physical phone, device/performance benchmark, full UI/textures/animation/3D, complete migration, CI or full-product acceptance. Browser results are desktop observations, not universal allocation limits.",
+  "projection": {
+    "role": "Public knowledge-base projection",
+    "original": "verification/display-frame-review.json"
+  },
+  "finalBranchReview": {
+    "date": "2026-10-09",
+    "reviewedCommit": "7608bdfef3d89a0a66c3304c766ea4b9d669b521",
+    "reviewedTree": "78b9f721f0011696225dbfe0b5561280f08410ed",
+    "task3Verdict": "PASS WITH ONE MINOR DOCUMENTATION NIT",
+    "wholeBranchVerdict": "READY FOR BOUNDED DRAFT SUBMISSION",
+    "severityCounts": {
+      "P0": 0,
+      "P1": 0,
+      "P2": 0,
+      "P3": 1,
+      "blockers": 0
+    },
+    "scope": "Independent whole-branch source/contracts/tests/tooling and changed bilingual semantic scope review; inspected original saved gate/browser logs. Reviewed 122 source/document/prior-review/final-log identities and both public/KB evidence projections with zero mismatches.",
+    "sourceIdentity": "Reviewed package/source/tests/tools/lockfile bytes remain unchanged in this narrow metadata correction; the later metadata commit is not the reviewed commit.",
+    "finding": {
+      "priority": "P3",
+      "path": "DOCUMENTATION.en.md",
+      "reviewedLine": 114,
+      "description": "Canvas example linked English then Chinese contrary to Chinese/English column headings.",
+      "status": "corrected_by_link_order_swap",
+      "correctionScope": "Documentation metadata only; both existing reading versions and link targets remain.",
+      "scopedMetadataRereview": "PASS at 3f40d106dda454d8805aacc78cb27b7980a360d1; P3 resolved"
+    },
+    "limits": "No test/build/browser repeat or fresh translation of all 90 historical pairs; no main/production/full-product/GPU/Native/device/performance/UI/3D/migration/CI approval. Narrow correction re-review completed at the metadataRereview head/tree; remote verification remains subsequent.",
+    "privateRawReview": {
+      "identity": "final-review.md",
+      "sha256": "3f10466708860469925274dfa5ab98a8aace436a226b170fe7403225891a56bb",
+      "status": "identity_only_not_distributed"
+    }
+  },
+  "metadataRereview": {
+    "date": "2026-10-09",
+    "verdict": "PASS",
+    "readiness": "Ready for bounded draft submission remains valid",
+    "reviewedCommit": "3f40d106dda454d8805aacc78cb27b7980a360d1",
+    "reviewedTree": "bea7f32c80a70f7c5822f156f99a574230299438",
+    "scope": "Independent limited re-review of the 11 metadata correction paths, not another whole-branch/code review.",
+    "severityCounts": {
+      "P0": 0,
+      "P1": 0,
+      "P2": 0,
+      "P3": 0,
+      "blockers": 0
+    },
+    "previousP3": "resolved",
+    "checks": {
+      "unchangedReviewedPaths": 728,
+      "unchangedPackageSources": 34,
+      "currentValidationHashesIndependentlyChecked": 590,
+      "currentValidationHashMismatches": 0,
+      "reviewEvidenceProjectionExactMatch": true,
+      "privateFinalReviewReceiptHashMatches": true,
+      "changedLocalizationDocumentHashesMatch": true,
+      "sourceRegistryCanonicalHashMatches": true,
+      "savedPublicationTestsRead": {
+        "tests": 12,
+        "pass": 12
+      },
+      "savedStructuralLogRead": {
+        "pairs": 90,
+        "registryViews": 6,
+        "criticalSources": 30,
+        "issues": 0
+      },
+      "savedKBLogRead": {
+        "records": 109,
+        "markdown": 158,
+        "links": 1433,
+        "references": 704,
+        "issues": 0
+      },
+      "fourMetadataLogHashesIndependentlyMatched": true,
+      "gitCandidateReceiptInspected": {
+        "files": 739,
+        "hashesSizesModesMatch": true
+      }
+    },
+    "execution": "No tests, full core gates, browser or validator rerun by the independent re-reviewer; read-only hashes/projection/Git-state checks and saved-log inspection only.",
+    "privateReport": {
+      "identity": "final-metadata-review.md",
+      "sha256": "cdeb98e1642afc2ee3b35f97923706fe0794eef1d9f652f0dd079225d665cd84",
+      "status": "identity_only_not_distributed"
+    },
+    "attestation": "This author-recorded faithful verdict attestation is subsequent to the exact reviewed commit. The reviewer permits recording the completed result without recursive review; this is not independent approval of future substantive changes.",
+    "limitations": "Earlier bounded desktop Canvas/allocation and unaccepted GPU/Native/phone/performance/full UI/3D/migration/CI/full-product scopes remain. Remote upload/audit and canonical KB synchronization remain subsequent."
+  }
+}
