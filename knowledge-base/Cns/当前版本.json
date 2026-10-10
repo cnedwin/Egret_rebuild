@@ -532,5 +532,20 @@
     "fullMigrationAcceptance": false,
     "contract": "Cns/docs/显示内容边界契约.md",
     "evidence": "Cns/docs/显示内容边界证据.md"
+  },
+  "latestEngineeringPreview": "0.23.0",
+  "texturedMesh2DImplementation": {
+    "version": "0.23.0",
+    "status": "bounded_increment_implemented",
+    "doc": "Cns/docs/自有纹理几何与Mesh2D契约.md",
+    "evidence": "evidence/textured-mesh2d-verification.json",
+    "desktopNativeScope": "fixed_cases_single_reported_environment",
+    "independentSavedResultReview": "accepted_bounded",
+    "publicReproduction": "recorded_separately_in_delivery_verification",
+    "publication": "recorded_separately",
+    "performance": false,
+    "phone": false,
+    "nativeSDK": false,
+    "fullA2": false
   }
 }

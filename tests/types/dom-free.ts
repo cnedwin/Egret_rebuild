@@ -69,3 +69,46 @@ const boundsDomY: number = boundsDomRectangle.y;
 const boundsDomWidth: number = boundsDomRectangle.width;
 const boundsDomHeight: number = boundsDomRectangle.height;
 void boundsDomResults; void boundsDomX; void boundsDomY; void boundsDomWidth; void boundsDomHeight;
+
+// Geometry admission and consumer declarations require only ES2022 globals.
+import {createTexturedGeometry2D as createDomGeometry, isTexturedGeometry2D as isDomGeometry} from '@egret/engine';
+import type {TexturedFloatArray2D as DomGeometryFloat, TexturedIndexArray2D as DomGeometryIndex, TexturedGeometry2DInput as DomGeometryInput, TexturedGeometry2D as DomGeometry} from '@egret/engine';
+const domGeometryFloat: DomGeometryFloat = new Float64Array(new ArrayBuffer(0));
+const domGeometryIndex: DomGeometryIndex = new Uint32Array(new ArrayBuffer(0));
+const domGeometryInput: DomGeometryInput = {positions: domGeometryFloat, uvs: new Float32Array(0), lightColors: domGeometryFloat, indices: domGeometryIndex};
+const domGeometry: DomGeometry = createDomGeometry(domGeometryInput);
+const domGeometryPositions: readonly number[] = domGeometry.positions;
+const domGeometryUnknown: unknown = domGeometry;
+if (isDomGeometry(domGeometryUnknown)) { const domGeometryNarrowed: DomGeometry = domGeometryUnknown; void domGeometryNarrowed; }
+void domGeometryPositions;
+
+// Mesh construction, cached getters and inherited bounds need no host globals.
+import {Mesh2D as DomMesh} from '@egret/engine';
+import type {AssetLease as DomMeshLease, Texture as DomMeshTexture} from '@egret/engine';
+declare const domMeshLease: DomMeshLease<DomMeshTexture>;
+const domMesh = new DomMesh(domMeshLease, domGeometry);
+const domMeshCachedLease: DomMeshLease<DomMeshTexture> | undefined = domMesh.textureLease;
+const domMeshCachedGeometry: DomGeometry | undefined = domMesh.geometry;
+domMesh.setContent(domMeshLease, domGeometry);
+const domMeshBounds: BoundsDomRectangle = domMesh.getBounds({maxNodes: 1, maxPrimitives: 1});
+domMesh.clear();
+domMesh.dispose();
+void domMeshCachedLease; void domMeshCachedGeometry; void domMeshBounds;
+
+// Task 5: opt-in consumers use ES2022 types without DOM or GPU globals.
+import {TEXTURED_FRAME_PROFILE_2D as DomProfileLiteral, createEngineForProfile as DomProfileFactory} from '@egret/engine';
+import type {TexturedFrameProfile2D as DomProfile, TexturedRenderFrame2D as DomProfileFrame, TexturedRenderHostAdapter as DomProfileHost, TexturedRenderCommand2D as DomProfileCommand, TexturedMeshCommand2D as DomProfileMesh, FrameOptions2D as DomProfileOptions, Engine as DomProfileEngine} from '@egret/engine';
+import {collectTexturedFrameContent as DomProfileCollect} from '../../packages/runtime/dist/index.js';
+import type {CapturedTexturedContent2D as DomProfileContent} from '../../packages/runtime/dist/index.js';
+declare const domProfileEngine: DomProfileEngine;
+declare const domProfileHost: DomProfileHost;
+declare const domProfileMesh: DomProfileMesh;
+const domProfile: DomProfile = DomProfileLiteral;
+const domProfileOptions: DomProfileOptions = {width: 1, height: 1};
+const domProfileFrame: DomProfileFrame = domProfileEngine.captureTexturedFrame(domProfileOptions);
+const domProfileRendered: DomProfileFrame = domProfileEngine.renderTexturedFrame(domProfileOptions);
+const domProfileReturn: undefined = domProfileHost.renderTexturedFrame(domProfileFrame);
+const domProfileFactory: Promise<DomProfileEngine> = DomProfileFactory({host: domProfileHost}, domProfile);
+const domProfileCommands: readonly DomProfileCommand[] = [domProfileMesh];
+const domProfileContent: DomProfileContent = DomProfileCollect(stage);
+void domProfileRendered; void domProfileReturn; void domProfileFactory; void domProfileCommands; void domProfileContent;

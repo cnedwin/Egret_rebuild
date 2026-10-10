@@ -269,7 +269,7 @@ const config=boundedJSON(fs.readFileSync(CONFIG_PATH,'utf8'));
 ownKeys(config,['schemaVersion','caseId','repository','entries','packages','files','metadata','sceneFiles','gpuFiles']);
 assert.equal(config.schemaVersion,1);assert.equal(config.caseId,CASE);assert.equal(normal(process.cwd()),config.repository);
 ownKeys(config.entries,['core','canvas','webgpu','host','b1']);
-ownKeys(config.packages,['@egret/contracts','@egret/runtime','@egret/engine','robust-predicates']);
+ownKeys(config.packages,['@egret/contracts','@egret/runtime','@egret/engine','robust-predicates','#egret-textured-frame-state']);
 assert.ok(Array.isArray(config.files)&&config.files.length<=LIMITS.modules);
 const FILES=new Map();let sourceBytes=0;
 for(const descriptor of config.files){ownKeys(descriptor,['path','bytes','sha256']);assert.equal(FILES.has(descriptor.path),false);assert.deepEqual(exactFile(descriptor.path),descriptor);sourceBytes+=descriptor.bytes;assert.ok(sourceBytes<=LIMITS.sourceBytes);FILES.set(descriptor.path,descriptor);}
@@ -290,6 +290,12 @@ let coldHost,closingFromHook,hooks,syntheticThrows=0,forbiddenAttempts=0,startup
 const unhandled=[];
 const unhandledListener=()=>{unhandled.push(true);};process.on('unhandledRejection',unhandledListener);
 function resolveTarget(specifier,parent){
+  if(specifier==='#egret-textured-frame-state'){
+    assert.ok(parent===config.entries.host||parent===pathToFileURL(config.repository+'/packages/engine/dist/web/CanvasHost.js').href,'exact registry adapter parent');
+    assert.ok(Object.hasOwn(config.packages,specifier),'literal registry mapping');
+    const target=config.packages[specifier];assert.ok(FILES.has(target),'registry in actual finite manifest');
+    return pathToFileURL(target).href;
+  }
   assert.ok(typeof specifier==='string'&&!specifier.includes('?')&&!specifier.includes('#'));
   if(specifier.startsWith('node:'))return specifier;
   if(Object.hasOwn(config.packages,specifier))return pathToFileURL(config.packages[specifier]).href;
@@ -297,6 +303,10 @@ function resolveTarget(specifier,parent){
   assert.ok(url&&url.protocol==='file:','closed module resolution');const file=normal(fileURLToPath(url));assert.equal(pathToFileURL(file).href,url.href,'URL alias');assert.ok(FILES.has(file),'target in actual finite manifest');return url.href;
 }
 function staticInspection(){
+  const registry=pathToFileURL(config.repository+'/packages/engine/dist/internal/texturedFrameState.js').href;
+  for(const parent of [config.entries.host,pathToFileURL(config.repository+'/packages/engine/dist/web/CanvasHost.js').href])assert.equal(resolveTarget('#egret-textured-frame-state',parent),registry);
+  assert.throws(()=>resolveTarget('#egret-textured-frame-state',config.entries.core),{message:'exact registry adapter parent'});
+  assert.throws(()=>resolveTarget('#egret-textured-frame-state/other',config.entries.host));
   assert.equal(typeof vm.SourceTextModule,'function');const budget={tokens:0};const inspected=new Map();
   const selectedAnchors=new Map([[config.entries.host,['((color >>> 16) & 255) / 255 * alpha','((color >>> 8) & 255) / 255 * alpha','(color & 255) / 255 * alpha']],[pathToFileURL(config.repository+'/packages/engine/dist/web/webgpuPass.js').href,['((group.color >>> 16) & 255) / 255 * alpha','((group.color >>> 8) & 255) / 255 * alpha','(group.color & 255) / 255 * alpha']],[pathToFileURL(config.repository+'/packages/engine/dist/web/imageProjections2D.js').href,['Math.floor((pixels[offset] * alpha + 127) / 255)','Math.floor((pixels[offset + 1] * alpha + 127) / 255)','Math.floor((pixels[offset + 2] * alpha + 127) / 255)']],[pathToFileURL(config.repository+'/packages/runtime/dist/sequenceClip.js').href,['Math.floor((high - low) / 2)']]]);
   // A selected division token never grants general closing-delimiter admission.
@@ -330,8 +340,8 @@ function installHooks(){hooks=registerHooks({
 const imported=url=>observe(import(url));
 async function ordinaryLifecycle(namespace,acquire){const f=fixture();f.device.limits.maxUniformBufferBindingSize=16;const h=namespace.createWebGPUHost({canvas:f.canvas,device:acquire?{kind:'acquire'}:{kind:'borrow',device:f.device},enableReadback:true});f.host=h;sceneFree(h);const start=observe(h.start());assert.equal(h.start(),start);await start;assert.deepEqual(f.events.filter(e=>e.kind==='pipeline').map(e=>e.pipeline),['rect','image']);const ticket=observe(h.requestReadback());assert.equal(h.renderFrame({frameId:1,width:1,height:1,clearColor:0,clearAlpha:1,commands:[]}),undefined);const idle=observe(h.whenIdle());const readback=await ticket;await idle;assert.equal(readback.serial,1);assert.equal(readback.bytes.byteLength,4);assert.equal(f.events.filter(e=>e.kind==='pass').length,1);assert.equal(f.events.filter(e=>e.kind==='submit').length,1);await observe(h.close());assert.equal(h.getStatus().state,'closed');assert.equal(h.getStatus().cleanupOutcome,'safe');assert.equal(f.deviceDestroyed,acquire?1:0);sceneFree(h);record('ORDINARY_LIFECYCLE',{ownership:acquire?'acquire':'borrow',uniformLimit:16,closed:true});}
 async function positiveBehavior(namespace,cold){const cpu=await imported(pathToFileURL(config.sceneFiles.find(file=>file.endsWith('/sceneFrame3D.js'))).href);const packing=await imported(pathToFileURL(config.sceneFiles.find(file=>file.endsWith('/packMeshGeometry3D.js'))).href);const mesh=await imported(pathToFileURL(config.sceneFiles.find(file=>file.endsWith('/webgpuMeshPass.js'))).href);const geometry=await imported(pathToFileURL(config.sceneFiles.find(file=>file.endsWith('/meshGeometry3D.js'))).href);const matrix=await imported(pathToFileURL(config.sceneFiles.find(file=>file.endsWith('/matrix4.js'))).href);const core=await imported(config.entries.core);const ordinary=await imported(config.entries.webgpu);const references={...cpu,...packing,...mesh};const protocol=protocolAssertions(namespace,references);record('AUTHENTIC_PROTOCOL',{sevenActualReferences:true,stableIdentity:true,predicateNoReads:true});if(cold){const scene=protocol.createSceneFrame3D({projection:PROJECTION,draws:[{geometry:geometry.createMeshGeometry3D(TRIANGLE),modelView:matrix.createMatrix4(MATRIX_IDENTITY)}]});const ticket=observe(cold.h.requestReadback());assert.equal(cold.h.renderSceneFrame(scene,{frameId:1,width:1,height:1,clearColor:0,clearAlpha:1,commands:[]}),undefined,'COLD01 actual cold host scene submission');const idle=observe(cold.h.whenIdle());assert.equal((await ticket).serial,1);await idle;assert.equal(cold.f.events.filter(e=>e.kind==='pass').length,2);assert.equal(cold.f.events.filter(e=>e.kind==='submit').length,1);await observe(cold.h.close());assert.equal(cold.f.deviceDestroyed,0);record('COLD_LIFECYCLE',{readback:true,twoPasses:true,closed:true});}await hostBehaviorAssertions(namespace.createB1WebGPUHost,protocol,{...core,...geometry,...matrix,...ordinary},fixture);record('HOST_BEHAVIORS',{namedAssertions:18});}
-async function runtimeCase(){installHooks();if(CASE==='N01'||CASE==='N02'){const namespace=await imported(CASE==='N01'?config.entries.core:config.entries.canvas);for(const key of ['createB1WebGPUHost','createB1WebGPUHostInternal','getBuiltinB1Protocol','isBuiltinB1Protocol','createSceneFrame3D','createWebGPUHost'])assert.equal(Object.hasOwn(namespace,key),false);record('FACADE_NEGATIVE',{entry:CASE==='N01'?'core':'canvas'});}
-  else if(CASE==='N03'||CASE==='N04'||CASE==='N05'){const namespace=await imported(config.entries.webgpu);assert.deepEqual(Object.keys(namespace),['createWebGPUHost']);if(CASE==='N03'){const f=fixture(),h=namespace.createWebGPUHost({canvas:f.canvas,device:{kind:'borrow',device:f.device}});f.host=h;sceneFree(h);assert.equal(f.events.length,0);await observe(h.close());record('FACTORY_NEGATIVE',{wholePrototypeChain:true});}else await ordinaryLifecycle(namespace,CASE==='N05');}
+async function runtimeCase(){installHooks();if(CASE==='N01'||CASE==='N02'){const namespace=await imported(CASE==='N01'?config.entries.core:config.entries.canvas);for(const key of ['createB1WebGPUHost','createB1WebGPUHostInternal','getBuiltinB1Protocol','isBuiltinB1Protocol','createSceneFrame3D','createWebGPUHost','createTexturedWebGPUHost'])assert.equal(Object.hasOwn(namespace,key),false);record('FACADE_NEGATIVE',{entry:CASE==='N01'?'core':'canvas'});}
+  else if(CASE==='N03'||CASE==='N04'||CASE==='N05'){const namespace=await imported(config.entries.webgpu);assert.deepEqual(Object.keys(namespace),['createTexturedWebGPUHost','createWebGPUHost']);if(CASE==='N03'){const f=fixture(),h=namespace.createWebGPUHost({canvas:f.canvas,device:{kind:'borrow',device:f.device}});f.host=h;sceneFree(h);assert.equal(f.events.length,0);await observe(h.close());record('FACTORY_NEGATIVE',{wholePrototypeChain:true});}else await ordinaryLifecycle(namespace,CASE==='N05');}
   else if(CASE==='P01'){const namespace=await imported(config.entries.b1);record('EXPLICIT_ENTRY_CACHED',{url:config.entries.b1});await positiveBehavior(namespace);}
   else {const hostNamespace=await imported(config.entries.host);assert.equal(EVENTS.some(e=>e.url===config.entries.b1),false,'genuine cold B1 module');const f=fixture();coldHost=hostNamespace.createB1WebGPUHostInternal({canvas:f.canvas,device:{kind:'borrow',device:f.device},enableReadback:true});f.host=coldHost;const start=observe(coldHost.start());assert.equal(coldHost.start(),start,'cached starting Promise');
     if(CASE==='P02'){await start;assert.equal(EVENTS.some(e=>e.kind==='LOAD_RETURN'&&e.url===config.entries.b1),true,'actual cold unchanged B1 load');assert.equal(coldHost.getStatus().state,'active');const namespace=await imported(config.entries.b1);await positiveBehavior(namespace,{f,h:coldHost});}
@@ -369,7 +379,22 @@ for(const descriptor of config.files)assert.deepEqual(exactFile(descriptor.path)
 for(const descriptor of config.metadata)assert.deepEqual(exactFile(descriptor.path),descriptor);
 assert.deepEqual(exactFile(PROGRAM,true),PROGRAM_IDENTITY);assert.deepEqual(exactFile(CONFIG_PATH,true),CONFIG_IDENTITY);
 const receipt={schemaVersion:1,caseId:CASE,pid:process.pid,ppid:process.ppid,node:process.version,execArgv:process.execArgv,argv:process.argv,cwd:normal(process.cwd()),program:PROGRAM_IDENTITY,config:CONFIG_IDENTITY,context:{isMainThread,threadId,NODE_TEST_CONTEXT:{present:Object.hasOwn(process.env,'NODE_TEST_CONTEXT'),value:process.env.NODE_TEST_CONTEXT??null},NODE_TEST_WORKER_ID:{present:Object.hasOwn(process.env,'NODE_TEST_WORKER_ID'),value:process.env.NODE_TEST_WORKER_ID??null}},environment:driverEnvironmentReceipt,status:complete&&!operationTimedOut&&!assertionFailure&&!cleanupTimedOut&&!driverCallbackFailure&&cleanupFailures.length===0&&unhandled.length===0?'PASSED':'FAILED',operationTimedOut,cleanupTimedOut,driverCallbackFailure,assertionFailure,cleanupFailures,cleanupOutcomes,unhandledRejections:unhandled.length,forbiddenAttempts,syntheticThrows,startupEvidence,staticEdges,dynamicEdges,staticClosures,divisionWitnesses,events:EVENTS};
-validateData(receipt);const receiptBytes=Buffer.from(JSON.stringify(receipt)+'\n');assert.ok(receiptBytes.length<=LIMITS.receiptBytes);fs.writeFileSync(RECEIPT_PATH,receiptBytes,{flag:'wx'});process.stdout.write(JSON.stringify({kind:'DRIVER_RECEIPT',caseId:CASE,path:RECEIPT_PATH,bytes:receiptBytes.length,sha256:digest(receiptBytes),status:receipt.status})+'\n');if(receipt.status!=='PASSED')process.exitCode=1;
+function projectRepositoryURLs(receipt){
+  const prefix=pathToFileURL(config.repository+'/').href,projected=JSON.parse(JSON.stringify(receipt));
+  const encode=value=>typeof value==='string'&&value.startsWith(prefix)?{repositoryURL:value.slice(prefix.length)}:value;
+  const fields=record=>{for(const key of ['parent','specifier','url'])if(Object.hasOwn(record,key))record[key]=encode(record[key]);};
+  for(const row of [...projected.staticEdges,...projected.dynamicEdges,...projected.divisionWitnesses,...projected.events])fields(row);
+  for(const closure of projected.staticClosures)closure.modules=closure.modules.map(encode);
+  // The transport changes representation only. Prove full observed data returns exactly.
+  const restored=JSON.parse(JSON.stringify(projected));
+  const decode=value=>value!==null&&typeof value==='object'&&Object.hasOwn(value,'repositoryURL')?prefix+value.repositoryURL:value;
+  const restore=record=>{for(const key of ['parent','specifier','url'])if(Object.hasOwn(record,key))record[key]=decode(record[key]);};
+  for(const row of [...restored.staticEdges,...restored.dynamicEdges,...restored.divisionWitnesses,...restored.events])restore(row);
+  for(const closure of restored.staticClosures)closure.modules=closure.modules.map(decode);
+  assert.deepEqual(restored,receipt,'lossless observed URL projection');
+  return {schemaVersion:2,encoding:'egret.b1-repository-url-prefix/1',repositoryURLPrefix:prefix,receipt:projected};
+}
+validateData(receipt);const receiptBytes=Buffer.from(JSON.stringify(projectRepositoryURLs(receipt))+'\n');assert.ok(receiptBytes.length<=LIMITS.receiptBytes);fs.writeFileSync(RECEIPT_PATH,receiptBytes,{flag:'wx'});process.stdout.write(JSON.stringify({kind:'DRIVER_RECEIPT',caseId:CASE,path:RECEIPT_PATH,bytes:receiptBytes.length,sha256:digest(receiptBytes),status:receipt.status})+'\n');if(receipt.status!=='PASSED')process.exitCode=1;
 /* B1_DRIVER_END */
 `;
 
@@ -439,6 +464,8 @@ function sourceInventory(repository){const files=[],metadata=[],packages={};let 
   for(const name of ['contracts','runtime','engine']){const root=repository+'/packages/'+name;const meta=fileDescriptor(root+'/package.json');metadata.push(meta);const data=JSON.parse(fs.readFileSync(meta.path,'utf8'));assert.equal(data.name,'@egret/'+name);assert.equal(data.type,'module');assert.deepEqual(data.exports['.'],{types:'./dist/index.d.ts',import:'./dist/index.js'});packages[data.name]=canonical(root+'/dist/index.js');collect(root+'/dist');}
   const dependency=canonical(repository+'/packages/engine/node_modules/robust-predicates');const meta=fileDescriptor(dependency+'/package.json');metadata.push(meta);const data=JSON.parse(fs.readFileSync(meta.path,'utf8'));assert.equal(data.name,'robust-predicates');assert.equal(data.version,'3.0.3');assert.equal(data.type,'module');assert.equal(data.exports,'./index.js');packages['robust-predicates']=canonical(dependency+'/index.js');files.push(fileDescriptor(dependency+'/index.js'));collect(dependency+'/esm');
   const engine=JSON.parse(fs.readFileSync(repository+'/packages/engine/package.json','utf8'));assert.deepEqual(engine.exports['./web'],{types:'./dist/web/index.d.ts',import:'./dist/web/index.js'});assert.deepEqual(engine.exports['./webgpu'],{types:'./dist/web/webgpu.d.ts',import:'./dist/web/webgpu.js'});assert.equal(engine.dependencies['robust-predicates'],'3.0.3');
+  assert.deepEqual(engine.imports,{'#egret-textured-frame-state':{types:'./dist/internal/texturedFrameState.d.ts',import:'./dist/internal/texturedFrameState.js'}});
+  packages['#egret-textured-frame-state']=canonical(repository+'/packages/engine/dist/internal/texturedFrameState.js');
   const entry=relative=>pathToFileURL(canonical(repository+'/'+relative)).href;
   const entries={core:entry('packages/engine/dist/index.js'),canvas:entry('packages/engine/dist/web/index.js'),webgpu:entry('packages/engine/dist/web/webgpu.js'),host:entry('packages/engine/dist/web/WebGPUHost.js'),b1:entry('packages/engine/dist/web/b1.js')};
   // CPU image projections are shared by Canvas and WebGPU, outside the GPU-only category.
@@ -450,6 +477,17 @@ function strictJSON(bytes){assert.ok(bytes.length<=QUOTAS.receiptBytes);const te
 }
 function exactKeys(value,keys){assert.ok(value!==null&&typeof value==='object'&&!Array.isArray(value));assert.deepEqual(Object.keys(value).sort(),[...keys].sort(),'closed receipt fields');}
 function checkEvents(events){assert.ok(Array.isArray(events)&&events.length<=QUOTAS.events);const shapes={RESOLVE_ATTEMPT:['parent','specifier','url'],RESOLVE_RETURN:['parent','specifier','url'],LOAD_ATTEMPT:['url'],LOAD_RETURN:['url','bytes','sha256'],FORBIDDEN_ATTEMPT:['phase','url'],SYNTHETIC_REJECTION:['url'],STATIC_ONLY:['modules','tokens','constructed','linked','evaluated'],ORDINARY_LIFECYCLE:['ownership','uniformLimit','closed'],FACADE_NEGATIVE:['entry'],FACTORY_NEGATIVE:['wholePrototypeChain'],EXPLICIT_ENTRY_CACHED:['url'],COLD_LIFECYCLE:['readback','twoPasses','closed'],AUTHENTIC_PROTOCOL:['sevenActualReferences','stableIdentity','predicateNoReads'],HOST_BEHAVIORS:['namedAssertions'],STARTUP_SETTLED:['code','synthetic','causeSame','cancelled','gpuEvents','closed'],OPERATION_DEADLINE:[]};const gpu={push:['filter'],pipeline:['pipeline','uniform'],layout:['pipeline'],buffer:['size','usage'],texture:['format'],destroyTexture:['format'],textureView:['format'],writeBuffer:['byteLength','offset','usage'],writeTexture:['byteLength'],bindGroup:['bindings'],pass:['colorLoad','hasDepth','depthFormat','depthClear','depthStore'],uiPipeline:['pipeline'],addListener:[],removeListener:[],deviceDestroy:[],pop:[],shader:[],sampler:[],destroyBuffer:[],unmap:[],map:[],encoder:[],draw:[],drawIndexed:[],end:[],copy:[],finish:[],configure:[],unconfigure:[],target:[],targetView:[],context:[],acquireDevice:[],preferred:[],adapter:[],submit:[],fence:[]};for(const event of events){assert.equal(typeof event.kind,'string');if(event.kind==='GPU'){assert.ok(Object.hasOwn(gpu,event.operation));exactKeys(event,['kind','fixture','operation',...gpu[event.operation]]);assert.ok(Number.isSafeInteger(event.fixture)&&event.fixture>=0);}else{assert.ok(Object.hasOwn(shapes,event.kind));exactKeys(event,['kind',...shapes[event.kind]]);}}}
+function decodeRepositoryURLs(transport,repository){
+  exactKeys(transport,['schemaVersion','encoding','repositoryURLPrefix','receipt']);
+  assert.equal(transport.schemaVersion,2);assert.equal(transport.encoding,'egret.b1-repository-url-prefix/1');
+  const prefix=pathToFileURL(repository+'/').href;assert.equal(transport.repositoryURLPrefix,prefix,'source-bound repository URL prefix');
+  const receipt=JSON.parse(JSON.stringify(transport.receipt));
+  const decode=value=>{if(value===null||typeof value!=='object')return value;exactKeys(value,['repositoryURL']);const suffix=value.repositoryURL;assert.equal(typeof suffix,'string');assert.ok(suffix.length>0&&!suffix.startsWith('/')&&!suffix.includes('\\')&&!suffix.includes('?')&&!suffix.includes('#'),'canonical projected suffix');const url=prefix+suffix;assert.equal(pathToFileURL(fileURLToPath(url)).href,url,'canonical projected URL');assert.ok(fileURLToPath(url).replaceAll('\\','/').startsWith(repository+'/'),'projected URL stays in repository');return url;};
+  const fields=record=>{for(const key of ['parent','specifier','url'])if(Object.hasOwn(record,key))record[key]=decode(record[key]);};
+  for(const row of [...receipt.staticEdges,...receipt.dynamicEdges,...receipt.divisionWitnesses,...receipt.events])fields(row);
+  for(const closure of receipt.staticClosures)closure.modules=closure.modules.map(decode);
+  return receipt;
+}
 function validateReceipt(receipt,program,worker,pid,environment){
   exactKeys(receipt,['schemaVersion','caseId','pid','ppid','node','execArgv','argv','cwd','program','config','context','environment','status','operationTimedOut','cleanupTimedOut','driverCallbackFailure','assertionFailure','cleanupFailures','cleanupOutcomes','unhandledRejections','forbiddenAttempts','syntheticThrows','startupEvidence','staticEdges','dynamicEdges','staticClosures','divisionWitnesses','events']);
   assert.equal(receipt.schemaVersion,1);assert.equal(receipt.caseId,program.caseId);assert.equal(receipt.pid,pid);assert.equal(receipt.ppid,worker.pid);assert.equal(receipt.node,'v24.19.0');
@@ -580,7 +618,7 @@ async function observedCase(program,worker,inventory,trace,ledger){
     assert.equal(closed,true,'UNSAFE_UNFINISHED direct child');assert.equal(streams.stdout.eof,true,'stdout missing EOF');assert.equal(streams.stderr.eof,true,'stderr missing EOF');
     assert.equal(spawnFailed,false);assert.equal(timeout,false);assert.equal(overflow,false);assert.equal(signal,null);assert.equal(state.firstFailure,null);assert.equal(trace.failure(),null);
     const descriptor=fileDescriptor(program.receiptPath);assert.ok(descriptor.bytes<=QUOTAS.receiptBytes);
-    receipt=validateReceipt(strictJSON(fs.readFileSync(program.receiptPath)),program,worker,pid,environment);
+    receipt=validateReceipt(decodeRepositoryURLs(strictJSON(fs.readFileSync(program.receiptPath)),inventory.repository),program,worker,pid,environment);
     const rows=fs.readFileSync(program.directory+'/stdout.raw','utf8').trimEnd().split('\n');assert.equal(rows.length,1);
     const summary=strictJSON(Buffer.from(rows[0]));exactKeys(summary,['kind','caseId','path','bytes','sha256','status']);
     assert.deepEqual(summary,{kind:'DRIVER_RECEIPT',caseId:program.caseId,path:program.receiptPath,bytes:descriptor.bytes,sha256:descriptor.sha256,status:receipt.status});
@@ -597,6 +635,17 @@ async function observedCase(program,worker,inventory,trace,ledger){
   entry.status=result.status;entry.completionReturned=true;entry.observerFailure=state.firstFailure;
   return result;
 }
+
+test('B1 lossless URL transport preserves all rows and rejects foreign prefixes or malformed suffixes',()=>{
+  const repository='C:/egret-owned-fixture',prefix='file:///C:/egret-owned-fixture/';
+  const projected={staticEdges:[{parent:{repositoryURL:'packages/engine/dist/index.js'},specifier:'./Engine.js',url:{repositoryURL:'packages/engine/dist/Engine.js'}}],dynamicEdges:[],divisionWitnesses:[{url:{repositoryURL:'packages/engine/dist/web/WebGPUHost.js'},sha256:'fixed',anchors:[]}],events:[{kind:'RESOLVE_ATTEMPT',parent:null,specifier:{repositoryURL:'packages/runtime/dist/index.js'},url:'node:fs'},{kind:'LOAD_RETURN',url:{repositoryURL:'packages/runtime/dist/index.js'},bytes:7,sha256:'unchanged'}],staticClosures:[{name:'core',modules:[{repositoryURL:'packages/contracts/dist/index.js'},'node:fs']}]};
+  const transport={schemaVersion:2,encoding:'egret.b1-repository-url-prefix/1',repositoryURLPrefix:prefix,receipt:projected};
+  const expected={staticEdges:[{parent:prefix+'packages/engine/dist/index.js',specifier:'./Engine.js',url:prefix+'packages/engine/dist/Engine.js'}],dynamicEdges:[],divisionWitnesses:[{url:prefix+'packages/engine/dist/web/WebGPUHost.js',sha256:'fixed',anchors:[]}],events:[{kind:'RESOLVE_ATTEMPT',parent:null,specifier:prefix+'packages/runtime/dist/index.js',url:'node:fs'},{kind:'LOAD_RETURN',url:prefix+'packages/runtime/dist/index.js',bytes:7,sha256:'unchanged'}],staticClosures:[{name:'core',modules:[prefix+'packages/contracts/dist/index.js','node:fs']}]};
+  assert.deepEqual(decodeRepositoryURLs(transport,repository),expected);assert.equal(transport.receipt,projected);
+  assert.throws(()=>decodeRepositoryURLs({...transport,repositoryURLPrefix:'file:///C:/foreign/'},repository),{message:/^source-bound repository URL prefix/});
+  for(const suffix of ['', '../outside.js', '/absolute.js', 'a?query', 'a#fragment']){const altered=JSON.parse(JSON.stringify(transport));altered.receipt.events[1].url={repositoryURL:suffix};assert.throws(()=>decodeRepositoryURLs(altered,repository));}
+  const extra=JSON.parse(JSON.stringify(transport));extra.receipt.events[1].url={repositoryURL:'a.js',extra:1};assert.throws(()=>decodeRepositoryURLs(extra,repository),{message:/^closed receipt fields/});
+});
 
 test('B1 fixed thirteen-case emitted loading and owned host contract', {timeout:QUOTAS.workerMs}, async()=>{
   const worker=callerEnvironment(),repository=canonical(path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'));

@@ -1,0 +1,11 @@
+{
+  "schemaVersion":1,
+  "phase":"held-out",
+  "frozenBeforeAnyNativeExecution":true,
+  "cases":["N02-interpolation","N04-empty","N04-singular","N06-diamond","N07-diamond","N07-palette","N08-degenerate","N09-complement","N10-replay02","N10-replay06"],
+  "expectedAuthority":"fixtures.mjs literal rational table plus DERIVATIONS.md; no calibration/native results",
+  "resetCheckpoints":"N10 uses before replay at declared different backing and after replay at saved backing; all bytes exact transparent",
+  "nativeSplitMayTuneCalibration":false,
+  "afterObservationEditsAllowed":false,
+  "actualExecuted":false
+}

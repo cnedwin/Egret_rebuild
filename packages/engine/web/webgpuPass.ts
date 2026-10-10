@@ -1,18 +1,19 @@
-import type { PreparedRectangles2D } from '../rendering/prepareRectangles2D.js';
+import { noteOwnedPreparationFailure } from '../rendering/ownedPreparationFailure2D.js';
+import type { PreparedRectangles2D, PreparationBudget2D } from '../rendering/prepareRectangles2D.js';
 import { packedPosition2D } from '../rendering/packedPosition2D.js';
 import { packedOrientation } from '../rendering/packedOrientation.js';
 
 export class WebGPUPackingError extends Error {
     public constructor(public readonly reason: 'precision' | 'budget' | 'device', cause: unknown = undefined) { super(`WebGPU packing ${reason}`, { cause }); }
 }
-export function packWebGPUVertices(prepared: PreparedRectangles2D, width: number, height: number, limits: { readonly maxUploadBytes: number; readonly maxBufferSize: number }): {
+export function packWebGPUVertices(prepared: PreparedRectangles2D, width: number, height: number, limits: { readonly maxUploadBytes: number; readonly maxBufferSize: number }, budget?: PreparationBudget2D): {
     data: Float32Array; ranges: readonly { firstVertex: number; vertexCount: number }[]; collapsedTriangles: number; maxBackingDisplacement: number;
 } {
     let maxBackingDisplacement = 0, collapsedTriangles = 0, vertices = 0;
     // Ordinary scratch preserves converted bits; no typed storage exists before both byte checks.
     const points = prepared.points.map(point => {
         const represented = packedPosition2D(point, width, height, maxBackingDisplacement);
-        if (!represented) throw new WebGPUPackingError('precision');
+        if (!represented) throw noteOwnedPreparationFailure(new WebGPUPackingError('precision'));
         const { x, y } = represented;
         maxBackingDisplacement = represented.maxBackingDisplacement;
         return { x, y };
@@ -24,16 +25,16 @@ export function packWebGPUVertices(prepared: PreparedRectangles2D, width: number
         for (let i = 1; i + 1 < command.pointIndices.length; i++) {
             const a = command.pointIndices[0]!, b = command.pointIndices[i]!, c = command.pointIndices[i + 1]!;
             const p = points[a]!, q = points[b]!, r = points[c]!;
-            const sign = packedOrientation(p.x, p.y, q.x, q.y, r.x, r.y);
-            if (!Number.isFinite(sign) || sign > 0) throw new WebGPUPackingError('precision');
+            const sign = packedOrientation(p.x, p.y, q.x, q.y, r.x, r.y, budget);
+            if (!Number.isFinite(sign) || sign > 0) throw noteOwnedPreparationFailure(new WebGPUPackingError('precision'));
             if (sign === 0) { collapsedTriangles++; continue; }
-            if (vertices > 4294967295 - 3) throw new WebGPUPackingError('device');
+            if (vertices > 4294967295 - 3) throw noteOwnedPreparationFailure(new WebGPUPackingError('device'));
             vertices += 3; indices.push(a, b, c);
         }
         if (vertices !== firstVertex) { ranges.push({ firstVertex, vertexCount: vertices - firstVertex }); groups.push({ indices, color: command.color, alpha: command.alpha }); }
     }
-    if (vertices > Math.floor(Number.MAX_SAFE_INTEGER / 24) || vertices > Math.floor(limits.maxUploadBytes / 24)) throw new WebGPUPackingError('budget');
-    if (vertices > Math.floor(limits.maxBufferSize / 24)) throw new WebGPUPackingError('device');
+    if (vertices > Math.floor(Number.MAX_SAFE_INTEGER / 24) || vertices > Math.floor(limits.maxUploadBytes / 24)) throw noteOwnedPreparationFailure(new WebGPUPackingError('budget'));
+    if (vertices > Math.floor(limits.maxBufferSize / 24)) throw noteOwnedPreparationFailure(new WebGPUPackingError('device'));
     const data = new Float32Array(vertices * 6);
     let offset = 0;
     for (const group of groups) {

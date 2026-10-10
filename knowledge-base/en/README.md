@@ -4,7 +4,7 @@ English | [简体中文](../Cns/README.md)
 
 Egret serves new creators who primarily use AI to make games, initially targeting complex 2D UI and lightweight 3D. Rendering and runtime, editable projects, Agent collaboration and complete legacy-project migration are central to the design.
 
-The current engineering preview is **0.22.0**, with partial independently authored core implementation. The complete engine, production hosts, editor, Agent services, target-device performance and complete migration remain open. Engineering checkpoints, design proposals and accepted results are recorded separately.
+The current engineering preview is **0.23.0**, with partial independently authored core implementation. The complete engine, production hosts, editor, Agent services, target-device performance and complete migration remain open. Engineering checkpoints, design proposals and accepted results are recorded separately.
 
 ## Start here
 
@@ -28,8 +28,13 @@ Confirmed **R020** requires complete Spine animation support. **V020** remains p
 
 [Requirements](registry/requirements.json), [decisions](registry/decisions.json), [hypotheses](registry/hypotheses.json), [deliverables](registry/deliverables.json) and [sources](registry/sources.json) provide the shared status views; their authoritative Chinese records are preserved in the Chinese edition. Stable R/D/H/V/S IDs connect goals, proposals, hypotheses, delivery and evidence. IDs are never reused, and superseded records retain their replacement relationships.
 
-Read the [record index](current-version.json), [Changelog](CHANGELOG.md) and [maintenance guide](docs/knowledge-base-maintenance.md) for versioned documents and history. The index's version field retains the historical **0.13.0 knowledge-base checkpoint**, including the delivery status recorded at that checkpoint. The latest **0.22.0 engineering preview** is described by the [content-bounds contract](docs/display-content-bounds-contract.md) and [evidence](docs/display-content-bounds-evidence.md); the [coordinate queries](docs/display-coordinate-query-contract.md) and [SequencePlayer](docs/sequence-player-contract.md) remain prior increments. Acceptance is governed separately by the registries. Original evidence, source identities, failures and repairs retain their recorded scope. Structural checks and historical research do not establish current product acceptance or a performance lead.
+Read the [record index](current-version.json), [Changelog](CHANGELOG.md) and [maintenance guide](docs/knowledge-base-maintenance.md) for versioned documents and history. The index's version field retains the historical **0.13.0 knowledge-base checkpoint**, including the delivery status recorded at that checkpoint. The latest **0.23.0 engineering preview** is described by the [owned textured geometry and Mesh2D contract](docs/textured-geometry-and-mesh2d-contract.md) and [bounded CPU/desktop evidence](docs/textured-profile-cpu-evidence.md); [content bounds](docs/display-content-bounds-contract.md), [coordinate queries](docs/display-coordinate-query-contract.md) and [SequencePlayer](docs/sequence-player-contract.md) remain prior increments. Acceptance is governed separately by the registries. Original evidence, source identities, failures and repairs retain their recorded scope. Structural checks and historical research do not establish current product acceptance or a performance lead.
 
 ## Contribute
 
 Contribute implementations, reproducible counterexamples, source corrections, translations, API proposals and authorized game or migration samples. Before every push, review public content, attribution and both languages, complete critical English code comments and run the full [pre-push checks](docs/bilingual-documentation-and-prepush-checks.md). See the [public collaboration policy](docs/open-source-collaboration-and-public-communication.md) and [language layout](docs/documentation-layout.md).
+
+## Textured geometry and desktop rendering
+
+- [Contract](docs/textured-geometry-and-mesh2d-contract.md)
+- [CPU and desktop evidence](docs/textured-profile-cpu-evidence.md)

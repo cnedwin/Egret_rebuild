@@ -234,3 +234,117 @@ boundsNegativeNode.getBounds({}, {});
 // @ts-expect-error BOUNDS_CASE options-type-only: the facade exports no executable BoundsQueryOptions value.
 BoundsNegativePublic.BoundsQueryOptions;
 void boundsNegativeUndefinedNodes; void boundsNegativeUndefinedPrimitives;
+
+// Each geometry misuse has a predicted unsuppressed file/line/code receipt.
+import {createTexturedGeometry2D as createNegativeGeometry} from '@egret/engine';
+import type {TexturedFloatArray2D as NegativeGeometryFloat, TexturedIndexArray2D as NegativeGeometryIndex, TexturedGeometry2DInput as NegativeGeometryInput, TexturedGeometry2D as NegativeGeometry} from '@egret/engine';
+import * as GeometryNegativePublic from '@egret/engine';
+declare const geometryNegativeSharedFloat: Float32Array<SharedArrayBuffer>;
+declare const geometryNegativeSharedIndex: Uint32Array<SharedArrayBuffer>;
+declare const geometryNegativeInput: NegativeGeometryInput;
+declare const geometryNegativeValue: NegativeGeometry;
+declare const geometryNegativeUnknown: unknown;
+// @ts-expect-error GEOMETRY_CASE ordinary-float TS2322
+const geometryNegativeOrdinaryFloat: NegativeGeometryFloat = [0, 0];
+// @ts-expect-error GEOMETRY_CASE ordinary-index TS2322
+const geometryNegativeOrdinaryIndex: NegativeGeometryIndex = [0, 1, 2];
+// @ts-expect-error GEOMETRY_CASE shared-float TS2322
+const geometryNegativeSharedFloatAssignment: NegativeGeometryFloat = geometryNegativeSharedFloat;
+// @ts-expect-error GEOMETRY_CASE shared-index TS2322
+const geometryNegativeSharedIndexAssignment: NegativeGeometryIndex = geometryNegativeSharedIndex;
+// @ts-expect-error GEOMETRY_CASE floating-index TS2322
+const geometryNegativeFloatingIndex: NegativeGeometryIndex = new Float32Array(new ArrayBuffer(0));
+// @ts-expect-error GEOMETRY_CASE byte-float TS2322
+const geometryNegativeByteFloat: NegativeGeometryFloat = new Uint8Array(new ArrayBuffer(0));
+// @ts-expect-error GEOMETRY_CASE missing-indices TS2741
+const geometryNegativeMissingIndices: NegativeGeometryInput = {positions: new Float32Array(0), uvs: new Float64Array(0), lightColors: new Float32Array(0)};
+// @ts-expect-error GEOMETRY_CASE unknown-input TS2345
+createNegativeGeometry(geometryNegativeUnknown);
+// @ts-expect-error GEOMETRY_CASE forged-brand TS2741
+const geometryNegativeForged: NegativeGeometry = {vertexCount: 0, indexCount: 0, triangleCount: 0, logicalByteLength: 0, positions: [], uvs: [], lightColors: [], indices: []};
+// @ts-expect-error GEOMETRY_CASE readonly-position TS2542
+geometryNegativeValue.positions[0] = 1;
+// @ts-expect-error GEOMETRY_CASE readonly-count TS2540
+geometryNegativeValue.vertexCount = 3;
+// @ts-expect-error GEOMETRY_CASE readonly-input-slot TS2540
+geometryNegativeInput.positions = new Float32Array(0);
+// @ts-expect-error GEOMETRY_CASE float-type-only TS2339
+GeometryNegativePublic.TexturedFloatArray2D;
+// @ts-expect-error GEOMETRY_CASE index-type-only TS2339
+GeometryNegativePublic.TexturedIndexArray2D;
+// @ts-expect-error GEOMETRY_CASE input-type-only TS2551
+GeometryNegativePublic.TexturedGeometry2DInput;
+// @ts-expect-error GEOMETRY_CASE geometry-type-only TS2551
+GeometryNegativePublic.TexturedGeometry2D;
+void geometryNegativeOrdinaryFloat; void geometryNegativeOrdinaryIndex;
+void geometryNegativeSharedFloatAssignment; void geometryNegativeSharedIndexAssignment;
+void geometryNegativeFloatingIndex; void geometryNegativeByteFloat;
+void geometryNegativeMissingIndices; void geometryNegativeForged;
+
+// Each Mesh misuse is checked at its own generated-file location and code.
+import {Mesh2D as NegativeMesh} from '@egret/engine';
+declare const meshNegativeLease: AssetLease<Texture>;
+declare const meshNegativeUnknownLease: AssetLease<unknown>;
+declare const meshNegativeWrongLease: AssetLease<string>;
+declare const meshNegativeNode: NegativeMesh;
+const meshNegativeForgedGeometry = {vertexCount: 0, indexCount: 0, triangleCount: 0, logicalByteLength: 0, positions: [], uvs: [], lightColors: [], indices: []};
+// @ts-expect-error MESH_CASE missing-geometry TS2554
+new NegativeMesh(meshNegativeLease);
+// @ts-expect-error MESH_CASE extra-constructor-argument TS2554
+new NegativeMesh(meshNegativeLease, geometryNegativeValue, {});
+// @ts-expect-error MESH_CASE forged-geometry TS2741
+new NegativeMesh(meshNegativeLease, meshNegativeForgedGeometry);
+// @ts-expect-error MESH_CASE unknown-lease-value TS2379
+new NegativeMesh(meshNegativeUnknownLease, geometryNegativeValue);
+// @ts-expect-error MESH_CASE wrong-resource-lease TS2379
+new NegativeMesh(meshNegativeWrongLease, geometryNegativeValue);
+// @ts-expect-error MESH_CASE reversed-content-arguments TS2739
+meshNegativeNode.setContent(geometryNegativeValue, meshNegativeLease);
+// @ts-expect-error MESH_CASE undefined-content-geometry TS2345
+meshNegativeNode.setContent(meshNegativeLease, undefined);
+// @ts-expect-error MESH_CASE readonly-texture-lease TS2540
+meshNegativeNode.textureLease = meshNegativeLease;
+// @ts-expect-error MESH_CASE readonly-geometry TS2540
+meshNegativeNode.geometry = geometryNegativeValue;
+// @ts-expect-error MESH_CASE clear-extra-argument TS2554
+meshNegativeNode.clear({});
+// @ts-expect-error MESH_CASE no-source-rect TS2339
+meshNegativeNode.sourceRect;
+// @ts-expect-error MESH_CASE no-natural-width TS2339
+meshNegativeNode.naturalWidth;
+// @ts-expect-error MESH_CASE no-max-triangles-option TS2353
+meshNegativeNode.getBounds({maxTriangles: 1});
+
+// Task 5: each predicted code requires one actual unsuppressed receipt at root.
+import {TEXTURED_FRAME_PROFILE_2D as NegativeProfileLiteral, createEngineForProfile as NegativeProfileFactory} from '@egret/engine';
+import type {Engine as NegativeProfileEngine, EngineOptions as NegativeProfileEngineOptions, TexturedRenderFrame2D as NegativeProfileFrame, TexturedMeshCommand2D as NegativeProfileMesh, TexturedRenderHostAdapter as NegativeProfileHost, RenderFrame2D as NegativeProfileLegacyFrame, RenderCommand2D as NegativeProfileLegacyCommand} from '@egret/engine';
+declare const negativeProfileEngine: NegativeProfileEngine;
+declare const negativeProfileEngineOptions: NegativeProfileEngineOptions;
+declare const negativeProfileFrame: NegativeProfileFrame;
+declare const negativeProfileMesh: NegativeProfileMesh;
+// @ts-expect-error TEXTURED_FRAME_CASE unsupported-profile TS2345
+NegativeProfileFactory(negativeProfileEngineOptions, 'egret.textured-frame2d/2');
+// @ts-expect-error TEXTURED_FRAME_CASE factory-missing-profile TS2554
+NegativeProfileFactory(negativeProfileEngineOptions);
+// @ts-expect-error TEXTURED_FRAME_CASE factory-extra-argument TS2554
+NegativeProfileFactory(negativeProfileEngineOptions, NegativeProfileLiteral, {});
+// @ts-expect-error TEXTURED_FRAME_CASE readonly-engine-profile TS2540
+negativeProfileEngine.texturedFrameProfile = NegativeProfileLiteral;
+// @ts-expect-error TEXTURED_FRAME_CASE wrong-frame-options TS2353
+negativeProfileEngine.captureTexturedFrame({width: 1, height: 1, maxTriangles: 1});
+// @ts-expect-error TEXTURED_FRAME_CASE plain-frame-missing-brand TS2741
+const negativeProfilePlainFrame: NegativeProfileFrame = {profile: NegativeProfileLiteral, frameId: 1, width: 1, height: 1, clearColor: 0, clearAlpha: 0, commands: [], images: [], geometries: []};
+// @ts-expect-error TEXTURED_FRAME_CASE textured-frame-to-legacy TS2322
+const negativeProfileLegacyFrame: NegativeProfileLegacyFrame = negativeProfileFrame;
+// @ts-expect-error TEXTURED_FRAME_CASE mesh-command-to-legacy TS2322
+const negativeProfileLegacyCommand: NegativeProfileLegacyCommand = negativeProfileMesh;
+// @ts-expect-error TEXTURED_FRAME_CASE missing-required-tables TS2739
+const negativeProfileMissingTables: Omit<NegativeProfileFrame, Extract<keyof NegativeProfileFrame, symbol>> = {profile: NegativeProfileLiteral, frameId: 1, width: 1, height: 1, clearColor: 0, clearAlpha: 0, commands: []};
+// @ts-expect-error TEXTURED_FRAME_CASE readonly-table-push TS2339
+negativeProfileFrame.geometries.push();
+// @ts-expect-error TEXTURED_FRAME_CASE readonly-frame-field TS2540
+negativeProfileFrame.frameId = 2;
+// @ts-expect-error TEXTURED_FRAME_CASE async-host-port TS2322
+const negativeProfileAsyncPort: NegativeProfileHost['renderTexturedFrame'] = async (_frame: NegativeProfileFrame) => undefined;
+void negativeProfilePlainFrame; void negativeProfileLegacyFrame; void negativeProfileLegacyCommand;
+void negativeProfileMissingTables; void negativeProfileAsyncPort;

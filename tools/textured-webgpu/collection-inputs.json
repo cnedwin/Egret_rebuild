@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "ready": false,
+  "entries": [
+    "packages/engine/dist/index.js",
+    "packages/engine/dist/web/webgpu.js"
+  ],
+  "files": [],
+  "buildReceipt": null,
+  "shader": null,
+  "generatedDirectory": "work/textured-webgpu-freeze",
+  "issuer": "tools/freeze-textured-webgpu-inputs.mjs",
+  "nativeExecuted": false,
+  "sourceBuildAttestedHere": false,
+  "instructions": "Keep this tracked template ready:false. Run node tools/freeze-textured-webgpu-inputs.mjs to record an actual bounded build and generate current repository-relative collection/selector/receipt files under ignored work/."
+}

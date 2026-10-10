@@ -2,6 +2,10 @@
 
 English | [简体中文](../Cns/CHANGELOG.md)
 
+## Engineering preview: 0.23.0 — 2026-10-11
+
+Added owned textured geometry and Mesh2D, immutable textured-frame capture, bounded clipping/vertex preparation and an explicit WebGPU host. Fixed desktop calibration, held-out pixels and copied-production sensitivity controls passed; affected Canvas, rectangle WebGPU, B1 and SequencePlayer saved results and process retirement received independent bounded review. Read the [contract](docs/textured-geometry-and-mesh2d-contract.md), [geometry evidence](docs/textured-geometry-and-mesh2d-evidence.md) and [CPU/desktop evidence](docs/textured-profile-cpu-evidence.md). Reproduction of the current public workflow and final delivery are separate records. Packages remain private 0.0.0 and protocol 1.0; phones, performance, full UI/fonts/Spine/3D and complete migration remain open.
+
 ## Engineering preview: 0.22.0 — 2026-10-10
 
 Added receiver-local `getBounds` with a fresh readonly `Rectangle2D`, explicit node/primitive budgets and deterministic authority/lifetime checks. Descendant direct corners are measured with ordinary binary64 arithmetic; authored zero extents count and skip arithmetic, and conservative enclosure is not promised. Read the [contract](docs/display-content-bounds-contract.md) and [evidence](docs/display-content-bounds-evidence.md) for actual recorded results and their identities. Other spaces/output adapters/layout/hit testing remain pending. Packages remain private 0.0.0 and protocol 1.0; final prepush and stacked publication are separate gates.

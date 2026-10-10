@@ -4,7 +4,7 @@ import { readFileSync, writeFileSync, mkdirSync, mkdtempSync, rmSync, existsSync
 import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const repository = fileURLToPath(new URL('..', import.meta.url));
 const checker = readFileSync(path.join(repository, 'tools/check-boundaries.mjs'));
@@ -13,7 +13,7 @@ const ownedParent = path.resolve(repository, 'work');
 const dependencies = { contracts: [], runtime: ['@egret/contracts'], engine: ['@egret/contracts', '@egret/runtime'], project: ['@egret/contracts'] };
 
 // Synthetic facades prove tool policy/resolution only, never core or native behavior.
-function fixture({ imported, subtree = 'engine/rendering', declared = false, missingImageExport = false }, run) {
+function fixture({ imported, subtree = 'engine/rendering', declared = false, missingImageExport = false, missingGeometryExport, missingGeometryType, missingMesh, splitMesh = false, meshLeak, meshModuleLeak, meshWrongEntry, meshStateSourceValueImport = false, meshStateEmittedValueImport = false, profileLeak, profileModuleLeak, missingTexturedPort, missingProfileFactory = false, profileRegistryImport = false, registryLegitimateHosts = false, registryMapMutation, registryImporterProbe }, run) {
   mkdirSync(ownedParent, { recursive: true });
   const root = mkdtempSync(path.join(ownedParent, 'egret-boundary-policy-'));
   function write(relative, content) {
@@ -44,15 +44,90 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
         write('node_modules/@egret/project/index.js', values.map(name => `export const ${name}=1;`).join('\n'));
         write('packages/project/dist/index.d.ts', readFileSync(path.join(repository,'packages/project/dist/index.d.ts')));
       }
-      if (name === 'engine') { write('node_modules/@egret/engine/web.js', 'export function createCanvasHost() {}\n'); write('node_modules/@egret/engine/webgpu.js', 'export function createWebGPUHost() {}\n'); }
+      if (name === 'engine') {
+        write('node_modules/@egret/engine/web.js', 'export function createCanvasHost() {}\n');
+        write('node_modules/@egret/engine/webgpu.js', 'export function createTexturedWebGPUHost() {}\nexport function createWebGPUHost() {}\n');
+        write('packages/engine/dist/web/index.js', 'export function createCanvasHost() {}\n');
+        write('packages/engine/dist/web/webgpu.js', 'export function createTexturedWebGPUHost() {}\nexport function createWebGPUHost() {}\n');
+      }
     }
     // These are synthetic policy/resolution surfaces, never engine execution proof.
     const imageValues = ['IMAGE_LIMITS_2D','copyImageData2DPixels','createImageData2D','isImageData2D'];
-    write('packages/contracts/dist/index.js', imageValues.filter(name => !missingImageExport || name !== 'isImageData2D').map(name => 'export const '+name+' = 1;').join('\n'));
-    write('node_modules/@egret/engine/index.js', "export * from '../../../packages/contracts/dist/index.js';\n");
+    const geometryValues = ['createTexturedGeometry2D','isTexturedGeometry2D'];
+    const geometryTypes = ['TexturedFloatArray2D','TexturedIndexArray2D','TexturedGeometry2DInput','TexturedGeometry2D'];
+    write('packages/contracts/dist/index.js', [
+      ...imageValues.filter(name => !missingImageExport || name !== 'isImageData2D').map(name => 'export const '+name+' = 1;'),
+      ...geometryValues.filter(name => name !== missingGeometryExport).map(name => 'export function '+name+'() {}'),
+      'export const TEXTURED_FRAME_PROFILE_2D = "egret.textured-frame2d/1";',
+    ].join('\n'));
+    const meshEngineValue = missingMesh === 'root' ? '' : splitMesh || missingMesh === 'runtime' ? 'export class Mesh2D {}\n' : "export {Mesh2D} from '../../../packages/runtime/dist/index.js';\n";
+    write('node_modules/@egret/engine/index.js', "export * from '../../../packages/contracts/dist/index.js';\n" + meshEngineValue);
     for (const file of ['packages/contracts/dist/index.d.ts','packages/engine/dist/index.d.ts','packages/engine/dist/web/index.d.ts','packages/engine/dist/web/webgpu.d.ts']) write(file,'export {};\n');
-    write('packages/runtime/dist/index.js','export function collectFrameContent() {}\n');
-    write('packages/runtime/dist/index.d.ts','interface CapturedContent2D {}\nexport type {CapturedContent2D};\n');
+    write('packages/engine/dist/web/webgpu.d.ts', "export {createTexturedWebGPUHost,createWebGPUHost} from './WebGPUHost.js';\nexport type {WebGPUHost,WebGPUHostState,WebGPUHostErrorCode,WebGPUHostFailure,WebGPUHostDiagnostic,WebGPUHostOptions,WebGPUReadback,WebGPUHostStatus,TexturedWebGPUHost,TexturedWebGPUHostOptions,TexturedWebGPUHostStatus} from './WebGPUHost.js';\n");
+    const geometryReexports = 'export type {'+geometryTypes.filter(name => name !== missingGeometryType).join(',')+"} from './TexturedGeometry2D.js';\n";
+    for (const file of ['packages/contracts/dist/index.d.ts','packages/engine/dist/index.d.ts']) write(file,geometryReexports);
+    write('packages/engine/dist/index.d.ts', geometryReexports + (missingMesh === 'root' ? '' : "export {Mesh2D} from '@egret/runtime';\n"));
+    write('packages/contracts/dist/TexturedGeometry2D.d.ts', [
+      ...geometryTypes.map(name => 'export type '+name+' = unknown;'),
+      ...geometryValues.map(name => 'export declare function '+name+'(): unknown;'),
+    ].join('\n'));
+    write('packages/runtime/dist/index.js','export function collectFrameContent() {}\n' + (missingMesh === 'runtime' ? '' : 'export class Mesh2D {}\n'));
+    write('packages/runtime/dist/index.d.ts','interface CapturedContent2D {}\nexport type {CapturedContent2D};\n' + (missingMesh === 'runtime' ? '' : "export {Mesh2D} from './Mesh2D.js';\n"));
+    // Profile Task 5: complete valid executable/declaration surfaces first.
+    const engineFixturePackage = JSON.parse(readFileSync(path.join(root,'packages/engine/package.json'),'utf8'));
+    write('packages/engine/package.json', {...engineFixturePackage, imports:{'#egret-textured-frame-state':{types:'./dist/internal/texturedFrameState.d.ts',import:'./dist/internal/texturedFrameState.js'}}});
+    const profileTypes = ['TexturedFrameProfile2D','TexturedMeshCommand2D','TexturedRenderCommand2D','TexturedRenderFrame2D','TexturedRenderHostAdapter'];
+    const profileRootValues = ['Engine','createEngine','createEngineForProfile','CancellationController','EgretError','Event','createEventType','EventDispatcher','DisplayObject','DisplayObjectContainer','Scope','Stage','AssetManager','AssetLease','createAssetType','createAssetRef','Sprite','Graphics','Texture','createTexture','isTexture','Bitmap','createSequenceClip','SequencePlayer'];
+    const profileRootFile = 'node_modules/@egret/engine/index.js';
+    write(profileRootFile, readFileSync(path.join(root, profileRootFile), 'utf8') + profileRootValues.map(name => `export function ${name}() {}\n`).join(''));
+    for (const file of ['packages/contracts/dist/index.d.ts','packages/engine/dist/index.d.ts']) write(file, readFileSync(path.join(root,file),'utf8') + `export type {${profileTypes.join(',')}} from './TexturedRenderFrame2D.js';\n`);
+    write('packages/contracts/dist/TexturedRenderFrame2D.d.ts', 'export declare const TEXTURED_FRAME_PROFILE_2D: "egret.textured-frame2d/1";\n' + profileTypes.map(name => `export type ${name} = unknown;\n`).join(''));
+    write('packages/runtime/dist/index.js', readFileSync(path.join(root,'packages/runtime/dist/index.js'),'utf8') + 'export function collectTexturedFrameContent() {}\n');
+    write('packages/runtime/dist/index.d.ts', readFileSync(path.join(root,'packages/runtime/dist/index.d.ts'),'utf8') + "export {collectTexturedFrameContent} from './texturedFrameCapture.js';\nexport type {CapturedTexturedContent2D} from './texturedFrameCapture.js';\n");
+    write('packages/runtime/dist/texturedFrameCapture.js', 'export function collectTexturedFrameContent() {}\n');
+    write('packages/runtime/dist/texturedFrameCapture.d.ts', 'export interface CapturedTexturedContent2D {}\nexport declare function collectTexturedFrameContent(): CapturedTexturedContent2D;\n');
+    write('packages/engine/src/internal/texturedFrameState.ts', 'export function registerTexturedFrame(): void {}\nexport function readOwnedTexturedFrame(): undefined {return undefined;}\n');
+    write('packages/engine/dist/internal/texturedFrameState.js', 'export function registerTexturedFrame() {}\nexport function readOwnedTexturedFrame() {}\n');
+    write('packages/engine/dist/internal/texturedFrameState.d.ts', 'export declare function registerTexturedFrame(): void;\nexport declare function readOwnedTexturedFrame(): undefined;\n');
+    if (registryLegitimateHosts) {
+      // Exact synthetic adapter importers exercise real package-map resolution.
+      // This does not import any engine or host implementation.
+      for (const file of ['web/CanvasHost.ts', 'web/WebGPUHost.ts', 'dist/web/CanvasHost.js', 'dist/web/WebGPUHost.js']) {
+        write(`packages/engine/${file}`, "import {readOwnedTexturedFrame} from '#egret-textured-frame-state';\nexport const registryProbe = readOwnedTexturedFrame;\n");
+      }
+      for (const file of ['dist/web/CanvasHost.js', 'dist/web/WebGPUHost.js']) {
+        const url = pathToFileURL(path.join(root, 'packages/engine', file)).href;
+        const resolvedHost = spawnSync(process.execPath, ['--input-type=module', '--eval', `const host = await import(${JSON.stringify(url)}); if (typeof host.registryProbe !== 'function') throw new Error('Synthetic exact host did not resolve registry');`], {cwd:root,encoding:'utf8'});
+        assert.ifError(resolvedHost.error);
+        assert.equal(resolvedHost.status, 0, `Exact synthetic host resolution failed: ${resolvedHost.stdout}${resolvedHost.stderr}`);
+      }
+    }
+
+    // This legitimate synthetic Mesh/state surface lets the current checker reach
+    // the new guard witness. It is not an actual product build or declaration.
+    write('packages/runtime/src/meshDisplayState.ts', meshStateSourceValueImport ? "import {DisplayObject} from './DisplayObject.js';\nexport {};\n" : "import type {DisplayObject} from './DisplayObject.js';\nexport {};\n");
+    write('packages/runtime/dist/meshDisplayState.js', (meshStateEmittedValueImport ? "import {Mesh2D} from './Mesh2D.js';\n" : '') + 'export function hasMeshState() {}\nexport function readMeshState() {}\nexport function writeMeshState() {}\n');
+    write('packages/runtime/dist/meshDisplayState.d.ts', 'export interface MeshCaptureState {}\nexport declare function hasMeshState(): boolean;\nexport declare function readMeshState(): undefined;\nexport declare function writeMeshState(): void;\n');
+    const meshEntryFiles = {
+      contracts: ['packages/contracts/dist/index.js', 'packages/contracts/dist/index.d.ts'],
+      root: ['node_modules/@egret/engine/index.js', 'packages/engine/dist/index.d.ts'],
+      runtime: ['packages/runtime/dist/index.js', 'packages/runtime/dist/index.d.ts'],
+      web: ['node_modules/@egret/engine/web.js', 'packages/engine/dist/web/index.d.ts'],
+      webgpu: ['node_modules/@egret/engine/webgpu.js', 'packages/engine/dist/web/webgpu.d.ts'],
+    };
+    if (meshLeak) {
+      const file = meshEntryFiles[meshLeak.entry][meshLeak.kind === 'value' ? 0 : 1];
+      const leak = meshLeak.kind === 'value' ? 'export function '+meshLeak.name+'() {}\n' : 'export interface '+meshLeak.name+' {}\n';
+      write(file, readFileSync(path.join(root, file), 'utf8') + leak);
+    }
+    if (meshModuleLeak) {
+      const file = meshEntryFiles[meshModuleLeak][1];
+      write(file, readFileSync(path.join(root, file), 'utf8') + "export * from './meshDisplayState.js';\n");
+    }
+    if (meshWrongEntry) {
+      const file = meshEntryFiles[meshWrongEntry][0];
+      write(file, readFileSync(path.join(root, file), 'utf8') + 'export class Mesh2D {}\n');
+    }
     for (const name of ['robust-predicates', 'constructor', 'jsonc-parser']) {
       // Deliberately resolve even a deep path; authorization must independently reject it.
       // jsonc-parser is a synthetic resolution fixture here, never installed-library admission.
@@ -65,6 +140,73 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
     write(`packages/${subtree}/Probe.ts`, `import { marker } from ${JSON.stringify(imported)};\nexport const value = marker;\n`);
     const resolution = spawnSync(process.execPath, ['--input-type=module', '--eval', `await import(${JSON.stringify(imported)});`], { cwd: path.join(root, 'packages/engine'), encoding: 'utf8' });
     assert.equal(resolution.status, 0, resolution.stderr);
+    const profileMutation = profileLeak || profileModuleLeak || missingTexturedPort || missingProfileFactory || profileRegistryImport || registryMapMutation || registryImporterProbe;
+    if (profileMutation) {
+      const baseline = spawnSync(process.execPath, ['tools/check-boundaries.mjs'], {cwd:root,encoding:'utf8'});
+      assert.ifError(baseline.error);
+      assert.equal(baseline.status, 0, `Assigned profile control never reached valid baseline: ${baseline.stdout}${baseline.stderr}`);
+      assert.match(baseline.stdout, /Boundary check PASS/);
+      if (profileLeak) {
+        const file = meshEntryFiles[profileLeak.entry][profileLeak.kind === 'value' ? 0 : 1];
+        const addition = profileLeak.kind === 'value' ? `export function ${profileLeak.name}() {}\n` : `export interface ${profileLeak.name} {}\n`;
+        write(file, readFileSync(path.join(root,file),'utf8') + addition);
+      }
+      if (profileModuleLeak) {
+        const emittedEntry = profileModuleLeak.entry === 'root' ? 'packages/engine/dist/index.js' : 'packages/runtime/dist/index.js';
+        const declarationEntry = meshEntryFiles[profileModuleLeak.entry][1];
+        const target = `./${profileModuleLeak.name}.js`;
+        const modulePath = path.posix.join(path.posix.dirname(emittedEntry), target);
+        write(modulePath, 'export const boundaryPrivateMarker = 1;\n');
+        write(modulePath.replace(/\.js$/, '.d.ts'), 'export interface BoundaryPrivateMarker {}\n');
+        if (profileModuleLeak.kind === 'type') write(declarationEntry, readFileSync(path.join(root,declarationEntry),'utf8') + `export type {BoundaryPrivateMarker as retainedAuthority} from '${target}';\n`);
+        else {
+          write(emittedEntry, readFileSync(path.join(root,emittedEntry),'utf8') + `export {boundaryPrivateMarker as retainedAuthority} from '${target}';\n`);
+          if (profileModuleLeak.entry === 'root') {
+            // Actual root executable facade also resolves the same named module.
+            write(`node_modules/@egret/engine/${profileModuleLeak.name}.js`, 'export const boundaryPrivateMarker = 1;\n');
+            const file = meshEntryFiles.root[0];
+            write(file, readFileSync(path.join(root,file),'utf8') + `export {boundaryPrivateMarker as retainedAuthority} from '${target}';\n`);
+          }
+        }
+      }
+      if (missingTexturedPort === 'value') {
+        const file = 'packages/runtime/dist/index.js';
+        write(file, readFileSync(path.join(root,file),'utf8').replace('export function collectTexturedFrameContent() {}\n',''));
+      }
+      if (missingTexturedPort === 'type') {
+        const file = 'packages/runtime/dist/index.d.ts';
+        write(file, readFileSync(path.join(root,file),'utf8').replace("export type {CapturedTexturedContent2D} from './texturedFrameCapture.js';\n",''));
+      }
+      if (missingProfileFactory) {
+        const file = meshEntryFiles.root[0];
+        write(file, readFileSync(path.join(root,file),'utf8').replace('export function createEngineForProfile() {}\n',''));
+      }
+      if (profileRegistryImport) {
+        write('packages/engine/dist/internal/marker.js', 'export const marker = 1;\n');
+        const file = 'packages/engine/dist/internal/texturedFrameState.js';
+        write(file, "import {marker} from './marker.js';\n" + readFileSync(path.join(root,file),'utf8'));
+      }
+      if (registryMapMutation) {
+        const file = `packages/${registryMapMutation.packageName}/package.json`;
+        const pkg = JSON.parse(readFileSync(path.join(root, file), 'utf8'));
+        if (registryMapMutation.remove) delete pkg.imports;
+        else pkg.imports = registryMapMutation.imports;
+        write(file, pkg);
+      }
+      if (registryImporterProbe) {
+        const file = `packages/engine/${registryImporterProbe}`;
+        write(file, "import {readOwnedTexturedFrame} from '#egret-textured-frame-state';\nexport const registryProbe = readOwnedTexturedFrame;\n");
+        // A resolvable package alias is still forbidden from the wrong importer.
+        // Only emitted .js fixtures execute here; .ts probes are source-policy only.
+        if (registryImporterProbe.endsWith('.js')) {
+          const url = pathToFileURL(path.join(root, file)).href;
+          const resolution = spawnSync(process.execPath, ['--input-type=module', '--eval', `const probe = await import(${JSON.stringify(url)}); if (typeof probe.registryProbe !== 'function') throw new Error('Synthetic disallowed importer did not resolve registry');`], {cwd:root,encoding:'utf8'});
+          assert.ifError(resolution.error);
+          assert.equal(resolution.status, 0, `Disallowed synthetic importer was not resolvable: ${resolution.stdout}${resolution.stderr}`);
+        }
+      }
+    }
+
     const result = spawnSync(process.execPath, ['tools/check-boundaries.mjs'], { cwd: root, encoding: 'utf8' });
     assert.ifError(result.error);
     run(result);
@@ -103,6 +245,160 @@ for (const declared of [true, false]) test(`boundary checker rejects resolvable 
 test('synthetic missing image export rejects for the assigned executable surface reason',()=>{
   fixture({imported:'robust-predicates',missingImageExport:true},result=>{
     assert.equal(result.status,1,result.stdout+result.stderr);
-    assert.match(result.stderr,/contracts: executable image export surface mismatch/);
+    assert.match(result.stderr,/contracts: executable image\/geometry export surface mismatch/);
+  });
+});
+
+for (const name of ['createTexturedGeometry2D','isTexturedGeometry2D']) test(`synthetic missing geometry value ${name} rejects its executable surface`,()=>{
+  fixture({imported:'robust-predicates',missingGeometryExport:name},result=>{
+    assert.equal(result.status,1,result.stdout+result.stderr);
+    assert.match(result.stderr,/contracts: executable image\/geometry export surface mismatch/);
+  });
+});
+for (const name of ['TexturedFloatArray2D','TexturedIndexArray2D','TexturedGeometry2DInput','TexturedGeometry2D']) test(`synthetic missing geometry type ${name} rejects its declaration surface`,()=>{
+  fixture({imported:'robust-predicates',missingGeometryType:name},result=>{
+    assert.equal(result.status,1,result.stdout+result.stderr);
+    assert.ok(result.stderr.includes('contracts: geometry type-only export mismatch: '+name));
+  });
+});
+
+test('synthetic Mesh facade admits the identical runtime singleton',()=>{
+  fixture({imported:'robust-predicates'},result=>{
+    assert.equal(result.status,0,result.stdout+result.stderr);
+    assert.match(result.stdout,/Boundary check PASS/);
+  });
+});
+for (const missingMesh of ['runtime','root']) test(`synthetic missing ${missingMesh} Mesh value rejects its singleton requirement`,()=>{
+  fixture({imported:'robust-predicates',missingMesh},result=>{
+    assert.equal(result.status,1,result.stdout+result.stderr);
+    assert.ok(result.stderr.includes(missingMesh+': public Mesh2D singleton missing'));
+  });
+});
+test('synthetic split Mesh constructors reject runtime identity mismatch',()=>{
+  fixture({imported:'robust-predicates',splitMesh:true},result=>{
+    assert.equal(result.status,1,result.stdout+result.stderr);
+    assert.match(result.stderr,/root: Mesh2D runtime identity mismatch/);
+  });
+});
+for (const entry of ['contracts','root','runtime','web','webgpu']) {
+  for (const [kind,name] of [['value','readMeshState'],['type','MeshCaptureState']]) test(`synthetic ${entry} Mesh ${kind} leak ${name} rejects private authority`,()=>{
+    fixture({imported:'robust-predicates',meshLeak:{entry,kind,name}},result=>{
+      assert.equal(result.status,1,result.stdout+result.stderr);
+      assert.ok(result.stderr.includes(entry+': private Mesh authority leaked: '+name));
+    });
+  });
+}
+for (const entry of ['root','runtime']) {
+  for (const name of ['hasMeshState','writeMeshState']) test(`synthetic ${entry} Mesh value leak ${name} rejects private authority`,()=>{
+    fixture({imported:'robust-predicates',meshLeak:{entry,kind:'value',name}},result=>{
+      assert.equal(result.status,1,result.stdout+result.stderr);
+      assert.ok(result.stderr.includes(entry+': private Mesh authority leaked: '+name));
+    });
+  });
+  test(`synthetic ${entry} Mesh state module re-export rejects private module`,()=>{
+    fixture({imported:'robust-predicates',meshModuleLeak:entry},result=>{
+      assert.equal(result.status,1,result.stdout+result.stderr);
+      assert.ok(result.stderr.includes(entry+': private Mesh state module leaked'));
+    });
+  });
+}
+for (const entry of ['contracts','web','webgpu']) test(`synthetic Mesh value on ${entry} rejects its exact public entry`,()=>{
+  fixture({imported:'robust-predicates',meshWrongEntry:entry},result=>{
+    assert.equal(result.status,1,result.stdout+result.stderr);
+    assert.ok(result.stderr.includes(entry+': public Mesh2D value belongs only to runtime/root'));
+  });
+});
+test('synthetic Mesh state source value import rejects the type-only seam',()=>{
+  fixture({imported:'robust-predicates',meshStateSourceValueImport:true},result=>{
+    assert.equal(result.status,1,result.stdout+result.stderr);
+    assert.match(result.stderr,/runtime: Mesh state source imports must be type-only/);
+  });
+});
+test('synthetic Mesh state emitted import rejects the value backedge',()=>{
+  fixture({imported:'robust-predicates',meshStateEmittedValueImport:true},result=>{
+    assert.equal(result.status,1,result.stdout+result.stderr);
+    assert.match(result.stderr,/runtime: Mesh state emitted value import\/backedge/);
+  });
+});
+
+// Task 5 controls. fixture admits a fresh baseline before each new mutation.
+// Root must run these with the old checker before applying the checker snippets.
+test('profile boundary valid executable and declaration baseline passes', () => {
+  fixture({imported:'robust-predicates'}, result => {
+    assert.equal(result.status, 0, result.stdout + result.stderr);
+    assert.match(result.stdout, /Boundary check PASS/);
+  });
+});
+const profilePrivateNames = ['registerTexturedFrame', 'readOwnedTexturedFrame', 'texturedRenderFrame2DBrand', 'createTexturedRenderFrame2D', 'CapturedEngineFramePorts', 'startEngine', 'TexturedCaptureBudget', 'admitTree', 'referencedTuples', 'flattenClips', 'readMeshCaptureImage', 'observeRejectedRenderResult'];
+for (const entry of ['contracts', 'root', 'runtime', 'web', 'webgpu']) for (const name of profilePrivateNames) for (const kind of ['value', 'type']) test(`profile boundary ${entry} ${kind} leak ${name} rejects exact private reason`, () => {
+  fixture({imported:'robust-predicates',profileLeak:{entry,name,kind}}, result => {
+    assert.equal(result.status, 1, result.stdout + result.stderr);
+    assert.ok(result.stderr.includes(`${entry}: private textured-frame authority leaked: ${name}`), result.stderr);
+  });
+});
+for (const entry of ['contracts', 'root', 'web', 'webgpu']) for (const name of ['collectTexturedFrameContent', 'CapturedTexturedContent2D']) for (const kind of ['value', 'type']) test(`profile boundary ${entry} ${kind} workspace leak ${name} rejects exact private reason`, () => {
+  fixture({imported:'robust-predicates',profileLeak:{entry,name,kind}}, result => {
+    assert.equal(result.status, 1, result.stdout + result.stderr);
+    assert.ok(result.stderr.includes(`${entry}: textured-frame workspace port leaked: ${name}`), result.stderr);
+  });
+});
+for (const entry of ['root', 'runtime']) for (const name of ['texturedFrameState', 'texturedFrameBudget', 'meshCaptureSnapshot']) for (const kind of ['emitted', 'type']) test(`profile boundary ${entry} ${kind} module leak ${name} rejects exact private reason`, () => {
+  fixture({imported:'robust-predicates',profileModuleLeak:{entry,name,kind}}, result => {
+    assert.equal(result.status, 1, result.stdout + result.stderr);
+    assert.ok(result.stderr.includes(`${entry}: private textured-frame module leaked: ${name}`), result.stderr);
+  });
+});
+for (const missingTexturedPort of ['value', 'type']) test(`profile boundary missing runtime ${missingTexturedPort} port rejects exact requirement`, () => {
+  fixture({imported:'robust-predicates',missingTexturedPort}, result => {
+    const name = missingTexturedPort === 'value' ? 'collectTexturedFrameContent' : 'CapturedTexturedContent2D';
+    assert.equal(result.status, 1, result.stdout + result.stderr);
+    assert.ok(result.stderr.includes(`runtime: low-level textured capture port mismatch: ${name}`), result.stderr);
+  });
+});
+test('profile boundary missing root factory rejects exact executable surface', () => {
+  fixture({imported:'robust-predicates',missingProfileFactory:true}, result => {
+    assert.equal(result.status, 1, result.stdout + result.stderr);
+    assert.ok(result.stderr.includes('root: executable textured-frame export surface mismatch'), result.stderr);
+  });
+});
+test('profile boundary completed-frame registry import rejects exact erased seam', () => {
+  fixture({imported:'robust-predicates',profileRegistryImport:true}, result => {
+    assert.equal(result.status, 1, result.stdout + result.stderr);
+    assert.ok(result.stderr.includes('engine: completed-frame registry emitted import/backedge'), result.stderr);
+  });
+});
+
+test('private package alias permits only exact targets and host importers', async t => {
+  t.diagnostic(`S02 copies the unmodified first-party checker ${checkerHash}; fixture modules are synthetic policy inputs only.`);
+  await t.test('exact package map and two source/emitted host importers are admitted', () => {
+    fixture({imported:'robust-predicates',registryLegitimateHosts:true}, result => {
+      assert.equal(result.status, 0, result.stdout + result.stderr);
+      assert.match(result.stdout, /Boundary check PASS/);
+    });
+  });
+  const exactTarget = {types:'./dist/internal/texturedFrameState.d.ts',import:'./dist/internal/texturedFrameState.js'};
+  const mutations = [
+    {label:'missing engine map',packageName:'engine',remove:true},
+    {label:'empty engine map',packageName:'engine',imports:{}},
+    {label:'misspelled private key',packageName:'engine',imports:{'#egret-textured-frame-states':exactTarget}},
+    {label:'extra private key',packageName:'engine',imports:{'#egret-textured-frame-state':exactTarget,'#egret-extra':exactTarget}},
+    {label:'altered types target points at existing declaration',packageName:'engine',imports:{'#egret-textured-frame-state':{types:'./dist/index.d.ts',import:exactTarget.import}}},
+    {label:'altered import target points at existing emitted file',packageName:'engine',imports:{'#egret-textured-frame-state':{types:exactTarget.types,import:'./dist/index.js'}}},
+    {label:'extra condition',packageName:'engine',imports:{'#egret-textured-frame-state':{...exactTarget,default:exactTarget.import}}},
+    {label:'string target omits exact conditions',packageName:'engine',imports:{'#egret-textured-frame-state':exactTarget.import}},
+    {label:'private mapping on another package',packageName:'runtime',imports:{'#egret-textured-frame-state':exactTarget}},
+  ];
+  for (const mutation of mutations) await t.test(mutation.label, () => {
+    fixture({imported:'robust-predicates',registryLegitimateHosts:true,registryMapMutation:mutation}, result => {
+      assert.equal(result.status, 1, result.stdout + result.stderr);
+      assert.ok(result.stderr.includes(mutation.packageName === 'engine' ? 'engine: private textured registry mapping mismatch' : 'runtime: unexpected private import mapping'), result.stderr);
+    });
+  });
+  for (const importer of ['src/ProbePrivate.ts','web/OtherHost.ts','rendering/ProbePrivate.ts','dist/ProbePrivate.js','dist/web/OtherHost.js']) await t.test(`resolvable exact alias is refused from ${importer}`, () => {
+    fixture({imported:'robust-predicates',registryLegitimateHosts:true,registryImporterProbe:importer}, result => {
+      assert.equal(result.status, 1, result.stdout + result.stderr);
+      assert.ok(result.stderr.includes('private textured registry import outside approved adapters'), result.stderr);
+      assert.ok(result.stderr.includes(importer.replaceAll('/', path.sep)), result.stderr);
+    });
   });
 });

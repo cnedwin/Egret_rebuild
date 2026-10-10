@@ -8,6 +8,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import { createHash } from 'node:crypto';
 import { POSITIVE_FRAMES, NEGATIVES } from './b1-webgpu/oracle.mjs';
+import { captureRegistryProvenance, verifyRegistryProvenanceAfter, resolveRegistryConsumers, resolveB1Dependency, isPrivateRegistryPolicyRefusal } from './b1-webgpu/registryProvenance.mjs';
 
 const directory = dirname(fileURLToPath(import.meta.url)), companionDirectory = resolve(directory, 'b1-webgpu');
 const sha256 = body => createHash('sha256').update(body).digest('hex');
@@ -115,6 +116,9 @@ const startedAt = Date.now(), operationDeadline = startedAt + 70000, closeDeadli
 const report = { schemaVersion: 1, status: 'INCOMPLETE', startedAtUTC: new Date(startedAt).toISOString(), budgetMs: 90000,
   launch: { channel: 'msedge', headless: true, callerAddedFlags: [], freshContext: true, deviceScaleFactor: 1 },
   windows: [], patches: [], requests: [], browserEvents: [], cleanupFailures: [], failure: null,
+  registryProvenance: [], registryResolution: [], registryCaptureObservations: [], registryRereads: [], registryRecordingFailures: [],
+  registryFailures: [], registryFailure: null,
+  registryRecordingScope: 'Enforced filesystem and selected resolver policy; not browser loads or requests',
   lifecycle: { browserClosed: false, contextClosed: false, serverClosed: false, identitiesStable: false,
     cleanupScope: 'standalone-cooperative-api', osDescendantRetirement: 'UNBOUND', pendingApiOperations: 0 },
   limits: 'Real desktop-browser compilation/readback only; no hardware acceleration, physical display, phone, SDK, font, DragonBones, performance or full texture acceptance.' };
@@ -144,6 +148,47 @@ const hardTimer = setTimeout(() => {
 }, 89000);
 let browser, server, context, browserCloseRequested = false;
 const sockets = new Set(), identities = new Map(metadataInputs), served = new Map(), openPages = new Set(), acquisitions = [];
+const registryCaptures = new Map();
+// Only errors created here have S04 incomplete authority; public code strings do not.
+const s04PrivateErrors = new WeakSet();
+let s04EnforcementIncomplete = false, s04FirstAbort = null;
+function s04Fault(error) {
+  return { ...fault(error), code: typeof error?.code === 'string' ? error.code : null };
+}
+function s04FailurePriority(value) {
+  const field = value.reason?.field ?? value.readFailures?.[0]?.role;
+  if (field === 'originalSource' || field === 'originalSource.path') return 0;
+  if (field === 'originalEmitted') return 1;
+  if (field === 'selectedEmitted') return 2;
+  return 3;
+}
+function s04Incomplete(phase, mode, reason, details = {}) {
+  const failure = { phase, mode, reason: reason ? structuredClone(reason) : null, ...structuredClone(details) };
+  report.registryFailures.push(failure);
+  if (!report.registryFailure || s04FailurePriority(failure) < s04FailurePriority(report.registryFailure)) {
+    report.registryFailure = structuredClone(failure);
+  }
+  s04EnforcementIncomplete = true;
+  const error = new Error('Private B1 registry evidence is incomplete');
+  s04PrivateErrors.add(error); s04FirstAbort ??= error;
+  return error;
+}
+async function s04Reread(phase, mode, capture) {
+  let receipt;
+  try { receipt = await verifyRegistryProvenanceAfter({ repository, output, captured: capture }); }
+  catch (error) {
+    // This catch owns only the policy read call, not native/render/setup operations.
+    const observationFailure = s04Fault(error);
+    report.registryRecordingFailures.push({ phase, mode, ...observationFailure });
+    s04Incomplete(phase, mode, null, { observationFailure });
+    return;
+  }
+  report.registryRereads.push({ phase, mode, ...receipt });
+  if (!receipt.accepted) {
+    const readFailures = receipt.observations.filter(value => value.error).map(value => ({ role: value.role, error: value.error }));
+    s04Incomplete(phase, mode, receipt.reason, { readFailures });
+  }
+}
 function acquire(promise, label, assign) {
   // Assign handles in the continuation even when the caller's bounded await has timed out.
   const record = { label, settled: false, promise: null };
@@ -151,10 +196,12 @@ function acquire(promise, label, assign) {
     error => { record.settled = true; throw error; }));
   acquisitions.push(record); return record.promise;
 }
-const aliases = { '@egret/contracts': 'packages/contracts/dist/index.js', '@egret/runtime': 'packages/runtime/dist/index.js',
+const aliases = { '#egret-textured-frame-state': 'packages/engine/dist/internal/texturedFrameState.js', '@egret/contracts': 'packages/contracts/dist/index.js', '@egret/runtime': 'packages/runtime/dist/index.js',
   '@egret/engine': 'packages/engine/dist/index.js', 'robust-predicates': 'packages/engine/node_modules/robust-predicates/index.js' };
 const entryNames = ['packages/engine/dist/web/b1.js', 'packages/engine/dist/rendering/meshGeometry3D.js',
   'packages/engine/dist/rendering/matrix4.js', 'packages/engine/dist/web/webgpuMeshPass.js', 'packages/contracts/dist/ImageData2D.js'];
+const registryName = 'packages/engine/dist/internal/texturedFrameState.js';
+const registrySourceName = 'packages/engine/src/internal/texturedFrameState.ts';
 const descriptor = (path, body) => ({ path, bytes: body.length, sha256: hash(body) });
 async function identity(path) {
   const absolute = await realpath(path); if (identities.has(absolute)) return identities.get(absolute);
@@ -167,10 +214,7 @@ function imported(source) {
   names.push(...[...source.matchAll(/\bimport\s*\(\s*['"]([^'"\r\n]+)['"]\s*\)/g)].map(match => match[1])); return names;
 }
 function dependency(specifier, parent) {
-  if (Object.hasOwn(aliases, specifier)) return aliases[specifier];
-  assert.ok(specifier.startsWith('.'), `Unsupported emitted dependency ${specifier}`);
-  const value = normalize(relative(repository, resolve(repository, dirname(parent), specifier)));
-  assert.ok(!value.startsWith('../') && !isAbsolute(value) && value.endsWith('.js')); return value;
+  return resolveB1Dependency(specifier, parent, { repository, aliases });
 }
 async function collect(name) {
   const url = '/' + name; if (served.has(url)) return;
@@ -235,6 +279,7 @@ async function retainWindow(window) {
 }
 try {
   for (const path of [process.execPath, fileURLToPath(import.meta.url), resolve(companionDirectory, 'fixture.mjs'), resolve(companionDirectory, 'oracle.mjs'),
+    resolve(companionDirectory, 'registryProvenance.mjs'),
     playwrightMetadataPath, resolve(modulePath, 'index.mjs'), coreMetadataPath, compilerMetadataPath,
     resolve(repository, 'package.json'), resolve(repository, 'pnpm-lock.yaml'), resolve(repository, 'tsconfig.json'),
     ...['engine', 'contracts', 'runtime'].map(name => resolve(repository, `packages/${name}/package.json`))]) await identity(path);
@@ -243,10 +288,19 @@ try {
   // Bind matching first-party source files without scanning unrelated repository files.
   for (const url of served.keys()) {
     const name = url.slice(1); let source;
-    if (name.startsWith('packages/engine/dist/')) {
+    if (name === 'packages/engine/dist/internal/texturedFrameState.js') {
+      source = 'packages/engine/src/internal/texturedFrameState.ts';
+    } else if (name.startsWith('packages/engine/dist/')) {
       const tail = name.slice('packages/engine/dist/'.length).replace(/\.js$/, '.ts'); source = `packages/engine/${tail.includes('/') ? '' : 'src/'}${tail}`;
     } else if (/^packages\/(runtime|contracts)\/dist\//.test(name)) source = name.replace('/dist/', '/src/').replace(/\.js$/, '.ts');
-    if (source) await identity(resolve(repository, source));
+    if (source === registrySourceName && name === registryName) {
+      try { await identity(resolve(repository, source)); }
+      catch (error) {
+        if (error?.code !== 'ENOENT') throw error;
+        throw s04Incomplete('capture', null, { code: 'B1_REGISTRY_EXACT_SOURCE_MISSING', phase: 'capture',
+          path: registrySourceName, field: 'originalSource.path' });
+      }
+    } else if (source) await identity(resolve(repository, source));
   }
   for (const name of ['packages/engine/node_modules/robust-predicates/package.json', 'packages/contracts/src/RenderFrame2D.ts']) await identity(resolve(repository, name));
   const meshSource = await readFile(resolve(repository, 'packages/engine/web/webgpuMeshPass.ts'));
@@ -264,9 +318,46 @@ try {
   for (const name of ['fixture.mjs', 'oracle.mjs']) {
     const body = await readFile(resolve(companionDirectory, name)); served.set('/' + name, { body, contentType: 'text/javascript', identity: descriptor(name, body) });
   }
-  const html = Buffer.from(`<!doctype html><meta charset="utf-8"><link rel="icon" href="data:,"><title>B1 WebGPU verification</title><script type="importmap">${JSON.stringify({ imports: Object.fromEntries(Object.entries(aliases).map(([name, value]) => [name, '/' + value])) })}</script><script type="module">import * as fixture from '/fixture.mjs'; window.b1Fixture=fixture; window.fixtureReady=true;</script>`);
+  const importMap = { imports: Object.fromEntries(Object.entries(aliases).map(([name, value]) => [name, '/' + value])),
+    scopes: Object.fromEntries(NEGATIVES.map(({ id }) => [`/copy/${id}/`, { '#egret-textured-frame-state': `/copy/${id}/${registryName}` }])) };
+  // One generated map serves both the real HTML and selected route validation.
+  // Scoped copies use their own private registry; other aliases remain unchanged.
+  const originalSource = { ...await identity(resolve(repository, registrySourceName)), path: registrySourceName };
+  const originalEmitted = served.get('/' + registryName).identity;
+  for (const mode of ['baseline', ...NEGATIVES.map(value => value.id)]) {
+    const copied = mode !== 'baseline', url = (copied ? `/copy/${mode}/` : '/') + registryName;
+    const patch = copied ? report.patches.find(value => value.id === mode) : null;
+    const selected = served.get(url);
+    const consumers = resolveRegistryConsumers(mode, importMap).map(value => ({ ...value,
+      moduleCollected: served.has(value.importerUrl), registryServed: served.has(value.url) }));
+    let capture;
+    try {
+      capture = await captureRegistryProvenance({ repository, output, selectedMode: mode,
+        originalSource, originalEmitted,
+        selectedEmitted: { ...selected.identity, path: copied ? `copies/${mode}/${registryName}` : registryName, url },
+        copiedFile: patch ? patch.copiedFiles.find(value => value.path === registryName) : null,
+        consumers, changedFiles: patch?.changedFiles ?? 0, patchTarget: patch?.target ?? null });
+    } catch (error) {
+      // Retain honest policy IO/setup failure; never assign an invented provenance code.
+      const observationFailure = s04Fault(error);
+      report.registryRecordingFailures.push({ phase: 'capture', mode, ...observationFailure });
+      s04Incomplete('capture', mode, null, { observationFailure });
+      continue;
+    }
+    report.registryProvenance.push(capture.registryProvenance); report.registryResolution.push(capture.resolverPolicy);
+    report.registryCaptureObservations.push({ mode, observations: capture.captureObservations });
+    if (patch) patch.registryProvenance = structuredClone(capture.registryProvenance);
+    if (capture.accepted) registryCaptures.set(mode, capture);
+    else s04Incomplete('capture', mode, capture.reason);
+  }
+  if (s04EnforcementIncomplete) throw s04FirstAbort;
+  const html = Buffer.from(`<!doctype html><meta charset="utf-8"><link rel="icon" href="data:,"><title>B1 WebGPU verification</title><script type="importmap">${JSON.stringify(importMap)}</script><script type="module">import * as fixture from '/fixture.mjs'; window.b1Fixture=fixture; window.fixtureReady=true;</script>`);
   served.set('/index.html', { body: html, contentType: 'text/html', identity: descriptor('index.html', html) });
-  report.identitiesBefore = [...identities.values()]; await save('inputs.json', { original: report.identitiesBefore, emitted: report.emittedModules, html: descriptor('index.html', html) });
+  report.identitiesBefore = [...identities.values()]; await save('inputs.json', { original: report.identitiesBefore,
+    emitted: report.emittedModules, html: descriptor('index.html', html), registryProvenance: report.registryProvenance,
+    registryResolution: report.registryResolution, registryCaptureObservations: report.registryCaptureObservations,
+    registryRecordingFailures: report.registryRecordingFailures, registryFailures: report.registryFailures,
+    registryFailure: report.registryFailure, registryRecordingScope: report.registryRecordingScope });
   server = createServer((request, response) => {
     const pathname = new URL(request.url, 'http://localhost').pathname, value = served.get(pathname);
     const observed = { method: request.method, pathname, status: value && request.method === 'GET' ? 200 : 404, bytes: value?.body.length ?? 0, sha256: value?.identity.sha256 ?? null };
@@ -301,6 +392,10 @@ try {
       await bounded(observe(page.waitForFunction(() => window.fixtureReady === true)), operationDeadline, 'fixture-ready');
       window = await bounded(observe(page.evaluate(value => window.b1Fixture.runWindow(value), { mode, deadline: operationDeadline })), operationDeadline, `native-${mode}`);
       // Preserve delivered raw bytes and failure metadata before inspecting identity.
+      if (registryCaptures.has(mode)) window.registryPolicy = {
+        scope: 'Retained selected resolver/filesystem policy; browser loads and requests are separate',
+        registryProvenance: structuredClone(registryCaptures.get(mode).registryProvenance),
+      };
       await retainWindow(window); report.windows.push(window);
       const expectedShader = mode === 'baseline' ? report.baselineShaderSHA256 : report.patches.find(value => value.id === mode).expectedShaderSHA256;
       if (window.compilation) assert.equal(window.compilation.shaderSHA256, expectedShader, 'Native compiler shader identity differs from served bytes');
@@ -327,13 +422,21 @@ try {
         if ((event.kind !== 'console' || event.level === 'error') && !event.expected) report.unexpectedBrowserEvent = true;
       }
       report.browserEvents.push(...events);
+      // Reread even when native validation or retention rejected the selected window.
+      if (registryCaptures.has(mode)) await s04Reread('window', mode, registryCaptures.get(mode));
     }
+    if (s04EnforcementIncomplete) throw s04FirstAbort;
   }
   if (report.requestOverflow || report.browserEventOverflow) throw Error('INCOMPLETE:bounded observation quota exceeded');
   assert.equal(report.unexpectedBrowserEvent ?? false, false, 'Unexpected browser event after closure');
-  if (report.status !== 'UNSUPPORTED') { assert.equal(report.windows.length, 6); report.status = 'PASS'; }
+  if (report.status !== 'UNSUPPORTED' && !s04EnforcementIncomplete) { assert.equal(report.windows.length, 6); report.status = 'PASS'; }
 } catch (error) {
-  report.failure = fault(error); report.status = /INCOMPLETE:|browserType\.launch|Executable doesn't exist|Target .* closed|page\.goto/.test(error.message ?? '') ? 'INCOMPLETE' : 'FAIL';
+  report.failure = fault(error);
+  if (s04PrivateErrors.has(error)) report.status = 'INCOMPLETE';
+  else if (isPrivateRegistryPolicyRefusal(error)) {
+    report.privateRegistryPolicyFailure = { code: error.code, phase: error.phase, field: error.field, expected: error.expected, actual: error.actual };
+    report.status = 'INCOMPLETE';
+  } else report.status = /INCOMPLETE:|browserType\.launch|Executable doesn't exist|Target .* closed|page\.goto/.test(error.message ?? '') ? 'INCOMPLETE' : 'FAIL';
 } finally {
   // Drain late acquisitions before deciding which handles this collector must close.
   for (const record of acquisitions) if (!record.settled) {
@@ -364,6 +467,9 @@ try {
     && report.lifecycle.unsettledAcquisitions.length === 0 && (!context || report.lifecycle.contextClosed)
     && (!browser || report.lifecycle.browserClosed) && (!server || report.lifecycle.serverClosed);
   const after = [];
+  // Recheck all accepted retained selections before generic original assertions.
+  // Earlier capture/window rejection does not suppress peer or final observations.
+  for (const [mode, capture] of registryCaptures) await s04Reread('final', mode, capture);
   try { for (const [path, before] of identities) { const body = await readFile(path); const current = descriptor(path, body); after.push(current); assert.deepEqual(current, before, 'Original source/tool identity changed'); } report.lifecycle.identitiesStable = true; }
   catch (error) { report.cleanupFailures.push(fault(error)); }
   report.identitiesAfter = after;
@@ -374,6 +480,11 @@ try {
   if (report.counts.submittedFrames > 11) { report.status = 'FAIL'; report.cleanupFailures.push({ message: 'Finite frame budget exceeded' }); }
   if (report.status === 'PASS' && (report.counts.positiveFrames !== 7 || report.counts.counterexamples !== 5 || report.counts.submittedFrames !== 11)) {
     report.status = 'FAIL'; report.cleanupFailures.push({ message: 'Complete seven-positive/five-counterexample receipt missing' });
+  }
+  // Preserve count/cleanup diagnostics, then keep trusted provenance incompleteness final.
+  if (s04EnforcementIncomplete || report.privateRegistryPolicyFailure) {
+    report.statusBeforeRegistryIncomplete = report.status;
+    report.status = 'INCOMPLETE';
   }
   report.elapsedMs = Date.now() - startedAt; report.exitCode = report.status === 'PASS' ? 0 : report.status === 'UNSUPPORTED' ? 2 : 1;
   try { await save('requests.json', report.requests); report.lifecycle.rawSaved = true; await save('result.json', report); }

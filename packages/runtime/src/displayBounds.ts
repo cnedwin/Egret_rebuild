@@ -1,6 +1,7 @@
 import type { Matrix2D, Rectangle2D } from '@egret/contracts';
 import type { DisplayObject } from './DisplayObject.js';
 import { readBitmapState } from './bitmapDisplayState.js';
+import { readMeshState } from './meshDisplayState.js';
 import { assertLive, childAtOf, childCountOf, isDisplayNode, parentOf } from './displayTreeState.js';
 import { composeDisplayTransform } from './displayTransform.js';
 import { finite, visualOf } from './displayVisualState.js';
@@ -51,7 +52,7 @@ interface TraversalFrame {
   nextChild: number;
 }
 
-/** Private state only: no Bitmap value import, resource lookup or public hook. */
+/** Private state only: no display-class value import, resource lookup or public hook. */
 export function queryDisplayBounds(receiver: unknown, options: unknown): Rectangle2D {
   if (!isDisplayNode(receiver as object)) throw new EgretError('BOUNDS_RECEIVER_INVALID');
   const node = receiver as DisplayObject;
@@ -93,6 +94,20 @@ export function queryDisplayBounds(receiver: unknown, options: unknown): Rectang
     const bitmap = readBitmapState(current);
     if (bitmap !== undefined) {
       admitItem(); rectangle(matrix, 0, 0, bitmap.width, bitmap.height);
+    }
+    const mesh = readMeshState(current);
+    if (mesh !== undefined) {
+      const geometry = mesh.geometry;
+      for (let triangle = 0; triangle < geometry.triangleCount; triangle++) {
+        // Debit before all three index reads; shared geometry still costs per use.
+        admitItem();
+        const offset = 3 * triangle;
+        const first = geometry.indices[offset]!, second = geometry.indices[offset + 1]!, third = geometry.indices[offset + 2]!;
+        // Logical bounds retain authored point/line triangles and skip unused XY.
+        point(matrix, geometry.positions[2 * first]!, geometry.positions[2 * first + 1]!);
+        point(matrix, geometry.positions[2 * second]!, geometry.positions[2 * second + 1]!);
+        point(matrix, geometry.positions[2 * third]!, geometry.positions[2 * third + 1]!);
+      }
     }
     stack.push({ node: current, matrix, children: childCountOf(current), nextChild: 0 });
   }

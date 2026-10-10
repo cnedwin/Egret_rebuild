@@ -84,8 +84,8 @@
       "action": "move-pair",
       "previousZhSha256": "f43625255269c8801af0929179a9aab32cbca58094e4a842797e39171fc549b0",
       "previousEnSha256": "e8b100ccbd9d0fb99237a564f484f7fa6dbf008191570fa58f3e481c05c3e9f9",
-      "currentZhSha256": "37ff991cb39211bead6c74faa904bd00652f3580aef23a156e2dd8a6729c77c4",
-      "currentEnSha256": "2f3409cfbced22be08f44d70339583676a9b8e4b9463efa6a7882e9f56998732"
+      "currentZhSha256": "b99459ca7ea77f50d5c174b2fc8ec104af559ab4ecb0ef18284391d954d76e6e",
+      "currentEnSha256": "3812debabc0e9c31fc10d72e1d02a9fdff5d5307c857ea37fc8d1614ab04add8"
     },
     {
       "oldZh": "knowledge-base/CONTRIBUTING.md",
@@ -840,8 +840,8 @@
       "action": "move-pair",
       "previousZhSha256": "372e5b07d4980eb45d8338424c8d970b7725e324e6b3397916944b0529c55ec7",
       "previousEnSha256": "ed88646659467d718a30c3bfff14b41c28debbcb786e7bf816ee68819f612887",
-      "currentZhSha256": "190f50551e69e93c3050bdfd898c4dae3a784a9f07176611c0a00b555f0567f5",
-      "currentEnSha256": "09510a1405efd04d0912afc4fd6ce0f673b1836b772ba8bb0419124f55c8ae31"
+      "currentZhSha256": "fdfa41fd4e3d48bb86fbf674e7e17e91d6d31ccba21c268d15007a147ddf7fb4",
+      "currentEnSha256": "cd1e8681483ff177fd466cef5f06c7c0962b1c2b70d3783c7bc7f0d42f1a82fe"
     },
     {
       "oldZh": "knowledge-base/templates/实现来源记录.md",
@@ -960,8 +960,8 @@
       "action": "move-pair",
       "previousZhSha256": "803a40dd8bfd0f98ade51c8ba736790509aae12a6e045a8ea688b3ff5d01cdcf",
       "previousEnSha256": "40a2ef2f686aba4a10279c417dfe17879bb6396b3b80dd75b26bd09c87d665f9",
-      "currentZhSha256": "4a496d7cef044634dbd943486d0eb9b5f206524fed9368fb57560f51f2fd2c3a",
-      "currentEnSha256": "453ccb22ae22ea4091f7d0ff10d686d9ba1f2350ed0202e85ab260c4d2d01bc3"
+      "currentZhSha256": "0d7ec681f57d1f0652d2ea00cf51ec213fd15db6e416c16eb31d163a882722c9",
+      "currentEnSha256": "dc1d2caa19f79c063d19867b21639e17bbb3d3c03fc8c3bf523b9a47f883410a"
     },
     {
       "oldZh": "knowledge-base/docs/WebGPU矩形执行合同.md",
@@ -1506,6 +1506,30 @@
       "action": "new-first-party-pair",
       "currentZhSha256": "c1657341c0e0837cc1f3fc1605216127e18720710b4ebc8ec7b9267545deba70",
       "currentEnSha256": "095c8889535f22d2b4a743c9990f81cb0c2a49ac9ed4c2bda8d232403dbc4066"
+    },
+    {
+      "newZh": "knowledge-base/Cns/docs/自有纹理几何与Mesh2D契约.md",
+      "newEn": "knowledge-base/en/docs/textured-geometry-and-mesh2d-contract.md",
+      "kind": "public_reading",
+      "action": "new-first-party-pair",
+      "currentZhSha256": "f8f01b5e6462d00a247d2879506745fdb7294369031521c3a0b87809b84384d9",
+      "currentEnSha256": "b66504e5d527f9ea7d68ef1ab1671dfc54455f811fba4af09b33e1ab7df1b2ff"
+    },
+    {
+      "newZh": "knowledge-base/Cns/docs/自有纹理几何与Mesh2D证据.md",
+      "newEn": "knowledge-base/en/docs/textured-geometry-and-mesh2d-evidence.md",
+      "kind": "public_reading",
+      "action": "new-first-party-pair",
+      "currentZhSha256": "53c635ff3a2cf30098edb835e5a2d02b76b3d1da741a71d61c4697d93b57aebb",
+      "currentEnSha256": "fb00c6420c0487ca72f00a051564cbed89594a64bd6e8be7c3b6e53f3d29112c"
+    },
+    {
+      "newZh": "knowledge-base/Cns/docs/纹理Profile的CPU证据与待完成门禁.md",
+      "newEn": "knowledge-base/en/docs/textured-profile-cpu-evidence.md",
+      "kind": "public_reading",
+      "action": "new-first-party-pair",
+      "currentZhSha256": "fa327dd91378af3c1e59ebec823e7acf245aabb2885f33942a654decd5d48a50",
+      "currentEnSha256": "9718817fc9139d1e084ee39f57830833585c360c9e282760f5aad8b2d64e70b7"
     }
   ],
   "registries": [

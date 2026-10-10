@@ -1,5 +1,7 @@
+import { noteOwnedPreparationFailure } from './ownedPreparationFailure2D.js';
 import type { PreparedImage2D } from './prepareImages2D.js';
 import { GeometryPreparationError } from './prepareRectangles2D.js';
+import type { PreparationBudget2D } from './prepareRectangles2D.js';
 import { packedPosition2D } from './packedPosition2D.js';
 import { packedOrientation } from './packedOrientation.js';
 
@@ -14,9 +16,9 @@ export interface PackedImage2D {
 export class ImagePackingAllocationError {
     public constructor(public readonly original: unknown) {}
 }
-function fail(reason: 'precision' | 'budget'): never { throw new GeometryPreparationError(reason); }
+function fail(reason: 'precision' | 'budget'): never { throw noteOwnedPreparationFailure(new GeometryPreparationError(reason)); }
 /** CPU observation layout only; A2 must separately review its GPU pipeline. */
-export function packImageVertices2D(prepared: PreparedImage2D, width: number, height: number, maxUploadBytes: number): PackedImage2D {
+export function packImageVertices2D(prepared: PreparedImage2D, width: number, height: number, maxUploadBytes: number, budget?: PreparationBudget2D): PackedImage2D {
     let maxBackingDisplacement = 0, maxUVDisplacement = 0, collapsedTriangles = 0;
     // Convert each shared fan corner once, before allocating the bounded upload array.
     const points = prepared.points.map(point => {
@@ -33,7 +35,7 @@ export function packImageVertices2D(prepared: PreparedImage2D, width: number, he
     for (let i = 1; i + 1 < prepared.pointIndices.length; i++) {
         const a = prepared.pointIndices[0]!, b = prepared.pointIndices[i]!, c = prepared.pointIndices[i + 1]!;
         const p = points[a]!, q = points[b]!, r = points[c]!;
-        const sign = packedOrientation(p.x, p.y, q.x, q.y, r.x, r.y);
+        const sign = packedOrientation(p.x, p.y, q.x, q.y, r.x, r.y, budget);
         if (!Number.isFinite(sign) || sign > 0) fail('precision');
         if (sign === 0) { collapsedTriangles++; continue; }
         if (vertexCount > 4294967295 - 3) fail('budget');
@@ -45,6 +47,6 @@ export function packImageVertices2D(prepared: PreparedImage2D, width: number, he
         data = new Float32Array(vertexCount * 4);
         let offset = 0;
         for (const index of indices) { const p = points[index]!; data[offset++] = p.x; data[offset++] = p.y; data[offset++] = p.u; data[offset++] = p.v; }
-    } catch (original) { throw new ImagePackingAllocationError(original); }
+    } catch (original) { throw noteOwnedPreparationFailure(new ImagePackingAllocationError(original)); }
     return { data, vertexCount, collapsedTriangles, maxBackingDisplacement, maxUVDisplacement };
 }

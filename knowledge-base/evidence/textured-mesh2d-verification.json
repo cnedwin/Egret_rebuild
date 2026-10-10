@@ -1,0 +1,191 @@
+{
+  "schemaVersion": 1,
+  "engineeringPreview": "0.23.0",
+  "date": "2026-10-11",
+  "supportLevel": "experimental_bounded_desktop",
+  "scope": {
+    "en": "Owned 2D textured geometry and Mesh2D, immutable textured frames, fixed numeric preparation and explicit desktop WebGPU execution. Scope is recorded per checkpoint; overlapping suites are not summed.",
+    "zh-CN": "自有 2D 纹理几何与 Mesh2D、不可变纹理帧、固定数值准备及显式桌面 WebGPU 执行。各检查点分别记录范围，重叠套件不累加。"
+  },
+  "checkpoints": {
+    "cpuGeometryAndMesh": {
+      "status": "accepted_bounded_cpu",
+      "coreFiles": 137,
+      "selectedInputs": 214,
+      "emissions": 324
+    },
+    "rectangleHelper": {
+      "status": "accepted_bounded_cpu",
+      "cases": 31
+    },
+    "meshHelper": {
+      "status": "accepted_bounded_cpu",
+      "newCases": 59
+    },
+    "admission": {
+      "status": "accepted_bounded_cpu",
+      "cases": 65
+    },
+    "controlledHost": {
+      "status": "accepted_bounded_controlled_host",
+      "cases": 30,
+      "sourceFiles": 17,
+      "emissions": 360
+    },
+    "strictTypesAndSourcePolicy": {
+      "status": "accepted_bounded",
+      "newNegativeDiagnostics": 19,
+      "newPolicyCases": 33,
+      "retainedPolicyCases": 299
+    },
+    "pixelComparator": {
+      "status": "accepted_bounded_cpu",
+      "cases": 208,
+      "channelIntervalCases": 188,
+      "syntheticCounterexamples": 13,
+      "otherCases": 7
+    }
+  },
+  "desktopTexturedNative": {
+    "status": "accepted_fixed_cases_single_environment",
+    "originalCases": 21,
+    "literalSamplePoints": 47,
+    "literalChannels": 188,
+    "positiveSampleComparisonsIncludingReplay": 56,
+    "windows": {
+      "total": 37,
+      "calibration": 11,
+      "heldOut": 10,
+      "assignedControls": 16
+    },
+    "observations": {
+      "positive": 27,
+      "controls": 19
+    },
+    "witnesses": {
+      "rgba": 46,
+      "png": 92,
+      "artifacts": 272,
+      "totalBytes": 9643297,
+      "resultBytes": 2686260
+    },
+    "copiedControls": 12,
+    "assignedControlWindows": 16,
+    "allAssignedControlsSensitive": true,
+    "registryCaptures": 13,
+    "completeThreeRoleRereads": 50,
+    "transparentChannelTolerance": 0,
+    "fixedNonzeroChannelTolerance": 1,
+    "fullResetBufferExactZero": true,
+    "savedFrameReplayAfterAuthorRetirement": true,
+    "allWindowsClosed": true,
+    "browserAndServerClosed": true,
+    "unexpectedErrors": 0,
+    "owningJob": {
+      "status": "accepted_bounded",
+      "assignmentBeforeAcknowledgement": true,
+      "activeProcessCountZero": true,
+      "closed": true,
+      "rawEOFComplete": true
+    },
+    "independentSavedResultReview": "accepted_bounded",
+    "getCompilationInfoTrace": false,
+    "nativeDescriptorInterception": false
+  },
+  "affectedDesktop": {
+    "status": "independently_reviewed_existing_saved_routes",
+    "canvas": {
+      "checks": 14
+    },
+    "rectangleWebGPU": {
+      "frames": 42,
+      "rawCheckRecords": 1709,
+      "compositionPNGs": 84,
+      "compositionChecks": 6808,
+      "nativeCopiedFaults": 7,
+      "syntheticCachedResetAssertions": 1
+    },
+    "b1": {
+      "positiveFrames": 7,
+      "assignedControls": 5,
+      "submittedFrames": 11,
+      "exactComparisons": 8214,
+      "compilerWindows": 6,
+      "assignedCompilerRejectionRetained": true,
+      "policyOnlyConsumersRemainPolicyOnly": true
+    },
+    "sequencePlayer": {
+      "captures": 8,
+      "opaquePixels": 256,
+      "channels": 1024,
+      "scope": "opaque_region_subset"
+    },
+    "allFourOwningJobsClosedWithZeroActiveProcesses": true
+  },
+  "environment": {
+    "os": "Windows",
+    "architecture": "x64",
+    "release": "10.0.26300",
+    "node": "24.19.0",
+    "playwright": "1.62.1",
+    "browser": "Microsoft Edge",
+    "browserVersion": "154.0.4258.62",
+    "channel": "msedge",
+    "headless": true,
+    "extraGPUFlags": [],
+    "reportedVendor": "NVIDIA",
+    "reportedArchitecture": "blackwell",
+    "redactedDevice": "",
+    "redactedDescription": ""
+  },
+  "retainedHistory": [
+    {
+      "stage": "first_textured_native_attempt",
+      "status": "INCOMPLETE",
+      "cause": "Copied shader control removed an inferred binding; pretty aggregate exceeded unchanged reader cap."
+    },
+    {
+      "stage": "old_rectangle_verifier_static_and_request_attempts",
+      "status": "INCOMPLETE",
+      "cause": "Exact private import-free provenance helper was rejected before the required captures."
+    },
+    {
+      "stage": "sequence_selected_graph_attempt",
+      "status": "INCOMPLETE",
+      "cause": "Exact existing private registry import literal was not yet admitted."
+    },
+    {
+      "stage": "old_rectangle_pretty_result_attempt",
+      "verifierStatus": "PASS",
+      "ownerStatus": "INCOMPLETE",
+      "resultBytes": 4926685,
+      "readerLimitBytes": 4194304
+    }
+  ],
+  "reproduction": {
+    "issuer": "tools/freeze-textured-webgpu-inputs.mjs",
+    "collector": "tools/verify-textured-webgpu.mjs",
+    "trackedTemplatesReady": false,
+    "generatedDirectory": "work/textured-webgpu-freeze",
+    "currentWorkflowExecution": "recorded_separately_in_delivery_verification",
+    "finalPublicPrepush": "recorded_separately_in_delivery_verification",
+    "remoteDelivery": "recorded_separately"
+  },
+  "limitations": [
+    "one_reported_desktop_environment",
+    "no_physical_scanout_qualification",
+    "no_phone_or_multi_device_qualification",
+    "no_performance_power_or_heat_comparison",
+    "no_production_native_sdk_acceptance",
+    "no_full_A2_3D_UI_fonts_Spine_or_migration_acceptance",
+    "no_complete_legacy_original_copied_singleton_refusal_coverage"
+  ],
+  "source": {
+    "implementation": "first_party_ai_assisted_independent_implementation",
+    "newThirdPartyRuntimeDependencies": [],
+    "existingOrientationDependency": "robust-predicates@3.0.3",
+    "existingDependencyLicense": "Unlicense",
+    "firstPartyLicense": "Apache-2.0",
+    "claimBoundary": "Recorded process and dependency attribution; no global originality, rights or training provenance certification."
+  }
+}

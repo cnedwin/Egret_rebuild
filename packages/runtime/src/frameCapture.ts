@@ -5,6 +5,7 @@ import { childrenOf, isStageRoot } from "./displayTreeState.js";
 import { visualOf, finite } from "./displayVisualState.js";
 import { EgretError } from "./EgretError.js";
 import { bitmapCaptureState, readBitmapImage } from "./Bitmap.js";
+import { readMeshState } from './meshDisplayState.js';
 import { engineOf } from "./ownership.js";
 import { CaptureImageBudget } from "./imageFrameBudget.js";
 import { composeDisplayTransform } from './displayTransform.js';
@@ -81,6 +82,11 @@ function capture(stage: Stage, mode: "content" | "rectangles"): CapturedContent2
         const imageIndex = budget!.register(snapshot.image, sourceRect);
         commands.push(Object.freeze({ kind: "image", matrix, rect, alpha, clips, imageIndex, sourceRect }));
       }
+    }
+    // Legacy frames cannot encode an occupied Mesh, including empty or retired
+    // content. Refuse after established skips/arithmetic without reading a lease.
+    if (readMeshState(entry.node) !== undefined && alpha !== 0) {
+      throw new EgretError('FRAME_MESH_UNSUPPORTED');
     }
     const children = childrenOf(entry.node);
     for (let i = children.length - 1; i >= 0; i--) {

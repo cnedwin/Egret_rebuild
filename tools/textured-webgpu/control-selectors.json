@@ -1,0 +1,171 @@
+{
+  "schemaVersion": 1,
+  "ready": false,
+  "controls": [
+    {
+      "id": "C01-no-op-mesh",
+      "checks": [
+        [
+          "N02-interpolation",
+          "interpolated-rgba"
+        ]
+      ],
+      "target": "packages/engine/dist/web/WebGPUHost.js",
+      "before": "                    else if (draw.packed.vertexCount > 0)\n                        encodeWebGPUImage(captured, draw.kind === 'mesh' ? this.texturedPipeline : this.imagePipeline, vertices.get(draw).buffer, bindings.get(draw), draw.packed.vertexCount, p.width, p.height);",
+      "after": "                    else if (draw.kind === 'image' && draw.packed.vertexCount > 0)\n                        encodeWebGPUImage(captured, this.imagePipeline, vertices.get(draw).buffer, bindings.get(draw), draw.packed.vertexCount, p.width, p.height);"
+    },
+    {
+      "id": "C02-reverse-painter",
+      "checks": [
+        [
+          "N03-forward",
+          "blue-over-red"
+        ],
+        [
+          "N04-empty",
+          "last-green-empty"
+        ],
+        [
+          "N04-singular",
+          "last-green-singular"
+        ]
+      ],
+      "target": "packages/engine/dist/web/WebGPUHost.js",
+      "before": "                for (const draw of p.draws) {\n                    if (draw.kind === 'rect')\n                        encodeWebGPURectangles(captured, this.pipeline, vertices.get(draw)?.buffer, draw.packed.ranges, p.width, p.height);",
+      "after": "                for (const draw of [...p.draws].reverse()) {\n                    if (draw.kind === 'rect')\n                        encodeWebGPURectangles(captured, this.pipeline, vertices.get(draw)?.buffer, draw.packed.ranges, p.width, p.height);"
+    },
+    {
+      "id": "C03-omit-light-alpha",
+      "checks": [
+        [
+          "N01-a128",
+          "alpha-128"
+        ]
+      ],
+      "target": "packages/engine/dist/web/webgpuTexturedPass.js",
+      "before": "    return vec4<f32>(sampled.rgb * input.light.rgb * input.light.a * draw.opacity, sampled.a * input.light.a * draw.opacity);",
+      "after": "    return vec4<f32>(sampled.rgb * input.light.rgb * draw.opacity, sampled.a * draw.opacity);"
+    },
+    {
+      "id": "C04-omit-opacity",
+      "checks": [
+        [
+          "N01-a128",
+          "alpha-128"
+        ]
+      ],
+      "target": "packages/engine/dist/web/prepareTexturedSubmission2D.js",
+      "before": "    uniform: (alpha) => new Float32Array([alpha, 0, 0, 0]),",
+      "after": "    uniform: (alpha) => new Float32Array([1, 0, 0, 0]),"
+    },
+    {
+      "id": "C05-detach-light",
+      "checks": [
+        [
+          "N02-interpolation",
+          "interpolated-rgba"
+        ],
+        [
+          "N06-diamond",
+          "clip-inside-left"
+        ],
+        [
+          "N09-complement",
+          "visible-complement-transport"
+        ]
+      ],
+      "target": "packages/engine/dist/web/webgpuTexturedPass.js",
+      "before": "out.light = light;",
+      "after": "out.light = vec4<f32>(1.0, 1.0, 1.0, 1.0);"
+    },
+    {
+      "id": "C06-remove-clip",
+      "checks": [
+        [
+          "N06-diamond",
+          "clip-outside-top"
+        ]
+      ],
+      "target": "packages/engine/dist/rendering/prepareTexturedMesh2D.js",
+      "before": "        for (const clip of clips)\n            polygon = clipPolygon2D(preparation, polygon, clip, policy.normalize, attachTexturedMeshAttributes2D, policy);",
+      "after": "        for (const clip of clips)\n            clipPolygon2D(preparation, polygon, clip, policy.normalize, attachTexturedMeshAttributes2D, policy);"
+    },
+    {
+      "id": "C07-double-premultiply",
+      "checks": [
+        [
+          "N01-a128",
+          "alpha-128"
+        ]
+      ],
+      "target": "packages/engine/dist/web/imageProjections2D.js",
+      "before": "            pixels[offset] = Math.floor((pixels[offset] * alpha + 127) / 255);\n            pixels[offset + 1] = Math.floor((pixels[offset + 1] * alpha + 127) / 255);\n            pixels[offset + 2] = Math.floor((pixels[offset + 2] * alpha + 127) / 255);",
+      "after": "            pixels[offset] = Math.floor((Math.floor((pixels[offset] * alpha + 127) / 255) * alpha + 127) / 255);\n            pixels[offset + 1] = Math.floor((Math.floor((pixels[offset + 1] * alpha + 127) / 255) * alpha + 127) / 255);\n            pixels[offset + 2] = Math.floor((Math.floor((pixels[offset + 2] * alpha + 127) / 255) * alpha + 127) / 255);"
+    },
+    {
+      "id": "C08-wrong-crop",
+      "checks": [
+        [
+          "N05-palette",
+          "crop-green"
+        ]
+      ],
+      "target": "packages/engine/dist/web/imageProjections2D.js",
+      "before": "        const sourceOffset = (region.y + row) * image.bytesPerRow + 4 * region.x;",
+      "after": "        const sourceOffset = row * image.bytesPerRow;"
+    },
+    {
+      "id": "C09-wrong-UV",
+      "checks": [
+        [
+          "N05-palette",
+          "crop-green"
+        ]
+      ],
+      "target": "packages/engine/dist/web/webgpuTexturedPass.js",
+      "before": "out.uv = uv;",
+      "after": "out.uv = vec2<f32>(0.0, 0.0);"
+    },
+    {
+      "id": "C10-nominal-DPR",
+      "checks": [
+        [
+          "N07-diamond",
+          "TEXTURED_NATIVE_METADATA_INVALID"
+        ]
+      ],
+      "target": "packages/engine/dist/web/WebGPUHost.js",
+      "before": "                const options = TEXTURED_OPTIONS.get(this);",
+      "after": "                const options = { ...TEXTURED_OPTIONS.get(this), pixelRatio: 1 };"
+    },
+    {
+      "id": "C11-wrong-clear",
+      "checks": [
+        [
+          "N10-replay02",
+          "N10-reset-after",
+          "reset-after"
+        ]
+      ],
+      "target": "packages/engine/dist/web/WebGPUHost.js",
+      "before": "clearValue: { r: ((color >>> 16) & 255) / 255 * alpha, g: ((color >>> 8) & 255) / 255 * alpha, b: (color & 255) / 255 * alpha, a: alpha }",
+      "after": "clearValue: { r: 1, g: 0, b: 0, a: 1 }"
+    },
+    {
+      "id": "C12-channel-order",
+      "checks": [
+        [
+          "N06-diamond",
+          "clip-inside-top"
+        ]
+      ],
+      "target": "packages/engine/dist/web/webgpuTexturedPass.js",
+      "before": "    return vec4<f32>(sampled.rgb * input.light.rgb * input.light.a * draw.opacity, sampled.a * input.light.a * draw.opacity);",
+      "after": "    return vec4<f32>((sampled.rgb * input.light.rgb).grb * input.light.a * draw.opacity, sampled.a * input.light.a * draw.opacity);"
+    }
+  ],
+  "scope": "Fixed first-party copied-production sensitivity recipes; output hashes are generated only after an actual successful fixed build",
+  "controlCount": 12,
+  "fixedCheckWindows": 16,
+  "nativeExecuted": false
+}

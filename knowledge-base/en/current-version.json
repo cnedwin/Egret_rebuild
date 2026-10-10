@@ -256,7 +256,7 @@
   },
   "_localization": {
     "canonicalSource": "当前版本.json",
-    "canonicalSha256": "eaad9596c8b540136c4352bb43ef8ab77c9a850a3770e02008850a970c821c7a",
+    "canonicalSha256": "7f19918343ce0c1852574267e4919cec03937c5c7a24b03dd5c90fc6e334c662",
     "role": "read_only_translation",
     "language": "en"
   },
@@ -538,5 +538,20 @@
     "fullMigrationAcceptance": false,
     "contract": "en/docs/display-content-bounds-contract.md",
     "evidence": "en/docs/display-content-bounds-evidence.md"
+  },
+  "latestEngineeringPreview": "0.23.0",
+  "texturedMesh2DImplementation": {
+    "version": "0.23.0",
+    "status": "bounded_increment_implemented",
+    "doc": "en/docs/textured-geometry-and-mesh2d-contract.md",
+    "evidence": "evidence/textured-mesh2d-verification.json",
+    "desktopNativeScope": "fixed_cases_single_reported_environment",
+    "independentSavedResultReview": "accepted_bounded",
+    "publicReproduction": "recorded_separately_in_delivery_verification",
+    "publication": "recorded_separately",
+    "performance": false,
+    "phone": false,
+    "nativeSDK": false,
+    "fullA2": false
   }
 }

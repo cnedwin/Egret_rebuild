@@ -1,3 +1,4 @@
+import { readOwnedTexturedFrame } from '#egret-textured-frame-state';
 import type { Matrix2D, RenderFrame2D, RenderHostAdapter } from '@egret/contracts';
 import { EgretError } from '@egret/runtime';
 import { CanvasImageCopyError, copyCanvasMixedFrame } from './copyCanvasFrame.js';
@@ -93,6 +94,8 @@ class CanvasHostImplementation implements CanvasHost {
             }
         };
         try {
+            // Exact Engine-owned identity is checked before any legacy copy or native work.
+            if (readOwnedTexturedFrame(input) !== undefined) throw new EgretError('CANVAS_FRAME_PROFILE_UNSUPPORTED');
             let copied;
             try {
                 copied = copyCanvasMixedFrame(input, this.ratio, this.budget, () => { sawImage = true; }, failure => { copyFailure = failure; });

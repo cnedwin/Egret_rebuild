@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-10",
+  "updatedAt": "2026-10-11",
   "authority": "Source grouping and applicable boundaries; researchCheckedAt is the project's research-check date, not a unified publication date",
   "items": [
     {
@@ -1193,11 +1193,23 @@
         "evidence/content-bounds-verification.json"
       ],
       "doc": "en/docs/display-content-bounds-evidence.md"
+    },
+    {
+      "id": "S073",
+      "title": "First-party textured Mesh2D and fixed desktop observations",
+      "type": "first_party_textured_mesh_cpu_type_policy_and_fixed_desktop_evidence",
+      "scope": "Separately accepted owned geometry/frame/helper/admission/controlled-host/type/source-policy checkpoints; fixed original and copied-control desktop observations, saved-result independent reviews and owning process retirement.",
+      "limit": "One reported desktop environment; no performance/power, phone/multi-device, Native SDK, full UI/fonts/Spine/3D or complete migration acceptance. Current public workflow and final delivery have separate records.",
+      "researchCheckedAt": "2026-10-11",
+      "artifacts": [
+        "evidence/textured-mesh2d-verification.json"
+      ],
+      "doc": "en/docs/textured-profile-cpu-evidence.md"
     }
   ],
   "_localization": {
     "canonicalSource": "来源.json",
-    "canonicalSha256": "2d0e1e986207c9063e1223b6bcdbaf4711bfc08bb0809b810f7099a55a0ea134",
+    "canonicalSha256": "feab25c1c983f8b68a88dd7b9e8b5ce0c4f7f6d3d2949d0e43199231e4256bc9",
     "role": "read_only_translation",
     "language": "en"
   }

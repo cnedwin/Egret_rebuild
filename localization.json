@@ -5,16 +5,17 @@
   "evidencePolicy": "Machine data, embedded source, historical code and upstream legal originals retain their identities; paired reading versions explain them.",
   "semanticReview": {
     "status": "reviewed_with_scope",
+    "engineeringPreview": "0.23.0",
     "method": {
-      "en": "Independent paired-meaning, source/record scope and public-material review of the current player additions and amended reading/registry entries; independent core/tool source and saved-native evidence reviews are separately bound. Root authors the later identity and attestation metadata. Unchanged earlier reading bodies retain their version-bound reviews.",
-      "zh-CN": "独立审阅当前播放器新增及修订阅读／登记内容的双语含义、来源／记录范围和公开措辞；核心／工具源码与保存原生产物的独立审阅分别绑定。根代理编写后续身份与凭据元数据；未变的既有阅读正文保留版本绑定审阅。"
+      "en": "Independent scoped reviews cover the three new paired rendering documents and structured evidence, changed community and knowledge-base entries, current registry additions, source attribution and newly listed English comments. Maintainers authored the current metadata successor. Unchanged earlier document bodies retain their own version-bound reviews.",
+      "zh-CN": "独立范围审阅覆盖三组新渲染配对文档及结构化证据、修订社区与知识库入口、当前登记新增、来源归属及新登记英文注释。维护者编写当前元数据后继版本；未变既有文档正文保留各自版本绑定审阅。"
     },
     "scope": {
-      "en": "117 current reading pairs, six exact registry translations and 96 critical English-comment source files. New factory/player contract, example/verifier guides, current navigation and acceptance records have scoped review. Older results, research archives, original source snapshots, failures and legal originals remain historical records.",
-      "zh-CN": "当前 117 对阅读文档、六组精确登记翻译及 96 份关键英文注释源码。新增工厂／播放器合同、示例／验证器指南、当前导航及验收记录具有范围审阅。旧结果、研究档案、原始源码快照、失败及法律原文仍为历史记录。"
+      "en": "The inventory contains 124 reading pairs, six canonical/translated registry views and 121 critical English-comment source files. Three new reading pairs and 19 newly listed critical modules have current scoped review; the remaining unchanged bodies and original evidence retain historical scopes. Source/native acceptance, current portable workflow execution, final prepush and remote delivery are separate records.",
+      "zh-CN": "清单包含 124 对阅读文档、六组规范／翻译登记视图及 121 份关键英文注释源码。三对新增阅读文档及 19 份新登记关键模块具有当前范围审阅；其余未变正文与原始证据保留历史范围。源码／原生验收、当前可移植流程执行、最终 prepush 及远程交付分别记录。"
     },
-    "qualityStatus": "INDEPENDENT_SEQUENCE_PLAYER_BILINGUAL_REVIEW_ACCEPTED_ROOT_METADATA_SUCCESSOR",
-    "publicationStatus": "FINAL_CANDIDATE_PREPUSH_AND_REMOTE_SUBMISSION_RECORDED_SEPARATELY"
+    "qualityStatus": "INDEPENDENT_SCOPED_REVIEWS_RECORDED_CURRENT_METADATA_SUCCESSOR",
+    "publicationStatus": "ACTUAL_WORKFLOW_PREPUSH_AND_REMOTE_DELIVERY_RECORDED_SEPARATELY"
   },
   "documents": [
     {
@@ -105,8 +106,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "zhSha256": "37ff991cb39211bead6c74faa904bd00652f3580aef23a156e2dd8a6729c77c4",
-      "enSha256": "2f3409cfbced22be08f44d70339583676a9b8e4b9463efa6a7882e9f56998732"
+      "zhSha256": "b99459ca7ea77f50d5c174b2fc8ec104af559ab4ecb0ef18284391d954d76e6e",
+      "enSha256": "3812debabc0e9c31fc10d72e1d02a9fdff5d5307c857ea37fc8d1614ab04add8"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -728,8 +729,8 @@
       "zh": "knowledge-base/Cns/README.md",
       "en": "knowledge-base/en/README.md",
       "kind": "public_reading",
-      "zhSha256": "190f50551e69e93c3050bdfd898c4dae3a784a9f07176611c0a00b555f0567f5",
-      "enSha256": "09510a1405efd04d0912afc4fd6ce0f673b1836b772ba8bb0419124f55c8ae31"
+      "zhSha256": "fdfa41fd4e3d48bb86fbf674e7e17e91d6d31ccba21c268d15007a147ddf7fb4",
+      "enSha256": "cd1e8681483ff177fd466cef5f06c7c0962b1c2b70d3783c7bc7f0d42f1a82fe"
     },
     {
       "zh": "knowledge-base/Cns/templates/ADR决策记录.md",
@@ -812,8 +813,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "zhSha256": "4a496d7cef044634dbd943486d0eb9b5f206524fed9368fb57560f51f2fd2c3a",
-      "enSha256": "453ccb22ae22ea4091f7d0ff10d686d9ba1f2350ed0202e85ab260c4d2d01bc3"
+      "zhSha256": "0d7ec681f57d1f0652d2ea00cf51ec213fd15db6e416c16eb31d163a882722c9",
+      "enSha256": "dc1d2caa19f79c063d19867b21639e17bbb3d3c03fc8c3bf523b9a47f883410a"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -863,6 +864,27 @@
       "kind": "public_reading",
       "enSha256": "c80867173018aa5389bf4dbb9b3c19592b2e834fef3e9d800da6cc024a9ffd95",
       "zhSha256": "790575a0bd6c52526f9d4a7641b0ea8e24a15d5bcbfa6cc7a954d30ced326ea5"
+    },
+    {
+      "en": "knowledge-base/en/docs/textured-geometry-and-mesh2d-contract.md",
+      "zh": "knowledge-base/Cns/docs/自有纹理几何与Mesh2D契约.md",
+      "kind": "public_reading",
+      "zhSha256": "f8f01b5e6462d00a247d2879506745fdb7294369031521c3a0b87809b84384d9",
+      "enSha256": "b66504e5d527f9ea7d68ef1ab1671dfc54455f811fba4af09b33e1ab7df1b2ff"
+    },
+    {
+      "en": "knowledge-base/en/docs/textured-geometry-and-mesh2d-evidence.md",
+      "zh": "knowledge-base/Cns/docs/自有纹理几何与Mesh2D证据.md",
+      "kind": "public_reading",
+      "zhSha256": "53c635ff3a2cf30098edb835e5a2d02b76b3d1da741a71d61c4697d93b57aebb",
+      "enSha256": "fb00c6420c0487ca72f00a051564cbed89594a64bd6e8be7c3b6e53f3d29112c"
+    },
+    {
+      "en": "knowledge-base/en/docs/textured-profile-cpu-evidence.md",
+      "zh": "knowledge-base/Cns/docs/纹理Profile的CPU证据与待完成门禁.md",
+      "kind": "public_reading",
+      "zhSha256": "fa327dd91378af3c1e59ebec823e7acf245aabb2885f33942a654decd5d48a50",
+      "enSha256": "9718817fc9139d1e084ee39f57830833585c360c9e282760f5aad8b2d64e70b7"
     }
   ],
   "registries": [
@@ -887,20 +909,20 @@
     {
       "source": "knowledge-base/Cns/registry/交付.json",
       "target": "knowledge-base/en/registry/deliverables.json",
-      "sourceSha256": "48b32a000752298816dee5aa72f7917f3965a183fdd86d5ec9e6915232b2ed60",
-      "targetSha256": "08c2c9c8a6da988eb39d4e4548e1970c06558ef4671b4e5e6330925df3af2767"
+      "sourceSha256": "549a469329a39002e9c69c828a048672cbb776c21724cbc69fee3d2d0866bf59",
+      "targetSha256": "9b458dd9b6592c4c866d65bfe6f823b8ca00180379f7a25ebae9b1030797305d"
     },
     {
       "source": "knowledge-base/Cns/registry/来源.json",
       "target": "knowledge-base/en/registry/sources.json",
-      "sourceSha256": "2d0e1e986207c9063e1223b6bcdbaf4711bfc08bb0809b810f7099a55a0ea134",
-      "targetSha256": "33fbad735eb16787bf5d0dc3756e3b89b823481655f4d2e53c68f2b14830ccea"
+      "sourceSha256": "feab25c1c983f8b68a88dd7b9e8b5ce0c4f7f6d3d2949d0e43199231e4256bc9",
+      "targetSha256": "8ec600508128d87888ef14ce328f6d6945de3b92e8a21efbc6c053ed979a84ed"
     },
     {
       "source": "knowledge-base/Cns/当前版本.json",
       "target": "knowledge-base/en/current-version.json",
-      "sourceSha256": "eaad9596c8b540136c4352bb43ef8ab77c9a850a3770e02008850a970c821c7a",
-      "targetSha256": "a0309b1b09bf51364b447e3a428d98219c2565bc799fce237d561908a0e54929"
+      "sourceSha256": "7f19918343ce0c1852574267e4919cec03937c5c7a24b03dd5c90fc6e334c662",
+      "targetSha256": "5ce592501658df4e8f7fc7eb603859e4c53de8df74f44b4f9e986b81863fe5b2"
     }
   ],
   "criticalComments": [
@@ -958,7 +980,7 @@
     },
     {
       "path": "packages/engine/rendering/packImageVertices2D.ts",
-      "sha256": "1db7c107e094ae239eb77af042e82e32238f8001b76dbe466d2721a11264353d"
+      "sha256": "bd95e142f92779e2266767251d0f28345d92e20611e92267df2fb61bab0fc5e0"
     },
     {
       "path": "packages/engine/rendering/packMeshGeometry3D.ts",
@@ -966,7 +988,7 @@
     },
     {
       "path": "packages/engine/rendering/packedOrientation.ts",
-      "sha256": "fdcedb1464a03dd39c6da6cd8a77596d6be33b95b0ba63ac907859a0e02c181b"
+      "sha256": "85ac6204f725ad5abab0bfc93f8a4af80a880011ba4bdf8b9585dc0719af851b"
     },
     {
       "path": "packages/engine/rendering/packedPosition2D.ts",
@@ -974,7 +996,7 @@
     },
     {
       "path": "packages/engine/rendering/prepareImages2D.ts",
-      "sha256": "1749ecc606a7a3f412b254a332842cbeadce2fab6b91a438ee685dd143a9e3ab"
+      "sha256": "f73066ae318c3950e69d9cf7ee0ac308fa7e96856df27cbfc2d6ad93ac07e400"
     },
     {
       "path": "packages/engine/rendering/prepareMixedDraws2D.ts",
@@ -982,7 +1004,7 @@
     },
     {
       "path": "packages/engine/rendering/prepareRectangles2D.ts",
-      "sha256": "4ff620e1670d594550534bd8ef70366ee0fda6c46307116060154e8415711473"
+      "sha256": "94aa0f00db125dc45448e8c0174ca9f0095b78035c98a4c1efc5cbd01cb44230"
     },
     {
       "path": "packages/engine/rendering/projection3D.ts",
@@ -990,7 +1012,7 @@
     },
     {
       "path": "packages/engine/src/Engine.ts",
-      "sha256": "e9e5b082a2f2cfd4f87bbfec13fbc604df887ba9ed82a9ef0a8b728b3261bfef"
+      "sha256": "ede0be39736301fb961177463384661913f9a4171b6e1677216f4fc924fb5f6e"
     },
     {
       "path": "packages/engine/src/closeHost.ts",
@@ -998,7 +1020,7 @@
     },
     {
       "path": "packages/engine/src/createEngine.ts",
-      "sha256": "32011ff9c7bbc65e0bdf455a21fcac2e975cd14f9065c3c7c9589bbb74c56774"
+      "sha256": "99d4f442f1b8c0eb19928e71896e46aec83de2458d2fa9516b5b10b23951589b"
     },
     {
       "path": "packages/engine/src/surfaceOwnership.ts",
@@ -1006,11 +1028,11 @@
     },
     {
       "path": "packages/engine/web/CanvasHost.ts",
-      "sha256": "9686477da8e6bc88ce6f47b673c37c92c01b93814e96dc23cb875a5431a69eff"
+      "sha256": "82236ce1a291da6409007c42ecc767b2cb382d23eabf65efc6707dd9806f6642"
     },
     {
       "path": "packages/engine/web/WebGPUHost.ts",
-      "sha256": "ecc99075132e2bd546d50da8d96ff096ba8e6ca33630d192bec66500ccca3bc8"
+      "sha256": "2679e634e35c3841daa499f59cb3279087b33245267af187ae78995a29019c72"
     },
     {
       "path": "packages/engine/web/canvasImageProjection.ts",
@@ -1022,11 +1044,11 @@
     },
     {
       "path": "packages/engine/web/imageProjections2D.ts",
-      "sha256": "28ffdfb517c38ebb4a260dd34368be927a21830db43f8e098da64ff7db84d5da"
+      "sha256": "937bfc89c93b941a78cc37242544e3d7b2ecd94454148006a0ff52e9ed3cfd17"
     },
     {
       "path": "packages/engine/web/webgpu.ts",
-      "sha256": "bf0e57d689d4ae60f3a25a11835e3d08aead7549c2c1b72a7cdbdf91da8c0e05"
+      "sha256": "84a69d7c3de60a5e3f83cd0d31cb6cd0bcabdebe5553a89abe0fb3f07540c3cb"
     },
     {
       "path": "packages/engine/web/webgpuImagePass.ts",
@@ -1038,7 +1060,7 @@
     },
     {
       "path": "packages/engine/web/webgpuPass.ts",
-      "sha256": "26f9cff856de0e868a945cbe55379013877eb3046bc16f41d86776905278fcf5"
+      "sha256": "c4fc82a5e2d8380a9379e0fb840b07082bb9ab652804237b6cfc068d9a4187ff"
     },
     {
       "path": "packages/project/src/api.ts",
@@ -1234,7 +1256,7 @@
     },
     {
       "path": "packages/runtime/src/frameCapture.ts",
-      "sha256": "598fa148c5ba223081eb0baf52e25d8793a824851ed854087b8eb77d9b02ca8e"
+      "sha256": "afa15011f15aab8d74a2fc4d82bcf1a53b99d0ab571da55d5827fa92564f666e"
     },
     {
       "path": "packages/runtime/src/imageFrameBudget.ts",
@@ -1270,7 +1292,7 @@
     },
     {
       "path": "tools/verify-webgpu-b1.mjs",
-      "sha256": "8216ff160d3dfc5b08fb56a943f91aee8ee7da612fd4a2e58379aedc1ef87002"
+      "sha256": "47f2de2e6cd997ce8b54773e79ad5a17669cf03bd55e022cd70bfe289280b104"
     },
     {
       "path": "tools/b1-webgpu/fixture.mjs",
@@ -1311,12 +1333,88 @@
     {
       "path": "packages/runtime/src/displayBounds.ts",
       "bytes": 6601,
-      "sha256": "114f634d2092ca84b2259841c3af8c885a7e7b854408e9631ee092e9782104bc"
+      "sha256": "e4c04810395dc17181be5fff15bb0fe015e29517a8672a95043094580cfa8038"
     },
     {
       "path": "packages/runtime/src/bitmapDisplayState.ts",
       "bytes": 1193,
       "sha256": "b4a565939d5ddd94eea321ba62a5cf69b3cc58bea3080c2d131c36045ff8a912"
+    },
+    {
+      "path": "packages/contracts/src/TexturedGeometry2D.ts",
+      "sha256": "ebfdafec006bd646cf35ec9a0b3610fc4c55b568db79cacca3d93d3acab75dfc"
+    },
+    {
+      "path": "packages/contracts/src/TexturedRenderFrame2D.ts",
+      "sha256": "81c0b9fdf5425b42b159777388c61a72fd7a6f656b34fe8ae92c2f4b2f5cbaf4"
+    },
+    {
+      "path": "packages/engine/rendering/admitTexturedFrame2D.ts",
+      "sha256": "943f6cfcb2dfaf3ec4380756ca13dae6dd112e43a51cebec5657c20b81391093"
+    },
+    {
+      "path": "packages/engine/rendering/ownedPreparationFailure2D.ts",
+      "sha256": "475525f49142c8fc94c6885b3af01931f418e5233d9b91bf7cf48dc1080cfec9"
+    },
+    {
+      "path": "packages/engine/rendering/packTexturedMesh2D.ts",
+      "sha256": "d5e9bbfe238cb0d43fc5b44ffa86de7cee09eaf27bfea71fbf43b9259ada18fb"
+    },
+    {
+      "path": "packages/engine/rendering/prepareTexturedDraws2D.ts",
+      "sha256": "ba17d38894b1d13a0fd85cadeb7a9b1355e10e0c24178f9facf02bfd73832df8"
+    },
+    {
+      "path": "packages/engine/rendering/prepareTexturedMesh2D.ts",
+      "sha256": "c587c567e45e09aa898e5e82035785018845a7aa7cedd8840c5e9229aa92de4c"
+    },
+    {
+      "path": "packages/engine/rendering/texturedPreparationBudget2D.ts",
+      "sha256": "6e2f6dae4d5ee4da53a39e8ed7efa0b5a3e94e283d9b5d6cf164d1cbfcf8d1cb"
+    },
+    {
+      "path": "packages/engine/src/createEngineForProfile.ts",
+      "sha256": "2b64bbec2a00ae16f3e075192af2b8c4fdf8143d3ed96dde4aadc406120aa248"
+    },
+    {
+      "path": "packages/engine/src/internal/texturedFrameState.ts",
+      "sha256": "dc308adcb61faa716681cabf6b717fbf8079a32862aafb5ae174203461fbfaa4"
+    },
+    {
+      "path": "packages/engine/src/startEngine.ts",
+      "sha256": "1c1cd118f693360344f2e84a3c27873efff7a1299b8461d4f1f23f6d76aedf88"
+    },
+    {
+      "path": "packages/engine/web/prepareTexturedSubmission2D.ts",
+      "sha256": "39863905140eee9af2c4739d407707901a6397a6cb17a91334fa56d3dfdab9bc"
+    },
+    {
+      "path": "packages/engine/web/texturedWebGPUOptions.ts",
+      "sha256": "1091fcf20ead47c954aa22841d2edf34b15c7c4c2222324e3aee0cb643af7983"
+    },
+    {
+      "path": "packages/engine/web/webgpuTexturedPass.ts",
+      "sha256": "c31d5f12cda3f38f5dbb9209e14f5b3345cbdc30d6b896bebf28146e0acdf4be"
+    },
+    {
+      "path": "packages/runtime/src/Mesh2D.ts",
+      "sha256": "df37a3c6380d911ec919aafe67b80d714fabadd972c83dd80c3083aaf4b73756"
+    },
+    {
+      "path": "packages/runtime/src/meshCaptureSnapshot.ts",
+      "sha256": "1259670e400cbe432f2edf176d1b7ddb6dbcc08d89c89038c4b3a30a9c4ae966"
+    },
+    {
+      "path": "packages/runtime/src/meshDisplayState.ts",
+      "sha256": "20cbd2d5c681fd49efd0c3d22e8505d0632896b46c598d0925a9f064dae6c251"
+    },
+    {
+      "path": "packages/runtime/src/texturedFrameBudget.ts",
+      "sha256": "5c9a21cdf862e4796aa1dc76f97c5e9219b02920b06528f0745456b67edb46fa"
+    },
+    {
+      "path": "packages/runtime/src/texturedFrameCapture.ts",
+      "sha256": "6f0ffe65866401de244310ea0a9813618dee33b3226428c1bfb5ff68686f0fda"
     }
   ],
   "historicalSemanticReview": {
@@ -2566,6 +2664,23 @@
         "qualityStatus": "INDEPENDENT_DOCUMENTATION_CLEANUP_REVIEWS_ACCEPTED_ROOT_METADATA_SUCCESSOR",
         "publicationStatus": "LOCAL_DOCUMENTATION_CLEANUP_REMOTE_PUBLICATION_NOT_PERFORMED_BY_THIS_UPDATE"
       }
+    },
+    {
+      "engineeringCheckpoint": "0.20.0",
+      "status": "inherited_version_bound_review_retained",
+      "record": {
+        "status": "reviewed_with_scope",
+        "method": {
+          "en": "Independent paired-meaning, source/record scope and public-material review of the current player additions and amended reading/registry entries; independent core/tool source and saved-native evidence reviews are separately bound. Root authors the later identity and attestation metadata. Unchanged earlier reading bodies retain their version-bound reviews.",
+          "zh-CN": "独立审阅当前播放器新增及修订阅读／登记内容的双语含义、来源／记录范围和公开措辞；核心／工具源码与保存原生产物的独立审阅分别绑定。根代理编写后续身份与凭据元数据；未变的既有阅读正文保留版本绑定审阅。"
+        },
+        "scope": {
+          "en": "117 current reading pairs, six exact registry translations and 96 critical English-comment source files. New factory/player contract, example/verifier guides, current navigation and acceptance records have scoped review. Older results, research archives, original source snapshots, failures and legal originals remain historical records.",
+          "zh-CN": "当前 117 对阅读文档、六组精确登记翻译及 96 份关键英文注释源码。新增工厂／播放器合同、示例／验证器指南、当前导航及验收记录具有范围审阅。旧结果、研究档案、原始源码快照、失败及法律原文仍为历史记录。"
+        },
+        "qualityStatus": "INDEPENDENT_SEQUENCE_PLAYER_BILINGUAL_REVIEW_ACCEPTED_ROOT_METADATA_SUCCESSOR",
+        "publicationStatus": "FINAL_CANDIDATE_PREPUSH_AND_REMOTE_SUBMISSION_RECORDED_SEPARATELY"
+      }
     }
   ],
   "textureA1Curation": {
@@ -3146,5 +3261,14 @@
     "independentBilingualReview": null,
     "currentIdentityAttestation": null,
     "fullProductAcceptance": false
+  },
+  "texturedMeshCuration": {
+    "version": "0.23.0",
+    "status": "SCOPED_PUBLIC_REVIEWS_RECORDED_METADATA_SUCCESSOR",
+    "newReadingPairs": 3,
+    "criticalSourceFiles": 121,
+    "sourceAndNativeReviews": "separately_accepted_bounded",
+    "finalPrepush": "recorded_separately_in_delivery_verification",
+    "remoteDelivery": "recorded_separately"
   }
 }
