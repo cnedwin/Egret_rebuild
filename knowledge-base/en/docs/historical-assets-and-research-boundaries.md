@@ -1,0 +1,32 @@
+# Historical assets and research boundaries
+
+English | [简体中文](../../Cns/docs/历史资产与研究边界.md)
+
+Historical product experience, public repositories, and engineering materials authorized for research together help recover Egret's design intent. Register their versions, publishable scope, and verification levels separately to inform new designs, compatibility rules, and regression samples.
+
+## Historical experience
+
+S002 records the founder's historical account: AS3-style APIs reduced the cost for Flash teams entering H5; compact Web/mobile Native runtimes improved loading, rendering, power consumption, and heat; complex UI benefited genres such as Legend-style games, dress-up games, and idle games; embedded Runtime partnerships and an independently developed integrated toolchain were important capabilities.
+
+The public Egret repository also describes the similarity between TypeScript APIs and AS3, supporting this design intent. It does not establish all private products or historical performance comparisons. [Official repository](https://github.com/egret-labs/egret-core#typescript). Historical partnerships do not establish current SDK deployment permissions.
+
+## Static research summaries of two engineering packages
+
+| Source | Observed content | Potential uses | Verification still needed |
+| --- | --- | --- | --- |
+| S011 Original engineering package | Egret core 5.4.1; a modular project labeled v6 with inconsistent internal versions; EUI phased invalidation queues, virtual-list reuse, EXML-generated code; various tool and platform directories | Recovering interface semantics, inventorying projects/modules, migration mapping, and designing regression samples | Complete builds, tooling completeness, plugin/third-party authorization, and contemporary host compatibility |
+| S012 Subsequent Runtime package | Runtime 1.1.2; Harmony project labeled 5.0.3/API15; bulk binary bridging, native display lists, adjacent-texture batching, consolidated vertex uploads, subtree caches, predownloads, and caching | Research on bridging/scheduling/resource lifecycle, Native migration, and compatibility requirements | Builds, target-platform completeness, driver compatibility, package size/performance, dependencies, and security defaults |
+
+These are read-only static summaries. The projects were not executed, dependencies were not installed, and neither old nor new engines were built. The first package does not contain all latest source code; the additional Runtime package does not establish completeness across all platforms and historical tools.
+
+## Mechanisms to study and reuse rules
+
+EUI phased invalidation and component reuse are suitable for complex-UI prototypes; native bulk commands are suitable for researching fixed cross-language costs; resource predownload and caching are suitable for researching the first playable experience. Benefits from adjacent batching, caching, and native execution depend on draw order, invalidation rate, uploads, memory, and bridging, and require end-to-end measurement.
+
+Compressed source-package size and precompiled dependency size are not release base-runtime size. A directory's existence does not establish platform completion; README version names do not establish all submodule versions; similar historical protocol scopes do not establish interoperability. For every candidate reuse module, first establish source, version, build, license, defects, and tests, then decide whether to reuse, rewrite, or replace it.
+
+## Public and internal records
+
+The knowledge base publishes curated mechanism summaries and references. Design records explain their relationship to Egret Rebuild. Original engineering packages, restricted source, receipt records, and private configuration are retained under their respective permissions; release inventories specify public scope. Historical modules and third-party dependencies use their actual applicable notices; project-license coverage is defined separately.
+
+Support matrices, performance conclusions, and migration success rates can come only from [delivery acceptance](delivery-plan.md). Community contributors may assist with owned or explicitly authorized minimal samples without submitting complete commercial projects or obtaining private source.

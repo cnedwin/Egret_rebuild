@@ -102,3 +102,241 @@ test('publication retains only the two exact sealed Three vendor builds and dete
  await writeFile(path.join(root,'localization.json'),JSON.stringify(m));
  assert.ok((await checkPublication(root)).issues.includes(`excluded listed file: ${unknown}`));
 }));
+
+async function layoutFixture(run){
+ await fixture(async(root,m)=>{
+  const zhIntroduction=await readFile(path.join(root,'README.md'),'utf8');
+  const enIntroduction=(await readFile(path.join(root,'README.en.md'),'utf8')).replace('(README.md)','(README.zh-CN.md)');
+  await writeFile(path.join(root,'README.zh-CN.md'),zhIntroduction);await writeFile(path.join(root,'README.md'),enIntroduction);await rm(path.join(root,'README.en.md'));
+  Object.assign(m.documents[0],{zh:'README.zh-CN.md',en:'README.md',zhSha256:sha(zhIntroduction),enSha256:sha(enIntroduction)});
+  m.documentationLayout={schemaVersion:1,englishRoot:'knowledge-base/en/',chineseRoot:'knowledge-base/Cns/',entryDocuments:['knowledge-base/README.md','knowledge-base/README.zh-CN.md']};
+  const documents=[
+   {zh:'knowledge-base/README.zh-CN.md',en:'knowledge-base/README.md',zhBody:'# 知识库\n',enBody:'# Knowledge base\n'},
+   {zh:'knowledge-base/Cns/docs/guide.md',en:'knowledge-base/en/docs/guide.md',zhBody:'# 指南\n',enBody:'# Guide\n'}
+  ];
+  for(const {zh,en,zhBody,enBody} of documents){
+   for(const [p,b] of [[zh,zhBody],[en,enBody]]){await mkdir(path.dirname(path.join(root,p)),{recursive:true});await writeFile(path.join(root,p),b);}
+   m.documents.push({zh,en,zhSha256:sha(zhBody),enSha256:sha(enBody),kind:'public_reading'});
+  }
+  const source='knowledge-base/Cns/registry/records.json',target='knowledge-base/en/registry/records.json';
+  const sourceBody=JSON.stringify({items:[{id:'D002',title:'候选记录',status:'proposed',samples:2,document:'Cns/docs/guide.md',fullDocument:'knowledge-base/Cns/docs/guide.md',registry:'Cns/registry/records.json',fullRegistry:source,historical:'knowledge-base-0.7.0/docs/历史.md'}]});
+  const targetBody=JSON.stringify({items:[{id:'D002',title:'Candidate record',status:'proposed',samples:2,document:'en/docs/guide.md',fullDocument:'knowledge-base/en/docs/guide.md',registry:'en/registry/records.json',fullRegistry:target,historical:'knowledge-base-0.7.0/docs/历史.md'}],_localization:{canonicalSource:'records.json',canonicalSha256:sha(sourceBody),role:'read_only_translation',language:'en'}});
+  for(const [p,b] of [[source,sourceBody],[target,targetBody]]){await mkdir(path.dirname(path.join(root,p)),{recursive:true});await writeFile(path.join(root,p),b);}
+  m.registries.push({source,target,sourceSha256:sha(sourceBody),targetSha256:sha(targetBody)});
+  await writeFile(path.join(root,'localization.json'),JSON.stringify(m));
+  await run(root,m);
+ });
+}
+
+async function moveListedDocument(root,m,language,to){
+ const item=m.documents.find(x=>x.zh==='knowledge-base/Cns/docs/guide.md'),from=item[language];
+ const body=await readFile(path.join(root,from));
+ await mkdir(path.dirname(path.join(root,to)),{recursive:true});await writeFile(path.join(root,to),body);await rm(path.join(root,from));
+ item[language]=to;
+ await writeFile(path.join(root,'localization.json'),JSON.stringify(m));
+}
+
+async function updateRegistryTarget(root,m,edit){
+ const item=m.registries.at(-1),target=JSON.parse(await readFile(path.join(root,item.target),'utf8'));
+ edit(target.items[0]);const body=JSON.stringify(target);
+ await writeFile(path.join(root,item.target),body);item.targetSha256=sha(body);
+ await writeFile(path.join(root,'localization.json'),JSON.stringify(m));
+}
+
+test('publication accepts the opt-in language trees, exact bridge pair and inventory-mapped registry paths',()=>layoutFixture(async root=>{
+ assert.deepEqual((await checkPublication(root)).issues,[]);
+}));
+
+for(const [language,to,label] of [
+ ['zh','knowledge-base/docs/guide.md','Chinese'],
+ ['zh','knowledge-base/en/docs/guide.zh-CN.md','Chinese'],
+ ['zh','knowledge-base/cns/docs/guide.md','Chinese'],
+ ['en','knowledge-base/Cns/docs/guide.en.md','English'],
+ ['en','knowledge-base/EN/docs/guide.md','English']
+])test(`publication rejects a ${label} document in the wrong or case-aliased language tree: ${to}`,()=>layoutFixture(async(root,m)=>{
+ await moveListedDocument(root,m,language,to);
+ assert.ok((await checkPublication(root)).issues.includes(`documentation ${label} root: ${to}`));
+}));
+
+for(const [language,to] of [
+ ['en','knowledge-base/en/docs/指南.md'],
+ ['en','knowledge-base/en/阅读/guide.md'],
+ ['en','knowledge-base/en/docs/reading guide.md']
+])test(`publication rejects non-ASCII or spaced reading path components: ${to}`,()=>layoutFixture(async(root,m)=>{
+ await moveListedDocument(root,m,language,to);
+ assert.ok((await checkPublication(root)).issues.includes(`documentation filename: ${to}`));
+}));
+
+test('publication accepts retained Chinese filenames in the Chinese reading tree',()=>layoutFixture(async(root,m)=>{
+ await moveListedDocument(root,m,'zh','knowledge-base/Cns/docs/指南.md');
+ const item=m.registries.at(-1),source=JSON.parse(await readFile(path.join(root,item.source),'utf8'));
+ source.items[0].document='Cns/docs/指南.md';source.items[0].fullDocument='knowledge-base/Cns/docs/指南.md';
+ const sourceBody=JSON.stringify(source);await writeFile(path.join(root,item.source),sourceBody);item.sourceSha256=sha(sourceBody);
+ const target=JSON.parse(await readFile(path.join(root,item.target),'utf8'));target._localization.canonicalSha256=sha(sourceBody);
+ const targetBody=JSON.stringify(target);await writeFile(path.join(root,item.target),targetBody);item.targetSha256=sha(targetBody);
+ await writeFile(path.join(root,'localization.json'),JSON.stringify(m));
+ assert.deepEqual((await checkPublication(root)).issues,[]);
+}));
+
+test('publication permits only the exact Chinese-to-English root bridge pairing',()=>layoutFixture(async(root,m)=>{
+ const item=m.documents.find(x=>x.en==='knowledge-base/README.md');
+ [item.zh,item.en]=[item.en,item.zh];[item.zhSha256,item.enSha256]=[item.enSha256,item.zhSha256];
+ await writeFile(path.join(root,'localization.json'),JSON.stringify(m));
+ const issues=(await checkPublication(root)).issues;
+ assert.ok(issues.includes('documentation Chinese root: knowledge-base/README.md'));
+ assert.ok(issues.includes('documentation English root: knowledge-base/README.zh-CN.md'));
+}));
+
+test('publication does not let the opt-in configuration grant a different language root or extra bridge exception',()=>layoutFixture(async(root,m)=>{
+ m.documentationLayout.englishRoot='knowledge-base/EN/';m.documentationLayout.entryDocuments.push('knowledge-base/other.md');
+ await writeFile(path.join(root,'localization.json'),JSON.stringify(m));
+ assert.ok((await checkPublication(root)).issues.includes('invalid documentation layout'));
+}));
+
+test('publication rejects an arbitrary outside-language LICENSE reading document',()=>layoutFixture(async root=>{
+ const p='knowledge-base/vendor/LICENSE.md';await mkdir(path.dirname(path.join(root,p)),{recursive:true});await writeFile(path.join(root,p),'# License\n');
+ assert.ok((await checkPublication(root)).issues.includes(`documentation outside language roots: ${p}`));
+}));
+
+const originalLicense='knowledge-base/experiments/asset-reference-probe/assets/RiggedSimple/LICENSE.md';
+test('publication retains the exact unlisted original asset license outside the language trees',()=>layoutFixture(async root=>{
+ const body=await readFile(new URL('../../'+originalLicense,import.meta.url));
+ await mkdir(path.dirname(path.join(root,originalLicense)),{recursive:true});await writeFile(path.join(root,originalLicense),body);
+ assert.deepEqual((await checkPublication(root)).issues,[]);
+}));
+
+test('publication rejects altered bytes at the sealed original license path',()=>layoutFixture(async root=>{
+ await mkdir(path.dirname(path.join(root,originalLicense)),{recursive:true});await writeFile(path.join(root,originalLicense),'# Changed original license\n');
+ assert.ok((await checkPublication(root)).issues.includes(`sealed original hash stale: ${originalLicense}`));
+}));
+
+test('publication inventory cannot list the sealed original as a language-tree exception',()=>layoutFixture(async(root,m)=>{
+ const body=await readFile(new URL('../../'+originalLicense,import.meta.url));
+ await mkdir(path.dirname(path.join(root,originalLicense)),{recursive:true});await writeFile(path.join(root,originalLicense),body);
+ m.documents.push({zh:originalLicense,en:originalLicense,zhSha256:sha(body),enSha256:sha(body),kind:'informational_legal'});
+ await writeFile(path.join(root,'localization.json'),JSON.stringify(m));
+ const issues=(await checkPublication(root)).issues;
+ assert.ok(issues.includes(`documentation Chinese root: ${originalLicense}`));
+ assert.ok(issues.includes(`documentation English root: ${originalLicense}`));
+}));
+
+for(const target of ['en/docs/other.md','knowledge-base/en/docs/guide.md'])test(`publication rejects registry path drift rather than allowlisting all translated paths: ${target}`,()=>layoutFixture(async(root,m)=>{
+ await updateRegistryTarget(root,m,item=>{item.document=target;});
+ assert.ok((await checkPublication(root)).issues.includes('parity value: knowledge-base/Cns/registry/records.json.items.0.document'));
+}));
+
+test('publication keeps historical path authority exact when no inventory pair maps it',()=>layoutFixture(async(root,m)=>{
+ await updateRegistryTarget(root,m,item=>{item.historical='knowledge-base-0.7.0/docs/history.md';});
+ assert.ok((await checkPublication(root)).issues.includes('parity value: knowledge-base/Cns/registry/records.json.items.0.historical'));
+}));
+
+test('publication retains exact registry status authority while permitting paired paths',()=>layoutFixture(async(root,m)=>{
+ await updateRegistryTarget(root,m,item=>{item.status='accepted';});
+ assert.ok((await checkPublication(root)).issues.includes('parity value: knowledge-base/Cns/registry/records.json.items.0.status'));
+}));
+
+async function moveListedRegistry(root,m,side,to){
+ const item=m.registries.at(-1),from=item[side];
+ const source=JSON.parse(await readFile(path.join(root,item.source),'utf8'));
+ const target=JSON.parse(await readFile(path.join(root,item.target),'utf8'));
+ item[side]=to;
+ source.items[0].registry=item.source.slice('knowledge-base/'.length);source.items[0].fullRegistry=item.source;
+ target.items[0].registry=item.target.slice('knowledge-base/'.length);target.items[0].fullRegistry=item.target;
+ const sourceBody=JSON.stringify(source);
+ target._localization.canonicalSource=path.basename(item.source);target._localization.canonicalSha256=sha(sourceBody);
+ const targetBody=JSON.stringify(target);
+ await rm(path.join(root,from));
+ for(const [p,b] of [[item.source,sourceBody],[item.target,targetBody]]){await mkdir(path.dirname(path.join(root,p)),{recursive:true});await writeFile(path.join(root,p),b);}
+ item.sourceSha256=sha(sourceBody);item.targetSha256=sha(targetBody);
+ await writeFile(path.join(root,'localization.json'),JSON.stringify(m));
+}
+
+test('publication requires a layout policy for discovered knowledge-base reading documents even without KB registries',()=>layoutFixture(async(root,m)=>{
+ delete m.documentationLayout;
+ const item=m.registries.pop();await rm(path.join(root,item.source));await rm(path.join(root,item.target));
+ await writeFile(path.join(root,'localization.json'),JSON.stringify(m));
+ assert.deepEqual((await checkPublication(root)).issues,['missing documentation layout']);
+}));
+
+test('publication requires a layout policy for a knowledge-base current-version registry without reading documents',()=>fixture(async(root,m)=>{
+ const source='knowledge-base/Cns/当前版本.json',target='knowledge-base/en/current-version.json';
+ const sourceBody=JSON.stringify({version:'0.19.0',status:'proposed'});
+ const targetBody=JSON.stringify({version:'0.19.0',status:'proposed',_localization:{canonicalSource:'当前版本.json',canonicalSha256:sha(sourceBody),role:'read_only_translation',language:'en'}});
+ for(const [p,b] of [[source,sourceBody],[target,targetBody]]){await mkdir(path.dirname(path.join(root,p)),{recursive:true});await writeFile(path.join(root,p),b);}
+ m.registries.push({source,target,sourceSha256:sha(sourceBody),targetSha256:sha(targetBody)});
+ await writeFile(path.join(root,'localization.json'),JSON.stringify(m));
+ assert.deepEqual((await checkPublication(root)).issues,['missing documentation layout']);
+}));
+
+for(const source of ['knowledge-base/当前版本.json','knowledge-base/en/registry/canonical.json'])test(`publication rejects a canonical KB registry outside the exact Chinese root: ${source}`,()=>layoutFixture(async(root,m)=>{
+ await moveListedRegistry(root,m,'source',source);
+ assert.ok((await checkPublication(root)).issues.includes(`documentation registry Chinese root: ${source}`));
+}));
+
+for(const target of ['knowledge-base/current-version.json','knowledge-base/Cns/registry/records.en.json'])test(`publication rejects an English KB registry outside the exact English root: ${target}`,()=>layoutFixture(async(root,m)=>{
+ await moveListedRegistry(root,m,'target',target);
+ assert.ok((await checkPublication(root)).issues.includes(`documentation registry English root: ${target}`));
+}));
+
+test('publication rejects a Han filename in the English JSON registry tree',()=>layoutFixture(async(root,m)=>{
+ const target='knowledge-base/en/registry/记录.json';await moveListedRegistry(root,m,'target',target);
+ assert.ok((await checkPublication(root)).issues.includes(`documentation filename: ${target}`));
+}));
+
+test('publication accepts a Chinese filename for the canonical current-version JSON inside Cns',()=>layoutFixture(async(root,m)=>{
+ await moveListedRegistry(root,m,'source','knowledge-base/Cns/当前版本.json');
+ assert.deepEqual((await checkPublication(root)).issues,[]);
+}));
+
+test('publication does not require a reading layout for the exact retained original license alone',()=>fixture(async root=>{
+ const body=await readFile(new URL('../../'+originalLicense,import.meta.url));
+ await mkdir(path.dirname(path.join(root,originalLicense)),{recursive:true});await writeFile(path.join(root,originalLicense),body);
+ assert.deepEqual((await checkPublication(root)).issues,[]);
+}));
+
+test('publication rejects reversed root introduction language identities when the layout policy is active',()=>layoutFixture(async(root,m)=>{
+ const item=m.documents.find(x=>x.en==='README.md');
+ [item.zh,item.en]=[item.en,item.zh];[item.zhSha256,item.enSha256]=[item.enSha256,item.zhSha256];
+ await writeFile(path.join(root,'localization.json'),JSON.stringify(m));
+ const issues=(await checkPublication(root)).issues;
+ assert.ok(issues.includes('documentation English default: README.zh-CN.md'));
+ assert.ok(issues.includes('documentation Chinese companion: README.md'));
+}));
+
+test('publication rejects a reverted Chinese default README and English .en companion',()=>layoutFixture(async(root,m)=>{
+ const item=m.documents.find(x=>x.en==='README.md');
+ const zhBody=await readFile(path.join(root,item.zh),'utf8');
+ const enBody=(await readFile(path.join(root,item.en),'utf8')).replace('(README.zh-CN.md)','(README.md)');
+ await rm(path.join(root,item.zh));await writeFile(path.join(root,'README.md'),zhBody);await writeFile(path.join(root,'README.en.md'),enBody);
+ Object.assign(item,{zh:'README.md',en:'README.en.md',zhSha256:sha(zhBody),enSha256:sha(enBody)});
+ await writeFile(path.join(root,'localization.json'),JSON.stringify(m));
+ const issues=(await checkPublication(root)).issues;
+ assert.ok(issues.includes('documentation English default: README.en.md'));
+ assert.ok(issues.includes('documentation Chinese companion: README.md'));
+}));
+
+test('publication requires the exact .zh-CN companion for a non-KB English reading document',()=>layoutFixture(async(root,m)=>{
+ const item=m.documents.find(x=>x.en==='README.md'),to='README.chinese.md';
+ const zhBody=await readFile(path.join(root,item.zh),'utf8');
+ const enBody=(await readFile(path.join(root,item.en),'utf8')).replace('(README.zh-CN.md)',`(${to})`);
+ await rm(path.join(root,item.zh));await writeFile(path.join(root,to),zhBody);await writeFile(path.join(root,item.en),enBody);
+ item.zh=to;item.enSha256=sha(enBody);
+ await writeFile(path.join(root,'localization.json'),JSON.stringify(m));
+ assert.deepEqual((await checkPublication(root)).issues,['documentation Chinese companion: README.chinese.md']);
+}));
+
+test('publication requires ASCII path components for English reading documents outside KB',()=>layoutFixture(async(root,m)=>{
+ const zh='docs/指南.zh-CN.md',en='docs/指南.md',zhBody='# 指南\n',enBody='# Guide\n';
+ await mkdir(path.join(root,'docs'));await writeFile(path.join(root,zh),zhBody);await writeFile(path.join(root,en),enBody);
+ m.documents.push({zh,en,zhSha256:sha(zhBody),enSha256:sha(enBody),kind:'public_reading'});
+ await writeFile(path.join(root,'localization.json'),JSON.stringify(m));
+ assert.deepEqual((await checkPublication(root)).issues,[`documentation filename: ${en}`]);
+}));
+
+test('publication preserves an informational original LICENSE pair outside KB under the layout policy',()=>layoutFixture(async(root,m)=>{
+ const zh='LICENSE.zh-CN.md',en='LICENSE',zhBody='# 许可证说明\n',enBody='Original license text.\n';
+ await writeFile(path.join(root,zh),zhBody);await writeFile(path.join(root,en),enBody);
+ m.documents.push({zh,en,zhSha256:sha(zhBody),enSha256:sha(enBody),kind:'informational_legal'});
+ await writeFile(path.join(root,'localization.json'),JSON.stringify(m));
+ assert.deepEqual((await checkPublication(root)).issues,[]);
+}));

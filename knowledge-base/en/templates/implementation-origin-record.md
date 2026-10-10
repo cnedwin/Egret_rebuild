@@ -1,0 +1,49 @@
+# Implementation source record
+
+English | [简体中文](../../Cns/templates/实现来源记录.md)
+
+Template version: 1.1 · Knowledge base: 0.9.0 candidate.
+
+Maintain with module proposals and code changes under the [independent implementation and third-party dependency policy](../docs/independent-implementation-and-dependency-policy.md). Describe independent implementation, explicit dependencies, research references, and generated content as actually used. See the [implementation record](../docs/core-framework-implementation-record.md) for the existing core prototype.
+
+## Module and change
+
+- Module, version, date, author, and reviewers: to be completed.
+- Related requirements, specifications, RFC/ADR, and change scope: to be completed.
+- Implementation role: independent implementation / explicit third-party dependency and adaptation / research execution dependency / mechanism research / standard or tool generation.
+- Scope of independently implemented and third-party-provided capabilities: to be completed.
+
+## Research and design basis
+
+- Standards, papers, official repositories, or documentation URLs: to be completed.
+- Tag, complete commit or standard version, files/interfaces read, and unread scope: to be completed.
+- Hashes of obtained files, snapshots, or evidence records: to be completed.
+- Mechanisms, invariants, limits, counterexamples, and maintenance experience: to be completed.
+- Egret inputs/outputs, data organization, lifecycle, failure behavior, and design rationale: to be completed.
+- Differences from references, expected improvements, and compatibility requirements: to be completed.
+
+## Dependencies and content sources
+
+- Third-party packages, versions/commits, purposes, entry points, and actual usage scope: to be completed; state none when absent.
+- Applicable licenses, copyright, NOTICE or attribution declarations, and record locations: to be completed; mark unconfirmed items awaiting review.
+- Local modifications, patch files, upstream baseline, and modification dates: to be completed; state none when absent.
+- Responsibility for upgrades, patch maintenance, and release notices: to be completed.
+- Assets, fonts, shaders, data, and authorized public scope: to be completed.
+- Generators, versions, inputs/configuration, and generated scope: to be completed.
+
+## AI participation and source review
+
+- AI tools, available version information, and usage scope: to be completed.
+- Specifications, materials, or prompt summaries actually supplied, and author modification scope: to be completed.
+- Author review of output, sample permissions, and notices: to be completed.
+- Sources or similar fragments requiring further confirmation, checking scope, basis, and resolution records: to be completed; mark checks not conducted as not conducted.
+
+## Verification and current conclusion
+
+- Items read, built, executed, and unverified: complete separately.
+- Commands or reproduction steps, environment, inputs, result files, and hashes: to be completed.
+- Comparison conditions and results for functionality, quality, compatibility, performance, and maintenance cost: to be completed.
+- Failures, uncovered items, rollback, and replacement conditions: to be completed.
+- Current conclusion, review status, and pending work: to be completed.
+
+Source records describe the actual process and review basis of this change; conclusions are limited to listed checks. Record production adoption, release-rights review, and product acceptance separately.

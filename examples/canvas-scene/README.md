@@ -1,9 +1,9 @@
-# Canvas矩形示例
+# Canvas Rectangle Example
 
-[English](README.en.md) | 简体中文
+English | [简体中文](README.zh-CN.md)
 
-先在仓库根执行`pnpm install --frozen-lockfile --ignore-scripts`及`node tools/build.mjs`（或`node tools/verify.mjs`），生成未纳入源码发行包的dist产物。通过HTTP服务仓库根，再打开`/examples/canvas-scene/index.html`。导入映射连接构建后的核心与独立web入口；指针操作改变矩形并重新绘制，仅展示局部场景交互。
+First run `pnpm install --frozen-lockfile --ignore-scripts` and `node tools/build.mjs` (or `node tools/verify.mjs`) at the repository root to generate dist outputs omitted from this source distribution. Serve the repository root over HTTP and open `/examples/canvas-scene/index.html`. Its import map connects the built core and separate web entry; pointer interaction changes rectangles and renders again, demonstrating a bounded scene interaction.
 
-渲染变更须另运行`node tools/verify-canvas.mjs --playwright <installed-playwright-module> --channel msedge --output <private-output-directory>`；亦可配置PLAYWRIGHT_MODULE。默认prepush仅运行结构与headless门禁，不包含真实浏览器。浏览器须已安装，工具不安装依赖。
+Rendering changes separately require `node tools/verify-canvas.mjs --playwright <installed-playwright-module> --channel msedge --output <private-output-directory>`; PLAYWRIGHT_MODULE can also configure the module. Default prepush runs structural/headless gates and does not include a real browser. The browser must be installed; tooling does not install dependencies.
 
-可从仓库根执行`node tools/serve-canvas.mjs`启动本地HTTP服务，打开它输出的URL；Ctrl+C停止。
+Run `node tools/serve-canvas.mjs` at the repository root to start the local HTTP server, open its printed URL, and stop it with Ctrl+C.

@@ -33,7 +33,8 @@ function Check-LocalPath([string]$Relative, [string]$Base, [string]$Origin) {
     }
 }
 
-$current = Read-Json (Join-Path $kbRoot '当前版本.json')
+# Registry references remain relative to the shared knowledge-base root.
+$current = Read-Json (Join-Path $kbRoot 'Cns/当前版本.json')
 $prefixMap = @{ requirements='R'; decisions='D'; hypotheses='H'; deliverables='V'; sources='S' }
 $statusMap = @{
     requirements=@('confirmed','proposed','superseded','withdrawn')

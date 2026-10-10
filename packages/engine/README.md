@@ -1,57 +1,57 @@
 # @egret/engine
 
-[English](README.en.md) | 简体中文
+English | [简体中文](README.zh-CN.md)
 
-## 当前本地工程预览：0.18.0
+## Current local engineering preview: 0.18.0
 
-新增单个具名旧 MovieClip 的有界 CPU 转换，保留图集裁剪、显示偏移和作者持续段时间；28/28 专项测试通过，输出已由真实序列帧工厂重新准入。阅读[契约](../../knowledge-base/docs/legacy-movieclip-contract.zh-CN.md)、[证据](../../knowledge-base/docs/legacy-movieclip-evidence.zh-CN.md)和[精简记录](../../knowledge-base/evidence/legacy-movieclip-focused.json)。API 保持内部使用，图片读取、解码和播放仍未验证。
+Adds bounded CPU conversion of one named legacy MovieClip, preserving atlas crops, display offsets and authored-hold time. Focused tests passed 28/28 with real sequence-factory re-admission. Read the [contract](../../knowledge-base/en/docs/legacy-movieclip-contract.md), [evidence](../../knowledge-base/en/docs/legacy-movieclip-evidence.md) and [compact record](../../knowledge-base/evidence/legacy-movieclip-focused.json). The API remains internal; image reads, decoding and playback are unverified.
 
-0.17.0 及更早结果保留为各自源码身份下的历史证据。此次增量的默认模式、全仓回归和完整 prepush 未运行；当前浏览器／设备像素、性能及完整 R008/V006 迁移仍待验收。0.18.0 是本地工程标签，包 0.0.0／协议 1.0 不变；GitHub 交付继续保持 HOLD_HTTP_403。
+0.17.0 and earlier results retain their historical source identities. Default-mode, repository regression and complete prepush for this increment are UNRUN; current browser/device pixels, performance and complete R008/V006 migration await acceptance. 0.18.0 is a local engineering label; package 0.0.0/protocol 1.0 are unchanged. GitHub delivery remains HOLD_HTTP_403.
 
-## 历史本地工程预览：0.17.0
+## Historical local engineering preview: 0.17.0
 
-本预览新增自有 CPU 场景快照、固定网格辅助函数、有界 B1 宿主源码／模拟整合、CPU 序列帧采样与纯 RES 转换意图。阅读[CPU 场景](../../knowledge-base/docs/3d-cpu-scene-contract.md)、[网格](../../knowledge-base/docs/3d-webgpu-mesh-contract.md)、[宿主](../../knowledge-base/docs/b1-host-contract.zh-CN.md)、[序列帧](../../knowledge-base/docs/sequence-clip-contract.zh-CN.md)及[RES 意图](../../knowledge-base/docs/legacy-res-plan-contract.zh-CN.md)与配对证据。这些接口保持内部使用；公开入口与包 0.0.0／协议 1.0 不变。
+This preview adds owned CPU scene snapshots, fixed mesh helpers, bounded B1 Host source/mock integration, CPU sequence sampling and pure RES conversion intents. Read [CPU scene](../../knowledge-base/en/docs/3d-cpu-scene-contract.md), [mesh](../../knowledge-base/en/docs/3d-webgpu-mesh-contract.md), [Host](../../knowledge-base/en/docs/b1-host-contract.md), [sequence](../../knowledge-base/en/docs/sequence-clip-contract.md) and [RES intents](../../knowledge-base/en/docs/legacy-res-plan-contract.md), with their paired evidence. These interfaces remain internal; public barrels and package 0.0.0/protocol 1.0 are unchanged.
 
-已记录默认宿主验证通过 13/13 项，CPU 序列帧采样通过 25/25，RES 意图规划通过 14/14。所选整仓运行通过 901/901 项测试、编译、282 个边界文件及类型门禁；901 项包含宿主回归。源码绑定、仅格式后继及保留的早期失败见[配对宿主证据](../../knowledge-base/docs/b1-host-evidence.zh-CN.md)。此次文档采用未重跑产品检查。
+Recorded default Host verification passed 13/13 cases, CPU sequence sampling 25/25 and RES intent planning 14/14. The selected whole-repository run passed 901/901 tests, build, 282 boundary files and type gates. The 901 tests include Host regression coverage. Source bindings, the formatting-only successor and retained earlier failure are detailed in the [paired Host evidence](../../knowledge-base/en/docs/b1-host-evidence.md). Documentation adoption replays no product checks.
 
-GitHub 交付因已记录的 403 响应保持 HOLD；当前文档最终审阅与完整 prepush 仍待完成。此前 0.13.0–0.16.0 检查点保留身份及结果。Native SDK、当前浏览器／设备像素、性能、字体、DragonBones、完整 R008/V006 迁移、V003／编辑器及完整产品验收仍未验证或保持开放。
+GitHub delivery is on HOLD after the recorded 403 response; final current-document review and complete prepush remain pending. Earlier 0.13.0–0.16.0 checkpoints keep their identities and results. Native SDKs, current browser/device pixels, performance, fonts, DragonBones, complete R008/V006 migration, V003/editor and full-product acceptance remain unverified or open.
 
-## 历史本地工程预览：0.16.0
+## Historical local engineering preview: 0.16.0
 
-当前增量覆盖已接受的有界图片源码／模拟逻辑、CPU 纹理参考公式、CPU 3D 数学／几何／打包，以及旧 RES 声明分析。阅读[核心进展](../../knowledge-base/docs/core-progress.md)、[3D CPU 基础](../../knowledge-base/docs/3d-foundation.md)和[旧 RES 声明](../../knowledge-base/docs/legacy-res-declarations.md)，查看契约、准确历史证据与开放任务。标签为工程预览；包 0.0.0 与协议 1.0 不变。最终独立公开审查、prepush 及本预览的 GitHub 交付仍待完成。
+The current additive scope covers accepted bounded image source/mock logic, CPU texture reference formulas, CPU 3D math/geometry/packing, and legacy RES declaration analysis. Read [core progress](../../knowledge-base/en/docs/core-progress.md), [3D CPU foundation](../../knowledge-base/en/docs/3d-foundation.md) and [legacy RES declarations](../../knowledge-base/en/docs/legacy-res-declarations.md) for contracts, exact historical evidence and open work. The label is an engineering preview; package 0.0.0 and protocol 1.0 remain unchanged. Final independent public review, prepush and this preview's GitHub delivery remain pending.
 
-此前 0.13.0／0.14.0／0.15.0 章节是各自有源码身份和结果的历史检查点，其矩形／浏览器观察不能验证当前图片或 3D 的 native 像素。Task 5a 仅提供 CPU 公式／边界；A2 Task 5b／Task 6、P0–P7、设备／文字／动画／Native、V003 和完整 R008／V006 迁移保持开放或 UNRUN。
+Earlier 0.13.0/0.14.0/0.15.0 sections are historical checkpoints with their own source identities and results. Their rectangle/browser observations do not validate current image or 3D native pixels. Task 5a provides CPU formulas/bounds only; A2 Task 5b/Task 6, P0–P7, device/text/animation/Native, V003 and complete R008/V006 migration remain open or UNRUN.
 
-## 0.13.0 WebGPU矩形本地检查点 — 2026年10月9日
+## 0.13.0 WebGPU rectangle checkpoint — October 9, 2026
 
-显式 `@egret/engine/webgpu` 入口同步执行不可变 `RenderFrame2D` 矩形命令。根入口保持无DOM；`@egret/engine/web`保持Canvas-only，实际请求不包含WebGPU或robust-predicates模块。无DOM准备层通过公共 `orient2d` 接入精确固定的基础依赖robust-predicates 3.0.3，适用Unlicense。复制、有界交点构造、打包、WGSL及宿主生命周期属于独立编写的第一方代码。见[完整0.6合同](../../knowledge-base/docs/WebGPU矩形执行合同.md)、[实施计划](../../knowledge-base/docs/WebGPU矩形实施计划.md)与[有限证据](../../knowledge-base/docs/WebGPU矩形实现证据.md)。
+The opt-in `@egret/engine/webgpu` entry executes immutable `RenderFrame2D` rectangle commands synchronously. The root stays DOM-free; `@egret/engine/web` stays Canvas-only and requests no WebGPU or robust-predicates modules. DOM-free preparation uses the exact foundational dependency robust-predicates 3.0.3 through public `orient2d`, under Unlicense. Copying, bounded intersection construction, packing, WGSL and host lifetime are independently authored first-party code. See the [complete 0.6 contract](../../knowledge-base/en/docs/webgpu-rectangle-execution-contract.md), [implementation plan](../../knowledge-base/en/docs/webgpu-rectangle-implementation-plan.md) and [bounded evidence](../../knowledge-base/en/docs/webgpu-rectangle-implementation-evidence.md).
 
-已接受的桌面构建记录177/177 CPU/mock/核心检查、28项预期负类型诊断及123个边界文件；独立真实WebGPU门禁记录42帧、1709项原始断言、84张截图、6808项合成断言、8项预期反例及0项意外错误。其中7项变异实际生产代码副本，1项仅为合成断言。实际结果与有限独立实现审阅由[验证](../../verification/webgpu-verification.json)与[审阅](../../verification/webgpu-review.json)绑定已接受的源码身份；文档整合没有重跑这些检查。
+The accepted desktop build records 177/177 CPU/mock/core tests, 28 expected negative type diagnostics and 123 boundary files. Its separate real WebGPU gate records 42 frames, 1709 raw assertions, 84 screenshots, 6808 composition assertions, eight intended negatives and zero unexpected errors. Seven negatives mutate copied production code; one is synthetic assertion-only. These recorded results and scoped independent implementation review belong to the accepted source identities in [verification](../../verification/webgpu-verification.json) and [review](../../verification/webgpu-review.json); they are not fresh execution by document integration.
 
-本experimental检查点记录于2026-10-08T21:23:54.294Z最终原生运行之前，核心/headless与桌面Canvas结果分别记录。随后仅注释入口重建的真实浏览器WebGPU运行在 `1aa0248a1ff6d8e54c42d631072223bb50483814`、2026-10-08T21:23:54.294Z以0退出并记录PASS：42帧、1709项原始断言、84张PNG截图、6808项合成断言、8项预期反例及0项意外错误。7项反例变异生产代码副本，1项为合成断言。233项源码/构建/工具/依赖清单身份在该运行前后相等，且与当时仅文档和元数据变更的后继版本一致。实际运行由验证作者执行；独立修正及原生绑定复审、最终语义凭据和发布仍待完成。浏览器WebGPU与Native App/SDK分别验收；截图合成不证明实体扫描输出、硬件加速、手机或性能。纹理/文字/UI/动画/3D、编辑器/Agent创作、CI、完整迁移与完整产品仍待实施或验收；R008/V006及V003保留既有义务。下文0.9–0.12历史记录保留原日期、身份与结果范围。
+This experimental checkpoint was recorded before the final native run at 2026-10-08T21:23:54.294Z; its core/headless and desktop Canvas results are separately recorded. The subsequent final comment-build browser WebGPU run at `1aa0248a1ff6d8e54c42d631072223bb50483814`, 2026-10-08T21:23:54.294Z, exited 0 and recorded PASS: 42 frames, 1709 raw assertions, 84 PNG screenshots, 6808 composition assertions, eight intended negatives and zero unexpected errors. Seven negatives mutate copied production code; one is synthetic. All 233 inventoried source/build/tool/dependency identities remained equal before and after that execution and match that historical metadata-only successor. The execution was performed by its verification author; independent correction/native-binding closure, final semantic attestation and publication remain pending. Browser WebGPU is separate from a Native app/SDK. Screenshot composition does not certify physical scanout, acceleration, phones or performance. Textures/text/UI/animation/3D, editor/Agent creation, CI, complete migration and full-product acceptance remain open; R008/V006 and V003 retain their existing obligations. Historical 0.9–0.12 records below keep their original dates, identities and result scopes.
 
 
-## 历史0.12.0显示与帧候选范围
+## Historical 0.12.0 display and frame candidate scope
 
-后续工作包按[显示与帧合同](../../knowledge-base/docs/显示与帧执行合同.md)及[实现计划](../../knowledge-base/docs/显示与帧执行实现计划.md)推进：显示变换、继承可见性/透明度与本地矩形裁剪、Sprite 所属 Graphics 的矩形填充，以及不可变 CPU 帧捕获/提交。首个已实现执行适配器为独立 @egret/engine/web 入口的 Canvas，核心根入口保留无 DOM 边界。限定实现检查已通过：97/97核心行为测试、25项负类型诊断及真实桌面Canvas像素/指针交互。跨realm拒绝修正后有限独立审阅通过；远端发布另行记录。最终限定结果由[实现记录](../../knowledge-base/docs/显示与帧执行实现记录.md)和[验证](../../verification/display-frame-verification.json)承载。
+The successor work package is defined by the [display and frame contract](../../knowledge-base/en/docs/display-and-frame-execution-contract.md) and [implementation plan](../../knowledge-base/en/docs/display-and-frame-implementation-plan.md): display transforms, inherited visibility/alpha and local rectangle clipping, Sprite-owned Graphics rectangle fills, and immutable CPU frame capture/submission. The implemented first execution adapter is Canvas through the separate @egret/engine/web entry; the core root retains its DOM-free boundary. Bounded implementation checks passed: 97/97 core behavior tests, 25 negative type diagnostics and real desktop Canvas pixels/pointer interaction. Scoped independent review passed after the recorded cross-realm rejection correction. Remote publication is tracked separately. Final scoped results belong in the [implementation record](../../knowledge-base/en/docs/display-and-frame-implementation-record.md) and [verification](../../verification/display-frame-verification.json).
 
-captureFrame 仅提取快照，renderFrame 另向创建时固定的同步宿主端口提交；没有渲染端口时前者仍可用，后者拒绝。帧读取/执行期间禁止重入；关闭立即进入 closing，但清理等待帧调用退出。Canvas 的 DOM 类型与执行隔离在 web 子入口，根入口不重导出该适配器。
+captureFrame only captures a snapshot; renderFrame additionally submits it to the synchronous host port fixed at creation. With no render port, capture remains available while rendering rejects. Frame reads/execution reject reentry. Closing starts immediately, while cleanup waits for the frame call to exit. Canvas DOM types and execution remain in the web subentry, which the root does not re-export.
 
-本包不验收完整文本/纹理/动画/UI/3D 执行、GPU 或 Native 支持、目标设备性能、编辑器、Agent 服务或完整迁移。此前 headless、CPU 资源与第三方研究记录保留原版本、数量、hash 和范围，不转为新显示帧验收。
+This work package does not establish complete text/texture/animation/UI/3D execution, GPU or Native support, target-device performance, editors, Agent services, or complete migration. Earlier headless, CPU asset and third-party research records retain their original versions, counts, hashes and scope; their results are not new display-frame acceptance.
 
-experimental公共门面；内部依赖runtime与contracts，WebGPU准备另有精确外部robust-predicates 3.0.3依赖。输入为显式HostAdapter、可选正整数关闭deadline与诊断回调，输出为Engine及其Stage、Scope、assets服务和唯一关闭Promise。Engine管理逻辑生命周期与surface预留，宿主管理物理资源和安全归还事实。
+An experimental public facade with runtime/contracts internally and the exact external robust-predicates 3.0.3 dependency for WebGPU preparation. Inputs are an explicit HostAdapter, optional positive-integer shutdown deadline, and diagnostic callback; outputs are Engine, its Stage, Scope, and assets service, and a single shutdown Promise. Engine manages logical lifecycle and surface reservations; the host manages physical resources and the fact of safe return.
 
-createEngine在等待host.start前预留surface，启动失败也进入清理。关闭先等待当前帧调用退出，再处理Scope与Stage，再关闭CPU资产管理器、停止host并有界等待close。只有close成功才释放surface；超时或拒绝保持隔离，迟到成功可以释放预留。核心不销毁借用的surface/device，本切片没有强制释放或恢复入口。
+createEngine reserves the surface before awaiting host.start, and startup failure still enters cleanup. Shutdown first waits for the current frame call to exit, then handles Scope, Stage, and the CPU asset manager, then stops the host and waits for close within bounds. Only successful close releases the surface. Timeouts or rejection preserve isolation; late success may release the reservation. The core does not destroy borrowed surfaces/devices; this slice has no forced-release or recovery entry.
 
-Scope或Stage清理失败仍继续后续步骤；EgretError保留原cause与按顺序收集的cleanupErrors。根导出只包含已实现的切片能力，内部装配口不导出。
+Scope or Stage cleanup failures do not stop subsequent steps. EgretError retains the original cause and cleanupErrors collected in order. Root exports contain only implemented slice capabilities; internal assembly interfaces are not exported.
 
-根目录验证为`node tools/verify.mjs`，联动样例为`node examples/headless.mjs`与`node examples/assets.mjs`。设计见[知识库](../../knowledge-base/README.md)，来源见[来源记录](../../source-origin.json)。包保留`private: true`以防止意外npm发布，第一方代码与本文采用[Apache-2.0](../../LICENSE)。
+Root verification is `node tools/verify.mjs`; the integrated example is `node examples/headless.mjs` and `node examples/assets.mjs`. See the [knowledge base](../../knowledge-base/en/README.md) for design and the [source record](../../source-origin.json) for sources. The package retains `private: true` to prevent accidental npm publication. First-party code and this document use [Apache-2.0](../../LICENSE).
 
-当前显示/帧公共API：DisplayObject的x/y、scaleX/scaleY、rotation、alpha、visible与clipRect；Sprite.graphics拥有矩形填充；Engine.captureFrame/renderFrame产生/提交不可变RenderFrame2D。独立`@egret/engine/web`导出createCanvasHost，根入口保持无DOM。接口为实验性质，完整文字/纹理/动画/UI/3D尚未实现。
+Current display/frame public APIs: DisplayObject x/y, scaleX/scaleY, rotation, alpha, visible and clipRect; Sprite.graphics owns rectangle fills; Engine.captureFrame/renderFrame captures/submits immutable RenderFrame2D. The separate `@egret/engine/web` entry exports createCanvasHost while the root remains DOM-free. Interfaces are experimental; complete text/textures/animation/UI/3D remain unfinished.
 
-## 公共WebGPU使用
+## Public WebGPU use
 
-`canvas`为HTMLCanvasElement。可选readback绑定下一次通过预检的帧；`renderFrame`同步返回undefined。`result.bytes`为调用者所有的预乘RGBA，不是浏览器合成结果。`whenIdle`仅截取已提交工作；只有`close`成功才证明安全归还，Engine包装保留原cause。见[示例](../../examples/webgpu/README.md)。
+Supply an HTMLCanvasElement as `canvas`. Readback is optional and arms the next accepted frame; `renderFrame` returns undefined synchronously. `result.bytes` is caller-owned premultiplied RGBA, not browser composition. `whenIdle` snapshots submitted work; only successful `close` proves safe return. Engine wrapping preserves the original cause. See the [example](../../examples/webgpu/README.md).
 
 ```ts
 import { createEngine, Sprite } from '@egret/engine';

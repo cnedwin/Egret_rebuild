@@ -10,7 +10,7 @@ ImageData2D从真实Uint8Array及已附着的固定ArrayBuffer复制精确4×宽
 
 Bitmap借用精确AssetLease<Texture>，不获取或释放租约；设置全部验证成功后才提交。清空/处置丢弃借用并把缓存自然尺寸归零，保持Engine归属，不释放调用方租约。释放使未来可见捕获失败，其他独立有效租约保留独立权益；最后释放触发提供者处置时共享Texture可能失效。租约/Texture死亡本身不改变缓存尺寸。已保存帧持有不可变值，不持有租约/包装器，可在释放、失效和Engine关闭后交给另一兼容CPU host；GC时机及全局内存不作保证。
 
-后续 [Bitmap 区域契约](../knowledge-base/docs/bitmap-region-contract.zh-CN.md) 已实施 `Bitmap.sourceRect`：Texture 原视图仍不可变，每个借用者拥有自己的有效裁剪与匹配自然尺寸。[CPU 证据](../knowledge-base/docs/bitmap-region-evidence.zh-CN.md)与单独[纹理首四项采集](../knowledge-base/docs/texture-first-four-evidence.zh-CN.md)各自保留源码／用例范围，后者数值边界仍为 UNKNOWN。以下原 A1 描述与 A2 义务保留历史范围。
+后续 [Bitmap 区域契约](../knowledge-base/Cns/docs/bitmap-region-contract.md) 已实施 `Bitmap.sourceRect`：Texture 原视图仍不可变，每个借用者拥有自己的有效裁剪与匹配自然尺寸。[CPU 证据](../knowledge-base/Cns/docs/bitmap-region-evidence.md)与单独[纹理首四项采集](../knowledge-base/Cns/docs/texture-first-four-evidence.md)各自保留源码／用例范围，后者数值边界仍为 UNKNOWN。以下原 A1 描述与 A2 义务保留历史范围。
 
 ## 固定上限与错误顺序
 

@@ -16,7 +16,8 @@ test('pre-push knowledge-base validation does not rewrite tracked evidence',asyn
    const item={id:prefix+'001',title:'Fixture',doc:'README.md',status:kind==='requirements'?'confirmed':kind==='decisions'?'proposed':kind==='hypotheses'?'untested':'planned',statement:'A requirement',sourceIds:['S001'],deliveryIds:['V001'],proposal:'Candidate',risk:'Untested',gate:'Review',claim:'Hypothesis',measure:'Experiment',kind:'documentation',implementation:'not_started',acceptance:'not_run',acceptanceCriteria:['Review'],type:'fixture',scope:'Fixture',limit:'Test only',researchCheckedAt:'2026-10-08'};
    await writeFile(path.join(root,p),JSON.stringify({schemaVersion:1,updatedAt:'2026-10-08',authority:'Test fixture',items:[item]}));
   }
-  await writeFile(path.join(root,'当前版本.json'),JSON.stringify({version:'fixture',entry:'README.md',roadmap:'README.md',maintenance:'README.md',contribution:'README.md',changelog:'README.md',validation:'核验记录.json',registries:paths}));
+  await mkdir(path.join(root,'Cns'));
+  await writeFile(path.join(root,'Cns/当前版本.json'),JSON.stringify({version:'fixture',entry:'README.md',roadmap:'README.md',maintenance:'README.md',contribution:'README.md',changelog:'README.md',validation:'核验记录.json',registries:paths}));
   await writeFile(path.join(root,'核验记录.json'),'preserved evidence bytes');
   const script=fileURLToPath(new URL('../../knowledge-base/tools/Validate-KnowledgeBase.ps1',import.meta.url));
   const result=spawnSync('pwsh',['-NoProfile','-File',script,'-Root',root,'-CheckOnly'],{encoding:'utf8'});

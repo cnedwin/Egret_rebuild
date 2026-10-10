@@ -1,0 +1,863 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-10-10",
+  "authority": "Delivery status summary; code, artifacts, and reproducible acceptance evidence separately govern implementation and testing",
+  "items": [
+    {
+      "id": "V001",
+      "title": "Shared samples and baselines",
+      "kind": "product_validation",
+      "status": "in_progress",
+      "requirementIds": [
+        "R001",
+        "R002",
+        "R005",
+        "R008",
+        "R010",
+        "R011",
+        "R012",
+        "R013",
+        "R014",
+        "R015",
+        "R016"
+      ],
+      "dependsOn": [],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "research_baseline_partial",
+      "acceptance": "not_run",
+      "acceptanceCriteria": [
+        "Authorized sample and version inventories",
+        "Equivalent-function/equivalent-quality performance definitions",
+        "Legacy-project behavior baselines",
+        "Initial device and host boundaries",
+        "Independent core sources and design are traceable; third-party dependencies, modifications, and release notices are explicit; competitor internal code is not copied or mechanically rewritten by AI"
+      ],
+      "artifacts": [
+        "en/docs/round-1-research-verification.md",
+        "en/docs/technical-validation-record.md",
+        "evidence/research-refresh-2026-10-08.json",
+        "evidence/contract-probe-results.json",
+        "evidence/browser-probe-results.json",
+        "en/docs/round-2-validation-record.md",
+        "evidence/reliable-event-probe-results.json",
+        "evidence/async-resource-probe-results.json",
+        "evidence/nested-ui-probe-results.json",
+        "evidence/batch-state-probe-results.json",
+        "evidence/mixed-scene-probe-results.json",
+        "en/docs/open-source-reference-implementations-and-adoption.md",
+        "evidence/reference-render-lifecycle.json",
+        "evidence/reference-text-ui.json",
+        "evidence/reference-assets-animation.json",
+        "evidence/reference-pixi-text.json",
+        "en/docs/round-3-integration-plan.md",
+        "en/docs/round-3-integration-record.md",
+        "en/docs/round-3-audit.md",
+        "evidence/asset-reference-probe-results.json",
+        "en/experiments/asset-reference-probe/README.md"
+      ],
+      "doc": "en/docs/delivery-plan.md",
+      "progressLimit": "Three rounds of limited programs and mature fixed-source research have progressed, and the real-asset reference chain has executable code; authorized benchmark works, target devices/hosts, old baselines, and equivalent-quality performance are incomplete; formal acceptance is not_run"
+    },
+    {
+      "id": "V002",
+      "title": "Rendering engine and runtime",
+      "kind": "product",
+      "status": "in_progress",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R005",
+        "R008",
+        "R012",
+        "R013",
+        "R014",
+        "R015",
+        "R016",
+        "R017"
+      ],
+      "dependsOn": [
+        "V001"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "partial_independent_headless_core",
+      "acceptance": "not_run",
+      "acceptanceCriteria": [
+        "Complex-UI prototype correctness and budgets",
+        "Mixed 2D/3D prototype correctness and budgets",
+        "Loading, scheduling, recovery, and sustained execution",
+        "Reproducible verification of candidate technical decisions",
+        "Independent core sources and design are traceable; third-party dependencies, modifications, and release notices are explicit; competitor internal code is not copied or mechanically rewritten by AI"
+      ],
+      "artifacts": [
+        "en/docs/round-3-integration-plan.md",
+        "en/docs/round-3-integration-record.md",
+        "en/docs/round-3-audit.md",
+        "evidence/asset-reference-probe-results.json",
+        "en/experiments/asset-reference-probe/README.md",
+        "en/docs/core-framework-first-slice-plan.md",
+        "en/docs/core-framework-implementation-record.md",
+        "en/docs/core-framework-evidence-gaps.md",
+        "evidence/core-framework-founder-context.json",
+        "evidence/core-framework-tooling.json",
+        "evidence/core-evidence-gaps.json",
+        "evidence/core-framework-verification.json",
+        "evidence/core-framework-implementation.json",
+        "evidence/core-framework-corrections.json",
+        "evidence/core-framework-code-review-initial.json",
+        "evidence/core-framework-code-review-final.json",
+        "evidence/core-framework-document-review-initial.json",
+        "evidence/core-framework-document-review-final.json"
+      ],
+      "doc": "en/docs/rendering-engine-and-runtime.md",
+      "referencePlan": "en/docs/open-source-reference-implementations-and-adoption.md",
+      "researchProgress": {
+        "status": "reference_chain_partial",
+        "scope": "Real-asset WebGL2 research code and boundary regressions exist; full-product implementation/acceptance status remains unchanged",
+        "runId": "d642177d-b007-4c0e-80a2-0f85e150d0c0"
+      },
+      "coreProgress": {
+        "artifactRoot": "outputs/白鹭引擎核心框架原型",
+        "prototypeVersion": "0.0.0",
+        "scope": "Independently authored TS cancellation/Scope/events/display-tree/headless Engine only",
+        "testCount": 44,
+        "fullRenderer": false,
+        "acceptance": "not_run"
+      },
+      "cpuResourceProgress": {
+        "deliverable": "V010",
+        "implementation": "independent_ts_cpu_asset_subset",
+        "acceptance": "full_product_not_run",
+        "evidence": "evidence/asset-core-verification.json"
+      },
+      "boundedProgress": "V009 lifecycle, V010 CPU assets and V011 rectangle display/frame plus desktop Canvas are implemented prototypes; full V002 acceptance remains unrun."
+    },
+    {
+      "id": "V003",
+      "title": "AI engineering interfaces",
+      "kind": "product",
+      "status": "planned",
+      "requirementIds": [
+        "R001",
+        "R006",
+        "R008",
+        "R013",
+        "R015",
+        "R016"
+      ],
+      "dependsOn": [
+        "V001"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "not_started",
+      "acceptance": "not_run",
+      "acceptanceCriteria": [
+        "Unified IDs/formats/commands and reference checking",
+        "Asynchronous diagnostics and bounded repairs",
+        "Transactional undo and conflict recovery",
+        "Continuous modifications meeting requirements and preserving gameplay",
+        "Independent core sources and design are traceable; third-party dependencies, modifications, and release notices are explicit; competitor internal code is not copied or mechanically rewritten by AI"
+      ],
+      "artifacts": [],
+      "doc": "en/docs/ai-creation-and-engineering-interfaces.md"
+    },
+    {
+      "id": "V004",
+      "title": "Resource and animation pipelines",
+      "kind": "product",
+      "status": "planned",
+      "requirementIds": [
+        "R002",
+        "R004",
+        "R005",
+        "R007",
+        "R008",
+        "R012",
+        "R015",
+        "R016"
+      ],
+      "dependsOn": [
+        "V001"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "not_started",
+      "acceptance": "not_run",
+      "acceptanceCriteria": [
+        "Traceable 2D/3D source assets and dependencies",
+        "Consistent text/atlas/skeletal/frame-sequence semantics",
+        "Reproducible target-resource and module inventories",
+        "Locatable loading/upload/release failures",
+        "Independent core sources and design are traceable; third-party dependencies, modifications, and release notices are explicit; competitor internal code is not copied or mechanically rewritten by AI"
+      ],
+      "artifacts": [
+        "en/docs/round-3-integration-plan.md",
+        "en/docs/round-3-integration-record.md",
+        "en/docs/round-3-audit.md",
+        "evidence/asset-reference-probe-results.json",
+        "en/experiments/asset-reference-probe/README.md"
+      ],
+      "doc": "en/docs/product-components.md",
+      "referencePlan": "en/docs/open-source-reference-implementations-and-adoption.md",
+      "researchProgress": {
+        "status": "reference_chain_partial",
+        "scope": "Real-asset WebGL2 research code and boundary regressions exist; full-product implementation/acceptance status remains unchanged",
+        "runId": "d642177d-b007-4c0e-80a2-0f85e150d0c0"
+      }
+    },
+    {
+      "id": "V005",
+      "title": "Creation workbench and platform delivery",
+      "kind": "product",
+      "status": "planned",
+      "requirementIds": [
+        "R001",
+        "R002",
+        "R005",
+        "R006",
+        "R007",
+        "R013",
+        "R014",
+        "R015",
+        "R016"
+      ],
+      "dependsOn": [
+        "V002",
+        "V003",
+        "V004"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "not_started",
+      "acceptance": "not_run",
+      "acceptanceCriteria": [
+        "Complete creation/edit/playtest/repair/undo loop",
+        "Complete execution on declared hosts and real devices",
+        "Packaging, updates, and lifecycle",
+        "Creator-task and cost baselines",
+        "Independent core sources and design are traceable; third-party dependencies, modifications, and release notices are explicit; competitor internal code is not copied or mechanically rewritten by AI"
+      ],
+      "artifacts": [],
+      "doc": "en/docs/product-components.md"
+    },
+    {
+      "id": "V006",
+      "title": "One-click AI migration tool for legacy projects",
+      "kind": "product",
+      "status": "planned",
+      "requirementIds": [
+        "R006",
+        "R008",
+        "R013",
+        "R015",
+        "R016"
+      ],
+      "dependsOn": [
+        "V001",
+        "V002",
+        "V003",
+        "V004",
+        "V005"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "not_started",
+      "acceptance": "not_run",
+      "acceptanceCriteria": [
+        "Version, module, dependency, and extension inventories",
+        "Independent new projects and executable builds",
+        "Deterministic conversion/Agent repair records and rollback",
+        "Old/new behavior, visuals, animation, resources, and state comparisons",
+        "Declared host-platform and performance acceptance",
+        "Manual intervention/AI costs and unresolved items across all samples",
+        "Continued editing/undo after migration, actual target publication, and an update loop",
+        "Independent core sources and design are traceable; third-party dependencies, modifications, and release notices are explicit; competitor internal code is not copied or mechanically rewritten by AI"
+      ],
+      "artifacts": [],
+      "doc": "en/docs/legacy-project-migration.md"
+    },
+    {
+      "id": "V007",
+      "title": "Knowledge-base and community collaboration foundation",
+      "kind": "documentation",
+      "status": "initial_documentation_delivered",
+      "requirementIds": [
+        "R009",
+        "R010",
+        "R011",
+        "R012",
+        "R015",
+        "R016",
+        "R018",
+        "R019"
+      ],
+      "dependsOn": [],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "local_documents",
+      "acceptance": "documentation_structure_only",
+      "acceptanceCriteria": [
+        "Traceable requirements, decisions, hypotheses, sources, and delivery",
+        "Verifiable relative links and IDs",
+        "Maintenance and contribution templates",
+        "Public candidates separated from internal materials",
+        "Independent-core, public-dependency, and research-reference boundaries are explicit; source templates and historical versions are retained"
+      ],
+      "artifacts": [
+        "README.md",
+        "en/current-version.json",
+        "核验记录.json",
+        "en/CONTRIBUTING.md",
+        "tools/Validate-KnowledgeBase.ps1",
+        "en/docs/open-source-research-and-validation-roles.md",
+        "en/docs/round-3-integration-plan.md",
+        "en/docs/round-3-integration-record.md",
+        "en/docs/round-3-audit.md",
+        "evidence/asset-reference-probe-results.json",
+        "en/experiments/asset-reference-probe/README.md",
+        "en/docs/independent-implementation-and-dependency-policy.md",
+        "en/templates/implementation-origin-record.md",
+        "evidence/code-origin-founder-context.json",
+        "evidence/code-origin-research-audit.json",
+        "evidence/code-origin-policy-review.json",
+        "en/docs/shaders-and-playground-lessons.md",
+        "evidence/shaders-reference-research.json",
+        "evidence/playground-reference-research.json",
+        "evidence/news-inspiration-review.json",
+        "en/docs/engineering-architecture-and-project-structure.md",
+        "en/docs/public-api-design-and-naming.md",
+        "en/docs/code-standards-and-quality-gates.md",
+        "evidence/engineering-norm-founder-context.json",
+        "evidence/egret-naming-contract-summary.json",
+        "evidence/engineering-language-tooling-research.json",
+        "evidence/engineering-norm-review-initial.json",
+        "evidence/engineering-norm-review-final.json",
+        "evidence/api-lifecycle-challenge-initial.json",
+        "evidence/api-lifecycle-challenge-final.json",
+        "evidence/engineering-dependency-contract.json",
+        "en/docs/core-framework-first-slice-plan.md",
+        "en/docs/core-framework-implementation-record.md",
+        "en/docs/core-framework-evidence-gaps.md",
+        "evidence/core-framework-founder-context.json",
+        "evidence/core-framework-tooling.json",
+        "evidence/core-evidence-gaps.json",
+        "evidence/core-framework-verification.json",
+        "evidence/core-framework-implementation.json",
+        "evidence/core-framework-corrections.json",
+        "evidence/core-framework-code-review-initial.json",
+        "evidence/core-framework-code-review-final.json",
+        "evidence/core-framework-document-review-initial.json",
+        "evidence/core-framework-document-review-final.json",
+        "en/docs/open-source-collaboration-and-public-communication.md",
+        "en/ACKNOWLEDGEMENTS.md",
+        "en/AGENTS.md",
+        "evidence/public-collaboration-requirement.json",
+        "evidence/public-community-editorial.json",
+        "evidence/public-release-boundary-audit.json",
+        "evidence/public-release-projection.json",
+        "en/docs/bilingual-documentation-and-prepush-checks.md",
+        "evidence/bilingual-publication-requirement.json"
+      ],
+      "doc": "en/docs/knowledge-base-maintenance.md"
+    },
+    {
+      "id": "V008",
+      "title": "Candidate technical white paper, product requirements, and engineering plan",
+      "kind": "documentation",
+      "status": "initial_documentation_delivered",
+      "requirementIds": [
+        "R001",
+        "R002",
+        "R003",
+        "R006",
+        "R008",
+        "R009",
+        "R010",
+        "R011",
+        "R012",
+        "R013",
+        "R014",
+        "R015",
+        "R016",
+        "R018",
+        "R019"
+      ],
+      "dependsOn": [],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "local_candidate_documents",
+      "acceptance": "documentation_structure_and_independent_review_only",
+      "acceptanceCriteria": [
+        "Consistent positioning, contracts, scope, and dependencies across the three candidate designs",
+        "Clear distinction between source facts, research models, and full-product evidence",
+        "Traceable counterexamples, failure history, repairs, and independent AI review",
+        "Structural checks of document links and IDs in public candidate directories",
+        "Independent-core, public-dependency, and research-reference boundaries are explicit; source templates and historical versions are retained"
+      ],
+      "artifacts": [
+        "en/docs/technical-white-paper.md",
+        "en/docs/product-requirements.md",
+        "en/docs/engineering-plan.md",
+        "en/docs/technical-validation-record.md",
+        "en/docs/round-1-audit.md",
+        "evidence/design-audit-2026-10-08.json",
+        "en/docs/round-2-validation-plan.md",
+        "en/docs/round-2-validation-record.md",
+        "en/docs/round-2-audit.md",
+        "evidence/design-audit-phase2-2026-10-08.json",
+        "en/docs/open-source-research-and-validation-roles.md",
+        "en/docs/open-source-reference-implementations-and-adoption.md",
+        "evidence/reference-render-lifecycle.json",
+        "evidence/reference-text-ui.json",
+        "evidence/reference-assets-animation.json",
+        "evidence/reference-pixi-text.json",
+        "evidence/reference-independent-audit.json",
+        "evidence/reference-research-audit-2026-10-08.json",
+        "en/docs/round-3-integration-plan.md",
+        "en/docs/round-3-integration-record.md",
+        "en/docs/round-3-audit.md",
+        "evidence/asset-reference-probe-results.json",
+        "en/experiments/asset-reference-probe/README.md",
+        "en/docs/graphics-backends-and-native-runtime-selection.md",
+        "evidence/backend-ts-research.json",
+        "evidence/backend-native-research.json",
+        "evidence/backend-host-ai-research.json",
+        "evidence/backend-graphics-research.json",
+        "en/docs/independent-implementation-and-dependency-policy.md",
+        "en/templates/implementation-origin-record.md",
+        "evidence/code-origin-founder-context.json",
+        "evidence/code-origin-research-audit.json",
+        "evidence/code-origin-policy-review.json",
+        "en/docs/shaders-and-playground-lessons.md",
+        "evidence/shaders-reference-research.json",
+        "evidence/playground-reference-research.json",
+        "evidence/news-inspiration-review.json",
+        "en/docs/engineering-architecture-and-project-structure.md",
+        "en/docs/public-api-design-and-naming.md",
+        "en/docs/code-standards-and-quality-gates.md",
+        "evidence/engineering-norm-founder-context.json",
+        "evidence/egret-naming-contract-summary.json",
+        "evidence/engineering-language-tooling-research.json",
+        "evidence/engineering-norm-review-initial.json",
+        "evidence/engineering-norm-review-final.json",
+        "evidence/api-lifecycle-challenge-initial.json",
+        "evidence/api-lifecycle-challenge-final.json",
+        "evidence/engineering-dependency-contract.json",
+        "en/docs/core-framework-first-slice-plan.md",
+        "en/docs/core-framework-implementation-record.md",
+        "en/docs/core-framework-evidence-gaps.md",
+        "evidence/core-framework-founder-context.json",
+        "evidence/core-framework-tooling.json",
+        "evidence/core-evidence-gaps.json",
+        "evidence/core-framework-verification.json",
+        "evidence/core-framework-implementation.json",
+        "evidence/core-framework-corrections.json",
+        "evidence/core-framework-code-review-initial.json",
+        "evidence/core-framework-code-review-final.json",
+        "evidence/core-framework-document-review-initial.json",
+        "evidence/core-framework-document-review-final.json",
+        "en/docs/open-source-collaboration-and-public-communication.md",
+        "en/ACKNOWLEDGEMENTS.md",
+        "en/AGENTS.md",
+        "evidence/public-collaboration-requirement.json",
+        "evidence/public-community-editorial.json",
+        "evidence/public-release-boundary-audit.json",
+        "evidence/public-release-projection.json",
+        "en/docs/bilingual-documentation-and-prepush-checks.md",
+        "evidence/bilingual-publication-requirement.json"
+      ],
+      "doc": "en/docs/engineering-plan.md",
+      "documentVersion": "0.7_candidate"
+    },
+    {
+      "id": "V009",
+      "title": "First independent core lifecycle and display-tree slice",
+      "kind": "engineering_prototype",
+      "status": "implemented",
+      "requirementIds": [
+        "R011",
+        "R015",
+        "R016",
+        "R017",
+        "R018",
+        "R019"
+      ],
+      "dependsOn": [],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "independent_ts_headless_subset",
+      "acceptance": "headless_subset_verified_not_full_product",
+      "acceptanceCriteria": [
+        "strict ES2022 core without DOM/Node ambient types",
+        "Scope/cancellation/event/tree/Engine headless behavior cases",
+        "public package positive and negative type fixtures",
+        "versioned source and dependency origin",
+        "scoped independent review and final root rerun"
+      ],
+      "artifacts": [
+        "en/docs/core-framework-first-slice-plan.md",
+        "en/docs/core-framework-implementation-record.md",
+        "en/docs/core-framework-evidence-gaps.md",
+        "evidence/core-framework-founder-context.json",
+        "evidence/core-framework-tooling.json",
+        "evidence/core-evidence-gaps.json",
+        "evidence/core-framework-verification.json",
+        "evidence/core-framework-implementation.json",
+        "evidence/core-framework-corrections.json",
+        "evidence/core-framework-code-review-initial.json",
+        "evidence/core-framework-code-review-final.json",
+        "evidence/core-framework-document-review-initial.json",
+        "evidence/core-framework-document-review-final.json",
+        "en/docs/open-source-collaboration-and-public-communication.md",
+        "en/ACKNOWLEDGEMENTS.md",
+        "en/AGENTS.md",
+        "evidence/public-collaboration-requirement.json",
+        "evidence/public-community-editorial.json",
+        "evidence/public-release-boundary-audit.json",
+        "evidence/public-release-projection.json",
+        "en/docs/bilingual-documentation-and-prepush-checks.md",
+        "evidence/bilingual-publication-requirement.json"
+      ],
+      "doc": "en/docs/core-framework-implementation-record.md",
+      "artifactRoot": "outputs/白鹭引擎核心框架原型"
+    },
+    {
+      "id": "V010",
+      "title": "CPU asset acquisition and independent leases",
+      "kind": "engineering_prototype",
+      "status": "implemented",
+      "requirementIds": [
+        "R011",
+        "R015",
+        "R016",
+        "R017",
+        "R019"
+      ],
+      "dependsOn": [
+        "V009"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "independent_ts_cpu_asset_subset",
+      "acceptance": "cpu_subset_verified_not_full_product",
+      "acceptanceCriteria": [
+        "Runtime-checked typed references and independent Engine-bound leases",
+        "Shared loading with pending-only cancellation and stale-result cleanup",
+        "Generation invalidation with old demand retained and entry-identity isolation",
+        "Scope/Engine cleanup, external callback reentry, and failed-adapter rollback",
+        "Strict public-entry type/boundary tests, scoped review, and bilingual records"
+      ],
+      "artifacts": [
+        "en/docs/resource-core-contract.md",
+        "en/docs/resource-core-implementation-record.md",
+        "evidence/asset-core-verification.json",
+        "evidence/asset-core-review.json"
+      ],
+      "doc": "en/docs/resource-core-implementation-record.md"
+    },
+    {
+      "id": "V011",
+      "kind": "engineering_prototype",
+      "status": "implemented",
+      "requirementIds": [
+        "R003",
+        "R011",
+        "R015",
+        "R016",
+        "R017",
+        "R019"
+      ],
+      "dependsOn": [
+        "V010"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "independent_rectangle_display_frame_canvas_subset",
+      "acceptance": "bounded_cpu_desktop_canvas_not_full_product",
+      "acceptanceCriteria": [
+        "Immutable CPU frames, transform/alpha/clip and synchronous shutdown barrier",
+        "Whole-frame Canvas validation/copy/reset and terminal close",
+        "97 behavior checks, 25 negative diagnostics and real desktop pixels/pointer",
+        "Scoped independent review and complete bilingual evidence"
+      ],
+      "artifacts": [
+        "en/docs/display-and-frame-execution-contract.md",
+        "en/docs/display-and-frame-implementation-plan.md",
+        "en/docs/display-and-frame-implementation-record.md",
+        "evidence/display-frame-verification.json",
+        "evidence/display-frame-review.json"
+      ],
+      "doc": "en/docs/display-and-frame-implementation-record.md",
+      "title": "Display/frame and Canvas rectangle engineering prototype"
+    },
+    {
+      "id": "V012",
+      "title": "WebGPU rectangle engineering prototype",
+      "kind": "engineering_prototype",
+      "status": "implemented",
+      "requirementIds": [
+        "R003",
+        "R011",
+        "R015",
+        "R016",
+        "R017",
+        "R019"
+      ],
+      "dependsOn": [
+        "V011"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "independent_browser_webgpu_rectangle_subset",
+      "acceptance": "accepted_desktop_build_subset_final_publication_pending",
+      "acceptanceCriteria": [
+        "Immutable public frame input and synchronous opt-in WebGPU execution",
+        "Bounded copying/intersection/float32 packing with unchanged Canvas compatibility",
+        "177 recorded core checks, 28 negative diagnostics and 123 boundary files",
+        "42 frames, 1709 raw checks, 84 screenshots, 6808 composition checks, 8 intended negatives, 0 unexpected errors",
+        "Scoped independent implementation reviews; final branch/public bilingual/source-native binding remains pending"
+      ],
+      "artifacts": [
+        "en/docs/webgpu-rectangle-execution-contract.md",
+        "en/docs/webgpu-rectangle-implementation-plan.md",
+        "en/docs/webgpu-rectangle-implementation-evidence.md",
+        "evidence/webgpu-verification.json",
+        "evidence/webgpu-review.json",
+        "evidence/webgpu-source-evidence.json"
+      ],
+      "doc": "en/docs/webgpu-rectangle-implementation-evidence.md",
+      "limit": "Bounded desktop browser rectangles only; Native SDK, phones, acceleration/performance, text/texture/UI/animation/3D, migration/editor/Agent loop, CI and full product remain unaccepted. Final source/native/publication binding is pending."
+    },
+    {
+      "id": "V013",
+      "title": "Bounded image source/mock engineering",
+      "kind": "engineering_prototype",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R005",
+        "R008",
+        "R012",
+        "R013",
+        "R014",
+        "R015",
+        "R016",
+        "R017"
+      ],
+      "dependsOn": [
+        "V012"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "independent_image_source_mock_subset",
+      "acceptance": "accepted_finite_source_mock_final_publication_pending",
+      "acceptanceCriteria": [
+        "Accepted A2 Tasks 1–4 and Task 5a CPU formulas/bounds only; Task 5b/Task 6 and P0–P7 unrun.",
+        "Historical receipts bind exact source identities; final independent public review and prepush remain pending."
+      ],
+      "artifacts": [
+        "en/docs/core-progress.md",
+        "evidence/core-progress-0.16.0.json"
+      ],
+      "doc": "en/docs/core-progress.md",
+      "limit": "Accepted A2 Tasks 1–4 and Task 5a CPU formulas/bounds only; Task 5b/Task 6 and P0–P7 unrun."
+    },
+    {
+      "id": "V014",
+      "title": "CPU 3D foundation",
+      "kind": "engineering_prototype",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R005",
+        "R008",
+        "R012",
+        "R013",
+        "R014",
+        "R015",
+        "R016",
+        "R017"
+      ],
+      "dependsOn": [],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "independent_cpu_3d_foundation_subset",
+      "acceptance": "accepted_finite_cpu_source_final_publication_pending",
+      "acceptanceCriteria": [
+        "B0 math/projection and B1 owned CPU geometry/exact packing; no GPU scene or performance acceptance.",
+        "Historical receipts bind exact source identities; final independent public review and prepush remain pending."
+      ],
+      "artifacts": [
+        "en/docs/3d-foundation.md",
+        "evidence/3d-cpu-source-verification.json"
+      ],
+      "doc": "en/docs/3d-foundation.md",
+      "limit": "B0 math/projection and B1 owned CPU geometry/exact packing; no GPU scene or performance acceptance."
+    },
+    {
+      "id": "V015",
+      "title": "Legacy RES declaration analysis",
+      "kind": "engineering_prototype",
+      "status": "implemented",
+      "requirementIds": [
+        "R006",
+        "R008",
+        "R013",
+        "R015",
+        "R016"
+      ],
+      "dependsOn": [],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "independent_legacy_res_declaration_subset",
+      "acceptance": "accepted_finite_declaration_source_final_publication_pending",
+      "acceptanceCriteria": [
+        "Strict bounded declaration inventory; file/decoding/execution/migration remain unverified.",
+        "Historical receipts bind exact source identities; final independent public review and prepush remain pending."
+      ],
+      "artifacts": [
+        "en/docs/legacy-res-declarations.md",
+        "evidence/legacy-res-declarations-verification.json"
+      ],
+      "doc": "en/docs/legacy-res-declarations.md",
+      "limit": "Strict bounded declaration inventory; file/decoding/execution/migration remain unverified."
+    },
+    {
+      "id": "V016",
+      "title": "Bounded B1 Host source/mock",
+      "kind": "engineering_prototype",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R013",
+        "R015",
+        "R016",
+        "R017"
+      ],
+      "dependsOn": [
+        "V013",
+        "V014"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "bounded_b1_host_source_mock",
+      "acceptance": "accepted_bounded_cpu_or_mock_github_hold",
+      "acceptanceCriteria": [
+        "Authentic scenes, distinct geometry uploads and per-draw matrix uniforms; source/mock behavior of mesh-first and depth-free UI-second passes.",
+        "Default 13/13 and selected repository 901/901 passed; earlier 900/901 rejection and final-LF successor without rerun remain separate.",
+        "Real devices, native shaders, pixels, performance and full product remain unverified; GitHub 403 delivery stays HOLD."
+      ],
+      "artifacts": [
+        "en/docs/b1-host-contract.md",
+        "evidence/b1-host-mock-evidence.json"
+      ],
+      "doc": "en/docs/b1-host-contract.md"
+    },
+    {
+      "id": "V017",
+      "title": "CPU sequence data and sampling",
+      "kind": "engineering_prototype",
+      "status": "implemented",
+      "requirementIds": [
+        "R003",
+        "R004",
+        "R013",
+        "R015",
+        "R016",
+        "R017"
+      ],
+      "dependsOn": [],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "cpu_sequence_data_sampling",
+      "acceptance": "accepted_bounded_cpu_or_mock_github_hold",
+      "acceptanceCriteria": [
+        "Immutable sequence data and deterministic bounded CPU sampling; focused 25/25 and selected repository 901/901 passed.",
+        "Player integration, real atlases, rendered animation and DragonBones are not accepted; public barrels remain unchanged."
+      ],
+      "artifacts": [
+        "en/docs/sequence-clip-contract.md",
+        "evidence/sequence-clip-cpu-evidence.json"
+      ],
+      "doc": "en/docs/sequence-clip-contract.md"
+    },
+    {
+      "id": "V018",
+      "title": "Pure RES conversion intents",
+      "kind": "engineering_prototype",
+      "status": "implemented",
+      "requirementIds": [
+        "R006",
+        "R008",
+        "R013",
+        "R015",
+        "R016",
+        "R017"
+      ],
+      "dependsOn": [
+        "V015"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "pure_legacy_res_conversion_intents",
+      "acceptance": "accepted_bounded_cpu_or_mock_github_hold",
+      "acceptanceCriteria": [
+        "Only recognized declarations yield frozen ordered file/resource/group intents; focused 14/14 and selected repository 901/901 passed.",
+        "No file copying, decoding, project execution or complete R008/V006 migration acceptance; analyzer diagnostics are retained."
+      ],
+      "artifacts": [
+        "en/docs/legacy-res-plan-contract.md",
+        "evidence/legacy-res-plan-cpu-evidence.json"
+      ],
+      "doc": "en/docs/legacy-res-plan-contract.md"
+    },
+    {
+      "id": "V019",
+      "title": "Bounded legacy MovieClip CPU conversion",
+      "kind": "engineering_prototype",
+      "status": "implemented",
+      "requirementIds": [
+        "R006",
+        "R008",
+        "R013",
+        "R015",
+        "R016",
+        "R017"
+      ],
+      "dependsOn": [
+        "V017"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "bounded_legacy_movieclip_cpu_conversion",
+      "acceptance": "accepted_focused_cpu_only_regression_pending_github_hold",
+      "acceptanceCriteria": [
+        "One named clip and declared atlas yield owned frozen sequence input and display offsets; strict refusal order, budgets and authored-hold time are specified by the contract.",
+        "Focused 28/28 passed with real V017 factory re-admission and sampling; this dependency represents data acceptance, without a runtime-private import.",
+        "Current default-mode, repository regression and complete prepush are UNRUN; the API is not in a package barrel.",
+        "Image reads, decoding, renderer offsets and playback are unverified; complete R008/V006 migration remains a mandatory formal deliverable."
+      ],
+      "artifacts": [
+        "en/docs/legacy-movieclip-contract.md",
+        "en/docs/legacy-movieclip-evidence.md",
+        "evidence/legacy-movieclip-focused.json"
+      ],
+      "doc": "en/docs/legacy-movieclip-contract.md"
+    }
+  ],
+  "_localization": {
+    "canonicalSource": "交付.json",
+    "canonicalSha256": "cababdd73a56664ee7836a256be5bf49c3578cf54de427b3e864de6186f72b71",
+    "role": "read_only_translation",
+    "language": "en"
+  }
+}
