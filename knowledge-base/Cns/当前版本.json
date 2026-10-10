@@ -533,7 +533,7 @@
     "contract": "Cns/docs/显示内容边界契约.md",
     "evidence": "Cns/docs/显示内容边界证据.md"
   },
-  "latestEngineeringPreview": "0.23.0",
+  "latestEngineeringPreview": "0.24.0",
   "texturedMesh2DImplementation": {
     "version": "0.23.0",
     "status": "bounded_increment_implemented",
@@ -547,5 +547,48 @@
     "phone": false,
     "nativeSDK": false,
     "fullA2": false
+  },
+  "textRasterT1Implementation": {
+    "version": "0.24.0",
+    "status": "bounded_t1_core_and_complete_source_verification_pass_delivery_separate",
+    "contract": "Cns/docs/文字栅格T1契约.md",
+    "record": "Cns/docs/文字栅格T1证据.md",
+    "verification": "evidence/text-raster-t1-verification.json",
+    "recordedBehavior": {
+      "genuineBaseline": "1/1",
+      "initialAffectedOldRegressions": "80/80",
+      "preservedPublicFailure": "37/38_T22",
+      "correctedPublicSuccessor": "38/38",
+      "countsAreVersionBoundAndNotAdditive": true,
+      "finalPublic": "38/38",
+      "finalAffectedOldRegressions": "80/80",
+      "privatePlanBudgetUnits": "32/32",
+      "rasterAuthorityIncludingBaseline": "5/5",
+      "sourceBoundaryControls": "19/19",
+      "scannedBoundaryFiles": 387
+    },
+    "finalCurrentSourceReview": "ACCEPTED_BOUNDED_SIX_FINDING_CLOSURE",
+    "currentTypeAndBoundaryAcceptance": "SCOPED_STRICT_TYPES_AND_SOURCE_BOUNDARY_PASS",
+    "completePackageAcceptance": "PENDING",
+    "finalPrepush": "recorded_separately_in_delivery_verification",
+    "remoteDelivery": "recorded_separately_in_delivery_verification",
+    "browserFonts": false,
+    "TextField": false,
+    "nativeGlyphPixels": false,
+    "performance": false,
+    "phone": false,
+    "nativeSDK": false,
+    "fullSpine": false,
+    "fullMigration": false,
+    "laterVerificationPending": {
+      "strictTypes": "PASS_EXACT_POSITIVE_18ORDINARY_9ISOLATED",
+      "completePackage": "PASS_BOUNDED_EXISTING_CORE_SOURCE_VERIFY",
+      "lastWholeCoreRun": "fullVerify-r3:2037tests;2037pass;0fail",
+      "earlierWholeCoreFailurePreserved": "fullVerify-r2:2037tests;1832pass;205fail",
+      "prepush": "recorded_separately_in_delivery_verification",
+      "publicCuration": "recorded_separately_in_delivery_verification",
+      "remote": "recorded_separately_in_delivery_verification",
+      "futurePassInferred": false
+    }
   }
 }

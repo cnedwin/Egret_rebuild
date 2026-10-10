@@ -1205,11 +1205,23 @@
         "evidence/textured-mesh2d-verification.json"
       ],
       "doc": "en/docs/textured-profile-cpu-evidence.md"
+    },
+    {
+      "id": "S074",
+      "type": "first_party_text_raster_source_lifecycle_type_and_accounting_evidence",
+      "researchCheckedAt": "2026-10-11",
+      "artifacts": [
+        "evidence/text-raster-t1-verification.json"
+      ],
+      "title": "First-party text raster core and bounded recorded controls",
+      "scope": "Independent request/plan/cache source, actual genuine-resource literal-provider controls, read-only private bookkeeping observations, strict type and source-boundary checks, and preserved initial failures and scoped repairs.",
+      "limit": "Literal RGBA bytes are not font pixels; logical charges and retained references are not measured physical memory. No browser font, TextField, phone, Native SDK, performance, full Spine or complete migration acceptance. Current public prepush and delivery have separate records.",
+      "doc": "en/docs/text-raster-t1-evidence.md"
     }
   ],
   "_localization": {
     "canonicalSource": "来源.json",
-    "canonicalSha256": "feab25c1c983f8b68a88dd7b9e8b5ce0c4f7f6d3d2949d0e43199231e4256bc9",
+    "canonicalSha256": "e773d8fd31e4f0c145ac129f5a41750fb04621de43fd73c887d8091c387c996d",
     "role": "read_only_translation",
     "language": "en"
   }

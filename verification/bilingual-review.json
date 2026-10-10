@@ -1198,5 +1198,41 @@
     "Independent semantic reviews are limited to the exact full/section scopes listed, not every paragraph of all documents.",
     "Historical input hashes identify earlier bytes; current language/comment/public wording projections have their own identities.",
     "Local publication preparation does not establish remote commit/PR success."
-  ]
+  ],
+  "textRasterT1Curation": {
+    "engineeringPreview": "0.24.0",
+    "status": "ROOT_ACCEPTED_INDEPENDENT_SCOPED_PUBLIC_REVIEW",
+    "scope": "Only new or changed T1 reading/guidance/registry/source-comment subjects. Earlier original 0.10 and later scoped records retain their own histories; inventory counts do not extend their acceptance.",
+    "newPairs": [
+      {
+        "en": "knowledge-base/en/docs/text-raster-t1-contract.md",
+        "zh": "knowledge-base/Cns/docs/文字栅格T1契约.md",
+        "kind": "public_reading",
+        "zhSha256": "b0a5cefef249d203f673f6322267ecdd2801e009aa64b2928bd225ced2f3f5b8",
+        "enSha256": "3c24eba249c3c7b8d14d45d8efe9fef19c8af914794a7d1817d2830abb5bb1c7"
+      },
+      {
+        "en": "knowledge-base/en/docs/text-raster-t1-evidence.md",
+        "zh": "knowledge-base/Cns/docs/文字栅格T1证据.md",
+        "kind": "public_reading",
+        "zhSha256": "be97e15c6a5b3331f8fc9a7a7bd2d3004c3ddef5d51947cfa8f0262a6c32fcc0",
+        "enSha256": "1de307d23447f43d8e69cc8e8a835172d71e9b16500839c62a6817af14ccdf24"
+      }
+    ],
+    "inventory": {
+      "readingPairs": 126,
+      "registryViews": 6,
+      "criticalSourceFiles": 129
+    },
+    "executionBoundary": "Complete source verification, final mandatory public hook and remote delivery remain separately version bound.",
+    "independentReview": {
+      "bytes": 5236,
+      "sha256": "9ebbb73ec5bdfc6a91d8fedcbd381f3b14754578b39f84e05772f818cf21fe42",
+      "status": "identity_only_not_distributed",
+      "scope": "Current new/changed T1 paired readings, community entries, guidance, structured registration, saved evidence boundaries, provenance and ten critical English-comment subjects. Unchanged older bodies retain their separately version-bound reviews; inventory totals are not blanket semantic acceptance."
+    },
+    "laterRootMetadataAttestation": true,
+    "productExecutionByReviewer": false,
+    "remoteDeliveryAccepted": false
+  }
 }

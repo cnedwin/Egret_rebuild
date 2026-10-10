@@ -9,6 +9,7 @@ interface LeaseState {
   active: boolean;
   readonly read: () => unknown;
   readonly release: () => void;
+  onRetired?: (() => void) | undefined;
 }
 
 const states = new WeakMap<object, LeaseState>();
@@ -24,7 +25,7 @@ export class AssetLease<T> {
     if (token !== CREATION_TOKEN) throw new EgretError("ASSET_LEASE_FACTORY_REQUIRED");
     this.leaseId = leaseId;
     this.resourceGeneration = generation;
-    states.set(this, { active: true, read, release });
+    states.set(this, { active: true, read, release, onRetired: undefined });
     commitBinding([this], engine);
     Object.freeze(this);
   }
@@ -45,6 +46,9 @@ export class AssetLease<T> {
     const state = states.get(this);
     if (state === undefined || !state.active) return;
     state.active = false;
+    const onRetired = state.onRetired;
+    state.onRetired = undefined;
+    onRetired?.();
     state.release();
   }
 }
@@ -52,7 +56,19 @@ export class AssetLease<T> {
 /** Manager shutdown revokes all leases before any external cleanup callback. */
 export function revokeAssetLease(lease: AssetLease<unknown>): void {
   const state = states.get(lease);
-  if (state !== undefined) state.active = false;
+  if (state === undefined || !state.active) return;
+  state.active = false;
+  const onRetired = state.onRetired;
+  state.onRetired = undefined;
+  onRetired?.();
+}
+
+/** Install one cache-owned, counter-only retirement observer without changing the lease. */
+export function observeAssetLeaseRetirement(lease: unknown, onRetired: () => void): boolean {
+  const state = states.get(lease as object);
+  if (state === undefined || !state.active || state.onRetired !== undefined) return false;
+  state.onRetired = onRetired;
+  return true;
 }
 
 /** Runtime-private identity guard; proxies and lookalikes cannot supply entitlement. */

@@ -36,6 +36,20 @@ for (const [name, allowed] of Object.entries(expected)) {
   for (const [dependency, version] of Object.entries(externalAllowed)) if (pkg.dependencies[dependency] !== version) throw new Error(`${name}: external exact pin mismatch`);
   if (!pkg.private || pkg.version !== "0.0.0" || pkg.type !== "module") throw new Error(`${name}: private prototype metadata mismatch`);
   if (name === 'project' && JSON.stringify(pkg.exports) !== JSON.stringify({'.': {types:'./dist/index.d.ts', import:'./dist/index.js'}})) throw new Error('project: root export mapping mismatch');
+  if (name === 'runtime' || name === 'engine') {
+    const textExports = name === 'runtime' ? {
+      '.': {types:'./dist/index.d.ts',import:'./dist/index.js'},
+      './text': {types:'./dist/text/index.d.ts',import:'./dist/text/index.js'},
+    } : {
+      '.': {types:'./dist/index.d.ts',import:'./dist/index.js'},
+      './webgpu': {types:'./dist/web/webgpu.d.ts',import:'./dist/web/webgpu.js'},
+      './web': {types:'./dist/web/index.d.ts',import:'./dist/web/index.js'},
+      './text': {types:'./dist/text.d.ts',import:'./dist/text.js'},
+    };
+    if (JSON.stringify(Object.keys(pkg.exports ?? {}).sort()) !== JSON.stringify(Object.keys(textExports).sort())
+        || Object.entries(textExports).some(([entry, mapping]) => JSON.stringify(pkg.exports[entry]) !== JSON.stringify(mapping)))
+      throw new Error(`${name}: text explicit export mapping mismatch`);
+  }
   for (const dependency of dependencies) {
     const result = spawnSync(process.execPath, ["--input-type=module", "--eval", `await import(${JSON.stringify(dependency)});`], { cwd: dir, encoding: "utf8" });
     if (result.status !== 0) throw new Error(`${name}: ESM dependency resolution failed: ${result.stderr}`);
@@ -60,6 +74,9 @@ for (const [name, allowed] of Object.entries(expected)) {
         // Only these two first-party adapters may share the Engine-owned registry.
         const relative = path.relative(dir, file).split(path.sep).join('/');
         if (name !== 'engine' || !['web/CanvasHost.ts', 'web/WebGPUHost.ts', 'dist/web/CanvasHost.js', 'dist/web/WebGPUHost.js'].includes(relative)) throw new Error(`${file}: private textured registry import outside approved adapters`);
+      } else if (imported === '@egret/runtime/text') {
+        const relative = path.relative(dir, file).split(path.sep).join('/');
+        if (name !== 'engine' || !['src/text.ts', 'dist/text.js', 'dist/text.d.ts'].includes(relative)) throw new Error(`${file}: unapproved/deep package import ${imported}`);
       } else if (!allowed.includes(imported) && !((rendering || projectFoundation) && Object.hasOwn(external, name) && Object.hasOwn(externalAllowed, imported))) throw new Error(`${file}: unapproved/deep package import ${imported}`);
     }
     inspected++;
@@ -254,6 +271,72 @@ const actualGPUTypeNames = [...gpuDeclaration.matchAll(/export type\s*\{([^}]+)\
 const actualGPUValueNames = [...gpuDeclaration.matchAll(/export\s*\{([^}]+)\}\s*from\s*["'][^"']+["'];?/g)].flatMap(match => match[1].split(',').map(name => name.trim())).sort();
 const gpuDeclarationRemainder = gpuDeclaration.replace(/export(?: type)?\s*\{[^}]+\}\s*from\s*["'][^"']+["'];?/g, '').trim();
 if (JSON.stringify(actualGPUTypeNames) !== JSON.stringify(expectedGPUTypeNames) || JSON.stringify(actualGPUValueNames) !== JSON.stringify(['createTexturedWebGPUHost', 'createWebGPUHost']) || gpuDeclarationRemainder) throw new Error('webgpu: exact type-only host export surface mismatch');
+
+// T1 adds one exact explicit DOM-free entry. Every retained rule above remains.
+const textPublicTypes = [
+  'TextRasterRequestInput','TextSourceLine','TextRasterRequest','TextBounds2D','TextLineMetricsInput',
+  'TextPlanInput','TextLineMetrics','TextRasterPlacement','TextRasterMetrics','TextRasterPlan','TextRasterLimits',
+  'TextMeasureContext','TextRasterContext','TextRasterProvider','TextRasterCacheOptions','TextRasterAcquireOptions',
+  'PreparedTextRaster','TextRasterCacheStatus','TextRasterCache',
+];
+const textPrivate = [
+  'registerAssetManagerOwner','requireAssetManagerOwner','beginTextCacheCreation','commitTextCacheLifetime',
+  'markAssetManagerOwnerClosed','closeOwnedTextCache','observeAssetLeaseRetirement',
+  'TextValueInvocation','TextValueFailureCode','TextValueFailure','TextRasterRequestSnapshot','TextRasterRequestSummary',
+  'createTextValueInvocation','closeTextValueInvocation','createTextValueFailure','takeTextValueFailure',
+  'snapshotTextRasterRequest','summarizeTextRasterRequest','createOwnedTextRasterRequest',
+  'isOwnedTextRasterRequest','requireOwnedTextRasterRequest','matchesTextRasterRequestSummary',
+  'TextRasterPlanIssuer','createTextRasterPlanIssuer','closeTextRasterPlanIssuer','readIssuedTextRasterPlan','requireIssuedTextRasterPlan',
+  'TextBudgetLimits','TextBudgetCounters','TextBudgetDelta','TextBudgetFailure','TextBudget','TEXT_BUDGET_DEFAULTS','TEXT_BUDGET_MINIMA',
+  'requestBrand','planBrand','cacheBrand',
+];
+const runtimeText = await import('@egret/runtime/text');
+const engineText = await import('@egret/engine/text');
+const textEntries = [...meshEntries,
+  ['runtime/text',runtimeText,'packages/runtime/dist/text/index'],
+  ['engine/text',engineText,'packages/engine/dist/text'],
+];
+for (const [entry,values,emittedEntry] of textEntries) {
+  const declaration=readFileSync(path.join(root,emittedEntry+'.d.ts'),'utf8');
+  const emitted=readFileSync(path.join(root,emittedEntry+'.js'),'utf8');
+  const source=declaration+'\n'+emitted;
+  for (const name of textPrivate) if (name in values || new RegExp('\\b'+name+'\\b').test(source)) throw new Error(`${entry}: private text authority leaked: ${name}`);
+  if (/["'][^"']*(?:assetManagerOwnerState|\/(?:request|plan|budget)\.js)["']/.test(source)) throw new Error(`${entry}: private text module leaked`);
+  if (!entry.endsWith('/text')) {
+    for (const name of ['createTextRasterCache',...textPublicTypes]) if (name in values || new RegExp('\\b'+name+'\\b').test(source)) throw new Error(`${entry}: explicit-only text port leaked: ${name}`);
+    if (/["'][^"']*(?:\/text(?:\/|\.js|["']))/.test(source)) throw new Error(`${entry}: explicit-only text module leaked`);
+  }
+}
+const expectedRuntimeValues=['CancellationController','EgretError','Scope','createScope','Event','createEventType',
+  'EventDispatcher','DisplayObject','DisplayObjectContainer','Stage','createStage','reportDiagnostic','AssetManager',
+  'createAssetManager','AssetLease','createAssetType','createAssetRef','Sprite','Graphics','collectFrameCommands',
+  'collectFrameContent','collectTexturedFrameContent','Texture','createTexture','isTexture','Bitmap','Mesh2D','createSequenceClip','SequencePlayer'].sort();
+if (JSON.stringify(Object.keys(runtimeFacade)) !== JSON.stringify(expectedRuntimeValues)) throw new Error('runtime: unchanged default-root export surface mismatch');
+for (const [entry,values,emittedEntry,valueTarget,typeTarget] of [
+  ['runtime/text',runtimeText,'packages/runtime/dist/text/index','./TextRasterCache.js','./types.js'],
+  ['engine/text',engineText,'packages/engine/dist/text','@egret/runtime/text','@egret/runtime/text'],
+]) {
+  if (JSON.stringify(Object.keys(values)) !== JSON.stringify(['createTextRasterCache']) || typeof values.createTextRasterCache !== 'function') throw new Error(`${entry}: exact text runtime surface mismatch`);
+  const declaration=readFileSync(path.join(root,emittedEntry+'.d.ts'),'utf8').replace(/\/\*[\s\S]*?\*\//g,'').replace(/\/\/[^\n]*/g,'');
+  const valuesDeclared=[...declaration.matchAll(/export\s*\{([^}]+)\}\s*from\s*["']([^"']+)["'];?/g)];
+  const typeStars=[...declaration.matchAll(/export\s+type\s*\*\s*from\s*["']([^"']+)["'];?/g)];
+  const remainder=declaration.replace(/export\s*\{[^}]+\}\s*from\s*["'][^"']+["'];?/g,'').replace(/export\s+type\s*\*\s*from\s*["'][^"']+["'];?/g,'').trim();
+  if (valuesDeclared.length!==1 || valuesDeclared[0][1].trim()!=='createTextRasterCache' || valuesDeclared[0][2]!==valueTarget || typeStars.length!==1 || typeStars[0][1]!==typeTarget || remainder) throw new Error(`${entry}: exact text declaration surface mismatch`);
+}
+if (runtimeText.createTextRasterCache !== engineText.createTextRasterCache) throw new Error('engine/text: runtime factory identity mismatch');
+const textTypesModule=await import(new URL('../packages/runtime/dist/text/types.js',import.meta.url));
+if (Object.keys(textTypesModule).length!==0) throw new Error('runtime/text: canonical types emitted runtime values');
+const textTypesDeclaration=readFileSync(path.join(root,'packages/runtime/dist/text/types.d.ts'),'utf8');
+const textDeclaredNames=[...textTypesDeclaration.matchAll(/\bexport\s+(?:declare\s+)?(?:type|interface|function|const|class|enum)\s+(\w+)/g)].map(match=>match[1]).sort();
+if (JSON.stringify(textDeclaredNames)!==JSON.stringify([...textPublicTypes].sort())) throw new Error('runtime/text: canonical public type inventory mismatch');
+// Triple-slash ambient references are dependencies even when normal comments
+// are removed by the retained source scan. The new text subtree is DOM-free.
+for (const file of [...files(path.join(root,'packages/runtime/src/text')), ...files(path.join(root,'packages/runtime/dist/text')),
+  path.join(root,'packages/engine/src/text.ts'),path.join(root,'packages/engine/dist/text.js'),path.join(root,'packages/engine/dist/text.d.ts')]) {
+  if (!file.endsWith('.ts') && !file.endsWith('.js')) continue;
+  const raw=readFileSync(file,'utf8');
+  if (/\/\/\/\s*<reference\s+(?:lib\s*=\s*["']dom(?:\.iterable)?["']|types\s*=\s*["']node["'])/i.test(raw)) throw new Error(`${path.relative(root,file)}: host ambient dependency`);
+}
 
 console.log(`Boundary check PASS: four private workspace packages, actual exports resolution, ${inspected} source/build/declaration files, DOM-free core and exact DOM-only web subtree without Node imports/globals.`);
 

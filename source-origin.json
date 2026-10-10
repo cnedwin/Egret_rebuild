@@ -191,7 +191,7 @@
   ],
   "dependencyLock": {
     "path": "pnpm-lock.yaml",
-    "sha256": "ce4b58d9705804e32ebea4f03ff77e4f6550ef116d48378bcbed681d1ca05c97",
+    "sha256": "78d967eade0029dc518bdc2654479982798af4c65d432b1d1b5312d7d4c43af1",
     "note": "Exact robust-predicates 3.0.3 and fixed tool versions recorded in the lock. Installation disabled lifecycle scripts; observed installed artifacts and browser requests have separate evidence. Exact jsonc-parser 3.3.1 added with scripts disabled; installed package artifact, public declarations and foundation graph have separate Task 1 evidence."
   },
   "hostCloseClarification": "Only successful close resolution proves safe surface return. Normal or late rejection keeps quarantine; no force-release/recovery override in this slice.",
@@ -288,16 +288,16 @@
     {
       "path": "AGENTS.md",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "sha256": "a1108c2895e879722b575442473ec16ef77c5537ba63020a93d127779520ebdd",
-      "bytes": 6758,
+      "sha256": "ac89557dfdb732f1eae77bba20cfbe55f92ca3e4a82266e6abdc0d81f973cd73",
+      "bytes": 7855,
       "previousRevisionSha256": "7c2716d3a678406ce905b8cd7fd9ef3552bca4e37b8e9456b63b871e4170e0c1",
       "previousLayoutPath": "AGENTS.en.md",
       "previousLayoutSha256": "7e4ccd840b8b23896f9d9e92fe8173693ef37e415d3cebbebb3bfafded8158c5"
     },
     {
       "path": "AGENTS.zh-CN.md",
-      "sha256": "cdfa3bb19f75778f81a949d27699684ab7118ae7d2bb32e3e3f09d390a7e7bb8",
-      "bytes": 5632,
+      "sha256": "cd04850491f0cd8f2bdc21ce7e82e6177560f6ef1f1d4c37e2899a67e92d7c4a",
+      "bytes": 6672,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousPublicSha256": "d133cdcd7d1f41fe0ce26bee63568cd0c4f23c6e6e7f9828d0768e95f53a05b4",
       "previousRevisionSha256": "f3551dd36ebc3023f8c846f0cdd876b7204c214c7c041e6496271d20c091046c",
@@ -505,8 +505,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/CHANGELOG.md",
-      "bytes": 20863,
-      "sha256": "b99459ca7ea77f50d5c174b2fc8ec104af559ab4ecb0ef18284391d954d76e6e"
+      "bytes": 22157,
+      "sha256": "0c125180412d12efa3b1e6dcb3eab33588d0dea18661414795c302cf98bcb14a"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1039,14 +1039,14 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/README.md",
-      "bytes": 4560,
-      "sha256": "fdfa41fd4e3d48bb86fbf674e7e17e91d6d31ccba21c268d15007a147ddf7fb4"
+      "bytes": 4871,
+      "sha256": "baee2b04f6ee7b519940d8031014f18824f0d724e81299d984272ec2c8685cda"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/registry/交付.json",
-      "bytes": 40838,
-      "sha256": "549a469329a39002e9c69c828a048672cbb776c21724cbc69fee3d2d0866bf59"
+      "bytes": 42584,
+      "sha256": "8402b0712c53242377c62c1236168e5810a51780d60405df0e94984a4b645120"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1063,14 +1063,14 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/registry/来源.json",
-      "bytes": 70232,
-      "sha256": "feab25c1c983f8b68a88dd7b9e8b5ce0c4f7f6d3d2949d0e43199231e4256bc9"
+      "bytes": 71075,
+      "sha256": "e773d8fd31e4f0c145ac129f5a41750fb04621de43fd73c887d8091c387c996d"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/registry/需求.json",
-      "bytes": 12937,
-      "sha256": "2cbc03cffa770beb5d79f6c529437ad3658defaeaee8cd645226cb9ee111b490"
+      "bytes": 13049,
+      "sha256": "977c481e6a399b2ccc7cf3df22a20ff945aa3be01417ae5e7635e727f8e05e35"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1099,14 +1099,14 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/当前版本.json",
-      "bytes": 24990,
-      "sha256": "7f19918343ce0c1852574267e4919cec03937c5c7a24b03dd5c90fc6e334c662"
+      "bytes": 26957,
+      "sha256": "afbc4644fdd270e165e9d6e43e2d0b420ab9ee1d70b2fed409c80c9814ee740c"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
-      "bytes": 109458,
-      "sha256": "8422e3f1e664f6f6be1902b3e1b171371bbf51f024caa6e0ed51fa68763a46cf"
+      "bytes": 110266,
+      "sha256": "b3f2617b65ae3c9de3796d8759659dd70203af1d13f671f9d315e47ff47288b6"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1135,8 +1135,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/CHANGELOG.md",
-      "bytes": 25982,
-      "sha256": "3812debabc0e9c31fc10d72e1d02a9fdff5d5307c857ea37fc8d1614ab04add8"
+      "bytes": 27499,
+      "sha256": "9aa80eb773b33c10a78dfafaab2d88c8b356732ac490b0d6ec206caa13751dc5"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1147,8 +1147,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/current-version.json",
-      "bytes": 25507,
-      "sha256": "5ce592501658df4e8f7fc7eb603859e4c53de8df74f44b4f9e986b81863fe5b2"
+      "bytes": 27434,
+      "sha256": "c280932a615eff65d07c3a0b5597d11843d9de716c9c00f136688c558179d466"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1675,8 +1675,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/README.md",
-      "bytes": 5436,
-      "sha256": "cd1e8681483ff177fd466cef5f06c7c0962b1c2b70d3783c7bc7f0d42f1a82fe"
+      "bytes": 5802,
+      "sha256": "bf59e5620eea24a29f08b587de087f2875c7aa64341c743b751800dbe5bfba2f"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1687,8 +1687,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/registry/deliverables.json",
-      "bytes": 44064,
-      "sha256": "9b458dd9b6592c4c866d65bfe6f823b8ca00180379f7a25ebae9b1030797305d"
+      "bytes": 45942,
+      "sha256": "cfb6a81325fc9c5146dcd4a0f98b955cf95e679edca3786b343ec0ae4dff8db6"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1699,14 +1699,14 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/registry/requirements.json",
-      "bytes": 15028,
-      "sha256": "bc2b4bf8054e7ebc1b99829c606b793cbe24b564cf98f505b035ded8543f3f2c"
+      "bytes": 15140,
+      "sha256": "f367cb8aaa56bf142892e7c3f2102f95ab989bdccbb5d0b201cda0446c4d031c"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/registry/sources.json",
-      "bytes": 77481,
-      "sha256": "8ec600508128d87888ef14ce328f6d6945de3b92e8a21efbc6c053ed979a84ed"
+      "bytes": 78390,
+      "sha256": "c6650bf77d95df1bd5f363546a081af2abeb6319313c9acfdba4c37fa7fc924e"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1768,8 +1768,8 @@
     {
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "path": "localization.json",
-      "sha256": "c539347630cb8a93f8bd7b167ce28d9d0d4429c8cf3a33760d2ba02263b56555",
-      "bytes": 166378,
+      "sha256": "6cb324ab69f4f8aef7599311bdce14c9cf1aa1cf5f0a2ef879d027c024256554",
+      "bytes": 170674,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123"
@@ -1784,8 +1784,8 @@
     },
     {
       "path": "package.json",
-      "sha256": "da76e04ed9c250048b793c695e21828474d4e10c63731d0df83de5ae61b7b017",
-      "bytes": 598,
+      "sha256": "9345ffe23a23ab60936d54f02c9c58a396753580f37e55b796ebe58403a00616",
+      "bytes": 631,
       "originalSha256": "dc8b4a1df35b654d52a366010430083495daf807144aa8882b01a0b82fb45234",
       "originRole": "byte-identical prototype whitelist export",
       "previousRevisionSha256": "dc8b4a1df35b654d52a366010430083495daf807144aa8882b01a0b82fb45234",
@@ -1898,8 +1898,8 @@
     },
     {
       "path": "packages/engine/package.json",
-      "sha256": "f341df10b4439156d4479c97036e5ad95db71a07dcc18e8e7e9403df847b37fa",
-      "bytes": 714,
+      "sha256": "f24878e43919b082a29c788e8bc721fdb7a0582ffc469d49ece04796bb119c0f",
+      "bytes": 805,
       "originalSha256": "26b7c45f629f7c8a7d41c466fdd06741163a2afd9b6002075c6341530ed2e663",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousRevisionSha256": "26b7c45f629f7c8a7d41c466fdd06741163a2afd9b6002075c6341530ed2e663",
@@ -2105,8 +2105,8 @@
     },
     {
       "path": "packages/runtime/package.json",
-      "sha256": "546d482c0bd990164d79acaec52953245314df6d50117c85b6c6ec5856f4f7ee",
-      "bytes": 234,
+      "sha256": "b9294c479d38614dd8866adcd8775f5d6f43c787d9b08c8ef54371e426cb5032",
+      "bytes": 327,
       "originalSha256": "546d482c0bd990164d79acaec52953245314df6d50117c85b6c6ec5856f4f7ee",
       "originRole": "byte-identical prototype whitelist export",
       "previousRevisionSha256": "546d482c0bd990164d79acaec52953245314df6d50117c85b6c6ec5856f4f7ee",
@@ -2136,8 +2136,8 @@
     },
     {
       "path": "packages/runtime/src/AssetLease.ts",
-      "sha256": "4785f4ef92606d4f183d0a11b7386191c8be4626b94799c10dad5284f137bb3f",
-      "bytes": 2689,
+      "sha256": "36c298af613284e1daa2501b2e823729c6d25da1a6480c1715d54704c1c04a5c",
+      "bytes": 3326,
       "originRole": "New independently authored CPU asset core/test/example",
       "previousRevisionSha256": "6c411c75c2737f4229e459f559efc75375b15c65af65e3791227abe416e24a21",
       "previousLayoutPath": "packages/runtime/src/AssetLease.ts",
@@ -2145,8 +2145,8 @@
     },
     {
       "path": "packages/runtime/src/AssetManager.ts",
-      "sha256": "31e52919bfa43df548fa661a9d46c5d8b2fcb7259addfe119ef4367fa25f462e",
-      "bytes": 13239,
+      "sha256": "245a18a19480073855d5e55f3014844fdc5c6f2e03c7cdb8fe49ef897e94c706",
+      "bytes": 14584,
       "originRole": "New independently authored CPU asset core/test/example",
       "previousRevisionSha256": "31e52919bfa43df548fa661a9d46c5d8b2fcb7259addfe119ef4367fa25f462e",
       "previousLayoutPath": "packages/runtime/src/AssetManager.ts",
@@ -2349,8 +2349,8 @@
     },
     {
       "path": "pnpm-lock.yaml",
-      "sha256": "ce4b58d9705804e32ebea4f03ff77e4f6550ef116d48378bcbed681d1ca05c97",
-      "bytes": 8757,
+      "sha256": "78d967eade0029dc518bdc2654479982798af4c65d432b1d1b5312d7d4c43af1",
+      "bytes": 8851,
       "originalSha256": "f58343405f8b75488966415da04a69edd5cbf01a32076ff08b75132fa476877c",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousRevisionSha256": "f58343405f8b75488966415da04a69edd5cbf01a32076ff08b75132fa476877c",
@@ -2389,16 +2389,16 @@
     {
       "path": "README.md",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "sha256": "dc1d2caa19f79c063d19867b21639e17bbb3d3c03fc8c3bf523b9a47f883410a",
-      "bytes": 14808,
+      "sha256": "7c3b2eda11152baf512613b9ed1f060bc2ed9ecf24f233c8875b4b6806068ea2",
+      "bytes": 15600,
       "previousRevisionSha256": "199156443d499d5012f1224263a1a3ee9994e5ba38ee067bceeb2ad865ae8167",
       "previousLayoutPath": "README.en.md",
       "previousLayoutSha256": "f40ec41ca699cd0b9138fbdf4a268080038f583ae11e78c4f37093a6b7095f57"
     },
     {
       "path": "README.zh-CN.md",
-      "sha256": "0d7ec681f57d1f0652d2ea00cf51ec213fd15db6e416c16eb31d163a882722c9",
-      "bytes": 14538,
+      "sha256": "643e6b57af9cade5bcc3a1c7d0087ce5cf20c321c80fbbb229f9e9b1242c4e63",
+      "bytes": 15330,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousPublicSha256": "7ec80b8575a700b6a2628eb0322f2e770bb2284859f68ec5e0eb6530154a6699",
       "previousRevisionSha256": "7a1d72019db7cb6075d7c3a3bd4075f7c069d527b6e31d992a69333cb126b6c3",
@@ -2425,8 +2425,8 @@
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "sha256": "5c668fbaf8aff454ceb2a7000f6cfe93f476578dabd0cd3f29f17e7aef7f60ed",
-      "bytes": 31924,
+      "sha256": "e4ab87c8fe3da046f585a5cfab1f24ed99c98f194e96cf045d6997c082e18891",
+      "bytes": 35462,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousLayoutPath": "tests/boundaries.test.mjs",
       "previousLayoutSha256": "7fab4a4c490d4823a1cbd3d8721eb87d8c6a2401e60a7068be245975abf538bc"
@@ -2672,8 +2672,8 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "baa0451cbcc515a5c6b338ce65fdae7db4838e2b5188d3e92f8d271b43a64524",
-      "bytes": 29240,
+      "sha256": "105e01e501a83b9e7495d9928553cf7a04d65730828330c5f43a0ecfdbb0c29c",
+      "bytes": 36542,
       "originalSha256": "e7994ad6962e55fba9b481d50377ede30729b345e6a901e2089b235edfde9491",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousRevisionSha256": "e7994ad6962e55fba9b481d50377ede30729b345e6a901e2089b235edfde9491",
@@ -2691,8 +2691,8 @@
     },
     {
       "path": "tools/check-types.mjs",
-      "sha256": "c59647fb10e4edb8eeadfdae45039aebdc9cbb2c1dc282216a410cc003067505",
-      "bytes": 17201,
+      "sha256": "a09c38b72f6b9ac3d77fc9ed408ad4767cb66d4e9d616d77ef3bca34466ff259",
+      "bytes": 20160,
       "originalSha256": "332d2c161ceb9ec7d75429c89a3d2c95af24f2cf5eed68b92b09532d1ce691a4",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousRevisionSha256": "332d2c161ceb9ec7d75429c89a3d2c95af24f2cf5eed68b92b09532d1ce691a4",
@@ -4078,9 +4078,177 @@
       "originRole": "Independent first-party fixed build/freeze reproduction; existing graph and native verifier are reused within their recorded limits.",
       "bytes": 17322,
       "sha256": "ea0db384c001b603734261739c01c62ec88aa9c8fa3540ec10e80398f171b1db"
+    },
+    {
+      "path": "packages/engine/src/text.ts",
+      "originRole": "Independent first-party T1 source authored from reviewed Egret contracts; no copied historical or competitor implementation.",
+      "bytes": 187,
+      "sha256": "910b8b9ec887fdec7b2db706f215e7d19f5f40d5a3beb0d643551706b033a100"
+    },
+    {
+      "path": "packages/runtime/src/assetManagerOwnerState.ts",
+      "originRole": "Independent first-party T1 source authored from reviewed Egret contracts; no copied historical or competitor implementation.",
+      "bytes": 3778,
+      "sha256": "1519a2193b7e39184e3b9d500fb935f94129da46b2e47899086794b658e4b333"
+    },
+    {
+      "path": "packages/runtime/src/text/budget.ts",
+      "originRole": "Independent first-party T1 source authored from reviewed Egret contracts; no copied historical or competitor implementation.",
+      "bytes": 4488,
+      "sha256": "6eb700f0eea1f3595a246f0582ca555e1dbb25adf8254831e8a820f851d0ccd3"
+    },
+    {
+      "path": "packages/runtime/src/text/index.ts",
+      "originRole": "Independent first-party T1 source authored from reviewed Egret contracts; no copied historical or competitor implementation.",
+      "bytes": 172,
+      "sha256": "550f5349821f81ed9257780a1e4b5a409afe52e370c90a5fef6334ec7a06191f"
+    },
+    {
+      "path": "packages/runtime/src/text/plan.ts",
+      "originRole": "Independent first-party T1 source authored from reviewed Egret contracts; no copied historical or competitor implementation.",
+      "bytes": 12307,
+      "sha256": "e94e7f77aaa3bbc65d08a3963bfafe44c391ac139d3bd9181d55d9b74296d883"
+    },
+    {
+      "path": "packages/runtime/src/text/request.ts",
+      "originRole": "Independent first-party T1 source authored from reviewed Egret contracts; no copied historical or competitor implementation.",
+      "bytes": 14786,
+      "sha256": "080b358dd86fec5ac6d569914825709896080aa8b7c41828267c39ca29fa3576"
+    },
+    {
+      "path": "packages/runtime/src/text/TextRasterCache.ts",
+      "originRole": "Independent first-party T1 source authored from reviewed Egret contracts; no copied historical or competitor implementation.",
+      "bytes": 42737,
+      "sha256": "5f9b349ddddb55af4aee1802a28c4b2b5e2aafe93b7dcabc7032a8b531b0b5b7"
+    },
+    {
+      "path": "packages/runtime/src/text/types.ts",
+      "originRole": "Independent first-party T1 source authored from reviewed Egret contracts; no copied historical or competitor implementation.",
+      "bytes": 6514,
+      "sha256": "98074409d7a370ad2976dcef9635101546a96d697d9eac77397157f0b1106462"
+    },
+    {
+      "path": "tests/text-raster-allocation.test.mjs",
+      "originRole": "First-party T1 validation fixture; its documented public, private-unit or synthetic-policy scope is distinct from real-font execution.",
+      "bytes": 1573,
+      "sha256": "15941c677cde4eb04f1cad3bc04a8cdee1f6675d2a39982eb299b501a3128991"
+    },
+    {
+      "path": "tests/text-raster-authority.test.mjs",
+      "originRole": "First-party T1 validation fixture; its documented public, private-unit or synthetic-policy scope is distinct from real-font execution.",
+      "bytes": 9262,
+      "sha256": "7446cbf55696d62a23c5da399a899807d1b13ee4633ff74a2ff722d8afd63a02"
+    },
+    {
+      "path": "tests/text-raster-baseline.test.mjs",
+      "originRole": "First-party T1 validation fixture; its documented public, private-unit or synthetic-policy scope is distinct from real-font execution.",
+      "bytes": 3519,
+      "sha256": "b01fddbcb5aa8e2229eedd380e33d41f4f333123d4a2f5b736ad06ad890787d8"
+    },
+    {
+      "path": "tests/text-raster-boundaries.test.mjs",
+      "originRole": "First-party T1 validation fixture; its documented public, private-unit or synthetic-policy scope is distinct from real-font execution.",
+      "bytes": 8195,
+      "sha256": "b59df1d7f7cd42b56276216cd55ce2be58125ccddf9647ac08682cd89c6b7e8d"
+    },
+    {
+      "path": "tests/text-raster-closing.test.mjs",
+      "originRole": "First-party T1 validation fixture; its documented public, private-unit or synthetic-policy scope is distinct from real-font execution.",
+      "bytes": 2659,
+      "sha256": "51486a2bfe0c61abfde9ad6e5912b1d3e462021b613c575b9a830633af27c914"
+    },
+    {
+      "path": "tests/text-raster-idle-delivery.test.mjs",
+      "originRole": "First-party T1 validation fixture; its documented public, private-unit or synthetic-policy scope is distinct from real-font execution.",
+      "bytes": 1498,
+      "sha256": "e7fea0f66babf9afc17e61cc789cb9d36f7da4d3fe7cd4797030387d82da2c61"
+    },
+    {
+      "path": "tests/text-raster-materialization.test.mjs",
+      "originRole": "First-party T1 validation fixture; its documented public, private-unit or synthetic-policy scope is distinct from real-font execution.",
+      "bytes": 1020,
+      "sha256": "4fdf92f5c304852492fce4dcf967b4578477553f8fcc3430179c2e9fa4148004"
+    },
+    {
+      "path": "tests/text-raster-private.test.mjs",
+      "originRole": "First-party T1 validation fixture; its documented public, private-unit or synthetic-policy scope is distinct from real-font execution.",
+      "bytes": 15131,
+      "sha256": "d2dab3aa49a225c006c981ac9e8ff340370f2dec6ea904ab8e0aa3cfbac553f7"
+    },
+    {
+      "path": "tests/text-raster-public-helpers.mjs",
+      "originRole": "First-party T1 validation fixture; its documented public, private-unit or synthetic-policy scope is distinct from real-font execution.",
+      "bytes": 6867,
+      "sha256": "1a27bebed5181b855f30f40994ef25336e452cd31ee8dab7beac4a4af6679dac"
+    },
+    {
+      "path": "tests/text-raster-public.test.mjs",
+      "originRole": "First-party T1 validation fixture; its documented public, private-unit or synthetic-policy scope is distinct from real-font execution.",
+      "bytes": 62213,
+      "sha256": "c042787209fcdc0a004a347a9f2d457e062d7052f4e67ebc039f0a804c2ad366"
+    },
+    {
+      "path": "tests/text-raster-release-closing.test.mjs",
+      "originRole": "First-party T1 validation fixture; its documented public, private-unit or synthetic-policy scope is distinct from real-font execution.",
+      "bytes": 2490,
+      "sha256": "e3384704ced7b186c6d0f094d8d8846f45db9216586f3a8e724693b36d3e322a"
+    },
+    {
+      "path": "tests/text-raster-residency-audit.test.mjs",
+      "originRole": "First-party T1 validation fixture; its documented public, private-unit or synthetic-policy scope is distinct from real-font execution.",
+      "bytes": 2527,
+      "sha256": "9e0e06081f9ecc2f7a34efbe7561c223b9166392ae3595a88b8151b815f240c2"
+    },
+    {
+      "path": "tests/types/text-raster-import-negative.ts",
+      "originRole": "First-party T1 validation fixture; its documented public, private-unit or synthetic-policy scope is distinct from real-font execution.",
+      "bytes": 1320,
+      "sha256": "220d9c2d64fef0f76b5e57fd114d469cf228a32bbb5dcfb0ac19ba96bc676600"
+    },
+    {
+      "path": "tests/types/text-raster-negative.ts",
+      "originRole": "First-party T1 validation fixture; its documented public, private-unit or synthetic-policy scope is distinct from real-font execution.",
+      "bytes": 2794,
+      "sha256": "55312f269ffb588443a5a7f4bc254d5cd0bf06663de6bcc274260bbaec344891"
+    },
+    {
+      "path": "tests/types/text-raster-positive.ts",
+      "originRole": "First-party T1 validation fixture; its documented public, private-unit or synthetic-policy scope is distinct from real-font execution.",
+      "bytes": 9092,
+      "sha256": "eb9e5142bfa83e87adbd4e038baf362c768aaa8be21cfd7055664562bcb992a8"
+    },
+    {
+      "path": "knowledge-base/en/docs/text-raster-t1-contract.md",
+      "originRole": "First-party paired T1 documentation or structured saved verification projection.",
+      "bytes": 9174,
+      "sha256": "3c24eba249c3c7b8d14d45d8efe9fef19c8af914794a7d1817d2830abb5bb1c7"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/文字栅格T1契约.md",
+      "originRole": "First-party paired T1 documentation or structured saved verification projection.",
+      "bytes": 8347,
+      "sha256": "b0a5cefef249d203f673f6322267ecdd2801e009aa64b2928bd225ced2f3f5b8"
+    },
+    {
+      "path": "knowledge-base/en/docs/text-raster-t1-evidence.md",
+      "originRole": "First-party paired T1 documentation or structured saved verification projection.",
+      "bytes": 13330,
+      "sha256": "1de307d23447f43d8e69cc8e8a835172d71e9b16500839c62a6817af14ccdf24"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/文字栅格T1证据.md",
+      "originRole": "First-party paired T1 documentation or structured saved verification projection.",
+      "bytes": 11634,
+      "sha256": "be97e15c6a5b3331f8fc9a7a7bd2d3004c3ddef5d51947cfa8f0262a6c32fcc0"
+    },
+    {
+      "path": "knowledge-base/evidence/text-raster-t1-verification.json",
+      "originRole": "First-party paired T1 documentation or structured saved verification projection.",
+      "bytes": 76910,
+      "sha256": "919ee64dbcf5264f0d5f44dda8171805a4360e05a17c235cbd5fbc8a95baa0de"
     }
   ],
-  "fileListScope": "Current explicit source-owned root/package/code/configuration inventory; source-origin itself, original LICENSE, export manifest, verification and KB are separate. Identities are provisional review inputs, not final export approval. Historical original/previous hashes retain their original scope.",
+  "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",
   "repositoryIntegration": {
     "checkedAtUtc": "2026-10-08T12:24:40.073Z",
     "priorPublicProjectionSha256": "aef303142fcb02d05095c48fe37a24170559061dc7c98a6f38b1d226de9aac3a",
@@ -6705,5 +6873,250 @@
     "publicCuration": "scoped_independent_reviews_recorded",
     "prepush": "recorded_separately_in_delivery_verification",
     "verificationRecordPolicy": "Source and document identities are frozen before actual workflow/prepush execution; their later results and remote delivery are recorded separately in the delivery PR."
+  },
+  "textRasterT1WorkPackage": {
+    "date": "2026-10-11",
+    "engineeringLabel": "0.24.0",
+    "deliverable": "V025",
+    "sourceId": "S074",
+    "scope": "DOM-free explicit text raster orchestration, private request/plan authority, genuine Texture leases, bounded retained work and honest cleanup settlement. No browser font provider or TextField implementation.",
+    "packageVersion": "0.0.0",
+    "protocolVersion": "1.0",
+    "implementationOrigin": {
+      "process": "Codex-assisted independent first-party specifications, tests, implementation and scoped review. This observed authoring record does not guarantee global originality or all model training sources.",
+      "copiedHistoricalOrCompetitorImplementationSources": [],
+      "newThirdPartyRegistryDependencies": [],
+      "developmentWorkspaceLink": "@egret/runtime: workspace:* at the root only; unchanged four-package runtime dependency DAG and registry pins.",
+      "license": "Apache-2.0"
+    },
+    "sourceSubjects": [
+      {
+        "path": "package.json",
+        "bytes": 631,
+        "sha256": "9345ffe23a23ab60936d54f02c9c58a396753580f37e55b796ebe58403a00616"
+      },
+      {
+        "path": "pnpm-lock.yaml",
+        "bytes": 8851,
+        "sha256": "78d967eade0029dc518bdc2654479982798af4c65d432b1d1b5312d7d4c43af1"
+      },
+      {
+        "path": "packages/engine/package.json",
+        "bytes": 805,
+        "sha256": "f24878e43919b082a29c788e8bc721fdb7a0582ffc469d49ece04796bb119c0f"
+      },
+      {
+        "path": "packages/engine/src/text.ts",
+        "bytes": 187,
+        "sha256": "910b8b9ec887fdec7b2db706f215e7d19f5f40d5a3beb0d643551706b033a100"
+      },
+      {
+        "path": "packages/runtime/package.json",
+        "bytes": 327,
+        "sha256": "b9294c479d38614dd8866adcd8775f5d6f43c787d9b08c8ef54371e426cb5032"
+      },
+      {
+        "path": "packages/runtime/src/AssetLease.ts",
+        "bytes": 3326,
+        "sha256": "36c298af613284e1daa2501b2e823729c6d25da1a6480c1715d54704c1c04a5c"
+      },
+      {
+        "path": "packages/runtime/src/AssetManager.ts",
+        "bytes": 14584,
+        "sha256": "245a18a19480073855d5e55f3014844fdc5c6f2e03c7cdb8fe49ef897e94c706"
+      },
+      {
+        "path": "packages/runtime/src/assetManagerOwnerState.ts",
+        "bytes": 3778,
+        "sha256": "1519a2193b7e39184e3b9d500fb935f94129da46b2e47899086794b658e4b333"
+      },
+      {
+        "path": "packages/runtime/src/text/budget.ts",
+        "bytes": 4488,
+        "sha256": "6eb700f0eea1f3595a246f0582ca555e1dbb25adf8254831e8a820f851d0ccd3"
+      },
+      {
+        "path": "packages/runtime/src/text/index.ts",
+        "bytes": 172,
+        "sha256": "550f5349821f81ed9257780a1e4b5a409afe52e370c90a5fef6334ec7a06191f"
+      },
+      {
+        "path": "packages/runtime/src/text/plan.ts",
+        "bytes": 12307,
+        "sha256": "e94e7f77aaa3bbc65d08a3963bfafe44c391ac139d3bd9181d55d9b74296d883"
+      },
+      {
+        "path": "packages/runtime/src/text/request.ts",
+        "bytes": 14786,
+        "sha256": "080b358dd86fec5ac6d569914825709896080aa8b7c41828267c39ca29fa3576"
+      },
+      {
+        "path": "packages/runtime/src/text/TextRasterCache.ts",
+        "bytes": 42737,
+        "sha256": "5f9b349ddddb55af4aee1802a28c4b2b5e2aafe93b7dcabc7032a8b531b0b5b7"
+      },
+      {
+        "path": "packages/runtime/src/text/types.ts",
+        "bytes": 6514,
+        "sha256": "98074409d7a370ad2976dcef9635101546a96d697d9eac77397157f0b1106462"
+      },
+      {
+        "path": "tests/text-raster-allocation.test.mjs",
+        "bytes": 1573,
+        "sha256": "15941c677cde4eb04f1cad3bc04a8cdee1f6675d2a39982eb299b501a3128991"
+      },
+      {
+        "path": "tests/text-raster-authority.test.mjs",
+        "bytes": 9262,
+        "sha256": "7446cbf55696d62a23c5da399a899807d1b13ee4633ff74a2ff722d8afd63a02"
+      },
+      {
+        "path": "tests/text-raster-baseline.test.mjs",
+        "bytes": 3519,
+        "sha256": "b01fddbcb5aa8e2229eedd380e33d41f4f333123d4a2f5b736ad06ad890787d8"
+      },
+      {
+        "path": "tests/text-raster-boundaries.test.mjs",
+        "bytes": 8195,
+        "sha256": "b59df1d7f7cd42b56276216cd55ce2be58125ccddf9647ac08682cd89c6b7e8d"
+      },
+      {
+        "path": "tests/text-raster-closing.test.mjs",
+        "bytes": 2659,
+        "sha256": "51486a2bfe0c61abfde9ad6e5912b1d3e462021b613c575b9a830633af27c914"
+      },
+      {
+        "path": "tests/text-raster-idle-delivery.test.mjs",
+        "bytes": 1498,
+        "sha256": "e7fea0f66babf9afc17e61cc789cb9d36f7da4d3fe7cd4797030387d82da2c61"
+      },
+      {
+        "path": "tests/text-raster-materialization.test.mjs",
+        "bytes": 1020,
+        "sha256": "4fdf92f5c304852492fce4dcf967b4578477553f8fcc3430179c2e9fa4148004"
+      },
+      {
+        "path": "tests/text-raster-private.test.mjs",
+        "bytes": 15131,
+        "sha256": "d2dab3aa49a225c006c981ac9e8ff340370f2dec6ea904ab8e0aa3cfbac553f7"
+      },
+      {
+        "path": "tests/text-raster-public-helpers.mjs",
+        "bytes": 6867,
+        "sha256": "1a27bebed5181b855f30f40994ef25336e452cd31ee8dab7beac4a4af6679dac"
+      },
+      {
+        "path": "tests/text-raster-public.test.mjs",
+        "bytes": 62213,
+        "sha256": "c042787209fcdc0a004a347a9f2d457e062d7052f4e67ebc039f0a804c2ad366"
+      },
+      {
+        "path": "tests/text-raster-release-closing.test.mjs",
+        "bytes": 2490,
+        "sha256": "e3384704ced7b186c6d0f094d8d8846f45db9216586f3a8e724693b36d3e322a"
+      },
+      {
+        "path": "tests/text-raster-residency-audit.test.mjs",
+        "bytes": 2527,
+        "sha256": "9e0e06081f9ecc2f7a34efbe7561c223b9166392ae3595a88b8151b815f240c2"
+      },
+      {
+        "path": "tests/types/text-raster-import-negative.ts",
+        "bytes": 1320,
+        "sha256": "220d9c2d64fef0f76b5e57fd114d469cf228a32bbb5dcfb0ac19ba96bc676600"
+      },
+      {
+        "path": "tests/types/text-raster-negative.ts",
+        "bytes": 2794,
+        "sha256": "55312f269ffb588443a5a7f4bc254d5cd0bf06663de6bcc274260bbaec344891"
+      },
+      {
+        "path": "tests/types/text-raster-positive.ts",
+        "bytes": 9092,
+        "sha256": "eb9e5142bfa83e87adbd4e038baf362c768aaa8be21cfd7055664562bcb992a8"
+      },
+      {
+        "path": "tools/check-boundaries.mjs",
+        "bytes": 36542,
+        "sha256": "105e01e501a83b9e7495d9928553cf7a04d65730828330c5f43a0ecfdbb0c29c"
+      },
+      {
+        "path": "tools/check-types.mjs",
+        "bytes": 20160,
+        "sha256": "a09c38b72f6b9ac3d77fc9ed408ad4767cb66d4e9d616d77ef3bca34466ff259"
+      },
+      {
+        "path": "tests/boundaries.test.mjs",
+        "bytes": 35462,
+        "sha256": "e4ab87c8fe3da046f585a5cfab1f24ed99c98f194e96cf045d6997c082e18891"
+      }
+    ],
+    "reviews": [
+      {
+        "identityOnly": "accepted_core_source_review",
+        "bytes": 3529,
+        "sha256": "994361cd791d11f808081b69c2c9de8e301c16fae94542c0a26d075f51403a8b",
+        "status": "identity_only_not_distributed",
+        "scope": "Original separately bounded source or curation review; no later execution retrospectively credited."
+      },
+      {
+        "identityOnly": "critical_english_comments_review",
+        "bytes": 4431,
+        "sha256": "5bdba3bfed0277256e6110853960050121176654b02807e17d13086c730a0bbc",
+        "status": "identity_only_not_distributed",
+        "scope": "Original bounded source review retained the publication-only comment finding; later root comment acceptance is separately identified."
+      },
+      {
+        "identityOnly": "root_independent_comment_proposal_acceptance",
+        "bytes": 6030,
+        "sha256": "dd19ef816cb673ecfa2691c8da4680e4304e8830f6b9463d2057c8397fe39439",
+        "status": "identity_only_not_distributed",
+        "scope": "Original separately bounded source or curation review; no later execution retrospectively credited."
+      },
+      {
+        "identityOnly": "root_independent_paired_guidance_acceptance",
+        "bytes": 8498,
+        "sha256": "3338030ec893bdbc19b9f8307d956822f2f7cb2c0619c484652f5a9377126812",
+        "status": "identity_only_not_distributed",
+        "scope": "Original separately bounded source or curation review; no later execution retrospectively credited."
+      }
+    ],
+    "record": "knowledge-base/evidence/text-raster-t1-verification.json",
+    "publicationGate": "Independent current public-material review, actual final mandatory prepush and remote delivery have separate records. No future result inferred.",
+    "excludedAcceptance": [
+      "browser_font_provider",
+      "TextField",
+      "physical_memory",
+      "phones",
+      "performance",
+      "Native_SDK",
+      "full_Spine",
+      "complete_3D",
+      "complete_R008_V006_migration"
+    ],
+    "currentPublicReview": {
+      "bytes": 5236,
+      "sha256": "9ebbb73ec5bdfc6a91d8fedcbd381f3b14754578b39f84e05772f818cf21fe42",
+      "status": "identity_only_not_distributed",
+      "scope": "Current new/changed T1 paired readings, community entries, guidance, structured registration, saved evidence boundaries, provenance and ten critical English-comment subjects. Unchanged older bodies retain their separately version-bound reviews; inventory totals are not blanket semantic acceptance."
+    },
+    "laterRootMetadataAttestation": true,
+    "sourceFormatSuccessor": {
+      "path": "tools/check-types.mjs",
+      "before": {
+        "bytes": 20161,
+        "sha256": "bef840cf8bc6a9a82e6c44c6f0a14dd2137dc115f97f9a943ca42a63a3104960"
+      },
+      "after": {
+        "bytes": 20160,
+        "sha256": "a09c38b72f6b9ac3d77fc9ed408ad4767cb66d4e9d616d77ef3bca34466ff259"
+      },
+      "change": {
+        "en": "Remove one surplus terminal LF only; all executable and test bytes are unchanged. The precommit whitespace check stopped before commit or network push.",
+        "zh-CN": "仅移除末尾一个多余 LF；全部可执行及测试内容保持原样。提交前空白检查已在提交或网络推送前停止。"
+      },
+      "evidenceScope": "Earlier recorded tests and independent reviews retain their original input identities; current complete prepush and remote delivery remain separate actual records.",
+      "independentFormatSuccessorReview": "recorded_separately"
+    }
   }
 }

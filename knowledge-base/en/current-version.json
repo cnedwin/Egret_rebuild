@@ -256,7 +256,7 @@
   },
   "_localization": {
     "canonicalSource": "当前版本.json",
-    "canonicalSha256": "7f19918343ce0c1852574267e4919cec03937c5c7a24b03dd5c90fc6e334c662",
+    "canonicalSha256": "afbc4644fdd270e165e9d6e43e2d0b420ab9ee1d70b2fed409c80c9814ee740c",
     "role": "read_only_translation",
     "language": "en"
   },
@@ -539,7 +539,7 @@
     "contract": "en/docs/display-content-bounds-contract.md",
     "evidence": "en/docs/display-content-bounds-evidence.md"
   },
-  "latestEngineeringPreview": "0.23.0",
+  "latestEngineeringPreview": "0.24.0",
   "texturedMesh2DImplementation": {
     "version": "0.23.0",
     "status": "bounded_increment_implemented",
@@ -553,5 +553,48 @@
     "phone": false,
     "nativeSDK": false,
     "fullA2": false
+  },
+  "textRasterT1Implementation": {
+    "version": "0.24.0",
+    "status": "bounded_t1_core_and_complete_source_verification_pass_delivery_separate",
+    "contract": "en/docs/text-raster-t1-contract.md",
+    "record": "en/docs/text-raster-t1-evidence.md",
+    "verification": "evidence/text-raster-t1-verification.json",
+    "recordedBehavior": {
+      "genuineBaseline": "1/1",
+      "initialAffectedOldRegressions": "80/80",
+      "preservedPublicFailure": "37/38_T22",
+      "correctedPublicSuccessor": "38/38",
+      "countsAreVersionBoundAndNotAdditive": true,
+      "finalPublic": "38/38",
+      "finalAffectedOldRegressions": "80/80",
+      "privatePlanBudgetUnits": "32/32",
+      "rasterAuthorityIncludingBaseline": "5/5",
+      "sourceBoundaryControls": "19/19",
+      "scannedBoundaryFiles": 387
+    },
+    "finalCurrentSourceReview": "ACCEPTED_BOUNDED_SIX_FINDING_CLOSURE",
+    "currentTypeAndBoundaryAcceptance": "SCOPED_STRICT_TYPES_AND_SOURCE_BOUNDARY_PASS",
+    "completePackageAcceptance": "PENDING",
+    "finalPrepush": "recorded_separately_in_delivery_verification",
+    "remoteDelivery": "recorded_separately_in_delivery_verification",
+    "browserFonts": false,
+    "TextField": false,
+    "nativeGlyphPixels": false,
+    "performance": false,
+    "phone": false,
+    "nativeSDK": false,
+    "fullSpine": false,
+    "fullMigration": false,
+    "laterVerificationPending": {
+      "strictTypes": "PASS_EXACT_POSITIVE_18ORDINARY_9ISOLATED",
+      "completePackage": "PASS_BOUNDED_EXISTING_CORE_SOURCE_VERIFY",
+      "lastWholeCoreRun": "fullVerify-r3:2037tests;2037pass;0fail",
+      "earlierWholeCoreFailurePreserved": "fullVerify-r2:2037tests;1832pass;205fail",
+      "prepush": "recorded_separately_in_delivery_verification",
+      "publicCuration": "recorded_separately_in_delivery_verification",
+      "remote": "recorded_separately_in_delivery_verification",
+      "futurePassInferred": false
+    }
   }
 }
