@@ -1,5 +1,6 @@
 import type { DisplayObject } from "./DisplayObject.js";
 import type { DisplayObjectContainer } from "./DisplayObjectContainer.js";
+import type { Stage } from "./Stage.js";
 import { EgretError } from "./EgretError.js";
 
 // Internal state authority: validation/commit never uses overridable getters
@@ -13,6 +14,8 @@ const childLists = new WeakMap<DisplayObjectContainer, DisplayObject[]>();
 export function registerNode(node: DisplayObject): void { nodes.add(node); }
 export function registerContainer(node: DisplayObjectContainer): void { childLists.set(node, []); }
 export function markStageRoot(node: DisplayObject): void { roots.add(node); }
+/** Identity-only authentication never reads a forged or proxied Stage. */
+export function isStageRoot(value: unknown): value is Stage { return roots.has(value as object); }
 export function isDisplayNode(value: object): value is DisplayObject { return nodes.has(value); }
 export function isTerminated(node: DisplayObject): boolean { return terminated.has(node); }
 export function parentOf(node: DisplayObject): DisplayObjectContainer | undefined { return parents.get(node); }

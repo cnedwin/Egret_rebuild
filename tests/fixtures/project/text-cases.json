@@ -1,0 +1,19 @@
+{
+  "invalid": ["", "{\"a\":1,\"\\u0061\":2}", "{\"x\":{\"k\":0,\"k\":1}}", "{\"data\":{\"x\":1,\"\\u0078\":2}}", "{}x", "{} {}", "/*x*/{}", "{\"a\":1,}", "[1,]", "﻿{}", "01", "+1", "NaN", "Infinity", "1e", "0x1", "{\"\\ud800\":0}", "\"\\udfff\""],
+  "numeric": [
+    {"raw":"1.0","safe":true,"negativeZero":false},
+    {"raw":"1e0","safe":true,"negativeZero":false},
+    {"raw":"1000e-3","safe":true,"negativeZero":false},
+    {"raw":"9007199254740991","safe":true,"negativeZero":false},
+    {"raw":"9007199254740991.1","safe":false,"negativeZero":false},
+    {"raw":"9007199254740992","safe":false,"negativeZero":false},
+    {"raw":"1e-1","safe":false,"negativeZero":false},
+    {"raw":"-1","safe":false,"negativeZero":false},
+    {"raw":"-0","safe":false,"negativeZero":true},
+    {"raw":"-0.0","safe":false,"negativeZero":true},
+    {"raw":"-0e999","safe":false,"negativeZero":true},
+    {"raw":"0e999","safe":true,"negativeZero":false},
+    {"raw":"1e999","safe":false,"negativeZero":false},
+    {"raw":"1e-999","safe":false,"negativeZero":false}
+  ]
+}

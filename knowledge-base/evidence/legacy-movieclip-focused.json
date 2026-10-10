@@ -1,0 +1,50 @@
+{
+  "schema": "egret.legacy-movieclip-focused/0.1",
+  "component": "legacy-movieclip-single-atlas-0.1",
+  "apiVisibility": "internal-module-only",
+  "observationKind": "cpu-conversion-and-sequence-factory-readmission",
+  "source": {
+    "path": "packages/project/src/legacy-movieclip-plan.ts",
+    "bytes": 17420,
+    "sha256": "a6cd539126753989fb0f79cdfa0bf674d83d62e8c713ad173c3aca0e8d4117bb"
+  },
+  "test": {
+    "path": "tests/legacy-movieclip-plan.test.mjs",
+    "bytes": 27671,
+    "sha256": "59a695124ce26d051eb4d2d165b7285f2825c1345bcf13cfb3038cd36b717933"
+  },
+  "initialStub": {
+    "path": "packages/project/src/legacy-movieclip-plan.ts",
+    "bytes": 2640,
+    "sha256": "2196a7b90951f923b095dd139d646b817e22e83065ead312cc0f83ebe4afb87b"
+  },
+  "environment": { "node": "v24.19.0", "typescript": "7.0.2" },
+  "focusedArguments": ["--test", "--test-isolation=none", "--test-reporter=tap", "tests/legacy-movieclip-plan.test.mjs"],
+  "red": {
+    "buildInvocations": 1, "buildExit": 0, "focusedInvocations": 1, "focusedExit": 1,
+    "tests": 28, "pass": 0, "fail": 28, "cancelled": 0, "skipped": 0, "todo": 0,
+    "failureKind": "missing-behavior-port",
+    "laterTableAssertionsFullyReached": false
+  },
+  "green": {
+    "buildInvocations": 1, "buildExit": 0, "focusedInvocations": 1, "focusedExit": 0,
+    "tests": 28, "pass": 28, "fail": 0, "cancelled": 0, "skipped": 0, "todo": 0
+  },
+  "sourceReview": {
+    "status": "SPEC_QUALITY_REVIEW_COMPLETE_NO_ACTIONABLE_P1_P2",
+    "findingCount": 0, "observationKind": "source-and-recorded-focused-evidence", "productRerun": false
+  },
+  "directObservation": {
+    "processClose": true, "stdoutEOF": true, "stderrEOF": true,
+    "timeout": false, "streamOverflow": false, "observerFailure": false,
+    "sourceRuntimeCompilerIdentitiesStable": true, "runtimeCompilerInputCount": 7,
+    "focusedSelectedEmitsStable": true, "focusedSelectedEmitCount": 5,
+    "completeImportClosure": false, "completeOSAncestry": false, "allCompilerDescendantRetirement": false
+  },
+  "heldGates": {
+    "defaultWorkerRegression": "UNRUN", "repositoryRegression": "UNRUN",
+    "atlasReadingDecoding": "UNRUN", "exporterProjectCoverage": "UNRUN",
+    "rendererOffsetPlacement": "UNRUN", "labelEventBlankPlayback": "UNRUN",
+    "nativePixels": "UNRUN", "devicePerformance": "UNRUN", "fullMigration": "UNRUN"
+  }
+}

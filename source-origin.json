@@ -87,6 +87,12 @@
         "sha256": "d2c02d0443afea85a1f56d8e98a11777f625bfad9bd011f632ba526f38428d3c",
         "status": "identity-only/not-distributed",
         "role": "recorded prototype fix-1 execution log"
+      },
+      {
+        "identityOnly": "project-transaction-core-frozen-contract.en",
+        "sha256": "abdc50dd32d59b243cd481fd28c3c5133f555cde5f9e8a708a055984b98344ab",
+        "status": "identity-only/not-distributed",
+        "role": "Frozen first-party headless project format/transaction specification; implementation restricted to foundation Task 1"
       }
     ],
     "implementationCodeSources": [],
@@ -106,6 +112,18 @@
         "repository": "https://github.com/mourner/robust-predicates",
         "licensePath": "third-party/robust-predicates-3.0.3.LICENSE",
         "scope": "External engine dependency; root and Canvas import graphs remain free of GPU and this dependency."
+      },
+      {
+        "name": "jsonc-parser",
+        "version": "3.3.1",
+        "license": "MIT",
+        "publicEntry": "createScanner and visit from jsonc-parser",
+        "role": "Private headless scanner/visitor foundation; acceptance and project semantics remain first-party adapters",
+        "patched": false,
+        "sourceCopiedToFirstParty": false,
+        "repository": "https://github.com/microsoft/node-jsonc-parser",
+        "licensePath": "third-party/jsonc-parser-3.3.1.LICENSE",
+        "scope": "Actual installed public-root foundation admission only; strict declarations and built-foundation denied-host graph checked. No completed project/store, browser or native ESM delivery acceptance."
       }
     ],
     "workspace": {
@@ -116,6 +134,9 @@
       "engine": [
         "@egret/contracts",
         "@egret/runtime"
+      ],
+      "project": [
+        "@egret/contracts"
       ]
     }
   },
@@ -170,8 +191,8 @@
   ],
   "dependencyLock": {
     "path": "pnpm-lock.yaml",
-    "sha256": "ed9759a4ae0d1ca6e2d707fd1a324d1eff3b326cb2a8c827eecf14e3ebfb53d4",
-    "note": "Exact robust-predicates 3.0.3 and fixed tool versions recorded in the lock. Installation disabled lifecycle scripts; observed installed artifacts and browser requests have separate evidence."
+    "sha256": "ce4b58d9705804e32ebea4f03ff77e4f6550ef116d48378bcbed681d1ca05c97",
+    "note": "Exact robust-predicates 3.0.3 and fixed tool versions recorded in the lock. Installation disabled lifecycle scripts; observed installed artifacts and browser requests have separate evidence. Exact jsonc-parser 3.3.1 added with scripts disabled; installed package artifact, public declarations and foundation graph have separate Task 1 evidence."
   },
   "hostCloseClarification": "Only successful close resolution proves safe surface return. Normal or late rejection keeps quarantine; no force-release/recovery override in this slice.",
   "researchBoundary": {
@@ -1155,9 +1176,10 @@
     },
     {
       "path": "tools/verify-webgpu.mjs",
-      "sha256": "99e85364bbb2619f8e83e9877e68acce7443bc23b320fe19f7cd953c8b5b9b26",
-      "bytes": 21474,
-      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope."
+      "sha256": "9d1e0c3ffb1c74a55796023bbfcb661e61c89006466e441a308c26bc4bd3b05d",
+      "bytes": 21620,
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
+      "previousRevisionSha256": "99e85364bbb2619f8e83e9877e68acce7443bc23b320fe19f7cd953c8b5b9b26"
     },
     {
       "path": "tools/verify.mjs",
@@ -1413,6 +1435,1404 @@
       "canonicalSha256": "16218d1dfa48d91da108ce69f2f4a4a3620d2a8e4cae95dc436a2450330ca726",
       "reviewedCheckpoint": "9d046bfff0c3bbee4d5a9dd7623d2da8c8a9229e",
       "scope": "Factual integration of the actual scoped 9d checkpoint correction and 1aa native-artifact review. This attestation is authored operational metadata; the supplied reviewers did not review these subsequently generated attestation bytes or execute the browser gate. Semantic meaning acceptance is separate from pending quality/digest/prepush/publication closure."
+    }
+  },
+  "projectFoundation": {
+    "status": "Task 1 foundation implemented; independent controller review and later full API/publication gates pending",
+    "schemaAuthority": "packages/contracts/schema/project-format.schema.json",
+    "schemaSha256": "85617c17f23323bf4a0fd8ef31abba6040b244f6c199c62cd40f3a389bbef789",
+    "generator": "tools/generate-project-format.mjs",
+    "generated": [
+      "packages/contracts/src/ProjectFormat.generated.ts",
+      "packages/project/src/format-shape.generated.ts"
+    ],
+    "literalApiFixture": "tests/fixtures/project/api-signatures.txt",
+    "literalApiSha256": "d4ea9fe100ecef6774e81571b268d9f0b47e289ea9febdd456ec4ec28bfcf7f3",
+    "dependencyArtifactSha256": "4a0315b8671e7463bae7af7c142cdf19e9aa7ba39eb36dc2df383b8648e3cbc9",
+    "implementation": "AI-assisted first-party schema/generator/package wiring and independent literal fixtures; no upstream implementation copied into first-party source",
+    "runtimeSurface": "Project root type-only; private foundation values createScanner/visit only; upstream const enums type-only",
+    "limits": "No parser adapters, ordered semantic validator, canonicalizer, transaction store, browser/Native/editor/migration/performance completion; publication inventory belongs to the final project milestone"
+  },
+  "projectCoreEngineeringPreview": {
+    "label": "0.14.0",
+    "packageVersion": "0.0.0",
+    "protocolVersion": "1.0",
+    "status": "documentation-authoring checkpoint: local engineering preview; final Task7 independent immutable review, whole-branch review and delivery pending; subsequent evidence tracked separately",
+    "acceptedImplementationCheckpoints": [
+      "43c66101bf5791ff9039162eabd980d248e2b8c0",
+      "fafbe32d1601b5b230dcb4a38e5fdeb50a657b4f"
+    ],
+    "contract": "knowledge-base/docs/工程事务核心合同.en.md",
+    "evidence": "knowledge-base/docs/工程事务核心实现证据.en.md",
+    "historicalSpecification": "firstParty.internalInputs/project-transaction-core-frozen-contract.en; original identity retained",
+    "historicalFoundation": "projectFoundation is the unchanged Task1 checkpoint, not current completion status",
+    "authorship": "AI-assisted first-party schema, descriptors, strict input adapters, validation, canonical bytes, atomic transactions and iterative journals; Microsoft scanner/visitor attribution remains separate",
+    "independentOracleScope": "20 author-run oracle/sensitivity checks, including10 guarded copied-artifact mutations with named failures and restored-copy success; no self-granted independent implementation review",
+    "memoryScope": "nine separate-process public API observations; observed heap/RSS and OS lifetime RSS are distinct; polling/GC can miss transient peaks; no RAM/performance/OOM threshold",
+    "nativeBoundary": "Native public-root ESM import uses shipped dependency CJS interop; direct upstream shipped ESM entry fails extensionless imports; VM bridge is simulated module integration, not bundler/browser/Native SDK delivery",
+    "publicRuntimeValues": [
+      "DEFAULT_PROJECT_LIMITS",
+      "createProjectStore",
+      "openProjectHistory",
+      "parseProjectSnapshot",
+      "parseProjectTransaction",
+      "serializeProjectSnapshot"
+    ],
+    "publicTypeCount": 29,
+    "internalDag": "project -> contracts only",
+    "knownHarnessWarning": "Exact Experimental VM Modules warning retained; successful unexpected stderr is rejected",
+    "limitations": "Unknown kinds/domain schemas and content/digest/authorization unchecked; unauthenticated journal, Proxy effects and recoverable OOM unsupported; V003/editor/R008/V006/phones/native/3D/production performance remain unaccepted",
+    "historicalWebGPU": "renderingRevision and all original0.13 source/spec/review/native evidence are unchanged",
+    "delivery": "not performed by Task7",
+    "npmPublication": "not performed"
+  },
+  "textureA1CpuPreview": {
+    "label": "0.15.0",
+    "packageVersion": "0.0.0",
+    "status": "root_curated_cpu_preview_publication_pending",
+    "sourceCommit": "c0c97c957b1d4446d14ec46dc474b8c2790a899a",
+    "documents": [
+      {
+        "path": "docs/texture-a1.en.md",
+        "sha256": "f1099891549f686c91e8a270bc556090f6b437a8186c6b8ce57933436fd9cb77"
+      },
+      {
+        "path": "docs/texture-a1.zh-CN.md",
+        "sha256": "ff5bc165c67e4154f33dce3586122813b9af2c5d1d725e07e9710ba7941cbc52"
+      },
+      {
+        "path": "docs/evidence/texture-a1.en.md",
+        "sha256": "244ad51397c9849d114d83d9363a99a51bfa248f632d5e8742d79789cd27ff6f"
+      },
+      {
+        "path": "docs/evidence/texture-a1.zh-CN.md",
+        "sha256": "e17f9096b9989cbd7904263e42b0e79031cac9d1d3de33e62852f28daa0fa070"
+      }
+    ],
+    "sourceFiles": [
+      {
+        "path": "packages/contracts/src/ImageData2D.ts",
+        "sha256": "8e093ee8b06d6c44eae0248dd140372c8da0f8efd01523a880d67a09542fd134"
+      },
+      {
+        "path": "packages/engine/rendering/RectangleFrame2D.ts",
+        "sha256": "8117e8629840906ebacc6d8ea04f7413402f3624fc4bb4c2c663eea166f3f69a"
+      },
+      {
+        "path": "packages/runtime/src/Texture.ts",
+        "sha256": "0022669cef2b2df2e3d3ddbb85378247297b3049e7708f0e26a362af62884cc5"
+      },
+      {
+        "path": "packages/runtime/src/Bitmap.ts",
+        "sha256": "1db166f88e603c3fefb537a17220dc0de391e6e96b4736284a684fcdda3079fe"
+      },
+      {
+        "path": "packages/runtime/src/imageFrameBudget.ts",
+        "sha256": "6b1286470f486905241905228fadfd2abcaa5b7bfd0f986e3975fea21ea0dcf3"
+      },
+      {
+        "path": "packages/engine/rendering/copyMixedFrame2D.ts",
+        "sha256": "addd9c4bea9648bdf15e3f8da6873958a54080495f13a4d7e0ded2164c944365"
+      },
+      {
+        "path": "packages/engine/rendering/imageFrameBudget.ts",
+        "sha256": "302063eb2a42f8543a1b728b10546618795b1d97f491ad4752e10f10d72a82e8"
+      },
+      {
+        "path": "packages/engine/rendering/prepareImages2D.ts",
+        "sha256": "1749ecc606a7a3f412b254a332842cbeadce2fab6b91a438ee685dd143a9e3ab"
+      },
+      {
+        "path": "packages/engine/rendering/packImageVertices2D.ts",
+        "sha256": "99044ea7ed990a02251e1b5ecf67bd0f838af7783e4794670349c5bad5a4911a"
+      },
+      {
+        "path": "packages/engine/rendering/packedPosition2D.ts",
+        "sha256": "089777bcf9cb4dde92354091db7bea205f6dd616ee26a16d3b4a40ff2087fd26"
+      },
+      {
+        "path": "packages/contracts/src/RenderFrame2D.ts",
+        "sha256": "621103ce9ef7dbe0850c049fdb26972cb61d555f8597b11c60e6eb36677e0b93"
+      },
+      {
+        "path": "packages/runtime/src/AssetLease.ts",
+        "sha256": "4785f4ef92606d4f183d0a11b7386191c8be4626b94799c10dad5284f137bb3f"
+      },
+      {
+        "path": "packages/engine/rendering/copyFrame2D.ts",
+        "sha256": "a3b6623673cccb61f051abf0da780acbd2fc2cf8816efa452a73fa20dae891c6"
+      },
+      {
+        "path": "packages/engine/rendering/prepareRectangles2D.ts",
+        "sha256": "4ff620e1670d594550534bd8ef70366ee0fda6c46307116060154e8415711473"
+      },
+      {
+        "path": "packages/engine/web/copyCanvasFrame.ts",
+        "sha256": "d932b8cb92355963d689a09133a64ed5b69ae76e8027d15698469c5af6158223"
+      },
+      {
+        "path": "packages/runtime/src/displayTreeState.ts",
+        "sha256": "ce6c49660bc825bece18cc840b2b042a3832c8bc914ad5101849798b477a285d"
+      },
+      {
+        "path": "packages/runtime/src/frameCapture.ts",
+        "sha256": "7d71a6b3e37b4091dc118b3fb73cf4fdecc01c7b86e36ebdffd94152bc21a776"
+      },
+      {
+        "path": "packages/engine/src/Engine.ts",
+        "sha256": "e9e5b082a2f2cfd4f87bbfec13fbc604df887ba9ed82a9ef0a8b728b3261bfef"
+      },
+      {
+        "path": "packages/engine/web/webgpuPass.ts",
+        "sha256": "26f9cff856de0e868a945cbe55379013877eb3046bc16f41d86776905278fcf5"
+      }
+    ],
+    "authorship": "Independent first-party CPU image, Texture/Bitmap, frame ownership and attributed geometry implementation. Shared private helpers extract the existing Egret rectangle arithmetic while retaining its numerical policy and caller ownership boundaries.",
+    "dependencyBoundary": "No new dependencies or upstream source copies in A1. Orientation continues to use the separately credited robust-predicates 3.0.3 dependency under Unlicense; historical third-party source records and acknowledgements remain unchanged.",
+    "evidenceScope": "Actual CPU factory, entitlement, capture, mixed snapshot, independent geometry and packing evidence; exact historical receipt subjects and subsequent scoped fix evidence are described in the paired evidence documents. Injected host rejection tests do not certify browser image sampling. Fresh task reviews and whole-A1 review have separate subjects.",
+    "limitations": "A1 is a CPU preview. Production Canvas/WebGPU image sampling, browser precision bounds, GPU image reservations/settlement, phones, native SDK, editor, text, animation, 3D and complete migration/performance acceptance remain outside this slice. Curation performs no remote submission; public delivery requires separate fresh remote-state and candidate gates.",
+    "remoteSubmission": "not_performed_by_curation"
+  },
+  "textureA1BoundedAdmissionFix": {
+    "sourceCommit": "602370f690e715332758bb1baa9ac790d39ce64f",
+    "foundationCommit": "af94a9a74be76d06a0964f9003b33af948f30a6a",
+    "documents": [
+      {
+        "path": "docs/texture-a1.en.md",
+        "sha256": "480ee726c6da4171c438f90bb5b009b7e9b0a06230edb4f9e5c7e2e52a8bd4e1"
+      },
+      {
+        "path": "docs/texture-a1.zh-CN.md",
+        "sha256": "136c50009552b9241ac2cec06307d6571120bd73c748c4867809dc0e4a63c052"
+      },
+      {
+        "path": "docs/evidence/texture-a1.en.md",
+        "sha256": "210d10797a2e7189f65f4aee2dbabfa71726d6436d7b7a98e180ed7cd8983916"
+      },
+      {
+        "path": "docs/evidence/texture-a1.zh-CN.md",
+        "sha256": "de4bc2c62e7049208c75b336cbe4adc2df1ed4820f979cd55a7bde97212d25fd"
+      }
+    ],
+    "sourceFiles": [
+      {
+        "path": "packages/engine/rendering/copyMixedFrame2D.ts",
+        "sha256": "919f38d2c972c770f88d2ca9695e066895e790e2425b3935098d3743ba29cb61"
+      },
+      {
+        "path": "packages/engine/rendering/imageFrameBudget.ts",
+        "sha256": "cb4f33b67f24d95430a334d4d9381c405e6ac7f75ffc419372a3edd1adc5f803"
+      }
+    ],
+    "authorship": "First-party bounded table admission and contributor-facing CPU texture documentation. Existing rectangle geometry and robust-predicates attribution remain unchanged.",
+    "behavior": "Reject safe-integer image table length above 64 before allocation or indexed reads; authenticate all admitted entries before payload, view and geometry work.",
+    "evidenceScope": "The paired evidence documents distinguish the unchanged-production 29-test RED with five intended failures, changed-source focused 41/41, type and direct 237-file boundary checks, and earlier historical full-suite subjects.",
+    "semanticReview": {
+      "status": "reviewed_with_scope",
+      "method": "Root full read of four current language documents and paired writer report, exact declarations and opaque identifier parity, current source/comment readback and reversible six-field localization refresh.",
+      "scope": "Bounded admission behavior, ownership, independent literals, retained failures, diagnostic qualifications and public contributor wording. This author integration is separate from the pending independent scoped fix review."
+    },
+    "qualityStatus": "scoped_fix_review_pending",
+    "publicationStatus": "final_prepush_and_delivery_pending",
+    "limitations": "CPU preview only. Browser image sampling, GPU image submission lifetime, target-device performance, native SDK, editor, 3D and full migration remain outside this change."
+  },
+  "textureA1EvidenceSpacing": {
+    "sourceCommit": "1765aac08ae2b79e704366c628baed6ed4d0e54a",
+    "path": "docs/evidence/texture-a1.en.md",
+    "beforeSha256": "210d10797a2e7189f65f4aee2dbabfa71726d6436d7b7a98e180ed7cd8983916",
+    "afterSha256": "b0a6021bc64726b98b439d393194396419a2705142d8f0b6969a1eb672c4a80c",
+    "change": "One ASCII space separates the historical commit identifier from its preceding English word. Historical identifier value, meaning and executable bytes are unchanged.",
+    "validation": "The first final prepush stopped at publication identifier parity before any engine suite ran. Exact existing checker identifier multiplicities now match the Chinese evidence document; fresh aggregate result is recorded separately.",
+    "qualityStatus": "scoped_fix_review_pending",
+    "publicationStatus": "fresh_prepush_pending"
+  },
+  "engineeringPreview": {
+    "label": "0.16.0",
+    "curatedAt": "2026-10-10",
+    "state": "AUTHOR_CURATED_FINAL_REVIEW_PREPUSH_DELIVERY_PENDING",
+    "sourceBaseCommit": "a3fb6c2d6d6b7499d1731a1127a85ea4354df0b9",
+    "packageVersion": "0.0.0",
+    "protocolVersion": "1.0",
+    "historicalCatalogScope": "LEGACY_FILES_AND_RESULTS_KEEP_ORIGINAL_CHECKPOINT_IDENTITIES",
+    "originalInputBoundaryScope": "RECORDED_HISTORICAL_CORE_ONLY_NOT_GLOBAL_RES_RESEARCH_EXCLUSION",
+    "implementationOrigin": "INDEPENDENT_FIRST_PARTY_CONTRACT_AND_FIXTURES",
+    "compatibilityContext": {
+      "kind": "FOUNDER_SUPPLIED_HISTORICAL_RES_DECLARATION_SEMANTICS",
+      "historicalVersionModuleClosure": "UNVERIFIED",
+      "historicalPrivateSourceDistributed": false
+    },
+    "dependencies": {
+      "jsoncParser": {
+        "name": "jsonc-parser",
+        "version": "3.3.1",
+        "publicRootAPIs": [
+          "createScanner",
+          "visit"
+        ],
+        "license": "MIT",
+        "notice": "third-party/jsonc-parser-3.3.1.LICENSE"
+      },
+      "robustPredicates": {
+        "name": "robust-predicates",
+        "version": "3.0.3",
+        "publicRootAPI": "orient2d",
+        "license": "Unlicense",
+        "notice": "third-party/robust-predicates-3.0.3.LICENSE"
+      }
+    },
+    "evidence": [
+      {
+        "path": "knowledge-base/evidence/core-progress-0.16.0.json",
+        "bytes": 8599,
+        "sha256": "755b7aa1c3433ba6c832f8023a9be2c3310cd63485d26f50c9f18d30dda83146"
+      },
+      {
+        "path": "knowledge-base/evidence/3d-cpu-source-verification.json",
+        "bytes": 8444,
+        "sha256": "b34934905d462e47bee3abe556323f66ee3aaf8e017c2e6be3cbe116ba5e0435"
+      },
+      {
+        "path": "knowledge-base/evidence/legacy-res-declarations-verification.json",
+        "bytes": 3761,
+        "sha256": "6997223146b32726cb95705012541109a72e920d3fda985233ca8e58df79ce46"
+      }
+    ],
+    "currentNamedCodeIdentities": [
+      {
+        "path": "packages/engine/web/imageProjections2D.ts",
+        "bytes": 6384,
+        "sha256": "28ffdfb517c38ebb4a260dd34368be927a21830db43f8e098da64ff7db84d5da"
+      },
+      {
+        "path": "packages/engine/rendering/prepareMixedDraws2D.ts",
+        "bytes": 3128,
+        "sha256": "5528c5b1f951a9e5f574320f44bedabd5ec37b9d9cb13efd0925032822a75316"
+      },
+      {
+        "path": "packages/engine/web/webgpuImagePass.ts",
+        "bytes": 2620,
+        "sha256": "586dfff3ef870da41cba08cce34de18fdc570cb31088bd9dab4cd8cb474b01e2"
+      },
+      {
+        "path": "packages/engine/rendering/packImageVertices2D.ts",
+        "bytes": 2974,
+        "sha256": "1db7c107e094ae239eb77af042e82e32238f8001b76dbe466d2721a11264353d"
+      },
+      {
+        "path": "packages/engine/web/webgpuLifetime.ts",
+        "bytes": 2109,
+        "sha256": "2d4bda7be618e088bb414f9964c25fe0624af5186b41342fe053457567b25512"
+      },
+      {
+        "path": "packages/engine/web/CanvasHost.ts",
+        "bytes": 11094,
+        "sha256": "9686477da8e6bc88ce6f47b673c37c92c01b93814e96dc23cb875a5431a69eff"
+      },
+      {
+        "path": "packages/engine/web/copyCanvasFrame.ts",
+        "bytes": 13543,
+        "sha256": "03e8d3110915aac30fcd6908c4a5d6f15cfc37f4f9e4697baeadd2f769ca67ef"
+      },
+      {
+        "path": "packages/engine/web/WebGPUHost.ts",
+        "bytes": 50484,
+        "sha256": "4542c09398bd48d6f519ddaa5841325193e428249872c666e399ade3fb330909"
+      },
+      {
+        "path": "packages/engine/web/canvasImageProjection.ts",
+        "bytes": 1220,
+        "sha256": "0d8bec0566c69f69e462f14c30507abe182dcdfded7fbf3c83abdb71e4adc23e"
+      },
+      {
+        "path": "tools/texture-oracle.mjs",
+        "bytes": 3375,
+        "sha256": "ee213c00a7956ca55bf4a75ee88c6cb92879ec27a2792aa2d41e02c9c4322d65"
+      },
+      {
+        "path": "tests/texture-oracle.test.mjs",
+        "bytes": 11182,
+        "sha256": "c951f1934b43a3ba8d02b0df2a4e0302fa667244cdb622f65ae1e40653d00678"
+      },
+      {
+        "path": "packages/engine/rendering/projection3D.ts",
+        "bytes": 7909,
+        "sha256": "303fbf2eb8486a106f1372bab299d9ca56de9b4262800978617b1245fdf3af59"
+      },
+      {
+        "path": "tests/projection3d.test.mjs",
+        "bytes": 18431,
+        "sha256": "3c7e4968fcbc00c320fce1e576eb6bbdb47f7f33d469702eaa7a27c4078930a6"
+      },
+      {
+        "path": "packages/engine/rendering/matrix4.ts",
+        "bytes": 4834,
+        "sha256": "7bbf23719fc7d9566276778281f2e22ae84c658d3181474d8d50ad6dc08ea27c"
+      },
+      {
+        "path": "tests/matrix4.test.mjs",
+        "bytes": 17574,
+        "sha256": "b40dbdd65f856cafe680956c8e1d8985468c7b85ee32f60fb69ff4d01f116fc4"
+      },
+      {
+        "path": "packages/engine/rendering/meshGeometry3D.ts",
+        "bytes": 6944,
+        "sha256": "2a0d9ef6fb10b08c31b6caad95d1a5517aac3641631335a6cfaf4b4e31daf186"
+      },
+      {
+        "path": "tests/mesh-geometry-3d.test.mjs",
+        "bytes": 17070,
+        "sha256": "5d842624a5a55fbb5e65f792d06d0af4bb318aad57b0bb2cf6b2195bd6b96466"
+      },
+      {
+        "path": "packages/engine/rendering/packMeshGeometry3D.ts",
+        "bytes": 5585,
+        "sha256": "b17b7ff26be2bcf2fb31edd52ae72a9367019b5d1af8481cdb63f9b1b3464f28"
+      },
+      {
+        "path": "tests/mesh-packing-3d.test.mjs",
+        "bytes": 16265,
+        "sha256": "eca21300ecfa475651f6107fd9a441d908c4dd80871e1e56fdb8519ddba44fd6"
+      },
+      {
+        "path": "tools/check-boundaries.mjs",
+        "bytes": 13145,
+        "sha256": "418fdc939fe865875c1606340ff0bbc574f7ed1151c03c66ab51af2dfb28487a"
+      },
+      {
+        "path": "packages/project/src/legacy-res-json.ts",
+        "bytes": 5844,
+        "sha256": "fcb1f897cd8717937c43b4c6e03a1bf8571952fab19f68a5deb6d890abd38f6d"
+      },
+      {
+        "path": "packages/project/src/legacy-res-report.ts",
+        "bytes": 13722,
+        "sha256": "f9b2c7fdac70d6af488b51ad4ecb795c19bbbf062383cf83a5da64d1cc3ee98e"
+      },
+      {
+        "path": "tests/legacy-res-report.test.mjs",
+        "bytes": 20737,
+        "sha256": "dfa04d0ba80428d90c45e9d31fdbba7eb02fb2f23653892f63ae3e4e4d43d803"
+      }
+    ],
+    "criticalEnglishCommentIdentities": [
+      {
+        "path": "packages/contracts/src/CancellationSignal.ts",
+        "bytes": 507,
+        "sha256": "6a9e5f07b549ec50c2a5c50915309e8de6fba2d943f59a0d7b54b079e14584b3"
+      },
+      {
+        "path": "packages/contracts/src/Diagnostic.ts",
+        "bytes": 485,
+        "sha256": "ce61e4d90319f55febc2782ca5e1a7329984cf6cfdf14955cc3a20dbdd5920ad"
+      },
+      {
+        "path": "packages/contracts/src/Disposable.ts",
+        "bytes": 399,
+        "sha256": "76d74cd41b6e136ea840c7d8d05273520ce7d41031a7820dd4ddabc73be947db"
+      },
+      {
+        "path": "packages/contracts/src/HostAdapter.ts",
+        "bytes": 840,
+        "sha256": "3c8289a85e04e34be3782156244cc253792eff1b41629758d54cd1692c64c2ae"
+      },
+      {
+        "path": "packages/contracts/src/ImageData2D.ts",
+        "bytes": 6489,
+        "sha256": "8e093ee8b06d6c44eae0248dd140372c8da0f8efd01523a880d67a09542fd134"
+      },
+      {
+        "path": "packages/contracts/src/ProjectFormat.generated.ts",
+        "bytes": 4079,
+        "sha256": "55fea1151508e8c009b6d777cd38b5c76763439676f4dec476ce2fdef31834af"
+      },
+      {
+        "path": "packages/contracts/src/RenderFrame2D.ts",
+        "bytes": 1692,
+        "sha256": "621103ce9ef7dbe0850c049fdb26972cb61d555f8597b11c60e6eb36677e0b93"
+      },
+      {
+        "path": "packages/engine/rendering/RectangleFrame2D.ts",
+        "bytes": 294,
+        "sha256": "8117e8629840906ebacc6d8ea04f7413402f3624fc4bb4c2c663eea166f3f69a"
+      },
+      {
+        "path": "packages/engine/rendering/copyFrame2D.ts",
+        "bytes": 7467,
+        "sha256": "a3b6623673cccb61f051abf0da780acbd2fc2cf8816efa452a73fa20dae891c6"
+      },
+      {
+        "path": "packages/engine/rendering/copyMixedFrame2D.ts",
+        "bytes": 4109,
+        "sha256": "919f38d2c972c770f88d2ca9695e066895e790e2425b3935098d3743ba29cb61"
+      },
+      {
+        "path": "packages/engine/rendering/imageFrameBudget.ts",
+        "bytes": 1813,
+        "sha256": "cb4f33b67f24d95430a334d4d9381c405e6ac7f75ffc419372a3edd1adc5f803"
+      },
+      {
+        "path": "packages/engine/rendering/matrix4.ts",
+        "bytes": 4834,
+        "sha256": "7bbf23719fc7d9566276778281f2e22ae84c658d3181474d8d50ad6dc08ea27c"
+      },
+      {
+        "path": "packages/engine/rendering/meshGeometry3D.ts",
+        "bytes": 6944,
+        "sha256": "2a0d9ef6fb10b08c31b6caad95d1a5517aac3641631335a6cfaf4b4e31daf186"
+      },
+      {
+        "path": "packages/engine/rendering/packImageVertices2D.ts",
+        "bytes": 2974,
+        "sha256": "1db7c107e094ae239eb77af042e82e32238f8001b76dbe466d2721a11264353d"
+      },
+      {
+        "path": "packages/engine/rendering/packMeshGeometry3D.ts",
+        "bytes": 5585,
+        "sha256": "b17b7ff26be2bcf2fb31edd52ae72a9367019b5d1af8481cdb63f9b1b3464f28"
+      },
+      {
+        "path": "packages/engine/rendering/packedOrientation.ts",
+        "bytes": 313,
+        "sha256": "fdcedb1464a03dd39c6da6cd8a77596d6be33b95b0ba63ac907859a0e02c181b"
+      },
+      {
+        "path": "packages/engine/rendering/packedPosition2D.ts",
+        "bytes": 725,
+        "sha256": "089777bcf9cb4dde92354091db7bea205f6dd616ee26a16d3b4a40ff2087fd26"
+      },
+      {
+        "path": "packages/engine/rendering/prepareImages2D.ts",
+        "bytes": 4139,
+        "sha256": "1749ecc606a7a3f412b254a332842cbeadce2fab6b91a438ee685dd143a9e3ab"
+      },
+      {
+        "path": "packages/engine/rendering/prepareMixedDraws2D.ts",
+        "bytes": 3128,
+        "sha256": "5528c5b1f951a9e5f574320f44bedabd5ec37b9d9cb13efd0925032822a75316"
+      },
+      {
+        "path": "packages/engine/rendering/prepareRectangles2D.ts",
+        "bytes": 10705,
+        "sha256": "4ff620e1670d594550534bd8ef70366ee0fda6c46307116060154e8415711473"
+      },
+      {
+        "path": "packages/engine/rendering/projection3D.ts",
+        "bytes": 7909,
+        "sha256": "303fbf2eb8486a106f1372bab299d9ca56de9b4262800978617b1245fdf3af59"
+      },
+      {
+        "path": "packages/engine/src/Engine.ts",
+        "bytes": 8606,
+        "sha256": "e9e5b082a2f2cfd4f87bbfec13fbc604df887ba9ed82a9ef0a8b728b3261bfef"
+      },
+      {
+        "path": "packages/engine/src/closeHost.ts",
+        "bytes": 2307,
+        "sha256": "9fac806cc0d19265ec6956cc19305a9ff2ae03ff0e49700d64c39be88ba3244f"
+      },
+      {
+        "path": "packages/engine/src/createEngine.ts",
+        "bytes": 1705,
+        "sha256": "32011ff9c7bbc65e0bdf455a21fcac2e975cd14f9065c3c7c9589bbb74c56774"
+      },
+      {
+        "path": "packages/engine/src/surfaceOwnership.ts",
+        "bytes": 579,
+        "sha256": "604df51eb03f8dbb7965100e06667c09bb311f0e26e0ee752b2404c899e5a320"
+      },
+      {
+        "path": "packages/engine/web/CanvasHost.ts",
+        "bytes": 11094,
+        "sha256": "9686477da8e6bc88ce6f47b673c37c92c01b93814e96dc23cb875a5431a69eff"
+      },
+      {
+        "path": "packages/engine/web/WebGPUHost.ts",
+        "bytes": 50484,
+        "sha256": "4542c09398bd48d6f519ddaa5841325193e428249872c666e399ade3fb330909"
+      },
+      {
+        "path": "packages/engine/web/canvasImageProjection.ts",
+        "bytes": 1220,
+        "sha256": "0d8bec0566c69f69e462f14c30507abe182dcdfded7fbf3c83abdb71e4adc23e"
+      },
+      {
+        "path": "packages/engine/web/copyCanvasFrame.ts",
+        "bytes": 13543,
+        "sha256": "03e8d3110915aac30fcd6908c4a5d6f15cfc37f4f9e4697baeadd2f769ca67ef"
+      },
+      {
+        "path": "packages/engine/web/imageProjections2D.ts",
+        "bytes": 6384,
+        "sha256": "28ffdfb517c38ebb4a260dd34368be927a21830db43f8e098da64ff7db84d5da"
+      },
+      {
+        "path": "packages/engine/web/webgpu.ts",
+        "bytes": 313,
+        "sha256": "bf0e57d689d4ae60f3a25a11835e3d08aead7549c2c1b72a7cdbdf91da8c0e05"
+      },
+      {
+        "path": "packages/engine/web/webgpuImagePass.ts",
+        "bytes": 2620,
+        "sha256": "586dfff3ef870da41cba08cce34de18fdc570cb31088bd9dab4cd8cb474b01e2"
+      },
+      {
+        "path": "packages/engine/web/webgpuLifetime.ts",
+        "bytes": 2109,
+        "sha256": "2d4bda7be618e088bb414f9964c25fe0624af5186b41342fe053457567b25512"
+      },
+      {
+        "path": "packages/engine/web/webgpuPass.ts",
+        "bytes": 5107,
+        "sha256": "26f9cff856de0e868a945cbe55379013877eb3046bc16f41d86776905278fcf5"
+      },
+      {
+        "path": "packages/project/src/api.ts",
+        "bytes": 3548,
+        "sha256": "af52153bcfc6646204195f68970ff63fb4dbe0be0b0f1da60fd901647073ebe2"
+      },
+      {
+        "path": "packages/project/src/canonical.ts",
+        "bytes": 3304,
+        "sha256": "a922ed7577d4bb6b0f644eb22c515af71bb23feea117e70e1223dfa18b8ae725"
+      },
+      {
+        "path": "packages/project/src/commit.ts",
+        "bytes": 5518,
+        "sha256": "8463dfac7abc473bb468ffb6c888cbc50697b50a4bbf45d7687b12d7b1c202c1"
+      },
+      {
+        "path": "packages/project/src/diagnostics.ts",
+        "bytes": 5306,
+        "sha256": "cbd6dbd13db4b4c95e5a22698f333a20b182eaeff4c53b75fb11c8e5e078356d"
+      },
+      {
+        "path": "packages/project/src/diff.ts",
+        "bytes": 1949,
+        "sha256": "18c70cb4b6643ec1b93d599baa4b37c3d015ba16dd87bc1d07e6de74a325f453"
+      },
+      {
+        "path": "packages/project/src/edit.ts",
+        "bytes": 4511,
+        "sha256": "63a86f8120d4fc5a4bdcb0b75e10fbb238b32af851ef48cd42eb490624822acf"
+      },
+      {
+        "path": "packages/project/src/format-shape.generated.ts",
+        "bytes": 26730,
+        "sha256": "ae77e4c7ee5fa34b271ab1d1179412fdbdfa8ff970fa8735a861848dcff7e48d"
+      },
+      {
+        "path": "packages/project/src/history-bytes.ts",
+        "bytes": 392,
+        "sha256": "0c3edda099f1f085acd5201d1c847e715c29055bfde9bbc5c885f816186e98a1"
+      },
+      {
+        "path": "packages/project/src/history.ts",
+        "bytes": 4408,
+        "sha256": "6cdb4789b6888b39ce40449baf117085be0aabd6c2bb1b6a13839233d274d67f"
+      },
+      {
+        "path": "packages/project/src/index.ts",
+        "bytes": 932,
+        "sha256": "95f833ab8c6b93e4b7eb33a0d403c73142648a36b2736a159407bda3eeb6ed2e"
+      },
+      {
+        "path": "packages/project/src/integer-token.ts",
+        "bytes": 1780,
+        "sha256": "9dce98069331e619ac5273609f1c14202f7255d08e36e12084216fca8e0b0f6f"
+      },
+      {
+        "path": "packages/project/src/internal.ts",
+        "bytes": 1400,
+        "sha256": "3c84306d9e729ecaa43909ab78ad94fe2b7637f71acb8c9d55481b4247eb6d13"
+      },
+      {
+        "path": "packages/project/src/json-foundation.ts",
+        "bytes": 353,
+        "sha256": "b375a0f59cfc7907deafd96538dce64dc931e491e405bd8424e424cbf07e0b06"
+      },
+      {
+        "path": "packages/project/src/legacy-res-json.ts",
+        "bytes": 5844,
+        "sha256": "fcb1f897cd8717937c43b4c6e03a1bf8571952fab19f68a5deb6d890abd38f6d"
+      },
+      {
+        "path": "packages/project/src/legacy-res-report.ts",
+        "bytes": 13722,
+        "sha256": "f9b2c7fdac70d6af488b51ad4ecb795c19bbbf062383cf83a5da64d1cc3ee98e"
+      },
+      {
+        "path": "packages/project/src/limits.ts",
+        "bytes": 2252,
+        "sha256": "56e9dea10a2734e2046807980bf0cca887c9f28a9cedaeb2e725466c8b5ba5c1"
+      },
+      {
+        "path": "packages/project/src/live-input.ts",
+        "bytes": 8355,
+        "sha256": "b813806f8bcccbca9a3500449e50bd532867f433af1d326eed86eb6eb5de499a"
+      },
+      {
+        "path": "packages/project/src/paths.ts",
+        "bytes": 633,
+        "sha256": "87277a4f58d4b7070d661e0f8584092d77350b3473da38066e7e676a8a07ecd0"
+      },
+      {
+        "path": "packages/project/src/public.ts",
+        "bytes": 3441,
+        "sha256": "0e3460c0ef659b3aadfa6dd01cebdc4f3f840f983f4203622651e013be8b3dd6"
+      },
+      {
+        "path": "packages/project/src/replay-cost.ts",
+        "bytes": 586,
+        "sha256": "637325306a066a824132e2e1a55e717798e32fa28c6075feb15c7d3d3f16c226"
+      },
+      {
+        "path": "packages/project/src/restore.ts",
+        "bytes": 4272,
+        "sha256": "3722a00d5f2d3bdf8d563870589217dbaced598fed742c007c2cfeb045d1792b"
+      },
+      {
+        "path": "packages/project/src/shape.ts",
+        "bytes": 1853,
+        "sha256": "9cbf500e95dad16f294d34b8e6fc7901741bbd74e155a9d331b3d1bfe5b9f135"
+      },
+      {
+        "path": "packages/project/src/state.ts",
+        "bytes": 2334,
+        "sha256": "27907e7f16ff3366324e0c1cee15410ba0c4f42953ab29b86f66d183ea37c3e9"
+      },
+      {
+        "path": "packages/project/src/store.ts",
+        "bytes": 2096,
+        "sha256": "eae50eb4c93f61f38820914d883dbf1a941c66321a044a5e9da035103e99579e"
+      },
+      {
+        "path": "packages/project/src/text-input.ts",
+        "bytes": 12003,
+        "sha256": "76461163d59b410687a0b56ce806467e04a7261f08a97f24512b8fd709c39cb3"
+      },
+      {
+        "path": "packages/project/src/unicode.ts",
+        "bytes": 1009,
+        "sha256": "7759fd35069663eb0e802ed790447dd18e53cf5c81826fdf213c4b3c6ec56d0c"
+      },
+      {
+        "path": "packages/project/src/validate-snapshot.ts",
+        "bytes": 7089,
+        "sha256": "2f44669f60f1ab9cec41a0536f4e40d657f471ba3b8664a25b5a1c8e9118139d"
+      },
+      {
+        "path": "packages/project/src/validate-transaction.ts",
+        "bytes": 4441,
+        "sha256": "44d50a15efe1ec4c5a78a499682663a8937db5eefae7b612e9e55a76d956de77"
+      },
+      {
+        "path": "packages/project/src/validation-order.ts",
+        "bytes": 9300,
+        "sha256": "373336e495d6670e39353d1848bf41ae15d4ca4a006ca0a063a3e5ef3cc2a087"
+      },
+      {
+        "path": "packages/runtime/src/AssetLease.ts",
+        "bytes": 2689,
+        "sha256": "4785f4ef92606d4f183d0a11b7386191c8be4626b94799c10dad5284f137bb3f"
+      },
+      {
+        "path": "packages/runtime/src/AssetManager.ts",
+        "bytes": 13239,
+        "sha256": "31e52919bfa43df548fa661a9d46c5d8b2fcb7259addfe119ef4367fa25f462e"
+      },
+      {
+        "path": "packages/runtime/src/AssetRef.ts",
+        "bytes": 1818,
+        "sha256": "48963664a8a048697a962f1c3d56826333e65e3bbf05d1524d7c30b049a10ab7"
+      },
+      {
+        "path": "packages/runtime/src/Bitmap.ts",
+        "bytes": 3175,
+        "sha256": "1db166f88e603c3fefb537a17220dc0de391e6e96b4736284a684fcdda3079fe"
+      },
+      {
+        "path": "packages/runtime/src/CancellationController.ts",
+        "bytes": 2414,
+        "sha256": "3cfdb217804b282c4a422420ce5efa63ced25a6bb215bff254e7f947c4942e28"
+      },
+      {
+        "path": "packages/runtime/src/DisplayObject.ts",
+        "bytes": 3430,
+        "sha256": "f66c3aaecf255601969603b359ac42bcd4db6d2ed17750727f0f4f5816152e70"
+      },
+      {
+        "path": "packages/runtime/src/DisplayObjectContainer.ts",
+        "bytes": 4736,
+        "sha256": "36b2f5e42d5654a03765c292bedf42f094fde122967a17c00b3e4180d1e2a72c"
+      },
+      {
+        "path": "packages/runtime/src/EgretError.ts",
+        "bytes": 652,
+        "sha256": "f647ab0f675a5e0d460f1e7b04bce603d06998096f460371035f23826eed7f08"
+      },
+      {
+        "path": "packages/runtime/src/Event.ts",
+        "bytes": 3379,
+        "sha256": "de5671dcddbde4637c22b5ea2bff9ebb520c7aed503608e670d0efc08cf9539c"
+      },
+      {
+        "path": "packages/runtime/src/EventDispatcher.ts",
+        "bytes": 6498,
+        "sha256": "141051a7aede922c0d8d73aa2b509c75cbe209118ba0bb48b3869765b9c5a82d"
+      },
+      {
+        "path": "packages/runtime/src/Graphics.ts",
+        "bytes": 1270,
+        "sha256": "e84deaaefeec9e9bbe25d1447aba980ebefa5c981af73d71a611fe45898443a9"
+      },
+      {
+        "path": "packages/runtime/src/Scope.ts",
+        "bytes": 4700,
+        "sha256": "29e9d5da9232ed8347b2a829e069d33daabb1bad296798492a45c7950f43e8ea"
+      },
+      {
+        "path": "packages/runtime/src/Sprite.ts",
+        "bytes": 442,
+        "sha256": "a3175515cdeedc283199870cd683e541acf208f04330c63c3f5f5eee2e328bba"
+      },
+      {
+        "path": "packages/runtime/src/Stage.ts",
+        "bytes": 1019,
+        "sha256": "08eb1599d9c75c70add22558f28e214ec31fe4305ccdf2638a8f7d35ec61bb0f"
+      },
+      {
+        "path": "packages/runtime/src/Texture.ts",
+        "bytes": 3992,
+        "sha256": "0022669cef2b2df2e3d3ddbb85378247297b3049e7708f0e26a362af62884cc5"
+      },
+      {
+        "path": "packages/runtime/src/assetState.ts",
+        "bytes": 1515,
+        "sha256": "044c1aceef34403be1b1297794d3d3e390182a84d2876ce2d3392a4c2e5a6920"
+      },
+      {
+        "path": "packages/runtime/src/diagnostics.ts",
+        "bytes": 601,
+        "sha256": "c330f5d9083d84ee5b23b947d0d8534e7050a92f8b76a7e5259a1bad92395294"
+      },
+      {
+        "path": "packages/runtime/src/displayTreeState.ts",
+        "bytes": 3578,
+        "sha256": "ce6c49660bc825bece18cc840b2b042a3832c8bc914ad5101849798b477a285d"
+      },
+      {
+        "path": "packages/runtime/src/displayVisualState.ts",
+        "bytes": 1785,
+        "sha256": "0bee8a7e5136f59c3301ec4d829bceaf5a01aff6f0d770dd6a2952ed31110f21"
+      },
+      {
+        "path": "packages/runtime/src/frameCapture.ts",
+        "bytes": 5068,
+        "sha256": "7d71a6b3e37b4091dc118b3fb73cf4fdecc01c7b86e36ebdffd94152bc21a776"
+      },
+      {
+        "path": "packages/runtime/src/imageFrameBudget.ts",
+        "bytes": 1963,
+        "sha256": "6b1286470f486905241905228fadfd2abcaa5b7bfd0f986e3975fea21ea0dcf3"
+      },
+      {
+        "path": "packages/runtime/src/ownership.ts",
+        "bytes": 3239,
+        "sha256": "8c8c40e465002882dac1bf054fa49248c99df62da337cf75f50168f0a6748c62"
+      }
+    ],
+    "commentAuditScope": "CURRENT_COMMENT_TEXT_AND_FINITE_BYTE_IDENTITIES_ONLY_NOT_WHOLE_SOURCE_SEMANTIC_REVIEW",
+    "documents": [
+      {
+        "path": "knowledge-base/docs/core-progress.md",
+        "bytes": 4910,
+        "sha256": "6c43c402865cb06401dca47ed6e97315ddf4a595946ab1e13972e3dda9328baf"
+      },
+      {
+        "path": "knowledge-base/docs/core-progress.en.md",
+        "bytes": 5633,
+        "sha256": "a2072b4d848d25c599918d5576fcb674cd1488dca9b0944676b5a99bd5c33fe9"
+      },
+      {
+        "path": "knowledge-base/docs/3d-foundation.md",
+        "bytes": 5067,
+        "sha256": "27a1700c28036e614dd3f41678103c32f68ba983f830222d76d21f6e804c48ef"
+      },
+      {
+        "path": "knowledge-base/docs/3d-foundation.en.md",
+        "bytes": 5754,
+        "sha256": "b2bd61ed8afaf34917d43250ec42deb472e01bcfbe1f2889a15e047e4f1e9693"
+      },
+      {
+        "path": "knowledge-base/docs/legacy-res-declarations.md",
+        "bytes": 4052,
+        "sha256": "1c97c0b505a87ef5a9219c59ae2fc73cd603deba333c86bc63938a9a1aa0d819"
+      },
+      {
+        "path": "knowledge-base/docs/legacy-res-declarations.en.md",
+        "bytes": 4711,
+        "sha256": "d366b9f42c8ef96ff818d2adc597f52b2b99441d5b34b2cdcb82b5194f093eea"
+      },
+      {
+        "path": "README.md",
+        "bytes": 10221,
+        "sha256": "59e1549792159e9210d34bbf1f79180663f709ec997808d66e62291e58f10626"
+      },
+      {
+        "path": "README.en.md",
+        "bytes": 12188,
+        "sha256": "3bce1d73f040777a69729838995732027c8364e26eb50f04a0c7e3b7c0d0554f"
+      },
+      {
+        "path": "DOCUMENTATION.md",
+        "bytes": 20334,
+        "sha256": "550d0677ead6e2ce56d581078a084c7a690e50f74acd3c6649d7618fe4fe2438"
+      },
+      {
+        "path": "DOCUMENTATION.en.md",
+        "bytes": 21585,
+        "sha256": "4e127fd21428d40866217f8576a978f8f8f24737152226fbfb12731a46dac64c"
+      },
+      {
+        "path": "packages/engine/README.md",
+        "bytes": 7266,
+        "sha256": "6ae6c322847fabc6efcafccbf4bce1129aca38ca26c5da63cb17c537bdca369a"
+      },
+      {
+        "path": "packages/engine/README.en.md",
+        "bytes": 8558,
+        "sha256": "d35a346272dd5f7390fa898f0b8b6a06612ad6d3e2268d32a8e5c4f8225b0df4"
+      },
+      {
+        "path": "packages/project/README.md",
+        "bytes": 5024,
+        "sha256": "c7cb98823d7c3423dad1465963601201ff305c0d463d2209cadbfeb9339bb022"
+      },
+      {
+        "path": "packages/project/README.en.md",
+        "bytes": 5968,
+        "sha256": "7de65b148b452a66fd56e6da61972a566303770969b8646b40b80e41aea31fe5"
+      },
+      {
+        "path": "knowledge-base/README.md",
+        "bytes": 13804,
+        "sha256": "6bc721c8a3354629d6f6da8d2d45758973580dae08f795009943f1100cdb9dfc"
+      },
+      {
+        "path": "knowledge-base/README.en.md",
+        "bytes": 17318,
+        "sha256": "64260ed9dcb0e2bd11a2da50fbc04fd4e3b57de6fe5843cd4eecb05670861828"
+      },
+      {
+        "path": "knowledge-base/CHANGELOG.md",
+        "bytes": 16519,
+        "sha256": "4771d7dee7c60279d62fecce5798e4a398db4f985abbc6f71682d94dd960c7d8"
+      },
+      {
+        "path": "knowledge-base/CHANGELOG.en.md",
+        "bytes": 20941,
+        "sha256": "313dab356064d9e4bebbd84f48e39d640f39b763c61409a3ee0d8b3f9880ceca"
+      },
+      {
+        "path": "PUBLICATION.md",
+        "bytes": 7302,
+        "sha256": "b18b0f2964031545f73c4477567d8545df5725e5c277e0f33b34229694204d21"
+      },
+      {
+        "path": "PUBLICATION.en.md",
+        "bytes": 9154,
+        "sha256": "f9673b691face7d67d63fd623c89509f5b9c03f281fd8abf78e9929e5a570d10"
+      },
+      {
+        "path": "ACKNOWLEDGEMENTS.md",
+        "bytes": 3973,
+        "sha256": "c2eace3a18292062c40c9a2aa517a83f3ce3943943ba53f47266f390f8e12d87"
+      },
+      {
+        "path": "ACKNOWLEDGEMENTS.en.md",
+        "bytes": 4870,
+        "sha256": "5d6d5be4b0a4f2cebc9cd5f019ec8c56fd45ba34104a4cbe392c74c2443261f2"
+      },
+      {
+        "path": "knowledge-base/ACKNOWLEDGEMENTS.md",
+        "bytes": 15181,
+        "sha256": "3388de47f57a352cca87857a7fcd1dac8b1ff37d479fac9fcedb355ad6af4004"
+      },
+      {
+        "path": "knowledge-base/ACKNOWLEDGEMENTS.en.md",
+        "bytes": 17632,
+        "sha256": "b23bdceb03aadbbffca7fec88b13f77c9bc118d80f0e944124db7fdd52ec63ad"
+      }
+    ],
+    "testReplayByCuration": 0,
+    "nativeExecutionByCuration": false,
+    "githubSubmissionByCuration": false,
+    "open": [
+      "V002_FULL_PRODUCT",
+      "V003",
+      "V006",
+      "R008",
+      "A2_TASK5B",
+      "A2_TASK6",
+      "P0_P7",
+      "GPU_3D",
+      "DEVICE_TEXT_ANIMATION",
+      "NATIVE_SDK",
+      "EDITOR_AGENT"
+    ]
+  },
+  "coreSuccessor": {
+    "label": "0.17.0",
+    "curatedAt": "2026-10-10",
+    "scope": "OWNED_CPU_SCENE_FIXED_MESH_BOUNDED_B1_HOST_MOCK_CPU_SEQUENCE_PURE_RES_INTENTS",
+    "implementationOrigin": "INDEPENDENT_FIRST_PARTY_CONTRACT_AND_LITERAL_FIXTURES",
+    "publicFacadeChanged": false,
+    "dependenciesChanged": false,
+    "packageVersion": "0.0.0",
+    "protocolVersion": "1.0",
+    "historicalCatalogPreserved": true,
+    "githubDelivery": "HOLD_HTTP_403",
+    "verificationReplayByAdoption": false,
+    "evidence": [
+      {
+        "path": "knowledge-base/evidence/b1-host-mock-evidence.json",
+        "bytes": 3883,
+        "sha256": "8b8fa7bd506049ae7083b2c36971d4a9b737814516e45e91b35fc72e8d00ab16"
+      },
+      {
+        "path": "knowledge-base/evidence/sequence-clip-cpu-evidence.json",
+        "bytes": 2602,
+        "sha256": "f10fd19a5a29c6e20c451ec5463fc376aacd259c0048aa5632dda90933920f7d"
+      },
+      {
+        "path": "knowledge-base/evidence/legacy-res-plan-cpu-evidence.json",
+        "bytes": 2694,
+        "sha256": "55d3da1776c45cb350e2d26b7a705c53b771d6b98cf96350fdb3b75d1e8be590"
+      }
+    ],
+    "subjects": [
+      {
+        "path": "packages/engine/web/WebGPUHost.ts",
+        "bytes": 66888,
+        "sha256": "ecc99075132e2bd546d50da8d96ff096ba8e6ca33630d192bec66500ccca3bc8"
+      },
+      {
+        "path": "packages/engine/web/b1.ts",
+        "bytes": 2366,
+        "sha256": "9b3e02b47e9328a106783f2ea88baca2066f5bf66b6c66113dd5952872c833b7"
+      },
+      {
+        "path": "tools/check-boundaries.mjs",
+        "bytes": 13562,
+        "sha256": "e0404cdb4b470310c06302f6e36f6525c44230cd933b426485b308bfbb1f1323"
+      },
+      {
+        "path": "packages/runtime/src/sequenceClip.ts",
+        "bytes": 8258,
+        "sha256": "0471afcb27d11ea35cd8a7a987656a09010a9daca54f38d330a73576c5ee0451"
+      },
+      {
+        "path": "packages/project/src/legacy-res-plan.ts",
+        "bytes": 3782,
+        "sha256": "b1149868f617583ae74860405fbe468e70b32b51940e308741962891eed789a7"
+      },
+      {
+        "path": "packages/engine/rendering/sceneFrame3D.ts",
+        "bytes": 11442,
+        "sha256": "c2ee3db171c8f88f821bfec28ca2d93474c60e6cd1a6d1dd2f7d400e4ff5c16e"
+      },
+      {
+        "path": "packages/engine/web/webgpuMeshPass.ts",
+        "bytes": 2998,
+        "sha256": "6213e04e77f1a09afe35627eaba4ab2be2ddab92b986423deed361e51c7bdc37"
+      }
+    ],
+    "verifiedHostTest": {
+      "path": "tests/webgpu-mesh-host.test.mjs",
+      "bytes": 85984,
+      "sha256": "9ac77c5090c1739602fd09c69f9c1a42131573dc02d3f349b73dbc95b7b3eba9"
+    },
+    "currentHostTest": {
+      "path": "tests/webgpu-mesh-host.test.mjs",
+      "bytes": 85983,
+      "sha256": "0680a9c10f290e6104b150fbd85df805d1e03882292ce8745d22f817e1ee6783"
+    },
+    "byteOnlySuccessor": {
+      "removedFinalByte": "LF",
+      "runtimeRerun": false
+    },
+    "notProven": [
+      "NATIVE_SDK",
+      "CURRENT_BROWSER_DEVICE_PIXELS",
+      "PERFORMANCE",
+      "FONT",
+      "DRAGONBONES",
+      "FULL_MIGRATION",
+      "FULL_PRODUCT"
+    ],
+    "sourceCommitPrefix": "d9cd6f6",
+    "coreCommitPrefix": "2d1a766"
+  },
+  "movieClipCpuConversion": {
+    "label": "0.18.0",
+    "curatedAt": "2026-10-10",
+    "scope": "ONE_NAMED_LEGACY_CLIP_SINGLE_DECLARED_ATLAS_CPU_INTENT",
+    "implementationOrigin": "INDEPENDENT_FIRST_PARTY_CONTRACT_AND_LITERAL_FIXTURES",
+    "publicFacadeChanged": false,
+    "dependenciesChanged": false,
+    "packageVersion": "0.0.0",
+    "protocolVersion": "1.0",
+    "subjects": [
+      {
+        "path": "packages/project/src/legacy-movieclip-plan.ts",
+        "bytes": 17420,
+        "sha256": "a6cd539126753989fb0f79cdfa0bf674d83d62e8c713ad173c3aca0e8d4117bb"
+      },
+      {
+        "path": "tests/legacy-movieclip-plan.test.mjs",
+        "bytes": 27671,
+        "sha256": "59a695124ce26d051eb4d2d165b7285f2825c1345bcf13cfb3038cd36b717933"
+      }
+    ],
+    "evidence": {
+      "path": "knowledge-base/evidence/legacy-movieclip-focused.json",
+      "bytes": 2349,
+      "sha256": "c6d973a92f4ce967e468668f0a12464a5d4461767c0e53d2653ebd3db5f17565"
+    },
+    "documents": [
+      {
+        "path": "knowledge-base/docs/legacy-movieclip-contract.en.md",
+        "bytes": 8911,
+        "sha256": "436b59996bf213447ad57c2fd688880b2d9d56c3646cedf45047a2143d59a447"
+      },
+      {
+        "path": "knowledge-base/docs/legacy-movieclip-contract.zh-CN.md",
+        "bytes": 8014,
+        "sha256": "64cce1f446253b2f2dd7d59e7f854d00ddebb98699852ac1494b27bea144610b"
+      },
+      {
+        "path": "knowledge-base/docs/legacy-movieclip-evidence.en.md",
+        "bytes": 5267,
+        "sha256": "694514654fca75d18ecdac1a6d95288d6c1aa22b2948632ef93fe84567c9ad86"
+      },
+      {
+        "path": "knowledge-base/docs/legacy-movieclip-evidence.zh-CN.md",
+        "bytes": 4627,
+        "sha256": "88607136d8660dacf0bc84936d3de6dc6831952a80798aa77f73abb20d63ee0e"
+      }
+    ],
+    "criticalEnglishCommentIdentity": {
+      "path": "packages/project/src/legacy-movieclip-plan.ts",
+      "bytes": 17420,
+      "sha256": "a6cd539126753989fb0f79cdfa0bf674d83d62e8c713ad173c3aca0e8d4117bb"
+    },
+    "historicalBoundary": {
+      "en": "Historical Egret MovieClip declaration semantics inform this strict conversion contract. Its implementation and literal fixtures are authored for the new project; earlier core input-boundary declarations retain their historical scope.",
+      "zh-CN": "历史 Egret MovieClip 声明语义用于定义本次严格转换契约。实现与手算测试夹具为新工程编写；早期核心输入边界声明仍保留其历史范围。"
+    },
+    "references": [
+      {
+        "name": "MovieClipDataFactory.ts",
+        "bytes": 6034,
+        "sha256": "0145d604476b633d115c5ded167cc8227a301f98b0b58d1ab4ab4358fe7b2b3c",
+        "publicReference": "https://raw.githubusercontent.com/egret-labs/egret-core/master/src/extension/game/display/MovieClipDataFactory.ts"
+      },
+      {
+        "name": "MovieClipData.ts",
+        "bytes": 9149,
+        "sha256": "82a778d66ec2da8327f4947b3bfd0cb758b49c36085f0863ab6bb4b06db9c41c",
+        "publicReference": "https://raw.githubusercontent.com/egret-labs/egret-core/master/src/extension/game/display/MovieClipData.ts"
+      },
+      {
+        "name": "package-manifest",
+        "bytes": 16207,
+        "sha256": "fb434c743952d6fa389733a44c56bc691dde11eb7782e8d21d3d0f87ede99431",
+        "declaredVersion": "5.4.1"
+      }
+    ],
+    "referenceScope": {
+      "en": "Finite historical snapshot identities; manifest-declared version, not an official tag or latest-version assertion. Mutable public references do not establish remote byte/commit equivalence. Credit Egret Technology and contributors, retaining applicable original three-condition BSD-style notices for redistributed reference sources.",
+      "zh-CN": "有限历史快照身份；版本来自包清单，不证明官方标签或最新版本。可变公开链接不建立远端字节或提交等价。鸣谢 Egret Technology 及贡献者，重新分发参考源码时保留适用的原三条件 BSD 风格声明。"
+    },
+    "verificationReplayByAdoption": false,
+    "githubDelivery": "HOLD_HTTP_403",
+    "notProven": [
+      "CURRENT_DEFAULT_REPOSITORY_REGRESSION",
+      "IMAGE_READ_DECODE",
+      "RENDERER_OFFSET_PLACEMENT",
+      "LABEL_EVENT_BLANK_PLAYBACK",
+      "NATIVE_PIXELS",
+      "DEVICE_PERFORMANCE",
+      "FULL_MIGRATION"
+    ]
+  },
+  "webgpuCollectorIdentityRefresh": {
+    "previousRegistration": {
+      "path": "tools/verify-webgpu.mjs",
+      "bytes": 21474,
+      "sha256": "99e85364bbb2619f8e83e9877e68acce7443bc23b320fe19f7cd953c8b5b9b26"
+    },
+    "currentIdentity": {
+      "path": "tools/verify-webgpu.mjs",
+      "bytes": 21620,
+      "sha256": "9d1e0c3ffb1c74a55796023bbfcb661e61c89006466e441a308c26bc4bd3b05d"
+    },
+    "validationByThisAdoption": "UNRUN",
+    "acceptedNewBrowserResult": false,
+    "scope": {
+      "en": "The current collector identity follows a separately recorded source correction. This document-only adoption refreshes its registration without changing or running the tool, or adopting an ongoing browser result.",
+      "zh-CN": "当前采集器身份来自单独记录的源码修正。本次只更新登记，不改变或运行工具，也不采用正在进行的浏览器结果。"
+    }
+  },
+  "bitmapAndBrowserIncrement": {
+    "label": "0.19.0",
+    "curatedAt": "2026-10-10",
+    "scope": "BITMAP_ABSOLUTE_REGION_CPU_AND_BOUNDED_DESKTOP_BROWSER_EVIDENCE",
+    "implementationOrigin": "INDEPENDENT_FIRST_PARTY_CONTRACT_IMPLEMENTATION_AND_LITERAL_FIXTURES",
+    "packageVersion": "0.0.0",
+    "protocolVersion": "1.0",
+    "sourceRectPublicMemberAdded": true,
+    "newPackageEntrypoints": false,
+    "dependenciesChanged": false,
+    "historicalCatalogPreserved": true,
+    "verificationReplayByCuration": false,
+    "scopeReading": {
+      "en": "The implemented Bitmap sourceRect member selects an absolute borrowed Texture crop. The public experimental B1 verifier exercises existing internal emitted modules through a finite standalone browser protocol. Current source identities are recorded below; earlier catalog entries retain their historical byte identities and result scopes.",
+      "zh-CN": "已实施的 Bitmap sourceRect 成员选择借用 Texture 的绝对裁剪区域。公开实验性 B1 验证器通过有限独立浏览器协议检查既有内部编译模块。下列登记当前源码身份；早期目录项保留历史字节身份及结果范围。"
+    },
+    "subjects": [
+      {
+        "path": "packages/runtime/src/Bitmap.ts",
+        "bytes": 7397,
+        "sha256": "21b209ee6809e8645e2920b3680eac0eb91f481edf9ad07f961b638624ebfffe"
+      },
+      {
+        "path": "packages/runtime/src/frameCapture.ts",
+        "bytes": 5066,
+        "sha256": "23ebe914a57f165ecd210fa31d28ae4681508b684ec68895d3bbfb58a81f9fa1"
+      },
+      {
+        "path": "packages/runtime/src/imageFrameBudget.ts",
+        "bytes": 1968,
+        "sha256": "591700c47a2ec78a5a2e11b9b380386e6d79fd0bc09a5d37c0a637bbc4d5b19e"
+      },
+      {
+        "path": "tools/verify-webgpu-b1.mjs",
+        "bytes": 31551,
+        "sha256": "8216ff160d3dfc5b08fb56a943f91aee8ee7da612fd4a2e58379aedc1ef87002"
+      },
+      {
+        "path": "tools/b1-webgpu/fixture.mjs",
+        "bytes": 16923,
+        "sha256": "dc7f6dd2d2cf363cf4492e498ed196be075514f994b4efc4bc8e1a728a423426"
+      },
+      {
+        "path": "tools/b1-webgpu/oracle.mjs",
+        "bytes": 3852,
+        "sha256": "a4e4bff613e7968714d4266e6575c8016e7be5900cae685407d0e957a7c36652"
+      },
+      {
+        "path": "tests/b1-webgpu-verifier.test.mjs",
+        "bytes": 17519,
+        "sha256": "179e1eebdfa48a9b8d62cbe548b3732d6263d6a788ef2adf27f4aa78ea41c9a5"
+      },
+      {
+        "path": "tests/bitmap-region.test.mjs",
+        "bytes": 23375,
+        "sha256": "50fce0797a3ae0bdf30ab1a5429fb3fd5d47c16f40d984a12c64030844ba208a"
+      },
+      {
+        "path": "tests/types/positive.ts",
+        "bytes": 5135,
+        "sha256": "7b26a6d90a257e1f5c9060bd52621f363ec0ebe1402668d6ef403f9764941be7"
+      },
+      {
+        "path": "tests/types/negative.ts",
+        "bytes": 7536,
+        "sha256": "848361188c9615628813aa23b795dad09747b65b6923fead0989e42a88eb4cb3"
+      }
+    ],
+    "documents": [
+      {
+        "path": "knowledge-base/docs/bitmap-region-contract.en.md",
+        "bytes": 7987,
+        "sha256": "209cb59206c8a673d108d7ab4f6ae3ec6f0943bd61bd24a9a1a8b6da0e44a7d0"
+      },
+      {
+        "path": "knowledge-base/docs/bitmap-region-contract.zh-CN.md",
+        "bytes": 7055,
+        "sha256": "b0edce72fec34d0434e059dce3704950d40e372c3656198737c2104ed21b5b19"
+      },
+      {
+        "path": "knowledge-base/docs/bitmap-region-evidence.en.md",
+        "bytes": 3525,
+        "sha256": "9962803fb59878057d6ef12a6f04e4e65c90f8d8dc10476ee4e74e855d87a3a1"
+      },
+      {
+        "path": "knowledge-base/docs/bitmap-region-evidence.zh-CN.md",
+        "bytes": 3074,
+        "sha256": "6c8e906359c5103cfe5263ef71821016fe9d14f1a23261a972c6ca4dbeebc7bc"
+      },
+      {
+        "path": "knowledge-base/docs/texture-first-four-evidence.en.md",
+        "bytes": 2466,
+        "sha256": "dc0ec317cdb214f20f3e9ab1d9b2bf90c0eb1d6cf9cc68f1a7a558b2064b15f1"
+      },
+      {
+        "path": "knowledge-base/docs/texture-first-four-evidence.zh-CN.md",
+        "bytes": 2137,
+        "sha256": "4668b180b626981091f4725a6e05ca9868cc8ee845e6b495654936c40f04a056"
+      },
+      {
+        "path": "knowledge-base/docs/b1-browser-verifier.en.md",
+        "bytes": 7295,
+        "sha256": "8748365aa21b0d473b380b366f5d6695f10612c7bbafc9ae742c551f07f6fc15"
+      },
+      {
+        "path": "knowledge-base/docs/b1-browser-verifier.zh-CN.md",
+        "bytes": 6578,
+        "sha256": "852b4de3543ae953391688b959531a660395cffa46ed2041bd72e71f215af54a"
+      }
+    ],
+    "evidence": [
+      {
+        "path": "knowledge-base/evidence/bitmap-region-cpu.json",
+        "bytes": 2273,
+        "sha256": "922652d76b1296bbbb8d0666cd56282e62784a57a287f414d7a2562f62ef7e0e"
+      },
+      {
+        "path": "knowledge-base/evidence/texture-first-four-collection.json",
+        "bytes": 1789,
+        "sha256": "6f721a82cd6e9a79dcc65529d6cb6a1d5c9d82e73e828132ec794299a5838443"
+      },
+      {
+        "path": "knowledge-base/evidence/b1-public-browser.json",
+        "bytes": 4163,
+        "sha256": "d0338a7328262f645f5918ed5448335681552711fa02d2ea1e50218c4a6c9113"
+      }
+    ],
+    "recordedVerification": {
+      "bitmap": {
+        "buildExit": 0,
+        "projectDefinitions": 21,
+        "focusedPass": 113,
+        "focusedFail": 0,
+        "expectedNegativeTypeDiagnostics": 76,
+        "typeGroups": {
+          "core": 43,
+          "web": 5,
+          "project": 28
+        },
+        "review": "PASS_SOURCE_AND_SAVED_CPU_EVIDENCE"
+      },
+      "textureFirstFour": {
+        "review": "PASS_SAVED_ARTIFACT_INTEGRITY",
+        "preservedCopies": 1233,
+        "captures": 8,
+        "pngFiles": 16,
+        "observationRows": 192,
+        "nativeChannelBounds": "UNKNOWN",
+        "numericAcceptance": false,
+        "wholeA2": false
+      },
+      "publicB1": {
+        "cpuPass": 30,
+        "cpuFail": 0,
+        "browserStatus": "PASS",
+        "savedArtifactReview": "PASS_SAVED_PUBLIC_B1_ARTIFACT_INTEGRITY",
+        "positiveFrames": 7,
+        "counterexamples": 5,
+        "submittedFrames": 11,
+        "literalBaselineComparisons": 8214,
+        "safeHosts": 6,
+        "pendingLedgersZero": true,
+        "browserVersion": "154.0.4258.62",
+        "channelBinaryIdentity": "UNBOUND",
+        "standaloneOsDescendantRetirement": "UNBOUND",
+        "savedArtifactReviewAccepted": true
+      }
+    },
+    "referenceAndLicenseBoundary": {
+      "en": "First-party implementation and independent literal fixtures retain the repository Apache-2.0 terms. Existing upstream acknowledgements, historical source records and third-party NOTICE obligations remain unchanged. The contracts, fixtures and verifier logic are maintained as first-party project work.",
+      "zh-CN": "首方实现与独立手算夹具沿用仓库 Apache-2.0 条款。既有上游鸣谢、历史源码记录及第三方 NOTICE 义务保持不变。本契约、夹具和验证逻辑作为首方工程持续维护。"
+    },
+    "currentIncrementSemanticReview": "INDEPENDENT_ADOPTED_DOCUMENT_DELTA_SOURCE_REVIEW_ACCEPTED",
+    "completePrepush": "FRESH_PREPUSH_REQUIRED_NOT_RECORDED_IN_THIS_CURATION",
+    "notProven": [
+      "VISIBLE_BITMAP_SEQUENCE",
+      "FULL_A2",
+      "PHONE_NATIVE_SDK",
+      "DEVICE_PERFORMANCE",
+      "FONT",
+      "DRAGONBONES",
+      "FULL_MIGRATION",
+      "FULL_PRODUCT"
+    ],
+    "adoptedPublicDeltaReview": {
+      "status": "ACCEPTED_BOUNDED_SOURCE_REVIEW",
+      "reviewDescriptor": {
+        "bytes": 16887,
+        "sha256": "850dabeb8f5e0911e43b98664940714da2a8bf8bacd344d2f3ae14672f695338"
+      },
+      "actionableP1": 0,
+      "actionableP2": 0,
+      "productExecutionByReview": false,
+      "rootMetadataUpdate": "FAITHFUL_REVIEW_ATTESTATION_WITH_AUTHOR_SELF_READ",
+      "scope": {
+        "en": "Four added bilingual reading pairs, seven updated reading/navigation pairs, three compact evidence records and the selected provenance, registry and comment delta. Historical materials retain their earlier review and result scope.",
+        "zh-CN": "新增四对双语阅读材料、更新七对阅读／导航、三个精简证据记录及选定出处、登记和注释增量；历史材料保留此前审阅与结果范围。"
+      }
+    },
+    "publicFormattingCorrection": {
+      "status": "ROOT_VERIFIED_TERMINAL_EMPTY_LINES_ONLY",
+      "date": "2026-10-10",
+      "changedPublicBodies": 8,
+      "previousIdentities": [
+        {
+          "path": "knowledge-base/docs/b1-browser-verifier.en.md",
+          "bytes": 7296,
+          "sha256": "be54f66253b1cc4716dc10fd7513ad9707979821260847eb5bb0a4f93c4c7d5a"
+        },
+        {
+          "path": "knowledge-base/docs/b1-browser-verifier.zh-CN.md",
+          "bytes": 6579,
+          "sha256": "320599f9d43a1f78a98a7be55c083cf0b70731c8266054624cf691cd681eb00a"
+        },
+        {
+          "path": "knowledge-base/docs/bitmap-region-evidence.en.md",
+          "bytes": 3526,
+          "sha256": "0619476e64ef6d5d1119706ab05f0c05f6dd79a90548e690d23c922cd1fe8729"
+        },
+        {
+          "path": "knowledge-base/docs/bitmap-region-evidence.zh-CN.md",
+          "bytes": 3075,
+          "sha256": "aee2f0d00e1de46dcf2afdd4bca1f2241725b09be73f24176fe47e51558c9071"
+        },
+        {
+          "path": "knowledge-base/docs/texture-first-four-evidence.en.md",
+          "bytes": 2467,
+          "sha256": "9732af3141b968a6012e084d678ee3302d49de9d67af21085e6b4805c5c0b130"
+        },
+        {
+          "path": "knowledge-base/docs/texture-first-four-evidence.zh-CN.md",
+          "bytes": 2138,
+          "sha256": "7ab2f963082a4b57f9883747040073f0f563a865c35d147400f519640a4e6479"
+        },
+        {
+          "path": "knowledge-base/evidence/bitmap-region-cpu.json",
+          "bytes": 2274,
+          "sha256": "d63c2de422c4623fd35ab8e368c2de0097a27e5d5e2e0468abbb7948e13b83c4"
+        },
+        {
+          "path": "knowledge-base/evidence/texture-first-four-collection.json",
+          "bytes": 1790,
+          "sha256": "f48058eb595f3b240aeb9aa51cbb7d7e5bc50babb8e2a46af13f929a3ab96803"
+        }
+      ],
+      "scope": {
+        "en": "Remove surplus terminal empty lines from six paired reading documents and two language-neutral evidence records. All substantive bytes and decoded evidence values are unchanged; current document/evidence identities are refreshed. Earlier review snapshots remain historical. No product execution or publication is asserted by this correction.",
+        "zh-CN": "移除六份配对阅读文档与两个语言中立证据记录末尾的多余空行；所有实质字节和解码证据值不变，并刷新当前文档／证据身份。此前审阅快照保留历史范围；本格式修正不声称产品执行或发布。"
+      }
     }
   }
 }

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-09",
+  "updatedAt": "2026-10-10",
   "authority": "来源分组与适用边界；researchCheckedAt是项目研究核查日期，非统一发布日期",
   "items": [
     {
@@ -1020,6 +1020,90 @@
         "evidence/webgpu-review.json"
       ],
       "doc": "docs/WebGPU矩形实现证据.md"
+    },
+    {
+      "id": "S059",
+      "title": "已接受图片源码／模拟及 CPU 参考范围",
+      "type": "first_party_finite_source_mock_and_saved_tests",
+      "scope": "A2 Tasks 1–4 及 Task 5a CPU 公式；历史源码／测试身份和修正。",
+      "limit": "无浏览器 profile／native 像素；Task 5b／Task 6／P0–P7 未运行；记录不转移到后续字节。",
+      "researchCheckedAt": "2026-10-09",
+      "artifacts": [
+        "evidence/core-progress-0.16.0.json"
+      ],
+      "doc": "docs/core-progress.md"
+    },
+    {
+      "id": "S060",
+      "title": "已接受 CPU 3D 契约与打包",
+      "type": "first_party_finite_cpu_source_and_saved_tests",
+      "scope": "B0 数学／投影和 B1 几何／打包，限于具名验收身份。",
+      "limit": "无 GPU 场景、float32 着色器精度、native 端序或设备性能验收。",
+      "researchCheckedAt": "2026-10-09",
+      "artifacts": [
+        "evidence/3d-cpu-source-verification.json"
+      ],
+      "doc": "docs/3d-foundation.md"
+    },
+    {
+      "id": "S061",
+      "title": "RES 声明兼容性与公开 parser 依赖",
+      "type": "historical_semantic_context_and_independent_declaration_source",
+      "scope": "创始人提供 RES 语义用于独立编写的 profile／fixture；公开 jsonc-parser 3.3.1 根 API。",
+      "limit": "准确历史版本／模块闭合未知；声明不验证文件、解码、运行时或完整迁移。",
+      "researchCheckedAt": "2026-10-09",
+      "artifacts": [
+        "evidence/legacy-res-declarations-verification.json"
+      ],
+      "doc": "docs/legacy-res-declarations.md"
+    },
+    {
+      "id": "S062",
+      "title": "选定固定 GPUWeb 草案与安装声明",
+      "type": "primary_fixed_draft_selected_semantics_and_type_observation",
+      "scope": "固定 GPUWeb commit 九个语义区间及选定 TypeScript 7.0.2 DOM 声明，与完整字节身份区分。",
+      "limit": "无全规范语义阅读、最新最终标准或 native GPU／host／像素／性能证明；无 depth UI／readback 顺序为白鹭选择。",
+      "researchCheckedAt": "2026-10-09",
+      "artifacts": [
+        "evidence/3d-cpu-source-verification.json"
+      ],
+      "doc": "docs/3d-foundation.md"
+    },
+    {
+      "id": "S063",
+      "title": "Bitmap 绝对区域契约与 CPU／类型证据",
+      "type": "first_party_implemented_contract_and_recorded_cpu_type_evidence",
+      "scope": "首方 Bitmap 区域实现；专项 113/113、构建 21 项定义、预期负类型诊断 76 项（核心 43、Web 5、工程 28）；有限源码与保存 CPU 证据审阅已接受。",
+      "limit": "23 项 RED 失败不等于 23 项独立到达的行为。可见序列帧、后继完整 prepush、性能及完整迁移不在本记录中。",
+      "researchCheckedAt": "2026-10-10",
+      "artifacts": [
+        "evidence/bitmap-region-cpu.json"
+      ],
+      "doc": "docs/bitmap-region-contract.zh-CN.md"
+    },
+    {
+      "id": "S064",
+      "title": "纹理首四项桌面采集完整性",
+      "type": "first_party_recorded_texture_collection_and_saved_artifact_integrity",
+      "scope": "C01/C03/C05/C07 在 Canvas 与 WebGPU 的 8 次捕获、16 张 PNG、192 行观察及 1233 份保全副本；保存产物完整性审阅已接受。",
+      "limit": "原生通道数值边界 UNKNOWN，numericAcceptance=false、wholeA2=false。观察行不等于独立捕获；旧采集不证明后续 Bitmap 切帧可见效果或性能。",
+      "researchCheckedAt": "2026-10-10",
+      "artifacts": [
+        "evidence/texture-first-four-collection.json"
+      ],
+      "doc": "docs/texture-first-four-evidence.zh-CN.md"
+    },
+    {
+      "id": "S065",
+      "title": "公开 B1 浏览器验证器与有界桌面证据",
+      "type": "first_party_public_verifier_recorded_cpu_and_browser_evidence",
+      "scope": "实际仓库 CPU 30/30；公开命令在 Edge 154.0.4258.62 记录 7 帧正例、5 项反例、11 次绘制、8214 项字面量比较及 6 个安全返回 Host；1313 份保存副本的独立完整性审阅已接受。",
+      "limit": "通道可执行文件与独立命令的操作系统后代退场身份 UNBOUND；不证明硬件加速、设备性能、完整 A2、手机 Native SDK 或整个产品。后继完整 prepush 须在推送前另行通过。",
+      "researchCheckedAt": "2026-10-10",
+      "artifacts": [
+        "evidence/b1-public-browser.json"
+      ],
+      "doc": "docs/b1-browser-verifier.zh-CN.md"
     }
   ]
 }

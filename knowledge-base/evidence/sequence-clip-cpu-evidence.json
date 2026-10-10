@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "projectionStatus": "ROOT_RECONCILED_PUBLIC_SUMMARY",
+  "evidenceKind": "actual_focused_CPU_run_projection",
+  "scope": "Immutable validated sequence-clip data and deterministic bounded frame sampling; no rendering or player integration.",
+  "toolchain": {
+    "node": "24.19.0",
+    "typescript": "7.0.2",
+    "packageManagerPin": "pnpm@11.25.0"
+  },
+  "source": {
+    "path": "packages/runtime/src/sequenceClip.ts",
+    "bytes": 8258,
+    "sha256": "0471afcb27d11ea35cd8a7a987656a09010a9daca54f38d330a73576c5ee0451"
+  },
+  "test": {
+    "path": "tests/sequence-clip.test.mjs",
+    "bytes": 28761,
+    "sha256": "66cf3e6333c2a9813f2cbeab4e9574f57dc0e0c0f26b2a88003a2a02583dcfc5"
+  },
+  "focused": {
+    "command": [
+      "node",
+      "--test",
+      "--test-isolation=none",
+      "--test-reporter=tap",
+      "tests/sequence-clip.test.mjs"
+    ],
+    "red": {
+      "tests": 25,
+      "passed": 0,
+      "failed": 25,
+      "skipped": 0,
+      "exitCode": 1,
+      "failureClass": "behavioral_test_failures"
+    },
+    "green": {
+      "tests": 25,
+      "passed": 25,
+      "failed": 0,
+      "skipped": 0,
+      "exitCode": 0
+    },
+    "bothRuns": {
+      "signal": null,
+      "closed": true,
+      "stdoutEOF": true,
+      "stderrEOF": true,
+      "timedOut": false,
+      "overflow": false,
+      "identitiesStable": true,
+      "savedRawOutputHashesChecked": true
+    },
+    "buildGreen": {
+      "success": true,
+      "exitCode": 0,
+      "closed": true,
+      "stdoutEOF": true,
+      "stderrEOF": true,
+      "identitiesStable": true
+    }
+  },
+  "wholeRepository": {
+    "entry": "tools/verify.mjs",
+    "status": "PASS",
+    "tests": {
+      "total": 901,
+      "passed": 901,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "verifyExitCode": 0,
+    "closed": true,
+    "jobActiveZero": true,
+    "jobClosed": true,
+    "workloadStreamsEOF": true,
+    "outerStreamsEOF": true,
+    "rawOutputSaved": true,
+    "pinsStable": true,
+    "snapshotQualification": "Recorded before the Host test final-LF-only successor; current repository runtime was not rerun.",
+    "historyAndSnapshotEvidence": "b1-host-mock-evidence.json"
+  },
+  "notProven": [
+    "rendered_animation",
+    "player_integration",
+    "DragonBones",
+    "real_browser_GPU",
+    "native_runtime",
+    "device_performance",
+    "Chinese_font_performance",
+    "full_legacy_project_migration"
+  ],
+  "provenance": "Sanitized projection of retained actual receipts and raw output; this JSON does not publish private raw records or re-execute verification."
+}

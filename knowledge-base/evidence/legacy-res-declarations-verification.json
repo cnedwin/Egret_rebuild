@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 1,
+  "label": "0.16.0",
+  "evidenceClass": "CURATED_FINITE_HISTORICAL_EVIDENCE",
+  "curationDate": "2026-10-10",
+  "currentSourceIdentityOnly": true,
+  "productTestsReplayedByCuration": 0,
+  "publication": "FINAL_REVIEW_PREPUSH_AND_DELIVERY_PENDING",
+  "slices": [
+    {
+      "id": "RES_DECLARATIONS",
+      "state": "ACCEPTED_FINITE_HISTORICAL_SOURCE_MOCK",
+      "historicalCommit": "50cbb85e69ff5ebcc066679b5b184dd91ec48a7d",
+      "historicalTree": "c1be5f313cbee94c6e4e6cf213eafa38184ce7f4",
+      "acceptanceIdentity": {
+        "bytes": 343802,
+        "sha256": "26a1cf53a885d36cb6893075f27ac1189e5f4c8a98d9d629735e3ad4819d8666",
+        "distribution": "IDENTITY_ONLY"
+      },
+      "historicalTestReceipt": {
+        "focusedPass": 20,
+        "fullPass": 772,
+        "replayedByCuration": false
+      },
+      "namedCurrentSources": [
+        {
+          "path": "packages/project/src/legacy-res-json.ts",
+          "bytes": 5844,
+          "sha256": "fcb1f897cd8717937c43b4c6e03a1bf8571952fab19f68a5deb6d890abd38f6d"
+        },
+        {
+          "path": "packages/project/src/legacy-res-report.ts",
+          "bytes": 13722,
+          "sha256": "f9b2c7fdac70d6af488b51ad4ecb795c19bbbf062383cf83a5da64d1cc3ee98e"
+        },
+        {
+          "path": "tests/legacy-res-report.test.mjs",
+          "bytes": 20737,
+          "sha256": "dfa04d0ba80428d90c45e9d31fdbba7eb02fb2f23653892f63ae3e4e4d43d803"
+        }
+      ],
+      "scope": {
+        "en": "Private independently authored strict JSON declaration analyzer/report for legacy-res-comma-declarations-0.1, with recognized/unsupported/invalid/incomplete states and fixed limits. Tests validate invented declaration fixtures, not a historical game conversion.",
+        "zh-CN": "私有独立编写的严格 JSON 声明分析/报告，采用 legacy-res-comma-declarations-0.1，区分 recognized/unsupported/invalid/incomplete 并限制资源。测试验证自建声明 fixture，不是历史游戏转换。"
+      },
+      "held": [
+        "FILE_EXISTENCE",
+        "DECODING_LOADING",
+        "RUNTIME_EQUIVALENCE",
+        "ARCHIVE_CONVERSION",
+        "AGENT_REPAIR",
+        "R008_FULL_MIGRATION"
+      ]
+    }
+  ],
+  "reportVersion": "0.1",
+  "profile": "legacy-res-comma-declarations-0.1",
+  "facadeExported": false,
+  "statuses": [
+    "recognized",
+    "unsupported",
+    "invalid",
+    "incomplete"
+  ],
+  "limits": {
+    "textUTF16": 1048576,
+    "textUTF8": 1048576,
+    "depth": 16,
+    "decodedStringUTF8": 4096,
+    "resourceRootEarlyCharacters": 4096,
+    "resourceRootUTF8": 4096,
+    "resources": 4096,
+    "groups": 1024,
+    "declaredReferences": 16384,
+    "warnings": 256,
+    "portablePathUTF8": 1024
+  },
+  "groupKeys": "LITERAL_COMMA_PRESERVE_EMPTY_SPACE_DUPLICATES_ORDER_EMPTY_STRING_ZERO_KEYS",
+  "dependency": {
+    "name": "jsonc-parser",
+    "version": "3.3.1",
+    "publicRootAPIs": [
+      "createScanner",
+      "visit"
+    ],
+    "license": "MIT",
+    "upstreamUrl": "https://github.com/microsoft/node-jsonc-parser/tree/v3.3.1"
+  },
+  "provenance": {
+    "implementation": "INDEPENDENT_FIRST_PARTY_CONTRACT_AND_FIXTURES",
+    "compatibilityContext": "FOUNDER_SUPPLIED_HISTORICAL_RES_DECLARATION_SEMANTICS",
+    "historicalVersionModuleClosure": "UNVERIFIED",
+    "historicalSourceDistributed": false
+  },
+  "independentReviews": {
+    "count": 3,
+    "findings": 0,
+    "scope": "EXACT_ACCEPTED_THREE_FILE_RANGE"
+  },
+  "acceptance": {
+    "fileExistence": "unverified",
+    "decoding": "unverified",
+    "execution": "unverified",
+    "migration": "unverified"
+  },
+  "open": [
+    "R008",
+    "V006",
+    "ARCHIVE_CONVERSION",
+    "RUNTIME_EQUIVALENCE",
+    "AGENT_REPAIR",
+    "EDITOR",
+    "TARGET_PUBLISH_CONTINUED_EDITING"
+  ]
+}

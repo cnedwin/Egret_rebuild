@@ -1,0 +1,65 @@
+{
+  "forwardSnapshot": {
+    "projectSchemaVersion":"1.0","projectId":"p_a","revision":1,"name":"",
+    "versions":{"engineVersion":"1","resourceFormatVersion":"1","toolProtocolVersion":"1.0"},
+    "roots":["e_a"],
+    "entities":[
+      {"id":"e_a","kind":"scene","dataSchemaVersion":"1","name":"A","data":{"value":1},"references":[{"slot":"next","target":"entity","id":"e_b","expectedKind":"scene"}]},
+      {"id":"e_b","kind":"scene","dataSchemaVersion":"1","name":"B","data":{},"references":[]}
+    ],
+    "files":[],"retiredEntityIds":[],"retiredFileIds":[]
+  },
+  "retiredSnapshot": {
+    "projectSchemaVersion":"1.0","projectId":"p_a","revision":2,"name":"",
+    "versions":{"engineVersion":"1","resourceFormatVersion":"1","toolProtocolVersion":"1.0"},
+    "roots":[],"entities":[],"files":[],"retiredEntityIds":["e_a","e_b"],"retiredFileIds":[]
+  },
+  "fileSnapshot": {
+    "projectSchemaVersion":"1.0","projectId":"p_a","revision":1,"name":"",
+    "versions":{"engineVersion":"1","resourceFormatVersion":"1","toolProtocolVersion":"1.0"},
+    "roots":[],"entities":[],
+    "files":[{"id":"f_a","path":"a.ts","role":"source","mediaType":"text/plain","sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","byteLength":1}],
+    "retiredEntityIds":[],"retiredFileIds":[]
+  },
+  "replacedEntitySnapshot": {
+    "projectSchemaVersion":"1.0","projectId":"p_a","revision":1,"name":"",
+    "versions":{"engineVersion":"1","resourceFormatVersion":"1","toolProtocolVersion":"1.0"},
+    "roots":[],"entities":[{"id":"e_a","kind":"scene","dataSchemaVersion":"1","name":"","data":{"keep":1},"references":[]}],
+    "files":[],"retiredEntityIds":[],"retiredFileIds":[]
+  },
+  "identicalEntitySnapshot": {
+    "projectSchemaVersion":"1.0","projectId":"p_a","revision":2,"name":"",
+    "versions":{"engineVersion":"1","resourceFormatVersion":"1","toolProtocolVersion":"1.0"},
+    "roots":[],"entities":[{"id":"e_a","kind":"scene","dataSchemaVersion":"1","name":"","data":{"keep":1},"references":[]}],
+    "files":[],"retiredEntityIds":[],"retiredFileIds":[]
+  },
+  "changedFileSnapshot": {
+    "projectSchemaVersion":"1.0","projectId":"p_a","revision":2,"name":"",
+    "versions":{"engineVersion":"1","resourceFormatVersion":"1","toolProtocolVersion":"1.0"},
+    "roots":[],"entities":[],
+    "files":[{"id":"f_a","path":"b.ts","role":"source","mediaType":"text/javascript","sha256":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","byteLength":2}],
+    "retiredEntityIds":[],"retiredFileIds":[]
+  },
+  "removedFileSnapshot": {
+    "projectSchemaVersion":"1.0","projectId":"p_a","revision":3,"name":"",
+    "versions":{"engineVersion":"1","resourceFormatVersion":"1","toolProtocolVersion":"1.0"},
+    "roots":[],"entities":[],"files":[],"retiredEntityIds":[],"retiredFileIds":["f_a"]
+  },
+  "metadataRootsSnapshot": {
+    "projectSchemaVersion":"1.0","projectId":"p_a","revision":1,"name":"new",
+    "versions":{"engineVersion":"2","resourceFormatVersion":"1","toolProtocolVersion":"1.0"},
+    "roots":["e_b","e_a"],
+    "entities":[{"id":"e_a","kind":"scene","dataSchemaVersion":"1","name":"","data":{},"references":[]},{"id":"e_b","kind":"scene","dataSchemaVersion":"1","name":"","data":{},"references":[]}],
+    "files":[],"retiredEntityIds":[],"retiredFileIds":[]
+  },
+  "diffs": {
+    "empty":{"addedEntityIds":[],"changedEntityIds":[],"removedEntityIds":[],"addedFileIds":[],"changedFileIds":[],"removedFileIds":[],"metadataChanged":false,"rootsChanged":false},
+    "forward":{"addedEntityIds":["e_a","e_b"],"changedEntityIds":[],"removedEntityIds":[],"addedFileIds":[],"changedFileIds":[],"removedFileIds":[],"metadataChanged":false,"rootsChanged":true},
+    "retired":{"addedEntityIds":[],"changedEntityIds":[],"removedEntityIds":["e_a","e_b"],"addedFileIds":[],"changedFileIds":[],"removedFileIds":[],"metadataChanged":false,"rootsChanged":true},
+    "entityChanged":{"addedEntityIds":[],"changedEntityIds":["e_a"],"removedEntityIds":[],"addedFileIds":[],"changedFileIds":[],"removedFileIds":[],"metadataChanged":false,"rootsChanged":false},
+    "fileAdded":{"addedEntityIds":[],"changedEntityIds":[],"removedEntityIds":[],"addedFileIds":["f_a"],"changedFileIds":[],"removedFileIds":[],"metadataChanged":false,"rootsChanged":false},
+    "fileChanged":{"addedEntityIds":[],"changedEntityIds":[],"removedEntityIds":[],"addedFileIds":[],"changedFileIds":["f_a"],"removedFileIds":[],"metadataChanged":false,"rootsChanged":false},
+    "fileRemoved":{"addedEntityIds":[],"changedEntityIds":[],"removedEntityIds":[],"addedFileIds":[],"changedFileIds":[],"removedFileIds":["f_a"],"metadataChanged":false,"rootsChanged":false},
+    "metadataRoots":{"addedEntityIds":[],"changedEntityIds":[],"removedEntityIds":[],"addedFileIds":[],"changedFileIds":[],"removedFileIds":[],"metadataChanged":true,"rootsChanged":true}
+  }
+}

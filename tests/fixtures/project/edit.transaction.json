@@ -1,0 +1,1 @@
+{"baseRevision":0,"command":"edit","operations":[{"op":"setRoots","roots":[]}],"projectId":"p_demo","scope":{"entityIds":[],"fileIds":[],"metadata":false,"roots":true},"source":{"actorId":"actor","actorKind":"tool","intent":"","toolId":"tool","toolVersion":"1.0"},"toolProtocolVersion":"1.0","transactionId":"t_edit"}

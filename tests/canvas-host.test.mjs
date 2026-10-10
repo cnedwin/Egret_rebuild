@@ -45,7 +45,8 @@ test('close during drawing stops later primitives; failures release idle barrier
   f.context.fillRect=()=>{ if(++n===2) closed=host.close(); };
   const v=frame();v.commands.push(structuredClone(v.commands[0])); host.renderFrame(v);assert.equal(n,2);await closed;
   const g=fixture(),other=createCanvasHost({canvas:g.canvas});other.start();g.context.fillRect=()=>{throw Error('draw');};
-  assert.throws(()=>other.renderFrame(frame()),code('CANVAS_RENDER_FAILED'));await other.close();
+  assert.throws(()=>other.renderFrame(frame()),code('CANVAS_RENDER_FAILED'));
+  assert.throws(()=>other.renderFrame(frame()),code('CANVAS_HOST_CLOSED'));assert.throws(()=>other.start(),code('CANVAS_HOST_CLOSED'));await other.close();
 });
 test('stop before start and invalid options',async()=>{
   const f=fixture(),host=createCanvasHost({canvas:f.canvas});host.stop();assert.throws(()=>host.start(),code('CANVAS_HOST_CLOSED'));await host.close();
@@ -62,7 +63,8 @@ test('context availability/loss, assigned dimensions, backing budgets and scaled
   g.context.isContextLost=()=>true;g.calls.length=0;
   assert.throws(()=>host.renderFrame(frame()),code('CANVAS_CONTEXT_LOST'));assert.equal(g.calls.length,0);await host.close();
   const k=fixture();Object.defineProperty(k.canvas,'width',{get:()=>0,set:()=>{}});
-  const allocation=createCanvasHost({canvas:k.canvas});allocation.start();assert.throws(()=>allocation.renderFrame(frame()),code('CANVAS_BACKING_LIMIT'));await allocation.close();
+  const allocation=createCanvasHost({canvas:k.canvas});allocation.start();assert.throws(()=>allocation.renderFrame(frame()),code('CANVAS_BACKING_LIMIT'));
+  assert.throws(()=>allocation.renderFrame(frame()),code('CANVAS_HOST_CLOSED'));assert.throws(()=>allocation.start(),code('CANVAS_HOST_CLOSED'));await allocation.close();
 });
 test('stable copy survives mutation of previously read fields',async()=>{
   const f=fixture(),host=createCanvasHost({canvas:f.canvas});host.start();

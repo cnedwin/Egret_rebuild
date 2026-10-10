@@ -14,5 +14,5 @@
     "verify": "node tools/verify.mjs"
   },
   "devDependencies": { "typescript": "7.0.2" },
-  "dependencies": { "@egret/engine": "workspace:*" }
+  "dependencies": { "@egret/engine": "workspace:*", "@egret/project": "workspace:*" }
 }

@@ -1,0 +1,10 @@
+[
+  {"name":"earlier ID semantic beats later type","changes":{"projectId":"bad","revision":"bad"},"code":"PROJECT_ID_INVALID","pointer":"/projectId"},
+  {"name":"revision semantic beats name type","changes":{"revision":1.5,"name":17},"code":"PROJECT_LIMIT_EXCEEDED","pointer":"/revision"},
+  {"name":"earlier ID type beats revision semantic","changes":{"projectId":17,"revision":1.5},"code":"PROJECT_INPUT_INVALID","pointer":"/projectId"},
+  {"name":"snapshot version unsupported","changes":{"projectSchemaVersion":"2.0"},"code":"PROJECT_FORMAT_UNSUPPORTED","pointer":"/projectSchemaVersion"},
+  {"name":"snapshot version wrong type","changes":{"projectSchemaVersion":2},"code":"PROJECT_INPUT_INVALID","pointer":"/projectSchemaVersion"},
+  {"name":"nested protocol unsupported","changes":{"versions":{"engineVersion":"1","resourceFormatVersion":"1","toolProtocolVersion":"2.0"}},"code":"PROJECT_FORMAT_UNSUPPORTED","pointer":"/versions/toolProtocolVersion"},
+  {"name":"unknown envelope","changes":{"extra":0},"code":"PROJECT_INPUT_INVALID","pointer":""},
+  {"name":"node-local closure beats child semantic","changes":{"projectId":"bad","extra":0},"code":"PROJECT_INPUT_INVALID","pointer":""}
+]

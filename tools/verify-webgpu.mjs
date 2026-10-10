@@ -12,7 +12,7 @@ const option=(name,fallback)=>{const i=process.argv.indexOf(name);return i<0?fal
 const inside=(base,file)=>file.startsWith(base+sep);
 const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
 const output=resolve(option('--output','../runs/webgpu-native-task4'));
-const copied=resolve(root,'../runs/webgpu-native-counterexamples');
+const copied=resolve(output,'counterexamples');
 // Private altered product copies and raw evidence can never become publication inputs.
 if(output===root || inside(root,output) || copied===root || inside(root,copied))throw new Error('Output and counterexample trees must be outside the repository');
 await mkdir(output,{recursive:true});
@@ -56,12 +56,14 @@ if(manifest.exports['./webgpu'].import!=='./dist/web/webgpu.js'||manifest.export
 const modeDefinitions=[
   {name:'no-op',fixture:'painter',assertion:'painter-colored-interior',file:'web/webgpuPass.js',from:'pass.draw(range.vertexCount, 1, range.firstVertex, 0);',to:'void range;'},
   {name:'reversed-order',fixture:'painter',assertion:'painter-overlap',file:'web/webgpuPass.js',from:'for (const range of ranges)',to:'for (const range of [...ranges].reverse())'},
-  {name:'removed-diamond-clip',fixture:'nested',assertion:'diamond-outside',file:'web/WebGPUHost.js',from:'prepareRectangles2D(copied.frame,',to:'prepareRectangles2D({ ...copied.frame, commands: copied.frame.commands.map(command => ({ ...command, clips: [] })) },'},
+  {name:'removed-diamond-clip',fixture:'nested',assertion:'diamond-outside',file:'web/WebGPUHost.js',from:'prepareMixedDraws2D(copied.frame,',to:'prepareMixedDraws2D({ ...copied.frame, commands: copied.frame.commands.map(command => ({ ...command, clips: [] })) },'},
   {name:'double-premultiply',fixture:'painter',assertion:'painter-overlap',file:'web/webgpuPass.js',from:'data[offset++] = red;\n            data[offset++] = green;\n            data[offset++] = blue;',to:'data[offset++] = red * alpha;\n            data[offset++] = green * alpha;\n            data[offset++] = blue * alpha;'},
   {name:'translated',fixture:'painter',assertion:'painter-colored-interior',file:'web/webgpuPass.js',from:'data[offset++] = p.x;',to:'data[offset++] = p.x + 16 / width;'},
   {name:'missing-clear',fixture:'red-clear',assertion:'empty-nonzero-clear',file:'web/WebGPUHost.js',from:"loadOp: 'clear'",to:"loadOp: 'load'"},
-  {name:'nominal-dpr-substitution',fixture:'dpr',assertion:'nominal-dpr-boundary-marker',file:'web/webgpuPass.js',from:'2 * point.x / width - 1',to:'2 * point.x * (width / 10.2) / 1.5 / width - 1'}
+  {name:'nominal-dpr-substitution',fixture:'dpr',assertion:'nominal-dpr-boundary-marker',file:'web/webgpuPass.js',from:'data[offset++] = p.x;',to:'data[offset++] = (p.x + 1) * (width / 10.2) / 1.5 - 1'}
 ];
+// Nominal-DPR substitution mutates the final upload after valid CPU projection;
+// (packedX + 1) * (backingWidth / 10.2) / 1.5 - 1 is the same wrong X mapping.
 // Exact finite patches touch disposable copies only. Their URL space has its own root.
 async function prepareMode(mode) {
   const base=resolve(copied,mode.name,'engine/dist');await mkdir(dirname(base),{recursive:true});

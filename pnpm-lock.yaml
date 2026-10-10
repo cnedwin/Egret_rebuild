@@ -11,6 +11,9 @@ importers:
       '@egret/engine':
         specifier: workspace:*
         version: link:packages/engine
+      '@egret/project':
+        specifier: workspace:*
+        version: link:packages/project
     devDependencies:
       typescript:
         specifier: 7.0.2
@@ -29,6 +32,15 @@ importers:
       robust-predicates:
         specifier: 3.0.3
         version: 3.0.3
+
+  packages/project:
+    dependencies:
+      '@egret/contracts':
+        specifier: workspace:*
+        version: link:../contracts
+      jsonc-parser:
+        specifier: 3.3.1
+        version: 3.3.1
 
   packages/runtime:
     dependencies:
@@ -158,6 +170,9 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  jsonc-parser@3.3.1:
+    resolution: {integrity: sha512-HUgH65KyejrUFPvHFPbqOY0rsFip3Bo5wb4ngvdi1EpCYWUQDC5V+Y7mZws+DLkr4M//zQJoanu1SP+87Dv1oQ==}
+
   robust-predicates@3.0.3:
     resolution: {integrity: sha512-NS3levdsRIUOmiJ8FZWCP7LG3QpJyrs/TE0Zpf1yvZu8cAJJ6QMW92H1c7kWpdIHo8RvmLxN/o2JXTKHp74lUA==}
 
@@ -227,6 +242,8 @@ snapshots:
 
   '@typescript/typescript-win32-x64@7.0.2':
     optional: true
+
+  jsonc-parser@3.3.1: {}
 
   robust-predicates@3.0.3: {}
 

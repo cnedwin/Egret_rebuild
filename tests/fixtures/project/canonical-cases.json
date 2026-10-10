@@ -1,0 +1,7 @@
+[
+  {"name":"integer-looking keys","input":{"2":2,"10":1,"a":-0},"canonical":"{\"10\":1,\"2\":2,\"a\":0}","nodes":7},
+  {"name":"nested UTF16 keys","input":{"z":{"β":1,"a":2},"a":[true,null]},"canonical":"{\"a\":[true,null],\"z\":{\"a\":2,\"β\":1}}","nodes":11},
+  {"name":"nonascii original Unicode and escaped controls","input":{"é":"😀\n\u0000\t\"\\","é":"é"},"canonical":"{\"é\":\"é\",\"é\":\"😀\\n\\u0000\\t\\\"\\\\\"}","nodes":5},
+  {"name":"primitive exponent spelling","input":[1e-7,1e21,1e20,-0,5e-324],"canonical":"[1e-7,1e+21,100000000000000000000,0,5e-324]","nodes":6},
+  {"name":"UTF16 supplementary keys before BMP high keys","input":{"":1,"😀":2},"canonical":"{\"😀\":2,\"\":1}","nodes":5}
+]

@@ -59,3 +59,35 @@ try {
 } finally {
   rmSync(webInvalid,{force:true});rmSync(webConfig,{force:true});
 }
+
+const projectConfig = 'tests/types/tsconfig.project.json';
+const projectPositive = spawnSync(process.execPath, [compiler, '--project', projectConfig], {cwd:root,encoding:'utf8'});
+process.stdout.write(projectPositive.stdout ?? '');process.stderr.write(projectPositive.stderr ?? '');
+if (projectPositive.error) throw projectPositive.error;
+if (projectPositive.status !== 0) process.exit(projectPositive.status ?? 1);
+const projectRaw = readFileSync(path.join(root,'tests/types/project-negative.ts'),'utf8');
+const projectInvalid = path.join(root,'tests/types/project-invalid.generated.ts');
+const projectInvalidConfig = path.join(root,'tests/types/project-invalid.generated.json');
+const expectedProject = projectRaw.split(/\r?\n/).flatMap((line,index) => {
+  const match = line.match(/@ts-expect-error PROJECT_CASE ([\w-]+) TS(\d+)/);
+  return match ? [{name:match[1],line:index+2,code:Number(match[2])}] : [];
+});
+if (!expectedProject.length || expectedProject.length !== (projectRaw.match(/@ts-expect-error/g) ?? []).length) throw Error('Unclassified project negative fixture');
+try {
+  // Keep line endings/locations stable; only remove suppression comment content.
+  writeFileSync(projectInvalid,projectRaw.replace(/^.*@ts-expect-error.*$/gm,''));
+  writeFileSync(projectInvalidConfig,JSON.stringify({extends:'./tsconfig.project.json',include:['project-invalid.generated.ts']}));
+  const check = spawnSync(process.execPath,[compiler,'--project','tests/types/project-invalid.generated.json','--pretty','false'],{cwd:root,encoding:'utf8'});
+  process.stdout.write(check.stdout ?? '');process.stderr.write(check.stderr ?? '');
+  if (check.error) throw check.error;
+  const observed = [...(check.stdout ?? '').matchAll(/^(.+)\((\d+),(\d+)\): error TS(\d+):/gm)].map(match=>({file:match[1].replaceAll('\\','/'),line:Number(match[2]),column:Number(match[3]),code:Number(match[4])}));
+  if (check.status === 0 || observed.length !== expectedProject.length) throw Error(`Project negatives expected ${expectedProject.length} actual diagnostics; got ${observed.length}, exit ${check.status}`);
+  for (const expected of expectedProject) {
+    const matching=observed.filter(actual=>actual.file==='tests/types/project-invalid.generated.ts'&&actual.line===expected.line&&actual.code===expected.code);
+    if(matching.length!==1)throw Error(`Project negative ${expected.name}: missing exact line ${expected.line} / TS${expected.code}`);
+  }
+  console.log(`Project type fixtures PASS: 29 type-only exports, six exact value signatures, ${observed.length} unsuppressed diagnostics with individual file/line/code checks.`);
+  console.log('Project diagnostic locations: '+JSON.stringify(observed));
+} finally {
+  rmSync(projectInvalid,{force:true});rmSync(projectInvalidConfig,{force:true});
+}

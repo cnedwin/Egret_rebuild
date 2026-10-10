@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "kind": "RECORDED_BITMAP_REGION_CPU_AND_TYPE_EVIDENCE",
+  "engineeringLabel": "0.19.0",
+  "packageVersion": "0.0.0",
+  "protocolVersion": "1.0",
+  "observationKind": "SAVED_DIRECT_CPU_COMMANDS",
+  "reviewStatus": "PASS_SOURCE_AND_SAVED_CPU_EVIDENCE",
+  "reviewFindingCounts": {
+    "P1": 0,
+    "P2": 0
+  },
+  "sourceSubjects": [
+    {
+      "path": "packages/runtime/src/Bitmap.ts",
+      "bytes": 7397,
+      "sha256": "21b209ee6809e8645e2920b3680eac0eb91f481edf9ad07f961b638624ebfffe"
+    },
+    {
+      "path": "packages/runtime/src/frameCapture.ts",
+      "bytes": 5066,
+      "sha256": "23ebe914a57f165ecd210fa31d28ae4681508b684ec68895d3bbfb58a81f9fa1"
+    },
+    {
+      "path": "packages/runtime/src/imageFrameBudget.ts",
+      "bytes": 1968,
+      "sha256": "591700c47a2ec78a5a2e11b9b380386e6d79fd0bc09a5d37c0a637bbc4d5b19e"
+    }
+  ],
+  "testSubject": {
+    "path": "tests/bitmap-region.test.mjs",
+    "bytes": 23375,
+    "sha256": "50fce0797a3ae0bdf30ab1a5429fb3fd5d47c16f40d984a12c64030844ba208a"
+  },
+  "node": "v24.19.0",
+  "focusedRoute": "--test-isolation=none",
+  "red": {
+    "registeredGroups": 23,
+    "pass": 0,
+    "fail": 23,
+    "independentlyReachedCount": null,
+    "selectedReachedCase": "B01",
+    "requested": {
+      "x": 2,
+      "width": 1
+    },
+    "actual": {
+      "x": 0,
+      "width": 6
+    },
+    "positiveTypeDiagnostics": {
+      "code": "TS2339",
+      "count": 3
+    }
+  },
+  "green": {
+    "buildExit": 0,
+    "projectFormatDefinitions": 21,
+    "focused": {
+      "tests": 113,
+      "pass": 113,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "types": {
+      "exit": 0,
+      "positiveAdmission": true,
+      "expectedNegativeDiagnostics": 76,
+      "core": 43,
+      "web": 5,
+      "project": 28,
+      "newMemberCodes": [
+        "TS2322",
+        "TS2322",
+        "TS2540"
+      ]
+    },
+    "directClose": true,
+    "stdoutEOF": true,
+    "stderrEOF": true,
+    "finiteBeforeAfterIdentitiesStable": true
+  },
+  "held": {
+    "completePrepush": "FRESH_PREPUSH_REQUIRED_NOT_RECORDED_IN_THIS_CURATION",
+    "nativeVisibleSequence": "UNRUN",
+    "fullA2": false,
+    "fullMigration": false,
+    "devicePerformance": false
+  },
+  "integrationReplay": false
+}

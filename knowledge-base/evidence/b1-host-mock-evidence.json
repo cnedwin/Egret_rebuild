@@ -1,0 +1,148 @@
+{
+  "schemaVersion": 1,
+  "projectionStatus": "ROOT_RECONCILED_PUBLIC_SUMMARY",
+  "evidenceKind": "actual_mock_host_run_projection",
+  "scope": "Bounded emitted-module loading and owned Host behavior under mock GPU resources.",
+  "toolchain": {
+    "node": "24.19.0",
+    "typescript": "7.0.2",
+    "packageManagerPin": "pnpm@11.25.0"
+  },
+  "subjects": [
+    {
+      "path": "packages/engine/web/WebGPUHost.ts",
+      "bytes": 66888,
+      "sha256": "ecc99075132e2bd546d50da8d96ff096ba8e6ca33630d192bec66500ccca3bc8"
+    },
+    {
+      "path": "packages/engine/web/b1.ts",
+      "bytes": 2366,
+      "sha256": "9b3e02b47e9328a106783f2ea88baca2066f5bf66b6c66113dd5952872c833b7"
+    },
+    {
+      "path": "tools/check-boundaries.mjs",
+      "bytes": 13562,
+      "sha256": "e0404cdb4b470310c06302f6e36f6525c44230cd933b426485b308bfbb1f1323"
+    }
+  ],
+  "verifiedTest": {
+    "path": "tests/webgpu-mesh-host.test.mjs",
+    "bytes": 85984,
+    "sha256": "9ac77c5090c1739602fd09c69f9c1a42131573dc02d3f349b73dbc95b7b3eba9"
+  },
+  "currentTest": {
+    "path": "tests/webgpu-mesh-host.test.mjs",
+    "bytes": 85983,
+    "sha256": "0680a9c10f290e6104b150fbd85df805d1e03882292ce8745d22f817e1ee6783"
+  },
+  "byteOnlySuccessor": {
+    "removedFinalByte": "LF",
+    "exactVerifiedPrefix": true,
+    "runtimeRerun": false
+  },
+  "defaultProcessFocused": {
+    "command": [
+      "node",
+      "--test",
+      "tests/webgpu-mesh-host.test.mjs"
+    ],
+    "testSubject": "verifiedTest",
+    "nodeTests": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0
+    },
+    "hostCases": {
+      "total": 13,
+      "passed": 13,
+      "notAttempted": 0
+    },
+    "caseIds": [
+      "S01",
+      "N01",
+      "N02",
+      "N03",
+      "N04",
+      "N05",
+      "P01",
+      "P02",
+      "R01",
+      "C01",
+      "C02",
+      "C03",
+      "C04"
+    ],
+    "exitCode": 0,
+    "signal": null,
+    "closed": true,
+    "stdoutEOF": true,
+    "stderrEOF": true,
+    "identitiesStable": true,
+    "joined": true,
+    "allCaseDriverReceiptsMatched": true,
+    "allCaseExitsZeroAndStreamsEOF": true
+  },
+  "wholeRepository": {
+    "entry": "tools/verify.mjs",
+    "status": "PASS",
+    "testSubject": "verifiedTest",
+    "tests": {
+      "total": 901,
+      "passed": 901,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "hostCases": {
+      "total": 13,
+      "passed": 13,
+      "allCaseDriverReceiptsMatched": true,
+      "allCaseExitsZeroAndStreamsEOF": true
+    },
+    "verifyExitCode": 0,
+    "workerExitCode": 0,
+    "ownerExitCode": 0,
+    "closed": true,
+    "jobActiveZero": true,
+    "jobClosed": true,
+    "workloadStreamsEOF": true,
+    "outerStreamsEOF": true,
+    "rawOutputSaved": true,
+    "pinsStable": true,
+    "fallbackUsed": false,
+    "currentRepositoryRuntimeRerun": false
+  },
+  "history": [
+    {
+      "phase": "pre_correction_whole_repository",
+      "status": "INCOMPLETE",
+      "tests": 901,
+      "passed": 900,
+      "failed": 1,
+      "hostDriversStarted": 0,
+      "failure": "Parent guard rejected materialized Node default worker options."
+    },
+    {
+      "phase": "parent_guard_correction",
+      "change": "Accept the exact frozen 24-option profile only after child-v8 validation; retain loader rejection and unchanged driver source."
+    },
+    {
+      "phase": "post_verification_formatting",
+      "change": "Remove one final LF; recorded runtime results remain bound to verifiedTest."
+    }
+  ],
+  "notProven": [
+    "real_browser_GPU",
+    "native_runtime",
+    "device_compatibility",
+    "rendered_pixels",
+    "performance",
+    "power_or_heat",
+    "Chinese_font_performance",
+    "DragonBones",
+    "full_legacy_project_migration"
+  ],
+  "provenance": "Sanitized projection of retained actual receipts and raw output; this JSON does not publish private raw records or re-execute verification."
+}
