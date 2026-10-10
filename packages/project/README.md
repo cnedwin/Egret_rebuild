@@ -1,49 +1,49 @@
-# 工程事务核心
+# Project transaction core
 
-[English](README.en.md) | 简体中文
+[简体中文](README.zh-CN.md) | English
 
-## 当前本地工程预览：0.18.0
+## Current local engineering preview: 0.18.0
 
-新增单个具名旧 MovieClip 的有界 CPU 转换，保留图集裁剪、显示偏移和作者持续段时间；28/28 专项测试通过，输出已由真实序列帧工厂重新准入。阅读[契约](../../knowledge-base/docs/legacy-movieclip-contract.zh-CN.md)、[证据](../../knowledge-base/docs/legacy-movieclip-evidence.zh-CN.md)和[精简记录](../../knowledge-base/evidence/legacy-movieclip-focused.json)。API 保持内部使用，图片读取、解码和播放仍未验证。
+Adds bounded CPU conversion of one named legacy MovieClip, preserving atlas crops, display offsets and authored-hold time. Focused tests passed 28/28 with real sequence-factory re-admission. Read the [contract](../../knowledge-base/en/docs/legacy-movieclip-contract.md), [evidence](../../knowledge-base/en/docs/legacy-movieclip-evidence.md) and [compact record](../../knowledge-base/evidence/legacy-movieclip-focused.json). The API remains internal; image reads, decoding and playback are unverified.
 
-0.17.0 及更早结果保留为各自源码身份下的历史证据。此次增量的默认模式、全仓回归和完整 prepush 未运行；当前浏览器／设备像素、性能及完整 R008/V006 迁移仍待验收。0.18.0 是本地工程标签，包 0.0.0／协议 1.0 不变；GitHub 交付继续保持 HOLD_HTTP_403。
+0.17.0 and earlier results retain their historical source identities. Default-mode, repository regression and complete prepush for this increment are UNRUN; current browser/device pixels, performance and complete R008/V006 migration await acceptance. 0.18.0 is a local engineering label; package 0.0.0/protocol 1.0 are unchanged. GitHub delivery remains HOLD_HTTP_403.
 
-## 历史本地工程预览：0.17.0
+## Historical local engineering preview: 0.17.0
 
-本预览新增自有 CPU 场景快照、固定网格辅助函数、有界 B1 宿主源码／模拟整合、CPU 序列帧采样与纯 RES 转换意图。阅读[CPU 场景](../../knowledge-base/docs/3d-cpu-scene-contract.md)、[网格](../../knowledge-base/docs/3d-webgpu-mesh-contract.md)、[宿主](../../knowledge-base/docs/b1-host-contract.zh-CN.md)、[序列帧](../../knowledge-base/docs/sequence-clip-contract.zh-CN.md)及[RES 意图](../../knowledge-base/docs/legacy-res-plan-contract.zh-CN.md)与配对证据。这些接口保持内部使用；公开入口与包 0.0.0／协议 1.0 不变。
+This preview adds owned CPU scene snapshots, fixed mesh helpers, bounded B1 Host source/mock integration, CPU sequence sampling and pure RES conversion intents. Read [CPU scene](../../knowledge-base/en/docs/3d-cpu-scene-contract.md), [mesh](../../knowledge-base/en/docs/3d-webgpu-mesh-contract.md), [Host](../../knowledge-base/en/docs/b1-host-contract.md), [sequence](../../knowledge-base/en/docs/sequence-clip-contract.md) and [RES intents](../../knowledge-base/en/docs/legacy-res-plan-contract.md), with their paired evidence. These interfaces remain internal; public barrels and package 0.0.0/protocol 1.0 are unchanged.
 
-已记录默认宿主验证通过 13/13 项，CPU 序列帧采样通过 25/25，RES 意图规划通过 14/14。所选整仓运行通过 901/901 项测试、编译、282 个边界文件及类型门禁；901 项包含宿主回归。源码绑定、仅格式后继及保留的早期失败见[配对宿主证据](../../knowledge-base/docs/b1-host-evidence.zh-CN.md)。此次文档采用未重跑产品检查。
+Recorded default Host verification passed 13/13 cases, CPU sequence sampling 25/25 and RES intent planning 14/14. The selected whole-repository run passed 901/901 tests, build, 282 boundary files and type gates. The 901 tests include Host regression coverage. Source bindings, the formatting-only successor and retained earlier failure are detailed in the [paired Host evidence](../../knowledge-base/en/docs/b1-host-evidence.md). Documentation adoption replays no product checks.
 
-GitHub 交付因已记录的 403 响应保持 HOLD；当前文档最终审阅与完整 prepush 仍待完成。此前 0.13.0–0.16.0 检查点保留身份及结果。Native SDK、当前浏览器／设备像素、性能、字体、DragonBones、完整 R008/V006 迁移、V003／编辑器及完整产品验收仍未验证或保持开放。
+GitHub delivery is on HOLD after the recorded 403 response; final current-document review and complete prepush remain pending. Earlier 0.13.0–0.16.0 checkpoints keep their identities and results. Native SDKs, current browser/device pixels, performance, fonts, DragonBones, complete R008/V006 migration, V003/editor and full-product acceptance remain unverified or open.
 
-## 历史本地工程预览：0.16.0
+## Historical local engineering preview: 0.16.0
 
-当前增量覆盖已接受的有界图片源码／模拟逻辑、CPU 纹理参考公式、CPU 3D 数学／几何／打包，以及旧 RES 声明分析。阅读[核心进展](../../knowledge-base/docs/core-progress.md)、[3D CPU 基础](../../knowledge-base/docs/3d-foundation.md)和[旧 RES 声明](../../knowledge-base/docs/legacy-res-declarations.md)，查看契约、准确历史证据与开放任务。标签为工程预览；包 0.0.0 与协议 1.0 不变。最终独立公开审查、prepush 及本预览的 GitHub 交付仍待完成。
+The current additive scope covers accepted bounded image source/mock logic, CPU texture reference formulas, CPU 3D math/geometry/packing, and legacy RES declaration analysis. Read [core progress](../../knowledge-base/en/docs/core-progress.md), [3D CPU foundation](../../knowledge-base/en/docs/3d-foundation.md) and [legacy RES declarations](../../knowledge-base/en/docs/legacy-res-declarations.md) for contracts, exact historical evidence and open work. The label is an engineering preview; package 0.0.0 and protocol 1.0 remain unchanged. Final independent public review, prepush and this preview's GitHub delivery remain pending.
 
-此前 0.13.0／0.14.0／0.15.0 章节是各自有源码身份和结果的历史检查点，其矩形／浏览器观察不能验证当前图片或 3D 的 native 像素。Task 5a 仅提供 CPU 公式／边界；A2 Task 5b／Task 6、P0–P7、设备／文字／动画／Native、V003 和完整 R008／V006 迁移保持开放或 UNRUN。
+Earlier 0.13.0/0.14.0/0.15.0 sections are historical checkpoints with their own source identities and results. Their rectangle/browser observations do not validate current image or 3D native pixels. Task 5a provides CPU formulas/bounds only; A2 Task 5b/Task 6, P0–P7, device/text/animation/Native, V003 and complete R008/V006 migration remain open or UNRUN.
 
-0.14.0工程预览提供同步headless工程事务核心。私有workspace包仍为`@egret/project`0.0.0，工程/历史/工具协议仍为`1.0`。本预览支持不可变创作快照、原子编辑、保留目标恢复、通过规范历史持久重试及有界准入；不完成编辑器、旧工程迁移或目标交付验收。
+The 0.14.0 engineering preview provides a synchronous headless project transaction core. The private workspace package remains `@egret/project` 0.0.0; project/history/tool protocols remain `1.0`. This preview supports immutable authored snapshots, atomic edits, retained-target restore, durable retry through canonical journals and bounded admission. It does not complete editor, legacy migration or target delivery acceptance.
 
-## 公开API
+## Public API
 
-包根恰好导出`DEFAULT_PROJECT_LIMITS`、`parseProjectSnapshot`、`serializeProjectSnapshot`、`parseProjectTransaction`、`createProjectStore`及`openProjectHistory`，另有29项仅类型声明。Store提供`limits`、`earliestRevision`、`getSnapshot`、`commit`和`exportHistory`。预期失败返回有界诊断；提交及重放结果包含不可变回执。实验性接口不承诺API稳定。
+The root exports exactly `DEFAULT_PROJECT_LIMITS`, `parseProjectSnapshot`, `serializeProjectSnapshot`, `parseProjectTransaction`, `createProjectStore` and `openProjectHistory`, plus 29 type-only declarations. A store exposes `limits`, `earliestRevision`, `getSnapshot`, `commit` and `exportHistory`. Expected failures return bounded diagnostics; committed and replayed results include immutable receipts. These experimental interfaces do not assert API stability.
 
-[完整合同](../../knowledge-base/docs/工程事务核心合同.md)规定全部字段、操作、诊断、限额和公共签名；[实现证据](../../knowledge-base/docs/工程事务核心实现证据.md)区分历史范围审阅、当前oracle检查与内存观察。使用公共包根导入，不支持私有辅助接口或深路径导入。
+The [complete contract](../../knowledge-base/en/docs/project-transaction-core-contract.md) defines every field, operation, diagnostic, limit and public signature. The [implementation evidence](../../knowledge-base/en/docs/project-transaction-core-evidence.md) separates historical scoped reviews, current oracle checks and memory observations. Import from the package root; private helpers and deep imports are unsupported.
 
-## 创作权威与限额
+## Authored authority and limits
 
-唯一人工编写的格式权威是[project-format.schema.json](../contracts/schema/project-format.schema.json)。封闭生成器输出readonly合同类型及私有有序描述符，保留来源指针/哈希。仓库根执行`node tools/generate-project-format.mjs --check`检查漂移；编辑schema后使用正常生成。结构schema相符本身不证明语义有效。
+The single authored format authority is [project-format.schema.json](../contracts/schema/project-format.schema.json). The closed generator emits readonly contract types and private ordered descriptors with source-pointer/hash provenance. Run `node tools/generate-project-format.mjs --check` from the repository root to check drift; normal generation follows schema edits. Structural schema agreement alone does not establish semantic validity.
 
-严格文本适配器拒绝解码重复键、孤立代理项及尾随输入；整数字段在Number舍入之前依据精确数学词元判断。实值适配器仅读取检查过的自有数据描述符，绝不调用getter，并对每个共享别名展开计费。普通有限data负零变为0。自定义规范字节采用UTF-16键顺序、保留roots/references/operations编写顺序并归一化身份集合；不声称RFC8785认证。
+Strict text adapters reject decoded duplicate keys, lone surrogates and trailing input; exact mathematical tokens control integer validation before Number rounding. Live adapters inspect checked own data descriptors, never getters, and charge every expanded shared alias. General finite data -0 becomes 0. Custom canonical bytes use UTF-16 key ordering, retain authored roots/references/operations, and normalize identity sets. No RFC8785 certification is claimed.
 
-已知规范重试先于CAS，不新增历史或工作量。新指令在最终验证及完整字节/数量/工作量准入之后，一次发布耦合head/指令/回执状态。恢复取回目标创作内容，同时增加revision并保留身份退役知识。导出仅保存基线与成功指令，重开在交付store前重建回执及重试索引。独立快照形成新历史边界；历史不提供认证防篡改或崩溃安全持久化。
+Known canonical retries precede CAS and add no journal entry or replay work. Fresh commands publish coupled head/command/receipt state only after final validation and full byte/count/work admission. Restore recovers authored target content while advancing revision and preserving identity retirement knowledge. Export persists only baseline and successful commands; reopening rebuilds receipts and retry indices before exposing a store. Standalone snapshots start a new history boundary. Journals have no authenticated tamper evidence or crash-safe persistence.
 
-配置限额是准入边界，不是RAM承诺。一次Windows x64/Node24.19.0观察中，100000份小实体达到采样heap1071184632/RSS1501483008字节。10ms轮询在全部测量案例中仍出现最大7058.9561ms观察间隔，同步API工作会阻塞轮询；观察与GC可能漏掉瞬时峰值。不据此设定RAM门槛、接受生产性能或保证普遍OOM安全。
+Configured limits are admission bounds, not RAM promises. In one Windows x64/Node 24.19.0 observation, 100000 small entities reached sampled heap 1071184632/RSS 1501483008 bytes. A 10ms polling interval still had a maximum 7058.9561 ms observation gap across the measured cases; synchronous API work blocks polling. Observations and GC can miss transient peaks. No RAM threshold, production performance or universal OOM guarantee follows.
 
-## 依赖与交付范围
+## Dependency and delivery scope
 
-第一方适配器、schema生成工具及工程语义在Codex辅助下独立编写。精确固定的Microsoft Corporation `jsonc-parser`3.3.1适用MIT，仅在私有适配器通过公共包根使用`createScanner`/`visit`。保留[未经修改的MIT声明](../../third-party/jsonc-parser-3.3.1.LICENSE)、[NOTICE](../../NOTICE)及[来源记录](../../source-origin.json)。安装仍遵循既有固定工具/lock及禁用生命周期脚本政策。
+First-party adapters, generated-schema tooling and project semantics were independently authored with Codex assistance. Exact `jsonc-parser` 3.3.1 by Microsoft Corporation, MIT, supplies only public-root `createScanner`/`visit` in a private adapter. Preserve its [unchanged MIT notice](../../third-party/jsonc-parser-3.3.1.LICENSE), [NOTICE](../../NOTICE) and [source record](../../source-origin.json). Installation remains script-disabled under the existing pinned tool/lock policy.
 
-Native Node公共包根导入与依赖随包CommonJS入口互操作；直接原生导入随包ESM入口因内部无扩展名导入失败，实际bundler/浏览器交付尚未接受。无宿主VM/CJS桥是模拟模块集成证据；已知Experimental VM Modules警告明确保留，并有精确警告/意外stderr控制，不是产品运行时要求。允许纯依赖缓存初始化，但不证明零内存。
+Native Node bare-root imports interoperate with the dependency's shipped CommonJS entry. Direct native import of its shipped ESM entry fails on extensionless internal imports; actual bundler/browser delivery remains unaccepted. The denied-host VM/CJS bridge is simulated module integration evidence. Its known Experimental VM Modules warning remains explicitly retained, with exact-warning and unexpected-stderr controls; it is not a production-runtime requirement. Pure eager dependency caches are allowed and are not zero-memory evidence.
 
-未知实体kind/领域data schema及实际文件内容/摘要/授权仍未检查或未验证。反射无法隔离Proxy副作用；可恢复OOM、手机/Native SDK、生产性能、编辑器/V003及完整R008/V006迁移仍待完成。本段文档编写检查点的最终独立预览审阅及公开交付仍待完成，后续证据另行记录；标签不产生npm发布或完整引擎认证。
+Unknown entity kinds/domain data schemas and actual file content/digests/authorization remain unchecked or unverified. Proxy side effects cannot be isolated by reflection; recoverable OOM, phones/Native SDK, production performance, editor/V003 and complete R008/V006 migration remain pending. At this documentation-authoring checkpoint, final independent preview review and public delivery remain pending; subsequent review and delivery evidence are tracked separately; this label does not publish npm or certify a complete engine.

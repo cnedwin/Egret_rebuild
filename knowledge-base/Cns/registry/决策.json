@@ -1,0 +1,991 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-10-08",
+  "authority": "技术候选登记；生产选型均未最终批准，局部研究证据不代表完整实现或端到端性能验收",
+  "items": [
+    {
+      "id": "D001",
+      "title": "易用API与增量执行数据",
+      "status": "proposed",
+      "proposal": "TS场景/组件/保留UI接口与脏队列数据提取分层，仅为实测热点使用SoA及预分配。",
+      "risk": "全失效可能需要全遍历退路；CPU增量更新不等于GPU局部重绘。",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R005",
+        "R008",
+        "R015"
+      ],
+      "sourceIds": [
+        "S011",
+        "S005",
+        "S007",
+        "S015",
+        "S020",
+        "S038"
+      ],
+      "deliveryIds": [
+        "V002"
+      ],
+      "hypothesisIds": [
+        "H002",
+        "H007"
+      ],
+      "gate": "UI不变/稀疏/全失效原型，对照正确性与端到端开销。",
+      "acceptedAt": null,
+      "reviewer": null,
+      "supersedes": null,
+      "evidence": [
+        "evidence/contract-probe-results.json",
+        "Cns/docs/第一轮审计.md",
+        "evidence/nested-ui-probe-results.json",
+        "evidence/nested-ui-probe-red-results.json",
+        "evidence/nested-ui-probe-audit-red-results.json",
+        "evidence/nested-ui-probe-unsafe-isolation-results.json",
+        "Cns/experiments/nested-ui-probe/README.md",
+        "Cns/docs/第二轮验证记录.md",
+        "Cns/docs/第二轮审计.md"
+      ],
+      "doc": "Cns/docs/渲染引擎与运行时.md",
+      "evidenceScope": "两轮有限研究模型/本地图形/独立AI审阅；完整gate未完成，status仍为proposed",
+      "codeOriginConstraint": "R015：白鹭核心依据自有需求和规格独立设计实现；标准与开放项目提供研究依据，公共基础设施作为明确依赖接入并保留版本、来源、声明和修改记录。"
+    },
+    {
+      "id": "D002",
+      "title": "UI和3D分离执行共享基础",
+      "status": "proposed",
+      "proposal": "有序UI/2D骨骼列表与3D不透明/透明列表分开，单实例共享选定设备与资源中心。",
+      "risk": "全局按材质排序可破坏透明、骨骼slot、遮罩和世界UI语义。",
+      "requirementIds": [
+        "R002",
+        "R004",
+        "R005",
+        "R012",
+        "R015"
+      ],
+      "sourceIds": [
+        "S005",
+        "S006",
+        "S009",
+        "S016",
+        "S021",
+        "S022",
+        "S025",
+        "S028",
+        "S030",
+        "S031",
+        "S032",
+        "S038"
+      ],
+      "deliveryIds": [
+        "V002"
+      ],
+      "hypothesisIds": [
+        "H002",
+        "H004"
+      ],
+      "gate": "混合透明、遮罩、骨骼、世界UI的视觉与事件一致性。",
+      "acceptedAt": null,
+      "reviewer": null,
+      "supersedes": null,
+      "evidence": [
+        "evidence/browser-probe-results.json",
+        "Cns/docs/技术验证记录.md",
+        "evidence/batch-state-probe-results.json",
+        "evidence/batch-state-probe-red-results.json",
+        "evidence/batch-state-probe-audit-red-results.json",
+        "Cns/experiments/batch-state-probe/README.md",
+        "evidence/mixed-scene-probe-results.json",
+        "evidence/mixed-scene-probe-empty-results.json",
+        "evidence/mixed-scene-probe-strict-empty-results.json",
+        "evidence/mixed-scene-probe-shared-builder-results.json",
+        "Cns/experiments/mixed-scene-probe/README.md",
+        "Cns/docs/第二轮验证记录.md",
+        "Cns/docs/第二轮审计.md",
+        "Cns/docs/开源参考实现与采用方案.md",
+        "Cns/docs/开源实现优先与验证分工.md",
+        "evidence/reference-render-lifecycle.json",
+        "evidence/reference-pixi-text.json",
+        "Cns/docs/第三轮集成记录.md",
+        "Cns/docs/第三轮审计.md",
+        "evidence/asset-reference-probe-results.json",
+        "Cns/experiments/asset-reference-probe/README.md"
+      ],
+      "doc": "Cns/docs/渲染引擎与运行时.md",
+      "evidenceScope": "成熟源码研究与有限真实资产执行；独立AI审阅和root复跑，未完成完整gate，status仍proposed",
+      "implementationBasis": {
+        "status": "partially_integrated_research_reference_chain_not_production",
+        "adoption": "采用成熟有序UI与3D列表分路机制；统一帧入口与状态所有者，第三方renderer交接时双向失效缓存。",
+        "validationBoundary": "共享context、pass与状态交接适配；不预设两个renderer天然共享缓存。",
+        "doc": "Cns/docs/开源参考实现与采用方案.md"
+      },
+      "referenceIntegration": {
+        "status": "limited_reference_chain_executed",
+        "scope": "同WebGL2 context的Three3D与独立Canvas纹理UI交接；不是完整混合遮挡、mask、worldUI或passgraph。",
+        "doc": "Cns/docs/第三轮集成记录.md",
+        "report": "evidence/asset-reference-probe-results.json"
+      },
+      "codeOriginConstraint": "R015：白鹭核心依据自有需求和规格独立设计实现；标准与开放项目提供研究依据，公共基础设施作为明确依赖接入并保留版本、来源、声明和修改记录。"
+    },
+    {
+      "id": "D003",
+      "title": "小型缓存帧图",
+      "status": "proposed",
+      "proposal": "用小型模板表达依赖、资源寿命与读写，缓存执行计划，按需启用3D后处理与UI合成。",
+      "risk": "通道合并不保证收益；中间目标、带宽和逐帧解释成本需测量。",
+      "requirementIds": [
+        "R003",
+        "R005",
+        "R012",
+        "R015"
+      ],
+      "sourceIds": [
+        "S005",
+        "S009",
+        "S025",
+        "S038"
+      ],
+      "deliveryIds": [
+        "V002"
+      ],
+      "hypothesisIds": [
+        "H003",
+        "H004"
+      ],
+      "gate": "代表tile与其他GPU的相同视觉内容，测CPU/GPU带宽及目标内存。",
+      "acceptedAt": null,
+      "reviewer": null,
+      "supersedes": null,
+      "evidence": [
+        "Cns/docs/开源参考实现与采用方案.md",
+        "Cns/docs/开源实现优先与验证分工.md",
+        "evidence/reference-render-lifecycle.json"
+      ],
+      "doc": "Cns/docs/渲染引擎与运行时.md",
+      "implementationBasis": {
+        "status": "selected_reference_baseline_not_integrated",
+        "adoption": "采用成熟pass附件读写及load/store/resolve规则，白鹭只设计小型帧模板与缓存。",
+        "validationBoundary": "局部clear、多相机、mask/filter、截图与后续pass读取；能耗另测。",
+        "doc": "Cns/docs/开源参考实现与采用方案.md"
+      },
+      "evidenceScope": "既有有限实验加固定版本源码研究；成熟机制作为工程默认起点，未完成白鹭完整gate，D状态仍proposed",
+      "codeOriginConstraint": "R015：白鹭核心依据自有需求和规格独立设计实现；标准与开放项目提供研究依据，公共基础设施作为明确依赖接入并保留版本、来源、声明和修改记录。"
+    },
+    {
+      "id": "D004",
+      "title": "移动前向基线与能力增强",
+      "status": "proposed",
+      "proposal": "以移动前向渲染为可移植基线，按内容及能力配置启用Forward+、compute等增强。",
+      "risk": "增强路径不能变成独立引擎；默认延迟渲染缺少当前需求支持。",
+      "requirementIds": [
+        "R002",
+        "R004",
+        "R012",
+        "R015"
+      ],
+      "sourceIds": [
+        "S007",
+        "S009",
+        "S025",
+        "S027",
+        "S030",
+        "S031",
+        "S032",
+        "S038"
+      ],
+      "deliveryIds": [
+        "V002"
+      ],
+      "hypothesisIds": [
+        "H004"
+      ],
+      "gate": "标杆灯光、材质、透明与特效在基线和增强路径上的同质量验证。",
+      "acceptedAt": null,
+      "reviewer": null,
+      "supersedes": null,
+      "evidence": [
+        "Cns/docs/开源参考实现与采用方案.md",
+        "Cns/docs/开源实现优先与验证分工.md",
+        "evidence/reference-render-lifecycle.json",
+        "evidence/reference-assets-animation.json",
+        "Cns/docs/第三轮集成记录.md",
+        "Cns/docs/第三轮审计.md",
+        "evidence/asset-reference-probe-results.json",
+        "Cns/experiments/asset-reference-probe/README.md"
+      ],
+      "doc": "Cns/docs/渲染引擎与运行时.md",
+      "implementationBasis": {
+        "status": "partially_integrated_research_reference_chain_not_production",
+        "adoption": "已执行Three renderer/glTF loader/AnimationMixer为第三方研究链；白鹭自主渲染核心按规格独立实现，库形式的拟生产依赖明确归属后另行评估；Babylon/PlayCanvas作机制对照。",
+        "validationBoundary": "属于可替换研究基线，非最终生产内核批准；包体、UI合成和画质等价需集成验证。",
+        "doc": "Cns/docs/开源参考实现与采用方案.md"
+      },
+      "evidenceScope": "成熟源码研究与有限真实资产执行；独立AI审阅和root复跑，未完成完整gate，status仍proposed",
+      "referenceIntegration": {
+        "status": "limited_reference_chain_executed",
+        "scope": "固定r186成熟renderer与蒙皮圆柱真实执行；未验收完整角色、材质灯光支持矩阵或移动前向收益。",
+        "doc": "Cns/docs/第三轮集成记录.md",
+        "report": "evidence/asset-reference-probe-results.json"
+      },
+      "codeOriginConstraint": "R015：白鹭核心依据自有需求和规格独立设计实现；标准与开放项目提供研究依据，公共基础设施作为明确依赖接入并保留版本、来源、声明和修改记录。"
+    },
+    {
+      "id": "D005",
+      "title": "现代图形抽象与宿主能力",
+      "status": "proposed",
+      "proposal": "以WebGPU显式资源/pass/管线为架构方向，维护WebGL兼容；同surface选择一个图形backend，Canvas为离屏文字provider，有限纯2D回退单列；原生RHI可替换且能力/支持等级显式。",
+      "risk": "宿主能力不能由浏览器或其他产品文档外推；WebGL1需求、原生包体与移植代价待测。",
+      "requirementIds": [
+        "R003",
+        "R007",
+        "R012",
+        "R015"
+      ],
+      "sourceIds": [
+        "S004",
+        "S006",
+        "S007",
+        "S008",
+        "S009",
+        "S016",
+        "S022",
+        "S023",
+        "S025",
+        "S030",
+        "S031",
+        "S032",
+        "S033",
+        "S034",
+        "S035",
+        "S036",
+        "S037",
+        "S038"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V002",
+        "V005"
+      ],
+      "hypothesisIds": [
+        "H001",
+        "H007"
+      ],
+      "gate": "选定宿主设备能力探测、功能降级、加载及真实发布原型。",
+      "acceptedAt": null,
+      "reviewer": null,
+      "supersedes": null,
+      "evidence": [
+        "evidence/browser-probe-results.json",
+        "Cns/docs/技术验证记录.md",
+        "evidence/mixed-scene-probe-results.json",
+        "evidence/mixed-scene-probe-empty-results.json",
+        "evidence/mixed-scene-probe-strict-empty-results.json",
+        "evidence/mixed-scene-probe-shared-builder-results.json",
+        "Cns/experiments/mixed-scene-probe/README.md",
+        "evidence/phase2-reference-check-2026-10-08.json",
+        "Cns/docs/第二轮验证记录.md",
+        "Cns/docs/第二轮审计.md",
+        "Cns/docs/开源参考实现与采用方案.md",
+        "Cns/docs/开源实现优先与验证分工.md",
+        "evidence/reference-render-lifecycle.json",
+        "Cns/docs/第三轮集成记录.md",
+        "Cns/docs/第三轮审计.md",
+        "evidence/asset-reference-probe-results.json",
+        "Cns/experiments/asset-reference-probe/README.md"
+      ],
+      "doc": "Cns/docs/渲染引擎与运行时.md",
+      "evidenceScope": "成熟源码研究与有限真实资产执行；独立AI审阅和root复跑，未完成完整gate，status仍proposed",
+      "implementationBasis": {
+        "status": "partially_integrated_research_reference_chain_not_production",
+        "adoption": "参考链先接WebGL2；WebGPU独立backend/caps/shader/缓存/恢复责任，不视为简单API替换。",
+        "validationBoundary": "不决定首发宿主或手机支持；外部device由实际owner负责恢复。",
+        "doc": "Cns/docs/开源参考实现与采用方案.md"
+      },
+      "referenceIntegration": {
+        "status": "limited_reference_chain_executed",
+        "scope": "仅当前桌面WebGL2实际lost/restored与固定帧重建；无WebGPU场景或生产宿主认证。",
+        "doc": "Cns/docs/第三轮集成记录.md",
+        "report": "evidence/asset-reference-probe-results.json"
+      },
+      "selectionResearch": {
+        "status": "candidate_source_research_not_implemented",
+        "doc": "Cns/docs/图形后端编译与原生Runtime选型.md",
+        "artifacts": [
+          "evidence/backend-graphics-research.json",
+          "evidence/backend-native-research.json",
+          "evidence/backend-host-ai-research.json"
+        ]
+      },
+      "codeOriginConstraint": "R015：白鹭核心依据自有需求和规格独立设计实现；标准与开放项目提供研究依据，公共基础设施作为明确依赖接入并保留版本、来源、声明和修改记录。"
+    },
+    {
+      "id": "D006",
+      "title": "可选计算核与批量镜像协议",
+      "status": "proposed",
+      "proposal": "TS负责公共接口与编排；原生/WASM计算和执行模块采用窄合同、批量通信与可重建镜像，Rust/C++及下沉范围由D014和端到端瓶颈比较决定。",
+      "risk": "对象代际、序号、所有权、资源就绪、背压与图形快照恢复必须明确；玩法事件留在逻辑权威层，跨界必达事件另需ID、未确认outbox、消费水位和重发去重，不能由快照跳过。",
+      "requirementIds": [
+        "R003",
+        "R005",
+        "R008",
+        "R015"
+      ],
+      "sourceIds": [
+        "S005",
+        "S012",
+        "S015",
+        "S018",
+        "S019",
+        "S033",
+        "S034",
+        "S035",
+        "S036",
+        "S037",
+        "S038"
+      ],
+      "deliveryIds": [
+        "V002",
+        "V003",
+        "V006"
+      ],
+      "hypothesisIds": [
+        "H006",
+        "H007"
+      ],
+      "gate": "端到端桥接成本、销毁后异步回调、丢帧/丢序列与设备丢失恢复。",
+      "acceptedAt": null,
+      "reviewer": null,
+      "supersedes": null,
+      "evidence": [
+        "evidence/contract-probe-results.json",
+        "Cns/docs/第一轮审计.md",
+        "evidence/reliable-event-probe-results.json",
+        "evidence/reliable-event-probe-red-results.json",
+        "evidence/reliable-event-probe-red-input-results.json",
+        "evidence/reliable-event-probe-verification-results.json",
+        "Cns/experiments/reliable-event-probe/README.md",
+        "evidence/async-resource-probe-results.json",
+        "evidence/async-resource-probe-legacy-red-results.json",
+        "evidence/async-resource-probe-audit-red-results.json",
+        "Cns/experiments/async-resource-probe/README.md",
+        "Cns/docs/第二轮验证记录.md",
+        "Cns/docs/第二轮审计.md"
+      ],
+      "doc": "Cns/docs/技术架构.md",
+      "evidenceScope": "两轮有限研究模型/本地图形/独立AI审阅；完整gate未完成，status仍为proposed",
+      "selectionResearch": {
+        "status": "candidate_source_research_not_implemented",
+        "doc": "Cns/docs/图形后端编译与原生Runtime选型.md",
+        "artifacts": [
+          "evidence/backend-graphics-research.json",
+          "evidence/backend-native-research.json",
+          "evidence/backend-host-ai-research.json"
+        ]
+      },
+      "codeOriginConstraint": "R015：白鹭核心依据自有需求和规格独立设计实现；标准与开放项目提供研究依据，公共基础设施作为明确依赖接入并保留版本、来源、声明和修改记录。",
+      "proposalRevision": {
+        "knowledgeBaseVersion": "0.7.0",
+        "reason": "消除旧C++措辞与D014原生候选研究间歧义；不接受Rust/C++选型或改变gate。",
+        "priorKnowledgeBaseVersion": "0.6.2"
+      }
+    },
+    {
+      "id": "D007",
+      "title": "复杂UI分阶段更新与文本缓存",
+      "status": "proposed",
+      "proposal": "分阶段失效、布局隔离、虚拟化、保序批处理、字形及塑形缓存，子树缓存有预算。",
+      "risk": "CJK/emoji/IME质量、遮罩类型和动态缓存失效有独立代价。",
+      "requirementIds": [
+        "R002",
+        "R004",
+        "R005",
+        "R008",
+        "R012",
+        "R015"
+      ],
+      "sourceIds": [
+        "S005",
+        "S006",
+        "S007",
+        "S009",
+        "S011",
+        "S015",
+        "S020",
+        "S021",
+        "S026",
+        "S028",
+        "S030",
+        "S031",
+        "S032",
+        "S038"
+      ],
+      "deliveryIds": [
+        "V002",
+        "V004",
+        "V006"
+      ],
+      "hypothesisIds": [
+        "H002",
+        "H006"
+      ],
+      "gate": "动态文字、变高列表、嵌套遮罩、换肤与全失效正确性和成本。",
+      "acceptedAt": null,
+      "reviewer": null,
+      "supersedes": null,
+      "evidence": [
+        "evidence/contract-probe-results.json",
+        "Cns/docs/第一轮审计.md",
+        "evidence/nested-ui-probe-results.json",
+        "evidence/nested-ui-probe-red-results.json",
+        "evidence/nested-ui-probe-audit-red-results.json",
+        "evidence/nested-ui-probe-unsafe-isolation-results.json",
+        "Cns/experiments/nested-ui-probe/README.md",
+        "evidence/batch-state-probe-results.json",
+        "evidence/batch-state-probe-red-results.json",
+        "evidence/batch-state-probe-audit-red-results.json",
+        "Cns/experiments/batch-state-probe/README.md",
+        "Cns/docs/第二轮验证记录.md",
+        "Cns/docs/第二轮审计.md",
+        "Cns/docs/开源参考实现与采用方案.md",
+        "Cns/docs/开源实现优先与验证分工.md",
+        "evidence/reference-text-ui.json",
+        "evidence/reference-pixi-text.json",
+        "Cns/docs/第三轮集成记录.md",
+        "Cns/docs/第三轮审计.md",
+        "evidence/asset-reference-probe-results.json",
+        "Cns/experiments/asset-reference-probe/README.md"
+      ],
+      "doc": "Cns/docs/渲染引擎与运行时.md",
+      "evidenceScope": "成熟源码研究与有限真实资产执行；独立AI审阅和root复跑，未完成完整gate，status仍proposed",
+      "implementationBasis": {
+        "status": "partially_integrated_research_reference_chain_not_production",
+        "adoption": "Web普通文字默认采用成熟Canvas整行/整段测量栅格；高频数字和固定短标签使用受控图集，白鹭适配字体就绪/图集代次和资源预算。",
+        "validationBoundary": "保留原文；CJK换行、fallback、IME与宿主文字提供者单独适配。CPU脏区不等于GPU局部上传。",
+        "doc": "Cns/docs/开源参考实现与采用方案.md"
+      },
+      "referenceIntegration": {
+        "status": "limited_reference_chain_executed",
+        "scope": "原生Canvas原文/样式/分辨率/fontEpoch缓存及文字重建；无真实字体身份、覆盖、CJK换行、IME或复杂UI性能。",
+        "doc": "Cns/docs/第三轮集成记录.md",
+        "report": "evidence/asset-reference-probe-results.json"
+      },
+      "codeOriginConstraint": "R015：白鹭核心依据自有需求和规格独立设计实现；标准与开放项目提供研究依据，公共基础设施作为明确依赖接入并保留版本、来源、声明和修改记录。"
+    },
+    {
+      "id": "D008",
+      "title": "动画语义与视觉采样分离",
+      "status": "proposed",
+      "proposal": "动画状态/事件与采样/变形分层，CPU/WASM参考行为与按配置GPU变形并行；序列帧优先修改图集引用。",
+      "risk": "GPU蒙皮不解决约束、附件、顺序、裁剪和root-motion；降采样要保留事件和玩法变换。",
+      "requirementIds": [
+        "R002",
+        "R004",
+        "R008",
+        "R012",
+        "R015"
+      ],
+      "sourceIds": [
+        "S009",
+        "S011",
+        "S012",
+        "S022",
+        "S027",
+        "S030",
+        "S031",
+        "S032",
+        "S038"
+      ],
+      "deliveryIds": [
+        "V002",
+        "V004",
+        "V006"
+      ],
+      "hypothesisIds": [
+        "H004",
+        "H006"
+      ],
+      "gate": "2D/3D约束、附件、变形、遮罩、动画事件与暂停恢复的参考对照。",
+      "acceptedAt": null,
+      "reviewer": null,
+      "supersedes": null,
+      "evidence": [
+        "evidence/mixed-scene-probe-results.json",
+        "evidence/mixed-scene-probe-empty-results.json",
+        "evidence/mixed-scene-probe-strict-empty-results.json",
+        "evidence/mixed-scene-probe-shared-builder-results.json",
+        "Cns/experiments/mixed-scene-probe/README.md",
+        "Cns/docs/第二轮验证记录.md",
+        "Cns/docs/第二轮审计.md",
+        "Cns/docs/开源参考实现与采用方案.md",
+        "Cns/docs/开源实现优先与验证分工.md",
+        "evidence/reference-assets-animation.json",
+        "Cns/docs/第三轮集成记录.md",
+        "Cns/docs/第三轮审计.md",
+        "evidence/asset-reference-probe-results.json",
+        "Cns/experiments/asset-reference-probe/README.md"
+      ],
+      "doc": "Cns/docs/渲染引擎与运行时.md",
+      "evidenceScope": "成熟源码研究与有限真实资产执行；独立AI审阅和root复跑，未完成完整gate，status仍proposed",
+      "implementationBasis": {
+        "status": "partially_integrated_research_reference_chain_not_production",
+        "adoption": "研究成熟glTF轨道、插值与骨架原理；白鹭动画组织依自有规格独立实现。DragonBonesJS为旧语义参考，若按授权作为组件依赖则保留归属，不摘取内部代码充当自主核心。",
+        "validationBoundary": "本轮没有读完AnimationAction/PropertyMixer/Interpolant或GPU蒙皮；2D slot/attachment/约束/clipping不得由3Dskin替代。",
+        "doc": "Cns/docs/开源参考实现与采用方案.md"
+      },
+      "referenceIntegration": {
+        "status": "limited_reference_chain_executed",
+        "scope": "实际glTF加权蒙皮、Mixer采样及独立骨架实例；无完整2Dslot/约束/clipping、控制树、root-motion或动画业务事件。",
+        "doc": "Cns/docs/第三轮集成记录.md",
+        "report": "evidence/asset-reference-probe-results.json"
+      },
+      "codeOriginConstraint": "R015：白鹭核心依据自有需求和规格独立设计实现；标准与开放项目提供研究依据，公共基础设施作为明确依赖接入并保留版本、来源、声明和修改记录。"
+    },
+    {
+      "id": "D009",
+      "title": "目标资源与构建时专门化",
+      "status": "proposed",
+      "proposal": "确定性目标资产、shader变体和模块/分包依赖清单，按帧时与内存预算流式加载上传。 资源代际、逐次租约、共享解码/上传任务与设备代次分离；完成栅栏显式使用注册时设备代次。",
+      "risk": "转码器的包体/CPU成本要计入；字体UI保留质量例外；Web不能假定离线GPU二进制通用。",
+      "requirementIds": [
+        "R004",
+        "R005",
+        "R007",
+        "R008",
+        "R012",
+        "R015"
+      ],
+      "sourceIds": [
+        "S005",
+        "S007",
+        "S009",
+        "S015",
+        "S019",
+        "S027",
+        "S026",
+        "S028",
+        "S030",
+        "S031",
+        "S032",
+        "S038",
+        "S040"
+      ],
+      "deliveryIds": [
+        "V002",
+        "V004",
+        "V005",
+        "V006"
+      ],
+      "hypothesisIds": [
+        "H001",
+        "H006"
+      ],
+      "gate": "冷启动/首次shader出现/局部资源更换、构建可重复性与卸载恢复。",
+      "acceptedAt": null,
+      "reviewer": null,
+      "supersedes": null,
+      "evidence": [
+        "evidence/contract-probe-results.json",
+        "Cns/docs/第一轮审计.md",
+        "evidence/async-resource-probe-results.json",
+        "evidence/async-resource-probe-legacy-red-results.json",
+        "evidence/async-resource-probe-audit-red-results.json",
+        "Cns/experiments/async-resource-probe/README.md",
+        "Cns/docs/第二轮验证记录.md",
+        "Cns/docs/第二轮审计.md",
+        "Cns/docs/开源参考实现与采用方案.md",
+        "Cns/docs/开源实现优先与验证分工.md",
+        "evidence/reference-assets-animation.json",
+        "evidence/reference-text-ui.json",
+        "evidence/reference-pixi-text.json",
+        "Cns/docs/第三轮集成记录.md",
+        "Cns/docs/第三轮审计.md",
+        "evidence/asset-reference-probe-results.json",
+        "Cns/experiments/asset-reference-probe/README.md"
+      ],
+      "doc": "Cns/docs/渲染引擎与运行时.md",
+      "evidenceScope": "成熟源码研究与有限真实资产执行；独立AI审阅和root复跑，未完成完整gate，status仍proposed",
+      "implementationBasis": {
+        "status": "partially_integrated_research_reference_chain_not_production",
+        "adoption": "优先成熟glTF/KTX2/Basis路径，资源容器与实例、解码器与已创建纹理分别管理；生成来源与设备代次显式登记。",
+        "validationBoundary": "白鹭导入前拒绝不支持的required extension；依赖许可、worker/WASM/格式与最后引用释放须适配。",
+        "doc": "Cns/docs/开源参考实现与采用方案.md"
+      },
+      "referenceIntegration": {
+        "status": "limited_reference_chain_executed",
+        "scope": "embedded glTF、实例与bundle最后引用、取消/迟到及GPU恢复；KTX2/Basis等未执行，发布管线未实现。",
+        "doc": "Cns/docs/第三轮集成记录.md",
+        "report": "evidence/asset-reference-probe-results.json"
+      },
+      "codeOriginConstraint": "R015：白鹭核心依据自有需求和规格独立设计实现；标准与开放项目提供研究依据，公共基础设施作为明确依赖接入并保留版本、来源、声明和修改记录。",
+      "relatedResearch": {
+        "doc": "Cns/docs/Shaders与Playground产品技术启发.md",
+        "scope": "新组件机制与创作流程启发；未执行gate，不改变既有proposal或接受状态。"
+      }
+    },
+    {
+      "id": "D010",
+      "title": "呈现调度与持续质量控制",
+      "status": "proposed",
+      "proposal": "模拟与渲染分开，利用宿主时钟与有界队列；滞回质量调整、3D动态分辨率和清晰UI。",
+      "risk": "热与GPU时间API并非处处可得，代理指标标明估算；输入延迟及恢复必须实测。",
+      "requirementIds": [
+        "R003",
+        "R005",
+        "R012",
+        "R015"
+      ],
+      "sourceIds": [
+        "S008",
+        "S009",
+        "S025",
+        "S030",
+        "S031",
+        "S032",
+        "S038"
+      ],
+      "deliveryIds": [
+        "V002",
+        "V005"
+      ],
+      "hypothesisIds": [
+        "H003",
+        "H004"
+      ],
+      "gate": "20至30分钟持续运行，输入延迟、后台恢复及可选质量调整正确性。",
+      "acceptedAt": null,
+      "reviewer": null,
+      "supersedes": null,
+      "evidence": [
+        "Cns/docs/开源参考实现与采用方案.md",
+        "Cns/docs/开源实现优先与验证分工.md",
+        "evidence/reference-render-lifecycle.json",
+        "Cns/docs/第三轮集成记录.md",
+        "Cns/docs/第三轮审计.md",
+        "evidence/asset-reference-probe-results.json",
+        "Cns/experiments/asset-reference-probe/README.md"
+      ],
+      "doc": "Cns/docs/渲染引擎与运行时.md",
+      "implementationBasis": {
+        "status": "partially_integrated_research_reference_chain_not_production",
+        "adoption": "统一帧入口、宿主时钟和present/submit拥有者，沿成熟帧循环加入白鹭任务预算与暂停恢复。",
+        "validationBoundary": "单一RAF不证明帧时、功耗或掉帧收益。",
+        "doc": "Cns/docs/开源参考实现与采用方案.md"
+      },
+      "evidenceScope": "成熟源码研究与有限真实资产执行；独立AI审阅和root复跑，未完成完整gate，status仍proposed",
+      "referenceIntegration": {
+        "status": "limited_reference_chain_executed",
+        "scope": "参考链由一个调用方拥有帧入口，示例启动/停止边界回归；无调度预算、热反馈、帧时或能耗测量。",
+        "doc": "Cns/docs/第三轮集成记录.md",
+        "report": "evidence/asset-reference-probe-results.json"
+      },
+      "codeOriginConstraint": "R015：白鹭核心依据自有需求和规格独立设计实现；标准与开放项目提供研究依据，公共基础设施作为明确依赖接入并保留版本、来源、声明和修改记录。"
+    },
+    {
+      "id": "D011",
+      "title": "可定位诊断与AI反馈",
+      "status": "proposed",
+      "proposal": "开发态输出对象/pass/资源来源与瓶颈诊断，供人和Agent使用；发行时可移除诊断。",
+      "risk": "LLM不进入逐帧循环；建议改动需测量并复验视觉和行为。",
+      "requirementIds": [
+        "R001",
+        "R006",
+        "R015"
+      ],
+      "sourceIds": [
+        "S004",
+        "S006",
+        "S010",
+        "S038",
+        "S040",
+        "S041"
+      ],
+      "deliveryIds": [
+        "V002",
+        "V003",
+        "V005"
+      ],
+      "hypothesisIds": [
+        "H005"
+      ],
+      "gate": "诊断定位准确、修改影响可追溯、多轮优化后玩法视觉保持。",
+      "acceptedAt": null,
+      "reviewer": null,
+      "supersedes": null,
+      "evidence": [],
+      "doc": "Cns/docs/AI创作与工程接口.md",
+      "codeOriginConstraint": "R015：白鹭核心依据自有需求和规格独立设计实现；标准与开放项目提供研究依据，公共基础设施作为明确依赖接入并保留版本、来源、声明和修改记录。",
+      "relatedResearch": {
+        "doc": "Cns/docs/Shaders与Playground产品技术启发.md",
+        "scope": "新组件机制与创作流程启发；未执行gate，不改变既有proposal或接受状态。"
+      }
+    },
+    {
+      "id": "D012",
+      "title": "独立版本合同与回归资产",
+      "status": "proposed",
+      "proposal": "公共场景/资源/材质/桥接合同与后端实现分别版本化，维护迁移与混合负载回归样本。",
+      "risk": "可替换降低升级成本，不保证两三年性能领先；支持矩阵需持续验收。",
+      "requirementIds": [
+        "R003",
+        "R006",
+        "R008",
+        "R009",
+        "R010",
+        "R011",
+        "R012",
+        "R015"
+      ],
+      "sourceIds": [
+        "S004",
+        "S006",
+        "S007",
+        "S011",
+        "S012",
+        "S015",
+        "S024",
+        "S025",
+        "S026",
+        "S027",
+        "S028",
+        "S029",
+        "S030",
+        "S031",
+        "S032",
+        "S038",
+        "S040",
+        "S041"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V002",
+        "V003",
+        "V005",
+        "V006",
+        "V007",
+        "V008"
+      ],
+      "hypothesisIds": [
+        "H005",
+        "H006",
+        "H007"
+      ],
+      "gate": "协议/资源/引擎升级和后端替换时旧工程可回归，差异与迁移路径明确。",
+      "acceptedAt": null,
+      "reviewer": null,
+      "supersedes": null,
+      "evidence": [
+        "evidence/contract-probe-results.json",
+        "Cns/docs/第一轮审计.md",
+        "Cns/docs/第二轮审计.md",
+        "evidence/design-audit-phase2-2026-10-08.json",
+        "evidence/phase2-path-metadata-normalization.json",
+        "Cns/docs/第二轮验证记录.md",
+        "Cns/docs/开源参考实现与采用方案.md",
+        "Cns/docs/开源实现优先与验证分工.md",
+        "evidence/reference-render-lifecycle.json",
+        "evidence/reference-text-ui.json",
+        "evidence/reference-assets-animation.json",
+        "evidence/reference-pixi-text.json",
+        "Cns/docs/第三轮集成记录.md",
+        "Cns/docs/第三轮审计.md",
+        "evidence/asset-reference-probe-results.json",
+        "Cns/experiments/asset-reference-probe/README.md"
+      ],
+      "doc": "Cns/docs/技术架构.md",
+      "evidenceScope": "成熟源码研究与有限真实资产执行；独立AI审阅和root复跑，未完成完整gate，status仍proposed",
+      "implementationBasis": {
+        "status": "partially_integrated_research_reference_chain_not_production",
+        "adoption": "按R012/R015登记源码研究、版本、机制、显式公共依赖和自主设计；实现来源可追溯，升级执行受影响适配及产品回归。",
+        "validationBoundary": "源码基线选定可继续工程，不等待每项基础机制重新批准；正式D接受仍需对应gate，不能由静态代码越级。",
+        "doc": "Cns/docs/开源参考实现与采用方案.md"
+      },
+      "referenceIntegration": {
+        "status": "limited_reference_chain_executed",
+        "scope": "新增固定SHA依赖、来源及失败快照；完整版本合同、升级迁移与生产回归尚未完成。",
+        "doc": "Cns/docs/第三轮集成记录.md",
+        "report": "evidence/asset-reference-probe-results.json"
+      },
+      "codeOriginConstraint": "R015：白鹭核心依据自有需求和规格独立设计实现；标准与开放项目提供研究依据，公共基础设施作为明确依赖接入并保留版本、来源、声明和修改记录。",
+      "relatedResearch": {
+        "doc": "Cns/docs/Shaders与Playground产品技术启发.md",
+        "scope": "新组件机制与创作流程启发；未执行gate，不改变既有proposal或接受状态。"
+      }
+    },
+    {
+      "id": "D013",
+      "title": "预览类型检查资源与原生构建分离",
+      "proposal": "TS7.0.2稳定CLI/LSP作为新项目候选；Web预览评估Vite8/Oxc/Rolldown，独立增量类型检查与资源转换，发行完整检查。旧CompilerAPI工具隔离TS6进程，配置/装饰器/namespace与source map纳入迁移。",
+      "risk": "预览成功不等于类型与目标发布通过；unstable API、metadata推断、HMR状态和平台模块可能不兼容。",
+      "requirementIds": [
+        "R001",
+        "R006",
+        "R008",
+        "R013",
+        "R015"
+      ],
+      "sourceIds": [
+        "S033",
+        "S035",
+        "S038"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V003",
+        "V005",
+        "V006",
+        "V008"
+      ],
+      "hypothesisIds": [
+        "H005",
+        "H008"
+      ],
+      "gate": "代表性工程的冷预览、热修改到画面、增量诊断、资源/shader与目标发布分别计时；旧语义与source map正确，过期诊断不混入新版本。",
+      "status": "proposed",
+      "acceptedAt": null,
+      "reviewer": null,
+      "supersedes": null,
+      "evidence": [],
+      "doc": "Cns/docs/图形后端编译与原生Runtime选型.md",
+      "evidenceScope": "本轮只进行来源研究与候选设计，未执行对应gate",
+      "codeOriginConstraint": "R015：白鹭核心依据自有需求和规格独立设计实现；标准与开放项目提供研究依据，公共基础设施作为明确依赖接入并保留版本、来源、声明和修改记录。"
+    },
+    {
+      "id": "D014",
+      "title": "原生Runtime可替换图形VM与宿主模块",
+      "proposal": "先封装C++与私有依赖，Rust进入边界清楚的新模块；对照wgpu/Dawn并选择一个主图形实现，D3D11按实际SDK需求比较；脚本VM独立，V8/JSVM/iOS模式分别验证，NativeApp与SDK分owned/borrowed。",
+      "risk": "语言安全不覆盖全部FFI；库主线不等于支持等级，VM目录不等于实际二进制；跨device导入、线程和回收可能增加复制/同步/包体。",
+      "requirementIds": [
+        "R003",
+        "R005",
+        "R008",
+        "R014",
+        "R015"
+      ],
+      "sourceIds": [
+        "S012",
+        "S033",
+        "S036",
+        "S038"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V002",
+        "V005",
+        "V006"
+      ],
+      "hypothesisIds": [
+        "H001",
+        "H003",
+        "H007"
+      ],
+      "gate": "固定源码与二进制/工具链，等作品对照旧C++基线；VM绑定、生命周期、surface/外部资源同步、shutdown、包体、冷启动与持续性能通过对应宿主验收。",
+      "status": "proposed",
+      "acceptedAt": null,
+      "reviewer": null,
+      "supersedes": null,
+      "evidence": [],
+      "doc": "Cns/docs/图形后端编译与原生Runtime选型.md",
+      "evidenceScope": "本轮只进行来源研究与候选设计，未执行对应gate",
+      "codeOriginConstraint": "R015：白鹭核心依据自有需求和规格独立设计实现；标准与开放项目提供研究依据，公共基础设施作为明确依赖接入并保留版本、来源、声明和修改记录。"
+    },
+    {
+      "id": "D015",
+      "title": "GPU AI与超分作为独立可选能力",
+      "proposal": "AI优先用于构建优化；运行AI与厂商超分独立provider/profile，有预算、取消与fallback；3D重建后合成清晰UI，device/IO绑定和模型算子显式。",
+      "risk": "compute不等于TensorCore/NPU/厂商SDK；默认CPU tensor上传读回、模型初始化和带宽内存可能抵消收益，画质和延迟需对照。",
+      "requirementIds": [
+        "R005",
+        "R006",
+        "R014",
+        "R015"
+      ],
+      "sourceIds": [
+        "S033",
+        "S037",
+        "S038"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V002",
+        "V003",
+        "V005"
+      ],
+      "hypothesisIds": [
+        "H003",
+        "H004",
+        "H005"
+      ],
+      "gate": "指定模型/插件和硬件API条件；GPU/CPU全链、复制、内存、画质、延迟与能源净收益；设备丢失/退路正确，无证据时可选增强关闭。",
+      "status": "proposed",
+      "acceptedAt": null,
+      "reviewer": null,
+      "supersedes": null,
+      "evidence": [],
+      "doc": "Cns/docs/图形后端编译与原生Runtime选型.md",
+      "evidenceScope": "本轮只进行来源研究与候选设计，未执行对应gate",
+      "codeOriginConstraint": "R015：白鹭核心依据自有需求和规格独立设计实现；标准与开放项目提供研究依据，公共基础设施作为明确依赖接入并保留版本、来源、声明和修改记录。"
+    },
+    {
+      "id": "D016",
+      "title": "分层工程包与现代白鹭API及代码合同",
+      "status": "proposed",
+      "proposal": "统一TS/原生工作区，少量分层职责包；首期engine/project/cli三公共身份，EUI/3D/宿主/兼容显式子入口。保留白鹭类名与显示列表，采用ESM、Engine实例、typed事件、AssetLease/Scope、版本化工程与自动质量门禁。",
+      "risk": "包名未核可用；配置/接口未实现；Scope、事件、旧尺寸和兼容行为需对照；ESM/Rust/模块拆分本身不证明包体或性能收益。",
+      "requirementIds": [
+        "R001",
+        "R003",
+        "R006",
+        "R008",
+        "R009",
+        "R011",
+        "R012",
+        "R013",
+        "R014",
+        "R015",
+        "R016"
+      ],
+      "sourceIds": [
+        "S003",
+        "S038",
+        "S040",
+        "S041",
+        "S042",
+        "S043",
+        "S044"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V002",
+        "V003",
+        "V004",
+        "V005",
+        "V006",
+        "V007",
+        "V008"
+      ],
+      "hypothesisIds": [
+        "H005",
+        "H006",
+        "H007",
+        "H008"
+      ],
+      "gate": "从实际发布目录验证exports/公共API与禁止反依赖；多Engine隔离、Scope/租约/事件/取消竞态和失败恢复；旧语义映射与完整迁移；目标包成分/开发反馈按固定样本测量。",
+      "acceptedAt": null,
+      "reviewer": null,
+      "supersedes": null,
+      "evidence": [
+        "evidence/egret-naming-contract-summary.json",
+        "evidence/engineering-language-tooling-research.json",
+        {
+          "type": "partial_implementation_evidence",
+          "artifact": "evidence/core-framework-verification.json",
+          "scope": "Headless subset only; all remaining API/render/host/migration gates stay unaccepted."
+        }
+      ],
+      "evidenceScope": "静态资料与候选规格，不代表gate已执行。",
+      "doc": "Cns/docs/工程技术架构与项目结构.md",
+      "codeOriginConstraint": "R015：白鹭核心依据自有需求和规格独立设计实现；标准与开放项目提供研究依据，公共基础设施作为明确依赖接入并保留版本、来源、声明和修改记录。"
+    }
+  ]
+}

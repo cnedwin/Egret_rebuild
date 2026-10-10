@@ -1,0 +1,252 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-10-08",
+  "authority": "候选优势与验证计划；不代表已获得性能或市场结论",
+  "items": [
+    {
+      "id": "H001",
+      "title": "精简与首个可玩体验",
+      "status": "untested",
+      "claim": "按需模块、目标资源和加载策略可形成首包与首次可交互优势。",
+      "requirementIds": [
+        "R005",
+        "R007"
+      ],
+      "decisionIds": [
+        "D005",
+        "D009"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V002",
+        "V004",
+        "V005"
+      ],
+      "sourceIds": [
+        "S002",
+        "S005",
+        "S009",
+        "S012"
+      ],
+      "measure": "发布空包、功能包、资源总量、冷启动下载/解码/初始化/上传、首次有效操作时间分别计量。",
+      "threshold": null,
+      "evidence": [],
+      "doc": "Cns/docs/核心优势与验证.md"
+    },
+    {
+      "id": "H002",
+      "title": "复杂UI持续帧时间",
+      "status": "untested",
+      "claim": "分阶段失效、布局隔离、虚拟化与保序执行可改善复杂UI的尾部帧时间。",
+      "requirementIds": [
+        "R002",
+        "R004",
+        "R005"
+      ],
+      "decisionIds": [
+        "D001",
+        "D002",
+        "D007"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V002"
+      ],
+      "sourceIds": [
+        "S002",
+        "S005",
+        "S006",
+        "S011"
+      ],
+      "measure": "不变、稀疏失效、全失效与交互混合，记录布局/准备/GC/CPU/GPU、P95/P99、输入延迟与视觉正确性。",
+      "threshold": null,
+      "evidence": [],
+      "doc": "Cns/docs/核心优势与验证.md"
+    },
+    {
+      "id": "H003",
+      "title": "功耗与发热",
+      "status": "untested",
+      "claim": "有预算的调度、上传、填充与质量控制可改善持续运行的能耗和热稳定。",
+      "requirementIds": [
+        "R003",
+        "R005"
+      ],
+      "decisionIds": [
+        "D003",
+        "D009",
+        "D010"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V002"
+      ],
+      "sourceIds": [
+        "S002",
+        "S009"
+      ],
+      "measure": "20至30分钟相同内容与条件，记录功耗/温升/降频/帧时间；估算值与实测分开。",
+      "threshold": null,
+      "evidence": [],
+      "doc": "Cns/docs/核心优势与验证.md"
+    },
+    {
+      "id": "H004",
+      "title": "混合2D与3D效率",
+      "status": "untested",
+      "claim": "分离执行列表、共享资源与帧调度可兼顾3D场景和复杂2D表现。",
+      "requirementIds": [
+        "R002",
+        "R004",
+        "R005"
+      ],
+      "decisionIds": [
+        "D002",
+        "D003",
+        "D004",
+        "D007",
+        "D008"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V002",
+        "V004"
+      ],
+      "sourceIds": [
+        "S005",
+        "S006",
+        "S007",
+        "S009"
+      ],
+      "measure": "同资产/同画质角色场景、透明特效、UI、2D骨骼和序列帧；核对CPU/GPU、过绘、上传、内存与动画事件。",
+      "threshold": null,
+      "evidence": [],
+      "doc": "Cns/docs/核心优势与验证.md"
+    },
+    {
+      "id": "H005",
+      "title": "AI持续创作可靠性",
+      "status": "untested",
+      "claim": "统一工程语义、诊断与恢复可改善AI新创作者连续修改与交付的成功率。",
+      "requirementIds": [
+        "R001",
+        "R006",
+        "R007"
+      ],
+      "decisionIds": [
+        "D011",
+        "D012"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V003",
+        "V005"
+      ],
+      "sourceIds": [
+        "S004",
+        "S006",
+        "S007",
+        "S010",
+        "S013"
+      ],
+      "measure": "首次可玩、多轮修改满足率、无关玩法保持、撤销、人工接管、耗时与成本，按创作者经验分组。",
+      "threshold": null,
+      "evidence": [],
+      "doc": "Cns/docs/AI创作与工程接口.md"
+    },
+    {
+      "id": "H006",
+      "title": "迁移少干预与一致性",
+      "status": "untested",
+      "claim": "确定转换加Agent修复与旧新对照可在声明支持范围内以少干预完成完整迁移。",
+      "requirementIds": [
+        "R008"
+      ],
+      "decisionIds": [
+        "D006",
+        "D007",
+        "D008",
+        "D009",
+        "D012"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V002",
+        "V003",
+        "V004",
+        "V006"
+      ],
+      "sourceIds": [
+        "S001",
+        "S011",
+        "S012"
+      ],
+      "measure": "按工程版本/依赖分类，统计全样本成功比例、人工次数耗时、AI成本、旧新行为视觉与平台对照，不排除失败样本。",
+      "threshold": null,
+      "evidence": [],
+      "doc": "Cns/docs/旧工程迁移.md"
+    },
+    {
+      "id": "H007",
+      "title": "稳定接口迭代成本",
+      "status": "untested",
+      "claim": "版本化合同与可替换内部实现可降低后端更换、宿主更新和旧作品升级成本。",
+      "requirementIds": [
+        "R003",
+        "R006",
+        "R008",
+        "R009"
+      ],
+      "decisionIds": [
+        "D005",
+        "D006",
+        "D012"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V002",
+        "V003",
+        "V005",
+        "V006",
+        "V007"
+      ],
+      "sourceIds": [
+        "S004",
+        "S006",
+        "S007"
+      ],
+      "measure": "升级前后需改动范围、迁移次数、回归失败、修复工时与仍可运行作品比例。",
+      "threshold": null,
+      "evidence": [],
+      "doc": "Cns/docs/核心优势与验证.md"
+    },
+    {
+      "id": "H008",
+      "title": "编译调试等待与AI修改反馈",
+      "status": "untested",
+      "claim": "稳定原生TS编译器、分离预览与检查及按内容增量构建可缩短完整创作的修改反馈时间。",
+      "requirementIds": [
+        "R006",
+        "R013"
+      ],
+      "decisionIds": [
+        "D011",
+        "D012",
+        "D013"
+      ],
+      "deliveryIds": [
+        "V001",
+        "V003",
+        "V005"
+      ],
+      "sourceIds": [
+        "S033",
+        "S035"
+      ],
+      "measure": "固定代表工程/硬件与缓存，分别测cold preview、warm edit-to-frame、类型诊断、资源shader转换和目标发布，计错误定位与连续修改成功。",
+      "threshold": null,
+      "evidence": [],
+      "doc": "Cns/docs/图形后端编译与原生Runtime选型.md"
+    }
+  ]
+}

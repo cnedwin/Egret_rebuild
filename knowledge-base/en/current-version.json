@@ -1,0 +1,412 @@
+{
+  "schemaVersion": 1,
+  "version": "0.13.0",
+  "updatedAt": "2026-10-09",
+  "title": "Egret Engine Rebuild",
+  "stage": "independent_browser_webgpu_rectangle_checkpoint",
+  "publication": "development_preview",
+  "registries": {
+    "requirements": "en/registry/requirements.json",
+    "decisions": "en/registry/decisions.json",
+    "hypotheses": "en/registry/hypotheses.json",
+    "deliverables": "en/registry/deliverables.json",
+    "sources": "en/registry/sources.json"
+  },
+  "entry": "README.md",
+  "roadmap": "en/docs/delivery-plan.md",
+  "maintenance": "en/docs/knowledge-base-maintenance.md",
+  "contribution": "en/CONTRIBUTING.md",
+  "changelog": "en/CHANGELOG.md",
+  "validation": "核验记录.json",
+  "authority": {
+    "scope": "user_confirmed_requirements",
+    "technicalChoices": "decision_registry_plus_accepted_ADR",
+    "implementation": "versioned_local_source_artifacts_and_future_repository",
+    "acceptance": "reproducible_test_reports",
+    "summaryStatus": "deliverable_registry"
+  },
+  "engineImplementation": "partial_independent_cpu_canvas_webgpu_rectangles",
+  "engineBenchmarksRun": false,
+  "creatorTaskTestsRun": false,
+  "migrationAcceptanceRun": false,
+  "productionHostAcceptanceRun": false,
+  "license": "Apache-2.0",
+  "publicRepository": "https://github.com/cnedwin/Egret_rebuild",
+  "maintainers": [],
+  "designDocuments": {
+    "whitepaper": "en/docs/technical-white-paper.md",
+    "productRequirements": "en/docs/product-requirements.md",
+    "engineeringPlan": "en/docs/engineering-plan.md",
+    "technicalValidation": "en/docs/round-3-integration-record.md",
+    "independentAudit": "en/docs/round-3-audit.md",
+    "researchRefresh": "en/docs/round-1-research-verification.md",
+    "firstTechnicalValidation": "en/docs/technical-validation-record.md",
+    "firstIndependentAudit": "en/docs/round-1-audit.md",
+    "secondValidationPlan": "en/docs/round-2-validation-plan.md",
+    "referenceAdoption": "en/docs/open-source-reference-implementations-and-adoption.md",
+    "researchPolicy": "en/docs/open-source-research-and-validation-roles.md",
+    "sourceIndependentAudit": "evidence/reference-independent-audit.json",
+    "thirdIntegrationPlan": "en/docs/round-3-integration-plan.md",
+    "secondTechnicalValidation": "en/docs/round-2-validation-record.md",
+    "secondIndependentAudit": "en/docs/round-2-audit.md",
+    "backendToolchainNativeSelection": "en/docs/graphics-backends-and-native-runtime-selection.md",
+    "codeOriginPolicy": "en/docs/independent-implementation-and-dependency-policy.md",
+    "shaderAndPlaygroundInspiration": "en/docs/shaders-and-playground-lessons.md",
+    "engineeringArchitecture": "en/docs/engineering-architecture-and-project-structure.md",
+    "publicApiAndNaming": "en/docs/public-api-design-and-naming.md",
+    "codeStandardsAndQuality": "en/docs/code-standards-and-quality-gates.md",
+    "coreImplementation": "en/docs/core-framework-implementation-record.md",
+    "coreEvidenceGaps": "en/docs/core-framework-evidence-gaps.md",
+    "publicCollaboration": "en/docs/open-source-collaboration-and-public-communication.md",
+    "bilingualPublication": "en/docs/bilingual-documentation-and-prepush-checks.md",
+    "cpuAssetContract": "en/docs/resource-core-contract.md",
+    "cpuAssetImplementation": "en/docs/resource-core-implementation-record.md",
+    "displayFrameContract": "en/docs/display-and-frame-execution-contract.md",
+    "displayFramePlan": "en/docs/display-and-frame-implementation-plan.md",
+    "displayFrameRecord": "en/docs/display-and-frame-implementation-record.md",
+    "webgpuRectangleContract": "en/docs/webgpu-rectangle-execution-contract.md",
+    "webgpuRectanglePlan": "en/docs/webgpu-rectangle-implementation-plan.md",
+    "webgpuRectangleEvidence": "en/docs/webgpu-rectangle-implementation-evidence.md"
+  },
+  "architectureContractProbesRun": true,
+  "browserApiPixelProbesRun": true,
+  "researchProbeReports": {
+    "contracts": "evidence/contract-probe-results.json",
+    "browser": "evidence/browser-probe-results.json",
+    "audit": "evidence/design-audit-2026-10-08.json",
+    "reliableEvents": "evidence/reliable-event-probe-results.json",
+    "asyncResources": "evidence/async-resource-probe-results.json",
+    "nestedUI": "evidence/nested-ui-probe-results.json",
+    "sharedBatchState": "evidence/batch-state-probe-results.json",
+    "mixedScene": "evidence/mixed-scene-probe-results.json",
+    "secondAudit": "evidence/design-audit-phase2-2026-10-08.json",
+    "sourceReferenceAudit": "evidence/reference-research-audit-2026-10-08.json",
+    "realAssetReference": "evidence/asset-reference-probe-results.json",
+    "realAssetIntegrity": "evidence/asset-reference-report-integrity.json",
+    "realAssetSourceAudit": "evidence/asset-reference-source-audit.json",
+    "realAssetCodeAudit": "evidence/asset-reference-code-review.json",
+    "realAssetIntegrationAudit": "evidence/asset-reference-integration-audit.json",
+    "backendSelection": "evidence/backend-graphics-research.json"
+  },
+  "designDocumentVersion": "0.7_candidate",
+  "mixedSceneResearchProbeRun": true,
+  "referenceSourceReviewCompleted": true,
+  "upstreamRuntimeTestsRun": false,
+  "newExperimentsRunThisRevision": true,
+  "referenceAdoption": "partially_integrated_research_reference_chain_not_production",
+  "upstreamCodeExecutedInReferenceChain": true,
+  "referenceImplementation": "limited_desktop_webgl2_chain_executed",
+  "referenceIntegrationRun": "d642177d-b007-4c0e-80a2-0f85e150d0c0",
+  "historicalEvidenceBindings": [
+    {
+      "artifact": "evidence/reference-independent-audit.json",
+      "knowledgeBaseVersion": "0.4.0",
+      "scope": "reviewedDocumentHashes refer to preserved 0.4.0 document bytes, not current 0.5.0 prose"
+    },
+    {
+      "artifact": "evidence/asset-reference-code-review-initial.json",
+      "scope": "reviewedFileHashes refer to pre-review-fix and retained source snapshots; later corrections are in final code review"
+    },
+    {
+      "artifact": "evidence/asset-reference-integration-audit.json",
+      "knowledgeBaseVersion": "0.5.0",
+      "scope": "reviewedDocumentHashes bind preserved 0.5.0 bytes, not current 0.6.0 prose"
+    },
+    {
+      "artifact": "evidence/asset-reference-document-review.json",
+      "knowledgeBaseVersion": "0.5.0",
+      "scope": "reviewedFileHashes bind the preserved 0.5.0 semantic review; execution and authored source bytes remain unchanged"
+    },
+    {
+      "artifact": "evidence/backend-selection-document-review.json",
+      "knowledgeBaseVersion": "0.6.0",
+      "scope": "Reviewed document hashes bind preserved 0.6.0 bytes, not the current 0.6.1 source-policy revision; research reports and execution artifacts are unchanged."
+    },
+    {
+      "artifact": "evidence/backend-selection-integration-audit.json",
+      "knowledgeBaseVersion": "0.6.0",
+      "scope": "Reviewed document hashes bind preserved 0.6.0 bytes, not the current 0.6.1 source-policy revision; research reports and execution artifacts are unchanged."
+    },
+    {
+      "artifact": "evidence/code-origin-research-audit.json",
+      "knowledgeBaseVersion": "0.6.0",
+      "scope": "Initial policy-conflict observations refer to preserved 0.6.0 files, not the revised 0.6.1 policy; vendor/asset bytes are unchanged."
+    },
+    {
+      "artifact": "evidence/code-origin-policy-review.json",
+      "knowledgeBaseVersion": "0.6.1",
+      "scope": "Reviewed document hashes bind the preserved 0.6.1 policy revision; research and experiment bytes remain unchanged in the 0.6.2 source-only update."
+    },
+    {
+      "artifact": "evidence/code-origin-policy-integration-audit.json",
+      "knowledgeBaseVersion": "0.6.1",
+      "scope": "Reviewed document hashes bind the preserved 0.6.1 policy revision; research and experiment bytes remain unchanged in the 0.6.2 source-only update."
+    },
+    {
+      "artifact": "evidence/news-inspiration-review.json",
+      "knowledgeBaseVersion": "0.6.2",
+      "scope": "Eight reviewed-file hashes bind preserved 0.6.2 research integration; this 0.7.0 specification revision changes current entry/metadata/registries."
+    },
+    {
+      "artifact": "evidence/engineering-norm-review-initial.json",
+      "snapshotLabel": "engineering-norm-0.7.0-initial",
+      "scope": "Initial reviewedFileHashes bind retained selected-file bytes before candidate contract corrections; final reviews bind current specification documents. No product tests."
+    },
+    {
+      "artifact": "evidence/api-lifecycle-challenge-initial.json",
+      "snapshotLabel": "engineering-norm-0.7.0-initial",
+      "scope": "Initial reviewedFileHashes bind retained selected-file bytes before candidate contract corrections; final reviews bind current specification documents. No product tests."
+    },
+    {
+      "artifact": "evidence/engineering-norm-review-final.json",
+      "knowledgeBaseVersion": "0.7.0",
+      "scope": "Reviewed hashes bind retained 0.7.0 document bytes; 0.8.0 is a partial implementation integration, not retrospective expansion of that review."
+    },
+    {
+      "artifact": "evidence/api-lifecycle-challenge-final.json",
+      "knowledgeBaseVersion": "0.7.0",
+      "scope": "Reviewed hashes bind retained 0.7.0 document bytes; 0.8.0 is a partial implementation integration, not retrospective expansion of that review."
+    },
+    {
+      "knowledgeBaseVersion": "0.8.0",
+      "scope": "Prior document-review hashes identify the pre-editorial 0.8.0 bytes. Public editorial projections retain original identities and results; current core source/test hashes still identify the unchanged precursor prototype."
+    },
+    {
+      "knowledgeBaseVersion": "0.9.0",
+      "scope": "Prior public-document and export hashes bind the preserved 0.9.0 bytes; translated reading companions and comment-only current source have separate identities."
+    },
+    {
+      "knowledgeBaseVersion": "0.10.0",
+      "scope": "The earlier bilingual publication verification, comment restoration identities, and export manifest bind the preserved 0.10.0 bytes. Resource-core code and verification have separate current identities."
+    },
+    {
+      "knowledgeBaseVersion": "0.11.0",
+      "scope": "Resource-core evidence and sealed export identities remain historical; 0.12 display/frame evidence binds current sources separately."
+    }
+  ],
+  "selectionResearchOnlyThisRevision": false,
+  "policyInstructionConfirmedThisRevision": false,
+  "codeOriginPolicy": {
+    "doc": "en/docs/independent-implementation-and-dependency-policy.md",
+    "template": "en/templates/implementation-origin-record.md",
+    "requirement": "R015",
+    "core": "independent_implementation_from_egret_specifications",
+    "publicDependencies": "explicit_versioned_attributed",
+    "existingReferenceChain": "third_party_research_only_not_independent_core",
+    "productionSourceAcceptance": "not_run"
+  },
+  "marketAndComponentResearchOnlyThisRevision": false,
+  "sourceResearchReports": {
+    "shaders": "evidence/shaders-reference-research.json",
+    "playground": "evidence/playground-reference-research.json"
+  },
+  "engineeringSpecificationOnlyThisRevision": false,
+  "userDesignObjectiveConfirmedThisRevision": true,
+  "newExperimentScopeThisRevision": "Historical bounded browser WebGPU acceptance at 956; current local CPU/mock/core and desktop Canvas checks; final browser WebGPU run at 1aa0248 on 2026-10-08T21:23:54.294Z observed PASS and unchanged artifacts reviewed at 9d046bf. Scoped bilingual meaning SPEC PASS; operational metadata quality, required prepush and publication remain pending. No Native SDK, physical-device/performance, full UI/3D, editor, migration or CI acceptance.",
+  "existingResearchExperimentsRerunThisRevision": false,
+  "coreFrameworkImplementation": {
+    "artifactRoot": "outputs/白鹭引擎核心框架原型",
+    "prototypeVersion": "0.0.0",
+    "specificationInputsKnowledgeBaseVersion": "0.7.0",
+    "report": "evidence/core-framework-verification.json",
+    "scope": "Independently authored TS cancellation/Scope/events/display-tree/headless Engine only",
+    "headlessTestsRun": true,
+    "strictBuildRun": true,
+    "fullRendererImplemented": false,
+    "ciConfigured": false
+  },
+  "publicDevelopmentFromInception": true,
+  "documentationLicense": "Apache-2.0",
+  "publicRepositoryCandidate": "outputs/白鹭引擎核心渲染工程",
+  "publicationPolicy": "en/docs/open-source-collaboration-and-public-communication.md",
+  "acknowledgements": "en/ACKNOWLEDGEMENTS.md",
+  "contributorInstructions": "en/AGENTS.md",
+  "publicationTracking": "Actual integration and review status is tracked by repository branches and pull requests; packaging evidence records its own historical timestamp.",
+  "bilingualDocumentationRequired": true,
+  "pushPreparationPolicy": "en/docs/bilingual-documentation-and-prepush-checks.md",
+  "cpuResourceImplementation": {
+    "deliverable": "V010",
+    "supportLevel": "experimental",
+    "state": "cpu_subset_verified",
+    "specification": "en/docs/resource-core-contract.md",
+    "record": "en/docs/resource-core-implementation-record.md",
+    "verification": "evidence/asset-core-verification.json",
+    "review": "evidence/asset-core-review.json",
+    "physicalProviderShutdownProven": false,
+    "gpuUploadImplemented": false
+  },
+  "renderingImplementation": {
+    "deliverable": "V011",
+    "state": "bounded_rectangle_cpu_canvas_verified",
+    "supportLevel": "experimental",
+    "verification": "evidence/display-frame-verification.json",
+    "review": "evidence/display-frame-review.json",
+    "cpuTestsRun": true,
+    "desktopCanvasPixelsRun": true,
+    "fullUIAcceptanceRun": false,
+    "gpuAcceptanceRun": false,
+    "nativeAcceptanceRun": false,
+    "devicePerformanceRun": false,
+    "fullMigrationAcceptanceRun": false,
+    "ciRun": false
+  },
+  "_localization": {
+    "canonicalSource": "当前版本.json",
+    "canonicalSha256": "4b36eb59dd7ea19ef864ec4a5be14a3952f09e688737fc1386dbe7dd029018dd",
+    "role": "read_only_translation",
+    "language": "en"
+  },
+  "webgpuImplementation": {
+    "deliverable": "V012",
+    "state": "accepted_desktop_build_final_publication_pending",
+    "supportLevel": "experimental",
+    "protocol": "0.6",
+    "verification": "evidence/webgpu-verification.json",
+    "review": "evidence/webgpu-review.json",
+    "sourceEvidence": "evidence/webgpu-source-evidence.json",
+    "acceptedSourceCommit": "956e2f9894dc8e27291ffd0210a6cd8b4e651eab",
+    "cpuMockCoreTests": 177,
+    "negativeTypeDiagnostics": 28,
+    "boundaryFiles": 123,
+    "desktopWebGPUFrames": 42,
+    "rawAssertions": 1709,
+    "screenshots": 84,
+    "compositionAssertions": 6808,
+    "intendedNegatives": 8,
+    "unexpectedErrors": 0,
+    "browserWebGPUAcceptedAtRecordedBuild": true,
+    "finalSourceNativeBinding": "actual_1aa_native_artifacts_independently_reviewed_publication_pending",
+    "publicSemanticReview": "reviewed_with_scope_operational_quality_pending",
+    "finalPrepush": "pending_current_metadata_refresh_and_prepush",
+    "physicalPhoneAcceptanceRun": false,
+    "performanceAcceptanceRun": false,
+    "fullUIAcceptanceRun": false,
+    "fullMigrationAcceptanceRun": false,
+    "ciRun": false,
+    "remoteSubmission": "not_performed_this_revision",
+    "nativeSdkAcceptanceRun": false,
+    "finalNativeSourceCommit": "1aa0248a1ff6d8e54c42d631072223bb50483814",
+    "finalNativeExecutedAt": "2026-10-08T21:23:54.294Z",
+    "finalNativeResultSha256": "b5a8fa4adbfc559cedfc5a4da8397a31c1778502511240216bfd3004914a0933",
+    "finalNativeArtifactBinding": "evidence/webgpu-final-artifact-binding.json"
+  },
+  "engineeringPreview": {
+    "label": "0.18.0",
+    "curatedAt": "2026-10-10",
+    "scope": "Adds bounded CPU conversion of one named legacy MovieClip, with focused 28/28 and real sequence-factory re-admission; 0.17.0 and earlier results retain historical identities, while current repository/default regression is UNRUN.",
+    "state": "LOCAL_ENGINEERING_PREVIEW_FOCUSED_CPU_ONLY",
+    "packageVersion": "0.0.0",
+    "protocolVersion": "1.0",
+    "documents": [
+      "en/docs/core-progress.md",
+      "en/docs/3d-foundation.md",
+      "en/docs/legacy-res-declarations.md",
+      "en/docs/3d-cpu-scene-contract.md",
+      "en/docs/3d-cpu-scene-evidence.md",
+      "en/docs/3d-webgpu-mesh-contract.md",
+      "en/docs/3d-webgpu-mesh-evidence.md",
+      "en/docs/b1-host-contract.md",
+      "en/docs/b1-host-evidence.md",
+      "en/docs/sequence-clip-contract.md",
+      "en/docs/sequence-clip-evidence.md",
+      "en/docs/legacy-res-plan-contract.md",
+      "en/docs/legacy-res-plan-evidence.md",
+      "en/docs/legacy-movieclip-contract.md",
+      "en/docs/legacy-movieclip-evidence.md"
+    ],
+    "evidence": [
+      "evidence/core-progress-0.16.0.json",
+      "evidence/3d-cpu-source-verification.json",
+      "evidence/legacy-res-declarations-verification.json",
+      "evidence/b1-host-mock-evidence.json",
+      "evidence/sequence-clip-cpu-evidence.json",
+      "evidence/legacy-res-plan-cpu-evidence.json",
+      "evidence/legacy-movieclip-focused.json"
+    ],
+    "open": [
+      "V002_FULL_PRODUCT",
+      "V003",
+      "V006",
+      "R008",
+      "A2_TASK5B",
+      "A2_TASK6",
+      "P0_P7",
+      "DEVICE_TEXT_ANIMATION",
+      "GPU_3D",
+      "NATIVE_SDK",
+      "EDITOR_AGENT",
+      "MOVIECLIP_IMAGE_PLAYBACK",
+      "CURRENT_DEFAULT_REPOSITORY_REGRESSION"
+    ],
+    "githubDelivery": "HOLD_HTTP_403",
+    "runtimeReplayByAdoption": false,
+    "currentDefaultRegression": "UNRUN",
+    "currentRepositoryRegression": "UNRUN",
+    "currentPrepush": "UNRUN"
+  },
+  "engineeringPreviewHistory": [
+    {
+      "label": "0.17.0",
+      "curatedAt": "2026-10-10",
+      "scope": "Owned CPU scene, fixed mesh, bounded B1 Host source/mock, CPU sequence and RES intents; 13/13 default Host and 901/901 repository results bind the verified test, with no final-LF successor rerun.",
+      "state": "AUTHOR_ADOPTED_PUBLIC_REVIEW_PREPUSH_GITHUB_HOLD",
+      "packageVersion": "0.0.0",
+      "protocolVersion": "1.0",
+      "documents": [
+        "docs/core-progress.md",
+        "docs/3d-foundation.md",
+        "docs/legacy-res-declarations.md",
+        "docs/3d-cpu-scene-contract.md",
+        "docs/3d-cpu-scene-evidence.md",
+        "docs/3d-webgpu-mesh-contract.md",
+        "docs/3d-webgpu-mesh-evidence.md",
+        "docs/b1-host-contract.zh-CN.md",
+        "docs/b1-host-evidence.zh-CN.md",
+        "docs/sequence-clip-contract.zh-CN.md",
+        "docs/sequence-clip-evidence.zh-CN.md",
+        "docs/legacy-res-plan-contract.zh-CN.md",
+        "docs/legacy-res-plan-evidence.zh-CN.md"
+      ],
+      "evidence": [
+        "evidence/core-progress-0.16.0.json",
+        "evidence/3d-cpu-source-verification.json",
+        "evidence/legacy-res-declarations-verification.json",
+        "evidence/b1-host-mock-evidence.json",
+        "evidence/sequence-clip-cpu-evidence.json",
+        "evidence/legacy-res-plan-cpu-evidence.json"
+      ],
+      "open": [
+        "V002_FULL_PRODUCT",
+        "V003",
+        "V006",
+        "R008",
+        "A2_TASK5B",
+        "A2_TASK6",
+        "P0_P7",
+        "DEVICE_TEXT_ANIMATION",
+        "GPU_3D",
+        "NATIVE_SDK",
+        "EDITOR_AGENT"
+      ],
+      "githubDelivery": "HOLD_HTTP_403",
+      "runtimeReplayByAdoption": false
+    }
+  ],
+  "movieClipConversion": {
+    "deliverable": "V019",
+    "state": "BOUNDED_FOCUSED_CPU_VERIFIED",
+    "supportLevel": "experimental",
+    "contract": "en/docs/legacy-movieclip-contract.md",
+    "record": "en/docs/legacy-movieclip-evidence.md",
+    "verification": "evidence/legacy-movieclip-focused.json",
+    "focusedTests": 28,
+    "focusedPasses": 28,
+    "factoryReadmissionRun": true,
+    "publicFacadeChanged": false,
+    "imageDecodeRun": false,
+    "rendererPlacementRun": false,
+    "nativePixelsRun": false,
+    "performanceRun": false,
+    "fullMigrationAcceptanceRun": false
+  }
+}

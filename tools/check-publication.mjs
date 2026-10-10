@@ -11,14 +11,69 @@ const sealedVendor=new Map([
  ['knowledge-base/experiments/asset-reference-probe/vendor/three/r186/build/three.core.js','9edde002b066a9a05676a6127f67735b62baf399bdea529f2f7e31657da769e6'],
  ['knowledge-base/experiments/asset-reference-probe/vendor/three/r186/build/three.module.js','9052042d676cb0fdc1ddfefe193053f34b7ac0513a616fdac4535d49987812ea']
 ]);
+// Retain this upstream original at its historical path, separately from reading copies.
+const sealedOriginal=new Map([
+ ['knowledge-base/experiments/asset-reference-probe/assets/RiggedSimple/LICENSE.md','4343fbd97e5ecfc4c872a85cb1d755a3006f8848e15135fd6c4534839909bdbb']
+]);
 const validPath=p=>typeof p==='string'&&p.length>0&&!p.includes('\\')&&!p.includes(':')&&!p.startsWith('/')&&p.split('/').every(x=>x&&x!=='.'&&x!=='..'&&!/[.\s]$/.test(x));
 const excluded=p=>p.split('/').some(x=>ignored.has(x.toLowerCase())||/^\.env(?:\.|$)/i.test(x))&&!sealedVendor.has(p);
 const preservedAncestor=p=>[...sealedVendor.keys()].some(x=>x===p||x.startsWith(p+'/'));
 
-/** Compare structured authority, allowing translation only of human prose strings. */
-function parity(a,b,location,issues){
+function documentationLayout(inventory,files,retainedOriginals,issues){
+ const isKnowledgeBase=p=>typeof p==='string'&&/^knowledge-base\//i.test(p);
+ const readingFiles=files.filter(x=>isKnowledgeBase(x)&&/\.md$/i.test(x));
+ const registryPairs=(inventory.registries??[]).filter(x=>isKnowledgeBase(x.source)||isKnowledgeBase(x.target));
+ const layout=inventory.documentationLayout;
+ if(layout===undefined){
+  if(readingFiles.some(x=>!retainedOriginals.has(x))||registryPairs.length)issues.push('missing documentation layout');
+  return;
+ }
+ const englishRoot='knowledge-base/en/',chineseRoot='knowledge-base/Cns/';
+ const entryDocuments=['knowledge-base/README.md','knowledge-base/README.zh-CN.md'];
+ if(layout?.schemaVersion!==1||layout?.englishRoot!==englishRoot||layout?.chineseRoot!==chineseRoot||!Array.isArray(layout?.entryDocuments)||JSON.stringify([...layout.entryDocuments].sort())!==JSON.stringify([...entryDocuments].sort()))issues.push('invalid documentation layout');
+ for(const item of inventory.documents??[]){
+  if(!isKnowledgeBase(item.zh)&&!isKnowledgeBase(item.en)){
+   const originalLicensePair=item.kind==='informational_legal'&&item.en==='LICENSE'&&item.zh==='LICENSE.zh-CN.md';
+   if(!originalLicensePair){
+    if(!validPath(item.en)||!item.en.endsWith('.md')||/\.(?:en|zh-CN)\.md$/i.test(item.en))issues.push(`documentation English default: ${item.en}`);
+    if(typeof item.en!=='string'||item.zh!==item.en.slice(0,-3)+'.zh-CN.md')issues.push(`documentation Chinese companion: ${item.zh}`);
+    if(validPath(item.en)&&!item.en.split('/').every(x=>/^[A-Za-z0-9._-]+$/.test(x)))issues.push(`documentation filename: ${item.en}`);
+   }
+   continue;
+  }
+  const bridge=item.zh===entryDocuments[1]&&item.en===entryDocuments[0];
+  if(!bridge){
+   if(typeof item.zh!=='string'||!item.zh.startsWith(chineseRoot))issues.push(`documentation Chinese root: ${item.zh}`);
+   if(typeof item.en!=='string'||!item.en.startsWith(englishRoot))issues.push(`documentation English root: ${item.en}`);
+  }
+ }
+ for(const item of registryPairs){
+  if(typeof item.source!=='string'||!item.source.startsWith(chineseRoot))issues.push(`documentation registry Chinese root: ${item.source}`);
+  if(typeof item.target!=='string'||!item.target.startsWith(englishRoot))issues.push(`documentation registry English root: ${item.target}`);
+ }
+ for(const f of files.filter(x=>isKnowledgeBase(x)&&/\.(?:md|json)$/i.test(x))){
+  if(retainedOriginals.has(f))continue;
+  if(/\.md$/i.test(f)&&!f.startsWith(englishRoot)&&!f.startsWith(chineseRoot)&&!entryDocuments.includes(f))issues.push(`documentation outside language roots: ${f}`);
+  if(f.startsWith(englishRoot)&&!f.split('/').every(x=>/^[A-Za-z0-9._-]+$/.test(x)))issues.push(`documentation filename: ${f}`);
+ }
+}
+
+function inventoryPathPairs(inventory){
+ const pairs=new Map();
+ for(const [source,target] of [...(inventory.documents??[]).map(x=>[x.zh,x.en]),...(inventory.registries??[]).map(x=>[x.source,x.target])]){
+  if(!validPath(source)||!validPath(target))continue;
+  pairs.set(source,target);
+  if(source.startsWith('knowledge-base/')&&target.startsWith('knowledge-base/'))pairs.set(source.slice('knowledge-base/'.length),target.slice('knowledge-base/'.length));
+ }
+ return pairs;
+}
+
+/** Compare authority with bounded prose translations and exact inventory path pairs. */
+function parity(a,b,location,issues,pathPairs){
  if(typeof a!==typeof b||Array.isArray(a)!==Array.isArray(b)){issues.push(`parity shape: ${location}`);return;}
  if(a===null||b===null||typeof a!=='object'){
+  // Only an exact inventory source string may use its exact paired target identity.
+  if(typeof a==='string'&&pathPairs.get(a)===b)return;
   if(typeof a==='string'&&han.test(a)&&!identity(a)){
    if(a===b)issues.push(`parity untranslated prose: ${location}`);
    const numbers=s=>s.match(/\d+(?:\.\d+)*/g)??[];
@@ -28,12 +83,12 @@ function parity(a,b,location,issues){
  }
  const keys=Object.keys(a),other=Object.keys(b);
  if(JSON.stringify(keys.sort())!==JSON.stringify(other.sort())){issues.push(`parity keys: ${location}`);return;}
- for(const k of keys)parity(a[k],b[k],`${location}.${k}`,issues);
+ for(const k of keys)parity(a[k],b[k],`${location}.${k}`,issues,pathPairs);
 }
 
 /** Checks current file identities and structure; it cannot certify prose meaning or authorization. */
 export async function checkPublication(inputRoot){
- const root=path.resolve(inputRoot),issues=[],files=[];
+ const root=path.resolve(inputRoot),issues=[],files=[],retainedOriginals=new Set();
  async function walk(dir){for(const e of await readdir(dir,{withFileTypes:true})){
   const full=path.join(dir,e.name),rel=path.relative(root,full).replaceAll('\\','/');
   if((excluded(rel)&&!preservedAncestor(rel))||e.name.toLowerCase().endsWith('.tsbuildinfo'))continue;
@@ -41,11 +96,17 @@ export async function checkPublication(inputRoot){
   if(e.isDirectory())await walk(full);else {
    files.push(rel);
    if(sealedVendor.has(rel)&&sha(await readFile(full))!==sealedVendor.get(rel))issues.push(`sealed vendor hash stale: ${rel}`);
+   if(sealedOriginal.has(rel)){
+    if(sha(await readFile(full))!==sealedOriginal.get(rel))issues.push(`sealed original hash stale: ${rel}`);
+    else retainedOriginals.add(rel);
+   }
   }
  }}
  await walk(root);
  const inventory=JSON.parse(await readFile(path.join(root,'localization.json'),'utf8'));
  if(inventory.schemaVersion!==1||inventory.semanticReview?.status!=='reviewed_with_scope')issues.push('missing scoped semantic review record');
+ documentationLayout(inventory,files,retainedOriginals,issues);
+ const pathPairs=inventoryPathPairs(inventory);
  const paired=new Set(),seen=new Set();
  async function verifyFile(rel,hash){
   if(!validPath(rel)){issues.push(`invalid listed path: ${rel}`);return;}
@@ -83,7 +144,7 @@ export async function checkPublication(inputRoot){
    if(JSON.stringify(opaque(pairedBodies[0]))!==JSON.stringify(opaque(pairedBodies[1])))issues.push(`opaque identifier occurrence drift: ${item.en}`);
   }
  }
- for(const f of files.filter(x=>x.endsWith('.md')))if(!paired.has(f))issues.push(`unlisted reading document: ${f}`);
+ for(const f of files.filter(x=>/\.md$/i.test(x)))if(!paired.has(f)&&!retainedOriginals.has(f))issues.push(`unlisted reading document: ${f}`);
  const registryFiles=new Set();
  for(const item of inventory.registries??[]){
   registryFiles.add(item.source);registryFiles.add(item.target);
@@ -91,7 +152,7 @@ export async function checkPublication(inputRoot){
   if(source===undefined||target===undefined)continue;
   const a=JSON.parse(source),b=JSON.parse(target),meta=b._localization;delete b._localization;
   if(meta?.canonicalSource!==path.basename(item.source)||meta?.canonicalSha256!==sha(source)||meta?.role!=='read_only_translation'||meta?.language!=='en')issues.push(`parity localization authority: ${item.target}`);
-  parity(a,b,item.source,issues);
+  parity(a,b,item.source,issues,pathPairs);
  }
  for(const f of files.filter(x=>/(^|\/)registry\/[^/]+\.json$/.test(x)))if(!registryFiles.has(f))issues.push(`unlisted registry view: ${f}`);
  for(const item of inventory.criticalComments??[]){

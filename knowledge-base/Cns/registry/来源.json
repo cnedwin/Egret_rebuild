@@ -1,0 +1,1109 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-10-10",
+  "authority": "来源分组与适用边界；researchCheckedAt是项目研究核查日期，非统一发布日期",
+  "items": [
+    {
+      "id": "S001",
+      "title": "用户确认的项目要求",
+      "type": "user_confirmation",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "本次白鹭项目对话中的用户确认，原意进入R001至R012；R012确定开源实现优先的研究和工程原则。",
+      "limit": "不代表具体选型批准、功能实现、团队预算或公开发布授权。",
+      "urls": [],
+      "doc": "Cns/docs/设计理念与定位.md"
+    },
+    {
+      "id": "S002",
+      "title": "创始人历史说明",
+      "type": "founder_historical_account",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "API迁移、历史效率、复杂UI、Runtime合作、自研整合工具经验。",
+      "limit": "历史竞争对照与合作范围不等于今天的实测与部署权。",
+      "urls": [],
+      "doc": "Cns/docs/历史资产与研究边界.md"
+    },
+    {
+      "id": "S003",
+      "title": "Egret公开API设计说明",
+      "type": "official_repository",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "TypeScript与AS3相近API的官方设计意图。",
+      "limit": "公开仓库并不代表用户私有工程完整最新；许可证适用范围分开核查。",
+      "urls": [
+        "https://github.com/egret-labs/egret-core#typescript"
+      ],
+      "doc": "Cns/docs/历史资产与研究边界.md"
+    },
+    {
+      "id": "S004",
+      "title": "Cocos正式产品与Alpha工程工具",
+      "type": "official_release_and_source",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "Creator3.8.8；Cocos4alpha.34、CLIalpha.42及对应命令源码。",
+      "limit": "分别管理成熟度；不外推全部生产平台矩阵或创作成功率。",
+      "urls": [
+        "https://www.cocos.com/creator-download",
+        "https://github.com/cocos/cocos4/releases/tag/4.0.0-alpha.34",
+        "https://github.com/cocos/cocos-cli/releases/tag/0.0.1-alpha.42",
+        "https://github.com/cocos/cocos-cli/blob/main/docs/en/commands.md"
+      ],
+      "doc": "Cns/docs/竞品演进与生态.md"
+    },
+    {
+      "id": "S005",
+      "title": "Cocos渲染UI桥接和资源演进",
+      "type": "official_documentation",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "3.8管线迁移、UI合批、历史JSB成本、资源生命周期、shader变体。",
+      "limit": "历史缺陷/旧成熟度不作为当前未修复问题；无跨引擎实测。",
+      "urls": [
+        "https://docs.cocos.com/creator/3.8/manual/zh/render-pipeline/overview.html",
+        "https://docs.cocos.com/creator/3.8/manual/en/ui-system/components/engine/ui-batch.html",
+        "https://docs.cocos.com/creator/3.8/manual/en/advanced-topics/jsb-optimizations.html",
+        "https://docs.cocos.com/creator/3.8/manual/en/asset/release-manager.html",
+        "https://docs.cocos.com/creator/3.8/manual/zh/shader/effect-inspector.html"
+      ],
+      "doc": "Cns/docs/竞品演进与生态.md"
+    },
+    {
+      "id": "S006",
+      "title": "Laya近两年渲染适配与AI工具",
+      "type": "official_release_and_source",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "3.3.0/3.3.1重构，3.4.1主线、CLI与AgentSkills。",
+      "limit": "已修复条目与官方条件化性能说明不能当作当前缺陷或普遍优势。",
+      "urls": [
+        "https://github.com/layabox/LayaAir/releases/tag/v3.3.0",
+        "https://github.com/layabox/LayaAir/releases/tag/v3.3.1",
+        "https://github.com/layabox/LayaAir/releases/tag/v3.4.1",
+        "https://github.com/layabox/layaair-cli",
+        "https://github.com/layabox/layaair-skills",
+        "https://www.layaair.com/3.x/doc/basics/ide/projectsettings/webgpu/"
+      ],
+      "doc": "Cns/docs/竞品演进与生态.md"
+    },
+    {
+      "id": "S007",
+      "title": "Godot正式渲染工程与版本演进",
+      "type": "official_release_documentation_and_source",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "4.7.2正式边界；UID、4.6接口/嵌入/物理，现代原生与Web差异。",
+      "limit": "原生shader编译优化不外推Web；社区MCP不视为官方AI产品；无独立性能测量。",
+      "urls": [
+        "https://github.com/godotengine/godot/releases/tag/4.7.2-stable",
+        "https://godotengine.org/article/uid-changes-coming-to-godot-4-4/",
+        "https://godotengine.org/releases/4.6/",
+        "https://docs.godotengine.org/en/4.7/tutorials/rendering/renderers.html",
+        "https://docs.godotengine.org/en/4.7/tutorials/export/exporting_for_web.html",
+        "https://docs.godotengine.org/en/4.7/tutorials/performance/pipeline_compilations.html",
+        "https://docs.godotengine.org/en/4.7/tutorials/performance/using_servers.html",
+        "https://docs.godotengine.org/en/4.7/tutorials/migrating/upgrading_to_godot_4.html"
+      ],
+      "doc": "Cns/docs/竞品演进与生态.md"
+    },
+    {
+      "id": "S008",
+      "title": "目标宿主与浏览器生态",
+      "type": "official_platform_documentation",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "InstantGames生命周期、Discord代理、Telegram视口/状态、抖音适配、浏览器WebGPU里程碑。",
+      "limit": "宿主客户端能力需单独测；微信/抖音全量图形/WASM覆盖未核验，浏览器版本不替代OS/GPU/宿主能力。",
+      "urls": [
+        "https://developers.facebook.com/documentation/games/build/quick-start",
+        "https://docs.discord.com/developers/activities/development-guides/networking",
+        "https://github.com/discord/embedded-app-sdk/blob/main/README.md",
+        "https://core.telegram.org/bots/webapps",
+        "https://partner.open-douyin.com/docs/resource/zh-CN/mini-game/develop/guide/game-engine/cocos-laya-egret",
+        "https://webkit.org/blog/17333/webkit-features-in-safari-26-0/",
+        "https://bugs.webkit.org/show_bug.cgi?format=multiple&id=299237",
+        "https://developer.chrome.com/blog/new-in-webgpu-146"
+      ],
+      "doc": "Cns/docs/竞品演进与生态.md"
+    },
+    {
+      "id": "S009",
+      "title": "图形运行时专业参考",
+      "type": "primary_technical_reference",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "帧图、tile带宽、Android调度/热提示、异步管线、Dawn、KTX2、文字塑形及骨骼裁剪代价。",
+      "limit": "参考机制不证明白鹭收益，原生提供者和第三方组件均未选定或授权接入。",
+      "urls": [
+        "https://google.github.io/filament/notes/framegraph.html",
+        "https://developer.arm.com/community/arm-community-blogs/b/mobile-graphics-and-gaming-blog/posts/vulkan-subpasses-the-good-the-bad-and-the-ugly",
+        "https://developer.android.com/games/optimize/adpf",
+        "https://developer.android.com/games/sdk/frame-pacing",
+        "https://gpuweb.github.io/types/interfaces/GPUDevice",
+        "https://github.com/google/dawn/blob/main/docs/dawn/overview.md",
+        "https://registry.khronos.org/KTX/specs/2.0/ktxspec.v2.html",
+        "https://harfbuzz.github.io/what-is-harfbuzz.html",
+        "https://eu.esotericsoftware.com/spine-clipping"
+      ],
+      "doc": "Cns/docs/渲染引擎与运行时.md"
+    },
+    {
+      "id": "S010",
+      "title": "MCP工具规范",
+      "type": "official_protocol",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "2025-06-18版工具发现、调用及结构。",
+      "limit": "协议不能代替工程正确性、权限、恢复或创作实测。",
+      "urls": [
+        "https://modelcontextprotocol.io/specification/2025-06-18/server/tools"
+      ],
+      "doc": "Cns/docs/AI创作与工程接口.md"
+    },
+    {
+      "id": "S011",
+      "title": "原白鹭工程静态研究摘要",
+      "type": "private_archive_static_review",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "用户提供原工程包；版本分支/模块、EUI更新复用、资源工具与历史适配盘点。",
+      "limit": "原包及行级证据不在公开候选目录；未构建、未执行、未证明全部产品完整。",
+      "urls": [],
+      "doc": "Cns/docs/历史资产与研究边界.md"
+    },
+    {
+      "id": "S012",
+      "title": "补充Runtime静态研究摘要",
+      "type": "private_archive_static_review",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "用户补充后续Runtime；桥接、显示列表、GLES、资源与Harmony工程静态机制。",
+      "limit": "未证明全平台完整/当前可构建/性能优势/许可；源码和签名配置不公开。",
+      "urls": [],
+      "doc": "Cns/docs/历史资产与研究边界.md"
+    },
+    {
+      "id": "S013",
+      "title": "AI创作竞争参考",
+      "type": "official_product_statement",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "GDevelop官方Agent说明，表明AI修改工程已有直接竞争。",
+      "limit": "未亲测完整流程及可靠性；不推导市场成功。",
+      "urls": [
+        "https://gdevelop.io/blog/make-games-with-ai-agent-gdevelop-automated-prompt"
+      ],
+      "doc": "Cns/docs/竞品演进与生态.md"
+    },
+    {
+      "id": "S014",
+      "title": "第一轮官方研究刷新与冲突记录",
+      "type": "official_sources_refreshed",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "12项关键主张与27条官方来源；核对Cocos/Laya/Godot版本与演进、CLI/AI工具、Web后端及互操作；逐条版本和日期见研究JSON。",
+      "limit": "全部是资料/源码声明，无竞品运行或跨引擎性能测试；Laya部分日期冲突与IDE未重验项保留；访问失败不解释为能力缺失。",
+      "urls": [
+        "https://www.cocos.com/creator-download",
+        "https://github.com/cocos/cocos4/releases/tag/4.0.0-alpha.34",
+        "https://github.com/cocos/cocos-cli/releases/tag/0.0.1-alpha.42",
+        "https://github.com/layabox/LayaAir/releases/tag/v3.4.1",
+        "https://godotengine.org/article/maintenance-release-godot-4-7-2/",
+        "https://godotengine.org/download/archive/4.7.2-stable/",
+        "https://godotengine.org/download/windows/",
+        "https://github.com/godotengine/godot/releases/tag/4.7.2-stable",
+        "https://docs.godotengine.org/en/4.7/tutorials/export/exporting_for_web.html",
+        "https://docs.godotengine.org/en/4.7/tutorials/rendering/renderers.html",
+        "https://docs.godotengine.org/en/4.7/tutorials/performance/pipeline_compilations.html",
+        "https://www.layaair.com/3.x/doc/basics/architecture/",
+        "https://gpuweb.github.io/types/interfaces/GPUDevice",
+        "https://gpuweb.github.io/gpuweb/explainer/",
+        "https://emscripten.org/docs/porting/connecting_cpp_and_javascript/Interacting-with-code.html",
+        "https://emscripten.org/docs/porting/connecting_cpp_and_javascript/embind.html",
+        "https://github.com/cocos/cocos-cli/blob/0.0.1-alpha.42/readme.md",
+        "https://github.com/cocos/cocos-cli/blob/main/docs/en/commands.md",
+        "https://layaair.com/3.x/doc/guides/roadmap/ai/",
+        "https://github.com/layabox/layaair-cli",
+        "https://github.com/layabox/layaair-skills",
+        "https://layaair.com/3.x/doc/basics/developmentenvironment/ide-mcp/",
+        "https://layaair.com/3.3/doc/basics/developmentEnvironment/CodingMCP/readme.html",
+        "https://layaair.com/3.x/doc/services/",
+        "https://github.com/layabox/LayaAir/releases/tag/v3.3.0",
+        "https://github.com/layabox/LayaAir/releases/tag/v3.4.0",
+        "https://www.layaair.com/3.x/doc/basics/ide/projectsettings/webgpu/"
+      ],
+      "artifacts": [
+        "Cns/docs/第一轮研究核查.md",
+        "evidence/research-refresh-2026-10-08.json"
+      ],
+      "doc": "Cns/docs/第一轮研究核查.md"
+    },
+    {
+      "id": "S015",
+      "title": "局部架构合同实验与审计修正",
+      "type": "authored_research_model_execution",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "Node24.19.0；固定区域布局、命令保序、简化镜像与资源状态；初版17通过，首组新增17过7失败，修正24通过，租约组24过2失败，最终26通过。每版源码摘要与失败历史保留，并由独立AI审阅者重现。",
+      "limit": "研究模型不是生产引擎；没有可靠事件恢复、独立批次状态执行、完整逐owner租约、真实跨语言/二进制桥接或异步GPU重建；操作量不是性能或用户指标。",
+      "urls": [],
+      "artifacts": [
+        "evidence/contract-probe-results.json",
+        "evidence/contract-probe-audit-red-results.json",
+        "evidence/contract-probe-audit-red-2-results.json",
+        "Cns/experiments/contract-probe/README.md"
+      ],
+      "doc": "Cns/docs/技术验证记录.md"
+    },
+    {
+      "id": "S016",
+      "title": "本地桌面浏览器图形API与像素实验",
+      "type": "local_browser_graphics_execution",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "Edge154.0.4258.62临时无界面profile；WebGL2深度/透明/scissor/顺序反例/上下文恢复与WebGPU清屏读回。首次6通过1失败，时序修正后7通过；两次结果与源码摘要保留。",
+      "limit": "32×32简单几何和清屏；renderer字符串未经硬件认证；无实际3D资产、骨骼/字体、GPU计时、手机/小游戏/原生宿主、功耗或WebGPU device-loss测试。",
+      "urls": [],
+      "artifacts": [
+        "evidence/browser-probe-results.json",
+        "evidence/browser-probe-first-attempt.json",
+        "evidence/browser-probe.png",
+        "Cns/experiments/browser-probe/README.md"
+      ],
+      "doc": "Cns/docs/技术验证记录.md"
+    },
+    {
+      "id": "S017",
+      "title": "WebGL上下文恢复时序的官方调试参考",
+      "type": "official_specification_and_source",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "Khronos WEBGL_lose_context与Chromium公开事件派发后允许恢复的源码；支持本轮测试延后恢复申请的解释。",
+      "limit": "读取Chromium HEAD源码不是当前Edge精确二进制调用追踪；结果与解释一致，不证明全部浏览器的唯一根因。",
+      "urls": [
+        "https://registry.khronos.org/webgl/extensions/WEBGL_lose_context/",
+        "https://chromium.googlesource.com/chromium/src/+/HEAD/third_party/blink/renderer/modules/webgl/webgl_rendering_context_base.cc"
+      ],
+      "doc": "Cns/docs/技术验证记录.md"
+    },
+    {
+      "id": "S018",
+      "title": "单实例必达事件与图形恢复分离",
+      "type": "authored_research_model_execution",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "事件程序13过0失败，11个红项转绿、负对照保留并刻画第13项同一进程内新实例状态重置边界；另有作者9项验证和独立只读复演。",
+      "limit": "仅单实例同步内存effects与水位；不具持久事务、真实IPC或崩溃安全exactly-once；通过边界刻画不等于风险修复。",
+      "urls": [],
+      "artifacts": [
+        "evidence/reliable-event-probe-results.json",
+        "evidence/reliable-event-probe-red-results.json",
+        "evidence/reliable-event-probe-red-input-results.json",
+        "evidence/reliable-event-probe-verification-results.json",
+        "Cns/experiments/reliable-event-probe/README.md"
+      ],
+      "doc": "Cns/docs/第二轮验证记录.md"
+    },
+    {
+      "id": "S019",
+      "title": "独立租约与分段异步资源合同",
+      "type": "authored_research_model_execution",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "逐次租约、资源任务共享、CPU/GPU分段、迟到/失败/取消与显式deviceEpoch栅栏，25过0失败；先行旧模型7项全部失败、栅栏审计24过1失败保留。",
+      "limit": "手动异步调度，无实际GPU/驱动；旧模型指第一轮研究ResourceModel，不是旧白鹭源码。设备丢失后的释放规则须真实后端验证。",
+      "urls": [],
+      "artifacts": [
+        "evidence/async-resource-probe-results.json",
+        "evidence/async-resource-probe-legacy-red-results.json",
+        "evidence/async-resource-probe-audit-red-results.json",
+        "Cns/experiments/async-resource-probe/README.md"
+      ],
+      "doc": "Cns/docs/第二轮验证记录.md"
+    },
+    {
+      "id": "S020",
+      "title": "嵌套UI依赖裁剪命中与全量对照",
+      "type": "authored_research_model_execution",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "18过0失败；增删/重挂/隐藏、尺寸依赖、裁剪命中、100步种子编辑及1200次额外命中对照。稀疏数组和溢出审计反例先16过2失败。",
+      "limit": "有限纵向树与外部glyph宽度夹具；限定128节点等研究输入预算。仍全树复制/验证/世界坐标遍历，不证明字体/EUI或性能优势。",
+      "urls": [],
+      "artifacts": [
+        "evidence/nested-ui-probe-results.json",
+        "evidence/nested-ui-probe-red-results.json",
+        "evidence/nested-ui-probe-audit-red-results.json",
+        "evidence/nested-ui-probe-unsafe-isolation-results.json",
+        "Cns/experiments/nested-ui-probe/README.md"
+      ],
+      "doc": "Cns/docs/第二轮验证记录.md"
+    },
+    {
+      "id": "S021",
+      "title": "独立批次共享状态消费与反例",
+      "type": "authored_research_model_execution",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "8过0失败；texture/clip/pipeline共享状态由批次消费者实际执行，对照独立逐命令像素参考，100个24命令种子场景。只按纹理分批5过3失败，稀疏color审计7过1失败。",
+      "limit": "有限矩形、单texel、straight/additive；无任意遮罩、完整材质或CPU/GPU性能对照。",
+      "urls": [],
+      "artifacts": [
+        "evidence/batch-state-probe-results.json",
+        "evidence/batch-state-probe-red-results.json",
+        "evidence/batch-state-probe-audit-red-results.json",
+        "Cns/experiments/batch-state-probe/README.md"
+      ],
+      "doc": "Cns/docs/第二轮验证记录.md"
+    },
+    {
+      "id": "S022",
+      "title": "本地WebGL混合图形与独立像素参考",
+      "type": "local_browser_graphics_execution",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "Edge154.0.4258.62实际7过0失败；256×192透视cube、UI、两段刚性骨节、图集、上下文重建；6命令实际3draw，196608通道最大误差1，容差3。",
+      "limit": "程序生成夹具与英文纹理；未认证硬件路径，无完整角色/骨骼/文字质量、WebGPU场景、手机/小游戏/原生宿主、计时能耗或迁移。",
+      "urls": [],
+      "artifacts": [
+        "evidence/mixed-scene-probe-results.json",
+        "evidence/mixed-scene-probe-empty-results.json",
+        "evidence/mixed-scene-probe-strict-empty-results.json",
+        "evidence/mixed-scene-probe-shared-builder-results.json",
+        "evidence/mixed-scene-probe.png",
+        "Cns/experiments/mixed-scene-probe/README.md"
+      ],
+      "doc": "Cns/docs/第二轮验证记录.md"
+    },
+    {
+      "id": "S023",
+      "title": "第二轮图形规范状态与访问边界",
+      "type": "official_reference_checked",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "Khronos版本页与最新WebGL2页面可读取，两页状态均编辑草案；MDN混合函数参考可读取；逐条记录日期与访问错误。",
+      "limit": "规范/文档说明机制，不证明产品/平台；两个访问工具错误不解释为能力缺失；版本页不等同最终批准标准。",
+      "urls": [
+        "https://registry.khronos.org/webgl/specs/2.0.0/",
+        "https://registry.khronos.org/webgl/specs/latest/2.0/",
+        "https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/blendFuncSeparate"
+      ],
+      "artifacts": [
+        "evidence/phase2-reference-check-2026-10-08.json"
+      ],
+      "doc": "Cns/docs/第二轮验证记录.md"
+    },
+    {
+      "id": "S024",
+      "title": "第二轮独立AI审计与证据集成",
+      "type": "independent_AI_research_review",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "独立只读审阅、反例、四CPU64项内存复演、历史红链、GPU源码摘要与独立参考核查；作者修复复跑，版本/位置元数据与结构门单独核验。",
+      "limit": "非人类批准；审阅者未新增浏览器运行或旧工程执行，不能证明完整产品或优势。",
+      "urls": [],
+      "artifacts": [
+        "Cns/docs/第二轮审计.md",
+        "evidence/design-audit-phase2-2026-10-08.json",
+        "evidence/phase2-path-metadata-normalization.json"
+      ],
+      "doc": "Cns/docs/第二轮审计.md"
+    },
+    {
+      "id": "S025",
+      "title": "成熟渲染与设备生命周期源码",
+      "type": "pinned_official_source_static_review",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "Three r180、Babylon9.29.0、PlayCanvas2.23.0固定SHA源码；帧入口、列表、状态缓存、pass附件、设备恢复及所有权。",
+      "limit": "未运行上游；手册与PR另标日期。机制不能证明白鹭已集成、手机性能、能耗或宿主认证。",
+      "urls": [
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/src/renderers/WebGLRenderer.js",
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/src/renderers/webgl/WebGLRenderLists.js",
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/src/renderers/webgl/WebGLState.js",
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/src/renderers/webgpu/WebGPURenderer.js",
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/LICENSE",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/core/src/Engines/abstractEngine.pure.ts",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/core/src/Engines/thinEngine.pure.ts",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/core/src/Engines/webgpuEngine.pure.ts",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/core/src/Rendering/renderingGroup.ts",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/license.md",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/platform/graphics/webgl/webgl-graphics-device.js",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/platform/graphics/webgpu/webgpu-graphics-device.js",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/platform/graphics/render-pass.js",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/scene/layer.js",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/LICENSE"
+      ],
+      "artifacts": [
+        "evidence/reference-render-lifecycle.json"
+      ],
+      "doc": "Cns/docs/开源参考实现与采用方案.md"
+    },
+    {
+      "id": "S026",
+      "title": "成熟文字UI源码与测试边界",
+      "type": "pinned_official_source_static_review",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "PlayCanvas2.23.1、Babylon9.29.0固定SHA文字/图集/GUI/上传路径及已读测试；图集重建、整段绘制、缓存和CPU脏区。",
+      "limit": "只读测试不等于执行；无中文/IME/字体覆盖/手机验收。fontEpoch等是白鹭建议；不得默认NFC改写业务原文。",
+      "urls": [
+        "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/src/framework/font/canvas-font.js",
+        "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/src/framework/components/element/text-element.js",
+        "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/examples/src/examples/user-interface/text-emojis.example.mjs#L88-L103",
+        "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/test/framework/components/element/text-element.test.mjs",
+        "https://github.com/playcanvas/engine/blob/c3eb40348be7e80617164e4f2fea0b139ad42ebb/LICENSE",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/gui/src/2D/advancedDynamicTexture.ts",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/gui/src/2D/controls/textBlock.pure.ts",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/gui/src/2D/controls/control.pure.ts",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/core/src/Materials/Textures/dynamicTexture.pure.ts",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/core/src/Engines/Extensions/engine.dynamicTexture.pure.ts",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/gui/test/unit/inputText.test.ts",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/license.md"
+      ],
+      "artifacts": [
+        "evidence/reference-text-ui.json"
+      ],
+      "doc": "Cns/docs/开源参考实现与采用方案.md"
+    },
+    {
+      "id": "S027",
+      "title": "成熟资源导入与动画源码",
+      "type": "pinned_official_source_static_review",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "Three r180、Babylon8.26.0、PlayCanvas2.23.0、DragonBonesJS固定SHA共12代码/许可文件；glTF/KTX2、共享容器、骨架与动画实例。",
+      "limit": "Babylon8.26与9.29分开；未读完整混合/约束/shader路径或执行来源。DragonBones Slot不证明全部Spine能力；Spine仅官方文档/许可补读。",
+      "urls": [
+        "https://github.com/DragonBones/DragonBonesJS/blob/64b6c69ae35777c2404be68c9192e2c56906079e/LICENSE",
+        "https://github.com/DragonBones/DragonBonesJS/blob/64b6c69ae35777c2404be68c9192e2c56906079e/DragonBones/src/dragonBones/armature/Slot.ts",
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/LICENSE",
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/GLTFLoader.js",
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/examples/jsm/loaders/KTX2Loader.js",
+        "https://github.com/mrdoob/three.js/blob/0af9729d0c143a86a1d725d6e2c3ad83301f3f34/src/animation/AnimationMixer.js",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/LICENSE",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/framework/parsers/glb-parser.js",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/framework/components/anim/component.js",
+        "https://github.com/playcanvas/engine/blob/cfef43d306b2b55a2c0742e4994221f6d2463957/src/framework/parsers/glb-container-resource.js",
+        "https://github.com/BabylonJS/Babylon.js/blob/09876696f9942657ec9da5a72ec16c9d3de54365/license.md",
+        "https://github.com/BabylonJS/Babylon.js/blob/09876696f9942657ec9da5a72ec16c9d3de54365/packages/dev/core/src/Bones/skeleton.ts"
+      ],
+      "artifacts": [
+        "evidence/reference-assets-animation.json"
+      ],
+      "doc": "Cns/docs/开源参考实现与采用方案.md"
+    },
+    {
+      "id": "S028",
+      "title": "Pixi文字批次缓存与恢复",
+      "type": "pinned_official_source_static_review",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "Pixi8.22.0固定SHA五个源码文件及MIT许可；Canvas文字、普通批次、池化来源恢复；PR12170及12194修复记录。",
+      "limit": "五个文件SHA256可追溯；模板后端仅读PR/发布说明，未读实际模板实现。无中文、性能或恢复实测。",
+      "urls": [
+        "https://github.com/pixijs/pixijs/blob/5b41ee37fd36c61e089113345a8f12cf1c3323cf/src/scene/text/shared/AbstractTextSystem.ts",
+        "https://github.com/pixijs/pixijs/blob/5b41ee37fd36c61e089113345a8f12cf1c3323cf/src/scene/text/canvas/CanvasTextMetrics.ts",
+        "https://github.com/pixijs/pixijs/blob/5b41ee37fd36c61e089113345a8f12cf1c3323cf/src/scene/text/canvas/CanvasTextGenerator.ts",
+        "https://github.com/pixijs/pixijs/blob/5b41ee37fd36c61e089113345a8f12cf1c3323cf/src/scene/text-html/HTMLTextSystem.ts",
+        "https://github.com/pixijs/pixijs/blob/5b41ee37fd36c61e089113345a8f12cf1c3323cf/src/scene/text/canvas/CanvasTextPipe.ts",
+        "https://github.com/pixijs/pixijs/blob/5b41ee37fd36c61e089113345a8f12cf1c3323cf/LICENSE"
+      ],
+      "artifacts": [
+        "evidence/reference-pixi-text.json"
+      ],
+      "doc": "Cns/docs/开源参考实现与采用方案.md"
+    },
+    {
+      "id": "S029",
+      "title": "开源参考整合与独立AI只读审计",
+      "type": "independent_AI_source_review_and_integration",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "复核关键源码与标签映射，区分原文事实、白鹭提议、适配要求及性能未知；保留原始报告和NFC文案修正，建立复用及验证分工。",
+      "limit": "非人类批准或代码运行验收；本轮没有新增probe、上游安装或性能实验，原两轮结果不扩大覆盖。",
+      "urls": [],
+      "artifacts": [
+        "evidence/reference-independent-audit.json",
+        "evidence/reference-research-audit-2026-10-08.json",
+        "Cns/docs/开源实现优先与验证分工.md"
+      ],
+      "doc": "Cns/docs/开源参考实现与采用方案.md"
+    },
+    {
+      "id": "S030",
+      "title": "真实资产参考链固定来源与文件核查",
+      "type": "pinned_official_sources_and_local_integrity_review",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "Three r186 code commit9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8及RiggedSimple固定资产；9文件Git blob/SHA256/大小、5模块ESM闭包、许可及本地文件压缩估算。",
+      "limit": "r180仍为历史研究；静态核查及独立压缩估算不证明实际发布包、网络传输或性能。资产为Cesium2017的CC-BY-4.0蒙皮圆柱，不是完整角色；未加载KTX2/Draco/meshopt。",
+      "urls": [
+        "https://github.com/mrdoob/three.js/tree/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8",
+        "https://github.com/KhronosGroup/glTF-Sample-Assets/blob/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/RiggedSimple/glTF-Embedded/RiggedSimple.gltf"
+      ],
+      "artifacts": [
+        "experiments/asset-reference-probe/sources.json",
+        "Cns/experiments/asset-reference-probe/THIRD_PARTY_NOTICES.md",
+        "evidence/asset-reference-source-selection.json",
+        "evidence/asset-reference-dependencies.json",
+        "evidence/asset-reference-source-audit.json",
+        "evidence/asset-reference-file-footprint.json"
+      ],
+      "doc": "Cns/docs/第三轮集成记录.md"
+    },
+    {
+      "id": "S031",
+      "title": "真实骨骼资产混合渲染与生命周期执行",
+      "type": "local_browser_real_asset_reference_execution",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "Edge154.0.4258.62新测试profile；实际GLTFLoader、SkeletonUtils、AnimationMixer与同context文字UI；当前17/17主检查、零页面错误/console诊断；保留行为红版、恢复清理失败、四变异及审阅后修正。",
+      "limit": "只限固定资产和桌面WebGL2适配；系统字体烟测不是CJK覆盖、IME或性能；上下文恢复像素不是作品交互验收。无手机/小游戏/原生、生产复杂UI、完整2D骨骼、压缩资产、WebGPU场景、AI创作或迁移验收。",
+      "urls": [],
+      "artifacts": [
+        "evidence/asset-reference-probe-results.json",
+        "evidence/asset-reference-probe.png",
+        "Cns/experiments/asset-reference-probe/README.md",
+        "Cns/docs/第三轮集成记录.md"
+      ],
+      "doc": "Cns/docs/第三轮集成记录.md"
+    },
+    {
+      "id": "S032",
+      "title": "第三轮独立AI审阅及历史来源完整性",
+      "type": "independent_AI_code_source_review_and_local_integration_verification",
+      "researchCheckedAt": "2026-10-08",
+      "scope": "来源与代码由独立代理分别审阅；作者补失败回归并修复，root对最终同一源码新鲜复跑；全部保留报告的执行来源逐hash核对，0.4.0与此前基线保持。",
+      "limit": "非人类批准；未运行上游测试套件或完成法律/安全全审计、GC堆泄漏证明与产品设备验收。结构检查不代替代码审阅或实际运行。",
+      "urls": [],
+      "artifacts": [
+        "evidence/asset-reference-source-audit.json",
+        "evidence/asset-reference-code-review.json",
+        "evidence/asset-reference-report-integrity.json",
+        "evidence/asset-reference-integration-audit.json",
+        "Cns/docs/第三轮审计.md"
+      ],
+      "doc": "Cns/docs/第三轮审计.md"
+    },
+    {
+      "id": "S033",
+      "title": "创始人补充后端编译及原生扩展意图",
+      "type": "user_confirmed_context",
+      "scope": "Canvas到WebGL、WASM探索、历史编译优化经验；原生App/SDK及未来桌面、图形API和GPU AI研究意图。",
+      "limit": "历史效率为用户陈述；新技术采纳、数字预算和首发Steam未批准。",
+      "urls": [],
+      "artifacts": [
+        "evidence/backend-founder-context.json"
+      ],
+      "researchCheckedAt": "2026-10-08",
+      "doc": "Cns/docs/图形后端编译与原生Runtime选型.md"
+    },
+    {
+      "id": "S034",
+      "title": "图形双后端与Canvas边界官方研究",
+      "type": "official_documentation_research",
+      "scope": "Three WebGPU/WebGL2 fallback、材质迁移及实验边界；HTML context互斥，Pixi文档版本冲突。",
+      "limit": "没有新增WebGPU场景、shader或宿主测试；资料中的收益不等于白鹭性能。",
+      "urls": [
+        "https://threejs.org/manual/pages/webgpurenderer",
+        "https://html.spec.whatwg.org/multipage/canvas.html#dom-canvas-getcontext",
+        "https://pixijs.com/blog/8.16.0"
+      ],
+      "artifacts": [
+        "evidence/backend-graphics-research.json"
+      ],
+      "researchCheckedAt": "2026-10-08",
+      "doc": "Cns/docs/图形后端编译与原生Runtime选型.md"
+    },
+    {
+      "id": "S035",
+      "title": "TypeScript7与快速迭代工具链现状",
+      "type": "official_release_package_and_tool_documentation_research",
+      "scope": "稳定TS7.0.2、Go原生正式发布、unstable API、TS6工具兼容、Vite8/Oxc/Rolldown及迁移边界。",
+      "limit": "未安装或测Egret；厂商8至12倍构建数据只归属其测量，7.1计划不是实际交付。",
+      "urls": [
+        "https://github.com/microsoft/TypeScript/releases",
+        "https://registry.npmjs.org/typescript/latest",
+        "https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/",
+        "https://github.com/microsoft/typescript-go/blob/main/README.md",
+        "https://github.com/microsoft/typescript-go/discussions/4576",
+        "https://github.com/microsoft/TypeScript/issues/63703",
+        "https://vite.dev/blog/announcing-vite8",
+        "https://vite.dev/guide/features#typescript",
+        "https://esbuild.github.io/content-types/#typescript",
+        "https://www.typescriptlang.org/tsconfig/#incremental",
+        "https://www.typescriptlang.org/docs/handbook/project-references.html",
+        "https://esbuild.github.io/api/#sourcemap",
+        "https://www.typescriptlang.org/docs/handbook/release-notes/typescript-6-0.html",
+        "https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-0.html",
+        "https://oxc.rs/docs/guide/usage/transformer/typescript",
+        "https://vite.dev/guide/api-hmr",
+        "https://github.com/microsoft/TypeScript/issues/64589"
+      ],
+      "artifacts": [
+        "evidence/backend-ts-research.json"
+      ],
+      "researchCheckedAt": "2026-10-08",
+      "doc": "Cns/docs/图形后端编译与原生Runtime选型.md"
+    },
+    {
+      "id": "S036",
+      "title": "Rust原生Runtime图形库及脚本VM研究",
+      "type": "official_source_and_private_static_research_summary",
+      "scope": "Rust/C++与FFI、wgpu/Dawn/bgfx/ANGLE、V8/JSC/JSVM及解释器候选；私有头文件和CMake条件关系。",
+      "limit": "私有包只读条目未构建；目录版本不等于二进制或运行VM；Dawn主线D3D11不等于指定release验收；包体、性能、iOS模式和鸿蒙库支持未验收。",
+      "urls": [
+        "https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html",
+        "https://doc.rust-lang.org/book/ch16-03-shared-state.html",
+        "https://doc.rust-lang.org/nomicon/ffi.html",
+        "https://cxx.rs/",
+        "https://github.com/gfx-rs/wgpu",
+        "https://github.com/gfx-rs/wgpu/releases/tag/v30.0.1",
+        "https://github.com/gfx-rs/wgpu-native/releases",
+        "https://docs.rs/wgpu/30.0.1/wgpu/struct.Device.html",
+        "https://dawn.googlesource.com/dawn/+/refs/heads/main/README.md",
+        "https://raw.githubusercontent.com/google/dawn/main/src/dawn/native/CMakeLists.txt",
+        "https://raw.githubusercontent.com/google/dawn/main/src/dawn/native/d3d11/PhysicalDeviceD3D11.cpp",
+        "https://raw.githubusercontent.com/google/dawn/main/include/dawn/native/D3D11Backend.h",
+        "https://raw.githubusercontent.com/google/dawn/main/docs/dawn/features/shared_texture_memory.md",
+        "https://github.com/google/dawn/releases",
+        "https://bkaradzic.github.io/bgfx/overview.html",
+        "https://bkaradzic.github.io/bgfx/bgfx.html",
+        "https://chromium.googlesource.com/angle/angle/+/main/README.md",
+        "https://v8.dev/docs/embed",
+        "https://v8.dev/docs/version-numbers",
+        "https://v8.dev/blog/jitless",
+        "https://raw.githubusercontent.com/v8/v8/main/docs/wasm/architecture.md",
+        "https://bellard.org/quickjs/",
+        "https://bellard.org/quickjs/quickjs.html",
+        "https://developer.apple.com/documentation/javascriptcore",
+        "https://docs.webkit.org/Deep%20Dive/JSC/JavaScriptCore.html",
+        "https://github.com/facebook/hermes",
+        "https://reactnative.dev/docs/hermes",
+        "https://developer.apple.com/app-store/review/guidelines/",
+        "https://developer.apple.com/support/alternative-browser-engines/",
+        "https://raw.githubusercontent.com/openharmony/docs/master/zh-cn/application-dev/napi/jsvm-introduction.md"
+      ],
+      "artifacts": [
+        "evidence/backend-native-research.json"
+      ],
+      "researchCheckedAt": "2026-10-08",
+      "doc": "Cns/docs/图形后端编译与原生Runtime选型.md"
+    },
+    {
+      "id": "S037",
+      "title": "浏览器宿主矩阵与GPU AI能力现状",
+      "type": "official_standard_vendor_sdk_and_host_documentation_research",
+      "scope": "GPUWeb2026年10月状态、小游戏/iframe/WebView边界、ORT/WebNN和厂商超分版本/硬件条件。",
+      "limit": "observed均为空；不估算渗透率，不把compute当TensorCore/NPU/DLSS，不把AI当净节省证据。",
+      "urls": [
+        "https://github.com/gpuweb/gpuweb/wiki/Implementation-Status",
+        "https://developer.chrome.com/docs/web-platform/webgpu/overview",
+        "https://developer.chrome.com/docs/web-platform/webgpu/troubleshooting-tips",
+        "https://webkit.org/blog/17333/webkit-features-in-safari-26-0/",
+        "https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Releases/141",
+        "https://raw.githubusercontent.com/wechat-miniprogram/minigame-api-typings/master/types/wx/lib.wx.api.d.ts",
+        "https://github.com/wechat-miniprogram/minigame-api-typings",
+        "https://partner.open-douyin.com/docs/resource/zh-CN/mini-game/develop/guide/basic-function/render",
+        "https://partner.open-douyin.com/docs/resource/zh-CN/mini-app/develop/api/canvas/v2/Canvas/Canvas.getContext",
+        "https://github.com/facebook/meta-instant-games-unity-plugin",
+        "https://docs.discord.com/developers/activities/how-activities-work",
+        "https://docs.discord.com/developers/activities/development-guides/networking",
+        "https://core.telegram.org/api/bots/webapps",
+        "https://core.telegram.org/bots/webapps",
+        "https://www.w3.org/TR/WGSL/",
+        "https://github.com/gpuweb/gpuweb/blob/main/proposals/subgroup-matrix.md",
+        "https://dawn.googlesource.com/dawn/+/refs/heads/main/src/dawn/tests/end2end/SubgroupMatrixTests.cpp",
+        "https://www.w3.org/TR/2026/CRD-webnn-20260910/",
+        "https://webmachinelearning.github.io/webnn-status/",
+        "https://onnxruntime.ai/docs/tutorials/web/",
+        "https://onnxruntime.ai/docs/tutorials/web/ep-webgpu.html",
+        "https://github.com/microsoft/onnxruntime/blob/main/js/web/docs/webgpu-operators.md",
+        "https://developer.nvidia.com/rtx/dlss",
+        "https://raw.githubusercontent.com/NVIDIA/DLSS/main/doc/DLSS_Programming_Guide_Release.pdf",
+        "https://gpuopen.com/amd-fsr-sdk/",
+        "https://gpuopen.com/learn/amd-fsr-sdk-2-3-blog/",
+        "https://gpuopen.com/amd-fsr-upscaling/",
+        "https://gpuopen.com/learn/amd-fsr4-gpuopen-release/",
+        "https://raw.githubusercontent.com/intel/xess/main/doc/xess_sr_developer_guide_english.md",
+        "https://developer.apple.com/metal/capabilities/",
+        "https://github.com/gfx-rs/wgpu",
+        "https://partner.steamgames.com/doc/steamhardware/recommendations"
+      ],
+      "artifacts": [
+        "evidence/backend-host-ai-research.json"
+      ],
+      "researchCheckedAt": "2026-10-08",
+      "doc": "Cns/docs/图形后端编译与原生Runtime选型.md"
+    },
+    {
+      "id": "S038",
+      "title": "创始人确认核心独立实现与第三方边界",
+      "type": "founder_instruction",
+      "scope": "白鹭核心依据自有需求和规格独立设计实现；标准与开放项目提供研究依据，公共基础设施作为明确依赖接入并保留版本、来源、声明和修改记录。",
+      "limit": "确认实现原则与开源意图，不证明已有自主核心、代码权利、性能领先或开源发布；公共依赖允许不自动选定某个库。",
+      "artifacts": [
+        "evidence/code-origin-founder-context.json"
+      ],
+      "researchCheckedAt": "2026-10-08",
+      "doc": "Cns/docs/独立实现与第三方依赖规范.md"
+    },
+    {
+      "id": "S039",
+      "title": "现有参考链归属与政策文档独立审阅",
+      "type": "independent_local_artifact_and_document_review",
+      "scope": "现有Three研究依赖、来源记录及核心实现/公共依赖边界的文档核查。",
+      "limit": "有限文件和声明核对；代码来源、发行声明和生产依赖选择分别评审，本记录没有新增运行实验。",
+      "artifacts": [
+        "evidence/code-origin-research-audit.json",
+        "evidence/code-origin-policy-review.json"
+      ],
+      "researchCheckedAt": "2026-10-08",
+      "doc": "Cns/docs/独立实现与第三方依赖规范.md"
+    },
+    {
+      "id": "S040",
+      "title": "Shaders效果组件与AI工具官方资料及固定源码",
+      "type": "official_documentation_and_fixed_source_static_research",
+      "scope": "10月6日开源公告、软件/内容边界、参数化组件及MCP/CLI；v4.0.2固定提交六份关键源码。",
+      "limit": "200+是官方展示口径，未清点；没有Evan作者一手证明；WebGPU-only及DOM/canvas边界，未证明白鹭pass互操作、性能或小游戏兼容；未安装或执行。",
+      "urls": [
+        "https://shaders.com/updates/shaders-is-open-source",
+        "https://shaders.com/docs/guide/mcp",
+        "https://shaders.com/docs/guide/cli",
+        "https://github.com/shader-effects-inc/shaders/tree/9435282c29d3505c67eef427470c8d835095a199"
+      ],
+      "artifacts": [
+        "evidence/shaders-reference-research.json"
+      ],
+      "researchCheckedAt": "2026-10-08",
+      "doc": "Cns/docs/Shaders与Playground产品技术启发.md"
+    },
+    {
+      "id": "S041",
+      "title": "Google Playground与Unity Spark当前能力和未来计划",
+      "type": "official_product_documentation_and_announcement_research",
+      "scope": "10月7日发布、当前帮助中的源码ZIP和草稿/公开版；Spark未来专业3D、runtime与资产生态计划。",
+      "limit": "当前Playground与未来Spark分开；导出不等于平台开源、自部署或工程往返；没有生成/运行/导出实测，不证明竞品缺少未公开能力。",
+      "urls": [
+        "https://blog.google/innovation-and-ai/technology/ai/playground-experimental-gaming-platform/",
+        "https://playground.google/helpcenter",
+        "https://unity.com/news/google-and-unity-partner-on-new-ai-gaming-platform-for-the-next-era-of-interactive-entertainment",
+        "https://unity.com/spark",
+        "https://unity.com/blog/why-we-built-unity-spark"
+      ],
+      "artifacts": [
+        "evidence/playground-reference-research.json"
+      ],
+      "researchCheckedAt": "2026-10-08",
+      "doc": "Cns/docs/Shaders与Playground产品技术启发.md"
+    },
+    {
+      "id": "S042",
+      "title": "创始人要求现代工程架构API与白鹭命名规范",
+      "type": "founder_instruction",
+      "scope": "完整重新制定技术架构与代码规范，保留白鹭命名习惯，现代化项目结构/API并保持亲切感。",
+      "limit": "确认目标，不自动接受具体选型或代码门禁，不证明已有实现。",
+      "artifacts": [
+        "evidence/engineering-norm-founder-context.json"
+      ],
+      "researchCheckedAt": "2026-10-08",
+      "doc": "Cns/docs/工程技术架构与项目结构.md"
+    },
+    {
+      "id": "S043",
+      "title": "历史白鹭命名与接口定点静态核查",
+      "type": "selected_historical_source_static_research_public_safe_summary",
+      "scope": "八个历史源码条目及既有EUI记录；Sprite/Bitmap分工、尺寸、事件、removeChild与命名。",
+      "limit": "非完整最新版本/运行兼容证明；不复制源码正文或公开原包路径；未构建执行。",
+      "artifacts": [
+        "evidence/egret-naming-contract-summary.json"
+      ],
+      "researchCheckedAt": "2026-10-08",
+      "doc": "Cns/docs/公共API设计与命名规范.md"
+    },
+    {
+      "id": "S044",
+      "title": "现代语言模块FFI与工程工具官方资料",
+      "type": "official_language_and_tool_documentation_research",
+      "scope": "TS模块/严格配置、Rust unsafe/FFI/panic/Cargo、workspace/格式/lint机制。",
+      "limit": "机制说明用于候选规范；未选新工具版本、安装、生成仓库配置或编译API样例，不证明收益。",
+      "urls": [
+        "https://www.typescriptlang.org/docs/handbook/modules/reference.html",
+        "https://www.typescriptlang.org/tsconfig/",
+        "https://doc.rust-lang.org/nomicon/ffi.html",
+        "https://doc.rust-lang.org/cargo/reference/workspaces.html",
+        "https://pnpm.io/workspaces",
+        "https://prettier.io/docs/configuration",
+        "https://eslint.org/docs/latest/use/configure/configuration-files",
+        "https://typescript-eslint.io/getting-started/typed-linting"
+      ],
+      "artifacts": [
+        "evidence/engineering-language-tooling-research.json"
+      ],
+      "researchCheckedAt": "2026-10-08",
+      "doc": "Cns/docs/代码规范与质量门禁.md"
+    },
+    {
+      "id": "S045",
+      "title": "创始人启动核心实现与证据核查要求",
+      "type": "founder_instruction",
+      "scope": "核心框架和逻辑开始实现，核查证据缺口与研究对象。",
+      "limit": "不接受整套技术候选，不授权公开发布，不预判性能或完整产品通过。",
+      "researchCheckedAt": "2026-10-08",
+      "artifacts": [
+        "evidence/core-framework-founder-context.json"
+      ],
+      "doc": "Cns/docs/核心框架实现记录.md"
+    },
+    {
+      "id": "S046",
+      "title": "固定开发工具与自主核心运行证据",
+      "type": "local_tool_metadata_and_reproducible_subset_execution",
+      "scope": "TS7.0.2安装版本/许可证、严格编译、包/类型和headless行为验证。",
+      "limit": "CPU/模拟host子集，无GPU/浏览器/原生或性能结果。",
+      "researchCheckedAt": "2026-10-08",
+      "urls": [
+        "https://www.typescriptlang.org/download/",
+        "https://registry.npmjs.org/typescript/latest"
+      ],
+      "artifacts": [
+        "evidence/core-framework-tooling.json",
+        "evidence/core-framework-verification.json",
+        "evidence/core-framework-implementation.json"
+      ],
+      "doc": "Cns/docs/核心框架实现记录.md"
+    },
+    {
+      "id": "S047",
+      "title": "核心证据缺口与官方研究路径定点核查",
+      "type": "bounded_evidence_gap_audit_official_entry_points",
+      "scope": "八项研究与验证缺口，已有窄研究索引和官方标准/主仓库入口。",
+      "limit": "部分只核对入口，不等于新增固定SHA完整源码阅读；Dawn/JSC抓取限制保留，下一步验证未执行。",
+      "researchCheckedAt": "2026-10-08",
+      "urls": [
+        "https://dom.spec.whatwg.org/#interface-abortsignal",
+        "https://github.com/harfbuzz/harfbuzz/blob/main/src/hb-shape.cc",
+        "https://harfbuzz.github.io/working-with-harfbuzz-clusters.html",
+        "https://freetype.org/freetype2/docs/reference/ft2-character_mapping.html",
+        "https://github.com/pixijs/pixijs/blob/5b41ee37fd36c61e089113345a8f12cf1c3323cf/src/scene/text/canvas/CanvasTextMetrics.ts",
+        "https://www.unicode.org/reports/tr14/",
+        "https://www.unicode.org/reports/tr29/",
+        "https://www.w3.org/TR/webgpu/",
+        "https://registry.khronos.org/webgl/specs/latest/2.0/",
+        "https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/core/src/Engines/webgpuEngine.pure.ts",
+        "https://threejs.org/manual/pages/webgpurenderer",
+        "https://developer.playcanvas.com/user-manual/graphics/advanced-rendering/device-loss/",
+        "https://docs.rs/wgpu/30.0.1/wgpu/struct.Device.html",
+        "https://github.com/google/dawn/blob/main/include/dawn/native/D3D11Backend.h",
+        "https://github.com/google/dawn/blob/main/docs/dawn/features/shared_texture_memory.md",
+        "https://v8.dev/docs/embed",
+        "https://developer.apple.com/documentation/javascriptcore",
+        "https://github.com/egret-labs/egret-core/blob/master/src/egret/events/EventDispatcher.ts",
+        "https://github.com/egret-labs/egret-core/tree/master/src/extension/eui",
+        "https://modelcontextprotocol.io/specification/2025-06-18/server/tools",
+        "https://modelcontextprotocol.io/specification/2025-06-18/basic/utilities/cancellation",
+        "https://www.w3.org/TR/uievents/#events-compositionevents",
+        "https://harfbuzz.github.io/what-does-harfbuzz-do.html"
+      ],
+      "artifacts": [
+        "evidence/core-evidence-gaps.json"
+      ],
+      "doc": "Cns/docs/核心框架证据缺口与研究清单.md"
+    },
+    {
+      "id": "S048",
+      "title": "核心切片独立代码与整合审阅证据",
+      "type": "independent_AI_scoped_code_and_document_review",
+      "scope": "本次core完整新文件初审、必要修订、限定终审及输入hash；文档预审三项一致性修订与生成后限定核查另列。",
+      "limit": "有限代码质量/规格及文档证据一致性核查，不授予产品/性能/原创或许可证验收权。",
+      "researchCheckedAt": "2026-10-08",
+      "artifacts": [
+        "evidence/core-framework-code-review-initial.json",
+        "evidence/core-framework-code-review-final.json",
+        "evidence/core-framework-document-review-initial.json",
+        "evidence/core-framework-document-review-final.json"
+      ],
+      "doc": "Cns/docs/核心框架实现记录.md"
+    },
+    {
+      "id": "S049",
+      "title": "开发初期公开协作与社区表达要求",
+      "type": "project_owner_instruction",
+      "scope": "代码、设计过程、文档及知识库从开发初期采用公开协作；公开表达专业客观，保护不适合公开的交流和资料，保留研究出处与鸣谢，展示白鹭的独立设计与创新。",
+      "limit": "确认公开开发方向与表达标准；仓库账号、许可证和实际发布状态另行登记，不改变技术与产品验收。",
+      "researchCheckedAt": "2026-10-08",
+      "artifacts": [
+        "evidence/public-collaboration-requirement.json"
+      ],
+      "doc": "Cns/docs/开源协作与公开表达规范.md"
+    },
+    {
+      "id": "S050",
+      "title": "公开材料编辑及发行边界核查",
+      "type": "editorial_and_local_release_boundary_review",
+      "scope": "来源与鸣谢、文档表达、当前代码和第三方研究文件的发行边界及公开投影。",
+      "limit": "文字与发行准备；沿用项目指定仓库既有Apache-2.0配置，现有测试计数和来源身份保留，未接受新的平台/性能/迁移结论。",
+      "researchCheckedAt": "2026-10-08",
+      "artifacts": [
+        "evidence/public-community-editorial.json",
+        "evidence/public-release-boundary-audit.json",
+        "evidence/public-release-projection.json"
+      ],
+      "doc": "Cns/docs/开源协作与公开表达规范.md"
+    },
+    {
+      "id": "S051",
+      "title": "双语公开材料与首批GitHub提交要求",
+      "type": "project_owner_instruction",
+      "scope": "每次推送GitHub前补全关键代码英文注释，整理可公开的所有文档和知识库，并为阅读文档及共同登记状态提供完整中文与英文版本。完成首批核心源码、文档及知识库后提交指定公开仓库。",
+      "limit": "确定双语和推送前步骤；不扩大技术实现、性能、迁移或宿主验收。实际提交取决于已核验的远端写入授权。",
+      "researchCheckedAt": "2026-10-08",
+      "artifacts": [
+        "evidence/bilingual-publication-requirement.json"
+      ],
+      "doc": "Cns/docs/双语文档与推送前检查.md"
+    },
+    {
+      "id": "S052",
+      "title": "CPU资源合同与独立实现证据",
+      "type": "first_party_specification_and_execution",
+      "scope": "类型化引用、共享获取、等待取消、代际、租约及Scope/Engine清理。",
+      "limit": "仅CPU服务切片；不含GPU上传/fence、解码器、生产宿主、性能或迁移验收。此前25项手工研究保持原范围。",
+      "researchCheckedAt": "2026-10-08",
+      "artifacts": [
+        "evidence/asset-core-verification.json"
+      ],
+      "doc": "Cns/docs/资源核心合同.md"
+    },
+    {
+      "id": "S053",
+      "title": "CPU资源核心有限独立审阅",
+      "type": "independent_ai_code_and_contract_review",
+      "scope": "当前核心代码、失败交错、测试与实现规格一致性。",
+      "limit": "独立AI有限审阅与已记录回归；不是外部社区评审、原创性保证或完整产品验收。",
+      "researchCheckedAt": "2026-10-08",
+      "artifacts": [
+        "evidence/asset-core-review.json"
+      ],
+      "doc": "Cns/docs/资源核心实现记录.md"
+    },
+    {
+      "id": "S054",
+      "title": "显示与帧规格和执行证据",
+      "type": "first_party_specification_and_execution",
+      "scope": "自主二维矩形CPU显示/帧及桌面Canvas像素/指针检查。",
+      "limit": "不验收GPU、Native、实体手机、性能、完整UI/文字/纹理/动画/3D、完整迁移、CI或完整产品；浏览器仅为桌面观察，不是通用分配上限。",
+      "researchCheckedAt": "2026-10-09",
+      "artifacts": [
+        "evidence/display-frame-verification.json"
+      ],
+      "doc": "Cns/docs/显示与帧执行合同.md"
+    },
+    {
+      "id": "S055",
+      "title": "显示与帧及Canvas有限独立审阅",
+      "type": "independent_ai_code_and_contract_review",
+      "scope": "跨realm修正后有限独立实现审阅及最终分支的变更双语语义/证据身份审阅；作者公开表达与翻译自审另行标明，本次元数据有限复审尚待完成。",
+      "limit": "不验收GPU、Native、实体手机、性能、完整UI/文字/纹理/动画/3D、完整迁移、CI或完整产品；浏览器仅为桌面观察，不是通用分配上限。",
+      "researchCheckedAt": "2026-10-09",
+      "artifacts": [
+        "evidence/display-frame-review.json"
+      ],
+      "doc": "Cns/docs/显示与帧执行实现记录.md"
+    },
+    {
+      "id": "S056",
+      "title": "WebGPU矩形合同与实际执行记录",
+      "type": "first_party_specification_and_recorded_execution",
+      "scope": "0.6协议、有界CPU/mock检查、公共生产目标读回与桌面截图合成；保留早期F4失败。",
+      "limit": "仅限定桌面浏览器矩形；Native SDK、手机、加速/性能、文字/纹理/UI/动画/3D、迁移/编辑器/Agent闭环、CI与完整产品未验收。最终源码/native/公开交付绑定尚待完成。",
+      "researchCheckedAt": "2026-10-09",
+      "artifacts": [
+        "evidence/webgpu-verification.json"
+      ],
+      "doc": "Cns/docs/WebGPU矩形实现证据.md"
+    },
+    {
+      "id": "S057",
+      "title": "robust-predicates与已查阅WebGPU/WGSL资料",
+      "type": "explicit_foundational_dependency_and_primary_documentation",
+      "scope": "精确3.0.3公共orient2d/Unlicense、已审计npm完整性及安装声明；一手API资料保留日期与访问失败。",
+      "limit": "仅限定桌面浏览器矩形；Native SDK、手机、加速/性能、文字/纹理/UI/动画/3D、迁移/编辑器/Agent闭环、CI与完整产品未验收。最终源码/native/公开交付绑定尚待完成。",
+      "researchCheckedAt": "2026-10-09",
+      "artifacts": [
+        "evidence/webgpu-source-evidence.json"
+      ],
+      "doc": "Cns/docs/WebGPU矩形执行合同.md"
+    },
+    {
+      "id": "S058",
+      "title": "WebGPU有限独立实现审阅",
+      "type": "independent_ai_scoped_implementation_review",
+      "scope": "帧复制/准备与整合R1–R4已闭环；已记录源码的数值修正及完整native工具/产物审阅通过，最终公开审阅待完成。",
+      "limit": "仅限定桌面浏览器矩形；Native SDK、手机、加速/性能、文字/纹理/UI/动画/3D、迁移/编辑器/Agent闭环、CI与完整产品未验收。最终源码/native/公开交付绑定尚待完成。",
+      "researchCheckedAt": "2026-10-09",
+      "artifacts": [
+        "evidence/webgpu-review.json"
+      ],
+      "doc": "Cns/docs/WebGPU矩形实现证据.md"
+    },
+    {
+      "id": "S059",
+      "title": "已接受图片源码／模拟及 CPU 参考范围",
+      "type": "first_party_finite_source_mock_and_saved_tests",
+      "scope": "A2 Tasks 1–4 及 Task 5a CPU 公式；历史源码／测试身份和修正。",
+      "limit": "无浏览器 profile／native 像素；Task 5b／Task 6／P0–P7 未运行；记录不转移到后续字节。",
+      "researchCheckedAt": "2026-10-09",
+      "artifacts": [
+        "evidence/core-progress-0.16.0.json"
+      ],
+      "doc": "Cns/docs/core-progress.md"
+    },
+    {
+      "id": "S060",
+      "title": "已接受 CPU 3D 契约与打包",
+      "type": "first_party_finite_cpu_source_and_saved_tests",
+      "scope": "B0 数学／投影和 B1 几何／打包，限于具名验收身份。",
+      "limit": "无 GPU 场景、float32 着色器精度、native 端序或设备性能验收。",
+      "researchCheckedAt": "2026-10-09",
+      "artifacts": [
+        "evidence/3d-cpu-source-verification.json"
+      ],
+      "doc": "Cns/docs/3d-foundation.md"
+    },
+    {
+      "id": "S061",
+      "title": "RES 声明兼容性与公开 parser 依赖",
+      "type": "historical_semantic_context_and_independent_declaration_source",
+      "scope": "创始人提供 RES 语义用于独立编写的 profile／fixture；公开 jsonc-parser 3.3.1 根 API。",
+      "limit": "准确历史版本／模块闭合未知；声明不验证文件、解码、运行时或完整迁移。",
+      "researchCheckedAt": "2026-10-09",
+      "artifacts": [
+        "evidence/legacy-res-declarations-verification.json"
+      ],
+      "doc": "Cns/docs/legacy-res-declarations.md"
+    },
+    {
+      "id": "S062",
+      "title": "选定固定 GPUWeb 草案与安装声明",
+      "type": "primary_fixed_draft_selected_semantics_and_type_observation",
+      "scope": "固定 GPUWeb commit 九个语义区间及选定 TypeScript 7.0.2 DOM 声明，与完整字节身份区分。",
+      "limit": "无全规范语义阅读、最新最终标准或 native GPU／host／像素／性能证明；无 depth UI／readback 顺序为白鹭选择。",
+      "researchCheckedAt": "2026-10-09",
+      "artifacts": [
+        "evidence/3d-cpu-source-verification.json"
+      ],
+      "doc": "Cns/docs/3d-foundation.md"
+    },
+    {
+      "id": "S063",
+      "title": "Bitmap 绝对区域契约与 CPU／类型证据",
+      "type": "first_party_implemented_contract_and_recorded_cpu_type_evidence",
+      "scope": "首方 Bitmap 区域实现；专项 113/113、构建 21 项定义、预期负类型诊断 76 项（核心 43、Web 5、工程 28）；有限源码与保存 CPU 证据审阅已接受。",
+      "limit": "23 项 RED 失败不等于 23 项独立到达的行为。可见序列帧、后继完整 prepush、性能及完整迁移不在本记录中。",
+      "researchCheckedAt": "2026-10-10",
+      "artifacts": [
+        "evidence/bitmap-region-cpu.json"
+      ],
+      "doc": "Cns/docs/bitmap-region-contract.md"
+    },
+    {
+      "id": "S064",
+      "title": "纹理首四项桌面采集完整性",
+      "type": "first_party_recorded_texture_collection_and_saved_artifact_integrity",
+      "scope": "C01/C03/C05/C07 在 Canvas 与 WebGPU 的 8 次捕获、16 张 PNG、192 行观察及 1233 份保全副本；保存产物完整性审阅已接受。",
+      "limit": "原生通道数值边界 UNKNOWN，numericAcceptance=false、wholeA2=false。观察行不等于独立捕获；旧采集不证明后续 Bitmap 切帧可见效果或性能。",
+      "researchCheckedAt": "2026-10-10",
+      "artifacts": [
+        "evidence/texture-first-four-collection.json"
+      ],
+      "doc": "Cns/docs/texture-first-four-evidence.md"
+    },
+    {
+      "id": "S065",
+      "title": "公开 B1 浏览器验证器与有界桌面证据",
+      "type": "first_party_public_verifier_recorded_cpu_and_browser_evidence",
+      "scope": "实际仓库 CPU 30/30；公开命令在 Edge 154.0.4258.62 记录 7 帧正例、5 项反例、11 次绘制、8214 项字面量比较及 6 个安全返回 Host；1313 份保存副本的独立完整性审阅已接受。",
+      "limit": "通道可执行文件与独立命令的操作系统后代退场身份 UNBOUND；不证明硬件加速、设备性能、完整 A2、手机 Native SDK 或整个产品。后继完整 prepush 须在推送前另行通过。",
+      "researchCheckedAt": "2026-10-10",
+      "artifacts": [
+        "evidence/b1-public-browser.json"
+      ],
+      "doc": "Cns/docs/b1-browser-verifier.md"
+    }
+  ]
+}

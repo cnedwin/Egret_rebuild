@@ -1,42 +1,59 @@
-# Agent协作约定
+# Agent collaboration agreement
 
-[English](AGENTS.en.md) | 简体中文
+English | [简体中文](AGENTS.zh-CN.md)
 
-## 0.13.0 WebGPU矩形本地检查点 — 2026年10月9日
+## 0.13.0 WebGPU rectangle checkpoint — October 9, 2026
 
-显式 `@egret/engine/webgpu` 入口同步执行不可变 `RenderFrame2D` 矩形命令。根入口保持无DOM；`@egret/engine/web`保持Canvas-only，实际请求不包含WebGPU或robust-predicates模块。无DOM准备层通过公共 `orient2d` 接入精确固定的基础依赖robust-predicates 3.0.3，适用Unlicense。复制、有界交点构造、打包、WGSL及宿主生命周期属于独立编写的第一方代码。见[完整0.6合同](knowledge-base/docs/WebGPU矩形执行合同.md)、[实施计划](knowledge-base/docs/WebGPU矩形实施计划.md)与[有限证据](knowledge-base/docs/WebGPU矩形实现证据.md)。
+The opt-in `@egret/engine/webgpu` entry executes immutable `RenderFrame2D` rectangle commands synchronously. The root stays DOM-free; `@egret/engine/web` stays Canvas-only and requests no WebGPU or robust-predicates modules. DOM-free preparation uses the exact foundational dependency robust-predicates 3.0.3 through public `orient2d`, under Unlicense. Copying, bounded intersection construction, packing, WGSL and host lifetime are independently authored first-party code. See the [complete 0.6 contract](knowledge-base/en/docs/webgpu-rectangle-execution-contract.md), [implementation plan](knowledge-base/en/docs/webgpu-rectangle-implementation-plan.md) and [bounded evidence](knowledge-base/en/docs/webgpu-rectangle-implementation-evidence.md).
 
-已接受的桌面构建记录177/177 CPU/mock/核心检查、28项预期负类型诊断及123个边界文件；独立真实WebGPU门禁记录42帧、1709项原始断言、84张截图、6808项合成断言、8项预期反例及0项意外错误。其中7项变异实际生产代码副本，1项仅为合成断言。实际结果与有限独立实现审阅由[验证](verification/webgpu-verification.json)与[审阅](verification/webgpu-review.json)绑定已接受的源码身份；文档整合没有重跑这些检查。
+The accepted desktop build records 177/177 CPU/mock/core tests, 28 expected negative type diagnostics and 123 boundary files. Its separate real WebGPU gate records 42 frames, 1709 raw assertions, 84 screenshots, 6808 composition assertions, eight intended negatives and zero unexpected errors. Seven negatives mutate copied production code; one is synthetic assertion-only. These recorded results and scoped independent implementation review belong to the accepted source identities in [verification](verification/webgpu-verification.json) and [review](verification/webgpu-review.json); they are not fresh execution by document integration.
 
-本experimental检查点记录于2026-10-08T21:23:54.294Z最终原生运行之前，核心/headless与桌面Canvas结果分别记录。随后仅注释入口重建的真实浏览器WebGPU运行在 `1aa0248a1ff6d8e54c42d631072223bb50483814`、2026-10-08T21:23:54.294Z以0退出并记录PASS：42帧、1709项原始断言、84张PNG截图、6808项合成断言、8项预期反例及0项意外错误。7项反例变异生产代码副本，1项为合成断言。233项源码/构建/工具/依赖清单身份在该运行前后相等，且与当时仅文档和元数据变更的后继版本一致。实际运行由验证作者执行；独立修正及原生绑定复审、最终语义凭据和发布仍待完成。浏览器WebGPU与Native App/SDK分别验收；截图合成不证明实体扫描输出、硬件加速、手机或性能。纹理/文字/UI/动画/3D、编辑器/Agent创作、CI、完整迁移与完整产品仍待实施或验收；R008/V006及V003保留既有义务。下文0.9–0.12历史记录保留原日期、身份与结果范围。
+This experimental checkpoint was recorded before the final native run at 2026-10-08T21:23:54.294Z; its core/headless and desktop Canvas results are separately recorded. The subsequent final comment-build browser WebGPU run at `1aa0248a1ff6d8e54c42d631072223bb50483814`, 2026-10-08T21:23:54.294Z, exited 0 and recorded PASS: 42 frames, 1709 raw assertions, 84 PNG screenshots, 6808 composition assertions, eight intended negatives and zero unexpected errors. Seven negatives mutate copied production code; one is synthetic. All 233 inventoried source/build/tool/dependency identities remained equal before and after that execution and match that historical metadata-only successor. The execution was performed by its verification author; independent correction/native-binding closure, final semantic attestation and publication remain pending. Browser WebGPU is separate from a Native app/SDK. Screenshot composition does not certify physical scanout, acceleration, phones or performance. Textures/text/UI/animation/3D, editor/Agent creation, CI, complete migration and full-product acceptance remain open; R008/V006 and V003 retain their existing obligations. Historical 0.9–0.12 records below keep their original dates, identities and result scopes.
 
-本仓库包含自主核心切片与公开知识库。先读README、CONTRIBUTING、source-origin.json及相关规格；按当前用户已授权范围完成工作。
+This repository contains an independently developed core slice and a public knowledge base. Read README, CONTRIBUTING, source-origin.json, and the relevant specifications first. Complete work within the current scope authorized by the user.
 
-- 自主核心按规格独立设计。资料研究、第三方依赖、白鹭适配和自主代码分别记录来源、版本与验证。
-- engine依赖runtime/contracts，runtime仅依赖contracts，contracts不依赖其他包。公共示例与行为测试从`@egret/engine`入口使用构建产物，保持包exports、strict配置和无DOM/Node环境全局的核心边界。
-- 私有几何单元测试可直接导入构建后的`engine/dist/rendering`辅助模块；公共行为测试仍使用公共入口。rendering独立编译项目保持无DOM，仅引用contracts。engine精确固定的外部依赖`robust-predicates` 3.0.3仅允许在rendering通过包根入口导入，与内部包依赖图及项目引用分别检查。
+- Design the independent core from the specifications. Record sources, versions, and verification separately for research, third-party dependencies, Egret adapters, and independent code.
+- engine depends on runtime/contracts; runtime depends only on contracts; contracts has no package dependencies. Public examples and behavioral tests use built artifacts through the `@egret/engine` entry point. Preserve package exports, strict configuration, and the core boundary that excludes DOM/Node environment globals.
+- Private geometry unit tests may import built `engine/dist/rendering` helpers directly; public behavior tests still use public entries. The rendering composite is DOM-free and references contracts only. Engine's exact external `robust-predicates` 3.0.3 root import is restricted to rendering and is separate from the internal package DAG and project references.
 
-- 仓库实验性 `tools/verify-webgpu-b1.mjs` 可加载其固定构建后 B1／几何验证图：`packages/engine/dist/web/b1.js`、`packages/engine/dist/rendering/meshGeometry3D.js`、`packages/engine/dist/rendering/matrix4.js`、`packages/engine/dist/web/webgpuMeshPass.js`、`packages/contracts/dist/ImageData2D.js`，以及验证器的有限字面量导入闭包与固定别名。本例外不增加稳定包导出，不允许普通公开示例或行为测试任意导入私有模块。
-- 公共行为变化同步规格、来源记录与必要回归。说明实际运行环境与未验证项，保留反例和修复记录。
-- AI参与按实际资料、生成范围和作者复核声明；私有资料只保留可公开的必要摘要，凭据和个人数据不进入仓库。
-- 使用固定工具和lockfile，安装禁用生命周期脚本。版本、依赖、许可证或发布设置的变化单独说明理由和影响。
-- 第一方代码与文档沿用Apache-2.0，保留第三方版权、许可、NOTICE和资产归属。历史身份hash不因公开投影而改写。
-- 推送、发布、部署与仓库管理以用户实际授权为准。本地文件生成或验证不代表远端发布完成。
+- The repository's experimental `tools/verify-webgpu-b1.mjs` may load its fixed emitted B1/geometry verification graph: `packages/engine/dist/web/b1.js`, `packages/engine/dist/rendering/meshGeometry3D.js`, `packages/engine/dist/rendering/matrix4.js`, `packages/engine/dist/web/webgpuMeshPass.js`, and `packages/contracts/dist/ImageData2D.js`, plus the verifier's bounded literal-import closure and fixed aliases. This exception adds no stable package exports and permits no arbitrary private imports in ordinary public examples or behavioral tests.
+- Update specifications, source records, and necessary regressions when public behavior changes. State the actual execution environment and unverified items, and retain counterexamples and repair records.
+- Disclose AI participation according to the materials actually used, the generated scope, and author review. Retain only the necessary publishable summaries of private materials; credentials and personal data must not enter the repository.
+- Use fixed tools and the lockfile; disable lifecycle scripts during installation. Explain the reasons and effects of changes to versions, dependencies, licenses, or publication settings separately.
+- Continue using Apache-2.0 for first-party code and documentation. Retain third-party copyright, licenses, NOTICE files, and asset attribution. Do not rewrite historical identity hashes for a public projection.
+- Pushes, releases, deployments, and repository administration require actual user authorization. Local file generation or verification does not establish that remote publication is complete.
 
-原型的44/44行为检查与11项负类型断言是已记录的headless基线；GPU、Native、真实宿主、性能与CI需各自验收。知识库中的Three运行链属于第三方研究，不替代自主核心验证。
+The prototype's 44/44 behavioral checks and 11 negative type assertions are a recorded headless baseline. GPU, Native, real hosts, performance, and CI require their own acceptance. The Three execution chain in the knowledge base is third-party research and does not replace verification of the independent core.
 
-## 每次推送前的双语与公开检查
+## Bilingual and public-content checks before every push
 
-每次推送到GitHub前，整理全部可公开的文档和知识库，保持完整中文及英文阅读版本，并补全关键代码的英文注释。登记册英文视图从中文权威记录生成，保持ID、状态、数字与来源一致；原始证据、代码快照和上游许可保持原始身份。完成来源、归属、可公开内容与翻译语义复核后，运行`node tools/prepush.mjs`，该命令包含双语检查及核心验证。机器检查不能替代作者对公开授权和翻译含义的复核。
+Before every push to GitHub, organize all publishable documentation and knowledge-base content, maintain complete Chinese and English reading versions, and add English comments to critical code. Generate English registry views from the authoritative Chinese records, keeping IDs, statuses, numbers, and sources consistent; retain the original identity of raw evidence, code snapshots, and upstream licenses. After reviewing sources, attribution, publishable content, and translation meaning, run `node tools/prepush.mjs`, which includes bilingual checks and core verification. Machine checks do not replace the author's review of publication authorization and translation meaning.
 
-本地克隆后可执行`git config --local core.hooksPath .githooks`启用仓库推送钩子；钩子执行同一检查。CI与贡献者均执行该命令，禁止以跳过钩子代替修复。该约定适用于所有后续推送，详情见[双语规范](knowledge-base/docs/双语文档与推送前检查.md)。
+After cloning locally, run `git config --local core.hooksPath .githooks` to enable the repository's push hook; it runs the same checks. CI and contributors must run this command, and must fix failures rather than bypass the hook. This agreement applies to all subsequent pushes. See the [bilingual policy](knowledge-base/en/docs/bilingual-documentation-and-prepush-checks.md).
 
-0.12.0限定显示/帧及独立Canvas实现已通过97/97行为检查及25项负类型诊断；原44项仍是历史基线。渲染变更另须运行`node tools/verify-canvas.mjs --playwright <installed-playwright-module> --channel msedge --output <private-output-directory>`；默认prepush不包含真实浏览器。
+The bounded 0.12.0 display/frame and separate Canvas implementation passed 97/97 behavior checks and 25 negative type diagnostics; the original 44 remain historical. Rendering changes separately require `node tools/verify-canvas.mjs --playwright <installed-playwright-module> --channel msedge --output <private-output-directory>`; default prepush does not include a real browser.
 
-## 浏览器门禁与公开清单
+## Browser gates and publication inventory
 
-每次推送必须执行`node tools/prepush.mjs`，检查公开结构、核心/类型/边界、headless行为与知识库结构；它不启动浏览器。渲染变更按影响另执行`node tools/verify-canvas.mjs --playwright <installed-playwright-module> --channel msedge --output <private-output-directory>`与独立`node tools/verify-webgpu.mjs --playwright <installed-playwright-module> --channel msedge --output <private-output-directory>`。使用已接受的固定依赖，浏览器默认启动无附加flags；源码身份比对相同的既有构建结果可明确注明后保留。
+`node tools/prepush.mjs` remains mandatory before every push and checks publication structure, core/type/boundaries, headless behavior and KB structure. It does not launch a browser. Rendering changes additionally use `node tools/verify-canvas.mjs --playwright <installed-playwright-module> --channel msedge --output <private-output-directory>` and the separate `node tools/verify-webgpu.mjs --playwright <installed-playwright-module> --channel msedge --output <private-output-directory>` as affected. Use the accepted pinned dependencies; preserve default browser launch with no extra flags. Recorded unchanged-build evidence may be retained with explicit identity comparison.
 
-发现与登记路径均按Windows大小写不敏感方式排除私有执行、依赖及生成目录；清单不能覆盖排除规则。普通公开AGENTS文档仍有效；仅保留两个精确路径/hash的Three r186历史研究构建例外。结构检查不能产生翻译含义或公开审阅批准。
+Discovery and registered inventory paths exclude private execution/dependency/generated trees case-insensitively on Windows. Listings cannot override exclusions. Public AGENTS documents remain valid. Only the exact two sealed Three r186 research build paths/hashes remain exceptions. Structural checks do not create translation meaning or public review approval.
 
-受影响的 B1 场景渲染变更还应执行 `node tools/verify-webgpu-b1.mjs --playwright "<absolute-installed-playwright-package-directory>" --channel msedge --output "<absolute-new-output-directory-outside-repository>"`，使用自己的安装包路径和仓库外全新输出路径。见[有限 B1 浏览器验证器](knowledge-base/docs/b1-browser-verifier.zh-CN.md)。默认 prepush 不启动浏览器；推送前必须另行通过新完整检查。
+For affected B1 scene-rendering changes, also run `node tools/verify-webgpu-b1.mjs --playwright "<absolute-installed-playwright-package-directory>" --channel msedge --output "<absolute-new-output-directory-outside-repository>"` with your own installed-package and fresh repository-external output paths. See the [bounded B1 browser verifier](knowledge-base/en/docs/b1-browser-verifier.md). Keep the default prepush browser-free; a fresh complete prepush must separately pass before pushing.
+
+## International community documentation
+
+Public introductions are English first, followed by Chinese. Keep complete knowledge-base reading editions under `knowledge-base/en/` and `knowledge-base/Cns/`, with English filenames in the English tree. Shared experiment code, raw evidence, historical source identities and upstream legal originals keep their provenance. Record design choices with questions, options, sources, counterexamples and conclusions; use professional, respectful public wording. Review source attribution, publishable content and both language editions, complete critical English code comments, and run the full prepush before every GitHub push. See the [layout policy](knowledge-base/en/docs/documentation-layout.md).
+
+## Public collaboration rules across the repository
+
+These rules also govern shared knowledge-base experiments, tools and evidence.
+
+- Explain changes through Egret's target scenarios, independent design, explicit interfaces, and reproducible results.
+- Retain references and acknowledgements. Distinguish mechanism research, experimental dependencies, product dependencies, and development tools; actual third-party capabilities retain their original attribution.
+- Use professional, objective, and friendly language. Tie technical comparisons to material versions and test conditions; record performance goals and measured conclusions separately.
+- Build reviewable design records from questions, options, evidence, counterexamples, and conclusions. State the scope of AI-assisted contributions and review sources, behavior, and verification.
+- Protect private information, business information, unauthorized original projects, credentials, and private configuration in public materials. Workbench scheduling and unedited chats are excluded from release content.
+- When editing evidence, organize only its presentation and publishable scope. Preserve data, results, source identity, failures, and revision records; identify projection relationships in public copies.
+- Retain Egret domain naming. Module boundaries, APIs, and code style follow existing candidate policies; actual acceptance status is governed by registries and verification records.
+- This file applies to code, documentation, comments, Issues, and PRs. It grants no account permissions and expands no authorization for external publication, message sending, or asset use.

@@ -1,0 +1,67 @@
+# Second Round Validation Record
+
+English | [简体中文](../../Cns/docs/第二轮验证记录.md)
+
+Version: 0.2 research record · Executed: October 8, 2026 · Knowledge base 0.3.0. This round adds contracts and actual mixed-graphics experiments expressly excluded from round one. Four current CPU programs pass 64 main checks; the browser program passes seven. The 71 include counterexamples and boundary characterization; passing does not mean every characterized risk is resolved.
+
+[Technical white paper](technical-white-paper.md) · [Product requirements](product-requirements.md) · [Engineering plan](engineering-plan.md) · [Second-round audit](round-2-audit.md) · [Original plan](round-2-validation-plan.md) · [First-round historical record](technical-validation-record.md)
+
+## Actual results and boundaries
+
+| Evidence | Main result | Actual execution | Still unproven |
+| --- | --- | --- | --- |
+| S018 must-deliver events | 13 passes/0 failures | Single-instance in-memory outbox, watermarks, retransmission/deduplication, gaps/backpressure separated from graphics rebuilding; actual effects array as side effects | Real IPC, durable transactions, no repeats after process crashes, one-time external-service effects |
+| S019 asynchronous resources | 25 passes/0 failures | Independent leases per acquire, shared tasks, separate CPU decode/GPU upload, cancellation/late failure, explicit device generations/completion fences | Actual drivers, upload queues, cross-thread synchronization, real resource peaks/unload costs |
+| S020 nested UI | 18 passes/0 failures | Dynamic dependencies, reparenting/insert/delete/hide, clipping/hits; independent full reference, 100 seeded edit steps, 1,200 additional hit comparisons | Production layout, font shaping, CJK/emoji/IME, real large-scale UI performance |
+| S021 batch shared state | 8 passes/0 failures | Consumer actually uses batch-header texture/clip/pipeline; independent per-pixel per-command reference, 100 seeded scenes of 24 commands | Arbitrary masks, complete materials/filters, real-engine batching/performance advantage |
+| S022 local mixed graphics | 7 passes/0 failures | Actual WebGL2 geometry batching, perspective mesh/UI, rigid joints, atlas frames, actual contextlost/restored/resource rebuilding | Complete 3D character/2D skeleton import, text quality, WebGPU scenes, phones/hosts, energy, package size, migration |
+
+Each entry provides reproduction, current code, results, and history: [events](../experiments/reliable-event-probe/README.md), [resources](../experiments/async-resource-probe/README.md), [UI](../experiments/nested-ui-probe/README.md), [batches](../experiments/batch-state-probe/README.md), [mixed graphics](../experiments/mixed-scene-probe/README.md). Raw current results: [events JSON](../../evidence/reliable-event-probe-results.json), [resources JSON](../../evidence/async-resource-probe-results.json), [UI JSON](../../evidence/nested-ui-probe-results.json), [batches JSON](../../evidence/batch-state-probe-results.json), [graphics JSON](../../evidence/mixed-scene-probe-results.json), [screenshot](../../evidence/mixed-scene-probe.png).
+
+## Constraints from events and resources
+
+Must-deliver event producerSession, streamId, and consumerSession are separate from graphics epoch. Event IDs combine producer session, stream, and sequence. At capacity three, a full outbox rejects new events without consuming sequence numbers. Consumers reject gaps and synchronously commit only the next effect and watermark. Duplicate sequence numbers do not repeat effects but can be acknowledged. ACK checks identity, sent sequences, and continuous consumption watermark. Graphics recovery retains event records. This is a local consistency contract, not security authentication of forged same-identity messages. Bounded outbox entries do not bound effects history or total memory.
+
+Case 13 creates a second in-memory instance within the same Node process, observing the same effect twice after state reset; no operating-system restart or crash is executed. Passing means this boundary was correctly recognized, not eliminated. Actual cross-boundary use needs explicit retry semantics, idempotency keys, and atomic durable storage of effects/consumption records; crash-safe exactly-once cannot be promised.
+
+Resources separately record resourceGeneration, per-acquisition leaseId, decode/upload taskId, and deviceEpoch. One owner can retain multiple independent leases. Cancelling one lease does not terminate a shared task still needed by others; final release invalidates old tasks. Device loss invalidates old upload/GPU use while allowing device-independent CPU decoded data to remain. Recovery reuploads and does not report residency before completion.
+
+Audit additionally found that defaulting completion fences to the current device generation let old callbacks without generations incorrectly clean new-device resources. Callbacks now capture generation at registration and must pass it explicitly; missing generation is rejected without state changes. The model assumes old-device use becomes invalid after loss. Actual backends must validate this release rule. Callbacks are manually scheduled, not real GPU synchronization.
+
+## Effective UI and batching validation
+
+The UI model supports a bounded vertical tree with fixed/content/explicit size references and external glyphWidths. Candidate edits clone the source tree and commit only after acyclic-dependency validation. Incremental dimension calculation is compared with an independent full topological reference, including world coordinates, clips, and hits. Sparse change in an eight-node fixture uses six dimension calculations versus 16 full calculations. Source cloning/validation and world-coordinate traversal still visit the entire tree; stationary snapshots also clone it. These are operation counts, not timing or speedups.
+
+A counterexample rejects arbitrary subtree isolation: correct root height 85, b.y=49, tail.y=76; incorrect cutoff produces 75,39,66. Sparse glyph arrays previously bypassed validation and produced NaN; sums of very large finite dimensions produced Infinity. Corrections use dense own-index checks and explicit research budgets: at most 128 nodes, scalar values 1e6, reference multiplier 8, and glyph-list length 4096. Arbitrary finite inputs are unsupported; these budgets are not future product limits.
+
+Batching preserves input order and merges only adjacent compatible texture/clip/pipeline items, splitting at geometry capacity. An independent CPU consumer executes shared state; the reference composites original commands per pixel without sharing its composition function. Equal textures with different clips/blends still require boundaries. Sparse color arrays need per-index validation. Rectangles, single texels, and straight/additive alpha define this experiment's scope.
+
+## Actual mixed graphics
+
+A fresh temporary headless Edge 154.0.4258.62 uses a 256×192 target and WebGL2 through ANGLE/D3D11. The renderer string contains NVIDIA RTX5090 Laptop, without independent authentication of hardware acceleration. The local-only server closes after testing. A cube with 12 triangles is actually drawn using handwritten perspective/rotation; UI composites in the same default framebuffer. Skeletons are two CPU-rigid-transformed rectangles; the atlas is a 3×1 color fixture; text is a Canvas-generated English texture.
+
+The first case combines six commands into three actual draws with 36 vertices. Its 49,152 pixels/196,608 channels are compared with an independent per-command CPU reference: maximum channel error 1, within predefined ±3 tolerance. Incorrect clipping yields transparent pixels instead of red; incorrect blending yields [64,127,0,191] instead of [127,127,0,191]. Two skeletal frames change 561 pixels; red/green atlas frames are read back separately. Perspective mesh/UI center composition supports only this fixed scene, not arbitrary cameras, depth configuration, or a complete 3D pipeline.
+
+The context is actually lost, restoration requested after the loss event returns, and resources recreated. The same fixed frame then differs in zero of 196,608 channels. Nonempty output is required before recovery comparison can pass. This establishes resource rebuilding for this scene, not combined recovery of game clocks, animation events, or asynchronous resource contracts. Text appears in the recovered image without independent quality assessment.
+
+WebGL state/context references: [Khronos version page](https://registry.khronos.org/webgl/specs/2.0.0/) and [latest editor's draft](https://registry.khronos.org/webgl/specs/latest/2.0/). The first is dated 2017-04-11, the latest 2026-06-30; both status sections say editor's draft/work in progress, not a finally approved standard verified this round. [MDN blending reference](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/blendFuncSeparate) assists API checks. GPUWeb specification anchors/OpenGL reference pages returned tool errors; this does not establish missing APIs/platform capability. See [reference verification JSON](../../evidence/phase2-reference-check-2026-10-08.json).
+
+## Failure chains and audit corrections
+
+| Chain | Actual failures and corrections |
+| --- | --- |
+| Events | Initial 11-case set: 1 pass/10 failures, then 12-case set: 1 pass/11 failures. Eleven failures turned green; old-snapshot missed-event negative control passed throughout. Case 13 separately characterizes reset by a new instance in the same process. Author also ran nine validations; independent reviewer reproduced the red chain. |
+| Resources | Seven advance counterexamples against an adaptation of the first-round ResourceModel: 0 passes/7 failures, without running historical Egret source. New model initially 24 passes; fence counterexample 24 passes/1 failure; final 25 passes. |
+| UI | Stub 16 cases: 1 pass/15 failures; first implementation 16 passes; sparse-array/overflow counterexamples 16 passes/2 failures; final 18 passes. Incorrect isolation currently 16 passes/2 failures, retained as an expected-to-fail control. |
+| Batches | Texture-only initial version 5 passes/3 failures; corrected 8 passes; sparse-color audit counterexample 7 passes/1 failure; final 8 passes. |
+| GPU | Empty renderer 1 pass/6 failures exposed weak recovery judgment; nonempty guard 0 passes/7 failures. First actual renderer 7 passes but reference shared builder; independent reference corrected and actually rerun 7 passes. |
+
+Initial, failing, intermediate green, and current results/SHA256 remain. Reports embed source or use explicit historical-file mappings. First-round 26+7 remains historical; integration additionally reran the first contract read-only with 26 passes without overwriting its original report. Second-round 71 is not a same-scope performance score. See [second-round audit](round-2-audit.md).
+
+## Document and evidence self-check
+
+Local-position metadata in public candidate reports became relative positions. Thirty-seven fields involved historical source paths, executable positions, or error stacks. Complete originals were first retained internally. Observations, test states, inputs, embedded source bytes, and source SHA256 remain unchanged. The current event program also outputs relative source names and generic node names, and reran 13 cases; previous source/reports remain. See [normalization record](../../evidence/phase2-path-metadata-normalization.json).
+
+The knowledge-base checker misidentified JSON-escaped newlines/backslashes as UNC paths. It now parses JSON before checking individual strings, excluding neither source nor reports. A synthetic escaped fixture changed from failure to pass while real-local-path fixtures still fail correctly. The tool checks only structure, references, states, and defined sensitive markers, not page availability, licensing, all disclosure risks, or engine functionality.
+
+D001–D012 remain proposed and H001–H007 untested. V001 continues accumulating research; V002–V006 product implementation has not started. V008 is the 0.2 candidate document package. Next address real assets/fonts, complete animation semantics, and integrated lifecycle, then measure frame time, loading, memory, input, energy, and temperature after confirming target hosts/devices and equal-quality content. R008 complete migration, continued editing, and publishing remain formal delivery requirements.
