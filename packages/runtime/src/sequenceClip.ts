@@ -1,4 +1,14 @@
-/** Internal immutable sequence timing metadata; not a texture or player. */
+export interface SequenceFrameInput {
+  readonly x: number; readonly y: number; readonly width: number; readonly height: number;
+  readonly durationSeconds: number;
+}
+export interface SequenceClipInput {
+  readonly atlasWidth: number; readonly atlasHeight: number;
+  readonly frames: readonly SequenceFrameInput[];
+}
+export type SequencePlaybackMode = 'once' | 'loop';
+
+/** Public immutable sequence metadata; authentic values come from createSequenceClip. */
 export interface SequenceClip {
   readonly atlasWidth: number;
   readonly atlasHeight: number;

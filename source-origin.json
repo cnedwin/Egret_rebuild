@@ -288,16 +288,16 @@
     {
       "path": "AGENTS.md",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "sha256": "b8d347350a7b64bb02e01b4fe37e2900d1fd41b44052e360a7a313fcf315e74f",
-      "bytes": 11271,
+      "sha256": "a1108c2895e879722b575442473ec16ef77c5537ba63020a93d127779520ebdd",
+      "bytes": 6758,
       "previousRevisionSha256": "7c2716d3a678406ce905b8cd7fd9ef3552bca4e37b8e9456b63b871e4170e0c1",
       "previousLayoutPath": "AGENTS.en.md",
       "previousLayoutSha256": "7e4ccd840b8b23896f9d9e92fe8173693ef37e415d3cebbebb3bfafded8158c5"
     },
     {
       "path": "AGENTS.zh-CN.md",
-      "sha256": "c060d137ceadf8c11603bec56fc9b2012842c52cbeadf85e8586ec406315e0d1",
-      "bytes": 9090,
+      "sha256": "cdfa3bb19f75778f81a949d27699684ab7118ae7d2bb32e3e3f09d390a7e7bb8",
+      "bytes": 5632,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousPublicSha256": "d133cdcd7d1f41fe0ce26bee63568cd0c4f23c6e6e7f9828d0768e95f53a05b4",
       "previousRevisionSha256": "f3551dd36ebc3023f8c846f0cdd876b7204c214c7c041e6496271d20c091046c",
@@ -307,16 +307,16 @@
     {
       "path": "CONTRIBUTING.md",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "sha256": "8d56f6363a1e6fd47ade7d3e628a212287f4ec0cfce0b06ce6e6e556240478f8",
-      "bytes": 9311,
+      "sha256": "845f7f116bd769179f6d558e1dd9820434eed10ca02ac05d245c699f6d2a81b9",
+      "bytes": 6900,
       "previousRevisionSha256": "cfd1f60cfae8c262a8897e78b542e7f3036c3d492b5bbab79bdd80be80677e4d",
       "previousLayoutPath": "CONTRIBUTING.en.md",
       "previousLayoutSha256": "ea91269863610b03cc682a3656d77b55325631c6b897efb0c6bcb534d5ac5fee"
     },
     {
       "path": "CONTRIBUTING.zh-CN.md",
-      "sha256": "b7c56feb3741833cfbf2475c2ceace9bf4bcf73ccbdc88f24e048c84c864e83c",
-      "bytes": 7520,
+      "sha256": "479d4543923b1955e74fa015e6efa007e566c197c43dd869fea5e7a130cd6f46",
+      "bytes": 5451,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousPublicSha256": "da6292f0408cc88f776b7d113924b364dd045b94d3a7541e85d71e1964ed4dae",
       "previousRevisionSha256": "373de5c518c0208d972ceef4c331d8ae81853102ca6aee8dbd1f90064c57bec8",
@@ -348,16 +348,10 @@
       "sha256": "796bfdb903e83a7fb71e165a6bd69025407448a237b324dfa2a8d4d355ca78fb"
     },
     {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/documentation-layout.json",
-      "bytes": 88342,
-      "sha256": "07e1f0c2407cde3f50b3150a090365ad153e7ff0906f66c631a67bed62b467e9"
-    },
-    {
       "path": "DOCUMENTATION.md",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "sha256": "5b56cd8a30b8cd504471543ab8a7d4359e9dd45f6dc7832acca017c7c15f29a5",
-      "bytes": 26553,
+      "sha256": "3e73932c80f14a49edc8dccd1b2f7a6e5be7231bc372f0fff140d8fb1ba47043",
+      "bytes": 5829,
       "previousRevisionSha256": "ef35dafcd765aeacdce5c0d14362dc5f30319b84dd3d1693d9d6a769f7162f99",
       "previousLayoutPath": "DOCUMENTATION.en.md",
       "previousLayoutSha256": "4921b952a38aa70c692db7b37cda758e6e58942ea097761ee72d36f42a6ae31b"
@@ -365,8 +359,8 @@
     {
       "path": "DOCUMENTATION.zh-CN.md",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "sha256": "54ed0b6c5ddfafc6a9ca01f29b33315e56804140ad40caee19233ac332eaa179",
-      "bytes": 25054,
+      "sha256": "258ebbe83b30b418a21309a8981531bc6105a08f62a55d36b4455359760dd0a7",
+      "bytes": 5528,
       "previousRevisionSha256": "22f3073e3a0096efc4c92fce0aed95a81bdbaa6b1e50ed6432a1ed597c86a8d4",
       "previousLayoutPath": "DOCUMENTATION.md",
       "previousLayoutSha256": "421ba91329f03b9ace090842a7eeaabce268c8cce6ec89d7ccd05b6b15e44bfd"
@@ -486,33 +480,39 @@
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/当前版本.json",
-      "bytes": 19379,
-      "sha256": "4b36eb59dd7ea19ef864ec4a5be14a3952f09e688737fc1386dbe7dd029018dd"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/ACKNOWLEDGEMENTS.md",
-      "bytes": 15301,
-      "sha256": "7f229c046972156a6a3f99ad0535bca6df7510f9ca544cd799543f0a9e010ad0"
+      "bytes": 15308,
+      "sha256": "903dfab1d8534312c45a8c91f639e3f52bf077ae1f9fefbce676b3330fc6203e"
     },
     {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/AGENTS.md",
-      "bytes": 5535,
-      "sha256": "326d5d081ad40b929084c7e77df722d0e20ee13ec69e666be923c9e5915ccce3"
+      "path": "knowledge-base/Cns/archive/第一轮研究.md",
+      "bytes": 26540,
+      "sha256": "acb8d98a91ad732b31125f2fdec8adb8e81b79180464ce63ad4fbb9fdd48e75d",
+      "originRole": "Consolidated first-party historical research reading record; original evidence and source identities retained in documentation cleanup ancestry."
+    },
+    {
+      "path": "knowledge-base/Cns/archive/第三轮研究.md",
+      "bytes": 19944,
+      "sha256": "e9a440a5116e0e7b52c5a1d661fd9fc572bb4a2737f229b4d9fb22f7956722ab",
+      "originRole": "Consolidated first-party historical research reading record; original evidence and source identities retained in documentation cleanup ancestry."
+    },
+    {
+      "path": "knowledge-base/Cns/archive/第二轮研究.md",
+      "bytes": 19019,
+      "sha256": "70081fdb978a41ed27e941ebb618dbf1d85bd61b6176e939bee35ce8942d2c3a",
+      "originRole": "Consolidated first-party historical research reading record; original evidence and source identities retained in documentation cleanup ancestry."
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/CHANGELOG.md",
-      "bytes": 18961,
-      "sha256": "9fc343afa971ef93ae4872ccd27057a1a01b5573e2d25ce057a8ff7280d55a73"
+      "bytes": 19092,
+      "sha256": "cf98f383f084c7e1020a1184c3b7e22c0db0fa388b5514c57b4180aae80b3601"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/CONTRIBUTING.md",
-      "bytes": 9539,
-      "sha256": "7695cd5895676c0ad1e49d1ee76df593574ec9148fbf305bb96cc95543166401"
+      "bytes": 7510,
+      "sha256": "2871da3c6741b3f98d4d8832630e5b3b04be9633631bc7e72d8aaffd0ff06170"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -546,270 +546,6 @@
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/产品需求说明书.md",
-      "bytes": 19400,
-      "sha256": "f7b0ff97842b1a5eead6c6de07c04d224324e67570acca6ddbab5df99d542388"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/产品组成.md",
-      "bytes": 3484,
-      "sha256": "d4340567d44fb78c90232e2594247c5e85325585d3fedecb251e5d81ca679e2a"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/代码规范与质量门禁.md",
-      "bytes": 17154,
-      "sha256": "b4ed2c2b36b81e13b2d5da8c4c8fc75c6a1af9b572f2d48293c6037990bb4c23"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/第二轮审计.md",
-      "bytes": 4926,
-      "sha256": "f8cad4caaca281a7a10104903b003fe267bbd1e611c7e3de098f15cffd3cbf1f"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/第二轮验证计划.md",
-      "bytes": 3118,
-      "sha256": "e404372b311f83fec12492bd53017c47910fd6999fac6f13028ee169629745c3"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/第二轮验证记录.md",
-      "bytes": 10464,
-      "sha256": "5bb3b8d0c0b525442c5b56014fdd0c95af5323e8145e002df1e98cba048fc791"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/第三轮集成计划.md",
-      "bytes": 3526,
-      "sha256": "67abbc41cbcb10b16dce60259fdbe59f9c415d4c34ae480c9f9f6be8bb680987"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/第三轮集成记录.md",
-      "bytes": 9204,
-      "sha256": "2d7a086888f383ce42c7e50da1d6e11150deb5c5e5bfe932fb788967703e845c"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/第三轮审计.md",
-      "bytes": 6753,
-      "sha256": "98e789caf60a99ead7dd51807390874d9aac550de23c0d267ad8bbd1e12c5a96"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/第一轮审计.md",
-      "bytes": 4992,
-      "sha256": "257439822059e2e3b627a9085eae21335eaa19a77e91551b500d13392f725c54"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/第一轮研究核查.md",
-      "bytes": 13576,
-      "sha256": "525dec4370cff89bad30b55a158ee281c6125b9ae4088077cdd01f392e8f9802"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/独立实现与第三方依赖规范.md",
-      "bytes": 7815,
-      "sha256": "cfbe0e6df4e4e50f2ee79cab508b1654a2ffe97615d1359e031529b53c0b0c23"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/工程规划.md",
-      "bytes": 25291,
-      "sha256": "97a9d24b257a8bf43c1ecf71ebf5155e6dae6fd87e90d4f0ca9cca3470fe38dd"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/工程技术架构与项目结构.md",
-      "bytes": 22244,
-      "sha256": "6e58b596e6ca90c42b424146ebf520ccfb42368c40210bd78b9621bec17388cd"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/工程事务核心合同.md",
-      "bytes": 23944,
-      "sha256": "49f39a0a5b2356dbb7e4187206bafc1143a3edf898cea3f98137eedebd39cc28"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/工程事务核心实现证据.md",
-      "bytes": 6794,
-      "sha256": "e0d3ecd946865de06bd948084d521aa7651e9f099849299060c83796e6a9ce2b"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/公共API设计与命名规范.md",
-      "bytes": 19293,
-      "sha256": "d3a6b0d8b8adbdef74f14166ba4a395e74d5fde0ef470e1130e913a60e5a3666"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/核心框架实现记录.md",
-      "bytes": 6849,
-      "sha256": "b42b6b568b62f85f03c35a9b8f69164f0c367519dcf7da5de0c8b771a2d5d0ac"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/核心框架首段实现计划.md",
-      "bytes": 8599,
-      "sha256": "0e14c948bd6e7170e08684aa47064712f0c47ba6ae9daea407e269b7771313f3"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/核心框架证据缺口与研究清单.md",
-      "bytes": 28141,
-      "sha256": "b510db099488f9351628c66b5e0aedce0881e8c99f97b641f22bd96abd4fe933"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/核心优势与验证.md",
-      "bytes": 7294,
-      "sha256": "8f95d3b60b9a594e69540478634bc21bcfcf381c469a5b64d95667f852221bef"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/技术白皮书.md",
-      "bytes": 22351,
-      "sha256": "bd0f47b139287ca8a0a2bdb84a91c7fa81eecf67e1b44b8add14321912c93474"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/技术架构.md",
-      "bytes": 9180,
-      "sha256": "76ed9d743a95be28272af340ec6be0e44017f8b69936554258cd8ad9e26a2412"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/技术验证记录.md",
-      "bytes": 7451,
-      "sha256": "59b61fb41c9196822db184b72ea8a9308f645414ff0a9a1cfd1c7dea6df47650"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/交付计划.md",
-      "bytes": 9069,
-      "sha256": "0ce3d4d3d351afe7beda0b9db20348318bf7c460a634c18498d7b5853ab20282"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/竞品演进与生态.md",
-      "bytes": 10298,
-      "sha256": "cf69a19367e27763b500b7c73457f8fc842dc46ce62a2db935da12760b3696d6"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/旧工程迁移.md",
-      "bytes": 6211,
-      "sha256": "1ae544b31809cc6f5c470c825c9fbbd637f18dfd0ec9a01a50974f0b9d359514"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/决策与开放问题.md",
-      "bytes": 3166,
-      "sha256": "d036663f357ed616a961a94fc60572dda935f5c197c45d6910b0fc656808138c"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/开源参考实现与采用方案.md",
-      "bytes": 15043,
-      "sha256": "707cb809fdb033aa8f62691b56da79b65bddb73aab0be049add3475eff8fd953"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/开源实现优先与验证分工.md",
-      "bytes": 4916,
-      "sha256": "75029af917aed03a27569ebd83f427eb0080525c58e09f197b2188170d6acd5b"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/开源协作与公开表达规范.md",
-      "bytes": 4044,
-      "sha256": "d40b31f39b08cb7af6bf4a422e9c760019e4a3735007e0474803a1ebb237d656"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/历史资产与研究边界.md",
-      "bytes": 3225,
-      "sha256": "c286a7e254804b7c9772485b8c7ec2aec96a89f643c8dd1beaeef7818194d154"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/设计理念与定位.md",
-      "bytes": 3272,
-      "sha256": "6b7c8c264f246763c6616630910ce4549bba13ca2e1bfe6cb9670f7383c41021"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/社区参与.md",
-      "bytes": 1947,
-      "sha256": "ac9dc1a71b01df744acc36bf4a0d1a661f38b94f33209fe27a3d8eeb565c43d5"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/术语表.md",
-      "bytes": 1806,
-      "sha256": "87990e3b64cb9d887b68751876d9b8cfe4045d8c9aa04caef964498656da9cd3"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/双语文档与推送前检查.md",
-      "bytes": 9191,
-      "sha256": "edd843ae238b1a1e88a30a2985882f925db05bb87d97dbdbba06a26d2dec5011"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/图形后端编译与原生Runtime选型.md",
-      "bytes": 19372,
-      "sha256": "02f9c9e2990634cdd14f466b9e8486fdd9dcc271f4590ce8342d7e7535f6e9c1"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/显示与帧执行合同.md",
-      "bytes": 10517,
-      "sha256": "ba5009d0d9767d309f6ae3047e53ef17cda48c0ecebaa7f03708551db9c69f0a"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/显示与帧执行实现计划.md",
-      "bytes": 7426,
-      "sha256": "635325aaa2a7c1d7d3dbbc34b2acf75203a7b02d8e4b1b1072249bd90faf38c8"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/显示与帧执行实现记录.md",
-      "bytes": 3205,
-      "sha256": "012021e46b132244aa4b1f7cd4305cf8bd081fa6c0e3c906f8767f2e4109c78e"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/渲染引擎与运行时.md",
-      "bytes": 15296,
-      "sha256": "76ae3cd692056beedd026bad402fb4bb77cf4cf292de28145f587c5039d03a67"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/知识库维护.md",
-      "bytes": 3530,
-      "sha256": "e996a5f9524b5e1393c2ece0c1adab77ba827b10b1a72847e12ec6928b2b5c44"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/资源核心合同.md",
-      "bytes": 5688,
-      "sha256": "2e7a111ba400e8135e0d16fb9c0fa291188238dc079da4f7fd3d903db50f5797"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/docs/资源核心实现记录.md",
-      "bytes": 12992,
-      "sha256": "30823285766bb8afce7643e523511411f8865b0c4202af7d21bcf0a29270cfd6"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/AI创作与工程接口.md",
       "bytes": 3272,
       "sha256": "7ac30df8ed0f0f10efe70c6faf1295df6ffa1d98d46230c812fe27abfa91fc19"
@@ -835,26 +571,26 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/bitmap-region-contract.md",
-      "bytes": 7054,
-      "sha256": "58a81daf191d2196ec517bc2793a8aa01a06735cc68d7021f2e1fa3fdeb1402b"
+      "bytes": 7320,
+      "sha256": "741a5f71d2e27709d94e690e62f2cbb17fa84f143d3eb4df640f929d3c1f9163"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/bitmap-region-evidence.md",
-      "bytes": 3082,
-      "sha256": "d0452c116458fcd7991ca2c6e1813c6eb46ced351a65f5b226ddf0c3468f3b06"
+      "bytes": 4153,
+      "sha256": "d53fedf8fd1b853e344921e262865627afc922f27f804898667d98f90d99466a"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 6961,
-      "sha256": "f9458bc6a57541f7215011adc7d96a1203299fb1014ec08aee9019c2500d88e1"
+      "bytes": 8290,
+      "sha256": "26ac1fa6c788d9599392722b5191fd65c1fe342325b78dc96abe840927d99adc"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/documentation-layout.md",
-      "bytes": 1426,
-      "sha256": "2f2c5f5e3759218149a7e35dab8d2a84aac953579da18f9a8d4d072d6c5e3dc5"
+      "bytes": 1730,
+      "sha256": "0535259dac461c27c4cd05d7fc412dadcb8d935dbf23f0e4e9b96d33a0da4ad3"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -889,20 +625,26 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/sequence-clip-contract.md",
-      "bytes": 3453,
-      "sha256": "19c483ea63ba71eeaac17449f4db66884c128350959fb51a0d7b7557c902b7a5"
+      "bytes": 3619,
+      "sha256": "a262155bb89d583a5c3ea7d408e3dc1fb5db65b9a0546b811092b1c5cc9f91b5"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/sequence-clip-evidence.md",
-      "bytes": 2925,
-      "sha256": "8aff8f6c5b0b79918e089dbdd70e259267bd8468701d348725259074da9eab5f"
+      "bytes": 3370,
+      "sha256": "a311a313303b680b2965aa427b02445ebaea823c7e24c5d714ea7d1b8fbf59bb"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/Shaders与Playground产品技术启发.md",
       "bytes": 7760,
       "sha256": "153bb0d8f96d86a1d7c44aef25a6cabeaa882a884fc16b5507fdbd7f5dcccb1a"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/Spine动画支持需求与验收.md",
+      "bytes": 11531,
+      "sha256": "5ef212050b1d4c3fbea260c413502b1bf84a12836b31184ee79ae4dbf92354ff",
+      "originRole": "Independent first-party Spine requirement and acceptance documentation; no runtime source or assets incorporated."
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -927,6 +669,216 @@
       "path": "knowledge-base/Cns/docs/WebGPU矩形执行合同.md",
       "bytes": 37112,
       "sha256": "bd7eb60777e919ad47d4e54c7ef0c6f888e300d6d992e3d4c07c4eb523bd880f"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/docs/交付计划.md",
+      "bytes": 7659,
+      "sha256": "3bb5ad2395e353c5251164b0e9f57ae6f87289c871284e446564e3290030d06b"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/docs/产品组成.md",
+      "bytes": 3484,
+      "sha256": "d4340567d44fb78c90232e2594247c5e85325585d3fedecb251e5d81ca679e2a"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/docs/产品需求说明书.md",
+      "bytes": 20026,
+      "sha256": "f34fac1de90cad1b367f621adcb98991e554fd15ff3b95dcc8ccbe5eb24c2417"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/docs/代码规范与质量门禁.md",
+      "bytes": 15129,
+      "sha256": "9aa4bc62bb42bc7b2dec01dbf4ed4f24d3898acc2cd5b754d6e6b5b7dafacdab"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/docs/公共API设计与命名规范.md",
+      "bytes": 17268,
+      "sha256": "fe91d97934c25cdeaf958350be5f8bc6393eefd729508a831ced1e2fdafaf8cb"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/docs/决策与开放问题.md",
+      "bytes": 3166,
+      "sha256": "d036663f357ed616a961a94fc60572dda935f5c197c45d6910b0fc656808138c"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/docs/历史资产与研究边界.md",
+      "bytes": 3225,
+      "sha256": "c286a7e254804b7c9772485b8c7ec2aec96a89f643c8dd1beaeef7818194d154"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/docs/双语文档与推送前检查.md",
+      "bytes": 7166,
+      "sha256": "cabdf49de67a9af98d305554048799a9e436d0f1f6f829963552ccadc6055209"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/docs/图形后端编译与原生Runtime选型.md",
+      "bytes": 19372,
+      "sha256": "02f9c9e2990634cdd14f466b9e8486fdd9dcc271f4590ce8342d7e7535f6e9c1"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/docs/工程事务核心合同.md",
+      "bytes": 23944,
+      "sha256": "49f39a0a5b2356dbb7e4187206bafc1143a3edf898cea3f98137eedebd39cc28"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/docs/工程事务核心实现证据.md",
+      "bytes": 6794,
+      "sha256": "e0d3ecd946865de06bd948084d521aa7651e9f099849299060c83796e6a9ce2b"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/docs/工程技术架构与项目结构.md",
+      "bytes": 20219,
+      "sha256": "f3046831310e86efb6a912c9322947dddf00d6aec418b33a1535da9644027228"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/docs/工程规划.md",
+      "bytes": 23962,
+      "sha256": "a673477bac3c490f6cdc251b05708036b9c0223ab3046a83fde550c80d2b97e4"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/docs/开源协作与公开表达规范.md",
+      "bytes": 4044,
+      "sha256": "d40b31f39b08cb7af6bf4a422e9c760019e4a3735007e0474803a1ebb237d656"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/docs/开源参考实现与采用方案.md",
+      "bytes": 15058,
+      "sha256": "db414bf3f13cd302b8e19f64228d6514f5979491b727f561de0ecd277e4f6fb9"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/docs/开源实现优先与验证分工.md",
+      "bytes": 4916,
+      "sha256": "75029af917aed03a27569ebd83f427eb0080525c58e09f197b2188170d6acd5b"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/docs/技术架构.md",
+      "bytes": 9320,
+      "sha256": "a0b6ac86e7dae2b728572c6693f262966557362bd8ccf99fd08f23e38f352619"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/docs/技术白皮书.md",
+      "bytes": 23106,
+      "sha256": "527da7081fabdf350785a03ba42c51a615f8b615a26672a87c29b5d4ac6e6374"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/docs/旧工程迁移.md",
+      "bytes": 6211,
+      "sha256": "1ae544b31809cc6f5c470c825c9fbbd637f18dfd0ec9a01a50974f0b9d359514"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/docs/显示与帧执行合同.md",
+      "bytes": 10517,
+      "sha256": "ba5009d0d9767d309f6ae3047e53ef17cda48c0ecebaa7f03708551db9c69f0a"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/docs/显示与帧执行实现计划.md",
+      "bytes": 7426,
+      "sha256": "635325aaa2a7c1d7d3dbbc34b2acf75203a7b02d8e4b1b1072249bd90faf38c8"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/docs/显示与帧执行实现记录.md",
+      "bytes": 3205,
+      "sha256": "012021e46b132244aa4b1f7cd4305cf8bd081fa6c0e3c906f8767f2e4109c78e"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/docs/术语表.md",
+      "bytes": 1806,
+      "sha256": "87990e3b64cb9d887b68751876d9b8cfe4045d8c9aa04caef964498656da9cd3"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/docs/核心优势与验证.md",
+      "bytes": 7294,
+      "sha256": "8f95d3b60b9a594e69540478634bc21bcfcf381c469a5b64d95667f852221bef"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/docs/核心框架实现记录.md",
+      "bytes": 6849,
+      "sha256": "b42b6b568b62f85f03c35a9b8f69164f0c367519dcf7da5de0c8b771a2d5d0ac"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/docs/核心框架证据缺口与研究清单.md",
+      "bytes": 26116,
+      "sha256": "6d164fbd847a50333e63333c606e70373cbf5cc96b1a9b1a38032551e1edd9a5"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/docs/核心框架首段实现计划.md",
+      "bytes": 8599,
+      "sha256": "0e14c948bd6e7170e08684aa47064712f0c47ba6ae9daea407e269b7771313f3"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/docs/渲染引擎与运行时.md",
+      "bytes": 13996,
+      "sha256": "f1f4787639a1589678e8b7b6a82cc10ffec4880191b1f0c2c29d79ca8922e7f6"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/docs/独立实现与第三方依赖规范.md",
+      "bytes": 7830,
+      "sha256": "30fe03921cdadd5852de183e267ad23e50a8c88cfeae19ea90face68a3abee6c"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/docs/知识库维护.md",
+      "bytes": 3530,
+      "sha256": "e996a5f9524b5e1393c2ece0c1adab77ba827b10b1a72847e12ec6928b2b5c44"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/docs/社区参与.md",
+      "bytes": 1947,
+      "sha256": "ac9dc1a71b01df744acc36bf4a0d1a661f38b94f33209fe27a3d8eeb565c43d5"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/docs/竞品演进与生态.md",
+      "bytes": 10379,
+      "sha256": "f5db4d0f6f8ebeb5d91c04229141cc7b88a9c02152569fbac452a1f80c448b09"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/docs/设计理念与定位.md",
+      "bytes": 3272,
+      "sha256": "6b7c8c264f246763c6616630910ce4549bba13ca2e1bfe6cb9670f7383c41021"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/docs/资源核心合同.md",
+      "bytes": 5688,
+      "sha256": "2e7a111ba400e8135e0d16fb9c0fa291188238dc079da4f7fd3d903db50f5797"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/docs/资源核心实现记录.md",
+      "bytes": 12992,
+      "sha256": "30823285766bb8afce7643e523511411f8865b0c4202af7d21bcf0a29270cfd6"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1039,8 +991,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/experiments/batch-state-probe/README.md",
-      "bytes": 1713,
-      "sha256": "a8a2bff71ed302fb64d7d5e8c06c89649da9f0c31bae70893610aecb10997baa"
+      "bytes": 1720,
+      "sha256": "0a05cd4bdb6cdf4568b7ceb3cba6a79fa830d0008ea430896b9ed21753582e3d"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1057,8 +1009,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/experiments/contract-probe/README.md",
-      "bytes": 1943,
-      "sha256": "2d050eb2f689956f399481620eab4b9c026bb5f0507dd80ee1e42d48480e764c"
+      "bytes": 1953,
+      "sha256": "48c4832faa08609f0cd06e99a427df6181d5ace1bcd2e249001b88650b3af9d8"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1075,8 +1027,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/experiments/reliable-event-probe/README.md",
-      "bytes": 5517,
-      "sha256": "7546d23b4df72b07a810da44291dd4e0da9c6b455e6e48117d8b8462f9a65c23"
+      "bytes": 5526,
+      "sha256": "7e7b3bff52fe4f8e0e5d4ed82b04bfa862dc9d57e9e8e4d19feda08a0425c301"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1087,8 +1039,14 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/README.md",
-      "bytes": 17195,
-      "sha256": "fad616b2b2894b97d7328e49a607499c00e1c9657b10f94e2a5dfc224af1143e"
+      "bytes": 4071,
+      "sha256": "232eab71f05d73d74bc6a6ad0e8f06dcd3931b8dc2f60c2a14c4c7febfb90f66"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/registry/交付.json",
+      "bytes": 35444,
+      "sha256": "ab313cc8cdebcead8f8ef4d88f5abf1493fc902cd0f0fb2c7fd7aa934fae0a3d"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1098,39 +1056,21 @@
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/registry/交付.json",
-      "bytes": 31660,
-      "sha256": "cababdd73a56664ee7836a256be5bf49c3578cf54de427b3e864de6186f72b71"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/registry/决策.json",
-      "bytes": 41206,
-      "sha256": "dd3a02b4cc0f37e479cb88caa5f26eaf8358f95164706133f511b973275f15de"
+      "bytes": 41213,
+      "sha256": "e246bfa887d7434d07b28867e7be749b32f9036d745c3363bc7a96268b523663"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/registry/来源.json",
-      "bytes": 63816,
-      "sha256": "f8e9adfdc8fccde1047611be2ba2602c36246843b7757931306140ebbb981488"
+      "bytes": 67701,
+      "sha256": "068cbd28494bd9f75921400bc0b158b6079b8e4fdd0d9af6d360bd8029d8ee21"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/registry/需求.json",
-      "bytes": 12007,
-      "sha256": "90d12d60d79a029383eb14dfeeef8670b2b7675c3a6e641c901889ee197a96d1"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/templates/实现来源记录.md",
-      "bytes": 2652,
-      "sha256": "fda4d329eb55f722b023aee071ebfd615df2a4942168df47407765208e5479f5"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/Cns/templates/实验与验收.md",
-      "bytes": 1065,
-      "sha256": "d310b55dbc74df5e0fe9b808f610a88fc4adaf78ab95415b96629b1e99a12633"
+      "bytes": 12809,
+      "sha256": "90fd86d3b53a13af6bdbf5b7c352ba0c917922d4e67e48fd55b7c9fec9153632"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1146,33 +1086,69 @@
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/en/ACKNOWLEDGEMENTS.md",
-      "bytes": 17762,
-      "sha256": "4f56c5b7e3a900cc26260a1ac803eab21891495f31650a48b4cacf6b5facdc91"
+      "path": "knowledge-base/Cns/templates/实现来源记录.md",
+      "bytes": 2652,
+      "sha256": "fda4d329eb55f722b023aee071ebfd615df2a4942168df47407765208e5479f5"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/en/AGENTS.md",
-      "bytes": 6911,
-      "sha256": "2d7ef83b1d5bd980e49e3c63ef5ccc7d6e1b265655eb19c516f23fe63c6c7d2c"
+      "path": "knowledge-base/Cns/templates/实验与验收.md",
+      "bytes": 1065,
+      "sha256": "d310b55dbc74df5e0fe9b808f610a88fc4adaf78ab95415b96629b1e99a12633"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/Cns/当前版本.json",
+      "bytes": 19379,
+      "sha256": "50f5e71ee8aff7f0483d51671cd2bc2373d4714f7952c66cbe9bc61ea0547de3"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/documentation-layout.json",
+      "bytes": 108163,
+      "sha256": "a7458e88843fd71de61f2facccb53aba585839d8b362d2ad5a117ba69122ef5e"
+    },
+    {
+      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "path": "knowledge-base/en/ACKNOWLEDGEMENTS.md",
+      "bytes": 17765,
+      "sha256": "c9b5990f3bd2c72a8ec22a162d2f1d987977abcc0977adbdc9bc89123bd8f67b"
+    },
+    {
+      "path": "knowledge-base/en/archive/round-1-research.md",
+      "bytes": 30595,
+      "sha256": "9edd6df4bd4f90ddb76843a1e7baa52cc9518a0c4801dc6a8cb719b40ac844d0",
+      "originRole": "Consolidated first-party historical research reading record; original evidence and source identities retained in documentation cleanup ancestry."
+    },
+    {
+      "path": "knowledge-base/en/archive/round-2-research.md",
+      "bytes": 23193,
+      "sha256": "aa6442509ba1e5aec6328a6d25044b8de9bad3257ba72386f82fdaf2a547bab8",
+      "originRole": "Consolidated first-party historical research reading record; original evidence and source identities retained in documentation cleanup ancestry."
+    },
+    {
+      "path": "knowledge-base/en/archive/round-3-research.md",
+      "bytes": 24070,
+      "sha256": "92313ed092b6916f94592525e462b7d4516540ec943f07cd984394a55473c9ac",
+      "originRole": "Consolidated first-party historical research reading record; original evidence and source identities retained in documentation cleanup ancestry."
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/CHANGELOG.md",
-      "bytes": 23780,
-      "sha256": "2aebcf06ceeb7766a65a713213468ea44e401e54731f22316c4f9c709b2fdb87"
+      "bytes": 23884,
+      "sha256": "14d37eb710befbcabd6a78a49f2a361276b81dc601e92616b89c921487f69987"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/CONTRIBUTING.md",
-      "bytes": 12037,
-      "sha256": "b57b525d891abb513d6e9ae2066f9e54e1bd61e6644f047ba194108fbd10ebea"
+      "bytes": 9664,
+      "sha256": "7703c2cd385d8a12e9de9bf521ae717b44240922e5e55e517a2fbe4dad3ad604"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/current-version.json",
-      "bytes": 19853,
-      "sha256": "cad16ff84fa8ee96d9b88ac8fd3840a2a2cdeeb4bd1d3309813a1fbcd9c2a9ea"
+      "bytes": 19837,
+      "sha256": "120cac8c19daeb98c60abd2f331e4b3afad4523c4e28a07b9d3947e99c0003e5"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1231,26 +1207,26 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/bilingual-documentation-and-prepush-checks.md",
-      "bytes": 11576,
-      "sha256": "9b1708a7a090fe1b8012c8118c36ac4808cd4875ef5992774bd8acc6de0586f2"
+      "bytes": 9207,
+      "sha256": "32e21df2d3e183d349e276d26ac73498c481e84522dfff1e11951a0683243878"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/bitmap-region-contract.md",
-      "bytes": 7985,
-      "sha256": "370efeaf0c9856029ee3069a9570a58363e2a7c970c7320e2e678bcfed7346c5"
+      "bytes": 8291,
+      "sha256": "c47f3a78b702c4f805b6d3471f1898b8006aca56813e7025116df89c8ad9edf5"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/bitmap-region-evidence.md",
-      "bytes": 3534,
-      "sha256": "57bcd01408cdeec829c347cafc5f82a2289917ebbc0189bae6e3045f3e5952b9"
+      "bytes": 4752,
+      "sha256": "bcba323905f1633aed5ac8379aa1ac3bfdc9dd45dded6f0b78695fa99ded7a2a"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/code-standards-and-quality-gates.md",
-      "bytes": 21683,
-      "sha256": "64b43051f55a07843da4145b186a61038c580212f6e0bcb9a6630b782c5687b4"
+      "bytes": 19314,
+      "sha256": "d11a99e8937f113ffa2f5361abcd2a30a60afd6ccfccff8ba21a17c104b3b202"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1261,8 +1237,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/competitor-evolution-and-ecosystems.md",
-      "bytes": 11864,
-      "sha256": "acf2a066180de4c6728037a16f04df7d8314bae0f31b3e38125b6ddfb109a0d3"
+      "bytes": 11918,
+      "sha256": "f4a07a89f6f77fbd702fd2b0d52524a35aa7428b5af9ef8698edc4bb65045ffc"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1273,8 +1249,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-framework-evidence-gaps.md",
-      "bytes": 31652,
-      "sha256": "cd4a5004913ebf8345f798712a5c1ff6c8c645838e342b197c76b60d2886b6ff"
+      "bytes": 29283,
+      "sha256": "474ec37c8b372dee47e036ae310b49a3694200f12387ef7f41ba9f9214a70ab6"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1291,8 +1267,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-progress.md",
-      "bytes": 7882,
-      "sha256": "78a784646175be1d726ce82aaa6afd99a801649edf204825aa5a6bd542043e2e"
+      "bytes": 9372,
+      "sha256": "635349baf5ead3053895d211ff03e0b96642343ba2450d89154d78ca785e077d"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1303,8 +1279,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/delivery-plan.md",
-      "bytes": 11771,
-      "sha256": "6167ac6c9b578dd23177a32c8a91d6654fb8ca314e095c0571b8e9fa7dffeda1"
+      "bytes": 10111,
+      "sha256": "15220e85d187c396b6250539bf5e6d7569f7d484e63a58bfb391917b6c19e84c"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1333,20 +1309,20 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/documentation-layout.md",
-      "bytes": 1819,
-      "sha256": "021f806f2123eee8033f6d50a9c21e07cf0b2cc042f9e47b6499879b03a05a08"
+      "bytes": 2212,
+      "sha256": "07c7152baf1d701b9fd44a7d30c02ffb8c9b449c9cd2d72c17dc28dbaec551d9"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/engineering-architecture-and-project-structure.md",
-      "bytes": 27048,
-      "sha256": "ee0acfc895001db51412f0f3158a0e6b09d8ccabe75f43497e9f0a7b9ed565cd"
+      "bytes": 24679,
+      "sha256": "df7919fd3a6094088734fc35845bd6446078c768a03869093bf909f352dcb45e"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/engineering-plan.md",
-      "bytes": 31557,
-      "sha256": "143f1a7e7235a397e56f160230fc74d2c24a035a9b2661e03640b121a2ee6655"
+      "bytes": 29962,
+      "sha256": "c0574b8bac64d81eed9693a818d71a2b0a644236e3a974eb0492a677278ad87d"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1369,8 +1345,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/independent-implementation-and-dependency-policy.md",
-      "bytes": 10345,
-      "sha256": "d7808184d5b38f76fd9f7502a547f539ea65d1007668432043d2cc6f18c1e8dc"
+      "bytes": 10356,
+      "sha256": "408fa6fe8e8503cd00876fa462720784b9fa31a305c796252621c5df297c61d2"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1423,8 +1399,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/open-source-reference-implementations-and-adoption.md",
-      "bytes": 18295,
-      "sha256": "2170557ee55a5dccd1678721c4fe041d4689208f5f9a0a865b84fef43d750f0a"
+      "bytes": 18306,
+      "sha256": "ab35527e7b43eae2149f4d62b08a12797d5e415c9e8dbf3cffb153b10500d0e2"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1441,8 +1417,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/product-requirements.md",
-      "bytes": 24382,
-      "sha256": "d205bdf07061e04038ef3b722415c28f045c6c143b9f882df217e604ec336aab"
+      "bytes": 25078,
+      "sha256": "7e3a40f328c16c1ac0355ab250a9b43529975b63a49f8bb54358f4c4deb227d4"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1459,14 +1435,14 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/public-api-design-and-naming.md",
-      "bytes": 24149,
-      "sha256": "aa5fd404ad3f09e8d46ad995db625b04e2280b653194f9b6742609c7ee17c93f"
+      "bytes": 21780,
+      "sha256": "6d7bdcd3d4b76b40d6ab498b9fbd7511d9786221f27cede40f56b6ca08060fb1"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/rendering-engine-and-runtime.md",
-      "bytes": 19176,
-      "sha256": "21eb13d8c0683f1a0cd1317a515a3a99ab4f0361149adc7c36e94d9b8c28f095"
+      "bytes": 17598,
+      "sha256": "ee4281ae98099f72724e1498b35ef68d89668662b6daef3204239940712b4b84"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1482,63 +1458,15 @@
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/en/docs/round-1-audit.md",
-      "bytes": 6206,
-      "sha256": "753db4d3eef828ed90e431ed6b8fee70d9c3e6b3b130fb8221c5b1542883cc1e"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/en/docs/round-1-research-verification.md",
-      "bytes": 14451,
-      "sha256": "e55ad39fbc5c4ad239c059b88e936cd1dd3b6060f8e7739886c035b36be75f7f"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/en/docs/round-2-audit.md",
-      "bytes": 6143,
-      "sha256": "e5f5c1f3c002fc2b27f17a8475393568b716ca77e9afedaaea6bed251a7a7e63"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/en/docs/round-2-validation-plan.md",
-      "bytes": 4023,
-      "sha256": "f98e21f6fbf05d69b7fa98b6b08d9a321aa7a28fdaed3e1be6d4d61521c91a7a"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/en/docs/round-2-validation-record.md",
-      "bytes": 12440,
-      "sha256": "bf7b2254b11e389ec9d848bd3eb1c7e184caa94a3315060b0ad3f5f3359240d8"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/en/docs/round-3-audit.md",
-      "bytes": 8262,
-      "sha256": "27d82bd9c5fc561affeef710c0a630713ceb7364eccb4faff803a06331f77770"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/en/docs/round-3-integration-plan.md",
-      "bytes": 4471,
-      "sha256": "6c06f7346e91c7d46acf672c2e918eda2627c960f60e5b21a829ae4cc1ae8fa1"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/en/docs/round-3-integration-record.md",
-      "bytes": 10799,
-      "sha256": "7aacdef3cc80f856840990d887f486beef10e88b982a3d452629016a79eda884"
-    },
-    {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/sequence-clip-contract.md",
-      "bytes": 3886,
-      "sha256": "42ee80a99e36808c87f456b35d0ceab7eabcbcb18c681d51644f572dde184ca3"
+      "bytes": 4080,
+      "sha256": "eab09f99c0f680dd1e11fadf25a4287e12dbf836d08151c80815402eb089b7e6"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/sequence-clip-evidence.md",
-      "bytes": 3374,
-      "sha256": "7187d11e4b158d0705bd87b3e3f757b31b98f0972ca15270ccedfc99b4f0efac"
+      "bytes": 3875,
+      "sha256": "5a54a213a55c6ebd2dea86744567e8a02ba6ce69d3ada89594ce114ede7abe19"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1547,22 +1475,22 @@
       "sha256": "85867a1cc475a1f97c28e7d23a59aa58f2d05ebf8570871a2d74bba43ebe7e9b"
     },
     {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/en/docs/technical-architecture.md",
-      "bytes": 11963,
-      "sha256": "5b51748967d7b81f89039e18c7fdc5f3949478c1be4025840b2732d36e2742c1"
+      "path": "knowledge-base/en/docs/spine-animation-support-and-acceptance.md",
+      "bytes": 13671,
+      "sha256": "2adf9c99bae5e95c30e3e72e5945bc49bb1d7090a8db29d6995cd34500cb6053",
+      "originRole": "Independent first-party Spine requirement and acceptance documentation; no runtime source or assets incorporated."
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
-      "path": "knowledge-base/en/docs/technical-validation-record.md",
-      "bytes": 9346,
-      "sha256": "75234c5329896467d1dc026b2f0a9f72c21e1eabbe5288eedcd6197430edaab2"
+      "path": "knowledge-base/en/docs/technical-architecture.md",
+      "bytes": 12074,
+      "sha256": "4f49587b51175f194c28c122866fd2c0f75715d1f6f1556ba168184ec478d2f6"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/technical-white-paper.md",
-      "bytes": 27871,
-      "sha256": "f66f2ae48b496e5cab428244bf7f874b33644956ec4ed1d53895d843f5fa86ea"
+      "bytes": 28712,
+      "sha256": "156e16bd8e2f335a95712b57b60f83919ca5544325c84aa772ebfb8014ff5eaf"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1699,8 +1627,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/experiments/batch-state-probe/README.md",
-      "bytes": 2015,
-      "sha256": "c403347587b8377ee645e0134c24364fbcf74bc28429ef09520d7bcd74b139ef"
+      "bytes": 2019,
+      "sha256": "7a0f3fb3007728dfcf784ff1baedb81382e38507fafb1aa6d69534702111c1e9"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1717,8 +1645,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/experiments/contract-probe/README.md",
-      "bytes": 2269,
-      "sha256": "09fb47e8f47c6bf4fb4428ae16931a5c5e5063b747b10c90c18a0e1cbb7bbbcd"
+      "bytes": 2271,
+      "sha256": "ade8f9bc1bd7629d98521b043888d6a662e0b2b3f14589682cf0b351d4e4a38b"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1735,8 +1663,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/experiments/reliable-event-probe/README.md",
-      "bytes": 5751,
-      "sha256": "8631e4ffb06e1ced9f53a1fe803dbb31bddd288ef40a6ef332b87d0bf5b490c6"
+      "bytes": 5763,
+      "sha256": "0cb14540e3027ee04c1393d7852f100c6446d6019ed66ec0b9515469c17f623b"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1747,20 +1675,20 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/README.md",
-      "bytes": 21356,
-      "sha256": "42325bda4ccb1dbf4c032933317ebec9fa8a578858cdfb23b76cb5e43389b439"
+      "bytes": 4914,
+      "sha256": "6915cf79eb4ce0764e433cd115d854099515ab2dc220853de34ff7ac72cca582"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/registry/decisions.json",
-      "bytes": 47561,
-      "sha256": "70d1f7a7d5c4950f61db30f6929899e5b6db636d2345d4a174b1da9ab694e44a"
+      "bytes": 47527,
+      "sha256": "1953c56b8c6cafbea81946a9f6a3ddb9e735d67b243e51d5e03c3f025b42d676"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/registry/deliverables.json",
-      "bytes": 34072,
-      "sha256": "40d246d078bd2e845f3c5112813cdfbd8eccd92eccb1e431e57c0f45d362c419"
+      "bytes": 38170,
+      "sha256": "eb8b2862641d36987668c2c28e6e6d2ab6bd1cc7b9c2d755e7342d29765c15e5"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1771,14 +1699,14 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/registry/requirements.json",
-      "bytes": 14048,
-      "sha256": "5a5d00043880b07cd408c67d5039af1961ec04c41e9fb9f5e2d71e7500e6b7cd"
+      "bytes": 14900,
+      "sha256": "421a265dfd3d51d1ea0ead2d69dd460fa6f39d029544c60dda6177deed25497f"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/registry/sources.json",
-      "bytes": 70500,
-      "sha256": "ad8ec4b121b99b589fbd53264f71c5ca675f2db5e809324d10c3add1312f8c91"
+      "bytes": 74712,
+      "sha256": "66793a6bfd3c3fd9c694825a2f63cf104cccb5061ca62dab075f912876d379c5"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1840,8 +1768,8 @@
     {
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "path": "localization.json",
-      "sha256": "002387192e11cdaebdde4bf707b3b22c9f55ad8fe5978ee8d7496c2408cc2ecb",
-      "bytes": 133746,
+      "sha256": "f4f72f7b74b6d302dff99f2adf6ce302cafd51909d6100394f714a4f62d217de",
+      "bytes": 156201,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123"
@@ -1877,16 +1805,16 @@
     {
       "path": "packages/contracts/README.md",
       "originRole": "New first-party bilingual documentation or publication tooling",
-      "sha256": "aa788d8715f6950e1815246204195b7c9a1c6bec418f133bd3b109384df30834",
-      "bytes": 3274,
+      "sha256": "d7903adeb66d71cb76d48da47a5646cefaae846213f0cc0430d96de55a4cd0f7",
+      "bytes": 2338,
       "previousRevisionSha256": "4b7aedc3f9f8f9648353f4acb1c5a110387d0139b1213d6978fab74485400864",
       "previousLayoutPath": "packages/contracts/README.en.md",
       "previousLayoutSha256": "ac8a3e151ea797dbad13f5074192721de58162d727b1f1bbbdd1b7d548a51c88"
     },
     {
       "path": "packages/contracts/README.zh-CN.md",
-      "sha256": "99da76dde70b8ec156d80941557b47988c136cdb87486e2a6b60a8f92cbdc935",
-      "bytes": 2690,
+      "sha256": "feb7c6164c2fc85d5ed513d3eb36fd22b668bb7b1985e7d7fcc6f9dc352e44bf",
+      "bytes": 2010,
       "originalSha256": "f631cb1809f3160b76b5b4451c8820c264f269da2b64842c96abeaae702607ad",
       "originRole": "Bilingual public documentation projection",
       "change": "Preserves package responsibilities and lifecycle semantics; removes internal review history wording and adds contributor/source/license links.",
@@ -1981,16 +1909,16 @@
     {
       "path": "packages/engine/README.md",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "sha256": "b838fc9452f269907e4250c754711fd8c00bbbdbaa49b958bcf2fcbb8e1ddf71",
-      "bytes": 11088,
+      "sha256": "1cd58e3bc795d6558b308e5bb27b8df9b68ffb693c73629781e5783260a7cff5",
+      "bytes": 4772,
       "previousRevisionSha256": "77fa6a7eacbb0c3d386524d6c9ed5fec9f3e91bf393b95a6c3b2498c5ae6b83f",
       "previousLayoutPath": "packages/engine/README.en.md",
       "previousLayoutSha256": "4a1fba94711cf91b22cd90c641012b842ef7c7fa0be969fc996464f80ebaeae7"
     },
     {
       "path": "packages/engine/README.zh-CN.md",
-      "sha256": "e8c79af8be86f809cda8654b913901d8d22816d6ac440864a813a022855645d7",
-      "bytes": 9549,
+      "sha256": "5359129f987d45894294445e31eccd4e7816de4334404024d4f905a6ab7ac476",
+      "bytes": 4212,
       "originalSha256": "2b39a8a5f988a0c4d7271d30da7f8c04a735149e00b6f0f28f2c59940e5842f0",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "change": "Preserves package responsibilities and lifecycle semantics; removes internal review history wording and adds contributor/source/license links.",
@@ -2058,8 +1986,8 @@
     },
     {
       "path": "packages/engine/src/index.ts",
-      "sha256": "7c62240b56f9c260e29ad135a86c317d0172a216b548266a30c4ca78ed531d62",
-      "bytes": 1307,
+      "sha256": "76036883c39505afc9cc5d2f1d06b8f824720c212b4498da68b67a0df27ffb94",
+      "bytes": 1521,
       "originalSha256": "45f2377ffe6e180815d68b8b2dcbddaca8eaa167c142a356d130da8ce008e2f0",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
       "previousRevisionSha256": "45f2377ffe6e180815d68b8b2dcbddaca8eaa167c142a356d130da8ce008e2f0",
@@ -2166,14 +2094,14 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "packages/project/README.md",
-      "bytes": 8435,
-      "sha256": "3b3c6a9385286c6d03975a8ec5bcf86d02bd05be7a72e6172cd51607d3f07586"
+      "bytes": 5059,
+      "sha256": "4f19388a9a090f3d0738f04c39b2fcd0b75bfda472d71eb5c26e02ff0baab5fb"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "packages/project/README.zh-CN.md",
-      "bytes": 7281,
-      "sha256": "cecfd0204599647c590f6b78f7d388cf9eb4654bfe8a3ae9b76045084cbca8d1"
+      "bytes": 4240,
+      "sha256": "85a77e4381c7bd8338666e40f0bf12585eb5b700b14708e53fe6aee93c8020aa"
     },
     {
       "path": "packages/runtime/package.json",
@@ -2188,16 +2116,16 @@
     {
       "path": "packages/runtime/README.md",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
-      "sha256": "416e443a4d62f4d7d9802b2edb63957c00373bc3a4c851b34bd9ea9ec40eb172",
-      "bytes": 4198,
+      "sha256": "4db2d6893d0f8fe0f0e86530cabd2255ddb115a1ff208f4d92209f12fca24d1a",
+      "bytes": 3663,
       "previousRevisionSha256": "88752546b92c8c859b1c0296f4307db2d6b79cf38f378bac3d0e67bfdb533768",
       "previousLayoutPath": "packages/runtime/README.en.md",
       "previousLayoutSha256": "97eeca38ec5f73641b226f5e3e724580232040fc1acd0e4cb8e9b692d20e9214"
     },
     {
       "path": "packages/runtime/README.zh-CN.md",
-      "sha256": "95e1ac39b5d42b538aebe7c1328d5aa8d0ec86876b6947c26a1a1ccbafac9646",
-      "bytes": 3293,
+      "sha256": "14f5d1c35c35e99910cc95134d2f1f65ae47b755017213cedf37838c5cbccf8c",
+      "bytes": 3033,
       "originalSha256": "dadf19b00a845d7e8ed154644f2214b720d7acd03f4450a2e9a002be5d085911",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
       "change": "Preserves package responsibilities and lifecycle semantics; removes internal review history wording and adds contributor/source/license links.",
@@ -2359,8 +2287,8 @@
     },
     {
       "path": "packages/runtime/src/index.ts",
-      "sha256": "8a70a7150c01a96907ca65f91d74dacbb0cdf224ab45e4bdbfa01cf4b7388b31",
-      "bytes": 1490,
+      "sha256": "38341fa44ea9cbfadc8d746c75d014c2e0585339fd5fe4a27a15e3febdcf0a2b",
+      "bytes": 1748,
       "originalSha256": "3af52ebe93ac933d989ceb0f5abadd31e72f9436fda1d2206b3e71d7f1216310",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
       "previousRevisionSha256": "3af52ebe93ac933d989ceb0f5abadd31e72f9436fda1d2206b3e71d7f1216310",
@@ -2442,16 +2370,16 @@
     {
       "path": "PUBLICATION.md",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "sha256": "3bbe7424ae36039e6fc4ab2826cad36308516891cbe9b7bcaa61ea05def03584",
-      "bytes": 11653,
+      "sha256": "0270b0e76e24320a809470f8d788ff633e046b64d4b84303692f0ae60bc3ad05",
+      "bytes": 3318,
       "previousRevisionSha256": "c027cc00e307fc3053c4ac3c150659d034f758e004af3394e06353280aa3d7bf",
       "previousLayoutPath": "PUBLICATION.en.md",
       "previousLayoutSha256": "83a435e68aa8560b1df5294c2d5aef50f362f1fb5ec4dc3ec3da08c72b3c9a9a"
     },
     {
       "path": "PUBLICATION.zh-CN.md",
-      "sha256": "f57b26a7bb4160f45fbc8c350d951873bc218b500a8b682d0ea9f42913e77084",
-      "bytes": 9521,
+      "sha256": "c5f16753c24dfc85a8f14a92a874eafc88c530332f63bb0cf26fb43b08cdfc91",
+      "bytes": 2638,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousPublicSha256": "3347cb4d8fef1e8298f9dee869a21894162a9082a834b4784094d642fd9fd388",
       "previousRevisionSha256": "cf5858ee0a62ef72fc9d8309566e15a2d5de8bc9c91545c718a95adff24aaed2",
@@ -2461,16 +2389,16 @@
     {
       "path": "README.md",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "sha256": "dc2e5b61c3214cdf136ba576ffc574319569a7650d602bc82c8d22612008e105",
-      "bytes": 28432,
+      "sha256": "84e88cda499f4c4ac6b184ad7ac0190ffc4629db88fb2017338e2034989c0b29",
+      "bytes": 13119,
       "previousRevisionSha256": "199156443d499d5012f1224263a1a3ee9994e5ba38ee067bceeb2ad865ae8167",
       "previousLayoutPath": "README.en.md",
       "previousLayoutSha256": "f40ec41ca699cd0b9138fbdf4a268080038f583ae11e78c4f37093a6b7095f57"
     },
     {
       "path": "README.zh-CN.md",
-      "sha256": "a8fb817db919e7f4214b3389cd2323d08ca345a2ab72ab3c55038f2d51d2d1b1",
-      "bytes": 25799,
+      "sha256": "17c21e6163d372c7760f00b0dbb07ea2673b147b8673cd045487764cbc799be5",
+      "bytes": 12849,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousPublicSha256": "7ec80b8575a700b6a2628eb0322f2e770bb2284859f68ec5e0eb6530154a6699",
       "previousRevisionSha256": "7a1d72019db7cb6075d7c3a3bd4075f7c069d527b6e31d992a69333cb126b6c3",
@@ -2636,8 +2564,8 @@
     },
     {
       "path": "tests/types/negative.ts",
-      "sha256": "848361188c9615628813aa23b795dad09747b65b6923fead0989e42a88eb4cb3",
-      "bytes": 7536,
+      "sha256": "f4d337395151331ef5ea987c157b7f51ee75e22a7307a4f7f4c078812b199551",
+      "bytes": 9229,
       "originalSha256": "f2aba4d444432063b862b42822b392b82d09c8d91458cc80f5478f136115ce7b",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
       "previousRevisionSha256": "f2aba4d444432063b862b42822b392b82d09c8d91458cc80f5478f136115ce7b",
@@ -2646,8 +2574,8 @@
     },
     {
       "path": "tests/types/positive.ts",
-      "sha256": "7b26a6d90a257e1f5c9060bd52621f363ec0ebe1402668d6ef403f9764941be7",
-      "bytes": 5135,
+      "sha256": "778ddfe8cdab974750bcc98a1d39b0381779cc9cae930d83355ca89935cb2db8",
+      "bytes": 6271,
       "originalSha256": "1041d77568560fb1d08fa3a4dbb86cb1e77cc48dace50884b5173c4459713aeb",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
       "previousRevisionSha256": "1041d77568560fb1d08fa3a4dbb86cb1e77cc48dace50884b5173c4459713aeb",
@@ -2854,6 +2782,102 @@
       "previousRevisionSha256": "e07fc831f31dc9ea9ecb612be734f4b533e32d7dbbb246abffaa8b23111076aa",
       "previousLayoutPath": "tsconfig.json",
       "previousLayoutSha256": "01ad6c8c6e7a8c86c99baf969ec73d9dd386fc7d8c5e412ee01b6e5dc248f10a"
+    },
+    {
+      "path": "packages/runtime/src/SequencePlayer.ts",
+      "bytes": 3304,
+      "sha256": "c0c1884d61c6ec2e578cdc95097e4e1f17dea95593f23335c95c25d80c69e876",
+      "originRole": "First-party explicit-time sequence work package; public verifier reuses independently authored first-party opaque collector mechanisms."
+    },
+    {
+      "path": "packages/runtime/src/Bitmap.ts",
+      "bytes": 7674,
+      "sha256": "fbc41946d88073f1f62957d6c5623543f9d096ed6d7d35f065eac40e0c119e29",
+      "originRole": "First-party explicit-time sequence work package; public verifier reuses independently authored first-party opaque collector mechanisms."
+    },
+    {
+      "path": "packages/runtime/src/sequenceClip.ts",
+      "bytes": 8641,
+      "sha256": "97ec389ed75a145f8f0feddf00648dc0d5176564e311406c3ac8c7b359076053",
+      "originRole": "First-party explicit-time sequence work package; public verifier reuses independently authored first-party opaque collector mechanisms."
+    },
+    {
+      "path": "tests/sequence-player.test.mjs",
+      "bytes": 13736,
+      "sha256": "d852215b33f4ea6ed079802f77a31e3ff99876276559c346bd216d2a1c317354",
+      "originRole": "First-party explicit-time sequence work package; public verifier reuses independently authored first-party opaque collector mechanisms."
+    },
+    {
+      "path": "tests/webgpu-mesh-host.test.mjs",
+      "bytes": 87020,
+      "sha256": "eb68d02d2d8c537d4209f71dd0e13f0ec1b8761556ea88fb1f0ec61b8855d56d",
+      "originRole": "First-party explicit-time sequence work package; public verifier reuses independently authored first-party opaque collector mechanisms."
+    },
+    {
+      "path": "examples/sequence-player/index.html",
+      "bytes": 2130,
+      "sha256": "79023e0f9e6a19bdd5e784f74fb73ca3f5b00c8551aaf711bea3f66655bc0257",
+      "originRole": "First-party explicit-time sequence work package; public verifier reuses independently authored first-party opaque collector mechanisms."
+    },
+    {
+      "path": "examples/sequence-player/main.mjs",
+      "bytes": 3953,
+      "sha256": "6e5ae91430e37349d7925613287619a6f3b373c49f7c5d6a2f8a9332746fa7d1",
+      "originRole": "First-party explicit-time sequence work package; public verifier reuses independently authored first-party opaque collector mechanisms."
+    },
+    {
+      "path": "tools/sequence-player/collector.mjs",
+      "bytes": 27722,
+      "sha256": "5e49943f93bbb1130fdd079d828b38da07401e65ae026f226f1353b0146da7d7",
+      "originRole": "First-party explicit-time sequence work package; public verifier reuses independently authored first-party opaque collector mechanisms."
+    },
+    {
+      "path": "tools/sequence-player/fixture.mjs",
+      "bytes": 23700,
+      "sha256": "6d1b63f4044c99dfabf2d459fbe74450334fc4d4cc98ecd407deaf3229a6740a",
+      "originRole": "First-party explicit-time sequence work package; public verifier reuses independently authored first-party opaque collector mechanisms."
+    },
+    {
+      "path": "tools/sequence-player/oracle.mjs",
+      "bytes": 7958,
+      "sha256": "5244dadb443ed2bf4b5c6d01952a1dbc7242614798ab6933c9fe17cb610f01e4",
+      "originRole": "First-party explicit-time sequence work package; public verifier reuses independently authored first-party opaque collector mechanisms."
+    },
+    {
+      "path": "tools/sequence-player/file-graph.mjs",
+      "bytes": 9188,
+      "sha256": "689e77d290b3ab86ea0991be4bba2b799260646483e44c243695a5f76fe1214d",
+      "originRole": "First-party explicit-time sequence work package; public verifier reuses independently authored first-party opaque collector mechanisms."
+    },
+    {
+      "path": "tools/sequence-player/console-policy.mjs",
+      "bytes": 672,
+      "sha256": "2fb5b6e865ad1a374d003e36007a61cadcc9bd84f75221bd1bddecde66ef81d8",
+      "originRole": "First-party explicit-time sequence work package; public verifier reuses independently authored first-party opaque collector mechanisms."
+    },
+    {
+      "path": "tools/sequence-player/README.md",
+      "bytes": 5507,
+      "sha256": "095c8889535f22d2b4a743c9990f81cb0c2a49ac9ed4c2bda8d232403dbc4066",
+      "originRole": "First-party explicit-time sequence work package; public verifier reuses independently authored first-party opaque collector mechanisms."
+    },
+    {
+      "path": "tools/sequence-player/README.zh-CN.md",
+      "bytes": 4979,
+      "sha256": "c1657341c0e0837cc1f3fc1605216127e18720710b4ebc8ec7b9267545deba70",
+      "originRole": "First-party explicit-time sequence work package; public verifier reuses independently authored first-party opaque collector mechanisms."
+    },
+    {
+      "path": "examples/sequence-player/README.md",
+      "bytes": 1690,
+      "sha256": "bff034fc06fb21fc05c9d6cf4cac5611491e2009958ea10b85495a1f845aee6e",
+      "originRole": "First-party explicit-time sequence work package; public verifier reuses independently authored first-party opaque collector mechanisms."
+    },
+    {
+      "path": "examples/sequence-player/README.zh-CN.md",
+      "bytes": 1468,
+      "sha256": "6cb218ba6d72437982a68450e491f214079f1edd252fdd0cc7e3b7411222dc28",
+      "originRole": "First-party explicit-time sequence work package; public verifier reuses independently authored first-party opaque collector mechanisms."
     }
   ],
   "fileListScope": "Current explicit source-owned root/package/code/configuration inventory; source-origin itself, original LICENSE, export manifest, verification and KB are separate. Identities are provisional review inputs, not final export approval. Historical original/previous hashes retain their original scope.",
@@ -4563,5 +4587,614 @@
       ],
       "scope": "README pair, confirmed founder statement, source-backed bilingual Changelog, new navigation, preserved historical paragraphs and code fences only; later metadata is a root-authored successor."
     }
+  },
+  "spineRequirementAmendment": {
+    "date": "2026-10-10",
+    "requirement": "R020",
+    "delivery": "V020",
+    "record": "knowledge-base/en/docs/spine-animation-support-and-acceptance.md",
+    "firstParty": "Independently authored bilingual product requirement and acceptance design; official references S067/S068 remain attributed.",
+    "productSourceChanged": false,
+    "spineRuntimeInstalled": false,
+    "spineRuntimeExecuted": false,
+    "license": "First-party documentation remains Apache-2.0; no third-party runtime or assets incorporated.",
+    "independentReview": {
+      "status": "accepted_with_scope",
+      "reviews": [
+        {
+          "role": "independent_bilingual_requirement_scope",
+          "P1": 0,
+          "P2": 0,
+          "reportSha256": "cce12c00814e1a703c9a2505900fd6afd992665698b824f00a83412a992d377a",
+          "descriptorSha256": "797536d2ab076823904519bb5ff0fa3b56dda78f42e95245231da30f3c8f2a7b",
+          "scope": "Complete new bilingual pair; seven paired additive reading amendments; four canonical registries and four English views. Later metadata and publication checks excluded."
+        },
+        {
+          "role": "independent_official_fact_scope",
+          "P1": 0,
+          "P2": 0,
+          "reportSha256": "224a24fb454f8076800e3940966749d238ee8ada6f80f484f83a57e9b21d2bcd",
+          "descriptorSha256": "49839f3c94664d355a2fedd04c7cd76621b6554d089665b2b033762583fb8dc1",
+          "scope": "Complete bilingual Spine requirement pair and S067/S068 source entries only"
+        }
+      ],
+      "rootMetadataSuccessor": true
+    }
+  },
+  "documentationCleanup": {
+    "date": "2026-10-10",
+    "baseCommit": "75af74e9c44cb4d093d5dc4d8aef453aa54febb9",
+    "retiredOriginEntries": [
+      {
+        "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+        "path": "knowledge-base/Cns/AGENTS.md",
+        "bytes": 5535,
+        "sha256": "326d5d081ad40b929084c7e77df722d0e20ee13ec69e666be923c9e5915ccce3"
+      },
+      {
+        "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+        "path": "knowledge-base/Cns/docs/第二轮审计.md",
+        "bytes": 4926,
+        "sha256": "f8cad4caaca281a7a10104903b003fe267bbd1e611c7e3de098f15cffd3cbf1f"
+      },
+      {
+        "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+        "path": "knowledge-base/Cns/docs/第二轮验证计划.md",
+        "bytes": 3118,
+        "sha256": "e404372b311f83fec12492bd53017c47910fd6999fac6f13028ee169629745c3"
+      },
+      {
+        "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+        "path": "knowledge-base/Cns/docs/第二轮验证记录.md",
+        "bytes": 10464,
+        "sha256": "5bb3b8d0c0b525442c5b56014fdd0c95af5323e8145e002df1e98cba048fc791"
+      },
+      {
+        "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+        "path": "knowledge-base/Cns/docs/第三轮集成计划.md",
+        "bytes": 3526,
+        "sha256": "67abbc41cbcb10b16dce60259fdbe59f9c415d4c34ae480c9f9f6be8bb680987"
+      },
+      {
+        "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+        "path": "knowledge-base/Cns/docs/第三轮集成记录.md",
+        "bytes": 9204,
+        "sha256": "2d7a086888f383ce42c7e50da1d6e11150deb5c5e5bfe932fb788967703e845c"
+      },
+      {
+        "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+        "path": "knowledge-base/Cns/docs/第三轮审计.md",
+        "bytes": 6753,
+        "sha256": "98e789caf60a99ead7dd51807390874d9aac550de23c0d267ad8bbd1e12c5a96"
+      },
+      {
+        "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+        "path": "knowledge-base/Cns/docs/第一轮审计.md",
+        "bytes": 4992,
+        "sha256": "257439822059e2e3b627a9085eae21335eaa19a77e91551b500d13392f725c54"
+      },
+      {
+        "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+        "path": "knowledge-base/Cns/docs/第一轮研究核查.md",
+        "bytes": 13576,
+        "sha256": "525dec4370cff89bad30b55a158ee281c6125b9ae4088077cdd01f392e8f9802"
+      },
+      {
+        "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+        "path": "knowledge-base/Cns/docs/技术验证记录.md",
+        "bytes": 7451,
+        "sha256": "59b61fb41c9196822db184b72ea8a9308f645414ff0a9a1cfd1c7dea6df47650"
+      },
+      {
+        "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+        "path": "knowledge-base/en/AGENTS.md",
+        "bytes": 6911,
+        "sha256": "2d7ef83b1d5bd980e49e3c63ef5ccc7d6e1b265655eb19c516f23fe63c6c7d2c"
+      },
+      {
+        "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+        "path": "knowledge-base/en/docs/round-1-audit.md",
+        "bytes": 6206,
+        "sha256": "753db4d3eef828ed90e431ed6b8fee70d9c3e6b3b130fb8221c5b1542883cc1e"
+      },
+      {
+        "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+        "path": "knowledge-base/en/docs/round-1-research-verification.md",
+        "bytes": 14451,
+        "sha256": "e55ad39fbc5c4ad239c059b88e936cd1dd3b6060f8e7739886c035b36be75f7f"
+      },
+      {
+        "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+        "path": "knowledge-base/en/docs/round-2-audit.md",
+        "bytes": 6143,
+        "sha256": "e5f5c1f3c002fc2b27f17a8475393568b716ca77e9afedaaea6bed251a7a7e63"
+      },
+      {
+        "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+        "path": "knowledge-base/en/docs/round-2-validation-plan.md",
+        "bytes": 4023,
+        "sha256": "f98e21f6fbf05d69b7fa98b6b08d9a321aa7a28fdaed3e1be6d4d61521c91a7a"
+      },
+      {
+        "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+        "path": "knowledge-base/en/docs/round-2-validation-record.md",
+        "bytes": 12440,
+        "sha256": "bf7b2254b11e389ec9d848bd3eb1c7e184caa94a3315060b0ad3f5f3359240d8"
+      },
+      {
+        "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+        "path": "knowledge-base/en/docs/round-3-audit.md",
+        "bytes": 8262,
+        "sha256": "27d82bd9c5fc561affeef710c0a630713ceb7364eccb4faff803a06331f77770"
+      },
+      {
+        "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+        "path": "knowledge-base/en/docs/round-3-integration-plan.md",
+        "bytes": 4471,
+        "sha256": "6c06f7346e91c7d46acf672c2e918eda2627c960f60e5b21a829ae4cc1ae8fa1"
+      },
+      {
+        "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+        "path": "knowledge-base/en/docs/round-3-integration-record.md",
+        "bytes": 10799,
+        "sha256": "7aacdef3cc80f856840990d887f486beef10e88b982a3d452629016a79eda884"
+      },
+      {
+        "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+        "path": "knowledge-base/en/docs/technical-validation-record.md",
+        "bytes": 9346,
+        "sha256": "75234c5329896467d1dc026b2f0a9f72c21e1eabbe5288eedcd6197430edaab2"
+      }
+    ],
+    "consolidated": [
+      {
+        "target": "knowledge-base/en/archive/round-1-research.md",
+        "inputs": [
+          {
+            "path": "knowledge-base/en/docs/round-1-research-verification.md",
+            "bytes": 14451,
+            "sha256": "e55ad39fbc5c4ad239c059b88e936cd1dd3b6060f8e7739886c035b36be75f7f",
+            "bodySha256": "25dd830f89af69b569929586e2139a9a50a50f50620cece17e291ce7edb9b58e",
+            "retainedBodySha256": "ae73db64db7d8f7afeec1af70848a247b662ff82dc06e70fc4ff5778f8db21db",
+            "section": "research"
+          },
+          {
+            "path": "knowledge-base/en/docs/technical-validation-record.md",
+            "bytes": 9346,
+            "sha256": "75234c5329896467d1dc026b2f0a9f72c21e1eabbe5288eedcd6197430edaab2",
+            "bodySha256": "f2518040c40eedac1a386434c49f66ccac6daaad491fbe08c05889199e284c9d",
+            "retainedBodySha256": "8f00366134f7bde085eb6c5d7569583cb72d19ea0d04543b2aab1e6e12556c2c",
+            "section": "execution"
+          },
+          {
+            "path": "knowledge-base/en/docs/round-1-audit.md",
+            "bytes": 6206,
+            "sha256": "753db4d3eef828ed90e431ed6b8fee70d9c3e6b3b130fb8221c5b1542883cc1e",
+            "bodySha256": "d004d7a8081103fbaa2dfb19eb33235d7054add2ee0e554a42e1d8c0d3de6717",
+            "retainedBodySha256": "c3e4c777970ca1bbc54ba1cac9ced3bb28717716afad1e5379793cc1b3d19665",
+            "section": "audit"
+          }
+        ]
+      },
+      {
+        "target": "knowledge-base/Cns/archive/第一轮研究.md",
+        "inputs": [
+          {
+            "path": "knowledge-base/Cns/docs/第一轮研究核查.md",
+            "bytes": 13576,
+            "sha256": "525dec4370cff89bad30b55a158ee281c6125b9ae4088077cdd01f392e8f9802",
+            "bodySha256": "5aaa6cd8f78282fa3c1a9255ac48beaba19d5e634eec4081ffcf6fcaf78911ca",
+            "retainedBodySha256": "ac811ecb7f76cefe17dc4ee036155815a66c77ed3a0ccf655d0256d2d119aa4d",
+            "section": "research"
+          },
+          {
+            "path": "knowledge-base/Cns/docs/技术验证记录.md",
+            "bytes": 7451,
+            "sha256": "59b61fb41c9196822db184b72ea8a9308f645414ff0a9a1cfd1c7dea6df47650",
+            "bodySha256": "048a2284e90dd390b8007e6085f6c7d97dcc6a85a05de870f7859420f52e63af",
+            "retainedBodySha256": "b109c076fa644ef02d1d5e67ec49dada6f5f44797029955ac50c901cd1521023",
+            "section": "execution"
+          },
+          {
+            "path": "knowledge-base/Cns/docs/第一轮审计.md",
+            "bytes": 4992,
+            "sha256": "257439822059e2e3b627a9085eae21335eaa19a77e91551b500d13392f725c54",
+            "bodySha256": "277024a84a695f438728bd5acefafadfff87aadd3c566e214f7973d585f9bf2e",
+            "retainedBodySha256": "532663966d7ce40b4fc30f1b3be1d3642f554d7963fd0426280d058d35b223dc",
+            "section": "audit"
+          }
+        ]
+      },
+      {
+        "target": "knowledge-base/en/archive/round-2-research.md",
+        "inputs": [
+          {
+            "path": "knowledge-base/en/docs/round-2-validation-plan.md",
+            "bytes": 4023,
+            "sha256": "f98e21f6fbf05d69b7fa98b6b08d9a321aa7a28fdaed3e1be6d4d61521c91a7a",
+            "bodySha256": "5f1a99584dd28f67c8338aad9235a75b2e61dd39d55685eedbd01388d8fec22d",
+            "retainedBodySha256": "060cd5ed399c9e486a980cea89c39eb30b4f18ae1c29e892e37216213f0ae478",
+            "section": "research"
+          },
+          {
+            "path": "knowledge-base/en/docs/round-2-validation-record.md",
+            "bytes": 12440,
+            "sha256": "bf7b2254b11e389ec9d848bd3eb1c7e184caa94a3315060b0ad3f5f3359240d8",
+            "bodySha256": "8c8edc3b014ece179b5192cf5194480cd670ed60e0a60a3275da152b35cdd72f",
+            "retainedBodySha256": "7e17f87966d8b140114a06a521b90465cf3dee4733cb530ed515c2ef999bc417",
+            "section": "execution"
+          },
+          {
+            "path": "knowledge-base/en/docs/round-2-audit.md",
+            "bytes": 6143,
+            "sha256": "e5f5c1f3c002fc2b27f17a8475393568b716ca77e9afedaaea6bed251a7a7e63",
+            "bodySha256": "883d91f4de01f97e22f2fd84772533000c814c86014521d5c1bf4185ea222b49",
+            "retainedBodySha256": "47eb2d64cf684fab7af8c89ac4f443b6c94bc40e88d1f77d5ced78e947d06430",
+            "section": "audit"
+          }
+        ]
+      },
+      {
+        "target": "knowledge-base/Cns/archive/第二轮研究.md",
+        "inputs": [
+          {
+            "path": "knowledge-base/Cns/docs/第二轮验证计划.md",
+            "bytes": 3118,
+            "sha256": "e404372b311f83fec12492bd53017c47910fd6999fac6f13028ee169629745c3",
+            "bodySha256": "cdbb4d65230d3a594002b6451b38b16791fb008203ae1674fb3fc50663d4117d",
+            "retainedBodySha256": "b847b4f83764f4b659bcca5f07581d0800ca97df473ce00df44b38669a230490",
+            "section": "research"
+          },
+          {
+            "path": "knowledge-base/Cns/docs/第二轮验证记录.md",
+            "bytes": 10464,
+            "sha256": "5bb3b8d0c0b525442c5b56014fdd0c95af5323e8145e002df1e98cba048fc791",
+            "bodySha256": "187dc1a78adeda1b7335a9140370a6d0ba319a4949fc1beb3ee8d5622a31015d",
+            "retainedBodySha256": "23005665f4640481c5474e3e3bac1cf01e4c720baa9e19a13fd1da953226405b",
+            "section": "execution"
+          },
+          {
+            "path": "knowledge-base/Cns/docs/第二轮审计.md",
+            "bytes": 4926,
+            "sha256": "f8cad4caaca281a7a10104903b003fe267bbd1e611c7e3de098f15cffd3cbf1f",
+            "bodySha256": "1fa5626f0f20eb470c3abff641b3e5ecf5629ed566d0f2fa4341c60d7d7133ae",
+            "retainedBodySha256": "4c80f67b3f791a3db4ee90b14342b047ffce87dc9d45aa37ce0b01ec0d817f92",
+            "section": "audit"
+          }
+        ]
+      },
+      {
+        "target": "knowledge-base/en/archive/round-3-research.md",
+        "inputs": [
+          {
+            "path": "knowledge-base/en/docs/round-3-integration-plan.md",
+            "bytes": 4471,
+            "sha256": "6c06f7346e91c7d46acf672c2e918eda2627c960f60e5b21a829ae4cc1ae8fa1",
+            "bodySha256": "17dd81d21908e166fbd8f34a4f1370136276ac09f99607c0564667d716016166",
+            "retainedBodySha256": "a60af9377bd5e4c331a1ef19456d631291a04daae3323658d89b83cca24a4adf",
+            "section": "research"
+          },
+          {
+            "path": "knowledge-base/en/docs/round-3-integration-record.md",
+            "bytes": 10799,
+            "sha256": "7aacdef3cc80f856840990d887f486beef10e88b982a3d452629016a79eda884",
+            "bodySha256": "627d9557b1d877ca375d99f1fe5a7de039e3fd73c119a0f855cfffad80ac84e4",
+            "retainedBodySha256": "b8c2eb736c1fbf6722cbe3eb8f7f19e442976787b6c528fdb6660561c5436a14",
+            "section": "execution"
+          },
+          {
+            "path": "knowledge-base/en/docs/round-3-audit.md",
+            "bytes": 8262,
+            "sha256": "27d82bd9c5fc561affeef710c0a630713ceb7364eccb4faff803a06331f77770",
+            "bodySha256": "af72144a9afe87815a6aa65943247400921905dd6d7d187041e8e98432852616",
+            "retainedBodySha256": "1f00c7aab2e6d9c612e285cffb4f2f12463648f7143806d93931b561ed55f8b8",
+            "section": "audit"
+          }
+        ]
+      },
+      {
+        "target": "knowledge-base/Cns/archive/第三轮研究.md",
+        "inputs": [
+          {
+            "path": "knowledge-base/Cns/docs/第三轮集成计划.md",
+            "bytes": 3526,
+            "sha256": "67abbc41cbcb10b16dce60259fdbe59f9c415d4c34ae480c9f9f6be8bb680987",
+            "bodySha256": "e3500b9a786dedeca01aa36d1a30992c7ea356b5fb49431bab73b13698258307",
+            "retainedBodySha256": "4b3a5d487ab6b6a43466484e30c3915c6e3f8855320dd27fdc6feb8122601a7d",
+            "section": "research"
+          },
+          {
+            "path": "knowledge-base/Cns/docs/第三轮集成记录.md",
+            "bytes": 9204,
+            "sha256": "2d7a086888f383ce42c7e50da1d6e11150deb5c5e5bfe932fb788967703e845c",
+            "bodySha256": "c826defc865325d8365fc25a8492b7c1eaf8a0e8b215f3a3e24452f877162f7e",
+            "retainedBodySha256": "778e51d6c538cff1247435988d8d0062aabfb6532e42fc97a67a01ab7ba1994c",
+            "section": "execution"
+          },
+          {
+            "path": "knowledge-base/Cns/docs/第三轮审计.md",
+            "bytes": 6753,
+            "sha256": "98e789caf60a99ead7dd51807390874d9aac550de23c0d267ad8bbd1e12c5a96",
+            "bodySha256": "4eab5eae24ab4a2a0e5500a41a5765e244d0cbea9cb15ece56ff3d4493502889",
+            "retainedBodySha256": "313623f655fe3a8b7869620609a77d23e23ec707dc4b2634f08853227140df28",
+            "section": "audit"
+          }
+        ]
+      }
+    ],
+    "rawEvidenceChanged": false,
+    "productSourceChanged": false,
+    "remotePublication": false,
+    "independentReview": {
+      "status": "accepted_with_scope",
+      "reviews": [
+        {
+          "role": "independent_historical_content_preservation",
+          "P1": 0,
+          "P2": 0,
+          "reportSha256": "8fa5e5f0d5f65f3f3484c42e02bf20f066c34e10765a36d7837babc6cf17eec5",
+          "descriptorSha256": "e16b2fc3987960a722eba1438a9adb26b3db6d11d36e0b3104c02c4b50d00b4c",
+          "scope": {
+            "archives": 6,
+            "historicalSourceBodies": 18,
+            "stableBannerFiles": 22,
+            "layoutPolicyFiles": 2,
+            "canonicalWebgpuEvidenceFiles": 2,
+            "currentReadingFiles": 32,
+            "originalBodyLinks": 274,
+            "pairedMeaningReview": "new archive introductions, historical pointer sentences, layout additions and CHANGELOG cleanup/0.19 summaries",
+            "preservation": "independent full body and link target normalization comparisons of 18 saved originals; all saved input and body hashes independently reproduced",
+            "excluded": [
+              "ten entry files under separate review",
+              "packages/engine/README.md",
+              "packages/engine/README.zh-CN.md",
+              "JSON metadata and registries",
+              "product tests/build/browser execution",
+              "Git and remote delivery",
+              "link/metadata validation outside the 32 reviewed reading files"
+            ],
+            "integrationCondition": "Any later identity changes require scoped refresh; complete publication/prepush remains a separate required gate",
+            "currentLocalLinkOccurrences": 734,
+            "currentExplicitArchiveAnchorOccurrences": 134,
+            "refreshedReadingIdentities": 8,
+            "unchangedReadingIdentities": 24,
+            "redirectedHistoricalReferences": 80
+          }
+        },
+        {
+          "role": "independent_navigation_package_and_registry_parity",
+          "P1": 0,
+          "P2": 0,
+          "reportSha256": "78dffa09dec0683a21d2eeb45cde75ce5c838b70c29b2e262b5c2f7b65c7fd05",
+          "descriptorSha256": "7902a875423b4c76081dbedae0d0c5bd0d50cc1c45959254d04253dc34445236",
+          "scope": "Ten repository/knowledge-base entries, eight package guides, two progress-reading updates and twelve registry/current-version views; scoped cleanup ancestry observations only. Later attestation metadata, product execution and remote publication excluded."
+        }
+      ],
+      "rootMetadataSuccessor": true
+    }
+  },
+  "sequencePlayerWorkPackage": {
+    "date": "2026-10-10",
+    "engineeringLabel": "0.20.0",
+    "scope": "PUBLIC_EXPLICIT_TIME_SEQUENCE_PLAYER_AND_FIXED_OPAQUE_BROWSER_SUBSET",
+    "packageVersion": "0.0.0",
+    "protocolVersion": "1.0",
+    "implementationOrigin": "AI-assisted independent first-party implementation from the paired sequence-player contract; no third-party animation implementation or new dependency.",
+    "sourceSubjects": [
+      {
+        "path": "packages/runtime/src/SequencePlayer.ts",
+        "bytes": 3304,
+        "sha256": "c0c1884d61c6ec2e578cdc95097e4e1f17dea95593f23335c95c25d80c69e876"
+      },
+      {
+        "path": "packages/runtime/src/Bitmap.ts",
+        "bytes": 7674,
+        "sha256": "fbc41946d88073f1f62957d6c5623543f9d096ed6d7d35f065eac40e0c119e29"
+      },
+      {
+        "path": "packages/runtime/src/sequenceClip.ts",
+        "bytes": 8641,
+        "sha256": "97ec389ed75a145f8f0feddf00648dc0d5176564e311406c3ac8c7b359076053"
+      },
+      {
+        "path": "packages/runtime/src/index.ts",
+        "bytes": 1748,
+        "sha256": "38341fa44ea9cbfadc8d746c75d014c2e0585339fd5fe4a27a15e3febdcf0a2b"
+      },
+      {
+        "path": "packages/engine/src/index.ts",
+        "bytes": 1521,
+        "sha256": "76036883c39505afc9cc5d2f1d06b8f824720c212b4498da68b67a0df27ffb94"
+      },
+      {
+        "path": "tests/sequence-player.test.mjs",
+        "bytes": 13736,
+        "sha256": "d852215b33f4ea6ed079802f77a31e3ff99876276559c346bd216d2a1c317354"
+      },
+      {
+        "path": "tests/types/positive.ts",
+        "bytes": 6271,
+        "sha256": "778ddfe8cdab974750bcc98a1d39b0381779cc9cae930d83355ca89935cb2db8"
+      },
+      {
+        "path": "tests/types/negative.ts",
+        "bytes": 9229,
+        "sha256": "f4d337395151331ef5ea987c157b7f51ee75e22a7307a4f7f4c078812b199551"
+      },
+      {
+        "path": "tests/webgpu-mesh-host.test.mjs",
+        "bytes": 87020,
+        "sha256": "eb68d02d2d8c537d4209f71dd0e13f0ec1b8761556ea88fb1f0ec61b8855d56d"
+      },
+      {
+        "path": "examples/sequence-player/index.html",
+        "bytes": 2130,
+        "sha256": "79023e0f9e6a19bdd5e784f74fb73ca3f5b00c8551aaf711bea3f66655bc0257"
+      },
+      {
+        "path": "examples/sequence-player/main.mjs",
+        "bytes": 3953,
+        "sha256": "6e5ae91430e37349d7925613287619a6f3b373c49f7c5d6a2f8a9332746fa7d1"
+      },
+      {
+        "path": "tools/sequence-player/collector.mjs",
+        "bytes": 27722,
+        "sha256": "5e49943f93bbb1130fdd079d828b38da07401e65ae026f226f1353b0146da7d7"
+      },
+      {
+        "path": "tools/sequence-player/fixture.mjs",
+        "bytes": 23700,
+        "sha256": "6d1b63f4044c99dfabf2d459fbe74450334fc4d4cc98ecd407deaf3229a6740a"
+      },
+      {
+        "path": "tools/sequence-player/oracle.mjs",
+        "bytes": 7958,
+        "sha256": "5244dadb443ed2bf4b5c6d01952a1dbc7242614798ab6933c9fe17cb610f01e4"
+      },
+      {
+        "path": "tools/sequence-player/file-graph.mjs",
+        "bytes": 9188,
+        "sha256": "689e77d290b3ab86ea0991be4bba2b799260646483e44c243695a5f76fe1214d"
+      },
+      {
+        "path": "tools/sequence-player/console-policy.mjs",
+        "bytes": 672,
+        "sha256": "2fb5b6e865ad1a374d003e36007a61cadcc9bd84f75221bd1bddecde66ef81d8"
+      },
+      {
+        "path": "tools/sequence-player/README.md",
+        "bytes": 5507,
+        "sha256": "095c8889535f22d2b4a743c9990f81cb0c2a49ac9ed4c2bda8d232403dbc4066"
+      },
+      {
+        "path": "tools/sequence-player/README.zh-CN.md",
+        "bytes": 4979,
+        "sha256": "c1657341c0e0837cc1f3fc1605216127e18720710b4ebc8ec7b9267545deba70"
+      },
+      {
+        "path": "examples/sequence-player/README.md",
+        "bytes": 1690,
+        "sha256": "bff034fc06fb21fc05c9d6cf4cac5611491e2009958ea10b85495a1f845aee6e"
+      },
+      {
+        "path": "examples/sequence-player/README.zh-CN.md",
+        "bytes": 1468,
+        "sha256": "6cb218ba6d72437982a68450e491f214079f1edd252fdd0cc7e3b7411222dc28"
+      }
+    ],
+    "specifications": [
+      {
+        "path": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
+        "bytes": 8360,
+        "sha256": "6db7ac80073b070891071594a90f4c79fc36590fa22b1644523511c4c93bb64b"
+      },
+      {
+        "path": "knowledge-base/en/docs/sequence-player-contract.md",
+        "bytes": 9506,
+        "sha256": "c72e33c31d0dc02d680112c9ab19a61b4147aaa1f79718dadc3944e4d9f8961d"
+      }
+    ],
+    "samplerPublic": false,
+    "clipFactoryPublic": true,
+    "implicitScheduler": false,
+    "resourceBorrowOnly": true,
+    "recordedChecks": {
+      "focusedCpu": 14,
+      "negativeTypes": {
+        "root": 54,
+        "web": 5,
+        "project": 28
+      },
+      "b1ClosureDriverCases": 13
+    },
+    "browserEvidence": "knowledge-base/evidence/sequence-player-native.json",
+    "fullA2": false,
+    "performanceClaim": false,
+    "SpineImplemented": false,
+    "fullLegacyMigration": false,
+    "browserScope": {
+      "captures": 8,
+      "pixels": 256,
+      "channels": 1024,
+      "tolerance": 0,
+      "backends": [
+        "canvas",
+        "webgpu"
+      ],
+      "fixedOpaqueOnly": true
+    },
+    "derivedFirstPartyVerifierFiles": [
+      {
+        "current": {
+          "path": "tools/sequence-player/oracle.mjs",
+          "bytes": 7958,
+          "sha256": "5244dadb443ed2bf4b5c6d01952a1dbc7242614798ab6933c9fe17cb610f01e4"
+        },
+        "origin": "Earlier independently reviewed first-party Egret opaque Bitmap verifier",
+        "adoption": "Exact byte reuse of first-party helper; no new third-party code or algorithm."
+      },
+      {
+        "current": {
+          "path": "tools/sequence-player/file-graph.mjs",
+          "bytes": 9188,
+          "sha256": "689e77d290b3ab86ea0991be4bba2b799260646483e44c243695a5f76fe1214d"
+        },
+        "origin": "Earlier independently reviewed first-party Egret opaque Bitmap verifier",
+        "adoption": "Exact byte reuse of first-party helper; no new third-party code or algorithm."
+      },
+      {
+        "current": {
+          "path": "tools/sequence-player/console-policy.mjs",
+          "bytes": 672,
+          "sha256": "2fb5b6e865ad1a374d003e36007a61cadcc9bd84f75221bd1bddecde66ef81d8"
+        },
+        "origin": "Earlier independently reviewed first-party Egret opaque Bitmap verifier",
+        "adoption": "Exact byte reuse of first-party helper; no new third-party code or algorithm."
+      }
+    ],
+    "publicationGate": "The fresh final-candidate prepush and remote branch/PR outcome are recorded separately; this source curation does not infer a remote action.",
+    "interactiveExampleBrowserTested": false,
+    "independentReviews": [
+      {
+        "role": "core_scoped_fix",
+        "status": "PASS_SCOPED",
+        "P1": 0,
+        "P2": 0,
+        "findingsSha256": "219c593ae2d57dc4cc85310f245525816bb1bbf6e02207116bd82b71959c2cce",
+        "scope": "Recorded review scope only; later root attestation metadata is not attributed to the reviewer."
+      },
+      {
+        "role": "public_tool_and_private_owner_source_fix",
+        "status": "PASS_SOURCE_ONLY",
+        "P1": 0,
+        "P2": 0,
+        "findingsSha256": "cb6ad6732be34086d97a7c3adf1e386672609adcf65e4b814f776a12a73085e7",
+        "scope": "Recorded review scope only; later root attestation metadata is not attributed to the reviewer."
+      },
+      {
+        "role": "bitmap_saved_native_prerequisite",
+        "status": "PASS_SAVED_OPAQUE_REGION_SUBSET",
+        "P1": 0,
+        "P2": 0,
+        "findingsSha256": "6a2d8d2d4a808b59af6435c2230285f13cce0b63245680fd28ab6a6fb21dcd94",
+        "scope": "Recorded review scope only; later root attestation metadata is not attributed to the reviewer."
+      },
+      {
+        "role": "player_saved_native_subset",
+        "status": "PASS_SAVED_ARTIFACTS_OPAQUE_PLAYER_SUBSET",
+        "P1": 0,
+        "P2": 0,
+        "findingsSha256": "c3bf1911bbb8b555fc2bd3651479401a6928a0c242a3e2ff7d9601aa8685801e",
+        "scope": "Recorded review scope only; later root attestation metadata is not attributed to the reviewer."
+      },
+      {
+        "role": "current_bilingual_public_material",
+        "status": "PASS_BILINGUAL_PUBLIC_MATERIAL_SOURCE_REVIEW",
+        "P1": 0,
+        "P2": 0,
+        "findingsSha256": "801e5a4290157c1efa0749a877c78f4c46b6107bd97d589abef0da0d2b8a2c06",
+        "scope": "Recorded review scope only; later root attestation metadata is not attributed to the reviewer."
+      }
+    ]
   }
 }

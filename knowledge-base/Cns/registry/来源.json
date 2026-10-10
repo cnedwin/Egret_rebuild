@@ -222,10 +222,10 @@
         "https://www.layaair.com/3.x/doc/basics/ide/projectsettings/webgpu/"
       ],
       "artifacts": [
-        "Cns/docs/第一轮研究核查.md",
+        "Cns/archive/第一轮研究.md",
         "evidence/research-refresh-2026-10-08.json"
       ],
-      "doc": "Cns/docs/第一轮研究核查.md"
+      "doc": "Cns/archive/第一轮研究.md"
     },
     {
       "id": "S015",
@@ -241,7 +241,7 @@
         "evidence/contract-probe-audit-red-2-results.json",
         "Cns/experiments/contract-probe/README.md"
       ],
-      "doc": "Cns/docs/技术验证记录.md"
+      "doc": "Cns/archive/第一轮研究.md"
     },
     {
       "id": "S016",
@@ -257,7 +257,7 @@
         "evidence/browser-probe.png",
         "Cns/experiments/browser-probe/README.md"
       ],
-      "doc": "Cns/docs/技术验证记录.md"
+      "doc": "Cns/archive/第一轮研究.md"
     },
     {
       "id": "S017",
@@ -270,7 +270,7 @@
         "https://registry.khronos.org/webgl/extensions/WEBGL_lose_context/",
         "https://chromium.googlesource.com/chromium/src/+/HEAD/third_party/blink/renderer/modules/webgl/webgl_rendering_context_base.cc"
       ],
-      "doc": "Cns/docs/技术验证记录.md"
+      "doc": "Cns/archive/第一轮研究.md"
     },
     {
       "id": "S018",
@@ -287,7 +287,7 @@
         "evidence/reliable-event-probe-verification-results.json",
         "Cns/experiments/reliable-event-probe/README.md"
       ],
-      "doc": "Cns/docs/第二轮验证记录.md"
+      "doc": "Cns/archive/第二轮研究.md"
     },
     {
       "id": "S019",
@@ -303,7 +303,7 @@
         "evidence/async-resource-probe-audit-red-results.json",
         "Cns/experiments/async-resource-probe/README.md"
       ],
-      "doc": "Cns/docs/第二轮验证记录.md"
+      "doc": "Cns/archive/第二轮研究.md"
     },
     {
       "id": "S020",
@@ -320,7 +320,7 @@
         "evidence/nested-ui-probe-unsafe-isolation-results.json",
         "Cns/experiments/nested-ui-probe/README.md"
       ],
-      "doc": "Cns/docs/第二轮验证记录.md"
+      "doc": "Cns/archive/第二轮研究.md"
     },
     {
       "id": "S021",
@@ -336,7 +336,7 @@
         "evidence/batch-state-probe-audit-red-results.json",
         "Cns/experiments/batch-state-probe/README.md"
       ],
-      "doc": "Cns/docs/第二轮验证记录.md"
+      "doc": "Cns/archive/第二轮研究.md"
     },
     {
       "id": "S022",
@@ -354,7 +354,7 @@
         "evidence/mixed-scene-probe.png",
         "Cns/experiments/mixed-scene-probe/README.md"
       ],
-      "doc": "Cns/docs/第二轮验证记录.md"
+      "doc": "Cns/archive/第二轮研究.md"
     },
     {
       "id": "S023",
@@ -371,7 +371,7 @@
       "artifacts": [
         "evidence/phase2-reference-check-2026-10-08.json"
       ],
-      "doc": "Cns/docs/第二轮验证记录.md"
+      "doc": "Cns/archive/第二轮研究.md"
     },
     {
       "id": "S024",
@@ -382,11 +382,11 @@
       "limit": "非人类批准；审阅者未新增浏览器运行或旧工程执行，不能证明完整产品或优势。",
       "urls": [],
       "artifacts": [
-        "Cns/docs/第二轮审计.md",
+        "Cns/archive/第二轮研究.md",
         "evidence/design-audit-phase2-2026-10-08.json",
         "evidence/phase2-path-metadata-normalization.json"
       ],
-      "doc": "Cns/docs/第二轮审计.md"
+      "doc": "Cns/archive/第二轮研究.md"
     },
     {
       "id": "S025",
@@ -523,7 +523,7 @@
         "evidence/asset-reference-source-audit.json",
         "evidence/asset-reference-file-footprint.json"
       ],
-      "doc": "Cns/docs/第三轮集成记录.md"
+      "doc": "Cns/archive/第三轮研究.md"
     },
     {
       "id": "S031",
@@ -537,9 +537,9 @@
         "evidence/asset-reference-probe-results.json",
         "evidence/asset-reference-probe.png",
         "Cns/experiments/asset-reference-probe/README.md",
-        "Cns/docs/第三轮集成记录.md"
+        "Cns/archive/第三轮研究.md"
       ],
-      "doc": "Cns/docs/第三轮集成记录.md"
+      "doc": "Cns/archive/第三轮研究.md"
     },
     {
       "id": "S032",
@@ -554,9 +554,9 @@
         "evidence/asset-reference-code-review.json",
         "evidence/asset-reference-report-integrity.json",
         "evidence/asset-reference-integration-audit.json",
-        "Cns/docs/第三轮审计.md"
+        "Cns/archive/第三轮研究.md"
       ],
-      "doc": "Cns/docs/第三轮审计.md"
+      "doc": "Cns/archive/第三轮研究.md"
     },
     {
       "id": "S033",
@@ -1104,6 +1104,71 @@
         "evidence/b1-public-browser.json"
       ],
       "doc": "Cns/docs/b1-browser-verifier.md"
+    },
+    {
+      "id": "S066",
+      "title": "项目所有者确认完整 Spine 支持",
+      "type": "project_owner_instruction",
+      "scope": "本次新增引擎须完美支持 Spine 动画的产品需求。",
+      "limit": "需求确认不是实现、依赖采用或兼容验收；不预判性能及全版本支持。",
+      "researchCheckedAt": "2026-10-10",
+      "doc": "Cns/docs/Spine动画支持需求与验收.md"
+    },
+    {
+      "id": "S067",
+      "title": "Spine 当前官方版本、架构及后端文档",
+      "type": "primary_official_documentation_research",
+      "scope": "官方 4.3 非 beta 状态、版本匹配、TypeScript 语义／渲染分离、Canvas 限制、官方 WebGPU 集成先例及原生候选。",
+      "limit": "在线文档及分支阅读不是固定提交源码审计、npm 最新包证据、依赖安装或白鹭运行验收；尚无 Spine 实验。",
+      "researchCheckedAt": "2026-10-10",
+      "urls": [
+        "https://esotericsoftware.com/spine-api-reference",
+        "https://esotericsoftware.com/spine-versioning",
+        "https://esotericsoftware.com/spine-runtime-architecture",
+        "https://github.com/EsotericSoftware/spine-runtimes/blob/4.3/spine-ts/README.md",
+        "https://esotericsoftware.com/spine-pixi",
+        "https://esotericsoftware.com/blog/Spine-4.3-released",
+        "https://github.com/EsotericSoftware/spine-runtimes/blob/4.3/spine-cpp/README.md",
+        "https://github.com/EsotericSoftware/spine-runtimes/blob/4.3/spine-c/README.md"
+      ],
+      "doc": "Cns/docs/Spine动画支持需求与验收.md"
+    },
+    {
+      "id": "S068",
+      "title": "Spine 官方运行时与编辑器许可文本",
+      "type": "primary_official_license_research",
+      "scope": "官方运行时自定义许可及编辑器许可中集成、工具使用者许可和再发行声明条件。",
+      "limit": "记录适用条款来源，不构成未来白鹭发行安排的完整法律评估；不授权资产或运行时纳入。",
+      "researchCheckedAt": "2026-10-10",
+      "urls": [
+        "https://esotericsoftware.com/spine-runtimes-license",
+        "https://esotericsoftware.com/spine-editor-license"
+      ],
+      "doc": "Cns/docs/Spine动画支持需求与验收.md"
+    },
+    {
+      "id": "S069",
+      "title": "Bitmap 不透明原生前置观察",
+      "type": "first_party_recorded_opaque_native_subset_and_independent_saved_artifact_review",
+      "scope": "Canvas／WebGPU 的 8 次捕获、256 个像素、1024 次零容差通道比较；同一图集租约及资源退出后的保存帧重放。保存产物独立审阅 P1／P2 均为 0。",
+      "limit": "使用内部采样器与裁剪 setter；不验收公共 SequencePlayer、完整 A2、透明精度、硬件加速、手机或性能；不完整前序保持保留。",
+      "researchCheckedAt": "2026-10-10",
+      "artifacts": [
+        "evidence/bitmap-region-native.json"
+      ],
+      "doc": "Cns/docs/bitmap-region-evidence.md"
+    },
+    {
+      "id": "S070",
+      "title": "公共显式时间播放器实现与有界验收",
+      "type": "first_party_public_api_implementation_and_recorded_cpu_type_opaque_native_evidence",
+      "scope": "公共工厂与 SequencePlayer；14 项行为、54／5／28 项预期负向类型诊断、13 个 B1 源码驱动案例通过。Canvas／WebGPU 的 8 次捕获、256 个像素、1024 次零容差通道比较；保存产物独立审阅 P1／P2 均为 0。",
+      "limit": "浏览器夹具只覆盖固定不透明显式时间子集，交互示例 UI 尚未测试；不证明完整 A2、全部生命周期浏览器覆盖、性能、手机、Spine 或完整迁移。推送前完整门禁与远端交付另行记录。",
+      "researchCheckedAt": "2026-10-10",
+      "artifacts": [
+        "evidence/sequence-player-native.json"
+      ],
+      "doc": "Cns/docs/显式时间序列播放器契约.md"
     }
   ]
 }

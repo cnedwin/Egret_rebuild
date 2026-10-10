@@ -34,12 +34,12 @@
         "Independent core sources and design are traceable; third-party dependencies, modifications, and release notices are explicit; competitor internal code is not copied or mechanically rewritten by AI"
       ],
       "artifacts": [
-        "en/docs/round-1-research-verification.md",
-        "en/docs/technical-validation-record.md",
+        "en/archive/round-1-research.md",
+        "en/archive/round-1-research.md",
         "evidence/research-refresh-2026-10-08.json",
         "evidence/contract-probe-results.json",
         "evidence/browser-probe-results.json",
-        "en/docs/round-2-validation-record.md",
+        "en/archive/round-2-research.md",
         "evidence/reliable-event-probe-results.json",
         "evidence/async-resource-probe-results.json",
         "evidence/nested-ui-probe-results.json",
@@ -50,9 +50,9 @@
         "evidence/reference-text-ui.json",
         "evidence/reference-assets-animation.json",
         "evidence/reference-pixi-text.json",
-        "en/docs/round-3-integration-plan.md",
-        "en/docs/round-3-integration-record.md",
-        "en/docs/round-3-audit.md",
+        "en/archive/round-3-research.md",
+        "en/archive/round-3-research.md",
+        "en/archive/round-3-research.md",
         "evidence/asset-reference-probe-results.json",
         "en/experiments/asset-reference-probe/README.md"
       ],
@@ -75,7 +75,8 @@
         "R014",
         "R015",
         "R016",
-        "R017"
+        "R017",
+        "R020"
       ],
       "dependsOn": [
         "V001"
@@ -89,12 +90,13 @@
         "Mixed 2D/3D prototype correctness and budgets",
         "Loading, scheduling, recovery, and sustained execution",
         "Reproducible verification of candidate technical decisions",
-        "Independent core sources and design are traceable; third-party dependencies, modifications, and release notices are explicit; competitor internal code is not copied or mechanically rewritten by AI"
+        "Independent core sources and design are traceable; third-party dependencies, modifications, and release notices are explicit; competitor internal code is not copied or mechanically rewritten by AI",
+        "R020: complete Spine ordered rendering, complex UI/3D composition and graphics recovery, accepted against the public version/host matrix."
       ],
       "artifacts": [
-        "en/docs/round-3-integration-plan.md",
-        "en/docs/round-3-integration-record.md",
-        "en/docs/round-3-audit.md",
+        "en/archive/round-3-research.md",
+        "en/archive/round-3-research.md",
+        "en/archive/round-3-research.md",
         "evidence/asset-reference-probe-results.json",
         "en/experiments/asset-reference-probe/README.md",
         "en/docs/core-framework-first-slice-plan.md",
@@ -177,7 +179,8 @@
         "R008",
         "R012",
         "R015",
-        "R016"
+        "R016",
+        "R020"
       ],
       "dependsOn": [
         "V001"
@@ -191,12 +194,13 @@
         "Consistent text/atlas/skeletal/frame-sequence semantics",
         "Reproducible target-resource and module inventories",
         "Locatable loading/upload/release failures",
-        "Independent core sources and design are traceable; third-party dependencies, modifications, and release notices are explicit; competitor internal code is not copied or mechanically rewritten by AI"
+        "Independent core sources and design are traceable; third-party dependencies, modifications, and release notices are explicit; competitor internal code is not copied or mechanically rewritten by AI",
+        "R020: complete Spine import, versions, constraints/attachments/skins/events and resource lifecycle; simple playback cannot replace V020."
       ],
       "artifacts": [
-        "en/docs/round-3-integration-plan.md",
-        "en/docs/round-3-integration-record.md",
-        "en/docs/round-3-audit.md",
+        "en/archive/round-3-research.md",
+        "en/archive/round-3-research.md",
+        "en/archive/round-3-research.md",
         "evidence/asset-reference-probe-results.json",
         "en/experiments/asset-reference-probe/README.md"
       ],
@@ -222,7 +226,8 @@
         "R013",
         "R014",
         "R015",
-        "R016"
+        "R016",
+        "R020"
       ],
       "dependsOn": [
         "V002",
@@ -238,7 +243,8 @@
         "Complete execution on declared hosts and real devices",
         "Packaging, updates, and lifecycle",
         "Creator-task and cost baselines",
-        "Independent core sources and design are traceable; third-party dependencies, modifications, and release notices are explicit; competitor internal code is not copied or mechanically rewritten by AI"
+        "Independent core sources and design are traceable; third-party dependencies, modifications, and release notices are explicit; competitor internal code is not copied or mechanically rewritten by AI",
+        "R020: Spine import/preview, edit/undo, AI operations and declared-host packaging/update loop."
       ],
       "artifacts": [],
       "doc": "en/docs/product-components.md"
@@ -253,7 +259,8 @@
         "R008",
         "R013",
         "R015",
-        "R016"
+        "R016",
+        "R020"
       ],
       "dependsOn": [
         "V001",
@@ -274,7 +281,8 @@
         "Declared host-platform and performance acceptance",
         "Manual intervention/AI costs and unresolved items across all samples",
         "Continued editing/undo after migration, actual target publication, and an update loop",
-        "Independent core sources and design are traceable; third-party dependencies, modifications, and release notices are explicit; competitor internal code is not copied or mechanically rewritten by AI"
+        "Independent core sources and design are traceable; third-party dependencies, modifications, and release notices are explicit; competitor internal code is not copied or mechanically rewritten by AI",
+        "R020: inventory applicable legacy Spine plugin versions and compare old/new animation/events/resources, continued editing and target publication."
       ],
       "artifacts": [],
       "doc": "en/docs/legacy-project-migration.md"
@@ -313,9 +321,9 @@
         "en/CONTRIBUTING.md",
         "tools/Validate-KnowledgeBase.ps1",
         "en/docs/open-source-research-and-validation-roles.md",
-        "en/docs/round-3-integration-plan.md",
-        "en/docs/round-3-integration-record.md",
-        "en/docs/round-3-audit.md",
+        "en/archive/round-3-research.md",
+        "en/archive/round-3-research.md",
+        "en/archive/round-3-research.md",
         "evidence/asset-reference-probe-results.json",
         "en/experiments/asset-reference-probe/README.md",
         "en/docs/independent-implementation-and-dependency-policy.md",
@@ -353,7 +361,7 @@
         "evidence/core-framework-document-review-final.json",
         "en/docs/open-source-collaboration-and-public-communication.md",
         "en/ACKNOWLEDGEMENTS.md",
-        "en/AGENTS.md",
+        "en/CONTRIBUTING.md",
         "evidence/public-collaboration-requirement.json",
         "evidence/public-community-editorial.json",
         "evidence/public-release-boundary-audit.json",
@@ -401,12 +409,12 @@
         "en/docs/technical-white-paper.md",
         "en/docs/product-requirements.md",
         "en/docs/engineering-plan.md",
-        "en/docs/technical-validation-record.md",
-        "en/docs/round-1-audit.md",
+        "en/archive/round-1-research.md",
+        "en/archive/round-1-research.md",
         "evidence/design-audit-2026-10-08.json",
-        "en/docs/round-2-validation-plan.md",
-        "en/docs/round-2-validation-record.md",
-        "en/docs/round-2-audit.md",
+        "en/archive/round-2-research.md",
+        "en/archive/round-2-research.md",
+        "en/archive/round-2-research.md",
         "evidence/design-audit-phase2-2026-10-08.json",
         "en/docs/open-source-research-and-validation-roles.md",
         "en/docs/open-source-reference-implementations-and-adoption.md",
@@ -416,9 +424,9 @@
         "evidence/reference-pixi-text.json",
         "evidence/reference-independent-audit.json",
         "evidence/reference-research-audit-2026-10-08.json",
-        "en/docs/round-3-integration-plan.md",
-        "en/docs/round-3-integration-record.md",
-        "en/docs/round-3-audit.md",
+        "en/archive/round-3-research.md",
+        "en/archive/round-3-research.md",
+        "en/archive/round-3-research.md",
         "evidence/asset-reference-probe-results.json",
         "en/experiments/asset-reference-probe/README.md",
         "en/docs/graphics-backends-and-native-runtime-selection.md",
@@ -461,7 +469,7 @@
         "evidence/core-framework-document-review-final.json",
         "en/docs/open-source-collaboration-and-public-communication.md",
         "en/ACKNOWLEDGEMENTS.md",
-        "en/AGENTS.md",
+        "en/CONTRIBUTING.md",
         "evidence/public-collaboration-requirement.json",
         "evidence/public-community-editorial.json",
         "evidence/public-release-boundary-audit.json",
@@ -513,7 +521,7 @@
         "evidence/core-framework-document-review-final.json",
         "en/docs/open-source-collaboration-and-public-communication.md",
         "en/ACKNOWLEDGEMENTS.md",
-        "en/AGENTS.md",
+        "en/CONTRIBUTING.md",
         "evidence/public-collaboration-requirement.json",
         "evidence/public-community-editorial.json",
         "evidence/public-release-boundary-audit.json",
@@ -852,11 +860,82 @@
         "evidence/legacy-movieclip-focused.json"
       ],
       "doc": "en/docs/legacy-movieclip-contract.md"
+    },
+    {
+      "id": "V020",
+      "title": "Complete Spine animation capability and integration",
+      "kind": "product_capability",
+      "status": "planned",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R005",
+        "R006",
+        "R007",
+        "R008",
+        "R012",
+        "R014",
+        "R015",
+        "R016",
+        "R020"
+      ],
+      "dependsOn": [
+        "V001"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "not_started",
+      "acceptance": "not_run",
+      "acceptanceCriteria": [
+        "Exact export/runtime identities and complete version-feature matrix; correct JSON/binary and atlas-dependency import; mismatch and failure diagnostics.",
+        "Complete selected constraints/meshes/attachments/skins/timelines, track mixing and animation events agree with version-correct references; unknown or unsupported items remain explicit.",
+        "WebGPU/WebGL ordered draws, clipping, two-color tint, alpha and blending are correct in complex UI/3D; Canvas limitations must not be silently hidden.",
+        "Independent instances, shared resources, cancellation, disposal and graphics recovery are correct; recovery does not replay gameplay state or consumed events.",
+        "Creation/edit/undo/package/update and applicable legacy migration comparisons are reproducible; actual declared-host runs and equivalent-content performance scope are explicit.",
+        "Egret adapters, official runtime and assets have separate origin/license records; projects without Spine do not acquire its dependency by default."
+      ],
+      "artifacts": [
+        "en/docs/spine-animation-support-and-acceptance.md"
+      ],
+      "doc": "en/docs/spine-animation-support-and-acceptance.md"
+    },
+    {
+      "id": "V021",
+      "title": "Public explicit-time sequence player",
+      "kind": "bounded_runtime_increment",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R012"
+      ],
+      "dependsOn": [
+        "V010",
+        "V017"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "public_explicit_time_sequence_player",
+      "acceptance": "bounded_cpu_type_and_opaque_desktop_subset_verified_publication_separate",
+      "acceptanceCriteria": [
+        "The public root supplies the admitted sequence factory/types and player, with explicit absolute time, once/loop selection, backward seeks and immutable samples under a defined contract.",
+        "Exact borrowed Bitmap/lease/full-atlas binding, crop and cached-sample commit, error order, private authority, disposal and Engine affinity passed 14 behavior checks.",
+        "54/5/28 expected negative type diagnostics and the affected 13 B1 source-driver cases passed; the real integration failure and repair remain recorded.",
+        "8 captures, 256 pixels and 1024 zero-tolerance channel comparisons on Canvas/WebGPU, plus saved-frame replay on a distinct Host after resource retirement, received independent saved-artifact review.",
+        "Acceptance is limited to CPU/types and the fixed desktop opaque fixture; interactive example UI, complete A2/alpha precision, full lifecycle browser coverage, Spine, performance and complete R008/V006 migration remain separate obligations."
+      ],
+      "artifacts": [
+        "en/docs/sequence-player-contract.md",
+        "evidence/sequence-player-native.json"
+      ],
+      "doc": "en/docs/sequence-player-contract.md"
     }
   ],
   "_localization": {
     "canonicalSource": "交付.json",
-    "canonicalSha256": "cababdd73a56664ee7836a256be5bf49c3578cf54de427b3e864de6186f72b71",
+    "canonicalSha256": "ab313cc8cdebcead8f8ef4d88f5abf1493fc902cd0f0fb2c7fd7aa934fae0a3d",
     "role": "read_only_translation",
     "language": "en"
   }

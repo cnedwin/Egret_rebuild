@@ -4,6 +4,12 @@
 
 The first-party `Bitmap.sourceRect` implementation passed the existing build, **113/113 focused CPU checks** and the selected type checks. Independent review of the three changed sources and saved CPU observations recorded **PASS_SOURCE_AND_SAVED_CPU_EVIDENCE**, with no actionable P1/P2 findings in that scope. This is a local **0.19.0** engineering increment; package **0.0.0** and protocol **1.0** remain unchanged.
 
+## Fresh opaque browser observation — 2026-10-10
+
+A separately bound native attempt completed **8 captures, 256 pixels and 1024 exact channel comparisons** across Canvas and WebGPU. It renders red/green/blue crops with the same atlas lease, then replays a saved red frame on a distinct Host after Bitmap, lease, Texture and origin Engine retirement. Independent saved-source/artifact review reported zero actionable P1/P2; browser/server/context closure and external Job/process/EOF receipts agree. The selected [public record](../../evidence/bitmap-region-native.json) includes exact raw bytes and the original source identities.
+
+The earlier incomplete Canvas-only attempt remains preserved. Only the exact Canvas readback advisory is allowed; other warning/error messages stay fatal. This observation is the fixed 8×4 DPR1 opaque subset on Node 24.19.0, Playwright 1.62.1 and Edge 154.0.4258.62, with no added browser flags. It exercises the internal sampler and intrinsic Bitmap crop setter; it does **not** certify the subsequent public SequencePlayer, full A2, alpha precision, hardware acceleration, phones or performance. The CPU history and source table below retain their original checkpoint identities.
+
 ## Observed checks
 
 The build exited zero and its project-format check covered **21 definitions**. The focused Node.js **v24.19.0** run used `--test-isolation=none`; 113 checks passed with zero failures, cancellations, skips or todos. The schedule includes B01–B23 in `tests/bitmap-region.test.mjs` and the existing texture, saved-frame, integration, type-shape, oracle and CPU sequence suites.

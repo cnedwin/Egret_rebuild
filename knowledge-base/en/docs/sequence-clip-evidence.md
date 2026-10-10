@@ -2,6 +2,10 @@
 
 [简体中文](../../Cns/docs/sequence-clip-evidence.md) · [Contract](sequence-clip-contract.md)
 
+## Historical checkpoint: 0.17.0
+
+This preserved CPU record describes its own checkpoint source and API. References to current source, internal exports and unverified browser behavior below belong to that historical checkpoint. The factory/types are now public and the sampler remains internal; the separate [SequencePlayer record](sequence-player-contract.md) describes the current public API and fresh opaque observation. The original counts, failure history and source hashes below are unchanged.
+
 The current `packages/runtime/src/sequenceClip.ts` passed a build and **25/25 focused tests**, with zero failures or skips, in `tests/sequence-clip.test.mjs`. The saved fixed-runtime Node.js run exited zero, closed its direct process and ended both output streams; selected source/test identities remained stable. These are CPU results from the actual adopted tests, not predicted counts or a performance benchmark.
 
 The tests cover input and identity admission; own-field capture order and exact source causes; independent atlas dimensions and safe region bounds; dense-array and 1024-frame limits; finite, strictly increasing binary64 totals; once/loop boundaries and large times; explicit stop behavior; negative-zero normalization; fresh frozen samples and source mutation independence. The implementation's upper-bound search has at most eleven comparisons for 1024 frame ends; this is an algorithmic bound, not measured device latency.

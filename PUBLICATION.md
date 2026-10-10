@@ -1,64 +1,26 @@
-# Local candidate and publication status
+# Publication guide
 
 English | [简体中文](PUBLICATION.zh-CN.md)
 
-## Current local engineering preview: 0.18.0
+The public repository is [cnedwin/Egret_rebuild](https://github.com/cnedwin/Egret_rebuild), with `main` as the integration branch. The current engineering preview is **0.20.0**; workspace packages remain private at `0.0.0` and protocol pins remain `1.0`. Publishing source and documents does not establish a production release or complete product acceptance.
 
-Adds bounded CPU conversion of one named legacy MovieClip, preserving atlas crops, display offsets and authored-hold time. Focused tests passed 28/28 with real sequence-factory re-admission. Read the [contract](knowledge-base/en/docs/legacy-movieclip-contract.md), [evidence](knowledge-base/en/docs/legacy-movieclip-evidence.md) and [compact record](knowledge-base/evidence/legacy-movieclip-focused.json). The API remains internal; image reads, decoding and playback are unverified.
+## Prepare a contribution
 
-0.17.0 and earlier results retain their historical source identities. Default-mode, repository regression and complete prepush for this increment are UNRUN; current browser/device pixels, performance and complete R008/V006 migration await acceptance. 0.18.0 is a local engineering label; package 0.0.0/protocol 1.0 are unchanged. GitHub delivery remains HOLD_HTTP_403.
+1. Keep the change scoped and reviewable. Follow the [contribution guide](CONTRIBUTING.md) and [Agent agreement](AGENTS.md); update the relevant specifications, sources and necessary regressions.
+2. Organize publishable content and complete both language editions. Keep the knowledge base in `en/` and `Cns/`, use English filenames in `en/`, and complete critical English code comments. Review attribution and translation meaning; synchronize current document identities and registry views.
+3. Run `node tools/prepush.mjs` against the final candidate. For affected rendering, run the corresponding real-browser gates documented in AGENTS. Record exact source/build identities, environments, results and unverified work.
+4. Push under the user's or repository maintainer's actual authorization and open a reviewable PR. Check the remote branch and PR after upload; after an authorized merge, verify the content on `main`. Local commits and passing checks alone do not establish these remote outcomes.
 
-## Historical local engineering preview: 0.17.0
+Enable the repository hook after cloning with `git config --local core.hooksPath .githooks`. Fix check failures instead of bypassing the hook. See the [bilingual pre-push policy](knowledge-base/en/docs/bilingual-documentation-and-prepush-checks.md).
 
-This preview adds owned CPU scene snapshots, fixed mesh helpers, bounded B1 Host source/mock integration, CPU sequence sampling and pure RES conversion intents. Read [CPU scene](knowledge-base/en/docs/3d-cpu-scene-contract.md), [mesh](knowledge-base/en/docs/3d-webgpu-mesh-contract.md), [Host](knowledge-base/en/docs/b1-host-contract.md), [sequence](knowledge-base/en/docs/sequence-clip-contract.md) and [RES intents](knowledge-base/en/docs/legacy-res-plan-contract.md), with their paired evidence. These interfaces remain internal; public barrels and package 0.0.0/protocol 1.0 are unchanged.
+## Public scope and provenance
 
-Recorded default Host verification passed 13/13 cases, CPU sequence sampling 25/25 and RES intent planning 14/14. The selected whole-repository run passed 901/901 tests, build, 282 boundary files and type gates. The 901 tests include Host regression coverage. Source bindings, the formatting-only successor and retained earlier failure are detailed in the [paired Host evidence](knowledge-base/en/docs/b1-host-evidence.md). Documentation adoption replays no product checks.
+First-party code and documentation use the existing [Apache-2.0 license](LICENSE). Preserve third-party copyright, licenses, NOTICE files and asset attribution. [Source records](source-origin.json) distinguish independent implementation, dependencies, research references and public projections.
 
-GitHub delivery is on HOLD after the recorded 403 response; final current-document review and complete prepush remain pending. Earlier 0.13.0–0.16.0 checkpoints keep their identities and results. Native SDKs, current browser/device pixels, performance, fonts, DragonBones, complete R008/V006 migration, V003/editor and full-product acceptance remain unverified or open.
+Publish authorized source, examples, specifications and curated evidence. Exclude dependency/build caches, private execution output, credentials, private configuration, unauthorized original project packages and unedited internal discussions. Shared evidence and upstream legal originals keep their identity; public projections record their relationship to original material.
 
-## 0.16.0 documentation integration checkpoint
+[Localization inventory](localization.json) records the current bilingual documents. Historical export manifests, reviews and verification reports retain the files, identities and action scope recorded at their own checkpoints; they do not describe a new upload automatically. Consult the [Changelog](knowledge-base/en/CHANGELOG.md) and actual repository history for subsequent changes.
 
-This local engineering preview curates accepted image source/mock work, CPU texture formulas/bounds, CPU 3D foundations and RES declaration analysis in [the current overview](knowledge-base/en/docs/core-progress.md). The current source base is locally committed; this curation does not push, upload, create a PR, publish npm or record a CI result. The target remains the existing public repository. Root-owned independent review and the complete existing prepush gate must bind the final candidate before any new GitHub submission. Package 0.0.0/protocol 1.0 and all historical license/evidence identities remain unchanged.
+## Acceptance boundaries
 
-The new summaries contain public logical source identities and bounded historical results, rather than private archives, raw logs or internal deliberation. CPU Task 5a does not authenticate browser precision; Task 5b/Task 6 and P0–P7 remain UNRUN. R008/V006 complete migration, V003/editor, real device/text/animation/3D GPU/Native performance and full-product acceptance remain open. Earlier sections below describe their original checkpoints, including original export-manifest scope.
-
-## 0.13.0 WebGPU rectangle checkpoint — October 9, 2026
-
-The opt-in `@egret/engine/webgpu` entry executes immutable `RenderFrame2D` rectangle commands synchronously. The root stays DOM-free; `@egret/engine/web` stays Canvas-only and requests no WebGPU or robust-predicates modules. DOM-free preparation uses the exact foundational dependency robust-predicates 3.0.3 through public `orient2d`, under Unlicense. Copying, bounded intersection construction, packing, WGSL and host lifetime are independently authored first-party code. See the [complete 0.6 contract](knowledge-base/en/docs/webgpu-rectangle-execution-contract.md), [implementation plan](knowledge-base/en/docs/webgpu-rectangle-implementation-plan.md) and [bounded evidence](knowledge-base/en/docs/webgpu-rectangle-implementation-evidence.md).
-
-The accepted desktop build records 177/177 CPU/mock/core tests, 28 expected negative type diagnostics and 123 boundary files. Its separate real WebGPU gate records 42 frames, 1709 raw assertions, 84 screenshots, 6808 composition assertions, eight intended negatives and zero unexpected errors. Seven negatives mutate copied production code; one is synthetic assertion-only. These recorded results and scoped independent implementation review belong to the accepted source identities in [verification](verification/webgpu-verification.json) and [review](verification/webgpu-review.json); they are not fresh execution by document integration.
-
-This experimental checkpoint was recorded before the final native run at 2026-10-08T21:23:54.294Z; its core/headless and desktop Canvas results are separately recorded. The subsequent final comment-build browser WebGPU run at `1aa0248a1ff6d8e54c42d631072223bb50483814`, 2026-10-08T21:23:54.294Z, exited 0 and recorded PASS: 42 frames, 1709 raw assertions, 84 PNG screenshots, 6808 composition assertions, eight intended negatives and zero unexpected errors. Seven negatives mutate copied production code; one is synthetic. All 233 inventoried source/build/tool/dependency identities remained equal before and after that execution and match that historical metadata-only successor. The execution was performed by its verification author; independent correction/native-binding closure, final semantic attestation and publication remain pending. Browser WebGPU is separate from a Native app/SDK. Screenshot composition does not certify physical scanout, acceleration, phones or performance. Textures/text/UI/animation/3D, editor/Agent creation, CI, complete migration and full-product acceptance remain open; R008/V006 and V003 retain their existing obligations. Historical 0.9–0.12 records below keep their original dates, identities and result scopes.
-
-
-## Historical 0.12.0 display and frame candidate scope
-
-The successor work package is defined by the [display and frame contract](knowledge-base/en/docs/display-and-frame-execution-contract.md) and [implementation plan](knowledge-base/en/docs/display-and-frame-implementation-plan.md): display transforms, inherited visibility/alpha and local rectangle clipping, Sprite-owned Graphics rectangle fills, and immutable CPU frame capture/submission. The implemented first execution adapter is Canvas through the separate @egret/engine/web entry; the core root retains its DOM-free boundary. Bounded implementation checks passed: 97/97 core behavior tests, 25 negative type diagnostics and real desktop Canvas pixels/pointer interaction. Scoped independent review passed after the recorded cross-realm rejection correction. Remote publication is tracked separately. Final scoped results belong in the [implementation record](knowledge-base/en/docs/display-and-frame-implementation-record.md) and [verification](verification/display-frame-verification.json).
-
-This work package does not establish complete text/texture/animation/UI/3D execution, GPU or Native support, target-device performance, editors, Agent services, or complete migration. Earlier headless, CPU asset and third-party research records retain their original versions, counts, hashes and scope; their results are not new display-frame acceptance.
-
-Record date: October 8, 2026.
-
-The target remote is [cnedwin/Egret_rebuild](https://github.com/cnedwin/Egret_rebuild). The repository already exists and is public; main already contains the complete Apache-2.0 LICENSE. The original LICENSE Git blob is `261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64`. First-party code and documentation continue to use this configuration; third-party materials retain their respective notices.
-
-This record describes the local candidate packaging point on October 8, 2026. That export did not initialize Git, push, upload, or publish npm packages; the prototype and existing knowledge base remained separate. Consult repository branches and actual records for subsequent commits, draft PRs, and releases. That export does not overwrite main or the existing license.
-
-## Historical 0.11.0 asset-core revision
-
-This revision adds independently authored CPU asset acquisition and lease code on top of the preserved 0.10.0 candidate. Its current specification, review, tests, and identities are recorded in [the implementation record](knowledge-base/en/docs/resource-core-implementation-record.md), [verification](verification/asset-core-verification.json), and source-origin.json. Earlier unchanged-byte export statements below describe their historical first export, not the new resource code. Dependencies and the original LICENSE remain unchanged. This local revision does not establish a remote commit or CI run.
-
-## Historical first export
-
-The prototype source-origin.json allowlist defines the scope of code, tests, examples, tools, and configuration. These retain their original bytes. Root documentation and package READMEs are public projections; the source record describes their original hashes and projection roles. node_modules, dist, tsbuildinfo, and internal work were excluded from the candidate.
-
-Root source-origin.json retains the original source-record SHA, and the identity and hashes of the 0.7.0 input specifications. Internal briefs, reviews, counterexamples, and logs are registered only as identity-only/not-distributed and are not public file links. The knowledge base has been integrated as public version 0.9.0; its current specifications and the prototype's historical inputs are versioned separately.
-
-## Verification and subsequent integration
-
-Export-stage actions are recorded at the packaging point described above. Fixed dependencies were subsequently installed in a separate candidate directory, completing 44/44 behavioral checks, 11 negative type assertions, actual package resolution, and the headless example; see [integration verification](verification/headless-verification.json). Checks of knowledge-base structure, source identity, and historical results are in the [integration integrity record](verification/community-integrity.json). Overall release scope and file digests are in the [export manifest](EXPORT-MANIFEST.json). These results remain limited to the stated CPU and simulated-host scope.
-
-GPU, Native, production browser/mini-game hosts, device interoperability, performance, CI, and the complete product still require their respective acceptance. source-origin.json provides author declarations and source-review clues within a limited scope; it does not guarantee complete originality, rights, or product performance.
-
-The historical 0.10.0 bilingual revision corresponds to knowledge-base 0.10.0 at that time. Every push must follow the [bilingual and public-content checks](knowledge-base/en/docs/bilingual-documentation-and-prepush-checks.md) and run `node tools/prepush.mjs`. Language and comment improvements do not expand the scope of technical product acceptance.
-
-The root EXPORT-MANIFEST.json retains the sealed 0.12 historical inventory at this checkpoint. A final 0.13 manifest/archive has not been created; provisional identities and review-pending metadata do not establish a packaged release.
+Document publication and language maintenance do not expand technical acceptance. The [Spine requirement](knowledge-base/en/docs/spine-animation-support-and-acceptance.md) is confirmed, with implementation and acceptance still pending. Browser graphics, production mini-game/Native hosts, target-device performance, CI, editor/Agent workflows and complete legacy migration require their own evidence. Report only the checks and remote actions actually completed for the submitted revision.

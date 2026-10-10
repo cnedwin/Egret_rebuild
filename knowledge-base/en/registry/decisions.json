@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-08",
+  "updatedAt": "2026-10-10",
   "authority": "Technical candidate registry; production selections are not finally approved, and partial research evidence does not establish complete implementation or end-to-end performance acceptance",
   "items": [
     {
@@ -38,14 +38,14 @@
       "supersedes": null,
       "evidence": [
         "evidence/contract-probe-results.json",
-        "en/docs/round-1-audit.md",
+        "en/archive/round-1-research.md",
         "evidence/nested-ui-probe-results.json",
         "evidence/nested-ui-probe-red-results.json",
         "evidence/nested-ui-probe-audit-red-results.json",
         "evidence/nested-ui-probe-unsafe-isolation-results.json",
         "en/experiments/nested-ui-probe/README.md",
-        "en/docs/round-2-validation-record.md",
-        "en/docs/round-2-audit.md"
+        "en/archive/round-2-research.md",
+        "en/archive/round-2-research.md"
       ],
       "doc": "en/docs/rendering-engine-and-runtime.md",
       "evidenceScope": "Two rounds of limited research models/local graphics/independent AI review; the complete gate is unfinished and status remains proposed",
@@ -91,7 +91,7 @@
       "supersedes": null,
       "evidence": [
         "evidence/browser-probe-results.json",
-        "en/docs/technical-validation-record.md",
+        "en/archive/round-1-research.md",
         "evidence/batch-state-probe-results.json",
         "evidence/batch-state-probe-red-results.json",
         "evidence/batch-state-probe-audit-red-results.json",
@@ -101,14 +101,14 @@
         "evidence/mixed-scene-probe-strict-empty-results.json",
         "evidence/mixed-scene-probe-shared-builder-results.json",
         "en/experiments/mixed-scene-probe/README.md",
-        "en/docs/round-2-validation-record.md",
-        "en/docs/round-2-audit.md",
+        "en/archive/round-2-research.md",
+        "en/archive/round-2-research.md",
         "en/docs/open-source-reference-implementations-and-adoption.md",
         "en/docs/open-source-research-and-validation-roles.md",
         "evidence/reference-render-lifecycle.json",
         "evidence/reference-pixi-text.json",
-        "en/docs/round-3-integration-record.md",
-        "en/docs/round-3-audit.md",
+        "en/archive/round-3-research.md",
+        "en/archive/round-3-research.md",
         "evidence/asset-reference-probe-results.json",
         "en/experiments/asset-reference-probe/README.md"
       ],
@@ -123,7 +123,7 @@
       "referenceIntegration": {
         "status": "limited_reference_chain_executed",
         "scope": "Handoff on one WebGL2 context between Three3D and independent Canvas-texture UI; not complete mixed occlusion, masks, worldUI, or passgraph.",
-        "doc": "en/docs/round-3-integration-record.md",
+        "doc": "en/archive/round-3-research.md",
         "report": "evidence/asset-reference-probe-results.json"
       },
       "codeOriginConstraint": "R015: Design and implement Egret core independently from its own requirements and specifications; standards and open projects supply research foundations, while public infrastructure enters as explicit dependencies retaining versions, sources, notices, and modification records."
@@ -209,8 +209,8 @@
         "en/docs/open-source-research-and-validation-roles.md",
         "evidence/reference-render-lifecycle.json",
         "evidence/reference-assets-animation.json",
-        "en/docs/round-3-integration-record.md",
-        "en/docs/round-3-audit.md",
+        "en/archive/round-3-research.md",
+        "en/archive/round-3-research.md",
         "evidence/asset-reference-probe-results.json",
         "en/experiments/asset-reference-probe/README.md"
       ],
@@ -225,7 +225,7 @@
       "referenceIntegration": {
         "status": "limited_reference_chain_executed",
         "scope": "Actual fixed-r186 mature renderer and skinned-cylinder execution; no acceptance of complete characters, material/lighting support matrices, or mobile-forward benefits.",
-        "doc": "en/docs/round-3-integration-record.md",
+        "doc": "en/archive/round-3-research.md",
         "report": "evidence/asset-reference-probe-results.json"
       },
       "codeOriginConstraint": "R015: Design and implement Egret core independently from its own requirements and specifications; standards and open projects supply research foundations, while public infrastructure enters as explicit dependencies retaining versions, sources, notices, and modification records."
@@ -277,20 +277,20 @@
       "supersedes": null,
       "evidence": [
         "evidence/browser-probe-results.json",
-        "en/docs/technical-validation-record.md",
+        "en/archive/round-1-research.md",
         "evidence/mixed-scene-probe-results.json",
         "evidence/mixed-scene-probe-empty-results.json",
         "evidence/mixed-scene-probe-strict-empty-results.json",
         "evidence/mixed-scene-probe-shared-builder-results.json",
         "en/experiments/mixed-scene-probe/README.md",
         "evidence/phase2-reference-check-2026-10-08.json",
-        "en/docs/round-2-validation-record.md",
-        "en/docs/round-2-audit.md",
+        "en/archive/round-2-research.md",
+        "en/archive/round-2-research.md",
         "en/docs/open-source-reference-implementations-and-adoption.md",
         "en/docs/open-source-research-and-validation-roles.md",
         "evidence/reference-render-lifecycle.json",
-        "en/docs/round-3-integration-record.md",
-        "en/docs/round-3-audit.md",
+        "en/archive/round-3-research.md",
+        "en/archive/round-3-research.md",
         "evidence/asset-reference-probe-results.json",
         "en/experiments/asset-reference-probe/README.md"
       ],
@@ -305,7 +305,7 @@
       "referenceIntegration": {
         "status": "limited_reference_chain_executed",
         "scope": "Only actual desktop WebGL2 lost/restored and fixed-frame reconstruction; no WebGPU scenes or production-host certification.",
-        "doc": "en/docs/round-3-integration-record.md",
+        "doc": "en/archive/round-3-research.md",
         "report": "evidence/asset-reference-probe-results.json"
       },
       "selectionResearch": {
@@ -359,7 +359,7 @@
       "supersedes": null,
       "evidence": [
         "evidence/contract-probe-results.json",
-        "en/docs/round-1-audit.md",
+        "en/archive/round-1-research.md",
         "evidence/reliable-event-probe-results.json",
         "evidence/reliable-event-probe-red-results.json",
         "evidence/reliable-event-probe-red-input-results.json",
@@ -369,8 +369,8 @@
         "evidence/async-resource-probe-legacy-red-results.json",
         "evidence/async-resource-probe-audit-red-results.json",
         "en/experiments/async-resource-probe/README.md",
-        "en/docs/round-2-validation-record.md",
-        "en/docs/round-2-audit.md"
+        "en/archive/round-2-research.md",
+        "en/archive/round-2-research.md"
       ],
       "doc": "en/docs/technical-architecture.md",
       "evidenceScope": "Two rounds of limited research models/local graphics/independent AI review; the complete gate is unfinished and status remains proposed",
@@ -435,7 +435,7 @@
       "supersedes": null,
       "evidence": [
         "evidence/contract-probe-results.json",
-        "en/docs/round-1-audit.md",
+        "en/archive/round-1-research.md",
         "evidence/nested-ui-probe-results.json",
         "evidence/nested-ui-probe-red-results.json",
         "evidence/nested-ui-probe-audit-red-results.json",
@@ -445,14 +445,14 @@
         "evidence/batch-state-probe-red-results.json",
         "evidence/batch-state-probe-audit-red-results.json",
         "en/experiments/batch-state-probe/README.md",
-        "en/docs/round-2-validation-record.md",
-        "en/docs/round-2-audit.md",
+        "en/archive/round-2-research.md",
+        "en/archive/round-2-research.md",
         "en/docs/open-source-reference-implementations-and-adoption.md",
         "en/docs/open-source-research-and-validation-roles.md",
         "evidence/reference-text-ui.json",
         "evidence/reference-pixi-text.json",
-        "en/docs/round-3-integration-record.md",
-        "en/docs/round-3-audit.md",
+        "en/archive/round-3-research.md",
+        "en/archive/round-3-research.md",
         "evidence/asset-reference-probe-results.json",
         "en/experiments/asset-reference-probe/README.md"
       ],
@@ -467,7 +467,7 @@
       "referenceIntegration": {
         "status": "limited_reference_chain_executed",
         "scope": "Native Canvas original-text/style/resolution/fontEpoch caches and text reconstruction; no actual font identity, coverage, CJK wrapping, IME, or complex-UI performance.",
-        "doc": "en/docs/round-3-integration-record.md",
+        "doc": "en/archive/round-3-research.md",
         "report": "evidence/asset-reference-probe-results.json"
       },
       "codeOriginConstraint": "R015: Design and implement Egret core independently from its own requirements and specifications; standards and open projects supply research foundations, while public infrastructure enters as explicit dependencies retaining versions, sources, notices, and modification records."
@@ -483,7 +483,8 @@
         "R004",
         "R008",
         "R012",
-        "R015"
+        "R015",
+        "R020"
       ],
       "sourceIds": [
         "S009",
@@ -515,13 +516,13 @@
         "evidence/mixed-scene-probe-strict-empty-results.json",
         "evidence/mixed-scene-probe-shared-builder-results.json",
         "en/experiments/mixed-scene-probe/README.md",
-        "en/docs/round-2-validation-record.md",
-        "en/docs/round-2-audit.md",
+        "en/archive/round-2-research.md",
+        "en/archive/round-2-research.md",
         "en/docs/open-source-reference-implementations-and-adoption.md",
         "en/docs/open-source-research-and-validation-roles.md",
         "evidence/reference-assets-animation.json",
-        "en/docs/round-3-integration-record.md",
-        "en/docs/round-3-audit.md",
+        "en/archive/round-3-research.md",
+        "en/archive/round-3-research.md",
         "evidence/asset-reference-probe-results.json",
         "en/experiments/asset-reference-probe/README.md"
       ],
@@ -536,7 +537,7 @@
       "referenceIntegration": {
         "status": "limited_reference_chain_executed",
         "scope": "Actual glTF weighted skinning, Mixer sampling, and independent skeleton instances; no complete 2Dslot/constraints/clipping, control trees, root-motion, or animation business events.",
-        "doc": "en/docs/round-3-integration-record.md",
+        "doc": "en/archive/round-3-research.md",
         "report": "evidence/asset-reference-probe-results.json"
       },
       "codeOriginConstraint": "R015: Design and implement Egret core independently from its own requirements and specifications; standards and open projects supply research foundations, while public infrastructure enters as explicit dependencies retaining versions, sources, notices, and modification records."
@@ -586,20 +587,20 @@
       "supersedes": null,
       "evidence": [
         "evidence/contract-probe-results.json",
-        "en/docs/round-1-audit.md",
+        "en/archive/round-1-research.md",
         "evidence/async-resource-probe-results.json",
         "evidence/async-resource-probe-legacy-red-results.json",
         "evidence/async-resource-probe-audit-red-results.json",
         "en/experiments/async-resource-probe/README.md",
-        "en/docs/round-2-validation-record.md",
-        "en/docs/round-2-audit.md",
+        "en/archive/round-2-research.md",
+        "en/archive/round-2-research.md",
         "en/docs/open-source-reference-implementations-and-adoption.md",
         "en/docs/open-source-research-and-validation-roles.md",
         "evidence/reference-assets-animation.json",
         "evidence/reference-text-ui.json",
         "evidence/reference-pixi-text.json",
-        "en/docs/round-3-integration-record.md",
-        "en/docs/round-3-audit.md",
+        "en/archive/round-3-research.md",
+        "en/archive/round-3-research.md",
         "evidence/asset-reference-probe-results.json",
         "en/experiments/asset-reference-probe/README.md"
       ],
@@ -614,7 +615,7 @@
       "referenceIntegration": {
         "status": "limited_reference_chain_executed",
         "scope": "Embedded glTF, final references of instances/bundles, cancellation/late results, and GPU recovery; KTX2/Basis and others were not executed; publication pipelines are unimplemented.",
-        "doc": "en/docs/round-3-integration-record.md",
+        "doc": "en/archive/round-3-research.md",
         "report": "evidence/asset-reference-probe-results.json"
       },
       "codeOriginConstraint": "R015: Design and implement Egret core independently from its own requirements and specifications; standards and open projects supply research foundations, while public infrastructure enters as explicit dependencies retaining versions, sources, notices, and modification records.",
@@ -660,8 +661,8 @@
         "en/docs/open-source-reference-implementations-and-adoption.md",
         "en/docs/open-source-research-and-validation-roles.md",
         "evidence/reference-render-lifecycle.json",
-        "en/docs/round-3-integration-record.md",
-        "en/docs/round-3-audit.md",
+        "en/archive/round-3-research.md",
+        "en/archive/round-3-research.md",
         "evidence/asset-reference-probe-results.json",
         "en/experiments/asset-reference-probe/README.md"
       ],
@@ -676,7 +677,7 @@
       "referenceIntegration": {
         "status": "limited_reference_chain_executed",
         "scope": "One caller owns frame entry in the reference chain, with example start/stop-boundary regressions; no scheduling budgets, thermal feedback, frame-time, or energy measurements.",
-        "doc": "en/docs/round-3-integration-record.md",
+        "doc": "en/archive/round-3-research.md",
         "report": "evidence/asset-reference-probe-results.json"
       },
       "codeOriginConstraint": "R015: Design and implement Egret core independently from its own requirements and specifications; standards and open projects supply research foundations, while public infrastructure enters as explicit dependencies retaining versions, sources, notices, and modification records."
@@ -776,19 +777,19 @@
       "supersedes": null,
       "evidence": [
         "evidence/contract-probe-results.json",
-        "en/docs/round-1-audit.md",
-        "en/docs/round-2-audit.md",
+        "en/archive/round-1-research.md",
+        "en/archive/round-2-research.md",
         "evidence/design-audit-phase2-2026-10-08.json",
         "evidence/phase2-path-metadata-normalization.json",
-        "en/docs/round-2-validation-record.md",
+        "en/archive/round-2-research.md",
         "en/docs/open-source-reference-implementations-and-adoption.md",
         "en/docs/open-source-research-and-validation-roles.md",
         "evidence/reference-render-lifecycle.json",
         "evidence/reference-text-ui.json",
         "evidence/reference-assets-animation.json",
         "evidence/reference-pixi-text.json",
-        "en/docs/round-3-integration-record.md",
-        "en/docs/round-3-audit.md",
+        "en/archive/round-3-research.md",
+        "en/archive/round-3-research.md",
         "evidence/asset-reference-probe-results.json",
         "en/experiments/asset-reference-probe/README.md"
       ],
@@ -803,7 +804,7 @@
       "referenceIntegration": {
         "status": "limited_reference_chain_executed",
         "scope": "Added fixed-SHA dependencies, sources, and failure snapshots; complete version contracts, upgrade migration, and production regressions remain incomplete.",
-        "doc": "en/docs/round-3-integration-record.md",
+        "doc": "en/archive/round-3-research.md",
         "report": "evidence/asset-reference-probe-results.json"
       },
       "codeOriginConstraint": "R015: Design and implement Egret core independently from its own requirements and specifications; standards and open projects supply research foundations, while public infrastructure enters as explicit dependencies retaining versions, sources, notices, and modification records.",
@@ -990,7 +991,7 @@
   ],
   "_localization": {
     "canonicalSource": "决策.json",
-    "canonicalSha256": "dd3a02b4cc0f37e479cb88caa5f26eaf8358f95164706133f511b973275f15de",
+    "canonicalSha256": "e246bfa887d7434d07b28867e7be749b32f9036d745c3363bc7a96268b523663",
     "role": "read_only_translation",
     "language": "en"
   }

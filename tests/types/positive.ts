@@ -69,6 +69,23 @@ const captureCommands:readonly RenderCommand2D[]=content.commands;
 const captureImages:readonly ImageData2D[]|undefined=content.images;
 void legacyCommands;void captureCommands;void captureImages;
 
+import {createSequenceClip,SequencePlayer} from '@egret/engine';
+import type {SequenceClipInput,SequenceFrameInput,SequenceClip,SequenceSample,SequenceRegion,SequencePlaybackMode} from '@egret/engine';
+const sequenceFrame:SequenceFrameInput={x:0,y:0,width:1,height:1,durationSeconds:0.125};
+const sequenceInput:SequenceClipInput={atlasWidth:1,atlasHeight:1,frames:[sequenceFrame]};
+const sequenceClip:SequenceClip=createSequenceClip(sequenceInput);
+const unknownSequence:unknown=sequenceInput;
+const validatedSequence:SequenceClip=createSequenceClip(unknownSequence);
+const playbackMode:SequencePlaybackMode='loop';
+const player:SequencePlayer=new SequencePlayer(bitmap,sequenceClip,playbackMode);
+const defaultPlayer:SequencePlayer=new SequencePlayer(bitmap,validatedSequence);
+const selected:SequenceSample=player.applyAt(0.125);
+const selectedRegion:SequenceRegion=selected.region;
+const cached:SequenceSample|undefined=player.lastSample;
+const disposedPlayer:boolean=player.isDisposed;
+const scopedPlayer:ScopeValue=player;
+player.dispose();void defaultPlayer;void selectedRegion;void cached;void disposedPlayer;void scopedPlayer;
+
 // Append this type-only fixture to R/tests/types/positive.ts after test-only adoption.
 import type {Bitmap as RegionBitmap, TextureRegion2D as RegionRect} from '@egret/engine';
 declare const bitmapRegionPositive: RegionBitmap;

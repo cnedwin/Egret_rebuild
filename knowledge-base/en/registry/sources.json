@@ -222,10 +222,10 @@
         "https://www.layaair.com/3.x/doc/basics/ide/projectsettings/webgpu/"
       ],
       "artifacts": [
-        "en/docs/round-1-research-verification.md",
+        "en/archive/round-1-research.md",
         "evidence/research-refresh-2026-10-08.json"
       ],
-      "doc": "en/docs/round-1-research-verification.md"
+      "doc": "en/archive/round-1-research.md"
     },
     {
       "id": "S015",
@@ -241,7 +241,7 @@
         "evidence/contract-probe-audit-red-2-results.json",
         "en/experiments/contract-probe/README.md"
       ],
-      "doc": "en/docs/technical-validation-record.md"
+      "doc": "en/archive/round-1-research.md"
     },
     {
       "id": "S016",
@@ -257,7 +257,7 @@
         "evidence/browser-probe.png",
         "en/experiments/browser-probe/README.md"
       ],
-      "doc": "en/docs/technical-validation-record.md"
+      "doc": "en/archive/round-1-research.md"
     },
     {
       "id": "S017",
@@ -270,7 +270,7 @@
         "https://registry.khronos.org/webgl/extensions/WEBGL_lose_context/",
         "https://chromium.googlesource.com/chromium/src/+/HEAD/third_party/blink/renderer/modules/webgl/webgl_rendering_context_base.cc"
       ],
-      "doc": "en/docs/technical-validation-record.md"
+      "doc": "en/archive/round-1-research.md"
     },
     {
       "id": "S018",
@@ -287,7 +287,7 @@
         "evidence/reliable-event-probe-verification-results.json",
         "en/experiments/reliable-event-probe/README.md"
       ],
-      "doc": "en/docs/round-2-validation-record.md"
+      "doc": "en/archive/round-2-research.md"
     },
     {
       "id": "S019",
@@ -303,7 +303,7 @@
         "evidence/async-resource-probe-audit-red-results.json",
         "en/experiments/async-resource-probe/README.md"
       ],
-      "doc": "en/docs/round-2-validation-record.md"
+      "doc": "en/archive/round-2-research.md"
     },
     {
       "id": "S020",
@@ -320,7 +320,7 @@
         "evidence/nested-ui-probe-unsafe-isolation-results.json",
         "en/experiments/nested-ui-probe/README.md"
       ],
-      "doc": "en/docs/round-2-validation-record.md"
+      "doc": "en/archive/round-2-research.md"
     },
     {
       "id": "S021",
@@ -336,7 +336,7 @@
         "evidence/batch-state-probe-audit-red-results.json",
         "en/experiments/batch-state-probe/README.md"
       ],
-      "doc": "en/docs/round-2-validation-record.md"
+      "doc": "en/archive/round-2-research.md"
     },
     {
       "id": "S022",
@@ -354,7 +354,7 @@
         "evidence/mixed-scene-probe.png",
         "en/experiments/mixed-scene-probe/README.md"
       ],
-      "doc": "en/docs/round-2-validation-record.md"
+      "doc": "en/archive/round-2-research.md"
     },
     {
       "id": "S023",
@@ -371,7 +371,7 @@
       "artifacts": [
         "evidence/phase2-reference-check-2026-10-08.json"
       ],
-      "doc": "en/docs/round-2-validation-record.md"
+      "doc": "en/archive/round-2-research.md"
     },
     {
       "id": "S024",
@@ -382,11 +382,11 @@
       "limit": "Not human approval; reviewers did not add browser execution or run legacy projects and cannot establish complete products or advantages.",
       "urls": [],
       "artifacts": [
-        "en/docs/round-2-audit.md",
+        "en/archive/round-2-research.md",
         "evidence/design-audit-phase2-2026-10-08.json",
         "evidence/phase2-path-metadata-normalization.json"
       ],
-      "doc": "en/docs/round-2-audit.md"
+      "doc": "en/archive/round-2-research.md"
     },
     {
       "id": "S025",
@@ -523,7 +523,7 @@
         "evidence/asset-reference-source-audit.json",
         "evidence/asset-reference-file-footprint.json"
       ],
-      "doc": "en/docs/round-3-integration-record.md"
+      "doc": "en/archive/round-3-research.md"
     },
     {
       "id": "S031",
@@ -537,9 +537,9 @@
         "evidence/asset-reference-probe-results.json",
         "evidence/asset-reference-probe.png",
         "en/experiments/asset-reference-probe/README.md",
-        "en/docs/round-3-integration-record.md"
+        "en/archive/round-3-research.md"
       ],
-      "doc": "en/docs/round-3-integration-record.md"
+      "doc": "en/archive/round-3-research.md"
     },
     {
       "id": "S032",
@@ -554,9 +554,9 @@
         "evidence/asset-reference-code-review.json",
         "evidence/asset-reference-report-integrity.json",
         "evidence/asset-reference-integration-audit.json",
-        "en/docs/round-3-audit.md"
+        "en/archive/round-3-research.md"
       ],
-      "doc": "en/docs/round-3-audit.md"
+      "doc": "en/archive/round-3-research.md"
     },
     {
       "id": "S033",
@@ -1104,11 +1104,76 @@
         "evidence/b1-public-browser.json"
       ],
       "doc": "en/docs/b1-browser-verifier.md"
+    },
+    {
+      "id": "S066",
+      "title": "Project owner confirms complete Spine support",
+      "type": "project_owner_instruction",
+      "scope": "The new product requirement that the engine must perfectly support Spine animation.",
+      "limit": "Requirement confirmation is not implementation, dependency adoption or compatibility acceptance; it does not establish performance or all-version support.",
+      "researchCheckedAt": "2026-10-10",
+      "doc": "en/docs/spine-animation-support-and-acceptance.md"
+    },
+    {
+      "id": "S067",
+      "title": "Current official Spine version, architecture and backend documentation",
+      "type": "primary_official_documentation_research",
+      "scope": "Official 4.3 non-beta status, version matching, TypeScript semantics/rendering separation, Canvas limitations, official WebGPU integration precedent and native candidates.",
+      "limit": "Online documentation and branch reading are not a fixed-commit source audit, proof of the latest npm package, dependency installation or Egret runtime acceptance; no Spine experiment has run.",
+      "researchCheckedAt": "2026-10-10",
+      "urls": [
+        "https://esotericsoftware.com/spine-api-reference",
+        "https://esotericsoftware.com/spine-versioning",
+        "https://esotericsoftware.com/spine-runtime-architecture",
+        "https://github.com/EsotericSoftware/spine-runtimes/blob/4.3/spine-ts/README.md",
+        "https://esotericsoftware.com/spine-pixi",
+        "https://esotericsoftware.com/blog/Spine-4.3-released",
+        "https://github.com/EsotericSoftware/spine-runtimes/blob/4.3/spine-cpp/README.md",
+        "https://github.com/EsotericSoftware/spine-runtimes/blob/4.3/spine-c/README.md"
+      ],
+      "doc": "en/docs/spine-animation-support-and-acceptance.md"
+    },
+    {
+      "id": "S068",
+      "title": "Official Spine runtime and editor license texts",
+      "type": "primary_official_license_research",
+      "scope": "Official custom runtime license and editor-license conditions for integration, toolkit users and redistribution notices.",
+      "limit": "Records applicable source terms, not a complete legal assessment of a future Egret distribution; it does not authorize asset or runtime incorporation.",
+      "researchCheckedAt": "2026-10-10",
+      "urls": [
+        "https://esotericsoftware.com/spine-runtimes-license",
+        "https://esotericsoftware.com/spine-editor-license"
+      ],
+      "doc": "en/docs/spine-animation-support-and-acceptance.md"
+    },
+    {
+      "id": "S069",
+      "title": "Bitmap opaque native prerequisite observation",
+      "type": "first_party_recorded_opaque_native_subset_and_independent_saved_artifact_review",
+      "scope": "8 captures, 256 pixels and 1024 zero-tolerance channel comparisons on Canvas/WebGPU; same atlas lease and saved-frame replay after resource retirement. Independent saved-artifact review P1/P2 are both 0.",
+      "limit": "Uses the internal sampler and crop setter; does not accept public SequencePlayer, complete A2, alpha precision, hardware acceleration, phones or performance; the incomplete predecessor remains preserved.",
+      "researchCheckedAt": "2026-10-10",
+      "artifacts": [
+        "evidence/bitmap-region-native.json"
+      ],
+      "doc": "en/docs/bitmap-region-evidence.md"
+    },
+    {
+      "id": "S070",
+      "title": "Public explicit-time player implementation and bounded acceptance",
+      "type": "first_party_public_api_implementation_and_recorded_cpu_type_opaque_native_evidence",
+      "scope": "Public factory and SequencePlayer; 14 behavior checks, 54/5/28 expected negative type diagnostics and 13 B1 source-driver cases passed. 8 captures, 256 pixels and 1024 zero-tolerance channel comparisons on Canvas/WebGPU; independent saved-artifact review P1/P2 are both 0.",
+      "limit": "Browser fixture covers only the fixed opaque explicit-time subset; interactive example UI remains untested. No complete A2, full lifecycle browser coverage, performance, phones, Spine or complete migration acceptance. Complete prepush and remote delivery are recorded separately.",
+      "researchCheckedAt": "2026-10-10",
+      "artifacts": [
+        "evidence/sequence-player-native.json"
+      ],
+      "doc": "en/docs/sequence-player-contract.md"
     }
   ],
   "_localization": {
     "canonicalSource": "来源.json",
-    "canonicalSha256": "f8e9adfdc8fccde1047611be2ba2602c36246843b7757931306140ebbb981488",
+    "canonicalSha256": "068cbd28494bd9f75921400bc0b158b6079b8e4fdd0d9af6d360bd8029d8ee21",
     "role": "read_only_translation",
     "language": "en"
   }

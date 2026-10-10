@@ -11,3 +11,5 @@ export type { Matrix2D, Rectangle2D, ClipRectangle2D, RectangleCommand2D, ImageC
 export { IMAGE_LIMITS_2D, createImageData2D, isImageData2D, copyImageData2DPixels } from '@egret/contracts';
 export type { ImageData2DInput, ImageData2D, TextureRegion2D } from '@egret/contracts';
 export { Texture, createTexture, isTexture, Bitmap } from '@egret/runtime';
+export { createSequenceClip, SequencePlayer } from '@egret/runtime';
+export type { SequenceFrameInput, SequenceClipInput, SequenceClip, SequenceRegion, SequenceSample, SequencePlaybackMode } from '@egret/runtime';

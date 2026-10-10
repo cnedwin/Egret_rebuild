@@ -34,12 +34,12 @@
         "自主核心来源与设计可追溯；第三方依赖、修改及发行声明明确，竞品内部代码不复制或由AI机械改写"
       ],
       "artifacts": [
-        "Cns/docs/第一轮研究核查.md",
-        "Cns/docs/技术验证记录.md",
+        "Cns/archive/第一轮研究.md",
+        "Cns/archive/第一轮研究.md",
         "evidence/research-refresh-2026-10-08.json",
         "evidence/contract-probe-results.json",
         "evidence/browser-probe-results.json",
-        "Cns/docs/第二轮验证记录.md",
+        "Cns/archive/第二轮研究.md",
         "evidence/reliable-event-probe-results.json",
         "evidence/async-resource-probe-results.json",
         "evidence/nested-ui-probe-results.json",
@@ -50,9 +50,9 @@
         "evidence/reference-text-ui.json",
         "evidence/reference-assets-animation.json",
         "evidence/reference-pixi-text.json",
-        "Cns/docs/第三轮集成计划.md",
-        "Cns/docs/第三轮集成记录.md",
-        "Cns/docs/第三轮审计.md",
+        "Cns/archive/第三轮研究.md",
+        "Cns/archive/第三轮研究.md",
+        "Cns/archive/第三轮研究.md",
         "evidence/asset-reference-probe-results.json",
         "Cns/experiments/asset-reference-probe/README.md"
       ],
@@ -75,7 +75,8 @@
         "R014",
         "R015",
         "R016",
-        "R017"
+        "R017",
+        "R020"
       ],
       "dependsOn": [
         "V001"
@@ -89,12 +90,13 @@
         "混合2D/3D原型正确性与预算",
         "加载调度恢复与持续运行",
         "候选技术决策的可复现验证",
-        "自主核心来源与设计可追溯；第三方依赖、修改及发行声明明确，竞品内部代码不复制或由AI机械改写"
+        "自主核心来源与设计可追溯；第三方依赖、修改及发行声明明确，竞品内部代码不复制或由AI机械改写",
+        "R020：完整 Spine 有序渲染、复杂 UI／3D 合成及图形恢复，按公开版本／宿主矩阵验收。"
       ],
       "artifacts": [
-        "Cns/docs/第三轮集成计划.md",
-        "Cns/docs/第三轮集成记录.md",
-        "Cns/docs/第三轮审计.md",
+        "Cns/archive/第三轮研究.md",
+        "Cns/archive/第三轮研究.md",
+        "Cns/archive/第三轮研究.md",
         "evidence/asset-reference-probe-results.json",
         "Cns/experiments/asset-reference-probe/README.md",
         "Cns/docs/核心框架首段实现计划.md",
@@ -177,7 +179,8 @@
         "R008",
         "R012",
         "R015",
-        "R016"
+        "R016",
+        "R020"
       ],
       "dependsOn": [
         "V001"
@@ -191,12 +194,13 @@
         "文本/图集/骨骼/序列帧语义一致",
         "目标资源和模块清单可重复生成",
         "加载上传释放失败可定位",
-        "自主核心来源与设计可追溯；第三方依赖、修改及发行声明明确，竞品内部代码不复制或由AI机械改写"
+        "自主核心来源与设计可追溯；第三方依赖、修改及发行声明明确，竞品内部代码不复制或由AI机械改写",
+        "R020：完整 Spine 导入、版本、约束／附件／皮肤／事件及资源生命周期，V020 不能以简单播放替代。"
       ],
       "artifacts": [
-        "Cns/docs/第三轮集成计划.md",
-        "Cns/docs/第三轮集成记录.md",
-        "Cns/docs/第三轮审计.md",
+        "Cns/archive/第三轮研究.md",
+        "Cns/archive/第三轮研究.md",
+        "Cns/archive/第三轮研究.md",
         "evidence/asset-reference-probe-results.json",
         "Cns/experiments/asset-reference-probe/README.md"
       ],
@@ -222,7 +226,8 @@
         "R013",
         "R014",
         "R015",
-        "R016"
+        "R016",
+        "R020"
       ],
       "dependsOn": [
         "V002",
@@ -238,7 +243,8 @@
         "声明宿主真实设备完整运行",
         "打包更新与生命周期",
         "创作者任务与成本基线",
-        "自主核心来源与设计可追溯；第三方依赖、修改及发行声明明确，竞品内部代码不复制或由AI机械改写"
+        "自主核心来源与设计可追溯；第三方依赖、修改及发行声明明确，竞品内部代码不复制或由AI机械改写",
+        "R020：Spine 导入预览、编辑撤销、AI 操作及声明宿主打包更新闭环。"
       ],
       "artifacts": [],
       "doc": "Cns/docs/产品组成.md"
@@ -253,7 +259,8 @@
         "R008",
         "R013",
         "R015",
-        "R016"
+        "R016",
+        "R020"
       ],
       "dependsOn": [
         "V001",
@@ -274,7 +281,8 @@
         "声明宿主平台和性能验收",
         "全样本人工介入/AI成本及未解决项",
         "迁移后继续编辑撤销、真实目标发布及更新闭环",
-        "自主核心来源与设计可追溯；第三方依赖、修改及发行声明明确，竞品内部代码不复制或由AI机械改写"
+        "自主核心来源与设计可追溯；第三方依赖、修改及发行声明明确，竞品内部代码不复制或由AI机械改写",
+        "R020：适用旧工程 Spine 插件版本盘点及旧新动画／事件／资源对照，继续编辑及目标发布。"
       ],
       "artifacts": [],
       "doc": "Cns/docs/旧工程迁移.md"
@@ -313,9 +321,9 @@
         "Cns/CONTRIBUTING.md",
         "tools/Validate-KnowledgeBase.ps1",
         "Cns/docs/开源实现优先与验证分工.md",
-        "Cns/docs/第三轮集成计划.md",
-        "Cns/docs/第三轮集成记录.md",
-        "Cns/docs/第三轮审计.md",
+        "Cns/archive/第三轮研究.md",
+        "Cns/archive/第三轮研究.md",
+        "Cns/archive/第三轮研究.md",
         "evidence/asset-reference-probe-results.json",
         "Cns/experiments/asset-reference-probe/README.md",
         "Cns/docs/独立实现与第三方依赖规范.md",
@@ -353,7 +361,7 @@
         "evidence/core-framework-document-review-final.json",
         "Cns/docs/开源协作与公开表达规范.md",
         "Cns/ACKNOWLEDGEMENTS.md",
-        "Cns/AGENTS.md",
+        "Cns/CONTRIBUTING.md",
         "evidence/public-collaboration-requirement.json",
         "evidence/public-community-editorial.json",
         "evidence/public-release-boundary-audit.json",
@@ -401,12 +409,12 @@
         "Cns/docs/技术白皮书.md",
         "Cns/docs/产品需求说明书.md",
         "Cns/docs/工程规划.md",
-        "Cns/docs/技术验证记录.md",
-        "Cns/docs/第一轮审计.md",
+        "Cns/archive/第一轮研究.md",
+        "Cns/archive/第一轮研究.md",
         "evidence/design-audit-2026-10-08.json",
-        "Cns/docs/第二轮验证计划.md",
-        "Cns/docs/第二轮验证记录.md",
-        "Cns/docs/第二轮审计.md",
+        "Cns/archive/第二轮研究.md",
+        "Cns/archive/第二轮研究.md",
+        "Cns/archive/第二轮研究.md",
         "evidence/design-audit-phase2-2026-10-08.json",
         "Cns/docs/开源实现优先与验证分工.md",
         "Cns/docs/开源参考实现与采用方案.md",
@@ -416,9 +424,9 @@
         "evidence/reference-pixi-text.json",
         "evidence/reference-independent-audit.json",
         "evidence/reference-research-audit-2026-10-08.json",
-        "Cns/docs/第三轮集成计划.md",
-        "Cns/docs/第三轮集成记录.md",
-        "Cns/docs/第三轮审计.md",
+        "Cns/archive/第三轮研究.md",
+        "Cns/archive/第三轮研究.md",
+        "Cns/archive/第三轮研究.md",
         "evidence/asset-reference-probe-results.json",
         "Cns/experiments/asset-reference-probe/README.md",
         "Cns/docs/图形后端编译与原生Runtime选型.md",
@@ -461,7 +469,7 @@
         "evidence/core-framework-document-review-final.json",
         "Cns/docs/开源协作与公开表达规范.md",
         "Cns/ACKNOWLEDGEMENTS.md",
-        "Cns/AGENTS.md",
+        "Cns/CONTRIBUTING.md",
         "evidence/public-collaboration-requirement.json",
         "evidence/public-community-editorial.json",
         "evidence/public-release-boundary-audit.json",
@@ -513,7 +521,7 @@
         "evidence/core-framework-document-review-final.json",
         "Cns/docs/开源协作与公开表达规范.md",
         "Cns/ACKNOWLEDGEMENTS.md",
-        "Cns/AGENTS.md",
+        "Cns/CONTRIBUTING.md",
         "evidence/public-collaboration-requirement.json",
         "evidence/public-community-editorial.json",
         "evidence/public-release-boundary-audit.json",
@@ -852,6 +860,77 @@
         "evidence/legacy-movieclip-focused.json"
       ],
       "doc": "Cns/docs/legacy-movieclip-contract.md"
+    },
+    {
+      "id": "V020",
+      "title": "完整 Spine 动画能力与集成",
+      "kind": "product_capability",
+      "status": "planned",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R005",
+        "R006",
+        "R007",
+        "R008",
+        "R012",
+        "R014",
+        "R015",
+        "R016",
+        "R020"
+      ],
+      "dependsOn": [
+        "V001"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "not_started",
+      "acceptance": "not_run",
+      "acceptanceCriteria": [
+        "精确导出／运行时身份及完整版本功能矩阵，JSON／二进制与图集依赖正确导入，版本不匹配及失败有诊断。",
+        "所选完整约束／网格／附件／皮肤／时间线、轨道混合和动画事件与版本匹配参考一致；未知或不支持项明确。",
+        "WebGPU／WebGL 有序绘制、裁剪、双色、透明度和混合在复杂 UI／3D 中正确；Canvas 限制不得静默隐藏。",
+        "独立实例、共享资源、取消、销毁和图形恢复正确，玩法状态及已消费事件不因恢复重复。",
+        "创作／编辑／撤销／打包／更新和适用旧工程迁移对照可复现，声明宿主真实运行与等效内容性能范围清晰。",
+        "白鹭适配层、官方运行时与资产分别登记出处及许可；不使用 Spine 的工程不默认引入其依赖。"
+      ],
+      "artifacts": [
+        "Cns/docs/Spine动画支持需求与验收.md"
+      ],
+      "doc": "Cns/docs/Spine动画支持需求与验收.md"
+    },
+    {
+      "id": "V021",
+      "title": "公共显式时间序列播放器",
+      "kind": "bounded_runtime_increment",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R012"
+      ],
+      "dependsOn": [
+        "V010",
+        "V017"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "public_explicit_time_sequence_player",
+      "acceptance": "bounded_cpu_type_and_opaque_desktop_subset_verified_publication_separate",
+      "acceptanceCriteria": [
+        "公共根入口提供已准入序列工厂／类型及播放器；显式绝对时间、once／loop、向后定位和不可变采样有明确合同。",
+        "精确借用 Bitmap／租约／完整图集；裁剪与缓存采样提交、错误顺序、私有权威、销毁及 Engine 归属通过 14 项行为检查。",
+        "54／5／28 项预期负向类型诊断与受影响的 13 个 B1 源码驱动案例通过；真实集成失败及修复保持记录。",
+        "Canvas／WebGPU 上 8 次捕获、256 个像素、1024 次零容差通道比较，以及资源退出后不同 Host 的保存帧重放，均经保存产物独立审阅。",
+        "此验收限定 CPU／类型与固定桌面不透明夹具；交互示例 UI、完整 A2／透明精度、全部生命周期浏览器覆盖、Spine、性能和完整 R008／V006 迁移仍为独立义务。"
+      ],
+      "artifacts": [
+        "Cns/docs/显式时间序列播放器契约.md",
+        "evidence/sequence-player-native.json"
+      ],
+      "doc": "Cns/docs/显式时间序列播放器契约.md"
     }
   ]
 }

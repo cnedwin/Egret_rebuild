@@ -2,9 +2,9 @@
 
 [简体中文](../../Cns/docs/sequence-clip-contract.md) · [Verification evidence](sequence-clip-evidence.md)
 
-Egret's first-party sequence clip core (`packages/runtime/src/sequenceClip.ts`) converts atlas-region durations into immutable timing data and samples a frame from supplied seconds. It is an internal CPU component, not a player, texture loader or renderer. Its functions and types are not exported by the runtime package barrel.
+Egret's first-party sequence clip core (`packages/runtime/src/sequenceClip.ts`) converts atlas-region durations into immutable timing data and samples a frame from supplied seconds. The clip factory and metadata types are now exposed through the root/runtime barrels. The sampler remains internal, and this component itself does not load textures or render. The separate [explicit-time SequencePlayer contract](sequence-player-contract.md) defines live Bitmap binding and application.
 
-The [implemented Bitmap region member](bitmap-region-contract.md) can receive a sample from a full-image atlas using caller-supplied seconds and the same borrowed lease. Sampling remains internal and separate from assignment; no clock/player is added. Its bounded CPU evidence does not validate visible playback or transfer the older sampler/full-suite records to a new rendering result.
+The [implemented Bitmap region member](bitmap-region-contract.md) can receive a sample from a full-image atlas using caller-supplied seconds and the same borrowed lease. The historical manual sampling path remains separate from assignment. SequencePlayer adds explicit application without a clock. Historical CPU evidence does not certify that new player or transfer older sampler/full-suite records to new rendering results.
 
 ```ts
 createSequenceClip(input: unknown): SequenceClip

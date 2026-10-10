@@ -35,7 +35,7 @@ Microsoft Corporation 的 [jsonc-parser](https://github.com/microsoft/node-jsonc
 | Three.js r186 | WebGLRenderer、GLTFLoader、AnimationMixer和SkeletonUtils实际执行于研究对照链。第三方执行能力保留Three.js归属，白鹭适配单独保存 | commit `9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8`；[官方固定来源](https://github.com/mrdoob/three.js/tree/9b4a2ac29c63ccb43fd51c5661f2f873ac2c39b8)、[来源与文件hash](../experiments/asset-reference-probe/sources.json)、[随附MIT声明](../experiments/asset-reference-probe/vendor/three/r186/LICENSE)、[第三方声明](experiments/asset-reference-probe/THIRD_PARTY_NOTICES.md) |
 | Rigged Simple — Cesium (2017) | 研究链使用的未修改embedded glTF资产，1skin/2joint/1clip蒙皮圆柱 | KhronosGroup/glTF-Sample-Assets commit `edc7c9e67c639d230715049ee31f9a96a6babbbe`；[官方固定资产](https://github.com/KhronosGroup/glTF-Sample-Assets/blob/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/RiggedSimple/glTF-Embedded/RiggedSimple.gltf)、[CC-BY-4.0许可](../en/experiments/asset-reference-probe/assets/RiggedSimple/LICENSE.md)、[归属元数据](../experiments/asset-reference-probe/assets/RiggedSimple/metadata.json) |
 
-已有17/17检查限于本地桌面WebGL2研究链及原条件，见[第三轮集成记录](docs/第三轮集成记录.md)。这些依赖尚未作为白鹭生产内核选择；KTX2/Basis、完整2D骨骼、复杂UI和生产宿主另有验收范围。
+已有17/17检查限于本地桌面WebGL2研究链及原条件，见[第三轮集成记录](archive/第三轮研究.md#execution)。这些依赖尚未作为白鹭生产内核选择；KTX2/Basis、完整2D骨骼、复杂UI和生产宿主另有验收范围。
 
 ## 公开标准与文字基础资料
 
