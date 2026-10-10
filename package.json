@@ -13,6 +13,6 @@
     "example": "node examples/headless.mjs",
     "verify": "node tools/verify.mjs"
   },
-  "devDependencies": { "typescript": "7.0.2" },
+  "devDependencies": { "@egret/runtime": "workspace:*", "typescript": "7.0.2" },
   "dependencies": { "@egret/engine": "workspace:*", "@egret/project": "workspace:*" }
 }

@@ -1029,11 +1029,47 @@
         "evidence/textured-mesh2d-verification.json"
       ],
       "doc": "en/docs/textured-geometry-and-mesh2d-contract.md"
+    },
+    {
+      "id": "V025",
+      "kind": "bounded_runtime_increment",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R011",
+        "R015",
+        "R016",
+        "R019"
+      ],
+      "dependsOn": [
+        "V010",
+        "V011"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "explicit_dom_free_text_raster_provider_cache_and_genuine_texture_leases",
+      "acceptance": "bounded_source_type_lifecycle_accounting_controls_publication_separate",
+      "title": "DOM-free text raster orchestration and owned resource lifetimes",
+      "acceptanceCriteria": [
+        "The explicit Engine text entry shares the runtime factory and types; default roots and host contracts remain unchanged.",
+        "Owned requests and invocation-scoped plans preserve exact lines, signed ink, bounded allocation and separately charged retained actors, caller leases and residency.",
+        "Actual literal-provider behavior, image authority, private accounting/fault controls, affected regressions and source boundaries retain their own version-bound results; overlapping groups are not added.",
+        "The genuine DOM-free positive consumer and exactly 18 ordinary plus 9 isolated negative diagnostics pass all required file/line/code checks; earlier resolution and fixture failures are preserved.",
+        "Independent bounded source review closes six lifecycle findings. English comments, paired public curation, complete current prepush and remote delivery are recorded separately; browser fonts, TextField and full product obligations remain open."
+      ],
+      "artifacts": [
+        "en/docs/text-raster-t1-contract.md",
+        "en/docs/text-raster-t1-evidence.md",
+        "evidence/text-raster-t1-verification.json"
+      ],
+      "doc": "en/docs/text-raster-t1-contract.md"
     }
   ],
   "_localization": {
     "canonicalSource": "交付.json",
-    "canonicalSha256": "549a469329a39002e9c69c828a048672cbb776c21724cbc69fee3d2d0866bf59",
+    "canonicalSha256": "8402b0712c53242377c62c1236168e5810a51780d60405df0e94984a4b645120",
     "role": "read_only_translation",
     "language": "en"
   }

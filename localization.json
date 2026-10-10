@@ -1,21 +1,28 @@
 {
   "schemaVersion": 1,
-  "revision": "0.22.0",
+  "revision": "0.24.0",
   "canonicalState": "Chinese registries; English JSON is a read-only translation",
   "evidencePolicy": "Machine data, embedded source, historical code and upstream legal originals retain their identities; paired reading versions explain them.",
   "semanticReview": {
     "status": "reviewed_with_scope",
-    "engineeringPreview": "0.23.0",
+    "engineeringPreview": "0.24.0",
     "method": {
-      "en": "Independent scoped reviews cover the three new paired rendering documents and structured evidence, changed community and knowledge-base entries, current registry additions, source attribution and newly listed English comments. Maintainers authored the current metadata successor. Unchanged earlier document bodies retain their own version-bound reviews.",
-      "zh-CN": "独立范围审阅覆盖三组新渲染配对文档及结构化证据、修订社区与知识库入口、当前登记新增、来源归属及新登记英文注释。维护者编写当前元数据后继版本；未变既有文档正文保留各自版本绑定审阅。"
+      "en": "Maintainer curation and independent bounded review accepted the current new or changed T1 public material. Unchanged earlier bodies retain their separately version-bound reviews; later root metadata hashes are independently attested here.",
+      "zh-CN": "维护者整理及独立有界审阅接受当前新增或修改的 T1 公开材料。未变既有正文保留各自版本绑定审阅；后续根维护者元数据哈希在此单独记录。"
     },
     "scope": {
-      "en": "The inventory contains 124 reading pairs, six canonical/translated registry views and 121 critical English-comment source files. Three new reading pairs and 19 newly listed critical modules have current scoped review; the remaining unchanged bodies and original evidence retain historical scopes. Source/native acceptance, current portable workflow execution, final prepush and remote delivery are separate records.",
-      "zh-CN": "清单包含 124 对阅读文档、六组规范／翻译登记视图及 121 份关键英文注释源码。三对新增阅读文档及 19 份新登记关键模块具有当前范围审阅；其余未变正文与原始证据保留历史范围。源码／原生验收、当前可移植流程执行、最终 prepush 及远程交付分别记录。"
+      "en": "Two new reading pairs, changed community and knowledge-base entries, paired T1 test guidance, current registry additions, source attribution and ten critical source comment subjects. Inventory totals are counts, not blanket review acceptance.",
+      "zh-CN": "两对新阅读文档、修订社区与知识库入口、配对 T1 测试指引、当前登记新增、来源归属及十份关键源码注释对象。清单总数只作计数，不代表整体审阅验收。"
     },
-    "qualityStatus": "INDEPENDENT_SCOPED_REVIEWS_RECORDED_CURRENT_METADATA_SUCCESSOR",
-    "publicationStatus": "ACTUAL_WORKFLOW_PREPUSH_AND_REMOTE_DELIVERY_RECORDED_SEPARATELY"
+    "qualityStatus": "ROOT_ACCEPTED_CURRENT_SCOPED_PUBLIC_REVIEW",
+    "publicationStatus": "ACTUAL_CURRENT_PREPUSH_AND_REMOTE_DELIVERY_RECORDED_SEPARATELY",
+    "review": {
+      "bytes": 5236,
+      "sha256": "9ebbb73ec5bdfc6a91d8fedcbd381f3b14754578b39f84e05772f818cf21fe42",
+      "status": "identity_only_not_distributed",
+      "scope": "Current new/changed T1 paired readings, community entries, guidance, structured registration, saved evidence boundaries, provenance and ten critical English-comment subjects. Unchanged older bodies retain their separately version-bound reviews; inventory totals are not blanket semantic acceptance."
+    },
+    "laterRootMetadataAttestation": true
   },
   "documents": [
     {
@@ -29,8 +36,8 @@
       "zh": "AGENTS.zh-CN.md",
       "en": "AGENTS.md",
       "kind": "public_reading",
-      "zhSha256": "cdfa3bb19f75778f81a949d27699684ab7118ae7d2bb32e3e3f09d390a7e7bb8",
-      "enSha256": "a1108c2895e879722b575442473ec16ef77c5537ba63020a93d127779520ebdd"
+      "zhSha256": "cd04850491f0cd8f2bdc21ce7e82e6177560f6ef1f1d4c37e2899a67e92d7c4a",
+      "enSha256": "ac89557dfdb732f1eae77bba20cfbe55f92ca3e4a82266e6abdc0d81f973cd73"
     },
     {
       "zh": "CONTRIBUTING.zh-CN.md",
@@ -106,8 +113,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "zhSha256": "b99459ca7ea77f50d5c174b2fc8ec104af559ab4ecb0ef18284391d954d76e6e",
-      "enSha256": "3812debabc0e9c31fc10d72e1d02a9fdff5d5307c857ea37fc8d1614ab04add8"
+      "zhSha256": "0c125180412d12efa3b1e6dcb3eab33588d0dea18661414795c302cf98bcb14a",
+      "enSha256": "9aa80eb773b33c10a78dfafaab2d88c8b356732ac490b0d6ec206caa13751dc5"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -729,8 +736,8 @@
       "zh": "knowledge-base/Cns/README.md",
       "en": "knowledge-base/en/README.md",
       "kind": "public_reading",
-      "zhSha256": "fdfa41fd4e3d48bb86fbf674e7e17e91d6d31ccba21c268d15007a147ddf7fb4",
-      "enSha256": "cd1e8681483ff177fd466cef5f06c7c0962b1c2b70d3783c7bc7f0d42f1a82fe"
+      "zhSha256": "baee2b04f6ee7b519940d8031014f18824f0d724e81299d984272ec2c8685cda",
+      "enSha256": "bf59e5620eea24a29f08b587de087f2875c7aa64341c743b751800dbe5bfba2f"
     },
     {
       "zh": "knowledge-base/Cns/templates/ADR决策记录.md",
@@ -813,8 +820,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "zhSha256": "0d7ec681f57d1f0652d2ea00cf51ec213fd15db6e416c16eb31d163a882722c9",
-      "enSha256": "dc1d2caa19f79c063d19867b21639e17bbb3d3c03fc8c3bf523b9a47f883410a"
+      "zhSha256": "643e6b57af9cade5bcc3a1c7d0087ce5cf20c321c80fbbb229f9e9b1242c4e63",
+      "enSha256": "7c3b2eda11152baf512613b9ed1f060bc2ed9ecf24f233c8875b4b6806068ea2"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -885,14 +892,28 @@
       "kind": "public_reading",
       "zhSha256": "fa327dd91378af3c1e59ebec823e7acf245aabb2885f33942a654decd5d48a50",
       "enSha256": "9718817fc9139d1e084ee39f57830833585c360c9e282760f5aad8b2d64e70b7"
+    },
+    {
+      "en": "knowledge-base/en/docs/text-raster-t1-contract.md",
+      "zh": "knowledge-base/Cns/docs/文字栅格T1契约.md",
+      "kind": "public_reading",
+      "zhSha256": "b0a5cefef249d203f673f6322267ecdd2801e009aa64b2928bd225ced2f3f5b8",
+      "enSha256": "3c24eba249c3c7b8d14d45d8efe9fef19c8af914794a7d1817d2830abb5bb1c7"
+    },
+    {
+      "en": "knowledge-base/en/docs/text-raster-t1-evidence.md",
+      "zh": "knowledge-base/Cns/docs/文字栅格T1证据.md",
+      "kind": "public_reading",
+      "zhSha256": "be97e15c6a5b3331f8fc9a7a7bd2d3004c3ddef5d51947cfa8f0262a6c32fcc0",
+      "enSha256": "1de307d23447f43d8e69cc8e8a835172d71e9b16500839c62a6817af14ccdf24"
     }
   ],
   "registries": [
     {
       "source": "knowledge-base/Cns/registry/需求.json",
       "target": "knowledge-base/en/registry/requirements.json",
-      "sourceSha256": "2cbc03cffa770beb5d79f6c529437ad3658defaeaee8cd645226cb9ee111b490",
-      "targetSha256": "bc2b4bf8054e7ebc1b99829c606b793cbe24b564cf98f505b035ded8543f3f2c"
+      "sourceSha256": "977c481e6a399b2ccc7cf3df22a20ff945aa3be01417ae5e7635e727f8e05e35",
+      "targetSha256": "f367cb8aaa56bf142892e7c3f2102f95ab989bdccbb5d0b201cda0446c4d031c"
     },
     {
       "source": "knowledge-base/Cns/registry/决策.json",
@@ -909,20 +930,20 @@
     {
       "source": "knowledge-base/Cns/registry/交付.json",
       "target": "knowledge-base/en/registry/deliverables.json",
-      "sourceSha256": "549a469329a39002e9c69c828a048672cbb776c21724cbc69fee3d2d0866bf59",
-      "targetSha256": "9b458dd9b6592c4c866d65bfe6f823b8ca00180379f7a25ebae9b1030797305d"
+      "sourceSha256": "8402b0712c53242377c62c1236168e5810a51780d60405df0e94984a4b645120",
+      "targetSha256": "cfb6a81325fc9c5146dcd4a0f98b955cf95e679edca3786b343ec0ae4dff8db6"
     },
     {
       "source": "knowledge-base/Cns/registry/来源.json",
       "target": "knowledge-base/en/registry/sources.json",
-      "sourceSha256": "feab25c1c983f8b68a88dd7b9e8b5ce0c4f7f6d3d2949d0e43199231e4256bc9",
-      "targetSha256": "8ec600508128d87888ef14ce328f6d6945de3b92e8a21efbc6c053ed979a84ed"
+      "sourceSha256": "e773d8fd31e4f0c145ac129f5a41750fb04621de43fd73c887d8091c387c996d",
+      "targetSha256": "c6650bf77d95df1bd5f363546a081af2abeb6319313c9acfdba4c37fa7fc924e"
     },
     {
       "source": "knowledge-base/Cns/当前版本.json",
       "target": "knowledge-base/en/current-version.json",
-      "sourceSha256": "7f19918343ce0c1852574267e4919cec03937c5c7a24b03dd5c90fc6e334c662",
-      "targetSha256": "5ce592501658df4e8f7fc7eb603859e4c53de8df74f44b4f9e986b81863fe5b2"
+      "sourceSha256": "afbc4644fdd270e165e9d6e43e2d0b420ab9ee1d70b2fed409c80c9814ee740c",
+      "targetSha256": "c280932a615eff65d07c3a0b5597d11843d9de716c9c00f136688c558179d466"
     }
   ],
   "criticalComments": [
@@ -1180,11 +1201,11 @@
     },
     {
       "path": "packages/runtime/src/AssetLease.ts",
-      "sha256": "4785f4ef92606d4f183d0a11b7386191c8be4626b94799c10dad5284f137bb3f"
+      "sha256": "36c298af613284e1daa2501b2e823729c6d25da1a6480c1715d54704c1c04a5c"
     },
     {
       "path": "packages/runtime/src/AssetManager.ts",
-      "sha256": "31e52919bfa43df548fa661a9d46c5d8b2fcb7259addfe119ef4367fa25f462e"
+      "sha256": "245a18a19480073855d5e55f3014844fdc5c6f2e03c7cdb8fe49ef897e94c706"
     },
     {
       "path": "packages/runtime/src/AssetRef.ts",
@@ -1415,6 +1436,38 @@
     {
       "path": "packages/runtime/src/texturedFrameCapture.ts",
       "sha256": "6f0ffe65866401de244310ea0a9813618dee33b3226428c1bfb5ff68686f0fda"
+    },
+    {
+      "path": "packages/engine/src/text.ts",
+      "sha256": "910b8b9ec887fdec7b2db706f215e7d19f5f40d5a3beb0d643551706b033a100"
+    },
+    {
+      "path": "packages/runtime/src/assetManagerOwnerState.ts",
+      "sha256": "1519a2193b7e39184e3b9d500fb935f94129da46b2e47899086794b658e4b333"
+    },
+    {
+      "path": "packages/runtime/src/text/TextRasterCache.ts",
+      "sha256": "5f9b349ddddb55af4aee1802a28c4b2b5e2aafe93b7dcabc7032a8b531b0b5b7"
+    },
+    {
+      "path": "packages/runtime/src/text/budget.ts",
+      "sha256": "6eb700f0eea1f3595a246f0582ca555e1dbb25adf8254831e8a820f851d0ccd3"
+    },
+    {
+      "path": "packages/runtime/src/text/index.ts",
+      "sha256": "550f5349821f81ed9257780a1e4b5a409afe52e370c90a5fef6334ec7a06191f"
+    },
+    {
+      "path": "packages/runtime/src/text/plan.ts",
+      "sha256": "e94e7f77aaa3bbc65d08a3963bfafe44c391ac139d3bd9181d55d9b74296d883"
+    },
+    {
+      "path": "packages/runtime/src/text/request.ts",
+      "sha256": "080b358dd86fec5ac6d569914825709896080aa8b7c41828267c39ca29fa3576"
+    },
+    {
+      "path": "packages/runtime/src/text/types.ts",
+      "sha256": "98074409d7a370ad2976dcef9635101546a96d697d9eac77397157f0b1106462"
     }
   ],
   "historicalSemanticReview": {
@@ -2681,6 +2734,23 @@
         "qualityStatus": "INDEPENDENT_SEQUENCE_PLAYER_BILINGUAL_REVIEW_ACCEPTED_ROOT_METADATA_SUCCESSOR",
         "publicationStatus": "FINAL_CANDIDATE_PREPUSH_AND_REMOTE_SUBMISSION_RECORDED_SEPARATELY"
       }
+    },
+    {
+      "revision": "0.23.0",
+      "semanticReview": {
+        "status": "reviewed_with_scope",
+        "engineeringPreview": "0.23.0",
+        "method": {
+          "en": "Independent scoped reviews cover the three new paired rendering documents and structured evidence, changed community and knowledge-base entries, current registry additions, source attribution and newly listed English comments. Maintainers authored the current metadata successor. Unchanged earlier document bodies retain their own version-bound reviews.",
+          "zh-CN": "独立范围审阅覆盖三组新渲染配对文档及结构化证据、修订社区与知识库入口、当前登记新增、来源归属及新登记英文注释。维护者编写当前元数据后继版本；未变既有文档正文保留各自版本绑定审阅。"
+        },
+        "scope": {
+          "en": "The inventory contains 124 reading pairs, six canonical/translated registry views and 121 critical English-comment source files. Three new reading pairs and 19 newly listed critical modules have current scoped review; the remaining unchanged bodies and original evidence retain historical scopes. Source/native acceptance, current portable workflow execution, final prepush and remote delivery are separate records.",
+          "zh-CN": "清单包含 124 对阅读文档、六组规范／翻译登记视图及 121 份关键英文注释源码。三对新增阅读文档及 19 份新登记关键模块具有当前范围审阅；其余未变正文与原始证据保留历史范围。源码／原生验收、当前可移植流程执行、最终 prepush 及远程交付分别记录。"
+        },
+        "qualityStatus": "INDEPENDENT_SCOPED_REVIEWS_RECORDED_CURRENT_METADATA_SUCCESSOR",
+        "publicationStatus": "ACTUAL_WORKFLOW_PREPUSH_AND_REMOTE_DELIVERY_RECORDED_SEPARATELY"
+      }
     }
   ],
   "textureA1Curation": {
@@ -3270,5 +3340,17 @@
     "sourceAndNativeReviews": "separately_accepted_bounded",
     "finalPrepush": "recorded_separately_in_delivery_verification",
     "remoteDelivery": "recorded_separately"
+  },
+  "textRasterT1Curation": {
+    "engineeringPreview": "0.24.0",
+    "deliverable": "V025",
+    "sourceId": "S074",
+    "newReadingPairs": 2,
+    "newCriticalEntries": 8,
+    "criticalCommentReviewSubjects": 10,
+    "readingPairs": 126,
+    "registryViews": 6,
+    "criticalSourceFiles": 129,
+    "limits": "Logical resource accounting and literal-provider tests do not prove font pixels, physical memory, browser fonts, TextField, phones or performance. Fresh full publication and remote delivery remain separate records."
   }
 }

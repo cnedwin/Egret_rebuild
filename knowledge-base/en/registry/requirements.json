@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-10",
+  "updatedAt": "2026-10-11",
   "authority": "Goals confirmed by the user in this project discussion; see the delivery registry separately for implementation and acceptance",
   "items": [
     {
@@ -37,7 +37,8 @@
         "V005",
         "V021",
         "V022",
-        "V023"
+        "V023",
+        "V025"
       ],
       "decisionIds": [
         "D002",
@@ -61,7 +62,8 @@
         "V012",
         "V021",
         "V022",
-        "V023"
+        "V023",
+        "V025"
       ],
       "decisionIds": [
         "D001",
@@ -84,7 +86,8 @@
       "deliveryIds": [
         "V002",
         "V004",
-        "V021"
+        "V021",
+        "V025"
       ],
       "decisionIds": [
         "D002",
@@ -243,7 +246,8 @@
         "V007",
         "V008",
         "V011",
-        "V012"
+        "V012",
+        "V025"
       ],
       "decisionIds": [
         "D012"
@@ -347,7 +351,8 @@
         "V007",
         "V008",
         "V011",
-        "V012"
+        "V012",
+        "V025"
       ],
       "decisionIds": [
         "D001",
@@ -389,7 +394,8 @@
         "V011",
         "V012",
         "V022",
-        "V023"
+        "V023",
+        "V025"
       ],
       "decisionIds": [
         "D016"
@@ -446,7 +452,8 @@
         "V008",
         "V009",
         "V011",
-        "V012"
+        "V012",
+        "V025"
       ],
       "decisionIds": [],
       "doc": "en/docs/bilingual-documentation-and-prepush-checks.md"
@@ -479,7 +486,7 @@
   ],
   "_localization": {
     "canonicalSource": "需求.json",
-    "canonicalSha256": "2cbc03cffa770beb5d79f6c529437ad3658defaeaee8cd645226cb9ee111b490",
+    "canonicalSha256": "977c481e6a399b2ccc7cf3df22a20ff945aa3be01417ae5e7635e727f8e05e35",
     "role": "read_only_translation",
     "language": "en"
   }

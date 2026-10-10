@@ -1029,6 +1029,42 @@
         "evidence/textured-mesh2d-verification.json"
       ],
       "doc": "Cns/docs/自有纹理几何与Mesh2D契约.md"
+    },
+    {
+      "id": "V025",
+      "kind": "bounded_runtime_increment",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R011",
+        "R015",
+        "R016",
+        "R019"
+      ],
+      "dependsOn": [
+        "V010",
+        "V011"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "explicit_dom_free_text_raster_provider_cache_and_genuine_texture_leases",
+      "acceptance": "bounded_source_type_lifecycle_accounting_controls_publication_separate",
+      "title": "无 DOM 文字栅格编排与自有资源生命周期",
+      "acceptanceCriteria": [
+        "显式 Engine 文字入口共享 runtime 工厂与类型；默认入口和宿主契约保持原有边界。",
+        "自有请求与调用范围内的计划保留精确分行、有符号墨迹、有界分配，以及分别计费的保留活动、调用方租约和驻留资源。",
+        "实际字面量 provider 行为、图像身份、私有计费／故障控制、受影响回归与源码边界保留各自版本绑定结果；重叠集合不累加。",
+        "真实无 DOM 正向使用方与恰好 18 项普通、9 项隔离反例通过指定文件／位置／诊断编码检查；早期解析与测试定义失败保留。",
+        "独立有界源码审阅关闭六项生命周期问题。英文注释、配对公开整理、当前完整 prepush 与远端交付分别记录；浏览器字体、TextField 和完整产品义务仍待完成。"
+      ],
+      "artifacts": [
+        "Cns/docs/文字栅格T1契约.md",
+        "Cns/docs/文字栅格T1证据.md",
+        "evidence/text-raster-t1-verification.json"
+      ],
+      "doc": "Cns/docs/文字栅格T1契约.md"
     }
   ]
 }

@@ -15,6 +15,9 @@ importers:
         specifier: workspace:*
         version: link:packages/project
     devDependencies:
+      '@egret/runtime':
+        specifier: workspace:*
+        version: link:packages/runtime
       typescript:
         specifier: 7.0.2
         version: 7.0.2

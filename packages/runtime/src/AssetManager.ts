@@ -4,6 +4,7 @@ import { assertAssetRef, assertAssetType } from "./AssetRef.js";
 import type { AssetRef, AssetType } from "./AssetRef.js";
 import { CancellationController } from "./CancellationController.js";
 import { EgretError } from "./EgretError.js";
+import { closeOwnedTextCache, markAssetManagerOwnerClosed, registerAssetManagerOwner } from "./assetManagerOwnerState.js";
 import type { EngineContext } from "./ownership.js";
 import type { AssetLoadContext, Entry, Identity, ProviderBinding, Waiter } from "./assetState.js";
 
@@ -19,6 +20,9 @@ export interface AssetAcquireOptions {
 }
 
 const CREATION_TOKEN: unique symbol = Symbol("egret.assetManagerFactory");
+const APPLY = Reflect.apply;
+const FREEZE = Object.freeze;
+let bindAssetManagerOwner: (manager: AssetManager, engine: EngineContext) => void;
 export let createAssetManager: (engine: EngineContext) => AssetManager;
 
 function nextIdentity(value: number): number {
@@ -41,9 +45,24 @@ export class AssetManager {
   private constructor(engine: EngineContext, token: typeof CREATION_TOKEN) {
     if (token !== CREATION_TOKEN) throw new EgretError("ASSET_MANAGER_FACTORY_REQUIRED");
     this.engine = engine;
+    bindAssetManagerOwner(this, engine);
   }
 
   static {
+    // Capture original operations before any manager or later explicit entry is exposed.
+    const assertOpen = this.prototype.assertOpen;
+    const register = this.prototype.register;
+    const acquire = this.prototype.acquire;
+    const invalidate = this.prototype.invalidate;
+    bindAssetManagerOwner = (manager, context): void => {
+      registerAssetManagerOwner(manager, FREEZE({
+        context,
+        assertOpen: (): void => { APPLY(assertOpen, manager, []); },
+        register: <T>(type: AssetType<T>, provider: AssetProvider<NoInfer<T>>): void => { APPLY(register, manager, [type, provider]); },
+        acquire: <T>(ref: AssetRef<T>, options?: AssetAcquireOptions): Promise<AssetLease<T>> => APPLY(acquire, manager, [ref, options]) as Promise<AssetLease<T>>,
+        invalidate: <T>(ref: AssetRef<T>): void => { APPLY(invalidate, manager, [ref]); },
+      }));
+    };
     createAssetManager = (engine): AssetManager => new AssetManager(engine, CREATION_TOKEN);
   }
 
@@ -299,10 +318,13 @@ export class AssetManager {
   public dispose(): void {
     if (this.closed) return;
     this.closed = true;
+    markAssetManagerOwnerClosed(this);
     const entries = [...this.entries];
     const waiters = entries.flatMap(entry => [...entry.waiters]);
     for (const entry of entries) this.markTerminal(entry);
     for (const waiter of waiters) waiter.pending = false;
+    // All manager demand is inert before the trusted cache close or external hooks.
+    closeOwnedTextCache(this);
     const error = new EgretError("ASSET_MANAGER_CLOSED");
     for (const waiter of waiters) {
       const removal = this.detach(waiter);

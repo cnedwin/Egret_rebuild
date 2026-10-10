@@ -31,11 +31,21 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
       }
       if (name === 'project') dependencyMap['jsonc-parser'] = '3.3.1';
       const gpuExport = { types: './dist/web/webgpu.d.ts', import: './dist/web/webgpu.js' };
-      write(`packages/${name}/package.json`, { name: `@egret/${name}`, private: true, version: '0.0.0', type: 'module', dependencies: dependencyMap, ...(name === 'engine' ? {exports:{'./webgpu':gpuExport}} : name === 'project' ? {exports:{'.':{types:'./dist/index.d.ts',import:'./dist/index.js'}}} : {}) });
+      const packageExports = name === 'runtime' ? {
+        '.': {types:'./dist/index.d.ts',import:'./dist/index.js'},
+        './text': {types:'./dist/text/index.d.ts',import:'./dist/text/index.js'},
+      } : name === 'engine' ? {
+        '.': {types:'./dist/index.d.ts',import:'./dist/index.js'},
+        './webgpu': gpuExport,
+        './web': {types:'./dist/web/index.d.ts',import:'./dist/web/index.js'},
+        './text': {types:'./dist/text.d.ts',import:'./dist/text.js'},
+      } : name === 'project' ? {'.':{types:'./dist/index.d.ts',import:'./dist/index.js'}} : undefined;
+      write(`packages/${name}/package.json`, { name: `@egret/${name}`, private: true, version: '0.0.0', type: 'module', dependencies: dependencyMap, ...(packageExports === undefined ? {} : {exports:packageExports}) });
       write(`packages/${name}/tsconfig.json`, { extends: '../../tsconfig.base.json', ...(name === 'project' ? {compilerOptions:{rootDir:'src',outDir:'dist'}} : {}), references: allowed.map(value => ({ path: `../${value.slice('@egret/'.length)}` })) });
       write(`packages/${name}/src/index.ts`, 'export {};\n');
       write(`packages/${name}/dist/index.js`, 'export {};\n');
-      const exports = name === 'engine' ? { '.': './index.js', './web': './web.js', './webgpu':'./webgpu.js' } : './index.js';
+      const exports = name === 'engine' ? { '.': './index.js', './web': './web.js', './webgpu':'./webgpu.js', './text':'./text.js' }
+        : name === 'runtime' ? { '.': './index.js', './text':'./text.js' } : './index.js';
       write(`node_modules/@egret/${name}/package.json`, { name: `@egret/${name}`, type: 'module', exports });
       write(`node_modules/@egret/${name}/index.js`, 'export {};\n');
       if (name === 'project') {
@@ -86,6 +96,35 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
     write('packages/runtime/dist/index.d.ts', readFileSync(path.join(root,'packages/runtime/dist/index.d.ts'),'utf8') + "export {collectTexturedFrameContent} from './texturedFrameCapture.js';\nexport type {CapturedTexturedContent2D} from './texturedFrameCapture.js';\n");
     write('packages/runtime/dist/texturedFrameCapture.js', 'export function collectTexturedFrameContent() {}\n');
     write('packages/runtime/dist/texturedFrameCapture.d.ts', 'export interface CapturedTexturedContent2D {}\nexport declare function collectTexturedFrameContent(): CapturedTexturedContent2D;\n');
+    // T1 scaffolds are synthetic policy surfaces, never genuine assets or cache behavior.
+    // Retain the three existing runtime values and every old mutation of them.
+    const runtimeRootValues = ['CancellationController','EgretError','Scope','createScope','Event','createEventType',
+      'EventDispatcher','DisplayObject','DisplayObjectContainer','Stage','createStage','reportDiagnostic','AssetManager',
+      'createAssetManager','AssetLease','createAssetType','createAssetRef','Sprite','Graphics','collectFrameCommands',
+      'Texture','createTexture','isTexture','Bitmap','createSequenceClip','SequencePlayer'];
+    write('packages/runtime/dist/index.js', readFileSync(path.join(root,'packages/runtime/dist/index.js'),'utf8')
+      + runtimeRootValues.map(name => `export function ${name}() {}\n`).join(''));
+    const textTypes = ['TextRasterRequestInput','TextSourceLine','TextRasterRequest','TextBounds2D','TextLineMetricsInput',
+      'TextPlanInput','TextLineMetrics','TextRasterPlacement','TextRasterMetrics','TextRasterPlan','TextRasterLimits',
+      'TextMeasureContext','TextRasterContext','TextRasterProvider','TextRasterCacheOptions','TextRasterAcquireOptions',
+      'PreparedTextRaster','TextRasterCacheStatus','TextRasterCache'];
+    const textTypeScaffold = textTypes.map(name => `export type ${name} = unknown;\n`).join('');
+    write('packages/runtime/src/text/types.ts', textTypeScaffold);
+    write('packages/runtime/dist/text/types.d.ts', textTypeScaffold);
+    write('packages/runtime/dist/text/types.js', 'export {};\n');
+    write('packages/runtime/src/text/TextRasterCache.ts', 'export function createTextRasterCache(): void {}\n');
+    write('packages/runtime/dist/text/TextRasterCache.js', 'export function createTextRasterCache() {}\n');
+    write('packages/runtime/dist/text/TextRasterCache.d.ts', 'export declare function createTextRasterCache(): void;\n');
+    const runtimeTextDeclaration = "export {createTextRasterCache} from './TextRasterCache.js';\nexport type * from './types.js';\n";
+    write('packages/runtime/src/text/index.ts', runtimeTextDeclaration);
+    write('packages/runtime/dist/text/index.d.ts', runtimeTextDeclaration);
+    write('packages/runtime/dist/text/index.js', "export {createTextRasterCache} from './TextRasterCache.js';\n");
+    const engineTextDeclaration = "export {createTextRasterCache} from '@egret/runtime/text';\nexport type * from '@egret/runtime/text';\n";
+    write('packages/engine/src/text.ts', engineTextDeclaration);
+    write('packages/engine/dist/text.d.ts', engineTextDeclaration);
+    write('packages/engine/dist/text.js', "export {createTextRasterCache} from '@egret/runtime/text';\n");
+    write('node_modules/@egret/runtime/text.js', "export {createTextRasterCache} from '../../../packages/runtime/dist/text/index.js';\n");
+    write('node_modules/@egret/engine/text.js', "export {createTextRasterCache} from '../../../packages/engine/dist/text.js';\n");
     write('packages/engine/src/internal/texturedFrameState.ts', 'export function registerTexturedFrame(): void {}\nexport function readOwnedTexturedFrame(): undefined {return undefined;}\n');
     write('packages/engine/dist/internal/texturedFrameState.js', 'export function registerTexturedFrame() {}\nexport function readOwnedTexturedFrame() {}\n');
     write('packages/engine/dist/internal/texturedFrameState.d.ts', 'export declare function registerTexturedFrame(): void;\nexport declare function readOwnedTexturedFrame(): undefined;\n');

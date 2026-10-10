@@ -199,3 +199,37 @@ try {
   rmSync(texturedGPUPositiveConfig, {force:true});
   rmSync(texturedGPUNegativeConfig, {force:true});
 }
+// T1 explicit-entry fixtures supplement every existing compiler check above.
+// Positives and ordinary misuses compile with ES2022 only; existing DOM entry
+// absence trials remain isolated under the existing web configuration.
+const textTypeConfigs=[];
+try {
+  for (const [name,source,base,expectedCount,marker] of [
+    ['positive','text-raster-positive.ts','tsconfig.dom-free.json',0,null],
+    ['negative','text-raster-negative.ts','tsconfig.dom-free.json',18,'TEXT_RASTER_CASE'],
+    ['imports','text-raster-import-negative.ts','tsconfig.web.json',9,'TEXT_RASTER_IMPORT_CASE'],
+  ]) {
+    const file='tests/types/'+source;
+    const fixture=readFileSync(path.join(root,file),'utf8');
+    if (/@ts-(?:expect-error|ignore|nocheck)/.test(fixture)) throw new Error('Text raster fixture contains suppression: '+file);
+    const expected=marker ? fixture.split(/\r?\n/).flatMap((line,index)=>{
+      const match=line.match(new RegExp('^// '+marker+' ([\\w-]+) TS(\\d+)$'));
+      return match ? [{name:match[1],file,line:index+2,code:Number(match[2])}] : [];
+    }) : [];
+    if (expected.length!==expectedCount || new Set(expected.map(item=>item.name)).size!==expectedCount) throw new Error('Text raster diagnostic inventory mismatch: '+file);
+    const config='tests/types/text-raster-'+name+'.generated.json';textTypeConfigs.push(path.join(root,config));
+    writeFileSync(path.join(root,config),JSON.stringify({extends:'./'+base,include:[source]}));
+    const check=spawnSync(process.execPath,[compiler,'--project',config,'--pretty','false'],{cwd:root,encoding:'utf8'});
+    process.stdout.write(check.stdout??'');process.stderr.write(check.stderr??'');if(check.error)throw check.error;
+    if (!marker) { if(check.status!==0)throw new Error('Text raster DOM-free positive consumer failed: exit '+check.status);continue; }
+    const observed=[...(check.stdout??'').matchAll(/^(.+)\((\d+),(\d+)\): error TS(\d+):/gm)].map(match=>({file:match[1].replaceAll('\\','/'),line:Number(match[2]),column:Number(match[3]),code:Number(match[4])}));
+    if(check.status!==1 || observed.length!==expectedCount)throw new Error(`Text raster ${name} expected ${expectedCount} diagnostics, exit 1; got ${observed.length}, exit ${check.status}`);
+    const receipts=expected.map(item=>{
+      const found=observed.filter(actual=>actual.file===item.file&&actual.line===item.line);
+      if(found.length!==1||found[0].code!==item.code)throw new Error(`Text raster ${item.name}: expected one ${item.file}:${item.line}/TS${item.code}; got ${JSON.stringify(found)}`);
+      return {name:item.name,expected:item,actual:found[0]};
+    });
+    console.log('Text raster '+name+' individual unsuppressed diagnostic receipts: '+JSON.stringify(receipts));
+  }
+  console.log('Text raster fixtures PASS: exact explicit-entry DOM-free positive consumer, 18 ordinary and 9 isolated import/value diagnostics.');
+} finally { for(const config of textTypeConfigs)rmSync(config,{force:true}); }
