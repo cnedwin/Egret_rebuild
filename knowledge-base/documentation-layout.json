@@ -1080,8 +1080,8 @@
       "action": "move-pair",
       "previousZhSha256": "803a40dd8bfd0f98ade51c8ba736790509aae12a6e045a8ea688b3ff5d01cdcf",
       "previousEnSha256": "40a2ef2f686aba4a10279c417dfe17879bb6396b3b80dd75b26bd09c87d665f9",
-      "currentZhSha256": "d203484bb44cf4c3b64f9a23fe7de2dc5626aa55600e2ce573ae7bdcd8b2b82a",
-      "currentEnSha256": "5f5639fbe95bc1b0ba7030ae7333fd53553d15d3bf31873e8fb069a954cb0e68"
+      "currentZhSha256": "a8fb817db919e7f4214b3389cd2323d08ca345a2ab72ab3c55038f2d51d2d1b1",
+      "currentEnSha256": "dc2e5b61c3214cdf136ba576ffc574319569a7650d602bc82c8d22612008e105"
     },
     {
       "oldZh": "knowledge-base/docs/WebGPU矩形执行合同.md",
