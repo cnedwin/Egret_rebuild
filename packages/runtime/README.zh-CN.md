@@ -2,6 +2,8 @@
 
 [English](README.md) | 简体中文
 
+继承的显示坐标查询使用真实显示状态、有界祖先／生命周期检查及可选的 `CoordinateQueryOptions`。 阅读[坐标契约](../../knowledge-base/Cns/docs/显示坐标查询契约.md)。
+
 白鹭实验性逻辑包，仅依赖 `@egret/contracts`。接收事件描述符、同步清理值及 Engine 注入的窄生命周期端口，提供取消、Scope、显示树、同步派发和 CPU 资源获取／租约，维持 Scope 所有权、对象与 Engine 绑定、父子关系及事件状态。
 
 ## 所有权与清理

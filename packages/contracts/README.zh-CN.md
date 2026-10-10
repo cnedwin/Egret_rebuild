@@ -2,6 +2,8 @@
 
 [English](README.md) | 简体中文
 
+`Point2D` 是只读、仅类型的逻辑坐标结果。 阅读[坐标契约](../../knowledge-base/Cns/docs/显示坐标查询契约.md)。
+
 白鹭实验性类型包，依据生命周期规格定义 `CancellationSignal`、`Disposable`／`Releasable`、`Diagnostic` 和 `HostAdapter` 合同。没有包依赖或第三方运行时依赖、DOM／Node 环境全局，也没有宿主初始化副作用。
 
 ## 宿主与帧义务

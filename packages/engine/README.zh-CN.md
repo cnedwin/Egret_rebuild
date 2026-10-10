@@ -2,6 +2,8 @@
 
 [English](README.md) | 简体中文
 
+根入口导出仅类型的 `Point2D`／`CoordinateQueryOptions`，显示类继承 `localToGlobal`／`globalToLocal`。 阅读[坐标契约](../../knowledge-base/Cns/docs/显示坐标查询契约.md)。
+
 白鹭实验性公共门面，装配 `@egret/runtime` 与 `@egret/contracts`，管理逻辑生命周期、显示／帧访问、CPU 资源及 surface 独占预留；物理资源和安全归还由宿主负责。根入口保持无 DOM，独立 `@egret/engine/web` 导出 `createCanvasHost`，`@egret/engine/webgpu` 显式启用 WebGPU。Engine 为渲染准备固定使用 `robust-predicates` 3.0.3。
 
 ## 公共 API 与生命周期

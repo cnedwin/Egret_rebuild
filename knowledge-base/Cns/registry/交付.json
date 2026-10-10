@@ -931,6 +931,38 @@
         "evidence/sequence-player-native.json"
       ],
       "doc": "Cns/docs/显式时间序列播放器契约.md"
+    },
+    {
+      "id": "V022",
+      "title": "公共显示坐标查询",
+      "kind": "bounded_runtime_increment",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R012",
+        "R016"
+      ],
+      "dependsOn": [
+        "V011"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "public_display_coordinate_queries",
+      "acceptance": "bounded_cpu_type_affected_desktop_regression_independently_reviewed_publication_separate",
+      "acceptanceCriteria": [
+        "公共根入口提供只读Point2D/CoordinateQueryOptions及继承的localToGlobal/globalToLocal，采用已存储矩阵精确逆算舍入，并明确逻辑空间／生命周期／祖先预算。",
+        "实现前49个缺失API回调失败；专项后继92/92通过，含实际公共C37系数门禁。显式undefined原因预期检查已加强并重跑。",
+        "Parameters元组预期修正后68/5/28项预期负向诊断通过，含14个坐标新增负例；已记录验证器1045/1045通过，边界覆盖300文件。",
+        "新受影响Canvas的14项检查及381项稳定身份、WebGPU的42帧/1709原始记录/6808合成检查/84截图/8反例，以及B1的7正向帧/5反例/11提交通过。",
+        "范围内实现与保存渲染审阅无剩余P1/P2。B1清理仅覆盖协作API，OS后代退出为UNBOUND。最终prepush与远端交付分别记录；手机／性能／完整UI／3D／Spine／迁移仍待完成。"
+      ],
+      "artifacts": [
+        "Cns/docs/显示坐标查询契约.md",
+        "Cns/docs/显示坐标查询证据.md",
+        "evidence/coordinate-query-verification.json"
+      ],
+      "doc": "Cns/docs/显示坐标查询契约.md"
     }
   ]
 }

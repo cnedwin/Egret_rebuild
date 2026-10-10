@@ -94,3 +94,66 @@ bitmapRegionPositive.sourceRect=bitmapRegionValue;
 bitmapRegionPositive.sourceRect=undefined;
 const bitmapRegionMaybe: RegionRect | undefined=bitmapRegionPositive.sourceRect;
 void bitmapRegionMaybe;
+
+// Public coordinate consumers keep the inherited signatures and shapes exact.
+import type {
+  Point2D as CoordinatePoint,
+  CoordinateQueryOptions as CoordinateOptions,
+  DisplayObject as CoordinateNode,
+  DisplayObjectContainer as CoordinateContainer,
+  Sprite as CoordinateSprite,
+  Bitmap as CoordinateBitmap,
+  Stage as CoordinateStage,
+} from '@egret/engine';
+
+// Generic-function equality distinguishes readonly from writable properties;
+// ordinary structural assignment alone does not establish readonly modifiers.
+type CoordinateEqual<A, B> =
+  (<T>() => T extends A ? 1 : 2) extends (<T>() => T extends B ? 1 : 2)
+    ? ((<T>() => T extends B ? 1 : 2) extends (<T>() => T extends A ? 1 : 2) ? true : false)
+    : false;
+type CoordinateAssert<T extends true> = T;
+type CoordinatePointShape = CoordinateAssert<CoordinateEqual<CoordinatePoint, {readonly x: number; readonly y: number}>>;
+type CoordinateOptionsShape = CoordinateAssert<CoordinateEqual<CoordinateOptions, {readonly maxNodes?: number}>>;
+// Optional function arguments accept explicit undefined; Parameters retains
+// that union even when authored optional object/tuple fields require omission.
+type CoordinateParameters = [x?: number | undefined, y?: number | undefined, options?: CoordinateOptions | undefined];
+type CoordinateForwardParameters = CoordinateAssert<CoordinateEqual<Parameters<CoordinateNode['localToGlobal']>, CoordinateParameters>>;
+type CoordinateInverseParameters = CoordinateAssert<CoordinateEqual<Parameters<CoordinateNode['globalToLocal']>, CoordinateParameters>>;
+type CoordinateForwardResult = CoordinateAssert<CoordinateEqual<ReturnType<CoordinateNode['localToGlobal']>, CoordinatePoint>>;
+type CoordinateInverseResult = CoordinateAssert<CoordinateEqual<ReturnType<CoordinateNode['globalToLocal']>, CoordinatePoint>>;
+type CoordinateCallable = (x?: number, y?: number, options?: CoordinateOptions) => CoordinatePoint;
+type CoordinateForwardCallable = CoordinateAssert<CoordinateEqual<CoordinateNode['localToGlobal'], CoordinateCallable>>;
+type CoordinateInverseCallable = CoordinateAssert<CoordinateEqual<CoordinateNode['globalToLocal'], CoordinateCallable>>;
+
+declare const coordinateNode: CoordinateNode;
+declare const coordinateContainer: CoordinateContainer;
+declare const coordinateSprite: CoordinateSprite;
+declare const coordinateBitmap: CoordinateBitmap;
+declare const coordinateStage: CoordinateStage;
+const coordinateOptions: CoordinateOptions = {maxNodes: 8};
+const coordinateEmptyOptions: CoordinateOptions = {};
+const coordinateLiteralPoint: CoordinatePoint = {x: 1, y: 2};
+const coordinateResults: readonly CoordinatePoint[] = [
+  coordinateNode.localToGlobal(),
+  coordinateNode.localToGlobal(1),
+  coordinateNode.localToGlobal(undefined, 2),
+  coordinateNode.localToGlobal(undefined, undefined, coordinateOptions),
+  coordinateNode.localToGlobal(1, 2, undefined),
+  coordinateNode.globalToLocal(),
+  coordinateNode.globalToLocal(1),
+  coordinateNode.globalToLocal(undefined, 2),
+  coordinateNode.globalToLocal(undefined, undefined, coordinateEmptyOptions),
+  coordinateNode.globalToLocal(1, 2, undefined),
+];
+for (const inheritedNode of [coordinateContainer, coordinateSprite, coordinateBitmap, coordinateStage]) {
+  const inheritedForward: CoordinatePoint = inheritedNode.localToGlobal(1, 2, coordinateOptions);
+  const inheritedInverse: CoordinatePoint = inheritedNode.globalToLocal(1, 2, coordinateOptions);
+  void inheritedForward; void inheritedInverse;
+}
+// Structural variables with a valid known field permit additional properties.
+const coordinateStructuralOptions = {maxNodes: 8, x: 10, y: 20};
+const coordinateStructuralForward: CoordinatePoint = coordinateNode.localToGlobal(1, 2, coordinateStructuralOptions);
+const coordinateStructuralInverse: CoordinatePoint = coordinateNode.globalToLocal(1, 2, coordinateStructuralOptions);
+void coordinateLiteralPoint; void coordinateResults;
+void coordinateStructuralForward; void coordinateStructuralInverse;

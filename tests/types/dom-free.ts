@@ -20,3 +20,20 @@ declare const stage:Stage;
 const captured:CapturedContent2D=collectFrameContent(stage);
 const images:readonly ImageData2D[]|undefined=captured.images;
 void captured;void images;
+
+// Logical coordinate queries require no host globals.
+import type {
+  Point2D as CoordinateDomPoint,
+  CoordinateQueryOptions as CoordinateDomOptions,
+  DisplayObject as CoordinateDomNode,
+  Stage as CoordinateDomStage,
+} from '@egret/engine';
+
+declare const coordinateDomNode: CoordinateDomNode;
+declare const coordinateDomStage: CoordinateDomStage;
+const coordinateDomOptions: CoordinateDomOptions = {maxNodes: 4};
+const coordinateDomForward: CoordinateDomPoint = coordinateDomNode.localToGlobal(undefined, 2, coordinateDomOptions);
+const coordinateDomInverse: CoordinateDomPoint = coordinateDomStage.globalToLocal(1, undefined);
+const coordinateDomX: number = coordinateDomForward.x;
+const coordinateDomY: number = coordinateDomInverse.y;
+void coordinateDomX; void coordinateDomY;

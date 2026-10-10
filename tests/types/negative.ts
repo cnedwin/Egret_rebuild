@@ -152,3 +152,45 @@ bitmapRegionNegative.sourceRect={x:0,y:0,width:'1',height:1};
 bitmapRegionNegative.sourceRect=null;
 // @ts-expect-error BITMAP_REGION_CASE readonly-crop TS2540: exposed region metadata is immutable.
 bitmapRegionNegative.sourceRect!.x=1;
+
+// Coordinate misuse must produce real, unsuppressed compiler diagnostics.
+import type {
+  Point2D as CoordinateNegativePoint,
+  CoordinateQueryOptions as CoordinateNegativeOptions,
+  DisplayObject as CoordinateNegativeNode,
+} from '@egret/engine';
+import * as CoordinateNegativePublic from '@egret/engine';
+
+declare const coordinateNegativeNode: CoordinateNegativeNode;
+declare const coordinateNegativeOptions: CoordinateNegativeOptions;
+const coordinateNegativeForward: CoordinateNegativePoint = coordinateNegativeNode.localToGlobal();
+const coordinateNegativeInverse: CoordinateNegativePoint = coordinateNegativeNode.globalToLocal();
+// @ts-expect-error COORDINATE_CASE readonly-forward-x: query results have readonly x.
+coordinateNegativeForward.x = 3;
+// @ts-expect-error COORDINATE_CASE readonly-inverse-y: query results have readonly y.
+coordinateNegativeInverse.y = 4;
+// @ts-expect-error COORDINATE_CASE readonly-options: the typed budget field is readonly.
+coordinateNegativeOptions.maxNodes = 9;
+// @ts-expect-error COORDINATE_CASE forward-scalar: the first coordinate is numeric.
+coordinateNegativeNode.localToGlobal('1', 2);
+// @ts-expect-error COORDINATE_CASE inverse-scalar: the second coordinate is numeric.
+coordinateNegativeNode.globalToLocal(1, false);
+// @ts-expect-error COORDINATE_CASE budget-scalar: a budget literal is numeric.
+coordinateNegativeNode.localToGlobal(1, 2, {maxNodes: '8'});
+// @ts-expect-error COORDINATE_CASE null-options: null is not an optional options object.
+coordinateNegativeNode.globalToLocal(1, 2, null);
+// @ts-expect-error COORDINATE_CASE forward-legacy-output: fresh Point-like literals are not query options.
+coordinateNegativeNode.localToGlobal(1, 2, {x: 0, y: 0});
+// @ts-expect-error COORDINATE_CASE inverse-legacy-output: fresh Point-like literals are not query options.
+coordinateNegativeNode.globalToLocal(1, 2, {x: 0, y: 0});
+// @ts-expect-error COORDINATE_CASE fourth-argument: there is no fourth output argument.
+coordinateNegativeNode.localToGlobal(1, 2, {}, {});
+// @ts-expect-error COORDINATE_CASE inverse-fourth-argument: there is no fourth inverse output argument.
+coordinateNegativeNode.globalToLocal(1, 2, {}, {});
+// @ts-expect-error COORDINATE_CASE undefined-field: exact optional properties omit the field instead of storing undefined.
+const coordinateUndefinedField: CoordinateNegativeOptions = {maxNodes: undefined};
+// @ts-expect-error COORDINATE_CASE point-type-only: the root namespace exports no executable Point2D value.
+CoordinateNegativePublic.Point2D;
+// @ts-expect-error COORDINATE_CASE options-type-only: the root namespace exports no executable CoordinateQueryOptions value.
+CoordinateNegativePublic.CoordinateQueryOptions;
+void coordinateUndefinedField;

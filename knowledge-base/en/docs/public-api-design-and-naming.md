@@ -2,6 +2,8 @@
 
 English | [简体中文](../../Cns/docs/公共API设计与命名规范.md)
 
+Public inherited `localToGlobal`/`globalToLocal` queries return a fresh readonly `Point2D` in logical space. Missing coordinates independently default to zero; the third argument is `CoordinateQueryOptions`. Ancestor budgets, authentic receiver/lifetime checks and the exact stored-matrix inverse are defined by the [coordinate contract](display-coordinate-query-contract.md). The legacy mutable-output adapter remains pending.
+
 The historical 0.13.0 rectangle checkpoint has its own [implementation and verification record](webgpu-rectangle-implementation-evidence.md). Its source identities, results and pending work retain their recorded scope; they do not establish current product acceptance.
 
 

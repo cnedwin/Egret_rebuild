@@ -2,6 +2,10 @@
 
 English | [简体中文](../Cns/CHANGELOG.md)
 
+## Engineering preview: 0.21.0 — 2026-10-10
+
+Added public display coordinate queries with owned readonly results, exact stored-matrix inverse rounding and ancestor/lifetime budgets. CPU/type and fresh affected desktop rendering regressions passed within recorded scope; final publication is separately gated. Read the [contract](docs/display-coordinate-query-contract.md) and [evidence](docs/display-coordinate-query-evidence.md). No dependency or package/protocol release was added; private 0.0.0/protocol 1.0 and open full UI/3D/Spine/migration obligations remain.
+
 ## Engineering preview: 0.20.0 — 2026-10-10
 
 Added the public sequence factory/types and explicit-time SequencePlayer with exact lease binding, atomic crop/sample commit, private receiver authority and Engine affinity. Added a public-entry example and opaque browser verifier. Read the [contract and acceptance](docs/sequence-player-contract.md) for measured behavior, type and browser scopes; the earlier [Bitmap observation](docs/bitmap-region-evidence.md) remains separate.

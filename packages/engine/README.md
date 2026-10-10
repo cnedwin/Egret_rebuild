@@ -2,6 +2,8 @@
 
 English | [简体中文](README.zh-CN.md)
 
+The root facade exports type-only `Point2D`/`CoordinateQueryOptions` and inherits `localToGlobal`/`globalToLocal` on display classes. Read the [coordinate contract](../../knowledge-base/en/docs/display-coordinate-query-contract.md).
+
 Egret's experimental public facade assembles `@egret/runtime` and `@egret/contracts`. It manages logical lifecycle, display/frame access, CPU assets and exclusive surface reservations; hosts manage physical resources and safe return. The root entry remains DOM-free. The separate `@egret/engine/web` entry exports `createCanvasHost`; `@egret/engine/webgpu` explicitly enables WebGPU. Engine pins `robust-predicates` 3.0.3 for rendering preparation.
 
 ## Public API and lifecycle
