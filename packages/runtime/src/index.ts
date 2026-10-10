@@ -24,3 +24,6 @@ export { collectFrameContent } from './frameCapture.js';
 export type { CapturedContent2D } from './frameCapture.js';
 export { Texture, createTexture, isTexture } from './Texture.js';
 export { Bitmap } from './Bitmap.js';
+export { createSequenceClip } from './sequenceClip.js';
+export type { SequenceFrameInput, SequenceClipInput, SequenceClip, SequenceRegion, SequenceSample, SequencePlaybackMode } from './sequenceClip.js';
+export { SequencePlayer } from './SequencePlayer.js';

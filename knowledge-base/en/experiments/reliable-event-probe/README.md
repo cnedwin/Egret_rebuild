@@ -2,7 +2,7 @@
 
 English | [简体中文](../../../Cns/experiments/reliable-event-probe/README.md)
 
-Second-round local contract research using the [technical white paper](../../docs/technical-white-paper.md) and [first-round audit](../../docs/round-1-audit.md). Gameplay TS remains authoritative. No production engine, real audio execution, network, IPC, or WASM bridge is implemented. Tests consume actual in-memory events/effect arrays rather than assert mock calls.
+Second-round local contract research using the [technical white paper](../../docs/technical-white-paper.md) and [first-round audit](../../archive/round-1-research.md#audit). Gameplay TS remains authoritative. No production engine, real audio execution, network, IPC, or WASM bridge is implemented. Tests consume actual in-memory events/effect arrays rather than assert mock calls.
 
 ## Contract and scope
 

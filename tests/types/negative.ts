@@ -53,6 +53,35 @@ new AssetLease();
 import { createAssetManager } from "@egret/engine";
 void broadType; void broadRef;
 
+import {SequencePlayer,createSequenceClip} from '@egret/engine';
+import type {SequenceClip,SequenceClipInput,SequenceFrameInput,SequencePlaybackMode} from '@egret/engine';
+declare const sequenceBitmap:Bitmap;
+const publicClip:SequenceClip=createSequenceClip({});
+const publicPlayer=new SequencePlayer(sequenceBitmap,publicClip);
+// @ts-expect-error Mode is restricted to the documented selections.
+new SequencePlayer(sequenceBitmap,publicClip,'ping-pong');
+// @ts-expect-error Player requires a Bitmap target.
+new SequencePlayer(new DisplayObject(),publicClip);
+// @ts-expect-error Player requires admitted clip metadata, not input frames.
+new SequencePlayer(sequenceBitmap,{atlasWidth:1,atlasHeight:1,frames:[]});
+// @ts-expect-error Absolute seconds are numeric.
+publicPlayer.applyAt('0');
+// @ts-expect-error Cached sample is readonly.
+publicPlayer.lastSample=undefined;
+// @ts-expect-error Disposal observation is readonly.
+publicPlayer.isDisposed=false;
+// @ts-expect-error Samples own readonly region metadata.
+publicPlayer.applyAt(0).region.width=2;
+// @ts-expect-error Valid documented frame durations are numeric.
+const invalidSequenceFrame:SequenceFrameInput={x:0,y:0,width:1,height:1,durationSeconds:'0.1'};
+// @ts-expect-error Valid documented atlas dimensions are numeric.
+const invalidSequenceInput:SequenceClipInput={atlasWidth:'1',atlasHeight:1,frames:[]};
+// @ts-expect-error Public playback modes do not include stop controllers.
+const invalidSequenceMode:SequencePlaybackMode='stop';
+// @ts-expect-error The underlying sampler remains internal.
+import {sampleSequenceClip} from '@egret/engine';
+void invalidSequenceFrame;void invalidSequenceInput;void invalidSequenceMode;
+
 import type {RenderFrame2D, RenderHostAdapter} from '@egret/engine';
 declare const capturedFrame:RenderFrame2D;
 // @ts-expect-error Frames are immutable headers.

@@ -1,59 +1,48 @@
-# Agent协作约定
+# Agent 协作约定
 
 [English](AGENTS.md) | 简体中文
 
-## 0.13.0 WebGPU矩形本地检查点 — 2026年10月9日
+本约定适用于全仓库，包括知识库共享实验、工具、证据、注释、Issue 与 PR。先读 [README](README.zh-CN.md)、[贡献指南](CONTRIBUTING.zh-CN.md)、[来源记录](source-origin.json)与相关规格，按用户既有授权范围开展工作。
 
-显式 `@egret/engine/webgpu` 入口同步执行不可变 `RenderFrame2D` 矩形命令。根入口保持无DOM；`@egret/engine/web`保持Canvas-only，实际请求不包含WebGPU或robust-predicates模块。无DOM准备层通过公共 `orient2d` 接入精确固定的基础依赖robust-predicates 3.0.3，适用Unlicense。复制、有界交点构造、打包、WGSL及宿主生命周期属于独立编写的第一方代码。见[完整0.6合同](knowledge-base/Cns/docs/WebGPU矩形执行合同.md)、[实施计划](knowledge-base/Cns/docs/WebGPU矩形实施计划.md)与[有限证据](knowledge-base/Cns/docs/WebGPU矩形实现证据.md)。
+## 架构与实现
 
-已接受的桌面构建记录177/177 CPU/mock/核心检查、28项预期负类型诊断及123个边界文件；独立真实WebGPU门禁记录42帧、1709项原始断言、84张截图、6808项合成断言、8项预期反例及0项意外错误。其中7项变异实际生产代码副本，1项仅为合成断言。实际结果与有限独立实现审阅由[验证](verification/webgpu-verification.json)与[审阅](verification/webgpu-review.json)绑定已接受的源码身份；文档整合没有重跑这些检查。
+- 核心按白鹭自己的规格独立实现。沿用熟悉的白鹭领域命名，遵循既有模块、API 与代码规范。机制研究、第三方依赖、白鹭适配与第一方实现分别登记来源及版本。
+- 保持包依赖图：engine 依赖 runtime/contracts，runtime 仅依赖 contracts，contracts 不依赖其他包。保留包 exports、strict 配置及不含 DOM/Node 环境全局的核心边界。公开示例与行为测试通过 `@egret/engine` 公共入口使用构建产物。
+- `@egret/engine/web` 保持 Canvas-only，不请求 WebGPU 或 robust-predicates 模块；WebGPU 使用显式 `@egret/engine/webgpu` 入口。rendering 独立编译项目保持无 DOM，仅引用 contracts。engine 精确固定的外部依赖 `robust-predicates` 3.0.3 仅允许在 rendering 通过包根入口的公共 `orient2d` 导入，适用 Unlicense，并与内部包依赖图和项目引用分别检查。
+- 私有几何单元测试可直接导入构建后的 `engine/dist/rendering` 辅助模块，此例外不适用于公开行为测试。
+- 实验性 `tools/verify-webgpu-b1.mjs` 仅可加载固定构建图：`packages/engine/dist/web/b1.js`、`packages/engine/dist/rendering/meshGeometry3D.js`、`packages/engine/dist/rendering/matrix4.js`、`packages/engine/dist/web/webgpuMeshPass.js`、`packages/contracts/dist/ImageData2D.js`，以及有限字面量导入闭包与固定别名。本例外不增加稳定导出，不允许普通示例或行为测试任意导入私有模块。
+- 公共行为变化同步规格、来源记录与必要回归。记录实际环境、未验证项、反例及修复；第三方研究或历史测试不替代自主产品验收。
 
-本experimental检查点记录于2026-10-08T21:23:54.294Z最终原生运行之前，核心/headless与桌面Canvas结果分别记录。随后仅注释入口重建的真实浏览器WebGPU运行在 `1aa0248a1ff6d8e54c42d631072223bb50483814`、2026-10-08T21:23:54.294Z以0退出并记录PASS：42帧、1709项原始断言、84张PNG截图、6808项合成断言、8项预期反例及0项意外错误。7项反例变异生产代码副本，1项为合成断言。233项源码/构建/工具/依赖清单身份在该运行前后相等，且与当时仅文档和元数据变更的后继版本一致。实际运行由验证作者执行；独立修正及原生绑定复审、最终语义凭据和发布仍待完成。浏览器WebGPU与Native App/SDK分别验收；截图合成不证明实体扫描输出、硬件加速、手机或性能。纹理/文字/UI/动画/3D、编辑器/Agent创作、CI、完整迁移与完整产品仍待实施或验收；R008/V006及V003保留既有义务。下文0.9–0.12历史记录保留原日期、身份与结果范围。
+## 公开贡献与证据
 
-本仓库包含自主核心切片与公开知识库。先读README、CONTRIBUTING、source-origin.json及相关规格；按当前用户已授权范围完成工作。
+措辞保持专业、客观与友善，以白鹭的目标场景、独立设计、接口和可复现结果说明变更。设计记录连接问题、选项、依据、反例及结论。技术比较注明资料版本与测试条件，性能目标与实测结论分别记录。
 
-- 自主核心按规格独立设计。资料研究、第三方依赖、白鹭适配和自主代码分别记录来源、版本与验证。
-- engine依赖runtime/contracts，runtime仅依赖contracts，contracts不依赖其他包。公共示例与行为测试从`@egret/engine`入口使用构建产物，保持包exports、strict配置和无DOM/Node环境全局的核心边界。
-- 私有几何单元测试可直接导入构建后的`engine/dist/rendering`辅助模块；公共行为测试仍使用公共入口。rendering独立编译项目保持无DOM，仅引用contracts。engine精确固定的外部依赖`robust-predicates` 3.0.3仅允许在rendering通过包根入口导入，与内部包依赖图及项目引用分别检查。
+AI 辅助贡献注明实际范围、资料与作者复核。保留参考出处和鸣谢，区分机制研究、实验依赖、产品依赖与开发工具。保留第三方归属、版权、许可、NOTICE 及资产来源；第一方代码与文档沿用 Apache-2.0。
 
-- 仓库实验性 `tools/verify-webgpu-b1.mjs` 可加载其固定构建后 B1／几何验证图：`packages/engine/dist/web/b1.js`、`packages/engine/dist/rendering/meshGeometry3D.js`、`packages/engine/dist/rendering/matrix4.js`、`packages/engine/dist/web/webgpuMeshPass.js`、`packages/contracts/dist/ImageData2D.js`，以及验证器的有限字面量导入闭包与固定别名。本例外不增加稳定包导出，不允许普通公开示例或行为测试任意导入私有模块。
-- 公共行为变化同步规格、来源记录与必要回归。说明实际运行环境与未验证项，保留反例和修复记录。
-- AI参与按实际资料、生成范围和作者复核声明；私有资料只保留可公开的必要摘要，凭据和个人数据不进入仓库。
-- 使用固定工具和lockfile，安装禁用生命周期脚本。版本、依赖、许可证或发布设置的变化单独说明理由和影响。
-- 第一方代码与文档沿用Apache-2.0，保留第三方版权、许可、NOTICE和资产归属。历史身份hash不因公开投影而改写。
-- 推送、发布、部署与仓库管理以用户实际授权为准。本地文件生成或验证不代表远端发布完成。
+使用固定工具和 lockfile，安装时禁用生命周期脚本。版本、依赖、许可证或发布设置发生变化时，说明理由与影响。保护个人及商业信息、未授权原始工程、凭据和私有配置，只公开必要且已获授权的摘要。工作台调度与未经整理的聊天不进入发行内容。
 
-原型的44/44行为检查与11项负类型断言是已记录的headless基线；GPU、Native、真实宿主、性能与CI需各自验收。知识库中的Three运行链属于第三方研究，不替代自主核心验证。
+整理证据只调整表达和公开范围，保留数据、结果、来源身份、失败与修订历史。公开副本注明投影关系，不改写历史哈希。实际接受状态以登记册和绑定版本的验证记录为准；浏览器、Native SDK、宿主、CI、目标设备性能及完整迁移分别验收。
 
-## 每次推送前的双语与公开检查
+## 文档与验证
 
-每次推送到GitHub前，整理全部可公开的文档和知识库，保持完整中文及英文阅读版本，并补全关键代码的英文注释。登记册英文视图从中文权威记录生成，保持ID、状态、数字与来源一致；原始证据、代码快照和上游许可保持原始身份。完成来源、归属、可公开内容与翻译语义复核后，运行`node tools/prepush.mjs`，该命令包含双语检查及核心验证。机器检查不能替代作者对公开授权和翻译含义的复核。
+公开简介英文优先，随后附中文。完整阅读版本分别放在 `knowledge-base/en/` 与 `knowledge-base/Cns/`，英文目录使用英文文件名。英文登记册视图从中文权威记录生成并保持只读，ID、状态、数字与来源一致。共享实验代码、原始证据、历史源码身份及上游许可原件保留出处。
 
-本地克隆后可执行`git config --local core.hooksPath .githooks`启用仓库推送钩子；钩子执行同一检查。CI与贡献者均执行该命令，禁止以跳过钩子代替修复。该约定适用于所有后续推送，详情见[双语规范](knowledge-base/Cns/docs/双语文档与推送前检查.md)。
+每次推送 GitHub 前，复核来源归属、公开内容及完整双语版本，补齐关键代码英文注释，更新当前文档身份并执行 `node tools/prepush.mjs`。该命令检查公开结构、核心／类型／包边界、headless 行为及知识库结构，不启动浏览器。结构检查不能代替翻译质量复核或公开批准。
 
-0.12.0限定显示/帧及独立Canvas实现已通过97/97行为检查及25项负类型诊断；原44项仍是历史基线。渲染变更另须运行`node tools/verify-canvas.mjs --playwright <installed-playwright-module> --channel msedge --output <private-output-directory>`；默认prepush不包含真实浏览器。
+克隆后，贡献者与 CI 必须执行 `git config --local core.hooksPath .githooks` 启用同一推送钩子；应修复失败而非绕过钩子。详见[双语规范](knowledge-base/Cns/docs/双语文档与推送前检查.md)及[目录规范](knowledge-base/Cns/docs/documentation-layout.md)。
 
-## 浏览器门禁与公开清单
+渲染变更按影响另行执行相应真实浏览器门禁：
 
-每次推送必须执行`node tools/prepush.mjs`，检查公开结构、核心/类型/边界、headless行为与知识库结构；它不启动浏览器。渲染变更按影响另执行`node tools/verify-canvas.mjs --playwright <installed-playwright-module> --channel msedge --output <private-output-directory>`与独立`node tools/verify-webgpu.mjs --playwright <installed-playwright-module> --channel msedge --output <private-output-directory>`。使用已接受的固定依赖，浏览器默认启动无附加flags；源码身份比对相同的既有构建结果可明确注明后保留。
+```text
+node tools/verify-canvas.mjs --playwright <installed-playwright-module> --channel msedge --output <private-output-directory>
+node tools/verify-webgpu.mjs --playwright <installed-playwright-module> --channel msedge --output <private-output-directory>
+node tools/verify-webgpu-b1.mjs --playwright "<absolute-installed-playwright-package-directory>" --channel msedge --output "<absolute-new-output-directory-outside-repository>"
+```
 
-发现与登记路径均按Windows大小写不敏感方式排除私有执行、依赖及生成目录；清单不能覆盖排除规则。普通公开AGENTS文档仍有效；仅保留两个精确路径/hash的Three r186历史研究构建例外。结构检查不能产生翻译含义或公开审阅批准。
+B1 命令用于受影响的 B1 场景渲染，详见[有界验证器](knowledge-base/Cns/docs/b1-browser-verifier.md)。使用已接受的固定依赖，浏览器默认启动且不附加 flags。沿用未变构建的已有证据时须明确比对身份；推送前仍须重新通过完整 prepush。
 
-受影响的 B1 场景渲染变更还应执行 `node tools/verify-webgpu-b1.mjs --playwright "<absolute-installed-playwright-package-directory>" --channel msedge --output "<absolute-new-output-directory-outside-repository>"`，使用自己的安装包路径和仓库外全新输出路径。见[有限 B1 浏览器验证器](knowledge-base/Cns/docs/b1-browser-verifier.md)。默认 prepush 不启动浏览器；推送前必须另行通过新完整检查。
+发现与登记路径在 Windows 按大小写不敏感方式排除私有执行、依赖及生成目录，清单不能覆盖排除规则。普通公开 AGENTS 文件仍有效；只有两个封存的 Three r186 研究构建精确路径／哈希保留既定例外。
 
-## 国际社区文档约定
+## 授权
 
-公开简介英文优先，随后附中文。完整知识库阅读版本分别放在 `knowledge-base/en/` 与 `knowledge-base/Cns/`，英文目录内使用英文文件名。共享实验代码、原始证据、历史源码身份与上游许可原件保留出处。设计记录使用问题、选项、依据、反例及结论，公开表达保持专业、客观与友善。每次推送 GitHub 前复核来源、公开范围及完整双语版本，补全关键代码英文注释，并运行完整 prepush。见[目录规范](knowledge-base/Cns/docs/documentation-layout.md)。
-
-## 全仓库公开协作规则
-
-以下规则同样适用于知识库的共享实验、工具与证据。
-
-- 以白鹭的目标场景、独立设计、明确接口和可复现结果说明变更。
-- 保留参考出处与鸣谢，区分机制研究、实验依赖、产品依赖和开发工具；实际第三方能力保持原有归属。
-- 使用专业、客观、友善的措辞。技术比较对应资料版本和测试条件，性能目标与实测结论分别记录。
-- 设计过程用问题、选项、依据、反例及结论形成可审查记录。AI辅助贡献注明范围并复核来源、行为与验证。
-- 公开材料保护私人信息、商业信息、原始未授权工程、凭据与私有配置；工作台调度和未经整理的聊天不进入发行内容。
-- 编辑证据只整理表达和公开范围，保持数据、结果、来源身份、失败及修订记录；公开副本注明投影关系。
-- 沿用白鹭领域命名，模块边界、API与代码风格遵循现有候选规范；实际接受状态以登记册和验证记录为准。
-- 本文件适用于代码、文档、注释、Issue和PR。它不授予账号权限或扩大任何外部发布、消息发送和资产使用授权。
+推送、发行、部署和仓库管理以用户实际授权为准，既有授权在其范围内持续有效。本地生成或验证不代表远端发布完成。本约定不授予账号权限，不扩大外部发布、消息发送或资产使用授权。

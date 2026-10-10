@@ -2,7 +2,17 @@
 
 English | [简体中文](../../Cns/docs/core-progress.md)
 
-## Current local engineering preview: 0.18.0
+## Current reading: engineering preview 0.20.0
+
+The public [explicit-time SequencePlayer](sequence-player-contract.md) connects admitted atlas metadata to a borrowed Bitmap through the root API, with once/loop selection, immutable samples, backward seeks and explicit disposal. The browser example (`examples/sequence-player/README.md`) and opaque verifier (`tools/sequence-player/README.md`) use public entries. Read the contract acceptance section and its compact record for the exact executed source and scope.
+
+Fourteen focused behavior checks passed. The type gate passed 54 root, 5 web and 28 project expected negative diagnostics; the affected B1 source-admission driver passed 13 cases after a narrowly selected delimiter repair. Full prepush is a separate publication gate. The prerequisite [Bitmap native observation](bitmap-region-evidence.md) remains distinct from the new public player observation.
+
+The [Spine specification](spine-animation-support-and-acceptance.md) remains a confirmed requirement, with implementation and acceptance pending. Full A2/alpha calibration, production hosts, fonts/UI/skeletons, target-device performance, editor/Agent and complete R008/V006 migration remain open. Packages stay private at 0.0.0, protocol pins at 1.0; 0.20.0 is an engineering checkpoint.
+
+The sections below retain historical checkpoint results and delivery statuses, including the earlier 403 response. They do not report current publication status or new test execution.
+
+## Historical local engineering preview: 0.18.0
 
 Adds bounded CPU conversion of one named legacy MovieClip, preserving atlas crops, display offsets and authored-hold time. Focused tests passed 28/28 with real sequence-factory re-admission. Read the [contract](legacy-movieclip-contract.md), [evidence](legacy-movieclip-evidence.md) and [compact record](../../evidence/legacy-movieclip-focused.json). The API remains internal; image reads, decoding and playback are unverified.
 

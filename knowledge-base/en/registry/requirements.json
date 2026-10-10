@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-09",
+  "updatedAt": "2026-10-10",
   "authority": "Goals confirmed by the user in this project discussion; see the delivery registry separately for implementation and acceptance",
   "items": [
     {
@@ -34,7 +34,8 @@
         "V001",
         "V002",
         "V004",
-        "V005"
+        "V005",
+        "V021"
       ],
       "decisionIds": [
         "D002",
@@ -55,7 +56,8 @@
       "deliveryIds": [
         "V002",
         "V011",
-        "V012"
+        "V012",
+        "V021"
       ],
       "decisionIds": [
         "D001",
@@ -77,7 +79,8 @@
       ],
       "deliveryIds": [
         "V002",
-        "V004"
+        "V004",
+        "V021"
       ],
       "decisionIds": [
         "D002",
@@ -241,7 +244,7 @@
       "decisionIds": [
         "D012"
       ],
-      "doc": "en/docs/technical-validation-record.md"
+      "doc": "en/archive/round-1-research.md"
     },
     {
       "id": "R012",
@@ -256,7 +259,8 @@
         "V002",
         "V004",
         "V007",
-        "V008"
+        "V008",
+        "V021"
       ],
       "decisionIds": [
         "D002",
@@ -438,11 +442,36 @@
       ],
       "decisionIds": [],
       "doc": "en/docs/bilingual-documentation-and-prepush-checks.md"
+    },
+    {
+      "id": "R020",
+      "title": "Complete Spine animation support",
+      "statement": "The engine must fully support Spine animation, preserving official semantics and authored effects within a publicly verified version/feature/backend/host matrix. Cover import, editing, complex UI and scene composition, events, resource recovery and applicable legacy migration without silently dropping features.",
+      "status": "confirmed",
+      "sourceIds": [
+        "S066"
+      ],
+      "deliveryIds": [
+        "V002",
+        "V004",
+        "V005",
+        "V006",
+        "V020",
+        "V007",
+        "V008"
+      ],
+      "decisionIds": [
+        "D002",
+        "D008",
+        "D012",
+        "D016"
+      ],
+      "doc": "en/docs/spine-animation-support-and-acceptance.md"
     }
   ],
   "_localization": {
     "canonicalSource": "需求.json",
-    "canonicalSha256": "90d12d60d79a029383eb14dfeeef8670b2b7675c3a6e641c901889ee197a96d1",
+    "canonicalSha256": "90fd86d3b53a13af6bdbf5b7c352ba0c917922d4e67e48fd55b7c9fec9153632",
     "role": "read_only_translation",
     "language": "en"
   }

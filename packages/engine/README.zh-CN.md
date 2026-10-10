@@ -2,56 +2,25 @@
 
 [English](README.md) | 简体中文
 
-## 当前本地工程预览：0.18.0
+白鹭实验性公共门面，装配 `@egret/runtime` 与 `@egret/contracts`，管理逻辑生命周期、显示／帧访问、CPU 资源及 surface 独占预留；物理资源和安全归还由宿主负责。根入口保持无 DOM，独立 `@egret/engine/web` 导出 `createCanvasHost`，`@egret/engine/webgpu` 显式启用 WebGPU。Engine 为渲染准备固定使用 `robust-predicates` 3.0.3。
 
-新增单个具名旧 MovieClip 的有界 CPU 转换，保留图集裁剪、显示偏移和作者持续段时间；28/28 专项测试通过，输出已由真实序列帧工厂重新准入。阅读[契约](../../knowledge-base/Cns/docs/legacy-movieclip-contract.md)、[证据](../../knowledge-base/Cns/docs/legacy-movieclip-evidence.md)和[精简记录](../../knowledge-base/evidence/legacy-movieclip-focused.json)。API 保持内部使用，图片读取、解码和播放仍未验证。
+## 公共 API 与生命周期
 
-0.17.0 及更早结果保留为各自源码身份下的历史证据。此次增量的默认模式、全仓回归和完整 prepush 未运行；当前浏览器／设备像素、性能及完整 R008/V006 迁移仍待验收。0.18.0 是本地工程标签，包 0.0.0／协议 1.0 不变；GitHub 交付继续保持 HOLD_HTTP_403。
+`createEngine` 接收显式 `HostAdapter`、可选正整数关闭 deadline 和诊断回调，提供 `Engine`、所属 `Stage`、`Scope`、assets 服务及唯一关闭 Promise。公共门面不导出内部装配接口。
 
-## 历史本地工程预览：0.17.0
+`createEngine` 在等待 `host.start` 前预留 surface；启动失败仍进入清理。关闭立即开始，等待当前帧调用退出后处理 Scope、Stage 和 CPU 资源管理器，再停止宿主并有界等待 `close`。只有 close 成功才释放预留；超时或拒绝保持隔离，迟到成功可以释放预留。Engine 不销毁借用的 surface 或 device；本切片没有强制释放或恢复入口。
 
-本预览新增自有 CPU 场景快照、固定网格辅助函数、有界 B1 宿主源码／模拟整合、CPU 序列帧采样与纯 RES 转换意图。阅读[CPU 场景](../../knowledge-base/Cns/docs/3d-cpu-scene-contract.md)、[网格](../../knowledge-base/Cns/docs/3d-webgpu-mesh-contract.md)、[宿主](../../knowledge-base/Cns/docs/b1-host-contract.md)、[序列帧](../../knowledge-base/Cns/docs/sequence-clip-contract.md)及[RES 意图](../../knowledge-base/Cns/docs/legacy-res-plan-contract.md)与配对证据。这些接口保持内部使用；公开入口与包 0.0.0／协议 1.0 不变。
+Scope 或 Stage 清理失败仍继续后续步骤。`EgretError` 保留原 cause 和按顺序收集的清理错误。
 
-已记录默认宿主验证通过 13/13 项，CPU 序列帧采样通过 25/25，RES 意图规划通过 14/14。所选整仓运行通过 901/901 项测试、编译、282 个边界文件及类型门禁；901 项包含宿主回归。源码绑定、仅格式后继及保留的早期失败见[配对宿主证据](../../knowledge-base/Cns/docs/b1-host-evidence.md)。此次文档采用未重跑产品检查。
+## 显示与帧执行
 
-GitHub 交付因已记录的 403 响应保持 HOLD；当前文档最终审阅与完整 prepush 仍待完成。此前 0.13.0–0.16.0 检查点保留身份及结果。Native SDK、当前浏览器／设备像素、性能、字体、DragonBones、完整 R008/V006 迁移、V003／编辑器及完整产品验收仍未验证或保持开放。
+`DisplayObject` 提供 `x`、`y`、`scaleX`、`scaleY`、`rotation`、`alpha`、`visible` 与 `clipRect`；`Sprite.graphics` 拥有矩形填充。`Engine.captureFrame` 生成不可变 `RenderFrame2D`，`renderFrame` 另向创建时固定的同步宿主端口提交。没有渲染端口时捕获仍可用，渲染会拒绝。帧读取和执行拒绝重入；清理等待帧调用退出。
 
-## 历史本地工程预览：0.16.0
+Canvas DOM 类型与执行保留在 web 子入口。具体行为见[显示与帧合同](../../knowledge-base/Cns/docs/显示与帧执行合同.md)，绑定版本的证据见[实现记录](../../knowledge-base/Cns/docs/显示与帧执行实现记录.md)。
 
-当前增量覆盖已接受的有界图片源码／模拟逻辑、CPU 纹理参考公式、CPU 3D 数学／几何／打包，以及旧 RES 声明分析。阅读[核心进展](../../knowledge-base/Cns/docs/core-progress.md)、[3D CPU 基础](../../knowledge-base/Cns/docs/3d-foundation.md)和[旧 RES 声明](../../knowledge-base/Cns/docs/legacy-res-declarations.md)，查看契约、准确历史证据与开放任务。标签为工程预览；包 0.0.0 与协议 1.0 不变。最终独立公开审查、prepush 及本预览的 GitHub 交付仍待完成。
+## WebGPU 使用
 
-此前 0.13.0／0.14.0／0.15.0 章节是各自有源码身份和结果的历史检查点，其矩形／浏览器观察不能验证当前图片或 3D 的 native 像素。Task 5a 仅提供 CPU 公式／边界；A2 Task 5b／Task 6、P0–P7、设备／文字／动画／Native、V003 和完整 R008／V006 迁移保持开放或 UNRUN。
-
-## 0.13.0 WebGPU矩形本地检查点 — 2026年10月9日
-
-显式 `@egret/engine/webgpu` 入口同步执行不可变 `RenderFrame2D` 矩形命令。根入口保持无DOM；`@egret/engine/web`保持Canvas-only，实际请求不包含WebGPU或robust-predicates模块。无DOM准备层通过公共 `orient2d` 接入精确固定的基础依赖robust-predicates 3.0.3，适用Unlicense。复制、有界交点构造、打包、WGSL及宿主生命周期属于独立编写的第一方代码。见[完整0.6合同](../../knowledge-base/Cns/docs/WebGPU矩形执行合同.md)、[实施计划](../../knowledge-base/Cns/docs/WebGPU矩形实施计划.md)与[有限证据](../../knowledge-base/Cns/docs/WebGPU矩形实现证据.md)。
-
-已接受的桌面构建记录177/177 CPU/mock/核心检查、28项预期负类型诊断及123个边界文件；独立真实WebGPU门禁记录42帧、1709项原始断言、84张截图、6808项合成断言、8项预期反例及0项意外错误。其中7项变异实际生产代码副本，1项仅为合成断言。实际结果与有限独立实现审阅由[验证](../../verification/webgpu-verification.json)与[审阅](../../verification/webgpu-review.json)绑定已接受的源码身份；文档整合没有重跑这些检查。
-
-本experimental检查点记录于2026-10-08T21:23:54.294Z最终原生运行之前，核心/headless与桌面Canvas结果分别记录。随后仅注释入口重建的真实浏览器WebGPU运行在 `1aa0248a1ff6d8e54c42d631072223bb50483814`、2026-10-08T21:23:54.294Z以0退出并记录PASS：42帧、1709项原始断言、84张PNG截图、6808项合成断言、8项预期反例及0项意外错误。7项反例变异生产代码副本，1项为合成断言。233项源码/构建/工具/依赖清单身份在该运行前后相等，且与当时仅文档和元数据变更的后继版本一致。实际运行由验证作者执行；独立修正及原生绑定复审、最终语义凭据和发布仍待完成。浏览器WebGPU与Native App/SDK分别验收；截图合成不证明实体扫描输出、硬件加速、手机或性能。纹理/文字/UI/动画/3D、编辑器/Agent创作、CI、完整迁移与完整产品仍待实施或验收；R008/V006及V003保留既有义务。下文0.9–0.12历史记录保留原日期、身份与结果范围。
-
-
-## 历史0.12.0显示与帧候选范围
-
-后续工作包按[显示与帧合同](../../knowledge-base/Cns/docs/显示与帧执行合同.md)及[实现计划](../../knowledge-base/Cns/docs/显示与帧执行实现计划.md)推进：显示变换、继承可见性/透明度与本地矩形裁剪、Sprite 所属 Graphics 的矩形填充，以及不可变 CPU 帧捕获/提交。首个已实现执行适配器为独立 @egret/engine/web 入口的 Canvas，核心根入口保留无 DOM 边界。限定实现检查已通过：97/97核心行为测试、25项负类型诊断及真实桌面Canvas像素/指针交互。跨realm拒绝修正后有限独立审阅通过；远端发布另行记录。最终限定结果由[实现记录](../../knowledge-base/Cns/docs/显示与帧执行实现记录.md)和[验证](../../verification/display-frame-verification.json)承载。
-
-captureFrame 仅提取快照，renderFrame 另向创建时固定的同步宿主端口提交；没有渲染端口时前者仍可用，后者拒绝。帧读取/执行期间禁止重入；关闭立即进入 closing，但清理等待帧调用退出。Canvas 的 DOM 类型与执行隔离在 web 子入口，根入口不重导出该适配器。
-
-本包不验收完整文本/纹理/动画/UI/3D 执行、GPU 或 Native 支持、目标设备性能、编辑器、Agent 服务或完整迁移。此前 headless、CPU 资源与第三方研究记录保留原版本、数量、hash 和范围，不转为新显示帧验收。
-
-experimental公共门面；内部依赖runtime与contracts，WebGPU准备另有精确外部robust-predicates 3.0.3依赖。输入为显式HostAdapter、可选正整数关闭deadline与诊断回调，输出为Engine及其Stage、Scope、assets服务和唯一关闭Promise。Engine管理逻辑生命周期与surface预留，宿主管理物理资源和安全归还事实。
-
-createEngine在等待host.start前预留surface，启动失败也进入清理。关闭先等待当前帧调用退出，再处理Scope与Stage，再关闭CPU资产管理器、停止host并有界等待close。只有close成功才释放surface；超时或拒绝保持隔离，迟到成功可以释放预留。核心不销毁借用的surface/device，本切片没有强制释放或恢复入口。
-
-Scope或Stage清理失败仍继续后续步骤；EgretError保留原cause与按顺序收集的cleanupErrors。根导出只包含已实现的切片能力，内部装配口不导出。
-
-根目录验证为`node tools/verify.mjs`，联动样例为`node examples/headless.mjs`与`node examples/assets.mjs`。设计见[知识库](../../knowledge-base/Cns/README.md)，来源见[来源记录](../../source-origin.json)。包保留`private: true`以防止意外npm发布，第一方代码与本文采用[Apache-2.0](../../LICENSE)。
-
-当前显示/帧公共API：DisplayObject的x/y、scaleX/scaleY、rotation、alpha、visible与clipRect；Sprite.graphics拥有矩形填充；Engine.captureFrame/renderFrame产生/提交不可变RenderFrame2D。独立`@egret/engine/web`导出createCanvasHost，根入口保持无DOM。接口为实验性质，完整文字/纹理/动画/UI/3D尚未实现。
-
-## 公共WebGPU使用
-
-`canvas`为HTMLCanvasElement。可选readback绑定下一次通过预检的帧；`renderFrame`同步返回undefined。`result.bytes`为调用者所有的预乘RGBA，不是浏览器合成结果。`whenIdle`仅截取已提交工作；只有`close`成功才证明安全归还，Engine包装保留原cause。见[示例](../../examples/webgpu/README.zh-CN.md)。
+将 `HTMLCanvasElement` 作为 `canvas`。可选 readback 绑定下一次通过预检的帧；`renderFrame` 同步返回 `undefined`。`result.bytes` 是调用者所有的预乘 RGBA，与浏览器合成结果不同。`whenIdle` 截取已提交工作；只有 `close` 成功才证明安全归还，Engine 包装保留原 cause。见 [WebGPU 示例](../../examples/webgpu/README.zh-CN.md)。
 
 ```ts
 import { createEngine, Sprite } from '@egret/engine';
@@ -67,3 +36,15 @@ engine.renderFrame({ width: 48, height: 40, clearColor: 0, clearAlpha: 0 });
 const result = await pixels;
 await engine.dispose();
 ```
+
+## 验证与范围
+
+在仓库根运行 `node tools/verify.mjs`、`node examples/headless.mjs` 及 `node examples/assets.mjs`。影响渲染的修改还须运行[协作约定](../../AGENTS.zh-CN.md)规定的对应真实浏览器门禁。包指南说明接口；历史数量和交付记录见[知识库](../../knowledge-base/Cns/README.md)及其[版本记录](../../knowledge-base/Cns/CHANGELOG.md)。
+
+完整文字、纹理、动画、UI 与 3D 执行、Native SDK、目标设备性能、编辑器、Agent 服务及完整旧工程迁移各有独立验收义务。内部 CPU 场景、序列帧及转换工作不代表这些能力已公开或完整实现。
+
+包版本 `0.0.0`、协议 `1.0` 和实验性 API 状态保持不变。`private: true` 防止意外 npm 发布。归属见[来源记录](../../source-origin.json)，交付政策见[发布指南](../../PUBLICATION.zh-CN.md)。第一方代码与本文采用 [Apache-2.0](../../LICENSE)。
+
+## 显式序列动画
+
+`createSequenceClip` 拥有已校验图集时序；`SequencePlayer` 把调用方提供的绝对秒数应用于一个 Bitmap 与确切借用租约。构造不改变裁剪，销毁不释放调用方资源，不包含自动调度器。见[契约与验收范围](../../knowledge-base/Cns/docs/显式时间序列播放器契约.md)，以及公共 `examples/sequence-player` / `tools/sequence-player` 指南。

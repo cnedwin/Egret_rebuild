@@ -2,9 +2,9 @@
 
 [English](../../en/docs/sequence-clip-contract.md) · [验证证据](sequence-clip-evidence.md)
 
-白鹭自主实现的`packages/runtime/src/sequenceClip.ts` 把图集区域和帧时长转为不可变时间数据，再按调用者提供的秒数采样帧。它是内部 CPU 组件，不是播放器、纹理加载器或渲染器；函数和类型尚未由 runtime 包入口集中导出。
+白鹭自主实现的`packages/runtime/src/sequenceClip.ts` 把图集区域和帧时长转为不可变时间数据，再按调用者提供的秒数采样帧。clip 工厂与元数据类型现在通过根入口及 runtime 入口导出；采样器仍为内部实现，本组件本身不加载纹理或渲染。独立的[显式时间 SequencePlayer 契约](显式时间序列播放器契约.md)定义存活 Bitmap 的绑定与应用。
 
-完整图像图集可用调用者秒数采样，并通过[已实施 Bitmap 区域成员](bitmap-region-contract.md)和同一借用租约应用选区。采样仍为内部组件，与赋值分别执行，不新增时钟／播放器。其有限 CPU 证据不验证可见播放，也不把较早采样器／整仓记录转为新的渲染结果。
+完整图像图集可用调用者秒数采样，并通过[已实施 Bitmap 区域成员](bitmap-region-contract.md)和同一借用租约应用选区。历史手动采样路径仍与赋值分别执行；SequencePlayer 提供显式应用，不增加时钟。历史 CPU 证据不认证该新播放器，也不把较早采样器／整仓记录转为新的渲染结果。
 
 ```ts
 createSequenceClip(input: unknown): SequenceClip

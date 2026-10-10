@@ -2,7 +2,25 @@
 
 English | [简体中文](../Cns/CHANGELOG.md)
 
-## Current local engineering preview: 0.18.0
+## Engineering preview: 0.20.0 — 2026-10-10
+
+Added the public sequence factory/types and explicit-time SequencePlayer with exact lease binding, atomic crop/sample commit, private receiver authority and Engine affinity. Added a public-entry example and opaque browser verifier. Read the [contract and acceptance](docs/sequence-player-contract.md) for measured behavior, type and browser scopes; the earlier [Bitmap observation](docs/bitmap-region-evidence.md) remains separate.
+
+No third-party animation dependency was added. This does not accept full A2/alpha calibration, production hosts, UI/fonts/skeletons, performance, complete Spine support or R008/V006 migration. Packages remain private at 0.0.0 and protocol pins remain 1.0. The documentation cleanup and Spine requirement below are included without changing their historical technical acceptance.
+
+## Documentation cleanup — 2026-10-10
+
+Consolidated nine historical research/plan/execution/audit documents into three complete round records under `archive/`, kept both language editions, and removed the duplicated knowledge-base agent agreement in favor of the repository-wide rules. Shortened entry pages and replaced repeated historical GPU reports with evidence links. Raw results, failures, source snapshots, legal originals and product code are preserved; this is a reading-structure change, not a new engine version.
+
+## Engineering preview: 0.19.0
+
+Added bounded CPU Bitmap region admission/capture and the B1 browser verifier. Read the [Bitmap contract](docs/bitmap-region-contract.md), [Bitmap evidence](docs/bitmap-region-evidence.md) and [B1 verifier](docs/b1-browser-verifier.md). These increments do not accept complete UI, skeletons, target hosts, device performance, AI creation or R008/V006 migration. Older checkpoint statuses below describe their own dates and source identities.
+
+## Requirement amendment — 2026-10-10: complete Spine support
+
+Added confirmed R020, planned V020 and S066–S068, a complete bilingual support/acceptance specification, and corresponding product, rendering, engineering and delivery obligations. Initial version candidates are 4.3 and 4.2; all Egret Spine compatibility rows remain unverified. No runtime source, dependency, API, test result or engineering version was added. See the [Spine requirement](docs/spine-animation-support-and-acceptance.md).
+
+## Historical local engineering preview: 0.18.0
 
 Adds bounded CPU conversion of one named legacy MovieClip, preserving atlas crops, display offsets and authored-hold time. Focused tests passed 28/28 with real sequence-factory re-admission. Read the [contract](docs/legacy-movieclip-contract.md), [evidence](docs/legacy-movieclip-evidence.md) and [compact record](../evidence/legacy-movieclip-focused.json). The API remains internal; image reads, decoding and playback are unverified.
 
@@ -26,11 +44,7 @@ Added V013–V015 and S059–S062 without upgrading V002 full acceptance, V003, 
 
 ## 0.13.0 WebGPU rectangle checkpoint — October 9, 2026
 
-The opt-in `@egret/engine/webgpu` entry executes immutable `RenderFrame2D` rectangle commands synchronously. The root stays DOM-free; `@egret/engine/web` stays Canvas-only and requests no WebGPU or robust-predicates modules. DOM-free preparation uses the exact foundational dependency robust-predicates 3.0.3 through public `orient2d`, under Unlicense. Copying, bounded intersection construction, packing, WGSL and host lifetime are independently authored first-party code. See the [complete 0.6 contract](docs/webgpu-rectangle-execution-contract.md), [implementation plan](docs/webgpu-rectangle-implementation-plan.md) and [bounded evidence](docs/webgpu-rectangle-implementation-evidence.md).
-
-The accepted desktop build records 177/177 CPU/mock/core tests, 28 expected negative type diagnostics and 123 boundary files. Its separate real WebGPU gate records 42 frames, 1709 raw assertions, 84 screenshots, 6808 composition assertions, eight intended negatives and zero unexpected errors. Seven negatives mutate copied production code; one is synthetic assertion-only. These recorded results and scoped independent implementation review belong to the accepted source identities in [verification](../evidence/webgpu-verification.json) and [review](../evidence/webgpu-review.json); they are not fresh execution by document integration.
-
-This experimental checkpoint was recorded before the final native run at 2026-10-08T21:23:54.294Z; its core/headless and desktop Canvas results are separately recorded. The subsequent final comment-build browser WebGPU run at `1aa0248a1ff6d8e54c42d631072223bb50483814`, 2026-10-08T21:23:54.294Z, exited 0 and recorded PASS: 42 frames, 1709 raw assertions, 84 PNG screenshots, 6808 composition assertions, eight intended negatives and zero unexpected errors. Seven negatives mutate copied production code; one is synthetic. All 233 inventoried source/build/tool/dependency identities remained equal before and after that execution and match that historical metadata-only successor. The execution was performed by its verification author; independent correction/native-binding closure, final semantic attestation and publication remain pending. Browser WebGPU is separate from a Native app/SDK. Screenshot composition does not certify physical scanout, acceleration, phones or performance. Textures/text/UI/animation/3D, editor/Agent creation, CI, complete migration and full-product acceptance remain open; R008/V006 and V003 retain their existing obligations. Historical 0.9–0.12 records below keep their original dates, identities and result scopes.
+The historical 0.13.0 rectangle checkpoint has its own [implementation and verification record](docs/webgpu-rectangle-implementation-evidence.md). Its source identities, results and pending work retain their recorded scope; they do not establish current product acceptance.
 
 
 ## Historical 0.12.0 display and frame candidate scope
@@ -91,7 +105,7 @@ Compilation/Runtime/GPUAI were not installed or run, and graphics experiments we
 
 ## 0.5.0 October 8, 2026
 
-Executed the first Three r186 real-asset reference chain under R012: fixed glTF skinned cylinder, independent animation instances, same-context text UI, shared-resource release, required policy, cancellation, and actual context recovery. Added the [third-round integration record](docs/round-3-integration-record.md) and [audit](docs/round-3-audit.md). Three design documents update to candidate 0.4.
+Executed the first Three r186 real-asset reference chain under R012: fixed glTF skinned cylinder, independent animation instances, same-context text UI, shared-resource release, required policy, cancellation, and actual context recovery. Added the [third-round integration record](archive/round-3-research.md#execution) and [audit](archive/round-3-research.md#audit). Three design documents update to candidate 0.4.
 
 Current main checks pass 17/17, with zero page errors/console diagnostics. Retained the failing behavioral version, old-handle cleanup failure after recovery, four faulty mutations, and regressions after independent review. Sources and code received separate independent AI reviews; integration verification reran the final identical source. Counts cover only the current limited reference chain, neither accumulating historical repeats nor increasing existing 71-item coverage.
 
@@ -109,7 +123,7 @@ Upstream projects were not installed or executed; existing experiments were not 
 
 ## 0.3.0 October 8, 2026
 
-Updated the technical white paper, PRD, and engineering plan to candidate 0.2. Added the [second-round verification record](docs/round-2-validation-record.md) and [second-round audit](docs/round-2-audit.md). Main checks pass 64 items in four CPU programs and 7 actual WebGL mixed-graphics items. All conclusions remain experimental and do not constitute engine, host, performance, or migration acceptance.
+Updated the technical white paper, PRD, and engineering plan to candidate 0.2. Added the [second-round verification record](archive/round-2-research.md#execution) and [second-round audit](archive/round-2-research.md#audit). Main checks pass 64 items in four CPU programs and 7 actual WebGL mixed-graphics items. All conclusions remain experimental and do not constitute engine, host, performance, or migration acceptance.
 
 Further separated identity and lifecycle for events, resources, UI, and batching. Audits repaired missing generations in device fences, sparse arrays, finite-input overflow, and a GPU reference sharing a builder. The weak blank-screen recovery criterion was also repaired after retaining counterexamples. Original failures, intermediate passing versions, source digests, and independent-review boundaries remain.
 
@@ -119,11 +133,11 @@ S018–S024 record this round's programs, official graphics references, and inde
 
 Added the candidate 0.1 technical white paper, product requirements document, and engineering-plan package, plus technical verification records, first-round independent audit, and first-round official-research entry points. R011 records the user's requirement for gradual research, deliberation, verification, and self-audit. V008 corresponds to the candidate design package; the complete 0.1.0 baseline snapshot remains in internal history.
 
-Independent contract models and local browser graphics research programs ran, retaining partial results and failure history. Contract-model audits found defects; repairs, reverification, and final actual check counts follow the [technical verification record](docs/technical-validation-record.md). V001 research becomes in_progress. V002–V006 product implementation has not started; all D001–D012 remain proposed and H001–H007 untested. The complete engine, production hosts, performance, creator tasks, and migration have not passed acceptance; delivery of candidate documents does not approve technical selections.
+Independent contract models and local browser graphics research programs ran, retaining partial results and failure history. Contract-model audits found defects; repairs, reverification, and final actual check counts follow the [technical verification record](archive/round-1-research.md#execution). V001 research becomes in_progress. V002–V006 product implementation has not started; all D001–D012 remain proposed and H001–H007 untested. The complete engine, production hosts, performance, creator tasks, and migration have not passed acceptance; delivery of candidate documents does not approve technical selections.
 
 Tightened competitor evidence levels: LayaAir engine 3.4.1 was checked this round; IDE 3.4.1 and old official-site dates remain previous-round static excerpts only. Date differences between official services and GitHub for 3.3/3.4 retain conflicting sources/event definitions without combining them into new conclusions. Initial host order, team, schedule, and numerical performance budgets remain unconfirmed by the user. R008/V006 remains a formal requirement for the first complete release target; V006 ultimately depends on V001–V005.
 
-[Technical white paper](docs/technical-white-paper.md) · [Product requirements document](docs/product-requirements.md) · [Engineering plan](docs/engineering-plan.md) · [Technical verification record](docs/technical-validation-record.md) · [First-round audit](docs/round-1-audit.md) · [First-round research checks](docs/round-1-research-verification.md)
+[Technical white paper](docs/technical-white-paper.md) · [Product requirements document](docs/product-requirements.md) · [Engineering plan](docs/engineering-plan.md) · [Technical verification record](archive/round-1-research.md#execution) · [First-round audit](archive/round-1-research.md#audit) · [First-round research checks](archive/round-1-research.md#research)
 
 ## 0.1.0 October 8, 2026
 

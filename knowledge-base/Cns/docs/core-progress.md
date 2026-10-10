@@ -2,7 +2,17 @@
 
 [English](../../en/docs/core-progress.md) | 简体中文
 
-## 当前本地工程预览：0.18.0
+## 当前阅读：工程预览 0.20.0
+
+公共[显式时间 SequencePlayer](显式时间序列播放器契约.md)通过根 API，把已准入图集元数据连接到借用的 Bitmap，提供 once／loop 选帧、不可变采样、向后定位与显式销毁。浏览器示例（`examples/sequence-player/README.zh-CN.md`）与不透明验证器（`tools/sequence-player/README.zh-CN.md`）使用公共入口。实际执行的确切源码与范围，请参阅契约验收段及紧凑记录。
+
+14 项聚焦行为检查通过。类型门禁通过 54 项根入口、5 项 web、28 项工程预期负向诊断；受影响的 B1 源码准入驱动在仅选定分隔位置的修复后通过 13 个案例。完整推送前检查属于独立发布门禁。[Bitmap 原生前置观察](bitmap-region-evidence.md)与新的公共播放器观察保持独立。
+
+[Spine 规范](Spine动画支持需求与验收.md)仍是已确认需求，实现与验收待完成。完整 A2／透明精度校准、生产宿主、字体／UI／骨骼、目标设备性能、编辑器／Agent 及完整 R008／V006 迁移仍待完成。包仍为 private 0.0.0，协议固定值为 1.0；0.20.0 是工程检查点。
+
+以下章节保留历史检查点结果与交付状态，包括早期的 403 响应；它们不表示当前发布状态或新增测试执行。
+
+## 历史本地工程预览：0.18.0
 
 新增单个具名旧 MovieClip 的有界 CPU 转换，保留图集裁剪、显示偏移和作者持续段时间；28/28 专项测试通过，输出已由真实序列帧工厂重新准入。阅读[契约](legacy-movieclip-contract.md)、[证据](legacy-movieclip-evidence.md)和[精简记录](../../evidence/legacy-movieclip-focused.json)。API 保持内部使用，图片读取、解码和播放仍未验证。
 

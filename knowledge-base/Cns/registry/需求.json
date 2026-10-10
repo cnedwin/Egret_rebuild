@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-09",
+  "updatedAt": "2026-10-10",
   "authority": "用户在本次项目讨论中确认的目标；实现与验收另查交付登记册",
   "items": [
     {
@@ -34,7 +34,8 @@
         "V001",
         "V002",
         "V004",
-        "V005"
+        "V005",
+        "V021"
       ],
       "decisionIds": [
         "D002",
@@ -55,7 +56,8 @@
       "deliveryIds": [
         "V002",
         "V011",
-        "V012"
+        "V012",
+        "V021"
       ],
       "decisionIds": [
         "D001",
@@ -77,7 +79,8 @@
       ],
       "deliveryIds": [
         "V002",
-        "V004"
+        "V004",
+        "V021"
       ],
       "decisionIds": [
         "D002",
@@ -241,7 +244,7 @@
       "decisionIds": [
         "D012"
       ],
-      "doc": "Cns/docs/技术验证记录.md"
+      "doc": "Cns/archive/第一轮研究.md"
     },
     {
       "id": "R012",
@@ -256,7 +259,8 @@
         "V002",
         "V004",
         "V007",
-        "V008"
+        "V008",
+        "V021"
       ],
       "decisionIds": [
         "D002",
@@ -438,6 +442,31 @@
       ],
       "decisionIds": [],
       "doc": "Cns/docs/双语文档与推送前检查.md"
+    },
+    {
+      "id": "R020",
+      "title": "完整支持 Spine 动画",
+      "statement": "引擎必须完整支持 Spine 动画；在公开验证的版本／功能／后端／宿主矩阵内保持官方语义与作者效果，覆盖导入、编辑、复杂 UI 与场景合成、事件、资源恢复及适用的旧工程迁移，不得静默丢失功能。",
+      "status": "confirmed",
+      "sourceIds": [
+        "S066"
+      ],
+      "deliveryIds": [
+        "V002",
+        "V004",
+        "V005",
+        "V006",
+        "V020",
+        "V007",
+        "V008"
+      ],
+      "decisionIds": [
+        "D002",
+        "D008",
+        "D012",
+        "D016"
+      ],
+      "doc": "Cns/docs/Spine动画支持需求与验收.md"
     }
   ]
 }

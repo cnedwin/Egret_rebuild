@@ -170,6 +170,14 @@ export class Bitmap extends DisplayObject {
 /** Brand and slot only: geometry may be validated before any lease read. */
 export function bitmapCaptureState(node: DisplayObject): BitmapCaptureState | undefined { return states.get(node); }
 
+/** Internal binding authority; a cleared slot remains distinguishable from retirement. */
+export function readBitmapBinding(node: Bitmap): BitmapCaptureState | undefined {
+  assertBitmap(node);
+  assertLive(node);
+  engineOf(node)!.assertOpen();
+  return states.get(node);
+}
+
 /** Exact entitlement precedes value/live checks; public value getters are not authority. */
 export function readBitmapImage(lease: AssetLease<Texture>): TextureSnapshot2D {
   if (!isAssetLease(lease)) throw new EgretError("BITMAP_LEASE_INVALID");

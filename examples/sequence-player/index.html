@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Egret explicit-time sequence</title>
+<link rel="icon" href="/examples/canvas-scene/favicon.svg">
+<script type="importmap">{"imports":{"@egret/engine":"/packages/engine/dist/index.js","@egret/engine/web":"/packages/engine/dist/web/index.js","@egret/engine/webgpu":"/packages/engine/dist/web/webgpu.js","@egret/runtime":"/packages/runtime/dist/index.js","@egret/contracts":"/packages/contracts/dist/index.js","robust-predicates":"/packages/engine/node_modules/robust-predicates/index.js"}}</script>
+<style>body{font:17px system-ui;margin:32px;background:#eef2f6;color:#172033}main{max-width:720px}canvas{border:2px solid #334155;image-rendering:pixelated}button,select{font:inherit;padding:8px;margin:4px 4px 4px 0}pre{white-space:pre-wrap}label{display:inline-block;margin-right:12px}</style>
+</head><body><main>
+<h1>Explicit-time sequence / 显式时间序列</h1>
+<p>Choose an absolute time. No automatic playback. One 6×2 atlas supplies red 2×2, green 1×2 and blue 3×1 frames.<br>选择绝对时刻；不自动播放。同一图集提供红、绿、蓝三帧。</p>
+<p><label>Backend / 后端 <select id="backend"><option value="canvas">Canvas</option><option value="webgpu">WebGPU</option></select></label>
+<label>Mode / 模式 <select id="mode"><option value="once">once</option><option value="loop">loop</option></select></label></p>
+<p id="times"><button data-time="0">0 s</button><button data-time="0.125">0.125 s</button><button data-time="0.375">0.375 s</button><button data-time="0.5">0.5 s</button></p>
+<canvas id="scene" width="192" height="112" aria-label="Selected atlas frame / 所选图集帧"></canvas>
+<p><button id="save">Save green frame / 保存绿帧</button><button id="replay" disabled>Replay saved frame / 重放保存帧</button><button id="retire">Retire borrow and replay / 释放借用并重放</button><button id="close">Close / 关闭</button></p>
+<pre id="status" role="status">Starting / 启动中</pre>
+</main><script type="module" src="./main.mjs"></script></body></html>

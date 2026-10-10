@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-08",
+  "updatedAt": "2026-10-10",
   "authority": "技术候选登记；生产选型均未最终批准，局部研究证据不代表完整实现或端到端性能验收",
   "items": [
     {
@@ -38,14 +38,14 @@
       "supersedes": null,
       "evidence": [
         "evidence/contract-probe-results.json",
-        "Cns/docs/第一轮审计.md",
+        "Cns/archive/第一轮研究.md",
         "evidence/nested-ui-probe-results.json",
         "evidence/nested-ui-probe-red-results.json",
         "evidence/nested-ui-probe-audit-red-results.json",
         "evidence/nested-ui-probe-unsafe-isolation-results.json",
         "Cns/experiments/nested-ui-probe/README.md",
-        "Cns/docs/第二轮验证记录.md",
-        "Cns/docs/第二轮审计.md"
+        "Cns/archive/第二轮研究.md",
+        "Cns/archive/第二轮研究.md"
       ],
       "doc": "Cns/docs/渲染引擎与运行时.md",
       "evidenceScope": "两轮有限研究模型/本地图形/独立AI审阅；完整gate未完成，status仍为proposed",
@@ -91,7 +91,7 @@
       "supersedes": null,
       "evidence": [
         "evidence/browser-probe-results.json",
-        "Cns/docs/技术验证记录.md",
+        "Cns/archive/第一轮研究.md",
         "evidence/batch-state-probe-results.json",
         "evidence/batch-state-probe-red-results.json",
         "evidence/batch-state-probe-audit-red-results.json",
@@ -101,14 +101,14 @@
         "evidence/mixed-scene-probe-strict-empty-results.json",
         "evidence/mixed-scene-probe-shared-builder-results.json",
         "Cns/experiments/mixed-scene-probe/README.md",
-        "Cns/docs/第二轮验证记录.md",
-        "Cns/docs/第二轮审计.md",
+        "Cns/archive/第二轮研究.md",
+        "Cns/archive/第二轮研究.md",
         "Cns/docs/开源参考实现与采用方案.md",
         "Cns/docs/开源实现优先与验证分工.md",
         "evidence/reference-render-lifecycle.json",
         "evidence/reference-pixi-text.json",
-        "Cns/docs/第三轮集成记录.md",
-        "Cns/docs/第三轮审计.md",
+        "Cns/archive/第三轮研究.md",
+        "Cns/archive/第三轮研究.md",
         "evidence/asset-reference-probe-results.json",
         "Cns/experiments/asset-reference-probe/README.md"
       ],
@@ -123,7 +123,7 @@
       "referenceIntegration": {
         "status": "limited_reference_chain_executed",
         "scope": "同WebGL2 context的Three3D与独立Canvas纹理UI交接；不是完整混合遮挡、mask、worldUI或passgraph。",
-        "doc": "Cns/docs/第三轮集成记录.md",
+        "doc": "Cns/archive/第三轮研究.md",
         "report": "evidence/asset-reference-probe-results.json"
       },
       "codeOriginConstraint": "R015：白鹭核心依据自有需求和规格独立设计实现；标准与开放项目提供研究依据，公共基础设施作为明确依赖接入并保留版本、来源、声明和修改记录。"
@@ -209,8 +209,8 @@
         "Cns/docs/开源实现优先与验证分工.md",
         "evidence/reference-render-lifecycle.json",
         "evidence/reference-assets-animation.json",
-        "Cns/docs/第三轮集成记录.md",
-        "Cns/docs/第三轮审计.md",
+        "Cns/archive/第三轮研究.md",
+        "Cns/archive/第三轮研究.md",
         "evidence/asset-reference-probe-results.json",
         "Cns/experiments/asset-reference-probe/README.md"
       ],
@@ -225,7 +225,7 @@
       "referenceIntegration": {
         "status": "limited_reference_chain_executed",
         "scope": "固定r186成熟renderer与蒙皮圆柱真实执行；未验收完整角色、材质灯光支持矩阵或移动前向收益。",
-        "doc": "Cns/docs/第三轮集成记录.md",
+        "doc": "Cns/archive/第三轮研究.md",
         "report": "evidence/asset-reference-probe-results.json"
       },
       "codeOriginConstraint": "R015：白鹭核心依据自有需求和规格独立设计实现；标准与开放项目提供研究依据，公共基础设施作为明确依赖接入并保留版本、来源、声明和修改记录。"
@@ -277,20 +277,20 @@
       "supersedes": null,
       "evidence": [
         "evidence/browser-probe-results.json",
-        "Cns/docs/技术验证记录.md",
+        "Cns/archive/第一轮研究.md",
         "evidence/mixed-scene-probe-results.json",
         "evidence/mixed-scene-probe-empty-results.json",
         "evidence/mixed-scene-probe-strict-empty-results.json",
         "evidence/mixed-scene-probe-shared-builder-results.json",
         "Cns/experiments/mixed-scene-probe/README.md",
         "evidence/phase2-reference-check-2026-10-08.json",
-        "Cns/docs/第二轮验证记录.md",
-        "Cns/docs/第二轮审计.md",
+        "Cns/archive/第二轮研究.md",
+        "Cns/archive/第二轮研究.md",
         "Cns/docs/开源参考实现与采用方案.md",
         "Cns/docs/开源实现优先与验证分工.md",
         "evidence/reference-render-lifecycle.json",
-        "Cns/docs/第三轮集成记录.md",
-        "Cns/docs/第三轮审计.md",
+        "Cns/archive/第三轮研究.md",
+        "Cns/archive/第三轮研究.md",
         "evidence/asset-reference-probe-results.json",
         "Cns/experiments/asset-reference-probe/README.md"
       ],
@@ -305,7 +305,7 @@
       "referenceIntegration": {
         "status": "limited_reference_chain_executed",
         "scope": "仅当前桌面WebGL2实际lost/restored与固定帧重建；无WebGPU场景或生产宿主认证。",
-        "doc": "Cns/docs/第三轮集成记录.md",
+        "doc": "Cns/archive/第三轮研究.md",
         "report": "evidence/asset-reference-probe-results.json"
       },
       "selectionResearch": {
@@ -359,7 +359,7 @@
       "supersedes": null,
       "evidence": [
         "evidence/contract-probe-results.json",
-        "Cns/docs/第一轮审计.md",
+        "Cns/archive/第一轮研究.md",
         "evidence/reliable-event-probe-results.json",
         "evidence/reliable-event-probe-red-results.json",
         "evidence/reliable-event-probe-red-input-results.json",
@@ -369,8 +369,8 @@
         "evidence/async-resource-probe-legacy-red-results.json",
         "evidence/async-resource-probe-audit-red-results.json",
         "Cns/experiments/async-resource-probe/README.md",
-        "Cns/docs/第二轮验证记录.md",
-        "Cns/docs/第二轮审计.md"
+        "Cns/archive/第二轮研究.md",
+        "Cns/archive/第二轮研究.md"
       ],
       "doc": "Cns/docs/技术架构.md",
       "evidenceScope": "两轮有限研究模型/本地图形/独立AI审阅；完整gate未完成，status仍为proposed",
@@ -435,7 +435,7 @@
       "supersedes": null,
       "evidence": [
         "evidence/contract-probe-results.json",
-        "Cns/docs/第一轮审计.md",
+        "Cns/archive/第一轮研究.md",
         "evidence/nested-ui-probe-results.json",
         "evidence/nested-ui-probe-red-results.json",
         "evidence/nested-ui-probe-audit-red-results.json",
@@ -445,14 +445,14 @@
         "evidence/batch-state-probe-red-results.json",
         "evidence/batch-state-probe-audit-red-results.json",
         "Cns/experiments/batch-state-probe/README.md",
-        "Cns/docs/第二轮验证记录.md",
-        "Cns/docs/第二轮审计.md",
+        "Cns/archive/第二轮研究.md",
+        "Cns/archive/第二轮研究.md",
         "Cns/docs/开源参考实现与采用方案.md",
         "Cns/docs/开源实现优先与验证分工.md",
         "evidence/reference-text-ui.json",
         "evidence/reference-pixi-text.json",
-        "Cns/docs/第三轮集成记录.md",
-        "Cns/docs/第三轮审计.md",
+        "Cns/archive/第三轮研究.md",
+        "Cns/archive/第三轮研究.md",
         "evidence/asset-reference-probe-results.json",
         "Cns/experiments/asset-reference-probe/README.md"
       ],
@@ -467,7 +467,7 @@
       "referenceIntegration": {
         "status": "limited_reference_chain_executed",
         "scope": "原生Canvas原文/样式/分辨率/fontEpoch缓存及文字重建；无真实字体身份、覆盖、CJK换行、IME或复杂UI性能。",
-        "doc": "Cns/docs/第三轮集成记录.md",
+        "doc": "Cns/archive/第三轮研究.md",
         "report": "evidence/asset-reference-probe-results.json"
       },
       "codeOriginConstraint": "R015：白鹭核心依据自有需求和规格独立设计实现；标准与开放项目提供研究依据，公共基础设施作为明确依赖接入并保留版本、来源、声明和修改记录。"
@@ -483,7 +483,8 @@
         "R004",
         "R008",
         "R012",
-        "R015"
+        "R015",
+        "R020"
       ],
       "sourceIds": [
         "S009",
@@ -515,13 +516,13 @@
         "evidence/mixed-scene-probe-strict-empty-results.json",
         "evidence/mixed-scene-probe-shared-builder-results.json",
         "Cns/experiments/mixed-scene-probe/README.md",
-        "Cns/docs/第二轮验证记录.md",
-        "Cns/docs/第二轮审计.md",
+        "Cns/archive/第二轮研究.md",
+        "Cns/archive/第二轮研究.md",
         "Cns/docs/开源参考实现与采用方案.md",
         "Cns/docs/开源实现优先与验证分工.md",
         "evidence/reference-assets-animation.json",
-        "Cns/docs/第三轮集成记录.md",
-        "Cns/docs/第三轮审计.md",
+        "Cns/archive/第三轮研究.md",
+        "Cns/archive/第三轮研究.md",
         "evidence/asset-reference-probe-results.json",
         "Cns/experiments/asset-reference-probe/README.md"
       ],
@@ -536,7 +537,7 @@
       "referenceIntegration": {
         "status": "limited_reference_chain_executed",
         "scope": "实际glTF加权蒙皮、Mixer采样及独立骨架实例；无完整2Dslot/约束/clipping、控制树、root-motion或动画业务事件。",
-        "doc": "Cns/docs/第三轮集成记录.md",
+        "doc": "Cns/archive/第三轮研究.md",
         "report": "evidence/asset-reference-probe-results.json"
       },
       "codeOriginConstraint": "R015：白鹭核心依据自有需求和规格独立设计实现；标准与开放项目提供研究依据，公共基础设施作为明确依赖接入并保留版本、来源、声明和修改记录。"
@@ -586,20 +587,20 @@
       "supersedes": null,
       "evidence": [
         "evidence/contract-probe-results.json",
-        "Cns/docs/第一轮审计.md",
+        "Cns/archive/第一轮研究.md",
         "evidence/async-resource-probe-results.json",
         "evidence/async-resource-probe-legacy-red-results.json",
         "evidence/async-resource-probe-audit-red-results.json",
         "Cns/experiments/async-resource-probe/README.md",
-        "Cns/docs/第二轮验证记录.md",
-        "Cns/docs/第二轮审计.md",
+        "Cns/archive/第二轮研究.md",
+        "Cns/archive/第二轮研究.md",
         "Cns/docs/开源参考实现与采用方案.md",
         "Cns/docs/开源实现优先与验证分工.md",
         "evidence/reference-assets-animation.json",
         "evidence/reference-text-ui.json",
         "evidence/reference-pixi-text.json",
-        "Cns/docs/第三轮集成记录.md",
-        "Cns/docs/第三轮审计.md",
+        "Cns/archive/第三轮研究.md",
+        "Cns/archive/第三轮研究.md",
         "evidence/asset-reference-probe-results.json",
         "Cns/experiments/asset-reference-probe/README.md"
       ],
@@ -614,7 +615,7 @@
       "referenceIntegration": {
         "status": "limited_reference_chain_executed",
         "scope": "embedded glTF、实例与bundle最后引用、取消/迟到及GPU恢复；KTX2/Basis等未执行，发布管线未实现。",
-        "doc": "Cns/docs/第三轮集成记录.md",
+        "doc": "Cns/archive/第三轮研究.md",
         "report": "evidence/asset-reference-probe-results.json"
       },
       "codeOriginConstraint": "R015：白鹭核心依据自有需求和规格独立设计实现；标准与开放项目提供研究依据，公共基础设施作为明确依赖接入并保留版本、来源、声明和修改记录。",
@@ -660,8 +661,8 @@
         "Cns/docs/开源参考实现与采用方案.md",
         "Cns/docs/开源实现优先与验证分工.md",
         "evidence/reference-render-lifecycle.json",
-        "Cns/docs/第三轮集成记录.md",
-        "Cns/docs/第三轮审计.md",
+        "Cns/archive/第三轮研究.md",
+        "Cns/archive/第三轮研究.md",
         "evidence/asset-reference-probe-results.json",
         "Cns/experiments/asset-reference-probe/README.md"
       ],
@@ -676,7 +677,7 @@
       "referenceIntegration": {
         "status": "limited_reference_chain_executed",
         "scope": "参考链由一个调用方拥有帧入口，示例启动/停止边界回归；无调度预算、热反馈、帧时或能耗测量。",
-        "doc": "Cns/docs/第三轮集成记录.md",
+        "doc": "Cns/archive/第三轮研究.md",
         "report": "evidence/asset-reference-probe-results.json"
       },
       "codeOriginConstraint": "R015：白鹭核心依据自有需求和规格独立设计实现；标准与开放项目提供研究依据，公共基础设施作为明确依赖接入并保留版本、来源、声明和修改记录。"
@@ -776,19 +777,19 @@
       "supersedes": null,
       "evidence": [
         "evidence/contract-probe-results.json",
-        "Cns/docs/第一轮审计.md",
-        "Cns/docs/第二轮审计.md",
+        "Cns/archive/第一轮研究.md",
+        "Cns/archive/第二轮研究.md",
         "evidence/design-audit-phase2-2026-10-08.json",
         "evidence/phase2-path-metadata-normalization.json",
-        "Cns/docs/第二轮验证记录.md",
+        "Cns/archive/第二轮研究.md",
         "Cns/docs/开源参考实现与采用方案.md",
         "Cns/docs/开源实现优先与验证分工.md",
         "evidence/reference-render-lifecycle.json",
         "evidence/reference-text-ui.json",
         "evidence/reference-assets-animation.json",
         "evidence/reference-pixi-text.json",
-        "Cns/docs/第三轮集成记录.md",
-        "Cns/docs/第三轮审计.md",
+        "Cns/archive/第三轮研究.md",
+        "Cns/archive/第三轮研究.md",
         "evidence/asset-reference-probe-results.json",
         "Cns/experiments/asset-reference-probe/README.md"
       ],
@@ -803,7 +804,7 @@
       "referenceIntegration": {
         "status": "limited_reference_chain_executed",
         "scope": "新增固定SHA依赖、来源及失败快照；完整版本合同、升级迁移与生产回归尚未完成。",
-        "doc": "Cns/docs/第三轮集成记录.md",
+        "doc": "Cns/archive/第三轮研究.md",
         "report": "evidence/asset-reference-probe-results.json"
       },
       "codeOriginConstraint": "R015：白鹭核心依据自有需求和规格独立设计实现；标准与开放项目提供研究依据，公共基础设施作为明确依赖接入并保留版本、来源、声明和修改记录。",
