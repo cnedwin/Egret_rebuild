@@ -1,0 +1,565 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-10",
+  "engineeringLabel": "0.22.0",
+  "packageVersion": "0.0.0",
+  "protocolVersion": "1.0",
+  "state": "BOUNDED_EXECUTION_SOURCE_RENDER_REVIEW_RECORDED_PUBLICATION_SEPARATELY_GATED",
+  "scope": "Receiver-local display content measurement and fresh affected desktop rendering regressions",
+  "deliverableId": "V023",
+  "sourceId": "S072",
+  "boundsSemantics": {
+    "space": "receiver-local",
+    "numericalPolicy": "ordinary-binary64-nonconservative",
+    "zeroExtentPolicy": "count-and-skip-arithmetic"
+  },
+  "originalSpecificationIdentities": [
+    {
+      "identityOnly": "display-content-bounds-contract.md",
+      "bytes": 10575,
+      "sha256": "8ab017ae55143e602dda9337d1cd1677b399abd2d193c725ed7297e141854679",
+      "role": "Reviewed first-party proposed contract; only isolated public status and acceptance appendix may change"
+    },
+    {
+      "identityOnly": "显示内容边界契约.md",
+      "bytes": 9568,
+      "sha256": "3b1e4191b16401ee40ee16f8e151b349b21a9baab58ad305d1daf2820ed3087f",
+      "role": "Reviewed first-party proposed contract; only isolated public status and acceptance appendix may change"
+    }
+  ],
+  "publicSpecificationProjection": "Original title and normative/validation/provenance bodies preserved exactly; only isolated status paragraph and appended acceptance section change",
+  "counts": {
+    "baseline": {
+      "registeredCallbacks": 18,
+      "missingApiFailures": 18,
+      "passes": 0,
+      "failures": 18,
+      "meaning": "All authentic getBounds availability assertions failed before allocation; Bitmap facade loaded. These are missing-method failures, not separately reached geometry counterexamples."
+    },
+    "focused": {
+      "tests": 157,
+      "passes": 157,
+      "failures": 0,
+      "cancellations": 0,
+      "skips": 0,
+      "todos": 0,
+      "boundsCallbacksIncluded": 18,
+      "meaning": "Bounds plus existing frame/tree/texture/Bitmap/SequencePlayer/coordinate suites; overlaps full verification."
+    },
+    "negativeTypes": {
+      "root": 81,
+      "web": 5,
+      "project": 28,
+      "total": 114,
+      "boundsAdditions": 13,
+      "positive": "PASS",
+      "domFree": "PASS"
+    },
+    "core": {
+      "tests": 1063,
+      "passes": 1063,
+      "failures": 0,
+      "cancellations": 0,
+      "skips": 0,
+      "todos": 0,
+      "boundaryFiles": 306,
+      "buildExitCode": 0,
+      "headlessExitCode": 0,
+      "headlessScopeState": "closed",
+      "headlessPendingTimers": 0,
+      "meaning": "Core total includes regression callbacks; it is separate from final current full prepush."
+    }
+  },
+  "retainedHistory": {
+    "apiAbsenceRed": {
+      "runId": "baseline-red-9c13dd07-aa4e-4ed0-a7de-0c1073a89a15",
+      "method": "DisplayObject.prototype.getBounds",
+      "actual": "undefined",
+      "expected": "function",
+      "failures": 18
+    },
+    "candidateProjection": {
+      "originalBehaviorCandidateSha256": "dff3f6ccfe8baf3572c1ee4136bf49c55d17e30c9a78b0a4a5560944fe132160",
+      "publicBehaviorSuccessorSha256": "0ac16a71e8d38cd65ec62f3c4f675ac718f33d17250897a9361bfda5318fffa3",
+      "scope": "Only the private candidate header became a publishable English comment after RED; all executable fixture bytes retained; final source review includes successor"
+    },
+    "bitmapMechanicalExtraction": {
+      "oldSha256": "fbc41946d88073f1f62957d6c5623543f9d096ed6d7d35f065eac40e0c119e29",
+      "newSha256": "5608f43b857b4616099873cf441ad63ba3f907e076966dccd573bb9acbf401c6",
+      "has": 1,
+      "get": 9,
+      "set": 6,
+      "entireExpectedTransformMatch": true,
+      "independentComparisonSha256": "202a7952c702bd4e0cd482f652ed47da34d5c8b74762625790176054eb20ad32"
+    },
+    "sourcePreparationGuard": {
+      "initialAttempt": "Literal CRLF block assumption failed before writing Bitmap",
+      "successor": "Use detected actual LF/CRLF before exact block and port substitutions",
+      "rootReportedFailure": true,
+      "initialHelperSha256": "9840e36511a63073645f32abc0f1b20981997cc4c8daf2379d3f118860bab0a0",
+      "successorHelperSha256": "0301b95bc4ef861f757cf1c18428fd332de4191df9196dae22bc3768cbd5ea1c",
+      "scope": "Private source-preparation guard, not an engine regression failure",
+      "productExecutionFromThisGuard": false
+    }
+  },
+  "executionIdentityBindings": [
+    {
+      "runId": "baseline-red-9c13dd07-aa4e-4ed0-a7de-0c1073a89a15",
+      "mode": "baseline-red",
+      "passed": false,
+      "receipt": {
+        "bytes": 1552,
+        "sha256": "f51570cb1cb7293c80bf8421ddcbcb8e374a43be0b25978d3f82540412c2d97e"
+      },
+      "outputs": [
+        {
+          "role": "build",
+          "exitCode": 0,
+          "startedAtUtc": "2026-10-10T07:12:31.993Z",
+          "finishedAtUtc": "2026-10-10T07:12:32.396Z",
+          "stdout": {
+            "bytes": 44,
+            "sha256": "166710cb105690b244b48c5dcc5672a4c0bc8280e995ae7d2f5bd46141491cea"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "role": "behavior",
+          "exitCode": 1,
+          "startedAtUtc": "2026-10-10T07:12:32.397Z",
+          "finishedAtUtc": "2026-10-10T07:12:32.521Z",
+          "stdout": {
+            "bytes": 21455,
+            "sha256": "706ed9972adbfbc75e0d6a476c8db07776c6db5463beb6b8e26605c928f281e8"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      ]
+    },
+    {
+      "runId": "focused-green-1381422d-9efe-4ab7-b786-db5169ee0afa",
+      "mode": "focused-green",
+      "passed": true,
+      "receipt": {
+        "bytes": 1826,
+        "sha256": "e432b199d9560c91ea062a92cf2b6693c09cedad96b1ed3adb835d3d29d2aa2c"
+      },
+      "outputs": [
+        {
+          "role": "build",
+          "exitCode": 0,
+          "startedAtUtc": "2026-10-10T07:15:17.792Z",
+          "finishedAtUtc": "2026-10-10T07:15:18.176Z",
+          "stdout": {
+            "bytes": 44,
+            "sha256": "166710cb105690b244b48c5dcc5672a4c0bc8280e995ae7d2f5bd46141491cea"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "role": "behavior",
+          "exitCode": 0,
+          "startedAtUtc": "2026-10-10T07:15:18.177Z",
+          "finishedAtUtc": "2026-10-10T07:15:18.452Z",
+          "stdout": {
+            "bytes": 13671,
+            "sha256": "a4faa688d144101edb1205c0ef8595f28516454bc25040fbc38d3574d969db35"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      ]
+    },
+    {
+      "runId": "types-1f976aa7-c655-4a64-8c5d-80426be3ff51",
+      "mode": "types",
+      "passed": true,
+      "receipt": {
+        "bytes": 801,
+        "sha256": "1473adf1e1d817006c7a2842d40e5f799a4b1f5d09bb5c8e846dc6521149e479"
+      },
+      "outputs": [
+        {
+          "role": "types",
+          "exitCode": 0,
+          "startedAtUtc": "2026-10-10T07:16:17.639Z",
+          "finishedAtUtc": "2026-10-10T07:16:18.455Z",
+          "stdout": {
+            "bytes": 24403,
+            "sha256": "c31dc7e27955ce576d437024d161a547c1877fb0e37e656e8aff05862b1ccd6e"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      ]
+    },
+    {
+      "runId": "boundaries-be4e056d-14aa-4eb8-8154-124e05be67d1",
+      "mode": "boundaries",
+      "passed": true,
+      "receipt": {
+        "bytes": 814,
+        "sha256": "c71157af03075360384f9cba1e6f30535cbfc054de3dbf1f3b09b22543ad8809"
+      },
+      "outputs": [
+        {
+          "role": "boundaries",
+          "exitCode": 0,
+          "startedAtUtc": "2026-10-10T07:16:19.292Z",
+          "finishedAtUtc": "2026-10-10T07:16:19.776Z",
+          "stdout": {
+            "bytes": 192,
+            "sha256": "ee202bbb5743e1efb1c46b7f0e1b1d03fbf11f9f4f4462248e9d21b8fd5a0287"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      ]
+    },
+    {
+      "runId": "verify-core-28a670d1-dbfa-4a47-9962-4c7163a2434c",
+      "mode": "verify-core",
+      "passed": true,
+      "receipt": {
+        "bytes": 1528,
+        "sha256": "a7ead092001e4c06adc631e48de15b653a393d42680f4e3b1da0c5aa9ced0411"
+      },
+      "outputs": [
+        {
+          "role": "verify",
+          "exitCode": 0,
+          "startedAtUtc": "2026-10-10T07:16:39.643Z",
+          "finishedAtUtc": "2026-10-10T07:17:17.045Z",
+          "stdout": {
+            "bytes": 179514,
+            "sha256": "067491d7b17b90a81e46702c7ae846931cbd9fba65b340cc119b2ff22a4ab8a9"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "role": "headless",
+          "exitCode": 0,
+          "startedAtUtc": "2026-10-10T07:17:17.046Z",
+          "finishedAtUtc": "2026-10-10T07:17:17.108Z",
+          "stdout": {
+            "bytes": 318,
+            "sha256": "ad50f6dd89dd73ed852cb8f9813a810e39d1744070a1c3ba4466b8a8b6af74d9"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      ]
+    },
+    {
+      "runId": "canvas-7c29df91-dc60-499e-acb5-91b845fdb1bd",
+      "mode": "canvas",
+      "passed": true,
+      "receipt": {
+        "bytes": 1408,
+        "sha256": "ca612437aff9b32d505a7870bd2bd3c35257e158380d85ad270e7e980dbd8bfe"
+      },
+      "outputs": [
+        {
+          "role": "canvas",
+          "exitCode": 0,
+          "startedAtUtc": "2026-10-10T07:18:01.487Z",
+          "finishedAtUtc": "2026-10-10T07:18:02.766Z",
+          "stdout": {
+            "bytes": 3020,
+            "sha256": "bbbd9efb6f3de286717496ff44b76bfc5fd024df201c2f4f25fe38c17a693712"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      ]
+    },
+    {
+      "runId": "webgpu-c91a3a56-974b-4510-bfe8-d210ae63225b",
+      "mode": "webgpu",
+      "passed": true,
+      "receipt": {
+        "bytes": 1407,
+        "sha256": "0c052ee778041042975948f24b0dd6299cf00d13f5e3fedd4ebab501a33c37cb"
+      },
+      "outputs": [
+        {
+          "role": "webgpu",
+          "exitCode": 0,
+          "startedAtUtc": "2026-10-10T07:17:59.308Z",
+          "finishedAtUtc": "2026-10-10T07:18:07.218Z",
+          "stdout": {
+            "bytes": 437,
+            "sha256": "1f5bd1003e0b22786a55147d0983971b22f1491f35860158a539fd25c615b3dc"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      ]
+    },
+    {
+      "runId": "b1-0ed554ed-9ec0-4295-a586-9fdfa5275ff4",
+      "mode": "b1",
+      "passed": true,
+      "receipt": {
+        "bytes": 1398,
+        "sha256": "377b55993f66b45f0cc220f9f2a49fd4a65519e7c2853e3cc26f88fe1c2d233a"
+      },
+      "outputs": [
+        {
+          "role": "b1",
+          "exitCode": 0,
+          "startedAtUtc": "2026-10-10T07:18:01.342Z",
+          "finishedAtUtc": "2026-10-10T07:18:04.626Z",
+          "stdout": {
+            "bytes": 425,
+            "sha256": "b9dfc1102fb8e334f43689a01d2b3082cbf8f36875358004a71913746307c2da"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      ]
+    }
+  ],
+  "sourceSnapshotAtCuration": {
+    "role": "Current 12 changed/new source subjects rehashed at saved receipt intake, separately scoped from execution and final publication",
+    "baseHeadFromSavedBaseline": "eb7429171c4b8ca051fbaca4c128a09b38dab72c",
+    "baseTreeFromSavedBaseline": "2345498d9a3fa84c99b3c631ad7a1446724c49ab",
+    "sourceSubjects": [
+      {
+        "path": "packages/runtime/src/Bitmap.ts",
+        "bytes": 7744,
+        "sha256": "5608f43b857b4616099873cf441ad63ba3f907e076966dccd573bb9acbf401c6"
+      },
+      {
+        "path": "packages/runtime/src/displayTreeState.ts",
+        "bytes": 3946,
+        "sha256": "f7df42c7917e87c2492a6411a2f686936cdaa61ab4d5a6f362d06f4ff2e64f0b"
+      },
+      {
+        "path": "packages/runtime/src/DisplayObject.ts",
+        "bytes": 4398,
+        "sha256": "326529229fd835a41eb4525d55e9738ae177e34e6feea56ab8c074423e5b1e56"
+      },
+      {
+        "path": "packages/runtime/src/index.ts",
+        "bytes": 1881,
+        "sha256": "6ba6b067abdc982baf0fe2b3949d21969493f222e724ce8d3c83645f2b634bf2"
+      },
+      {
+        "path": "packages/engine/src/index.ts",
+        "bytes": 1690,
+        "sha256": "dad4abe092f551f5863177187888b581e93d1cbaf19bf095498eb8594eba66a6"
+      },
+      {
+        "path": "tools/check-boundaries.mjs",
+        "bytes": 13948,
+        "sha256": "ef0abf6c5976a438bdde87370cd4b9fe5d28489dbb032b0423da45f00eaf6c46"
+      },
+      {
+        "path": "packages/runtime/src/displayBounds.ts",
+        "bytes": 6601,
+        "sha256": "114f634d2092ca84b2259841c3af8c885a7e7b854408e9631ee092e9782104bc"
+      },
+      {
+        "path": "packages/runtime/src/bitmapDisplayState.ts",
+        "bytes": 1193,
+        "sha256": "b4a565939d5ddd94eea321ba62a5cf69b3cc58bea3080c2d131c36045ff8a912"
+      },
+      {
+        "path": "tests/content-bounds.test.mjs",
+        "bytes": 24621,
+        "sha256": "0ac16a71e8d38cd65ec62f3c4f675ac718f33d17250897a9361bfda5318fffa3"
+      },
+      {
+        "path": "tests/types/positive.ts",
+        "bytes": 14471,
+        "sha256": "9afabd3706b034920907bb90e41581addf888f4fec2a01e0484978e446bf3d09"
+      },
+      {
+        "path": "tests/types/negative.ts",
+        "bytes": 14481,
+        "sha256": "5a9d66a5c27ac74252296f7aa04cef32ca99ee5780525f431ddc35ac2a2a9483"
+      },
+      {
+        "path": "tests/types/dom-free.ts",
+        "bytes": 3424,
+        "sha256": "dbfe974488ff0b768b64c9ca2811f5d6f1236345d13a45f44f64cbbfcda1b851"
+      }
+    ],
+    "independentSourceReadyManifestSha256": "f88bbee2105e0b19e05a6d0d9aa89e7a7a3986f9c3e2da22a38087ad0910ef11",
+    "finalSourceReviewSha256": "6efd73dbacdab718c9d89d4b7153f582c1c8aa48d208beed738391db7f36f83b"
+  },
+  "rendering": {
+    "boundsArithmeticOnGPU": false,
+    "savedRenderReview": "PASS_SAVED_RENDER_WITH_LIMITS",
+    "environment": {
+      "browser": "154.0.4258.62",
+      "playwright": "1.62.1",
+      "channel": "msedge",
+      "headless": true,
+      "deviceScaleFactor": 1
+    },
+    "Canvas": {
+      "runId": "canvas-7c29df91-dc60-499e-acb5-91b845fdb1bd",
+      "status": "SAVED_EXECUTION_AND_INDEPENDENT_REVIEW_PASS",
+      "checks": 14,
+      "pointerPixelsChanged": true,
+      "counterexampleFailed": true,
+      "unexpectedErrors": 0,
+      "sourceBuildBinding": {
+        "files": 391,
+        "beforeSha256": "3fa9fe42f643ef7cf8b1b764ad93f5b7c5b3cca7f8829393925c697664cf3e79",
+        "afterSha256": "3fa9fe42f643ef7cf8b1b764ad93f5b7c5b3cca7f8829393925c697664cf3e79",
+        "stable": true,
+        "scope": "Affected source/build/tool/example inventory captured before and after each supplied desktop gate"
+      }
+    },
+    "WebGPU": {
+      "runId": "webgpu-c91a3a56-974b-4510-bfe8-d210ae63225b",
+      "status": "PASS",
+      "counts": {
+        "frames": 42,
+        "failedRequiredFixtures": 0,
+        "rawChecks": 1709,
+        "screenshots": 84,
+        "compositionChecks": 6808,
+        "counterexamples": 8,
+        "unexpectedErrors": 0,
+        "namedRawPoints": 1702,
+        "exhaustiveZeroRecords": 7,
+        "exhaustiveRecordByteSum": 46984,
+        "uniqueZeroFrames": 4,
+        "uniqueZeroBytes": 27332,
+        "nativeControls": 7,
+        "syntheticControls": 1
+      },
+      "resultSha256": "280a2912112b367d1ec7e0adb2e666747cf378c96af98088262e724d611a9a86",
+      "sourceBuildBinding": {
+        "files": 391,
+        "beforeSha256": "3fa9fe42f643ef7cf8b1b764ad93f5b7c5b3cca7f8829393925c697664cf3e79",
+        "afterSha256": "3fa9fe42f643ef7cf8b1b764ad93f5b7c5b3cca7f8829393925c697664cf3e79",
+        "stable": true,
+        "scope": "Affected source/build/tool/example inventory captured before and after each supplied desktop gate"
+      }
+    },
+    "B1": {
+      "runId": "b1-0ed554ed-9ec0-4295-a586-9fdfa5275ff4",
+      "status": "PASS",
+      "counts": {
+        "positiveFrames": 7,
+        "counterexamples": 5,
+        "submittedFrames": 11,
+        "maximumSubmittedFrames": 11,
+        "exactPositiveComparisons": 8214,
+        "negativePixelWitnesses": 4,
+        "nativeCompileRejections": 1,
+        "requests": 366,
+        "emittedModules": 58,
+        "pngFiles": 0
+      },
+      "lifecycle": {
+        "browserClosed": true,
+        "contextClosed": true,
+        "serverClosed": true,
+        "identitiesStable": true,
+        "cleanupScope": "standalone-cooperative-api",
+        "osDescendantRetirement": "UNBOUND",
+        "pendingApiOperations": 0,
+        "unsettledAcquisitions": [],
+        "standaloneCleanupObserved": true,
+        "rawSaved": true
+      },
+      "cleanupScope": "standalone-cooperative-api",
+      "osDescendantRetirement": "UNBOUND",
+      "resultSha256": "c4238273d0721b25ada69b975a4ab61651c9a122a5a37bcd2b20e77f4bf496c7",
+      "sourceBuildBinding": {
+        "files": 391,
+        "beforeSha256": "3fa9fe42f643ef7cf8b1b764ad93f5b7c5b3cca7f8829393925c697664cf3e79",
+        "afterSha256": "3fa9fe42f643ef7cf8b1b764ad93f5b7c5b3cca7f8829393925c697664cf3e79",
+        "stable": true,
+        "scope": "Affected source/build/tool/example inventory captured before and after each supplied desktop gate"
+      }
+    }
+  },
+  "independentReviews": {
+    "implementationSource": {
+      "status": "PASS_SOURCE_WITH_LIMITS",
+      "sha256": "6efd73dbacdab718c9d89d4b7153f582c1c8aa48d208beed738391db7f36f83b",
+      "P1": 0,
+      "P2": 0,
+      "sourceOnly": true,
+      "reviewerRole": {
+        "specificationAndPlanAuthor": true,
+        "implementationAuthor": false,
+        "candidateBehaviorOrTypeAuthor": false,
+        "independentDesignReview": "separate sealed review exists; this verdict does not self-review design"
+      },
+      "scope": "Frozen bounds source implementation and mechanical Bitmap state extraction only",
+      "productOrPublicationAcceptance": false
+    },
+    "savedRendering": {
+      "status": "PASS_SAVED_RENDER_WITH_LIMITS",
+      "sha256": "98edc92dee250f25d4a2c02029fc2d2c08cf9da3ef478b2019b329e07f05b023",
+      "P1": 0,
+      "P2": 0,
+      "scope": "Fresh saved desktop rendering graph regression after bounds implementation; not product/publication acceptance",
+      "reviewerRole": "Spec/plan author, no production implementation or candidate behavior/type test authorship",
+      "productOrPublicationAcceptance": false
+    },
+    "bilingualPublicMaterial": null,
+    "deliveryPreparation": null
+  },
+  "origin": {
+    "process": "Codex-assisted independent first-party specification, behavior/type fixtures, implementation, source-equivalence work and curation; independent scoped reviews remain separately bound",
+    "copiedHistoricalOrCompetitorImplementationSources": [],
+    "newThirdPartyDependencies": [],
+    "license": "Apache-2.0",
+    "limits": "The origin record describes this work package's actual authoring, reuse and review scope."
+  },
+  "publication": {
+    "publicMaterialReview": null,
+    "finalPrepush": null,
+    "remoteDelivery": null
+  },
+  "excludedAcceptance": [
+    "conservative enclosure",
+    "other coordinate spaces",
+    "legacy mutable output adapter",
+    "layout sizing or invalidation",
+    "hit testing or input eligibility",
+    "clipping-aware visual/pixel bounds",
+    "GPU bounds arithmetic",
+    "other browsers",
+    "physical phones",
+    "performance",
+    "production hosts",
+    "complete UI/fonts/skeletons/3D/A2/Spine",
+    "complete R008/V006 migration"
+  ]
+}

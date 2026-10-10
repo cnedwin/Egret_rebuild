@@ -2,7 +2,13 @@
 
 English | [简体中文](../../Cns/docs/core-progress.md)
 
-## Current reading: engineering preview 0.21.0
+## Current reading: engineering preview 0.22.0
+
+The [content-bounds contract](display-content-bounds-contract.md) defines receiver-local measurement of authoritative Graphics and cached Bitmap content. Descendant direct corners, ordinary binary64 nonconservative subtraction, authored-zero count/skip behavior and explicit budgets retain the exact contract boundary. Read the [evidence](display-content-bounds-evidence.md) for actual baseline, passing successors, strict gates, retained corrections and exact source/build/review identities; their suites overlap.
+
+Fresh affected desktop evidence retains its own fixture and source scope. Bounds arithmetic is not executed on the GPU; B1 OS descendant retirement is UNBOUND. Other coordinate spaces, output adapters, layout/input/hit testing, phones/performance, full UI/3D/Spine, production hosts, editor/Agent and complete migration remain pending. Final prepush and actual stacked delivery are separate gates; packages stay private 0.0.0 and protocol 1.0.
+
+## Historical engineering preview: 0.21.0
 
 The public [display coordinate contract](display-coordinate-query-contract.md) adds inherited logical `localToGlobal`/`globalToLocal` queries, fresh immutable results and bounded ancestor/lifetime authority. The recorded baseline had 49 missing-method failures; the strengthened focused successor passed 92/92, the type gate passed 68/5/28 expected negative diagnostics, and the separately recorded core verifier passed 1045/1045 with 300 boundary files. These suites overlap. Read the [evidence](display-coordinate-query-evidence.md) for retained fixture repairs and exact source identities.
 

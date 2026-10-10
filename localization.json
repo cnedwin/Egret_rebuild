@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "revision": "0.21.0",
+  "revision": "0.22.0",
   "canonicalState": "Chinese registries; English JSON is a read-only translation",
   "evidencePolicy": "Machine data, embedded source, historical code and upstream legal originals retain their identities; paired reading versions explain them.",
   "semanticReview": {
@@ -105,8 +105,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "zhSha256": "02f4a6b01cd72289b36f09ecfb37e85205a47847837f8bbec7eb7ecebf9ac9db",
-      "enSha256": "aa15671321c6499f8c1b76403eee17ca0b21798439dd1ca1f0468accc2f4d49e"
+      "zhSha256": "37ff991cb39211bead6c74faa904bd00652f3580aef23a156e2dd8a6729c77c4",
+      "enSha256": "2f3409cfbced22be08f44d70339583676a9b8e4b9463efa6a7882e9f56998732"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -252,8 +252,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "zhSha256": "90a18e3e969ae959e1d6d1efa4bc4dfa25fe7d1cb072b98e04a2d660867fd19d",
-      "enSha256": "5fe1549b2ce0c3e71235413290f92390baa0646183bfba98c9f3914ca3d34868"
+      "zhSha256": "3d5c660ae71889d32071cb76d0946801daa29ecefddf0d51fee5a7828abe5a2c",
+      "enSha256": "4ef985f19e310dd8a9c86dde301c67b8ecf7491091fb2c23f5ae2db825265224"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -448,8 +448,8 @@
       "zh": "knowledge-base/Cns/docs/公共API设计与命名规范.md",
       "en": "knowledge-base/en/docs/public-api-design-and-naming.md",
       "kind": "public_reading",
-      "zhSha256": "99aeb5e35e5eafb7aaa9183067dd996ff847d668561a8573feb5e3136dbf47ad",
-      "enSha256": "10cddb25e3798f32d63a96eb184dedb68d428045e8343aa71dac8b91e598828c"
+      "zhSha256": "68e577bca4f5f5e062f7248031d5de490f4faefe4a1e6c03fd1ff32ea54b0fa0",
+      "enSha256": "3b7e2b6be2626bbf8a37348c4064129e3f1c65d8f79c86d9ff2823833d87f0f3"
     },
     {
       "zh": "knowledge-base/Cns/docs/渲染引擎与运行时.md",
@@ -728,8 +728,8 @@
       "zh": "knowledge-base/Cns/README.md",
       "en": "knowledge-base/en/README.md",
       "kind": "public_reading",
-      "zhSha256": "2f9236dfe68c7004816faf21b8987637074369de032bb74f8730603fcfc024f4",
-      "enSha256": "9c91722457f70cd9b84fd65cb4540eda6cddc2b1e920b2aa1340ecdefcc65c8f"
+      "zhSha256": "190f50551e69e93c3050bdfd898c4dae3a784a9f07176611c0a00b555f0567f5",
+      "enSha256": "09510a1405efd04d0912afc4fd6ce0f673b1836b772ba8bb0419124f55c8ae31"
     },
     {
       "zh": "knowledge-base/Cns/templates/ADR决策记录.md",
@@ -777,15 +777,15 @@
       "zh": "packages/contracts/README.zh-CN.md",
       "en": "packages/contracts/README.md",
       "kind": "public_reading",
-      "zhSha256": "8fbca0db1c08506004c72fc1512d15cd255e30531b8d2dcf188929e7a6609dcd",
-      "enSha256": "7396ac2dff66c098226d572a43310d7d6de55045e38db94c924f845bb339b9e3"
+      "zhSha256": "a6ae5ca016dea4b41453bb3fbac62f164d7c5bddd0912ea578b285eb8d6a0901",
+      "enSha256": "a8319d0e6623c15a1f6e3dc0d982e8e4c55e291ff5456c7182d9b2f8c3c4381e"
     },
     {
       "zh": "packages/engine/README.zh-CN.md",
       "en": "packages/engine/README.md",
       "kind": "public_reading",
-      "zhSha256": "039709a4c01f1dcba4058734fe78507c2fd2b36a6aa824edaa17ffb3671187b1",
-      "enSha256": "a56294a0016f7951c55066b7a5b6957dfed15328042a7c9e1a6a5c36f5307633"
+      "zhSha256": "cb145fea9aead8c4092743c5e138637845d8706369339d00188f50fa2a797172",
+      "enSha256": "0f8b79c7c9bf7ecc727416cdbc2548b20f416e93fe3f2ea4e891c53ac4aea447"
     },
     {
       "zh": "packages/project/README.zh-CN.md",
@@ -798,8 +798,8 @@
       "zh": "packages/runtime/README.zh-CN.md",
       "en": "packages/runtime/README.md",
       "kind": "public_reading",
-      "zhSha256": "45fb7b164b64be9de2d058c8d70b8a21ceccf39680befbb0f188805a95339cf7",
-      "enSha256": "319cffcae21a6f9b45868751af5646082ade6eb4860c51714ce68809ebfd3a75"
+      "zhSha256": "248043d15ad13ffd194d8d1e55bbdc28354f3465a0ca417a972bbc80c945a2f3",
+      "enSha256": "cf25e1b5119a9136c6ad5412e6113e420c734ed75186dff089ae4fded3e8dc00"
     },
     {
       "zh": "PUBLICATION.zh-CN.md",
@@ -812,8 +812,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "zhSha256": "a268121ce3d2e82bb4ad8c08fa09871ac362cb1e9ff953a07b2de123452ccca5",
-      "enSha256": "49dbe0f87cce155cea8f8e985fec523c1bae756d6eac6549d0f5bd908379acd3"
+      "zhSha256": "4a496d7cef044634dbd943486d0eb9b5f206524fed9368fb57560f51f2fd2c3a",
+      "enSha256": "453ccb22ae22ea4091f7d0ff10d686d9ba1f2350ed0202e85ab260c4d2d01bc3"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -849,14 +849,28 @@
       "kind": "public_reading",
       "zhSha256": "089da44799cf278498f7726ab1bc0553590178e4d00723054a9e79add1492a6f",
       "enSha256": "f86fc237d581565acbafbb46aa4b521edb91a4974718fd8e767c45d39c246df5"
+    },
+    {
+      "en": "knowledge-base/en/docs/display-content-bounds-contract.md",
+      "zh": "knowledge-base/Cns/docs/显示内容边界契约.md",
+      "kind": "public_reading",
+      "enSha256": "38b59894aeecbf9d661abb5ceeede5cdaf925c4213099b6d0633164b10348533",
+      "zhSha256": "2243999008b5ebf5e58e819b167adb31ebc1c3a461c45c653dd9811673c27431"
+    },
+    {
+      "en": "knowledge-base/en/docs/display-content-bounds-evidence.md",
+      "zh": "knowledge-base/Cns/docs/显示内容边界证据.md",
+      "kind": "public_reading",
+      "enSha256": "c80867173018aa5389bf4dbb9b3c19592b2e834fef3e9d800da6cc024a9ffd95",
+      "zhSha256": "790575a0bd6c52526f9d4a7641b0ea8e24a15d5bcbfa6cc7a954d30ced326ea5"
     }
   ],
   "registries": [
     {
       "source": "knowledge-base/Cns/registry/需求.json",
       "target": "knowledge-base/en/registry/requirements.json",
-      "sourceSha256": "5640229dc5b614c8e95a65f24401131324e6ed5c9bbd713a65257beee53c5fdf",
-      "targetSha256": "2dc4e7c0dd2bbbc38616a4f258c6feacf1ee18bd97551d02e85c768dae240232"
+      "sourceSha256": "2cbc03cffa770beb5d79f6c529437ad3658defaeaee8cd645226cb9ee111b490",
+      "targetSha256": "bc2b4bf8054e7ebc1b99829c606b793cbe24b564cf98f505b035ded8543f3f2c"
     },
     {
       "source": "knowledge-base/Cns/registry/决策.json",
@@ -873,20 +887,20 @@
     {
       "source": "knowledge-base/Cns/registry/交付.json",
       "target": "knowledge-base/en/registry/deliverables.json",
-      "sourceSha256": "a25275982a589eea4141d507dc842506ff2bec9bdf181fadc079a98c0c7cd61d",
-      "targetSha256": "83fab4de53d6623eb468380b1a9bc1efa30a801f816ac58ef89fe47367ed6b13"
+      "sourceSha256": "48b32a000752298816dee5aa72f7917f3965a183fdd86d5ec9e6915232b2ed60",
+      "targetSha256": "08c2c9c8a6da988eb39d4e4548e1970c06558ef4671b4e5e6330925df3af2767"
     },
     {
       "source": "knowledge-base/Cns/registry/来源.json",
       "target": "knowledge-base/en/registry/sources.json",
-      "sourceSha256": "b76fec85224ed1db7ee1aa1164a7c117efbe290f0a9c93d0d0faffcc587ce00e",
-      "targetSha256": "ec040c3b671908be5b86f0e56cd0965b5940f6456f5d87bda3fcc7e04eea62b1"
+      "sourceSha256": "2d0e1e986207c9063e1223b6bcdbaf4711bfc08bb0809b810f7099a55a0ea134",
+      "targetSha256": "33fbad735eb16787bf5d0dc3756e3b89b823481655f4d2e53c68f2b14830ccea"
     },
     {
       "source": "knowledge-base/Cns/当前版本.json",
       "target": "knowledge-base/en/current-version.json",
-      "sourceSha256": "c15215bcc38519d8358ad1c31d0ad8b3332b81e7e9cd075cc35eabbed87f00f7",
-      "targetSha256": "963384a7e04c6d7687c2c6a334c180230c8fecaf42460153d70522eeca883459"
+      "sourceSha256": "eaad9596c8b540136c4352bb43ef8ab77c9a850a3770e02008850a970c821c7a",
+      "targetSha256": "a0309b1b09bf51364b447e3a428d98219c2565bc799fce237d561908a0e54929"
     }
   ],
   "criticalComments": [
@@ -1156,7 +1170,7 @@
     },
     {
       "path": "packages/runtime/src/Bitmap.ts",
-      "sha256": "fbc41946d88073f1f62957d6c5623543f9d096ed6d7d35f065eac40e0c119e29"
+      "sha256": "5608f43b857b4616099873cf441ad63ba3f907e076966dccd573bb9acbf401c6"
     },
     {
       "path": "packages/runtime/src/CancellationController.ts",
@@ -1164,7 +1178,7 @@
     },
     {
       "path": "packages/runtime/src/DisplayObject.ts",
-      "sha256": "3f354494b0034c2a08dd77947b0e2ccc1c1d766f083d1342509cbd945b2b3902"
+      "sha256": "326529229fd835a41eb4525d55e9738ae177e34e6feea56ab8c074423e5b1e56"
     },
     {
       "path": "packages/runtime/src/DisplayObjectContainer.ts",
@@ -1212,7 +1226,7 @@
     },
     {
       "path": "packages/runtime/src/displayTreeState.ts",
-      "sha256": "ce6c49660bc825bece18cc840b2b042a3832c8bc914ad5101849798b477a285d"
+      "sha256": "f7df42c7917e87c2492a6411a2f686936cdaa61ab4d5a6f362d06f4ff2e64f0b"
     },
     {
       "path": "packages/runtime/src/displayVisualState.ts",
@@ -1293,6 +1307,16 @@
       "path": "packages/runtime/src/coordinateInverse.ts",
       "bytes": 4359,
       "sha256": "bb17707ec9d932dbcd9a8b46ce595fb14a75b283a438fc88e5d5e009b99078de"
+    },
+    {
+      "path": "packages/runtime/src/displayBounds.ts",
+      "bytes": 6601,
+      "sha256": "114f634d2092ca84b2259841c3af8c885a7e7b854408e9631ee092e9782104bc"
+    },
+    {
+      "path": "packages/runtime/src/bitmapDisplayState.ts",
+      "bytes": 1193,
+      "sha256": "b4a565939d5ddd94eea321ba62a5cf69b3cc58bea3080c2d131c36045ff8a912"
     }
   ],
   "historicalSemanticReview": {
@@ -3112,6 +3136,15 @@
       "P2": 0,
       "scope": "Independent adopted-reading/registry/source identity review at its sealed snapshot. This later root hash attestation is separate and is not credited retrospectively to that review."
     },
+    "fullProductAcceptance": false
+  },
+  "contentBoundsCuration": {
+    "date": "2026-10-10",
+    "engineeringLabel": "0.22.0",
+    "state": "PENDING_ROOT_ADOPTION_AND_INDEPENDENT_BILINGUAL_REVIEW",
+    "scope": "Only two new paired readings, exact registry additions, narrow current navigation and separately refreshed current identities; all historical reviews and execution remain at their accepted scope.",
+    "independentBilingualReview": null,
+    "currentIdentityAttestation": null,
     "fullProductAcceptance": false
   }
 }

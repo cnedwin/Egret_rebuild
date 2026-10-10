@@ -2,6 +2,10 @@
 
 English | [简体中文](../Cns/CHANGELOG.md)
 
+## Engineering preview: 0.22.0 — 2026-10-10
+
+Added receiver-local `getBounds` with a fresh readonly `Rectangle2D`, explicit node/primitive budgets and deterministic authority/lifetime checks. Descendant direct corners are measured with ordinary binary64 arithmetic; authored zero extents count and skip arithmetic, and conservative enclosure is not promised. Read the [contract](docs/display-content-bounds-contract.md) and [evidence](docs/display-content-bounds-evidence.md) for actual recorded results and their identities. Other spaces/output adapters/layout/hit testing remain pending. Packages remain private 0.0.0 and protocol 1.0; final prepush and stacked publication are separate gates.
+
 ## Engineering preview: 0.21.0 — 2026-10-10
 
 Added public display coordinate queries with owned readonly results, exact stored-matrix inverse rounding and ancestor/lifetime budgets. CPU/type and fresh affected desktop rendering regressions passed within recorded scope; final publication is separately gated. Read the [contract](docs/display-coordinate-query-contract.md) and [evidence](docs/display-coordinate-query-evidence.md). No dependency or package/protocol release was added; private 0.0.0/protocol 1.0 and open full UI/3D/Spine/migration obligations remain.

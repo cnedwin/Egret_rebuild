@@ -9,6 +9,7 @@ export { EventDispatcher } from "./EventDispatcher.js";
 export type { EventListenerOptions } from "./EventDispatcher.js";
 export { DisplayObject } from "./DisplayObject.js";
 export type { CoordinateQueryOptions } from './displayCoordinates.js';
+export type { BoundsQueryOptions } from './displayBounds.js';
 export { DisplayObjectContainer } from "./DisplayObjectContainer.js";
 export { Stage, createStage } from "./Stage.js";
 export type { EngineContext } from "./ownership.js";

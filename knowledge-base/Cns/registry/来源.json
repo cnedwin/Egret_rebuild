@@ -1181,6 +1181,18 @@
         "evidence/coordinate-query-verification.json"
       ],
       "doc": "Cns/docs/显示坐标查询证据.md"
+    },
+    {
+      "id": "S072",
+      "title": "接收者局部边界实现与有界已记录回归",
+      "type": "first_party_content_bounds_cpu_type_and_affected_desktop_render_evidence",
+      "scope": "18 个真实 getBounds 缺失失败、157/157 专项后继（含 18 边界回调）、114 项预期负向诊断（新增 13）、1063/1063 核心测试与 306 边界文件；清单稳定的新受影响 Canvas／WebGPU／B1 桌面观察及范围内源码及保存渲染审阅。",
+      "limit": "普通 binary64 测量不承诺保守包围；其他空间／输出适配器／布局／命中测试待完成。不验收 GPU 边界算术、其他浏览器／手机／性能／完整产品。B1 OS 后代退出保持 UNBOUND；prepush 与交付分别记录。",
+      "researchCheckedAt": "2026-10-10",
+      "artifacts": [
+        "evidence/content-bounds-verification.json"
+      ],
+      "doc": "Cns/docs/显示内容边界证据.md"
     }
   ]
 }

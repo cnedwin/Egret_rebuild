@@ -84,8 +84,8 @@
       "action": "move-pair",
       "previousZhSha256": "f43625255269c8801af0929179a9aab32cbca58094e4a842797e39171fc549b0",
       "previousEnSha256": "e8b100ccbd9d0fb99237a564f484f7fa6dbf008191570fa58f3e481c05c3e9f9",
-      "currentZhSha256": "02f4a6b01cd72289b36f09ecfb37e85205a47847837f8bbec7eb7ecebf9ac9db",
-      "currentEnSha256": "aa15671321c6499f8c1b76403eee17ca0b21798439dd1ca1f0468accc2f4d49e"
+      "currentZhSha256": "37ff991cb39211bead6c74faa904bd00652f3580aef23a156e2dd8a6729c77c4",
+      "currentEnSha256": "2f3409cfbced22be08f44d70339583676a9b8e4b9463efa6a7882e9f56998732"
     },
     {
       "oldZh": "knowledge-base/CONTRIBUTING.md",
@@ -180,8 +180,8 @@
       "action": "move-pair",
       "previousZhSha256": "94d08c3fa5f9b388359d98b23b98c6a830bda394e85fd6ce7d464e4d2faf2330",
       "previousEnSha256": "3ada9f60a71676175a081be749a5c7e578a4066ec2d1cfa2e602ecb00bef8348",
-      "currentZhSha256": "99aeb5e35e5eafb7aaa9183067dd996ff847d668561a8573feb5e3136dbf47ad",
-      "currentEnSha256": "10cddb25e3798f32d63a96eb184dedb68d428045e8343aa71dac8b91e598828c"
+      "currentZhSha256": "68e577bca4f5f5e062f7248031d5de490f4faefe4a1e6c03fd1ff32ea54b0fa0",
+      "currentEnSha256": "3b7e2b6be2626bbf8a37348c4064129e3f1c65d8f79c86d9ff2823833d87f0f3"
     },
     {
       "oldZh": "knowledge-base/docs/核心框架实现记录.md",
@@ -840,8 +840,8 @@
       "action": "move-pair",
       "previousZhSha256": "372e5b07d4980eb45d8338424c8d970b7725e324e6b3397916944b0529c55ec7",
       "previousEnSha256": "ed88646659467d718a30c3bfff14b41c28debbcb786e7bf816ee68819f612887",
-      "currentZhSha256": "2f9236dfe68c7004816faf21b8987637074369de032bb74f8730603fcfc024f4",
-      "currentEnSha256": "9c91722457f70cd9b84fd65cb4540eda6cddc2b1e920b2aa1340ecdefcc65c8f"
+      "currentZhSha256": "190f50551e69e93c3050bdfd898c4dae3a784a9f07176611c0a00b555f0567f5",
+      "currentEnSha256": "09510a1405efd04d0912afc4fd6ce0f673b1836b772ba8bb0419124f55c8ae31"
     },
     {
       "oldZh": "knowledge-base/templates/实现来源记录.md",
@@ -912,8 +912,8 @@
       "action": "move-pair",
       "previousZhSha256": "64b1311f9991abce8024627c86c767419118c175c09d45b5d37c2b1a0924b5a9",
       "previousEnSha256": "ac8a3e151ea797dbad13f5074192721de58162d727b1f1bbbdd1b7d548a51c88",
-      "currentZhSha256": "8fbca0db1c08506004c72fc1512d15cd255e30531b8d2dcf188929e7a6609dcd",
-      "currentEnSha256": "7396ac2dff66c098226d572a43310d7d6de55045e38db94c924f845bb339b9e3"
+      "currentZhSha256": "a6ae5ca016dea4b41453bb3fbac62f164d7c5bddd0912ea578b285eb8d6a0901",
+      "currentEnSha256": "a8319d0e6623c15a1f6e3dc0d982e8e4c55e291ff5456c7182d9b2f8c3c4381e"
     },
     {
       "oldZh": "packages/engine/README.md",
@@ -924,8 +924,8 @@
       "action": "move-pair",
       "previousZhSha256": "43dedd7c762d66456f0505ec5080d664e69bc9f19e8483598e78af5339ab7079",
       "previousEnSha256": "e1ec54dcd7979bc433657230dc8b943b680a44defae7eab5a39d1540877de61b",
-      "currentZhSha256": "039709a4c01f1dcba4058734fe78507c2fd2b36a6aa824edaa17ffb3671187b1",
-      "currentEnSha256": "a56294a0016f7951c55066b7a5b6957dfed15328042a7c9e1a6a5c36f5307633"
+      "currentZhSha256": "cb145fea9aead8c4092743c5e138637845d8706369339d00188f50fa2a797172",
+      "currentEnSha256": "0f8b79c7c9bf7ecc727416cdbc2548b20f416e93fe3f2ea4e891c53ac4aea447"
     },
     {
       "oldZh": "packages/runtime/README.md",
@@ -936,8 +936,8 @@
       "action": "move-pair",
       "previousZhSha256": "5ff29a37678e52fb6deba246b732a01c0edc217959486a5df72a61e4db1aa32b",
       "previousEnSha256": "97eeca38ec5f73641b226f5e3e724580232040fc1acd0e4cb8e9b692d20e9214",
-      "currentZhSha256": "45fb7b164b64be9de2d058c8d70b8a21ceccf39680befbb0f188805a95339cf7",
-      "currentEnSha256": "319cffcae21a6f9b45868751af5646082ade6eb4860c51714ce68809ebfd3a75"
+      "currentZhSha256": "248043d15ad13ffd194d8d1e55bbdc28354f3465a0ca417a972bbc80c945a2f3",
+      "currentEnSha256": "cf25e1b5119a9136c6ad5412e6113e420c734ed75186dff089ae4fded3e8dc00"
     },
     {
       "oldZh": "PUBLICATION.md",
@@ -960,8 +960,8 @@
       "action": "move-pair",
       "previousZhSha256": "803a40dd8bfd0f98ade51c8ba736790509aae12a6e045a8ea688b3ff5d01cdcf",
       "previousEnSha256": "40a2ef2f686aba4a10279c417dfe17879bb6396b3b80dd75b26bd09c87d665f9",
-      "currentZhSha256": "a268121ce3d2e82bb4ad8c08fa09871ac362cb1e9ff953a07b2de123452ccca5",
-      "currentEnSha256": "49dbe0f87cce155cea8f8e985fec523c1bae756d6eac6549d0f5bd908379acd3"
+      "currentZhSha256": "4a496d7cef044634dbd943486d0eb9b5f206524fed9368fb57560f51f2fd2c3a",
+      "currentEnSha256": "453ccb22ae22ea4091f7d0ff10d686d9ba1f2350ed0202e85ab260c4d2d01bc3"
     },
     {
       "oldZh": "knowledge-base/docs/WebGPU矩形执行合同.md",
@@ -1080,8 +1080,8 @@
       "action": "move-pair",
       "previousZhSha256": "61639f120f4ed3aa77c4ffd41cf377e447dcac20e9562322c103e2e6b44c3990",
       "previousEnSha256": "60c77a11dc614191ba1d98fa488301a344839cc672df01e2c632048d85e8d376",
-      "currentZhSha256": "90a18e3e969ae959e1d6d1efa4bc4dfa25fe7d1cb072b98e04a2d660867fd19d",
-      "currentEnSha256": "5fe1549b2ce0c3e71235413290f92390baa0646183bfba98c9f3914ca3d34868"
+      "currentZhSha256": "3d5c660ae71889d32071cb76d0946801daa29ecefddf0d51fee5a7828abe5a2c",
+      "currentEnSha256": "4ef985f19e310dd8a9c86dde301c67b8ecf7491091fb2c23f5ae2db825265224"
     },
     {
       "oldZh": "knowledge-base/docs/3d-foundation.md",

@@ -963,6 +963,39 @@
         "evidence/coordinate-query-verification.json"
       ],
       "doc": "Cns/docs/显示坐标查询契约.md"
+    },
+    {
+      "id": "V023",
+      "title": "接收者局部显示内容边界",
+      "kind": "bounded_runtime_increment",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R012",
+        "R016"
+      ],
+      "dependsOn": [
+        "V011",
+        "V022"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "public_receiver_local_display_content_bounds",
+      "acceptance": "bounded_cpu_type_affected_desktop_execution_source_review_recorded_publication_separate",
+      "acceptanceCriteria": [
+        "继承的 getBounds(options?: BoundsQueryOptions) 从权威接收者局部 Graphics／非空 Bitmap 几何返回全新、冻结、只读 Rectangle2D。后代直接角点、作者零尺寸计数／跳过及普通 binary64 非保守减法遵循确切双语契约。",
+        "真实公共基线编译／载入 Bitmap 成功，在分配前注册 18 个 getBounds 缺失失败；专项后继 157/157 通过，包含 18 个边界回调。",
+        "正向／无 DOM 类型通过，81／5／28 项预期诊断（总计 114、边界新增 13）；单独记录的核心验证器 1063/1063 通过，覆盖 306 边界文件并完成无头关闭。各集合重叠。",
+        "新受影响桌面 Canvas 14 项检查、矩形 WebGPU 42 帧／1709 原始检查／84 张 PNG／6808 合成检查／8 反例及 B1 7 正向帧／5 反例／11 次提交通过，391 文件清单稳定。边界算术仅在 CPU；B1 OS 后代退出为 UNBOUND。",
+        "独立源码与保存渲染审阅通过且无未解决 P1/P2；本检查点双语公开材料审阅仍待完成。完整 prepush 与实际堆叠远端交付是独立门禁；其他空间／输出／布局／命中测试及完整产品义务保持开放。"
+      ],
+      "artifacts": [
+        "Cns/docs/显示内容边界契约.md",
+        "Cns/docs/显示内容边界证据.md",
+        "evidence/content-bounds-verification.json"
+      ],
+      "doc": "Cns/docs/显示内容边界契约.md"
     }
   ]
 }

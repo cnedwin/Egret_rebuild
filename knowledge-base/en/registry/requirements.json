@@ -36,7 +36,8 @@
         "V004",
         "V005",
         "V021",
-        "V022"
+        "V022",
+        "V023"
       ],
       "decisionIds": [
         "D002",
@@ -59,7 +60,8 @@
         "V011",
         "V012",
         "V021",
-        "V022"
+        "V022",
+        "V023"
       ],
       "decisionIds": [
         "D001",
@@ -263,7 +265,8 @@
         "V007",
         "V008",
         "V021",
-        "V022"
+        "V022",
+        "V023"
       ],
       "decisionIds": [
         "D002",
@@ -385,7 +388,8 @@
         "V008",
         "V011",
         "V012",
-        "V022"
+        "V022",
+        "V023"
       ],
       "decisionIds": [
         "D016"
@@ -475,7 +479,7 @@
   ],
   "_localization": {
     "canonicalSource": "需求.json",
-    "canonicalSha256": "5640229dc5b614c8e95a65f24401131324e6ed5c9bbd713a65257beee53c5fdf",
+    "canonicalSha256": "2cbc03cffa770beb5d79f6c529437ad3658defaeaee8cd645226cb9ee111b490",
     "role": "read_only_translation",
     "language": "en"
   }
