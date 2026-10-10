@@ -1,26 +1,26 @@
 {
   "schemaVersion": 1,
-  "revision": "0.24.0",
+  "revision": "0.25.0",
   "canonicalState": "Chinese registries; English JSON is a read-only translation",
   "evidencePolicy": "Machine data, embedded source, historical code and upstream legal originals retain their identities; paired reading versions explain them.",
   "semanticReview": {
     "status": "reviewed_with_scope",
-    "engineeringPreview": "0.24.0",
+    "engineeringPreview": "0.25.0",
     "method": {
-      "en": "Maintainer curation and independent bounded review accepted the current new or changed T1 public material. Unchanged earlier bodies retain their separately version-bound reviews; later root metadata hashes are independently attested here.",
-      "zh-CN": "维护者整理及独立有界审阅接受当前新增或修改的 T1 公开材料。未变既有正文保留各自版本绑定审阅；后续根维护者元数据哈希在此单独记录。"
+      "en": "Maintainer curation and independent finite review accepted the current changed public materials. Prior bodies retain their original version-bound review; later identity-only root attestations receive separate bounded checking.",
+      "zh-CN": "维护者整理及独立有限范围审阅接受当前变更的公开材料；既有正文保留原有版本绑定审阅，后续仅身份的根维护者记录单独核对。"
     },
     "scope": {
-      "en": "Two new reading pairs, changed community and knowledge-base entries, paired T1 test guidance, current registry additions, source attribution and ten critical source comment subjects. Inventory totals are counts, not blanket review acceptance.",
-      "zh-CN": "两对新阅读文档、修订社区与知识库入口、配对 T1 测试指引、当前登记新增、来源归属及十份关键源码注释对象。清单总数只作计数，不代表整体审阅验收。"
+      "en": "Two new reading pairs and necessary changed entries, bounded T2 failure summary, paired registry additions and current identity refresh; inventory counts do not imply blanket acceptance.",
+      "zh-CN": "两对新阅读文档及必要入口、限定 T2 失败摘要、配对登记新增与当前身份刷新；清单计数不代表整库验收。"
     },
     "qualityStatus": "ROOT_ACCEPTED_CURRENT_SCOPED_PUBLIC_REVIEW",
-    "publicationStatus": "ACTUAL_CURRENT_PREPUSH_AND_REMOTE_DELIVERY_RECORDED_SEPARATELY",
+    "publicationStatus": "PENDING_ACTUAL_CURRENT_HOOK_AND_REMOTE_DELIVERY",
     "review": {
-      "bytes": 5236,
-      "sha256": "9ebbb73ec5bdfc6a91d8fedcbd381f3b14754578b39f84e05772f818cf21fe42",
+      "bytes": 1732,
+      "sha256": "60795d24e46921273540af14210eed875fe31ccbe816d2e1280b7cba8a1c34e8",
       "status": "identity_only_not_distributed",
-      "scope": "Current new/changed T1 paired readings, community entries, guidance, structured registration, saved evidence boundaries, provenance and ten critical English-comment subjects. Unchanged older bodies retain their separately version-bound reviews; inventory totals are not blanket semantic acceptance."
+      "scope": "Current game-clock paired readings and necessary community entries/guidance, bounded T2 counterexample, paired registries, saved evidence, source provenance and seven critical English comments. Separate independent core, type and integration reviews retain their own source/fixture limits; inventory totals are not blanket semantic acceptance."
     },
     "laterRootMetadataAttestation": true
   },
@@ -43,8 +43,8 @@
       "zh": "CONTRIBUTING.zh-CN.md",
       "en": "CONTRIBUTING.md",
       "kind": "public_reading",
-      "zhSha256": "479d4543923b1955e74fa015e6efa007e566c197c43dd869fea5e7a130cd6f46",
-      "enSha256": "845f7f116bd769179f6d558e1dd9820434eed10ca02ac05d245c699f6d2a81b9"
+      "zhSha256": "d090ef310eb4b69d3eecb09cbffaecf6dccace78f522e1776f278a3e21e4c9e1",
+      "enSha256": "dc7bbdf2e9f4c77dc2d28a1423245b646aa065772e0f0e6ca137e8899e003951"
     },
     {
       "zh": "docs/evidence/texture-a1.zh-CN.md",
@@ -113,8 +113,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "zhSha256": "0c125180412d12efa3b1e6dcb3eab33588d0dea18661414795c302cf98bcb14a",
-      "enSha256": "9aa80eb773b33c10a78dfafaab2d88c8b356732ac490b0d6ec206caa13751dc5"
+      "zhSha256": "742b3aeb4220628975cb6edfdcfc95dfab3ef6f77f843d349fb68cc0a9b7a580",
+      "enSha256": "f6829f7e589b494fe68e32920c4aa2333db610eadf16c0e0b2188ee6c78d349b"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -736,8 +736,8 @@
       "zh": "knowledge-base/Cns/README.md",
       "en": "knowledge-base/en/README.md",
       "kind": "public_reading",
-      "zhSha256": "baee2b04f6ee7b519940d8031014f18824f0d724e81299d984272ec2c8685cda",
-      "enSha256": "bf59e5620eea24a29f08b587de087f2875c7aa64341c743b751800dbe5bfba2f"
+      "zhSha256": "7228bb49d8352d7a361512a246afd2fb2b8f3239d0f6fbed17bbb6107784045d",
+      "enSha256": "76ae02bae0c3eecaadf6de8c8454ca0ee6e72fa9a99b9317d8898f6348972b21"
     },
     {
       "zh": "knowledge-base/Cns/templates/ADR决策记录.md",
@@ -820,8 +820,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "zhSha256": "643e6b57af9cade5bcc3a1c7d0087ce5cf20c321c80fbbb229f9e9b1242c4e63",
-      "enSha256": "7c3b2eda11152baf512613b9ed1f060bc2ed9ecf24f233c8875b4b6806068ea2"
+      "zhSha256": "fdfc7c852a0b1ad226ce3a52bbdbf66bc43f956f53bb150ee419b07ac34810c1",
+      "enSha256": "db6abbbedfc1817c84cff428c9be88fdd343465fc6ca237d88c3f3613d9751b3"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -904,16 +904,30 @@
       "en": "knowledge-base/en/docs/text-raster-t1-evidence.md",
       "zh": "knowledge-base/Cns/docs/文字栅格T1证据.md",
       "kind": "public_reading",
-      "zhSha256": "be97e15c6a5b3331f8fc9a7a7bd2d3004c3ddef5d51947cfa8f0262a6c32fcc0",
-      "enSha256": "1de307d23447f43d8e69cc8e8a835172d71e9b16500839c62a6817af14ccdf24"
+      "zhSha256": "0950e6c3c48a276e7aadbf19125f2520cbb1a9bcb5dd112efb51937e5f031010",
+      "enSha256": "a92f10099e17c4cc75888a19b4480034eb9b8f2c66231706214a89462cbc632c"
+    },
+    {
+      "en": "knowledge-base/en/docs/game-clock-contract.md",
+      "zh": "knowledge-base/Cns/docs/游戏时间核心契约.md",
+      "kind": "public_reading",
+      "enSha256": "7f0a0024b12c9531fd4092443f1e7c386bdaef1eef77acb52c96da9a56c1ae68",
+      "zhSha256": "fc67d70a95abeb696c248bf98e55dc0d3789dffc1f0f5bb12ed5ed4478fa2e8c"
+    },
+    {
+      "en": "knowledge-base/en/docs/game-clock-evidence.md",
+      "zh": "knowledge-base/Cns/docs/游戏时间核心证据.md",
+      "kind": "public_reading",
+      "enSha256": "fe0838db5ff368aa94e2289055b35cf9408b25341878f2b30905db01a0fd6682",
+      "zhSha256": "b0c1081871ebc4a3a45ac3287cb7e67297c8bc8ed3de57d8ef28ef7148e68b02"
     }
   ],
   "registries": [
     {
       "source": "knowledge-base/Cns/registry/需求.json",
       "target": "knowledge-base/en/registry/requirements.json",
-      "sourceSha256": "977c481e6a399b2ccc7cf3df22a20ff945aa3be01417ae5e7635e727f8e05e35",
-      "targetSha256": "f367cb8aaa56bf142892e7c3f2102f95ab989bdccbb5d0b201cda0446c4d031c"
+      "sourceSha256": "64165b373e75339cca05327355f2ec5dd2d71d017eec2b116ab17777739203f5",
+      "targetSha256": "f9ba06ca6202c28a2657ac017f3100bbf27596de803149239e7c1c1448b3883b"
     },
     {
       "source": "knowledge-base/Cns/registry/决策.json",
@@ -930,20 +944,20 @@
     {
       "source": "knowledge-base/Cns/registry/交付.json",
       "target": "knowledge-base/en/registry/deliverables.json",
-      "sourceSha256": "8402b0712c53242377c62c1236168e5810a51780d60405df0e94984a4b645120",
-      "targetSha256": "cfb6a81325fc9c5146dcd4a0f98b955cf95e679edca3786b343ec0ae4dff8db6"
+      "sourceSha256": "7d6360f120241b6e261035c78554d7ee677c96092ad803bcfc0166ed789df309",
+      "targetSha256": "4cd89614c561621ffeb746e72297d51a97526b2dcff9bddf4f952f98b5a82e1c"
     },
     {
       "source": "knowledge-base/Cns/registry/来源.json",
       "target": "knowledge-base/en/registry/sources.json",
-      "sourceSha256": "e773d8fd31e4f0c145ac129f5a41750fb04621de43fd73c887d8091c387c996d",
-      "targetSha256": "c6650bf77d95df1bd5f363546a081af2abeb6319313c9acfdba4c37fa7fc924e"
+      "sourceSha256": "afa0a47a73149338074e56a013e987644d58e4b8f0e0d7e0b3b96ebc9c036e83",
+      "targetSha256": "0d1baa0ac7e6a51d31fe43f4be13dd6b2ea6aab6522d28dadb3957d08739f71d"
     },
     {
       "source": "knowledge-base/Cns/当前版本.json",
       "target": "knowledge-base/en/current-version.json",
-      "sourceSha256": "afbc4644fdd270e165e9d6e43e2d0b420ab9ee1d70b2fed409c80c9814ee740c",
-      "targetSha256": "c280932a615eff65d07c3a0b5597d11843d9de716c9c00f136688c558179d466"
+      "sourceSha256": "44eaee8e2b70784d3d5f9a2273856a6c0ff49112148db17291e3c4299c5b7f86",
+      "targetSha256": "8213effd8ba373955a4e0bcdd2bc759b64328aa0ad6e8d7b23b147d431f7428b"
     }
   ],
   "criticalComments": [
@@ -1033,7 +1047,7 @@
     },
     {
       "path": "packages/engine/src/Engine.ts",
-      "sha256": "ede0be39736301fb961177463384661913f9a4171b6e1677216f4fc924fb5f6e"
+      "sha256": "f02f188886c6acd6436b638838703ed52f43c7554f76e1e5dd544ce25ae32724"
     },
     {
       "path": "packages/engine/src/closeHost.ts",
@@ -1041,7 +1055,7 @@
     },
     {
       "path": "packages/engine/src/createEngine.ts",
-      "sha256": "99d4f442f1b8c0eb19928e71896e46aec83de2458d2fa9516b5b10b23951589b"
+      "sha256": "626ab89ddf8ecfb248e6ef62e5c088a9439d78657b6e005e23e7da9fedd6b0cc"
     },
     {
       "path": "packages/engine/src/surfaceOwnership.ts",
@@ -1395,7 +1409,7 @@
     },
     {
       "path": "packages/engine/src/createEngineForProfile.ts",
-      "sha256": "2b64bbec2a00ae16f3e075192af2b8c4fdf8143d3ed96dde4aadc406120aa248"
+      "sha256": "0d01e78092da05089d0664e212f70a165cedc73460cc02d7b95ed557ad88288a"
     },
     {
       "path": "packages/engine/src/internal/texturedFrameState.ts",
@@ -1403,7 +1417,7 @@
     },
     {
       "path": "packages/engine/src/startEngine.ts",
-      "sha256": "1c1cd118f693360344f2e84a3c27873efff7a1299b8461d4f1f23f6d76aedf88"
+      "sha256": "bef626c51436762b93dfff97b11d75969a17be3292b8a482b323c59f17d45fa1"
     },
     {
       "path": "packages/engine/web/prepareTexturedSubmission2D.ts",
@@ -1468,6 +1482,14 @@
     {
       "path": "packages/runtime/src/text/types.ts",
       "sha256": "98074409d7a370ad2976dcef9635101546a96d697d9eac77397157f0b1106462"
+    },
+    {
+      "path": "packages/engine/src/gameClock.ts",
+      "sha256": "1115ee023465b0501b563e696b93f7f86f18e85d1fb57b2eed3d1c896bd71141"
+    },
+    {
+      "path": "packages/engine/src/gameClockTypes.ts",
+      "sha256": "4adb7495464d0e9f7eb6d3296d147d43cd2ebbe46d3a028323b1750b299402e0"
     }
   ],
   "historicalSemanticReview": {
@@ -2750,6 +2772,30 @@
         },
         "qualityStatus": "INDEPENDENT_SCOPED_REVIEWS_RECORDED_CURRENT_METADATA_SUCCESSOR",
         "publicationStatus": "ACTUAL_WORKFLOW_PREPUSH_AND_REMOTE_DELIVERY_RECORDED_SEPARATELY"
+      }
+    },
+    {
+      "revision": "0.24.0",
+      "semanticReview": {
+        "status": "reviewed_with_scope",
+        "engineeringPreview": "0.24.0",
+        "method": {
+          "en": "Maintainer curation and independent bounded review accepted the current new or changed T1 public material. Unchanged earlier bodies retain their separately version-bound reviews; later root metadata hashes are independently attested here.",
+          "zh-CN": "维护者整理及独立有界审阅接受当前新增或修改的 T1 公开材料。未变既有正文保留各自版本绑定审阅；后续根维护者元数据哈希在此单独记录。"
+        },
+        "scope": {
+          "en": "Two new reading pairs, changed community and knowledge-base entries, paired T1 test guidance, current registry additions, source attribution and ten critical source comment subjects. Inventory totals are counts, not blanket review acceptance.",
+          "zh-CN": "两对新阅读文档、修订社区与知识库入口、配对 T1 测试指引、当前登记新增、来源归属及十份关键源码注释对象。清单总数只作计数，不代表整体审阅验收。"
+        },
+        "qualityStatus": "ROOT_ACCEPTED_CURRENT_SCOPED_PUBLIC_REVIEW",
+        "publicationStatus": "ACTUAL_CURRENT_PREPUSH_AND_REMOTE_DELIVERY_RECORDED_SEPARATELY",
+        "review": {
+          "bytes": 5236,
+          "sha256": "9ebbb73ec5bdfc6a91d8fedcbd381f3b14754578b39f84e05772f818cf21fe42",
+          "status": "identity_only_not_distributed",
+          "scope": "Current new/changed T1 paired readings, community entries, guidance, structured registration, saved evidence boundaries, provenance and ten critical English-comment subjects. Unchanged older bodies retain their separately version-bound reviews; inventory totals are not blanket semantic acceptance."
+        },
+        "laterRootMetadataAttestation": true
       }
     }
   ],

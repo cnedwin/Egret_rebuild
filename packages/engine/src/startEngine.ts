@@ -2,12 +2,13 @@ import { EgretError } from '@egret/runtime';
 import { constructEngine } from './Engine.js';
 import type { CapturedEngineFramePorts, Engine, EngineOptions } from './Engine.js';
 import { reserveSurface } from './surfaceOwnership.js';
+import type { AdmittedGameClockOptions } from './gameClock.js';
 
 /** Admission supplies stable internal options; both factories share one owner. */
-export async function startEngine(options: EngineOptions, timeoutMs: number, ports: CapturedEngineFramePorts): Promise<Engine> {
+export async function startEngine(options: EngineOptions, timeoutMs: number, ports: CapturedEngineFramePorts, clockOptions: AdmittedGameClockOptions): Promise<Engine> {
   const host = options.host;
   const releaseSurface = reserveSurface(host.surface);
-  const engine = constructEngine(options, timeoutMs, releaseSurface, ports);
+  const engine = constructEngine(options, timeoutMs, releaseSurface, ports, clockOptions);
   try {
     await host.start?.();
     return engine;

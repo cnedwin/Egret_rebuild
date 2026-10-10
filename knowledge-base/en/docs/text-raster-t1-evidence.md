@@ -80,6 +80,24 @@ The bounded T1 core source and listed CPU/private/source-boundary controls are a
 
 T2 browser font acquisition, real surfaces/background work, shaping, TextField/layout and glyph-pixel correctness are unverified. Spine, complete UI/3D, production hosts, physical phones, Native SDKs, power/performance and complete legacy migration retain their existing open acceptance. The previous 0.23.0 Mesh2D/native results keep their original environment, fixtures, source identities and counts; they do not establish text support.
 
+## Recorded 0.24.0 delivery
+
+This later record supplements the preserved cutoffs above. [PR #9](https://github.com/cnedwin/Egret_rebuild/pull/9) was created as a draft, marked ready and merged. Merged PR and Main verification was recorded at `2026-10-10T20:36:51.146Z` (2026-10-11 in Kuala Lumpur); this is the saved verification time, not a separately captured merge-event timestamp.
+
+The delivered source commit is `d025846a1655e3de8441d16f7591658e43e75588`, based on `299df09fcb9b0a34bdd266d808eef13249d906dc`. Merged Main is `5a387f6604c08734c1419af91c33d627404118dc`. Both use tree `aff9b94e0bfcd284f686e32e5e35fd19355e59b7`. The complete remote source tree contained 1,086 files; all paths, modes and Git blobs matched the curated candidate, and merged Main retained that tree.
+
+The actual mandatory local prepush hook completed at `2026-10-10T20:35:58.229Z`: core 2,037/2,037 and publication 52/52 passed, with zero failed/cancelled/skipped/todo cases; knowledge-base issues were zero. It included the 387-file boundary check and exactly 18 ordinary/9 isolated text diagnostics. Source identities remained stable; no hook bypass or force push was used. This is a fresh delivery run, including the final format-only checker successor, and does not relabel earlier runs.
+
+GitHub reported zero remote status entries and zero check runs at the merged verification cutoff. Their absence does not establish remote CI execution or success. Earlier pending receipts, the 205-failure whole run, timeout and historical source bindings remain unchanged. This delivery adds no acceptance for browser fonts/glyph pixels, TextField, devices, Native SDKs, power/performance, complete Spine support or complete legacy migration; later edits require their own review and verification.
+
+## Later native font probe — bounded counterexample
+
+A later frozen T2 probe on Edge 154.0.4258.62, Windows, headless msedge and device scale 1 loaded and selected the exact 22,572-byte Ahem face (SHA256 `f0a92cd0cc45735591c9b5b1fa8aecd5194e8dc518895ca22af94a46c23550dc`). X advance was 20, but native baseline ink was [-1,-16,21,4], against the unchanged frozen [0,-16,20,4] expectation. Saved native raster edges corroborated the measured extent. The first metric comparison failed before Bitmap creation, frame composition or independent reference drawing; those observations and all later glyph/control groups were not reached.
+
+The collector recorded FAIL in its one baseline window; the owning wrapper recorded INCOMPLETE after nonzero verification. Two CSP-blocked favicon console diagnostics also remained unwaived failures. Stable pins, complete raw capture and retirement of the owned processes show cleanup, without awarding font or rendering acceptance. No browser rerun, expectation adjustment, tolerance or replacement gate followed this diagnosis.
+
+The [Ahem geometry specification](https://www.w3.org/Style/CSS/Test/Fonts/Ahem/README) describes nominal square geometry without promising identical platform Canvas ink bounds. The official [WPT bounding-box test](https://raw.githubusercontent.com/web-platform-tests/wpt/master/html/canvas/element/text/2d.text.measure.actualBoundingBox.html) permits edge variation from antialiasing, but uses a different font, CanvasTest. Together with the [signed TextMetrics contract](https://html.spec.whatwg.org/multipage/canvas.html#dom-textmetrics-actualboundingboxleft), this supports an unproved portability assumption in the frozen oracle; it does not identify an engine defect or the installed browser backend's exact cause. The T1 logical-core acceptance above remains separately scoped, and T2 remains open.
+
 ## Sources and licensing
 
 This summary uses first-party T1 requirements, preserved execution receipts and independently authored public fixtures. AI assisted code and document preparation. Existing Egret ownership/resource/image mechanisms are reused under their stated contracts; a process declaration is not global-originality or training-provenance certification. Code and documentation retain [Apache-2.0](https://github.com/cnedwin/Egret_rebuild/blob/main/LICENSE). Existing dependency notices and research-asset rights remain unchanged in scope. Future font backend adoption requires its own provenance, license and acceptance record.

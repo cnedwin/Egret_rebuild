@@ -1,5 +1,6 @@
 export { Engine } from "./Engine.js";
 export type { EngineOptions } from "./Engine.js";
+export type { GameClockOptions, GameClockState, GameClockTick, GameClockHandler, GameClock, GameClockSubscription } from './gameClockTypes.js';
 export { createEngine } from "./createEngine.js";
 export { createEngineForProfile } from './createEngineForProfile.js';
 export { CancellationController, EgretError, Event, createEventType, EventDispatcher, DisplayObject, DisplayObjectContainer, Scope, Stage } from "@egret/runtime";

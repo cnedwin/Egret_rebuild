@@ -125,6 +125,15 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
     write('packages/engine/dist/text.js', "export {createTextRasterCache} from '@egret/runtime/text';\n");
     write('node_modules/@egret/runtime/text.js', "export {createTextRasterCache} from '../../../packages/runtime/dist/text/index.js';\n");
     write('node_modules/@egret/engine/text.js', "export {createTextRasterCache} from '../../../packages/engine/dist/text.js';\n");
+    // Clock baseline only: inert synthetic policy inputs carry the exact six
+    // public type names and erased emission. No owner or behavior shim is added.
+    const clockTypes = ['GameClockOptions','GameClockState','GameClockTick','GameClockHandler','GameClock','GameClockSubscription'];
+    const clockTypeScaffold = clockTypes.map(name => `export type ${name} = unknown;\n`).join('');
+    write('packages/engine/src/gameClockTypes.ts', clockTypeScaffold);
+    write('packages/engine/dist/gameClockTypes.d.ts', clockTypeScaffold);
+    write('packages/engine/dist/gameClockTypes.js', 'export {};\n');
+    for (const file of ['packages/engine/src/gameClock.ts','packages/engine/dist/gameClock.d.ts','packages/engine/dist/gameClock.js']) write(file, 'export {};\n');
+    write('packages/engine/dist/index.d.ts', readFileSync(path.join(root,'packages/engine/dist/index.d.ts'),'utf8') + `export type {${clockTypes.join(',')}} from './gameClockTypes.js';\n`);
     write('packages/engine/src/internal/texturedFrameState.ts', 'export function registerTexturedFrame(): void {}\nexport function readOwnedTexturedFrame(): undefined {return undefined;}\n');
     write('packages/engine/dist/internal/texturedFrameState.js', 'export function registerTexturedFrame() {}\nexport function readOwnedTexturedFrame() {}\n');
     write('packages/engine/dist/internal/texturedFrameState.d.ts', 'export declare function registerTexturedFrame(): void;\nexport declare function readOwnedTexturedFrame(): undefined;\n');

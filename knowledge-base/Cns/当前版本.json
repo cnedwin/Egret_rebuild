@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "version": "0.13.0",
-  "updatedAt": "2026-10-10",
+  "updatedAt": "2026-10-11",
   "title": "白鹭引擎重构工程",
   "stage": "independent_browser_webgpu_rectangle_checkpoint",
   "publication": "development_preview",
@@ -70,7 +70,9 @@
     "displayCoordinateQueryContract": "Cns/docs/显示坐标查询契约.md",
     "displayCoordinateQueryEvidence": "Cns/docs/显示坐标查询证据.md",
     "displayContentBoundsContract": "Cns/docs/显示内容边界契约.md",
-    "displayContentBoundsEvidence": "Cns/docs/显示内容边界证据.md"
+    "displayContentBoundsEvidence": "Cns/docs/显示内容边界证据.md",
+    "gameClockContract": "Cns/docs/游戏时间核心契约.md",
+    "gameClockEvidence": "Cns/docs/游戏时间核心证据.md"
   },
   "architectureContractProbesRun": true,
   "browserApiPixelProbesRun": true,
@@ -533,7 +535,7 @@
     "contract": "Cns/docs/显示内容边界契约.md",
     "evidence": "Cns/docs/显示内容边界证据.md"
   },
-  "latestEngineeringPreview": "0.24.0",
+  "latestEngineeringPreview": "0.25.0",
   "texturedMesh2DImplementation": {
     "version": "0.23.0",
     "status": "bounded_increment_implemented",
@@ -590,5 +592,32 @@
       "remote": "recorded_separately_in_delivery_verification",
       "futurePassInferred": false
     }
+  },
+  "gameClockImplementation": {
+    "version": "0.25.0",
+    "status": "bounded_explicit_clock_increment_implemented",
+    "deliverable": "V026",
+    "publicBehavior": {
+      "tests": 21,
+      "pass": 21,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "wholeCore": {
+      "tests": 2076,
+      "pass": 2076,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "wholeCoreFixtureScope": "prior_unsupplemented_fixture_verify_r1",
+    "currentSupplementedFixtureScope": "public_r3_only_until_fresh_complete_prepush",
+    "automaticHostScheduling": false,
+    "browserPixelAcceptance": false,
+    "performanceAcceptance": false,
+    "publication": "PENDING_SEPARATE_ACTUAL_RECORD"
   }
 }

@@ -2195,5 +2195,210 @@
     },
     "requiresExplicitVersionedSuccessor": true,
     "futurePassInferred": false
+  },
+  "currentDelivery": {
+    "schemaVersion": 1,
+    "engineeringPreview": "0.24.0",
+    "status": "ACTUAL_0_24_SOURCE_DELIVERY_RECORDED",
+    "scope": {
+      "en": "Saved actual source commit, mandatory local hook, remote source tree, PR and Main results; earlier receipt cutoffs remain intact and later edits are not accepted by this record.",
+      "Cns": "保存的实际源码提交、强制本地 hook、远程源码树、PR 与 Main 结果；此前 receipt 截止状态保持完整，本记录不接受后续修改。"
+    },
+    "sourceCommit": "d025846a1655e3de8441d16f7591658e43e75588",
+    "parentCommit": "299df09fcb9b0a34bdd266d808eef13249d906dc",
+    "mergedMainCommit": "5a387f6604c08734c1419af91c33d627404118dc",
+    "tree": "aff9b94e0bfcd284f686e32e5e35fd19355e59b7",
+    "publicFiles": 1086,
+    "mandatoryLocalHook": {
+      "status": "PASS_ACTUAL_FRESH_LOCAL_HOOK",
+      "startedAtUtc": "2026-10-10T20:29:25.741Z",
+      "completedAtUtc": "2026-10-10T20:35:58.229Z",
+      "exitCode": 0,
+      "sourceStable": true,
+      "hookBypass": false,
+      "forcePush": false,
+      "core": {
+        "tests": 2037,
+        "passed": 2037,
+        "failed": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "publication": {
+        "tests": 52,
+        "passed": 52,
+        "failed": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "knowledgeBaseIssues": 0,
+      "boundaryFiles": 387,
+      "textDiagnostics": {
+        "ordinary": 18,
+        "isolated": 9
+      },
+      "countsAreNotAdded": true
+    },
+    "pullRequest": {
+      "number": 9,
+      "url": "https://github.com/cnedwin/Egret_rebuild/pull/9",
+      "draftRecordedAtUtc": "2026-10-10T20:36:28.857Z",
+      "readyRecordedAtUtc": "2026-10-10T20:36:38.918Z",
+      "mergedAndMainVerifiedAtUtc": "2026-10-10T20:36:51.146Z",
+      "state": "closed",
+      "merged": true,
+      "separateMergeEventTimestampRecorded": false
+    },
+    "remoteTree": {
+      "files": 1086,
+      "allSourcePathsModesGitBlobsMatch": true,
+      "mergedMainTreeMatchesSourceTree": true
+    },
+    "remoteCI": {
+      "combinedStateAtCutoff": "pending",
+      "statusEntries": 0,
+      "checkRuns": 0,
+      "executionEstablished": false,
+      "successEstablished": false,
+      "scope": {
+        "en": "No remote statuses or check runs were reported; this does not establish CI execution or success. The actual mandatory local hook is recorded separately.",
+        "Cns": "没有报告远程 status 或 check run，不证明 CI 已运行或成功；实际强制本地 hook 单独记录。"
+      }
+    },
+    "receipts": [
+      {
+        "record": "actual-source-commit",
+        "bytes": 717,
+        "sha256": "a2ef7009c17bd266e1222a364638878c69585c8a32577664707c6bdf21e81bae"
+      },
+      {
+        "record": "fresh-local-hook-and-remote-branch",
+        "bytes": 1430,
+        "sha256": "0e1de787eeaaee831bfda27826d3631bb904d323c4e052f5df7fb160245f7a8b"
+      },
+      {
+        "record": "draft-pr-and-complete-remote-source-tree",
+        "bytes": 1066,
+        "sha256": "7a0ff00c313eccd30aebb1ed8ca91eb6a596e7573ed8073fdb44780d4a797773"
+      },
+      {
+        "record": "pr-ready",
+        "bytes": 800,
+        "sha256": "efe4dd315627fff0bc4aac260a282b58e85b0d6b943033b350d4f764f5f4ff9e"
+      },
+      {
+        "record": "merged-pr-and-main-tree",
+        "bytes": 1281,
+        "sha256": "d56b662aa4a3042af13cbbbfdad0b5d5260cb591d56a4ed770fc2ecc86717b15"
+      }
+    ],
+    "rawOutputIdentities": [
+      {
+        "record": "local-hook-stdout",
+        "bytes": 307888,
+        "sha256": "aec31d25ae5506794643a76fd4caae922e276756f6cc472582b07c51dcf61dfe"
+      },
+      {
+        "record": "local-hook-redacted-stderr",
+        "bytes": 338,
+        "sha256": "2f93a3bf15e3ce56265bb533a97f830df96894f36df3adb2715fde998f4bc991"
+      }
+    ],
+    "selectedDeliveredSourceIdentities": [
+      {
+        "path": "packages/runtime/src/text/TextRasterCache.ts",
+        "bytes": 42737,
+        "sha256": "5f9b349ddddb55af4aee1802a28c4b2b5e2aafe93b7dcabc7032a8b531b0b5b7"
+      },
+      {
+        "path": "packages/runtime/src/text/types.ts",
+        "bytes": 6514,
+        "sha256": "98074409d7a370ad2976dcef9635101546a96d697d9eac77397157f0b1106462"
+      },
+      {
+        "path": "tools/check-types.mjs",
+        "bytes": 20160,
+        "sha256": "a09c38b72f6b9ac3d77fc9ed408ad4767cb66d4e9d616d77ef3bca34466ff259"
+      }
+    ],
+    "earlierReceiptCutoffsPreserved": true,
+    "earlierWholeFailureAndTimeoutPreserved": true,
+    "earlierSourceBindingsRelabelled": false,
+    "extendsProductAcceptanceScope": false,
+    "laterEditsAcceptedByThisRecord": false,
+    "unchangedOpenAcceptance": {
+      "en": [
+        "T2 browser fonts, surfaces, shaping and glyph pixels",
+        "TextField and layout",
+        "physical devices and production hosts",
+        "Native SDKs",
+        "power and performance",
+        "complete Spine support",
+        "complete legacy migration"
+      ],
+      "Cns": [
+        "T2 浏览器字体、surface、shaping 与字形像素",
+        "TextField 与布局",
+        "实体设备与生产宿主",
+        "Native SDK",
+        "电耗与性能",
+        "完整 Spine 支持",
+        "完整旧工程迁移"
+      ]
+    }
+  },
+  "laterNativeT2Counterexample": {
+    "status": "ACTUAL_NATIVE_FONT_PROBE_FAILED_NOT_ACCEPTED",
+    "environment": {
+      "browser": "Edge 154.0.4258.62",
+      "platform": "Windows",
+      "launch": "headless msedge",
+      "deviceScaleFactor": 1
+    },
+    "font": {
+      "bytes": 22572,
+      "sha256": "f0a92cd0cc45735591c9b5b1fa8aecd5194e8dc518895ca22af94a46c23550dc",
+      "loadedAndSelected": true
+    },
+    "advance": {
+      "expected": 20,
+      "actual": 20
+    },
+    "signedBaselineInk": {
+      "expected": [
+        0,
+        -16,
+        20,
+        4
+      ],
+      "actual": [
+        -1,
+        -16,
+        21,
+        4
+      ]
+    },
+    "collector": "FAIL",
+    "outer": "INCOMPLETE",
+    "baselineWindows": 1,
+    "unwaivedConsoleDiagnostics": 2,
+    "firstFailure": "X: actual signed baseline ink",
+    "savedFrameCount": 0,
+    "remainingObservations": "NOT_REACHED",
+    "exactInstalledBackendCause": "UNKNOWN",
+    "diagnosisSeal": {
+      "identityOnly": "text-t2-native-failure-diagnosis-revision-1",
+      "bytes": 2693,
+      "sha256": "8da4bc59575500432313fc58092d1520a68f49e1715e8a23f19793b87f2a7cb7",
+      "distributed": false
+    },
+    "frozenExpectationsChanged": false,
+    "browserRerun": false,
+    "newGateAdded": false,
+    "ownedProcessCleanupCompleted": true,
+    "fontOrRenderingAcceptance": false,
+    "preservesEarlierT1LogicalAcceptanceScope": true
   }
 }

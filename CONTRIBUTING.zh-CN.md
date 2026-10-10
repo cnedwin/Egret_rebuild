@@ -20,6 +20,8 @@
 
 现有原型基线为44/44行为检查和11项负类型断言，限于CPU与模拟host。真实GPU、Native、宿主、性能和CI另行验证。包清单的`private: true`、版本0.0.0、exports与依赖方向属于当前检查合同；升级或发布设置的变化需单独说明影响。
 
+游戏时钟变更先通过常规验证流程构建，再用 `node --test tests/game-clock.test.mjs` 检查公共行为，用 `node --test tests/game-clock-boundaries.test.mjs` 运行真实基线先行的源码对照。执行前固定字面源时间、回调顺序、真实 Scope／资源归属及清理原因；保留既有失败，区分完整核心运行与之后改变的 fixture。CPU 时钟检查不证明浏览器／GPU 像素、性能或自动动画；下方必需 prepush 及受影响浏览器规则继续适用。阅读[时钟契约](knowledge-base/Cns/docs/游戏时间核心契约.md)及[证据](knowledge-base/Cns/docs/游戏时间核心证据.md)。
+
 ## 可公开资料
 
 提交可分发代码、样本和技术摘要。私有原包、凭据、个人数据和未获公开授权的内容不进入贡献；历史研究以必要的来源种类和技术结论呈现。详细流程见[知识库贡献指南](knowledge-base/Cns/CONTRIBUTING.md)与[独立实现规范](knowledge-base/Cns/docs/独立实现与第三方依赖规范.md)。

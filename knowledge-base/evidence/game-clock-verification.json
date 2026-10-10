@@ -1,0 +1,328 @@
+{
+  "schemaVersion": 1,
+  "engineeringLabel": "0.25.0",
+  "status": "ACTUAL_BOUNDED_CORE_CHECKS_PUBLICATION_PENDING",
+  "deliverable": "V026",
+  "sourceId": "S075",
+  "packageVersion": "0.0.0",
+  "protocolVersion": "1.0",
+  "publicBehavior": {
+    "tests": 21,
+    "pass": 21,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "affectedRegressions": {
+    "tests": 59,
+    "pass": 59,
+    "fail": 0
+  },
+  "strictTypes": {
+    "diagnostics": 234,
+    "newClockDiagnostics": 31,
+    "exactLocationsAndCodes": true,
+    "exactLocationsAndCodesScope": "31_new_clock_cases_and_retained_named_guards",
+    "domFreePositive": true
+  },
+  "productionBoundaryFiles": 393,
+  "selectedBoundaryControls": {
+    "tests": 18,
+    "pass": 18,
+    "assignedMutations": 16,
+    "genuineBaselineBeforeEach": true
+  },
+  "wholeCore": {
+    "tests": 2076,
+    "pass": 2076,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "wholeCoreFixtureScope": "prior_unsupplemented_fixture_verify_r1",
+  "currentSupplementedFixtureScope": "public_r3_only_until_fresh_complete_prepush",
+  "countsNotAdditive": true,
+  "arithmeticExhaustion": "GC19_STATIC_REVIEW_ONLY",
+  "savedRuns": [
+    {
+      "identityOnly": "game-clock-red-r1",
+      "bytes": 93240,
+      "sha256": "16d4736cdb6aad9659691ab691c7acd85714fc681bcb8a4ab642718a8e6b09d2",
+      "exit": 1,
+      "sourceStable": true,
+      "inputsStable": true,
+      "distributed": false
+    },
+    {
+      "identityOnly": "game-clock-build-r1",
+      "bytes": 26711,
+      "sha256": "ae5e0707980c8566299e2d8f1f0fb5a649714898594c86381a5e31b244cab507",
+      "exit": 0,
+      "sourceStable": true,
+      "inputsStable": true,
+      "distributed": false
+    },
+    {
+      "identityOnly": "game-clock-public-r1",
+      "bytes": 94777,
+      "sha256": "0966819ad5cb9946c52a8788afe010cbe5f1ed9b02599a098c9b660efa821499",
+      "exit": 0,
+      "sourceStable": true,
+      "inputsStable": true,
+      "distributed": false
+    },
+    {
+      "identityOnly": "game-clock-admissionRed-r1",
+      "bytes": 94805,
+      "sha256": "3d741e212b9a28d8ddfd6cbb8b8eb2c969f38eaeb1e4c044b66453bf09502c75",
+      "exit": 1,
+      "sourceStable": true,
+      "inputsStable": true,
+      "distributed": false
+    },
+    {
+      "identityOnly": "game-clock-build-r2",
+      "bytes": 26711,
+      "sha256": "b0ff842056e45fd0167e36e0f7c52a33073930eb17b9af1564ca694b1c1bea7e",
+      "exit": 0,
+      "sourceStable": true,
+      "inputsStable": true,
+      "distributed": false
+    },
+    {
+      "identityOnly": "game-clock-admissionRed-r2",
+      "bytes": 94805,
+      "sha256": "2d674c485542643631143ecb779d260c84c578a29d8279832ecdbcc5ac379677",
+      "exit": 0,
+      "sourceStable": true,
+      "inputsStable": true,
+      "distributed": false
+    },
+    {
+      "identityOnly": "game-clock-types-r1",
+      "bytes": 100076,
+      "sha256": "fd4984769c8f6a4577706935c7018291eeaf378cdd38b53b4e6295194f00124d",
+      "exit": 1,
+      "sourceStable": true,
+      "inputsStable": true,
+      "distributed": false
+    },
+    {
+      "identityOnly": "game-clock-types-r2",
+      "bytes": 100076,
+      "sha256": "33ac57069ef30a7d0239848a934e80e8740a2d49871a391005e4edeff3e2fb43",
+      "exit": 1,
+      "sourceStable": true,
+      "inputsStable": true,
+      "distributed": false
+    },
+    {
+      "identityOnly": "game-clock-types-r3",
+      "bytes": 100073,
+      "sha256": "bec76cff56c1bf589ab37dc7c21264dfaed28678800264f1ef55ec0df4b70eed",
+      "exit": 0,
+      "sourceStable": true,
+      "inputsStable": true,
+      "distributed": false
+    },
+    {
+      "identityOnly": "game-clock-boundaries-r1",
+      "bytes": 100091,
+      "sha256": "f32745b220ec0d25e399119b3f5bafd8f9fa922443fe1e08e0f467377cbb4e97",
+      "exit": 0,
+      "sourceStable": true,
+      "inputsStable": true,
+      "distributed": false
+    },
+    {
+      "identityOnly": "game-clock-boundaryControls-r1",
+      "bytes": 100119,
+      "sha256": "36a814361a231d28864265c615de87c388d376a4c90efc7b13aa0b0f07d0e94a",
+      "exit": 1,
+      "sourceStable": true,
+      "inputsStable": true,
+      "distributed": false
+    },
+    {
+      "identityOnly": "game-clock-boundaryControls-r2",
+      "bytes": 100119,
+      "sha256": "fefb7e4bc0e289d94fae6d6488dff38f3f0e5143e0db3146ea98470ebb96a49e",
+      "exit": 0,
+      "sourceStable": true,
+      "inputsStable": true,
+      "distributed": false
+    },
+    {
+      "identityOnly": "game-clock-public-r2",
+      "bytes": 94779,
+      "sha256": "214243b50a09a203db1a1e6dfb76c8ed2671b39ad13313b2fa6373c9d2dc14b3",
+      "exit": 0,
+      "sourceStable": true,
+      "inputsStable": true,
+      "distributed": false
+    },
+    {
+      "identityOnly": "game-clock-regressions-r1",
+      "bytes": 95737,
+      "sha256": "611938a481cb9b909ad00dab7eafccebf1797ec302b684d8a9261a1814fab5d2",
+      "exit": 0,
+      "sourceStable": true,
+      "inputsStable": true,
+      "distributed": false
+    },
+    {
+      "identityOnly": "game-clock-verify-r1",
+      "bytes": 26719,
+      "sha256": "887e4397275a1274ebccca71e379bf254f79fe2497c04563760f9cf5039e8523",
+      "exit": 0,
+      "sourceStable": true,
+      "inputsStable": true,
+      "distributed": false
+    },
+    {
+      "identityOnly": "game-clock-public-r3",
+      "bytes": 94779,
+      "sha256": "8e8457a3d3307cc1fd82abfec1dcbfb10164b8f8d105461db5c946c957520725",
+      "exit": 0,
+      "sourceStable": true,
+      "inputsStable": true,
+      "distributed": false
+    }
+  ],
+  "history": [
+    "Initial genuine initialized-Engine RED: advanceTime absent.",
+    "Independent GC-CORE-001: revoked clock-options Proxy escaped raw TypeError; focused RED preserved, exact-cause Egret error fix and GREEN reviewed.",
+    "Four predicted compiler codes were corrected to actual strict diagnostics; original guard failures retained.",
+    "First public-boundary setup lacked the contracts consumer alias; only its built public-root route was corrected.",
+    "Independent fixture review requested two in-callback witnesses; the original 21/21 result remains scoped, and the supplemented fixture passed separately."
+  ],
+  "sourceSubjects": [
+    {
+      "path": "packages/engine/src/gameClockTypes.ts",
+      "bytes": 1058,
+      "sha256": "4adb7495464d0e9f7eb6d3296d147d43cd2ebbe46d3a028323b1750b299402e0"
+    },
+    {
+      "path": "packages/engine/src/gameClock.ts",
+      "bytes": 9147,
+      "sha256": "1115ee023465b0501b563e696b93f7f86f18e85d1fb57b2eed3d1c896bd71141"
+    },
+    {
+      "path": "packages/engine/src/Engine.ts",
+      "bytes": 11513,
+      "sha256": "f02f188886c6acd6436b638838703ed52f43c7554f76e1e5dd544ce25ae32724"
+    },
+    {
+      "path": "packages/engine/src/createEngine.ts",
+      "bytes": 1408,
+      "sha256": "626ab89ddf8ecfb248e6ef62e5c088a9439d78657b6e005e23e7da9fedd6b0cc"
+    },
+    {
+      "path": "packages/engine/src/createEngineForProfile.ts",
+      "bytes": 2306,
+      "sha256": "0d01e78092da05089d0664e212f70a165cedc73460cc02d7b95ed557ad88288a"
+    },
+    {
+      "path": "packages/engine/src/startEngine.ts",
+      "bytes": 1209,
+      "sha256": "bef626c51436762b93dfff97b11d75969a17be3292b8a482b323c59f17d45fa1"
+    },
+    {
+      "path": "packages/engine/src/index.ts",
+      "bytes": 2348,
+      "sha256": "535eff6a3d2da9a30578ed56b051abd911ab89fa3226ee12ba55dcf78d83fc07"
+    },
+    {
+      "path": "tools/check-types.mjs",
+      "bytes": 23615,
+      "sha256": "7235057f03a9f0bbc95e222de8a35ab620faabb16f80634a072438f979115a1e"
+    },
+    {
+      "path": "tools/check-boundaries.mjs",
+      "bytes": 39957,
+      "sha256": "6933fb612e1c936c8d340bdcc57aaec5beed9ef52c0fb338115968faf0de98ee"
+    },
+    {
+      "path": "tests/types/positive.ts",
+      "bytes": 30528,
+      "sha256": "a39f6b35e425e8daacb5ec0243372ce3fd28dee709c5b23ee344a84ecb8c24cd"
+    },
+    {
+      "path": "tests/types/negative.ts",
+      "bytes": 25526,
+      "sha256": "7ecf31315259d401f8dedfb8b7bd49d9958534cf75ceac1298d754f1700635d1"
+    },
+    {
+      "path": "tests/types/dom-free.ts",
+      "bytes": 8204,
+      "sha256": "eec3a5341776c7b737d479e8f351fbccc575ac67dd23949213ff21b95cc3aadc"
+    },
+    {
+      "path": "tests/types/game-clock-import-negative.ts",
+      "bytes": 1298,
+      "sha256": "0ff02f5803886c893116304cdceee4e639314b0439aa46da899c33963eadae36"
+    },
+    {
+      "path": "tests/types/tsconfig.game-clock-import-negative.json",
+      "bytes": 83,
+      "sha256": "208150945ae6e92019935a8b9bb14ad41744b284d377dfcf8f616008f92d36cc"
+    },
+    {
+      "path": "tests/game-clock-boundaries.test.mjs",
+      "bytes": 7980,
+      "sha256": "0337e60adcb61b1bff5deab93c6b3ac202ab6f43046b75d750bf63085b6392e8"
+    },
+    {
+      "path": "tests/boundaries.test.mjs",
+      "bytes": 36422,
+      "sha256": "59b7ac88fa0e2a4581e59b5baed3c4626be9686aa8ac9656218f44928a9edd80"
+    },
+    {
+      "path": "tests/game-clock.test.mjs",
+      "bytes": 43474,
+      "sha256": "96271fc6eaaa872d37f160fb4002d651b334ec9a1511b5ea1ab59aa68207e8bc"
+    }
+  ],
+  "noNewThirdPartyDependencies": true,
+  "sourceOrigin": "Independent first-party Egret specification and fixtures; no historical or competitor implementation source input.",
+  "review": {
+    "status": "INDEPENDENT_SCOPED_REVIEWS_CLOSED",
+    "publicMaterial": {
+      "bytes": 1732,
+      "sha256": "60795d24e46921273540af14210eed875fe31ccbe816d2e1280b7cba8a1c34e8",
+      "status": "identity_only_not_distributed",
+      "scope": "Current game-clock paired readings and necessary community entries/guidance, bounded T2 counterexample, paired registries, saved evidence, source provenance and seven critical English comments. Separate independent core, type and integration reviews retain their own source/fixture limits; inventory totals are not blanket semantic acceptance."
+    },
+    "core": {
+      "bytes": 6462,
+      "sha256": "cbd3d5feeca5aa71dcdf1ae3ca6e23d585f33891a6bf4b57421ca1c7433c5bcb"
+    },
+    "strictTypesAndBoundaries": {
+      "bytes": 14563,
+      "sha256": "f56435529df03019aa22f6d63dab2016bf50ccad3113991c21c826c96b23a51d"
+    },
+    "integration": {
+      "bytes": 3201,
+      "sha256": "c47fa1673df2a7f8623e2edafc1a3c91a117bfa663a25d4a5218d80766145de0"
+    },
+    "reviewedCutoffsRemainSeparate": true,
+    "finalPrepushAndRemoteDeliveryAccepted": false
+  },
+  "finalPrepush": "PENDING",
+  "remoteDelivery": "PENDING",
+  "excludedAcceptance": [
+    "automatic_host_scheduling",
+    "browser_pixels",
+    "fonts",
+    "phones",
+    "physical_memory",
+    "performance",
+    "complete_UI",
+    "full_Spine",
+    "complete_3D",
+    "Native_SDK",
+    "complete_migration"
+  ]
+}

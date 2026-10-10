@@ -112,3 +112,18 @@ const domProfileFactory: Promise<DomProfileEngine> = DomProfileFactory({host: do
 const domProfileCommands: readonly DomProfileCommand[] = [domProfileMesh];
 const domProfileContent: DomProfileContent = DomProfileCollect(stage);
 void domProfileRendered; void domProfileReturn; void domProfileFactory; void domProfileCommands; void domProfileContent;
+
+// Public clock consumers remain within the retained ES2022-only/no ambient types config.
+import type {GameClockOptions as DomClockOptions, GameClockState as DomClockState, GameClockTick as DomClockTick, GameClockHandler as DomClockHandler, GameClock as DomClock, GameClockSubscription as DomClockSubscription, Engine as DomClockEngine} from '@egret/engine';
+declare const domClockEngine: DomClockEngine;
+const domClockOptions: DomClockOptions = {maxDeltaSeconds: 0.25};
+const domClock: DomClock = domClockEngine.clock;
+const domClockState: DomClockState = domClock.state;
+const domClockScope = domClockEngine.createScope();
+const domClockHandler: DomClockHandler = tick => { const elapsed: number = tick.elapsedSeconds; void elapsed; return undefined; };
+const domClockSubscription: DomClockSubscription = domClock.onTick(domClockScope, domClockHandler);
+const domClockOwned: DomClockSubscription = domClockScope.use(domClockSubscription);
+const domClockTick: DomClockTick | undefined = domClockEngine.advanceTime(10);
+const domClockCaptured: RenderFrame2D = domClockEngine.captureFrame({width: 1, height: 1});
+const domClockRendered: RenderFrame2D = domClockEngine.renderFrame({width: 1, height: 1});
+void domClockOptions; void domClockState; void domClockOwned; void domClockTick; void domClockCaptured; void domClockRendered;

@@ -1065,6 +1065,42 @@
         "evidence/text-raster-t1-verification.json"
       ],
       "doc": "Cns/docs/文字栅格T1契约.md"
+    },
+    {
+      "id": "V026",
+      "kind": "bounded_runtime_increment",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R011",
+        "R015",
+        "R016",
+        "R019"
+      ],
+      "dependsOn": [
+        "V010",
+        "V011",
+        "V021"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "explicit_engine_owned_game_clock_and_scope_subscriptions",
+      "acceptance": "bounded_public_behavior_types_lifetimes_and_source_controls_publication_separate",
+      "title": "显式游戏时间与作用域订阅",
+      "acceptanceCriteria": [
+        "无 DOM 游戏时间由 Engine 显式推进，暂停间隔不计入游戏时间；拒绝的输入不改变已接受状态。",
+        "真实同引擎 Scope 管理订阅；回调在提交后同步执行，结束当前回调后才进行引擎资源与宿主清理。",
+        "公共行为、真实 SequencePlayer／资源协作、严格类型及指定源码对照各自保留实际范围与早期失败。",
+        "完整核心源码验证与当前补充测试分别记录；中英文、来源、关键英文注释、最终 prepush 和远程交付单独审阅。"
+      ],
+      "artifacts": [
+        "Cns/docs/游戏时间核心契约.md",
+        "Cns/docs/游戏时间核心证据.md",
+        "evidence/game-clock-verification.json"
+      ],
+      "doc": "Cns/docs/游戏时间核心契约.md"
     }
   ]
 }

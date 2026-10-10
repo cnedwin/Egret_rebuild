@@ -1,6 +1,7 @@
 import { EgretError } from "@egret/runtime";
 import type { Engine, EngineOptions } from "./Engine.js";
 import { startEngine } from './startEngine.js';
+import { admitGameClockOptions } from './gameClock.js';
 
 /** Reserve the surface before startup; failed startup uses the normal close path. */
 export async function createEngine(options: EngineOptions): Promise<Engine> {
@@ -10,7 +11,11 @@ export async function createEngine(options: EngineOptions): Promise<Engine> {
   const diagnostic=options.onDiagnostic; const stableOptions:EngineOptions={host,...(diagnostic===undefined?{}:{onDiagnostic:diagnostic})};
   const timeoutMs = options.shutdownTimeoutMs ?? 1000;
   if (!Number.isFinite(timeoutMs) || !Number.isInteger(timeoutMs) || timeoutMs <= 0) throw new EgretError("INVALID_TIMEOUT");
-  return startEngine(stableOptions, timeoutMs, { legacy: renderer, textured: undefined, profile: undefined });
+  let clockValue: unknown;
+  try { clockValue = options.clock; }
+  catch (cause) { throw new EgretError('CLOCK_OPTIONS_INVALID', { cause }); }
+  const clockOptions = admitGameClockOptions(clockValue);
+  return startEngine(stableOptions, timeoutMs, { legacy: renderer, textured: undefined, profile: undefined }, clockOptions);
 }
 
 
