@@ -324,5 +324,78 @@
     "complete_3D",
     "Native_SDK",
     "complete_migration"
-  ]
+  ],
+  "laterDelivery": {
+    "engineeringLabel": "0.25.0",
+    "status": "ACTUAL_FRESH_COMPLETE_LOCAL_HOOK_AND_MERGED_MAIN_RECORDED",
+    "recordedAtUtc": "2026-10-10T22:03:08.216Z",
+    "localDate": "2026-10-11",
+    "localTimeZone": "UTC+08:00",
+    "priorCutoffsAndFailureHistoryPreserved": true,
+    "freshCompleteLocalHook": {
+      "completedAtUtc": "2026-10-10T22:02:22.722Z",
+      "exitCode": 0,
+      "hookBypass": false,
+      "forcePush": false,
+      "sourceStable": true,
+      "coreTests": {
+        "tests": 2076,
+        "pass": 2076,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "publicationTests": {
+        "tests": 52,
+        "pass": 52,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "knowledgeBaseIssues": 0,
+      "supplementedClockFixture": {
+        "path": "tests/game-clock.test.mjs",
+        "bytes": 43474,
+        "sha256": "96271fc6eaaa872d37f160fb4002d651b334ec9a1511b5ea1ab59aa68207e8bc",
+        "testDeclarations": 21,
+        "scope": "Includes the two added in-callback public time/id and running-state resume assertions; earlier wholeCore cutoff is not relabelled."
+      }
+    },
+    "remoteDelivery": {
+      "pullRequest": 10,
+      "url": "https://github.com/cnedwin/Egret_rebuild/pull/10",
+      "merged": true,
+      "head": "a03e51226f361e58dc65cafcbeb617a24887e844",
+      "base": "5a387f6604c08734c1419af91c33d627404118dc",
+      "main": "b888f418faa43516202708e62f2c3dc1e5832d95",
+      "tree": "4ffeff19d5f5c0b4f8f323134339bdab01ee5338",
+      "publicInventoryEntries": 1097,
+      "identityScope": "Saved Main tree equals the committed tree bound to the 1097 path/mode/blob inventory; inventory identity is not blanket semantic acceptance.",
+      "statusCount": 0,
+      "checkRunCount": 0,
+      "remoteCIExecutionAccepted": false
+    },
+    "receipts": [
+      {
+        "identityOnly": "game-clock-push-verified",
+        "bytes": 1447,
+        "sha256": "53045a59efb0fd79949a449b5e1704058c234c6ef0e6675e2ce1f4eebfd314a6",
+        "distributed": false
+      },
+      {
+        "identityOnly": "game-clock-pr-merged",
+        "bytes": 1274,
+        "sha256": "e1e222acfa115c8efee07c7afb7d7d881438cfb61e19c5900a01da12a1fb7709",
+        "distributed": false
+      }
+    ],
+    "limits": [
+      "Earlier run source and fixture cutoffs remain unchanged.",
+      "Synchronous Scope cleanup and the separate Engine clock-idle barrier retain their scopes.",
+      "Historical handle retention and non-preemptible synchronous callbacks are unchanged.",
+      "No new fonts/TextField, GPU, Native/devices, physical memory/GC, performance or complete animation/UI/Spine/migration acceptance."
+    ]
+  }
 }

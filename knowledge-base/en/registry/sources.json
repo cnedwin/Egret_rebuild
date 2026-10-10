@@ -1229,11 +1229,23 @@
       "scope": "Independent specification, implementation and review; public clock behavior, genuine Scope/resource/sequence integration, strict types, selected boundary controls and complete existing core-source verification.",
       "limit": "Explicit CPU time integration does not establish automatic host scheduling, browser pixels, phones, physical memory or performance. Complete UI, Spine, 3D, Native SDK and migration retain separate obligations; final publication checks and remote delivery are recorded separately.",
       "doc": "en/docs/game-clock-evidence.md"
+    },
+    {
+      "id": "S076",
+      "type": "first_party_scalar_tween_behavior_type_lifetime_and_source_evidence",
+      "researchCheckedAt": "2026-10-11",
+      "artifacts": [
+        "evidence/scalar-tween-verification.json"
+      ],
+      "title": "First-party scalar Tween integration evidence",
+      "scope": "Independently reviewed specification and first-party implementation; scoped public behavior, real clock/display/Scope integration, strict type diagnostics, production import/export checks, genuine copied-graph controls and complete existing core verification.",
+      "limit": "CPU checks do not establish browser/native animation, fonts, target-phone or performance acceptance, full property animation, UI, Spine, legacy Tween compatibility or migration. Final publication and remote delivery remain separately recorded.",
+      "doc": "en/docs/scalar-tween-evidence.md"
     }
   ],
   "_localization": {
     "canonicalSource": "来源.json",
-    "canonicalSha256": "afa0a47a73149338074e56a013e987644d58e4b8f0e0d7e0b3b96ebc9c036e83",
+    "canonicalSha256": "c0374adefd27c415a2dec40c62f10bd44a605984f62a63e595a47465c1c02a18",
     "role": "read_only_translation",
     "language": "en"
   }

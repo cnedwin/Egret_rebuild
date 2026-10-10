@@ -127,3 +127,18 @@ const domClockTick: DomClockTick | undefined = domClockEngine.advanceTime(10);
 const domClockCaptured: RenderFrame2D = domClockEngine.captureFrame({width: 1, height: 1});
 const domClockRendered: RenderFrame2D = domClockEngine.renderFrame({width: 1, height: 1});
 void domClockOptions; void domClockState; void domClockOwned; void domClockTick; void domClockCaptured; void domClockRendered;
+
+// Public scalar Tween consumers use the unchanged ES2022-only/no-ambient config.
+import type {Tween as DomTween, TweenOptions as DomTweenOptions, TweenState as DomTweenState, TweenEasing as DomTweenEasing, Engine as DomTweenEngine} from '@egret/engine';
+declare const domTweenEngine: DomTweenEngine;
+const domTweenScope = domTweenEngine.createScope();
+const domTweenEasing: DomTweenEasing = 'quadInOut';
+const domTweenOptions: DomTweenOptions = {from: 0, to: 1, durationSeconds: 1, easing: domTweenEasing, onUpdate(value) { sprite.alpha = value; return undefined; }, onComplete() { return undefined; }};
+const domTween: DomTween = domTweenEngine.createTween(domTweenScope, domTweenOptions);
+const domTweenOwned: DomTween = domTweenScope.use(domTween);
+const domTweenState: DomTweenState = domTween.state;
+const domTweenElapsed: number = domTween.elapsedSeconds;
+const domTweenProgress: number = domTween.progress;
+const domTweenValue: number = domTween.value;
+domTween.start(); domTween.pause(); domTween.resume(); domTween.stop(); domTween.dispose();
+void domTweenOwned; void domTweenState; void domTweenElapsed; void domTweenProgress; void domTweenValue;

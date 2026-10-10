@@ -401,3 +401,52 @@ ClockNegativePublic.GameClock;
 // @ts-expect-error GAME_CLOCK_CASE subscription-type-only TS2339
 ClockNegativePublic.GameClockSubscription;
 void negativeClockForgery; void negativeClockSubscriptionForgery;
+
+// First-party named Tween diagnostic predictions; actual compiler evidence pending.
+import * as TweenNegativePublic from '@egret/engine';
+import type {Tween as NegativeTween, TweenOptions as NegativeTweenOptions, Engine as NegativeTweenEngine, Scope as NegativeTweenScope} from '@egret/engine';
+declare const negativeTween: NegativeTween;
+declare const negativeTweenOptions: NegativeTweenOptions;
+declare const negativeTweenEngine: NegativeTweenEngine;
+declare const negativeTweenScope: NegativeTweenScope;
+// @ts-expect-error TWEEN_CASE readonly-state TS2540
+negativeTween.state = 'paused';
+// @ts-expect-error TWEEN_CASE readonly-disposal TS2540
+negativeTween.isDisposed = false;
+// @ts-expect-error TWEEN_CASE readonly-elapsed TS2540
+negativeTween.elapsedSeconds = 1;
+// @ts-expect-error TWEEN_CASE readonly-progress TS2540
+negativeTween.progress = 1;
+// @ts-expect-error TWEEN_CASE readonly-value TS2540
+negativeTween.value = 1;
+// @ts-expect-error TWEEN_CASE readonly-from-option TS2540
+negativeTweenOptions.from = 1;
+// @ts-expect-error TWEEN_CASE readonly-to-option TS2540
+negativeTweenOptions.to = 1;
+// @ts-expect-error TWEEN_CASE readonly-duration-option TS2540
+negativeTweenOptions.durationSeconds = 1;
+// @ts-expect-error TWEEN_CASE readonly-easing-option TS2540
+negativeTweenOptions.easing = 'linear';
+// @ts-expect-error TWEEN_CASE readonly-writer-option TS2540
+negativeTweenOptions.onUpdate = () => undefined;
+// @ts-expect-error TWEEN_CASE readonly-completion-option TS2540
+negativeTweenOptions.onComplete = () => undefined;
+// @ts-expect-error TWEEN_CASE wrong-scope TS2740
+negativeTweenEngine.createTween({}, negativeTweenOptions);
+// @ts-expect-error TWEEN_CASE unsupported-easing TS2322
+negativeTweenEngine.createTween(negativeTweenScope, {...negativeTweenOptions, easing: 'cubic'});
+// @ts-expect-error TWEEN_CASE asynchronous-writer TS2322
+negativeTweenEngine.createTween(negativeTweenScope, {...negativeTweenOptions, onUpdate: async () => undefined});
+// @ts-expect-error TWEEN_CASE asynchronous-completion TS2322
+negativeTweenEngine.createTween(negativeTweenScope, {...negativeTweenOptions, onComplete: async () => undefined});
+// @ts-expect-error TWEEN_CASE non-undefined-writer TS2322
+negativeTweenEngine.createTween(negativeTweenScope, {...negativeTweenOptions, onUpdate: () => 1});
+// @ts-expect-error TWEEN_CASE no-forged-handle TS2741
+const negativeTweenForgery: NegativeTween = {state: 'idle', isDisposed: false, elapsedSeconds: 0, progress: 0, value: 0, start() {}, pause() {}, resume() {}, stop() {}, dispose() {}};
+// @ts-expect-error TWEEN_CASE state-type-only TS2339
+TweenNegativePublic.TweenState;
+// @ts-expect-error TWEEN_CASE options-type-only TS2339
+TweenNegativePublic.TweenOptions;
+// @ts-expect-error TWEEN_CASE easing-type-only TS2339
+TweenNegativePublic.TweenEasing;
+void negativeTweenForgery;

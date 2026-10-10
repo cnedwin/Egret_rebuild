@@ -1101,11 +1101,46 @@
         "evidence/game-clock-verification.json"
       ],
       "doc": "en/docs/game-clock-contract.md"
+    },
+    {
+      "id": "V027",
+      "kind": "bounded_runtime_increment",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R011",
+        "R015",
+        "R016",
+        "R019"
+      ],
+      "dependsOn": [
+        "V011",
+        "V026"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "scope_owned_one_shot_scalar_tween_with_explicit_engine_game_time",
+      "acceptance": "bounded_public_behavior_types_lifetimes_source_controls_and_complete_existing_core_checks_delivery_separate",
+      "title": "Scope-owned scalar Tween",
+      "acceptanceCriteria": [
+        "Engine creates an opaque one-shot scalar handle in an authentic same-Engine Scope; explicit game seconds and four built-in easings drive synchronous undefined-only callbacks.",
+        "Construction/start do not write; pause/resume preserve offered-time semantics, and stop/Scope/Engine closing retire callbacks and borrowed resources without implicit rendering.",
+        "Public behavior, exact strict type diagnostics, genuine copied-graph import/export controls and complete existing core verification retain separate actual counts, source identities and earlier failures.",
+        "Paired public readings, critical English comments, provenance and final mandatory publication/remote delivery receive separate review."
+      ],
+      "artifacts": [
+        "en/docs/scalar-tween-contract.md",
+        "en/docs/scalar-tween-evidence.md",
+        "evidence/scalar-tween-verification.json"
+      ],
+      "doc": "en/docs/scalar-tween-contract.md"
     }
   ],
   "_localization": {
     "canonicalSource": "交付.json",
-    "canonicalSha256": "7d6360f120241b6e261035c78554d7ee677c96092ad803bcfc0166ed789df309",
+    "canonicalSha256": "b8908a58cfbc060af8abc282069c69af4aff925f33f99d2bbf7000204c02fb84",
     "role": "read_only_translation",
     "language": "en"
   }

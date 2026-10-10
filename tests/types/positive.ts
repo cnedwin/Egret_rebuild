@@ -402,3 +402,27 @@ const clockAdvancedTick: GameClockTick | undefined = clockConsumerEngine.advance
 const clockAfterAdvanceCapture: RenderFrame2D = clockConsumerEngine.captureFrame({width: 1, height: 1});
 const clockAfterAdvanceRender: RenderFrame2D = clockConsumerEngine.renderFrame({width: 1, height: 1});
 void clockOwnedSubscription; void clockAdvancedTick; void clockAfterAdvanceCapture; void clockAfterAdvanceRender;
+
+// First-party scalar Tween consumer from the adopted API; no private owner port.
+import type {Tween, TweenState, TweenOptions, TweenEasing, Engine as TweenEngine, Scope as TweenScope, Disposable as TweenDisposable} from '@egret/engine';
+type TweenAssert<T extends true> = T;
+type TweenEqual<A, B> = ProfileEqual<A, B>;
+type TweenStatesExact = TweenAssert<TweenEqual<TweenState, 'idle' | 'running' | 'paused' | 'completed' | 'stopped' | 'failed'>>;
+type TweenEasingExact = TweenAssert<TweenEqual<TweenEasing, 'linear' | 'quadIn' | 'quadOut' | 'quadInOut'>>;
+type TweenOptionsFields = {readonly from: number; readonly to: number; readonly durationSeconds: number; readonly easing?: TweenEasing; readonly onUpdate: (value: number) => undefined; readonly onComplete?: () => undefined};
+type TweenOptionsExact = TweenAssert<TweenEqual<TweenOptions, TweenOptionsFields>>;
+type TweenFields = {readonly state: TweenState; readonly isDisposed: boolean; readonly elapsedSeconds: number; readonly progress: number; readonly value: number; start(): void; pause(): void; resume(): void; stop(): void; dispose(): void};
+type TweenStringKeysExact = TweenAssert<TweenEqual<Extract<keyof Tween, string>, keyof TweenFields>>;
+type TweenFieldsExact = TweenAssert<TweenEqual<Pick<Tween, keyof TweenFields>, TweenFields>>;
+type TweenBrandPresent = TweenAssert<TweenEqual<Extract<keyof Tween, symbol> extends never ? false : true, true>>;
+type TweenBrandValue = TweenAssert<TweenEqual<Tween[Extract<keyof Tween, symbol>], true>>;
+type TweenEngineMethodExact = TweenAssert<TweenEqual<TweenEngine['createTween'], (scope: TweenScope, options: TweenOptions) => Tween>>;
+declare const tweenConsumerEngine: TweenEngine;
+const tweenConsumerScope = tweenConsumerEngine.createScope();
+const tweenConsumerOptions: TweenOptions = {from: 0, to: 100, durationSeconds: 1, easing: 'quadIn', onUpdate(value) { const scalar: number = value; void scalar; return undefined; }, onComplete() { return undefined; }};
+const tweenConsumer: Tween = tweenConsumerEngine.createTween(tweenConsumerScope, tweenConsumerOptions);
+const tweenConsumerOwned: Tween = tweenConsumerScope.use(tweenConsumer);
+const tweenConsumerDisposable: TweenDisposable = tweenConsumer;
+const tweenConsumerState: TweenState = tweenConsumer.state;
+tweenConsumer.start(); tweenConsumer.pause(); tweenConsumer.resume(); tweenConsumer.stop(); tweenConsumer.dispose();
+void tweenConsumerOwned; void tweenConsumerDisposable; void tweenConsumerState;

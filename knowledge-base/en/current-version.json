@@ -72,7 +72,9 @@
     "displayContentBoundsContract": "en/docs/display-content-bounds-contract.md",
     "displayContentBoundsEvidence": "en/docs/display-content-bounds-evidence.md",
     "gameClockContract": "en/docs/game-clock-contract.md",
-    "gameClockEvidence": "en/docs/game-clock-evidence.md"
+    "gameClockEvidence": "en/docs/game-clock-evidence.md",
+    "scalarTweenContract": "en/docs/scalar-tween-contract.md",
+    "scalarTweenEvidence": "en/docs/scalar-tween-evidence.md"
   },
   "architectureContractProbesRun": true,
   "browserApiPixelProbesRun": true,
@@ -258,7 +260,7 @@
   },
   "_localization": {
     "canonicalSource": "当前版本.json",
-    "canonicalSha256": "44eaee8e2b70784d3d5f9a2273856a6c0ff49112148db17291e3c4299c5b7f86",
+    "canonicalSha256": "922fd7541acc76f6960e1430acf3e76cc41e31192f9c11a56fee772e7b53886e",
     "role": "read_only_translation",
     "language": "en"
   },
@@ -541,7 +543,7 @@
     "contract": "en/docs/display-content-bounds-contract.md",
     "evidence": "en/docs/display-content-bounds-evidence.md"
   },
-  "latestEngineeringPreview": "0.25.0",
+  "latestEngineeringPreview": "0.26.0",
   "texturedMesh2DImplementation": {
     "version": "0.23.0",
     "status": "bounded_increment_implemented",
@@ -624,6 +626,25 @@
     "automaticHostScheduling": false,
     "browserPixelAcceptance": false,
     "performanceAcceptance": false,
+    "publication": "PENDING_SEPARATE_ACTUAL_RECORD"
+  },
+  "scalarTweenImplementation": {
+    "version": "0.26.0",
+    "status": "bounded_scope_owned_scalar_increment_verified",
+    "deliverable": "V027",
+    "source": "S076",
+    "wholeCore": {
+      "tests": 2131,
+      "pass": 2131,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "automaticScheduling": false,
+    "browserNativeAnimationAcceptance": false,
+    "performanceAcceptance": false,
+    "fullLegacyTweenAcceptance": false,
     "publication": "PENDING_SEPARATE_ACTUAL_RECORD"
   }
 }

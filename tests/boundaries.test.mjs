@@ -134,6 +134,15 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
     write('packages/engine/dist/gameClockTypes.js', 'export {};\n');
     for (const file of ['packages/engine/src/gameClock.ts','packages/engine/dist/gameClock.d.ts','packages/engine/dist/gameClock.js']) write(file, 'export {};\n');
     write('packages/engine/dist/index.d.ts', readFileSync(path.join(root,'packages/engine/dist/index.d.ts'),'utf8') + `export type {${clockTypes.join(',')}} from './gameClockTypes.js';\n`);
+    // Tween baseline only: inert canonical names and erased module emission.
+    // No behavior/owner shim or private-import exemption is introduced.
+    const tweenTypes = ['Tween','TweenState','TweenOptions','TweenEasing'];
+    const tweenTypeScaffold = tweenTypes.map(name => `export type ${name} = unknown;\n`).join('');
+    write('packages/engine/src/tweenTypes.ts', tweenTypeScaffold);
+    write('packages/engine/dist/tweenTypes.d.ts', tweenTypeScaffold);
+    write('packages/engine/dist/tweenTypes.js', 'export {};\n');
+    for (const file of ['packages/engine/src/tween.ts','packages/engine/dist/tween.d.ts','packages/engine/dist/tween.js']) write(file, 'export {};\n');
+    write('packages/engine/dist/index.d.ts', readFileSync(path.join(root,'packages/engine/dist/index.d.ts'),'utf8') + `export type {${tweenTypes.join(',')}} from './tweenTypes.js';\n`);
     write('packages/engine/src/internal/texturedFrameState.ts', 'export function registerTexturedFrame(): void {}\nexport function readOwnedTexturedFrame(): undefined {return undefined;}\n');
     write('packages/engine/dist/internal/texturedFrameState.js', 'export function registerTexturedFrame() {}\nexport function readOwnedTexturedFrame() {}\n');
     write('packages/engine/dist/internal/texturedFrameState.d.ts', 'export declare function registerTexturedFrame(): void;\nexport declare function readOwnedTexturedFrame(): undefined;\n');

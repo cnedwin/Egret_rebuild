@@ -1101,6 +1101,41 @@
         "evidence/game-clock-verification.json"
       ],
       "doc": "Cns/docs/游戏时间核心契约.md"
+    },
+    {
+      "id": "V027",
+      "kind": "bounded_runtime_increment",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R011",
+        "R015",
+        "R016",
+        "R019"
+      ],
+      "dependsOn": [
+        "V011",
+        "V026"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "scope_owned_one_shot_scalar_tween_with_explicit_engine_game_time",
+      "acceptance": "bounded_public_behavior_types_lifetimes_source_controls_and_complete_existing_core_checks_delivery_separate",
+      "title": "Scope 所有的标量 Tween",
+      "acceptanceCriteria": [
+        "Engine 在真实同引擎 Scope 中创建不透明的一次性标量句柄；显式游戏秒和四种内建缓动驱动同步且仅返回 undefined 的回调。",
+        "构造和启动不写回，暂停恢复保留已提供时间语义；停止及 Scope/Engine 关闭退役回调和资源借用，不隐式渲染。",
+        "公开行为、精确严格类型诊断、真实复制工程的导入导出对照与完整既有核心检查分别保留实际数量、源码身份和早期失败。",
+        "双语公开阅读、关键英文注释、来源及最终必要公开门禁和远程交付分别审阅。"
+      ],
+      "artifacts": [
+        "Cns/docs/标量补间契约.md",
+        "Cns/docs/标量补间证据.md",
+        "evidence/scalar-tween-verification.json"
+      ],
+      "doc": "Cns/docs/标量补间契约.md"
     }
   ]
 }
