@@ -7,4 +7,7 @@ export type { CancellationListener, CancellationSignal, Disposable, Releasable, 
 export { AssetManager, AssetLease, createAssetType, createAssetRef } from "@egret/runtime";
 export type { AssetProvider, AssetAcquireOptions, AssetLoadContext, AssetType, AssetRef } from "@egret/runtime";
 export { Sprite, Graphics } from '@egret/runtime';
-export type { Matrix2D, Rectangle2D, ClipRectangle2D, RectangleCommand2D, FrameOptions2D, RenderFrame2D, RenderHostAdapter } from '@egret/contracts';
+export type { Matrix2D, Rectangle2D, ClipRectangle2D, RectangleCommand2D, ImageCommand2D, RenderCommand2D, FrameOptions2D, RenderFrame2D, RenderHostAdapter } from '@egret/contracts';
+export { IMAGE_LIMITS_2D, createImageData2D, isImageData2D, copyImageData2DPixels } from '@egret/contracts';
+export type { ImageData2DInput, ImageData2D, TextureRegion2D } from '@egret/contracts';
+export { Texture, createTexture, isTexture, Bitmap } from '@egret/runtime';

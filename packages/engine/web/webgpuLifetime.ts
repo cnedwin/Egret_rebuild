@@ -28,3 +28,15 @@ export function cleanupWebGPUBuffer(resource: OwnedWebGPUBuffer): unknown[] {
     try { resource.destroy(); } catch (cause) { errors.push(cause); }
     return errors;
 }
+
+export interface OwnedWebGPUTexture {
+    readonly texture: GPUTexture;
+    readonly destroy: () => void;
+    cleaned: boolean;
+}
+/** Mark the attempt before calling captured cleanup, including throwing or reentrant paths. */
+export function cleanupWebGPUTexture(resource: OwnedWebGPUTexture): unknown[] {
+    if (resource.cleaned) return [];
+    resource.cleaned = true;
+    try { resource.destroy(); return []; } catch (cause) { return [cause]; }
+}

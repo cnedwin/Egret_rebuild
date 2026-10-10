@@ -2,13 +2,33 @@
 
 [English](DOCUMENTATION.en.md) | 简体中文
 
+## 当前本地工程预览：0.18.0
+
+新增单个具名旧 MovieClip 的有界 CPU 转换，保留图集裁剪、显示偏移和作者持续段时间；28/28 专项测试通过，输出已由真实序列帧工厂重新准入。阅读[契约](knowledge-base/docs/legacy-movieclip-contract.zh-CN.md)、[证据](knowledge-base/docs/legacy-movieclip-evidence.zh-CN.md)和[精简记录](knowledge-base/evidence/legacy-movieclip-focused.json)。API 保持内部使用，图片读取、解码和播放仍未验证。
+
+0.17.0 及更早结果保留为各自源码身份下的历史证据。此次增量的默认模式、全仓回归和完整 prepush 未运行；当前浏览器／设备像素、性能及完整 R008/V006 迁移仍待验收。0.18.0 是本地工程标签，包 0.0.0／协议 1.0 不变；GitHub 交付继续保持 HOLD_HTTP_403。
+
+## 历史本地工程预览：0.17.0
+
+本预览新增自有 CPU 场景快照、固定网格辅助函数、有界 B1 宿主源码／模拟整合、CPU 序列帧采样与纯 RES 转换意图。阅读[CPU 场景](knowledge-base/docs/3d-cpu-scene-contract.md)、[网格](knowledge-base/docs/3d-webgpu-mesh-contract.md)、[宿主](knowledge-base/docs/b1-host-contract.zh-CN.md)、[序列帧](knowledge-base/docs/sequence-clip-contract.zh-CN.md)及[RES 意图](knowledge-base/docs/legacy-res-plan-contract.zh-CN.md)与配对证据。这些接口保持内部使用；公开入口与包 0.0.0／协议 1.0 不变。
+
+已记录默认宿主验证通过 13/13 项，CPU 序列帧采样通过 25/25，RES 意图规划通过 14/14。所选整仓运行通过 901/901 项测试、编译、282 个边界文件及类型门禁；901 项包含宿主回归。源码绑定、仅格式后继及保留的早期失败见[配对宿主证据](knowledge-base/docs/b1-host-evidence.zh-CN.md)。此次文档采用未重跑产品检查。
+
+GitHub 交付因已记录的 403 响应保持 HOLD；当前文档最终审阅与完整 prepush 仍待完成。此前 0.13.0–0.16.0 检查点保留身份及结果。Native SDK、当前浏览器／设备像素、性能、字体、DragonBones、完整 R008/V006 迁移、V003／编辑器及完整产品验收仍未验证或保持开放。
+
+## 历史本地工程预览：0.16.0
+
+当前增量覆盖已接受的有界图片源码／模拟逻辑、CPU 纹理参考公式、CPU 3D 数学／几何／打包，以及旧 RES 声明分析。阅读[核心进展](knowledge-base/docs/core-progress.md)、[3D CPU 基础](knowledge-base/docs/3d-foundation.md)和[旧 RES 声明](knowledge-base/docs/legacy-res-declarations.md)，查看契约、准确历史证据与开放任务。标签为工程预览；包 0.0.0 与协议 1.0 不变。最终独立公开审查、prepush 及本预览的 GitHub 交付仍待完成。
+
+此前 0.13.0／0.14.0／0.15.0 章节是各自有源码身份和结果的历史检查点，其矩形／浏览器观察不能验证当前图片或 3D 的 native 像素。Task 5a 仅提供 CPU 公式／边界；A2 Task 5b／Task 6、P0–P7、设备／文字／动画／Native、V003 和完整 R008／V006 迁移保持开放或 UNRUN。
+
 ## 0.13.0 WebGPU矩形本地检查点 — 2026年10月9日
 
 显式 `@egret/engine/webgpu` 入口同步执行不可变 `RenderFrame2D` 矩形命令。根入口保持无DOM；`@egret/engine/web`保持Canvas-only，实际请求不包含WebGPU或robust-predicates模块。无DOM准备层通过公共 `orient2d` 接入精确固定的基础依赖robust-predicates 3.0.3，适用Unlicense。复制、有界交点构造、打包、WGSL及宿主生命周期属于独立编写的第一方代码。见[完整0.6合同](knowledge-base/docs/WebGPU矩形执行合同.md)、[实施计划](knowledge-base/docs/WebGPU矩形实施计划.md)与[有限证据](knowledge-base/docs/WebGPU矩形实现证据.md)。
 
 已接受的桌面构建记录177/177 CPU/mock/核心检查、28项预期负类型诊断及123个边界文件；独立真实WebGPU门禁记录42帧、1709项原始断言、84张截图、6808项合成断言、8项预期反例及0项意外错误。其中7项变异实际生产代码副本，1项仅为合成断言。实际结果与有限独立实现审阅由[验证](verification/webgpu-verification.json)与[审阅](verification/webgpu-review.json)绑定已接受的源码身份；文档整合没有重跑这些检查。
 
-本experimental检查点记录于2026-10-08T21:23:54.294Z最终原生运行之前，核心/headless与桌面Canvas结果分别记录。随后仅注释入口重建的真实浏览器WebGPU运行在 `1aa0248a1ff6d8e54c42d631072223bb50483814`、2026-10-08T21:23:54.294Z以0退出并记录PASS：42帧、1709项原始断言、84张PNG截图、6808项合成断言、8项预期反例及0项意外错误。7项反例变异生产代码副本，1项为合成断言。233项源码/构建/工具/依赖清单身份在该运行前后相等，且与当前仅文档和元数据变更的后继版本一致。实际运行由验证作者执行；独立修正及原生绑定复审、最终语义凭据和发布仍待完成。浏览器WebGPU与Native App/SDK分别验收；截图合成不证明实体扫描输出、硬件加速、手机或性能。纹理/文字/UI/动画/3D、编辑器/Agent创作、CI、完整迁移与完整产品仍待实施或验收；R008/V006及V003保留既有义务。下文0.9–0.12历史记录保留原日期、身份与结果范围。
+本experimental检查点记录于2026-10-08T21:23:54.294Z最终原生运行之前，核心/headless与桌面Canvas结果分别记录。随后仅注释入口重建的真实浏览器WebGPU运行在 `1aa0248a1ff6d8e54c42d631072223bb50483814`、2026-10-08T21:23:54.294Z以0退出并记录PASS：42帧、1709项原始断言、84张PNG截图、6808项合成断言、8项预期反例及0项意外错误。7项反例变异生产代码副本，1项为合成断言。233项源码/构建/工具/依赖清单身份在该运行前后相等，且与当时仅文档和元数据变更的后继版本一致。实际运行由验证作者执行；独立修正及原生绑定复审、最终语义凭据和发布仍待完成。浏览器WebGPU与Native App/SDK分别验收；截图合成不证明实体扫描输出、硬件加速、手机或性能。纹理/文字/UI/动画/3D、编辑器/Agent创作、CI、完整迁移与完整产品仍待实施或验收；R008/V006及V003保留既有义务。下文0.9–0.12历史记录保留原日期、身份与结果范围。
 
 
 ## 历史0.12.0显示与帧候选范围
@@ -134,3 +154,37 @@
 - [交付](knowledge-base/registry/交付.json) · [English](knowledge-base/registry/交付.en.json)
 - [来源](knowledge-base/registry/来源.json) · [English](knowledge-base/registry/来源.en.json)
 - [当前版本](knowledge-base/当前版本.json) · [English](knowledge-base/当前版本.en.json)
+
+## 工程事务核心阅读版本
+
+[包API](packages/project/README.md) · [完整合同](knowledge-base/docs/工程事务核心合同.md) · [实现与内存证据](knowledge-base/docs/工程事务核心实现证据.md)。本地工程预览标签为0.14.0；包0.0.0/协议1.0及历史0.13身份不变，公开交付在本段文档编写检查点待完成，后续交付证据另行记录。
+
+## CPU 纹理预览阅读版本
+
+中文 | English
+--- | ---
+| [CPU 纹理 API 与所有权](docs/texture-a1.zh-CN.md) | [English](docs/texture-a1.en.md) |
+| [CPU 纹理验证证据](docs/evidence/texture-a1.zh-CN.md) | [English](docs/evidence/texture-a1.en.md) |
+
+## 0.16.0 阅读文档对
+
+| 中文 | English |
+| --- | --- |
+| [核心进展](knowledge-base/docs/core-progress.md) | [Core progress](knowledge-base/docs/core-progress.en.md) |
+| [3D CPU 基础](knowledge-base/docs/3d-foundation.md) | [3D CPU foundation](knowledge-base/docs/3d-foundation.en.md) |
+| [旧 RES 声明](knowledge-base/docs/legacy-res-declarations.md) | [Legacy RES declarations](knowledge-base/docs/legacy-res-declarations.en.md) |
+
+## 0.17.0 新增文档配对
+
+| 中文 | English |
+| --- | --- |
+| [3d-cpu-scene-contract.md](knowledge-base/docs/3d-cpu-scene-contract.md) | [3d-cpu-scene-contract.en.md](knowledge-base/docs/3d-cpu-scene-contract.en.md) |
+| [3d-cpu-scene-evidence.md](knowledge-base/docs/3d-cpu-scene-evidence.md) | [3d-cpu-scene-evidence.en.md](knowledge-base/docs/3d-cpu-scene-evidence.en.md) |
+| [3d-webgpu-mesh-contract.md](knowledge-base/docs/3d-webgpu-mesh-contract.md) | [3d-webgpu-mesh-contract.en.md](knowledge-base/docs/3d-webgpu-mesh-contract.en.md) |
+| [3d-webgpu-mesh-evidence.md](knowledge-base/docs/3d-webgpu-mesh-evidence.md) | [3d-webgpu-mesh-evidence.en.md](knowledge-base/docs/3d-webgpu-mesh-evidence.en.md) |
+| [b1-host-contract.zh-CN.md](knowledge-base/docs/b1-host-contract.zh-CN.md) | [b1-host-contract.en.md](knowledge-base/docs/b1-host-contract.en.md) |
+| [b1-host-evidence.zh-CN.md](knowledge-base/docs/b1-host-evidence.zh-CN.md) | [b1-host-evidence.en.md](knowledge-base/docs/b1-host-evidence.en.md) |
+| [sequence-clip-contract.zh-CN.md](knowledge-base/docs/sequence-clip-contract.zh-CN.md) | [sequence-clip-contract.en.md](knowledge-base/docs/sequence-clip-contract.en.md) |
+| [sequence-clip-evidence.zh-CN.md](knowledge-base/docs/sequence-clip-evidence.zh-CN.md) | [sequence-clip-evidence.en.md](knowledge-base/docs/sequence-clip-evidence.en.md) |
+| [legacy-res-plan-contract.zh-CN.md](knowledge-base/docs/legacy-res-plan-contract.zh-CN.md) | [legacy-res-plan-contract.en.md](knowledge-base/docs/legacy-res-plan-contract.en.md) |
+| [legacy-res-plan-evidence.zh-CN.md](knowledge-base/docs/legacy-res-plan-evidence.zh-CN.md) | [legacy-res-plan-evidence.en.md](knowledge-base/docs/legacy-res-plan-evidence.en.md) |

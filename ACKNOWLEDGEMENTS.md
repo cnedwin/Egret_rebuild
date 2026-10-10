@@ -2,6 +2,12 @@
 
 [English](ACKNOWLEDGEMENTS.en.md) | 简体中文
 
+## 0.16.0 声明与 3D 参考来源
+
+Microsoft Corporation 的 [jsonc-parser](https://github.com/microsoft/node-jsonc-parser/tree/v3.3.1) 3.3.1 以 MIT 提供公共根 createScanner／visit，供既有私有工程适配器与声明分析使用。已有 MIT 声明和依赖固定值继续适用。RES profile／报告／fixture 与 CPU 3D 契约／实现独立编写。创始人提供的历史 RES 声明语义用于兼容性研究；准确版本／模块闭合仍未验证，不分发历史私有源码。见[声明范围](knowledge-base/docs/legacy-res-declarations.md)。
+
+选定的 [GPUWeb 草案](https://github.com/gpuweb/gpuweb/blob/25a5dc4537074c9b3844dd95891f5cfd193f4407/spec/index.bs)固定在 commit 25a5dc4537074c9b3844dd95891f5cfd193f4407，为九个选定 3D 设计语义区间提供依据。这份固定阅读及选定 TypeScript 声明不产生最新最终标准、GPU 宿主、像素或性能验收。无 depth UI 和选定 pass 后 readback 是白鹭架构选择，不是 WebGPU 的普遍要求。见[3D 基础](knowledge-base/docs/3d-foundation.md)。已有研究／依赖鸣谢及历史限制继续适用。
+
 感谢公开源码、标准、文档和维护经验的项目与社区。鸣谢按实际角色记录，不表示合作或上游背书。
 
 ## 当前开发工具

@@ -1,0 +1,249 @@
+{
+  "schemaVersion": 1,
+  "label": "0.16.0",
+  "evidenceClass": "CURATED_FINITE_HISTORICAL_EVIDENCE",
+  "curationDate": "2026-10-10",
+  "currentSourceIdentityOnly": true,
+  "productTestsReplayedByCuration": 0,
+  "publication": "FINAL_REVIEW_PREPUSH_AND_DELIVERY_PENDING",
+  "slices": [
+    {
+      "id": "A2_TASK1",
+      "state": "ACCEPTED_FINITE_HISTORICAL_SOURCE_MOCK",
+      "historicalCommit": "e69f54edcb793a1d88b7c180c86ea21f191d23b1",
+      "historicalTree": "cca5b06879876d23a2f755dd618ee969c5c09cf4",
+      "acceptanceIdentity": {
+        "bytes": 2020,
+        "sha256": "a6f9ff4ef04142572faf71d4c4ccc2cdee1886f2ab989c98de95f1284ff2b743",
+        "distribution": "IDENTITY_ONLY"
+      },
+      "historicalTestReceipt": {
+        "focusedPass": 10,
+        "fullPass": null,
+        "replayedByCuration": false
+      },
+      "namedCurrentSources": [
+        {
+          "path": "packages/engine/web/imageProjections2D.ts",
+          "bytes": 6384,
+          "sha256": "28ffdfb517c38ebb4a260dd34368be927a21830db43f8e098da64ff7db84d5da"
+        }
+      ],
+      "scope": {
+        "en": "CPU source-byte projection policy; current projection source is the later Task 4 accepted successor. The 10-test receipt belongs to the original Task 1 identity.",
+        "zh-CN": "CPU 源像素字节投影策略；当前投影源码是随后 Task 4 验收的版本。10 项测试记录属于原 Task 1 身份。"
+      },
+      "held": [
+        "NATIVE_PIXELS",
+        "CURRENT_TEST_REPLAY",
+        "PUBLIC_FINAL_ACCEPTANCE"
+      ]
+    },
+    {
+      "id": "A2_TASK2",
+      "state": "ACCEPTED_FINITE_HISTORICAL_SOURCE_MOCK",
+      "historicalCommit": "1c613339d1c874c626b8576c36e5145c727ae4fd",
+      "historicalTree": "3ecf28d28e96fea7609935382e4145213efa0314",
+      "acceptanceIdentity": {
+        "bytes": 2027,
+        "sha256": "75388fd45f7fe29379ebb7b086f1ac50704ec3163af9b32dcbc32e7725468dfc",
+        "distribution": "IDENTITY_ONLY"
+      },
+      "historicalTestReceipt": {
+        "focusedPass": 42,
+        "fullPass": null,
+        "replayedByCuration": false
+      },
+      "namedCurrentSources": [
+        {
+          "path": "packages/engine/rendering/prepareMixedDraws2D.ts",
+          "bytes": 3128,
+          "sha256": "5528c5b1f951a9e5f574320f44bedabd5ec37b9d9cb13efd0925032822a75316"
+        },
+        {
+          "path": "packages/engine/web/webgpuImagePass.ts",
+          "bytes": 2620,
+          "sha256": "586dfff3ef870da41cba08cce34de18fdc570cb31088bd9dab4cd8cb474b01e2"
+        }
+      ],
+      "scope": {
+        "en": "Ordered mixed rectangle/image preparation and source-level image pass descriptors, within accepted CPU/mock contracts.",
+        "zh-CN": "按绘制顺序组织矩形与图片准备结果及源码级图片 pass 描述，限于已验收 CPU/mock 契约。"
+      },
+      "held": [
+        "REAL_WEBGPU_UPLOAD",
+        "NATIVE_PIXELS",
+        "CURRENT_TEST_REPLAY"
+      ]
+    },
+    {
+      "id": "A2_TASK3_C1",
+      "state": "ACCEPTED_FINITE_HISTORICAL_SOURCE_MOCK",
+      "historicalCommit": "82ba8b099d0f86c0c0d660efeb40c6ce6dfe4960",
+      "historicalTree": "ac3d13ec59930b62722e9699d6024aa1fdb101a6",
+      "acceptanceIdentity": {
+        "bytes": 3744,
+        "sha256": "7987237d5a3a43564005ec84500943518bbbdcf86c2d4fd5d577df4ac73e6964",
+        "distribution": "IDENTITY_ONLY"
+      },
+      "historicalTestReceipt": {
+        "focusedPass": 124,
+        "fullPass": 515,
+        "replayedByCuration": false
+      },
+      "namedCurrentSources": [
+        {
+          "path": "packages/engine/rendering/packImageVertices2D.ts",
+          "bytes": 2974,
+          "sha256": "1db7c107e094ae239eb77af042e82e32238f8001b76dbe466d2721a11264353d"
+        },
+        {
+          "path": "packages/engine/web/webgpuLifetime.ts",
+          "bytes": 2109,
+          "sha256": "2d4bda7be618e088bb414f9964c25fe0624af5186b41342fe053457567b25512"
+        }
+      ],
+      "scope": {
+        "en": "Finite six-path source/mock host lifetime and image preparation correction. Task 4 later supersedes the host file identity; original failed review remains historical.",
+        "zh-CN": "有限六路径源码/mock 主机生命周期与图片准备修正。Task 4 后续取代主机文件身份；原失败审查保留为历史。"
+      },
+      "held": [
+        "A2_BROWSER_CALIBRATION",
+        "CURRENT_HOST_RECEIPT_TRANSFER",
+        "DEVICE_PERFORMANCE"
+      ]
+    },
+    {
+      "id": "A2_TASK4_ORIGIN_CORRECTION",
+      "state": "ACCEPTED_FINITE_HISTORICAL_SOURCE_MOCK",
+      "historicalCommit": "5271b93b85e79c01fcdd6122d7d412e9975e7416",
+      "historicalTree": "e9a0bf428e3afe6778e0f94575b6aa22e9a307e0",
+      "acceptanceIdentity": {
+        "bytes": 419061,
+        "sha256": "e5125c74a26bd1daa965cd1e5231a2369784a88f60fbfcf0b6a17cf70156683d",
+        "distribution": "IDENTITY_ONLY"
+      },
+      "historicalTestReceipt": {
+        "focusedPass": 193,
+        "fullPass": 610,
+        "replayedByCuration": false
+      },
+      "namedCurrentSources": [
+        {
+          "path": "packages/engine/web/CanvasHost.ts",
+          "bytes": 11094,
+          "sha256": "9686477da8e6bc88ce6f47b673c37c92c01b93814e96dc23cb875a5431a69eff"
+        },
+        {
+          "path": "packages/engine/web/copyCanvasFrame.ts",
+          "bytes": 13543,
+          "sha256": "03e8d3110915aac30fcd6908c4a5d6f15cfc37f4f9e4697baeadd2f769ca67ef"
+        },
+        {
+          "path": "packages/engine/web/imageProjections2D.ts",
+          "bytes": 6384,
+          "sha256": "28ffdfb517c38ebb4a260dd34368be927a21830db43f8e098da64ff7db84d5da"
+        },
+        {
+          "path": "packages/engine/web/WebGPUHost.ts",
+          "bytes": 50484,
+          "sha256": "4542c09398bd48d6f519ddaa5841325193e428249872c666e399ade3fb330909"
+        },
+        {
+          "path": "packages/engine/web/canvasImageProjection.ts",
+          "bytes": 1220,
+          "sha256": "0d8bec0566c69f69e462f14c30507abe182dcdfded7fbf3c83abdb71e4adc23e"
+        }
+      ],
+      "scope": {
+        "en": "Combined bounded Canvas preparation and source/native failure classification correction; retained earlier 193-test run had 11 failures, accepted successor focused 193 and full 610 passed.",
+        "zh-CN": "有界 Canvas 准备与 source/native 失败分类修正的组合范围；保留的早期 193 项测试有 11 项失败，验收后继版本 focused 193、full 610 通过。"
+      },
+      "held": [
+        "NATIVE_PIXELS",
+        "A2_TASK6",
+        "P0_P7_PUBLIC_GATES",
+        "A2_TASK5B"
+      ]
+    },
+    {
+      "id": "A2_TASK5A",
+      "state": "ACCEPTED_FINITE_HISTORICAL_CPU_REFERENCE",
+      "historicalCommit": "a3fb6c2d6d6b7499d1731a1127a85ea4354df0b9",
+      "acceptanceIdentity": {
+        "bytes": 351131,
+        "sha256": "547c962caca1ee30f8fdc73573d968233c743b24f4c367b1b9bf9e530d6ded09",
+        "distribution": "IDENTITY_ONLY"
+      },
+      "historicalTestReceipt": {
+        "behavioralRedTests": 31,
+        "behavioralRedFail": 31,
+        "focusedPass": 31,
+        "fullPass": 825,
+        "fullFail": 0,
+        "replayedByCuration": false
+      },
+      "namedCurrentSources": [
+        {
+          "path": "tools/texture-oracle.mjs",
+          "bytes": 3375,
+          "sha256": "ee213c00a7956ca55bf4a75ee88c6cb92879ec27a2792aa2d41e02c9c4322d65"
+        },
+        {
+          "path": "tests/texture-oracle.test.mjs",
+          "bytes": 11182,
+          "sha256": "c951f1934b43a3ba8d02b0df2a4e0302fa667244cdb622f65ae1e40653d00678"
+        }
+      ],
+      "held": [
+        "BROWSER_PROFILE_AUTHENTICATION",
+        "NATIVE_PIXELS",
+        "A2_TASK5B",
+        "A2_TASK6",
+        "P0_P7"
+      ],
+      "historicalTree": "e747e8f1c7d724f07b972338726c57a7f783b377"
+    }
+  ],
+  "historicalCorrections": [
+    {
+      "id": "A2_TASK3_C1",
+      "state": "ORIGINAL_FAILED_REVIEW_RETAINED_SUCCESSOR_ACCEPTED"
+    },
+    {
+      "id": "A2_TASK4_ORIGIN_CORRECTION",
+      "earlierTests": 193,
+      "earlierPass": 182,
+      "earlierFail": 11,
+      "state": "SOURCE_ORIGIN_SUCCESSOR_ACCEPTED"
+    }
+  ],
+  "supersessions": [
+    {
+      "id": "TASK1_PROJECTION",
+      "successor": "A2_TASK4_ORIGIN_CORRECTION",
+      "originalReceiptTransfer": false
+    },
+    {
+      "id": "TASK3_HOST",
+      "successor": "A2_TASK4_ORIGIN_CORRECTION",
+      "originalReceiptTransfer": false
+    }
+  ],
+  "open": [
+    "V002_FULL_PRODUCT",
+    "V003",
+    "V006",
+    "R008",
+    "A2_TASK5B",
+    "A2_TASK6",
+    "P0_P7",
+    "FONTS",
+    "ANIMATION",
+    "EDITOR",
+    "AGENT",
+    "DEVICE_PERFORMANCE",
+    "NATIVE_SDK",
+    "MINI_GAME_HOSTS"
+  ]
+}

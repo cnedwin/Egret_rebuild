@@ -1,0 +1,262 @@
+{
+  "schemaVersion": 1,
+  "label": "0.16.0",
+  "evidenceClass": "CURATED_FINITE_HISTORICAL_EVIDENCE",
+  "curationDate": "2026-10-10",
+  "currentSourceIdentityOnly": true,
+  "productTestsReplayedByCuration": 0,
+  "publication": "FINAL_REVIEW_PREPUSH_AND_DELIVERY_PENDING",
+  "slices": [
+    {
+      "id": "B0_MATRIX_PROJECTION",
+      "state": "ACCEPTED_FINITE_HISTORICAL_SOURCE_MOCK",
+      "historicalCommit": "4cd5e5cafe1b3d112920ccb9dd606f4aca01b2d4",
+      "historicalTree": "dfc36008531b99b6b37fddb1b0154f1dc233f779",
+      "acceptanceIdentity": {
+        "bytes": 7030451,
+        "sha256": "9c39460ed176b091dc94e6ac4a5762f5bb24baf82efdb510ac38af0c18c08f71",
+        "distribution": "IDENTITY_ONLY"
+      },
+      "historicalTestReceipt": {
+        "focusedPass": 121,
+        "fullPass": 731,
+        "replayedByCuration": false
+      },
+      "namedCurrentSources": [
+        {
+          "path": "packages/engine/rendering/projection3D.ts",
+          "bytes": 7909,
+          "sha256": "303fbf2eb8486a106f1372bab299d9ca56de9b4262800978617b1245fdf3af59"
+        },
+        {
+          "path": "tests/projection3d.test.mjs",
+          "bytes": 18431,
+          "sha256": "3c7e4968fcbc00c320fce1e576eb6bbdb47f7f33d469702eaa7a27c4078930a6"
+        },
+        {
+          "path": "packages/engine/rendering/matrix4.ts",
+          "bytes": 4834,
+          "sha256": "7bbf23719fc7d9566276778281f2e22ae84c658d3181474d8d50ad6dc08ea27c"
+        },
+        {
+          "path": "tests/matrix4.test.mjs",
+          "bytes": 17574,
+          "sha256": "b40dbdd65f856cafe680956c8e1d8985468c7b85ee32f60fb69ff4d01f116fc4"
+        }
+      ],
+      "scope": {
+        "en": "Owned CPU binary64 matrices and homogeneous transforms, explicit zero-to-one/minus-one-to-one depth and forward/reverse direction; preserves raw w. No GPU precision result.",
+        "zh-CN": "拥有自身数据的 CPU binary64 矩阵与齐次变换，显式 zero-to-one/minus-one-to-one 深度及 forward/reverse 方向，保留原始 w。不代表 GPU 精度结果。"
+      },
+      "held": [
+        "FLOAT32_GPU_PRECISION",
+        "SCENE_RENDERING",
+        "DEVICE_PERFORMANCE"
+      ]
+    },
+    {
+      "id": "B1_CPU_GEOMETRY",
+      "state": "ACCEPTED_FINITE_HISTORICAL_SOURCE_MOCK",
+      "historicalCommit": "2fbf3573434671686c93be3dc57518d80defdec6",
+      "historicalTree": "8702f66c0e076ba84feb96773660a573840a59a5",
+      "acceptanceIdentity": {
+        "bytes": 374260,
+        "sha256": "3f83e6b1a2159bf3d8e45f85b75ff41a867fadd84107f323c236e9a470bd1f9e",
+        "distribution": "IDENTITY_ONLY"
+      },
+      "historicalTestReceipt": {
+        "focusedPass": 21,
+        "fullPass": 752,
+        "replayedByCuration": false
+      },
+      "namedCurrentSources": [
+        {
+          "path": "packages/engine/rendering/meshGeometry3D.ts",
+          "bytes": 6944,
+          "sha256": "2a0d9ef6fb10b08c31b6caad95d1a5517aac3641631335a6cfaf4b4e31daf186"
+        },
+        {
+          "path": "tests/mesh-geometry-3d.test.mjs",
+          "bytes": 17070,
+          "sha256": "5d842624a5a55fbb5e65f792d06d0af4bb318aad57b0bb2cf6b2195bd6b96466"
+        }
+      ],
+      "scope": {
+        "en": "Deeply owned frozen CPU mesh identity; finite binary64 positions, RGB within [0,1], indexed triangles and admission budgets. Vertex limit 65536, index limit 196608 and logical byte limit 4194304; no GPU allocation guarantee.",
+        "zh-CN": "深度拥有并冻结的 CPU 网格身份；有限 binary64 坐标、[0,1] RGB、索引三角形和准入预算。顶点上限 65536、索引上限 196608、逻辑字节上限 4194304；不保证 GPU 分配成功。"
+      },
+      "held": [
+        "GPU_MESH",
+        "MATERIALS",
+        "SKINNING",
+        "ANIMATION",
+        "NATIVE_OOM_GUARANTEE"
+      ]
+    },
+    {
+      "id": "B1_CPU_PACKING",
+      "state": "ACCEPTED_FINITE_HISTORICAL_CPU_PACKING",
+      "historicalCommit": "501f6e92101748dfbc7e4b882c4f86f3221b26c4",
+      "historicalTree": "02481f36c3b080f9e264c9510fd21b9b376ef02f",
+      "acceptanceIdentity": {
+        "bytes": 380428,
+        "sha256": "35fc0fa366c87ed390fc025b0ac1407885a40e08cc2b1837b2e77345ab516994",
+        "distribution": "IDENTITY_ONLY"
+      },
+      "historicalTestReceipt": {
+        "focusedPass": 43,
+        "fullPass": 794,
+        "replayedByCuration": false
+      },
+      "namedCurrentSources": [
+        {
+          "path": "packages/engine/rendering/packMeshGeometry3D.ts",
+          "bytes": 5585,
+          "sha256": "b17b7ff26be2bcf2fb31edd52ae72a9367019b5d1af8481cdb63f9b1b3464f28"
+        },
+        {
+          "path": "tests/mesh-packing-3d.test.mjs",
+          "bytes": 16265,
+          "sha256": "eca21300ecfa475651f6107fd9a441d908c4dd80871e1e56fdb8519ddba44fd6"
+        },
+        {
+          "path": "tools/check-boundaries.mjs",
+          "bytes": 13145,
+          "sha256": "418fdc939fe865875c1606340ff0bbc574f7ed1151c03c66ab51af2dfb28487a"
+        }
+      ],
+      "held": [
+        "GPU_LAYOUT_EXECUTION",
+        "NATIVE_ENDIAN_PROOF",
+        "NATIVE_OOM_GUARANTEE"
+      ]
+    }
+  ],
+  "geometry": {
+    "vertexCap": 65536,
+    "indexCap": 196608,
+    "logicalByteCap": 4194304,
+    "logicalByteFormula": "8*(6*V+I)",
+    "numericFormat": "BINARY64",
+    "ownership": "OWNED_DEEP_FROZEN_AUTHENTIC_IDENTITY"
+  },
+  "packing": {
+    "vertexStride": 24,
+    "positionOffset": 0,
+    "colorOffset": 12,
+    "indexFormat": "UINT32",
+    "numericProfile": "ZERO_OR_EXACT_NORMAL_FLOAT32",
+    "outputOwnership": "FROZEN_WRAPPER_FRESH_MUTABLE_OWNED_TYPED_ARRAYS",
+    "p01Authority": "ORIGINAL_NUMBERS_COUNTS_INDEPENDENT_WORD_BYTE_EXPECTATIONS",
+    "littleEndianFixture": "NOT_UNIVERSAL_NATIVE_ENDIAN_PROOF",
+    "forgedBudgetFixture": false
+  },
+  "historicalCorrections": [
+    {
+      "id": "B0_FIXTURE_CORRECTION",
+      "earlierPass": 119,
+      "earlierFail": 2,
+      "state": "SUCCESSOR_ACCEPTED"
+    }
+  ],
+  "standardObservation": {
+    "state": "SELECTED_DRAFT_SEMANTICS_ONLY",
+    "upstreamCommit": "25a5dc4537074c9b3844dd95891f5cfd193f4407",
+    "upstreamUrl": "https://github.com/gpuweb/gpuweb/blob/25a5dc4537074c9b3844dd95891f5cfd193f4407/spec/index.bs",
+    "upstreamBytes": 848916,
+    "upstreamSha256": "6408fbf862e748c2bbe1366aa7fb89455c25c7c200a0542e7175601bcc9458f5",
+    "gitBlob": "53e14b7b3219aea7b4904f0d503c38a2a8465a43",
+    "selectedLineRanges": [
+      [
+        874,
+        943
+      ],
+      [
+        5959,
+        5989
+      ],
+      [
+        9527,
+        9646
+      ],
+      [
+        12680,
+        12843
+      ],
+      [
+        12849,
+        12944
+      ],
+      [
+        13189,
+        13214
+      ],
+      [
+        16495,
+        16729
+      ],
+      [
+        16733,
+        16908
+      ],
+      [
+        16932,
+        17101
+      ]
+    ],
+    "fullSemanticRead": false,
+    "acceptanceIdentity": {
+      "bytes": 7240,
+      "sha256": "30257d6179b7b97c9f93ec4e10e4f20e544b318effe88870491af115c89a150f",
+      "distribution": "IDENTITY_ONLY"
+    },
+    "installedDOM": {
+      "typescriptVersion": "7.0.2",
+      "bytes": 2349483,
+      "sha256": "d6b1eba8496bdd0eed6fc8a685768fe01b2da4a0388b5fe7df558290bffcf32f",
+      "hardLinks": 6,
+      "readonly": true,
+      "uniqueOwnershipClaim": false,
+      "scope": "SELECTED_DECLARATIONS_ONLY"
+    },
+    "qualification": {
+      "en": "BS-M1 retained: depth-free UI and readback after both selected passes are chosen Egret B1 architecture assumptions, not universal WebGPU requirements.",
+      "zh-CN": "保留 BS-M1：无 depth UI 与两个选定 pass 后 readback 是白鹭 B1 选择的架构假设，不是普遍 WebGPU 要求。"
+    },
+    "held": [
+      "ACTUAL_HOST_ABI",
+      "NATIVE_GPU",
+      "PIXEL_EDGE_INCLUSION",
+      "PERFORMANCE",
+      "A2_CALIBRATION_CONFIRMATION"
+    ]
+  },
+  "futureSceneDesign": {
+    "state": "DESIGN_ONLY_NOT_IMPLEMENTATION_ACCEPTANCE",
+    "depth": "REVERSED_ZERO_TO_ONE_DEPTH32FLOAT",
+    "clearDepth": 0,
+    "compare": "greater",
+    "write": true,
+    "cull": "none",
+    "frontFace": "ccw",
+    "passes": [
+      "SCENE_CLEAR",
+      "ORDERED_2D_UI_LOAD_STORE_DEPTH_FREE"
+    ],
+    "encoders": 1,
+    "submits": 1,
+    "readback": "AFTER_SELECTED_BOTH_PASSES",
+    "universalWebGPURequirement": false
+  },
+  "open": [
+    "GPU_HOST_ABI",
+    "GPU_SCENE",
+    "MVP_FLOAT32_ADMISSION",
+    "MATERIALS",
+    "SKINNING",
+    "ANIMATION",
+    "PIXEL_EDGE_INCLUSION",
+    "DEVICE_PRECISION",
+    "PERFORMANCE"
+  ]
+}

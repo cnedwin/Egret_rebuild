@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "kind": "RECORDED_FIRST_FOUR_TEXTURE_COLLECTION_INTEGRITY",
+  "status": "PARTIAL_COLLECTION_COMPLETE",
+  "reviewStatus": "PASS_SAVED_ARTIFACT_INTEGRITY",
+  "cases": [
+    "C01",
+    "C03",
+    "C05",
+    "C07"
+  ],
+  "backends": [
+    "canvas",
+    "webgpu"
+  ],
+  "captures": 8,
+  "pngs": 16,
+  "observationRows": 192,
+  "observationDomains": {
+    "canvasStraight": 32,
+    "webgpuEncodedPremultiplied": 32,
+    "pngComposition": 128
+  },
+  "preservedCopies": 1233,
+  "collectorResultIdentity": {
+    "bytes": 1427670,
+    "sha256": "14332fb1afe91722f345b4168e6d5ed994299d5b55a4e954fd117b375a407cbe"
+  },
+  "toolchain": {
+    "node": "v24.19.0",
+    "playwright": "1.62.1",
+    "playwrightCore": "1.62.1",
+    "pngjs": "7.0.0",
+    "browser": "154.0.4258.62",
+    "channel": "msedge",
+    "platform": "win32",
+    "addedBrowserFlags": []
+  },
+  "scale": {
+    "browserDpr": 1,
+    "enginePixelRatios": [
+      1,
+      1.5
+    ],
+    "backingSizes": [
+      [
+        32,
+        24
+      ],
+      [
+        48,
+        36
+      ]
+    ],
+    "cssMatchesBacking": true
+  },
+  "cleanup": {
+    "safeHosts": 8,
+    "closedContexts": 8,
+    "pendingLedgersZero": true,
+    "collectorOwnedDevicesDestroyed": 4,
+    "intentionalDeviceLossObserved": true,
+    "externalOwnerJobActiveZero": true,
+    "externalOwnerJobClosed": true
+  },
+  "bounds": "UNKNOWN",
+  "nativeChannelBounds": null,
+  "numericAcceptance": false,
+  "wholeA2": false,
+  "held": [
+    "REMAINING_FOURTEEN_CASES",
+    "TASK5B_G5_TASK6",
+    "CONFIRMATION_CONTROLS_REPLAY",
+    "VISIBLE_BITMAP_SEQUENCE",
+    "PHONE_NATIVE_SDK",
+    "PERFORMANCE",
+    "FONTS_DRAGONBONES",
+    "PHYSICAL_SCANOUT",
+    "WHOLE_ENGINE"
+  ],
+  "evidenceTransferToLaterBitmapDelta": false,
+  "integrationReplay": false
+}

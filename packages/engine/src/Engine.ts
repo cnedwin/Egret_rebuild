@@ -1,5 +1,5 @@
 import type { FrameOptions2D, RenderFrame2D } from '@egret/contracts';
-import { collectFrameCommands } from '@egret/runtime';
+import { collectFrameContent } from '@egret/runtime';
 import type { Diagnostic, DiagnosticHandler, HostAdapter } from "@egret/contracts";
 import { EgretError, createScope, createStage, createAssetManager, reportDiagnostic } from "@egret/runtime";
 import type { AssetManager, Scope, Stage } from "@egret/runtime";
@@ -113,13 +113,13 @@ export class Engine {
         throw new EgretError("INVALID_FRAME_OPTIONS", { cause });
       }
       this.context.assertOpen();
-      const commands = collectFrameCommands(this.stage);
+      const content = collectFrameContent(this.stage);
       this.context.assertOpen();
       if (!Number.isSafeInteger(this.nextFrameId) || this.nextFrameId <= 0) {
         throw new EgretError("FRAME_ID_EXHAUSTED");
       }
       const frame = Object.freeze({
-        frameId: this.nextFrameId++, width, height, clearColor, clearAlpha, commands,
+        frameId: this.nextFrameId++, width, height, clearColor, clearAlpha, ...content,
       });
       if (render) {
         try {

@@ -2,6 +2,12 @@
 
 English | [简体中文](ACKNOWLEDGEMENTS.md)
 
+## 0.16.0 declaration and 3D references
+
+[jsonc-parser](https://github.com/microsoft/node-jsonc-parser/tree/v3.3.1) 3.3.1 by Microsoft Corporation supplies public-root createScanner/visit under MIT for the existing private project adapter and declaration analysis. Its existing MIT notice and dependency pin remain applicable. The RES profile/report/fixtures and CPU 3D contracts/implementation were independently authored. Founder-supplied historical RES declaration semantics informed compatibility research; exact version/module closure remains unverified and historical private source is not distributed. See [the declaration scope](docs/legacy-res-declarations.en.md).
+
+The selected [GPUWeb draft](https://github.com/gpuweb/gpuweb/blob/25a5dc4537074c9b3844dd95891f5cfd193f4407/spec/index.bs) at commit 25a5dc4537074c9b3844dd95891f5cfd193f4407 informs nine selected 3D design semantic ranges. This fixed reading and selected TypeScript declarations establish no latest-final-standard, GPU host, pixel or performance acceptance. Depth-free UI and readback after the selected passes are Egret architectural choices, not universal WebGPU requirements. See [3D foundation](docs/3d-foundation.en.md). Existing research/dependency credits and their historical limitations remain in force.
+
 Version: 1.1 · Knowledge base: 0.9.0 · Updated: October 8, 2026.
 
 We thank the following projects, standards organizations, and communities for publishing source code, documentation, tests, and maintenance experience. These inform Egret Rebuild's mechanism research, independent design, and verification. Sources are listed by their actual roles. Acknowledgements identify knowledge and tool sources; they do not imply cooperation, upstream participation, or endorsement. See the [source registry](registry/来源.en.json) for complete versions, reading scope, and limitations.

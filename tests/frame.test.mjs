@@ -4,6 +4,32 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as egret from '@egret/engine';
 
+test('image capture faults consume no IDs or renderer diagnostics and options precede traversal',async()=>{
+  let calls=0;const diagnostics=[];
+  const engine=await egret.createEngine({host:makeHost({renderFrame(){calls++;}}).adapter,onDiagnostic:d=>diagnostics.push(d)});
+  const type=egret.createAssetType('frame-texture',egret.isTexture);
+  const texture=egret.createTexture(egret.createImageData2D({width:1,height:1,pixels:new Uint8Array([1,2,3,4])}));
+  engine.assets.register(type,{load:async()=>texture,dispose:t=>t.dispose()});
+  const lease=await engine.assets.acquire(egret.createAssetRef(type,'frame'));
+  const bitmap=new egret.Bitmap(lease);engine.stage.addChild(bitmap);lease.release();
+  assert.throws(()=>engine.renderFrame({width:0,height:1}),{code:'INVALID_FRAME_OPTIONS'});
+  assert.throws(()=>engine.renderFrame({width:1,height:1}),{code:'ASSET_LEASE_RELEASED'});
+  assert.equal(calls,0);assert.deepEqual(diagnostics,[]);
+  bitmap.textureLease=undefined;assert.equal(engine.renderFrame({width:1,height:1}).frameId,1);
+  assert.equal(calls,1);await engine.dispose();
+});
+
+test('rectangle and clear-only capture omit the images property and preserve ID exhaustion',async()=>{
+  const engine=await egret.createEngine({host:makeHost().adapter});
+  assert.equal(Object.hasOwn(engine.captureFrame({width:1,height:1}),'images'),false);
+  const rect=new egret.Sprite();rect.graphics.beginFill(1).drawRect(0,0,1,1);engine.stage.addChild(rect);
+  assert.equal(Object.hasOwn(engine.captureFrame({width:1,height:1}),'images'),false);
+  engine.nextFrameId=Number.MAX_SAFE_INTEGER;
+  assert.equal(engine.captureFrame({width:1,height:1}).frameId,Number.MAX_SAFE_INTEGER);
+  assert.throws(()=>engine.captureFrame({width:1,height:1}),{code:'FRAME_ID_EXHAUSTED'});
+  await engine.dispose();assert.throws(()=>engine.captureFrame({get width(){throw Error('unread');}}),{code:'ENGINE_CLOSED'});
+});
+
 test('literal world geometry and immutable painter snapshots', async () => {
   assert.equal(typeof egret.Sprite, 'function');
   const engine = await egret.createEngine({host: makeHost().adapter});

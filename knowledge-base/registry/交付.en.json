@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-09",
+  "updatedAt": "2026-10-10",
   "authority": "Delivery status summary; code, artifacts, and reproducible acceptance evidence separately govern implementation and testing",
   "items": [
     {
@@ -630,11 +630,233 @@
       ],
       "doc": "docs/WebGPU矩形实现证据.md",
       "limit": "Bounded desktop browser rectangles only; Native SDK, phones, acceleration/performance, text/texture/UI/animation/3D, migration/editor/Agent loop, CI and full product remain unaccepted. Final source/native/publication binding is pending."
+    },
+    {
+      "id": "V013",
+      "title": "Bounded image source/mock engineering",
+      "kind": "engineering_prototype",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R005",
+        "R008",
+        "R012",
+        "R013",
+        "R014",
+        "R015",
+        "R016",
+        "R017"
+      ],
+      "dependsOn": [
+        "V012"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "independent_image_source_mock_subset",
+      "acceptance": "accepted_finite_source_mock_final_publication_pending",
+      "acceptanceCriteria": [
+        "Accepted A2 Tasks 1–4 and Task 5a CPU formulas/bounds only; Task 5b/Task 6 and P0–P7 unrun.",
+        "Historical receipts bind exact source identities; final independent public review and prepush remain pending."
+      ],
+      "artifacts": [
+        "docs/core-progress.md",
+        "evidence/core-progress-0.16.0.json"
+      ],
+      "doc": "docs/core-progress.md",
+      "limit": "Accepted A2 Tasks 1–4 and Task 5a CPU formulas/bounds only; Task 5b/Task 6 and P0–P7 unrun."
+    },
+    {
+      "id": "V014",
+      "title": "CPU 3D foundation",
+      "kind": "engineering_prototype",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R005",
+        "R008",
+        "R012",
+        "R013",
+        "R014",
+        "R015",
+        "R016",
+        "R017"
+      ],
+      "dependsOn": [],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "independent_cpu_3d_foundation_subset",
+      "acceptance": "accepted_finite_cpu_source_final_publication_pending",
+      "acceptanceCriteria": [
+        "B0 math/projection and B1 owned CPU geometry/exact packing; no GPU scene or performance acceptance.",
+        "Historical receipts bind exact source identities; final independent public review and prepush remain pending."
+      ],
+      "artifacts": [
+        "docs/3d-foundation.md",
+        "evidence/3d-cpu-source-verification.json"
+      ],
+      "doc": "docs/3d-foundation.md",
+      "limit": "B0 math/projection and B1 owned CPU geometry/exact packing; no GPU scene or performance acceptance."
+    },
+    {
+      "id": "V015",
+      "title": "Legacy RES declaration analysis",
+      "kind": "engineering_prototype",
+      "status": "implemented",
+      "requirementIds": [
+        "R006",
+        "R008",
+        "R013",
+        "R015",
+        "R016"
+      ],
+      "dependsOn": [],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "independent_legacy_res_declaration_subset",
+      "acceptance": "accepted_finite_declaration_source_final_publication_pending",
+      "acceptanceCriteria": [
+        "Strict bounded declaration inventory; file/decoding/execution/migration remain unverified.",
+        "Historical receipts bind exact source identities; final independent public review and prepush remain pending."
+      ],
+      "artifacts": [
+        "docs/legacy-res-declarations.md",
+        "evidence/legacy-res-declarations-verification.json"
+      ],
+      "doc": "docs/legacy-res-declarations.md",
+      "limit": "Strict bounded declaration inventory; file/decoding/execution/migration remain unverified."
+    },
+    {
+      "id": "V016",
+      "title": "Bounded B1 Host source/mock",
+      "kind": "engineering_prototype",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R013",
+        "R015",
+        "R016",
+        "R017"
+      ],
+      "dependsOn": [
+        "V013",
+        "V014"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "bounded_b1_host_source_mock",
+      "acceptance": "accepted_bounded_cpu_or_mock_github_hold",
+      "acceptanceCriteria": [
+        "Authentic scenes, distinct geometry uploads and per-draw matrix uniforms; source/mock behavior of mesh-first and depth-free UI-second passes.",
+        "Default 13/13 and selected repository 901/901 passed; earlier 900/901 rejection and final-LF successor without rerun remain separate.",
+        "Real devices, native shaders, pixels, performance and full product remain unverified; GitHub 403 delivery stays HOLD."
+      ],
+      "artifacts": [
+        "docs/b1-host-contract.zh-CN.md",
+        "evidence/b1-host-mock-evidence.json"
+      ],
+      "doc": "docs/b1-host-contract.zh-CN.md"
+    },
+    {
+      "id": "V017",
+      "title": "CPU sequence data and sampling",
+      "kind": "engineering_prototype",
+      "status": "implemented",
+      "requirementIds": [
+        "R003",
+        "R004",
+        "R013",
+        "R015",
+        "R016",
+        "R017"
+      ],
+      "dependsOn": [],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "cpu_sequence_data_sampling",
+      "acceptance": "accepted_bounded_cpu_or_mock_github_hold",
+      "acceptanceCriteria": [
+        "Immutable sequence data and deterministic bounded CPU sampling; focused 25/25 and selected repository 901/901 passed.",
+        "Player integration, real atlases, rendered animation and DragonBones are not accepted; public barrels remain unchanged."
+      ],
+      "artifacts": [
+        "docs/sequence-clip-contract.zh-CN.md",
+        "evidence/sequence-clip-cpu-evidence.json"
+      ],
+      "doc": "docs/sequence-clip-contract.zh-CN.md"
+    },
+    {
+      "id": "V018",
+      "title": "Pure RES conversion intents",
+      "kind": "engineering_prototype",
+      "status": "implemented",
+      "requirementIds": [
+        "R006",
+        "R008",
+        "R013",
+        "R015",
+        "R016",
+        "R017"
+      ],
+      "dependsOn": [
+        "V015"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "pure_legacy_res_conversion_intents",
+      "acceptance": "accepted_bounded_cpu_or_mock_github_hold",
+      "acceptanceCriteria": [
+        "Only recognized declarations yield frozen ordered file/resource/group intents; focused 14/14 and selected repository 901/901 passed.",
+        "No file copying, decoding, project execution or complete R008/V006 migration acceptance; analyzer diagnostics are retained."
+      ],
+      "artifacts": [
+        "docs/legacy-res-plan-contract.zh-CN.md",
+        "evidence/legacy-res-plan-cpu-evidence.json"
+      ],
+      "doc": "docs/legacy-res-plan-contract.zh-CN.md"
+    },
+    {
+      "id": "V019",
+      "title": "Bounded legacy MovieClip CPU conversion",
+      "kind": "engineering_prototype",
+      "status": "implemented",
+      "requirementIds": [
+        "R006",
+        "R008",
+        "R013",
+        "R015",
+        "R016",
+        "R017"
+      ],
+      "dependsOn": [
+        "V017"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "bounded_legacy_movieclip_cpu_conversion",
+      "acceptance": "accepted_focused_cpu_only_regression_pending_github_hold",
+      "acceptanceCriteria": [
+        "One named clip and declared atlas yield owned frozen sequence input and display offsets; strict refusal order, budgets and authored-hold time are specified by the contract.",
+        "Focused 28/28 passed with real V017 factory re-admission and sampling; this dependency represents data acceptance, without a runtime-private import.",
+        "Current default-mode, repository regression and complete prepush are UNRUN; the API is not in a package barrel.",
+        "Image reads, decoding, renderer offsets and playback are unverified; complete R008/V006 migration remains a mandatory formal deliverable."
+      ],
+      "artifacts": [
+        "docs/legacy-movieclip-contract.zh-CN.md",
+        "docs/legacy-movieclip-evidence.zh-CN.md",
+        "evidence/legacy-movieclip-focused.json"
+      ],
+      "doc": "docs/legacy-movieclip-contract.zh-CN.md"
     }
   ],
   "_localization": {
     "canonicalSource": "交付.json",
-    "canonicalSha256": "4d0d32a65a23744dc7fde8fc070a6752131794b52c62563cce791dadb825ab5b",
+    "canonicalSha256": "ad4dda8e337ff46cf6035b09810d5607045037c9bc4020ecbb3818f1d0b68ba5",
     "role": "read_only_translation",
     "language": "en"
   }

@@ -54,3 +54,13 @@ export function revokeAssetLease(lease: AssetLease<unknown>): void {
   const state = states.get(lease);
   if (state !== undefined) state.active = false;
 }
+
+/** Runtime-private identity guard; proxies and lookalikes cannot supply entitlement. */
+export function isAssetLease(value: unknown): value is AssetLease<unknown> { return states.has(value as object); }
+
+/** Read the manager-owned value, without overridable getters or descriptor callbacks. */
+export function readAssetLeaseValue(value: unknown): unknown {
+  const state = states.get(value as object);
+  if (state === undefined || !state.active) throw new EgretError("ASSET_LEASE_RELEASED");
+  return state.read();
+}

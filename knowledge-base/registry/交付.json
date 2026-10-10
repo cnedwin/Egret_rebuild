@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-09",
+  "updatedAt": "2026-10-10",
   "authority": "交付状态摘要；代码、产物和可复现验收证据分别作为实现与测试权威",
   "items": [
     {
@@ -630,6 +630,228 @@
       ],
       "doc": "docs/WebGPU矩形实现证据.md",
       "limit": "仅限定桌面浏览器矩形；Native SDK、手机、加速/性能、文字/纹理/UI/动画/3D、迁移/编辑器/Agent闭环、CI与完整产品未验收。最终源码/native/公开交付绑定尚待完成。"
+    },
+    {
+      "id": "V013",
+      "title": "有界图片源码／模拟工程",
+      "kind": "engineering_prototype",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R005",
+        "R008",
+        "R012",
+        "R013",
+        "R014",
+        "R015",
+        "R016",
+        "R017"
+      ],
+      "dependsOn": [
+        "V012"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "independent_image_source_mock_subset",
+      "acceptance": "accepted_finite_source_mock_final_publication_pending",
+      "acceptanceCriteria": [
+        "仅接受 A2 Tasks 1–4 与 Task 5a CPU 公式／边界；Task 5b／Task 6 和 P0–P7 未运行。",
+        "历史记录绑定准确源码身份；最终独立公开审查和 prepush 仍待完成。"
+      ],
+      "artifacts": [
+        "docs/core-progress.md",
+        "evidence/core-progress-0.16.0.json"
+      ],
+      "doc": "docs/core-progress.md",
+      "limit": "仅接受 A2 Tasks 1–4 与 Task 5a CPU 公式／边界；Task 5b／Task 6 和 P0–P7 未运行。"
+    },
+    {
+      "id": "V014",
+      "title": "CPU 3D 基础",
+      "kind": "engineering_prototype",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R005",
+        "R008",
+        "R012",
+        "R013",
+        "R014",
+        "R015",
+        "R016",
+        "R017"
+      ],
+      "dependsOn": [],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "independent_cpu_3d_foundation_subset",
+      "acceptance": "accepted_finite_cpu_source_final_publication_pending",
+      "acceptanceCriteria": [
+        "B0 数学／投影与 B1 自有 CPU 几何／精确打包；无 GPU 场景或性能验收。",
+        "历史记录绑定准确源码身份；最终独立公开审查和 prepush 仍待完成。"
+      ],
+      "artifacts": [
+        "docs/3d-foundation.md",
+        "evidence/3d-cpu-source-verification.json"
+      ],
+      "doc": "docs/3d-foundation.md",
+      "limit": "B0 数学／投影与 B1 自有 CPU 几何／精确打包；无 GPU 场景或性能验收。"
+    },
+    {
+      "id": "V015",
+      "title": "旧 RES 声明分析",
+      "kind": "engineering_prototype",
+      "status": "implemented",
+      "requirementIds": [
+        "R006",
+        "R008",
+        "R013",
+        "R015",
+        "R016"
+      ],
+      "dependsOn": [],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "independent_legacy_res_declaration_subset",
+      "acceptance": "accepted_finite_declaration_source_final_publication_pending",
+      "acceptanceCriteria": [
+        "严格有界声明盘点；文件／解码／执行／迁移保持未验证。",
+        "历史记录绑定准确源码身份；最终独立公开审查和 prepush 仍待完成。"
+      ],
+      "artifacts": [
+        "docs/legacy-res-declarations.md",
+        "evidence/legacy-res-declarations-verification.json"
+      ],
+      "doc": "docs/legacy-res-declarations.md",
+      "limit": "严格有界声明盘点；文件／解码／执行／迁移保持未验证。"
+    },
+    {
+      "id": "V016",
+      "title": "有界 B1 宿主源码／模拟",
+      "kind": "engineering_prototype",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R013",
+        "R015",
+        "R016",
+        "R017"
+      ],
+      "dependsOn": [
+        "V013",
+        "V014"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "bounded_b1_host_source_mock",
+      "acceptance": "accepted_bounded_cpu_or_mock_github_hold",
+      "acceptanceCriteria": [
+        "认证场景、不同几何上传与逐绘制矩阵常量；网格首遍及无深度 UI 次遍的源代码／模拟行为。",
+        "默认 13/13 项及所选整仓 901/901 已通过；早期 900/901 拒绝和末尾 LF 未复跑后继分别保留。",
+        "真实设备、原生着色器、像素、性能及完整产品未验证；GitHub 403 交付保持 HOLD。"
+      ],
+      "artifacts": [
+        "docs/b1-host-contract.zh-CN.md",
+        "evidence/b1-host-mock-evidence.json"
+      ],
+      "doc": "docs/b1-host-contract.zh-CN.md"
+    },
+    {
+      "id": "V017",
+      "title": "CPU 序列帧数据与采样",
+      "kind": "engineering_prototype",
+      "status": "implemented",
+      "requirementIds": [
+        "R003",
+        "R004",
+        "R013",
+        "R015",
+        "R016",
+        "R017"
+      ],
+      "dependsOn": [],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "cpu_sequence_data_sampling",
+      "acceptance": "accepted_bounded_cpu_or_mock_github_hold",
+      "acceptanceCriteria": [
+        "不可变序列帧数据和确定性有界 CPU 采样；专项 25/25 与所选整仓 901/901 通过。",
+        "不验收播放器集成、真实图集、动画画面或 DragonBones；公开入口不变。"
+      ],
+      "artifacts": [
+        "docs/sequence-clip-contract.zh-CN.md",
+        "evidence/sequence-clip-cpu-evidence.json"
+      ],
+      "doc": "docs/sequence-clip-contract.zh-CN.md"
+    },
+    {
+      "id": "V018",
+      "title": "纯 RES 转换意图",
+      "kind": "engineering_prototype",
+      "status": "implemented",
+      "requirementIds": [
+        "R006",
+        "R008",
+        "R013",
+        "R015",
+        "R016",
+        "R017"
+      ],
+      "dependsOn": [
+        "V015"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "pure_legacy_res_conversion_intents",
+      "acceptance": "accepted_bounded_cpu_or_mock_github_hold",
+      "acceptanceCriteria": [
+        "仅已识别声明生成冻结、有序文件／资源／分组意图；专项 14/14 与所选整仓 901/901 通过。",
+        "不复制文件、不解码、不执行项目或验收完整 R008/V006 迁移；原分析器诊断保留。"
+      ],
+      "artifacts": [
+        "docs/legacy-res-plan-contract.zh-CN.md",
+        "evidence/legacy-res-plan-cpu-evidence.json"
+      ],
+      "doc": "docs/legacy-res-plan-contract.zh-CN.md"
+    },
+    {
+      "id": "V019",
+      "title": "旧 MovieClip 有界 CPU 转换",
+      "kind": "engineering_prototype",
+      "status": "implemented",
+      "requirementIds": [
+        "R006",
+        "R008",
+        "R013",
+        "R015",
+        "R016",
+        "R017"
+      ],
+      "dependsOn": [
+        "V017"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "bounded_legacy_movieclip_cpu_conversion",
+      "acceptance": "accepted_focused_cpu_only_regression_pending_github_hold",
+      "acceptanceCriteria": [
+        "单个具名片段和声明图集生成自有冻结序列帧输入与显示偏移；严格拒绝顺序、预算及作者持续段时间见契约。",
+        "专项 28/28 通过，真实 V017 工厂重新准入与采样；该依赖表示数据验收关系，不导入运行时私有模块。",
+        "当前默认模式、全仓回归及完整 prepush 未运行；API 未加入统一导出入口。",
+        "图片读取、解码、渲染偏移和播放未验证；完整 R008/V006 迁移仍是必须完成的正式交付。"
+      ],
+      "artifacts": [
+        "docs/legacy-movieclip-contract.zh-CN.md",
+        "docs/legacy-movieclip-evidence.zh-CN.md",
+        "evidence/legacy-movieclip-focused.json"
+      ],
+      "doc": "docs/legacy-movieclip-contract.zh-CN.md"
     }
   ]
 }

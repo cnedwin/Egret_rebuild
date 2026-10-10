@@ -252,7 +252,7 @@
   },
   "_localization": {
     "canonicalSource": "当前版本.json",
-    "canonicalSha256": "a298aed113cd11a52053f47edacceb704e6eea698072968bc4129bc8c20284df",
+    "canonicalSha256": "cd9f729b4f884982226d140b8e0a4939f2719c34b4fc255926f3d0dd7a755690",
     "role": "read_only_translation",
     "language": "en"
   },
@@ -289,5 +289,124 @@
     "finalNativeExecutedAt": "2026-10-08T21:23:54.294Z",
     "finalNativeResultSha256": "b5a8fa4adbfc559cedfc5a4da8397a31c1778502511240216bfd3004914a0933",
     "finalNativeArtifactBinding": "evidence/webgpu-final-artifact-binding.json"
+  },
+  "engineeringPreview": {
+    "label": "0.18.0",
+    "curatedAt": "2026-10-10",
+    "scope": "Adds bounded CPU conversion of one named legacy MovieClip, with focused 28/28 and real sequence-factory re-admission; 0.17.0 and earlier results retain historical identities, while current repository/default regression is UNRUN.",
+    "state": "LOCAL_ENGINEERING_PREVIEW_FOCUSED_CPU_ONLY",
+    "packageVersion": "0.0.0",
+    "protocolVersion": "1.0",
+    "documents": [
+      "docs/core-progress.md",
+      "docs/3d-foundation.md",
+      "docs/legacy-res-declarations.md",
+      "docs/3d-cpu-scene-contract.md",
+      "docs/3d-cpu-scene-evidence.md",
+      "docs/3d-webgpu-mesh-contract.md",
+      "docs/3d-webgpu-mesh-evidence.md",
+      "docs/b1-host-contract.zh-CN.md",
+      "docs/b1-host-evidence.zh-CN.md",
+      "docs/sequence-clip-contract.zh-CN.md",
+      "docs/sequence-clip-evidence.zh-CN.md",
+      "docs/legacy-res-plan-contract.zh-CN.md",
+      "docs/legacy-res-plan-evidence.zh-CN.md",
+      "docs/legacy-movieclip-contract.zh-CN.md",
+      "docs/legacy-movieclip-evidence.zh-CN.md"
+    ],
+    "evidence": [
+      "evidence/core-progress-0.16.0.json",
+      "evidence/3d-cpu-source-verification.json",
+      "evidence/legacy-res-declarations-verification.json",
+      "evidence/b1-host-mock-evidence.json",
+      "evidence/sequence-clip-cpu-evidence.json",
+      "evidence/legacy-res-plan-cpu-evidence.json",
+      "evidence/legacy-movieclip-focused.json"
+    ],
+    "open": [
+      "V002_FULL_PRODUCT",
+      "V003",
+      "V006",
+      "R008",
+      "A2_TASK5B",
+      "A2_TASK6",
+      "P0_P7",
+      "DEVICE_TEXT_ANIMATION",
+      "GPU_3D",
+      "NATIVE_SDK",
+      "EDITOR_AGENT",
+      "MOVIECLIP_IMAGE_PLAYBACK",
+      "CURRENT_DEFAULT_REPOSITORY_REGRESSION"
+    ],
+    "githubDelivery": "HOLD_HTTP_403",
+    "runtimeReplayByAdoption": false,
+    "currentDefaultRegression": "UNRUN",
+    "currentRepositoryRegression": "UNRUN",
+    "currentPrepush": "UNRUN"
+  },
+  "engineeringPreviewHistory": [
+    {
+      "label": "0.17.0",
+      "curatedAt": "2026-10-10",
+      "scope": "Owned CPU scene, fixed mesh, bounded B1 Host source/mock, CPU sequence and RES intents; 13/13 default Host and 901/901 repository results bind the verified test, with no final-LF successor rerun.",
+      "state": "AUTHOR_ADOPTED_PUBLIC_REVIEW_PREPUSH_GITHUB_HOLD",
+      "packageVersion": "0.0.0",
+      "protocolVersion": "1.0",
+      "documents": [
+        "docs/core-progress.md",
+        "docs/3d-foundation.md",
+        "docs/legacy-res-declarations.md",
+        "docs/3d-cpu-scene-contract.md",
+        "docs/3d-cpu-scene-evidence.md",
+        "docs/3d-webgpu-mesh-contract.md",
+        "docs/3d-webgpu-mesh-evidence.md",
+        "docs/b1-host-contract.zh-CN.md",
+        "docs/b1-host-evidence.zh-CN.md",
+        "docs/sequence-clip-contract.zh-CN.md",
+        "docs/sequence-clip-evidence.zh-CN.md",
+        "docs/legacy-res-plan-contract.zh-CN.md",
+        "docs/legacy-res-plan-evidence.zh-CN.md"
+      ],
+      "evidence": [
+        "evidence/core-progress-0.16.0.json",
+        "evidence/3d-cpu-source-verification.json",
+        "evidence/legacy-res-declarations-verification.json",
+        "evidence/b1-host-mock-evidence.json",
+        "evidence/sequence-clip-cpu-evidence.json",
+        "evidence/legacy-res-plan-cpu-evidence.json"
+      ],
+      "open": [
+        "V002_FULL_PRODUCT",
+        "V003",
+        "V006",
+        "R008",
+        "A2_TASK5B",
+        "A2_TASK6",
+        "P0_P7",
+        "DEVICE_TEXT_ANIMATION",
+        "GPU_3D",
+        "NATIVE_SDK",
+        "EDITOR_AGENT"
+      ],
+      "githubDelivery": "HOLD_HTTP_403",
+      "runtimeReplayByAdoption": false
+    }
+  ],
+  "movieClipConversion": {
+    "deliverable": "V019",
+    "state": "BOUNDED_FOCUSED_CPU_VERIFIED",
+    "supportLevel": "experimental",
+    "contract": "docs/legacy-movieclip-contract.zh-CN.md",
+    "record": "docs/legacy-movieclip-evidence.zh-CN.md",
+    "verification": "evidence/legacy-movieclip-focused.json",
+    "focusedTests": 28,
+    "focusedPasses": 28,
+    "factoryReadmissionRun": true,
+    "publicFacadeChanged": false,
+    "imageDecodeRun": false,
+    "rendererPlacementRun": false,
+    "nativePixelsRun": false,
+    "performanceRun": false,
+    "fullMigrationAcceptanceRun": false
   }
 }

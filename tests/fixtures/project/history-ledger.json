@@ -1,0 +1,19 @@
+{
+  "snapshot": "{\"entities\":[],\"files\":[],\"name\":\"\",\"projectId\":\"p_a\",\"projectSchemaVersion\":\"1.0\",\"retiredEntityIds\":[],\"retiredFileIds\":[],\"revision\":0,\"roots\":[],\"versions\":{\"engineVersion\":\"1\",\"resourceFormatVersion\":\"1\",\"toolProtocolVersion\":\"1.0\"}}",
+  "edit": "{\"baseRevision\":0,\"command\":\"edit\",\"operations\":[{\"name\":\"\",\"op\":\"setMetadata\",\"versions\":{\"engineVersion\":\"1\",\"resourceFormatVersion\":\"1\",\"toolProtocolVersion\":\"1.0\"}}],\"projectId\":\"p_a\",\"scope\":{\"entityIds\":[],\"fileIds\":[],\"metadata\":true,\"roots\":false},\"source\":{\"actorId\":\"a\",\"actorKind\":\"tool\",\"intent\":\"\",\"toolId\":\"a\",\"toolVersion\":\"1\"},\"toolProtocolVersion\":\"1.0\",\"transactionId\":\"t_a\"}",
+  "restore": "{\"baseRevision\":1,\"command\":\"restore\",\"projectId\":\"p_a\",\"source\":{\"actorId\":\"a\",\"actorKind\":\"tool\",\"intent\":\"\",\"toolId\":\"a\",\"toolVersion\":\"1\"},\"targetRevision\":0,\"toolProtocolVersion\":\"1.0\",\"transactionId\":\"t_b\"}",
+  "snapshotBytes": 238,
+  "emptyHistoryBytes": 298,
+  "editBytes": 393,
+  "restoreBytes": 212,
+  "oneCommandHistoryBytes": 691,
+  "twoCommandHistoryBytes": 904,
+  "snapshotContributions": {"container":1,"keys":10,"scalars":4,"versionsContainer":1,"versionsKeys":3,"versionsScalars":3,"arrays":5},
+  "editContributions": {"container":1,"keys":8,"scalars":5,"sourceContainer":1,"sourceKeys":5,"sourceScalars":5,"scopeContainer":1,"scopeKeys":4,"scopeArrays":2,"scopeScalars":2,"operationsArray":1,"operationContainer":1,"operationKeys":3,"operationScalars":2,"versionsContainer":1,"versionsKeys":3,"versionsScalars":3},
+  "restoreContributions": {"container":1,"keys":7,"scalars":6,"sourceContainer":1,"sourceKeys":5,"sourceScalars":5},
+  "nodes": [27,48,27,25,27],
+  "prefix": [27,102,181],
+  "multipleTargetPrefix": [27,102,256,564],
+  "expectedSnapshot1": {"projectSchemaVersion":"1.0","projectId":"p_a","revision":1,"name":"","versions":{"engineVersion":"1","resourceFormatVersion":"1","toolProtocolVersion":"1.0"},"roots":[],"entities":[],"files":[],"retiredEntityIds":[],"retiredFileIds":[]},
+  "expectedSnapshot2": {"projectSchemaVersion":"1.0","projectId":"p_a","revision":2,"name":"","versions":{"engineVersion":"1","resourceFormatVersion":"1","toolProtocolVersion":"1.0"},"roots":[],"entities":[],"files":[],"retiredEntityIds":[],"retiredFileIds":[]}
+}

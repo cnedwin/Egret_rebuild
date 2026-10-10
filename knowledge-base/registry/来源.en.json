@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-09",
+  "updatedAt": "2026-10-10",
   "authority": "Source grouping and applicable boundaries; researchCheckedAt is the project's research-check date, not a unified publication date",
   "items": [
     {
@@ -1020,11 +1020,95 @@
         "evidence/webgpu-review.json"
       ],
       "doc": "docs/WebGPU矩形实现证据.md"
+    },
+    {
+      "id": "S059",
+      "title": "Accepted image source/mock and CPU reference slices",
+      "type": "first_party_finite_source_mock_and_saved_tests",
+      "scope": "A2 Tasks 1–4 and Task 5a CPU formulas; historical source/test identities and corrections.",
+      "limit": "No browser profile/native pixels; Task 5b/Task 6/P0–P7 unrun; no receipt transfer to later bytes.",
+      "researchCheckedAt": "2026-10-09",
+      "artifacts": [
+        "evidence/core-progress-0.16.0.json"
+      ],
+      "doc": "docs/core-progress.md"
+    },
+    {
+      "id": "S060",
+      "title": "Accepted CPU 3D contracts and packing",
+      "type": "first_party_finite_cpu_source_and_saved_tests",
+      "scope": "B0 math/projection and B1 geometry/packing on named accepted identities.",
+      "limit": "No GPU scene, float32 shader precision, native endian or device performance acceptance.",
+      "researchCheckedAt": "2026-10-09",
+      "artifacts": [
+        "evidence/3d-cpu-source-verification.json"
+      ],
+      "doc": "docs/3d-foundation.md"
+    },
+    {
+      "id": "S061",
+      "title": "RES declaration compatibility and public parser dependency",
+      "type": "historical_semantic_context_and_independent_declaration_source",
+      "scope": "Founder-supplied RES semantics informed independently authored profile/fixtures; public jsonc-parser 3.3.1 root APIs.",
+      "limit": "Exact historical version/module closure unknown; declarations do not validate files, decoding, runtime or complete migration.",
+      "researchCheckedAt": "2026-10-09",
+      "artifacts": [
+        "evidence/legacy-res-declarations-verification.json"
+      ],
+      "doc": "docs/legacy-res-declarations.md"
+    },
+    {
+      "id": "S062",
+      "title": "Selected fixed GPUWeb draft and installed declarations",
+      "type": "primary_fixed_draft_selected_semantics_and_type_observation",
+      "scope": "Nine semantic ranges at fixed GPUWeb commit and selected TypeScript 7.0.2 DOM declarations, distinct from whole-byte identity.",
+      "limit": "No full-spec semantic reading, latest-final-standard or native GPU/host/pixel/performance proof; depth-free UI/readback order are Egret choices.",
+      "researchCheckedAt": "2026-10-09",
+      "artifacts": [
+        "evidence/3d-cpu-source-verification.json"
+      ],
+      "doc": "docs/3d-foundation.md"
+    },
+    {
+      "id": "S063",
+      "title": "Bitmap absolute-region contract and CPU/type evidence",
+      "type": "first_party_implemented_contract_and_recorded_cpu_type_evidence",
+      "scope": "First-party Bitmap region implementation; focused 113/113, build 21 definitions, 76 expected negative type diagnostics (core 43, Web 5, project 28); bounded source and saved CPU evidence review accepted.",
+      "limit": "23 RED failures do not mean 23 independently reached behaviors. Visible sequences, successor complete prepush, performance and full migration are outside this record.",
+      "researchCheckedAt": "2026-10-10",
+      "artifacts": [
+        "evidence/bitmap-region-cpu.json"
+      ],
+      "doc": "docs/bitmap-region-contract.zh-CN.md"
+    },
+    {
+      "id": "S064",
+      "title": "First-four desktop texture collection integrity",
+      "type": "first_party_recorded_texture_collection_and_saved_artifact_integrity",
+      "scope": "C01/C03/C05/C07 on Canvas and WebGPU: 8 captures, 16 PNG files, 192 observation rows and 1233 preserved copies; saved-artifact integrity review accepted.",
+      "limit": "Native channel numeric bounds UNKNOWN, numericAcceptance=false and wholeA2=false. Observation rows are not independent captures; the older collection does not demonstrate later visible Bitmap sequences or performance.",
+      "researchCheckedAt": "2026-10-10",
+      "artifacts": [
+        "evidence/texture-first-four-collection.json"
+      ],
+      "doc": "docs/texture-first-four-evidence.zh-CN.md"
+    },
+    {
+      "id": "S065",
+      "title": "Public B1 browser verifier and bounded desktop evidence",
+      "type": "first_party_public_verifier_recorded_cpu_and_browser_evidence",
+      "scope": "Actual repository CPU 30/30; the public command in Edge 154.0.4258.62 recorded 7 baselines, 5 negatives, 11 renders, 8214 literal comparisons and 6 safely returned Hosts; independent integrity review of 1313 saved copies accepted.",
+      "limit": "Channel executable and standalone OS descendant retirement identities UNBOUND; no proof of hardware acceleration, device performance, full A2, phone Native SDKs or the whole product. Successor complete prepush must pass separately before any push.",
+      "researchCheckedAt": "2026-10-10",
+      "artifacts": [
+        "evidence/b1-public-browser.json"
+      ],
+      "doc": "docs/b1-browser-verifier.zh-CN.md"
     }
   ],
   "_localization": {
     "canonicalSource": "来源.json",
-    "canonicalSha256": "5e27f56dbe9b44b0656419dacf63f034a0e3a1e7e7e688ff83b3f00adabb8771",
+    "canonicalSha256": "3de7218fdadfda4e4931046150b5db92d340e8f554b7860509084dcbb4fd4fb4",
     "role": "read_only_translation",
     "language": "en"
   }

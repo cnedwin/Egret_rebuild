@@ -2,13 +2,44 @@
 
 English | [简体中文](README.md)
 
-## 0.13.0 WebGPU rectangle checkpoint — October 9, 2026
+## Current local engineering increment: 0.19.0
+
+Read the implemented [Bitmap region contract](knowledge-base/docs/bitmap-region-contract.en.md) and [CPU evidence](knowledge-base/docs/bitmap-region-evidence.en.md), the [first-four texture collection](knowledge-base/docs/texture-first-four-evidence.en.md), and the [reproducible B1 browser verifier](knowledge-base/docs/b1-browser-verifier.en.md). Bitmap focused checks passed 113/113. The public B1 command recorded 7 baselines, 5 negatives, 11 renders and 8214 literal comparisons; its bounded saved-artifact independent review is accepted. Texture collection integrity is accepted, with numeric bounds UNKNOWN and full A2 incomplete.
+
+This evidence curation records no successor complete prepush; a fresh prepush must pass before any push. Visible Bitmap sequence playback and device/performance/full-migration gates remain open. This is a local engineering label, not a release; package 0.0.0/protocol 1.0 are unchanged. Earlier records retain their own dates, identities and scopes.
+
+## Historical local engineering preview: 0.18.0
+
+Adds bounded CPU conversion of one named legacy MovieClip, preserving atlas crops, display offsets and authored-hold time. Focused tests passed 28/28 with real sequence-factory re-admission. Read the [contract](knowledge-base/docs/legacy-movieclip-contract.en.md), [evidence](knowledge-base/docs/legacy-movieclip-evidence.en.md) and [compact record](knowledge-base/evidence/legacy-movieclip-focused.json). The API remains internal; image reads, decoding and playback are unverified.
+
+0.17.0 and earlier results retain their historical source identities. Default-mode, repository regression and complete prepush for this increment are UNRUN; current browser/device pixels, performance and complete R008/V006 migration await acceptance. 0.18.0 is a local engineering label; package 0.0.0/protocol 1.0 are unchanged. GitHub delivery remains HOLD_HTTP_403.
+
+## Historical local engineering preview: 0.17.0
+
+This preview adds owned CPU scene snapshots, fixed mesh helpers, bounded B1 Host source/mock integration, CPU sequence sampling and pure RES conversion intents. Read [CPU scene](knowledge-base/docs/3d-cpu-scene-contract.en.md), [mesh](knowledge-base/docs/3d-webgpu-mesh-contract.en.md), [Host](knowledge-base/docs/b1-host-contract.en.md), [sequence](knowledge-base/docs/sequence-clip-contract.en.md) and [RES intents](knowledge-base/docs/legacy-res-plan-contract.en.md), with their paired evidence. These interfaces remain internal; public barrels and package 0.0.0/protocol 1.0 are unchanged.
+
+Recorded default Host verification passed 13/13 cases, CPU sequence sampling 25/25 and RES intent planning 14/14. The selected whole-repository run passed 901/901 tests, build, 282 boundary files and type gates. The 901 tests include Host regression coverage. Source bindings, the formatting-only successor and retained earlier failure are detailed in the [paired Host evidence](knowledge-base/docs/b1-host-evidence.en.md). Documentation adoption replays no product checks.
+
+GitHub delivery is on HOLD after the recorded 403 response; final current-document review and complete prepush remain pending. Earlier 0.13.0–0.16.0 checkpoints keep their identities and results. Native SDKs, current browser/device pixels, performance, fonts, DragonBones, complete R008/V006 migration, V003/editor and full-product acceptance remain unverified or open.
+
+## Historical local engineering preview: 0.16.0
+
+The current additive scope covers accepted bounded image source/mock logic, CPU texture reference formulas, CPU 3D math/geometry/packing, and legacy RES declaration analysis. Read [core progress](knowledge-base/docs/core-progress.en.md), [3D CPU foundation](knowledge-base/docs/3d-foundation.en.md) and [legacy RES declarations](knowledge-base/docs/legacy-res-declarations.en.md) for contracts, exact historical evidence and open work. The label is an engineering preview; package 0.0.0 and protocol 1.0 remain unchanged. Final independent public review, prepush and this preview's GitHub delivery remain pending.
+
+Earlier 0.13.0/0.14.0/0.15.0 sections are historical checkpoints with their own source identities and results. Their rectangle/browser observations do not validate current image or 3D native pixels. Task 5a provides CPU formulas/bounds only; A2 Task 5b/Task 6, P0–P7, device/text/animation/Native, V003 and complete R008/V006 migration remain open or UNRUN.
+
+
+## Historical 0.14.0 project transaction core engineering preview
+
+The local 0.14.0 engineering-preview candidate includes the private 0.0.0 headless `@egret/project` package for immutable authored snapshots, atomic edits/retries and retained-target restore through canonical journals. See the [package API](packages/project/README.en.md), [complete contract](knowledge-base/docs/工程事务核心合同.en.md) and [bounded implementation and memory evidence](knowledge-base/docs/工程事务核心实现证据.en.md). Protocol pins remain 1.0. Historical 0.13 WebGPU/knowledge-base identities remain unchanged. At this documentation-authoring checkpoint, final independent preview review and public delivery remain pending; subsequent review and delivery evidence are tracked separately; V003/editor and complete R008/V006 migration are not accepted.
+
+## Historical 0.13.0 WebGPU rectangle checkpoint — October 9, 2026
 
 The opt-in `@egret/engine/webgpu` entry executes immutable `RenderFrame2D` rectangle commands synchronously. The root stays DOM-free; `@egret/engine/web` stays Canvas-only and requests no WebGPU or robust-predicates modules. DOM-free preparation uses the exact foundational dependency robust-predicates 3.0.3 through public `orient2d`, under Unlicense. Copying, bounded intersection construction, packing, WGSL and host lifetime are independently authored first-party code. See the [complete 0.6 contract](knowledge-base/docs/WebGPU矩形执行合同.en.md), [implementation plan](knowledge-base/docs/WebGPU矩形实施计划.en.md) and [bounded evidence](knowledge-base/docs/WebGPU矩形实现证据.en.md).
 
 The accepted desktop build records 177/177 CPU/mock/core tests, 28 expected negative type diagnostics and 123 boundary files. Its separate real WebGPU gate records 42 frames, 1709 raw assertions, 84 screenshots, 6808 composition assertions, eight intended negatives and zero unexpected errors. Seven negatives mutate copied production code; one is synthetic assertion-only. These recorded results and scoped independent implementation review belong to the accepted source identities in [verification](verification/webgpu-verification.json) and [review](verification/webgpu-review.json); they are not fresh execution by document integration.
 
-This experimental checkpoint was recorded before the final native run at 2026-10-08T21:23:54.294Z; its core/headless and desktop Canvas results are separately recorded. The subsequent final comment-build browser WebGPU run at `1aa0248a1ff6d8e54c42d631072223bb50483814`, 2026-10-08T21:23:54.294Z, exited 0 and recorded PASS: 42 frames, 1709 raw assertions, 84 PNG screenshots, 6808 composition assertions, eight intended negatives and zero unexpected errors. Seven negatives mutate copied production code; one is synthetic. All 233 inventoried source/build/tool/dependency identities remained equal before and after that execution and match this metadata-only successor. The execution was performed by its verification author; independent correction/native-binding closure, final semantic attestation and publication remain pending. Browser WebGPU is separate from a Native app/SDK. Screenshot composition does not certify physical scanout, acceleration, phones or performance. Textures/text/UI/animation/3D, editor/Agent creation, CI, complete migration and full-product acceptance remain open; R008/V006 and V003 retain their existing obligations. Historical 0.9–0.12 records below keep their original dates, identities and result scopes.
+This experimental checkpoint was recorded before the final native run at 2026-10-08T21:23:54.294Z; its core/headless and desktop Canvas results are separately recorded. The subsequent final comment-build browser WebGPU run at `1aa0248a1ff6d8e54c42d631072223bb50483814`, 2026-10-08T21:23:54.294Z, exited 0 and recorded PASS: 42 frames, 1709 raw assertions, 84 PNG screenshots, 6808 composition assertions, eight intended negatives and zero unexpected errors. Seven negatives mutate copied production code; one is synthetic. All 233 inventoried source/build/tool/dependency identities remained equal before and after that execution and match that historical metadata-only successor. The execution was performed by its verification author; independent correction/native-binding closure, final semantic attestation and publication remain pending. Browser WebGPU is separate from a Native app/SDK. Screenshot composition does not certify physical scanout, acceleration, phones or performance. Textures/text/UI/animation/3D, editor/Agent creation, CI, complete migration and full-product acceptance remain open; R008/V006 and V003 retain their existing obligations. Historical 0.9–0.12 records below keep their original dates, identities and result scopes.
 
 
 ## Historical 0.12.0 display and frame candidate scope
@@ -25,6 +56,7 @@ The previous local 0.12.0 candidate covered bounded display frames, targeting th
 
 | Package | Current responsibilities | Dependencies |
 | --- | --- | --- |
+| `@egret/project` | Immutable authored snapshots, atomic edits/retries and retained-target restore through canonical journals | contracts; private jsonc-parser 3.3.1 scanner/visitor adapter |
 | `@egret/contracts` | Cancellation, synchronous cleanup, diagnostics, and headless host ports | None |
 | `@egret/runtime` | Scope, display tree, typed synchronous events, CPU asset references/shared acquisition/independent leases | contracts |
 | `@egret/engine` | Instance and asset-service assembly, surface reservation, startup, and bounded shutdown | contracts, runtime; explicit robust-predicates 3.0.3 for WebGPU preparation |
@@ -53,7 +85,7 @@ Before every push, run the [bilingual and public-content checks](knowledge-base/
 
 Current display/frame public APIs: DisplayObject x/y, scaleX/scaleY, rotation, alpha, visible and clipRect; Sprite.graphics owns rectangle fills; Engine.captureFrame/renderFrame captures/submits immutable RenderFrame2D. The separate `@egret/engine/web` entry exports createCanvasHost while the root remains DOM-free. Interfaces are experimental; complete text/textures/animation/UI/3D remain unfinished.
 
-The local checkpoint and target knowledge-base revision are 0.13.0; private experimental workspace package versions remain 0.0.0.
+At the historical checkpoint, the local engineering-preview label was 0.14.0; private experimental workspace packages remain 0.0.0 and project/history/tool protocol pins remain 1.0. The preserved WebGPU checkpoint and its knowledge-base identities are historical 0.13.0 records.
 
 ## Public WebGPU use
 
@@ -73,3 +105,7 @@ engine.renderFrame({ width: 48, height: 40, clearColor: 0, clearAlpha: 0 });
 const result = await pixels;
 await engine.dispose();
 ```
+
+## CPU texture preview (local 0.15.0)
+
+This slice adds immutable ImageData2D, Texture, a Bitmap that borrows an asset lease, saved mixed frames, and clipping/vertex preparation with attached UVs. Read the [API and ownership](docs/texture-a1.en.md) and [CPU evidence](docs/evidence/texture-a1.en.md). It extends the 0.14 project core experimentally; production Canvas/WebGPU image sampling, browser precision and GPU resource settlement await separate A2 validation. Source and documentation curation do not establish GitHub delivery. Historical evidence and full-product acceptance obligations remain.

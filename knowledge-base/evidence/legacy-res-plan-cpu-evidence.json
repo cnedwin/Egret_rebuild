@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "projectionStatus": "ROOT_RECONCILED_PUBLIC_SUMMARY",
+  "evidenceKind": "actual_focused_CPU_run_projection",
+  "scope": "Pure ordered conversion-intent planning for recognized legacy RES JSON, including path deduplication and alias/group references; no file I/O or project conversion.",
+  "toolchain": {
+    "node": "24.19.0",
+    "typescript": "7.0.2",
+    "packageManagerPin": "pnpm@11.25.0"
+  },
+  "source": {
+    "path": "packages/project/src/legacy-res-plan.ts",
+    "bytes": 3782,
+    "sha256": "b1149868f617583ae74860405fbe468e70b32b51940e308741962891eed789a7"
+  },
+  "test": {
+    "path": "tests/legacy-res-plan.test.mjs",
+    "bytes": 12345,
+    "sha256": "d1e8d5247396f624b718aeaf4cd7715ac70c91341f47c1cd84e9dd60dbbdef6e"
+  },
+  "focused": {
+    "command": [
+      "node",
+      "--test",
+      "--test-isolation=none",
+      "--test-reporter=tap",
+      "tests/legacy-res-plan.test.mjs"
+    ],
+    "red": {
+      "tests": 14,
+      "passed": 0,
+      "failed": 14,
+      "skipped": 0,
+      "exitCode": 1,
+      "failureClass": "behavioral_test_failures"
+    },
+    "green": {
+      "tests": 14,
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0,
+      "exitCode": 0
+    },
+    "bothRuns": {
+      "signal": null,
+      "closed": true,
+      "stdoutEOF": true,
+      "stderrEOF": true,
+      "timedOut": false,
+      "overflow": false,
+      "identitiesStable": true,
+      "savedRawOutputHashesChecked": true
+    },
+    "buildGreen": {
+      "success": true,
+      "exitCode": 0,
+      "closed": true,
+      "stdoutEOF": true,
+      "stderrEOF": true,
+      "identitiesStable": true
+    }
+  },
+  "wholeRepository": {
+    "entry": "tools/verify.mjs",
+    "status": "PASS",
+    "tests": {
+      "total": 901,
+      "passed": 901,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "verifyExitCode": 0,
+    "closed": true,
+    "jobActiveZero": true,
+    "jobClosed": true,
+    "workloadStreamsEOF": true,
+    "outerStreamsEOF": true,
+    "rawOutputSaved": true,
+    "pinsStable": true,
+    "snapshotQualification": "Recorded before the Host test final-LF-only successor; current repository runtime was not rerun.",
+    "historyAndSnapshotEvidence": "b1-host-mock-evidence.json"
+  },
+  "notProven": [
+    "file_copy_or_write",
+    "resource_decoding",
+    "runtime_asset_loading",
+    "automatic_project_migration",
+    "perfect_legacy_compatibility",
+    "native_runtime",
+    "device_performance",
+    "Chinese_font_performance",
+    "DragonBones"
+  ],
+  "provenance": "Sanitized projection of retained actual receipts and raw output; this JSON does not publish private raw records or re-execute verification."
+}

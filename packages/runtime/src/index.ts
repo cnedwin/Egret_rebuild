@@ -20,3 +20,7 @@ export type { AssetType, AssetRef } from "./AssetRef.js";
 export { Sprite } from './Sprite.js';
 export { Graphics } from './Graphics.js';
 export { collectFrameCommands } from './frameCapture.js';
+export { collectFrameContent } from './frameCapture.js';
+export type { CapturedContent2D } from './frameCapture.js';
+export { Texture, createTexture, isTexture } from './Texture.js';
+export { Bitmap } from './Bitmap.js';

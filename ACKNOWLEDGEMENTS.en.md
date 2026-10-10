@@ -2,6 +2,12 @@
 
 English | [简体中文](ACKNOWLEDGEMENTS.md)
 
+## 0.16.0 declaration and 3D references
+
+[jsonc-parser](https://github.com/microsoft/node-jsonc-parser/tree/v3.3.1) 3.3.1 by Microsoft Corporation supplies public-root createScanner/visit under MIT for the existing private project adapter and declaration analysis. Its existing MIT notice and dependency pin remain applicable. The RES profile/report/fixtures and CPU 3D contracts/implementation were independently authored. Founder-supplied historical RES declaration semantics informed compatibility research; exact version/module closure remains unverified and historical private source is not distributed. See [the declaration scope](knowledge-base/docs/legacy-res-declarations.en.md).
+
+The selected [GPUWeb draft](https://github.com/gpuweb/gpuweb/blob/25a5dc4537074c9b3844dd95891f5cfd193f4407/spec/index.bs) at commit 25a5dc4537074c9b3844dd95891f5cfd193f4407 informs nine selected 3D design semantic ranges. This fixed reading and selected TypeScript declarations establish no latest-final-standard, GPU host, pixel or performance acceptance. Depth-free UI and readback after the selected passes are Egret architectural choices, not universal WebGPU requirements. See [3D foundation](knowledge-base/docs/3d-foundation.en.md). Existing research/dependency credits and their historical limitations remain in force.
+
 We thank the projects and communities that publish source code, standards, documentation, and maintenance experience. Acknowledgements record their actual roles and do not imply cooperation or upstream endorsement.
 
 ## Current development tools

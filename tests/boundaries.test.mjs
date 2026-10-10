@@ -10,10 +10,10 @@ const repository = fileURLToPath(new URL('..', import.meta.url));
 const checker = readFileSync(path.join(repository, 'tools/check-boundaries.mjs'));
 const checkerHash = createHash('sha256').update(checker).digest('hex');
 const ownedParent = path.resolve(repository, 'work');
-const dependencies = { contracts: [], runtime: ['@egret/contracts'], engine: ['@egret/contracts', '@egret/runtime'] };
+const dependencies = { contracts: [], runtime: ['@egret/contracts'], engine: ['@egret/contracts', '@egret/runtime'], project: ['@egret/contracts'] };
 
 // Synthetic facades prove tool policy/resolution only, never core or native behavior.
-function fixture({ imported, subtree = 'engine/rendering', declared = false }, run) {
+function fixture({ imported, subtree = 'engine/rendering', declared = false, missingImageExport = false }, run) {
   mkdirSync(ownedParent, { recursive: true });
   const root = mkdtempSync(path.join(ownedParent, 'egret-boundary-policy-'));
   function write(relative, content) {
@@ -29,19 +29,34 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false }, r
         dependencyMap['robust-predicates'] = '3.0.3';
         if (declared) dependencyMap.constructor = '1.0.0';
       }
+      if (name === 'project') dependencyMap['jsonc-parser'] = '3.3.1';
       const gpuExport = { types: './dist/web/webgpu.d.ts', import: './dist/web/webgpu.js' };
-      write(`packages/${name}/package.json`, { name: `@egret/${name}`, private: true, version: '0.0.0', type: 'module', dependencies: dependencyMap, ...(name === 'engine' ? {exports:{'./webgpu':gpuExport}} : {}) });
-      write(`packages/${name}/tsconfig.json`, { extends: '../../tsconfig.base.json', references: allowed.map(value => ({ path: `../${value.slice('@egret/'.length)}` })) });
+      write(`packages/${name}/package.json`, { name: `@egret/${name}`, private: true, version: '0.0.0', type: 'module', dependencies: dependencyMap, ...(name === 'engine' ? {exports:{'./webgpu':gpuExport}} : name === 'project' ? {exports:{'.':{types:'./dist/index.d.ts',import:'./dist/index.js'}}} : {}) });
+      write(`packages/${name}/tsconfig.json`, { extends: '../../tsconfig.base.json', ...(name === 'project' ? {compilerOptions:{rootDir:'src',outDir:'dist'}} : {}), references: allowed.map(value => ({ path: `../${value.slice('@egret/'.length)}` })) });
       write(`packages/${name}/src/index.ts`, 'export {};\n');
       write(`packages/${name}/dist/index.js`, 'export {};\n');
       const exports = name === 'engine' ? { '.': './index.js', './web': './web.js', './webgpu':'./webgpu.js' } : './index.js';
       write(`node_modules/@egret/${name}/package.json`, { name: `@egret/${name}`, type: 'module', exports });
       write(`node_modules/@egret/${name}/index.js`, 'export {};\n');
+      if (name === 'project') {
+        // Synthetic policy fixture only; the project integration suite uses real builds.
+        const values = ['DEFAULT_PROJECT_LIMITS','createProjectStore','openProjectHistory','parseProjectSnapshot','parseProjectTransaction','serializeProjectSnapshot'];
+        write('node_modules/@egret/project/index.js', values.map(name => `export const ${name}=1;`).join('\n'));
+        write('packages/project/dist/index.d.ts', readFileSync(path.join(repository,'packages/project/dist/index.d.ts')));
+      }
       if (name === 'engine') { write('node_modules/@egret/engine/web.js', 'export function createCanvasHost() {}\n'); write('node_modules/@egret/engine/webgpu.js', 'export function createWebGPUHost() {}\n'); }
     }
-    for (const name of ['robust-predicates', 'constructor']) {
+    // These are synthetic policy/resolution surfaces, never engine execution proof.
+    const imageValues = ['IMAGE_LIMITS_2D','copyImageData2DPixels','createImageData2D','isImageData2D'];
+    write('packages/contracts/dist/index.js', imageValues.filter(name => !missingImageExport || name !== 'isImageData2D').map(name => 'export const '+name+' = 1;').join('\n'));
+    write('node_modules/@egret/engine/index.js', "export * from '../../../packages/contracts/dist/index.js';\n");
+    for (const file of ['packages/contracts/dist/index.d.ts','packages/engine/dist/index.d.ts','packages/engine/dist/web/index.d.ts','packages/engine/dist/web/webgpu.d.ts']) write(file,'export {};\n');
+    write('packages/runtime/dist/index.js','export function collectFrameContent() {}\n');
+    write('packages/runtime/dist/index.d.ts','interface CapturedContent2D {}\nexport type {CapturedContent2D};\n');
+    for (const name of ['robust-predicates', 'constructor', 'jsonc-parser']) {
       // Deliberately resolve even a deep path; authorization must independently reject it.
-      write(`node_modules/${name}/package.json`, { name, version: name === 'robust-predicates' ? '3.0.3' : '1.0.0', type: 'module', exports: { '.': './index.js', './esm/orient2d.js': './index.js' } });
+      // jsonc-parser is a synthetic resolution fixture here, never installed-library admission.
+      write(`node_modules/${name}/package.json`, { name, version: name === 'robust-predicates' ? '3.0.3' : name === 'jsonc-parser' ? '3.3.1' : '1.0.0', type: 'module', exports: { '.': './index.js', './esm/orient2d.js': './index.js' } });
       write(`node_modules/${name}/index.js`, 'export const marker = 1;\n');
     }
     write('packages/engine/web/index.ts', 'export {};\n');
@@ -82,5 +97,12 @@ for (const declared of [true, false]) test(`boundary checker rejects resolvable 
   fixture({ imported: 'constructor', declared }, result => {
     assert.equal(result.status, 1, `resolvable constructor unexpectedly accepted: ${result.stdout}`);
     assert.match(result.stderr, declared ? /engine: dependency DAG mismatch/ : /unapproved\/deep package import constructor/);
+  });
+});
+
+test('synthetic missing image export rejects for the assigned executable surface reason',()=>{
+  fixture({imported:'robust-predicates',missingImageExport:true},result=>{
+    assert.equal(result.status,1,result.stdout+result.stderr);
+    assert.match(result.stderr,/contracts: executable image export surface mismatch/);
   });
 });

@@ -2,13 +2,44 @@
 
 [English](README.en.md) | 简体中文
 
-## 0.13.0 WebGPU矩形本地检查点 — 2026年10月9日
+## 当前本地工程增量：0.19.0
+
+阅读已实施的[Bitmap 区域契约](knowledge-base/docs/bitmap-region-contract.zh-CN.md)和[CPU 证据](knowledge-base/docs/bitmap-region-evidence.zh-CN.md)、[纹理首四项采集](knowledge-base/docs/texture-first-four-evidence.zh-CN.md)，以及[可复现的 B1 浏览器验证器](knowledge-base/docs/b1-browser-verifier.zh-CN.md)。Bitmap 专项检查通过 113/113。公开 B1 命令记录 7 帧正例、5 项反例、11 次绘制和 8214 项字面量比较；有界保存产物的独立复核已接受。纹理采集完整性已接受，数值边界为 UNKNOWN，完整 A2 未完成。
+
+本证据整理不包含后继完整 prepush，推送前必须另行通过新检查。可见 Bitmap 序列播放、设备／性能／完整迁移门禁仍开放。这是本地工程标签，不是发行版本，包 0.0.0／协议 1.0 不变；此前记录保留各自日期、身份和范围。
+
+## 历史本地工程预览：0.18.0
+
+新增单个具名旧 MovieClip 的有界 CPU 转换，保留图集裁剪、显示偏移和作者持续段时间；28/28 专项测试通过，输出已由真实序列帧工厂重新准入。阅读[契约](knowledge-base/docs/legacy-movieclip-contract.zh-CN.md)、[证据](knowledge-base/docs/legacy-movieclip-evidence.zh-CN.md)和[精简记录](knowledge-base/evidence/legacy-movieclip-focused.json)。API 保持内部使用，图片读取、解码和播放仍未验证。
+
+0.17.0 及更早结果保留为各自源码身份下的历史证据。此次增量的默认模式、全仓回归和完整 prepush 未运行；当前浏览器／设备像素、性能及完整 R008/V006 迁移仍待验收。0.18.0 是本地工程标签，包 0.0.0／协议 1.0 不变；GitHub 交付继续保持 HOLD_HTTP_403。
+
+## 历史本地工程预览：0.17.0
+
+本预览新增自有 CPU 场景快照、固定网格辅助函数、有界 B1 宿主源码／模拟整合、CPU 序列帧采样与纯 RES 转换意图。阅读[CPU 场景](knowledge-base/docs/3d-cpu-scene-contract.md)、[网格](knowledge-base/docs/3d-webgpu-mesh-contract.md)、[宿主](knowledge-base/docs/b1-host-contract.zh-CN.md)、[序列帧](knowledge-base/docs/sequence-clip-contract.zh-CN.md)及[RES 意图](knowledge-base/docs/legacy-res-plan-contract.zh-CN.md)与配对证据。这些接口保持内部使用；公开入口与包 0.0.0／协议 1.0 不变。
+
+已记录默认宿主验证通过 13/13 项，CPU 序列帧采样通过 25/25，RES 意图规划通过 14/14。所选整仓运行通过 901/901 项测试、编译、282 个边界文件及类型门禁；901 项包含宿主回归。源码绑定、仅格式后继及保留的早期失败见[配对宿主证据](knowledge-base/docs/b1-host-evidence.zh-CN.md)。此次文档采用未重跑产品检查。
+
+GitHub 交付因已记录的 403 响应保持 HOLD；当前文档最终审阅与完整 prepush 仍待完成。此前 0.13.0–0.16.0 检查点保留身份及结果。Native SDK、当前浏览器／设备像素、性能、字体、DragonBones、完整 R008/V006 迁移、V003／编辑器及完整产品验收仍未验证或保持开放。
+
+## 历史本地工程预览：0.16.0
+
+当前增量覆盖已接受的有界图片源码／模拟逻辑、CPU 纹理参考公式、CPU 3D 数学／几何／打包，以及旧 RES 声明分析。阅读[核心进展](knowledge-base/docs/core-progress.md)、[3D CPU 基础](knowledge-base/docs/3d-foundation.md)和[旧 RES 声明](knowledge-base/docs/legacy-res-declarations.md)，查看契约、准确历史证据与开放任务。标签为工程预览；包 0.0.0 与协议 1.0 不变。最终独立公开审查、prepush 及本预览的 GitHub 交付仍待完成。
+
+此前 0.13.0／0.14.0／0.15.0 章节是各自有源码身份和结果的历史检查点，其矩形／浏览器观察不能验证当前图片或 3D 的 native 像素。Task 5a 仅提供 CPU 公式／边界；A2 Task 5b／Task 6、P0–P7、设备／文字／动画／Native、V003 和完整 R008／V006 迁移保持开放或 UNRUN。
+
+
+## 历史 0.14.0 工程事务核心工程预览
+
+本地0.14.0工程预览候选包含私有0.0.0 headless `@egret/project`包，支持不可变创作快照、原子编辑/重试和通过规范历史恢复保留目标。见[包API](packages/project/README.md)、[完整合同](knowledge-base/docs/工程事务核心合同.md)及[有限实现和内存证据](knowledge-base/docs/工程事务核心实现证据.md)。协议固定值仍为1.0，历史0.13 WebGPU/知识库身份不变。本段文档编写检查点的最终独立预览审阅与公开交付待完成，后续审阅和交付证据另行记录；V003/编辑器和完整R008/V006迁移未接受。
+
+## 历史0.13.0 WebGPU矩形本地检查点 — 2026年10月9日
 
 显式 `@egret/engine/webgpu` 入口同步执行不可变 `RenderFrame2D` 矩形命令。根入口保持无DOM；`@egret/engine/web`保持Canvas-only，实际请求不包含WebGPU或robust-predicates模块。无DOM准备层通过公共 `orient2d` 接入精确固定的基础依赖robust-predicates 3.0.3，适用Unlicense。复制、有界交点构造、打包、WGSL及宿主生命周期属于独立编写的第一方代码。见[完整0.6合同](knowledge-base/docs/WebGPU矩形执行合同.md)、[实施计划](knowledge-base/docs/WebGPU矩形实施计划.md)与[有限证据](knowledge-base/docs/WebGPU矩形实现证据.md)。
 
 已接受的桌面构建记录177/177 CPU/mock/核心检查、28项预期负类型诊断及123个边界文件；独立真实WebGPU门禁记录42帧、1709项原始断言、84张截图、6808项合成断言、8项预期反例及0项意外错误。其中7项变异实际生产代码副本，1项仅为合成断言。实际结果与有限独立实现审阅由[验证](verification/webgpu-verification.json)与[审阅](verification/webgpu-review.json)绑定已接受的源码身份；文档整合没有重跑这些检查。
 
-本experimental检查点记录于2026-10-08T21:23:54.294Z最终原生运行之前，核心/headless与桌面Canvas结果分别记录。随后仅注释入口重建的真实浏览器WebGPU运行在 `1aa0248a1ff6d8e54c42d631072223bb50483814`、2026-10-08T21:23:54.294Z以0退出并记录PASS：42帧、1709项原始断言、84张PNG截图、6808项合成断言、8项预期反例及0项意外错误。7项反例变异生产代码副本，1项为合成断言。233项源码/构建/工具/依赖清单身份在该运行前后相等，且与当前仅文档和元数据变更的后继版本一致。实际运行由验证作者执行；独立修正及原生绑定复审、最终语义凭据和发布仍待完成。浏览器WebGPU与Native App/SDK分别验收；截图合成不证明实体扫描输出、硬件加速、手机或性能。纹理/文字/UI/动画/3D、编辑器/Agent创作、CI、完整迁移与完整产品仍待实施或验收；R008/V006及V003保留既有义务。下文0.9–0.12历史记录保留原日期、身份与结果范围。
+本experimental检查点记录于2026-10-08T21:23:54.294Z最终原生运行之前，核心/headless与桌面Canvas结果分别记录。随后仅注释入口重建的真实浏览器WebGPU运行在 `1aa0248a1ff6d8e54c42d631072223bb50483814`、2026-10-08T21:23:54.294Z以0退出并记录PASS：42帧、1709项原始断言、84张PNG截图、6808项合成断言、8项预期反例及0项意外错误。7项反例变异生产代码副本，1项为合成断言。233项源码/构建/工具/依赖清单身份在该运行前后相等，且与当时仅文档和元数据变更的后继版本一致。实际运行由验证作者执行；独立修正及原生绑定复审、最终语义凭据和发布仍待完成。浏览器WebGPU与Native App/SDK分别验收；截图合成不证明实体扫描输出、硬件加速、手机或性能。纹理/文字/UI/动画/3D、编辑器/Agent创作、CI、完整迁移与完整产品仍待实施或验收；R008/V006及V003保留既有义务。下文0.9–0.12历史记录保留原日期、身份与结果范围。
 
 
 ## 历史0.12.0显示与帧候选范围
@@ -25,6 +56,7 @@
 
 | 包 | 当前职责 | 依赖 |
 | --- | --- | --- |
+| `@egret/project` | 不可变创作快照、原子编辑/重试及通过规范历史恢复保留目标 | contracts；私有jsonc-parser 3.3.1 scanner/visitor适配器 |
 | `@egret/contracts` | 取消、同步清理、诊断与 headless 宿主端口 | 无 |
 | `@egret/runtime` | Scope、显示树、类型化同步事件、CPU 资源引用/共享获取/独立租约 | contracts |
 | `@egret/engine` | 实例与资产服务装配、surface 预留、启动和有界关闭 | contracts、runtime；WebGPU准备显式依赖robust-predicates 3.0.3 |
@@ -53,7 +85,7 @@ node tools/prepush.mjs
 
 当前显示/帧公共API：DisplayObject的x/y、scaleX/scaleY、rotation、alpha、visible与clipRect；Sprite.graphics拥有矩形填充；Engine.captureFrame/renderFrame产生/提交不可变RenderFrame2D。独立`@egret/engine/web`导出createCanvasHost，根入口保持无DOM。接口为实验性质，完整文字/纹理/动画/UI/3D尚未实现。
 
-本地检查点与知识库目标版本为0.13.0；私有实验包版本继续保持0.0.0。
+该历史检查点的本地工程预览标签为0.14.0；私有实验包版本仍为0.0.0，工程/历史/工具协议固定值仍为1.0。保留的WebGPU检查点及其知识库身份属于历史0.13.0记录。
 
 ## 公共WebGPU使用
 
@@ -73,3 +105,7 @@ engine.renderFrame({ width: 48, height: 40, clearColor: 0, clearAlpha: 0 });
 const result = await pixels;
 await engine.dispose();
 ```
+
+## CPU 纹理预览（本地 0.15.0）
+
+新增不可变 ImageData2D、Texture、借用资源租约的 Bitmap、可保存的混合帧，以及保留 UV 属性的裁剪和顶点准备。阅读 [API 与所有权](docs/texture-a1.zh-CN.md) 和 [CPU 验证证据](docs/evidence/texture-a1.zh-CN.md)。这是对 0.14 工程核心的增量实验；生产 Canvas/WebGPU 图像采样、浏览器精度与 GPU 资源结算仍等待独立 A2 验证。源码与文档整理不代表 GitHub 已交付，历史记录及完整产品验收目标继续保留。

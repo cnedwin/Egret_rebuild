@@ -1,4 +1,5 @@
 import type { PreparedRectangles2D } from '../rendering/prepareRectangles2D.js';
+import { packedPosition2D } from '../rendering/packedPosition2D.js';
 import { packedOrientation } from '../rendering/packedOrientation.js';
 
 export class WebGPUPackingError extends Error {
@@ -10,9 +11,10 @@ export function packWebGPUVertices(prepared: PreparedRectangles2D, width: number
     let maxBackingDisplacement = 0, collapsedTriangles = 0, vertices = 0;
     // Ordinary scratch preserves converted bits; no typed storage exists before both byte checks.
     const points = prepared.points.map(point => {
-        const x = Math.fround(2 * point.x / width - 1), y = Math.fround(1 - 2 * point.y / height);
-        if (!Number.isFinite(x) || !Number.isFinite(y)) throw new WebGPUPackingError('precision');
-        maxBackingDisplacement = Math.max(maxBackingDisplacement, Math.abs((x + 1) * width / 2 - point.x), Math.abs((1 - y) * height / 2 - point.y));
+        const represented = packedPosition2D(point, width, height, maxBackingDisplacement);
+        if (!represented) throw new WebGPUPackingError('precision');
+        const { x, y } = represented;
+        maxBackingDisplacement = represented.maxBackingDisplacement;
         return { x, y };
     });
     const ranges: { firstVertex: number; vertexCount: number }[] = [];

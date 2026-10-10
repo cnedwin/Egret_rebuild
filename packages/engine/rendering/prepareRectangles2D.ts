@@ -1,4 +1,5 @@
-import type { ClipRectangle2D, RenderFrame2D } from '@egret/contracts';
+import type { ClipRectangle2D } from '@egret/contracts';
+import type { RectangleFrame2D } from './RectangleFrame2D.js';
 import { orient2d } from 'robust-predicates';
 
 export interface PreparedPoint2D { readonly x: number; readonly y: number; }
@@ -18,18 +19,19 @@ export class GeometryPreparationError extends Error {
         super(`Geometry preparation ${reason}`, { cause });
     }
 }
-const MINIMUM = 2 ** -100, MAXIMUM = 2 ** 20, POLYGON_LIMIT = 1024;
+const MINIMUM = 2 ** -100, MAXIMUM = 2 ** 20;
+export const POLYGON_LIMIT = 1024;
 function fail(reason: 'range' | 'precision' | 'budget'): never { throw new GeometryPreparationError(reason); }
-function coordinate(value: number): number {
+export function coordinate(value: number): number {
     if (!Number.isFinite(value) || (value !== 0 && (Math.abs(value) < MINIMUM || Math.abs(value) > MAXIMUM))) fail('range');
     return value === 0 ? 0 : value;
 }
-function same(a: PreparedPoint2D, b: PreparedPoint2D): boolean { return a.x === b.x && a.y === b.y; }
-function before(a: PreparedPoint2D, b: PreparedPoint2D): boolean { return a.x < b.x || (a.x === b.x && a.y < b.y); }
+export function same(a: PreparedPoint2D, b: PreparedPoint2D): boolean { return a.x === b.x && a.y === b.y; }
+export function before(a: PreparedPoint2D, b: PreparedPoint2D): boolean { return a.x < b.x || (a.x === b.x && a.y < b.y); }
 function between(a: PreparedPoint2D, b: PreparedPoint2D, c: PreparedPoint2D): boolean {
     return b.x >= Math.min(a.x, c.x) && b.x <= Math.max(a.x, c.x) && b.y >= Math.min(a.y, c.y) && b.y <= Math.max(a.y, c.y);
 }
-class Preparation {
+export class Preparation {
     public edgeTests = 0;
     public constructor(private readonly options: RectanglePreparationOptions) {}
     private determinant(a: PreparedPoint2D, b: PreparedPoint2D, c: PreparedPoint2D): number {
@@ -39,7 +41,7 @@ class Preparation {
         if (!Number.isFinite(value)) fail('precision');
         return value;
     }
-    private sign(a: PreparedPoint2D, b: PreparedPoint2D, c: PreparedPoint2D): number {
+    public sign(a: PreparedPoint2D, b: PreparedPoint2D, c: PreparedPoint2D): number {
         // The dependency uses the opposite sign to the conventional algebraic cross product.
         return -Math.sign(this.determinant(a, b, c));
     }
@@ -60,16 +62,9 @@ class Preparation {
             }
         }
         if (points.length < 3) return [];
-        let winding = 0;
-        for (let i = 0; i < points.length; i++) {
-            const sign = this.sign(points[i]!, points[(i + 1) % points.length]!, points[(i + 2) % points.length]!);
-            if (sign !== 0) { if (winding !== 0 && winding !== sign) fail('precision'); winding = sign; }
-        }
-        if (winding === 0) return [];
-        if (winding < 0) points.reverse();
-        return points;
+        return finishPolygonWinding2D(this, points);
     }
-    public rectangle(input: ClipRectangle2D): PreparedPoint2D[] {
+    public corners(input: ClipRectangle2D): PreparedPoint2D[] {
         const { matrix: m, rect: r } = input, ratio = coordinate(this.options.pixelRatio);
         for (const value of [m.a, m.b, m.c, m.d, m.tx, m.ty, r.x, r.y, r.width, r.height]) coordinate(value);
         const right = coordinate(r.x + r.width), bottom = coordinate(r.y + r.height);
@@ -82,14 +77,18 @@ class Preparation {
         // Singular matrices must not acquire fabricated area from rounded corner arithmetic.
         const determinant = this.sign({ x: 0, y: 0 }, { x: m.a, y: m.b }, { x: m.c, y: m.d });
         if (r.width === 0 || r.height === 0 || determinant === 0) return [];
-        return this.normalize(points);
+        return points;
     }
-    private crossing(a: PreparedPoint2D, b: PreparedPoint2D, first: PreparedPoint2D, second: PreparedPoint2D): PreparedPoint2D {
+    public rectangle(input: ClipRectangle2D): PreparedPoint2D[] {
+        const points = this.corners(input);
+        return points.length ? this.normalize(points) : [];
+    }
+    public crossing<P extends PreparedPoint2D>(a: PreparedPoint2D, b: PreparedPoint2D, first: P, second: P, attach: CrossingAttributes<P>): P {
         const p = before(first, second) ? first : second, q = p === first ? second : first;
         const u = Math.abs(this.determinant(a, b, p)), v = Math.abs(this.determinant(a, b, q));
         const sum = u + v, t = u / sum;
         if (!(u > 0) || !(v > 0) || !Number.isFinite(sum) || !Number.isFinite(t)) fail('precision');
-        let x: number, y: number;
+        let x: number, y: number, weight = t, complementary = false;
         if (t > 0 && t < 1) {
             // Preserve the operation order and bits of strict-interior crossings.
             x = coordinate(p.x + t * (q.x - p.x)); y = coordinate(p.y + t * (q.y - p.y));
@@ -98,38 +97,58 @@ class Preparation {
             const s = v / sum;
             if (!Number.isFinite(s) || !(s > 0 && s <= 0.5)) fail('precision');
             x = coordinate(q.x + s * (p.x - q.x)); y = coordinate(q.y + s * (p.y - q.y));
+            weight = s; complementary = true;
         } else fail('precision');
         if (x < Math.min(p.x, q.x) || x > Math.max(p.x, q.x) || y < Math.min(p.y, q.y) || y > Math.max(p.y, q.y)) fail('precision');
-        return { x, y };
+        return attach(p, q, weight, complementary, x, y);
     }
     public intersect(subject: PreparedPoint2D[], clip: readonly PreparedPoint2D[]): PreparedPoint2D[] {
-        if (!clip.length) return [];
-        for (let edge = 0; edge < clip.length && subject.length; edge++) {
-            const a = clip[edge]!, b = clip[(edge + 1) % clip.length]!;
-            const signs = subject.map(point => this.sign(a, b, point));
-            const output: PreparedPoint2D[] = [];
-            const cache: { p: PreparedPoint2D; q: PreparedPoint2D; point: PreparedPoint2D }[] = [];
-            const append = (point: PreparedPoint2D): void => {
-                if (output.length >= POLYGON_LIMIT) fail('budget');
-                output.push(point);
-            };
-            for (let i = 0; i < subject.length; i++) {
-                const p = subject[i]!, j = (i + 1) % subject.length, q = subject[j]!;
-                const ps = signs[i]!, qs = signs[j]!;
-                if (ps >= 0) append(p);
-                if ((ps < 0 && qs > 0) || (ps > 0 && qs < 0)) {
-                    const left = before(p, q) ? p : q, right = left === p ? q : p;
-                    let hit = cache.find(item => same(item.p, left) && same(item.q, right));
-                    if (!hit) { hit = { p: left, q: right, point: this.crossing(a, b, left, right) }; cache.push(hit); }
-                    append(hit.point);
-                }
-            }
-            subject = this.normalize(output);
-        }
-        return subject;
+        return clipPolygon2D(this, subject, clip, normalizeRectangle, attachRectangle);
     }
 }
-export function prepareRectangles2D(frame: RenderFrame2D, width: number, height: number, options: RectanglePreparationOptions): PreparedRectangles2D {
+/** Policy wrappers keep their collinear/duplicate rules; this finish preserves sign order and full points. */
+export function finishPolygonWinding2D<P extends PreparedPoint2D>(preparation: Preparation, points: P[]): P[] {
+    let winding = 0;
+    for (let i = 0; i < points.length; i++) {
+        const sign = preparation.sign(points[i]!, points[(i + 1) % points.length]!, points[(i + 2) % points.length]!);
+        if (sign !== 0) { if (winding !== 0 && winding !== sign) fail('precision'); winding = sign; }
+    }
+    if (winding === 0) return [];
+    if (winding < 0) points.reverse();
+    return points;
+}
+export type CrossingAttributes<P extends PreparedPoint2D> = (p: P, q: P, weight: number, complementary: boolean, x: number, y: number) => P;
+const normalizeRectangle = (preparation: Preparation, input: readonly PreparedPoint2D[]): PreparedPoint2D[] => preparation.normalize(input);
+// Plain rectangle corners retain exactly their original two-field shape.
+const attachRectangle: CrossingAttributes<PreparedPoint2D> = (_p, _q, _weight, _complementary, x, y) => ({ x, y });
+/** Shared traversal preserves determinant order; callers own attribute normalization. */
+export function clipPolygon2D<P extends PreparedPoint2D>(preparation: Preparation, subject: P[], clip: readonly PreparedPoint2D[], normalize: (preparation: Preparation, input: readonly P[]) => P[], attach: CrossingAttributes<P>): P[] {
+    if (!clip.length) return [];
+    for (let edge = 0; edge < clip.length && subject.length; edge++) {
+        const a = clip[edge]!, b = clip[(edge + 1) % clip.length]!;
+        const signs = subject.map(point => preparation.sign(a, b, point));
+        const output: P[] = [];
+        const cache: { p: P; q: P; point: P }[] = [];
+        const append = (point: P): void => {
+            if (output.length >= POLYGON_LIMIT) fail('budget');
+            output.push(point);
+        };
+        for (let i = 0; i < subject.length; i++) {
+            const p = subject[i]!, j = (i + 1) % subject.length, q = subject[j]!;
+            const ps = signs[i]!, qs = signs[j]!;
+            if (ps >= 0) append(p);
+            if ((ps < 0 && qs > 0) || (ps > 0 && qs < 0)) {
+                const left = before(p, q) ? p : q, right = left === p ? q : p;
+                let hit = cache.find(item => same(item.p, left) && same(item.q, right));
+                if (!hit) { hit = { p: left, q: right, point: preparation.crossing(a, b, left, right, attach) }; cache.push(hit); }
+                append(hit.point);
+            }
+        }
+        subject = normalize(preparation, output);
+    }
+    return subject;
+}
+export function prepareRectangles2D(frame: RectangleFrame2D, width: number, height: number, options: RectanglePreparationOptions): PreparedRectangles2D {
     // A clear-only frame still consumes nominal DPR, so its envelope is unconditional.
     coordinate(options.pixelRatio);
     const preparation = new Preparation(options);

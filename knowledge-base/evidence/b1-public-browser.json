@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 1,
+  "kind": "OBSERVED_PUBLIC_B1_DESKTOP_BROWSER_RUN",
+  "status": "PASS",
+  "recordedAtUTC": "2026-10-10T01:03:50.422Z",
+  "savedArtifactIndependentReview": "PASS_SAVED_PUBLIC_B1_ARTIFACT_INTEGRITY",
+  "publicCli": {
+    "path": "tools/verify-webgpu-b1.mjs",
+    "bytes": 31551,
+    "sha256": "8216ff160d3dfc5b08fb56a943f91aee8ee7da612fd4a2e58379aedc1ef87002"
+  },
+  "cpu": {
+    "actualAdoptedRepositoryRun": true,
+    "tests": 30,
+    "pass": 30,
+    "fail": 0,
+    "cliRefusals": 18,
+    "literalOracle": 12,
+    "browserLaunches": 0
+  },
+  "browser": {
+    "version": "154.0.4258.62",
+    "channel": "msedge",
+    "platform": "win32",
+    "headless": true,
+    "browserDpr": 1,
+    "addedFlags": [],
+    "executableIdentity": "UNBOUND"
+  },
+  "toolchain": {
+    "node": "v24.19.0",
+    "playwright": "1.62.1",
+    "playwrightCore": "1.62.1",
+    "typescript": "7.0.2",
+    "packageManagerPin": "pnpm@11.25.0"
+  },
+  "counts": {
+    "positiveFrames": 7,
+    "counterexamples": 5,
+    "submittedFrames": 11,
+    "literalBaselineRgbaComparisons": 8214,
+    "safeHosts": 6,
+    "pendingLedgersZero": true
+  },
+  "negativeStatuses": {
+    "N1": "EXPECTED_PIXEL_FAILURE",
+    "N2": "EXPECTED_PIXEL_FAILURE",
+    "N3": "EXPECTED_PIXEL_FAILURE",
+    "N4": "EXPECTED_COMPILATION_FAILURE",
+    "N5": "EXPECTED_PIXEL_FAILURE"
+  },
+  "N4": {
+    "actualCompilationError": true,
+    "asyncPipelineRejected": true,
+    "rejectionReason": "validation",
+    "hostStartupFailed": true,
+    "submittedFrames": 0
+  },
+  "standaloneCleanup": {
+    "observed": true,
+    "contextClosed": true,
+    "browserClosed": true,
+    "serverClosed": true,
+    "pendingApiOperations": 0,
+    "osDescendantRetirement": "UNBOUND"
+  },
+  "externalObservation": {
+    "jobActiveZero": true,
+    "jobClosed": true,
+    "qualification": "RECORDED_ATTEMPT_ONLY_NOT_STANDALONE_REQUIREMENT"
+  },
+  "evidence": {
+    "preservedCopies": 1313,
+    "result": {
+      "bytes": 224184,
+      "sha256": "153ac2827313165fc3ff6cef5d7860549bf65aa1d66ecb36c7d6dda0478631ba"
+    },
+    "selectedSourceAndEmitIdentities": [
+      {
+        "path": "tools/verify-webgpu-b1.mjs",
+        "bytes": 31551,
+        "sha256": "8216ff160d3dfc5b08fb56a943f91aee8ee7da612fd4a2e58379aedc1ef87002"
+      },
+      {
+        "path": "tools/b1-webgpu/fixture.mjs",
+        "bytes": 16923,
+        "sha256": "dc7f6dd2d2cf363cf4492e498ed196be075514f994b4efc4bc8e1a728a423426"
+      },
+      {
+        "path": "tools/b1-webgpu/oracle.mjs",
+        "bytes": 3852,
+        "sha256": "a4e4bff613e7968714d4266e6575c8016e7be5900cae685407d0e957a7c36652"
+      },
+      {
+        "path": "packages/engine/dist/web/webgpuMeshPass.js",
+        "bytes": 2743,
+        "sha256": "5cae311c66b2c5dbf6b27c9195c7e80eb759e96395ebaa03f49630ab30ac722f"
+      },
+      {
+        "path": "packages/engine/dist/web/WebGPUHost.js",
+        "bytes": 62901,
+        "sha256": "6c0384dbdf6fbef6cd2976f400b60650ec71574d264759fc5669e3b31284612f"
+      },
+      {
+        "path": "packages/engine/web/webgpuMeshPass.ts",
+        "bytes": 2998,
+        "sha256": "6213e04e77f1a09afe35627eaba4ab2be2ddab92b986423deed361e51c7bdc37"
+      },
+      {
+        "path": "packages/engine/web/WebGPUHost.ts",
+        "bytes": 66888,
+        "sha256": "ecc99075132e2bd546d50da8d96ff096ba8e6ca33630d192bec66500ccca3bc8"
+      }
+    ],
+    "finiteBeforeAfterIdentitiesStable": true
+  },
+  "prepush": "FRESH_PREPUSH_REQUIRED_NOT_RECORDED_IN_THIS_CURATION",
+  "held": [
+    "CHANNEL_BINARY_IDENTITY",
+    "UNIVERSAL_OS_DESCENDANT_RETIREMENT",
+    "VISIBLE_BITMAP_SEQUENCE",
+    "FULL_A2",
+    "PHONE_NATIVE_SDK",
+    "PERFORMANCE",
+    "FONTS_DRAGONBONES",
+    "WHOLE_ENGINE"
+  ],
+  "integrationReplay": false,
+  "savedArtifactReview": {
+    "status": "PASS_SAVED_PUBLIC_B1_ARTIFACT_INTEGRITY",
+    "acceptedAtUTC": "2026-10-10T01:11:55.798Z",
+    "actionableP1": 0,
+    "actionableP2": 0,
+    "acceptance": "ACCEPTED_BOUNDED_SAVED_RESULT",
+    "scope": "SAVED_ARTIFACT_INTEGRITY_AND_LITERAL_BROWSER_CHECKS"
+  }
+}

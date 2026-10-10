@@ -1,0 +1,21 @@
+{
+  "snapshot": "{\"entities\":[],\"files\":[],\"name\":\"\",\"projectId\":\"p_a\",\"projectSchemaVersion\":\"1.0\",\"retiredEntityIds\":[],\"retiredFileIds\":[],\"revision\":0,\"roots\":[],\"versions\":{\"engineVersion\":\"1\",\"resourceFormatVersion\":\"1\",\"toolProtocolVersion\":\"1.0\"}}",
+  "emptyHistory": "{\"baseline\":{\"entities\":[],\"files\":[],\"name\":\"\",\"projectId\":\"p_a\",\"projectSchemaVersion\":\"1.0\",\"retiredEntityIds\":[],\"retiredFileIds\":[],\"revision\":0,\"roots\":[],\"versions\":{\"engineVersion\":\"1\",\"resourceFormatVersion\":\"1\",\"toolProtocolVersion\":\"1.0\"}},\"historySchemaVersion\":\"1.0\",\"transactions\":[]}",
+  "metadataEdit": "{\"baseRevision\":0,\"command\":\"edit\",\"operations\":[{\"name\":\"\",\"op\":\"setMetadata\",\"versions\":{\"engineVersion\":\"1\",\"resourceFormatVersion\":\"1\",\"toolProtocolVersion\":\"1.0\"}}],\"projectId\":\"p_a\",\"scope\":{\"entityIds\":[],\"fileIds\":[],\"metadata\":true,\"roots\":false},\"source\":{\"actorId\":\"a\",\"actorKind\":\"creator\",\"intent\":\"\",\"toolId\":\"t\",\"toolVersion\":\"1\"},\"toolProtocolVersion\":\"1.0\",\"transactionId\":\"t_a\"}",
+  "restore": "{\"baseRevision\":1,\"command\":\"restore\",\"projectId\":\"p_a\",\"source\":{\"actorId\":\"a\",\"actorKind\":\"creator\",\"intent\":\"\",\"toolId\":\"t\",\"toolVersion\":\"1\"},\"targetRevision\":0,\"toolProtocolVersion\":\"1.0\",\"transactionId\":\"t_b\"}",
+  "snapshotBytes": 238,
+  "emptyHistoryBytes": 298,
+  "nodeDecomposition": { "baseline": [1,10,4,7,5], "metadataEdit": [1,8,5,11,9,1,6,7], "restore": [1,7,6,11] },
+  "work": { "B": 27, "C1": 48, "S1": 27, "P1": 102, "C2": 25, "S2": 27, "P2": 181 },
+  "futureObligation": "Task 5 must exercise empty export/open under identical limits and real restore C2/P2. Task 2 roots-only C1=40 is distinct.",
+  "task5ExactToolASource": {
+    "source": {"actorId":"a","actorKind":"tool","toolId":"a","toolVersion":"1","intent":""},
+    "literalLedger": "history-ledger.json",
+    "bytes": {"snapshot":238,"emptyHistory":298,"metadataEdit":393,"restore":212,"oneCommandHistory":691,"twoCommandHistory":904},
+    "snapshotContributions": {"container":1,"keys":10,"scalars":4,"versionsContainer":1,"versionsKeys":3,"versionsScalars":3,"arrays":5},
+    "editContributions": {"container":1,"keys":8,"scalars":5,"sourceContainer":1,"sourceKeys":5,"sourceScalars":5,"scopeContainer":1,"scopeKeys":4,"scopeArrays":2,"scopeScalars":2,"operationsArray":1,"operationContainer":1,"operationKeys":3,"operationScalars":2,"versionsContainer":1,"versionsKeys":3,"versionsScalars":3},
+    "restoreContributions": {"container":1,"keys":7,"scalars":6,"sourceContainer":1,"sourceKeys":5,"sourceScalars":5},
+    "work": {"B":27,"C1":48,"S1":27,"P1":102,"C2":25,"S2":27,"P2":181},
+    "priorTask4Variant": "Original creator/t source literals above are retained verbatim with distinct byte lengths."
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "$defs": {
+    "ProjectId": { "x-ts-name": "ProjectId", "type": "string", "x-ts-brand": "projectIdBrand", "x-project-check": "project-id" },
+    "EntityId": { "x-ts-name": "EntityId", "type": "string", "x-ts-brand": "entityIdBrand", "x-project-check": "entity-id" },
+    "FileId": { "x-ts-name": "FileId", "type": "string", "x-ts-brand": "fileIdBrand", "x-project-check": "file-id" },
+    "TransactionId": { "x-ts-name": "TransactionId", "type": "string", "x-ts-brand": "transactionIdBrand", "x-project-check": "transaction-id" },
+    "ProjectRevision": { "x-ts-name": "ProjectRevision", "type": "number", "x-project-check": "safe-integer" },
+    "Sha256": { "x-ts-name": "Sha256", "type": "string" },
+    "JsonValue": { "x-ts-name": "JsonValue", "oneOf": [
+      { "type": "null" }, { "type": "boolean" }, { "type": "number" }, { "type": "string" },
+      { "type": "array", "items": { "$ref": "#/$defs/JsonValue" } },
+      { "type": "object", "additionalProperties": { "$ref": "#/$defs/JsonValue" } }
+    ] },
+    "JsonObject": { "x-ts-name": "JsonObject", "type": "object", "additionalProperties": { "$ref": "#/$defs/JsonValue" } },
+    "ProjectVersionPins": { "x-ts-name": "ProjectVersionPins", "type": "object", "properties": {
+      "engineVersion": { "type": "string" }, "resourceFormatVersion": { "type": "string" },
+      "toolProtocolVersion": { "type": "string", "const": "1.0", "x-project-check": "fixed-version" }
+    }, "required": ["engineVersion", "resourceFormatVersion", "toolProtocolVersion"], "additionalProperties": false },
+    "ProjectReference": { "x-ts-name": "ProjectReference", "oneOf": [
+      { "type": "object", "properties": {
+        "slot": { "type": "string" }, "target": { "type": "string", "const": "entity" },
+        "id": { "$ref": "#/$defs/EntityId" }, "expectedKind": { "type": "string" }
+      }, "required": ["slot", "target", "id", "expectedKind"], "additionalProperties": false },
+      { "type": "object", "properties": {
+        "slot": { "type": "string" }, "target": { "type": "string", "const": "file" },
+        "id": { "$ref": "#/$defs/FileId" }, "expectedRole": { "$ref": "#/$defs/ProjectFileRole" }
+      }, "required": ["slot", "target", "id", "expectedRole"], "additionalProperties": false }
+    ] },
+    "ProjectEntity": { "x-ts-name": "ProjectEntity", "type": "object", "properties": {
+      "id": { "$ref": "#/$defs/EntityId" }, "kind": { "type": "string" },
+      "dataSchemaVersion": { "type": "string" }, "name": { "type": "string" },
+      "data": { "$ref": "#/$defs/JsonObject" }, "references": { "type": "array", "items": { "$ref": "#/$defs/ProjectReference" } }
+    }, "required": ["id", "kind", "dataSchemaVersion", "name", "data", "references"], "additionalProperties": false },
+    "ProjectFileRole": { "x-ts-name": "ProjectFileRole", "type": "string", "enum": ["source", "asset", "configuration", "legacy-original", "other"] },
+    "ProjectFile": { "x-ts-name": "ProjectFile", "type": "object", "properties": {
+      "id": { "$ref": "#/$defs/FileId" }, "path": { "type": "string", "x-project-check": "path" },
+      "role": { "$ref": "#/$defs/ProjectFileRole" }, "mediaType": { "type": "string" },
+      "sha256": { "$ref": "#/$defs/Sha256" }, "byteLength": { "type": "number", "x-project-check": "safe-integer" }
+    }, "required": ["id", "path", "role", "mediaType", "sha256", "byteLength"], "additionalProperties": false },
+    "ProjectSnapshot": { "x-ts-name": "ProjectSnapshot", "type": "object", "properties": {
+      "projectSchemaVersion": { "type": "string", "const": "1.0", "x-project-check": "fixed-version" },
+      "projectId": { "$ref": "#/$defs/ProjectId" }, "revision": { "$ref": "#/$defs/ProjectRevision" },
+      "name": { "type": "string" }, "versions": { "$ref": "#/$defs/ProjectVersionPins" },
+      "roots": { "type": "array", "items": { "$ref": "#/$defs/EntityId" } },
+      "entities": { "type": "array", "items": { "$ref": "#/$defs/ProjectEntity" } },
+      "files": { "type": "array", "items": { "$ref": "#/$defs/ProjectFile" } },
+      "retiredEntityIds": { "type": "array", "items": { "$ref": "#/$defs/EntityId" } },
+      "retiredFileIds": { "type": "array", "items": { "$ref": "#/$defs/FileId" } }
+    }, "required": ["projectSchemaVersion", "projectId", "revision", "name", "versions", "roots", "entities", "files", "retiredEntityIds", "retiredFileIds"], "additionalProperties": false },
+    "ProjectTransactionSource": { "x-ts-name": "ProjectTransactionSource", "type": "object", "properties": {
+      "actorId": { "type": "string" }, "actorKind": { "type": "string", "enum": ["creator", "agent", "legacy-converter", "tool"] },
+      "toolId": { "type": "string" }, "toolVersion": { "type": "string" }, "intent": { "type": "string" }
+    }, "required": ["actorId", "actorKind", "toolId", "toolVersion", "intent"], "additionalProperties": false },
+    "ProjectTransactionScope": { "x-ts-name": "ProjectTransactionScope", "type": "object", "properties": {
+      "entityIds": { "type": "array", "items": { "$ref": "#/$defs/EntityId" } },
+      "fileIds": { "type": "array", "items": { "$ref": "#/$defs/FileId" } },
+      "metadata": { "type": "boolean" }, "roots": { "type": "boolean" }
+    }, "required": ["entityIds", "fileIds", "metadata", "roots"], "additionalProperties": false },
+    "ProjectOperation": { "x-ts-name": "ProjectOperation", "oneOf": [
+      { "type": "object", "properties": { "op": { "type": "string", "const": "putEntity" }, "entity": { "$ref": "#/$defs/ProjectEntity" } }, "required": ["op", "entity"], "additionalProperties": false },
+      { "type": "object", "properties": { "op": { "type": "string", "const": "removeEntity" }, "id": { "$ref": "#/$defs/EntityId" } }, "required": ["op", "id"], "additionalProperties": false },
+      { "type": "object", "properties": { "op": { "type": "string", "const": "putFile" }, "file": { "$ref": "#/$defs/ProjectFile" } }, "required": ["op", "file"], "additionalProperties": false },
+      { "type": "object", "properties": { "op": { "type": "string", "const": "removeFile" }, "id": { "$ref": "#/$defs/FileId" } }, "required": ["op", "id"], "additionalProperties": false },
+      { "type": "object", "properties": { "op": { "type": "string", "const": "setMetadata" }, "name": { "type": "string" }, "versions": { "$ref": "#/$defs/ProjectVersionPins" } }, "required": ["op", "name", "versions"], "additionalProperties": false },
+      { "type": "object", "properties": { "op": { "type": "string", "const": "setRoots" }, "roots": { "type": "array", "items": { "$ref": "#/$defs/EntityId" } } }, "required": ["op", "roots"], "additionalProperties": false }
+    ] },
+    "ProjectEditTransaction": { "x-ts-name": "ProjectEditTransaction", "type": "object", "properties": {
+      "command": { "type": "string", "const": "edit" },
+      "toolProtocolVersion": { "type": "string", "const": "1.0", "x-project-check": "fixed-version" },
+      "projectId": { "$ref": "#/$defs/ProjectId" }, "transactionId": { "$ref": "#/$defs/TransactionId" },
+      "baseRevision": { "$ref": "#/$defs/ProjectRevision" }, "source": { "$ref": "#/$defs/ProjectTransactionSource" },
+      "scope": { "$ref": "#/$defs/ProjectTransactionScope" }, "operations": { "type": "array", "items": { "$ref": "#/$defs/ProjectOperation" } }
+    }, "required": ["command", "toolProtocolVersion", "projectId", "transactionId", "baseRevision", "source", "scope", "operations"], "additionalProperties": false },
+    "ProjectRestoreTransaction": { "x-ts-name": "ProjectRestoreTransaction", "type": "object", "properties": {
+      "command": { "type": "string", "const": "restore" },
+      "toolProtocolVersion": { "type": "string", "const": "1.0", "x-project-check": "fixed-version" },
+      "projectId": { "$ref": "#/$defs/ProjectId" }, "transactionId": { "$ref": "#/$defs/TransactionId" },
+      "baseRevision": { "$ref": "#/$defs/ProjectRevision" }, "source": { "$ref": "#/$defs/ProjectTransactionSource" },
+      "targetRevision": { "$ref": "#/$defs/ProjectRevision" }
+    }, "required": ["command", "toolProtocolVersion", "projectId", "transactionId", "baseRevision", "source", "targetRevision"], "additionalProperties": false },
+    "ProjectTransaction": { "x-ts-name": "ProjectTransaction", "oneOf": [{ "$ref": "#/$defs/ProjectEditTransaction" }, { "$ref": "#/$defs/ProjectRestoreTransaction" }] },
+    "ProjectHistory": { "x-ts-name": "ProjectHistory", "type": "object", "properties": {
+      "historySchemaVersion": { "type": "string", "const": "1.0", "x-project-check": "fixed-version" },
+      "baseline": { "$ref": "#/$defs/ProjectSnapshot" }, "transactions": { "type": "array", "items": { "$ref": "#/$defs/ProjectTransaction" } }
+    }, "required": ["historySchemaVersion", "baseline", "transactions"], "additionalProperties": false }
+  }
+}
