@@ -6,15 +6,34 @@
   "semanticReview": {
     "status": "reviewed_with_scope",
     "method": {
-      "en": "Independent review accepted the actual bilingual reading delta, source provenance, structured authority and publication guards with no unresolved P1/P2 findings. Root read the report and verified all selected file identities, then recorded this faithful metadata successor. The reviewer did not inspect later metadata or execute product checks.",
-      "zh-CN": "独立审阅已接受实际双语阅读增量、出处、结构化权威状态及发布防护，未留下 P1/P2 问题。根代理阅读报告并验证全部所选文件身份后，记录本次忠实元数据后继。审阅者未检查后写入元数据，也未执行产品检查。"
+      "en": "The preserved independent layout review covers its recorded paired-reading snapshot. A separate independent scoped review accepts the current README pair, maintainer-provided founder account and source-backed bilingual Changelog with no unresolved P1/P2 findings. Root verifies the observed README identities and records this later metadata successor; the reviewers did not execute product checks or inspect later metadata.",
+      "zh-CN": "保留的独立目录审阅覆盖其记录的双语阅读快照；另一次独立范围内审阅接受当前 README 配对、维护者提供的创始人叙述及有来源的双语 Changelog，未留下 P1/P2 问题。根代理验证所观察的 README 身份并记录后写入的元数据后继；审阅者未执行产品检查，也未检查后写入元数据。"
     },
     "scope": {
       "en": "120 paired reading documents, six registry/current-version views, exact language/navigation mappings, unchanged shared code/evidence and preserved original licenses; historical claims retain their own scope.",
       "zh-CN": "120 对阅读文档、六套登记册／当前版本视图、精确语言和导航映射、未改动的共享代码／证据及原始许可；历史结论保留各自范围。"
     },
-    "qualityStatus": "INDEPENDENT_FINAL_DELTA_REVIEW_ACCEPTED_ROOT_METADATA_SUCCESSOR",
-    "publicationStatus": "CURATION_COMPLETE_FRESH_COMPLETE_PREPUSH_AND_PUSH_PENDING"
+    "qualityStatus": "INDEPENDENT_LAYOUT_AND_SCOPED_README_REVIEWS_ACCEPTED_ROOT_METADATA_SUCCESSOR",
+    "publicationStatus": "README_CURATED_FRESH_COMPLETE_PREPUSH_AND_PUSH_PENDING",
+    "communityReadmeUpdate": {
+      "status": "INDEPENDENT_SCOPED_README_REVIEW_ACCEPTED",
+      "P1": 0,
+      "P2": 0,
+      "reportSha256": "3be23a76da9af623910653f8db768908e194a1a558177dd541f9f1ed91ecb0ae",
+      "reviewedReadmes": [
+        {
+          "path": "README.md",
+          "bytes": 28432,
+          "sha256": "dc2e5b61c3214cdf136ba576ffc574319569a7650d602bc82c8d22612008e105"
+        },
+        {
+          "path": "README.zh-CN.md",
+          "bytes": 25799,
+          "sha256": "a8fb817db919e7f4214b3389cd2323d08ca345a2ab72ab3c55038f2d51d2d1b1"
+        }
+      ],
+      "scope": "README pair, confirmed founder statement, source-backed bilingual Changelog, new navigation, preserved historical paragraphs and code fences only; later metadata is a root-authored successor."
+    }
   },
   "documents": [
     {
@@ -644,8 +663,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "zhSha256": "d203484bb44cf4c3b64f9a23fe7de2dc5626aa55600e2ce573ae7bdcd8b2b82a",
-      "enSha256": "5f5639fbe95bc1b0ba7030ae7333fd53553d15d3bf31873e8fb069a954cb0e68"
+      "zhSha256": "a8fb817db919e7f4214b3389cd2323d08ca345a2ab72ab3c55038f2d51d2d1b1",
+      "enSha256": "dc2e5b61c3214cdf136ba576ffc574319569a7650d602bc82c8d22612008e105"
     },
     {
       "zh": "knowledge-base/Cns/docs/WebGPU矩形执行合同.md",

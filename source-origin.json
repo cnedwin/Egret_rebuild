@@ -351,7 +351,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 88342,
-      "sha256": "22c96e0dbfb406fc735f5dfad2b8417af342d0e4c3becd5022812cdbd246091b"
+      "sha256": "07e1f0c2407cde3f50b3150a090365ad153e7ff0906f66c631a67bed62b467e9"
     },
     {
       "path": "DOCUMENTATION.md",
@@ -1840,8 +1840,8 @@
     {
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "path": "localization.json",
-      "sha256": "24eca9e46d3dcae111ce9d3a36625d25c4c74ee61192574c55ac467698b30b47",
-      "bytes": 132777,
+      "sha256": "002387192e11cdaebdde4bf707b3b22c9f55ad8fe5978ee8d7496c2408cc2ecb",
+      "bytes": 133746,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123"
@@ -2461,16 +2461,16 @@
     {
       "path": "README.md",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "sha256": "5f5639fbe95bc1b0ba7030ae7333fd53553d15d3bf31873e8fb069a954cb0e68",
-      "bytes": 18146,
+      "sha256": "dc2e5b61c3214cdf136ba576ffc574319569a7650d602bc82c8d22612008e105",
+      "bytes": 28432,
       "previousRevisionSha256": "199156443d499d5012f1224263a1a3ee9994e5ba38ee067bceeb2ad865ae8167",
       "previousLayoutPath": "README.en.md",
       "previousLayoutSha256": "f40ec41ca699cd0b9138fbdf4a268080038f583ae11e78c4f37093a6b7095f57"
     },
     {
       "path": "README.zh-CN.md",
-      "sha256": "d203484bb44cf4c3b64f9a23fe7de2dc5626aa55600e2ce573ae7bdcd8b2b82a",
-      "bytes": 14834,
+      "sha256": "a8fb817db919e7f4214b3389cd2323d08ca345a2ab72ab3c55038f2d51d2d1b1",
+      "bytes": 25799,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousPublicSha256": "7ec80b8575a700b6a2628eb0322f2e770bb2284859f68ec5e0eb6530154a6699",
       "previousRevisionSha256": "7a1d72019db7cb6075d7c3a3bd4075f7c069d527b6e31d992a69333cb126b6c3",
@@ -4493,7 +4493,7 @@
       "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/2",
       "head": "fd4ad89fd6a2d89910082f9e9bd805cd675a602a"
     },
-    "currentLayoutPublication": "PENDING_FINAL_REVIEW_PREPUSH_AND_PUSH",
+    "currentLayoutPublication": "VERIFIED_PUBLIC_DRAFT_PR_AT_RECORDED_COMMIT",
     "review": {
       "date": "2026-10-10",
       "status": "INDEPENDENT_FINAL_DOCUMENTATION_DELTA_REVIEW_ACCEPTED",
@@ -4504,6 +4504,64 @@
       "checkedSubjects": 355,
       "scope": "Independent review of the actual paired reading delta, language paths, controller/tests, registry authority and preserved shared artifacts. Current metadata below is a faithful root-authored successor to that reviewed snapshot; final prepush and remote delivery remain separate."
     },
-    "publicationStateScope": "The pending publication value is the state at curation. Actual remote delivery is verified separately against the public branch and draft PR; it is not inferred from document creation."
+    "publicationStateScope": "This value records the verified earlier language-layout commit and draft PR. The later README revision has its own current source/curation record and requires a separate fresh prepush and remote verification.",
+    "verifiedLayoutCheckpoint": {
+      "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/3",
+      "head": "426854cb10791d38938e029230df24ae2c8e5c8d",
+      "tree": "57b389a79e86c1aea1207e43321809816a11c8dc",
+      "remoteFiles": 968,
+      "verifiedAt": "2026-10-10T02:43:11.965Z",
+      "allRemoteBlobIdentitiesMatch": true
+    }
+  },
+  "communityReadmeUpdate": {
+    "date": "2026-10-10",
+    "title": "白鹭引擎 Egret Engine 社区重建",
+    "foundingYear": 2013,
+    "founderStorySource": "Maintainer autobiographical statement and confirmed year correction",
+    "engineeringCheckpoints": [
+      "0.19.0",
+      "0.18.0",
+      "0.17.0",
+      "0.16.0",
+      "0.15.0",
+      "0.14.0",
+      "0.13.0",
+      "0.12.0",
+      "0.11.0",
+      "0.10.0",
+      "0.9.0",
+      "0.8.0",
+      "0.7.0",
+      "0.6.2",
+      "0.6.1",
+      "0.6.0",
+      "0.5.0",
+      "0.4.0",
+      "0.3.0",
+      "0.2.0",
+      "0.1.0"
+    ],
+    "historicalParagraphsRetained": true,
+    "productCodeChanged": false,
+    "review": {
+      "status": "INDEPENDENT_SCOPED_README_REVIEW_ACCEPTED",
+      "P1": 0,
+      "P2": 0,
+      "reportSha256": "3be23a76da9af623910653f8db768908e194a1a558177dd541f9f1ed91ecb0ae",
+      "reviewedReadmes": [
+        {
+          "path": "README.md",
+          "bytes": 28432,
+          "sha256": "dc2e5b61c3214cdf136ba576ffc574319569a7650d602bc82c8d22612008e105"
+        },
+        {
+          "path": "README.zh-CN.md",
+          "bytes": 25799,
+          "sha256": "a8fb817db919e7f4214b3389cd2323d08ca345a2ab72ab3c55038f2d51d2d1b1"
+        }
+      ],
+      "scope": "README pair, confirmed founder statement, source-backed bilingual Changelog, new navigation, preserved historical paragraphs and code fences only; later metadata is a root-authored successor."
+    }
   }
 }
