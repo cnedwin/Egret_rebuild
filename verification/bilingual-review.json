@@ -1234,5 +1234,32 @@
     "laterRootMetadataAttestation": true,
     "productExecutionByReviewer": false,
     "remoteDeliveryAccepted": false
+  },
+  "gameClockCuration": {
+    "engineeringPreview": "0.25.0",
+    "status": "ROOT_ACCEPTED_INDEPENDENT_SCOPED_PUBLIC_REVIEW",
+    "newPairs": [
+      {
+        "en": "knowledge-base/en/docs/game-clock-contract.md",
+        "zh": "knowledge-base/Cns/docs/游戏时间核心契约.md",
+        "kind": "public_reading"
+      },
+      {
+        "en": "knowledge-base/en/docs/game-clock-evidence.md",
+        "zh": "knowledge-base/Cns/docs/游戏时间核心证据.md",
+        "kind": "public_reading"
+      }
+    ],
+    "priorReviewsRetainOriginalScopes": true,
+    "executionAndDeliverySeparate": true,
+    "independentReview": {
+      "bytes": 1732,
+      "sha256": "60795d24e46921273540af14210eed875fe31ccbe816d2e1280b7cba8a1c34e8",
+      "status": "identity_only_not_distributed",
+      "scope": "Current game-clock paired readings and necessary community entries/guidance, bounded T2 counterexample, paired registries, saved evidence, source provenance and seven critical English comments. Separate independent core, type and integration reviews retain their own source/fixture limits; inventory totals are not blanket semantic acceptance."
+    },
+    "laterRootMetadataAttestation": true,
+    "productExecutionByReviewer": false,
+    "remoteDeliveryAccepted": false
   }
 }

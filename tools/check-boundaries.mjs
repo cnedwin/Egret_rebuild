@@ -296,6 +296,24 @@ const textEntries = [...meshEntries,
   ['runtime/text',runtimeText,'packages/runtime/dist/text/index'],
   ['engine/text',engineText,'packages/engine/dist/text'],
 ];
+// Engine-owned clock extends only the root type surface. Preserve every retained
+// reason above; admission and owner helpers remain same-package private details.
+const clockPublicTypes = ['GameClockOptions','GameClockState','GameClockTick','GameClockHandler','GameClock','GameClockSubscription'];
+const clockPrivate = ['admitGameClockOptions','createGameClockOwner','AdmittedGameClockOptions','GameClockContext','GameClockOwner','clockBrand','subscriptionBrand','createGameClock'];
+for (const [entry, values, emittedEntry] of [...textEntries, ['project',projectFacade,'packages/project/dist/index']]) {
+  const declaration = readFileSync(path.join(root,emittedEntry+'.d.ts'),'utf8');
+  const emitted = readFileSync(path.join(root,emittedEntry+'.js'),'utf8');
+  const source = declaration+'\n'+emitted;
+  for (const name of clockPrivate) if (name in values || new RegExp('\\b'+name+'\\b').test(source)) throw new Error(`${entry}: private clock authority leaked: ${name}`);
+  if (/["'][^"']*(?:^|\/)gameClock(?:\.js|["'])/.test(source)) throw new Error(`${entry}: private clock module leaked`);
+  if (entry !== 'root') {
+    for (const name of clockPublicTypes) if (name in values || new RegExp('\\b'+name+'\\b').test(source)) throw new Error(`${entry}: Engine-only clock type leaked: ${name}`);
+    if (/["'][^"']*(?:^|\/)gameClockTypes(?:\.js|["'])/.test(source)) throw new Error(`${entry}: Engine-only clock types module leaked`);
+  } else {
+    const clockPorts = [...declaration.matchAll(/export(\s+type)?\s*\{([^}]+)\}\s*from\s*["']([^"']+)["'];?/g)].filter(match => match[3] === './gameClockTypes.js');
+    if (clockPorts.length !== 1 || !clockPorts[0][1] || JSON.stringify(clockPorts[0][2].split(',').map(name=>name.trim()).sort()) !== JSON.stringify([...clockPublicTypes].sort()) || clockPublicTypes.some(name=>name in values)) throw new Error('root: exact clock type-only export surface mismatch');
+  }
+}
 for (const [entry,values,emittedEntry] of textEntries) {
   const declaration=readFileSync(path.join(root,emittedEntry+'.d.ts'),'utf8');
   const emitted=readFileSync(path.join(root,emittedEntry+'.js'),'utf8');
@@ -336,6 +354,19 @@ for (const file of [...files(path.join(root,'packages/runtime/src/text')), ...fi
   if (!file.endsWith('.ts') && !file.endsWith('.js')) continue;
   const raw=readFileSync(file,'utf8');
   if (/\/\/\/\s*<reference\s+(?:lib\s*=\s*["']dom(?:\.iterable)?["']|types\s*=\s*["']node["'])/i.test(raw)) throw new Error(`${path.relative(root,file)}: host ambient dependency`);
+}
+
+const clockTypesModule = await import(new URL('../packages/engine/dist/gameClockTypes.js',import.meta.url));
+if (Object.keys(clockTypesModule).length !== 0) throw new Error('engine: clock types emitted runtime values');
+const clockTypesDeclaration = readFileSync(path.join(root,'packages/engine/dist/gameClockTypes.d.ts'),'utf8');
+const clockDeclaredNames = [...clockTypesDeclaration.matchAll(/\bexport\s+(?:declare\s+)?(?:type|interface|function|const|class|enum)\s+(\w+)/g)].map(match=>match[1]).sort();
+if (JSON.stringify(clockDeclaredNames) !== JSON.stringify([...clockPublicTypes].sort())) throw new Error('engine: canonical clock type inventory mismatch');
+// Existing host timeout code remains outside this exact two-module clock scan.
+for (const file of ['packages/engine/src/gameClock.ts','packages/engine/src/gameClockTypes.ts','packages/engine/dist/gameClock.js','packages/engine/dist/gameClockTypes.js','packages/engine/dist/gameClock.d.ts','packages/engine/dist/gameClockTypes.d.ts']) {
+  const raw = readFileSync(path.join(root,file),'utf8');
+  const code = raw.replace(/\/\*[\s\S]*?\*\//g,'').replace(/\/\/[^\n]*/g,'');
+  if (/\b(?:Date|performance|requestAnimationFrame|cancelAnimationFrame|setInterval|clearInterval|setTimeout|clearTimeout)\b/.test(code)) throw new Error(`${file}: clock automatic timing dependency`);
+  if (/\/\/\/\s*<reference\s+(?:lib\s*=\s*["']dom(?:\.iterable)?["']|types\s*=\s*["']node["'])/i.test(raw)) throw new Error(`${file}: host ambient dependency`);
 }
 
 console.log(`Boundary check PASS: four private workspace packages, actual exports resolution, ${inspected} source/build/declaration files, DOM-free core and exact DOM-only web subtree without Node imports/globals.`);

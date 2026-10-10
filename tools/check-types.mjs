@@ -69,6 +69,19 @@ try {
   });
   console.log('Textured-frame individual diagnostic receipts: '+JSON.stringify(texturedReceipts));
 
+  // Clock additions retain the aggregate and all prior named diagnostic guards.
+  const expectedClock = raw.split(/\r?\n/).flatMap((line, index) => {
+    const match = line.match(/@ts-expect-error GAME_CLOCK_CASE ([\w-]+) TS(\d+)/);
+    return match ? [{name:match[1],file:'tests/types/invalid.generated.ts',line:index + 2,code:Number(match[2])}] : [];
+  });
+  if (expectedClock.length !== 21 || expectedClock.length !== (raw.match(/GAME_CLOCK_CASE/g) ?? []).length || new Set(expectedClock.map(item => item.name)).size !== expectedClock.length) throw new Error('Unclassified or duplicate clock negative fixture');
+  const clockReceipts = expectedClock.map(expectedCase => {
+    const atLocation = observedGeometry.filter(actual => actual.file === expectedCase.file && actual.line === expectedCase.line);
+    if (atLocation.length !== 1 || atLocation[0].code !== expectedCase.code) throw new Error(`Clock negative ${expectedCase.name}: expected one ${expectedCase.file}:${expectedCase.line} / TS${expectedCase.code}; got ${JSON.stringify(atLocation)}`);
+    return {name:expectedCase.name,expected:expectedCase,actual:atLocation[0]};
+  });
+  console.log('Clock individual unsuppressed diagnostic receipts: '+JSON.stringify(clockReceipts));
+
   console.log(`Type fixtures PASS: positive + ${expected} checked negative assertions (${count} actual compiler errors).`);
 } finally {
   rmSync(invalid, { force: true });
@@ -233,3 +246,24 @@ try {
   }
   console.log('Text raster fixtures PASS: exact explicit-entry DOM-free positive consumer, 18 ordinary and 9 isolated import/value diagnostics.');
 } finally { for(const config of textTypeConfigs)rmSync(config,{force:true}); }
+
+// Fixed isolated absent-clock imports supplement the retained import policies.
+const clockImportFile = 'tests/types/game-clock-import-negative.ts';
+const clockImportSource = readFileSync(path.join(root, clockImportFile), 'utf8');
+if (/@ts-(?:expect-error|ignore|nocheck)/.test(clockImportSource)) throw new Error('Clock import fixture contains suppression');
+const expectedClockImports = clockImportSource.split(/\r?\n/).flatMap((line,index) => {
+  const match = line.match(/^\/\/ GAME_CLOCK_IMPORT_CASE ([\w-]+) TS(\d+)$/);
+  return match ? [{name:match[1],file:clockImportFile,line:index+2,code:Number(match[2])}] : [];
+});
+if (expectedClockImports.length !== 10 || new Set(expectedClockImports.map(item=>item.name)).size !== 10) throw new Error('Clock import diagnostic inventory mismatch');
+const clockImportCheck = spawnSync(process.execPath, [compiler,'--project','tests/types/tsconfig.game-clock-import-negative.json','--pretty','false'], {cwd:root,encoding:'utf8'});
+process.stdout.write(clockImportCheck.stdout ?? ''); process.stderr.write(clockImportCheck.stderr ?? '');
+if (clockImportCheck.error) throw clockImportCheck.error;
+const observedClockImports = [...(clockImportCheck.stdout ?? '').matchAll(/^(.+)\((\d+),(\d+)\): error TS(\d+):/gm)].map(match=>({file:match[1].replaceAll('\\','/'),line:Number(match[2]),column:Number(match[3]),code:Number(match[4])}));
+if (clockImportCheck.status !== 1 || observedClockImports.length !== 10) throw new Error(`Clock imports expected 10 diagnostics, exit 1; got ${observedClockImports.length}, exit ${clockImportCheck.status}`);
+const clockImportReceipts = expectedClockImports.map(expectedCase => {
+  const atLocation = observedClockImports.filter(actual=>actual.file===expectedCase.file&&actual.line===expectedCase.line);
+  if (atLocation.length!==1 || atLocation[0].code!==expectedCase.code) throw new Error(`Clock import ${expectedCase.name}: expected one ${expectedCase.file}:${expectedCase.line}/TS${expectedCase.code}; got ${JSON.stringify(atLocation)}`);
+  return {name:expectedCase.name,expected:expectedCase,actual:atLocation[0]};
+});
+console.log('Clock import individual unsuppressed diagnostic receipts: '+JSON.stringify(clockImportReceipts));

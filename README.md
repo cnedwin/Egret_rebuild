@@ -21,6 +21,7 @@ These are engineering and knowledge-base checkpoints, newest first, rather than 
 | Checkpoint | Main problem addressed | Record |
 | --- | --- | --- |
 | Unreleased | English-first community entry, separate `en/` and `Cns/` knowledge-base editions, English filenames, founder introduction and bilingual Changelog. Simplified document entries and grouped historical research for easier navigation. | [Details](knowledge-base/en/docs/documentation-layout.md) |
+| 0.25.0 | Engine-owned explicit game time in seconds, bounded Scope-owned callbacks and phase-safe cleanup; callers retain control of rendering and sequence sampling. Public behavior, strict types, source controls and the 2,076-test core run have separately recorded cutoffs. | [Details](knowledge-base/en/docs/game-clock-evidence.md) |
 | 0.24.0 | DOM-free text-provider orchestration, fixed resource slots and budgets, genuine Texture leases and terminal cleanup. Six core findings closed; strict types and complete existing core-source verification passed, including 2,037/2,037 tests, with earlier failures preserved. Final prepush and delivery are recorded separately in delivery verification. | [Details](knowledge-base/en/docs/text-raster-t1-evidence.md) |
 | 0.23.0 | Owned textured geometry and Mesh2D, immutable textured frames and explicit WebGPU execution. Fixed desktop pixels, copied controls and affected legacy routes have bounded independent review; public reproduction and final delivery are separate. | [Details](knowledge-base/en/docs/textured-profile-cpu-evidence.md) |
 | 0.22.0 | Receiver-local content bounds: owned readonly results, explicit budgets and ordinary binary64 nonconservative measurement. Actual checks and affected desktop scope are recorded separately. | [Details](knowledge-base/en/docs/display-content-bounds-contract.md) |
@@ -55,6 +56,7 @@ These are engineering and knowledge-base checkpoints, newest first, rather than 
 | 检查点 | 主要解决的问题 | 记录 |
 | --- | --- | --- |
 | 未发行 | 英文优先的社区入口、独立的 `en/` 与 `Cns/` 知识库、英文文件名、创始人介绍与双语 Changelog。精简文档入口，集中历史研究，便于查阅。 | [详情](knowledge-base/Cns/docs/documentation-layout.md) |
+| 0.25.0 | Engine 自有的显式秒制游戏时间、有界 Scope 回调及阶段安全清理；渲染与序列采样由调用者显式控制。公共行为、严格类型、源码对照及 2,076 项核心测试分别保留验证范围。 | [详情](knowledge-base/Cns/docs/游戏时间核心证据.md) |
 | 0.24.0 | 无 DOM 文字 provider 编排、固定资源槽位与预算、真实 Texture 租约及终结清理。六项核心问题关闭，严格类型及完整既有核心源码验证通过，包括 2,037/2,037 测试，并保留此前失败。最终 prepush 与交付在交付验证中分别记录。 | [详情](knowledge-base/Cns/docs/文字栅格T1证据.md) |
 | 0.23.0 | 自有纹理几何与 Mesh2D、不可变纹理帧及显式 WebGPU 执行。固定桌面像素、复制对照与受影响旧链路分别完成有界独立审阅；公开复现与最终交付单独记录。 | [详情](knowledge-base/Cns/docs/纹理Profile的CPU证据与待完成门禁.md) |
 | 0.22.0 | 接收者局部内容边界：自有只读结果、显式预算与普通 binary64 非保守测量；实际检查及受影响桌面范围分别记录。 | [详情](knowledge-base/Cns/docs/显示内容边界契约.md) |
@@ -84,7 +86,7 @@ These are engineering and knowledge-base checkpoints, newest first, rather than 
 
 ## Current scope and participation
 
-The current engineering preview is **0.24.0**. We are rebuilding an open-source game engine and creation workflow for people who primarily use AI to make games, initially targeting complex 2D UI and lightweight 3D. The repository contains an experimental core and a structured knowledge base. The complete engine, production platform hosts, editor, Agent services, target-device performance and complete legacy-project migration still require implementation or acceptance.
+The current engineering preview is **0.25.0**. We are rebuilding an open-source game engine and creation workflow for people who primarily use AI to make games, initially targeting complex 2D UI and lightweight 3D. The repository contains an experimental core and a structured knowledge base. The complete engine, production platform hosts, editor, Agent services, target-device performance and complete legacy-project migration still require implementation or acceptance.
 
 Contributors worldwide are welcome to help with implementation, reproducible bugs and fixes, documentation and translations, API proposals, and game or migration samples they own or are authorized to share. Start with the [contribution guide](CONTRIBUTING.md), [English knowledge base](knowledge-base/en/README.md), [Chinese knowledge base](knowledge-base/Cns/README.md), [document index](DOCUMENTATION.md), [source records](source-origin.json) and [acknowledgements](ACKNOWLEDGEMENTS.md).
 

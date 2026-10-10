@@ -3,6 +3,7 @@ import type { TexturedFrameProfile2D } from '@egret/contracts';
 import { EgretError } from '@egret/runtime';
 import type { CapturedEngineFramePorts, Engine, EngineOptions } from './Engine.js';
 import { startEngine } from './startEngine.js';
+import { admitGameClockOptions } from './gameClock.js';
 
 /** Exact negotiation completes all successful port reads before semantics. */
 export async function createEngineForProfile(options: EngineOptions, profile: TexturedFrameProfile2D): Promise<Engine> {
@@ -25,10 +26,14 @@ export async function createEngineForProfile(options: EngineOptions, profile: Te
   const stableOptions: EngineOptions = { host, ...(diagnostic === undefined ? {} : { onDiagnostic: diagnostic }) };
   const timeoutMs = options.shutdownTimeoutMs ?? 1000;
   if (!Number.isFinite(timeoutMs) || !Number.isInteger(timeoutMs) || timeoutMs <= 0) throw new EgretError('INVALID_TIMEOUT');
+  let clockValue: unknown;
+  try { clockValue = options.clock; }
+  catch (cause) { throw new EgretError('CLOCK_OPTIONS_INVALID', { cause }); }
+  const clockOptions = admitGameClockOptions(clockValue);
   const ports: CapturedEngineFramePorts = {
     legacy: legacy as CapturedEngineFramePorts['legacy'],
     textured: textured as CapturedEngineFramePorts['textured'],
     profile,
   };
-  return startEngine(stableOptions, timeoutMs, ports);
+  return startEngine(stableOptions, timeoutMs, ports, clockOptions);
 }

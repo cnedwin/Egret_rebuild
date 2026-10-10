@@ -1065,11 +1065,47 @@
         "evidence/text-raster-t1-verification.json"
       ],
       "doc": "en/docs/text-raster-t1-contract.md"
+    },
+    {
+      "id": "V026",
+      "kind": "bounded_runtime_increment",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R011",
+        "R015",
+        "R016",
+        "R019"
+      ],
+      "dependsOn": [
+        "V010",
+        "V011",
+        "V021"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "explicit_engine_owned_game_clock_and_scope_subscriptions",
+      "acceptance": "bounded_public_behavior_types_lifetimes_and_source_controls_publication_separate",
+      "title": "Explicit game time and Scope-owned subscriptions",
+      "acceptanceCriteria": [
+        "The DOM-free Engine clock advances explicitly; paused gaps do not become game time, and refused inputs preserve accepted state.",
+        "Authentic same-Engine Scopes own subscriptions; callbacks run synchronously after commit, and resource/host cleanup waits for the active callback to unwind.",
+        "Public behavior, genuine SequencePlayer/resource integration, strict types and selected source controls retain separate actual scopes and earlier failures.",
+        "Complete core-source verification and the current supplemented fixture are recorded separately; bilingual content, provenance, critical English comments, final prepush and remote delivery receive separate review."
+      ],
+      "artifacts": [
+        "en/docs/game-clock-contract.md",
+        "en/docs/game-clock-evidence.md",
+        "evidence/game-clock-verification.json"
+      ],
+      "doc": "en/docs/game-clock-contract.md"
     }
   ],
   "_localization": {
     "canonicalSource": "交付.json",
-    "canonicalSha256": "8402b0712c53242377c62c1236168e5810a51780d60405df0e94984a4b645120",
+    "canonicalSha256": "7d6360f120241b6e261035c78554d7ee677c96092ad803bcfc0166ed789df309",
     "role": "read_only_translation",
     "language": "en"
   }

@@ -371,3 +371,34 @@ const profilePositiveFactory: Promise<ProfileEngine> = ProfileFactory({host: pro
 const profilePositiveContent: ProfileContent = ProfileCollect(profilePositiveStage);
 void profileExhaustion; void profileLegacyExhaustion; void profilePositiveRendered;
 void profilePositiveHostReturn; void profilePositiveFactory; void profilePositiveContent;
+
+// First-party clock consumer authored from revision-1 API, not private owner ports.
+import type {GameClockOptions, GameClockState, GameClockTick, GameClockHandler, GameClock, GameClockSubscription, Engine as ClockEngine, EngineOptions as ClockEngineOptions, Scope as ClockScope} from '@egret/engine';
+type ClockEqual<A, B> = ProfileEqual<A, B>;
+type ClockAssert<T extends true> = T;
+type ClockOptionsExact = ClockAssert<ClockEqual<GameClockOptions, {readonly maxDeltaSeconds?: number}>>;
+type ClockStatesExact = ClockAssert<ClockEqual<GameClockState, 'running' | 'paused' | 'closed'>>;
+type ClockTickExact = ClockAssert<ClockEqual<GameClockTick, {readonly tickId: number; readonly elapsedSeconds: number; readonly deltaSeconds: number}>>;
+type ClockHandlerExact = ClockAssert<ClockEqual<GameClockHandler, (tick: GameClockTick) => undefined>>;
+type ClockFields = {readonly state: GameClockState; readonly elapsedSeconds: number; readonly tickId: number; readonly maxDeltaSeconds: number; onTick(scope: ClockScope, handler: GameClockHandler): GameClockSubscription; pause(): void; resume(): void};
+type ClockKeysExact = ClockAssert<ClockEqual<Extract<keyof GameClock, string>, keyof ClockFields>>;
+type ClockFieldsExact = ClockAssert<ClockEqual<Pick<GameClock, keyof ClockFields>, ClockFields>>;
+type ClockBrandPresent = ClockAssert<ClockEqual<Extract<keyof GameClock, symbol> extends never ? false : true, true>>;
+type ClockBrandExact = ClockAssert<ClockEqual<GameClock[Extract<keyof GameClock, symbol>], true>>;
+type ClockSubscriptionFields = {readonly isDisposed: boolean; dispose(): void};
+type ClockSubscriptionKeys = ClockAssert<ClockEqual<Extract<keyof GameClockSubscription, string>, keyof ClockSubscriptionFields>>;
+type ClockSubscriptionExact = ClockAssert<ClockEqual<Pick<GameClockSubscription, keyof ClockSubscriptionFields>, ClockSubscriptionFields>>;
+type ClockSubscriptionBrandPresent = ClockAssert<ClockEqual<Extract<keyof GameClockSubscription, symbol> extends never ? false : true, true>>;
+type ClockSubscriptionBrandExact = ClockAssert<ClockEqual<GameClockSubscription[Extract<keyof GameClockSubscription, symbol>], true>>;
+type ClockEngineFieldExact = ClockAssert<ClockEqual<Pick<ClockEngine, 'clock'>, {readonly clock: GameClock}>>;
+type ClockAdvanceExact = ClockAssert<ClockEqual<ClockEngine['advanceTime'], (sourceSeconds: number) => GameClockTick | undefined>>;
+type ClockEngineOptionExact = ClockAssert<ClockEqual<Pick<ClockEngineOptions, 'clock'>, {readonly clock?: GameClockOptions}>>;
+declare const clockConsumerEngine: ClockEngine;
+const clockConsumerScope = clockConsumerEngine.createScope();
+const clockConsumerHandler: GameClockHandler = (tick) => { const seconds: number = tick.elapsedSeconds; void seconds; return undefined; };
+const clockConsumerSubscription: GameClockSubscription = clockConsumerEngine.clock.onTick(clockConsumerScope, clockConsumerHandler);
+const clockOwnedSubscription: GameClockSubscription = clockConsumerScope.use(clockConsumerSubscription);
+const clockAdvancedTick: GameClockTick | undefined = clockConsumerEngine.advanceTime(10);
+const clockAfterAdvanceCapture: RenderFrame2D = clockConsumerEngine.captureFrame({width: 1, height: 1});
+const clockAfterAdvanceRender: RenderFrame2D = clockConsumerEngine.renderFrame({width: 1, height: 1});
+void clockOwnedSubscription; void clockAdvancedTick; void clockAfterAdvanceCapture; void clockAfterAdvanceRender;

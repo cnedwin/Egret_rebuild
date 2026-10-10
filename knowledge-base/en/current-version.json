@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "version": "0.13.0",
-  "updatedAt": "2026-10-10",
+  "updatedAt": "2026-10-11",
   "title": "Egret Engine Rebuild",
   "stage": "independent_browser_webgpu_rectangle_checkpoint",
   "publication": "development_preview",
@@ -70,7 +70,9 @@
     "displayCoordinateQueryContract": "en/docs/display-coordinate-query-contract.md",
     "displayCoordinateQueryEvidence": "en/docs/display-coordinate-query-evidence.md",
     "displayContentBoundsContract": "en/docs/display-content-bounds-contract.md",
-    "displayContentBoundsEvidence": "en/docs/display-content-bounds-evidence.md"
+    "displayContentBoundsEvidence": "en/docs/display-content-bounds-evidence.md",
+    "gameClockContract": "en/docs/game-clock-contract.md",
+    "gameClockEvidence": "en/docs/game-clock-evidence.md"
   },
   "architectureContractProbesRun": true,
   "browserApiPixelProbesRun": true,
@@ -256,7 +258,7 @@
   },
   "_localization": {
     "canonicalSource": "当前版本.json",
-    "canonicalSha256": "afbc4644fdd270e165e9d6e43e2d0b420ab9ee1d70b2fed409c80c9814ee740c",
+    "canonicalSha256": "44eaee8e2b70784d3d5f9a2273856a6c0ff49112148db17291e3c4299c5b7f86",
     "role": "read_only_translation",
     "language": "en"
   },
@@ -539,7 +541,7 @@
     "contract": "en/docs/display-content-bounds-contract.md",
     "evidence": "en/docs/display-content-bounds-evidence.md"
   },
-  "latestEngineeringPreview": "0.24.0",
+  "latestEngineeringPreview": "0.25.0",
   "texturedMesh2DImplementation": {
     "version": "0.23.0",
     "status": "bounded_increment_implemented",
@@ -596,5 +598,32 @@
       "remote": "recorded_separately_in_delivery_verification",
       "futurePassInferred": false
     }
+  },
+  "gameClockImplementation": {
+    "version": "0.25.0",
+    "status": "bounded_explicit_clock_increment_implemented",
+    "deliverable": "V026",
+    "publicBehavior": {
+      "tests": 21,
+      "pass": 21,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "wholeCore": {
+      "tests": 2076,
+      "pass": 2076,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "wholeCoreFixtureScope": "prior_unsupplemented_fixture_verify_r1",
+    "currentSupplementedFixtureScope": "public_r3_only_until_fresh_complete_prepush",
+    "automaticHostScheduling": false,
+    "browserPixelAcceptance": false,
+    "performanceAcceptance": false,
+    "publication": "PENDING_SEPARATE_ACTUAL_RECORD"
   }
 }

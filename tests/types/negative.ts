@@ -348,3 +348,56 @@ negativeProfileFrame.frameId = 2;
 const negativeProfileAsyncPort: NegativeProfileHost['renderTexturedFrame'] = async (_frame: NegativeProfileFrame) => undefined;
 void negativeProfilePlainFrame; void negativeProfileLegacyFrame; void negativeProfileLegacyCommand;
 void negativeProfileMissingTables; void negativeProfileAsyncPort;
+
+// Predictions are frozen before compilation and checked individually unsuppressed.
+import * as ClockNegativePublic from '@egret/engine';
+import type {GameClock as NegativeClock, GameClockSubscription as NegativeClockSubscription, GameClockTick as NegativeClockTick, GameClockOptions as NegativeClockOptions} from '@egret/engine';
+declare const negativeClock: NegativeClock;
+declare const negativeClockSubscription: NegativeClockSubscription;
+declare const negativeClockTick: NegativeClockTick;
+declare const negativeClockOptions: NegativeClockOptions;
+declare const negativeClockEngine: Engine;
+declare const negativeClockScope: Scope;
+// @ts-expect-error GAME_CLOCK_CASE readonly-engine-clock TS2540
+negativeClockEngine.clock = negativeClock;
+// @ts-expect-error GAME_CLOCK_CASE readonly-state TS2540
+negativeClock.state = 'paused';
+// @ts-expect-error GAME_CLOCK_CASE readonly-elapsed TS2540
+negativeClock.elapsedSeconds = 1;
+// @ts-expect-error GAME_CLOCK_CASE readonly-tick-id TS2540
+negativeClock.tickId = 1;
+// @ts-expect-error GAME_CLOCK_CASE readonly-limit TS2540
+negativeClock.maxDeltaSeconds = 1;
+// @ts-expect-error GAME_CLOCK_CASE readonly-options TS2540
+negativeClockOptions.maxDeltaSeconds = 1;
+// @ts-expect-error GAME_CLOCK_CASE readonly-tick TS2540
+negativeClockTick.deltaSeconds = 1;
+// @ts-expect-error GAME_CLOCK_CASE readonly-disposal TS2540
+negativeClockSubscription.isDisposed = true;
+// @ts-expect-error GAME_CLOCK_CASE wrong-scope TS2740
+negativeClock.onTick({}, () => undefined);
+// @ts-expect-error GAME_CLOCK_CASE promise-handler TS2322
+negativeClock.onTick(negativeClockScope, async () => undefined);
+// @ts-expect-error GAME_CLOCK_CASE no-public-advance TS2339
+negativeClock.advance(1);
+// @ts-expect-error GAME_CLOCK_CASE no-public-close TS2339
+negativeClock.close();
+// @ts-expect-error GAME_CLOCK_CASE no-clock-scope-adoption TS2345
+negativeClockScope.use(negativeClock);
+// @ts-expect-error GAME_CLOCK_CASE no-forged-clock TS2741
+const negativeClockForgery: NegativeClock = {state: 'running', elapsedSeconds: 0, tickId: 0, maxDeltaSeconds: 0.25, onTick: () => negativeClockSubscription, pause() {}, resume() {}};
+// @ts-expect-error GAME_CLOCK_CASE no-forged-subscription TS2741
+const negativeClockSubscriptionForgery: NegativeClockSubscription = {isDisposed: false, dispose() {}};
+// @ts-expect-error GAME_CLOCK_CASE options-type-only TS2339
+ClockNegativePublic.GameClockOptions;
+// @ts-expect-error GAME_CLOCK_CASE state-type-only TS2339
+ClockNegativePublic.GameClockState;
+// @ts-expect-error GAME_CLOCK_CASE tick-type-only TS2339
+ClockNegativePublic.GameClockTick;
+// @ts-expect-error GAME_CLOCK_CASE handler-type-only TS2339
+ClockNegativePublic.GameClockHandler;
+// @ts-expect-error GAME_CLOCK_CASE clock-type-only TS2339
+ClockNegativePublic.GameClock;
+// @ts-expect-error GAME_CLOCK_CASE subscription-type-only TS2339
+ClockNegativePublic.GameClockSubscription;
+void negativeClockForgery; void negativeClockSubscriptionForgery;

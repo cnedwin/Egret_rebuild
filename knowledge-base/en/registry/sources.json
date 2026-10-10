@@ -1217,11 +1217,23 @@
       "scope": "Independent request/plan/cache source, actual genuine-resource literal-provider controls, read-only private bookkeeping observations, strict type and source-boundary checks, and preserved initial failures and scoped repairs.",
       "limit": "Literal RGBA bytes are not font pixels; logical charges and retained references are not measured physical memory. No browser font, TextField, phone, Native SDK, performance, full Spine or complete migration acceptance. Current public prepush and delivery have separate records.",
       "doc": "en/docs/text-raster-t1-evidence.md"
+    },
+    {
+      "id": "S075",
+      "type": "first_party_game_clock_behavior_type_lifetime_and_source_evidence",
+      "researchCheckedAt": "2026-10-11",
+      "artifacts": [
+        "evidence/game-clock-verification.json"
+      ],
+      "title": "First-party explicit game-time integration evidence",
+      "scope": "Independent specification, implementation and review; public clock behavior, genuine Scope/resource/sequence integration, strict types, selected boundary controls and complete existing core-source verification.",
+      "limit": "Explicit CPU time integration does not establish automatic host scheduling, browser pixels, phones, physical memory or performance. Complete UI, Spine, 3D, Native SDK and migration retain separate obligations; final publication checks and remote delivery are recorded separately.",
+      "doc": "en/docs/game-clock-evidence.md"
     }
   ],
   "_localization": {
     "canonicalSource": "来源.json",
-    "canonicalSha256": "e773d8fd31e4f0c145ac129f5a41750fb04621de43fd73c887d8091c387c996d",
+    "canonicalSha256": "afa0a47a73149338074e56a013e987644d58e4b8f0e0d7e0b3b96ebc9c036e83",
     "role": "read_only_translation",
     "language": "en"
   }

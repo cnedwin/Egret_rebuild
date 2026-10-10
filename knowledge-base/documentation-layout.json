@@ -36,8 +36,8 @@
       "action": "move-pair",
       "previousZhSha256": "9de14fd2a1e74069ec8718ebaa0d39a13afce4b836a2eba5bb521c94f1df5dda",
       "previousEnSha256": "f7feb36d983e8da309bbe161a51b398c7233e1cac9678572fc8ce0f2941af2b7",
-      "currentZhSha256": "479d4543923b1955e74fa015e6efa007e566c197c43dd869fea5e7a130cd6f46",
-      "currentEnSha256": "845f7f116bd769179f6d558e1dd9820434eed10ca02ac05d245c699f6d2a81b9"
+      "currentZhSha256": "d090ef310eb4b69d3eecb09cbffaecf6dccace78f522e1776f278a3e21e4c9e1",
+      "currentEnSha256": "dc7bbdf2e9f4c77dc2d28a1423245b646aa065772e0f0e6ca137e8899e003951"
     },
     {
       "oldZh": "DOCUMENTATION.md",
@@ -84,8 +84,8 @@
       "action": "move-pair",
       "previousZhSha256": "f43625255269c8801af0929179a9aab32cbca58094e4a842797e39171fc549b0",
       "previousEnSha256": "e8b100ccbd9d0fb99237a564f484f7fa6dbf008191570fa58f3e481c05c3e9f9",
-      "currentZhSha256": "0c125180412d12efa3b1e6dcb3eab33588d0dea18661414795c302cf98bcb14a",
-      "currentEnSha256": "9aa80eb773b33c10a78dfafaab2d88c8b356732ac490b0d6ec206caa13751dc5"
+      "currentZhSha256": "742b3aeb4220628975cb6edfdcfc95dfab3ef6f77f843d349fb68cc0a9b7a580",
+      "currentEnSha256": "f6829f7e589b494fe68e32920c4aa2333db610eadf16c0e0b2188ee6c78d349b"
     },
     {
       "oldZh": "knowledge-base/CONTRIBUTING.md",
@@ -840,8 +840,8 @@
       "action": "move-pair",
       "previousZhSha256": "372e5b07d4980eb45d8338424c8d970b7725e324e6b3397916944b0529c55ec7",
       "previousEnSha256": "ed88646659467d718a30c3bfff14b41c28debbcb786e7bf816ee68819f612887",
-      "currentZhSha256": "baee2b04f6ee7b519940d8031014f18824f0d724e81299d984272ec2c8685cda",
-      "currentEnSha256": "bf59e5620eea24a29f08b587de087f2875c7aa64341c743b751800dbe5bfba2f"
+      "currentZhSha256": "7228bb49d8352d7a361512a246afd2fb2b8f3239d0f6fbed17bbb6107784045d",
+      "currentEnSha256": "76ae02bae0c3eecaadf6de8c8454ca0ee6e72fa9a99b9317d8898f6348972b21"
     },
     {
       "oldZh": "knowledge-base/templates/实现来源记录.md",
@@ -960,8 +960,8 @@
       "action": "move-pair",
       "previousZhSha256": "803a40dd8bfd0f98ade51c8ba736790509aae12a6e045a8ea688b3ff5d01cdcf",
       "previousEnSha256": "40a2ef2f686aba4a10279c417dfe17879bb6396b3b80dd75b26bd09c87d665f9",
-      "currentZhSha256": "643e6b57af9cade5bcc3a1c7d0087ce5cf20c321c80fbbb229f9e9b1242c4e63",
-      "currentEnSha256": "7c3b2eda11152baf512613b9ed1f060bc2ed9ecf24f233c8875b4b6806068ea2"
+      "currentZhSha256": "fdfc7c852a0b1ad226ce3a52bbdbf66bc43f956f53bb150ee419b07ac34810c1",
+      "currentEnSha256": "db6abbbedfc1817c84cff428c9be88fdd343465fc6ca237d88c3f3613d9751b3"
     },
     {
       "oldZh": "knowledge-base/docs/WebGPU矩形执行合同.md",
@@ -1544,8 +1544,24 @@
       "newEn": "knowledge-base/en/docs/text-raster-t1-evidence.md",
       "kind": "public_reading",
       "action": "new-first-party-pair",
-      "currentZhSha256": "be97e15c6a5b3331f8fc9a7a7bd2d3004c3ddef5d51947cfa8f0262a6c32fcc0",
-      "currentEnSha256": "1de307d23447f43d8e69cc8e8a835172d71e9b16500839c62a6817af14ccdf24"
+      "currentZhSha256": "0950e6c3c48a276e7aadbf19125f2520cbb1a9bcb5dd112efb51937e5f031010",
+      "currentEnSha256": "a92f10099e17c4cc75888a19b4480034eb9b8f2c66231706214a89462cbc632c"
+    },
+    {
+      "newZh": "knowledge-base/Cns/docs/游戏时间核心契约.md",
+      "newEn": "knowledge-base/en/docs/game-clock-contract.md",
+      "kind": "public_reading",
+      "action": "new-first-party-pair",
+      "currentZhSha256": "fc67d70a95abeb696c248bf98e55dc0d3789dffc1f0f5bb12ed5ed4478fa2e8c",
+      "currentEnSha256": "7f0a0024b12c9531fd4092443f1e7c386bdaef1eef77acb52c96da9a56c1ae68"
+    },
+    {
+      "newZh": "knowledge-base/Cns/docs/游戏时间核心证据.md",
+      "newEn": "knowledge-base/en/docs/game-clock-evidence.md",
+      "kind": "public_reading",
+      "action": "new-first-party-pair",
+      "currentZhSha256": "b0c1081871ebc4a3a45ac3287cb7e67297c8bc8ed3de57d8ef28ef7148e68b02",
+      "currentEnSha256": "fe0838db5ff368aa94e2289055b35cf9408b25341878f2b30905db01a0fd6682"
     }
   ],
   "registries": [

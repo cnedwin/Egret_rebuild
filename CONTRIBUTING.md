@@ -20,6 +20,8 @@ Use fixed Node.js 24.19.0, pnpm 11.25.0, and TypeScript 7.0.2. After `pnpm insta
 
 The existing prototype baseline consists of 44/44 behavioral checks and 11 negative type assertions, limited to CPU and a simulated host. Verify real GPU, Native, hosts, performance, and CI separately. Package manifest `private: true`, version 0.0.0, exports, and dependency direction belong to the current checking contract; explain the effects of upgrades or publication-setting changes separately.
 
+For game-clock changes, build through the normal verification flow, then use `node --test tests/game-clock.test.mjs` for public behavior and `node --test tests/game-clock-boundaries.test.mjs` for baseline-first source controls. Freeze literal source seconds, callback order, genuine Scope/resource ownership and cleanup causes before running. Preserve existing failure records and distinguish the complete core run from a later changed fixture. CPU clock checks do not establish browser/GPU pixels, performance or automatic animation; the mandatory prepush and affected browser policies below still apply. Read the [clock contract](knowledge-base/en/docs/game-clock-contract.md) and [evidence](knowledge-base/en/docs/game-clock-evidence.md).
+
 ## Publishable materials
 
 Submit distributable code, samples, and technical summaries. Contributions must exclude private original packages, credentials, personal data, and content lacking publication authorization. Present historical research through necessary source categories and technical conclusions. See the [knowledge-base contribution guide](knowledge-base/en/CONTRIBUTING.md) and [independent implementation policy](knowledge-base/en/docs/independent-implementation-and-dependency-policy.md) for details.

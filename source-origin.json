@@ -307,16 +307,16 @@
     {
       "path": "CONTRIBUTING.md",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "sha256": "845f7f116bd769179f6d558e1dd9820434eed10ca02ac05d245c699f6d2a81b9",
-      "bytes": 6900,
+      "sha256": "dc7bbdf2e9f4c77dc2d28a1423245b646aa065772e0f0e6ca137e8899e003951",
+      "bytes": 7643,
       "previousRevisionSha256": "cfd1f60cfae8c262a8897e78b542e7f3036c3d492b5bbab79bdd80be80677e4d",
       "previousLayoutPath": "CONTRIBUTING.en.md",
       "previousLayoutSha256": "ea91269863610b03cc682a3656d77b55325631c6b897efb0c6bcb534d5ac5fee"
     },
     {
       "path": "CONTRIBUTING.zh-CN.md",
-      "sha256": "479d4543923b1955e74fa015e6efa007e566c197c43dd869fea5e7a130cd6f46",
-      "bytes": 5451,
+      "sha256": "d090ef310eb4b69d3eecb09cbffaecf6dccace78f522e1776f278a3e21e4c9e1",
+      "bytes": 6116,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousPublicSha256": "da6292f0408cc88f776b7d113924b364dd045b94d3a7541e85d71e1964ed4dae",
       "previousRevisionSha256": "373de5c518c0208d972ceef4c331d8ae81853102ca6aee8dbd1f90064c57bec8",
@@ -505,8 +505,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/CHANGELOG.md",
-      "bytes": 22157,
-      "sha256": "0c125180412d12efa3b1e6dcb3eab33588d0dea18661414795c302cf98bcb14a"
+      "bytes": 23311,
+      "sha256": "742b3aeb4220628975cb6edfdcfc95dfab3ef6f77f843d349fb68cc0a9b7a580"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1039,14 +1039,14 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/README.md",
-      "bytes": 4871,
-      "sha256": "baee2b04f6ee7b519940d8031014f18824f0d724e81299d984272ec2c8685cda"
+      "bytes": 5264,
+      "sha256": "7228bb49d8352d7a361512a246afd2fb2b8f3239d0f6fbed17bbb6107784045d"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/registry/交付.json",
-      "bytes": 42584,
-      "sha256": "8402b0712c53242377c62c1236168e5810a51780d60405df0e94984a4b645120"
+      "bytes": 44043,
+      "sha256": "7d6360f120241b6e261035c78554d7ee677c96092ad803bcfc0166ed789df309"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1063,14 +1063,14 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/registry/来源.json",
-      "bytes": 71075,
-      "sha256": "e773d8fd31e4f0c145ac129f5a41750fb04621de43fd73c887d8091c387c996d"
+      "bytes": 71844,
+      "sha256": "afa0a47a73149338074e56a013e987644d58e4b8f0e0d7e0b3b96ebc9c036e83"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/registry/需求.json",
-      "bytes": 13049,
-      "sha256": "977c481e6a399b2ccc7cf3df22a20ff945aa3be01417ae5e7635e727f8e05e35"
+      "bytes": 13161,
+      "sha256": "64165b373e75339cca05327355f2ec5dd2d71d017eec2b116ab17777739203f5"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1099,14 +1099,14 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/当前版本.json",
-      "bytes": 26957,
-      "sha256": "afbc4644fdd270e165e9d6e43e2d0b420ab9ee1d70b2fed409c80c9814ee740c"
+      "bytes": 27798,
+      "sha256": "44eaee8e2b70784d3d5f9a2273856a6c0ff49112148db17291e3c4299c5b7f86"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
-      "bytes": 110266,
-      "sha256": "b3f2617b65ae3c9de3796d8759659dd70203af1d13f671f9d315e47ff47288b6"
+      "bytes": 111074,
+      "sha256": "1739c64432d75651314ccae3c2e778983672e4fc24a6dab4dac99588e54b3080"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1135,8 +1135,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/CHANGELOG.md",
-      "bytes": 27499,
-      "sha256": "9aa80eb773b33c10a78dfafaab2d88c8b356732ac490b0d6ec206caa13751dc5"
+      "bytes": 28807,
+      "sha256": "f6829f7e589b494fe68e32920c4aa2333db610eadf16c0e0b2188ee6c78d349b"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1147,8 +1147,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/current-version.json",
-      "bytes": 27434,
-      "sha256": "c280932a615eff65d07c3a0b5597d11843d9de716c9c00f136688c558179d466"
+      "bytes": 28307,
+      "sha256": "8213effd8ba373955a4e0bcdd2bc759b64328aa0ad6e8d7b23b147d431f7428b"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1675,8 +1675,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/README.md",
-      "bytes": 5802,
-      "sha256": "bf59e5620eea24a29f08b587de087f2875c7aa64341c743b751800dbe5bfba2f"
+      "bytes": 6214,
+      "sha256": "76ae02bae0c3eecaadf6de8c8454ca0ee6e72fa9a99b9317d8898f6348972b21"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1687,8 +1687,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/registry/deliverables.json",
-      "bytes": 45942,
-      "sha256": "cfb6a81325fc9c5146dcd4a0f98b955cf95e679edca3786b343ec0ae4dff8db6"
+      "bytes": 47515,
+      "sha256": "4cd89614c561621ffeb746e72297d51a97526b2dcff9bddf4f952f98b5a82e1c"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1699,14 +1699,14 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/registry/requirements.json",
-      "bytes": 15140,
-      "sha256": "f367cb8aaa56bf142892e7c3f2102f95ab989bdccbb5d0b201cda0446c4d031c"
+      "bytes": 15252,
+      "sha256": "f9ba06ca6202c28a2657ac017f3100bbf27596de803149239e7c1c1448b3883b"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/registry/sources.json",
-      "bytes": 78390,
-      "sha256": "c6650bf77d95df1bd5f363546a081af2abeb6319313c9acfdba4c37fa7fc924e"
+      "bytes": 79268,
+      "sha256": "0d1baa0ac7e6a51d31fe43f4be13dd6b2ea6aab6522d28dadb3957d08739f71d"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1768,8 +1768,8 @@
     {
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "path": "localization.json",
-      "sha256": "6cb324ab69f4f8aef7599311bdce14c9cf1aa1cf5f0a2ef879d027c024256554",
-      "bytes": 170674,
+      "sha256": "ae2e0061fcdf9e2bbc8f989c630447a08d7d252b8aa0483d81151c0ca6e36ea8",
+      "bytes": 173446,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123"
@@ -1964,8 +1964,8 @@
     },
     {
       "path": "packages/engine/src/createEngine.ts",
-      "sha256": "99d4f442f1b8c0eb19928e71896e46aec83de2458d2fa9516b5b10b23951589b",
-      "bytes": 1137,
+      "sha256": "626ab89ddf8ecfb248e6ef62e5c088a9439d78657b6e005e23e7da9fedd6b0cc",
+      "bytes": 1408,
       "originalSha256": "6298922aa970b883fd5f84a098a44d5d4654736446709856381416f182e0aaf3",
       "originRole": "English comment-only projection; exact baseline restoration proven",
       "previousPublicSha256": "6298922aa970b883fd5f84a098a44d5d4654736446709856381416f182e0aaf3",
@@ -1975,8 +1975,8 @@
     },
     {
       "path": "packages/engine/src/Engine.ts",
-      "sha256": "ede0be39736301fb961177463384661913f9a4171b6e1677216f4fc924fb5f6e",
-      "bytes": 10186,
+      "sha256": "f02f188886c6acd6436b638838703ed52f43c7554f76e1e5dd544ce25ae32724",
+      "bytes": 11513,
       "originalSha256": "d5b4fcfc5bcf921d6b75aa4a33d7e71412595e8e377e5ff9b186b19ec6868f58",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
       "previousPublicSha256": "d5b4fcfc5bcf921d6b75aa4a33d7e71412595e8e377e5ff9b186b19ec6868f58",
@@ -1986,8 +1986,8 @@
     },
     {
       "path": "packages/engine/src/index.ts",
-      "sha256": "c1f7a78c489a6fa0e87c23b5d6b3f472a439c95121b4cd7a7e7b5a1d144a9746",
-      "bytes": 2204,
+      "sha256": "535eff6a3d2da9a30578ed56b051abd911ab89fa3226ee12ba55dcf78d83fc07",
+      "bytes": 2348,
       "originalSha256": "45f2377ffe6e180815d68b8b2dcbddaca8eaa167c142a356d130da8ce008e2f0",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
       "previousRevisionSha256": "45f2377ffe6e180815d68b8b2dcbddaca8eaa167c142a356d130da8ce008e2f0",
@@ -2389,16 +2389,16 @@
     {
       "path": "README.md",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "sha256": "7c3b2eda11152baf512613b9ed1f060bc2ed9ecf24f233c8875b4b6806068ea2",
-      "bytes": 15600,
+      "sha256": "db6abbbedfc1817c84cff428c9be88fdd343465fc6ca237d88c3f3613d9751b3",
+      "bytes": 16244,
       "previousRevisionSha256": "199156443d499d5012f1224263a1a3ee9994e5ba38ee067bceeb2ad865ae8167",
       "previousLayoutPath": "README.en.md",
       "previousLayoutSha256": "f40ec41ca699cd0b9138fbdf4a268080038f583ae11e78c4f37093a6b7095f57"
     },
     {
       "path": "README.zh-CN.md",
-      "sha256": "643e6b57af9cade5bcc3a1c7d0087ce5cf20c321c80fbbb229f9e9b1242c4e63",
-      "bytes": 15330,
+      "sha256": "fdfc7c852a0b1ad226ce3a52bbdbf66bc43f956f53bb150ee419b07ac34810c1",
+      "bytes": 15974,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousPublicSha256": "7ec80b8575a700b6a2628eb0322f2e770bb2284859f68ec5e0eb6530154a6699",
       "previousRevisionSha256": "7a1d72019db7cb6075d7c3a3bd4075f7c069d527b6e31d992a69333cb126b6c3",
@@ -2425,8 +2425,8 @@
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "sha256": "e4ab87c8fe3da046f585a5cfab1f24ed99c98f194e96cf045d6997c082e18891",
-      "bytes": 35462,
+      "sha256": "59b7ac88fa0e2a4581e59b5baed3c4626be9686aa8ac9656218f44928a9edd80",
+      "bytes": 36422,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousLayoutPath": "tests/boundaries.test.mjs",
       "previousLayoutSha256": "7fab4a4c490d4823a1cbd3d8721eb87d8c6a2401e60a7068be245975abf538bc"
@@ -2556,16 +2556,16 @@
     {
       "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
       "path": "tests/types/dom-free.ts",
-      "sha256": "e1e584986d8878824aeac6369eeff2690ed3091b83e85511b65cfef2e8f810bc",
-      "bytes": 6873,
+      "sha256": "eec3a5341776c7b737d479e8f351fbccc575ac67dd23949213ff21b95cc3aadc",
+      "bytes": 8204,
       "previousRevisionSha256": "c3801687ad3896fbdbfb3518c63b13afaebb42df455c0230e7f2a0e374264ed4",
       "previousLayoutPath": "tests/types/dom-free.ts",
       "previousLayoutSha256": "c3801687ad3896fbdbfb3518c63b13afaebb42df455c0230e7f2a0e374264ed4"
     },
     {
       "path": "tests/types/negative.ts",
-      "sha256": "18d19a3fc03dcd946e04a0a5fc566f7bfcdafdb6a63ec41073eadc48001cf552",
-      "bytes": 22557,
+      "sha256": "7ecf31315259d401f8dedfb8b7bd49d9958534cf75ceac1298d754f1700635d1",
+      "bytes": 25526,
       "originalSha256": "f2aba4d444432063b862b42822b392b82d09c8d91458cc80f5478f136115ce7b",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
       "previousRevisionSha256": "f2aba4d444432063b862b42822b392b82d09c8d91458cc80f5478f136115ce7b",
@@ -2574,8 +2574,8 @@
     },
     {
       "path": "tests/types/positive.ts",
-      "sha256": "df0f017038229204838870c94afc92785e9c27c533b9480ce844b02b4952c67a",
-      "bytes": 27116,
+      "sha256": "a39f6b35e425e8daacb5ec0243372ce3fd28dee709c5b23ee344a84ecb8c24cd",
+      "bytes": 30528,
       "originalSha256": "1041d77568560fb1d08fa3a4dbb86cb1e77cc48dace50884b5173c4459713aeb",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
       "previousRevisionSha256": "1041d77568560fb1d08fa3a4dbb86cb1e77cc48dace50884b5173c4459713aeb",
@@ -2672,8 +2672,8 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "105e01e501a83b9e7495d9928553cf7a04d65730828330c5f43a0ecfdbb0c29c",
-      "bytes": 36542,
+      "sha256": "6933fb612e1c936c8d340bdcc57aaec5beed9ef52c0fb338115968faf0de98ee",
+      "bytes": 39957,
       "originalSha256": "e7994ad6962e55fba9b481d50377ede30729b345e6a901e2089b235edfde9491",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousRevisionSha256": "e7994ad6962e55fba9b481d50377ede30729b345e6a901e2089b235edfde9491",
@@ -2691,8 +2691,8 @@
     },
     {
       "path": "tools/check-types.mjs",
-      "sha256": "a09c38b72f6b9ac3d77fc9ed408ad4767cb66d4e9d616d77ef3bca34466ff259",
-      "bytes": 20160,
+      "sha256": "7235057f03a9f0bbc95e222de8a35ab620faabb16f80634a072438f979115a1e",
+      "bytes": 23615,
       "originalSha256": "332d2c161ceb9ec7d75429c89a3d2c95af24f2cf5eed68b92b09532d1ce691a4",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousRevisionSha256": "332d2c161ceb9ec7d75429c89a3d2c95af24f2cf5eed68b92b09532d1ce691a4",
@@ -3098,8 +3098,8 @@
     {
       "path": "packages/engine/src/createEngineForProfile.ts",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 2035,
-      "sha256": "2b64bbec2a00ae16f3e075192af2b8c4fdf8143d3ed96dde4aadc406120aa248"
+      "bytes": 2306,
+      "sha256": "0d01e78092da05089d0664e212f70a165cedc73460cc02d7b95ed557ad88288a"
     },
     {
       "path": "packages/engine/src/internal/texturedFrameState.ts",
@@ -3110,8 +3110,8 @@
     {
       "path": "packages/engine/src/startEngine.ts",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 1091,
-      "sha256": "1c1cd118f693360344f2e84a3c27873efff7a1299b8461d4f1f23f6d76aedf88"
+      "bytes": 1209,
+      "sha256": "bef626c51436762b93dfff97b11d75969a17be3292b8a482b323c59f17d45fa1"
     },
     {
       "path": "packages/engine/tests/geometry-contract-types.ts",
@@ -4232,20 +4232,86 @@
     {
       "path": "knowledge-base/en/docs/text-raster-t1-evidence.md",
       "originRole": "First-party paired T1 documentation or structured saved verification projection.",
-      "bytes": 13330,
-      "sha256": "1de307d23447f43d8e69cc8e8a835172d71e9b16500839c62a6817af14ccdf24"
+      "bytes": 16988,
+      "sha256": "a92f10099e17c4cc75888a19b4480034eb9b8f2c66231706214a89462cbc632c"
     },
     {
       "path": "knowledge-base/Cns/docs/文字栅格T1证据.md",
       "originRole": "First-party paired T1 documentation or structured saved verification projection.",
-      "bytes": 11634,
-      "sha256": "be97e15c6a5b3331f8fc9a7a7bd2d3004c3ddef5d51947cfa8f0262a6c32fcc0"
+      "bytes": 15066,
+      "sha256": "0950e6c3c48a276e7aadbf19125f2520cbb1a9bcb5dd112efb51937e5f031010"
     },
     {
       "path": "knowledge-base/evidence/text-raster-t1-verification.json",
       "originRole": "First-party paired T1 documentation or structured saved verification projection.",
-      "bytes": 76910,
-      "sha256": "919ee64dbcf5264f0d5f44dda8171805a4360e05a17c235cbd5fbc8a95baa0de"
+      "bytes": 81431,
+      "sha256": "28eb0b6859e9ace7a665e0d4e2e21e4121740a7558bca96f70917266d2c266c7"
+    },
+    {
+      "path": "packages/engine/src/gameClockTypes.ts",
+      "originRole": "Independent first-party explicit game-clock implementation from Egret specifications; no copied historical or competitor implementation.",
+      "bytes": 1058,
+      "sha256": "4adb7495464d0e9f7eb6d3296d147d43cd2ebbe46d3a028323b1750b299402e0"
+    },
+    {
+      "path": "packages/engine/src/gameClock.ts",
+      "originRole": "Independent first-party explicit game-clock implementation from Egret specifications; no copied historical or competitor implementation.",
+      "bytes": 9147,
+      "sha256": "1115ee023465b0501b563e696b93f7f86f18e85d1fb57b2eed3d1c896bd71141"
+    },
+    {
+      "path": "tests/types/game-clock-import-negative.ts",
+      "originRole": "First-party game-clock validation or paired public documentation; actual scope recorded separately.",
+      "bytes": 1298,
+      "sha256": "0ff02f5803886c893116304cdceee4e639314b0439aa46da899c33963eadae36"
+    },
+    {
+      "path": "tests/types/tsconfig.game-clock-import-negative.json",
+      "originRole": "First-party game-clock validation or paired public documentation; actual scope recorded separately.",
+      "bytes": 83,
+      "sha256": "208150945ae6e92019935a8b9bb14ad41744b284d377dfcf8f616008f92d36cc"
+    },
+    {
+      "path": "tests/game-clock-boundaries.test.mjs",
+      "originRole": "First-party game-clock validation or paired public documentation; actual scope recorded separately.",
+      "bytes": 7980,
+      "sha256": "0337e60adcb61b1bff5deab93c6b3ac202ab6f43046b75d750bf63085b6392e8"
+    },
+    {
+      "path": "tests/game-clock.test.mjs",
+      "originRole": "First-party game-clock validation or paired public documentation; actual scope recorded separately.",
+      "bytes": 43474,
+      "sha256": "96271fc6eaaa872d37f160fb4002d651b334ec9a1511b5ea1ab59aa68207e8bc"
+    },
+    {
+      "path": "knowledge-base/en/docs/game-clock-contract.md",
+      "originRole": "First-party game-clock validation or paired public documentation; actual scope recorded separately.",
+      "bytes": 9284,
+      "sha256": "7f0a0024b12c9531fd4092443f1e7c386bdaef1eef77acb52c96da9a56c1ae68"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/游戏时间核心契约.md",
+      "originRole": "First-party game-clock validation or paired public documentation; actual scope recorded separately.",
+      "bytes": 8534,
+      "sha256": "fc67d70a95abeb696c248bf98e55dc0d3789dffc1f0f5bb12ed5ed4478fa2e8c"
+    },
+    {
+      "path": "knowledge-base/en/docs/game-clock-evidence.md",
+      "originRole": "First-party game-clock validation or paired public documentation; actual scope recorded separately.",
+      "bytes": 7430,
+      "sha256": "fe0838db5ff368aa94e2289055b35cf9408b25341878f2b30905db01a0fd6682"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/游戏时间核心证据.md",
+      "originRole": "First-party game-clock validation or paired public documentation; actual scope recorded separately.",
+      "bytes": 6613,
+      "sha256": "b0c1081871ebc4a3a45ac3287cb7e67297c8bc8ed3de57d8ef28ef7148e68b02"
+    },
+    {
+      "path": "knowledge-base/evidence/game-clock-verification.json",
+      "originRole": "First-party game-clock validation or paired public documentation; actual scope recorded separately.",
+      "bytes": 10587,
+      "sha256": "181bbf0d0d7e8d9c2c166c803453edda6b2bf4eb647a5b82abd045d6a0122b1b"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",
@@ -7118,5 +7184,116 @@
       "evidenceScope": "Earlier recorded tests and independent reviews retain their original input identities; current complete prepush and remote delivery remain separate actual records.",
       "independentFormatSuccessorReview": "recorded_separately"
     }
+  },
+  "gameClockWorkPackage": {
+    "date": "2026-10-11",
+    "engineeringLabel": "0.25.0",
+    "deliverable": "V026",
+    "sourceId": "S075",
+    "scope": "Explicit DOM-free Engine-owned game time, authentic Scope subscriptions, synchronous callback commit/failure rules and existing Engine cleanup integration.",
+    "packageVersion": "0.0.0",
+    "protocolVersion": "1.0",
+    "implementationOrigin": {
+      "process": "Codex-assisted independent first-party specification, fixtures, implementation and scoped review; no claim about global originality or all model training sources.",
+      "copiedHistoricalOrCompetitorImplementationSources": [],
+      "newThirdPartyDependencies": [],
+      "license": "Apache-2.0"
+    },
+    "sourceSubjects": [
+      {
+        "path": "packages/engine/src/gameClockTypes.ts",
+        "bytes": 1058,
+        "sha256": "4adb7495464d0e9f7eb6d3296d147d43cd2ebbe46d3a028323b1750b299402e0"
+      },
+      {
+        "path": "packages/engine/src/gameClock.ts",
+        "bytes": 9147,
+        "sha256": "1115ee023465b0501b563e696b93f7f86f18e85d1fb57b2eed3d1c896bd71141"
+      },
+      {
+        "path": "packages/engine/src/Engine.ts",
+        "bytes": 11513,
+        "sha256": "f02f188886c6acd6436b638838703ed52f43c7554f76e1e5dd544ce25ae32724"
+      },
+      {
+        "path": "packages/engine/src/createEngine.ts",
+        "bytes": 1408,
+        "sha256": "626ab89ddf8ecfb248e6ef62e5c088a9439d78657b6e005e23e7da9fedd6b0cc"
+      },
+      {
+        "path": "packages/engine/src/createEngineForProfile.ts",
+        "bytes": 2306,
+        "sha256": "0d01e78092da05089d0664e212f70a165cedc73460cc02d7b95ed557ad88288a"
+      },
+      {
+        "path": "packages/engine/src/startEngine.ts",
+        "bytes": 1209,
+        "sha256": "bef626c51436762b93dfff97b11d75969a17be3292b8a482b323c59f17d45fa1"
+      },
+      {
+        "path": "packages/engine/src/index.ts",
+        "bytes": 2348,
+        "sha256": "535eff6a3d2da9a30578ed56b051abd911ab89fa3226ee12ba55dcf78d83fc07"
+      },
+      {
+        "path": "tools/check-types.mjs",
+        "bytes": 23615,
+        "sha256": "7235057f03a9f0bbc95e222de8a35ab620faabb16f80634a072438f979115a1e"
+      },
+      {
+        "path": "tools/check-boundaries.mjs",
+        "bytes": 39957,
+        "sha256": "6933fb612e1c936c8d340bdcc57aaec5beed9ef52c0fb338115968faf0de98ee"
+      },
+      {
+        "path": "tests/types/positive.ts",
+        "bytes": 30528,
+        "sha256": "a39f6b35e425e8daacb5ec0243372ce3fd28dee709c5b23ee344a84ecb8c24cd"
+      },
+      {
+        "path": "tests/types/negative.ts",
+        "bytes": 25526,
+        "sha256": "7ecf31315259d401f8dedfb8b7bd49d9958534cf75ceac1298d754f1700635d1"
+      },
+      {
+        "path": "tests/types/dom-free.ts",
+        "bytes": 8204,
+        "sha256": "eec3a5341776c7b737d479e8f351fbccc575ac67dd23949213ff21b95cc3aadc"
+      },
+      {
+        "path": "tests/types/game-clock-import-negative.ts",
+        "bytes": 1298,
+        "sha256": "0ff02f5803886c893116304cdceee4e639314b0439aa46da899c33963eadae36"
+      },
+      {
+        "path": "tests/types/tsconfig.game-clock-import-negative.json",
+        "bytes": 83,
+        "sha256": "208150945ae6e92019935a8b9bb14ad41744b284d377dfcf8f616008f92d36cc"
+      },
+      {
+        "path": "tests/game-clock-boundaries.test.mjs",
+        "bytes": 7980,
+        "sha256": "0337e60adcb61b1bff5deab93c6b3ac202ab6f43046b75d750bf63085b6392e8"
+      },
+      {
+        "path": "tests/boundaries.test.mjs",
+        "bytes": 36422,
+        "sha256": "59b7ac88fa0e2a4581e59b5baed3c4626be9686aa8ac9656218f44928a9edd80"
+      },
+      {
+        "path": "tests/game-clock.test.mjs",
+        "bytes": 43474,
+        "sha256": "96271fc6eaaa872d37f160fb4002d651b334ec9a1511b5ea1ab59aa68207e8bc"
+      }
+    ],
+    "record": "knowledge-base/evidence/game-clock-verification.json",
+    "finalReview": {
+      "bytes": 1732,
+      "sha256": "60795d24e46921273540af14210eed875fe31ccbe816d2e1280b7cba8a1c34e8",
+      "status": "identity_only_not_distributed",
+      "scope": "Current game-clock paired readings and necessary community entries/guidance, bounded T2 counterexample, paired registries, saved evidence, source provenance and seven critical English comments. Separate independent core, type and integration reviews retain their own source/fixture limits; inventory totals are not blanket semantic acceptance."
+    },
+    "publicationGate": "Actual final mandatory prepush and remote delivery remain separate; no future result inferred.",
+    "laterRootMetadataAttestation": true
   }
 }

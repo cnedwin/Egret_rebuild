@@ -7,11 +7,15 @@ import type { AssetManager, Scope, Stage } from "@egret/runtime";
 import type { EngineContext } from "@egret/runtime";
 import { closeHost } from "./closeHost.js";
 import { registerTexturedFrame } from './internal/texturedFrameState.js';
+import { createGameClockOwner } from './gameClock.js';
+import type { AdmittedGameClockOptions, GameClockOwner } from './gameClock.js';
+import type { GameClock, GameClockOptions, GameClockTick } from './gameClockTypes.js';
 
 export interface EngineOptions {
   readonly host: HostAdapter;
   readonly shutdownTimeoutMs?: number;
   readonly onDiagnostic?: DiagnosticHandler;
+  readonly clock?: GameClockOptions;
 }
 
 export interface CapturedEngineFramePorts {
@@ -19,7 +23,7 @@ export interface CapturedEngineFramePorts {
   readonly textured: ((frame: TexturedRenderFrame2D) => unknown) | undefined;
   readonly profile: TexturedFrameProfile2D | undefined;
 }
-export let constructEngine: (options: EngineOptions, timeoutMs: number, releaseSurface: () => void, ports: CapturedEngineFramePorts) => Engine;
+export let constructEngine: (options: EngineOptions, timeoutMs: number, releaseSurface: () => void, ports: CapturedEngineFramePorts, clockOptions: AdmittedGameClockOptions) => Engine;
 const CREATION_TOKEN: unique symbol = Symbol("egret.engineFactory");
 
 /** Observation does not accept asynchronous submission or prove host completion. */
@@ -38,6 +42,8 @@ function observeRejectedRenderResult(result: unknown): void {
 }
 /** One headless run. Construct with createEngine(), not directly. */
 export class Engine {
+  readonly #gameClockOwner: GameClockOwner;
+  readonly #engineScopes = new WeakSet<Scope>();
   private frameBusy = false;
   private nextFrameId = 1;
   private frameIdle: Promise<void> | undefined;
@@ -56,8 +62,9 @@ export class Engine {
   public readonly stage: Stage;
   public readonly assets: AssetManager;
   public readonly texturedFrameProfile: TexturedFrameProfile2D | undefined;
+  public readonly clock: GameClock;
 
-  private constructor(options: EngineOptions, timeoutMs: number, releaseSurface: () => void, ports: CapturedEngineFramePorts, token: typeof CREATION_TOKEN) {
+  private constructor(options: EngineOptions, timeoutMs: number, releaseSurface: () => void, ports: CapturedEngineFramePorts, clockOptions: AdmittedGameClockOptions, token: typeof CREATION_TOKEN) {
     if (token !== CREATION_TOKEN) throw new EgretError("ENGINE_FACTORY_REQUIRED");
     this.host = options.host;
     this.renderer = ports.legacy;
@@ -75,12 +82,24 @@ export class Engine {
         if (this.currentState === "closing") this.cleanupErrors.push(cause);
       },
     };
+    // The inert owner precedes publication and uses private Scope membership.
+    this.#gameClockOwner = createGameClockOwner({
+      assertOpen: this.context.assertOpen,
+      isEngineScope: (scope: unknown): scope is Scope => typeof scope === 'object' && scope !== null && this.#engineScopes.has(scope as Scope),
+      isFrameBusy: (): boolean => this.frameBusy,
+      report: this.context.report,
+    }, clockOptions);
+    this.clock = this.#gameClockOwner.clock;
     this.stage = createStage(this.context);
     this.assets = createAssetManager(this.context);
   }
 
   static {
-    constructEngine = (options, timeoutMs, releaseSurface, ports): Engine => new Engine(options, timeoutMs, releaseSurface, ports, CREATION_TOKEN);
+    constructEngine = (options, timeoutMs, releaseSurface, ports, clockOptions): Engine => new Engine(options, timeoutMs, releaseSurface, ports, clockOptions, CREATION_TOKEN);
+  }
+
+  public advanceTime(sourceSeconds: number): GameClockTick | undefined {
+    return this.#gameClockOwner.advance(sourceSeconds);
   }
 
   public captureFrame(options: FrameOptions2D): RenderFrame2D {
@@ -105,6 +124,7 @@ export class Engine {
   private executeFrame(options: FrameOptions2D, render: boolean, textured: boolean): RenderFrame2D | TexturedRenderFrame2D {
     this.context.assertOpen();
     if (this.frameBusy) throw new EgretError("FRAME_REENTRANT");
+    if (this.#gameClockOwner.isBusy()) throw new EgretError('CLOCK_REENTRANT');
     this.frameBusy = true;
     this.frameIdle = new Promise<void>(resolve => { this.releaseFrame = resolve; });
     try {
@@ -172,6 +192,7 @@ export class Engine {
     this.context.assertOpen();
     const scope = createScope(this.context, (closed): void => { this.scopes.delete(closed); });
     this.scopes.add(scope);
+    this.#engineScopes.add(scope);
     return scope;
   }
 
@@ -183,6 +204,7 @@ export class Engine {
     this.closePromise = new Promise<void>((resolve, reject) => { resolveClose = resolve; rejectClose = reject; });
     // Cache the result before abort/cleanup/diagnostic callbacks can reenter.
     this.currentState = "closing";
+    this.#gameClockOwner.close();
     void this.runClose().then(resolveClose, rejectClose);
     return this.closePromise;
   }
@@ -191,6 +213,7 @@ export class Engine {
   private async runClose(): Promise<void> {
     try {
       if (this.frameIdle !== undefined) await this.frameIdle;
+      if (this.#gameClockOwner.isBusy()) await this.#gameClockOwner.whenIdle();
       for (const scope of [...this.scopes].reverse()) {
         try { scope.dispose(); }
         catch (cause) {
