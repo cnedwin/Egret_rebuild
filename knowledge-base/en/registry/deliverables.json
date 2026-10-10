@@ -963,11 +963,44 @@
         "evidence/coordinate-query-verification.json"
       ],
       "doc": "en/docs/display-coordinate-query-contract.md"
+    },
+    {
+      "id": "V023",
+      "title": "Receiver-local display content bounds",
+      "kind": "bounded_runtime_increment",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R012",
+        "R016"
+      ],
+      "dependsOn": [
+        "V011",
+        "V022"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "public_receiver_local_display_content_bounds",
+      "acceptance": "bounded_cpu_type_affected_desktop_execution_source_review_recorded_publication_separate",
+      "acceptanceCriteria": [
+        "Inherited getBounds(options?: BoundsQueryOptions) returns a fresh frozen readonly Rectangle2D from authoritative receiver-local Graphics/occupied Bitmap geometry. Descendant direct corners, authored-zero count/skip behavior and ordinary binary64 nonconservative subtraction follow the exact paired contract.",
+        "The genuine public baseline built/loaded Bitmap and registered 18 getBounds-absence failures before allocation; the focused successor passed 157/157 including 18 bounds callbacks.",
+        "Positive/DOM-free types passed with 81/5/28 expected diagnostics (114 total, 13 bounds additions); the separately recorded core verifier passed 1063/1063 with 306 boundary files and closed headless execution. Suites overlap.",
+        "Fresh affected desktop Canvas 14 checks, rectangle WebGPU 42 frames/1709 raw checks/84 PNGs/6808 composition checks/8 counterexamples and B1 7 positive frames/5 counterexamples/11 submissions passed with stable 391-file inventories. Bounds arithmetic is CPU-only; B1 OS descendant retirement is UNBOUND.",
+        "Independent source and saved-render reviews passed with zero unresolved P1/P2; bilingual public-material review remains pending at this checkpoint. Complete prepush and actual stacked remote delivery are separate gates; other spaces/output/layout/hit testing and full-product obligations remain open."
+      ],
+      "artifacts": [
+        "en/docs/display-content-bounds-contract.md",
+        "en/docs/display-content-bounds-evidence.md",
+        "evidence/content-bounds-verification.json"
+      ],
+      "doc": "en/docs/display-content-bounds-contract.md"
     }
   ],
   "_localization": {
     "canonicalSource": "交付.json",
-    "canonicalSha256": "a25275982a589eea4141d507dc842506ff2bec9bdf181fadc079a98c0c7cd61d",
+    "canonicalSha256": "48b32a000752298816dee5aa72f7917f3965a183fdd86d5ec9e6915232b2ed60",
     "role": "read_only_translation",
     "language": "en"
   }

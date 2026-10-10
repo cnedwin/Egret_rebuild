@@ -68,7 +68,9 @@
     "webgpuRectanglePlan": "Cns/docs/WebGPU矩形实施计划.md",
     "webgpuRectangleEvidence": "Cns/docs/WebGPU矩形实现证据.md",
     "displayCoordinateQueryContract": "Cns/docs/显示坐标查询契约.md",
-    "displayCoordinateQueryEvidence": "Cns/docs/显示坐标查询证据.md"
+    "displayCoordinateQueryEvidence": "Cns/docs/显示坐标查询证据.md",
+    "displayContentBoundsContract": "Cns/docs/显示内容边界契约.md",
+    "displayContentBoundsEvidence": "Cns/docs/显示内容边界证据.md"
   },
   "architectureContractProbesRun": true,
   "browserApiPixelProbesRun": true,
@@ -433,5 +435,102 @@
     "performanceAcceptance": false,
     "SpineAcceptance": false,
     "fullMigrationAcceptance": false
+  },
+  "contentBoundsImplementation": {
+    "deliverable": "V023",
+    "source": "S072",
+    "engineeringLabel": "0.22.0",
+    "state": "BOUNDED_CPU_TYPE_AND_AFFECTED_DESKTOP_EXECUTION_RECORDED_REVIEW_PUBLICATION_SEPARATE",
+    "supportLevel": "experimental",
+    "verification": "evidence/content-bounds-verification.json",
+    "boundsSemantics": {
+      "space": "receiver-local",
+      "numericalPolicy": "ordinary-binary64-nonconservative",
+      "zeroExtentPolicy": "count-and-skip-arithmetic"
+    },
+    "actualCounts": {
+      "baseline": {
+        "registeredCallbacks": 18,
+        "missingApiFailures": 18,
+        "passes": 0,
+        "failures": 18,
+        "meaning": "All authentic getBounds availability assertions failed before allocation; Bitmap facade loaded. These are missing-method failures, not separately reached geometry counterexamples."
+      },
+      "focused": {
+        "tests": 157,
+        "passes": 157,
+        "failures": 0,
+        "cancellations": 0,
+        "skips": 0,
+        "todos": 0,
+        "boundsCallbacksIncluded": 18,
+        "meaning": "Bounds plus existing frame/tree/texture/Bitmap/SequencePlayer/coordinate suites; overlaps full verification."
+      },
+      "negativeTypes": {
+        "root": 81,
+        "web": 5,
+        "project": 28,
+        "total": 114,
+        "boundsAdditions": 13,
+        "positive": "PASS",
+        "domFree": "PASS"
+      },
+      "core": {
+        "tests": 1063,
+        "passes": 1063,
+        "failures": 0,
+        "cancellations": 0,
+        "skips": 0,
+        "todos": 0,
+        "boundaryFiles": 306,
+        "buildExitCode": 0,
+        "headlessExitCode": 0,
+        "headlessScopeState": "closed",
+        "headlessPendingTimers": 0,
+        "meaning": "Core total includes regression callbacks; it is separate from final current full prepush."
+      }
+    },
+    "independentReview": {
+      "implementationSource": {
+        "status": "PASS_SOURCE_WITH_LIMITS",
+        "sha256": "6efd73dbacdab718c9d89d4b7153f582c1c8aa48d208beed738391db7f36f83b",
+        "P1": 0,
+        "P2": 0,
+        "sourceOnly": true,
+        "reviewerRole": {
+          "specificationAndPlanAuthor": true,
+          "implementationAuthor": false,
+          "candidateBehaviorOrTypeAuthor": false,
+          "independentDesignReview": "separate sealed review exists; this verdict does not self-review design"
+        },
+        "scope": "Frozen bounds source implementation and mechanical Bitmap state extraction only",
+        "productOrPublicationAcceptance": false
+      },
+      "savedRendering": {
+        "status": "PASS_SAVED_RENDER_WITH_LIMITS",
+        "sha256": "98edc92dee250f25d4a2c02029fc2d2c08cf9da3ef478b2019b329e07f05b023",
+        "P1": 0,
+        "P2": 0,
+        "scope": "Fresh saved desktop rendering graph regression after bounds implementation; not product/publication acceptance",
+        "reviewerRole": "Spec/plan author, no production implementation or candidate behavior/type test authorship",
+        "productOrPublicationAcceptance": false
+      },
+      "bilingualPublicMaterial": null,
+      "deliveryPreparation": null
+    },
+    "B1": {
+      "cleanupScope": "standalone-cooperative-api",
+      "osDescendantRetirement": "UNBOUND"
+    },
+    "publicMaterialReview": "PENDING",
+    "finalPrepush": "PENDING",
+    "remoteDelivery": "PENDING",
+    "fullProductAcceptance": false,
+    "performanceAcceptance": false,
+    "fullLayoutInputAcceptance": false,
+    "fullSpineAcceptance": false,
+    "fullMigrationAcceptance": false,
+    "contract": "Cns/docs/显示内容边界契约.md",
+    "evidence": "Cns/docs/显示内容边界证据.md"
   }
 }

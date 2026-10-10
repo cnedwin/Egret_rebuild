@@ -4,7 +4,7 @@ English | [简体中文](../Cns/README.md)
 
 Egret serves new creators who primarily use AI to make games, initially targeting complex 2D UI and lightweight 3D. Rendering and runtime, editable projects, Agent collaboration and complete legacy-project migration are central to the design.
 
-The current engineering preview is **0.21.0**, with partial independently authored core implementation. The complete engine, production hosts, editor, Agent services, target-device performance and complete migration remain open. Engineering checkpoints, design proposals and accepted results are recorded separately.
+The current engineering preview is **0.22.0**, with partial independently authored core implementation. The complete engine, production hosts, editor, Agent services, target-device performance and complete migration remain open. Engineering checkpoints, design proposals and accepted results are recorded separately.
 
 ## Start here
 
@@ -13,7 +13,7 @@ The current engineering preview is **0.21.0**, with partial independently author
 | Product direction | [Positioning](docs/design-philosophy-and-positioning.md) · [Product requirements](docs/product-requirements.md) · [Product components](docs/product-components.md) |
 | Architecture and delivery | [Technical white paper](docs/technical-white-paper.md) · [Rendering and runtime](docs/rendering-engine-and-runtime.md) · [Engineering plan](docs/engineering-plan.md) · [Delivery plan](docs/delivery-plan.md) |
 | Structure, API and code | [Engineering architecture](docs/engineering-architecture-and-project-structure.md) · [API and naming](docs/public-api-design-and-naming.md) · [Quality gates](docs/code-standards-and-quality-gates.md) |
-| Implemented slices and evidence | [Core progress](docs/core-progress.md) · [Bitmap regions](docs/bitmap-region-evidence.md) · [B1 browser verifier](docs/b1-browser-verifier.md) · [Texture collection](docs/texture-first-four-evidence.md) |
+| Implemented slices and evidence | [Core progress](docs/core-progress.md) · [Content bounds](docs/display-content-bounds-evidence.md) · [Bitmap regions](docs/bitmap-region-evidence.md) · [B1 browser verifier](docs/b1-browser-verifier.md) · [Texture collection](docs/texture-first-four-evidence.md) |
 | Animation and migration | [Spine support and acceptance](docs/spine-animation-support-and-acceptance.md) · [Sequence sampling](docs/sequence-clip-contract.md) · [Legacy MovieClip](docs/legacy-movieclip-evidence.md) · [Legacy-project migration](docs/legacy-project-migration.md) |
 | AI creation | [AI creation and engineering interfaces](docs/ai-creation-and-engineering-interfaces.md) · [Shaders and Playground research](docs/shaders-and-playground-lessons.md) |
 | Reference research | [Competitor evolution](docs/competitor-evolution-and-ecosystems.md) · [Open-source reference mechanisms](docs/open-source-reference-implementations-and-adoption.md) · [Backend and Native Runtime proposals](docs/graphics-backends-and-native-runtime-selection.md) |
@@ -28,7 +28,7 @@ Confirmed **R020** requires complete Spine animation support. **V020** remains p
 
 [Requirements](registry/requirements.json), [decisions](registry/decisions.json), [hypotheses](registry/hypotheses.json), [deliverables](registry/deliverables.json) and [sources](registry/sources.json) provide the shared status views; their authoritative Chinese records are preserved in the Chinese edition. Stable R/D/H/V/S IDs connect goals, proposals, hypotheses, delivery and evidence. IDs are never reused, and superseded records retain their replacement relationships.
 
-Read the [record index](current-version.json), [Changelog](CHANGELOG.md) and [maintenance guide](docs/knowledge-base-maintenance.md) for versioned documents and history. The index's version field retains the historical **0.13.0 knowledge-base checkpoint**, including the delivery status recorded at that checkpoint. The latest **0.21.0 engineering preview** is described by the [coordinate contract](docs/display-coordinate-query-contract.md) and [evidence](docs/display-coordinate-query-evidence.md); the [SequencePlayer](docs/sequence-player-contract.md) remains a prior increment; acceptance status is governed separately by the registries. Original evidence, source identities, failures and repairs retain their recorded scope. Structural checks and historical research do not establish current product acceptance or a performance lead.
+Read the [record index](current-version.json), [Changelog](CHANGELOG.md) and [maintenance guide](docs/knowledge-base-maintenance.md) for versioned documents and history. The index's version field retains the historical **0.13.0 knowledge-base checkpoint**, including the delivery status recorded at that checkpoint. The latest **0.22.0 engineering preview** is described by the [content-bounds contract](docs/display-content-bounds-contract.md) and [evidence](docs/display-content-bounds-evidence.md); the [coordinate queries](docs/display-coordinate-query-contract.md) and [SequencePlayer](docs/sequence-player-contract.md) remain prior increments. Acceptance is governed separately by the registries. Original evidence, source identities, failures and repairs retain their recorded scope. Structural checks and historical research do not establish current product acceptance or a performance lead.
 
 ## Contribute
 

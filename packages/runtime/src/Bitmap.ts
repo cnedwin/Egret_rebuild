@@ -2,6 +2,9 @@ import type { TextureRegion2D } from "@egret/contracts";
 import { isAssetLease, readAssetLeaseValue } from "./AssetLease.js";
 import type { AssetLease } from "./AssetLease.js";
 import { DisplayObject } from "./DisplayObject.js";
+import { hasBitmapState, readBitmapState, writeBitmapState } from "./bitmapDisplayState.js";
+import type { BitmapCaptureState } from "./bitmapDisplayState.js";
+export type { BitmapCaptureState } from "./bitmapDisplayState.js";
 import { assertLive, isTerminated } from "./displayTreeState.js";
 import { EgretError } from "./EgretError.js";
 import { commitBinding, engineOf } from "./ownership.js";
@@ -9,17 +12,10 @@ import type { EngineContext } from "./ownership.js";
 import { isTexture, readTextureSnapshot } from "./Texture.js";
 import type { Texture, TextureSnapshot2D } from "./Texture.js";
 
-export interface BitmapCaptureState {
-  readonly lease: AssetLease<Texture>;
-  readonly sourceRect: TextureRegion2D;
-  readonly width: number;
-  readonly height: number;
-}
-const states = new WeakMap<object, BitmapCaptureState | undefined>();
 const mutations = new WeakSet<object>();
 
 function assertBitmap(value: unknown): void {
-  if (!states.has(value as object)) throw new EgretError("BITMAP_INVALID");
+  if (!hasBitmapState(value as object)) throw new EgretError("BITMAP_INVALID");
 }
 
 function captureState(lease: AssetLease<Texture>, sourceRect: TextureRegion2D): BitmapCaptureState {
@@ -41,7 +37,7 @@ function beginMutation(node: Bitmap): EngineContext {
 function revalidateMutation(node: Bitmap, engine: EngineContext, previous: BitmapCaptureState | undefined): void {
   assertLive(node);
   engine.assertOpen();
-  if (states.get(node) !== previous) throw new EgretError("BITMAP_MUTATION_REENTRANT");
+  if (readBitmapState(node) !== previous) throw new EgretError("BITMAP_MUTATION_REENTRANT");
 }
 
 interface RegionFields {
@@ -99,25 +95,25 @@ export class Bitmap extends DisplayObject {
     const engine = engineOf(textureLease)!;
     engine.assertOpen();
     commitBinding([this], engine);
-    states.set(this, captureState(textureLease, snapshot.sourceRect));
+    writeBitmapState(this, captureState(textureLease, snapshot.sourceRect));
   }
 
   public get textureLease(): AssetLease<Texture> | undefined {
     assertBitmap(this);
-    return states.get(this)?.lease;
+    return readBitmapState(this)?.lease;
   }
 
   public set textureLease(value: AssetLease<Texture> | undefined) {
     const engine = beginMutation(this);
     try {
-      const previous = states.get(this);
-      if (value === undefined) { states.set(this, undefined); return; }
+      const previous = readBitmapState(this);
+      if (value === undefined) { writeBitmapState(this, undefined); return; }
       if (!isAssetLease(value)) throw new EgretError("BITMAP_LEASE_INVALID");
       if (engineOf(value) !== engine) throw new EgretError("ENGINE_MISMATCH");
       const snapshot = readBitmapImage(value);
       revalidateMutation(this, engine, previous);
       // Every successful assignment, including the same lease, resets the crop.
-      states.set(this, captureState(value, snapshot.sourceRect));
+      writeBitmapState(this, captureState(value, snapshot.sourceRect));
     } finally {
       mutations.delete(this);
     }
@@ -126,13 +122,13 @@ export class Bitmap extends DisplayObject {
   /** Cached metadata remains readable without granting live image entitlement. */
   public get sourceRect(): TextureRegion2D | undefined {
     assertBitmap(this);
-    return states.get(this)?.sourceRect;
+    return readBitmapState(this)?.sourceRect;
   }
 
   public set sourceRect(value: TextureRegion2D | undefined) {
     const engine = beginMutation(this);
     try {
-      const previous = states.get(this);
+      const previous = readBitmapState(this);
       if (previous === undefined) {
         if (value !== undefined) throw new EgretError("BITMAP_TEXTURE_REQUIRED");
         return;
@@ -141,7 +137,7 @@ export class Bitmap extends DisplayObject {
       const snapshot = readBitmapImage(previous.lease);
       if (value === undefined) {
         revalidateMutation(this, engine, previous);
-        states.set(this, captureState(previous.lease, snapshot.sourceRect));
+        writeBitmapState(this, captureState(previous.lease, snapshot.sourceRect));
         return;
       }
       const fields = readRegion(value);
@@ -149,33 +145,33 @@ export class Bitmap extends DisplayObject {
       const current = readBitmapImage(previous.lease);
       const sourceRect = copyRegion(current.sourceRect, fields);
       // Crop and natural geometry become observable together, without callbacks.
-      states.set(this, captureState(previous.lease, sourceRect));
+      writeBitmapState(this, captureState(previous.lease, sourceRect));
     } finally {
       mutations.delete(this);
     }
   }
 
-  public get naturalWidth(): number { assertBitmap(this); return states.get(this)?.width ?? 0; }
-  public get naturalHeight(): number { assertBitmap(this); return states.get(this)?.height ?? 0; }
+  public get naturalWidth(): number { assertBitmap(this); return readBitmapState(this)?.width ?? 0; }
+  public get naturalHeight(): number { assertBitmap(this); return readBitmapState(this)?.height ?? 0; }
 
   /** Drop the borrow before base cleanup/reentry; the caller still owns the lease. */
   public override dispose(): void {
     assertBitmap(this);
     if (isTerminated(this)) return;
-    states.set(this, undefined);
+    writeBitmapState(this, undefined);
     super.dispose();
   }
 }
 
 /** Brand and slot only: geometry may be validated before any lease read. */
-export function bitmapCaptureState(node: DisplayObject): BitmapCaptureState | undefined { return states.get(node); }
+export function bitmapCaptureState(node: DisplayObject): BitmapCaptureState | undefined { return readBitmapState(node); }
 
 /** Internal binding authority; a cleared slot remains distinguishable from retirement. */
 export function readBitmapBinding(node: Bitmap): BitmapCaptureState | undefined {
   assertBitmap(node);
   assertLive(node);
   engineOf(node)!.assertOpen();
-  return states.get(node);
+  return readBitmapState(node);
 }
 
 /** Exact entitlement precedes value/live checks; public value getters are not authority. */

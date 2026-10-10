@@ -194,3 +194,43 @@ CoordinateNegativePublic.Point2D;
 // @ts-expect-error COORDINATE_CASE options-type-only: the root namespace exports no executable CoordinateQueryOptions value.
 CoordinateNegativePublic.CoordinateQueryOptions;
 void coordinateUndefinedField;
+
+// Content-bounds misuse must produce real, unsuppressed compiler diagnostics.
+import type {
+  BoundsQueryOptions as BoundsNegativeOptions,
+  Rectangle2D as BoundsNegativeRectangle,
+  DisplayObject as BoundsNegativeNode,
+} from '@egret/engine';
+import * as BoundsNegativePublic from '@egret/engine';
+
+declare const boundsNegativeNode: BoundsNegativeNode;
+declare const boundsNegativeOptions: BoundsNegativeOptions;
+declare const boundsNegativeUnknownOptions: unknown;
+const boundsNegativeResult: BoundsNegativeRectangle = boundsNegativeNode.getBounds();
+// @ts-expect-error BOUNDS_CASE readonly-result-x: the returned origin is readonly.
+boundsNegativeResult.x = 3;
+// @ts-expect-error BOUNDS_CASE readonly-result-width: the returned extent is readonly.
+boundsNegativeResult.width = 4;
+// @ts-expect-error BOUNDS_CASE readonly-max-nodes: the node budget field is readonly.
+boundsNegativeOptions.maxNodes = 9;
+// @ts-expect-error BOUNDS_CASE readonly-max-primitives: the content budget field is readonly.
+boundsNegativeOptions.maxPrimitives = 10;
+// @ts-expect-error BOUNDS_CASE unknown-options: unknown input needs prior type admission.
+boundsNegativeNode.getBounds(boundsNegativeUnknownOptions);
+// @ts-expect-error BOUNDS_CASE null-options: null is not an optional options object.
+boundsNegativeNode.getBounds(null);
+// @ts-expect-error BOUNDS_CASE nonnumeric-max-nodes: the node budget field is numeric.
+boundsNegativeNode.getBounds({maxNodes: '2'});
+// @ts-expect-error BOUNDS_CASE nonnumeric-max-primitives: the content budget field is numeric.
+boundsNegativeNode.getBounds({maxPrimitives: false});
+// @ts-expect-error BOUNDS_CASE undefined-max-nodes: typed optional fields omit undefined values.
+const boundsNegativeUndefinedNodes: BoundsNegativeOptions = {maxNodes: undefined};
+// @ts-expect-error BOUNDS_CASE undefined-max-primitives: typed optional fields omit undefined values.
+const boundsNegativeUndefinedPrimitives: BoundsNegativeOptions = {maxPrimitives: undefined};
+// @ts-expect-error BOUNDS_CASE fresh-legacy-output: a fresh rectangle literal is not query options.
+boundsNegativeNode.getBounds({x: 0, y: 0, width: 1, height: 1});
+// @ts-expect-error BOUNDS_CASE extra-argument: there is no second output or target-space argument.
+boundsNegativeNode.getBounds({}, {});
+// @ts-expect-error BOUNDS_CASE options-type-only: the facade exports no executable BoundsQueryOptions value.
+BoundsNegativePublic.BoundsQueryOptions;
+void boundsNegativeUndefinedNodes; void boundsNegativeUndefinedPrimitives;

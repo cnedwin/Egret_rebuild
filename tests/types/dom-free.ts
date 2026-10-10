@@ -37,3 +37,35 @@ const coordinateDomInverse: CoordinateDomPoint = coordinateDomStage.globalToLoca
 const coordinateDomX: number = coordinateDomForward.x;
 const coordinateDomY: number = coordinateDomInverse.y;
 void coordinateDomX; void coordinateDomY;
+
+// Receiver-local content-bounds types and calls require no host globals.
+import type {
+  BoundsQueryOptions as BoundsDomOptions,
+  Rectangle2D as BoundsDomRectangle,
+  DisplayObject as BoundsDomNode,
+  DisplayObjectContainer as BoundsDomContainer,
+  Sprite as BoundsDomSprite,
+  Bitmap as BoundsDomBitmap,
+  Stage as BoundsDomStage,
+} from '@egret/engine';
+
+declare const boundsDomNode: BoundsDomNode;
+declare const boundsDomContainer: BoundsDomContainer;
+declare const boundsDomSprite: BoundsDomSprite;
+declare const boundsDomBitmap: BoundsDomBitmap;
+declare const boundsDomStage: BoundsDomStage;
+const boundsDomOptions: BoundsDomOptions = {maxNodes: 4, maxPrimitives: 8};
+const boundsDomResults: readonly BoundsDomRectangle[] = [
+  boundsDomNode.getBounds(),
+  boundsDomContainer.getBounds(undefined),
+  boundsDomSprite.getBounds({}),
+  boundsDomBitmap.getBounds(boundsDomOptions),
+  boundsDomStage.getBounds({maxPrimitives: 2}),
+];
+const boundsDomStructuralOptions = {maxNodes: 2, x: 0, y: 0, width: 1, height: 1};
+const boundsDomRectangle: BoundsDomRectangle = boundsDomNode.getBounds(boundsDomStructuralOptions);
+const boundsDomX: number = boundsDomRectangle.x;
+const boundsDomY: number = boundsDomRectangle.y;
+const boundsDomWidth: number = boundsDomRectangle.width;
+const boundsDomHeight: number = boundsDomRectangle.height;
+void boundsDomResults; void boundsDomX; void boundsDomY; void boundsDomWidth; void boundsDomHeight;

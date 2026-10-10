@@ -1181,11 +1181,23 @@
         "evidence/coordinate-query-verification.json"
       ],
       "doc": "en/docs/display-coordinate-query-evidence.md"
+    },
+    {
+      "id": "S072",
+      "title": "Receiver-local bounds implementation and bounded recorded regressions",
+      "type": "first_party_content_bounds_cpu_type_and_affected_desktop_render_evidence",
+      "scope": "18 authentic getBounds-absence failures, 157/157 focused successors including 18 bounds callbacks, 114 expected negative diagnostics (13 additions), 1063/1063 core tests and 306 boundary files; fresh affected Canvas/WebGPU/B1 desktop observations with stable inventories and scoped source and saved-render reviews.",
+      "limit": "Ordinary binary64 measurement is nonconservative; other spaces/output adapter/layout/hit testing remain pending. No GPU bounds arithmetic, other-browser/phone/performance/full-product acceptance. B1 OS descendant retirement remains UNBOUND; prepush and delivery are separate.",
+      "researchCheckedAt": "2026-10-10",
+      "artifacts": [
+        "evidence/content-bounds-verification.json"
+      ],
+      "doc": "en/docs/display-content-bounds-evidence.md"
     }
   ],
   "_localization": {
     "canonicalSource": "来源.json",
-    "canonicalSha256": "b76fec85224ed1db7ee1aa1164a7c117efbe290f0a9c93d0d0faffcc587ce00e",
+    "canonicalSha256": "2d0e1e986207c9063e1223b6bcdbaf4711bfc08bb0809b810f7099a55a0ea134",
     "role": "read_only_translation",
     "language": "en"
   }

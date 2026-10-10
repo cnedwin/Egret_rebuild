@@ -157,3 +157,84 @@ const coordinateStructuralForward: CoordinatePoint = coordinateNode.localToGloba
 const coordinateStructuralInverse: CoordinatePoint = coordinateNode.globalToLocal(1, 2, coordinateStructuralOptions);
 void coordinateLiteralPoint; void coordinateResults;
 void coordinateStructuralForward; void coordinateStructuralInverse;
+
+// Public content-bounds consumers keep the inherited signature and readonly shapes exact.
+import type {
+  BoundsQueryOptions as BoundsPositiveOptions,
+  Rectangle2D as BoundsPositiveRectangle,
+  DisplayObject as BoundsPositiveNode,
+  DisplayObjectContainer as BoundsPositiveContainer,
+  Sprite as BoundsPositiveSprite,
+  Bitmap as BoundsPositiveBitmap,
+  Stage as BoundsPositiveStage,
+} from '@egret/engine';
+
+// Generic-function equality checks readonly modifiers as well as field types.
+type BoundsPositiveEqual<A, B> =
+  (<T>() => T extends A ? 1 : 2) extends (<T>() => T extends B ? 1 : 2)
+    ? ((<T>() => T extends B ? 1 : 2) extends (<T>() => T extends A ? 1 : 2) ? true : false)
+    : false;
+type BoundsPositiveAssert<T extends true> = T;
+type BoundsPositiveRectangleShape = BoundsPositiveAssert<BoundsPositiveEqual<
+  BoundsPositiveRectangle,
+  {readonly x: number; readonly y: number; readonly width: number; readonly height: number}
+>>;
+type BoundsPositiveOptionsShape = BoundsPositiveAssert<BoundsPositiveEqual<
+  BoundsPositiveOptions,
+  {readonly maxNodes?: number; readonly maxPrimitives?: number}
+>>;
+type BoundsPositiveCallable = (options?: BoundsPositiveOptions) => BoundsPositiveRectangle;
+type BoundsPositiveWholeCallable = BoundsPositiveAssert<BoundsPositiveEqual<
+  BoundsPositiveNode['getBounds'], BoundsPositiveCallable
+>>;
+// Optional function arguments accept explicit undefined even though an
+// explicitly undefined optional object field is rejected by exact typing.
+type BoundsPositiveParameters = BoundsPositiveAssert<BoundsPositiveEqual<
+  Parameters<BoundsPositiveNode['getBounds']>, [options?: BoundsPositiveOptions | undefined]
+>>;
+type BoundsPositiveReturn = BoundsPositiveAssert<BoundsPositiveEqual<
+  ReturnType<BoundsPositiveNode['getBounds']>, BoundsPositiveRectangle
+>>;
+type BoundsPositiveContainerCallable = BoundsPositiveAssert<BoundsPositiveEqual<
+  BoundsPositiveContainer['getBounds'], BoundsPositiveCallable
+>>;
+type BoundsPositiveSpriteCallable = BoundsPositiveAssert<BoundsPositiveEqual<
+  BoundsPositiveSprite['getBounds'], BoundsPositiveCallable
+>>;
+type BoundsPositiveBitmapCallable = BoundsPositiveAssert<BoundsPositiveEqual<
+  BoundsPositiveBitmap['getBounds'], BoundsPositiveCallable
+>>;
+type BoundsPositiveStageCallable = BoundsPositiveAssert<BoundsPositiveEqual<
+  BoundsPositiveStage['getBounds'], BoundsPositiveCallable
+>>;
+
+declare const boundsPositiveNode: BoundsPositiveNode;
+declare const boundsPositiveContainer: BoundsPositiveContainer;
+declare const boundsPositiveSprite: BoundsPositiveSprite;
+declare const boundsPositiveBitmap: BoundsPositiveBitmap;
+declare const boundsPositiveStage: BoundsPositiveStage;
+const boundsPositiveReadonlyOptions: BoundsPositiveOptions = {maxNodes: 8, maxPrimitives: 16};
+const boundsPositiveLiteralRectangle: BoundsPositiveRectangle = {x: 0, y: 1, width: 2, height: 3};
+const boundsPositiveResults: readonly BoundsPositiveRectangle[] = [
+  boundsPositiveNode.getBounds(),
+  boundsPositiveNode.getBounds(undefined),
+  boundsPositiveNode.getBounds({}),
+  boundsPositiveNode.getBounds({maxNodes: 2}),
+  boundsPositiveNode.getBounds({maxPrimitives: 3}),
+  boundsPositiveNode.getBounds({maxNodes: 2, maxPrimitives: 3}),
+  boundsPositiveNode.getBounds(boundsPositiveReadonlyOptions),
+  boundsPositiveContainer.getBounds(boundsPositiveReadonlyOptions),
+  boundsPositiveSprite.getBounds(),
+  boundsPositiveBitmap.getBounds(undefined),
+  boundsPositiveStage.getBounds({maxPrimitives: 3}),
+];
+// Structural variables with a recognized options field may have extra fields.
+const boundsPositiveStructuralOptions = {maxNodes: 2, x: 0, y: 0, width: 1, height: 1};
+const boundsPositiveStructuralResult: BoundsPositiveRectangle =
+  boundsPositiveNode.getBounds(boundsPositiveStructuralOptions);
+const boundsPositiveX: number = boundsPositiveStructuralResult.x;
+const boundsPositiveY: number = boundsPositiveStructuralResult.y;
+const boundsPositiveWidth: number = boundsPositiveStructuralResult.width;
+const boundsPositiveHeight: number = boundsPositiveStructuralResult.height;
+void boundsPositiveLiteralRectangle; void boundsPositiveResults;
+void boundsPositiveX; void boundsPositiveY; void boundsPositiveWidth; void boundsPositiveHeight;

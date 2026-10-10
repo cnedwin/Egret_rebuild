@@ -2,6 +2,8 @@
 
 English | [简体中文](README.zh-CN.md)
 
+Inherited `getBounds` reads authoritative receiver-local content with type-only `BoundsQueryOptions`, explicit node/primitive budgets and a fresh frozen result. Read the [bounds contract](../../knowledge-base/en/docs/display-content-bounds-contract.md).
+
 Inherited display coordinate queries use authentic display state, bounded ancestor/lifetime checks and optional `CoordinateQueryOptions`. Read the [coordinate contract](../../knowledge-base/en/docs/display-coordinate-query-contract.md).
 
 Egret's experimental logic package depends only on `@egret/contracts`. It receives event descriptors, synchronous cleanup values and narrow lifecycle ports injected by Engine, and provides cancellation, Scope, display trees, synchronous dispatch and CPU asset acquisition/leases. It maintains Scope ownership, object-to-Engine binding, parent/child relationships and event state.
