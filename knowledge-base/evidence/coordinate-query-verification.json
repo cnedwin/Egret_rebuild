@@ -1,0 +1,681 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-10",
+  "engineeringLabel": "0.21.0",
+  "packageVersion": "0.0.0",
+  "protocolVersion": "1.0",
+  "state": "BOUNDED_EXECUTION_RECORDED_PUBLICATION_SEPARATELY_GATED",
+  "scope": "Public logical display coordinate queries and fresh affected desktop rendering regressions",
+  "deliverableId": "V022",
+  "sourceId": "S071",
+  "originalSpecificationIdentities": [
+    {
+      "identityOnly": "display-coordinate-query-contract.md",
+      "bytes": 14339,
+      "sha256": "7e5653c561b0c80e7989756d0f381ada06f31af984db075019f3877b310d5233",
+      "role": "Reviewed first-party specification; later public status/acceptance projection bound separately"
+    },
+    {
+      "identityOnly": "显示坐标查询契约.md",
+      "bytes": 12752,
+      "sha256": "8628c53325ca0626fdfcf0b239970904cc4bb4c277d1531410ba57da32763ed8",
+      "role": "Reviewed first-party specification; later public status/acceptance projection bound separately"
+    }
+  ],
+  "origin": {
+    "process": "Codex-assisted independent first-party specification, tests, types, implementation and curation; independent scoped audits bound separately when sealed",
+    "copiedHistoricalOrCompetitorImplementationSources": [],
+    "newThirdPartyDependencies": [],
+    "intrinsics": [
+      "BigInt",
+      "DataView"
+    ],
+    "license": "Apache-2.0",
+    "limits": "Workflow disclosure does not guarantee model-training provenance or global originality"
+  },
+  "counts": {
+    "baseline": {
+      "registeredCallbacks": 49,
+      "passes": 0,
+      "failures": 49,
+      "meaning": "Missing authentic public methods; not 49 independently reached geometry counterexamples"
+    },
+    "focused": {
+      "tests": 92,
+      "passes": 92,
+      "failures": 0,
+      "coordinateCallbacksIncluded": 49,
+      "finalRun": "focused-green-efafd923-4147-4ca8-be10-19c44f0e47d4",
+      "priorPassRetained": true
+    },
+    "negativeTypes": {
+      "root": 68,
+      "web": 5,
+      "project": 28,
+      "total": 101,
+      "coordinateAdditions": 14
+    },
+    "core": {
+      "tests": 1045,
+      "passes": 1045,
+      "failures": 0,
+      "boundaryFiles": 300,
+      "headlessExit": 0,
+      "scope": "Version-bound verifier regression; full engine acceptance false"
+    },
+    "overlapRule": "Do not add baseline, focused and full-suite totals"
+  },
+  "repairs": [
+    {
+      "kind": "type-fixture-oracle",
+      "failedRun": "types-26b373f0-2d13-4aee-b5a8-17dd642dd2bb",
+      "diagnostics": [
+        "TS2344 positive.ts(119,53)",
+        "TS2344 positive.ts(120,53)"
+      ],
+      "cause": "Parameters optional elements include undefined; expected optional tuple omitted explicit unions under exactOptionalPropertyTypes",
+      "fix": "Expected x/y/options tuple elements include undefined; whole callable assertions and production signatures retained",
+      "successor": "types-a3822d19-cf6c-42f8-bb4b-fa89c4b5d228"
+    },
+    {
+      "kind": "behavior-fixture-cause-oracle",
+      "cause": "Optional cause comparison skipped a supplied undefined",
+      "fix": "Rest-argument presence makes supplied undefined distinguishable from omission",
+      "successor": "focused-green-efafd923-4147-4ca8-be10-19c44f0e47d4",
+      "priorPassingRun": "focused-green-dce068a6-024c-4caa-bbb3-afca1ca9df62"
+    }
+  ],
+  "C37": {
+    "route": "Public Sprite/Graphics/Engine.captureFrame and query; no private runtime import",
+    "actualCoefficientGatePassed": true,
+    "u": "2^-53",
+    "coefficients": [
+      "1/2+u",
+      "1/2",
+      "-1/2",
+      "-1/2+u",
+      "0",
+      "0"
+    ],
+    "ordinaryRoundedDeterminant": "0",
+    "independentExactDeterminant": "u^2=2^-106",
+    "globalInput": [
+      "0",
+      "2^-106"
+    ],
+    "localExpected": [
+      "1/2",
+      "1/2+u"
+    ],
+    "negativeMirrorPassed": true,
+    "observation": "Named C37 callback passed in both focused runs; coefficient identities asserted before results"
+  },
+  "rendering": {
+    "reason": "Shared transform helper changes runtime emitted graph; affected Canvas/WebGPU rectangle and bounded B1 gates rerun",
+    "environment": {
+      "browser": "Edge154.0.4258.62",
+      "playwright": "1.62.1",
+      "node": "v24.19.0",
+      "typescript": "7.0.2",
+      "packageManagerPin": "pnpm@11.25.0",
+      "headless": true,
+      "DPR": 1,
+      "callerAddedFlags": []
+    },
+    "Canvas": {
+      "primary": "canvas-39e32715-f870-415b-807b-399e246b1e71",
+      "checks": 14,
+      "pointerPixelChange": true,
+      "negativeControlPassed": true,
+      "unexpectedErrors": 0,
+      "stableIdentityFiles": 381,
+      "predecessor": "canvas-61e18c05-57a5-4ee7-9fd1-a919d4f37740",
+      "predecessorLimit": "Passed observation lacks own identity inventory; retained as predecessor, not failure"
+    },
+    "WebGPU": {
+      "run": "webgpu-ab9bbb1b-a4c2-459a-a91b-7b8f26f5b119",
+      "frames": 42,
+      "rawChecks": 1709,
+      "compositionChecks": 6808,
+      "screenshots": 84,
+      "counterexamples": 8,
+      "unexpectedErrors": 0,
+      "identitiesStable": true,
+      "rawRecordComposition": {
+        "namedPixelPoints": 1702,
+        "exhaustiveZeroRecords": 7,
+        "exhaustiveZeroBytes": 27332,
+        "decodedPngs": 84,
+        "nativeCounterexamples": 7,
+        "syntheticCounterexamples": 1
+      }
+    },
+    "B1": {
+      "run": "b1-abbfb92d-04a7-478f-865e-5b1be8819642",
+      "positiveFrames": 7,
+      "counterexamples": 5,
+      "submissions": 11,
+      "browserClosed": true,
+      "contextClosed": true,
+      "serverClosed": true,
+      "pendingApiOperations": 0,
+      "cleanupScope": "standalone-cooperative-api",
+      "osDescendantRetirement": "UNBOUND",
+      "identitiesStable": true,
+      "exactPositiveComparisons": 8214,
+      "counterexampleComposition": {
+        "negativePixelCases": 4,
+        "compilerRefusal": "N4"
+      }
+    },
+    "coordinateArithmeticOnGPU": false
+  },
+  "sourceSnapshotAtCuration": {
+    "meaning": "Current read-only byte identity snapshot, not a substitute for execution-time manifests or later successor binding",
+    "files": [
+      {
+        "path": "packages/contracts/src/Point2D.ts",
+        "bytes": 152,
+        "sha256": "7ba32badad650fe83fd09843043d5ecfd995c0471e6861d5a3eb1ecd4bd3feac"
+      },
+      {
+        "path": "packages/contracts/src/index.ts",
+        "bytes": 1115,
+        "sha256": "b0b13fd6b1dc7e6d7627691e2e45f499c383327991066576bd29b62c5c15c16c"
+      },
+      {
+        "path": "packages/runtime/src/displayTransform.ts",
+        "bytes": 697,
+        "sha256": "f9f28f5edcfda29a92b89bff1ed817f93736f96d2b29c8a8dc1ed2eeb823ebbc"
+      },
+      {
+        "path": "packages/runtime/src/displayCoordinates.ts",
+        "bytes": 3515,
+        "sha256": "803047a0fef81cb685021be92799dece597f8152f668a9eba8392411ac536a25"
+      },
+      {
+        "path": "packages/runtime/src/coordinateInverse.ts",
+        "bytes": 4359,
+        "sha256": "bb17707ec9d932dbcd9a8b46ce595fb14a75b283a438fc88e5d5e009b99078de"
+      },
+      {
+        "path": "packages/runtime/src/DisplayObject.ts",
+        "bytes": 4082,
+        "sha256": "3f354494b0034c2a08dd77947b0e2ccc1c1d766f083d1342509cbd945b2b3902"
+      },
+      {
+        "path": "packages/runtime/src/frameCapture.ts",
+        "bytes": 4703,
+        "sha256": "598fa148c5ba223081eb0baf52e25d8793a824851ed854087b8eb77d9b02ca8e"
+      },
+      {
+        "path": "packages/runtime/src/index.ts",
+        "bytes": 1819,
+        "sha256": "518729019b22a4891cbf7a082f2cd0494e3e1512c32804d96b6041a5cb6fd09d"
+      },
+      {
+        "path": "packages/engine/src/index.ts",
+        "bytes": 1632,
+        "sha256": "f6132cff4e2eab342b62f15cf9cb78cbd5e51e39ca3ffdf3d3acc002a544fecc"
+      },
+      {
+        "path": "tests/coordinates.test.mjs",
+        "bytes": 24251,
+        "sha256": "157b1fd734c980e34f80c218fceed99dcd30c76a4143c064b5fda379e26a889a"
+      },
+      {
+        "path": "tests/types/positive.ts",
+        "bytes": 10248,
+        "sha256": "da1637b2b004dab19014a5c601c60b17d1de03e4090d6651a7ca818c35558358"
+      },
+      {
+        "path": "tests/types/negative.ts",
+        "bytes": 11969,
+        "sha256": "57ff4772460d579be77d7c765299537644b12fd297b95f6aa8d2c402c2c317e6"
+      },
+      {
+        "path": "tests/types/dom-free.ts",
+        "bytes": 1990,
+        "sha256": "43588bdace3717fdbe46bc6b4c70817ba20899759a9bfe0c00f39492ccb9cd32"
+      },
+      {
+        "path": "pnpm-lock.yaml",
+        "bytes": 8757,
+        "sha256": "ce4b58d9705804e32ebea4f03ff77e4f6550ef116d48378bcbed681d1ca05c97"
+      },
+      {
+        "path": "tools/check-boundaries.mjs",
+        "bytes": 13780,
+        "sha256": "d7b49ef1c8eb63ab60b9123f601743345b72fd0d405157257fd5adcdb81c9b9e"
+      }
+    ]
+  },
+  "runs": [
+    {
+      "identityOnly": "baseline-red-8a461dfb-a9b0-4788-9f06-2638844cbc2a",
+      "receiptSha256": "56d09695a7a984ec70a936e66f803693d5145dd27e0d7378bc89914c8e905533",
+      "rawDistribution": "identity-only/not-distributed",
+      "mode": "baseline-red",
+      "passed": false,
+      "observations": [
+        {
+          "name": "build",
+          "command": "tools/build.mjs",
+          "commandArgumentsScope": "Exact private receipt retains full command; public browser reproductions use the documented installed Playwright path and fresh private output directory",
+          "startedAtUtc": "2026-10-10T06:05:33.331Z",
+          "finishedAtUtc": "2026-10-10T06:05:33.769Z",
+          "exitCode": 0,
+          "stdout": {
+            "bytes": 44,
+            "sha256": "166710cb105690b244b48c5dcc5672a4c0bc8280e995ae7d2f5bd46141491cea"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "browserIdentity": null
+        },
+        {
+          "name": "behavior",
+          "command": "--test",
+          "commandArgumentsScope": "Exact private receipt retains full command; public browser reproductions use the documented installed Playwright path and fresh private output directory",
+          "startedAtUtc": "2026-10-10T06:05:33.769Z",
+          "finishedAtUtc": "2026-10-10T06:05:33.938Z",
+          "exitCode": 1,
+          "stdout": {
+            "bytes": 64980,
+            "sha256": "6e77d2b4b05149f6d97b354b4a2fc3928426836215bd88a8aa1b4b0ec2acb6f4"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "browserIdentity": null
+        }
+      ]
+    },
+    {
+      "identityOnly": "focused-green-dce068a6-024c-4caa-bbb3-afca1ca9df62",
+      "receiptSha256": "5aa23538cd5c91e8e054dea3c27de85407ac7cff99353c5f7742db74ff3f1cb5",
+      "rawDistribution": "identity-only/not-distributed",
+      "mode": "focused-green",
+      "passed": true,
+      "observations": [
+        {
+          "name": "build",
+          "command": "tools/build.mjs",
+          "commandArgumentsScope": "Exact private receipt retains full command; public browser reproductions use the documented installed Playwright path and fresh private output directory",
+          "startedAtUtc": "2026-10-10T06:07:17.223Z",
+          "finishedAtUtc": "2026-10-10T06:07:17.644Z",
+          "exitCode": 0,
+          "stdout": {
+            "bytes": 44,
+            "sha256": "166710cb105690b244b48c5dcc5672a4c0bc8280e995ae7d2f5bd46141491cea"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "browserIdentity": null
+        },
+        {
+          "name": "behavior",
+          "command": "--test",
+          "commandArgumentsScope": "Exact private receipt retains full command; public browser reproductions use the documented installed Playwright path and fresh private output directory",
+          "startedAtUtc": "2026-10-10T06:07:17.645Z",
+          "finishedAtUtc": "2026-10-10T06:07:17.931Z",
+          "exitCode": 0,
+          "stdout": {
+            "bytes": 7745,
+            "sha256": "84119060e52a637c5c84d828c266d5edb7030fc1271ede731ab5dbacfba97a7d"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "browserIdentity": null
+        }
+      ]
+    },
+    {
+      "identityOnly": "types-26b373f0-2d13-4aee-b5a8-17dd642dd2bb",
+      "receiptSha256": "0c7ec3af1c702f2efb94a25fedc15ff820cb48eb7f8c83a6c5ee84dbea5ea9a3",
+      "rawDistribution": "identity-only/not-distributed",
+      "mode": "types",
+      "passed": false,
+      "observations": [
+        {
+          "name": "types",
+          "command": "tools/check-types.mjs",
+          "commandArgumentsScope": "Exact private receipt retains full command; public browser reproductions use the documented installed Playwright path and fresh private output directory",
+          "startedAtUtc": "2026-10-10T06:08:32.258Z",
+          "finishedAtUtc": "2026-10-10T06:08:32.435Z",
+          "exitCode": 1,
+          "stdout": {
+            "bytes": 200,
+            "sha256": "570cdef9b2c82845765d404ed5a4fa7118a8a9117db471f002fbbb5a2175e1d6"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "browserIdentity": null
+        }
+      ]
+    },
+    {
+      "identityOnly": "types-a3822d19-cf6c-42f8-bb4b-fa89c4b5d228",
+      "receiptSha256": "b97ca7fb2cb191b5f799c616d2cafc2bd9e3481763ec47b291bf633386260a94",
+      "rawDistribution": "identity-only/not-distributed",
+      "mode": "types",
+      "passed": true,
+      "observations": [
+        {
+          "name": "types",
+          "command": "tools/check-types.mjs",
+          "commandArgumentsScope": "Exact private receipt retains full command; public browser reproductions use the documented installed Playwright path and fresh private output directory",
+          "startedAtUtc": "2026-10-10T06:09:17.574Z",
+          "finishedAtUtc": "2026-10-10T06:09:18.609Z",
+          "exitCode": 0,
+          "stdout": {
+            "bytes": 22241,
+            "sha256": "bbe3bacd74f0c8da74e10ad812f0155cbe37e3a3299550b36478b9525bf97b71"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "browserIdentity": null
+        }
+      ]
+    },
+    {
+      "identityOnly": "boundaries-4d8cfd2e-cc7b-48a3-9c2c-9a25600e9d34",
+      "receiptSha256": "f1e7652a41c73de46739e423f8e0238a8e65a60ea29fca02ed85d68a5e770bbf",
+      "rawDistribution": "identity-only/not-distributed",
+      "mode": "boundaries",
+      "passed": true,
+      "observations": [
+        {
+          "name": "boundaries",
+          "command": "tools/check-boundaries.mjs",
+          "commandArgumentsScope": "Exact private receipt retains full command; public browser reproductions use the documented installed Playwright path and fresh private output directory",
+          "startedAtUtc": "2026-10-10T06:08:32.485Z",
+          "finishedAtUtc": "2026-10-10T06:08:33.052Z",
+          "exitCode": 0,
+          "stdout": {
+            "bytes": 192,
+            "sha256": "22cac770d60650bb4befbe4b5b8016e24848b9063d05712c349699eba907e3a0"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "browserIdentity": null
+        }
+      ]
+    },
+    {
+      "identityOnly": "verify-core-4c0cbd2a-4dc4-40c7-9244-aec94f165c8b",
+      "receiptSha256": "cb9df294117494bef7243a1703e41931857206fc218e46504e0dac07bb44700d",
+      "rawDistribution": "identity-only/not-distributed",
+      "mode": "verify-core",
+      "passed": true,
+      "observations": [
+        {
+          "name": "verify",
+          "command": "tools/verify.mjs",
+          "commandArgumentsScope": "Exact private receipt retains full command; public browser reproductions use the documented installed Playwright path and fresh private output directory",
+          "startedAtUtc": "2026-10-10T06:09:47.852Z",
+          "finishedAtUtc": "2026-10-10T06:10:24.651Z",
+          "exitCode": 0,
+          "stdout": {
+            "bytes": 176277,
+            "sha256": "eb1f88f0a7e0ccc91a880ab9fe49f3c50cc69e5194c3a395be25f55be68b1d14"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "browserIdentity": null
+        },
+        {
+          "name": "headless",
+          "command": "examples/headless.mjs",
+          "commandArgumentsScope": "Exact private receipt retains full command; public browser reproductions use the documented installed Playwright path and fresh private output directory",
+          "startedAtUtc": "2026-10-10T06:10:24.652Z",
+          "finishedAtUtc": "2026-10-10T06:10:24.718Z",
+          "exitCode": 0,
+          "stdout": {
+            "bytes": 318,
+            "sha256": "ad50f6dd89dd73ed852cb8f9813a810e39d1744070a1c3ba4466b8a8b6af74d9"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "browserIdentity": null
+        }
+      ]
+    },
+    {
+      "identityOnly": "focused-green-efafd923-4147-4ca8-be10-19c44f0e47d4",
+      "receiptSha256": "89f01dd7b291557e2159c3f0f80217401c56befac899f5420d67c225e3a1f70d",
+      "rawDistribution": "identity-only/not-distributed",
+      "mode": "focused-green",
+      "passed": true,
+      "observations": [
+        {
+          "name": "build",
+          "command": "tools/build.mjs",
+          "commandArgumentsScope": "Exact private receipt retains full command; public browser reproductions use the documented installed Playwright path and fresh private output directory",
+          "startedAtUtc": "2026-10-10T06:13:30.713Z",
+          "finishedAtUtc": "2026-10-10T06:13:31.153Z",
+          "exitCode": 0,
+          "stdout": {
+            "bytes": 44,
+            "sha256": "166710cb105690b244b48c5dcc5672a4c0bc8280e995ae7d2f5bd46141491cea"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "browserIdentity": null
+        },
+        {
+          "name": "behavior",
+          "command": "--test",
+          "commandArgumentsScope": "Exact private receipt retains full command; public browser reproductions use the documented installed Playwright path and fresh private output directory",
+          "startedAtUtc": "2026-10-10T06:13:31.153Z",
+          "finishedAtUtc": "2026-10-10T06:13:31.443Z",
+          "exitCode": 0,
+          "stdout": {
+            "bytes": 7748,
+            "sha256": "e5504db7a060e354cf3192023030095e8add036f804d775188824c5c6f782a26"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "browserIdentity": null
+        }
+      ]
+    },
+    {
+      "identityOnly": "canvas-61e18c05-57a5-4ee7-9fd1-a919d4f37740",
+      "receiptSha256": "697aadf1dd5bfa2d49f6f4a7d84821caf3620a7edee7f61888ff7909464052a4",
+      "rawDistribution": "identity-only/not-distributed",
+      "mode": "canvas",
+      "passed": true,
+      "observations": [
+        {
+          "name": "canvas",
+          "command": "tools/verify-canvas.mjs",
+          "commandArgumentsScope": "Exact private receipt retains full command; public browser reproductions use the documented installed Playwright path and fresh private output directory",
+          "startedAtUtc": "2026-10-10T06:11:00.842Z",
+          "finishedAtUtc": "2026-10-10T06:11:01.992Z",
+          "exitCode": 0,
+          "stdout": {
+            "bytes": 3020,
+            "sha256": "bbbd9efb6f3de286717496ff44b76bfc5fd024df201c2f4f25fe38c17a693712"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "browserIdentity": null
+        }
+      ]
+    },
+    {
+      "identityOnly": "canvas-39e32715-f870-415b-807b-399e246b1e71",
+      "receiptSha256": "9d37b445894224c8928540de041a11f3ca4b64ecb6e66ee81fabddeef5b90504",
+      "rawDistribution": "identity-only/not-distributed",
+      "mode": "canvas",
+      "passed": true,
+      "observations": [
+        {
+          "name": "canvas",
+          "command": "tools/verify-canvas.mjs",
+          "commandArgumentsScope": "Exact private receipt retains full command; public browser reproductions use the documented installed Playwright path and fresh private output directory",
+          "startedAtUtc": "2026-10-10T06:15:23.235Z",
+          "finishedAtUtc": "2026-10-10T06:15:24.241Z",
+          "exitCode": 0,
+          "stdout": {
+            "bytes": 3020,
+            "sha256": "bbbd9efb6f3de286717496ff44b76bfc5fd024df201c2f4f25fe38c17a693712"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "browserIdentity": {
+            "files": 381,
+            "beforeSha256": "98e73c449cd3461ad4b07093e31faa45b6071db82bfc672abd883b489fecf831",
+            "afterSha256": "98e73c449cd3461ad4b07093e31faa45b6071db82bfc672abd883b489fecf831",
+            "stable": true
+          }
+        }
+      ]
+    },
+    {
+      "identityOnly": "webgpu-ab9bbb1b-a4c2-459a-a91b-7b8f26f5b119",
+      "receiptSha256": "dd75b134695ff0fdfe6c91c5a4b1274581996befbd14c365c64cbc3375d5d6f8",
+      "rawDistribution": "identity-only/not-distributed",
+      "mode": "webgpu",
+      "passed": true,
+      "observations": [
+        {
+          "name": "webgpu",
+          "command": "tools/verify-webgpu.mjs",
+          "commandArgumentsScope": "Exact private receipt retains full command; public browser reproductions use the documented installed Playwright path and fresh private output directory",
+          "startedAtUtc": "2026-10-10T06:11:10.499Z",
+          "finishedAtUtc": "2026-10-10T06:11:18.181Z",
+          "exitCode": 0,
+          "stdout": {
+            "bytes": 443,
+            "sha256": "be0a4dfd704d7d12567113431aeb3b6a2a80d475c4b1d74ddc1a88fab9465559"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "browserIdentity": null
+        }
+      ]
+    },
+    {
+      "identityOnly": "b1-abbfb92d-04a7-478f-865e-5b1be8819642",
+      "receiptSha256": "89e017cfee2b40574a3ae4be76d2ff6423b674af638924f5b467a7b4cd252902",
+      "rawDistribution": "identity-only/not-distributed",
+      "mode": "b1",
+      "passed": true,
+      "observations": [
+        {
+          "name": "b1",
+          "command": "tools/verify-webgpu-b1.mjs",
+          "commandArgumentsScope": "Exact private receipt retains full command; public browser reproductions use the documented installed Playwright path and fresh private output directory",
+          "startedAtUtc": "2026-10-10T06:11:54.754Z",
+          "finishedAtUtc": "2026-10-10T06:11:57.554Z",
+          "exitCode": 0,
+          "stdout": {
+            "bytes": 425,
+            "sha256": "b9dfc1102fb8e334f43689a01d2b3082cbf8f36875358004a71913746307c2da"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "browserIdentity": null
+        }
+      ]
+    }
+  ],
+  "pending": [
+    "Fresh complete prepush on final adopted source/docs",
+    "Authorized reviewable stacked coordinate PR and actual remote receipt"
+  ],
+  "remote": {
+    "state": "NOT_SUBMITTED_BY_THIS_CURATION",
+    "merged": false,
+    "released": false,
+    "mainChangedByThisCuration": false
+  },
+  "excludedAcceptance": [
+    "performance",
+    "physical phones",
+    "cross-browser",
+    "coordinate GPU arithmetic",
+    "complete 3D",
+    "complete A2/alpha calibration",
+    "production hosts",
+    "full fonts/UI/skeletons",
+    "Spine",
+    "complete R008/V006 migration"
+  ],
+  "curationExecution": {
+    "RWritten": false,
+    "productsExecuted": false,
+    "Git": false,
+    "network": false
+  },
+  "independentReviews": [
+    {
+      "role": "implementation_source",
+      "status": "PASS_SOURCE_ONLY_AFTER_SCOPED_TEST_FIX",
+      "P1": 0,
+      "P2": 0,
+      "findingsSha256": "fb7afdf06275d8ade9aba4dbc290c82fdc7f8dfed02d29a66221886639972e1e",
+      "scope": "Declared source and saved-type evidence; no reviewer product execution or later metadata review"
+    },
+    {
+      "role": "saved_render_artifacts",
+      "status": "PASS_WITH_LIMITS",
+      "P1": 0,
+      "P2": 0,
+      "findingsSha256": "387eaf7891eab499a75dd38c9a584a9eacc8d107ea05e1a6a319d8557e93646b",
+      "scope": "Selected saved Canvas/WebGPU/B1 sources and artifacts; excludes OS job-owner retirement and broader platform/performance acceptance"
+    },
+    {
+      "role": "current_bilingual_public_material",
+      "status": "PASS_BILINGUAL_PUBLIC_MATERIAL_SOURCE_REVIEW_AFTER_DIGEST_FIX",
+      "findingsSha256": "29a609025841e35c4f2331b7059f3e930f2454b52c7ac029c8926830e9c697e0",
+      "P1": 0,
+      "P2": 0,
+      "scope": "Independent adopted-reading/registry/source identity review at its sealed snapshot. This later root hash attestation is separate and is not credited retrospectively to that review."
+    }
+  ],
+  "rootProjection": {
+    "date": "2026-10-10",
+    "scope": "Public status/navigation/registry integration; original specification bodies retained apart from isolated status and acceptance appendix",
+    "finalPrepush": "PENDING",
+    "remoteDelivery": "PENDING",
+    "publicMaterialReview": {
+      "status": "PASS_BILINGUAL_PUBLIC_MATERIAL_SOURCE_REVIEW_AFTER_DIGEST_FIX",
+      "findingsSha256": "29a609025841e35c4f2331b7059f3e930f2454b52c7ac029c8926830e9c697e0",
+      "P1": 0,
+      "P2": 0,
+      "scope": "Independent adopted-reading/registry/source identity review at its sealed snapshot. This later root hash attestation is separate and is not credited retrospectively to that review."
+    }
+  }
+}

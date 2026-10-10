@@ -1169,11 +1169,23 @@
         "evidence/sequence-player-native.json"
       ],
       "doc": "en/docs/sequence-player-contract.md"
+    },
+    {
+      "id": "S071",
+      "title": "Public coordinate implementation and bounded recorded regressions",
+      "type": "first_party_coordinate_api_cpu_type_and_affected_desktop_render_evidence",
+      "scope": "49 baseline failures, 92/92 focused successors, 101 expected type diagnostics and 1045/1045 verifier tests; actual public C37 coefficients, 300 boundary files, fresh affected Canvas/WebGPU/B1 observations and scoped independent reviews.",
+      "limit": "B1 cleanup covers cooperative APIs; OS descendant retirement UNBOUND. No coordinate GPU arithmetic, other browsers, phones, performance, complete 3D/UI/A2/Spine or R008/V006 migration. Final prepush and remote delivery remain separate.",
+      "researchCheckedAt": "2026-10-10",
+      "artifacts": [
+        "evidence/coordinate-query-verification.json"
+      ],
+      "doc": "en/docs/display-coordinate-query-evidence.md"
     }
   ],
   "_localization": {
     "canonicalSource": "来源.json",
-    "canonicalSha256": "068cbd28494bd9f75921400bc0b158b6079b8e4fdd0d9af6d360bd8029d8ee21",
+    "canonicalSha256": "b76fec85224ed1db7ee1aa1164a7c117efbe290f0a9c93d0d0faffcc587ce00e",
     "role": "read_only_translation",
     "language": "en"
   }

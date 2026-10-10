@@ -931,11 +931,43 @@
         "evidence/sequence-player-native.json"
       ],
       "doc": "en/docs/sequence-player-contract.md"
+    },
+    {
+      "id": "V022",
+      "title": "Public display coordinate queries",
+      "kind": "bounded_runtime_increment",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R012",
+        "R016"
+      ],
+      "dependsOn": [
+        "V011"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "public_display_coordinate_queries",
+      "acceptance": "bounded_cpu_type_affected_desktop_regression_independently_reviewed_publication_separate",
+      "acceptanceCriteria": [
+        "The public root provides readonly Point2D/CoordinateQueryOptions and inherited localToGlobal/globalToLocal, with exact stored-matrix inverse rounding and explicit logical-space/lifetime/ancestor budgets.",
+        "49 missing-API callbacks failed before implementation; focused successors passed 92/92, including the actual public C37 coefficient gate. The supplied-undefined cause oracle was strengthened and rerun.",
+        "68/5/28 expected negative diagnostics, including 14 coordinate additions, passed after the Parameters tuple oracle correction; the recorded verifier passed 1045/1045 and 300 boundary files.",
+        "Fresh affected Canvas 14 checks with 381 stable identities, WebGPU 42 frames/1709 raw records/6808 composition checks/84 screenshots/8 counterexamples, and B1 7 positive frames/5 counterexamples/11 submissions passed.",
+        "Scoped implementation and saved-render reviews have no remaining P1/P2. B1 cleanup is cooperative API scope only; OS descendant retirement is UNBOUND. Final prepush and remote delivery are separate; phones/performance/complete UI/3D/Spine/migration remain open."
+      ],
+      "artifacts": [
+        "en/docs/display-coordinate-query-contract.md",
+        "en/docs/display-coordinate-query-evidence.md",
+        "evidence/coordinate-query-verification.json"
+      ],
+      "doc": "en/docs/display-coordinate-query-contract.md"
     }
   ],
   "_localization": {
     "canonicalSource": "交付.json",
-    "canonicalSha256": "ab313cc8cdebcead8f8ef4d88f5abf1493fc902cd0f0fb2c7fd7aa934fae0a3d",
+    "canonicalSha256": "a25275982a589eea4141d507dc842506ff2bec9bdf181fadc079a98c0c7cd61d",
     "role": "read_only_translation",
     "language": "en"
   }

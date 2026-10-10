@@ -2,6 +2,7 @@ export type { CancellationListener, CancellationSignal } from "./CancellationSig
 export type { Disposable, Releasable, ScopeValue } from "./Disposable.js";
 export type { Diagnostic, DiagnosticHandler } from "./Diagnostic.js";
 export type { HostAdapter } from "./HostAdapter.js";
+export type { Point2D } from './Point2D.js';
 export type { Matrix2D, Rectangle2D, ClipRectangle2D, RectangleCommand2D, ImageCommand2D, RenderCommand2D, FrameOptions2D, RenderFrame2D, RenderHostAdapter } from './RenderFrame2D.js';
 export { IMAGE_LIMITS_2D, createImageData2D, isImageData2D, copyImageData2DPixels } from './ImageData2D.js';
 export type { ImageData2DInput, ImageData2D, TextureRegion2D } from './ImageData2D.js';

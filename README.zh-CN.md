@@ -21,6 +21,7 @@ Years later, as times change and technology advances, many developers continue t
 | 检查点 | 主要解决的问题 | 记录 |
 | --- | --- | --- |
 | 未发行 | 英文优先的社区入口、独立的 `en/` 与 `Cns/` 知识库、英文文件名、创始人介绍与双语 Changelog。精简文档入口，集中历史研究，便于查阅。 | [详情](knowledge-base/Cns/docs/documentation-layout.md) |
+| 0.21.0 | 公共逻辑显示坐标查询、全新不可变结果、已存储矩阵精确逆算及明确祖先／生命周期预算。CPU／类型与受影响桌面回归分别记录范围。 | [详情](knowledge-base/Cns/docs/显示坐标查询契约.md) |
 | 0.20.0 | 公共显式时间 SequencePlayer，提供 once／loop 选帧、精确借用租约与不可变采样；附公共浏览器验证器和示例。行为／类型检查与 Canvas／WebGPU 不透明观察分别记录范围。 | [详情](knowledge-base/Cns/docs/显式时间序列播放器契约.md) |
 | 0.19.0 | Bitmap 图集区域与序列采样定位；可复现的 B1 浏览器检查与纹理采集证据。Bitmap CPU 检查已通过，可见序列播放及纹理数值边界仍待验证。 | [详情](knowledge-base/Cns/docs/bitmap-region-evidence.md) |
 | 0.18.0 | 具名旧 MovieClip 的有界 CPU 转换，保留图集裁剪、偏移与作者持续段时间。图片解码和播放仍未验证。 | [详情](knowledge-base/Cns/docs/legacy-movieclip-evidence.md) |
@@ -51,6 +52,7 @@ These are engineering and knowledge-base checkpoints, newest first, rather than 
 | Checkpoint | Main problem addressed | Record |
 | --- | --- | --- |
 | Unreleased | English-first community entry, separate `en/` and `Cns/` knowledge-base editions, English filenames, founder introduction and bilingual Changelog. Simplified document entries and grouped historical research for easier navigation. | [Details](knowledge-base/en/docs/documentation-layout.md) |
+| 0.21.0 | Public logical display coordinate queries, fresh immutable results, exact stored-matrix inverse and explicit ancestor/lifetime budgets. CPU/type and affected desktop regression results have separate recorded scopes. | [Details](knowledge-base/en/docs/display-coordinate-query-contract.md) |
 | 0.20.0 | Public explicit-time SequencePlayer with once/loop selection, exact borrowed lease and immutable samples; a public browser verifier and example. Focused behavior/type and opaque Canvas/WebGPU observations have separate recorded scopes. | [Details](knowledge-base/en/docs/sequence-player-contract.md) |
 | 0.19.0 | Bitmap atlas regions and sequence-sample placement; reproducible B1 browser checks and preserved texture-collection evidence. Bitmap CPU checks passed; visible sequence playback and texture numeric bounds remain open. | [Details](knowledge-base/en/docs/bitmap-region-evidence.md) |
 | 0.18.0 | Bounded CPU conversion of a named legacy MovieClip, preserving atlas crops, offsets and authored hold durations. Image decoding and playback remain unverified. | [Details](knowledge-base/en/docs/legacy-movieclip-evidence.md) |
@@ -76,7 +78,7 @@ These are engineering and knowledge-base checkpoints, newest first, rather than 
 
 ## 当前范围与参与方式
 
-当前工程预览为 **0.20.0**。我们正在为主要依靠 AI 制作游戏的创作者，重建开源游戏引擎与创作流程，首期方向涵盖复杂 2D UI 与轻量 3D。仓库包含实验性核心和结构化知识库；完整引擎、生产平台宿主、编辑器、Agent 服务、目标设备性能及完整旧工程迁移仍待实施或验收。
+当前工程预览为 **0.21.0**。我们正在为主要依靠 AI 制作游戏的创作者，重建开源游戏引擎与创作流程，首期方向涵盖复杂 2D UI 与轻量 3D。仓库包含实验性核心和结构化知识库；完整引擎、生产平台宿主、编辑器、Agent 服务、目标设备性能及完整旧工程迁移仍待实施或验收。
 
 欢迎全球开发者参与实现、可复现问题与修复、文档翻译、API 提案，以及自有或获授权的游戏和迁移样本。请先阅读[贡献指南](CONTRIBUTING.zh-CN.md)、[中文知识库](knowledge-base/Cns/README.md)、[英文知识库](knowledge-base/en/README.md)、[文档索引](DOCUMENTATION.zh-CN.md)、[来源记录](source-origin.json)和[鸣谢](ACKNOWLEDGEMENTS.zh-CN.md)。
 

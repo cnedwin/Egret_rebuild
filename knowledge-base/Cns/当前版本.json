@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "version": "0.13.0",
-  "updatedAt": "2026-10-09",
+  "updatedAt": "2026-10-10",
   "title": "白鹭引擎重构工程",
   "stage": "independent_browser_webgpu_rectangle_checkpoint",
   "publication": "development_preview",
@@ -66,7 +66,9 @@
     "displayFrameRecord": "Cns/docs/显示与帧执行实现记录.md",
     "webgpuRectangleContract": "Cns/docs/WebGPU矩形执行合同.md",
     "webgpuRectanglePlan": "Cns/docs/WebGPU矩形实施计划.md",
-    "webgpuRectangleEvidence": "Cns/docs/WebGPU矩形实现证据.md"
+    "webgpuRectangleEvidence": "Cns/docs/WebGPU矩形实现证据.md",
+    "displayCoordinateQueryContract": "Cns/docs/显示坐标查询契约.md",
+    "displayCoordinateQueryEvidence": "Cns/docs/显示坐标查询证据.md"
   },
   "architectureContractProbesRun": true,
   "browserApiPixelProbesRun": true,
@@ -402,5 +404,34 @@
     "nativePixelsRun": false,
     "performanceRun": false,
     "fullMigrationAcceptanceRun": false
+  },
+  "coordinateQueryImplementation": {
+    "deliverable": "V022",
+    "source": "S071",
+    "engineeringLabel": "0.21.0",
+    "state": "BOUNDED_CPU_TYPE_AFFECTED_DESKTOP_REGRESSION_RECORDED",
+    "supportLevel": "experimental",
+    "contract": "Cns/docs/显示坐标查询契约.md",
+    "evidence": "Cns/docs/显示坐标查询证据.md",
+    "verification": "evidence/coordinate-query-verification.json",
+    "baselineFailures": 49,
+    "focusedPasses": 92,
+    "negativeTypes": {
+      "root": 68,
+      "web": 5,
+      "project": 28
+    },
+    "verifierPasses": 1045,
+    "boundaryFiles": 300,
+    "scope": "逻辑显示坐标与已存储矩阵精确逆算；仅覆盖受影响桌面夹具，各项总数重叠。",
+    "b1CleanupScope": "standalone-cooperative-api",
+    "osDescendantRetirement": "UNBOUND",
+    "publicMaterialReview": "PENDING",
+    "finalPrepush": "PENDING",
+    "remoteDelivery": "PENDING",
+    "fullProductAcceptance": false,
+    "performanceAcceptance": false,
+    "SpineAcceptance": false,
+    "fullMigrationAcceptance": false
   }
 }

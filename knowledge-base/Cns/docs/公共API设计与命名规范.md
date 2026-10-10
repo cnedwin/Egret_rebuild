@@ -2,6 +2,8 @@
 
 [English](../../en/docs/public-api-design-and-naming.md) | 简体中文
 
+公共继承的 `localToGlobal`／`globalToLocal` 查询在逻辑空间返回全新的只读 `Point2D`。缺失坐标分别默认为零；第三个参数是 `CoordinateQueryOptions`。祖先预算、真实接收者／生命周期检查及已存储矩阵精确逆算见[坐标契约](显示坐标查询契约.md)。旧版可变输出适配器仍待完成。
+
 历史 0.13.0 矩形检查点见单独的[实现与验证记录](WebGPU矩形实现证据.md)；源码身份、结果及待办保留当时范围，不代表当前产品验收。
 
 

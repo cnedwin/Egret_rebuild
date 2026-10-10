@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "version": "0.13.0",
-  "updatedAt": "2026-10-09",
+  "updatedAt": "2026-10-10",
   "title": "Egret Engine Rebuild",
   "stage": "independent_browser_webgpu_rectangle_checkpoint",
   "publication": "development_preview",
@@ -66,7 +66,9 @@
     "displayFrameRecord": "en/docs/display-and-frame-implementation-record.md",
     "webgpuRectangleContract": "en/docs/webgpu-rectangle-execution-contract.md",
     "webgpuRectanglePlan": "en/docs/webgpu-rectangle-implementation-plan.md",
-    "webgpuRectangleEvidence": "en/docs/webgpu-rectangle-implementation-evidence.md"
+    "webgpuRectangleEvidence": "en/docs/webgpu-rectangle-implementation-evidence.md",
+    "displayCoordinateQueryContract": "en/docs/display-coordinate-query-contract.md",
+    "displayCoordinateQueryEvidence": "en/docs/display-coordinate-query-evidence.md"
   },
   "architectureContractProbesRun": true,
   "browserApiPixelProbesRun": true,
@@ -252,7 +254,7 @@
   },
   "_localization": {
     "canonicalSource": "当前版本.json",
-    "canonicalSha256": "50f5e71ee8aff7f0483d51671cd2bc2373d4714f7952c66cbe9bc61ea0547de3",
+    "canonicalSha256": "c15215bcc38519d8358ad1c31d0ad8b3332b81e7e9cd075cc35eabbed87f00f7",
     "role": "read_only_translation",
     "language": "en"
   },
@@ -408,5 +410,34 @@
     "nativePixelsRun": false,
     "performanceRun": false,
     "fullMigrationAcceptanceRun": false
+  },
+  "coordinateQueryImplementation": {
+    "deliverable": "V022",
+    "source": "S071",
+    "engineeringLabel": "0.21.0",
+    "state": "BOUNDED_CPU_TYPE_AFFECTED_DESKTOP_REGRESSION_RECORDED",
+    "supportLevel": "experimental",
+    "contract": "en/docs/display-coordinate-query-contract.md",
+    "evidence": "en/docs/display-coordinate-query-evidence.md",
+    "verification": "evidence/coordinate-query-verification.json",
+    "baselineFailures": 49,
+    "focusedPasses": 92,
+    "negativeTypes": {
+      "root": 68,
+      "web": 5,
+      "project": 28
+    },
+    "verifierPasses": 1045,
+    "boundaryFiles": 300,
+    "scope": "Logical display coordinates, exact stored-matrix inverse; affected desktop fixtures only. Totals overlap.",
+    "b1CleanupScope": "standalone-cooperative-api",
+    "osDescendantRetirement": "UNBOUND",
+    "publicMaterialReview": "PENDING",
+    "finalPrepush": "PENDING",
+    "remoteDelivery": "PENDING",
+    "fullProductAcceptance": false,
+    "performanceAcceptance": false,
+    "SpineAcceptance": false,
+    "fullMigrationAcceptance": false
   }
 }

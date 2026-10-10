@@ -2,6 +2,8 @@
 
 English | [简体中文](README.zh-CN.md)
 
+`Point2D` is a readonly type-only logical coordinate result. Read the [coordinate contract](../../knowledge-base/en/docs/display-coordinate-query-contract.md).
+
 Egret's experimental type package defines `CancellationSignal`, `Disposable`/`Releasable`, `Diagnostic` and `HostAdapter` contracts from the lifecycle specification. It has no package or third-party runtime dependencies, DOM/Node environment globals, or host-initialization side effects.
 
 ## Host and frame obligations

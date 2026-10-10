@@ -1169,6 +1169,18 @@
         "evidence/sequence-player-native.json"
       ],
       "doc": "Cns/docs/显式时间序列播放器契约.md"
+    },
+    {
+      "id": "S071",
+      "title": "公共坐标实现与有界已记录回归",
+      "type": "first_party_coordinate_api_cpu_type_and_affected_desktop_render_evidence",
+      "scope": "49个基线失败、92/92专项后继、101项预期类型诊断及1045/1045验证器测试；实际公共C37系数、300文件边界、新受影响Canvas/WebGPU/B1观察及范围内独立审阅。",
+      "limit": "B1清理覆盖协作API，OS后代退出为UNBOUND。不验收坐标GPU算术、其他浏览器、手机、性能、完整3D/UI/A2/Spine或R008/V006迁移；最终prepush与远端交付分别记录。",
+      "researchCheckedAt": "2026-10-10",
+      "artifacts": [
+        "evidence/coordinate-query-verification.json"
+      ],
+      "doc": "Cns/docs/显示坐标查询证据.md"
     }
   ]
 }

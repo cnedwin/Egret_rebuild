@@ -7,6 +7,7 @@ import { EgretError } from "./EgretError.js";
 import { bitmapCaptureState, readBitmapImage } from "./Bitmap.js";
 import { engineOf } from "./ownership.js";
 import { CaptureImageBudget } from "./imageFrameBudget.js";
+import { composeDisplayTransform } from './displayTransform.js';
 
 export interface CapturedContent2D {
   readonly commands: readonly RenderCommand2D[];
@@ -53,22 +54,7 @@ function capture(stage: Stage, mode: "content" | "rectangles"): CapturedContent2
     const entry = pending.pop()!;
     const s = visualOf(entry.node);
     if (!s.visible || s.alpha === 0) continue;
-    const angle = (s.rotation % 360) * Math.PI / 180;
-    const cos = Math.cos(angle);
-    const sin = Math.sin(angle);
-    const p = entry.matrix;
-    const a = cos * s.scaleX;
-    const b = sin * s.scaleX;
-    const c = -sin * s.scaleY;
-    const d = cos * s.scaleY;
-    const matrix = checked({
-      a: p.a * a + p.c * b,
-      b: p.b * a + p.d * b,
-      c: p.a * c + p.c * d,
-      d: p.b * c + p.d * d,
-      tx: p.a * s.x + p.c * s.y + p.tx,
-      ty: p.b * s.x + p.d * s.y + p.ty,
-    });
+    const matrix = checked(composeDisplayTransform(entry.matrix, s));
     const alpha = entry.alpha * s.alpha;
     const clips = s.clipRect === undefined ? entry.clips : Object.freeze([
       ...entry.clips,
