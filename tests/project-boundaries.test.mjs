@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync,writeFileSync,mkdirSync,mkdtempSync,cpSync,rmSync,realpathSync,existsSync} from 'node:fs';
+import {readFileSync,writeFileSync,mkdirSync,mkdtempSync,cpSync,symlinkSync,rmSync,realpathSync,existsSync} from 'node:fs';
 import {spawnSync} from 'node:child_process';
 import {createRequire} from 'node:module';
 import {fileURLToPath} from 'node:url';
@@ -12,8 +12,9 @@ const values=['DEFAULT_PROJECT_LIMITS','createProjectStore','openProjectHistory'
 const types=['ProjectId','EntityId','FileId','TransactionId','ProjectRevision','Sha256','JsonValue','JsonObject','ProjectVersionPins','ProjectReference','ProjectEntity','ProjectFileRole','ProjectFile','ProjectSnapshot','ProjectTransactionSource','ProjectTransactionScope','ProjectOperation','ProjectEditTransaction','ProjectRestoreTransaction','ProjectTransaction','ProjectHistory','ProjectDiff','ProjectDiagnosticCode','ProjectDiagnostic','ProjectValueResult','ProjectTransactionReceipt','ProjectCommitResult','ProjectLimits','ProjectStore'];
 const run=(args,cwd=repository)=>spawnSync(process.execPath,args,{cwd,encoding:'utf8',maxBuffer:8*1024*1024});
 
-// Every fixture copies actual packages/dependencies; one explicit contracts root bridge shares identity.
-// Its Node resolution copies receive the same package/dist mutations.
+// Every fixture copies actual packages/dependencies; an owned junction shares the runtime singleton.
+// The separate contracts resolution copy retains its explicit root bridge and duplicate-identity control.
+// Package/dist mutations still reach the same resolution inputs.
 function isolated(action) {
   mkdirSync(parent,{recursive:true});
   const root=mkdtempSync(path.join(parent,'project-boundary-'));
@@ -27,7 +28,11 @@ function isolated(action) {
     for(const name of ['contracts','runtime','engine','project']) {
       for(const entry of ['package.json','tsconfig.json','src','dist',...(name==='engine'?['web','rendering','tsconfig.web.json','tsconfig.rendering.json']:[])]) cpSync(path.join(repository,'packages',name,entry),path.join(root,'packages',name,entry),{recursive:true});
       mkdirSync(path.join(root,'node_modules/@egret'),{recursive:true});
-      cpSync(path.join(root,'packages',name),path.join(root,'node_modules/@egret',name),{recursive:true});
+      if(name==='runtime') {
+        const runtimeRoot=path.join(root,'packages',name),runtimeLink=path.join(root,'node_modules/@egret',name);
+        symlinkSync(runtimeRoot,runtimeLink,'junction');
+        assert.equal(realpathSync(runtimeLink),realpathSync(runtimeRoot));
+      } else cpSync(path.join(root,'packages',name),path.join(root,'node_modules/@egret',name),{recursive:true});
     }
     for(const name of ['jsonc-parser','robust-predicates']) {
       const require=createRequire(path.join(repository,'packages',name==='jsonc-parser'?'project':'engine','package.json'));
@@ -45,6 +50,8 @@ function isolated(action) {
   } finally {
     const resolved=realpathSync(root);
     assert.ok(resolved.toLowerCase().startsWith(realpathSync(parent).toLowerCase()+path.sep)&&path.basename(resolved).startsWith('project-boundary-'));
+    const runtimeLink=path.join(resolved,'node_modules/@egret/runtime');
+    if(existsSync(runtimeLink)) assert.equal(realpathSync(runtimeLink),realpathSync(path.join(resolved,'packages/runtime')),'runtime junction stays in the owned copied graph');
     rmSync(resolved,{recursive:true,force:true});
     assert.equal(existsSync(resolved),false);
   }
@@ -102,6 +109,10 @@ test('strict public project consumers and unsuppressed diagnostic locations run 
 
 test('real compiler negatives with unchanged error count reject incorrect expected code and location',t=>isolated(({root,write})=>{
   cpSync(path.join(repository,'tests/types'),path.join(root,'tests/types'),{recursive:true});
+  // Existing positive consumers resolve both opaque contracts through these unchanged type-only bridges.
+  mkdirSync(path.join(root,'packages/engine/tests'),{recursive:true});
+  for(const name of ['geometry-contract-types.ts','profile-contract-types.ts'])
+    cpSync(path.join(repository,'packages/engine/tests',name),path.join(root,'packages/engine/tests',name));
   write('tsconfig.base.json',readFileSync(path.join(repository,'tsconfig.base.json'),'utf8'));
   const checker=readFileSync(path.join(repository,'tools/check-types.mjs'),'utf8');
   // The installed compiler is read-only outside the fixture; package/type inputs

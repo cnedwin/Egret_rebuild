@@ -1,0 +1,10 @@
+{
+  "schemaVersion":1,
+  "phase":"calibration",
+  "frozenBeforeAnyNativeExecution":true,
+  "cases":["N01-a0","N01-a1","N01-a127","N01-a128","N01-a254","N01-a255","N03-forward","N03-reversed","N05-palette","N05-clamp0","N05-clamp1"],
+  "expectedAuthority":"fixtures.mjs literal rational table plus DERIVATIONS.md; no production helper/readback",
+  "bounds":"Structural zeros and opaque palette values exact; declared nonzero rational channels absolute byte bound one",
+  "afterObservationEditsAllowed":false,
+  "actualExecuted":false
+}

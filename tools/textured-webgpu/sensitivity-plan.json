@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "scope": "Prospective copied-production native controls; synthetic oracle units are separate",
+  "actualProductionPatchFrozen": false,
+  "actualNativeExecuted": false,
+  "requirements": {
+    "beforeAnyNativeRun": "Root binds final original emitted graph, exact one-file patch text/locations/hashes, copy manifests and independent review; no observed-pixel fitting",
+    "changedFilesPerCopy": 1,
+    "originalsEdited": false,
+    "registrySourceAndEmission": "Exact original source authority, retained descriptors/copy equality, actual selected singleton URL and after-read-all priorities remain enforced",
+    "counterexample": "Only the declared behavioral assertion can establish sensitivity; setup/import/compiler/device/cleanup/unavailable errors remain distinct and unaccepted",
+    "finalReread": "Every original/copy source/emission descriptor is reread even after earlier rejection and cleanup",
+    "pending": "Exact selectors are not fabricated from unimplemented Task4 shader/owner code; root freezes them before browser start"
+  },
+  "controls": [
+    {"id":"C01-no-op-mesh","targetRole":"textured mesh pass encode","operator":"Suppress the actual mesh draw call only","case":"N02-interpolation","assertion":"interpolated-rgba","reason":"Transparent output fails fixed nonzero rational channels"},
+    {"id":"C02-reverse-painter","targetRole":"sole WebGPU owner ordered draw encoding","operator":"Reverse actual prepared draw traversal only","checks":[["N03-forward","blue-over-red"],["N04-empty","last-green-empty"],["N04-singular","last-green-singular"]],"reason":"Forward table must fail; do not select the reversed positive oracle"},
+    {"id":"C03-omit-light-alpha","targetRole":"textured mesh fragment shader","operator":"Omit interpolated straight light alpha from both RGB and output alpha","case":"N01-a128","assertion":"alpha-128"},
+    {"id":"C04-omit-opacity","targetRole":"textured mesh fragment shader","operator":"Omit the per-command opacity from both RGB and output alpha","case":"N01-a128","assertion":"alpha-128"},
+    {"id":"C05-detach-light","targetRole":"textured mesh vertex shader","operator":"Replace transported varying light with constant white while retaining actual XY/UV","checks":[["N02-interpolation","interpolated-rgba"],["N06-diamond","clip-inside-left"],["N09-complement","visible-complement-transport"]],"reason":"Proves native light/interpolation dependence; exact tiny complementary arithmetic remains the separate G06 CPU proof"},
+    {"id":"C06-remove-clip","targetRole":"Mesh preparation clip application","operator":"Skip Mesh command clip application only, leaving numeric tuple validation and viewport clipping intact","case":"N06-diamond","assertion":"clip-outside-top"},
+    {"id":"C07-double-premultiply","targetRole":"shared projection payload copying","operator":"Multiply premultiplied RGB by source alpha a second time while preserving alpha","case":"N01-a128","assertion":"alpha-128"},
+    {"id":"C08-wrong-crop","targetRole":"projection payload source coordinate selection","operator":"Read the fixed atlas origin instead of the recorded crop origin without changing payload dimensions","case":"N05-palette","assertion":"crop-green"},
+    {"id":"C09-wrong-UV","targetRole":"textured mesh vertex shader","operator":"Replace transported UV with constant zero","case":"N05-palette","assertion":"crop-green"},
+    {"id":"C10-nominal-DPR","targetRole":"textured backing/preparation ratio","operator":"Use fixed ratio one instead of the actual configured ratio in the new path","case":"N07-diamond","assertion":"TEXTURED_NATIVE_METADATA_INVALID","reason":"The expected 48×48 backing remains fixed; a setup/device fault is not this behavioral counterexample"},
+    {"id":"C11-wrong-clear","targetRole":"sole WebGPU owner render pass clear","operator":"Substitute literal opaque red for the requested transparent clear value in the disposable copied window","case":"N10-replay02","observation":"reset-after","assertion":"N10-reset-after","reason":"Same-size reset after actual replay must be exhaustive transparent. This actual wrong-clear control is separate from the synthetic stale-byte oracle unit; loading an unspecified swap-chain texture is not a guaranteed stale-pixel counterexample."},
+    {"id":"C12-channel-order","targetRole":"textured mesh fragment output","operator":"Swap red and green output only, preserving blue and alpha","case":"N06-diamond","assertion":"clip-inside-top"}
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-10",
+  "updatedAt": "2026-10-11",
   "authority": "交付状态摘要；代码、产物和可复现验收证据分别作为实现与测试权威",
   "items": [
     {
@@ -931,6 +931,104 @@
         "evidence/sequence-player-native.json"
       ],
       "doc": "Cns/docs/显式时间序列播放器契约.md"
+    },
+    {
+      "id": "V022",
+      "title": "公共显示坐标查询",
+      "kind": "bounded_runtime_increment",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R012",
+        "R016"
+      ],
+      "dependsOn": [
+        "V011"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "public_display_coordinate_queries",
+      "acceptance": "bounded_cpu_type_affected_desktop_regression_independently_reviewed_publication_separate",
+      "acceptanceCriteria": [
+        "公共根入口提供只读Point2D/CoordinateQueryOptions及继承的localToGlobal/globalToLocal，采用已存储矩阵精确逆算舍入，并明确逻辑空间／生命周期／祖先预算。",
+        "实现前49个缺失API回调失败；专项后继92/92通过，含实际公共C37系数门禁。显式undefined原因预期检查已加强并重跑。",
+        "Parameters元组预期修正后68/5/28项预期负向诊断通过，含14个坐标新增负例；已记录验证器1045/1045通过，边界覆盖300文件。",
+        "新受影响Canvas的14项检查及381项稳定身份、WebGPU的42帧/1709原始记录/6808合成检查/84截图/8反例，以及B1的7正向帧/5反例/11提交通过。",
+        "范围内实现与保存渲染审阅无剩余P1/P2。B1清理仅覆盖协作API，OS后代退出为UNBOUND。最终prepush与远端交付分别记录；手机／性能／完整UI／3D／Spine／迁移仍待完成。"
+      ],
+      "artifacts": [
+        "Cns/docs/显示坐标查询契约.md",
+        "Cns/docs/显示坐标查询证据.md",
+        "evidence/coordinate-query-verification.json"
+      ],
+      "doc": "Cns/docs/显示坐标查询契约.md"
+    },
+    {
+      "id": "V023",
+      "title": "接收者局部显示内容边界",
+      "kind": "bounded_runtime_increment",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R012",
+        "R016"
+      ],
+      "dependsOn": [
+        "V011",
+        "V022"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "public_receiver_local_display_content_bounds",
+      "acceptance": "bounded_cpu_type_affected_desktop_execution_source_review_recorded_publication_separate",
+      "acceptanceCriteria": [
+        "继承的 getBounds(options?: BoundsQueryOptions) 从权威接收者局部 Graphics／非空 Bitmap 几何返回全新、冻结、只读 Rectangle2D。后代直接角点、作者零尺寸计数／跳过及普通 binary64 非保守减法遵循确切双语契约。",
+        "真实公共基线编译／载入 Bitmap 成功，在分配前注册 18 个 getBounds 缺失失败；专项后继 157/157 通过，包含 18 个边界回调。",
+        "正向／无 DOM 类型通过，81／5／28 项预期诊断（总计 114、边界新增 13）；单独记录的核心验证器 1063/1063 通过，覆盖 306 边界文件并完成无头关闭。各集合重叠。",
+        "新受影响桌面 Canvas 14 项检查、矩形 WebGPU 42 帧／1709 原始检查／84 张 PNG／6808 合成检查／8 反例及 B1 7 正向帧／5 反例／11 次提交通过，391 文件清单稳定。边界算术仅在 CPU；B1 OS 后代退出为 UNBOUND。",
+        "独立源码与保存渲染审阅通过且无未解决 P1/P2；本检查点双语公开材料审阅仍待完成。完整 prepush 与实际堆叠远端交付是独立门禁；其他空间／输出／布局／命中测试及完整产品义务保持开放。"
+      ],
+      "artifacts": [
+        "Cns/docs/显示内容边界契约.md",
+        "Cns/docs/显示内容边界证据.md",
+        "evidence/content-bounds-verification.json"
+      ],
+      "doc": "Cns/docs/显示内容边界契约.md"
+    },
+    {
+      "id": "V024",
+      "title": "自有纹理几何、Mesh2D 与有界桌面 WebGPU 执行",
+      "kind": "bounded_runtime_increment",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R012",
+        "R016"
+      ],
+      "dependsOn": [
+        "V011",
+        "V023"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "owned_textured_geometry_mesh2d_and_explicit_webgpu",
+      "acceptance": "bounded_cpu_type_policy_controlled_host_fixed_desktop_saved_review_publication_separate",
+      "acceptanceCriteria": [
+        "自有不可变几何、精确租约借用 Mesh2D 及纹理帧采集遵循配对契约与显式预算。",
+        "CPU helper、准入、受控宿主、严格类型及源码策略检查点保留各自实际结果；重叠套件不累加。",
+        "37 个桌面窗口、27 份正向及 19 份对照观察、12 项复制对照及全部 16 个指定对照窗口通过观察前冻结的像素／schema／reset 预期。",
+        "保存纹理及四条受影响旧链路完成独立有界审阅；实际外层 Job 关闭、活跃进程归零、原始输出 EOF 完整。",
+        "当前公开复现、配对来源／注释整理、最终 prepush 与远程交付分别记录；手机／性能／完整 UI／字体／Spine／3D／迁移仍待完成。"
+      ],
+      "artifacts": [
+        "Cns/docs/自有纹理几何与Mesh2D契约.md",
+        "Cns/docs/纹理Profile的CPU证据与待完成门禁.md",
+        "evidence/textured-mesh2d-verification.json"
+      ],
+      "doc": "Cns/docs/自有纹理几何与Mesh2D契约.md"
     }
   ]
 }

@@ -17,7 +17,8 @@ const copied=resolve(output,'counterexamples');
 if(output===root || inside(root,output) || copied===root || inside(root,copied))throw new Error('Output and counterexample trees must be outside the repository');
 await mkdir(output,{recursive:true});
 const report={status:'INCOMPLETE',timestamp:new Date().toISOString(),launch:{headless:true,channel:option('--channel','msedge'),additionalFlags:[],freshProfile:true,deviceScaleFactor:1},fixtures:[],fixtureFailures:[],composition:[],counterexamples:[],requests:[],unexpectedErrors:[],limits:'Browser composition only; no physical scanout, hardware, phone, performance, UI, 3D or migration acceptance'};
-const save=(name,data)=>writeFile(resolve(output,name),JSON.stringify(data,null,2));
+// Preserve complete JSON values without indentation that duplicates large saved-frame reports.
+const save=(name,data)=>writeFile(resolve(output,name),JSON.stringify(data));
 const files=async base=>{const found=[];for(const entry of await readdir(base,{withFileTypes:true})){const p=resolve(base,entry.name);if(entry.isDirectory())found.push(...await files(p));else found.push(p);}return found;};
 async function identity() {
   const list=[];
@@ -33,7 +34,7 @@ report.head=execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).
 report.node=process.version;
 const passSource=await readFile(resolve(root,'packages/engine/web/webgpuPass.ts'),'utf8');
 report.wgslHash=hash(passSource.match(/const SHADER = `([\s\S]*?)`;/)[1]);
-const entries={'@egret/engine':'packages/engine/dist/index.js','@egret/engine/web':'packages/engine/dist/web/index.js','@egret/runtime':'packages/runtime/dist/index.js','@egret/contracts':'packages/contracts/dist/index.js'};
+const entries={'#egret-textured-frame-state':'packages/engine/dist/internal/texturedFrameState.js','@egret/engine':'packages/engine/dist/index.js','@egret/engine/web':'packages/engine/dist/web/index.js','@egret/runtime':'packages/runtime/dist/index.js','@egret/contracts':'packages/contracts/dist/index.js'};
 async function closure(entry) {
   const visited=new Set();
   async function walk(file){if(visited.has(file))return;visited.add(file);
@@ -46,7 +47,8 @@ async function closure(entry) {
   }
   await walk(resolve(root,entry));
   const paths=[...visited].map(p=>relative(root,p).replaceAll('\\','/')).sort();
-  if(paths.some(p=>/webgpu|rendering|robust-predicates/i.test(p)))throw new Error('Static Canvas/root dependency isolation failed');
+  // This exact DOM-free error-provenance module carries no renderer or external dependency.
+  if(paths.some(p=>p!=='packages/engine/dist/rendering/ownedPreparationFailure2D.js'&&/webgpu|rendering|robust-predicates/i.test(p)))throw new Error('Static Canvas/root dependency isolation failed');
   return paths;
 }
 report.isolation={staticRoot:await closure(entries['@egret/engine']),staticCanvas:await closure(entries['@egret/engine/web'])};
@@ -125,7 +127,8 @@ try {
   window='unchanged-canvas-isolation';const canvasPage=await pageFor(`${origin}/examples/canvas-scene/index.html`);
   await canvasPage.waitForFunction(()=>document.querySelector('#scene').getContext('2d').getImageData(80,60,1,1).data[2]>100);
   const canvasRequests=report.requests.at(-1).inventory;
-  if(canvasRequests.some(r=>/webgpu|rendering|robust-predicates/i.test(r.url)))throw new Error('Fresh unchanged Canvas example fetched GPU dependency');
+  // The exact same-origin import-free provenance module is the sole permitted exception.
+  if(canvasRequests.some(r=>r.url!==origin+'/packages/engine/dist/rendering/ownedPreparationFailure2D.js'&&/webgpu|rendering|robust-predicates/i.test(r.url)))throw new Error('Fresh unchanged Canvas example fetched GPU dependency');
   report.isolation.actualCanvasRequests=canvasRequests;await canvasPage.close();
   window='public-webgpu-baseline';const page=await pageFor(`${origin}/examples/webgpu/index.html?harness=1`);await page.waitForFunction(()=>window.ready===true);
   const nativeTimeout=async promise=>{let timer;try{return await Promise.race([promise,new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error(`INCOMPLETE: native operation timed out in ${window}`)),20000);})]);}finally{clearTimeout(timer);}};

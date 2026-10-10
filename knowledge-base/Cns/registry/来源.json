@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-10",
+  "updatedAt": "2026-10-11",
   "authority": "来源分组与适用边界；researchCheckedAt是项目研究核查日期，非统一发布日期",
   "items": [
     {
@@ -1169,6 +1169,42 @@
         "evidence/sequence-player-native.json"
       ],
       "doc": "Cns/docs/显式时间序列播放器契约.md"
+    },
+    {
+      "id": "S071",
+      "title": "公共坐标实现与有界已记录回归",
+      "type": "first_party_coordinate_api_cpu_type_and_affected_desktop_render_evidence",
+      "scope": "49个基线失败、92/92专项后继、101项预期类型诊断及1045/1045验证器测试；实际公共C37系数、300文件边界、新受影响Canvas/WebGPU/B1观察及范围内独立审阅。",
+      "limit": "B1清理覆盖协作API，OS后代退出为UNBOUND。不验收坐标GPU算术、其他浏览器、手机、性能、完整3D/UI/A2/Spine或R008/V006迁移；最终prepush与远端交付分别记录。",
+      "researchCheckedAt": "2026-10-10",
+      "artifacts": [
+        "evidence/coordinate-query-verification.json"
+      ],
+      "doc": "Cns/docs/显示坐标查询证据.md"
+    },
+    {
+      "id": "S072",
+      "title": "接收者局部边界实现与有界已记录回归",
+      "type": "first_party_content_bounds_cpu_type_and_affected_desktop_render_evidence",
+      "scope": "18 个真实 getBounds 缺失失败、157/157 专项后继（含 18 边界回调）、114 项预期负向诊断（新增 13）、1063/1063 核心测试与 306 边界文件；清单稳定的新受影响 Canvas／WebGPU／B1 桌面观察及范围内源码及保存渲染审阅。",
+      "limit": "普通 binary64 测量不承诺保守包围；其他空间／输出适配器／布局／命中测试待完成。不验收 GPU 边界算术、其他浏览器／手机／性能／完整产品。B1 OS 后代退出保持 UNBOUND；prepush 与交付分别记录。",
+      "researchCheckedAt": "2026-10-10",
+      "artifacts": [
+        "evidence/content-bounds-verification.json"
+      ],
+      "doc": "Cns/docs/显示内容边界证据.md"
+    },
+    {
+      "id": "S073",
+      "title": "第一方纹理 Mesh2D 与固定桌面观察",
+      "type": "first_party_textured_mesh_cpu_type_policy_and_fixed_desktop_evidence",
+      "scope": "分别验收的自有几何／帧／helper／准入／受控宿主／类型／源码策略检查点；固定原始及复制对照桌面观察、保存结果独立审阅及外层进程退休。",
+      "limit": "单一报告桌面环境；不验收性能／电耗、手机／多设备、Native SDK、完整 UI／字体／Spine／3D 或完整迁移。当前公开流程与最终交付另有记录。",
+      "researchCheckedAt": "2026-10-11",
+      "artifacts": [
+        "evidence/textured-mesh2d-verification.json"
+      ],
+      "doc": "Cns/docs/纹理Profile的CPU证据与待完成门禁.md"
     }
   ]
 }

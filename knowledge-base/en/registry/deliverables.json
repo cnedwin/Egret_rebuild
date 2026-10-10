@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-10",
+  "updatedAt": "2026-10-11",
   "authority": "Delivery status summary; code, artifacts, and reproducible acceptance evidence separately govern implementation and testing",
   "items": [
     {
@@ -931,11 +931,109 @@
         "evidence/sequence-player-native.json"
       ],
       "doc": "en/docs/sequence-player-contract.md"
+    },
+    {
+      "id": "V022",
+      "title": "Public display coordinate queries",
+      "kind": "bounded_runtime_increment",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R012",
+        "R016"
+      ],
+      "dependsOn": [
+        "V011"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "public_display_coordinate_queries",
+      "acceptance": "bounded_cpu_type_affected_desktop_regression_independently_reviewed_publication_separate",
+      "acceptanceCriteria": [
+        "The public root provides readonly Point2D/CoordinateQueryOptions and inherited localToGlobal/globalToLocal, with exact stored-matrix inverse rounding and explicit logical-space/lifetime/ancestor budgets.",
+        "49 missing-API callbacks failed before implementation; focused successors passed 92/92, including the actual public C37 coefficient gate. The supplied-undefined cause oracle was strengthened and rerun.",
+        "68/5/28 expected negative diagnostics, including 14 coordinate additions, passed after the Parameters tuple oracle correction; the recorded verifier passed 1045/1045 and 300 boundary files.",
+        "Fresh affected Canvas 14 checks with 381 stable identities, WebGPU 42 frames/1709 raw records/6808 composition checks/84 screenshots/8 counterexamples, and B1 7 positive frames/5 counterexamples/11 submissions passed.",
+        "Scoped implementation and saved-render reviews have no remaining P1/P2. B1 cleanup is cooperative API scope only; OS descendant retirement is UNBOUND. Final prepush and remote delivery are separate; phones/performance/complete UI/3D/Spine/migration remain open."
+      ],
+      "artifacts": [
+        "en/docs/display-coordinate-query-contract.md",
+        "en/docs/display-coordinate-query-evidence.md",
+        "evidence/coordinate-query-verification.json"
+      ],
+      "doc": "en/docs/display-coordinate-query-contract.md"
+    },
+    {
+      "id": "V023",
+      "title": "Receiver-local display content bounds",
+      "kind": "bounded_runtime_increment",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R012",
+        "R016"
+      ],
+      "dependsOn": [
+        "V011",
+        "V022"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "public_receiver_local_display_content_bounds",
+      "acceptance": "bounded_cpu_type_affected_desktop_execution_source_review_recorded_publication_separate",
+      "acceptanceCriteria": [
+        "Inherited getBounds(options?: BoundsQueryOptions) returns a fresh frozen readonly Rectangle2D from authoritative receiver-local Graphics/occupied Bitmap geometry. Descendant direct corners, authored-zero count/skip behavior and ordinary binary64 nonconservative subtraction follow the exact paired contract.",
+        "The genuine public baseline built/loaded Bitmap and registered 18 getBounds-absence failures before allocation; the focused successor passed 157/157 including 18 bounds callbacks.",
+        "Positive/DOM-free types passed with 81/5/28 expected diagnostics (114 total, 13 bounds additions); the separately recorded core verifier passed 1063/1063 with 306 boundary files and closed headless execution. Suites overlap.",
+        "Fresh affected desktop Canvas 14 checks, rectangle WebGPU 42 frames/1709 raw checks/84 PNGs/6808 composition checks/8 counterexamples and B1 7 positive frames/5 counterexamples/11 submissions passed with stable 391-file inventories. Bounds arithmetic is CPU-only; B1 OS descendant retirement is UNBOUND.",
+        "Independent source and saved-render reviews passed with zero unresolved P1/P2; bilingual public-material review remains pending at this checkpoint. Complete prepush and actual stacked remote delivery are separate gates; other spaces/output/layout/hit testing and full-product obligations remain open."
+      ],
+      "artifacts": [
+        "en/docs/display-content-bounds-contract.md",
+        "en/docs/display-content-bounds-evidence.md",
+        "evidence/content-bounds-verification.json"
+      ],
+      "doc": "en/docs/display-content-bounds-contract.md"
+    },
+    {
+      "id": "V024",
+      "title": "Owned textured geometry, Mesh2D and bounded desktop WebGPU execution",
+      "kind": "bounded_runtime_increment",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R012",
+        "R016"
+      ],
+      "dependsOn": [
+        "V011",
+        "V023"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "owned_textured_geometry_mesh2d_and_explicit_webgpu",
+      "acceptance": "bounded_cpu_type_policy_controlled_host_fixed_desktop_saved_review_publication_separate",
+      "acceptanceCriteria": [
+        "Owned immutable geometry, exact lease-borrowing Mesh2D and textured-frame capture follow the paired contract and explicit budgets.",
+        "CPU helpers, admission, controlled host, strict types and source-policy checkpoints retain separate actual results; overlapping suites are not summed.",
+        "37 desktop windows, 27 positive and 19 control observations, 12 copied controls and all 16 assigned control windows passed fixed pre-observation pixel/schema/reset expectations.",
+        "Saved textured and four affected legacy routes received independent bounded review; actual owning Jobs closed with zero active processes and complete raw EOF.",
+        "Current public reproduction, paired-source/comment curation, final prepush and remote delivery are separately recorded. Phones/performance/full UI/fonts/Spine/3D/migration remain open."
+      ],
+      "artifacts": [
+        "en/docs/textured-geometry-and-mesh2d-contract.md",
+        "en/docs/textured-profile-cpu-evidence.md",
+        "evidence/textured-mesh2d-verification.json"
+      ],
+      "doc": "en/docs/textured-geometry-and-mesh2d-contract.md"
     }
   ],
   "_localization": {
     "canonicalSource": "交付.json",
-    "canonicalSha256": "ab313cc8cdebcead8f8ef4d88f5abf1493fc902cd0f0fb2c7fd7aa934fae0a3d",
+    "canonicalSha256": "549a469329a39002e9c69c828a048672cbb776c21724cbc69fee3d2d0866bf59",
     "role": "read_only_translation",
     "language": "en"
   }

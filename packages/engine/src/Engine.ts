@@ -1,10 +1,12 @@
-import type { FrameOptions2D, RenderFrame2D } from '@egret/contracts';
-import { collectFrameContent } from '@egret/runtime';
+import { TEXTURED_FRAME_PROFILE_2D } from '@egret/contracts';
+import type { FrameOptions2D, RenderFrame2D, TexturedFrameProfile2D, TexturedRenderFrame2D } from '@egret/contracts';
+import { collectFrameContent, collectTexturedFrameContent } from '@egret/runtime';
 import type { Diagnostic, DiagnosticHandler, HostAdapter } from "@egret/contracts";
 import { EgretError, createScope, createStage, createAssetManager, reportDiagnostic } from "@egret/runtime";
 import type { AssetManager, Scope, Stage } from "@egret/runtime";
 import type { EngineContext } from "@egret/runtime";
 import { closeHost } from "./closeHost.js";
+import { registerTexturedFrame } from './internal/texturedFrameState.js';
 
 export interface EngineOptions {
   readonly host: HostAdapter;
@@ -12,7 +14,12 @@ export interface EngineOptions {
   readonly onDiagnostic?: DiagnosticHandler;
 }
 
-export let constructEngine: (options: EngineOptions, timeoutMs: number, releaseSurface: () => void, renderer: ((frame: RenderFrame2D) => unknown) | undefined) => Engine;
+export interface CapturedEngineFramePorts {
+  readonly legacy: ((frame: RenderFrame2D) => unknown) | undefined;
+  readonly textured: ((frame: TexturedRenderFrame2D) => unknown) | undefined;
+  readonly profile: TexturedFrameProfile2D | undefined;
+}
+export let constructEngine: (options: EngineOptions, timeoutMs: number, releaseSurface: () => void, ports: CapturedEngineFramePorts) => Engine;
 const CREATION_TOKEN: unique symbol = Symbol("egret.engineFactory");
 
 /** Observation does not accept asynchronous submission or prove host completion. */
@@ -36,6 +43,7 @@ export class Engine {
   private frameIdle: Promise<void> | undefined;
   private releaseFrame: (() => void) | undefined;
   private readonly renderer: ((frame: RenderFrame2D) => unknown) | undefined;
+  private readonly texturedRenderer: ((frame: TexturedRenderFrame2D) => unknown) | undefined;
   private currentState: "open" | "closing" | "closed" = "open";
   private readonly scopes = new Set<Scope>();
   private readonly cleanupErrors: unknown[] = [];
@@ -47,11 +55,14 @@ export class Engine {
   private readonly context: EngineContext;
   public readonly stage: Stage;
   public readonly assets: AssetManager;
+  public readonly texturedFrameProfile: TexturedFrameProfile2D | undefined;
 
-  private constructor(options: EngineOptions, timeoutMs: number, releaseSurface: () => void, renderer: ((frame: RenderFrame2D) => unknown) | undefined, token: typeof CREATION_TOKEN) {
+  private constructor(options: EngineOptions, timeoutMs: number, releaseSurface: () => void, ports: CapturedEngineFramePorts, token: typeof CREATION_TOKEN) {
     if (token !== CREATION_TOKEN) throw new EgretError("ENGINE_FACTORY_REQUIRED");
     this.host = options.host;
-    this.renderer = renderer;
+    this.renderer = ports.legacy;
+    this.texturedRenderer = ports.textured;
+    this.texturedFrameProfile = ports.profile;
     this.timeoutMs = timeoutMs;
     this.onDiagnostic = options.onDiagnostic;
     this.releaseSurface = releaseSurface;
@@ -69,25 +80,36 @@ export class Engine {
   }
 
   static {
-    constructEngine = (options, timeoutMs, releaseSurface, renderer): Engine => new Engine(options, timeoutMs, releaseSurface, renderer, CREATION_TOKEN);
+    constructEngine = (options, timeoutMs, releaseSurface, ports): Engine => new Engine(options, timeoutMs, releaseSurface, ports, CREATION_TOKEN);
   }
 
   public captureFrame(options: FrameOptions2D): RenderFrame2D {
-    return this.executeFrame(options, false);
+    return this.executeFrame(options, false, false);
   }
 
   public renderFrame(options: FrameOptions2D): RenderFrame2D {
-    return this.executeFrame(options, true);
+    return this.executeFrame(options, true, false);
+  }
+
+  public captureTexturedFrame(options: FrameOptions2D): TexturedRenderFrame2D {
+    return this.executeFrame(options, false, true);
+  }
+
+  public renderTexturedFrame(options: FrameOptions2D): TexturedRenderFrame2D {
+    return this.executeFrame(options, true, true);
   }
 
   /** Busy precedes all external reads; cleanup waits for the finally barrier. */
-  private executeFrame(options: FrameOptions2D, render: boolean): RenderFrame2D {
+  private executeFrame(options: FrameOptions2D, render: boolean, textured: false): RenderFrame2D;
+  private executeFrame(options: FrameOptions2D, render: boolean, textured: true): TexturedRenderFrame2D;
+  private executeFrame(options: FrameOptions2D, render: boolean, textured: boolean): RenderFrame2D | TexturedRenderFrame2D {
     this.context.assertOpen();
     if (this.frameBusy) throw new EgretError("FRAME_REENTRANT");
     this.frameBusy = true;
     this.frameIdle = new Promise<void>(resolve => { this.releaseFrame = resolve; });
     try {
-      if (render && this.renderer === undefined) throw new EgretError("RENDERER_REQUIRED");
+      const renderer = textured ? this.texturedRenderer : this.renderer;
+      if (render && renderer === undefined) throw new EgretError("RENDERER_REQUIRED");
       let width: number;
       let height: number;
       let clearColor: number;
@@ -113,17 +135,20 @@ export class Engine {
         throw new EgretError("INVALID_FRAME_OPTIONS", { cause });
       }
       this.context.assertOpen();
-      const content = collectFrameContent(this.stage);
+      const content = textured ? collectTexturedFrameContent(this.stage) : collectFrameContent(this.stage);
       this.context.assertOpen();
       if (!Number.isSafeInteger(this.nextFrameId) || this.nextFrameId <= 0) {
         throw new EgretError("FRAME_ID_EXHAUSTED");
       }
       const frame = Object.freeze({
+        ...(textured ? { profile: TEXTURED_FRAME_PROFILE_2D } : {}),
         frameId: this.nextFrameId++, width, height, clearColor, clearAlpha, ...content,
       });
+      // Only the Engine registers a fully captured, frozen new-profile record.
+      if (textured) registerTexturedFrame(frame as TexturedRenderFrame2D);
       if (render) {
         try {
-          const result = Reflect.apply(this.renderer!, this.host, [frame]);
+          const result = Reflect.apply(renderer!, this.host, [frame]);
           if (result !== undefined) {
             observeRejectedRenderResult(result);
             throw new EgretError("INVALID_RENDERER");
@@ -133,7 +158,7 @@ export class Engine {
           throw new EgretError("FRAME_RENDER_FAILED", { cause });
         }
       }
-      return frame;
+      return frame as RenderFrame2D | TexturedRenderFrame2D;
     } finally {
       this.frameBusy = false;
       const release = this.releaseFrame;

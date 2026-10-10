@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-10",
+  "updatedAt": "2026-10-11",
   "authority": "Source grouping and applicable boundaries; researchCheckedAt is the project's research-check date, not a unified publication date",
   "items": [
     {
@@ -1169,11 +1169,47 @@
         "evidence/sequence-player-native.json"
       ],
       "doc": "en/docs/sequence-player-contract.md"
+    },
+    {
+      "id": "S071",
+      "title": "Public coordinate implementation and bounded recorded regressions",
+      "type": "first_party_coordinate_api_cpu_type_and_affected_desktop_render_evidence",
+      "scope": "49 baseline failures, 92/92 focused successors, 101 expected type diagnostics and 1045/1045 verifier tests; actual public C37 coefficients, 300 boundary files, fresh affected Canvas/WebGPU/B1 observations and scoped independent reviews.",
+      "limit": "B1 cleanup covers cooperative APIs; OS descendant retirement UNBOUND. No coordinate GPU arithmetic, other browsers, phones, performance, complete 3D/UI/A2/Spine or R008/V006 migration. Final prepush and remote delivery remain separate.",
+      "researchCheckedAt": "2026-10-10",
+      "artifacts": [
+        "evidence/coordinate-query-verification.json"
+      ],
+      "doc": "en/docs/display-coordinate-query-evidence.md"
+    },
+    {
+      "id": "S072",
+      "title": "Receiver-local bounds implementation and bounded recorded regressions",
+      "type": "first_party_content_bounds_cpu_type_and_affected_desktop_render_evidence",
+      "scope": "18 authentic getBounds-absence failures, 157/157 focused successors including 18 bounds callbacks, 114 expected negative diagnostics (13 additions), 1063/1063 core tests and 306 boundary files; fresh affected Canvas/WebGPU/B1 desktop observations with stable inventories and scoped source and saved-render reviews.",
+      "limit": "Ordinary binary64 measurement is nonconservative; other spaces/output adapter/layout/hit testing remain pending. No GPU bounds arithmetic, other-browser/phone/performance/full-product acceptance. B1 OS descendant retirement remains UNBOUND; prepush and delivery are separate.",
+      "researchCheckedAt": "2026-10-10",
+      "artifacts": [
+        "evidence/content-bounds-verification.json"
+      ],
+      "doc": "en/docs/display-content-bounds-evidence.md"
+    },
+    {
+      "id": "S073",
+      "title": "First-party textured Mesh2D and fixed desktop observations",
+      "type": "first_party_textured_mesh_cpu_type_policy_and_fixed_desktop_evidence",
+      "scope": "Separately accepted owned geometry/frame/helper/admission/controlled-host/type/source-policy checkpoints; fixed original and copied-control desktop observations, saved-result independent reviews and owning process retirement.",
+      "limit": "One reported desktop environment; no performance/power, phone/multi-device, Native SDK, full UI/fonts/Spine/3D or complete migration acceptance. Current public workflow and final delivery have separate records.",
+      "researchCheckedAt": "2026-10-11",
+      "artifacts": [
+        "evidence/textured-mesh2d-verification.json"
+      ],
+      "doc": "en/docs/textured-profile-cpu-evidence.md"
     }
   ],
   "_localization": {
     "canonicalSource": "来源.json",
-    "canonicalSha256": "068cbd28494bd9f75921400bc0b158b6079b8e4fdd0d9af6d360bd8029d8ee21",
+    "canonicalSha256": "feab25c1c983f8b68a88dd7b9e8b5ce0c4f7f6d3d2949d0e43199231e4256bc9",
     "role": "read_only_translation",
     "language": "en"
   }

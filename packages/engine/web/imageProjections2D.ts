@@ -1,5 +1,6 @@
+import { noteOwnedPreparationFailure } from '../rendering/ownedPreparationFailure2D.js';
 import { copyImageData2DPixels, IMAGE_LIMITS_2D, isImageData2D } from '@egret/contracts';
-import type { ImageData2D, RenderFrame2D, TextureRegion2D } from '@egret/contracts';
+import type { ImageData2D, RenderFrame2D, TexturedRenderFrame2D, TextureRegion2D } from '@egret/contracts';
 
 export class ImageProjectionError extends Error {
     public constructor(public readonly reason: 'budget' | 'invalid') {
@@ -21,7 +22,7 @@ export interface ProjectionPlan2D {
 }
 
 function reject(reason: 'budget' | 'invalid', onFailure?: (failure: ImageProjectionError) => void): never {
-    const failure = new ImageProjectionError(reason);
+    const failure = noteOwnedPreparationFailure(new ImageProjectionError(reason));
     // The observer identifies only deliberate admission in this call; owned Map,
     // array, freeze and allocation faults escape without acquiring that authority.
     onFailure?.(failure);
@@ -47,7 +48,7 @@ function projectionLength(image: ImageData2D, region: TextureRegion2D, onFailure
 }
 
 /** Reserve only metadata from an already copied trusted frame, before any pixel allocation. */
-export function planImageProjections(frame: RenderFrame2D, mode: 'straight' | 'premultiplied', onFailure?: (failure: ImageProjectionError) => void): ProjectionPlan2D {
+function planProjectionViews(frame: RenderFrame2D | TexturedRenderFrame2D, mode: 'straight' | 'premultiplied', onFailure?: (failure: ImageProjectionError) => void): ProjectionPlan2D {
     const views: ProjectionView2D[] = [];
     const commandViews: (number | undefined)[] = [];
     const identities = new Map<ImageData2D, Map<string, number>>();
@@ -86,6 +87,15 @@ export function planImageProjections(frame: RenderFrame2D, mode: 'straight' | 'p
     const retainedBytes = bounded(projectionBytes * (mode === 'straight' ? 2 : 1), IMAGE_LIMITS_2D.maxImageScratchBytes, onFailure);
     const scratchBytes = bounded(retainedBytes + maxSourceCopy, IMAGE_LIMITS_2D.maxImageScratchBytes, onFailure);
     return Object.freeze({ views: Object.freeze(views), commandViews: Object.freeze(commandViews), projectionBytes, scratchBytes });
+}
+
+/** Legacy facade preserves mode, optional-image timing and exact failure identity. */
+export function planImageProjections(frame: RenderFrame2D, mode: 'straight' | 'premultiplied', onFailure?: (failure: ImageProjectionError) => void): ProjectionPlan2D {
+    return planProjectionViews(frame, mode, onFailure);
+}
+/** Mesh and image rows share the same identity/crop registry, including empty barriers. */
+export function planTexturedImageProjections(frame: TexturedRenderFrame2D, onFailure?: (failure: ImageProjectionError) => void): ProjectionPlan2D {
+    return planProjectionViews(frame, 'premultiplied', onFailure);
 }
 
 /** Return a standalone tight crop; neither source ownership nor another output is exposed. */

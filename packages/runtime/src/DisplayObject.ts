@@ -1,4 +1,8 @@
-import type { Rectangle2D } from '@egret/contracts';
+import type { Point2D, Rectangle2D } from '@egret/contracts';
+import { queryDisplayBounds } from './displayBounds.js';
+import type { BoundsQueryOptions } from './displayBounds.js';
+import { queryDisplayPoint } from './displayCoordinates.js';
+import type { CoordinateQueryOptions } from './displayCoordinates.js';
 import { EgretError } from './EgretError.js';
 import { assertVisualMutable, copyRect, finite, unit, registerVisual, visualOf } from './displayVisualState.js';
 import { EventDispatcher } from "./EventDispatcher.js";
@@ -28,6 +32,21 @@ export class DisplayObject extends EventDispatcher {
   public set clipRect(value:Rectangle2D|undefined) { assertVisualMutable(this); let copy; try { copy=value===undefined?undefined:copyRect(value,'DISPLAY_VALUE_INVALID'); } catch(cause) { if(cause instanceof EgretError) throw cause; throw new EgretError('DISPLAY_VALUE_INVALID',{cause}); } assertVisualMutable(this); visualOf(this).clipRect=copy; }
   public get parent(): DisplayObjectContainer | undefined { return parentOf(this); }
   public get isDisposed(): boolean { return isTerminated(this); }
+
+  /** Map logical coordinates through the actual root, including its transform. */
+  public localToGlobal(localX?: number, localY?: number, options?: CoordinateQueryOptions): Point2D {
+    return queryDisplayPoint(this, localX, localY, options, false);
+  }
+
+  /** Solve the stored world matrix and return one owned, frozen point. */
+  public globalToLocal(globalX?: number, globalY?: number, options?: CoordinateQueryOptions): Point2D {
+    return queryDisplayPoint(this, globalX, globalY, options, true);
+  }
+
+  /** Measure descendant-transformed content in this node's local coordinates. */
+  public getBounds(options?: BoundsQueryOptions): Rectangle2D {
+    return queryDisplayBounds(this, options);
+  }
 
   protected override assertUsable(): void {
     assertLive(this);

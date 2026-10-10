@@ -2,6 +2,8 @@
 
 [English](../../en/docs/public-api-design-and-naming.md) | 简体中文
 
+公共继承的 `localToGlobal`／`globalToLocal` 查询在逻辑空间返回全新的只读 `Point2D`。缺失坐标分别默认为零；第三个参数是 `CoordinateQueryOptions`。祖先预算、真实接收者／生命周期检查及已存储矩阵精确逆算见[坐标契约](显示坐标查询契约.md)。旧版可变输出适配器仍待完成。
+
 历史 0.13.0 矩形检查点见单独的[实现与验证记录](WebGPU矩形实现证据.md)；源码身份、结果及待办保留当时范围，不代表当前产品验收。
 
 
@@ -48,7 +50,7 @@
 
 `x/y/scaleX/scaleY/alpha/rotation/visible/touchEnabled`保留易懂属性；频繁变更先进入CPU逻辑状态与脏队列，确定帧阶段再提取。设置属性不逐次跨语言或同步等待GPU。`getBounds`等查询读CPU已知状态；需要布局刷新的操作命名为显式`validateLayout`，不能在普通getter中隐藏整帧渲染。
 
-显示树成员只读迭代或返回快照，不开放可直接修改的children数组。`addChild`保持单一父节点和明确顺序；重挂载不销毁对象。2D `width/height`表示未变换的逻辑布局尺寸，显式尺寸与内容自然尺寸规则按对象类型记录；变换后的包围盒通过`getBounds`查询。历史快照的尺寸行为不统一，不自动把所有旧width赋值改成scale；迁移按版本、子类、EUI布局模式建立对照。
+显示树成员只读迭代或返回快照，不开放可直接修改的children数组。`addChild`保持单一父节点和明确顺序；重挂载不销毁对象。2D `width/height`表示未变换的逻辑布局尺寸，显式尺寸与内容自然尺寸规则按对象类型记录；`getBounds`在接收者局部空间测量内容，计入后代变换、排除接收者自身及祖先变换，见[有界契约](显示内容边界契约.md)；其他坐标空间、旧式可变输出适配器、布局尺寸／失效机制及命中测试仍待完成。历史快照的尺寸行为不统一，不自动把所有旧width赋值改成scale；迁移按版本、子类、EUI布局模式建立对照。
 
 2D坐标采用独立于设备像素密度的逻辑像素，原点左上、x向右、y向下；保留历史`rotation`的角度单位。3D默认右手系、Y向上、相机朝局部-Z，世界单位约定为米；`rotation`使用Quaternion，Euler辅助方法明确命名`setEulerRadians`，不混用2D角度。资产导入记录坐标、单位转换。游戏时钟和新动画持续时间默认秒，名字需要区分时用`durationSeconds`；旧Tween毫秒由兼容入口显式转换。
 

@@ -70,7 +70,7 @@ function tokens(text) {
 function imports(text) {
   const lexical = tokens(text), result = [];
   const admit = token => {
-    if (!token || token.kind !== 'string' || token.value.length === 0 || /[\\\s?#%:\0]/.test(token.value)) {
+    if (!token || token.kind !== 'string' || token.value.length === 0 || (token.value !== '#egret-textured-frame-state' && /[\\\s?#%:\0]/.test(token.value))) {
       throw new Error('Module import must be a simple literal path');
     }
     result.push(token);
@@ -166,7 +166,8 @@ export async function sealGraph({ repositoryRoot, entryPaths, aliases, maxModule
     };
     records.forEach(traverse);
     closures[name] = [...found].sort();
-    if (name === 'canvas' && closures[name].some(file => /[\\/]rendering[\\/]|[\\/]webgpu[^\\/]*\.js$|[\\/]b1\.js$|[\\/]WebGPUHost\.js$|[\\/]robust-predicates[\\/]/i.test(file))) {
+    // Admit only the existing DOM-free, import-free error-provenance module.
+    if (name === 'canvas' && closures[name].some(file => path.relative(root, file).replaceAll(path.sep, '/') !== 'packages/engine/dist/rendering/ownedPreparationFailure2D.js' && /[\\/]rendering[\\/]|[\\/]webgpu[^\\/]*\.js$|[\\/]b1\.js$|[\\/]WebGPUHost\.js$|[\\/]robust-predicates[\\/]/i.test(file))) {
       throw new Error('Canvas/root closure crosses the GPU boundary');
     }
   }

@@ -2,6 +2,18 @@
 
 English | [简体中文](../Cns/CHANGELOG.md)
 
+## Engineering preview: 0.23.0 — 2026-10-11
+
+Added owned textured geometry and Mesh2D, immutable textured-frame capture, bounded clipping/vertex preparation and an explicit WebGPU host. Fixed desktop calibration, held-out pixels and copied-production sensitivity controls passed; affected Canvas, rectangle WebGPU, B1 and SequencePlayer saved results and process retirement received independent bounded review. Read the [contract](docs/textured-geometry-and-mesh2d-contract.md), [geometry evidence](docs/textured-geometry-and-mesh2d-evidence.md) and [CPU/desktop evidence](docs/textured-profile-cpu-evidence.md). Reproduction of the current public workflow and final delivery are separate records. Packages remain private 0.0.0 and protocol 1.0; phones, performance, full UI/fonts/Spine/3D and complete migration remain open.
+
+## Engineering preview: 0.22.0 — 2026-10-10
+
+Added receiver-local `getBounds` with a fresh readonly `Rectangle2D`, explicit node/primitive budgets and deterministic authority/lifetime checks. Descendant direct corners are measured with ordinary binary64 arithmetic; authored zero extents count and skip arithmetic, and conservative enclosure is not promised. Read the [contract](docs/display-content-bounds-contract.md) and [evidence](docs/display-content-bounds-evidence.md) for actual recorded results and their identities. Other spaces/output adapters/layout/hit testing remain pending. Packages remain private 0.0.0 and protocol 1.0; final prepush and stacked publication are separate gates.
+
+## Engineering preview: 0.21.0 — 2026-10-10
+
+Added public display coordinate queries with owned readonly results, exact stored-matrix inverse rounding and ancestor/lifetime budgets. CPU/type and fresh affected desktop rendering regressions passed within recorded scope; final publication is separately gated. Read the [contract](docs/display-coordinate-query-contract.md) and [evidence](docs/display-coordinate-query-evidence.md). No dependency or package/protocol release was added; private 0.0.0/protocol 1.0 and open full UI/3D/Spine/migration obligations remain.
+
 ## Engineering preview: 0.20.0 — 2026-10-10
 
 Added the public sequence factory/types and explicit-time SequencePlayer with exact lease binding, atomic crop/sample commit, private receiver authority and Engine affinity. Added a public-entry example and opaque browser verifier. Read the [contract and acceptance](docs/sequence-player-contract.md) for measured behavior, type and browser scopes; the earlier [Bitmap observation](docs/bitmap-region-evidence.md) remains separate.

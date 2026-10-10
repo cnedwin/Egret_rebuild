@@ -24,6 +24,10 @@ export function childrenOf(node: DisplayObject): readonly DisplayObject[] {
   return [...(childLists.get(node as DisplayObjectContainer) ?? [])];
 }
 
+/** Callback-free O(1) readers for budgeted traversal; never clone the list. */
+export function childCountOf(node: DisplayObject): number { return childLists.get(node as DisplayObjectContainer)?.length ?? 0; }
+export function childAtOf(node: DisplayObject, index: number): DisplayObject | undefined { return childLists.get(node as DisplayObjectContainer)?.[index]; }
+
 export function assertLive(node: DisplayObject): void {
   if (terminated.has(node)) throw new EgretError("OBJECT_DISPOSED");
 }

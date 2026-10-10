@@ -1,6 +1,7 @@
+import { noteOwnedPreparationFailure } from './ownedPreparationFailure2D.js';
 import type { ImageCommand2D, TextureRegion2D } from '@egret/contracts';
 import { Preparation, coordinate, same, POLYGON_LIMIT, GeometryPreparationError, clipPolygon2D, finishPolygonWinding2D } from './prepareRectangles2D.js';
-import type { RectanglePreparationOptions, CrossingAttributes } from './prepareRectangles2D.js';
+import type { RectanglePreparationOptions, CrossingAttributes, PreparationBudget2D } from './prepareRectangles2D.js';
 
 export interface ImagePoint2D { readonly x: number; readonly y: number; readonly u: number; readonly v: number; }
 export interface PreparedImage2D {
@@ -11,7 +12,7 @@ export interface PreparedImage2D {
     readonly alpha: number;
     readonly edgeTests: number;
 }
-function fail(reason: 'range' | 'precision' | 'budget'): never { throw new GeometryPreparationError(reason); }
+function fail(reason: 'range' | 'precision' | 'budget'): never { throw noteOwnedPreparationFailure(new GeometryPreparationError(reason)); }
 function attributes(point: ImagePoint2D): void {
     coordinate(point.x); coordinate(point.y);
     if (!Number.isFinite(point.u) || !Number.isFinite(point.v)) fail('precision');
@@ -47,9 +48,9 @@ export function normalizeImagePolygon(points: readonly ImagePoint2D[], options: 
     const preparation = new Preparation(options), normalized = normalize(preparation, points);
     return { points: normalized, edgeTests: preparation.edgeTests };
 }
-export function prepareImage2D(command: ImageCommand2D, width: number, height: number, options: RectanglePreparationOptions): PreparedImage2D {
+export function prepareImage2D(command: ImageCommand2D, width: number, height: number, options: RectanglePreparationOptions, budget?: PreparationBudget2D): PreparedImage2D {
     coordinate(options.pixelRatio);
-    const preparation = new Preparation(options), corners = preparation.corners(command);
+    const preparation = new Preparation(options, budget), corners = preparation.corners(command);
     const uv = [[0, 0], [1, 0], [1, 1], [0, 1]] as const;
     let polygon = normalize(preparation, corners.map((point, i) => ({ ...point, u: uv[i]![0], v: uv[i]![1] })));
     // Every clip is preflighted even for singular, empty or zero-alpha commands.
@@ -59,5 +60,6 @@ export function prepareImage2D(command: ImageCommand2D, width: number, height: n
     if (command.alpha === 0) polygon = [];
     const vertices = polygon.length ? (polygon.length - 2) * 3 : 0;
     if (vertices > options.maxPreparedVertices || vertices > 4294967295) fail('budget');
+    budget?.admitPreparedVertices(vertices);
     return { points: polygon, pointIndices: polygon.map((_point, index) => index), imageIndex: command.imageIndex, sourceRect: command.sourceRect, alpha: command.alpha, edgeTests: preparation.edgeTests };
 }

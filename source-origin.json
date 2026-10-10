@@ -386,8 +386,8 @@
     {
       "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
       "path": "examples/canvas-scene/index.html",
-      "sha256": "adb71b35dba2d9cb557240888a15fd35f4944cbe79b3cbda40335fcd56c0df63",
-      "bytes": 933,
+      "sha256": "ec6c887f844d49cf883f95756919affc7b8258a286f7fa5ec0dd634afb89b9cb",
+      "bytes": 1018,
       "previousRevisionSha256": "adb71b35dba2d9cb557240888a15fd35f4944cbe79b3cbda40335fcd56c0df63",
       "previousLayoutPath": "examples/canvas-scene/index.html",
       "previousLayoutSha256": "adb71b35dba2d9cb557240888a15fd35f4944cbe79b3cbda40335fcd56c0df63"
@@ -448,8 +448,8 @@
     },
     {
       "path": "examples/webgpu/index.html",
-      "sha256": "7d93185fd2da56aaf9869654c55e73ff97b4bd861468e09559c55edef00b9b95",
-      "bytes": 892,
+      "sha256": "f9beaff113e9e5f2ec77e4893577dd7831a681ab84e50bdc28a5cb282c600bb0",
+      "bytes": 977,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousLayoutPath": "examples/webgpu/index.html",
       "previousLayoutSha256": "7d93185fd2da56aaf9869654c55e73ff97b4bd861468e09559c55edef00b9b95"
@@ -505,8 +505,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/CHANGELOG.md",
-      "bytes": 19092,
-      "sha256": "cf98f383f084c7e1020a1184c3b7e22c0db0fa388b5514c57b4180aae80b3601"
+      "bytes": 20863,
+      "sha256": "b99459ca7ea77f50d5c174b2fc8ec104af559ab4ecb0ef18284391d954d76e6e"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -583,8 +583,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 8290,
-      "sha256": "26ac1fa6c788d9599392722b5191fd65c1fe342325b78dc96abe840927d99adc"
+      "bytes": 10083,
+      "sha256": "3d5c660ae71889d32071cb76d0946801daa29ecefddf0d51fee5a7828abe5a2c"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -697,8 +697,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/公共API设计与命名规范.md",
-      "bytes": 17268,
-      "sha256": "fe91d97934c25cdeaf958350be5f8bc6393eefd729508a831ced1e2fdafaf8cb"
+      "bytes": 17846,
+      "sha256": "68e577bca4f5f5e062f7248031d5de490f4faefe4a1e6c03fd1ff32ea54b0fa0"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1039,14 +1039,14 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/README.md",
-      "bytes": 4071,
-      "sha256": "232eab71f05d73d74bc6a6ad0e8f06dcd3931b8dc2f60c2a14c4c7febfb90f66"
+      "bytes": 4560,
+      "sha256": "fdfa41fd4e3d48bb86fbf674e7e17e91d6d31ccba21c268d15007a147ddf7fb4"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/registry/交付.json",
-      "bytes": 35444,
-      "sha256": "ab313cc8cdebcead8f8ef4d88f5abf1493fc902cd0f0fb2c7fd7aa934fae0a3d"
+      "bytes": 40838,
+      "sha256": "549a469329a39002e9c69c828a048672cbb776c21724cbc69fee3d2d0866bf59"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1063,14 +1063,14 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/registry/来源.json",
-      "bytes": 67701,
-      "sha256": "068cbd28494bd9f75921400bc0b158b6079b8e4fdd0d9af6d360bd8029d8ee21"
+      "bytes": 70232,
+      "sha256": "feab25c1c983f8b68a88dd7b9e8b5ce0c4f7f6d3d2949d0e43199231e4256bc9"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/registry/需求.json",
-      "bytes": 12809,
-      "sha256": "90fd86d3b53a13af6bdbf5b7c352ba0c917922d4e67e48fd55b7c9fec9153632"
+      "bytes": 12937,
+      "sha256": "2cbc03cffa770beb5d79f6c529437ad3658defaeaee8cd645226cb9ee111b490"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1099,14 +1099,14 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/当前版本.json",
-      "bytes": 19379,
-      "sha256": "50f5e71ee8aff7f0483d51671cd2bc2373d4714f7952c66cbe9bc61ea0547de3"
+      "bytes": 24990,
+      "sha256": "7f19918343ce0c1852574267e4919cec03937c5c7a24b03dd5c90fc6e334c662"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
-      "bytes": 108163,
-      "sha256": "a7458e88843fd71de61f2facccb53aba585839d8b362d2ad5a117ba69122ef5e"
+      "bytes": 109458,
+      "sha256": "8422e3f1e664f6f6be1902b3e1b171371bbf51f024caa6e0ed51fa68763a46cf"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1135,8 +1135,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/CHANGELOG.md",
-      "bytes": 23884,
-      "sha256": "14d37eb710befbcabd6a78a49f2a361276b81dc601e92616b89c921487f69987"
+      "bytes": 25982,
+      "sha256": "3812debabc0e9c31fc10d72e1d02a9fdff5d5307c857ea37fc8d1614ab04add8"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1147,8 +1147,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/current-version.json",
-      "bytes": 19837,
-      "sha256": "120cac8c19daeb98c60abd2f331e4b3afad4523c4e28a07b9d3947e99c0003e5"
+      "bytes": 25507,
+      "sha256": "5ce592501658df4e8f7fc7eb603859e4c53de8df74f44b4f9e986b81863fe5b2"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1267,8 +1267,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-progress.md",
-      "bytes": 9372,
-      "sha256": "635349baf5ead3053895d211ff03e0b96642343ba2450d89154d78ca785e077d"
+      "bytes": 11440,
+      "sha256": "4ef985f19e310dd8a9c86dde301c67b8ecf7491091fb2c23f5ae2db825265224"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1435,8 +1435,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/public-api-design-and-naming.md",
-      "bytes": 21780,
-      "sha256": "6d7bdcd3d4b76b40d6ab498b9fbd7511d9786221f27cede40f56b6ca08060fb1"
+      "bytes": 22490,
+      "sha256": "3b7e2b6be2626bbf8a37348c4064129e3f1c65d8f79c86d9ff2823833d87f0f3"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1675,8 +1675,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/README.md",
-      "bytes": 4914,
-      "sha256": "6915cf79eb4ce0764e433cd115d854099515ab2dc220853de34ff7ac72cca582"
+      "bytes": 5436,
+      "sha256": "cd1e8681483ff177fd466cef5f06c7c0962b1c2b70d3783c7bc7f0d42f1a82fe"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1687,8 +1687,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/registry/deliverables.json",
-      "bytes": 38170,
-      "sha256": "eb8b2862641d36987668c2c28e6e6d2ab6bd1cc7b9c2d755e7342d29765c15e5"
+      "bytes": 44064,
+      "sha256": "9b458dd9b6592c4c866d65bfe6f823b8ca00180379f7a25ebae9b1030797305d"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1699,14 +1699,14 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/registry/requirements.json",
-      "bytes": 14900,
-      "sha256": "421a265dfd3d51d1ea0ead2d69dd460fa6f39d029544c60dda6177deed25497f"
+      "bytes": 15028,
+      "sha256": "bc2b4bf8054e7ebc1b99829c606b793cbe24b564cf98f505b035ded8543f3f2c"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/registry/sources.json",
-      "bytes": 74712,
-      "sha256": "66793a6bfd3c3fd9c694825a2f63cf104cccb5061ca62dab075f912876d379c5"
+      "bytes": 77481,
+      "sha256": "8ec600508128d87888ef14ce328f6d6945de3b92e8a21efbc6c053ed979a84ed"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1768,8 +1768,8 @@
     {
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "path": "localization.json",
-      "sha256": "f4f72f7b74b6d302dff99f2adf6ce302cafd51909d6100394f714a4f62d217de",
-      "bytes": 156201,
+      "sha256": "c539347630cb8a93f8bd7b167ce28d9d0d4429c8cf3a33760d2ba02263b56555",
+      "bytes": 166378,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123"
@@ -1805,16 +1805,16 @@
     {
       "path": "packages/contracts/README.md",
       "originRole": "New first-party bilingual documentation or publication tooling",
-      "sha256": "d7903adeb66d71cb76d48da47a5646cefaae846213f0cc0430d96de55a4cd0f7",
-      "bytes": 2338,
+      "sha256": "a8319d0e6623c15a1f6e3dc0d982e8e4c55e291ff5456c7182d9b2f8c3c4381e",
+      "bytes": 2740,
       "previousRevisionSha256": "4b7aedc3f9f8f9648353f4acb1c5a110387d0139b1213d6978fab74485400864",
       "previousLayoutPath": "packages/contracts/README.en.md",
       "previousLayoutSha256": "ac8a3e151ea797dbad13f5074192721de58162d727b1f1bbbdd1b7d548a51c88"
     },
     {
       "path": "packages/contracts/README.zh-CN.md",
-      "sha256": "feb7c6164c2fc85d5ed513d3eb36fd22b668bb7b1985e7d7fcc6f9dc352e44bf",
-      "bytes": 2010,
+      "sha256": "a6ae5ca016dea4b41453bb3fbac62f164d7c5bddd0912ea578b285eb8d6a0901",
+      "bytes": 2335,
       "originalSha256": "f631cb1809f3160b76b5b4451c8820c264f269da2b64842c96abeaae702607ad",
       "originRole": "Bilingual public documentation projection",
       "change": "Preserves package responsibilities and lifecycle semantics; removes internal review history wording and adds contributor/source/license links.",
@@ -1869,8 +1869,8 @@
     },
     {
       "path": "packages/contracts/src/index.ts",
-      "sha256": "c0abb297281a6213e07ed451078ab92e7c6378937863b432e2558ec95e231f48",
-      "bytes": 1070,
+      "sha256": "75d513766f2d2087ec0a07f097dff7abf5739289f3f9d0bf0e372576467a94c5",
+      "bytes": 1585,
       "originalSha256": "85f4a29e7e04334ab941dfe7a848edacc3a597dc5621820366c7cadd257eda13",
       "originRole": "byte-identical prototype whitelist export",
       "previousRevisionSha256": "85f4a29e7e04334ab941dfe7a848edacc3a597dc5621820366c7cadd257eda13",
@@ -1898,8 +1898,8 @@
     },
     {
       "path": "packages/engine/package.json",
-      "sha256": "d49f766cd3c4c6866b7e9f3746dbaa317b3588b8ffd3ce96a563e2921c8d6080",
-      "bytes": 537,
+      "sha256": "f341df10b4439156d4479c97036e5ad95db71a07dcc18e8e7e9403df847b37fa",
+      "bytes": 714,
       "originalSha256": "26b7c45f629f7c8a7d41c466fdd06741163a2afd9b6002075c6341530ed2e663",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousRevisionSha256": "26b7c45f629f7c8a7d41c466fdd06741163a2afd9b6002075c6341530ed2e663",
@@ -1909,16 +1909,16 @@
     {
       "path": "packages/engine/README.md",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "sha256": "1cd58e3bc795d6558b308e5bb27b8df9b68ffb693c73629781e5783260a7cff5",
-      "bytes": 4772,
+      "sha256": "0f8b79c7c9bf7ecc727416cdbc2548b20f416e93fe3f2ea4e891c53ac4aea447",
+      "bytes": 5268,
       "previousRevisionSha256": "77fa6a7eacbb0c3d386524d6c9ed5fec9f3e91bf393b95a6c3b2498c5ae6b83f",
       "previousLayoutPath": "packages/engine/README.en.md",
       "previousLayoutSha256": "4a1fba94711cf91b22cd90c641012b842ef7c7fa0be969fc996464f80ebaeae7"
     },
     {
       "path": "packages/engine/README.zh-CN.md",
-      "sha256": "5359129f987d45894294445e31eccd4e7816de4334404024d4f905a6ab7ac476",
-      "bytes": 4212,
+      "sha256": "cb145fea9aead8c4092743c5e138637845d8706369339d00188f50fa2a797172",
+      "bytes": 4653,
       "originalSha256": "2b39a8a5f988a0c4d7271d30da7f8c04a735149e00b6f0f28f2c59940e5842f0",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "change": "Preserves package responsibilities and lifecycle semantics; removes internal review history wording and adds contributor/source/license links.",
@@ -1937,16 +1937,16 @@
     },
     {
       "path": "packages/engine/rendering/packedOrientation.ts",
-      "sha256": "fdcedb1464a03dd39c6da6cd8a77596d6be33b95b0ba63ac907859a0e02c181b",
-      "bytes": 313,
+      "sha256": "85ac6204f725ad5abab0bfc93f8a4af80a880011ba4bdf8b9585dc0719af851b",
+      "bytes": 442,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousLayoutPath": "packages/engine/rendering/packedOrientation.ts",
       "previousLayoutSha256": "fdcedb1464a03dd39c6da6cd8a77596d6be33b95b0ba63ac907859a0e02c181b"
     },
     {
       "path": "packages/engine/rendering/prepareRectangles2D.ts",
-      "sha256": "4ff620e1670d594550534bd8ef70366ee0fda6c46307116060154e8415711473",
-      "bytes": 10705,
+      "sha256": "94aa0f00db125dc45448e8c0174ca9f0095b78035c98a4c1efc5cbd01cb44230",
+      "bytes": 12192,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousLayoutPath": "packages/engine/rendering/prepareRectangles2D.ts",
       "previousLayoutSha256": "5003eef853f6982c9b7f5f36999279688e7b6aa4184e88ff5673af2ad02aa74f"
@@ -1964,8 +1964,8 @@
     },
     {
       "path": "packages/engine/src/createEngine.ts",
-      "sha256": "32011ff9c7bbc65e0bdf455a21fcac2e975cd14f9065c3c7c9589bbb74c56774",
-      "bytes": 1705,
+      "sha256": "99d4f442f1b8c0eb19928e71896e46aec83de2458d2fa9516b5b10b23951589b",
+      "bytes": 1137,
       "originalSha256": "6298922aa970b883fd5f84a098a44d5d4654736446709856381416f182e0aaf3",
       "originRole": "English comment-only projection; exact baseline restoration proven",
       "previousPublicSha256": "6298922aa970b883fd5f84a098a44d5d4654736446709856381416f182e0aaf3",
@@ -1975,8 +1975,8 @@
     },
     {
       "path": "packages/engine/src/Engine.ts",
-      "sha256": "e9e5b082a2f2cfd4f87bbfec13fbc604df887ba9ed82a9ef0a8b728b3261bfef",
-      "bytes": 8606,
+      "sha256": "ede0be39736301fb961177463384661913f9a4171b6e1677216f4fc924fb5f6e",
+      "bytes": 10186,
       "originalSha256": "d5b4fcfc5bcf921d6b75aa4a33d7e71412595e8e377e5ff9b186b19ec6868f58",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
       "previousPublicSha256": "d5b4fcfc5bcf921d6b75aa4a33d7e71412595e8e377e5ff9b186b19ec6868f58",
@@ -1986,8 +1986,8 @@
     },
     {
       "path": "packages/engine/src/index.ts",
-      "sha256": "76036883c39505afc9cc5d2f1d06b8f824720c212b4498da68b67a0df27ffb94",
-      "bytes": 1521,
+      "sha256": "c1f7a78c489a6fa0e87c23b5d6b3f472a439c95121b4cd7a7e7b5a1d144a9746",
+      "bytes": 2204,
       "originalSha256": "45f2377ffe6e180815d68b8b2dcbddaca8eaa167c142a356d130da8ce008e2f0",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
       "previousRevisionSha256": "45f2377ffe6e180815d68b8b2dcbddaca8eaa167c142a356d130da8ce008e2f0",
@@ -2026,8 +2026,8 @@
     {
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "path": "packages/engine/tsconfig.web.json",
-      "sha256": "df259ef242d8a166dd6d67722424496b896ed65c0730090d4a160527e05ba20f",
-      "bytes": 325,
+      "sha256": "c1db022356fde98656725aff6d5e795d8a54bed48046fecb49b33c3c73f2bea3",
+      "bytes": 356,
       "previousRevisionSha256": "ed3119d70f5e94a243c2375a62c09ac95d60454fa4fb6577013029e7571c4d68",
       "previousLayoutPath": "packages/engine/tsconfig.web.json",
       "previousLayoutSha256": "df259ef242d8a166dd6d67722424496b896ed65c0730090d4a160527e05ba20f"
@@ -2035,8 +2035,8 @@
     {
       "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
       "path": "packages/engine/web/CanvasHost.ts",
-      "sha256": "9686477da8e6bc88ce6f47b673c37c92c01b93814e96dc23cb875a5431a69eff",
-      "bytes": 11094,
+      "sha256": "82236ce1a291da6409007c42ecc767b2cb382d23eabf65efc6707dd9806f6642",
+      "bytes": 11376,
       "previousRevisionSha256": "ae6c2f46bd3e43b44e8a915a5b4fb9c1cbebab6b5f14b93178b7bd7eb5f0c7cb",
       "previousLayoutPath": "packages/engine/web/CanvasHost.ts",
       "previousLayoutSha256": "ae6c2f46bd3e43b44e8a915a5b4fb9c1cbebab6b5f14b93178b7bd7eb5f0c7cb"
@@ -2061,16 +2061,16 @@
     },
     {
       "path": "packages/engine/web/webgpu.ts",
-      "sha256": "bf0e57d689d4ae60f3a25a11835e3d08aead7549c2c1b72a7cdbdf91da8c0e05",
-      "bytes": 313,
+      "sha256": "84a69d7c3de60a5e3f83cd0d31cb6cd0bcabdebe5553a89abe0fb3f07540c3cb",
+      "bytes": 451,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousLayoutPath": "packages/engine/web/webgpu.ts",
       "previousLayoutSha256": "bf0e57d689d4ae60f3a25a11835e3d08aead7549c2c1b72a7cdbdf91da8c0e05"
     },
     {
       "path": "packages/engine/web/WebGPUHost.ts",
-      "sha256": "ecc99075132e2bd546d50da8d96ff096ba8e6ca33630d192bec66500ccca3bc8",
-      "bytes": 66888,
+      "sha256": "2679e634e35c3841daa499f59cb3279087b33245267af187ae78995a29019c72",
+      "bytes": 74888,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousLayoutPath": "packages/engine/web/WebGPUHost.ts",
       "previousLayoutSha256": "f07f59068f1c65f1247500ca8665747bb957d99e07286b16e3d6d08be3da51bc"
@@ -2085,8 +2085,8 @@
     },
     {
       "path": "packages/engine/web/webgpuPass.ts",
-      "sha256": "26f9cff856de0e868a945cbe55379013877eb3046bc16f41d86776905278fcf5",
-      "bytes": 5107,
+      "sha256": "c4fc82a5e2d8380a9379e0fb840b07082bb9ab652804237b6cfc068d9a4187ff",
+      "bytes": 5400,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousLayoutPath": "packages/engine/web/webgpuPass.ts",
       "previousLayoutSha256": "780bb10de89b894ea01b6ae4122281a7c2b3c32e3435bed6d1e071be4969a5a5"
@@ -2116,16 +2116,16 @@
     {
       "path": "packages/runtime/README.md",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
-      "sha256": "4db2d6893d0f8fe0f0e86530cabd2255ddb115a1ff208f4d92209f12fca24d1a",
-      "bytes": 3663,
+      "sha256": "cf25e1b5119a9136c6ad5412e6113e420c734ed75186dff089ae4fded3e8dc00",
+      "bytes": 4156,
       "previousRevisionSha256": "88752546b92c8c859b1c0296f4307db2d6b79cf38f378bac3d0e67bfdb533768",
       "previousLayoutPath": "packages/runtime/README.en.md",
       "previousLayoutSha256": "97eeca38ec5f73641b226f5e3e724580232040fc1acd0e4cb8e9b692d20e9214"
     },
     {
       "path": "packages/runtime/README.zh-CN.md",
-      "sha256": "14f5d1c35c35e99910cc95134d2f1f65ae47b755017213cedf37838c5cbccf8c",
-      "bytes": 3033,
+      "sha256": "248043d15ad13ffd194d8d1e55bbdc28354f3465a0ca417a972bbc80c945a2f3",
+      "bytes": 3477,
       "originalSha256": "dadf19b00a845d7e8ed154644f2214b720d7acd03f4450a2e9a002be5d085911",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
       "change": "Preserves package responsibilities and lifecycle semantics; removes internal review history wording and adds contributor/source/license links.",
@@ -2194,8 +2194,8 @@
     },
     {
       "path": "packages/runtime/src/DisplayObject.ts",
-      "sha256": "f66c3aaecf255601969603b359ac42bcd4db6d2ed17750727f0f4f5816152e70",
-      "bytes": 3430,
+      "sha256": "326529229fd835a41eb4525d55e9738ae177e34e6feea56ab8c074423e5b1e56",
+      "bytes": 4398,
       "originalSha256": "a5744fe971a6490e54eda1b6cd7aa2ff18f8dd8e172eca83e458b89a42febe39",
       "originRole": "English comment-only projection; exact baseline restoration proven",
       "previousPublicSha256": "a5744fe971a6490e54eda1b6cd7aa2ff18f8dd8e172eca83e458b89a42febe39",
@@ -2216,8 +2216,8 @@
     },
     {
       "path": "packages/runtime/src/displayTreeState.ts",
-      "sha256": "ce6c49660bc825bece18cc840b2b042a3832c8bc914ad5101849798b477a285d",
-      "bytes": 3578,
+      "sha256": "f7df42c7917e87c2492a6411a2f686936cdaa61ab4d5a6f362d06f4ff2e64f0b",
+      "bytes": 3946,
       "originalSha256": "e6606b65ba3cdd5b18691121bdb028186eda6c4f2d8fe836bec3f8a1a9a61ff9",
       "originRole": "English comment-only projection; exact baseline restoration proven",
       "previousPublicSha256": "e6606b65ba3cdd5b18691121bdb028186eda6c4f2d8fe836bec3f8a1a9a61ff9",
@@ -2270,8 +2270,8 @@
     {
       "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
       "path": "packages/runtime/src/frameCapture.ts",
-      "sha256": "23ebe914a57f165ecd210fa31d28ae4681508b684ec68895d3bbfb58a81f9fa1",
-      "bytes": 5066,
+      "sha256": "afa15011f15aab8d74a2fc4d82bcf1a53b99d0ab571da55d5827fa92564f666e",
+      "bytes": 5047,
       "previousRevisionSha256": "37ac4db4273ddca728622fd2db1226c1d104e056c40fd3bcbfbadeae1c75e921",
       "previousLayoutPath": "packages/runtime/src/frameCapture.ts",
       "previousLayoutSha256": "37ac4db4273ddca728622fd2db1226c1d104e056c40fd3bcbfbadeae1c75e921"
@@ -2287,8 +2287,8 @@
     },
     {
       "path": "packages/runtime/src/index.ts",
-      "sha256": "38341fa44ea9cbfadc8d746c75d014c2e0585339fd5fe4a27a15e3febdcf0a2b",
-      "bytes": 1748,
+      "sha256": "f0438f839eedc98b697db2daa0938041526093ad37d825154efe31a24397407c",
+      "bytes": 2069,
       "originalSha256": "3af52ebe93ac933d989ceb0f5abadd31e72f9436fda1d2206b3e71d7f1216310",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
       "previousRevisionSha256": "3af52ebe93ac933d989ceb0f5abadd31e72f9436fda1d2206b3e71d7f1216310",
@@ -2389,16 +2389,16 @@
     {
       "path": "README.md",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "sha256": "84e88cda499f4c4ac6b184ad7ac0190ffc4629db88fb2017338e2034989c0b29",
-      "bytes": 13119,
+      "sha256": "dc1d2caa19f79c063d19867b21639e17bbb3d3c03fc8c3bf523b9a47f883410a",
+      "bytes": 14808,
       "previousRevisionSha256": "199156443d499d5012f1224263a1a3ee9994e5ba38ee067bceeb2ad865ae8167",
       "previousLayoutPath": "README.en.md",
       "previousLayoutSha256": "f40ec41ca699cd0b9138fbdf4a268080038f583ae11e78c4f37093a6b7095f57"
     },
     {
       "path": "README.zh-CN.md",
-      "sha256": "17c21e6163d372c7760f00b0dbb07ea2673b147b8673cd045487764cbc799be5",
-      "bytes": 12849,
+      "sha256": "0d7ec681f57d1f0652d2ea00cf51ec213fd15db6e416c16eb31d163a882722c9",
+      "bytes": 14538,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousPublicSha256": "7ec80b8575a700b6a2628eb0322f2e770bb2284859f68ec5e0eb6530154a6699",
       "previousRevisionSha256": "7a1d72019db7cb6075d7c3a3bd4075f7c069d527b6e31d992a69333cb126b6c3",
@@ -2425,8 +2425,8 @@
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "sha256": "8671d2e417bc090fc0e595ad9451d2784fc4b250c9b4e19f858df740a5a64d23",
-      "bytes": 8005,
+      "sha256": "5c668fbaf8aff454ceb2a7000f6cfe93f476578dabd0cd3f29f17e7aef7f60ed",
+      "bytes": 31924,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousLayoutPath": "tests/boundaries.test.mjs",
       "previousLayoutSha256": "7fab4a4c490d4823a1cbd3d8721eb87d8c6a2401e60a7068be245975abf538bc"
@@ -2556,16 +2556,16 @@
     {
       "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
       "path": "tests/types/dom-free.ts",
-      "sha256": "ac2642126ddb862c7fdd23ed16a09886ce068fb82049475d7ebd460100bbf560",
-      "bytes": 1204,
+      "sha256": "e1e584986d8878824aeac6369eeff2690ed3091b83e85511b65cfef2e8f810bc",
+      "bytes": 6873,
       "previousRevisionSha256": "c3801687ad3896fbdbfb3518c63b13afaebb42df455c0230e7f2a0e374264ed4",
       "previousLayoutPath": "tests/types/dom-free.ts",
       "previousLayoutSha256": "c3801687ad3896fbdbfb3518c63b13afaebb42df455c0230e7f2a0e374264ed4"
     },
     {
       "path": "tests/types/negative.ts",
-      "sha256": "f4d337395151331ef5ea987c157b7f51ee75e22a7307a4f7f4c078812b199551",
-      "bytes": 9229,
+      "sha256": "18d19a3fc03dcd946e04a0a5fc566f7bfcdafdb6a63ec41073eadc48001cf552",
+      "bytes": 22557,
       "originalSha256": "f2aba4d444432063b862b42822b392b82d09c8d91458cc80f5478f136115ce7b",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
       "previousRevisionSha256": "f2aba4d444432063b862b42822b392b82d09c8d91458cc80f5478f136115ce7b",
@@ -2574,8 +2574,8 @@
     },
     {
       "path": "tests/types/positive.ts",
-      "sha256": "778ddfe8cdab974750bcc98a1d39b0381779cc9cae930d83355ca89935cb2db8",
-      "bytes": 6271,
+      "sha256": "df0f017038229204838870c94afc92785e9c27c533b9480ce844b02b4952c67a",
+      "bytes": 27116,
       "originalSha256": "1041d77568560fb1d08fa3a4dbb86cb1e77cc48dace50884b5173c4459713aeb",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
       "previousRevisionSha256": "1041d77568560fb1d08fa3a4dbb86cb1e77cc48dace50884b5173c4459713aeb",
@@ -2672,8 +2672,8 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "e0404cdb4b470310c06302f6e36f6525c44230cd933b426485b308bfbb1f1323",
-      "bytes": 13562,
+      "sha256": "baa0451cbcc515a5c6b338ce65fdae7db4838e2b5188d3e92f8d271b43a64524",
+      "bytes": 29240,
       "originalSha256": "e7994ad6962e55fba9b481d50377ede30729b345e6a901e2089b235edfde9491",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousRevisionSha256": "e7994ad6962e55fba9b481d50377ede30729b345e6a901e2089b235edfde9491",
@@ -2691,8 +2691,8 @@
     },
     {
       "path": "tools/check-types.mjs",
-      "sha256": "d93959e912e331f012b275cddb02118ade79ec28be6a352bacf9c39f69638e61",
-      "bytes": 6418,
+      "sha256": "c59647fb10e4edb8eeadfdae45039aebdc9cbb2c1dc282216a410cc003067505",
+      "bytes": 17201,
       "originalSha256": "332d2c161ceb9ec7d75429c89a3d2c95af24f2cf5eed68b92b09532d1ce691a4",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousRevisionSha256": "332d2c161ceb9ec7d75429c89a3d2c95af24f2cf5eed68b92b09532d1ce691a4",
@@ -2738,8 +2738,8 @@
     },
     {
       "path": "tools/verify-webgpu.mjs",
-      "sha256": "9d1e0c3ffb1c74a55796023bbfcb661e61c89006466e441a308c26bc4bd3b05d",
-      "bytes": 21620,
+      "sha256": "ca670e6e80b35d738c1225ce5d10d5e2f1d2bb516ecd282dcd3090d3ed35d9ad",
+      "bytes": 22122,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousRevisionSha256": "99e85364bbb2619f8e83e9877e68acce7443bc23b320fe19f7cd953c8b5b9b26",
       "previousLayoutPath": "tools/verify-webgpu.mjs",
@@ -2791,8 +2791,8 @@
     },
     {
       "path": "packages/runtime/src/Bitmap.ts",
-      "bytes": 7674,
-      "sha256": "fbc41946d88073f1f62957d6c5623543f9d096ed6d7d35f065eac40e0c119e29",
+      "bytes": 7744,
+      "sha256": "5608f43b857b4616099873cf441ad63ba3f907e076966dccd573bb9acbf401c6",
       "originRole": "First-party explicit-time sequence work package; public verifier reuses independently authored first-party opaque collector mechanisms."
     },
     {
@@ -2809,8 +2809,8 @@
     },
     {
       "path": "tests/webgpu-mesh-host.test.mjs",
-      "bytes": 87020,
-      "sha256": "eb68d02d2d8c537d4209f71dd0e13f0ec1b8761556ea88fb1f0ec61b8855d56d",
+      "bytes": 93530,
+      "sha256": "3e694eb33d00358524287b1e2fca88023eacfcbbb230ce07e080a260f8f24417",
       "originRole": "First-party explicit-time sequence work package; public verifier reuses independently authored first-party opaque collector mechanisms."
     },
     {
@@ -2827,8 +2827,8 @@
     },
     {
       "path": "tools/sequence-player/collector.mjs",
-      "bytes": 27722,
-      "sha256": "5e49943f93bbb1130fdd079d828b38da07401e65ae026f226f1353b0146da7d7",
+      "bytes": 27839,
+      "sha256": "b2c55df20be9793cb7adac423607d7900fa5fc4201656977ff12eb835538b602",
       "originRole": "First-party explicit-time sequence work package; public verifier reuses independently authored first-party opaque collector mechanisms."
     },
     {
@@ -2845,8 +2845,8 @@
     },
     {
       "path": "tools/sequence-player/file-graph.mjs",
-      "bytes": 9188,
-      "sha256": "689e77d290b3ab86ea0991be4bba2b799260646483e44c243695a5f76fe1214d",
+      "bytes": 9438,
+      "sha256": "ff3ef2eae90acf30d049daee4ba8bdd270964fa045ae34f93f16476bd0189600",
       "originRole": "First-party explicit-time sequence work package; public verifier reuses independently authored first-party opaque collector mechanisms."
     },
     {
@@ -2878,6 +2878,1206 @@
       "bytes": 1468,
       "sha256": "6cb218ba6d72437982a68450e491f214079f1edd252fdd0cc7e3b7411222dc28",
       "originRole": "First-party explicit-time sequence work package; public verifier reuses independently authored first-party opaque collector mechanisms."
+    },
+    {
+      "path": "packages/contracts/src/Point2D.ts",
+      "bytes": 152,
+      "sha256": "7ba32badad650fe83fd09843043d5ecfd995c0471e6861d5a3eb1ecd4bd3feac",
+      "originRole": "Independent first-party display coordinate work package; no new third-party implementation source or dependency."
+    },
+    {
+      "path": "packages/runtime/src/displayTransform.ts",
+      "bytes": 697,
+      "sha256": "f9f28f5edcfda29a92b89bff1ed817f93736f96d2b29c8a8dc1ed2eeb823ebbc",
+      "originRole": "Independent first-party display coordinate work package; no new third-party implementation source or dependency."
+    },
+    {
+      "path": "packages/runtime/src/displayCoordinates.ts",
+      "bytes": 3515,
+      "sha256": "803047a0fef81cb685021be92799dece597f8152f668a9eba8392411ac536a25",
+      "originRole": "Independent first-party display coordinate work package; no new third-party implementation source or dependency."
+    },
+    {
+      "path": "packages/runtime/src/coordinateInverse.ts",
+      "bytes": 4359,
+      "sha256": "bb17707ec9d932dbcd9a8b46ce595fb14a75b283a438fc88e5d5e009b99078de",
+      "originRole": "Independent first-party display coordinate work package; no new third-party implementation source or dependency."
+    },
+    {
+      "path": "tests/coordinates.test.mjs",
+      "bytes": 24251,
+      "sha256": "157b1fd734c980e34f80c218fceed99dcd30c76a4143c064b5fda379e26a889a",
+      "originRole": "Independent first-party display coordinate work package; no new third-party implementation source or dependency."
+    },
+    {
+      "path": "packages/runtime/src/displayBounds.ts",
+      "bytes": 7492,
+      "sha256": "e4c04810395dc17181be5fff15bb0fe015e29517a8672a95043094580cfa8038",
+      "originRole": "Independent first-party receiver-local content-bounds work package; no copied historical/competitor implementation or new third-party dependency."
+    },
+    {
+      "path": "packages/runtime/src/bitmapDisplayState.ts",
+      "bytes": 1193,
+      "sha256": "b4a565939d5ddd94eea321ba62a5cf69b3cc58bea3080c2d131c36045ff8a912",
+      "originRole": "Independent first-party receiver-local content-bounds work package; no copied historical/competitor implementation or new third-party dependency."
+    },
+    {
+      "path": "tests/content-bounds.test.mjs",
+      "bytes": 24621,
+      "sha256": "0ac16a71e8d38cd65ec62f3c4f675ac718f33d17250897a9361bfda5318fffa3",
+      "originRole": "Independent first-party receiver-local content-bounds work package; no copied historical/competitor implementation or new third-party dependency."
+    },
+    {
+      "path": "knowledge-base/en/docs/display-content-bounds-contract.md",
+      "bytes": 12262,
+      "sha256": "38b59894aeecbf9d661abb5ceeede5cdaf925c4213099b6d0633164b10348533",
+      "originRole": "Independent first-party receiver-local content-bounds work package; no copied historical/competitor implementation or new third-party dependency."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/显示内容边界契约.md",
+      "bytes": 11026,
+      "sha256": "2243999008b5ebf5e58e819b167adb31ebc1c3a461c45c653dd9811673c27431",
+      "originRole": "Independent first-party receiver-local content-bounds work package; no copied historical/competitor implementation or new third-party dependency."
+    },
+    {
+      "path": "knowledge-base/en/docs/display-content-bounds-evidence.md",
+      "bytes": 6763,
+      "sha256": "c80867173018aa5389bf4dbb9b3c19592b2e834fef3e9d800da6cc024a9ffd95",
+      "originRole": "Independent first-party receiver-local content-bounds work package; no copied historical/competitor implementation or new third-party dependency."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/显示内容边界证据.md",
+      "bytes": 5845,
+      "sha256": "790575a0bd6c52526f9d4a7641b0ea8e24a15d5bcbfa6cc7a954d30ced326ea5",
+      "originRole": "Independent first-party receiver-local content-bounds work package; no copied historical/competitor implementation or new third-party dependency."
+    },
+    {
+      "path": "knowledge-base/evidence/content-bounds-verification.json",
+      "bytes": 20255,
+      "sha256": "fe9acf9bdbb42305a2f2c9b5e88483b6eb45f9ef7f117e9599c9eb832fda6579",
+      "originRole": "Independent first-party receiver-local content-bounds work package; no copied historical/competitor implementation or new third-party dependency."
+    },
+    {
+      "path": "packages/contracts/schema/project-format.schema.json",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 8773,
+      "sha256": "85617c17f23323bf4a0fd8ef31abba6040b244f6c199c62cd40f3a389bbef789"
+    },
+    {
+      "path": "packages/contracts/src/ImageData2D.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 6489,
+      "sha256": "8e093ee8b06d6c44eae0248dd140372c8da0f8efd01523a880d67a09542fd134"
+    },
+    {
+      "path": "packages/contracts/src/ProjectFormat.generated.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 4079,
+      "sha256": "55fea1151508e8c009b6d777cd38b5c76763439676f4dec476ce2fdef31834af"
+    },
+    {
+      "path": "packages/contracts/src/TexturedGeometry2D.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 9279,
+      "sha256": "ebfdafec006bd646cf35ec9a0b3610fc4c55b568db79cacca3d93d3acab75dfc"
+    },
+    {
+      "path": "packages/contracts/src/TexturedRenderFrame2D.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 1718,
+      "sha256": "81c0b9fdf5425b42b159777388c61a72fd7a6f656b34fe8ae92c2f4b2f5cbaf4"
+    },
+    {
+      "path": "packages/engine/rendering/admitTexturedFrame2D.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 7317,
+      "sha256": "943f6cfcb2dfaf3ec4380756ca13dae6dd112e43a51cebec5657c20b81391093"
+    },
+    {
+      "path": "packages/engine/rendering/copyMixedFrame2D.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 4109,
+      "sha256": "919f38d2c972c770f88d2ca9695e066895e790e2425b3935098d3743ba29cb61"
+    },
+    {
+      "path": "packages/engine/rendering/imageFrameBudget.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 1813,
+      "sha256": "cb4f33b67f24d95430a334d4d9381c405e6ac7f75ffc419372a3edd1adc5f803"
+    },
+    {
+      "path": "packages/engine/rendering/matrix4.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 4834,
+      "sha256": "7bbf23719fc7d9566276778281f2e22ae84c658d3181474d8d50ad6dc08ea27c"
+    },
+    {
+      "path": "packages/engine/rendering/meshGeometry3D.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 6944,
+      "sha256": "2a0d9ef6fb10b08c31b6caad95d1a5517aac3641631335a6cfaf4b4e31daf186"
+    },
+    {
+      "path": "packages/engine/rendering/ownedPreparationFailure2D.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 1027,
+      "sha256": "475525f49142c8fc94c6885b3af01931f418e5233d9b91bf7cf48dc1080cfec9"
+    },
+    {
+      "path": "packages/engine/rendering/packedPosition2D.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 725,
+      "sha256": "089777bcf9cb4dde92354091db7bea205f6dd616ee26a16d3b4a40ff2087fd26"
+    },
+    {
+      "path": "packages/engine/rendering/packImageVertices2D.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 3217,
+      "sha256": "bd95e142f92779e2266767251d0f28345d92e20611e92267df2fb61bab0fc5e0"
+    },
+    {
+      "path": "packages/engine/rendering/packMeshGeometry3D.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 5585,
+      "sha256": "b17b7ff26be2bcf2fb31edd52ae72a9367019b5d1af8481cdb63f9b1b3464f28"
+    },
+    {
+      "path": "packages/engine/rendering/packTexturedMesh2D.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 4879,
+      "sha256": "d5e9bbfe238cb0d43fc5b44ffa86de7cee09eaf27bfea71fbf43b9259ada18fb"
+    },
+    {
+      "path": "packages/engine/rendering/prepareImages2D.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 4350,
+      "sha256": "f73066ae318c3950e69d9cf7ee0ac308fa7e96856df27cbfc2d6ad93ac07e400"
+    },
+    {
+      "path": "packages/engine/rendering/prepareMixedDraws2D.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 3128,
+      "sha256": "5528c5b1f951a9e5f574320f44bedabd5ec37b9d9cb13efd0925032822a75316"
+    },
+    {
+      "path": "packages/engine/rendering/prepareTexturedDraws2D.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 3331,
+      "sha256": "ba17d38894b1d13a0fd85cadeb7a9b1355e10e0c24178f9facf02bfd73832df8"
+    },
+    {
+      "path": "packages/engine/rendering/prepareTexturedMesh2D.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 7100,
+      "sha256": "c587c567e45e09aa898e5e82035785018845a7aa7cedd8840c5e9229aa92de4c"
+    },
+    {
+      "path": "packages/engine/rendering/projection3D.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 7909,
+      "sha256": "303fbf2eb8486a106f1372bab299d9ca56de9b4262800978617b1245fdf3af59"
+    },
+    {
+      "path": "packages/engine/rendering/RectangleFrame2D.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 294,
+      "sha256": "8117e8629840906ebacc6d8ea04f7413402f3624fc4bb4c2c663eea166f3f69a"
+    },
+    {
+      "path": "packages/engine/rendering/sceneFrame3D.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 11442,
+      "sha256": "c2ee3db171c8f88f821bfec28ca2d93474c60e6cd1a6d1dd2f7d400e4ff5c16e"
+    },
+    {
+      "path": "packages/engine/rendering/texturedPreparationBudget2D.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 6663,
+      "sha256": "6e2f6dae4d5ee4da53a39e8ed7efa0b5a3e94e283d9b5d6cf164d1cbfcf8d1cb"
+    },
+    {
+      "path": "packages/engine/src/createEngineForProfile.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 2035,
+      "sha256": "2b64bbec2a00ae16f3e075192af2b8c4fdf8143d3ed96dde4aadc406120aa248"
+    },
+    {
+      "path": "packages/engine/src/internal/texturedFrameState.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 718,
+      "sha256": "dc308adcb61faa716681cabf6b717fbf8079a32862aafb5ae174203461fbfaa4"
+    },
+    {
+      "path": "packages/engine/src/startEngine.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 1091,
+      "sha256": "1c1cd118f693360344f2e84a3c27873efff7a1299b8461d4f1f23f6d76aedf88"
+    },
+    {
+      "path": "packages/engine/tests/geometry-contract-types.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 407,
+      "sha256": "3fc7b6eb8343d860e54ee581133b5e0c74e9ed78dfa93c8254d410d347c7d20a"
+    },
+    {
+      "path": "packages/engine/tests/profile-contract-types.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 467,
+      "sha256": "f6a39de38240c02cb5c3122204ba0f83ed50f81c6536a67a1cd45d7dfb5dddcf"
+    },
+    {
+      "path": "packages/engine/web/b1.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 2366,
+      "sha256": "9b3e02b47e9328a106783f2ea88baca2066f5bf66b6c66113dd5952872c833b7"
+    },
+    {
+      "path": "packages/engine/web/canvasImageProjection.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 1220,
+      "sha256": "0d8bec0566c69f69e462f14c30507abe182dcdfded7fbf3c83abdb71e4adc23e"
+    },
+    {
+      "path": "packages/engine/web/imageProjections2D.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 7164,
+      "sha256": "937bfc89c93b941a78cc37242544e3d7b2ecd94454148006a0ff52e9ed3cfd17"
+    },
+    {
+      "path": "packages/engine/web/prepareTexturedSubmission2D.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 12147,
+      "sha256": "39863905140eee9af2c4739d407707901a6397a6cb17a91334fa56d3dfdab9bc"
+    },
+    {
+      "path": "packages/engine/web/texturedWebGPUOptions.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 3545,
+      "sha256": "1091fcf20ead47c954aa22841d2edf34b15c7c4c2222324e3aee0cb643af7983"
+    },
+    {
+      "path": "packages/engine/web/webgpuImagePass.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 2620,
+      "sha256": "586dfff3ef870da41cba08cce34de18fdc570cb31088bd9dab4cd8cb474b01e2"
+    },
+    {
+      "path": "packages/engine/web/webgpuMeshPass.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 2998,
+      "sha256": "6213e04e77f1a09afe35627eaba4ab2be2ddab92b986423deed361e51c7bdc37"
+    },
+    {
+      "path": "packages/engine/web/webgpuTexturedPass.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 2210,
+      "sha256": "c31d5f12cda3f38f5dbb9209e14f5b3345cbdc30d6b896bebf28146e0acdf4be"
+    },
+    {
+      "path": "packages/project/package.json",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 291,
+      "sha256": "e53bb0b35c66844acc80f3faa4557585cff88c98e965f6afcbfd523383b79932"
+    },
+    {
+      "path": "packages/project/src/api.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 3548,
+      "sha256": "af52153bcfc6646204195f68970ff63fb4dbe0be0b0f1da60fd901647073ebe2"
+    },
+    {
+      "path": "packages/project/src/canonical.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 3304,
+      "sha256": "a922ed7577d4bb6b0f644eb22c515af71bb23feea117e70e1223dfa18b8ae725"
+    },
+    {
+      "path": "packages/project/src/commit.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 5518,
+      "sha256": "8463dfac7abc473bb468ffb6c888cbc50697b50a4bbf45d7687b12d7b1c202c1"
+    },
+    {
+      "path": "packages/project/src/diagnostics.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 5306,
+      "sha256": "cbd6dbd13db4b4c95e5a22698f333a20b182eaeff4c53b75fb11c8e5e078356d"
+    },
+    {
+      "path": "packages/project/src/diff.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 1949,
+      "sha256": "18c70cb4b6643ec1b93d599baa4b37c3d015ba16dd87bc1d07e6de74a325f453"
+    },
+    {
+      "path": "packages/project/src/edit.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 4511,
+      "sha256": "63a86f8120d4fc5a4bdcb0b75e10fbb238b32af851ef48cd42eb490624822acf"
+    },
+    {
+      "path": "packages/project/src/format-shape.generated.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 26730,
+      "sha256": "ae77e4c7ee5fa34b271ab1d1179412fdbdfa8ff970fa8735a861848dcff7e48d"
+    },
+    {
+      "path": "packages/project/src/history-bytes.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 392,
+      "sha256": "0c3edda099f1f085acd5201d1c847e715c29055bfde9bbc5c885f816186e98a1"
+    },
+    {
+      "path": "packages/project/src/history.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 4408,
+      "sha256": "6cdb4789b6888b39ce40449baf117085be0aabd6c2bb1b6a13839233d274d67f"
+    },
+    {
+      "path": "packages/project/src/index.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 932,
+      "sha256": "95f833ab8c6b93e4b7eb33a0d403c73142648a36b2736a159407bda3eeb6ed2e"
+    },
+    {
+      "path": "packages/project/src/integer-token.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 1780,
+      "sha256": "9dce98069331e619ac5273609f1c14202f7255d08e36e12084216fca8e0b0f6f"
+    },
+    {
+      "path": "packages/project/src/internal.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 1400,
+      "sha256": "3c84306d9e729ecaa43909ab78ad94fe2b7637f71acb8c9d55481b4247eb6d13"
+    },
+    {
+      "path": "packages/project/src/json-foundation.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 353,
+      "sha256": "b375a0f59cfc7907deafd96538dce64dc931e491e405bd8424e424cbf07e0b06"
+    },
+    {
+      "path": "packages/project/src/legacy-movieclip-plan.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 17420,
+      "sha256": "a6cd539126753989fb0f79cdfa0bf674d83d62e8c713ad173c3aca0e8d4117bb"
+    },
+    {
+      "path": "packages/project/src/legacy-res-json.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 5844,
+      "sha256": "fcb1f897cd8717937c43b4c6e03a1bf8571952fab19f68a5deb6d890abd38f6d"
+    },
+    {
+      "path": "packages/project/src/legacy-res-plan.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 3782,
+      "sha256": "b1149868f617583ae74860405fbe468e70b32b51940e308741962891eed789a7"
+    },
+    {
+      "path": "packages/project/src/legacy-res-report.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 13722,
+      "sha256": "f9b2c7fdac70d6af488b51ad4ecb795c19bbbf062383cf83a5da64d1cc3ee98e"
+    },
+    {
+      "path": "packages/project/src/limits.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 2252,
+      "sha256": "56e9dea10a2734e2046807980bf0cca887c9f28a9cedaeb2e725466c8b5ba5c1"
+    },
+    {
+      "path": "packages/project/src/live-input.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 8355,
+      "sha256": "b813806f8bcccbca9a3500449e50bd532867f433af1d326eed86eb6eb5de499a"
+    },
+    {
+      "path": "packages/project/src/paths.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 633,
+      "sha256": "87277a4f58d4b7070d661e0f8584092d77350b3473da38066e7e676a8a07ecd0"
+    },
+    {
+      "path": "packages/project/src/public.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 3441,
+      "sha256": "0e3460c0ef659b3aadfa6dd01cebdc4f3f840f983f4203622651e013be8b3dd6"
+    },
+    {
+      "path": "packages/project/src/replay-cost.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 586,
+      "sha256": "637325306a066a824132e2e1a55e717798e32fa28c6075feb15c7d3d3f16c226"
+    },
+    {
+      "path": "packages/project/src/restore.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 4272,
+      "sha256": "3722a00d5f2d3bdf8d563870589217dbaced598fed742c007c2cfeb045d1792b"
+    },
+    {
+      "path": "packages/project/src/shape.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 1853,
+      "sha256": "9cbf500e95dad16f294d34b8e6fc7901741bbd74e155a9d331b3d1bfe5b9f135"
+    },
+    {
+      "path": "packages/project/src/state.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 2334,
+      "sha256": "27907e7f16ff3366324e0c1cee15410ba0c4f42953ab29b86f66d183ea37c3e9"
+    },
+    {
+      "path": "packages/project/src/store.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 2096,
+      "sha256": "eae50eb4c93f61f38820914d883dbf1a941c66321a044a5e9da035103e99579e"
+    },
+    {
+      "path": "packages/project/src/text-input.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 12003,
+      "sha256": "76461163d59b410687a0b56ce806467e04a7261f08a97f24512b8fd709c39cb3"
+    },
+    {
+      "path": "packages/project/src/unicode.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 1009,
+      "sha256": "7759fd35069663eb0e802ed790447dd18e53cf5c81826fdf213c4b3c6ec56d0c"
+    },
+    {
+      "path": "packages/project/src/validate-snapshot.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 7089,
+      "sha256": "2f44669f60f1ab9cec41a0536f4e40d657f471ba3b8664a25b5a1c8e9118139d"
+    },
+    {
+      "path": "packages/project/src/validate-transaction.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 4441,
+      "sha256": "44d50a15efe1ec4c5a78a499682663a8937db5eefae7b612e9e55a76d956de77"
+    },
+    {
+      "path": "packages/project/src/validation-order.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 9300,
+      "sha256": "373336e495d6670e39353d1848bf41ae15d4ca4a006ca0a063a3e5ef3cc2a087"
+    },
+    {
+      "path": "packages/project/tsconfig.json",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 217,
+      "sha256": "77bce36f3e9727b65bad73927abbf5ef3391453d2ff407f2740e4f7c83783567"
+    },
+    {
+      "path": "packages/runtime/src/imageFrameBudget.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 1968,
+      "sha256": "591700c47a2ec78a5a2e11b9b380386e6d79fd0bc09a5d37c0a637bbc4d5b19e"
+    },
+    {
+      "path": "packages/runtime/src/Mesh2D.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 4619,
+      "sha256": "df37a3c6380d911ec919aafe67b80d714fabadd972c83dd80c3083aaf4b73756"
+    },
+    {
+      "path": "packages/runtime/src/meshCaptureSnapshot.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 695,
+      "sha256": "1259670e400cbe432f2edf176d1b7ddb6dbcc08d89c89038c4b3a30a9c4ae966"
+    },
+    {
+      "path": "packages/runtime/src/meshDisplayState.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 1123,
+      "sha256": "20cbd2d5c681fd49efd0c3d22e8505d0632896b46c598d0925a9f064dae6c251"
+    },
+    {
+      "path": "packages/runtime/src/Texture.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 3992,
+      "sha256": "0022669cef2b2df2e3d3ddbb85378247297b3049e7708f0e26a362af62884cc5"
+    },
+    {
+      "path": "packages/runtime/src/texturedFrameBudget.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 1684,
+      "sha256": "5c9a21cdf862e4796aa1dc76f97c5e9219b02920b06528f0745456b67edb46fa"
+    },
+    {
+      "path": "packages/runtime/src/texturedFrameCapture.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 10768,
+      "sha256": "6f0ffe65866401de244310ea0a9813618dee33b3226428c1bfb5ff68686f0fda"
+    },
+    {
+      "path": "tests/b1-webgpu-verifier.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 17519,
+      "sha256": "179e1eebdfa48a9b8d62cbe548b3732d6263d6a788ef2adf27f4aa78ea41c9a5"
+    },
+    {
+      "path": "tests/bitmap-region.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 23375,
+      "sha256": "50fce0797a3ae0bdf30ab1a5429fb3fd5d47c16f40d984a12c64030844ba208a"
+    },
+    {
+      "path": "tests/canvas-image-host.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 34348,
+      "sha256": "74c4a08871dd7a27ef8cc62f369a944842f96bb6a6a7d32134d77804eb74809f"
+    },
+    {
+      "path": "tests/fixtures/image-affine-oracles.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 987,
+      "sha256": "fde9535e1b6fa9de954ca7c9eb81f4e651740ae9a485944ef27579323dd2e68b"
+    },
+    {
+      "path": "tests/fixtures/project/api-signatures.txt",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 7809,
+      "sha256": "d4ea9fe100ecef6774e81571b268d9f0b47e289ea9febdd456ec4ec28bfcf7f3"
+    },
+    {
+      "path": "tests/fixtures/project/canonical-cases.json",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 731,
+      "sha256": "c4a9df17b7ccc450108717becade92c82ee531e883c8ebae6afa889004a64176"
+    },
+    {
+      "path": "tests/fixtures/project/edit-ledger.json",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 4851,
+      "sha256": "a2435d97d082e82281bb8d43f75b004400d610cc674448936e9e0001e5aa260c"
+    },
+    {
+      "path": "tests/fixtures/project/edit.transaction.json",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 317,
+      "sha256": "7777ff2f1e26487ab26d64d7a97656f6e1c1b75d0ed94c7df3f39d52328f0e69"
+    },
+    {
+      "path": "tests/fixtures/project/empty.history.json",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 307,
+      "sha256": "8c9ff3a2b9039c457f0a5fc69c915253f203c438885af3aed5e1bb340ff22cb2"
+    },
+    {
+      "path": "tests/fixtures/project/empty.snapshot.json",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 247,
+      "sha256": "b20c3b5ac792dfa840174b620ba9488db90ae9a36458957a103ca44e998bb4f5"
+    },
+    {
+      "path": "tests/fixtures/project/foundation-cases.json",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 3500,
+      "sha256": "c5cc50bfae26194f5e62e5ce68ff7ee1d4d2f334c553100acc28991c1d1ba052"
+    },
+    {
+      "path": "tests/fixtures/project/history-ledger.json",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 2409,
+      "sha256": "230c12d6af50597a80ca8c94fd1e74a4128cb21f78161c23b0687809f82e6bc4"
+    },
+    {
+      "path": "tests/fixtures/project/history-raw-cases.json",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 2744,
+      "sha256": "4119e08284e057ccd1d26480d8f2c6cfaa3c0d7f4a3e5eb2f8f6276ce7d5f4f0"
+    },
+    {
+      "path": "tests/fixtures/project/live-cases.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 935,
+      "sha256": "b44149df32559e3e42f9d5ed531b655555be53ee7ed80c240fb5f89ce66ecc59"
+    },
+    {
+      "path": "tests/fixtures/project/retry-ledger.json",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 2778,
+      "sha256": "217881268167375f00dbdd1021fded67373a0a237c7e7c695506b2df86f5ee85"
+    },
+    {
+      "path": "tests/fixtures/project/text-cases.json",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 1060,
+      "sha256": "841b548cf8132cfaf3de63e250af2ea849ec062d4eec79d05057764a94bbf3e9"
+    },
+    {
+      "path": "tests/fixtures/project/validation-cases.json",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 1195,
+      "sha256": "1406b2544dc195d5465261af8f92f41f53a2429aaafecb10ab4ef3a07dc0e096"
+    },
+    {
+      "path": "tests/fixtures/project/work-ledger.json",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 2898,
+      "sha256": "a55f0c4b941b12e19bb0927524584774086e7635ca71acb290ef4a3afd1bf5d4"
+    },
+    {
+      "path": "tests/fixtures/textured-frame-admission-oracles.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 3450,
+      "sha256": "2c785329b00e0848eeb16555f77efc5124272ac49e23bf7a4dfaad13e801af95"
+    },
+    {
+      "path": "tests/fixtures/textured-mesh-preparation-oracles.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 3348,
+      "sha256": "cf80ae1c841de887c6ea25348ede013da681a4b87cf1b53fe65d2459c95cf4fe"
+    },
+    {
+      "path": "tests/helpers/project-denied-host.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 7465,
+      "sha256": "a8e0c8dd95f7d42cfa260a2d95e00326a3df4d5ae2dc0ff3a781dc2e8001ba33"
+    },
+    {
+      "path": "tests/image-data-2d.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 8765,
+      "sha256": "98c9d33f1befdf21f8b5fa0343c566c8c332e74493ada387e7aa680fcbbbd84e"
+    },
+    {
+      "path": "tests/image-geometry-2d.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 7322,
+      "sha256": "d9cbf647cc44810dd5a1a8cb4a8383e7b9e8a61317a13bbcaecffdf52f768f54"
+    },
+    {
+      "path": "tests/image-mixed-draws.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 10932,
+      "sha256": "527660ca42350cda7b3486d00c2e840b608b9e4c4bdb0e3796ad1fcfb61ccb92"
+    },
+    {
+      "path": "tests/image-projections-2d.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 12247,
+      "sha256": "ab2f06a24df66be41c3503d757536b34cb4188bc61c24e9aee1bdbaa2c2c9378"
+    },
+    {
+      "path": "tests/legacy-movieclip-plan.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 27671,
+      "sha256": "59a695124ce26d051eb4d2d165b7285f2825c1345bcf13cfb3038cd36b717933"
+    },
+    {
+      "path": "tests/legacy-res-plan.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 12345,
+      "sha256": "d1e8d5247396f624b718aeaf4cd7715ac70c91341f47c1cd84e9dd60dbbdef6e"
+    },
+    {
+      "path": "tests/legacy-res-report.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 20737,
+      "sha256": "dfa04d0ba80428d90c45e9d31fdbba7eb02fb2f23653892f63ae3e4e4d43d803"
+    },
+    {
+      "path": "tests/matrix4.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 17574,
+      "sha256": "b40dbdd65f856cafe680956c8e1d8985468c7b85ee32f60fb69ff4d01f116fc4"
+    },
+    {
+      "path": "tests/mesh-bounds.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 10437,
+      "sha256": "548a8aae5ee0418542b810adefff56566f4952c3ee914d68e44d78855f27854e"
+    },
+    {
+      "path": "tests/mesh-display.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 12334,
+      "sha256": "a4e7880d40bda66fdc7e28990d2891919aa88ac22b3af42a341395c0dd2756a6"
+    },
+    {
+      "path": "tests/mesh-geometry-3d.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 17070,
+      "sha256": "5d842624a5a55fbb5e65f792d06d0af4bb318aad57b0bb2cf6b2195bd6b96466"
+    },
+    {
+      "path": "tests/mesh-legacy-capture.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 10402,
+      "sha256": "4aec04fba77bc89675de9fb70efef4b6afa32e12dc500e094f26220649ff54f6"
+    },
+    {
+      "path": "tests/mesh-packing-3d.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 16265,
+      "sha256": "eca21300ecfa475651f6107fd9a441d908c4dd80871e1e56fdb8519ddba44fd6"
+    },
+    {
+      "path": "tests/mixed-frame-2d.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 18110,
+      "sha256": "0606c34108f4a54efb52cd3aaab47a8ed03e960fb7bbdb36e681e6ef746ee3f7"
+    },
+    {
+      "path": "tests/project-baseline.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 4765,
+      "sha256": "8fe131ebdcdeed3e35cd2e31e555cfd352b613b4e98e74b04af5e985f37d65b6"
+    },
+    {
+      "path": "tests/project-boundaries.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 13130,
+      "sha256": "3a0c942dbbbcf993b386c71768a525316a16a9e57d5078bfe2548870e5091f4c"
+    },
+    {
+      "path": "tests/project-canonical.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 2996,
+      "sha256": "6bd9344119bced6f1b72eefcfb553c8193b2abf0319310df1acd6a6f6c3b2549"
+    },
+    {
+      "path": "tests/project-commit.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 13013,
+      "sha256": "be458cfb56c47f438f5c028d0e397ba42e297fa3f0f3d88b4ebb84b38386979c"
+    },
+    {
+      "path": "tests/project-edit.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 11697,
+      "sha256": "5310fe524aed6198444654da8e0fbd73a692b3e42b56bf5e40ff44185245a0c2"
+    },
+    {
+      "path": "tests/project-foundation.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 20744,
+      "sha256": "ede52df5b7b56d52544bd3b45cfeac785e659c82ea8c681285ea48c3b758a200"
+    },
+    {
+      "path": "tests/project-headless.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 7441,
+      "sha256": "913774a81043b9306231155cae45f6c541cc57a0370fb0b5c3bc72b7ea70b57e"
+    },
+    {
+      "path": "tests/project-history.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 17699,
+      "sha256": "d69e66dfad30ccd49c17b8335e615bd95d348d748160c1a0bd35338e2cb16cb4"
+    },
+    {
+      "path": "tests/project-live-input.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 6543,
+      "sha256": "60b77f4df35ed6acc59c5c39c79a48a6bfb5540cc9489b86dc1cfbcd642ba9cc"
+    },
+    {
+      "path": "tests/project-oracles.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 12588,
+      "sha256": "2b493936c0fe66df8d3a7b3e895ae871fe9293f285a8170da8f41e3cfbfe95e7"
+    },
+    {
+      "path": "tests/project-restore.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 6365,
+      "sha256": "678e2ddb59ecbe3e15972a00045248a092c0ea5dfabaf30a95c282bb2e886112"
+    },
+    {
+      "path": "tests/project-text-input.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 13685,
+      "sha256": "7924ed58230ca29455cc34c45d513d7a6310f9ca71554d12c56fbd9ae7f75b85"
+    },
+    {
+      "path": "tests/project-validation.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 27410,
+      "sha256": "681798c2416f7932cea9955bd20f7380b27729bd842d2543a21a235e740a26a6"
+    },
+    {
+      "path": "tests/projection3d.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 18431,
+      "sha256": "3c7e4968fcbc00c320fce1e576eb6bbdb47f7f33d469702eaa7a27c4078930a6"
+    },
+    {
+      "path": "tests/scene-frame-3d.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 21555,
+      "sha256": "31faa4c3cac85ddf4dbfc87f08c01e2715d695e42397583db3602c4118af68fb"
+    },
+    {
+      "path": "tests/sequence-clip.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 28761,
+      "sha256": "66cf3e6333c2a9813f2cbeab4e9574f57dc0e0c0f26b2a88003a2a02583dcfc5"
+    },
+    {
+      "path": "tests/texture-a1-integration.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 5444,
+      "sha256": "85a75bc119436a4f01ffb2fd96277f297307a0f7e6422104b0ac3ab251faae5a"
+    },
+    {
+      "path": "tests/texture-bitmap.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 12451,
+      "sha256": "f350cb833e3b2e0696e4b5137baa307e9d62e61904a918be3546254a70e607eb"
+    },
+    {
+      "path": "tests/texture-capture.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 12759,
+      "sha256": "956b102bb3e83887ffe1b6554943c71f31cd4a10644789b721e1daa3e542ab3e"
+    },
+    {
+      "path": "tests/texture-frame-types.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 5065,
+      "sha256": "44be1b34ad26f280de612c22762b41f4a686234ed8a659dc191576eb0f899b48"
+    },
+    {
+      "path": "tests/texture-oracle.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 11182,
+      "sha256": "c951f1934b43a3ba8d02b0df2a4e0302fa667244cdb622f65ae1e40653d00678"
+    },
+    {
+      "path": "tests/textured-frame-admission.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 49816,
+      "sha256": "af85ccf61d6993f44cccdcfb3b2b3f73f4ce06763dd8de29c655f3081400137d"
+    },
+    {
+      "path": "tests/textured-frame-boundaries.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 20844,
+      "sha256": "1b11825e913b6be7f02dd4ec4e6fc86f368a6de1081b86f8f2d1d965e86edfe2"
+    },
+    {
+      "path": "tests/textured-frame-capture.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 33418,
+      "sha256": "0c2bbb2bf1ce9966eb00849a88290170a6ba379b36e7bea7b3e6fad5069486a6"
+    },
+    {
+      "path": "tests/textured-frame-contracts.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 644,
+      "sha256": "60653ff2e7ca1c575a1685d78126288264dd559fddc5585d62e9ab6bb0b0a69b"
+    },
+    {
+      "path": "tests/textured-frame-legacy-hosts.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 21959,
+      "sha256": "74176208df82eb5d75a5b3290c22d56de9eaec582b8cd4df5c5bf3ded9d54d30"
+    },
+    {
+      "path": "tests/textured-frame-private-map.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 9860,
+      "sha256": "52d414872a42baaf1b1caa641fadafcde8d8dfa62dc61df284261674763042fc"
+    },
+    {
+      "path": "tests/textured-geometry-2d.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 27604,
+      "sha256": "2e5079c8537f3d91b378646a0b24dfb04f53016b2c64092d27737d8c3f49753f"
+    },
+    {
+      "path": "tests/textured-mesh-preparation.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 31979,
+      "sha256": "e2da784978c3264536fb6847a240f16836a721bf938485638f8b60a61123a125"
+    },
+    {
+      "path": "tests/textured-native-oracle.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 7860,
+      "sha256": "fb50f11a7a591c99f63b33aadaa0527f0ff22878298208633c55d279117b85f2"
+    },
+    {
+      "path": "tests/textured-preparation-budget.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 20371,
+      "sha256": "c50f692772985a41ab40b9211b46a0cc495bbeb33ef9452e284eac5360f8ab03"
+    },
+    {
+      "path": "tests/textured-profile-engine.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 32600,
+      "sha256": "603fa81b2da8cd2add961367a28e8d93e46ce5c0afc5029011e5a2a8c5bf8f81"
+    },
+    {
+      "path": "tests/textured-webgpu-host-fixtures.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 15497,
+      "sha256": "0b4d550e7a76ef3eb4e01f38e8ce43f482212fc1fee5672f9e142081e3a2855a"
+    },
+    {
+      "path": "tests/textured-webgpu-host.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 41204,
+      "sha256": "6556d44556f995736658552ecae0b56d994fa5a877fadc8408c0d709071056ae"
+    },
+    {
+      "path": "tests/textured-webgpu-types.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 10866,
+      "sha256": "96db490c597b3215e75d46946872e3cecaa7d6c9e74a29e52ca4f897c3c98f79"
+    },
+    {
+      "path": "tests/types/project-foundation.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 12143,
+      "sha256": "37103b3bbc765f305e7740f54f05b6639256f0c56686ff11dbee7934fdf4768c"
+    },
+    {
+      "path": "tests/types/project-negative.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 4027,
+      "sha256": "dbe099ac3c46a91ca6e165500f5707efeaff0cf2b44a5dd7934bc68d5798c73d"
+    },
+    {
+      "path": "tests/types/project-positive.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 4000,
+      "sha256": "5b34bcf3e857b9c0d8a02329ec876b884bf99d7bfd683f2ede904c88545e2ea2"
+    },
+    {
+      "path": "tests/types/textured-frame-import-negative.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 403,
+      "sha256": "47d81251618507b9a207f3ae4c38e2d3f732ad96afa6be9bb9b0eebe8a7270c0"
+    },
+    {
+      "path": "tests/types/textured-webgpu-negative.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 2825,
+      "sha256": "24e5e20c1f08f86f75ec3b0e58b15c746bacab839a59745bf1293b98f20bee35"
+    },
+    {
+      "path": "tests/types/textured-webgpu-positive.ts",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 5146,
+      "sha256": "ee44e0ce00c1e2d5cc310aa8baf9b60060df95c0471f3214c791b40dc34ee682"
+    },
+    {
+      "path": "tests/types/tsconfig.project-foundation.json",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 218,
+      "sha256": "8e534a0057a1079100573eba4f2b1d30a0ab0cba65006a27c68913c66a31a15e"
+    },
+    {
+      "path": "tests/types/tsconfig.project.json",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 213,
+      "sha256": "da337c5dfc276a65e0478c5d12f33329969a199b90695b137ab911bb9db324bb"
+    },
+    {
+      "path": "tests/types/tsconfig.textured-frame-import-negative.json",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 78,
+      "sha256": "b75d3227e2422bdae02f7390dc684be5ab21478d009a60dbae4475f6a1aa5591"
+    },
+    {
+      "path": "tests/webgpu-image-host.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 39831,
+      "sha256": "158b1560f0bb95c3a8a58ddc0322bc89bc78a3947bfbc5b139679d7b1ab8b24e"
+    },
+    {
+      "path": "tests/webgpu-image-pass.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 5291,
+      "sha256": "e0379401b2eb73d952a9ae30e3867aa908916b8281c1daa7c97fe96371649760"
+    },
+    {
+      "path": "tests/webgpu-mesh-pass.test.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 10302,
+      "sha256": "1250753c4b99fd40e549e4e45e758e54b5cf71e23c992877a5f88953484ff1bf"
+    },
+    {
+      "path": "tools/b1-webgpu/fixture.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 16923,
+      "sha256": "dc7f6dd2d2cf363cf4492e498ed196be075514f994b4efc4bc8e1a728a423426"
+    },
+    {
+      "path": "tools/b1-webgpu/oracle.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 3852,
+      "sha256": "a4e4bff613e7968714d4266e6575c8016e7be5900cae685407d0e957a7c36652"
+    },
+    {
+      "path": "tools/b1-webgpu/registryProvenance.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 17201,
+      "sha256": "ace3aca3d05c3944e1882afd3374e73c0f2def1179aa18305e1ac18e5b009f4e"
+    },
+    {
+      "path": "tools/generate-project-format.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 10545,
+      "sha256": "43b362c5b08459794cd19cfbdffc06181e4c903d5db0fb9b22efa67957f91aa9"
+    },
+    {
+      "path": "tools/measure-project-memory.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 9657,
+      "sha256": "20e83948b4f07fc52abfd631ff9b77e00abd38bf41806cc3186ebb66cfd8ec4a"
+    },
+    {
+      "path": "tools/texture-oracle.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 3375,
+      "sha256": "ee213c00a7956ca55bf4a75ee88c6cb92879ec27a2792aa2d41e02c9c4322d65"
+    },
+    {
+      "path": "tools/textured-webgpu/calibration-manifest.json",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 535,
+      "sha256": "fb9452047c34e62e50a9e763b8300a0103edb36c07622338ef62a4452868088a"
+    },
+    {
+      "path": "tools/textured-webgpu/collection-inputs.json",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 625,
+      "sha256": "cdede8fedfbb2bc5f23f44381e2b470693b5d205953c7c2a371d2f257368d4d6"
+    },
+    {
+      "path": "tools/textured-webgpu/collector.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 43976,
+      "sha256": "a0e3fe4d7d62112b420ef3c9b8678a2c54e27efc303aa3793abfc56f5c5f931e"
+    },
+    {
+      "path": "tools/textured-webgpu/control-selectors.json",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 6815,
+      "sha256": "33b8b2e83a5d5ff65c9852c725f8de3b07a65eac17a0e28f94e29f114533de05"
+    },
+    {
+      "path": "tools/textured-webgpu/fixtures.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 6741,
+      "sha256": "4b6d8fb5fded90e2c09293549165755d51c4ddc36ee376bb2a8a36878bdbf6ef"
+    },
+    {
+      "path": "tools/textured-webgpu/held-out-manifest.json",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 612,
+      "sha256": "8b9a369090f494b2c3f5ead6b240df5e58840ce1ff2f51400e1d2125addbdcd0"
+    },
+    {
+      "path": "tools/textured-webgpu/native-files.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 18437,
+      "sha256": "65f559445212da4a22c3def084a7809a1aa10e82867472937e18ccea6fb7a592"
+    },
+    {
+      "path": "tools/textured-webgpu/native-window.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 4158,
+      "sha256": "a717322147973fae1973eb9709f45caa4ee86015ac79707f0289c6bcd7187e3c"
+    },
+    {
+      "path": "tools/textured-webgpu/oracle.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 3679,
+      "sha256": "60707983df2361c74e0b5482f393c0bc6d9f8f36cf090a92e78fbb0a5d9b7ef7"
+    },
+    {
+      "path": "tools/textured-webgpu/sensitivity-plan.json",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 4486,
+      "sha256": "a56067fe5294add30ccdf0bf5eb666d2f614dcb30374c2c29e86c6b2b00bacb3"
+    },
+    {
+      "path": "tools/verify-textured-webgpu.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 181,
+      "sha256": "66538bf1d5f8baa6d708a042cb8e08a7c65e2a3c4331aab0f5711491f8218e5b"
+    },
+    {
+      "path": "tools/verify-webgpu-b1.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 38603,
+      "sha256": "47f2de2e6cd997ce8b54773e79ad5a17669cf03bd55e022cd70bfe289280b104"
+    },
+    {
+      "path": "examples/textured-webgpu/fixtures.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 13425,
+      "sha256": "5472e15bdcca75e196007e4141bf21ea2f782f1b0480a82db5aed22dbd06cbd0"
+    },
+    {
+      "path": "examples/textured-webgpu/index.html",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 937,
+      "sha256": "f62c80de64aee83124c728419a2d071e655d622afddfe3d98594bf5a5dc0d572"
+    },
+    {
+      "path": "examples/textured-webgpu/main.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 432,
+      "sha256": "787aaa953c81bc70debac33c4327df5fa65fab12562d16c53a9cffbd7ae38cfb"
+    },
+    {
+      "path": "knowledge-base/en/docs/textured-geometry-and-mesh2d-contract.md",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 31759,
+      "sha256": "b66504e5d527f9ea7d68ef1ab1671dfc54455f811fba4af09b33e1ab7df1b2ff"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/自有纹理几何与Mesh2D契约.md",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 28976,
+      "sha256": "f8f01b5e6462d00a247d2879506745fdb7294369031521c3a0b87809b84384d9"
+    },
+    {
+      "path": "knowledge-base/en/docs/textured-geometry-and-mesh2d-evidence.md",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 10711,
+      "sha256": "fb00c6420c0487ca72f00a051564cbed89594a64bd6e8be7c3b6e53f3d29112c"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/自有纹理几何与Mesh2D证据.md",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 9238,
+      "sha256": "53c635ff3a2cf30098edb835e5a2d02b76b3d1da741a71d61c4697d93b57aebb"
+    },
+    {
+      "path": "knowledge-base/en/docs/textured-profile-cpu-evidence.md",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 25693,
+      "sha256": "9718817fc9139d1e084ee39f57830833585c360c9e282760f5aad8b2d64e70b7"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/纹理Profile的CPU证据与待完成门禁.md",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 22254,
+      "sha256": "fa327dd91378af3c1e59ebec823e7acf245aabb2885f33942a654decd5d48a50"
+    },
+    {
+      "path": "knowledge-base/evidence/textured-mesh2d-verification.json",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+      "bytes": 6095,
+      "sha256": "69294661135c10d12e1c1ecd8c148b85797df0bf65970b4396cb43ae48e094cf"
+    },
+    {
+      "path": "tools/freeze-textured-webgpu-inputs.mjs",
+      "originRole": "Independent first-party fixed build/freeze reproduction; existing graph and native verifier are reused within their recorded limits.",
+      "bytes": 17322,
+      "sha256": "ea0db384c001b603734261739c01c62ec88aa9c8fa3540ec10e80398f171b1db"
     }
   ],
   "fileListScope": "Current explicit source-owned root/package/code/configuration inventory; source-origin itself, original LICENSE, export manifest, verification and KB are separate. Identities are provisional review inputs, not final export approval. Historical original/previous hashes retain their original scope.",
@@ -5196,5 +6396,314 @@
         "scope": "Recorded review scope only; later root attestation metadata is not attributed to the reviewer."
       }
     ]
+  },
+  "coordinateQueryWorkPackage": {
+    "date": "2026-10-10",
+    "engineeringLabel": "0.21.0",
+    "deliverable": "V022",
+    "sourceId": "S071",
+    "scope": "Public logical display coordinate queries and fresh affected desktop rendering regressions",
+    "packageVersion": "0.0.0",
+    "protocolVersion": "1.0",
+    "implementationOrigin": {
+      "process": "Codex-assisted independent first-party specification, tests, types, implementation and curation; independent scoped audits bound separately when sealed",
+      "copiedHistoricalOrCompetitorImplementationSources": [],
+      "newThirdPartyDependencies": [],
+      "intrinsics": [
+        "BigInt",
+        "DataView"
+      ],
+      "license": "Apache-2.0",
+      "limits": "Workflow disclosure does not guarantee model-training provenance or global originality"
+    },
+    "originalSpecificationIdentities": [
+      {
+        "identityOnly": "display-coordinate-query-contract.md",
+        "bytes": 14339,
+        "sha256": "7e5653c561b0c80e7989756d0f381ada06f31af984db075019f3877b310d5233",
+        "role": "Reviewed first-party specification; later public status/acceptance projection bound separately"
+      },
+      {
+        "identityOnly": "显示坐标查询契约.md",
+        "bytes": 12752,
+        "sha256": "8628c53325ca0626fdfcf0b239970904cc4bb4c277d1531410ba57da32763ed8",
+        "role": "Reviewed first-party specification; later public status/acceptance projection bound separately"
+      }
+    ],
+    "publicSpecificationProjection": "Status sentence and acceptance appendix only; original normative bodies retained",
+    "sourceSubjects": [
+      {
+        "path": "packages/contracts/src/Point2D.ts",
+        "bytes": 152,
+        "sha256": "7ba32badad650fe83fd09843043d5ecfd995c0471e6861d5a3eb1ecd4bd3feac"
+      },
+      {
+        "path": "packages/contracts/src/index.ts",
+        "bytes": 1115,
+        "sha256": "b0b13fd6b1dc7e6d7627691e2e45f499c383327991066576bd29b62c5c15c16c"
+      },
+      {
+        "path": "packages/runtime/src/displayTransform.ts",
+        "bytes": 697,
+        "sha256": "f9f28f5edcfda29a92b89bff1ed817f93736f96d2b29c8a8dc1ed2eeb823ebbc"
+      },
+      {
+        "path": "packages/runtime/src/displayCoordinates.ts",
+        "bytes": 3515,
+        "sha256": "803047a0fef81cb685021be92799dece597f8152f668a9eba8392411ac536a25"
+      },
+      {
+        "path": "packages/runtime/src/coordinateInverse.ts",
+        "bytes": 4359,
+        "sha256": "bb17707ec9d932dbcd9a8b46ce595fb14a75b283a438fc88e5d5e009b99078de"
+      },
+      {
+        "path": "packages/runtime/src/DisplayObject.ts",
+        "bytes": 4082,
+        "sha256": "3f354494b0034c2a08dd77947b0e2ccc1c1d766f083d1342509cbd945b2b3902"
+      },
+      {
+        "path": "packages/runtime/src/frameCapture.ts",
+        "bytes": 4703,
+        "sha256": "598fa148c5ba223081eb0baf52e25d8793a824851ed854087b8eb77d9b02ca8e"
+      },
+      {
+        "path": "packages/runtime/src/index.ts",
+        "bytes": 1819,
+        "sha256": "518729019b22a4891cbf7a082f2cd0494e3e1512c32804d96b6041a5cb6fd09d"
+      },
+      {
+        "path": "packages/engine/src/index.ts",
+        "bytes": 1632,
+        "sha256": "f6132cff4e2eab342b62f15cf9cb78cbd5e51e39ca3ffdf3d3acc002a544fecc"
+      },
+      {
+        "path": "tests/coordinates.test.mjs",
+        "bytes": 24251,
+        "sha256": "157b1fd734c980e34f80c218fceed99dcd30c76a4143c064b5fda379e26a889a"
+      },
+      {
+        "path": "tests/types/positive.ts",
+        "bytes": 10248,
+        "sha256": "da1637b2b004dab19014a5c601c60b17d1de03e4090d6651a7ca818c35558358"
+      },
+      {
+        "path": "tests/types/negative.ts",
+        "bytes": 11969,
+        "sha256": "57ff4772460d579be77d7c765299537644b12fd297b95f6aa8d2c402c2c317e6"
+      },
+      {
+        "path": "tests/types/dom-free.ts",
+        "bytes": 1990,
+        "sha256": "43588bdace3717fdbe46bc6b4c70817ba20899759a9bfe0c00f39492ccb9cd32"
+      },
+      {
+        "path": "pnpm-lock.yaml",
+        "bytes": 8757,
+        "sha256": "ce4b58d9705804e32ebea4f03ff77e4f6550ef116d48378bcbed681d1ca05c97"
+      },
+      {
+        "path": "tools/check-boundaries.mjs",
+        "bytes": 13780,
+        "sha256": "d7b49ef1c8eb63ab60b9123f601743345b72fd0d405157257fd5adcdb81c9b9e"
+      }
+    ],
+    "record": "knowledge-base/evidence/coordinate-query-verification.json",
+    "independentReviews": [
+      {
+        "role": "implementation_source",
+        "status": "PASS_SOURCE_ONLY_AFTER_SCOPED_TEST_FIX",
+        "P1": 0,
+        "P2": 0,
+        "findingsSha256": "fb7afdf06275d8ade9aba4dbc290c82fdc7f8dfed02d29a66221886639972e1e",
+        "scope": "Declared source and saved-type evidence; no reviewer product execution or later metadata review"
+      },
+      {
+        "role": "saved_render_artifacts",
+        "status": "PASS_WITH_LIMITS",
+        "P1": 0,
+        "P2": 0,
+        "findingsSha256": "387eaf7891eab499a75dd38c9a584a9eacc8d107ea05e1a6a319d8557e93646b",
+        "scope": "Selected saved Canvas/WebGPU/B1 sources and artifacts; excludes OS job-owner retirement and broader platform/performance acceptance"
+      }
+    ],
+    "publicMaterialReview": {
+      "status": "PASS_BILINGUAL_PUBLIC_MATERIAL_SOURCE_REVIEW_AFTER_DIGEST_FIX",
+      "findingsSha256": "29a609025841e35c4f2331b7059f3e930f2454b52c7ac029c8926830e9c697e0",
+      "P1": 0,
+      "P2": 0,
+      "scope": "Independent adopted-reading/registry/source identity review at its sealed snapshot. This later root hash attestation is separate and is not credited retrospectively to that review."
+    },
+    "publicationGate": "Fresh final-candidate complete prepush and stacked branch/PR receipt remain separately bound; no remote action inferred",
+    "excludedAcceptance": [
+      "performance",
+      "physical phones",
+      "cross-browser",
+      "coordinate GPU arithmetic",
+      "complete 3D",
+      "complete A2/alpha calibration",
+      "production hosts",
+      "full fonts/UI/skeletons",
+      "Spine",
+      "complete R008/V006 migration"
+    ]
+  },
+  "contentBoundsWorkPackage": {
+    "date": "2026-10-10",
+    "engineeringLabel": "0.22.0",
+    "deliverable": "V023",
+    "sourceId": "S072",
+    "scope": "Receiver-local content measurement, ordinary binary64 nonconservative bounds, deterministic authority/lifetime/budgets and fresh affected desktop regressions",
+    "packageVersion": "0.0.0",
+    "protocolVersion": "1.0",
+    "boundsSemantics": {
+      "space": "receiver-local",
+      "numericalPolicy": "ordinary-binary64-nonconservative",
+      "zeroExtentPolicy": "count-and-skip-arithmetic"
+    },
+    "implementationOrigin": {
+      "process": "Codex-assisted independent first-party specification, behavior/type fixtures, implementation, source-equivalence work and curation; independent scoped reviews remain separately bound",
+      "copiedHistoricalOrCompetitorImplementationSources": [],
+      "newThirdPartyDependencies": [],
+      "license": "Apache-2.0",
+      "limits": "The origin record describes this work package's actual authoring, reuse and review scope."
+    },
+    "originalSpecificationIdentities": [
+      {
+        "identityOnly": "display-content-bounds-contract.md",
+        "bytes": 10575,
+        "sha256": "8ab017ae55143e602dda9337d1cd1677b399abd2d193c725ed7297e141854679",
+        "role": "Reviewed first-party proposed contract; only isolated public status and acceptance appendix may change"
+      },
+      {
+        "identityOnly": "显示内容边界契约.md",
+        "bytes": 9568,
+        "sha256": "3b1e4191b16401ee40ee16f8e151b349b21a9baab58ad305d1daf2820ed3087f",
+        "role": "Reviewed first-party proposed contract; only isolated public status and acceptance appendix may change"
+      }
+    ],
+    "publicSpecificationProjection": "Original title and normative/validation/provenance bodies preserved exactly; only isolated status paragraph and appended acceptance section change",
+    "sourceSubjects": [
+      {
+        "path": "packages/runtime/src/Bitmap.ts",
+        "bytes": 7744,
+        "sha256": "5608f43b857b4616099873cf441ad63ba3f907e076966dccd573bb9acbf401c6"
+      },
+      {
+        "path": "packages/runtime/src/displayTreeState.ts",
+        "bytes": 3946,
+        "sha256": "f7df42c7917e87c2492a6411a2f686936cdaa61ab4d5a6f362d06f4ff2e64f0b"
+      },
+      {
+        "path": "packages/runtime/src/DisplayObject.ts",
+        "bytes": 4398,
+        "sha256": "326529229fd835a41eb4525d55e9738ae177e34e6feea56ab8c074423e5b1e56"
+      },
+      {
+        "path": "packages/runtime/src/index.ts",
+        "bytes": 1881,
+        "sha256": "6ba6b067abdc982baf0fe2b3949d21969493f222e724ce8d3c83645f2b634bf2"
+      },
+      {
+        "path": "packages/engine/src/index.ts",
+        "bytes": 1690,
+        "sha256": "dad4abe092f551f5863177187888b581e93d1cbaf19bf095498eb8594eba66a6"
+      },
+      {
+        "path": "tools/check-boundaries.mjs",
+        "bytes": 13948,
+        "sha256": "ef0abf6c5976a438bdde87370cd4b9fe5d28489dbb032b0423da45f00eaf6c46"
+      },
+      {
+        "path": "packages/runtime/src/displayBounds.ts",
+        "bytes": 6601,
+        "sha256": "114f634d2092ca84b2259841c3af8c885a7e7b854408e9631ee092e9782104bc"
+      },
+      {
+        "path": "packages/runtime/src/bitmapDisplayState.ts",
+        "bytes": 1193,
+        "sha256": "b4a565939d5ddd94eea321ba62a5cf69b3cc58bea3080c2d131c36045ff8a912"
+      },
+      {
+        "path": "tests/content-bounds.test.mjs",
+        "bytes": 24621,
+        "sha256": "0ac16a71e8d38cd65ec62f3c4f675ac718f33d17250897a9361bfda5318fffa3"
+      },
+      {
+        "path": "tests/types/positive.ts",
+        "bytes": 14471,
+        "sha256": "9afabd3706b034920907bb90e41581addf888f4fec2a01e0484978e446bf3d09"
+      },
+      {
+        "path": "tests/types/negative.ts",
+        "bytes": 14481,
+        "sha256": "5a9d66a5c27ac74252296f7aa04cef32ca99ee5780525f431ddc35ac2a2a9483"
+      },
+      {
+        "path": "tests/types/dom-free.ts",
+        "bytes": 3424,
+        "sha256": "dbfe974488ff0b768b64c9ca2811f5d6f1236345d13a45f44f64cbbfcda1b851"
+      }
+    ],
+    "record": "knowledge-base/evidence/content-bounds-verification.json",
+    "independentReviews": {
+      "implementationSource": {
+        "status": "PASS_SOURCE_WITH_LIMITS",
+        "sha256": "6efd73dbacdab718c9d89d4b7153f582c1c8aa48d208beed738391db7f36f83b",
+        "P1": 0,
+        "P2": 0,
+        "sourceOnly": true,
+        "reviewerRole": {
+          "specificationAndPlanAuthor": true,
+          "implementationAuthor": false,
+          "candidateBehaviorOrTypeAuthor": false,
+          "independentDesignReview": "separate sealed review exists; this verdict does not self-review design"
+        },
+        "scope": "Frozen bounds source implementation and mechanical Bitmap state extraction only",
+        "productOrPublicationAcceptance": false
+      },
+      "savedRendering": {
+        "status": "PASS_SAVED_RENDER_WITH_LIMITS",
+        "sha256": "98edc92dee250f25d4a2c02029fc2d2c08cf9da3ef478b2019b329e07f05b023",
+        "P1": 0,
+        "P2": 0,
+        "scope": "Fresh saved desktop rendering graph regression after bounds implementation; not product/publication acceptance",
+        "reviewerRole": "Spec/plan author, no production implementation or candidate behavior/type test authorship",
+        "productOrPublicationAcceptance": false
+      },
+      "bilingualPublicMaterial": null,
+      "deliveryPreparation": null
+    },
+    "currentIdentityAttestation": null,
+    "publicationGate": "Fresh final prepush and actual stacked publication receipt remain separately bound; no remote action is inferred from source/build/render records.",
+    "excludedAcceptance": [
+      "conservative enclosure",
+      "other coordinate spaces",
+      "legacy mutable output adapter",
+      "layout sizing or invalidation",
+      "hit testing or input eligibility",
+      "clipping-aware visual/pixel bounds",
+      "GPU bounds arithmetic",
+      "other browsers",
+      "physical phones",
+      "performance",
+      "production hosts",
+      "complete UI/fonts/skeletons/3D/A2/Spine",
+      "complete R008/V006 migration"
+    ]
+  },
+  "texturedMeshWorkPackage": {
+    "version": "0.23.0",
+    "date": "2026-10-11",
+    "sourceId": "S073",
+    "deliverableId": "V024",
+    "implementation": "first_party_ai_assisted_independent_implementation",
+    "runtimeDependencyChange": false,
+    "scope": "Owned 2D textured geometry/frame/host and fixed bounded desktop observations; public reproduction and final delivery separately recorded.",
+    "historicalCheckpointsPreserved": true,
+    "record": "knowledge-base/evidence/textured-mesh2d-verification.json",
+    "publicCuration": "scoped_independent_reviews_recorded",
+    "prepush": "recorded_separately_in_delivery_verification",
+    "verificationRecordPolicy": "Source and document identities are frozen before actual workflow/prepush execution; their later results and remote delivery are recorded separately in the delivery PR."
   }
 }

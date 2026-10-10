@@ -21,5 +21,11 @@
     "@egret/contracts": "workspace:*",
     "@egret/runtime": "workspace:*",
     "robust-predicates": "3.0.3"
+  },
+  "imports": {
+    "#egret-textured-frame-state": {
+      "types": "./dist/internal/texturedFrameState.d.ts",
+      "import": "./dist/internal/texturedFrameState.js"
+    }
   }
 }
