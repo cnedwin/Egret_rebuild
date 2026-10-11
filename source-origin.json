@@ -349,9 +349,9 @@
     },
     {
       "path": "DOCUMENTATION.md",
-      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "sha256": "19c196d625d99ccc7f520ce10e3b4307e6670076a1f0bc5049286c420eb1b9b5",
-      "bytes": 6713,
+      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
+      "sha256": "a90bcbb5e52442fa75f7bd7ad46dcba19abc8d78dcb0b9e9948c5f54e0a03be8",
+      "bytes": 7111,
       "previousRevisionSha256": "ef35dafcd765aeacdce5c0d14362dc5f30319b84dd3d1693d9d6a769f7162f99",
       "previousLayoutPath": "DOCUMENTATION.en.md",
       "previousLayoutSha256": "4921b952a38aa70c692db7b37cda758e6e58942ea097761ee72d36f42a6ae31b",
@@ -361,14 +361,29 @@
           "sha256": "3e73932c80f14a49edc8dccd1b2f7a6e5be7231bc372f0fff140d8fb1ba47043",
           "recordedBeforeSuccessor": "0.29.0",
           "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+        },
+        {
+          "bytes": 6713,
+          "sha256": "19c196d625d99ccc7f520ce10e3b4307e6670076a1f0bc5049286c420eb1b9b5",
+          "scope": "Preserved identity before the 0.30 preparation successor."
+        },
+        {
+          "bytes": 7008,
+          "sha256": "e8af6a20e16c249c4003bc67bca77231e7b60a9b89292363589684c643c46e45",
+          "scope": "Preserved identity before the actual 0.30 native factual successor."
+        },
+        {
+          "bytes": 7064,
+          "sha256": "c204f1b6d3f98b040bf59c5098f0f036ebcfb9e986c46e269ae9f10d53aad47a",
+          "scope": "Preserved identity before complete-gate factual successor."
         }
       ]
     },
     {
       "path": "DOCUMENTATION.zh-CN.md",
-      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "sha256": "a6b757b88e96bb1399b55b90dad0c9f19c377bad065aa87bbabd03116764c557",
-      "bytes": 6408,
+      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
+      "sha256": "4275596c6abb8c11e319f2b968b57b40ebca9e768df72525c3a7a32449cdcc92",
+      "bytes": 6806,
       "previousRevisionSha256": "22f3073e3a0096efc4c92fce0aed95a81bdbaa6b1e50ed6432a1ed597c86a8d4",
       "previousLayoutPath": "DOCUMENTATION.md",
       "previousLayoutSha256": "421ba91329f03b9ace090842a7eeaabce268c8cce6ec89d7ccd05b6b15e44bfd",
@@ -378,6 +393,21 @@
           "sha256": "258ebbe83b30b418a21309a8981531bc6105a08f62a55d36b4455359760dd0a7",
           "recordedBeforeSuccessor": "0.29.0",
           "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+        },
+        {
+          "bytes": 6408,
+          "sha256": "a6b757b88e96bb1399b55b90dad0c9f19c377bad065aa87bbabd03116764c557",
+          "scope": "Preserved identity before the 0.30 preparation successor."
+        },
+        {
+          "bytes": 6703,
+          "sha256": "e2cb444be9743505f4643b30a78f75e1f3496126b4bed48ec60a318b126da05d",
+          "scope": "Preserved identity before the actual 0.30 native factual successor."
+        },
+        {
+          "bytes": 6759,
+          "sha256": "d49b9caee1b78ac16e8f9fdc2ee4531256cb0b41f0abb2659da67fb625f9dc58",
+          "scope": "Preserved identity before complete-gate factual successor."
         }
       ]
     },
@@ -519,10 +549,10 @@
       "originRole": "Consolidated first-party historical research reading record; original evidence and source identities retained in documentation cleanup ancestry."
     },
     {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
       "path": "knowledge-base/Cns/CHANGELOG.md",
-      "bytes": 33132,
-      "sha256": "c4b1ee0e923859033ede32b2613cf67b654b036793f085ac81046dca7c505d9d",
+      "bytes": 36739,
+      "sha256": "c57da1511d6e379064ed28399c9b62bc170cae5d382e070c020a13ad899fa1de",
       "identityHistory": [
         {
           "bytes": 25611,
@@ -535,6 +565,21 @@
           "sha256": "8252f7aec4367d0eb8eb03bd83963151f632717aa59821f28d77975d22b94971",
           "recordedBeforeSuccessor": "0.29.0",
           "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+        },
+        {
+          "bytes": 33132,
+          "sha256": "c4b1ee0e923859033ede32b2613cf67b654b036793f085ac81046dca7c505d9d",
+          "scope": "Preserved identity before the 0.30 preparation successor."
+        },
+        {
+          "bytes": 34764,
+          "sha256": "5c87cce762460e332b38ef0144a33ff14ae7fdd59394bc7a9cbbbaae572416c8",
+          "scope": "Preserved identity before the actual 0.30 native factual successor."
+        },
+        {
+          "bytes": 36041,
+          "sha256": "510aa786baa2908f6b5d9e861435389a5e0ef32a1356f8184d93f9956f4748c6",
+          "scope": "Preserved identity before complete-gate factual successor."
         }
       ]
     },
@@ -1067,10 +1112,10 @@
       "sha256": "eec3c91b28230136fd03948fcc8d9fd253172001864d5c9b76cb500e35826c31"
     },
     {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
       "path": "knowledge-base/Cns/README.md",
-      "bytes": 8458,
-      "sha256": "8f4b56786cb1f37875ae8f2d942f5c24c81122a9de2e1cdf04d70057abe79df4",
+      "bytes": 9804,
+      "sha256": "24bfce06a106b4344c9de7a51cb9deec65a0558941f3916f9a2d1ec4018a222c",
       "identityHistory": [
         {
           "bytes": 6319,
@@ -1083,14 +1128,29 @@
           "sha256": "2397b4f84c7ee3d796005588718b57a1322be2e0e848dce1059eadf647bc5143",
           "recordedBeforeSuccessor": "0.29.0",
           "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+        },
+        {
+          "bytes": 8458,
+          "sha256": "8f4b56786cb1f37875ae8f2d942f5c24c81122a9de2e1cdf04d70057abe79df4",
+          "scope": "Preserved identity before the 0.30 preparation successor."
+        },
+        {
+          "bytes": 8923,
+          "sha256": "4f0e2959c74bdcdacaaf94d17d8194a1fa367598833b879de94cc5043e4d5aec",
+          "scope": "Preserved identity before the actual 0.30 native factual successor."
+        },
+        {
+          "bytes": 9353,
+          "sha256": "c49e49f1de9b12724b02650dcc966d2532ce09305e974498aa9204c4a5291ad2",
+          "scope": "Preserved identity before complete-gate factual successor."
         }
       ]
     },
     {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
       "path": "knowledge-base/Cns/registry/交付.json",
-      "bytes": 59131,
-      "sha256": "99a04be2a8bbed2a4b9a53e3347928872c50800a574122916042b865364d6182",
+      "bytes": 69668,
+      "sha256": "8b8b81fa4fe6686257ad94a2a33312ff2327b161cbb9d22c4ff79ff74a74ab88",
       "identityHistory": [
         {
           "bytes": 50664,
@@ -1103,6 +1163,26 @@
           "sha256": "3174b489b8b1ed7604015ce3394c9594c9c94cc7e8a587f52b35c6425b581c77",
           "recordedBeforeSuccessor": "0.29.0",
           "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+        },
+        {
+          "bytes": 59131,
+          "sha256": "99a04be2a8bbed2a4b9a53e3347928872c50800a574122916042b865364d6182",
+          "scope": "Preserved identity before the 0.30 preparation successor."
+        },
+        {
+          "bytes": 61271,
+          "sha256": "dfd75c438967ea42b5f9208434fcffe8700a2f39926412df73668ccad502258f",
+          "scope": "Preserved identity before the actual 0.30 native factual successor."
+        },
+        {
+          "bytes": 65766,
+          "sha256": "a00bb3aec0fbaf17efa3bbf55c29fe0cb1719327cc4fafea0b6384b474f9723f",
+          "scope": "Preserved identity before the actual 0.30 native factual successor."
+        },
+        {
+          "bytes": 65771,
+          "sha256": "6ddb6262ecc892b2549c02582c73d778a140209a33d6f7337c5057162126c0ce",
+          "scope": "Preserved identity before complete-gate factual successor."
         }
       ]
     },
@@ -1119,10 +1199,10 @@
       "sha256": "e246bfa887d7434d07b28867e7be749b32f9036d745c3363bc7a96268b523663"
     },
     {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
       "path": "knowledge-base/Cns/registry/来源.json",
-      "bytes": 79442,
-      "sha256": "e1e872f20c756bab15648a3f836a1bd7e6ad5ae8a448f7f32d390e7a5f5d2d4a",
+      "bytes": 87968,
+      "sha256": "51855cfab06bbcf10bddd5ef54180476e39b75b0a28c6001e3d5b0433a9b1858",
       "identityHistory": [
         {
           "bytes": 74667,
@@ -1135,6 +1215,26 @@
           "sha256": "144f0d002729e4cded9bf7df786a08d1bbc0b62944cda0b1740967ed3d91dd86",
           "recordedBeforeSuccessor": "0.29.0",
           "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+        },
+        {
+          "bytes": 79442,
+          "sha256": "e1e872f20c756bab15648a3f836a1bd7e6ad5ae8a448f7f32d390e7a5f5d2d4a",
+          "scope": "Preserved identity before the 0.30 preparation successor."
+        },
+        {
+          "bytes": 80607,
+          "sha256": "38fb84b460146e8ea0bfbc8dc3db9376e8b5896f347378b010890a8da0a02f74",
+          "scope": "Preserved identity before the actual 0.30 native factual successor."
+        },
+        {
+          "bytes": 84556,
+          "sha256": "26a548c256e1f1f597cdac41631589c9b0e56d8a80b3fdf21379e8ebfcd0654b",
+          "scope": "Preserved identity before the actual 0.30 native factual successor."
+        },
+        {
+          "bytes": 84561,
+          "sha256": "520fdd38aa0dfc71572f006f4aee47d9cb85e6debd82e6b93d4237a3730c5892",
+          "scope": "Preserved identity before complete-gate factual successor."
         }
       ]
     },
@@ -1169,10 +1269,10 @@
       "sha256": "d310b55dbc74df5e0fe9b808f610a88fc4adaf78ab95415b96629b1e99a12633"
     },
     {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
       "path": "knowledge-base/Cns/当前版本.json",
-      "bytes": 52164,
-      "sha256": "4dfbcbc593c826e8422f7c81020e292ce3c87be595ffd42c704f98772a8a626b",
+      "bytes": 65825,
+      "sha256": "1010c39e079cc04785b1fdef93035e13eebdfc1754ce1ca0bf66d38416c31b40",
       "identityHistory": [
         {
           "bytes": 31425,
@@ -1185,6 +1285,21 @@
           "sha256": "d7f1cfbf11e6115721b867d0172e5cc2a53d3b41b5193c854f895c365175a97b",
           "recordedBeforeSuccessor": "0.29.0",
           "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+        },
+        {
+          "bytes": 52164,
+          "sha256": "4dfbcbc593c826e8422f7c81020e292ce3c87be595ffd42c704f98772a8a626b",
+          "scope": "Preserved identity before the 0.30 preparation successor."
+        },
+        {
+          "bytes": 56649,
+          "sha256": "cb066c96e1c68475c9510b2ec2463dca1a5ee2e7a65b66396b1aa976eb6ed399",
+          "scope": "Preserved identity before the actual 0.30 native factual successor."
+        },
+        {
+          "bytes": 63599,
+          "sha256": "2ed599e7f1523072b34b7cd927efa94cc89d95c4006e715a244ab583a272f3de",
+          "scope": "Preserved identity before complete-gate factual successor."
         }
       ]
     },
@@ -1219,10 +1334,10 @@
       "originRole": "Consolidated first-party historical research reading record; original evidence and source identities retained in documentation cleanup ancestry."
     },
     {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
       "path": "knowledge-base/en/CHANGELOG.md",
-      "bytes": 39942,
-      "sha256": "a1fcbc306cbccf36f3347e17a70b6c8b9c7f5f8368c3f96ab89ac8152d9e2f42",
+      "bytes": 44029,
+      "sha256": "bf9bd10549a35cbdc6bed78a4fd3be497ea7fc57494bfbb23d3072ed16f063dc",
       "identityHistory": [
         {
           "bytes": 31389,
@@ -1235,6 +1350,21 @@
           "sha256": "e26c89685f90317f2642ed8e00b9ccad49c5fa4ee75b1220c846f0def8abfadc",
           "recordedBeforeSuccessor": "0.29.0",
           "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+        },
+        {
+          "bytes": 39942,
+          "sha256": "a1fcbc306cbccf36f3347e17a70b6c8b9c7f5f8368c3f96ab89ac8152d9e2f42",
+          "scope": "Preserved identity before the 0.30 preparation successor."
+        },
+        {
+          "bytes": 41776,
+          "sha256": "b53ee2c2fb1746633e09a7c1f4d069049d1a0bb41a372e087634fe91d9374ab8",
+          "scope": "Preserved identity before the actual 0.30 native factual successor."
+        },
+        {
+          "bytes": 43247,
+          "sha256": "b0883be5b664631a3e8dd46d950c2ab190c9bd7d9ca87cab74997a5bedc2fecc",
+          "scope": "Preserved identity before complete-gate factual successor."
         }
       ]
     },
@@ -1245,10 +1375,10 @@
       "sha256": "7703c2cd385d8a12e9de9bf521ae717b44240922e5e55e517a2fbe4dad3ad604"
     },
     {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
       "path": "knowledge-base/en/current-version.json",
-      "bytes": 52753,
-      "sha256": "b4301d5a9dfb23b2ec1c62a30e389d286390fd4bf9d92634c97f1c12842337d7",
+      "bytes": 66445,
+      "sha256": "5786debf8a04919e77378ceb62b8808b6e95e71b3795bbe488ea641468b7aec6",
       "identityHistory": [
         {
           "bytes": 31946,
@@ -1261,6 +1391,21 @@
           "sha256": "485771e9e1a576599d4f9d491768dc0b10ed4591e1bc92318defa4ea40f91743",
           "recordedBeforeSuccessor": "0.29.0",
           "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+        },
+        {
+          "bytes": 52753,
+          "sha256": "b4301d5a9dfb23b2ec1c62a30e389d286390fd4bf9d92634c97f1c12842337d7",
+          "scope": "Preserved identity before the 0.30 preparation successor."
+        },
+        {
+          "bytes": 57242,
+          "sha256": "79abe243e0402031bedcd7b8d33b6733c7ba57b8155661eaefe4f4123b91f519",
+          "scope": "Preserved identity before the actual 0.30 native factual successor."
+        },
+        {
+          "bytes": 64201,
+          "sha256": "9355971c4a58986249e1001aad4de954fdb317f32080419c55eb2f8b79c1612f",
+          "scope": "Preserved identity before complete-gate factual successor."
         }
       ]
     },
@@ -1787,10 +1932,10 @@
       "sha256": "496798afbdd03d5968e3c947fc146f9f360990e0dd799765b72e731408fa3020"
     },
     {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
       "path": "knowledge-base/en/README.md",
-      "bytes": 9767,
-      "sha256": "e1b71caeacbe40b84953a961ac25ae704446a7d0790edc0521be263070e97717",
+      "bytes": 11218,
+      "sha256": "6e346aafffd62ee471377f3a4b53dca52f8acb6c7283b84423e8a41eb3d4c6fb",
       "identityHistory": [
         {
           "bytes": 7397,
@@ -1803,6 +1948,21 @@
           "sha256": "3e3390d2daa265b4ee47ea684a8cdcb471e5d69b36efe4f9fbbf1a6dce85db39",
           "recordedBeforeSuccessor": "0.29.0",
           "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+        },
+        {
+          "bytes": 9767,
+          "sha256": "e1b71caeacbe40b84953a961ac25ae704446a7d0790edc0521be263070e97717",
+          "scope": "Preserved identity before the 0.30 preparation successor."
+        },
+        {
+          "bytes": 10284,
+          "sha256": "195d4c73cc867c385333fb0090f8f6cf4acedfb7fd79ba99f06bd2d366c52415",
+          "scope": "Preserved identity before the actual 0.30 native factual successor."
+        },
+        {
+          "bytes": 10766,
+          "sha256": "d2d8e0f087190b100ddff39f0a032c03ed5d9e6cfb0a0e84da6a086012ed8756",
+          "scope": "Preserved identity before complete-gate factual successor."
         }
       ]
     },
@@ -1813,10 +1973,10 @@
       "sha256": "1953c56b8c6cafbea81946a9f6a3ddb9e735d67b243e51d5e03c3f025b42d676"
     },
     {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
       "path": "knowledge-base/en/registry/deliverables.json",
-      "bytes": 63482,
-      "sha256": "916ea957273e0114cbb6747210abe42b7a3d2567a48d1dd7e084437c18c519ef",
+      "bytes": 74488,
+      "sha256": "ed7ea4a4a67ea40d2e452aa273327b773bfa6b150f2329229ba665084ea115cd",
       "identityHistory": [
         {
           "bytes": 54446,
@@ -1829,6 +1989,26 @@
           "sha256": "14ba730c6b25c28c1d44de1692f6c1a5d7e112cd0580dd91cd0c40d64194955d",
           "recordedBeforeSuccessor": "0.29.0",
           "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+        },
+        {
+          "bytes": 63482,
+          "sha256": "916ea957273e0114cbb6747210abe42b7a3d2567a48d1dd7e084437c18c519ef",
+          "scope": "Preserved identity before the 0.30 preparation successor."
+        },
+        {
+          "bytes": 65753,
+          "sha256": "d759158a97ef4eaef304541ebaecfa023ad95b09c69f9590bf0437a3d8279a1a",
+          "scope": "Preserved identity before the actual 0.30 native factual successor."
+        },
+        {
+          "bytes": 70424,
+          "sha256": "943d72a0c195db39d633e0d7fead298d14c925b95e3f1bd725539e24d96a2727",
+          "scope": "Preserved identity before the actual 0.30 native factual successor."
+        },
+        {
+          "bytes": 70424,
+          "sha256": "f2a0cfa1bb51cd0e992d4655d4a8d0b12e8f6e0a918902f6858c288db83f24cc",
+          "scope": "Preserved identity before complete-gate factual successor."
         }
       ]
     },
@@ -1845,10 +2025,10 @@
       "sha256": "c19f36f39573d198256641c8f057a350b4c12d99e6098faba352664646bc8a8f"
     },
     {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
       "path": "knowledge-base/en/registry/sources.json",
-      "bytes": 87597,
-      "sha256": "6c0d817a4a7825e018d568ae649b39af2781a7baa68def2560a83c19b497c852",
+      "bytes": 96492,
+      "sha256": "bfce2ac670d6a6b47cdf562af7263c438a0d073243a185e185e7d37fcb11d488",
       "identityHistory": [
         {
           "bytes": 82270,
@@ -1861,6 +2041,26 @@
           "sha256": "ae3e3ac9c4e1cc61f22a8b9b41761e8ea5431fc4f0c1c8e6695eee847bb96a05",
           "recordedBeforeSuccessor": "0.29.0",
           "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+        },
+        {
+          "bytes": 87597,
+          "sha256": "6c0d817a4a7825e018d568ae649b39af2781a7baa68def2560a83c19b497c852",
+          "scope": "Preserved identity before the 0.30 preparation successor."
+        },
+        {
+          "bytes": 88876,
+          "sha256": "6704dee503850cda2816ca1a76794361fde7b590446933b01195bdd284ccc367",
+          "scope": "Preserved identity before the actual 0.30 native factual successor."
+        },
+        {
+          "bytes": 92947,
+          "sha256": "cdd642a660981309fe92dedb1c5aafb81f0ce78542635612ac0ea3d8ecd9a030",
+          "scope": "Preserved identity before the actual 0.30 native factual successor."
+        },
+        {
+          "bytes": 92947,
+          "sha256": "48abeec66ddb53ccbacb6f138e64b496aa15031709f18e1a34309b8d110a2dba",
+          "scope": "Preserved identity before complete-gate factual successor."
         }
       ]
     },
@@ -1902,9 +2102,16 @@
     },
     {
       "path": "knowledge-base/tools/Validate-KnowledgeBase.ps1",
-      "bytes": 12394,
-      "sha256": "9a29811796093d473ed1d8d71bce5a06a247c5d46e790190464e9a173d9d0c12",
-      "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
+      "bytes": 12469,
+      "sha256": "b1dcc45807cfc7ba72d3630701a184b48a32196639f24a3db70942448fb66f1d",
+      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
+      "identityHistory": [
+        {
+          "bytes": 12394,
+          "sha256": "9a29811796093d473ed1d8d71bce5a06a247c5d46e790190464e9a173d9d0c12",
+          "scope": "Preserved identity before the 0.30 preparation successor."
+        }
+      ]
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -2540,9 +2747,9 @@
     },
     {
       "path": "README.md",
-      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "sha256": "374814b9365d55960938e4621b6a3a9580e2e4ff4b21812792ef6fa2c21129c3",
-      "bytes": 23511,
+      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
+      "sha256": "3c8f4ea89da6c082b05e7b3a2b49fcc29ce3f0f0107a941ffe856070098ef1e3",
+      "bytes": 25791,
       "previousRevisionSha256": "199156443d499d5012f1224263a1a3ee9994e5ba38ee067bceeb2ad865ae8167",
       "previousLayoutPath": "README.en.md",
       "previousLayoutSha256": "f40ec41ca699cd0b9138fbdf4a268080038f583ae11e78c4f37093a6b7095f57",
@@ -2558,14 +2765,29 @@
           "sha256": "4be695a82242f09dbd250feec906026fb7feff8dc13cef97d992fb00822087b2",
           "recordedBeforeSuccessor": "0.29.0",
           "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+        },
+        {
+          "bytes": 23511,
+          "sha256": "374814b9365d55960938e4621b6a3a9580e2e4ff4b21812792ef6fa2c21129c3",
+          "scope": "Preserved identity before the 0.30 preparation successor."
+        },
+        {
+          "bytes": 24568,
+          "sha256": "4c7d59715adb9792888855dec679e7849a18dd07f6ce6b9c7676b53750781510",
+          "scope": "Preserved identity before the actual 0.30 native factual successor."
+        },
+        {
+          "bytes": 25190,
+          "sha256": "f673b62562d5ec9c7e9238aa120fbde935a634c2362bdbb0042282512378bd33",
+          "scope": "Preserved identity before complete-gate factual successor."
         }
       ]
     },
     {
       "path": "README.zh-CN.md",
-      "sha256": "58f841289c66b1ae2b60ab015d179fc99ab57b1e4d48616c4c95233c943a18b8",
-      "bytes": 22939,
-      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
+      "sha256": "91f843173ea050ef050d7b44c7a616d248b1b39a612c96dcf3a3c290f403bd10",
+      "bytes": 25134,
+      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
       "previousPublicSha256": "7ec80b8575a700b6a2628eb0322f2e770bb2284859f68ec5e0eb6530154a6699",
       "previousRevisionSha256": "7a1d72019db7cb6075d7c3a3bd4075f7c069d527b6e31d992a69333cb126b6c3",
       "previousLayoutPath": "README.md",
@@ -2582,6 +2804,21 @@
           "sha256": "9738c168eb8f208b6f6254072f2d8926f6bd8f10db8677b6e5bc571e2e44982a",
           "recordedBeforeSuccessor": "0.29.0",
           "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+        },
+        {
+          "bytes": 22939,
+          "sha256": "58f841289c66b1ae2b60ab015d179fc99ab57b1e4d48616c4c95233c943a18b8",
+          "scope": "Preserved identity before the 0.30 preparation successor."
+        },
+        {
+          "bytes": 23959,
+          "sha256": "ac6987ffc48050f6b6ddc83427b53b4e0d508107dcc753f8fbfe7f4ec83f7fbf",
+          "scope": "Preserved identity before the actual 0.30 native factual successor."
+        },
+        {
+          "bytes": 24529,
+          "sha256": "780e7355df87382542f8386ad59b6d1d9aa102815293448219f075601ed9425e",
+          "scope": "Preserved identity before complete-gate factual successor."
         }
       ]
     },
@@ -2711,9 +2948,16 @@
     },
     {
       "path": "tests/publication/knowledge-base-check-only.test.mjs",
-      "bytes": 8658,
-      "sha256": "d55b4a76c564eebd36e90a4b5f716042d92eaccb7f937fa45beb662ffdce3259",
-      "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
+      "bytes": 12955,
+      "sha256": "6e4d2ca28bd8c2beae032c14ecd3ba3a6549113e34f546c086d40d5a7a5918f6",
+      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
+      "identityHistory": [
+        {
+          "bytes": 8658,
+          "sha256": "d55b4a76c564eebd36e90a4b5f716042d92eaccb7f937fa45beb662ffdce3259",
+          "scope": "Preserved identity before the 0.30 preparation successor."
+        }
+      ]
     },
     {
       "path": "tests/review-regressions.test.mjs",
@@ -4923,6 +5167,191 @@
           "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
         }
       ]
+    },
+    {
+      "path": "examples/hit-test/scene.mjs",
+      "bytes": 5205,
+      "sha256": "924d8087bb0689024f321014bef9ed2dab0838d4a07eeee70f3e930d1ef3fed0",
+      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately."
+    },
+    {
+      "path": "examples/hit-test/application.mjs",
+      "bytes": 5676,
+      "sha256": "200a414d359cc5d8656ef4e302655af7fdad24719aa544414b8cd7542fa26daa",
+      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately."
+    },
+    {
+      "path": "examples/hit-test/main.mjs",
+      "bytes": 841,
+      "sha256": "ed15163624fbed0f28d999eaa3e286fd8dc958df5a8f7803ea4d636af6bc8654",
+      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately."
+    },
+    {
+      "path": "examples/hit-test/index.html",
+      "bytes": 1820,
+      "sha256": "ae2d4c7ea4935094121b90f2e2f6b11ed68dbf3beef481c56c074a2bea970281",
+      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately."
+    },
+    {
+      "path": "tests/hit-test-scene.test.mjs",
+      "bytes": 17844,
+      "sha256": "5bacf3815ce8b2a76f170070cfb3e0b1bd3d5a3392ffa2c87526d3b039417d31",
+      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately."
+    },
+    {
+      "path": "examples/hit-test/README.md",
+      "bytes": 4493,
+      "sha256": "0d6484f779f5de19387513791b0cc2f9e00da9faf37cea4a5525a1786a5c84d5",
+      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
+      "identityHistory": [
+        {
+          "bytes": 3071,
+          "sha256": "e7fa4d7787aa65959190e3adc471c2e82265b674fc158062e7f02d25154bffa4",
+          "scope": "Preserved identity before the actual 0.30 native factual successor."
+        },
+        {
+          "bytes": 4003,
+          "sha256": "67802bc1d59b455878827cb24126cbb30b22879e4220fb2b41e4ca02b54abfcf",
+          "scope": "Preserved identity before complete-gate factual successor."
+        },
+        {
+          "bytes": 4520,
+          "sha256": "2f80a1d3e5928b4cd220f9db0c41d56a5d7269c3d2a8204d5233d1284c1745d0",
+          "scope": "Preserved identity before complete-gate factual successor."
+        }
+      ]
+    },
+    {
+      "path": "examples/hit-test/README.zh-CN.md",
+      "bytes": 4036,
+      "sha256": "7d64a80ce972676df4e02fe6833897ad4b4866e75215fdb361a139fb3bddaa8f",
+      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
+      "identityHistory": [
+        {
+          "bytes": 2752,
+          "sha256": "97ed70d1138e81fa06b0ad84c7c6246382ec34f06a11bbd171d9f579f90a9f8f",
+          "scope": "Preserved identity before the actual 0.30 native factual successor."
+        },
+        {
+          "bytes": 3580,
+          "sha256": "fc788d3bda892fa5213308d15187616aa3fe9c5364c218780cf7264de8cd3bdf",
+          "scope": "Preserved identity before complete-gate factual successor."
+        },
+        {
+          "bytes": 4060,
+          "sha256": "1c7c5b47f52855eee248c36d36cfec8509f61f60aaabeeb293eb3df4f44ed06b",
+          "scope": "Preserved identity before complete-gate factual successor."
+        }
+      ]
+    },
+    {
+      "path": "knowledge-base/en/docs/display-picking-example.md",
+      "bytes": 5422,
+      "sha256": "c4c73ff0b3b95619f05276af2f578262de5efa429daaa48bbc89ea09b6663754",
+      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
+      "identityHistory": [
+        {
+          "bytes": 4236,
+          "sha256": "b46eb1f9703ab7ae90fd5a8f4fe6be2504022699ac5812557992828f13b83a54",
+          "scope": "Preserved identity before the actual 0.30 native factual successor."
+        },
+        {
+          "bytes": 5095,
+          "sha256": "cfd95ebefeee8b4f602c9ceaac2311c76dc7c3bf8147899172a8fd84278c5350",
+          "scope": "Preserved identity before complete-gate factual successor."
+        }
+      ]
+    },
+    {
+      "path": "knowledge-base/Cns/docs/显示拾取示例.md",
+      "bytes": 4928,
+      "sha256": "0accd87786662dd8f63bb2c72e0d3c147a65d25a606706b96b88bebb9c4c44cf",
+      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
+      "identityHistory": [
+        {
+          "bytes": 3805,
+          "sha256": "ced487a6bb50d47eb7841ab975e815ec4790538c73906a2e2fdbae3ebcfc6bed",
+          "scope": "Preserved identity before the actual 0.30 native factual successor."
+        },
+        {
+          "bytes": 4564,
+          "sha256": "727fab4d8a09da590f871299587857282d66e74b9c6823ad09ac8ff15a65d9bd",
+          "scope": "Preserved identity before complete-gate factual successor."
+        }
+      ]
+    },
+    {
+      "path": "knowledge-base/evidence/display-picking-example-verification.json",
+      "bytes": 42942,
+      "sha256": "eb627a79ae0794101b30fb33a2cc6a13112beca96f21e38f4c523590837a99ea",
+      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
+      "identityHistory": [
+        {
+          "bytes": 18232,
+          "sha256": "5ae090e7f16a4315571a43001f0ccf66adab2f2615eb440ae839fe1af648c151",
+          "scope": "Unpublished initial preparation projection; retained private original receipts."
+        },
+        {
+          "bytes": 14121,
+          "sha256": "7eb37a84a28c6c8de1a9d86c14ab416ee12cc7f786fc09d08fe8a369f0204ca5",
+          "scope": "Preserved identity before the actual 0.30 native factual successor."
+        },
+        {
+          "bytes": 40733,
+          "sha256": "0140330bb09988ff49221b83c65a2576303a79d02b5c2d3bfe44b112ff18a762",
+          "scope": "Preserved identity before the actual 0.30 native factual successor."
+        },
+        {
+          "bytes": 40733,
+          "sha256": "99306e9b6c49f9f7223d8b07ff99c67a1d50c585ab314260cea19b66182e5da1",
+          "scope": "Preserved identity before complete-gate factual successor."
+        },
+        {
+          "bytes": 42373,
+          "sha256": "7ac6880df583632cc90914c5e0c0a66c7fd1907fc815fa12c9d3007a27a9b1db",
+          "scope": "Preserved identity before complete-gate factual successor."
+        },
+        {
+          "bytes": 42373,
+          "sha256": "4fb347087abda027ecb163cf8fb012ea3cf7a9dac8e3ed68c1b5f8ae06bacdec",
+          "scope": "Preserved identity before complete-gate factual successor."
+        },
+        {
+          "bytes": 42373,
+          "sha256": "91140e2037d9dcd8b6d3e27fb167a07ea77cb1d707cc625d14a96b78298b5393",
+          "scope": "Preserved complete-gate record identity before enrollment of the independent public meaning review."
+        }
+      ]
+    },
+    {
+      "path": "tools/verify-hit-test-canvas.mjs",
+      "bytes": 22001,
+      "sha256": "4e36ae17c6d6ec6dc995e08618a252a6d795b15e3d43d33a3149ac3167deb257",
+      "originRole": "Independently authored first-party finite Canvas picking verification; saved execution scope and limits are recorded separately."
+    },
+    {
+      "path": "tools/hit-test-canvas-contract.mjs",
+      "bytes": 19188,
+      "sha256": "48368bef4475ff488ecc694768161cc604e6195f723631287e75d22e64884fad",
+      "originRole": "Independently authored first-party finite Canvas picking verification; saved execution scope and limits are recorded separately."
+    },
+    {
+      "path": "tests/hit-test-canvas-verifier.test.mjs",
+      "bytes": 17974,
+      "sha256": "44430e9798c6ad698c756cdccdd824a5ac6f4fdac66e0a4d2359cfff49261b8c",
+      "originRole": "Independently authored first-party finite Canvas picking verification; saved execution scope and limits are recorded separately."
+    },
+    {
+      "path": "tests/fixtures/hit-test-canvas/cases.json",
+      "bytes": 3915,
+      "sha256": "f8e993a66743db4718a1b31c0112ccf5890af8b79f21a1dcf25863bcec8db786",
+      "originRole": "Independently authored first-party finite Canvas picking verification; saved execution scope and limits are recorded separately."
+    },
+    {
+      "path": "tests/fixtures/hit-test-canvas/reference.mjs",
+      "bytes": 1259,
+      "sha256": "40e21d7db6d11feb1ab1f615524a2f06f99992489e6639d23144e5738d65cc1b",
+      "originRole": "Independently authored first-party finite Canvas picking verification; saved execution scope and limits are recorded separately."
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",
@@ -8645,5 +9074,139 @@
       "sha256": "a7555e4ca9734c645658cd80034eed025e36c8e16fb74826bbb40d0bbf09c790"
     },
     "scope": "Delivery successor only; original Canvas-text preparation/native cutoffs remain unchanged."
+  },
+  "displayPickingExampleWorkPackage": {
+    "date": "2026-10-12",
+    "engineeringLabel": "0.30.0",
+    "sourceId": "S083",
+    "deliverable": "V034",
+    "sourceBaseCommit": "fb7f15b21cf80345e23490c551552deb4b68061a",
+    "packageVersion": "0.0.0",
+    "protocolVersion": "1.0",
+    "scope": "First-party thin desktop Canvas mouse picking application composed from existing HT1, scoped typed events and explicit rendering; no SDK API changes.",
+    "record": "knowledge-base/evidence/display-picking-example-verification.json",
+    "productSources": [
+      {
+        "path": "examples/hit-test/scene.mjs",
+        "bytes": 5205,
+        "sha256": "924d8087bb0689024f321014bef9ed2dab0838d4a07eeee70f3e930d1ef3fed0"
+      },
+      {
+        "path": "examples/hit-test/application.mjs",
+        "bytes": 5676,
+        "sha256": "200a414d359cc5d8656ef4e302655af7fdad24719aa544414b8cd7542fa26daa"
+      },
+      {
+        "path": "examples/hit-test/main.mjs",
+        "bytes": 841,
+        "sha256": "ed15163624fbed0f28d999eaa3e286fd8dc958df5a8f7803ea4d636af6bc8654"
+      },
+      {
+        "path": "examples/hit-test/index.html",
+        "bytes": 1820,
+        "sha256": "ae2d4c7ea4935094121b90f2e2f6b11ed68dbf3beef481c56c074a2bea970281"
+      }
+    ],
+    "currentPublicEntryVerification": "PASS_12_OF_12",
+    "nativeBrowserAcceptance": "PASS_DESKTOP_HT1_CANVAS_SUBSET",
+    "currentFiniteKBPolicyVerification": "PASS_9_OF_9",
+    "finalWholeVerification": "ACTUAL_COMPLETE_PREPUSH_PASS",
+    "independentBilingualMeaningReview": "PASS_FINITE_0_30_BILINGUAL_PUBLIC_MEANING_SUCCESSOR",
+    "mandatoryGitPushHook": "PENDING",
+    "remoteDelivery": "PENDING",
+    "origin": {
+      "firstPartyImplementation": "Independently authored AI-assisted first-party Egret application, bounded fixtures, policy and paired documents under Apache-2.0.",
+      "newRuntimeDependencies": [],
+      "newExternalAssets": [],
+      "sdkImplementationChanged": false
+    },
+    "limits": {
+      "generalDOMInputRouter": false,
+      "gestures": false,
+      "layoutAndAccessibility": false,
+      "physicalMobileDevices": false,
+      "CJKFonts": false,
+      "fullSpine": false,
+      "fullUI": false,
+      "threeDInput": false,
+      "completeMigration": false,
+      "performanceLeadership": false,
+      "wholeFrameGolden": false
+    },
+    "historicalCutoffsPreserved": true,
+    "nativeVerificationSources": [
+      {
+        "path": "tools/verify-hit-test-canvas.mjs",
+        "bytes": 22001,
+        "sha256": "4e36ae17c6d6ec6dc995e08618a252a6d795b15e3d43d33a3149ac3167deb257"
+      },
+      {
+        "path": "tools/hit-test-canvas-contract.mjs",
+        "bytes": 19188,
+        "sha256": "48368bef4475ff488ecc694768161cc604e6195f723631287e75d22e64884fad"
+      },
+      {
+        "path": "tests/hit-test-canvas-verifier.test.mjs",
+        "bytes": 17974,
+        "sha256": "44430e9798c6ad698c756cdccdd824a5ac6f4fdac66e0a4d2359cfff49261b8c"
+      },
+      {
+        "path": "tests/fixtures/hit-test-canvas/cases.json",
+        "bytes": 3915,
+        "sha256": "f8e993a66743db4718a1b31c0112ccf5890af8b79f21a1dcf25863bcec8db786"
+      },
+      {
+        "path": "tests/fixtures/hit-test-canvas/reference.mjs",
+        "bytes": 1259,
+        "sha256": "40e21d7db6d11feb1ab1f615524a2f06f99992489e6639d23144e5738d65cc1b"
+      }
+    ],
+    "recordStatus": "ACTUAL_PUBLIC_APPLICATION_NATIVE_DESKTOP_AND_COMPLETE_PREPUSH_PASS",
+    "publicationStructure": "ACTUAL_COMPLETE_PREPUSH_PASS",
+    "coreTests": 2377,
+    "publicationTests": 63,
+    "meaningReviewReceipt": {
+      "status": "PASS_FINITE_0_30_BILINGUAL_PUBLIC_MEANING_SUCCESSOR",
+      "openFindings": 0,
+      "receipt": {
+        "bytes": 20139,
+        "sha256": "78b185fcae5c1af91b3fe24e4e8ef90a3e0896260f5b6707123086d90a5e75ff"
+      },
+      "scope": "Independent finite review of the current 18 paired readings/navigation/registry documents, source provenance, localization and saved actual verification at the complete-gate cutoff. The original review bytes remain fixed; this successor enrolls only its identity in three metadata files. Subsequent final byte readback remains separate."
+    }
+  },
+  "displayHitTestDeliverySuccessor": {
+    "engineeringLabel": "0.29.0",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/16",
+    "head": "6e724971938ec8be4d271066f327814394e0b7fb",
+    "mergedMain": "fb7f15b21cf80345e23490c551552deb4b68061a",
+    "tree": "e79ad52bf85a1efa7835a1d4074c5a4368ca8981",
+    "mandatoryHook": "ACTUAL_PASS",
+    "localCoreTests": 2333,
+    "localPublicationTests": 59,
+    "remoteStatusesReported": 0,
+    "remoteCheckRunsReported": 0,
+    "mainReadback": {
+      "bytes": 200,
+      "sha256": "9695de0bcd542538b401461ea183956d3a236edf17f8e7677eaa6adb65e6442a"
+    },
+    "pushReceipt": {
+      "identity": {
+        "bytes": 947,
+        "sha256": "7f74483b613976b48f7bf358eb06e747572828c60998aacb183e0444afb8af65"
+      },
+      "executions": [
+        {
+          "name": "push",
+          "startedAtUtc": "2026-10-11T17:11:46.5237220Z",
+          "finishedAtUtc": "2026-10-11T17:14:46.1202499Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "0bc9ef99fc69f22c3d193313b969bdcb73fdfe84351b3ea41a1f372519aac49c",
+          "stderrSHA256": "2c996c40cb10771e9c836094c65f12be2e35919863d34a352126db43765cc6df"
+        }
+      ]
+    },
+    "scope": "Delivery successor; earlier HT1 source/type/browser and preparation cutoffs remain unchanged."
   }
 }

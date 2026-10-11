@@ -2,6 +2,28 @@
 
 English | [简体中文](../Cns/CHANGELOG.md)
 
+## Engineering preview: 0.30.0 — 2026-10-12
+
+Added a small authored-rectangle picking application through existing Stage, Event and CanvasHost APIs. CSS mouse coordinates feed the genuine logical query; actual typed target/ancestor listeners record routes. After dispatch returns, scene code clears and repaints one feedback rectangle and renders once; listeners do not paint the feedback. Six concrete callback pairs, eight scoped typed subscriptions and shared acquisition/close ownership keep cleanup explicit. No SDK API, dependency or external asset is added; package 0.0.0 and protocol 1.0 remain unchanged. Read the [example record](docs/display-picking-example.md).
+
+Actual adopted public-entry headless checks passed 12/12. Independent private core review and its 12-case execution envelope are separate, overlapping evidence. Retain missing-module/setup failures, the correction to existing dispatchEvent, and the initial-render Ready-revival RED fixed by rechecking phase before Ready. Native browser input/pixels, five projection controls, complete current checks, final publication and independent bilingual meaning review, the mandatory Git push hook and delivery remain PENDING. This example does not accept a general input router, gestures, full UI/Spine/3D, phones, performance or complete migration.
+
+The **0.29.0** HT1 delivery successor passed the mandatory push hook with 2,333 core and 59 publication tests and was merged through [PR #16](https://github.com/cnedwin/Egret_rebuild/pull/16) to Main `fb7f15b21cf80345e23490c551552deb4b68061a`, tree `e79ad52bf85a1efa7835a1d4074c5a4368ca8981`. The recorded source commit is `6e724971938ec8be4d271066f327814394e0b7fb`. Remote status/check counts were both 0; no remote CI pass is claimed. Earlier preparation records retain their original pending/failure cutoffs.
+
+### 0.30.0 desktop factual successor — 2026-10-12
+
+The preparation paragraph above retains its original pending cutoff; the current desktop status is recorded here. The fresh desktop successor passed **PASS_DESKTOP_HT1_CANVAS_SUBSET** in default Edge **154.0.4258.62**: ten baseline rows and five assigned controls cover real mouse input, typed routes, Canvas pixels and an independent six-pair native listener ledger. Pure admission checks passed **32/32** separately; counts from these scopes are not summed.
+
+The six isolated contexts saved 30 artifacts, including **424 target + 424 reference raw RGBA bytes**. Baseline Close removed all six owned native pairs with zero outstanding; the omit-retirement control deliberately retained six pairs and was detected. The collector closed every context and restored its observer. All contexts recorded zero errors and retained exactly two Canvas readback advisories each. The first native result remains **INCOMPLETE**; its records were not rewritten. V3 classifies only the exact known readback hint as advisory, without changing CanvasHost attributes, SDK, case actions or pixel oracle. Other warnings/errors remain fatal.
+
+Complete current verification, final publication and independent bilingual meaning review, the mandatory Git push hook and delivery remain **PENDING**. This is a fixed desktop mouse/Canvas subset; phones, OS/physical reclamation, performance and full input/UI/Spine acceptance remain separate.
+
+### 0.30.0 complete local verification successor — 2026-10-12
+
+The preparation and desktop paragraphs above retain their original cutoffs; this later local verification result is recorded separately. Complete local verification passed: build, type fixtures and package boundaries; core **2377/2377** and structural publication **63/63**. Localization checked **140** pairs, **6** registry views and **154** critical source files. Knowledge-base validation checked **159** records, **243** Markdown files, **1997** links and **955** references with **0** issues; the headless lifecycle closed with **0** pending timers. These are separate scopes, not a combined test count.
+
+Final independent bilingual meaning review, the mandatory Git push hook and delivery remain **PENDING**.
+
 ## Engineering preview: 0.29.0 — 2026-10-12
 
 Added explicit Stage picking with `touchEnabled=false`, owned frozen `hitArea` rectangles and container `touchChildren=true`. Type-only `HitTestOptions` extends the existing engine/runtime roots; value exports, dependencies, package 0.0.0 and protocol 1.0 remain unchanged. The whole current Stage tree is admitted before arithmetic, with a receiver-inclusive default 4096 budget and range 1–65536. Eligible traversal uses Stage transforms, owner-local half-open clips and reverse painter/child-before-container order, retains the first winner while completing all active arithmetic, ignores alpha and never returns Stage or implicitly retargets. Read the [HT1 contract and bounded evidence](docs/display-hit-test-ht1.md).

@@ -3,7 +3,7 @@
 $ErrorActionPreference = 'Stop'
 $kbRoot = [IO.Path]::GetFullPath($Root)
 $kbPrefix = $kbRoot.TrimEnd([IO.Path]::DirectorySeparatorChar) + [IO.Path]::DirectorySeparatorChar
-# Public reading links may reference only these five files outside the KB.
+# Public reading links may reference only these seven files outside the KB.
 # Resolve exact targets from the KB's repository parent; no directory is allowed.
 $repositoryRoot = Split-Path -Parent $kbRoot
 $repositoryReadingTargets = @(
@@ -12,6 +12,8 @@ $repositoryReadingTargets = @(
     'examples/canvas-text/assets/Ahem-COPYING.txt'
     'examples/canvas-text/assets/Ahem-README.txt'
     'examples/canvas-text/assets/provenance.json'
+    'examples/hit-test/README.md'
+    'examples/hit-test/README.zh-CN.md'
 ) | ForEach-Object { [IO.Path]::GetFullPath((Join-Path $repositoryRoot $_)) }
 $issues = New-Object 'System.Collections.Generic.List[string]'
 $registryCounts = [ordered]@{}
