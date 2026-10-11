@@ -206,6 +206,45 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
     write('packages/engine/dist/tweenTypes.js', 'export {};\n');
     for (const file of ['packages/engine/src/tween.ts','packages/engine/dist/tween.d.ts','packages/engine/dist/tween.js']) write(file, 'export {};\n');
     write('packages/engine/dist/index.d.ts', readFileSync(path.join(root,'packages/engine/dist/index.d.ts'),'utf8') + `export type {${tweenTypes.join(',')}} from './tweenTypes.js';\n`);
+    // RG1 baseline only: exact inert declarations and one instance descriptor let
+    // retained policy controls reach their assigned guard. No group, owner,
+    // acquisition, cleanup or product module is executed by this scaffold.
+    const assetGroupTypes = ['AssetGroup','AssetGroupState','AssetGroupOptions'];
+    const assetGroupTypeScaffold = [
+      "import type {AssetLease} from '@egret/runtime';",
+      'declare const assetGroupBrand: unique symbol;',
+      "export type AssetGroupState = 'pending' | 'ready' | 'failed' | 'disposed';",
+      'export interface AssetGroupOptions { readonly concurrency?: number; }',
+      'export interface AssetGroup<T> { readonly [assetGroupBrand]: true; readonly state: AssetGroupState; readonly ready: Promise<readonly AssetLease<T>[]>; dispose(): void; }',
+    ].join('\n') + '\n';
+    for (const file of ['packages/engine/src/assetGroupTypes.ts','packages/engine/dist/assetGroupTypes.d.ts']) write(file, assetGroupTypeScaffold);
+    write('packages/engine/dist/assetGroupTypes.js', 'export {};\n');
+    for (const file of ['packages/engine/src/assetGroup.ts','packages/engine/dist/assetGroup.d.ts','packages/engine/dist/assetGroup.js']) write(file, 'export {};\n');
+    for (const file of ['packages/engine/src/index.ts','packages/engine/dist/index.d.ts'])
+      write(file, readFileSync(path.join(root,file),'utf8') + `export type {${assetGroupTypes.join(',')}} from './assetGroupTypes.js';\n`);
+    const assetGroupOperationsScaffold = [
+      "import type {AssetAcquireOptions} from './AssetManager.js';",
+      "import type {AssetLease} from './AssetLease.js';",
+      "import type {AssetRef} from './AssetRef.js';",
+      'export interface AssetGroupOperations {',
+      'readonly admitGroupRefs: (refs: readonly unknown[]) => void;',
+      'readonly acquire: <T>(ref: AssetRef<T>, options?: AssetAcquireOptions) => Promise<AssetLease<T>>;',
+      'readonly claimGroupLease: (lease: unknown, group: object) => void;',
+      'readonly releaseGroupLease: (lease: unknown) => void;',
+      '}',
+    ].join('\n') + '\n';
+    for (const file of ['packages/runtime/src/assetManagerOwnerState.ts','packages/runtime/dist/assetManagerOwnerState.d.ts']) write(file, assetGroupOperationsScaffold);
+    write('packages/runtime/dist/assetManagerOwnerState.js', 'export {};\n');
+    for (const file of ['packages/runtime/src/index.ts','packages/runtime/dist/index.d.ts'])
+      write(file, readFileSync(path.join(root,file),'utf8') + "export type {AssetGroupOperations} from './assetManagerOwnerState.js';\n");
+    const assetGroupContextScaffold = "import type {AssetGroupOperations} from './assetManagerOwnerState.js';\nexport interface EngineContext { readonly registerAssetGroupOperations?: (operations: AssetGroupOperations) => void; }\n";
+    for (const file of ['packages/runtime/src/ownership.ts','packages/runtime/dist/ownership.d.ts']) write(file, assetGroupContextScaffold);
+    const assetGroupMethod = 'createAssetGroup<T>(scope: Scope, refs: readonly AssetRef<T>[], options?: AssetGroupOptions): AssetGroup<T>';
+    const assetGroupEngineImports = "import type {Scope,AssetRef} from '@egret/runtime';\nimport type {AssetGroup,AssetGroupOptions} from './assetGroupTypes.js';\n";
+    write('packages/engine/src/Engine.ts', assetGroupEngineImports + `export class Engine { ${assetGroupMethod} { throw new Error('Synthetic policy fixture only'); } }\n`);
+    write('packages/engine/dist/Engine.d.ts', assetGroupEngineImports + `export declare class Engine { ${assetGroupMethod}; }\n`);
+    write(profileRootFile, readFileSync(path.join(root,profileRootFile),'utf8') + "Object.defineProperty(Engine.prototype,'createAssetGroup',{value:function createAssetGroup() {},configurable:true,writable:true});\n");
+    write('packages/engine/web/webgpu.ts', 'export {};\n');
     write('packages/engine/src/internal/texturedFrameState.ts', 'export function registerTexturedFrame(): void {}\nexport function readOwnedTexturedFrame(): undefined {return undefined;}\n');
     write('packages/engine/dist/internal/texturedFrameState.js', 'export function registerTexturedFrame() {}\nexport function readOwnedTexturedFrame() {}\n');
     write('packages/engine/dist/internal/texturedFrameState.d.ts', 'export declare function registerTexturedFrame(): void;\nexport declare function readOwnedTexturedFrame(): undefined;\n');

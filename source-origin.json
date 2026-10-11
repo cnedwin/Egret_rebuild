@@ -349,9 +349,9 @@
     },
     {
       "path": "DOCUMENTATION.md",
-      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
-      "sha256": "a90bcbb5e52442fa75f7bd7ad46dcba19abc8d78dcb0b9e9948c5f54e0a03be8",
-      "bytes": 7111,
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+      "sha256": "2bc86913a3043b4bad285ee052ed0728fe31cb18a611e17a14ef1ad96b624b29",
+      "bytes": 7389,
       "previousRevisionSha256": "ef35dafcd765aeacdce5c0d14362dc5f30319b84dd3d1693d9d6a769f7162f99",
       "previousLayoutPath": "DOCUMENTATION.en.md",
       "previousLayoutSha256": "4921b952a38aa70c692db7b37cda758e6e58942ea097761ee72d36f42a6ae31b",
@@ -376,14 +376,19 @@
           "bytes": 7064,
           "sha256": "c204f1b6d3f98b040bf59c5098f0f036ebcfb9e986c46e269ae9f10d53aad47a",
           "scope": "Preserved identity before complete-gate factual successor."
+        },
+        {
+          "bytes": 7111,
+          "sha256": "a90bcbb5e52442fa75f7bd7ad46dcba19abc8d78dcb0b9e9948c5f54e0a03be8",
+          "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
         }
       ]
     },
     {
       "path": "DOCUMENTATION.zh-CN.md",
-      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
-      "sha256": "4275596c6abb8c11e319f2b968b57b40ebca9e768df72525c3a7a32449cdcc92",
-      "bytes": 6806,
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+      "sha256": "3fc40b0d139cddfe9d2a9ee3100ab453db36c7d771151056533a13019ca14104",
+      "bytes": 7084,
       "previousRevisionSha256": "22f3073e3a0096efc4c92fce0aed95a81bdbaa6b1e50ed6432a1ed597c86a8d4",
       "previousLayoutPath": "DOCUMENTATION.md",
       "previousLayoutSha256": "421ba91329f03b9ace090842a7eeaabce268c8cce6ec89d7ccd05b6b15e44bfd",
@@ -408,6 +413,11 @@
           "bytes": 6759,
           "sha256": "d49b9caee1b78ac16e8f9fdc2ee4531256cb0b41f0abb2659da67fb625f9dc58",
           "scope": "Preserved identity before complete-gate factual successor."
+        },
+        {
+          "bytes": 6806,
+          "sha256": "4275596c6abb8c11e319f2b968b57b40ebca9e768df72525c3a7a32449cdcc92",
+          "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
         }
       ]
     },
@@ -549,10 +559,10 @@
       "originRole": "Consolidated first-party historical research reading record; original evidence and source identities retained in documentation cleanup ancestry."
     },
     {
-      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/CHANGELOG.md",
-      "bytes": 36739,
-      "sha256": "c57da1511d6e379064ed28399c9b62bc170cae5d382e070c020a13ad899fa1de",
+      "bytes": 38335,
+      "sha256": "b63b2b6ab160c565e71fc65ab57fdd0b859876f29a7700244791f12a26d8421c",
       "identityHistory": [
         {
           "bytes": 25611,
@@ -580,6 +590,11 @@
           "bytes": 36041,
           "sha256": "510aa786baa2908f6b5d9e861435389a5e0ef32a1356f8184d93f9956f4748c6",
           "scope": "Preserved identity before complete-gate factual successor."
+        },
+        {
+          "bytes": 36739,
+          "sha256": "c57da1511d6e379064ed28399c9b62bc170cae5d382e070c020a13ad899fa1de",
+          "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
         }
       ]
     },
@@ -1112,10 +1127,10 @@
       "sha256": "eec3c91b28230136fd03948fcc8d9fd253172001864d5c9b76cb500e35826c31"
     },
     {
-      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/README.md",
-      "bytes": 9804,
-      "sha256": "24bfce06a106b4344c9de7a51cb9deec65a0558941f3916f9a2d1ec4018a222c",
+      "bytes": 11057,
+      "sha256": "a8337454a66c0c034293d02feba6b1a0beef887a59d3190abc1a28efa46e329b",
       "identityHistory": [
         {
           "bytes": 6319,
@@ -1143,14 +1158,19 @@
           "bytes": 9353,
           "sha256": "c49e49f1de9b12724b02650dcc966d2532ce09305e974498aa9204c4a5291ad2",
           "scope": "Preserved identity before complete-gate factual successor."
+        },
+        {
+          "bytes": 9804,
+          "sha256": "24bfce06a106b4344c9de7a51cb9deec65a0558941f3916f9a2d1ec4018a222c",
+          "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
         }
       ]
     },
     {
-      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/registry/交付.json",
-      "bytes": 69668,
-      "sha256": "8b8b81fa4fe6686257ad94a2a33312ff2327b161cbb9d22c4ff79ff74a74ab88",
+      "bytes": 79480,
+      "sha256": "67001cd06bc8e7c8a3ad29bcc39fa87ace5e83b72efb9bc4b8c2e8cfbafc5069",
       "identityHistory": [
         {
           "bytes": 50664,
@@ -1183,6 +1203,11 @@
           "bytes": 65771,
           "sha256": "6ddb6262ecc892b2549c02582c73d778a140209a33d6f7337c5057162126c0ce",
           "scope": "Preserved identity before complete-gate factual successor."
+        },
+        {
+          "bytes": 69668,
+          "sha256": "8b8b81fa4fe6686257ad94a2a33312ff2327b161cbb9d22c4ff79ff74a74ab88",
+          "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
         }
       ]
     },
@@ -1199,10 +1224,10 @@
       "sha256": "e246bfa887d7434d07b28867e7be749b32f9036d745c3363bc7a96268b523663"
     },
     {
-      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/registry/来源.json",
-      "bytes": 87968,
-      "sha256": "51855cfab06bbcf10bddd5ef54180476e39b75b0a28c6001e3d5b0433a9b1858",
+      "bytes": 97322,
+      "sha256": "273e46dc752cb3a0990ddf28c88fa78df01b97e9b7ae8c39bac9b09846e664b1",
       "identityHistory": [
         {
           "bytes": 74667,
@@ -1235,6 +1260,11 @@
           "bytes": 84561,
           "sha256": "520fdd38aa0dfc71572f006f4aee47d9cb85e6debd82e6b93d4237a3730c5892",
           "scope": "Preserved identity before complete-gate factual successor."
+        },
+        {
+          "bytes": 87968,
+          "sha256": "51855cfab06bbcf10bddd5ef54180476e39b75b0a28c6001e3d5b0433a9b1858",
+          "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
         }
       ]
     },
@@ -1269,10 +1299,10 @@
       "sha256": "d310b55dbc74df5e0fe9b808f610a88fc4adaf78ab95415b96629b1e99a12633"
     },
     {
-      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/当前版本.json",
-      "bytes": 65825,
-      "sha256": "1010c39e079cc04785b1fdef93035e13eebdfc1754ce1ca0bf66d38416c31b40",
+      "bytes": 74455,
+      "sha256": "4fc3fbf6b38ab5adb0c5091d631983a42d938ecafaad194b0ba4c86f13026f65",
       "identityHistory": [
         {
           "bytes": 31425,
@@ -1300,6 +1330,11 @@
           "bytes": 63599,
           "sha256": "2ed599e7f1523072b34b7cd927efa94cc89d95c4006e715a244ab583a272f3de",
           "scope": "Preserved identity before complete-gate factual successor."
+        },
+        {
+          "bytes": 65825,
+          "sha256": "1010c39e079cc04785b1fdef93035e13eebdfc1754ce1ca0bf66d38416c31b40",
+          "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
         }
       ]
     },
@@ -1334,10 +1369,10 @@
       "originRole": "Consolidated first-party historical research reading record; original evidence and source identities retained in documentation cleanup ancestry."
     },
     {
-      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/CHANGELOG.md",
-      "bytes": 44029,
-      "sha256": "bf9bd10549a35cbdc6bed78a4fd3be497ea7fc57494bfbb23d3072ed16f063dc",
+      "bytes": 45830,
+      "sha256": "2bb053752b41f79b202046f0d97e3c8965fa79049a32c9ee53f975fe1e242a35",
       "identityHistory": [
         {
           "bytes": 31389,
@@ -1365,6 +1400,11 @@
           "bytes": 43247,
           "sha256": "b0883be5b664631a3e8dd46d950c2ab190c9bd7d9ca87cab74997a5bedc2fecc",
           "scope": "Preserved identity before complete-gate factual successor."
+        },
+        {
+          "bytes": 44029,
+          "sha256": "bf9bd10549a35cbdc6bed78a4fd3be497ea7fc57494bfbb23d3072ed16f063dc",
+          "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
         }
       ]
     },
@@ -1375,10 +1415,10 @@
       "sha256": "7703c2cd385d8a12e9de9bf521ae717b44240922e5e55e517a2fbe4dad3ad604"
     },
     {
-      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/current-version.json",
-      "bytes": 66445,
-      "sha256": "5786debf8a04919e77378ceb62b8808b6e95e71b3795bbe488ea641468b7aec6",
+      "bytes": 75083,
+      "sha256": "9e713912271eadab4c3d5cfc33a52424549d823154767bc9bfebacf2e564c33e",
       "identityHistory": [
         {
           "bytes": 31946,
@@ -1406,6 +1446,11 @@
           "bytes": 64201,
           "sha256": "9355971c4a58986249e1001aad4de954fdb317f32080419c55eb2f8b79c1612f",
           "scope": "Preserved identity before complete-gate factual successor."
+        },
+        {
+          "bytes": 66445,
+          "sha256": "5786debf8a04919e77378ceb62b8808b6e95e71b3795bbe488ea641468b7aec6",
+          "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
         }
       ]
     },
@@ -1932,10 +1977,10 @@
       "sha256": "496798afbdd03d5968e3c947fc146f9f360990e0dd799765b72e731408fa3020"
     },
     {
-      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/README.md",
-      "bytes": 11218,
-      "sha256": "6e346aafffd62ee471377f3a4b53dca52f8acb6c7283b84423e8a41eb3d4c6fb",
+      "bytes": 12729,
+      "sha256": "a9e0bb655fa5e3d68809bad799a85f3563a38c97e91ffd56b008a6e9c72a5e51",
       "identityHistory": [
         {
           "bytes": 7397,
@@ -1963,6 +2008,11 @@
           "bytes": 10766,
           "sha256": "d2d8e0f087190b100ddff39f0a032c03ed5d9e6cfb0a0e84da6a086012ed8756",
           "scope": "Preserved identity before complete-gate factual successor."
+        },
+        {
+          "bytes": 11218,
+          "sha256": "6e346aafffd62ee471377f3a4b53dca52f8acb6c7283b84423e8a41eb3d4c6fb",
+          "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
         }
       ]
     },
@@ -1973,10 +2023,10 @@
       "sha256": "1953c56b8c6cafbea81946a9f6a3ddb9e735d67b243e51d5e03c3f025b42d676"
     },
     {
-      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/registry/deliverables.json",
-      "bytes": 74488,
-      "sha256": "ed7ea4a4a67ea40d2e452aa273327b773bfa6b150f2329229ba665084ea115cd",
+      "bytes": 84422,
+      "sha256": "b9324a3fdfb9fa03778dc34eb60f9c6e2182eae3868275cf51569d21834f6b26",
       "identityHistory": [
         {
           "bytes": 54446,
@@ -2009,6 +2059,11 @@
           "bytes": 70424,
           "sha256": "f2a0cfa1bb51cd0e992d4655d4a8d0b12e8f6e0a918902f6858c288db83f24cc",
           "scope": "Preserved identity before complete-gate factual successor."
+        },
+        {
+          "bytes": 74488,
+          "sha256": "ed7ea4a4a67ea40d2e452aa273327b773bfa6b150f2329229ba665084ea115cd",
+          "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
         }
       ]
     },
@@ -2025,10 +2080,10 @@
       "sha256": "c19f36f39573d198256641c8f057a350b4c12d99e6098faba352664646bc8a8f"
     },
     {
-      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/registry/sources.json",
-      "bytes": 96492,
-      "sha256": "bfce2ac670d6a6b47cdf562af7263c438a0d073243a185e185e7d37fcb11d488",
+      "bytes": 105996,
+      "sha256": "bb0a9cc89703083abb3163a7a8de0568d3846ca1d5aeacce65dc84dbeb04ce5f",
       "identityHistory": [
         {
           "bytes": 82270,
@@ -2061,6 +2116,11 @@
           "bytes": 92947,
           "sha256": "48abeec66ddb53ccbacb6f138e64b496aa15031709f18e1a34309b8d110a2dba",
           "scope": "Preserved identity before complete-gate factual successor."
+        },
+        {
+          "bytes": 96492,
+          "sha256": "bfce2ac670d6a6b47cdf562af7263c438a0d073243a185e185e7d37fcb11d488",
+          "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
         }
       ]
     },
@@ -2131,11 +2191,23 @@
     {
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "path": "localization.json",
-      "sha256": "aab26e596ad1b6a118ac1bd8071f8279e9568561f8661790179f29029ed4d20f",
-      "bytes": 180599,
+      "sha256": "c86a8a9a979d97887233645ece67a99727610e927c9e5747f842fead3921ffc5",
+      "bytes": 193315,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
-      "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123"
+      "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
+      "identityHistory": [
+        {
+          "bytes": 180599,
+          "sha256": "aab26e596ad1b6a118ac1bd8071f8279e9568561f8661790179f29029ed4d20f",
+          "scope": "Preserved listed localization identity before the finite 0.31 current-inventory correction."
+        },
+        {
+          "bytes": 193257,
+          "sha256": "1514fc3539699c72dda35a4ef44405970b757cec1f7bb1fd42ffedb2bd8ee80f",
+          "scope": "Preserved meaning-reviewed localization identity before factual review enrollment."
+        }
+      ]
     },
     {
       "path": "NOTICE",
@@ -2334,24 +2406,38 @@
     },
     {
       "path": "packages/engine/src/Engine.ts",
-      "sha256": "0d5191166d9cc58489109e474f28ec4e6d3d6c97f6ee09b6e26d0aa0988a3940",
-      "bytes": 12852,
+      "sha256": "d622327f839bc93578215919c76148424ccc6ecbb510fe3972087cb811d45dbc",
+      "bytes": 13968,
       "originalSha256": "d5b4fcfc5bcf921d6b75aa4a33d7e71412595e8e377e5ff9b186b19ec6868f58",
-      "originRole": "First-party CPU asset revision or synchronized public documentation",
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "previousPublicSha256": "d5b4fcfc5bcf921d6b75aa4a33d7e71412595e8e377e5ff9b186b19ec6868f58",
       "previousRevisionSha256": "471f78e5f01bfdbb0492d6be3f1f3c5ed9daa7cc8e20068c47fef49e21acac56",
       "previousLayoutPath": "packages/engine/src/Engine.ts",
-      "previousLayoutSha256": "565d2f2701d5f1c7f653a5833f435b649f68975bf650400003bbdd86ecb909a0"
+      "previousLayoutSha256": "565d2f2701d5f1c7f653a5833f435b649f68975bf650400003bbdd86ecb909a0",
+      "identityHistory": [
+        {
+          "bytes": 12852,
+          "sha256": "0d5191166d9cc58489109e474f28ec4e6d3d6c97f6ee09b6e26d0aa0988a3940",
+          "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
+        }
+      ]
     },
     {
       "path": "packages/engine/src/index.ts",
-      "sha256": "40351e266e2c9169b1eb57639665c4a234306f2f24b932b11dcbba7dc00aa451",
-      "bytes": 2601,
+      "sha256": "b23d6cd5c8dfbc1f900ae194012a8dc2c1ce22b7b2bf4c8ee2499b999f1943cf",
+      "bytes": 2693,
       "originalSha256": "45f2377ffe6e180815d68b8b2dcbddaca8eaa167c142a356d130da8ce008e2f0",
-      "originRole": "Independent first-party Egret explicit-area picking, bounded verification or paired documentation; CPU and finite-policy evidence with separate browser and whole-engine admission.",
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "previousRevisionSha256": "45f2377ffe6e180815d68b8b2dcbddaca8eaa167c142a356d130da8ce008e2f0",
       "previousLayoutPath": "packages/engine/src/index.ts",
-      "previousLayoutSha256": "610b29b05ca80e16c602d68af2ad1a71be4027cb4c5731816c177eb415e3b3f4"
+      "previousLayoutSha256": "610b29b05ca80e16c602d68af2ad1a71be4027cb4c5731816c177eb415e3b3f4",
+      "identityHistory": [
+        {
+          "bytes": 2601,
+          "sha256": "40351e266e2c9169b1eb57639665c4a234306f2f24b932b11dcbba7dc00aa451",
+          "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
+        }
+      ]
     },
     {
       "path": "packages/engine/src/surfaceOwnership.ts",
@@ -2504,12 +2590,19 @@
     },
     {
       "path": "packages/runtime/src/AssetManager.ts",
-      "sha256": "be7c1b5d008395328429e3f75d539d8e979b840c8d80868e838e62a84c19bb2f",
-      "bytes": 14582,
-      "originRole": "New independently authored CPU asset core/test/example",
+      "sha256": "800760598f41e47d092cfc7d91ae3c4e21035bcaf4883618c932b6c9884aa0a6",
+      "bytes": 17021,
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "previousRevisionSha256": "31e52919bfa43df548fa661a9d46c5d8b2fcb7259addfe119ef4367fa25f462e",
       "previousLayoutPath": "packages/runtime/src/AssetManager.ts",
-      "previousLayoutSha256": "31e52919bfa43df548fa661a9d46c5d8b2fcb7259addfe119ef4367fa25f462e"
+      "previousLayoutSha256": "31e52919bfa43df548fa661a9d46c5d8b2fcb7259addfe119ef4367fa25f462e",
+      "identityHistory": [
+        {
+          "bytes": 14582,
+          "sha256": "be7c1b5d008395328429e3f75d539d8e979b840c8d80868e838e62a84c19bb2f",
+          "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
+        }
+      ]
     },
     {
       "path": "packages/runtime/src/AssetRef.ts",
@@ -2646,24 +2739,38 @@
     },
     {
       "path": "packages/runtime/src/index.ts",
-      "sha256": "91e0fbcf854e7c36ae7e342ac8eca3b6f9e60846eac9d470aeb0311ae70a0237",
-      "bytes": 2244,
+      "sha256": "cbf0e01afa519c806deac1de3e2af616cd489908efdbc0554d0141027a6bbe85",
+      "bytes": 2317,
       "originalSha256": "3af52ebe93ac933d989ceb0f5abadd31e72f9436fda1d2206b3e71d7f1216310",
-      "originRole": "Independent first-party Egret explicit-area picking, bounded verification or paired documentation; CPU and finite-policy evidence with separate browser and whole-engine admission.",
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "previousRevisionSha256": "3af52ebe93ac933d989ceb0f5abadd31e72f9436fda1d2206b3e71d7f1216310",
       "previousLayoutPath": "packages/runtime/src/index.ts",
-      "previousLayoutSha256": "51700665e52ddabfbce7359ee7e08747bee348a46cc0c1ba3a936a901f21e4b8"
+      "previousLayoutSha256": "51700665e52ddabfbce7359ee7e08747bee348a46cc0c1ba3a936a901f21e4b8",
+      "identityHistory": [
+        {
+          "bytes": 2244,
+          "sha256": "91e0fbcf854e7c36ae7e342ac8eca3b6f9e60846eac9d470aeb0311ae70a0237",
+          "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
+        }
+      ]
     },
     {
       "path": "packages/runtime/src/ownership.ts",
-      "sha256": "18c982d0a92eadc3d9e235cf65b40e5adea364304c8ad9620f429baae20b033b",
-      "bytes": 3540,
+      "sha256": "2a71e3d75994f86ad9817dea349b3ce58344e55c9dc1e6d664a69add599a758a",
+      "bytes": 3787,
       "originalSha256": "0fbd5497c87995998c3d080d4909b3caa9738ec8ee5743120c86e9cdcceeaeab",
-      "originRole": "English comment-only projection; exact baseline restoration proven",
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "previousPublicSha256": "0fbd5497c87995998c3d080d4909b3caa9738ec8ee5743120c86e9cdcceeaeab",
       "previousRevisionSha256": "8c8c40e465002882dac1bf054fa49248c99df62da337cf75f50168f0a6748c62",
       "previousLayoutPath": "packages/runtime/src/ownership.ts",
-      "previousLayoutSha256": "8c8c40e465002882dac1bf054fa49248c99df62da337cf75f50168f0a6748c62"
+      "previousLayoutSha256": "8c8c40e465002882dac1bf054fa49248c99df62da337cf75f50168f0a6748c62",
+      "identityHistory": [
+        {
+          "bytes": 3540,
+          "sha256": "18c982d0a92eadc3d9e235cf65b40e5adea364304c8ad9620f429baae20b033b",
+          "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
+        }
+      ]
     },
     {
       "path": "packages/runtime/src/Scope.ts",
@@ -2747,9 +2854,9 @@
     },
     {
       "path": "README.md",
-      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
-      "sha256": "3c8f4ea89da6c082b05e7b3a2b49fcc29ce3f0f0107a941ffe856070098ef1e3",
-      "bytes": 25791,
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+      "sha256": "d4b00dd8f8a362c9e0356227077cc60931c508ad0d8de302272a09be1241f9e7",
+      "bytes": 28265,
       "previousRevisionSha256": "199156443d499d5012f1224263a1a3ee9994e5ba38ee067bceeb2ad865ae8167",
       "previousLayoutPath": "README.en.md",
       "previousLayoutSha256": "f40ec41ca699cd0b9138fbdf4a268080038f583ae11e78c4f37093a6b7095f57",
@@ -2780,14 +2887,19 @@
           "bytes": 25190,
           "sha256": "f673b62562d5ec9c7e9238aa120fbde935a634c2362bdbb0042282512378bd33",
           "scope": "Preserved identity before complete-gate factual successor."
+        },
+        {
+          "bytes": 25791,
+          "sha256": "3c8f4ea89da6c082b05e7b3a2b49fcc29ce3f0f0107a941ffe856070098ef1e3",
+          "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
         }
       ]
     },
     {
       "path": "README.zh-CN.md",
-      "sha256": "91f843173ea050ef050d7b44c7a616d248b1b39a612c96dcf3a3c290f403bd10",
-      "bytes": 25134,
-      "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
+      "sha256": "7e3af36191ac5f923b7a15b7d2f65df0f21a686986adf4dfa69f248aa57c445a",
+      "bytes": 27378,
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "previousPublicSha256": "7ec80b8575a700b6a2628eb0322f2e770bb2284859f68ec5e0eb6530154a6699",
       "previousRevisionSha256": "7a1d72019db7cb6075d7c3a3bd4075f7c069d527b6e31d992a69333cb126b6c3",
       "previousLayoutPath": "README.md",
@@ -2819,6 +2931,11 @@
           "bytes": 24529,
           "sha256": "780e7355df87382542f8386ad59b6d1d9aa102815293448219f075601ed9425e",
           "scope": "Preserved identity before complete-gate factual successor."
+        },
+        {
+          "bytes": 25134,
+          "sha256": "91f843173ea050ef050d7b44c7a616d248b1b39a612c96dcf3a3c290f403bd10",
+          "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
         }
       ]
     },
@@ -2842,9 +2959,16 @@
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "bytes": 49876,
-      "sha256": "2eb6deae78280003d708a83ca1d40dbe22c560ba6b82498fa16597ede7f703ce",
-      "originRole": "Independent first-party Egret explicit-area picking, bounded verification or paired documentation; CPU and finite-policy evidence with separate browser and whole-engine admission."
+      "bytes": 53695,
+      "sha256": "8a011b06a897131c7a4295f892de6db6c0060131e8e509f8267ece60f5eaa90d",
+      "originRole": "Independent first-party Egret explicit-area picking, bounded verification or paired documentation; CPU and finite-policy evidence with separate browser and whole-engine admission.",
+      "identityHistory": [
+        {
+          "bytes": 49876,
+          "sha256": "2eb6deae78280003d708a83ca1d40dbe22c560ba6b82498fa16597ede7f703ce",
+          "scope": "Preserved retained synthetic fixture before minimal RG1 canonical interface repair."
+        }
+      ]
     },
     {
       "path": "tests/cancellation-scope.test.mjs",
@@ -3009,13 +3133,20 @@
     },
     {
       "path": "tests/types/tsconfig.json",
-      "sha256": "88a3194ab9d7990646c7957e96e8d059ee16e79fe88373543a763da38a84dae1",
-      "bytes": 197,
+      "sha256": "e378996174db2020f9c416fb0599ea1182b3ca3265b3dc56012a688fd3252ad9",
+      "bytes": 224,
       "originalSha256": "88a3194ab9d7990646c7957e96e8d059ee16e79fe88373543a763da38a84dae1",
-      "originRole": "byte-identical prototype whitelist export",
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "previousRevisionSha256": "88a3194ab9d7990646c7957e96e8d059ee16e79fe88373543a763da38a84dae1",
       "previousLayoutPath": "tests/types/tsconfig.json",
-      "previousLayoutSha256": "88a3194ab9d7990646c7957e96e8d059ee16e79fe88373543a763da38a84dae1"
+      "previousLayoutSha256": "88a3194ab9d7990646c7957e96e8d059ee16e79fe88373543a763da38a84dae1",
+      "identityHistory": [
+        {
+          "bytes": 197,
+          "sha256": "88a3194ab9d7990646c7957e96e8d059ee16e79fe88373543a763da38a84dae1",
+          "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
+        }
+      ]
     },
     {
       "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
@@ -3088,9 +3219,16 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "bytes": 63980,
-      "sha256": "dbad3b9a875a48be9b21665250ce905bfea7c916f184cf44ad4f40c6d22f6d6e",
-      "originRole": "Independent first-party Egret explicit-area picking, bounded verification or paired documentation; CPU and finite-policy evidence with separate browser and whole-engine admission."
+      "bytes": 74430,
+      "sha256": "51745ac03560d1a9821c6961cb24ba8540b64b832e8289c750f0c161ea686092",
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+      "identityHistory": [
+        {
+          "bytes": 63980,
+          "sha256": "dbad3b9a875a48be9b21665250ce905bfea7c916f184cf44ad4f40c6d22f6d6e",
+          "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
+        }
+      ]
     },
     {
       "path": "tools/check-publication.mjs",
@@ -3100,9 +3238,16 @@
     },
     {
       "path": "tools/check-types.mjs",
-      "bytes": 38869,
-      "sha256": "fe674b06bfb8d44a6afc79c7569c965ce6af252240bd0ce9b2d3996b8bdbc444",
-      "originRole": "Independent first-party Egret explicit-area picking, bounded verification or paired documentation; CPU and finite-policy evidence with separate browser and whole-engine admission."
+      "bytes": 43356,
+      "sha256": "8f27c5100f494045d2763f584d2cdd54dd4701efe8d67a44e9c23948d12d54bf",
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+      "identityHistory": [
+        {
+          "bytes": 38869,
+          "sha256": "fe674b06bfb8d44a6afc79c7569c965ce6af252240bd0ce9b2d3996b8bdbc444",
+          "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
+        }
+      ]
     },
     {
       "path": "tools/prepush.mjs",
@@ -4492,9 +4637,16 @@
     },
     {
       "path": "packages/runtime/src/assetManagerOwnerState.ts",
-      "originRole": "Independent first-party T1 source authored from reviewed Egret contracts; no copied historical or competitor implementation.",
-      "bytes": 3778,
-      "sha256": "1519a2193b7e39184e3b9d500fb935f94129da46b2e47899086794b658e4b333"
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+      "bytes": 4195,
+      "sha256": "876d4e019270abda5ac30b710ee2aeec6ebd71dc78a5c5b9d05231e04b5cef15",
+      "identityHistory": [
+        {
+          "bytes": 3778,
+          "sha256": "1519a2193b7e39184e3b9d500fb935f94129da46b2e47899086794b658e4b333",
+          "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
+        }
+      ]
     },
     {
       "path": "packages/runtime/src/text/budget.ts",
@@ -5352,6 +5504,101 @@
       "bytes": 1259,
       "sha256": "40e21d7db6d11feb1ab1f615524a2f06f99992489e6639d23144e5738d65cc1b",
       "originRole": "Independently authored first-party finite Canvas picking verification; saved execution scope and limits are recorded separately."
+    },
+    {
+      "path": "examples/asset-group.mjs",
+      "bytes": 2249,
+      "sha256": "1a5b55c8101f35ed63eec0a57fa15ef956eb621730c7e455d0a9a4090beb7759",
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately."
+    },
+    {
+      "path": "packages/engine/src/assetGroup.ts",
+      "bytes": 12499,
+      "sha256": "66572c1ac1df6d0e9f64f32d72fbf46b08624ba4c48047179bab6c648af39de3",
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately."
+    },
+    {
+      "path": "packages/engine/src/assetGroupTypes.ts",
+      "bytes": 508,
+      "sha256": "54dee5e40fb6812ad133e621745360bfb368e0656b578b6e11160789275ff5d7",
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately."
+    },
+    {
+      "path": "tests/asset-group.test.mjs",
+      "bytes": 29514,
+      "sha256": "9cbc84e2a2fd6e91d503f198ca9c77dfc07aa287de3849cc9a3424280524fee1",
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately."
+    },
+    {
+      "path": "tests/types/asset-group-import-negative.ts",
+      "bytes": 1203,
+      "sha256": "e0d09c263b1584312143af228819521d2d5b4f9945c9fd8c68fc2c1b5df84fe7",
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately."
+    },
+    {
+      "path": "tests/types/asset-group-negative.ts",
+      "bytes": 1562,
+      "sha256": "d59d52089c582fb089f2f717d213a6213af472e1d47a86167c670989afe60bc0",
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately."
+    },
+    {
+      "path": "tests/types/asset-group-positive.ts",
+      "bytes": 1478,
+      "sha256": "7f633f4d8c2b954f36eff3c70a56af309d385e3e9e2483d5c6da1aebebe446d9",
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately."
+    },
+    {
+      "path": "tests/types/tsconfig.asset-group-import-negative.json",
+      "bytes": 84,
+      "sha256": "06efa86702f0043c1e498b1e9fbf2089ed1c9abb81094fec9773462ecd5ab1e6",
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately."
+    },
+    {
+      "path": "tests/types/tsconfig.asset-group-negative.json",
+      "bytes": 77,
+      "sha256": "e23d562585ae8f6e7439724c3b099624d958f0e8a64289b12750f292e503005b",
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately."
+    },
+    {
+      "path": "tests/asset-group-boundaries.test.mjs",
+      "bytes": 12435,
+      "sha256": "1b4a51744adfcaba4d1b4f27e1549792754c6df3d4b730e384cb3067eefd0ea1",
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately."
+    },
+    {
+      "path": "knowledge-base/en/docs/resource-acquisition-groups.md",
+      "bytes": 14476,
+      "sha256": "57ba4b556649533ae513acd24faa94750edca2c6006acc601965c6bfa11b7603",
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/资源批量获取.md",
+      "bytes": 13524,
+      "sha256": "a8051df39c1281eae42f3a3fd1852944788cdc6e120de5422e73e4c9ed60763b",
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately."
+    },
+    {
+      "path": "knowledge-base/evidence/resource-acquisition-groups-verification.json",
+      "bytes": 33731,
+      "sha256": "0680e33ba627cbf96e03693d857211ca5919cec9deeec4653f932e996f4ffe5c",
+      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+      "identityHistory": [
+        {
+          "bytes": 27703,
+          "sha256": "0bb088f780ecedbb8a1712b472bd3281a83880a3009d08254ae14467f1fbf8ee",
+          "scope": "Preserved 38-file public preparation before whole-suite failure and fixture-only repair successor."
+        },
+        {
+          "bytes": 30707,
+          "sha256": "f3d16196d50fa828091dba8860e52b86936a805ca224b37bfed7a6d76e8c03dc",
+          "scope": "Preserved preparation record identity before the complete-gate factual successor."
+        },
+        {
+          "bytes": 33109,
+          "sha256": "69c4c7caad23fafc446fdef051791d5ac1df03572d19ef28e6641bc8ecaf983a",
+          "scope": "Preserved complete-gate meaning-reviewed evidence before independent review enrollment."
+        }
+      ]
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",
@@ -9208,5 +9455,106 @@
       ]
     },
     "scope": "Delivery successor; earlier HT1 source/type/browser and preparation cutoffs remain unchanged."
+  },
+  "resourceAcquisitionGroupsWorkPackage": {
+    "date": "2026-10-12",
+    "engineeringLabel": "0.31.0",
+    "sourceId": "S084",
+    "deliverable": "V035",
+    "sourceBaseCommit": "cd19ac07b8994b19ed777d1c2483a07c852fc1b9",
+    "record": "knowledge-base/evidence/resource-acquisition-groups-verification.json",
+    "status": "INDEPENDENTLY_REVIEWED_ACTUAL_COMPLETE_PREPUSH_PASS_MANDATORY_PUSH_AND_DELIVERY_PENDING",
+    "scope": "Independent Engine-local scoped resource acquisition groups: finite admission, bounded local waiter activation, authenticated borrowed leases and prompt terminal cleanup.",
+    "packageVersion": "0.0.0",
+    "protocolVersion": "1.0",
+    "productSources": [
+      {
+        "path": "packages/engine/src/assetGroup.ts",
+        "bytes": 12499,
+        "sha256": "66572c1ac1df6d0e9f64f32d72fbf46b08624ba4c48047179bab6c648af39de3"
+      },
+      {
+        "path": "packages/engine/src/assetGroupTypes.ts",
+        "bytes": 508,
+        "sha256": "54dee5e40fb6812ad133e621745360bfb368e0656b578b6e11160789275ff5d7"
+      },
+      {
+        "path": "packages/engine/src/Engine.ts",
+        "bytes": 13968,
+        "sha256": "d622327f839bc93578215919c76148424ccc6ecbb510fe3972087cb811d45dbc"
+      },
+      {
+        "path": "packages/engine/src/index.ts",
+        "bytes": 2693,
+        "sha256": "b23d6cd5c8dfbc1f900ae194012a8dc2c1ce22b7b2bf4c8ee2499b999f1943cf"
+      },
+      {
+        "path": "packages/runtime/src/AssetManager.ts",
+        "bytes": 17021,
+        "sha256": "800760598f41e47d092cfc7d91ae3c4e21035bcaf4883618c932b6c9884aa0a6"
+      },
+      {
+        "path": "packages/runtime/src/assetManagerOwnerState.ts",
+        "bytes": 4195,
+        "sha256": "876d4e019270abda5ac30b710ee2aeec6ebd71dc78a5c5b9d05231e04b5cef15"
+      },
+      {
+        "path": "packages/runtime/src/index.ts",
+        "bytes": 2317,
+        "sha256": "cbf0e01afa519c806deac1de3e2af616cd489908efdbc0554d0141027a6bbe85"
+      },
+      {
+        "path": "packages/runtime/src/ownership.ts",
+        "bytes": 3787,
+        "sha256": "2a71e3d75994f86ad9817dea349b3ce58344e55c9dc1e6d664a69add599a758a"
+      }
+    ],
+    "publicCPU": "ACTUAL_PASS_86_INCLUDING_29_GROUP_AND_57_RETAINED_CASES",
+    "privatePolicy": "ACTUAL_PASS_35",
+    "strictTypes": "ACTUAL_DOM_FREE_POSITIVE_AND_EXACT_15_ORDINARY_11_IMPORT_NEGATIVES",
+    "retainedDesktop": "ACTUAL_SEVEN_PROFILES_AT_SAVED_CUTOFF_NOT_GROUP_BROWSER_ACCEPTANCE",
+    "fullVerification": "ACTUAL_COMPLETE_PREPUSH_PASS",
+    "publicationStructure": "ACTUAL_COMPLETE_PREPUSH_PASS",
+    "independentBilingualMeaningReview": "PASS_FINITE_RG1_BILINGUAL_PUBLIC_MEANING_AND_EXACT_39_BYTE_REVIEW",
+    "mandatoryGitPushHook": "PENDING",
+    "remoteDelivery": "PENDING",
+    "origin": {
+      "firstPartyImplementation": "Independently authored AI-assisted Egret implementation, fixtures, finite engineering guards and paired documents under Apache-2.0.",
+      "newRuntimeDependencies": [],
+      "newExternalAssets": []
+    },
+    "limits": {
+      "atomicBundle": false,
+      "globalNetworkConcurrency": false,
+      "providerCompletionWait": false,
+      "progressCallbacks": false,
+      "browserGroupApplication": false,
+      "physicalMobileDevices": false,
+      "physicalMemoryReclamation": false,
+      "CJKPerformance": false,
+      "fullSpine": false,
+      "fullUI": false,
+      "full3D": false,
+      "completeMigration": false,
+      "performanceLeadership": false
+    },
+    "historicalCutoffsPreserved": true,
+    "retainedCompletePrepushFailure": "ACTUAL_2441_TESTS_2254_PASS_187_FAIL",
+    "retainedBoundaryFixtureRepair": "INDEPENDENT_REVIEW_AND_ACTUAL_COMPLETE_PREPUSH_PASS",
+    "coreTests": 2441,
+    "publicationTests": 63
+  },
+  "displayPickingDeliverySuccessor": {
+    "engineeringLabel": "0.30.0",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/17",
+    "head": "6cfc5e53d1c5daa287c003b24bca6f54861cc536",
+    "mergedMain": "cd19ac07b8994b19ed777d1c2483a07c852fc1b9",
+    "tree": "828cd68ce8d86fc339848d5e9d4a10a443af6eba",
+    "mandatoryHook": "ACTUAL_PASS",
+    "coreTests": 2377,
+    "publicationTests": 63,
+    "remoteStatusCount": 0,
+    "remoteCheckCount": 0,
+    "scope": "Actual prior delivery successor; no remote CI pass is inferred from zero checks."
   }
 }

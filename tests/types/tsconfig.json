@@ -1,5 +1,5 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": { "noEmit": true, "composite": false, "declaration": false, "declarationMap": false },
-  "include": ["positive.ts", "negative.ts"]
+  "include": ["positive.ts", "negative.ts", "asset-group-positive.ts"]
 }

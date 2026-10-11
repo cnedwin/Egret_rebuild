@@ -3,6 +3,7 @@ import { EgretError } from "./EgretError.js";
 import { assertLive, childrenOf, isDisplayNode } from "./displayTreeState.js";
 import type { Scope } from './Scope.js';
 import type { DisplayObject } from './DisplayObject.js';
+import type { AssetGroupOperations } from './assetManagerOwnerState.js';
 
 /** Internal instance port; runtime never imports the Engine implementation. */
 export interface EngineContext {
@@ -11,6 +12,8 @@ export interface EngineContext {
   captureCleanup(cause: unknown): void;
   /** @internal Optional explicit-text assembly; ordinary runtime contexts need not supply it. */
   readonly registerTextFieldCache?: (cache: object, construct: (scope: Scope) => DisplayObject) => void;
+  /** @internal Optional group assembly; ordinary runtime contexts remain unchanged. */
+  readonly registerAssetGroupOperations?: (operations: AssetGroupOperations) => void;
 }
 
 export const OWNERSHIP_CHILDREN: unique symbol = Symbol("egret.ownershipChildren");

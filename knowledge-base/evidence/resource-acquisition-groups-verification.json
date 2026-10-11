@@ -1,0 +1,876 @@
+{
+  "schemaVersion": 1,
+  "engineeringLabel": "0.31.0",
+  "sourceId": "S084",
+  "deliverable": "V035",
+  "date": "2026-10-12",
+  "preparedAtUtc": "2026-10-11T18:52:35.236Z",
+  "sourceBaseCommit": "cd19ac07b8994b19ed777d1c2483a07c852fc1b9",
+  "packageVersion": "0.0.0",
+  "protocolVersion": "1.0",
+  "status": "INDEPENDENTLY_REVIEWED_ACTUAL_COMPLETE_PREPUSH_PASS_MANDATORY_PUSH_AND_DELIVERY_PENDING",
+  "scope": "Independent Engine-local scoped resource acquisition groups: finite admission, bounded local waiter activation, authenticated borrowed leases and prompt terminal cleanup.",
+  "productSources": [
+    {
+      "path": "packages/engine/src/assetGroup.ts",
+      "bytes": 12499,
+      "sha256": "66572c1ac1df6d0e9f64f32d72fbf46b08624ba4c48047179bab6c648af39de3"
+    },
+    {
+      "path": "packages/engine/src/assetGroupTypes.ts",
+      "bytes": 508,
+      "sha256": "54dee5e40fb6812ad133e621745360bfb368e0656b578b6e11160789275ff5d7"
+    },
+    {
+      "path": "packages/engine/src/Engine.ts",
+      "bytes": 13968,
+      "sha256": "d622327f839bc93578215919c76148424ccc6ecbb510fe3972087cb811d45dbc"
+    },
+    {
+      "path": "packages/engine/src/index.ts",
+      "bytes": 2693,
+      "sha256": "b23d6cd5c8dfbc1f900ae194012a8dc2c1ce22b7b2bf4c8ee2499b999f1943cf"
+    },
+    {
+      "path": "packages/runtime/src/AssetManager.ts",
+      "bytes": 17021,
+      "sha256": "800760598f41e47d092cfc7d91ae3c4e21035bcaf4883618c932b6c9884aa0a6"
+    },
+    {
+      "path": "packages/runtime/src/assetManagerOwnerState.ts",
+      "bytes": 4195,
+      "sha256": "876d4e019270abda5ac30b710ee2aeec6ebd71dc78a5c5b9d05231e04b5cef15"
+    },
+    {
+      "path": "packages/runtime/src/index.ts",
+      "bytes": 2317,
+      "sha256": "cbf0e01afa519c806deac1de3e2af616cd489908efdbc0554d0141027a6bbe85"
+    },
+    {
+      "path": "packages/runtime/src/ownership.ts",
+      "bytes": 3787,
+      "sha256": "2a71e3d75994f86ad9817dea349b3ce58344e55c9dc1e6d664a69add599a758a"
+    }
+  ],
+  "selectedEngineeringInputs": [
+    {
+      "path": "examples/asset-group.mjs",
+      "bytes": 2249,
+      "sha256": "1a5b55c8101f35ed63eec0a57fa15ef956eb621730c7e455d0a9a4090beb7759"
+    },
+    {
+      "path": "packages/engine/src/assetGroup.ts",
+      "bytes": 12499,
+      "sha256": "66572c1ac1df6d0e9f64f32d72fbf46b08624ba4c48047179bab6c648af39de3"
+    },
+    {
+      "path": "packages/engine/src/assetGroupTypes.ts",
+      "bytes": 508,
+      "sha256": "54dee5e40fb6812ad133e621745360bfb368e0656b578b6e11160789275ff5d7"
+    },
+    {
+      "path": "packages/engine/src/Engine.ts",
+      "bytes": 13968,
+      "sha256": "d622327f839bc93578215919c76148424ccc6ecbb510fe3972087cb811d45dbc"
+    },
+    {
+      "path": "packages/engine/src/index.ts",
+      "bytes": 2693,
+      "sha256": "b23d6cd5c8dfbc1f900ae194012a8dc2c1ce22b7b2bf4c8ee2499b999f1943cf"
+    },
+    {
+      "path": "packages/runtime/src/AssetManager.ts",
+      "bytes": 17021,
+      "sha256": "800760598f41e47d092cfc7d91ae3c4e21035bcaf4883618c932b6c9884aa0a6"
+    },
+    {
+      "path": "packages/runtime/src/assetManagerOwnerState.ts",
+      "bytes": 4195,
+      "sha256": "876d4e019270abda5ac30b710ee2aeec6ebd71dc78a5c5b9d05231e04b5cef15"
+    },
+    {
+      "path": "packages/runtime/src/index.ts",
+      "bytes": 2317,
+      "sha256": "cbf0e01afa519c806deac1de3e2af616cd489908efdbc0554d0141027a6bbe85"
+    },
+    {
+      "path": "packages/runtime/src/ownership.ts",
+      "bytes": 3787,
+      "sha256": "2a71e3d75994f86ad9817dea349b3ce58344e55c9dc1e6d664a69add599a758a"
+    },
+    {
+      "path": "tests/asset-group.test.mjs",
+      "bytes": 29514,
+      "sha256": "9cbc84e2a2fd6e91d503f198ca9c77dfc07aa287de3849cc9a3424280524fee1"
+    },
+    {
+      "path": "tests/types/asset-group-import-negative.ts",
+      "bytes": 1203,
+      "sha256": "e0d09c263b1584312143af228819521d2d5b4f9945c9fd8c68fc2c1b5df84fe7"
+    },
+    {
+      "path": "tests/types/asset-group-negative.ts",
+      "bytes": 1562,
+      "sha256": "d59d52089c582fb089f2f717d213a6213af472e1d47a86167c670989afe60bc0"
+    },
+    {
+      "path": "tests/types/asset-group-positive.ts",
+      "bytes": 1478,
+      "sha256": "7f633f4d8c2b954f36eff3c70a56af309d385e3e9e2483d5c6da1aebebe446d9"
+    },
+    {
+      "path": "tests/types/tsconfig.asset-group-import-negative.json",
+      "bytes": 84,
+      "sha256": "06efa86702f0043c1e498b1e9fbf2089ed1c9abb81094fec9773462ecd5ab1e6"
+    },
+    {
+      "path": "tests/types/tsconfig.asset-group-negative.json",
+      "bytes": 77,
+      "sha256": "e23d562585ae8f6e7439724c3b099624d958f0e8a64289b12750f292e503005b"
+    },
+    {
+      "path": "tests/types/tsconfig.json",
+      "bytes": 224,
+      "sha256": "e378996174db2020f9c416fb0599ea1182b3ca3265b3dc56012a688fd3252ad9"
+    },
+    {
+      "path": "tools/check-boundaries.mjs",
+      "bytes": 74430,
+      "sha256": "51745ac03560d1a9821c6961cb24ba8540b64b832e8289c750f0c161ea686092"
+    },
+    {
+      "path": "tools/check-types.mjs",
+      "bytes": 43356,
+      "sha256": "8f27c5100f494045d2763f584d2cdd54dd4701efe8d67a44e9c23948d12d54bf"
+    },
+    {
+      "path": "tests/asset-group-boundaries.test.mjs",
+      "bytes": 12435,
+      "sha256": "1b4a51744adfcaba4d1b4f27e1549792754c6df3d4b730e384cb3067eefd0ea1"
+    }
+  ],
+  "documents": [
+    {
+      "path": "README.md",
+      "bytes": 28265,
+      "sha256": "d4b00dd8f8a362c9e0356227077cc60931c508ad0d8de302272a09be1241f9e7"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "bytes": 27378,
+      "sha256": "7e3af36191ac5f923b7a15b7d2f65df0f21a686986adf4dfa69f248aa57c445a"
+    },
+    {
+      "path": "knowledge-base/en/README.md",
+      "bytes": 12729,
+      "sha256": "a9e0bb655fa5e3d68809bad799a85f3563a38c97e91ffd56b008a6e9c72a5e51"
+    },
+    {
+      "path": "knowledge-base/Cns/README.md",
+      "bytes": 11057,
+      "sha256": "a8337454a66c0c034293d02feba6b1a0beef887a59d3190abc1a28efa46e329b"
+    },
+    {
+      "path": "DOCUMENTATION.md",
+      "bytes": 7389,
+      "sha256": "2bc86913a3043b4bad285ee052ed0728fe31cb18a611e17a14ef1ad96b624b29"
+    },
+    {
+      "path": "DOCUMENTATION.zh-CN.md",
+      "bytes": 7084,
+      "sha256": "3fc40b0d139cddfe9d2a9ee3100ab453db36c7d771151056533a13019ca14104"
+    },
+    {
+      "path": "knowledge-base/en/CHANGELOG.md",
+      "bytes": 45830,
+      "sha256": "2bb053752b41f79b202046f0d97e3c8965fa79049a32c9ee53f975fe1e242a35"
+    },
+    {
+      "path": "knowledge-base/Cns/CHANGELOG.md",
+      "bytes": 38335,
+      "sha256": "b63b2b6ab160c565e71fc65ab57fdd0b859876f29a7700244791f12a26d8421c"
+    },
+    {
+      "path": "knowledge-base/en/registry/sources.json",
+      "bytes": 105996,
+      "sha256": "bb0a9cc89703083abb3163a7a8de0568d3846ca1d5aeacce65dc84dbeb04ce5f"
+    },
+    {
+      "path": "knowledge-base/en/registry/deliverables.json",
+      "bytes": 84422,
+      "sha256": "b9324a3fdfb9fa03778dc34eb60f9c6e2182eae3868275cf51569d21834f6b26"
+    },
+    {
+      "path": "knowledge-base/Cns/registry/来源.json",
+      "bytes": 97322,
+      "sha256": "273e46dc752cb3a0990ddf28c88fa78df01b97e9b7ae8c39bac9b09846e664b1"
+    },
+    {
+      "path": "knowledge-base/Cns/registry/交付.json",
+      "bytes": 79480,
+      "sha256": "67001cd06bc8e7c8a3ad29bcc39fa87ace5e83b72efb9bc4b8c2e8cfbafc5069"
+    },
+    {
+      "path": "knowledge-base/en/current-version.json",
+      "bytes": 75083,
+      "sha256": "9e713912271eadab4c3d5cfc33a52424549d823154767bc9bfebacf2e564c33e"
+    },
+    {
+      "path": "knowledge-base/Cns/当前版本.json",
+      "bytes": 74455,
+      "sha256": "4fc3fbf6b38ab5adb0c5091d631983a42d938ecafaad194b0ba4c86f13026f65"
+    },
+    {
+      "path": "knowledge-base/en/docs/resource-acquisition-groups.md",
+      "bytes": 14476,
+      "sha256": "57ba4b556649533ae513acd24faa94750edca2c6006acc601965c6bfa11b7603"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/资源批量获取.md",
+      "bytes": 13524,
+      "sha256": "a8051df39c1281eae42f3a3fd1852944788cdc6e120de5422e73e4c9ed60763b"
+    }
+  ],
+  "publicCPU": {
+    "status": "PASS",
+    "build": true,
+    "tests": 86,
+    "passed": 86,
+    "failed": 0,
+    "groupCases": 29,
+    "retainedCases": 57,
+    "cpuExample": true,
+    "receipt": {
+      "identity": {
+        "bytes": 2499,
+        "sha256": "32a1aabc68c53b752bcb79809f099a9bb13499d04f8e118c442fd57b9fdf596e"
+      },
+      "executions": [
+        {
+          "name": "build",
+          "startedAtUtc": "2026-10-11T18:47:55.1667948Z",
+          "finishedAtUtc": "2026-10-11T18:47:55.6478273Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "166710cb105690b244b48c5dcc5672a4c0bc8280e995ae7d2f5bd46141491cea",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "behavior-and-retained-lifetimes",
+          "startedAtUtc": "2026-10-11T18:47:55.6673208Z",
+          "finishedAtUtc": "2026-10-11T18:47:55.9280275Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "be9e81e9d8520f903dc38331a57dc47b94b553a2ec3e214c3146c91bc52f0132",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "cpu-example",
+          "startedAtUtc": "2026-10-11T18:47:55.9361046Z",
+          "finishedAtUtc": "2026-10-11T18:47:56.0150482Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "f0f30b569afed0ebd801bb770ecffeabb3803d725af1a1f7d1d7b385811bfda8",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "privateAndPublicScopesOverlap": true
+  },
+  "privatePolicy": {
+    "status": "PASS",
+    "tests": 35,
+    "passed": 35,
+    "failed": 0,
+    "receipt": {
+      "identity": {
+        "bytes": 814,
+        "sha256": "84b2a2a010f34172ec56835433447eae6d18231036e138cb50d25b370a02b659"
+      },
+      "executions": [
+        {
+          "name": "finite-policy",
+          "startedAtUtc": "2026-10-11T18:49:16.2751238Z",
+          "finishedAtUtc": "2026-10-11T18:50:31.6265177Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "4f368bc804e0d1a210e07e7d2db4ef39b21328fb4ca13b04c1838cc80ab73049",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "retainsPrior34Controls": true,
+    "newControl": "Non-exported emitted brand allocation",
+    "assignedActualRed": {
+      "identity": {
+        "bytes": 901,
+        "sha256": "6d1295272cc589b35f237f447356ee62e7bfa38e20c37db8c5db3ab845bbc02e"
+      },
+      "executions": [
+        {
+          "name": "local-brand-erasure",
+          "startedAtUtc": "2026-10-11T18:45:50.3606397Z",
+          "finishedAtUtc": "2026-10-11T18:45:52.7413009Z",
+          "exitCode": 1,
+          "timeout": false,
+          "stdoutSHA256": "1b8fa90ebe8266d9b12bf439b146d2478d7ceb1c0097df0c5eddb8271a4be716",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "originalMissingGuardRed": {
+      "identity": {
+        "bytes": 832,
+        "sha256": "f3cf75d6b9ca9704b75f16655c4467a77fa9d1f310f4fb2273f7ce4bb0b134ca"
+      },
+      "executions": [
+        {
+          "name": "finite-policy",
+          "startedAtUtc": "2026-10-11T18:26:27.5011524Z",
+          "finishedAtUtc": "2026-10-11T18:27:38.2926183Z",
+          "exitCode": 1,
+          "timeout": false,
+          "stdoutSHA256": "40e96a5a388e0edc4a86fc31106544ba00b8aee12f0c3df4278e9fd8a6da1a9d",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "canonicalBaseline": {
+      "status": "ACTUAL_PASS_NOT_RED",
+      "receipt": {
+        "identity": {
+          "bytes": 921,
+          "sha256": "a3d21d7c3ea75a499d8e5bbe695db59ab167a283ec80b7e765dba3e4cba09bc8"
+        },
+        "executions": [
+          {
+            "name": "canonical-registration",
+            "startedAtUtc": "2026-10-11T18:24:29.2878101Z",
+            "finishedAtUtc": "2026-10-11T18:24:32.4855888Z",
+            "exitCode": 0,
+            "timeout": false,
+            "stdoutSHA256": "30e9f0777fe7bdc8971a474e48ec5376757f24db2bc2ff15d85befd01d9200d5",
+            "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      }
+    },
+    "scope": "Genuine canonical graphs before assigned mutations; finite structural boundary guards, not a general parser or sandbox."
+  },
+  "strictTypes": {
+    "status": "PASS",
+    "ordinaryNegatives": 15,
+    "importNegatives": 11,
+    "positiveDOMFree": true,
+    "unsuppressed": true,
+    "exactFileLineCode": true,
+    "receipt": {
+      "identity": {
+        "bytes": 1547,
+        "sha256": "5ac3bb3cf2ac7802caf578b107e1d9585ebbde310b9f1b74d4d3b25e87db6a40"
+      },
+      "executions": [
+        {
+          "name": "strict-types",
+          "startedAtUtc": "2026-10-11T18:36:23.5210151Z",
+          "finishedAtUtc": "2026-10-11T18:36:27.2445474Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "3dcfb021be71b5cd53b4d519c9fbdb5c4c3428c2c0fa87e08f6202d9a31c6fa5",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "finite-policy",
+          "startedAtUtc": "2026-10-11T18:36:27.2672400Z",
+          "finishedAtUtc": "2026-10-11T18:37:50.1908866Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "f5c5f14035d1da361b30548665c166bad794a7f2654fa015ff9c8ae3d12afd35",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "sourceMapReceipt": {
+      "bytes": 12421,
+      "sha256": "08c4bd731fe9acc559d3f7c3a628e49d64149d821c925de6f45db312f87d4b57"
+    }
+  },
+  "independentReviews": {
+    "source": {
+      "bytes": 11394,
+      "sha256": "f95f26fe502c7a709c78cb73cdba64dd3a51c24fa88e28f3f851ceae9692128d"
+    },
+    "deliveredLeaseCoverage": {
+      "bytes": 8460,
+      "sha256": "2a4474d89064b60f1df33cbec9fa5547d1ba5a7003e7759ad92a2ab2ab6b5972"
+    },
+    "policy": {
+      "bytes": 12543,
+      "sha256": "2eec6ee2a62ad3d9f406803c412960d0c24440f9fa8b9ae5ba916a4e825a018e"
+    },
+    "policySuccessor": {
+      "bytes": 6079,
+      "sha256": "81b8a6b7d4e90c635ba1f47d811116c109f2f5176fe6ff5f5a6875ae3ae64b3a"
+    },
+    "sourceReviewIsRuntimePass": false
+  },
+  "retainedDesktop": {
+    "status": "ACTUAL_SEVEN_PROFILE_REGRESSIONS_PASS",
+    "browser": "154.0.4258.62",
+    "playwright": "1.62.1",
+    "headless": true,
+    "callerAddedFlags": [],
+    "receipt": {
+      "identity": {
+        "bytes": 8275,
+        "sha256": "9e8dfcdf966efd56f5570d9a7b90a7b656e4583ebc1a01073b549c1228cfccfa"
+      },
+      "executions": [
+        {
+          "name": "canvas",
+          "startedAtUtc": "2026-10-11T18:49:16.2257849Z",
+          "finishedAtUtc": "2026-10-11T18:49:17.8667036Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "bbbd9efb6f3de286717496ff44b76bfc5fd024df201c2f4f25fe38c17a693712",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "webgpu",
+          "startedAtUtc": "2026-10-11T18:49:17.8885849Z",
+          "finishedAtUtc": "2026-10-11T18:49:26.5170388Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "d7479dbbd6ff9d9c27a4a8548819ad03b03f5d1ee7c427db00c2df4264fd8e36",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "b1",
+          "startedAtUtc": "2026-10-11T18:49:26.5241363Z",
+          "finishedAtUtc": "2026-10-11T18:49:29.7107170Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "b9dfc1102fb8e334f43689a01d2b3082cbf8f36875358004a71913746307c2da",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "freeze",
+          "startedAtUtc": "2026-10-11T18:49:29.7154449Z",
+          "finishedAtUtc": "2026-10-11T18:49:32.0466516Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "7714f70bad48bc94927762e6d4a915e2d04e6b913e0d6a5d5f1d3d47cc66b148",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "textured",
+          "startedAtUtc": "2026-10-11T18:49:32.0528049Z",
+          "finishedAtUtc": "2026-10-11T18:49:50.9379910Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "ccaa557192c29cd5b6b015fe5845b9f2e149976397677a9c31705deb06f72fab",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "sequence",
+          "startedAtUtc": "2026-10-11T18:49:50.9435428Z",
+          "finishedAtUtc": "2026-10-11T18:49:52.6717710Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "6a781e3784afb1c1307d9965e600db123d57b30050acac6f2ec88eca4864995f",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "canvas-text-native",
+          "startedAtUtc": "2026-10-11T18:49:52.6784005Z",
+          "finishedAtUtc": "2026-10-11T18:50:02.1663795Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "acd17209af788116306d8aef80150959b8d348affb92a98d5ca1e4d5fb6f4647",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "picking-native",
+          "startedAtUtc": "2026-10-11T18:50:02.1720303Z",
+          "finishedAtUtc": "2026-10-11T18:50:04.9981074Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "16cb8a8178360f8cd50a2e6b615754b040904411444140cd6223ba9be0af094c",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "profiles": [
+      {
+        "name": "canvas",
+        "status": "ACTUAL_VERIFIER_EXIT_ZERO_WITH_LITERAL_CHECKS_AND_ASSIGNED_NEGATIVE",
+        "identity": {
+          "bytes": 3020,
+          "sha256": "bbbd9efb6f3de286717496ff44b76bfc5fd024df201c2f4f25fe38c17a693712"
+        },
+        "scope": "Desktop Canvas only; no device, GPU or performance conclusion"
+      },
+      {
+        "name": "webgpu",
+        "status": "PASS",
+        "identity": {
+          "bytes": 2174596,
+          "sha256": "17466d4844cd9448aa283f7d299133fc4547a4e0e91162466ee48f474434ea2f"
+        },
+        "scope": "Retained desktop profile on the integrated SDK, at its saved input cutoff. This profile does not exercise an RG1 browser acquisition application."
+      },
+      {
+        "name": "b1",
+        "status": "PASS",
+        "identity": {
+          "bytes": 386574,
+          "sha256": "e4cfd25c93108fb072b1d78f856021ecdcc893d2f2105826bd60648ab4a8c87a"
+        },
+        "scope": "Retained desktop profile on the integrated SDK, at its saved input cutoff. This profile does not exercise an RG1 browser acquisition application."
+      },
+      {
+        "name": "textured",
+        "status": "PASS",
+        "identity": {
+          "bytes": 2851331,
+          "sha256": "63a1ed080972e13721f5d4a62b4383b4665db031adf350e3920addfb7d2c0e1a"
+        },
+        "scope": "Retained desktop profile on the integrated SDK, at its saved input cutoff. This profile does not exercise an RG1 browser acquisition application."
+      },
+      {
+        "name": "sequence",
+        "status": "PASS_OPAQUE_REGION_SUBSET",
+        "identity": {
+          "bytes": 73039,
+          "sha256": "113c33979c1de69a6cf9d1c14fc1938f2231acabe4b54b0958e62ec9cdeb7fb6"
+        },
+        "scope": "Retained desktop profile on the integrated SDK, at its saved input cutoff. This profile does not exercise an RG1 browser acquisition application."
+      },
+      {
+        "name": "canvas-text",
+        "status": "PASS_WC1_CANVAS_SUBSET",
+        "identity": {
+          "bytes": 195204,
+          "sha256": "e6a238f2b6efc2b988b04648086c2777e989a101163e15bd485dbdaff449a683"
+        },
+        "scope": "Retained desktop profile on the integrated SDK, at its saved input cutoff. This profile does not exercise an RG1 browser acquisition application."
+      },
+      {
+        "name": "picking",
+        "status": "PASS_DESKTOP_HT1_CANVAS_SUBSET",
+        "identity": {
+          "bytes": 8141,
+          "sha256": "76ea6a18cbd8167e5f0899bf0235e4056467d665fc019aa86ba5a93dee657c52"
+        },
+        "scope": "Retained desktop profile on the integrated SDK, at its saved input cutoff. This profile does not exercise an RG1 browser acquisition application."
+      }
+    ],
+    "scope": "Current SDK regression snapshots before RG1 publication metadata. No RG1-specific browser group composition, physical-device or performance acceptance."
+  },
+  "displayPickingDeliverySuccessor": {
+    "engineeringLabel": "0.30.0",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/17",
+    "head": "6cfc5e53d1c5daa287c003b24bca6f54861cc536",
+    "mergedMain": "cd19ac07b8994b19ed777d1c2483a07c852fc1b9",
+    "tree": "828cd68ce8d86fc339848d5e9d4a10a443af6eba",
+    "mandatoryHook": "ACTUAL_PASS",
+    "coreTests": 2377,
+    "publicationTests": 63,
+    "remoteStatusCount": 0,
+    "remoteCheckCount": 0,
+    "scope": "Actual prior delivery successor; no remote CI pass is inferred from zero checks."
+  },
+  "fullVerification": "ACTUAL_COMPLETE_PREPUSH_PASS",
+  "publicationStructure": "ACTUAL_COMPLETE_PREPUSH_PASS",
+  "independentBilingualMeaningReview": "PENDING",
+  "mandatoryGitPushHook": "PENDING",
+  "remoteDelivery": "PENDING",
+  "origin": {
+    "firstPartyImplementation": "Independently authored AI-assisted Egret implementation, fixtures, finite engineering guards and paired documents under Apache-2.0.",
+    "newRuntimeDependencies": [],
+    "newExternalAssets": []
+  },
+  "limits": {
+    "atomicBundle": false,
+    "globalNetworkConcurrency": false,
+    "providerCompletionWait": false,
+    "progressCallbacks": false,
+    "browserGroupApplication": false,
+    "physicalMobileDevices": false,
+    "physicalMemoryReclamation": false,
+    "CJKPerformance": false,
+    "fullSpine": false,
+    "fullUI": false,
+    "full3D": false,
+    "completeMigration": false,
+    "performanceLeadership": false
+  },
+  "historicalCutoffsPreserved": true,
+  "originalMissingFactoryRed": {
+    "status": "ACTUAL_ASSIGNED_RED",
+    "receipt": {
+      "bytes": 2501,
+      "sha256": "46c010d042a782e5dba41e37394b9e877316001eaa19ab7ebefc4ffb85692d46"
+    },
+    "initialCollectorFormatReceipt": {
+      "bytes": 1823,
+      "sha256": "de554447114a5fcf318098c430f94eaa17ec03c36c54d65ef7010a668dbc6c3e"
+    },
+    "startedAtUtc": "2026-10-11T17:44:21.737Z",
+    "finishedAtUtc": "2026-10-11T17:44:21.907Z",
+    "exitCode": 1,
+    "timeout": false,
+    "tests": 1,
+    "passed": 0,
+    "failed": 1,
+    "assignedFailure": "RG1_MISSING_FACTORY: expected function, actual undefined",
+    "stdout": {
+      "bytes": 1292,
+      "sha256": "69e4c22ecb41281dd25077f058532e8a1ee74e006c700813b528541f7753f7c5"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "sdkInputs": 343,
+    "inputsBeforeSHA256": "b716133cef06cb508cf4a67ecc731f40bd3d1b1b6a39dcdf58c26dea6dd200e7",
+    "inputsAfterSHA256": "b716133cef06cb508cf4a67ecc731f40bd3d1b1b6a39dcdf58c26dea6dd200e7",
+    "scopeClosed": true,
+    "providerLoads": 1,
+    "providerDisposals": 1,
+    "engineCloseAwaited": true,
+    "collectorCorrection": {
+      "validationOnlyUTC": "2026-10-11T17:45:18.025Z",
+      "actualTestRerun": false,
+      "correction": "Read actual Node spec reporter counters and unprefixed cleanup marker; preserved initial receipt, stdout/stderr and before/after SDK pins. No product changes."
+    },
+    "scope": "Genuine Engine/Scope/provider setup and cleanup before the missing public factory witness. The reporter parser was corrected against retained output without rerunning or changing the product."
+  },
+  "retainedSetupFailures": [
+    {
+      "scope": "PRIVATE_JUNCTION_TARGET_SETUP_FAILURE_BEFORE_FEATURE_TESTS",
+      "receipt": {
+        "bytes": 713,
+        "sha256": "6b26b2534f4f096ff196517464d6c8539348e08fda1e94bff47c460f5f6d6489"
+      },
+      "executions": [
+        {
+          "name": "build",
+          "startedAtUtc": "2026-10-11T18:13:40.6854761Z",
+          "finishedAtUtc": "2026-10-11T18:13:41.0851982Z",
+          "exitCode": 1,
+          "timeout": false,
+          "stdoutSHA256": "90dfa7e5644f6773dc88dd45eb8e196f89dde10cc628d54bc7f995dce0b11420",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "scope": "PINNED_THIRD_PARTY_DEPENDENCY_SETUP_FAILURE_BEFORE_FEATURE_TESTS",
+      "receipt": {
+        "bytes": 707,
+        "sha256": "42f0a830b321faf8d0ca52b67a9df2b5ee5cca4a26394dbf719b3854e2d0e4c1"
+      },
+      "executions": [
+        {
+          "name": "build",
+          "startedAtUtc": "2026-10-11T18:16:05.6645038Z",
+          "finishedAtUtc": "2026-10-11T18:16:06.2667732Z",
+          "exitCode": 1,
+          "timeout": false,
+          "stdoutSHA256": "97230b84f89429bcb508fc7de554fbc73d5aced066f7cd574916e3fc368c3741",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    }
+  ],
+  "independentNativeRegressionReview": {
+    "status": "PASS_SAVED_RG1_INTEGRATION_RETAINED_DESKTOP_REGRESSIONS",
+    "openFindings": 0,
+    "receipt": {
+      "bytes": 20667,
+      "sha256": "ba4248890285256b15263a85dfe4d0c50e65a754ab98051d5bbe3a3f5368c3d3"
+    },
+    "scope": "Finite saved actual seven-profile desktop regression admission and identified SDK code/artifact readback. Canvas plain stdout has no independent per-profile input envelope. No reviewer execution or RG1-specific browser acceptance."
+  },
+  "publicBoundaryAndTypeSuccessor": {
+    "status": "ACTUAL_PASS",
+    "receipt": {
+      "bytes": 1552,
+      "sha256": "ba2ac5b894ea80bfef4305b81c67a3d8ef8a0bde613acb68dbbe36650f5744f7"
+    },
+    "executions": [
+      {
+        "name": "public-boundary",
+        "startedAtUtc": "2026-10-11T19:01:40.5147968Z",
+        "finishedAtUtc": "2026-10-11T19:01:40.9411193Z",
+        "exitCode": 0,
+        "timeout": false,
+        "stdoutSHA256": "0f201dbf4c5967033c81736b807886531fa7a43e02cf02734f1b1c6f684ef86c",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "public-strict-types",
+        "startedAtUtc": "2026-10-11T19:01:40.9616971Z",
+        "finishedAtUtc": "2026-10-11T19:01:44.6743083Z",
+        "exitCode": 0,
+        "timeout": false,
+        "stdoutSHA256": "f1edbe7f05f382136b5275f6117f66c1683e64df7e517fef2838a8ab20c3c27a",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "scope": "Actual adopted public source/declaration/export boundary and strict DOM-free/negative consumers. This succeeds the earlier private type cutoff and does not replace the separate complete publication gate."
+  },
+  "publicReadings": [
+    "knowledge-base/en/docs/resource-acquisition-groups.md",
+    "knowledge-base/Cns/docs/资源批量获取.md"
+  ],
+  "initialDocumentationCutoffUTC": "2026-10-11T18:50:31.6265177Z",
+  "documentationSnapshotScope": "One combined contract/usage/evidence reading pair, finite paired navigation and canonical registry additions. Later complete-gate and delivery facts are separate successors; historical cutoffs remain fixed.",
+  "retainedCompletePrepushFailure": {
+    "status": "ACTUAL_COMPLETE_PREPUSH_FAILED",
+    "startedAtUtc": "2026-10-11T19:08:09.2610366Z",
+    "finishedAtUtc": "2026-10-11T19:10:09.0631560Z",
+    "exitCode": 1,
+    "timeout": false,
+    "core": {
+      "tests": 2441,
+      "passed": 2254,
+      "failed": 187,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "publication": {
+      "tests": 63,
+      "passed": 63,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "receipt": {
+      "bytes": 754,
+      "sha256": "3dbd41875045ad577af1597f2c74c55f56b3a0d182abfb956a3325bb0a9b9992"
+    },
+    "stdoutSHA256": "5eb624c750db5a35fdff7cc1a3bf1c0438fb7c71f40bf99c2209a6518c86a7ca",
+    "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "observedGuard": "root: exact AssetGroup type-only export surface mismatch",
+    "scope": "The retained synthetic canonical boundary fixture lacks the newly mandatory RG1 interface. Old assigned controls cannot reach their intended mutations until this baseline is repaired. This failed receipt remains distinct from later verification."
+  },
+  "retainedBoundaryFixtureSuccessor": {
+    "status": "INDEPENDENT_SOURCE_REVIEW_AND_ACTUAL_COMPLETE_PREPUSH_PASS",
+    "path": "tests/boundaries.test.mjs",
+    "original": {
+      "path": "tests/boundaries.test.mjs",
+      "bytes": 49876,
+      "sha256": "2eb6deae78280003d708a83ca1d40dbe22c560ba6b82498fa16597ede7f703ce"
+    },
+    "candidate": {
+      "path": "tests/boundaries.test.mjs",
+      "bytes": 53695,
+      "sha256": "8a011b06a897131c7a4295f892de6db6c0060131e8e509f8267ece60f5eaa90d"
+    },
+    "manifest": {
+      "bytes": 4035,
+      "sha256": "72d96f75785d678d360967193e051468a6fd6bd4597c378aaea928488e106877"
+    },
+    "review": {
+      "verdict": "PASS_FINITE_RETAINED_BOUNDARY_FIXTURE_SHAPE_REPAIR_SOURCE_ONLY",
+      "openFindings": 0,
+      "receipt": {
+        "bytes": 3609,
+        "sha256": "b946ff8d42a811ed9fcb08f7d6b13e64c6a44705a8dddaa3999ce7f709774657"
+      }
+    },
+    "scope": "Minimal inert canonical RG1 interface scaffolding in the retained policy fixture. Existing negative mutations and expected reasons remain unchanged. No product/checker behavior, exemption or acceptance claim is added.",
+    "originalFocusedRed": {
+      "status": "ACTUAL_RETAINED_CANONICAL_FIXTURE_RED",
+      "startedAtUtc": "2026-10-11T19:18:11.7779351Z",
+      "finishedAtUtc": "2026-10-11T19:18:12.3228458Z",
+      "exitCode": 1,
+      "timeout": false,
+      "tests": 1,
+      "passed": 0,
+      "failed": 1,
+      "receipt": {
+        "bytes": 961,
+        "sha256": "3fa42aae2474e1895981073fe07449be71ba04f834f0e8322b4365d6706cfc31"
+      },
+      "stdoutSHA256": "b947ff8c9f50277704fdfb63c020eb4f5f4af97144930188d8263bcbae04177f",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "assignedFailure": "root: exact AssetGroup type-only export surface mismatch"
+    },
+    "initialStatus": "INDEPENDENTLY_REVIEWED_FIXTURE_ONLY_REPAIR_PENDING_ACTUAL_SUCCESSOR",
+    "actualSuccessor": "ACTUAL_COMPLETE_PREPUSH_PASS_WITH_ALL_RETAINED_CONTROLS",
+    "actualRetainedFixtureGate": {
+      "status": "ACTUAL_ALL_RETAINED_BOUNDARY_FIXTURES_PASS",
+      "startedAtUtc": "2026-10-11T19:23:28.6254123Z",
+      "finishedAtUtc": "2026-10-11T19:25:37.8263194Z",
+      "exitCode": 0,
+      "timeout": false,
+      "tests": 221,
+      "passed": 221,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "receipt": {
+        "bytes": 837,
+        "sha256": "bb7e85f120ab05229a88948c3ad6882d44d4724674c86a864ec38ad610753f0b"
+      },
+      "stdoutSHA256": "49cdce305823c8e1264df428e9e6365843a4a80c0abe059cb72e7008706ace6a",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scope": "All retained boundary fixtures at the repaired canonical baseline. These 221 records overlap the later complete core gate and are not added to its total."
+    }
+  },
+  "prepushSuccessor": {
+    "completedAtUtc": "2026-10-11T19:29:30.4938423Z",
+    "exitCode": 0,
+    "timeout": false,
+    "core": {
+      "tests": 2441,
+      "passed": 2441,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "publication": {
+      "tests": 63,
+      "passed": 63,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "documents": 141,
+      "registryViews": 6,
+      "criticalSources": 157
+    },
+    "knowledgeBase": {
+      "records": 161,
+      "markdown": 245,
+      "links": 2011,
+      "references": 974,
+      "issues": 0
+    },
+    "headless": "Closed scopes, disposed nodes and zero pending timers.",
+    "receipt": {
+      "bytes": 760,
+      "sha256": "818992d779401f00542705bd0292f4d1ef729370ca2a447fcc0ac67e2fb7484a"
+    },
+    "stdoutSHA256": "543f944f49a5227a52cae419de896dc4b4b0821b36bc52c82e30f55098ddf086",
+    "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "scope": "Actual complete adopted-source build/type/boundary/core/publication/headless/KB gates after the fixture-only repair. This factual metadata-only successor retains the failed complete run and earlier documentation cutoff. Independent public meaning/byte review and the mandatory Git push hook remain separate."
+  },
+  "independentPublicMeaningSuccessor": {
+    "status": "PASS_FINITE_RG1_BILINGUAL_PUBLIC_MEANING_AND_EXACT_39_BYTE_REVIEW",
+    "openFindings": 0,
+    "receipt": {
+      "bytes": 14769,
+      "sha256": "d1e5621ca6435bb6933379617b7ccf7563907e55c740984d8448e1e656b1755a"
+    },
+    "reviewedFiles": 39,
+    "scope": "Independent finite bilingual meaning, provenance, critical English comment and saved receipt review at the fixed 39-file cutoff. The following enrollment changes only three factual metadata records and is subject to separate exact byte readback. No reviewer test/build/browser/Git execution."
+  }
+}

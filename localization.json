@@ -92,8 +92,8 @@
       "zh": "DOCUMENTATION.zh-CN.md",
       "en": "DOCUMENTATION.md",
       "kind": "public_reading",
-      "enSha256": "a90bcbb5e52442fa75f7bd7ad46dcba19abc8d78dcb0b9e9948c5f54e0a03be8",
-      "zhSha256": "4275596c6abb8c11e319f2b968b57b40ebca9e768df72525c3a7a32449cdcc92"
+      "enSha256": "2bc86913a3043b4bad285ee052ed0728fe31cb18a611e17a14ef1ad96b624b29",
+      "zhSha256": "3fc40b0d139cddfe9d2a9ee3100ab453db36c7d771151056533a13019ca14104"
     },
     {
       "zh": "examples/canvas-scene/README.zh-CN.md",
@@ -141,8 +141,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "bf9bd10549a35cbdc6bed78a4fd3be497ea7fc57494bfbb23d3072ed16f063dc",
-      "zhSha256": "c57da1511d6e379064ed28399c9b62bc170cae5d382e070c020a13ad899fa1de"
+      "enSha256": "2bb053752b41f79b202046f0d97e3c8965fa79049a32c9ee53f975fe1e242a35",
+      "zhSha256": "b63b2b6ab160c565e71fc65ab57fdd0b859876f29a7700244791f12a26d8421c"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -764,8 +764,8 @@
       "zh": "knowledge-base/Cns/README.md",
       "en": "knowledge-base/en/README.md",
       "kind": "public_reading",
-      "enSha256": "6e346aafffd62ee471377f3a4b53dca52f8acb6c7283b84423e8a41eb3d4c6fb",
-      "zhSha256": "24bfce06a106b4344c9de7a51cb9deec65a0558941f3916f9a2d1ec4018a222c"
+      "enSha256": "a9e0bb655fa5e3d68809bad799a85f3563a38c97e91ffd56b008a6e9c72a5e51",
+      "zhSha256": "a8337454a66c0c034293d02feba6b1a0beef887a59d3190abc1a28efa46e329b"
     },
     {
       "zh": "knowledge-base/Cns/templates/ADR决策记录.md",
@@ -848,8 +848,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "3c8f4ea89da6c082b05e7b3a2b49fcc29ce3f0f0107a941ffe856070098ef1e3",
-      "zhSha256": "91f843173ea050ef050d7b44c7a616d248b1b39a612c96dcf3a3c290f403bd10"
+      "enSha256": "d4b00dd8f8a362c9e0356227077cc60931c508ad0d8de302272a09be1241f9e7",
+      "zhSha256": "7e3af36191ac5f923b7a15b7d2f65df0f21a686986adf4dfa69f248aa57c445a"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -1032,6 +1032,13 @@
       "kind": "public_reading",
       "enSha256": "c4c73ff0b3b95619f05276af2f578262de5efa429daaa48bbc89ea09b6663754",
       "zhSha256": "0accd87786662dd8f63bb2c72e0d3c147a65d25a606706b96b88bebb9c4c44cf"
+    },
+    {
+      "en": "knowledge-base/en/docs/resource-acquisition-groups.md",
+      "zh": "knowledge-base/Cns/docs/资源批量获取.md",
+      "kind": "public_reading",
+      "enSha256": "57ba4b556649533ae513acd24faa94750edca2c6006acc601965c6bfa11b7603",
+      "zhSha256": "a8051df39c1281eae42f3a3fd1852944788cdc6e120de5422e73e4c9ed60763b"
     }
   ],
   "registries": [
@@ -1056,20 +1063,20 @@
     {
       "source": "knowledge-base/Cns/registry/交付.json",
       "target": "knowledge-base/en/registry/deliverables.json",
-      "sourceSha256": "8b8b81fa4fe6686257ad94a2a33312ff2327b161cbb9d22c4ff79ff74a74ab88",
-      "targetSha256": "ed7ea4a4a67ea40d2e452aa273327b773bfa6b150f2329229ba665084ea115cd"
+      "sourceSha256": "67001cd06bc8e7c8a3ad29bcc39fa87ace5e83b72efb9bc4b8c2e8cfbafc5069",
+      "targetSha256": "b9324a3fdfb9fa03778dc34eb60f9c6e2182eae3868275cf51569d21834f6b26"
     },
     {
       "source": "knowledge-base/Cns/registry/来源.json",
       "target": "knowledge-base/en/registry/sources.json",
-      "sourceSha256": "51855cfab06bbcf10bddd5ef54180476e39b75b0a28c6001e3d5b0433a9b1858",
-      "targetSha256": "bfce2ac670d6a6b47cdf562af7263c438a0d073243a185e185e7d37fcb11d488"
+      "sourceSha256": "273e46dc752cb3a0990ddf28c88fa78df01b97e9b7ae8c39bac9b09846e664b1",
+      "targetSha256": "bb0a9cc89703083abb3163a7a8de0568d3846ca1d5aeacce65dc84dbeb04ce5f"
     },
     {
       "source": "knowledge-base/Cns/当前版本.json",
       "target": "knowledge-base/en/current-version.json",
-      "sourceSha256": "1010c39e079cc04785b1fdef93035e13eebdfc1754ce1ca0bf66d38416c31b40",
-      "targetSha256": "5786debf8a04919e77378ceb62b8808b6e95e71b3795bbe488ea641468b7aec6"
+      "sourceSha256": "4fc3fbf6b38ab5adb0c5091d631983a42d938ecafaad194b0ba4c86f13026f65",
+      "targetSha256": "9e713912271eadab4c3d5cfc33a52424549d823154767bc9bfebacf2e564c33e"
     }
   ],
   "criticalComments": [
@@ -1159,7 +1166,7 @@
     },
     {
       "path": "packages/engine/src/Engine.ts",
-      "sha256": "0d5191166d9cc58489109e474f28ec4e6d3d6c97f6ee09b6e26d0aa0988a3940"
+      "sha256": "d622327f839bc93578215919c76148424ccc6ecbb510fe3972087cb811d45dbc"
     },
     {
       "path": "packages/engine/src/closeHost.ts",
@@ -1331,7 +1338,7 @@
     },
     {
       "path": "packages/runtime/src/AssetManager.ts",
-      "sha256": "be7c1b5d008395328429e3f75d539d8e979b840c8d80868e838e62a84c19bb2f"
+      "sha256": "800760598f41e47d092cfc7d91ae3c4e21035bcaf4883618c932b6c9884aa0a6"
     },
     {
       "path": "packages/runtime/src/AssetRef.ts",
@@ -1411,7 +1418,7 @@
     },
     {
       "path": "packages/runtime/src/ownership.ts",
-      "sha256": "18c982d0a92eadc3d9e235cf65b40e5adea364304c8ad9620f429baae20b033b"
+      "sha256": "2a71e3d75994f86ad9817dea349b3ce58344e55c9dc1e6d664a69add599a758a"
     },
     {
       "path": "packages/engine/rendering/sceneFrame3D.ts",
@@ -1569,7 +1576,7 @@
     },
     {
       "path": "packages/runtime/src/assetManagerOwnerState.ts",
-      "sha256": "1519a2193b7e39184e3b9d500fb935f94129da46b2e47899086794b658e4b333"
+      "sha256": "876d4e019270abda5ac30b710ee2aeec6ebd71dc78a5c5b9d05231e04b5cef15"
     },
     {
       "path": "packages/runtime/src/text/TextRasterCache.ts",
@@ -1694,6 +1701,18 @@
     {
       "path": "tests/fixtures/hit-test-canvas/reference.mjs",
       "sha256": "40e21d7db6d11feb1ab1f615524a2f06f99992489e6639d23144e5738d65cc1b"
+    },
+    {
+      "path": "packages/engine/src/assetGroup.ts",
+      "sha256": "66572c1ac1df6d0e9f64f32d72fbf46b08624ba4c48047179bab6c648af39de3"
+    },
+    {
+      "path": "packages/engine/src/assetGroupTypes.ts",
+      "sha256": "54dee5e40fb6812ad133e621745360bfb368e0656b578b6e11160789275ff5d7"
+    },
+    {
+      "path": "examples/asset-group.mjs",
+      "sha256": "1a5b55c8101f35ed63eec0a57fa15ef956eb621730c7e455d0a9a4090beb7759"
     }
   ],
   "historicalSemanticReview": {
@@ -3761,5 +3780,24 @@
       },
       "scope": "Independent finite review of the current 18 paired readings/navigation/registry documents, source provenance, localization and saved actual verification at the complete-gate cutoff. The original review bytes remain fixed; this successor enrolls only its identity in three metadata files. Subsequent final byte readback remains separate."
     }
+  },
+  "resourceAcquisitionGroupsCuration": {
+    "date": "2026-10-12",
+    "engineeringLabel": "0.31.0",
+    "documents": [
+      "knowledge-base/en/docs/resource-acquisition-groups.md",
+      "knowledge-base/Cns/docs/资源批量获取.md"
+    ],
+    "criticalSources": [
+      "packages/engine/src/assetGroup.ts",
+      "packages/engine/src/assetGroupTypes.ts",
+      "examples/asset-group.mjs"
+    ],
+    "scope": "One combined reading pair and finite paired navigation/registry successors; exact source origins, actual receipts and unverified capability boundaries stay separate.",
+    "publicTone": "Positive independent engineering with explicit observed evidence and limits.",
+    "independentMeaningReview": "PASS_FINITE_RG1_BILINGUAL_PUBLIC_MEANING_AND_EXACT_39_BYTE_REVIEW",
+    "completeSemanticParityClaim": false,
+    "retainedCanonicalFixtureRepair": "INDEPENDENT_SOURCE_REVIEW_AND_ACTUAL_COMPLETE_PREPUSH_PASS",
+    "completeStructuralGate": "ACTUAL_PASS"
   }
 }

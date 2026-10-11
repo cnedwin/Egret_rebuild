@@ -1453,11 +1453,232 @@
         "remoteDelivery": "PENDING",
         "remoteCIPassClaimed": false
       }
+    },
+    {
+      "id": "S084",
+      "type": "first_party_resource_acquisition_group_cpu_strict_type_finite_policy_and_retained_regression_evidence",
+      "researchCheckedAt": "2026-10-12",
+      "title": "First-party resource acquisition groups and bounded acceptance",
+      "scope": "First-party independent RG1 candidate adopted into the public working tree: build, 86/86 combined CPU checks (29 RG1 and 57 retained resource/lifecycle) and the two-texture example passed. Private strict checker accepted retained/new positives and exact unsuppressed 15 ordinary/11 import negatives. Corrected private finite policy passed 35/35 (2 direct, 33 genuine-baseline-first mutants), after independent source coverage review. Seven retained desktop browser profiles passed and one build/freeze command passed.",
+      "limit": "Original missing-feature RED, overlapping private 28/29 results, primary type probe, 34-control pass and assigned one-mutant type-erasure RED remain preserved. Product source review has no blocker, and its late delivered-lease coverage follow-up is addressed; finite policy successor source finding is resolved with zero open findings, separate from actual 35-pass execution. Full current, bilingual/publication review, mandatory push hook and RG1 delivery are pending. Prior 0.30.0 PR17 delivery is separate. Browser results are existing desktop subsets, not a group-based application, whole A2, physical display/OS retirement, phones, performance or full R020/V020 Spine acceptance. Overlapping counts are not summed.",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R011",
+        "R015",
+        "R016",
+        "R017",
+        "R018",
+        "R019"
+      ],
+      "artifacts": [
+        "evidence/resource-acquisition-groups-verification.json"
+      ],
+      "doc": "en/docs/resource-acquisition-groups.md",
+      "evidenceCutoffUTC": "2026-10-11T18:50:31.6265177Z",
+      "candidateEvidence": {
+        "scope": "candidate_cpu_strict_types_finite_policy_and_adopted_working_tree_regressions",
+        "missingFeatureRed": {
+          "tests": 1,
+          "passed": 0,
+          "failed": 1,
+          "exitCode": 1,
+          "assignedFailure": "RG1_MISSING_FACTORY",
+          "genuineBaselineLoads": 1,
+          "genuineBaselineDisposals": 1,
+          "engineCloseAwaited": true,
+          "sdkInputs": 343,
+          "sdkInputsUnchanged": true,
+          "executedAtUTC": "2026-10-11T17:44:21.737Z"
+        },
+        "firstStable": {
+          "buildExitCode": 0,
+          "focusedTests": 28,
+          "focusedPassed": 28,
+          "focusedFailed": 0,
+          "cpuExampleExitCode": 0,
+          "imageCommands": 2,
+          "imageX": [
+            0,
+            1
+          ],
+          "resourceGenerations": [
+            1,
+            1
+          ],
+          "providerDisposals": 2,
+          "pendingTimers": 0,
+          "executedAtUTC": "2026-10-11T18:16:49.0455330Z"
+        },
+        "focusedSuccessor": {
+          "tests": 29,
+          "passed": 29,
+          "failed": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0,
+          "exitCode": 0,
+          "executedAtUTC": "2026-10-11T18:20:15.0503411Z",
+          "lateAlreadyDeliveredLeaseWitness": true,
+          "unchangedProductSourcePins": 8,
+          "overlapsOriginal28": true
+        },
+        "primaryTypes": {
+          "positiveExitCode": 0,
+          "ordinaryNegativeDiagnostics": 15,
+          "importNegativeDiagnostics": 11,
+          "inputsUnchanged": true,
+          "executedAtUTC": "2026-10-11T18:19:16.163Z",
+          "exactCheckerRegistration": "PENDING_AT_HISTORICAL_PROBE_CUTOFF",
+          "strictTypePolicyAcceptance": "PENDING_AT_HISTORICAL_PROBE_CUTOFF"
+        },
+        "independentReview": {
+          "blockingProductSourceFindings": 0,
+          "lateLeaseCoverageFollowUp": "actual_focused_successor_pass_and_finite_source_successor_review_addressed",
+          "directArtificialGroupOperationFaultInjection": "NOT_RUN",
+          "successorReviewedAtUTC": "2026-10-11T18:22:31Z"
+        },
+        "fullCurrent": "PENDING",
+        "policyMutants": "FINITE_35_PASS_OVERLAPS_PRESERVED_34",
+        "bilingualMeaning": "PENDING",
+        "publication": "PENDING",
+        "mandatoryGitPushHook": "PENDING",
+        "remoteDelivery": "PENDING",
+        "remoteCIPassClaimed": false,
+        "browserNativeAcceptance": "RETAINED_DESKTOP_PROFILE_SUBSETS_PASS_RG1_GROUP_APPLICATION_PENDING",
+        "fullSpineR020V020": "PENDING",
+        "strictTypes": {
+          "exitCode": 0,
+          "timeout": false,
+          "startedAtUTC": "2026-10-11T18:36:23.5210151Z",
+          "finishedAtUTC": "2026-10-11T18:36:27.2445474Z",
+          "retainedConsumers": "PASS",
+          "publicPositiveConsumer": "PASS",
+          "ordinaryNegativeDiagnostics": 15,
+          "importNegativeDiagnostics": 11,
+          "exactUnsuppressedFileLineCodeBinding": "PASS",
+          "overlapsPrimaryProbe": true,
+          "executionTree": "PRIVATE"
+        },
+        "finitePolicy": {
+          "tests": 34,
+          "passed": 34,
+          "failed": 0,
+          "exitCode": 0,
+          "timeout": false,
+          "directControls": 2,
+          "baselineFirstMutants": 32,
+          "startedAtUTC": "2026-10-11T18:36:27.2672400Z",
+          "finishedAtUTC": "2026-10-11T18:37:50.1908866Z",
+          "scope": "preserved_original_34_control_finite_pass",
+          "executionTree": "PRIVATE"
+        },
+        "independentPolicyReview": {
+          "reviewedAtUTC": "2026-10-11T18:41:12Z",
+          "oldGuardWeakeningFound": false,
+          "currentProductTypeModuleLeakFound": false,
+          "historicalFinding": "RG-PR-C1_non_exported_emitted_runtime_brand_coverage",
+          "successorSourceReviewAtUTC": "2026-10-11T18:50:17Z",
+          "successorSourceFindingStatus": "RESOLVED",
+          "successorOpenSourceFindings": 0,
+          "sourceReviewIsRuntimePass": false
+        },
+        "typeErasureRed": {
+          "tests": 1,
+          "passed": 0,
+          "failed": 1,
+          "exitCode": 1,
+          "timeout": false,
+          "startedAtUTC": "2026-10-11T18:45:50.3606397Z",
+          "finishedAtUTC": "2026-10-11T18:45:52.7413009Z",
+          "baseline": "genuine_four_package_graph_accepted_before_single_mutant",
+          "mutant": "non_exported_local_runtime_brand_in_emitted_types_module",
+          "failure": "checker_accepted_mutant_instead_of_assigned_refusal",
+          "productModuleChanged": false
+        },
+        "policySuccessor": {
+          "tests": 35,
+          "passed": 35,
+          "failed": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0,
+          "exitCode": 0,
+          "timeout": false,
+          "directControls": 2,
+          "baselineFirstMutants": 33,
+          "startedAtUTC": "2026-10-11T18:49:16.2751238Z",
+          "finishedAtUTC": "2026-10-11T18:50:31.6265177Z",
+          "overlapsOriginal34": true,
+          "executionTree": "PRIVATE",
+          "scope": "finite_exact_emitted_empty_module_guard_and_35_controls"
+        },
+        "adoptedWorkingTreeCore": {
+          "projectedSourceFixturePaths": 16,
+          "projectedPolicyPaths": 3,
+          "buildExitCode": 0,
+          "tests": 86,
+          "passed": 86,
+          "failed": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0,
+          "groupCases": 29,
+          "retainedResourceLifecycleCases": 57,
+          "overlapsPrivateGroupCases": true,
+          "cpuExampleExitCode": 0,
+          "imageCommands": 2,
+          "resourceGenerations": [
+            1,
+            1
+          ],
+          "providerDisposals": 2,
+          "pendingTimers": 0,
+          "startedAtUTC": "2026-10-11T18:47:55.1667948Z",
+          "finishedAtUTC": "2026-10-11T18:47:56.0150482Z"
+        },
+        "retainedBrowserRegressions": {
+          "commands": 8,
+          "browserProfiles": 7,
+          "freezeCommands": 1,
+          "allExitCodes": 0,
+          "timeouts": 0,
+          "startedAtUTC": "2026-10-11T18:49:16.2257849Z",
+          "finishedAtUTC": "2026-10-11T18:50:04.9981074Z",
+          "statuses": {
+            "canvas": "CHECKED_DESKTOP_CANVAS_PIXELS",
+            "webgpu": "PASS",
+            "b1": "PASS",
+            "textured": "PASS",
+            "sequence": "PASS_OPAQUE_REGION_SUBSET",
+            "canvasText": "PASS_WC1_CANVAS_SUBSET",
+            "picking": "PASS_DESKTOP_HT1_CANVAS_SUBSET",
+            "freeze": "BUILD_INPUT_FREEZE_ONLY"
+          },
+          "groupSpecificBrowserApplication": false,
+          "wholeA2": false,
+          "phones": false,
+          "performance": false,
+          "physicalDisplay": false,
+          "osResourceRetirement": false
+        },
+        "precedingDelivery": {
+          "engineeringVersion": "0.30.0",
+          "status": "DELIVERED_SEPARATE_FROM_RG1",
+          "pullRequest": 17,
+          "pullRequestUrl": "https://github.com/cnedwin/Egret_rebuild/pull/17",
+          "mergedMainCommit": "cd19ac07b8994b19ed777d1c2483a07c852fc1b9",
+          "mainTree": "828cd68ce8d86fc339848d5e9d4a10a443af6eba",
+          "localRemoteMainIdentityVerifiedAtUTC": "2026-10-11T18:44:39.383Z",
+          "remoteCIPassClaimed": false
+        }
+      },
+      "urls": []
     }
   ],
   "_localization": {
     "canonicalSource": "来源.json",
-    "canonicalSha256": "51855cfab06bbcf10bddd5ef54180476e39b75b0a28c6001e3d5b0433a9b1858",
+    "canonicalSha256": "273e46dc752cb3a0990ddf28c88fa78df01b97e9b7ae8c39bac9b09846e664b1",
     "role": "read_only_translation",
     "language": "en"
   }

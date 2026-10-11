@@ -17,6 +17,7 @@ export type { EngineContext } from "./ownership.js";
 export { reportDiagnostic } from "./diagnostics.js";
 export { AssetManager, createAssetManager } from "./AssetManager.js";
 export type { AssetProvider, AssetAcquireOptions, AssetLoadContext } from "./AssetManager.js";
+export type { AssetGroupOperations } from './assetManagerOwnerState.js';
 export { AssetLease } from "./AssetLease.js";
 export { createAssetType, createAssetRef } from "./AssetRef.js";
 export type { AssetType, AssetRef } from "./AssetRef.js";

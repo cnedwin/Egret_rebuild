@@ -4,6 +4,14 @@ import type { AssetRef, AssetType } from "./AssetRef.js";
 import { EgretError } from "./EgretError.js";
 import type { EngineContext } from "./ownership.js";
 
+/** @internal Narrow immutable group assembly; no manager or owner lookup escapes. */
+export interface AssetGroupOperations {
+  readonly admitGroupRefs: (refs: readonly unknown[]) => void;
+  readonly acquire: <T>(ref: AssetRef<T>, options?: AssetAcquireOptions) => Promise<AssetLease<T>>;
+  readonly claimGroupLease: (lease: unknown, group: object) => void;
+  readonly releaseGroupLease: (lease: unknown) => void;
+}
+
 /** Private authority installed only by authentic AssetManager construction. */
 interface AssetManagerOwner {
   readonly context: EngineContext;

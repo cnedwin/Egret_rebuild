@@ -1,10 +1,12 @@
 import type { CancellationSignal } from "@egret/contracts";
-import { AssetLease, createAssetLease, revokeAssetLease } from "./AssetLease.js";
+import { AssetLease, createAssetLease, isAssetLease, readAssetLeaseValue, revokeAssetLease } from "./AssetLease.js";
 import { assertAssetRef, assertAssetType } from "./AssetRef.js";
 import type { AssetRef, AssetType } from "./AssetRef.js";
 import { CancellationController } from "./CancellationController.js";
 import { EgretError } from "./EgretError.js";
 import { closeOwnedTextCache, markAssetManagerOwnerClosed, registerAssetManagerOwner } from "./assetManagerOwnerState.js";
+import type { AssetGroupOperations } from './assetManagerOwnerState.js';
+import { claimOwner, engineOf, ownerOf } from './ownership.js';
 import type { EngineContext } from "./ownership.js";
 import type { AssetLoadContext, Entry, Identity, ProviderBinding, Waiter } from "./assetState.js";
 
@@ -54,6 +56,9 @@ export class AssetManager {
     const register = this.prototype.register;
     const acquire = this.prototype.acquire;
     const invalidate = this.prototype.invalidate;
+    const admitGroupRefs = this.prototype.admitGroupRefs;
+    const claimGroupLease = this.prototype.claimGroupLease;
+    const releaseGroupLease = AssetLease.prototype.release;
     bindAssetManagerOwner = (manager, context): void => {
       registerAssetManagerOwner(manager, FREEZE({
         context,
@@ -62,6 +67,18 @@ export class AssetManager {
         acquire: <T>(ref: AssetRef<T>, options?: AssetAcquireOptions): Promise<AssetLease<T>> => APPLY(acquire, manager, [ref, options]) as Promise<AssetLease<T>>,
         invalidate: <T>(ref: AssetRef<T>): void => { APPLY(invalidate, manager, [ref]); },
       }));
+      // Genuine construction alone supplies the captured, frozen narrow bridge.
+      // Text-cache owner state and contexts without this callback are unchanged.
+      const registerGroupOperations = context.registerAssetGroupOperations;
+      if (registerGroupOperations !== undefined) {
+        const operations: AssetGroupOperations = FREEZE({
+          admitGroupRefs: (refs: readonly unknown[]): void => { APPLY(admitGroupRefs, manager, [refs]); },
+          acquire: <T>(ref: AssetRef<T>, options?: AssetAcquireOptions): Promise<AssetLease<T>> => APPLY(acquire, manager, [ref, options]) as Promise<AssetLease<T>>,
+          claimGroupLease: (lease: unknown, group: object): void => { APPLY(claimGroupLease, manager, [lease, group]); },
+          releaseGroupLease: (lease: unknown): void => { APPLY(releaseGroupLease, lease, []); },
+        });
+        APPLY(registerGroupOperations, context, [operations]);
+      }
     };
     createAssetManager = (engine): AssetManager => new AssetManager(engine, CREATION_TOKEN);
   }
@@ -156,6 +173,30 @@ export class AssetManager {
       this.identities.set(ref.id, identity);
     }
     return identity;
+  }
+
+  /** Authenticate all positions without reserving identity or creating demand. */
+  private admitGroupRefs(refs: readonly unknown[]): void {
+    this.assertOpen();
+    const admitted = new Map<string, object>();
+    for (const ref of refs) {
+      assertAssetRef(ref);
+      if (!this.providers.has(ref.type)) throw new EgretError('ASSET_PROVIDER_MISSING');
+      const existing = this.identities.get(ref.id);
+      const inputType = admitted.get(ref.id);
+      if ((existing !== undefined && existing.type !== ref.type)
+        || (inputType !== undefined && inputType !== ref.type)) throw new EgretError('ASSET_TYPE_MISMATCH');
+      admitted.set(ref.id, ref.type);
+    }
+  }
+
+  /** Lease identity, affinity and one cleanup owner are checked before publication. */
+  private claimGroupLease(lease: unknown, group: object): void {
+    this.assertOpen();
+    if (!isAssetLease(lease) || engineOf(lease) !== this.#engine || ownerOf(lease) !== undefined) throw new EgretError('ASSET_GROUP_MEMBER_INVALID');
+    try { readAssetLeaseValue(lease); }
+    catch (cause) { throw new EgretError('ASSET_GROUP_MEMBER_INVALID', { cause }); }
+    claimOwner(lease, group);
   }
 
   /** Invalidation changes future routing, while old demand keeps its own entry. */
