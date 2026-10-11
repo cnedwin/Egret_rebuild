@@ -125,3 +125,74 @@ test('KB local artifact references keep rejecting absolute file URIs',async()=>{
   assert.match(result.stdout,/External or absolute path in local reference: V001/);
  });
 });
+
+
+// Exact named hit-test readings extend the finite reading set; nearby executable
+// or HTML files remain outside it. The original five cases above are unchanged.
+const hitTestReadingFiles=['examples/hit-test/README.md','examples/hit-test/README.zh-CN.md'];
+async function writeHitTestReadings(repository){
+ for(const relative of hitTestReadingFiles){
+  await mkdir(path.dirname(path.join(repository,relative)),{recursive:true});
+  await writeFile(path.join(repository,relative),'owned hit-test reading fixture\n');
+ }
+}
+
+test('KB links accept exactly both existing hit-test README readings from root, nested docs and artifacts',async()=>{
+ await withRepositoryReadingFixture(async({repository,root,validate})=>{
+  await writeHitTestReadings(repository);
+  await writeFile(path.join(root,'README.md'),'# Fixture\n'+hitTestReadingFiles.map(relative=>'[Reading](../'+relative+')').join('\n')+'\n');
+  await writeFile(path.join(root,'en/docs/hit-test.md'),hitTestReadingFiles.map(relative=>'[Reading](../../../'+relative+')').join('\n')+'\n');
+  const registryPath=path.join(root,'registry/deliverables.json');
+  const registry=JSON.parse(await readFile(registryPath,'utf8'));
+  registry.items[0].artifacts=hitTestReadingFiles.map(relative=>'../'+relative);
+  await writeFile(registryPath,JSON.stringify(registry));
+  const result=validate();
+  assert.equal(result.error,undefined,result.stderr);
+  assert.equal(result.status,0,result.stdout+result.stderr);
+  assert.match(result.stdout,/fixture: passed/);
+ });
+});
+
+test('KB hit-test readings do not admit existing sibling documents, modules, HTML or foreign traversal',async()=>{
+ await withRepositoryReadingFixture(async({owned,repository,root,validate})=>{
+  await writeHitTestReadings(repository);
+  const denied=['examples/hit-test/README-other.md','examples/hit-test/scene.mjs','examples/hit-test/index.html'];
+  for(const relative of denied) await writeFile(path.join(repository,relative),'existing unlisted fixture\n');
+  await mkdir(path.join(owned,'foreign'));
+  await writeFile(path.join(owned,'foreign/README.md'),'existing foreign fixture\n');
+  await writeFile(path.join(root,'README.md'),'# Fixture\n'+denied.map(relative=>'[Unlisted](../'+relative+')').join('\n')+'\n[Foreign](../../foreign/README.md)\n');
+  const result=validate();
+  assert.equal(result.error,undefined,result.stderr);
+  assert.equal(result.status,1,result.stdout+result.stderr);
+  for(const relative of denied) assert.ok(result.stdout.includes('Local reference leaves knowledge base: README.md -> ../'+relative),result.stdout);
+  assert.match(result.stdout,/Local reference leaves knowledge base: README\.md -> \.\.\/\.\.\/foreign\/README\.md/);
+  assert.doesNotMatch(result.stdout,/Missing local target/);
+ });
+});
+
+test('KB links reject either missing exact hit-test README as a missing local target',async()=>{
+ await withRepositoryReadingFixture(async({repository,root,validate})=>{
+  await writeHitTestReadings(repository);
+  for(const relative of hitTestReadingFiles) await rm(path.join(repository,relative));
+  await writeFile(path.join(root,'README.md'),'# Fixture\n'+hitTestReadingFiles.map(relative=>'[Missing](../'+relative+')').join('\n')+'\n');
+  const result=validate();
+  assert.equal(result.error,undefined,result.stderr);
+  assert.equal(result.status,1,result.stdout+result.stderr);
+  for(const relative of hitTestReadingFiles) assert.ok(result.stdout.includes('Missing local target: README.md -> ../'+relative),result.stdout);
+  assert.doesNotMatch(result.stdout,/Local reference leaves knowledge base/);
+ });
+});
+
+test('KB hit-test artifact readings do not permit an absolute file URI with an allowed filename',async()=>{
+ await withRepositoryReadingFixture(async({repository,root,validate})=>{
+  await writeHitTestReadings(repository);
+  const registryPath=path.join(root,'registry/deliverables.json');
+  const registry=JSON.parse(await readFile(registryPath,'utf8'));
+  registry.items[0].artifacts=['file:///fixture/examples/hit-test/README.md'];
+  await writeFile(registryPath,JSON.stringify(registry));
+  const result=validate();
+  assert.equal(result.error,undefined,result.stderr);
+  assert.equal(result.status,1,result.stdout+result.stderr);
+  assert.match(result.stdout,/External or absolute path in local reference: V001/);
+ });
+});

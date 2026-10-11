@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "scope": "First-party literal desktop Canvas picking recipe; predictions until actual native collection.",
+  "dimensions": {"logical": [320, 200], "css": [640, 400], "viewport": [900, 700], "deviceScaleFactor": 1},
+  "clear": {"color": 0, "alpha": 1, "rgba": [0, 0, 0, 255], "basis": "Public CanvasHost resets state, clears, then fills the entire surface with the frame clear color/alpha; CSS appearance is not the oracle."},
+  "initialSamples": [
+    {"point": [20, 20], "rgba": [255, 0, 0, 255]},
+    {"point": [56, 48], "rgba": [0, 0, 255, 255]},
+    {"point": [168, 32], "rgba": [0, 255, 0, 255]},
+    {"point": [216, 32], "rgba": [0, 0, 0, 255]},
+    {"point": [20, 132], "rgba": [255, 0, 255, 255]},
+    {"point": [52, 132], "rgba": [255, 255, 0, 255]},
+    {"point": [284, 28], "rgba": [64, 64, 64, 255]}
+  ],
+  "rows": [
+    {"id": "B01", "kind": "ready"},
+    {"id": "B02", "steps": [{"point": [56, 48], "label": "upper", "p": 1, "d": 1, "r": 2, "feedback": 255}]},
+    {"id": "B03", "steps": [{"toggle": "upper", "point": [56, 48], "label": "lower", "p": 2, "d": 2, "r": 4, "feedback": 16711680}, {"toggle": "upper", "point": [56, 48], "label": "upper", "p": 3, "d": 3, "r": 6, "feedback": 255}]},
+    {"id": "B04", "steps": [{"point": [168, 32], "label": "gatedChild", "p": 4, "d": 4, "r": 7, "feedback": 65280}, {"point": [216, 32], "label": null, "p": 5, "d": 4, "r": 7, "feedback": 65280}]},
+    {"id": "B05", "steps": [{"toggle": "gate", "point": [168, 32], "label": null, "p": 6, "d": 4, "r": 8, "feedback": 65280}, {"toggle": "gate", "point": [168, 32], "label": "gatedChild", "p": 7, "d": 5, "r": 10, "feedback": 65280}]},
+    {"id": "B06", "steps": [{"toggle": "children", "point": [168, 32], "label": null, "p": 8, "d": 5, "r": 11, "feedback": 65280}, {"toggle": "children", "point": [168, 32], "label": "gatedChild", "p": 9, "d": 6, "r": 13, "feedback": 65280}]},
+    {"id": "B07", "steps": [{"point": [16, 128], "label": "left", "p": 10, "d": 7, "r": 14, "feedback": 16711935}, {"point": [48, 136], "label": "right", "p": 11, "d": 8, "r": 15, "feedback": 16776960}]},
+    {"id": "B08", "steps": [{"point": [80, 136], "label": null, "p": 12, "d": 8, "r": 15, "feedback": 16776960}, {"point": [20, 160], "label": null, "p": 13, "d": 8, "r": 15, "feedback": 16776960}]},
+    {"id": "B09", "steps": [{"point": [300, 180], "label": null, "p": 14, "d": 8, "r": 15, "feedback": 16776960}]},
+    {"id": "B10", "kind": "close"}
+  ],
+  "sceneSamples": {
+    "B02": [[0, 0, 255, 255]],
+    "B03": [[255, 0, 0, 255], [0, 0, 255, 255]],
+    "B04": [[0, 255, 0, 255], [0, 0, 0, 255]],
+    "B05": [[0, 0, 0, 255], [0, 255, 0, 255]],
+    "B06": [[0, 255, 0, 255], [0, 255, 0, 255]],
+    "B07": [[255, 0, 255, 255], [255, 255, 0, 255]],
+    "B08": [[0, 0, 0, 255], [0, 0, 0, 255]],
+    "B09": [[0, 0, 0, 255]]
+  },
+  "controls": [
+    {"id": "omit-query", "row": "B02", "code": "SELECTED_TARGET", "actualLabel": null},
+    {"id": "omit-css", "row": "B02", "code": "LOGICAL_PAYLOAD", "actualPoint": [112, 96]},
+    {"id": "omit-dispatch", "row": "B02", "code": "TYPED_ROUTE", "actualRoute": [], "note": "Frozen application paints after dispatch; this control still paints/renders blue. Empty route is the assigned witness."},
+    {"id": "capture-only", "row": "B02", "code": "FEEDBACK_PIXEL", "actualRGBA": [64, 64, 64, 255]},
+    {"id": "omit-retirement", "row": "B10", "code": "NATIVE_PAIRS_RETIRED", "actualOutstanding": 6}
+  ],
+  "bounds": {"nodes": 9, "typedSubscriptions": 8, "domPairs": 6, "ledger": 16, "frames": 64, "records": 256, "requests": 512, "awaitMs": 20000, "contextMs": 120000, "cleanupMs": 20000},
+  "lifecycleScope": "Closed Scope and disposed nodes are observed through the frozen scalar port; Scope.signal, Engine state, OS descendants and physical reclamation are not exported native observations. Independent headless evidence covers the genuine lifecycle."
+}

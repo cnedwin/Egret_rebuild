@@ -541,7 +541,7 @@
     "contract": "Cns/docs/显示内容边界契约.md",
     "evidence": "Cns/docs/显示内容边界证据.md"
   },
-  "latestEngineeringPreview": "0.29.0",
+  "latestEngineeringPreview": "0.30.0",
   "texturedMesh2DImplementation": {
     "version": "0.23.0",
     "status": "bounded_increment_implemented",
@@ -1296,6 +1296,387 @@
       "canvasTextSubset": "PASS_WC1_CANVAS_SUBSET",
       "canvasTextContexts": 6,
       "scope": "Fresh actual regressions against the adopted HT1 classes: existing Canvas, WebGPU, B1, textured-WebGPU, sequence-player and opt-in Canvas text. Their own renderer/reference cutoffs remain separate; these are not native pointer picking or mobile/performance acceptance."
+    }
+  },
+  "displayHitTestHT1DeliverySuccessor": {
+    "engineeringPreview": "0.29.0",
+    "status": "ACTUAL_PR_MERGED_MAIN_AND_MANDATORY_PUSH_HOOK_PASS",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/16",
+    "sourceCommit": "6e724971938ec8be4d271066f327814394e0b7fb",
+    "mergedMain": "fb7f15b21cf80345e23490c551552deb4b68061a",
+    "tree": "e79ad52bf85a1efa7835a1d4074c5a4368ca8981",
+    "mandatoryPushHook": "ACTUAL_PASS",
+    "localCoreTests": 2333,
+    "localPublicationTests": 59,
+    "remoteStatusCount": 0,
+    "remoteCheckRunCount": 0,
+    "remoteCIPassClaimed": false,
+    "originalPreparationCutoffsUnchanged": true
+  },
+  "displayPickingExampleImplementation": {
+    "engineeringPreview": "0.30.0",
+    "deliverable": "V034",
+    "sourceId": "S083",
+    "status": "core_public_entry_and_desktop_native_subset_and_complete_local_verification_pass_meaning_hook_and_delivery_pending",
+    "sourceBaseCommit": "fb7f15b21cf80345e23490c551552deb4b68061a",
+    "packageVersion": "0.0.0",
+    "protocolVersion": "1.0",
+    "newSDKAPIs": [],
+    "newPackageExports": [],
+    "newRuntimeDependencies": [],
+    "newExternalAssets": [],
+    "scene": {
+      "logicalWidth": 320,
+      "logicalHeight": 200,
+      "cssWidth": 640,
+      "cssHeight": 400,
+      "totalNodesIncludingStage": 9,
+      "authoredActors": 5,
+      "queryMaxNodes": 9,
+      "typedSubscriptions": 8,
+      "routeRecordsOnHit": 4,
+      "payloadFields": [
+        "globalX",
+        "globalY",
+        "button",
+        "pointerType"
+      ],
+      "feedbackRepaintOwner": "scene_code_after_dispatch_returns",
+      "targetListenersRecordRoute": true,
+      "listenersPaintFeedback": false,
+      "graphicsClearedBeforeRepaint": true,
+      "rendersPerSuccessfulPick": 1,
+      "rendersPerMiss": 0
+    },
+    "input": {
+      "isPrimary": true,
+      "button": 0,
+      "pointerType": "mouse",
+      "finiteCSSOriginAndCoordinates": true,
+      "positiveCSSDimensions": true,
+      "rounding": false,
+      "clamping": false,
+      "DPRMultiplication": false
+    },
+    "lifetime": {
+      "domCallbackPairs": 6,
+      "sharedClosePromise": true,
+      "allRemovalAttemptsDespiteFailure": true,
+      "acquisitionDoesNotAwaitClose": true,
+      "lateEngineRetiredWithoutScene": true,
+      "initialRenderReentryCheckedBeforeReady": true,
+      "firstThrownUndefinedPreserved": true,
+      "scopeThenEngineThenBorrowedCanvas": true
+    },
+    "actualPublicEntry": {
+      "status": "PASS",
+      "tests": 12,
+      "passed": 12,
+      "failed": 0,
+      "timeout": false,
+      "privateAliasLoader": false,
+      "stdoutSHA256": "c7b30ab0a5cb88dcf542fa9b87dddf371ccc8f08ce9dbe3c39f5d61e1d0a18ca"
+    },
+    "actualPrivateEnvelope": {
+      "status": "PASS",
+      "tests": 12,
+      "passed": 12,
+      "failed": 0,
+      "sdkLoadedInputs": 60,
+      "candidateFiles": 5,
+      "candidateBeforeAfterUnchanged": true,
+      "sdkInputsUnchanged": true,
+      "stdoutSHA256": "2b0bce973dcf3cdc0abaad623c779286b0828221544a6caaae2c1f114d8dfa16",
+      "scope": "Genuine SDK and Node EventTarget; separate overlapping headless execution"
+    },
+    "independentCoreReview": {
+      "status": "PASS_BOUNDED_PRIVATE_APPLICATION_CORE_AND_SAVED_TWELVE_CASES",
+      "openFindings": 0,
+      "sourceAndSavedEnvelopeScope": true
+    },
+    "retainedFailures": [
+      "Windows_import_setup_not_product_RED",
+      "missing_scene_application_main_modules",
+      "invented_dispatch_corrected_to_existing_dispatchEvent",
+      "initial_render_pagehide_Ready_revival_RED"
+    ],
+    "nativeBrowserInput": "PASS_DESKTOP_HT1_CANVAS_SUBSET",
+    "nativeDOMPairRetirement": "PASS_DESKTOP_HT1_CANVAS_SUBSET",
+    "nativeCanvasPixels": "PASS_DESKTOP_HT1_CANVAS_SUBSET",
+    "fiveProjectionControls": "PASS_ASSIGNED_CONTROL_SENSITIVITY",
+    "finalWholeVerification": "PASS",
+    "finalPublication": "PASS_STRUCTURAL_PUBLICATION_ONLY",
+    "independentBilingualMeaningReview": "PENDING",
+    "mandatoryGitPushHook": "PENDING",
+    "remoteDelivery": "PENDING",
+    "completeInputRouterAccepted": false,
+    "gesturesAccepted": false,
+    "fullUIAccepted": false,
+    "fullSpineAccepted": false,
+    "threeDInputAccepted": false,
+    "physicalPhonesAccepted": false,
+    "performanceAccepted": false,
+    "fullMigrationAccepted": false,
+    "historicalCutoffsPreserved": true,
+    "evidence": [
+      "evidence/display-picking-example-verification.json"
+    ],
+    "documents": [
+      "Cns/docs/显示拾取示例.md"
+    ],
+    "preparationCutoff": {
+      "engineeringPreview": "0.30.0",
+      "deliverable": "V034",
+      "sourceId": "S083",
+      "status": "core_implemented_public_entry_headless_pass_native_whole_publication_meaning_and_delivery_pending",
+      "sourceBaseCommit": "fb7f15b21cf80345e23490c551552deb4b68061a",
+      "packageVersion": "0.0.0",
+      "protocolVersion": "1.0",
+      "newSDKAPIs": [],
+      "newPackageExports": [],
+      "newRuntimeDependencies": [],
+      "newExternalAssets": [],
+      "scene": {
+        "logicalWidth": 320,
+        "logicalHeight": 200,
+        "cssWidth": 640,
+        "cssHeight": 400,
+        "totalNodesIncludingStage": 9,
+        "authoredActors": 5,
+        "queryMaxNodes": 9,
+        "typedSubscriptions": 8,
+        "routeRecordsOnHit": 4,
+        "payloadFields": [
+          "globalX",
+          "globalY",
+          "button",
+          "pointerType"
+        ],
+        "feedbackRepaintOwner": "scene_code_after_dispatch_returns",
+        "targetListenersRecordRoute": true,
+        "listenersPaintFeedback": false,
+        "graphicsClearedBeforeRepaint": true,
+        "rendersPerSuccessfulPick": 1,
+        "rendersPerMiss": 0
+      },
+      "input": {
+        "isPrimary": true,
+        "button": 0,
+        "pointerType": "mouse",
+        "finiteCSSOriginAndCoordinates": true,
+        "positiveCSSDimensions": true,
+        "rounding": false,
+        "clamping": false,
+        "DPRMultiplication": false
+      },
+      "lifetime": {
+        "domCallbackPairs": 6,
+        "sharedClosePromise": true,
+        "allRemovalAttemptsDespiteFailure": true,
+        "acquisitionDoesNotAwaitClose": true,
+        "lateEngineRetiredWithoutScene": true,
+        "initialRenderReentryCheckedBeforeReady": true,
+        "firstThrownUndefinedPreserved": true,
+        "scopeThenEngineThenBorrowedCanvas": true
+      },
+      "actualPublicEntry": {
+        "status": "PASS",
+        "tests": 12,
+        "passed": 12,
+        "failed": 0,
+        "timeout": false,
+        "privateAliasLoader": false,
+        "stdoutSHA256": "c7b30ab0a5cb88dcf542fa9b87dddf371ccc8f08ce9dbe3c39f5d61e1d0a18ca"
+      },
+      "actualPrivateEnvelope": {
+        "status": "PASS",
+        "tests": 12,
+        "passed": 12,
+        "failed": 0,
+        "sdkLoadedInputs": 60,
+        "candidateFiles": 5,
+        "candidateBeforeAfterUnchanged": true,
+        "sdkInputsUnchanged": true,
+        "stdoutSHA256": "2b0bce973dcf3cdc0abaad623c779286b0828221544a6caaae2c1f114d8dfa16",
+        "scope": "Genuine SDK and Node EventTarget; separate overlapping headless execution"
+      },
+      "independentCoreReview": {
+        "status": "PASS_BOUNDED_PRIVATE_APPLICATION_CORE_AND_SAVED_TWELVE_CASES",
+        "openFindings": 0,
+        "sourceAndSavedEnvelopeScope": true
+      },
+      "retainedFailures": [
+        "Windows_import_setup_not_product_RED",
+        "missing_scene_application_main_modules",
+        "invented_dispatch_corrected_to_existing_dispatchEvent",
+        "initial_render_pagehide_Ready_revival_RED"
+      ],
+      "nativeBrowserInput": "PENDING",
+      "nativeDOMPairRetirement": "PENDING",
+      "nativeCanvasPixels": "PENDING",
+      "fiveProjectionControls": "PENDING",
+      "finalWholeVerification": "PENDING",
+      "finalPublication": "PENDING",
+      "independentBilingualMeaningReview": "PENDING",
+      "mandatoryGitPushHook": "PENDING",
+      "remoteDelivery": "PENDING",
+      "completeInputRouterAccepted": false,
+      "gesturesAccepted": false,
+      "fullUIAccepted": false,
+      "fullSpineAccepted": false,
+      "threeDInputAccepted": false,
+      "physicalPhonesAccepted": false,
+      "performanceAccepted": false,
+      "fullMigrationAccepted": false,
+      "historicalCutoffsPreserved": true,
+      "evidence": [
+        "evidence/display-picking-example-verification.json"
+      ],
+      "documents": [
+        "Cns/docs/显示拾取示例.md"
+      ]
+    },
+    "actualDesktopNative": {
+      "status": "PASS_DESKTOP_HT1_CANVAS_SUBSET",
+      "executedAtUTC": "2026-10-11T17:58:46.2648963Z",
+      "finishedAtUTC": "2026-10-11T17:58:49.1112141Z",
+      "browser": {
+        "channel": "msedge",
+        "version": "154.0.4258.62",
+        "headless": true,
+        "viewport": {
+          "width": 900,
+          "height": 700
+        },
+        "deviceScaleFactor": 1
+      },
+      "baselineRows": 10,
+      "assignedControls": [
+        {
+          "id": "omit-query",
+          "status": "PASS_ASSIGNED_CONTROL_SENSITIVITY"
+        },
+        {
+          "id": "omit-css",
+          "status": "PASS_ASSIGNED_CONTROL_SENSITIVITY"
+        },
+        {
+          "id": "omit-dispatch",
+          "status": "PASS_ASSIGNED_CONTROL_SENSITIVITY"
+        },
+        {
+          "id": "capture-only",
+          "status": "PASS_ASSIGNED_CONTROL_SENSITIVITY"
+        },
+        {
+          "id": "omit-retirement",
+          "status": "PASS_ASSIGNED_CONTROL_SENSITIVITY"
+        }
+      ],
+      "isolatedContexts": 6,
+      "nativeInputMethod": "page.mouse.click",
+      "nativeCallbackPairsPerLedger": 6,
+      "baselineLedger": {
+        "registrations": 6,
+        "removals": 6,
+        "outstanding": 0
+      },
+      "omitRetirementAssignedLedger": {
+        "registrations": 6,
+        "removals": 0,
+        "outstanding": 6
+      },
+      "artifacts": 30,
+      "targetRawRGBABytes": 424,
+      "referenceRawRGBABytes": 424,
+      "contextErrors": 0,
+      "retainedReadbackAdvisoriesPerContext": 2,
+      "allContextsClosed": true,
+      "allObserversRestored": true,
+      "pendingActors": 0,
+      "originalNativeStatus": "INCOMPLETE",
+      "originalNativeRecordsUnchanged": true,
+      "admission": {
+        "status": "PASS",
+        "tests": 32,
+        "passed": 32,
+        "failed": 0,
+        "stdoutSHA256": "f2348b1c5bfb14e0477b5e97d1e4a6972a7888b1fa9d0e2792edb6b909f3f3cc"
+      },
+      "nativeStdoutSHA256": "bff6ebf5ae3b032f239c8cb24e3de23c815ba96919e8f41f75206319604e3bd3",
+      "collectionSHA256": "abb7c4ee26b72cfd2826deffad0bd904bc019f7f8b5c92aa94b3c4bd21da04df",
+      "resultSHA256": "76ea6a18cbd8167e5f0899bf0235e4056467d665fc019aa86ba5a93dee657c52",
+      "verifierSourceReview": "APPROVE_FINITE_EXACT_READBACK_ADVISORY_CLASSIFICATION_SOURCE_DELTA",
+      "verifierSourceOpenFindings": 0,
+      "fullReleaseGate": "PENDING",
+      "independentBilingualMeaningReview": "PENDING",
+      "mandatoryGitPushHook": "PENDING",
+      "remoteDelivery": "PENDING",
+      "remoteCIPassClaimed": false,
+      "scope": "固定桌面鼠标、字面类型化路径、Canvas 像素及协作式自有清理；不验收实体设备／性能／操作系统回收。"
+    },
+    "nativeCutoff": {
+      "status": "core_implemented_public_entry_headless_and_desktop_native_subset_pass_whole_publication_meaning_and_delivery_pending",
+      "finalWholeVerification": "PENDING",
+      "finalPublication": "PENDING",
+      "independentBilingualMeaningReview": "PENDING",
+      "mandatoryGitPushHook": "PENDING",
+      "remoteDelivery": "PENDING"
+    },
+    "actualFullVerification": {
+      "status": "PASS_COMPLETE_LOCAL_STRUCTURAL_AND_HEADLESS_VERIFICATION",
+      "startedAtUTC": "2026-10-11T18:15:07.8418666Z",
+      "finishedAtUTC": "2026-10-11T18:17:52.7554898Z",
+      "exitCode": 0,
+      "timeout": false,
+      "stdoutSHA256": "962650431b2d5655dc311c53b73f9ebe137158eade3b31a69a80e5f3dcde34a9",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "build": "PASS",
+      "typeFixtures": "PASS",
+      "packageBoundaries": {
+        "status": "PASS",
+        "sourceBuildDeclarationFiles": 426
+      },
+      "core": {
+        "tests": 2377,
+        "passed": 2377,
+        "failed": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "structuralPublication": {
+        "tests": 63,
+        "passed": 63,
+        "failed": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "localization": {
+        "documentPairs": 140,
+        "registryViews": 6,
+        "criticalSourceFiles": 154,
+        "issues": 0
+      },
+      "knowledgeBase": {
+        "records": 159,
+        "markdownFiles": 243,
+        "links": 1997,
+        "references": 955,
+        "issues": 0
+      },
+      "headless": {
+        "scopeState": "closed",
+        "pendingTimers": 0
+      },
+      "countsFromSeparateScopesNotSummed": true,
+      "preparationAndNativeCutoffsPreserved": true,
+      "independentBilingualMeaningReview": "PENDING",
+      "mandatoryGitPushHook": "PENDING",
+      "remoteDelivery": "PENDING",
+      "remoteCIPassClaimed": false,
+      "scope": "完整本地构建、类型、边界、核心、结构化公开、知识库及无界面执行；最终独立双语语义及实际 Git 交付仍待完成。"
     }
   }
 }

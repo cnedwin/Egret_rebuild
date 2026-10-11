@@ -1301,6 +1301,158 @@
       "scope": "实际已采用源码构建、98/98 项 HT1／显示树／扩展性／坐标合并案例（含 32 项 HT1）、426 文件生产扫描、完整严格类型 16 普通／8 导入文件行代码诊断及独立合成策略 221/221 通过。策略数量分为 205 保留记录、15 个 HT1 叶控制（1 正例／14 变异）及 1 个 HT1 父记录。有限七产品／三整合源码审阅批准受控采用且无阻断问题；此前缺失入口 RED 与夹具算术修正保留各自截止点。 完整当前验证通过核心 2,333/2,333、公开检查 59/59、构建、严格类型、边界、headless 与知识库检查；六项受影响既有桌面渲染回归分别通过。",
       "limit": "重叠范围不合计；源码批准与合成策略不是命中／浏览器执行。仅有私有计划的命中补充、独立双语语义审阅、必要 Git 推送钩子与交付仍待完成；完整手动验证与 Git 推送钩子分开记录。既有桌面渲染回归不验收浏览器命中或手机。不验收完整输入路由、手势、内容／像素命中、UI、字体、Spine、3D 输入、手机性能或完整迁移。",
       "doc": "Cns/docs/显示命中HT1.md"
+    },
+    {
+      "id": "S083",
+      "type": "first_party_display_picking_application_headless_evidence",
+      "researchCheckedAt": "2026-10-12",
+      "artifacts": [
+        "evidence/display-picking-example-verification.json"
+      ],
+      "title": "第一方显示拾取应用与有界无界面证据",
+      "scope": "实际已采用公共入口检查通过 12/12。单独私有 12/12 执行记录五个候选身份在执行前后未改变及 60 个已编译 SDK 输入；独立有界核心审阅未解决问题为 0。范围涵盖场景拾取、实际类型化路径记录、分发后清除／重绘、CSS 鼠标准入、六组 Node EventTarget 回调、八个类型化订阅及真实所有权／启动／关闭夹具。 新桌面后继通过 **PASS_DESKTOP_HT1_CANVAS_SUBSET**，环境为默认 Edge **154.0.4258.62**：十个基线记录与五项指定对照覆盖真实鼠标输入、类型化路径、Canvas 像素及独立的六组原生监听账本。纯准入检查单独通过 **32/32**，不同范围数量不合计。 完整本地验证通过：构建、类型夹具及包边界；核心 **2377/2377** 与结构化公开检查 **63/63**。本地化检查覆盖 **140** 对文档、**6** 个注册表视图及 **154** 个关键源文件。知识库验证检查 **159** 条记录、**243** 份 Markdown、**1997** 个链接及 **955** 个引用，问题数为 **0**；无界面生命周期关闭后待处理计时器为 **0**。以上是不同范围，不合并为测试总数。",
+      "limit": "无界面、纯准入、原生及完整门禁数量重叠，不合计。实际桌面范围为固定鼠标／Canvas 子集。完整本地结构与无界面检查通过；最终独立双语语义、实际 Git 推送钩子及交付仍待完成。首次准备与 INCOMPLETE 原生记录继续保留；完整路由、手势、UI／Spine／3D、手机、性能、操作系统回收及迁移单独保留。",
+      "doc": "Cns/docs/显示拾取示例.md",
+      "preparationCutoff": {
+        "scope": "实际已采用公共入口检查通过 12/12。单独私有 12/12 执行记录五个候选身份在执行前后未改变及 60 个已编译 SDK 输入；独立有界核心审阅未解决问题为 0。范围涵盖场景拾取、实际类型化路径记录、分发后清除／重绘、CSS 鼠标准入、六组 Node EventTarget 回调、八个类型化订阅及真实所有权／启动／关闭夹具。",
+        "limit": "重叠数量不合计。原生浏览器输入／DOM 移除／像素、五项投影对照、完整当前验证、最终公开／独立双语语义、实际 Git 推送钩子及交付仍待完成。Main 失败路径与 Node EventTarget 检查不是原生浏览器成功验收；完整路由、手势、UI／Spine／3D、手机、性能及迁移单独保留。"
+      },
+      "nativeSuccessor": {
+        "status": "PASS_DESKTOP_HT1_CANVAS_SUBSET",
+        "executedAtUTC": "2026-10-11T17:58:46.2648963Z",
+        "finishedAtUTC": "2026-10-11T17:58:49.1112141Z",
+        "browser": {
+          "channel": "msedge",
+          "version": "154.0.4258.62",
+          "headless": true,
+          "viewport": {
+            "width": 900,
+            "height": 700
+          },
+          "deviceScaleFactor": 1
+        },
+        "baselineRows": 10,
+        "assignedControls": [
+          {
+            "id": "omit-query",
+            "status": "PASS_ASSIGNED_CONTROL_SENSITIVITY"
+          },
+          {
+            "id": "omit-css",
+            "status": "PASS_ASSIGNED_CONTROL_SENSITIVITY"
+          },
+          {
+            "id": "omit-dispatch",
+            "status": "PASS_ASSIGNED_CONTROL_SENSITIVITY"
+          },
+          {
+            "id": "capture-only",
+            "status": "PASS_ASSIGNED_CONTROL_SENSITIVITY"
+          },
+          {
+            "id": "omit-retirement",
+            "status": "PASS_ASSIGNED_CONTROL_SENSITIVITY"
+          }
+        ],
+        "isolatedContexts": 6,
+        "nativeInputMethod": "page.mouse.click",
+        "nativeCallbackPairsPerLedger": 6,
+        "baselineLedger": {
+          "registrations": 6,
+          "removals": 6,
+          "outstanding": 0
+        },
+        "omitRetirementAssignedLedger": {
+          "registrations": 6,
+          "removals": 0,
+          "outstanding": 6
+        },
+        "artifacts": 30,
+        "targetRawRGBABytes": 424,
+        "referenceRawRGBABytes": 424,
+        "contextErrors": 0,
+        "retainedReadbackAdvisoriesPerContext": 2,
+        "allContextsClosed": true,
+        "allObserversRestored": true,
+        "pendingActors": 0,
+        "originalNativeStatus": "INCOMPLETE",
+        "originalNativeRecordsUnchanged": true,
+        "admission": {
+          "status": "PASS",
+          "tests": 32,
+          "passed": 32,
+          "failed": 0,
+          "stdoutSHA256": "f2348b1c5bfb14e0477b5e97d1e4a6972a7888b1fa9d0e2792edb6b909f3f3cc"
+        },
+        "nativeStdoutSHA256": "bff6ebf5ae3b032f239c8cb24e3de23c815ba96919e8f41f75206319604e3bd3",
+        "collectionSHA256": "abb7c4ee26b72cfd2826deffad0bd904bc019f7f8b5c92aa94b3c4bd21da04df",
+        "resultSHA256": "76ea6a18cbd8167e5f0899bf0235e4056467d665fc019aa86ba5a93dee657c52",
+        "verifierSourceReview": "APPROVE_FINITE_EXACT_READBACK_ADVISORY_CLASSIFICATION_SOURCE_DELTA",
+        "verifierSourceOpenFindings": 0,
+        "fullReleaseGate": "PENDING",
+        "independentBilingualMeaningReview": "PENDING",
+        "mandatoryGitPushHook": "PENDING",
+        "remoteDelivery": "PENDING",
+        "remoteCIPassClaimed": false
+      },
+      "nativeCutoff": {
+        "scope": "实际已采用公共入口检查通过 12/12。单独私有 12/12 执行记录五个候选身份在执行前后未改变及 60 个已编译 SDK 输入；独立有界核心审阅未解决问题为 0。范围涵盖场景拾取、实际类型化路径记录、分发后清除／重绘、CSS 鼠标准入、六组 Node EventTarget 回调、八个类型化订阅及真实所有权／启动／关闭夹具。 新桌面后继通过 **PASS_DESKTOP_HT1_CANVAS_SUBSET**，环境为默认 Edge **154.0.4258.62**：十个基线记录与五项指定对照覆盖真实鼠标输入、类型化路径、Canvas 像素及独立的六组原生监听账本。纯准入检查单独通过 **32/32**，不同范围数量不合计。",
+        "limit": "无界面、纯准入与原生范围数量重叠，不合计。实际桌面范围为固定鼠标／Canvas 子集；完整当前验证、最终公开／语义、实际 Git 推送钩子及交付仍待完成。首次准备与 INCOMPLETE 原生记录继续保留；完整路由、手势、UI／Spine／3D、手机、性能、操作系统回收及迁移单独保留。"
+      },
+      "fullVerificationSuccessor": {
+        "status": "PASS_COMPLETE_LOCAL_STRUCTURAL_AND_HEADLESS_VERIFICATION",
+        "startedAtUTC": "2026-10-11T18:15:07.8418666Z",
+        "finishedAtUTC": "2026-10-11T18:17:52.7554898Z",
+        "exitCode": 0,
+        "timeout": false,
+        "stdoutSHA256": "962650431b2d5655dc311c53b73f9ebe137158eade3b31a69a80e5f3dcde34a9",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "build": "PASS",
+        "typeFixtures": "PASS",
+        "packageBoundaries": {
+          "status": "PASS",
+          "sourceBuildDeclarationFiles": 426
+        },
+        "core": {
+          "tests": 2377,
+          "passed": 2377,
+          "failed": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        "structuralPublication": {
+          "tests": 63,
+          "passed": 63,
+          "failed": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        "localization": {
+          "documentPairs": 140,
+          "registryViews": 6,
+          "criticalSourceFiles": 154,
+          "issues": 0
+        },
+        "knowledgeBase": {
+          "records": 159,
+          "markdownFiles": 243,
+          "links": 1997,
+          "references": 955,
+          "issues": 0
+        },
+        "headless": {
+          "scopeState": "closed",
+          "pendingTimers": 0
+        },
+        "countsFromSeparateScopesNotSummed": true,
+        "preparationAndNativeCutoffsPreserved": true,
+        "independentBilingualMeaningReview": "PENDING",
+        "mandatoryGitPushHook": "PENDING",
+        "remoteDelivery": "PENDING",
+        "remoteCIPassClaimed": false
+      }
     }
   ]
 }

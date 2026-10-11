@@ -1,0 +1,1207 @@
+{
+  "schemaVersion": 1,
+  "engineeringLabel": "0.30.0",
+  "sourceId": "S083",
+  "deliverable": "V034",
+  "date": "2026-10-12",
+  "preparedAtUtc": "2026-10-11T17:31:55.727Z",
+  "sourceBaseCommit": "fb7f15b21cf80345e23490c551552deb4b68061a",
+  "status": "ACTUAL_PUBLIC_APPLICATION_NATIVE_DESKTOP_AND_COMPLETE_PREPUSH_PASS",
+  "scope": "First-party thin desktop Canvas mouse picking application composed from existing HT1, scoped typed events and explicit rendering; no SDK API changes.",
+  "packageVersion": "0.0.0",
+  "protocolVersion": "1.0",
+  "productSources": [
+    {
+      "path": "examples/hit-test/scene.mjs",
+      "bytes": 5205,
+      "sha256": "924d8087bb0689024f321014bef9ed2dab0838d4a07eeee70f3e930d1ef3fed0"
+    },
+    {
+      "path": "examples/hit-test/application.mjs",
+      "bytes": 5676,
+      "sha256": "200a414d359cc5d8656ef4e302655af7fdad24719aa544414b8cd7542fa26daa"
+    },
+    {
+      "path": "examples/hit-test/main.mjs",
+      "bytes": 841,
+      "sha256": "ed15163624fbed0f28d999eaa3e286fd8dc958df5a8f7803ea4d636af6bc8654"
+    },
+    {
+      "path": "examples/hit-test/index.html",
+      "bytes": 1820,
+      "sha256": "ae2d4c7ea4935094121b90f2e2f6b11ed68dbf3beef481c56c074a2bea970281"
+    }
+  ],
+  "selectedEngineeringInputs": [
+    {
+      "path": "examples/hit-test/scene.mjs",
+      "bytes": 5205,
+      "sha256": "924d8087bb0689024f321014bef9ed2dab0838d4a07eeee70f3e930d1ef3fed0"
+    },
+    {
+      "path": "examples/hit-test/application.mjs",
+      "bytes": 5676,
+      "sha256": "200a414d359cc5d8656ef4e302655af7fdad24719aa544414b8cd7542fa26daa"
+    },
+    {
+      "path": "examples/hit-test/main.mjs",
+      "bytes": 841,
+      "sha256": "ed15163624fbed0f28d999eaa3e286fd8dc958df5a8f7803ea4d636af6bc8654"
+    },
+    {
+      "path": "examples/hit-test/index.html",
+      "bytes": 1820,
+      "sha256": "ae2d4c7ea4935094121b90f2e2f6b11ed68dbf3beef481c56c074a2bea970281"
+    },
+    {
+      "path": "tests/hit-test-scene.test.mjs",
+      "bytes": 17844,
+      "sha256": "5bacf3815ce8b2a76f170070cfb3e0b1bd3d5a3392ffa2c87526d3b039417d31"
+    },
+    {
+      "path": "knowledge-base/tools/Validate-KnowledgeBase.ps1",
+      "bytes": 12469,
+      "sha256": "b1dcc45807cfc7ba72d3630701a184b48a32196639f24a3db70942448fb66f1d"
+    },
+    {
+      "path": "tests/publication/knowledge-base-check-only.test.mjs",
+      "bytes": 12955,
+      "sha256": "6e4d2ca28bd8c2beae032c14ecd3ba3a6549113e34f546c086d40d5a7a5918f6"
+    },
+    {
+      "path": "tools/verify-hit-test-canvas.mjs",
+      "bytes": 22001,
+      "sha256": "4e36ae17c6d6ec6dc995e08618a252a6d795b15e3d43d33a3149ac3167deb257"
+    },
+    {
+      "path": "tools/hit-test-canvas-contract.mjs",
+      "bytes": 19188,
+      "sha256": "48368bef4475ff488ecc694768161cc604e6195f723631287e75d22e64884fad"
+    },
+    {
+      "path": "tests/hit-test-canvas-verifier.test.mjs",
+      "bytes": 17974,
+      "sha256": "44430e9798c6ad698c756cdccdd824a5ac6f4fdac66e0a4d2359cfff49261b8c"
+    },
+    {
+      "path": "tests/fixtures/hit-test-canvas/cases.json",
+      "bytes": 3915,
+      "sha256": "f8e993a66743db4718a1b31c0112ccf5890af8b79f21a1dcf25863bcec8db786"
+    },
+    {
+      "path": "tests/fixtures/hit-test-canvas/reference.mjs",
+      "bytes": 1259,
+      "sha256": "40e21d7db6d11feb1ab1f615524a2f06f99992489e6639d23144e5738d65cc1b"
+    }
+  ],
+  "documents": [
+    {
+      "path": "examples/hit-test/README.md",
+      "bytes": 4493,
+      "sha256": "0d6484f779f5de19387513791b0cc2f9e00da9faf37cea4a5525a1786a5c84d5"
+    },
+    {
+      "path": "examples/hit-test/README.zh-CN.md",
+      "bytes": 4036,
+      "sha256": "7d64a80ce972676df4e02fe6833897ad4b4866e75215fdb361a139fb3bddaa8f"
+    },
+    {
+      "path": "knowledge-base/en/docs/display-picking-example.md",
+      "bytes": 5422,
+      "sha256": "c4c73ff0b3b95619f05276af2f578262de5efa429daaa48bbc89ea09b6663754"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/显示拾取示例.md",
+      "bytes": 4928,
+      "sha256": "0accd87786662dd8f63bb2c72e0d3c147a65d25a606706b96b88bebb9c4c44cf"
+    }
+  ],
+  "specification": {
+    "originalPlan": {
+      "path": "../hit-test-next/browser-plan.md",
+      "bytes": 18621,
+      "sha256": "9f80e452ad2c49744baa5f2d68120f8befd6b8dc2b9e604c67079273896b4fe2"
+    },
+    "originalReview": {
+      "path": "../hit-test-next/browser-plan-review.json",
+      "bytes": 13343,
+      "sha256": "3ea2a0b0b42b6857a0d6df028981e1d65465f898911d1f099a0cade8622e8e42"
+    },
+    "resolvedPlan": {
+      "path": "resolved-plan.md",
+      "bytes": 4947,
+      "sha256": "2a926ebb1ed77e6bf2db614a430d2bbfecd9e4d12543879dfb5e4f2050c32067"
+    },
+    "manifest": {
+      "bytes": 11351,
+      "sha256": "9b19761a60e8211c4a605b71b00d3b60e33926c83f684b66e76b6738032479c5"
+    },
+    "sdkInputs": {
+      "path": "actual-green-app-twelve/sdk-loads.json",
+      "bytes": 9822,
+      "sha256": "32b3ae0ff4564bc1a1503b96de4d858c8ddca0b37e19cf03fc1e4b654af646ae"
+    },
+    "sdkLoadedInputs": 60
+  },
+  "publicEntry": {
+    "status": "PASS",
+    "tests": 12,
+    "passed": 12,
+    "failed": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "privateAliasLoader": false,
+    "scope": "Actual adopted repository entries; Node EventTarget and failed genuine CanvasHost startup are not successful Window or native pixels.",
+    "receipt": {
+      "identity": {
+        "bytes": 732,
+        "sha256": "385a4b15b95aee05ed0458d6283a457db7af075d2d01f3deb9f1ad345cf4bf6f"
+      },
+      "executions": [
+        {
+          "name": "application",
+          "startedAtUtc": "2026-10-11T17:19:52.8584876Z",
+          "finishedAtUtc": "2026-10-11T17:19:53.0804902Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "c7b30ab0a5cb88dcf542fa9b87dddf371ccc8f08ce9dbe3c39f5d61e1d0a18ca",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    }
+  },
+  "privateEnvelope": {
+    "status": "PASS",
+    "tests": 12,
+    "passed": 12,
+    "failed": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "candidateFiles": 5,
+    "sdkLoadedInputs": 60,
+    "inputsUnchanged": true,
+    "overlapsPublicEntry": true,
+    "receipt": {
+      "identity": {
+        "bytes": 2286,
+        "sha256": "4c54202f269265b323c21df1afcc83bd3a006129d7d6405965733ce73767afde"
+      },
+      "executions": [
+        {
+          "name": "bounded application envelope",
+          "startedAtUtc": "2026-10-11T17:10:50.687Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "2b0bce973dcf3cdc0abaad623c779286b0828221544a6caaae2c1f114d8dfa16",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    }
+  },
+  "independentCoreReview": {
+    "status": "PASS_BOUNDED_PRIVATE_APPLICATION_CORE_AND_SAVED_TWELVE_CASES",
+    "openFindings": 0,
+    "identity": {
+      "bytes": 11293,
+      "sha256": "abd1c508b71692f6ee5b8a36d617ada038c20fffa55bad08d7b24e078e6c4053"
+    },
+    "scope": "Five source files and saved twelve-case/sixty-SDK-byte envelope only."
+  },
+  "finiteKBPolicy": {
+    "status": "PASS_FINITE_TWO_NAMED_READINGS_AND_FOUR_REAL_FILESYSTEM_CASES",
+    "allowedReadings": [
+      "examples/hit-test/README.md",
+      "examples/hit-test/README.zh-CN.md"
+    ],
+    "retainedReadings": 5,
+    "retainedCases": 5,
+    "addedCases": 4,
+    "tests": 9,
+    "passed": 9,
+    "failed": 0,
+    "baselineRed": {
+      "tests": 9,
+      "passed": 7,
+      "failed": 2
+    },
+    "manifest": {
+      "bytes": 3508,
+      "sha256": "d35e67998dd5374ae379dccf9d124cebb524c09a19ebdc07165acca5cbb3dcbf"
+    },
+    "independentReview": {
+      "bytes": 1644,
+      "sha256": "8ce7c1fc4dac51afbbe5fa15782d94cecc14e11d0f1931983dcd7dcbc62942f9"
+    },
+    "receipt": {
+      "identity": {
+        "bytes": 1385,
+        "sha256": "2cadabb84afc5401019cc6e0c2a61e524fdacfa12ca38b2e4a7556e2f2cb6a82"
+      },
+      "executions": [
+        {
+          "name": "bounded application envelope",
+          "startedAtUtc": "2026-10-11T17:23:08.318Z",
+          "finishedAtUtc": "2026-10-11T17:23:14.218Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "b19f01a95501de28624ef0b08c8c4d6a17952f495c80dc6ed3f2e29f6c4c9f1f",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "scope": "Two exactly named README targets; nearby source, HTML, sibling document, foreign traversal and absolute artifact URI remain refused. Not a general filesystem security proof."
+  },
+  "retainedFailures": [
+    {
+      "path": "actual-red/receipt.json",
+      "bytes": 1436,
+      "sha256": "f2f81e9f45d7dd07505eb83a94f6190929e8bbe333ad8584eec827a64a50d20c",
+      "stdout": {
+        "bytes": 1833,
+        "sha256": "acf402acd3c655c6c23a6a231103643d657cc3882dc5e9c474c34ce3dd20272b"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": "actual-red-scene/receipt.json",
+      "bytes": 1435,
+      "sha256": "43b337d55b68890421f37b3d24b52acb548c95126fe2a29057592c28afc04187",
+      "stdout": {
+        "bytes": 1815,
+        "sha256": "295cbe61ef5730161ed8d3cf9bacb5350785cd87dea7c19a3617e73eef2ec5b3"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": "actual-red-scene-six/receipt.json",
+      "bytes": 1403,
+      "sha256": "91ec43da9b1500516615fcc40415758da236ece3887e12675ab05c1bd893335b",
+      "stdout": {
+        "bytes": 10307,
+        "sha256": "7bb49f3d3b6cf5d67d6ccb8f0596374116ebbbebc0b089b35d2bf0ac11cc01b0"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": "actual-green-scene/receipt.json",
+      "bytes": 1402,
+      "sha256": "6eeb1618ba10c0b06310d4f8f1894fb22ec9c0f00f13bc49cc7c9c3ecaa125e7",
+      "stdout": {
+        "bytes": 7794,
+        "sha256": "dcb4a95b46fbb2ce55a1741278b15a311021675cc06b18bd51e4548b017c0412"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": "actual-red-application/receipt.json",
+      "bytes": 1446,
+      "sha256": "5d1c43d93f54ba170483cd61d321b000fb097113843fd6d7fb2f968f5dd553e3",
+      "stdout": {
+        "bytes": 6301,
+        "sha256": "464e85107feb50aa503edccf9c7b34c9fb27bc8a1b9a0e756a4a40d331c5b784"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": "actual-red-main/receipt.json",
+      "bytes": 1436,
+      "sha256": "326bd5b3493999df1ffa9ebf33f744431db150017316791b3cbc6d55400c311a",
+      "stdout": {
+        "bytes": 1656,
+        "sha256": "22a94cc060dc35863ada90d28ad06b38ee546b1ae2fb79b4e7e331ae0bde9c91"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": "actual-red-ready-reentry/receipt.json",
+      "bytes": 1436,
+      "sha256": "a024793bef7f0fdc7c41ceda97276a25c7d9e01689fd1a47116788976b58b707",
+      "stdout": {
+        "bytes": 1369,
+        "sha256": "27ebeba091a9354de0abcfc1619bae328d32ecf2142136f2973e6cea65d32bdf"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "repairedAssumptions": [
+    "Initial Windows --import path error is retained as setup failure, not application RED.",
+    "Actual public typed dispatch method is dispatchEvent; intermediate five-case failure retained.",
+    "Close during initial rendering must be rechecked before Ready; APP12 genuine observed RED retained."
+  ],
+  "native": {
+    "status": "PASS_DESKTOP_HT1_CANVAS_SUBSET",
+    "nativeInputAccepted": true,
+    "literalRows": 10,
+    "applicationOnlyProjections": 5,
+    "admissionTests": 32,
+    "admissionPassed": 32,
+    "receipt": {
+      "identity": {
+        "bytes": 1901,
+        "sha256": "00998c4d4389c4adf12a447ef4b11b0d3d14f7d96431d5e173fc7edf885617ca"
+      },
+      "executions": [
+        {
+          "name": "admission",
+          "startedAtUtc": "2026-10-11T17:58:46.0395621Z",
+          "finishedAtUtc": "2026-10-11T17:58:46.2422772Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "f2348b1c5bfb14e0477b5e97d1e4a6972a7888b1fa9d0e2792edb6b909f3f3cc",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "native",
+          "startedAtUtc": "2026-10-11T17:58:46.2648963Z",
+          "finishedAtUtc": "2026-10-11T17:58:49.1112141Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "bff6ebf5ae3b032f239c8cb24e3de23c815ba96919e8f41f75206319604e3bd3",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "collection": {
+      "bytes": 452720,
+      "sha256": "abb7c4ee26b72cfd2826deffad0bd904bc019f7f8b5c92aa94b3c4bd21da04df"
+    },
+    "result": {
+      "bytes": 8141,
+      "sha256": "76ea6a18cbd8167e5f0899bf0235e4056467d665fc019aa86ba5a93dee657c52"
+    },
+    "verifierManifest": {
+      "bytes": 4185,
+      "sha256": "6cf081ed07aac6486ee23799b9faba38de5cd0b57ff7d72d4fa671cc75b1cd72"
+    },
+    "independentV2SourceReview": {
+      "bytes": 10146,
+      "sha256": "a5a28aa9965688d7f0703330475c50c14149107e91ea5071e7f326cae53409ec"
+    },
+    "independentAdvisoryDeltaSourceReview": {
+      "bytes": 2298,
+      "sha256": "42a36d1364bb09a0f2167a1654f963001dfcf3e966b86cf45c62a598ef707886"
+    },
+    "environment": {
+      "node": "v24.19.0",
+      "browserVersion": "154.0.4258.62",
+      "channel": "msedge",
+      "headless": true,
+      "viewport": {
+        "width": 900,
+        "height": 700
+      },
+      "deviceScaleFactor": 1
+    },
+    "inputs": {
+      "records": 131,
+      "unchanged": true,
+      "loadedSDKModules": 60,
+      "originalSDKGraphBytes": 229548
+    },
+    "originalImportMapValidated": true,
+    "routeOnlyImportMapAdaptations": [
+      {
+        "context": "baseline",
+        "original": {
+          "imports": {
+            "#egret-textured-frame-state": "/packages/engine/dist/internal/texturedFrameState.js",
+            "@egret/engine": "/packages/engine/dist/index.js",
+            "@egret/engine/web": "/packages/engine/dist/web/index.js",
+            "@egret/runtime": "/packages/runtime/dist/index.js",
+            "@egret/contracts": "/packages/contracts/dist/index.js"
+          }
+        },
+        "served": {
+          "imports": {
+            "@egret/engine": "/m/0000.js",
+            "@egret/engine/web": "/m/0054.js",
+            "@egret/runtime": "/m/0006.js",
+            "@egret/contracts": "/m/0002.js",
+            "#egret-textured-frame-state": "/m/0046.js"
+          }
+        }
+      },
+      {
+        "context": "omit-query",
+        "original": {
+          "imports": {
+            "#egret-textured-frame-state": "/packages/engine/dist/internal/texturedFrameState.js",
+            "@egret/engine": "/packages/engine/dist/index.js",
+            "@egret/engine/web": "/packages/engine/dist/web/index.js",
+            "@egret/runtime": "/packages/runtime/dist/index.js",
+            "@egret/contracts": "/packages/contracts/dist/index.js"
+          }
+        },
+        "served": {
+          "imports": {
+            "@egret/engine": "/m/0000.js",
+            "@egret/engine/web": "/m/0054.js",
+            "@egret/runtime": "/m/0006.js",
+            "@egret/contracts": "/m/0002.js",
+            "#egret-textured-frame-state": "/m/0046.js"
+          }
+        }
+      },
+      {
+        "context": "omit-css",
+        "original": {
+          "imports": {
+            "#egret-textured-frame-state": "/packages/engine/dist/internal/texturedFrameState.js",
+            "@egret/engine": "/packages/engine/dist/index.js",
+            "@egret/engine/web": "/packages/engine/dist/web/index.js",
+            "@egret/runtime": "/packages/runtime/dist/index.js",
+            "@egret/contracts": "/packages/contracts/dist/index.js"
+          }
+        },
+        "served": {
+          "imports": {
+            "@egret/engine": "/m/0000.js",
+            "@egret/engine/web": "/m/0054.js",
+            "@egret/runtime": "/m/0006.js",
+            "@egret/contracts": "/m/0002.js",
+            "#egret-textured-frame-state": "/m/0046.js"
+          }
+        }
+      },
+      {
+        "context": "omit-dispatch",
+        "original": {
+          "imports": {
+            "#egret-textured-frame-state": "/packages/engine/dist/internal/texturedFrameState.js",
+            "@egret/engine": "/packages/engine/dist/index.js",
+            "@egret/engine/web": "/packages/engine/dist/web/index.js",
+            "@egret/runtime": "/packages/runtime/dist/index.js",
+            "@egret/contracts": "/packages/contracts/dist/index.js"
+          }
+        },
+        "served": {
+          "imports": {
+            "@egret/engine": "/m/0000.js",
+            "@egret/engine/web": "/m/0054.js",
+            "@egret/runtime": "/m/0006.js",
+            "@egret/contracts": "/m/0002.js",
+            "#egret-textured-frame-state": "/m/0046.js"
+          }
+        }
+      },
+      {
+        "context": "capture-only",
+        "original": {
+          "imports": {
+            "#egret-textured-frame-state": "/packages/engine/dist/internal/texturedFrameState.js",
+            "@egret/engine": "/packages/engine/dist/index.js",
+            "@egret/engine/web": "/packages/engine/dist/web/index.js",
+            "@egret/runtime": "/packages/runtime/dist/index.js",
+            "@egret/contracts": "/packages/contracts/dist/index.js"
+          }
+        },
+        "served": {
+          "imports": {
+            "@egret/engine": "/m/0000.js",
+            "@egret/engine/web": "/m/0054.js",
+            "@egret/runtime": "/m/0006.js",
+            "@egret/contracts": "/m/0002.js",
+            "#egret-textured-frame-state": "/m/0046.js"
+          }
+        }
+      },
+      {
+        "context": "omit-retirement",
+        "original": {
+          "imports": {
+            "#egret-textured-frame-state": "/packages/engine/dist/internal/texturedFrameState.js",
+            "@egret/engine": "/packages/engine/dist/index.js",
+            "@egret/engine/web": "/packages/engine/dist/web/index.js",
+            "@egret/runtime": "/packages/runtime/dist/index.js",
+            "@egret/contracts": "/packages/contracts/dist/index.js"
+          }
+        },
+        "served": {
+          "imports": {
+            "@egret/engine": "/m/0000.js",
+            "@egret/engine/web": "/m/0054.js",
+            "@egret/runtime": "/m/0006.js",
+            "@egret/contracts": "/m/0002.js",
+            "#egret-textured-frame-state": "/m/0046.js"
+          }
+        }
+      }
+    ],
+    "controls": [
+      {
+        "id": "omit-query",
+        "status": "PASS_ASSIGNED_CONTROL_SENSITIVITY",
+        "assigned": {
+          "row": "B02",
+          "code": "SELECTED_TARGET",
+          "actual": null,
+          "expected": "upper"
+        }
+      },
+      {
+        "id": "omit-css",
+        "status": "PASS_ASSIGNED_CONTROL_SENSITIVITY",
+        "assigned": {
+          "row": "B02",
+          "code": "LOGICAL_PAYLOAD",
+          "actual": {
+            "globalX": 112,
+            "globalY": 96,
+            "button": 0,
+            "pointerType": "mouse"
+          },
+          "expected": {
+            "globalX": 56,
+            "globalY": 48,
+            "button": 0,
+            "pointerType": "mouse"
+          }
+        }
+      },
+      {
+        "id": "omit-dispatch",
+        "status": "PASS_ASSIGNED_CONTROL_SENSITIVITY",
+        "assigned": {
+          "row": "B02",
+          "code": "TYPED_ROUTE",
+          "actual": [],
+          "expected": [
+            {
+              "currentTarget": "stage",
+              "target": "upper",
+              "phase": "capturing"
+            },
+            {
+              "currentTarget": "upper",
+              "target": "upper",
+              "phase": "atTarget"
+            },
+            {
+              "currentTarget": "root",
+              "target": "upper",
+              "phase": "bubbling"
+            },
+            {
+              "currentTarget": "stage",
+              "target": "upper",
+              "phase": "bubbling"
+            }
+          ]
+        }
+      },
+      {
+        "id": "capture-only",
+        "status": "PASS_ASSIGNED_CONTROL_SENSITIVITY",
+        "assigned": {
+          "row": "B02",
+          "code": "FEEDBACK_PIXEL",
+          "actual": [
+            64,
+            64,
+            64,
+            255
+          ],
+          "expected": [
+            0,
+            0,
+            255,
+            255
+          ]
+        }
+      },
+      {
+        "id": "omit-retirement",
+        "status": "PASS_ASSIGNED_CONTROL_SENSITIVITY",
+        "assigned": {
+          "row": "B10",
+          "code": "NATIVE_PAIRS_RETIRED",
+          "actual": {
+            "registrations": 6,
+            "removals": 0,
+            "outstanding": 6,
+            "overflow": false
+          },
+          "expected": {
+            "registrations": 6,
+            "removals": 6,
+            "outstanding": 0,
+            "overflow": false
+          }
+        }
+      }
+    ],
+    "contexts": [
+      {
+        "id": "baseline",
+        "rows": 10,
+        "artifacts": [
+          {
+            "kind": "before",
+            "path": "baseline.before.png",
+            "bytes": 31510,
+            "sha256": "f7c0454645529d187e6b0d7937343c5e49f0f3ef525f9fb254d581ab2cbeb0ed"
+          },
+          {
+            "kind": "after",
+            "path": "baseline.after.png",
+            "bytes": 30828,
+            "sha256": "5c6e9ce50ce13b02e908e612ba3426f9199c0fbe2a6f729e3a24eecb8f91bc9b"
+          },
+          {
+            "kind": "rows",
+            "path": "baseline.rows.json",
+            "bytes": 75687,
+            "sha256": "c83455bdaccd7c73009ce91285815270de92a852222b911097d0e584416ccc5d"
+          },
+          {
+            "kind": "target-rgba",
+            "path": "baseline.target.rgba",
+            "bytes": 140,
+            "sha256": "fc20f78eb8cb49a1a6e1bebadbba402721968c73bd3ea52317f6789e381730c8"
+          },
+          {
+            "kind": "reference-rgba",
+            "path": "baseline.reference.rgba",
+            "bytes": 140,
+            "sha256": "fc20f78eb8cb49a1a6e1bebadbba402721968c73bd3ea52317f6789e381730c8"
+          }
+        ],
+        "errors": 0,
+        "advisories": [
+          {
+            "kind": "CANVAS2D_READBACK_ADVISORY",
+            "message": "Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently"
+          },
+          {
+            "kind": "CANVAS2D_READBACK_ADVISORY",
+            "message": "Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently"
+          }
+        ],
+        "recordOverflow": false,
+        "cleanup": {
+          "contextClosed": true,
+          "observerRestored": true,
+          "pendingActors": 0
+        },
+        "selectedLoopbackRequests": 65
+      },
+      {
+        "id": "omit-query",
+        "rows": 2,
+        "artifacts": [
+          {
+            "kind": "before",
+            "path": "omit-query.before.png",
+            "bytes": 31510,
+            "sha256": "f7c0454645529d187e6b0d7937343c5e49f0f3ef525f9fb254d581ab2cbeb0ed"
+          },
+          {
+            "kind": "after",
+            "path": "omit-query.after.png",
+            "bytes": 31196,
+            "sha256": "ebca6382098a0cfd1f13d9825be238c5bf1b9a270368eecfb757b67b5d21710e"
+          },
+          {
+            "kind": "rows",
+            "path": "omit-query.rows.json",
+            "bytes": 8823,
+            "sha256": "0b0c97554f21b77f5f6b743198efe0e0b2ce1f4ef1f9e71c41e8dc47f9142d4b"
+          },
+          {
+            "kind": "target-rgba",
+            "path": "omit-query.target.rgba",
+            "bytes": 36,
+            "sha256": "33095d4e8ad1f94534a073d5955cdfbc10b0cb75dbfb9bc5c54c90df27627c93"
+          },
+          {
+            "kind": "reference-rgba",
+            "path": "omit-query.reference.rgba",
+            "bytes": 36,
+            "sha256": "c39c1185eaa89c2d34dff6c623ae075c1a025f8cc1c1bc862c9d8589b05c6a3d"
+          }
+        ],
+        "errors": 0,
+        "advisories": [
+          {
+            "kind": "CANVAS2D_READBACK_ADVISORY",
+            "message": "Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently"
+          },
+          {
+            "kind": "CANVAS2D_READBACK_ADVISORY",
+            "message": "Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently"
+          }
+        ],
+        "recordOverflow": false,
+        "cleanup": {
+          "contextClosed": true,
+          "observerRestored": true,
+          "pendingActors": 0
+        },
+        "selectedLoopbackRequests": 65
+      },
+      {
+        "id": "omit-css",
+        "rows": 2,
+        "artifacts": [
+          {
+            "kind": "before",
+            "path": "omit-css.before.png",
+            "bytes": 31510,
+            "sha256": "f7c0454645529d187e6b0d7937343c5e49f0f3ef525f9fb254d581ab2cbeb0ed"
+          },
+          {
+            "kind": "after",
+            "path": "omit-css.after.png",
+            "bytes": 31196,
+            "sha256": "ebca6382098a0cfd1f13d9825be238c5bf1b9a270368eecfb757b67b5d21710e"
+          },
+          {
+            "kind": "rows",
+            "path": "omit-css.rows.json",
+            "bytes": 8816,
+            "sha256": "8077e611cf72fe464fa1a245f352b1524b6d3ac895033ed95ece66c305e63ac4"
+          },
+          {
+            "kind": "target-rgba",
+            "path": "omit-css.target.rgba",
+            "bytes": 36,
+            "sha256": "33095d4e8ad1f94534a073d5955cdfbc10b0cb75dbfb9bc5c54c90df27627c93"
+          },
+          {
+            "kind": "reference-rgba",
+            "path": "omit-css.reference.rgba",
+            "bytes": 36,
+            "sha256": "c39c1185eaa89c2d34dff6c623ae075c1a025f8cc1c1bc862c9d8589b05c6a3d"
+          }
+        ],
+        "errors": 0,
+        "advisories": [
+          {
+            "kind": "CANVAS2D_READBACK_ADVISORY",
+            "message": "Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently"
+          },
+          {
+            "kind": "CANVAS2D_READBACK_ADVISORY",
+            "message": "Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently"
+          }
+        ],
+        "recordOverflow": false,
+        "cleanup": {
+          "contextClosed": true,
+          "observerRestored": true,
+          "pendingActors": 0
+        },
+        "selectedLoopbackRequests": 65
+      },
+      {
+        "id": "omit-dispatch",
+        "rows": 2,
+        "artifacts": [
+          {
+            "kind": "before",
+            "path": "omit-dispatch.before.png",
+            "bytes": 31510,
+            "sha256": "f7c0454645529d187e6b0d7937343c5e49f0f3ef525f9fb254d581ab2cbeb0ed"
+          },
+          {
+            "kind": "after",
+            "path": "omit-dispatch.after.png",
+            "bytes": 31421,
+            "sha256": "a59ee080b7e4f0fd7c97d61c97dfd937110e56ca6cd855047703b51eab5e0fdb"
+          },
+          {
+            "kind": "rows",
+            "path": "omit-dispatch.rows.json",
+            "bytes": 8865,
+            "sha256": "122eb44b033060e2bbf6b1554c9ef530d06315429af6e29b969763d3b64b3e27"
+          },
+          {
+            "kind": "target-rgba",
+            "path": "omit-dispatch.target.rgba",
+            "bytes": 36,
+            "sha256": "c39c1185eaa89c2d34dff6c623ae075c1a025f8cc1c1bc862c9d8589b05c6a3d"
+          },
+          {
+            "kind": "reference-rgba",
+            "path": "omit-dispatch.reference.rgba",
+            "bytes": 36,
+            "sha256": "c39c1185eaa89c2d34dff6c623ae075c1a025f8cc1c1bc862c9d8589b05c6a3d"
+          }
+        ],
+        "errors": 0,
+        "advisories": [
+          {
+            "kind": "CANVAS2D_READBACK_ADVISORY",
+            "message": "Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently"
+          },
+          {
+            "kind": "CANVAS2D_READBACK_ADVISORY",
+            "message": "Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently"
+          }
+        ],
+        "recordOverflow": false,
+        "cleanup": {
+          "contextClosed": true,
+          "observerRestored": true,
+          "pendingActors": 0
+        },
+        "selectedLoopbackRequests": 65
+      },
+      {
+        "id": "capture-only",
+        "rows": 2,
+        "artifacts": [
+          {
+            "kind": "before",
+            "path": "capture-only.before.png",
+            "bytes": 31510,
+            "sha256": "f7c0454645529d187e6b0d7937343c5e49f0f3ef525f9fb254d581ab2cbeb0ed"
+          },
+          {
+            "kind": "after",
+            "path": "capture-only.after.png",
+            "bytes": 31475,
+            "sha256": "e0461820749d097687c658ada1cc08dc5aa1384c12b43e8b5c60af13b6300e65"
+          },
+          {
+            "kind": "rows",
+            "path": "capture-only.rows.json",
+            "bytes": 9416,
+            "sha256": "32ce96b168952c551e94c79cd92a8e443d25388d1da3e1586afb450d46a394d5"
+          },
+          {
+            "kind": "target-rgba",
+            "path": "capture-only.target.rgba",
+            "bytes": 36,
+            "sha256": "33095d4e8ad1f94534a073d5955cdfbc10b0cb75dbfb9bc5c54c90df27627c93"
+          },
+          {
+            "kind": "reference-rgba",
+            "path": "capture-only.reference.rgba",
+            "bytes": 36,
+            "sha256": "c39c1185eaa89c2d34dff6c623ae075c1a025f8cc1c1bc862c9d8589b05c6a3d"
+          }
+        ],
+        "errors": 0,
+        "advisories": [
+          {
+            "kind": "CANVAS2D_READBACK_ADVISORY",
+            "message": "Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently"
+          },
+          {
+            "kind": "CANVAS2D_READBACK_ADVISORY",
+            "message": "Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently"
+          }
+        ],
+        "recordOverflow": false,
+        "cleanup": {
+          "contextClosed": true,
+          "observerRestored": true,
+          "pendingActors": 0
+        },
+        "selectedLoopbackRequests": 65
+      },
+      {
+        "id": "omit-retirement",
+        "rows": 10,
+        "artifacts": [
+          {
+            "kind": "before",
+            "path": "omit-retirement.before.png",
+            "bytes": 31510,
+            "sha256": "f7c0454645529d187e6b0d7937343c5e49f0f3ef525f9fb254d581ab2cbeb0ed"
+          },
+          {
+            "kind": "after",
+            "path": "omit-retirement.after.png",
+            "bytes": 30828,
+            "sha256": "5c6e9ce50ce13b02e908e612ba3426f9199c0fbe2a6f729e3a24eecb8f91bc9b"
+          },
+          {
+            "kind": "rows",
+            "path": "omit-retirement.rows.json",
+            "bytes": 75897,
+            "sha256": "fd8e1758b4c40b64ff3fec2b23f15eade0f54d52bf133f73faa03bbc5c8388c5"
+          },
+          {
+            "kind": "target-rgba",
+            "path": "omit-retirement.target.rgba",
+            "bytes": 140,
+            "sha256": "fc20f78eb8cb49a1a6e1bebadbba402721968c73bd3ea52317f6789e381730c8"
+          },
+          {
+            "kind": "reference-rgba",
+            "path": "omit-retirement.reference.rgba",
+            "bytes": 140,
+            "sha256": "fc20f78eb8cb49a1a6e1bebadbba402721968c73bd3ea52317f6789e381730c8"
+          }
+        ],
+        "errors": 0,
+        "advisories": [
+          {
+            "kind": "CANVAS2D_READBACK_ADVISORY",
+            "message": "Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently"
+          },
+          {
+            "kind": "CANVAS2D_READBACK_ADVISORY",
+            "message": "Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently"
+          }
+        ],
+        "recordOverflow": false,
+        "cleanup": {
+          "contextClosed": true,
+          "observerRestored": true,
+          "pendingActors": 0
+        },
+        "selectedLoopbackRequests": 65
+      }
+    ],
+    "retirement": {
+      "browserClosed": true,
+      "serverClosed": true,
+      "pendingActors": 0
+    },
+    "baselineClose": {
+      "nativePairLedger": {
+        "registrations": 6,
+        "removals": 6,
+        "outstanding": 0,
+        "overflow": false
+      },
+      "disposedNodes": 9,
+      "typedUnsubscribeAttempts": 8,
+      "postClosePhysicalProbes": 5,
+      "scalarSnapshotStable": true,
+      "surface": {
+        "width": 0,
+        "height": 0,
+        "connected": false
+      }
+    },
+    "pixelScope": {
+      "targetRawBytes": 424,
+      "referenceRawBytes": 424,
+      "rawArtifacts": 12,
+      "totalArtifacts": 30,
+      "wholeFrameGolden": false,
+      "scope": "Literal bounded sample atlases with independent role/offset/geometry/hash bindings; PNGs supplement the saved raw bytes."
+    },
+    "limits": "Closed Scope and disposed nodes are observed through the frozen scalar port; Scope.signal, Engine state, OS descendants and physical reclamation are not exported native observations. Independent headless evidence covers the genuine lifecycle."
+  },
+  "fullVerification": "ACTUAL_COMPLETE_PREPUSH_PASS",
+  "publicationStructure": "ACTUAL_COMPLETE_PREPUSH_PASS",
+  "independentBilingualMeaningReview": {
+    "status": "PASS_FINITE_0_30_BILINGUAL_PUBLIC_MEANING_SUCCESSOR",
+    "openFindings": 0,
+    "receipt": {
+      "bytes": 20139,
+      "sha256": "78b185fcae5c1af91b3fe24e4e8ef90a3e0896260f5b6707123086d90a5e75ff"
+    },
+    "scope": "Independent finite review of the current 18 paired readings/navigation/registry documents, source provenance, localization and saved actual verification at the complete-gate cutoff. The original review bytes remain fixed; this successor enrolls only its identity in three metadata files. Subsequent final byte readback remains separate."
+  },
+  "mandatoryGitPushHook": "PENDING",
+  "remoteDelivery": "PENDING",
+  "displayHitTestDeliverySuccessor": {
+    "engineeringLabel": "0.29.0",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/16",
+    "head": "6e724971938ec8be4d271066f327814394e0b7fb",
+    "mergedMain": "fb7f15b21cf80345e23490c551552deb4b68061a",
+    "tree": "e79ad52bf85a1efa7835a1d4074c5a4368ca8981",
+    "mandatoryHook": "ACTUAL_PASS",
+    "localCoreTests": 2333,
+    "localPublicationTests": 59,
+    "remoteStatusesReported": 0,
+    "remoteCheckRunsReported": 0,
+    "mainReadback": {
+      "bytes": 200,
+      "sha256": "9695de0bcd542538b401461ea183956d3a236edf17f8e7677eaa6adb65e6442a"
+    },
+    "pushReceipt": {
+      "identity": {
+        "bytes": 947,
+        "sha256": "7f74483b613976b48f7bf358eb06e747572828c60998aacb183e0444afb8af65"
+      },
+      "executions": [
+        {
+          "name": "push",
+          "startedAtUtc": "2026-10-11T17:11:46.5237220Z",
+          "finishedAtUtc": "2026-10-11T17:14:46.1202499Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "0bc9ef99fc69f22c3d193313b969bdcb73fdfe84351b3ea41a1f372519aac49c",
+          "stderrSHA256": "2c996c40cb10771e9c836094c65f12be2e35919863d34a352126db43765cc6df"
+        }
+      ]
+    },
+    "scope": "Delivery successor; earlier HT1 source/type/browser and preparation cutoffs remain unchanged."
+  },
+  "origin": {
+    "firstPartyImplementation": "Independently authored AI-assisted first-party Egret application, bounded fixtures, policy and paired documents under Apache-2.0.",
+    "newRuntimeDependencies": [],
+    "newExternalAssets": [],
+    "sdkImplementationChanged": false
+  },
+  "limits": {
+    "generalDOMInputRouter": false,
+    "gestures": false,
+    "layoutAndAccessibility": false,
+    "physicalMobileDevices": false,
+    "CJKFonts": false,
+    "fullSpine": false,
+    "fullUI": false,
+    "threeDInput": false,
+    "completeMigration": false,
+    "performanceLeadership": false,
+    "wholeFrameGolden": false
+  },
+  "historicalCutoffsPreserved": true,
+  "preparationProjectionCorrection": {
+    "originalCandidate": {
+      "bytes": 18232,
+      "sha256": "5ae090e7f16a4315571a43001f0ccf66adab2f2615eb440ae839fe1af648c151"
+    },
+    "reason": "Machine receipt projection uses portable bounded facts and exact private receipt/log identities; host-specific paths remain in retained private receipts.",
+    "actualInitialKBCheck": "FAIL_PRIVATE_ABSOLUTE_PATH_MARKER",
+    "originalReceiptRetained": true
+  },
+  "preNativePublicCutoff": {
+    "record": {
+      "bytes": 14121,
+      "sha256": "7eb37a84a28c6c8de1a9d86c14ab416ee12cc7f786fc09d08fe8a369f0204ca5"
+    },
+    "meaningReview": {
+      "bytes": 14564,
+      "sha256": "07e4a900542679149c9b077a63d0e413ba74e6ab7f889cb1ee660615b51ec539"
+    },
+    "scope": "Initial preparation was reviewed before the later actual native collection; its pending native and whole-gate facts are retained by identity."
+  },
+  "initialDocumentPins": [
+    {
+      "path": "examples/hit-test/README.md",
+      "bytes": 3071,
+      "sha256": "e7fa4d7787aa65959190e3adc471c2e82265b674fc158062e7f02d25154bffa4"
+    },
+    {
+      "path": "examples/hit-test/README.zh-CN.md",
+      "bytes": 2752,
+      "sha256": "97ed70d1138e81fa06b0ad84c7c6246382ec34f06a11bbd171d9f579f90a9f8f"
+    },
+    {
+      "path": "knowledge-base/en/docs/display-picking-example.md",
+      "bytes": 4236,
+      "sha256": "b46eb1f9703ab7ae90fd5a8f4fe6be2504022699ac5812557992828f13b83a54"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/显示拾取示例.md",
+      "bytes": 3805,
+      "sha256": "ced487a6bb50d47eb7841ab975e815ec4790538c73906a2e2fdbae3ebcfc6bed"
+    }
+  ],
+  "retainedNativeFailure": {
+    "status": "INCOMPLETE",
+    "receipt": {
+      "identity": {
+        "bytes": 1886,
+        "sha256": "2896cb837b18cffeccd72c4dc1b5ba078a3f4a9ff1edfc619b48fb8c409a4bf4"
+      },
+      "executions": [
+        {
+          "name": "admission",
+          "startedAtUtc": "2026-10-11T17:51:14.2371708Z",
+          "finishedAtUtc": "2026-10-11T17:51:14.4363348Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "153101b48085d0766d602c84166517aea74957020a29249e3820ecc019304f2f",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "native",
+          "startedAtUtc": "2026-10-11T17:51:14.4588197Z",
+          "finishedAtUtc": "2026-10-11T17:51:17.7505755Z",
+          "exitCode": 1,
+          "timeout": false,
+          "stdoutSHA256": "c5520f12b054b29918817683831c197417dcf90695214a30145818ba0d9dcadc",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "collection": {
+      "bytes": 452258,
+      "sha256": "1cc0e5b05bf157b5eb4a451dad3ad4080e97d0c425b10261f12c8f3c1d5e200c"
+    },
+    "result": {
+      "bytes": 559,
+      "sha256": "a06b4162926fed3b1d13a960a5480cf23a321ce42c5a3077a69556c8eb86cc93"
+    },
+    "reason": "The initial verifier treated the exact browser Canvas2D readback advisory as an error. Its original failed bytes remain unchanged. The narrowly matched advisory is retained in the fresh collection; unknown warnings, errors and overflow remain fatal.",
+    "correction": "Finite exact advisory classification, three genuine admission RED cases, 32 actual admission cases, independently reviewed source delta and a fresh actual browser collection. No CanvasHost performance attribute or application/SDK change."
+  },
+  "prepushSuccessor": {
+    "completedAtUtc": "2026-10-11T18:17:52.7554898Z",
+    "exitCode": 0,
+    "timeout": false,
+    "core": {
+      "tests": 2377,
+      "passed": 2377,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "publication": {
+      "tests": 63,
+      "passed": 63,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "documents": 140,
+      "registryViews": 6,
+      "criticalSources": 154
+    },
+    "knowledgeBase": {
+      "records": 159,
+      "markdown": 243,
+      "links": 1997,
+      "references": 955,
+      "issues": 0
+    },
+    "headless": "Closed scopes, disposed nodes, zero pending timers.",
+    "receipt": {
+      "bytes": 689,
+      "sha256": "d9e4ca3747a3d5bd7449f6d2eba8714d1cec58ff80e22f52340f56b0473cafca"
+    },
+    "stdoutSHA256": "962650431b2d5655dc311c53b73f9ebe137158eade3b31a69a80e5f3dcde34a9",
+    "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "scope": "Actual complete build, type, boundary, core, publication, headless and knowledge-base gates. This source-stable factual documentation successor is followed by finite identity checks and independent public meaning review. The Git push hook remains a separate mandatory execution."
+  },
+  "independentNativeReceiptReview": {
+    "bytes": 22985,
+    "sha256": "664b58ea11014a283ce99b088ee401eb5c78b697f792a422c89bb2bb6c62d6df",
+    "status": "ADMIT_SAVED_DESKTOP_HT1_CANVAS_SUBSET",
+    "scope": "Finite saved actual native V3 collection and unchanged-input/artifact/retirement envelope."
+  }
+}

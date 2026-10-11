@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Egret hit test / 白鹭命中测试</title>
+  <link rel="icon" href="data:,">
+  <script type="importmap">{"imports":{"#egret-textured-frame-state":"/packages/engine/dist/internal/texturedFrameState.js","@egret/engine":"/packages/engine/dist/index.js","@egret/engine/web":"/packages/engine/dist/web/index.js","@egret/runtime":"/packages/runtime/dist/index.js","@egret/contracts":"/packages/contracts/dist/index.js"}}</script>
+  <style>
+    body { margin: 24px; background: #eef2f6; color: #172033; font: 16px system-ui; }
+    .surface { width: 640px; height: 400px; outline: 2px solid #334155; margin: 20px 0; }
+    canvas { display: block; width: 640px; height: 400px; border: 0; padding: 0; }
+    button { padding: 10px 14px; margin: 0 8px 8px 0; }
+    p { max-width: 760px; }
+  </style>
+</head>
+<body>
+  <h1>Hit test / 命中测试</h1>
+  <p>Click the colored rectangles with the primary mouse button. Overlaps select the front rectangle; the clipped green region and adjacent edges demonstrate explicit input areas.<br>用鼠标左键点击色块。重叠处选择上层矩形；绿色裁剪区域与相邻边界演示显式命中区域。</p>
+  <div class="surface"><canvas id="scene" width="320" height="200" aria-label="Colored rectangles for mouse hit testing"></canvas></div>
+  <button id="toggle-upper" disabled>Upper visibility / 上层可见性</button>
+  <button id="toggle-gate" disabled>Green visibility / 绿色可见性</button>
+  <button id="toggle-children" disabled>Green input / 绿色交互</button>
+  <button id="close">Close / 关闭</button>
+  <p id="status" role="status">Starting / 正在启动</p>
+  <script type="module" src="./main.mjs"></script>
+</body>
+</html>
