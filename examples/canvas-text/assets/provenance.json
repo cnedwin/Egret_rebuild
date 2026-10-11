@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "asset": "Ahem",
+  "authors": [
+    "Todd Fahrner",
+    "Myles C. Maxfield"
+  ],
+  "rights": "Public domain; original Creative Commons Zero fallback declaration retained verbatim in Ahem-COPYING.txt. Do not substitute the repository Apache-2.0 license or infer a different SPDX version.",
+  "intake": "Exact existing retained bytes copied without download, parsing, installation or execution during WC1 example preparation.",
+  "subset": "Example accepts X, U+0020 and explicit source-line delimiters only. Original README documents X and space; source-line delimiters are handled by T1.",
+  "files": [
+    {
+      "path": "ahem.ttf",
+      "bytes": 22572,
+      "sha256": "f0a92cd0cc45735591c9b5b1fa8aecd5194e8dc518895ca22af94a46c23550dc",
+      "originalURL": "https://www.w3.org/Style/CSS/Test/Fonts/Ahem/ahem.ttf",
+      "retainedAtUtc": "2026-10-10T19:10:44.3818863Z"
+    },
+    {
+      "path": "Ahem-README.txt",
+      "bytes": 2456,
+      "sha256": "e5314468f94f7d9caf62bd8f6871ebf81c96827254043dac95814c943852d40e",
+      "originalURL": "https://www.w3.org/Style/CSS/Test/Fonts/Ahem/README",
+      "retainedAtUtc": "2026-10-10T19:10:44.8286098Z"
+    },
+    {
+      "path": "Ahem-COPYING.txt",
+      "bytes": 1928,
+      "sha256": "3100f58a80de8fcd9dee4280dc4e52a45cc25a2084006e6b8fb5750708a388f8",
+      "originalURL": "https://www.w3.org/Style/CSS/Test/Fonts/Ahem/COPYING",
+      "retainedAtUtc": "2026-10-10T19:10:45.1389285Z"
+    }
+  ]
+}

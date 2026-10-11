@@ -1298,11 +1298,49 @@
         "evidence/display-tree-scaling-verification.json"
       ],
       "doc": "en/docs/display-tree-scaling.md"
+    },
+    {
+      "id": "V032",
+      "kind": "bounded_canvas_text_provider_increment",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R011",
+        "R015",
+        "R016",
+        "R018",
+        "R019"
+      ],
+      "dependsOn": [
+        "V002",
+        "V025",
+        "V028"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "explicit_web_text_canvas_provider_caller_owned_fonts_and_public_t1_tf1_integration",
+      "acceptance": "bounded_canvas_native_app_complete_current_verification_and_bilingual_review_passed_push_delivery_pending",
+      "title": "WC1 Canvas-only provider and independent native verification",
+      "acceptanceCriteria": [
+        "Add only createCanvasTextRasterProvider at @egret/engine/web/text using the public T1 return protocol; add no named type, default-entry export or dependency. Callers own fonts and explicitly invalidate/prepare/render.",
+        "Fixed native 6 contexts and 14 baseline rows compare complete independent raster/frame bytes with zero tolerance; C01–C03 bind their predeclared wrong pixels, with composition, blank replacement, font generation, held raster and not-ready checks.",
+        "Plans release, caches close and actors settle; owned fonts/reference buffers are zero and contexts/browser/server close. Closed logical metadata retains 4096 bytes; OS descendants and physical reclamation remain unknown.",
+        "Record actual Main 288/288, complete strict types with 12 new ordinary/8 import and retained BR1 18, 420 boundary files, pure contract 12/12 and app smoke separately; all five existing-browser gates and finite source/actual saved-native review passed with 0 open findings. Complete current verification passed 2,285/2,285 core and 59/59 publication tests, build, strict types, production boundaries, knowledge-base checks and headless example. Retain the initial nine-path prepush failure and finite 3/5→5/5 knowledge-base and 53/54→54/54 parity repairs; independent bilingual meaning review including the public shared JSON passed with 0 open findings; the mandatory Git push hook and remote delivery remain pending. Do not sum overlapping scopes.",
+        "Retain prior mixed GPU 512-byte/maximum-difference 1 FAIL and Native7/OR1 pending; do not extrapolate full WC1, CJK/phones, Spine, 3D, performance or migration."
+      ],
+      "artifacts": [
+        "en/docs/canvas-text-wc1-canvas.md",
+        "evidence/canvas-text-wc1-canvas-verification.json",
+        "../examples/canvas-text/README.md"
+      ],
+      "doc": "en/docs/canvas-text-wc1-canvas.md"
     }
   ],
   "_localization": {
     "canonicalSource": "交付.json",
-    "canonicalSha256": "f635cf10ab4e6a26dbcf24562da119720735fabc8e9971e24455b21b3479e07d",
+    "canonicalSha256": "742acd56ac4f0248ecc09308cd2f93e22a880675f87c66d3c263476bec81a11e",
     "role": "read_only_translation",
     "language": "en"
   }

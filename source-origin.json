@@ -1745,10 +1745,10 @@
       "sha256": "de405d8aa07f107c6f1cd47b6ecc4f85bebf4a36472ae69edaf80389e49ddfa5"
     },
     {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/tools/Validate-KnowledgeBase.ps1",
-      "bytes": 11556,
-      "sha256": "9a133517dccf37c5535ada5f978c31026ebf88d8e085c452e78276215cd04b56"
+      "bytes": 12394,
+      "sha256": "9a29811796093d473ed1d8d71bce5a06a247c5d46e790190464e9a173d9d0c12",
+      "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1898,13 +1898,9 @@
     },
     {
       "path": "packages/engine/package.json",
-      "sha256": "f24878e43919b082a29c788e8bc721fdb7a0582ffc469d49ece04796bb119c0f",
-      "bytes": 805,
-      "originalSha256": "26b7c45f629f7c8a7d41c466fdd06741163a2afd9b6002075c6341530ed2e663",
-      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "previousRevisionSha256": "26b7c45f629f7c8a7d41c466fdd06741163a2afd9b6002075c6341530ed2e663",
-      "previousLayoutPath": "packages/engine/package.json",
-      "previousLayoutSha256": "d49f766cd3c4c6866b7e9f3746dbaa317b3588b8ffd3ce96a563e2921c8d6080"
+      "bytes": 908,
+      "sha256": "14c13fae2d7321b88b055045c7d0f957d1d96d7c1dbcb2ff5b9ac17eed54ed9e",
+      "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
     },
     {
       "path": "packages/engine/README.md",
@@ -2425,11 +2421,9 @@
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "sha256": "6d4452e6d0062b0c2f07e7dec61f33e4340b12b09ec69d2c6b6fbf5ef356dbf8",
-      "bytes": 38101,
-      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "previousLayoutPath": "tests/boundaries.test.mjs",
-      "previousLayoutSha256": "7fab4a4c490d4823a1cbd3d8721eb87d8c6a2401e60a7068be245975abf538bc"
+      "bytes": 41311,
+      "sha256": "f6faf32c950eb3f4176b82cdb4d17eaea03fba9cfa1568adb81c9d417542b0a6",
+      "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
     },
     {
       "path": "tests/cancellation-scope.test.mjs",
@@ -2527,21 +2521,15 @@
     },
     {
       "path": "tests/publication/check-publication.test.mjs",
-      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "sha256": "7365b6d53adf2a33fd7ef9194d74a9514d2cd9138b77e5c2252c32131df8273a",
-      "bytes": 28763,
-      "previousRevisionSha256": "ff5b1e45e710f5842aa2615d55b8f87d6fe8256fb6a8fe85cfff2192710f0161",
-      "previousLayoutPath": "tests/publication/check-publication.test.mjs",
-      "previousLayoutSha256": "837efc414e2679109905d0413868b83152f4f75a89d9aa10674f1b4200f24c17"
+      "bytes": 30829,
+      "sha256": "9aab57c3d5ad1ea8d33c12828cc13aba0aeaa24b9d9ba3a84d28bab29f48d6ed",
+      "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
     },
     {
       "path": "tests/publication/knowledge-base-check-only.test.mjs",
-      "originRole": "New first-party bilingual documentation or publication tooling",
-      "sha256": "03b35fbede9c1ec910f9a63362b27edb3154aef2455906db835bb275c77f36dc",
-      "bytes": 2421,
-      "previousRevisionSha256": "969b2df98420781875316ec9c0dcbb24ae4e3698466d4a2ea592b9dfcb581a09",
-      "previousLayoutPath": "tests/publication/knowledge-base-check-only.test.mjs",
-      "previousLayoutSha256": "969b2df98420781875316ec9c0dcbb24ae4e3698466d4a2ea592b9dfcb581a09"
+      "bytes": 8658,
+      "sha256": "d55b4a76c564eebd36e90a4b5f716042d92eaccb7f937fa45beb662ffdce3259",
+      "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
     },
     {
       "path": "tests/review-regressions.test.mjs",
@@ -2672,32 +2660,21 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "ab6823f1e8cac54216d365011185c756231bbb7da520cf2d24aba671241a1b6f",
-      "bytes": 46359,
-      "originalSha256": "e7994ad6962e55fba9b481d50377ede30729b345e6a901e2089b235edfde9491",
-      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "previousRevisionSha256": "e7994ad6962e55fba9b481d50377ede30729b345e6a901e2089b235edfde9491",
-      "previousLayoutPath": "tools/check-boundaries.mjs",
-      "previousLayoutSha256": "40a9a8360e6a1a060c75e5adfe47865de28a49fa45929e5be9b3c97f8da30cbe"
+      "bytes": 57840,
+      "sha256": "cee908dbf87e7b6f206a33521042714eeadb84f8890b845e578642a41a98b104",
+      "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
     },
     {
       "path": "tools/check-publication.mjs",
-      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "sha256": "13e8d1b00c4002f8d6d9c4da0e873f54a62b60e32d88694403d98af39e1c0d8b",
-      "bytes": 12175,
-      "previousRevisionSha256": "3a23d7ca84233e3339107fcdb617795c5cee8fd503f3ddcac223f37508cc6b38",
-      "previousLayoutPath": "tools/check-publication.mjs",
-      "previousLayoutSha256": "22decff2b21a8c3027617978934b9a498b27e42d14926b48efa36e708b9ef35d"
+      "bytes": 12375,
+      "sha256": "7130901ba3c6c84b106eb78c924a6f36ea3f2b8fc59c28deadb8e326e24f6339",
+      "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
     },
     {
       "path": "tools/check-types.mjs",
-      "sha256": "c634a3330aefcc68397b0d5147b669d99512aa64fc48ac7db81ca2e8b370d169",
-      "bytes": 29780,
-      "originalSha256": "332d2c161ceb9ec7d75429c89a3d2c95af24f2cf5eed68b92b09532d1ce691a4",
-      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "previousRevisionSha256": "332d2c161ceb9ec7d75429c89a3d2c95af24f2cf5eed68b92b09532d1ce691a4",
-      "previousLayoutPath": "tools/check-types.mjs",
-      "previousLayoutSha256": "d4ee3359c0a357d03eaeb774021e952a29c9624b8394e2f0466168ba898d75a4"
+      "bytes": 35799,
+      "sha256": "21b4d6f47ebb73d27a818d01ee20e231090379baa6d467e2388a45b93baca3cc",
+      "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
     },
     {
       "path": "tools/prepush.mjs",
@@ -4486,6 +4463,192 @@
       "originRole": "AI-assisted independent first-party bounded display-tree documentation; no external implementation copied or new dependency.",
       "bytes": 6811,
       "sha256": "dc9fcd3a028c53459db1400d3663958127b8b8a6793b539ef0d8d0fd8cda8e98"
+    },
+    {
+      "path": "examples/canvas-text/README.md",
+      "bytes": 5519,
+      "sha256": "a3e7a3c73da43686a25ffba0f8e89df7080115227dc85f266b71154765de82d9",
+      "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
+    },
+    {
+      "path": "examples/canvas-text/README.zh-CN.md",
+      "bytes": 4914,
+      "sha256": "c0d2643eacee08fbf4462877dca854d35f62a62d34d4bfe613820a5055400e2f",
+      "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
+    },
+    {
+      "path": "examples/canvas-text/assets/Ahem-COPYING.txt",
+      "bytes": 1928,
+      "sha256": "3100f58a80de8fcd9dee4280dc4e52a45cc25a2084006e6b8fb5750708a388f8",
+      "originRole": "Retained official W3C Ahem test-font bytes and notices; public-domain/CC0 rights recorded separately from first-party Apache-2.0."
+    },
+    {
+      "path": "examples/canvas-text/assets/Ahem-README.txt",
+      "bytes": 2456,
+      "sha256": "e5314468f94f7d9caf62bd8f6871ebf81c96827254043dac95814c943852d40e",
+      "originRole": "Retained official W3C Ahem test-font bytes and notices; public-domain/CC0 rights recorded separately from first-party Apache-2.0."
+    },
+    {
+      "path": "examples/canvas-text/assets/ahem.ttf",
+      "bytes": 22572,
+      "sha256": "f0a92cd0cc45735591c9b5b1fa8aecd5194e8dc518895ca22af94a46c23550dc",
+      "originRole": "Retained official W3C Ahem test-font bytes and notices; public-domain/CC0 rights recorded separately from first-party Apache-2.0."
+    },
+    {
+      "path": "examples/canvas-text/assets/provenance.json",
+      "bytes": 1509,
+      "sha256": "2a970cd2a600ed8af4fa44bee7fcf30d505b2d2d32c2bac0747816445dcfac2d",
+      "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
+    },
+    {
+      "path": "examples/canvas-text/index.html",
+      "bytes": 2499,
+      "sha256": "8ad452c9c0d7341b29e198648b396535ae45852c078917b291df0e04ec024ec7",
+      "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
+    },
+    {
+      "path": "examples/canvas-text/main.mjs",
+      "bytes": 7372,
+      "sha256": "8621c4bf2840060d45d479734db5f678d28f0ec3bc6ebc0b4df45f10924be05b",
+      "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
+    },
+    {
+      "path": "packages/engine/web/CanvasTextRasterProvider.ts",
+      "bytes": 14947,
+      "sha256": "0f5089c8a8146b035604b6f07152be76cac9f602251d7628bc71820d8d521a45",
+      "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
+    },
+    {
+      "path": "packages/engine/web/text.ts",
+      "bytes": 161,
+      "sha256": "f80a1cc204922ca45c180fb82f3860522852108922af25a200df3c27c0654047",
+      "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
+    },
+    {
+      "path": "tests/canvas-text-canvas-verifier.test.mjs",
+      "bytes": 10939,
+      "sha256": "8625566574c064e5ff3d01b3e126aec72110ecaea1a4b81829e9d47d30ec3875",
+      "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
+    },
+    {
+      "path": "tests/canvas-text-provider-boundaries.test.mjs",
+      "bytes": 5894,
+      "sha256": "abd1f0e86f0303d030df08c7f044e4a7d35a0aea19cda1de4b4cd07b365db25c",
+      "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
+    },
+    {
+      "path": "tests/canvas-text-provider-double-helpers.mjs",
+      "bytes": 9549,
+      "sha256": "fd927f4efca39564a63c3975a05da96a2a5a208b3da33484bdfa5b4897055faf",
+      "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
+    },
+    {
+      "path": "tests/canvas-text-provider.test.mjs",
+      "bytes": 43670,
+      "sha256": "7c9032f44f5f212209ee46cae725bb3b3bc37c05ffb95e96b90d77975cd5d45f",
+      "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
+    },
+    {
+      "path": "tests/fixtures/canvas-text-provider-canvas/assets/Ahem-COPYING.txt",
+      "bytes": 1928,
+      "sha256": "3100f58a80de8fcd9dee4280dc4e52a45cc25a2084006e6b8fb5750708a388f8",
+      "originRole": "Retained official W3C Ahem test-font bytes and notices; public-domain/CC0 rights recorded separately from first-party Apache-2.0."
+    },
+    {
+      "path": "tests/fixtures/canvas-text-provider-canvas/assets/Ahem-README.txt",
+      "bytes": 2456,
+      "sha256": "e5314468f94f7d9caf62bd8f6871ebf81c96827254043dac95814c943852d40e",
+      "originRole": "Retained official W3C Ahem test-font bytes and notices; public-domain/CC0 rights recorded separately from first-party Apache-2.0."
+    },
+    {
+      "path": "tests/fixtures/canvas-text-provider-canvas/assets/ahem.ttf",
+      "bytes": 22572,
+      "sha256": "f0a92cd0cc45735591c9b5b1fa8aecd5194e8dc518895ca22af94a46c23550dc",
+      "originRole": "Retained official W3C Ahem test-font bytes and notices; public-domain/CC0 rights recorded separately from first-party Apache-2.0."
+    },
+    {
+      "path": "tests/fixtures/canvas-text-provider-canvas/assets/favicon.png",
+      "bytes": 73,
+      "sha256": "eacb1a012fc0820bb358ea06380857fd97d62a420932142014ac89bcc4afbbc3",
+      "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
+    },
+    {
+      "path": "tests/fixtures/canvas-text-provider-canvas/assets/source-ledger.json",
+      "bytes": 2875,
+      "sha256": "6d393775a2649fc1589f2f419d399707adc2e68769089a4d914ad8dbe942946d",
+      "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
+    },
+    {
+      "path": "tests/fixtures/canvas-text-provider-canvas/cases.json",
+      "bytes": 2157,
+      "sha256": "56dfe52a429bc5126cbd98d6ba564717c91837b3b40d0d3dbe0de277c1fd968a",
+      "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
+    },
+    {
+      "path": "tests/fixtures/canvas-text-provider-canvas/fixture.mjs",
+      "bytes": 25876,
+      "sha256": "8ace2fa3452a6011fce35f78fdb35308ac54dee84e40a16dbef9a33301f6f9f0",
+      "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
+    },
+    {
+      "path": "tests/fixtures/canvas-text-provider-canvas/index.html",
+      "bytes": 432,
+      "sha256": "a1bc0253941fc25e698e668001b9b83f78b11419002be351f0413827b275345d",
+      "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
+    },
+    {
+      "path": "tests/fixtures/canvas-text-provider-canvas/reference.mjs",
+      "bytes": 17655,
+      "sha256": "22ade552367c167e43e8a8c62d6af829edfdc54655d242384982b2925d289d42",
+      "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
+    },
+    {
+      "path": "tests/types/canvas-text-provider-import-negative.ts",
+      "bytes": 1193,
+      "sha256": "3cd6b529d2045be001819b8b5f557b8da84d1d4088030bc308ad59b955134016",
+      "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
+    },
+    {
+      "path": "tests/types/canvas-text-provider-negative.ts",
+      "bytes": 1140,
+      "sha256": "1ec38d0e054b2fb5777d8d100e8c4bc9471b0260c7d51ed043fc0f9663fb37be",
+      "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
+    },
+    {
+      "path": "tests/types/canvas-text-provider-positive.ts",
+      "bytes": 1017,
+      "sha256": "71b91e4aee88d1142f9098cfb07a5596cbf593dfcacc249b63c54b25d58b6caf",
+      "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
+    },
+    {
+      "path": "tools/canvas-text-canvas-contract.mjs",
+      "bytes": 11557,
+      "sha256": "91a29d6ffd604e8d59f20806538f1c46108d47a16bc343a1c3f39fa84338f9f7",
+      "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
+    },
+    {
+      "path": "tools/verify-canvas-text-canvas.mjs",
+      "bytes": 26032,
+      "sha256": "e97e8c0c9320d23caece696f8a05c156ee09f27e960428612f6dd04d5f0100ca",
+      "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
+    },
+    {
+      "path": "knowledge-base/en/docs/canvas-text-wc1-canvas.md",
+      "bytes": 10832,
+      "sha256": "535ee4a7f079a360aa371a6e6fb7604bfa86bee32a2b4436fd1b4b73673e32e3",
+      "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/Canvas文字WC1.md",
+      "bytes": 9741,
+      "sha256": "af7b75d68d6cfe93f271c0604bdc4753b2ab51f81a2775c620906f31c145bcac",
+      "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
+    },
+    {
+      "path": "knowledge-base/evidence/canvas-text-wc1-canvas-verification.json",
+      "bytes": 35788,
+      "sha256": "e3b9420b9d1d2d5e78a6e048d3a5fec1277168e15692b18ee74eca446822dbf1",
+      "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",
@@ -8001,5 +8164,94 @@
     "SpineAccepted": false,
     "fullMigrationAccepted": false,
     "historicalCutoffsPreserved": true
+  },
+  "canvasTextWC1WorkPackage": {
+    "date": "2026-10-11",
+    "engineeringLabel": "0.28.0",
+    "sourceId": "S081",
+    "deliverable": "V032",
+    "sourceBaseCommit": "b8446d23d6cf8b979d05d35757876811fe190e7a",
+    "scope": "Opt-in modern Window Canvas complete-line text provider and independently retained native pixel verification; desktop environment-bound subset.",
+    "packageVersion": "0.0.0",
+    "protocolVersion": "1.0",
+    "implementationOrigin": {
+      "firstPartyImplementation": "Independently authored Egret Canvas text provider, lifecycle fixtures, native reference and result admission under Apache-2.0.",
+      "newRuntimeDependencies": [],
+      "thirdPartyTestFont": {
+        "source": "https://www.w3.org/Style/CSS/Test/Fonts/Ahem/ahem.ttf",
+        "rights": "Public domain with retained CC0 fallback declaration",
+        "sha256": "f0a92cd0cc45735591c9b5b1fa8aecd5194e8dc518895ca22af94a46c23550dc",
+        "credits": [
+          "Todd Fahrner",
+          "Myles C. Maxfield"
+        ],
+        "notice": "tests/fixtures/canvas-text-provider-canvas/assets/Ahem-COPYING.txt"
+      },
+      "primaryReferences": [
+        "https://html.spec.whatwg.org/multipage/canvas.html#drawing-text-to-the-bitmap",
+        "https://html.spec.whatwg.org/multipage/canvas.html#textmetrics",
+        "https://drafts.csswg.org/css-font-loading-3/#font-face-set-check"
+      ]
+    },
+    "productSourcePaths": [
+      "packages/engine/web/CanvasTextRasterProvider.ts",
+      "packages/engine/web/text.ts"
+    ],
+    "productSources": [
+      {
+        "path": "packages/engine/web/CanvasTextRasterProvider.ts",
+        "bytes": 14947,
+        "sha256": "0f5089c8a8146b035604b6f07152be76cac9f602251d7628bc71820d8d521a45"
+      },
+      {
+        "path": "packages/engine/web/text.ts",
+        "bytes": 161,
+        "sha256": "f80a1cc204922ca45c180fb82f3860522852108922af25a200df3c27c0654047"
+      }
+    ],
+    "publicSubpath": "@egret/engine/web/text",
+    "publicFactory": "createCanvasTextRasterProvider(): TextRasterProvider",
+    "defaultRootExportChanged": false,
+    "defaultWebExportChanged": false,
+    "record": "knowledge-base/evidence/canvas-text-wc1-canvas-verification.json",
+    "currentTargetedVerification": "PASS",
+    "actualNativeCanvasSubset": "PASS_WC1_CANVAS_SUBSET",
+    "affectedBrowserRegression": "ACTUAL_FIVE_EXISTING_DESKTOP_REGRESSION_GATES_PASS",
+    "independentFiniteSourceReview": "PASS_LIMITS_SOURCE_AND_CONTROLLED_ADMISSION_ONLY",
+    "independentActualSavedResultReview": "PASS_LIMITS_ACTUAL_SAVED_CANVAS_TEXT_SLICE",
+    "finalWholeVerification": "ACTUAL_COMPLETE_PREPUSH_R3_PASS",
+    "mandatoryPrepush": "PENDING",
+    "remoteDelivery": "PENDING",
+    "limits": {
+      "CJK": false,
+      "physicalMobileDevices": false,
+      "WebGPUText": false,
+      "fullWC1": false,
+      "fullSpine": false,
+      "nativeRuntime": false,
+      "threeD": false,
+      "fullUI": false,
+      "migration": false,
+      "physicalMemory": false,
+      "performanceLeadership": false,
+      "historicalMixedGpuFailure": "Retained mixed Canvas/textured-WebGPU FAIL: 512 GPU composition bytes differed, maximum channel difference 1, at its original source cutoff",
+      "Native7": "PENDING",
+      "OR1": "Separate original scope; no acceptance expansion"
+    },
+    "historicalCutoffsPreserved": true,
+    "independentBilingualMeaningReview": "ACTUAL_FINITE_PUBLIC_MEANING_PASS"
+  },
+  "displayTreeScalingDeliverySuccessor": {
+    "date": "2026-10-11",
+    "engineeringLabel": "0.27.2",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/14",
+    "head": "011100e54be90af1f0f0d23f37126ee7200bedb6",
+    "mergedMain": "b8446d23d6cf8b979d05d35757876811fe190e7a",
+    "tree": "4d86da1216f8f9727999cafe3f447301807d3116",
+    "mandatoryPrepush": "ACTUAL_PASS",
+    "localCoreTests": 2228,
+    "localPublicationTests": 52,
+    "remoteChecksReported": 0,
+    "scope": "Delivery successor; dated preparation cutoffs retained."
   }
 }

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "status": "PREPARED_NOT_RUN",
+  "firstParty": {"license": "Apache-2.0", "implementation": "Independent Egret fixture, complete-line reference and collector authored from the adopted WC1 specification and first-party lifecycle/graph patterns", "copiedUpstreamImplementation": false, "productDependencyAdded": false},
+  "ahem": {
+    "source": "https://www.w3.org/Style/CSS/Test/Fonts/Ahem/ahem.ttf",
+    "readme": "https://www.w3.org/Style/CSS/Test/Fonts/Ahem/README",
+    "notice": "https://www.w3.org/Style/CSS/Test/Fonts/Ahem/COPYING",
+    "version": "Exact retained official bytes; mutable URL, no upstream version or commit asserted",
+    "bytes": 22572,
+    "sha256": "f0a92cd0cc45735591c9b5b1fa8aecd5194e8dc518895ca22af94a46c23550dc",
+    "rights": "Public domain; original Creative Commons Zero declaration fallback retained in Ahem-COPYING.txt",
+    "credits": ["Todd Fahrner", "Myles C. Maxfield"],
+    "readmeSHA256": "e5314468f94f7d9caf62bd8f6871ebf81c96827254043dac95814c943852d40e",
+    "noticeSHA256": "3100f58a80de8fcd9dee4280dc4e52a45cc25a2084006e6b8fb5750708a388f8",
+    "geometry": "README: 1000 units/em, ascent800/descent200; X full square, p descent-only, É ascent-only, space no path/full advance",
+    "scope": "Geometric test font; no natural-language, CJK or device-performance claim"
+  },
+  "favicon": {"origin": "Existing first-party authored 1x1 transparent RGBA PNG", "license": "Apache-2.0", "bytes": 73, "sha256": "eacb1a012fc0820bb358ea06380857fd97d62a420932142014ac89bcc4afbbc3", "admission": "Only exact current loopback origin/port and /favicon.ico with bound bytes; no wildcard, no success absent actual request"},
+  "primaryResearch": [
+    {"source": "https://html.spec.whatwg.org/multipage/canvas.html#drawing-text-to-the-bitmap", "scope": "Complete-line native drawing and fixed state; retained prior source research, no new network verification"},
+    {"source": "https://html.spec.whatwg.org/multipage/canvas.html#textmetrics", "scope": "Advance and signed actualBoundingBox metrics; actual values are environment-bound"},
+    {"source": "https://html.spec.whatwg.org/multipage/canvas.html#pixel-manipulation", "scope": "sRGB rgba8 native readback and extra backing allocations"},
+    {"source": "https://drafts.csswg.org/css-font-loading-3/#font-face-set-check", "scope": "Readiness check can permit fallback; owned face selection is separately proved"}
+  ],
+  "allocation": {"referenceAndHostBackingOutsideT1": true, "nativeImageDataOutsideT1": true, "readbackCopiesOutsideT1": true, "physicalPeak": "UNKNOWN", "logicalImageBAndScratch2B": "Validated against independent request/geometry; no physical-memory proof"},
+  "history": "Old B3 renderer/font results and failures retain their original source cutoffs; this preparation establishes no new native result. No oracle fitted to old target output."
+}

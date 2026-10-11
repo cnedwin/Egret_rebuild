@@ -3,6 +3,16 @@
 $ErrorActionPreference = 'Stop'
 $kbRoot = [IO.Path]::GetFullPath($Root)
 $kbPrefix = $kbRoot.TrimEnd([IO.Path]::DirectorySeparatorChar) + [IO.Path]::DirectorySeparatorChar
+# Public reading links may reference only these five files outside the KB.
+# Resolve exact targets from the KB's repository parent; no directory is allowed.
+$repositoryRoot = Split-Path -Parent $kbRoot
+$repositoryReadingTargets = @(
+    'examples/canvas-text/README.md'
+    'examples/canvas-text/README.zh-CN.md'
+    'examples/canvas-text/assets/Ahem-COPYING.txt'
+    'examples/canvas-text/assets/Ahem-README.txt'
+    'examples/canvas-text/assets/provenance.json'
+) | ForEach-Object { [IO.Path]::GetFullPath((Join-Path $repositoryRoot $_)) }
 $issues = New-Object 'System.Collections.Generic.List[string]'
 $registryCounts = [ordered]@{}
 $idMap = @{}
@@ -23,7 +33,14 @@ function Check-LocalPath([string]$Relative, [string]$Base, [string]$Origin) {
     $filePart = ($Relative -split '#', 2)[0]
     if ([string]::IsNullOrWhiteSpace($filePart)) { return }
     $target = [IO.Path]::GetFullPath((Join-Path $Base ([Uri]::UnescapeDataString($filePart))))
-    if (-not $target.StartsWith($kbPrefix, [StringComparison]::OrdinalIgnoreCase)) {
+    $isRepositoryReading = $false
+    foreach ($readingTarget in $repositoryReadingTargets) {
+        if ([string]::Equals($target, $readingTarget, [StringComparison]::OrdinalIgnoreCase)) {
+            $isRepositoryReading = $true
+            break
+        }
+    }
+    if (-not $target.StartsWith($kbPrefix, [StringComparison]::OrdinalIgnoreCase) -and -not $isRepositoryReading) {
         $issues.Add("Local reference leaves knowledge base: $Origin -> $Relative")
     } elseif ($current -and $target -eq [IO.Path]::GetFullPath((Join-Path $kbRoot $current.validation))) {
         # The generated report may not exist during the first validation run.

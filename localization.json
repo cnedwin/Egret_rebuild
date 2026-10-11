@@ -92,8 +92,8 @@
       "zh": "DOCUMENTATION.zh-CN.md",
       "en": "DOCUMENTATION.md",
       "kind": "public_reading",
-      "enSha256": "28d2c5c1af8efa2dc5840e7c5050fba6617fa15a7b0571c7f840399665ca1b36",
-      "zhSha256": "bcf6059bf2882e54c2e7ba9cf31190add7f52c35bdf8a1ff4536549477db3c9d"
+      "enSha256": "db00c9eda845f57d91c9af06fc304ff56766144134222f2a43de64ebdfb192a2",
+      "zhSha256": "d6b3783d11ebe54dc41f11e0e3f625687c5a9fa93c9c842f6a20a8a927c019e6"
     },
     {
       "zh": "examples/canvas-scene/README.zh-CN.md",
@@ -141,8 +141,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "74deb17bf6f707f50738da9d4c9c1924a02425040e9236f7590a9d513bf7a132",
-      "zhSha256": "4a1df493f0ed8486435f6fb1b6c2b9afbcdde6451817884271cfa33061d9f70c"
+      "enSha256": "c4daf1e97a96684899a1f2ab60d7bdeae93f72ffcd20d2cfa536e347b4501c9a",
+      "zhSha256": "226407acd469ab0edafd5ca20b4aa08fc3fbd4d516b1ac0645adba8429e1c3de"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -764,8 +764,8 @@
       "zh": "knowledge-base/Cns/README.md",
       "en": "knowledge-base/en/README.md",
       "kind": "public_reading",
-      "enSha256": "3e5f4551be1ea4a0f2cd692135aba003e99e9a01df208b70345e24837eda2023",
-      "zhSha256": "7a4970a9cfde4aaf819a6fe0a989b79bb82cdb0538cc707ea72ea58af3f0c3d1"
+      "enSha256": "4812fe2e164940034122318a12be0531cb38de3f15d7e034f6d48f6696120ec1",
+      "zhSha256": "fca455b325d187ecb4e4bedee40c11f33441b3125eef28e234cba84c7a7102a5"
     },
     {
       "zh": "knowledge-base/Cns/templates/ADR决策记录.md",
@@ -848,8 +848,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "ce4d7c63631b5ad8b3a0a7b529afaf627ca7014e364eca615df11dc68b8a0cf1",
-      "zhSha256": "ba0b98bfd237e5642d752c02f722ade857eb72fdc46350c3e62512f839b85f9c"
+      "enSha256": "b70a36312c55412e114289b0bf1b3f98b33bd995e25087db58a2e8c5be13a31b",
+      "zhSha256": "330905a8423bbb6d1db8f4811867197f0e05399d2f0a05dc13da5d6cdc9661ae"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -997,6 +997,20 @@
       "kind": "public_reading",
       "enSha256": "1b5b109e362e0acb1ac07855be9e7b820d1671be3f728e434d8a94a740ac9d3c",
       "zhSha256": "dc9fcd3a028c53459db1400d3663958127b8b8a6793b539ef0d8d0fd8cda8e98"
+    },
+    {
+      "zh": "knowledge-base/Cns/docs/Canvas文字WC1.md",
+      "en": "knowledge-base/en/docs/canvas-text-wc1-canvas.md",
+      "kind": "public_reading",
+      "enSha256": "535ee4a7f079a360aa371a6e6fb7604bfa86bee32a2b4436fd1b4b73673e32e3",
+      "zhSha256": "af7b75d68d6cfe93f271c0604bdc4753b2ab51f81a2775c620906f31c145bcac"
+    },
+    {
+      "zh": "examples/canvas-text/README.zh-CN.md",
+      "en": "examples/canvas-text/README.md",
+      "kind": "public_reading",
+      "enSha256": "a3e7a3c73da43686a25ffba0f8e89df7080115227dc85f266b71154765de82d9",
+      "zhSha256": "c0d2643eacee08fbf4462877dca854d35f62a62d34d4bfe613820a5055400e2f"
     }
   ],
   "registries": [
@@ -1021,20 +1035,20 @@
     {
       "source": "knowledge-base/Cns/registry/交付.json",
       "target": "knowledge-base/en/registry/deliverables.json",
-      "sourceSha256": "f635cf10ab4e6a26dbcf24562da119720735fabc8e9971e24455b21b3479e07d",
-      "targetSha256": "05f91257b13892776860bc4c2623cfb9d8a5a1ce815030c379c7d2d9cfdabba0"
+      "sourceSha256": "742acd56ac4f0248ecc09308cd2f93e22a880675f87c66d3c263476bec81a11e",
+      "targetSha256": "9e9ed46b67d975b7f0f8d3b4786bb368ef2a78c2dff53f172f4d0cb843baba39"
     },
     {
       "source": "knowledge-base/Cns/registry/来源.json",
       "target": "knowledge-base/en/registry/sources.json",
-      "sourceSha256": "9b1d5ebcaf982c69e87293d2e32eb860a713ab5104f6629450f4191e641cccd8",
-      "targetSha256": "912e52408cab53b605dfe156223f99c54cd06f3c8edeb1daeaa36c0878cd1b92"
+      "sourceSha256": "f19de00ee40e067c13ae7538e0f451c5a16992971f825a166f771120776030f6",
+      "targetSha256": "08cd130d0b14239ea6a6fbf9778edf89d5ab47caf948e6e5b3207261411c8d6c"
     },
     {
       "source": "knowledge-base/Cns/当前版本.json",
       "target": "knowledge-base/en/current-version.json",
-      "sourceSha256": "b5128bbe9cdcb366de7da4a5ea93fb9d4430f5209bef7b52d0d3ed415051b1c4",
-      "targetSha256": "18d683572c32aa74b9c37114b87fa074597b2e8cd54ee968b7882685272d56aa"
+      "sourceSha256": "09f3c4e657abacd4528559afb08d63ade9324c1e36d2af21cf01573ee03bbd05",
+      "targetSha256": "c4e1708bf0a8e8f87a4b6ee7f4b15673aa78a8be9e5c006147f03fffdde99a9b"
     }
   ],
   "criticalComments": [
@@ -1595,6 +1609,38 @@
     {
       "path": "packages/runtime/src/ByteReader.ts",
       "sha256": "6bdfd946873b01d829682dccdaca85e0c11e579574657d4c2c5d0b901766dedb"
+    },
+    {
+      "path": "packages/engine/web/CanvasTextRasterProvider.ts",
+      "sha256": "0f5089c8a8146b035604b6f07152be76cac9f602251d7628bc71820d8d521a45"
+    },
+    {
+      "path": "packages/engine/web/text.ts",
+      "sha256": "f80a1cc204922ca45c180fb82f3860522852108922af25a200df3c27c0654047"
+    },
+    {
+      "path": "tools/verify-canvas-text-canvas.mjs",
+      "sha256": "e97e8c0c9320d23caece696f8a05c156ee09f27e960428612f6dd04d5f0100ca"
+    },
+    {
+      "path": "tools/canvas-text-canvas-contract.mjs",
+      "sha256": "91a29d6ffd604e8d59f20806538f1c46108d47a16bc343a1c3f39fa84338f9f7"
+    },
+    {
+      "path": "tests/fixtures/canvas-text-provider-canvas/fixture.mjs",
+      "sha256": "8ace2fa3452a6011fce35f78fdb35308ac54dee84e40a16dbef9a33301f6f9f0"
+    },
+    {
+      "path": "tests/fixtures/canvas-text-provider-canvas/reference.mjs",
+      "sha256": "22ade552367c167e43e8a8c62d6af829edfdc54655d242384982b2925d289d42"
+    },
+    {
+      "path": "examples/canvas-text/main.mjs",
+      "sha256": "8621c4bf2840060d45d479734db5f678d28f0ec3bc6ebc0b4df45f10924be05b"
+    },
+    {
+      "path": "knowledge-base/tools/Validate-KnowledgeBase.ps1",
+      "sha256": "9a29811796093d473ed1d8d71bce5a06a247c5d46e790190464e9a173d9d0c12"
     }
   ],
   "historicalSemanticReview": {
@@ -3582,5 +3628,31 @@
     "sourceExecutionByCurationAuthor": false,
     "currentIdentityRefresh": "ACTUAL_CURRENT_DOCUMENT_REGISTRY_AND_CRITICAL_SOURCE_IDENTITIES",
     "publication": "PENDING_ACTUAL_CURRENT_HOOK_AND_REMOTE_DELIVERY"
+  },
+  "canvasTextWC1Curation": {
+    "date": "2026-10-11",
+    "engineeringLabel": "0.28.0",
+    "scope": "Two new reading pairs, finite affected navigation and registry successors, critical English comments for the additive Canvas subset.",
+    "documents": [
+      "knowledge-base/en/docs/canvas-text-wc1-canvas.md",
+      "knowledge-base/Cns/docs/Canvas文字WC1.md"
+    ],
+    "example": [
+      "examples/canvas-text/README.md",
+      "examples/canvas-text/README.zh-CN.md"
+    ],
+    "criticalSources": [
+      "packages/engine/web/CanvasTextRasterProvider.ts",
+      "packages/engine/web/text.ts",
+      "tools/verify-canvas-text-canvas.mjs",
+      "tools/canvas-text-canvas-contract.mjs",
+      "tests/fixtures/canvas-text-provider-canvas/fixture.mjs",
+      "tests/fixtures/canvas-text-provider-canvas/reference.mjs",
+      "examples/canvas-text/main.mjs",
+      "knowledge-base/tools/Validate-KnowledgeBase.ps1"
+    ],
+    "publicTone": "Positive independent implementation, explicit test-font credit and environment-bound evidence.",
+    "independentMeaningReview": "ACTUAL_FINITE_PUBLIC_MEANING_PASS",
+    "completeSemanticParityClaim": false
   }
 }

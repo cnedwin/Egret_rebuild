@@ -375,3 +375,37 @@ try {
   }
   console.log('ByteReader fixtures PASS: frozen DOM/Node-free public positive consumer and 18 exact file/line/code unsuppressed negatives.');
 } finally { for (const config of byteReaderTypeConfigs) rmSync(config, {force:true}); }
+
+// WC1 predictions are source-authored before compilation. Existing checks above
+// keep their exact fixtures, counts and refusal reasons.
+const canvasTextConfigs=[];
+try {
+  for(const [name,source,base,count,marker] of [
+    ['positive','canvas-text-provider-positive.ts','tsconfig.dom-free.json',0,null],
+    ['negative','canvas-text-provider-negative.ts','tsconfig.web.json',12,'CANVAS_TEXT_CASE'],
+    ['imports','canvas-text-provider-import-negative.ts','tsconfig.web.json',8,'CANVAS_TEXT_IMPORT_CASE'],
+  ]) {
+    const file='tests/types/'+source,fixture=readFileSync(path.join(root,file),'utf8');
+    if(/@ts-(?:expect-error|ignore|nocheck)/.test(fixture))throw new Error('Canvas text fixture contains suppression: '+file);
+    const expected=marker?fixture.split(/\r?\n/).flatMap((line,index)=>{
+      const match=line.match(new RegExp('^// '+marker+' ([\\w-]+) TS(\\d+)$'));
+      return match?[{name:match[1],file,line:index+2,code:Number(match[2])}]:[];
+    }):[];
+    if(expected.length!==count||new Set(expected.map(item=>item.name)).size!==count
+        || (marker && (fixture.match(new RegExp('\\b'+marker+'\\b','g'))??[]).length!==count)) throw new Error('Canvas text diagnostic inventory mismatch: '+file);
+    const config='tests/types/canvas-text-provider-'+name+'.generated.json';canvasTextConfigs.push(path.join(root,config));
+    writeFileSync(path.join(root,config),JSON.stringify({extends:'./'+base,include:[source]}));
+    const check=spawnSync(process.execPath,[compiler,'--project',config,'--pretty','false'],{cwd:root,encoding:'utf8'});
+    process.stdout.write(check.stdout??'');process.stderr.write(check.stderr??'');if(check.error)throw check.error;
+    if(!marker){if(check.status!==0)throw new Error('Canvas text DOM-free signature consumer failed');continue;}
+    const observed=[...(check.stdout??'').matchAll(/^(.+)\((\d+),(\d+)\): error TS(\d+):/gm)].map(match=>({file:match[1].replaceAll('\\','/'),line:Number(match[2]),column:Number(match[3]),code:Number(match[4])}));
+    if(check.status!==1||observed.length!==count)throw new Error(`Canvas text ${name}: expected ${count} diagnostics/exit 1; got ${observed.length}/exit ${check.status}`);
+    const receipts=expected.map(item=>{
+      const found=observed.filter(actual=>actual.file===item.file&&actual.line===item.line);
+      if(found.length!==1||found[0].code!==item.code)throw new Error(`Canvas text ${item.name}: expected ${item.file}:${item.line}/TS${item.code}; got ${JSON.stringify(found)}`);
+      return {name:item.name,expected:item,actual:found[0]};
+    });
+    console.log('Canvas text '+name+' individual unsuppressed diagnostic receipts: '+JSON.stringify(receipts));
+  }
+  console.log('Canvas text fixtures PASS: DOM-free public signature, 12 ordinary diagnostics and 8 dedicated-file exact-location diagnostics in one invocation (file/line/code).');
+} finally {for(const config of canvasTextConfigs)rmSync(config,{force:true});}

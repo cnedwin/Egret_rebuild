@@ -45,6 +45,7 @@ for (const [name, allowed] of Object.entries(expected)) {
       './webgpu': {types:'./dist/web/webgpu.d.ts',import:'./dist/web/webgpu.js'},
       './web': {types:'./dist/web/index.d.ts',import:'./dist/web/index.js'},
       './text': {types:'./dist/text.d.ts',import:'./dist/text.js'},
+      './web/text': {types:'./dist/web/text.d.ts',import:'./dist/web/text.js'},
     };
     if (JSON.stringify(Object.keys(pkg.exports ?? {}).sort()) !== JSON.stringify(Object.keys(textExports).sort())
         || Object.entries(textExports).some(([entry, mapping]) => JSON.stringify(pkg.exports[entry]) !== JSON.stringify(mapping)))
@@ -72,6 +73,13 @@ for (const [name, allowed] of Object.entries(expected)) {
       if (!imported) continue;
       if (imported.startsWith(".")) {
         if (!path.resolve(path.dirname(file), imported).startsWith(`${dir}${path.sep}`)) throw new Error(`${file}: crosses package by relative path`);
+        if (name === 'engine') {
+          const target=path.relative(dir,path.resolve(path.dirname(file),imported)).split(path.sep).join('/');
+          const relative=path.relative(dir,file).split(path.sep).join('/');
+          const providerTarget=['web/CanvasTextRasterProvider.js','dist/web/CanvasTextRasterProvider.js'].includes(target);
+          const providerBarrel=['web/text.ts','dist/web/text.js','dist/web/text.d.ts'].includes(relative);
+          if ((providerTarget && !providerBarrel) || ['web/text.js','dist/web/text.js'].includes(target)) throw new Error(`${file}: Canvas text opt-in module imported outside its barrel`);
+        }
       } else if (imported === '#egret-textured-frame-state') {
         // Only these two first-party adapters may share the Engine-owned registry.
         const relative = path.relative(dir, file).split(path.sep).join('/');
@@ -79,6 +87,16 @@ for (const [name, allowed] of Object.entries(expected)) {
       } else if (imported === '@egret/runtime/text') {
         const relative = path.relative(dir, file).split(path.sep).join('/');
         if (name !== 'engine' || !['src/text.ts', 'dist/text.js', 'dist/text.d.ts'].includes(relative)) throw new Error(`${file}: unapproved/deep package import ${imported}`);
+      } else if (imported === '@egret/engine/text') {
+        const relative = path.relative(dir, file).split(path.sep).join('/');
+        // The public provider protocol is one exact erased dependency, not a
+        // same-package value-import exception or permission for other adapters.
+        const clause = code.slice(0, match.index).match(/\bimport\s+type\s*\{([^{}]+)\}\s*$/);
+        const types = ['TextLineMetricsInput','TextMeasureContext','TextRasterContext','TextRasterPlan','TextRasterProvider','TextRasterRequest'];
+        const names = clause?.[1].split(',').map(value=>value.trim()).filter(Boolean);
+        if (name !== 'engine' || !['web/CanvasTextRasterProvider.ts','dist/web/CanvasTextRasterProvider.d.ts'].includes(relative)
+            || !names?.length || names.some(value=>!types.includes(value)) || new Set(names).size!==names.length)
+          throw new Error(`${file}: unapproved/deep package import ${imported}`);
       } else if (!allowed.includes(imported) && !((rendering || projectFoundation) && Object.hasOwn(external, name) && Object.hasOwn(externalAllowed, imported))) throw new Error(`${file}: unapproved/deep package import ${imported}`);
     }
     inspected++;
@@ -297,9 +315,11 @@ const textPrivate = [
 ];
 const runtimeText = await import('@egret/runtime/text');
 const engineText = await import('@egret/engine/text');
+const canvasText = await import('@egret/engine/web/text');
 const textEntries = [...meshEntries,
   ['runtime/text',runtimeText,'packages/runtime/dist/text/index'],
   ['engine/text',engineText,'packages/engine/dist/text'],
+  ['engine/web/text',canvasText,'packages/engine/dist/web/text'],
 ];
 // Engine-owned clock extends only the root type surface. Preserve every retained
 // reason above; admission and owner helpers remain same-package private details.
@@ -504,6 +524,33 @@ for (const file of ['packages/runtime/src/ByteReader.ts', 'packages/runtime/dist
   if (forbidden.test(code) || /\b(?:HTMLElement|Document|Window|Navigator|NodeJS)\b/.test(code)
       || /\/\/\/\s*<reference\s+(?:lib\s*=\s*["']dom(?:\.iterable)?["']|types\s*=\s*["']node["'])/i.test(raw)) throw new Error(`${file}: host ambient dependency`);
 }
+
+// WC1 adds one explicit value and no named type surface. Keep old entry guards
+// and their refusal precedence; this leaf is never a default or Canvas-host port.
+if (JSON.stringify(Object.keys(canvasText))!==JSON.stringify(['createCanvasTextRasterProvider'])
+    || typeof canvasText.createCanvasTextRasterProvider!=='function') throw new Error('web/text: exact Canvas text runtime surface mismatch');
+const canvasTextStrip=raw=>raw.replace(/\/\*[\s\S]*?\*\//g,'').replace(/\/\/[^\n]*/g,'').trim();
+const canvasTextDeclaration=canvasTextStrip(readFileSync(path.join(root,'packages/engine/dist/web/text.d.ts'),'utf8'));
+if (!/^export\s*\{\s*createCanvasTextRasterProvider\s*\}\s*from\s*['"]\.\/CanvasTextRasterProvider\.js['"];?$/.test(canvasTextDeclaration)) throw new Error('web/text: exact Canvas text declaration surface mismatch');
+const canvasProviderDeclaration=canvasTextStrip(readFileSync(path.join(root,'packages/engine/dist/web/CanvasTextRasterProvider.d.ts'),'utf8'));
+if (!/^import\s+type\s*\{\s*TextRasterProvider\s*\}\s*from\s*['"]@egret\/engine\/text['"];\s*export\s+declare\s+function\s+createCanvasTextRasterProvider\s*\(\s*\)\s*:\s*TextRasterProvider\s*;$/.test(canvasProviderDeclaration)) throw new Error('web/text: exact Canvas text factory declaration mismatch');
+for(const [entry,values,emittedEntry] of [...textEntries,['project',projectFacade,'packages/project/dist/index']]) {
+  if(entry==='engine/web/text')continue;
+  const code=readFileSync(path.join(root,emittedEntry+'.d.ts'),'utf8')+'\n'+readFileSync(path.join(root,emittedEntry+'.js'),'utf8');
+  if('createCanvasTextRasterProvider' in values || /\b(?:createCanvasTextRasterProvider|CanvasTextRasterProvider)\b/.test(code)
+      || /['"][^'"]*\/web\/text\.js['"]/.test(code)) throw new Error(`${entry}: explicit-only Canvas text port leaked`);
+}
+// Source, runtime emission and declarations share the exact opt-in boundary.
+for(const suffix of ['web/CanvasTextRasterProvider.ts','web/text.ts','dist/web/CanvasTextRasterProvider.js','dist/web/text.js','dist/web/CanvasTextRasterProvider.d.ts','dist/web/text.d.ts']) {
+  const file='packages/engine/'+suffix,code=canvasTextStrip(readFileSync(path.join(root,file),'utf8'));
+  if(/\b(?:FontFace|OffscreenCanvas|fetch|setTimeout|clearTimeout|setInterval|clearInterval|requestAnimationFrame|cancelAnimationFrame)\b|\.fonts\s*\.\s*(?:load|ready|add|delete|clear)\b|\baddEventListener\b/.test(code)) throw new Error(`${file}: Canvas text hidden work or font ownership`);
+  if(/['"][^'"]*(?:runtime\/text|\/text\/(?:TextRasterCache|request|plan|budget|types)|\.\.\/text|textField)\.js['"]/.test(code)) throw new Error(`${file}: Canvas text private/value text dependency`);
+}
+// Import itself is inert in the ordinary Node checker; only the explicit factory
+// reports environment unavailability. This is not native Canvas verification.
+let canvasTextUnavailable;
+try { canvasText.createCanvasTextRasterProvider(); } catch(error) { canvasTextUnavailable=error; }
+if(canvasTextUnavailable?.code!=='WEB_TEXT_UNAVAILABLE')throw new Error('web/text: nonbrowser factory must be unavailable');
 
 console.log(`Boundary check PASS: four private workspace packages, actual exports resolution, ${inspected} source/build/declaration files, DOM-free core and exact DOM-only web subtree without Node imports/globals.`);
 
