@@ -53,7 +53,9 @@ export function detachNode(child: DisplayObject): void {
   const parent = parentOf(child);
   if (parent === undefined) return;
   const list = listOf(parent);
-  const index = list.indexOf(child);
+  // Reverse acquisition cleanup commonly removes the tail. Avoid a full
+  // search in that case; middle removals retain stable ordering and linear cost.
+  const index = list[list.length - 1] === child ? list.length - 1 : list.indexOf(child);
   if (index < 0) throw new EgretError("DISPLAY_TREE_INVARIANT");
   list.splice(index, 1);
   parents.delete(child);

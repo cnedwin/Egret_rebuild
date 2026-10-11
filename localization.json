@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "revision": "0.27.1",
+  "revision": "0.27.2",
   "canonicalState": "Chinese registries; English JSON is a read-only translation",
   "evidencePolicy": "Machine data, embedded source, historical code and upstream legal originals retain their identities; paired reading versions explain them.",
   "semanticReview": {
@@ -92,8 +92,8 @@
       "zh": "DOCUMENTATION.zh-CN.md",
       "en": "DOCUMENTATION.md",
       "kind": "public_reading",
-      "enSha256": "87191bfaf32316d06ed4bd64c2ccc4ebe8dcfb3fcbf36c800bca4ae0c7ddd34f",
-      "zhSha256": "e23e2acefadeef718f3482ec369f5a6b2677b7d51ba042564d662f5bff38bbe6"
+      "enSha256": "28d2c5c1af8efa2dc5840e7c5050fba6617fa15a7b0571c7f840399665ca1b36",
+      "zhSha256": "bcf6059bf2882e54c2e7ba9cf31190add7f52c35bdf8a1ff4536549477db3c9d"
     },
     {
       "zh": "examples/canvas-scene/README.zh-CN.md",
@@ -141,8 +141,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "586120d956c54bde9aa69d10651ce6f9a78e4fd79911060ed6220ca0db51058b",
-      "zhSha256": "0d1567c40e1155a21ae38d7be57ef3ff91aac3eb7c086f6337fddcf2dcc40f34"
+      "enSha256": "74deb17bf6f707f50738da9d4c9c1924a02425040e9236f7590a9d513bf7a132",
+      "zhSha256": "4a1df493f0ed8486435f6fb1b6c2b9afbcdde6451817884271cfa33061d9f70c"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -764,8 +764,8 @@
       "zh": "knowledge-base/Cns/README.md",
       "en": "knowledge-base/en/README.md",
       "kind": "public_reading",
-      "enSha256": "a1b751b3ca14c20b87bcdf422c22236b6848d230a158ff882cdc64430c77343f",
-      "zhSha256": "8ca53abf7a65847907d55fdd1211337203ede8632c0e32f5572e41a47bbe3fe9"
+      "enSha256": "3e5f4551be1ea4a0f2cd692135aba003e99e9a01df208b70345e24837eda2023",
+      "zhSha256": "7a4970a9cfde4aaf819a6fe0a989b79bb82cdb0538cc707ea72ea58af3f0c3d1"
     },
     {
       "zh": "knowledge-base/Cns/templates/ADR决策记录.md",
@@ -848,8 +848,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "43a7f74030c2e0f6e18e870ac8c95d8c3afdfdbbc474b2cc8823a787e0c4637b",
-      "zhSha256": "cb2bc932fe34f8b5add65008c81d8c5e104597f23130cb41b1734f03c0e9bd13"
+      "enSha256": "ce4d7c63631b5ad8b3a0a7b529afaf627ca7014e364eca615df11dc68b8a0cf1",
+      "zhSha256": "ba0b98bfd237e5642d752c02f722ade857eb72fdc46350c3e62512f839b85f9c"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -990,6 +990,13 @@
       "kind": "public_reading",
       "enSha256": "d729dfc9cba4fd6ab09696c155d316ebec7b8f3a8b1bf9f271dab9f92565cfde",
       "zhSha256": "04e326b77a226115b2d03bd94c4c9bff9a157a05536c08954b36a1a5cf2ca92a"
+    },
+    {
+      "zh": "knowledge-base/Cns/docs/显示树扩展性.md",
+      "en": "knowledge-base/en/docs/display-tree-scaling.md",
+      "kind": "public_reading",
+      "enSha256": "1b5b109e362e0acb1ac07855be9e7b820d1671be3f728e434d8a94a740ac9d3c",
+      "zhSha256": "dc9fcd3a028c53459db1400d3663958127b8b8a6793b539ef0d8d0fd8cda8e98"
     }
   ],
   "registries": [
@@ -1014,20 +1021,20 @@
     {
       "source": "knowledge-base/Cns/registry/交付.json",
       "target": "knowledge-base/en/registry/deliverables.json",
-      "sourceSha256": "3e08ad5b75eaa34cc066e58f03b027f1a93574854f787cac6034e90ff705acdc",
-      "targetSha256": "1696d90f6654c436d78f4e5bd24b6ed55a7c7a9e0009639b9555d03665a1ae84"
+      "sourceSha256": "f635cf10ab4e6a26dbcf24562da119720735fabc8e9971e24455b21b3479e07d",
+      "targetSha256": "05f91257b13892776860bc4c2623cfb9d8a5a1ce815030c379c7d2d9cfdabba0"
     },
     {
       "source": "knowledge-base/Cns/registry/来源.json",
       "target": "knowledge-base/en/registry/sources.json",
-      "sourceSha256": "f952622ac7e88bea1f70c7f48d4fbd9246aa30d044a30ac8e634c74f5edd4bad",
-      "targetSha256": "3a3e5de7cd5c97ee2c1b0a1c72eee4e37e294bbad132e3c4e24c5af66e2ac7a2"
+      "sourceSha256": "9b1d5ebcaf982c69e87293d2e32eb860a713ab5104f6629450f4191e641cccd8",
+      "targetSha256": "912e52408cab53b605dfe156223f99c54cd06f3c8edeb1daeaa36c0878cd1b92"
     },
     {
       "source": "knowledge-base/Cns/当前版本.json",
       "target": "knowledge-base/en/current-version.json",
-      "sourceSha256": "b6c455d4ff4be301dac7ee4e88e7ae541984f63ddb46523a5dffac88119a49e6",
-      "targetSha256": "69b76c92b046fcb55b01e849d021f5ce98d12d9ea786cc0faf57aed718bbb278"
+      "sourceSha256": "b5128bbe9cdcb366de7da4a5ea93fb9d4430f5209bef7b52d0d3ed415051b1c4",
+      "targetSha256": "18d683572c32aa74b9c37114b87fa074597b2e8cd54ee968b7882685272d56aa"
     }
   ],
   "criticalComments": [
@@ -1309,7 +1316,7 @@
     },
     {
       "path": "packages/runtime/src/DisplayObjectContainer.ts",
-      "sha256": "36b2f5e42d5654a03765c292bedf42f094fde122967a17c00b3e4180d1e2a72c"
+      "sha256": "1bccfc8d316858ca1b7af769708ae2baed9c7a553da02e650d9ed0832f82ebfd"
     },
     {
       "path": "packages/runtime/src/EgretError.ts",
@@ -1353,7 +1360,7 @@
     },
     {
       "path": "packages/runtime/src/displayTreeState.ts",
-      "sha256": "f7df42c7917e87c2492a6411a2f686936cdaa61ab4d5a6f362d06f4ff2e64f0b"
+      "sha256": "4729121d89ae4fad0a06ea231cadd16807e4ff01de602d3bf218894e1fd9cc57"
     },
     {
       "path": "packages/runtime/src/displayVisualState.ts",
@@ -3565,5 +3572,15 @@
       "closeoutMeaningReview": "PENDING_DIFFERENT_REVIEW",
       "scope": "Finite BR1 curation and appended factual Main evidence only; historical semanticReview remains unchanged."
     }
+  },
+  "displayTreeScalingCuration": {
+    "engineeringPreview": "0.27.2",
+    "status": "AUTHOR_PREPARED_PENDING_INDEPENDENT_FINITE_REVIEW",
+    "scope": "One new display-tree reading pair, finite current entry/navigation changes and S080/V031/current-version successors; historical meanings, identities and cutoffs remain unchanged.",
+    "priorSemanticReviewUnchanged": true,
+    "newSemanticReviewAccepted": false,
+    "sourceExecutionByCurationAuthor": false,
+    "currentIdentityRefresh": "ACTUAL_CURRENT_DOCUMENT_REGISTRY_AND_CRITICAL_SOURCE_IDENTITIES",
+    "publication": "PENDING_ACTUAL_CURRENT_HOOK_AND_REMOTE_DELIVERY"
   }
 }

@@ -1265,6 +1265,39 @@
         "evidence/byte-reader-br1-verification.json"
       ],
       "doc": "Cns/docs/字节读取器BR1契约.md"
+    },
+    {
+      "id": "V031",
+      "kind": "bounded_display_tree_bugfix",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R011",
+        "R015",
+        "R016",
+        "R019"
+      ],
+      "dependsOn": [
+        "V002"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "bounded_receiver_attachment_validation_direct_child_reads_and_tail_detach",
+      "acceptance": "corrected_source_targeted_cpu_verified_final_whole_browser_review_and_delivery_pending",
+      "title": "显示树挂接与子列表扩展性修复",
+      "acceptanceCriteria": [
+        "已绑定接收者检查接收者与完整待挂接子树，保留自身可绑定回调且先检查 Engine 开放状态，不重跑无关既有后代钩子；初始未绑定接收者保留整树预检及最终绑定验证。",
+        "重入预检后以无回调最终检查保护当前 Engine、存活、Stage 根、环路及完整待挂接子树归属；保留拒绝原子性与清理所有权。",
+        "子数量和索引读取不复制列表；尾部分离直接检查，任意中间移除仍为线性，未绑定树追加仍可能重扫。",
+        "实际修正源码的 71/71 专项结果包含 9 项扩展性测试；此前 2227/2227 完整核心结果仅作中间证据，最终完整验证／prepush、受影响浏览器门禁、独立有限审阅与远程交付分别待完成，不合计重叠范围。"
+      ],
+      "artifacts": [
+        "Cns/docs/显示树扩展性.md",
+        "evidence/display-tree-scaling-verification.json"
+      ],
+      "doc": "Cns/docs/显示树扩展性.md"
     }
   ]
 }

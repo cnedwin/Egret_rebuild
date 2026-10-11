@@ -264,7 +264,7 @@
   },
   "_localization": {
     "canonicalSource": "当前版本.json",
-    "canonicalSha256": "b6c455d4ff4be301dac7ee4e88e7ae541984f63ddb46523a5dffac88119a49e6",
+    "canonicalSha256": "b5128bbe9cdcb366de7da4a5ea93fb9d4430f5209bef7b52d0d3ed415051b1c4",
     "role": "read_only_translation",
     "language": "en"
   },
@@ -547,7 +547,7 @@
     "contract": "en/docs/display-content-bounds-contract.md",
     "evidence": "en/docs/display-content-bounds-evidence.md"
   },
-  "latestEngineeringPreview": "0.27.1",
+  "latestEngineeringPreview": "0.27.2",
   "texturedMesh2DImplementation": {
     "version": "0.23.0",
     "status": "bounded_increment_implemented",
@@ -758,5 +758,67 @@
     "performanceAccepted": false,
     "fullMigrationAccepted": false,
     "historicalFailuresRetained": true
+  },
+  "displayTreeScalingImplementation": {
+    "engineeringPreview": "0.27.2",
+    "deliverable": "V031",
+    "sourceId": "S080",
+    "status": "corrected_source_targeted_cpu_verified_final_gates_pending",
+    "sourceBaseCommit": "d58e624942ec485d66003ec9bb48e5edab6a6374",
+    "packageVersion": "0.0.0",
+    "protocolVersion": "1.0",
+    "defaultExportSurfaceChanged": false,
+    "newThirdPartyDependencies": [],
+    "boundReceiverExistingDescendantHooks": false,
+    "boundReceiverOwnBindableHook": true,
+    "openEngineBeforeReceiverBindableHook": true,
+    "fullIncomingSubtreeValidation": true,
+    "initiallyUnboundWholeTreePreflightAndValidation": true,
+    "callbackFreeFinalRevalidation": true,
+    "directChildCountAndIndexReads": true,
+    "tailDetachFastPath": true,
+    "arbitraryMiddleRemoval": "linear_sibling_search_and_shift",
+    "unboundAppendsMayRescan": true,
+    "globalLinearTimeGuarantee": false,
+    "actualTargetedVerification": {
+      "tests": 71,
+      "passed": 71,
+      "failed": 0,
+      "scalingTestsIncluded": 9,
+      "scope": "corrected_source_build_display_scaling_cancellation_textured_capture",
+      "c06NodeSubtest": {
+        "exactNodes": 65536,
+        "smallestOverNodes": 65537,
+        "durationMs": 501.1715
+      },
+      "c06GroupDurationMs": 644.454,
+      "targetedHarnessDurationMs": 1946.6674,
+      "nestedScopesAdded": false
+    },
+    "intermediateWholeVerification": {
+      "tests": 2227,
+      "passed": 2227,
+      "failed": 0,
+      "includesFinalGuardCorrection": false,
+      "includesNinthClosingHookTest": false,
+      "finalSourceAcceptance": false
+    },
+    "finalWholeVerification": "PENDING",
+    "affectedBrowserRegression": "PENDING",
+    "publicCuration": "AUTHOR_PREPARED_PENDING_INDEPENDENT_FINITE_REVIEW",
+    "mandatoryPrepush": "PENDING",
+    "remoteDelivery": "PENDING",
+    "browserDeviceGpuPhoneAcceptance": false,
+    "performanceLeadershipAccepted": false,
+    "SpineAccepted": false,
+    "fullMigrationAccepted": false,
+    "historicalCutoffsPreserved": true,
+    "scope": "Bounded CPU display-tree attachment and child-list access only; local fixture timing does not constitute device or global performance acceptance.",
+    "documents": [
+      "en/docs/display-tree-scaling.md"
+    ],
+    "evidence": [
+      "evidence/display-tree-scaling-verification.json"
+    ]
   }
 }

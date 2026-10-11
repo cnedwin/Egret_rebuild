@@ -1265,6 +1265,18 @@
       "scope": "独立规格和第一方源码；已记录隔离编译、23 项公共行为、18 条精确无抑制负向类型诊断、受控分配／复制故障和 156 项相关回归。",
       "limit": "重叠范围不合计；Main 完整集成、双语语义审阅、最终 prepush 与远程交付仍待完成。故障观察不证明物理 OOM／回收，也不验收格式、Spine、渲染、平台、性能或迁移。",
       "doc": "Cns/docs/字节读取器BR1证据.md"
+    },
+    {
+      "id": "S080",
+      "type": "first_party_display_tree_scaling_source_diagnosis_and_bounded_verification",
+      "researchCheckedAt": "2026-10-11",
+      "artifacts": [
+        "evidence/display-tree-scaling-verification.json"
+      ],
+      "title": "第一方显示树扩展性诊断与有界验证",
+      "scope": "记录源码诊断、独立的本地基线耗时与钩子观察、保留修复前失败，以及修正源码编译和专项 71/71 通过，包含 9 项扩展性测试；此前 2227/2227 完整核心结果早于最终检查修正与新增测试，只作为中间证据。",
+      "limit": "重叠范围不合计；最终完整当前验证／prepush、受影响浏览器门禁、有限源码／双语审阅与交付仍待完成。不作全局 O(N) 或性能领先保证，不验收浏览器、设备、GPU、手机、完整 Spine 或迁移。",
+      "doc": "Cns/docs/显示树扩展性.md"
     }
   ]
 }

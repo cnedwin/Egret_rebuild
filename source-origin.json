@@ -4474,6 +4474,18 @@
       "originRole": "First-party CPU TextField source, verification or paired public documentation; version-bound subset only.",
       "bytes": 82465,
       "sha256": "52910568aaa1c1e22bdf96e2da9e146aba90ba7e6bc4e19d969dec3a722edea7"
+    },
+    {
+      "path": "knowledge-base/en/docs/display-tree-scaling.md",
+      "originRole": "AI-assisted independent first-party bounded display-tree documentation; no external implementation copied or new dependency.",
+      "bytes": 7699,
+      "sha256": "1b5b109e362e0acb1ac07855be9e7b820d1671be3f728e434d8a94a740ac9d3c"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/显示树扩展性.md",
+      "originRole": "AI-assisted independent first-party bounded display-tree documentation; no external implementation copied or new dependency.",
+      "bytes": 6811,
+      "sha256": "dc9fcd3a028c53459db1400d3663958127b8b8a6793b539ef0d8d0fd8cda8e98"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",
@@ -7938,5 +7950,56 @@
       "newNativeRenderingAcceptance": false,
       "scope": "Actual repository verification on the Main-compatible BR1 source selection; previous candidate and isolated records retain their original cutoffs. Unchanged renderer source identity is not a new browser, TextField, font, phone, Spine or performance result."
     }
+  },
+  "displayTreeScalingWorkPackage": {
+    "date": "2026-10-11",
+    "engineeringLabel": "0.27.2",
+    "deliverable": "V031",
+    "sourceId": "S080",
+    "sourceBaseCommit": "d58e624942ec485d66003ec9bb48e5edab6a6374",
+    "scope": "Bounded CPU attachment validation, direct child-list reads and tail detach; no public export or dependency change.",
+    "packageVersion": "0.0.0",
+    "protocolVersion": "1.0",
+    "implementationOrigin": {
+      "process": "AI-assisted independent first-party source diagnosis, contract, implementation and separately authored fixtures; finite review and actual execution remain separately scoped.",
+      "copiedHistoricalOrCompetitorImplementationSources": [],
+      "newThirdPartyDependencies": [],
+      "license": "Apache-2.0",
+      "limit": "Bounded workflow declaration, not a global originality certification."
+    },
+    "productSourcePaths": [
+      "packages/runtime/src/DisplayObjectContainer.ts",
+      "packages/runtime/src/displayTreeState.ts"
+    ],
+    "verificationFixturePaths": [
+      "tests/display-tree-scaling.test.mjs"
+    ],
+    "productSources": [
+      {
+        "path": "packages/runtime/src/DisplayObjectContainer.ts",
+        "bytes": 5597,
+        "sha256": "1bccfc8d316858ca1b7af769708ae2baed9c7a553da02e650d9ed0832f82ebfd"
+      },
+      {
+        "path": "packages/runtime/src/displayTreeState.ts",
+        "bytes": 4153,
+        "sha256": "4729121d89ae4fad0a06ea231cadd16807e4ff01de602d3bf218894e1fd9cc57"
+      }
+    ],
+    "finalSourceIdentity": "BOUND_TO_INDEPENDENT_REVIEWED_CURRENT_SOURCE",
+    "record": "knowledge-base/evidence/display-tree-scaling-verification.json",
+    "currentTargetedVerification": "ACTUAL_CORRECTED_SOURCE_BUILD_AND_71_TEST_TARGETED_HARNESS_PASS_9_SCALING_INCLUDED",
+    "intermediateWholeVerification": "2227_PASS_PRIOR_TO_FINAL_GUARD_AND_NINTH_TEST_NOT_FINAL_SOURCE_ACCEPTANCE",
+    "finalWholeVerification": "ACTUAL_COMPLETE_PREPUSH_2228_CORE_52_PUBLICATION_PASS",
+    "affectedBrowserRegression": "ACTUAL_FIVE_EXISTING_DESKTOP_REGRESSION_GATES_PASS",
+    "independentFiniteSourceAndMeaningReview": "PASS_FINITE_SOURCE_AND_BILINGUAL_SAVED_EVIDENCE",
+    "mandatoryPrepush": "PENDING",
+    "remoteDelivery": "PENDING",
+    "globalLinearTimeGuarantee": false,
+    "browserDeviceGpuPhoneAcceptance": false,
+    "performanceLeadershipAccepted": false,
+    "SpineAccepted": false,
+    "fullMigrationAccepted": false,
+    "historicalCutoffsPreserved": true
   }
 }

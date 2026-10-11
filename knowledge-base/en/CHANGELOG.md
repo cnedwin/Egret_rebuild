@@ -2,6 +2,14 @@
 
 English | [简体中文](../Cns/CHANGELOG.md)
 
+## Engineering preview: 0.27.2 — 2026-10-11
+
+Bounded CPU display-tree work narrows already bound receiver preflight to the receiver and full incoming subtree, retaining its own bindable callback and callback-free final revalidation after reentrant hooks. Initially unbound receivers retain whole-tree preflight and final binding validation. Direct child count/index reads and a last-child detach path address specific sibling scans; middle removals remain linear and unbound appends may still rescan. Read [attachment and cost boundaries](docs/display-tree-scaling.md).
+
+The source diagnosis, one local Node.js 24.19.0 baseline timing observation, separate 32,012,000-hook observation for 8,000 children and 8-test pre-fix snapshot (7 pass, 1 fail) retain separate scopes. Actual successor checks/probe, complete current verification, finite source/bilingual review, mandatory prepush and remote delivery remain PENDING at this preparation cutoff. No exports or dependencies are added; packages stay private 0.0.0 and protocol 1.0. Browser/device/GPU/phone results, performance leadership, complete Spine and full migration are excluded. Earlier checkpoints retain their own cutoffs.
+
+Actual corrected-source build and targeted display/scaling/cancellation/textured-capture checks passed 71/71, including nine scaling tests. The closing-hook error-priority failure was preserved and repaired with an open-engine guard before the receiver callback. An earlier 2,227/2,227 whole-core result predates that correction and ninth test, so remains intermediate only. Final whole verification/prepush, affected browser gates, finite review and remote delivery remain PENDING. These scopes overlap and are not summed.
+
 ## Engineering preview: 0.27.1 — 2026-10-11
 
 Added a small owned ByteReader for binary resource and engineering work: signed/unsigned scalar reads, explicit byte order, an atomic cursor, independent copy-out and synchronous disposal. Only the engine/runtime roots gain two shared values and the erased ByteOrder type. The per-reader payload limit is 16,777,216 bytes; this is not a process-memory budget or a legacy ByteArray compatibility claim. Read the [contract](docs/byte-reader-br1-contract.md) and [bounded evidence](docs/byte-reader-br1-evidence.md).
