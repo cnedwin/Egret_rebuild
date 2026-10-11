@@ -64,8 +64,8 @@
       "zh": "AGENTS.zh-CN.md",
       "en": "AGENTS.md",
       "kind": "public_reading",
-      "enSha256": "ac89557dfdb732f1eae77bba20cfbe55f92ca3e4a82266e6abdc0d81f973cd73",
-      "zhSha256": "cd04850491f0cd8f2bdc21ce7e82e6177560f6ef1f1d4c37e2899a67e92d7c4a"
+      "enSha256": "44e3b3d146d90d793cb90ad8171f78684f3ddaec1b05e9c52d1cad970b1351de",
+      "zhSha256": "1ba96441c42a24793f92b40b56d0a22536db4f41b620681ac4f8f00d8343b761"
     },
     {
       "zh": "CONTRIBUTING.zh-CN.md",
@@ -141,8 +141,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "2bb053752b41f79b202046f0d97e3c8965fa79049a32c9ee53f975fe1e242a35",
-      "zhSha256": "b63b2b6ab160c565e71fc65ab57fdd0b859876f29a7700244791f12a26d8421c"
+      "enSha256": "f0d4025cd3a25cf2182e7fcea27d48b51730e32046bece7d60ee9057883234e2",
+      "zhSha256": "2e65af9b087dab5e7316aa33cbc1d32d66b6b0b90d7e8b956ab39a811df0a451"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -169,8 +169,8 @@
       "zh": "knowledge-base/Cns/docs/3d-foundation.md",
       "en": "knowledge-base/en/docs/3d-foundation.md",
       "kind": "public_reading",
-      "enSha256": "85b3d656c5f0fcc7e0078f49457700b935b3ac67005f6b70f9eddd5ce882f0d4",
-      "zhSha256": "f66a71ef6441e8ccb7c12ac2c8dee8a062795f1f3ad1179933947e32bb742dcc"
+      "enSha256": "469bb9059de6563f62e329b7ff4a4adc85ad0fc3d98170c6f001629ca41d34fb",
+      "zhSha256": "f8aa4ed10d7424b3336e8aa5c4e8119d7cfc267db33d4cd64ae797fb04a11e38"
     },
     {
       "zh": "knowledge-base/Cns/docs/3d-webgpu-mesh-contract.md",
@@ -288,8 +288,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "4beb5b2b00afd534ba0e75005cb69fd7b3bf55822aa69bde82de6eb7bc20df56",
-      "zhSha256": "3d8489e9da3849db05e5183634f4a9ea95b70f404ce02a104180f95e936acaf8"
+      "enSha256": "59e613db79e19be1e77d594fecb4ba2534014e7d6fc919792cc7d4e55418471c",
+      "zhSha256": "f98926c189b0c2e5636904cdd140dc11462ec24d1603972472d2b8a23c2631aa"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -351,8 +351,8 @@
       "zh": "knowledge-base/Cns/docs/工程规划.md",
       "en": "knowledge-base/en/docs/engineering-plan.md",
       "kind": "public_reading",
-      "enSha256": "c0574b8bac64d81eed9693a818d71a2b0a644236e3a974eb0492a677278ad87d",
-      "zhSha256": "a673477bac3c490f6cdc251b05708036b9c0223ab3046a83fde550c80d2b97e4"
+      "enSha256": "4e144ae5fda6ac6ecf47a3d94abdd479388245f9fb0198f2c43fd286726094d6",
+      "zhSha256": "f514410ee4e8d6b1247b894f8356e714f237989515d29e313c591bf475ce8277"
     },
     {
       "zh": "knowledge-base/Cns/docs/术语表.md",
@@ -764,8 +764,8 @@
       "zh": "knowledge-base/Cns/README.md",
       "en": "knowledge-base/en/README.md",
       "kind": "public_reading",
-      "enSha256": "a9e0bb655fa5e3d68809bad799a85f3563a38c97e91ffd56b008a6e9c72a5e51",
-      "zhSha256": "a8337454a66c0c034293d02feba6b1a0beef887a59d3190abc1a28efa46e329b"
+      "enSha256": "94ca342c3fd7ec2182a8beb8796e9731781503e9f8d84c4b275efb7f37539301",
+      "zhSha256": "5d92bc90ff081db964a52878eba09ffe727f787072103428db4b66a07120f21c"
     },
     {
       "zh": "knowledge-base/Cns/templates/ADR决策记录.md",
@@ -848,8 +848,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "d4b00dd8f8a362c9e0356227077cc60931c508ad0d8de302272a09be1241f9e7",
-      "zhSha256": "7e3af36191ac5f923b7a15b7d2f65df0f21a686986adf4dfa69f248aa57c445a"
+      "enSha256": "0d2471bb7585febdbb496df070b6e7f96a9f68483fa8765cbf99c819bd0036ef",
+      "zhSha256": "52daf3df1692fc56205c740c537dde2cf11f11bb5a49823ee482be19c1551802"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -1039,6 +1039,20 @@
       "kind": "public_reading",
       "enSha256": "57ba4b556649533ae513acd24faa94750edca2c6006acc601965c6bfa11b7603",
       "zhSha256": "a8051df39c1281eae42f3a3fd1852944788cdc6e120de5422e73e4c9ed60763b"
+    },
+    {
+      "en": "knowledge-base/en/docs/public-scene3d-contract.md",
+      "zh": "knowledge-base/Cns/docs/公共3D场景契约.md",
+      "kind": "public_reading",
+      "enSha256": "cfb8d439eddd8112f9ef17fa99d2e4f82a77ed1be95ff94e3f3d5ebd3d0751bd",
+      "zhSha256": "3ff393961a7548bd453190f6f23b711b798a2ff47bc19650899c4a8b7d153b7a"
+    },
+    {
+      "en": "examples/scene3d/README.md",
+      "zh": "examples/scene3d/README.zh-CN.md",
+      "kind": "public_reading",
+      "enSha256": "199ed73457beab2dcd258e230a55a8c556c3050aa58852958936452e122ad0fa",
+      "zhSha256": "29957cda2e468d9a22615d86cc2bc7ea2ad2d645165d9c6d40b91abeed8f4e52"
     }
   ],
   "registries": [
@@ -1063,20 +1077,20 @@
     {
       "source": "knowledge-base/Cns/registry/交付.json",
       "target": "knowledge-base/en/registry/deliverables.json",
-      "sourceSha256": "67001cd06bc8e7c8a3ad29bcc39fa87ace5e83b72efb9bc4b8c2e8cfbafc5069",
-      "targetSha256": "b9324a3fdfb9fa03778dc34eb60f9c6e2182eae3868275cf51569d21834f6b26"
+      "sourceSha256": "c4f271b5bb09f71ecf57c09fa5398bca0ac81826651690afecbd9fe0a5da6dcc",
+      "targetSha256": "f63f80eff5f293aa44572832a46dc355f0a479bf30a43c1166ea5fce31331604"
     },
     {
       "source": "knowledge-base/Cns/registry/来源.json",
       "target": "knowledge-base/en/registry/sources.json",
-      "sourceSha256": "273e46dc752cb3a0990ddf28c88fa78df01b97e9b7ae8c39bac9b09846e664b1",
-      "targetSha256": "bb0a9cc89703083abb3163a7a8de0568d3846ca1d5aeacce65dc84dbeb04ce5f"
+      "sourceSha256": "4f9c1801ceab2c58dcce8496655b2864fd36ff783d5a09fe140541b3985ebd76",
+      "targetSha256": "69107b36aaa20ee96de933deb6190d7772d53d490c561b558589f3eaee8d6765"
     },
     {
       "source": "knowledge-base/Cns/当前版本.json",
       "target": "knowledge-base/en/current-version.json",
-      "sourceSha256": "4fc3fbf6b38ab5adb0c5091d631983a42d938ecafaad194b0ba4c86f13026f65",
-      "targetSha256": "9e713912271eadab4c3d5cfc33a52424549d823154767bc9bfebacf2e564c33e"
+      "sourceSha256": "735843f22065b0b783e49d320bf4e8e7bb5e2468d9fab9f6027f331e648a9f35",
+      "targetSha256": "604825c24a905279dd7ef9acf86e4c120641dd7bc75c00bb9d7e716018dcded9"
     }
   ],
   "criticalComments": [
@@ -1446,11 +1460,11 @@
     },
     {
       "path": "tools/verify-webgpu-b1.mjs",
-      "sha256": "47f2de2e6cd997ce8b54773e79ad5a17669cf03bd55e022cd70bfe289280b104"
+      "sha256": "075b34b38bd46c666c461ca8a19b2a4b5b2318b3680d5fbf9b1e6224a8622652"
     },
     {
       "path": "tools/b1-webgpu/fixture.mjs",
-      "sha256": "dc7f6dd2d2cf363cf4492e498ed196be075514f994b4efc4bc8e1a728a423426"
+      "sha256": "3cfa21987a1f40297fb287355d271d71ff6a4d863b2381e84fab1005498119eb"
     },
     {
       "path": "tools/b1-webgpu/oracle.mjs",
@@ -1458,7 +1472,7 @@
     },
     {
       "path": "tests/b1-webgpu-verifier.test.mjs",
-      "sha256": "179e1eebdfa48a9b8d62cbe548b3732d6263d6a788ef2adf27f4aa78ea41c9a5"
+      "sha256": "d2c048b56c196ff0b15305a8edb08fcaae0cbe86307b32ccbec3130440af4140"
     },
     {
       "path": "packages/runtime/src/SequencePlayer.ts",
@@ -1713,6 +1727,30 @@
     {
       "path": "examples/asset-group.mjs",
       "sha256": "1a5b55c8101f35ed63eec0a57fa15ef956eb621730c7e455d0a9a4090beb7759"
+    },
+    {
+      "path": "packages/engine/rendering/scene3d.ts",
+      "sha256": "34ade2adf838957258bc6b60ca59083639e5d8a17282ec2368ccbb3d31819bec"
+    },
+    {
+      "path": "packages/engine/web/scene3d.ts",
+      "sha256": "5a85d630b66f0b26ccc2588105a923d050f56ee34f07d00524f84b5dbc221739"
+    },
+    {
+      "path": "tools/b1-webgpu/public-composition-oracle.mjs",
+      "sha256": "53c90973f4c5bb5338d0b85900b2ab7091d1556a548d89f76b1af9105d171ec4"
+    },
+    {
+      "path": "examples/scene3d/scene.mjs",
+      "sha256": "aa7323fec36a561e146bbca2ee63cd78df451bdb976bf5a3b3d04f8c99d9f1df"
+    },
+    {
+      "path": "tests/scene3d-public.test.mjs",
+      "sha256": "1a52c4bd0506ea954c6777ccd05f000bf67d1ece13e4e4179589905f0c66c9f5"
+    },
+    {
+      "path": "tests/scene3d-public-host.test.mjs",
+      "sha256": "240f0037b511737974abd6dffcce4b4ff0a013f41c5a8a6bce368960a9c7f459"
     }
   ],
   "historicalSemanticReview": {
@@ -3799,5 +3837,23 @@
     "completeSemanticParityClaim": false,
     "retainedCanonicalFixtureRepair": "INDEPENDENT_SOURCE_REVIEW_AND_ACTUAL_COMPLETE_PREPUSH_PASS",
     "completeStructuralGate": "ACTUAL_PASS"
+  },
+  "scene3dPublicCuration": {
+    "engineeringLabel": "0.32.0",
+    "documents": [
+      "knowledge-base/en/docs/public-scene3d-contract.md",
+      "knowledge-base/Cns/docs/公共3D场景契约.md"
+    ],
+    "criticalSources": [
+      "packages/engine/rendering/scene3d.ts",
+      "packages/engine/web/scene3d.ts",
+      "tools/b1-webgpu/public-composition-oracle.mjs",
+      "examples/scene3d/scene.mjs",
+      "tests/scene3d-public.test.mjs",
+      "tests/scene3d-public-host.test.mjs"
+    ],
+    "scope": "Finite paired contract, navigation, example and canonical register successors; preserved historical cutoffs and independent implementation provenance.",
+    "independentFinalMeaningReview": "PENDING",
+    "completeSemanticParityClaim": false
   }
 }

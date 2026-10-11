@@ -45,6 +45,16 @@ function isolated(action) {
     assert.deepEqual(readFileSync(path.join(root,'node_modules/@egret/contracts/dist/index.js')), contractsRoot);
     write('node_modules/@egret/contracts/dist/index.js', "export * from '../../../../packages/contracts/dist/index.js';\n");
     assert.deepEqual(readFileSync(path.join(root,'packages/contracts/dist/index.js')), contractsRoot);
+    // The explicit scene facade must share the original geometry/scene registries.
+    // Bridge only the resolution copy; source and emitted package bytes stay real.
+    for(const name of ['meshGeometry3D','sceneFrame3D']) {
+      const relative='packages/engine/dist/rendering/'+name+'.js';
+      const actual=readFileSync(path.join(root,relative));
+      const resolution='node_modules/@egret/engine/dist/rendering/'+name+'.js';
+      assert.deepEqual(readFileSync(path.join(root,resolution)),actual);
+      write(resolution,"export * from '../../../../../"+relative+"';\n");
+      assert.deepEqual(readFileSync(path.join(root,relative)),actual);
+    }
     write('tools/check-boundaries.mjs',readFileSync(path.join(repository,'tools/check-boundaries.mjs'),'utf8'));
     return action({root,write,edit,check:()=>run(['tools/check-boundaries.mjs'],root)});
   } finally {

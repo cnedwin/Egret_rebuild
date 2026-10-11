@@ -2,6 +2,18 @@
 
 English | [简体中文](../../Cns/docs/3d-foundation.md)
 
+<!-- S3D1-DOC-0.32.0-BEGIN -->
+## Current public scene checkpoint: 0.32.0 (S3D1)
+
+Verified implementation: public behavior **35/35**, boundaries **238/238**, **2** positive type consumers and **10 + 3 + 11 + 15** exact negative diagnostics pass. Retained integration checks **161/161** and fresh fixed headless Edge composition pass after independently reviewed repairs. Full final publication and current delivery remain pending at this curation cutoff; the linked scene contract records exact scopes and successors.
+
+**Initial source/API observation (historical cutoff):**
+
+Read the [public scene contract](public-scene3d-contract.md) for exact exported factories/types, authentic readonly snapshots, restricted camera/numeric/budget rules and explicit browser Host ownership. The independently designed interfaces directly reuse the current first-party foundation and Host algorithms. Three-file adoption, build and interface GREEN at **2026-10-11 19:54:25–19:54:26 UTC** confirm source/API reachability only. Behavior, types, policy, native and final acceptance/delivery are **PENDING**. This experimental procedural mesh/screen-UI route does not accept complete UI/3D, assets, characters, Spine, Native SDKs or performance.
+
+The delivered **0.31.0** successor was merged through [PR #18](https://github.com/cnedwin/Egret_rebuild/pull/18) to Main `b4062e134af7b923ab6c2c16381004bc1c62ee3c`, tree `5bf7e05cf88e15ca66d1b8b6e26e2c442cbfcf7a`. The following **0.16.0** body is the historical internal-foundation cutoff, including its absence of public rendering exports. Its original results, numbers and source identities remain unchanged and are not new public-route acceptance.
+<!-- S3D1-DOC-0.32.0-END -->
+
 The 0.16.0 3D increment establishes verifiable data and numeric contracts before GPU host integration. B0 math/projection, B1 CPU geometry and CPU packing are accepted. Mixed GPU execution of scenes, characters, effects and complex 2D UI still requires implementation and actual verification. These are internal engineering foundations; they add no public rendering API and do not change RenderFrame2D.
 
 ## Math and projection

@@ -511,3 +511,79 @@ try {
   console.log('AssetGroup fixtures PASS: DOM-free public positive consumer, 15 ordinary and 11 import negatives bound to exact source/file/line/code.');
 } finally { for (const config of assetGroupTypeConfigs) rmSync(config, { force: true }); }
 // RG1_TYPES_END
+// S3D1_TYPES_BEGIN
+// This gate intentionally refuses pending predictions. Exact diagnostics are
+// populated only from a separate actual pinned TS7 probe after genuine ports.
+const {createHash:sceneTypeHash}=await import('node:crypto');
+const sceneTypeDigest=file=>sceneTypeHash('sha256').update(readFileSync(path.join(root,file))).digest('hex');
+const sceneTypeExpectations=JSON.parse(readFileSync(path.join(root,'tests/types/scene3d-diagnostic-expectations.json'),'utf8'));
+const sceneTypeCompiler=JSON.parse(readFileSync(path.join(root,'node_modules/typescript/package.json'),'utf8'));
+if (sceneTypeExpectations.schemaVersion!==1 || sceneTypeExpectations.status!=='OBSERVED_FROZEN_TS7_DIAGNOSTICS')
+  throw new Error('S3D1 types: actual TS7 diagnostic expectations are not frozen; run the independent unsuppressed probes before final acceptance');
+if (sceneTypeCompiler.version!=='7.0.2' || sceneTypeExpectations.compiler?.version!=='7.0.2'
+    || sceneTypeExpectations.compiler?.tscSHA256!==sceneTypeDigest('node_modules/typescript/bin/tsc')
+    || sceneTypeExpectations.compiler?.packageSHA256!==sceneTypeDigest('node_modules/typescript/package.json'))
+  throw new Error('S3D1 types: exact observed compiler identity mismatch');
+const sceneTypeConsumers=[
+  ['positive','tsconfig.dom-free.json',false],['web-positive','tsconfig.web.json',false],
+  ['negative','tsconfig.dom-free.json',true],['web-negative','tsconfig.web.json',true],
+  ['import-negative','tsconfig.web.json',true],['web-dom-free-negative','tsconfig.dom-free.json',true],
+];
+const sceneTypeConfigs=[];
+try {
+  for (const [name,base,isNegative] of sceneTypeConsumers) {
+    const source='scene3d-'+name+'.ts',file='tests/types/'+source,fixture=readFileSync(path.join(root,file),'utf8');
+    if (/@ts-(?:expect-error|ignore|nocheck)/.test(fixture)) throw new Error('S3D1 types: suppression in '+file);
+    if (sceneTypeExpectations.fixtureSHA256?.[file]!==sceneTypeDigest(file)) throw new Error('S3D1 types: observed fixture identity mismatch: '+file);
+    const expected=isNegative?sceneTypeExpectations.cases[name]:[];
+    if (!Array.isArray(expected) || (isNegative && expected.length===0)) throw new Error('S3D1 types: missing actual diagnostic inventory: '+name);
+    const declared=fixture.split(/\r?\n/).flatMap((line,index)=>{
+      const match=line.match(/^\/\/ SCENE3D_CASE ([\w-]+)$/);return match?[{name:match[1],line:index+2}]:[];
+    });
+    if (name!=='web-dom-free-negative' && isNegative && (declared.length!==expected.length
+        || new Set(declared.map(item=>item.name)).size!==declared.length
+        || (fixture.match(/\bSCENE3D_CASE\b/g)??[]).length!==declared.length
+        || expected.some((item,index)=>item.name!==declared[index]?.name || item.file!==file || item.line!==declared[index]?.line)))
+      throw new Error('S3D1 types: exact authored case/file/line inventory mismatch: '+file);
+    if (new Set(expected.map(item=>item.name)).size!==expected.length || expected.some(item=>
+        typeof item.name!=='string' || typeof item.file!=='string' || !Number.isSafeInteger(item.line) || item.line<1
+        || !Number.isSafeInteger(item.column) || item.column<1 || !Number.isSafeInteger(item.code) || item.code<1))
+      throw new Error('S3D1 types: malformed actual diagnostic receipt: '+name);
+    // Names identify authored cases; only normalized diagnostic tuples can
+    // prove one-to-one coverage of the complete compiler diagnostic multiset.
+    const sceneDiagnosticTuple=item=>JSON.stringify([item.file.replaceAll('\\','/'),item.line,item.column,item.code]);
+    const expectedTuples=new Set();
+    for (const item of expected) {
+      const tuple=sceneDiagnosticTuple(item);
+      if(expectedTuples.has(tuple))throw new Error('S3D1 types: '+name+' duplicate expected diagnostic tuple: '+tuple);
+      expectedTuples.add(tuple);
+    }
+    if (name==='web-dom-free-negative' && !expected.some(item=>/^packages\/engine\/dist\/web\/.+\.d\.ts$/.test(item.file)))
+      throw new Error('S3D1 types: no actual browser declaration DOM dependency witness');
+    const config='tests/types/scene3d-'+name+'.generated.json';sceneTypeConfigs.push(path.join(root,config));
+    writeFileSync(path.join(root,config),JSON.stringify({extends:'./'+base,include:[source]}));
+    const check=spawnSync(process.execPath,[compiler,'--project',config,'--pretty','false'],{cwd:root,encoding:'utf8',timeout:30000,windowsHide:true});
+    process.stdout.write(check.stdout??'');process.stderr.write(check.stderr??'');if(check.error)throw check.error;
+    const observed=[...(check.stdout??'').matchAll(/^(.+)\((\d+),(\d+)\): error TS(\d+):/gm)]
+      .map(match=>({file:match[1].replaceAll('\\','/'),line:Number(match[2]),column:Number(match[3]),code:Number(match[4])}));
+    if (!isNegative) { if(check.status!==0 || observed.length!==0)throw new Error('S3D1 types: '+name+' actual positive consumer failed: '+check.status);continue; }
+    if (check.status!==1 || observed.length!==expected.length) throw new Error('S3D1 types: '+name+' extra/missing/unrelated diagnostics: '+observed.length+'/'+check.status);
+    // Keep multiplicity: a duplicate compiler tuple cannot be collapsed
+    // into a set and silently satisfy a single expected diagnostic.
+    const unconsumedDiagnostics=new Map();
+    for (const actual of observed) {
+      const tuple=sceneDiagnosticTuple(actual),bucket=unconsumedDiagnostics.get(tuple)??[];
+      bucket.push(actual);unconsumedDiagnostics.set(tuple,bucket);
+    }
+    const receipts=expected.map(item=>{
+      const tuple=sceneDiagnosticTuple(item),found=unconsumedDiagnostics.get(tuple)??[];
+      if(found.length!==1)throw new Error('S3D1 types: '+item.name+' exact file/line/column/code mismatch: '+JSON.stringify(found));
+      unconsumedDiagnostics.delete(tuple);
+      return {name:item.name,expected:item,actual:found[0]};
+    });
+    if(unconsumedDiagnostics.size!==0)throw new Error('S3D1 types: '+name+' unmatched observed diagnostic tuples: '+JSON.stringify([...unconsumedDiagnostics.values()].flat()));
+    console.log('S3D1 '+name+' individual unsuppressed diagnostic receipts: '+JSON.stringify(receipts));
+  }
+  console.log('S3D1 type fixtures PASS: actual DOM-free/public browser positives and individually frozen unsuppressed TS7 diagnostics. Structural types do not authenticate owned values.');
+} finally { for(const config of sceneTypeConfigs)rmSync(config,{force:true}); }
+// S3D1_TYPES_END

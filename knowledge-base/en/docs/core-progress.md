@@ -2,7 +2,19 @@
 
 English | [简体中文](../../Cns/docs/core-progress.md)
 
-## Current reading: engineering preview 0.27.0
+<!-- S3D1-DOC-0.32.0-BEGIN -->
+## Current bounded checkpoint: 0.32.0 (S3D1)
+
+Verified implementation: public behavior **35/35**, boundaries **238/238**, **2** positive type consumers and **10 + 3 + 11 + 15** exact negative diagnostics pass. Retained integration checks **161/161** and fresh fixed headless Edge composition pass after independently reviewed repairs. Full final publication and current delivery remain pending at this curation cutoff; the linked scene contract records exact scopes and successors.
+
+**Initial source/API observation (historical cutoff):**
+
+The [public scene contract](public-scene3d-contract.md) is the current entry for experimental owned mesh/scene frames and their explicit browser Host. Independently designed interfaces directly reuse current first-party algorithms. Three-file adoption, build and interface GREEN at **2026-10-11 19:54:25–19:54:26 UTC** confirm source/API reachability only. Behavior, types, policy, native and final acceptance/delivery are **PENDING**. Complete UI/3D, characters, Spine, Native SDKs and performance remain roadmap obligations beyond this bounded frame route.
+
+The delivered **0.31.0** successor was merged through [PR #18](https://github.com/cnedwin/Egret_rebuild/pull/18) to Main `b4062e134af7b923ab6c2c16381004bc1c62ee3c`, tree `5bf7e05cf88e15ca66d1b8b6e26e2c442cbfcf7a`. Older sections below are historical readings at their saved cutoffs. Their factual text/results are retained; earlier pending labels do not describe this new public-interface cutoff.
+<!-- S3D1-DOC-0.32.0-END -->
+
+## Historical reading: engineering preview 0.27.0
 
 The 0.27.0 engineering preview adds a factory-owned, noneditable TextField through `@egret/engine/text`: `createTextField(engine, scope, cache)` and type-only `TextField`/`TextFieldStatus`. Ten-scalar requests, explicit preparation, revision replacement and coalesced caller leases follow genuine Engine/Scope/cache affinity. Committed images and blank direct bounds participate in both image-capable collectors under existing budgets; legacy image refusal is preserved. Default roots remain unchanged. Read the [contract](text-field-tf1-contract.md) and [evidence](text-field-tf1-evidence.md).
 

@@ -12,7 +12,7 @@
 - 私有几何单元测试可直接导入构建后的 `engine/dist/rendering` 辅助模块，此例外不适用于公开行为测试。
 - 在已采纳的 T1 测试范围内，公开控制还使用构建后的 `@egret/engine/text`；`@egret/runtime/text` 仅用于 T02 入口身份／类型／源码检查。`tests/text-raster-private.test.mjs` 的私有 runtime 导入仅限 `packages/runtime/dist/text/budget.js`、`packages/runtime/dist/text/request.js`、`packages/runtime/dist/text/plan.js` 与 `packages/runtime/dist/EgretError.js`，必须按单元测试记录。
 - `tests/text-raster-allocation.test.mjs` 与 `tests/text-raster-materialization.test.mjs` 是使用真实初始化并恢复被拦截状态的受控构造／计数器故障单元。`tests/text-raster-residency-audit.test.mjs` 仅可在内存中为实际编译的 `packages/runtime/dist/text/TextRasterCache.js` 追加既有只读 `__textRetainedAudit`，注销其单模块加载钩子并保持磁盘字节不变。这些测试不新增产品导出、不授权任意私有导入，也不替代公开行为控制；逻辑计数／保留引用观察不能证明物理内存／GC、字体或渲染器验收。
-- 实验性 `tools/verify-webgpu-b1.mjs` 仅可加载固定构建图：`packages/engine/dist/web/b1.js`、`packages/engine/dist/rendering/meshGeometry3D.js`、`packages/engine/dist/rendering/matrix4.js`、`packages/engine/dist/web/webgpuMeshPass.js`、`packages/contracts/dist/ImageData2D.js`，以及有限字面量导入闭包与固定别名。本例外不增加稳定导出，不允许普通示例或行为测试任意导入私有模块。
+- 实验性 `tools/verify-webgpu-b1.mjs` 的普通样例通过精确生成的 import map 导入构建后的 `@egret/engine`、`@egret/engine/scene3d`、`@egret/engine/webgpu/scene3d`。唯一直接私有产品导入为 `packages/engine/dist/web/webgpuMeshPass.js`，仅用于绑定源码的固定原生 WGSL 编译／N4 诊断。服务范围仅限验证器显式模块白名单、这些公共入口的有限字面量导入闭包及固定别名；N1–N5 各自在仓库外的一次性副本中只修改一个已记录的构建文件。S1／S2／SN1 是独立的真实 Engine／Stage／Scope／Bitmap 组合阶段，SN1 只遗漏指定父节点裁剪。原有 oracle 与七正例／五控制／十一次绘制／8214 次比较的计划保持不变。本例外不允许普通示例或公开行为测试私有导入产品模块，也不授权新的产品导出或任意诊断钩子。
 - 公共行为变化同步规格、来源记录与必要回归。记录实际环境、未验证项、反例及修复；第三方研究或历史测试不替代自主产品验收。
 
 ## 公开贡献与证据

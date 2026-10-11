@@ -872,5 +872,20 @@
     },
     "reviewedFiles": 39,
     "scope": "Independent finite bilingual meaning, provenance, critical English comment and saved receipt review at the fixed 39-file cutoff. The following enrollment changes only three factual metadata records and is subject to separate exact byte readback. No reviewer test/build/browser/Git execution."
+  },
+  "resourceAcquisitionGroupsDeliverySuccessor": {
+    "engineeringLabel": "0.31.0",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/18",
+    "sourceHead": "b95beee49a216f00085402f54d2e1f8ee40b5aaa",
+    "mergedMain": "b4062e134af7b923ab6c2c16381004bc1c62ee3c",
+    "tree": "5bf7e05cf88e15ca66d1b8b6e26e2c442cbfcf7a",
+    "mandatoryPushHook": "ACTUAL_PASS",
+    "coreTests": 2441,
+    "publicationTests": 63,
+    "localRemoteMainReadbackAtUtc": "2026-10-11T19:43:24.561Z",
+    "remoteStatusCount": 0,
+    "remoteCheckCount": 0,
+    "remoteCIPassClaimed": false,
+    "scope": "Observed prior delivery successor; preserves RG1 earlier pending cutoffs."
   }
 }
