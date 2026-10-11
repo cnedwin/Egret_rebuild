@@ -625,5 +625,112 @@ for (const name of ['displayHitState', 'displayHitTest']) for (const [directory,
   }
 }
 
+// RG1_BOUNDARY_BEGIN
+// Scope-owned resource groups add three erased Engine types and one instance
+// method. The runtime port below is exact assembly typing, not owner authority.
+// Every retained policy runs before this finite successor, with no exemption.
+const assetGroupStrip = raw => raw.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/[^\n]*/g, '').trim();
+const assetGroupPublicTypes = ['AssetGroup', 'AssetGroupState', 'AssetGroupOptions'];
+const assetGroupPrivateNames = ['createAssetGroup', 'createAssetGroupOwner', 'AssetGroupOwner', 'AssetGroupContext', 'assetGroupBrand', 'registerAssetGroupOperations', 'requireAssetManagerOwner', 'registerAssetManagerOwner'];
+const assetGroupSourceEntries = {
+  contracts: 'packages/contracts/src/index.ts', root: 'packages/engine/src/index.ts',
+  runtime: 'packages/runtime/src/index.ts', web: 'packages/engine/web/index.ts',
+  webgpu: 'packages/engine/web/webgpu.ts', 'runtime/text': 'packages/runtime/src/text/index.ts',
+  'engine/text': 'packages/engine/src/text.ts', 'engine/web/text': 'packages/engine/web/text.ts',
+  project: 'packages/project/src/index.ts',
+};
+for (const [entry, values, emittedEntry] of [...textEntries, ['project', projectFacade, 'packages/project/dist/index']]) {
+  const declaration = assetGroupStrip(readFileSync(path.join(root, emittedEntry + '.d.ts'), 'utf8'));
+  const emitted = assetGroupStrip(readFileSync(path.join(root, emittedEntry + '.js'), 'utf8'));
+  const original = assetGroupStrip(readFileSync(path.join(root, assetGroupSourceEntries[entry]), 'utf8'));
+  for (const [label, text] of [[entry, declaration], [entry + ' source', original]]) {
+    let remainder = text;
+    if (entry === 'root') {
+      const ports = [...text.matchAll(/export(?:\s+type)?\s*\{([^}]+)\}\s*from\s*['"]([^'"]+)['"];?/g)]
+        .filter(match => match[2] === './assetGroupTypes.js' || /\b(?:AssetGroup|AssetGroupState|AssetGroupOptions)\b/.test(match[1]));
+      const references = [...text.matchAll(/['"]\.\/assetGroupTypes\.js['"]/g)];
+      if (ports.length !== 1 || !/^export\s+type\s*\{[^}]+\}\s*from\s*['"]\.\/assetGroupTypes\.js['"];?$/.test(ports[0][0])
+          || references.length !== 1 || JSON.stringify(ports[0][1].split(',').map(name => name.trim()).sort()) !== JSON.stringify([...assetGroupPublicTypes].sort())
+          || assetGroupPublicTypes.some(name => name in values)) throw new Error(`${label}: exact AssetGroup type-only export surface mismatch`);
+      remainder = text.replace(ports[0][0], '');
+      if (/\b(?:AssetGroup|AssetGroupState|AssetGroupOptions)\b/.test(remainder)) throw new Error(`${label}: exact AssetGroup type-only export surface mismatch`);
+    } else {
+      for (const name of assetGroupPublicTypes) if (name in values || new RegExp('\\b' + name + '\\b').test(text)) throw new Error(`${label}: Engine-only AssetGroup type leaked: ${name}`);
+      if (/\bassetGroupTypes\b/.test(text)) throw new Error(`${label}: Engine-only AssetGroup types module leaked`);
+    }
+    if (entry === 'runtime') {
+      const ports = [...text.matchAll(/export(?:\s+type)?\s*\{([^}]+)\}\s*from\s*['"]([^'"]+)['"];?/g)]
+        .filter(match => match[2] === './assetManagerOwnerState.js' || /\bAssetGroupOperations\b/.test(match[1]));
+      if (ports.length !== 1 || !/^export\s+type\s*\{\s*AssetGroupOperations\s*\}\s*from\s*['"]\.\/assetManagerOwnerState\.js['"];?$/.test(ports[0][0])
+          || [...text.matchAll(/['"]\.\/assetManagerOwnerState\.js['"]/g)].length !== 1 || 'AssetGroupOperations' in values)
+        throw new Error(`${label}: exact AssetGroupOperations type-only assembly mismatch`);
+      remainder = remainder.replace(ports[0][0], '');
+      if (/\b(?:AssetGroupOperations|assetManagerOwnerState)\b/.test(remainder)) throw new Error(`${label}: exact AssetGroupOperations type-only assembly mismatch`);
+    } else if ('AssetGroupOperations' in values || /\bAssetGroupOperations\b/.test(text)) {
+      throw new Error(`${label}: runtime-only AssetGroup assembly type leaked`);
+    }
+    for (const name of assetGroupPrivateNames) if (name in values || new RegExp('\\b' + name + '\\b').test(remainder)) throw new Error(`${label}: private AssetGroup authority leaked: ${name}`);
+    if (/['"][^'"]*(?:^|\/)assetGroup(?:\.js|['"])/.test(remainder)) throw new Error(`${label}: private AssetGroup module leaked`);
+  }
+  for (const name of [...assetGroupPublicTypes, 'AssetGroupOperations', ...assetGroupPrivateNames])
+    if (name in values || new RegExp('\\b' + name + '\\b').test(emitted)) throw new Error(`${entry}: AssetGroup erased or private value leaked: ${name}`);
+  if (/\b(?:assetGroupTypes|assetGroup|assetManagerOwnerState)\b/.test(emitted)) throw new Error(`${entry}: private AssetGroup module leaked`);
+}
+const assetGroupTypesModule = await import(new URL('../packages/engine/dist/assetGroupTypes.js', import.meta.url));
+if (Object.keys(assetGroupTypesModule).length !== 0) throw new Error('engine: AssetGroup types emitted runtime values');
+// RG1_ERASURE_BEGIN
+// An empty namespace does not prove local allocations were erased. The exact
+// declaration-only module may retain only its empty compiler module marker.
+const assetGroupTypesEmitted = assetGroupStrip(readFileSync(path.join(root, 'packages/engine/dist/assetGroupTypes.js'), 'utf8'));
+if (!/^export\s*\{\s*\}\s*;$/.test(assetGroupTypesEmitted)) throw new Error('engine: AssetGroup types emitted non-erased module code');
+// RG1_ERASURE_END
+for (const [label, file] of [['engine source', 'packages/engine/src/assetGroupTypes.ts'], ['engine', 'packages/engine/dist/assetGroupTypes.d.ts']]) {
+  const code = assetGroupStrip(readFileSync(path.join(root, file), 'utf8'));
+  const names = [...code.matchAll(/\bexport\s+(?:declare\s+)?(?:type|interface|function|const|class|enum)\s+(\w+)/g)].map(match => match[1]).sort();
+  const exportCount = (code.replace(/^[ \t]*export[ \t]*\{[ \t]*\}[ \t]*;[ \t]*\r?$/gm, '').match(/\bexport\b/g) ?? []).length;
+  if (JSON.stringify(names) !== JSON.stringify([...assetGroupPublicTypes].sort()) || exportCount !== 3)
+    throw new Error(`${label}: canonical AssetGroup type inventory mismatch`);
+  const states = [...code.matchAll(/export\s+type\s+AssetGroupState\s*=\s*([^;]+);/g)];
+  const options = [...code.matchAll(/export\s+interface\s+AssetGroupOptions\s*\{([^}]*)\}/g)];
+  const groups = [...code.matchAll(/export\s+interface\s+AssetGroup\s*<\s*T\s*>\s*\{([^}]*)\}/g)];
+  const compact = value => value.replace(/\s+/g, '');
+  if ([...code.matchAll(/\bdeclare\s+const\s+assetGroupBrand\s*:\s*unique\s+symbol\s*;/g)].length !== 1
+      || /\bexport\s+(?:declare\s+)?const\s+assetGroupBrand\b/.test(code)
+      || states.length !== 1 || compact(states[0][1]) !== "'pending'|'ready'|'failed'|'disposed'"
+      || options.length !== 1 || compact(options[0][1]) !== 'readonlyconcurrency?:number;'
+      || groups.length !== 1 || compact(groups[0][1]) !== 'readonly[assetGroupBrand]:true;readonlystate:AssetGroupState;readonlyready:Promise<readonlyAssetLease<T>[]>;dispose():void;')
+    throw new Error(`${label}: canonical AssetGroup contract mismatch`);
+}
+const assetGroupMethod = 'createAssetGroup<T>(scope: Scope, refs: readonly AssetRef<T>[], options?: AssetGroupOptions): AssetGroup<T>';
+for (const [label, file, ending] of [['engine source', 'packages/engine/src/Engine.ts', ' {'], ['engine', 'packages/engine/dist/Engine.d.ts', ';']]) {
+  const code = assetGroupStrip(readFileSync(path.join(root, file), 'utf8')).replace(/\s+/g, ' ');
+  if (!code.includes(assetGroupMethod + ending) || [...code.matchAll(/\bcreateAssetGroup\s*(?:<[^>]*>)?\s*\(/g)].length !== 1)
+    throw new Error(`${label}: exact createAssetGroup signature mismatch`);
+}
+const assetGroupMethodDescriptor = Object.getOwnPropertyDescriptor(facade.Engine.prototype, 'createAssetGroup');
+if (!assetGroupMethodDescriptor || typeof assetGroupMethodDescriptor.value !== 'function'
+    || assetGroupMethodDescriptor.enumerable !== false || assetGroupMethodDescriptor.configurable !== true
+    || Object.hasOwn(facade.Engine, 'createAssetGroup')) throw new Error('engine: createAssetGroup instance method mismatch');
+// Optional context assembly keeps ordinary runtime construction valid. Pin the
+// four captured operations, not a public factory or runtime ownership lookup.
+for (const [label, directory, suffix] of [['runtime source', 'src', '.ts'], ['runtime', 'dist', '.d.ts']]) {
+  const operations = assetGroupStrip(readFileSync(path.join(root, `packages/runtime/${directory}/assetManagerOwnerState${suffix}`), 'utf8'));
+  const ports = [...operations.matchAll(/export\s+interface\s+AssetGroupOperations\s*\{([^}]*)\}/g)];
+  const expectedBody = 'readonlyadmitGroupRefs:(refs:readonlyunknown[])=>void;readonlyacquire:<T>(ref:AssetRef<T>,options?:AssetAcquireOptions)=>Promise<AssetLease<T>>;readonlyclaimGroupLease:(lease:unknown,group:object)=>void;readonlyreleaseGroupLease:(lease:unknown)=>void;';
+  if (ports.length !== 1 || ports[0][1].replace(/\s+/g, '') !== expectedBody) throw new Error(`${label}: AssetGroupOperations assembly contract mismatch`);
+  const context = assetGroupStrip(readFileSync(path.join(root, `packages/runtime/${directory}/ownership${suffix}`), 'utf8'));
+  if ([...context.matchAll(/readonly\s+registerAssetGroupOperations\?\s*:\s*\(operations\s*:\s*AssetGroupOperations\)\s*=>\s*void\s*;/g)].length !== 1
+      || [...context.matchAll(/\bregisterAssetGroupOperations\b/g)].length !== 1) throw new Error(`${label}: optional AssetGroupOperations context assembly mismatch`);
+}
+// Only new group modules gain this no-automatic-timing check. Retained Engine
+// shutdown deadlines and all earlier source-scanner exceptions remain intact.
+for (const name of ['assetGroup', 'assetGroupTypes']) for (const [directory, suffix] of [['src', '.ts'], ['dist', '.js'], ['dist', '.d.ts']]) {
+  const file = `packages/engine/${directory}/${name}${suffix}`;
+  const raw = readFileSync(path.join(root, file), 'utf8'), code = assetGroupStrip(raw);
+  if (/\b(?:Date|performance|requestAnimationFrame|cancelAnimationFrame|setInterval|clearInterval|setTimeout|clearTimeout)\b/.test(code)) throw new Error(`${file}: AssetGroup automatic timing dependency`);
+  if (forbidden.test(code) || /\b(?:HTMLElement|Document|Window|Navigator|NodeJS|GPUDevice)\b/.test(code)
+      || /\/\/\/\s*<reference\s+(?:lib\s*=\s*['"]dom(?:\.iterable)?['"]|types\s*=\s*['"]node['"])/i.test(raw)) throw new Error(`${file}: host ambient dependency`);
+}
+// RG1_BOUNDARY_END
 console.log(`Boundary check PASS: four private workspace packages, actual exports resolution, ${inspected} source/build/declaration files, DOM-free core and exact DOM-only web subtree without Node imports/globals.`);
 

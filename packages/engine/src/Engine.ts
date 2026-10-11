@@ -3,7 +3,7 @@ import type { FrameOptions2D, RenderFrame2D, TexturedFrameProfile2D, TexturedRen
 import { collectFrameContent, collectTexturedFrameContent } from '@egret/runtime';
 import type { Diagnostic, DiagnosticHandler, HostAdapter } from "@egret/contracts";
 import { EgretError, createScope, createStage, createAssetManager, reportDiagnostic } from "@egret/runtime";
-import type { AssetManager, Scope, Stage } from "@egret/runtime";
+import type { AssetGroupOperations, AssetManager, AssetRef, Scope, Stage } from "@egret/runtime";
 import type { EngineContext } from "@egret/runtime";
 import { closeHost } from "./closeHost.js";
 import { registerTexturedFrame } from './internal/texturedFrameState.js';
@@ -14,6 +14,9 @@ import { createTweenOwner } from './tween.js';
 import type { TweenOwner } from './tween.js';
 import type { Tween, TweenOptions } from './tweenTypes.js';
 import { registerTextFieldEngine } from './internal/textFieldFactoryState.js';
+import { createAssetGroupOwner } from './assetGroup.js';
+import type { AssetGroupOwner } from './assetGroup.js';
+import type { AssetGroup, AssetGroupOptions } from './assetGroupTypes.js';
 
 export interface EngineOptions {
   readonly host: HostAdapter;
@@ -48,6 +51,7 @@ function observeRejectedRenderResult(result: unknown): void {
 export class Engine {
   readonly #gameClockOwner: GameClockOwner;
   readonly #tweenOwner: TweenOwner;
+  readonly #assetGroupOwner: AssetGroupOwner;
   readonly #engineScopes = new WeakSet<Scope>();
   private frameBusy = false;
   private nextFrameId = 1;
@@ -83,6 +87,7 @@ export class Engine {
     };
     const textFields = registerTextFieldEngine(this, assertOpen,
       (scope: unknown): scope is Scope => typeof scope === 'object' && scope !== null && this.#engineScopes.has(scope as Scope));
+    let assetGroupOperations: AssetGroupOperations | undefined;
     // The context is never retained in a named public property by its consumers.
     this.#context = Object.freeze({
       assertOpen: (): void => {
@@ -93,6 +98,7 @@ export class Engine {
         if (this.#currentState === "closing") this.cleanupErrors.push(cause);
       },
       registerTextFieldCache: textFields.registerCache,
+      registerAssetGroupOperations: (operations: AssetGroupOperations): void => { assetGroupOperations = operations; },
     });
     // The inert owner precedes publication and uses private Scope membership.
     this.#gameClockOwner = createGameClockOwner({
@@ -110,6 +116,13 @@ export class Engine {
     this.clock = this.#gameClockOwner.clock;
     this.stage = createStage(this.#context);
     this.assets = createAssetManager(this.#context);
+    // Authentic manager construction captured the operations before publication.
+    this.#assetGroupOwner = createAssetGroupOwner({
+      assertOpen: this.#context.assertOpen,
+      isEngineScope: (scope: unknown): scope is Scope => typeof scope === 'object' && scope !== null && this.#engineScopes.has(scope as Scope),
+      report: this.#context.report,
+      captureCleanup: this.#context.captureCleanup,
+    }, assetGroupOperations!);
   }
 
   static {
@@ -218,6 +231,10 @@ export class Engine {
     return this.#tweenOwner.create(scope, options);
   }
 
+  public createAssetGroup<T>(scope: Scope, refs: readonly AssetRef<T>[], options?: AssetGroupOptions): AssetGroup<T> {
+    return this.#assetGroupOwner.create<T>(scope, refs, options);
+  }
+
   /** Every caller shares one close promise, including reentrant cleanup callbacks. */
   public dispose(): Promise<void> {
     if (this.closePromise !== undefined) return this.closePromise;
@@ -227,6 +244,7 @@ export class Engine {
     // Cache the result before abort/cleanup/diagnostic callbacks can reenter.
     this.#currentState = "closing";
     // Terminal observations change now, before the existing idle barriers wait.
+    this.#assetGroupOwner.close();
     this.#tweenOwner.close();
     this.#gameClockOwner.close();
     void this.runClose().then(resolveClose, rejectClose);

@@ -264,7 +264,7 @@
   },
   "_localization": {
     "canonicalSource": "当前版本.json",
-    "canonicalSha256": "1010c39e079cc04785b1fdef93035e13eebdfc1754ce1ca0bf66d38416c31b40",
+    "canonicalSha256": "4fc3fbf6b38ab5adb0c5091d631983a42d938ecafaad194b0ba4c86f13026f65",
     "role": "read_only_translation",
     "language": "en"
   },
@@ -547,7 +547,7 @@
     "contract": "en/docs/display-content-bounds-contract.md",
     "evidence": "en/docs/display-content-bounds-evidence.md"
   },
-  "latestEngineeringPreview": "0.30.0",
+  "latestEngineeringPreview": "0.31.0",
   "texturedMesh2DImplementation": {
     "version": "0.23.0",
     "status": "bounded_increment_implemented",
@@ -1684,5 +1684,245 @@
       "remoteCIPassClaimed": false,
       "scope": "Complete local build, types, boundaries, core, structural publication, KB and headless execution; final independent bilingual meaning and actual Git delivery remain pending."
     }
+  },
+  "resourceAcquisitionGroupImplementation": {
+    "engineeringPreview": "0.31.0",
+    "deliverable": "V035",
+    "sourceId": "S084",
+    "status": "working_tree_cpu_private_strict_types_finite_policy_and_retained_desktop_subsets_pass_full_public_delivery_pending",
+    "sourceBaseCommit": "cd19ac07b8994b19ed777d1c2483a07c852fc1b9",
+    "packageVersion": "0.0.0",
+    "protocolVersion": "1.0",
+    "evidenceCutoffUTC": "2026-10-11T18:50:31.6265177Z",
+    "bounds": {
+      "occurrences": 128,
+      "defaultConcurrency": 4,
+      "minConcurrency": 1,
+      "maxConcurrency": 16,
+      "window": "local_group_waiters_not_global_network"
+    },
+    "api": {
+      "method": "Engine.createAssetGroup",
+      "engineTypeOnlyExports": [
+        "AssetGroup",
+        "AssetGroupState",
+        "AssetGroupOptions"
+      ],
+      "runtimeTypeOnlyAssembly": "AssetGroupOperations",
+      "newRuntimeValueExports": [],
+      "newDependencies": [],
+      "newPackageExportMapEntries": []
+    },
+    "evidence": [
+      "evidence/resource-acquisition-groups-verification.json"
+    ],
+    "documents": [
+      "en/docs/resource-acquisition-groups.md"
+    ],
+    "candidateEvidence": {
+      "scope": "candidate_cpu_strict_types_finite_policy_and_adopted_working_tree_regressions",
+      "missingFeatureRed": {
+        "tests": 1,
+        "passed": 0,
+        "failed": 1,
+        "exitCode": 1,
+        "assignedFailure": "RG1_MISSING_FACTORY",
+        "genuineBaselineLoads": 1,
+        "genuineBaselineDisposals": 1,
+        "engineCloseAwaited": true,
+        "sdkInputs": 343,
+        "sdkInputsUnchanged": true,
+        "executedAtUTC": "2026-10-11T17:44:21.737Z"
+      },
+      "firstStable": {
+        "buildExitCode": 0,
+        "focusedTests": 28,
+        "focusedPassed": 28,
+        "focusedFailed": 0,
+        "cpuExampleExitCode": 0,
+        "imageCommands": 2,
+        "imageX": [
+          0,
+          1
+        ],
+        "resourceGenerations": [
+          1,
+          1
+        ],
+        "providerDisposals": 2,
+        "pendingTimers": 0,
+        "executedAtUTC": "2026-10-11T18:16:49.0455330Z"
+      },
+      "focusedSuccessor": {
+        "tests": 29,
+        "passed": 29,
+        "failed": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "exitCode": 0,
+        "executedAtUTC": "2026-10-11T18:20:15.0503411Z",
+        "lateAlreadyDeliveredLeaseWitness": true,
+        "unchangedProductSourcePins": 8,
+        "overlapsOriginal28": true
+      },
+      "primaryTypes": {
+        "positiveExitCode": 0,
+        "ordinaryNegativeDiagnostics": 15,
+        "importNegativeDiagnostics": 11,
+        "inputsUnchanged": true,
+        "executedAtUTC": "2026-10-11T18:19:16.163Z",
+        "exactCheckerRegistration": "PENDING_AT_HISTORICAL_PROBE_CUTOFF",
+        "strictTypePolicyAcceptance": "PENDING_AT_HISTORICAL_PROBE_CUTOFF"
+      },
+      "independentReview": {
+        "blockingProductSourceFindings": 0,
+        "lateLeaseCoverageFollowUp": "actual_focused_successor_pass_and_finite_source_successor_review_addressed",
+        "directArtificialGroupOperationFaultInjection": "NOT_RUN",
+        "successorReviewedAtUTC": "2026-10-11T18:22:31Z"
+      },
+      "fullCurrent": "PENDING",
+      "policyMutants": "FINITE_35_PASS_OVERLAPS_PRESERVED_34",
+      "bilingualMeaning": "PENDING",
+      "publication": "PENDING",
+      "mandatoryGitPushHook": "PENDING",
+      "remoteDelivery": "PENDING",
+      "remoteCIPassClaimed": false,
+      "browserNativeAcceptance": "RETAINED_DESKTOP_PROFILE_SUBSETS_PASS_RG1_GROUP_APPLICATION_PENDING",
+      "fullSpineR020V020": "PENDING",
+      "strictTypes": {
+        "exitCode": 0,
+        "timeout": false,
+        "startedAtUTC": "2026-10-11T18:36:23.5210151Z",
+        "finishedAtUTC": "2026-10-11T18:36:27.2445474Z",
+        "retainedConsumers": "PASS",
+        "publicPositiveConsumer": "PASS",
+        "ordinaryNegativeDiagnostics": 15,
+        "importNegativeDiagnostics": 11,
+        "exactUnsuppressedFileLineCodeBinding": "PASS",
+        "overlapsPrimaryProbe": true,
+        "executionTree": "PRIVATE"
+      },
+      "finitePolicy": {
+        "tests": 34,
+        "passed": 34,
+        "failed": 0,
+        "exitCode": 0,
+        "timeout": false,
+        "directControls": 2,
+        "baselineFirstMutants": 32,
+        "startedAtUTC": "2026-10-11T18:36:27.2672400Z",
+        "finishedAtUTC": "2026-10-11T18:37:50.1908866Z",
+        "scope": "preserved_original_34_control_finite_pass",
+        "executionTree": "PRIVATE"
+      },
+      "independentPolicyReview": {
+        "reviewedAtUTC": "2026-10-11T18:41:12Z",
+        "oldGuardWeakeningFound": false,
+        "currentProductTypeModuleLeakFound": false,
+        "historicalFinding": "RG-PR-C1_non_exported_emitted_runtime_brand_coverage",
+        "successorSourceReviewAtUTC": "2026-10-11T18:50:17Z",
+        "successorSourceFindingStatus": "RESOLVED",
+        "successorOpenSourceFindings": 0,
+        "sourceReviewIsRuntimePass": false
+      },
+      "typeErasureRed": {
+        "tests": 1,
+        "passed": 0,
+        "failed": 1,
+        "exitCode": 1,
+        "timeout": false,
+        "startedAtUTC": "2026-10-11T18:45:50.3606397Z",
+        "finishedAtUTC": "2026-10-11T18:45:52.7413009Z",
+        "baseline": "genuine_four_package_graph_accepted_before_single_mutant",
+        "mutant": "non_exported_local_runtime_brand_in_emitted_types_module",
+        "failure": "checker_accepted_mutant_instead_of_assigned_refusal",
+        "productModuleChanged": false
+      },
+      "policySuccessor": {
+        "tests": 35,
+        "passed": 35,
+        "failed": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "exitCode": 0,
+        "timeout": false,
+        "directControls": 2,
+        "baselineFirstMutants": 33,
+        "startedAtUTC": "2026-10-11T18:49:16.2751238Z",
+        "finishedAtUTC": "2026-10-11T18:50:31.6265177Z",
+        "overlapsOriginal34": true,
+        "executionTree": "PRIVATE",
+        "scope": "finite_exact_emitted_empty_module_guard_and_35_controls"
+      },
+      "adoptedWorkingTreeCore": {
+        "projectedSourceFixturePaths": 16,
+        "projectedPolicyPaths": 3,
+        "buildExitCode": 0,
+        "tests": 86,
+        "passed": 86,
+        "failed": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "groupCases": 29,
+        "retainedResourceLifecycleCases": 57,
+        "overlapsPrivateGroupCases": true,
+        "cpuExampleExitCode": 0,
+        "imageCommands": 2,
+        "resourceGenerations": [
+          1,
+          1
+        ],
+        "providerDisposals": 2,
+        "pendingTimers": 0,
+        "startedAtUTC": "2026-10-11T18:47:55.1667948Z",
+        "finishedAtUTC": "2026-10-11T18:47:56.0150482Z"
+      },
+      "retainedBrowserRegressions": {
+        "commands": 8,
+        "browserProfiles": 7,
+        "freezeCommands": 1,
+        "allExitCodes": 0,
+        "timeouts": 0,
+        "startedAtUTC": "2026-10-11T18:49:16.2257849Z",
+        "finishedAtUTC": "2026-10-11T18:50:04.9981074Z",
+        "statuses": {
+          "canvas": "CHECKED_DESKTOP_CANVAS_PIXELS",
+          "webgpu": "PASS",
+          "b1": "PASS",
+          "textured": "PASS",
+          "sequence": "PASS_OPAQUE_REGION_SUBSET",
+          "canvasText": "PASS_WC1_CANVAS_SUBSET",
+          "picking": "PASS_DESKTOP_HT1_CANVAS_SUBSET",
+          "freeze": "BUILD_INPUT_FREEZE_ONLY"
+        },
+        "groupSpecificBrowserApplication": false,
+        "wholeA2": false,
+        "phones": false,
+        "performance": false,
+        "physicalDisplay": false,
+        "osResourceRetirement": false
+      },
+      "precedingDelivery": {
+        "engineeringVersion": "0.30.0",
+        "status": "DELIVERED_SEPARATE_FROM_RG1",
+        "pullRequest": 17,
+        "pullRequestUrl": "https://github.com/cnedwin/Egret_rebuild/pull/17",
+        "mergedMainCommit": "cd19ac07b8994b19ed777d1c2483a07c852fc1b9",
+        "mainTree": "828cd68ce8d86fc339848d5e9d4a10a443af6eba",
+        "localRemoteMainIdentityVerifiedAtUTC": "2026-10-11T18:44:39.383Z",
+        "remoteCIPassClaimed": false
+      }
+    },
+    "fullCurrent": "PENDING",
+    "publication": "PENDING",
+    "independentBilingualMeaningReview": "PENDING",
+    "mandatoryGitPushHook": "PENDING",
+    "remoteDelivery": "PENDING",
+    "remoteCIPassClaimed": false,
+    "fullSpineR020V020": "PENDING",
+    "historicalCutoffsPreserved": true
   }
 }

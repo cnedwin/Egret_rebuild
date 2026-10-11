@@ -2,6 +2,14 @@
 
 English | [简体中文](../Cns/CHANGELOG.md)
 
+## Engineering preview: 0.31.0 — 2026-10-12
+
+Added independent Scope-owned resource acquisition groups: a homogeneous invariant Engine method, 0–128 own input occurrences, whole-input preflight and default 4 / integer 1–16 local waiter slots. Genuine member leases remain group-owned; queue stopping, late lease retirement, first observed terminal state, all-group Engine closure and manager/direct-group cleanup errors have explicit bounds. Read the [combined contract, usage and evidence](docs/resource-acquisition-groups.md).
+
+At **2026-10-11 18:50:31 UTC**, the adopted working-tree build/example and **86/86** combined CPU checks passed (**29** RG1 + **57** retained). Private strict types passed with exact unsuppressed **15** ordinary/**11** import negatives. Corrected private finite policy controls passed **35/35** after the genuine one-mutant RED; finite source review resolved its finding with 0 open successor findings. The earlier **28/29** and **34/35** results remain preserved and overlap. Seven existing desktop browser profiles plus one build/freeze command passed; those profiles do not exercise a group-based browser application. Full current, bilingual/publication, push hook and RG1 delivery are **PENDING**. First-party Apache-2.0, no added dependency, private package `0.0.0` and protocol `1.0` remain; full Spine R020/V020 and broader UI/3D/device/performance/migration acceptance are unfinished.
+
+The preceding 0.30.0 example was delivered through [PR #17](https://github.com/cnedwin/Egret_rebuild/pull/17) to Main `cd19ac07b8994b19ed777d1c2483a07c852fc1b9`, tree `828cd68ce8d86fc339848d5e9d4a10a443af6eba`. Local and remote Main identities were verified separately; this is no RG1 delivery or remote CI claim. All older sections below retain their original cutoffs.
+
 ## Engineering preview: 0.30.0 — 2026-10-12
 
 Added a small authored-rectangle picking application through existing Stage, Event and CanvasHost APIs. CSS mouse coordinates feed the genuine logical query; actual typed target/ancestor listeners record routes. After dispatch returns, scene code clears and repaints one feedback rectangle and renders once; listeners do not paint the feedback. Six concrete callback pairs, eight scoped typed subscriptions and shared acquisition/close ownership keep cleanup explicit. No SDK API, dependency or external asset is added; package 0.0.0 and protocol 1.0 remain unchanged. Read the [example record](docs/display-picking-example.md).

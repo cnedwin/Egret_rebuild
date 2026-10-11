@@ -446,3 +446,68 @@ try {
   }
   console.log('Hit-test fixtures PASS: DOM-free public positive consumer, 16 ordinary and 8 import negatives bound to exact file/line/code.');
 } finally { for (const config of hitTestConfigs) rmSync(config, { force: true }); }
+
+// RG1_TYPES_BEGIN
+// Codes and exact source lines below are primary observations from the frozen
+// unsuppressed RG1 consumer probe, not guessed diagnostic totals. Keep the
+// misuse fixtures unchanged and refuse extra/missing/unrelated diagnostics.
+const assetGroupDiagnosticCases = {
+  negative: [
+    ['required-private-brand', 8, 2741], ['homogeneous-invariant-input', 10, 2322],
+    ['invariant-group-result', 12, 2322], ['required-arguments', 14, 2554],
+    ['required-refs', 16, 2554], ['genuine-scope-type', 18, 2740],
+    ['ref-type', 20, 2322], ['array-type', 22, 2740],
+    ['numeric-concurrency', 24, 2322], ['options-shape', 26, 2559],
+    ['readonly-state', 28, 2540], ['readonly-members', 30, 2339],
+    ['group-type-only', 32, 2693], ['state-type-only', 34, 2693], ['options-type-only', 36, 2693],
+  ],
+  imports: [
+    ['no-root-factory', 2, 2724], ['no-root-owner', 4, 2305],
+    ['no-root-brand', 6, 2724], ['no-root-assembly-port', 8, 2724],
+    ['no-runtime-group', 10, 2305], ['no-runtime-state', 12, 2305],
+    ['no-runtime-options', 14, 2724], ['no-runtime-factory', 16, 2724],
+    ['no-runtime-owner-lookup', 18, 2305], ['no-group-subpath', 20, 2307], ['no-private-module', 22, 2307],
+  ],
+};
+const assetGroupTypeConfigs = [];
+try {
+  for (const [name, source, marker] of [
+    ['positive', 'asset-group-positive.ts', null],
+    ['negative', 'asset-group-negative.ts', 'ASSET_GROUP_CASE'],
+    ['imports', 'asset-group-import-negative.ts', 'ASSET_GROUP_IMPORT_CASE'],
+  ]) {
+    const file = 'tests/types/' + source, fixture = readFileSync(path.join(root, file), 'utf8');
+    if (/@ts-(?:expect-error|ignore|nocheck)/.test(fixture)) throw new Error('AssetGroup fixture contains suppression: ' + file);
+    const expected = marker ? assetGroupDiagnosticCases[name].map(([caseName, line, code]) => ({ name: caseName, file, line, code })) : [];
+    const declared = marker ? fixture.split(/\r?\n/).flatMap((line, index) => {
+      const match = line.match(new RegExp('^// ' + marker + ' ([\\w-]+)$'));
+      return match ? [{ name: match[1], line: index + 2 }] : [];
+    }) : [];
+    if (declared.length !== expected.length || new Set(declared.map(item => item.name)).size !== expected.length
+        || (marker && (fixture.match(new RegExp('\\b' + marker + '\\b', 'g')) ?? []).length !== expected.length)
+        || expected.some((item, index) => declared[index]?.name !== item.name || declared[index]?.line !== item.line))
+      throw new Error('AssetGroup exact source diagnostic inventory mismatch: ' + file);
+    const config = 'tests/types/asset-group-' + name + '.generated.json';
+    assetGroupTypeConfigs.push(path.join(root, config));
+    writeFileSync(path.join(root, config), JSON.stringify({ extends: './tsconfig.dom-free.json', include: [source] }));
+    const check = spawnSync(process.execPath, [compiler, '--project', config, '--pretty', 'false'], {
+      cwd: root, encoding: 'utf8', timeout: 30000, windowsHide: true,
+    });
+    process.stdout.write(check.stdout ?? ''); process.stderr.write(check.stderr ?? '');
+    if (check.error) throw check.error;
+    if (!marker) { if (check.status !== 0) throw new Error('AssetGroup DOM-free public positive consumer failed: exit ' + check.status); continue; }
+    const observed = [...(check.stdout ?? '').matchAll(/^(.+)\((\d+),(\d+)\): error TS(\d+):/gm)]
+      .map(match => ({ file: match[1].replaceAll('\\', '/'), line: Number(match[2]), column: Number(match[3]), code: Number(match[4]) }));
+    if (check.status !== 1 || observed.length !== expected.length)
+      throw new Error(`AssetGroup ${name}: expected ${expected.length} diagnostics/exit 1; got ${observed.length}/exit ${check.status}`);
+    const receipts = expected.map(item => {
+      const found = observed.filter(actual => actual.file === item.file && actual.line === item.line);
+      if (found.length !== 1 || found[0].code !== item.code)
+        throw new Error(`AssetGroup ${item.name}: expected ${item.file}:${item.line}/TS${item.code}; got ${JSON.stringify(found)}`);
+      return { name: item.name, expected: item, actual: found[0] };
+    });
+    console.log('AssetGroup ' + name + ' individual unsuppressed diagnostic receipts: ' + JSON.stringify(receipts));
+  }
+  console.log('AssetGroup fixtures PASS: DOM-free public positive consumer, 15 ordinary and 11 import negatives bound to exact source/file/line/code.');
+} finally { for (const config of assetGroupTypeConfigs) rmSync(config, { force: true }); }
+// RG1_TYPES_END

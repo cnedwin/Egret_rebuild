@@ -21,6 +21,7 @@ Years later, as times change and technology advances, many developers continue t
 | 检查点 | 主要解决的问题 | 记录 |
 | --- | --- | --- |
 | 未发行 | 英文优先的社区入口、独立的 `en/` 与 `Cns/` 知识库、英文文件名、创始人介绍与双语 Changelog。精简文档入口，集中历史研究，便于查阅。 | [详情](knowledge-base/Cns/docs/documentation-layout.md) |
+| 0.31.0 | Scope 所有的资源批量获取：0–128 个输入位置、1–16 局部等待窗口。已采用构建/示例与 CPU 86/86（29 项 RG1 + 57 项既有）、私有精确严格类型和有限策略 35/35 通过；七项既有桌面 profile 在原子集通过。完整验证、双语/公开、推送钩子及 RG1 交付后继由[核验记录](knowledge-base/evidence/resource-acquisition-groups-verification.json)跟踪。 | [阅读](knowledge-base/Cns/docs/资源批量获取.md) |
 | 0.30.0 | 将既有 Stage 拾取、类型化分发与 Canvas 渲染组合成小型应用，公共入口无界面检查通过 12/12。桌面鼠标／Canvas 输入、像素与五项对照通过固定子集；纯准入检查单独通过 32/32。完整本地验证通过：核心 2377/2377 与结构化公开检查 63/63；最终独立语义、实际 Git 推送钩子及交付待完成。 | [示例](knowledge-base/Cns/docs/显示拾取示例.md) |
 | 0.29.0 | 自定义矩形 Stage 命中、整树预算、半开局部裁剪与显式输入标志。专项 CPU 98/98、严格类型、426 文件边界及 221/221 策略记录通过；完整核心 2,333/2,333、公开检查 59/59 及六项既有桌面渲染回归通过。命中补充、双语语义、Git 推送钩子与交付待完成。 | [详情](knowledge-base/Cns/docs/显示命中HT1.md) |
 | 0.28.0 | 显式仅 Canvas WC1 文字提供者、调用方字体与精确原生栅格／帧控制。2,285 项核心及 59 项公开检查、构建、严格类型和完整当前检查与有界桌面 Canvas 子集均通过；双语审阅通过且未解决问题为 0；必要 Git 推送钩子及交付仍待完成。 | [详情](knowledge-base/Cns/docs/Canvas文字WC1.md) |
@@ -63,6 +64,7 @@ These are engineering and knowledge-base checkpoints, newest first, rather than 
 | Checkpoint | Main problem addressed | Record |
 | --- | --- | --- |
 | Unreleased | English-first community entry, separate `en/` and `Cns/` knowledge-base editions, English filenames, founder introduction and bilingual Changelog. Simplified document entries and grouped historical research for easier navigation. | [Details](knowledge-base/en/docs/documentation-layout.md) |
+| 0.31.0 | Scope-owned resource acquisition groups with 0–128 occurrences and a 1–16 local waiter window. Adopted build/example and CPU 86/86 (29 RG1 + 57 retained), private exact strict types and finite policy 35/35 passed; seven retained desktop profiles passed their existing subsets. Complete verification, bilingual/publication, push hook and RG1 delivery successors are tracked in the [verification record](knowledge-base/evidence/resource-acquisition-groups-verification.json). | [Reading](knowledge-base/en/docs/resource-acquisition-groups.md) |
 | 0.30.0 | Existing Stage picking, typed dispatch and Canvas rendering composed into a small application; 12/12 public-entry headless checks passed. Desktop mouse/Canvas input, pixels and five controls passed the fixed subset; 32/32 pure admission checks passed separately. Complete local verification passed: core 2377/2377 and structural publication 63/63; final independent meaning, actual Git push hook and delivery remain pending. | [Example](knowledge-base/en/docs/display-picking-example.md) |
 | 0.29.0 | Authored rectangular Stage picking, whole-tree budgets, half-open local clips and explicit input flags. Targeted CPU 98/98, strict types, 426-file boundaries and 221/221 policy records passed; complete core 2,333/2,333, publication 59/59 and six existing desktop renderer regressions passed. Picking supplement, bilingual meaning, Git push hook and delivery remain pending. | [Details](knowledge-base/en/docs/display-hit-test-ht1.md) |
 | 0.28.0 | Explicit Canvas-only WC1 text provider, caller-owned fonts and exact native raster/frame controls. 2,285 core and 59 publication tests, build, strict types and complete current checks passed alongside the bounded desktop Canvas subset; bilingual review passed with 0 open findings; the mandatory Git push hook and delivery remain pending. | [Details](knowledge-base/en/docs/canvas-text-wc1-canvas.md) |
@@ -99,6 +101,10 @@ These are engineering and knowledge-base checkpoints, newest first, rather than 
 | 0.1.0 | Structured knowledge base for confirmed requirements, candidate decisions, hypotheses, sources and delivery goals. | [Details](knowledge-base/en/CHANGELOG.md) |
 
 ## 当前范围与参与方式
+
+最新工程预览为 **0.31.0**，为依赖资源的场景新增 Scope 所有的资源批量获取。已采用工作树构建、双纹理 CPU 示例及 **86/86** 合并检查通过（**29** 项 RG1、**57** 项既有资源/生命周期）。私有严格类型将 **15** 个普通、**11** 个导入反例绑定精确、未抑制诊断；修正后的有限策略为 **35/35**。七项既有桌面浏览器 profile 在原子集通过，没有执行使用 group 的浏览器应用。此前 **28/29**、**34/35** 及当前 **29/86** 结果重叠，不合计。[共享核验记录](knowledge-base/evidence/resource-acquisition-groups-verification.json)跟踪完整当前检查、双语/公开审阅、必要推送钩子及 RG1 远端交付后继。第一方代码保持 Apache-2.0、不新增依赖；private 包为 `0.0.0`、协议 `1.0`。阅读[合并的契约、用法和有界证据](knowledge-base/Cns/docs/资源批量获取.md)。R020/V020 完整 Spine、完整 UI/3D、手机、性能、物理资源回收及迁移仍是单独未完成的验收义务。
+
+下方段落保留早先 0.30.0 准备截止点；其单独交付见 [PR #17](https://github.com/cnedwin/Egret_rebuild/pull/17)。
 
 最新工程预览为 **0.30.0**，新增组合既有 Stage、类型化事件与 CanvasHost 的小型显示拾取应用。实际已采用公共入口的无界面运行通过 12/12；私有执行与独立核心审阅单独记录，重叠数量不合计。范围涵盖自定义重叠／裁剪、字面半开边界、CSS 鼠标坐标、分发返回后的一次重绘／渲染，以及有界启动／关闭所有权。新桌面后继在默认 Edge **154.0.4258.62** 中通过 **PASS_DESKTOP_HT1_CANVAS_SUBSET**：十个基线记录与五项指定对照覆盖真实鼠标输入、类型化路径、Canvas 像素及独立的六组原生监听账本。纯准入检查单独通过 **32/32**，不同范围数量不合计。 完整本地验证通过：构建、类型夹具及包边界；核心 **2377/2377** 与结构化公开检查 **63/63**。本地化检查覆盖 **140** 对文档、**6** 个注册表视图及 **154** 个关键源文件。知识库验证检查 **159** 条记录、**243** 份 Markdown、**1997** 个链接及 **955** 个引用，问题数为 **0**；无界面生命周期关闭后待处理计时器为 **0**。以上是不同范围，不合并为测试总数。 最终独立双语语义审阅、必要 Git 推送钩子及交付仍为 **PENDING**。这是固定桌面鼠标／Canvas 子集；手机、操作系统／物理回收、性能及完整输入／UI／Spine 验收单独保留。包保持 private `0.0.0`、协议 `1.0`。阅读[示例记录](knowledge-base/Cns/docs/显示拾取示例.md)与[运行指南](examples/hit-test/README.zh-CN.md)。我们正在为主要依靠 AI 制作游戏的创作者，重建开源游戏引擎与创作流程，首期方向涵盖复杂 2D UI 与轻量 3D。仓库包含实验性核心和结构化知识库；完整引擎、生产平台宿主、编辑器、Agent 服务、目标设备性能及完整旧工程迁移仍待实施或验收。
 
