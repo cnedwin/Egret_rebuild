@@ -1,0 +1,1520 @@
+{
+  "schemaVersion": 1,
+  "engineeringLabel": "0.33.0",
+  "sourceId": "S086",
+  "deliverable": "V037",
+  "packageVersion": "0.0.0",
+  "protocolVersion": "1.0",
+  "date": "2026-10-12",
+  "preparedAtUtc": "2026-10-11T22:58:38.447Z",
+  "sourceBaseCommit": "a240bc1e6ee218c63fc1511d715d01d1358d908f",
+  "status": "PRIMARY_MOUSE_BEHAVIOR_TYPES_FOCUSED_POLICY_NATIVE_AND_RETAINED_RENDERERS_OBSERVED_COMPLETE_PUBLICATION_PENDING",
+  "scope": "Optional browser primary-mouse adapter for genuine ready Engine/Scope/Stage, current authored rectangular hit areas, typed routed events, explicit painting and exact listener ownership.",
+  "productSources": [
+    {
+      "path": "packages/runtime/src/EventDispatcher.ts",
+      "bytes": 7997,
+      "sha256": "f04d19f24c30d5a4b81787e7df94688d1489578e629180ac09929e244f04355f"
+    },
+    {
+      "path": "packages/runtime/src/displayInputOperations.ts",
+      "bytes": 3520,
+      "sha256": "f8a803b10a513afa25fd68d9e28055eeb186e3e6bd9fb00a15c9e8ae78cbce15"
+    },
+    {
+      "path": "packages/runtime/src/index.ts",
+      "bytes": 2468,
+      "sha256": "90d9f473afdab179ee0828f0744911b3173b96441dfccebf99e619c097467135"
+    },
+    {
+      "path": "packages/engine/src/Engine.ts",
+      "bytes": 14749,
+      "sha256": "e36d58286681b353cc9cc15d84f8afc3b2b2e6373bc7de6e32d9442c99f36a97"
+    },
+    {
+      "path": "packages/engine/src/startEngine.ts",
+      "bytes": 1370,
+      "sha256": "8c61c07c5e22ff48a0d7ade0befceb84ab19af4452e7793d4a2fb21c184249d0"
+    },
+    {
+      "path": "packages/engine/src/mouseInput.ts",
+      "bytes": 19357,
+      "sha256": "842be3c1d4eac3769b09ada4fb5e8be36685ade97275d8dc99d2bdf6a5d02401"
+    },
+    {
+      "path": "packages/engine/src/mouseInputTypes.ts",
+      "bytes": 1238,
+      "sha256": "b0f21bc206a9e832a7e6ebc4fd220594c9f6a6e7d6dc17b114ef410ed3c316ed"
+    },
+    {
+      "path": "packages/engine/src/internal/mouseInputFactoryState.ts",
+      "bytes": 793,
+      "sha256": "78c734d3b181ec621d12eb7dbdd9ea98be844243207d90cf7bca660480da01ae"
+    },
+    {
+      "path": "packages/engine/web/MouseInput.ts",
+      "bytes": 9532,
+      "sha256": "8a7029b569a7032e8cade74efe6b1fe25df7b5ba2901045bb463085a95b3248b"
+    },
+    {
+      "path": "packages/engine/web/input.ts",
+      "bytes": 289,
+      "sha256": "2e4145f2d372cb9a9c9e19a284da7885e8af7b3dafdc6967d2e72f9afb7a3318"
+    },
+    {
+      "path": "packages/engine/package.json",
+      "bytes": 1372,
+      "sha256": "891311a277b03b583ef35d45ad862ece747bda8ad04aae12f1fce9ed0e9149df"
+    },
+    {
+      "path": "packages/runtime/src/CancellationController.ts",
+      "bytes": 2536,
+      "sha256": "1f669f03990da30cee01b0590c8e6c3b2c04d9634fb459d9134cb50d023e1c19"
+    }
+  ],
+  "selectedEngineeringInputs": [
+    {
+      "path": "packages/runtime/src/EventDispatcher.ts",
+      "bytes": 7997,
+      "sha256": "f04d19f24c30d5a4b81787e7df94688d1489578e629180ac09929e244f04355f"
+    },
+    {
+      "path": "packages/runtime/src/displayInputOperations.ts",
+      "bytes": 3520,
+      "sha256": "f8a803b10a513afa25fd68d9e28055eeb186e3e6bd9fb00a15c9e8ae78cbce15"
+    },
+    {
+      "path": "packages/runtime/src/index.ts",
+      "bytes": 2468,
+      "sha256": "90d9f473afdab179ee0828f0744911b3173b96441dfccebf99e619c097467135"
+    },
+    {
+      "path": "packages/engine/src/Engine.ts",
+      "bytes": 14749,
+      "sha256": "e36d58286681b353cc9cc15d84f8afc3b2b2e6373bc7de6e32d9442c99f36a97"
+    },
+    {
+      "path": "packages/engine/src/startEngine.ts",
+      "bytes": 1370,
+      "sha256": "8c61c07c5e22ff48a0d7ade0befceb84ab19af4452e7793d4a2fb21c184249d0"
+    },
+    {
+      "path": "packages/engine/src/mouseInput.ts",
+      "bytes": 19357,
+      "sha256": "842be3c1d4eac3769b09ada4fb5e8be36685ade97275d8dc99d2bdf6a5d02401"
+    },
+    {
+      "path": "packages/engine/src/mouseInputTypes.ts",
+      "bytes": 1238,
+      "sha256": "b0f21bc206a9e832a7e6ebc4fd220594c9f6a6e7d6dc17b114ef410ed3c316ed"
+    },
+    {
+      "path": "packages/engine/src/internal/mouseInputFactoryState.ts",
+      "bytes": 793,
+      "sha256": "78c734d3b181ec621d12eb7dbdd9ea98be844243207d90cf7bca660480da01ae"
+    },
+    {
+      "path": "packages/engine/web/MouseInput.ts",
+      "bytes": 9532,
+      "sha256": "8a7029b569a7032e8cade74efe6b1fe25df7b5ba2901045bb463085a95b3248b"
+    },
+    {
+      "path": "packages/engine/web/input.ts",
+      "bytes": 289,
+      "sha256": "2e4145f2d372cb9a9c9e19a284da7885e8af7b3dafdc6967d2e72f9afb7a3318"
+    },
+    {
+      "path": "packages/engine/package.json",
+      "bytes": 1372,
+      "sha256": "891311a277b03b583ef35d45ad862ece747bda8ad04aae12f1fce9ed0e9149df"
+    },
+    {
+      "path": "tests/mouse-input.test.mjs",
+      "bytes": 27106,
+      "sha256": "5d10bc7e436cb0740b9c6e4e531aee2bbccf9d767f9fd932795debc73798b69c"
+    },
+    {
+      "path": "tests/mouse-input-lifecycle.test.mjs",
+      "bytes": 35956,
+      "sha256": "fcbd141042f6009bc7d109ed711c28242bcff72a42b876c708b64611c91ee7e6"
+    },
+    {
+      "path": "tests/types/mouse-input-positive.ts",
+      "bytes": 1851,
+      "sha256": "23a7731bb56be6ee7628c77d652b7fabcb0ba76ff292163306a0df48c09a6463"
+    },
+    {
+      "path": "tests/types/mouse-input-negative.ts",
+      "bytes": 2777,
+      "sha256": "ac859cfbf7813dc3c636ee758ee50d2d4c4260f213c25836c54426ab0e9f21d3"
+    },
+    {
+      "path": "tests/types/mouse-input-import-negative.ts",
+      "bytes": 1806,
+      "sha256": "6c34169bab1f3248a832daf90d885eb19ff1af1424f7c021bb3f469049215db0"
+    },
+    {
+      "path": "tests/types/mouse-input-dom-free-negative.ts",
+      "bytes": 559,
+      "sha256": "d81d4613c6c78f176796dc321a90cbd50bc95e19c7de891b68bfc493573fcb43"
+    },
+    {
+      "path": "tools/check-types.mjs",
+      "bytes": 60660,
+      "sha256": "67002f6602381dcb5f4d75c304acd7af2140ef8f5005e43634643dad20285e88"
+    },
+    {
+      "path": "tools/check-boundaries.mjs",
+      "bytes": 120578,
+      "sha256": "02b607f7db9cdc45a897530fc013a8aa0fc8dde846f8dfacd6524227bd2b0718"
+    },
+    {
+      "path": "tests/boundaries.test.mjs",
+      "bytes": 91022,
+      "sha256": "ab1cf21a59b6975c169ebf8fd9aa38aae137c3f138ab7fb97a41df484cd09a62"
+    },
+    {
+      "path": "tools/verify-mouse-input-canvas.mjs",
+      "bytes": 30075,
+      "sha256": "0bcbb2a8c5f0f6511bd0c5d0f582e65fed198291f7170cfbc073226e73ae5a31"
+    },
+    {
+      "path": "tools/mouse-input-canvas-contract.mjs",
+      "bytes": 22451,
+      "sha256": "48e1874e197d28848205189d08ed4cfec468107cdefb29c426bae6b07bcaee1c"
+    },
+    {
+      "path": "tests/mouse-input-canvas-verifier.test.mjs",
+      "bytes": 13243,
+      "sha256": "e62f0ceeef954ee494adf696512366d0ad386a5c2b294c6f1b8f1069183f97ae"
+    },
+    {
+      "path": "examples/mouse-input/index.html",
+      "bytes": 1366,
+      "sha256": "6f69d5c75ef4acd84546627c4878836b8161ac74f4cdcc1b356c312fcff48fc9"
+    },
+    {
+      "path": "examples/mouse-input/main.mjs",
+      "bytes": 4275,
+      "sha256": "718e0dce1a4c635f004b5d1b8bfaf341c748d0e45c830f83ec05dbd74ca12cfb"
+    },
+    {
+      "path": "examples/mouse-input/scene.mjs",
+      "bytes": 3159,
+      "sha256": "5f85dd9528e3c517389f3816a058dc2e63491237c0b9f7680fcb8850c97bb9ec"
+    },
+    {
+      "path": "examples/mouse-input/README.md",
+      "bytes": 2253,
+      "sha256": "8f7ce85ceff4049c653d7a35ec4deb824da9e2f9675b060889551164c974edc6"
+    },
+    {
+      "path": "examples/mouse-input/README.zh-CN.md",
+      "bytes": 2061,
+      "sha256": "38ed779761a9b555fc7c4476fc5ef003efa0af1b64dee57712c94a8a49e8a408"
+    },
+    {
+      "path": "packages/runtime/src/CancellationController.ts",
+      "bytes": 2536,
+      "sha256": "1f669f03990da30cee01b0590c8e6c3b2c04d9634fb459d9134cb50d023e1c19"
+    },
+    {
+      "path": "tools/verify-webgpu-b1.mjs",
+      "bytes": 48332,
+      "sha256": "b9f964458887c23411d92ee91441337ce3559ec7a8e91b9697a1737246719a3f"
+    },
+    {
+      "path": "tools/sequence-player/file-graph.mjs",
+      "bytes": 9478,
+      "sha256": "6df225a735bbdb3badabfd751b77a47c84ad6a4b8125a3c37a439161faf957dc"
+    },
+    {
+      "path": "tests/webgpu-mesh-host.test.mjs",
+      "bytes": 94773,
+      "sha256": "3812f94f2dfd501a52551ec1b03ba499ff1e2b90b1bfa9fc2a75a5df0692d087"
+    }
+  ],
+  "publicReadings": [
+    "knowledge-base/en/docs/primary-mouse-input-contract.md",
+    "knowledge-base/Cns/docs/主鼠标输入契约.md"
+  ],
+  "historicalCutoffsPreserved": true,
+  "originalMissingInterfaceRed": {
+    "status": "ACTUAL_ASSIGNED_MISSING_PUBLIC_INTERFACE_RED_AFTER_GENUINE_CLEAN_BASELINE",
+    "artifactIdentity": {
+      "bytes": 2947,
+      "sha256": "44334176ea0ff7fd58032a789a55c08134e7138a302bac27c57e9651923bcb80"
+    },
+    "startedAtUtc": "2026-10-11T21:43:34.369Z",
+    "finishedAtUtc": "2026-10-11T21:43:34.540Z",
+    "exitCode": 1,
+    "timeout": false,
+    "stdout": {
+      "bytes": 2061,
+      "sha256": "abaf256352c5a7e62805abb3ecb5cca68f58cd3356d9a701f8ad269520852771"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "publicInterfaceGreen": {
+    "status": "ACTUAL_PUBLIC_INPUT_INTERFACE_GREEN_AFTER_GENUINE_CLEAN_BASELINE",
+    "artifactIdentity": {
+      "bytes": 2852,
+      "sha256": "082ff13e6f060ad4c39d5d53a658d273eec7bbfd933db55d3209fb47e57921a1"
+    },
+    "startedAtUtc": "2026-10-11T22:20:06.194Z",
+    "finishedAtUtc": "2026-10-11T22:20:06.386Z",
+    "exitCode": 0,
+    "timeout": false,
+    "stdout": {
+      "bytes": 1037,
+      "sha256": "eb612c796ef8f5307713de656e6dc6384a0d2b5675e2283dc633b1842991ac23"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "scope": "Same genuine dependency baseline and cleanup; interface reachability only."
+  },
+  "publicBehavior": {
+    "status": "PASS",
+    "counts": {
+      "tests": 98,
+      "pass": 98,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "receipt": {
+      "artifactIdentity": {
+        "bytes": 2340,
+        "sha256": "6aaf11fc648ee7cc4d0f0551dbfecdf73ad8a5586f2fb655bc97e28839bd2c93"
+      },
+      "executions": [
+        {
+          "name": "mouse-behavior",
+          "startedAtUtc": "2026-10-11T22:34:12.6292008Z",
+          "finishedAtUtc": "2026-10-11T22:34:12.8575146Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "35ed55f088a90a09454ace1a7098367980e4ffa7288bfc864c1f7dcb0c41ea1d",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "public-types",
+          "startedAtUtc": "2026-10-11T22:34:12.8793275Z",
+          "finishedAtUtc": "2026-10-11T22:34:18.3471935Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "2ea2291269f44d82dade078c5c6b6f261cc16e9108e91ab06efe4fa036ed9df1",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "scope": "CPU/fake-DOM lifecycle and genuine first-party display/event behavior; overlaps cancellation and native scenarios, totals are not summed."
+  },
+  "cancellation": {
+    "status": "PASS",
+    "regressions": 8,
+    "retainedSignalChecks": 35,
+    "retainedRuntimeChecks": 64,
+    "actualRed": {
+      "status": "ACTUAL_ASSIGNED_MARKER_AND_UNDEFINED_ONCE_REMOVAL_REGRESSION_RED",
+      "artifactIdentity": {
+        "bytes": 1735,
+        "sha256": "72b56b5b8ee80039d3f053ef51bd8ef0bc2c5ece2406ce88889212d8d8bd4093"
+      },
+      "startedAtUtc": "2026-10-11T21:45:51.398Z",
+      "finishedAtUtc": "2026-10-11T21:45:51.571Z",
+      "exitCode": 1,
+      "timeout": false,
+      "stdout": {
+        "bytes": 5689,
+        "sha256": "af2133d6f03644f316e36a6bb2130ad049e0e87df3e8fcab722f3fea0a98385e"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "actualGreen": {
+      "status": "ACTUAL_PUBLIC_CANCELLATION_REGRESSIONS_GREEN_8_OF_8",
+      "artifactIdentity": {
+        "bytes": 1674,
+        "sha256": "f77ddf9124a5d2d7768af98d773af9f2189cf072c4c2d1a18863fa9f03459be6"
+      },
+      "startedAtUtc": "2026-10-11T21:47:15.296Z",
+      "finishedAtUtc": "2026-10-11T21:47:15.476Z",
+      "exitCode": 0,
+      "timeout": false,
+      "stdout": {
+        "bytes": 1761,
+        "sha256": "d9a953e0fe661b1f444b46f011dc280b54c0489079db1e7406ff325385df86d7"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "retainedSignal": {
+      "artifactIdentity": {
+        "bytes": 901,
+        "sha256": "126f3871d73bb66e67d422bbaa4c4e92d1db15a6f483fbd3b49791d64826c05e"
+      },
+      "executions": [
+        {
+          "name": "retained-cancellation-assets",
+          "startedAtUtc": "2026-10-11T21:51:02.6304730Z",
+          "finishedAtUtc": "2026-10-11T21:51:02.8402238Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "b1b1728379a6b6157e2985deb499df85194ee2534f30ce60fbf14f7520d8680e",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "retainedRuntime": {
+      "artifactIdentity": {
+        "bytes": 1011,
+        "sha256": "0cdc18f6fc59da57828a8f842a71a448fd5c2c1b8855fb42a708d4b5ec10e789"
+      },
+      "executions": [
+        {
+          "name": "retained-events-display-hit-cancellation",
+          "startedAtUtc": "2026-10-11T21:54:48.6032523Z",
+          "finishedAtUtc": "2026-10-11T21:54:48.9787470Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "a4b8d10432d71fd415c74d7dc19feb5c4b4667bb5abe76df76fa5ebacca67d42",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "repair": "Original frozen-once signal performs internal removal before invoking the callback, independent of poisoned public remove methods.",
+    "overlapNotSummed": true
+  },
+  "strictTypes": {
+    "status": "ACTUAL_PUBLIC_DIRECT_CHECKER_PASS",
+    "compiler": {
+      "version": "7.0.2",
+      "tscSHA256": "2219f428a7e55aaf1f7ad85b9b0f0cf5078aeb76ccc9a7c6036c92d48f492ffd",
+      "packageSHA256": "3722b30210616a13a3213ded11575ba6b2dbab10c32a5ef67afca8513e27017e"
+    },
+    "primaryObservation": {
+      "bytes": 10234,
+      "sha256": "86b43e063dc863389fd681bbb9d48b5ae10cd95a20fe612963ae10fcf6948eb6"
+    },
+    "expectationIdentity": {
+      "bytes": 8993,
+      "sha256": "70486e6298a4669e14ca97d611e4c283c0db405c623f3c57230663e2b87f59d6"
+    },
+    "positiveConsumers": 1,
+    "negativeDiagnostics": {
+      "ordinary": 26,
+      "imports": 15,
+      "domFreeBrowser": 5
+    },
+    "exactFileLineColumnCode": true,
+    "completeOneToOneMatching": true,
+    "structuralTypesAuthenticateObjects": false,
+    "scope": "Observed strict diagnostics and emitted public entry; no compilation-speed claim."
+  },
+  "policy": {
+    "status": "PASS_NEW_FOCUSED_CONTROLS_COMPLETE_SUITE_PENDING",
+    "counts": {
+      "tests": 21,
+      "pass": 21,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "receipt": {
+      "artifactIdentity": {
+        "bytes": 824,
+        "sha256": "69e1bb0df8722acba45bf0d2e5453eb60976c9563eb93b7989a3530009447c33"
+      },
+      "executions": [
+        {
+          "name": "mi1-policy",
+          "startedAtUtc": "2026-10-11T22:43:43.5139607Z",
+          "finishedAtUtc": "2026-10-11T22:44:01.2205059Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "32607fe9841d84fa9fd0e86cfe49bfc1abb9984677d26a7a1c667ec02cdfede5",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "newAssignedChecks": 21,
+    "fullSuiteExpectedTests": 259,
+    "fullSuiteStatus": "PENDING_FINAL_PREPUSH",
+    "retainedStrictGuardOrder": true,
+    "expectedMessageRepair": "One assertion now names the preserved earlier strict WebGPU export refusal; mutation and checker are unchanged.",
+    "preservedTimeout": {
+      "artifactIdentity": {
+        "bytes": 2340,
+        "sha256": "6aaf11fc648ee7cc4d0f0551dbfecdf73ad8a5586f2fb655bc97e28839bd2c93"
+      },
+      "executions": [
+        {
+          "name": "mouse-behavior",
+          "startedAtUtc": "2026-10-11T22:34:12.6292008Z",
+          "finishedAtUtc": "2026-10-11T22:34:12.8575146Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "35ed55f088a90a09454ace1a7098367980e4ffa7288bfc864c1f7dcb0c41ea1d",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "public-types",
+          "startedAtUtc": "2026-10-11T22:34:12.8793275Z",
+          "finishedAtUtc": "2026-10-11T22:34:18.3471935Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "2ea2291269f44d82dade078c5c6b6f261cc16e9108e91ab06efe4fa036ed9df1",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "boundaries",
+          "startedAtUtc": "2026-10-11T22:34:18.3546596Z",
+          "finishedAtUtc": "2026-10-11T22:37:18.4101400Z",
+          "exitCode": -1,
+          "timeout": true,
+          "stdoutSHA256": "7cb03ab03edf5190a8aa546c78285344395fad3d42d4011cd224f934aef96b3f",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "preservedCompleteAssertionFailure": {
+      "artifactIdentity": {
+        "bytes": 801,
+        "sha256": "3de29559f2e353a5304eec4ac5f161309934b547086b6ba8769ec50aadc1317a"
+      },
+      "executions": [
+        {
+          "name": "boundaries",
+          "startedAtUtc": "2026-10-11T22:38:29.8641437Z",
+          "finishedAtUtc": "2026-10-11T22:41:47.6848300Z",
+          "exitCode": 1,
+          "timeout": false,
+          "stdoutSHA256": "f92f06e2ffb88b2b6eb7a8cb3dce3489bfcb30b9584f62a7b0f2c4646872bb0b",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    }
+  },
+  "collectorGrammar": {
+    "status": "PASS",
+    "counts": {
+      "tests": 13,
+      "pass": 13,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "receiptIdentity": {
+      "bytes": 2821,
+      "sha256": "b9ca722292a3d9d9fa9629130df51f042cac8894bff55ac391e52d9fbb905d18"
+    },
+    "scope": "First driver row only; later native observation failure is preserved separately."
+  },
+  "native": {
+    "status": "PASS_DESKTOP_PRIMARY_MOUSE_CANVAS_SUBSET",
+    "driver": {
+      "artifactIdentities": [
+        {
+          "bytes": 6830,
+          "sha256": "9beffcb4bf04a4d22527cb8ce891f2e0cffa132152884fdd08da91b3ad5a5ed8"
+        },
+        {
+          "bytes": 5544,
+          "sha256": "e0e03409978d392de2391397b3aabe53bd3ab2ecd86c0ea72eeec5514c915519"
+        }
+      ],
+      "executions": [
+        {
+          "name": "ordinary-http",
+          "startedAtUtc": "2026-10-11T23:01:31.8117669Z",
+          "finishedAtUtc": "2026-10-11T23:01:33.9100586Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "4feca1000d4d49a4890919cc981929483f22a740fb53e4b952a3572077bf9a80",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "native-mouse",
+          "startedAtUtc": "2026-10-11T23:01:33.9129430Z",
+          "finishedAtUtc": "2026-10-11T23:01:37.8006410Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "d6e7c864a2b650a2b4db11ed35716b3cfed68a3d8e1c570ddab929e255ff8964",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "collectionIdentity": {
+      "bytes": 1057516,
+      "sha256": "547d96c11de89b355cb360ed1c952e11faa1c950c0647ba80c28765186b1f28b"
+    },
+    "resultIdentity": {
+      "bytes": 50667,
+      "sha256": "e1216974125726d6a331c6b2e881a6ba2e651b4e2a6921191a356631834582f3"
+    },
+    "profile": {
+      "node": "v24.19.0",
+      "browser": "154.0.4258.62",
+      "playwright": "1.62.1",
+      "channel": "msedge",
+      "headless": true,
+      "viewport": {
+        "width": 900,
+        "height": 700
+      },
+      "deviceScaleFactor": 2,
+      "callerAddedFlags": []
+    },
+    "baselineContexts": 1,
+    "assignedControls": 6,
+    "contexts": 7,
+    "rowsPerContext": 11,
+    "artifactCount": 28,
+    "artifacts": [
+      {
+        "kind": "before",
+        "path": "baseline.before.png",
+        "bytes": 60050,
+        "sha256": "850c148f9b8f2d7d86e2c28fb98e5f6158b00aeec9cee3f59e11c4f50af2e6c6"
+      },
+      {
+        "kind": "after",
+        "path": "baseline.after.png",
+        "bytes": 60050,
+        "sha256": "850c148f9b8f2d7d86e2c28fb98e5f6158b00aeec9cee3f59e11c4f50af2e6c6"
+      },
+      {
+        "kind": "rows",
+        "path": "baseline.rows.json",
+        "bytes": 99159,
+        "sha256": "c815078047dfed012d3dba5cf0d9da2af04bd782cfbe3e98c54c101815b33a25"
+      },
+      {
+        "kind": "rgba",
+        "path": "baseline.rgba",
+        "bytes": 132,
+        "sha256": "16b6854851ce68f19b9fe6298e4b18c2591ea473e0eb8b0f1e7be245b38ed7d3"
+      },
+      {
+        "kind": "before",
+        "path": "OMIT_BEGIN.before.png",
+        "bytes": 60050,
+        "sha256": "850c148f9b8f2d7d86e2c28fb98e5f6158b00aeec9cee3f59e11c4f50af2e6c6"
+      },
+      {
+        "kind": "after",
+        "path": "OMIT_BEGIN.after.png",
+        "bytes": 60050,
+        "sha256": "850c148f9b8f2d7d86e2c28fb98e5f6158b00aeec9cee3f59e11c4f50af2e6c6"
+      },
+      {
+        "kind": "rows",
+        "path": "OMIT_BEGIN.rows.json",
+        "bytes": 71157,
+        "sha256": "65da6662546d027fe172ba743cef8dec98e9f3ca0d775d57a47f857ac5fdf3ba"
+      },
+      {
+        "kind": "rgba",
+        "path": "OMIT_BEGIN.rgba",
+        "bytes": 132,
+        "sha256": "16b6854851ce68f19b9fe6298e4b18c2591ea473e0eb8b0f1e7be245b38ed7d3"
+      },
+      {
+        "kind": "before",
+        "path": "RETARGET_END.before.png",
+        "bytes": 60050,
+        "sha256": "850c148f9b8f2d7d86e2c28fb98e5f6158b00aeec9cee3f59e11c4f50af2e6c6"
+      },
+      {
+        "kind": "after",
+        "path": "RETARGET_END.after.png",
+        "bytes": 60050,
+        "sha256": "850c148f9b8f2d7d86e2c28fb98e5f6158b00aeec9cee3f59e11c4f50af2e6c6"
+      },
+      {
+        "kind": "rows",
+        "path": "RETARGET_END.rows.json",
+        "bytes": 99195,
+        "sha256": "6061cb1d5cb867dd9d7ff6c7372a60c8d1890df65bc020ff00fbf3887c210fe1"
+      },
+      {
+        "kind": "rgba",
+        "path": "RETARGET_END.rgba",
+        "bytes": 132,
+        "sha256": "16b6854851ce68f19b9fe6298e4b18c2591ea473e0eb8b0f1e7be245b38ed7d3"
+      },
+      {
+        "kind": "before",
+        "path": "OMIT_Q2.before.png",
+        "bytes": 60050,
+        "sha256": "850c148f9b8f2d7d86e2c28fb98e5f6158b00aeec9cee3f59e11c4f50af2e6c6"
+      },
+      {
+        "kind": "after",
+        "path": "OMIT_Q2.after.png",
+        "bytes": 60050,
+        "sha256": "850c148f9b8f2d7d86e2c28fb98e5f6158b00aeec9cee3f59e11c4f50af2e6c6"
+      },
+      {
+        "kind": "rows",
+        "path": "OMIT_Q2.rows.json",
+        "bytes": 110426,
+        "sha256": "a068980b6dfe983f99af8eb3bb573bff87add5719abec2ed30b45ff6f5c9139b"
+      },
+      {
+        "kind": "rgba",
+        "path": "OMIT_Q2.rgba",
+        "bytes": 132,
+        "sha256": "16b6854851ce68f19b9fe6298e4b18c2591ea473e0eb8b0f1e7be245b38ed7d3"
+      },
+      {
+        "kind": "before",
+        "path": "CANVAS_ONLY_CSS.before.png",
+        "bytes": 60050,
+        "sha256": "850c148f9b8f2d7d86e2c28fb98e5f6158b00aeec9cee3f59e11c4f50af2e6c6"
+      },
+      {
+        "kind": "after",
+        "path": "CANVAS_ONLY_CSS.after.png",
+        "bytes": 60050,
+        "sha256": "850c148f9b8f2d7d86e2c28fb98e5f6158b00aeec9cee3f59e11c4f50af2e6c6"
+      },
+      {
+        "kind": "rows",
+        "path": "CANVAS_ONLY_CSS.rows.json",
+        "bytes": 121043,
+        "sha256": "a536f60bf12d4a8fa3dbed19e50cca94839c268e68b7d4e1da74e41c5b1afd44"
+      },
+      {
+        "kind": "rgba",
+        "path": "CANVAS_ONLY_CSS.rgba",
+        "bytes": 132,
+        "sha256": "16b6854851ce68f19b9fe6298e4b18c2591ea473e0eb8b0f1e7be245b38ed7d3"
+      },
+      {
+        "kind": "before",
+        "path": "DPR_MULTIPLY.before.png",
+        "bytes": 60050,
+        "sha256": "850c148f9b8f2d7d86e2c28fb98e5f6158b00aeec9cee3f59e11c4f50af2e6c6"
+      },
+      {
+        "kind": "after",
+        "path": "DPR_MULTIPLY.after.png",
+        "bytes": 60050,
+        "sha256": "850c148f9b8f2d7d86e2c28fb98e5f6158b00aeec9cee3f59e11c4f50af2e6c6"
+      },
+      {
+        "kind": "rows",
+        "path": "DPR_MULTIPLY.rows.json",
+        "bytes": 57661,
+        "sha256": "bf72f9b981989345168e1cece1099b04f9941b3c8bba91f9554fe2ff266b575d"
+      },
+      {
+        "kind": "rgba",
+        "path": "DPR_MULTIPLY.rgba",
+        "bytes": 132,
+        "sha256": "c2dc85667706ec29bf01f7997dc8933d7697cf9f5df81df41173ddcf6a844ea4"
+      },
+      {
+        "kind": "before",
+        "path": "OMIT_PHYSICAL_REMOVE.before.png",
+        "bytes": 60050,
+        "sha256": "850c148f9b8f2d7d86e2c28fb98e5f6158b00aeec9cee3f59e11c4f50af2e6c6"
+      },
+      {
+        "kind": "after",
+        "path": "OMIT_PHYSICAL_REMOVE.after.png",
+        "bytes": 60050,
+        "sha256": "850c148f9b8f2d7d86e2c28fb98e5f6158b00aeec9cee3f59e11c4f50af2e6c6"
+      },
+      {
+        "kind": "rows",
+        "path": "OMIT_PHYSICAL_REMOVE.rows.json",
+        "bytes": 99297,
+        "sha256": "9fe3656e6ad5c2f01d5854bb654ab946c8d64e47987b72b947c91882f8385302"
+      },
+      {
+        "kind": "rgba",
+        "path": "OMIT_PHYSICAL_REMOVE.rgba",
+        "bytes": 132,
+        "sha256": "16b6854851ce68f19b9fe6298e4b18c2591ea473e0eb8b0f1e7be245b38ed7d3"
+      }
+    ],
+    "rawRGBABuffers": 7,
+    "rawRGBABytes": 924,
+    "assignedWitnesses": [
+      "BEGIN_ROUTE",
+      "END_TARGET",
+      "ACTIVATION_SUPPRESSED",
+      "CSS_REFUSAL",
+      "WRONG_X_PAYLOAD_B03",
+      "PHYSICAL_REMOVAL"
+    ],
+    "ownedGenerationsPerContext": 2,
+    "nativePairsPerGeneration": 5,
+    "originalAbortPairsPerGeneration": 1,
+    "baselineManualRecovery": 0,
+    "physicalControlCanvasOmissions": 2,
+    "physicalControlManualRecovery": 2,
+    "retirement": {
+      "browserClosed": true,
+      "serverClosed": true,
+      "pendingActors": 0
+    },
+    "scope": "Two bounded desktop mouse adapter generations; literal events, coordinates, pixels and observed physical listener cleanup. No mobile, full UI, OS reclamation or performance acceptance."
+  },
+  "ordinaryHTTPExample": {
+    "status": "ACTUAL_NORMAL_HTTP_PUBLIC_EXAMPLE_PASS",
+    "graphRewrite": false,
+    "artifactIdentity": {
+      "bytes": 26810,
+      "sha256": "6edddad53fa73496adcff41f23ce236d5c77322e326a7e52b7c7b68caa6c20a4"
+    },
+    "profile": {
+      "browser": "154.0.4258.62",
+      "channel": "msedge",
+      "headless": true,
+      "viewport": [
+        900,
+        700
+      ],
+      "deviceScaleFactor": 2,
+      "noExtraFlags": true
+    },
+    "publicClickVisits": 18,
+    "literalPayload": [
+      50,
+      40,
+      "mouse",
+      0
+    ],
+    "renderCountAfterClick": 1,
+    "literalRGBA": [
+      [
+        0,
+        255,
+        0,
+        255
+      ],
+      [
+        255,
+        0,
+        0,
+        255
+      ],
+      [
+        0,
+        0,
+        0,
+        255
+      ]
+    ],
+    "borrowedCanvasPreserved": true,
+    "scope": "Current HTML import map and original emitted SDK served over ordinary HTTP; public application imports only public entries."
+  },
+  "retainedRenderers": {
+    "status": "PASS_DECLARED_SEVEN_DESKTOP_GATES",
+    "driver": {
+      "artifactIdentities": [
+        {
+          "bytes": 6830,
+          "sha256": "9beffcb4bf04a4d22527cb8ce891f2e0cffa132152884fdd08da91b3ad5a5ed8"
+        },
+        {
+          "bytes": 5544,
+          "sha256": "e0e03409978d392de2391397b3aabe53bd3ab2ecd86c0ea72eeec5514c915519"
+        }
+      ],
+      "executions": [
+        {
+          "name": "freeze",
+          "startedAtUtc": "2026-10-11T23:01:37.8063949Z",
+          "finishedAtUtc": "2026-10-11T23:01:40.1610404Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "7714f70bad48bc94927762e6d4a915e2d04e6b913e0d6a5d5f1d3d47cc66b148",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "canvas",
+          "startedAtUtc": "2026-10-11T23:01:40.1635072Z",
+          "finishedAtUtc": "2026-10-11T23:01:41.2388955Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "bbbd9efb6f3de286717496ff44b76bfc5fd024df201c2f4f25fe38c17a693712",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "webgpu",
+          "startedAtUtc": "2026-10-11T23:01:41.2410699Z",
+          "finishedAtUtc": "2026-10-11T23:01:50.2008989Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "ebc6e9ee08ff3f1b85d68f33d2bdf93c93327ea446552c68672986e2ada88a9e",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "b1",
+          "startedAtUtc": "2026-10-11T23:03:10.8591144Z",
+          "finishedAtUtc": "2026-10-11T23:03:15.0034623Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "b9dfc1102fb8e334f43689a01d2b3082cbf8f36875358004a71913746307c2da",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "textured",
+          "startedAtUtc": "2026-10-11T23:03:15.0161949Z",
+          "finishedAtUtc": "2026-10-11T23:03:34.1164369Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "9af0bac911679ab69b97cdfaf93c40bc45a99eaea7a9d847585a3f4b240a6ac8",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "sequence",
+          "startedAtUtc": "2026-10-11T23:03:34.1225688Z",
+          "finishedAtUtc": "2026-10-11T23:03:35.8234548Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "2bda0ae5b642c56836598527d563756bd53431d0a7f2d1feb68914df74efe345",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "canvas-text",
+          "startedAtUtc": "2026-10-11T23:03:35.8294023Z",
+          "finishedAtUtc": "2026-10-11T23:03:45.3711940Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "58d98f0e36e4223a880c4bc380a30c5b62d86ce9bae1bd0120ca57d77c9ddbd7",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "picking",
+          "startedAtUtc": "2026-10-11T23:03:45.3769210Z",
+          "finishedAtUtc": "2026-10-11T23:03:48.2461467Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "da7dde20980cf7e1789a9ea6716c21d3bf2ecf02c18f529df5070e699f5ed153",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "gates": [
+      "canvas",
+      "webgpu",
+      "b1",
+      "textured",
+      "sequence",
+      "canvas-text",
+      "picking"
+    ],
+    "scope": "Current repaired package declarations, fresh texture freeze and all seven unchanged desktop renderer schedules; previous cutoff preserved separately."
+  },
+  "independentReviews": {
+    "runtime": {
+      "bytes": 13922,
+      "sha256": "48226232ba85aa5f0f264b2789a7772b61e066b854abb5f04fc14050f945f0a4"
+    },
+    "runtimeB1": {
+      "bytes": 6665,
+      "sha256": "3141b1dff02102526f771a08fbce230fa379d8741563cfec815ba2d26a4f5d0b"
+    },
+    "engineOriginalNeedsRepair": {
+      "bytes": 15494,
+      "sha256": "912a67c48c4ee6c1af0b547f490ee80344870800bcb4443a23b79278bdb79344"
+    },
+    "engineFinal": {
+      "bytes": 7348,
+      "sha256": "a19efafed6b0f5fa3e1b66551e43c6a4b2dc201a7bf331a284fda21acf17b1b8"
+    },
+    "testOriginalNeedsRepair": {
+      "bytes": 12465,
+      "sha256": "13215319914c5cde58c2e012e97e04f7880df7652bb54d850b25db3ce435a96c"
+    },
+    "testSuccessor": {
+      "bytes": 2573,
+      "sha256": "89f76754e640d4b68f831a761560830bde69a5b486db4fd99186765d19209a10"
+    },
+    "nativeOriginalNeedsRepair": {
+      "bytes": 10707,
+      "sha256": "9a8f15da92dc0848f2f0aead549d6e95e845eafc861a48646023a753bb53a28e"
+    },
+    "nativeSuccessor": {
+      "bytes": 6873,
+      "sha256": "3ee79d0e1fabad5c20cab6ccb45892afec1a5b42c146f210b7f87216ae34b153"
+    },
+    "nativeObserver": {
+      "bytes": 6631,
+      "sha256": "b40986bc3be19b72b9a412fcd39d1089e1f584111f7aeab7d7e4e188a8e417f0"
+    },
+    "nativeActual": {
+      "bytes": 11129,
+      "sha256": "48ab41012be61102536c5cd0c11fca502a83f4d0bf091d5fbf5137d761e0c6c1"
+    },
+    "sourceReviewIsRuntimePass": false,
+    "rawReviewArtifactsDistributed": false
+  },
+  "preservedFailures": {
+    "emittedModuleTopology": {
+      "identity": {
+        "bytes": 767,
+        "sha256": "115693748a5cb072d9706731cf6a39300f46be87b89972a593c40ff0cd23baaf"
+      },
+      "classification": "SETUP_ERR_MODULE_NOT_FOUND",
+      "resolution": "Exact private alias map plus actual emitted-entry import; no broad import exception."
+    },
+    "fixtureBaseline": {
+      "identity": {
+        "bytes": 881,
+        "sha256": "7297b734446ac146704925e5af2c0122c369ba8d4da02b09b65875489ccc411d"
+      },
+      "classification": "SETUP_MISSING_AUTHORED_HIT_AREA",
+      "resolution": "Real public hitArea authored before evaluating dependent input behavior."
+    },
+    "boundaryTimeout": {
+      "identity": {
+        "bytes": 950,
+        "sha256": "947ab49777b4b5f5e84380a0f5c495903ec81760866e9a3597602d5fb99ca8f9"
+      },
+      "classification": "INCOMPLETE_PROCESS_BUDGET",
+      "resolution": "Keep prior receipts; budget from measured duration plus added controls."
+    },
+    "boundaryExpectation": {
+      "identity": {
+        "bytes": 830,
+        "sha256": "a409899e7ddeea51928d5ce063c035217c0b5c4d1836ec2d994c621ded337764"
+      },
+      "classification": "TEST_EXPECTED_DIAGNOSTIC_MISMATCH",
+      "resolution": "One expected-message literal follows the earlier existing strict guard."
+    },
+    "nativeObservation": {
+      "driver": {
+        "artifactIdentity": {
+          "bytes": 2821,
+          "sha256": "b9ca722292a3d9d9fa9629130df51f042cac8894bff55ac391e52d9fbb905d18"
+        },
+        "executions": [
+          {
+            "name": "collector-policy",
+            "startedAtUtc": "2026-10-11T22:38:29.5469237Z",
+            "finishedAtUtc": "2026-10-11T22:38:29.7151637Z",
+            "exitCode": 0,
+            "timeout": false,
+            "stdoutSHA256": "ccd1f7b931ca12e81d2a9168ec17a9e9532db74f7d4399d7a8d0bfb75ec089b3",
+            "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "name": "ordinary-http",
+            "startedAtUtc": "2026-10-11T22:38:29.7328363Z",
+            "finishedAtUtc": "2026-10-11T22:38:31.3402383Z",
+            "exitCode": 0,
+            "timeout": false,
+            "stdoutSHA256": "4feca1000d4d49a4890919cc981929483f22a740fb53e4b952a3572077bf9a80",
+            "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "name": "native-mouse",
+            "startedAtUtc": "2026-10-11T22:38:31.3456901Z",
+            "finishedAtUtc": "2026-10-11T22:38:35.4287118Z",
+            "exitCode": 1,
+            "timeout": false,
+            "stdoutSHA256": "e305a955883385ddd959f69d3274a630ac5b199391799ceb7e4f77463ad80df8",
+            "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      },
+      "resultIdentity": {
+        "bytes": 647,
+        "sha256": "b9c8492f7ada7cfc36e6b0b0f18476a8fec189b1b774f00a56b10ac72363b441"
+      },
+      "classification": "INCOMPLETE_OBSERVER_FOREIGN_CALLBACK_OWNERSHIP",
+      "resolution": "Bracket add admission around synchronous acquisition, close in finally and continue exact owned removal tracking. Oracle and controls unchanged."
+    },
+    "environment": "Canonical-path EPERM in the managed Windows sandbox was resolved using already authorized execution; it supplies no product acceptance."
+  },
+  "priorDelivery": {
+    "engineeringLabel": "0.32.0",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/19",
+    "sourceHead": "ccfad10de077045ada3018fa624cc0e9a8677ac0",
+    "mergedMain": "a240bc1e6ee218c63fc1511d715d01d1358d908f",
+    "tree": "f97f9e6986d2804601c679e143aa8c22b6fa0a75",
+    "mandatoryPushHook": "ACTUAL_PASS",
+    "coreTests": 2499,
+    "publicationTests": 63,
+    "localRemoteMainReadbackAtUtc": "2026-10-11T21:23:49.237Z",
+    "remoteStatusCount": 0,
+    "remoteCheckCount": 0,
+    "remoteCIPassClaimed": false,
+    "scope": "Observed prior delivery successor; earlier public-scene3d pending cutoffs remain historical."
+  },
+  "origin": {
+    "implementation": "Independently authored AI-assisted first-party adapter, private lifetime state, fixtures, bounded guards and paired public explanations under Apache-2.0.",
+    "newRuntimeDependencies": [],
+    "newExternalAssets": []
+  },
+  "limits": {
+    "touch": false,
+    "pen": false,
+    "move": false,
+    "pointerCapture": false,
+    "gestures": false,
+    "fullUI": false,
+    "physicalMobileDevices": false,
+    "nativeSDK": false,
+    "CJKPerformance": false,
+    "fullSpineR020V020": "PENDING",
+    "full3D": false,
+    "completeMigration": false,
+    "performanceLeadership": false,
+    "energyOrThermalImprovement": false,
+    "hardwareAcceleration": "UNBOUND",
+    "physicalDisplay": "UNBOUND",
+    "osDescendantRetirement": "UNBOUND",
+    "productionReadiness": false
+  },
+  "fullVerification": "PENDING_AT_PRECOMMIT_METADATA_CUTOFF",
+  "publicationStructure": "PENDING_AT_PRECOMMIT_METADATA_CUTOFF",
+  "independentFinalBilingualMeaningReview": "PENDING",
+  "mandatoryGitPushHook": "PENDING",
+  "remoteDelivery": "PENDING",
+  "remoteCIPassClaimed": false,
+  "priorAcceptedPackageObservation": {
+    "packageIdentity": {
+      "bytes": 1372,
+      "sha256": "30c676e4a8984ca1a07954aacb81a58f643d5a0958beb652b8de60ba97ccf092"
+    },
+    "nativeCollection": {
+      "bytes": 1057516,
+      "sha256": "d408e64324d5b402024cc080552a08933cbce6ffcb7236d88dc9828865a86f61"
+    },
+    "nativeResult": {
+      "bytes": 50667,
+      "sha256": "e1216974125726d6a331c6b2e881a6ba2e651b4e2a6921191a356631834582f3"
+    },
+    "nativeDriver": {
+      "artifactIdentity": {
+        "bytes": 2062,
+        "sha256": "4ef3bc8be3d9939a22f7054b63e05310e092e68e0a909a41c4c34753fde74d5e"
+      },
+      "executions": [
+        {
+          "name": "ordinary-http",
+          "startedAtUtc": "2026-10-11T22:45:27.9398478Z",
+          "finishedAtUtc": "2026-10-11T22:45:29.5614074Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "4feca1000d4d49a4890919cc981929483f22a740fb53e4b952a3572077bf9a80",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "native-mouse",
+          "startedAtUtc": "2026-10-11T22:45:29.5815434Z",
+          "finishedAtUtc": "2026-10-11T22:45:33.5174499Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "69067984d35d3a332987efd1f540ce3a49d985452d3cf6743ba4160f721cd38c",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "ordinaryHTTPReceipt": {
+      "bytes": 26810,
+      "sha256": "00f5c612cc6184a2dcf7e2f2d6150922206d36c55944d45a217a008ab1edce3a"
+    },
+    "retainedRendererDriver": {
+      "artifactIdentity": {
+        "bytes": 8215,
+        "sha256": "404e540f7ced5408a4254670248a10fb62dd536981370f8d60a9d219a826481d"
+      },
+      "executions": [
+        {
+          "name": "freeze",
+          "startedAtUtc": "2026-10-11T22:51:52.5905396Z",
+          "finishedAtUtc": "2026-10-11T22:51:55.7246841Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "7714f70bad48bc94927762e6d4a915e2d04e6b913e0d6a5d5f1d3d47cc66b148",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "canvas",
+          "startedAtUtc": "2026-10-11T22:51:55.7472354Z",
+          "finishedAtUtc": "2026-10-11T22:51:57.0679496Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "bbbd9efb6f3de286717496ff44b76bfc5fd024df201c2f4f25fe38c17a693712",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "webgpu",
+          "startedAtUtc": "2026-10-11T22:51:57.0751092Z",
+          "finishedAtUtc": "2026-10-11T22:52:06.1111552Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "ebc6e9ee08ff3f1b85d68f33d2bdf93c93327ea446552c68672986e2ada88a9e",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "b1",
+          "startedAtUtc": "2026-10-11T22:52:06.1181586Z",
+          "finishedAtUtc": "2026-10-11T22:52:10.3804222Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "b9dfc1102fb8e334f43689a01d2b3082cbf8f36875358004a71913746307c2da",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "textured",
+          "startedAtUtc": "2026-10-11T22:52:10.3874528Z",
+          "finishedAtUtc": "2026-10-11T22:52:29.2389948Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "65ae7c9aee386517bf8a41fd238c5df4fe6a09a4e72c35714ce72d2cf2b90b81",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "sequence",
+          "startedAtUtc": "2026-10-11T22:52:29.2457890Z",
+          "finishedAtUtc": "2026-10-11T22:52:30.9966446Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "7736aacf34cad4b1ecf0ee765258c79fa17bb0c566bc01c4ed60af7db123368c",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "canvas-text",
+          "startedAtUtc": "2026-10-11T22:52:31.0030926Z",
+          "finishedAtUtc": "2026-10-11T22:52:40.5377491Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "d4cc87b17f18abee3ac66a28b669709c7fd93d08aa26c36f2b6421ace30a15f7",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "picking",
+          "startedAtUtc": "2026-10-11T22:52:40.5430052Z",
+          "finishedAtUtc": "2026-10-11T22:52:43.3777042Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "86bee6a3782d6ec036b06577103dc4b7ee95b6cb9472236baa45d3b33ba0d848",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "scope": "Preserved earlier accepted package declaration/input cutoff. Current package successor follows; original receipts remain immutable."
+  },
+  "packageDeclarationOrderSuccessor": {
+    "status": "ACTUAL_REAL_REPOSITORY_CHECKER_AND_CURRENT_NATIVE_RENDERER_PASS",
+    "atUtc": "2026-10-11T23:04:14.736Z",
+    "package": {
+      "path": "packages/engine/package.json",
+      "bytes": 1372,
+      "sha256": "891311a277b03b583ef35d45ad862ece747bda8ad04aae12f1fce9ed0e9149df"
+    },
+    "priorPackageIdentity": {
+      "bytes": 1372,
+      "sha256": "30c676e4a8984ca1a07954aacb81a58f643d5a0958beb652b8de60ba97ccf092"
+    },
+    "sourceRepairIdentity": {
+      "bytes": 1130,
+      "sha256": "c5461e646242c3e9fa789e012f54c6126dbefb80506f6d475db87e8007e11b0a"
+    },
+    "allOtherBytesPreserved": true,
+    "parsedValuesUnchanged": true,
+    "strictCheckerUnchanged": true,
+    "mutantsUnchanged": true,
+    "directRealBoundary": {
+      "name": "real-boundary",
+      "startedAtUtc": "2026-10-11T23:01:31.1176234Z",
+      "finishedAtUtc": "2026-10-11T23:01:31.7899035Z",
+      "exitCode": 0,
+      "timeout": false,
+      "stdoutSHA256": "7dd31eec6951f750a53c98ed27e6a11f7cef3b0e2e2b8ef9713c1d7670b65511",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "preservedFirstPrepush": {
+      "artifactIdentity": {
+        "bytes": 725,
+        "sha256": "c92193e4daee1b330676c6c7f2f159dd27836ee4006e7d67cf0faa5f8eeaa200"
+      },
+      "executions": [
+        {
+          "name": "prepush",
+          "startedAtUtc": "2026-10-11T22:58:54.3276063Z",
+          "finishedAtUtc": "2026-10-11T22:58:59.9182705Z",
+          "exitCode": 1,
+          "timeout": false,
+          "stdoutSHA256": "85023648bc17443b1bb82106ef786936ab216f8fdf22b6d65ccd69a7337a2406",
+          "stderrSHA256": "193785af1b0fb648598adc99ef0aa4825fb2ac646c1f72dc2c18bd34958e0a10"
+        }
+      ]
+    },
+    "classification": "REAL_MANIFEST_DECLARATION_ORDER_MISMATCH_BEFORE_PRODUCT_TEST_SUITE",
+    "currentNativeAndRetainedRendererReceipt": {
+      "artifactIdentities": [
+        {
+          "bytes": 6830,
+          "sha256": "9beffcb4bf04a4d22527cb8ce891f2e0cffa132152884fdd08da91b3ad5a5ed8"
+        },
+        {
+          "bytes": 5544,
+          "sha256": "e0e03409978d392de2391397b3aabe53bd3ab2ecd86c0ea72eeec5514c915519"
+        }
+      ],
+      "executions": [
+        {
+          "name": "real-boundary",
+          "startedAtUtc": "2026-10-11T23:01:31.1176234Z",
+          "finishedAtUtc": "2026-10-11T23:01:31.7899035Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "7dd31eec6951f750a53c98ed27e6a11f7cef3b0e2e2b8ef9713c1d7670b65511",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "ordinary-http",
+          "startedAtUtc": "2026-10-11T23:01:31.8117669Z",
+          "finishedAtUtc": "2026-10-11T23:01:33.9100586Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "4feca1000d4d49a4890919cc981929483f22a740fb53e4b952a3572077bf9a80",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "native-mouse",
+          "startedAtUtc": "2026-10-11T23:01:33.9129430Z",
+          "finishedAtUtc": "2026-10-11T23:01:37.8006410Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "d6e7c864a2b650a2b4db11ed35716b3cfed68a3d8e1c570ddab929e255ff8964",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "freeze",
+          "startedAtUtc": "2026-10-11T23:01:37.8063949Z",
+          "finishedAtUtc": "2026-10-11T23:01:40.1610404Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "7714f70bad48bc94927762e6d4a915e2d04e6b913e0d6a5d5f1d3d47cc66b148",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "canvas",
+          "startedAtUtc": "2026-10-11T23:01:40.1635072Z",
+          "finishedAtUtc": "2026-10-11T23:01:41.2388955Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "bbbd9efb6f3de286717496ff44b76bfc5fd024df201c2f4f25fe38c17a693712",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "webgpu",
+          "startedAtUtc": "2026-10-11T23:01:41.2410699Z",
+          "finishedAtUtc": "2026-10-11T23:01:50.2008989Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "ebc6e9ee08ff3f1b85d68f33d2bdf93c93327ea446552c68672986e2ada88a9e",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "b1",
+          "startedAtUtc": "2026-10-11T23:03:10.8591144Z",
+          "finishedAtUtc": "2026-10-11T23:03:15.0034623Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "b9dfc1102fb8e334f43689a01d2b3082cbf8f36875358004a71913746307c2da",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "textured",
+          "startedAtUtc": "2026-10-11T23:03:15.0161949Z",
+          "finishedAtUtc": "2026-10-11T23:03:34.1164369Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "9af0bac911679ab69b97cdfaf93c40bc45a99eaea7a9d847585a3f4b240a6ac8",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "sequence",
+          "startedAtUtc": "2026-10-11T23:03:34.1225688Z",
+          "finishedAtUtc": "2026-10-11T23:03:35.8234548Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "2bda0ae5b642c56836598527d563756bd53431d0a7f2d1feb68914df74efe345",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "canvas-text",
+          "startedAtUtc": "2026-10-11T23:03:35.8294023Z",
+          "finishedAtUtc": "2026-10-11T23:03:45.3711940Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "58d98f0e36e4223a880c4bc380a30c5b62d86ce9bae1bd0120ca57d77c9ddbd7",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "picking",
+          "startedAtUtc": "2026-10-11T23:03:45.3769210Z",
+          "finishedAtUtc": "2026-10-11T23:03:48.2461467Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "da7dde20980cf7e1789a9ea6716c21d3bf2ecf02c18f529df5070e699f5ed153",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "outputSetupHistory": {
+      "preservedFirstDriver": {
+        "artifactIdentity": {
+          "bytes": 6830,
+          "sha256": "9beffcb4bf04a4d22527cb8ce891f2e0cffa132152884fdd08da91b3ad5a5ed8"
+        },
+        "executions": [
+          {
+            "name": "real-boundary",
+            "startedAtUtc": "2026-10-11T23:01:31.1176234Z",
+            "finishedAtUtc": "2026-10-11T23:01:31.7899035Z",
+            "exitCode": 0,
+            "timeout": false,
+            "stdoutSHA256": "7dd31eec6951f750a53c98ed27e6a11f7cef3b0e2e2b8ef9713c1d7670b65511",
+            "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "name": "ordinary-http",
+            "startedAtUtc": "2026-10-11T23:01:31.8117669Z",
+            "finishedAtUtc": "2026-10-11T23:01:33.9100586Z",
+            "exitCode": 0,
+            "timeout": false,
+            "stdoutSHA256": "4feca1000d4d49a4890919cc981929483f22a740fb53e4b952a3572077bf9a80",
+            "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "name": "native-mouse",
+            "startedAtUtc": "2026-10-11T23:01:33.9129430Z",
+            "finishedAtUtc": "2026-10-11T23:01:37.8006410Z",
+            "exitCode": 0,
+            "timeout": false,
+            "stdoutSHA256": "d6e7c864a2b650a2b4db11ed35716b3cfed68a3d8e1c570ddab929e255ff8964",
+            "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "name": "freeze",
+            "startedAtUtc": "2026-10-11T23:01:37.8063949Z",
+            "finishedAtUtc": "2026-10-11T23:01:40.1610404Z",
+            "exitCode": 0,
+            "timeout": false,
+            "stdoutSHA256": "7714f70bad48bc94927762e6d4a915e2d04e6b913e0d6a5d5f1d3d47cc66b148",
+            "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "name": "canvas",
+            "startedAtUtc": "2026-10-11T23:01:40.1635072Z",
+            "finishedAtUtc": "2026-10-11T23:01:41.2388955Z",
+            "exitCode": 0,
+            "timeout": false,
+            "stdoutSHA256": "bbbd9efb6f3de286717496ff44b76bfc5fd024df201c2f4f25fe38c17a693712",
+            "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "name": "webgpu",
+            "startedAtUtc": "2026-10-11T23:01:41.2410699Z",
+            "finishedAtUtc": "2026-10-11T23:01:50.2008989Z",
+            "exitCode": 0,
+            "timeout": false,
+            "stdoutSHA256": "ebc6e9ee08ff3f1b85d68f33d2bdf93c93327ea446552c68672986e2ada88a9e",
+            "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "name": "b1",
+            "startedAtUtc": "2026-10-11T23:01:50.2035595Z",
+            "finishedAtUtc": "2026-10-11T23:01:50.2759905Z",
+            "exitCode": 1,
+            "timeout": false,
+            "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stderrSHA256": "b7425063556bdd55e8509235ac1cbeae3c97928351426eb51386dd139dcba650"
+          }
+        ]
+      },
+      "classification": "PRIVATE_PATH_SEPARATOR_REPLACEMENT_MISSED_EXISTING_OUTPUT",
+      "resolution": "Stop on B1 ownership refusal; retain completed direct/native/Canvas/WebGPU executions and run only five unfinished renderers in checked fresh paths. Old receipts remain immutable; Canvas/WebGPU directories now bind their current rerun."
+    },
+    "scope": "Exact two-map declaration reordering, not a runtime or import-policy relaxation. Fresh actual package-bound observations replace the current cutoff."
+  },
+  "retainedB1TestInventorySuccessor": {
+    "status": "INDEPENDENT_SOURCE_REVIEW_AND_ACTUAL_RETAINED_TEST_PASS",
+    "path": "tests/webgpu-mesh-host.test.mjs",
+    "currentIdentity": {
+      "path": "tests/webgpu-mesh-host.test.mjs",
+      "bytes": 94773,
+      "sha256": "3812f94f2dfd501a52551ec1b03ba499ff1e2b90b1bfa9fc2a75a5df0692d087"
+    },
+    "amendmentIdentity": {
+      "bytes": 1719,
+      "sha256": "8c5573ed9bf841fabf032e2ca789017fae457809a1b66387b8362538b84821de"
+    },
+    "sourceReviewIdentity": {
+      "bytes": 4396,
+      "sha256": "67b486d6a9a28af886b4138e54776ea0bf682a425df4825e2216a02831beab2e"
+    },
+    "preservedCompletePrepushFailure": {
+      "artifactIdentity": {
+        "bytes": 745,
+        "sha256": "27ea6702bd37fe83fce0203a5ef1408169e5f2e3e78e6bda9890112f1f05d5e1"
+      },
+      "executions": [
+        {
+          "name": "prepush",
+          "startedAtUtc": "2026-10-11T23:04:15.2149384Z",
+          "finishedAtUtc": "2026-10-11T23:08:17.3413755Z",
+          "exitCode": 1,
+          "timeout": false,
+          "stdoutSHA256": "d7932479f977bb960b55af5db3f11abd260a63d23a20e8dbade1e33877f46270",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "earlierCoreCounts": {
+      "tests": 2631,
+      "passed": 2630,
+      "failed": 1
+    },
+    "earlierFailure": "B1 fixed thirteen-case emitted loading and owned host contract refused the new exact map before case execution.",
+    "actualTargetedRetainedTest": {
+      "artifactIdentity": {
+        "bytes": 837,
+        "sha256": "4f7f49960b334665058fec8d0cfdbb127fb90f5755bd7bab114958073f3c6131"
+      },
+      "executions": [
+        {
+          "name": "retained-b1-test",
+          "startedAtUtc": "2026-10-11T23:17:55.3599203Z",
+          "finishedAtUtc": "2026-10-11T23:18:00.3682524Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "f3ac8ca8ff06eb4a4c3382300063aa74977b07ab652d3fbe73a0a72c0b92ac0c",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "thirteenCaseSchedulePreserved": true,
+    "oracleQuotasAndColdHostConstraintsPreserved": true,
+    "exactOptionalMouseAliasOnly": true,
+    "productSourcesChanged": false,
+    "currentEditablePaths": 55,
+    "completePublication": "PENDING_FINAL_RERUN"
+  }
+}

@@ -205,15 +205,15 @@ const entryNames = ['packages/engine/dist/index.js', 'packages/engine/dist/rende
 // Source-read frozen finite closure of the public entries plus the one private WGSL diagnostic.
 const allowedModules = new Set([
   ...['ImageData2D', 'index', 'TexturedGeometry2D', 'TexturedRenderFrame2D'].map(name => `packages/contracts/dist/${name}.js`),
-  ...['assetGroup', 'closeHost', 'createEngine', 'createEngineForProfile', 'Engine', 'gameClock', 'index', 'startEngine', 'surfaceOwnership', 'tween'].map(name => `packages/engine/dist/${name}.js`),
-  ...['textFieldFactoryState', 'texturedFrameState'].map(name => `packages/engine/dist/internal/${name}.js`),
+  ...['assetGroup', 'closeHost', 'createEngine', 'createEngineForProfile', 'Engine', 'gameClock', 'index', 'mouseInput', 'startEngine', 'surfaceOwnership', 'tween'].map(name => `packages/engine/dist/${name}.js`),
+  ...['mouseInputFactoryState', 'textFieldFactoryState', 'texturedFrameState'].map(name => `packages/engine/dist/internal/${name}.js`),
   ...['admitTexturedFrame2D', 'copyFrame2D', 'copyMixedFrame2D', 'imageFrameBudget', 'matrix4', 'meshGeometry3D', 'ownedPreparationFailure2D',
     'packedOrientation', 'packedPosition2D', 'packImageVertices2D', 'packMeshGeometry3D', 'packTexturedMesh2D', 'prepareImages2D', 'prepareMixedDraws2D',
     'prepareRectangles2D', 'prepareTexturedDraws2D', 'prepareTexturedMesh2D', 'projection3D', 'sceneFrame3D', 'scene3d', 'texturedPreparationBudget2D'].map(name => `packages/engine/dist/rendering/${name}.js`),
   ...['b1', 'imageProjections2D', 'prepareTexturedSubmission2D', 'scene3d', 'texturedWebGPUOptions', 'WebGPUHost', 'webgpuImagePass', 'webgpuLifetime',
     'webgpuMeshPass', 'webgpuPass', 'webgpuTexturedPass'].map(name => `packages/engine/dist/web/${name}.js`),
   ...['AssetLease', 'AssetManager', 'assetManagerOwnerState', 'AssetRef', 'Bitmap', 'bitmapDisplayState', 'ByteReader', 'CancellationController',
-    'coordinateInverse', 'diagnostics', 'displayBounds', 'displayCoordinates', 'displayHitState', 'displayHitTest', 'DisplayObject', 'DisplayObjectContainer',
+    'coordinateInverse', 'diagnostics', 'displayBounds', 'displayCoordinates', 'displayHitState', 'displayHitTest', 'displayInputOperations', 'DisplayObject', 'DisplayObjectContainer',
     'displayTransform', 'displayTreeState', 'displayVisualState', 'EgretError', 'Event', 'EventDispatcher', 'frameCapture', 'Graphics', 'imageFrameBudget',
     'index', 'Mesh2D', 'meshCaptureSnapshot', 'meshDisplayState', 'ownership', 'Scope', 'sequenceClip', 'SequencePlayer', 'Sprite', 'Stage',
     'textDisplayState', 'Texture', 'texturedFrameBudget', 'texturedFrameCapture'].map(name => `packages/runtime/dist/${name}.js`),
@@ -336,6 +336,8 @@ try {
       source = 'packages/engine/src/internal/texturedFrameState.ts';
     } else if (name === 'packages/engine/dist/internal/textFieldFactoryState.js') {
       source = 'packages/engine/src/internal/textFieldFactoryState.ts';
+    } else if (name === 'packages/engine/dist/internal/mouseInputFactoryState.js') {
+      source = 'packages/engine/src/internal/mouseInputFactoryState.ts';
     } else if (name.startsWith('packages/engine/dist/')) {
       const tail = name.slice('packages/engine/dist/'.length).replace(/\.js$/, '.ts'); source = `packages/engine/${tail.includes('/') ? '' : 'src/'}${tail}`;
     } else if (/^packages\/(runtime|contracts)\/dist\//.test(name)) source = name.replace('/dist/', '/src/').replace(/\.js$/, '.ts');

@@ -70,7 +70,7 @@ function tokens(text) {
 function imports(text) {
   const lexical = tokens(text), result = [];
   const admit = token => {
-    if (!token || token.kind !== 'string' || token.value.length === 0 || (token.value !== '#egret-textured-frame-state' && /[\\\s?#%:\0]/.test(token.value))) {
+    if (!token || token.kind !== 'string' || token.value.length === 0 || (token.value !== '#egret-textured-frame-state' && token.value !== '#egret-mouse-input' && /[\\\s?#%:\0]/.test(token.value))) {
       throw new Error('Module import must be a simple literal path');
     }
     result.push(token);

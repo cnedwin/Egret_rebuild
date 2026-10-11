@@ -12,6 +12,38 @@ I'm Edwin, the founder of Egret Engine. In late 2013, WanderWang and I founded E
 
 Years later, as times change and technology advances, many developers continue to encourage us. I hope to rebuild this game engine with the help of AI and the community.
 
+<!-- MI1-DOC-0.33.0-BEGIN -->
+## Current engineering preview / 当前工程预览
+
+### English
+
+Development preview **0.33.0 (MI1)** introduces Scope-owned primary mouse input through the optional `@egret/engine/web/input` entry. It connects existing logical hit testing and typed display events while rendering remains explicit. Read the [primary mouse contract](knowledge-base/en/docs/primary-mouse-input-contract.md) and designated [verification record](knowledge-base/evidence/primary-mouse-input-verification.json) for the exact profile, ownership, failure handling and gate scopes.
+
+At the documentation cutoff **2026-10-11 22:52:43 UTC**, the final Engine build and genuine public interface check passed. Public MI1 behavior/lifecycle passed **98/98**. TypeScript **7.0.2** passed one public positive and matched **26 + 15 + 5** exact unsuppressed negative diagnostics; the public type gate exited **0**. Focused MI1 policy passed **21/21** after correcting one expected diagnostic to retain the existing guard order. Public cancellation **8/8** and earlier retained CPU checks keep their separately recorded scopes. These overlapping checks are not added.
+
+Default headless Edge **154.0.4258.62** with Playwright **1.62.1** passed the fixed desktop Canvas mouse subset: **1** genuine native baseline and **6** assigned controls cover literal events, logical points, RGBA witnesses and observed physical listener cleanup. The ordinary HTTP example passed, and collector policy/grammar units passed **13/13**. All **7** retained desktop gates—Canvas, WebGPU, B1, textured rendering, sequence animation, Canvas text and picking—passed their existing bounded profiles. This establishes neither phones, arbitrary UI/3D, OS reclamation nor a performance lead.
+
+**The complete 259-case boundary rerun, final publication/bilingual checks, mandatory pre-push gate and current 0.33.0 remote delivery remain PENDING.** The earlier timeout and full **258/259** result retain their original artifacts; the latter exposed one expected-message mismatch. Focused **21/21** is its finite successor, not a complete rerun. Other earlier failures retain their recorded identities and cutoffs in the verification record.
+
+The delivered baseline **0.32.0 (S3D1)** was merged through [PR #19](https://github.com/cnedwin/Egret_rebuild/pull/19) to Main `a240bc1e6ee218c63fc1511d715d01d1358d908f`. Earlier scene/preview sections retain their original sources, results and pending/failure cutoffs as history; their earlier pending labels do not undo this delivery.
+
+Full Spine support **R020/V020** remains planned, implementation **not_started**, acceptance **not_run**. Complete UI, touch/pen, phones, Native SDKs, target-device performance, editor/Agent tools and complete legacy migration retain their separate implementation and acceptance obligations.
+
+### 中文
+
+开发预览 **0.33.0 (MI1)** 通过可选 `@egret/engine/web/input` 入口提供 Scope 所有的主鼠标输入，连接既有逻辑命中与类型化显示事件，渲染仍由应用显式控制。精确 profile、所有权、故障处理和门禁范围见[主鼠标契约](knowledge-base/Cns/docs/主鼠标输入契约.md)及指定的[验证记录](knowledge-base/evidence/primary-mouse-input-verification.json)。
+
+截至文档截止点 **2026-10-11 22:52:43 UTC**，最终 Engine 构建与真实公共接口检查通过。MI1 公共行为／生命周期通过 **98/98**。TypeScript **7.0.2** 通过一个公共正例，并匹配 **26 + 15 + 5** 条精确、未抑制的负例诊断；公共类型门禁退出码为 **0**。修正一项预期诊断并保留既有门禁顺序后，MI1 限定策略通过 **21/21**。公共取消 **8/8** 与早先既有 CPU 检查继续保留各自记录范围；这些重叠检查不合计。
+
+默认无界面 Edge **154.0.4258.62** 配合 Playwright **1.62.1** 通过固定桌面 Canvas 鼠标子集：**1** 个真实原生基线和 **6** 项指定对照覆盖字面事件、逻辑坐标、RGBA 观察及实际监听移除。普通 HTTP 示例通过，采集器策略／语法单元通过 **13/13**。**7** 项既有桌面门禁——Canvas、WebGPU、B1、纹理渲染、序列动画、Canvas 文字和拾取——在各自有界 profile 内通过。这不验收手机、任意 UI／3D、操作系统回收或性能领先。
+
+**完整 259 项边界重跑、最终公开／双语检查、必要推送前门禁及本次 0.33.0 远端交付仍为 PENDING。** 早先超时和完整 **258/259** 结果保留原产物；后者暴露一项预期消息不匹配。限定 **21/21** 是其有限后继，不是完整重跑。其余早先失败在验证记录中保留原身份与截止点。
+
+已交付基线 **0.32.0 (S3D1)** 经 [PR #19](https://github.com/cnedwin/Egret_rebuild/pull/19) 合并至 Main `a240bc1e6ee218c63fc1511d715d01d1358d908f`。早先场景／预览章节作为历史保留原来源、结果及待完成／失败截止点；原待完成标签不推翻此次交付。
+
+完整 Spine 支持 **R020/V020** 仍为 planned，实施 **not_started**，验收 **not_run**。完整 UI、触摸／笔、手机、Native SDK、目标设备性能、编辑器／Agent 工具及旧工程完整迁移继续保留各自实现与验收义务。
+<!-- MI1-DOC-0.33.0-END -->
+
 <!-- S3D1-DOC-0.32.0-BEGIN -->
 ## Current bounded scene checkpoint / 当前限定场景检查点
 
@@ -45,6 +77,7 @@ The delivered **0.31.0** successor was merged through [PR #18](https://github.co
 | 检查点 | 主要解决的问题 | 记录 |
 | --- | --- | --- |
 | 未发行 | 英文优先的社区入口、独立的 `en/` 与 `Cns/` 知识库、英文文件名、创始人介绍与双语 Changelog。精简文档入口，集中历史研究，便于查阅。 | [详情](knowledge-base/Cns/docs/documentation-layout.md) |
+| 0.33.0 | Scope 所有的主鼠标输入：公共行为／生命周期 98/98、一个正例及 26/15/5 精确类型负例、MI1 策略 21/21、原生基线及六项对照、七项既有桌面门禁通过。完整边界重跑、最终公开／推送门禁和本次交付待完成。 | [契约](knowledge-base/Cns/docs/主鼠标输入契约.md) |
 | 0.32.0 | 显式拥有型低层 3D 场景帧与 WebGPU 场景/UI 合成。公共行为 35/35、边界 238/238、精确严格类型、保留集成 161/161 及重新执行的固定桌面像素通过；最终公开运行与交付单独跟踪。 | [契约](knowledge-base/Cns/docs/公共3D场景契约.md) |
 | 0.31.0 | Scope 所有的资源批量获取：0–128 个输入位置、1–16 局部等待窗口。已采用构建/示例与 CPU 86/86（29 项 RG1 + 57 项既有）、私有精确严格类型和有限策略 35/35 通过；七项既有桌面 profile 在原子集通过。完整验证、双语/公开、推送钩子及 RG1 交付后继由[核验记录](knowledge-base/evidence/resource-acquisition-groups-verification.json)跟踪。 | [阅读](knowledge-base/Cns/docs/资源批量获取.md) |
 | 0.30.0 | 将既有 Stage 拾取、类型化分发与 Canvas 渲染组合成小型应用，公共入口无界面检查通过 12/12。桌面鼠标／Canvas 输入、像素与五项对照通过固定子集；纯准入检查单独通过 32/32。完整本地验证通过：核心 2377/2377 与结构化公开检查 63/63；最终独立语义、实际 Git 推送钩子及交付待完成。 | [示例](knowledge-base/Cns/docs/显示拾取示例.md) |
@@ -89,6 +122,7 @@ These are engineering and knowledge-base checkpoints, newest first, rather than 
 | Checkpoint | Main problem addressed | Record |
 | --- | --- | --- |
 | Unreleased | English-first community entry, separate `en/` and `Cns/` knowledge-base editions, English filenames, founder introduction and bilingual Changelog. Simplified document entries and grouped historical research for easier navigation. | [Details](knowledge-base/en/docs/documentation-layout.md) |
+| 0.33.0 | Scope-owned primary mouse input: public behavior/lifecycle 98/98, one positive + 26/15/5 exact type negatives, MI1 policy 21/21, native baseline + six controls and seven retained desktop gates pass. Full boundary rerun, final publication/push gate and current delivery remain pending. | [Contract](knowledge-base/en/docs/primary-mouse-input-contract.md) |
 | 0.32.0 | Explicit owned low-level 3D scene frames and WebGPU scene/UI composition. Public behavior 35/35, boundaries 238/238, exact strict types, retained integration 161/161 and fresh fixed desktop pixels pass; final publication and delivery are tracked separately. | [Contract](knowledge-base/en/docs/public-scene3d-contract.md) |
 | 0.31.0 | Scope-owned resource acquisition groups with 0–128 occurrences and a 1–16 local waiter window. Adopted build/example and CPU 86/86 (29 RG1 + 57 retained), private exact strict types and finite policy 35/35 passed; seven retained desktop profiles passed their existing subsets. Complete verification, bilingual/publication, push hook and RG1 delivery successors are tracked in the [verification record](knowledge-base/evidence/resource-acquisition-groups-verification.json). | [Reading](knowledge-base/en/docs/resource-acquisition-groups.md) |
 | 0.30.0 | Existing Stage picking, typed dispatch and Canvas rendering composed into a small application; 12/12 public-entry headless checks passed. Desktop mouse/Canvas input, pixels and five controls passed the fixed subset; 32/32 pure admission checks passed separately. Complete local verification passed: core 2377/2377 and structural publication 63/63; final independent meaning, actual Git push hook and delivery remain pending. | [Example](knowledge-base/en/docs/display-picking-example.md) |

@@ -64,8 +64,8 @@
       "zh": "AGENTS.zh-CN.md",
       "en": "AGENTS.md",
       "kind": "public_reading",
-      "enSha256": "44e3b3d146d90d793cb90ad8171f78684f3ddaec1b05e9c52d1cad970b1351de",
-      "zhSha256": "1ba96441c42a24793f92b40b56d0a22536db4f41b620681ac4f8f00d8343b761"
+      "enSha256": "ca198adafdd84a0e09c47be20ff3a0d3cf3bee4ffa67d3f0add52de8cfa2a923",
+      "zhSha256": "c69bb78281acd74fdc7abe9e6952869f263e03ee0199af189a2f6d3f37b09c17"
     },
     {
       "zh": "CONTRIBUTING.zh-CN.md",
@@ -141,8 +141,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "f0d4025cd3a25cf2182e7fcea27d48b51730e32046bece7d60ee9057883234e2",
-      "zhSha256": "2e65af9b087dab5e7316aa33cbc1d32d66b6b0b90d7e8b956ab39a811df0a451"
+      "enSha256": "79c0248866be207cf80740c306df4e41e19a13bd66ce96697105ce1b71bb971e",
+      "zhSha256": "e150a74e0346f90f42ce4856666316d6e3e5d998a4d7daf838bd0b2dfd66d226"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -288,8 +288,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "59e613db79e19be1e77d594fecb4ba2534014e7d6fc919792cc7d4e55418471c",
-      "zhSha256": "f98926c189b0c2e5636904cdd140dc11462ec24d1603972472d2b8a23c2631aa"
+      "enSha256": "e2d156a4fe0525b7a37f5956e071a7752738b791e730d97b5759f15062a91cef",
+      "zhSha256": "faf8ab78c6853d7f24835427f7fb737440796ccaca70ab1c6def480ead9b5191"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -351,8 +351,8 @@
       "zh": "knowledge-base/Cns/docs/工程规划.md",
       "en": "knowledge-base/en/docs/engineering-plan.md",
       "kind": "public_reading",
-      "enSha256": "4e144ae5fda6ac6ecf47a3d94abdd479388245f9fb0198f2c43fd286726094d6",
-      "zhSha256": "f514410ee4e8d6b1247b894f8356e714f237989515d29e313c591bf475ce8277"
+      "enSha256": "06b286a4f7e4799a8a5f6d08951eea5594acf096e8ceeecd1c9c400d03c79ac6",
+      "zhSha256": "9dd7f2fa6d813ee684cea4076b2dab530b31f4e42a72682e88beac104fb35c36"
     },
     {
       "zh": "knowledge-base/Cns/docs/术语表.md",
@@ -764,8 +764,8 @@
       "zh": "knowledge-base/Cns/README.md",
       "en": "knowledge-base/en/README.md",
       "kind": "public_reading",
-      "enSha256": "94ca342c3fd7ec2182a8beb8796e9731781503e9f8d84c4b275efb7f37539301",
-      "zhSha256": "5d92bc90ff081db964a52878eba09ffe727f787072103428db4b66a07120f21c"
+      "enSha256": "f22874f65df0157ad3f4ce12b88e40e6cfe1336267eff6f1434f5f50d0d14db6",
+      "zhSha256": "8ed1147c37aa80f5b59697c361b7904f935bd73cb95f7b9e26ef51acebcd9ab7"
     },
     {
       "zh": "knowledge-base/Cns/templates/ADR决策记录.md",
@@ -848,8 +848,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "0d2471bb7585febdbb496df070b6e7f96a9f68483fa8765cbf99c819bd0036ef",
-      "zhSha256": "52daf3df1692fc56205c740c537dde2cf11f11bb5a49823ee482be19c1551802"
+      "enSha256": "b5389c4b9ad20dcee4b94d496ebe23690aed5cd495aace88401bbf67ed9bfc1a",
+      "zhSha256": "086b2fd18f36c8e29a062118f99c4bc808ea1d9097cd22b93131ce525f40f8e8"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -1053,6 +1053,20 @@
       "kind": "public_reading",
       "enSha256": "199ed73457beab2dcd258e230a55a8c556c3050aa58852958936452e122ad0fa",
       "zhSha256": "29957cda2e468d9a22615d86cc2bc7ea2ad2d645165d9c6d40b91abeed8f4e52"
+    },
+    {
+      "en": "knowledge-base/en/docs/primary-mouse-input-contract.md",
+      "zh": "knowledge-base/Cns/docs/主鼠标输入契约.md",
+      "kind": "public_reading",
+      "enSha256": "eb0f15edfaf7f2ada46e9556ec5eaa5d8ef62729b3eb85359d73a9094c91c472",
+      "zhSha256": "8cca508cf5b5aa6ffd676dbde9574d907268ffbef3c881ced59b4d49639531dd"
+    },
+    {
+      "en": "examples/mouse-input/README.md",
+      "zh": "examples/mouse-input/README.zh-CN.md",
+      "kind": "public_reading",
+      "enSha256": "8f7ce85ceff4049c653d7a35ec4deb824da9e2f9675b060889551164c974edc6",
+      "zhSha256": "38ed779761a9b555fc7c4476fc5ef003efa0af1b64dee57712c94a8a49e8a408"
     }
   ],
   "registries": [
@@ -1077,20 +1091,20 @@
     {
       "source": "knowledge-base/Cns/registry/交付.json",
       "target": "knowledge-base/en/registry/deliverables.json",
-      "sourceSha256": "c4f271b5bb09f71ecf57c09fa5398bca0ac81826651690afecbd9fe0a5da6dcc",
-      "targetSha256": "f63f80eff5f293aa44572832a46dc355f0a479bf30a43c1166ea5fce31331604"
+      "sourceSha256": "2e3b7fe872bb4011bb4ba14aa965d8424e9adc967f124fe73c8e00526cfa4405",
+      "targetSha256": "10395dc7274f5bf398b83582565caa583410f4577f6921811764b79aa95f7de9"
     },
     {
       "source": "knowledge-base/Cns/registry/来源.json",
       "target": "knowledge-base/en/registry/sources.json",
-      "sourceSha256": "4f9c1801ceab2c58dcce8496655b2864fd36ff783d5a09fe140541b3985ebd76",
-      "targetSha256": "69107b36aaa20ee96de933deb6190d7772d53d490c561b558589f3eaee8d6765"
+      "sourceSha256": "9fd7b478420d6d90e2389f6fd5f4f61c38e3232dedcf484163277c62fc2a3560",
+      "targetSha256": "1e723f20df75911214c986ec00bedf95f018f62309619a44954d8cd420deaa90"
     },
     {
       "source": "knowledge-base/Cns/当前版本.json",
       "target": "knowledge-base/en/current-version.json",
-      "sourceSha256": "735843f22065b0b783e49d320bf4e8e7bb5e2468d9fab9f6027f331e648a9f35",
-      "targetSha256": "604825c24a905279dd7ef9acf86e4c120641dd7bc75c00bb9d7e716018dcded9"
+      "sourceSha256": "f8f5baa605eca36bb3c068e180651fba85b24b03ac3e0d83e7f690643d630aa1",
+      "targetSha256": "3efed447036d02f485fa42db1a75ef7c6d05a1586fcc13868b2b63b5e52a13fe"
     }
   ],
   "criticalComments": [
@@ -1180,7 +1194,7 @@
     },
     {
       "path": "packages/engine/src/Engine.ts",
-      "sha256": "d622327f839bc93578215919c76148424ccc6ecbb510fe3972087cb811d45dbc"
+      "sha256": "e36d58286681b353cc9cc15d84f8afc3b2b2e6373bc7de6e32d9442c99f36a97"
     },
     {
       "path": "packages/engine/src/closeHost.ts",
@@ -1364,7 +1378,7 @@
     },
     {
       "path": "packages/runtime/src/CancellationController.ts",
-      "sha256": "3cfdb217804b282c4a422420ce5efa63ced25a6bb215bff254e7f947c4942e28"
+      "sha256": "1f669f03990da30cee01b0590c8e6c3b2c04d9634fb459d9134cb50d023e1c19"
     },
     {
       "path": "packages/runtime/src/DisplayObject.ts",
@@ -1384,7 +1398,7 @@
     },
     {
       "path": "packages/runtime/src/EventDispatcher.ts",
-      "sha256": "141051a7aede922c0d8d73aa2b509c75cbe209118ba0bb48b3869765b9c5a82d"
+      "sha256": "f04d19f24c30d5a4b81787e7df94688d1489578e629180ac09929e244f04355f"
     },
     {
       "path": "packages/runtime/src/Graphics.ts",
@@ -1460,7 +1474,7 @@
     },
     {
       "path": "tools/verify-webgpu-b1.mjs",
-      "sha256": "075b34b38bd46c666c461ca8a19b2a4b5b2318b3680d5fbf9b1e6224a8622652"
+      "sha256": "b9f964458887c23411d92ee91441337ce3559ec7a8e91b9697a1737246719a3f"
     },
     {
       "path": "tools/b1-webgpu/fixture.mjs",
@@ -1550,7 +1564,7 @@
     },
     {
       "path": "packages/engine/src/startEngine.ts",
-      "sha256": "bef626c51436762b93dfff97b11d75969a17be3292b8a482b323c59f17d45fa1"
+      "sha256": "8c61c07c5e22ff48a0d7ade0befceb84ab19af4452e7793d4a2fb21c184249d0"
     },
     {
       "path": "packages/engine/web/prepareTexturedSubmission2D.ts",
@@ -1751,6 +1765,50 @@
     {
       "path": "tests/scene3d-public-host.test.mjs",
       "sha256": "240f0037b511737974abd6dffcce4b4ff0a013f41c5a8a6bce368960a9c7f459"
+    },
+    {
+      "path": "packages/runtime/src/displayInputOperations.ts",
+      "sha256": "f8a803b10a513afa25fd68d9e28055eeb186e3e6bd9fb00a15c9e8ae78cbce15"
+    },
+    {
+      "path": "packages/engine/src/mouseInput.ts",
+      "sha256": "842be3c1d4eac3769b09ada4fb5e8be36685ade97275d8dc99d2bdf6a5d02401"
+    },
+    {
+      "path": "packages/engine/src/mouseInputTypes.ts",
+      "sha256": "b0f21bc206a9e832a7e6ebc4fd220594c9f6a6e7d6dc17b114ef410ed3c316ed"
+    },
+    {
+      "path": "packages/engine/src/internal/mouseInputFactoryState.ts",
+      "sha256": "78c734d3b181ec621d12eb7dbdd9ea98be844243207d90cf7bca660480da01ae"
+    },
+    {
+      "path": "packages/engine/web/MouseInput.ts",
+      "sha256": "8a7029b569a7032e8cade74efe6b1fe25df7b5ba2901045bb463085a95b3248b"
+    },
+    {
+      "path": "packages/engine/web/input.ts",
+      "sha256": "2e4145f2d372cb9a9c9e19a284da7885e8af7b3dafdc6967d2e72f9afb7a3318"
+    },
+    {
+      "path": "tools/verify-mouse-input-canvas.mjs",
+      "sha256": "0bcbb2a8c5f0f6511bd0c5d0f582e65fed198291f7170cfbc073226e73ae5a31"
+    },
+    {
+      "path": "tools/mouse-input-canvas-contract.mjs",
+      "sha256": "48e1874e197d28848205189d08ed4cfec468107cdefb29c426bae6b07bcaee1c"
+    },
+    {
+      "path": "examples/mouse-input/main.mjs",
+      "sha256": "718e0dce1a4c635f004b5d1b8bfaf341c748d0e45c830f83ec05dbd74ca12cfb"
+    },
+    {
+      "path": "examples/mouse-input/scene.mjs",
+      "sha256": "5f85dd9528e3c517389f3816a058dc2e63491237c0b9f7680fcb8850c97bb9ec"
+    },
+    {
+      "path": "tests/webgpu-mesh-host.test.mjs",
+      "sha256": "3812f94f2dfd501a52551ec1b03ba499ff1e2b90b1bfa9fc2a75a5df0692d087"
     }
   ],
   "historicalSemanticReview": {
@@ -3855,5 +3913,91 @@
     "scope": "Finite paired contract, navigation, example and canonical register successors; preserved historical cutoffs and independent implementation provenance.",
     "independentFinalMeaningReview": "PENDING",
     "completeSemanticParityClaim": false
+  },
+  "primaryMouseInputCuration": {
+    "engineeringLabel": "0.33.0",
+    "documents": [
+      "knowledge-base/en/docs/primary-mouse-input-contract.md",
+      "knowledge-base/Cns/docs/主鼠标输入契约.md"
+    ],
+    "criticalSources": [
+      "packages/runtime/src/CancellationController.ts",
+      "packages/runtime/src/displayInputOperations.ts",
+      "packages/engine/src/mouseInput.ts",
+      "packages/engine/src/mouseInputTypes.ts",
+      "packages/engine/src/internal/mouseInputFactoryState.ts",
+      "packages/engine/web/MouseInput.ts",
+      "packages/engine/web/input.ts",
+      "tools/verify-mouse-input-canvas.mjs",
+      "tools/mouse-input-canvas-contract.mjs",
+      "examples/mouse-input/main.mjs",
+      "examples/mouse-input/scene.mjs"
+    ],
+    "scope": "Finite paired contract, navigation, ordinary HTTP example and canonical registers; independent implementation, English critical comments and historical verification boundaries.",
+    "independentFinalMeaningReview": "PENDING",
+    "completeSemanticParityClaim": false,
+    "retainedB1TestAmendment": {
+      "status": "INDEPENDENT_SOURCE_REVIEW_AND_ACTUAL_RETAINED_TEST_PASS",
+      "path": "tests/webgpu-mesh-host.test.mjs",
+      "currentIdentity": {
+        "path": "tests/webgpu-mesh-host.test.mjs",
+        "bytes": 94773,
+        "sha256": "3812f94f2dfd501a52551ec1b03ba499ff1e2b90b1bfa9fc2a75a5df0692d087"
+      },
+      "amendmentIdentity": {
+        "bytes": 1719,
+        "sha256": "8c5573ed9bf841fabf032e2ca789017fae457809a1b66387b8362538b84821de"
+      },
+      "sourceReviewIdentity": {
+        "bytes": 4396,
+        "sha256": "67b486d6a9a28af886b4138e54776ea0bf682a425df4825e2216a02831beab2e"
+      },
+      "preservedCompletePrepushFailure": {
+        "artifactIdentity": {
+          "bytes": 745,
+          "sha256": "27ea6702bd37fe83fce0203a5ef1408169e5f2e3e78e6bda9890112f1f05d5e1"
+        },
+        "executions": [
+          {
+            "name": "prepush",
+            "startedAtUtc": "2026-10-11T23:04:15.2149384Z",
+            "finishedAtUtc": "2026-10-11T23:08:17.3413755Z",
+            "exitCode": 1,
+            "timeout": false,
+            "stdoutSHA256": "d7932479f977bb960b55af5db3f11abd260a63d23a20e8dbade1e33877f46270",
+            "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      },
+      "earlierCoreCounts": {
+        "tests": 2631,
+        "passed": 2630,
+        "failed": 1
+      },
+      "earlierFailure": "B1 fixed thirteen-case emitted loading and owned host contract refused the new exact map before case execution.",
+      "actualTargetedRetainedTest": {
+        "artifactIdentity": {
+          "bytes": 837,
+          "sha256": "4f7f49960b334665058fec8d0cfdbb127fb90f5755bd7bab114958073f3c6131"
+        },
+        "executions": [
+          {
+            "name": "retained-b1-test",
+            "startedAtUtc": "2026-10-11T23:17:55.3599203Z",
+            "finishedAtUtc": "2026-10-11T23:18:00.3682524Z",
+            "exitCode": 0,
+            "timeout": false,
+            "stdoutSHA256": "f3ac8ca8ff06eb4a4c3382300063aa74977b07ab652d3fbe73a0a72c0b92ac0c",
+            "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      },
+      "thirteenCaseSchedulePreserved": true,
+      "oracleQuotasAndColdHostConstraintsPreserved": true,
+      "exactOptionalMouseAliasOnly": true,
+      "productSourcesChanged": false,
+      "currentEditablePaths": 55,
+      "completePublication": "PENDING_FINAL_RERUN"
+    }
   }
 }

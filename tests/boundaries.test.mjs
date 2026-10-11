@@ -13,7 +13,7 @@ const ownedParent = path.resolve(repository, 'work');
 const dependencies = { contracts: [], runtime: ['@egret/contracts'], engine: ['@egret/contracts', '@egret/runtime'], project: ['@egret/contracts'] };
 
 // Synthetic facades prove tool policy/resolution only, never core or native behavior.
-function fixture({ imported, subtree = 'engine/rendering', declared = false, missingImageExport = false, missingGeometryExport, missingGeometryType, missingMesh, splitMesh = false, meshLeak, meshModuleLeak, meshWrongEntry, meshStateSourceValueImport = false, meshStateEmittedValueImport = false, profileLeak, profileModuleLeak, missingTexturedPort, missingProfileFactory = false, profileRegistryImport = false, registryLegitimateHosts = false, registryMapMutation, registryImporterProbe, hitTestMutation, /* S3D1_OPTIONS_BEGIN */ scene3dMutation /* S3D1_OPTIONS_END */ }, run) {
+function fixture({ imported, subtree = 'engine/rendering', declared = false, missingImageExport = false, missingGeometryExport, missingGeometryType, missingMesh, splitMesh = false, meshLeak, meshModuleLeak, meshWrongEntry, meshStateSourceValueImport = false, meshStateEmittedValueImport = false, profileLeak, profileModuleLeak, missingTexturedPort, missingProfileFactory = false, profileRegistryImport = false, registryLegitimateHosts = false, registryMapMutation, registryImporterProbe, hitTestMutation, mouseInputMutation, /* S3D1_OPTIONS_BEGIN */ scene3dMutation /* S3D1_OPTIONS_END */ }, run) {
   mkdirSync(ownedParent, { recursive: true });
   const root = mkdtempSync(path.join(ownedParent, 'egret-boundary-policy-'));
   function write(relative, content) {
@@ -40,6 +40,7 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
         './web': {types:'./dist/web/index.d.ts',import:'./dist/web/index.js'},
         './text': {types:'./dist/text.d.ts',import:'./dist/text.js'},
         './web/text': {types:'./dist/web/text.d.ts',import:'./dist/web/text.js'},
+        './web/input': {types:'./dist/web/input.d.ts',import:'./dist/web/input.js'},
         // S3D1_FIXTURE_MAP_BEGIN
         './scene3d': {types:'./dist/rendering/scene3d.d.ts',import:'./dist/rendering/scene3d.js'},
         './webgpu/scene3d': {types:'./dist/web/scene3d.d.ts',import:'./dist/web/scene3d.js'},
@@ -90,7 +91,7 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
     write('packages/runtime/dist/index.d.ts','interface CapturedContent2D {}\nexport type {CapturedContent2D};\n' + (missingMesh === 'runtime' ? '' : "export {Mesh2D} from './Mesh2D.js';\n"));
     // Profile Task 5: complete valid executable/declaration surfaces first.
     const engineFixturePackage = JSON.parse(readFileSync(path.join(root,'packages/engine/package.json'),'utf8'));
-    write('packages/engine/package.json', {...engineFixturePackage, imports:{'#egret-textured-frame-state':{types:'./dist/internal/texturedFrameState.d.ts',import:'./dist/internal/texturedFrameState.js'}}});
+    write('packages/engine/package.json', {...engineFixturePackage, imports:{'#egret-textured-frame-state':{types:'./dist/internal/texturedFrameState.d.ts',import:'./dist/internal/texturedFrameState.js'},'#egret-mouse-input':{types:'./dist/mouseInput.d.ts',import:'./dist/mouseInput.js'}}});
     const profileTypes = ['TexturedFrameProfile2D','TexturedMeshCommand2D','TexturedRenderCommand2D','TexturedRenderFrame2D','TexturedRenderHostAdapter'];
     const profileRootValues = ['Engine','createEngine','createEngineForProfile','CancellationController','EgretError','Event','createEventType','EventDispatcher','DisplayObject','DisplayObjectContainer','Scope','Stage','AssetManager','AssetLease','createAssetType','createAssetRef','Sprite','Graphics','Texture','createTexture','isTexture','Bitmap','createSequenceClip','SequencePlayer'];
     const profileRootFile = 'node_modules/@egret/engine/index.js';
@@ -335,6 +336,35 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
     write('node_modules/@egret/engine/scene3d.js',"export * from '../../../packages/engine/dist/rendering/scene3d.js';\n");
     write('node_modules/@egret/engine/scene3d-web.js',"export * from '../../../packages/engine/dist/web/scene3d.js';\n");
     // S3D1_FIXTURE_SCAFFOLD_END
+    // MI1_FIXTURE_SCAFFOLD_BEGIN
+    // Inert canonical policy inputs, never picker/event/native behavior evidence.
+    const mouseTypes=['MouseInputOptions','MouseInput','MouseInputState','MouseInputEvents','MouseInputPayload','MouseInputCancelReason'];
+    const mouseBarrel="export {createMouseInput} from './MouseInput.js';\nexport type {"+mouseTypes.join(',')+"} from '#egret-mouse-input';\n";
+    write('packages/engine/web/input.ts',mouseBarrel);write('packages/engine/dist/web/input.d.ts',mouseBarrel);
+    write('packages/engine/dist/web/input.js',"export {createMouseInput} from './MouseInput.js';\n");
+    write('node_modules/@egret/engine/mouse-input.js',"export * from '../../../packages/engine/dist/web/input.js';\n");
+    const resolverFile='node_modules/@egret/engine/package.json',resolver=JSON.parse(readFileSync(path.join(root,resolverFile),'utf8'));
+    write(resolverFile,{...resolver,exports:{...resolver.exports,'./web/input':'./mouse-input.js'}});
+    const mouseTypeScaffold=mouseTypes.map(name=>'export type '+name+' = unknown;\n').join('');
+    write('packages/engine/src/mouseInputTypes.ts',mouseTypeScaffold);write('packages/engine/dist/mouseInputTypes.d.ts',mouseTypeScaffold);write('packages/engine/dist/mouseInputTypes.js','export {};\n');
+    const browserInput="import {createMouseInputWithNative} from '#egret-mouse-input';\nexport function createMouseInput(options) { return createMouseInputWithNative(options); }\n";
+    write('packages/engine/web/MouseInput.ts',browserInput);write('packages/engine/dist/web/MouseInput.js',browserInput);
+    write('packages/engine/dist/web/MouseInput.d.ts',"import type {MouseInputOptions,MouseInput} from '#egret-mouse-input';\nexport declare function createMouseInput(options:MouseInputOptions):MouseInput;\n");
+    const ownerSource="import {CancellationController,EgretError} from '@egret/runtime';\nexport function createMouseInputOwner(engine, assembly) {\nconst sample = new CancellationController().signal;\nconst originalSignals = new WeakMap();\nlet started=false;\nif (!started) throw new EgretError('MOUSE_INPUT_INVALID');\n}\nexport function createMouseInputWithNative(options) {}\nexport type {"+mouseTypes.join(',')+"} from './mouseInputTypes.js';\n";
+    write('packages/engine/src/mouseInput.ts',ownerSource);write('packages/engine/dist/mouseInput.js','export function createMouseInputWithNative(options) {}\n');
+    write('packages/engine/dist/mouseInput.d.ts','export declare function createMouseInputWithNative(options:unknown):unknown;\nexport type {'+mouseTypes.join(',')+"} from './mouseInputTypes.js';\n");
+    for(const file of ['packages/engine/src/internal/mouseInputFactoryState.ts','packages/engine/dist/internal/mouseInputFactoryState.js'])write(file,'export function markMouseInputEngineStarted(engine) {}\n');
+    write('packages/engine/src/startEngine.ts',"import {markMouseInputEngineStarted} from './internal/mouseInputFactoryState.js';\nexport async function startEngine(host,engine) { await host.start?.(); markMouseInputEngineStarted(engine); return engine; }\n");
+    const engineSourceFile='packages/engine/src/Engine.ts',engineOriginal=readFileSync(path.join(root,engineSourceFile),'utf8');
+    const mouseEngineBody=' #currentState="open"; #mouseInputOwner; #assetGroupOwner; constructor() { const stage={}; this.#mouseInputOwner=createMouseInputOwner(this,{operations:createDisplayInputOperations(stage)}); } createScope() { const scope={}; this.#mouseInputOwner.registerScope(scope); return scope; } dispose() { this.#currentState = "closing"; this.#mouseInputOwner.close(); this.#assetGroupOwner.close(); } ';
+    write(engineSourceFile,"import {createDisplayInputOperations} from '@egret/runtime';\nimport {createMouseInputOwner} from './mouseInput.js';\n"+engineOriginal.replace('export class Engine {','export class Engine {'+mouseEngineBody));
+    write('packages/runtime/dist/EventDispatcher.js','export function dispatchDisplayInputEvent(target,event,route) {}\n');
+    const operationSource="import {queryDisplayHit} from './displayHitTest.js';\nimport {dispatchDisplayInputEvent} from './EventDispatcher.js';\nexport function createDisplayInputOperations(stage) { return {pick(x,y,maxNodes) { return queryDisplayHit(stage,x,y,{maxNodes}); },dispatch(target,event,maxNodes) { return dispatchDisplayInputEvent(target,event,[]); }}; }\n";
+    write('packages/runtime/src/displayInputOperations.ts',operationSource);write('packages/runtime/dist/displayInputOperations.js',operationSource);
+    write('packages/runtime/dist/displayInputOperations.d.ts','export interface DisplayInputOperations {}\nexport declare function createDisplayInputOperations(stage:unknown):DisplayInputOperations;\n');
+    write('packages/runtime/dist/index.js',readFileSync(path.join(root,'packages/runtime/dist/index.js'),'utf8')+"export {createDisplayInputOperations} from './displayInputOperations.js';\n");
+    write('packages/runtime/dist/index.d.ts',readFileSync(path.join(root,'packages/runtime/dist/index.d.ts'),'utf8')+"export {createDisplayInputOperations} from './displayInputOperations.js';\nexport type {DisplayInputOperations} from './displayInputOperations.js';\n");
+    // MI1_FIXTURE_SCAFFOLD_END
     const profileMutation = profileLeak || profileModuleLeak || missingTexturedPort || missingProfileFactory || profileRegistryImport || registryMapMutation || registryImporterProbe;
     if (profileMutation) {
       const baseline = spawnSync(process.execPath, ['tools/check-boundaries.mjs'], {cwd:root,encoding:'utf8'});
@@ -473,6 +503,39 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
       write('tools/check-boundaries.mjs',checker);
     }
     // S3D1_MUTATION_END
+    // MI1_MUTATION_BEGIN
+    if(mouseInputMutation) {
+      assert.equal(createHash('sha256').update(readFileSync(path.join(root,'tools/check-boundaries.mjs'))).digest('hex'),checkerHash,'exact MI1 checker fixture copy');
+      const baseline=spawnSync(process.execPath,['tools/check-boundaries.mjs'],{cwd:root,encoding:'utf8'});assert.ifError(baseline.error);
+      assert.equal(baseline.status,0,'MI1 mutation requires canonical baseline first: '+baseline.stdout+baseline.stderr);assert.match(baseline.stdout,/Boundary check PASS/);
+      const edits={
+        'extra-runtime':['packages/engine/dist/web/input.js','','export function extraMouseInput() {}\n'],
+        'extra-type':['packages/engine/dist/web/input.d.ts','','export interface ExtraMouseInput {}\n'],
+        'type-as-value':['packages/engine/dist/web/input.d.ts','export type {MouseInputOptions','export {MouseInputOptions'],
+        'wrong-forward':['packages/engine/web/input.ts',"from './MouseInput.js'","from './input.js'"],
+        'barrel-work':['packages/engine/web/input.ts','','const extraMouseWork=Object.freeze({});\n'],
+        'root-type-leak':['packages/engine/dist/index.d.ts','','export interface MouseInputPayload {}\n'],
+        'web-type-leak':['packages/engine/dist/web/index.d.ts','','export interface MouseInputEvents {}\n'],
+        'gpu-type-leak':['packages/engine/dist/web/webgpu.d.ts','','export interface MouseInputState {}\n'],
+        'engine-assembly-type':['packages/engine/dist/index.d.ts','','export interface DisplayInputOperations {}\n'],
+        'types-runtime':['packages/engine/dist/mouseInputTypes.js','','export const MouseInputTypeRuntime=1;\n'],
+        'browser-extra-import':['packages/engine/web/MouseInput.ts','',"import {Scope} from '@egret/runtime';\n"],
+        'browser-dynamic-import':['packages/engine/web/MouseInput.ts','',"const lazyInput=()=>import('./MouseInput.js');\n"],
+        'browser-emitted-src':['packages/engine/web/MouseInput.ts',"from '#egret-mouse-input'","from '../src/mouseInput.js'"],
+        'public-picker':['packages/runtime/src/displayInputOperations.ts','queryDisplayHit(stage,x,y,{maxNodes})','stage.hitTest(x,y,{maxNodes})'],
+        'public-dispatch':['packages/runtime/src/displayInputOperations.ts','dispatchDisplayInputEvent(target,event,[])','target.dispatchEvent(event)'],
+        'early-gate':['packages/engine/src/Engine.ts','this.#mouseInputOwner.close(); this.#assetGroupOwner.close();','this.#assetGroupOwner.close(); this.#mouseInputOwner.close();'],
+        'startup-ready':['packages/engine/src/startEngine.ts','await host.start?.(); markMouseInputEngineStarted(engine);','markMouseInputEngineStarted(engine); await host.start?.();'],
+        'module-signal-capture':['packages/engine/src/mouseInput.ts','export function createMouseInputOwner(engine, assembly) {\nconst sample = new CancellationController().signal;','const sample = new CancellationController().signal;\nexport function createMouseInputOwner(engine, assembly) {'],
+        'private-type-target':['packages/engine/src/ProbeMouse.ts','',"import type {MouseInput} from './mouseInputTypes.js';\n"],
+        'private-alias-importer':['packages/engine/web/ProbeMouse.ts','',"import type {MouseInput} from '#egret-mouse-input';\n"],
+      };
+      const edit=edits[mouseInputMutation];assert.ok(edit,'finite MI1 assigned mutation');const [file,before,after]=edit;
+      const original=existsSync(path.join(root,file))?readFileSync(path.join(root,file),'utf8'):'';
+      if(before!=='')assert.equal(original.split(before).length-1,1,'unique MI1 source mutation anchor');
+      write(file,before===''?original+after:original.replace(before,after));
+    }
+    // MI1_MUTATION_END
     const result = spawnSync(process.execPath, ['tools/check-boundaries.mjs'], { cwd: root, encoding: 'utf8' });
     assert.ifError(result.error);
     /* S3D1_RESULT_BEGIN */ if(sceneComparator)result.mapAdaptedPredecessor=sceneComparator; /* S3D1_RESULT_END */
@@ -484,6 +547,36 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
     assert.equal(existsSync(resolved), false);
   }
 }
+
+// MI1_POLICY_TESTS_BEGIN
+test('MI1 canonical policy baseline preserves every retained facade and exact alias',()=>{
+  fixture({imported:'robust-predicates'},result=>{assert.equal(result.status,0,result.stdout+result.stderr);assert.match(result.stdout,/Boundary check PASS/);});
+});
+for(const [name,reason]of [
+  ['extra-runtime','MI1: exact optional runtime export surface mismatch'],
+  ['extra-type','MI1: exact optional export surface mismatch'],
+  ['type-as-value','MI1: exact optional export surface mismatch'],
+  ['wrong-forward','MI1: exact optional forwarding mismatch'],
+  ['barrel-work','MI1: input barrel performs module work'],
+  ['root-type-leak','MI1: input leaks outside optional entry'],
+  ['web-type-leak','MI1: input leaks outside optional entry'],
+  ['gpu-type-leak','webgpu: exact type-only host export surface mismatch'],
+  ['engine-assembly-type','MI1: input leaks outside optional entry'],
+  ['types-runtime','MI1: input types emitted runtime values'],
+  ['browser-extra-import','MI1: exact input module import closure mismatch'],
+  ['browser-dynamic-import','MI1: exact input module import closure mismatch'],
+  ['browser-emitted-src','MI1: exact input module import closure mismatch'],
+  ['public-picker','MI1: captured display port must reuse private HT1 and typed route'],
+  ['public-dispatch','MI1: captured display port must reuse private HT1 and typed route'],
+  ['early-gate','MI1: early Engine input gate order mismatch'],
+  ['startup-ready','MI1: successful startup readiness guard missing'],
+  ['module-signal-capture','MI1: Signal intrinsic capture must occur per Engine assembly'],
+  ['private-type-target','MI1: private input target imported outside named paths'],
+  ['private-alias-importer','MI1: private mouse input alias imported outside exact browser ports'],
+])test('MI1 policy '+name+' requires canonical baseline and assigned refusal',()=>{
+  fixture({imported:'robust-predicates',mouseInputMutation:name},result=>{assert.equal(result.status,1,result.stdout+result.stderr);assert.ok(result.stderr.includes(reason),result.stderr);});
+});
+// MI1_POLICY_TESTS_END
 
 // S3D1_TESTS_BEGIN
 // Run this focused positive gate first, before the retained suite and controls.

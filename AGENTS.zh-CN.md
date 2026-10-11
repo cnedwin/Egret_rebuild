@@ -15,6 +15,16 @@
 - 实验性 `tools/verify-webgpu-b1.mjs` 的普通样例通过精确生成的 import map 导入构建后的 `@egret/engine`、`@egret/engine/scene3d`、`@egret/engine/webgpu/scene3d`。唯一直接私有产品导入为 `packages/engine/dist/web/webgpuMeshPass.js`，仅用于绑定源码的固定原生 WGSL 编译／N4 诊断。服务范围仅限验证器显式模块白名单、这些公共入口的有限字面量导入闭包及固定别名；N1–N5 各自在仓库外的一次性副本中只修改一个已记录的构建文件。S1／S2／SN1 是独立的真实 Engine／Stage／Scope／Bitmap 组合阶段，SN1 只遗漏指定父节点裁剪。原有 oracle 与七正例／五控制／十一次绘制／8214 次比较的计划保持不变。本例外不允许普通示例或公开行为测试私有导入产品模块，也不授权新的产品导出或任意诊断钩子。
 - 公共行为变化同步规格、来源记录与必要回归。记录实际环境、未验证项、反例及修复；第三方研究或历史测试不替代自主产品验收。
 
+<!-- MI1-AGENT-POLICY-BEGIN -->
+## 主鼠标输入边界
+
+- MI1 公开使用仅通过构建后的 `@egret/engine` 与可选 `@egret/engine/web/input`。可选入口只导出 `createMouseInput` 与契约中的六个类型；默认 Engine／Canvas／WebGPU 入口不增加该 API。Runtime 显示装配端口不通过 Engine 公开，核心保持无 DOM／Node。详见[契约](knowledge-base/Cns/docs/主鼠标输入契约.md)与[验证记录](knowledge-base/evidence/primary-mouse-input-verification.json)。
+- `tests/mouse-input.test.mjs` 与 `tests/mouse-input-lifecycle.test.mjs` 使用真实公共 SDK 对象及受控浏览器端口，不私有导入产品，不复制命中或事件算法，也不声明真实 DOM／原生验收。实际浏览器与受控单元的结果分别记录。
+- `#egret-mouse-input` 仅按精确包映射连接已命名的浏览器输入模块及声明到核心产物；共享验证器只允许显式固定映射和有限闭包，不授权通配符、任意私有导入或新产品导出。每项新策略变异必须先在独立完整夹具中通过当前基线；类型负例冻结实际未抑制诊断，待测表不得标作 PASS。
+- MI1 证据分别记录源码、构建／公共接口、行为／生命周期、类型、策略、原生及最终公开／交付状态，保留失败与修正。公开内容不包含私有提示词、委派文件、未经整理的对话或个人绝对路径。
+- MI1 沿用 HT1 准入：交互对象须挂接真实 Engine Stage 并显式设置自定义局部 `hitArea`；Graphics 边界或渲染像素不自动提供命中区域。事件回调通过 `event.payload` 读取坐标。
+<!-- MI1-AGENT-POLICY-END -->
+
 ## 公开贡献与证据
 
 措辞保持专业、客观与友善，以白鹭的目标场景、独立设计、接口和可复现结果说明变更。设计记录连接问题、选项、依据、反例及结论。技术比较注明资料版本与测试条件，性能目标与实测结论分别记录。

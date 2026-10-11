@@ -26,7 +26,7 @@ for (const [name, allowed] of Object.entries(expected)) {
   const dir = path.join(root, "packages", name);
   const pkg = JSON.parse(readFileSync(path.join(dir, "package.json"), "utf8"));
   const dependencies = Object.keys(pkg.dependencies ?? {}).sort();
-  const registryImports = { '#egret-textured-frame-state': { types: './dist/internal/texturedFrameState.d.ts', import: './dist/internal/texturedFrameState.js' } };
+  const registryImports = { '#egret-textured-frame-state': { types: './dist/internal/texturedFrameState.d.ts', import: './dist/internal/texturedFrameState.js' }, '#egret-mouse-input': {types:'./dist/mouseInput.d.ts',import:'./dist/mouseInput.js'} };
   if (name === 'engine') {
     if (JSON.stringify(pkg.imports) !== JSON.stringify(registryImports)) throw new Error('engine: private textured registry mapping mismatch');
   } else if (pkg.imports !== undefined) throw new Error(`${name}: unexpected private import mapping`);
@@ -46,6 +46,7 @@ for (const [name, allowed] of Object.entries(expected)) {
       './web': {types:'./dist/web/index.d.ts',import:'./dist/web/index.js'},
       './text': {types:'./dist/text.d.ts',import:'./dist/text.js'},
       './web/text': {types:'./dist/web/text.d.ts',import:'./dist/web/text.js'},
+      './web/input': {types:'./dist/web/input.d.ts',import:'./dist/web/input.js'},
       // S3D1_MAP_BEGIN
       './scene3d': {types:'./dist/rendering/scene3d.d.ts',import:'./dist/rendering/scene3d.js'},
       './webgpu/scene3d': {types:'./dist/web/scene3d.d.ts',import:'./dist/web/scene3d.js'},
@@ -84,6 +85,10 @@ for (const [name, allowed] of Object.entries(expected)) {
           const providerBarrel=['web/text.ts','dist/web/text.js','dist/web/text.d.ts'].includes(relative);
           if ((providerTarget && !providerBarrel) || ['web/text.js','dist/web/text.js'].includes(target)) throw new Error(`${file}: Canvas text opt-in module imported outside its barrel`);
         }
+      } else if (imported === '#egret-mouse-input') {
+        const relative=path.relative(dir,file).split(path.sep).join('/');
+        if(name!=='engine'||!['web/input.ts','web/MouseInput.ts','dist/web/input.d.ts','dist/web/MouseInput.js','dist/web/MouseInput.d.ts'].includes(relative))
+          throw new Error('MI1: private mouse input alias imported outside exact browser ports: '+relative);
       } else if (imported === '#egret-textured-frame-state') {
         // Only these two first-party adapters may share the Engine-owned registry.
         const relative = path.relative(dir, file).split(path.sep).join('/');
@@ -361,7 +366,7 @@ for (const [entry,values,emittedEntry] of textEntries) {
   }
 }
 const expectedRuntimeValues=['CancellationController','EgretError','Scope','createScope','Event','createEventType',
-  'EventDispatcher','DisplayObject','DisplayObjectContainer','Stage','createStage','reportDiagnostic','AssetManager',
+  'EventDispatcher','DisplayObject','DisplayObjectContainer','Stage','createStage','createDisplayInputOperations','reportDiagnostic','AssetManager',
   'createAssetManager','AssetLease','createAssetType','createAssetRef','Sprite','Graphics','collectFrameCommands',
   'collectFrameContent','collectTexturedFrameContent','Texture','createTexture','isTexture','Bitmap','Mesh2D','createSequenceClip','SequencePlayer','ByteReader','BYTE_READER_LIMITS'].sort();
 if (JSON.stringify(Object.keys(runtimeFacade)) !== JSON.stringify(expectedRuntimeValues)) throw new Error('runtime: unchanged default-root export surface mismatch');
@@ -2082,5 +2087,93 @@ for (const [file,edges] of Object.entries(sceneLiteralClosure)) {
 }
 
 // S3D1_BOUNDARY_END
+
+// MI1_BOUNDARY_BEGIN
+// This finite opt-in policy adds no wildcard package/private-import permission.
+const mousePublicTypes=['MouseInputOptions','MouseInput','MouseInputState','MouseInputEvents','MouseInputPayload','MouseInputCancelReason'];
+const mousePrivateNames=['createMouseInputOwner','createMouseInputWithNative','MouseInputOwner','MouseInputAssembly','MouseInputEnginePort','MouseInputNativeFactory','MouseInputNativePorts','MouseInputNativePair','MouseInputNativeKind','MouseInputNativeListener','MouseInputPoint','registerMouseInputEngine','requireMouseInputEngine','markMouseInputEngineStarted'];
+const mouseRead=file=>assetGroupStrip(readFileSync(path.join(root,file),'utf8'));
+const mouseSame=(a,b)=>JSON.stringify([...a].sort())===JSON.stringify([...b].sort());
+function mouseExports(code,label) {
+  if(/\bexport\s*(?:type\s*)?\*|\bexport\s+default\b/.test(code))throw new Error('MI1: exact optional export surface mismatch: '+label);
+  const values=[],types=[];
+  for(const match of code.matchAll(/\bexport(\s+type)?\s*\{([^}]+)\}(?:\s*from\s*['"]([^'"]+)['"])?\s*;?/g))
+    for(const name of match[2].split(',').map(value=>value.trim()).filter(Boolean)){if(!/^\w+$/.test(name))throw new Error('MI1: exact optional export surface mismatch: '+label);(match[1]?types:values).push(name);}
+  for(const match of code.matchAll(/\bexport\s+(?:declare\s+)?(type|interface|function|const|class|enum)\s+(\w+)/g))(['type','interface'].includes(match[1])?types:values).push(match[2]);
+  return {values,types};
+}
+function mouseEdges(code,label) {
+  if(/\bimport\s*\(/.test(code))throw new Error('MI1: exact input module import closure mismatch: '+label);
+  const clauses=[...code.matchAll(/\b(import|export)(\s+type)?\s*\{([^}]+)\}\s*from\s*['"]([^'"]+)['"]\s*;?/g)];
+  const rest=code.replace(/\b(?:import|export)(?:\s+type)?\s*\{[^}]+\}\s*from\s*['"][^'"]+['"]\s*;?/g,'');
+  if(/\bimport\b|\bfrom\s*['"]/.test(rest))throw new Error('MI1: exact input module import closure mismatch: '+label);
+  return clauses.map(match=>({kind:match[2]?'type':'value',target:match[4],names:match[3].split(',').map(value=>value.trim().split(/\s+as\s+/)[0]).filter(Boolean)}));
+}
+const mouseFacade=await import('@egret/engine/web/input');
+if(!mouseSame(Object.keys(mouseFacade),['createMouseInput'])||typeof mouseFacade.createMouseInput!=='function')throw new Error('MI1: exact optional runtime export surface mismatch');
+for(const [file,hasTypes]of [['packages/engine/web/input.ts',true],['packages/engine/dist/web/input.js',false],['packages/engine/dist/web/input.d.ts',true]]) {
+  const code=mouseRead(file),surface=mouseExports(code,file);
+  if(!mouseSame(surface.values,['createMouseInput'])||!mouseSame(surface.types,hasTypes?mousePublicTypes:[]))throw new Error('MI1: exact optional export surface mismatch: '+file);
+  const clauses=mouseEdges(code,file);
+  if(clauses.length!==(hasTypes?2:1)||clauses.some(clause=>clause.kind==='value'?(clause.target!=='./MouseInput.js'||!mouseSame(clause.names,['createMouseInput'])):(clause.target!=='#egret-mouse-input'||!mouseSame(clause.names,mousePublicTypes))))
+    throw new Error('MI1: exact optional forwarding mismatch: '+file);
+  if(code.replace(/\bexport(?:\s+type)?\s*\{[^}]+\}\s*from\s*['"][^'"]+['"]\s*;?/g,'').trim())throw new Error('MI1: input barrel performs module work: '+file);
+}
+const mouseEntryFiles=[['root',facade,'packages/engine/dist/index'],['web',webFacade,'packages/engine/dist/web/index'],['webgpu',gpuFacade,'packages/engine/dist/web/webgpu'],['runtime',runtimeFacade,'packages/runtime/dist/index'],['text',engineText,'packages/engine/dist/text']];
+for(const [label,values,entry]of mouseEntryFiles) {
+  const declared=mouseRead(entry+'.d.ts');
+  const prohibited=[...mousePublicTypes,'createMouseInput',...mousePrivateNames,...(label==='runtime'?[]:['createDisplayInputOperations','DisplayInputOperations'])];
+  for(const name of prohibited)if(name in values||new RegExp('\\b'+name+'\\b').test(declared))throw new Error('MI1: input leaks outside optional entry: '+label+'/'+name);
+  if(/(?:mouseInput|MouseInput|web\/input|#egret-mouse-input)/.test(declared))throw new Error('MI1: private input declaration edge leaks outside optional entry: '+label);
+}
+for(const file of ['packages/engine/src/mouseInputTypes.ts','packages/engine/dist/mouseInputTypes.d.ts']) {
+  const surface=mouseExports(mouseRead(file),file);if(surface.values.length||!mouseSame(surface.types,mousePublicTypes))throw new Error('MI1: canonical six erased input types mismatch: '+file);
+}
+if(Object.keys(await import(new URL('../packages/engine/dist/mouseInputTypes.js',import.meta.url))).length)throw new Error('MI1: input types emitted runtime values');
+for(const file of ['packages/engine/src/mouseInput.ts','packages/engine/src/mouseInputTypes.ts','packages/engine/src/internal/mouseInputFactoryState.ts','packages/engine/dist/mouseInput.js','packages/engine/dist/mouseInputTypes.js','packages/engine/dist/internal/mouseInputFactoryState.js','packages/runtime/src/displayInputOperations.ts','packages/runtime/dist/displayInputOperations.js']) {
+  const raw=readFileSync(path.join(root,file),'utf8'),code=mouseRead(file);
+  if(/\b(?:document|window|HTMLCanvasElement|HTMLElement|Document|Window|PointerEvent|MouseEvent|EventTarget|CSSStyleDeclaration|DOMRect|GPUDevice|NodeJS|process|Buffer|require)\b|['"]node:/.test(code)
+    ||/\/\/\/\s*<reference\s+(?:lib\s*=\s*['"]dom(?:\.iterable)?['"]|types\s*=\s*['"]node['"])/i.test(raw))throw new Error('MI1: input core host ambient dependency: '+file);
+  if(/\b(?:requestAnimationFrame|cancelAnimationFrame|setInterval|clearInterval|setTimeout|clearTimeout|performance|Date)\b/.test(code))throw new Error('MI1: input automatic timing dependency: '+file);
+}
+const mouseBrowserRules={
+  '@egret/runtime':{value:['EgretError']},
+  '#egret-mouse-input':{value:['createMouseInputWithNative'],type:['MouseInput','MouseInputOptions','MouseInputNativeFactory','MouseInputNativeKind','MouseInputNativeListener','MouseInputNativePair','MouseInputPoint']},
+};
+for(const file of ['packages/engine/web/MouseInput.ts','packages/engine/dist/web/MouseInput.js','packages/engine/dist/web/MouseInput.d.ts']) {
+  for(const clause of mouseEdges(mouseRead(file),file)){const allowed=mouseBrowserRules[clause.target]?.[clause.kind];if(!allowed||clause.names.some(name=>!allowed.includes(name))||new Set(clause.names).size!==clause.names.length)throw new Error('MI1: exact input module import closure mismatch: '+file);}
+  if(/\.\.[/]src[/]|\b(?:preventDefault|stopPropagation|setPointerCapture|releasePointerCapture|requestAnimationFrame|setTimeout)\s*\(/.test(mouseRead(file)))throw new Error('MI1: browser input forbidden native behavior: '+file);
+}
+const mouseEngine=mouseRead('packages/engine/src/Engine.ts'),mouseStart=mouseRead('packages/engine/src/startEngine.ts'),mouseOwner=mouseRead('packages/engine/src/mouseInput.ts');
+if(!/createDisplayInputOperations\(stage\)/.test(mouseEngine)||!/createMouseInputOwner\(this,/.test(mouseEngine)||!/\.registerScope\(scope\)/.test(mouseEngine))throw new Error('MI1: genuine Engine display/scope assembly guard missing');
+const closing=mouseEngine.indexOf('this.#currentState = "closing"'),inputGate=mouseEngine.indexOf('this.#mouseInputOwner.close()',closing),owners=mouseEngine.indexOf('this.#assetGroupOwner.close()',closing);
+if(closing<0||inputGate<closing||owners<inputGate)throw new Error('MI1: early Engine input gate order mismatch');
+if(!/await\s+host\.start\?\.\(\)\s*;\s*markMouseInputEngineStarted\(engine\)\s*;\s*return\s+engine/.test(mouseStart)
+  ||!/if\s*\(!started\)\s*throw\s+new\s+EgretError\(['"]MOUSE_INPUT_INVALID['"]\)/.test(mouseOwner))throw new Error('MI1: successful startup readiness guard missing');
+const ownerAssembly=mouseOwner.indexOf('export function createMouseInputOwner('),signalCapture=mouseOwner.indexOf('new CancellationController().signal');
+if(ownerAssembly<0||signalCapture<ownerAssembly||!/const originalSignals = new WeakMap/.test(mouseOwner))throw new Error('MI1: Signal intrinsic capture must occur per Engine assembly');
+for(const file of ['packages/runtime/src/displayInputOperations.ts','packages/runtime/dist/displayInputOperations.js']) {
+  const code=mouseRead(file);
+  if(!/queryDisplayHit\(stage,\s*x,\s*y,\s*\{\s*maxNodes\s*\}\)/.test(code)||!/dispatchDisplayInputEvent\(target,\s*event,/.test(code)
+    ||/\.hitTest\s*\(|\.dispatchEvent\s*\(|\.eventParent\s*\(|\.assertUsable\s*\(|\.parent\b|\.candidates\b/.test(code))throw new Error('MI1: captured display port must reuse private HT1 and typed route');
+}
+// Exact new target ownership; unrelated files never acquire input authority by
+// importing a dormant value, an erased type, or a dynamic relative edge.
+const mouseApprovedTargets={
+  'src/mouseInput.js':['src/Engine.ts','src/internal/mouseInputFactoryState.ts'],
+  'dist/mouseInput.js':['dist/Engine.js','dist/Engine.d.ts','dist/internal/mouseInputFactoryState.js','dist/internal/mouseInputFactoryState.d.ts'],
+  'src/mouseInputTypes.js':['src/mouseInput.ts'],
+  'dist/mouseInputTypes.js':['dist/mouseInput.js','dist/mouseInput.d.ts'],
+  'src/internal/mouseInputFactoryState.js':['src/mouseInput.ts','src/startEngine.ts'],
+  'dist/internal/mouseInputFactoryState.js':['dist/mouseInput.js','dist/startEngine.js'],
+};
+for(const file of [...files(path.join(root,'packages/engine/src')),...files(path.join(root,'packages/engine/web')),...files(path.join(root,'packages/engine/dist'))]) {
+  if(!/\.(?:ts|js)$/.test(file))continue;const relative=path.relative(path.join(root,'packages/engine'),file).split(path.sep).join('/'),code=assetGroupStrip(readFileSync(file,'utf8'));
+  for(const match of code.matchAll(/\b(?:from\s*|import\s*\(\s*|import\s*)['"](\.[^'"]+)['"]/g)) {
+    const target=path.relative(path.join(root,'packages/engine'),path.resolve(path.dirname(file),match[1])).split(path.sep).join('/');
+    if(Object.hasOwn(mouseApprovedTargets,target)&&!mouseApprovedTargets[target].includes(relative))throw new Error('MI1: private input target imported outside named paths: '+relative);
+  }
+}
+// MI1_BOUNDARY_END
 console.log(`Boundary check PASS: four private workspace packages, actual exports resolution, ${inspected} source/build/declaration files, DOM-free core and exact DOM-only web subtree without Node imports/globals.`);
 

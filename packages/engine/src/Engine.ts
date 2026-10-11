@@ -2,7 +2,7 @@ import { TEXTURED_FRAME_PROFILE_2D } from '@egret/contracts';
 import type { FrameOptions2D, RenderFrame2D, TexturedFrameProfile2D, TexturedRenderFrame2D } from '@egret/contracts';
 import { collectFrameContent, collectTexturedFrameContent } from '@egret/runtime';
 import type { Diagnostic, DiagnosticHandler, HostAdapter } from "@egret/contracts";
-import { EgretError, createScope, createStage, createAssetManager, reportDiagnostic } from "@egret/runtime";
+import { EgretError, createScope, createStage, createAssetManager, reportDiagnostic, createDisplayInputOperations } from "@egret/runtime";
 import type { AssetGroupOperations, AssetManager, AssetRef, Scope, Stage } from "@egret/runtime";
 import type { EngineContext } from "@egret/runtime";
 import { closeHost } from "./closeHost.js";
@@ -17,6 +17,8 @@ import { registerTextFieldEngine } from './internal/textFieldFactoryState.js';
 import { createAssetGroupOwner } from './assetGroup.js';
 import type { AssetGroupOwner } from './assetGroup.js';
 import type { AssetGroup, AssetGroupOptions } from './assetGroupTypes.js';
+import { createMouseInputOwner } from './mouseInput.js';
+import type { MouseInputOwner } from './mouseInput.js';
 
 export interface EngineOptions {
   readonly host: HostAdapter;
@@ -30,7 +32,7 @@ export interface CapturedEngineFramePorts {
   readonly textured: ((frame: TexturedRenderFrame2D) => unknown) | undefined;
   readonly profile: TexturedFrameProfile2D | undefined;
 }
-export let constructEngine: (options: EngineOptions, timeoutMs: number, releaseSurface: () => void, ports: CapturedEngineFramePorts, clockOptions: AdmittedGameClockOptions) => Engine;
+export let constructEngine: (options: EngineOptions, timeoutMs: number, surface: object, releaseSurface: () => void, ports: CapturedEngineFramePorts, clockOptions: AdmittedGameClockOptions) => Engine;
 const CREATION_TOKEN: unique symbol = Symbol("egret.engineFactory");
 
 /** Observation does not accept asynchronous submission or prove host completion. */
@@ -52,6 +54,7 @@ export class Engine {
   readonly #gameClockOwner: GameClockOwner;
   readonly #tweenOwner: TweenOwner;
   readonly #assetGroupOwner: AssetGroupOwner;
+  readonly #mouseInputOwner: MouseInputOwner;
   readonly #engineScopes = new WeakSet<Scope>();
   private frameBusy = false;
   private nextFrameId = 1;
@@ -73,7 +76,7 @@ export class Engine {
   public readonly texturedFrameProfile: TexturedFrameProfile2D | undefined;
   public readonly clock: GameClock;
 
-  private constructor(options: EngineOptions, timeoutMs: number, releaseSurface: () => void, ports: CapturedEngineFramePorts, clockOptions: AdmittedGameClockOptions, token: typeof CREATION_TOKEN) {
+  private constructor(options: EngineOptions, timeoutMs: number, surface: object, releaseSurface: () => void, ports: CapturedEngineFramePorts, clockOptions: AdmittedGameClockOptions, token: typeof CREATION_TOKEN) {
     if (token !== CREATION_TOKEN) throw new EgretError("ENGINE_FACTORY_REQUIRED");
     this.host = options.host;
     this.renderer = ports.legacy;
@@ -114,7 +117,13 @@ export class Engine {
       clock: this.#gameClockOwner.clock,
     });
     this.clock = this.#gameClockOwner.clock;
-    this.stage = createStage(this.#context);
+    const stage = createStage(this.#context);
+    // Capture original startup and Stage authority before publishing replaceable readonly fields.
+    this.#mouseInputOwner = createMouseInputOwner(this, {
+      surface, operations: createDisplayInputOperations(stage), assertOpen: this.#context.assertOpen,
+      report: this.#context.report, captureCleanup: this.#context.captureCleanup,
+    });
+    this.stage = stage;
     this.assets = createAssetManager(this.#context);
     // Authentic manager construction captured the operations before publication.
     this.#assetGroupOwner = createAssetGroupOwner({
@@ -126,7 +135,7 @@ export class Engine {
   }
 
   static {
-    constructEngine = (options, timeoutMs, releaseSurface, ports, clockOptions): Engine => new Engine(options, timeoutMs, releaseSurface, ports, clockOptions, CREATION_TOKEN);
+    constructEngine = (options, timeoutMs, surface, releaseSurface, ports, clockOptions): Engine => new Engine(options, timeoutMs, surface, releaseSurface, ports, clockOptions, CREATION_TOKEN);
   }
 
   public advanceTime(sourceSeconds: number): GameClockTick | undefined {
@@ -224,6 +233,7 @@ export class Engine {
     const scope = createScope(this.#context, (closed): void => { this.scopes.delete(closed); });
     this.scopes.add(scope);
     this.#engineScopes.add(scope);
+    this.#mouseInputOwner.registerScope(scope);
     return scope;
   }
 
@@ -243,6 +253,8 @@ export class Engine {
     this.closePromise = new Promise<void>((resolve, reject) => { resolveClose = resolve; rejectClose = reject; });
     // Cache the result before abort/cleanup/diagnostic callbacks can reenter.
     this.#currentState = "closing";
+    // Gate browser input before any callback-capable owner shutdown or idle wait.
+    this.#mouseInputOwner.close();
     // Terminal observations change now, before the existing idle barriers wait.
     this.#assetGroupOwner.close();
     this.#tweenOwner.close();
