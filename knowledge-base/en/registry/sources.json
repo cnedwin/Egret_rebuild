@@ -1253,11 +1253,23 @@
       "scope": "Independent specification and current 14-source review; genuine public CPU display/cache/Scope integration, exact types, copied-graph controls and saved complete existing prototype verification, each with its own cutoff.",
       "limit": "Overlapping suites are not summed. Build emitted[] is not a cryptographic emission attestation. Native TextField/fonts, full UI, CJK, phones, SDKs, performance, 3D, Spine, migration and final delivery remain separate and unaccepted.",
       "doc": "en/docs/text-field-tf1-evidence.md"
+    },
+    {
+      "id": "S079",
+      "type": "first_party_byte_reader_owned_cpu_behavior_type_and_fault_evidence",
+      "researchCheckedAt": "2026-10-11",
+      "artifacts": [
+        "evidence/byte-reader-br1-verification.json"
+      ],
+      "title": "First-party owned ByteReader BR1 evidence",
+      "scope": "Independent specification and first-party source; recorded isolated compilation, 23 public behavior tests, 18 exact unsuppressed negative type diagnostics, controlled allocation/copy failures and 156 related regressions.",
+      "limit": "Overlapping scopes are not summed; complete Main integration, bilingual meaning review, final prepush and remote delivery remain pending. Fault observations establish neither physical OOM/reclamation nor formats, Spine, rendering, platforms, performance or migration acceptance.",
+      "doc": "en/docs/byte-reader-br1-evidence.md"
     }
   ],
   "_localization": {
     "canonicalSource": "来源.json",
-    "canonicalSha256": "6a99cc0acaa9f9f4f8b13861d7e4ed819648409565ccdeb6093034b01e5bd775",
+    "canonicalSha256": "f952622ac7e88bea1f70c7f48d4fbd9246aa30d044a30ac8e634c74f5edd4bad",
     "role": "read_only_translation",
     "language": "en"
   }

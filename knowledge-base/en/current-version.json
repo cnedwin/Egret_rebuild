@@ -76,7 +76,9 @@
     "scalarTweenContract": "en/docs/scalar-tween-contract.md",
     "scalarTweenEvidence": "en/docs/scalar-tween-evidence.md",
     "textFieldTF1Contract": "en/docs/text-field-tf1-contract.md",
-    "textFieldTF1Evidence": "en/docs/text-field-tf1-evidence.md"
+    "textFieldTF1Evidence": "en/docs/text-field-tf1-evidence.md",
+    "byteReaderBR1Contract": "en/docs/byte-reader-br1-contract.md",
+    "byteReaderBR1Evidence": "en/docs/byte-reader-br1-evidence.md"
   },
   "architectureContractProbesRun": true,
   "browserApiPixelProbesRun": true,
@@ -262,7 +264,7 @@
   },
   "_localization": {
     "canonicalSource": "当前版本.json",
-    "canonicalSha256": "4b7357a1a8aafc101536ee5f59c41e9348099ca05764644017e43237a1f1320c",
+    "canonicalSha256": "b6c455d4ff4be301dac7ee4e88e7ae541984f63ddb46523a5dffac88119a49e6",
     "role": "read_only_translation",
     "language": "en"
   },
@@ -545,7 +547,7 @@
     "contract": "en/docs/display-content-bounds-contract.md",
     "evidence": "en/docs/display-content-bounds-evidence.md"
   },
-  "latestEngineeringPreview": "0.27.0",
+  "latestEngineeringPreview": "0.27.1",
   "texturedMesh2DImplementation": {
     "version": "0.23.0",
     "status": "bounded_increment_implemented",
@@ -718,6 +720,43 @@
     "threeDAccepted": false,
     "SpineAccepted": false,
     "migrationAccepted": false,
+    "historicalFailuresRetained": true
+  },
+  "byteReaderBR1Implementation": {
+    "engineeringPreview": "0.27.1",
+    "deliverable": "V030",
+    "sourceId": "S079",
+    "status": "isolated_owned_byte_reader_verified_main_integration_pending",
+    "scope": "Owned synchronous CPU binary reading only; no format or legacy ByteArray compatibility.",
+    "packageVersion": "0.0.0",
+    "protocolVersion": "1.0",
+    "defaultExportSurfaceChanged": true,
+    "values": [
+      "ByteReader",
+      "BYTE_READER_LIMITS"
+    ],
+    "typeOnlyNames": [
+      "ByteOrder"
+    ],
+    "publicEntries": [
+      "@egret/runtime",
+      "@egret/engine"
+    ],
+    "isolatedBehavior": 23,
+    "isolatedExactNegativeTypes": 18,
+    "controlledFaultObservations": 5,
+    "observationsAreTestCounts": false,
+    "relatedRegressions": 156,
+    "suiteTotalsAdded": false,
+    "completeMainVerification": "PENDING",
+    "publicCuration": "AUTHOR_PREPARED_PENDING_INDEPENDENT_REVIEW",
+    "mandatoryPrepush": "PENDING",
+    "remoteDelivery": "PENDING",
+    "newNativeRenderingAccepted": false,
+    "formatsAccepted": false,
+    "SpineAccepted": false,
+    "performanceAccepted": false,
+    "fullMigrationAccepted": false,
     "historicalFailuresRetained": true
   }
 }

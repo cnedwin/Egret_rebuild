@@ -214,7 +214,7 @@ for (const name of geometryValues) if (typeof contractsFacade[name] !== 'functio
 // requires actual Engine captures and first-party host refusal in later stages.
 if (contractsFacade.TEXTURED_FRAME_PROFILE_2D !== 'egret.textured-frame2d/1' || facade.TEXTURED_FRAME_PROFILE_2D !== contractsFacade.TEXTURED_FRAME_PROFILE_2D) throw new Error('engine: textured profile literal mismatch');
 // Exact accepted Mesh root plus the opt-in factory and shared literal.
-const texturedRootValues = ['Engine', 'createEngine', 'createEngineForProfile', 'CancellationController', 'EgretError', 'Event', 'createEventType', 'EventDispatcher', 'DisplayObject', 'DisplayObjectContainer', 'Scope', 'Stage', 'AssetManager', 'AssetLease', 'createAssetType', 'createAssetRef', 'Sprite', 'Graphics', ...imageValues, ...geometryValues, 'TEXTURED_FRAME_PROFILE_2D', 'Texture', 'createTexture', 'isTexture', 'Bitmap', 'Mesh2D', 'createSequenceClip', 'SequencePlayer'].sort();
+const texturedRootValues = ['Engine', 'createEngine', 'createEngineForProfile', 'CancellationController', 'EgretError', 'Event', 'createEventType', 'EventDispatcher', 'DisplayObject', 'DisplayObjectContainer', 'Scope', 'Stage', 'AssetManager', 'AssetLease', 'createAssetType', 'createAssetRef', 'Sprite', 'Graphics', ...imageValues, ...geometryValues, 'TEXTURED_FRAME_PROFILE_2D', 'Texture', 'createTexture', 'isTexture', 'Bitmap', 'Mesh2D', 'createSequenceClip', 'SequencePlayer', 'ByteReader', 'BYTE_READER_LIMITS'].sort();
 if (typeof facade.createEngineForProfile !== 'function' || JSON.stringify(Object.keys(facade)) !== JSON.stringify(texturedRootValues)) throw new Error('root: executable textured-frame export surface mismatch');
 const texturedTypes = ['TexturedFrameProfile2D', 'TexturedMeshCommand2D', 'TexturedRenderCommand2D', 'TexturedRenderFrame2D', 'TexturedRenderHostAdapter'];
 for (const [entry, values, declarationPath] of [['contracts', contractsFacade, 'packages/contracts/dist/index.d.ts'], ['root', facade, 'packages/engine/dist/index.d.ts']]) {
@@ -339,7 +339,7 @@ for (const [entry,values,emittedEntry] of textEntries) {
 const expectedRuntimeValues=['CancellationController','EgretError','Scope','createScope','Event','createEventType',
   'EventDispatcher','DisplayObject','DisplayObjectContainer','Stage','createStage','reportDiagnostic','AssetManager',
   'createAssetManager','AssetLease','createAssetType','createAssetRef','Sprite','Graphics','collectFrameCommands',
-  'collectFrameContent','collectTexturedFrameContent','Texture','createTexture','isTexture','Bitmap','Mesh2D','createSequenceClip','SequencePlayer'].sort();
+  'collectFrameContent','collectTexturedFrameContent','Texture','createTexture','isTexture','Bitmap','Mesh2D','createSequenceClip','SequencePlayer','ByteReader','BYTE_READER_LIMITS'].sort();
 if (JSON.stringify(Object.keys(runtimeFacade)) !== JSON.stringify(expectedRuntimeValues)) throw new Error('runtime: unchanged default-root export surface mismatch');
 for (const [entry,values,emittedEntry,valueTarget,typeTarget] of [
   ['runtime/text',runtimeText,'packages/runtime/dist/text/index','./TextRasterCache.js','./types.js'],
@@ -428,6 +428,81 @@ for(const file of ['packages/engine/src/tween.ts','packages/engine/src/tweenType
   const code=raw.replace(/\/\*[\s\S]*?\*\//g,'').replace(/\/\/[^\n]*/g,'');
   if(/\b(?:Date|performance|requestAnimationFrame|cancelAnimationFrame|setInterval|clearInterval|setTimeout|clearTimeout)\b/.test(code))throw new Error(`${file}: Tween automatic timing dependency`);
   if(/\/\/\/\s*<reference\s+(?:lib\s*=\s*["']dom(?:\.iterable)?["']|types\s*=\s*["']node["'])/i.test(raw))throw new Error(`${file}: host ambient dependency`);
+}
+
+// BR1 extends only the two retained exact value inventories above. These new
+// checks follow every old refusal, without adding an import/subpath exception.
+const byteReaderValues = ['BYTE_READER_LIMITS', 'ByteReader'];
+const byteReaderNames = [...byteReaderValues, 'ByteOrder'];
+const byteReaderStrip = raw => raw.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/[^\n]*/g, '');
+const byteReaderModuleReference = /["'][^"']*(?:^|\/)ByteReader\.js["']/;
+const byteReaderRuntimeWildcard = /export\s+(?:type\s+)?\*(?:\s+as\s+\w+)?\s*from\s*["']@egret\/runtime["']/;
+// These public barrels admit named runtime dependencies, never a root-runtime
+// namespace import or import-type query. The observed genuine baseline has
+// neither form. Reject the form itself, without resolving local names/escapes.
+// This bounded ordinary-barrel scan is not a general TypeScript parser.
+const byteReaderRuntimeModuleAccess = raw => {
+  const tokens = [...raw.matchAll(/\/\*[\s\S]*?\*\/|\/\/[^\n]*|"(?:\\(?:\r\n|[\s\S])|[^"\\\r\n])*"|'(?:\\(?:\r\n|[\s\S])|[^'\\\r\n])*'|`(?:\\[\s\S]|[^`\\$]|\$(?!\{))*`|[$_\p{ID_Start}][$\u200c\u200d\p{ID_Continue}]*|[^\s]/gu)]
+    .map(match => match[0]).filter(text => !text.startsWith('/*') && !text.startsWith('//'));
+  const target = token => typeof token === 'string' && /^(["'])@egret\/runtime\1$/.test(token);
+  for (let index = 0; index < tokens.length; index++) {
+    if (tokens[index] !== 'import') continue;
+    // typeof import(...) exposes value shapes even with no BR1 name in the
+    // declaration; the same fixed policy also rejects qualified import types.
+    if (tokens[index + 1] === '(' && target(tokens[index + 2])) return true;
+    let from = index + 1;
+    for (; from < tokens.length; from++) {
+      if (tokens[from] === ';' || (from > index + 1 && ['import', 'export'].includes(tokens[from]))) break;
+      if (tokens[from] === 'from' && /^["']/.test(tokens[from + 1] ?? '')) break;
+    }
+    if (tokens[from] === 'from' && target(tokens[from + 1]) && tokens.slice(index + 1, from).includes('*')) return true;
+  }
+  return false;
+};
+for (const [entry, values, emittedEntry] of [...textEntries, ['project', projectFacade, 'packages/project/dist/index']]) {
+  const rawDeclaration = readFileSync(path.join(root, emittedEntry + '.d.ts'), 'utf8');
+  const declaration = byteReaderStrip(rawDeclaration);
+  const emitted = byteReaderStrip(readFileSync(path.join(root, emittedEntry + '.js'), 'utf8'));
+  if (entry !== 'root' && entry !== 'runtime') {
+    for (const name of byteReaderNames) if (name in values || new RegExp('\\b' + name + '\\b').test(declaration + '\n' + emitted)) throw new Error(`${entry}: root/runtime-only ByteReader port leaked: ${name}`);
+    if (byteReaderModuleReference.test(declaration + '\n' + emitted) || byteReaderRuntimeWildcard.test(declaration + '\n' + emitted)
+        || byteReaderRuntimeModuleAccess(rawDeclaration)) throw new Error(`${entry}: root/runtime-only ByteReader module leaked`);
+    continue;
+  }
+  if ('ByteOrder' in values || /\bByteOrder\b/.test(emitted)) throw new Error(`${entry}: ByteOrder must be erased`);
+  if (typeof values.ByteReader !== 'function' || typeof values.BYTE_READER_LIMITS !== 'object' || values.BYTE_READER_LIMITS === null) throw new Error(`${entry}: ByteReader value surface missing`);
+  const target = entry === 'root' ? '@egret/runtime' : './ByteReader.js';
+  const ports = [...declaration.matchAll(/export(\s+type)?\s*\{([^}]+)\}\s*from\s*["']([^"']+)["'];?/g)].filter(match =>
+    byteReaderNames.some(name => new RegExp('\\b' + name + '\\b').test(match[2])) || /(?:^|\/)ByteReader\.js$/.test(match[3]));
+  const valuesDeclared = ports.filter(match => !match[1]);
+  const typesDeclared = ports.filter(match => !!match[1]);
+  const remainder = ports.reduce((text, match) => text.replace(match[0], ''), declaration);
+  // Named clauses are exact: aliases, inline type modifiers, duplicate clauses
+  // and runtime-wide type namespaces cannot silently enlarge this small API.
+  if (ports.length !== 2 || valuesDeclared.length !== 1 || typesDeclared.length !== 1
+      || ports.some(match => match[3] !== target)
+      || JSON.stringify(valuesDeclared[0][2].split(',').map(name => name.trim()).sort()) !== JSON.stringify(byteReaderValues)
+      || typesDeclared[0][2].trim() !== 'ByteOrder'
+      || byteReaderNames.some(name => new RegExp('\\b' + name + '\\b').test(remainder))
+      || byteReaderModuleReference.test(remainder) || byteReaderRuntimeWildcard.test(remainder)
+      || byteReaderRuntimeModuleAccess(rawDeclaration)) throw new Error(`${entry}: exact ByteReader declaration re-export mismatch`);
+}
+const byteReaderModule = await import(new URL('../packages/runtime/dist/ByteReader.js', import.meta.url));
+if (JSON.stringify(Object.keys(byteReaderModule)) !== JSON.stringify(byteReaderValues)) throw new Error('runtime: canonical ByteReader runtime export surface mismatch');
+for (const name of byteReaderValues) {
+  if (runtimeFacade[name] !== byteReaderModule[name]) throw new Error(`runtime: ByteReader module identity mismatch: ${name}`);
+  if (facade[name] !== runtimeFacade[name]) throw new Error(`root: ByteReader runtime identity mismatch: ${name}`);
+}
+const byteReaderDeclaration = byteReaderStrip(readFileSync(path.join(root, 'packages/runtime/dist/ByteReader.d.ts'), 'utf8'));
+const byteReaderDeclaredNames = [...byteReaderDeclaration.matchAll(/\bexport\s+(?:declare\s+)?(?:type|interface|function|const|class|enum)\s+(\w+)/g)].map(match => match[1]).sort();
+const byteReaderExportCount = (byteReaderDeclaration.replace(/^[ \t]*export[ \t]*\{[ \t]*\}[ \t]*;[ \t]*\r?$/gm, '').match(/\bexport\b/g) ?? []).length;
+if (JSON.stringify(byteReaderDeclaredNames) !== JSON.stringify([...byteReaderNames].sort()) || byteReaderExportCount !== 3) throw new Error('runtime: canonical ByteReader declaration export surface mismatch');
+// Triple-slash references remain dependencies even though the retained generic
+// scan removes ordinary comments. This exact utility stays DOM/Node-free.
+for (const file of ['packages/runtime/src/ByteReader.ts', 'packages/runtime/dist/ByteReader.js', 'packages/runtime/dist/ByteReader.d.ts']) {
+  const raw = readFileSync(path.join(root, file), 'utf8'), code = byteReaderStrip(raw);
+  if (forbidden.test(code) || /\b(?:HTMLElement|Document|Window|Navigator|NodeJS)\b/.test(code)
+      || /\/\/\/\s*<reference\s+(?:lib\s*=\s*["']dom(?:\.iterable)?["']|types\s*=\s*["']node["'])/i.test(raw)) throw new Error(`${file}: host ambient dependency`);
 }
 
 console.log(`Boundary check PASS: four private workspace packages, actual exports resolution, ${inspected} source/build/declaration files, DOM-free core and exact DOM-only web subtree without Node imports/globals.`);

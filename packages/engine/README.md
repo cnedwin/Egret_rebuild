@@ -52,3 +52,7 @@ Package version `0.0.0`, protocol `1.0` and experimental API status remain uncha
 ## Explicit sequence animation
 
 `createSequenceClip` owns validated atlas timing; `SequencePlayer` applies caller-supplied absolute seconds to one Bitmap and exact borrowed lease. Construction changes no crop; disposal releases no caller resource. There is no automatic scheduler. See the [contract and acceptance scope](../../knowledge-base/en/docs/sequence-player-contract.md) and public `examples/sequence-player` / `tools/sequence-player` guides.
+
+## Owned binary reading
+
+The root exports `ByteReader` and the frozen `BYTE_READER_LIMITS`, plus type-only `ByteOrder`. Readers copy an eligible fixed ordinary Uint8Array payload, default to bigEndian, and support bounded atomic scalar/copy reads. Returned bytes are independent copies; disposal clears owned references. Existing Scope may own a reader through its disposable shape. Read the [BR1 contract](../../knowledge-base/en/docs/byte-reader-br1-contract.md) and [recorded verification scope](../../knowledge-base/en/docs/byte-reader-br1-evidence.md). No binary format, text encoding or legacy ByteArray compatibility is promised. The Main integration and publication checks remain pending at this preparation cutoff.

@@ -76,7 +76,9 @@
     "scalarTweenContract": "Cns/docs/标量补间契约.md",
     "scalarTweenEvidence": "Cns/docs/标量补间证据.md",
     "textFieldTF1Contract": "Cns/docs/文字显示TF1契约.md",
-    "textFieldTF1Evidence": "Cns/docs/文字显示TF1证据.md"
+    "textFieldTF1Evidence": "Cns/docs/文字显示TF1证据.md",
+    "byteReaderBR1Contract": "Cns/docs/字节读取器BR1契约.md",
+    "byteReaderBR1Evidence": "Cns/docs/字节读取器BR1证据.md"
   },
   "architectureContractProbesRun": true,
   "browserApiPixelProbesRun": true,
@@ -539,7 +541,7 @@
     "contract": "Cns/docs/显示内容边界契约.md",
     "evidence": "Cns/docs/显示内容边界证据.md"
   },
-  "latestEngineeringPreview": "0.27.0",
+  "latestEngineeringPreview": "0.27.1",
   "texturedMesh2DImplementation": {
     "version": "0.23.0",
     "status": "bounded_increment_implemented",
@@ -712,6 +714,43 @@
     "threeDAccepted": false,
     "SpineAccepted": false,
     "migrationAccepted": false,
+    "historicalFailuresRetained": true
+  },
+  "byteReaderBR1Implementation": {
+    "engineeringPreview": "0.27.1",
+    "deliverable": "V030",
+    "sourceId": "S079",
+    "status": "isolated_owned_byte_reader_verified_main_integration_pending",
+    "scope": "仅自有同步 CPU 二进制读取，不验收格式或旧 ByteArray 兼容。",
+    "packageVersion": "0.0.0",
+    "protocolVersion": "1.0",
+    "defaultExportSurfaceChanged": true,
+    "values": [
+      "ByteReader",
+      "BYTE_READER_LIMITS"
+    ],
+    "typeOnlyNames": [
+      "ByteOrder"
+    ],
+    "publicEntries": [
+      "@egret/runtime",
+      "@egret/engine"
+    ],
+    "isolatedBehavior": 23,
+    "isolatedExactNegativeTypes": 18,
+    "controlledFaultObservations": 5,
+    "observationsAreTestCounts": false,
+    "relatedRegressions": 156,
+    "suiteTotalsAdded": false,
+    "completeMainVerification": "PENDING",
+    "publicCuration": "AUTHOR_PREPARED_PENDING_INDEPENDENT_REVIEW",
+    "mandatoryPrepush": "PENDING",
+    "remoteDelivery": "PENDING",
+    "newNativeRenderingAccepted": false,
+    "formatsAccepted": false,
+    "SpineAccepted": false,
+    "performanceAccepted": false,
+    "fullMigrationAccepted": false,
     "historicalFailuresRetained": true
   }
 }

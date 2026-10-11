@@ -32,3 +32,5 @@ export { Mesh2D } from './Mesh2D.js';
 export { createSequenceClip } from './sequenceClip.js';
 export type { SequenceFrameInput, SequenceClipInput, SequenceClip, SequenceRegion, SequenceSample, SequencePlaybackMode } from './sequenceClip.js';
 export { SequencePlayer } from './SequencePlayer.js';
+export { ByteReader, BYTE_READER_LIMITS } from "./ByteReader.js";
+export type { ByteOrder } from "./ByteReader.js";

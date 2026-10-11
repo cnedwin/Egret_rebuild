@@ -2,6 +2,12 @@
 
 English | [简体中文](../Cns/CHANGELOG.md)
 
+## Engineering preview: 0.27.1 — 2026-10-11
+
+Added a small owned ByteReader for binary resource and engineering work: signed/unsigned scalar reads, explicit byte order, an atomic cursor, independent copy-out and synchronous disposal. Only the engine/runtime roots gain two shared values and the erased ByteOrder type. The per-reader payload limit is 16,777,216 bytes; this is not a process-memory budget or a legacy ByteArray compatibility claim. Read the [contract](docs/byte-reader-br1-contract.md) and [bounded evidence](docs/byte-reader-br1-evidence.md).
+
+Recorded isolated compilation, 23 behavior cases, strict positive types, 18 exact negative diagnostics, controlled allocation/copy failures and 156 affected regressions passed. Earlier missing-export, setup and type failures remain preserved. These scopes are not summed. The Main-compatible integration, complete current core checks, bilingual meaning review, final mandatory prepush and remote delivery remain PENDING at this preparation cutoff. The allocation fixture is an exact path copy into the default test inventory; its five observations are not five test cases. Packages remain private 0.0.0 and protocol 1.0. This increment does not accept new rendering, fonts, formats, Spine, platforms, performance or complete migration.
+
 ## Engineering preview: 0.27.0 — 2026-10-11
 
 The 0.27.0 engineering preview adds a factory-owned, noneditable TextField through `@egret/engine/text`: `createTextField(engine, scope, cache)` and type-only `TextField`/`TextFieldStatus`. Ten-scalar requests, explicit preparation, revision replacement and coalesced caller leases follow genuine Engine/Scope/cache affinity. Committed images and blank direct bounds participate in both image-capable collectors under existing budgets; legacy image refusal is preserved. Default roots remain unchanged. Read the [contract](docs/text-field-tf1-contract.md) and [evidence](docs/text-field-tf1-evidence.md).

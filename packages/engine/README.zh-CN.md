@@ -52,3 +52,7 @@ await engine.dispose();
 ## 显式序列动画
 
 `createSequenceClip` 拥有已校验图集时序；`SequencePlayer` 把调用方提供的绝对秒数应用于一个 Bitmap 与确切借用租约。构造不改变裁剪，销毁不释放调用方资源，不包含自动调度器。见[契约与验收范围](../../knowledge-base/Cns/docs/显式时间序列播放器契约.md)，以及公共 `examples/sequence-player` / `tools/sequence-player` 指南。
+
+## 自有二进制读取
+
+根入口导出 `ByteReader` 与冻结的 `BYTE_READER_LIMITS`，以及仅类型 `ByteOrder`。读取器复制符合条件的固定普通 Uint8Array 载荷，默认 bigEndian，提供有界原子标量／复制读取；返回字节是独立副本，释放清除自有引用。既有 Scope 可通过可释放对象形状管理读取器。阅读 [BR1 契约](../../knowledge-base/Cns/docs/字节读取器BR1契约.md)与[已有验证范围](../../knowledge-base/Cns/docs/字节读取器BR1证据.md)。不承诺二进制格式、文字编码或旧 ByteArray 兼容；本准备截止点的 Main 集成与公开门禁仍待完成。

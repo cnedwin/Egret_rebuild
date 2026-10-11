@@ -1253,6 +1253,18 @@
       "scope": "独立规格及当前 14 源码审阅；真实公共 CPU 显示／cache／Scope 整合、精确类型、复制工程对照及保存的完整既有原型验证，各自具有确切截止点。",
       "limit": "重叠套件不合计。build emitted[] 不构成产物密码学见证。原生 TextField／字体、完整 UI、CJK、手机、SDK、性能、3D、Spine、迁移及最终交付仍属独立未验收范围。",
       "doc": "Cns/docs/文字显示TF1证据.md"
+    },
+    {
+      "id": "S079",
+      "type": "first_party_byte_reader_owned_cpu_behavior_type_and_fault_evidence",
+      "researchCheckedAt": "2026-10-11",
+      "artifacts": [
+        "evidence/byte-reader-br1-verification.json"
+      ],
+      "title": "第一方自有字节读取器 BR1 证据",
+      "scope": "独立规格和第一方源码；已记录隔离编译、23 项公共行为、18 条精确无抑制负向类型诊断、受控分配／复制故障和 156 项相关回归。",
+      "limit": "重叠范围不合计；Main 完整集成、双语语义审阅、最终 prepush 与远程交付仍待完成。故障观察不证明物理 OOM／回收，也不验收格式、Spine、渲染、平台、性能或迁移。",
+      "doc": "Cns/docs/字节读取器BR1证据.md"
     }
   ]
 }

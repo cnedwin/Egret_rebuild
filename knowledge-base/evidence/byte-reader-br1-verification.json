@@ -1,0 +1,230 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-11",
+  "engineeringPreview": "0.27.1",
+  "sourceId": "S079",
+  "deliverable": "V030",
+  "scope": "Recorded isolated CPU ByteReader checks; final Main integration and publication pending",
+  "actualResults": {
+    "compilationExit": 0,
+    "publicBehaviorTests": 23,
+    "publicBehaviorPassed": 23,
+    "positiveTypeExit": 0,
+    "exactUnsuppressedNegativeDiagnostics": 18,
+    "controlledFaultExit": 0,
+    "controlledFaultObservations": 5,
+    "controlledFaultObservationsAreTestCount": false,
+    "relatedRegressions": 156,
+    "relatedRegressionPassed": 156,
+    "suiteTotalsAdded": false
+  },
+  "preservedFailures": [
+    "public missing-export RED",
+    "missing existing dependency in private setup",
+    "original positive TS2344 and one negative diagnostic prediction mismatch",
+    "original receipt scope erratum"
+  ],
+  "records": [
+    {
+      "role": "red",
+      "identity": {
+        "bytes": 4156,
+        "sha256": "916d82a4091389329bd74e76add8c1d9c953789da13cc9dd0d48e50045e0ee0c",
+        "status": "identity_only_not_distributed"
+      }
+    },
+    {
+      "role": "compileFailure",
+      "identity": {
+        "bytes": 3399,
+        "sha256": "26dddf83110d85996d924d758da273c54c2745c2f417ef99399112da65b8195e",
+        "status": "identity_only_not_distributed"
+      }
+    },
+    {
+      "role": "compilation",
+      "identity": {
+        "bytes": 4102,
+        "sha256": "ff1a484b40622fd0f520315dea4939ddda1401c651479efa85ec4e440e78d6fe",
+        "status": "identity_only_not_distributed"
+      }
+    },
+    {
+      "role": "originalBehaviorAndTypeFailure",
+      "identity": {
+        "bytes": 5255,
+        "sha256": "0b68437217bfdf391c5be266c07dcc164f3bd1c2ccd185693a16e6c680281f1c",
+        "status": "identity_only_not_distributed"
+      }
+    },
+    {
+      "role": "originalTypeScopeErratum",
+      "identity": {
+        "bytes": 1214,
+        "sha256": "4609ab8f2c76476a0beddf6cef49f9ebe046fef06a4e135fed62f79b6868beb9",
+        "status": "identity_only_not_distributed"
+      }
+    },
+    {
+      "role": "exactTypeReconciliation",
+      "identity": {
+        "bytes": 8960,
+        "sha256": "6ce6df095a8233897fb99b6912f81571840c2493f73d2c2f5ab3a929910badc8",
+        "status": "identity_only_not_distributed"
+      }
+    },
+    {
+      "role": "positiveTypes",
+      "identity": {
+        "bytes": 2066,
+        "sha256": "7eea3a6760e77f26e9785fbb3db9af4271385212691d42576ba8dad52cc6d0f8",
+        "status": "identity_only_not_distributed"
+      }
+    },
+    {
+      "role": "negativeTypes",
+      "identity": {
+        "bytes": 2070,
+        "sha256": "10aea14c44a5e75738d057d0ced8d203fdbd98f2d95042d42a0ef297227160f6",
+        "status": "identity_only_not_distributed"
+      }
+    },
+    {
+      "role": "controlledFault",
+      "identity": {
+        "bytes": 1952,
+        "sha256": "ce4dcba8d4c96fc9e5723a1e70b781244afceaff03001a51c24e8add8d67c1db",
+        "status": "identity_only_not_distributed"
+      }
+    },
+    {
+      "role": "controlledFaultOutput",
+      "identity": {
+        "bytes": 588,
+        "sha256": "5576c20e0280258529f186c742fcd8ff82a57a2ccf0f83bf5d43997e2617ca28",
+        "status": "identity_only_not_distributed"
+      }
+    },
+    {
+      "role": "affectedRegressions",
+      "identity": {
+        "bytes": 2416,
+        "sha256": "15315f953bd793af09388d379ce4c844ac9ed4d39f43868936b7e312f6323afe",
+        "status": "identity_only_not_distributed"
+      }
+    },
+    {
+      "role": "independentProductSourceReview",
+      "identity": {
+        "bytes": 5757,
+        "sha256": "b9d3de27139039b61b3ee4eaed77716a234547998168a93d147c56f8dd1d486e",
+        "status": "identity_only_not_distributed"
+      }
+    },
+    {
+      "role": "independentFixtureSourceReview",
+      "identity": {
+        "bytes": 7337,
+        "sha256": "5ed2c69a8f8621c889c3d7799c320ae16cfe3a990cbfd7e4151e9c207ab24337",
+        "status": "identity_only_not_distributed"
+      }
+    },
+    {
+      "role": "independentFaultSourceReview",
+      "identity": {
+        "bytes": 4407,
+        "sha256": "2fce78e41332a9262d244916ce1e1dbd805d0cf1eba3d2aa582f6d51cd5ba803",
+        "status": "identity_only_not_distributed"
+      }
+    },
+    {
+      "role": "independentPublicContractSourceReview",
+      "identity": {
+        "bytes": 17487,
+        "sha256": "8082ce5652c702d8f25f5fde063ba77e48d238041974fa9e8471e3d27c61b06f",
+        "status": "identity_only_not_distributed"
+      }
+    }
+  ],
+  "currentPathCopy": {
+    "destination": "tests/byte-reader-allocation.test.mjs",
+    "bytes": 5826,
+    "sha256": "5ef0b25c4bc69aba258c291968fba6535ee51fc3c804b43227e911bf683461d4",
+    "relationship": "CURRENT_PATH_COPY",
+    "sourceExecutedAsPrivatePlainMjs": true,
+    "MainTestHarnessExecuted": false,
+    "observationsAreFiveTests": false
+  },
+  "currentMain": {
+    "selectedCommit": "935639ee8df30937a0fd8bc9706ef1a11470aa9d",
+    "integration": "PENDING",
+    "completeVerification": "PENDING",
+    "bilingualMeaningReview": "PENDING",
+    "mandatoryPrepush": "PENDING",
+    "remoteDelivery": "PENDING"
+  },
+  "physicalOOMRecoveryProven": false,
+  "physicalReclamationProven": false,
+  "newNativeRenderingAcceptance": false,
+  "formatOrSpineAcceptance": false,
+  "firstPartyLicense": "Apache-2.0",
+  "rawPrivateExecutionTreesDistributed": false,
+  "mainIntegrationSuccessor": {
+    "date": "2026-10-11",
+    "selectedBase": "935639ee8df30937a0fd8bc9706ef1a11470aa9d",
+    "completedAtUtc": "2026-10-11T11:46:43.8874112Z",
+    "status": "ACTUAL_MAIN_BUILD_BOUNDARIES_TYPES_AND_FULL_CPU_TESTS_PASS",
+    "counts": {
+      "tests": 2219,
+      "passed": 2219,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "positiveConsumersAndExactNegativeDiagnostics": "PASS_IN_COMPLETE_TYPE_TOOL",
+    "sourceControls": "PASS_IN_DEFAULT_COMPLETE_TEST_HARNESS",
+    "allocationFixture": "ONE_DEFAULT_FILE_TEST_WITH_FIVE_CONTROLLED_OBSERVATIONS",
+    "verificationReceipt": {
+      "bytes": 3766,
+      "sha256": "afc6fd58e2373bf2872518edda0e991e4710e8540eaf5cde81125b16e006406f",
+      "status": "identity_only_not_distributed"
+    },
+    "verificationOutput": {
+      "bytes": 363379,
+      "sha256": "768f5ec2e6ec1956182420bf786195392d76873e716273cfe06a5fca9b67490e",
+      "status": "identity_only_not_distributed"
+    },
+    "independentSourceAndBilingualReview": {
+      "bytes": 32738,
+      "sha256": "ff70c769a19377c56cb3383bc056d87bcae9d05e3c6541c266348221d7cddffa",
+      "status": "identity_only_not_distributed"
+    },
+    "unchangedMainProductIdentityCount": 148,
+    "unchangedRendererSourceGraph": true,
+    "mandatoryPrepush": "PENDING_FRESH_HOOK",
+    "remoteDelivery": "PENDING",
+    "newNativeRenderingAcceptance": false,
+    "scope": "Actual repository verification on the Main-compatible BR1 source selection; previous candidate and isolated records retain their original cutoffs. Unchanged renderer source identity is not a new browser, TextField, font, phone, Spine or performance result."
+  },
+  "laterPrivateWholeFailure": {
+    "counts": {
+      "tests": 2265,
+      "passed": 2264,
+      "failed": 1
+    },
+    "exitCode": 1,
+    "receipt": {
+      "bytes": 1966,
+      "sha256": "fc95fbe8d1ed7d281b247eea0ba024e2075485be570b2f6783d359296994888d",
+      "status": "identity_only_not_distributed"
+    },
+    "output": {
+      "bytes": 237459,
+      "sha256": "72e09da925ddfd5ba5ff03c5929938012bcb80f286d588d76dd0860803818f75",
+      "status": "identity_only_not_distributed"
+    },
+    "cause": "Missing private engine package dependency directory stopped the existing B1 inventory before its thirteen cases.",
+    "productFailureEstablished": false,
+    "notMainAcceptance": true
+  }
+}

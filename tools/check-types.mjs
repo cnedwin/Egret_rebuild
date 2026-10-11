@@ -334,3 +334,44 @@ try {
   }
   console.log('TextField fixtures PASS: DOM/Node-free positive, 18 ordinary, 4 supplemental and 12 dedicated-file import location diagnostics.');
 } finally {for(const config of fieldTypeConfigs)rmSync(config,{force:true});}
+
+
+// BR1 consumes the frozen R2 public consumers under the existing DOM-free
+// strict baseline; every previous compiler/diagnostic check stays above intact.
+const byteReaderTypeConfigs = [];
+try {
+  for (const [name, source, count, marker] of [
+    ['positive', 'byte-reader-positive.ts', 0, null],
+    ['negative', 'byte-reader-negative.ts', 18, 'BYTE_READER_CASE'],
+  ]) {
+    const file = 'tests/types/' + source, fixture = readFileSync(path.join(root, file), 'utf8');
+    if (/@ts-(?:expect-error|ignore|nocheck)/.test(fixture)) throw new Error('ByteReader fixture contains suppression: ' + file);
+    const expected = marker ? fixture.split(/\r?\n/).flatMap((line, index) => {
+      const match = line.match(/^\/\/ BYTE_READER_CASE ([\w-]+) TS(\d+)$/);
+      return match ? [{name:match[1], file, line:index + 2, code:Number(match[2])}] : [];
+    }) : [];
+    if (expected.length !== count || new Set(expected.map(item => item.name)).size !== count
+        || (marker && (fixture.match(/\bBYTE_READER_CASE\b/g) ?? []).length !== count)) throw new Error('ByteReader diagnostic inventory mismatch: ' + file);
+    const config = 'tests/types/byte-reader-' + name + '.generated.json';
+    byteReaderTypeConfigs.push(path.join(root, config));
+    writeFileSync(path.join(root, config), JSON.stringify({extends:'./tsconfig.dom-free.json', include:[source]}));
+    const check = spawnSync(process.execPath, [compiler, '--project', config, '--pretty', 'false'], {cwd:root, encoding:'utf8'});
+    process.stdout.write(check.stdout ?? ''); process.stderr.write(check.stderr ?? '');
+    if (check.error) throw check.error;
+    if (!marker) {
+      if (check.status !== 0) throw new Error('ByteReader DOM-free positive consumer failed: exit ' + check.status);
+      continue;
+    }
+    const observed = [...(check.stdout ?? '').matchAll(/^(.+)\((\d+),(\d+)\): error TS(\d+):/gm)].map(match => ({file:match[1].replaceAll('\\','/'), line:Number(match[2]), column:Number(match[3]), code:Number(match[4])}));
+    if (check.status !== 1 || observed.length !== count) throw new Error(`ByteReader negatives expected ${count} diagnostics/exit 1; got ${observed.length}/exit ${check.status}`);
+    // Total count cannot award a case: require its sole actual diagnostic at
+    // the unchanged consumer filename/line and its frozen R2 prediction code.
+    const receipts = expected.map(item => {
+      const found = observed.filter(actual => actual.file === item.file && actual.line === item.line);
+      if (found.length !== 1 || found[0].code !== item.code) throw new Error(`ByteReader ${item.name}: expected one ${item.file}:${item.line}/TS${item.code}; got ${JSON.stringify(found)}`);
+      return {name:item.name, expected:item, actual:found[0]};
+    });
+    console.log('ByteReader individual unsuppressed diagnostic receipts: ' + JSON.stringify(receipts));
+  }
+  console.log('ByteReader fixtures PASS: frozen DOM/Node-free public positive consumer and 18 exact file/line/code unsuppressed negatives.');
+} finally { for (const config of byteReaderTypeConfigs) rmSync(config, {force:true}); }
