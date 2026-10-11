@@ -167,3 +167,75 @@ test('projection cap charges distinct cropped views while source bytes count onc
   await add(e,source,{x:0,y:0,width:1024,height:1023});assert.equal(e.captureFrame(options).commands.length,5);
   await add(e,source);code(()=>e.captureFrame(options),'FRAME_IMAGE_BUDGET');await e.dispose();
 });
+
+// TF1 private collector regression unit: this file already owns the runtime
+// collector import above. Public TextField acceptance stays in its own fixture.
+import { fixture as textFieldFixture, request as textFieldRequest,
+  issue as textFieldPlan } from './text-raster-public-helpers.mjs';
+
+test('TF1 legacy rectangle collector refuses a genuine text image and admits blank layout', async (t) => {
+  const base = await textFieldFixture(t, { measure(value, context) {
+    return value.text.length === 0 ? context.createPlan({ baselineOffset: 5,
+      lines: value.sourceLines.map(() => ({ advance: 0, hasInk: false,
+        inkLeft: 0, inkTop: 0, inkRight: 0, inkBottom: 0 })) })
+      : textFieldPlan(value, context);
+  } }, { maxResidentEntries: 0 });
+  const { createTextField } = await import('@egret/engine/text');
+  const scope = base.engine.createScope();
+  const field = createTextField(base.engine, scope, base.cache);
+  base.engine.stage.addChild(field);
+  field.setRequest(textFieldRequest()); await field.prepare();
+  const saved = base.engine.captureFrame({ width: 80, height: 80 });
+  const savedPixels = egret.copyImageData2DPixels(saved.images[0]);
+  assert.equal(saved.commands[0].kind, 'image');
+  code(() => runtime.collectFrameCommands(base.engine.stage), 'FRAME_IMAGE_UNSUPPORTED');
+  field.visible = false;
+  assert.deepEqual(runtime.collectFrameCommands(base.engine.stage), []);
+  field.visible = true; field.alpha = 0;
+  assert.deepEqual(runtime.collectFrameCommands(base.engine.stage), []);
+  field.alpha = 1; field.clipRect = { x: 0, y: 0, width: 0, height: 10 };
+  assert.deepEqual(runtime.collectFrameCommands(base.engine.stage), []);
+  field.clipRect = undefined;
+  field.setRequest(textFieldRequest({ text: '' }));
+  const blank = await field.prepare();
+  assert.equal(blank.raster, undefined);
+  assert.deepEqual(runtime.collectFrameCommands(base.engine.stage), []);
+  assert.deepEqual(base.engine.captureFrame({ width: 80, height: 80 }).commands, []);
+  assert.deepEqual(base.engine.captureTexturedFrame({ width: 80, height: 80 }).commands, []);
+  assert.equal(base.cache.getStatus().activeCallerLeases, 0);
+  assert.equal(base.state.raster, 2, 'T1 still calls rasterize for a no-ink plan');
+  assert.equal(base.state.images[1], undefined, 'blank raster callback creates no image');
+  assert.deepEqual(egret.copyImageData2DPixels(saved.images[0]), savedPixels);
+  scope.dispose(); await base.cache.whenIdle();
+});
+
+test('TF1 legacy collector refuses reached Scope-closing text before leaf cleanup', async (t) => {
+  const base = await textFieldFixture(t, {}, { maxResidentEntries: 0 });
+  const { createTextField } = await import('@egret/engine/text');
+  const scope = base.engine.createScope();
+  let field, reachedError, hidden, observedDisposed;
+  scope.signal.addEventListener('abort', () => {
+    observedDisposed = field.isDisposed;
+    try { runtime.collectFrameCommands(base.engine.stage); }
+    catch (error) { reachedError = error; }
+    field.visible = false;
+    hidden = runtime.collectFrameCommands(base.engine.stage);
+    field.visible = true;
+  });
+  field = createTextField(base.engine, scope, base.cache);
+  field.setRequest(textFieldRequest()); await field.prepare();
+  base.engine.stage.addChild(field);
+  const saved = base.engine.captureFrame({ width: 80, height: 80 });
+  const savedPixels = egret.copyImageData2DPixels(saved.images[0]);
+  scope.dispose();
+  assert.equal(observedDisposed, false);
+  assert.ok(reachedError instanceof egret.EgretError);
+  assert.equal(reachedError.code, 'SCOPE_CLOSED');
+  assert.deepEqual(hidden, []);
+  assert.equal(field.isDisposed, true);
+  assert.deepEqual(runtime.collectFrameCommands(base.engine.stage), []);
+  assert.equal(base.cache.getStatus().activeCallerLeases, 0);
+  assert.equal(base.cache.getStatus().closed, false);
+  assert.deepEqual(egret.copyImageData2DPixels(saved.images[0]), savedPixels);
+  await base.cache.whenIdle();
+});

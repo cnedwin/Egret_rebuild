@@ -1,12 +1,16 @@
 import type { Diagnostic } from "@egret/contracts";
 import { EgretError } from "./EgretError.js";
 import { assertLive, childrenOf, isDisplayNode } from "./displayTreeState.js";
+import type { Scope } from './Scope.js';
+import type { DisplayObject } from './DisplayObject.js';
 
 /** Internal instance port; runtime never imports the Engine implementation. */
 export interface EngineContext {
   assertOpen(): void;
   report(diagnostic: Diagnostic): void;
   captureCleanup(cause: unknown): void;
+  /** @internal Optional explicit-text assembly; ordinary runtime contexts need not supply it. */
+  readonly registerTextFieldCache?: (cache: object, construct: (scope: Scope) => DisplayObject) => void;
 }
 
 export const OWNERSHIP_CHILDREN: unique symbol = Symbol("egret.ownershipChildren");

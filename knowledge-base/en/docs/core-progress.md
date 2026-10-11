@@ -2,7 +2,15 @@
 
 English | [简体中文](../../Cns/docs/core-progress.md)
 
-## Current reading: engineering preview 0.26.0
+## Current reading: engineering preview 0.27.0
+
+The 0.27.0 engineering preview adds a factory-owned, noneditable TextField through `@egret/engine/text`: `createTextField(engine, scope, cache)` and type-only `TextField`/`TextFieldStatus`. Ten-scalar requests, explicit preparation, revision replacement and coalesced caller leases follow genuine Engine/Scope/cache affinity. Committed images and blank direct bounds participate in both image-capable collectors under existing budgets; legacy image refusal is preserved. Default roots remain unchanged. Read the [contract](text-field-tf1-contract.md) and [evidence](text-field-tf1-evidence.md).
+
+Complete existing prototype verification passed 2,157/2,157 and its current production boundary scan covered 411 files. The focused public result is 16/16 (13 main top-level, two nested and one constructor test); strict types cover 18 ordinary, four supplemental and 12 dedicated-file import diagnostic locations, with one compiler invocation for the import file. Copied-source controls passed 27/27, including existing T1 controls; affected regressions passed 83/83 and private collector units 20/20. These scopes overlap and are not added. Earlier failures and source/emission cutoffs remain in the evidence.
+
+Workspace packages remain private 0.0.0 and protocol 1.0. Current five existing native regression gates, final mandatory prepush and remote delivery remain PENDING at this curation cutoff. Those native gates do not constitute a native TextField supplement. Complete UI, editing, automatic wrapping, browser fonts/native TextField, CJK, phones, Native SDKs, performance, 3D, Spine and complete migration remain open.
+
+## Historical engineering preview: 0.26.0
 
 The [scalar Tween contract](scalar-tween-contract.md) adds `engine.createTween(scope, options)` with four type-only root names, built-in linear/quadratic easing and one-shot controls. Synchronous undefined-only writer/completion callbacks, authentic Scope ownership and terminal cleanup govern borrowed application targets. The prior [0.25.0 game clock](game-clock-contract.md) drives explicit seconds; advancement never renders and capture/render never advances time. Read the [bounded evidence](scalar-tween-evidence.md) for separate source/fixture scopes. Complete core verification passed in its recorded source/fixture scope; final publication and delivery remain separate gates; this checkpoint does not establish chains/property arbitration, complete legacy Tween/Spine or production performance. Packages remain private 0.0.0 and protocol 1.0.
 

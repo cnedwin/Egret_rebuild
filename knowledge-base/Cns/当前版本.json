@@ -74,7 +74,9 @@
     "gameClockContract": "Cns/docs/游戏时间核心契约.md",
     "gameClockEvidence": "Cns/docs/游戏时间核心证据.md",
     "scalarTweenContract": "Cns/docs/标量补间契约.md",
-    "scalarTweenEvidence": "Cns/docs/标量补间证据.md"
+    "scalarTweenEvidence": "Cns/docs/标量补间证据.md",
+    "textFieldTF1Contract": "Cns/docs/文字显示TF1契约.md",
+    "textFieldTF1Evidence": "Cns/docs/文字显示TF1证据.md"
   },
   "architectureContractProbesRun": true,
   "browserApiPixelProbesRun": true,
@@ -537,7 +539,7 @@
     "contract": "Cns/docs/显示内容边界契约.md",
     "evidence": "Cns/docs/显示内容边界证据.md"
   },
-  "latestEngineeringPreview": "0.26.0",
+  "latestEngineeringPreview": "0.27.0",
   "texturedMesh2DImplementation": {
     "version": "0.23.0",
     "status": "bounded_increment_implemented",
@@ -640,5 +642,76 @@
     "performanceAcceptance": false,
     "fullLegacyTweenAcceptance": false,
     "publication": "PENDING_SEPARATE_ACTUAL_RECORD"
+  },
+  "textFieldTF1Implementation": {
+    "engineeringPreview": "0.27.0",
+    "deliverable": "V028",
+    "sourceId": "S077",
+    "status": "bounded_explicit_line_cpu_display_increment_verified",
+    "scope": "CPU display leaf with genuine owned T1 resources; no complete UI/font acceptance",
+    "packageVersion": "0.0.0",
+    "protocolVersion": "1.0",
+    "defaultExportSurfaceChanged": false,
+    "explicitEntry": "@egret/engine/text",
+    "factory": "createTextField",
+    "typeOnlyNames": [
+      "TextField",
+      "TextFieldStatus"
+    ],
+    "wholeCore": {
+      "tests": 2157,
+      "passed": 2157,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "boundaryFiles": 411,
+      "receiptBytes": 61569,
+      "receiptSha256": "6483fafa5991150a95c0dd3f19f597399523891465896aa86a6586771c1cb0ff",
+      "compilerEmissionEquivalence": false
+    },
+    "publicBehavior": {
+      "tests": 16,
+      "mainTopLevel": 13,
+      "nested": 2,
+      "constructor": 1
+    },
+    "strictTypes": {
+      "ordinary": 18,
+      "supplemental": 4,
+      "importDiagnosticLocations": 12,
+      "dedicatedImportFileCompilerInvocations": 1
+    },
+    "sourceControls": {
+      "tests": 27,
+      "includesExistingT1": true
+    },
+    "privateCollectorUnits": 20,
+    "affectedRegressions": 83,
+    "suiteTotalsAdded": false,
+    "sourceSubjects": 26,
+    "currentProductSources": 14,
+    "publicReceiptSources": 101,
+    "publicReceiptEmissions": 274,
+    "buildEmissionAttestation": false,
+    "nativeRegressionGates": {
+      "existingGateCount": 5,
+      "status": "PENDING",
+      "nativeTextFieldSupplementCovered": false
+    },
+    "publicCuration": "AUTHOR_PREPARED_PENDING_INDEPENDENT_REVIEW",
+    "mandatoryPrepush": "PENDING",
+    "remoteDelivery": "PENDING",
+    "fullUIAccepted": false,
+    "fontsAccepted": false,
+    "nativeTextFieldAccepted": false,
+    "CJKAccepted": false,
+    "phonesAccepted": false,
+    "nativeSDKAccepted": false,
+    "performanceAccepted": false,
+    "threeDAccepted": false,
+    "SpineAccepted": false,
+    "migrationAccepted": false,
+    "historicalFailuresRetained": true
   }
 }

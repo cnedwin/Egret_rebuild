@@ -291,6 +291,9 @@ const textPrivate = [
   'TextRasterPlanIssuer','createTextRasterPlanIssuer','closeTextRasterPlanIssuer','readIssuedTextRasterPlan','requireIssuedTextRasterPlan',
   'TextBudgetLimits','TextBudgetCounters','TextBudgetDelta','TextBudgetFailure','TextBudget','TEXT_BUDGET_DEFAULTS','TEXT_BUDGET_MINIMA',
   'requestBrand','planBrand','cacheBrand',
+  'registerTextFieldEngine','requireTextFieldEngine','TextFieldEnginePort',
+  'createTextFieldLeaf','TextFieldLeaf','TextFieldCachePort','createTextFieldRequestInput',
+  'TextFieldCommittedDisplay','TextFieldDisplayState','hasTextFieldState','readTextFieldState','writeTextFieldState','assertTextFieldScope',
 ];
 const runtimeText = await import('@egret/runtime/text');
 const engineText = await import('@egret/engine/text');
@@ -322,6 +325,12 @@ for (const [entry,values,emittedEntry] of textEntries) {
   const source=declaration+'\n'+emitted;
   for (const name of textPrivate) if (name in values || new RegExp('\\b'+name+'\\b').test(source)) throw new Error(`${entry}: private text authority leaked: ${name}`);
   if (/["'][^"']*(?:assetManagerOwnerState|\/(?:request|plan|budget)\.js)["']/.test(source)) throw new Error(`${entry}: private text module leaked`);
+  if (/["'][^"']*(?:textFieldFactoryState|textDisplayState|\/text\/TextField)\.js["']/.test(source)) throw new Error(`${entry}: private text module leaked`);
+  if (entry !== 'engine/text') {
+    for (const name of ['createTextField','TextField','TextFieldStatus']) if (name in values || new RegExp('\\b'+name+'\\b').test(source)) throw new Error(`${entry}: explicit-only TextField port leaked: ${name}`);
+    if (/["'][^"']*\/textField\.js["']/.test(source)) throw new Error(`${entry}: explicit-only TextField module leaked`);
+  }
+  if (Object.hasOwn(values,'textFieldBrand') || /\bexport\s+(?:declare\s+)?(?:const|let|var|class|function)\s+textFieldBrand\b/.test(declaration) || /\btextFieldBrand\b/.test(emitted)) throw new Error(`${entry}: private TextField brand value leaked`);
   if (!entry.endsWith('/text')) {
     for (const name of ['createTextRasterCache',...textPublicTypes]) if (name in values || new RegExp('\\b'+name+'\\b').test(source)) throw new Error(`${entry}: explicit-only text port leaked: ${name}`);
     if (/["'][^"']*(?:\/text(?:\/|\.js|["']))/.test(source)) throw new Error(`${entry}: explicit-only text module leaked`);
@@ -336,12 +345,24 @@ for (const [entry,values,emittedEntry,valueTarget,typeTarget] of [
   ['runtime/text',runtimeText,'packages/runtime/dist/text/index','./TextRasterCache.js','./types.js'],
   ['engine/text',engineText,'packages/engine/dist/text','@egret/runtime/text','@egret/runtime/text'],
 ]) {
-  if (JSON.stringify(Object.keys(values)) !== JSON.stringify(['createTextRasterCache']) || typeof values.createTextRasterCache !== 'function') throw new Error(`${entry}: exact text runtime surface mismatch`);
+  const expectedValues=entry==='engine/text'?['createTextField','createTextRasterCache']:['createTextRasterCache'];
+  if (JSON.stringify(Object.keys(values)) !== JSON.stringify(expectedValues) || expectedValues.some(name=>typeof values[name]!=='function')) throw new Error(`${entry}: exact text runtime surface mismatch`);
   const declaration=readFileSync(path.join(root,emittedEntry+'.d.ts'),'utf8').replace(/\/\*[\s\S]*?\*\//g,'').replace(/\/\/[^\n]*/g,'');
   const valuesDeclared=[...declaration.matchAll(/export\s*\{([^}]+)\}\s*from\s*["']([^"']+)["'];?/g)];
   const typeStars=[...declaration.matchAll(/export\s+type\s*\*\s*from\s*["']([^"']+)["'];?/g)];
-  const remainder=declaration.replace(/export\s*\{[^}]+\}\s*from\s*["'][^"']+["'];?/g,'').replace(/export\s+type\s*\*\s*from\s*["'][^"']+["'];?/g,'').trim();
-  if (valuesDeclared.length!==1 || valuesDeclared[0][1].trim()!=='createTextRasterCache' || valuesDeclared[0][2]!==valueTarget || typeStars.length!==1 || typeStars[0][1]!==typeTarget || remainder) throw new Error(`${entry}: exact text declaration surface mismatch`);
+  let remainder=declaration.replace(/export\s*\{[^}]+\}\s*from\s*["'][^"']+["'];?/g,'').replace(/export\s+type\s*\*\s*from\s*["'][^"']+["'];?/g,'');
+  const cachePorts=valuesDeclared.filter(match=>match[1].trim()==='createTextRasterCache'&&match[2]===valueTarget);
+  if(entry==='engine/text') {
+    const fieldPorts=valuesDeclared.filter(match=>match[1].trim()==='createTextField'&&match[2]==='./textField.js');
+    const interfaces=[...remainder.matchAll(/export\s+interface\s+(\w+)(?:\s+extends\s+DisplayObject)?\s*\{[^{}]*\}/g)];
+    if(fieldPorts.length!==1||JSON.stringify(interfaces.map(match=>match[1]).sort())!==JSON.stringify(['TextField','TextFieldStatus']))throw new Error(`${entry}: exact TextField type-only surface mismatch`);
+    remainder=remainder.replace(/export\s+interface\s+(?:TextField|TextFieldStatus)(?:\s+extends\s+DisplayObject)?\s*\{[^{}]*\}/g,'')
+      .replace(/import\s+type\s*\{\s*DisplayObject\s*\}\s*from\s*["']@egret\/runtime["'];?/g,'')
+      .replace(/import\s+type\s*\{\s*TextRasterMetrics\s*,\s*TextRasterRequestInput\s*\}\s*from\s*["']@egret\/runtime\/text["'];?/g,'')
+      .replace(/declare\s+const\s+textFieldBrand\s*:\s*unique\s+symbol\s*;/g,'')
+      .replace(/^[ \t]*export[ \t]*\{[ \t]*\}[ \t]*;[ \t]*\r?$/gm,'');
+  }
+  if (valuesDeclared.length!==expectedValues.length || cachePorts.length!==1 || typeStars.length!==1 || typeStars[0][1]!==typeTarget || remainder.trim()) throw new Error(`${entry}: exact text declaration surface mismatch`);
 }
 if (runtimeText.createTextRasterCache !== engineText.createTextRasterCache) throw new Error('engine/text: runtime factory identity mismatch');
 const textTypesModule=await import(new URL('../packages/runtime/dist/text/types.js',import.meta.url));

@@ -13,6 +13,7 @@ import type { GameClock, GameClockOptions, GameClockTick } from './gameClockType
 import { createTweenOwner } from './tween.js';
 import type { TweenOwner } from './tween.js';
 import type { Tween, TweenOptions } from './tweenTypes.js';
+import { registerTextFieldEngine } from './internal/textFieldFactoryState.js';
 
 export interface EngineOptions {
   readonly host: HostAdapter;
@@ -54,7 +55,7 @@ export class Engine {
   private releaseFrame: (() => void) | undefined;
   private readonly renderer: ((frame: RenderFrame2D) => unknown) | undefined;
   private readonly texturedRenderer: ((frame: TexturedRenderFrame2D) => unknown) | undefined;
-  private currentState: "open" | "closing" | "closed" = "open";
+   #currentState: "open" | "closing" | "closed" = "open";
   private readonly scopes = new Set<Scope>();
   private readonly cleanupErrors: unknown[] = [];
   private closePromise: Promise<void> | undefined;
@@ -62,7 +63,7 @@ export class Engine {
   private readonly timeoutMs: number;
   private readonly onDiagnostic: DiagnosticHandler | undefined;
   private readonly releaseSurface: () => void;
-  private readonly context: EngineContext;
+  readonly #context: EngineContext;
   public readonly stage: Stage;
   public readonly assets: AssetManager;
   public readonly texturedFrameProfile: TexturedFrameProfile2D | undefined;
@@ -77,31 +78,38 @@ export class Engine {
     this.timeoutMs = timeoutMs;
     this.onDiagnostic = options.onDiagnostic;
     this.releaseSurface = releaseSurface;
-    this.context = {
+    const assertOpen = (): void => {
+      if (this.#currentState !== 'open') throw new EgretError('ENGINE_CLOSED');
+    };
+    const textFields = registerTextFieldEngine(this, assertOpen,
+      (scope: unknown): scope is Scope => typeof scope === 'object' && scope !== null && this.#engineScopes.has(scope as Scope));
+    // The context is never retained in a named public property by its consumers.
+    this.#context = Object.freeze({
       assertOpen: (): void => {
-        if (this.currentState !== "open") throw new EgretError("ENGINE_CLOSED");
+        if (this.#currentState !== "open") throw new EgretError("ENGINE_CLOSED");
       },
       report: (diagnostic: Diagnostic): void => reportDiagnostic(this.onDiagnostic, diagnostic),
       captureCleanup: (cause: unknown): void => {
-        if (this.currentState === "closing") this.cleanupErrors.push(cause);
+        if (this.#currentState === "closing") this.cleanupErrors.push(cause);
       },
-    };
+      registerTextFieldCache: textFields.registerCache,
+    });
     // The inert owner precedes publication and uses private Scope membership.
     this.#gameClockOwner = createGameClockOwner({
-      assertOpen: this.context.assertOpen,
+      assertOpen: this.#context.assertOpen,
       isEngineScope: (scope: unknown): scope is Scope => typeof scope === 'object' && scope !== null && this.#engineScopes.has(scope as Scope),
       isFrameBusy: (): boolean => this.frameBusy,
-      report: this.context.report,
+      report: this.#context.report,
     }, clockOptions);
     // Tween assembly receives the authentic private clock before publication.
     this.#tweenOwner = createTweenOwner({
-      assertOpen: this.context.assertOpen,
+      assertOpen: this.#context.assertOpen,
       isEngineScope: (scope: unknown): scope is Scope => typeof scope === 'object' && scope !== null && this.#engineScopes.has(scope as Scope),
       clock: this.#gameClockOwner.clock,
     });
     this.clock = this.#gameClockOwner.clock;
-    this.stage = createStage(this.context);
-    this.assets = createAssetManager(this.context);
+    this.stage = createStage(this.#context);
+    this.assets = createAssetManager(this.#context);
   }
 
   static {
@@ -132,7 +140,7 @@ export class Engine {
   private executeFrame(options: FrameOptions2D, render: boolean, textured: false): RenderFrame2D;
   private executeFrame(options: FrameOptions2D, render: boolean, textured: true): TexturedRenderFrame2D;
   private executeFrame(options: FrameOptions2D, render: boolean, textured: boolean): RenderFrame2D | TexturedRenderFrame2D {
-    this.context.assertOpen();
+    this.#context.assertOpen();
     if (this.frameBusy) throw new EgretError("FRAME_REENTRANT");
     if (this.#gameClockOwner.isBusy()) throw new EgretError('CLOCK_REENTRANT');
     this.frameBusy = true;
@@ -164,9 +172,9 @@ export class Engine {
         if (cause instanceof EgretError) throw cause;
         throw new EgretError("INVALID_FRAME_OPTIONS", { cause });
       }
-      this.context.assertOpen();
+      this.#context.assertOpen();
       const content = textured ? collectTexturedFrameContent(this.stage) : collectFrameContent(this.stage);
-      this.context.assertOpen();
+      this.#context.assertOpen();
       if (!Number.isSafeInteger(this.nextFrameId) || this.nextFrameId <= 0) {
         throw new EgretError("FRAME_ID_EXHAUSTED");
       }
@@ -184,7 +192,7 @@ export class Engine {
             throw new EgretError("INVALID_RENDERER");
           }
         } catch (cause) {
-          this.context.report({ code: "FRAME_RENDER_FAILED", phase: "graphics", severity: "error", cause });
+          this.#context.report({ code: "FRAME_RENDER_FAILED", phase: "graphics", severity: "error", cause });
           throw new EgretError("FRAME_RENDER_FAILED", { cause });
         }
       }
@@ -199,8 +207,8 @@ export class Engine {
   }
 
   public createScope(): Scope {
-    this.context.assertOpen();
-    const scope = createScope(this.context, (closed): void => { this.scopes.delete(closed); });
+    this.#context.assertOpen();
+    const scope = createScope(this.#context, (closed): void => { this.scopes.delete(closed); });
     this.scopes.add(scope);
     this.#engineScopes.add(scope);
     return scope;
@@ -217,7 +225,7 @@ export class Engine {
     let rejectClose: (cause: unknown) => void = (): void => {};
     this.closePromise = new Promise<void>((resolve, reject) => { resolveClose = resolve; rejectClose = reject; });
     // Cache the result before abort/cleanup/diagnostic callbacks can reenter.
-    this.currentState = "closing";
+    this.#currentState = "closing";
     // Terminal observations change now, before the existing idle barriers wait.
     this.#tweenOwner.close();
     this.#gameClockOwner.close();
@@ -234,27 +242,27 @@ export class Engine {
         try { scope.dispose(); }
         catch (cause) {
           this.cleanupErrors.push(cause);
-          this.context.report({ code: "ENGINE_SCOPE_CLEANUP_FAILED", phase: "engine", severity: "error", cause });
+          this.#context.report({ code: "ENGINE_SCOPE_CLEANUP_FAILED", phase: "engine", severity: "error", cause });
         }
       }
       try { this.stage.dispose(); }
       catch (cause) {
         this.cleanupErrors.push(cause);
-        this.context.report({ code: "ENGINE_STAGE_CLEANUP_FAILED", phase: "engine", severity: "error", cause });
+        this.#context.report({ code: "ENGINE_STAGE_CLEANUP_FAILED", phase: "engine", severity: "error", cause });
       }
       try { this.assets.dispose(); }
       catch (cause) {
         this.cleanupErrors.push(cause);
-        this.context.report({ code: "ENGINE_ASSETS_CLEANUP_FAILED", phase: "assets", severity: "error", cause });
+        this.#context.report({ code: "ENGINE_ASSETS_CLEANUP_FAILED", phase: "assets", severity: "error", cause });
       }
       try { this.host.stop?.(); }
       catch (cause) {
         this.cleanupErrors.push(cause);
-        this.context.report({ code: "HOST_STOP_FAILED", phase: "engine", severity: "error", cause });
+        this.#context.report({ code: "HOST_STOP_FAILED", phase: "engine", severity: "error", cause });
       }
       await closeHost(this.host, this.timeoutMs, this.releaseSurface, this.cleanupErrors, this.onDiagnostic);
     } finally {
-      this.currentState = "closed";
+      this.#currentState = "closed";
     }
   }
 }

@@ -36,7 +36,7 @@ export class AssetManager {
   private closed = false;
   private taskId = 0;
   private leaseId = 0;
-  private readonly engine: EngineContext;
+  readonly #engine: EngineContext;
   private readonly providers = new Map<object, ProviderBinding>();
   private readonly identities = new Map<string, Identity>();
   private readonly current = new Map<string, Entry>();
@@ -44,7 +44,7 @@ export class AssetManager {
 
   private constructor(engine: EngineContext, token: typeof CREATION_TOKEN) {
     if (token !== CREATION_TOKEN) throw new EgretError("ASSET_MANAGER_FACTORY_REQUIRED");
-    this.engine = engine;
+    this.#engine = engine;
     bindAssetManagerOwner(this, engine);
   }
 
@@ -68,7 +68,7 @@ export class AssetManager {
 
   private assertOpen(): void {
     if (this.closed) throw new EgretError("ASSET_MANAGER_CLOSED");
-    try { this.engine.assertOpen(); }
+    try { this.#engine.assertOpen(); }
     catch (cause) { throw new EgretError("ASSET_MANAGER_CLOSED", { cause }); }
   }
 
@@ -235,7 +235,7 @@ export class AssetManager {
     let lease: AssetLease<unknown>;
     try {
       this.leaseId = nextIdentity(this.leaseId);
-      lease = createAssetLease(this.engine, this.leaseId, entry.generation, () => entry.value, () => {
+      lease = createAssetLease(this.#engine, this.leaseId, entry.generation, () => entry.value, () => {
         entry.leases.delete(lease);
         this.retireUnused(entry);
       });
@@ -310,8 +310,8 @@ export class AssetManager {
   }
 
   private diagnose(code: string, cause: unknown): void {
-    this.engine.captureCleanup(cause);
-    this.engine.report({ code, phase: "assets", severity: "error", cause });
+    this.#engine.captureCleanup(cause);
+    this.#engine.report({ code, phase: "assets", severity: "error", cause });
   }
 
   /** Close the gate and revoke every local demand before the first external hook. */

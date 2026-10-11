@@ -83,7 +83,7 @@
       ],
       "owner": null,
       "dueDate": null,
-      "implementation": "partial_independent_headless_core",
+      "implementation": "partial_independent_cpu_display_and_bounded_browser_hosts",
       "acceptance": "not_run",
       "acceptanceCriteria": [
         "复杂UI原型正确性与预算",
@@ -134,7 +134,35 @@
         "acceptance": "full_product_not_run",
         "evidence": "evidence/asset-core-verification.json"
       },
-      "boundedProgress": "V009 lifecycle, V010 CPU assets and V011 rectangle display/frame plus desktop Canvas are implemented prototypes; full V002 acceptance remains unrun."
+      "implementationHistory": [
+        {
+          "status": "in_progress",
+          "implementation": "partial_independent_headless_core",
+          "acceptance": "not_run",
+          "boundedProgress": "V009 lifecycle, V010 CPU assets and V011 rectangle display/frame plus desktop Canvas are implemented prototypes; full V002 acceptance remains unrun.",
+          "scope": "prior_0.26_registry_cutoff"
+        }
+      ],
+      "boundedProgress": {
+        "engineeringPreview": "0.27.0",
+        "deliverables": [
+          "V011",
+          "V012",
+          "V021",
+          "V024",
+          "V025",
+          "V026",
+          "V027",
+          "V028"
+        ],
+        "scope": "既有 Canvas 与有界 WebGPU 宿主、自有纹理／序列资源、无 DOM 文字栅格编排、显式时钟／标量 Tween 及 CPU TextField 均为版本绑定增量；不代表完整 runtime、资源／动画管线或 UI／Spine 验收。",
+        "evidence": [
+          "evidence/text-raster-t1-verification.json",
+          "evidence/scalar-tween-verification.json",
+          "evidence/text-field-tf1-verification.json"
+        ],
+        "fullProductAcceptance": "not_run"
+      }
     },
     {
       "id": "V003",
@@ -170,7 +198,7 @@
       "id": "V004",
       "title": "资源与动画管线",
       "kind": "product",
-      "status": "planned",
+      "status": "in_progress",
       "requirementIds": [
         "R002",
         "R004",
@@ -187,7 +215,7 @@
       ],
       "owner": null,
       "dueDate": null,
-      "implementation": "not_started",
+      "implementation": "partial_bounded_resource_and_animation_increments",
       "acceptance": "not_run",
       "acceptanceCriteria": [
         "2D/3D源资产及依赖可追溯",
@@ -210,6 +238,36 @@
         "status": "reference_chain_partial",
         "scope": "已有真实资产WebGL2研究代码和边界回归；完整产品实现/验收状态不变",
         "runId": "d642177d-b007-4c0e-80a2-0f85e150d0c0"
+      },
+      "implementationHistory": [
+        {
+          "status": "planned",
+          "implementation": "not_started",
+          "acceptance": "not_run",
+          "boundedProgress": null,
+          "scope": "prior_0.26_registry_cutoff"
+        }
+      ],
+      "boundedProgress": {
+        "engineeringPreview": "0.27.0",
+        "deliverables": [
+          "V013",
+          "V017",
+          "V019",
+          "V021",
+          "V024",
+          "V025",
+          "V026",
+          "V027",
+          "V028"
+        ],
+        "scope": "既有 Canvas 与有界 WebGPU 宿主、自有纹理／序列资源、无 DOM 文字栅格编排、显式时钟／标量 Tween 及 CPU TextField 均为版本绑定增量；不代表完整 runtime、资源／动画管线或 UI／Spine 验收。",
+        "evidence": [
+          "evidence/text-raster-t1-verification.json",
+          "evidence/scalar-tween-verification.json",
+          "evidence/text-field-tf1-verification.json"
+        ],
+        "fullProductAcceptance": "not_run"
       }
     },
     {
@@ -1136,6 +1194,43 @@
         "evidence/scalar-tween-verification.json"
       ],
       "doc": "Cns/docs/标量补间契约.md"
+    },
+    {
+      "id": "V028",
+      "kind": "bounded_runtime_increment",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R011",
+        "R015",
+        "R016",
+        "R019"
+      ],
+      "dependsOn": [
+        "V011",
+        "V023",
+        "V025"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "factory_owned_explicit_line_cpu_text_field_display_and_resource_lifecycle",
+      "acceptance": "bounded_cpu_public_types_source_controls_and_complete_existing_core_verified_native_and_delivery_separate",
+      "title": "显式行 CPU TextField 显示叶",
+      "acceptanceCriteria": [
+        "显式 Engine 文字入口在读取输入前认证 Engine、固有 Scope 与真实同 manager cache；不透明显示叶具有只读保存状态及仅工厂构造。",
+        "十标量准入、版本、合并调用者租约、带 guard 的原子准备及终结清理保留主因与旧已提交内容。",
+        "占用图片及空白直接边界在既有源／图片／树／内容预算下接入两种可采集图片的 collector；旧路径图片拒绝保持。",
+        "完整既有原型验证通过 2157/2157，并包含当前 411 文件边界扫描；重叠公共、严格类型、复制源码、单元及回归套件保留各自数量与历史失败。",
+        "双语公开整理与当前原生回归／prepush／远程交付另记；不验收原生 TextField、字体、完整 UI、CJK、手机、SDK、3D、Spine、性能或完整迁移。"
+      ],
+      "artifacts": [
+        "Cns/docs/文字显示TF1契约.md",
+        "Cns/docs/文字显示TF1证据.md",
+        "evidence/text-field-tf1-verification.json"
+      ],
+      "doc": "Cns/docs/文字显示TF1契约.md"
     }
   ]
 }

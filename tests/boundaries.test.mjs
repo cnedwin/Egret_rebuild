@@ -125,6 +125,13 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
     write('packages/engine/dist/text.js', "export {createTextRasterCache} from '@egret/runtime/text';\n");
     write('node_modules/@egret/runtime/text.js', "export {createTextRasterCache} from '../../../packages/runtime/dist/text/index.js';\n");
     write('node_modules/@egret/engine/text.js', "export {createTextRasterCache} from '../../../packages/engine/dist/text.js';\n");
+    // TF1 inventory baseline only: inert named interfaces/factory, never leaf behavior.
+    const textFieldTypes = 'export interface TextFieldStatus {}\nexport interface TextField {}\n';
+    for (const file of ['packages/engine/src/text.ts','packages/engine/dist/text.d.ts'])
+      write(file, readFileSync(path.join(root,file),'utf8') + "export {createTextField} from './textField.js';\n" + textFieldTypes);
+    write('packages/engine/dist/textField.js', 'export function createTextField() {}\n');
+    write('packages/engine/dist/text.js', readFileSync(path.join(root,'packages/engine/dist/text.js'),'utf8') + "export {createTextField} from './textField.js';\n");
+    write('node_modules/@egret/engine/text.js', "export {createTextField,createTextRasterCache} from '../../../packages/engine/dist/text.js';\n");
     // Clock baseline only: inert synthetic policy inputs carry the exact six
     // public type names and erased emission. No owner or behavior shim is added.
     const clockTypes = ['GameClockOptions','GameClockState','GameClockTick','GameClockHandler','GameClock','GameClockSubscription'];

@@ -83,7 +83,7 @@
       ],
       "owner": null,
       "dueDate": null,
-      "implementation": "partial_independent_headless_core",
+      "implementation": "partial_independent_cpu_display_and_bounded_browser_hosts",
       "acceptance": "not_run",
       "acceptanceCriteria": [
         "Complex-UI prototype correctness and budgets",
@@ -134,7 +134,35 @@
         "acceptance": "full_product_not_run",
         "evidence": "evidence/asset-core-verification.json"
       },
-      "boundedProgress": "V009 lifecycle, V010 CPU assets and V011 rectangle display/frame plus desktop Canvas are implemented prototypes; full V002 acceptance remains unrun."
+      "implementationHistory": [
+        {
+          "status": "in_progress",
+          "implementation": "partial_independent_headless_core",
+          "acceptance": "not_run",
+          "boundedProgress": "V009 lifecycle, V010 CPU assets and V011 rectangle display/frame plus desktop Canvas are implemented prototypes; full V002 acceptance remains unrun.",
+          "scope": "prior_0.26_registry_cutoff"
+        }
+      ],
+      "boundedProgress": {
+        "engineeringPreview": "0.27.0",
+        "deliverables": [
+          "V011",
+          "V012",
+          "V021",
+          "V024",
+          "V025",
+          "V026",
+          "V027",
+          "V028"
+        ],
+        "scope": "Existing Canvas and bounded WebGPU hosts, owned texture/sequence resources, DOM-free text raster orchestration, explicit clock/scalar Tween and CPU TextField are version-bound increments; this is not complete runtime, resource/animation pipeline or UI/Spine acceptance.",
+        "evidence": [
+          "evidence/text-raster-t1-verification.json",
+          "evidence/scalar-tween-verification.json",
+          "evidence/text-field-tf1-verification.json"
+        ],
+        "fullProductAcceptance": "not_run"
+      }
     },
     {
       "id": "V003",
@@ -170,7 +198,7 @@
       "id": "V004",
       "title": "Resource and animation pipelines",
       "kind": "product",
-      "status": "planned",
+      "status": "in_progress",
       "requirementIds": [
         "R002",
         "R004",
@@ -187,7 +215,7 @@
       ],
       "owner": null,
       "dueDate": null,
-      "implementation": "not_started",
+      "implementation": "partial_bounded_resource_and_animation_increments",
       "acceptance": "not_run",
       "acceptanceCriteria": [
         "Traceable 2D/3D source assets and dependencies",
@@ -210,6 +238,36 @@
         "status": "reference_chain_partial",
         "scope": "Real-asset WebGL2 research code and boundary regressions exist; full-product implementation/acceptance status remains unchanged",
         "runId": "d642177d-b007-4c0e-80a2-0f85e150d0c0"
+      },
+      "implementationHistory": [
+        {
+          "status": "planned",
+          "implementation": "not_started",
+          "acceptance": "not_run",
+          "boundedProgress": null,
+          "scope": "prior_0.26_registry_cutoff"
+        }
+      ],
+      "boundedProgress": {
+        "engineeringPreview": "0.27.0",
+        "deliverables": [
+          "V013",
+          "V017",
+          "V019",
+          "V021",
+          "V024",
+          "V025",
+          "V026",
+          "V027",
+          "V028"
+        ],
+        "scope": "Existing Canvas and bounded WebGPU hosts, owned texture/sequence resources, DOM-free text raster orchestration, explicit clock/scalar Tween and CPU TextField are version-bound increments; this is not complete runtime, resource/animation pipeline or UI/Spine acceptance.",
+        "evidence": [
+          "evidence/text-raster-t1-verification.json",
+          "evidence/scalar-tween-verification.json",
+          "evidence/text-field-tf1-verification.json"
+        ],
+        "fullProductAcceptance": "not_run"
       }
     },
     {
@@ -1136,11 +1194,48 @@
         "evidence/scalar-tween-verification.json"
       ],
       "doc": "en/docs/scalar-tween-contract.md"
+    },
+    {
+      "id": "V028",
+      "kind": "bounded_runtime_increment",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R011",
+        "R015",
+        "R016",
+        "R019"
+      ],
+      "dependsOn": [
+        "V011",
+        "V023",
+        "V025"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "factory_owned_explicit_line_cpu_text_field_display_and_resource_lifecycle",
+      "acceptance": "bounded_cpu_public_types_source_controls_and_complete_existing_core_verified_native_and_delivery_separate",
+      "title": "Explicit-line CPU TextField display leaf",
+      "acceptanceCriteria": [
+        "The explicit Engine text entry authenticates Engine, intrinsic Scope and genuine same-manager cache before input reads; opaque fields have readonly saved status and factory-only construction.",
+        "Ten-scalar admission, revisions, coalesced caller leases, guarded atomic preparation and terminal cleanup preserve first causes and old committed content.",
+        "Occupied images and blank direct bounds integrate both image-capable collectors under unchanged source/image/tree/content budgets; legacy image refusal remains.",
+        "Complete existing prototype verification passed 2157/2157 with a current 411-file boundary scan; overlapping public, strict-type, copied-source, unit and regression suites retain their own counts and historical failures.",
+        "Paired public curation and current native regression/prepush/remote delivery remain separate; this does not accept native TextField, fonts, full UI, CJK, phones, SDKs, 3D, Spine, performance or complete migration."
+      ],
+      "artifacts": [
+        "en/docs/text-field-tf1-contract.md",
+        "en/docs/text-field-tf1-evidence.md",
+        "evidence/text-field-tf1-verification.json"
+      ],
+      "doc": "en/docs/text-field-tf1-contract.md"
     }
   ],
   "_localization": {
     "canonicalSource": "交付.json",
-    "canonicalSha256": "b8908a58cfbc060af8abc282069c69af4aff925f33f99d2bbf7000204c02fb84",
+    "canonicalSha256": "0cb910c45635ddbe39e7d9676e1a3d37a7ff3c20d1c25002a82c2481ca9952ed",
     "role": "read_only_translation",
     "language": "en"
   }

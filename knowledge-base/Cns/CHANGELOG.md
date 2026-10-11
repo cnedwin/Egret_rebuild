@@ -2,6 +2,14 @@
 
 [English](../en/CHANGELOG.md) | 简体中文
 
+## 工程预览：0.27.0 — 2026-10-11
+
+0.27.0 工程预览通过 `@egret/engine/text` 新增工厂所有、不可编辑的 TextField：`createTextField(engine, scope, cache)` 及仅类型 `TextField`／`TextFieldStatus`。十标量请求、显式准备、版本替换及合并工作的调用者租约遵循真实 Engine／Scope／cache 归属。已提交图片与空白直接边界在既有预算下接入两种可采集图片的 collector；旧路径的图片拒绝保持。默认根入口不变。 阅读[契约](docs/文字显示TF1契约.md)与[证据](docs/文字显示TF1证据.md)。
+
+完整既有原型验证通过 2,157/2,157，其当前生产边界扫描覆盖 411 个文件。限定公共结果为 16/16（13 个主要顶层、两个嵌套及一个构造测试）；严格类型覆盖 18 条普通、四条补充及 12 个专用文件导入诊断位置，导入文件使用一次编译器调用。复制工程源码对照通过 27/27，包含既有 T1 对照；受影响回归通过 83/83，私有 collector 单元通过 20/20。这些范围重叠，不合计；证据保留早期失败及源码／产物截止点。
+
+工作区包保持 private 0.0.0、协议 1.0。在本次整理截止点，当前五项既有原生回归门禁、最终必要 prepush 及远程交付仍为 PENDING；这些原生门禁不构成原生 TextField 补充验收。完整 UI、编辑、自动折行、浏览器字体／原生 TextField、CJK、手机、Native SDK、性能、3D、Spine 及完整迁移仍待完成。
+
 ## 工程预览：0.26.0 — 2026-10-11
 
 新增 `engine.createTween(scope, options)` 与四个仅类型根导出，用于 Scope 所有的标量补间。内建 `linear`、`quadIn`、`quadOut`、`quadInOut` 缓动、一次性 start/pause/resume/stop、同步且仅返回 undefined 的回调与终结清理遵守 Engine/Scope 生命周期。前序 0.25.0 时钟提供显式游戏秒；捕获/渲染不推进时间，推进不渲染。阅读[契约](docs/标量补间契约.md)与[有界证据](docs/标量补间证据.md)。完整核心验证已在记录的源码/夹具范围内通过，最终公开门禁与交付另记；限定检查保留各自源码/夹具截止点。包保持 private 0.0.0、协议 1.0；属性仲裁、链、完整旧 Tween/Spine 及生产性能仍属独立工作。

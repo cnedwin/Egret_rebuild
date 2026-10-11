@@ -121,7 +121,7 @@
         "competition": "No new unsupported competitive accusation observed in checked sections."
       },
       "limits": "This was a bounded textual translation review, not a new research refresh, execution, license opinion, full implementation audit or exhaustive review of all 15 design pairs. No other agent targets were edited.",
-      "verifiedAt": "2026-10-08T13:31:46.870Z"
+      "verifiedAt": "2026-10-08T13:31:46.87Z"
     },
     {
       "scope": "research cross review",
@@ -129,7 +129,7 @@
       "schemaVersion": 1,
       "reviewType": "Independent bounded bilingual research cross-review",
       "status": "pass_with_stated_scope",
-      "checkedAtUtc": "2026-10-08T13:34:43.552919+00:00",
+      "checkedAtUtc": "2026-10-08T21:34:43.552919+08:00",
       "identityCoveragePairs": 40,
       "semanticReadingPairs": 15,
       "semanticReviewBoundaries": "14 full source/target readings plus one bounded adoption-plan pair reading; first-round research review received exact-name spot checks only. Other pairs received automated identity/structural checks. No exhaustive semantic review of all 40 pairs is claimed.",
@@ -1288,5 +1288,160 @@
     "laterRootMetadataAttestation": true,
     "productExecutionByReviewer": false,
     "remoteDeliveryAccepted": false
+  },
+  "textFieldTF1Curation": {
+    "engineeringPreview": "0.27.0",
+    "status": "ROOT_ACCEPTED_INDEPENDENT_SCOPED_PUBLIC_REVIEW",
+    "newPairs": [
+      {
+        "en": "knowledge-base/en/docs/text-field-tf1-contract.md",
+        "zh": "knowledge-base/Cns/docs/文字显示TF1契约.md",
+        "kind": "public_reading"
+      },
+      {
+        "en": "knowledge-base/en/docs/text-field-tf1-evidence.md",
+        "zh": "knowledge-base/Cns/docs/文字显示TF1证据.md",
+        "kind": "public_reading"
+      }
+    ],
+    "changedEntryPaths": [
+      "README.md",
+      "README.zh-CN.md",
+      "knowledge-base/en/CHANGELOG.md",
+      "knowledge-base/Cns/CHANGELOG.md",
+      "knowledge-base/en/README.md",
+      "knowledge-base/Cns/README.md",
+      "knowledge-base/en/docs/core-progress.md",
+      "knowledge-base/Cns/docs/core-progress.md"
+    ],
+    "criticalCommentSourcePaths": [
+      "packages/engine/src/Engine.ts",
+      "packages/engine/src/text.ts",
+      "packages/engine/src/textField.ts",
+      "packages/engine/src/internal/textFieldFactoryState.ts",
+      "packages/runtime/src/ownership.ts",
+      "packages/runtime/src/Scope.ts",
+      "packages/runtime/src/AssetManager.ts",
+      "packages/runtime/src/text/TextRasterCache.ts",
+      "packages/runtime/src/text/request.ts",
+      "packages/runtime/src/text/TextField.ts",
+      "packages/runtime/src/textDisplayState.ts",
+      "packages/runtime/src/displayBounds.ts",
+      "packages/runtime/src/frameCapture.ts",
+      "packages/runtime/src/texturedFrameCapture.ts"
+    ],
+    "currentCore": {
+      "engineeringPreview": "0.27.0",
+      "deliverable": "V028",
+      "sourceId": "S077",
+      "status": "bounded_explicit_line_cpu_display_increment_verified",
+      "scope": "CPU display leaf with genuine owned T1 resources; no complete UI/font acceptance",
+      "packageVersion": "0.0.0",
+      "protocolVersion": "1.0",
+      "defaultExportSurfaceChanged": false,
+      "explicitEntry": "@egret/engine/text",
+      "factory": "createTextField",
+      "typeOnlyNames": [
+        "TextField",
+        "TextFieldStatus"
+      ],
+      "wholeCore": {
+        "tests": 2157,
+        "passed": 2157,
+        "failed": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "boundaryFiles": 411,
+        "receiptBytes": 61569,
+        "receiptSha256": "6483fafa5991150a95c0dd3f19f597399523891465896aa86a6586771c1cb0ff",
+        "compilerEmissionEquivalence": false
+      },
+      "publicBehavior": {
+        "tests": 16,
+        "mainTopLevel": 13,
+        "nested": 2,
+        "constructor": 1
+      },
+      "strictTypes": {
+        "ordinary": 18,
+        "supplemental": 4,
+        "importDiagnosticLocations": 12,
+        "dedicatedImportFileCompilerInvocations": 1
+      },
+      "sourceControls": {
+        "tests": 27,
+        "includesExistingT1": true
+      },
+      "privateCollectorUnits": 20,
+      "affectedRegressions": 83,
+      "suiteTotalsAdded": false,
+      "sourceSubjects": 26,
+      "currentProductSources": 14,
+      "publicReceiptSources": 101,
+      "publicReceiptEmissions": 274,
+      "buildEmissionAttestation": false,
+      "nativeRegressionGates": {
+        "existingGateCount": 5,
+        "status": "PENDING",
+        "nativeTextFieldSupplementCovered": false
+      },
+      "publicCuration": "AUTHOR_PREPARED_PENDING_INDEPENDENT_REVIEW",
+      "mandatoryPrepush": "PENDING",
+      "remoteDelivery": "PENDING",
+      "fullUIAccepted": false,
+      "fontsAccepted": false,
+      "nativeTextFieldAccepted": false,
+      "CJKAccepted": false,
+      "phonesAccepted": false,
+      "nativeSDKAccepted": false,
+      "performanceAccepted": false,
+      "threeDAccepted": false,
+      "SpineAccepted": false,
+      "migrationAccepted": false,
+      "historicalFailuresRetained": true
+    },
+    "priorReviewsRetainOriginalScopes": true,
+    "executionAndDeliverySeparate": true,
+    "productExecutionByAuthor": false,
+    "reviews": [
+      {
+        "bytes": 4394,
+        "sha256": "60ddd449203d750775df90e7126912e671444a94fed1800d0dbab01dc6608a9a",
+        "status": "identity_only_not_distributed",
+        "reviewVerdict": "PASS_WITH_LIMITS_SOURCE_ONLY",
+        "scope": "Independent finite public source/meaning review; no product execution or blanket inventory acceptance."
+      },
+      {
+        "bytes": 6665,
+        "sha256": "7f43723feb22ecf526eac5f6628e0f0df857d4719643d8e87f132ea88ba1b3c7",
+        "status": "identity_only_not_distributed",
+        "reviewVerdict": "NEEDS_METADATA_CORRECTION_SOURCE_ONLY",
+        "scope": "Preserved one-P2 successor finding; independently closed by the narrow derived-hash successor."
+      },
+      {
+        "bytes": 4815,
+        "sha256": "2c4b60eb0609249d86851c2234a963a63d5539059c541ee34e1eccab417e6cbf",
+        "status": "identity_only_not_distributed",
+        "reviewVerdict": "PASS_WITH_LIMITS_SOURCE_ONLY",
+        "scope": "Independent finite public source/meaning review; no product execution or blanket inventory acceptance."
+      }
+    ],
+    "actualSavedRendererReview": {
+      "bytes": 2488,
+      "sha256": "ed35706693b3688f5cb2a0e1aa6d02b40a35143260a2e6482219a793f036ee3a",
+      "status": "identity_only_not_distributed",
+      "reviewVerdict": "PASS_WITH_LIMITS_ACTUAL_RENDERER_REGRESSIONS",
+      "scope": "Five existing Canvas/WebGPU/B1/textured/sequence renderer regressions and their saved ownership/oracle outputs; excludes native TextField/fonts/UI/phones/performance."
+    },
+    "laterRootIdentityOnlyBinding": true,
+    "productExecutionByReviewer": false,
+    "remoteDeliveryAccepted": false,
+    "finalWhitespaceFormatReview": {
+      "bytes": 3955,
+      "sha256": "a04080bf97f2a82f68e92e72bb85cf5aad86cf3f01a01b23b07378875132ad1e",
+      "verdict": "PASS_WITH_LIMITS_SOURCE_ONLY",
+      "scope": "Independent finite byte/data/saved-output review of two EOF LF deletions, exact derived hashes and prior four-metadata review-identity binding; no product execution or wider acceptance"
+    }
   }
 }

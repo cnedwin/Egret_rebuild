@@ -225,6 +225,19 @@ export function summarizeTextRasterRequest(
     return value;
 }
 
+/** Project validated field scalars without granting cache request/plan authority. */
+export function createTextFieldRequestInput(
+    summary: TextRasterRequestSummary, invocation: TextValueInvocation,
+): TextRasterRequestInput {
+    openInvocation(invocation);
+    const data = apply(weakGet, summaries, [summary]) as Normalized | undefined;
+    if (data === undefined) throw new TypeFault('Authentic private request summary required');
+    // Plain validated scalars only: no cache-owned source-line array or plan identity.
+    return freeze({ text: data.text, fontFamily: data.fontFamily, fontSize: data.fontSize,
+        fontWeight: data.fontWeight, fontStyle: data.fontStyle, lineHeight: data.lineHeight,
+        locale: data.locale, direction: data.direction, density: data.density, fillColor: data.fillColor });
+}
+
 /** Call only after the cache commits the summary's exact generation metadata charge. */
 export function createOwnedTextRasterRequest(
     summary: TextRasterRequestSummary, invocation: TextValueInvocation,

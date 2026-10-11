@@ -2400,5 +2400,457 @@
     "ownedProcessCleanupCompleted": true,
     "fontOrRenderingAcceptance": false,
     "preservesEarlierT1LogicalAcceptanceScope": true
+  },
+  "currentAttempt": {
+    "schemaVersion": 1,
+    "status": "ACTUAL_BOUNDED_GEOMETRIC_FONT_SLICE_PASS",
+    "releaseId": "916db6f3deb844ae0970a965c039d804",
+    "nonce": "d98c11ec44639bfb45d81ad3310c689c",
+    "scope": {
+      "en": "Later native Ahem geometric-font slice only; all earlier document/JSON cutoffs and failures retain their own source identities.",
+      "Cns": "仅后续原生Ahem几何字体切片；旧文档/JSON截止状态及失败保持各自源码身份。"
+    },
+    "environment": {
+      "node": "v24.19.0",
+      "browser": "154.0.4258.62",
+      "channel": "msedge",
+      "headless": true,
+      "platform": "win32",
+      "osRelease": "10.0.26300",
+      "architecture": "x64",
+      "deviceScaleFactor": 1,
+      "callerAddedBrowserFlags": []
+    },
+    "recordedTimes": {
+      "releaseAtUtc": "2026-10-11T00:34:27.607Z",
+      "firstReferenceSaveAtUtc": "2026-10-11T00:34:47.867Z",
+      "lastReferenceSaveAtUtc": "2026-10-11T00:34:50.521Z",
+      "completionTimestampInferred": false
+    },
+    "collectorStatus": "PASS_GEOMETRIC_FONT_SLICE",
+    "collectorExitCode": 0,
+    "outerStatus": "PASS",
+    "fixedWindows": [
+      {
+        "mode": "baseline",
+        "callers": 8,
+        "groups": [
+          "F01-owned",
+          "M01",
+          "R01",
+          "K01",
+          "V01",
+          "L02"
+        ],
+        "status": "PASS_GEOMETRIC_FONT_SLICE",
+        "rows": 7,
+        "frames": 7
+      },
+      {
+        "mode": "malformed",
+        "callers": 1,
+        "groups": [
+          "F01-malformed",
+          "L02"
+        ],
+        "status": "PASS_GEOMETRIC_FONT_SLICE",
+        "rows": 0,
+        "frames": 0
+      },
+      {
+        "mode": "holdRaster",
+        "callers": 1,
+        "groups": [
+          "L01",
+          "L02"
+        ],
+        "status": "PASS_GEOMETRIC_FONT_SLICE",
+        "rows": 0,
+        "frames": 0
+      },
+      {
+        "controlStatus": "FAIL_ASSIGNED_WITNESS",
+        "mode": "omitFill",
+        "callers": 1,
+        "groups": [
+          "C01",
+          "L02"
+        ],
+        "status": "PASS_ASSIGNED_CONTROL_SENSITIVITY",
+        "rows": 0,
+        "frames": 0
+      },
+      {
+        "controlStatus": "FAIL_ASSIGNED_WITNESS",
+        "mode": "omitOrigin",
+        "callers": 1,
+        "groups": [
+          "C02",
+          "L02"
+        ],
+        "status": "PASS_ASSIGNED_CONTROL_SENSITIVITY",
+        "rows": 0,
+        "frames": 0
+      }
+    ],
+    "countsAreNotAdded": true,
+    "preJobReference": {
+      "recipeId": "ahem-complete-lines-prejob-reference-v1",
+      "ACKs": 4,
+      "rawFiles": 28,
+      "rawFilesPerWindow": 7,
+      "rawWidth": 80,
+      "rawHeight": 80,
+      "rawBytesEach": 25600,
+      "malformedReference": "NOT_APPLICABLE",
+      "savedAndReadBackBeforeFirstAcquire": true,
+      "canonicalPrettyBodyUnchanged": true,
+      "metadataIdentities": [
+        {
+          "mode": "baseline",
+          "bytes": 60479,
+          "sha256": "d8713d8280ed7ca1198856951c89f98053e6c71f13612f2722463406078a67d0",
+          "savedAtUtc": "2026-10-11T00:34:47.867Z"
+        },
+        {
+          "mode": "holdRaster",
+          "bytes": 60497,
+          "sha256": "7164bac0e0cac91c1df9ebc206888068830719f488be89bba9c0ea6a6e8a4aa6",
+          "savedAtUtc": "2026-10-11T00:34:49.386Z"
+        },
+        {
+          "mode": "omitFill",
+          "bytes": 65143,
+          "sha256": "f6b30419c544e2fb0da354ea2ef3721e5270104c706eb33ce13834286da5b2a6",
+          "savedAtUtc": "2026-10-11T00:34:49.96Z"
+        },
+        {
+          "mode": "omitOrigin",
+          "bytes": 65191,
+          "sha256": "164e700c06428ab48c14c0f72e7a9f809370c4bbc5c13c07d66d7e1407c93cc7",
+          "savedAtUtc": "2026-10-11T00:34:50.521Z"
+        }
+      ]
+    },
+    "imageEvidence": {
+      "rows": [
+        "X",
+        "p",
+        "E-acute",
+        "space",
+        "empty",
+        "LF",
+        "CRLF"
+      ],
+      "baselineRawFiles": 21,
+      "sensitivityRawFiles": 2,
+      "allArraysMatchSavedRaw": true,
+      "nonblankNativeOwnedExactMatches": 5,
+      "savedBytesAfterCallerRelease": true,
+      "distinctXLeasesShareTexture": true,
+      "lfCrLfSeparateTexturesAndOriginalKeys": true,
+      "lfCrLfCompleteOwnedBytesEqual": true,
+      "lfCrLfBytesEach": 4576,
+      "lfCrLfSHA256": "bc8f14db296985779a67cc516dcb3a1542732c16e935c00110d4e2475530010a",
+      "tolerance": 0,
+      "painterComparison": "Frozen interior/gap/guard samples and geometry, not universal edge or full-buffer equivalence"
+    },
+    "heldCancellation": {
+      "imageBytes": 2496,
+      "scratchBytes": 4992,
+      "retainedUntilActualUseSettled": true,
+      "exactScopeCause": true,
+      "idleBeforeActualUseSettled": false,
+      "lateLeasePublished": false,
+      "afterImageAndScratchBytes": 0
+    },
+    "diagnostics": {
+      "events": 1,
+      "allowedMalformedParserWarnings": 1,
+      "warningText": "OTS parsing error: invalid sfntVersion: 66051",
+      "warningAtUtc": "2026-10-11T00:34:48.844Z",
+      "unexpectedDiagnostics": 0,
+      "frequentReadbackWarnings": 0,
+      "firstError": null,
+      "newWaiver": false,
+      "requests": 670,
+      "requestsAdmitted": 670,
+      "faviconRequests": 0,
+      "faviconDeliveryEstablished": false,
+      "rasterResizeStatesHintTrue": 16,
+      "referenceAndTargetHintHonoredSeparatelyObserved": false,
+      "backendCauseEstablished": false
+    },
+    "artifactCompleteness": {
+      "manifestEntries": 67,
+      "directoryFilesIncludingManifest": 68,
+      "allManifestByteHashesMatch": true,
+      "manifestSeparatelyBound": true,
+      "totalBytesIncludingManifest": 3613660,
+      "largestFileBytes": 1000056,
+      "singleFileCapBytes": 4194304,
+      "aggregateCapBytes": 16777216,
+      "capsChanged": false,
+      "rawValuesDropped": false
+    },
+    "sourceCutoff": {
+      "savedCollectorInputs": 312,
+      "beforeAfterEqual": true,
+      "releaseInputEntries": 786,
+      "nodeIdentityBoundSeparately": true,
+      "graphModules": 61,
+      "graphAttestsSourceBuildEquivalence": false,
+      "cutoff": "Completed admitted B3 run",
+      "laterTF1EditsOutsideRun": true,
+      "currentRRehashUsedToJudgeHistoricalRun": false,
+      "releaseSHA256": "15bda0c0e9771aaaf0a2bf17253511e3adec9ffbb20dafd5ad47c0e0e1e5f6c0",
+      "sources": [
+        {
+          "record": "collector.mjs",
+          "bytes": 34464,
+          "sha256": "9a4f264b1c33b0ee6eb66f22e144d94d35c55d0d5e9bb150c8d77118ffb32da2",
+          "distributed": false
+        },
+        {
+          "record": "provider.mjs",
+          "bytes": 20452,
+          "sha256": "fdfbbc9c154256e1a2c73b13358b0e34dfaf5022f341701b4d46e5c7a94c88b7",
+          "distributed": false
+        },
+        {
+          "record": "fixture.mjs",
+          "bytes": 23490,
+          "sha256": "f66eb0a2d6264b79922b6e9b2f72e9d791aeb9aefff4b9acb57386f5f4e7028a",
+          "distributed": false
+        },
+        {
+          "record": "reference.mjs",
+          "bytes": 21657,
+          "sha256": "6e91d7cd981c33ab8bbd28d455cda0a9b1ba047d3f7bac31a6e218792ff8be62",
+          "distributed": false
+        },
+        {
+          "record": "cases.json",
+          "bytes": 24673,
+          "sha256": "8191b3b97400d6f90d2537df80c48d84d7a47e1f279f749096c0c549e334a81d",
+          "distributed": false
+        },
+        {
+          "record": "favicon.png",
+          "bytes": 73,
+          "sha256": "eacb1a012fc0820bb358ea06380857fd97d62a420932142014ac89bcc4afbbc3",
+          "distributed": false
+        },
+        {
+          "record": "text-t2-runner.mjs",
+          "bytes": 8091,
+          "sha256": "82ff59f721e950917256fb0d7f46ee928843c80bbb869e1c59aac992782f612e",
+          "distributed": false
+        }
+      ]
+    },
+    "ownership": {
+      "claim": "ATTEMPT_CONSUMED",
+      "ownerClosed": true,
+      "activeZero": true,
+      "jobClosed": true,
+      "workerAndVerifierClosed": true,
+      "outerOwnerWorkerRunnerExitCodes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "allRawEOFComplete": true,
+      "overflow": false,
+      "fallback": false,
+      "jobActiveProcesses": 0,
+      "jobCumulativeProcesses": 23,
+      "browserContextsClosed": 5,
+      "browserClosed": true,
+      "serverClosed": true,
+      "providerClosedWindows": 5,
+      "logicalImageLeaseReservationJobCountersRetired": true,
+      "closedCacheMetadataBytesEach": 4096,
+      "physicalReclamation": "UNKNOWN",
+      "newLiveProcessProbePerformed": false
+    },
+    "preservedPredecessors": [
+      {
+        "reason": "Frozen X ink mismatch; two favicon CSP diagnostics",
+        "outer": "INCOMPLETE",
+        "retroactivePass": false,
+        "releaseId": "dd031d181f13129c19e35b2b0e367a5e",
+        "collector": "FAIL"
+      },
+      {
+        "retroactivePass": false,
+        "missingControls": [
+          "tools/test.mjs",
+          "tsconfig.json"
+        ],
+        "status": "ROOT_BINDING_ADMISSION_FAILURE_BEFORE_CLAIM",
+        "browserStarted": false,
+        "releaseId": "217d2c488f1e9e3f52adc8fca90c757e"
+      },
+      {
+        "releaseId": "7237a07515e1d69f701c7b7438c301f5",
+        "callers": 0,
+        "retroactivePass": false,
+        "outer": "INCOMPLETE",
+        "bundle": "B1",
+        "reason": "Frequent-readback warning before reference ACK"
+      },
+      {
+        "retroactivePass": false,
+        "baseline": "FAIL",
+        "baselineReferenceACKCompleted": true,
+        "reason": "Exact LF/CRLF inequality; two readback warnings; final artifact cap",
+        "outer": "INCOMPLETE",
+        "releaseId": "52dc3aa925057266bcc7ca9481a70379",
+        "rows": 5,
+        "bundle": "B2"
+      }
+    ],
+    "reviewedSuccessorChanges": [
+      {
+        "change": "Independent pre-job metric/reference recipe and exact authored icon route; original nominal counterexample retained, observed tuple not fitted",
+        "bundle": "B1"
+      },
+      {
+        "change": "Reference first-context readback hint; strict reference identity and fixed route updated",
+        "bundle": "B2"
+      },
+      {
+        "change": "Provider first raster-context and target-before-CanvasHost hints; compact general JSON; strict provider identity and fixed route updated",
+        "bundle": "B3"
+      }
+    ],
+    "selectedCasesSameAcrossB1B2B3": true,
+    "B3CanonicalACKAssertionsGuardsCapsUnchanged": true,
+    "closedForCurrentAttemptOnly": [
+      "FONT-RB-ACTUAL-001",
+      "FONT-RB-ACTUAL-002",
+      "FONT-RB-ACTUAL-003"
+    ],
+    "receipts": [
+      {
+        "record": "collector-result",
+        "bytes": 1000056,
+        "sha256": "277afed698458e1a988aceebd317e7d1327b6c5a97e77d3d771258e794cbcf3b",
+        "distributed": false
+      },
+      {
+        "record": "outer-result",
+        "bytes": 4239,
+        "sha256": "e3a257e8318daca7f67c7633ae9d2fed1cc9f27f8310950aa6566f1961eb7b9b",
+        "distributed": false
+      },
+      {
+        "record": "collection-runner",
+        "bytes": 1294,
+        "sha256": "9868ed5b02885806e693cbbbb706462cb3402fe98eca4a5d54480771ef2a5347",
+        "distributed": false
+      },
+      {
+        "record": "artifact-manifest",
+        "bytes": 8600,
+        "sha256": "ee6acb16a3254e11d386e302cf3db23ab058e2fbdde720be7d6e52761d060907",
+        "distributed": false
+      },
+      {
+        "record": "input-before",
+        "bytes": 98773,
+        "sha256": "8055e3eee6dbbe726e8988fe4ad978e1ffd5a4fcf99652439d5103752e9d7b4b",
+        "distributed": false
+      },
+      {
+        "record": "input-after",
+        "bytes": 85813,
+        "sha256": "226185483ad8283bd1807239f91a827406cbde1e90da48cabd595a1b53618911",
+        "distributed": false
+      },
+      {
+        "record": "module-graph",
+        "bytes": 65332,
+        "sha256": "e400d509b795bd2497c012179f4b889015b86c33a98c544742abedf14290c967",
+        "distributed": false
+      },
+      {
+        "record": "browser-events",
+        "bytes": 148,
+        "sha256": "d9bb6963059cd79788224724d69c42632b044c0a8d7c7711ff1ebe6cab34d126",
+        "distributed": false
+      },
+      {
+        "record": "requests",
+        "bytes": 75142,
+        "sha256": "5a45f7ffef503c2d780f27b1eee4828668146c61d0c18199eaf7ffbbf06ce5d5",
+        "distributed": false
+      },
+      {
+        "record": "collector-stdout",
+        "bytes": 258,
+        "sha256": "4c200be19a698baac69476cedeca69a1d03bbdd854c291b7d78a6374fcac0da9",
+        "distributed": false
+      },
+      {
+        "record": "collector-stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "distributed": false
+      },
+      {
+        "record": "actual-output-review",
+        "bytes": 3233,
+        "sha256": "e61218ddbae20cbbace2995ded522f165e2fb29f8e738cfdb90a1d4d55ae9a3f",
+        "distributed": false
+      },
+      {
+        "record": "B3-source-review",
+        "bytes": 1480,
+        "sha256": "2132501292250f089d15c42a29ebf6ac208e5e1822a05e9ea29315a9340330fc",
+        "distributed": false
+      },
+      {
+        "record": "B3-projection",
+        "bytes": 5244,
+        "sha256": "0eaf0e7782875f44c07538b884f23e07eb940afea98a871ead1ae9d8f5355e3d",
+        "distributed": false
+      }
+    ],
+    "provenance": {
+      "fontBytes": 22572,
+      "fontSHA256": "f0a92cd0cc45735591c9b5b1fa8aecd5194e8dc518895ca22af94a46c23550dc",
+      "fontCredits": [
+        "Todd Fahrner",
+        "Myles C. Maxfield"
+      ],
+      "fontNotice": "Public domain with the retained notice CC0 fallback",
+      "fontNoticeURL": "https://www.w3.org/Style/CSS/Test/Fonts/Ahem/README",
+      "existingFontAndNoticesReused": true,
+      "readbackSourceURL": "https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently",
+      "readbackLookupRecordedAtUtc": "2026-10-11T00:11:26.1901130+00:00",
+      "readbackGuaranteesPerformanceOrStorageArchitecture": false,
+      "aiAssistedFirstPartyHarnessAndDocs": true,
+      "upstreamImplementationCopied": false,
+      "newFontOrDependencyCopied": false,
+      "universalOriginalityCertified": false
+    },
+    "privateRawArtifactsDistributed": false,
+    "publicCandidateReview": "PENDING_INDEPENDENT_ROOT_REVIEW",
+    "publicPublicationAccepted": false,
+    "unchangedExcludedAcceptance": [
+      "full T2",
+      "shaping",
+      "TextField/layout",
+      "CJK",
+      "physical phones",
+      "production hosts",
+      "performance",
+      "physical memory/reclamation",
+      "complete UI/Spine/legacy migration"
+    ],
+    "oldJSONValuesUnchanged": true
   }
 }
