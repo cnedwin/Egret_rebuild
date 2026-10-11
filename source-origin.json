@@ -7846,5 +7846,97 @@
       "verdict": "PASS_WITH_LIMITS_SOURCE_ONLY",
       "scope": "Independent finite byte/data/saved-output review of two EOF LF deletions, exact derived hashes and prior four-metadata review-identity binding; no product execution or wider acceptance"
     }
+  },
+  "byteReaderBR1WorkPackage": {
+    "date": "2026-10-11",
+    "engineeringLabel": "0.27.1",
+    "deliverable": "V030",
+    "sourceId": "S079",
+    "scope": "Owned synchronous ByteReader with explicit order, bounded atomic reads/copy-out and disposable lifetime.",
+    "packageVersion": "0.0.0",
+    "protocolVersion": "1.0",
+    "implementationOrigin": {
+      "process": "AI-assisted independent first-party specification, separately authored fixtures, implementation and finite reviews; no claim about global originality or all model training sources.",
+      "copiedHistoricalOrCompetitorImplementationSources": [],
+      "newThirdPartyDependencies": [],
+      "license": "Apache-2.0",
+      "historicalByteArrayContext": "Naming familiarity only, no compatibility guarantee."
+    },
+    "productSources": [
+      {
+        "path": "packages/runtime/src/ByteReader.ts",
+        "bytes": 7470,
+        "sha256": "6bdfd946873b01d829682dccdaca85e0c11e579574657d4c2c5d0b901766dedb"
+      },
+      {
+        "path": "packages/runtime/src/index.ts",
+        "bytes": 2185,
+        "sha256": "afc0732ba36d23598aab29a523841957254f35708c9e63953b0bc30903ab3e6c"
+      },
+      {
+        "path": "packages/engine/src/index.ts",
+        "bytes": 2547,
+        "sha256": "467f63d4da50afd3ff845bafbc243108f9f56ddab1a48bb6a9ca39b111376fab"
+      }
+    ],
+    "record": "knowledge-base/evidence/byte-reader-br1-verification.json",
+    "publicContractCopy": "Exact independently reviewed root-authored public contract pair.",
+    "controlledFaultPathCopy": {
+      "path": "tests/byte-reader-allocation.test.mjs",
+      "bytes": 5826,
+      "sha256": "5ef0b25c4bc69aba258c291968fba6535ee51fc3c804b43227e911bf683461d4",
+      "relationship": "CURRENT_PATH_COPY",
+      "privatePlainMjsExecuted": true,
+      "MainHarnessExecuted": false
+    },
+    "criticalEnglishComments": {
+      "paths": [
+        "packages/runtime/src/ByteReader.ts"
+      ],
+      "sourceBytesUnchangedByPublicCuration": true
+    },
+    "publicCuration": "AUTHOR_PREPARED_PENDING_INDEPENDENT_REVIEW",
+    "currentMainWholeVerification": "PENDING",
+    "mandatoryPrepush": "PENDING",
+    "remoteDelivery": "PENDING",
+    "newRenderingAcceptance": false,
+    "fileListScope": "Explicit BR1 subset only; all historical source identities and statuses retain their original cutoffs.",
+    "rootMainSuccessor": {
+      "date": "2026-10-11",
+      "selectedBase": "935639ee8df30937a0fd8bc9706ef1a11470aa9d",
+      "completedAtUtc": "2026-10-11T11:46:43.8874112Z",
+      "status": "ACTUAL_MAIN_BUILD_BOUNDARIES_TYPES_AND_FULL_CPU_TESTS_PASS",
+      "counts": {
+        "tests": 2219,
+        "passed": 2219,
+        "failed": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "positiveConsumersAndExactNegativeDiagnostics": "PASS_IN_COMPLETE_TYPE_TOOL",
+      "sourceControls": "PASS_IN_DEFAULT_COMPLETE_TEST_HARNESS",
+      "allocationFixture": "ONE_DEFAULT_FILE_TEST_WITH_FIVE_CONTROLLED_OBSERVATIONS",
+      "verificationReceipt": {
+        "bytes": 3766,
+        "sha256": "afc6fd58e2373bf2872518edda0e991e4710e8540eaf5cde81125b16e006406f",
+        "status": "identity_only_not_distributed"
+      },
+      "verificationOutput": {
+        "bytes": 363379,
+        "sha256": "768f5ec2e6ec1956182420bf786195392d76873e716273cfe06a5fca9b67490e",
+        "status": "identity_only_not_distributed"
+      },
+      "independentSourceAndBilingualReview": {
+        "bytes": 32738,
+        "sha256": "ff70c769a19377c56cb3383bc056d87bcae9d05e3c6541c266348221d7cddffa",
+        "status": "identity_only_not_distributed"
+      },
+      "unchangedMainProductIdentityCount": 148,
+      "unchangedRendererSourceGraph": true,
+      "mandatoryPrepush": "PENDING_FRESH_HOOK",
+      "remoteDelivery": "PENDING",
+      "newNativeRenderingAcceptance": false,
+      "scope": "Actual repository verification on the Main-compatible BR1 source selection; previous candidate and isolated records retain their original cutoffs. Unchanged renderer source identity is not a new browser, TextField, font, phone, Spine or performance result."
+    }
   }
 }

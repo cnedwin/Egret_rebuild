@@ -21,6 +21,7 @@ These are engineering and knowledge-base checkpoints, newest first, rather than 
 | Checkpoint | Main problem addressed | Record |
 | --- | --- | --- |
 | Unreleased | English-first community entry, separate `en/` and `Cns/` knowledge-base editions, English filenames, founder introduction and bilingual Changelog. Simplified document entries and grouped historical research for easier navigation. | [Details](knowledge-base/en/docs/documentation-layout.md) |
+| 0.27.1 | Owned ByteReader, explicit byte order, atomic bounded reads and copy-out, with strict public types and controlled failure fixtures. Isolated checks passed; Main integration, final prepush and delivery remain pending. | [Contract](knowledge-base/en/docs/byte-reader-br1-contract.md) · [Evidence](knowledge-base/en/docs/byte-reader-br1-evidence.md) |
 | 0.27.0 | Explicit-line CPU TextField, genuine Scope/cache ownership, atomic preparation and display-resource cleanup. Complete existing core checks passed; native and delivery gates remain separate. | [Contract](knowledge-base/en/docs/text-field-tf1-contract.md) · [Evidence](knowledge-base/en/docs/text-field-tf1-evidence.md) |
 | 0.26.0 | Scope-owned scalar Tween, four built-in easings and one-shot controls; game time and rendering remain explicit. Core checks passed; final publication and delivery are separate. | [Contract](knowledge-base/en/docs/scalar-tween-contract.md) · [Evidence](knowledge-base/en/docs/scalar-tween-evidence.md) |
 | 0.25.0 | Engine-owned explicit game time in seconds, bounded Scope-owned callbacks and phase-safe cleanup; callers retain control of rendering and sequence sampling. Public behavior, strict types, source controls and the 2,076-test core run have separately recorded cutoffs. | [Details](knowledge-base/en/docs/game-clock-evidence.md) |
@@ -58,6 +59,7 @@ These are engineering and knowledge-base checkpoints, newest first, rather than 
 | 检查点 | 主要解决的问题 | 记录 |
 | --- | --- | --- |
 | 未发行 | 英文优先的社区入口、独立的 `en/` 与 `Cns/` 知识库、英文文件名、创始人介绍与双语 Changelog。精简文档入口，集中历史研究，便于查阅。 | [详情](knowledge-base/Cns/docs/documentation-layout.md) |
+| 0.27.1 | 自有 ByteReader、显式字节序、有界原子读取与复制输出，以及严格公共类型和受控故障测试。隔离检查已通过；Main 集成、最终 prepush 与交付仍待完成。 | [契约](knowledge-base/Cns/docs/字节读取器BR1契约.md) · [证据](knowledge-base/Cns/docs/字节读取器BR1证据.md) |
 | 0.27.0 | 显式行 CPU TextField、真实 Scope／cache 所有权、原子准备及显示资源清理。完整既有核心检查已通过；原生及交付门禁另记。 | [契约](knowledge-base/Cns/docs/文字显示TF1契约.md) · [证据](knowledge-base/Cns/docs/文字显示TF1证据.md) |
 | 0.26.0 | Scope 所有的标量 Tween、四种内建缓动与一次性控制；游戏时间与渲染仍显式执行。核心检查已通过；最终公开门禁与交付另记。 | [契约](knowledge-base/Cns/docs/标量补间契约.md) · [证据](knowledge-base/Cns/docs/标量补间证据.md) |
 | 0.25.0 | Engine 自有的显式秒制游戏时间、有界 Scope 回调及阶段安全清理；渲染与序列采样由调用者显式控制。公共行为、严格类型、源码对照及 2,076 项核心测试分别保留验证范围。 | [详情](knowledge-base/Cns/docs/游戏时间核心证据.md) |
@@ -90,7 +92,9 @@ These are engineering and knowledge-base checkpoints, newest first, rather than 
 
 ## Current scope and participation
 
-The latest engineering preview is **0.27.0**, adding an explicit-line CPU TextField display leaf. Complete existing core verification passed in its recorded scope; current native regression gates, final mandatory prepush and remote delivery remain separate and PENDING. We are rebuilding an open-source game engine and creation workflow for people who primarily use AI to make games, initially targeting complex 2D UI and lightweight 3D. The repository contains an experimental core and a structured knowledge base. The complete engine, production platform hosts, editor, Agent services, target-device performance and complete legacy-project migration still require implementation or acceptance.
+The latest engineering preview is **0.27.1**, adding an owned ByteReader utility. Isolated behavior, types, controlled failures and related regressions passed in their recorded scopes; Main integration, final mandatory prepush and remote delivery remain PENDING. We are rebuilding an open-source game engine and creation workflow for people who primarily use AI to make games, initially targeting complex 2D UI and lightweight 3D. The repository contains an experimental core and a structured knowledge base. The complete engine, production platform hosts, editor, Agent services, target-device performance and complete legacy-project migration still require implementation or acceptance.
+
+`ByteReader` and the frozen `BYTE_READER_LIMITS` are shared values at the engine and runtime roots; `ByteOrder` is type-only. A reader owns a fixed snapshot, supports explicit byte order, rejects out-of-range reads atomically and returns independent copies. Read the [contract](knowledge-base/en/docs/byte-reader-br1-contract.md) and [bounded evidence](knowledge-base/en/docs/byte-reader-br1-evidence.md).
 
 The 0.27.0 engineering preview adds a factory-owned, noneditable TextField through `@egret/engine/text`: `createTextField(engine, scope, cache)` and type-only `TextField`/`TextFieldStatus`. Ten-scalar requests, explicit preparation, revision replacement and coalesced caller leases follow genuine Engine/Scope/cache affinity. Committed images and blank direct bounds participate in both image-capable collectors under existing budgets; legacy image refusal is preserved. Default roots remain unchanged. Read the [contract](knowledge-base/en/docs/text-field-tf1-contract.md) and [evidence](knowledge-base/en/docs/text-field-tf1-evidence.md).
 

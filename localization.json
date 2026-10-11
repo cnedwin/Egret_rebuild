@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "revision": "0.27.0",
+  "revision": "0.27.1",
   "canonicalState": "Chinese registries; English JSON is a read-only translation",
   "evidencePolicy": "Machine data, embedded source, historical code and upstream legal originals retain their identities; paired reading versions explain them.",
   "semanticReview": {
@@ -92,8 +92,8 @@
       "zh": "DOCUMENTATION.zh-CN.md",
       "en": "DOCUMENTATION.md",
       "kind": "public_reading",
-      "enSha256": "3e73932c80f14a49edc8dccd1b2f7a6e5be7231bc372f0fff140d8fb1ba47043",
-      "zhSha256": "258ebbe83b30b418a21309a8981531bc6105a08f62a55d36b4455359760dd0a7"
+      "enSha256": "87191bfaf32316d06ed4bd64c2ccc4ebe8dcfb3fcbf36c800bca4ae0c7ddd34f",
+      "zhSha256": "e23e2acefadeef718f3482ec369f5a6b2677b7d51ba042564d662f5bff38bbe6"
     },
     {
       "zh": "examples/canvas-scene/README.zh-CN.md",
@@ -141,8 +141,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "03392805386b45a5f86ce3a795bfa4d836a180f52cdcddd66cd0a4fb002ee339",
-      "zhSha256": "6502e7f2600cd3858777f31c0ad8b29f5281bc59484dbde245e9b59b7afa5335"
+      "enSha256": "586120d956c54bde9aa69d10651ce6f9a78e4fd79911060ed6220ca0db51058b",
+      "zhSha256": "0d1567c40e1155a21ae38d7be57ef3ff91aac3eb7c086f6337fddcf2dcc40f34"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -764,8 +764,8 @@
       "zh": "knowledge-base/Cns/README.md",
       "en": "knowledge-base/en/README.md",
       "kind": "public_reading",
-      "enSha256": "973f2ec5f1c10eddc90e84d72c1efb5fd5d89e84647fa8d8b638359399f98ac1",
-      "zhSha256": "d1cabfab188b34b8ae394dc698a04cb7563e7948b98bf74e669a7f51f343abe4"
+      "enSha256": "a1b751b3ca14c20b87bcdf422c22236b6848d230a158ff882cdc64430c77343f",
+      "zhSha256": "8ca53abf7a65847907d55fdd1211337203ede8632c0e32f5572e41a47bbe3fe9"
     },
     {
       "zh": "knowledge-base/Cns/templates/ADR决策记录.md",
@@ -820,8 +820,8 @@
       "zh": "packages/engine/README.zh-CN.md",
       "en": "packages/engine/README.md",
       "kind": "public_reading",
-      "enSha256": "0f8b79c7c9bf7ecc727416cdbc2548b20f416e93fe3f2ea4e891c53ac4aea447",
-      "zhSha256": "cb145fea9aead8c4092743c5e138637845d8706369339d00188f50fa2a797172"
+      "enSha256": "68bc1b057d1c2a1764209cce4434d3847be3d7d39464bc59da9e7e29b6c70942",
+      "zhSha256": "a147b85e45c33ab9319731ba04cdd72a7e1efe035afd41aa5844cd8d1e1006ba"
     },
     {
       "zh": "packages/project/README.zh-CN.md",
@@ -834,8 +834,8 @@
       "zh": "packages/runtime/README.zh-CN.md",
       "en": "packages/runtime/README.md",
       "kind": "public_reading",
-      "enSha256": "cf25e1b5119a9136c6ad5412e6113e420c734ed75186dff089ae4fded3e8dc00",
-      "zhSha256": "248043d15ad13ffd194d8d1e55bbdc28354f3465a0ca417a972bbc80c945a2f3"
+      "enSha256": "4365178ba25f950e399deaf3f28ff85cedc1e91c52882dd1479951c34cbbedc8",
+      "zhSha256": "624b7e5f0021403469011b532028f981c6be178879b6977c932ec0f11afc6b91"
     },
     {
       "zh": "PUBLICATION.zh-CN.md",
@@ -848,8 +848,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "e893776f5590b13468a4312ed6d36e0be0a6b41b0bcf2f0ab8a8212f475fcc36",
-      "zhSha256": "d61980f3024ff2ca33e63878731d0f63ffd0da1163dacdae8699950321c4cf15"
+      "enSha256": "43a7f74030c2e0f6e18e870ac8c95d8c3afdfdbbc474b2cc8823a787e0c4637b",
+      "zhSha256": "cb2bc932fe34f8b5add65008c81d8c5e104597f23130cb41b1734f03c0e9bd13"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -976,6 +976,20 @@
       "kind": "public_reading",
       "enSha256": "1505749f59079bf4ac7c6064adb2084ca30f5ea83771df6fcca8046b89ddd4fd",
       "zhSha256": "f217769146df71c10b54b61c20f5641e392fd78757702f99099fafefd73f1298"
+    },
+    {
+      "zh": "knowledge-base/Cns/docs/字节读取器BR1契约.md",
+      "en": "knowledge-base/en/docs/byte-reader-br1-contract.md",
+      "kind": "public_reading",
+      "enSha256": "9e480ca07caa507359a9eed41cb1ba3da5603e01d0b212f84c373dcf408b76cd",
+      "zhSha256": "c4f4203a62c06996cb251afafad7ff6151a63002f1311a2865f35bd1580f5158"
+    },
+    {
+      "zh": "knowledge-base/Cns/docs/字节读取器BR1证据.md",
+      "en": "knowledge-base/en/docs/byte-reader-br1-evidence.md",
+      "kind": "public_reading",
+      "enSha256": "d729dfc9cba4fd6ab09696c155d316ebec7b8f3a8b1bf9f271dab9f92565cfde",
+      "zhSha256": "04e326b77a226115b2d03bd94c4c9bff9a157a05536c08954b36a1a5cf2ca92a"
     }
   ],
   "registries": [
@@ -1000,20 +1014,20 @@
     {
       "source": "knowledge-base/Cns/registry/交付.json",
       "target": "knowledge-base/en/registry/deliverables.json",
-      "sourceSha256": "0cb910c45635ddbe39e7d9676e1a3d37a7ff3c20d1c25002a82c2481ca9952ed",
-      "targetSha256": "1b1dbb30bd281d4af34c1822601e63057fd53793fdb3ac08ca51f999fa680bd8"
+      "sourceSha256": "3e08ad5b75eaa34cc066e58f03b027f1a93574854f787cac6034e90ff705acdc",
+      "targetSha256": "1696d90f6654c436d78f4e5bd24b6ed55a7c7a9e0009639b9555d03665a1ae84"
     },
     {
       "source": "knowledge-base/Cns/registry/来源.json",
       "target": "knowledge-base/en/registry/sources.json",
-      "sourceSha256": "6a99cc0acaa9f9f4f8b13861d7e4ed819648409565ccdeb6093034b01e5bd775",
-      "targetSha256": "b2c8b63cf5c2bdadc3ed07e5d89cfc73b906cd25d29630bdb9e47d64ca6033b0"
+      "sourceSha256": "f952622ac7e88bea1f70c7f48d4fbd9246aa30d044a30ac8e634c74f5edd4bad",
+      "targetSha256": "3a3e5de7cd5c97ee2c1b0a1c72eee4e37e294bbad132e3c4e24c5af66e2ac7a2"
     },
     {
       "source": "knowledge-base/Cns/当前版本.json",
       "target": "knowledge-base/en/current-version.json",
-      "sourceSha256": "4b7357a1a8aafc101536ee5f59c41e9348099ca05764644017e43237a1f1320c",
-      "targetSha256": "611d08e35d7116f18e6bc17eca15ec1fe18d0541e929d33c945f06d5c39a2ac5"
+      "sourceSha256": "b6c455d4ff4be301dac7ee4e88e7ae541984f63ddb46523a5dffac88119a49e6",
+      "targetSha256": "69b76c92b046fcb55b01e849d021f5ce98d12d9ea786cc0faf57aed718bbb278"
     }
   ],
   "criticalComments": [
@@ -1570,6 +1584,10 @@
     {
       "path": "packages/runtime/src/textDisplayState.ts",
       "sha256": "7aa4c5e15aa3715c30fb16cdefad198171b21dab80066577651c5361dbcfba9c"
+    },
+    {
+      "path": "packages/runtime/src/ByteReader.ts",
+      "sha256": "6bdfd946873b01d829682dccdaca85e0c11e579574657d4c2c5d0b901766dedb"
     }
   ],
   "historicalSemanticReview": {
@@ -3523,5 +3541,29 @@
     "registryViews": 6,
     "criticalSourceFiles": 129,
     "limits": "Logical resource accounting and literal-provider tests do not prove font pixels, physical memory, browser fonts, TextField, phones or performance. Fresh full publication and remote delivery remain separate records."
+  },
+  "byteReaderBR1Curation": {
+    "engineeringPreview": "0.27.1",
+    "status": "AUTHOR_PREPARED_PENDING_DIFFERENT_REVIEW",
+    "scope": "Exact BR1 contract pair, bounded evidence pair, Main-only entry/registry/provenance/comment successors; no blanket repository semantic acceptance.",
+    "priorSemanticReviewEngineeringPreview": "0.27.0",
+    "priorSemanticReviewUnchanged": true,
+    "newSemanticReviewAccepted": false,
+    "criticalEnglishComments": "Existing independently reviewed ByteReader comment bytes preserved.",
+    "MainAcceptance": "PENDING_ACTUAL_FINAL_SOURCE_GATES",
+    "publication": "PENDING_ACTUAL_CURRENT_HOOK_AND_REMOTE_DELIVERY",
+    "sourceExecutionByCurationAuthor": false,
+    "rootMainSuccessor": {
+      "engineeringPreview": "0.27.1",
+      "sourceAndMeaningReviewStatus": "PASS_WITH_LIMITS_MAIN_CURATION_SOURCE_AND_BILINGUAL_MEANING_ONLY",
+      "independentReview": {
+        "bytes": 32738,
+        "sha256": "ff70c769a19377c56cb3383bc056d87bcae9d05e3c6541c266348221d7cddffa",
+        "status": "identity_only_not_distributed"
+      },
+      "currentMainVerification": "ACTUAL_MAIN_BUILD_BOUNDARIES_TYPES_AND_FULL_CPU_TESTS_PASS",
+      "closeoutMeaningReview": "PENDING_DIFFERENT_REVIEW",
+      "scope": "Finite BR1 curation and appended factual Main evidence only; historical semanticReview remains unchanged."
+    }
   }
 }

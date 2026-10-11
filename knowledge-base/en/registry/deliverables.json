@@ -1231,11 +1231,45 @@
         "evidence/text-field-tf1-verification.json"
       ],
       "doc": "en/docs/text-field-tf1-contract.md"
+    },
+    {
+      "id": "V030",
+      "kind": "bounded_runtime_utility_increment",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R011",
+        "R015",
+        "R016",
+        "R019"
+      ],
+      "dependsOn": [
+        "V002"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "owned_fixed_byte_reader_with_explicit_order_atomic_reads_and_disposal",
+      "acceptance": "isolated_cpu_behavior_types_and_controlled_faults_verified_main_integration_and_delivery_pending",
+      "title": "Owned ByteReader BR1",
+      "acceptanceCriteria": [
+        "Copy only the selected eligible authentic attached fixed ordinary Uint8Array payload, bounded to 16777216 bytes, with explicit public byte-order/read/disposal semantics.",
+        "Commit the cursor after success; refusals and real controlled allocation/copy exceptions preserve cursor/storage, and copy-out buffers do not alias.",
+        "Keep recorded isolated public behavior, strict consumer and fault scopes separate; complete Main build, types, boundaries, source controls and regressions still require actual execution.",
+        "Review bilingual public material, attribution, critical English comments, final prepush and remote delivery separately; no legacy ByteArray or Spine format compatibility promise."
+      ],
+      "artifacts": [
+        "en/docs/byte-reader-br1-contract.md",
+        "en/docs/byte-reader-br1-evidence.md",
+        "evidence/byte-reader-br1-verification.json"
+      ],
+      "doc": "en/docs/byte-reader-br1-contract.md"
     }
   ],
   "_localization": {
     "canonicalSource": "交付.json",
-    "canonicalSha256": "0cb910c45635ddbe39e7d9676e1a3d37a7ff3c20d1c25002a82c2481ca9952ed",
+    "canonicalSha256": "3e08ad5b75eaa34cc066e58f03b027f1a93574854f787cac6034e90ff705acdc",
     "role": "read_only_translation",
     "language": "en"
   }

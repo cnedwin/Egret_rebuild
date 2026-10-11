@@ -23,3 +23,5 @@ export type { TexturedFrameProfile2D, TexturedMeshCommand2D, TexturedRenderComma
 export { Texture, createTexture, isTexture, Bitmap, Mesh2D } from '@egret/runtime';
 export { createSequenceClip, SequencePlayer } from '@egret/runtime';
 export type { SequenceFrameInput, SequenceClipInput, SequenceClip, SequenceRegion, SequenceSample, SequencePlaybackMode } from '@egret/runtime';
+export { ByteReader, BYTE_READER_LIMITS } from "@egret/runtime";
+export type { ByteOrder } from "@egret/runtime";

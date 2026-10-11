@@ -132,6 +132,21 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
     write('packages/engine/dist/textField.js', 'export function createTextField() {}\n');
     write('packages/engine/dist/text.js', readFileSync(path.join(root,'packages/engine/dist/text.js'),'utf8') + "export {createTextField} from './textField.js';\n");
     write('node_modules/@egret/engine/text.js', "export {createTextField,createTextRasterCache} from '../../../packages/engine/dist/text.js';\n");
+    // BR1 baseline only: inert policy values share one synthetic identity;
+    // erased declaration names keep old witnesses reachable, not byte behavior.
+    const byteReaderBody = 'export class ByteReader {}\nexport const BYTE_READER_LIMITS = Object.freeze({maxBytes:16777216});\n';
+    const byteReaderTypes = 'export type ByteOrder = "bigEndian" | "littleEndian";\nexport declare const BYTE_READER_LIMITS: Readonly<{maxBytes:16777216}>;\nexport declare class ByteReader {}\n';
+    write('packages/runtime/src/ByteReader.ts', byteReaderTypes);
+    write('packages/runtime/dist/ByteReader.d.ts', byteReaderTypes);
+    write('packages/runtime/dist/ByteReader.js', byteReaderBody);
+    const byteReaderValues = "export {ByteReader,BYTE_READER_LIMITS} from './ByteReader.js';\n";
+    const byteReaderPortTypes = "export type {ByteOrder} from './ByteReader.js';\n";
+    for (const file of ['packages/runtime/dist/index.js', 'packages/runtime/dist/index.d.ts'])
+      write(file, readFileSync(path.join(root, file), 'utf8') + byteReaderValues + (file.endsWith('.d.ts') ? byteReaderPortTypes : ''));
+    for (const file of ['packages/engine/dist/index.js', 'packages/engine/dist/index.d.ts'])
+      write(file, readFileSync(path.join(root, file), 'utf8') + "export {ByteReader,BYTE_READER_LIMITS} from '@egret/runtime';\n" + (file.endsWith('.d.ts') ? "export type {ByteOrder} from '@egret/runtime';\n" : ''));
+    for (const file of ['node_modules/@egret/engine/index.js', 'node_modules/@egret/runtime/index.js'])
+      write(file, readFileSync(path.join(root, file), 'utf8') + "export {ByteReader,BYTE_READER_LIMITS} from '../../../packages/runtime/dist/ByteReader.js';\n");
     // Clock baseline only: inert synthetic policy inputs carry the exact six
     // public type names and erased emission. No owner or behavior shim is added.
     const clockTypes = ['GameClockOptions','GameClockState','GameClockTick','GameClockHandler','GameClock','GameClockSubscription'];

@@ -1231,6 +1231,40 @@
         "evidence/text-field-tf1-verification.json"
       ],
       "doc": "Cns/docs/文字显示TF1契约.md"
+    },
+    {
+      "id": "V030",
+      "kind": "bounded_runtime_utility_increment",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R011",
+        "R015",
+        "R016",
+        "R019"
+      ],
+      "dependsOn": [
+        "V002"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "owned_fixed_byte_reader_with_explicit_order_atomic_reads_and_disposal",
+      "acceptance": "isolated_cpu_behavior_types_and_controlled_faults_verified_main_integration_and_delivery_pending",
+      "title": "自有字节读取器 BR1",
+      "acceptanceCriteria": [
+        "只复制真实未脱离且固定普通 Uint8Array 选中载荷，上限 16777216 字节；公开字节序、读取和释放语义明确。",
+        "成功后提交游标，拒绝和真实受控分配／复制异常保持游标及存储；复制输出互不共享底层。",
+        "公共行为、严格消费者和故障的已记录隔离范围分别保存；Main 完整编译、类型、边界、源码对照和回归仍须实际运行。",
+        "双语公开材料、来源、关键英文注释、最终 prepush 和远程交付分别审查；不承诺旧 ByteArray 或 Spine 格式兼容。"
+      ],
+      "artifacts": [
+        "Cns/docs/字节读取器BR1契约.md",
+        "Cns/docs/字节读取器BR1证据.md",
+        "evidence/byte-reader-br1-verification.json"
+      ],
+      "doc": "Cns/docs/字节读取器BR1契约.md"
     }
   ]
 }
