@@ -1265,11 +1265,23 @@
       "scope": "Independent specification and first-party source; recorded isolated compilation, 23 public behavior tests, 18 exact unsuppressed negative type diagnostics, controlled allocation/copy failures and 156 related regressions.",
       "limit": "Overlapping scopes are not summed; complete Main integration, bilingual meaning review, final prepush and remote delivery remain pending. Fault observations establish neither physical OOM/reclamation nor formats, Spine, rendering, platforms, performance or migration acceptance.",
       "doc": "en/docs/byte-reader-br1-evidence.md"
+    },
+    {
+      "id": "S080",
+      "type": "first_party_display_tree_scaling_source_diagnosis_and_bounded_verification",
+      "researchCheckedAt": "2026-10-11",
+      "artifacts": [
+        "evidence/display-tree-scaling-verification.json"
+      ],
+      "title": "First-party display-tree scaling diagnosis and bounded verification",
+      "scope": "Recorded source diagnosis, separate local baseline timing and hook observations, preserved pre-fix failures, and corrected-source build/targeted checks passed 71/71 including 9 scaling tests; the earlier 2227/2227 whole-core result predates the final guard correction and added test, so remains intermediate evidence only.",
+      "limit": "Overlapping scopes are not summed; final complete current verification/prepush, affected browser gates, finite source/bilingual review and delivery remain pending. No global O(N) or performance-lead guarantee; browser, device, GPU, phone, complete Spine and migration acceptance are excluded.",
+      "doc": "en/docs/display-tree-scaling.md"
     }
   ],
   "_localization": {
     "canonicalSource": "来源.json",
-    "canonicalSha256": "f952622ac7e88bea1f70c7f48d4fbd9246aa30d044a30ac8e634c74f5edd4bad",
+    "canonicalSha256": "9b1d5ebcaf982c69e87293d2e32eb860a713ab5104f6629450f4191e641cccd8",
     "role": "read_only_translation",
     "language": "en"
   }

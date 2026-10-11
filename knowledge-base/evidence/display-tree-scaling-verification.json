@@ -1,0 +1,430 @@
+{
+  "schemaVersion": 1,
+  "engineeringPreview": "0.27.2",
+  "sourceBaseCommit": "d58e624942ec485d66003ec9bb48e5edab6a6374",
+  "date": "2026-10-11",
+  "scope": "Bounded CPU display attachment and child-list repair; existing desktop regressions only.",
+  "environment": {
+    "node": "24.19.0",
+    "typescript": "7.0.2",
+    "platform": "win32",
+    "browser": "Edge",
+    "playwright": "1.62.1",
+    "channel": "msedge",
+    "headless": true,
+    "extraBrowserFlags": [],
+    "hardwareIdentity": "not_recorded"
+  },
+  "sourceSubjects": [
+    {
+      "path": "packages/runtime/src/DisplayObjectContainer.ts",
+      "bytes": 5597,
+      "sha256": "1bccfc8d316858ca1b7af769708ae2baed9c7a553da02e650d9ed0832f82ebfd"
+    },
+    {
+      "path": "packages/runtime/src/displayTreeState.ts",
+      "bytes": 4153,
+      "sha256": "4729121d89ae4fad0a06ea231cadd16807e4ff01de602d3bf218894e1fd9cc57"
+    },
+    {
+      "path": "tests/display-tree-scaling.test.mjs",
+      "bytes": 7636,
+      "sha256": "b87ea48fbebc4cd2e87a0bf5ab224f13c9db192ebea4b45167554be691cba04e"
+    }
+  ],
+  "independentSourceReview": {
+    "bytes": 3031,
+    "sha256": "28f096e85a9028fa1d8a5cdd6bd33bcfef194e3ba2313a191dc40cbf93d9509f",
+    "status": "identity_only_not_distributed",
+    "verdict": "PASS within reviewed source/test scope; no open concrete findings"
+  },
+  "initialFailure": {
+    "tests": 8,
+    "passed": 7,
+    "failed": 1,
+    "reason": "Unrelated old sibling usability hook blocks incoming child.",
+    "output": {
+      "bytes": 2017,
+      "sha256": "f132f669371a99cbbda629848deb558c7a6395fafaf6a9561dbebc0cdfac7cd7",
+      "status": "identity_only_not_distributed"
+    }
+  },
+  "reviewRepairFailure": {
+    "tests": 9,
+    "passed": 8,
+    "failed": 1,
+    "reason": "OBJECT_DISPOSED instead of ENGINE_CLOSED before guard repair.",
+    "output": {
+      "bytes": 3206,
+      "sha256": "b99ea9aeb2da1880ee610dba0b4d6da31e1f311c3a629536cda1be2f9e733552",
+      "status": "identity_only_not_distributed"
+    }
+  },
+  "correctedTargeted": {
+    "tests": 71,
+    "passed": 71,
+    "failed": 0,
+    "scalingTests": 9,
+    "nodeCapacitySubtestMs": 501.1715,
+    "nodeCapacityEnclosingGroupMs": 644.454,
+    "harnessMs": 1946.6674,
+    "overlappingCountsAndDurations": true,
+    "output": {
+      "bytes": 6153,
+      "sha256": "54213c19859bb0203cfa10fe471aa646cf93fdde1196a37bae7b033289a20cd0",
+      "status": "identity_only_not_distributed"
+    }
+  },
+  "intermediateWhole": {
+    "tests": 2227,
+    "passed": 2227,
+    "failed": 0,
+    "scope": "Before the ninth closing regression and final guard; not final-source acceptance.",
+    "output": {
+      "bytes": 367026,
+      "sha256": "698b4acea525d378578cca537f2bbcea44e429a4953bf5669abf5ad8551c46fd",
+      "status": "identity_only_not_distributed"
+    }
+  },
+  "localProbe": {
+    "baseline": [
+      {
+        "n": 128,
+        "counted": false,
+        "constructionMs": 3.2090999999999923,
+        "captureMs": 0.9610999999999876,
+        "reverseTailDisposalMs": 0.3054000000000059,
+        "hooks": 0
+      },
+      {
+        "n": 2000,
+        "counted": false,
+        "constructionMs": 199.8308,
+        "captureMs": 2.487799999999993,
+        "reverseTailDisposalMs": 1.0750999999999635,
+        "hooks": 0
+      },
+      {
+        "n": 4000,
+        "counted": false,
+        "constructionMs": 976.2328,
+        "captureMs": 2.317399999999907,
+        "reverseTailDisposalMs": 2.4647999999999683,
+        "hooks": 0
+      },
+      {
+        "n": 8000,
+        "counted": false,
+        "constructionMs": 4315.1398,
+        "captureMs": 12.865099999999984,
+        "reverseTailDisposalMs": 13.246100000000297,
+        "hooks": 0
+      },
+      {
+        "n": 2000,
+        "counted": true,
+        "constructionMs": 331.4519,
+        "captureMs": 2.389600000000428,
+        "reverseTailDisposalMs": 3.0708999999997104,
+        "hooks": 2003000
+      },
+      {
+        "n": 4000,
+        "counted": true,
+        "constructionMs": 1423.2163,
+        "captureMs": 4.1612999999997555,
+        "reverseTailDisposalMs": 4.204299999999421,
+        "hooks": 8006000
+      },
+      {
+        "n": 8000,
+        "counted": true,
+        "constructionMs": 6584.6222,
+        "captureMs": 11.986399999999776,
+        "reverseTailDisposalMs": 16.00090000000091,
+        "hooks": 32012000
+      }
+    ],
+    "corrected": [
+      {
+        "n": 128,
+        "counted": false,
+        "constructionMs": 0.6413000000000011,
+        "captureMs": 0.8668000000000049,
+        "reverseTailDisposalMs": 0.186399999999999,
+        "hooks": 0
+      },
+      {
+        "n": 2000,
+        "counted": false,
+        "constructionMs": 4.3703,
+        "captureMs": 2.444899999999997,
+        "reverseTailDisposalMs": 2.4320999999999913,
+        "hooks": 0
+      },
+      {
+        "n": 4000,
+        "counted": false,
+        "constructionMs": 14.131600000000006,
+        "captureMs": 2.556299999999993,
+        "reverseTailDisposalMs": 2.538799999999995,
+        "hooks": 0
+      },
+      {
+        "n": 8000,
+        "counted": false,
+        "constructionMs": 28.631199999999993,
+        "captureMs": 9.186700000000002,
+        "reverseTailDisposalMs": 3.9833,
+        "hooks": 0
+      },
+      {
+        "n": 2000,
+        "counted": true,
+        "constructionMs": 6.448399999999992,
+        "captureMs": 1.2409000000000106,
+        "reverseTailDisposalMs": 1.0990999999999929,
+        "hooks": 4000
+      },
+      {
+        "n": 4000,
+        "counted": true,
+        "constructionMs": 10.336900000000014,
+        "captureMs": 2.1887000000000114,
+        "reverseTailDisposalMs": 2.0790000000000077,
+        "hooks": 8000
+      },
+      {
+        "n": 8000,
+        "counted": true,
+        "constructionMs": 38.95409999999998,
+        "captureMs": 6.830800000000011,
+        "reverseTailDisposalMs": 11.613900000000001,
+        "hooks": 16000
+      }
+    ],
+    "baselineResult": {
+      "bytes": 2337,
+      "sha256": "d95a03a058ea70cc10683ac070fbb71ac476d844ec243b7ce1983ae85cfaab05",
+      "status": "identity_only_not_distributed"
+    },
+    "correctedResult": {
+      "bytes": 2413,
+      "sha256": "b021f89449f4ca62400915dc8b3763f301d5ee6020b0092c946d1e65171927a4",
+      "status": "identity_only_not_distributed"
+    },
+    "baselineProbe": {
+      "bytes": 2411,
+      "sha256": "c671ee3dd6cae431849ae9a4a9d08947a93c357ebc01a361481dbb2c70338a69",
+      "status": "identity_only_not_distributed"
+    },
+    "correctedProbe": {
+      "bytes": 2485,
+      "sha256": "75c4c29aebdf1cc39cc9a23f08272795409db87b2e66c036615c0159c375bc6a",
+      "status": "identity_only_not_distributed"
+    },
+    "limits": "Single samples with separate stock/counting workloads and no hardware identity. Only projected observed fields are evidence; retained private theoretical fields are baseline estimates, not corrected observations. No cross-engine, phone, rendering-throughput or performance-lead comparison."
+  },
+  "desktopRegression": {
+    "canvas": {
+      "exitCode": 0,
+      "limits": "Fixed rectangle/Canvas scenes and deliberate counterexample."
+    },
+    "webgpu": {
+      "exitCode": 0,
+      "summary": {
+        "frames": 42,
+        "failedRequiredFixtures": 0,
+        "rawChecks": 1709,
+        "screenshots": 84,
+        "compositionChecks": 6808,
+        "counterexamples": 8,
+        "unexpectedErrors": 0
+      }
+    },
+    "b1": {
+      "exitCode": 0,
+      "counts": {
+        "positiveFrames": 7,
+        "counterexamples": 5,
+        "submittedFrames": 11,
+        "maximumSubmittedFrames": 11
+      },
+      "lifecycle": {
+        "browserClosed": true,
+        "contextClosed": true,
+        "serverClosed": true,
+        "identitiesStable": true,
+        "cleanupScope": "standalone-cooperative-api",
+        "osDescendantRetirement": "UNBOUND",
+        "pendingApiOperations": 0,
+        "unsettledAcquisitions": [],
+        "standaloneCleanupObserved": true,
+        "rawSaved": true
+      }
+    },
+    "receipts": [
+      {
+        "name": "canvas",
+        "startedAtUtc": "2026-10-11T14:33:31.6131499Z",
+        "finishedAtUtc": "2026-10-11T14:33:33.1572292Z",
+        "exitCode": 0,
+        "timeout": false,
+        "stdoutSHA256": "bbbd9efb6f3de286717496ff44b76bfc5fd024df201c2f4f25fe38c17a693712",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "webgpu",
+        "startedAtUtc": "2026-10-11T14:33:33.1832964Z",
+        "finishedAtUtc": "2026-10-11T14:33:44.6930015Z",
+        "exitCode": 0,
+        "timeout": false,
+        "stdoutSHA256": "99245a68a6f617dd1b91d70b0b98de5e28f74c8fa8c3ed1aa3371e61ac88ddc6",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "b1",
+        "startedAtUtc": "2026-10-11T14:33:44.7033635Z",
+        "finishedAtUtc": "2026-10-11T14:33:48.4585246Z",
+        "exitCode": 0,
+        "timeout": false,
+        "stdoutSHA256": "b9dfc1102fb8e334f43689a01d2b3082cbf8f36875358004a71913746307c2da",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "limits": "Fixed default desktop browser workloads at this source cutoff; no OS descendant-retirement certificate or complete renderer/font/device acceptance. Textured and sequence regression pending.",
+    "remainingSuccessor": {
+      "completedAtUtc": "2026-10-11T14:39:02.6994190Z",
+      "observations": {
+        "textured": {
+          "status": "PASS",
+          "counts": {
+            "calibrationCases": 11,
+            "heldOutCases": 10,
+            "controlWindows": 16,
+            "controlsSensitive": 12,
+            "positiveObservations": 27,
+            "controlObservations": 19
+          },
+          "lifecycle": {
+            "browserClosed": true,
+            "serverClosed": true,
+            "contextsClosed": 37,
+            "identitiesStable": true,
+            "artifactsStable": true,
+            "standaloneCleanupObserved": true,
+            "cleanupScope": "standalone-cooperative-api",
+            "osDescendantRetirement": "UNBOUND",
+            "pendingApiOperations": 0,
+            "unsettledAcquisitions": []
+          },
+          "fullA2": false
+        },
+        "sequence": {
+          "status": "PASS_OPAQUE_REGION_SUBSET",
+          "counts": {
+            "completedCaptures": 8,
+            "comparedChannels": 1024
+          },
+          "fullA2": false
+        }
+      },
+      "receipts": [
+        {
+          "name": "freeze",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "7714f70bad48bc94927762e6d4a915e2d04e6b913e0d6a5d5f1d3d47cc66b148",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "textured",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "acacfde26334d61eb532c8b3ff838651dd65e21d447baba8aca3284d5caf8d1a",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "sequence",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "849db336edf0a1b41c75f219fca9f77e934378a38c0567e7ce32ac33800dfb88",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "sourceSubjects": [
+        {
+          "path": "packages/runtime/src/DisplayObjectContainer.ts",
+          "bytes": 5597,
+          "sha256": "1bccfc8d316858ca1b7af769708ae2baed9c7a553da02e650d9ed0832f82ebfd"
+        },
+        {
+          "path": "packages/runtime/src/displayTreeState.ts",
+          "bytes": 4153,
+          "sha256": "4729121d89ae4fad0a06ea231cadd16807e4ff01de602d3bf218894e1fd9cc57"
+        },
+        {
+          "path": "tests/display-tree-scaling.test.mjs",
+          "bytes": 7636,
+          "sha256": "b87ea48fbebc4cd2e87a0bf5ab224f13c9db192ebea4b45167554be691cba04e"
+        }
+      ],
+      "limits": "Existing textured geometry and opaque SequencePlayer regression only; output counts overlap and neither full A2 nor new text/native/device acceptance is implied."
+    }
+  },
+  "finalWhole": "ACTUAL_COMPLETE_PREPUSH_PASS_FINAL_PRODUCT_SOURCE",
+  "independentBilingualReview": {
+    "bytes": 8723,
+    "sha256": "10b56bfb841168f1262f0e911873fde35a934fa2c5eb2ac2d698b89a350c0132",
+    "status": "identity_only_not_distributed",
+    "scope": "Finite source, paired documentation and saved evidence at pre-prepush-successor cutoff."
+  },
+  "remoteDelivery": "PENDING",
+  "excludes": [
+    "global_linear_tree_operations",
+    "target_device_performance",
+    "performance_leadership",
+    "fonts_CJK",
+    "full_Spine",
+    "full_migration",
+    "complete_UI_3D_engine",
+    "Native_SDK"
+  ],
+  "historicalFailuresPreserved": true,
+  "prepushSuccessor": {
+    "completedAtUtc": "2026-10-11T14:44:42.7819650Z",
+    "exitCode": 0,
+    "timeout": false,
+    "core": {
+      "tests": 2228,
+      "passed": 2228,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "publication": {
+      "tests": 52,
+      "passed": 52,
+      "failed": 0,
+      "documents": 135,
+      "registryViews": 6,
+      "criticalSources": 138
+    },
+    "knowledgeBase": {
+      "records": 153,
+      "markdown": 237,
+      "links": 1945,
+      "references": 921,
+      "issues": 0
+    },
+    "headless": "closed_scopes_disposed_nodes_zero_pending_timers",
+    "receipt": {
+      "bytes": 675,
+      "sha256": "c93bc826388861837d3d68bdc3b5f2f7b0ab5cd221dad99bd854c6882114227d",
+      "status": "identity_only_not_distributed"
+    },
+    "stdoutSHA256": "cd5be08f392c33d7d436b80576c9d9fd4522531bf15066572dbe30326c731cb7",
+    "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "scope": "Actual complete final product-source build, types, boundaries, CPU harness, publication structure, headless and knowledge-base gates before the factual documentation successor. Subsequent push hook remains separately mandatory."
+  }
+}

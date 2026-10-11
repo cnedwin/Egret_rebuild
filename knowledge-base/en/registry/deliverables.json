@@ -1265,11 +1265,44 @@
         "evidence/byte-reader-br1-verification.json"
       ],
       "doc": "en/docs/byte-reader-br1-contract.md"
+    },
+    {
+      "id": "V031",
+      "kind": "bounded_display_tree_bugfix",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R011",
+        "R015",
+        "R016",
+        "R019"
+      ],
+      "dependsOn": [
+        "V002"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "bounded_receiver_attachment_validation_direct_child_reads_and_tail_detach",
+      "acceptance": "corrected_source_targeted_cpu_verified_final_whole_browser_review_and_delivery_pending",
+      "title": "Display-tree attachment and child-list scaling fix",
+      "acceptanceCriteria": [
+        "Check the bound receiver and full incoming subtree, retain its bindable callback with a preceding open-engine check, and omit unrelated existing-descendant hooks; retain whole-tree preflight/final binding validation for an initially unbound receiver.",
+        "After reentrant preflight, callback-free final checks protect current engine, liveness, Stage roots, cycles and full incoming affinity; preserve refusal atomicity and cleanup ownership.",
+        "Child count/index reads do not copy the list; tail detach checks directly, while arbitrary middle removal remains linear and unbound appends may still rescan.",
+        "Actual corrected-source targeted checks passed 71/71 including 9 scaling tests; prior 2227/2227 whole-core evidence is intermediate only, and final whole verification/prepush, affected browser gates, independent finite review and remote delivery remain separately pending. Do not sum overlapping scopes."
+      ],
+      "artifacts": [
+        "en/docs/display-tree-scaling.md",
+        "evidence/display-tree-scaling-verification.json"
+      ],
+      "doc": "en/docs/display-tree-scaling.md"
     }
   ],
   "_localization": {
     "canonicalSource": "交付.json",
-    "canonicalSha256": "3e08ad5b75eaa34cc066e58f03b027f1a93574854f787cac6034e90ff705acdc",
+    "canonicalSha256": "f635cf10ab4e6a26dbcf24562da119720735fabc8e9971e24455b21b3479e07d",
     "role": "read_only_translation",
     "language": "en"
   }

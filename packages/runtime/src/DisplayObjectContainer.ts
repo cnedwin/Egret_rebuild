@@ -1,7 +1,7 @@
 import { DisplayObject } from "./DisplayObject.js";
 import { EgretError } from "./EgretError.js";
-import { ASSERT_ATTACHABLE, OWNERSHIP_CHILDREN, commitBinding, engineInSubtree, engineOf, ownerOf, preflightBinding, validateBinding } from "./ownership.js";
-import { assertAttachable, assertLive, assertNoCycle, attachNode, childrenOf, detachNode, isTerminated, parentOf, registerContainer, removeNode, setNodeIndex } from "./displayTreeState.js";
+import { ASSERT_ATTACHABLE, ASSERT_BINDABLE, OWNERSHIP_CHILDREN, commitBinding, engineInSubtree, engineOf, ownerOf, preflightBinding, validateBinding } from "./ownership.js";
+import { assertAttachable, assertLive, assertNoCycle, attachNode, childAtOf, childCountOf, childrenOf, detachNode, isTerminated, parentOf, registerContainer, removeNode, setNodeIndex } from "./displayTreeState.js";
 
 // Carries the initiating owner's boundary through unowned intermediate containers.
 const disposalBoundaries = new WeakMap<DisplayObject, { readonly owner: object | undefined }>();
@@ -9,18 +9,29 @@ const disposalBoundaries = new WeakMap<DisplayObject, { readonly owner: object |
 /** Ordered display children with atomic reparenting and ownership-aware cleanup. */
 export class DisplayObjectContainer extends DisplayObject {
   public constructor() { super(); registerContainer(this); }
-  public get numChildren(): number { return childrenOf(this).length; }
+  public get numChildren(): number { return childCountOf(this); }
   public override [OWNERSHIP_CHILDREN](): readonly object[] { return childrenOf(this); }
 
   /** Subclass hooks run in preflight; final binding and reparenting use internal state. */
   public addChild<T extends DisplayObject>(child: T): T {
+    // A bound receiver's existing descendants already share its permanent
+    // affinity: every attach/bind validates before commit and detach retains it.
+    // Preserve whole-tree checks for a receiver that starts unbound, even if a
+    // subclass hook binds it while this operation is in progress.
+    const receiverWasBound = engineOf(this) !== undefined;
     const engine = engineInSubtree(this) ?? engineInSubtree(child);
     engine?.assertOpen();
     this.assertUsable();
     child[ASSERT_ATTACHABLE]();
     assertNoCycle(this, child);
     if (engine !== undefined) {
-      preflightBinding(this, engine);
+      if (receiverWasBound) {
+        // Incoming attachability can close the Engine. Preserve the original
+        // preflight error priority before invoking any receiver bindable hook.
+        engine.assertOpen();
+        this[ASSERT_BINDABLE]();
+      }
+      else preflightBinding(this, engine);
       preflightBinding(child, engine);
     }
     // Re-read state and both current trees after callback-capable preflight.
@@ -30,7 +41,12 @@ export class DisplayObjectContainer extends DisplayObject {
     assertLive(this);
     assertAttachable(child);
     assertNoCycle(this, child);
-    const binding = finalEngine === undefined ? undefined : [...validateBinding(this, finalEngine), ...validateBinding(child, finalEngine)];
+    // Receiver hooks still run; unrelated existing descendants do not. Final
+    // incoming validation always reads the current tree without user callbacks.
+    const binding = finalEngine === undefined ? undefined : [
+      ...(receiverWasBound ? [] : validateBinding(this, finalEngine)),
+      ...validateBinding(child, finalEngine),
+    ];
     if (binding !== undefined && finalEngine !== undefined) commitBinding(binding, finalEngine);
     attachNode(this, child);
     return child;
@@ -45,7 +61,7 @@ export class DisplayObjectContainer extends DisplayObject {
 
   public getChildAt(index: number): DisplayObject {
     this.validateIndex(index);
-    const child = childrenOf(this)[index];
+    const child = childAtOf(this, index);
     if (child === undefined) throw new EgretError("INVALID_INDEX");
     return child;
   }
@@ -59,7 +75,7 @@ export class DisplayObjectContainer extends DisplayObject {
   }
 
   private validateIndex(index: number): void {
-    if (!Number.isInteger(index) || index < 0 || index >= childrenOf(this).length) throw new EgretError("INVALID_INDEX");
+    if (!Number.isInteger(index) || index < 0 || index >= childCountOf(this)) throw new EgretError("INVALID_INDEX");
   }
 
   public override dispose(): void {
