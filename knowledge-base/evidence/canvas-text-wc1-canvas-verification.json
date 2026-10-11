@@ -1,0 +1,1051 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-11",
+  "engineeringLabel": "0.28.0",
+  "sourceId": "S081",
+  "deliverable": "V032",
+  "sourceBaseCommit": "b8446d23d6cf8b979d05d35757876811fe190e7a",
+  "status": "ACTUAL_CANVAS_TEXT_SUBSET_AND_COMPLETE_LOCAL_GATES_PASS_PUSH_DELIVERY_PENDING",
+  "scope": "Opt-in modern Window Canvas complete-line text provider and independently retained native pixel verification; desktop environment-bound subset.",
+  "productSources": [
+    {
+      "path": "packages/engine/web/CanvasTextRasterProvider.ts",
+      "bytes": 14947,
+      "sha256": "0f5089c8a8146b035604b6f07152be76cac9f602251d7628bc71820d8d521a45"
+    },
+    {
+      "path": "packages/engine/web/text.ts",
+      "bytes": 161,
+      "sha256": "f80a1cc204922ca45c180fb82f3860522852108922af25a200df3c27c0654047"
+    }
+  ],
+  "selectedEngineeringInputs": [
+    {
+      "path": "examples/canvas-text/README.md",
+      "bytes": 5519,
+      "sha256": "a3e7a3c73da43686a25ffba0f8e89df7080115227dc85f266b71154765de82d9"
+    },
+    {
+      "path": "examples/canvas-text/README.zh-CN.md",
+      "bytes": 4914,
+      "sha256": "c0d2643eacee08fbf4462877dca854d35f62a62d34d4bfe613820a5055400e2f"
+    },
+    {
+      "path": "examples/canvas-text/assets/Ahem-COPYING.txt",
+      "bytes": 1928,
+      "sha256": "3100f58a80de8fcd9dee4280dc4e52a45cc25a2084006e6b8fb5750708a388f8"
+    },
+    {
+      "path": "examples/canvas-text/assets/Ahem-README.txt",
+      "bytes": 2456,
+      "sha256": "e5314468f94f7d9caf62bd8f6871ebf81c96827254043dac95814c943852d40e"
+    },
+    {
+      "path": "examples/canvas-text/assets/ahem.ttf",
+      "bytes": 22572,
+      "sha256": "f0a92cd0cc45735591c9b5b1fa8aecd5194e8dc518895ca22af94a46c23550dc"
+    },
+    {
+      "path": "examples/canvas-text/assets/provenance.json",
+      "bytes": 1509,
+      "sha256": "2a970cd2a600ed8af4fa44bee7fcf30d505b2d2d32c2bac0747816445dcfac2d"
+    },
+    {
+      "path": "examples/canvas-text/index.html",
+      "bytes": 2499,
+      "sha256": "8ad452c9c0d7341b29e198648b396535ae45852c078917b291df0e04ec024ec7"
+    },
+    {
+      "path": "examples/canvas-text/main.mjs",
+      "bytes": 7372,
+      "sha256": "8621c4bf2840060d45d479734db5f678d28f0ec3bc6ebc0b4df45f10924be05b"
+    },
+    {
+      "path": "knowledge-base/tools/Validate-KnowledgeBase.ps1",
+      "bytes": 12394,
+      "sha256": "9a29811796093d473ed1d8d71bce5a06a247c5d46e790190464e9a173d9d0c12"
+    },
+    {
+      "path": "packages/engine/package.json",
+      "bytes": 908,
+      "sha256": "14c13fae2d7321b88b055045c7d0f957d1d96d7c1dbcb2ff5b9ac17eed54ed9e"
+    },
+    {
+      "path": "packages/engine/web/CanvasTextRasterProvider.ts",
+      "bytes": 14947,
+      "sha256": "0f5089c8a8146b035604b6f07152be76cac9f602251d7628bc71820d8d521a45"
+    },
+    {
+      "path": "packages/engine/web/text.ts",
+      "bytes": 161,
+      "sha256": "f80a1cc204922ca45c180fb82f3860522852108922af25a200df3c27c0654047"
+    },
+    {
+      "path": "tests/boundaries.test.mjs",
+      "bytes": 41311,
+      "sha256": "f6faf32c950eb3f4176b82cdb4d17eaea03fba9cfa1568adb81c9d417542b0a6"
+    },
+    {
+      "path": "tests/canvas-text-canvas-verifier.test.mjs",
+      "bytes": 10939,
+      "sha256": "8625566574c064e5ff3d01b3e126aec72110ecaea1a4b81829e9d47d30ec3875"
+    },
+    {
+      "path": "tests/canvas-text-provider-boundaries.test.mjs",
+      "bytes": 5894,
+      "sha256": "abd1f0e86f0303d030df08c7f044e4a7d35a0aea19cda1de4b4cd07b365db25c"
+    },
+    {
+      "path": "tests/canvas-text-provider-double-helpers.mjs",
+      "bytes": 9549,
+      "sha256": "fd927f4efca39564a63c3975a05da96a2a5a208b3da33484bdfa5b4897055faf"
+    },
+    {
+      "path": "tests/canvas-text-provider.test.mjs",
+      "bytes": 43670,
+      "sha256": "7c9032f44f5f212209ee46cae725bb3b3bc37c05ffb95e96b90d77975cd5d45f"
+    },
+    {
+      "path": "tests/fixtures/canvas-text-provider-canvas/assets/Ahem-COPYING.txt",
+      "bytes": 1928,
+      "sha256": "3100f58a80de8fcd9dee4280dc4e52a45cc25a2084006e6b8fb5750708a388f8"
+    },
+    {
+      "path": "tests/fixtures/canvas-text-provider-canvas/assets/Ahem-README.txt",
+      "bytes": 2456,
+      "sha256": "e5314468f94f7d9caf62bd8f6871ebf81c96827254043dac95814c943852d40e"
+    },
+    {
+      "path": "tests/fixtures/canvas-text-provider-canvas/assets/ahem.ttf",
+      "bytes": 22572,
+      "sha256": "f0a92cd0cc45735591c9b5b1fa8aecd5194e8dc518895ca22af94a46c23550dc"
+    },
+    {
+      "path": "tests/fixtures/canvas-text-provider-canvas/assets/favicon.png",
+      "bytes": 73,
+      "sha256": "eacb1a012fc0820bb358ea06380857fd97d62a420932142014ac89bcc4afbbc3"
+    },
+    {
+      "path": "tests/fixtures/canvas-text-provider-canvas/assets/source-ledger.json",
+      "bytes": 2875,
+      "sha256": "6d393775a2649fc1589f2f419d399707adc2e68769089a4d914ad8dbe942946d"
+    },
+    {
+      "path": "tests/fixtures/canvas-text-provider-canvas/cases.json",
+      "bytes": 2157,
+      "sha256": "56dfe52a429bc5126cbd98d6ba564717c91837b3b40d0d3dbe0de277c1fd968a"
+    },
+    {
+      "path": "tests/fixtures/canvas-text-provider-canvas/fixture.mjs",
+      "bytes": 25876,
+      "sha256": "8ace2fa3452a6011fce35f78fdb35308ac54dee84e40a16dbef9a33301f6f9f0"
+    },
+    {
+      "path": "tests/fixtures/canvas-text-provider-canvas/index.html",
+      "bytes": 432,
+      "sha256": "a1bc0253941fc25e698e668001b9b83f78b11419002be351f0413827b275345d"
+    },
+    {
+      "path": "tests/fixtures/canvas-text-provider-canvas/reference.mjs",
+      "bytes": 17655,
+      "sha256": "22ade552367c167e43e8a8c62d6af829edfdc54655d242384982b2925d289d42"
+    },
+    {
+      "path": "tests/publication/check-publication.test.mjs",
+      "bytes": 30829,
+      "sha256": "9aab57c3d5ad1ea8d33c12828cc13aba0aeaa24b9d9ba3a84d28bab29f48d6ed"
+    },
+    {
+      "path": "tests/publication/knowledge-base-check-only.test.mjs",
+      "bytes": 8658,
+      "sha256": "d55b4a76c564eebd36e90a4b5f716042d92eaccb7f937fa45beb662ffdce3259"
+    },
+    {
+      "path": "tests/types/canvas-text-provider-import-negative.ts",
+      "bytes": 1193,
+      "sha256": "3cd6b529d2045be001819b8b5f557b8da84d1d4088030bc308ad59b955134016"
+    },
+    {
+      "path": "tests/types/canvas-text-provider-negative.ts",
+      "bytes": 1140,
+      "sha256": "1ec38d0e054b2fb5777d8d100e8c4bc9471b0260c7d51ed043fc0f9663fb37be"
+    },
+    {
+      "path": "tests/types/canvas-text-provider-positive.ts",
+      "bytes": 1017,
+      "sha256": "71b91e4aee88d1142f9098cfb07a5596cbf593dfcacc249b63c54b25d58b6caf"
+    },
+    {
+      "path": "tools/canvas-text-canvas-contract.mjs",
+      "bytes": 11557,
+      "sha256": "91a29d6ffd604e8d59f20806538f1c46108d47a16bc343a1c3f39fa84338f9f7"
+    },
+    {
+      "path": "tools/check-boundaries.mjs",
+      "bytes": 57840,
+      "sha256": "cee908dbf87e7b6f206a33521042714eeadb84f8890b845e578642a41a98b104"
+    },
+    {
+      "path": "tools/check-publication.mjs",
+      "bytes": 12375,
+      "sha256": "7130901ba3c6c84b106eb78c924a6f36ea3f2b8fc59c28deadb8e326e24f6339"
+    },
+    {
+      "path": "tools/check-types.mjs",
+      "bytes": 35799,
+      "sha256": "21b4d6f47ebb73d27a818d01ee20e231090379baa6d467e2388a45b93baca3cc"
+    },
+    {
+      "path": "tools/verify-canvas-text-canvas.mjs",
+      "bytes": 26032,
+      "sha256": "e97e8c0c9320d23caece696f8a05c156ee09f27e960428612f6dd04d5f0100ca"
+    }
+  ],
+  "publicEntryRed": {
+    "status": "ACTUAL_FAILURE_BEFORE_ADOPTION",
+    "tests": 1,
+    "passed": 0,
+    "failed": 1,
+    "error": "ERR_PACKAGE_PATH_NOT_EXPORTED",
+    "operation": "Import @egret/engine/web/text after actual public Engine/cache/TextField setup and idle cleanup",
+    "receipt": {
+      "bytes": 851,
+      "sha256": "f89a03b6fa577427c0fbeb798a5c7e9549237b9c548cdb3d34ddfdc50d09054a"
+    },
+    "stdoutSHA256": "4480564e5178a3771b6f7dcbfc83ec6967dc7d76be7207c4204e65f54dc7f7d1"
+  },
+  "targeted": {
+    "status": "PASS",
+    "tests": 288,
+    "passed": 288,
+    "failed": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "boundaryFiles": 420,
+    "scope": "Provider behavior, copied-source boundary mutations, retained generic boundaries and ByteReader boundaries",
+    "receipts": [
+      {
+        "name": "build",
+        "startedAtUtc": "2026-10-11T15:06:24.2459994Z",
+        "finishedAtUtc": "2026-10-11T15:06:24.8045704Z",
+        "exitCode": 0,
+        "timeout": false,
+        "stdoutSHA256": "166710cb105690b244b48c5dcc5672a4c0bc8280e995ae7d2f5bd46141491cea",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "boundaries",
+        "startedAtUtc": "2026-10-11T15:06:24.8275465Z",
+        "finishedAtUtc": "2026-10-11T15:06:25.6478279Z",
+        "exitCode": 0,
+        "timeout": false,
+        "stdoutSHA256": "4d070f64d2615a109fdb4c4be2324eaf2cd1d2c33e0bc784a297f28b81f50424",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "behavior-and-boundary-controls",
+        "startedAtUtc": "2026-10-11T15:06:25.6558228Z",
+        "finishedAtUtc": "2026-10-11T15:08:58.8519032Z",
+        "exitCode": 0,
+        "timeout": false,
+        "stdoutSHA256": "5dc836b64d2aa5c74619d36e7714200a9504a946fcaa4eef849fb7d39b87d001",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ]
+  },
+  "strictTypes": {
+    "status": "PASS",
+    "wc1OrdinaryNegativeDiagnostics": 12,
+    "wc1ImportNegativeDiagnostics": 8,
+    "retainedByteReaderNegativeDiagnostics": 18,
+    "receipts": [
+      {
+        "name": "types",
+        "startedAtUtc": "2026-10-11T15:06:43.4077925Z",
+        "finishedAtUtc": "2026-10-11T15:06:47.6209377Z",
+        "exitCode": 0,
+        "timeout": false,
+        "stdoutSHA256": "be116f4b5a076b48448d4d3cbf39d0ade6b496e7db00d86234202622de30e801",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ]
+  },
+  "independentReview": {
+    "sourceAndAdmissionVerdict": "PASS_LIMITS_SOURCE_AND_CONTROLLED_ADMISSION_ONLY",
+    "actualSavedResultVerdict": "PASS_LIMITS_ACTUAL_SAVED_CANVAS_TEXT_SLICE",
+    "openFindings": 0,
+    "receipt": {
+      "bytes": 73935,
+      "sha256": "46f4bf79994be41a97c12cd4b140753f7bf5e04a34be44da3a8acea752844593"
+    },
+    "originalFindingsPreserved": true,
+    "correctedFindings": [
+      "Require complete baseline and assigned-control pixel evidence",
+      "Reject unnamed or collapsed reused image identities",
+      "Bind admission to reread exact raw bytes and hashes",
+      "Use independent requested clip literal for expected composition"
+    ],
+    "scope": "Finite reviewed source and actual saved result; public bilingual meaning and complete engine gates remain separate."
+  },
+  "nativeCanvas": {
+    "status": "PASS_WC1_CANVAS_SUBSET",
+    "exitCode": 0,
+    "environment": {
+      "os": "Windows",
+      "node": "24.19.0",
+      "playwright": "1.62.1",
+      "browser": "default headless msedge",
+      "browserVersion": "154.0.4258.62"
+    },
+    "windows": [
+      {
+        "mode": "baseline",
+        "status": "PASS_WC1_CANVAS_SUBSET",
+        "baselineRows": 14,
+        "targetArtifacts": 29,
+        "counters": {
+          "measure": 21,
+          "issuedPlans": 21,
+          "raster": 21,
+          "release": 21,
+          "held": 0,
+          "lateImages": 0,
+          "firstTargetAcquire": 14
+        },
+        "witnessCompletion": {
+          "holdRaster": false,
+          "notReady": false
+        },
+        "logicalRetirement": {
+          "pendingActors": 0,
+          "providerPlansReleased": true,
+          "nativeMethodsRestored": true,
+          "ownedFaceDeleted": true,
+          "reference": {
+            "disposed": true,
+            "retainedRawBuffers": 0,
+            "physicalReclamation": "UNKNOWN"
+          },
+          "caches": [
+            {
+              "closed": true,
+              "fontGeneration": 2,
+              "occupiedSlots": 0,
+              "currentGenerations": 0,
+              "retiredGenerations": 0,
+              "quarantinedGenerations": 0,
+              "pendingJobs": 0,
+              "pendingWaiters": 0,
+              "callerLeaseSlots": 0,
+              "activeCallerLeases": 0,
+              "residentEntries": 0,
+              "residentBytes": 0,
+              "liveImageBytes": 0,
+              "reservedImageBytes": 0,
+              "pendingRasterBytes": 0,
+              "quarantinedImageBytes": 0,
+              "quarantinedRasterBytes": 0,
+              "metadataBytes": 4096,
+              "idleWaiters": 0,
+              "cleanupFailureCount": 0,
+              "lateProviderFailureCount": 0
+            }
+          ],
+          "engineClosePromisesSettled": 1
+        }
+      },
+      {
+        "mode": "omitFill",
+        "status": "PASS_ASSIGNED_CONTROL_SENSITIVITY",
+        "baselineRows": 1,
+        "targetArtifacts": 2,
+        "counters": {
+          "measure": 1,
+          "issuedPlans": 1,
+          "raster": 1,
+          "release": 1,
+          "held": 0,
+          "lateImages": 0,
+          "firstTargetAcquire": 1
+        },
+        "witnessCompletion": {
+          "holdRaster": false,
+          "notReady": false
+        },
+        "logicalRetirement": {
+          "pendingActors": 0,
+          "providerPlansReleased": true,
+          "nativeMethodsRestored": true,
+          "ownedFaceDeleted": true,
+          "reference": {
+            "disposed": true,
+            "retainedRawBuffers": 0,
+            "physicalReclamation": "UNKNOWN"
+          },
+          "caches": [
+            {
+              "closed": true,
+              "fontGeneration": 1,
+              "occupiedSlots": 0,
+              "currentGenerations": 0,
+              "retiredGenerations": 0,
+              "quarantinedGenerations": 0,
+              "pendingJobs": 0,
+              "pendingWaiters": 0,
+              "callerLeaseSlots": 0,
+              "activeCallerLeases": 0,
+              "residentEntries": 0,
+              "residentBytes": 0,
+              "liveImageBytes": 0,
+              "reservedImageBytes": 0,
+              "pendingRasterBytes": 0,
+              "quarantinedImageBytes": 0,
+              "quarantinedRasterBytes": 0,
+              "metadataBytes": 4096,
+              "idleWaiters": 0,
+              "cleanupFailureCount": 0,
+              "lateProviderFailureCount": 0
+            }
+          ],
+          "engineClosePromisesSettled": 1
+        }
+      },
+      {
+        "mode": "omitOrigin",
+        "status": "PASS_ASSIGNED_CONTROL_SENSITIVITY",
+        "baselineRows": 1,
+        "targetArtifacts": 2,
+        "counters": {
+          "measure": 1,
+          "issuedPlans": 1,
+          "raster": 1,
+          "release": 1,
+          "held": 0,
+          "lateImages": 0,
+          "firstTargetAcquire": 1
+        },
+        "witnessCompletion": {
+          "holdRaster": false,
+          "notReady": false
+        },
+        "logicalRetirement": {
+          "pendingActors": 0,
+          "providerPlansReleased": true,
+          "nativeMethodsRestored": true,
+          "ownedFaceDeleted": true,
+          "reference": {
+            "disposed": true,
+            "retainedRawBuffers": 0,
+            "physicalReclamation": "UNKNOWN"
+          },
+          "caches": [
+            {
+              "closed": true,
+              "fontGeneration": 1,
+              "occupiedSlots": 0,
+              "currentGenerations": 0,
+              "retiredGenerations": 0,
+              "quarantinedGenerations": 0,
+              "pendingJobs": 0,
+              "pendingWaiters": 0,
+              "callerLeaseSlots": 0,
+              "activeCallerLeases": 0,
+              "residentEntries": 0,
+              "residentBytes": 0,
+              "liveImageBytes": 0,
+              "reservedImageBytes": 0,
+              "pendingRasterBytes": 0,
+              "quarantinedImageBytes": 0,
+              "quarantinedRasterBytes": 0,
+              "metadataBytes": 4096,
+              "idleWaiters": 0,
+              "cleanupFailureCount": 0,
+              "lateProviderFailureCount": 0
+            }
+          ],
+          "engineClosePromisesSettled": 1
+        }
+      },
+      {
+        "mode": "noOp",
+        "status": "PASS_ASSIGNED_CONTROL_SENSITIVITY",
+        "baselineRows": 1,
+        "targetArtifacts": 2,
+        "counters": {
+          "measure": 1,
+          "issuedPlans": 1,
+          "raster": 1,
+          "release": 1,
+          "held": 0,
+          "lateImages": 0,
+          "firstTargetAcquire": 1
+        },
+        "witnessCompletion": {
+          "holdRaster": false,
+          "notReady": false
+        },
+        "logicalRetirement": {
+          "pendingActors": 0,
+          "providerPlansReleased": true,
+          "nativeMethodsRestored": true,
+          "ownedFaceDeleted": true,
+          "reference": {
+            "disposed": true,
+            "retainedRawBuffers": 0,
+            "physicalReclamation": "UNKNOWN"
+          },
+          "caches": [
+            {
+              "closed": true,
+              "fontGeneration": 1,
+              "occupiedSlots": 0,
+              "currentGenerations": 0,
+              "retiredGenerations": 0,
+              "quarantinedGenerations": 0,
+              "pendingJobs": 0,
+              "pendingWaiters": 0,
+              "callerLeaseSlots": 0,
+              "activeCallerLeases": 0,
+              "residentEntries": 0,
+              "residentBytes": 0,
+              "liveImageBytes": 0,
+              "reservedImageBytes": 0,
+              "pendingRasterBytes": 0,
+              "quarantinedImageBytes": 0,
+              "quarantinedRasterBytes": 0,
+              "metadataBytes": 4096,
+              "idleWaiters": 0,
+              "cleanupFailureCount": 0,
+              "lateProviderFailureCount": 0
+            }
+          ],
+          "engineClosePromisesSettled": 1
+        }
+      },
+      {
+        "mode": "holdRaster",
+        "status": "PASS_WC1_CANVAS_SUBSET",
+        "baselineRows": 0,
+        "targetArtifacts": 1,
+        "counters": {
+          "measure": 2,
+          "issuedPlans": 2,
+          "raster": 2,
+          "release": 2,
+          "held": 1,
+          "lateImages": 1,
+          "firstTargetAcquire": 1
+        },
+        "witnessCompletion": {
+          "holdRaster": true,
+          "notReady": false
+        },
+        "logicalRetirement": {
+          "pendingActors": 0,
+          "providerPlansReleased": true,
+          "nativeMethodsRestored": true,
+          "ownedFaceDeleted": true,
+          "reference": {
+            "disposed": true,
+            "retainedRawBuffers": 0,
+            "physicalReclamation": "UNKNOWN"
+          },
+          "caches": [
+            {
+              "closed": true,
+              "fontGeneration": 1,
+              "occupiedSlots": 0,
+              "currentGenerations": 0,
+              "retiredGenerations": 0,
+              "quarantinedGenerations": 0,
+              "pendingJobs": 0,
+              "pendingWaiters": 0,
+              "callerLeaseSlots": 0,
+              "activeCallerLeases": 0,
+              "residentEntries": 0,
+              "residentBytes": 0,
+              "liveImageBytes": 0,
+              "reservedImageBytes": 0,
+              "pendingRasterBytes": 0,
+              "quarantinedImageBytes": 0,
+              "quarantinedRasterBytes": 0,
+              "metadataBytes": 4096,
+              "idleWaiters": 0,
+              "cleanupFailureCount": 0,
+              "lateProviderFailureCount": 0
+            }
+          ],
+          "engineClosePromisesSettled": 1
+        }
+      },
+      {
+        "mode": "notReady",
+        "status": "PASS_WC1_CANVAS_SUBSET",
+        "baselineRows": 0,
+        "targetArtifacts": 0,
+        "counters": {
+          "measure": 1,
+          "issuedPlans": 0,
+          "raster": 0,
+          "release": 0,
+          "held": 0,
+          "lateImages": 0,
+          "firstTargetAcquire": 1
+        },
+        "witnessCompletion": {
+          "holdRaster": false,
+          "notReady": true
+        },
+        "logicalRetirement": {
+          "pendingActors": 0,
+          "providerPlansReleased": true,
+          "nativeMethodsRestored": true,
+          "ownedFaceDeleted": true,
+          "reference": {
+            "disposed": true,
+            "retainedRawBuffers": 0,
+            "physicalReclamation": "UNKNOWN"
+          },
+          "caches": [
+            {
+              "closed": true,
+              "fontGeneration": 1,
+              "occupiedSlots": 0,
+              "currentGenerations": 0,
+              "retiredGenerations": 0,
+              "quarantinedGenerations": 0,
+              "pendingJobs": 0,
+              "pendingWaiters": 0,
+              "callerLeaseSlots": 0,
+              "activeCallerLeases": 0,
+              "residentEntries": 0,
+              "residentBytes": 0,
+              "liveImageBytes": 0,
+              "reservedImageBytes": 0,
+              "pendingRasterBytes": 0,
+              "quarantinedImageBytes": 0,
+              "quarantinedRasterBytes": 0,
+              "metadataBytes": 4096,
+              "idleWaiters": 0,
+              "cleanupFailureCount": 0,
+              "lateProviderFailureCount": 0
+            }
+          ],
+          "engineClosePromisesSettled": 1
+        }
+      }
+    ],
+    "rows": 14,
+    "assignedPixelControls": [
+      "omitFill",
+      "omitOrigin",
+      "noOp"
+    ],
+    "references": {
+      "rawBuffersBeforeAnyTargetAcquirePerWindow": 28,
+      "totalRawBuffers": 168,
+      "fullOwnedPixelsAnd80By80Frames": true,
+      "zeroTolerance": true
+    },
+    "listedArtifacts": 221,
+    "listedArtifactBytes": 3747397,
+    "inventorySelfListed": false,
+    "resultIdentity": {
+      "bytes": 191190,
+      "sha256": "ea7a2d3351672b7d5023aa93c1a18be1138cdc616508752de4e81043f2989600"
+    },
+    "inventoryIdentity": {
+      "bytes": 137332,
+      "sha256": "edb877331ec365378c82ce1e691263709761997bd4e24a6b3323984193fe3249"
+    },
+    "selectedInputCount": 328,
+    "canvasModuleGraphCount": 68,
+    "identitiesStable": true,
+    "events": 0,
+    "requests": 876,
+    "retirement": {
+      "browser": "closed",
+      "server": "closed",
+      "contexts": [
+        {
+          "mode": "baseline",
+          "state": "closed"
+        },
+        {
+          "mode": "omitFill",
+          "state": "closed"
+        },
+        {
+          "mode": "omitOrigin",
+          "state": "closed"
+        },
+        {
+          "mode": "noOp",
+          "state": "closed"
+        },
+        {
+          "mode": "holdRaster",
+          "state": "closed"
+        },
+        {
+          "mode": "notReady",
+          "state": "closed"
+        }
+      ]
+    },
+    "receipts": [
+      {
+        "name": "build",
+        "startedAtUtc": "2026-10-11T15:19:30.2349767Z",
+        "finishedAtUtc": "2026-10-11T15:19:30.8354690Z",
+        "exitCode": 0,
+        "timeout": false,
+        "stdoutSHA256": "166710cb105690b244b48c5dcc5672a4c0bc8280e995ae7d2f5bd46141491cea",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "admission-tests",
+        "startedAtUtc": "2026-10-11T15:19:30.8600166Z",
+        "finishedAtUtc": "2026-10-11T15:19:31.1646662Z",
+        "exitCode": 0,
+        "timeout": false,
+        "stdoutSHA256": "163fb3c73c30e5f194f8d1ba589f670e9f9ba925dcc3a01ca36ccd4fdac8cfc7",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "canvas-native",
+        "startedAtUtc": "2026-10-11T15:19:31.1729448Z",
+        "finishedAtUtc": "2026-10-11T15:19:42.6349620Z",
+        "exitCode": 0,
+        "timeout": false,
+        "stdoutSHA256": "607dbc082d6468877339da1e71ff5abb1978022437941f3088ec3a36635dfbdd",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "retainedLogicalMetadataBytesPerClosedCache": 4096,
+    "physicalReclamation": "UNKNOWN",
+    "osDescendantRetirement": "UNBOUND"
+  },
+  "exampleSmoke": {
+    "status": "ACTUAL_EXAMPLE_SMOKE_PASS",
+    "sequence": [
+      "initial",
+      "replacement",
+      "empty",
+      "closed"
+    ],
+    "browserErrors": 0,
+    "finalOwnedCanvasCount": 0,
+    "finalOwnedFontCount": 0,
+    "pixelOracle": false,
+    "receipt": {
+      "bytes": 25648,
+      "sha256": "b68a5a46b20a1b8c5117b49e66ca904203a308c11886da419746fe2b807cbbe9"
+    }
+  },
+  "existingBrowserRegression": {
+    "status": "ACTUAL_FIVE_EXISTING_DESKTOP_REGRESSION_GATES_PASS",
+    "receipts": [
+      {
+        "name": "canvas",
+        "startedAtUtc": "2026-10-11T15:22:01.6676869Z",
+        "finishedAtUtc": "2026-10-11T15:22:02.8811127Z",
+        "exitCode": 0,
+        "timeout": false,
+        "stdoutSHA256": "bbbd9efb6f3de286717496ff44b76bfc5fd024df201c2f4f25fe38c17a693712",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "webgpu",
+        "startedAtUtc": "2026-10-11T15:22:02.9099523Z",
+        "finishedAtUtc": "2026-10-11T15:22:14.8310364Z",
+        "exitCode": 0,
+        "timeout": false,
+        "stdoutSHA256": "916a06cb11a7ab13a108cbc51b5604506c06f069d9b39feccb5b057cd6156a29",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "b1",
+        "startedAtUtc": "2026-10-11T15:22:14.8404123Z",
+        "finishedAtUtc": "2026-10-11T15:22:18.4638364Z",
+        "exitCode": 0,
+        "timeout": false,
+        "stdoutSHA256": "b9dfc1102fb8e334f43689a01d2b3082cbf8f36875358004a71913746307c2da",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "freeze",
+        "startedAtUtc": "2026-10-11T15:27:59.8546687Z",
+        "finishedAtUtc": "2026-10-11T15:28:03.7417422Z",
+        "exitCode": 0,
+        "timeout": false,
+        "stdoutSHA256": "7714f70bad48bc94927762e6d4a915e2d04e6b913e0d6a5d5f1d3d47cc66b148",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "textured",
+        "startedAtUtc": "2026-10-11T15:28:03.7724914Z",
+        "finishedAtUtc": "2026-10-11T15:28:25.9416940Z",
+        "exitCode": 0,
+        "timeout": false,
+        "stdoutSHA256": "3b4644f909e2c8679bef850cf4a84a7231daf2d3d52ba497e33914beecb751d0",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "sequence",
+        "startedAtUtc": "2026-10-11T15:28:25.9502843Z",
+        "finishedAtUtc": "2026-10-11T15:28:27.7409447Z",
+        "exitCode": 0,
+        "timeout": false,
+        "stdoutSHA256": "e7f18f698dbfc8dec3d7b5e1a3e048554fb04742bdab698600d8d8611a03655d",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "preparationFailure": {
+      "stage": "exclusive freeze output directory creation",
+      "error": "EEXIST",
+      "renderingEntered": false,
+      "originalFailureReceipts": [
+        {
+          "name": "freeze",
+          "startedAtUtc": "2026-10-11T15:22:18.4726532Z",
+          "finishedAtUtc": "2026-10-11T15:22:18.5459293Z",
+          "exitCode": 1,
+          "timeout": false,
+          "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderrSHA256": "184e8888e4913c85497dba140ef0752a4b7b3dff34306981764b747cdc09ea28"
+        }
+      ],
+      "repair": "Preserved the prior ignored freeze directory in an owned archive and created fresh frozen inputs; public verifier code unchanged."
+    }
+  },
+  "firstCompletePrepush": {
+    "status": "FAILED_ONLY_AT_KNOWLEDGE_BASE_PATH_VALIDATION",
+    "core": {
+      "tests": 2285,
+      "passed": 2285,
+      "failed": 0
+    },
+    "publication": {
+      "tests": 52,
+      "passed": 52,
+      "failed": 0
+    },
+    "buildBoundariesStrictTypesHeadless": "PASS",
+    "knowledgeBaseIssues": 9,
+    "receipts": [
+      {
+        "name": "prepush",
+        "startedAtUtc": "2026-10-11T15:37:26.2422597Z",
+        "finishedAtUtc": "2026-10-11T15:39:56.1421601Z",
+        "exitCode": 1,
+        "timeout": false,
+        "stdoutSHA256": "a60dc33eb5ba7aeff27c111f622e11bf4a0e0120ad6042250ece056ec3dc1b20",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "interpretation": "Complete core verification passed; overall prepush failed because the new example artifacts used the wrong shared-KB base and legitimate reading links were outside the validator admission boundary."
+  },
+  "knowledgeBasePathRepair": {
+    "sourcePaths": [
+      "knowledge-base/tools/Validate-KnowledgeBase.ps1",
+      "tests/publication/knowledge-base-check-only.test.mjs"
+    ],
+    "allowedReadingPaths": [
+      "examples/canvas-text/README.md",
+      "examples/canvas-text/README.zh-CN.md",
+      "examples/canvas-text/assets/Ahem-COPYING.txt",
+      "examples/canvas-text/assets/Ahem-README.txt",
+      "examples/canvas-text/assets/provenance.json"
+    ],
+    "pairedV032Artifacts": "Corrected to ../examples/... from the shared knowledge-base root",
+    "baseline": {
+      "tests": 5,
+      "passed": 3,
+      "failed": 2,
+      "receipts": [
+        {
+          "name": "isolated-reading-fixtures",
+          "startedAtUtc": "2026-10-11T15:47:05.8550340Z",
+          "finishedAtUtc": "2026-10-11T15:47:08.2511919Z",
+          "exitCode": 1,
+          "timeout": false,
+          "stdoutSHA256": "f4eb9604bde51b1379d968aa7e43d6e3d3dfc4f64ebe6cae9ed43771e1e64c7d",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "candidate": {
+      "tests": 5,
+      "passed": 5,
+      "failed": 0,
+      "receipts": [
+        {
+          "name": "isolated-reading-fixtures",
+          "startedAtUtc": "2026-10-11T15:50:13.7775899Z",
+          "finishedAtUtc": "2026-10-11T15:50:16.1704164Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "5302b12e7a41f2cb0579a7745f72f9aeaa1503887745f63973512a7677c862dd",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "scope": "Finite repository reading-file admission; other outward paths and absolute URI references remain refused. No general sandbox or filesystem security certification."
+  },
+  "publicationParityRepair": {
+    "sourcePaths": [
+      "tools/check-publication.mjs",
+      "tests/publication/check-publication.test.mjs"
+    ],
+    "mapping": "Exact inventoried language pairs represented relative to the shared knowledge-base root",
+    "baseline": {
+      "tests": 54,
+      "passed": 53,
+      "failed": 1,
+      "receipts": [
+        {
+          "name": "publication-unit",
+          "startedAtUtc": "2026-10-11T15:58:48.0827551Z",
+          "finishedAtUtc": "2026-10-11T15:58:49.2887224Z",
+          "exitCode": 1,
+          "timeout": false,
+          "stdoutSHA256": "6d515a141dcc6d8c2148b62f7735a514937d83aed2a6d68fd651e55b5ad3f023",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "candidate": {
+      "tests": 54,
+      "passed": 54,
+      "failed": 0,
+      "receipts": [
+        {
+          "name": "publication-unit",
+          "startedAtUtc": "2026-10-11T15:59:30.1950846Z",
+          "finishedAtUtc": "2026-10-11T15:59:31.1153035Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "fecc5ba7652e8d2b47f149ad210be2170e3387aacef860c7f8f09fb1ccbe5e21",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "scope": "Representation repair for declared pairs only; near-match and unpaired outward identities remain rejected."
+  },
+  "fullVerification": {
+    "status": "ACTUAL_COMPLETE_PREPUSH_R3_PASS",
+    "core": {
+      "tests": 2285,
+      "passed": 2285,
+      "failed": 0
+    },
+    "publication": {
+      "tests": 59,
+      "passed": 59,
+      "failed": 0
+    },
+    "buildBoundariesStrictTypesHeadlessKnowledgeBase": "PASS",
+    "localization": {
+      "documents": 137,
+      "registryViews": 6,
+      "criticalSourceFiles": 146,
+      "issues": 0
+    },
+    "knowledgeBase": {
+      "records": 155,
+      "markdown": 239,
+      "links": 1969,
+      "references": 932,
+      "issues": 0
+    },
+    "receipt": {
+      "name": "prepush",
+      "startedAtUtc": "2026-10-11T16:10:13.4523180Z",
+      "finishedAtUtc": "2026-10-11T16:12:46.0450223Z",
+      "exitCode": 0,
+      "timeout": false,
+      "stdoutSHA256": "9f059afdab2659da2b5271196dcd056521b27b6bf607f5f465cc1123ca145700",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "nativeResultCutoffUnchanged": true,
+    "sourceAndEnvironmentBoundsRetained": true
+  },
+  "independentBilingualMeaningReview": {
+    "status": "ACTUAL_FINITE_PUBLIC_MEANING_PASS",
+    "openFindings": 0,
+    "reviewReceipt": {
+      "bytes": 89311,
+      "sha256": "73185a4210395c09600e3a5ab40a3263f853f15012d881f1f884420d5d6dbe54"
+    },
+    "scope": "Affected paired public material and shared verification JSON; historical cutoffs and unverified full-product boundaries retained."
+  },
+  "mandatoryPrepush": "PENDING",
+  "remoteDelivery": "PENDING",
+  "origin": {
+    "firstPartyImplementation": "Independently authored Egret Canvas text provider, lifecycle fixtures, native reference and result admission under Apache-2.0.",
+    "newRuntimeDependencies": [],
+    "thirdPartyTestFont": {
+      "source": "https://www.w3.org/Style/CSS/Test/Fonts/Ahem/ahem.ttf",
+      "rights": "Public domain with retained CC0 fallback declaration",
+      "sha256": "f0a92cd0cc45735591c9b5b1fa8aecd5194e8dc518895ca22af94a46c23550dc",
+      "credits": [
+        "Todd Fahrner",
+        "Myles C. Maxfield"
+      ],
+      "notice": "tests/fixtures/canvas-text-provider-canvas/assets/Ahem-COPYING.txt"
+    },
+    "primaryReferences": [
+      "https://html.spec.whatwg.org/multipage/canvas.html#drawing-text-to-the-bitmap",
+      "https://html.spec.whatwg.org/multipage/canvas.html#textmetrics",
+      "https://drafts.csswg.org/css-font-loading-3/#font-face-set-check"
+    ]
+  },
+  "limits": {
+    "CJK": false,
+    "physicalMobileDevices": false,
+    "WebGPUText": false,
+    "fullWC1": false,
+    "fullSpine": false,
+    "nativeRuntime": false,
+    "threeD": false,
+    "fullUI": false,
+    "migration": false,
+    "physicalMemory": false,
+    "performanceLeadership": false,
+    "historicalMixedGpuFailure": "Retained mixed Canvas/textured-WebGPU FAIL: 512 GPU composition bytes differed, maximum channel difference 1, at its original source cutoff",
+    "Native7": "PENDING",
+    "OR1": "Separate original scope; no acceptance expansion"
+  },
+  "historicalCutoffsPreserved": true,
+  "restrictedProcessPrepush": {
+    "status": "ENVIRONMENT_LINK_OR_TEMP_SETUP_FAILURE",
+    "publication": {
+      "tests": 59,
+      "passed": 59,
+      "failed": 0
+    },
+    "core": {
+      "tests": 2285,
+      "passed": 2002,
+      "failed": 283
+    },
+    "code": "EPERM",
+    "observedOperations": [
+      "symlink",
+      "realpath"
+    ],
+    "observedDetailedErrors": {
+      "directoryLink": 172,
+      "tempRealpath": 103
+    },
+    "scope": "Restricted-process fixtures encountered EPERM during directory-link creation or temporary-path resolution before assigned probes; the failed overall result is not accepted as product passes.",
+    "receipt": {
+      "startedAtUtc": "2026-10-11T16:06:59.9778026Z",
+      "finishedAtUtc": "2026-10-11T16:09:37.0693258Z",
+      "stdoutSHA256": "742b20f53839f3f1c7f91e0710b594fc0204296148c4842038711b5c7f254bd2",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "repair": "Reran the unchanged complete gate under authorized host permissions; no fixture weakening or bypass."
+  }
+}

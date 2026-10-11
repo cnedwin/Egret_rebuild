@@ -1298,6 +1298,44 @@
         "evidence/display-tree-scaling-verification.json"
       ],
       "doc": "Cns/docs/显示树扩展性.md"
+    },
+    {
+      "id": "V032",
+      "kind": "bounded_canvas_text_provider_increment",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R011",
+        "R015",
+        "R016",
+        "R018",
+        "R019"
+      ],
+      "dependsOn": [
+        "V002",
+        "V025",
+        "V028"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "explicit_web_text_canvas_provider_caller_owned_fonts_and_public_t1_tf1_integration",
+      "acceptance": "bounded_canvas_native_app_complete_current_verification_and_bilingual_review_passed_push_delivery_pending",
+      "title": "WC1 仅 Canvas 文字提供者与独立原生验证",
+      "acceptanceCriteria": [
+        "仅在 @egret/engine/web/text 新增 createCanvasTextRasterProvider，沿用公开 T1 返回协议；不新增具名类型、默认入口导出或依赖，字体由调用方持有，失效／准备／渲染显式执行。",
+        "固定原生 6 context 与 14 行基线以完整独立栅格／帧字节零容差比较，C01–C03 绑定自身预定错误像素，另验证组合、空白替换、字体代次、延迟栅格及字体未就绪。",
+        "计划释放、缓存关闭、actor 完成，自有字体／参考缓冲为零且 context／浏览器／服务器关闭；关闭后逻辑元数据 4096 字节保留，OS 后代进程与物理回收未知。",
+        "实际 Main 288/288、完整严格类型新增 12 普通／8 导入及保留 BR1 18、420 文件边界、纯契约 12/12 和应用冒烟分别记录；全部五项既有浏览器门禁及有限源码／实际保存原生结果审阅通过，未解决问题为 0。完整当前验证通过 2,285/2,285 项核心、59/59 项公开检查、构建、严格类型、生产边界、知识库检查及 headless 示例。保留首轮九项路径 prepush 失败与知识库 3/5→5/5、公开路径对应 53/54→54/54 有限修复；包含公开共享 JSON 的独立双语语义审阅通过且未解决问题为 0；必要 Git 推送钩子与远程交付仍待完成，不合计重叠范围。",
+        "保留此前混合 GPU 512 字节／最大差 1 FAIL 及 Native7／OR1 待完成，不外推完整 WC1、CJK／手机、Spine、3D、性能或迁移。"
+      ],
+      "artifacts": [
+        "Cns/docs/Canvas文字WC1.md",
+        "evidence/canvas-text-wc1-canvas-verification.json",
+        "../examples/canvas-text/README.zh-CN.md"
+      ],
+      "doc": "Cns/docs/Canvas文字WC1.md"
     }
   ]
 }

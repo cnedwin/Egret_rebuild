@@ -19,6 +19,10 @@
     "./text": {
       "types": "./dist/text.d.ts",
       "import": "./dist/text.js"
+    },
+    "./web/text": {
+      "types": "./dist/web/text.d.ts",
+      "import": "./dist/web/text.js"
     }
   },
   "dependencies": {

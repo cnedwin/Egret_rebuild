@@ -39,12 +39,13 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
         './webgpu': gpuExport,
         './web': {types:'./dist/web/index.d.ts',import:'./dist/web/index.js'},
         './text': {types:'./dist/text.d.ts',import:'./dist/text.js'},
+        './web/text': {types:'./dist/web/text.d.ts',import:'./dist/web/text.js'},
       } : name === 'project' ? {'.':{types:'./dist/index.d.ts',import:'./dist/index.js'}} : undefined;
       write(`packages/${name}/package.json`, { name: `@egret/${name}`, private: true, version: '0.0.0', type: 'module', dependencies: dependencyMap, ...(packageExports === undefined ? {} : {exports:packageExports}) });
       write(`packages/${name}/tsconfig.json`, { extends: '../../tsconfig.base.json', ...(name === 'project' ? {compilerOptions:{rootDir:'src',outDir:'dist'}} : {}), references: allowed.map(value => ({ path: `../${value.slice('@egret/'.length)}` })) });
       write(`packages/${name}/src/index.ts`, 'export {};\n');
       write(`packages/${name}/dist/index.js`, 'export {};\n');
-      const exports = name === 'engine' ? { '.': './index.js', './web': './web.js', './webgpu':'./webgpu.js', './text':'./text.js' }
+      const exports = name === 'engine' ? { '.': './index.js', './web': './web.js', './webgpu':'./webgpu.js', './text':'./text.js', './web/text':'./web-text.js' }
         : name === 'runtime' ? { '.': './index.js', './text':'./text.js' } : './index.js';
       write(`node_modules/@egret/${name}/package.json`, { name: `@egret/${name}`, type: 'module', exports });
       write(`node_modules/@egret/${name}/index.js`, 'export {};\n');
@@ -147,6 +148,19 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
       write(file, readFileSync(path.join(root, file), 'utf8') + "export {ByteReader,BYTE_READER_LIMITS} from '@egret/runtime';\n" + (file.endsWith('.d.ts') ? "export type {ByteOrder} from '@egret/runtime';\n" : ''));
     for (const file of ['node_modules/@egret/engine/index.js', 'node_modules/@egret/runtime/index.js'])
       write(file, readFileSync(path.join(root, file), 'utf8') + "export {ByteReader,BYTE_READER_LIMITS} from '../../../packages/runtime/dist/ByteReader.js';\n");
+    // WC1 baseline only: exact opt-in surfaces let retained policy mutants run.
+    // The inert synthetic factory reports Node unavailability; it provides no
+    // native Canvas, genuine resource, font, TextField or rendering evidence.
+    const canvasTextBarrel = "export {createCanvasTextRasterProvider} from './CanvasTextRasterProvider.js';\n";
+    const canvasTextProviderTypes = "import type {TextRasterProvider} from '@egret/engine/text';\nexport declare function createCanvasTextRasterProvider(): TextRasterProvider;\n";
+    const canvasTextProviderBody = "export function createCanvasTextRasterProvider() { throw {code:'WEB_TEXT_UNAVAILABLE'}; }\n";
+    write('packages/engine/web/text.ts', canvasTextBarrel);
+    write('packages/engine/web/CanvasTextRasterProvider.ts', "import type {TextRasterProvider} from '@egret/engine/text';\nexport function createCanvasTextRasterProvider(): TextRasterProvider { throw {code:'WEB_TEXT_UNAVAILABLE'}; }\n");
+    write('packages/engine/dist/web/text.js', canvasTextBarrel);
+    write('packages/engine/dist/web/text.d.ts', canvasTextBarrel);
+    write('packages/engine/dist/web/CanvasTextRasterProvider.js', canvasTextProviderBody);
+    write('packages/engine/dist/web/CanvasTextRasterProvider.d.ts', canvasTextProviderTypes);
+    write('node_modules/@egret/engine/web-text.js', "export {createCanvasTextRasterProvider} from '../../../packages/engine/dist/web/text.js';\n");
     // Clock baseline only: inert synthetic policy inputs carry the exact six
     // public type names and erased emission. No owner or behavior shim is added.
     const clockTypes = ['GameClockOptions','GameClockState','GameClockTick','GameClockHandler','GameClock','GameClockSubscription'];

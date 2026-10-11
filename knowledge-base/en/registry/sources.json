@@ -1277,11 +1277,23 @@
       "scope": "Recorded source diagnosis, separate local baseline timing and hook observations, preserved pre-fix failures, and corrected-source build/targeted checks passed 71/71 including 9 scaling tests; the earlier 2227/2227 whole-core result predates the final guard correction and added test, so remains intermediate evidence only.",
       "limit": "Overlapping scopes are not summed; final complete current verification/prepush, affected browser gates, finite source/bilingual review and delivery remain pending. No global O(N) or performance-lead guarantee; browser, device, GPU, phone, complete Spine and migration acceptance are excluded.",
       "doc": "en/docs/display-tree-scaling.md"
+    },
+    {
+      "id": "S081",
+      "type": "first_party_canvas_text_provider_cpu_types_canvas_native_and_example_evidence",
+      "researchCheckedAt": "2026-10-11",
+      "artifacts": [
+        "evidence/canvas-text-wc1-canvas-verification.json"
+      ],
+      "title": "First-party WC1 Canvas-only provider and native evidence",
+      "scope": "Actual Main public behavior/boundary 288/288, complete strict types (12 new ordinary and 8 import diagnostics, retained BR1 18), production scan 420 files, pure contract 12/12, and fixed native 6 contexts/14 baseline rows plus C01–C03; default Edge 154.0.4258.62 complete raster/frame zero-tolerance, composition/replacement/generation/lifetime/readiness and app smoke retain separate records. All five existing renderer gates passed separately. Finite source and actual saved-native review passed with 0 open findings. Complete current verification passed 2,285/2,285 core tests and 59/59 publication tests, build, strict types, production boundaries, knowledge-base checks and headless example; the earlier nine-path prepush failure and finite 3/5→5/5 knowledge-base and 53/54→54/54 parity repairs remain preserved.",
+      "limit": "Overlapping scopes are not summed; independent bilingual meaning review including the public shared JSON passed with 0 open findings; the mandatory Git push hook and delivery remain pending. Prior mixed GPU 512-byte/maximum-difference 1 FAIL and Native7/OR1 pending retain separate scope; OS descendants, physical memory and full WC1/CJK/phones/Spine/3D/performance/migration are not accepted.",
+      "doc": "en/docs/canvas-text-wc1-canvas.md"
     }
   ],
   "_localization": {
     "canonicalSource": "来源.json",
-    "canonicalSha256": "9b1d5ebcaf982c69e87293d2e32eb860a713ab5104f6629450f4191e641cccd8",
+    "canonicalSha256": "f19de00ee40e067c13ae7538e0f451c5a16992971f825a166f771120776030f6",
     "role": "read_only_translation",
     "language": "en"
   }

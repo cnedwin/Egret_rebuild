@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Egret explicit Canvas text / 显式 Canvas 文字</title>
+  <link rel="icon" href="data:,">
+  <script type="importmap">
+  {"imports": {
+    "@egret/engine": "/packages/engine/dist/index.js",
+    "@egret/engine/web": "/packages/engine/dist/web/index.js",
+    "@egret/engine/text": "/packages/engine/dist/text.js",
+    "@egret/engine/web/text": "/packages/engine/dist/web/text.js",
+    "@egret/runtime": "/packages/runtime/dist/index.js",
+    "@egret/runtime/text": "/packages/runtime/dist/text/index.js",
+    "@egret/contracts": "/packages/contracts/dist/index.js",
+    "#egret-textured-frame-state": "/packages/engine/dist/internal/texturedFrameState.js"
+  }}
+  </script>
+  <style>
+    body { font: 1rem/1.5 system-ui, sans-serif; margin: 2rem auto; padding: 0 1rem; max-width: 48rem; color: #172033; background: #f4f6fa; }
+    textarea, button { font: inherit; padding: .6rem; }
+    textarea { display: block; box-sizing: border-box; width: 100%; margin: .5rem 0; }
+    button { margin: .25rem .5rem .25rem 0; }
+    canvas { display: block; max-width: 100%; height: auto; border: 1px solid #596579; }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+  </style>
+</head>
+<body>
+  <h1>Explicit Canvas text / 显式 Canvas 文字</h1>
+  <p>Ahem draws test blocks. The readable source stays in this page. No animation loop.<br> Ahem 绘制测试方块；可读的原文保留在页面中。不启用动画循环。</p>
+  <form id="replace-form">
+    <label for="source">Text: X, spaces and line breaks only; at most 12 columns × 4 lines.<br>文字：只允许 X、空格和换行，最多 12 列 × 4 行。</label>
+    <textarea id="source" rows="4" maxlength="104" spellcheck="false">XX X
+X XX</textarea>
+    <button id="replace" type="submit" disabled>Prepare and render / 准备并渲染</button>
+    <button id="close" type="button">Close and await cleanup / 关闭并等待清理</button>
+  </form>
+  <p id="status" role="status" aria-live="polite">Loading the owned font… / 正在加载应用拥有的字体…</p>
+  <h2>Last committed source / 最近提交的原文</h2>
+  <pre id="committed">No committed text / 尚未提交文字</pre>
+  <div id="surface"></div>
+  <p><a href="./README.md">English instructions</a> · <a href="./README.zh-CN.md">中文说明</a></p>
+  <script type="module" src="./main.mjs"></script>
+</body>
+</html>

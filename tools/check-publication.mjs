@@ -64,6 +64,8 @@ function inventoryPathPairs(inventory){
   if(!validPath(source)||!validPath(target))continue;
   pairs.set(source,target);
   if(source.startsWith('knowledge-base/')&&target.startsWith('knowledge-base/'))pairs.set(source.slice('knowledge-base/'.length),target.slice('knowledge-base/'.length));
+  // Registry readings share the KB root as their base, including inventoried repository files.
+  pairs.set(path.posix.relative('knowledge-base',source),path.posix.relative('knowledge-base',target));
  }
  return pairs;
 }

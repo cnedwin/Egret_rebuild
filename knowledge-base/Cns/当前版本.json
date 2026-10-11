@@ -541,7 +541,7 @@
     "contract": "Cns/docs/显示内容边界契约.md",
     "evidence": "Cns/docs/显示内容边界证据.md"
   },
-  "latestEngineeringPreview": "0.27.2",
+  "latestEngineeringPreview": "0.28.0",
   "texturedMesh2DImplementation": {
     "version": "0.23.0",
     "status": "bounded_increment_implemented",
@@ -814,5 +814,246 @@
     "evidence": [
       "evidence/display-tree-scaling-verification.json"
     ]
+  },
+  "canvasTextWC1CanvasImplementation": {
+    "engineeringPreview": "0.28.0",
+    "deliverable": "V032",
+    "sourceId": "S081",
+    "status": "bounded_canvas_native_app_complete_current_verification_and_bilingual_review_passed_push_delivery_pending",
+    "sourceBaseCommit": "b8446d23d6cf8b979d05d35757876811fe190e7a",
+    "packageVersion": "0.0.0",
+    "protocolVersion": "1.0",
+    "publicEntries": [
+      "@egret/engine/web/text"
+    ],
+    "values": [
+      "createCanvasTextRasterProvider"
+    ],
+    "newNamedTypes": [],
+    "defaultExportSurfaceChanged": false,
+    "newThirdPartyDependencies": [],
+    "fonts": "caller_owned_explicit_invalidation_and_preparation",
+    "runtimeEnvironment": "current_window_document_effective_canvas_2d_and_font_capabilities",
+    "currentVerifierRequirements": {
+      "os": "Windows",
+      "node": "24.19.0",
+      "playwright": "1.62.1",
+      "browser": "default_msedge_profile"
+    },
+    "actualMainVerification": {
+      "behaviorBoundaryTests": 288,
+      "passed": 288,
+      "failed": 0,
+      "fullStrictTypes": "PASS",
+      "newOrdinaryDiagnostics": 12,
+      "newImportDiagnostics": 8,
+      "retainedBR1Diagnostics": 18,
+      "productionBoundaryFiles": 420,
+      "productionBoundaries": "PASS",
+      "pureContractTests": 12,
+      "pureContractPassed": 12,
+      "suiteTotalsAdded": false
+    },
+    "actualNativeCanvas": {
+      "status": "PASS_WC1_CANVAS_SUBSET",
+      "browserVersion": "154.0.4258.62",
+      "contexts": 6,
+      "baselineRows": 14,
+      "controlIds": [
+        "C01",
+        "C02",
+        "C03"
+      ],
+      "completeOwnedRasterAndFrameBytes": true,
+      "byteTolerance": 0,
+      "compositionBlankGenerationHeldReadiness": "PASS",
+      "baselineInitialAcquires": 14,
+      "baselineMeasurePlanRasterReleaseEach": 21,
+      "actorCallsAreTestCounts": false,
+      "heldPrepareError": "TEXT_FIELD_DISPOSED",
+      "scopeReentryError": "SCOPE_CLOSED",
+      "plansReleased": true,
+      "cachesClosed": true,
+      "actorsSettled": true,
+      "ownedFontsRemaining": 0,
+      "ownedReferenceBuffersRemaining": 0,
+      "closedMetadataBytes": 4096,
+      "allContextsBrowserServerClosed": true,
+      "osDescendantRetirement": "UNVERIFIED",
+      "physicalReclamation": "UNKNOWN"
+    },
+    "actualAppSmoke": {
+      "status": "PASS_INITIAL_REPLACE_EMPTY_EXPLICIT_CLOSE",
+      "browserErrors": 0,
+      "cacheIdle": true,
+      "engineDisposed": true,
+      "ownedFontsAndCanvasRemaining": 0,
+      "contextBrowserServerClosed": true,
+      "independentPixelOracle": false
+    },
+    "priorMixedGpu": {
+      "status": "FAIL",
+      "differentCompositionBytes": 512,
+      "maximumChannelDifference": 1,
+      "Native7OR1Acceptance": "PENDING",
+      "supersededByCanvasSubset": false
+    },
+    "finalWholeVerification": "PASS",
+    "affectedFiveExistingBrowserAggregate": "PASS",
+    "mandatoryPrepush": "PENDING",
+    "remoteDelivery": "PENDING",
+    "fullWC1Accepted": false,
+    "CJKPhoneAccepted": false,
+    "SpineAccepted": false,
+    "threeDAccepted": false,
+    "performanceAccepted": false,
+    "fullMigrationAccepted": false,
+    "historicalCutoffsPreserved": true,
+    "scope": "仅显式行 Canvas 文字提供者及固定桌面 Canvas 子集，不扩展 GPU、设备或完整文字产品验收。",
+    "documents": [
+      "Cns/docs/Canvas文字WC1.md"
+    ],
+    "evidence": [
+      "evidence/canvas-text-wc1-canvas-verification.json"
+    ],
+    "existingBrowserRoutes": [
+      "Canvas",
+      "rectangle_WebGPU",
+      "B1",
+      "textured_WebGPU",
+      "SequencePlayer"
+    ],
+    "existingBrowserPassExtendsWC1WebGpuAcceptance": false,
+    "finiteSourceActualSavedNativeReview": {
+      "status": "PASS",
+      "openFindings": 0
+    },
+    "independentBilingualSharedJsonMeaningReview": "PASS",
+    "completeCurrentVerificationSuccessor": {
+      "status": "PASS",
+      "startedAtUtc": "2026-10-11T16:10:13.4523180Z",
+      "finishedAtUtc": "2026-10-11T16:12:46.0450223Z",
+      "exitCode": 0,
+      "timeout": false,
+      "stdoutSha256": "9f059afdab2659da2b5271196dcd056521b27b6bf607f5f465cc1123ca145700",
+      "coreTests": 2285,
+      "corePassed": 2285,
+      "publicationTests": 59,
+      "publicationPassed": 59,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "build": "PASS",
+      "fullStrictTypes": "PASS",
+      "productionBoundaries": "PASS",
+      "knowledgeBase": "PASS",
+      "knowledgeBaseRecords": 155,
+      "knowledgeBaseMarkdown": 239,
+      "knowledgeBaseLinks": 1969,
+      "knowledgeBaseReferences": 932,
+      "publicationInventory": "PASS",
+      "publicationDocuments": 137,
+      "publicationRegistryViews": 6,
+      "criticalEnglishCommentFiles": 146,
+      "headlessExample": "PASS",
+      "mandatoryGitPushHookObserved": false,
+      "sourceCutoff": "before_factual_documentation_successor",
+      "overlappingScopesAdded": false
+    },
+    "publicationToolRepairHistory": {
+      "firstCompletePrepush": {
+        "status": "FAIL_KNOWLEDGE_BASE_PATH_BINDING",
+        "finishedAtUtc": "2026-10-11T15:39:56.1421601Z",
+        "exitCode": 1,
+        "timeout": false,
+        "coreTests": 2285,
+        "corePassed": 2285,
+        "publicationTests": 52,
+        "publicationPassed": 52,
+        "knowledgeBaseIssues": 9,
+        "stdoutSha256": "a60dc33eb5ba7aeff27c111f622e11bf4a0e0120ad6042250ece056ec3dc1b20",
+        "preserved": true
+      },
+      "knowledgeBaseReadingFix": {
+        "exactRepositoryReadingPaths": 5,
+        "baselineTests": 5,
+        "baselinePassed": 3,
+        "baselineFailed": 2,
+        "candidateTests": 5,
+        "candidatePassed": 5,
+        "candidateFailed": 0,
+        "allowsGeneralOutwardPaths": false
+      },
+      "publicationPairRepresentationFix": {
+        "mapping": "exact_inventoried_pair_in_repository_root_and_shared_knowledge_base_relative_forms",
+        "baselineTests": 54,
+        "baselinePassed": 53,
+        "baselineFailed": 1,
+        "candidateTests": 54,
+        "candidatePassed": 54,
+        "candidateFailed": 0,
+        "allowsUninventoriedTranslations": false
+      },
+      "restrictedProcessSetupCutoff": {
+        "status": "FAIL_ENVIRONMENT_SETUP_EPERM",
+        "startedAtUtc": "2026-10-11T16:06:59.9778026Z",
+        "finishedAtUtc": "2026-10-11T16:09:37.0693258Z",
+        "exitCode": 1,
+        "timeout": false,
+        "publicationTests": 59,
+        "publicationPassed": 59,
+        "coreTests": 2285,
+        "corePassed": 2002,
+        "aggregateCoreFailed": 283,
+        "reportedSymlinkErrors": 172,
+        "reportedRealpathErrors": 103,
+        "errorObservationsAreAggregateTestCounts": false,
+        "operations": [
+          "isolated_package_directory_symlink",
+          "temporary_directory_realpath"
+        ],
+        "errorCode": "EPERM",
+        "beforeAssignedProbe": true,
+        "stdoutSha256": "742b20f53839f3f1c7f91e0710b594fc0204296148c4842038711b5c7f254bd2",
+        "preserved": true
+      },
+      "successfulSuccessorEnvironment": {
+        "unchangedFullGate": true,
+        "authorizedHostProcess": true,
+        "productOrTestsWeakened": false
+      },
+      "scopesAdded": false,
+      "currentWholeSuccessor": {
+        "status": "PASS",
+        "startedAtUtc": "2026-10-11T16:10:13.4523180Z",
+        "finishedAtUtc": "2026-10-11T16:12:46.0450223Z",
+        "exitCode": 0,
+        "timeout": false,
+        "stdoutSha256": "9f059afdab2659da2b5271196dcd056521b27b6bf607f5f465cc1123ca145700",
+        "coreTests": 2285,
+        "corePassed": 2285,
+        "publicationTests": 59,
+        "publicationPassed": 59,
+        "failed": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "build": "PASS",
+        "fullStrictTypes": "PASS",
+        "productionBoundaries": "PASS",
+        "knowledgeBase": "PASS",
+        "knowledgeBaseRecords": 155,
+        "knowledgeBaseMarkdown": 239,
+        "knowledgeBaseLinks": 1969,
+        "knowledgeBaseReferences": 932,
+        "publicationInventory": "PASS",
+        "publicationDocuments": 137,
+        "publicationRegistryViews": 6,
+        "criticalEnglishCommentFiles": 146,
+        "headlessExample": "PASS",
+        "mandatoryGitPushHookObserved": false,
+        "sourceCutoff": "before_factual_documentation_successor",
+        "overlappingScopesAdded": false
+      }
+    }
   }
 }

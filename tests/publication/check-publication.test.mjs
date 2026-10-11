@@ -340,3 +340,42 @@ test('publication preserves an informational original LICENSE pair outside KB un
  await writeFile(path.join(root,'localization.json'),JSON.stringify(m));
  assert.deepEqual((await checkPublication(root)).issues,[]);
 }));
+
+
+// Registry paths are authored relative to the shared KB root. Pairing remains
+// limited to the exact document identities declared in the public inventory.
+async function rootReadingFixture(run){
+ await layoutFixture(async(root,m)=>{
+  const zh='examples/canvas-text/README.zh-CN.md',en='examples/canvas-text/README.md';
+  const zhBody='# 示例\n',enBody='# Example\n';
+  for(const [relative,body] of [[zh,zhBody],[en,enBody]]){
+   await mkdir(path.dirname(path.join(root,relative)),{recursive:true});
+   await writeFile(path.join(root,relative),body);
+  }
+  m.documents.push({zh,en,zhSha256:sha(zhBody),enSha256:sha(enBody),kind:'public_reading'});
+  const item=m.registries.at(-1);
+  const source=JSON.parse(await readFile(path.join(root,item.source),'utf8'));
+  const target=JSON.parse(await readFile(path.join(root,item.target),'utf8'));
+  source.items[0].rootReading='../examples/canvas-text/README.zh-CN.md';
+  target.items[0].rootReading='../examples/canvas-text/README.md';
+  const sourceBody=JSON.stringify(source);
+  target._localization.canonicalSha256=sha(sourceBody);
+  const targetBody=JSON.stringify(target);
+  await writeFile(path.join(root,item.source),sourceBody);
+  await writeFile(path.join(root,item.target),targetBody);
+  item.sourceSha256=sha(sourceBody);item.targetSha256=sha(targetBody);
+  await writeFile(path.join(root,'localization.json'),JSON.stringify(m));
+  await run(root,m);
+ });
+}
+
+test('publication pairs exact inventoried repository readings relative to the shared KB root',()=>rootReadingFixture(async root=>{
+ assert.deepEqual((await checkPublication(root)).issues,[]);
+}));
+
+for(const target of ['../examples/canvas-text/README.other.md','../../examples/canvas-text/README.md']){
+ test('publication rejects unpaired KB-relative repository reading identity: '+target,()=>rootReadingFixture(async(root,m)=>{
+  await updateRegistryTarget(root,m,item=>{item.rootReading=target;});
+  assert.deepEqual((await checkPublication(root)).issues,['parity value: knowledge-base/Cns/registry/records.json.items.0.rootReading']);
+ }));
+}
