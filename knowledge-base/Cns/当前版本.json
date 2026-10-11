@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "version": "0.13.0",
-  "updatedAt": "2026-10-11",
+  "updatedAt": "2026-10-12",
   "title": "白鹭引擎重构工程",
   "stage": "independent_browser_webgpu_rectangle_checkpoint",
   "publication": "development_preview",
@@ -541,7 +541,7 @@
     "contract": "Cns/docs/显示内容边界契约.md",
     "evidence": "Cns/docs/显示内容边界证据.md"
   },
-  "latestEngineeringPreview": "0.28.0",
+  "latestEngineeringPreview": "0.29.0",
   "texturedMesh2DImplementation": {
     "version": "0.23.0",
     "status": "bounded_increment_implemented",
@@ -1054,6 +1054,248 @@
         "sourceCutoff": "before_factual_documentation_successor",
         "overlappingScopesAdded": false
       }
+    }
+  },
+  "canvasTextWC1CanvasDeliverySuccessor": {
+    "engineeringPreview": "0.28.0",
+    "status": "ACTUAL_MERGED_MAIN_TREE_VERIFIED",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/15",
+    "pullRequestNumber": 15,
+    "sourceCommit": "94f239b2d1bd6b1af6f63ebc4f375bc7c9894bca",
+    "sourceParent": "b8446d23d6cf8b979d05d35757876811fe190e7a",
+    "mainCommit": "b704349207c536d2bdae38496ef622613355a3f4",
+    "tree": "d1b4fcd5629c2fe54455244534220c50e0cdc419",
+    "verifiedAtUtc": "2026-10-11T16:31:09.508Z",
+    "mandatoryPushHook": {
+      "status": "PASS",
+      "exitCode": 0,
+      "timeout": false,
+      "coreTests": 2285,
+      "corePassed": 2285,
+      "publicationTests": 59,
+      "publicationPassed": 59,
+      "stdoutSha256": "29f9786b4f36dfe49e9af71882da94f2b44a19a4abc3d420ce04d24728ea1172"
+    },
+    "remoteStatusCount": 0,
+    "remoteCheckCount": 0,
+    "remoteCIProvenPassed": false,
+    "priorCurationCutoffsRewritten": false,
+    "scope": "actual_reviewed_commit_push_hook_pr_merge_and_matching_main_tree_only"
+  },
+  "displayHitTestHT1Implementation": {
+    "engineeringPreview": "0.29.0",
+    "deliverable": "V033",
+    "sourceId": "S082",
+    "status": "bounded_cpu_types_policy_whole_and_desktop_renderer_regressions_passed_picking_bilingual_push_and_delivery_pending",
+    "sourceBaseCommit": "b704349207c536d2bdae38496ef622613355a3f4",
+    "packageVersion": "0.0.0",
+    "protocolVersion": "1.0",
+    "publicTypeOnlyExports": [
+      "HitTestOptions"
+    ],
+    "publicTypeEntries": [
+      "@egret/runtime",
+      "@egret/engine"
+    ],
+    "newValueExports": [],
+    "newPackageSubpaths": [],
+    "newThirdPartyDependencies": [],
+    "query": "Stage.hitTest(globalX, globalY, options?): DisplayObject | undefined",
+    "defaults": {
+      "touchEnabled": false,
+      "hitArea": "undefined",
+      "touchChildren": true
+    },
+    "nodeBudget": {
+      "default": 4096,
+      "minimum": 1,
+      "maximum": 65536,
+      "stageCounted": true,
+      "fullCurrentTreeBeforeArithmetic": true
+    },
+    "selection": {
+      "authoredLocalHalfOpenRectangles": true,
+      "stageTransformAndOwnerLocalClips": true,
+      "reversePainterChildrenBeforeOwnArea": true,
+      "alphaIgnored": true,
+      "stageNeverTarget": true,
+      "implicitRetargeting": false,
+      "contentOrPixelFallback": false,
+      "allOtherwiseEligibleArithmeticCompletesAfterFirstWinner": true,
+      "exactStoredMatrixRank": true,
+      "singularAncestorsPruneBranch": true,
+      "suppressedDescendantsRemainStructurallyCharged": true
+    },
+    "state": {
+      "areaOwnedFrozenFiniteEndpoints": true,
+      "orderedReads": [
+        "x",
+        "y",
+        "width",
+        "height"
+      ],
+      "readsEachOnce": true,
+      "successfulReadsRecheckLifetimeBeforeSemantics": true,
+      "sourceThrowsRetainExactWrappedCause": true,
+      "completedReentrantEffectsPreserved": true,
+      "failedOuterAssignmentDoesNotCommit": true,
+      "gettersMayReadStoredValuesAfterDisposal": true,
+      "settersRequireLiveNodeAndOpenBoundEngine": true,
+      "privateAuthorityNoOverriddenDisplayOrScopeHooks": true
+    },
+    "newErrorCodes": [
+      "HIT_TEST_RECEIVER_INVALID",
+      "HIT_TEST_INPUT_INVALID",
+      "HIT_TEST_AREA_INVALID",
+      "HIT_TEST_VALUE_INVALID",
+      "HIT_TEST_TREE_LIMIT",
+      "HIT_TEST_ARITHMETIC_RANGE"
+    ],
+    "baselineActualRed": {
+      "tests": 1,
+      "passed": 0,
+      "failed": 1,
+      "cause": "TypeError: engine.stage.hitTest is not a function",
+      "cleanupRecorded": true
+    },
+    "finiteSourceReview": {
+      "status": "APPROVED_FOR_CONTROLLED_ADOPTION_AND_EXECUTION",
+      "productionFiles": 7,
+      "integrationFiles": 3,
+      "blockingFindings": 0,
+      "executionAcceptedBySourceReview": false
+    },
+    "actualTargetedVerification": {
+      "build": "PASS",
+      "tests": 98,
+      "passed": 98,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "namedHT1Cases": 32,
+      "includesDisplayTreeScalingAndCoordinates": true,
+      "behaviorStdoutSha256": "50e3d1a3ec5ed9e1f2b322afdf7fae1f9f64ac856860444db2bb9ce7298b5e82",
+      "boundaryStatus": "PASS",
+      "productionBoundaryFiles": 426,
+      "fullStrictTypes": "PASS",
+      "ordinaryDiagnostics": 16,
+      "importDiagnostics": 8,
+      "diagnosticsBoundToOriginalFileLineCode": true,
+      "typesStdoutSha256": "adce38ef15082139f2aec0ea01a4e939e6b7e6f2698521ae352fc7907a340ed7",
+      "scopesAdded": false
+    },
+    "actualBoundaryPolicy": {
+      "status": "PASS",
+      "tests": 221,
+      "passed": 221,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "retainedNodeRecords": 205,
+      "newPositiveLeafControls": 1,
+      "newAssignedMutantLeaves": 14,
+      "newParentRecords": 1,
+      "eachMutantRequiresSyntheticBaselinePass": true,
+      "stdoutSha256": "0cd98adc321bcf9592ea7ee2fa8868bdb257eab41e302fc2cf911777ded250cc",
+      "provesPickingExecution": false,
+      "generalParserOrSecurityProof": false,
+      "scopesAdded": false
+    },
+    "fixtureCorrection": {
+      "roundedDeterminant": 0,
+      "exactIntegerUnitDeterminant": "1",
+      "coefficientUnit": "2^-53",
+      "productionChanged": false,
+      "historicalSourceCutoffPreserved": true
+    },
+    "finalWholeVerification": "PASS",
+    "affectedBrowserRegressions": "PASS",
+    "browserPickingSupplement": {
+      "status": "PENDING_PRIVATE_PLAN_ONLY",
+      "implemented": false,
+      "run": false
+    },
+    "independentBilingualMeaningReview": "PENDING",
+    "mandatoryPrepush": "PENDING",
+    "remoteDelivery": "PENDING",
+    "completeInputRouterAccepted": false,
+    "gesturesAccepted": false,
+    "contentPixelHitAccepted": false,
+    "fullUIAccepted": false,
+    "browserPhoneAccepted": false,
+    "fontsAccepted": false,
+    "SpineAccepted": false,
+    "threeDInputAccepted": false,
+    "performanceAccepted": false,
+    "fullMigrationAccepted": false,
+    "historicalCutoffsPreserved": true,
+    "documents": [
+      "Cns/docs/显示命中HT1.md"
+    ],
+    "evidence": [
+      "evidence/display-hit-test-ht1-verification.json"
+    ],
+    "actualCompleteVerificationSuccessor": {
+      "status": "ACTUAL_COMPLETE_PREPUSH_PASS",
+      "publication": {
+        "tests": 59,
+        "passed": 59,
+        "failed": 0
+      },
+      "core": {
+        "tests": 2333,
+        "passed": 2333,
+        "failed": 0
+      },
+      "buildBoundariesStrictTypesHeadlessKnowledgeBase": "PASS",
+      "localization": {
+        "documents": 138,
+        "registryViews": 6,
+        "criticalSourceFiles": 148,
+        "issues": 0
+      },
+      "knowledgeBase": {
+        "records": 157,
+        "markdown": 241,
+        "links": 1981,
+        "references": 944,
+        "issues": 0
+      },
+      "receipt": {
+        "name": "prepush",
+        "startedAtUtc": "2026-10-11T16:52:20.2390410Z",
+        "finishedAtUtc": "2026-10-11T16:55:00.7541332Z",
+        "exitCode": 0,
+        "timeout": false,
+        "stdoutSHA256": "7f43d7a7d585bbd96e5eba267035eac3226bb2b25636ff8f61449d5f45f125e5",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "sourceAndEnvironmentBoundsRetained": true,
+      "manualFullPrepushObserved": true,
+      "mandatoryGitPushHookObserved": false
+    },
+    "actualAffectedRendererRegressionSuccessor": {
+      "status": "ACTUAL_SIX_AFFECTED_DESKTOP_REGRESSION_GATES_PASS",
+      "rendererGateCount": 6,
+      "preparationCommandCount": 1,
+      "rendererRoutes": [
+        "canvas",
+        "webgpu",
+        "b1",
+        "textured",
+        "sequence",
+        "canvas-text-native"
+      ],
+      "environment": {
+        "os": "Windows",
+        "node": "24.19.0",
+        "playwright": "1.62.1",
+        "browser": "default headless msedge",
+        "browserVersion": "154.0.4258.62"
+      },
+      "canvasTextSubset": "PASS_WC1_CANVAS_SUBSET",
+      "canvasTextContexts": 6,
+      "scope": "Fresh actual regressions against the adopted HT1 classes: existing Canvas, WebGPU, B1, textured-WebGPU, sequence-player and opt-in Canvas text. Their own renderer/reference cutoffs remain separate; these are not native pointer picking or mobile/performance acceptance."
     }
   }
 }

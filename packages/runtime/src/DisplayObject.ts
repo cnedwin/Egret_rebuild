@@ -1,4 +1,5 @@
 import type { Point2D, Rectangle2D } from '@egret/contracts';
+import { registerDisplayHitNode, readDisplayHitState, writeDisplayHitArea, writeDisplayTouchEnabled } from './displayHitState.js';
 import { queryDisplayBounds } from './displayBounds.js';
 import type { BoundsQueryOptions } from './displayBounds.js';
 import { queryDisplayPoint } from './displayCoordinates.js';
@@ -12,7 +13,13 @@ import { assertLive, isTerminated, parentOf, registerNode, terminateNode } from 
 
 /** A live display node; detach and terminal dispose are separate operations. */
 export class DisplayObject extends EventDispatcher {
-  public constructor() { super(); registerNode(this); registerVisual(this); }
+  public constructor() { super(); registerNode(this); registerVisual(this); registerDisplayHitNode(this); }
+
+  /** Explicit input regions are separate from rendering content and opacity. */
+  public get touchEnabled(): boolean { return readDisplayHitState(this).touchEnabled; }
+  public set touchEnabled(value: boolean) { writeDisplayTouchEnabled(this, value); }
+  public get hitArea(): Rectangle2D | undefined { return readDisplayHitState(this).hitArea; }
+  public set hitArea(value: Rectangle2D | undefined) { writeDisplayHitArea(this, value); }
 
   public get x():number { return visualOf(this).x; }
   public set x(value:number) { assertVisualMutable(this); if(!finite(value)) throw new EgretError('DISPLAY_VALUE_INVALID'); visualOf(this).x=value; }

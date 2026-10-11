@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-11",
+  "updatedAt": "2026-10-12",
   "authority": "Source grouping and applicable boundaries; researchCheckedAt is the project's research-check date, not a unified publication date",
   "items": [
     {
@@ -1289,11 +1289,23 @@
       "scope": "Actual Main public behavior/boundary 288/288, complete strict types (12 new ordinary and 8 import diagnostics, retained BR1 18), production scan 420 files, pure contract 12/12, and fixed native 6 contexts/14 baseline rows plus C01–C03; default Edge 154.0.4258.62 complete raster/frame zero-tolerance, composition/replacement/generation/lifetime/readiness and app smoke retain separate records. All five existing renderer gates passed separately. Finite source and actual saved-native review passed with 0 open findings. Complete current verification passed 2,285/2,285 core tests and 59/59 publication tests, build, strict types, production boundaries, knowledge-base checks and headless example; the earlier nine-path prepush failure and finite 3/5→5/5 knowledge-base and 53/54→54/54 parity repairs remain preserved.",
       "limit": "Overlapping scopes are not summed; independent bilingual meaning review including the public shared JSON passed with 0 open findings; the mandatory Git push hook and delivery remain pending. Prior mixed GPU 512-byte/maximum-difference 1 FAIL and Native7/OR1 pending retain separate scope; OS descendants, physical memory and full WC1/CJK/phones/Spine/3D/performance/migration are not accepted.",
       "doc": "en/docs/canvas-text-wc1-canvas.md"
+    },
+    {
+      "id": "S082",
+      "type": "first_party_display_hit_test_cpu_type_and_finite_policy_evidence",
+      "researchCheckedAt": "2026-10-12",
+      "artifacts": [
+        "evidence/display-hit-test-ht1-verification.json"
+      ],
+      "title": "First-party HT1 authored rectangular picking and bounded evidence",
+      "scope": "Actual adopted-source build, 98/98 combined HT1/display-tree/scaling/coordinate cases including 32 HT1 cases, 426-file production scan, complete strict types with 16 ordinary/8 import file-line-code diagnostics, and separate synthetic policy 221/221 passed. Policy counts partition as 205 retained records, 15 HT1 leaf controls (1 positive/14 mutants) and 1 HT1 parent. Finite seven-production/three-integration source review approved controlled adoption with no blocking findings; prior missing-entry RED and fixture arithmetic correction retain their cutoffs. Complete current verification passed 2,333/2,333 core and 59/59 publication tests, build, strict types, boundaries, headless and knowledge-base checks; six affected existing desktop renderer regressions passed separately.",
+      "limit": "Overlapping scopes are not summed; source approval and synthetic policy are not picking/browser execution. The private-plan-only picking supplement, independent bilingual meaning review, mandatory Git push hook and delivery remain pending; the complete manual verification is separate from the Git push hook. Existing desktop renderer regressions do not accept browser picking or phones. No full input router, gestures, content/pixel hit, UI, fonts, Spine, 3D input, phone performance or complete migration acceptance.",
+      "doc": "en/docs/display-hit-test-ht1.md"
     }
   ],
   "_localization": {
     "canonicalSource": "来源.json",
-    "canonicalSha256": "f19de00ee40e067c13ae7538e0f451c5a16992971f825a166f771120776030f6",
+    "canonicalSha256": "e1e872f20c756bab15648a3f836a1bd7e6ad5ae8a448f7f32d390e7a5f5d2d4a",
     "role": "read_only_translation",
     "language": "en"
   }

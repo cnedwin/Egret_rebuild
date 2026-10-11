@@ -409,3 +409,40 @@ try {
   }
   console.log('Canvas text fixtures PASS: DOM-free public signature, 12 ordinary diagnostics and 8 dedicated-file exact-location diagnostics in one invocation (file/line/code).');
 } finally {for(const config of canvasTextConfigs)rmSync(config,{force:true});}
+
+// HT1 expectations are authored in unsuppressed consumer fixtures before the
+// compiler runs; each diagnostic must bind to its own file, line and code.
+const hitTestConfigs = [];
+try {
+  for (const [name, source, base, count, marker] of [
+    ['positive', 'hit-test-positive.ts', 'tsconfig.dom-free.json', 0, null],
+    ['negative', 'hit-test-negative.ts', 'tsconfig.dom-free.json', 16, 'HIT_TEST_CASE'],
+    ['imports', 'hit-test-import-negative.ts', 'tsconfig.web.json', 8, 'HIT_TEST_IMPORT_CASE'],
+  ]) {
+    const file = 'tests/types/' + source, fixture = readFileSync(path.join(root, file), 'utf8');
+    if (/@ts-(?:expect-error|ignore|nocheck)/.test(fixture)) throw new Error('Hit-test fixture contains suppression: ' + file);
+    const expected = marker ? fixture.split(/\r?\n/).flatMap((line, index) => {
+      const match = line.match(new RegExp('^// ' + marker + ' ([\\w-]+) TS(\\d+)$'));
+      return match ? [{ name: match[1], file, line: index + 2, code: Number(match[2]) }] : [];
+    }) : [];
+    if (expected.length !== count || new Set(expected.map(item => item.name)).size !== count
+        || (marker && (fixture.match(new RegExp('\\b' + marker + '\\b', 'g')) ?? []).length !== count)) throw new Error('Hit-test diagnostic inventory mismatch: ' + file);
+    const config = 'tests/types/hit-test-' + name + '.generated.json';
+    hitTestConfigs.push(path.join(root, config));
+    writeFileSync(path.join(root, config), JSON.stringify({ extends: './' + base, include: [source] }));
+    const check = spawnSync(process.execPath, [compiler, '--project', config, '--pretty', 'false'], { cwd: root, encoding: 'utf8' });
+    process.stdout.write(check.stdout ?? ''); process.stderr.write(check.stderr ?? '');
+    if (check.error) throw check.error;
+    if (!marker) { if (check.status !== 0) throw new Error('Hit-test DOM-free positive consumer failed: exit ' + check.status); continue; }
+    const observed = [...(check.stdout ?? '').matchAll(/^(.+)\((\d+),(\d+)\): error TS(\d+):/gm)]
+      .map(match => ({ file: match[1].replaceAll('\\', '/'), line: Number(match[2]), column: Number(match[3]), code: Number(match[4]) }));
+    if (check.status !== 1 || observed.length !== count) throw new Error(`Hit-test ${name}: expected ${count} diagnostics/exit 1; got ${observed.length}/exit ${check.status}`);
+    const receipts = expected.map(item => {
+      const found = observed.filter(actual => actual.file === item.file && actual.line === item.line);
+      if (found.length !== 1 || found[0].code !== item.code) throw new Error(`Hit-test ${item.name}: expected ${item.file}:${item.line}/TS${item.code}; got ${JSON.stringify(found)}`);
+      return { name: item.name, expected: item, actual: found[0] };
+    });
+    console.log('Hit-test ' + name + ' individual unsuppressed diagnostic receipts: ' + JSON.stringify(receipts));
+  }
+  console.log('Hit-test fixtures PASS: DOM-free public positive consumer, 16 ordinary and 8 import negatives bound to exact file/line/code.');
+} finally { for (const config of hitTestConfigs) rmSync(config, { force: true }); }

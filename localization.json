@@ -92,8 +92,8 @@
       "zh": "DOCUMENTATION.zh-CN.md",
       "en": "DOCUMENTATION.md",
       "kind": "public_reading",
-      "enSha256": "db00c9eda845f57d91c9af06fc304ff56766144134222f2a43de64ebdfb192a2",
-      "zhSha256": "d6b3783d11ebe54dc41f11e0e3f625687c5a9fa93c9c842f6a20a8a927c019e6"
+      "enSha256": "19c196d625d99ccc7f520ce10e3b4307e6670076a1f0bc5049286c420eb1b9b5",
+      "zhSha256": "a6b757b88e96bb1399b55b90dad0c9f19c377bad065aa87bbabd03116764c557"
     },
     {
       "zh": "examples/canvas-scene/README.zh-CN.md",
@@ -141,8 +141,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "c4daf1e97a96684899a1f2ab60d7bdeae93f72ffcd20d2cfa536e347b4501c9a",
-      "zhSha256": "226407acd469ab0edafd5ca20b4aa08fc3fbd4d516b1ac0645adba8429e1c3de"
+      "enSha256": "a1fcbc306cbccf36f3347e17a70b6c8b9c7f5f8368c3f96ab89ac8152d9e2f42",
+      "zhSha256": "c4b1ee0e923859033ede32b2613cf67b654b036793f085ac81046dca7c505d9d"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -764,8 +764,8 @@
       "zh": "knowledge-base/Cns/README.md",
       "en": "knowledge-base/en/README.md",
       "kind": "public_reading",
-      "enSha256": "4812fe2e164940034122318a12be0531cb38de3f15d7e034f6d48f6696120ec1",
-      "zhSha256": "fca455b325d187ecb4e4bedee40c11f33441b3125eef28e234cba84c7a7102a5"
+      "enSha256": "e1b71caeacbe40b84953a961ac25ae704446a7d0790edc0521be263070e97717",
+      "zhSha256": "8f4b56786cb1f37875ae8f2d942f5c24c81122a9de2e1cdf04d70057abe79df4"
     },
     {
       "zh": "knowledge-base/Cns/templates/ADR决策记录.md",
@@ -848,8 +848,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "b70a36312c55412e114289b0bf1b3f98b33bd995e25087db58a2e8c5be13a31b",
-      "zhSha256": "330905a8423bbb6d1db8f4811867197f0e05399d2f0a05dc13da5d6cdc9661ae"
+      "enSha256": "374814b9365d55960938e4621b6a3a9580e2e4ff4b21812792ef6fa2c21129c3",
+      "zhSha256": "58f841289c66b1ae2b60ab015d179fc99ab57b1e4d48616c4c95233c943a18b8"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -1011,6 +1011,13 @@
       "kind": "public_reading",
       "enSha256": "a3e7a3c73da43686a25ffba0f8e89df7080115227dc85f266b71154765de82d9",
       "zhSha256": "c0d2643eacee08fbf4462877dca854d35f62a62d34d4bfe613820a5055400e2f"
+    },
+    {
+      "en": "knowledge-base/en/docs/display-hit-test-ht1.md",
+      "zh": "knowledge-base/Cns/docs/显示命中HT1.md",
+      "kind": "public_reading",
+      "enSha256": "2e1bcd3b938bf6c37b4a35ac9d9a49f28eb6bd36e52a5741b324436bbc0fc617",
+      "zhSha256": "1fae95b096f8c5958587497ea85731a0d113b51b34c8343e472185f77d24fd1f"
     }
   ],
   "registries": [
@@ -1035,20 +1042,20 @@
     {
       "source": "knowledge-base/Cns/registry/交付.json",
       "target": "knowledge-base/en/registry/deliverables.json",
-      "sourceSha256": "742acd56ac4f0248ecc09308cd2f93e22a880675f87c66d3c263476bec81a11e",
-      "targetSha256": "9e9ed46b67d975b7f0f8d3b4786bb368ef2a78c2dff53f172f4d0cb843baba39"
+      "sourceSha256": "99a04be2a8bbed2a4b9a53e3347928872c50800a574122916042b865364d6182",
+      "targetSha256": "916ea957273e0114cbb6747210abe42b7a3d2567a48d1dd7e084437c18c519ef"
     },
     {
       "source": "knowledge-base/Cns/registry/来源.json",
       "target": "knowledge-base/en/registry/sources.json",
-      "sourceSha256": "f19de00ee40e067c13ae7538e0f451c5a16992971f825a166f771120776030f6",
-      "targetSha256": "08cd130d0b14239ea6a6fbf9778edf89d5ab47caf948e6e5b3207261411c8d6c"
+      "sourceSha256": "e1e872f20c756bab15648a3f836a1bd7e6ad5ae8a448f7f32d390e7a5f5d2d4a",
+      "targetSha256": "6c0d817a4a7825e018d568ae649b39af2781a7baa68def2560a83c19b497c852"
     },
     {
       "source": "knowledge-base/Cns/当前版本.json",
       "target": "knowledge-base/en/current-version.json",
-      "sourceSha256": "09f3c4e657abacd4528559afb08d63ade9324c1e36d2af21cf01573ee03bbd05",
-      "targetSha256": "c4e1708bf0a8e8f87a4b6ee7f4b15673aa78a8be9e5c006147f03fffdde99a9b"
+      "sourceSha256": "4dfbcbc593c826e8422f7c81020e292ce3c87be595ffd42c704f98772a8a626b",
+      "targetSha256": "b4301d5a9dfb23b2ec1c62a30e389d286390fd4bf9d92634c97f1c12842337d7"
     }
   ],
   "criticalComments": [
@@ -1326,11 +1333,11 @@
     },
     {
       "path": "packages/runtime/src/DisplayObject.ts",
-      "sha256": "326529229fd835a41eb4525d55e9738ae177e34e6feea56ab8c074423e5b1e56"
+      "sha256": "58d3211f349f28d21c520631029971e87b784a17745cde8f34e746d3fc349f3f"
     },
     {
       "path": "packages/runtime/src/DisplayObjectContainer.ts",
-      "sha256": "1bccfc8d316858ca1b7af769708ae2baed9c7a553da02e650d9ed0832f82ebfd"
+      "sha256": "743f19d599a573c82be0438df25b3c76d6144f70de66828a6e31b42c3e2faed1"
     },
     {
       "path": "packages/runtime/src/EgretError.ts",
@@ -1358,7 +1365,7 @@
     },
     {
       "path": "packages/runtime/src/Stage.ts",
-      "sha256": "08eb1599d9c75c70add22558f28e214ec31fe4305ccdf2638a8f7d35ec61bb0f"
+      "sha256": "629b19abac38cc3ecd6c340b808dec5158650e381407eaba7a5d1050d2b2dfb1"
     },
     {
       "path": "packages/runtime/src/Texture.ts",
@@ -1641,6 +1648,14 @@
     {
       "path": "knowledge-base/tools/Validate-KnowledgeBase.ps1",
       "sha256": "9a29811796093d473ed1d8d71bce5a06a247c5d46e790190464e9a173d9d0c12"
+    },
+    {
+      "path": "packages/runtime/src/displayHitState.ts",
+      "sha256": "b4b2d765831cb6a8c7b26ef3faaec8bb4b44b8ee12d345a7cc465ed53e5ecebf"
+    },
+    {
+      "path": "packages/runtime/src/displayHitTest.ts",
+      "sha256": "87de8d0a1957cf33e04f025dd95b471f4a584a3d2fe2c4622319029a05f2312d"
     }
   ],
   "historicalSemanticReview": {
@@ -3653,6 +3668,25 @@
     ],
     "publicTone": "Positive independent implementation, explicit test-font credit and environment-bound evidence.",
     "independentMeaningReview": "ACTUAL_FINITE_PUBLIC_MEANING_PASS",
+    "completeSemanticParityClaim": false
+  },
+  "displayHitTestHT1Curation": {
+    "date": "2026-10-11",
+    "engineeringLabel": "0.29.0",
+    "scope": "One paired HT1 contract and affected navigation/registry successors with independent first-party provenance.",
+    "documents": [
+      "knowledge-base/en/docs/display-hit-test-ht1.md",
+      "knowledge-base/Cns/docs/显示命中HT1.md"
+    ],
+    "criticalSources": [
+      "packages/runtime/src/DisplayObject.ts",
+      "packages/runtime/src/DisplayObjectContainer.ts",
+      "packages/runtime/src/Stage.ts",
+      "packages/runtime/src/displayHitState.ts",
+      "packages/runtime/src/displayHitTest.ts"
+    ],
+    "publicTone": "Positive independent engineering; explicit capability and evidence boundaries.",
+    "independentMeaningReview": "ACTUAL_FINITE_BILINGUAL_MEANING_PASS",
     "completeSemanticParityClaim": false
   }
 }

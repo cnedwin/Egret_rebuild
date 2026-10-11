@@ -552,5 +552,78 @@ let canvasTextUnavailable;
 try { canvasText.createCanvasTextRasterProvider(); } catch(error) { canvasTextUnavailable=error; }
 if(canvasTextUnavailable?.code!=='WEB_TEXT_UNAVAILABLE')throw new Error('web/text: nonbrowser factory must be unavailable');
 
+// HT1 adds only an erased options port and members on existing display classes.
+// The retained value inventories and every older refusal above stay unchanged.
+const hitTestStrip = raw => raw.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/[^\n]*/g, '').trim();
+const hitTestPrivateNames = ['DisplayHitState', 'registerDisplayHitNode', 'registerDisplayHitContainer',
+  'readDisplayHitState', 'readDisplayTouchChildren', 'writeDisplayTouchEnabled', 'writeDisplayTouchChildren', 'writeDisplayHitArea', 'queryDisplayHit'];
+for (const [entry, values, emittedEntry] of [...textEntries, ['project', projectFacade, 'packages/project/dist/index']]) {
+  const declaration = hitTestStrip(readFileSync(path.join(root, emittedEntry + '.d.ts'), 'utf8'));
+  const emitted = hitTestStrip(readFileSync(path.join(root, emittedEntry + '.js'), 'utf8'));
+  let remainder = declaration;
+  if (entry === 'root' || entry === 'runtime') {
+    const target = entry === 'root' ? '@egret/runtime' : './displayHitTest.js';
+    const clauses = [...declaration.matchAll(/export(?:\s+type)?\s*\{([^}]+)\}\s*from\s*['"]([^'"]+)['"];?/g)]
+      .filter(match => /\bHitTestOptions\b/.test(match[1]) || /\bdisplayHitTest\b/.test(match[2]));
+    if (clauses.length !== 1 || !/^export\s+type\s*\{\s*HitTestOptions\s*\}\s*from\s*['"][^'"]+['"];?$/.test(clauses[0][0])
+        || clauses[0][2] !== target || 'HitTestOptions' in values || /\bHitTestOptions\b/.test(emitted)) {
+      throw new Error(`${entry}: exact hit-test type-only facade mismatch`);
+    }
+    remainder = declaration.replace(clauses[0][0], '');
+    if (/\bHitTestOptions\b/.test(remainder)) throw new Error(`${entry}: duplicate hit-test options declaration`);
+  } else if ('HitTestOptions' in values || /\bHitTestOptions\b/.test(declaration + '\n' + emitted)) {
+    throw new Error(`${entry}: root/runtime-only hit-test options leaked`);
+  }
+  for (const name of hitTestPrivateNames) if (name in values || new RegExp('\\b' + name + '\\b').test(remainder + '\n' + emitted)) {
+    throw new Error(`${entry}: private hit-test authority leaked: ${name}`);
+  }
+  if (/\b(?:displayHitState|displayHitTest)\b/.test(remainder + '\n' + emitted)) throw new Error(`${entry}: private hit-test module leaked`);
+}
+const hitTestOptionsDeclaration = hitTestStrip(readFileSync(path.join(root, 'packages/runtime/dist/displayHitTest.d.ts'), 'utf8'));
+const hitTestOptionBodies = [...hitTestOptionsDeclaration.matchAll(/export\s+interface\s+HitTestOptions\s*\{([^}]*)\}/g)];
+if (hitTestOptionBodies.length !== 1 || !/^\s*readonly\s+maxNodes\?\s*:\s*number\s*;\s*$/.test(hitTestOptionBodies[0][1])) {
+  throw new Error('runtime: exact hit-test options shape mismatch');
+}
+const hitTestClassMembers = [
+  ['DisplayObject', 'touchEnabled', 'get touchEnabled(): boolean;', 'set touchEnabled(value: boolean);'],
+  ['DisplayObject', 'hitArea', 'get hitArea(): Rectangle2D | undefined;', 'set hitArea(value: Rectangle2D | undefined);'],
+  ['DisplayObjectContainer', 'touchChildren', 'get touchChildren(): boolean;', 'set touchChildren(value: boolean);'],
+];
+for (const name of ['DisplayObject', 'DisplayObjectContainer', 'Stage']) if (facade[name] !== runtimeFacade[name]) {
+  throw new Error(`root: hit-test class identity mismatch: ${name}`);
+}
+const hitTestDeclarationText = name => hitTestStrip(readFileSync(path.join(root, 'packages/runtime/dist/' + name + '.d.ts'), 'utf8')).replace(/\s+/g, ' ');
+for (const [name, member, getter, setter] of hitTestClassMembers) {
+  const declaration = hitTestDeclarationText(name);
+  if (!declaration.includes(getter) || !declaration.includes(setter)
+      || [...declaration.matchAll(new RegExp('\\b(?:get|set)\\s+' + member + '\\s*\\(', 'g'))].length !== 2) throw new Error(`runtime: hit-test ${name}.${member} declaration mismatch`);
+  for (const [entry, values] of [['runtime', runtimeFacade], ['root', facade]]) {
+    const descriptor = Object.getOwnPropertyDescriptor(values[name].prototype, member);
+    if (!descriptor || typeof descriptor.get !== 'function' || typeof descriptor.set !== 'function'
+        || descriptor.enumerable !== false || descriptor.configurable !== true) throw new Error(`${entry}: hit-test ${name}.${member} accessor mismatch`);
+  }
+}
+const hitTestStageSignature = 'hitTest(globalX: number, globalY: number, options?: HitTestOptions): DisplayObject | undefined;';
+if (!hitTestDeclarationText('Stage').includes(hitTestStageSignature)
+    || [...hitTestDeclarationText('Stage').matchAll(/\bhitTest\s*\(/g)].length !== 1
+    || /\bhitTest\s*\(|\btouchChildren\b/.test(hitTestDeclarationText('DisplayObject'))
+    || /\bhitTest\s*\(/.test(hitTestDeclarationText('DisplayObjectContainer'))) throw new Error('runtime: Stage.hitTest declaration mismatch');
+for (const [entry, values] of [['runtime', runtimeFacade], ['root', facade]]) {
+  const descriptor = Object.getOwnPropertyDescriptor(values.Stage.prototype, 'hitTest');
+  if (!descriptor || typeof descriptor.value !== 'function' || descriptor.enumerable !== false || descriptor.configurable !== true
+      || Object.hasOwn(values.DisplayObject.prototype, 'hitTest') || Object.hasOwn(values.DisplayObjectContainer.prototype, 'hitTest')) {
+    throw new Error(`${entry}: Stage-only hit-test method mismatch`);
+  }
+}
+for (const name of ['displayHitState', 'displayHitTest']) for (const [directory, suffix] of [['src', '.ts'], ['dist', '.js'], ['dist', '.d.ts']]) {
+  const file = `packages/runtime/${directory}/${name}${suffix}`, raw = readFileSync(path.join(root, file), 'utf8'), code = hitTestStrip(raw);
+  if (forbidden.test(code) || /\b(?:HTMLElement|Document|Window|Navigator|NodeJS)\b/.test(code)
+      || /\/\/\/\s*<reference\s+(?:lib\s*=\s*['"]dom(?:\.iterable)?['"]|types\s*=\s*['"]node['"])/i.test(raw)) throw new Error(`${file}: hit-test host ambient dependency`);
+  const runtimeImports = directory === 'src' ? code.replace(/\bimport\s+type\s*\{[^}]+\}\s*from\s*['"][^'"]+['"];?/g, '') : code;
+  if (suffix !== '.d.ts' && /\bimport\b[^;]*['"]\.\/(?:DisplayObject|DisplayObjectContainer|Stage)\.js['"]/.test(runtimeImports)) {
+    throw new Error(`${file}: hit-test display class value backedge`);
+  }
+}
+
 console.log(`Boundary check PASS: four private workspace packages, actual exports resolution, ${inspected} source/build/declaration files, DOM-free core and exact DOM-only web subtree without Node imports/globals.`);
 

@@ -1,4 +1,5 @@
 import { DisplayObject } from "./DisplayObject.js";
+import { registerDisplayHitContainer, readDisplayTouchChildren, writeDisplayTouchChildren } from './displayHitState.js';
 import { EgretError } from "./EgretError.js";
 import { ASSERT_ATTACHABLE, ASSERT_BINDABLE, OWNERSHIP_CHILDREN, commitBinding, engineInSubtree, engineOf, ownerOf, preflightBinding, validateBinding } from "./ownership.js";
 import { assertAttachable, assertLive, assertNoCycle, attachNode, childAtOf, childCountOf, childrenOf, detachNode, isTerminated, parentOf, registerContainer, removeNode, setNodeIndex } from "./displayTreeState.js";
@@ -8,7 +9,11 @@ const disposalBoundaries = new WeakMap<DisplayObject, { readonly owner: object |
 
 /** Ordered display children with atomic reparenting and ownership-aware cleanup. */
 export class DisplayObjectContainer extends DisplayObject {
-  public constructor() { super(); registerContainer(this); }
+  public constructor() { super(); registerContainer(this); registerDisplayHitContainer(this); }
+  /** Suppressed descendants never implicitly retarget to this container. */
+  public get touchChildren(): boolean { return readDisplayTouchChildren(this); }
+  public set touchChildren(value: boolean) { writeDisplayTouchChildren(this, value); }
+
   public get numChildren(): number { return childCountOf(this); }
   public override [OWNERSHIP_CHILDREN](): readonly object[] { return childrenOf(this); }
 
