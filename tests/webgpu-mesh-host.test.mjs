@@ -269,7 +269,7 @@ const config=boundedJSON(fs.readFileSync(CONFIG_PATH,'utf8'));
 ownKeys(config,['schemaVersion','caseId','repository','entries','packages','files','metadata','sceneFiles','gpuFiles']);
 assert.equal(config.schemaVersion,1);assert.equal(config.caseId,CASE);assert.equal(normal(process.cwd()),config.repository);
 ownKeys(config.entries,['core','canvas','webgpu','host','b1']);
-ownKeys(config.packages,['@egret/contracts','@egret/runtime','@egret/engine','robust-predicates','#egret-textured-frame-state']);
+ownKeys(config.packages,['@egret/contracts','@egret/runtime','@egret/engine','robust-predicates','#egret-textured-frame-state','#egret-mouse-input']);
 assert.ok(Array.isArray(config.files)&&config.files.length<=LIMITS.modules);
 const FILES=new Map();let sourceBytes=0;
 for(const descriptor of config.files){ownKeys(descriptor,['path','bytes','sha256']);assert.equal(FILES.has(descriptor.path),false);assert.deepEqual(exactFile(descriptor.path),descriptor);sourceBytes+=descriptor.bytes;assert.ok(sourceBytes<=LIMITS.sourceBytes);FILES.set(descriptor.path,descriptor);}
@@ -296,6 +296,12 @@ function resolveTarget(specifier,parent){
     const target=config.packages[specifier];assert.ok(FILES.has(target),'registry in actual finite manifest');
     return pathToFileURL(target).href;
   }
+  if(specifier==='#egret-mouse-input'){
+    assert.ok(parent===pathToFileURL(config.repository+'/packages/engine/dist/web/MouseInput.js').href,'exact mouse input adapter parent');
+    assert.ok(Object.hasOwn(config.packages,specifier),'literal mouse input mapping');
+    const target=config.packages[specifier];assert.ok(FILES.has(target),'mouse input in actual finite manifest');
+    return pathToFileURL(target).href;
+  }
   assert.ok(typeof specifier==='string'&&!specifier.includes('?')&&!specifier.includes('#'));
   if(specifier.startsWith('node:'))return specifier;
   if(Object.hasOwn(config.packages,specifier))return pathToFileURL(config.packages[specifier]).href;
@@ -307,6 +313,11 @@ function staticInspection(){
   for(const parent of [config.entries.host,pathToFileURL(config.repository+'/packages/engine/dist/web/CanvasHost.js').href])assert.equal(resolveTarget('#egret-textured-frame-state',parent),registry);
   assert.throws(()=>resolveTarget('#egret-textured-frame-state',config.entries.core),{message:'exact registry adapter parent'});
   assert.throws(()=>resolveTarget('#egret-textured-frame-state/other',config.entries.host));
+  const mouseParent=pathToFileURL(config.repository+'/packages/engine/dist/web/MouseInput.js').href;
+  const mouseTarget=pathToFileURL(config.repository+'/packages/engine/dist/mouseInput.js').href;
+  assert.equal(resolveTarget('#egret-mouse-input',mouseParent),mouseTarget);
+  for(const parent of [config.entries.core,config.entries.canvas,config.entries.host,pathToFileURL(config.repository+'/packages/engine/dist/web/input.js').href])assert.throws(()=>resolveTarget('#egret-mouse-input',parent),{message:'exact mouse input adapter parent'});
+  assert.throws(()=>resolveTarget('#egret-mouse-input/other',mouseParent));
   assert.equal(typeof vm.SourceTextModule,'function');const budget={tokens:0};const inspected=new Map();
   const selectedAnchors=new Map([[config.entries.host,['((color >>> 16) & 255) / 255 * alpha','((color >>> 8) & 255) / 255 * alpha','(color & 255) / 255 * alpha']],[pathToFileURL(config.repository+'/packages/engine/dist/web/webgpuPass.js').href,['((group.color >>> 16) & 255) / 255 * alpha','((group.color >>> 8) & 255) / 255 * alpha','(group.color & 255) / 255 * alpha']],[pathToFileURL(config.repository+'/packages/engine/dist/web/imageProjections2D.js').href,['Math.floor((pixels[offset] * alpha + 127) / 255)','Math.floor((pixels[offset + 1] * alpha + 127) / 255)','Math.floor((pixels[offset + 2] * alpha + 127) / 255)']],[pathToFileURL(config.repository+'/packages/runtime/dist/sequenceClip.js').href,['Math.floor((high - low) / 2)']]]);
   // A selected division token never grants general closing-delimiter admission.
@@ -464,8 +475,9 @@ function sourceInventory(repository){const files=[],metadata=[],packages={};let 
   for(const name of ['contracts','runtime','engine']){const root=repository+'/packages/'+name;const meta=fileDescriptor(root+'/package.json');metadata.push(meta);const data=JSON.parse(fs.readFileSync(meta.path,'utf8'));assert.equal(data.name,'@egret/'+name);assert.equal(data.type,'module');assert.deepEqual(data.exports['.'],{types:'./dist/index.d.ts',import:'./dist/index.js'});packages[data.name]=canonical(root+'/dist/index.js');collect(root+'/dist');}
   const dependency=canonical(repository+'/packages/engine/node_modules/robust-predicates');const meta=fileDescriptor(dependency+'/package.json');metadata.push(meta);const data=JSON.parse(fs.readFileSync(meta.path,'utf8'));assert.equal(data.name,'robust-predicates');assert.equal(data.version,'3.0.3');assert.equal(data.type,'module');assert.equal(data.exports,'./index.js');packages['robust-predicates']=canonical(dependency+'/index.js');files.push(fileDescriptor(dependency+'/index.js'));collect(dependency+'/esm');
   const engine=JSON.parse(fs.readFileSync(repository+'/packages/engine/package.json','utf8'));assert.deepEqual(engine.exports['./web'],{types:'./dist/web/index.d.ts',import:'./dist/web/index.js'});assert.deepEqual(engine.exports['./webgpu'],{types:'./dist/web/webgpu.d.ts',import:'./dist/web/webgpu.js'});assert.equal(engine.dependencies['robust-predicates'],'3.0.3');
-  assert.deepEqual(engine.imports,{'#egret-textured-frame-state':{types:'./dist/internal/texturedFrameState.d.ts',import:'./dist/internal/texturedFrameState.js'}});
+  assert.deepEqual(engine.imports,{'#egret-textured-frame-state':{types:'./dist/internal/texturedFrameState.d.ts',import:'./dist/internal/texturedFrameState.js'},'#egret-mouse-input':{types:'./dist/mouseInput.d.ts',import:'./dist/mouseInput.js'}});
   packages['#egret-textured-frame-state']=canonical(repository+'/packages/engine/dist/internal/texturedFrameState.js');
+  packages['#egret-mouse-input']=canonical(repository+'/packages/engine/dist/mouseInput.js');
   const entry=relative=>pathToFileURL(canonical(repository+'/'+relative)).href;
   const entries={core:entry('packages/engine/dist/index.js'),canvas:entry('packages/engine/dist/web/index.js'),webgpu:entry('packages/engine/dist/web/webgpu.js'),host:entry('packages/engine/dist/web/WebGPUHost.js'),b1:entry('packages/engine/dist/web/b1.js')};
   // CPU image projections are shared by Canvas and WebGPU, outside the GPU-only category.

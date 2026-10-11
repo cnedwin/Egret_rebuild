@@ -28,6 +28,10 @@
       "types": "./dist/text.d.ts",
       "import": "./dist/text.js"
     },
+    "./web/input": {
+      "types": "./dist/web/input.d.ts",
+      "import": "./dist/web/input.js"
+    },
     "./web/text": {
       "types": "./dist/web/text.d.ts",
       "import": "./dist/web/text.js"
@@ -42,6 +46,10 @@
     "#egret-textured-frame-state": {
       "types": "./dist/internal/texturedFrameState.d.ts",
       "import": "./dist/internal/texturedFrameState.js"
+    },
+    "#egret-mouse-input": {
+      "types": "./dist/mouseInput.d.ts",
+      "import": "./dist/mouseInput.js"
     }
   }
 }

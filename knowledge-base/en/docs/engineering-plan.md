@@ -2,6 +2,24 @@
 
 English | [简体中文](../../Cns/docs/工程规划.md)
 
+<!-- MI1-DOC-0.33.0-BEGIN -->
+## Bounded input work package: 0.33.0 (MI1)
+
+Development preview **0.33.0 (MI1)** introduces Scope-owned primary mouse input through the optional `@egret/engine/web/input` entry. It connects existing logical hit testing and typed display events while rendering remains explicit. Read the [primary mouse contract](primary-mouse-input-contract.md) and designated [verification record](../../evidence/primary-mouse-input-verification.json) for the exact profile, ownership, failure handling and gate scopes.
+
+At the documentation cutoff **2026-10-11 22:52:43 UTC**, the final Engine build and genuine public interface check passed. Public MI1 behavior/lifecycle passed **98/98**. TypeScript **7.0.2** passed one public positive and matched **26 + 15 + 5** exact unsuppressed negative diagnostics; the public type gate exited **0**. Focused MI1 policy passed **21/21** after correcting one expected diagnostic to retain the existing guard order. Public cancellation **8/8** and earlier retained CPU checks keep their separately recorded scopes. These overlapping checks are not added.
+
+Default headless Edge **154.0.4258.62** with Playwright **1.62.1** passed the fixed desktop Canvas mouse subset: **1** genuine native baseline and **6** assigned controls cover literal events, logical points, RGBA witnesses and observed physical listener cleanup. The ordinary HTTP example passed, and collector policy/grammar units passed **13/13**. All **7** retained desktop gates—Canvas, WebGPU, B1, textured rendering, sequence animation, Canvas text and picking—passed their existing bounded profiles. This establishes neither phones, arbitrary UI/3D, OS reclamation nor a performance lead.
+
+**The complete 259-case boundary rerun, final publication/bilingual checks, mandatory pre-push gate and current 0.33.0 remote delivery remain PENDING.** The earlier timeout and full **258/259** result retain their original artifacts; the latter exposed one expected-message mismatch. Focused **21/21** is its finite successor, not a complete rerun. Other earlier failures retain their recorded identities and cutoffs in the verification record.
+
+The delivered baseline **0.32.0 (S3D1)** was merged through [PR #19](https://github.com/cnedwin/Egret_rebuild/pull/19) to Main `a240bc1e6ee218c63fc1511d715d01d1358d908f`. Earlier scene/preview sections retain their original sources, results and pending/failure cutoffs as history; their earlier pending labels do not undo this delivery.
+
+This bounded interaction foundation requires genuine public behavior/lifecycle controls, exact unsuppressed type diagnostics, a fresh complete canonical baseline before each policy mutant, the six assigned native controls, affected retained native regressions and final provenance/bilingual/pre-push checks. Continue the existing display/rendering, resources/animation/UI and Host priorities before expanding AI engineering interfaces and legacy migration.
+
+Full Spine support **R020/V020** remains planned, implementation **not_started**, acceptance **not_run**. Complete UI, touch/pen, phones, Native SDKs, target-device performance, editor/Agent tools and complete legacy migration retain their separate implementation and acceptance obligations.
+<!-- MI1-DOC-0.33.0-END -->
+
 <!-- S3D1-DOC-0.32.0-BEGIN -->
 ## Bounded public scene checkpoint: 0.32.0 (S3D1)
 

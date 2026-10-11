@@ -36,3 +36,5 @@ export type { SequenceFrameInput, SequenceClipInput, SequenceClip, SequenceRegio
 export { SequencePlayer } from './SequencePlayer.js';
 export { ByteReader, BYTE_READER_LIMITS } from "./ByteReader.js";
 export type { ByteOrder } from "./ByteReader.js";
+export { createDisplayInputOperations } from "./displayInputOperations.js";
+export type { DisplayInputOperations } from "./displayInputOperations.js";

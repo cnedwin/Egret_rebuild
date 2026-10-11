@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<title>Egret primary mouse example</title>
+<style>
+  body { margin: 24px; font: 16px system-ui, sans-serif; }
+  #canvas-parent { width: 320px; height: 200px; }
+  #scene { display: block; width: 320px; height: 200px; padding: 0; border: 0; object-fit: fill; }
+</style>
+<script type="importmap">{"imports":{"@egret/engine":"../../packages/engine/dist/index.js","@egret/engine/web":"../../packages/engine/dist/web/index.js","@egret/engine/web/input":"../../packages/engine/dist/web/input.js","@egret/runtime":"../../packages/runtime/dist/index.js","@egret/contracts":"../../packages/contracts/dist/index.js","#egret-textured-frame-state":"../../packages/engine/dist/internal/texturedFrameState.js","#egret-mouse-input":"../../packages/engine/dist/mouseInput.js"}}</script>
+<h1>Egret primary mouse example</h1>
+<p>A 160 × 100 logical scene displayed at 320 × 200 CSS pixels. Input does not repaint the scene.</p>
+<div id="canvas-parent"><canvas id="scene" width="160" height="100" aria-label="Red and green input regions"></canvas></div>
+<p>Green: front region. Red: rear region. This example admits an ordinary canvas with no transformed ancestors.</p>
+<script type="module" src="./main.mjs"></script>
+</html>

@@ -39,7 +39,11 @@ class Signal implements CancellationSignal {
     const candidates = [...this.subscriptions.values()];
     for (const candidate of candidates) {
       if (!candidate.active) continue;
-      if (candidate.once) this.removeEventListener("abort", candidate.listener);
+      if (candidate.once) {
+        // Retire internally before callbacks; public removal is replaceable.
+        candidate.active = false;
+        this.subscriptions.delete(candidate.listener);
+      }
       try {
         candidate.listener();
       } catch (cause) {

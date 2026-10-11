@@ -1926,12 +1926,201 @@
           "productionReadiness": false
         },
         "historicalCutoffsPreserved": true
+      },
+      "deliverySuccessor": {
+        "engineeringLabel": "0.32.0",
+        "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/19",
+        "sourceHead": "ccfad10de077045ada3018fa624cc0e9a8677ac0",
+        "mergedMain": "a240bc1e6ee218c63fc1511d715d01d1358d908f",
+        "tree": "f97f9e6986d2804601c679e143aa8c22b6fa0a75",
+        "mandatoryPushHook": "ACTUAL_PASS",
+        "coreTests": 2499,
+        "publicationTests": 63,
+        "localRemoteMainReadbackAtUtc": "2026-10-11T21:23:49.237Z",
+        "remoteStatusCount": 0,
+        "remoteCheckCount": 0,
+        "remoteCIPassClaimed": false,
+        "scope": "Observed prior delivery successor; earlier public-scene3d pending cutoffs remain historical."
+      }
+    },
+    {
+      "id": "V037",
+      "title": "Optional primary mouse input and display event routing",
+      "kind": "bounded_primary_mouse_input_adapter",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R005",
+        "R011",
+        "R015",
+        "R016",
+        "R017",
+        "R018",
+        "R019"
+      ],
+      "sourceIds": [
+        "S086"
+      ],
+      "dependsOn": [],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "independently_authored_optional_browser_input_over_existing_first_party_display_and_typed_events",
+      "acceptance": "observed_98_behavior_46_exact_negative_diagnostics_21_focused_policy_1_plus_6_native_7_retained_renderers_final_publication_pending",
+      "acceptanceCriteria": [
+        "One optional entry and six public types; default entry keeps the DOM-free boundary.",
+        "Current hit areas and two release picks govern activation; logical coordinates do not multiply by DPR, painting is explicit.",
+        "Genuine lifecycle, original Scope Signal and five native listener pairs retire with exact error precedence.",
+        "Real browser, ordinary HTTP example, assigned controls, paired readings, origin and reviewable delivery have distinct verification."
+      ],
+      "artifacts": [
+        "en/docs/primary-mouse-input-contract.md",
+        "evidence/primary-mouse-input-verification.json"
+      ],
+      "doc": "en/docs/primary-mouse-input-contract.md",
+      "candidateEvidence": {
+        "engineeringLabel": "0.33.0",
+        "sourceId": "S086",
+        "deliverable": "V037",
+        "packageVersion": "0.0.0",
+        "protocolVersion": "1.0",
+        "behavior": {
+          "tests": 98,
+          "passed": 98,
+          "failed": 0
+        },
+        "strictTypes": {
+          "positiveConsumers": 1,
+          "negativeDiagnostics": {
+            "ordinary": 26,
+            "imports": 15,
+            "domFreeBrowser": 5
+          },
+          "completeOneToOneMatching": true
+        },
+        "focusedBoundaries": {
+          "tests": 21,
+          "passed": 21,
+          "failed": 0
+        },
+        "fullBoundarySuite": "PENDING_FINAL_PREPUSH",
+        "native": {
+          "baseline": 1,
+          "controls": 6,
+          "contexts": 7,
+          "rowsPerContext": 11,
+          "collectorGrammarChecks": 13,
+          "independentActualReviewOpenFindings": 0
+        },
+        "ordinaryHTTPExample": "ACTUAL_PASS",
+        "retainedBrowserGates": 7,
+        "fullCurrent": "PENDING_AT_PRECOMMIT_METADATA_CUTOFF",
+        "publication": "PENDING_AT_PRECOMMIT_METADATA_CUTOFF",
+        "independentFinalBilingualMeaningReview": "PENDING",
+        "mandatoryGitPushHook": "PENDING",
+        "remoteDelivery": "PENDING",
+        "limits": {
+          "touch": false,
+          "pen": false,
+          "move": false,
+          "pointerCapture": false,
+          "gestures": false,
+          "fullUI": false,
+          "physicalMobileDevices": false,
+          "nativeSDK": false,
+          "CJKPerformance": false,
+          "fullSpineR020V020": "PENDING",
+          "full3D": false,
+          "completeMigration": false,
+          "performanceLeadership": false,
+          "energyOrThermalImprovement": false,
+          "hardwareAcceleration": "UNBOUND",
+          "physicalDisplay": "UNBOUND",
+          "osDescendantRetirement": "UNBOUND",
+          "productionReadiness": false
+        },
+        "historicalCutoffsPreserved": true,
+        "packageDeclarationOrderSuccessor": {
+          "status": "ACTUAL_REAL_CHECKER_CURRENT_PACKAGE_NATIVE_AND_SEVEN_RENDERERS_PASS",
+          "packageIdentity": {
+            "bytes": 1372,
+            "sha256": "891311a277b03b583ef35d45ad862ece747bda8ad04aae12f1fce9ed0e9149df"
+          },
+          "allOtherBytesPreserved": true,
+          "parsedValuesUnchanged": true,
+          "strictCheckerUnchanged": true,
+          "evidence": "evidence/primary-mouse-input-verification.json",
+          "completePublication": "PENDING_FINAL_RERUN"
+        },
+        "retainedB1TestInventorySuccessor": {
+          "status": "INDEPENDENT_SOURCE_REVIEW_AND_ACTUAL_RETAINED_TEST_PASS",
+          "path": "tests/webgpu-mesh-host.test.mjs",
+          "currentIdentity": {
+            "path": "tests/webgpu-mesh-host.test.mjs",
+            "bytes": 94773,
+            "sha256": "3812f94f2dfd501a52551ec1b03ba499ff1e2b90b1bfa9fc2a75a5df0692d087"
+          },
+          "amendmentIdentity": {
+            "bytes": 1719,
+            "sha256": "8c5573ed9bf841fabf032e2ca789017fae457809a1b66387b8362538b84821de"
+          },
+          "sourceReviewIdentity": {
+            "bytes": 4396,
+            "sha256": "67b486d6a9a28af886b4138e54776ea0bf682a425df4825e2216a02831beab2e"
+          },
+          "preservedCompletePrepushFailure": {
+            "artifactIdentity": {
+              "bytes": 745,
+              "sha256": "27ea6702bd37fe83fce0203a5ef1408169e5f2e3e78e6bda9890112f1f05d5e1"
+            },
+            "executions": [
+              {
+                "name": "prepush",
+                "startedAtUtc": "2026-10-11T23:04:15.2149384Z",
+                "finishedAtUtc": "2026-10-11T23:08:17.3413755Z",
+                "exitCode": 1,
+                "timeout": false,
+                "stdoutSHA256": "d7932479f977bb960b55af5db3f11abd260a63d23a20e8dbade1e33877f46270",
+                "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              }
+            ]
+          },
+          "earlierCoreCounts": {
+            "tests": 2631,
+            "passed": 2630,
+            "failed": 1
+          },
+          "earlierFailure": "B1 fixed thirteen-case emitted loading and owned host contract refused the new exact map before case execution.",
+          "actualTargetedRetainedTest": {
+            "artifactIdentity": {
+              "bytes": 837,
+              "sha256": "4f7f49960b334665058fec8d0cfdbb127fb90f5755bd7bab114958073f3c6131"
+            },
+            "executions": [
+              {
+                "name": "retained-b1-test",
+                "startedAtUtc": "2026-10-11T23:17:55.3599203Z",
+                "finishedAtUtc": "2026-10-11T23:18:00.3682524Z",
+                "exitCode": 0,
+                "timeout": false,
+                "stdoutSHA256": "f3ac8ca8ff06eb4a4c3382300063aa74977b07ab652d3fbe73a0a72c0b92ac0c",
+                "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              }
+            ]
+          },
+          "thirteenCaseSchedulePreserved": true,
+          "oracleQuotasAndColdHostConstraintsPreserved": true,
+          "exactOptionalMouseAliasOnly": true,
+          "productSourcesChanged": false,
+          "currentEditablePaths": 55,
+          "completePublication": "PENDING_FINAL_RERUN"
+        }
       }
     }
   ],
   "_localization": {
     "canonicalSource": "交付.json",
-    "canonicalSha256": "c4f271b5bb09f71ecf57c09fa5398bca0ac81826651690afecbd9fe0a5da6dcc",
+    "canonicalSha256": "2e3b7fe872bb4011bb4ba14aa965d8424e9adc967f124fe73c8e00526cfa4405",
     "role": "read_only_translation",
     "language": "en"
   }

@@ -288,8 +288,8 @@
     {
       "path": "AGENTS.md",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "sha256": "44e3b3d146d90d793cb90ad8171f78684f3ddaec1b05e9c52d1cad970b1351de",
-      "bytes": 8337,
+      "sha256": "ca198adafdd84a0e09c47be20ff3a0d3cf3bee4ffa67d3f0add52de8cfa2a923",
+      "bytes": 10223,
       "previousRevisionSha256": "7c2716d3a678406ce905b8cd7fd9ef3552bca4e37b8e9456b63b871e4170e0c1",
       "previousLayoutPath": "AGENTS.en.md",
       "previousLayoutSha256": "7e4ccd840b8b23896f9d9e92fe8173693ef37e415d3cebbebb3bfafded8158c5",
@@ -298,13 +298,18 @@
           "bytes": 7855,
           "sha256": "ac89557dfdb732f1eae77bba20cfbe55f92ca3e4a82266e6abdc0d81f973cd73",
           "scope": "Preserved identity before the 0.32 public scene3d preparation."
+        },
+        {
+          "bytes": 8337,
+          "sha256": "44e3b3d146d90d793cb90ad8171f78684f3ddaec1b05e9c52d1cad970b1351de",
+          "scope": "Preserved identity before the 0.33 primary mouse input preparation."
         }
       ]
     },
     {
       "path": "AGENTS.zh-CN.md",
-      "sha256": "1ba96441c42a24793f92b40b56d0a22536db4f41b620681ac4f8f00d8343b761",
-      "bytes": 7111,
+      "sha256": "c69bb78281acd74fdc7abe9e6952869f263e03ee0199af189a2f6d3f37b09c17",
+      "bytes": 8793,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousPublicSha256": "d133cdcd7d1f41fe0ce26bee63568cd0c4f23c6e6e7f9828d0768e95f53a05b4",
       "previousRevisionSha256": "f3551dd36ebc3023f8c846f0cdd876b7204c214c7c041e6496271d20c091046c",
@@ -315,6 +320,11 @@
           "bytes": 6672,
           "sha256": "cd04850491f0cd8f2bdc21ce7e82e6177560f6ef1f1d4c37e2899a67e92d7c4a",
           "scope": "Preserved identity before the 0.32 public scene3d preparation."
+        },
+        {
+          "bytes": 7111,
+          "sha256": "1ba96441c42a24793f92b40b56d0a22536db4f41b620681ac4f8f00d8343b761",
+          "scope": "Preserved identity before the 0.33 primary mouse input preparation."
         }
       ]
     },
@@ -575,8 +585,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/CHANGELOG.md",
-      "bytes": 40107,
-      "sha256": "2e65af9b087dab5e7316aa33cbc1d32d66b6b0b90d7e8b956ab39a811df0a451",
+      "bytes": 42577,
+      "sha256": "e150a74e0346f90f42ce4856666316d6e3e5d998a4d7daf838bd0b2dfd66d226",
       "identityHistory": [
         {
           "bytes": 25611,
@@ -619,6 +629,11 @@
           "bytes": 39419,
           "sha256": "59f8b83f9b49c322f3460dfa6740da821fecd929d72530838bcd0fa445c2020d",
           "scope": "Preserved pre-final retained integration successor identity."
+        },
+        {
+          "bytes": 40107,
+          "sha256": "2e65af9b087dab5e7316aa33cbc1d32d66b6b0b90d7e8b956ab39a811df0a451",
+          "scope": "Preserved identity before the 0.33 primary mouse input preparation."
         }
       ]
     },
@@ -709,8 +724,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 13802,
-      "sha256": "f98926c189b0c2e5636904cdd140dc11462ec24d1603972472d2b8a23c2631aa",
+      "bytes": 16262,
+      "sha256": "faf8ab78c6853d7f24835427f7fb737440796ccaca70ab1c6def480ead9b5191",
       "identityHistory": [
         {
           "bytes": 12315,
@@ -721,6 +736,11 @@
           "bytes": 13260,
           "sha256": "4c8f2eec7d83afbc56f4d34210cdc21035b18b165d712d0a836fd246ad7f3c86",
           "scope": "Preserved pre-final retained integration successor identity."
+        },
+        {
+          "bytes": 13802,
+          "sha256": "f98926c189b0c2e5636904cdd140dc11462ec24d1603972472d2b8a23c2631aa",
+          "scope": "Preserved identity before the 0.33 primary mouse input preparation."
         }
       ]
     },
@@ -883,8 +903,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/工程规划.md",
-      "bytes": 25665,
-      "sha256": "f514410ee4e8d6b1247b894f8356e714f237989515d29e313c591bf475ce8277",
+      "bytes": 28526,
+      "sha256": "9dd7f2fa6d813ee684cea4076b2dab530b31f4e42a72682e88beac104fb35c36",
       "identityHistory": [
         {
           "bytes": 23962,
@@ -895,6 +915,11 @@
           "bytes": 25078,
           "sha256": "6617d376a010123183b93032c82dc00da1e41c21af917d20f4665fb397b38c14",
           "scope": "Preserved pre-final retained integration successor identity."
+        },
+        {
+          "bytes": 25665,
+          "sha256": "f514410ee4e8d6b1247b894f8356e714f237989515d29e313c591bf475ce8277",
+          "scope": "Preserved identity before the 0.33 primary mouse input preparation."
         }
       ]
     },
@@ -1189,8 +1214,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/README.md",
-      "bytes": 12454,
-      "sha256": "5d92bc90ff081db964a52878eba09ffe727f787072103428db4b66a07120f21c",
+      "bytes": 14998,
+      "sha256": "8ed1147c37aa80f5b59697c361b7904f935bd73cb95f7b9e26ef51acebcd9ab7",
       "identityHistory": [
         {
           "bytes": 6319,
@@ -1233,14 +1258,19 @@
           "bytes": 11957,
           "sha256": "375b7f1e1493d310ea5e1f3ace0cefc3208cd541914a6e53c0550c5f2ca2aedf",
           "scope": "Preserved pre-final retained integration successor identity."
+        },
+        {
+          "bytes": 12454,
+          "sha256": "5d92bc90ff081db964a52878eba09ffe727f787072103428db4b66a07120f21c",
+          "scope": "Preserved identity before the 0.33 primary mouse input preparation."
         }
       ]
     },
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/registry/交付.json",
-      "bytes": 83782,
-      "sha256": "c4f271b5bb09f71ecf57c09fa5398bca0ac81826651690afecbd9fe0a5da6dcc",
+      "bytes": 91429,
+      "sha256": "2e3b7fe872bb4011bb4ba14aa965d8424e9adc967f124fe73c8e00526cfa4405",
       "identityHistory": [
         {
           "bytes": 50664,
@@ -1283,6 +1313,21 @@
           "bytes": 79480,
           "sha256": "67001cd06bc8e7c8a3ad29bcc39fa87ace5e83b72efb9bc4b8c2e8cfbafc5069",
           "scope": "Preserved identity before the 0.32 public scene3d preparation."
+        },
+        {
+          "bytes": 83782,
+          "sha256": "c4f271b5bb09f71ecf57c09fa5398bca0ac81826651690afecbd9fe0a5da6dcc",
+          "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+        },
+        {
+          "bytes": 88036,
+          "sha256": "109a13242e9cd255a8bb0af2d2ab17c2d548a4e14ebc64ccf6a2e8cc54c9ccc0",
+          "scope": "Preserved pre-order-repair metadata cutoff."
+        },
+        {
+          "bytes": 88608,
+          "sha256": "12a9d8912f949399c3d8a838c56c6d6682bc57bc6789579f097cdae25580ea4b",
+          "scope": "Preserved 54-path MI1 prepublication cutoff."
         }
       ]
     },
@@ -1301,8 +1346,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/registry/来源.json",
-      "bytes": 101160,
-      "sha256": "4f9c1801ceab2c58dcce8496655b2864fd36ff783d5a09fe140541b3985ebd76",
+      "bytes": 108253,
+      "sha256": "9fd7b478420d6d90e2389f6fd5f4f61c38e3232dedcf484163277c62fc2a3560",
       "identityHistory": [
         {
           "bytes": 74667,
@@ -1345,6 +1390,21 @@
           "bytes": 97322,
           "sha256": "273e46dc752cb3a0990ddf28c88fa78df01b97e9b7ae8c39bac9b09846e664b1",
           "scope": "Preserved identity before the 0.32 public scene3d preparation."
+        },
+        {
+          "bytes": 101160,
+          "sha256": "4f9c1801ceab2c58dcce8496655b2864fd36ff783d5a09fe140541b3985ebd76",
+          "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+        },
+        {
+          "bytes": 104860,
+          "sha256": "78fbe42dc9d7a7a6d0547c18b1811340b0f83ff1069b55bf95cd2ff67a91d50f",
+          "scope": "Preserved pre-order-repair metadata cutoff."
+        },
+        {
+          "bytes": 105432,
+          "sha256": "2d898b104a66ba49fbcdf6505753ce3a597953928c6aa520573cb456df243483",
+          "scope": "Preserved 54-path MI1 prepublication cutoff."
         }
       ]
     },
@@ -1381,8 +1441,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/当前版本.json",
-      "bytes": 77282,
-      "sha256": "735843f22065b0b783e49d320bf4e8e7bb5e2468d9fab9f6027f331e648a9f35",
+      "bytes": 83136,
+      "sha256": "f8f5baa605eca36bb3c068e180651fba85b24b03ac3e0d83e7f690643d630aa1",
       "identityHistory": [
         {
           "bytes": 31425,
@@ -1420,6 +1480,21 @@
           "bytes": 74455,
           "sha256": "4fc3fbf6b38ab5adb0c5091d631983a42d938ecafaad194b0ba4c86f13026f65",
           "scope": "Preserved identity before the 0.32 public scene3d preparation."
+        },
+        {
+          "bytes": 77282,
+          "sha256": "735843f22065b0b783e49d320bf4e8e7bb5e2468d9fab9f6027f331e648a9f35",
+          "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+        },
+        {
+          "bytes": 80043,
+          "sha256": "52045a27ae09c6c787cc96461b5c6cd5a36d58a311ce22347aad84f7599ce505",
+          "scope": "Preserved pre-order-repair metadata cutoff."
+        },
+        {
+          "bytes": 80567,
+          "sha256": "43c35848f3060f98a6e9ef2a1267986d23845fdefea44c386e8fdc1b2e8442d3",
+          "scope": "Preserved 54-path MI1 prepublication cutoff."
         }
       ]
     },
@@ -1456,8 +1531,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/CHANGELOG.md",
-      "bytes": 47774,
-      "sha256": "f0d4025cd3a25cf2182e7fcea27d48b51730e32046bece7d60ee9057883234e2",
+      "bytes": 50622,
+      "sha256": "79c0248866be207cf80740c306df4e41e19a13bd66ce96697105ce1b71bb971e",
       "identityHistory": [
         {
           "bytes": 31389,
@@ -1500,6 +1575,11 @@
           "bytes": 47041,
           "sha256": "dca1afa112f376bb1b2634f7ee92b9db0bd85c018221be15b6f843652968fdf6",
           "scope": "Preserved pre-final retained integration successor identity."
+        },
+        {
+          "bytes": 47774,
+          "sha256": "f0d4025cd3a25cf2182e7fcea27d48b51730e32046bece7d60ee9057883234e2",
+          "scope": "Preserved identity before the 0.33 primary mouse input preparation."
         }
       ]
     },
@@ -1512,8 +1592,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/current-version.json",
-      "bytes": 77939,
-      "sha256": "604825c24a905279dd7ef9acf86e4c120641dd7bc75c00bb9d7e716018dcded9",
+      "bytes": 83813,
+      "sha256": "3efed447036d02f485fa42db1a75ef7c6d05a1586fcc13868b2b63b5e52a13fe",
       "identityHistory": [
         {
           "bytes": 31946,
@@ -1551,6 +1631,21 @@
           "bytes": 75083,
           "sha256": "9e713912271eadab4c3d5cfc33a52424549d823154767bc9bfebacf2e564c33e",
           "scope": "Preserved identity before the 0.32 public scene3d preparation."
+        },
+        {
+          "bytes": 77939,
+          "sha256": "604825c24a905279dd7ef9acf86e4c120641dd7bc75c00bb9d7e716018dcded9",
+          "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+        },
+        {
+          "bytes": 80720,
+          "sha256": "9e5da9a9606e3afb91be3f7ccbea882b4bc4090760d833f032df9622979461be",
+          "scope": "Preserved pre-order-repair metadata cutoff."
+        },
+        {
+          "bytes": 81244,
+          "sha256": "ab8f5e61618900231ae633e31180be62375aa9e5138441ae7071dd15e46901b9",
+          "scope": "Preserved 54-path MI1 prepublication cutoff."
         }
       ]
     },
@@ -1683,8 +1778,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-progress.md",
-      "bytes": 15676,
-      "sha256": "59e613db79e19be1e77d594fecb4ba2534014e7d6fc919792cc7d4e55418471c",
+      "bytes": 18512,
+      "sha256": "e2d156a4fe0525b7a37f5956e071a7752738b791e730d97b5759f15062a91cef",
       "identityHistory": [
         {
           "bytes": 14004,
@@ -1695,6 +1790,11 @@
           "bytes": 15081,
           "sha256": "e773fb3e63c87ed831b000f97a481b264a7906ff51cef767de9932f9be1ffa9a",
           "scope": "Preserved pre-final retained integration successor identity."
+        },
+        {
+          "bytes": 15676,
+          "sha256": "59e613db79e19be1e77d594fecb4ba2534014e7d6fc919792cc7d4e55418471c",
+          "scope": "Preserved identity before the 0.33 primary mouse input preparation."
         }
       ]
     },
@@ -1749,8 +1849,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/engineering-plan.md",
-      "bytes": 31868,
-      "sha256": "4e144ae5fda6ac6ecf47a3d94abdd479388245f9fb0198f2c43fd286726094d6",
+      "bytes": 35163,
+      "sha256": "06b286a4f7e4799a8a5f6d08951eea5594acf096e8ceeecd1c9c400d03c79ac6",
       "identityHistory": [
         {
           "bytes": 29962,
@@ -1761,6 +1861,11 @@
           "bytes": 31228,
           "sha256": "5e1abbf94d1105c6d6658d56421a90ef79d527180f37bb11d8aec693f98db0d9",
           "scope": "Preserved pre-final retained integration successor identity."
+        },
+        {
+          "bytes": 31868,
+          "sha256": "4e144ae5fda6ac6ecf47a3d94abdd479388245f9fb0198f2c43fd286726094d6",
+          "scope": "Preserved identity before the 0.33 primary mouse input preparation."
         }
       ]
     },
@@ -2115,8 +2220,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/README.md",
-      "bytes": 14315,
-      "sha256": "94ca342c3fd7ec2182a8beb8796e9731781503e9f8d84c4b275efb7f37539301",
+      "bytes": 17258,
+      "sha256": "f22874f65df0157ad3f4ce12b88e40e6cfe1336267eff6f1434f5f50d0d14db6",
       "identityHistory": [
         {
           "bytes": 7397,
@@ -2164,6 +2269,11 @@
           "bytes": 14319,
           "sha256": "811e1218f63a3b5df438abc4b86dc7a17a551159eb4982b24276bdf5e1c1db19",
           "scope": "Preserved complete r3 verification cutoff before independently identified editorial-only language/table correction."
+        },
+        {
+          "bytes": 14315,
+          "sha256": "94ca342c3fd7ec2182a8beb8796e9731781503e9f8d84c4b275efb7f37539301",
+          "scope": "Preserved identity before the 0.33 primary mouse input preparation."
         }
       ]
     },
@@ -2176,8 +2286,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/registry/deliverables.json",
-      "bytes": 88803,
-      "sha256": "f63f80eff5f293aa44572832a46dc355f0a479bf30a43c1166ea5fce31331604",
+      "bytes": 96530,
+      "sha256": "10395dc7274f5bf398b83582565caa583410f4577f6921811764b79aa95f7de9",
       "identityHistory": [
         {
           "bytes": 54446,
@@ -2225,6 +2335,21 @@
           "bytes": 88800,
           "sha256": "3b3f566d7c7498840cb34aec105b95e59a3c66397bc5ac4d80ce2688fcc64770",
           "scope": "Preserved initial 0.32 preparation before one English 3D title parity repair."
+        },
+        {
+          "bytes": 88803,
+          "sha256": "f63f80eff5f293aa44572832a46dc355f0a479bf30a43c1166ea5fce31331604",
+          "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+        },
+        {
+          "bytes": 93137,
+          "sha256": "2c4124c5e39374cc89aa1e00c3c3b430af4409e473921e4553703bbf96fe41a9",
+          "scope": "Preserved pre-order-repair metadata cutoff."
+        },
+        {
+          "bytes": 93709,
+          "sha256": "0c9d6b75000ea22a4e2c03763410c90a20b26aa7740cc2264f4629934eb5e9e2",
+          "scope": "Preserved 54-path MI1 prepublication cutoff."
         }
       ]
     },
@@ -2243,8 +2368,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/registry/sources.json",
-      "bytes": 109908,
-      "sha256": "69107b36aaa20ee96de933deb6190d7772d53d490c561b558589f3eaee8d6765",
+      "bytes": 117071,
+      "sha256": "1e723f20df75911214c986ec00bedf95f018f62309619a44954d8cd420deaa90",
       "identityHistory": [
         {
           "bytes": 82270,
@@ -2287,6 +2412,21 @@
           "bytes": 105996,
           "sha256": "bb0a9cc89703083abb3163a7a8de0568d3846ca1d5aeacce65dc84dbeb04ce5f",
           "scope": "Preserved identity before the 0.32 public scene3d preparation."
+        },
+        {
+          "bytes": 109908,
+          "sha256": "69107b36aaa20ee96de933deb6190d7772d53d490c561b558589f3eaee8d6765",
+          "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+        },
+        {
+          "bytes": 113678,
+          "sha256": "a2e91182b286502cdcb368a8c274d38986567388b3a1a0c06108cb047719de1d",
+          "scope": "Preserved pre-order-repair metadata cutoff."
+        },
+        {
+          "bytes": 114250,
+          "sha256": "c8261feae478b3b8582ed45ad34b4b6bdeed43c2cd14d87873ed750acdf3fa8c",
+          "scope": "Preserved 54-path MI1 prepublication cutoff."
         }
       ]
     },
@@ -2357,8 +2497,8 @@
     {
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "path": "localization.json",
-      "sha256": "fede765db637dc8c0e81eaae0386e9898561950334e917a360d25cd28a0a695d",
-      "bytes": 195605,
+      "sha256": "c1cda4769dc9b7442393e5aa31d43d80d59a707a210c0791d7383c236f5e2a09",
+      "bytes": 201465,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -2397,6 +2537,21 @@
           "bytes": 195605,
           "sha256": "b2dd757eb635474ab29e6673cb93f54081799e8ad979bf9483a72b2ecd49f4ce",
           "scope": "Preserved complete r3 verification cutoff before independently identified editorial-only language/table correction."
+        },
+        {
+          "bytes": 195605,
+          "sha256": "fede765db637dc8c0e81eaae0386e9898561950334e917a360d25cd28a0a695d",
+          "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+        },
+        {
+          "bytes": 198823,
+          "sha256": "9d37cf0748aba0d90f1e8bf5a50e1f053ef7f15c3087461831af2d77aeb2604b",
+          "scope": "Preserved pre-order-repair metadata cutoff."
+        },
+        {
+          "bytes": 198823,
+          "sha256": "a34ebfcf19f189aed6b93f5a8efc6e93b8ddb248d3a9f2d8ffdb8dc2db442655",
+          "scope": "Preserved 54-path MI1 prepublication cutoff."
         }
       ]
     },
@@ -2524,14 +2679,24 @@
     },
     {
       "path": "packages/engine/package.json",
-      "bytes": 1151,
-      "sha256": "04d88fe4ce86639f45f32703a2fe2d45e5450ee1098ebe6dd439c05816f78286",
+      "bytes": 1372,
+      "sha256": "891311a277b03b583ef35d45ad862ece747bda8ad04aae12f1fce9ed0e9149df",
       "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset.",
       "identityHistory": [
         {
           "bytes": 908,
           "sha256": "14c13fae2d7321b88b055045c7d0f957d1d96d7c1dbcb2ff5b9ac17eed54ed9e",
           "scope": "Preserved identity before the 0.32 public scene3d preparation."
+        },
+        {
+          "bytes": 1151,
+          "sha256": "04d88fe4ce86639f45f32703a2fe2d45e5450ee1098ebe6dd439c05816f78286",
+          "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+        },
+        {
+          "bytes": 1372,
+          "sha256": "30c676e4a8984ca1a07954aacb81a58f643d5a0958beb652b8de60ba97ccf092",
+          "scope": "Preserved pre-order-repair metadata cutoff."
         }
       ]
     },
@@ -2604,8 +2769,8 @@
     },
     {
       "path": "packages/engine/src/Engine.ts",
-      "sha256": "d622327f839bc93578215919c76148424ccc6ecbb510fe3972087cb811d45dbc",
-      "bytes": 13968,
+      "sha256": "e36d58286681b353cc9cc15d84f8afc3b2b2e6373bc7de6e32d9442c99f36a97",
+      "bytes": 14749,
       "originalSha256": "d5b4fcfc5bcf921d6b75aa4a33d7e71412595e8e377e5ff9b186b19ec6868f58",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "previousPublicSha256": "d5b4fcfc5bcf921d6b75aa4a33d7e71412595e8e377e5ff9b186b19ec6868f58",
@@ -2617,6 +2782,11 @@
           "bytes": 12852,
           "sha256": "0d5191166d9cc58489109e474f28ec4e6d3d6c97f6ee09b6e26d0aa0988a3940",
           "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
+        },
+        {
+          "bytes": 13968,
+          "sha256": "d622327f839bc93578215919c76148424ccc6ecbb510fe3972087cb811d45dbc",
+          "scope": "Preserved identity before the 0.33 primary mouse input preparation."
         }
       ]
     },
@@ -2822,14 +2992,21 @@
     },
     {
       "path": "packages/runtime/src/CancellationController.ts",
-      "sha256": "3cfdb217804b282c4a422420ce5efa63ced25a6bb215bff254e7f947c4942e28",
-      "bytes": 2414,
+      "sha256": "1f669f03990da30cee01b0590c8e6c3b2c04d9634fb459d9134cb50d023e1c19",
+      "bytes": 2536,
       "originalSha256": "d2bbfd7d23269df59651d628e8f4c448be120fb46e1e5307d718aec43c8c7515",
       "originRole": "English comment-only projection; exact baseline restoration proven",
       "previousPublicSha256": "d2bbfd7d23269df59651d628e8f4c448be120fb46e1e5307d718aec43c8c7515",
       "previousRevisionSha256": "3cfdb217804b282c4a422420ce5efa63ced25a6bb215bff254e7f947c4942e28",
       "previousLayoutPath": "packages/runtime/src/CancellationController.ts",
-      "previousLayoutSha256": "3cfdb217804b282c4a422420ce5efa63ced25a6bb215bff254e7f947c4942e28"
+      "previousLayoutSha256": "3cfdb217804b282c4a422420ce5efa63ced25a6bb215bff254e7f947c4942e28",
+      "identityHistory": [
+        {
+          "bytes": 2414,
+          "sha256": "3cfdb217804b282c4a422420ce5efa63ced25a6bb215bff254e7f947c4942e28",
+          "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+        }
+      ]
     },
     {
       "path": "packages/runtime/src/diagnostics.ts",
@@ -2908,14 +3085,21 @@
     },
     {
       "path": "packages/runtime/src/EventDispatcher.ts",
-      "sha256": "141051a7aede922c0d8d73aa2b509c75cbe209118ba0bb48b3869765b9c5a82d",
-      "bytes": 6498,
+      "sha256": "f04d19f24c30d5a4b81787e7df94688d1489578e629180ac09929e244f04355f",
+      "bytes": 7997,
       "originalSha256": "2d1d6613d83ea9e904c1e4074db7b466911f3689e8c81e60d63d96481c0e6008",
       "originRole": "English comment-only projection; exact baseline restoration proven",
       "previousPublicSha256": "2d1d6613d83ea9e904c1e4074db7b466911f3689e8c81e60d63d96481c0e6008",
       "previousRevisionSha256": "141051a7aede922c0d8d73aa2b509c75cbe209118ba0bb48b3869765b9c5a82d",
       "previousLayoutPath": "packages/runtime/src/EventDispatcher.ts",
-      "previousLayoutSha256": "141051a7aede922c0d8d73aa2b509c75cbe209118ba0bb48b3869765b9c5a82d"
+      "previousLayoutSha256": "141051a7aede922c0d8d73aa2b509c75cbe209118ba0bb48b3869765b9c5a82d",
+      "identityHistory": [
+        {
+          "bytes": 6498,
+          "sha256": "141051a7aede922c0d8d73aa2b509c75cbe209118ba0bb48b3869765b9c5a82d",
+          "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+        }
+      ]
     },
     {
       "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
@@ -2937,8 +3121,8 @@
     },
     {
       "path": "packages/runtime/src/index.ts",
-      "sha256": "cbf0e01afa519c806deac1de3e2af616cd489908efdbc0554d0141027a6bbe85",
-      "bytes": 2317,
+      "sha256": "90d9f473afdab179ee0828f0744911b3173b96441dfccebf99e619c097467135",
+      "bytes": 2468,
       "originalSha256": "3af52ebe93ac933d989ceb0f5abadd31e72f9436fda1d2206b3e71d7f1216310",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "previousRevisionSha256": "3af52ebe93ac933d989ceb0f5abadd31e72f9436fda1d2206b3e71d7f1216310",
@@ -2949,6 +3133,11 @@
           "bytes": 2244,
           "sha256": "91e0fbcf854e7c36ae7e342ac8eca3b6f9e60846eac9d470aeb0311ae70a0237",
           "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
+        },
+        {
+          "bytes": 2317,
+          "sha256": "cbf0e01afa519c806deac1de3e2af616cd489908efdbc0554d0141027a6bbe85",
+          "scope": "Preserved identity before the 0.33 primary mouse input preparation."
         }
       ]
     },
@@ -3053,8 +3242,8 @@
     {
       "path": "README.md",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
-      "sha256": "0d2471bb7585febdbb496df070b6e7f96a9f68483fa8765cbf99c819bd0036ef",
-      "bytes": 32284,
+      "sha256": "b5389c4b9ad20dcee4b94d496ebe23690aed5cd495aace88401bbf67ed9bfc1a",
+      "bytes": 38296,
       "previousRevisionSha256": "199156443d499d5012f1224263a1a3ee9994e5ba38ee067bceeb2ad865ae8167",
       "previousLayoutPath": "README.en.md",
       "previousLayoutSha256": "f40ec41ca699cd0b9138fbdf4a268080038f583ae11e78c4f37093a6b7095f57",
@@ -3105,13 +3294,18 @@
           "bytes": 32288,
           "sha256": "59f2f32ac6e114d4250f8192d8ddb063876ba626752ae7de2074d5f18d6d161d",
           "scope": "Preserved complete r3 verification cutoff before independently identified editorial-only language/table correction."
+        },
+        {
+          "bytes": 32284,
+          "sha256": "0d2471bb7585febdbb496df070b6e7f96a9f68483fa8765cbf99c819bd0036ef",
+          "scope": "Preserved identity before the 0.33 primary mouse input preparation."
         }
       ]
     },
     {
       "path": "README.zh-CN.md",
-      "sha256": "52daf3df1692fc56205c740c537dde2cf11f11bb5a49823ee482be19c1551802",
-      "bytes": 31393,
+      "sha256": "086b2fd18f36c8e29a062118f99c4bc808ea1d9097cd22b93131ce525f40f8e8",
+      "bytes": 37405,
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "previousPublicSha256": "7ec80b8575a700b6a2628eb0322f2e770bb2284859f68ec5e0eb6530154a6699",
       "previousRevisionSha256": "7a1d72019db7cb6075d7c3a3bd4075f7c069d527b6e31d992a69333cb126b6c3",
@@ -3164,6 +3358,11 @@
           "bytes": 31393,
           "sha256": "b8e0ae4f9a5f58254b1d290ad4a74a21fc3249c2fc942e3769f808fb710e2a39",
           "scope": "Preserved complete r3 verification cutoff before independently identified editorial-only language/table correction."
+        },
+        {
+          "bytes": 31393,
+          "sha256": "52daf3df1692fc56205c740c537dde2cf11f11bb5a49823ee482be19c1551802",
+          "scope": "Preserved identity before the 0.33 primary mouse input preparation."
         }
       ]
     },
@@ -3187,8 +3386,8 @@
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "bytes": 79817,
-      "sha256": "ad623d9d6e80303b0de8092e2ad51c3b382bd394f52ee3e36c42152268e813c7",
+      "bytes": 91022,
+      "sha256": "ab1cf21a59b6975c169ebf8fd9aa38aae137c3f138ab7fb97a41df484cd09a62",
       "originRole": "Independent first-party Egret explicit-area picking, bounded verification or paired documentation; CPU and finite-policy evidence with separate browser and whole-engine admission.",
       "identityHistory": [
         {
@@ -3200,6 +3399,11 @@
           "bytes": 53695,
           "sha256": "8a011b06a897131c7a4295f892de6db6c0060131e8e509f8267ece60f5eaa90d",
           "scope": "Preserved identity before the 0.32 public scene3d preparation."
+        },
+        {
+          "bytes": 79817,
+          "sha256": "ad623d9d6e80303b0de8092e2ad51c3b382bd394f52ee3e36c42152268e813c7",
+          "scope": "Preserved identity before the 0.33 primary mouse input preparation."
         }
       ]
     },
@@ -3452,8 +3656,8 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "bytes": 109896,
-      "sha256": "26dd8f6b22e681c99adb42845fe808e26a8687cb04abd999fecaec23d6ed6500",
+      "bytes": 120578,
+      "sha256": "02b607f7db9cdc45a897530fc013a8aa0fc8dde846f8dfacd6524227bd2b0718",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "identityHistory": [
         {
@@ -3465,6 +3669,11 @@
           "bytes": 74430,
           "sha256": "51745ac03560d1a9821c6961cb24ba8540b64b832e8289c750f0c161ea686092",
           "scope": "Preserved identity before the 0.32 public scene3d preparation."
+        },
+        {
+          "bytes": 109896,
+          "sha256": "26dd8f6b22e681c99adb42845fe808e26a8687cb04abd999fecaec23d6ed6500",
+          "scope": "Preserved identity before the 0.33 primary mouse input preparation."
         }
       ]
     },
@@ -3476,8 +3685,8 @@
     },
     {
       "path": "tools/check-types.mjs",
-      "bytes": 49790,
-      "sha256": "31bbb5df7a3dd4090b9cc12f24a6a8a2ec0ce041b3047b07e00bc5574e839870",
+      "bytes": 60660,
+      "sha256": "67002f6602381dcb5f4d75c304acd7af2140ef8f5005e43634643dad20285e88",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "identityHistory": [
         {
@@ -3489,6 +3698,11 @@
           "bytes": 43356,
           "sha256": "8f27c5100f494045d2763f584d2cdd54dd4701efe8d67a44e9c23948d12d54bf",
           "scope": "Preserved identity before the 0.32 public scene3d preparation."
+        },
+        {
+          "bytes": 49790,
+          "sha256": "31bbb5df7a3dd4090b9cc12f24a6a8a2ec0ce041b3047b07e00bc5574e839870",
+          "scope": "Preserved identity before the 0.33 primary mouse input preparation."
         }
       ]
     },
@@ -3602,9 +3816,16 @@
     },
     {
       "path": "tests/webgpu-mesh-host.test.mjs",
-      "bytes": 93530,
-      "sha256": "3e694eb33d00358524287b1e2fca88023eacfcbbb230ce07e080a260f8f24417",
-      "originRole": "First-party explicit-time sequence work package; public verifier reuses independently authored first-party opaque collector mechanisms."
+      "bytes": 94773,
+      "sha256": "3812f94f2dfd501a52551ec1b03ba499ff1e2b90b1bfa9fc2a75a5df0692d087",
+      "originRole": "First-party explicit-time sequence work package; public verifier reuses independently authored first-party opaque collector mechanisms.",
+      "identityHistory": [
+        {
+          "bytes": 93530,
+          "sha256": "3e694eb33d00358524287b1e2fca88023eacfcbbb230ce07e080a260f8f24417",
+          "scope": "Preserved 54-path MI1 prepublication cutoff."
+        }
+      ]
     },
     {
       "path": "examples/sequence-player/index.html",
@@ -3638,9 +3859,16 @@
     },
     {
       "path": "tools/sequence-player/file-graph.mjs",
-      "bytes": 9438,
-      "sha256": "ff3ef2eae90acf30d049daee4ba8bdd270964fa045ae34f93f16476bd0189600",
-      "originRole": "First-party explicit-time sequence work package; public verifier reuses independently authored first-party opaque collector mechanisms."
+      "bytes": 9478,
+      "sha256": "6df225a735bbdb3badabfd751b77a47c84ad6a4b8125a3c37a439161faf957dc",
+      "originRole": "First-party explicit-time sequence work package; public verifier reuses independently authored first-party opaque collector mechanisms.",
+      "identityHistory": [
+        {
+          "bytes": 9438,
+          "sha256": "ff3ef2eae90acf30d049daee4ba8bdd270964fa045ae34f93f16476bd0189600",
+          "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+        }
+      ]
     },
     {
       "path": "tools/sequence-player/console-policy.mjs",
@@ -3903,8 +4131,15 @@
     {
       "path": "packages/engine/src/startEngine.ts",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 1209,
-      "sha256": "bef626c51436762b93dfff97b11d75969a17be3292b8a482b323c59f17d45fa1"
+      "bytes": 1370,
+      "sha256": "8c61c07c5e22ff48a0d7ade0befceb84ab19af4452e7793d4a2fb21c184249d0",
+      "identityHistory": [
+        {
+          "bytes": 1209,
+          "sha256": "bef626c51436762b93dfff97b11d75969a17be3292b8a482b323c59f17d45fa1",
+          "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+        }
+      ]
     },
     {
       "path": "packages/engine/tests/geometry-contract-types.ts",
@@ -4824,8 +5059,8 @@
     {
       "path": "tools/verify-webgpu-b1.mjs",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 48108,
-      "sha256": "075b34b38bd46c666c461ca8a19b2a4b5b2318b3680d5fbf9b1e6224a8622652",
+      "bytes": 48332,
+      "sha256": "b9f964458887c23411d92ee91441337ce3559ec7a8e91b9697a1737246719a3f",
       "identityHistory": [
         {
           "bytes": 38603,
@@ -4836,6 +5071,11 @@
           "bytes": 47863,
           "sha256": "f9b810295eba0e801274756ecd582264f6d0f1176172d83aa0076dc3d8805776",
           "scope": "Preserved initial 0.32 source identity before retained exact mapping/copy-fixture repair."
+        },
+        {
+          "bytes": 48108,
+          "sha256": "075b34b38bd46c666c461ca8a19b2a4b5b2318b3680d5fbf9b1e6224a8622652",
+          "scope": "Preserved identity before the 0.33 primary mouse input preparation."
         }
       ]
     },
@@ -6023,6 +6263,156 @@
           "bytes": 28392,
           "sha256": "66e290e99774ce5308aa48bbb6586859249683507ca42d54caad2eba63239aa2",
           "scope": "Preserved retained successor before explicit initial/current evidence scope clarification."
+        }
+      ]
+    },
+    {
+      "path": "packages/runtime/src/displayInputOperations.ts",
+      "bytes": 3520,
+      "sha256": "f8a803b10a513afa25fd68d9e28055eeb186e3e6bd9fb00a15c9e8ae78cbce15",
+      "originRole": "First-party independent primary mouse implementation, bounded verification, paired public reading or derived register."
+    },
+    {
+      "path": "packages/engine/src/mouseInput.ts",
+      "bytes": 19357,
+      "sha256": "842be3c1d4eac3769b09ada4fb5e8be36685ade97275d8dc99d2bdf6a5d02401",
+      "originRole": "First-party independent primary mouse implementation, bounded verification, paired public reading or derived register."
+    },
+    {
+      "path": "packages/engine/src/mouseInputTypes.ts",
+      "bytes": 1238,
+      "sha256": "b0f21bc206a9e832a7e6ebc4fd220594c9f6a6e7d6dc17b114ef410ed3c316ed",
+      "originRole": "First-party independent primary mouse implementation, bounded verification, paired public reading or derived register."
+    },
+    {
+      "path": "packages/engine/src/internal/mouseInputFactoryState.ts",
+      "bytes": 793,
+      "sha256": "78c734d3b181ec621d12eb7dbdd9ea98be844243207d90cf7bca660480da01ae",
+      "originRole": "First-party independent primary mouse implementation, bounded verification, paired public reading or derived register."
+    },
+    {
+      "path": "packages/engine/web/MouseInput.ts",
+      "bytes": 9532,
+      "sha256": "8a7029b569a7032e8cade74efe6b1fe25df7b5ba2901045bb463085a95b3248b",
+      "originRole": "First-party independent primary mouse implementation, bounded verification, paired public reading or derived register."
+    },
+    {
+      "path": "packages/engine/web/input.ts",
+      "bytes": 289,
+      "sha256": "2e4145f2d372cb9a9c9e19a284da7885e8af7b3dafdc6967d2e72f9afb7a3318",
+      "originRole": "First-party independent primary mouse implementation, bounded verification, paired public reading or derived register."
+    },
+    {
+      "path": "tests/mouse-input.test.mjs",
+      "bytes": 27106,
+      "sha256": "5d10bc7e436cb0740b9c6e4e531aee2bbccf9d767f9fd932795debc73798b69c",
+      "originRole": "First-party independent primary mouse implementation, bounded verification, paired public reading or derived register."
+    },
+    {
+      "path": "tests/mouse-input-lifecycle.test.mjs",
+      "bytes": 35956,
+      "sha256": "fcbd141042f6009bc7d109ed711c28242bcff72a42b876c708b64611c91ee7e6",
+      "originRole": "First-party independent primary mouse implementation, bounded verification, paired public reading or derived register."
+    },
+    {
+      "path": "tests/types/mouse-input-positive.ts",
+      "bytes": 1851,
+      "sha256": "23a7731bb56be6ee7628c77d652b7fabcb0ba76ff292163306a0df48c09a6463",
+      "originRole": "First-party independent primary mouse implementation, bounded verification, paired public reading or derived register."
+    },
+    {
+      "path": "tests/types/mouse-input-negative.ts",
+      "bytes": 2777,
+      "sha256": "ac859cfbf7813dc3c636ee758ee50d2d4c4260f213c25836c54426ab0e9f21d3",
+      "originRole": "First-party independent primary mouse implementation, bounded verification, paired public reading or derived register."
+    },
+    {
+      "path": "tests/types/mouse-input-import-negative.ts",
+      "bytes": 1806,
+      "sha256": "6c34169bab1f3248a832daf90d885eb19ff1af1424f7c021bb3f469049215db0",
+      "originRole": "First-party independent primary mouse implementation, bounded verification, paired public reading or derived register."
+    },
+    {
+      "path": "tests/types/mouse-input-dom-free-negative.ts",
+      "bytes": 559,
+      "sha256": "d81d4613c6c78f176796dc321a90cbd50bc95e19c7de891b68bfc493573fcb43",
+      "originRole": "First-party independent primary mouse implementation, bounded verification, paired public reading or derived register."
+    },
+    {
+      "path": "tools/verify-mouse-input-canvas.mjs",
+      "bytes": 30075,
+      "sha256": "0bcbb2a8c5f0f6511bd0c5d0f582e65fed198291f7170cfbc073226e73ae5a31",
+      "originRole": "First-party independent primary mouse implementation, bounded verification, paired public reading or derived register."
+    },
+    {
+      "path": "tools/mouse-input-canvas-contract.mjs",
+      "bytes": 22451,
+      "sha256": "48e1874e197d28848205189d08ed4cfec468107cdefb29c426bae6b07bcaee1c",
+      "originRole": "First-party independent primary mouse implementation, bounded verification, paired public reading or derived register."
+    },
+    {
+      "path": "tests/mouse-input-canvas-verifier.test.mjs",
+      "bytes": 13243,
+      "sha256": "e62f0ceeef954ee494adf696512366d0ad386a5c2b294c6f1b8f1069183f97ae",
+      "originRole": "First-party independent primary mouse implementation, bounded verification, paired public reading or derived register."
+    },
+    {
+      "path": "examples/mouse-input/index.html",
+      "bytes": 1366,
+      "sha256": "6f69d5c75ef4acd84546627c4878836b8161ac74f4cdcc1b356c312fcff48fc9",
+      "originRole": "First-party independent primary mouse implementation, bounded verification, paired public reading or derived register."
+    },
+    {
+      "path": "examples/mouse-input/main.mjs",
+      "bytes": 4275,
+      "sha256": "718e0dce1a4c635f004b5d1b8bfaf341c748d0e45c830f83ec05dbd74ca12cfb",
+      "originRole": "First-party independent primary mouse implementation, bounded verification, paired public reading or derived register."
+    },
+    {
+      "path": "examples/mouse-input/scene.mjs",
+      "bytes": 3159,
+      "sha256": "5f85dd9528e3c517389f3816a058dc2e63491237c0b9f7680fcb8850c97bb9ec",
+      "originRole": "First-party independent primary mouse implementation, bounded verification, paired public reading or derived register."
+    },
+    {
+      "path": "examples/mouse-input/README.md",
+      "bytes": 2253,
+      "sha256": "8f7ce85ceff4049c653d7a35ec4deb824da9e2f9675b060889551164c974edc6",
+      "originRole": "First-party independent primary mouse implementation, bounded verification, paired public reading or derived register."
+    },
+    {
+      "path": "examples/mouse-input/README.zh-CN.md",
+      "bytes": 2061,
+      "sha256": "38ed779761a9b555fc7c4476fc5ef003efa0af1b64dee57712c94a8a49e8a408",
+      "originRole": "First-party independent primary mouse implementation, bounded verification, paired public reading or derived register."
+    },
+    {
+      "path": "knowledge-base/en/docs/primary-mouse-input-contract.md",
+      "bytes": 9861,
+      "sha256": "eb0f15edfaf7f2ada46e9556ec5eaa5d8ef62729b3eb85359d73a9094c91c472",
+      "originRole": "First-party independent primary mouse implementation, bounded verification, paired public reading or derived register."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/主鼠标输入契约.md",
+      "bytes": 8804,
+      "sha256": "8cca508cf5b5aa6ffd676dbde9574d907268ffbef3c881ced59b4d49639531dd",
+      "originRole": "First-party independent primary mouse implementation, bounded verification, paired public reading or derived register."
+    },
+    {
+      "path": "knowledge-base/evidence/primary-mouse-input-verification.json",
+      "bytes": 56432,
+      "sha256": "7dcce37935cbf2cf29084e8ebe1942d11344134999590317deb5c01f74111186",
+      "originRole": "First-party independent primary mouse implementation, bounded verification, paired public reading or derived register.",
+      "identityHistory": [
+        {
+          "bytes": 37874,
+          "sha256": "c893a2c609dc8fc85fb21d566810ce6c9f9c4464fb610c4d756fd56471ecfb5e",
+          "scope": "Preserved pre-order-repair metadata cutoff."
+        },
+        {
+          "bytes": 53885,
+          "sha256": "d919365e402957d96035aa3ee038498f200677c8375a6519c346c405a0facca4",
+          "scope": "Preserved 54-path MI1 prepublication cutoff."
         }
       ]
     }
@@ -10083,5 +10473,166 @@
     "remoteCheckCount": 0,
     "remoteCIPassClaimed": false,
     "scope": "Observed prior delivery successor; preserves RG1 earlier pending cutoffs."
+  },
+  "primaryMouseInputWorkPackage": {
+    "engineeringLabel": "0.33.0",
+    "sourceId": "S086",
+    "deliverable": "V037",
+    "packageVersion": "0.0.0",
+    "protocolVersion": "1.0",
+    "behavior": {
+      "tests": 98,
+      "passed": 98,
+      "failed": 0
+    },
+    "strictTypes": {
+      "positiveConsumers": 1,
+      "negativeDiagnostics": {
+        "ordinary": 26,
+        "imports": 15,
+        "domFreeBrowser": 5
+      },
+      "completeOneToOneMatching": true
+    },
+    "focusedBoundaries": {
+      "tests": 21,
+      "passed": 21,
+      "failed": 0
+    },
+    "fullBoundarySuite": "PENDING_FINAL_PREPUSH",
+    "native": {
+      "baseline": 1,
+      "controls": 6,
+      "contexts": 7,
+      "rowsPerContext": 11,
+      "collectorGrammarChecks": 13,
+      "independentActualReviewOpenFindings": 0
+    },
+    "ordinaryHTTPExample": "ACTUAL_PASS",
+    "retainedBrowserGates": 7,
+    "fullCurrent": "PENDING_AT_PRECOMMIT_METADATA_CUTOFF",
+    "publication": "PENDING_AT_PRECOMMIT_METADATA_CUTOFF",
+    "independentFinalBilingualMeaningReview": "PENDING",
+    "mandatoryGitPushHook": "PENDING",
+    "remoteDelivery": "PENDING",
+    "limits": {
+      "touch": false,
+      "pen": false,
+      "move": false,
+      "pointerCapture": false,
+      "gestures": false,
+      "fullUI": false,
+      "physicalMobileDevices": false,
+      "nativeSDK": false,
+      "CJKPerformance": false,
+      "fullSpineR020V020": "PENDING",
+      "full3D": false,
+      "completeMigration": false,
+      "performanceLeadership": false,
+      "energyOrThermalImprovement": false,
+      "hardwareAcceleration": "UNBOUND",
+      "physicalDisplay": "UNBOUND",
+      "osDescendantRetirement": "UNBOUND",
+      "productionReadiness": false
+    },
+    "historicalCutoffsPreserved": true,
+    "record": "knowledge-base/evidence/primary-mouse-input-verification.json",
+    "scope": "Optional browser primary-mouse adapter for genuine ready Engine/Scope/Stage, current authored rectangular hit areas, typed routed events, explicit painting and exact listener ownership.",
+    "origin": {
+      "implementation": "Independently authored AI-assisted first-party adapter, private lifetime state, fixtures, bounded guards and paired public explanations under Apache-2.0.",
+      "newRuntimeDependencies": [],
+      "newExternalAssets": []
+    },
+    "sourceBaseCommit": "a240bc1e6ee218c63fc1511d715d01d1358d908f",
+    "packageDeclarationOrderSuccessor": {
+      "status": "ACTUAL_REAL_CHECKER_CURRENT_PACKAGE_NATIVE_AND_SEVEN_RENDERERS_PASS",
+      "packageIdentity": {
+        "bytes": 1372,
+        "sha256": "891311a277b03b583ef35d45ad862ece747bda8ad04aae12f1fce9ed0e9149df"
+      },
+      "allOtherBytesPreserved": true,
+      "parsedValuesUnchanged": true,
+      "strictCheckerUnchanged": true,
+      "evidence": "evidence/primary-mouse-input-verification.json",
+      "completePublication": "PENDING_FINAL_RERUN"
+    },
+    "retainedB1TestInventorySuccessor": {
+      "status": "INDEPENDENT_SOURCE_REVIEW_AND_ACTUAL_RETAINED_TEST_PASS",
+      "path": "tests/webgpu-mesh-host.test.mjs",
+      "currentIdentity": {
+        "path": "tests/webgpu-mesh-host.test.mjs",
+        "bytes": 94773,
+        "sha256": "3812f94f2dfd501a52551ec1b03ba499ff1e2b90b1bfa9fc2a75a5df0692d087"
+      },
+      "amendmentIdentity": {
+        "bytes": 1719,
+        "sha256": "8c5573ed9bf841fabf032e2ca789017fae457809a1b66387b8362538b84821de"
+      },
+      "sourceReviewIdentity": {
+        "bytes": 4396,
+        "sha256": "67b486d6a9a28af886b4138e54776ea0bf682a425df4825e2216a02831beab2e"
+      },
+      "preservedCompletePrepushFailure": {
+        "artifactIdentity": {
+          "bytes": 745,
+          "sha256": "27ea6702bd37fe83fce0203a5ef1408169e5f2e3e78e6bda9890112f1f05d5e1"
+        },
+        "executions": [
+          {
+            "name": "prepush",
+            "startedAtUtc": "2026-10-11T23:04:15.2149384Z",
+            "finishedAtUtc": "2026-10-11T23:08:17.3413755Z",
+            "exitCode": 1,
+            "timeout": false,
+            "stdoutSHA256": "d7932479f977bb960b55af5db3f11abd260a63d23a20e8dbade1e33877f46270",
+            "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      },
+      "earlierCoreCounts": {
+        "tests": 2631,
+        "passed": 2630,
+        "failed": 1
+      },
+      "earlierFailure": "B1 fixed thirteen-case emitted loading and owned host contract refused the new exact map before case execution.",
+      "actualTargetedRetainedTest": {
+        "artifactIdentity": {
+          "bytes": 837,
+          "sha256": "4f7f49960b334665058fec8d0cfdbb127fb90f5755bd7bab114958073f3c6131"
+        },
+        "executions": [
+          {
+            "name": "retained-b1-test",
+            "startedAtUtc": "2026-10-11T23:17:55.3599203Z",
+            "finishedAtUtc": "2026-10-11T23:18:00.3682524Z",
+            "exitCode": 0,
+            "timeout": false,
+            "stdoutSHA256": "f3ac8ca8ff06eb4a4c3382300063aa74977b07ab652d3fbe73a0a72c0b92ac0c",
+            "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      },
+      "thirteenCaseSchedulePreserved": true,
+      "oracleQuotasAndColdHostConstraintsPreserved": true,
+      "exactOptionalMouseAliasOnly": true,
+      "productSourcesChanged": false,
+      "currentEditablePaths": 55,
+      "completePublication": "PENDING_FINAL_RERUN"
+    }
+  },
+  "scene3dPublicDeliverySuccessor": {
+    "engineeringLabel": "0.32.0",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/19",
+    "sourceHead": "ccfad10de077045ada3018fa624cc0e9a8677ac0",
+    "mergedMain": "a240bc1e6ee218c63fc1511d715d01d1358d908f",
+    "tree": "f97f9e6986d2804601c679e143aa8c22b6fa0a75",
+    "mandatoryPushHook": "ACTUAL_PASS",
+    "coreTests": 2499,
+    "publicationTests": 63,
+    "localRemoteMainReadbackAtUtc": "2026-10-11T21:23:49.237Z",
+    "remoteStatusCount": 0,
+    "remoteCheckCount": 0,
+    "remoteCIPassClaimed": false,
+    "scope": "Observed prior delivery successor; earlier public-scene3d pending cutoffs remain historical."
   }
 }
