@@ -7,7 +7,8 @@ import { resolve, dirname, relative, isAbsolute, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import { createHash } from 'node:crypto';
-import { POSITIVE_FRAMES, NEGATIVES } from './b1-webgpu/oracle.mjs';
+import { verifyPixels, POSITIVE_FRAMES, NEGATIVES } from './b1-webgpu/oracle.mjs';
+import { verifyCompositionPixels, COMPOSITION_BASELINES, COMPOSITION_CONTROL } from './b1-webgpu/public-composition-oracle.mjs';
 import { captureRegistryProvenance, verifyRegistryProvenanceAfter, resolveRegistryConsumers, resolveB1Dependency, isPrivateRegistryPolicyRefusal } from './b1-webgpu/registryProvenance.mjs';
 
 const directory = dirname(fileURLToPath(import.meta.url)), companionDirectory = resolve(directory, 'b1-webgpu');
@@ -115,7 +116,7 @@ const { repository, output, modulePath, playwrightMetadataPath, metadata, coreMe
 const startedAt = Date.now(), operationDeadline = startedAt + 70000, closeDeadline = startedAt + 85000;
 const report = { schemaVersion: 1, status: 'INCOMPLETE', startedAtUTC: new Date(startedAt).toISOString(), budgetMs: 90000,
   launch: { channel: 'msedge', headless: true, callerAddedFlags: [], freshContext: true, deviceScaleFactor: 1 },
-  windows: [], patches: [], requests: [], browserEvents: [], cleanupFailures: [], failure: null,
+  windows: [], supplementaryWindows: [], patches: [], requests: [], browserEvents: [], cleanupFailures: [], failure: null,
   registryProvenance: [], registryResolution: [], registryCaptureObservations: [], registryRereads: [], registryRecordingFailures: [],
   registryFailures: [], registryFailure: null,
   registryRecordingScope: 'Enforced filesystem and selected resolver policy; not browser loads or requests',
@@ -197,9 +198,28 @@ function acquire(promise, label, assign) {
   acquisitions.push(record); return record.promise;
 }
 const aliases = { '#egret-textured-frame-state': 'packages/engine/dist/internal/texturedFrameState.js', '@egret/contracts': 'packages/contracts/dist/index.js', '@egret/runtime': 'packages/runtime/dist/index.js',
-  '@egret/engine': 'packages/engine/dist/index.js', 'robust-predicates': 'packages/engine/node_modules/robust-predicates/index.js' };
-const entryNames = ['packages/engine/dist/web/b1.js', 'packages/engine/dist/rendering/meshGeometry3D.js',
-  'packages/engine/dist/rendering/matrix4.js', 'packages/engine/dist/web/webgpuMeshPass.js', 'packages/contracts/dist/ImageData2D.js'];
+  '@egret/engine': 'packages/engine/dist/index.js', '@egret/engine/scene3d': 'packages/engine/dist/rendering/scene3d.js',
+  '@egret/engine/webgpu/scene3d': 'packages/engine/dist/web/scene3d.js', 'robust-predicates': 'packages/engine/node_modules/robust-predicates/index.js' };
+const entryNames = ['packages/engine/dist/index.js', 'packages/engine/dist/rendering/scene3d.js',
+  'packages/engine/dist/web/scene3d.js', 'packages/engine/dist/web/webgpuMeshPass.js'];
+// Source-read frozen finite closure of the public entries plus the one private WGSL diagnostic.
+const allowedModules = new Set([
+  ...['ImageData2D', 'index', 'TexturedGeometry2D', 'TexturedRenderFrame2D'].map(name => `packages/contracts/dist/${name}.js`),
+  ...['assetGroup', 'closeHost', 'createEngine', 'createEngineForProfile', 'Engine', 'gameClock', 'index', 'startEngine', 'surfaceOwnership', 'tween'].map(name => `packages/engine/dist/${name}.js`),
+  ...['textFieldFactoryState', 'texturedFrameState'].map(name => `packages/engine/dist/internal/${name}.js`),
+  ...['admitTexturedFrame2D', 'copyFrame2D', 'copyMixedFrame2D', 'imageFrameBudget', 'matrix4', 'meshGeometry3D', 'ownedPreparationFailure2D',
+    'packedOrientation', 'packedPosition2D', 'packImageVertices2D', 'packMeshGeometry3D', 'packTexturedMesh2D', 'prepareImages2D', 'prepareMixedDraws2D',
+    'prepareRectangles2D', 'prepareTexturedDraws2D', 'prepareTexturedMesh2D', 'projection3D', 'sceneFrame3D', 'scene3d', 'texturedPreparationBudget2D'].map(name => `packages/engine/dist/rendering/${name}.js`),
+  ...['b1', 'imageProjections2D', 'prepareTexturedSubmission2D', 'scene3d', 'texturedWebGPUOptions', 'WebGPUHost', 'webgpuImagePass', 'webgpuLifetime',
+    'webgpuMeshPass', 'webgpuPass', 'webgpuTexturedPass'].map(name => `packages/engine/dist/web/${name}.js`),
+  ...['AssetLease', 'AssetManager', 'assetManagerOwnerState', 'AssetRef', 'Bitmap', 'bitmapDisplayState', 'ByteReader', 'CancellationController',
+    'coordinateInverse', 'diagnostics', 'displayBounds', 'displayCoordinates', 'displayHitState', 'displayHitTest', 'DisplayObject', 'DisplayObjectContainer',
+    'displayTransform', 'displayTreeState', 'displayVisualState', 'EgretError', 'Event', 'EventDispatcher', 'frameCapture', 'Graphics', 'imageFrameBudget',
+    'index', 'Mesh2D', 'meshCaptureSnapshot', 'meshDisplayState', 'ownership', 'Scope', 'sequenceClip', 'SequencePlayer', 'Sprite', 'Stage',
+    'textDisplayState', 'Texture', 'texturedFrameBudget', 'texturedFrameCapture'].map(name => `packages/runtime/dist/${name}.js`),
+  'packages/engine/node_modules/robust-predicates/index.js',
+  ...['incircle', 'insphere', 'orient2d', 'orient3d', 'util'].map(name => `packages/engine/node_modules/robust-predicates/esm/${name}.js`),
+]);
 const registryName = 'packages/engine/dist/internal/texturedFrameState.js';
 const registrySourceName = 'packages/engine/src/internal/texturedFrameState.ts';
 const descriptor = (path, body) => ({ path, bytes: body.length, sha256: hash(body) });
@@ -218,6 +238,7 @@ function dependency(specifier, parent) {
 }
 async function collect(name) {
   const url = '/' + name; if (served.has(url)) return;
+  assert.ok(allowedModules.has(name), `Unapproved public native dependency: ${name}`);
   assert.ok(served.size < 128, 'Finite emitted closure exceeded');
   const path = resolve(repository, name), physical = await realpath(path);
   assert.ok(physical.startsWith(repository + sep), 'Selected dependency escaped repository');
@@ -273,23 +294,48 @@ async function retainWindow(window) {
   for (const frame of window.frames) if (frame.readback) {
     const bytes = Buffer.from(frame.readback.bytes); assert.ok(bytes.length <= 1024 * 1024, 'Unexpected raw capture exceeded its finite cap');
     const file = `${window.mode}-${frame.name}.rgba`; await writeFile(resolve(output, file), bytes, { flag: 'wx' });
+    // This collector independently reinspects delivered raw bytes; fixture JSON is not pixel authority.
+    const supplemental = window.stage === 'public-engine-composition';
+    const negative = supplemental ? (window.mode === 'SN1' ? COMPOSITION_CONTROL : null) : NEGATIVES.find(value => value.id === window.mode);
+    try {
+      frame.collectorChecks = supplemental ? verifyCompositionPixels({ ...frame.readback, bytes }, frame.name, negative?.assertion ?? null)
+        : verifyPixels({ ...frame.readback, bytes }, frame.name, negative?.assertion ?? null);
+      assert.ok(!negative, 'Intended negative raw readback unexpectedly passed');
+    } catch (error) {
+      if (!negative || error.name !== (supplemental ? 'CompositionPixelAssertion' : 'PixelAssertion')) throw error;
+      assert.equal(error.assertion, negative.assertion); assert.deepEqual(error.actual, [...negative.actual]);
+      assert.deepEqual(frame.assertion?.actual, error.actual); assert.equal(frame.assertion?.assertion, error.assertion);
+      frame.collectorAssertion = { name: error.name, assertion: error.assertion, x: error.x, y: error.y, expected: error.expected, actual: error.actual };
+    }
     frame.readback = { ...frame.readback, bytes: undefined, raw: descriptor(file, bytes) };
   }
   await save(`window-${window.mode}.json`, window);
 }
 try {
   for (const path of [process.execPath, fileURLToPath(import.meta.url), resolve(companionDirectory, 'fixture.mjs'), resolve(companionDirectory, 'oracle.mjs'),
+    resolve(companionDirectory, 'public-composition-oracle.mjs'),
     resolve(companionDirectory, 'registryProvenance.mjs'),
     playwrightMetadataPath, resolve(modulePath, 'index.mjs'), coreMetadataPath, compilerMetadataPath,
     resolve(repository, 'package.json'), resolve(repository, 'pnpm-lock.yaml'), resolve(repository, 'tsconfig.json'),
     ...['engine', 'contracts', 'runtime'].map(name => resolve(repository, `packages/${name}/package.json`))]) await identity(path);
   for (const name of entryNames) await collect(name);
+  const packageExports = JSON.parse((await readFile(resolve(repository, 'packages/engine/package.json'))).toString('utf8')).exports;
+  assert.deepEqual(packageExports['./scene3d'], { types: './dist/rendering/scene3d.d.ts', import: './dist/rendering/scene3d.js' });
+  assert.deepEqual(packageExports['./webgpu/scene3d'], { types: './dist/web/scene3d.d.ts', import: './dist/web/scene3d.js' });
+  const currentHost = await identity(resolve(repository, 'packages/engine/web/WebGPUHost.ts'));
+  assert.equal(currentHost.bytes, 74888, 'Native acceptance must bind the current post-RG1 Host, never the historical 66888-byte Host');
+  assert.equal(currentHost.sha256, '2679e634e35c3841daa499f59cb3279087b33245267af187ae78995a29019c72');
+  report.publicRoute = { entries: entryNames.slice(0, 3), packageExports: { './scene3d': packageExports['./scene3d'], './webgpu/scene3d': packageExports['./webgpu/scene3d'] },
+    hostSource: currentHost, privateDiagnostic: 'packages/engine/dist/web/webgpuMeshPass.js', allowedModules: [...allowedModules].sort() };
   const emitted = [...served.values()].reduce((sum, value) => sum + value.body.length, 0); assert.ok(emitted <= 4 * 1024 * 1024);
   // Bind matching first-party source files without scanning unrelated repository files.
   for (const url of served.keys()) {
     const name = url.slice(1); let source;
+    // Exact internal source exceptions preserve the retained registry policy.
     if (name === 'packages/engine/dist/internal/texturedFrameState.js') {
       source = 'packages/engine/src/internal/texturedFrameState.ts';
+    } else if (name === 'packages/engine/dist/internal/textFieldFactoryState.js') {
+      source = 'packages/engine/src/internal/textFieldFactoryState.ts';
     } else if (name.startsWith('packages/engine/dist/')) {
       const tail = name.slice('packages/engine/dist/'.length).replace(/\.js$/, '.ts'); source = `packages/engine/${tail.includes('/') ? '' : 'src/'}${tail}`;
     } else if (/^packages\/(runtime|contracts)\/dist\//.test(name)) source = name.replace('/dist/', '/src/').replace(/\.js$/, '.ts');
@@ -315,7 +361,7 @@ try {
   report.baselineShaderSHA256 = hash(Buffer.from(baselineShader));
   report.emittedModules = [...served.entries()].map(([url, value]) => ({ url, ...value.identity }));
   for (const value of NEGATIVES) await prepareCopy(value.id);
-  for (const name of ['fixture.mjs', 'oracle.mjs']) {
+  for (const name of ['fixture.mjs', 'oracle.mjs', 'public-composition-oracle.mjs']) {
     const body = await readFile(resolve(companionDirectory, name)); served.set('/' + name, { body, contentType: 'text/javascript', identity: descriptor(name, body) });
   }
   const importMap = { imports: Object.fromEntries(Object.entries(aliases).map(([name, value]) => [name, '/' + value])),
@@ -353,15 +399,24 @@ try {
   if (s04EnforcementIncomplete) throw s04FirstAbort;
   const html = Buffer.from(`<!doctype html><meta charset="utf-8"><link rel="icon" href="data:,"><title>B1 WebGPU verification</title><script type="importmap">${JSON.stringify(importMap)}</script><script type="module">import * as fixture from '/fixture.mjs'; window.b1Fixture=fixture; window.fixtureReady=true;</script>`);
   served.set('/index.html', { body: html, contentType: 'text/html', identity: descriptor('index.html', html) });
+  report.publicImportMaps = [{ mode: 'baseline', map: importMap, html: descriptor('index.html', html) }];
+  for (const { id } of NEGATIVES) {
+    const selectedMap = structuredClone(importMap);
+    for (const name of ['@egret/engine/scene3d', '@egret/engine/webgpu/scene3d']) selectedMap.imports[name] = `/copy/${id}/${aliases[name]}`;
+    const body = Buffer.from(html.toString('utf8').replace(JSON.stringify(importMap), JSON.stringify(selectedMap)));
+    served.set(`/index-${id}.html`, { body, contentType: 'text/html', identity: descriptor(`index-${id}.html`, body) });
+    report.publicImportMaps.push({ mode: id, map: selectedMap, html: descriptor(`index-${id}.html`, body) });
+  }
   report.identitiesBefore = [...identities.values()]; await save('inputs.json', { original: report.identitiesBefore,
-    emitted: report.emittedModules, html: descriptor('index.html', html), registryProvenance: report.registryProvenance,
+    emitted: report.emittedModules, html: descriptor('index.html', html), publicRoute: report.publicRoute, publicImportMaps: report.publicImportMaps,
+    registryProvenance: report.registryProvenance,
     registryResolution: report.registryResolution, registryCaptureObservations: report.registryCaptureObservations,
     registryRecordingFailures: report.registryRecordingFailures, registryFailures: report.registryFailures,
     registryFailure: report.registryFailure, registryRecordingScope: report.registryRecordingScope });
   server = createServer((request, response) => {
     const pathname = new URL(request.url, 'http://localhost').pathname, value = served.get(pathname);
     const observed = { method: request.method, pathname, status: value && request.method === 'GET' ? 200 : 404, bytes: value?.body.length ?? 0, sha256: value?.identity.sha256 ?? null };
-    if (report.requests.length >= 512) { report.requestOverflow = true; response.writeHead(429); response.end(); return; }
+    if (report.requests.length >= 1024) { report.requestOverflow = true; response.writeHead(429); response.end(); return; }
     report.requests.push(observed);
     if (!value || request.method !== 'GET') { response.writeHead(404); response.end('Unselected resource'); return; }
     response.writeHead(200, { 'content-type': value.contentType, 'cache-control': 'no-store' }); response.end(value.body);
@@ -378,7 +433,8 @@ try {
   report.browserVersion = browser.version();
   await bounded(acquire(browser.newContext({ viewport: { width: 128, height: 128 }, deviceScaleFactor: 1 }),
     'context-start', value => { context = value; }), operationDeadline, 'context-start');
-  for (const mode of ['baseline', ...NEGATIVES.map(value => value.id)]) {
+  for (const mode of ['baseline', ...NEGATIVES.map(value => value.id), ...COMPOSITION_BASELINES, COMPOSITION_CONTROL.id]) {
+    const supplemental = [...COMPOSITION_BASELINES, COMPOSITION_CONTROL.id].includes(mode);
     const page = await bounded(acquire(context.newPage(), `page-start-${mode}`, value => { openPages.add(value); }),
       operationDeadline, `page-start-${mode}`); const events = [];
     const record = value => { if (events.length >= 128) { report.browserEventOverflow = true; return; } events.push({ mode, ...value }); };
@@ -388,16 +444,22 @@ try {
     page.on('response', response => { if (response.status() >= 400) record({ kind: 'HTTP', text: `HTTP ${response.status()}`, url: response.url() }); });
     let window;
     try {
-      await bounded(observe(page.goto(origin + '/index.html')), operationDeadline, 'page-start');
+      await bounded(observe(page.goto(origin + (NEGATIVES.some(value => value.id === mode) ? `/index-${mode}.html` : '/index.html'))), operationDeadline, 'page-start');
       await bounded(observe(page.waitForFunction(() => window.fixtureReady === true)), operationDeadline, 'fixture-ready');
+      if (supplemental) await bounded(observe(page.exposeFunction('b1CaptureSupplementaryScreenshot', async selectedMode => {
+        assert.equal(selectedMode, mode, 'Supplementary screenshot request changed mode');
+        const screenshot = `${mode}-supplement.png`;
+        const body = await bounded(observe(page.screenshot()), operationDeadline, `screenshot-${mode}`);
+        await writeFile(resolve(output, screenshot), body, { flag: 'wx' }); return descriptor(screenshot, body);
+      })), operationDeadline, 'supplementary-screenshot-port');
       window = await bounded(observe(page.evaluate(value => window.b1Fixture.runWindow(value), { mode, deadline: operationDeadline })), operationDeadline, `native-${mode}`);
       // Preserve delivered raw bytes and failure metadata before inspecting identity.
       if (registryCaptures.has(mode)) window.registryPolicy = {
         scope: 'Retained selected resolver/filesystem policy; browser loads and requests are separate',
         registryProvenance: structuredClone(registryCaptures.get(mode).registryProvenance),
       };
-      await retainWindow(window); report.windows.push(window);
-      const expectedShader = mode === 'baseline' ? report.baselineShaderSHA256 : report.patches.find(value => value.id === mode).expectedShaderSHA256;
+      await retainWindow(window); (supplemental ? report.supplementaryWindows : report.windows).push(window);
+      const expectedShader = mode === 'baseline' || supplemental ? report.baselineShaderSHA256 : report.patches.find(value => value.id === mode).expectedShaderSHA256;
       if (window.compilation) assert.equal(window.compilation.shaderSHA256, expectedShader, 'Native compiler shader identity differs from served bytes');
       for (const event of events) {
         event.expected = event.kind === 'console' && event.level === 'warning' ? false : expectedCompilerConsole(event, window);
@@ -411,7 +473,23 @@ try {
       }
       assert.ok(window.cleanup.failures.length === 0 && window.uncaptured.length === 0, 'Native API cleanup failed');
       assert.equal(window.cleanup.hostClosed, true); assert.equal(window.cleanup.hostSafe, true); assert.equal(window.cleanup.deviceDestroyed, true); assert.equal(window.cleanup.lossSettled, true);
-      if (mode === 'baseline') { assert.equal(window.status, 'PASSED'); assert.equal(window.frames.length, 7); assert.equal(window.frames.reduce((sum, value) => sum + value.checks.comparisons, 0), 8214); }
+      assert.equal(window.nativeQueue.submitAttempts, mode === 'baseline' ? 7 : mode === 'N4' ? 0 : 1, 'Actual native queue submit count differs from selected frame schedule');
+      assert.equal(window.cleanup.queueObserverRestored, true); assert.equal(window.cleanup.canvasRetired, true);
+      if (supplemental) {
+        assert.equal(window.stage, 'public-engine-composition'); assert.equal(window.frames.length, 1);
+        assert.equal(window.status, mode === 'SN1' ? 'EXPECTED_PIXEL_FAILURE' : 'PASSED');
+        for (const key of ['engineClosed', 'scopeClosed', 'nodesDisposed', 'textureDisposed']) assert.equal(window.cleanup[key], true);
+        assert.equal(window.authoring.cpuLogicalBytes, 480); assert.equal(window.authoring.sceneBytes, 240); assert.equal(window.authoring.uniformBytes, 128);
+        if (mode !== 'SN1') assert.equal(window.frames[0].collectorChecks.comparisons, mode === 'S1' ? 6 : 8);
+        else {
+          const baseline = report.supplementaryWindows.find(value => value.mode === 'S2'); assert.ok(baseline, 'SN1 requires completed S2');
+          const changed = structuredClone(baseline.authoring); changed.parent.clipRect = null;
+          assert.deepEqual(window.authoring, changed, 'SN1 must omit only the parent local clip');
+          assert.deepEqual(window.frames[0].collectorAssertion, { name: 'CompositionPixelAssertion', assertion: 'clip-outside', x: 33, y: 28,
+            expected: [255, 255, 255, 255], actual: [255, 0, 255, 255] });
+          assert.equal(window.controlBinding.changedInput, 'parent.clipRect');
+        }
+      } else if (mode === 'baseline') { assert.equal(window.status, 'PASSED'); assert.equal(window.frames.length, 7); assert.equal(window.frames.reduce((sum, value) => sum + value.checks.comparisons, 0), 8214); }
       else { assert.equal(window.status, mode === 'N4' ? 'EXPECTED_COMPILATION_FAILURE' : 'EXPECTED_PIXEL_FAILURE'); assert.equal(window.frames.length, mode === 'N4' ? 0 : 1); }
     } finally {
       try { await bounded(observe(page.close().then(() => { openPages.delete(page); })), closeDeadline, `page-close-${mode}`); }
@@ -429,7 +507,7 @@ try {
   }
   if (report.requestOverflow || report.browserEventOverflow) throw Error('INCOMPLETE:bounded observation quota exceeded');
   assert.equal(report.unexpectedBrowserEvent ?? false, false, 'Unexpected browser event after closure');
-  if (report.status !== 'UNSUPPORTED' && !s04EnforcementIncomplete) { assert.equal(report.windows.length, 6); report.status = 'PASS'; }
+  if (report.status !== 'UNSUPPORTED' && !s04EnforcementIncomplete) { assert.equal(report.windows.length, 6); assert.equal(report.supplementaryWindows.length, 3); report.status = 'PASS'; }
 } catch (error) {
   report.failure = fault(error);
   if (s04PrivateErrors.has(error)) report.status = 'INCOMPLETE';
@@ -480,6 +558,14 @@ try {
   if (report.counts.submittedFrames > 11) { report.status = 'FAIL'; report.cleanupFailures.push({ message: 'Finite frame budget exceeded' }); }
   if (report.status === 'PASS' && (report.counts.positiveFrames !== 7 || report.counts.counterexamples !== 5 || report.counts.submittedFrames !== 11)) {
     report.status = 'FAIL'; report.cleanupFailures.push({ message: 'Complete seven-positive/five-counterexample receipt missing' });
+  }
+  report.supplementaryCounts = { stage: 'public-engine-composition', positiveFrames: report.supplementaryWindows.filter(value => value.status === 'PASSED').length,
+    controls: report.supplementaryWindows.filter(value => value.mode === 'SN1' && value.status === 'EXPECTED_PIXEL_FAILURE').length,
+    submittedFrames: report.supplementaryWindows.reduce((sum, value) => sum + value.frames.filter(frame => frame.rendered).length, 0),
+    baselinePixelComparisons: report.supplementaryWindows.reduce((sum, value) => sum + (value.mode === 'SN1' ? 0 : value.frames.reduce((sum, frame) => sum + (frame.collectorChecks?.comparisons ?? 0), 0)), 0), maximumSubmittedFrames: 3 };
+  if (report.supplementaryCounts.submittedFrames > 3 || (report.status === 'PASS' &&
+      (report.supplementaryCounts.positiveFrames !== 2 || report.supplementaryCounts.controls !== 1 || report.supplementaryCounts.submittedFrames !== 3 || report.supplementaryCounts.baselinePixelComparisons !== 14))) {
+    report.status = 'FAIL'; report.cleanupFailures.push({ message: 'Separate S1/S2/SN1 composition receipt incomplete' });
   }
   // Preserve count/cleanup diagnostics, then keep trusted provenance incompleteness final.
   if (s04EnforcementIncomplete || report.privateRegistryPolicyFailure) {

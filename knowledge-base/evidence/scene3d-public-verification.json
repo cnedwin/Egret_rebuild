@@ -1,0 +1,786 @@
+{
+  "schemaVersion": 1,
+  "engineeringLabel": "0.32.0",
+  "sourceId": "S085",
+  "deliverable": "V036",
+  "packageVersion": "0.0.0",
+  "protocolVersion": "1.0",
+  "date": "2026-10-12",
+  "preparedAtUtc": "2026-10-11T20:33:27.921Z",
+  "sourceBaseCommit": "b4062e134af7b923ab6c2c16381004bc1c62ee3c",
+  "status": "PUBLIC_SCENE3D_BEHAVIOR_TYPES_POLICY_AND_FIXED_DESKTOP_COMPOSITION_OBSERVED_FINAL_PUBLICATION_PENDING",
+  "scope": "Explicit experimental low-level owned procedural scene frames and existing WebGPU scene-before-ordinary-2D-UI composition; thin independent public facades over first-party implementations.",
+  "productSources": [
+    {
+      "path": "packages/engine/rendering/scene3d.ts",
+      "bytes": 1480,
+      "sha256": "34ade2adf838957258bc6b60ca59083639e5d8a17282ec2368ccbb3d31819bec"
+    },
+    {
+      "path": "packages/engine/web/scene3d.ts",
+      "bytes": 903,
+      "sha256": "5a85d630b66f0b26ccc2588105a923d050f56ee34f07d00524f84b5dbc221739"
+    },
+    {
+      "path": "packages/engine/package.json",
+      "bytes": 1151,
+      "sha256": "04d88fe4ce86639f45f32703a2fe2d45e5450ee1098ebe6dd439c05816f78286"
+    }
+  ],
+  "selectedEngineeringInputs": [
+    {
+      "path": "packages/engine/rendering/scene3d.ts",
+      "bytes": 1480,
+      "sha256": "34ade2adf838957258bc6b60ca59083639e5d8a17282ec2368ccbb3d31819bec"
+    },
+    {
+      "path": "packages/engine/web/scene3d.ts",
+      "bytes": 903,
+      "sha256": "5a85d630b66f0b26ccc2588105a923d050f56ee34f07d00524f84b5dbc221739"
+    },
+    {
+      "path": "packages/engine/package.json",
+      "bytes": 1151,
+      "sha256": "04d88fe4ce86639f45f32703a2fe2d45e5450ee1098ebe6dd439c05816f78286"
+    },
+    {
+      "path": "tools/check-boundaries.mjs",
+      "bytes": 109896,
+      "sha256": "26dd8f6b22e681c99adb42845fe808e26a8687cb04abd999fecaec23d6ed6500"
+    },
+    {
+      "path": "tools/check-types.mjs",
+      "bytes": 49790,
+      "sha256": "31bbb5df7a3dd4090b9cc12f24a6a8a2ec0ce041b3047b07e00bc5574e839870"
+    },
+    {
+      "path": "tests/boundaries.test.mjs",
+      "bytes": 79817,
+      "sha256": "ad623d9d6e80303b0de8092e2ad51c3b382bd394f52ee3e36c42152268e813c7"
+    },
+    {
+      "path": "tests/scene3d-public.test.mjs",
+      "bytes": 16549,
+      "sha256": "1a52c4bd0506ea954c6777ccd05f000bf67d1ece13e4e4179589905f0c66c9f5"
+    },
+    {
+      "path": "tests/scene3d-public-host.test.mjs",
+      "bytes": 25465,
+      "sha256": "240f0037b511737974abd6dffcce4b4ff0a013f41c5a8a6bce368960a9c7f459"
+    },
+    {
+      "path": "tests/types/scene3d-positive.ts",
+      "bytes": 1815,
+      "sha256": "87687c0f54bf637afcd1d82ea04067afee504f9eab99ee092739f242d96b3f04"
+    },
+    {
+      "path": "tests/types/scene3d-web-positive.ts",
+      "bytes": 1481,
+      "sha256": "9def46be4b552e2a64b785b7e8a65a146b04dae74caf14ed5ada4f3b5309ebda"
+    },
+    {
+      "path": "tests/types/scene3d-negative.ts",
+      "bytes": 1295,
+      "sha256": "e6f2bff09e133432e97b9a60d84bdb042a00024afd1dfc9e7a94a0f04f0c926e"
+    },
+    {
+      "path": "tests/types/scene3d-web-negative.ts",
+      "bytes": 440,
+      "sha256": "b82f7409b95dcaaba7c0e151582d5c4feda3b6c3a81908098cebbb2c0887b72a"
+    },
+    {
+      "path": "tests/types/scene3d-import-negative.ts",
+      "bytes": 1158,
+      "sha256": "a56c248ca16f720c0e65611997d009178c73b41a8f7e5c3c57d9ec33d1395713"
+    },
+    {
+      "path": "tests/types/scene3d-web-dom-free-negative.ts",
+      "bytes": 397,
+      "sha256": "914d4ae90905f31dabfaa428c3fb37065517340c0dcbb89ac8ebd64b09638cde"
+    },
+    {
+      "path": "tests/types/scene3d-diagnostic-expectations.json",
+      "bytes": 8508,
+      "sha256": "5a3b838e6355bd414ed2f6f6cc63e2f24d3f88ce2359ccf1866bc9a14f894ad9"
+    },
+    {
+      "path": "tools/verify-webgpu-b1.mjs",
+      "bytes": 47863,
+      "sha256": "f9b810295eba0e801274756ecd582264f6d0f1176172d83aa0076dc3d8805776"
+    },
+    {
+      "path": "tools/b1-webgpu/fixture.mjs",
+      "bytes": 24825,
+      "sha256": "3cfa21987a1f40297fb287355d271d71ff6a4d863b2381e84fab1005498119eb"
+    },
+    {
+      "path": "tools/b1-webgpu/public-composition-oracle.mjs",
+      "bytes": 2552,
+      "sha256": "53c90973f4c5bb5338d0b85900b2ab7091d1556a548d89f76b1af9105d171ec4"
+    },
+    {
+      "path": "tests/b1-webgpu-verifier.test.mjs",
+      "bytes": 21544,
+      "sha256": "d2c048b56c196ff0b15305a8edb08fcaae0cbe86307b32ccbec3130440af4140"
+    },
+    {
+      "path": "examples/scene3d/README.md",
+      "bytes": 2422,
+      "sha256": "199ed73457beab2dcd258e230a55a8c556c3050aa58852958936452e122ad0fa"
+    },
+    {
+      "path": "examples/scene3d/README.zh-CN.md",
+      "bytes": 2347,
+      "sha256": "29957cda2e468d9a22615d86cc2bc7ea2ad2d645165d9c6d40b91abeed8f4e52"
+    },
+    {
+      "path": "examples/scene3d/index.html",
+      "bytes": 1549,
+      "sha256": "fd82f34b12b1ba35bea0d52fdf1df405fe3b3cad4e61ff6513195616ed376b01"
+    },
+    {
+      "path": "examples/scene3d/scene.mjs",
+      "bytes": 4706,
+      "sha256": "aa7323fec36a561e146bbca2ee63cd78df451bdb976bf5a3b3d04f8c99d9f1df"
+    },
+    {
+      "path": "AGENTS.md",
+      "bytes": 8337,
+      "sha256": "44e3b3d146d90d793cb90ad8171f78684f3ddaec1b05e9c52d1cad970b1351de"
+    },
+    {
+      "path": "AGENTS.zh-CN.md",
+      "bytes": 7111,
+      "sha256": "1ba96441c42a24793f92b40b56d0a22536db4f41b620681ac4f8f00d8343b761"
+    }
+  ],
+  "publicReadings": [
+    "knowledge-base/en/docs/public-scene3d-contract.md",
+    "knowledge-base/Cns/docs/公共3D场景契约.md"
+  ],
+  "initialDocumentationCutoffUTC": "2026-10-11T19:54:26.480Z",
+  "historicalCutoffsPreserved": true,
+  "originalMissingInterfaceRed": {
+    "status": "ACTUAL_ASSIGNED_RED_AFTER_GENUINE_ENGINE_SCOPE_FRAME_CLEANUP",
+    "artifactIdentity": {
+      "bytes": 2814,
+      "sha256": "69a5c8c9fe27e6e628c8c432af0de5ab6c56ce0c4e9033ecba5906bf6173197f"
+    },
+    "startedAtUtc": "2026-10-11T19:43:55.232Z",
+    "finishedAtUtc": "2026-10-11T19:43:55.402Z",
+    "exitCode": 1,
+    "timeout": false,
+    "stdout": {
+      "bytes": 2848,
+      "sha256": "16c427fd33057336d2c23644c740d879c9bbde9846021f032b1b6de198e2df1c"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "sdkFiles": 754,
+    "inputsUnchanged": true,
+    "scope": "Missing two package entry maps; no guessed import or setup failure awarded."
+  },
+  "publicInterfaceGreen": {
+    "status": "PASS",
+    "receipt": {
+      "identity": {
+        "bytes": 2346,
+        "sha256": "dbf835f465780a94feed83687a123febbab297a14f89320c59020f9ddd7a8dfd"
+      },
+      "executions": [
+        {
+          "name": "adopt",
+          "startedAtUtc": "2026-10-11T19:54:25.5025821Z",
+          "finishedAtUtc": "2026-10-11T19:54:25.6955642Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "31a3b4c1a6196f8ff19bb6969cf122550bc160c671d9830e37f096ab80255c00",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "build",
+          "startedAtUtc": "2026-10-11T19:54:25.7168679Z",
+          "finishedAtUtc": "2026-10-11T19:54:26.2570589Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "166710cb105690b244b48c5dcc5672a4c0bc8280e995ae7d2f5bd46141491cea",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "interface",
+          "startedAtUtc": "2026-10-11T19:54:26.2637143Z",
+          "finishedAtUtc": "2026-10-11T19:54:26.4806877Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "27e310f45c7449904916475e5685caf002a920f37aa80456c310e75856906f9d",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "scope": "Same frozen genuine setup/cleanup fixture after reviewed thin-facade build."
+  },
+  "publicBehavior": {
+    "status": "PASS",
+    "counts": {
+      "tests": 35,
+      "pass": 35,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "receipt": {
+      "identity": {
+        "bytes": 1716,
+        "sha256": "c3ad1f0bd56538093926e845715cac6ef43a763ec71f7c7cde2abaadfd8c4b17"
+      },
+      "executions": [
+        {
+          "name": "canonical-first",
+          "startedAtUtc": "2026-10-11T20:22:43.6220513Z",
+          "finishedAtUtc": "2026-10-11T20:22:44.2941232Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "7033ac1de34a757958ae38cd3ebbf8eb726f481e4d4e6b089dbba3245038da82",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "public-behavior",
+          "startedAtUtc": "2026-10-11T20:22:44.3157486Z",
+          "finishedAtUtc": "2026-10-11T20:22:44.7626147Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "9cd9da759412ef00c229646a11e959017fbb94b5fd1f45079efa920da72e6dac",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "cpuRecordingGPUOnly": true
+  },
+  "callableCounterexamples": {
+    "status": "ACTUAL_FOUR_ASSIGNED_CALLABLE_PUBLIC_ROUTE_COUNTEREXAMPLES_AFTER_GENUINE_BASELINES",
+    "controls": 4,
+    "executions": 8,
+    "assignedAssertions": 5,
+    "inputsUnchanged": true,
+    "artifactIdentity": {
+      "bytes": 10777,
+      "sha256": "9c650f4b655f5635074139364036d7926b2a9f222f189f1efd46f0bdac265719"
+    },
+    "scope": "Frozen geometry and scene clones, public Host authentication and scene-free Host substitution; SDK bytes unchanged. CPU recording-device behavior only, no native GPU or full product acceptance."
+  },
+  "strictTypes": {
+    "status": "ACTUAL_PUBLIC_DIRECT_CHECKER_PASS",
+    "receipt": {
+      "identity": {
+        "bytes": 1550,
+        "sha256": "824da00935cdbbacca3183662c6c31423b593a25fbe20bd2fd0e8600b4d0f454"
+      },
+      "executions": [
+        {
+          "name": "adopt-repaired-checker",
+          "startedAtUtc": "2026-10-11T20:32:53.1327641Z",
+          "finishedAtUtc": "2026-10-11T20:32:53.2148414Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "5c82578ab6217e9d6ee93b4f13d61a1f11288111f13587770b53b25f01d5bceb",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "public-strict-types",
+          "startedAtUtc": "2026-10-11T20:32:53.2348184Z",
+          "finishedAtUtc": "2026-10-11T20:32:58.0991549Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "4583e95d06e8c6906c635d8c4d36acd9ed6d225a02a115308294a0218165962b",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "primaryObservation": {
+      "bytes": 27394,
+      "sha256": "161a9e7a701d49e5331657005ca6e16d8529e9e18403b586c92381907dbb8bc4"
+    },
+    "compiler": {
+      "version": "7.0.2",
+      "packageSHA256": "3722b30210616a13a3213ded11575ba6b2dbab10c32a5ef67afca8513e27017e",
+      "tscSHA256": "2219f428a7e55aaf1f7ad85b9b0f0cf5078aeb76ccc9a7c6036c92d48f492ffd"
+    },
+    "negativeCases": {
+      "negative": 10,
+      "web-negative": 3,
+      "import-negative": 11,
+      "web-dom-free-negative": 15
+    },
+    "positiveConsumers": 2,
+    "exactFileLineColumnCode": true,
+    "completeOneToOneMatching": true,
+    "structuralTypesAuthenticateObjects": false,
+    "diagnosticCoverageRepair": {
+      "finding": "S3D1-POLICY-01",
+      "red": {
+        "bytes": 6662,
+        "sha256": "e612ddadcbebd6c069a671b8e428b721a1caee780bd4d35644251bd9f2ee584c"
+      },
+      "redOriginalCandidateValidExit": 0,
+      "redOriginalCandidateDuplicateExit": 0,
+      "actualDistinctDOMDiagnostics": 15,
+      "mutantUniqueExpectedTuples": 14,
+      "green": {
+        "bytes": 8667,
+        "sha256": "4ad003f0c7eeb20cf2f40d90eee3afd923e8a146f9441fa22f803d640d29da56"
+      },
+      "genuineExit": 0,
+      "assignedRefusals": 3,
+      "inputsUnchanged": true,
+      "originalFailurePreserved": true
+    }
+  },
+  "policy": {
+    "status": "PASS",
+    "counts": {
+      "tests": 238,
+      "pass": 238,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "receipt": {
+      "identity": {
+        "bytes": 1845,
+        "sha256": "4946f0f45f7649e1c5812be50ef439ab2ea11f4070c42be9825f892684cca547"
+      },
+      "executions": [
+        {
+          "name": "callable-controls",
+          "startedAtUtc": "2026-10-11T20:24:05.2711823Z",
+          "finishedAtUtc": "2026-10-11T20:24:06.4519150Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "2e35a00588f474498726f294a08f6f0cea7c8c462cff07a2f48c5a4270aadb0a",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "retained-and-new-boundaries",
+          "startedAtUtc": "2026-10-11T20:24:06.4718192Z",
+          "finishedAtUtc": "2026-10-11T20:26:56.8726618Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "deb74f7ef9676073a8e9738095c8d4857def84d79f14777ec49f9e5e28c61a7d",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "retainedControlsPreserved": true,
+    "newAssignedMutants": 16,
+    "scope": "Canonical baseline first, then mapped predecessor/amended baseline and sixteen assigned new refusals; retained controls keep original reasons. Finite exact source/emit/declaration graph and cold evaluation policy, not a general security sandbox."
+  },
+  "native": {
+    "status": "PASS_FIXED_HEADLESS_DESKTOP_PUBLIC_ROUTE",
+    "driver": {
+      "identity": {
+        "bytes": 2703,
+        "sha256": "c9c6a2aa8acb02f7d2980f0e7349deb1060773828f9ef9ab74fa2391a3b6fd05"
+      },
+      "executions": [
+        {
+          "name": "adopt",
+          "startedAtUtc": "2026-10-11T20:09:47.5402813Z",
+          "finishedAtUtc": "2026-10-11T20:09:47.6903598Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "075ae8c3c74e363293c8a69c4ff68eb597f621cdfb7797e02c123bb81a9f207f",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "native-unit",
+          "startedAtUtc": "2026-10-11T20:09:47.7090385Z",
+          "finishedAtUtc": "2026-10-11T20:09:49.1242817Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "0e29ae7ccc9d9ff06d7eb85bab92f6555ce49fd0173cb63c2ab20009aefd692f",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "native",
+          "startedAtUtc": "2026-10-11T20:09:49.1305620Z",
+          "finishedAtUtc": "2026-10-11T20:09:53.1060216Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "b9dfc1102fb8e334f43689a01d2b3082cbf8f36875358004a71913746307c2da",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "resultIdentity": {
+      "bytes": 559065,
+      "sha256": "da8d342144a16553601fe9f652e785a7a37c279e549b895d20fd645717f3789c"
+    },
+    "sourceHost": {
+      "path": "packages/engine/web/WebGPUHost.ts",
+      "bytes": 74888,
+      "sha256": "2679e634e35c3841daa499f59cb3279087b33245267af187ae78995a29019c72"
+    },
+    "emittedHost": {
+      "path": "packages/engine/dist/web/WebGPUHost.js",
+      "bytes": 69611,
+      "sha256": "42cf076d3930bcaf4e599b91974685e736590f22b81a038a713b5d9ca1fb0d98"
+    },
+    "browser": "154.0.4258.62",
+    "node": "24.19.0",
+    "playwright": "1.62.1",
+    "typescript": "7.0.2",
+    "headless": true,
+    "callerAddedFlags": [],
+    "originalSchedule": {
+      "baselines": 7,
+      "controls": 5,
+      "renders": 11,
+      "baselinePixelComparisons": 8214,
+      "originalOracleSHA256": "a4e4bff613e7968714d4266e6575c8016e7be5900cae685407d0e957a7c36652"
+    },
+    "supplementarySchedule": {
+      "baselines": 2,
+      "controls": 1,
+      "renders": 3,
+      "baselinePixelComparisons": 14,
+      "cases": [
+        "S1",
+        "S2",
+        "SN1"
+      ]
+    },
+    "rawRGBABuffers": 14,
+    "rawRGBABytes": 229376,
+    "independentLiteralBufferComparison": true,
+    "N4ActualCompileValidationStartupRefusalAndZeroSubmit": true,
+    "requestDescriptors": 878,
+    "observedClosureModules": 93,
+    "lifecycle": {
+      "browserClosed": true,
+      "contextClosed": true,
+      "serverClosed": true,
+      "identitiesStable": true,
+      "cleanupScope": "standalone-cooperative-api",
+      "osDescendantRetirement": "UNBOUND",
+      "pendingApiOperations": 0,
+      "unsettledAcquisitions": [],
+      "standaloneCleanupObserved": true,
+      "rawSaved": true
+    },
+    "scope": "Real desktop-browser compilation/readback only; no hardware acceleration, physical display, phone, SDK, font, DragonBones, performance or full texture acceptance.",
+    "interactiveExampleRuntime": "PENDING"
+  },
+  "independentReviews": {
+    "core": {
+      "bytes": 10975,
+      "sha256": "13925939bf07976b8f7eb987e9849fd96ffbb7c2dd169774907863534dcb503a"
+    },
+    "policyOriginalNeedsRepair": {
+      "bytes": 16771,
+      "sha256": "7cff0814526cabe4d0a36c6847a58189c013638fc6e2d7244195fb86098e364d"
+    },
+    "diagnosticRepair": {
+      "bytes": 19989,
+      "sha256": "ad900863fe78796fb88b1f56534c0b8bbf1cec1725d8b43bfb788b9732814050"
+    },
+    "nativeSource": {
+      "bytes": 18716,
+      "sha256": "65080fbb3f618927f24acd267e7c710c742332ed58523d2d712f7eb887298868"
+    },
+    "nativeActual": {
+      "bytes": 57912,
+      "sha256": "d4c2ee4cafb7736c05cad7da361013b9fc05421bb39aadd86b7385705d909619"
+    },
+    "initialBilingualDocuments": {
+      "bytes": 14913,
+      "sha256": "73dfc66df184c3df1278e482b2600e78a3832d0f1058647dbb792b0ce5018db0"
+    },
+    "sourceReviewIsRuntimePass": false,
+    "rawReviewArtifactsDistributed": false
+  },
+  "setupFailureRetained": {
+    "driver": {
+      "identity": {
+        "bytes": 910,
+        "sha256": "92162a2000619f80140e3af7b2ff26a4c99a41e44757a3151f60789892cea1f8"
+      },
+      "executions": [
+        {
+          "name": "adopt",
+          "startedAtUtc": "2026-10-11T20:09:07.7356829Z",
+          "finishedAtUtc": "2026-10-11T20:09:07.8006619Z",
+          "exitCode": 1,
+          "timeout": false,
+          "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderrSHA256": "dc4307c87d16fd0add341ecd6bc629c67ae55ab8609157036d542c624e6455bf"
+        }
+      ]
+    },
+    "scope": "Root private adoption helper expected a top-level reviewedFiles field; actual sealed report stored it under review. Refused before any public write. Exact schema/pins corrected without changing independent review or product."
+  },
+  "priorDelivery": {
+    "engineeringLabel": "0.31.0",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/18",
+    "sourceHead": "b95beee49a216f00085402f54d2e1f8ee40b5aaa",
+    "mergedMain": "b4062e134af7b923ab6c2c16381004bc1c62ee3c",
+    "tree": "5bf7e05cf88e15ca66d1b8b6e26e2c442cbfcf7a",
+    "mandatoryPushHook": "ACTUAL_PASS",
+    "coreTests": 2441,
+    "publicationTests": 63,
+    "localRemoteMainReadbackAtUtc": "2026-10-11T19:43:24.561Z",
+    "remoteStatusCount": 0,
+    "remoteCheckCount": 0,
+    "remoteCIPassClaimed": false,
+    "scope": "Observed prior delivery successor; preserves RG1 earlier pending cutoffs."
+  },
+  "origin": {
+    "implementation": "Independently authored AI-assisted Egret facades, fixtures, finite engineering guards and paired public explanations under Apache-2.0.",
+    "newRuntimeDependencies": [],
+    "newExternalAssets": []
+  },
+  "limits": {
+    "interactiveExampleRuntime": "PENDING",
+    "physicalMobileDevices": false,
+    "nativeSDK": false,
+    "CJKPerformance": false,
+    "fullSpineR020V020": "PENDING",
+    "mutableSceneGraph": false,
+    "cameraPose": false,
+    "materialsLighting": false,
+    "glTFImport": false,
+    "skinningCharacters": false,
+    "transparentSorting": false,
+    "fullUI": false,
+    "full3D": false,
+    "completeMigration": false,
+    "performanceLeadership": false,
+    "hardwareAcceleration": "UNBOUND",
+    "physicalDisplay": "UNBOUND",
+    "osDescendantRetirement": "UNBOUND",
+    "productionReadiness": false
+  },
+  "fullVerification": "PENDING_AT_PRECOMMIT_METADATA_CUTOFF",
+  "publicationStructure": "PENDING_AT_PRECOMMIT_METADATA_CUTOFF",
+  "independentFinalBilingualMeaningReview": "PENDING",
+  "mandatoryGitPushHook": "PENDING",
+  "remoteDelivery": "PENDING",
+  "remoteCIPassClaimed": false,
+  "publicationGateFirstAttempt": {
+    "status": "ACTUAL_STRUCTURAL_TRANSLATION_TITLE_REFUSAL_BEFORE_CODE_GATE",
+    "receipt": {
+      "bytes": 746,
+      "sha256": "fef23699fa2c90041298477073ef52d53c183bca193cea9f10102ec0bb89b62d"
+    },
+    "startedAtUtc": "2026-10-11T20:33:52.1344069Z",
+    "finishedAtUtc": "2026-10-11T20:33:52.4956149Z",
+    "exitCode": 1,
+    "timeout": false,
+    "stderrSHA256": "10a66c6946baeb9144fd55693d3018126b3fd0f4f5113709d5f1e4de10f79058",
+    "issue": "parity numerical prose: knowledge-base/Cns/registry/交付.json.items.34.title",
+    "repair": "English V036 title retains the Chinese 3D identifier; no guard or product change. Derived localization/provenance identities refreshed.",
+    "fullCurrentAfterRepair": "PENDING"
+  },
+  "retainedIntegrationSuccessor": {
+    "observedAtUtc": "2026-10-11T21:02:52.438Z",
+    "status": "RETAINED_TARGETED_GREEN_AND_FRESH_FIXED_NATIVE_OBSERVED_FULL_SUCCESSOR_PENDING",
+    "failedFullGate": {
+      "receipt": {
+        "identity": {
+          "bytes": 752,
+          "sha256": "c2cc37516ba74c26fda7b187ec70e60f13204d30386f903dae3b5b19da7b2d07"
+        },
+        "executions": [
+          {
+            "name": "complete-prepush",
+            "startedAtUtc": "2026-10-11T20:35:10.1276561Z",
+            "finishedAtUtc": "2026-10-11T20:38:40.2162438Z",
+            "exitCode": 1,
+            "timeout": false,
+            "stdoutSHA256": "2c8787553f1eed39cc523057a4f10763f30f3ba70a1097ee445b78fac32a6e52",
+            "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      },
+      "counts": {
+        "publicationTests": 63,
+        "publicationPassed": 63,
+        "coreTests": 2499,
+        "corePassed": 2497,
+        "coreFailed": 2
+      },
+      "assignedFailures": [
+        {
+          "test": "actual package copies with one contracts identity bridge preserve approved renderer entries",
+          "reason": "scene3d: original module identity mismatch: isMeshGeometry3D"
+        },
+        {
+          "test": "S01 browser alias and B1 source exception are exact",
+          "reason": "one literal exception before generic engine source mapping"
+        }
+      ]
+    },
+    "focusedRed": {
+      "identity": {
+        "bytes": 3220,
+        "sha256": "9527400da3313971d2cee216a3b9d95d22d679d4c36629c6d70e7b1d1c04481f"
+      },
+      "inputsUnchanged": true,
+      "cases": [
+        {
+          "id": "project-canonical-copy",
+          "startedAtUtc": "2026-10-11T20:42:13.481Z",
+          "finishedAtUtc": "2026-10-11T20:42:15.957Z",
+          "exitCode": 1,
+          "timeout": false,
+          "assigned": "scene3d: original module identity mismatch: isMeshGeometry3D",
+          "stdout": {
+            "bytes": 1926,
+            "sha256": "6e530dbf1401197dee926ca2dcc839c03fd472977ecf71b62d6156e095348b4f"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "id": "retained-registry-source-policy",
+          "startedAtUtc": "2026-10-11T20:42:15.963Z",
+          "finishedAtUtc": "2026-10-11T20:42:16.069Z",
+          "exitCode": 1,
+          "timeout": false,
+          "assigned": "one literal exception before generic engine source mapping",
+          "stdout": {
+            "bytes": 981,
+            "sha256": "6a9c49e8e65247f5292cbfa06cc99a7e0ee1a84c5f9283dbc8f5f41ee84fca80"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      ]
+    },
+    "repairs": [
+      {
+        "path": "tests/project-boundaries.test.mjs",
+        "bytes": 13797,
+        "sha256": "7cb845862ba8d489a904dc88dc749efec1c0d4e881605843b453eccc4aed9f11",
+        "scope": "Owned copied-package fixture bridges exactly two identity-bearing modules to its unchanged canonical package. Existing negative controls and owned package bytes remain unchanged."
+      },
+      {
+        "path": "tools/verify-webgpu-b1.mjs",
+        "bytes": 48108,
+        "sha256": "075b34b38bd46c666c461ca8a19b2a4b5b2318b3680d5fbf9b1e6224a8622652",
+        "scope": "Restores the retained exact texturedFrameState mapping and adds only the required exact textFieldFactoryState mapping before generic engine mapping. The retained S01 test is unchanged."
+      }
+    ],
+    "targetedGreen": {
+      "receipt": {
+        "identity": {
+          "bytes": 912,
+          "sha256": "2a9d545706ec64de0ce5808e5ab02364fc46ef134779dc303d20034302468ebd"
+        },
+        "executions": [
+          {
+            "name": "retained-targeted-suites",
+            "startedAtUtc": "2026-10-11T20:52:52.5542426Z",
+            "finishedAtUtc": "2026-10-11T20:53:44.7854180Z",
+            "exitCode": 0,
+            "timeout": false,
+            "stdoutSHA256": "5f25d2d536fae8e29c2037cfa0e26ba8ac344037bcc28a965b759adec7b4aef7",
+            "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      },
+      "counts": {
+        "tests": 161,
+        "pass": 161,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    "freshNative": {
+      "receipt": {
+        "identity": {
+          "bytes": 1109,
+          "sha256": "508dcddca25eed38288e3b880553a0b4fffc634f4527eab4f939dd4dd3aeba2f"
+        },
+        "executions": [
+          {
+            "name": "native-after-exact-mapping",
+            "startedAtUtc": "2026-10-11T20:52:52.7050801Z",
+            "finishedAtUtc": "2026-10-11T20:52:57.1131209Z",
+            "exitCode": 0,
+            "timeout": false,
+            "stdoutSHA256": "b9dfc1102fb8e334f43689a01d2b3082cbf8f36875358004a71913746307c2da",
+            "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      },
+      "resultIdentity": {
+        "bytes": 559065,
+        "sha256": "105fae2d01f406c34e98b88ea7da5ee40f1cec43a507c3c735ff03b0dc1cf6ff"
+      },
+      "collector": {
+        "path": "tools/verify-webgpu-b1.mjs",
+        "bytes": 48108,
+        "sha256": "075b34b38bd46c666c461ca8a19b2a4b5b2318b3680d5fbf9b1e6224a8622652"
+      },
+      "status": "PASS",
+      "browser": "154.0.4258.62",
+      "originalSchedule": [
+        7,
+        5,
+        11,
+        8214
+      ],
+      "supplementarySchedule": [
+        2,
+        1,
+        3,
+        14
+      ],
+      "rawBuffers": 14,
+      "rawRGBABytes": 229376,
+      "independentSavedEvidenceReview": {
+        "bytes": 16395,
+        "sha256": "9d26863144c2e849112f7a2e1b2352dbad5b9cf00a017179d123c681208fbf8f"
+      },
+      "scope": "Fresh execution after the changed collector, not reuse of the initial collector PASS. Product sources, original oracle and finite schedules remain unchanged; interactive example and physical mobile/native SDK acceptance remain pending."
+    },
+    "independentReviews": {
+      "projectFixture": {
+        "bytes": 13877,
+        "sha256": "185e60f8ba6a3e43fa203613165559d2e63fb93d9f99e604e73eff680488b1be"
+      },
+      "nativeMapping": {
+        "bytes": 9262,
+        "sha256": "b6b2b3605b15bcef1bda205bc971ca6129fd1935664b2fe21266b1d9b27c5a4c"
+      },
+      "nativeActual": {
+        "bytes": 16395,
+        "sha256": "9d26863144c2e849112f7a2e1b2352dbad5b9cf00a017179d123c681208fbf8f"
+      }
+    },
+    "retainedControlsPreserved": true,
+    "productAlgorithmsChanged": false,
+    "historicalFailuresPreserved": true,
+    "fullCurrent": "PENDING_AT_THIS_SUCCESSOR_CUTOFF",
+    "mandatoryGitPushHook": "PENDING",
+    "remoteDelivery": "PENDING",
+    "remoteCIPassClaimed": false
+  },
+  "initialEvidenceScope": {
+    "preparedAtUtc": "2026-10-11T20:33:27.921Z",
+    "selectedEngineeringInputs": "Preserved initial precommit source snapshot, not current post-repair source inventory.",
+    "native": "Preserved initial native execution at collector f9b810295eba0e801274756ecd582264f6d0f1176172d83aa0076dc3d8805776; its PASS does not accept later collector bytes.",
+    "currentCollector": "075b34b38bd46c666c461ca8a19b2a4b5b2318b3680d5fbf9b1e6224a8622652",
+    "currentCollectorAcceptance": "retainedIntegrationSuccessor.freshNative and its independently sealed saved-evidence review"
+  }
+}

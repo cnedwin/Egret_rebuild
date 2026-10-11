@@ -12,6 +12,14 @@
       "types": "./dist/web/webgpu.d.ts",
       "import": "./dist/web/webgpu.js"
     },
+    "./scene3d": {
+      "types": "./dist/rendering/scene3d.d.ts",
+      "import": "./dist/rendering/scene3d.js"
+    },
+    "./webgpu/scene3d": {
+      "types": "./dist/web/scene3d.d.ts",
+      "import": "./dist/web/scene3d.js"
+    },
     "./web": {
       "types": "./dist/web/index.d.ts",
       "import": "./dist/web/index.js"

@@ -2,6 +2,18 @@
 
 English | [简体中文](../../Cns/docs/工程规划.md)
 
+<!-- S3D1-DOC-0.32.0-BEGIN -->
+## Bounded public scene checkpoint: 0.32.0 (S3D1)
+
+Verified implementation: public behavior **35/35**, boundaries **238/238**, **2** positive type consumers and **10 + 3 + 11 + 15** exact negative diagnostics pass. Retained integration checks **161/161** and fresh fixed headless Edge composition pass after independently reviewed repairs. Full final publication and current delivery remain pending at this curation cutoff; the linked scene contract records exact scopes and successors.
+
+**Initial source/API observation (historical cutoff):**
+
+The [public scene contract](public-scene3d-contract.md) bounds this increment to authenticated immutable procedural geometry, camera-space scene capture and explicit browser scene/ordered screen-UI composition. Independently designed interfaces reuse current first-party algorithms; there is no new mutable scene graph, asset importer, material/lighting system, character or Spine implementation. Three-file adoption, build and interface GREEN at **2026-10-11 19:54:25–19:54:26 UTC** confirm source/API reachability only. Behavior, types, policy, native and final acceptance/delivery are **PENDING**. Full UI/3D, animation, creator/editor/migration/publishing, phones, Native SDKs and performance keep their existing separate exit gates.
+
+The delivered **0.31.0** successor was merged through [PR #18](https://github.com/cnedwin/Egret_rebuild/pull/18) to Main `b4062e134af7b923ab6c2c16381004bc1c62ee3c`, tree `5bf7e05cf88e15ca66d1b8b6e26e2c442cbfcf7a`. Historical design, implementation and verification cutoffs below remain intact; this bounded public-interface increment neither accepts nor removes the complete engineering-plan obligations.
+<!-- S3D1-DOC-0.32.0-END -->
+
 ## Requirement amendment — 2026-10-10: Spine
 
 The mandatory R020 / V020 work package proceeds through SP1 version/rights/feature inventory, SP2 resources/instances/events, SP3 ordered WebGPU/WebGL composition/recovery, and SP4 creator/migration/host acceptance. Start version-correct Spine semantic and visual fixtures before fixing animation interfaces. V020 is planned, implementation not_started, acceptance not_run; no time or performance budget is committed. The existing product dependency sets remain unchanged. See the [Spine work packages](spine-animation-support-and-acceptance.md).

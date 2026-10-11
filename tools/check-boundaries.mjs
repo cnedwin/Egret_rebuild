@@ -46,6 +46,10 @@ for (const [name, allowed] of Object.entries(expected)) {
       './web': {types:'./dist/web/index.d.ts',import:'./dist/web/index.js'},
       './text': {types:'./dist/text.d.ts',import:'./dist/text.js'},
       './web/text': {types:'./dist/web/text.d.ts',import:'./dist/web/text.js'},
+      // S3D1_MAP_BEGIN
+      './scene3d': {types:'./dist/rendering/scene3d.d.ts',import:'./dist/rendering/scene3d.js'},
+      './webgpu/scene3d': {types:'./dist/web/scene3d.d.ts',import:'./dist/web/scene3d.js'},
+      // S3D1_MAP_END
     };
     if (JSON.stringify(Object.keys(pkg.exports ?? {}).sort()) !== JSON.stringify(Object.keys(textExports).sort())
         || Object.entries(textExports).some(([entry, mapping]) => JSON.stringify(pkg.exports[entry]) !== JSON.stringify(mapping)))
@@ -732,5 +736,1351 @@ for (const name of ['assetGroup', 'assetGroupTypes']) for (const [directory, suf
       || /\/\/\/\s*<reference\s+(?:lib\s*=\s*['"]dom(?:\.iterable)?['"]|types\s*=\s*['"]node['"])/i.test(raw)) throw new Error(`${file}: host ambient dependency`);
 }
 // RG1_BOUNDARY_END
+// S3D1_BOUNDARY_BEGIN
+// Separate explicit entries do not exempt any earlier private authority guard.
+const sceneCPUValues = ['createMeshGeometry3D','isMeshGeometry3D','MeshGeometry3DError','getMeshGeometry3DErrorOrigin','createSceneFrame3D','isSceneFrame3D','Scene3DError','getScene3DErrorOrigin'];
+const sceneCPUTypes = ['Matrix4','MeshGeometry3DInput','MeshGeometry3D','MeshGeometry3DErrorCode','MeshGeometry3DErrorOrigin','SceneProjectionInput3D','SceneDrawInput3D','SceneInput3D','SceneDraw3D','SceneFrame3D','Scene3DErrorCode','Scene3DErrorOrigin'];
+const sceneWebTypes = ['SceneWebGPUHostOptions','SceneWebGPUHostStatus','SceneWebGPUHost'];
+const sceneRead = file => assetGroupStrip(readFileSync(path.join(root,file),'utf8'));
+const sceneEqual = (a,b) => JSON.stringify([...a].sort()) === JSON.stringify([...b].sort());
+function sceneExports(code, label) {
+  const value = [], type = [];
+  if (/\bexport\s*(?:type\s*)?\*/.test(code) || /\bexport\s+default\b/.test(code)) throw new Error(label + ': exact type-only export surface mismatch');
+  for (const match of code.matchAll(/\bexport(\s+type)?\s*\{([^}]+)\}(?:\s*from\s*['"]([^'"]+)['"])?\s*;?/g)) {
+    for (const name of match[2].split(',').map(name=>name.trim()).filter(Boolean)) {
+      if (!/^\w+$/.test(name)) throw new Error(label + ': exact type-only export surface mismatch');
+      (match[1] ? type : value).push(name);
+    }
+  }
+  for (const match of code.matchAll(/\bexport\s+(?:declare\s+)?(type|interface|function|const|class|enum)\s+(\w+)/g))
+    (['type','interface'].includes(match[1]) ? type : value).push(match[2]);
+  return {value,type};
+}
+function sceneSurface(code, label, expectedValues, expectedTypes) {
+  const names=sceneExports(code,label);
+  if (!sceneEqual(names.value,expectedValues)) throw new Error(label + ': exact runtime export surface mismatch');
+  if (!sceneEqual(names.type,expectedTypes)) throw new Error(label + ': exact type-only export surface mismatch');
+}
+function sceneClauses(code, label, allowed) {
+  // Direct quoted static clauses only. A computed/dynamic edge has no permission
+  // on either facade, even when it would resolve into the same private subtree.
+  if (/\bimport\s*\(/.test(code)) throw new Error('S3D1: scene entry imported outside approved closure: '+label);
+  for (const match of code.matchAll(/\b(import|export)(\s+type)?\s*\{([^}]+)\}\s*from\s*['"]([^'"]+)['"]\s*;?/g)) {
+    const kind=match[2]?'type':'value',rule=allowed[match[4]]?.[kind];
+    const names=match[3].split(',').map(name=>name.trim().split(/\s+as\s+/)[0]).filter(Boolean);
+    if (!rule || names.some(name=>!rule.includes(name)) || new Set(names).size!==names.length)
+      throw new Error('S3D1: scene entry imported outside approved closure: '+label);
+  }
+  const stripped=code.replace(/\b(?:import|export)(?:\s+type)?\s*\{[^}]+\}\s*from\s*['"][^'"]+['"]\s*;?/g,'');
+  if (/\bimport\b|\bfrom\s*['"]/.test(stripped)) throw new Error('S3D1: scene entry imported outside approved closure: '+label);
+}
+function sceneForward(code, name, target, parameter, label) {
+  const imports=[...code.matchAll(/\bimport\s*\{([^}]+)\}\s*from\s*['"]([^'"]+)['"]\s*;?/g)]
+    .filter(match=>match[2]===target).flatMap(match=>match[1].split(',').map(value=>value.trim().split(/\s+as\s+/)));
+  const forwardName=name==='createSceneWebGPUHost'?'createB1WebGPUHost':name;
+  const importsForFactory=imports.filter(parts=>parts[0]===forwardName);
+  if (importsForFactory.length!==1) throw new Error(label+': exact direct factory forwarding mismatch');
+  const local=importsForFactory[0][1]??importsForFactory[0][0];
+  const functions=[...code.matchAll(new RegExp('export\\s+function\\s+'+name+'\\s*\\(\\s*'+parameter+'(?:\\s*:[^)]*)?\\s*\\)(?:\\s*:[^{]+)?\\s*\\{([^}]*)\\}','g'))];
+  if (functions.length!==1 || functions[0][1].replace(/\s+/g,'')!=='return'+local+'('+parameter+');')
+    throw new Error(label+': exact direct factory forwarding mismatch');
+}
+function sceneOnlyProgram(code,kind,factories,localTypes,label) {
+  let rest=code.replace(/\b(?:import|export)(?:\s+type)?\s*\{[^}]+\}\s*from\s*['"][^'"]+['"]\s*;?/g,'');
+  for(const [name,signature,body]of localTypes) {
+    const match=rest.match(new RegExp('export\\s+(?:declare\\s+)?'+signature+'\\s*'+name+'\\b[^\\{;]*(?:\\{([^}]*)\\}|=([^;]+);)'));
+    if(!match || (match[1]??match[2]).replace(/\s+/g,'')!==body)throw new Error(label+': canonical authoring/Host type mismatch: '+name);
+    rest=rest.replace(match[0],'');
+  }
+  for(const [name,inputType,outputType,parameter]of factories) {
+    const expression=kind==='emitted'
+      ? 'export\\s+function\\s+'+name+'\\s*\\(\\s*'+parameter+'\\s*\\)\\s*\\{[^}]*\\}'
+      : kind==='declaration'
+      ? 'export\\s+declare\\s+function\\s+'+name+'\\s*\\(\\s*'+parameter+'\\s*:\\s*'+inputType+'\\s*\\)\\s*:\\s*'+outputType+'\\s*;'
+      : 'export\\s+function\\s+'+name+'\\s*\\(\\s*'+parameter+'\\s*:\\s*'+inputType+'\\s*\\)\\s*:\\s*'+outputType+'\\s*\\{[^}]*\\}';
+    const match=rest.match(new RegExp(expression));if(!match)throw new Error(label+': exact direct factory signature mismatch: '+name);
+    rest=rest.replace(match[0],'');
+  }
+  if(rest.trim())throw new Error('S3D1: facade contains non-forwarding module code: '+label);
+}
+function sceneCanonicalTypeReexports(code,label) {
+  const targets={Matrix4:'./matrix4.js',MeshGeometry3D:'./meshGeometry3D.js',MeshGeometry3DErrorCode:'./meshGeometry3D.js',MeshGeometry3DErrorOrigin:'./meshGeometry3D.js'};
+  for(const name of ['SceneProjectionInput3D','SceneDrawInput3D','SceneInput3D','SceneDraw3D','SceneFrame3D','Scene3DErrorCode','Scene3DErrorOrigin'])targets[name]='./sceneFrame3D.js';
+  const exports=[...code.matchAll(/\bexport\s+type\s*\{([^}]+)\}\s*from\s*['"]([^'"]+)['"]\s*;?/g)]
+    .flatMap(match=>match[1].split(',').map(name=>({name:name.trim(),target:match[2]})).filter(item=>item.name));
+  for(const [name,target]of Object.entries(targets)) {
+    const found=exports.filter(item=>item.name===name);
+    if(found.length!==1 || found[0].target!==target)throw new Error(label+': exact canonical type re-export mismatch: '+name);
+  }
+}
+const sceneCPU=await import('@egret/engine/scene3d');
+const sceneWeb=await import('@egret/engine/webgpu/scene3d');
+if (!sceneEqual(Object.keys(sceneCPU),sceneCPUValues)) throw new Error('scene3d: exact runtime export surface mismatch');
+if (!sceneEqual(Object.keys(sceneWeb),['createSceneWebGPUHost'])) throw new Error('webgpu/scene3d: exact runtime export surface mismatch');
+const sceneCPURules={
+  './matrix4.js':{type:['Matrix4']},
+  './meshGeometry3D.js':{value:['createMeshGeometry3D','isMeshGeometry3D','MeshGeometry3DError','getMeshGeometry3DErrorOrigin'],type:['MeshGeometry3D','MeshGeometry3DErrorCode','MeshGeometry3DErrorOrigin']},
+  './sceneFrame3D.js':{value:['createSceneFrame3D','isSceneFrame3D','Scene3DError','getScene3DErrorOrigin'],type:['SceneProjectionInput3D','SceneDrawInput3D','SceneInput3D','SceneDraw3D','SceneFrame3D','Scene3DErrorCode','Scene3DErrorOrigin']},
+};
+const sceneWebTypeRules={
+  '@egret/contracts':{type:['RenderFrame2D']},
+  '../rendering/scene3d.js':{type:['SceneFrame3D']},
+  './webgpu.js':{type:['WebGPUHost','WebGPUHostOptions','WebGPUHostStatus']},
+};
+for (const [label,file,kind] of [['scene3d source','packages/engine/rendering/scene3d.ts','source'],['scene3d','packages/engine/dist/rendering/scene3d.d.ts','declaration'],['scene3d emitted','packages/engine/dist/rendering/scene3d.js','emitted']]) {
+  const code=sceneRead(file);
+  sceneSurface(code,label,sceneCPUValues,kind==='emitted'?[]:sceneCPUTypes);
+  sceneClauses(code,label,sceneCPURules);
+  if (kind!=='declaration') {
+    sceneForward(code,'createMeshGeometry3D','./meshGeometry3D.js','input',label);
+    sceneForward(code,'createSceneFrame3D','./sceneFrame3D.js','input',label);
+  }
+  if(kind!=='emitted')sceneCanonicalTypeReexports(code,label);
+  sceneOnlyProgram(code,kind,[['createMeshGeometry3D','MeshGeometry3DInput','MeshGeometry3D','input'],['createSceneFrame3D','SceneInput3D','SceneFrame3D','input']],kind==='emitted'?[]:[['MeshGeometry3DInput','interface','readonlypositions:readonlynumber[];readonlycolors:readonlynumber[];readonlyindices:readonlynumber[];']],label);
+  if (kind==='emitted' && sceneCPUTypes.some(name=>new RegExp('\\b'+name+'\\b').test(code))) throw new Error('scene3d: type-only runtime erasure mismatch');
+}
+for (const [label,file,kind] of [['webgpu/scene3d source','packages/engine/web/scene3d.ts','source'],['webgpu/scene3d','packages/engine/dist/web/scene3d.d.ts','declaration'],['webgpu/scene3d emitted','packages/engine/dist/web/scene3d.js','emitted']]) {
+  const code=sceneRead(file);
+  if (kind==='declaration' && /\b(?:B1BuiltinProtocol|createB1WebGPUHostInternal|B1WebGPUHost|B1SceneStatus)\b|['"](?:\.\/b1|\.\/WebGPUHost|\.\.\/rendering\/sceneFrame3D)\.js['"]/.test(code))
+    throw new Error('webgpu/scene3d: private declaration dependency leaked');
+  sceneSurface(code,label,['createSceneWebGPUHost'],kind==='emitted'?[]:sceneWebTypes);
+  sceneClauses(code,label,{...sceneWebTypeRules,...(kind==='declaration'?{}:{'./b1.js':{value:['createB1WebGPUHost']}})});
+  if (kind!=='declaration') sceneForward(code,'createSceneWebGPUHost','./b1.js','options',label);
+  sceneOnlyProgram(code,kind,[['createSceneWebGPUHost','SceneWebGPUHostOptions','SceneWebGPUHost','options']],kind==='emitted'?[]:[
+    ['SceneWebGPUHostOptions','type','WebGPUHostOptions'],
+    ['SceneWebGPUHostStatus','interface','readonlyhost:WebGPUHostStatus;readonlypendingSceneBytes:number;readonlypendingUniformBytes:number;readonlypendingDepthBytes:number;'],
+    ['SceneWebGPUHost','interface','renderSceneFrame(scene:SceneFrame3D,overlay:RenderFrame2D):undefined;getSceneStatus():SceneWebGPUHostStatus;'],
+  ],label);
+  if (kind==='emitted' && [...sceneWebTypes,'SceneFrame3D','RenderFrame2D','WebGPUHostOptions','WebGPUHostStatus'].some(name=>new RegExp('\\b'+name+'\\b').test(code)))
+    throw new Error('webgpu/scene3d: type-only runtime erasure mismatch');
+}
+// Original module values, including origin registration and identity predicates,
+// cannot be replaced by a facade-local class/function with a matching shape.
+for (const [target,names] of [['meshGeometry3D',['isMeshGeometry3D','MeshGeometry3DError','getMeshGeometry3DErrorOrigin']],['sceneFrame3D',['isSceneFrame3D','Scene3DError','getScene3DErrorOrigin']]]) {
+  const original=await import(new URL('../packages/engine/dist/rendering/'+target+'.js',import.meta.url));
+  for (const name of names) if (sceneCPU[name]!==original[name]) throw new Error('scene3d: original module identity mismatch: '+name);
+}
+const sceneNewNames=['MeshGeometry3DInput','createSceneWebGPUHost',...sceneWebTypes];
+for (const [entry,values,emittedEntry] of [...textEntries,['project',projectFacade,'packages/project/dist/index']]) {
+  const text=[sceneRead(assetGroupSourceEntries[entry]),sceneRead(emittedEntry+'.js'),sceneRead(emittedEntry+'.d.ts')].join('\n');
+  for (const name of sceneNewNames) if (name in values || new RegExp('\\b'+name+'\\b').test(text)) throw new Error(entry+': explicit-only scene name leaked: '+name);
+}
+const sceneForbiddenNames=[...meshPrivate,...texturedPrivate,...privateTexturedGPU,...privateCapture,...privateCoordinates,...privateBounds,...assetGroupPublicTypes,'AssetGroupOperations',...assetGroupPrivateNames,'packMeshGeometry3D','PackedMeshGeometry3D','MeshPacking3DError','getMeshPacking3DErrorOrigin','B1BuiltinProtocol','getBuiltinB1Protocol','isBuiltinB1Protocol','createB1WebGPUHostInternal'];
+for (const [label,values,stem] of [['scene3d',sceneCPU,'packages/engine/dist/rendering/scene3d'],['webgpu/scene3d',sceneWeb,'packages/engine/dist/web/scene3d']]) {
+  const text=sceneRead(stem+'.d.ts')+'\n'+sceneRead(stem+'.js');
+  for (const name of sceneForbiddenNames) if (name in values || new RegExp('\\b'+name+'\\b').test(text)) throw new Error(label+': retained private authority leaked: '+name);
+}
+for (const file of [...files(path.join(root,'packages/engine/src')),...files(path.join(root,'packages/engine/rendering')),...files(path.join(root,'packages/engine/web')),...files(path.join(root,'packages/engine/dist'))]) {
+  if (!/\.(?:js|ts)$/.test(file)) continue;
+  const relative=path.relative(path.join(root,'packages/engine'),file).split(path.sep).join('/'),code=sceneRead(path.relative(root,file));
+  for (const match of code.matchAll(/\b(?:from\s*|import\s*\(\s*|import\s*)['"]([^'"]+)['"]/g)) {
+    if (!match[1].startsWith('.')) continue;
+    const target=path.relative(path.join(root,'packages/engine'),path.resolve(path.dirname(file),match[1])).split(path.sep).join('/');
+    if (!['rendering/scene3d.js','dist/rendering/scene3d.js','web/scene3d.js','dist/web/scene3d.js'].includes(target)) continue;
+    const typeHost=['web/scene3d.ts','dist/web/scene3d.d.ts'].includes(relative) && ['rendering/scene3d.js','dist/rendering/scene3d.js'].includes(target);
+    const before=code.slice(0,match.index);
+    if (!typeHost || !/\bimport\s+type\s*\{\s*SceneFrame3D\s*\}\s*$/.test(before)) throw new Error('S3D1: scene entry imported outside approved closure: '+relative);
+  }
+}
+const sceneLiteralClosure = {
+  "packages/engine/rendering/sceneFrame3D.ts": [
+    [
+      "static",
+      "./matrix4.js"
+    ],
+    [
+      "static",
+      "./matrix4.js"
+    ],
+    [
+      "static",
+      "./meshGeometry3D.js"
+    ],
+    [
+      "static",
+      "./meshGeometry3D.js"
+    ],
+    [
+      "static",
+      "./projection3D.js"
+    ]
+  ],
+  "packages/engine/rendering/meshGeometry3D.ts": [],
+  "packages/engine/web/b1.ts": [
+    [
+      "static",
+      "../rendering/packMeshGeometry3D.js"
+    ],
+    [
+      "static",
+      "../rendering/sceneFrame3D.js"
+    ],
+    [
+      "static",
+      "../rendering/sceneFrame3D.js"
+    ],
+    [
+      "static",
+      "./WebGPUHost.js"
+    ],
+    [
+      "static",
+      "./WebGPUHost.js"
+    ],
+    [
+      "static",
+      "./webgpuMeshPass.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/engine/rendering/matrix4.ts": [],
+  "packages/engine/rendering/projection3D.ts": [
+    [
+      "static",
+      "./matrix4.js"
+    ],
+    [
+      "static",
+      "./matrix4.js"
+    ]
+  ],
+  "packages/engine/rendering/packMeshGeometry3D.ts": [
+    [
+      "static",
+      "./meshGeometry3D.js"
+    ]
+  ],
+  "packages/engine/web/WebGPUHost.ts": [
+    [
+      "dynamic",
+      "./b1.js"
+    ],
+    [
+      "static",
+      "../rendering/admitTexturedFrame2D.js"
+    ],
+    [
+      "static",
+      "../rendering/copyFrame2D.js"
+    ],
+    [
+      "static",
+      "../rendering/copyMixedFrame2D.js"
+    ],
+    [
+      "static",
+      "../rendering/ownedPreparationFailure2D.js"
+    ],
+    [
+      "static",
+      "../rendering/packImageVertices2D.js"
+    ],
+    [
+      "static",
+      "../rendering/packTexturedMesh2D.js"
+    ],
+    [
+      "static",
+      "../rendering/prepareMixedDraws2D.js"
+    ],
+    [
+      "static",
+      "../rendering/prepareRectangles2D.js"
+    ],
+    [
+      "static",
+      "../rendering/prepareTexturedDraws2D.js"
+    ],
+    [
+      "static",
+      "../rendering/texturedPreparationBudget2D.js"
+    ],
+    [
+      "static",
+      "./b1.js"
+    ],
+    [
+      "static",
+      "./imageProjections2D.js"
+    ],
+    [
+      "static",
+      "./imageProjections2D.js"
+    ],
+    [
+      "static",
+      "./imageProjections2D.js"
+    ],
+    [
+      "static",
+      "./prepareTexturedSubmission2D.js"
+    ],
+    [
+      "static",
+      "./prepareTexturedSubmission2D.js"
+    ],
+    [
+      "static",
+      "./texturedWebGPUOptions.js"
+    ],
+    [
+      "static",
+      "./texturedWebGPUOptions.js"
+    ],
+    [
+      "static",
+      "./texturedWebGPUOptions.js"
+    ],
+    [
+      "static",
+      "./webgpuImagePass.js"
+    ],
+    [
+      "static",
+      "./webgpuLifetime.js"
+    ],
+    [
+      "static",
+      "./webgpuLifetime.js"
+    ],
+    [
+      "static",
+      "./webgpuPass.js"
+    ],
+    [
+      "static",
+      "./webgpuTexturedPass.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "#egret-textured-frame-state"
+    ]
+  ],
+  "packages/engine/web/webgpuMeshPass.ts": [],
+  "packages/engine/rendering/admitTexturedFrame2D.ts": [
+    [
+      "static",
+      "./ownedPreparationFailure2D.js"
+    ],
+    [
+      "static",
+      "./prepareRectangles2D.js"
+    ],
+    [
+      "static",
+      "./prepareTexturedDraws2D.js"
+    ],
+    [
+      "static",
+      "./texturedPreparationBudget2D.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/engine/rendering/copyFrame2D.ts": [
+    [
+      "static",
+      "./RectangleFrame2D.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/engine/rendering/copyMixedFrame2D.ts": [
+    [
+      "static",
+      "./copyFrame2D.js"
+    ],
+    [
+      "static",
+      "./copyFrame2D.js"
+    ],
+    [
+      "static",
+      "./imageFrameBudget.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/engine/rendering/ownedPreparationFailure2D.ts": [],
+  "packages/engine/rendering/packImageVertices2D.ts": [
+    [
+      "static",
+      "./ownedPreparationFailure2D.js"
+    ],
+    [
+      "static",
+      "./packedOrientation.js"
+    ],
+    [
+      "static",
+      "./packedPosition2D.js"
+    ],
+    [
+      "static",
+      "./prepareImages2D.js"
+    ],
+    [
+      "static",
+      "./prepareRectangles2D.js"
+    ],
+    [
+      "static",
+      "./prepareRectangles2D.js"
+    ]
+  ],
+  "packages/engine/rendering/packTexturedMesh2D.ts": [
+    [
+      "static",
+      "./ownedPreparationFailure2D.js"
+    ],
+    [
+      "static",
+      "./packedOrientation.js"
+    ],
+    [
+      "static",
+      "./packedPosition2D.js"
+    ],
+    [
+      "static",
+      "./prepareRectangles2D.js"
+    ],
+    [
+      "static",
+      "./prepareTexturedMesh2D.js"
+    ],
+    [
+      "static",
+      "./texturedPreparationBudget2D.js"
+    ]
+  ],
+  "packages/engine/rendering/prepareMixedDraws2D.ts": [
+    [
+      "static",
+      "./prepareImages2D.js"
+    ],
+    [
+      "static",
+      "./prepareImages2D.js"
+    ],
+    [
+      "static",
+      "./prepareRectangles2D.js"
+    ],
+    [
+      "static",
+      "./prepareRectangles2D.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/engine/rendering/prepareRectangles2D.ts": [
+    [
+      "static",
+      "./ownedPreparationFailure2D.js"
+    ],
+    [
+      "static",
+      "./RectangleFrame2D.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ],
+    [
+      "static",
+      "robust-predicates"
+    ]
+  ],
+  "packages/engine/rendering/prepareTexturedDraws2D.ts": [
+    [
+      "static",
+      "./prepareImages2D.js"
+    ],
+    [
+      "static",
+      "./prepareImages2D.js"
+    ],
+    [
+      "static",
+      "./prepareRectangles2D.js"
+    ],
+    [
+      "static",
+      "./prepareRectangles2D.js"
+    ],
+    [
+      "static",
+      "./prepareTexturedMesh2D.js"
+    ],
+    [
+      "static",
+      "./prepareTexturedMesh2D.js"
+    ],
+    [
+      "static",
+      "./texturedPreparationBudget2D.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/engine/rendering/texturedPreparationBudget2D.ts": [
+    [
+      "static",
+      "./ownedPreparationFailure2D.js"
+    ],
+    [
+      "static",
+      "./prepareRectangles2D.js"
+    ],
+    [
+      "static",
+      "./prepareRectangles2D.js"
+    ]
+  ],
+  "packages/engine/web/imageProjections2D.ts": [
+    [
+      "static",
+      "../rendering/ownedPreparationFailure2D.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/engine/web/prepareTexturedSubmission2D.ts": [
+    [
+      "static",
+      "../rendering/ownedPreparationFailure2D.js"
+    ],
+    [
+      "static",
+      "../rendering/packImageVertices2D.js"
+    ],
+    [
+      "static",
+      "../rendering/packImageVertices2D.js"
+    ],
+    [
+      "static",
+      "../rendering/packTexturedMesh2D.js"
+    ],
+    [
+      "static",
+      "../rendering/packTexturedMesh2D.js"
+    ],
+    [
+      "static",
+      "../rendering/prepareTexturedDraws2D.js"
+    ],
+    [
+      "static",
+      "../rendering/texturedPreparationBudget2D.js"
+    ],
+    [
+      "static",
+      "./imageProjections2D.js"
+    ],
+    [
+      "static",
+      "./imageProjections2D.js"
+    ],
+    [
+      "static",
+      "./webgpuPass.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/engine/web/texturedWebGPUOptions.ts": [
+    [
+      "static",
+      "./WebGPUHost.js"
+    ]
+  ],
+  "packages/engine/web/webgpuImagePass.ts": [],
+  "packages/engine/web/webgpuLifetime.ts": [],
+  "packages/engine/web/webgpuPass.ts": [
+    [
+      "static",
+      "../rendering/ownedPreparationFailure2D.js"
+    ],
+    [
+      "static",
+      "../rendering/packedOrientation.js"
+    ],
+    [
+      "static",
+      "../rendering/packedPosition2D.js"
+    ],
+    [
+      "static",
+      "../rendering/prepareRectangles2D.js"
+    ]
+  ],
+  "packages/engine/web/webgpuTexturedPass.ts": [],
+  "packages/engine/rendering/RectangleFrame2D.ts": [
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/engine/rendering/imageFrameBudget.ts": [
+    [
+      "static",
+      "./copyFrame2D.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/engine/rendering/packedOrientation.ts": [
+    [
+      "static",
+      "./prepareRectangles2D.js"
+    ],
+    [
+      "static",
+      "robust-predicates"
+    ]
+  ],
+  "packages/engine/rendering/packedPosition2D.ts": [
+    [
+      "static",
+      "./prepareRectangles2D.js"
+    ]
+  ],
+  "packages/engine/rendering/prepareImages2D.ts": [
+    [
+      "static",
+      "./ownedPreparationFailure2D.js"
+    ],
+    [
+      "static",
+      "./prepareRectangles2D.js"
+    ],
+    [
+      "static",
+      "./prepareRectangles2D.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/engine/rendering/prepareTexturedMesh2D.ts": [
+    [
+      "static",
+      "./ownedPreparationFailure2D.js"
+    ],
+    [
+      "static",
+      "./prepareRectangles2D.js"
+    ],
+    [
+      "static",
+      "./prepareRectangles2D.js"
+    ],
+    [
+      "static",
+      "./texturedPreparationBudget2D.js"
+    ],
+    [
+      "static",
+      "./texturedPreparationBudget2D.js"
+    ],
+    [
+      "static",
+      "./texturedPreparationBudget2D.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/engine/dist/rendering/sceneFrame3D.js": [
+    [
+      "static",
+      "./matrix4.js"
+    ],
+    [
+      "static",
+      "./meshGeometry3D.js"
+    ],
+    [
+      "static",
+      "./projection3D.js"
+    ]
+  ],
+  "packages/engine/dist/rendering/sceneFrame3D.d.ts": [
+    [
+      "static",
+      "./matrix4.js"
+    ],
+    [
+      "static",
+      "./meshGeometry3D.js"
+    ]
+  ],
+  "packages/engine/dist/rendering/meshGeometry3D.js": [],
+  "packages/engine/dist/rendering/meshGeometry3D.d.ts": [],
+  "packages/engine/dist/web/b1.js": [
+    [
+      "static",
+      "../rendering/packMeshGeometry3D.js"
+    ],
+    [
+      "static",
+      "../rendering/sceneFrame3D.js"
+    ],
+    [
+      "static",
+      "./WebGPUHost.js"
+    ],
+    [
+      "static",
+      "./webgpuMeshPass.js"
+    ]
+  ],
+  "packages/engine/dist/web/b1.d.ts": [
+    [
+      "static",
+      "../rendering/packMeshGeometry3D.js"
+    ],
+    [
+      "static",
+      "../rendering/sceneFrame3D.js"
+    ],
+    [
+      "static",
+      "../rendering/sceneFrame3D.js"
+    ],
+    [
+      "static",
+      "./WebGPUHost.js"
+    ],
+    [
+      "static",
+      "./webgpuMeshPass.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/engine/dist/rendering/matrix4.js": [],
+  "packages/engine/dist/rendering/matrix4.d.ts": [],
+  "packages/engine/dist/rendering/projection3D.js": [
+    [
+      "static",
+      "./matrix4.js"
+    ]
+  ],
+  "packages/engine/dist/rendering/projection3D.d.ts": [
+    [
+      "static",
+      "./matrix4.js"
+    ]
+  ],
+  "packages/engine/dist/rendering/packMeshGeometry3D.js": [
+    [
+      "static",
+      "./meshGeometry3D.js"
+    ]
+  ],
+  "packages/engine/dist/rendering/packMeshGeometry3D.d.ts": [
+    [
+      "static",
+      "./meshGeometry3D.js"
+    ]
+  ],
+  "packages/engine/dist/web/WebGPUHost.js": [
+    [
+      "dynamic",
+      "./b1.js"
+    ],
+    [
+      "static",
+      "../rendering/admitTexturedFrame2D.js"
+    ],
+    [
+      "static",
+      "../rendering/copyFrame2D.js"
+    ],
+    [
+      "static",
+      "../rendering/copyMixedFrame2D.js"
+    ],
+    [
+      "static",
+      "../rendering/ownedPreparationFailure2D.js"
+    ],
+    [
+      "static",
+      "../rendering/packImageVertices2D.js"
+    ],
+    [
+      "static",
+      "../rendering/packTexturedMesh2D.js"
+    ],
+    [
+      "static",
+      "../rendering/prepareMixedDraws2D.js"
+    ],
+    [
+      "static",
+      "../rendering/prepareRectangles2D.js"
+    ],
+    [
+      "static",
+      "../rendering/prepareTexturedDraws2D.js"
+    ],
+    [
+      "static",
+      "../rendering/texturedPreparationBudget2D.js"
+    ],
+    [
+      "static",
+      "./imageProjections2D.js"
+    ],
+    [
+      "static",
+      "./imageProjections2D.js"
+    ],
+    [
+      "static",
+      "./prepareTexturedSubmission2D.js"
+    ],
+    [
+      "static",
+      "./texturedWebGPUOptions.js"
+    ],
+    [
+      "static",
+      "./webgpuImagePass.js"
+    ],
+    [
+      "static",
+      "./webgpuLifetime.js"
+    ],
+    [
+      "static",
+      "./webgpuPass.js"
+    ],
+    [
+      "static",
+      "./webgpuTexturedPass.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "#egret-textured-frame-state"
+    ]
+  ],
+  "packages/engine/dist/web/WebGPUHost.d.ts": [
+    [
+      "static",
+      "./b1.js"
+    ],
+    [
+      "static",
+      "./texturedWebGPUOptions.js"
+    ],
+    [
+      "static",
+      "./texturedWebGPUOptions.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/engine/dist/web/webgpuMeshPass.js": [],
+  "packages/engine/dist/web/webgpuMeshPass.d.ts": [],
+  "packages/engine/dist/rendering/admitTexturedFrame2D.js": [
+    [
+      "static",
+      "./ownedPreparationFailure2D.js"
+    ],
+    [
+      "static",
+      "./prepareRectangles2D.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/engine/dist/rendering/admitTexturedFrame2D.d.ts": [
+    [
+      "static",
+      "./prepareTexturedDraws2D.js"
+    ],
+    [
+      "static",
+      "./texturedPreparationBudget2D.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/engine/dist/rendering/copyFrame2D.js": [],
+  "packages/engine/dist/rendering/copyFrame2D.d.ts": [
+    [
+      "static",
+      "./RectangleFrame2D.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/engine/dist/rendering/copyMixedFrame2D.js": [
+    [
+      "static",
+      "./copyFrame2D.js"
+    ],
+    [
+      "static",
+      "./imageFrameBudget.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/engine/dist/rendering/copyMixedFrame2D.d.ts": [
+    [
+      "static",
+      "./copyFrame2D.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/engine/dist/rendering/ownedPreparationFailure2D.js": [],
+  "packages/engine/dist/rendering/ownedPreparationFailure2D.d.ts": [],
+  "packages/engine/dist/rendering/packImageVertices2D.js": [
+    [
+      "static",
+      "./ownedPreparationFailure2D.js"
+    ],
+    [
+      "static",
+      "./packedOrientation.js"
+    ],
+    [
+      "static",
+      "./packedPosition2D.js"
+    ],
+    [
+      "static",
+      "./prepareRectangles2D.js"
+    ]
+  ],
+  "packages/engine/dist/rendering/packImageVertices2D.d.ts": [
+    [
+      "static",
+      "./prepareImages2D.js"
+    ],
+    [
+      "static",
+      "./prepareRectangles2D.js"
+    ]
+  ],
+  "packages/engine/dist/rendering/packTexturedMesh2D.js": [
+    [
+      "static",
+      "./ownedPreparationFailure2D.js"
+    ],
+    [
+      "static",
+      "./packedOrientation.js"
+    ],
+    [
+      "static",
+      "./packedPosition2D.js"
+    ],
+    [
+      "static",
+      "./prepareRectangles2D.js"
+    ]
+  ],
+  "packages/engine/dist/rendering/packTexturedMesh2D.d.ts": [
+    [
+      "static",
+      "./prepareTexturedMesh2D.js"
+    ],
+    [
+      "static",
+      "./texturedPreparationBudget2D.js"
+    ]
+  ],
+  "packages/engine/dist/rendering/prepareMixedDraws2D.js": [
+    [
+      "static",
+      "./prepareImages2D.js"
+    ],
+    [
+      "static",
+      "./prepareRectangles2D.js"
+    ]
+  ],
+  "packages/engine/dist/rendering/prepareMixedDraws2D.d.ts": [
+    [
+      "static",
+      "./prepareImages2D.js"
+    ],
+    [
+      "static",
+      "./prepareRectangles2D.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/engine/dist/rendering/prepareRectangles2D.js": [
+    [
+      "static",
+      "./ownedPreparationFailure2D.js"
+    ],
+    [
+      "static",
+      "robust-predicates"
+    ]
+  ],
+  "packages/engine/dist/rendering/prepareRectangles2D.d.ts": [
+    [
+      "static",
+      "./RectangleFrame2D.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/engine/dist/rendering/prepareTexturedDraws2D.js": [
+    [
+      "static",
+      "./prepareImages2D.js"
+    ],
+    [
+      "static",
+      "./prepareRectangles2D.js"
+    ],
+    [
+      "static",
+      "./prepareTexturedMesh2D.js"
+    ]
+  ],
+  "packages/engine/dist/rendering/prepareTexturedDraws2D.d.ts": [
+    [
+      "static",
+      "./prepareImages2D.js"
+    ],
+    [
+      "static",
+      "./prepareRectangles2D.js"
+    ],
+    [
+      "static",
+      "./prepareTexturedMesh2D.js"
+    ],
+    [
+      "static",
+      "./texturedPreparationBudget2D.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/engine/dist/rendering/texturedPreparationBudget2D.js": [
+    [
+      "static",
+      "./ownedPreparationFailure2D.js"
+    ],
+    [
+      "static",
+      "./prepareRectangles2D.js"
+    ]
+  ],
+  "packages/engine/dist/rendering/texturedPreparationBudget2D.d.ts": [
+    [
+      "static",
+      "./prepareRectangles2D.js"
+    ]
+  ],
+  "packages/engine/dist/web/imageProjections2D.js": [
+    [
+      "static",
+      "../rendering/ownedPreparationFailure2D.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/engine/dist/web/imageProjections2D.d.ts": [
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/engine/dist/web/prepareTexturedSubmission2D.js": [
+    [
+      "static",
+      "../rendering/ownedPreparationFailure2D.js"
+    ],
+    [
+      "static",
+      "../rendering/packImageVertices2D.js"
+    ],
+    [
+      "static",
+      "../rendering/packTexturedMesh2D.js"
+    ],
+    [
+      "static",
+      "./imageProjections2D.js"
+    ],
+    [
+      "static",
+      "./webgpuPass.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/engine/dist/web/prepareTexturedSubmission2D.d.ts": [
+    [
+      "static",
+      "../rendering/packImageVertices2D.js"
+    ],
+    [
+      "static",
+      "../rendering/packTexturedMesh2D.js"
+    ],
+    [
+      "static",
+      "../rendering/prepareTexturedDraws2D.js"
+    ],
+    [
+      "static",
+      "../rendering/texturedPreparationBudget2D.js"
+    ],
+    [
+      "static",
+      "./imageProjections2D.js"
+    ],
+    [
+      "static",
+      "./webgpuPass.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/engine/dist/web/texturedWebGPUOptions.js": [],
+  "packages/engine/dist/web/texturedWebGPUOptions.d.ts": [
+    [
+      "static",
+      "./WebGPUHost.js"
+    ]
+  ],
+  "packages/engine/dist/web/webgpuImagePass.js": [],
+  "packages/engine/dist/web/webgpuImagePass.d.ts": [],
+  "packages/engine/dist/web/webgpuLifetime.js": [],
+  "packages/engine/dist/web/webgpuLifetime.d.ts": [],
+  "packages/engine/dist/web/webgpuPass.js": [
+    [
+      "static",
+      "../rendering/ownedPreparationFailure2D.js"
+    ],
+    [
+      "static",
+      "../rendering/packedOrientation.js"
+    ],
+    [
+      "static",
+      "../rendering/packedPosition2D.js"
+    ]
+  ],
+  "packages/engine/dist/web/webgpuPass.d.ts": [
+    [
+      "static",
+      "../rendering/prepareRectangles2D.js"
+    ]
+  ],
+  "packages/engine/dist/web/webgpuTexturedPass.js": [],
+  "packages/engine/dist/web/webgpuTexturedPass.d.ts": [],
+  "packages/engine/dist/rendering/RectangleFrame2D.js": [],
+  "packages/engine/dist/rendering/RectangleFrame2D.d.ts": [
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/engine/dist/rendering/imageFrameBudget.js": [
+    [
+      "static",
+      "./copyFrame2D.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/engine/dist/rendering/imageFrameBudget.d.ts": [
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/engine/dist/rendering/packedOrientation.js": [
+    [
+      "static",
+      "robust-predicates"
+    ]
+  ],
+  "packages/engine/dist/rendering/packedOrientation.d.ts": [
+    [
+      "static",
+      "./prepareRectangles2D.js"
+    ]
+  ],
+  "packages/engine/dist/rendering/packedPosition2D.js": [],
+  "packages/engine/dist/rendering/packedPosition2D.d.ts": [
+    [
+      "static",
+      "./prepareRectangles2D.js"
+    ]
+  ],
+  "packages/engine/dist/rendering/prepareImages2D.js": [
+    [
+      "static",
+      "./ownedPreparationFailure2D.js"
+    ],
+    [
+      "static",
+      "./prepareRectangles2D.js"
+    ]
+  ],
+  "packages/engine/dist/rendering/prepareImages2D.d.ts": [
+    [
+      "static",
+      "./prepareRectangles2D.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/engine/dist/rendering/prepareTexturedMesh2D.js": [
+    [
+      "static",
+      "./ownedPreparationFailure2D.js"
+    ],
+    [
+      "static",
+      "./prepareRectangles2D.js"
+    ],
+    [
+      "static",
+      "./texturedPreparationBudget2D.js"
+    ]
+  ],
+  "packages/engine/dist/rendering/prepareTexturedMesh2D.d.ts": [
+    [
+      "static",
+      "./prepareRectangles2D.js"
+    ],
+    [
+      "static",
+      "./texturedPreparationBudget2D.js"
+    ],
+    [
+      "static",
+      "./texturedPreparationBudget2D.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ]
+};
+function sceneGraphEdges(code) {
+  return [...code.matchAll(/\b(?:from\s*|import\s*\(\s*|import\s*)['"]([^'"]+)['"]/g)]
+    .map(match=>[/^import\s*\(/.test(match[0])?'dynamic':'static',match[1]])
+    .sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
+}
+for (const [file,edges] of Object.entries(sceneLiteralClosure)) {
+  const code=sceneRead(file);
+  if (JSON.stringify(sceneGraphEdges(code))!==JSON.stringify(edges)) throw new Error('S3D1: scene entry imported outside approved closure: '+file);
+  // Non-literal dynamic imports cannot hide an additional dependency edge.
+  if ((code.match(/\bimport\s*\(/g)??[]).length!==edges.filter(edge=>edge[0]==='dynamic').length) throw new Error('S3D1: scene entry imported outside approved closure: '+file);
+}
+
+// S3D1_BOUNDARY_END
 console.log(`Boundary check PASS: four private workspace packages, actual exports resolution, ${inspected} source/build/declaration files, DOM-free core and exact DOM-only web subtree without Node imports/globals.`);
 

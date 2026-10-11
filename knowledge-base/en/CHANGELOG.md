@@ -2,6 +2,18 @@
 
 English | [简体中文](../Cns/CHANGELOG.md)
 
+<!-- S3D1-DOC-0.32.0-BEGIN -->
+## Engineering checkpoint: 0.32.0 (S3D1)
+
+Verified implementation: public behavior **35/35**, boundaries **238/238**, **2** positive type consumers and **10 + 3 + 11 + 15** exact negative diagnostics pass. Retained integration checks **161/161** and fresh fixed headless Edge composition pass after independently reviewed repairs. Full final publication and current delivery remain pending at this curation cutoff; the linked scene contract records exact scopes and successors.
+
+**Initial source/API observation (historical cutoff):**
+
+Adds the [bounded public scene contract](docs/public-scene3d-contract.md): exact opt-in geometry/scene and browser Host exports, authentic readonly capture, camera/numeric/budget rules and inherited Host ownership. The independently designed typed facades reuse current first-party algorithms without new dependencies. The genuine missing-map interface RED on the delivered base is retained. Three-file adoption, build and interface GREEN at **2026-10-11 19:54:25–19:54:26 UTC** confirm source/API reachability only. Behavior, types, policy, native and final acceptance/delivery are **PENDING**. This checkpoint does not accept complete UI/3D, asset/character/Spine systems, Native SDKs or performance.
+
+The delivered **0.31.0** successor was merged through [PR #18](https://github.com/cnedwin/Egret_rebuild/pull/18) to Main `b4062e134af7b923ab6c2c16381004bc1c62ee3c`, tree `5bf7e05cf88e15ca66d1b8b6e26e2c442cbfcf7a`. All prior sections retain their original source, results, failure/pending labels and curation cutoffs; this successor adds the delivery fact rather than rewriting them.
+<!-- S3D1-DOC-0.32.0-END -->
+
 ## Engineering preview: 0.31.0 — 2026-10-12
 
 Added independent Scope-owned resource acquisition groups: a homogeneous invariant Engine method, 0–128 own input occurrences, whole-input preflight and default 4 / integer 1–16 local waiter slots. Genuine member leases remain group-owned; queue stopping, late lease retirement, first observed terminal state, all-group Engine closure and manager/direct-group cleanup errors have explicit bounds. Read the [combined contract, usage and evidence](docs/resource-acquisition-groups.md).

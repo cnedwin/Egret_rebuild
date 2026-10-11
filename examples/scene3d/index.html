@@ -1,0 +1,8 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Egret procedural scene / 白鹭程序化场景</title><link rel="icon" href="data:,">
+<script type="importmap">{"imports":{"#egret-textured-frame-state":"/packages/engine/dist/internal/texturedFrameState.js","@egret/engine":"/packages/engine/dist/index.js","@egret/engine/scene3d":"/packages/engine/dist/rendering/scene3d.js","@egret/engine/webgpu/scene3d":"/packages/engine/dist/web/scene3d.js","@egret/runtime":"/packages/runtime/dist/index.js","@egret/contracts":"/packages/contracts/dist/index.js","robust-predicates":"/packages/engine/node_modules/robust-predicates/index.js"}}</script>
+<style>body{font:16px system-ui;margin:24px;background:#eee;color:#111}canvas{display:block;width:320px;height:320px;background:#000;image-rendering:pixelated;margin:16px 0}button,label{margin-right:12px}</style></head>
+<body><h1>Procedural scene + screen UI / 程序化场景与屏幕 UI</h1><p>Experimental fixed scene, explicit redraw. / 实验性固定场景，显式重绘。</p>
+<canvas id="scene" width="64" height="64" aria-label="Red and blue scene with white, magenta and green UI / 红蓝场景与白、品红、绿 UI"></canvas>
+<button id="redraw" disabled>Redraw / 重绘</button><label><input id="clip" type="checkbox" disabled>Clip image / 裁剪图像</label><button id="close">Close / 关闭</button><p id="status" role="status">Starting / 正在启动</p>
+<script type="module" src="./scene.mjs"></script></body></html>

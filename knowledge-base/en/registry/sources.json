@@ -1673,12 +1673,119 @@
           "remoteCIPassClaimed": false
         }
       },
+      "urls": [],
+      "deliverySuccessor": {
+        "engineeringLabel": "0.31.0",
+        "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/18",
+        "sourceHead": "b95beee49a216f00085402f54d2e1f8ee40b5aaa",
+        "mergedMain": "b4062e134af7b923ab6c2c16381004bc1c62ee3c",
+        "tree": "5bf7e05cf88e15ca66d1b8b6e26e2c442cbfcf7a",
+        "mandatoryPushHook": "ACTUAL_PASS",
+        "coreTests": 2441,
+        "publicationTests": 63,
+        "localRemoteMainReadbackAtUtc": "2026-10-11T19:43:24.561Z",
+        "remoteStatusCount": 0,
+        "remoteCheckCount": 0,
+        "remoteCIPassClaimed": false,
+        "scope": "Observed prior delivery successor; preserves RG1 earlier pending cutoffs."
+      }
+    },
+    {
+      "id": "S085",
+      "title": "First-party public low-level scene3d and bounded composition evidence",
+      "type": "first_party_public_scene3d_behavior_types_policy_and_fixed_desktop_evidence",
+      "researchCheckedAt": "2026-10-12",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R005",
+        "R011",
+        "R015",
+        "R016",
+        "R017",
+        "R018",
+        "R019"
+      ],
+      "scope": "Independent thin facades expose owned procedural scene frames and existing WebGPU scene-before-ordinary-2D-UI composition; actual behavior, strict types, boundaries and fixed desktop pixels pass.",
+      "limit": "Logical budgets and strict f32 profile do not establish general assets, physical memory or performance advantage. Interactive example, final publication gate and current delivery remain pending; full Spine/3D/UI, phones, fonts and Native SDK are unaccepted.",
+      "doc": "en/docs/public-scene3d-contract.md",
+      "verification": {
+        "engineeringLabel": "0.32.0",
+        "sourceId": "S085",
+        "deliverable": "V036",
+        "packageVersion": "0.0.0",
+        "protocolVersion": "1.0",
+        "publicBehavior": {
+          "tests": 35,
+          "passed": 35,
+          "failed": 0
+        },
+        "strictTypes": {
+          "positiveConsumers": 2,
+          "negativeDiagnostics": {
+            "ordinary": 10,
+            "web": 3,
+            "imports": 11,
+            "domFreeBrowser": 15
+          },
+          "completeOneToOneMatching": true
+        },
+        "boundaryChecks": {
+          "tests": 238,
+          "passed": 238,
+          "failed": 0,
+          "newAssignedMutants": 16
+        },
+        "nativeSchedules": {
+          "original": [
+            7,
+            5,
+            11,
+            8214
+          ],
+          "supplementary": [
+            2,
+            1,
+            3,
+            14
+          ],
+          "rawBuffers": 14,
+          "independentNativeReviewOpenFindings": 0
+        },
+        "fullCurrent": "PENDING_AT_PRECOMMIT_METADATA_CUTOFF",
+        "publication": "PENDING_AT_PRECOMMIT_METADATA_CUTOFF",
+        "independentFinalBilingualMeaningReview": "PENDING",
+        "mandatoryGitPushHook": "PENDING",
+        "remoteDelivery": "PENDING",
+        "limits": {
+          "interactiveExampleRuntime": "PENDING",
+          "physicalMobileDevices": false,
+          "nativeSDK": false,
+          "CJKPerformance": false,
+          "fullSpineR020V020": "PENDING",
+          "mutableSceneGraph": false,
+          "cameraPose": false,
+          "materialsLighting": false,
+          "glTFImport": false,
+          "skinningCharacters": false,
+          "transparentSorting": false,
+          "fullUI": false,
+          "full3D": false,
+          "completeMigration": false,
+          "performanceLeadership": false,
+          "hardwareAcceleration": "UNBOUND",
+          "physicalDisplay": "UNBOUND",
+          "osDescendantRetirement": "UNBOUND",
+          "productionReadiness": false
+        },
+        "historicalCutoffsPreserved": true
+      },
       "urls": []
     }
   ],
   "_localization": {
     "canonicalSource": "来源.json",
-    "canonicalSha256": "273e46dc752cb3a0990ddf28c88fa78df01b97e9b7ae8c39bac9b09846e664b1",
+    "canonicalSha256": "4f9c1801ceab2c58dcce8496655b2864fd36ff783d5a09fe140541b3985ebd76",
     "role": "read_only_translation",
     "language": "en"
   }

@@ -11,6 +11,7 @@ import { randomUUID } from 'node:crypto';
 const repository = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const cli = join(repository, 'tools/verify-webgpu-b1.mjs');
 const oracleUrl = new URL('../tools/b1-webgpu/oracle.mjs', import.meta.url);
+const compositionOracleUrl = new URL('../tools/b1-webgpu/public-composition-oracle.mjs', import.meta.url);
 let oraclePromise;
 const activeRefusals = new Set();
 function oracle() { return oraclePromise ??= import(oracleUrl.href); }
@@ -294,4 +295,58 @@ test('O12 a named-only check is distinct from the full exhaustive frame obligati
   expectPixelFailure(api, () => api.verifyPixels(frame, 'F7'), {
     assertion: 'behind-camera-all-black', x: 63, y: 0, expected: [0, 0, 0, 255], actual: [0, 255, 0, 255],
   });
+});
+
+function authoredComposition(id) {
+  const frame = blackFrame();
+  for (const [x, y, rgba] of authoredPoints.F4) pixel(frame, x, y, rgba);
+  if (id === 'S2') {
+    pixel(frame, 29, 28, [255, 0, 255, 255]);
+    pixel(frame, 33, 28, [255, 255, 255, 255]);
+  }
+  return frame;
+}
+test('S01 the separate S1/S2 oracle uses six/eight literal comparisons', async () => {
+  const api = await import(compositionOracleUrl.href);
+  assert.deepEqual(api.COMPOSITION_BASELINES, ['S1', 'S2']);
+  assert.deepEqual(api.verifyCompositionPixels(authoredComposition('S1'), 'S1'), { comparisons: 6, selection: null, exhaustive: false });
+  assert.deepEqual(api.verifyCompositionPixels(authoredComposition('S2'), 'S2'), { comparisons: 8, selection: null, exhaustive: false });
+});
+test('S02 SN1 selects clip-outside first and requires its assigned magenta literal', async () => {
+  const api = await import(compositionOracleUrl.href), frame = authoredComposition('S2');
+  pixel(frame, 33, 28, [255, 0, 255, 255]);
+  // An unrelated wrong pixel cannot take priority over the named SN1 witness.
+  pixel(frame, 22, 24, [0, 0, 0, 255]);
+  assert.throws(() => api.verifyCompositionPixels(frame, 'S2', 'clip-outside'), error => {
+    assert.ok(error instanceof api.CompositionPixelAssertion);
+    assert.equal(error.assertion, 'clip-outside'); assert.equal(error.x, 33); assert.equal(error.y, 28);
+    assert.deepEqual(error.expected, [255, 255, 255, 255]); assert.deepEqual(error.actual, [255, 0, 255, 255]); return true;
+  });
+});
+test('S03 S2 also checks the independently authored inside clip pixel', async () => {
+  const api = await import(compositionOracleUrl.href), frame = authoredComposition('S2'); pixel(frame, 29, 28, [255, 255, 255, 255]);
+  assert.throws(() => api.verifyCompositionPixels(frame, 'S2'), error => error.assertion === 'clip-inside' && error.x === 29 && error.y === 28);
+});
+test('S04 supplementary oracle refuses malformed metadata and unknown named assertions', async () => {
+  const api = await import(compositionOracleUrl.href);
+  for (const override of [{ width: 63 }, { height: 65 }, { bytes: new Uint8Array(16383) }, { bytes: new Uint8Array(16385) },
+    { format: 'bgra8unorm' }, { sourceFormat: 'rgba16float' }, { colorSpace: 'display-p3' }, { alphaMode: 'straight' }]) {
+    assert.throws(() => api.verifyCompositionPixels({ ...authoredComposition('S1'), ...override }, 'S1'), /COMPOSITION_READBACK_METADATA_INVALID/);
+  }
+  for (const name of ['SN1', 'F1', '__proto__', 'constructor']) assert.throws(() => api.verifyCompositionPixels(blackFrame(), name), /COMPOSITION_READBACK_METADATA_INVALID/);
+  assert.throws(() => api.verifyCompositionPixels(authoredComposition('S1'), 'S1', 'clip-outside'), /COMPOSITION_NAMED_ASSERTION_INVALID/);
+});
+test('S05 ordinary native fixture factory imports use only the exact public ports', async () => {
+  const source = await readFile(join(repository, 'tools/b1-webgpu/fixture.mjs'), 'utf8');
+  for (const name of ['@egret/engine', '@egret/engine/scene3d', '@egret/engine/webgpu/scene3d']) assert.ok(source.includes(`import('${name}')`));
+  assert.doesNotMatch(source, /getBuiltinB1Protocol|createB1WebGPUHost|createMatrix4|import\([^\n]*(?:meshGeometry3D|matrix4|ImageData2D|web\/b1)\.js/);
+  assert.match(source, /import\(`\$\{base\}\/packages\/engine\/dist\/web\/webgpuMeshPass\.js`\)/);
+});
+test('S06 collector pins the current Host and retains both schedules separately', async () => {
+  const source = await readFile(cli, 'utf8');
+  assert.match(source, /currentHost\.bytes, 74888/);
+  assert.ok(source.includes('2679e634e35c3841daa499f59cb3279087b33245267af187ae78995a29019c72'));
+  assert.match(source, /allowedModules\.has\(name\)/);
+  assert.match(source, /maximumSubmittedFrames: 11/); assert.match(source, /maximumSubmittedFrames: 3/);
+  assert.match(source, /baselinePixelComparisons !== 14/); assert.match(source, /window\.frames\.reduce\([^\n]*8214/);
 });

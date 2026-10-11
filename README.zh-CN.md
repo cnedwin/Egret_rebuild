@@ -12,6 +12,30 @@ I'm Edwin, the founder of Egret Engine. In late 2013, WanderWang and I founded E
 
 Years later, as times change and technology advances, many developers continue to encourage us. I hope to rebuild this game engine with the help of AI and the community.
 
+<!-- S3D1-DOC-0.32.0-BEGIN -->
+## Current bounded scene checkpoint / 当前限定场景检查点
+
+### English
+
+Verified implementation: public behavior **35/35**, boundaries **238/238**, **2** positive type consumers and **10 + 3 + 11 + 15** exact negative diagnostics pass. Retained integration checks **161/161** and fresh fixed headless Edge composition pass after independently reviewed repairs. Full final publication and current delivery remain pending at this curation cutoff; the linked scene contract records exact scopes and successors.
+
+**Initial source/API observation (historical cutoff):**
+
+The proposed **0.32.0 (S3D1)** checkpoint exposes immutable geometry and camera-space scene frames through `@egret/engine/scene3d`, with an explicit browser Host at `@egret/engine/webgpu/scene3d`. The independently designed facades directly reuse current first-party algorithms. At **2026-10-11 19:54:25–19:54:26 UTC**, three-file adoption, build and interface GREEN confirmed source/API reachability only. Behavior, types, policy, native composition and final acceptance/delivery are **PENDING**. Read the [bounded public scene contract](knowledge-base/en/docs/public-scene3d-contract.md). This is an experimental procedural mesh plus ordered screen-UI route; complete UI/3D, assets, characters, Spine, Native SDKs and performance remain separate roadmap obligations.
+
+The delivered **0.31.0** successor was merged through [PR #18](https://github.com/cnedwin/Egret_rebuild/pull/18) to Main `b4062e134af7b923ab6c2c16381004bc1c62ee3c`, tree `5bf7e05cf88e15ca66d1b8b6e26e2c442cbfcf7a`. The changelog and current-scope paragraphs below preserve earlier saved curation cutoffs; their prior pending labels are historical observations.
+
+### 中文
+
+已验证的实现：公共行为 **35/35**、边界 **238/238**、**2** 个类型正例及 **10 + 3 + 11 + 15** 条精确负例诊断通过。经独立审阅的修正后，保留集成检查 **161/161** 和重新执行的固定无界面 Edge 合成通过。最终完整公开运行与当前交付在本整理截止点仍待完成；所链接场景契约记录精确范围及后继。
+
+**初始源码／API 观察（历史截止点）：**
+
+拟议 **0.32.0 (S3D1)** 检查点通过 `@egret/engine/scene3d` 公开不可变网格及相机空间场景帧，并以 `@egret/engine/webgpu/scene3d` 提供显式浏览器 Host。独立设计的 facade 直接复用当前第一方算法。在 **2026-10-11 19:54:25–19:54:26 UTC**，三文件采用、构建及接口 GREEN 仅确认源码／API 可达性；行为、类型、策略、原生合成及最终验收／交付均为 **PENDING**。阅读[限定公共场景契约](knowledge-base/Cns/docs/公共3D场景契约.md)。这是实验性程序化网格加有序屏幕 UI 路径；完整 UI／3D、资产、角色、Spine、Native SDK 及性能仍是单独路线图义务。
+
+已交付的 **0.31.0** 后继经 [PR #18](https://github.com/cnedwin/Egret_rebuild/pull/18) 合并至 Main `b4062e134af7b923ab6c2c16381004bc1c62ee3c`，树 `5bf7e05cf88e15ca66d1b8b6e26e2c442cbfcf7a`。下方 changelog 与当前范围段落保留早先整理截止点，其中原待完成标签属于历史观察。
+<!-- S3D1-DOC-0.32.0-END -->
+
 ## Changelog / 更新记录
 
 ### 中文
@@ -21,6 +45,7 @@ Years later, as times change and technology advances, many developers continue t
 | 检查点 | 主要解决的问题 | 记录 |
 | --- | --- | --- |
 | 未发行 | 英文优先的社区入口、独立的 `en/` 与 `Cns/` 知识库、英文文件名、创始人介绍与双语 Changelog。精简文档入口，集中历史研究，便于查阅。 | [详情](knowledge-base/Cns/docs/documentation-layout.md) |
+| 0.32.0 | 显式拥有型低层 3D 场景帧与 WebGPU 场景/UI 合成。公共行为 35/35、边界 238/238、精确严格类型、保留集成 161/161 及重新执行的固定桌面像素通过；最终公开运行与交付单独跟踪。 | [契约](knowledge-base/Cns/docs/公共3D场景契约.md) |
 | 0.31.0 | Scope 所有的资源批量获取：0–128 个输入位置、1–16 局部等待窗口。已采用构建/示例与 CPU 86/86（29 项 RG1 + 57 项既有）、私有精确严格类型和有限策略 35/35 通过；七项既有桌面 profile 在原子集通过。完整验证、双语/公开、推送钩子及 RG1 交付后继由[核验记录](knowledge-base/evidence/resource-acquisition-groups-verification.json)跟踪。 | [阅读](knowledge-base/Cns/docs/资源批量获取.md) |
 | 0.30.0 | 将既有 Stage 拾取、类型化分发与 Canvas 渲染组合成小型应用，公共入口无界面检查通过 12/12。桌面鼠标／Canvas 输入、像素与五项对照通过固定子集；纯准入检查单独通过 32/32。完整本地验证通过：核心 2377/2377 与结构化公开检查 63/63；最终独立语义、实际 Git 推送钩子及交付待完成。 | [示例](knowledge-base/Cns/docs/显示拾取示例.md) |
 | 0.29.0 | 自定义矩形 Stage 命中、整树预算、半开局部裁剪与显式输入标志。专项 CPU 98/98、严格类型、426 文件边界及 221/221 策略记录通过；完整核心 2,333/2,333、公开检查 59/59 及六项既有桌面渲染回归通过。命中补充、双语语义、Git 推送钩子与交付待完成。 | [详情](knowledge-base/Cns/docs/显示命中HT1.md) |
@@ -64,6 +89,7 @@ These are engineering and knowledge-base checkpoints, newest first, rather than 
 | Checkpoint | Main problem addressed | Record |
 | --- | --- | --- |
 | Unreleased | English-first community entry, separate `en/` and `Cns/` knowledge-base editions, English filenames, founder introduction and bilingual Changelog. Simplified document entries and grouped historical research for easier navigation. | [Details](knowledge-base/en/docs/documentation-layout.md) |
+| 0.32.0 | Explicit owned low-level 3D scene frames and WebGPU scene/UI composition. Public behavior 35/35, boundaries 238/238, exact strict types, retained integration 161/161 and fresh fixed desktop pixels pass; final publication and delivery are tracked separately. | [Contract](knowledge-base/en/docs/public-scene3d-contract.md) |
 | 0.31.0 | Scope-owned resource acquisition groups with 0–128 occurrences and a 1–16 local waiter window. Adopted build/example and CPU 86/86 (29 RG1 + 57 retained), private exact strict types and finite policy 35/35 passed; seven retained desktop profiles passed their existing subsets. Complete verification, bilingual/publication, push hook and RG1 delivery successors are tracked in the [verification record](knowledge-base/evidence/resource-acquisition-groups-verification.json). | [Reading](knowledge-base/en/docs/resource-acquisition-groups.md) |
 | 0.30.0 | Existing Stage picking, typed dispatch and Canvas rendering composed into a small application; 12/12 public-entry headless checks passed. Desktop mouse/Canvas input, pixels and five controls passed the fixed subset; 32/32 pure admission checks passed separately. Complete local verification passed: core 2377/2377 and structural publication 63/63; final independent meaning, actual Git push hook and delivery remain pending. | [Example](knowledge-base/en/docs/display-picking-example.md) |
 | 0.29.0 | Authored rectangular Stage picking, whole-tree budgets, half-open local clips and explicit input flags. Targeted CPU 98/98, strict types, 426-file boundaries and 221/221 policy records passed; complete core 2,333/2,333, publication 59/59 and six existing desktop renderer regressions passed. Picking supplement, bilingual meaning, Git push hook and delivery remain pending. | [Details](knowledge-base/en/docs/display-hit-test-ht1.md) |
@@ -102,11 +128,11 @@ These are engineering and knowledge-base checkpoints, newest first, rather than 
 
 ## 当前范围与参与方式
 
-最新工程预览为 **0.31.0**，为依赖资源的场景新增 Scope 所有的资源批量获取。已采用工作树构建、双纹理 CPU 示例及 **86/86** 合并检查通过（**29** 项 RG1、**57** 项既有资源/生命周期）。私有严格类型将 **15** 个普通、**11** 个导入反例绑定精确、未抑制诊断；修正后的有限策略为 **35/35**。七项既有桌面浏览器 profile 在原子集通过，没有执行使用 group 的浏览器应用。此前 **28/29**、**34/35** 及当前 **29/86** 结果重叠，不合计。[共享核验记录](knowledge-base/evidence/resource-acquisition-groups-verification.json)跟踪完整当前检查、双语/公开审阅、必要推送钩子及 RG1 远端交付后继。第一方代码保持 Apache-2.0、不新增依赖；private 包为 `0.0.0`、协议 `1.0`。阅读[合并的契约、用法和有界证据](knowledge-base/Cns/docs/资源批量获取.md)。R020/V020 完整 Spine、完整 UI/3D、手机、性能、物理资源回收及迁移仍是单独未完成的验收义务。
+历史工程预览 **0.31.0**，为依赖资源的场景新增 Scope 所有的资源批量获取。已采用工作树构建、双纹理 CPU 示例及 **86/86** 合并检查通过（**29** 项 RG1、**57** 项既有资源/生命周期）。私有严格类型将 **15** 个普通、**11** 个导入反例绑定精确、未抑制诊断；修正后的有限策略为 **35/35**。七项既有桌面浏览器 profile 在原子集通过，没有执行使用 group 的浏览器应用。此前 **28/29**、**34/35** 及当前 **29/86** 结果重叠，不合计。[共享核验记录](knowledge-base/evidence/resource-acquisition-groups-verification.json)跟踪完整当前检查、双语/公开审阅、必要推送钩子及 RG1 远端交付后继。第一方代码保持 Apache-2.0、不新增依赖；private 包为 `0.0.0`、协议 `1.0`。阅读[合并的契约、用法和有界证据](knowledge-base/Cns/docs/资源批量获取.md)。R020/V020 完整 Spine、完整 UI/3D、手机、性能、物理资源回收及迁移仍是单独未完成的验收义务。
 
 下方段落保留早先 0.30.0 准备截止点；其单独交付见 [PR #17](https://github.com/cnedwin/Egret_rebuild/pull/17)。
 
-最新工程预览为 **0.30.0**，新增组合既有 Stage、类型化事件与 CanvasHost 的小型显示拾取应用。实际已采用公共入口的无界面运行通过 12/12；私有执行与独立核心审阅单独记录，重叠数量不合计。范围涵盖自定义重叠／裁剪、字面半开边界、CSS 鼠标坐标、分发返回后的一次重绘／渲染，以及有界启动／关闭所有权。新桌面后继在默认 Edge **154.0.4258.62** 中通过 **PASS_DESKTOP_HT1_CANVAS_SUBSET**：十个基线记录与五项指定对照覆盖真实鼠标输入、类型化路径、Canvas 像素及独立的六组原生监听账本。纯准入检查单独通过 **32/32**，不同范围数量不合计。 完整本地验证通过：构建、类型夹具及包边界；核心 **2377/2377** 与结构化公开检查 **63/63**。本地化检查覆盖 **140** 对文档、**6** 个注册表视图及 **154** 个关键源文件。知识库验证检查 **159** 条记录、**243** 份 Markdown、**1997** 个链接及 **955** 个引用，问题数为 **0**；无界面生命周期关闭后待处理计时器为 **0**。以上是不同范围，不合并为测试总数。 最终独立双语语义审阅、必要 Git 推送钩子及交付仍为 **PENDING**。这是固定桌面鼠标／Canvas 子集；手机、操作系统／物理回收、性能及完整输入／UI／Spine 验收单独保留。包保持 private `0.0.0`、协议 `1.0`。阅读[示例记录](knowledge-base/Cns/docs/显示拾取示例.md)与[运行指南](examples/hit-test/README.zh-CN.md)。我们正在为主要依靠 AI 制作游戏的创作者，重建开源游戏引擎与创作流程，首期方向涵盖复杂 2D UI 与轻量 3D。仓库包含实验性核心和结构化知识库；完整引擎、生产平台宿主、编辑器、Agent 服务、目标设备性能及完整旧工程迁移仍待实施或验收。
+历史工程预览 **0.30.0**，新增组合既有 Stage、类型化事件与 CanvasHost 的小型显示拾取应用。实际已采用公共入口的无界面运行通过 12/12；私有执行与独立核心审阅单独记录，重叠数量不合计。范围涵盖自定义重叠／裁剪、字面半开边界、CSS 鼠标坐标、分发返回后的一次重绘／渲染，以及有界启动／关闭所有权。新桌面后继在默认 Edge **154.0.4258.62** 中通过 **PASS_DESKTOP_HT1_CANVAS_SUBSET**：十个基线记录与五项指定对照覆盖真实鼠标输入、类型化路径、Canvas 像素及独立的六组原生监听账本。纯准入检查单独通过 **32/32**，不同范围数量不合计。 完整本地验证通过：构建、类型夹具及包边界；核心 **2377/2377** 与结构化公开检查 **63/63**。本地化检查覆盖 **140** 对文档、**6** 个注册表视图及 **154** 个关键源文件。知识库验证检查 **159** 条记录、**243** 份 Markdown、**1997** 个链接及 **955** 个引用，问题数为 **0**；无界面生命周期关闭后待处理计时器为 **0**。以上是不同范围，不合并为测试总数。 最终独立双语语义审阅、必要 Git 推送钩子及交付仍为 **PENDING**。这是固定桌面鼠标／Canvas 子集；手机、操作系统／物理回收、性能及完整输入／UI／Spine 验收单独保留。包保持 private `0.0.0`、协议 `1.0`。阅读[示例记录](knowledge-base/Cns/docs/显示拾取示例.md)与[运行指南](examples/hit-test/README.zh-CN.md)。我们正在为主要依靠 AI 制作游戏的创作者，重建开源游戏引擎与创作流程，首期方向涵盖复杂 2D UI 与轻量 3D。仓库包含实验性核心和结构化知识库；完整引擎、生产平台宿主、编辑器、Agent 服务、目标设备性能及完整旧工程迁移仍待实施或验收。
 
 **0.29.0** HT1 交付后继通过必要推送钩子（2,333 项核心与 59 项公开检查），经 [PR #16](https://github.com/cnedwin/Egret_rebuild/pull/16) 合并至 Main `fb7f15b21cf80345e23490c551552deb4b68061a`，树 `e79ad52bf85a1efa7835a1d4074c5a4368ca8981`，记录源码提交为 `6e724971938ec8be4d271066f327814394e0b7fb`。远程状态／检查数量均为 0，不宣称远程 CI 通过；此前准备记录保留原待完成／失败截止点。
 

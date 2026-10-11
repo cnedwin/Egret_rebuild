@@ -1,0 +1,302 @@
+{
+  "schemaVersion": 1,
+  "status": "OBSERVED_FROZEN_TS7_DIAGNOSTICS",
+  "compiler": {
+    "version": "7.0.2",
+    "packageSHA256": "3722b30210616a13a3213ded11575ba6b2dbab10c32a5ef67afca8513e27017e",
+    "tscSHA256": "2219f428a7e55aaf1f7ad85b9b0f0cf5078aeb76ccc9a7c6036c92d48f492ffd"
+  },
+  "fixtureSHA256": {
+    "tests/types/scene3d-positive.ts": "87687c0f54bf637afcd1d82ea04067afee504f9eab99ee092739f242d96b3f04",
+    "tests/types/scene3d-web-positive.ts": "9def46be4b552e2a64b785b7e8a65a146b04dae74caf14ed5ada4f3b5309ebda",
+    "tests/types/scene3d-negative.ts": "e6f2bff09e133432e97b9a60d84bdb042a00024afd1dfc9e7a94a0f04f0c926e",
+    "tests/types/scene3d-web-negative.ts": "b82f7409b95dcaaba7c0e151582d5c4feda3b6c3a81908098cebbb2c0887b72a",
+    "tests/types/scene3d-import-negative.ts": "a56c248ca16f720c0e65611997d009178c73b41a8f7e5c3c57d9ec33d1395713",
+    "tests/types/scene3d-web-dom-free-negative.ts": "914d4ae90905f31dabfaa428c3fb37065517340c0dcbb89ac8ebd64b09638cde"
+  },
+  "cases": {
+    "negative": [
+      {
+        "name": "typed-array-positions",
+        "file": "tests/types/scene3d-negative.ts",
+        "line": 8,
+        "column": 23,
+        "code": 2739
+      },
+      {
+        "name": "invalid-projection-kind",
+        "file": "tests/types/scene3d-negative.ts",
+        "line": 10,
+        "column": 47,
+        "code": 2322
+      },
+      {
+        "name": "short-matrix-tuple",
+        "file": "tests/types/scene3d-negative.ts",
+        "line": 12,
+        "column": 49,
+        "code": 2322
+      },
+      {
+        "name": "missing-projection",
+        "file": "tests/types/scene3d-negative.ts",
+        "line": 14,
+        "column": 20,
+        "code": 2741
+      },
+      {
+        "name": "missing-geometry",
+        "file": "tests/types/scene3d-negative.ts",
+        "line": 16,
+        "column": 39,
+        "code": 2741
+      },
+      {
+        "name": "readonly-geometry-slot",
+        "file": "tests/types/scene3d-negative.ts",
+        "line": 18,
+        "column": 1,
+        "code": 2542
+      },
+      {
+        "name": "readonly-geometry-wrapper",
+        "file": "tests/types/scene3d-negative.ts",
+        "line": 20,
+        "column": 10,
+        "code": 2540
+      },
+      {
+        "name": "readonly-frame-draw",
+        "file": "tests/types/scene3d-negative.ts",
+        "line": 22,
+        "column": 1,
+        "code": 2542
+      },
+      {
+        "name": "readonly-frame-uniform",
+        "file": "tests/types/scene3d-negative.ts",
+        "line": 24,
+        "column": 7,
+        "code": 2540
+      },
+      {
+        "name": "readonly-mvp-slot",
+        "file": "tests/types/scene3d-negative.ts",
+        "line": 26,
+        "column": 21,
+        "code": 2540
+      }
+    ],
+    "web-negative": [
+      {
+        "name": "invalid-overlay-type",
+        "file": "tests/types/scene3d-web-negative.ts",
+        "line": 6,
+        "column": 29,
+        "code": 2740
+      },
+      {
+        "name": "readonly-scene-host-status",
+        "file": "tests/types/scene3d-web-negative.ts",
+        "line": 8,
+        "column": 23,
+        "code": 2540
+      },
+      {
+        "name": "readonly-nested-host-status",
+        "file": "tests/types/scene3d-web-negative.ts",
+        "line": 10,
+        "column": 28,
+        "code": 2540
+      }
+    ],
+    "import-negative": [
+      {
+        "name": "no-root-scene-factory",
+        "file": "tests/types/scene3d-import-negative.ts",
+        "line": 2,
+        "column": 9,
+        "code": 2305
+      },
+      {
+        "name": "no-canvas-scene-factory",
+        "file": "tests/types/scene3d-import-negative.ts",
+        "line": 4,
+        "column": 9,
+        "code": 2305
+      },
+      {
+        "name": "no-ordinary-webgpu-scene-factory",
+        "file": "tests/types/scene3d-import-negative.ts",
+        "line": 6,
+        "column": 9,
+        "code": 2724
+      },
+      {
+        "name": "no-packing-public-port",
+        "file": "tests/types/scene3d-import-negative.ts",
+        "line": 8,
+        "column": 9,
+        "code": 2724
+      },
+      {
+        "name": "no-protocol-public-port",
+        "file": "tests/types/scene3d-import-negative.ts",
+        "line": 10,
+        "column": 9,
+        "code": 2305
+      },
+      {
+        "name": "no-private-packing-subpath",
+        "file": "tests/types/scene3d-import-negative.ts",
+        "line": 12,
+        "column": 49,
+        "code": 2307
+      },
+      {
+        "name": "no-private-protocol-subpath",
+        "file": "tests/types/scene3d-import-negative.ts",
+        "line": 14,
+        "column": 55,
+        "code": 2307
+      },
+      {
+        "name": "no-public-matrix-constructor",
+        "file": "tests/types/scene3d-import-negative.ts",
+        "line": 16,
+        "column": 9,
+        "code": 2305
+      },
+      {
+        "name": "matrix-type-not-runtime",
+        "file": "tests/types/scene3d-import-negative.ts",
+        "line": 20,
+        "column": 6,
+        "code": 2693
+      },
+      {
+        "name": "scene-type-not-runtime",
+        "file": "tests/types/scene3d-import-negative.ts",
+        "line": 22,
+        "column": 6,
+        "code": 2693
+      },
+      {
+        "name": "host-type-not-runtime",
+        "file": "tests/types/scene3d-import-negative.ts",
+        "line": 24,
+        "column": 6,
+        "code": 2693
+      }
+    ],
+    "web-dom-free-negative": [
+      {
+        "name": "browser-dom-dependency-01",
+        "file": "packages/engine/dist/web/WebGPUHost.d.ts",
+        "line": 17,
+        "column": 22,
+        "code": 2304
+      },
+      {
+        "name": "browser-dom-dependency-02",
+        "file": "packages/engine/dist/web/WebGPUHost.d.ts",
+        "line": 22,
+        "column": 26,
+        "code": 2304
+      },
+      {
+        "name": "browser-dom-dependency-03",
+        "file": "packages/engine/dist/web/WebGPUHost.d.ts",
+        "line": 60,
+        "column": 23,
+        "code": 2304
+      },
+      {
+        "name": "browser-dom-dependency-04",
+        "file": "packages/engine/dist/web/texturedWebGPUOptions.d.ts",
+        "line": 11,
+        "column": 14,
+        "code": 2304
+      },
+      {
+        "name": "browser-dom-dependency-05",
+        "file": "packages/engine/dist/web/texturedWebGPUOptions.d.ts",
+        "line": 13,
+        "column": 15,
+        "code": 2304
+      },
+      {
+        "name": "browser-dom-dependency-06",
+        "file": "packages/engine/dist/web/webgpuMeshPass.d.ts",
+        "line": 2,
+        "column": 71,
+        "code": 2304
+      },
+      {
+        "name": "browser-dom-dependency-07",
+        "file": "packages/engine/dist/web/webgpuMeshPass.d.ts",
+        "line": 2,
+        "column": 101,
+        "code": 2304
+      },
+      {
+        "name": "browser-dom-dependency-08",
+        "file": "packages/engine/dist/web/webgpuMeshPass.d.ts",
+        "line": 2,
+        "column": 141,
+        "code": 2304
+      },
+      {
+        "name": "browser-dom-dependency-09",
+        "file": "packages/engine/dist/web/webgpuMeshPass.d.ts",
+        "line": 2,
+        "column": 181,
+        "code": 2304
+      },
+      {
+        "name": "browser-dom-dependency-10",
+        "file": "packages/engine/dist/web/webgpuMeshPass.d.ts",
+        "line": 2,
+        "column": 247,
+        "code": 2304
+      },
+      {
+        "name": "browser-dom-dependency-11",
+        "file": "packages/engine/dist/web/webgpuMeshPass.d.ts",
+        "line": 4,
+        "column": 48,
+        "code": 2304
+      },
+      {
+        "name": "browser-dom-dependency-12",
+        "file": "packages/engine/dist/web/webgpuMeshPass.d.ts",
+        "line": 4,
+        "column": 80,
+        "code": 2304
+      },
+      {
+        "name": "browser-dom-dependency-13",
+        "file": "packages/engine/dist/web/webgpuMeshPass.d.ts",
+        "line": 4,
+        "column": 109,
+        "code": 2304
+      },
+      {
+        "name": "browser-dom-dependency-14",
+        "file": "packages/engine/dist/web/webgpuMeshPass.d.ts",
+        "line": 4,
+        "column": 129,
+        "code": 2304
+      },
+      {
+        "name": "browser-dom-dependency-15",
+        "file": "packages/engine/dist/web/webgpuMeshPass.d.ts",
+        "line": 4,
+        "column": 150,
+        "code": 2304
+      }
+    ]
+  },
+  "observedAtUtc": "2026-10-11T20:21:29.748Z",
+  "qualification": "Primary actual unsuppressed TypeScript 7.0.2 observations from isolated public consumers; no SDK source or declaration mutation. Whole retained/current checker acceptance is separate. Structural types do not establish private object authenticity."
+}
