@@ -8,6 +8,7 @@ export { CancellationController, EgretError, Event, createEventType, EventDispat
 export type { EgretErrorOptions, EventType, EventTypeOptions, EventPhase, EventListenerOptions, ScopeState } from "@egret/runtime";
 export type { CoordinateQueryOptions } from '@egret/runtime';
 export type { BoundsQueryOptions } from '@egret/runtime';
+export type { HitTestOptions } from '@egret/runtime';
 export type { Point2D } from '@egret/contracts';
 export type { CancellationListener, CancellationSignal, Disposable, Releasable, ScopeValue, Diagnostic, DiagnosticHandler, HostAdapter } from "@egret/contracts";
 export { AssetManager, AssetLease, createAssetType, createAssetRef } from "@egret/runtime";

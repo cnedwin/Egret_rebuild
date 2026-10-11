@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-11",
+  "updatedAt": "2026-10-12",
   "authority": "Delivery status summary; code, artifacts, and reproducible acceptance evidence separately govern implementation and testing",
   "items": [
     {
@@ -1336,11 +1336,50 @@
         "../examples/canvas-text/README.md"
       ],
       "doc": "en/docs/canvas-text-wc1-canvas.md"
+    },
+    {
+      "id": "V033",
+      "kind": "bounded_display_rectangular_picking_increment",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R011",
+        "R015",
+        "R016",
+        "R018",
+        "R019"
+      ],
+      "dependsOn": [
+        "V002",
+        "V009",
+        "V022",
+        "V031"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "stage_authored_rectangular_picking_private_owned_state_whole_tree_admission_and_exact_rank",
+      "acceptance": "bounded_source_cpu_types_policy_whole_and_desktop_renderer_regressions_passed_picking_bilingual_push_and_delivery_pending",
+      "title": "HT1 authored rectangular display picking",
+      "acceptanceCriteria": [
+        "Add Stage.hitTest, DisplayObject touchEnabled=false/owned frozen hitArea and container touchChildren=true, plus type-only HitTestOptions at existing engine/runtime roots; no new value, subpath or dependency.",
+        "Admit the full current tree before arithmetic: default 4096, integer range 1–65536, Stage counted, hidden/suppressed descendants charged before indexed retrieval. Use private genuine identity, parent/lifetime and Engine authority without overridden hooks.",
+        "Apply Stage transforms, owner-local half-open clips, exact stored rank and singular-ancestor pruning; reverse painter children precede own area. Complete all active arithmetic after the first winner; ignore alpha, never return Stage and never retarget implicitly.",
+        "Read rectangle x/y/width/height once in order; require primitive finite components, nonnegative extents and finite endpoints, own/freeze a copy, recheck lifetime after successful reads and preserve exact wrapped source cause and completed reentrant effects.",
+        "Record build, combined 98/98 including 32 HT1 cases, 426-file boundaries, exact 16 ordinary/8 import type diagnostics and separate 221/221 policy records (205 retained, 15 new leaf controls including 1 positive/14 mutants, 1 parent). Preserve earlier RED and fixture arithmetic correction; do not sum overlapping scopes or substitute synthetic policy for picking execution.",
+        "Record complete current verification passed 2,333/2,333 core and 59/59 publication tests, plus six affected existing desktop renderer regressions. Keep the private-plan browser picking supplement, independent bilingual meaning review, mandatory Git push hook and delivery pending; complete manual verification does not observe that hook. Full routing, gestures, content/pixel hit, UI, fonts, Spine, 3D input, phones, performance and migration need separate acceptance."
+      ],
+      "artifacts": [
+        "en/docs/display-hit-test-ht1.md",
+        "evidence/display-hit-test-ht1-verification.json"
+      ],
+      "doc": "en/docs/display-hit-test-ht1.md"
     }
   ],
   "_localization": {
     "canonicalSource": "交付.json",
-    "canonicalSha256": "742acd56ac4f0248ecc09308cd2f93e22a880675f87c66d3c263476bec81a11e",
+    "canonicalSha256": "99a04be2a8bbed2a4b9a53e3347928872c50800a574122916042b865364d6182",
     "role": "read_only_translation",
     "language": "en"
   }

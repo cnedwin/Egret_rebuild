@@ -1,4 +1,7 @@
 import { DisplayObjectContainer } from "./DisplayObjectContainer.js";
+import type { DisplayObject } from './DisplayObject.js';
+import { queryDisplayHit } from './displayHitTest.js';
+import type { HitTestOptions } from './displayHitTest.js';
 import { ASSERT_ATTACHABLE, bind } from "./ownership.js";
 import type { EngineContext } from "./ownership.js";
 import { EgretError } from "./EgretError.js";
@@ -18,6 +21,11 @@ export class Stage extends DisplayObjectContainer {
 
   static {
     createStage = (engine): Stage => new Stage(engine, CREATION_TOKEN);
+  }
+
+  /** Pick one authored input area after complete structural/arithmetic admission. */
+  public hitTest(globalX: number, globalY: number, options?: HitTestOptions): DisplayObject | undefined {
+    return queryDisplayHit(this, globalX, globalY, options);
   }
 
   // A Stage is an engine root and cannot become another display node's child.

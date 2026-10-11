@@ -13,7 +13,7 @@ const ownedParent = path.resolve(repository, 'work');
 const dependencies = { contracts: [], runtime: ['@egret/contracts'], engine: ['@egret/contracts', '@egret/runtime'], project: ['@egret/contracts'] };
 
 // Synthetic facades prove tool policy/resolution only, never core or native behavior.
-function fixture({ imported, subtree = 'engine/rendering', declared = false, missingImageExport = false, missingGeometryExport, missingGeometryType, missingMesh, splitMesh = false, meshLeak, meshModuleLeak, meshWrongEntry, meshStateSourceValueImport = false, meshStateEmittedValueImport = false, profileLeak, profileModuleLeak, missingTexturedPort, missingProfileFactory = false, profileRegistryImport = false, registryLegitimateHosts = false, registryMapMutation, registryImporterProbe }, run) {
+function fixture({ imported, subtree = 'engine/rendering', declared = false, missingImageExport = false, missingGeometryExport, missingGeometryType, missingMesh, splitMesh = false, meshLeak, meshModuleLeak, meshWrongEntry, meshStateSourceValueImport = false, meshStateEmittedValueImport = false, profileLeak, profileModuleLeak, missingTexturedPort, missingProfileFactory = false, profileRegistryImport = false, registryLegitimateHosts = false, registryMapMutation, registryImporterProbe, hitTestMutation }, run) {
   mkdirSync(ownedParent, { recursive: true });
   const root = mkdtempSync(path.join(ownedParent, 'egret-boundary-policy-'));
   function write(relative, content) {
@@ -161,6 +161,33 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
     write('packages/engine/dist/web/CanvasTextRasterProvider.js', canvasTextProviderBody);
     write('packages/engine/dist/web/CanvasTextRasterProvider.d.ts', canvasTextProviderTypes);
     write('node_modules/@egret/engine/web-text.js', "export {createCanvasTextRasterProvider} from '../../../packages/engine/dist/web/text.js';\n");
+    // HT1 baseline only: inert shared class surfaces exercise declaration and
+    // descriptor policy. No Engine, tree, rectangle, picking or lifecycle runs.
+    const hitTestOptions = 'export interface HitTestOptions { readonly maxNodes?: number; }\n';
+    for (const file of ['packages/runtime/src/displayHitTest.ts', 'packages/runtime/dist/displayHitTest.d.ts'])
+      write(file, hitTestOptions + 'export declare function queryDisplayHit(): undefined;\n');
+    write('packages/runtime/dist/displayHitTest.js', 'export function queryDisplayHit() {}\n');
+    for (const file of ['packages/runtime/src/displayHitState.ts', 'packages/runtime/dist/displayHitState.d.ts'])
+      write(file, 'export declare function readDisplayHitState(): undefined;\n');
+    write('packages/runtime/dist/displayHitState.js', 'export function readDisplayHitState() {}\n');
+    const hitTestClassBodies = {
+      DisplayObject: 'export class DisplayObject { get touchEnabled() { return false; } set touchEnabled(value) {} get hitArea() { return undefined; } set hitArea(value) {} }\n',
+      DisplayObjectContainer: "import {DisplayObject} from './DisplayObject.js';\nexport class DisplayObjectContainer extends DisplayObject { get touchChildren() { return true; } set touchChildren(value) {} }\n",
+      Stage: "import {DisplayObjectContainer} from './DisplayObjectContainer.js';\nexport class Stage extends DisplayObjectContainer { hitTest(globalX, globalY, options) {} }\n",
+    };
+    const hitTestClassDeclarations = {
+      DisplayObject: "import type {Rectangle2D} from '@egret/contracts';\nexport declare class DisplayObject { get touchEnabled(): boolean; set touchEnabled(value: boolean); get hitArea(): Rectangle2D | undefined; set hitArea(value: Rectangle2D | undefined); }\n",
+      DisplayObjectContainer: "import {DisplayObject} from './DisplayObject.js';\nexport declare class DisplayObjectContainer extends DisplayObject { get touchChildren(): boolean; set touchChildren(value: boolean); }\n",
+      Stage: "import {DisplayObjectContainer} from './DisplayObjectContainer.js';\nimport type {DisplayObject} from './DisplayObject.js';\nimport type {HitTestOptions} from './displayHitTest.js';\nexport declare class Stage extends DisplayObjectContainer { hitTest(globalX: number, globalY: number, options?: HitTestOptions): DisplayObject | undefined; }\n",
+    };
+    for (const name of Object.keys(hitTestClassBodies)) {
+      write(`packages/runtime/dist/${name}.js`, hitTestClassBodies[name]);
+      write(`packages/runtime/dist/${name}.d.ts`, hitTestClassDeclarations[name]);
+      for (const [file, target] of [['packages/runtime/dist/index.js', `./${name}.js`], ['node_modules/@egret/engine/index.js', `../../../packages/runtime/dist/${name}.js`]])
+        write(file, readFileSync(path.join(root, file), 'utf8').replace(`export function ${name}() {}\n`, `export {${name}} from '${target}';\n`));
+    }
+    write('packages/runtime/dist/index.d.ts', readFileSync(path.join(root, 'packages/runtime/dist/index.d.ts'), 'utf8') + "export type {HitTestOptions} from './displayHitTest.js';\n");
+    write('packages/engine/dist/index.d.ts', readFileSync(path.join(root, 'packages/engine/dist/index.d.ts'), 'utf8') + "export type {HitTestOptions} from '@egret/runtime';\n");
     // Clock baseline only: inert synthetic policy inputs carry the exact six
     // public type names and erased emission. No owner or behavior shim is added.
     const clockTypes = ['GameClockOptions','GameClockState','GameClockTick','GameClockHandler','GameClock','GameClockSubscription'];
@@ -300,6 +327,39 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
       }
     }
 
+    if (hitTestMutation) {
+      const baseline = spawnSync(process.execPath, ['tools/check-boundaries.mjs'], { cwd: root, encoding: 'utf8' });
+      assert.ifError(baseline.error);
+      assert.equal(baseline.status, 0, `Assigned HT1 control never reached valid baseline: ${baseline.stdout}${baseline.stderr}`);
+      assert.match(baseline.stdout, /Boundary check PASS/);
+      const edits = {
+        'missing-runtime-options': ['packages/runtime/dist/index.d.ts', "export type {HitTestOptions} from './displayHitTest.js';\n", ''],
+        'alias-root-options': ['packages/engine/dist/index.d.ts', 'export type {HitTestOptions}', 'export type {HitTestOptions as PublicOptions}'],
+        'value-root-options': ['packages/engine/dist/index.d.ts', 'export type {HitTestOptions}', 'export {HitTestOptions}'],
+        'duplicate-root-options': ['packages/engine/dist/index.d.ts', '', "export type {HitTestOptions} from '@egret/runtime';\n"],
+        'off-entry-options': ['packages/contracts/dist/index.d.ts', '', 'export interface HitTestOptions {}\n'],
+        'alias-private-query': ['packages/runtime/dist/index.d.ts', '', "export type {queryDisplayHit as PublicQuery} from './displayHitTest.js';\n"],
+        'alias-private-state': ['packages/engine/dist/index.d.ts', '', "export type {DisplayHitState as PublicState} from './displayHitState.js';\n"],
+        'split-root-stage': ['node_modules/@egret/engine/index.js', "export {Stage} from '../../../packages/runtime/dist/Stage.js';\n", 'export class Stage { hitTest(globalX, globalY, options) {} }\n'],
+        'missing-getter-declaration': ['packages/runtime/dist/DisplayObject.d.ts', 'get touchEnabled(): boolean;', ''],
+        'missing-setter-descriptor': ['packages/runtime/dist/DisplayObject.js', 'set touchEnabled(value) {}', ''],
+        'missing-query-declaration': ['packages/runtime/dist/Stage.d.ts', 'hitTest(globalX: number, globalY: number, options?: HitTestOptions): DisplayObject | undefined;', ''],
+        'missing-query-descriptor': ['packages/runtime/dist/Stage.js', 'hitTest(globalX, globalY, options) {}', ''],
+        'ambient-query-reference': ['packages/runtime/src/displayHitTest.ts', '', '/// <reference lib="dom" />\n'],
+        'state-value-backedge': ['packages/runtime/src/displayHitState.ts', '', "import {DisplayObject} from './DisplayObject.js';\n"],
+      };
+      const mutation = edits[hitTestMutation];
+      assert.ok(mutation, `Unknown HT1 policy mutation: ${hitTestMutation}`);
+      if (hitTestMutation === 'alias-private-state') {
+        // A resolvable same-package declaration alias must reach the new guard,
+        // rather than earning rejection from the retained cross-package rule.
+        write('packages/engine/dist/displayHitState.d.ts', 'export interface DisplayHitState {}\n');
+        write('packages/engine/dist/displayHitState.js', 'export {};\n');
+      }
+      const [file, before, after] = mutation, original = readFileSync(path.join(root, file), 'utf8');
+      if (before !== '') assert.equal(original.split(before).length - 1, 1, `HT1 mutation anchor is not unique: ${hitTestMutation}`);
+      write(file, before === '' ? original + after : original.replace(before, after));
+    }
     const result = spawnSync(process.execPath, ['tools/check-boundaries.mjs'], { cwd: root, encoding: 'utf8' });
     assert.ifError(result.error);
     run(result);
@@ -492,6 +552,38 @@ test('private package alias permits only exact targets and host importers', asyn
       assert.equal(result.status, 1, result.stdout + result.stderr);
       assert.ok(result.stderr.includes('private textured registry import outside approved adapters'), result.stderr);
       assert.ok(result.stderr.includes(importer.replaceAll('/', path.sep)), result.stderr);
+    });
+  });
+});
+
+test('HT1 admits only erased root/runtime options and the finite display class members', async t => {
+  t.diagnostic(`HT1 copies the first-party checker ${checkerHash}; inert synthetic classes prove policy only.`);
+  await t.test('complete inert surfaces reach the retained checker PASS', () => {
+    fixture({ imported: 'robust-predicates' }, result => {
+      assert.equal(result.status, 0, result.stdout + result.stderr);
+      assert.match(result.stdout, /Boundary check PASS/);
+    });
+  });
+  const mutants = [
+    ['missing-runtime-options', 'runtime: exact hit-test type-only facade mismatch'],
+    ['alias-root-options', 'root: exact hit-test type-only facade mismatch'],
+    ['value-root-options', 'root: exact hit-test type-only facade mismatch'],
+    ['duplicate-root-options', 'root: exact hit-test type-only facade mismatch'],
+    ['off-entry-options', 'contracts: root/runtime-only hit-test options leaked'],
+    ['alias-private-query', 'runtime: exact hit-test type-only facade mismatch'],
+    ['alias-private-state', 'root: private hit-test authority leaked: DisplayHitState'],
+    ['split-root-stage', 'root: hit-test class identity mismatch: Stage'],
+    ['missing-getter-declaration', 'runtime: hit-test DisplayObject.touchEnabled declaration mismatch'],
+    ['missing-setter-descriptor', 'runtime: hit-test DisplayObject.touchEnabled accessor mismatch'],
+    ['missing-query-declaration', 'runtime: Stage.hitTest declaration mismatch'],
+    ['missing-query-descriptor', 'runtime: Stage-only hit-test method mismatch'],
+    ['ambient-query-reference', 'packages/runtime/src/displayHitTest.ts: hit-test host ambient dependency'],
+    ['state-value-backedge', 'packages/runtime/src/displayHitState.ts: hit-test display class value backedge'],
+  ];
+  for (const [mutation, refusal] of mutants) await t.test(mutation, () => {
+    fixture({ imported: 'robust-predicates', hitTestMutation: mutation }, result => {
+      assert.equal(result.status, 1, result.stdout + result.stderr);
+      assert.ok(result.stderr.includes(refusal), result.stderr);
     });
   });
 });

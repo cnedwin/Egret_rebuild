@@ -2,6 +2,16 @@
 
 English | [简体中文](../Cns/CHANGELOG.md)
 
+## Engineering preview: 0.29.0 — 2026-10-12
+
+Added explicit Stage picking with `touchEnabled=false`, owned frozen `hitArea` rectangles and container `touchChildren=true`. Type-only `HitTestOptions` extends the existing engine/runtime roots; value exports, dependencies, package 0.0.0 and protocol 1.0 remain unchanged. The whole current Stage tree is admitted before arithmetic, with a receiver-inclusive default 4096 budget and range 1–65536. Eligible traversal uses Stage transforms, owner-local half-open clips and reverse painter/child-before-container order, retains the first winner while completing all active arithmetic, ignores alpha and never returns Stage or implicitly retargets. Read the [HT1 contract and bounded evidence](docs/display-hit-test-ht1.md).
+
+Actual build, combined HT1/display-tree/scaling/coordinate checks 98/98 (32 HT1 cases), strict types with 16 exact ordinary/8 import diagnostics, 426 production boundary files and separate 221/221 synthetic policy records passed. The policy slice adds 15 leaf controls (1 positive, 14 mutants) and 1 parent record beside 205 retained records; it is checker evidence, not picking execution. These scopes overlap and are not summed. The missing-entry RED and review-cutoff fixture arithmetic correction remain preserved; finite source approval is separate from actual execution.
+
+Complete current verification passed 2,333/2,333 core tests and 59/59 publication tests; all six affected existing desktop renderer regressions passed. The private-plan browser picking supplement, independent bilingual meaning review, mandatory Git push hook and delivery remain PENDING. This CPU increment does not accept routing, gestures, content/pixel hit, full UI, fonts, Spine, 3D input, phone performance or complete migration.
+
+The **0.28.0** Canvas text delivery successor passed the mandatory push hook with 2,285 core and 59 publication tests and was merged through [PR #15](https://github.com/cnedwin/Egret_rebuild/pull/15) to Main `b704349207c536d2bdae38496ef622613355a3f4`, tree `d1b4fcd5629c2fe54455244534220c50e0cdc419`. The recorded source commit is `94f239b2d1bd6b1af6f63ebc4f375bc7c9894bca`. Remote status/check counts were both 0, so no remote CI pass is claimed. Earlier preparation records retain their original pending/failure cutoffs.
+
 ## Engineering preview: 0.28.0 — 2026-10-11
 
 Added only `createCanvasTextRasterProvider` through `@egret/engine/web/text`, composing existing T1/TF1 and CanvasHost with caller-owned fonts, explicit invalidation/preparation and genuine cleanup. Default value exports and dependencies remain unchanged; packages stay private 0.0.0 and protocol 1.0. Read the [single Canvas reading record](docs/canvas-text-wc1-canvas.md).

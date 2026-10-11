@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-11",
+  "updatedAt": "2026-10-12",
   "authority": "交付状态摘要；代码、产物和可复现验收证据分别作为实现与测试权威",
   "items": [
     {
@@ -1336,6 +1336,45 @@
         "../examples/canvas-text/README.zh-CN.md"
       ],
       "doc": "Cns/docs/Canvas文字WC1.md"
+    },
+    {
+      "id": "V033",
+      "kind": "bounded_display_rectangular_picking_increment",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R011",
+        "R015",
+        "R016",
+        "R018",
+        "R019"
+      ],
+      "dependsOn": [
+        "V002",
+        "V009",
+        "V022",
+        "V031"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "stage_authored_rectangular_picking_private_owned_state_whole_tree_admission_and_exact_rank",
+      "acceptance": "bounded_source_cpu_types_policy_whole_and_desktop_renderer_regressions_passed_picking_bilingual_push_and_delivery_pending",
+      "title": "HT1 自定义矩形显示命中",
+      "acceptanceCriteria": [
+        "新增 Stage.hitTest、DisplayObject touchEnabled=false／自有冻结 hitArea、容器 touchChildren=true，以及既有 engine／runtime 根入口仅类型 HitTestOptions；不新增值、子路径或依赖。",
+        "数值工作前准入完整当前树：默认 4096，整数范围 1–65536，Stage 计数，隐藏／压制后代在索引读取前计费；使用私有真实身份、父链接／生命周期与 Engine 权威，不调用重写钩子。",
+        "采用 Stage 变换、所有者局部半开裁剪、精确存储秩与奇异祖先压制；反向绘制子节点先于自身区域。首个胜出者后完成所有活动算术；忽略 alpha，永不返回 Stage，不隐式重新指定目标。",
+        "矩形 x／y／width／height 按序各读一次；要求原始有限分量、非负宽高与有限端点，自有／冻结复制，成功读取后复核生命周期，保留精确包装来源 cause 与已完成重入效果。",
+        "记录构建、合并 98/98（含 32 HT1 案例）、426 文件边界、精确 16 普通／8 导入类型诊断及独立 221/221 策略记录（205 保留、15 新叶控制含 1 正例／14 变异、1 父记录）。保留此前 RED 与夹具算术修正，不合计重叠范围，不用合成策略代替命中执行。",
+        "记录完整当前验证通过核心 2,333/2,333、公开检查 59/59，以及六项受影响既有桌面渲染回归。私有计划浏览器命中补充、独立双语语义审阅、必要 Git 推送钩子与交付继续待完成；完整手动验证不证明已观察该钩子。完整路由、手势、内容／像素命中、UI、字体、Spine、3D 输入、手机、性能及迁移单独验收。"
+      ],
+      "artifacts": [
+        "Cns/docs/显示命中HT1.md",
+        "evidence/display-hit-test-ht1-verification.json"
+      ],
+      "doc": "Cns/docs/显示命中HT1.md"
     }
   ]
 }
