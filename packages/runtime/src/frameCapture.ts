@@ -6,6 +6,7 @@ import { visualOf, finite } from "./displayVisualState.js";
 import { EgretError } from "./EgretError.js";
 import { bitmapCaptureState, readBitmapImage } from "./Bitmap.js";
 import { readMeshState } from './meshDisplayState.js';
+import { assertTextFieldScope, readTextFieldState } from './textDisplayState.js';
 import { engineOf } from "./ownership.js";
 import { CaptureImageBudget } from "./imageFrameBudget.js";
 import { composeDisplayTransform } from './displayTransform.js';
@@ -87,6 +88,20 @@ function capture(stage: Stage, mode: "content" | "rectangles"): CapturedContent2
     // content. Refuse after established skips/arithmetic without reading a lease.
     if (readMeshState(entry.node) !== undefined && alpha !== 0) {
       throw new EgretError('FRAME_MESH_UNSUPPORTED');
+    }
+    const text = readTextFieldState(entry.node);
+    if (text !== undefined && alpha !== 0) {
+      // Preserve visibility/alpha/clip skips, then require intrinsic Scope lifetime.
+      assertTextFieldScope(text.scope);
+      const committed = text.committed;
+      if (committed?.lease !== undefined && committed.raster !== undefined && committed.sourceRect !== undefined) {
+        const rect = geometry(matrix, committed.raster);
+        if (mode === 'rectangles') throw new EgretError('FRAME_IMAGE_UNSUPPORTED');
+        const snapshot = readBitmapImage(committed.lease);
+        const sourceRect = committed.sourceRect;
+        const imageIndex = budget!.register(snapshot.image, sourceRect);
+        commands.push(Object.freeze({ kind: 'image', matrix, rect, alpha, clips, imageIndex, sourceRect }));
+      }
     }
     const children = childrenOf(entry.node);
     for (let i = children.length - 1; i >= 0; i--) {

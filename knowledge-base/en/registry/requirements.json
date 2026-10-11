@@ -40,7 +40,8 @@
         "V023",
         "V025",
         "V026",
-        "V027"
+        "V027",
+        "V028"
       ],
       "decisionIds": [
         "D002",
@@ -67,7 +68,8 @@
         "V023",
         "V025",
         "V026",
-        "V027"
+        "V027",
+        "V028"
       ],
       "decisionIds": [
         "D001",
@@ -93,7 +95,8 @@
         "V021",
         "V025",
         "V026",
-        "V027"
+        "V027",
+        "V028"
       ],
       "decisionIds": [
         "D002",
@@ -255,7 +258,8 @@
         "V012",
         "V025",
         "V026",
-        "V027"
+        "V027",
+        "V028"
       ],
       "decisionIds": [
         "D012"
@@ -362,7 +366,8 @@
         "V012",
         "V025",
         "V026",
-        "V027"
+        "V027",
+        "V028"
       ],
       "decisionIds": [
         "D001",
@@ -407,7 +412,8 @@
         "V023",
         "V025",
         "V026",
-        "V027"
+        "V027",
+        "V028"
       ],
       "decisionIds": [
         "D016"
@@ -467,7 +473,8 @@
         "V012",
         "V025",
         "V026",
-        "V027"
+        "V027",
+        "V028"
       ],
       "decisionIds": [],
       "doc": "en/docs/bilingual-documentation-and-prepush-checks.md"
@@ -500,7 +507,7 @@
   ],
   "_localization": {
     "canonicalSource": "需求.json",
-    "canonicalSha256": "e4b7459cdafb2f39a655f25fd893a1b57ab87d4fdd9882912fe18b435361d404",
+    "canonicalSha256": "261047023b90aa96e47afdc20937d70552686384b577e4c5f68080d50e2c395f",
     "role": "read_only_translation",
     "language": "en"
   }

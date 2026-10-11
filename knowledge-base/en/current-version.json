@@ -74,7 +74,9 @@
     "gameClockContract": "en/docs/game-clock-contract.md",
     "gameClockEvidence": "en/docs/game-clock-evidence.md",
     "scalarTweenContract": "en/docs/scalar-tween-contract.md",
-    "scalarTweenEvidence": "en/docs/scalar-tween-evidence.md"
+    "scalarTweenEvidence": "en/docs/scalar-tween-evidence.md",
+    "textFieldTF1Contract": "en/docs/text-field-tf1-contract.md",
+    "textFieldTF1Evidence": "en/docs/text-field-tf1-evidence.md"
   },
   "architectureContractProbesRun": true,
   "browserApiPixelProbesRun": true,
@@ -260,7 +262,7 @@
   },
   "_localization": {
     "canonicalSource": "当前版本.json",
-    "canonicalSha256": "922fd7541acc76f6960e1430acf3e76cc41e31192f9c11a56fee772e7b53886e",
+    "canonicalSha256": "4b7357a1a8aafc101536ee5f59c41e9348099ca05764644017e43237a1f1320c",
     "role": "read_only_translation",
     "language": "en"
   },
@@ -543,7 +545,7 @@
     "contract": "en/docs/display-content-bounds-contract.md",
     "evidence": "en/docs/display-content-bounds-evidence.md"
   },
-  "latestEngineeringPreview": "0.26.0",
+  "latestEngineeringPreview": "0.27.0",
   "texturedMesh2DImplementation": {
     "version": "0.23.0",
     "status": "bounded_increment_implemented",
@@ -646,5 +648,76 @@
     "performanceAcceptance": false,
     "fullLegacyTweenAcceptance": false,
     "publication": "PENDING_SEPARATE_ACTUAL_RECORD"
+  },
+  "textFieldTF1Implementation": {
+    "engineeringPreview": "0.27.0",
+    "deliverable": "V028",
+    "sourceId": "S077",
+    "status": "bounded_explicit_line_cpu_display_increment_verified",
+    "scope": "CPU display leaf with genuine owned T1 resources; no complete UI/font acceptance",
+    "packageVersion": "0.0.0",
+    "protocolVersion": "1.0",
+    "defaultExportSurfaceChanged": false,
+    "explicitEntry": "@egret/engine/text",
+    "factory": "createTextField",
+    "typeOnlyNames": [
+      "TextField",
+      "TextFieldStatus"
+    ],
+    "wholeCore": {
+      "tests": 2157,
+      "passed": 2157,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "boundaryFiles": 411,
+      "receiptBytes": 61569,
+      "receiptSha256": "6483fafa5991150a95c0dd3f19f597399523891465896aa86a6586771c1cb0ff",
+      "compilerEmissionEquivalence": false
+    },
+    "publicBehavior": {
+      "tests": 16,
+      "mainTopLevel": 13,
+      "nested": 2,
+      "constructor": 1
+    },
+    "strictTypes": {
+      "ordinary": 18,
+      "supplemental": 4,
+      "importDiagnosticLocations": 12,
+      "dedicatedImportFileCompilerInvocations": 1
+    },
+    "sourceControls": {
+      "tests": 27,
+      "includesExistingT1": true
+    },
+    "privateCollectorUnits": 20,
+    "affectedRegressions": 83,
+    "suiteTotalsAdded": false,
+    "sourceSubjects": 26,
+    "currentProductSources": 14,
+    "publicReceiptSources": 101,
+    "publicReceiptEmissions": 274,
+    "buildEmissionAttestation": false,
+    "nativeRegressionGates": {
+      "existingGateCount": 5,
+      "status": "PENDING",
+      "nativeTextFieldSupplementCovered": false
+    },
+    "publicCuration": "AUTHOR_PREPARED_PENDING_INDEPENDENT_REVIEW",
+    "mandatoryPrepush": "PENDING",
+    "remoteDelivery": "PENDING",
+    "fullUIAccepted": false,
+    "fontsAccepted": false,
+    "nativeTextFieldAccepted": false,
+    "CJKAccepted": false,
+    "phonesAccepted": false,
+    "nativeSDKAccepted": false,
+    "performanceAccepted": false,
+    "threeDAccepted": false,
+    "SpineAccepted": false,
+    "migrationAccepted": false,
+    "historicalFailuresRetained": true
   }
 }

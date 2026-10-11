@@ -2,6 +2,7 @@ import type { Matrix2D, Rectangle2D } from '@egret/contracts';
 import type { DisplayObject } from './DisplayObject.js';
 import { readBitmapState } from './bitmapDisplayState.js';
 import { readMeshState } from './meshDisplayState.js';
+import { assertTextFieldScope, readTextFieldState } from './textDisplayState.js';
 import { assertLive, childAtOf, childCountOf, isDisplayNode, parentOf } from './displayTreeState.js';
 import { composeDisplayTransform } from './displayTransform.js';
 import { finite, visualOf } from './displayVisualState.js';
@@ -107,6 +108,15 @@ export function queryDisplayBounds(receiver: unknown, options: unknown): Rectang
         point(matrix, geometry.positions[2 * first]!, geometry.positions[2 * first + 1]!);
         point(matrix, geometry.positions[2 * second]!, geometry.positions[2 * second + 1]!);
         point(matrix, geometry.positions[2 * third]!, geometry.positions[2 * third + 1]!);
+      }
+    }
+    const text = readTextFieldState(current);
+    if (text !== undefined) {
+      assertTextFieldScope(text.scope);
+      if (text.committed !== undefined) {
+        admitItem();
+        const rect = text.committed.contentBounds;
+        rectangle(matrix, rect.x, rect.y, rect.width, rect.height);
       }
     }
     stack.push({ node: current, matrix, children: childCountOf(current), nextChild: 0 });

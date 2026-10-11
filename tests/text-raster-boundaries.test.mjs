@@ -48,9 +48,9 @@ function isolated(action){
     rmSync(resolved,{recursive:true,force:true});assert.equal(existsSync(resolved),false);
   }
 }
-test('T02 actual text entries share exactly one factory and preserve default entry isolation',async()=>{
+test('T02 actual text entries share the cache factory and preserve default entry isolation',async()=>{
   const runtime=await import('@egret/runtime/text'),engine=await import('@egret/engine/text');
-  assert.deepEqual(Object.keys(runtime),['createTextRasterCache']);assert.deepEqual(Object.keys(engine),['createTextRasterCache']);
+  assert.deepEqual(Object.keys(runtime),['createTextRasterCache']);assert.deepEqual(Object.keys(engine),['createTextField','createTextRasterCache']);
   assert.equal(typeof runtime.createTextRasterCache,'function');assert.equal(runtime.createTextRasterCache,engine.createTextRasterCache);
   for(const specifier of ['@egret/runtime','@egret/engine','@egret/engine/web','@egret/engine/webgpu'])
     assert.equal(Object.hasOwn(await import(specifier),'createTextRasterCache'),false,specifier);

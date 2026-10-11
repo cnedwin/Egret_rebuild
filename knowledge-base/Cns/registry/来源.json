@@ -1241,6 +1241,18 @@
       "scope": "独立审阅规格和第一方实现；限定公开行为、真实时钟/显示/Scope 协作、严格类型诊断、生产导入导出检查、真实复制工程对照及完整既有核心验证。",
       "limit": "CPU 检查不代表浏览器原生动画、字体、目标手机或性能验收，也不代表完整属性动画、UI、Spine、旧 Tween 兼容或工程迁移；最终公开门禁和远程交付分别记录。",
       "doc": "Cns/docs/标量补间证据.md"
+    },
+    {
+      "id": "S077",
+      "type": "first_party_text_field_cpu_integration_lifecycle_type_source_evidence",
+      "researchCheckedAt": "2026-10-11",
+      "artifacts": [
+        "evidence/text-field-tf1-verification.json"
+      ],
+      "title": "第一方 CPU TextField 整合证据",
+      "scope": "独立规格及当前 14 源码审阅；真实公共 CPU 显示／cache／Scope 整合、精确类型、复制工程对照及保存的完整既有原型验证，各自具有确切截止点。",
+      "limit": "重叠套件不合计。build emitted[] 不构成产物密码学见证。原生 TextField／字体、完整 UI、CJK、手机、SDK、性能、3D、Spine、迁移及最终交付仍属独立未验收范围。",
+      "doc": "Cns/docs/文字显示TF1证据.md"
     }
   ]
 }

@@ -1241,11 +1241,23 @@
       "scope": "Independently reviewed specification and first-party implementation; scoped public behavior, real clock/display/Scope integration, strict type diagnostics, production import/export checks, genuine copied-graph controls and complete existing core verification.",
       "limit": "CPU checks do not establish browser/native animation, fonts, target-phone or performance acceptance, full property animation, UI, Spine, legacy Tween compatibility or migration. Final publication and remote delivery remain separately recorded.",
       "doc": "en/docs/scalar-tween-evidence.md"
+    },
+    {
+      "id": "S077",
+      "type": "first_party_text_field_cpu_integration_lifecycle_type_source_evidence",
+      "researchCheckedAt": "2026-10-11",
+      "artifacts": [
+        "evidence/text-field-tf1-verification.json"
+      ],
+      "title": "First-party CPU TextField integration evidence",
+      "scope": "Independent specification and current 14-source review; genuine public CPU display/cache/Scope integration, exact types, copied-graph controls and saved complete existing prototype verification, each with its own cutoff.",
+      "limit": "Overlapping suites are not summed. Build emitted[] is not a cryptographic emission attestation. Native TextField/fonts, full UI, CJK, phones, SDKs, performance, 3D, Spine, migration and final delivery remain separate and unaccepted.",
+      "doc": "en/docs/text-field-tf1-evidence.md"
     }
   ],
   "_localization": {
     "canonicalSource": "来源.json",
-    "canonicalSha256": "c0374adefd27c415a2dec40c62f10bd44a605984f62a63e595a47465c1c02a18",
+    "canonicalSha256": "6a99cc0acaa9f9f4f8b13861d7e4ed819648409565ccdeb6093034b01e5bd775",
     "role": "read_only_translation",
     "language": "en"
   }

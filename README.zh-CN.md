@@ -21,6 +21,7 @@ Years later, as times change and technology advances, many developers continue t
 | 检查点 | 主要解决的问题 | 记录 |
 | --- | --- | --- |
 | 未发行 | 英文优先的社区入口、独立的 `en/` 与 `Cns/` 知识库、英文文件名、创始人介绍与双语 Changelog。精简文档入口，集中历史研究，便于查阅。 | [详情](knowledge-base/Cns/docs/documentation-layout.md) |
+| 0.27.0 | 显式行 CPU TextField、真实 Scope／cache 所有权、原子准备及显示资源清理。完整既有核心检查已通过；原生及交付门禁另记。 | [契约](knowledge-base/Cns/docs/文字显示TF1契约.md) · [证据](knowledge-base/Cns/docs/文字显示TF1证据.md) |
 | 0.26.0 | Scope 所有的标量 Tween、四种内建缓动与一次性控制；游戏时间与渲染仍显式执行。核心检查已通过；最终公开门禁与交付另记。 | [契约](knowledge-base/Cns/docs/标量补间契约.md) · [证据](knowledge-base/Cns/docs/标量补间证据.md) |
 | 0.25.0 | Engine 自有的显式秒制游戏时间、有界 Scope 回调及阶段安全清理；渲染与序列采样由调用者显式控制。公共行为、严格类型、源码对照及 2,076 项核心测试分别保留验证范围。 | [详情](knowledge-base/Cns/docs/游戏时间核心证据.md) |
 | 0.24.0 | 无 DOM 文字 provider 编排、固定资源槽位与预算、真实 Texture 租约及终结清理。六项核心问题关闭，严格类型及完整既有核心源码验证通过，包括 2,037/2,037 测试，并保留此前失败。最终 prepush 与交付在交付验证中分别记录。 | [详情](knowledge-base/Cns/docs/文字栅格T1证据.md) |
@@ -57,6 +58,7 @@ These are engineering and knowledge-base checkpoints, newest first, rather than 
 | Checkpoint | Main problem addressed | Record |
 | --- | --- | --- |
 | Unreleased | English-first community entry, separate `en/` and `Cns/` knowledge-base editions, English filenames, founder introduction and bilingual Changelog. Simplified document entries and grouped historical research for easier navigation. | [Details](knowledge-base/en/docs/documentation-layout.md) |
+| 0.27.0 | Explicit-line CPU TextField, genuine Scope/cache ownership, atomic preparation and display-resource cleanup. Complete existing core checks passed; native and delivery gates remain separate. | [Contract](knowledge-base/en/docs/text-field-tf1-contract.md) · [Evidence](knowledge-base/en/docs/text-field-tf1-evidence.md) |
 | 0.26.0 | Scope-owned scalar Tween, four built-in easings and one-shot controls; game time and rendering remain explicit. Core checks passed; final publication and delivery are separate. | [Contract](knowledge-base/en/docs/scalar-tween-contract.md) · [Evidence](knowledge-base/en/docs/scalar-tween-evidence.md) |
 | 0.25.0 | Engine-owned explicit game time in seconds, bounded Scope-owned callbacks and phase-safe cleanup; callers retain control of rendering and sequence sampling. Public behavior, strict types, source controls and the 2,076-test core run have separately recorded cutoffs. | [Details](knowledge-base/en/docs/game-clock-evidence.md) |
 | 0.24.0 | DOM-free text-provider orchestration, fixed resource slots and budgets, genuine Texture leases and terminal cleanup. Six core findings closed; strict types and complete existing core-source verification passed, including 2,037/2,037 tests, with earlier failures preserved. Final prepush and delivery are recorded separately in delivery verification. | [Details](knowledge-base/en/docs/text-raster-t1-evidence.md) |
@@ -88,7 +90,9 @@ These are engineering and knowledge-base checkpoints, newest first, rather than 
 
 ## 当前范围与参与方式
 
-最新工程预览为 **0.26.0**；完整核心验证已在记录范围内通过，最终公开门禁与交付另记。我们正在为主要依靠 AI 制作游戏的创作者，重建开源游戏引擎与创作流程，首期方向涵盖复杂 2D UI 与轻量 3D。仓库包含实验性核心和结构化知识库；完整引擎、生产平台宿主、编辑器、Agent 服务、目标设备性能及完整旧工程迁移仍待实施或验收。
+最新工程预览为 **0.27.0**，新增显式行 CPU TextField 显示叶。完整既有核心验证已在记录范围内通过；当前原生回归门禁、最终必要 prepush 与远程交付分别记录，仍为 PENDING。我们正在为主要依靠 AI 制作游戏的创作者，重建开源游戏引擎与创作流程，首期方向涵盖复杂 2D UI 与轻量 3D。仓库包含实验性核心和结构化知识库；完整引擎、生产平台宿主、编辑器、Agent 服务、目标设备性能及完整旧工程迁移仍待实施或验收。
+
+0.27.0 工程预览通过 `@egret/engine/text` 新增工厂所有、不可编辑的 TextField：`createTextField(engine, scope, cache)` 及仅类型 `TextField`／`TextFieldStatus`。十标量请求、显式准备、版本替换及合并工作的调用者租约遵循真实 Engine／Scope／cache 归属。已提交图片与空白直接边界在既有预算下接入两种可采集图片的 collector；旧路径的图片拒绝保持。默认根入口不变。 阅读[契约](knowledge-base/Cns/docs/文字显示TF1契约.md)与[证据](knowledge-base/Cns/docs/文字显示TF1证据.md)。
 
 `engine.createTween(scope, options)` 提供一次性 start/pause/resume/stop、同步标量回调与 Scope/Engine 清理，以及 `linear`、`quadIn`、`quadOut`、`quadInOut` 缓动。它使用前序 0.25.0 游戏时钟：推进不渲染，捕获/渲染不推进时间。阅读[标量契约](knowledge-base/Cns/docs/标量补间契约.md)与[有界证据](knowledge-base/Cns/docs/标量补间证据.md)。
 

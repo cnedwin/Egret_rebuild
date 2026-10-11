@@ -46,3 +46,15 @@ Boundaries-r1 mistook the quoted `from` key for import syntax. Successor source 
 First-party AI-assisted source and spec-derived fixtures received independent source/output review. No competitor/vendored animation implementation or new dependency was added. Existing licensing/attribution applies; shared records contain identities, not private paths/raw logs.
 
 These CPU results exclude browser/native animation, fonts/TextField/Spine, full legacy Tween, chains/loops/custom easing, migration, phones/performance and physical memory. Source-bound successors preserve failures, incomplete attempts and review cutoffs.
+
+## Later delivery closure — 2026-10-11
+
+The PENDING statements above describe the earlier source-verification cutoff. The following saved delivery record closes publication for the recorded 0.26.0 source commit; this later appendix is intended for a subsequent publication.
+
+The first push attempt passed 2,131 core tests and 52 publication tests, but the mandatory hook failed because two LICENSE references in the English/Chinese contract pair left the knowledge-base root. The narrow correction replaced those targets with the repository's existing public LICENSE URL and refreshed their derived identities. It changed no product code, license terms or gate policy. The failed attempt remains part of the history.
+
+A fresh complete mandatory hook ran from 2026-10-11T00:06:01.917Z to 2026-10-11T00:12:37.643Z: 2,131 core tests passed, 52 publication tests passed and the knowledge base reported zero issues. The saved receipt records exit 0, stable source, no hook bypass and no forced push. These are separate results, not additions to earlier overlapping test totals.
+
+[PR 11](https://github.com/cnedwin/Egret_rebuild/pull/11) delivered source commit c57872a288fed15b2f9fba5f9022e8afdc8404dd. The saved draft-PR record verified all 1,108 remote paths, modes and Git blobs against the recorded inventory; the later merge record verified the same tree on Main. This appendix reports those saved checks and does not claim another remote enumeration. The PR was made ready for review, then its merged state was verified at 2026-10-11T00:14:25.560Z. That timestamp is the verification cutoff, not a separately established merge-event time. Main is ecd9f8c6a1fa55855c7d0ea0c9495cbde96bdbf7, with tree 5f54f7a11913ea9de36bee6de81deca68249ac3d. Local publication Main was fast-forwarded to those same identities at 2026-10-11T00:15:08.427Z, without resetting the engineering overlay.
+
+The saved GitHub response contains zero commit-status entries and zero check runs; it supplies no remote CI execution or CI success. The complete local mandatory hook is the verification witness. Delivery does not broaden the CPU, source-provenance, licensing or feature boundaries above: browser/native animation, fonts/TextField/Spine, legacy migration, phones/performance and physical memory remain outside this evidence.

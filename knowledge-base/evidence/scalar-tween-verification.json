@@ -1080,5 +1080,156 @@
       "scope": "Two new scalar Tween reading pairs, changed English-first community entries, version-bound prior-delivery additions, paired registry changes, saved actual evidence, first-party provenance and critical English comments. Other bodies retain their historical review scope; inventory totals are not blanket semantic or product acceptance."
     },
     "laterRootMetadataAttestation": true
+  },
+  "currentDelivery": {
+    "schemaVersion": 1,
+    "status": "ACTUAL_RECORDED_0_26_SOURCE_DELIVERED_AND_MAIN_SYNCED",
+    "interpretation": "Earlier PENDING/false delivery fields remain exact historical cutoff values. This later object records delivery of the named source commit; this appendix itself awaits a subsequent publication.",
+    "engineeringPreview": "0.26.0",
+    "sourceCommit": "c57872a288fed15b2f9fba5f9022e8afdc8404dd",
+    "recordedTree": "5f54f7a11913ea9de36bee6de81deca68249ac3d",
+    "initialPush": {
+      "status": "FAIL",
+      "exitCode": 1,
+      "coreTests": 2131,
+      "corePassed": 2131,
+      "publicationTests": 52,
+      "publicationPassed": 52,
+      "knowledgeBaseIssues": 2,
+      "cause": "Two contract LICENSE references left the knowledge-base root",
+      "productFailureClaimed": false,
+      "hookBypass": false,
+      "force": false,
+      "receipt": {
+        "bytes": 933,
+        "sha256": "cd2ba35cb4a3b59d8ac572e9cb40a8782af19d2d8574158463505642e201dcaa"
+      },
+      "preserved": true
+    },
+    "narrowCorrection": {
+      "scope": "Two equivalent public repository LICENSE targets and derived identities only",
+      "productCodeChanged": false,
+      "licenseTermsChanged": false,
+      "gatePolicyChanged": false,
+      "independentSourceReview": {
+        "bytes": 1913,
+        "sha256": "eae852f5091a9e4f9c5b2b13cd6b1b08f3fe30657c09b4b272868cdd2271c7c1"
+      },
+      "fullHookAcceptanceNotInferredFromSourceReview": true
+    },
+    "freshMandatoryHook": {
+      "status": "PASS",
+      "startedAtUtc": "2026-10-11T00:06:01.917Z",
+      "completedAtUtc": "2026-10-11T00:12:37.643Z",
+      "exitCode": 0,
+      "coreTests": 2131,
+      "corePassed": 2131,
+      "publicationTests": 52,
+      "publicationPassed": 52,
+      "knowledgeBaseIssues": 0,
+      "sourceStable": true,
+      "hookBypass": false,
+      "force": false,
+      "countsNotAddedToOverlappingEarlierRuns": true
+    },
+    "pullRequest": {
+      "number": 11,
+      "url": "https://github.com/cnedwin/Egret_rebuild/pull/11",
+      "head": "c57872a288fed15b2f9fba5f9022e8afdc8404dd",
+      "base": "b888f418faa43516202708e62f2c3dc1e5832d95",
+      "baseBranch": "main",
+      "madeReadyVerifiedAtUtc": "2026-10-11T00:14:17.548Z",
+      "merged": true,
+      "mergedStateVerifiedAtUtc": "2026-10-11T00:14:25.56Z",
+      "verificationTimestampIsNotMergeEventTimestamp": true,
+      "mergeCommit": "ecd9f8c6a1fa55855c7d0ea0c9495cbde96bdbf7"
+    },
+    "remoteTree": {
+      "status": "SAVED_COMPLETE_REMOTE_TREE_VERIFICATION",
+      "verifiedAtUtc": "2026-10-11T00:13:55.049Z",
+      "files": 1108,
+      "allPathsModesGitBlobsMatch": true,
+      "tree": "5f54f7a11913ea9de36bee6de81deca68249ac3d",
+      "mergeMainSameTreeVerified": true,
+      "freshEnumerationByThisAppendix": false
+    },
+    "main": {
+      "sha": "ecd9f8c6a1fa55855c7d0ea0c9495cbde96bdbf7",
+      "tree": "5f54f7a11913ea9de36bee6de81deca68249ac3d"
+    },
+    "localMain": {
+      "status": "LOCAL_PUBLICATION_MAIN_FAST_FORWARDED_TO_VERIFIED_MERGE",
+      "verifiedAtUtc": "2026-10-11T00:15:08.427Z",
+      "sha": "ecd9f8c6a1fa55855c7d0ea0c9495cbde96bdbf7",
+      "tree": "5f54f7a11913ea9de36bee6de81deca68249ac3d",
+      "engineeringOverlayReset": false,
+      "force": false,
+      "hookBypass": false
+    },
+    "remoteCI": {
+      "status": "NOT_CLAIMED",
+      "combinedState": "pending",
+      "commitStatusEntries": 0,
+      "checkRuns": 0,
+      "absenceIsNotExecutionOrSuccess": true
+    },
+    "records": [
+      {
+        "record": "push-verified.json",
+        "bytes": 1467,
+        "sha256": "0b9924025a78f10e1f27b646c4ec30970ebd5ae23e2aed5577bd91616ed1642e",
+        "status": "SAVED_IDENTITY_NOT_RAW_DISTRIBUTION"
+      },
+      {
+        "record": "pull-request.json",
+        "bytes": 1060,
+        "sha256": "bb9593805edfbd0fd419e97b857fb4912fa9f4936763527da1c785035c9df2f0",
+        "status": "SAVED_IDENTITY_NOT_RAW_DISTRIBUTION"
+      },
+      {
+        "record": "pr-ready.json",
+        "bytes": 794,
+        "sha256": "e5f980c261978eed9b3ca3c40eb0f669a538c594735b8fbca4cb4287ab7bbfe2",
+        "status": "SAVED_IDENTITY_NOT_RAW_DISTRIBUTION"
+      },
+      {
+        "record": "pr-merged.json",
+        "bytes": 1275,
+        "sha256": "d14186b9f5835e0b91542a0c72748c1702b0785fa06c80d7a0721edf38bc3b9d",
+        "status": "SAVED_IDENTITY_NOT_RAW_DISTRIBUTION"
+      },
+      {
+        "record": "local-main-sync.json",
+        "bytes": 320,
+        "sha256": "d7c44b63769dd89e5e5ecad6b968a810a660e7a80a7129572bc0411051c6f458",
+        "status": "SAVED_IDENTITY_NOT_RAW_DISTRIBUTION"
+      },
+      {
+        "record": "commit-receipt.json",
+        "bytes": 725,
+        "sha256": "023fea5e7d9de7f42bacb58f777d31440aa1629784913a4ea9b5a757de698d71",
+        "status": "SAVED_IDENTITY_NOT_RAW_DISTRIBUTION"
+      },
+      {
+        "record": "commit-intent.json",
+        "bytes": 214272,
+        "sha256": "1a81738da84ecfa2e41a105391d995c31d08857d13722ab6dc90b9d3394f0996",
+        "status": "SAVED_IDENTITY_NOT_RAW_DISTRIBUTION"
+      }
+    ],
+    "scope": {
+      "sourceBoundDeliveryOnly": true,
+      "priorCoreProvenanceAndLicenseScopesRetained": true,
+      "browserNative": "OUT_OF_SCOPE",
+      "fonts": "OUT_OF_SCOPE",
+      "TextField": "OUT_OF_SCOPE",
+      "Spine": "OUT_OF_SCOPE",
+      "legacyMigration": "OUT_OF_SCOPE",
+      "phones": "OUT_OF_SCOPE",
+      "performance": "OUT_OF_SCOPE",
+      "physicalMemory": "OUT_OF_SCOPE",
+      "thisAppendixIncludedInRecordedCommit": false,
+      "subsequentAppendixDelivery": "RECORDED_SEPARATELY"
+    }
   }
 }

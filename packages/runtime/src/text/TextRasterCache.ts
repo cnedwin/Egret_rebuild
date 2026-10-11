@@ -12,11 +12,12 @@ import { createTexture, isTexture, readTextureSnapshot, Texture } from '../Textu
 import { TextBudget, TEXT_BUDGET_DEFAULTS, TEXT_BUDGET_MINIMA } from './budget.js';
 import type { TextBudgetLimits } from './budget.js';
 import {
-  closeTextValueInvocation, createOwnedTextRasterRequest, createTextValueFailure,
+  closeTextValueInvocation, createOwnedTextRasterRequest, createTextFieldRequestInput, createTextValueFailure,
   createTextValueInvocation, matchesTextRasterRequestSummary, snapshotTextRasterRequest,
   summarizeTextRasterRequest, takeTextValueFailure,
 } from './request.js';
 import type { TextRasterRequestSummary } from './request.js';
+import { createTextFieldLeaf } from './TextField.js';
 import { closeTextRasterPlanIssuer, createTextRasterPlanIssuer, readIssuedTextRasterPlan, requireIssuedTextRasterPlan } from './plan.js';
 import type {
   PreparedTextRaster, TextRasterAcquireOptions, TextRasterCache, TextRasterCacheOptions,
@@ -801,6 +802,26 @@ export function createTextRasterCache(assets: AssetManager, options: TextRasterC
       owner.register(type, { load: (ref, context) => loadTexture(state, ref, context), dispose: texture => { disposeTexture(state, texture); } });
       for (const slot of slots) owner.invalidate(slot.ref);
     } catch (cause) { close(state); throw new EgretError('TEXT_CACHE_NAMESPACE_FAILED', { cause }); }
+    // Only the genuine manager's hidden context can register this exact cache.
+    owner.context.registerTextFieldCache?.(cache, scope => createTextFieldLeaf(scope, FREEZE({
+      context: owner.context,
+      assertOpen: (): void => { assertOpen(state); },
+      adopt: (input: TextRasterRequestInput, revalidate: () => void): TextRasterRequestInput => {
+        const invocation = createTextValueInvocation();
+        try {
+          const snapshot = snapshotTextRasterRequest(input, invocation);
+          revalidate();
+          const summary = summarizeTextRasterRequest(snapshot, state.provider.identity, state.fontGeneration, invocation);
+          return createTextFieldRequestInput(summary, invocation);
+        } catch (cause) {
+          const failure = takeTextValueFailure(invocation, cause);
+          if (failure !== undefined) throw failure.error;
+          throw cause;
+        } finally { closeTextValueInvocation(invocation); }
+      },
+      acquire: (input: TextRasterRequestInput, signal: CancellationSignal): Promise<PreparedTextRaster> =>
+        APPLY(acquire, cache, [input, { signal }]) as Promise<PreparedTextRaster>,
+    })));
     return cache;
   } finally { finish(); }
 }

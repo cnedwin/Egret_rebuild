@@ -1,0 +1,2491 @@
+{
+  "schemaVersion": 1,
+  "subject": "TextField TF1 explicit-line CPU integration",
+  "preparedDate": "2026-10-11",
+  "environment": {
+    "nodeVersion": "v24.19.0",
+    "nodeBinaryBytes": 92825416,
+    "nodeBinarySha256": "3602f2bb1a10f2cbab4c36886218a33c1ab3db87290e73b033c46c77147d0237",
+    "versionSource": "Saved compiler-check stderr; binary identity from public-r3 receipt",
+    "browserOrNativeExecutionInTheseReceipts": false
+  },
+  "status": "BOUNDED_CLOSED_CPU_OBSERVATIONS_WITH_PENDING_ACCEPTANCE",
+  "publicDocuments": [
+    "en/docs/text-field-tf1-evidence.md",
+    "Cns/docs/文字显示TF1证据.md"
+  ],
+  "proposedRecordIds": {
+    "verification": "V028",
+    "source": "S077",
+    "registered": false,
+    "meaning": "Design convention only; no registry mutation performed"
+  },
+  "currentBinding": {
+    "authority": "public-r3",
+    "coreSourceCount": 14,
+    "coreSources": [
+      {
+        "path": "packages/engine/src/Engine.ts",
+        "bytes": 12852,
+        "sha256": "0d5191166d9cc58489109e474f28ec4e6d3d6c97f6ee09b6e26d0aa0988a3940"
+      },
+      {
+        "path": "packages/engine/src/text.ts",
+        "bytes": 985,
+        "sha256": "d52c84ce6a50057d13c95291b81a120bb57bd6507ba9b237693aeaa9f84f8175"
+      },
+      {
+        "path": "packages/engine/src/textField.ts",
+        "bytes": 496,
+        "sha256": "c9a22c67a2cc453e25a8e3104cbb2e8e4a38d73bbb1bcb67ecf6cecf1e151887"
+      },
+      {
+        "path": "packages/engine/src/internal/textFieldFactoryState.ts",
+        "bytes": 1535,
+        "sha256": "8602e59028681b31fa2156c1e725290f4eb8a782f5324b7c3c2b22e549279014"
+      },
+      {
+        "path": "packages/runtime/src/ownership.ts",
+        "bytes": 3540,
+        "sha256": "18c982d0a92eadc3d9e235cf65b40e5adea364304c8ad9620f429baae20b033b"
+      },
+      {
+        "path": "packages/runtime/src/Scope.ts",
+        "bytes": 4704,
+        "sha256": "4f4a696a2c8eae5fa76d1888b19c7396bfd9b26fd064ea6a1f562661a98ad2b3"
+      },
+      {
+        "path": "packages/runtime/src/AssetManager.ts",
+        "bytes": 14582,
+        "sha256": "be7c1b5d008395328429e3f75d539d8e979b840c8d80868e838e62a84c19bb2f"
+      },
+      {
+        "path": "packages/runtime/src/text/TextRasterCache.ts",
+        "bytes": 43977,
+        "sha256": "d0a9e9d1d7d81b22f0747b2ed145cc2b59e79e9fa19aa1d001e31eba8de90520"
+      },
+      {
+        "path": "packages/runtime/src/text/request.ts",
+        "bytes": 15609,
+        "sha256": "7d0406edb8b3e37c17efd74d466f9ff88094d5ef890f92a7d5ee4b464a18ad3f"
+      },
+      {
+        "path": "packages/runtime/src/text/TextField.ts",
+        "bytes": 10118,
+        "sha256": "8713f1fc65992bab620317f3ad8ded75f78aae5cb6815ab66a24a6ed510b04bd"
+      },
+      {
+        "path": "packages/runtime/src/textDisplayState.ts",
+        "bytes": 1418,
+        "sha256": "7aa4c5e15aa3715c30fb16cdefad198171b21dab80066577651c5361dbcfba9c"
+      },
+      {
+        "path": "packages/runtime/src/displayBounds.ts",
+        "bytes": 7886,
+        "sha256": "77c01d020bde3a443eaf7a2aac1bff5a531212cb9a8f354485024aae632f4fd3"
+      },
+      {
+        "path": "packages/runtime/src/frameCapture.ts",
+        "bytes": 5950,
+        "sha256": "1bb80a1e17a15f1b9e5858259b2bbcf77d97e5899218e5c4589268ba4b20b958"
+      },
+      {
+        "path": "packages/runtime/src/texturedFrameCapture.ts",
+        "bytes": 11891,
+        "sha256": "65bab2e4ff65c8f4e27dd0ecccbfa2a33ad4781691fdd4a5965547d08796dd21"
+      }
+    ],
+    "receiptSourceVector": {
+      "count": 101,
+      "canonicalBytes": 13842,
+      "sha256": "281abd92ec0f3958559c9405f87979a6e35d6622e80049ab117b3da5234d35ca",
+      "encoding": "UTF-8 without BOM",
+      "canonicalization": "Ordered path, bytes, sha256 objects in saved receipt order; compact JSON array followed by LF"
+    },
+    "receiptEmittedVector": {
+      "count": 274,
+      "canonicalBytes": 38728,
+      "sha256": "209bcd8964b2a88c9e5bb4971f791a321007263d75d5dc726ca2a4547f370c25",
+      "encoding": "UTF-8 without BOM",
+      "canonicalization": "Ordered path, bytes, sha256 objects in saved receipt order; compact JSON array followed by LF"
+    },
+    "sourceInventoryCount": 101,
+    "emittedInventoryCount": 274,
+    "buildEmittedAttestation": false,
+    "meaning": "Current execution receipt inventories, not build crypto-attestation; original receipt retains complete vectors"
+  },
+  "closedResults": [
+    {
+      "record": "build-r2",
+      "status": "PASS",
+      "scope": "Exit 0, current source compilation, emitted array empty"
+    },
+    {
+      "record": "public-r3",
+      "status": "PASS",
+      "tests": 16,
+      "pass": 16,
+      "mainTopLevel": 13,
+      "nested": 2,
+      "constructorSupplement": 1,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "scope": "Genuine public-root literal-provider behavior; full selected fixture"
+    },
+    {
+      "record": "types-r6",
+      "status": "PASS",
+      "ordinary": 18,
+      "supplemental": 4,
+      "importLocations": 12,
+      "importCompilerInvocations": 1,
+      "scope": "DOM/Node-free positive and exact unsuppressed file/line/code diagnostics"
+    },
+    {
+      "record": "controls-r1",
+      "status": "PASS",
+      "tests": 27,
+      "pass": 27,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "includesRetainedT1": true,
+      "scope": "Baseline-first genuine copied four-package graphs and assigned source mutation reasons"
+    },
+    {
+      "record": "legacy-r2",
+      "status": "PASS",
+      "tests": 20,
+      "pass": 20,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "newPrivateCollectorUnits": 2,
+      "scope": "Existing texture-capture suite; not public-root behavior suite"
+    },
+    {
+      "record": "regressions-r1",
+      "status": "PASS",
+      "tests": 83,
+      "pass": 83,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "scope": "Selected existing Engine/resource/display regressions"
+    },
+    {
+      "record": "boundaries-r1",
+      "status": "PASS_HISTORICAL_SOURCE_CUTOFF",
+      "files": 411,
+      "currentProductScan": false,
+      "scope": "Production checker before creation-token correction"
+    },
+    {
+      "record": "verify-r1",
+      "status": "PASS_COMPLETE_EXISTING_PROTOTYPE_GATES",
+      "tests": 2157,
+      "pass": 2157,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "durationMs": 787914.0549,
+      "productionBoundaryFiles": 411,
+      "sourceStable": true,
+      "inputsStable": true,
+      "emittedInventoryCaptured": false,
+      "scope": "Current complete existing prototype verification; no emitted compiler equivalence, native or full-engine acceptance"
+    }
+  ],
+  "suiteTotalsAdded": false,
+  "typeDiagnosticReceipts": [
+    {
+      "label": "TextField negative individual unsuppressed diagnostic receipts:",
+      "rows": [
+        {
+          "name": "missing-factory-arguments",
+          "expected": {
+            "name": "missing-factory-arguments",
+            "file": "tests/types/text-field-negative.ts",
+            "line": 7,
+            "code": 2554
+          },
+          "actual": {
+            "file": "tests/types/text-field-negative.ts",
+            "line": 7,
+            "column": 1,
+            "code": 2554
+          }
+        },
+        {
+          "name": "extra-factory-argument",
+          "expected": {
+            "name": "extra-factory-argument",
+            "file": "tests/types/text-field-negative.ts",
+            "line": 9,
+            "code": 2554
+          },
+          "actual": {
+            "file": "tests/types/text-field-negative.ts",
+            "line": 9,
+            "column": 36,
+            "code": 2554
+          }
+        },
+        {
+          "name": "readonly-status-state",
+          "expected": {
+            "name": "readonly-status-state",
+            "file": "tests/types/text-field-negative.ts",
+            "line": 11,
+            "code": 2540
+          },
+          "actual": {
+            "file": "tests/types/text-field-negative.ts",
+            "line": 11,
+            "column": 8,
+            "code": 2540
+          }
+        },
+        {
+          "name": "readonly-desired-revision",
+          "expected": {
+            "name": "readonly-desired-revision",
+            "file": "tests/types/text-field-negative.ts",
+            "line": 13,
+            "code": 2540
+          },
+          "actual": {
+            "file": "tests/types/text-field-negative.ts",
+            "line": 13,
+            "column": 8,
+            "code": 2540
+          }
+        },
+        {
+          "name": "readonly-committed-revision",
+          "expected": {
+            "name": "readonly-committed-revision",
+            "file": "tests/types/text-field-negative.ts",
+            "line": 15,
+            "code": 2540
+          },
+          "actual": {
+            "file": "tests/types/text-field-negative.ts",
+            "line": 15,
+            "column": 8,
+            "code": 2540
+          }
+        },
+        {
+          "name": "readonly-pending",
+          "expected": {
+            "name": "readonly-pending",
+            "file": "tests/types/text-field-negative.ts",
+            "line": 17,
+            "code": 2540
+          },
+          "actual": {
+            "file": "tests/types/text-field-negative.ts",
+            "line": 17,
+            "column": 8,
+            "code": 2540
+          }
+        },
+        {
+          "name": "readonly-metrics",
+          "expected": {
+            "name": "readonly-metrics",
+            "file": "tests/types/text-field-negative.ts",
+            "line": 19,
+            "code": 2540
+          },
+          "actual": {
+            "file": "tests/types/text-field-negative.ts",
+            "line": 19,
+            "column": 8,
+            "code": 2540
+          }
+        },
+        {
+          "name": "no-public-cache",
+          "expected": {
+            "name": "no-public-cache",
+            "file": "tests/types/text-field-negative.ts",
+            "line": 21,
+            "code": 2339
+          },
+          "actual": {
+            "file": "tests/types/text-field-negative.ts",
+            "line": 21,
+            "column": 7,
+            "code": 2339
+          }
+        },
+        {
+          "name": "no-public-lease",
+          "expected": {
+            "name": "no-public-lease",
+            "file": "tests/types/text-field-negative.ts",
+            "line": 23,
+            "code": 2339
+          },
+          "actual": {
+            "file": "tests/types/text-field-negative.ts",
+            "line": 23,
+            "column": 7,
+            "code": 2339
+          }
+        },
+        {
+          "name": "no-caller-cancellation",
+          "expected": {
+            "name": "no-caller-cancellation",
+            "file": "tests/types/text-field-negative.ts",
+            "line": 25,
+            "code": 2554
+          },
+          "actual": {
+            "file": "tests/types/text-field-negative.ts",
+            "line": 25,
+            "column": 15,
+            "code": 2554
+          }
+        },
+        {
+          "name": "no-automatic-text-property",
+          "expected": {
+            "name": "no-automatic-text-property",
+            "file": "tests/types/text-field-negative.ts",
+            "line": 27,
+            "code": 2339
+          },
+          "actual": {
+            "file": "tests/types/text-field-negative.ts",
+            "line": 27,
+            "column": 7,
+            "code": 2339
+          }
+        },
+        {
+          "name": "missing-request",
+          "expected": {
+            "name": "missing-request",
+            "file": "tests/types/text-field-negative.ts",
+            "line": 29,
+            "code": 2554
+          },
+          "actual": {
+            "file": "tests/types/text-field-negative.ts",
+            "line": 29,
+            "column": 7,
+            "code": 2554
+          }
+        },
+        {
+          "name": "incomplete-request",
+          "expected": {
+            "name": "incomplete-request",
+            "file": "tests/types/text-field-negative.ts",
+            "line": 31,
+            "code": 2740
+          },
+          "actual": {
+            "file": "tests/types/text-field-negative.ts",
+            "line": 31,
+            "column": 18,
+            "code": 2740
+          }
+        },
+        {
+          "name": "promise-result",
+          "expected": {
+            "name": "promise-result",
+            "file": "tests/types/text-field-negative.ts",
+            "line": 33,
+            "code": 2739
+          },
+          "actual": {
+            "file": "tests/types/text-field-negative.ts",
+            "line": 33,
+            "column": 7,
+            "code": 2739
+          }
+        },
+        {
+          "name": "opaque-node",
+          "expected": {
+            "name": "opaque-node",
+            "file": "tests/types/text-field-negative.ts",
+            "line": 35,
+            "code": 2739
+          },
+          "actual": {
+            "file": "tests/types/text-field-negative.ts",
+            "line": 35,
+            "column": 7,
+            "code": 2739
+          }
+        },
+        {
+          "name": "no-runtime-type-value",
+          "expected": {
+            "name": "no-runtime-type-value",
+            "file": "tests/types/text-field-negative.ts",
+            "line": 37,
+            "code": 2693
+          },
+          "actual": {
+            "file": "tests/types/text-field-negative.ts",
+            "line": 37,
+            "column": 5,
+            "code": 2693
+          }
+        },
+        {
+          "name": "invalid-status-state",
+          "expected": {
+            "name": "invalid-status-state",
+            "file": "tests/types/text-field-negative.ts",
+            "line": 39,
+            "code": 2322
+          },
+          "actual": {
+            "file": "tests/types/text-field-negative.ts",
+            "line": 39,
+            "column": 7,
+            "code": 2322
+          }
+        },
+        {
+          "name": "readonly-content-bounds",
+          "expected": {
+            "name": "readonly-content-bounds",
+            "file": "tests/types/text-field-negative.ts",
+            "line": 41,
+            "code": 2540
+          },
+          "actual": {
+            "file": "tests/types/text-field-negative.ts",
+            "line": 41,
+            "column": 42,
+            "code": 2540
+          }
+        }
+      ]
+    },
+    {
+      "label": "TextField supplement individual unsuppressed diagnostic receipts:",
+      "rows": [
+        {
+          "name": "complete-shape-without-brand",
+          "expected": {
+            "name": "complete-shape-without-brand",
+            "file": "tests/types/text-field-supplement-negative.ts",
+            "line": 9,
+            "code": 2741
+          },
+          "actual": {
+            "file": "tests/types/text-field-supplement-negative.ts",
+            "line": 9,
+            "column": 7,
+            "code": 2741
+          }
+        },
+        {
+          "name": "wrong-engine-argument",
+          "expected": {
+            "name": "wrong-engine-argument",
+            "file": "tests/types/text-field-supplement-negative.ts",
+            "line": 11,
+            "code": 2740
+          },
+          "actual": {
+            "file": "tests/types/text-field-supplement-negative.ts",
+            "line": 11,
+            "column": 17,
+            "code": 2740
+          }
+        },
+        {
+          "name": "wrong-scope-argument",
+          "expected": {
+            "name": "wrong-scope-argument",
+            "file": "tests/types/text-field-supplement-negative.ts",
+            "line": 13,
+            "code": 2740
+          },
+          "actual": {
+            "file": "tests/types/text-field-supplement-negative.ts",
+            "line": 13,
+            "column": 25,
+            "code": 2740
+          }
+        },
+        {
+          "name": "wrong-cache-argument",
+          "expected": {
+            "name": "wrong-cache-argument",
+            "file": "tests/types/text-field-supplement-negative.ts",
+            "line": 15,
+            "code": 2740
+          },
+          "actual": {
+            "file": "tests/types/text-field-supplement-negative.ts",
+            "line": 15,
+            "column": 32,
+            "code": 2740
+          }
+        }
+      ]
+    },
+    {
+      "label": "TextField imports individual unsuppressed diagnostic receipts:",
+      "rows": [
+        {
+          "name": "root-factory",
+          "expected": {
+            "name": "root-factory",
+            "file": "tests/types/text-field-import-negative.ts",
+            "line": 2,
+            "code": 2724
+          },
+          "actual": {
+            "file": "tests/types/text-field-import-negative.ts",
+            "line": 2,
+            "column": 9,
+            "code": 2724
+          }
+        },
+        {
+          "name": "runtime-text-factory",
+          "expected": {
+            "name": "runtime-text-factory",
+            "file": "tests/types/text-field-import-negative.ts",
+            "line": 4,
+            "code": 2305
+          },
+          "actual": {
+            "file": "tests/types/text-field-import-negative.ts",
+            "line": 4,
+            "column": 9,
+            "code": 2305
+          }
+        },
+        {
+          "name": "runtime-root-factory",
+          "expected": {
+            "name": "runtime-root-factory",
+            "file": "tests/types/text-field-import-negative.ts",
+            "line": 6,
+            "code": 2724
+          },
+          "actual": {
+            "file": "tests/types/text-field-import-negative.ts",
+            "line": 6,
+            "column": 9,
+            "code": 2724
+          }
+        },
+        {
+          "name": "web-factory",
+          "expected": {
+            "name": "web-factory",
+            "file": "tests/types/text-field-import-negative.ts",
+            "line": 8,
+            "code": 2305
+          },
+          "actual": {
+            "file": "tests/types/text-field-import-negative.ts",
+            "line": 8,
+            "column": 9,
+            "code": 2305
+          }
+        },
+        {
+          "name": "gpu-factory",
+          "expected": {
+            "name": "gpu-factory",
+            "file": "tests/types/text-field-import-negative.ts",
+            "line": 10,
+            "code": 2305
+          },
+          "actual": {
+            "file": "tests/types/text-field-import-negative.ts",
+            "line": 10,
+            "column": 9,
+            "code": 2305
+          }
+        },
+        {
+          "name": "root-field-type",
+          "expected": {
+            "name": "root-field-type",
+            "file": "tests/types/text-field-import-negative.ts",
+            "line": 12,
+            "code": 2305
+          },
+          "actual": {
+            "file": "tests/types/text-field-import-negative.ts",
+            "line": 12,
+            "column": 14,
+            "code": 2305
+          }
+        },
+        {
+          "name": "runtime-field-type",
+          "expected": {
+            "name": "runtime-field-type",
+            "file": "tests/types/text-field-import-negative.ts",
+            "line": 14,
+            "code": 2305
+          },
+          "actual": {
+            "file": "tests/types/text-field-import-negative.ts",
+            "line": 14,
+            "column": 14,
+            "code": 2305
+          }
+        },
+        {
+          "name": "root-status-type",
+          "expected": {
+            "name": "root-status-type",
+            "file": "tests/types/text-field-import-negative.ts",
+            "line": 16,
+            "code": 2305
+          },
+          "actual": {
+            "file": "tests/types/text-field-import-negative.ts",
+            "line": 16,
+            "column": 14,
+            "code": 2305
+          }
+        },
+        {
+          "name": "private-leaf-factory",
+          "expected": {
+            "name": "private-leaf-factory",
+            "file": "tests/types/text-field-import-negative.ts",
+            "line": 18,
+            "code": 2724
+          },
+          "actual": {
+            "file": "tests/types/text-field-import-negative.ts",
+            "line": 18,
+            "column": 9,
+            "code": 2724
+          }
+        },
+        {
+          "name": "private-registration",
+          "expected": {
+            "name": "private-registration",
+            "file": "tests/types/text-field-import-negative.ts",
+            "line": 20,
+            "code": 2305
+          },
+          "actual": {
+            "file": "tests/types/text-field-import-negative.ts",
+            "line": 20,
+            "column": 9,
+            "code": 2305
+          }
+        },
+        {
+          "name": "private-engine-module",
+          "expected": {
+            "name": "private-engine-module",
+            "file": "tests/types/text-field-import-negative.ts",
+            "line": 22,
+            "code": 2307
+          },
+          "actual": {
+            "file": "tests/types/text-field-import-negative.ts",
+            "line": 22,
+            "column": 49,
+            "code": 2307
+          }
+        },
+        {
+          "name": "private-runtime-module",
+          "expected": {
+            "name": "private-runtime-module",
+            "file": "tests/types/text-field-import-negative.ts",
+            "line": 24,
+            "code": 2307
+          },
+          "actual": {
+            "file": "tests/types/text-field-import-negative.ts",
+            "line": 24,
+            "column": 50,
+            "code": 2307
+          }
+        }
+      ]
+    }
+  ],
+  "history": [
+    {
+      "id": "missing-factory-red",
+      "records": [
+        "red-r1"
+      ],
+      "outcome": "EXPECTED_FEATURE_RED",
+      "detail": "Genuine initialized cache prepared before missing createTextField assertion; not import/setup failure"
+    },
+    {
+      "id": "constructor-authority",
+      "records": [
+        "constructor-r1"
+      ],
+      "outcome": "EXPECTED_HISTORICAL_RED",
+      "detail": "Genuine field baseline then structured refusal assertion failed; source already repaired while emitted leaf was pre-rebuild. Not current product execution",
+      "finding": "TF1-CONSTRUCTION-001",
+      "priority": 1,
+      "repair": "Private creation token before super/cache/state/Scope; public codes and exports unchanged"
+    },
+    {
+      "id": "earlier-probe",
+      "outcome": "ESM_RESOLUTION_FAILURE",
+      "errorCode": "ERR_PACKAGE_PATH_NOT_EXPORTED",
+      "archiveRef": "reviews/ui-tf1-implementation/revision-1/probe-attempt-1/constructor-probe-receipt.json",
+      "identity": {
+        "bytes": 1418,
+        "sha256": "645ba17c6fdd22faee638c96b8c2e85403a8214197236df60b3cce6b6f6a5778"
+      },
+      "detail": "No constructor observation; distinct from genuine constructor RED and no successful bypass claim"
+    },
+    {
+      "id": "positive-import",
+      "records": [
+        "types-r1"
+      ],
+      "outcome": "FAIL",
+      "actual": 2307,
+      "repair": "Rectangle2D type uses existing public Engine entry; no alias/dependency/exports change"
+    },
+    {
+      "id": "request-prediction",
+      "records": [
+        "types-r2"
+      ],
+      "outcome": "FAIL_METADATA_PREDICTION",
+      "file": "tests/types/text-field-negative.ts",
+      "line": 31,
+      "predicted": 2345,
+      "actual": 2740,
+      "repair": "Only marker changed; rejected expression preserved"
+    },
+    {
+      "id": "import-predictions",
+      "records": [
+        "types-r3"
+      ],
+      "outcome": "FAIL_METADATA_PREDICTION",
+      "file": "tests/types/text-field-import-negative.ts",
+      "lines": [
+        2,
+        6,
+        18
+      ],
+      "predicted": 2305,
+      "actual": 2724,
+      "repair": "Only three markers changed; all twelve rejected expressions and exact locations preserved"
+    },
+    {
+      "id": "type-coverage",
+      "records": [
+        "types-r4",
+        "types-r5",
+        "types-r6"
+      ],
+      "findings": [
+        "TF1-TYPE-001",
+        "TF1-TYPE-002"
+      ],
+      "priorities": [
+        2,
+        2
+      ],
+      "detail": "Original 18 ordinary and 12 import bodies retained. Added one missing-brand-only structural case with all methods, and three wrong authority arguments",
+      "missingBrandActual": 2741,
+      "wrongArgumentLines": [
+        11,
+        13,
+        15
+      ],
+      "wrongArgumentsPredicted": 2345,
+      "wrongArgumentsActual": 2740,
+      "repair": "Three supplemental markers alone changed; four expressions/count/checker policy retained"
+    },
+    {
+      "id": "public-first",
+      "records": [
+        "public-r1",
+        "focused-r1"
+      ],
+      "outcome": "FAIL_MARKERS_AND_INCOMPLETE_TIMEOUT",
+      "timeoutMs": 90000,
+      "explicitFailureMarkers": [
+        "TF03",
+        "TF07"
+      ],
+      "focusedTests": 2,
+      "focusedFail": 2,
+      "detail": "Signed-zero expected +0 versus actual -0; missing mandatory host timer; primary cleanup cause incorrectly repeated among remaining errors. Fixture corrections preserve established contracts"
+    },
+    {
+      "id": "capacity-setup",
+      "records": [
+        "capacity-r1",
+        "capacitySetup-r1"
+      ],
+      "outcome": "HISTORICAL_SETUP_FAILURE_AND_DIAGNOSTIC",
+      "timeoutMs": 5000,
+      "diagnosticBranches": 2,
+      "diagnosticPass": 1,
+      "diagnosticFail": 1,
+      "detail": "Original-setup TEXT_CACHE_BUDGET versus explicit-idle raster entry under same caps and live old lease; source repaired but emitted leaf still pre-rebuild; no current-product acceptance"
+    },
+    {
+      "id": "large-tree",
+      "records": [
+        "public-r2",
+        "allTimed-r1",
+        "nonTree-r1",
+        "public-r3"
+      ],
+      "outcome": "PRESERVED_TIMEOUTS_WITH_COMPLETED_SUCCESSOR",
+      "timeoutMs": 90000,
+      "selectedNonTreeTests": 12,
+      "selectedNonTreePass": 12,
+      "genuineSprites": 65534,
+      "admittedTotalNodes": 65536,
+      "overLimitTotalNodes": 65537,
+      "detail": "One bottom-up binary setup replaces repeated flat Stage attachments. All literal oracles and genuine node/public API constraints remain. Source complexity reasoning is not measured performance"
+    },
+    {
+      "id": "blank-callback",
+      "records": [
+        "legacy-r1",
+        "legacy-r2"
+      ],
+      "outcome": "NORMAL_COMPLETED_FAILURE_WITH_SUCCESSOR",
+      "originalTests": 20,
+      "originalPass": 19,
+      "originalFail": 1,
+      "expectedRasterCallbacks": 1,
+      "actualRasterCallbacks": 2,
+      "repair": "Expected two callbacks and undefined blank image; T1 no-ink rasterize/release obligation and original prefix retained"
+    },
+    {
+      "id": "unfinished-review",
+      "outcome": "UNFINISHED_HISTORICAL_REVIEW",
+      "detail": "Original broader implementation review remains unfinished. Later independent fourteen-file source review and separate finite type review are completed, independently scoped records; no retroactive replacement"
+    }
+  ],
+  "reviews": [
+    {
+      "id": "product-source",
+      "reportedVerdict": "PASS_WITH_LIMITS_SOURCE_ONLY",
+      "scope": "Fourteen current source files; zero actionable findings; no execution.",
+      "archiveRef": "reviews/ui-tf1-product-current/revision-1/review-seal.json",
+      "identity": {
+        "bytes": 2062,
+        "sha256": "7fa3ff915a0ed5f1f68f5ca07af4d95973fd7d1a85e85f115361749f011a2ad8"
+      }
+    },
+    {
+      "id": "constructor-original",
+      "reportedVerdict": "CHANGES_REQUESTED_SOURCE_ONLY",
+      "scope": "P1 TF1-CONSTRUCTION-001.",
+      "archiveRef": "reviews/ui-tf1-construction-root/revision-1/review-seal.json",
+      "identity": {
+        "bytes": 3673,
+        "sha256": "82078d5321537871eba39c7c334b1f794e9d8289023ecba81fc1de36548dd0a1"
+      }
+    },
+    {
+      "id": "constructor-closure",
+      "reportedVerdict": "PASS_WITH_LIMITS_SOURCE_ONLY_CORRECTION",
+      "scope": "Private creation token; historical pre-rebuild RED retained.",
+      "archiveRef": "reviews/ui-tf1-construction-root/revision-2/review-seal.json",
+      "identity": {
+        "bytes": 1315,
+        "sha256": "a850f07a2fff91fa8f6e8372c69760ad15fe6e73bd93014579a5f04d57192cdd"
+      }
+    },
+    {
+      "id": "type-original",
+      "reportedVerdict": "REVIEW_FINDINGS_SOURCE_ONLY",
+      "scope": "Two P2 type coverage findings; unfinished broader review remains historical.",
+      "archiveRef": "reviews/ui-tf1-implementation/revision-1/checker-subreview/review-seal.json",
+      "identity": {
+        "bytes": 3603,
+        "sha256": "60ac16a425f2b5170d37581849c79d14aa9002f0d05bb463a5cb666ef25d8e12"
+      }
+    },
+    {
+      "id": "type-closure",
+      "reportedVerdict": "PASS_WITH_LIMITS_SOURCE_ONLY",
+      "scope": "TF1-TYPE-001 and TF1-TYPE-002 closed; saved types-r6 read, no compiler execution.",
+      "archiveRef": "reviews/ui-tf1-implementation/revision-2/checker-subreview/review-seal.json",
+      "identity": {
+        "bytes": 3571,
+        "sha256": "f1df03ec915a72066153b159271e4bc05bca9fd8268ac5bf86584bde6e2f9ff4"
+      }
+    },
+    {
+      "id": "public-fixture",
+      "reportedVerdict": "PASS_WITH_LIMITS_SOURCE_ONLY",
+      "scope": "Seven finite fixture corrections, baseline preserved, actual acceptance separate.",
+      "archiveRef": "reviews/ui-tf1-public-fixture/revision-2/review-seal.json",
+      "identity": {
+        "bytes": 917,
+        "sha256": "861688ad643418286cdc6cbd62f6b1080a309f60982c79e8c9e2233b5f552eb3"
+      }
+    },
+    {
+      "id": "large-tree-fixture",
+      "reportedVerdict": "PASS_WITH_LIMITS_SOURCE_ONLY",
+      "scope": "One genuine setup shape replacement, all existing oracles preserved.",
+      "archiveRef": "reviews/ui-tf1-large-tree-fixture/revision-1/review-seal.json",
+      "identity": {
+        "bytes": 4485,
+        "sha256": "0eae8fa98153f1b622d471973c76a64f31dfe5471e561719a5d3d169e2db3e41"
+      }
+    },
+    {
+      "id": "legacy-collector",
+      "reportedVerdict": "PASS_WITH_LIMITS_SOURCE_ONLY",
+      "scope": "Metadata/import attribution and blank callback count correction, historical locator correction retained.",
+      "archiveRef": "reviews/ui-tf1-legacy-collector/revision-2/review-seal.json",
+      "identity": {
+        "bytes": 2288,
+        "sha256": "892caa439cb3822388a8fd921432b694c5c28269cd13da93c7c308b9f15531cf"
+      }
+    },
+    {
+      "id": "public-contract",
+      "reportedVerdict": "PASS_WITH_LIMITS_BILINGUAL_CONTRACT_CONTENT_SOURCE_ONLY",
+      "scope": "Two contract payloads; selected inputs and private mapping verified.",
+      "archiveRef": "reviews/ui-tf1-contract-root/revision-1/review-seal.json",
+      "identity": {
+        "bytes": 2205,
+        "sha256": "a849691058a70be9e504cc12d68d93e7bf706f053ba7a75767e4b25890b48785"
+      }
+    },
+    {
+      "id": "saved-cpu-results",
+      "reportedVerdict": "PASS_WITH_LIMITS_SOURCE_AND_SAVED_RESULTS",
+      "scope": "Independent 24-receipt/48-stream saved-result audit; zero actionable findings; verify-r1 excluded and unread at this historical cutoff; no reviewer execution",
+      "archiveRef": "reviews/ui-tf1-cpu-saved-results/revision-1/review-seal.json",
+      "identity": {
+        "bytes": 6565,
+        "sha256": "d01611207b789374e457ab777242ede2bb01999fcfb27e7f86683d8c2d308769"
+      }
+    }
+  ],
+  "correctionIdentities": [
+    {
+      "archiveRef": "ui-tf1-implementation-work/type-positive-correction-r1/correction.json",
+      "identity": {
+        "bytes": 4365,
+        "sha256": "c14107bc366fe79a2e21a084d1c7fb651c9b02c0eb72ff14bdd7f5c54a8bdfc3"
+      }
+    },
+    {
+      "archiveRef": "ui-tf1-implementation-work/type-prediction-correction-r1/correction.json",
+      "identity": {
+        "bytes": 2725,
+        "sha256": "601bb9d3989f912cceb4f980a76ba3eb873868eb5680bc40295058266480a9d1"
+      }
+    },
+    {
+      "archiveRef": "ui-tf1-implementation-work/import-prediction-correction-r1/correction.json",
+      "identity": {
+        "bytes": 6631,
+        "sha256": "ba09a332d07363367c0bb3b281159cce680390252981a0c8e1dac4e522f61250"
+      }
+    },
+    {
+      "archiveRef": "ui-tf1-implementation-work/construction-and-type-supplement-r1/handoff.json",
+      "identity": {
+        "bytes": 4681,
+        "sha256": "0e51bf2e16ab4361b5c08dd4d5cd159cf336e5f53de9f63798ae4a7da6f284c0"
+      }
+    },
+    {
+      "archiveRef": "ui-tf1-implementation-work/supplement-prediction-correction-r1/handoff.json",
+      "identity": {
+        "bytes": 3772,
+        "sha256": "288c330b43b4b0690ac5561364d7dff99577ac16118335bac7267560b8dd228c"
+      }
+    }
+  ],
+  "executionReceipts": [
+    {
+      "id": "red-r1",
+      "mode": "red",
+      "startedUtc": "2026-10-11T00:29:13.098Z",
+      "endedUtc": "2026-10-11T00:29:13.235Z",
+      "exitStatus": 1,
+      "signal": null,
+      "errorCode": null,
+      "sourceStableWithinRun": true,
+      "inputsStableWithinRun": true,
+      "sourceCount": 97,
+      "inputCount": 7,
+      "emittedCount": 266,
+      "fourteenSourcePinsMatchCurrent": false,
+      "fullEmittedVectorMatchesCurrent": false,
+      "receipt": {
+        "archiveRef": "ui-tf1-verification/red-r1/receipt.json",
+        "identity": {
+          "bytes": 96507,
+          "sha256": "eabb13081e699a38be74136732a21be60b68b03037c251ddf62a1a33fdf9f972"
+        }
+      },
+      "stdout": {
+        "archiveRef": "ui-tf1-verification/red-r1/stdout.raw",
+        "identity": {
+          "bytes": 952,
+          "sha256": "693b27568ad4a1caccf07922de9d81e415c84f10dd831051fe31311007eb2442"
+        }
+      },
+      "stderr": {
+        "archiveRef": "ui-tf1-verification/red-r1/stderr.raw",
+        "identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "id": "build-r1",
+      "mode": "build",
+      "startedUtc": "2026-10-11T00:41:38.668Z",
+      "endedUtc": "2026-10-11T00:41:39.154Z",
+      "exitStatus": 0,
+      "signal": null,
+      "errorCode": null,
+      "sourceStableWithinRun": true,
+      "inputsStableWithinRun": true,
+      "sourceCount": 101,
+      "inputCount": 7,
+      "emittedCount": 0,
+      "fourteenSourcePinsMatchCurrent": false,
+      "fullEmittedVectorMatchesCurrent": null,
+      "receipt": {
+        "archiveRef": "ui-tf1-verification/build-r1/receipt.json",
+        "identity": {
+          "bytes": 28480,
+          "sha256": "7a893f5156bd3c1f499606facf8027cd61182a0dc911d814fcd81d672d0bf92c"
+        }
+      },
+      "stdout": {
+        "archiveRef": "ui-tf1-verification/build-r1/stdout.raw",
+        "identity": {
+          "bytes": 44,
+          "sha256": "166710cb105690b244b48c5dcc5672a4c0bc8280e995ae7d2f5bd46141491cea"
+        }
+      },
+      "stderr": {
+        "archiveRef": "ui-tf1-verification/build-r1/stderr.raw",
+        "identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "id": "build-r2",
+      "mode": "build",
+      "startedUtc": "2026-10-11T00:59:16.251Z",
+      "endedUtc": "2026-10-11T00:59:16.833Z",
+      "exitStatus": 0,
+      "signal": null,
+      "errorCode": null,
+      "sourceStableWithinRun": true,
+      "inputsStableWithinRun": true,
+      "sourceCount": 101,
+      "inputCount": 7,
+      "emittedCount": 0,
+      "fourteenSourcePinsMatchCurrent": true,
+      "fullEmittedVectorMatchesCurrent": null,
+      "receipt": {
+        "archiveRef": "ui-tf1-verification/build-r2/receipt.json",
+        "identity": {
+          "bytes": 28490,
+          "sha256": "eb29f511cdbdca8164fa3f641817120345fdc7784c985eb91fbf6e067e6dd4b7"
+        }
+      },
+      "stdout": {
+        "archiveRef": "ui-tf1-verification/build-r2/stdout.raw",
+        "identity": {
+          "bytes": 44,
+          "sha256": "166710cb105690b244b48c5dcc5672a4c0bc8280e995ae7d2f5bd46141491cea"
+        }
+      },
+      "stderr": {
+        "archiveRef": "ui-tf1-verification/build-r2/stderr.raw",
+        "identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "id": "types-r1",
+      "mode": "types",
+      "startedUtc": "2026-10-11T00:41:58.771Z",
+      "endedUtc": "2026-10-11T00:42:00.784Z",
+      "exitStatus": 1,
+      "signal": null,
+      "errorCode": null,
+      "sourceStableWithinRun": true,
+      "inputsStableWithinRun": true,
+      "sourceCount": 101,
+      "inputCount": 33,
+      "emittedCount": 274,
+      "fourteenSourcePinsMatchCurrent": false,
+      "fullEmittedVectorMatchesCurrent": false,
+      "receipt": {
+        "archiveRef": "ui-tf1-verification/types-r1/receipt.json",
+        "identity": {
+          "bytes": 106222,
+          "sha256": "f6126bcf413da73b8b813c13e94bfdc1a7736634ea95cdf5304acfc2d5c2b8dc"
+        }
+      },
+      "stdout": {
+        "archiveRef": "ui-tf1-verification/types-r1/stdout.raw",
+        "identity": {
+          "bytes": 85837,
+          "sha256": "b1c0e2a32155127a5bacbf99a45445f31ab2287df956b1cbf35d7dbaad244385"
+        }
+      },
+      "stderr": {
+        "archiveRef": "ui-tf1-verification/types-r1/stderr.raw",
+        "identity": {
+          "bytes": 659,
+          "sha256": "911a74bee9e2d0ab2d69ddc2059206f595f2fb5048cb6e49a417cfa3b78c287f"
+        }
+      }
+    },
+    {
+      "id": "types-r2",
+      "mode": "types",
+      "startedUtc": "2026-10-11T00:43:46.915Z",
+      "endedUtc": "2026-10-11T00:43:49.792Z",
+      "exitStatus": 1,
+      "signal": null,
+      "errorCode": null,
+      "sourceStableWithinRun": true,
+      "inputsStableWithinRun": true,
+      "sourceCount": 101,
+      "inputCount": 33,
+      "emittedCount": 274,
+      "fourteenSourcePinsMatchCurrent": false,
+      "fullEmittedVectorMatchesCurrent": false,
+      "receipt": {
+        "archiveRef": "ui-tf1-verification/types-r2/receipt.json",
+        "identity": {
+          "bytes": 106223,
+          "sha256": "e3219566a50eba213faabde84e9cd382946544127ecaf9189eea25732a5d5421"
+        }
+      },
+      "stdout": {
+        "archiveRef": "ui-tf1-verification/types-r2/stdout.raw",
+        "identity": {
+          "bytes": 87989,
+          "sha256": "5c692dfe3915615fe365b0a3f2a7bf6fbf393e756fbd7056ba66e6e414628956"
+        }
+      },
+      "stderr": {
+        "archiveRef": "ui-tf1-verification/types-r2/stderr.raw",
+        "identity": {
+          "bytes": 1018,
+          "sha256": "849c191f9f0c20e12d9149b474608fddf8e929b0560afbe2b78d954e8ab4d64b"
+        }
+      }
+    },
+    {
+      "id": "types-r3",
+      "mode": "types",
+      "startedUtc": "2026-10-11T00:45:25.812Z",
+      "endedUtc": "2026-10-11T00:45:29.203Z",
+      "exitStatus": 1,
+      "signal": null,
+      "errorCode": null,
+      "sourceStableWithinRun": true,
+      "inputsStableWithinRun": true,
+      "sourceCount": 101,
+      "inputCount": 33,
+      "emittedCount": 274,
+      "fourteenSourcePinsMatchCurrent": false,
+      "fullEmittedVectorMatchesCurrent": false,
+      "receipt": {
+        "archiveRef": "ui-tf1-verification/types-r3/receipt.json",
+        "identity": {
+          "bytes": 106223,
+          "sha256": "4e9ede30122103052ecbf427aeef36113ea373a2a49079565f1ab5a35febf6ed"
+        }
+      },
+      "stdout": {
+        "archiveRef": "ui-tf1-verification/types-r3/stdout.raw",
+        "identity": {
+          "bytes": 93887,
+          "sha256": "9802e10a37624bbbd59b981cfb5bca75c88c528d630df8e1d021698c7b3b86e3"
+        }
+      },
+      "stderr": {
+        "archiveRef": "ui-tf1-verification/types-r3/stderr.raw",
+        "identity": {
+          "bytes": 1023,
+          "sha256": "26c6ded0325f7ce99524c5581f5d71f56c53b44a11709bc802a1be89d2a06034"
+        }
+      }
+    },
+    {
+      "id": "types-r4",
+      "mode": "types",
+      "startedUtc": "2026-10-11T00:47:02.294Z",
+      "endedUtc": "2026-10-11T00:47:05.527Z",
+      "exitStatus": 0,
+      "signal": null,
+      "errorCode": null,
+      "sourceStableWithinRun": true,
+      "inputsStableWithinRun": true,
+      "sourceCount": 101,
+      "inputCount": 33,
+      "emittedCount": 274,
+      "fourteenSourcePinsMatchCurrent": false,
+      "fullEmittedVectorMatchesCurrent": false,
+      "receipt": {
+        "archiveRef": "ui-tf1-verification/types-r4/receipt.json",
+        "identity": {
+          "bytes": 106220,
+          "sha256": "102ab08c41199c3a2e03379f1a16e29458e14aa6013f01c0f85e0bbaec55a17c"
+        }
+      },
+      "stdout": {
+        "archiveRef": "ui-tf1-verification/types-r4/stdout.raw",
+        "identity": {
+          "bytes": 96894,
+          "sha256": "d82fc0e73387634e509c9dfe4f841bd7263a25a1205e05add10c0391eff5313d"
+        }
+      },
+      "stderr": {
+        "archiveRef": "ui-tf1-verification/types-r4/stderr.raw",
+        "identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "id": "types-r5",
+      "mode": "types",
+      "startedUtc": "2026-10-11T00:59:34.44Z",
+      "endedUtc": "2026-10-11T00:59:37.456Z",
+      "exitStatus": 1,
+      "signal": null,
+      "errorCode": null,
+      "sourceStableWithinRun": true,
+      "inputsStableWithinRun": true,
+      "sourceCount": 101,
+      "inputCount": 34,
+      "emittedCount": 274,
+      "fourteenSourcePinsMatchCurrent": true,
+      "fullEmittedVectorMatchesCurrent": true,
+      "receipt": {
+        "archiveRef": "ui-tf1-verification/types-r5/receipt.json",
+        "identity": {
+          "bytes": 106496,
+          "sha256": "ebd276bf4fd5aee057d55ff143af597ed422c2babb0cf3ae019c2288080b2a77"
+        }
+      },
+      "stdout": {
+        "archiveRef": "ui-tf1-verification/types-r5/stdout.raw",
+        "identity": {
+          "bytes": 92958,
+          "sha256": "d31cffc1296877d56301ea7a7efd2b22bae9431df7eb89b6368832d2b90d4ecf"
+        }
+      },
+      "stderr": {
+        "archiveRef": "ui-tf1-verification/types-r5/stderr.raw",
+        "identity": {
+          "bytes": 1043,
+          "sha256": "ba4052892ba93490d6e77fadd14cb5f44b1ccf37b5278adaec4511f5d58e6253"
+        }
+      }
+    },
+    {
+      "id": "types-r6",
+      "mode": "types",
+      "startedUtc": "2026-10-11T01:06:33.067Z",
+      "endedUtc": "2026-10-11T01:06:36.388Z",
+      "exitStatus": 0,
+      "signal": null,
+      "errorCode": null,
+      "sourceStableWithinRun": true,
+      "inputsStableWithinRun": true,
+      "sourceCount": 101,
+      "inputCount": 34,
+      "emittedCount": 274,
+      "fourteenSourcePinsMatchCurrent": true,
+      "fullEmittedVectorMatchesCurrent": true,
+      "receipt": {
+        "archiveRef": "ui-tf1-verification/types-r6/receipt.json",
+        "identity": {
+          "bytes": 106493,
+          "sha256": "c9c6ad23710e1bed1771589cb5da9199b9d0800bcc3f09c0166fb102ada8a4de"
+        }
+      },
+      "stdout": {
+        "archiveRef": "ui-tf1-verification/types-r6/stdout.raw",
+        "identity": {
+          "bytes": 98813,
+          "sha256": "f21ca8f6a911837272efbe93e4ba2209759be151bca0adca422fea2552b13fa9"
+        }
+      },
+      "stderr": {
+        "archiveRef": "ui-tf1-verification/types-r6/stderr.raw",
+        "identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "id": "boundaries-r1",
+      "mode": "boundaries",
+      "startedUtc": "2026-10-11T00:42:21.871Z",
+      "endedUtc": "2026-10-11T00:42:22.254Z",
+      "exitStatus": 0,
+      "signal": null,
+      "errorCode": null,
+      "sourceStableWithinRun": true,
+      "inputsStableWithinRun": true,
+      "sourceCount": 101,
+      "inputCount": 33,
+      "emittedCount": 274,
+      "fourteenSourcePinsMatchCurrent": false,
+      "fullEmittedVectorMatchesCurrent": false,
+      "receipt": {
+        "archiveRef": "ui-tf1-verification/boundaries-r1/receipt.json",
+        "identity": {
+          "bytes": 106238,
+          "sha256": "f5e7e6f0688363cfa6ce48a15e6c5ae4cf12d751cb118ebcbeded711d91a9968"
+        }
+      },
+      "stdout": {
+        "archiveRef": "ui-tf1-verification/boundaries-r1/stdout.raw",
+        "identity": {
+          "bytes": 192,
+          "sha256": "ad46549e92c8ee87a1cf7fe7819ac564d4862a9dc404d5604c1eddcdf2c7b996"
+        }
+      },
+      "stderr": {
+        "archiveRef": "ui-tf1-verification/boundaries-r1/stderr.raw",
+        "identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "id": "controls-r1",
+      "mode": "controls",
+      "startedUtc": "2026-10-11T01:07:03.223Z",
+      "endedUtc": "2026-10-11T01:07:51.941Z",
+      "exitStatus": 0,
+      "signal": null,
+      "errorCode": null,
+      "sourceStableWithinRun": true,
+      "inputsStableWithinRun": true,
+      "sourceCount": 101,
+      "inputCount": 8,
+      "emittedCount": 274,
+      "fourteenSourcePinsMatchCurrent": true,
+      "fullEmittedVectorMatchesCurrent": true,
+      "receipt": {
+        "archiveRef": "ui-tf1-verification/controls-r1/receipt.json",
+        "identity": {
+          "bytes": 99916,
+          "sha256": "46c66fd383c3b9eef43a93990512ab986101f0a23ace097ed871b34c2855433f"
+        }
+      },
+      "stdout": {
+        "archiveRef": "ui-tf1-verification/controls-r1/stdout.raw",
+        "identity": {
+          "bytes": 2944,
+          "sha256": "bb7f2419b8f6c054a82c3c333d78fb93c324a2d3074c1712bb4794e652003fd9"
+        }
+      },
+      "stderr": {
+        "archiveRef": "ui-tf1-verification/controls-r1/stderr.raw",
+        "identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "id": "public-r1",
+      "mode": "public",
+      "startedUtc": "2026-10-11T00:45:53.493Z",
+      "endedUtc": "2026-10-11T00:47:23.515Z",
+      "exitStatus": null,
+      "signal": "SIGTERM",
+      "errorCode": "ETIMEDOUT",
+      "sourceStableWithinRun": true,
+      "inputsStableWithinRun": true,
+      "sourceCount": 101,
+      "inputCount": 7,
+      "emittedCount": 274,
+      "fourteenSourcePinsMatchCurrent": false,
+      "fullEmittedVectorMatchesCurrent": false,
+      "receipt": {
+        "archiveRef": "ui-tf1-verification/public-r1/receipt.json",
+        "identity": {
+          "bytes": 99822,
+          "sha256": "6a703a3f08ec466877d50d3a592d9932df536b3ef5bd2d2972ac6b9263c9ebcc"
+        }
+      },
+      "stdout": {
+        "archiveRef": "ui-tf1-verification/public-r1/stdout.raw",
+        "identity": {
+          "bytes": 973,
+          "sha256": "77ae7e4e6f22284f160997befbbdc761415445fada213847b6ad22f02abf77f7"
+        }
+      },
+      "stderr": {
+        "archiveRef": "ui-tf1-verification/public-r1/stderr.raw",
+        "identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "id": "public-r2",
+      "mode": "public",
+      "startedUtc": "2026-10-11T00:59:33.96Z",
+      "endedUtc": "2026-10-11T01:01:03.999Z",
+      "exitStatus": null,
+      "signal": "SIGTERM",
+      "errorCode": "ETIMEDOUT",
+      "sourceStableWithinRun": true,
+      "inputsStableWithinRun": true,
+      "sourceCount": 101,
+      "inputCount": 8,
+      "emittedCount": 274,
+      "fourteenSourcePinsMatchCurrent": true,
+      "fullEmittedVectorMatchesCurrent": true,
+      "receipt": {
+        "archiveRef": "ui-tf1-verification/public-r2/receipt.json",
+        "identity": {
+          "bytes": 100081,
+          "sha256": "807e0c7b6e7abcb7de60439489757bb510fba903aa7a34b2c210ffa1a0d595c0"
+        }
+      },
+      "stdout": {
+        "archiveRef": "ui-tf1-verification/public-r2/stdout.raw",
+        "identity": {
+          "bytes": 94,
+          "sha256": "88a8ba34e4e70af53de2a6beb2ed2062586a85a47c4a0a73001bfaff6b631035"
+        }
+      },
+      "stderr": {
+        "archiveRef": "ui-tf1-verification/public-r2/stderr.raw",
+        "identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "id": "public-r3",
+      "mode": "public",
+      "startedUtc": "2026-10-11T01:14:15.14Z",
+      "endedUtc": "2026-10-11T01:14:16.692Z",
+      "exitStatus": 0,
+      "signal": null,
+      "errorCode": null,
+      "sourceStableWithinRun": true,
+      "inputsStableWithinRun": true,
+      "sourceCount": 101,
+      "inputCount": 8,
+      "emittedCount": 274,
+      "fourteenSourcePinsMatchCurrent": true,
+      "fullEmittedVectorMatchesCurrent": true,
+      "receipt": {
+        "archiveRef": "ui-tf1-verification/public-r3/receipt.json",
+        "identity": {
+          "bytes": 99913,
+          "sha256": "c43a38e737c562367c907f189a066960a54f8217c58affc6ef39590032d411cb"
+        }
+      },
+      "stdout": {
+        "archiveRef": "ui-tf1-verification/public-r3/stdout.raw",
+        "identity": {
+          "bytes": 1705,
+          "sha256": "ac81ef494f9cefe491085226516d612f1cb9750efda5d7e6193a709a39918b99"
+        }
+      },
+      "stderr": {
+        "archiveRef": "ui-tf1-verification/public-r3/stderr.raw",
+        "identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "id": "legacy-r1",
+      "mode": "legacy",
+      "startedUtc": "2026-10-11T01:12:13.453Z",
+      "endedUtc": "2026-10-11T01:12:13.686Z",
+      "exitStatus": 1,
+      "signal": null,
+      "errorCode": null,
+      "sourceStableWithinRun": true,
+      "inputsStableWithinRun": true,
+      "sourceCount": 101,
+      "inputCount": 7,
+      "emittedCount": 274,
+      "fourteenSourcePinsMatchCurrent": true,
+      "fullEmittedVectorMatchesCurrent": true,
+      "receipt": {
+        "archiveRef": "ui-tf1-verification/legacy-r1/receipt.json",
+        "identity": {
+          "bytes": 99660,
+          "sha256": "b950b2a20c7b52ffb76b54a87f4f254b77d2193a9fe28760b6a448a5a3fa1736"
+        }
+      },
+      "stdout": {
+        "archiveRef": "ui-tf1-verification/legacy-r1/stdout.raw",
+        "identity": {
+          "bytes": 2648,
+          "sha256": "4c0de3db718e02024543f42979490b99f8fd98726ef1208c4c4b89a62d940d59"
+        }
+      },
+      "stderr": {
+        "archiveRef": "ui-tf1-verification/legacy-r1/stderr.raw",
+        "identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "id": "legacy-r2",
+      "mode": "legacy",
+      "startedUtc": "2026-10-11T01:15:25.053Z",
+      "endedUtc": "2026-10-11T01:15:25.277Z",
+      "exitStatus": 0,
+      "signal": null,
+      "errorCode": null,
+      "sourceStableWithinRun": true,
+      "inputsStableWithinRun": true,
+      "sourceCount": 101,
+      "inputCount": 7,
+      "emittedCount": 274,
+      "fourteenSourcePinsMatchCurrent": true,
+      "fullEmittedVectorMatchesCurrent": true,
+      "receipt": {
+        "archiveRef": "ui-tf1-verification/legacy-r2/receipt.json",
+        "identity": {
+          "bytes": 99660,
+          "sha256": "81f5b162250f7c90e398cef2d1aee4aa76d777e7a705bd5a078e5925d24755da"
+        }
+      },
+      "stdout": {
+        "archiveRef": "ui-tf1-verification/legacy-r2/stdout.raw",
+        "identity": {
+          "bytes": 1955,
+          "sha256": "425fbbb82a666c7b90c9dfb33d3f5e86cbd959d3b67221a4b73eb01003f118da"
+        }
+      },
+      "stderr": {
+        "archiveRef": "ui-tf1-verification/legacy-r2/stderr.raw",
+        "identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "id": "regressions-r1",
+      "mode": "regressions",
+      "startedUtc": "2026-10-11T01:12:13.453Z",
+      "endedUtc": "2026-10-11T01:12:13.864Z",
+      "exitStatus": 0,
+      "signal": null,
+      "errorCode": null,
+      "sourceStableWithinRun": true,
+      "inputsStableWithinRun": true,
+      "sourceCount": 101,
+      "inputCount": 11,
+      "emittedCount": 274,
+      "fourteenSourcePinsMatchCurrent": true,
+      "fullEmittedVectorMatchesCurrent": true,
+      "receipt": {
+        "archiveRef": "ui-tf1-verification/regressions-r1/receipt.json",
+        "identity": {
+          "bytes": 100609,
+          "sha256": "5968c4b4daf55f61b8eaca3957249d4a2b4e1f16b8d6f7aea417551cd94d39b9"
+        }
+      },
+      "stdout": {
+        "archiveRef": "ui-tf1-verification/regressions-r1/stdout.raw",
+        "identity": {
+          "bytes": 8223,
+          "sha256": "d3ce30d535f372e7d710f2a8b1c9edeb12f9ae357c6bc6904b6d979241bd06e3"
+        }
+      },
+      "stderr": {
+        "archiveRef": "ui-tf1-verification/regressions-r1/stderr.raw",
+        "identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "id": "constructor-r1",
+      "mode": "constructor",
+      "startedUtc": "2026-10-11T00:58:30.113Z",
+      "endedUtc": "2026-10-11T00:58:30.28Z",
+      "exitStatus": 1,
+      "signal": null,
+      "errorCode": null,
+      "sourceStableWithinRun": true,
+      "inputsStableWithinRun": true,
+      "sourceCount": 101,
+      "inputCount": 7,
+      "emittedCount": 274,
+      "fourteenSourcePinsMatchCurrent": true,
+      "fullEmittedVectorMatchesCurrent": false,
+      "receipt": {
+        "archiveRef": "ui-tf1-verification/constructor-r1/receipt.json",
+        "identity": {
+          "bytes": 99688,
+          "sha256": "9d2f30633792d1b9e89f69c6be9205354f4403af532881ccada6d8bb4aae2f84"
+        }
+      },
+      "stdout": {
+        "archiveRef": "ui-tf1-verification/constructor-r1/stdout.raw",
+        "identity": {
+          "bytes": 1241,
+          "sha256": "6943fc58a39ecb8ee57d12e06bceed37928730404dc7a1b2f0949247b0901211"
+        }
+      },
+      "stderr": {
+        "archiveRef": "ui-tf1-verification/constructor-r1/stderr.raw",
+        "identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "id": "nonTree-r1",
+      "mode": "nonTree",
+      "startedUtc": "2026-10-11T01:09:56.25Z",
+      "endedUtc": "2026-10-11T01:09:56.46Z",
+      "exitStatus": 0,
+      "signal": null,
+      "errorCode": null,
+      "sourceStableWithinRun": true,
+      "inputsStableWithinRun": true,
+      "sourceCount": 101,
+      "inputCount": 7,
+      "emittedCount": 274,
+      "fourteenSourcePinsMatchCurrent": true,
+      "fullEmittedVectorMatchesCurrent": true,
+      "receipt": {
+        "archiveRef": "ui-tf1-verification/nonTree-r1/receipt.json",
+        "identity": {
+          "bytes": 99678,
+          "sha256": "7fafa1f7b146182a4612ced15425f46097d64eeecaf6cdd9e1ce6932cb337d5d"
+        }
+      },
+      "stdout": {
+        "archiveRef": "ui-tf1-verification/nonTree-r1/stdout.raw",
+        "identity": {
+          "bytes": 2881,
+          "sha256": "dce6876dd2dfdb35f6af9577ca90520bda0c2d4ce465cb3064cd3f7222c179da"
+        }
+      },
+      "stderr": {
+        "archiveRef": "ui-tf1-verification/nonTree-r1/stderr.raw",
+        "identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "id": "allTimed-r1",
+      "mode": "allTimed",
+      "startedUtc": "2026-10-11T01:07:10.252Z",
+      "endedUtc": "2026-10-11T01:08:40.267Z",
+      "exitStatus": null,
+      "signal": "SIGTERM",
+      "errorCode": "ETIMEDOUT",
+      "sourceStableWithinRun": true,
+      "inputsStableWithinRun": true,
+      "sourceCount": 101,
+      "inputCount": 7,
+      "emittedCount": 274,
+      "fourteenSourcePinsMatchCurrent": true,
+      "fullEmittedVectorMatchesCurrent": true,
+      "receipt": {
+        "archiveRef": "ui-tf1-verification/allTimed-r1/receipt.json",
+        "identity": {
+          "bytes": 99848,
+          "sha256": "032840da0fc2543dc4c203d91aba367085c69f38462ebb3bec150b2ad3fd7455"
+        }
+      },
+      "stdout": {
+        "archiveRef": "ui-tf1-verification/allTimed-r1/stdout.raw",
+        "identity": {
+          "bytes": 15,
+          "sha256": "7cb03ab03edf5190a8aa546c78285344395fad3d42d4011cd224f934aef96b3f"
+        }
+      },
+      "stderr": {
+        "archiveRef": "ui-tf1-verification/allTimed-r1/stderr.raw",
+        "identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "id": "capacitySetup-r1",
+      "mode": "capacitySetup",
+      "startedUtc": "2026-10-11T00:52:57.77Z",
+      "endedUtc": "2026-10-11T00:52:57.947Z",
+      "exitStatus": 1,
+      "signal": null,
+      "errorCode": null,
+      "sourceStableWithinRun": true,
+      "inputsStableWithinRun": true,
+      "sourceCount": 101,
+      "inputCount": 7,
+      "emittedCount": 274,
+      "fourteenSourcePinsMatchCurrent": true,
+      "fullEmittedVectorMatchesCurrent": false,
+      "receipt": {
+        "archiveRef": "ui-tf1-verification/capacitySetup-r1/receipt.json",
+        "identity": {
+          "bytes": 99702,
+          "sha256": "69a7f321533a40dd748df625352346709a034d2e71f0a568175b8c69f3af438a"
+        }
+      },
+      "stdout": {
+        "archiveRef": "ui-tf1-verification/capacitySetup-r1/stdout.raw",
+        "identity": {
+          "bytes": 4967,
+          "sha256": "15da4e07cc0b957bd1952979ad56ba65444752064da11375ec14a0102f1c1ced"
+        }
+      },
+      "stderr": {
+        "archiveRef": "ui-tf1-verification/capacitySetup-r1/stderr.raw",
+        "identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "id": "capacity-r1",
+      "mode": "capacity",
+      "startedUtc": "2026-10-11T00:49:11.525Z",
+      "endedUtc": "2026-10-11T00:49:16.691Z",
+      "exitStatus": 1,
+      "signal": null,
+      "errorCode": null,
+      "sourceStableWithinRun": true,
+      "inputsStableWithinRun": true,
+      "sourceCount": 101,
+      "inputCount": 7,
+      "emittedCount": 274,
+      "fourteenSourcePinsMatchCurrent": false,
+      "fullEmittedVectorMatchesCurrent": false,
+      "receipt": {
+        "archiveRef": "ui-tf1-verification/capacity-r1/receipt.json",
+        "identity": {
+          "bytes": 99670,
+          "sha256": "87ef8cec21b9fd6bcedd79a43b9830d9d008ddfd52a395df28e03714c7362d9f"
+        }
+      },
+      "stdout": {
+        "archiveRef": "ui-tf1-verification/capacity-r1/stdout.raw",
+        "identity": {
+          "bytes": 585,
+          "sha256": "44ef8c5c333fb1c960ec0fc81ee1f334a779cf42174f4108847917c25261c443"
+        }
+      },
+      "stderr": {
+        "archiveRef": "ui-tf1-verification/capacity-r1/stderr.raw",
+        "identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "id": "focused-r1",
+      "mode": "focused",
+      "startedUtc": "2026-10-11T00:48:43.789Z",
+      "endedUtc": "2026-10-11T00:48:44.009Z",
+      "exitStatus": 1,
+      "signal": null,
+      "errorCode": null,
+      "sourceStableWithinRun": true,
+      "inputsStableWithinRun": true,
+      "sourceCount": 101,
+      "inputCount": 7,
+      "emittedCount": 274,
+      "fourteenSourcePinsMatchCurrent": false,
+      "fullEmittedVectorMatchesCurrent": false,
+      "receipt": {
+        "archiveRef": "ui-tf1-verification/focused-r1/receipt.json",
+        "identity": {
+          "bytes": 99668,
+          "sha256": "b843bb83bb5d6799edaaae2e98887067bfc83444c4d6a3d3d105a8abf45024fa"
+        }
+      },
+      "stdout": {
+        "archiveRef": "ui-tf1-verification/focused-r1/stdout.raw",
+        "identity": {
+          "bytes": 4564,
+          "sha256": "83f67121f55f254fefa5b97e62eef50e4e8c0c0b1dfdba3d736893db3c989fcc"
+        }
+      },
+      "stderr": {
+        "archiveRef": "ui-tf1-verification/focused-r1/stderr.raw",
+        "identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "id": "first-r1",
+      "mode": "first",
+      "startedUtc": "2026-10-11T01:06:33.227Z",
+      "endedUtc": "2026-10-11T01:06:33.428Z",
+      "exitStatus": 0,
+      "signal": null,
+      "errorCode": null,
+      "sourceStableWithinRun": true,
+      "inputsStableWithinRun": true,
+      "sourceCount": 101,
+      "inputCount": 7,
+      "emittedCount": 274,
+      "fourteenSourcePinsMatchCurrent": true,
+      "fullEmittedVectorMatchesCurrent": true,
+      "receipt": {
+        "archiveRef": "ui-tf1-verification/first-r1/receipt.json",
+        "identity": {
+          "bytes": 99670,
+          "sha256": "e9296fc6fe64c3d24fe51320a92b456e56693b23c89799a0122bee36facc0fb0"
+        }
+      },
+      "stdout": {
+        "archiveRef": "ui-tf1-verification/first-r1/stdout.raw",
+        "identity": {
+          "bytes": 577,
+          "sha256": "df9a66b3462396d6db37255637ecadacf3184d4ae4f509a41eaa0df244e9470a"
+        }
+      },
+      "stderr": {
+        "archiveRef": "ui-tf1-verification/first-r1/stderr.raw",
+        "identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "id": "verify-r1",
+      "mode": "verify",
+      "startedUtc": "2026-10-11T01:15:28.585Z",
+      "endedUtc": "2026-10-11T01:28:41.26Z",
+      "exitStatus": 0,
+      "signal": null,
+      "errorCode": null,
+      "sourceStableWithinRun": true,
+      "inputsStableWithinRun": true,
+      "sourceCount": 101,
+      "inputCount": 139,
+      "emittedCount": 0,
+      "fourteenSourcePinsMatchCurrent": true,
+      "fullSourceVectorMatchesCurrent": true,
+      "fullEmittedVectorMatchesCurrent": null,
+      "receipt": {
+        "archiveRef": "ui-tf1-verification/verify-r1/receipt.json",
+        "identity": {
+          "bytes": 61569,
+          "sha256": "6483fafa5991150a95c0dd3f19f597399523891465896aa86a6586771c1cb0ff"
+        }
+      },
+      "stdout": {
+        "archiveRef": "ui-tf1-verification/verify-r1/stdout.raw",
+        "identity": {
+          "bytes": 349989,
+          "sha256": "ac7f7900c9858795b412a27a7c54c58639e1ef001cc8f98e24ee40e804ec544f"
+        }
+      },
+      "stderr": {
+        "archiveRef": "ui-tf1-verification/verify-r1/stderr.raw",
+        "identity": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    }
+  ],
+  "acceptance": {
+    "wholeVerification": "PASS_COMPLETE_EXISTING_PROTOTYPE_GATES",
+    "currentProductionBoundaryScan": "PASS_411_FILES_IN_VERIFY_R1",
+    "independentSavedCpuAudit": "PASS_WITH_LIMITS_SOURCE_AND_SAVED_RESULTS_24_RECEIPTS",
+    "nativeTF1": "PENDING",
+    "currentPublicPrepush": "PENDING",
+    "remoteDelivery": "PENDING",
+    "fullEngine": false,
+    "fullUI": false,
+    "fonts": false,
+    "nativeTextField": false,
+    "performance": false,
+    "CJK": false,
+    "phones": false,
+    "NativeSDK": false,
+    "Spine": false,
+    "threeD": false,
+    "migration": false,
+    "revisionExhaustion": "Source/type obligation only; no fabricated runtime counter",
+    "suiteOverlap": "No cross-suite sums or broad acceptance inferred",
+    "wholeVerificationAuditScope": "Later root-executed closed receipt, independently bound during document preparation; outside preceding 24-receipt saved-CPU audit"
+  },
+  "provenance": {
+    "firstParty": true,
+    "aiAssisted": "Code and documentation preparation",
+    "reusedContracts": "Existing Egret text, resource, image, ownership and display",
+    "competitorImplementationCopied": false,
+    "newDependency": false,
+    "license": "Apache-2.0",
+    "thirdPartyNotices": "Retained separately",
+    "globalOriginalityOrTrainingSourceCertification": false
+  },
+  "rawLogsEmbedded": false,
+  "publicAbsolutePaths": false,
+  "laterClosedWholeResult": {
+    "receipt": "verify-r1",
+    "existingPreparedInputsStableBeforeExtension": 87,
+    "savedCpuAuditExcludedWhole": true,
+    "compilerEmissionEquivalenceClaim": false,
+    "nativeTF1OrDeliveryAwarded": false
+  },
+  "publicRegistration": {
+    "engineeringPreview": "0.27.0",
+    "deliverable": "V028",
+    "sourceId": "S077",
+    "registeredInCandidate": true,
+    "historicalProposedRecordIdsRetained": true
+  },
+  "publicCuration": {
+    "status": "ROOT_ACCEPTED_INDEPENDENT_CURRENT_SCOPED_REVIEW",
+    "currentNativeRegressionGates": "PENDING",
+    "existingNativeGateCount": 5,
+    "nativeTextFieldSupplementCovered": false,
+    "mandatoryPrepush": "PENDING",
+    "remoteDelivery": "PENDING",
+    "currentSelectedSubjects": [
+      {
+        "path": "packages/engine/src/Engine.ts",
+        "bytes": 12852,
+        "sha256": "0d5191166d9cc58489109e474f28ec4e6d3d6c97f6ee09b6e26d0aa0988a3940"
+      },
+      {
+        "path": "packages/engine/src/text.ts",
+        "bytes": 985,
+        "sha256": "d52c84ce6a50057d13c95291b81a120bb57bd6507ba9b237693aeaa9f84f8175"
+      },
+      {
+        "path": "packages/engine/src/textField.ts",
+        "bytes": 496,
+        "sha256": "c9a22c67a2cc453e25a8e3104cbb2e8e4a38d73bbb1bcb67ecf6cecf1e151887"
+      },
+      {
+        "path": "packages/engine/src/internal/textFieldFactoryState.ts",
+        "bytes": 1535,
+        "sha256": "8602e59028681b31fa2156c1e725290f4eb8a782f5324b7c3c2b22e549279014"
+      },
+      {
+        "path": "packages/runtime/src/ownership.ts",
+        "bytes": 3540,
+        "sha256": "18c982d0a92eadc3d9e235cf65b40e5adea364304c8ad9620f429baae20b033b"
+      },
+      {
+        "path": "packages/runtime/src/Scope.ts",
+        "bytes": 4704,
+        "sha256": "4f4a696a2c8eae5fa76d1888b19c7396bfd9b26fd064ea6a1f562661a98ad2b3"
+      },
+      {
+        "path": "packages/runtime/src/AssetManager.ts",
+        "bytes": 14582,
+        "sha256": "be7c1b5d008395328429e3f75d539d8e979b840c8d80868e838e62a84c19bb2f"
+      },
+      {
+        "path": "packages/runtime/src/text/TextRasterCache.ts",
+        "bytes": 43977,
+        "sha256": "d0a9e9d1d7d81b22f0747b2ed145cc2b59e79e9fa19aa1d001e31eba8de90520"
+      },
+      {
+        "path": "packages/runtime/src/text/request.ts",
+        "bytes": 15609,
+        "sha256": "7d0406edb8b3e37c17efd74d466f9ff88094d5ef890f92a7d5ee4b464a18ad3f"
+      },
+      {
+        "path": "packages/runtime/src/text/TextField.ts",
+        "bytes": 10118,
+        "sha256": "8713f1fc65992bab620317f3ad8ded75f78aae5cb6815ab66a24a6ed510b04bd"
+      },
+      {
+        "path": "packages/runtime/src/textDisplayState.ts",
+        "bytes": 1418,
+        "sha256": "7aa4c5e15aa3715c30fb16cdefad198171b21dab80066577651c5361dbcfba9c"
+      },
+      {
+        "path": "packages/runtime/src/displayBounds.ts",
+        "bytes": 7886,
+        "sha256": "77c01d020bde3a443eaf7a2aac1bff5a531212cb9a8f354485024aae632f4fd3"
+      },
+      {
+        "path": "packages/runtime/src/frameCapture.ts",
+        "bytes": 5950,
+        "sha256": "1bb80a1e17a15f1b9e5858259b2bbcf77d97e5899218e5c4589268ba4b20b958"
+      },
+      {
+        "path": "packages/runtime/src/texturedFrameCapture.ts",
+        "bytes": 11891,
+        "sha256": "65bab2e4ff65c8f4e27dd0ecccbfa2a33ad4781691fdd4a5965547d08796dd21"
+      },
+      {
+        "path": "tools/check-types.mjs",
+        "bytes": 29780,
+        "sha256": "c634a3330aefcc68397b0d5147b669d99512aa64fc48ac7db81ca2e8b370d169"
+      },
+      {
+        "path": "tools/check-boundaries.mjs",
+        "bytes": 46359,
+        "sha256": "ab6823f1e8cac54216d365011185c756231bbb7da520cf2d24aba671241a1b6f"
+      },
+      {
+        "path": "tests/types/text-field-positive.ts",
+        "bytes": 1704,
+        "sha256": "5f2e6f6492a7eab202b627b526c321707f01888a9d69055626a167f996761b9b"
+      },
+      {
+        "path": "tests/types/text-field-negative.ts",
+        "bytes": 1827,
+        "sha256": "824c8ee8052c99b7a133a6c94d4ad5d37cfcb26b5bb8239c92cb1ea40dfabb2d"
+      },
+      {
+        "path": "tests/types/text-field-import-negative.ts",
+        "bytes": 1612,
+        "sha256": "7bf5c06548a109f215deed9fb6dc4a4625195f1ca1edcbb43248d6fd5c134765"
+      },
+      {
+        "path": "tests/text-field-boundaries.test.mjs",
+        "bytes": 5352,
+        "sha256": "5732aefcf32e7938a742d9fadb883a30693291ef35b5c232cc46b43aa9acab01"
+      },
+      {
+        "path": "tests/text-raster-boundaries.test.mjs",
+        "bytes": 8211,
+        "sha256": "1546a9826fb90df91ded3ad095f5df21f434f934aac2af57347960b36478d62b"
+      },
+      {
+        "path": "tests/boundaries.test.mjs",
+        "bytes": 38101,
+        "sha256": "6d4452e6d0062b0c2f07e7dec61f33e4340b12b09ec69d2c6b6fbf5ef356dbf8"
+      },
+      {
+        "path": "tests/types/text-field-supplement-negative.ts",
+        "bytes": 864,
+        "sha256": "2fdb7d6d4d2bab8edb17d87c96c36903ae1aa1434f62c3400b8b4a89b1ef794a"
+      },
+      {
+        "path": "tests/text-field-public.test.mjs",
+        "bytes": 36951,
+        "sha256": "16e00142eec586a6bfebec7e4526baf43703d90ef824564de60793bc0153f8f1"
+      },
+      {
+        "path": "tests/text-field-factory-authority.test.mjs",
+        "bytes": 2532,
+        "sha256": "27ea74ad0bd2e504a860e456c3162bc0f2155780e7c91cbebd86368b004f943d"
+      },
+      {
+        "path": "tests/texture-capture.test.mjs",
+        "bytes": 16696,
+        "sha256": "41a9d52ddd37af1b1750f78e47942048c7d21beeb5398fb24494151b78d25092"
+      }
+    ],
+    "compilerEmissionEquivalenceClaim": false,
+    "sourceReviews": [
+      {
+        "bytes": 4394,
+        "sha256": "60ddd449203d750775df90e7126912e671444a94fed1800d0dbab01dc6608a9a",
+        "status": "identity_only_not_distributed",
+        "reviewVerdict": "PASS_WITH_LIMITS_SOURCE_ONLY",
+        "scope": "Independent finite public source/meaning review; no product execution or blanket inventory acceptance."
+      },
+      {
+        "bytes": 6665,
+        "sha256": "7f43723feb22ecf526eac5f6628e0f0df857d4719643d8e87f132ea88ba1b3c7",
+        "status": "identity_only_not_distributed",
+        "reviewVerdict": "NEEDS_METADATA_CORRECTION_SOURCE_ONLY",
+        "scope": "Preserved one-P2 successor finding; independently closed by the narrow derived-hash successor."
+      },
+      {
+        "bytes": 4815,
+        "sha256": "2c4b60eb0609249d86851c2234a963a63d5539059c541ee34e1eccab417e6cbf",
+        "status": "identity_only_not_distributed",
+        "reviewVerdict": "PASS_WITH_LIMITS_SOURCE_ONLY",
+        "scope": "Independent finite public source/meaning review; no product execution or blanket inventory acceptance."
+      }
+    ],
+    "actualSavedRendererReview": {
+      "bytes": 2488,
+      "sha256": "ed35706693b3688f5cb2a0e1aa6d02b40a35143260a2e6482219a793f036ee3a",
+      "status": "identity_only_not_distributed",
+      "reviewVerdict": "PASS_WITH_LIMITS_ACTUAL_RENDERER_REGRESSIONS",
+      "scope": "Five existing Canvas/WebGPU/B1/textured/sequence renderer regressions and their saved ownership/oracle outputs; excludes native TextField/fonts/UI/phones/performance."
+    },
+    "laterRootIdentityOnlyBinding": true,
+    "finalHookAndRemoteDelivery": "PENDING_ACTUAL_RECORD",
+    "finalWhitespaceFormatReview": {
+      "bytes": 3955,
+      "sha256": "a04080bf97f2a82f68e92e72bb85cf5aad86cf3f01a01b23b07378875132ad1e",
+      "verdict": "PASS_WITH_LIMITS_SOURCE_ONLY",
+      "scope": "Independent finite byte/data/saved-output review of two EOF LF deletions, exact derived hashes and prior four-metadata review-identity binding; no product execution or wider acceptance"
+    }
+  },
+  "laterClosedIndependentReviews": {
+    "whole": {
+      "bytes": 2925,
+      "sha256": "6f504f40998ded739b569432ce873a8afdae7c5148392480d6c7e2e9db4ac162",
+      "verdict": "PASS_WITH_LIMITS_SOURCE_AND_SAVED_RESULTS",
+      "actionableFindings": 0,
+      "sourceMatches": 101,
+      "inputMatches": 139,
+      "tests": 2157,
+      "productionBoundaryFiles": 411,
+      "emittedSnapshotCount": 0,
+      "compilerCryptographicEquivalence": false,
+      "prior24ReceiptAuditCutoffUnchanged": true
+    },
+    "rendererFreeze": {
+      "bytes": 3839,
+      "sha256": "021306c148c8c6fea20c524b60f141a3a894f312b318e1ad86a2444322164c0e",
+      "verdict": "PASS_WITH_LIMITS_SOURCE_AND_SAVED_RESULTS",
+      "actionableFindings": 0,
+      "sourceInputs": 702,
+      "emittedFiles": 548,
+      "jsDeclarationFiles": 274,
+      "maps": 274,
+      "selectedGraphFiles": 187,
+      "jsModules": 88,
+      "edges": 249,
+      "controlInverses": 12,
+      "explicitTextFieldEntryFactoryLeafExcluded": true,
+      "nativeExecuted": false,
+      "sourceBuildAttestedHere": false,
+      "compilerCryptographicEquivalence": false
+    },
+    "reviewerExecution": false,
+    "currentNativeAcceptanceAwarded": false
+  },
+  "laterCurrentExistingRendererRegressions": {
+    "status": "ROOT_OBSERVED_PASS_PENDING_INDEPENDENT_SAVED_RESULT_REVIEW",
+    "routes": [
+      {
+        "mode": "canvas",
+        "status": "ROOT_OBSERVED_EXISTING_RENDERER_REGRESSION_PASS",
+        "releaseId": "4d25589b0d2ff1fca02511f3e0697585",
+        "nonce": "263eccbbc1a32aa16275511b1b8e52cf",
+        "inputPins": 1693,
+        "cumulativeJobProcesses": 13,
+        "assigned": true,
+        "ack": true,
+        "activeZero": true,
+        "jobClosed": true,
+        "completeEOF": true,
+        "additionalBrowserFlags": [],
+        "binding": {
+          "bytes": 1771,
+          "sha256": "11ed240135ffb667a6e98b77e507e873419cfc80ca8aedb63e59e93595c00f12",
+          "scope": "identity_only_not_distributed"
+        },
+        "launch": {
+          "bytes": 1780,
+          "sha256": "a2bed0310cc339c228df2e0e0249ec7bacbfaa1af8f09b5b9959d2b32e757c28",
+          "scope": "identity_only_not_distributed"
+        },
+        "owner": {
+          "bytes": 4215,
+          "sha256": "eb858c51f633d6dc58e77d98f3c924d2b0a120934c5027b1593e012d4c9af6eb",
+          "scope": "identity_only_not_distributed"
+        },
+        "runner": {
+          "bytes": 1247,
+          "sha256": "5e199e0334b4acea638c36937770452a180ac861f20a918fe88e457e9742887d",
+          "scope": "identity_only_not_distributed"
+        },
+        "archivedRelease": {
+          "bytes": 456532,
+          "sha256": "d9e0c03208eaad2d589edca58f46cf8d8c334ada66a403fdf3c6320af1dd5eb1",
+          "scope": "identity_only_not_distributed"
+        },
+        "archivedAdmission": {
+          "bytes": 11844,
+          "sha256": "8b3f50eb5bf5984b1886614ed277fc53181f253f6c585985f1aca91f1625fb65",
+          "scope": "identity_only_not_distributed"
+        }
+      },
+      {
+        "mode": "webgpu",
+        "status": "ROOT_OBSERVED_EXISTING_RENDERER_REGRESSION_PASS",
+        "releaseId": "894145bc89c96205b69ce55a740ff934",
+        "nonce": "a18876c1942e9a2d59f93ea1918f4e42",
+        "inputPins": 1693,
+        "cumulativeJobProcesses": 26,
+        "assigned": true,
+        "ack": true,
+        "activeZero": true,
+        "jobClosed": true,
+        "completeEOF": true,
+        "additionalBrowserFlags": [],
+        "binding": {
+          "bytes": 1771,
+          "sha256": "d2d395e7191a17150848d6ee85d5cde73b0828aee03a26d6bd78923271b1e620",
+          "scope": "identity_only_not_distributed"
+        },
+        "launch": {
+          "bytes": 1780,
+          "sha256": "bb00a58f36305b40a74591faeec920b92bc342f6cf846e9d63c2dd7e2640ff4c",
+          "scope": "identity_only_not_distributed"
+        },
+        "owner": {
+          "bytes": 4221,
+          "sha256": "8b52a1f268d96c0b26055ab7cfe95a037d9bfe10709e195766095d6ae555dfd3",
+          "scope": "identity_only_not_distributed"
+        },
+        "runner": {
+          "bytes": 1365,
+          "sha256": "c323fbb9ee66b5ae9fd9015e8061dce99a462a861e797e51416e5727c05e740b",
+          "scope": "identity_only_not_distributed"
+        },
+        "archivedRelease": {
+          "bytes": 456532,
+          "sha256": "916b78de668b98a3ebbe75fdb1a248dae2fb7b4172efea865a6f1af61931b80d",
+          "scope": "identity_only_not_distributed"
+        },
+        "archivedAdmission": {
+          "bytes": 11831,
+          "sha256": "9f1b6edbf1fa2792990a329aa6a20766511e4afb064f9ddc85a61c9dee07778b",
+          "scope": "identity_only_not_distributed"
+        }
+      },
+      {
+        "mode": "b1",
+        "status": "ROOT_OBSERVED_EXISTING_RENDERER_REGRESSION_PASS",
+        "releaseId": "371036a9edcafd5c65f8390e69170fe3",
+        "nonce": "3e3d5d313111c63ecd836c797f739e18",
+        "inputPins": 1693,
+        "cumulativeJobProcesses": 21,
+        "assigned": true,
+        "ack": true,
+        "activeZero": true,
+        "jobClosed": true,
+        "completeEOF": true,
+        "additionalBrowserFlags": [],
+        "binding": {
+          "bytes": 1759,
+          "sha256": "eaa83e65db8f9ef331c2ffbb292070b177318f4893762fa32ee8b7df15051b52",
+          "scope": "identity_only_not_distributed"
+        },
+        "launch": {
+          "bytes": 1768,
+          "sha256": "5687173b346c7156c29445208f4dc860bcb83e06a10555273b318ee3f724b74a",
+          "scope": "identity_only_not_distributed"
+        },
+        "owner": {
+          "bytes": 4221,
+          "sha256": "928bfdc34de62cdb56c64f0df4714c8057bcb7d28f92538689b1a2345cb2944f",
+          "scope": "identity_only_not_distributed"
+        },
+        "runner": {
+          "bytes": 1241,
+          "sha256": "db933dff6e3f7c6a1afe6afc71002335dc30e78b1936c2910b11145e3bd5b8e7",
+          "scope": "identity_only_not_distributed"
+        },
+        "archivedRelease": {
+          "bytes": 456527,
+          "sha256": "93302bce0ae07e36cfb23511e2389dfc5c70ed7b750b152f6d798eccee6d6b7b",
+          "scope": "identity_only_not_distributed"
+        },
+        "archivedAdmission": {
+          "bytes": 11823,
+          "sha256": "f3fc4b38f7f606c06f83d69d661b77da6f99b05757c71a545992be2daaa9a86b",
+          "scope": "identity_only_not_distributed"
+        }
+      },
+      {
+        "mode": "textured",
+        "status": "ROOT_OBSERVED_EXISTING_RENDERER_REGRESSION_PASS",
+        "releaseId": "4d2fcc73f4f192c0613cfcc443aa8a76",
+        "nonce": "c2e359b3b80743ebd74dc58fe72c98a5",
+        "inputPins": 1693,
+        "cumulativeJobProcesses": 88,
+        "assigned": true,
+        "ack": true,
+        "activeZero": true,
+        "jobClosed": true,
+        "completeEOF": true,
+        "additionalBrowserFlags": [],
+        "binding": {
+          "bytes": 1777,
+          "sha256": "e6f3559cf34e10827dc766e0bf5d30a7206ec03aa9dae12436534c33a425fafb",
+          "scope": "identity_only_not_distributed"
+        },
+        "launch": {
+          "bytes": 1786,
+          "sha256": "93240dbc9647e874063a75466e74a4b7e5eab460d245e188a3abee5a6ec8bdb2",
+          "scope": "identity_only_not_distributed"
+        },
+        "owner": {
+          "bytes": 4221,
+          "sha256": "903b85d17decd8e4fce3b17e03ea81844a997e0402e3baf6d5ab32328d4d16e5",
+          "scope": "identity_only_not_distributed"
+        },
+        "runner": {
+          "bytes": 1267,
+          "sha256": "a6a9892ae386bb18bf81b284c1b113b5d2bc97067fedb25827667e137b660348",
+          "scope": "identity_only_not_distributed"
+        },
+        "archivedRelease": {
+          "bytes": 456545,
+          "sha256": "b2c77588386bc3b6b0be00bb93757b61231a7f46c56e01c11bd3fe18554fa9a4",
+          "scope": "identity_only_not_distributed"
+        },
+        "archivedAdmission": {
+          "bytes": 11835,
+          "sha256": "2a7d4eb4d6d7e94f2d06bd99359be3ea4eba508dc37475f8d64a00a4429e8745",
+          "scope": "identity_only_not_distributed"
+        }
+      },
+      {
+        "mode": "sequence",
+        "status": "ROOT_OBSERVED_EXISTING_RENDERER_REGRESSION_PASS",
+        "releaseId": "be89ae23ab95d1041effae73d507efb6",
+        "nonce": "789b821f07584b9a26244f6c9e68458e",
+        "inputPins": 1693,
+        "cumulativeJobProcesses": 17,
+        "assigned": true,
+        "ack": true,
+        "activeZero": true,
+        "jobClosed": true,
+        "completeEOF": true,
+        "additionalBrowserFlags": [],
+        "binding": {
+          "bytes": 1777,
+          "sha256": "ac376a008beb01072552ec67d4bb16dbc85467332707159c6513b9cc15e8de1b",
+          "scope": "identity_only_not_distributed"
+        },
+        "launch": {
+          "bytes": 1786,
+          "sha256": "f02d01d242480af8d8d145db1cc1f18554e0f6b16d69be1bcf11087bc9c90a4a",
+          "scope": "identity_only_not_distributed"
+        },
+        "owner": {
+          "bytes": 4215,
+          "sha256": "0e90d406aa81fa19c5705826d7e56e1bae35515e084396482dbbb3ab59ee19e6",
+          "scope": "identity_only_not_distributed"
+        },
+        "runner": {
+          "bytes": 1262,
+          "sha256": "6c68105f09a05e436972bc346f2091b0d438c5c7f40f2d28ea5883db9b42b3c7",
+          "scope": "identity_only_not_distributed"
+        },
+        "archivedRelease": {
+          "bytes": 456548,
+          "sha256": "ce7b946a9c62532b874246897fdf1248d91bc0fa8db77d91061c0b15d923318d",
+          "scope": "identity_only_not_distributed"
+        },
+        "archivedAdmission": {
+          "bytes": 11835,
+          "sha256": "c6878f60d8e0ff3a507dcc8ab87f611c26ebe78b223360018e2b1be9e885be22",
+          "scope": "identity_only_not_distributed"
+        }
+      }
+    ],
+    "sourceFreeze": {
+      "bytes": 6378,
+      "sha256": "5bd9ba3f31410b68633201c6b09ad064f470c584efb905ee382855c1dec8e18f",
+      "scope": "identity_only_not_distributed"
+    },
+    "historicalBindingFailure": {
+      "status": "PRELAUNCH_BINDER_REFUSAL",
+      "ownedRawCaptured": false,
+      "productFailure": false,
+      "sourceCorrection": {
+        "bytes": 3865,
+        "sha256": "2ea924314c623d24d0c5589774b6326b0b43c0c7bf20ffd09fb8bfba2cf1855a",
+        "scope": "identity_only_not_distributed"
+      },
+      "sourceReview": {
+        "bytes": 2638,
+        "sha256": "4d18f6a4cbb1a8057bf809c8c7b478bf0f8dece8e2e901390c084dc0b098dd28",
+        "scope": "identity_only_not_distributed"
+      }
+    },
+    "nativeTextFieldAccepted": false,
+    "fontAccepted": false,
+    "performanceAccepted": false,
+    "phonesAccepted": false,
+    "independentSavedResultReview": {
+      "status": "PASS_WITH_LIMITS_ACTUAL_RENDERER_REGRESSIONS",
+      "identity": {
+        "bytes": 2488,
+        "sha256": "ed35706693b3688f5cb2a0e1aa6d02b40a35143260a2e6482219a793f036ee3a",
+        "status": "identity_only_not_distributed",
+        "reviewVerdict": "PASS_WITH_LIMITS_ACTUAL_RENDERER_REGRESSIONS",
+        "scope": "Five existing Canvas/WebGPU/B1/textured/sequence renderer regressions and their saved ownership/oracle outputs; excludes native TextField/fonts/UI/phones/performance."
+      },
+      "actionableFindings": 0
+    },
+    "mandatoryPrepush": "PENDING",
+    "remoteDelivery": "PENDING",
+    "browserEventQualification": {
+      "sequenceReadbackAdvisories": 1,
+      "gatePolicyChanged": false,
+      "zeroBrowserEventsClaim": false,
+      "fontStrictDiagnosticPolicyInherited": false,
+      "performanceEvidence": false
+    }
+  }
+}

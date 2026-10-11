@@ -301,3 +301,36 @@ const tweenImportReceipts=expectedTweenImports.map(expectedCase=>{
   return {name:expectedCase.name,expected:expectedCase,actual:atLocation[0]};
 });
 console.log('Tween import individual unsuppressed diagnostic receipts: '+JSON.stringify(tweenImportReceipts));
+
+// TF1 supplements every retained diagnostic, with predictions frozen in source.
+const fieldTypeConfigs=[];
+try {
+  for(const [name,source,base,count,marker] of [
+    ['positive','text-field-positive.ts','tsconfig.dom-free.json',0,null],
+    ['negative','text-field-negative.ts','tsconfig.dom-free.json',18,'TEXT_FIELD_CASE'],
+    ['supplement','text-field-supplement-negative.ts','tsconfig.dom-free.json',4,'TEXT_FIELD_SUPPLEMENT_CASE'],
+    ['imports','text-field-import-negative.ts','tsconfig.web.json',12,'TEXT_FIELD_IMPORT_CASE'],
+  ]) {
+    const file='tests/types/'+source,fixture=readFileSync(path.join(root,file),'utf8');
+    if(/@ts-(?:expect-error|ignore|nocheck)/.test(fixture))throw new Error('TextField fixture contains suppression: '+file);
+    const expected=marker?fixture.split(/\r?\n/).flatMap((line,index)=>{
+      const match=line.match(new RegExp('^// '+marker+' ([\\w-]+) TS(\\d+)$'));
+      return match?[{name:match[1],file,line:index+2,code:Number(match[2])}]:[];
+    }):[];
+    if(expected.length!==count||new Set(expected.map(item=>item.name)).size!==count)throw new Error('TextField diagnostic inventory mismatch: '+file);
+    const config='tests/types/text-field-'+name+'.generated.json';fieldTypeConfigs.push(path.join(root,config));
+    writeFileSync(path.join(root,config),JSON.stringify({extends:'./'+base,include:[source]}));
+    const check=spawnSync(process.execPath,[compiler,'--project',config,'--pretty','false'],{cwd:root,encoding:'utf8'});
+    process.stdout.write(check.stdout??'');process.stderr.write(check.stderr??'');if(check.error)throw check.error;
+    if(!marker){if(check.status!==0)throw new Error('TextField DOM-free positive consumer failed');continue;}
+    const observed=[...(check.stdout??'').matchAll(/^(.+)\((\d+),(\d+)\): error TS(\d+):/gm)].map(match=>({file:match[1].replaceAll('\\','/'),line:Number(match[2]),column:Number(match[3]),code:Number(match[4])}));
+    if(check.status!==1||observed.length!==count)throw new Error(`TextField ${name}: expected ${count} diagnostics/exit 1; got ${observed.length}/exit ${check.status}`);
+    const receipts=expected.map(item=>{
+      const found=observed.filter(actual=>actual.file===item.file&&actual.line===item.line);
+      if(found.length!==1||found[0].code!==item.code)throw new Error(`TextField ${item.name}: expected ${item.file}:${item.line}/TS${item.code}; got ${JSON.stringify(found)}`);
+      return {name:item.name,expected:item,actual:found[0]};
+    });
+    console.log('TextField '+name+' individual unsuppressed diagnostic receipts: '+JSON.stringify(receipts));
+  }
+  console.log('TextField fixtures PASS: DOM/Node-free positive, 18 ordinary, 4 supplemental and 12 dedicated-file import location diagnostics.');
+} finally {for(const config of fieldTypeConfigs)rmSync(config,{force:true});}

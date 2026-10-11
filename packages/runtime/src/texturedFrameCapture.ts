@@ -11,6 +11,7 @@ import { composeDisplayTransform } from './displayTransform.js';
 import { bitmapCaptureState, readBitmapImage } from './Bitmap.js';
 import { readMeshState } from './meshDisplayState.js';
 import { readMeshCaptureImage } from './meshCaptureSnapshot.js';
+import { assertTextFieldScope, readTextFieldState } from './textDisplayState.js';
 import { CaptureImageBudget } from './imageFrameBudget.js';
 import { TexturedCaptureBudget } from './texturedFrameBudget.js';
 import { EgretError } from './EgretError.js';
@@ -26,6 +27,7 @@ interface AdmittedNode {
   readonly primitiveCount: number;
   readonly bitmapOccupied: boolean;
   readonly meshGeometry: TexturedGeometry2D | undefined;
+  readonly textContentBounds: Rectangle2D | undefined;
 }
 interface Cursor { readonly node: DisplayObject; readonly children: number; nextChild: number; }
 interface ClipChain { readonly previous: ClipChain | undefined; readonly clip: ClipRectangle2D; readonly depth: number; }
@@ -56,7 +58,9 @@ function admitTree(stage: Stage, engine: EngineContext, budget: TexturedCaptureB
       budget.admitGeometry(meshGeometry);
     }
     // Retain geometry identity only; hidden lease/Texture pairs never enter this map.
-    metadata.set(node, { primitives, primitiveCount: primitives.length, bitmapOccupied, meshGeometry });
+    const textContentBounds = readTextFieldState(node)?.committed?.contentBounds;
+    if (textContentBounds !== undefined) budget.admitAuthoringUnits(1);
+    metadata.set(node, { primitives, primitiveCount: primitives.length, bitmapOccupied, meshGeometry, textContentBounds });
     stack.push({ node, children: childCountOf(node), nextChild: 0 });
   }
   enter(stage, undefined);
@@ -172,6 +176,20 @@ export function collectTexturedFrameContent(stage: Stage): CapturedTexturedConte
         geometries.push(mesh.geometry);
       }
       commands.push(Object.freeze({ kind: 'mesh', matrix, alpha, clips: commandClipRecords, imageIndex, sourceRect: mesh.sourceRect, geometryIndex }));
+    }
+    const text = readTextFieldState(node);
+    if (text?.committed?.contentBounds !== admitted.textContentBounds) throw new EgretError('DISPLAY_TREE_INVARIANT');
+    if (text !== undefined) {
+      assertTextFieldScope(text.scope);
+      const committed = text.committed;
+      if (committed?.lease !== undefined && committed.raster !== undefined && committed.sourceRect !== undefined) {
+        const rect = rectangle(matrix, committed.raster);
+        const commandClipRecords = commandClips();
+        const snapshot = readBitmapImage(committed.lease);
+        const imageIndex = images.register(snapshot.image, committed.sourceRect);
+        commands.push(Object.freeze({ kind: 'image', matrix, rect, alpha, clips: commandClipRecords,
+          imageIndex, sourceRect: committed.sourceRect }));
+      }
     }
     stack.push({ node, matrix, alpha, clips, children: childCountOf(node), nextChild: 0 });
   }
