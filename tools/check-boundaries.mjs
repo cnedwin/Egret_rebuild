@@ -65,7 +65,9 @@ for (const [name, allowed] of Object.entries(expected)) {
     // comments are removed below. Project declarations must stay DOM/Node-free.
     if (name === 'project' && (/\b(?:HTMLElement|HTMLCanvasElement|Document|Window|Navigator|NodeJS|GPUDevice)\b/.test(code) || /\/\/\/\s*<reference\s+(?:lib\s*=\s*["']dom(?:\.iterable)?["']|types\s*=\s*["']node["'])/i.test(raw))) throw new Error(`${path.relative(root, file)}: host ambient dependency`);
     if ((web ? /\b(?:process|Buffer|require)\b|["']node:/ : forbidden).test(code)) throw new Error(`${path.relative(root, file)}: host ambient dependency`);
-    for (const match of code.matchAll(/(?:from\s*|import\s*\(|import\s*)["']([^"']+)["']/g)) {
+    // Consume complete ordinary quoted strings before recognizing import clauses.
+    // This bounded lexical scan retains the existing import policies and reasons.
+    for (const match of code.matchAll(/"(?:\\(?:\r\n|[\s\S])|[^"\\\r\n])*"|'(?:\\(?:\r\n|[\s\S])|[^'\\\r\n])*'|\b(?:from\s*|import\s*\(\s*|import\s*)["']([^"']+)["']/g)) {
       const imported = match[1];
       if (!imported) continue;
       if (imported.startsWith(".")) {
@@ -367,6 +369,44 @@ for (const file of ['packages/engine/src/gameClock.ts','packages/engine/src/game
   const code = raw.replace(/\/\*[\s\S]*?\*\//g,'').replace(/\/\/[^\n]*/g,'');
   if (/\b(?:Date|performance|requestAnimationFrame|cancelAnimationFrame|setInterval|clearInterval|setTimeout|clearTimeout)\b/.test(code)) throw new Error(`${file}: clock automatic timing dependency`);
   if (/\/\/\/\s*<reference\s+(?:lib\s*=\s*["']dom(?:\.iterable)?["']|types\s*=\s*["']node["'])/i.test(raw)) throw new Error(`${file}: host ambient dependency`);
+}
+
+// Scope-owned scalar Tween extends only Engine's root type surface/method.
+// These names follow the adopted plan; they are not public owner ports.
+const tweenPublicTypes = ['Tween','TweenState','TweenOptions','TweenEasing'];
+const tweenPrivate = ['createTweenOwner','TweenContext','TweenOwner','tweenBrand','createTween'];
+for(const [entry,values,emittedEntry] of [...textEntries,['project',projectFacade,'packages/project/dist/index']]) {
+  const declaration=readFileSync(path.join(root,emittedEntry+'.d.ts'),'utf8');
+  const emitted=readFileSync(path.join(root,emittedEntry+'.js'),'utf8');
+  const source=declaration+'\n'+emitted;
+  for(const name of tweenPrivate)if(name in values || new RegExp('\\b'+name+'\\b').test(source))throw new Error(`${entry}: private Tween authority leaked: ${name}`);
+  if(/["'][^"']*(?:^|\/)tween(?:\.js|["'])/.test(source))throw new Error(`${entry}: private Tween module leaked`);
+  if(entry!=='root') {
+    for(const name of tweenPublicTypes)if(name in values || new RegExp('\\b'+name+'\\b').test(source))throw new Error(`${entry}: Engine-only Tween type leaked: ${name}`);
+    if(/["'][^"']*(?:^|\/)tweenTypes(?:\.js|["'])/.test(source))throw new Error(`${entry}: Engine-only Tween types module leaked`);
+  } else {
+    const ports=[...declaration.matchAll(/export(\s+type)?\s*\{([^}]+)\}\s*from\s*["']([^"']+)["'];?/g)].filter(match=>match[3]==='./tweenTypes.js');
+    const references=[...declaration.matchAll(/["']\.\/tweenTypes\.js["']/g)];
+    if(ports.length!==1 || !ports[0][1] || references.length!==1 || /["']\.\/tweenTypes\.js["']/.test(emitted) || JSON.stringify(ports[0][2].split(',').map(name=>name.trim()).sort())!==JSON.stringify([...tweenPublicTypes].sort()) || tweenPublicTypes.some(name=>name in values))throw new Error('root: exact Tween type-only export surface mismatch');
+  }
+}
+const tweenTypesModule=await import(new URL('../packages/engine/dist/tweenTypes.js',import.meta.url));
+if(Object.keys(tweenTypesModule).length!==0)throw new Error('engine: Tween types emitted runtime values');
+const tweenTypesDeclaration=readFileSync(path.join(root,'packages/engine/dist/tweenTypes.d.ts'),'utf8');
+const tweenDeclaredNames=[...tweenTypesDeclaration.matchAll(/\bexport\s+(?:declare\s+)?(?:type|interface|function|const|class|enum)\s+(\w+)/g)].map(match=>match[1]).sort();
+// The four canonical declarations are the complete export surface, including
+// erased local aliases/reexports that declaration-name scanning alone misses.
+const tweenTypesCode=tweenTypesDeclaration.replace(/\/\*[\s\S]*?\*\//g,'').replace(/\/\/[^\n]*/g,'');
+// Only standalone empty compiler module markers with a semicolon add no named export.
+const tweenExportCount=(tweenTypesCode.replace(/^[ \t]*export[ \t]*\{[ \t]*\}[ \t]*;[ \t]*\r?$/gm,'').match(/\bexport\b/g)??[]).length;
+if(JSON.stringify(tweenDeclaredNames)!==JSON.stringify([...tweenPublicTypes].sort()) || tweenExportCount!==tweenPublicTypes.length)throw new Error('engine: canonical Tween type inventory mismatch');
+// Only the exact two Tween modules are scanned; existing host deadlines keep
+// their lifecycle scope and every prior source scanner/reason remains intact.
+for(const file of ['packages/engine/src/tween.ts','packages/engine/src/tweenTypes.ts','packages/engine/dist/tween.js','packages/engine/dist/tweenTypes.js','packages/engine/dist/tween.d.ts','packages/engine/dist/tweenTypes.d.ts']) {
+  const raw=readFileSync(path.join(root,file),'utf8');
+  const code=raw.replace(/\/\*[\s\S]*?\*\//g,'').replace(/\/\/[^\n]*/g,'');
+  if(/\b(?:Date|performance|requestAnimationFrame|cancelAnimationFrame|setInterval|clearInterval|setTimeout|clearTimeout)\b/.test(code))throw new Error(`${file}: Tween automatic timing dependency`);
+  if(/\/\/\/\s*<reference\s+(?:lib\s*=\s*["']dom(?:\.iterable)?["']|types\s*=\s*["']node["'])/i.test(raw))throw new Error(`${file}: host ambient dependency`);
 }
 
 console.log(`Boundary check PASS: four private workspace packages, actual exports resolution, ${inspected} source/build/declaration files, DOM-free core and exact DOM-only web subtree without Node imports/globals.`);

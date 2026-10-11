@@ -82,6 +82,19 @@ try {
   });
   console.log('Clock individual unsuppressed diagnostic receipts: '+JSON.stringify(clockReceipts));
 
+  // Tween additions keep every old aggregate and individual guard intact.
+  const expectedTween = raw.split(/\r?\n/).flatMap((line, index) => {
+    const match = line.match(/@ts-expect-error TWEEN_CASE ([\w-]+) TS(\d+)/);
+    return match ? [{name:match[1],file:'tests/types/invalid.generated.ts',line:index + 2,code:Number(match[2])}] : [];
+  });
+  if (expectedTween.length !== 20 || expectedTween.length !== (raw.match(/TWEEN_CASE/g) ?? []).length || new Set(expectedTween.map(item=>item.name)).size !== 20) throw new Error('Unclassified or duplicate Tween negative fixture');
+  const tweenReceipts = expectedTween.map(expectedCase => {
+    const atLocation = observedGeometry.filter(actual=>actual.file===expectedCase.file&&actual.line===expectedCase.line);
+    if (atLocation.length!==1 || atLocation[0].code!==expectedCase.code) throw new Error(`Tween negative ${expectedCase.name}: expected one ${expectedCase.file}:${expectedCase.line}/TS${expectedCase.code}; got ${JSON.stringify(atLocation)}`);
+    return {name:expectedCase.name,expected:expectedCase,actual:atLocation[0]};
+  });
+  console.log('Tween individual unsuppressed diagnostic receipts: '+JSON.stringify(tweenReceipts));
+
   console.log(`Type fixtures PASS: positive + ${expected} checked negative assertions (${count} actual compiler errors).`);
 } finally {
   rmSync(invalid, { force: true });
@@ -267,3 +280,24 @@ const clockImportReceipts = expectedClockImports.map(expectedCase => {
   return {name:expectedCase.name,expected:expectedCase,actual:atLocation[0]};
 });
 console.log('Clock import individual unsuppressed diagnostic receipts: '+JSON.stringify(clockImportReceipts));
+
+// Fixed isolated Tween imports supplement the unchanged absence policies.
+const tweenImportFile = 'tests/types/tween-import-negative.ts';
+const tweenImportSource = readFileSync(path.join(root,tweenImportFile),'utf8');
+if (/@ts-(?:expect-error|ignore|nocheck)/.test(tweenImportSource)) throw new Error('Tween import fixture contains suppression');
+const expectedTweenImports = tweenImportSource.split(/\r?\n/).flatMap((line,index)=>{
+  const match=line.match(/^\/\/ TWEEN_IMPORT_CASE ([\w-]+) TS(\d+)$/);
+  return match ? [{name:match[1],file:tweenImportFile,line:index+2,code:Number(match[2])}] : [];
+});
+if (expectedTweenImports.length!==11 || new Set(expectedTweenImports.map(item=>item.name)).size!==11) throw new Error('Tween import diagnostic inventory mismatch');
+const tweenImportCheck = spawnSync(process.execPath,[compiler,'--project','tests/types/tsconfig.tween-import-negative.json','--pretty','false'],{cwd:root,encoding:'utf8'});
+process.stdout.write(tweenImportCheck.stdout ?? ''); process.stderr.write(tweenImportCheck.stderr ?? '');
+if(tweenImportCheck.error)throw tweenImportCheck.error;
+const observedTweenImports=[...(tweenImportCheck.stdout ?? '').matchAll(/^(.+)\((\d+),(\d+)\): error TS(\d+):/gm)].map(match=>({file:match[1].replaceAll('\\','/'),line:Number(match[2]),column:Number(match[3]),code:Number(match[4])}));
+if(tweenImportCheck.status!==1 || observedTweenImports.length!==11)throw new Error(`Tween imports expected 11 diagnostics, exit 1; got ${observedTweenImports.length}, exit ${tweenImportCheck.status}`);
+const tweenImportReceipts=expectedTweenImports.map(expectedCase=>{
+  const atLocation=observedTweenImports.filter(actual=>actual.file===expectedCase.file&&actual.line===expectedCase.line);
+  if(atLocation.length!==1 || atLocation[0].code!==expectedCase.code)throw new Error(`Tween import ${expectedCase.name}: expected one ${expectedCase.file}:${expectedCase.line}/TS${expectedCase.code}; got ${JSON.stringify(atLocation)}`);
+  return {name:expectedCase.name,expected:expectedCase,actual:atLocation[0]};
+});
+console.log('Tween import individual unsuppressed diagnostic receipts: '+JSON.stringify(tweenImportReceipts));

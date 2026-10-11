@@ -10,6 +10,9 @@ import { registerTexturedFrame } from './internal/texturedFrameState.js';
 import { createGameClockOwner } from './gameClock.js';
 import type { AdmittedGameClockOptions, GameClockOwner } from './gameClock.js';
 import type { GameClock, GameClockOptions, GameClockTick } from './gameClockTypes.js';
+import { createTweenOwner } from './tween.js';
+import type { TweenOwner } from './tween.js';
+import type { Tween, TweenOptions } from './tweenTypes.js';
 
 export interface EngineOptions {
   readonly host: HostAdapter;
@@ -43,6 +46,7 @@ function observeRejectedRenderResult(result: unknown): void {
 /** One headless run. Construct with createEngine(), not directly. */
 export class Engine {
   readonly #gameClockOwner: GameClockOwner;
+  readonly #tweenOwner: TweenOwner;
   readonly #engineScopes = new WeakSet<Scope>();
   private frameBusy = false;
   private nextFrameId = 1;
@@ -89,6 +93,12 @@ export class Engine {
       isFrameBusy: (): boolean => this.frameBusy,
       report: this.context.report,
     }, clockOptions);
+    // Tween assembly receives the authentic private clock before publication.
+    this.#tweenOwner = createTweenOwner({
+      assertOpen: this.context.assertOpen,
+      isEngineScope: (scope: unknown): scope is Scope => typeof scope === 'object' && scope !== null && this.#engineScopes.has(scope as Scope),
+      clock: this.#gameClockOwner.clock,
+    });
     this.clock = this.#gameClockOwner.clock;
     this.stage = createStage(this.context);
     this.assets = createAssetManager(this.context);
@@ -196,6 +206,10 @@ export class Engine {
     return scope;
   }
 
+  public createTween(scope: Scope, options: TweenOptions): Tween {
+    return this.#tweenOwner.create(scope, options);
+  }
+
   /** Every caller shares one close promise, including reentrant cleanup callbacks. */
   public dispose(): Promise<void> {
     if (this.closePromise !== undefined) return this.closePromise;
@@ -204,6 +218,8 @@ export class Engine {
     this.closePromise = new Promise<void>((resolve, reject) => { resolveClose = resolve; rejectClose = reject; });
     // Cache the result before abort/cleanup/diagnostic callbacks can reenter.
     this.currentState = "closing";
+    // Terminal observations change now, before the existing idle barriers wait.
+    this.#tweenOwner.close();
     this.#gameClockOwner.close();
     void this.runClose().then(resolveClose, rejectClose);
     return this.closePromise;

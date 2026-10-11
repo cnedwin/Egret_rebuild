@@ -1,0 +1,1084 @@
+{
+  "schemaVersion": 1,
+  "component": "scope-owned-scalar-tween",
+  "evidenceRevision": 2,
+  "cutoff": "AFTER_ACTUAL_VERIFY_R2_PASS_WITHIN_WHOLE_CONTROLS_BEFORE_FINAL_PUBLIC_CHECKS_DELIVERY",
+  "status": "BOUNDED_CURRENT_CPU_CORE_VERIFIED_DELIVERY_PENDING",
+  "scope": {
+    "build": "PASS",
+    "publicBehavior": "PASS",
+    "affectedRegressions": "PASS",
+    "strictTypes": "PASS",
+    "correctedProductionBoundaries": "PASS",
+    "boundaryControls": "PASS",
+    "wholePackage": "PASS",
+    "finalPublicChecks": "PENDING",
+    "githubDelivery": "PENDING",
+    "remoteCI": "NOT_CLAIMED",
+    "browserNative": "OUT_OF_SCOPE",
+    "fonts": "OUT_OF_SCOPE",
+    "TextField": "OUT_OF_SCOPE",
+    "Spine": "OUT_OF_SCOPE",
+    "legacyTweenCompatibility": "OUT_OF_SCOPE",
+    "migration": "OUT_OF_SCOPE",
+    "phones": "OUT_OF_SCOPE",
+    "performance": "OUT_OF_SCOPE",
+    "physicalMemory": "OUT_OF_SCOPE"
+  },
+  "records": [
+    {
+      "id": "red-r1",
+      "status": "FAIL",
+      "processExit": 1,
+      "receipt": {
+        "bytes": 94748,
+        "sha256": "d6bca840afcae7cd6bdb9ee333246d5a38d9a4aaf9f0f0e6a6d3aa33b6e74d24"
+      },
+      "outputs": [
+        {
+          "kind": "stdout",
+          "bytes": 920,
+          "sha256": "bbf4550bef871bf348b991d6a009c91bc5e2013e9d0e873324440a4d6d3bcaa7"
+        },
+        {
+          "kind": "stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "sourceStable": true,
+      "inputsStable": true,
+      "counts": {
+        "tests": 1,
+        "pass": 0,
+        "fail": 1,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    {
+      "id": "build-r2",
+      "status": "PASS",
+      "processExit": 0,
+      "receipt": {
+        "bytes": 27195,
+        "sha256": "097d4f230313c80191ea67c5cefcfcd491ad5c80748b0541a17d7b8818db5bc0"
+      },
+      "outputs": [
+        {
+          "kind": "stdout",
+          "bytes": 44,
+          "sha256": "166710cb105690b244b48c5dcc5672a4c0bc8280e995ae7d2f5bd46141491cea"
+        },
+        {
+          "kind": "stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "sourceStable": true,
+      "inputsStable": true,
+      "counts": null
+    },
+    {
+      "id": "public-r1",
+      "status": "PASS",
+      "processExit": 0,
+      "receipt": {
+        "bytes": 96261,
+        "sha256": "026b418af45455709503a09fea4694da958b0a062769567e3273e5a18b0d3fbc"
+      },
+      "outputs": [
+        {
+          "kind": "stdout",
+          "bytes": 3072,
+          "sha256": "bf51045d8012c5edb924855084a1b002709bcc5e23447f93b867d6e3f76f035d"
+        },
+        {
+          "kind": "stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "sourceStable": true,
+      "inputsStable": true,
+      "counts": {
+        "tests": 31,
+        "pass": 31,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    {
+      "id": "public-r2",
+      "status": "PASS",
+      "processExit": 0,
+      "receipt": {
+        "bytes": 96261,
+        "sha256": "e867c49e519416681a2bb042cf7d5f5b18db49b2acf8a8891c0aeefce935f048"
+      },
+      "outputs": [
+        {
+          "kind": "stdout",
+          "bytes": 3166,
+          "sha256": "dce9c1707e0e917afffbeeddd425bf95e29db6030c3ccf0af31113ee22c6845e"
+        },
+        {
+          "kind": "stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "sourceStable": true,
+      "inputsStable": true,
+      "counts": {
+        "tests": 32,
+        "pass": 32,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    {
+      "id": "regressions-r1",
+      "status": "PASS",
+      "processExit": 0,
+      "receipt": {
+        "bytes": 97684,
+        "sha256": "fea11f6df513617816d66cf796f0ba952186e72bfc66a714290bec36be289ba6"
+      },
+      "outputs": [
+        {
+          "kind": "stdout",
+          "bytes": 8683,
+          "sha256": "427db82f4845a370e86ed8637fa8aa3086684c7713004d04a4d7a41db5f90b9f"
+        },
+        {
+          "kind": "stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "sourceStable": true,
+      "inputsStable": true,
+      "counts": {
+        "tests": 94,
+        "pass": 94,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    {
+      "id": "types-r1",
+      "status": "PASS",
+      "processExit": 0,
+      "receipt": {
+        "bytes": 102077,
+        "sha256": "beb0103aa76eefcc1e53ff139979ffa7334e92738d9c010b556d3c9f7cb36b21"
+      },
+      "outputs": [
+        {
+          "kind": "stdout",
+          "bytes": 85705,
+          "sha256": "684411140e62b5fc6b8f91f59c6ae9d0e514e8f3dc9e68e190242c5509d43cb7"
+        },
+        {
+          "kind": "stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "sourceStable": true,
+      "inputsStable": true,
+      "counts": null
+    },
+    {
+      "id": "boundaries-r1",
+      "status": "FAIL",
+      "processExit": 1,
+      "receipt": {
+        "bytes": 102096,
+        "sha256": "db53f00508694cc87ceac631b7fc5e49dec9bd3e5d7234cffe24c558e5113be2"
+      },
+      "outputs": [
+        {
+          "kind": "stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "kind": "stderr",
+          "bytes": 1060,
+          "sha256": "5a998f68682271290c12e2473e530b881f6794292afcf2e902408e87816bcad7"
+        }
+      ],
+      "sourceStable": true,
+      "inputsStable": true,
+      "counts": null
+    },
+    {
+      "id": "boundaries-r2",
+      "status": "FAIL",
+      "processExit": 1,
+      "receipt": {
+        "bytes": 102095,
+        "sha256": "9294d87f1e9335373000cf54493ec5576bceadf5bcf62a50686df874467872d5"
+      },
+      "outputs": [
+        {
+          "kind": "stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "kind": "stderr",
+          "bytes": 651,
+          "sha256": "31a50b838eebbbada1f1f20f0b915c2470d435b4c5f92178ba338a6bc634612f"
+        }
+      ],
+      "sourceStable": true,
+      "inputsStable": true,
+      "counts": null,
+      "errorCode": null
+    },
+    {
+      "id": "boundaries-r3",
+      "status": "PASS",
+      "processExit": 0,
+      "receipt": {
+        "bytes": 102095,
+        "sha256": "e4453c2aff957e4d95773371a9d213d9fd63b7d307b906e088e5c4cd2d2f901f"
+      },
+      "outputs": [
+        {
+          "kind": "stdout",
+          "bytes": 192,
+          "sha256": "28d88bf450d5e09a98af01f0de96c995e8fa5cb6496731b45c49bd46444703ab"
+        },
+        {
+          "kind": "stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "sourceStable": true,
+      "inputsStable": true,
+      "counts": null,
+      "errorCode": null
+    },
+    {
+      "id": "boundaryControls-r1",
+      "status": "INCOMPLETE",
+      "processExit": null,
+      "receipt": {
+        "bytes": 102518,
+        "sha256": "0dfeaf247d2f91bbd411a654dc2cbf3eabfbfef7d2f01542d9a25e51f8f56693"
+      },
+      "outputs": [
+        {
+          "kind": "stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "kind": "stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "sourceStable": true,
+      "inputsStable": true,
+      "counts": null,
+      "errorCode": "ETIMEDOUT"
+    },
+    {
+      "id": "verify-r1",
+      "status": "FAIL",
+      "processExit": 1,
+      "receipt": {
+        "bytes": 58486,
+        "sha256": "7bb52bd9dc86e0143cc0c7c0c63bce3eb500f5c3fef76cf7e60875612effcc95"
+      },
+      "outputs": [
+        {
+          "kind": "stdout",
+          "bytes": 336350,
+          "sha256": "e80eab90ef5ba3eee8cf791b5151ac9c5d2edc18b991f426ea61571dbc00eb37"
+        },
+        {
+          "kind": "stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "sourceStable": true,
+      "inputsStable": true,
+      "counts": {
+        "tests": 2131,
+        "pass": 2130,
+        "fail": 1,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "errorCode": null
+    },
+    {
+      "id": "boundaryBrand-r1",
+      "status": "PASS",
+      "processExit": 0,
+      "receipt": {
+        "bytes": 96525,
+        "sha256": "59f2c05306e7d56ffacd3be7e30fe0fde95a7723fc46c9d29111da0f397e1a2b"
+      },
+      "outputs": [
+        {
+          "kind": "stdout",
+          "bytes": 204,
+          "sha256": "a36e19a8adaf3a073a7277b13179b49697bb67b6f4564fb3c199cdd50921fb9c"
+        },
+        {
+          "kind": "stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "sourceStable": true,
+      "inputsStable": true,
+      "counts": {
+        "tests": 1,
+        "pass": 1,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "scope": "NARROW_ASSIGNED_EARLIER_FACADE_REFUSAL_ONLY"
+    },
+    {
+      "id": "verify-r2",
+      "status": "PASS",
+      "processExit": 0,
+      "receipt": {
+        "bytes": 58486,
+        "sha256": "4cb94c1b9b872ce049a917de6ea8bd8be50ace6d133d494aaf353fc02e0c3938"
+      },
+      "outputs": [
+        {
+          "kind": "stdout",
+          "bytes": 334308,
+          "sha256": "95960fa32f57d16168ade39d925e379babb7c173198cbf3968c9117fc63d8b38"
+        },
+        {
+          "kind": "stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "sourceStable": true,
+      "inputsStable": true,
+      "counts": {
+        "tests": 2131,
+        "pass": 2131,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "productionScanFiles": 399,
+      "scope": "COMPLETE_CURRENT_CORE_VERIFIER_WITH_BOUNDARY_CONTROLS_NOT_PUBLIC_PREPUSH"
+    }
+  ],
+  "strictTypeEvidence": {
+    "totalActualCompilerErrorLines": 265,
+    "totalIncludesRetainedSuites": true,
+    "newOrdinaryNamedDiagnostics": 20,
+    "newIsolatedImportNamedDiagnostics": 11,
+    "exactFileLineCode": true,
+    "positiveAndDOMFree": "PASS",
+    "named": [
+      {
+        "category": "ordinary",
+        "count": 20,
+        "records": [
+          {
+            "name": "readonly-state",
+            "file": "tests/types/invalid.generated.ts",
+            "line": 413,
+            "code": 2540
+          },
+          {
+            "name": "readonly-disposal",
+            "file": "tests/types/invalid.generated.ts",
+            "line": 415,
+            "code": 2540
+          },
+          {
+            "name": "readonly-elapsed",
+            "file": "tests/types/invalid.generated.ts",
+            "line": 417,
+            "code": 2540
+          },
+          {
+            "name": "readonly-progress",
+            "file": "tests/types/invalid.generated.ts",
+            "line": 419,
+            "code": 2540
+          },
+          {
+            "name": "readonly-value",
+            "file": "tests/types/invalid.generated.ts",
+            "line": 421,
+            "code": 2540
+          },
+          {
+            "name": "readonly-from-option",
+            "file": "tests/types/invalid.generated.ts",
+            "line": 423,
+            "code": 2540
+          },
+          {
+            "name": "readonly-to-option",
+            "file": "tests/types/invalid.generated.ts",
+            "line": 425,
+            "code": 2540
+          },
+          {
+            "name": "readonly-duration-option",
+            "file": "tests/types/invalid.generated.ts",
+            "line": 427,
+            "code": 2540
+          },
+          {
+            "name": "readonly-easing-option",
+            "file": "tests/types/invalid.generated.ts",
+            "line": 429,
+            "code": 2540
+          },
+          {
+            "name": "readonly-writer-option",
+            "file": "tests/types/invalid.generated.ts",
+            "line": 431,
+            "code": 2540
+          },
+          {
+            "name": "readonly-completion-option",
+            "file": "tests/types/invalid.generated.ts",
+            "line": 433,
+            "code": 2540
+          },
+          {
+            "name": "wrong-scope",
+            "file": "tests/types/invalid.generated.ts",
+            "line": 435,
+            "code": 2740
+          },
+          {
+            "name": "unsupported-easing",
+            "file": "tests/types/invalid.generated.ts",
+            "line": 437,
+            "code": 2322
+          },
+          {
+            "name": "asynchronous-writer",
+            "file": "tests/types/invalid.generated.ts",
+            "line": 439,
+            "code": 2322
+          },
+          {
+            "name": "asynchronous-completion",
+            "file": "tests/types/invalid.generated.ts",
+            "line": 441,
+            "code": 2322
+          },
+          {
+            "name": "non-undefined-writer",
+            "file": "tests/types/invalid.generated.ts",
+            "line": 443,
+            "code": 2322
+          },
+          {
+            "name": "no-forged-handle",
+            "file": "tests/types/invalid.generated.ts",
+            "line": 445,
+            "code": 2741
+          },
+          {
+            "name": "state-type-only",
+            "file": "tests/types/invalid.generated.ts",
+            "line": 447,
+            "code": 2339
+          },
+          {
+            "name": "options-type-only",
+            "file": "tests/types/invalid.generated.ts",
+            "line": 449,
+            "code": 2339
+          },
+          {
+            "name": "easing-type-only",
+            "file": "tests/types/invalid.generated.ts",
+            "line": 451,
+            "code": 2339
+          }
+        ]
+      },
+      {
+        "category": "isolated-import",
+        "count": 11,
+        "records": [
+          {
+            "name": "owner-factory",
+            "file": "tests/types/tween-import-negative.ts",
+            "line": 4,
+            "code": 2305
+          },
+          {
+            "name": "context-type",
+            "file": "tests/types/tween-import-negative.ts",
+            "line": 6,
+            "code": 2305
+          },
+          {
+            "name": "owner-type",
+            "file": "tests/types/tween-import-negative.ts",
+            "line": 8,
+            "code": 2305
+          },
+          {
+            "name": "erased-brand-value",
+            "file": "tests/types/tween-import-negative.ts",
+            "line": 10,
+            "code": 2305
+          },
+          {
+            "name": "no-root-factory",
+            "file": "tests/types/tween-import-negative.ts",
+            "line": 12,
+            "code": 2305
+          },
+          {
+            "name": "no-runtime-port",
+            "file": "tests/types/tween-import-negative.ts",
+            "line": 14,
+            "code": 2305
+          },
+          {
+            "name": "no-owner-subpath",
+            "file": "tests/types/tween-import-negative.ts",
+            "line": 16,
+            "code": 2307
+          },
+          {
+            "name": "no-types-subpath",
+            "file": "tests/types/tween-import-negative.ts",
+            "line": 18,
+            "code": 2307
+          },
+          {
+            "name": "no-Tween-value",
+            "file": "tests/types/tween-import-negative.ts",
+            "line": 21,
+            "code": 2339
+          },
+          {
+            "name": "no-static-get",
+            "file": "tests/types/tween-import-negative.ts",
+            "line": 23,
+            "code": 2339
+          },
+          {
+            "name": "no-runtime-owner",
+            "file": "tests/types/tween-import-negative.ts",
+            "line": 25,
+            "code": 2305
+          }
+        ]
+      }
+    ]
+  },
+  "sourceSnapshot": {
+    "record": "build-r2",
+    "sourceIdentities": [
+      {
+        "file": "packages/engine/src/Engine.ts",
+        "bytes": 12294,
+        "sha256": "d32215441b52e2089cf18c7845b90d16223c7aa285a4b58347dcda4519745cb5"
+      },
+      {
+        "file": "packages/engine/src/index.ts",
+        "bytes": 2433,
+        "sha256": "674367028cf0e81a6ab0831ca074a35cbfd93ab53e27dd738afdd142f992e120"
+      },
+      {
+        "file": "packages/engine/src/tween.ts",
+        "bytes": 13260,
+        "sha256": "3f861705988d55cd556d031973dddc67dfaca13964c4175bd958292e00d1022f"
+      },
+      {
+        "file": "packages/engine/src/tweenTypes.ts",
+        "bytes": 973,
+        "sha256": "2c47d261614c9371d3e558698ad302b84d85915a0366ffaa89e40a1b24b723a5"
+      }
+    ],
+    "versionBoundNotAnEverCurrentVector": true
+  },
+  "reviews": [
+    {
+      "id": "initial-core-source-review",
+      "scope": "BOUNDED_REVIEW_NOT_WHOLE_PACKAGE_ACCEPTANCE",
+      "bytes": 3897,
+      "sha256": "4c75196b5eca2ba5d14fc2680254025eae4202cfc5014a85388c559f3f973305"
+    },
+    {
+      "id": "scope-abort-saved-output-closure",
+      "scope": "BOUNDED_REVIEW_NOT_WHOLE_PACKAGE_ACCEPTANCE",
+      "bytes": 4169,
+      "sha256": "ae54531e437a0feff34e0d0bcab30b6daa1c6ef1fc15ce4797bbbc3cd38e448a"
+    },
+    {
+      "id": "authentic-getter-fixture-source-closure",
+      "scope": "BOUNDED_REVIEW_NOT_WHOLE_PACKAGE_ACCEPTANCE",
+      "bytes": 2377,
+      "sha256": "b8d1b2fe884fe984f7da6e9cea40bf41d7eb77bab68336d9f6ca5fd11cd384cd"
+    },
+    {
+      "id": "scope-abort-fixture-source-review",
+      "scope": "BOUNDED_REVIEW_NOT_WHOLE_PACKAGE_ACCEPTANCE",
+      "bytes": 2382,
+      "sha256": "126d2459640d051f2b2068ff910dd35c89a8cda7ffb0174189f027e03c64cd99"
+    },
+    {
+      "id": "canonical-alias-guard-source-closure",
+      "scope": "BOUNDED_REVIEW_NOT_WHOLE_PACKAGE_ACCEPTANCE",
+      "bytes": 3502,
+      "sha256": "d0406039ca631fada59cc1c76570c773bf6af6c0e495cdf837b8faae20c7830e"
+    },
+    {
+      "id": "boundary-scanner-revision-3-source-review",
+      "scope": "SOURCE_ONLY_NO_EXECUTED_CONTROL_ACCEPTANCE",
+      "bytes": 1823,
+      "sha256": "c20214be507456dd83cab1c326492fcc9fb945ed06fe97357f662352927020b0"
+    },
+    {
+      "id": "boundary-scanner-revision-4-source-review",
+      "scope": "SOURCE_ONLY_NO_EXECUTED_CONTROL_ACCEPTANCE",
+      "bytes": 1834,
+      "sha256": "19ab49682a6b9fed881636b19fdb121decccd399c90c2a30ddd632aa87cca5dd"
+    },
+    {
+      "id": "boundary-scanner-revision-6-source-review",
+      "scope": "SOURCE_ONLY_NO_EXECUTED_CONTROL_ACCEPTANCE",
+      "bytes": 1479,
+      "sha256": "b081f7bfe871a5300abbafb37450dc899aebdd63f649651e2090d29e9dba6f2d"
+    },
+    {
+      "id": "boundary-scanner-revision-7-source-review",
+      "scope": "SOURCE_ONLY_NO_EXECUTED_CONTROL_ACCEPTANCE",
+      "bytes": 1447,
+      "sha256": "161a79e56624e03ea259073a35fe615f616fdcd70d0e49da187830b413007db6"
+    },
+    {
+      "id": "assigned-facade-reason-source-successor",
+      "scope": "ONE_LITERAL_EXPECTATION_CORRECTION_NO_PRODUCT_CHECKER_CHANGE",
+      "bytes": 1120,
+      "sha256": "574cae30c29767eaf56fedf9aa8d7e80eb2ae71ea8fc34c283a63cdbcef674ea"
+    },
+    {
+      "id": "actual-r8-whole-successor-output-closure",
+      "scope": "SAVED_ACTUAL_NARROW_AND_WHOLE_OUTPUT_REVIEW_NO_NEW_EXECUTION",
+      "verdict": "PASS_WITH_LIMITS",
+      "findingCount": 0,
+      "closedFinding": "TW-ACTUAL-001",
+      "laterTweenBranchCovered": false,
+      "bytes": 1474,
+      "sha256": "55933a8739529429cc6f41375d6bae9fc3046d23ca4a599604db87b705b2af2e"
+    }
+  ],
+  "history": [
+    {
+      "id": "TW-FIXTURE-001",
+      "kind": "SOURCE_ONLY_FIXTURE_ASSUMPTION",
+      "priorStatus": "CHANGES_REQUESTED",
+      "successorStatus": "CLOSED_FOR_EXACT_SOURCE_FIXTURE",
+      "preserved": true,
+      "reason": "Readonly observations need not be own accessors; authentic receiver-aware lookup retains forged-receiver refusal."
+    },
+    {
+      "id": "TW-CORE-NOTE-001",
+      "kind": "NONBLOCKING_COVERAGE_NOTE",
+      "initialStatus": "SOURCE_CORRECT_WITNESS_PENDING",
+      "successorStatus": "CLOSED_FOR_PUBLIC_R2_32_OF_32",
+      "preserved": true,
+      "reason": "External Scope abort observer advances genuine clock during closing before cleanup without another Tween write or completion."
+    },
+    {
+      "id": "canonical-type-alias-guard",
+      "kind": "SOURCE_ONLY_GUARD_CLOSURE",
+      "status": "SOURCE_CANDIDATE_REVIEWED_ACTUAL_CONTROLS_PENDING",
+      "reason": "Exact erased alias control supplements four-name inventory and empty runtime namespace with export count."
+    },
+    {
+      "id": "boundaries-r1-import-scan",
+      "kind": "ACTUAL_CHECKER_FAILURE",
+      "status": "FAIL_CORRECTION_PENDING",
+      "diagnosis": {
+        "bytes": 1508,
+        "sha256": "038c5f9df194ac671e176e4186f4654d9c8e4b5884d4c0d30b1a4f3738f1076f"
+      },
+      "reason": "Quoted ordinary from option key was treated as import syntax; no product change or waiver is inferred."
+    },
+    {
+      "id": "TW-SCANNER-001",
+      "kind": "SOURCE_ONLY_SCANNER_FINDING",
+      "priorStatus": "CHANGES_REQUESTED",
+      "successorStatus": "CLOSED_SOURCE_ONLY_FOR_REVIEWED_R6",
+      "preserved": true,
+      "reason": "Unescaped line breaks cannot let a comment-truncated ordinary quote consume a later genuine import."
+    },
+    {
+      "id": "TW-SCANNER-002",
+      "kind": "SOURCE_ONLY_SCANNER_FINDING",
+      "priorStatus": "CHANGES_REQUESTED",
+      "successorStatus": "CLOSED_SOURCE_ONLY_FOR_REVIEWED_R6",
+      "preserved": true,
+      "reason": "Escaped CRLF is consumed atomically while raw line exclusions and assigned refusal reasons remain."
+    },
+    {
+      "id": "boundaries-r2-empty-module-marker",
+      "kind": "ACTUAL_CHECKER_FAILURE_AND_REVIEWED_CORRECTION",
+      "priorStatus": "FAIL",
+      "successorStatus": "PRODUCTION_BOUNDARIES_R3_PASS",
+      "preserved": true,
+      "reason": "Four intended declarations plus the compiler empty export marker require the exact reviewed marker exclusion; named inventory and empty runtime guards remain."
+    },
+    {
+      "id": "boundaryControls-r1-timeout",
+      "kind": "ACTUAL_RUNNER_INCOMPLETE",
+      "status": "INCOMPLETE",
+      "timeoutMilliseconds": 90000,
+      "stdoutBytes": 0,
+      "stderrBytes": 0,
+      "controlAcceptance": false,
+      "preserved": true
+    },
+    {
+      "id": "verify-r1-assigned-reason",
+      "kind": "ACTUAL_WHOLE_PACKAGE_FAILURE",
+      "status": "FAIL",
+      "failedCase": "TW10 brand-facade",
+      "actualRefusal": "engine/text: exact text declaration surface mismatch",
+      "causeClassification": "DIAGNOSIS_PENDING_AT_FAILED_RUN_CUTOFF",
+      "preserved": true
+    },
+    {
+      "id": "TW-ACTUAL-001",
+      "kind": "ACTUAL_ASSIGNED_REASON_FIXTURE_CORRECTION",
+      "priorStatus": "VERIFY_R1_FAILED",
+      "successorStatus": "NARROW_BOUNDARY_BRAND_R1_PASS",
+      "preserved": true,
+      "reason": "Align exact expected text-facade refusal; retain the existing strict checker and all product sources.",
+      "laterTweenBranchCovered": false
+    },
+    {
+      "id": "verify-r2-complete-successor",
+      "kind": "ACTUAL_COMPLETE_CURRENT_CORE_SUCCESSOR",
+      "status": "PASS",
+      "priorFailRetained": true,
+      "standaloneTimeoutRetained": true,
+      "controlScope": "23_UNIQUE_CONTROLS_WITHIN_WHOLE_ONLY",
+      "publicationAcceptance": false
+    },
+    {
+      "id": "TW-ACTUAL-001-output-closure",
+      "kind": "INDEPENDENT_SAVED_ACTUAL_SUCCESSOR_REVIEW",
+      "status": "CLOSED_FOR_EXACT_R8_NARROW_AND_WHOLE_OUTPUTS",
+      "preservedFailedWhole": true,
+      "preservedStandaloneIncomplete": true,
+      "laterTweenBranchCovered": false,
+      "publicationAcceptance": false
+    }
+  ],
+  "counting": {
+    "overlappingRunsAreNotSummed": true,
+    "aggregateAcceptanceTotal": null,
+    "compilerDiagnosticsAreNotBehaviorTests": true,
+    "unreachableNumericEdges": "SOURCE_REVIEW_ONLY_NO_FORGED_RUNTIME_STATE"
+  },
+  "provenance": {
+    "implementation": "FIRST_PARTY_AI_ASSISTED",
+    "fixtures": "REVIEWED_SPEC_DERIVED_FIRST_PARTY",
+    "independentSourceAndOutputReview": true,
+    "competitorImplementationIntroduced": false,
+    "newDependencyIntroduced": false,
+    "existingLicenseAndAttributionPreserved": true
+  },
+  "laterResults": "EXPLICIT_VERSION_BOUND_SUCCESSOR_REQUIRED_NO_FUTURE_PASS",
+  "authoring": {
+    "publicAdoption": false,
+    "independentPublicMaterialReview": "PENDING",
+    "noRawInternalPathsOrLogs": true
+  },
+  "historicalEvidenceCutoffs": [
+    {
+      "evidenceRevision": 1,
+      "cutoff": "AFTER_TYPES_R1_AND_FAILED_BOUNDARIES_R1_BEFORE_CORRECTED_BOUNDARY_EXECUTION",
+      "status": "PARTIAL_CPU_VERIFIED_BOUNDARIES_PENDING",
+      "scope": {
+        "build": "PASS",
+        "publicBehavior": "PASS",
+        "affectedRegressions": "PASS",
+        "strictTypes": "PASS",
+        "correctedProductionBoundaries": "PENDING",
+        "boundaryControls": "PENDING",
+        "wholePackage": "PENDING",
+        "finalPublicChecks": "PENDING",
+        "githubDelivery": "PENDING",
+        "remoteCI": "NOT_CLAIMED",
+        "browserNative": "OUT_OF_SCOPE",
+        "fonts": "OUT_OF_SCOPE",
+        "TextField": "OUT_OF_SCOPE",
+        "Spine": "OUT_OF_SCOPE",
+        "legacyTweenCompatibility": "OUT_OF_SCOPE",
+        "migration": "OUT_OF_SCOPE",
+        "phones": "OUT_OF_SCOPE",
+        "performance": "OUT_OF_SCOPE",
+        "physicalMemory": "OUT_OF_SCOPE"
+      },
+      "preserved": true
+    }
+  ],
+  "boundaryControlEvidence": {
+    "standalone": {
+      "record": "boundaryControls-r1",
+      "status": "INCOMPLETE",
+      "controlAcceptance": false
+    },
+    "withinWhole": {
+      "record": "verify-r2",
+      "status": "PASS",
+      "tests": 23,
+      "uniqueControls": 23,
+      "assignedNegatives": 19,
+      "otherControls": 4,
+      "allControlsAccepted": true,
+      "controlNames": [
+        "TW10 actual public roots have no executable Tween values factories owners or brands",
+        "TW10 genuine four-package baseline passes the exact production checker",
+        "TW10 owner-factory refuses its assigned reason after a valid actual graph",
+        "TW10 owner-context refuses its assigned reason after a valid actual graph",
+        "TW10 owner-type refuses its assigned reason after a valid actual graph",
+        "TW10 aliased-private-module refuses its assigned reason after a valid actual graph",
+        "TW10 brand-facade refuses its assigned reason after a valid actual graph",
+        "TW10 erased-brand-emission refuses its assigned reason after a valid actual graph",
+        "TW10 missing-root-type refuses its assigned reason after a valid actual graph",
+        "TW10 extra-root-type-namespace refuses its assigned reason after a valid actual graph",
+        "TW10 extra-canonical-type refuses its assigned reason after a valid actual graph",
+        "TW10 extra-canonical-erased-alias refuses its assigned reason after a valid actual graph",
+        "TW10 wrong-runtime-entry refuses its assigned reason after a valid actual graph",
+        "TW10 automatic-source-time refuses its assigned reason after a valid actual graph",
+        "TW10 automatic-emitted-timer refuses its assigned reason after a valid actual graph",
+        "TW10 DOM-ambient-reference refuses its assigned reason after a valid actual graph",
+        "TW10 new-owner-subpath refuses its assigned reason after a valid actual graph",
+        "TW10 ordinary from/to keys and escaped quoted import text remain source data",
+        "TW10 zero-whitespace-static-type-from retains the assigned deep-import refusal",
+        "TW10 dynamic-import-inner-whitespace retains the assigned deep-import refusal",
+        "TW10 zero-whitespace-side-effect-import retains the assigned deep-import refusal",
+        "TW10 URL literal before a real static type import retains the deep-import refusal",
+        "TW10 single and double quoted CRLF continuations keep embedded import text as data"
+      ],
+      "notAdditionalToWholeTests": true,
+      "laterTweenBrandBranchCovered": false
+    },
+    "futureWitness": "Actual saved verify-r2 supplies the complete within-whole control witness; the standalone timeout is not relabeled PASS.",
+    "narrowSuccessor": {
+      "record": "boundaryBrand-r1",
+      "tests": 1,
+      "pass": 1,
+      "laterTweenBranchCovered": false,
+      "completeControlsAccepted": false
+    },
+    "failedWholePredecessor": {
+      "record": "verify-r1",
+      "status": "FAIL",
+      "passingUniqueControls": 22,
+      "failedUniqueControls": 1,
+      "preserved": true
+    }
+  },
+  "currentVerificationSourceSnapshot": {
+    "record": "verify-r2",
+    "subjects": [
+      {
+        "path": "packages/engine/src/tween.ts",
+        "bytes": 13260,
+        "sha256": "3f861705988d55cd556d031973dddc67dfaca13964c4175bd958292e00d1022f"
+      },
+      {
+        "path": "packages/engine/src/tweenTypes.ts",
+        "bytes": 973,
+        "sha256": "2c47d261614c9371d3e558698ad302b84d85915a0366ffaa89e40a1b24b723a5"
+      },
+      {
+        "path": "packages/engine/src/Engine.ts",
+        "bytes": 12294,
+        "sha256": "d32215441b52e2089cf18c7845b90d16223c7aa285a4b58347dcda4519745cb5"
+      },
+      {
+        "path": "packages/engine/src/index.ts",
+        "bytes": 2433,
+        "sha256": "674367028cf0e81a6ab0831ca074a35cbfd93ab53e27dd738afdd142f992e120"
+      },
+      {
+        "path": "tests/tween.test.mjs",
+        "bytes": 44633,
+        "sha256": "0b6390645f88698580299dfc0939073ac9c5b581230bbe602f4c569304620ba0"
+      },
+      {
+        "path": "tests/boundaries.test.mjs",
+        "bytes": 37288,
+        "sha256": "e7674d468ae14b8f2bc3df1a09dac2eeef57304ff1d054a4c1236e091ceb1b77"
+      },
+      {
+        "path": "tests/tween-boundaries.test.mjs",
+        "bytes": 10623,
+        "sha256": "07157a56dc218d699188adc5cd1289ec689dd1bd48ea3f6fd527908f08604826"
+      },
+      {
+        "path": "tests/types/dom-free.ts",
+        "bytes": 9363,
+        "sha256": "5799e831751b38cb15833c963f1ff2c3d234e027538895f1a36c47f670d14a9a"
+      },
+      {
+        "path": "tests/types/negative.ts",
+        "bytes": 28368,
+        "sha256": "43d89f16928a5052ef155bc078af964e9b73e2c58548fe5906c3b42e30787b13"
+      },
+      {
+        "path": "tests/types/positive.ts",
+        "bytes": 33001,
+        "sha256": "aa636808dd64895870b82c5eb9162d2329edebd2be3ae755d0e24666f3ba0bee"
+      },
+      {
+        "path": "tests/types/tsconfig.tween-import-negative.json",
+        "bytes": 78,
+        "sha256": "36d530d62224a6b4f2af8434f0f01832bde2d39ad699316695ccbbdf7d74649f"
+      },
+      {
+        "path": "tests/types/tween-import-negative.ts",
+        "bytes": 1305,
+        "sha256": "5ce9160489e724569f1c91df153dddd88f4ed85ceb0ba4f8fced0fd56db40332"
+      },
+      {
+        "path": "tools/check-boundaries.mjs",
+        "bytes": 44090,
+        "sha256": "af8951756322d060ab7057c68435a561f4c369aac42d0e042a3def984835334d"
+      },
+      {
+        "path": "tools/check-types.mjs",
+        "bytes": 26970,
+        "sha256": "6ad34104b4e21b0fd248a4fa684263281f0b27025ee9664810a10f261887289f"
+      }
+    ],
+    "subjectCount": 14,
+    "sourceAndInputsStable": true,
+    "oldSourceSnapshotsPreservedAsVersionBound": true
+  },
+  "engineeringPreview": "0.26.0",
+  "privateManifestVersion": "0.0.0",
+  "toolProtocolVersion": "1.0",
+  "engineeringLabel": "0.26.0",
+  "deliverable": "V027",
+  "sourceId": "S076",
+  "packageVersion": "0.0.0",
+  "protocolVersion": "1.0",
+  "currentSelectedSubjects": [
+    {
+      "path": "packages/engine/src/tweenTypes.ts",
+      "bytes": 973,
+      "sha256": "2c47d261614c9371d3e558698ad302b84d85915a0366ffaa89e40a1b24b723a5"
+    },
+    {
+      "path": "packages/engine/src/tween.ts",
+      "bytes": 13260,
+      "sha256": "3f861705988d55cd556d031973dddc67dfaca13964c4175bd958292e00d1022f"
+    },
+    {
+      "path": "packages/engine/src/Engine.ts",
+      "bytes": 12294,
+      "sha256": "d32215441b52e2089cf18c7845b90d16223c7aa285a4b58347dcda4519745cb5"
+    },
+    {
+      "path": "packages/engine/src/index.ts",
+      "bytes": 2433,
+      "sha256": "674367028cf0e81a6ab0831ca074a35cbfd93ab53e27dd738afdd142f992e120"
+    },
+    {
+      "path": "tools/check-types.mjs",
+      "bytes": 26970,
+      "sha256": "6ad34104b4e21b0fd248a4fa684263281f0b27025ee9664810a10f261887289f"
+    },
+    {
+      "path": "tools/check-boundaries.mjs",
+      "bytes": 44090,
+      "sha256": "af8951756322d060ab7057c68435a561f4c369aac42d0e042a3def984835334d"
+    },
+    {
+      "path": "tests/types/positive.ts",
+      "bytes": 33001,
+      "sha256": "aa636808dd64895870b82c5eb9162d2329edebd2be3ae755d0e24666f3ba0bee"
+    },
+    {
+      "path": "tests/types/negative.ts",
+      "bytes": 28368,
+      "sha256": "43d89f16928a5052ef155bc078af964e9b73e2c58548fe5906c3b42e30787b13"
+    },
+    {
+      "path": "tests/types/dom-free.ts",
+      "bytes": 9363,
+      "sha256": "5799e831751b38cb15833c963f1ff2c3d234e027538895f1a36c47f670d14a9a"
+    },
+    {
+      "path": "tests/types/tween-import-negative.ts",
+      "bytes": 1305,
+      "sha256": "5ce9160489e724569f1c91df153dddd88f4ed85ceb0ba4f8fced0fd56db40332"
+    },
+    {
+      "path": "tests/types/tsconfig.tween-import-negative.json",
+      "bytes": 78,
+      "sha256": "36d530d62224a6b4f2af8434f0f01832bde2d39ad699316695ccbbdf7d74649f"
+    },
+    {
+      "path": "tests/tween-boundaries.test.mjs",
+      "bytes": 10623,
+      "sha256": "07157a56dc218d699188adc5cd1289ec689dd1bd48ea3f6fd527908f08604826"
+    },
+    {
+      "path": "tests/boundaries.test.mjs",
+      "bytes": 37288,
+      "sha256": "e7674d468ae14b8f2bc3df1a09dac2eeef57304ff1d054a4c1236e091ceb1b77"
+    },
+    {
+      "path": "tests/tween.test.mjs",
+      "bytes": 44633,
+      "sha256": "0b6390645f88698580299dfc0939073ac9c5b581230bbe602f4c569304620ba0"
+    }
+  ],
+  "publicCuration": {
+    "status": "ROOT_ACCEPTED_INDEPENDENT_CURRENT_SCOPED_REVIEW",
+    "finalHookAndRemoteDelivery": "PENDING_ACTUAL_RECORD",
+    "independentReview": {
+      "bytes": 1217,
+      "sha256": "c969c02500a4be4856f9afbc1590f03c8847056eba30e267f245f87568a82948",
+      "status": "identity_only_not_distributed",
+      "scope": "Two new scalar Tween reading pairs, changed English-first community entries, version-bound prior-delivery additions, paired registry changes, saved actual evidence, first-party provenance and critical English comments. Other bodies retain their historical review scope; inventory totals are not blanket semantic or product acceptance."
+    },
+    "laterRootMetadataAttestation": true
+  }
+}

@@ -2,7 +2,11 @@
 
 English | [简体中文](../../Cns/docs/core-progress.md)
 
-## Current reading: engineering preview 0.22.0
+## Current reading: engineering preview 0.26.0
+
+The [scalar Tween contract](scalar-tween-contract.md) adds `engine.createTween(scope, options)` with four type-only root names, built-in linear/quadratic easing and one-shot controls. Synchronous undefined-only writer/completion callbacks, authentic Scope ownership and terminal cleanup govern borrowed application targets. The prior [0.25.0 game clock](game-clock-contract.md) drives explicit seconds; advancement never renders and capture/render never advances time. Read the [bounded evidence](scalar-tween-evidence.md) for separate source/fixture scopes. Complete core verification passed in its recorded source/fixture scope; final publication and delivery remain separate gates; this checkpoint does not establish chains/property arbitration, complete legacy Tween/Spine or production performance. Packages remain private 0.0.0 and protocol 1.0.
+
+## Historical engineering preview: 0.22.0
 
 The [content-bounds contract](display-content-bounds-contract.md) defines receiver-local measurement of authoritative Graphics and cached Bitmap content. Descendant direct corners, ordinary binary64 nonconservative subtraction, authored-zero count/skip behavior and explicit budgets retain the exact contract boundary. Read the [evidence](display-content-bounds-evidence.md) for actual baseline, passing successors, strict gates, retained corrections and exact source/build/review identities; their suites overlap.
 

@@ -72,7 +72,9 @@
     "displayContentBoundsContract": "Cns/docs/显示内容边界契约.md",
     "displayContentBoundsEvidence": "Cns/docs/显示内容边界证据.md",
     "gameClockContract": "Cns/docs/游戏时间核心契约.md",
-    "gameClockEvidence": "Cns/docs/游戏时间核心证据.md"
+    "gameClockEvidence": "Cns/docs/游戏时间核心证据.md",
+    "scalarTweenContract": "Cns/docs/标量补间契约.md",
+    "scalarTweenEvidence": "Cns/docs/标量补间证据.md"
   },
   "architectureContractProbesRun": true,
   "browserApiPixelProbesRun": true,
@@ -535,7 +537,7 @@
     "contract": "Cns/docs/显示内容边界契约.md",
     "evidence": "Cns/docs/显示内容边界证据.md"
   },
-  "latestEngineeringPreview": "0.25.0",
+  "latestEngineeringPreview": "0.26.0",
   "texturedMesh2DImplementation": {
     "version": "0.23.0",
     "status": "bounded_increment_implemented",
@@ -618,6 +620,25 @@
     "automaticHostScheduling": false,
     "browserPixelAcceptance": false,
     "performanceAcceptance": false,
+    "publication": "PENDING_SEPARATE_ACTUAL_RECORD"
+  },
+  "scalarTweenImplementation": {
+    "version": "0.26.0",
+    "status": "bounded_scope_owned_scalar_increment_verified",
+    "deliverable": "V027",
+    "source": "S076",
+    "wholeCore": {
+      "tests": 2131,
+      "pass": 2131,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "automaticScheduling": false,
+    "browserNativeAnimationAcceptance": false,
+    "performanceAcceptance": false,
+    "fullLegacyTweenAcceptance": false,
     "publication": "PENDING_SEPARATE_ACTUAL_RECORD"
   }
 }

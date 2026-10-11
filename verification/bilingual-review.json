@@ -1261,5 +1261,32 @@
     "laterRootMetadataAttestation": true,
     "productExecutionByReviewer": false,
     "remoteDeliveryAccepted": false
+  },
+  "scalarTweenCuration": {
+    "engineeringPreview": "0.26.0",
+    "status": "ROOT_ACCEPTED_INDEPENDENT_SCOPED_PUBLIC_REVIEW",
+    "newPairs": [
+      {
+        "en": "knowledge-base/en/docs/scalar-tween-contract.md",
+        "zh": "knowledge-base/Cns/docs/标量补间契约.md",
+        "kind": "public_reading"
+      },
+      {
+        "en": "knowledge-base/en/docs/scalar-tween-evidence.md",
+        "zh": "knowledge-base/Cns/docs/标量补间证据.md",
+        "kind": "public_reading"
+      }
+    ],
+    "priorReviewsRetainOriginalScopes": true,
+    "executionAndDeliverySeparate": true,
+    "independentReview": {
+      "bytes": 1217,
+      "sha256": "c969c02500a4be4856f9afbc1590f03c8847056eba30e267f245f87568a82948",
+      "status": "identity_only_not_distributed",
+      "scope": "Two new scalar Tween reading pairs, changed English-first community entries, version-bound prior-delivery additions, paired registry changes, saved actual evidence, first-party provenance and critical English comments. Other bodies retain their historical review scope; inventory totals are not blanket semantic or product acceptance."
+    },
+    "laterRootMetadataAttestation": true,
+    "productExecutionByReviewer": false,
+    "remoteDeliveryAccepted": false
   }
 }

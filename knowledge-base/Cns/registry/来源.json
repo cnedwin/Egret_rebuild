@@ -1229,6 +1229,18 @@
       "scope": "独立规格、实现与评审；公共时钟行为、真实 Scope／资源／序列帧协作、严格类型、指定边界对照及完整既有核心源码验证。",
       "limit": "显式 CPU 时间协作不代表自动宿主调度、浏览器像素、手机、物理内存或性能验收；完整 UI、Spine、3D、Native SDK 与迁移另有义务。最终公开门禁与远程交付分别记录。",
       "doc": "Cns/docs/游戏时间核心证据.md"
+    },
+    {
+      "id": "S076",
+      "type": "first_party_scalar_tween_behavior_type_lifetime_and_source_evidence",
+      "researchCheckedAt": "2026-10-11",
+      "artifacts": [
+        "evidence/scalar-tween-verification.json"
+      ],
+      "title": "第一方标量 Tween 协作证据",
+      "scope": "独立审阅规格和第一方实现；限定公开行为、真实时钟/显示/Scope 协作、严格类型诊断、生产导入导出检查、真实复制工程对照及完整既有核心验证。",
+      "limit": "CPU 检查不代表浏览器原生动画、字体、目标手机或性能验收，也不代表完整属性动画、UI、Spine、旧 Tween 兼容或工程迁移；最终公开门禁和远程交付分别记录。",
+      "doc": "Cns/docs/标量补间证据.md"
     }
   ]
 }
