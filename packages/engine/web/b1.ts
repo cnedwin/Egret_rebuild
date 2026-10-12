@@ -1,10 +1,10 @@
-import type { RenderFrame2D } from '@egret/contracts';
+import type { RenderFrame2D, TexturedRenderFrame2D } from '@egret/contracts';
 import { createSceneFrame3D, isSceneFrame3D, getScene3DErrorOrigin } from '../rendering/sceneFrame3D.js';
 import type { SceneFrame3D } from '../rendering/sceneFrame3D.js';
 import { packMeshGeometry3D, getMeshPacking3DErrorOrigin } from '../rendering/packMeshGeometry3D.js';
 import { createWebGPUMeshPipeline, encodeWebGPUMesh } from './webgpuMeshPass.js';
-import { createB1WebGPUHostInternal } from './WebGPUHost.js';
-import type { WebGPUHost, WebGPUHostOptions, WebGPUHostStatus } from './WebGPUHost.js';
+import { createB1WebGPUHostInternal, createTexturedB1WebGPUHostInternal } from './WebGPUHost.js';
+import type { WebGPUHost, WebGPUHostOptions, WebGPUHostStatus, TexturedWebGPUHost, TexturedWebGPUHostOptions } from './WebGPUHost.js';
 
 export interface B1SceneStatus {
     readonly host: WebGPUHostStatus;
@@ -15,6 +15,9 @@ export interface B1SceneStatus {
 export interface B1WebGPUHost extends WebGPUHost {
     renderSceneFrame(scene: SceneFrame3D, overlay: RenderFrame2D): undefined;
     getSceneStatus(): B1SceneStatus;
+}
+export interface TexturedB1WebGPUHost extends B1WebGPUHost, TexturedWebGPUHost {
+    renderSceneTexturedFrame(scene: SceneFrame3D, overlay: TexturedRenderFrame2D): undefined;
 }
 export interface B1BuiltinProtocol {
     readonly version: 'egret.internal.b1/1';
@@ -45,4 +48,8 @@ export function createB1WebGPUHost(options: WebGPUHostOptions): B1WebGPUHost {
     // The ESM backedge is read only on an explicit call, after module evaluation.
     // This module never starts a host or invokes the protocol getter at top level.
     return createB1WebGPUHostInternal(options);
+}
+/** The same delayed backedge selects one module-owned combined host. */
+export function createTexturedB1WebGPUHost(options: TexturedWebGPUHostOptions): TexturedB1WebGPUHost {
+    return createTexturedB1WebGPUHostInternal(options);
 }

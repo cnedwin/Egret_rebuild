@@ -12,6 +12,35 @@ Years later, as times change and technology advances, many developers continue t
 
 多年以后，时代变迁，技术革新，依然有很多开发者在鼓励我们。我希望借助 AI 和社区的力量，重建这个游戏引擎。
 
+<!-- CHOST-DOC-0.39.0-BEGIN -->
+## 0.39.0 proposed — textured scene composition
+
+**CPU scope accepted; native, full gates and publication pending. S092 / V043.** The explicit `createTexturedSceneWebGPUHost` draws an opaque RGB scene and a genuine Engine-captured textured overlay through one owner, two passes and one submission. Set `clearAlpha: 1` and use `renderSceneTexturedFrame`; existing factories and captured-frame lifetime remain unchanged.
+
+Recorded actual results cover the build, combined tests **12/12**, retained scene/textured tests **48/48**, positive types with **0** diagnostics, complete negative inventories **8/16/15**, the boundary guard and four assigned boundary controls **4/4**. This documentation curation is **SOURCE_ONLY / NOT_RUN** and does not add product execution.
+
+The **180-second** full boundary-suite attempt is **INCOMPLETE**. Mandatory full prepush and publication remain **PENDING**. New browser/GPU execution is **NOT_RUN at this preparation cutoff**; physical phones, performance and native SDK acceptance remain unclaimed. FullSpine **R020/V020** and migration **R008/V006** remain **OPEN**.
+
+**Recorded 0.38.0 delivery successor:** public Matrix authoring was merged through [PR #25](https://github.com/cnedwin/Egret_rebuild/pull/25), with Main `893f1ca86af10a092066dcccdaaa16ac194efded` and tree `5960109ca14c9a53ba1cd7ba80d967e6451ad102` read back locally and remotely. This supersedes earlier pending delivery labels while preserving their historical cutoffs; it does not establish 0.39 delivery or remote CI PASS.
+
+See the [textured scene contract](knowledge-base/en/docs/textured-scene-host-contract.md) and the [planned public verification record](knowledge-base/evidence/textured-scene-host-verification.json). The record awaits final evidence curation.
+
+## 0.39.0 拟议 — 纹理场景合成
+
+**CPU 有限范围已接受；原生验收、完整门禁和发布待完成。S092 / V043。** 显式 `createTexturedSceneWebGPUHost` 通过同一所有者、两遍渲染和一次提交，绘制不透明 RGB 场景及真实 Engine 捕获的纹理覆盖层。必须设置 `clearAlpha: 1` 并调用 `renderSceneTexturedFrame`；既有工厂与捕获帧生命周期保持原契约。
+
+已记录的实际结果覆盖构建、组合测试 **12/12**、保留场景／纹理测试 **48/48**、正向类型 **0** 项诊断、完整负向清单 **8/16/15**、边界检查和四项指定边界对照 **4/4**。本次文档整理为 **SOURCE_ONLY / NOT_RUN**，未新增产品执行。
+
+**180 秒**完整边界测试尝试为 **INCOMPLETE**。强制完整推送前检查和发布仍为 **PENDING**。新浏览器／GPU 执行在**本准备截止点为 NOT_RUN**；不声明实体手机、性能或原生 SDK 验收。FullSpine **R020/V020** 与迁移 **R008/V006** 继续保持 **OPEN**。
+
+**已记录的 0.38.0 交付后继：** 公共 Matrix 创作已经由 [PR #25](https://github.com/cnedwin/Egret_rebuild/pull/25) 合并，Main `893f1ca86af10a092066dcccdaaa16ac194efded` 与树 `5960109ca14c9a53ba1cd7ba80d967e6451ad102` 已完成本地和远端读回。这是较早待交付标签的后继，保留其历史截止点；不构成 0.39 交付或远端 CI PASS。
+
+详见[纹理场景契约](knowledge-base/Cns/docs/textured-scene-host-contract.md)及[计划中的公共核验记录](knowledge-base/evidence/textured-scene-host-verification.json)；该记录待最终证据整理。
+**Actual browser successor:** the default headless Edge **155.0.4283.45** run completed **2** genuine frames. All **24** fixed pixels (**12** per frame) matched exact RGBA expectations; each **16384**-byte normalized buffer is preserved in the shared record. Applying the first overlap expectation to the second buffer rejected the changed UI order at **(34, 32)**, without another rendered frame. Host safe close, resource/Scope/lease/Engine cleanup, application device destruction and cooperative browser closure passed. This establishes the bounded composition only; OS process retirement, physical hardware, phones, performance, complete 3D and full Spine remain separate. Full prepush and GitHub delivery are PENDING at this successor cutoff.
+
+**实际浏览器后继：**默认无头 Edge **155.0.4283.45** 完成 **2** 幅真实捕获帧。全部 **24** 个固定像素（每幅 **12** 个）与精确 RGBA 预期一致；每份 **16384** 字节的归一化缓冲保存在共享记录中。将首幅覆盖预期用于第二幅缓冲，在 **(34, 32)** 拒绝了变化后的 UI 顺序，未增加渲染帧。Host 安全关闭、资源／Scope／租约／Engine 清理、应用销毁设备以及浏览器协作式关闭均通过。此处仅验收有限合成能力；操作系统进程退出、实体硬件、手机、性能、完整 3D 和完整 Spine 仍需独立验收。完整 prepush 与 GitHub 交付在本后继截止点仍为 PENDING。
+<!-- CHOST-DOC-0.39.0-END -->
+
 <!-- MATRIX4-DOC-0.38.0-BEGIN -->
 ## 0.38.0 proposed — public Matrix4 authoring
 

@@ -550,7 +550,7 @@
   ],
   "_localization": {
     "canonicalSource": "需求.json",
-    "canonicalSha256": "4b5130fd87959c7b9000c49c5be748dbaa0aebd6be68e124a1caf4ea41bef69f",
+    "canonicalSha256": "2f6df54a73867a90abea5b0923802f6125741894866949d38b7c78650581fd78",
     "role": "read_only_translation",
     "language": "en"
   },
@@ -610,6 +610,163 @@
     "newGPUExecution": false,
     "fullRepositoryGate": "PENDING",
     "independentSourceAndBilingualReview": "PENDING",
+    "remoteDelivery": "PENDING"
+  },
+  "texturedSceneActualSuccessor": {
+    "engineeringLabel": "0.39.0",
+    "sourceId": "S092",
+    "deliverableId": "V043",
+    "status": "CPU_ACCEPTED_NATIVE_AND_FULL_GATES_PENDING",
+    "curationExecution": "SOURCE_ONLY_NOT_RUN",
+    "publicEntry": "@egret/engine/webgpu/scene3d",
+    "factory": "createTexturedSceneWebGPUHost",
+    "method": "renderSceneTexturedFrame",
+    "clearAlpha": 1,
+    "actualCPU": {
+      "buildExitCode": 0,
+      "combinedTests": {
+        "tests": 12,
+        "pass": 12,
+        "fail": 0,
+        "skipped": 0
+      },
+      "retainedSceneTexturedTests": {
+        "tests": 48,
+        "pass": 48,
+        "fail": 0,
+        "skipped": 0
+      },
+      "positiveTypes": {
+        "exitCode": 0,
+        "diagnostics": 0
+      },
+      "negativeTypes": {
+        "web": 8,
+        "import": 16,
+        "browserDOMFree": 15,
+        "eachExpectedExitCode": 1
+      },
+      "strictTypeGateExitCode": 0,
+      "boundaryGuardExitCode": 0,
+      "assignedBoundaryControls": {
+        "tests": 4,
+        "pass": 4,
+        "fail": 0,
+        "skipped": 0
+      },
+      "independentImplementationReviewOpenFindings": 0
+    },
+    "composition": {
+      "surfaceOwners": 1,
+      "pipelineRoles": 4,
+      "renderPasses": 2,
+      "queueSubmissions": 1,
+      "readbackAfterBothPasses": true
+    },
+    "fullBoundarySuite": {
+      "status": "INCOMPLETE_TIMEOUT",
+      "timeoutSeconds": 180
+    },
+    "mandatoryFullPrepush": "PENDING",
+    "newBrowserGPU": "NOT_RUN_AT_PREPARATION_CUTOFF",
+    "nativeAcceptance": "PENDING",
+    "publication": "PENDING",
+    "independentPublicCuration": "PENDING",
+    "phones": "NOT_RUN",
+    "performance": "NOT_MEASURED",
+    "nativeSDK": "NOT_RUN",
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "contract": "en/docs/textured-scene-host-contract.md",
+    "record": "knowledge-base/evidence/textured-scene-host-verification.json",
+    "recordStatus": "PLANNED_PENDING_FINAL_CURATION",
+    "historicalCutoffsPreserved": true,
+    "summary": "An explicit shared-owner WebGPU host composes genuine opaque RGB scene and captured textured UI; CPU source/tests/types/assigned boundaries are accepted at this cutoff, while native pixels, full gates and publication are pending.",
+    "limits": "No complete character/material/lighting/transparent-scene, phone/performance/native SDK or whole-product acceptance. FullSpine R020/V020 and migration R008/V006 remain OPEN."
+  },
+  "matrixAuthoringDeliverySuccessor": {
+    "engineeringLabel": "0.38.0",
+    "status": "ACTUAL_MERGED_MAIN_TREE_VERIFIED",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/25",
+    "sourceCommit": "49746fefa8a4fcfed998dfa11e9ebac9f4d40ef9",
+    "mergedMain": "893f1ca86af10a092066dcccdaaa16ac194efded",
+    "tree": "5960109ca14c9a53ba1cd7ba80d967e6451ad102",
+    "localRemoteMainReadbackAtUtc": "2026-10-12T06:35:44.814Z",
+    "mandatoryPushHookExitCode": 0,
+    "remoteStatusCount": 0,
+    "remoteCheckCount": 0,
+    "remoteCIPassClaimed": false,
+    "historicalPendingCutoffsRetained": true,
+    "summary": "Actual recorded 0.38.0 PR25/Main delivery supersedes the earlier pending delivery cutoff without changing historical preparation or acceptance records; remote CI PASS is not claimed."
+  },
+  "texturedSceneBrowserActualSuccessor": {
+    "status": "ACTUAL_TWO_FRAME_BROWSER_PIXELS_AND_COOPERATIVE_CLEANUP_PASS",
+    "record": "knowledge-base/evidence/textured-scene-host-verification.json",
+    "environment": {
+      "node": "v24.19.0",
+      "browserVersion": "155.0.4283.45",
+      "channel": "msedge",
+      "headless": true,
+      "additionalFlags": [],
+      "deviceScaleFactor": 1
+    },
+    "observations": 2,
+    "fixedPixels": 24,
+    "pixelsPerObservation": 12,
+    "bytesPerObservation": 16384,
+    "rawBuffers": [
+      {
+        "path": "knowledge-base/evidence/textured-scene-host/CHN01.rgba",
+        "bytes": 16384,
+        "sha256": "3b574bfecd5cb364e5aed4f2cf7ee44676af5dc82416c451f7b69b1068ec3a04",
+        "frameId": 1,
+        "serial": 1,
+        "width": 64,
+        "height": 64,
+        "format": "rgba8unorm"
+      },
+      {
+        "path": "knowledge-base/evidence/textured-scene-host/CHN02.rgba",
+        "bytes": 16384,
+        "sha256": "2c3f1bd9cf0b03387638b0211ac7f13607cc54e14dba3d1e3ca20224b9527ada",
+        "frameId": 2,
+        "serial": 2,
+        "width": 64,
+        "height": 64,
+        "format": "rgba8unorm"
+      }
+    ],
+    "sensitivity": {
+      "id": "CHNC01",
+      "status": "EXPECTED_PIXEL_REJECTION",
+      "x": 34,
+      "y": 32,
+      "expected": [
+        0,
+        255,
+        0,
+        255
+      ],
+      "actual": [
+        255,
+        255,
+        0,
+        255
+      ],
+      "rendererMutation": "none",
+      "newBrowserFrames": 0
+    },
+    "nativeCleanup": "PASS",
+    "cooperativeBrowserCleanup": "PASS",
+    "identitiesStable": true,
+    "artifactsStable": true,
+    "osProcessRetirement": "UNBOUND",
+    "browserExecutableIdentity": "UNBOUND",
+    "phonePerformance": "NOT_MEASURED",
+    "fullSpineR020V020": "OPEN",
+    "complete3D": "OPEN",
+    "mandatoryFullPrepush": "PENDING",
+    "mandatoryPushHook": "PENDING",
     "remoteDelivery": "PENDING"
   }
 }

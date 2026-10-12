@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "revision": "0.38.0",
+  "revision": "0.39.0",
   "canonicalState": "Chinese registries; English JSON is a read-only translation",
   "evidencePolicy": "Machine data, embedded source, historical code and upstream legal originals retain their identities; paired reading versions explain them.",
   "semanticReview": {
@@ -141,8 +141,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "65c3bbbcb83119c55b17eb81ce0cdcad407eeea4b19e61cdac9431d561ddfdb6",
-      "zhSha256": "30cc3520e92edffc0ffba67daf4ff476a145e808717e91c9cb1f21882812a424"
+      "enSha256": "f0853643a08f125199c9768f40835806577d05a1919cc4c6575a9bce784c6735",
+      "zhSha256": "536a75eef6aa6fdc8a6b6f5161aceb8ef555cc5a4d024f593c99d01657b8c295"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -288,8 +288,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "d320ff6cbbb91f0eb74d4b5ec4c53b8c19af1739d509a24e5a9b4003c9d9dd14",
-      "zhSha256": "5366ff4755d0ea9f3a152e9abb0347c1854287c8b9c6f169f868e92e037d35fe"
+      "enSha256": "0aff2501056e0f2f119e67ad18719b3ce19912f065367ca17aee301a822c1936",
+      "zhSha256": "c97539638f99aa58ed006f83f3ad2f1d9bea689d6d1af972b2713956fd5330e6"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -764,8 +764,8 @@
       "zh": "knowledge-base/Cns/README.md",
       "en": "knowledge-base/en/README.md",
       "kind": "public_reading",
-      "enSha256": "568282686eebdf3151f44e6156411353fce1673e52f06aea1089734e5008b4c2",
-      "zhSha256": "07cd4c42aa428847811c81b4f720c304e6ad3fe2a8283c7ab56be3391d9f8318"
+      "enSha256": "cc10b49cf0600390428c77d4977fb478a6f863cff9f897013aba33390784b8b4",
+      "zhSha256": "008ebbb9ce5d6f304eb118392177581c7b034e27598a8b86cec415f7dd3c8e2d"
     },
     {
       "zh": "knowledge-base/Cns/templates/ADR决策记录.md",
@@ -799,8 +799,8 @@
       "zh": "knowledge-base/README.zh-CN.md",
       "en": "knowledge-base/README.md",
       "kind": "public_navigation",
-      "enSha256": "4966f84ecbd1f4b6312a8e404cc044f1278fe7379fe7db0de9f16938b33fb7c2",
-      "zhSha256": "0005200518461883286e74e760ef2c7276d9c6b4e2076a7a6aaee6b0953e83ca"
+      "enSha256": "063929686b783853a77ed43f2bed35dac81ff454654fb5f491dbd6a85c5ec97a",
+      "zhSha256": "7f4355b6a29cba1dc4309b389ef780e2b58dd56ae2bbf39d25327b6b89eba2bf"
     },
     {
       "zh": "LICENSE.zh-CN.md",
@@ -848,8 +848,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "fc712ae50cc8b3d796c7d450f8c4a07707c94aa1c392e5d1b9d336875c0d7f30",
-      "zhSha256": "c58142965db3f5eaa022cea2ee0b3139b7c9a32e361012efb29878de580c0c36"
+      "enSha256": "c7ece775e2d9e127c4b4d79ef7b488caf21ef824d283f61fcc4edf9f58d86869",
+      "zhSha256": "dd06718307875574b034fa49804ae0fc116cf126625eb5a1283f422bdb164828"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -1044,8 +1044,8 @@
       "en": "knowledge-base/en/docs/public-scene3d-contract.md",
       "zh": "knowledge-base/Cns/docs/公共3D场景契约.md",
       "kind": "public_reading",
-      "enSha256": "adde33eeed04de145f633afd3c484e67263355e6b98d5e8bc388bdce386b38d1",
-      "zhSha256": "1b2c071f4526fef8f65d2d5944efddeff20433f9d50134011c2901d8e9d8041b"
+      "enSha256": "b23a57bfc54ccf5148a20d0d4113907a1589022d6ad10e8f04bf279bf2853806",
+      "zhSha256": "6fcdacce4bd4ac308de7c2401d32d3c26e3b979d886a92b6c15d24391c1d43db"
     },
     {
       "en": "examples/scene3d/README.md",
@@ -1095,14 +1095,20 @@
       "kind": "public_reading",
       "enSha256": "028d7ed99a88d3a5373ab2be456b017f762aa7238ada31161a5ed19fb3f47b40",
       "zhSha256": "4a47b527cd224eef7e461d640fd31a5ff0952a8bb075818ed29493bfa47720e4"
+    },
+    {
+      "zh": "knowledge-base/Cns/docs/textured-scene-host-contract.md",
+      "en": "knowledge-base/en/docs/textured-scene-host-contract.md",
+      "zhSha256": "422d49db8b6ad22a94354186c6d6bd7c71fb0da8faf6741b3c350f136325a3ce",
+      "enSha256": "83d4308af07228f2ab941fa0c4cbb06cbfcce6695aa57dd1ff6abd39857e6ece"
     }
   ],
   "registries": [
     {
       "source": "knowledge-base/Cns/registry/需求.json",
       "target": "knowledge-base/en/registry/requirements.json",
-      "sourceSha256": "4b5130fd87959c7b9000c49c5be748dbaa0aebd6be68e124a1caf4ea41bef69f",
-      "targetSha256": "04c8fcee7a834565182fa4dadb0159d24df3592f3ce1c2b0efbaee53107ae0ce"
+      "sourceSha256": "2f6df54a73867a90abea5b0923802f6125741894866949d38b7c78650581fd78",
+      "targetSha256": "573c071bd0a60396fbcb4511c817f64d010dede6ff526e4a42afb130cc2c419f"
     },
     {
       "source": "knowledge-base/Cns/registry/决策.json",
@@ -1119,20 +1125,20 @@
     {
       "source": "knowledge-base/Cns/registry/交付.json",
       "target": "knowledge-base/en/registry/deliverables.json",
-      "sourceSha256": "95061f28fd93d9419694e6bc3a70cb8efe1cc1f76189c9adbd1f7f2b8174cc68",
-      "targetSha256": "977cfc186382f71a61f23f4316719db0cc8e36e6802ffb4e2abefc911ec21e0b"
+      "sourceSha256": "dd3f9bc0fbcdba3e094fc3d41709f730e0f994bc2c051295d41d61695bdb0bcd",
+      "targetSha256": "82c8f055f1ea68259f91a90447dbbf718ad8f1e85d9ec5830910367e285b5880"
     },
     {
       "source": "knowledge-base/Cns/registry/来源.json",
       "target": "knowledge-base/en/registry/sources.json",
-      "sourceSha256": "78b5e01c90c805e9dd7b16bd23f8056770c1d8e25526858a390365c4b3369c3d",
-      "targetSha256": "6b325fd19713e0a27505093cd9c0a996a55a03540bb7d91bdca27d61114fbb43"
+      "sourceSha256": "194b207ff16a37cb57b50c51b70faa6901868bf7787d1483511970edb9fcfc1b",
+      "targetSha256": "0de43c6bfc8628320d7ddbf23d5a20e1fc95e461b5bd17f8b73488f8b8e66372"
     },
     {
       "source": "knowledge-base/Cns/当前版本.json",
       "target": "knowledge-base/en/current-version.json",
-      "sourceSha256": "41842cd3197337a966106e7a3bfd0c12a1dd6920a2ccb2b025176cb3618de965",
-      "targetSha256": "b99934a8c0ac375a3384ab48a21501a6c14f1202c13c9c807ef08f479489c845"
+      "sourceSha256": "1f202b71cf1e9b0b49211c7e8882666b5a34d84c29cacc479535cb4d9169d9c8",
+      "targetSha256": "75699e54fd806feda7bfa476b898a23efb830f870990b774a01a62b6294dad5c"
     }
   ],
   "criticalComments": [
@@ -1242,7 +1248,7 @@
     },
     {
       "path": "packages/engine/web/WebGPUHost.ts",
-      "sha256": "2679e634e35c3841daa499f59cb3279087b33245267af187ae78995a29019c72"
+      "sha256": "c0e9555e692e19d42ecc0bf443764c5c301d6f76febcf4d16f57c17853254e49"
     },
     {
       "path": "packages/engine/web/canvasImageProjection.ts",
@@ -1482,7 +1488,7 @@
     },
     {
       "path": "packages/engine/web/b1.ts",
-      "sha256": "9b3e02b47e9328a106783f2ea88baca2066f5bf66b6c66113dd5952872c833b7"
+      "sha256": "18d37f790210bf99797e8832d670ab40cd923c5d67ba0eaf35a9501ae13bbf63"
     },
     {
       "path": "packages/engine/web/webgpuMeshPass.ts",
@@ -1502,7 +1508,7 @@
     },
     {
       "path": "tools/verify-webgpu-b1.mjs",
-      "sha256": "b9f964458887c23411d92ee91441337ce3559ec7a8e91b9697a1737246719a3f"
+      "sha256": "4cf10a34ce7f00cd44a835b81a1491a09de4e1eaf97d93b0952dc4aa784abc30"
     },
     {
       "path": "tools/b1-webgpu/fixture.mjs",
@@ -1514,7 +1520,7 @@
     },
     {
       "path": "tests/b1-webgpu-verifier.test.mjs",
-      "sha256": "d2c048b56c196ff0b15305a8edb08fcaae0cbe86307b32ccbec3130440af4140"
+      "sha256": "29d5908d78bb7f7f0cd5a241daa3053711bd44b72cd205529a6689c5ab29b530"
     },
     {
       "path": "packages/runtime/src/SequencePlayer.ts",
@@ -1596,7 +1602,7 @@
     },
     {
       "path": "packages/engine/web/prepareTexturedSubmission2D.ts",
-      "sha256": "39863905140eee9af2c4739d407707901a6397a6cb17a91334fa56d3dfdab9bc"
+      "sha256": "09dd19bff3b2262dbbfe6cb7b478579e31cc2d579f6d27c328eb9de259b8d89b"
     },
     {
       "path": "packages/engine/web/texturedWebGPUOptions.ts",
@@ -1776,7 +1782,7 @@
     },
     {
       "path": "packages/engine/web/scene3d.ts",
-      "sha256": "5a85d630b66f0b26ccc2588105a923d050f56ee34f07d00524f84b5dbc221739"
+      "sha256": "f1e659b0eee592caf9eef33974e5468c802884d251c933c7df9ade108fb2d7b3"
     },
     {
       "path": "tools/b1-webgpu/public-composition-oracle.mjs",
@@ -1877,6 +1883,26 @@
     {
       "path": "knowledge-base/experiments/spine-f1/tests/manual-clock.test.mjs",
       "sha256": "6fe5a711718f2c2759ca5981751578c21d1bb74c771b81a68e83b940da228049"
+    },
+    {
+      "path": "tests/textured-scene-webgpu-host.test.mjs",
+      "sha256": "95d1caa1649be0d498b06e4ad02360ac58a4b52fe3a889fd32b6c9fd6b5dd924"
+    },
+    {
+      "path": "tests/textured-scene-webgpu-host-fixtures.mjs",
+      "sha256": "0a46419893d46cba263e1180257f1581fe345b31992f95d532495da6e1273a38"
+    },
+    {
+      "path": "tools/verify-textured-scene-webgpu.mjs",
+      "sha256": "11b4392791e2ba7c5c95c2c9a615b7af91ac5b5ea3db3d37ddba03d9c32340b9"
+    },
+    {
+      "path": "tools/textured-scene-webgpu/main.mjs",
+      "sha256": "c9cc2c9b174e5a73cac8618ee50e0f9059057ae2f5584c72ae204fe39a45a9a7"
+    },
+    {
+      "path": "tools/textured-scene-webgpu/oracle.mjs",
+      "sha256": "3b3d9b186db9a3b93f04cf1006535997c06f7248b0320ad029a38caa90433d9b"
     }
   ],
   "historicalSemanticReview": {
@@ -4156,5 +4182,27 @@
     "scope": "Existing public scene contract and ten reading/registry pairs; original math reuse and actual finite public/type regressions.",
     "independentMeaningReview": "PENDING",
     "completeSemanticParityClaim": false
+  },
+  "texturedSceneHostCuration": {
+    "engineeringLabel": "0.39.0",
+    "sourceId": "S092",
+    "deliverable": "V043",
+    "record": "knowledge-base/evidence/textured-scene-host-verification.json",
+    "scope": "First-party shared-owner scene/textured UI host, public regression and portable browser oracle, with separate acceptance cutoffs.",
+    "independentMeaningReview": "PENDING",
+    "completeSemanticParityClaim": false
+  },
+  "texturedSceneBrowserActualSuccessor": {
+    "record": "knowledge-base/evidence/textured-scene-host-verification.json",
+    "status": "ACTUAL_TWO_FRAME_BROWSER_PIXELS_AND_COOPERATIVE_CLEANUP_PASS",
+    "observations": 2,
+    "fixedPixels": 24,
+    "criticalToolFiles": [
+      "tools/verify-textured-scene-webgpu.mjs",
+      "tools/textured-scene-webgpu/index.html",
+      "tools/textured-scene-webgpu/main.mjs",
+      "tools/textured-scene-webgpu/oracle.mjs"
+    ],
+    "independentMeaningReview": "PENDING"
   }
 }

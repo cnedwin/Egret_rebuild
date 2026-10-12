@@ -344,8 +344,8 @@ test('S05 ordinary native fixture factory imports use only the exact public port
 });
 test('S06 collector pins the current Host and retains both schedules separately', async () => {
   const source = await readFile(cli, 'utf8');
-  assert.match(source, /currentHost\.bytes, 74888/);
-  assert.ok(source.includes('2679e634e35c3841daa499f59cb3279087b33245267af187ae78995a29019c72'));
+  assert.match(source, /currentHost\.bytes, 80902/);
+  assert.ok(source.includes('c0e9555e692e19d42ecc0bf443764c5c301d6f76febcf4d16f57c17853254e49'));
   assert.match(source, /allowedModules\.has\(name\)/);
   assert.match(source, /maximumSubmittedFrames: 11/); assert.match(source, /maximumSubmittedFrames: 3/);
   assert.match(source, /baselinePixelComparisons !== 14/); assert.match(source, /window\.frames\.reduce\([^\n]*8214/);

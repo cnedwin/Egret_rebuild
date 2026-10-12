@@ -235,6 +235,8 @@ const privateTexturedGPU = [
   'TEXTURED_MODE', 'TEXTURED_OWNERS', 'TEXTURED_OPTIONS', 'TEXTURED_FUNCTIONS', 'TEXTURED_LIMITS',
   'SharedSubmissionPlan2D', 'TexturedConfiguration', 'TexturedWebGPUConfiguration', 'admitTexturedWebGPUOptions',
   'createTexturedWebGPUHostInternal',
+  'TEXTURED_SCENE_MODE','TexturedB1WebGPUHost','createTexturedB1WebGPUHostInternal','createTexturedB1WebGPUHost',
+  'renderSceneTexturedOwnedFrame','packTexturedSubmission2D','TexturedSceneReservation2D',
 ];
 const privateTexturedGPUModules = [
   'texturedPreparationBudget2D', 'prepareTexturedMesh2D', 'packTexturedMesh2D',
@@ -771,7 +773,9 @@ for (const name of ['assetGroup', 'assetGroupTypes']) for (const [directory, suf
 // Separate explicit entries do not exempt any earlier private authority guard.
 const sceneCPUValues = ['createMatrix4','multiplyMatrix4','Math3DError','createMeshGeometry3D','isMeshGeometry3D','MeshGeometry3DError','getMeshGeometry3DErrorOrigin','createSceneFrame3D','isSceneFrame3D','Scene3DError','getScene3DErrorOrigin'];
 const sceneCPUTypes = ['Matrix4','Math3DErrorCode','MeshGeometry3DInput','MeshGeometry3D','MeshGeometry3DErrorCode','MeshGeometry3DErrorOrigin','SceneProjectionInput3D','SceneDrawInput3D','SceneInput3D','SceneDraw3D','SceneFrame3D','Scene3DErrorCode','Scene3DErrorOrigin'];
-const sceneWebTypes = ['SceneWebGPUHostOptions','SceneWebGPUHostStatus','SceneWebGPUHost'];
+const sceneLegacyWebTypes = ['SceneWebGPUHostOptions','SceneWebGPUHostStatus','SceneWebGPUHost'];
+const sceneWebValues = ['createSceneWebGPUHost','createTexturedSceneWebGPUHost'];
+const sceneWebTypes = [...sceneLegacyWebTypes,'TexturedSceneWebGPUHost','TexturedWebGPUHostOptions'];
 const sceneRead = file => assetGroupStrip(readFileSync(path.join(root,file),'utf8'));
 const sceneEqual = (a,b) => JSON.stringify([...a].sort()) === JSON.stringify([...b].sort());
 function sceneExports(code, label) {
@@ -808,7 +812,7 @@ function sceneClauses(code, label, allowed) {
 function sceneForward(code, name, target, parameter, label) {
   const imports=[...code.matchAll(/\bimport\s*\{([^}]+)\}\s*from\s*['"]([^'"]+)['"]\s*;?/g)]
     .filter(match=>match[2]===target).flatMap(match=>match[1].split(',').map(value=>value.trim().split(/\s+as\s+/)));
-  const forwardName=name==='createSceneWebGPUHost'?'createB1WebGPUHost':name;
+  const forwardName=name==='createSceneWebGPUHost'?'createB1WebGPUHost':name==='createTexturedSceneWebGPUHost'?'createTexturedB1WebGPUHost':name;
   const importsForFactory=imports.filter(parts=>parts[0]===forwardName);
   if (importsForFactory.length!==1) throw new Error(label+': exact direct factory forwarding mismatch');
   const local=importsForFactory[0][1]??importsForFactory[0][0];
@@ -854,19 +858,39 @@ function sceneCanonicalTypeReexports(code,label) {
     if(found.length!==1 || found[0].target!==target)throw new Error(label+': exact canonical type re-export mismatch: '+name);
   }
 }
+function sceneWebCanonicalTypes(code,label) {
+  const exported=[...code.matchAll(/\bexport\s+type\s*\{([^}]+)\}\s*from\s*['"]([^'"]+)['"]\s*;?/g)]
+    .flatMap(match=>match[1].split(',').map(name=>({name:name.trim(),target:match[2]})).filter(item=>item.name));
+  const options=exported.filter(item=>item.name==='TexturedWebGPUHostOptions');
+  if(options.length!==1 || options[0].target!=='./webgpu.js')throw new Error(label+': exact canonical type re-export mismatch: TexturedWebGPUHostOptions');
+  const required={
+    '@egret/contracts':['RenderFrame2D','TexturedRenderFrame2D'],
+    '../rendering/scene3d.js':['SceneFrame3D'],
+    './webgpu.js':['WebGPUHost','WebGPUHostOptions','WebGPUHostStatus','TexturedWebGPUHost','TexturedWebGPUHostOptions'],
+  };
+  const imported=[...code.matchAll(/\bimport\s+type\s*\{([^}]+)\}\s*from\s*['"]([^'"]+)['"]\s*;?/g)]
+    .flatMap(match=>match[1].split(',').map(name=>({name:name.trim(),target:match[2]})).filter(item=>item.name));
+  for(const [target,names]of Object.entries(required))for(const name of names){
+    const found=imported.filter(item=>item.name===name);
+    if(found.length!==1 || found[0].target!==target)throw new Error(label+': exact public consumer type import mismatch: '+name);
+  }
+  const inheritance=[...code.matchAll(/\bexport\s+(?:declare\s+)?interface\s+TexturedSceneWebGPUHost\b([^\{]*)\{/g)];
+  if(inheritance.length!==1 || inheritance[0][1].replace(/\s+/g,'')!=='extendsTexturedWebGPUHost,SceneWebGPUHost')
+    throw new Error(label+': canonical authoring/Host type mismatch: TexturedSceneWebGPUHost');
+}
 const sceneCPU=await import('@egret/engine/scene3d');
 const sceneWeb=await import('@egret/engine/webgpu/scene3d');
 if (!sceneEqual(Object.keys(sceneCPU),sceneCPUValues)) throw new Error('scene3d: exact runtime export surface mismatch');
-if (!sceneEqual(Object.keys(sceneWeb),['createSceneWebGPUHost'])) throw new Error('webgpu/scene3d: exact runtime export surface mismatch');
+if (!sceneEqual(Object.keys(sceneWeb),sceneWebValues)) throw new Error('webgpu/scene3d: exact runtime export surface mismatch');
 const sceneCPURules={
   './matrix4.js':{value:['createMatrix4','multiplyMatrix4','Math3DError'],type:['Matrix4','Math3DErrorCode']},
   './meshGeometry3D.js':{value:['createMeshGeometry3D','isMeshGeometry3D','MeshGeometry3DError','getMeshGeometry3DErrorOrigin'],type:['MeshGeometry3D','MeshGeometry3DErrorCode','MeshGeometry3DErrorOrigin']},
   './sceneFrame3D.js':{value:['createSceneFrame3D','isSceneFrame3D','Scene3DError','getScene3DErrorOrigin'],type:['SceneProjectionInput3D','SceneDrawInput3D','SceneInput3D','SceneDraw3D','SceneFrame3D','Scene3DErrorCode','Scene3DErrorOrigin']},
 };
 const sceneWebTypeRules={
-  '@egret/contracts':{type:['RenderFrame2D']},
+  '@egret/contracts':{type:['RenderFrame2D','TexturedRenderFrame2D']},
   '../rendering/scene3d.js':{type:['SceneFrame3D']},
-  './webgpu.js':{type:['WebGPUHost','WebGPUHostOptions','WebGPUHostStatus']},
+  './webgpu.js':{type:['WebGPUHost','WebGPUHostOptions','WebGPUHostStatus','TexturedWebGPUHost','TexturedWebGPUHostOptions']},
 };
 for (const [label,file,kind] of [['scene3d source','packages/engine/rendering/scene3d.ts','source'],['scene3d','packages/engine/dist/rendering/scene3d.d.ts','declaration'],['scene3d emitted','packages/engine/dist/rendering/scene3d.js','emitted']]) {
   const code=sceneRead(file);
@@ -884,17 +908,22 @@ for (const [label,file,kind] of [['scene3d source','packages/engine/rendering/sc
 }
 for (const [label,file,kind] of [['webgpu/scene3d source','packages/engine/web/scene3d.ts','source'],['webgpu/scene3d','packages/engine/dist/web/scene3d.d.ts','declaration'],['webgpu/scene3d emitted','packages/engine/dist/web/scene3d.js','emitted']]) {
   const code=sceneRead(file);
-  if (kind==='declaration' && /\b(?:B1BuiltinProtocol|createB1WebGPUHostInternal|B1WebGPUHost|B1SceneStatus)\b|['"](?:\.\/b1|\.\/WebGPUHost|\.\.\/rendering\/sceneFrame3D)\.js['"]/.test(code))
+  if (kind==='declaration' && /\b(?:B1BuiltinProtocol|createB1WebGPUHostInternal|B1WebGPUHost|B1SceneStatus|TEXTURED_SCENE_MODE|TexturedB1WebGPUHost|createTexturedB1WebGPUHostInternal|createTexturedB1WebGPUHost|renderSceneTexturedOwnedFrame|packTexturedSubmission2D)\b|['"](?:\.\/b1|\.\/WebGPUHost|\.\.\/rendering\/sceneFrame3D)\.js['"]/.test(code))
     throw new Error('webgpu/scene3d: private declaration dependency leaked');
-  sceneSurface(code,label,['createSceneWebGPUHost'],kind==='emitted'?[]:sceneWebTypes);
-  sceneClauses(code,label,{...sceneWebTypeRules,...(kind==='declaration'?{}:{'./b1.js':{value:['createB1WebGPUHost']}})});
-  if (kind!=='declaration') sceneForward(code,'createSceneWebGPUHost','./b1.js','options',label);
-  sceneOnlyProgram(code,kind,[['createSceneWebGPUHost','SceneWebGPUHostOptions','SceneWebGPUHost','options']],kind==='emitted'?[]:[
+  sceneSurface(code,label,sceneWebValues,kind==='emitted'?[]:sceneWebTypes);
+  sceneClauses(code,label,{...sceneWebTypeRules,...(kind==='declaration'?{}:{'./b1.js':{value:['createB1WebGPUHost','createTexturedB1WebGPUHost']}})});
+  if (kind!=='declaration') {
+    sceneForward(code,'createSceneWebGPUHost','./b1.js','options',label);
+    sceneForward(code,'createTexturedSceneWebGPUHost','./b1.js','options',label);
+  }
+  if(kind!=='emitted')sceneWebCanonicalTypes(code,label);
+  sceneOnlyProgram(code,kind,[['createSceneWebGPUHost','SceneWebGPUHostOptions','SceneWebGPUHost','options'],['createTexturedSceneWebGPUHost','TexturedWebGPUHostOptions','TexturedSceneWebGPUHost','options']],kind==='emitted'?[]:[
     ['SceneWebGPUHostOptions','type','WebGPUHostOptions'],
     ['SceneWebGPUHostStatus','interface','readonlyhost:WebGPUHostStatus;readonlypendingSceneBytes:number;readonlypendingUniformBytes:number;readonlypendingDepthBytes:number;'],
     ['SceneWebGPUHost','interface','renderSceneFrame(scene:SceneFrame3D,overlay:RenderFrame2D):undefined;getSceneStatus():SceneWebGPUHostStatus;'],
+    ['TexturedSceneWebGPUHost','interface','renderSceneTexturedFrame(scene:SceneFrame3D,overlay:TexturedRenderFrame2D):undefined;'],
   ],label);
-  if (kind==='emitted' && [...sceneWebTypes,'SceneFrame3D','RenderFrame2D','WebGPUHostOptions','WebGPUHostStatus'].some(name=>new RegExp('\\b'+name+'\\b').test(code)))
+  if (kind==='emitted' && [...sceneWebTypes,'SceneFrame3D','RenderFrame2D','TexturedRenderFrame2D','WebGPUHostOptions','WebGPUHostStatus','TexturedWebGPUHost'].some(name=>new RegExp('\\b'+name+'\\b').test(code)))
     throw new Error('webgpu/scene3d: type-only runtime erasure mismatch');
 }
 // Original module values, including origin registration and identity predicates,
@@ -903,12 +932,14 @@ for (const [target,names] of [['matrix4',['Math3DError']],['meshGeometry3D',['is
   const original=await import(new URL('../packages/engine/dist/rendering/'+target+'.js',import.meta.url));
   for (const name of names) if (sceneCPU[name]!==original[name]) throw new Error('scene3d: original module identity mismatch: '+name);
 }
-const sceneNewNames=['createMatrix4','multiplyMatrix4','Math3DError','Math3DErrorCode','MeshGeometry3DInput','createSceneWebGPUHost',...sceneWebTypes];
+const sceneNewNames=['createMatrix4','multiplyMatrix4','Math3DError','Math3DErrorCode','MeshGeometry3DInput',...sceneWebValues,...sceneLegacyWebTypes,'TexturedSceneWebGPUHost'];
 for (const [entry,values,emittedEntry] of [...textEntries,['project',projectFacade,'packages/project/dist/index']]) {
   const text=[sceneRead(assetGroupSourceEntries[entry]),sceneRead(emittedEntry+'.js'),sceneRead(emittedEntry+'.d.ts')].join('\n');
   for (const name of sceneNewNames) if (name in values || new RegExp('\\b'+name+'\\b').test(text)) throw new Error(entry+': explicit-only scene name leaked: '+name);
 }
-const sceneForbiddenNames=[...meshPrivate,...texturedPrivate,...privateTexturedGPU,...privateCapture,...privateCoordinates,...privateBounds,...assetGroupPublicTypes,'AssetGroupOperations',...assetGroupPrivateNames,'packMeshGeometry3D','PackedMeshGeometry3D','MeshPacking3DError','getMeshPacking3DErrorOrigin','B1BuiltinProtocol','getBuiltinB1Protocol','isBuiltinB1Protocol','createB1WebGPUHostInternal'];
+// The explicit facade alone forwards through this private b1 value. Its public
+// declarations still cannot name it; source/import shape is checked above.
+const sceneForbiddenNames=[...meshPrivate,...texturedPrivate,...privateTexturedGPU.filter(name=>name!=='createTexturedB1WebGPUHost'),...privateCapture,...privateCoordinates,...privateBounds,...assetGroupPublicTypes,'AssetGroupOperations',...assetGroupPrivateNames,'packMeshGeometry3D','PackedMeshGeometry3D','MeshPacking3DError','getMeshPacking3DErrorOrigin','B1BuiltinProtocol','getBuiltinB1Protocol','isBuiltinB1Protocol','createB1WebGPUHostInternal'];
 for (const [label,values,stem] of [['scene3d',sceneCPU,'packages/engine/dist/rendering/scene3d'],['webgpu/scene3d',sceneWeb,'packages/engine/dist/web/scene3d']]) {
   const text=sceneRead(stem+'.d.ts')+'\n'+sceneRead(stem+'.js');
   for (const name of sceneForbiddenNames) if (name in values || new RegExp('\\b'+name+'\\b').test(text)) throw new Error(label+': retained private authority leaked: '+name);

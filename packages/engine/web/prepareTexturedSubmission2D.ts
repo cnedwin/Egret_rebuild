@@ -21,17 +21,29 @@ export interface TexturedSubmissionHardware2D { readonly maxBufferSize: number; 
 export interface TexturedSubmissionOwnerSnapshot2D {
     readonly pendingFrames: number; readonly pendingUploadBytes: number; readonly pendingReadbackBytes: number;
     readonly pendingTextureBytes: number; readonly pendingGeometryBytes: number; readonly serial: number;
+    readonly pendingSceneBytes?: number; readonly pendingUniformBytes?: number; readonly pendingDepthBytes?: number;
+}
+/** Only the combined host supplies these captured, first-party scene charges. */
+export interface TexturedSceneReservation2D {
+    readonly sceneBytes: number; readonly uniformBytes: number;
+    readonly maxSceneBytes: number; readonly maxUniformBytes: number; readonly maxDepthBytes: number;
+    readonly maxPendingSceneBytes: number; readonly maxPendingUniformBytes: number; readonly maxPendingDepthBytes: number;
+}
+interface JointSceneStorage2D {
+    readonly sceneBytes: number; readonly uniformBytes: number; readonly depthBytes: number;
 }
 export interface TexturedSubmissionRequest2D {
     readonly admitted: TexturedFrameAdmission2D; readonly draws: readonly PreparedTexturedDraw2D[];
     readonly projectionPlan: ProjectionPlan2D; readonly options: TexturedSubmissionStorageOptions2D;
     readonly hardware: TexturedSubmissionHardware2D; readonly owner: TexturedSubmissionOwnerSnapshot2D; readonly readback: boolean;
+    readonly sceneReservation?: TexturedSceneReservation2D;
 }
 export interface TexturedDrawStorage2D { readonly vertexBytes: number; readonly uniformBytes: 0 | 16; }
 export interface TexturedSubmissionStorage2D {
     readonly request: TexturedSubmissionRequest2D; readonly frame: TexturedRenderFrame2D;
     readonly width: number; readonly height: number; readonly upload: number; readonly geometryBytes: number;
     readonly drawStorage: readonly TexturedDrawStorage2D[]; readonly rowPitch: number; readonly staging: number; readonly output: number;
+    readonly sceneStorage?: JointSceneStorage2D;
 }
 export type PackedTexturedDraw2D =
     { readonly kind: 'rect'; readonly packed: PackedRectangles2D } |
@@ -52,7 +64,7 @@ export interface TexturedPayloadOperations2D {
 }
 class TexturedSubmissionAdmissionError2D extends Error {
     public constructor(public readonly reason: 'budget' | 'device' | 'backpressure' | 'serial',
-        public readonly facet: 'upload' | 'buffer' | 'texture' | 'readback' | 'frames' | 'geometry' | 'serial') { super(`Textured submission ${reason}: ${facet}`); }
+        public readonly facet: 'upload' | 'buffer' | 'texture' | 'readback' | 'frames' | 'geometry' | 'scene' | 'uniform' | 'depth' | 'serial') { super(`Textured submission ${reason}: ${facet}`); }
 }
 const refusals = new WeakSet<object>();
 function fail(reason: TexturedSubmissionAdmissionError2D['reason'], facet: TexturedSubmissionAdmissionError2D['facet']): never {
@@ -78,7 +90,38 @@ function capacities(storage: TexturedSubmissionStorage2D, owner: TexturedSubmiss
     check(owner.pendingReadbackBytes, storage.staging + storage.output, options.maxReadbackBytes, 'readback');
     check(owner.pendingTextureBytes, projectionPlan.projectionBytes, IMAGE_LIMITS_2D.maxPendingTextureBytes, 'texture');
     check(owner.pendingGeometryBytes, storage.geometryBytes, options.maxPendingGeometryBytes, 'geometry');
+    if (storage.sceneStorage) {
+        const limits = storage.request.sceneReservation!;
+        check(owner.pendingSceneBytes!, storage.sceneStorage.sceneBytes, limits.maxPendingSceneBytes, 'scene');
+        check(owner.pendingUniformBytes!, storage.sceneStorage.uniformBytes, limits.maxPendingUniformBytes, 'uniform');
+        check(owner.pendingDepthBytes!, storage.sceneStorage.depthBytes, limits.maxPendingDepthBytes, 'depth');
+    }
     if (!nonnegative(owner.serial) || owner.serial >= Number.MAX_SAFE_INTEGER) fail('serial', 'serial');
+}
+
+function readbackStorage(request: TexturedSubmissionRequest2D, width: number, height: number): { rowPitch: number; staging: number; output: number } {
+    if (!request.readback) return { rowPitch: 0, staging: 0, output: 0 };
+    if (!nonnegative(width) || width > Math.floor(Number.MAX_SAFE_INTEGER / 4)) fail('budget', 'readback');
+    const rows = Math.ceil(4 * width / 256);
+    if (rows > Math.floor(Number.MAX_SAFE_INTEGER / 256)) fail('budget', 'readback');
+    const rowPitch = rows * 256;
+    if (!nonnegative(height) || height > Math.floor(Number.MAX_SAFE_INTEGER / rowPitch) ||
+        height > Math.floor(Number.MAX_SAFE_INTEGER / (4 * width))) fail('budget', 'readback');
+    const staging = rowPitch * height, output = 4 * width * height;
+    if (staging > request.options.maxReadbackBytes || output > request.options.maxReadbackBytes - staging) fail('budget', 'readback');
+    return { rowPitch, staging, output };
+}
+function hardwareStorage(request: TexturedSubmissionRequest2D, width: number, height: number,
+    draws: readonly TexturedDrawStorage2D[]): void {
+    for (const draw of draws) {
+        if (draw.vertexBytes > request.hardware.maxBufferSize) fail('device', 'buffer');
+        if (draw.uniformBytes > request.hardware.maxBufferSize) fail('device', 'buffer');
+    }
+    if (width > request.hardware.maxTextureDimension2D || height > request.hardware.maxTextureDimension2D) fail('device', 'texture');
+    for (const view of request.projectionPlan.views) {
+        if (view.region.width > request.hardware.maxTextureDimension2D || view.region.height > request.hardware.maxTextureDimension2D) fail('device', 'texture');
+    }
+    if (request.sceneReservation && request.sceneReservation.uniformBytes > 0 && 64 > request.hardware.maxBufferSize) fail('device', 'buffer');
 }
 
 /** Reserve whole upper bounds before packing, copying, uniform creation or owner mutation. */
@@ -86,6 +129,20 @@ export function planTexturedSubmissionStorage2D(request: TexturedSubmissionReque
     const { admitted, draws, options, hardware, projectionPlan } = request;
     const { frame, width, height } = admitted;
     let upload = 0;
+    let sceneStorage: JointSceneStorage2D | undefined;
+    const scene = request.sceneReservation;
+    if (scene) {
+        // Depth and the complete scene reserve precede every payload allocation.
+        if (!nonnegative(width) || !nonnegative(height) || width > Math.floor(Number.MAX_SAFE_INTEGER / 4) ||
+            height > Math.floor(Number.MAX_SAFE_INTEGER / (4 * width))) fail('budget', 'depth');
+        const depthBytes = 4 * width * height;
+        if (!nonnegative(depthBytes) || depthBytes > scene.maxDepthBytes) fail('budget', 'depth');
+        if (!nonnegative(scene.sceneBytes) || scene.sceneBytes > scene.maxSceneBytes) fail('budget', 'scene');
+        if (!nonnegative(scene.uniformBytes) || scene.uniformBytes > scene.maxUniformBytes) fail('budget', 'uniform');
+        if (scene.sceneBytes > options.maxUploadBytes || scene.uniformBytes > options.maxUploadBytes - scene.sceneBytes) fail('budget', 'upload');
+        upload = scene.sceneBytes + scene.uniformBytes;
+        sceneStorage = { sceneBytes: scene.sceneBytes, uniformBytes: scene.uniformBytes, depthBytes };
+    }
     const drawStorage: TexturedDrawStorage2D[] = [];
     for (const draw of draws) {
         let vertices = 0;
@@ -106,29 +163,14 @@ export function planTexturedSubmissionStorage2D(request: TexturedSubmissionReque
         upload += uniformBytes;
         drawStorage.push({ vertexBytes, uniformBytes });
     }
-    // Configuration has priority over every hardware predicate across all draws.
-    for (const draw of drawStorage) {
-        if (draw.vertexBytes > hardware.maxBufferSize) fail('device', 'buffer');
-        if (draw.uniformBytes > hardware.maxBufferSize) fail('device', 'buffer');
-    }
-    if (width > hardware.maxTextureDimension2D || height > hardware.maxTextureDimension2D) fail('device', 'texture');
-    for (const view of projectionPlan.views) {
-        if (view.region.width > hardware.maxTextureDimension2D || view.region.height > hardware.maxTextureDimension2D) fail('device', 'texture');
-    }
-    let rowPitch = 0, staging = 0, output = 0;
-    if (request.readback) {
-        if (!nonnegative(width) || width > Math.floor(Number.MAX_SAFE_INTEGER / 4)) fail('budget', 'readback');
-        const rows = Math.ceil(4 * width / 256);
-        if (rows > Math.floor(Number.MAX_SAFE_INTEGER / 256)) fail('budget', 'readback');
-        rowPitch = rows * 256;
-        if (!nonnegative(height) || height > Math.floor(Number.MAX_SAFE_INTEGER / rowPitch) ||
-            height > Math.floor(Number.MAX_SAFE_INTEGER / (4 * width))) fail('budget', 'readback');
-        staging = rowPitch * height; output = 4 * width * height;
-        if (staging > options.maxReadbackBytes || output > options.maxReadbackBytes - staging) fail('budget', 'readback');
-        if (staging > hardware.maxBufferSize) fail('device', 'readback');
-    }
+    // Existing textured calls keep hardware-before-readback-configuration order;
+    // combined calls qualify all joint configuration before joint hardware.
+    if (!scene) hardwareStorage(request, width, height, drawStorage);
+    const { rowPitch, staging, output } = readbackStorage(request, width, height);
+    if (scene) hardwareStorage(request, width, height, drawStorage);
+    if (request.readback && staging > hardware.maxBufferSize) fail('device', 'readback');
     const storage: TexturedSubmissionStorage2D = { request, frame, width, height, upload,
-        geometryBytes: admitted.uniqueGeometryBytes, drawStorage, rowPitch, staging, output };
+        geometryBytes: admitted.uniqueGeometryBytes, drawStorage, rowPitch, staging, output, ...(sceneStorage ? { sceneStorage } : {}) };
     capacities(storage, request.owner);
     return storage;
 }
@@ -142,14 +184,16 @@ const FIRST_PARTY_OPERATIONS: TexturedPayloadOperations2D = Object.freeze({
     uniform: (alpha: number) => new Float32Array([alpha, 0, 0, 0]),
 });
 
-/** Allocate only after whole admission, then recheck the sole owner's fresh state. */
-export function prepareTexturedSubmission2D(request: TexturedSubmissionRequest2D, budget: TexturedPreparationBudget2D,
-    readOwner: () => TexturedSubmissionOwnerSnapshot2D, operations: TexturedPayloadOperations2D = FIRST_PARTY_OPERATIONS): TexturedSubmissionPlan2D {
-    const storage = planTexturedSubmissionStorage2D(request);
+/** Allocate a previously admitted whole plan, then recheck its sole owner. */
+export function packTexturedSubmission2D(storage: TexturedSubmissionStorage2D, budget: TexturedPreparationBudget2D,
+    readOwner: () => TexturedSubmissionOwnerSnapshot2D, operations: TexturedPayloadOperations2D = FIRST_PARTY_OPERATIONS,
+    checkActive?: () => void): TexturedSubmissionPlan2D {
+    const request = storage.request;
     const draws: PackedTexturedDraw2D[] = [];
     for (let i = 0; i < request.draws.length; i++) {
         const draw = request.draws[i]!, bytes = storage.drawStorage[i]!.vertexBytes;
         const packed = operations.pack(draw, storage.width, storage.height, bytes, budget);
+        checkActive?.();
         if (draw.kind === 'rect') draws.push({ kind: 'rect', packed: packed as PackedRectangles2D });
         else {
             const record = request.admitted.commands[draw.commandIndex]!, viewIndex = request.projectionPlan.commandViews[draw.commandIndex]!;
@@ -159,11 +203,17 @@ export function prepareTexturedSubmission2D(request: TexturedSubmissionRequest2D
         }
     }
     const projections: Uint8Array<ArrayBuffer>[] = [];
-    for (const view of request.projectionPlan.views) projections.push(operations.copy(view));
-    for (const draw of draws) if (draw.kind !== 'rect' && draw.packed.vertexCount > 0) draw.uniform = operations.uniform(draw.alpha);
+    for (const view of request.projectionPlan.views) { const pixels = operations.copy(view); checkActive?.(); projections.push(pixels); }
+    for (const draw of draws) if (draw.kind !== 'rect' && draw.packed.vertexCount > 0) { draw.uniform = operations.uniform(draw.alpha); checkActive?.(); }
     // No serial, reservation or ticket changes occur in this helper.
     capacities(storage, readOwner());
     return { frame: storage.frame, width: storage.width, height: storage.height, draws, upload: storage.upload,
         geometryBytes: storage.geometryBytes, projectionPlan: request.projectionPlan, projections,
         rowPitch: storage.rowPitch, staging: storage.staging, output: storage.output, ticket: undefined, scene: undefined };
+}
+
+/** Preserve the existing textured-only planner-then-payload sequence. */
+export function prepareTexturedSubmission2D(request: TexturedSubmissionRequest2D, budget: TexturedPreparationBudget2D,
+    readOwner: () => TexturedSubmissionOwnerSnapshot2D, operations: TexturedPayloadOperations2D = FIRST_PARTY_OPERATIONS): TexturedSubmissionPlan2D {
+    return packTexturedSubmission2D(planTexturedSubmissionStorage2D(request), budget, readOwner, operations);
 }

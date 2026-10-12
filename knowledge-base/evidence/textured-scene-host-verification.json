@@ -1,0 +1,1175 @@
+{
+  "schemaVersion": 1,
+  "engineeringLabel": "0.39.0",
+  "sourceId": "S092",
+  "deliverable": "V043",
+  "status": "ACTUAL_CPU_SOURCE_ACCEPTED_BROWSER_AND_FULL_GATES_PENDING_AT_CURATION_CUTOFF",
+  "supportLevel": "experimental",
+  "sourceBase": {
+    "commit": "893f1ca86af10a092066dcccdaaa16ac194efded",
+    "tree": "5960109ca14c9a53ba1cd7ba80d967e6451ad102"
+  },
+  "contract": {
+    "entry": "@egret/engine/webgpu/scene3d",
+    "factory": "createTexturedSceneWebGPUHost",
+    "method": "renderSceneTexturedFrame",
+    "genuineSceneAndOverlay": true,
+    "clearAlpha": 1,
+    "surfaceOwners": 1,
+    "pipelineRoles": 4,
+    "renderPasses": 2,
+    "queueSubmissions": 1,
+    "scope": "Explicit shared-owner opaque RGB 3D scene plus Engine-captured textured UI. Joint preflight, one shared serial, source-bound readback and explicit safe-close authority.",
+    "newProductDependencies": [],
+    "fullSpineR020V020": "OPEN"
+  },
+  "actualCPU": {
+    "buildExitCode": 0,
+    "combined": {
+      "tests": 12,
+      "pass": 12,
+      "fail": 0,
+      "skipped": 0
+    },
+    "retainedSceneTextured": {
+      "tests": 48,
+      "pass": 48,
+      "fail": 0,
+      "skipped": 0
+    },
+    "positiveTypeDiagnostics": 0,
+    "intentionalNegativeDiagnostics": {
+      "web": 8,
+      "import": 16,
+      "domFree": 15
+    },
+    "strictTypeGateExitCode": 0,
+    "boundaryGuardExitCode": 0,
+    "assignedBoundaryControls": {
+      "tests": 4,
+      "pass": 4,
+      "fail": 0,
+      "skipped": 0
+    }
+  },
+  "actualWitnessIdentities": [
+    {
+      "path": "red-receipt.json",
+      "bytes": 20392,
+      "sha256": "05a3088029903102f5861451000713ccd8e687f04069706f7734aabbb2223418",
+      "distribution": "identity_only_not_distributed"
+    },
+    {
+      "path": "source-acceptance.json",
+      "bytes": 5249,
+      "sha256": "04c66309810ab0e4a4197df70b764628ab69845f64b534d3ce2f5b8a18724278",
+      "distribution": "identity_only_not_distributed"
+    },
+    {
+      "path": "implementation-review-r2.json",
+      "bytes": 10789,
+      "sha256": "1e9d4a903e87fb601a26e991f0baa469665be58c61fbed3206f1dfa32922aff4",
+      "distribution": "identity_only_not_distributed"
+    },
+    {
+      "path": "allocation-fault-red-receipt.json",
+      "bytes": 865,
+      "sha256": "75b2251856f9df2aa0b3d8248dfc4acba6a38f92aff618734600302b11332aa1",
+      "distribution": "identity_only_not_distributed"
+    },
+    {
+      "path": "allocation-fault-test-review.json",
+      "bytes": 5896,
+      "sha256": "516aad64c8be97da28cb4c5e21a978ffc3671d3ebea66c7cd7bc652c79b58a71",
+      "distribution": "identity_only_not_distributed"
+    },
+    {
+      "path": "policy-candidate-review.json",
+      "bytes": 15726,
+      "sha256": "de843f1473740bece7997cd494199b7104defa13612adc76ae2396792aca449d",
+      "distribution": "identity_only_not_distributed"
+    },
+    {
+      "path": "type-observation-receipt.json",
+      "bytes": 29141,
+      "sha256": "a35293e873b3b9f02ab9d3046e4dfd6ddaabcfd8ec6fac3d1a1aa9670008cf94",
+      "distribution": "identity_only_not_distributed"
+    },
+    {
+      "path": "retained-gpu-successor.json",
+      "bytes": 3019,
+      "sha256": "3f8eb1776804187db00153e33fd9e99633601d8213e42f4024248105c3883006",
+      "distribution": "identity_only_not_distributed"
+    }
+  ],
+  "currentSourceFiles": [
+    {
+      "path": "packages/engine/web/prepareTexturedSubmission2D.ts",
+      "bytes": 15910,
+      "sha256": "09dd19bff3b2262dbbfe6cb7b478579e31cc2d579f6d27c328eb9de259b8d89b"
+    },
+    {
+      "path": "packages/engine/web/WebGPUHost.ts",
+      "bytes": 80902,
+      "sha256": "c0e9555e692e19d42ecc0bf443764c5c301d6f76febcf4d16f57c17853254e49"
+    },
+    {
+      "path": "packages/engine/web/b1.ts",
+      "bytes": 2883,
+      "sha256": "18d37f790210bf99797e8832d670ab40cd923c5d67ba0eaf35a9501ae13bbf63"
+    },
+    {
+      "path": "packages/engine/web/scene3d.ts",
+      "bytes": 1484,
+      "sha256": "f1e659b0eee592caf9eef33974e5468c802884d251c933c7df9ade108fb2d7b3"
+    },
+    {
+      "path": "tests/textured-scene-webgpu-host.test.mjs",
+      "bytes": 34775,
+      "sha256": "95d1caa1649be0d498b06e4ad02360ac58a4b52fe3a889fd32b6c9fd6b5dd924"
+    },
+    {
+      "path": "tests/textured-scene-webgpu-host-fixtures.mjs",
+      "bytes": 5986,
+      "sha256": "0a46419893d46cba263e1180257f1581fe345b31992f95d532495da6e1273a38"
+    },
+    {
+      "path": "tests/types/scene3d-web-positive.ts",
+      "bytes": 5565,
+      "sha256": "d06f49ddd49272f7f73d27de6fca259615dd9fccdfbc7dd0fd07f2482083f6ef"
+    },
+    {
+      "path": "tests/types/scene3d-web-negative.ts",
+      "bytes": 1654,
+      "sha256": "2397d6b05febeb7bda9cf16bd71afcb7b2dc5267443490bff8015b02c09c4b27"
+    },
+    {
+      "path": "tests/types/scene3d-import-negative.ts",
+      "bytes": 1844,
+      "sha256": "174ebe06bda15736b4edecd153da234aa03360b80fd7d86d480f4c5516ab53a3"
+    },
+    {
+      "path": "tools/check-boundaries.mjs",
+      "bytes": 127414,
+      "sha256": "6badce56ac7660eedf3dda63010bea4334edab1fb7cf104b38fc823956648873"
+    },
+    {
+      "path": "tests/boundaries.test.mjs",
+      "bytes": 99957,
+      "sha256": "2b85c3b0968a05204217143df4502da2abde19c3600327314c7a961cbf3da70f"
+    },
+    {
+      "path": "tests/types/scene3d-diagnostic-expectations.json",
+      "bytes": 10358,
+      "sha256": "5d399ffd1e64fbdf790642f0f5832f629cc8e18e0cf15af907c8be994fefe0d9"
+    }
+  ],
+  "currentEmittedFiles": [
+    {
+      "path": "packages/engine/dist/web/prepareTexturedSubmission2D.js",
+      "bytes": 10783,
+      "sha256": "38254f2d88f1c4456d2e2a471d2cabdbccbcfd087cc88294e109e602da6d7df0"
+    },
+    {
+      "path": "packages/engine/dist/web/prepareTexturedSubmission2D.d.ts",
+      "bytes": 6120,
+      "sha256": "6d314807ea5f7a558134cdd5f9e0d197f4e8c3e52ed72d08cf4a0329841c81c0"
+    },
+    {
+      "path": "packages/engine/dist/web/WebGPUHost.js",
+      "bytes": 75520,
+      "sha256": "cf5fa99195f808ecedeaa1fcabc51a7c5910d71fbcf7b0145f70a5d1c08db0e7"
+    },
+    {
+      "path": "packages/engine/dist/web/WebGPUHost.d.ts",
+      "bytes": 4489,
+      "sha256": "3901c425c45da83e0a4331ea3945e318335abd78798dd3da6f3ea8be9b802576"
+    },
+    {
+      "path": "packages/engine/dist/web/b1.js",
+      "bytes": 1408,
+      "sha256": "ea0b12fe3693be7d3b1a2dc80c5768045e826e6278428ddca6e9006e66150c2e"
+    },
+    {
+      "path": "packages/engine/dist/web/b1.d.ts",
+      "bytes": 2093,
+      "sha256": "110e6403cef059c24bc4a83192010ec89a41eaafaff215e549ac00b7865345c4"
+    },
+    {
+      "path": "packages/engine/dist/web/scene3d.js",
+      "bytes": 471,
+      "sha256": "84c56083682a75cad68c065da06700cc18d448278144f130411d709fdc7e6f4b"
+    },
+    {
+      "path": "packages/engine/dist/web/scene3d.d.ts",
+      "bytes": 1280,
+      "sha256": "e2533624b4e0035d837e50bc963e1e39e665685daafa5ca1577d894b15085416"
+    }
+  ],
+  "failureHistory": [
+    {
+      "kind": "compile",
+      "status": "REPAIRED",
+      "reason": "Three initial strict narrowing diagnostics; final build passed."
+    },
+    {
+      "kind": "classification",
+      "status": "REPAIRED_WITH_TEST_FIRST_RED_AND_GREEN",
+      "reason": "CHPI01 preparation allocation now remains inside state-first admission; exact cause and close priority verified."
+    },
+    {
+      "kind": "environment",
+      "status": "REPAIRED",
+      "reason": "Missing clone package-local existing dependency alias stopped a retained B1 inventory before its child schedule. No dependency or product bytes changed."
+    },
+    {
+      "kind": "reader",
+      "status": "REPAIRED_BEFORE_ADOPTION",
+      "reason": "Exact report schema was checked after a status/verdict consumer mismatch."
+    },
+    {
+      "kind": "deadline",
+      "status": "INCOMPLETE_AT_ORIGINAL_CUTOFF",
+      "timeoutSeconds": 180,
+      "reason": "Full boundary suite deadline was shorter than its previously observed duration. TAP header alone supplies no complete result."
+    }
+  ],
+  "reproduction": {
+    "build": "node tools/build.mjs",
+    "combined": "node --test --test-reporter=tap tests/textured-scene-webgpu-host.test.mjs",
+    "types": "node tools/check-types.mjs",
+    "boundaries": "node tools/check-boundaries.mjs",
+    "fullGate": "node tools/prepush.mjs",
+    "browser": "node tools/verify-textured-scene-webgpu.mjs --playwright <absolute-installed-playwright-package-directory> --channel msedge --output <fresh-absolute-repository-external-directory>"
+  },
+  "newBrowserGPU": "PENDING",
+  "independentPublicCuration": "PENDING",
+  "mandatoryFullPrepush": "PENDING",
+  "mandatoryPushHook": "PENDING",
+  "remoteDelivery": "PENDING",
+  "limits": [
+    "CPU admission and counters are distinct from browser pixels, physical memory, performance and safe owner return.",
+    "Complete material, lighting, character, transparent 3D, target-phone, Native SDK, full Spine and migration acceptance remain separate."
+  ],
+  "historicalCutoffsPreserved": true,
+  "browserActualSuccessor": {
+    "status": "ACTUAL_TWO_FRAME_BROWSER_PIXELS_AND_COOPERATIVE_CLEANUP_PASS",
+    "record": "knowledge-base/evidence/textured-scene-host-verification.json",
+    "environment": {
+      "node": "v24.19.0",
+      "browserVersion": "155.0.4283.45",
+      "channel": "msedge",
+      "headless": true,
+      "additionalFlags": [],
+      "deviceScaleFactor": 1
+    },
+    "observations": 2,
+    "fixedPixels": 24,
+    "pixelsPerObservation": 12,
+    "bytesPerObservation": 16384,
+    "rawBuffers": [
+      {
+        "path": "knowledge-base/evidence/textured-scene-host/CHN01.rgba",
+        "bytes": 16384,
+        "sha256": "3b574bfecd5cb364e5aed4f2cf7ee44676af5dc82416c451f7b69b1068ec3a04",
+        "frameId": 1,
+        "serial": 1,
+        "width": 64,
+        "height": 64,
+        "format": "rgba8unorm"
+      },
+      {
+        "path": "knowledge-base/evidence/textured-scene-host/CHN02.rgba",
+        "bytes": 16384,
+        "sha256": "2c3f1bd9cf0b03387638b0211ac7f13607cc54e14dba3d1e3ca20224b9527ada",
+        "frameId": 2,
+        "serial": 2,
+        "width": 64,
+        "height": 64,
+        "format": "rgba8unorm"
+      }
+    ],
+    "sensitivity": {
+      "id": "CHNC01",
+      "status": "EXPECTED_PIXEL_REJECTION",
+      "x": 34,
+      "y": 32,
+      "expected": [
+        0,
+        255,
+        0,
+        255
+      ],
+      "actual": [
+        255,
+        255,
+        0,
+        255
+      ],
+      "rendererMutation": "none",
+      "newBrowserFrames": 0
+    },
+    "nativeCleanup": "PASS",
+    "cooperativeBrowserCleanup": "PASS",
+    "identitiesStable": true,
+    "artifactsStable": true,
+    "osProcessRetirement": "UNBOUND",
+    "browserExecutableIdentity": "UNBOUND",
+    "phonePerformance": "NOT_MEASURED",
+    "fullSpineR020V020": "OPEN",
+    "complete3D": "OPEN",
+    "mandatoryFullPrepush": "PENDING",
+    "mandatoryPushHook": "PENDING",
+    "remoteDelivery": "PENDING",
+    "launch": {
+      "channel": "msedge",
+      "headless": true,
+      "callerAddedFlags": [],
+      "deviceScaleFactor": 1,
+      "freshContext": true
+    },
+    "currentToolFiles": [
+      {
+        "path": "tools/verify-textured-scene-webgpu.mjs",
+        "bytes": 45404,
+        "sha256": "11b4392791e2ba7c5c95c2c9a615b7af91ac5b5ea3db3d37ddba03d9c32340b9"
+      },
+      {
+        "path": "tools/textured-scene-webgpu/index.html",
+        "bytes": 1024,
+        "sha256": "f7369d055cee764a66153b5ae9476c7324116c1940f1ab079e4a90ac46793a1f"
+      },
+      {
+        "path": "tools/textured-scene-webgpu/main.mjs",
+        "bytes": 18671,
+        "sha256": "c9cc2c9b174e5a73cac8618ee50e0f9059057ae2f5584c72ae204fe39a45a9a7"
+      },
+      {
+        "path": "tools/textured-scene-webgpu/oracle.mjs",
+        "bytes": 23171,
+        "sha256": "3b3d9b186db9a3b93f04cf1006535997c06f7248b0320ad029a38caa90433d9b"
+      }
+    ],
+    "positives": [
+      {
+        "id": "CHN01",
+        "status": "PASS",
+        "capture": {
+          "frameId": 1,
+          "width": 64,
+          "height": 64,
+          "clearColor": 0,
+          "clearAlpha": 1,
+          "commandKinds": [
+            "rect",
+            "mesh",
+            "image",
+            "rect"
+          ],
+          "images": 1,
+          "geometries": 1,
+          "stageChildOrder": [
+            "whiteRectangle",
+            "meshParent",
+            "croppedImage",
+            "greenRectangle"
+          ],
+          "scopeState": "open"
+        },
+        "renderReturn": "undefined",
+        "afterIdle": {
+          "host": {
+            "state": "active",
+            "lastSerial": 1,
+            "pendingFrames": 0,
+            "pendingUploadBytes": 0,
+            "pendingReadbackBytes": 0,
+            "firstFailure": null,
+            "callbackFailureCount": 0,
+            "lastCallbackFailure": null,
+            "cleanupOutcome": "not-started"
+          },
+          "textured": {
+            "pendingGeometryBytes": 0
+          },
+          "scene": {
+            "pendingSceneBytes": 0,
+            "pendingUniformBytes": 0,
+            "pendingDepthBytes": 0
+          }
+        },
+        "readback": {
+          "observationId": "CHN01",
+          "width": 64,
+          "height": 64,
+          "byteLength": 16384,
+          "frameId": 1,
+          "serial": 1,
+          "format": "rgba8unorm",
+          "sourceFormat": "bgra8unorm",
+          "colorSpace": "srgb",
+          "alphaMode": "premultiplied",
+          "derivedTightRowStride": 256,
+          "rawArtifact": {
+            "path": "knowledge-base/evidence/textured-scene-host/CHN01.rgba",
+            "bytes": 16384,
+            "sha256": "3b574bfecd5cb364e5aed4f2cf7ee44676af5dc82416c451f7b69b1068ec3a04",
+            "frameId": 1,
+            "serial": 1,
+            "width": 64,
+            "height": 64,
+            "format": "rgba8unorm"
+          }
+        },
+        "checks": [
+          {
+            "assertion": "background-preserved",
+            "x": 4,
+            "y": 4,
+            "expected": [
+              0,
+              0,
+              0,
+              255
+            ],
+            "actual": [
+              0,
+              0,
+              0,
+              255
+            ],
+            "channels": [
+              true,
+              true,
+              true,
+              true
+            ],
+            "zeroTolerance": true
+          },
+          {
+            "assertion": "scene-near-depth-preserved",
+            "x": 40,
+            "y": 17,
+            "expected": [
+              255,
+              0,
+              0,
+              255
+            ],
+            "actual": [
+              255,
+              0,
+              0,
+              255
+            ],
+            "channels": [
+              true,
+              true,
+              true,
+              true
+            ],
+            "zeroTolerance": true
+          },
+          {
+            "assertion": "scene-far-preserved",
+            "x": 10,
+            "y": 12,
+            "expected": [
+              0,
+              0,
+              255,
+              255
+            ],
+            "actual": [
+              0,
+              0,
+              255,
+              255
+            ],
+            "channels": [
+              true,
+              true,
+              true,
+              true
+            ],
+            "zeroTolerance": true
+          },
+          {
+            "assertion": "rectangle-over-far",
+            "x": 9,
+            "y": 24,
+            "expected": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "actual": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "channels": [
+              true,
+              true,
+              true,
+              true
+            ],
+            "zeroTolerance": true
+          },
+          {
+            "assertion": "mesh-cyan-over-near",
+            "x": 24,
+            "y": 22,
+            "expected": [
+              0,
+              255,
+              255,
+              255
+            ],
+            "actual": [
+              0,
+              255,
+              255,
+              255
+            ],
+            "channels": [
+              true,
+              true,
+              true,
+              true
+            ],
+            "zeroTolerance": true
+          },
+          {
+            "assertion": "mesh-yellow-uv",
+            "x": 34,
+            "y": 22,
+            "expected": [
+              255,
+              255,
+              0,
+              255
+            ],
+            "actual": [
+              255,
+              255,
+              0,
+              255
+            ],
+            "channels": [
+              true,
+              true,
+              true,
+              true
+            ],
+            "zeroTolerance": true
+          },
+          {
+            "assertion": "mesh-magenta-uv",
+            "x": 20,
+            "y": 35,
+            "expected": [
+              255,
+              0,
+              255,
+              255
+            ],
+            "actual": [
+              255,
+              0,
+              255,
+              255
+            ],
+            "channels": [
+              true,
+              true,
+              true,
+              true
+            ],
+            "zeroTolerance": true
+          },
+          {
+            "assertion": "mesh-white-uv",
+            "x": 31,
+            "y": 38,
+            "expected": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "actual": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "channels": [
+              true,
+              true,
+              true,
+              true
+            ],
+            "zeroTolerance": true
+          },
+          {
+            "assertion": "mesh-clip-outside-preserves-near",
+            "x": 38,
+            "y": 22,
+            "expected": [
+              255,
+              0,
+              0,
+              255
+            ],
+            "actual": [
+              255,
+              0,
+              0,
+              255
+            ],
+            "channels": [
+              true,
+              true,
+              true,
+              true
+            ],
+            "zeroTolerance": true
+          },
+          {
+            "assertion": "image-crop-over-mesh",
+            "x": 27,
+            "y": 30,
+            "expected": [
+              255,
+              255,
+              0,
+              255
+            ],
+            "actual": [
+              255,
+              255,
+              0,
+              255
+            ],
+            "channels": [
+              true,
+              true,
+              true,
+              true
+            ],
+            "zeroTolerance": true
+          },
+          {
+            "assertion": "rectangle-outside-image",
+            "x": 41,
+            "y": 32,
+            "expected": [
+              0,
+              255,
+              0,
+              255
+            ],
+            "actual": [
+              0,
+              255,
+              0,
+              255
+            ],
+            "channels": [
+              true,
+              true,
+              true,
+              true
+            ],
+            "zeroTolerance": true
+          },
+          {
+            "assertion": "ui-order-overlap",
+            "x": 34,
+            "y": 32,
+            "expected": [
+              0,
+              255,
+              0,
+              255
+            ],
+            "actual": [
+              0,
+              255,
+              0,
+              255
+            ],
+            "channels": [
+              true,
+              true,
+              true,
+              true
+            ],
+            "zeroTolerance": true
+          }
+        ]
+      },
+      {
+        "id": "CHN02",
+        "status": "PASS",
+        "capture": {
+          "frameId": 2,
+          "width": 64,
+          "height": 64,
+          "clearColor": 0,
+          "clearAlpha": 1,
+          "commandKinds": [
+            "rect",
+            "mesh",
+            "rect",
+            "image"
+          ],
+          "images": 1,
+          "geometries": 1,
+          "stageChildOrder": [
+            "whiteRectangle",
+            "meshParent",
+            "greenRectangle",
+            "croppedImage"
+          ],
+          "scopeState": "open"
+        },
+        "renderReturn": "undefined",
+        "afterIdle": {
+          "host": {
+            "state": "active",
+            "lastSerial": 2,
+            "pendingFrames": 0,
+            "pendingUploadBytes": 0,
+            "pendingReadbackBytes": 0,
+            "firstFailure": null,
+            "callbackFailureCount": 0,
+            "lastCallbackFailure": null,
+            "cleanupOutcome": "not-started"
+          },
+          "textured": {
+            "pendingGeometryBytes": 0
+          },
+          "scene": {
+            "pendingSceneBytes": 0,
+            "pendingUniformBytes": 0,
+            "pendingDepthBytes": 0
+          }
+        },
+        "readback": {
+          "observationId": "CHN02",
+          "width": 64,
+          "height": 64,
+          "byteLength": 16384,
+          "frameId": 2,
+          "serial": 2,
+          "format": "rgba8unorm",
+          "sourceFormat": "bgra8unorm",
+          "colorSpace": "srgb",
+          "alphaMode": "premultiplied",
+          "derivedTightRowStride": 256,
+          "rawArtifact": {
+            "path": "knowledge-base/evidence/textured-scene-host/CHN02.rgba",
+            "bytes": 16384,
+            "sha256": "2c3f1bd9cf0b03387638b0211ac7f13607cc54e14dba3d1e3ca20224b9527ada",
+            "frameId": 2,
+            "serial": 2,
+            "width": 64,
+            "height": 64,
+            "format": "rgba8unorm"
+          }
+        },
+        "checks": [
+          {
+            "assertion": "background-preserved",
+            "x": 4,
+            "y": 4,
+            "expected": [
+              0,
+              0,
+              0,
+              255
+            ],
+            "actual": [
+              0,
+              0,
+              0,
+              255
+            ],
+            "channels": [
+              true,
+              true,
+              true,
+              true
+            ],
+            "zeroTolerance": true
+          },
+          {
+            "assertion": "scene-near-depth-preserved",
+            "x": 40,
+            "y": 17,
+            "expected": [
+              255,
+              0,
+              0,
+              255
+            ],
+            "actual": [
+              255,
+              0,
+              0,
+              255
+            ],
+            "channels": [
+              true,
+              true,
+              true,
+              true
+            ],
+            "zeroTolerance": true
+          },
+          {
+            "assertion": "scene-far-preserved",
+            "x": 10,
+            "y": 12,
+            "expected": [
+              0,
+              0,
+              255,
+              255
+            ],
+            "actual": [
+              0,
+              0,
+              255,
+              255
+            ],
+            "channels": [
+              true,
+              true,
+              true,
+              true
+            ],
+            "zeroTolerance": true
+          },
+          {
+            "assertion": "rectangle-over-far",
+            "x": 9,
+            "y": 24,
+            "expected": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "actual": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "channels": [
+              true,
+              true,
+              true,
+              true
+            ],
+            "zeroTolerance": true
+          },
+          {
+            "assertion": "mesh-cyan-over-near",
+            "x": 24,
+            "y": 22,
+            "expected": [
+              0,
+              255,
+              255,
+              255
+            ],
+            "actual": [
+              0,
+              255,
+              255,
+              255
+            ],
+            "channels": [
+              true,
+              true,
+              true,
+              true
+            ],
+            "zeroTolerance": true
+          },
+          {
+            "assertion": "mesh-yellow-uv",
+            "x": 34,
+            "y": 22,
+            "expected": [
+              255,
+              255,
+              0,
+              255
+            ],
+            "actual": [
+              255,
+              255,
+              0,
+              255
+            ],
+            "channels": [
+              true,
+              true,
+              true,
+              true
+            ],
+            "zeroTolerance": true
+          },
+          {
+            "assertion": "mesh-magenta-uv",
+            "x": 20,
+            "y": 35,
+            "expected": [
+              255,
+              0,
+              255,
+              255
+            ],
+            "actual": [
+              255,
+              0,
+              255,
+              255
+            ],
+            "channels": [
+              true,
+              true,
+              true,
+              true
+            ],
+            "zeroTolerance": true
+          },
+          {
+            "assertion": "mesh-white-uv",
+            "x": 31,
+            "y": 38,
+            "expected": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "actual": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "channels": [
+              true,
+              true,
+              true,
+              true
+            ],
+            "zeroTolerance": true
+          },
+          {
+            "assertion": "mesh-clip-outside-preserves-near",
+            "x": 38,
+            "y": 22,
+            "expected": [
+              255,
+              0,
+              0,
+              255
+            ],
+            "actual": [
+              255,
+              0,
+              0,
+              255
+            ],
+            "channels": [
+              true,
+              true,
+              true,
+              true
+            ],
+            "zeroTolerance": true
+          },
+          {
+            "assertion": "image-crop-over-mesh",
+            "x": 27,
+            "y": 30,
+            "expected": [
+              255,
+              255,
+              0,
+              255
+            ],
+            "actual": [
+              255,
+              255,
+              0,
+              255
+            ],
+            "channels": [
+              true,
+              true,
+              true,
+              true
+            ],
+            "zeroTolerance": true
+          },
+          {
+            "assertion": "rectangle-outside-image",
+            "x": 41,
+            "y": 32,
+            "expected": [
+              0,
+              255,
+              0,
+              255
+            ],
+            "actual": [
+              0,
+              255,
+              0,
+              255
+            ],
+            "channels": [
+              true,
+              true,
+              true,
+              true
+            ],
+            "zeroTolerance": true
+          },
+          {
+            "assertion": "ui-order-overlap",
+            "x": 34,
+            "y": 32,
+            "expected": [
+              255,
+              255,
+              0,
+              255
+            ],
+            "actual": [
+              255,
+              255,
+              0,
+              255
+            ],
+            "channels": [
+              true,
+              true,
+              true,
+              true
+            ],
+            "zeroTolerance": true
+          }
+        ]
+      }
+    ],
+    "cleanup": {
+      "failures": [],
+      "scopeState": "closed",
+      "nodesDisposed": true,
+      "textureDisposed": true,
+      "providerDisposeCalls": 1,
+      "leaseValueRevoked": true,
+      "engineDisposed": true,
+      "host": {
+        "host": {
+          "state": "closed",
+          "lastSerial": 2,
+          "pendingFrames": 0,
+          "pendingUploadBytes": 0,
+          "pendingReadbackBytes": 0,
+          "firstFailure": null,
+          "callbackFailureCount": 0,
+          "lastCallbackFailure": null,
+          "cleanupOutcome": "safe"
+        },
+        "textured": {
+          "pendingGeometryBytes": 0
+        },
+        "scene": {
+          "pendingSceneBytes": 0,
+          "pendingUniformBytes": 0,
+          "pendingDepthBytes": 0
+        }
+      },
+      "hostSafeCloseObserved": true,
+      "deviceDestroyed": true,
+      "deviceLossSettled": true,
+      "pendingOperations": 0,
+      "acquisitionStates": [
+        {
+          "label": "device",
+          "settled": true
+        },
+        {
+          "label": "engine",
+          "settled": true
+        },
+        {
+          "label": "lease",
+          "settled": true
+        }
+      ]
+    },
+    "deviceLoss": {
+      "reason": "destroyed",
+      "message": "Device was destroyed.",
+      "destroyRequested": true
+    },
+    "claims": {
+      "fixedPositiveFrames": 2,
+      "fixedPositiveSamples": 24,
+      "oracleSensitivitySamples": 1,
+      "wholeImageColorEquality": false,
+      "nativePassSubmitCounters": "Separate accepted CPU/source evidence only",
+      "privateTextureCounter": "No public counter claimed",
+      "performance": false,
+      "phone": false,
+      "fullSpine": false,
+      "R020": "OPEN",
+      "V020": "OPEN"
+    },
+    "savedResult": {
+      "path": "source-bound-combined-native-result",
+      "bytes": 147748,
+      "sha256": "1007dfb0adf078e0568351fe8e940abdfd08c16bf9db139782602d551c6acec5"
+    },
+    "savedDriver": {
+      "path": "actual-combined-native-driver",
+      "bytes": 2021,
+      "sha256": "cc240ebbd190ea690ab248f7f1c34f77481e5e585cbf95d1b13a86c76c5b0e02"
+    },
+    "independentSavedResultReview": "PENDING"
+  },
+  "wholeGateFailedAttemptSuccessor": {
+    "status": "ACTUAL_FIRST_WHOLE_PREPUSH_FAILED_ONE_LEGACY_STATIC_PIN_ASSERTION",
+    "publication": {
+      "tests": 63,
+      "pass": 63,
+      "fail": 0
+    },
+    "core": {
+      "tests": 2698,
+      "pass": 2697,
+      "fail": 1,
+      "skipped": 0,
+      "cancelled": 0
+    },
+    "failure": "S06 retained verifier source test expected the historical Host bytes/SHA; current B1 source pin and actual browser result already qualified separately.",
+    "correction": "Only the two exact S06 version assertions now bind the reviewed current Host. Original schedules, behavior/oracle assertions and test count unchanged.",
+    "reviewSHA256": "46a601e61f76606797ac5dca63c4027bceb2063bf3aa6c1477a01596df19b662",
+    "freshCompletePrepush": "PENDING_REQUIRED",
+    "browserProductBytesChanged": false
+  }
+}

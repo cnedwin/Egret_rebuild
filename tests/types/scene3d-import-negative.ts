@@ -22,3 +22,15 @@ void Matrix4;
 void SceneFrame3D;
 // SCENE3D_CASE host-type-not-runtime
 void SceneWebGPUHost;
+
+// SCENE3D_CASE no-root-combined-host-factory
+import {createTexturedSceneWebGPUHost as rootCombinedFactory} from '@egret/engine';
+// SCENE3D_CASE no-canvas-combined-host-factory
+import {createTexturedSceneWebGPUHost as canvasCombinedFactory} from '@egret/engine/web';
+// SCENE3D_CASE no-ordinary-webgpu-combined-host-factory
+import {createTexturedSceneWebGPUHost as ordinaryCombinedFactory} from '@egret/engine/webgpu';
+// SCENE3D_CASE no-root-combined-host-type
+import type {TexturedSceneWebGPUHost as RootCombinedHost} from '@egret/engine';
+import type {TexturedSceneWebGPUHost} from '@egret/engine/webgpu/scene3d';
+// SCENE3D_CASE combined-host-type-not-runtime
+void TexturedSceneWebGPUHost;
