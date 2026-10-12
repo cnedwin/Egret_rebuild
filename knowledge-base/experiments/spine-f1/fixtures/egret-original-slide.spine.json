@@ -1,0 +1,36 @@
+{
+  "skeleton": { "spine": "4.3.13" },
+  "bones": [
+    { "name": "root" },
+    { "name": "moving", "parent": "root" }
+  ],
+  "slots": [
+    { "name": "back", "bone": "moving", "attachment": "redPanel", "color": "ffffffff", "blend": "normal" },
+    { "name": "front", "bone": "root", "attachment": "bluePanel", "color": "8080ffff", "blend": "normal" }
+  ],
+  "skins": [
+    {
+      "name": "default",
+      "attachments": {
+        "back": {
+          "redPanel": { "type": "region", "path": "egret-red", "x": 0, "y": 0, "width": 8, "height": 8 }
+        },
+        "front": {
+          "bluePanel": { "type": "region", "path": "egret-blue", "x": 2, "y": 0, "width": 4, "height": 4 }
+        }
+      }
+    }
+  ],
+  "animations": {
+    "slide": {
+      "bones": {
+        "moving": {
+          "translate": [
+            { "time": 0, "x": 0, "y": 0 },
+            { "time": 1, "x": 8, "y": 4 }
+          ]
+        }
+      }
+    }
+  }
+}

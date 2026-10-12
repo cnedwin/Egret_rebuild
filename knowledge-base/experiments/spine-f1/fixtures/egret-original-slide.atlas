@@ -1,0 +1,10 @@
+egret-original-page.png
+size: 16, 16
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+pma: false
+egret-red
+bounds: 0, 0, 8, 8
+egret-blue
+bounds: 8, 0, 8, 8

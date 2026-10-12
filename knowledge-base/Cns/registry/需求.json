@@ -485,7 +485,8 @@
       "statement": "引擎必须完整支持 Spine 动画；在公开验证的版本／功能／后端／宿主矩阵内保持官方语义与作者效果，覆盖导入、编辑、复杂 UI 与场景合成、事件、资源恢复及适用的旧工程迁移，不得静默丢失功能。",
       "status": "confirmed",
       "sourceIds": [
-        "S066"
+        "S066",
+        "S089"
       ],
       "deliveryIds": [
         "V002",
@@ -494,7 +495,8 @@
         "V006",
         "V020",
         "V007",
-        "V008"
+        "V008",
+        "V040"
       ],
       "decisionIds": [
         "D002",
@@ -502,7 +504,14 @@
         "D012",
         "D016"
       ],
-      "doc": "Cns/docs/Spine动画支持需求与验收.md"
+      "doc": "Cns/docs/Spine动画支持需求与验收.md",
+      "originalF1Experiment": {
+        "deliverable": "V040",
+        "source": "S089",
+        "fullCapabilityAcceptance": "not_run",
+        "status": "OPEN",
+        "doc": "Cns/experiments/spine-f1/README.md"
+      }
     }
   ]
 }
