@@ -2709,12 +2709,92 @@
         "evidence/spine-f1-clock-verification.json",
         "evidence/spine-f1-clock-public-projection.json"
       ],
-      "doc": "en/experiments/spine-f1/README.md"
+      "doc": "en/experiments/spine-f1/README.md",
+      "deliverySuccessor": {
+        "engineeringLabel": "0.37.0",
+        "status": "ACTUAL_DELIVERY_SUCCESSOR",
+        "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/24",
+        "sourceCommit": "206429369ce1751da616a9d59fecd854cc12491c",
+        "parentMain": "36909c3c1b2b9ef9784cb71d949ef6eba142fc0a",
+        "mergedMain": "8f84d5f99281ad051abd2e061b5aff90d6d0f40b",
+        "tree": "da042bc487de0eca6944a12595c10a790ae0cdc7",
+        "mandatoryPushHook": "ACTUAL_EXIT_0",
+        "coreTests": 2678,
+        "publicationTests": 63,
+        "documentPairs": 149,
+        "criticalSources": 184,
+        "remoteStatusCount": 0,
+        "remoteCheckCount": 0,
+        "remoteCIPassClaimed": false,
+        "localRemoteMainReadbackAtUtc": "2026-10-12T05:34:10.333Z",
+        "originalPendingCutoffs": "PRESERVED_UNCHANGED",
+        "scope": "Actual Clock delivery successor; preserve earlier preparation/curation cutoffs. This accepts neither Matrix nor remote CI."
+      }
+    },
+    {
+      "id": "V042",
+      "title": "Public Matrix4 authoring and composition",
+      "kind": "bounded_public_matrix_authoring_facade",
+      "status": "planned",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R011",
+        "R015",
+        "R016",
+        "R017",
+        "R018",
+        "R019"
+      ],
+      "sourceIds": [
+        "S091"
+      ],
+      "dependsOn": [
+        "V036"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "proposed_typed_public_forwarders_reusing_original_first_party_matrix_algorithm",
+      "acceptance": "NOT_RUN_SOURCE_ONLY_PROPOSAL",
+      "acceptanceCriteria": [
+        "An ordinary 16-slot Array becomes a frozen owned Matrix4 through the typed public constructor; refuse typed arrays and invalid slots.",
+        "Column-major/column-vector semantics retain left * right, right acting first; capture the complete left operand before the right.",
+        "Retain original diagnostic class identity and code/cause; return the exact result and propagate the exact thrown value; later scene admission stays separate.",
+        "Complete actual public behavior/types and retained regressions, required gates, bilingual provenance review and reviewable delivery separately."
+      ],
+      "artifacts": [
+        "en/docs/public-scene3d-contract.md"
+      ],
+      "doc": "en/docs/public-scene3d-contract.md",
+      "candidateEvidence": {
+        "engineeringLabel": "0.38.0",
+        "sourceId": "S091",
+        "status": "SOURCE_ONLY_NOT_RUN",
+        "execution": "NOT_RUN",
+        "actual": {
+          "implementation": "PENDING",
+          "actualRedGreen": "PENDING",
+          "publicBehavior": "PENDING",
+          "strictTypes": "PENDING",
+          "updatedExportAndGuardInventories": "PENDING",
+          "retainedMathSceneRegressions": "PENDING",
+          "currentFullGates": "PENDING",
+          "independentFinalBilingualReview": "PENDING",
+          "mandatoryPushHook": "PENDING",
+          "remoteDelivery": "PENDING"
+        },
+        "originalAlgorithmReused": true,
+        "renderingAlgorithmsChanged": false,
+        "fullSpineR020V020": "OPEN",
+        "fullSceneRendering": "NOT_ACCEPTED",
+        "performance": "NOT_MEASURED",
+        "historicalCutoffsPreserved": true
+      }
     }
   ],
   "_localization": {
     "canonicalSource": "交付.json",
-    "canonicalSha256": "fa66344bee66ebd1f8eeeb5e1e3c0eeea2291bbed53fa3ae0596ba4bdaae3b7a",
+    "canonicalSha256": "95061f28fd93d9419694e6bc3a70cb8efe1cc1f76189c9adbd1f7f2b8174cc68",
     "role": "read_only_translation",
     "language": "en"
   },
@@ -2736,5 +2816,44 @@
     "record": "evidence/spine-f1-clock-public-projection.json",
     "fullSpineR020V020": "OPEN",
     "cutoff": "Actual independent-clone public replay; saved-result review, final gates and delivery still PENDING."
+  },
+  "matrixAuthoringActualSuccessor": {
+    "status": "ACTUAL_TYPED_PUBLIC_MATRIX_FACADE_GREEN",
+    "record": "knowledge-base/evidence/public-matrix-authoring-verification.json",
+    "oldPublicTests": {
+      "passed": 17,
+      "assignedMissingAPI": 4
+    },
+    "oldPositiveTypes": {
+      "missingExports": 4
+    },
+    "retainedAndPublicTests": {
+      "passed": 168,
+      "failed": 0,
+      "skipped": 0
+    },
+    "publicTests": {
+      "passed": 21,
+      "newCases": 4
+    },
+    "positiveTypes": {
+      "exitCode": 0,
+      "diagnostics": 0
+    },
+    "importNegativeTypes": {
+      "assignedCases": 11,
+      "exitCode": 1
+    },
+    "exactBoundaries": {
+      "exitCode": 0
+    },
+    "strictTypes": {
+      "exitCode": 0
+    },
+    "renderingAlgorithmsChanged": false,
+    "newGPUExecution": false,
+    "fullRepositoryGate": "PENDING",
+    "independentSourceAndBilingualReview": "PENDING",
+    "remoteDelivery": "PENDING"
   }
 }

@@ -2709,7 +2709,87 @@
         "evidence/spine-f1-clock-verification.json",
         "evidence/spine-f1-clock-public-projection.json"
       ],
-      "doc": "Cns/experiments/spine-f1/README.md"
+      "doc": "Cns/experiments/spine-f1/README.md",
+      "deliverySuccessor": {
+        "engineeringLabel": "0.37.0",
+        "status": "ACTUAL_DELIVERY_SUCCESSOR",
+        "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/24",
+        "sourceCommit": "206429369ce1751da616a9d59fecd854cc12491c",
+        "parentMain": "36909c3c1b2b9ef9784cb71d949ef6eba142fc0a",
+        "mergedMain": "8f84d5f99281ad051abd2e061b5aff90d6d0f40b",
+        "tree": "da042bc487de0eca6944a12595c10a790ae0cdc7",
+        "mandatoryPushHook": "ACTUAL_EXIT_0",
+        "coreTests": 2678,
+        "publicationTests": 63,
+        "documentPairs": 149,
+        "criticalSources": 184,
+        "remoteStatusCount": 0,
+        "remoteCheckCount": 0,
+        "remoteCIPassClaimed": false,
+        "localRemoteMainReadbackAtUtc": "2026-10-12T05:34:10.333Z",
+        "originalPendingCutoffs": "PRESERVED_UNCHANGED",
+        "scope": "实际 Clock 交付后继；保留较早准备／curation 截止点。此项不验收 Matrix 或远端 CI。"
+      }
+    },
+    {
+      "id": "V042",
+      "title": "公共 Matrix4 创作与组合",
+      "kind": "bounded_public_matrix_authoring_facade",
+      "status": "planned",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R011",
+        "R015",
+        "R016",
+        "R017",
+        "R018",
+        "R019"
+      ],
+      "sourceIds": [
+        "S091"
+      ],
+      "dependsOn": [
+        "V036"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "proposed_typed_public_forwarders_reusing_original_first_party_matrix_algorithm",
+      "acceptance": "NOT_RUN_SOURCE_ONLY_PROPOSAL",
+      "acceptanceCriteria": [
+        "普通 16 槽 Array 经类型化公共构造器转为冻结自有 Matrix4；拒绝 typed arrays 和无效槽。",
+        "column-major／列向量保留 left * right、右侧先作用；先完整捕获左侧，再捕获右侧。",
+        "原诊断类身份与 code／cause 不变；返回精确结果、传播精确抛出值；后续场景准入保持独立。",
+        "实际公共行为／类型和保留回归、必要门禁、双语来源审阅与可审查交付分别完成。"
+      ],
+      "artifacts": [
+        "Cns/docs/公共3D场景契约.md"
+      ],
+      "doc": "Cns/docs/公共3D场景契约.md",
+      "candidateEvidence": {
+        "engineeringLabel": "0.38.0",
+        "sourceId": "S091",
+        "status": "SOURCE_ONLY_NOT_RUN",
+        "execution": "NOT_RUN",
+        "actual": {
+          "implementation": "PENDING",
+          "actualRedGreen": "PENDING",
+          "publicBehavior": "PENDING",
+          "strictTypes": "PENDING",
+          "updatedExportAndGuardInventories": "PENDING",
+          "retainedMathSceneRegressions": "PENDING",
+          "currentFullGates": "PENDING",
+          "independentFinalBilingualReview": "PENDING",
+          "mandatoryPushHook": "PENDING",
+          "remoteDelivery": "PENDING"
+        },
+        "originalAlgorithmReused": true,
+        "renderingAlgorithmsChanged": false,
+        "fullSpineR020V020": "OPEN",
+        "fullSceneRendering": "NOT_ACCEPTED",
+        "performance": "NOT_MEASURED",
+        "historicalCutoffsPreserved": true
+      }
     }
   ],
   "spineF1ClockPortableReplaySuccessor": {
@@ -2730,5 +2810,44 @@
     "record": "evidence/spine-f1-clock-public-projection.json",
     "fullSpineR020V020": "OPEN",
     "cutoff": "实际独立克隆公开重放；保存结果评审、最终门禁与交付仍为 PENDING。"
+  },
+  "matrixAuthoringActualSuccessor": {
+    "status": "ACTUAL_TYPED_PUBLIC_MATRIX_FACADE_GREEN",
+    "record": "knowledge-base/evidence/public-matrix-authoring-verification.json",
+    "oldPublicTests": {
+      "passed": 17,
+      "assignedMissingAPI": 4
+    },
+    "oldPositiveTypes": {
+      "missingExports": 4
+    },
+    "retainedAndPublicTests": {
+      "passed": 168,
+      "failed": 0,
+      "skipped": 0
+    },
+    "publicTests": {
+      "passed": 21,
+      "newCases": 4
+    },
+    "positiveTypes": {
+      "exitCode": 0,
+      "diagnostics": 0
+    },
+    "importNegativeTypes": {
+      "assignedCases": 11,
+      "exitCode": 1
+    },
+    "exactBoundaries": {
+      "exitCode": 0
+    },
+    "strictTypes": {
+      "exitCode": 0
+    },
+    "renderingAlgorithmsChanged": false,
+    "newGPUExecution": false,
+    "fullRepositoryGate": "PENDING",
+    "independentSourceAndBilingualReview": "PENDING",
+    "remoteDelivery": "PENDING"
   }
 }

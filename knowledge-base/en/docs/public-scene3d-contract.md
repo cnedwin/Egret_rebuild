@@ -6,6 +6,66 @@ Proposed documentation checkpoint **0.32.0**, package **S3D1**. Source **S085** 
 
 The delivered **0.31.0** resource-group successor was merged through [PR #18](https://github.com/cnedwin/Egret_rebuild/pull/18) to Main `b4062e134af7b923ab6c2c16381004bc1c62ee3c`, tree `5bf7e05cf88e15ca66d1b8b6e26e2c442cbfcf7a`. On that base, the genuine baseline preceded a missing-map interface **RED** at **2026-10-11 19:43:55 UTC**. The three public product files were adopted, built and checked for interface **GREEN** at **2026-10-11 19:54:25–19:54:26 UTC**. Independent source review found **0** open findings in those files. These observations confirm the bounded source and public API reachability only. **Behavior, types, policy, native and final gates are PENDING.** The [shared verification record](../../evidence/scene3d-public-verification.json) is the designated evidence destination; its publication and completed gate results are pending. Historical internal scene and browser results retain their original subjects and cutoffs.
 
+<!-- MATRIX4-DOC-0.38.0-BEGIN -->
+## 0.38.0 proposed — public Matrix4 authoring and composition
+
+**SOURCE_ONLY / NOT_RUN. S091 / V042** proposes additions to `@egret/engine/scene3d`. The existing scene interfaces and historical export inventories below retain their original checkpoints. The proposed functions use typed public wrappers, pass untouched arguments exactly once to the existing first-party implementation, and return its exact result or propagate its exact thrown value. The diagnostic value and type retain their original module bindings; the default engine and browser Host entries gain no matrix export from this proposal.
+
+```ts
+function createMatrix4(input: readonly number[]): Matrix4;
+function multiplyMatrix4(left: Matrix4, right: Matrix4): Matrix4;
+export { Math3DError };
+export type { Math3DErrorCode };
+```
+
+`Matrix4` uses column-major storage and column vectors. `multiplyMatrix4(left, right)` computes `left * right`, so the right transform acts first. `createMatrix4` accepts an ordinary Array of exactly **16** own slots with finite number values. Typed arrays, missing or inherited-only slots and nonfinite values are refused without coercion. Both functions publish fresh, frozen, owned binary64 tuples and normalize negative zero to positive zero; caller storage is not retained or written.
+
+Capture reads own slots in order before component validation. Multiplication completes the left capture before the right capture; aliased operands are captured separately. Caller getters/proxies can affect subsequent reads, so this is ordered capture rather than a simultaneous snapshot. Arithmetic checks the original fixed products and sums for finite range; cancellation does not repair intermediate overflow. `Math3DError` preserves the original code/cause behavior for input, source-read, arithmetic-range and owned allocation/publication failures. The public facade adds no error wrapping. Its existing error-code union includes other math operations and does not promise that every code is reachable through these functions.
+
+The public tuple type and diagnostic constructor do not authenticate provenance by themselves. Binary64 results promise neither exact-real arithmetic nor float32 representability; existing scene precision admission remains a later boundary.
+
+### Proposed authoring example
+
+The following unexecuted example takes `readonly number[]` inputs through `createMatrix4`, composes them with `multiplyMatrix4`, and supplies the result to existing scene capture without a caller type assertion. It creates a CPU frame and starts no Host. Scene capture still applies its own authenticity, precision and budget admission; successful matrix construction alone does not guarantee that all finite matrices are scene-admissible.
+
+```ts
+import {
+  createMatrix4, multiplyMatrix4,
+  createMeshGeometry3D, createSceneFrame3D
+} from '@egret/engine/scene3d';
+import type { Matrix4, SceneFrame3D } from '@egret/engine/scene3d';
+
+const parentSource: readonly number[] = [
+  0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1
+];
+const localSource: readonly number[] = [
+  1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 3, 0, 0, 1
+];
+const parent: Matrix4 = createMatrix4(parentSource);
+const local: Matrix4 = createMatrix4(localSource);
+// Column vectors: local acts before parent.
+const modelView: Matrix4 = multiplyMatrix4(parent, local);
+const geometry = createMeshGeometry3D({
+  positions: [0, 0, -1, 1, 0, -1, 0, 1, -1],
+  colors: [1, 0, 0, 0, 1, 0, 0, 0, 1],
+  indices: [0, 1, 2]
+});
+const scene: SceneFrame3D = createSceneFrame3D({
+  projection: {
+    kind: 'orthographic',
+    left: -1, right: 1, bottom: -1, top: 1, near: 0, far: 2
+  },
+  draws: [{ geometry, modelView }]
+});
+void scene;
+```
+
+Implementation, actual RED/GREEN, public-route behavior and strict types, updated export/guard inventories, retained math/scene regressions, current full gates and delivery are **PENDING**. Clock **0.37.0** delivery remains **PENDING at this preparation cutoff**. Browser gates are required if rendering behavior changes; the proposed forwarding change leaves rendering algorithms and existing scene precision gates unchanged. No inverse/vector API, camera system, new dependency, performance result or complete scene/Spine capability is added. Existing first-party code/documentation remains Apache-2.0.
+
+**Recorded delivery successor:** Clock **0.37.0** was merged through [PR #24](https://github.com/cnedwin/Egret_rebuild/pull/24), with Main `8f84d5f99281ad051abd2e061b5aff90d6d0f40b` read back locally and remotely. This supersedes the earlier delivery checkpoint without rewriting it and establishes no Matrix acceptance or remote CI PASS.
+**Actual 0.38.0 successor:** the old public SDK passed **17** retained cases and refused **4** new cases at the named missing-API assertion; its positive type consumer reported **4** missing exports. The newly built SDK passed **168/168** retained math, projection, scene and public cases, including **21/21** public cases. The positive consumer compiled; **11** intentional import negatives were bound to actual diagnostics, and exact boundary/strict-type gates passed with **0** unexpected failures. Original math algorithms remain unchanged. No new GPU, device or performance acceptance is claimed. Independent source/bilingual review, the full repository gate and delivery remain PENDING at this successor cutoff. See [the shared verification record](../../evidence/public-matrix-authoring-verification.json).
+<!-- MATRIX4-DOC-0.38.0-END -->
+
 ## Explicit modes and package entries
 
 | Entry | Bounded role |

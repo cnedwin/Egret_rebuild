@@ -1,0 +1,370 @@
+{
+  "schemaVersion": 1,
+  "engineeringLabel": "0.38.0",
+  "sourceId": "S091",
+  "deliverable": "V042",
+  "status": "ACTUAL_FINITE_PUBLIC_MATRIX_AUTHORING_GREEN",
+  "supportLevel": "experimental",
+  "sourceBase": {
+    "commit": "8f84d5f99281ad051abd2e061b5aff90d6d0f40b",
+    "tree": "da042bc487de0eca6944a12595c10a790ae0cdc7"
+  },
+  "contract": {
+    "entry": "@egret/engine/scene3d",
+    "functions": [
+      "createMatrix4(input: readonly number[]): Matrix4",
+      "multiplyMatrix4(left: Matrix4, right: Matrix4): Matrix4"
+    ],
+    "diagnosticValue": "Math3DError",
+    "diagnosticType": "Math3DErrorCode",
+    "scope": "Typed direct forwarding to the unchanged original first-party matrix implementation; independent owned tuple capture, column-major left * right, original diagnostic identity/code/cause.",
+    "defaultDependencyAdditions": [],
+    "renderingAlgorithmsChanged": false
+  },
+  "actualRed": {
+    "behavior": {
+      "tests": 21,
+      "passed": 17,
+      "failed": 4,
+      "reason": "public-matrix-api missing createMatrix4"
+    },
+    "typeDiagnostics": [
+      {
+        "file": "tests/types/scene3d-positive.ts",
+        "line": 23,
+        "column": 10,
+        "code": 2305,
+        "message": "Module '\"@egret/engine/scene3d\"' has no exported member 'createMatrix4'."
+      },
+      {
+        "file": "tests/types/scene3d-positive.ts",
+        "line": 23,
+        "column": 25,
+        "code": 2305,
+        "message": "Module '\"@egret/engine/scene3d\"' has no exported member 'multiplyMatrix4'."
+      },
+      {
+        "file": "tests/types/scene3d-positive.ts",
+        "line": 23,
+        "column": 42,
+        "code": 2305,
+        "message": "Module '\"@egret/engine/scene3d\"' has no exported member 'Math3DError'."
+      },
+      {
+        "file": "tests/types/scene3d-positive.ts",
+        "line": 24,
+        "column": 15,
+        "code": 2305,
+        "message": "Module '\"@egret/engine/scene3d\"' has no exported member 'Math3DErrorCode'."
+      }
+    ],
+    "witness": {
+      "logicalIdentity": "actual-old-sdk-public-matrix-red",
+      "path": "actual-old-sdk-public-matrix-red",
+      "bytes": 15264,
+      "sha256": "6a45f82d6fa73dc44c45814d0c36acffbde4f66080f18d05f713fe86280c004f",
+      "distribution": "identity_only_not_distributed"
+    }
+  },
+  "actualGreen": {
+    "retainedAndPublicTests": {
+      "tests": 168,
+      "pass": 168,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "publicCases": 21,
+    "newPublicCases": 4,
+    "positiveTypeDiagnostics": 0,
+    "importNegativeDiagnostics": [
+      {
+        "file": "tests/types/scene3d-import-negative.ts",
+        "line": 2,
+        "column": 9,
+        "code": 2305,
+        "message": "Module '\"@egret/engine\"' has no exported member 'createSceneFrame3D'."
+      },
+      {
+        "file": "tests/types/scene3d-import-negative.ts",
+        "line": 4,
+        "column": 9,
+        "code": 2305,
+        "message": "Module '\"@egret/engine/web\"' has no exported member 'createMeshGeometry3D'."
+      },
+      {
+        "file": "tests/types/scene3d-import-negative.ts",
+        "line": 6,
+        "column": 9,
+        "code": 2724,
+        "message": "'\"@egret/engine/webgpu\"' has no exported member named 'createSceneWebGPUHost'. Did you mean 'createWebGPUHost'?"
+      },
+      {
+        "file": "tests/types/scene3d-import-negative.ts",
+        "line": 8,
+        "column": 9,
+        "code": 2724,
+        "message": "'\"@egret/engine/scene3d\"' has no exported member named 'packMeshGeometry3D'. Did you mean 'MeshGeometry3D'?"
+      },
+      {
+        "file": "tests/types/scene3d-import-negative.ts",
+        "line": 10,
+        "column": 9,
+        "code": 2305,
+        "message": "Module '\"@egret/engine/webgpu/scene3d\"' has no exported member 'getBuiltinB1Protocol'."
+      },
+      {
+        "file": "tests/types/scene3d-import-negative.ts",
+        "line": 12,
+        "column": 49,
+        "code": 2307,
+        "message": "Cannot find module '@egret/engine/rendering/packMeshGeometry3D' or its corresponding type declarations."
+      },
+      {
+        "file": "tests/types/scene3d-import-negative.ts",
+        "line": 14,
+        "column": 55,
+        "code": 2307,
+        "message": "Cannot find module '@egret/engine/web/b1' or its corresponding type declarations."
+      },
+      {
+        "file": "tests/types/scene3d-import-negative.ts",
+        "line": 16,
+        "column": 9,
+        "code": 2305,
+        "message": "Module '\"@egret/engine\"' has no exported member 'createMatrix4'."
+      },
+      {
+        "file": "tests/types/scene3d-import-negative.ts",
+        "line": 20,
+        "column": 6,
+        "code": 2693,
+        "message": "'Matrix4' only refers to a type, but is being used as a value here."
+      },
+      {
+        "file": "tests/types/scene3d-import-negative.ts",
+        "line": 22,
+        "column": 6,
+        "code": 2693,
+        "message": "'SceneFrame3D' only refers to a type, but is being used as a value here."
+      },
+      {
+        "file": "tests/types/scene3d-import-negative.ts",
+        "line": 24,
+        "column": 6,
+        "code": 2693,
+        "message": "'SceneWebGPUHost' only refers to a type, but is being used as a value here."
+      }
+    ],
+    "commands": [
+      {
+        "name": "successor-build",
+        "startedAtUtc": "2026-10-12T05:45:26.165Z",
+        "finishedAtUtc": "2026-10-12T05:45:26.664Z",
+        "exitCode": 0,
+        "stdoutSHA256": "166710cb105690b244b48c5dcc5672a4c0bc8280e995ae7d2f5bd46141491cea",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "retained-math-and-public-green",
+        "startedAtUtc": "2026-10-12T05:45:26.669Z",
+        "finishedAtUtc": "2026-10-12T05:45:28.339Z",
+        "exitCode": 0,
+        "stdoutSHA256": "11caa137e8aba44a2b41f16edac064ff391ad9e25e075add4fc8032f5f70d94a",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "positive-types",
+        "startedAtUtc": "2026-10-12T05:45:28.345Z",
+        "finishedAtUtc": "2026-10-12T05:45:28.442Z",
+        "exitCode": 0,
+        "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "import-negative-types",
+        "startedAtUtc": "2026-10-12T05:45:28.443Z",
+        "finishedAtUtc": "2026-10-12T05:45:28.689Z",
+        "exitCode": 1,
+        "stdoutSHA256": "67bd720f206a15d354a7fbea375e42c2372bd8e67427d280942359ab7f057098",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "exact-boundaries",
+        "startedAtUtc": "2026-10-12T05:45:28.717Z",
+        "finishedAtUtc": "2026-10-12T05:45:30.559Z",
+        "exitCode": 0,
+        "stdoutSHA256": "717128ab09db9706538327db123ed6442a284879ec6449b67c0c2b511add21aa",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "strict-types-and-retained-diagnostic-inventory",
+        "startedAtUtc": "2026-10-12T05:45:30.564Z",
+        "finishedAtUtc": "2026-10-12T05:45:36.412Z",
+        "exitCode": 0,
+        "stdoutSHA256": "7dbaefcdcf37c896538ec975a78eef2297bfde08e0cf2b5ab7b7a2d0c43f5275",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "witness": {
+      "logicalIdentity": "actual-current-sdk-public-matrix-green",
+      "path": "actual-current-sdk-public-matrix-green",
+      "bytes": 12774,
+      "sha256": "5d6065e5b9828e2f3c2f53ae2d5da2130e240302ec913ca35bf777f86c84c57f",
+      "distribution": "identity_only_not_distributed"
+    },
+    "sourceFiles": [
+      {
+        "path": "packages/engine/rendering/scene3d.ts",
+        "bytes": 2176,
+        "sha256": "dc10f0cec74891a7a9e8fa67427eeeef6e5ac02012d57e1eee213ed9daad7ca3"
+      },
+      {
+        "path": "tools/check-boundaries.mjs",
+        "bytes": 124481,
+        "sha256": "5016a72a02da03e759a04b622b775cf1185feba7295f830f0f6797d0774942ad"
+      },
+      {
+        "path": "tests/scene3d-public.test.mjs",
+        "bytes": 20643,
+        "sha256": "f52d9b2c467a27687ac296cb774f4a6e108c253a08924c769b9f763b68b82001"
+      },
+      {
+        "path": "tests/types/scene3d-positive.ts",
+        "bytes": 3174,
+        "sha256": "399eb788eded32dfa82ea54dce6c435b907e4426bd212eb029f5a14417ee5583"
+      },
+      {
+        "path": "tests/types/scene3d-import-negative.ts",
+        "bytes": 1148,
+        "sha256": "1b5365dc6901514e96db851eec8c47375b6bc5da922d167678cb5d8a75fa5b0c"
+      },
+      {
+        "path": "tests/types/scene3d-diagnostic-expectations.json",
+        "bytes": 8506,
+        "sha256": "edf128a7473e7ee8d644cd6505b11e477321d1ccf93200e03f63bdfb44715e18"
+      }
+    ],
+    "emittedFiles": [
+      {
+        "path": "packages/engine/dist/rendering/scene3d.js",
+        "bytes": 1324,
+        "sha256": "4d71aed1486089f3da2c59fcb3d81b8067008c63d1565e89b9d3f74d419b247c"
+      },
+      {
+        "path": "packages/engine/dist/rendering/scene3d.d.ts",
+        "bytes": 1275,
+        "sha256": "4efe7c389cb1e312124984b6a6b8ed02115a2a131a937e0f83c70f06406d5c3e"
+      },
+      {
+        "path": "packages/engine/dist/rendering/matrix4.js",
+        "bytes": 4112,
+        "sha256": "3e816beceb6b79aed81bfbcdda765258a2da8ba6a0a12bcea42d151c87846f21"
+      },
+      {
+        "path": "packages/engine/dist/rendering/matrix4.d.ts",
+        "bytes": 1020,
+        "sha256": "7f93b0d9d9f549f9627ba9cea8fbe423241dc59806d84ce1006b419111eb36e7"
+      }
+    ],
+    "unchangedOriginalInputs": [
+      {
+        "path": "packages/engine/rendering/matrix4.ts",
+        "bytes": 4834,
+        "sha256": "7bbf23719fc7d9566276778281f2e22ae84c658d3181474d8d50ad6dc08ea27c"
+      },
+      {
+        "path": "packages/engine/rendering/sceneFrame3D.ts",
+        "bytes": 11442,
+        "sha256": "c2ee3db171c8f88f821bfec28ca2d93474c60e6cd1a6d1dd2f7d400e4ff5c16e"
+      },
+      {
+        "path": "tests/matrix4.test.mjs",
+        "bytes": 17574,
+        "sha256": "b40dbdd65f856cafe680956c8e1d8985468c7b85ee32f60fb69ff4d01f116fc4"
+      },
+      {
+        "path": "tools/check-types.mjs",
+        "bytes": 68576,
+        "sha256": "8f303321cfd0a75c65381bc8774230e585789a8859205be5052e157b0e474c16"
+      }
+    ]
+  },
+  "reproduction": {
+    "baseline": "Use the recorded preceding Main and the four published regression cases to observe the original missing-API behavior before the typed wrappers.",
+    "build": "node tools/build.mjs",
+    "targetedTests": "node --test --test-reporter=tap tests/matrix4.test.mjs tests/projection3d.test.mjs tests/scene-frame-3d.test.mjs tests/scene3d-public.test.mjs",
+    "boundaries": "node tools/check-boundaries.mjs",
+    "types": "node tools/check-types.mjs",
+    "fullGate": "node tools/prepush.mjs"
+  },
+  "independentReviews": "PENDING",
+  "fullRepositoryGate": "PENDING",
+  "mandatoryPushHook": "PENDING",
+  "remoteDelivery": "PENDING",
+  "limits": [
+    "No inverse/vector/camera API or new arithmetic algorithm.",
+    "No new GPU/device/native/performance benchmark; rendering behavior remains unchanged.",
+    "Finite public authoring does not authenticate arbitrary tuple/error values or bypass later scene precision/budget admission.",
+    "Complete 3D, Spine, UI, host/device recovery, creator workflow and migration acceptance remain separate."
+  ],
+  "fixtureIntegrationSuccessor": {
+    "status": "ACTUAL_RETAINED_FIXTURE_INTEGRATION_GREEN",
+    "precedingFullGateAttempt": {
+      "name": "prepush",
+      "startedAtUtc": "2026-10-12T06:02:00.8908738Z",
+      "finishedAtUtc": "2026-10-12T06:04:55.7972284Z",
+      "exitCode": 1,
+      "stdoutSHA256": "8b7769facbb17645f8a2c2685e2155da174e1956a62d4b5b4fbea4d1e8798a98",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "core": {
+        "tests": 2682,
+        "pass": 2447,
+        "fail": 235,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "rootCause": "The synthetic canonical fixture still described the prior public scene surface; the real package-copy fixture omitted the original matrix module identity bridge."
+    },
+    "correction": {
+      "scope": "Update inert matrix exports/typed forwarders in the canonical policy fixture and add matrix4 to the existing copied-resolution identity bridge. No boundary checker, algorithm or rendering change.",
+      "files": [
+        {
+          "path": "tests/boundaries.test.mjs",
+          "bytes": 96382,
+          "sha256": "c9710ab953aa40733eb4f3c15057d60acd31fd4b0c1ee0b232b7e1bba197cb65"
+        },
+        {
+          "path": "tests/project-boundaries.test.mjs",
+          "bytes": 13807,
+          "sha256": "e3faf9f89381265b5be917abfe1ad91437eeaa6496aed6377104cd26d8d2148e"
+        }
+      ],
+      "preserved": "Retained mutation anchors, fresh valid baselines, assigned refusal reasons and original package source/emitted bytes."
+    },
+    "actualRetainedFixtureTests": {
+      "tests": 299,
+      "pass": 299,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "command": "node --test --test-reporter=tap tests/boundaries.test.mjs tests/project-boundaries.test.mjs",
+      "receipt": {
+        "name": "retained-boundary-fixtures",
+        "startedAtUtc": "2026-10-12T06:19:13.6934114Z",
+        "finishedAtUtc": "2026-10-12T06:22:35.7493693Z",
+        "exitCode": 0,
+        "stdoutSHA256": "68daa68b6f8020d4b394e159ebce30c92c1cf5941cb747364f7d3dabe9bb10c9",
+        "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "remainingAcceptance": {
+      "fullRepositoryGate": "PENDING",
+      "mandatoryPushHook": "PENDING",
+      "remoteDelivery": "PENDING"
+    }
+  }
+}

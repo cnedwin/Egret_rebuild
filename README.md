@@ -12,6 +12,31 @@ Years later, as times change and technology advances, many developers continue t
 
 多年以后，时代变迁，技术革新，依然有很多开发者在鼓励我们。我希望借助 AI 和社区的力量，重建这个游戏引擎。
 
+<!-- MATRIX4-DOC-0.38.0-BEGIN -->
+## 0.38.0 proposed — public Matrix4 authoring
+
+**SOURCE_ONLY / NOT_RUN. S091 / V042** proposes typed matrix authoring in `@egret/engine/scene3d`: `createMatrix4`, `multiplyMatrix4` and the original `Math3DError` / `Math3DErrorCode` bindings. Editor and JSON source arrays can become owned tuples and compose transforms before existing scene capture. The proposal reuses Egret's independently authored matrix algorithm through thin public forwarders.
+
+Implementation, actual RED/GREEN, public behavior/types, current full gates and delivery are **PENDING**. Clock **0.37.0** delivery is **PENDING at this preparation cutoff**; earlier recorded results and cutoffs are retained. Broader scene/rendering, performance, complete Spine and migration acceptance remain separate.
+
+**Recorded delivery successor:** Clock **0.37.0** was merged through [PR #24](https://github.com/cnedwin/Egret_rebuild/pull/24), with Main `8f84d5f99281ad051abd2e061b5aff90d6d0f40b` read back locally and remotely. This supersedes the earlier delivery checkpoint without rewriting it and establishes no Matrix acceptance or remote CI PASS.
+
+See the [public scene contract](knowledge-base/en/docs/public-scene3d-contract.md) for the proposed API and authoring example.
+
+## 0.38.0 拟议 — 公共 Matrix4 创作
+
+**SOURCE_ONLY / NOT_RUN。S091 / V042** 拟在 `@egret/engine/scene3d` 提供类型化矩阵创作：`createMatrix4`、`multiplyMatrix4` 及原有 `Math3DError` / `Math3DErrorCode` 绑定。编辑器与 JSON 源数组可转换为自有元组，在既有场景捕获前组合变换。方案通过轻量公共转发器复用白鹭独立创作的矩阵算法。
+
+实现、实际 RED/GREEN、公共行为／类型、当前完整门禁及交付均为 **PENDING**。Clock **0.37.0** 交付在**本准备截止点仍为 PENDING**；保留较早记录的结果与截止点。更广的场景／渲染、性能、完整 Spine 及迁移验收继续单独处理。
+
+**已记录的交付后继：** Clock **0.37.0** 已经由 [PR #24](https://github.com/cnedwin/Egret_rebuild/pull/24) 合并，Main `8f84d5f99281ad051abd2e061b5aff90d6d0f40b` 已完成本地与远端读回。这是较早交付检查点的后继，保留原检查点，不构成 Matrix 验收或远端 CI PASS。
+
+拟议 API 与创作示例见[公共场景契约](knowledge-base/Cns/docs/公共3D场景契约.md)。
+**Actual 0.38.0 successor:** the old public SDK passed **17** retained cases and refused **4** new cases at the named missing-API assertion; its positive type consumer reported **4** missing exports. The newly built SDK passed **168/168** retained math, projection, scene and public cases, including **21/21** public cases. The positive consumer compiled; **11** intentional import negatives were bound to actual diagnostics, and exact boundary/strict-type gates passed with **0** unexpected failures. Original math algorithms remain unchanged. No new GPU, device or performance acceptance is claimed. Independent source/bilingual review, the full repository gate and delivery remain PENDING at this successor cutoff. See [the shared verification record](knowledge-base/evidence/public-matrix-authoring-verification.json).
+
+**实际 0.38.0 后继：**旧公开 SDK 通过 **17** 项原有用例，**4** 项新增用例在具名缺失 API 断言处失败；正向类型消费者报出 **4** 个缺失导出。新构建 SDK 通过 **168/168** 项原数学、投影、场景及公开用例，其中公开用例为 **21/21**。正向消费者编译通过；**11** 项有意导入负例对应真实诊断，精确边界与严格类型门禁通过，非预期失败为 **0**。原数学算法保持不变。此处不新增 GPU、设备或性能验收结论。独立源码／双语评审、完整仓库门禁与交付在本后继截止点仍为 PENDING。见[共享核验记录](knowledge-base/evidence/public-matrix-authoring-verification.json)。
+<!-- MATRIX4-DOC-0.38.0-END -->
+
 <!-- F1C-DOC-0.37.0-BEGIN -->
 ## Engineering preview 0.37.0 — opt-in F1 Clock candidate
 
