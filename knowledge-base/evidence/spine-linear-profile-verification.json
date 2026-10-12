@@ -1,0 +1,353 @@
+{
+  "schemaVersion": 1,
+  "engineeringLabel": "0.43.0",
+  "sourceId": "S096",
+  "deliverableId": "V047",
+  "status": "BOUNDED_F2_B_SOURCE_CPU_TYPES_POLICY_DEVELOPMENT_ACCEPTED_PUBLICATION_PENDING",
+  "authority": "Saved independent finite source and actual-result reviews; this metadata author does not rerun product or compiler gates.",
+  "firstParty": {
+    "license": "Apache-2.0",
+    "origin": "Independent first-party design with AI-assisted implementation and bounded independent review.",
+    "vendorPayloadBundled": false
+  },
+  "toolchain": {
+    "node": "24.19.0",
+    "pnpm": "11.25.0",
+    "typescript": "7.0.2",
+    "jsoncParser": "3.3.1",
+    "newDependencies": false
+  },
+  "namespace": {
+    "optInBuiltEntry": "knowledge-base/experiments/spine-f2/dist/index.js",
+    "runtimeValues": 2,
+    "erasedTypes": 10,
+    "AValues": 1,
+    "ATypes": 6,
+    "BValues": 1,
+    "BTypes": 4,
+    "defaultSdkAndPublicSp1Unchanged": true
+  },
+  "source": {
+    "status": "INDEPENDENT_SOURCE_ACCEPTED",
+    "files": [
+      {
+        "path": "knowledge-base/experiments/spine-f2/src/index.ts",
+        "bytes": 577,
+        "sha256": "51d992b5a6ab5f75f203b8bcd289d4af9d67b80935c2cd26b2d8031368886b2c"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/src/source-plan.ts",
+        "bytes": 22487,
+        "sha256": "4a1e57abdaf93a42236f72bcf6fef1569fe039efff1f56378862d539a30be728"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/src/profile-plan.ts",
+        "bytes": 4718,
+        "sha256": "70ea7129f28ee52ae6f12bcf853c94279c09aff917ec97db83562b3b8875b700"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/src/profile-source.ts",
+        "bytes": 30397,
+        "sha256": "5f2d9ee9b4a5c9f7582643e80eea805de2507373d417b97802ed370df6248d75"
+      }
+    ],
+    "review": {
+      "witness": "F2_B_product_source_review",
+      "bytes": 13079,
+      "sha256": "1f73ec1664ac77fc8cac9e71d2ee8b93151a1d22fd7a7475d68342223e08571c"
+    }
+  },
+  "ordinaryBehavior": {
+    "tests": 135,
+    "pass": 135,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "parentFamilies": 22,
+    "nestedCases": 113,
+    "receipt": {
+      "witness": "F2_B_ordinary_behavior_receipt",
+      "bytes": 2043,
+      "sha256": "04db058aab92de38b8f7133391fad2d4f6fd8c8e5c0de59b54e3246be77232cd"
+    },
+    "stdout": {
+      "witness": "F2_B_ordinary_behavior_stdout",
+      "bytes": 8054,
+      "sha256": "46afd87b3950d252920f30843bd07d015f5f3f5cc97de28bf5a978348e6a56b8"
+    },
+    "stderr": {
+      "witness": "F2_B_ordinary_behavior_stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "exitCode": 0,
+    "timeout": false,
+    "startedAtUtc": "2026-10-12T19:53:42.5158899Z",
+    "finishedAtUtc": "2026-10-12T19:53:43.8094608Z",
+    "review": {
+      "witness": "F2_B_ordinary_behavior_actual_review",
+      "bytes": 14101,
+      "sha256": "7633cdc12c8b78e8f78ae1774e3dec5383cabbebe86631475dfccf64ca5f04fd"
+    }
+  },
+  "normalHostTypes": {
+    "positiveDiagnostics": 0,
+    "negativeDiagnostics": 100,
+    "tupleFields": [
+      "file",
+      "line",
+      "column",
+      "code",
+      "message"
+    ],
+    "completeContinuations": true,
+    "exactCurrentRepoPrefixNormalizationOnly": true,
+    "positive": {
+      "receipt": {
+        "witness": "F2_B_normal_host_positive_types_receipt",
+        "bytes": 2131,
+        "sha256": "c64d48ffdcedb4cfb3b796adbab8e66d9dc2f0dc11456d6e49cfcc062ed92317"
+      },
+      "stdout": {
+        "witness": "F2_B_normal_host_positive_types_stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "witness": "F2_B_normal_host_positive_types_stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exitCode": 0,
+      "timeout": false,
+      "startedAtUtc": "2026-10-12T20:08:23.5927431Z",
+      "finishedAtUtc": "2026-10-12T20:08:23.7041192Z"
+    },
+    "negative": {
+      "receipt": {
+        "witness": "F2_B_normal_host_negative_types_receipt",
+        "bytes": 2131,
+        "sha256": "c64d48ffdcedb4cfb3b796adbab8e66d9dc2f0dc11456d6e49cfcc062ed92317"
+      },
+      "stdout": {
+        "witness": "F2_B_normal_host_negative_types_stdout",
+        "bytes": 21420,
+        "sha256": "27dceaf5f9fa798b82cae0bf0d79d9c60bfebc9ae7deefc1eade4733e544daa5"
+      },
+      "stderr": {
+        "witness": "F2_B_normal_host_negative_types_stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exitCode": 1,
+      "timeout": false,
+      "startedAtUtc": "2026-10-12T20:08:23.7196262Z",
+      "finishedAtUtc": "2026-10-12T20:08:23.9496817Z"
+    },
+    "review": {
+      "witness": "F2_B_normal_host_types_actual_review",
+      "bytes": 19517,
+      "sha256": "f7a27bb238704e3472f1df1373a128374c7f326ec08e8429f4326fb0650092ae"
+    },
+    "table": {
+      "path": "knowledge-base/experiments/spine-f2/type-tests/profile-negative-expectations.json",
+      "bytes": 29272,
+      "sha256": "e434ff4fdf8c0dd8f4d9c3aa9587cacb73ce7bc62fadf7dd8684a5b01eb18b70"
+    }
+  },
+  "retainedAAndPolicy": {
+    "tests": 25,
+    "pass": 25,
+    "fail": 0,
+    "retainedACases": 16,
+    "sourcePolicyCases": 8,
+    "apiPresenceCases": 1,
+    "assignedSourcePolicyControls": 7,
+    "positiveTypeDiagnostics": 0,
+    "negativeTypeTuples": 39,
+    "review": {
+      "witness": "F2_B_retained_A_and_policy_actual_review",
+      "bytes": 17012,
+      "sha256": "c265e86fcc2edd40a76b2e023abcacc1c49759b102b3e707c0f76dbb7ea09ca3"
+    },
+    "receipt": {
+      "witness": "F2_B_retained_A_and_policy_receipt",
+      "bytes": 1702,
+      "sha256": "c4432c3a0bb320ef01d28b7cadd8858f9e5b227f96a479792e5b7ee81a916d31"
+    },
+    "table": {
+      "path": "knowledge-base/experiments/spine-f2/type-tests/negative-expectations.json",
+      "bytes": 10385,
+      "sha256": "36b7e09bf71e229037442bd04d32d260a3ea580fa5ab762e7dd46de6e0ee8528"
+    }
+  },
+  "completeDevelopmentVerifier": {
+    "tests": 160,
+    "pass": 160,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "behaviorTests": 135,
+    "retainedAndPolicyTests": 25,
+    "retainedATuples": 39,
+    "profileTuples": 100,
+    "receipt": {
+      "witness": "F2_B_complete_development_verifier_R3_receipt",
+      "bytes": 1941,
+      "sha256": "f3a90efc4064c762d75bad7769756d1f4a0470f76c809dbd344a392d70cb841f"
+    },
+    "stdout": {
+      "witness": "F2_B_complete_development_verifier_R3_stdout",
+      "bytes": 74638,
+      "sha256": "35f7047b4b236a6bef5871a40fcdcb1909f418b39a8e6be48119e7fd1ac5b479"
+    },
+    "stderr": {
+      "witness": "F2_B_complete_development_verifier_R3_stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "exitCode": 0,
+    "timeout": false,
+    "startedAtUtc": "2026-10-12T20:13:03.7217641Z",
+    "finishedAtUtc": "2026-10-12T20:13:05.6939959Z",
+    "review": {
+      "witness": "F2_B_complete_development_verifier_R3_actual_review",
+      "bytes": 21751,
+      "sha256": "e60e901412f899deaa00c2e47422ede0259fd9f7c9ad26f32ea4eae3ec76b2c3"
+    },
+    "currentTableMatchesActual": true
+  },
+  "preservedFailure": {
+    "receipt": {
+      "witness": "F2_B_prior_failed_development_verifier_R2_receipt",
+      "bytes": 1903,
+      "sha256": "a7503ed95b5a9db1d3d76c7abc22199b847f5393bec47e1f161703e3420558a8"
+    },
+    "stdout": {
+      "witness": "F2_B_prior_failed_development_verifier_R2_stdout",
+      "bytes": 20914,
+      "sha256": "e0a37087faa79ad6cbd3062548d573c46dc4a706fc74aec1088341e6386b6dc2"
+    },
+    "stderr": {
+      "witness": "F2_B_prior_failed_development_verifier_R2_stderr",
+      "bytes": 24900,
+      "sha256": "8196ac18bb115b46653353415944ba6269270cd2635d0b5068d0539f51bcdb61"
+    },
+    "exitCode": 1,
+    "timeout": false,
+    "startedAtUtc": "2026-10-12T20:03:34.2182671Z",
+    "finishedAtUtc": "2026-10-12T20:03:36.2553227Z",
+    "status": "FAILED_AFTER_160_ORDINARY_TESTS_BEFORE_PROFILE_TYPE_GATE",
+    "meaning": "The first default compiler messages used a different namespace representation. An explicit unmodified normal-host run supplied a separately reviewed actual table; no expected diagnostic was invented. The historical failure remains unchanged."
+  },
+  "defaultSdk": {
+    "savedIdentityPaths": 314,
+    "newSdkBuildByMetadataAuthor": false,
+    "defaultExportsUnchanged": true
+  },
+  "acceptance": {
+    "sourceProfile": "passed",
+    "linearTimelineSourceAdmission": "passed",
+    "coreCompatibility": "not_run",
+    "poseNumerics": "not_run",
+    "resourceIdentity": "not_run",
+    "playback": "not_run",
+    "rendering": "not_run",
+    "licenseEntitlement": "unverified"
+  },
+  "controlledFaults": {
+    "sharedSnapshotAndViewOnce": "PENDING_CONTROL_MECHANISM",
+    "sourceViewFailure": "PENDING_CONTROL_MECHANISM",
+    "internalFailure": "PENDING_CONTROL_MECHANISM",
+    "ordinaryInputCoverageIsNotControlledFaultCoverage": true
+  },
+  "currentPublicDocuments": {
+    "status": "INDEPENDENT_FINITE_READING_SOURCE_ACCEPTED_HISTORICAL_DOCUMENT_CUTOFFS_RETAINED",
+    "files": [
+      {
+        "path": "knowledge-base/en/docs/spine-linear-profile-contract.md",
+        "bytes": 19210,
+        "sha256": "7c67c33cbd598d90b777eb8cae06899a493d53eb5347109f55bad5cc99ce8cc5"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/Spine线性动画源规格契约.md",
+        "bytes": 18103,
+        "sha256": "911c8c3725ca83b116fd5e8c5657ae6490f31a9691e250a77917553b2e6a589d"
+      },
+      {
+        "path": "knowledge-base/en/docs/spine-linear-profile-evidence.md",
+        "bytes": 11664,
+        "sha256": "98c2a7358ff21698e9148d051d01772d8caf4aff7d311cf5d3514f872ebf22f3"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/Spine线性动画源规格证据.md",
+        "bytes": 10278,
+        "sha256": "21c2712e1d0e8b9524d29d4cb97cea7df8e2d60ca1f8b841837ee5f9ba7c5488"
+      }
+    ],
+    "authorManifest": {
+      "witness": "F2_B_public_document_R2_author_manifest",
+      "bytes": 14330,
+      "sha256": "dc9105df14c2cbb0efb1ea652f5eb4b858f05b9fd690a27bfb01e5eccf03636f"
+    },
+    "sourceReview": {
+      "witness": "F2_B_public_document_R2_independent_reading_review",
+      "bytes": 6252,
+      "sha256": "f7655777e973eb729ca56497991787fd9b1ef059ffe631a1d5012447a03cd63b"
+    },
+    "authorReportIsIndependentPass": false
+  },
+  "priorDelivery": {
+    "engineeringLabel": "0.42.0",
+    "status": "ACTUAL_0_42_F2_A_DELIVERY_SUCCESSOR",
+    "source": {
+      "sha": "af1a4ba0894f91eac5383292e59fb17b2c78d187",
+      "tree": "319de5686631afe3213699f9fc2a4a424d7bcbdf",
+      "files": 48
+    },
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/29",
+    "main": {
+      "head": "e7a82283ef02b57976e5a94e10306fc6aee516b5",
+      "tree": "319de5686631afe3213699f9fc2a4a424d7bcbdf"
+    },
+    "mandatoryPushHook": {
+      "exitCode": 0,
+      "publicationTests": 63,
+      "coreTests": 2748,
+      "experimentTests": 22
+    },
+    "remoteChecks": {
+      "statusCount": 0,
+      "checkRuns": 0,
+      "remoteCIPassClaim": false
+    },
+    "independentlyReviewed": {
+      "witness": "F2_A_0.42_actual_delivery_review",
+      "bytes": 30222,
+      "sha256": "cfe0a836962c137db63741c2546f2c720a97467be7b9a6e7733cde1729b64013"
+    },
+    "historicalPendingCutoffsRetained": true
+  },
+  "officialReference": {
+    "runtimeSeries": "4.3",
+    "runtimeVersion": "4.3.13",
+    "runtimeLicenseUrl": "https://esotericsoftware.com/spine-runtimes-license",
+    "editorLicenseUrl": "https://esotericsoftware.com/spine-editor-license",
+    "officialLicensePagesLastUpdated": "2025-04-05",
+    "entitlement": "unverified",
+    "upstreamCodeAndLicensePayloadBundled": false
+  },
+  "publication": {
+    "metadataAuthoring": "SOURCE_ONLY_NOT_RUN",
+    "fullPrepush": "PENDING",
+    "mandatoryPushHook": "PENDING",
+    "pullRequest": "PENDING",
+    "Main": "PENDING",
+    "remoteCI": "PENDING"
+  },
+  "fullSpineR020V020": "OPEN",
+  "migrationR008V006": "OPEN",
+  "historicalCutoffsPreserved": true
+}

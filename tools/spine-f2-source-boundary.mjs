@@ -7,9 +7,10 @@ import { version } from 'typescript';
 import { API } from 'typescript/unstable/sync';
 import { SyntaxKind as K } from 'typescript/unstable/ast';
 
-const modules = ['index.ts', 'source-plan.ts', 'source-view.ts'];
+const modules = ['index.ts', 'source-plan.ts', 'source-view.ts', 'profile-plan.ts', 'profile-source.ts'];
 const types = ['F2MeshSourceDiagnosticCode', 'F2MeshSourceDiagnostic', 'F2MeshSourceSummary',
-  'F2SetupReference', 'F2MeshSourcePlan', 'F2MeshSourceResult'].sort();
+  'F2SetupReference', 'F2MeshSourcePlan', 'F2MeshSourceResult', 'F2MeshProfileDiagnosticCode',
+  'F2MeshProfileDiagnostic', 'F2MeshProfilePlan', 'F2MeshProfileResult'].sort();
 const experiment = 'knowledge-base/experiments/spine-f2';
 const fail = reason => { throw new Error('F2_BOUNDARY_' + reason); };
 const plain = value => value !== null && typeof value === 'object'
@@ -59,6 +60,19 @@ const expectedImports = {
     ['jsonc-parser', 'type', ['JSONPath', 'JSONVisitor']],
     ['@egret/project/spine', 'type', ['SPINE_IMPORT_LIMITS', 'SpineSourceSpan']],
   ],
+  'profile-plan.ts': [
+    ['@egret/project/spine', 'type', ['SpineImportInput', 'SpineImportDiagnostic', 'SpineSourceSpan']],
+    ['./source-plan.js', 'value', ['prepareF2MeshSource']],
+    ['./source-plan.js', 'type', ['F2MeshSourcePlan', 'F2MeshSourceResult']],
+    ['./profile-source.js', 'value', ['qualifyF2Profile', 'createProfileInternalDiagnostic']],
+  ],
+  'profile-source.ts': [
+    ['@egret/project/spine', 'type', ['SpineSourceSpan']],
+    ['./source-plan.js', 'type', ['F2MeshSourcePlan']],
+    ['./profile-plan.js', 'type', ['F2MeshProfileDiagnostic', 'F2MeshProfileDiagnosticCode', 'F2MeshProfilePlan']],
+    ['./source-view.js', 'value', ['sourceProperty']],
+    ['./source-view.js', 'type', ['SourceNode']],
+  ],
 };
 const normalizedImports = rows => rows.map(([route, phase, names]) =>
   JSON.stringify([route, phase, [...names].sort()])).sort();
@@ -100,19 +114,25 @@ function imports(file, module) {
 
 function entry(file) {
   const values = [], erased = [], edges = [];
+  // Every public name belongs to its specified module and erasure phase.
+  const routes = new Map([
+    ['./source-plan.js', { values: ['createF2MeshSourcePlan'], types: types.filter(name => !name.startsWith('F2MeshProfile')) }],
+    ['./profile-plan.js', { values: ['createF2MeshProfilePlan'], types: types.filter(name => name.startsWith('F2MeshProfile')) }],
+  ]);
   for (const node of file.statements) {
     if (node.kind !== K.ExportDeclaration || node.moduleSpecifier?.kind !== K.StringLiteral
-      || node.moduleSpecifier.text !== './source-plan.js' || node.attributes !== undefined
-      || node.exportClause?.kind !== K.NamedExports) fail('ENTRY');
+      || node.attributes !== undefined || node.exportClause?.kind !== K.NamedExports) fail('ENTRY');
+    const allowed = routes.get(node.moduleSpecifier.text);
+    if (allowed === undefined) fail('ENTRY');
     edges.push({ file: 'index.ts', route: node.moduleSpecifier.text, phase: node.isTypeOnly ? 'type' : 'value' });
     for (const element of node.exportClause.elements) {
       if (element.propertyName !== undefined || element.isTypeOnly && !node.isTypeOnly) fail('ENTRY');
       const name = nameOf(element.name);
-      if (name === undefined) fail('ENTRY');
+      if (name === undefined || !(node.isTypeOnly ? allowed.types : allowed.values).includes(name)) fail('ENTRY');
       (node.isTypeOnly ? erased : values).push(name);
     }
   }
-  if (!equal(values.sort(), ['createF2MeshSourcePlan']) || !equal(erased.sort(), types)) fail('ENTRY');
+  if (!equal(values.sort(), ['createF2MeshProfilePlan', 'createF2MeshSourcePlan']) || !equal(erased.sort(), types)) fail('ENTRY');
   return edges;
 }
 
@@ -168,7 +188,7 @@ export function checkF2SourceBoundary(input) {
     const sourcePins = modules.map(name => ({ file: name,
       sha256: createHash('sha256').update(input.sources[name]).digest('hex') }));
     return { status: 'F2_SOURCE_BOUNDARY_PASS', compilerVersion: version, sourcePins,
-      publicValues: 1, publicTypes: 6, modules: 3, graph,
+      publicValues: 2, publicTypes: types.length, modules: modules.length, graph,
       scope: 'Source AST/configuration/declared dependency only; no product execution or rendering acceptance.' };
   } finally {
     try { snapshot?.dispose(); } finally { api.close(); }

@@ -9,3 +9,11 @@ export type {
   F2MeshSourcePlan,
   F2MeshSourceResult,
 } from './source-plan.js';
+
+export { createF2MeshProfilePlan } from './profile-plan.js';
+export type {
+  F2MeshProfileDiagnosticCode,
+  F2MeshProfileDiagnostic,
+  F2MeshProfilePlan,
+  F2MeshProfileResult,
+} from './profile-plan.js';

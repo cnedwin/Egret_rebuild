@@ -47,3 +47,9 @@ F2-A 增加了需主动启用的开发实验 `knowledge-base/experiments/spine-f
 当前根 `package.json` 为 **762 字节**，SHA-256 `b522c278e5f0b4070fec73da2aa336da5c57a4dc189c0855d9e5770f879009bd`；经评审的修改增加了开发验证 script。另行评审的 `tools/verify.mjs` 修改在既有验证阶段之后加入该入口。**691 字节**的根文件身份只在原截止时点有效。依赖版本与 lockfile 保持不变。共享 JSON 区分原有 **21 文件**源码范围和当前 **15 文件**开发评审范围；新增准入的源码边界测试不会追加入原测试清单。
 
 对于本次开发执行，重新编译之前保存的 **6** 份实验构建产物与之后的 **6** 份产物，其字节数及 SHA-256 均相同。全部 **314** 份已保存 SDK 构建产物身份也继续一致。这次新观察到的等式没有补造较早行为后继缺失的快照。有限源码边界控制与这次开发入口在新截止时点已经接受；原待验证字段继续作为历史保留。全量 **0.42.0** pre-push 检查、GitHub 交付及远端 CI 仍为 **PENDING**。两项故障控制及原先开放的 profile、deform、资源、Core、渲染、许可、手机/native 和 **R020/V020** 边界保持原状态。
+
+<!-- F2-A-ACTUAL-DELIVERY-0.42.0-BEGIN -->
+## Recorded 0.42.0 delivery — Spine F2-A / 已记录的 0.42.0 交付 — Spine F2-A
+
+0.42.0 已经由 [PR #29](https://github.com/cnedwin/Egret_rebuild/pull/29) 合并；Main `e7a82283ef02b57976e5a94e10306fc6aee516b5` 与 tree `319de5686631afe3213699f9fc2a4a424d7bcbdf` 已回读。其必要推送 hook 通过 63 项 publication、2748 项 core 与 22 项实验检查，分别计数。远程 status/check-run 均为 0，不构成远端 CI PASS。较早 Pending 截止点继续保留。
+<!-- F2-A-ACTUAL-DELIVERY-0.42.0-END -->

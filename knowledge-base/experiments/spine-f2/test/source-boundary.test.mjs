@@ -11,7 +11,7 @@ const baseline = () => {
   const result = checkF2SourceBoundary(input);
   assert.equal(result.status, 'F2_SOURCE_BOUNDARY_PASS');
   assert.equal(result.compilerVersion, '7.0.2');
-  assert.deepEqual([result.publicValues, result.publicTypes, result.modules], [1, 6, 3]);
+  assert.deepEqual([result.publicValues, result.publicTypes, result.modules], [2, 10, 5]);
   return input;
 };
 const replaceOnce = (text, before, after) => {
@@ -28,31 +28,44 @@ const refusal = (input, reason) => assert.throws(() => checkF2SourceBoundary(inp
   return true;
 });
 
-test('F2B00 complete current source boundary baseline', () => { baseline(); });
-test('F2B01 private SP1 import is refused at the import boundary', () => {
+test('F2S00 complete current source boundary baseline', () => { baseline(); });
+test('F2S01 private SP1 import is refused at the import boundary', () => {
   const input = baseline();
   input.sources['source-plan.ts'] = replaceOnce(input.sources['source-plan.ts'],
     "import { createSpineImportPlan, SPINE_IMPORT_LIMITS } from '@egret/project/spine';",
     "import { createSpineImportPlan, SPINE_IMPORT_LIMITS } from '@egret/project/dist/spine/preflight.js';");
   refusal(input, 'F2_BOUNDARY_IMPORT');
 });
-test('F2B02 Core import is refused at the import boundary', () => {
+test('F2S02 Core import is refused at the import boundary', () => {
   const input = baseline();
   input.sources['source-plan.ts'] = "import { Skeleton } from '@esotericsoftware/spine-core';\n" + input.sources['source-plan.ts'];
   refusal(input, 'F2_BOUNDARY_IMPORT');
 });
-test('F2B03 DOM library is refused before parsing source', () => {
+test('F2S03 DOM library is refused before parsing source', () => {
   const input = baseline();
   input.config.compilerOptions.lib.push('DOM');
   refusal(input, 'F2_BOUNDARY_CONFIG');
 });
-test('F2B04 extra entry value is refused by the exact entry inventory', () => {
+test('F2S04 extra entry value is refused by the exact entry inventory', () => {
   const input = baseline();
   input.sources['index.ts'] += '\nexport const extraEntryValue = 1;\n';
   refusal(input, 'F2_BOUNDARY_ENTRY');
 });
-test('F2B05 Uint16 conversion is refused before entry admission', () => {
+test('F2S05 Uint16 conversion is refused before entry admission', () => {
   const input = baseline();
   input.sources['source-plan.ts'] += '\nconst forbiddenIndexNarrowing = new Uint16Array([65536]);\n';
   refusal(input, 'F2_BOUNDARY_NARROWING');
+});
+
+test('F2S06 profile module Float32 storage is refused while scalar qualification remains allowed', () => {
+  const input = baseline();
+  input.sources['profile-source.ts'] += '\nconst forbiddenTimeStorage = new Float32Array([0, 1]);\n';
+  refusal(input, 'F2_BOUNDARY_NARROWING');
+});
+test('F2S07 an unchanged entry name cannot move to the wrong source module', () => {
+  const input = baseline();
+  input.sources['index.ts'] = replaceOnce(input.sources['index.ts'],
+    "export { createF2MeshProfilePlan } from './profile-plan.js';",
+    "export { createF2MeshProfilePlan } from './source-plan.js';");
+  refusal(input, 'F2_BOUNDARY_ENTRY');
 });

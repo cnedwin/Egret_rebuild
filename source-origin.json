@@ -602,8 +602,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/CHANGELOG.md",
-      "bytes": 57835,
-      "sha256": "af4d4b5ddefd54345ef59eadd734d7202bc36ee33a85175d3fdefd954282e6d6",
+      "bytes": 59283,
+      "sha256": "f27fa0b720750624253565a5142fe1ef10d9f44035e060356841d4fcdfda0449",
       "identityHistory": [
         {
           "bytes": 25611,
@@ -696,6 +696,11 @@
           "bytes": 56250,
           "sha256": "3076293559107c9780c4949f90434ea42d59b34d56dc4b7394b389df9f32848e",
           "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+        },
+        {
+          "bytes": 57835,
+          "sha256": "af4d4b5ddefd54345ef59eadd734d7202bc36ee33a85175d3fdefd954282e6d6",
+          "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
         }
       ]
     },
@@ -1360,8 +1365,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/Cns/README.md",
-      "bytes": 30358,
-      "sha256": "f1a5435204e2c7a1b8d49f12355c0c8165fe6f8185bd3dc18682078a1b5ab361",
+      "bytes": 32992,
+      "sha256": "91ae89f61f70dbf2d6117d2a3f6e3ff8ca4ca16525d085b85a6838277b3faf0e",
       "identityHistory": [
         {
           "bytes": 6319,
@@ -1465,14 +1470,19 @@
           "bytes": 30358,
           "sha256": "a2a81102e9a14fbee24352fef6c3036a29bbdc040b9fe6653320a1388f7a1051",
           "scope": "Preserved F2-A R1 public curation snapshot before latest-first README placement; not a GitHub delivery identity."
+        },
+        {
+          "bytes": 30358,
+          "sha256": "f1a5435204e2c7a1b8d49f12355c0c8165fe6f8185bd3dc18682078a1b5ab361",
+          "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
         }
       ]
     },
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/Cns/registry/交付.json",
-      "bytes": 139751,
-      "sha256": "3a0298da6be4625e7bc220a5b527da65585aefe5ff21f7a26bd48f37c2d3c377",
+      "bytes": 143644,
+      "sha256": "0e543ce0f60e4a79f104a3460b2bec1b0c04e14b814686328accb68632ecbbf5",
       "identityHistory": [
         {
           "bytes": 50664,
@@ -1591,6 +1601,11 @@
           "bytes": 136594,
           "sha256": "882363aebc27fae99dc9a52a924801e4c45e53a998c3e13283f7e8610f8c55b3",
           "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
+        },
+        {
+          "bytes": 139751,
+          "sha256": "3a0298da6be4625e7bc220a5b527da65585aefe5ff21f7a26bd48f37c2d3c377",
+          "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
         }
       ]
     },
@@ -1621,8 +1636,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/Cns/registry/来源.json",
-      "bytes": 154008,
-      "sha256": "92b1e960b0eb7b658e1560a96e6a86937cfa83197c1eb5480cd166ef1e70d395",
+      "bytes": 158311,
+      "sha256": "3e0bea95d0229a656ac5b2aa7b835f9b94bb7e8fdfb44785f59ac9a117399794",
       "identityHistory": [
         {
           "bytes": 74667,
@@ -1736,14 +1751,19 @@
           "bytes": 150483,
           "sha256": "83c82ba93133ac85a68fd366a7af38bbcae1fd3fe8873d74b32fe76bd7bfd3e3",
           "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
+        },
+        {
+          "bytes": 154008,
+          "sha256": "92b1e960b0eb7b658e1560a96e6a86937cfa83197c1eb5480cd166ef1e70d395",
+          "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
         }
       ]
     },
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/Cns/registry/需求.json",
-      "bytes": 32244,
-      "sha256": "f5c53dc6e3dc4091f388f37f8c40c4211bea555674eb1af4a2182b8e0b826a3c",
+      "bytes": 35197,
+      "sha256": "d969946187f80c757bc1628bc3271b11fd024c9f032fdf82c76ed12a40165d77",
       "identityHistory": [
         {
           "bytes": 13892,
@@ -1790,6 +1810,11 @@
           "bytes": 29851,
           "sha256": "d14ab781082159d7d3286986f32f94c5fb19db45a6a3e320b28226092001960d",
           "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
+        },
+        {
+          "bytes": 32244,
+          "sha256": "f5c53dc6e3dc4091f388f37f8c40c4211bea555674eb1af4a2182b8e0b826a3c",
+          "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
         }
       ]
     },
@@ -1820,8 +1845,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/Cns/当前版本.json",
-      "bytes": 118710,
-      "sha256": "92ac8ed2159defa7dfa4c22794793ade0d0aa5ad2c1d076f9cf2cd0eb0509497",
+      "bytes": 121620,
+      "sha256": "0feba3376947feca504a4e45fc8285968d9415d45cec4e33b151640863a5a136",
       "identityHistory": [
         {
           "bytes": 31425,
@@ -1930,6 +1955,11 @@
           "bytes": 116424,
           "sha256": "907e58afeb86f50febb700b4775b90979af97629d464903a74c3d33f2e9b3010",
           "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
+        },
+        {
+          "bytes": 118710,
+          "sha256": "92ac8ed2159defa7dfa4c22794793ade0d0aa5ad2c1d076f9cf2cd0eb0509497",
+          "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
         }
       ]
     },
@@ -1966,8 +1996,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/CHANGELOG.md",
-      "bytes": 67370,
-      "sha256": "0b3c80923a41a39d29e62051d7220b8e8f6058f803706ad9c403fb4f0117d3be",
+      "bytes": 68939,
+      "sha256": "ac10555210463b08ac6b26d0a59206cbb337372ba4c534d0e032da8dbdcabcf6",
       "identityHistory": [
         {
           "bytes": 31389,
@@ -2060,6 +2090,11 @@
           "bytes": 65619,
           "sha256": "05ce4ab71729aeb4cf80bef9259626bf30ff888da9d61bc98b176d9aa3510dbc",
           "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+        },
+        {
+          "bytes": 67370,
+          "sha256": "0b3c80923a41a39d29e62051d7220b8e8f6058f803706ad9c403fb4f0117d3be",
+          "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
         }
       ]
     },
@@ -2072,8 +2107,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/en/current-version.json",
-      "bytes": 119570,
-      "sha256": "72dd6b79b98eb70c8e9937c4248a067f0ebb723f33b2fa4c2e4edbbb566756f9",
+      "bytes": 122501,
+      "sha256": "c14fc2cacc80c032af86d232d5ebadbf588de1d336bb653ce1c7dcf4b15e5e1c",
       "identityHistory": [
         {
           "bytes": 31946,
@@ -2182,6 +2217,11 @@
           "bytes": 117273,
           "sha256": "0d74c0c9d19cafdb02a10017310f37befc108eb0c4ae3434a72a6cc8b0a1a269",
           "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
+        },
+        {
+          "bytes": 119570,
+          "sha256": "72dd6b79b98eb70c8e9937c4248a067f0ebb723f33b2fa4c2e4edbbb566756f9",
+          "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
         }
       ]
     },
@@ -2840,8 +2880,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/en/README.md",
-      "bytes": 34027,
-      "sha256": "497543e44b8e377ab97dc85a1105d30c1b0753f90891de888d0a99223c31fc85",
+      "bytes": 36663,
+      "sha256": "af115ffcbd261ce231fd77fff3ee99ad8a93969699fd9da8062e0047606f3d15",
       "identityHistory": [
         {
           "bytes": 7397,
@@ -2950,6 +2990,11 @@
           "bytes": 34027,
           "sha256": "b6dfeff240f8e865bcce2f1cf35cc459ad105fd9b3a7e4070398c4e3f05d8d75",
           "scope": "Preserved F2-A R1 public curation snapshot before latest-first README placement; not a GitHub delivery identity."
+        },
+        {
+          "bytes": 34027,
+          "sha256": "497543e44b8e377ab97dc85a1105d30c1b0753f90891de888d0a99223c31fc85",
+          "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
         }
       ]
     },
@@ -2974,8 +3019,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/en/registry/deliverables.json",
-      "bytes": 145452,
-      "sha256": "92fb8cef3f234f1f91c636d8235cf7c0c3283562963db106e60d0905d78e41ee",
+      "bytes": 149379,
+      "sha256": "7c105d019acf83fbdfad4372e16667c3338aff803174e388b9945ba31aadea07",
       "identityHistory": [
         {
           "bytes": 54446,
@@ -3099,6 +3144,11 @@
           "bytes": 142247,
           "sha256": "bd094c86323fbc20bec4a5562a407822de2198d4ff31852e65d7cab22f15438e",
           "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
+        },
+        {
+          "bytes": 145452,
+          "sha256": "92fb8cef3f234f1f91c636d8235cf7c0c3283562963db106e60d0905d78e41ee",
+          "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
         }
       ]
     },
@@ -3111,8 +3161,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/en/registry/requirements.json",
-      "bytes": 34461,
-      "sha256": "e42adc95041da4fac9901b31f6b22f1aed58149a626111bf1aca19482834f59a",
+      "bytes": 37428,
+      "sha256": "3b7d7f0255b11e1a1b0415fb81820c7920b4a37b07a81b00722bd8b55f7caab2",
       "identityHistory": [
         {
           "bytes": 15989,
@@ -3159,14 +3209,19 @@
           "bytes": 32069,
           "sha256": "578a79fad14e048dfd4bd2e114c11fcb71662593dc58e31a427e7d7a20dcf9b2",
           "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
+        },
+        {
+          "bytes": 34461,
+          "sha256": "e42adc95041da4fac9901b31f6b22f1aed58149a626111bf1aca19482834f59a",
+          "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
         }
       ]
     },
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/en/registry/sources.json",
-      "bytes": 163278,
-      "sha256": "d398e3338c2b3071b0bcdfb1d4b1cf14de260ddc12194a270b9ba2d410d64458",
+      "bytes": 167634,
+      "sha256": "5cc5768e8c15b5e84283cccfa0db4013e5d5e593be26ebdbac979ca995eeadbf",
       "identityHistory": [
         {
           "bytes": 82270,
@@ -3280,6 +3335,11 @@
           "bytes": 159707,
           "sha256": "809bc53e0c1c66cebbc5b9c21ac4f40ee9378abda46a136676f6a2f68e281ae4",
           "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
+        },
+        {
+          "bytes": 163278,
+          "sha256": "d398e3338c2b3071b0bcdfb1d4b1cf14de260ddc12194a270b9ba2d410d64458",
+          "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
         }
       ]
     },
@@ -3424,8 +3484,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "87631fcaa0404c2b1dca11adcca8a0a988775b0f31c6234b4483ca651c45068b",
-      "bytes": 224467,
+      "sha256": "649c726d1768c73fda5c89154807430cc41c437596ec1806bcc1cdc7ce0afd2f",
+      "bytes": 230525,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -3585,6 +3645,11 @@
           "bytes": 224467,
           "sha256": "d6eff8fd76202066d417e6fb3a8a22037a1d75b7b4c6cdf4a175a9167d577109",
           "scope": "Preserved F2-A link-corrected snapshot before naming repository-root license files within knowledge-base reading boundaries; not a GitHub delivery identity."
+        },
+        {
+          "bytes": 224467,
+          "sha256": "87631fcaa0404c2b1dca11adcca8a0a988775b0f31c6234b4483ca651c45068b",
+          "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
         }
       ]
     },
@@ -4443,8 +4508,8 @@
     {
       "path": "README.md",
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
-      "sha256": "4328f09f5b1738ebff62f4e591f8b7858cc0b00fd5d2ed3b2a524b1b700b0a1f",
-      "bytes": 73687,
+      "sha256": "950c6d9826ecf8db1ea8afdfe609b8b973baacf3f971f5860d048a9439b69949",
+      "bytes": 76383,
       "previousRevisionSha256": "199156443d499d5012f1224263a1a3ee9994e5ba38ee067bceeb2ad865ae8167",
       "previousLayoutPath": "README.en.md",
       "previousLayoutSha256": "f40ec41ca699cd0b9138fbdf4a268080038f583ae11e78c4f37093a6b7095f57",
@@ -4561,13 +4626,18 @@
           "bytes": 73687,
           "sha256": "9485c631a09cdcecfdf94ab9f88f185ce9c52c305acb11023b4135d816b3789e",
           "scope": "Preserved F2-A R1 public curation snapshot before latest-first README placement; not a GitHub delivery identity."
+        },
+        {
+          "bytes": 73687,
+          "sha256": "4328f09f5b1738ebff62f4e591f8b7858cc0b00fd5d2ed3b2a524b1b700b0a1f",
+          "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
         }
       ]
     },
     {
       "path": "README.zh-CN.md",
-      "sha256": "6c502b1a07a87ae15789845393e3737fa7b4a41df79ef1b1a867b2cb7b7c563b",
-      "bytes": 72788,
+      "sha256": "e08847e13278eba9da0d2294694dda3bdb193125b067c900e75f437300f0c615",
+      "bytes": 75484,
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "previousPublicSha256": "7ec80b8575a700b6a2628eb0322f2e770bb2284859f68ec5e0eb6530154a6699",
       "previousRevisionSha256": "7a1d72019db7cb6075d7c3a3bd4075f7c069d527b6e31d992a69333cb126b6c3",
@@ -4691,6 +4761,11 @@
           "bytes": 72788,
           "sha256": "d7549b61baec3b677ff539ef7799779b1d9d5e109c4e2f579492c480bce720f5",
           "scope": "Preserved F2-A R1 public curation snapshot before latest-first README placement; not a GitHub delivery identity."
+        },
+        {
+          "bytes": 72788,
+          "sha256": "6c502b1a07a87ae15789845393e3737fa7b4a41df79ef1b1a867b2cb7b7c563b",
+          "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
         }
       ]
     },
@@ -8663,33 +8738,68 @@
     },
     {
       "path": "tools/verify-spine-f2-source.mjs",
-      "bytes": 7112,
-      "sha256": "441328b7de094b1432f2197fa8c4017df7ae4d551eb00052d6d3b8e0d8ca14c0",
-      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+      "bytes": 8883,
+      "sha256": "86bd8025ad2f145040f6816a0053d616e6b1654943474eb201b9e28a8ad51fa9",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload.",
+      "identityHistory": [
+        {
+          "bytes": 7112,
+          "sha256": "441328b7de094b1432f2197fa8c4017df7ae4d551eb00052d6d3b8e0d8ca14c0",
+          "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
+        }
+      ]
     },
     {
       "path": "tools/spine-f2-source-boundary.mjs",
-      "bytes": 9900,
-      "sha256": "fb70772a371b19724ac681b888d8c459cb361e6862d949c71bbefa6a22e27037",
-      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+      "bytes": 11311,
+      "sha256": "5ee0df1f0e79b34c2611fb0612ad64920245c8dc86f0db0487148472e3cb4a5b",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload.",
+      "identityHistory": [
+        {
+          "bytes": 9900,
+          "sha256": "fb70772a371b19724ac681b888d8c459cb361e6862d949c71bbefa6a22e27037",
+          "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
+        }
+      ]
     },
     {
       "path": "knowledge-base/experiments/spine-f2/test/source-boundary.test.mjs",
-      "bytes": 2822,
-      "sha256": "3ab72f229629e4926fd59874f0c84b306357eebd524692e0a1b7a8ac2257d6cd",
-      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+      "bytes": 3469,
+      "sha256": "cee37087e71a6925bc151fb4efe4dfb2fecb1e2eb07fdf5f705025d6336f7aa8",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload.",
+      "identityHistory": [
+        {
+          "bytes": 2822,
+          "sha256": "3ab72f229629e4926fd59874f0c84b306357eebd524692e0a1b7a8ac2257d6cd",
+          "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
+        }
+      ]
     },
     {
       "path": "knowledge-base/experiments/spine-f2/src/index.ts",
-      "bytes": 371,
-      "sha256": "ad5a1a817040ed24984d0a432fed5137ea0a5764f13fee390bf0ce9159120c2d",
-      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+      "bytes": 577,
+      "sha256": "51d992b5a6ab5f75f203b8bcd289d4af9d67b80935c2cd26b2d8031368886b2c",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload.",
+      "identityHistory": [
+        {
+          "bytes": 371,
+          "sha256": "ad5a1a817040ed24984d0a432fed5137ea0a5764f13fee390bf0ce9159120c2d",
+          "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
+        }
+      ]
     },
     {
       "path": "knowledge-base/experiments/spine-f2/src/source-plan.ts",
-      "bytes": 21562,
-      "sha256": "a75d31f623471e826a2d47f3dc5c3bbc630909e6848d2e30dd37dbf085badf06",
-      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+      "bytes": 22487,
+      "sha256": "4a1e57abdaf93a42236f72bcf6fef1569fe039efff1f56378862d539a30be728",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload.",
+      "identityHistory": [
+        {
+          "bytes": 21562,
+          "sha256": "a75d31f623471e826a2d47f3dc5c3bbc630909e6848d2e30dd37dbf085badf06",
+          "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
+        }
+      ]
     },
     {
       "path": "knowledge-base/experiments/spine-f2/src/source-view.ts",
@@ -8801,27 +8911,55 @@
     },
     {
       "path": "knowledge-base/en/docs/spine-mesh-source-plan-contract.md",
-      "bytes": 14384,
-      "sha256": "32669f086d7450d2e817969fff38bb99672b479f348d2b744ce9b055ccfa0a8f",
-      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+      "bytes": 14570,
+      "sha256": "7a1f7209aa2fb0aa371103ecfebdabd519c70d40367b2272d6fd4ebb86d6c5a4",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload.",
+      "identityHistory": [
+        {
+          "bytes": 14384,
+          "sha256": "32669f086d7450d2e817969fff38bb99672b479f348d2b744ce9b055ccfa0a8f",
+          "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
+        }
+      ]
     },
     {
       "path": "knowledge-base/Cns/docs/Spine网格源规划契约.md",
-      "bytes": 13247,
-      "sha256": "4b31939f91adb0b06f5b86d2697374adf04d8a2718153a7920f53beb2be62668",
-      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+      "bytes": 13420,
+      "sha256": "cb45fad6aa79a54f8637dc51dd51834cb4d799d161f0a842b8a53a8947216089",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload.",
+      "identityHistory": [
+        {
+          "bytes": 13247,
+          "sha256": "4b31939f91adb0b06f5b86d2697374adf04d8a2718153a7920f53beb2be62668",
+          "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
+        }
+      ]
     },
     {
       "path": "knowledge-base/en/docs/spine-mesh-source-plan-evidence.md",
-      "bytes": 10011,
-      "sha256": "3a402c44813b7d9f9dc7df3ef836e3b9732761d4a4a06a716e9cbf0699dfde6e",
-      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+      "bytes": 10610,
+      "sha256": "7a4f4dea64fff8643d9a80a93e4a66d78a81700ab50e2d7a0c2fee2095207523",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload.",
+      "identityHistory": [
+        {
+          "bytes": 10011,
+          "sha256": "3a402c44813b7d9f9dc7df3ef836e3b9732761d4a4a06a716e9cbf0699dfde6e",
+          "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
+        }
+      ]
     },
     {
       "path": "knowledge-base/Cns/docs/Spine网格源规划证据.md",
-      "bytes": 9016,
-      "sha256": "573116ff1c5fb92336c198f9f49de7ea7a05a14ca66094b2fec1a9515bd9f64d",
-      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+      "bytes": 9590,
+      "sha256": "d79c1bb560636064d421503ce02094e745990b15e6584c811a1be5d0d5b58701",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload.",
+      "identityHistory": [
+        {
+          "bytes": 9016,
+          "sha256": "573116ff1c5fb92336c198f9f49de7ea7a05a14ca66094b2fec1a9515bd9f64d",
+          "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
+        }
+      ]
     },
     {
       "path": "knowledge-base/evidence/spine-mesh-source-plan-verification.json",
@@ -8831,8 +8969,8 @@
     },
     {
       "path": "knowledge-base/en/experiments/spine-f2/README.md",
-      "bytes": 4155,
-      "sha256": "af23819c584cdfa26557d3911594b20b0b8a711049e904fdff8aaa0f2e555328",
+      "bytes": 5169,
+      "sha256": "e92797a47821729359f40b9a56be6949a11c56960c7518d36c226e3acbd9ab93",
       "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload.",
       "identityHistory": [
         {
@@ -8844,13 +8982,18 @@
           "bytes": 4173,
           "sha256": "d794a222b39d79fa82a5f78355c82e2bf9cc8e0d00fd03175e590a3f25995651",
           "scope": "Preserved F2-A link-corrected snapshot before naming repository-root license files within knowledge-base reading boundaries; not a GitHub delivery identity."
+        },
+        {
+          "bytes": 4155,
+          "sha256": "af23819c584cdfa26557d3911594b20b0b8a711049e904fdff8aaa0f2e555328",
+          "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
         }
       ]
     },
     {
       "path": "knowledge-base/Cns/experiments/spine-f2/README.md",
-      "bytes": 3910,
-      "sha256": "e28e8d259a6ff6014a8a894fc2ff34a2a7d8d0fdd868eafdf2b616688a38a639",
+      "bytes": 4916,
+      "sha256": "fc3e7206aaa25696213eb673b634b7b0d197168dd8bb2a4bcc3ae2946fae4896",
       "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload.",
       "identityHistory": [
         {
@@ -8862,8 +9005,103 @@
           "bytes": 3931,
           "sha256": "122f798d55805b335b417bfea4acf097cbe6eddef65e83656d3df96628160d0b",
           "scope": "Preserved F2-A link-corrected snapshot before naming repository-root license files within knowledge-base reading boundaries; not a GitHub delivery identity."
+        },
+        {
+          "bytes": 3910,
+          "sha256": "e28e8d259a6ff6014a8a894fc2ff34a2a7d8d0fdd868eafdf2b616688a38a639",
+          "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
         }
       ]
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2/src/profile-plan.ts",
+      "bytes": 4718,
+      "sha256": "70ea7129f28ee52ae6f12bcf853c94279c09aff917ec97db83562b3b8875b700",
+      "originRole": "Original first-party F2-B source/types/tests/tooling or bilingual documentation/evidence metadata; Apache-2.0; AI-assisted authorship and bounded source/actual review remain distinct."
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2/src/profile-source.ts",
+      "bytes": 30397,
+      "sha256": "5f2d9ee9b4a5c9f7582643e80eea805de2507373d417b97802ed370df6248d75",
+      "originRole": "Original first-party F2-B source/types/tests/tooling or bilingual documentation/evidence metadata; Apache-2.0; AI-assisted authorship and bounded source/actual review remain distinct."
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2/test/profile-plan.test.mjs",
+      "bytes": 39941,
+      "sha256": "d1cf57915a3c7c17426833f6c24e57c75628b5bc670341e25458d8b75449beb6",
+      "originRole": "Original first-party F2-B source/types/tests/tooling or bilingual documentation/evidence metadata; Apache-2.0; AI-assisted authorship and bounded source/actual review remain distinct."
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2/test/profile-fixtures.mjs",
+      "bytes": 11076,
+      "sha256": "d3c85bb230c466efc6a7b961cea8faafcdd1041ed6e25a863e8862b1852c330c",
+      "originRole": "Original first-party F2-B source/types/tests/tooling or bilingual documentation/evidence metadata; Apache-2.0; AI-assisted authorship and bounded source/actual review remain distinct."
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2/test/profile-api-presence.test.mjs",
+      "bytes": 700,
+      "sha256": "805ffe1fe194c88ac1536060f879cacdb31d41d2420d6e793966179a55f5aa8a",
+      "originRole": "Original first-party F2-B source/types/tests/tooling or bilingual documentation/evidence metadata; Apache-2.0; AI-assisted authorship and bounded source/actual review remain distinct."
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2/type-tests/profile-positive.ts",
+      "bytes": 11675,
+      "sha256": "4a41e55538845a1b274fef053aa3d02c2d927c11c4f230049f77ccb484588e12",
+      "originRole": "Original first-party F2-B source/types/tests/tooling or bilingual documentation/evidence metadata; Apache-2.0; AI-assisted authorship and bounded source/actual review remain distinct."
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2/type-tests/profile-negative.ts",
+      "bytes": 10325,
+      "sha256": "c681d476321838729e4a414316e656153ade6d7c2646ee71bca5853f553a538f",
+      "originRole": "Original first-party F2-B source/types/tests/tooling or bilingual documentation/evidence metadata; Apache-2.0; AI-assisted authorship and bounded source/actual review remain distinct."
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2/type-tests/tsconfig.profile-positive.json",
+      "bytes": 430,
+      "sha256": "06111346e235990cd4cc19989cd7a9f21b8bfe9308543facd18835fc8d45bdd6",
+      "originRole": "Original first-party F2-B source/types/tests/tooling or bilingual documentation/evidence metadata; Apache-2.0; AI-assisted authorship and bounded source/actual review remain distinct."
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2/type-tests/tsconfig.profile-negative.json",
+      "bytes": 430,
+      "sha256": "51c8abe47f1f87b73121efd6522f2292d66ee200675c866ad7c2aaf8a254c772",
+      "originRole": "Original first-party F2-B source/types/tests/tooling or bilingual documentation/evidence metadata; Apache-2.0; AI-assisted authorship and bounded source/actual review remain distinct."
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2/type-tests/profile-negative-expectations.json",
+      "bytes": 29272,
+      "sha256": "e434ff4fdf8c0dd8f4d9c3aa9587cacb73ce7bc62fadf7dd8684a5b01eb18b70",
+      "originRole": "Original first-party F2-B source/types/tests/tooling or bilingual documentation/evidence metadata; Apache-2.0; AI-assisted authorship and bounded source/actual review remain distinct."
+    },
+    {
+      "path": "knowledge-base/en/docs/spine-linear-profile-contract.md",
+      "bytes": 19210,
+      "sha256": "7c67c33cbd598d90b777eb8cae06899a493d53eb5347109f55bad5cc99ce8cc5",
+      "originRole": "Original first-party F2-B source/types/tests/tooling or bilingual documentation/evidence metadata; Apache-2.0; AI-assisted authorship and bounded source/actual review remain distinct."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/Spine线性动画源规格契约.md",
+      "bytes": 18103,
+      "sha256": "911c8c3725ca83b116fd5e8c5657ae6490f31a9691e250a77917553b2e6a589d",
+      "originRole": "Original first-party F2-B source/types/tests/tooling or bilingual documentation/evidence metadata; Apache-2.0; AI-assisted authorship and bounded source/actual review remain distinct."
+    },
+    {
+      "path": "knowledge-base/en/docs/spine-linear-profile-evidence.md",
+      "bytes": 11664,
+      "sha256": "98c2a7358ff21698e9148d051d01772d8caf4aff7d311cf5d3514f872ebf22f3",
+      "originRole": "Original first-party F2-B source/types/tests/tooling or bilingual documentation/evidence metadata; Apache-2.0; AI-assisted authorship and bounded source/actual review remain distinct."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/Spine线性动画源规格证据.md",
+      "bytes": 10278,
+      "sha256": "21c2712e1d0e8b9524d29d4cb97cea7df8e2d60ca1f8b841837ee5f9ba7c5488",
+      "originRole": "Original first-party F2-B source/types/tests/tooling or bilingual documentation/evidence metadata; Apache-2.0; AI-assisted authorship and bounded source/actual review remain distinct."
+    },
+    {
+      "path": "knowledge-base/evidence/spine-linear-profile-verification.json",
+      "bytes": 12189,
+      "sha256": "e8056b33bd59f444e450da7ce59dd116a8123b3d2ed7bac81d1e386f1307714a",
+      "originRole": "Original first-party F2-B source/types/tests/tooling or bilingual documentation/evidence metadata; Apache-2.0; AI-assisted authorship and bounded source/actual review remain distinct."
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",
@@ -14475,6 +14713,224 @@
       "witness": "NS1_0_41_actual_delivery",
       "bytes": 29643,
       "sha256": "39a9e645da096a52c9836bb6e16fe31599a7e5462e66d3ca1de20aa9a42f38c6"
+    },
+    "historicalPendingCutoffsRetained": true
+  },
+  "spineLinearProfileF2BWorkPackage": {
+    "engineeringLabel": "0.43.0",
+    "sourceId": "S096",
+    "deliverableId": "V047",
+    "status": "BOUNDED_F2_B_SOURCE_CPU_TYPES_POLICY_DEVELOPMENT_ACCEPTED_PUBLICATION_PENDING",
+    "record": "knowledge-base/evidence/spine-linear-profile-verification.json",
+    "sourceProfile": "passed",
+    "linearTimelineSourceAdmission": "passed",
+    "ordinaryBehavior": {
+      "tests": 135,
+      "pass": 135,
+      "fail": 0,
+      "skipped": 0
+    },
+    "normalHostTypes": {
+      "positiveDiagnostics": 0,
+      "negativeDiagnostics": 100,
+      "exactObservedTuples": true
+    },
+    "completeDevelopmentVerifier": {
+      "exitCode": 0,
+      "tests": 160,
+      "pass": 160,
+      "fail": 0,
+      "retainedATuples": 39,
+      "profileTuples": 100
+    },
+    "sourceBoundary": {
+      "modules": 5,
+      "publicValues": 2,
+      "publicTypes": 10,
+      "assignedControls": 7
+    },
+    "controlledFaults": "PENDING_CONTROL_MECHANISM",
+    "mandatoryFullPrepush": "PENDING",
+    "mandatoryPushHook": "PENDING",
+    "pullRequestAndMain": "PENDING",
+    "remoteCI": "PENDING",
+    "coreCompatibility": "not_run",
+    "poseNumerics": "not_run",
+    "resourceIdentity": "not_run",
+    "playback": "not_run",
+    "rendering": "not_run",
+    "licenseEntitlement": "unverified",
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "historicalCutoffsPreserved": true,
+    "firstPartyLicense": "Apache-2.0",
+    "origin": "Independent first-party design with AI-assisted implementation and bounded independent review.",
+    "dependencies": {
+      "reuse": "jsonc-parser3.3.1",
+      "license": "MIT",
+      "newDependencies": false,
+      "SDKDependenciesChanged": false,
+      "compiler": "TypeScript7.0.2",
+      "compilerAPIs": "Development tooling only; not a runtime API promise."
+    },
+    "functionalSourcePins": [
+      {
+        "path": "knowledge-base/experiments/spine-f2/src/index.ts",
+        "bytes": 577,
+        "sha256": "51d992b5a6ab5f75f203b8bcd289d4af9d67b80935c2cd26b2d8031368886b2c"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/src/source-plan.ts",
+        "bytes": 22487,
+        "sha256": "4a1e57abdaf93a42236f72bcf6fef1569fe039efff1f56378862d539a30be728"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/src/profile-plan.ts",
+        "bytes": 4718,
+        "sha256": "70ea7129f28ee52ae6f12bcf853c94279c09aff917ec97db83562b3b8875b700"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/src/profile-source.ts",
+        "bytes": 30397,
+        "sha256": "5f2d9ee9b4a5c9f7582643e80eea805de2507373d417b97802ed370df6248d75"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/test/profile-plan.test.mjs",
+        "bytes": 39941,
+        "sha256": "d1cf57915a3c7c17426833f6c24e57c75628b5bc670341e25458d8b75449beb6"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/test/profile-fixtures.mjs",
+        "bytes": 11076,
+        "sha256": "d3c85bb230c466efc6a7b961cea8faafcdd1041ed6e25a863e8862b1852c330c"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/test/profile-api-presence.test.mjs",
+        "bytes": 700,
+        "sha256": "805ffe1fe194c88ac1536060f879cacdb31d41d2420d6e793966179a55f5aa8a"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/type-tests/profile-positive.ts",
+        "bytes": 11675,
+        "sha256": "4a41e55538845a1b274fef053aa3d02c2d927c11c4f230049f77ccb484588e12"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/type-tests/profile-negative.ts",
+        "bytes": 10325,
+        "sha256": "c681d476321838729e4a414316e656153ade6d7c2646ee71bca5853f553a538f"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/type-tests/tsconfig.profile-positive.json",
+        "bytes": 430,
+        "sha256": "06111346e235990cd4cc19989cd7a9f21b8bfe9308543facd18835fc8d45bdd6"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/type-tests/tsconfig.profile-negative.json",
+        "bytes": 430,
+        "sha256": "51c8abe47f1f87b73121efd6522f2292d66ee200675c866ad7c2aaf8a254c772"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/type-tests/profile-negative-expectations.json",
+        "bytes": 29272,
+        "sha256": "e434ff4fdf8c0dd8f4d9c3aa9587cacb73ce7bc62fadf7dd8684a5b01eb18b70"
+      },
+      {
+        "path": "tools/spine-f2-source-boundary.mjs",
+        "bytes": 11311,
+        "sha256": "5ee0df1f0e79b34c2611fb0612ad64920245c8dc86f0db0487148472e3cb4a5b"
+      },
+      {
+        "path": "tools/verify-spine-f2-source.mjs",
+        "bytes": 8883,
+        "sha256": "86bd8025ad2f145040f6816a0053d616e6b1654943474eb201b9e28a8ad51fa9"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/test/source-boundary.test.mjs",
+        "bytes": 3469,
+        "sha256": "cee37087e71a6925bc151fb4efe4dfb2fecb1e2eb07fdf5f705025d6336f7aa8"
+      }
+    ],
+    "publicDocumentSourcePins": [
+      {
+        "path": "knowledge-base/en/docs/spine-linear-profile-contract.md",
+        "bytes": 19210,
+        "sha256": "7c67c33cbd598d90b777eb8cae06899a493d53eb5347109f55bad5cc99ce8cc5"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/Spine线性动画源规格契约.md",
+        "bytes": 18103,
+        "sha256": "911c8c3725ca83b116fd5e8c5657ae6490f31a9691e250a77917553b2e6a589d"
+      },
+      {
+        "path": "knowledge-base/en/docs/spine-linear-profile-evidence.md",
+        "bytes": 11664,
+        "sha256": "98c2a7358ff21698e9148d051d01772d8caf4aff7d311cf5d3514f872ebf22f3"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/Spine线性动画源规格证据.md",
+        "bytes": 10278,
+        "sha256": "21c2712e1d0e8b9524d29d4cb97cea7df8e2d60ca1f8b841837ee5f9ba7c5488"
+      }
+    ],
+    "publicDocumentStatus": "INDEPENDENT_FINITE_READING_SOURCE_ACCEPTED_HISTORICAL_DOCUMENT_CUTOFFS_RETAINED",
+    "metadataStatus": "SOURCE_ONLY_CANDIDATE_PENDING_INDEPENDENT_REVIEW",
+    "publicDocumentSourceReview": {
+      "witness": "F2_B_public_document_R2_independent_reading_review",
+      "bytes": 6252,
+      "sha256": "f7655777e973eb729ca56497991787fd9b1ef059ffe631a1d5012447a03cd63b"
+    },
+    "sourceAcceptance": {
+      "witness": "F2_B_product_source_review",
+      "bytes": 13079,
+      "sha256": "1f73ec1664ac77fc8cac9e71d2ee8b93151a1d22fd7a7475d68342223e08571c"
+    },
+    "actualAcceptance": {
+      "behavior": {
+        "witness": "F2_B_behavior_actual_review",
+        "bytes": 14101,
+        "sha256": "7633cdc12c8b78e8f78ae1774e3dec5383cabbebe86631475dfccf64ca5f04fd"
+      },
+      "normalHostTypes": {
+        "witness": "F2_B_host_types_actual_review",
+        "bytes": 19517,
+        "sha256": "f7a27bb238704e3472f1df1373a128374c7f326ec08e8429f4326fb0650092ae"
+      },
+      "fullDevelopment": {
+        "witness": "F2_B_full_R3_actual_review",
+        "bytes": 21751,
+        "sha256": "e60e901412f899deaa00c2e47422ede0259fd9f7c9ad26f32ea4eae3ec76b2c3"
+      }
+    },
+    "upstreamSpinePayload": "NONE_BUNDLED"
+  },
+  "spineMeshF2ADeliveryActualSuccessor": {
+    "engineeringLabel": "0.42.0",
+    "status": "ACTUAL_0_42_F2_A_DELIVERY_SUCCESSOR",
+    "source": {
+      "sha": "af1a4ba0894f91eac5383292e59fb17b2c78d187",
+      "tree": "319de5686631afe3213699f9fc2a4a424d7bcbdf",
+      "files": 48
+    },
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/29",
+    "main": {
+      "head": "e7a82283ef02b57976e5a94e10306fc6aee516b5",
+      "tree": "319de5686631afe3213699f9fc2a4a424d7bcbdf"
+    },
+    "mandatoryPushHook": {
+      "exitCode": 0,
+      "publicationTests": 63,
+      "coreTests": 2748,
+      "experimentTests": 22
+    },
+    "remoteChecks": {
+      "statusCount": 0,
+      "checkRuns": 0,
+      "remoteCIPassClaim": false
+    },
+    "independentlyReviewed": {
+      "witness": "F2_A_0.42_actual_delivery_review",
+      "bytes": 30222,
+      "sha256": "cfe0a836962c137db63741c2546f2c720a97467be7b9a6e7733cde1729b64013"
     },
     "historicalPendingCutoffsRetained": true
   }

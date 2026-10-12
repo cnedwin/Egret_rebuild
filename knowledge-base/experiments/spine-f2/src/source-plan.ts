@@ -398,12 +398,22 @@ function setupReferences(root: ObjectNode, defaultSkin: ObjectNode | undefined,
   return Object.freeze({ references: Object.freeze(references), attachmentCount, vertexCount, indexCount });
 }
 
-export function createF2MeshSourcePlan(input: SpineImportInput): F2MeshSourceResult {
+// Only sibling planners receive this transient context; the index never exports it.
+type F2SourcePreparation =
+  | { readonly ok: false; readonly result: Extract<F2MeshSourceResult, { readonly ok: false }> }
+  | { readonly ok: true; readonly result: Extract<F2MeshSourceResult, { readonly ok: true }>;
+      readonly owned: SpineImportInput; readonly root: SourceNode };
+
+export function prepareF2MeshSource(input: SpineImportInput): F2SourcePreparation {
   try {
     const owned = ownInput(input);
     const sp1 = createSpineImportPlan(owned);
     // SP1 fatal diagnostics are forwarded intact; no second visitor runs here.
-    if (!sp1.ok) return Object.freeze({ ok: false, stage: 'sp1', diagnostics: sp1.diagnostics });
+    if (!sp1.ok) {
+      const result: Extract<F2MeshSourceResult, { readonly ok: false }> =
+        Object.freeze({ ok: false, stage: 'sp1', diagnostics: sp1.diagnostics });
+      return { ok: false, result };
+    }
     const view = createSourceView(owned.skeleton.text, owned.skeleton.id);
     if (!view.ok) stop('F2_SOURCE_VIEW', 'raw', view.pointer, view.span);
     const root = view.root;
@@ -431,9 +441,18 @@ export function createF2MeshSourcePlan(input: SpineImportInput): F2MeshSourceRes
         rendering: 'not_run', licenseEntitlement: 'unverified' }),
     });
     // Only copied summaries/spans and SP1's owned frozen result escape this call.
-    return Object.freeze({ ok: true, value, diagnostics: sp1.diagnostics });
+    const result: Extract<F2MeshSourceResult, { readonly ok: true }> =
+      Object.freeze({ ok: true, value, diagnostics: sp1.diagnostics });
+    return { ok: true, result, owned, root };
   } catch (error: unknown) {
-    if (isPlanningFault(error)) return refusal(error.code, error.stage, error.pointer, error.span);
-    return refusal('F2_INTERNAL_ERROR', 'internal', '');
+    const result = isPlanningFault(error)
+      ? refusal(error.code, error.stage, error.pointer, error.span)
+      : refusal('F2_INTERNAL_ERROR', 'internal', '');
+    return { ok: false, result: result as Extract<F2MeshSourceResult, { readonly ok: false }> };
   }
+}
+
+// The public A facade still drops owned text and the private positional source view.
+export function createF2MeshSourcePlan(input: SpineImportInput): F2MeshSourceResult {
+  return prepareF2MeshSource(input).result;
 }

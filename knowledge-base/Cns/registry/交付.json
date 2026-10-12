@@ -2975,6 +2975,41 @@
       ],
       "fullSpineR020V020": "OPEN",
       "historicalCutoffsPreserved": true
+    },
+    {
+      "id": "V047",
+      "kind": "bounded_spine_linear_source_profile",
+      "status": "in_progress",
+      "title": "Spine 固定拓扑线性动画源规格 F2-B",
+      "requirementIds": [
+        "R020",
+        "R012"
+      ],
+      "sourceIds": [
+        "S096"
+      ],
+      "dependsOn": [
+        "V046"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "doc": "Cns/docs/Spine线性动画源规格契约.md",
+      "artifacts": [
+        "Cns/docs/Spine线性动画源规格契约.md",
+        "Cns/docs/Spine线性动画源规格证据.md",
+        "evidence/spine-linear-profile-verification.json",
+        "Cns/experiments/spine-f2/README.md"
+      ],
+      "implementation": "bounded_source_cpu_types_policy_development_accepted",
+      "acceptance": "BOUNDED_F2_B_SOURCE_CPU_TYPES_POLICY_DEVELOPMENT_ACCEPTED_PUBLICATION_PENDING",
+      "acceptanceCriteria": [
+        "固定 owned 源规格与线性源准入，保留原数值与原位置。",
+        "有限行为、精确类型元组、策略与完整开发验证器已独立接受。",
+        "当前完整 prepush、推送 hook 与 PR/Main 交付仍须完成。"
+      ],
+      "fullSpineR020V020": "OPEN",
+      "migrationR008V006": "OPEN",
+      "historicalCutoffsPreserved": true
     }
   ],
   "spineF1ClockPortableReplaySuccessor": {
@@ -3478,6 +3513,87 @@
       "witness": "NS1_0_41_actual_delivery",
       "bytes": 29643,
       "sha256": "39a9e645da096a52c9836bb6e16fe31599a7e5462e66d3ca1de20aa9a42f38c6"
+    },
+    "historicalPendingCutoffsRetained": true
+  },
+  "spineLinearProfileF2BActualSuccessor": {
+    "engineeringLabel": "0.43.0",
+    "sourceId": "S096",
+    "deliverableId": "V047",
+    "status": "BOUNDED_F2_B_SOURCE_CPU_TYPES_POLICY_DEVELOPMENT_ACCEPTED_PUBLICATION_PENDING",
+    "record": "knowledge-base/evidence/spine-linear-profile-verification.json",
+    "sourceProfile": "passed",
+    "linearTimelineSourceAdmission": "passed",
+    "ordinaryBehavior": {
+      "tests": 135,
+      "pass": 135,
+      "fail": 0,
+      "skipped": 0
+    },
+    "normalHostTypes": {
+      "positiveDiagnostics": 0,
+      "negativeDiagnostics": 100,
+      "exactObservedTuples": true
+    },
+    "completeDevelopmentVerifier": {
+      "exitCode": 0,
+      "tests": 160,
+      "pass": 160,
+      "fail": 0,
+      "retainedATuples": 39,
+      "profileTuples": 100
+    },
+    "sourceBoundary": {
+      "modules": 5,
+      "publicValues": 2,
+      "publicTypes": 10,
+      "assignedControls": 7
+    },
+    "controlledFaults": "PENDING_CONTROL_MECHANISM",
+    "mandatoryFullPrepush": "PENDING",
+    "mandatoryPushHook": "PENDING",
+    "pullRequestAndMain": "PENDING",
+    "remoteCI": "PENDING",
+    "coreCompatibility": "not_run",
+    "poseNumerics": "not_run",
+    "resourceIdentity": "not_run",
+    "playback": "not_run",
+    "rendering": "not_run",
+    "licenseEntitlement": "unverified",
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "historicalCutoffsPreserved": true,
+    "doc": "Cns/docs/Spine线性动画源规格契约.md",
+    "summary": "有限源行为、精确类型、策略和完整开发验证器已接受；公开交付及运行时资格分别待完成。"
+  },
+  "spineMeshF2ADeliveryActualSuccessor": {
+    "engineeringLabel": "0.42.0",
+    "status": "ACTUAL_0_42_F2_A_DELIVERY_SUCCESSOR",
+    "source": {
+      "sha": "af1a4ba0894f91eac5383292e59fb17b2c78d187",
+      "tree": "319de5686631afe3213699f9fc2a4a424d7bcbdf",
+      "files": 48
+    },
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/29",
+    "main": {
+      "head": "e7a82283ef02b57976e5a94e10306fc6aee516b5",
+      "tree": "319de5686631afe3213699f9fc2a4a424d7bcbdf"
+    },
+    "mandatoryPushHook": {
+      "exitCode": 0,
+      "publicationTests": 63,
+      "coreTests": 2748,
+      "experimentTests": 22
+    },
+    "remoteChecks": {
+      "statusCount": 0,
+      "checkRuns": 0,
+      "remoteCIPassClaim": false
+    },
+    "independentlyReviewed": {
+      "witness": "F2_A_0.42_actual_delivery_review",
+      "bytes": 30222,
+      "sha256": "cfe0a836962c137db63741c2546f2c720a97467be7b9a6e7733cde1729b64013"
     },
     "historicalPendingCutoffsRetained": true
   }

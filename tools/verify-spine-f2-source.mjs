@@ -16,9 +16,9 @@ const negativeFile = 'knowledge-base/experiments/spine-f2/type-tests/negative.ts
 const expectationFile = path.join(directory, 'type-tests/negative-expectations.json');
 const compiler = path.join(root, 'node_modules/typescript/bin/tsc');
 
-function expectations() {
-  if (!fs.existsSync(expectationFile)) throw new Error('F2_TYPES_EXPECTATIONS_PENDING');
-  const value = JSON.parse(fs.readFileSync(expectationFile, 'utf8'));
+function expectations(tableFile = expectationFile, sourceFile = negativeFile) {
+  if (!fs.existsSync(tableFile)) throw new Error('F2_TYPES_EXPECTATIONS_PENDING');
+  const value = JSON.parse(fs.readFileSync(tableFile, 'utf8'));
   const metadata = ['schemaVersion', 'kind', 'compilerVersion', 'messageNormalization', 'diagnostics'];
   assert(Object.keys(value).every(key => metadata.includes(key)), 'F2_TYPES_EXPECTATIONS_SCHEMA');
   if (Object.hasOwn(value, 'schemaVersion')) assert.equal(value.schemaVersion, 1);
@@ -29,7 +29,7 @@ function expectations() {
   assert(Array.isArray(value.diagnostics) && value.diagnostics.length > 0, 'F2_TYPES_EXPECTATIONS_SCHEMA');
   for (const row of value.diagnostics) {
     assert.deepEqual(Object.keys(row).sort(), ['code', 'column', 'file', 'line', 'message']);
-    assert.equal(row.file, negativeFile, 'F2_TYPES_EXPECTED_FILE');
+    assert.equal(row.file, sourceFile, 'F2_TYPES_EXPECTED_FILE');
     for (const field of ['line', 'column', 'code']) assert(Number.isSafeInteger(row[field]) && row[field] > 0);
     assert.equal(typeof row.message, 'string');
     assert(row.message.length > 0 && !row.message.includes(slashRoot + '/') && !row.message.includes(root + path.sep),
@@ -38,12 +38,14 @@ function expectations() {
   return value.diagnostics;
 }
 
-function typeConfiguration(name) {
+function typeConfiguration(name, profile = false) {
   const config = JSON.parse(fs.readFileSync(path.join(directory, 'type-tests/tsconfig.' + name + '.json'), 'utf8'));
   assert.deepEqual(Object.keys(config).sort(), ['compilerOptions', 'files'], 'F2_TYPES_CONFIG_SHAPE');
   assert.deepEqual(config.files, [name + '.ts'], 'F2_TYPES_CONFIG_FILES');
   assert.deepEqual(config.compilerOptions, { strict: true, target: 'ES2022', module: 'NodeNext',
-    moduleResolution: 'NodeNext', lib: ['ES2022'], types: [], skipLibCheck: false, noEmit: true }, 'F2_TYPES_STRICT_CONFIG');
+    moduleResolution: 'NodeNext', lib: ['ES2022'], types: [], skipLibCheck: false, noEmit: true,
+    ...(profile ? { noUncheckedIndexedAccess: true, exactOptionalPropertyTypes: true,
+      verbatimModuleSyntax: true, noImplicitOverride: true, noEmitOnError: true } : {}) }, 'F2_TYPES_STRICT_CONFIG');
 }
 
 function run(name, args, expectedExit = 0) {
@@ -59,7 +61,7 @@ function run(name, args, expectedExit = 0) {
   return result;
 }
 
-function diagnostics(output) {
+function diagnostics(output, sourceFile = negativeFile) {
   const rows = [];
   const lines = output.replaceAll('\r\n', '\n').split('\n');
   if (lines.at(-1) === '') lines.pop(); // Remove only the stream's final line terminator.
@@ -68,7 +70,7 @@ function diagnostics(output) {
     if (header !== null) {
       let file = header[1].replaceAll('\\', '/');
       if (file.startsWith(slashRoot + '/')) file = file.slice(slashRoot.length + 1);
-      assert.equal(file, negativeFile, 'F2_TYPES_UNRELATED_DIAGNOSTIC_FILE');
+      assert.equal(file, sourceFile, 'F2_TYPES_UNRELATED_DIAGNOSTIC_FILE');
       rows.push({ file, line: Number(header[2]), column: Number(header[3]), code: Number(header[4]), message: header[5] });
     } else if (rows.length > 0 && (line.length === 0 || /^\s/.test(line))) {
       rows[rows.length - 1].message += '\n' + line;
@@ -92,8 +94,9 @@ const sourceBoundary = checkF2SourceBoundary(readF2SourceInput(root));
 console.log('F2_SOURCE_BOUNDARY_RECEIPT ' + JSON.stringify(sourceBoundary));
 run('strict-experiment-compile', [compiler, '--project', relative(path.join(directory, 'tsconfig.json')), '--pretty', 'false']);
 const namespace = await import(pathToFileURL(path.join(directory, 'dist/index.js')).href);
-assert.deepEqual(Object.keys(namespace).sort(), ['createF2MeshSourcePlan'], 'F2_COMPILED_ENTRY_EXACT');
+assert.deepEqual(Object.keys(namespace).sort(), ['createF2MeshProfilePlan', 'createF2MeshSourcePlan'], 'F2_COMPILED_ENTRY_EXACT');
 assert.equal(typeof namespace.createF2MeshSourcePlan, 'function', 'F2_COMPILED_FACTORY_REQUIRED');
+assert.equal(typeof namespace.createF2MeshProfilePlan, 'function', 'F2_COMPILED_PROFILE_FACTORY_REQUIRED');
 const testDirectory = path.join(directory, 'test');
 const tests = fs.readdirSync(testDirectory, { withFileTypes: true })
   .filter(item => item.isFile() && item.name.endsWith('.test.mjs'))
@@ -110,4 +113,18 @@ assert.equal(negative.stderr, '', 'F2_TYPES_UNEXPECTED_COMPILER_STDERR');
 const observed = diagnostics(negative.stdout);
 assert.deepEqual(observed, expected, 'F2_TYPES_COMPLETE_DIAGNOSTIC_TUPLES');
 console.log('F2_TYPE_DIAGNOSTIC_RECEIPT ' + JSON.stringify({ positiveDiagnostics: 0, diagnostics: observed }));
-console.log('F2-A development source, strict compilation, experiment tests and exact type checks PASS.');
+// Profile consumer types remain separate from the retained A declaration lane.
+const profileNegativeFile = 'knowledge-base/experiments/spine-f2/type-tests/profile-negative.ts';
+const profileExpected = expectations(path.join(directory, 'type-tests/profile-negative-expectations.json'), profileNegativeFile);
+typeConfiguration('profile-positive', true);
+typeConfiguration('profile-negative', true);
+run('strict-profile-positive-types', [compiler, '--project', relative(path.join(directory, 'type-tests/tsconfig.profile-positive.json')), '--pretty', 'false']);
+const profileNegativeText = fs.readFileSync(path.join(root, profileNegativeFile), 'utf8');
+assert(!/@ts-(?:expect-error|ignore|nocheck)\b/.test(profileNegativeText), 'F2_PROFILE_TYPES_UNSUPPRESSED_NEGATIVE_REQUIRED');
+const profileNegative = run('unsuppressed-profile-negative-types', [compiler, '--project',
+  relative(path.join(directory, 'type-tests/tsconfig.profile-negative.json')), '--pretty', 'false'], 1);
+assert.equal(profileNegative.stderr, '', 'F2_PROFILE_TYPES_UNEXPECTED_COMPILER_STDERR');
+const profileObserved = diagnostics(profileNegative.stdout, profileNegativeFile);
+assert.deepEqual(profileObserved, profileExpected, 'F2_PROFILE_TYPES_COMPLETE_DIAGNOSTIC_TUPLES');
+console.log('F2_PROFILE_TYPE_DIAGNOSTIC_RECEIPT ' + JSON.stringify({ positiveDiagnostics: 0, diagnostics: profileObserved }));
+console.log('F2-A/B development source, strict compilation, experiment tests and both consumer type lanes PASS.');
