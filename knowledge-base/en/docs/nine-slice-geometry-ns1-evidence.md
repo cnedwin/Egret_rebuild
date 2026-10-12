@@ -50,3 +50,17 @@ Earlier contracts and original stage cutoffs remain unchanged. This curation is 
 The original full gate retains its 2748/2747/1 failure: S01 static scanning did not recognize one legitimate division expression in the new nine-slice module. The correction adds only that exact module/expression anchor and updates selected witnesses to five source files and eleven division tokens, preserving generic refusals. The retained test file passed 2/2 with its original default launch, completing all thirteen child cases. An earlier name-filtered launch was rejected before the child schedule by the strict process environment and remains separate setup history. Renderer code was unchanged; prior actual browser/type observations were not repeated. A new complete gate, push and Main delivery still require distinct acceptance.
 
 <!-- NS1-B1-FULL-GATE-SUCCESSOR-END -->
+
+<!-- NS1-ROOT-DEPENDENCY-CORRECTION-BEGIN -->
+
+## Root dependency correction — historical 0.41.0 delivery cutoff
+
+The first push exited 1 because the root boundary checker could not resolve `@egret/contracts`. An ignored local junction repaired that checkout; the second push exited 0, including 63 publication and 2748 core checks. Those results belong to the earlier 45-path commit and push. The proposed 47-path scope with the tracked dependency correction still has PENDING final gates, push, PR and Main delivery.
+
+A fresh manifest-only installation fixture used 7 pinned workspace manifests and 0 manually created aliases. Before correction, standard installation succeeded but `rootContractsPresent` was false. The earlier offline attempt failed on an uncached `robust-predicates` 3.0.3 tarball; that was installation setup history, not an SDK failure. The successful before-correction command retained an old “standard-offline-install” label, but its actual arguments omitted `--offline`; this was an online-enabled installation with `--frozen-lockfile --ignore-scripts`.
+
+The candidate adds `@egret/contracts: workspace:*` to root development dependencies and the matching lock importer. In the distinct after-correction fixture, 3 commands exited 0; the actual install used `--offline --frozen-lockfile --ignore-scripts`. It observed `rootContractsPresent: true`, target `packages/contracts`, unchanged manifest bytes and no manual aliases. These are saved installer observations independently admitted for the finite workspace-link scope. They establish the root workspace link for these pinned manifests, rather than SDK behavior or final release completion.
+
+Original PENDING blocks and the retained B1 failure remain historical records. See the shared verification record's `rootDependencyCorrection` for source identities, original failures and separate installer cutoffs.
+
+<!-- NS1-ROOT-DEPENDENCY-CORRECTION-END -->

@@ -548,5 +548,264 @@
     "priorActualBrowserAndTypesRepeated": false,
     "fullPrepush": "PENDING_DISTINCT_FRESH_ACTOR",
     "pushAndMainDelivery": "PENDING"
+  },
+  "rootDependencyCorrection": {
+    "status": "SAVED_STANDARD_INSTALLATION_ROOT_ALIAS_CORRECTION_FINAL_DELIVERY_PENDING",
+    "priorCommittedScope": {
+      "head": "8fe641f8f7f3e1c2226adfb6d71be83804475a8d",
+      "tree": "bb698013373bb767a9b70ccfb4bcd6807eae179e",
+      "changedPaths": 45
+    },
+    "proposedCorrectedScope": {
+      "changedPaths": 47,
+      "finalFullGate": "PENDING",
+      "finalPush": "PENDING",
+      "pullRequest": "PENDING",
+      "MainDelivery": "PENDING"
+    },
+    "firstPush": {
+      "exitCode": 1,
+      "failure": "ERR_MODULE_NOT_FOUND: root boundary checker could not resolve @egret/contracts.",
+      "classification": "LOCAL_HOOK_DEPENDENCY_SETUP_FAILURE_NOT_SDK_BEHAVIOR_FAILURE",
+      "receipt": {
+        "witness": "first_push_failure",
+        "bytes": 947,
+        "sha256": "69a3aef62cb80df5313607e06ad5c6af34c736f80d0b88e4a0da6e1d187fc91a"
+      }
+    },
+    "ignoredLocalRepair": {
+      "kind": "Junction",
+      "role": "Ignored local root workspace alias only; not a tracked dependency declaration.",
+      "savedRecord": {
+        "witness": "ignored_root_contracts_link_repair",
+        "bytes": 522,
+        "sha256": "e035d8a67e720d67fb98057c9be6186a206f2b25f0c599cc95c4e9ef7c78011e"
+      }
+    },
+    "earlierPushRetry": {
+      "exitCode": 0,
+      "publicationChecks": 63,
+      "coreChecks": 2748,
+      "scope": "Earlier 45-path commit; not the final 47-path correction.",
+      "receipt": {
+        "witness": "earlier_push_retry",
+        "bytes": 953,
+        "sha256": "f338bdf67b6029746d7279a15d37f35336413b3a26d68210567a848973894030"
+      }
+    },
+    "trackedCorrection": {
+      "dependency": "@egret/contracts",
+      "role": "root devDependencies",
+      "specifier": "workspace:*",
+      "lockImporter": ".",
+      "lockVersion": "link:packages/contracts",
+      "sourceCandidate": {
+        "witness": "two_manifest_source_correction",
+        "bytes": 4834,
+        "sha256": "0ec40729f6de5ef7304dbd55f3a195133ffe319e21667d7c1c145c5cef30b291"
+      },
+      "beforePins": [
+        {
+          "path": "package.json",
+          "bytes": 631,
+          "sha256": "9345ffe23a23ab60936d54f02c9c58a396753580f37e55b796ebe58403a00616"
+        },
+        {
+          "path": "pnpm-lock.yaml",
+          "bytes": 8851,
+          "sha256": "78d967eade0029dc518bdc2654479982798af4c65d432b1d1b5312d7d4c43af1"
+        }
+      ],
+      "afterPins": [
+        {
+          "path": "package.json",
+          "bytes": 666,
+          "sha256": "efafc565407f6189689bd8dd0c46d54e54b78827dd4a33981990730d504bb50f"
+        },
+        {
+          "path": "pnpm-lock.yaml",
+          "bytes": 8949,
+          "sha256": "ccdf71d985350becff1f9d6e41574df69282f41770d0a1a8ac603a98d6fc0d9a"
+        }
+      ]
+    },
+    "installationBefore": {
+      "originalOfflineAttempt": {
+        "exitCode": 1,
+        "actualFlags": [
+          "--offline",
+          "--frozen-lockfile",
+          "--ignore-scripts"
+        ],
+        "failure": "ERR_PNPM_NO_OFFLINE_TARBALL: robust-predicates 3.0.3 absent from the selected store.",
+        "classification": "INSTALLATION_SETUP_FAILURE_NOT_SDK_FAILURE",
+        "receipt": {
+          "witness": "original_offline_installation_setup_failure",
+          "bytes": 1971,
+          "sha256": "f6dee4ee6433e6cb9cb5a81a1e752a8a45ad48e3020ab0241aa2220ea197c6ac"
+        }
+      },
+      "completedAttempt": {
+        "commandLabel": "standard-offline-install",
+        "actualFlags": [
+          "--frozen-lockfile",
+          "--ignore-scripts"
+        ],
+        "offlineArgumentPresent": false,
+        "networkMode": "ONLINE_ENABLED_BY_ACTUAL_ARGUMENTS",
+        "commandCount": 2,
+        "allExitCodes": 0,
+        "receipt": {
+          "witness": "actual_installation_before_r2",
+          "bytes": 1951,
+          "sha256": "f2249b6603d30a61aa16d0bfa7018080248890cf06b8c0664d4454616d010cf7"
+        }
+      },
+      "fixture": {
+        "manifestCount": 7,
+        "sourcePins": [
+          {
+            "path": "package.json",
+            "bytes": 631,
+            "sha256": "9345ffe23a23ab60936d54f02c9c58a396753580f37e55b796ebe58403a00616"
+          },
+          {
+            "path": "pnpm-lock.yaml",
+            "bytes": 8851,
+            "sha256": "78d967eade0029dc518bdc2654479982798af4c65d432b1d1b5312d7d4c43af1"
+          },
+          {
+            "path": "pnpm-workspace.yaml",
+            "bytes": 51,
+            "sha256": "f51d3d153b0f3cdbb82186bd1c3eea9066f4e3a15828985952feeee965a75534"
+          },
+          {
+            "path": "packages/contracts/package.json",
+            "bytes": 179,
+            "sha256": "fceaef2ae55a77347ce9f99acd2165d36e991d89c76bf0480ff5048f3e7a94a1"
+          },
+          {
+            "path": "packages/runtime/package.json",
+            "bytes": 327,
+            "sha256": "b9294c479d38614dd8866adcd8775f5d6f43c787d9b08c8ef54371e426cb5032"
+          },
+          {
+            "path": "packages/engine/package.json",
+            "bytes": 1372,
+            "sha256": "891311a277b03b583ef35d45ad862ece747bda8ad04aae12f1fce9ed0e9149df"
+          },
+          {
+            "path": "packages/project/package.json",
+            "bytes": 397,
+            "sha256": "295e6bc8d81a4647f5b99355ea27879563ced216fa2af406c65cc78b95f40945"
+          }
+        ],
+        "manuallyCreatedAliases": 0,
+        "identity": {
+          "witness": "installation_before_source_fixture",
+          "bytes": 1546,
+          "sha256": "e744e83cd7179c45fd5d17fecbceaa69f555dd2bc511b73e6c683cdd298c720e"
+        }
+      },
+      "observation": {
+        "rootContractsPresent": false,
+        "rootContractsTarget": null,
+        "runtimeContractsTarget": "packages/contracts",
+        "inputManifestBytesUnchanged": true,
+        "manuallyCreatedAliases": 0,
+        "identity": {
+          "witness": "installation_before_link_observation",
+          "bytes": 417,
+          "sha256": "c699d212864a0c5ff631f0d9da86545a99a60401dcded229442742465c018eb8"
+        }
+      }
+    },
+    "installationAfter": {
+      "status": "ACTUAL_INSTALLER_OBSERVATIONS_INDEPENDENTLY_ADMITTED_FINITE_WORKSPACE_LINK_SCOPE",
+      "commandCount": 3,
+      "allExitCodes": 0,
+      "actualFlags": [
+        "--offline",
+        "--frozen-lockfile",
+        "--ignore-scripts"
+      ],
+      "startedAtUtc": "2026-10-12T15:43:49.4371243Z",
+      "finishedAtUtc": "2026-10-12T15:43:50.3650965Z",
+      "receipt": {
+        "witness": "actual_installation_after_r1",
+        "bytes": 2847,
+        "sha256": "8ec2e1d136a8a02d6aea5796bf9caccad931ee5942cfd123a02f0a1058da53f3"
+      },
+      "fixture": {
+        "manifestCount": 7,
+        "sourcePins": [
+          {
+            "path": "package.json",
+            "bytes": 666,
+            "sha256": "efafc565407f6189689bd8dd0c46d54e54b78827dd4a33981990730d504bb50f"
+          },
+          {
+            "path": "pnpm-lock.yaml",
+            "bytes": 8949,
+            "sha256": "ccdf71d985350becff1f9d6e41574df69282f41770d0a1a8ac603a98d6fc0d9a"
+          },
+          {
+            "path": "pnpm-workspace.yaml",
+            "bytes": 51,
+            "sha256": "f51d3d153b0f3cdbb82186bd1c3eea9066f4e3a15828985952feeee965a75534"
+          },
+          {
+            "path": "packages/contracts/package.json",
+            "bytes": 179,
+            "sha256": "fceaef2ae55a77347ce9f99acd2165d36e991d89c76bf0480ff5048f3e7a94a1"
+          },
+          {
+            "path": "packages/runtime/package.json",
+            "bytes": 327,
+            "sha256": "b9294c479d38614dd8866adcd8775f5d6f43c787d9b08c8ef54371e426cb5032"
+          },
+          {
+            "path": "packages/engine/package.json",
+            "bytes": 1372,
+            "sha256": "891311a277b03b583ef35d45ad862ece747bda8ad04aae12f1fce9ed0e9149df"
+          },
+          {
+            "path": "packages/project/package.json",
+            "bytes": 397,
+            "sha256": "295e6bc8d81a4647f5b99355ea27879563ced216fa2af406c65cc78b95f40945"
+          }
+        ],
+        "manuallyCreatedAliases": 0,
+        "identity": {
+          "witness": "installation_after_source_fixture",
+          "bytes": 1544,
+          "sha256": "76472b314417f3a623f3ec2c16736999ff30ca755be550e0f1774c89d206537d"
+        }
+      },
+      "observation": {
+        "rootContractsPresent": true,
+        "rootContractsTarget": "packages/contracts",
+        "runtimeContractsTarget": "packages/contracts",
+        "inputManifestBytesUnchanged": true,
+        "manuallyCreatedAliases": 0,
+        "identity": {
+          "witness": "installation_after_link_observation",
+          "bytes": 431,
+          "sha256": "8ad6c968d18c64eacf80d97d89428bd9e903ae9b56c32a11a8a17f8dcd32b40f"
+        }
+      }
+    },
+    "retainedHistory": "All original publication PENDING fields, original B1 failure and earlier 45-path records remain unchanged.",
+    "boundary": "Source declaration and saved manifest-only installer link observations. No new SDK/compiler/browser acceptance, final 47-path push, PR/Main delivery, remote CI or general clean-install guarantee.",
+    "independentSourceReview": {
+      "witness": "independent_two_manifest_source_review",
+      "bytes": 8603,
+      "sha256": "5508fecbf96fa72f8e7af000329c2854d176432bf9822ed3c063291910f96bda"
+    },
+    "independentInstallationReview": {
+      "witness": "independent_actual_standard_installation_review",
+      "bytes": 20197,
+      "sha256": "1e5ed86b6c465918169e638889ca6be20cefcde5d61b47b9094cfee9bf188734"
+    }
   }
 }

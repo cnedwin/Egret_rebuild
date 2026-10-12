@@ -3445,13 +3445,21 @@
     },
     {
       "path": "package.json",
-      "sha256": "9345ffe23a23ab60936d54f02c9c58a396753580f37e55b796ebe58403a00616",
-      "bytes": 631,
+      "sha256": "efafc565407f6189689bd8dd0c46d54e54b78827dd4a33981990730d504bb50f",
+      "bytes": 666,
       "originalSha256": "dc8b4a1df35b654d52a366010430083495daf807144aa8882b01a0b82fb45234",
-      "originRole": "byte-identical prototype whitelist export",
+      "originRole": "Original first-party root workspace development dependency declaration; prior origin roles and identities retain their historical scope.",
       "previousRevisionSha256": "dc8b4a1df35b654d52a366010430083495daf807144aa8882b01a0b82fb45234",
       "previousLayoutPath": "package.json",
-      "previousLayoutSha256": "dc8b4a1df35b654d52a366010430083495daf807144aa8882b01a0b82fb45234"
+      "previousLayoutSha256": "dc8b4a1df35b654d52a366010430083495daf807144aa8882b01a0b82fb45234",
+  "identityHistory": [
+    {
+      "bytes": 631,
+      "sha256": "9345ffe23a23ab60936d54f02c9c58a396753580f37e55b796ebe58403a00616",
+      "scope": "Preserved 0.41.0 45-path committed cutoff before tracked root workspace dependency correction.",
+      "originRole": "byte-identical prototype whitelist export"
+    }
+  ]
     },
     {
       "path": "packages/contracts/package.json",
@@ -4212,13 +4220,21 @@
     },
     {
       "path": "pnpm-lock.yaml",
-      "sha256": "78d967eade0029dc518bdc2654479982798af4c65d432b1d1b5312d7d4c43af1",
-      "bytes": 8851,
+      "sha256": "ccdf71d985350becff1f9d6e41574df69282f41770d0a1a8ac603a98d6fc0d9a",
+      "bytes": 8949,
       "originalSha256": "f58343405f8b75488966415da04a69edd5cbf01a32076ff08b75132fa476877c",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousRevisionSha256": "f58343405f8b75488966415da04a69edd5cbf01a32076ff08b75132fa476877c",
       "previousLayoutPath": "pnpm-lock.yaml",
-      "previousLayoutSha256": "ed9759a4ae0d1ca6e2d707fd1a324d1eff3b326cb2a8c827eecf14e3ebfb53d4"
+      "previousLayoutSha256": "ed9759a4ae0d1ca6e2d707fd1a324d1eff3b326cb2a8c827eecf14e3ebfb53d4",
+  "identityHistory": [
+    {
+      "bytes": 8851,
+      "sha256": "78d967eade0029dc518bdc2654479982798af4c65d432b1d1b5312d7d4c43af1",
+      "scope": "Preserved 0.41.0 45-path committed cutoff before tracked root workspace dependency correction.",
+      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope."
+    }
+  ]
     },
     {
       "path": "pnpm-workspace.yaml",
@@ -8370,41 +8386,59 @@
     },
     {
       "path": "knowledge-base/en/docs/nine-slice-geometry-ns1-evidence.md",
-      "bytes": 4286,
-      "sha256": "281dcb7fa44b5e424b5e4c1453229b4111a79db723c68d9707f6897b1cb370dc",
+      "bytes": 6226,
+      "sha256": "242a9b4d834ae4f501f7844734ac90e9a9b8f847a1a6e2fb0f6a2927eb3a6061",
       "originRole": "Original first-party nine-slice geometry NS1, frozen public fixture, strict gate or paired public documentation/evidence.",
       "identityHistory": [
         {
           "bytes": 3416,
           "sha256": "7c29a9ea02059977c09ece5904f24d944c68c365e922dbfbdc7bf1ad7f74411f",
           "scope": "Preserved NS1 original44 curation cutoff before retained B1 test-only successor."
-        }
+        },
+      {
+        "bytes": 4286,
+        "sha256": "281dcb7fa44b5e424b5e4c1453229b4111a79db723c68d9707f6897b1cb370dc",
+        "scope": "Preserved 0.41.0 45-path committed cutoff before tracked root workspace dependency correction.",
+        "originRole": "Original first-party nine-slice geometry NS1, frozen public fixture, strict gate or paired public documentation/evidence."
+      }
       ]
     },
     {
       "path": "knowledge-base/Cns/docs/九宫格几何NS1证据.md",
-      "bytes": 3785,
-      "sha256": "39ce1195833771263facb27ff08219dd98eee724aee96680e229abaa9c557b8c",
+      "bytes": 5548,
+      "sha256": "2c5e280d7d19c6f92868b5a4dae29bcaa2105fa1de4cf8d9058c716ea89c9945",
       "originRole": "Original first-party nine-slice geometry NS1, frozen public fixture, strict gate or paired public documentation/evidence.",
       "identityHistory": [
         {
           "bytes": 3033,
           "sha256": "8d8b332d0b9d26c3f9d187afeca6ddf3df9f62dae8e621e9f177ec0b06ee612a",
           "scope": "Preserved NS1 original44 curation cutoff before retained B1 test-only successor."
-        }
+        },
+      {
+        "bytes": 3785,
+        "sha256": "39ce1195833771263facb27ff08219dd98eee724aee96680e229abaa9c557b8c",
+        "scope": "Preserved 0.41.0 45-path committed cutoff before tracked root workspace dependency correction.",
+        "originRole": "Original first-party nine-slice geometry NS1, frozen public fixture, strict gate or paired public documentation/evidence."
+      }
       ]
     },
     {
       "path": "knowledge-base/evidence/nine-slice-geometry-ns1-verification.json",
-      "bytes": 17720,
-      "sha256": "a186174882bf4e4555e56e8bb96f0fa4f6538e527fed0a04e265b73790415c39",
+      "bytes": 27186,
+      "sha256": "bcc4f4072478b69f64b4f61e2f2b0aea88f638c7df1b37daf9026a92c8a29ff9",
       "originRole": "Original first-party nine-slice geometry NS1, frozen public fixture, strict gate or paired public documentation/evidence.",
       "identityHistory": [
         {
           "bytes": 15508,
           "sha256": "80baba51552d3cc81c26f482b812b231a93b71d5eda1ae86737ffa6380e91e07",
           "scope": "Preserved NS1 original44 curation cutoff before retained B1 test-only successor."
-        }
+        },
+      {
+        "bytes": 17720,
+        "sha256": "a186174882bf4e4555e56e8bb96f0fa4f6538e527fed0a04e265b73790415c39",
+        "scope": "Preserved 0.41.0 45-path committed cutoff before tracked root workspace dependency correction.",
+        "originRole": "Original first-party nine-slice geometry NS1, frozen public fixture, strict gate or paired public documentation/evidence."
+      }
       ]
     }
   ],

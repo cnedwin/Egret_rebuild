@@ -1123,8 +1123,8 @@
     {
       "en": "knowledge-base/en/docs/nine-slice-geometry-ns1-evidence.md",
       "zh": "knowledge-base/Cns/docs/九宫格几何NS1证据.md",
-      "zhSha256": "39ce1195833771263facb27ff08219dd98eee724aee96680e229abaa9c557b8c",
-      "enSha256": "281dcb7fa44b5e424b5e4c1453229b4111a79db723c68d9707f6897b1cb370dc"
+      "zhSha256": "2c5e280d7d19c6f92868b5a4dae29bcaa2105fa1de4cf8d9058c716ea89c9945",
+      "enSha256": "242a9b4d834ae4f501f7844734ac90e9a9b8f847a1a6e2fb0f6a2927eb3a6061"
     }
   ],
   "registries": [
@@ -4438,5 +4438,12 @@
     "priorActualBrowserAndTypesRepeated": false,
     "fullPrepush": "PENDING_DISTINCT_FRESH_ACTOR",
     "pushAndMainDelivery": "PENDING"
+  },
+  "nineSliceNS1RootDependencyCorrection": {
+    "sharedEvidencePin": {
+      "path": "knowledge-base/evidence/nine-slice-geometry-ns1-verification.json",
+      "bytes": 27186,
+      "sha256": "bcc4f4072478b69f64b4f61e2f2b0aea88f638c7df1b37daf9026a92c8a29ff9"
+    }
   }
 }

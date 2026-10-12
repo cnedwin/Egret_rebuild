@@ -50,3 +50,17 @@
 原始完整门禁保留 2748/2747/1 的失败：S01 静态扫描尚未识别新九宫格模块的一条合法除法表达式。修正仅为该模块及完整表达式增加精确锚点，并将已选见证计数更新为 5 份源码、11 个除法 token；原有通用拒绝规则保留。原默认启动的验证文件实际 2/2 通过，十三个子案例全部完成。此前带名称筛选的启动在子案例开始前被严格进程环境规则拒绝，单独保留为设置历史。渲染实现未改动，已有实际浏览器／类型结果无需重跑；新的完整门禁、推送和 Main 交付仍待单独验收。
 
 <!-- NS1-B1-FULL-GATE-SUCCESSOR-END -->
+
+<!-- NS1-ROOT-DEPENDENCY-CORRECTION-BEGIN -->
+
+## 根依赖修正 — 0.41.0 交付的历史截止点
+
+首次推送退出码为 1，原因是根目录的边界检查工具无法解析 `@egret/contracts`。忽略入库的本地 junction 修复了该检出目录；第二次推送退出码为 0，其中公开校验 63 项、核心校验 2748 项。这些结果只属于此前 45 文件的提交与推送；含已跟踪依赖修正的拟议 47 文件范围，最终门禁、推送、PR 与 Main 交付仍为 PENDING。
+
+新建的 manifest 安装夹具使用 7 份已固定工作区清单，手工创建别名数为 0。修正前，标准安装成功，但 `rootContractsPresent` 为 false。此前离线安装因缓存中缺少 `robust-predicates` 3.0.3 tarball 失败，这是安装设置历史，不是 SDK 失败。修正前成功命令虽沿用旧的“standard-offline-install”标签，实际参数却没有 `--offline`；它是允许联网、使用 `--frozen-lockfile --ignore-scripts` 的安装。
+
+候选在根开发依赖中增加 `@egret/contracts: workspace:*`，并补齐对应 lock importer。独立的修正后夹具中，3 个命令退出码均为 0；实际安装使用 `--offline --frozen-lockfile --ignore-scripts`。观测到 `rootContractsPresent: true`、目标 `packages/contracts`、输入清单字节未变，并且没有手工别名。这些是已保存并经独立审查接受的有限工作区入口安装观测。它们证明这些固定清单能够创建根工作区入口，不代表 SDK 行为或最终发布完成。
+
+原有 PENDING 块及保留的 B1 失败仍作为历史记录。源身份、原始失败及不同安装截止点见共享核验记录的 `rootDependencyCorrection`。
+
+<!-- NS1-ROOT-DEPENDENCY-CORRECTION-END -->

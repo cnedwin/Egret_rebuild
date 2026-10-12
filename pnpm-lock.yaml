@@ -15,6 +15,9 @@ importers:
         specifier: workspace:*
         version: link:packages/project
     devDependencies:
+      '@egret/contracts':
+        specifier: workspace:*
+        version: link:packages/contracts
       '@egret/runtime':
         specifier: workspace:*
         version: link:packages/runtime
