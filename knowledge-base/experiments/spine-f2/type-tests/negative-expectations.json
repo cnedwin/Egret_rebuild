@@ -1,0 +1,281 @@
+{
+  "schemaVersion": 1,
+  "kind": "ACTUAL_UNSUPPRESSED_COMPILER_DIAGNOSTICS",
+  "compilerVersion": "7.0.2",
+  "messageNormalization": "Only the exact repository root prefix is replaced by <repo>/. Raw private output is retained.",
+  "diagnostics": [
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 23,
+      "column": 1,
+      "code": 2554,
+      "message": "Expected 1 arguments, but got 0."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 25,
+      "column": 31,
+      "code": 2554,
+      "message": "Expected 1 arguments, but got 2."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 27,
+      "column": 24,
+      "code": 2345,
+      "message": "Argument of type 'null' is not assignable to parameter of type 'SpineImportInput'."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 29,
+      "column": 67,
+      "code": 2322,
+      "message": "Type 'number' is not assignable to type 'string'."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 31,
+      "column": 36,
+      "code": 2322,
+      "message": "Type 'string' is not assignable to type 'readonly SpinePageBinding[]'."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 34,
+      "column": 44,
+      "code": 2322,
+      "message": "Type 'boolean' is not assignable to type 'string'."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 36,
+      "column": 36,
+      "code": 2353,
+      "message": "Object literal may only specify known properties, and 'core' does not exist in type 'SpineImportInput'."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 39,
+      "column": 16,
+      "code": 2540,
+      "message": "Cannot assign to 'text' because it is a read-only property."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 41,
+      "column": 13,
+      "code": 2339,
+      "message": "Property 'push' does not exist on type 'readonly SpinePageBinding[]'."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 43,
+      "column": 6,
+      "code": 2540,
+      "message": "Cannot assign to 'planVersion' because it is a read-only property."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 45,
+      "column": 9,
+      "code": 2540,
+      "message": "Cannot assign to 'pointer' because it is a read-only property."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 47,
+      "column": 13,
+      "code": 2339,
+      "message": "Property 'push' does not exist on type 'readonly F2MeshSourceSummary[]'."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 49,
+      "column": 14,
+      "code": 2540,
+      "message": "Cannot assign to 'offset' because it is a read-only property."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 51,
+      "column": 11,
+      "code": 2540,
+      "message": "Cannot assign to 'attachmentPointer' because it is a read-only property."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 53,
+      "column": 23,
+      "code": 2339,
+      "message": "Property 'push' does not exist on type 'readonly F2SetupReference[]'."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 55,
+      "column": 12,
+      "code": 2540,
+      "message": "Cannot assign to 'vertexCount' because it is a read-only property."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 57,
+      "column": 17,
+      "code": 2540,
+      "message": "Cannot assign to 'rendering' because it is a read-only property."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 59,
+      "column": 12,
+      "code": 2540,
+      "message": "Cannot assign to 'message' because it is a read-only property."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 61,
+      "column": 10,
+      "code": 2540,
+      "message": "Cannot assign to 'column' because it is a read-only property."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 63,
+      "column": 22,
+      "code": 2339,
+      "message": "Property 'push' does not exist on type 'readonly string[]'."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 67,
+      "column": 10,
+      "code": 2339,
+      "message": "Property 'stage' does not exist on type '{ readonly ok: true; readonly value: F2MeshSourcePlan; readonly diagnostics: readonly SpineImportDiagnostic[]; }'."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 70,
+      "column": 10,
+      "code": 2339,
+      "message": "Property 'value' does not exist on type '{ readonly ok: false; readonly stage: \"sp1\"; readonly diagnostics: readonly SpineImportDiagnostic[]; } | { readonly ok: false; readonly stage: \"internal\" | \"raw\" | \"snapshot\"; readonly diagnostics: readonly [...]; }'.\n  Property 'value' does not exist on type '{ readonly ok: false; readonly stage: \"sp1\"; readonly diagnostics: readonly SpineImportDiagnostic[]; }'."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 73,
+      "column": 11,
+      "code": 2322,
+      "message": "Type 'readonly SpineImportDiagnostic[]' is not assignable to type 'readonly [F2MeshSourceDiagnostic]'.\n  Target requires 1 element(s) but source may have fewer."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 78,
+      "column": 8,
+      "code": 2339,
+      "message": "Property 'value' does not exist on type 'F2MeshSourceResult'.\n  Property 'value' does not exist on type '{ readonly ok: false; readonly stage: \"sp1\"; readonly diagnostics: readonly SpineImportDiagnostic[]; }'."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 80,
+      "column": 9,
+      "code": 2339,
+      "message": "Property 'uvs' does not exist on type 'F2MeshSourceSummary'."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 82,
+      "column": 11,
+      "code": 2339,
+      "message": "Property 'mesh' does not exist on type 'F2SetupReference'."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 84,
+      "column": 6,
+      "code": 2339,
+      "message": "Property 'core' does not exist on type 'F2MeshSourcePlan'."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 86,
+      "column": 12,
+      "code": 2339,
+      "message": "Property 'relatedSpan' does not exist on type 'F2MeshSourceDiagnostic'."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 88,
+      "column": 7,
+      "code": 2820,
+      "message": "Type '\"F2_MESH_INDEXX\"' is not assignable to type 'F2MeshSourceDiagnosticCode'. Did you mean '\"F2_MESH_INDEX\"'?"
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 92,
+      "column": 9,
+      "code": 2339,
+      "message": "Property 'createF2MeshSourcePlan' does not exist on type 'typeof import(\"<repo>/packages/project/dist/index\")'."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 94,
+      "column": 5,
+      "code": 2339,
+      "message": "Property 'createF2MeshSourcePlan' does not exist on type 'typeof import(\"<repo>/packages/project/dist/spine/index\")'."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 96,
+      "column": 8,
+      "code": 2339,
+      "message": "Property 'createF2MeshSourcePlan' does not exist on type 'typeof import(\"<repo>/packages/engine/dist/index\")'."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 98,
+      "column": 9,
+      "code": 2339,
+      "message": "Property 'createF2MeshSourcePlan' does not exist on type 'typeof import(\"<repo>/packages/runtime/dist/index\")'."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 100,
+      "column": 11,
+      "code": 2339,
+      "message": "Property 'createF2MeshSourcePlan' does not exist on type 'typeof import(\"<repo>/packages/contracts/dist/index\")'."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 102,
+      "column": 28,
+      "code": 2694,
+      "message": "Namespace '\"<repo>/packages/project/dist/index\"' has no exported member 'F2MeshSourcePlan'."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 104,
+      "column": 20,
+      "code": 2694,
+      "message": "Namespace '\"<repo>/packages/project/dist/spine/index\"' has no exported member 'F2MeshSourceResult'."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 106,
+      "column": 26,
+      "code": 2694,
+      "message": "Namespace '\"<repo>/packages/engine/dist/index\"' has no exported member 'F2MeshSourceSummary'."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 108,
+      "column": 28,
+      "code": 2694,
+      "message": "Namespace '\"<repo>/packages/runtime/dist/index\"' has no exported member 'F2SetupReference'."
+    },
+    {
+      "file": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "line": 110,
+      "column": 32,
+      "code": 2694,
+      "message": "Namespace '\"<repo>/packages/contracts/dist/index\"' has no exported member 'F2MeshSourceDiagnostic'."
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "status": "INDEPENDENT_LITERAL_PIXEL_DESIGN_CANDIDATE_NOT_RENDERED",
+  "viewport": [48, 40],
+  "rootPlacement": [20, 20],
+  "clearRGBA": [0, 0, 0, 0],
+  "sampleLocation": "Integer readback x/y, pixel center [x+0.5,y+0.5], proposed top-to-bottom rows",
+  "proposedProfile": "Same genuine Engine, borrowed application device, existing textured Host, nearest/clamp, straight RGBA8888",
+  "toleranceChannels": 0,
+  "acceptance": "PENDING_INDEPENDENT_SOURCE_REVIEW_NUMERIC_CORE_QUALIFICATION_AND_ACTUAL_HOST_BINDING",
+  "frames": [
+    {
+      "timeSeconds": 0,
+      "samples": [
+        { "x": 25, "y": 12, "rgba": [0,0,0,0], "witness": "outside undeformed upper leg" },
+        { "x": 26, "y": 12, "rgba": [0,0,0,0], "witness": "outside undeformed and half-time upper leg" },
+        { "x": 22, "y": 18, "rgba": [0,0,255,255], "witness": "blue region over mesh, original painter order" },
+        { "x": 30, "y": 18, "rgba": [0,255,0,255], "witness": "green lower arm, UV/page palette" },
+        { "x": 20, "y": 10, "rgba": [255,0,0,255], "witness": "red upper leg palette calibration" },
+        { "x": 40, "y": 30, "rgba": [0,0,0,0], "witness": "outside both attachments" }
+      ]
+    },
+    {
+      "timeSeconds": 0.5,
+      "samples": [
+        { "x": 25, "y": 12, "rgba": [255,0,0,255], "witness": "half-time leg expansion; omitted-deform candidate sensitivity" },
+        { "x": 26, "y": 12, "rgba": [0,0,0,0], "witness": "half-time exterior; double-advance candidate sensitivity" },
+        { "x": 22, "y": 18, "rgba": [0,0,255,255], "witness": "blue region over mesh, original painter order" },
+        { "x": 30, "y": 18, "rgba": [0,255,0,255], "witness": "green lower arm, UV/page palette" },
+        { "x": 20, "y": 10, "rgba": [255,0,0,255], "witness": "red upper leg palette calibration" },
+        { "x": 40, "y": 30, "rgba": [0,0,0,0], "witness": "outside both attachments" }
+      ]
+    }
+  ],
+  "designedSensitivityOnly": [
+    { "case": "omitted deform at total time 0.5", "x": 25, "y": 12, "referenceRGBA": [255,0,0,255], "hypothesizedWrongRGBA": [0,0,0,0] },
+    { "case": "double advance producing total time 1 instead of 0.5", "x": 26, "y": 12, "referenceRGBA": [0,0,0,0], "hypothesizedWrongRGBA": [255,0,0,255] },
+    { "case": "reverse logical attachment painter order", "x": 22, "y": 18, "referenceRGBA": [0,0,255,255], "hypothesizedWrongRGBA": [255,0,0,255] }
+  ],
+  "futureRawRetention": "Retain each complete 48x40 RGBA buffer before pixel assertions; no buffer is authored or observed in this packet.",
+  "qualificationLimits": [
+    "These values are hand-derived candidates, not accepted or observed pixel output or assigned-failure evidence.",
+    "Actual Core region corners, interpolation/nearest texel behavior, Y reflection and readback row direction must be independently qualified before running acceptance.",
+    "Sensitivity hypotheses are not canonical output for malformed inputs and not instructions to author extra GPU frames.",
+    "No browser, GPU/device, physical hardware, OS retirement, performance, runtime entitlement, or full Spine acceptance is established."
+  ]
+}

@@ -1,0 +1,10 @@
+egret-f2-page.rgba
+size: 16, 8
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+pma: false
+egret-f2-mesh
+bounds: 0, 0, 8, 8
+egret-f2-blue
+bounds: 8, 0, 8, 8

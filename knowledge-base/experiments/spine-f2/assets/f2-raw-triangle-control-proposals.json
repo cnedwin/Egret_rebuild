@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "status": "SINGLE_INPUT_SOURCE_DIFF_DESIGN_ONLY_NOT_AUTHORED_AS_MUTANTS_NOT_RUN",
+  "baselineFile": "egret-original-unfold.spine.json",
+  "pointer": "/skins/0/attachments/back/lPanel/triangles/0",
+  "baselineVertexCount": 6,
+  "beforeLiteral": "\"triangles\": [0, 1, 3, 1, 2, 3, 0, 3, 5, 3, 4, 5]",
+  "sourceAdmissionPurpose": "Verify the original primitive safeinteger and [0,6) range before any SkeletonJson construction/parse, Core pose/render, or Uint16 narrowing. A later valid Core command is an independent second boundary.",
+  "futureDiffs": [
+    { "id": "RAW_INDEX_65536", "replaceValue": 65536, "afterLiteral": "\"triangles\": [65536, 1, 3, 1, 2, 3, 0, 3, 5, 3, 4, 5]", "qualification": "valid JSON number; safeinteger but outside the original six-vertex range" },
+    { "id": "RAW_INDEX_FRACTIONAL", "replaceValue": 0.5, "afterLiteral": "\"triangles\": [0.5, 1, 3, 1, 2, 3, 0, 3, 5, 3, 4, 5]", "qualification": "valid JSON number; not an integer" },
+    { "id": "RAW_INDEX_NEGATIVE", "replaceValue": -1, "afterLiteral": "\"triangles\": [-1, 1, 3, 1, 2, 3, 0, 3, 5, 3, 4, 5]", "qualification": "valid JSON number; below zero" },
+    { "id": "RAW_INDEX_VERTEX_COUNT", "replaceValue": 6, "afterLiteral": "\"triangles\": [6, 1, 3, 1, 2, 3, 0, 3, 5, 3, 4, 5]", "qualification": "valid JSON number; equal to the exclusive original vertex-count bound" }
+  ],
+  "futureAcceptancePrerequisites": [
+    "Actual root-frozen Main/build, dependency/source admission and full fresh legal baseline precede each one-token owned input mutation.",
+    "Each literal replacement occurs once, inverse restores all original UTF8 bytes, and atlas/page/oracles remain unchanged.",
+    "Observe the first actual stage and diagnostic/source location; prove refusal before Core and no valid display publication plus real cleanup.",
+    "Unrelated setup failures or planner JSON syntax failures do not qualify these four valid-number semantic controls."
+  ],
+  "expectedDiagnostic": "PENDING_ACTUAL_OBSERVATION_NO_CODE_PREDICTION",
+  "canonicalInvalidInputOutput": "NONE_PREDICTED",
+  "additionalR2CasesStillPending": "String/null/shape/budget cases remain future tests. Bare NaN/Infinity are invalid JSON planning cases; valid JSON 1e400 is a planner-or-raw finite admission case. No forged parsed-object NaN substitute."
+}

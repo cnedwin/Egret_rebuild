@@ -21,6 +21,9 @@ importers:
       '@egret/runtime':
         specifier: workspace:*
         version: link:packages/runtime
+      jsonc-parser:
+        specifier: 3.3.1
+        version: 3.3.1
       typescript:
         specifier: 7.0.2
         version: 7.0.2

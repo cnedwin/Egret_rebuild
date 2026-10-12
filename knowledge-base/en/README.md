@@ -2,6 +2,20 @@
 
 English | [简体中文](../Cns/README.md)
 
+<!-- F2-A-0.42.0-BEGIN -->
+## Engineering preview 0.42.0 — Spine mesh source planning F2-A
+
+**S095 / V046: finite source-planning CPU, types and policy accepted; full prepush, mandatory push hook and PR/Main delivery remain PENDING.**
+
+The development experiment admits original unweighted mesh sources while preserving public SP1 planning boundaries; default SDK exports do not grow. After separate compilation/import, experiment tests passed 22/22: 16 source behavior and 6 boundary tests, including 5 assigned refusal controls. Positive type diagnostics were 0; negative types had 39 complete actual location/code/message records.
+
+These experiment counts are separate from prior core tests. Version 0.41.0 merged through [PR #28](https://github.com/cnedwin/Egret_rebuild/pull/28), with Main `758e516410a126483973a1d65eea0c6ca7f57ef6` and tree `ef0183ba3f555df5fd7a53cb98a677cd01f67356` read back; its mandatory push hook passed 2748 core and 63 publication tests. Remote statuses/check-runs were both 0; remote CI PASS is not claimed.
+
+[Contract](docs/spine-mesh-source-plan-contract.md) / [Evidence](docs/spine-mesh-source-plan-evidence.md) / [Use and development verification](experiments/spine-f2/README.md).
+
+First-party independent Egret design uses AI assistance for engineering and bounded review; public dependencies retain their own licenses. Two internal fault controls remain pending. This slice establishes no Core, deform, playback, rendering, rights, full Spine R020/V020, legacy migration R008/V006, complete UI/3D, multi-host or performance acceptance. Earlier failures and PENDING sections retain their original cutoffs.
+<!-- F2-A-0.42.0-END -->
+
 <!-- NS1-DOC-0.41.0-BEGIN -->
 ## Engineering preview 0.41.0 — nine-slice stretch geometry NS1
 

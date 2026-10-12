@@ -300,7 +300,8 @@
       "statement": "当前环境无法实际验证或从零探索代价过高时，优先调查GitHub成熟实现及修复记录；渲染与运行时参考范围扩展到Three.js、Babylon.js、PlayCanvas等。采用已确定的算法和机制，实验集中验证白鹭适配、差异化与真实设备收益，避免重复造轮子。 执行受R015边界约束：成熟原理优先研究，公共库明确依赖，白鹭核心独立实现。",
       "status": "confirmed",
       "sourceIds": [
-        "S001"
+        "S001",
+        "S095"
       ],
       "deliveryIds": [
         "V001",
@@ -310,7 +311,8 @@
         "V008",
         "V021",
         "V022",
-        "V023"
+        "V023",
+        "V046"
       ],
       "decisionIds": [
         "D002",
@@ -519,7 +521,8 @@
       "sourceIds": [
         "S066",
         "S089",
-        "S090"
+        "S090",
+        "S095"
       ],
       "deliveryIds": [
         "V002",
@@ -530,7 +533,8 @@
         "V007",
         "V008",
         "V040",
-        "V041"
+        "V041",
+        "V046"
       ],
       "decisionIds": [
         "D002",
@@ -557,6 +561,14 @@
         "publicReplay": "PENDING_AT_CURATION_CUTOFF",
         "record": "evidence/spine-f1-clock-verification.json",
         "doc": "Cns/experiments/spine-f1/README.md"
+      },
+      "originalF2ASourceExperiment": {
+        "source": "S095",
+        "deliverable": "V046",
+        "status": "OPEN",
+        "fullCapabilityAcceptance": "not_run",
+        "doc": "Cns/experiments/spine-f2/README.md",
+        "record": "evidence/spine-mesh-source-plan-verification.json"
       }
     }
   ],
@@ -998,6 +1010,69 @@
       "witness": "BW0.40_actual_delivery",
       "bytes": 25399,
       "sha256": "557cede85393e9536c7529885daee76bb5573b802a23c8bb9edfa7096862486c"
+    },
+    "historicalPendingCutoffsRetained": true
+  },
+  "spineMeshF2AActualSuccessor": {
+    "engineeringLabel": "0.42.0",
+    "sourceId": "S095",
+    "deliverableId": "V046",
+    "status": "BOUNDED_F2_A_SOURCE_CPU_TYPES_POLICY_ACCEPTED_PUBLICATION_PENDING",
+    "record": "knowledge-base/evidence/spine-mesh-source-plan-verification.json",
+    "developmentTests": {
+      "total": 22,
+      "pass": 22,
+      "fail": 0,
+      "skipped": 0,
+      "sourceBehavior": 16,
+      "boundaryTests": 6,
+      "assignedControls": 5
+    },
+    "types": {
+      "positiveDiagnostics": 0,
+      "negativeDiagnostics": 39,
+      "exactObservedTuples": true
+    },
+    "ownedInternalFaultControls": "PENDING",
+    "mandatoryFullPrepush": "PENDING",
+    "mandatoryPushHook": "PENDING",
+    "remoteDelivery": "PENDING",
+    "independentPublicMeaningReview": "PENDING",
+    "fullSpineR020V020": "OPEN",
+    "coreCompatibility": "not_run",
+    "rendering": "not_run",
+    "licenseEntitlement": "unverified",
+    "historicalCutoffsPreserved": true
+  },
+  "nineSliceDeliveryActualSuccessor": {
+    "engineeringLabel": "0.41.0",
+    "status": "ACTUAL_0_41_NINE_SLICE_DELIVERY_SUCCESSOR",
+    "source": {
+      "sha": "607b6ee6b98a38c6a95a63cb79dd65a74c1e8b4b",
+      "tree": "ef0183ba3f555df5fd7a53cb98a677cd01f67356",
+      "files": 47
+    },
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/28",
+    "main": {
+      "status": "ACTUAL_LOCAL_AND_REMOTE_MAIN_MATCH",
+      "head": "758e516410a126483973a1d65eea0c6ca7f57ef6",
+      "tree": "ef0183ba3f555df5fd7a53cb98a677cd01f67356",
+      "atUtc": "2026-10-12T16:35:50.275Z"
+    },
+    "mandatoryPushHook": {
+      "exitCode": 0,
+      "coreTests": 2748,
+      "publicationTests": 63
+    },
+    "remoteChecks": {
+      "statusCount": 0,
+      "checkRuns": 0,
+      "remoteCIPassClaim": false
+    },
+    "independentlyReviewed": {
+      "witness": "NS1_0_41_actual_delivery",
+      "bytes": 29643,
+      "sha256": "39a9e645da096a52c9836bb6e16fe31599a7e5462e66d3ca1de20aa9a42f38c6"
     },
     "historicalPendingCutoffsRetained": true
   }
