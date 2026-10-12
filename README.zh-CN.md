@@ -12,6 +12,30 @@ I'm Edwin, the founder of Egret Engine. In late 2013, WanderWang and I founded E
 
 Years later, as times change and technology advances, many developers continue to encourage us. I hope to rebuild this game engine with the help of AI and the community.
 
+<!-- SPH-DOC-0.35.0-BEGIN -->
+## Engineering preview 0.35.0 — Scope ownership repair
+
+Four internal Scope members now use JavaScript private storage/dispatch. Explicit same-name properties cannot bypass registration, replace owned cleanup values or cancellation, or retain closed Scopes in shutdown tracking. Public API and error/cleanup order remain intact. See the [contract and evidence](knowledge-base/en/docs/scope-private-ownership.md).
+
+Original baseline passed; the unchanged six-test suite produced 1 pass / 5 assigned failures. After repair: **6/6** new and **183/183** retained lifecycle tests, build, strict types and boundaries passed. Independent implementation review has zero open findings. Final full publication checks and **0.35.0** delivery are **PENDING** at this cutoff.
+
+The preceding **0.34.0** was delivered through [PR #21](https://github.com/cnedwin/Egret_rebuild/pull/21), Main `74ca6c3293167d8d3eb253074c0596bd1922db21`, tree `94e6a96f17b656cb8cd28cd65a75f48575cb0c38`. Its mandatory push gate passed **2672/2672** core and **63/63** publication tests, checking **147** document pairs and **177** critical comment records. GitHub returned **0** statuses and **0** check runs; no remote CI PASS is claimed. Earlier pending cutoffs remain history.
+
+This covers four explicit named shadows; it makes no claim about all internals, arbitrary public overrides, security isolation, GC or device performance. The next Spine step connects original manual animation fixtures to owned Mesh2D frames; full Spine, UI, 3D, platform, AI workflow and legacy migration acceptance remain in the engineering plan.
+
+### 中文
+
+## 工程预览 0.35.0 — Scope 所有权修复
+
+Scope 的四个内部成员改为 JavaScript 私有存储／调用。显式同名属性不能绕过登记、替换自有清理列表或取消控制器，也不能令关闭后的 Scope 滞留关闭跟踪。公共 API 与错误／清理顺序保持不变。 见 [契约与证据](knowledge-base/Cns/docs/Scope私有所有权.md).
+
+原基线通过；未修改实现的六项测试得到 1 项通过／5 项指定失败。修复后：**6/6** 新测试、**183/183** 保留生命周期测试、构建、严格类型与边界通过。独立实现评审无开放问题。本截止点的最终完整公开检查及 **0.35.0** 交付为 **PENDING**。
+
+前一版本 **0.34.0** 已经 [PR #21](https://github.com/cnedwin/Egret_rebuild/pull/21) 交付，Main 为 `74ca6c3293167d8d3eb253074c0596bd1922db21`，树为 `94e6a96f17b656cb8cd28cd65a75f48575cb0c38`。必要推送门禁通过 **2672/2672** 项核心及 **63/63** 项公开检查，检查 **147** 对文档与 **177** 项关键注释记录。GitHub 返回 **0** 项状态和 **0** 项检查任务；不宣称远端 CI 通过。早先待完成截止点继续作为历史保留。
+
+本次仅覆盖四个显式同名属性案例，不宣称全部内部成员、任意公共覆盖、安全隔离、GC 或设备性能已验证。下一项 Spine 工作将原创手动动画 fixture 接入自有 Mesh2D 帧；完整 Spine、UI、3D、平台、AI 工作流及旧工程迁移的验收继续列入工程规划。
+<!-- SPH-DOC-0.35.0-END -->
+
 <!-- SP1A-DOC-0.34.0-BEGIN -->
 ## Engineering preview 0.34.0 — Spine import planning
 

@@ -2212,7 +2212,78 @@
         "Cns/docs/Spine导入计划契约.md",
         "evidence/spine-import-plan-verification.json"
       ],
-      "doc": "Cns/docs/Spine导入计划契约.md"
+      "doc": "Cns/docs/Spine导入计划契约.md",
+      "deliverySuccessor": {
+        "engineeringLabel": "0.34.0",
+        "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/21",
+        "sourceHead": "3988d8cb093581c69e80610582a92f8d7fc03adb",
+        "mergedMain": "74ca6c3293167d8d3eb253074c0596bd1922db21",
+        "tree": "94e6a96f17b656cb8cd28cd65a75f48575cb0c38",
+        "mandatoryPushHook": "ACTUAL_PASS",
+        "coreTests": 2672,
+        "publicationTests": 63,
+        "documentPairs": 147,
+        "criticalSources": 177,
+        "localRemoteMainReadbackAtUtc": "2026-10-12T00:31:01.816Z",
+        "remoteStatusCount": 0,
+        "remoteCheckCount": 0,
+        "remoteCIPassClaimed": false,
+        "scope": "Observed delivery successor; earlier SP1-A preparation cutoffs remain historical."
+      }
+    },
+    {
+      "id": "V039",
+      "kind": "scope_private_ownership",
+      "status": "implemented",
+      "requirementIds": [
+        "R003",
+        "R015",
+        "R016"
+      ],
+      "sourceIds": [
+        "S088"
+      ],
+      "dependsOn": [],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "independent_four_member_javascript_private_conversion",
+      "acceptance": "observed_six_public_cases_retained_lifecycle_types_boundary_final_publication_pending",
+      "candidateEvidence": {
+        "engineeringLabel": "0.35.0",
+        "sourceId": "S088",
+        "deliverable": "V039",
+        "scope": "Four Scope internals use JavaScript private storage/dispatch; existing API and cleanup/error order retained.",
+        "behavior": {
+          "tests": 6,
+          "passed": 6,
+          "failed": 0
+        },
+        "retainedLifecycle": {
+          "tests": 183,
+          "pass": 183,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0
+        },
+        "independentImplementationReviewOpenFindings": 0,
+        "fullCurrent": "PENDING_AT_PRECOMMIT_METADATA_CUTOFF",
+        "publication": "PENDING_AT_PRECOMMIT_METADATA_CUTOFF",
+        "independentFinalBilingualMeaningReview": "PENDING",
+        "mandatoryGitPushHook": "PENDING",
+        "remoteDelivery": "PENDING",
+        "fullSpineR020V020": "OPEN"
+      },
+      "title": "Scope 私有所有权与清理链路修复",
+      "acceptanceCriteria": [
+        "六项公共行为案例实际验证。",
+        "保留错误优先级、先取消后逆序清理及原信号身份。",
+        "独立评审、双语与必要推送门禁分别完成。"
+      ],
+      "artifacts": [
+        "Cns/docs/Scope私有所有权.md",
+        "evidence/scope-private-ownership-verification.json"
+      ],
+      "doc": "Cns/docs/Scope私有所有权.md"
     }
   ]
 }

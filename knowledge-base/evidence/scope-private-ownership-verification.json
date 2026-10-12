@@ -1,0 +1,333 @@
+{
+  "schemaVersion": 1,
+  "engineeringLabel": "0.35.0",
+  "sourceId": "S088",
+  "deliverable": "V039",
+  "scope": "Four Scope internals use JavaScript private storage/dispatch; existing API and cleanup/error order retained.",
+  "behavior": {
+    "tests": 6,
+    "passed": 6,
+    "failed": 0
+  },
+  "retainedLifecycle": {
+    "tests": 183,
+    "pass": 183,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0
+  },
+  "independentImplementationReviewOpenFindings": 0,
+  "fullCurrent": "PENDING_AT_PRECOMMIT_METADATA_CUTOFF",
+  "publication": "PENDING_AT_PRECOMMIT_METADATA_CUTOFF",
+  "independentFinalBilingualMeaningReview": "PENDING",
+  "mandatoryGitPushHook": "PENDING",
+  "remoteDelivery": "PENDING",
+  "fullSpineR020V020": "OPEN",
+  "date": "2026-10-12",
+  "sourceBaseCommit": "74ca6c3293167d8d3eb253074c0596bd1922db21",
+  "status": "FINITE_SCOPE_OWNERSHIP_REPAIR_OBSERVED_PUBLICATION_PENDING",
+  "origin": {
+    "implementation": "Independently authored first-party runtime repair and original public lifecycle fixtures under Apache-2.0.",
+    "runtimeDependenciesAdded": [],
+    "externalAssetsAdded": [],
+    "researchRelation": "Existing Egret lifecycle contract and actual first-party reproduction; no upstream implementation reused."
+  },
+  "selectedEngineeringInputs": [
+    {
+      "path": "packages/runtime/src/Scope.ts",
+      "bytes": 4765,
+      "sha256": "c369db2b08df36e22553859c6ec7ccc110550bf32e5cbd3ffca1925f201f3044"
+    },
+    {
+      "path": "tests/scope-private-ownership.test.mjs",
+      "bytes": 7494,
+      "sha256": "5b385a2fa025732989cd8ac6647f1b2f0d03dfb1c1b173d25981da77b4a46c56"
+    },
+    {
+      "path": "tests/types/negative.ts",
+      "bytes": 28368,
+      "sha256": "e60c76f3d5d186657fd291bec3906898427ee1a4bddac67d48aa8276daf74702"
+    },
+    {
+      "path": "tools/check-types.mjs",
+      "bytes": 68576,
+      "sha256": "8f303321cfd0a75c65381bc8774230e585789a8859205be5052e157b0e474c16"
+    },
+    {
+      "path": "tests/types/text-field-supplement-negative.ts",
+      "bytes": 864,
+      "sha256": "08ccbf0f15e8b7b472f23df72ef919d396fa06686084f529b43737057514ff1d"
+    }
+  ],
+  "actual": {
+    "ordinaryBaselineAndOriginalRed": {
+      "artifactIdentity": {
+        "bytes": 1671,
+        "sha256": "7faed66d032f8651d54e87315810dbfdd7d86f0f7f0cc9c5644915007854066a"
+      },
+      "executions": [
+        {
+          "name": "ordinary-baseline",
+          "startedAtUtc": "2026-10-12T00:31:18.4378809Z",
+          "finishedAtUtc": "2026-10-12T00:31:18.5900480Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "4b95b2590c7a827ab39cefc8c5072e5e5a3f9ab58780de570f58cf5d8fbaf89a",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "assigned-original-red",
+          "startedAtUtc": "2026-10-12T00:31:18.6130943Z",
+          "finishedAtUtc": "2026-10-12T00:31:18.7555729Z",
+          "exitCode": 1,
+          "timeout": false,
+          "stdoutSHA256": "2698b77f74c9e0480ab24b43b073253f716a8506d1dc3ed17f9dd40b07c657ec",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "originalRedCounts": {
+      "tests": 6,
+      "pass": 1,
+      "fail": 5,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "currentBuildBehaviorRetainedTypesAndBoundary": {
+      "artifactIdentity": {
+        "bytes": 4109,
+        "sha256": "cfa238d0d068b015db61de4d2bb46b63efaf14163bb99d94ff52b648715295fb"
+      },
+      "executions": [
+        {
+          "name": "build",
+          "startedAtUtc": "2026-10-12T00:34:38.6892494Z",
+          "finishedAtUtc": "2026-10-12T00:34:39.1633659Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "166710cb105690b244b48c5dcc5672a4c0bc8280e995ae7d2f5bd46141491cea",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "scope-behavior",
+          "startedAtUtc": "2026-10-12T00:34:39.1836471Z",
+          "finishedAtUtc": "2026-10-12T00:34:39.3215784Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "ae15ade8537e987f0d117ecb9acedc28d439fead54cbfb925fb6fdce600db92e",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "retained-lifecycle",
+          "startedAtUtc": "2026-10-12T00:34:39.3280944Z",
+          "finishedAtUtc": "2026-10-12T00:34:39.5734982Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "f702ebd0b5dfa4489605b9573a7c7ecf728309cf99316229e8d588029a03a87b",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "strict-types",
+          "startedAtUtc": "2026-10-12T00:34:39.5807469Z",
+          "finishedAtUtc": "2026-10-12T00:34:45.0233602Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "1e2d3a50030678d4ed7dcfec7996b5ac314fdfb2a086af9f3b7e19f2b715c934",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "production-boundary",
+          "startedAtUtc": "2026-10-12T00:34:45.0305910Z",
+          "finishedAtUtc": "2026-10-12T00:34:45.7641271Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "717128ab09db9706538327db123ed6442a284879ec6449b67c0c2b511add21aa",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "initialTypeShapeFailures": [
+      {
+        "artifactIdentity": {
+          "bytes": 3326,
+          "sha256": "81b76eccf4bc56dc01d6f752b1cd60e0681781d4c50ae322aa994a0708c5f13b"
+        },
+        "executions": [
+          {
+            "name": "build",
+            "startedAtUtc": "2026-10-12T00:31:49.8738910Z",
+            "finishedAtUtc": "2026-10-12T00:31:50.3792828Z",
+            "exitCode": 0,
+            "timeout": false,
+            "stdoutSHA256": "166710cb105690b244b48c5dcc5672a4c0bc8280e995ae7d2f5bd46141491cea",
+            "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "name": "scope-behavior",
+            "startedAtUtc": "2026-10-12T00:31:50.4010336Z",
+            "finishedAtUtc": "2026-10-12T00:31:50.5374466Z",
+            "exitCode": 0,
+            "timeout": false,
+            "stdoutSHA256": "9480933adc50c003ee4f9a3b5d9b089df9d63215e426f5dfcf34543ebb44fb2e",
+            "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "name": "retained-lifecycle",
+            "startedAtUtc": "2026-10-12T00:31:50.5431886Z",
+            "finishedAtUtc": "2026-10-12T00:31:50.7856028Z",
+            "exitCode": 0,
+            "timeout": false,
+            "stdoutSHA256": "c5adf752b4a67e5dcb144f4e47982983e52631a7af2208de312e9cdd5901290d",
+            "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "name": "strict-types",
+            "startedAtUtc": "2026-10-12T00:31:50.7920297Z",
+            "finishedAtUtc": "2026-10-12T00:31:51.0300487Z",
+            "exitCode": 1,
+            "timeout": false,
+            "stdoutSHA256": "2957169be2928e2a8363177fe86be59f069ea700f9909b7891ea7939cec6d16a",
+            "stderrSHA256": "8324ad4a5e5b60c57d7d535415aaf4ac358b0b635bb0d79fbebc10c8ad36b52b"
+          }
+        ]
+      },
+      {
+        "artifactIdentity": {
+          "bytes": 3326,
+          "sha256": "8ec2ae81f3d695926ed4ccdcc84e20f0bcb5243c4319e2c4c42dc716ffb3d9b8"
+        },
+        "executions": [
+          {
+            "name": "build",
+            "startedAtUtc": "2026-10-12T00:33:37.4544573Z",
+            "finishedAtUtc": "2026-10-12T00:33:37.9517484Z",
+            "exitCode": 0,
+            "timeout": false,
+            "stdoutSHA256": "166710cb105690b244b48c5dcc5672a4c0bc8280e995ae7d2f5bd46141491cea",
+            "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "name": "scope-behavior",
+            "startedAtUtc": "2026-10-12T00:33:37.9742916Z",
+            "finishedAtUtc": "2026-10-12T00:33:38.1162474Z",
+            "exitCode": 0,
+            "timeout": false,
+            "stdoutSHA256": "e2b23ab9afb1aae880ff248f3cd97c7b045972e7fc8ad4eb19a9c5f4a551265a",
+            "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "name": "retained-lifecycle",
+            "startedAtUtc": "2026-10-12T00:33:38.1226051Z",
+            "finishedAtUtc": "2026-10-12T00:33:38.4229071Z",
+            "exitCode": 0,
+            "timeout": false,
+            "stdoutSHA256": "ecaad1a8428501c071c2cde5239817ffe1896808e5630f7fc647d9dea624da74",
+            "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "name": "strict-types",
+            "startedAtUtc": "2026-10-12T00:33:38.4315606Z",
+            "finishedAtUtc": "2026-10-12T00:33:40.7948702Z",
+            "exitCode": 1,
+            "timeout": false,
+            "stdoutSHA256": "3415ce11fb36f33ae3f79c47faba18776d69ad8cdcef8d640bb84b389b94dc49",
+            "stderrSHA256": "a076779ff1eb5718952ff00877eb69d9e5beddc80e4506974762d84de9be26ca"
+          }
+        ]
+      }
+    ],
+    "diagnosticShape": {
+      "compiler": "7.0.2",
+      "oldCode": 2740,
+      "newCode": 2739,
+      "tuples": [
+        {
+          "file": "tests/types/invalid.generated.ts",
+          "line": 378,
+          "column": 22,
+          "code": 2739
+        },
+        {
+          "file": "tests/types/invalid.generated.ts",
+          "line": 435,
+          "column": 33,
+          "code": 2739
+        },
+        {
+          "file": "tests/types/asset-group-negative.ts",
+          "line": 18,
+          "column": 25,
+          "code": 2739
+        },
+        {
+          "file": "tests/types/mouse-input-negative.ts",
+          "line": 18,
+          "column": 26,
+          "code": 2739
+        },
+        {
+          "file": "tests/types/text-field-supplement-negative.ts",
+          "line": 13,
+          "column": 25,
+          "code": 2739
+        }
+      ],
+      "probeIdentity": {
+        "bytes": 8559,
+        "sha256": "4c1619ccf821e4395d5bdc3021929d038489a1b6e031c045be4573a7ea4d1a1d"
+      },
+      "fifthObservedIdentity": {
+        "bytes": 1732,
+        "sha256": "f807031db1204caa881517ec11e9793cb5b4bd1c63187e1c9b6a67dcc5f8923d"
+      },
+      "fixtureInstructionsUnchanged": true,
+      "strictMatchingRulesUnchanged": true
+    },
+    "independentSpecificationReview": {
+      "bytes": 8492,
+      "sha256": "79e380e7f7d935ae2053ebd209e3399aa93e9143086d9d75a54a0a201896d242",
+      "verdict": "PASS",
+      "execution": "NOT_RUN"
+    },
+    "independentImplementationReview": {
+      "bytes": 12227,
+      "sha256": "28a318a419ef7b12800c261e4a3ad923b9f4902e9b99551f3f4b8c4282fe8709",
+      "verdict": "PASS",
+      "openFindings": 0,
+      "execution": "NOT_RUN"
+    }
+  },
+  "precedingDelivery": {
+    "engineeringLabel": "0.34.0",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/21",
+    "sourceHead": "3988d8cb093581c69e80610582a92f8d7fc03adb",
+    "mergedMain": "74ca6c3293167d8d3eb253074c0596bd1922db21",
+    "tree": "94e6a96f17b656cb8cd28cd65a75f48575cb0c38",
+    "mandatoryPushHook": "ACTUAL_PASS",
+    "coreTests": 2672,
+    "publicationTests": 63,
+    "documentPairs": 147,
+    "criticalSources": 177,
+    "localRemoteMainReadbackAtUtc": "2026-10-12T00:31:01.816Z",
+    "remoteStatusCount": 0,
+    "remoteCheckCount": 0,
+    "remoteCIPassClaimed": false,
+    "scope": "Observed delivery successor; earlier SP1-A preparation cutoffs remain historical."
+  },
+  "limits": {
+    "namedShadowActors": [
+      "values",
+      "controller",
+      "onClosed",
+      "validateAcceptance"
+    ],
+    "allEngineInternals": false,
+    "arbitraryPublicMethodReplacement": false,
+    "prototypeTampering": false,
+    "securityIsolation": false,
+    "physicalMemoryGC": false,
+    "devicePerformance": false,
+    "SpineAnimationRendering": "not_run"
+  },
+  "history": "The earlier assert-zero probe is a diagnosis, not a positive acceptance test. The original six-test RED and its assigned failures remain separate from the repaired run."
+}

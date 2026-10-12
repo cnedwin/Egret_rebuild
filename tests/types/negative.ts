@@ -374,7 +374,7 @@ negativeClockOptions.maxDeltaSeconds = 1;
 negativeClockTick.deltaSeconds = 1;
 // @ts-expect-error GAME_CLOCK_CASE readonly-disposal TS2540
 negativeClockSubscription.isDisposed = true;
-// @ts-expect-error GAME_CLOCK_CASE wrong-scope TS2740
+// @ts-expect-error GAME_CLOCK_CASE wrong-scope TS2739
 negativeClock.onTick({}, () => undefined);
 // @ts-expect-error GAME_CLOCK_CASE promise-handler TS2322
 negativeClock.onTick(negativeClockScope, async () => undefined);
@@ -431,7 +431,7 @@ negativeTweenOptions.easing = 'linear';
 negativeTweenOptions.onUpdate = () => undefined;
 // @ts-expect-error TWEEN_CASE readonly-completion-option TS2540
 negativeTweenOptions.onComplete = () => undefined;
-// @ts-expect-error TWEEN_CASE wrong-scope TS2740
+// @ts-expect-error TWEEN_CASE wrong-scope TS2739
 negativeTweenEngine.createTween({}, negativeTweenOptions);
 // @ts-expect-error TWEEN_CASE unsupported-easing TS2322
 negativeTweenEngine.createTween(negativeTweenScope, {...negativeTweenOptions, easing: 'cubic'});
