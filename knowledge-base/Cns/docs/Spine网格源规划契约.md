@@ -8,7 +8,7 @@ F2-A 是位于 `knowledge-base/experiments/spine-f2` 的开发实验。同步、
 
 ## 入口与使用
 
-实验导出 1 个运行时值 `createF2MeshSourcePlan(input: SpineImportInput): F2MeshSourceResult`，以及 6 个擦除类型：`F2MeshSourceSummary`、`F2SetupReference`、`F2MeshSourcePlan`、`F2MeshSourceDiagnostic`、`F2MeshSourceDiagnosticCode`、`F2MeshSourceResult`。`SpineImportInput`、`SpineImportPlan`、`SpineImportDiagnostic` 和 `SpineSourceSpan` 保留 `@egret/project/spine` 的公共身份。既有 SDK 根入口与可选规划入口不新增实验导出。
+当前实验导出 2 个运行时值和 10 个擦除类型。F2-A 自身保留 1 个运行时值 `createF2MeshSourcePlan(input: SpineImportInput): F2MeshSourceResult`，以及 6 个擦除类型：`F2MeshSourceSummary`、`F2SetupReference`、`F2MeshSourcePlan`、`F2MeshSourceDiagnostic`、`F2MeshSourceDiagnosticCode`、`F2MeshSourceResult`。[F2-B 契约](Spine线性动画源规格契约.md)定义 `createF2MeshProfilePlan` 与另外 4 个类型。`SpineImportInput`、`SpineImportPlan`、`SpineImportDiagnostic` 和 `SpineSourceSpan` 保留 `@egret/project/spine` 的公共身份。既有 SDK 根入口与可选规划入口不新增实验导出。
 
 在仓库根目录，完成实验构建后：
 

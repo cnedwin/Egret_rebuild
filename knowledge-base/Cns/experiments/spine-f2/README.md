@@ -58,3 +58,9 @@ else console.log(result.diagnostics);
 完整 profile、deform、动画语义、Core 兼容性、真实资源、渲染及许可资格仍待验收；R020/V020 保持 **OPEN**。`F2_SOURCE_VIEW` 与 `F2_INTERNAL_ERROR` 的受控见证也保持 **PENDING**。不得用源准入直接启动播放。
 
 七份[共享资产](../../../experiments/spine-f2/assets/egret-original-unfold.spine.json)是原创 Apache-2.0 样本，不是 Editor 导出或 canonical Core 输出。本切片不打包第三方 Core。参见仓库根目录的 `LICENSE` 与 `NOTICE`、[官方格式源码](https://github.com/EsotericSoftware/spine-runtimes/blob/b7beb2ccbbce667a12c02f44d070644f59b04968/spine-ts/spine-core/src/SkeletonJson.ts)、[图集格式](https://esotericsoftware.com/spine-atlas-format)及[运行库许可](https://esotericsoftware.com/spine-runtimes-license)。上游条款和资源权利需要分别取得资格。
+
+<!-- F2-B-GUIDE-0.43.0-BEGIN -->
+## Current F2-B opt-in entry / 当前 F2-B 可选入口
+
+当前已构建的可选实验提供 2 个运行时值：`createF2MeshSourcePlan`（A）与 `createF2MeshProfilePlan`（B），以及 10 个擦除类型：A 原有的 6 个保持不变，新增 `F2MeshProfilePlan`、`F2MeshProfileResult`、`F2MeshProfileDiagnostic` 和 `F2MeshProfileDiagnosticCode`。B 接收同一公共 `SpineImportInput`；参见 [B 契约](../../docs/Spine线性动画源规格契约.md)、[B 证据](../../docs/Spine线性动画源规格证据.md)与[共享验证](../../../evidence/spine-linear-profile-verification.json)。当前完整开发验证器已接受 160 项检查及精确 A39/B100 类型元组；当前完整 prepush/push/PR/Main 仍为 PENDING。上文 A 较早的 source-only 与 Pending 截止点保持不变。Core、pose、资源、播放、渲染和许可资格尚未验收；受控故障仍待完成，R020/V020 与 R008/V006 保持 OPEN。
+<!-- F2-B-GUIDE-0.43.0-END -->

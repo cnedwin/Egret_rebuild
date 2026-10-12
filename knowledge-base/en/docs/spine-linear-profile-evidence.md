@@ -1,0 +1,58 @@
+# Spine linear animation source-profile evidence
+
+English | [简体中文](../../Cns/docs/Spine线性动画源规格证据.md)
+
+Engineering preview **0.43.0 candidate** · specification **S096** · verification **V047**. This document records a finite F2-B source-profile slice, retaining the initial type cutoff at **2026-10-12T19:55:10.1768364Z** and the separate host observation ending **2026-10-12T20:08:23.9496817Z**. The later host result's independent audit and complete development integration are **PENDING at this cutoff**. [The contract](spine-linear-profile-contract.md) defines the supported source and refusal order. Full Spine **R020/V020 remains OPEN**; source-profile evidence does not upgrade Core, pose, playback, resource or rendering acceptance.
+
+## Accepted source, compilation and behavior
+
+Independent source review accepted four changed product files, the shared A facade preservation, the r2 specification and the r3 location clarification, with 0 open findings in those finite scopes. Saved-result independent reviews accepted actual strict product compilation, the named public API, retained A/source-policy tests and ordinary B behavior. No reviewer reran Core or a browser to establish these results.
+
+| Observation | Saved actual result | Scope |
+| --- | --- | --- |
+| Genuine named API RED | The complete public SP1/A baseline marker preceded the sole undefined-versus-function assertion for `createF2MeshProfilePlan`: 1 test, 0 pass, 1 fail; no skipped/cancelled/todo cases. | Missing symbol in the built, delivered A namespace; not a missing-module or fake-object setup failure. The original receipt remains history. |
+| Product strict compile and named API successor | Strict standalone compilation exited 0 with empty stdout/stderr; the separate named API test passed 1/1. Execution finished **2026-10-12T19:41:22.8058290Z**. | TypeScript 7.0.2, ES2022/NodeNext strict configuration, actual experiment entry; 2 values/10 erased types. This compile is not consumer-type acceptance. |
+| Retained A and source-policy development entry | **25/25** tests, fail/cancelled/skipped/todo all 0; execution finished **2026-10-12T19:46:53.2452198Z**. | 16 retained A behavior cases, 1 named API case, and 8 source-policy cases: 1 baseline plus 7 assigned controls. The same API test's separate executions are not added as unique coverage. |
+| Ordinary B source-profile behavior | **135/135** tests, including nested tests across 22 source families; fail/cancelled/skipped/todo all 0. Execution ran **2026-10-12T19:53:42.5158899Z–2026-10-12T19:53:43.8094608Z**. | Immutable owned output, strict allowlists, references including empty maps, original source locations, finite domains, binary64/Float32 time admission and logical budgets. Not Core/pose/playback/pixel coverage. |
+| SDK identity readback | All **314** sealed baseline SDK emission identities matched physical bytes/SHA-256, with 0 mismatches. | Exact saved inventory from the delivered baseline; no default SDK expansion or repeated whole-SDK algorithm audit. |
+
+The retained development entry also preserved the original A positive consumer result of 0 diagnostics and its **39** ordered negative diagnostic tuples/full messages, separately from the new B consumer lane. Its fixed-version structural tool used TypeScript 7.0.2 public `typescript/unstable/sync` and `typescript/unstable/ast` APIs. The accepted source-policy scope is 5 experiment modules, 2 public values and 10 erased types; structural controls are not an isolation or numerical proof.
+
+The ordinary B suite has 22 successful parent families and 113 nested successful cases. Literal expected results and diagnostic tokens were authored from the specification before product execution. Witnesses include component-offset sparse deform, known/unknown empty target maps, ancestor-before-child references before minimum-frame checks, inactive attachments, later animation errors, original CRLF/astral/escaped-pointer locations, missing/default versus present time, Float32 time collapse, and separately reachable count/expanded-budget cases. The defensive 128-timeline guard is not presented as an ordinary 128/129 witness; supported structural targets reach at most 96 timelines. Atlas axis caps make the RGBA byte guard defensive too. Logical counts are not measured memory, GPU draws or performance.
+
+## New consumer types: initial cutoff and successors
+
+The reviewed B positive/negative source fixtures and strict configurations were executed separately with TypeScript **7.0.2**. Actual positive compilation exited **0**, reported **0 diagnostics**, and had empty streams. The unsuppressed negative compilation exited **1** and its saved raw output yielded **100 diagnostic tuples**. All three recorded actors, including source adoption, completed without timeout; the negative exit 1 is the intended compiler-refusal observation.
+
+The actual 100 count comes from compiler output, not a predicted marker count. The saved table retains file/line/column/code/full-message tuples and replaces only the exact repository-root prefix with `<repo>/`; raw output remains retained. **Independent acceptance of the B tuple-to-intent relations and current type evidence remains PENDING at this cutoff.** Source review of fixtures does not supply that actual acceptance. This new 100-tuple lane does not replace or retroactively rewrite A's 39-tuple history. No full development integration, whole pre-push or remote result is inferred from it.
+
+That preceding paragraph retains the initial **19:55** observation cutoff. A subsequent independent actual review accepted the default-environment positive **0** and negative **100** result with 0 open findings: all five tuple fields/full messages matched their intended source relations, with no unrelated/setup diagnostics. It preserved A's original four consumer files and 39-tuple table.
+
+The first complete development-verifier attempt then exited **1**, after **160/160** ordinary tests with fail/cancelled/skipped/todo all 0. It stopped at the retained A39 exact-message comparison, before its B type stage. The execution environment represented normal pnpm workspace junction namespaces through `node_modules` paths, unlike the original `packages` message identities. A separate normal Windows-host observation of the same A inputs recovered the original package-path messages; the A table, product and contract did not need a change. This is a recorded environment/message-identity boundary, not an engine-behavior or performance conclusion, and the failed receipt remains history.
+
+The normal-host B successor ran **2026-10-12T20:08:23.5927431Z–2026-10-12T20:08:23.9496817Z**: positive exit **0**, empty streams and **0** diagnostics; unsuppressed negative exit **1**, **100** observed tuples. Its package-owner path messages are saved separately from the default-environment table. **Independent acceptance of this host successor and a fresh complete development-verifier result remain PENDING here.** No path-message oracle is rewritten to make a failed gate pass, and no future full-gate result is predicted.
+
+## Artifact identities and retained corrections
+
+The four changed source identities accepted by source review and matched in actual readbacks are:
+
+| Repository-relative path | Bytes | SHA-256 |
+| --- | --- | --- |
+| `knowledge-base/experiments/spine-f2/src/index.ts` | 577 | `51d992b5a6ab5f75f203b8bcd289d4af9d67b80935c2cd26b2d8031368886b2c` |
+| `knowledge-base/experiments/spine-f2/src/source-plan.ts` | 22487 | `4a1e57abdaf93a42236f72bcf6fef1569fe039efff1f56378862d539a30be728` |
+| `knowledge-base/experiments/spine-f2/src/profile-plan.ts` | 4718 | `70ea7129f28ee52ae6f12bcf853c94279c09aff917ec97db83562b3b8875b700` |
+| `knowledge-base/experiments/spine-f2/src/profile-source.ts` | 30397 | `5f2d9ee9b4a5c9f7582643e80eea805de2507373d417b97802ed370df6248d75` |
+
+The ordinary B stdout has **8054 bytes**, SHA-256 `46afd87b3950d252920f30843bd07d015f5f3f5cc97de28bf5a978348e6a56b8`; stderr is empty. Current **10** experiment JS/declaration identities are a saved current readback. A frozen post-compile ten-file inventory was not available before the behavior run; **compile-to-behavior before/after byte equality is NOT_ESTABLISHED**. Accepted source pins, the genuine strict compilation and actual 135-case output remain separate evidence. No missing historic snapshot is reconstructed as fact.
+
+The first B behavior source review found two incorrect expected locations before execution: the descriptor getter case must point to `/skeleton`, and an omitted second time must use its frame pointer/opening, while present time retains `/time`. A reviewed successor changed exactly those two expectation lines; whole-file inverse restored the original test bytes and the fixture helper stayed identical. The successful 135-case execution used that successor. The original NEEDS_REPAIR source review remains preserved; it was not a product failure. The B type-source successor added five strict configuration flags while preserving both TS fixtures; original source-review history is retained. Older A failure and PENDING cutoffs remain in the [A evidence](spine-mesh-source-plan-evidence.md), without being silently rewritten by this new document.
+
+## Previous delivery, attribution and remaining work
+
+The previous delivered **0.42.0** baseline is [PR #29](https://github.com/cnedwin/Egret_rebuild/pull/29), Main `e7a82283ef02b57976e5a94e10306fc6aee516b5`, tree `319de5686631afe3213699f9fc2a4a424d7bcbdf`. Its actual mandatory push hook accepted publication **63/63**, core **2748/2748**, experiment **22/22**, with 0 knowledge-base issues. These are **0.42.0 delivery observations**, not 0.43.0 gates. Saved remote status/check lists were empty with combined state pending; no remote CI PASS is claimed. Current 0.43.0 whole pre-push, GitHub delivery and remote CI remain **PENDING**.
+
+Planner code and the seven retained programmatic assets are original first-party Egret material under Apache-2.0; see repository-root `LICENSE` and `NOTICE`. The fixtures are not Spine Editor exports or canonical Core/pixel qualification. AI assistance supported design, implementation, test authoring and independent review, with fixed specifications and literal witnesses defining the evidence boundary. [jsonc-parser](https://github.com/microsoft/node-jsonc-parser) **3.3.1**, MIT, remains the existing root development dependency family.
+
+Source research used locally pinned official **Spine Core 4.3.13**, upstream `b7beb2ccbbce667a12c02f44d070644f59b04968`, including the [original SkeletonJson source](https://github.com/EsotericSoftware/spine-runtimes/blob/b7beb2ccbbce667a12c02f44d070644f59b04968/spine-ts/spine-core/src/SkeletonJson.ts). It is a reference for source semantics, not executed Core authority; upstream implementation/artwork is not included. The saved **2026-10-12** official [Runtimes License](https://esotericsoftware.com/spine-runtimes-license) and [Editor License](https://esotericsoftware.com/spine-editor-license) refresh recorded last-update date **2025-04-05**. It does not establish Editor entitlement, export qualification or distribution rights.
+
+Controlled once-call ownership, source-view and internal-error fault coverage remains **PENDING**; source-inspected call structure is not executed controlled-fault evidence. Core compatibility, pose numerics, actual deformation/sampling, playback, resources/leases, rendering, browser/native/phone/device/OS behavior, performance, licensing and complete Spine **R020/V020** remain **OPEN or unverified** as applicable. S096/V047 records this finite source-profile increment only.

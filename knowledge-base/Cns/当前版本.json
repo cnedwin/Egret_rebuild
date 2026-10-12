@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "version": "0.42.0",
+  "version": "0.43.0",
   "updatedAt": "2026-10-12",
-  "title": "白鹭引擎社区重建 — Spine 网格源规划 F2-A",
-  "stage": "bounded_spine_mesh_source_cpu_types_policy_accepted_publication_pending",
+  "title": "白鹭引擎社区重建 — Spine 线性动画源规格 F2-B",
+  "stage": "bounded_spine_linear_source_profile_cpu_types_policy_development_accepted_publication_pending",
   "publication": "development_preview",
   "registries": {
     "requirements": "Cns/registry/需求.json",
@@ -541,7 +541,7 @@
     "contract": "Cns/docs/显示内容边界契约.md",
     "evidence": "Cns/docs/显示内容边界证据.md"
   },
-  "latestEngineeringPreview": "0.42.0",
+  "latestEngineeringPreview": "0.43.0",
   "texturedMesh2DImplementation": {
     "version": "0.23.0",
     "status": "bounded_increment_implemented",
@@ -3189,6 +3189,93 @@
       "witness": "NS1_0_41_actual_delivery",
       "bytes": 29643,
       "sha256": "39a9e645da096a52c9836bb6e16fe31599a7e5462e66d3ca1de20aa9a42f38c6"
+    },
+    "historicalPendingCutoffsRetained": true
+  },
+  "spineLinearProfileF2BPreviousCheckpoint": {
+    "version": "0.42.0",
+    "title": "白鹭引擎社区重建 — Spine 网格源规划 F2-A",
+    "stage": "bounded_spine_mesh_source_cpu_types_policy_accepted_publication_pending",
+    "updatedAt": "2026-10-12"
+  },
+  "spineLinearProfileF2BActualSuccessor": {
+    "engineeringLabel": "0.43.0",
+    "sourceId": "S096",
+    "deliverableId": "V047",
+    "status": "BOUNDED_F2_B_SOURCE_CPU_TYPES_POLICY_DEVELOPMENT_ACCEPTED_PUBLICATION_PENDING",
+    "record": "knowledge-base/evidence/spine-linear-profile-verification.json",
+    "sourceProfile": "passed",
+    "linearTimelineSourceAdmission": "passed",
+    "ordinaryBehavior": {
+      "tests": 135,
+      "pass": 135,
+      "fail": 0,
+      "skipped": 0
+    },
+    "normalHostTypes": {
+      "positiveDiagnostics": 0,
+      "negativeDiagnostics": 100,
+      "exactObservedTuples": true
+    },
+    "completeDevelopmentVerifier": {
+      "exitCode": 0,
+      "tests": 160,
+      "pass": 160,
+      "fail": 0,
+      "retainedATuples": 39,
+      "profileTuples": 100
+    },
+    "sourceBoundary": {
+      "modules": 5,
+      "publicValues": 2,
+      "publicTypes": 10,
+      "assignedControls": 7
+    },
+    "controlledFaults": "PENDING_CONTROL_MECHANISM",
+    "mandatoryFullPrepush": "PENDING",
+    "mandatoryPushHook": "PENDING",
+    "pullRequestAndMain": "PENDING",
+    "remoteCI": "PENDING",
+    "coreCompatibility": "not_run",
+    "poseNumerics": "not_run",
+    "resourceIdentity": "not_run",
+    "playback": "not_run",
+    "rendering": "not_run",
+    "licenseEntitlement": "unverified",
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "historicalCutoffsPreserved": true,
+    "doc": "Cns/docs/Spine线性动画源规格契约.md",
+    "summary": "有限源行为、精确类型、策略和完整开发验证器已接受；公开交付及运行时资格分别待完成。"
+  },
+  "spineMeshF2ADeliveryActualSuccessor": {
+    "engineeringLabel": "0.42.0",
+    "status": "ACTUAL_0_42_F2_A_DELIVERY_SUCCESSOR",
+    "source": {
+      "sha": "af1a4ba0894f91eac5383292e59fb17b2c78d187",
+      "tree": "319de5686631afe3213699f9fc2a4a424d7bcbdf",
+      "files": 48
+    },
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/29",
+    "main": {
+      "head": "e7a82283ef02b57976e5a94e10306fc6aee516b5",
+      "tree": "319de5686631afe3213699f9fc2a4a424d7bcbdf"
+    },
+    "mandatoryPushHook": {
+      "exitCode": 0,
+      "publicationTests": 63,
+      "coreTests": 2748,
+      "experimentTests": 22
+    },
+    "remoteChecks": {
+      "statusCount": 0,
+      "checkRuns": 0,
+      "remoteCIPassClaim": false
+    },
+    "independentlyReviewed": {
+      "witness": "F2_A_0.42_actual_delivery_review",
+      "bytes": 30222,
+      "sha256": "cfe0a836962c137db63741c2546f2c720a97467be7b9a6e7733cde1729b64013"
     },
     "historicalPendingCutoffsRetained": true
   }

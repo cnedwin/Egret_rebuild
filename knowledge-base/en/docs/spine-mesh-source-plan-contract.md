@@ -8,7 +8,7 @@ Admission is limited to source planning. Core compatibility, deform and animatio
 
 ## Entry and use
 
-The experiment exports 1 runtime value, `createF2MeshSourcePlan(input: SpineImportInput): F2MeshSourceResult`, and 6 erased types: `F2MeshSourceSummary`, `F2SetupReference`, `F2MeshSourcePlan`, `F2MeshSourceDiagnostic`, `F2MeshSourceDiagnosticCode`, `F2MeshSourceResult`. `SpineImportInput`, `SpineImportPlan`, `SpineImportDiagnostic` and `SpineSourceSpan` retain their public identities from `@egret/project/spine`. Existing SDK roots and the optional planning entry do not gain experiment exports.
+The current experiment exports 2 runtime values and 10 erased types. F2-A itself retains its 1 runtime value, `createF2MeshSourcePlan(input: SpineImportInput): F2MeshSourceResult`, and 6 erased types: `F2MeshSourceSummary`, `F2SetupReference`, `F2MeshSourcePlan`, `F2MeshSourceDiagnostic`, `F2MeshSourceDiagnosticCode`, `F2MeshSourceResult`. The [F2-B contract](spine-linear-profile-contract.md) defines `createF2MeshProfilePlan` and its 4 additional types. `SpineImportInput`, `SpineImportPlan`, `SpineImportDiagnostic` and `SpineSourceSpan` retain their public identities from `@egret/project/spine`. Existing SDK roots and the optional planning entry do not gain experiment exports.
 
 From the repository root, after the experiment build:
 

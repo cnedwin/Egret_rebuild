@@ -2,6 +2,18 @@
 
 English | [简体中文](../Cns/CHANGELOG.md)
 
+<!-- F2-B-0.43.0-CHANGELOG-BEGIN -->
+## Engineering preview 0.43.0 — Spine linear source profile F2-B / 工程预览 0.43.0 — Spine 线性动画源规格 F2-B
+
+**S096 / V047. Finite source behavior, types, policy and the complete development verifier are accepted; current full prepush, push hook and PR/Main delivery remain PENDING.** B retains owned source text and qualifies a fixed single-page, unweighted linear translate/deform profile. The opt-in experiment currently exports 2 values and 10 erased types; default SDK and public SP1 entries gain no B API. Saved B behavior passed 135/135; normal-host types had 0 positive and 100 actual negative diagnostics. The complete experiment verifier passed 160/160 and retained A39/B100 tuples.
+
+[Contract](docs/spine-linear-profile-contract.md) / [Evidence](docs/spine-linear-profile-evidence.md). Source admission grants no Core, pose, resource, playback, rendering or entitlement authority. Controlled faults remain pending; R020/V020 and R008/V006 remain OPEN.
+
+## Recorded 0.42.0 delivery — Spine F2-A / 已记录的 0.42.0 交付 — Spine F2-A
+
+Version 0.42.0 merged through [PR #29](https://github.com/cnedwin/Egret_rebuild/pull/29); Main `e7a82283ef02b57976e5a94e10306fc6aee516b5` and tree `319de5686631afe3213699f9fc2a4a424d7bcbdf` were read back. Its mandatory push hook passed 63 publication, 2748 core and 22 experimental tests, counted separately. Zero remote statuses/check-runs do not establish remote CI PASS. Earlier Pending cutoffs remain historical records.
+<!-- F2-B-0.43.0-CHANGELOG-END -->
+
 <!-- NS1-DOC-0.41.0-BEGIN -->
 ## Engineering preview 0.41.0 — nine-slice stretch geometry NS1
 

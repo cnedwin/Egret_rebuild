@@ -2,6 +2,22 @@
 
 [English](../en/README.md) | 简体中文
 
+<!-- F2-B-0.43.0-BEGIN -->
+## Engineering preview 0.43.0 — Spine linear source profile F2-B / 工程预览 0.43.0 — Spine 线性动画源规格 F2-B
+
+**S096 / V047. Finite source behavior, types, policy and the complete development verifier are accepted; current full prepush, push hook and PR/Main delivery remain PENDING.** B retains owned source text and qualifies a fixed single-page, unweighted linear translate/deform profile. The opt-in experiment currently exports 2 values and 10 erased types; default SDK and public SP1 entries gain no B API. Saved B behavior passed 135/135; normal-host types had 0 positive and 100 actual negative diagnostics. The complete experiment verifier passed 160/160 and retained A39/B100 tuples.
+
+[Contract](../en/docs/spine-linear-profile-contract.md) / [Evidence](../en/docs/spine-linear-profile-evidence.md). Source admission grants no Core, pose, resource, playback, rendering or entitlement authority. Controlled faults remain pending; R020/V020 and R008/V006 remain OPEN.
+
+**S096 / V047：有限源行为、类型、策略与完整开发验证器已接受；当前完整 prepush、推送 hook 和 PR/Main 交付仍为 PENDING。** B 保留 owned 源文本，检查固定单页、非加权的线性 translate/deform 源规格。可选实验当前导出 2 个值与 10 个擦除类型；默认 SDK 和公开 SP1 入口不新增 B API。保存的 B 行为 135/135 通过；normal-host 类型正例 0、实际负例 100。完整实验验证器 160/160 通过，保留 A39/B100 元组。
+
+[契约](docs/Spine线性动画源规格契约.md) / [证据](docs/Spine线性动画源规格证据.md)。源准入不授予 Core、pose、资源、播放、渲染或许可资格；受控故障仍待验收，R020/V020 和 R008/V006 保持 OPEN。
+
+Version 0.42.0 merged through [PR #29](https://github.com/cnedwin/Egret_rebuild/pull/29); Main `e7a82283ef02b57976e5a94e10306fc6aee516b5` and tree `319de5686631afe3213699f9fc2a4a424d7bcbdf` were read back. Its mandatory push hook passed 63 publication, 2748 core and 22 experimental tests, counted separately. Zero remote statuses/check-runs do not establish remote CI PASS. Earlier Pending cutoffs remain historical records.
+
+0.42.0 已经由 [PR #29](https://github.com/cnedwin/Egret_rebuild/pull/29) 合并；Main `e7a82283ef02b57976e5a94e10306fc6aee516b5` 与 tree `319de5686631afe3213699f9fc2a4a424d7bcbdf` 已回读。其必要推送 hook 通过 63 项 publication、2748 项 core 与 22 项实验检查，分别计数。远程 status/check-run 均为 0，不构成远端 CI PASS。较早 Pending 截止点继续保留。
+<!-- F2-B-0.43.0-END -->
+
 <!-- F2-A-0.42.0-BEGIN -->
 ## 工程预览 0.42.0 — Spine 网格源规划 F2-A
 
