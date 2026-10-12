@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-10",
+  "updatedAt": "2026-10-12",
   "authority": "Technical candidate registry; production selections are not finally approved, and partial research evidence does not establish complete implementation or end-to-end performance acceptance",
   "items": [
     {
@@ -987,12 +987,67 @@
       "evidenceScope": "Static materials and candidate specifications do not establish that the gate was executed.",
       "doc": "en/docs/engineering-architecture-and-project-structure.md",
       "codeOriginConstraint": "R015: Design and implement Egret core independently from its own requirements and specifications; standards and open projects supply research foundations, while public infrastructure enters as explicit dependencies retaining versions, sources, notices, and modification records."
+    },
+    {
+      "id": "D017",
+      "title": "Opt-in F1 Clock trusted session and experiment provenance",
+      "status": "proposed",
+      "proposal": "Only in the original opt-in experiment, createF1ClockSession captures the genuine Engine Clock and bindClock uses genuine Scope; advance once per original tick delta. Keep official Core external and static provenance separate from actual current replay.",
+      "risk": "Finite F1 profile accepts maxDeltaSeconds <=0.25; a larger valid configuration needs cleanup after genuine startup. Closing/fault does not promise rollback; private results establish no public replay, product or licensing qualification.",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R012",
+        "R015",
+        "R016",
+        "R020"
+      ],
+      "sourceIds": [
+        "S089",
+        "S090"
+      ],
+      "deliveryIds": [
+        "V040",
+        "V041"
+      ],
+      "hypothesisIds": [],
+      "gate": "Independent source/ownership/closing order and original oracles; decide adoption after actual public fresh-output replay, all assigned controls, default isolation, bilingual/provenance and mandatory push gates.",
+      "acceptedAt": null,
+      "reviewer": null,
+      "supersedes": null,
+      "evidence": [
+        "evidence/spine-f1-clock-verification.json",
+        "evidence/spine-f1-clock-public-projection.json"
+      ],
+      "evidenceScope": "Private CPU10/3 controls and desktop GPU10+1 are saved and finitely independently reviewed. This decision remains proposed, accepts no whole engine architecture and does not supersede D016.",
+      "doc": "en/experiments/spine-f1/README.md",
+      "codeOriginConstraint": "R015: Independently implement the Egret bridge/experiment from its own specifications; retain public dependency attribution and exclude official runtime payload/rights from this package."
     }
   ],
   "_localization": {
     "canonicalSource": "决策.json",
-    "canonicalSha256": "e246bfa887d7434d07b28867e7be749b32f9036d745c3363bc7a96268b523663",
+    "canonicalSha256": "0aa6c638aaea3cf4ccbb7db9a8c0446e99a92729165c5116fd86a24d4fbcc507",
     "role": "read_only_translation",
     "language": "en"
+  },
+  "spineF1ClockPortableReplaySuccessor": {
+    "status": "ACTUAL_CURRENT_PUBLIC_PORTABLE_CLOCK_CPU_AND_NATIVE_PASS",
+    "counts": {
+      "manualPassed": 12,
+      "originalControls": 6,
+      "clockPassed": 10,
+      "clockFailed": 0,
+      "clockSkipped": 0,
+      "clockControls": 3,
+      "positiveReadbacks": 10,
+      "separateControlReadbacks": 1,
+      "positivePixelSamples": 30,
+      "positivePixelChannels": 120,
+      "channelTolerance": 0
+    },
+    "record": "evidence/spine-f1-clock-public-projection.json",
+    "fullSpineR020V020": "OPEN",
+    "cutoff": "Actual independent-clone public replay; saved-result review, final gates and delivery still PENDING."
   }
 }

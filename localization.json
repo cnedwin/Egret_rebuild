@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "revision": "0.36.0",
+  "revision": "0.37.0",
   "canonicalState": "Chinese registries; English JSON is a read-only translation",
   "evidencePolicy": "Machine data, embedded source, historical code and upstream legal originals retain their identities; paired reading versions explain them.",
   "semanticReview": {
@@ -141,8 +141,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "63fc9c3428daa38cf692a605c5bc9569d7bbee37e54740ac1f1ba5c06414750f",
-      "zhSha256": "b0d801dc0a0ab45cfc713aba4a99cdc9092ffa7e1d877d1f6a0c9856a8879158"
+      "enSha256": "b372af2b8a6e3553453401674a0e4e69fbaafd9e69bdbd25195945dd3d53895d",
+      "zhSha256": "58435ee2f58ef1d419cd785f50099bc1eea04453d3d2b1303ed01205160338f5"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -288,8 +288,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "abcb7f485e0ae3c2911a41354fa9dec8875a06371ee6267692abcd025cf9a08e",
-      "zhSha256": "ad4fa98ba2427efa319d3038ea39b161c913d172ed1ca411cdaefc34bfbb68e1"
+      "enSha256": "8268f300a74cde2f872898bef295596fe3f9c25ea947814c6a660e6b11d25102",
+      "zhSha256": "0d3579477e69d51d6aeb0ca959949ab81f13489f9aedfa8c485dc9f9ec07b131"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -302,8 +302,8 @@
       "zh": "knowledge-base/Cns/docs/交付计划.md",
       "en": "knowledge-base/en/docs/delivery-plan.md",
       "kind": "public_reading",
-      "enSha256": "15220e85d187c396b6250539bf5e6d7569f7d484e63a58bfb391917b6c19e84c",
-      "zhSha256": "3bb5ad2395e353c5251164b0e9f57ae6f87289c871284e446564e3290030d06b"
+      "enSha256": "782958580a37d230c8a4c4f51a3d9462e69afd807bef9a8de31c77c00090f4e4",
+      "zhSha256": "0af601ab2cabe66ba358b62a57fc2b9989f2f8dbe95cf735e3a33d0e54646fc6"
     },
     {
       "zh": "knowledge-base/Cns/docs/设计理念与定位.md",
@@ -351,8 +351,8 @@
       "zh": "knowledge-base/Cns/docs/工程规划.md",
       "en": "knowledge-base/en/docs/engineering-plan.md",
       "kind": "public_reading",
-      "enSha256": "16c41b786fee21291e4f56c5df0fd90a22ef6b2f7c1e3767c390f2994766fa39",
-      "zhSha256": "7bf71b6889bf03218929a69ca46490807d5774d1ca14f6a95963ab45dde6161e"
+      "enSha256": "48b040e2c05cbdddc100b414ae0485cbc3b83185a824801f679e26ee47d51b49",
+      "zhSha256": "bb3a9425cc9b250514fd26ea78bfd06f93a3da634d51f687c66d3500bb3dc499"
     },
     {
       "zh": "knowledge-base/Cns/docs/术语表.md",
@@ -533,8 +533,8 @@
       "zh": "knowledge-base/Cns/docs/Spine动画支持需求与验收.md",
       "en": "knowledge-base/en/docs/spine-animation-support-and-acceptance.md",
       "kind": "public_reading",
-      "enSha256": "ec2f9da3ab8867b595a8459b27993ac67de7cd8a852d2f64cf8a89e466c2d869",
-      "zhSha256": "2ee877814f9fa781fba1224dd09c6a4de1e19229d1eafd8d47740959935e28cf"
+      "enSha256": "2c7b9302e8e23d0ba67c5b05a8a403ecb455ea48cc4d8849bec14655b72413bb",
+      "zhSha256": "edf530f3f3d093fcdba7cd656049dfd52c1a6eb8058baaf37f17318571e3f12b"
     },
     {
       "zh": "knowledge-base/Cns/docs/技术架构.md",
@@ -764,8 +764,8 @@
       "zh": "knowledge-base/Cns/README.md",
       "en": "knowledge-base/en/README.md",
       "kind": "public_reading",
-      "enSha256": "cd729ca9b7da02a738b18e0fc8ecb793bec3c49c4fec5a7b7d47d3dc1f8e4a12",
-      "zhSha256": "899af7790b19b1d92b5f3a8e0ec66af71b3b30e09d71860d3cfd652c0deca518"
+      "enSha256": "ff6d8e31a5fcda99f1a29012e723d136361198d5fec5da33947f8b9da9de0c84",
+      "zhSha256": "bcbaaf5e24b8bfa3172dc7517191a08288a5789dc4239a6f9236484d5e98cf5e"
     },
     {
       "zh": "knowledge-base/Cns/templates/ADR决策记录.md",
@@ -799,8 +799,8 @@
       "zh": "knowledge-base/README.zh-CN.md",
       "en": "knowledge-base/README.md",
       "kind": "public_navigation",
-      "enSha256": "4422804c19daf00f779bb5bfe2301850e5b1d29c2567c9e0ea490ba20ea924b4",
-      "zhSha256": "0aeaec05c0e046ec409c8a443f47ec7c8e8506b00ee47c494429f32fd7eee5e4"
+      "enSha256": "bcc9088e015cbb959b94da49f40bf6dfe6d01dd5cef8c62810263dec3e0ed746",
+      "zhSha256": "0b09cf72de08bbb3abbd2a534cafe13f0c45dc2fd33363dc6a3ed2af331de50c"
     },
     {
       "zh": "LICENSE.zh-CN.md",
@@ -848,8 +848,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "543e8b47e85220cf383db1236da6277b9893069a8f0ae3a9ee3a41fc5068e413",
-      "zhSha256": "688eaba4bba72c697721360042ac7ae165049ac1ee9a7373c9b7fc04c6ebf75f"
+      "enSha256": "7dd5301730011fd21081176aa6616aa9244de1b60cc0944fa072372b6570fd67",
+      "zhSha256": "ecee2d0e32dbb2485befbe5a57c74f68a143a1b61f3e513d8e0893cf5f4e85af"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -1079,8 +1079,8 @@
       "en": "knowledge-base/en/docs/spine-import-plan-evidence.md",
       "zh": "knowledge-base/Cns/docs/Spine导入计划证据.md",
       "kind": "public_reading",
-      "enSha256": "c3e7007cdf5dce08c3b316a2d1e9ade9cc83fdc72fbe59c39d90873d42966203",
-      "zhSha256": "8d5919a5120de03b03c742f035e936d6b72cd33b76f2aa05d8cfcf150afb788e"
+      "enSha256": "6e222d81382ea7dc74af1fa39888fabeb425bdbcc20c369ef4a3428149bf9e9f",
+      "zhSha256": "ae47feba5dc8b82c109e48c2c16bba454b5f8856c8959b7963629317217fa620"
     },
     {
       "en": "knowledge-base/en/docs/scope-private-ownership.md",
@@ -1093,22 +1093,22 @@
       "en": "knowledge-base/en/experiments/spine-f1/README.md",
       "zh": "knowledge-base/Cns/experiments/spine-f1/README.md",
       "kind": "public_reading",
-      "enSha256": "054e04829d0c55334b976595f6f07b1f36733463a336f8fc1c00a4a29635b930",
-      "zhSha256": "0056297e9bd4110f67740b82c804dea4ca0bb64d011fd43dbdcb919142f93470"
+      "enSha256": "028d7ed99a88d3a5373ab2be456b017f762aa7238ada31161a5ed19fb3f47b40",
+      "zhSha256": "4a47b527cd224eef7e461d640fd31a5ff0952a8bb075818ed29493bfa47720e4"
     }
   ],
   "registries": [
     {
       "source": "knowledge-base/Cns/registry/需求.json",
       "target": "knowledge-base/en/registry/requirements.json",
-      "sourceSha256": "d546d6177d9390b63b1b11eb3e191db8f10e7c5c65347447edb4c8203a81bb64",
-      "targetSha256": "6385f6161fd684b1031b72da27a6b6c449f787475a6685c0459c375bfa2f31d2"
+      "sourceSha256": "d7bc50726fed150cf1f543da6cefe2cfcc4d1ea9b7b8d33b178d00c25da3b5d1",
+      "targetSha256": "342c6eaa0633fe8395a9f92c99fb5850d2f8c29d108de3823ff65ab7a8f77be2"
     },
     {
       "source": "knowledge-base/Cns/registry/决策.json",
       "target": "knowledge-base/en/registry/decisions.json",
-      "sourceSha256": "e246bfa887d7434d07b28867e7be749b32f9036d745c3363bc7a96268b523663",
-      "targetSha256": "1953c56b8c6cafbea81946a9f6a3ddb9e735d67b243e51d5e03c3f025b42d676"
+      "sourceSha256": "0aa6c638aaea3cf4ccbb7db9a8c0446e99a92729165c5116fd86a24d4fbcc507",
+      "targetSha256": "a7bec4f968c413fbd56fd564005ac60cac68f4364c79e32fe944fac526e58515"
     },
     {
       "source": "knowledge-base/Cns/registry/假设.json",
@@ -1119,20 +1119,20 @@
     {
       "source": "knowledge-base/Cns/registry/交付.json",
       "target": "knowledge-base/en/registry/deliverables.json",
-      "sourceSha256": "063589eef4b84f88964649a66e8a400cabc509237b24332a041b3b6e12cb6976",
-      "targetSha256": "21af0cd3187795d74c6f6e36ecbec9cd79fde32c5587bbc56e92132fc28e9c87"
+      "sourceSha256": "fa66344bee66ebd1f8eeeb5e1e3c0eeea2291bbed53fa3ae0596ba4bdaae3b7a",
+      "targetSha256": "a1178c599073f70c7f23c6ab52625879fbb370366d01818a6523ae0431c2e995"
     },
     {
       "source": "knowledge-base/Cns/registry/来源.json",
       "target": "knowledge-base/en/registry/sources.json",
-      "sourceSha256": "745139e8b1bbac1425415194e8981479a883940082d5eebdb3c0077704840c77",
-      "targetSha256": "dcfaa9bfbeadba50d906053572c75db7f9d71b3587438613e0f844e7f8e4cb3e"
+      "sourceSha256": "d839a2120fe3830e47f6d1c4bb4f7657b97967520722960e237381324e08b7c1",
+      "targetSha256": "09569f5c35fcbe518f71ebf16a88901cb5344d2c4821f0b2ba29e41e0a65f73d"
     },
     {
       "source": "knowledge-base/Cns/当前版本.json",
       "target": "knowledge-base/en/current-version.json",
-      "sourceSha256": "1ab900afeffa2c408f8abcad23795acbc0b5b698f7f7cd5b0858892281456b2c",
-      "targetSha256": "d58c6a74f2c89d4e6a0facf578190c76e052ae7addcad5e96369480d686e1449"
+      "sourceSha256": "6fc59c023e4f620feb8a3a88e102b912b97035109fe24c1e913a89e5ecb6f6b9",
+      "targetSha256": "57a19c3161b95db3a031a97d4ac7e41f419518dfc5110d31357b435ada0f5c23"
     }
   ],
   "criticalComments": [
@@ -1852,7 +1852,7 @@
     },
     {
       "path": "knowledge-base/experiments/spine-f1/run.mjs",
-      "sha256": "197a1623d6a6a2e71e1b63b06ac6d2499c1355d8eb3c3ba2b3260ab35346006e"
+      "sha256": "d99dba983e93dccf0faf196fe81c03f2381fc3a431d1d8369730a1ae416c2550"
     },
     {
       "path": "knowledge-base/experiments/spine-f1/src/canonical-baseline.ts",
@@ -1860,7 +1860,7 @@
     },
     {
       "path": "knowledge-base/experiments/spine-f1/src/f1-manual-bridge.ts",
-      "sha256": "876213de21022f351b0ff9492880846bb066381233275d237f1921ec8fad9078"
+      "sha256": "57effc17ae12c30eb2fa19c2b21f1a762de89971fe11027cf032c274054f6ef3"
     },
     {
       "path": "knowledge-base/experiments/spine-f1/tests/manual-step.test.mjs",
@@ -1868,11 +1868,15 @@
     },
     {
       "path": "knowledge-base/experiments/spine-f1/webgpu/main.mjs",
-      "sha256": "aa661379769a2617db53590b2c2d53bae1ae095164fae374f1a84322dc504673"
+      "sha256": "7b42e529f63e7023133e6c3c5af7d410115d8fa95b3c9ee3b985a22d8b3f2a46"
     },
     {
       "path": "knowledge-base/experiments/spine-f1/webgpu/run.mjs",
-      "sha256": "e9486c05e05ad2e4751e360dc108acd1905cf5271593772ac33598427a55f214"
+      "sha256": "e8ad9acf65396c28c4cdc8021bbc4614e349c0ebab258a331636e8acbd8e772f"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f1/tests/manual-clock.test.mjs",
+      "sha256": "6fe5a711718f2c2759ca5981751578c21d1bb74c771b81a68e83b940da228049"
     }
   ],
   "historicalSemanticReview": {
@@ -4131,5 +4135,17 @@
     "profileAndOraclesUnchanged": true,
     "independentMeaningDeltaReview": "PENDING",
     "scope": "One terminal LF and derived identities; paired guide records actual repeated CPU/browser subset."
+  },
+  "spineF1ClockExperimentCuration": {
+    "engineeringLabel": "0.37.0",
+    "sourceId": "S090",
+    "deliverable": "V041",
+    "decision": "D017",
+    "decisionStatus": "proposed",
+    "record": "knowledge-base/evidence/spine-f1-clock-verification.json",
+    "projectionRecord": "knowledge-base/evidence/spine-f1-clock-public-projection.json",
+    "scope": "Original opt-in F1 Clock bridge and independent-clone portable CPU/native replay; full Spine R020/V020 OPEN.",
+    "independentFinalMeaningReview": "PENDING_AT_PRECOMMIT_METADATA_CUTOFF",
+    "completeSemanticParityClaim": false
   }
 }

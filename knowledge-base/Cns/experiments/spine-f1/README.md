@@ -2,6 +2,37 @@
 
 [English](../../../en/experiments/spine-f1/README.md) | 简体中文
 
+<!-- F1C-DOC-0.37.0-BEGIN -->
+## 工程预览 0.37.0 — 可选 F1 Clock 候选
+
+**S090 / V041** 登记原创 F1 Clock 实验；**D017 仍为 proposed**，仅涉及实验的受信会话及显式可选出处。已保存私有 CPU 执行通过 **10/10** Clock 用例，包含具名推进后故障；**3** 项指定错误副本对照各有新基线。原手动 **12/12** 保持不变。已保存私有桌面 WebGPU 执行通过 **10** 次正例回读及 **1** 次独立重复推进对照：**30** 个原始正例采样点、**120** 个通道、容差 **0**，并观察完整字节重复与限定清理。各阶段数量不与历史运行相加。
+
+**公开 Clock 可移植源码／重放、当前完整门禁、最终双语评审、必要推送及 0.37.0 交付，在本次策展截止时均为 PENDING。** 私有结果不能替代这些步骤。下方 0.36.0 段落保留历史 pending 截止状态；0.36.0 后续已通过 [PR #23](https://github.com/cnedwin/Egret_rebuild/pull/23) 交付，Main 为 `36909c3c1b2b9ef9784cb71d949ef6eba142fc0a`。
+
+官方外置 `@esotericsoftware/spine-core@4.3.13` 明确署名，不打包、不改许可。集成／分发资格仍未核实。完整 Spine **R020/V020 继续 OPEN**；上述观察不构成手机／Native SDK、物理 GPU、操作系统进程退役、性能／能耗或完整产品验收。
+
+### 受信会话与时间所有权
+
+实验拟在可选原创桥中提供 `createF1ClockSession(options: EngineOptions): Promise<F1ClockSession>`，不加入默认 Engine 导出。它为既有纹理 profile 创建真实 Engine，在暴露 Engine 或调用资源 provider 前捕获原始 `engine.clock.onTick`，返回带 `engine` 与 `createResources(resourceScope, refs)` 的冻结会话；不接受调用方替换的 Clock。真实配置的 `maxDeltaSeconds` 仅在不超过 **0.25** 时符合此实验。合法但更大的配置会先启动真实 Engine，再以 `F1_CLOCK_PROFILE_UNSUPPORTED` 拒绝并等待销毁；清理拒绝以 `F1_CLOCK_SESSION_CLEANUP_FAILED` 保留原 profile cause 和清理错误，不返回可用会话。非法 Engine 配置仍保留 SDK 原先错误。成功返回后由调用方负责 `session.engine.dispose()`。
+
+通过会话创建的实例使用 `bindClock(subscriptionScope): GameClockSubscription`，订阅由真实 Scope 持有。每次运行中的原始 tick 只按原 delta 推进一次，实例本地 elapsed 独立于 Engine elapsed 起算。不引入钳制、时间欠账、丢弃区间或第二次 update。超出配置上限的间隔在桥回调前被 Clock 拒绝；恢复拒绝的卡顿间隔需要真实 pause/resume 与新的来源基线，已在 running 状态时调用 resume 不能恢复。暂停间隙不计入推进。渲染、捕获、空闲和零时间观察不推进动画。
+
+有效绑定排斥手动 `step`，包括 `step(0)` 和非法 delta；二次绑定以 `F1_CLOCK_BOUND` 拒绝。原手动工厂实例请求绑定时以 `F1_CLOCK_CONTEXT_REQUIRED` 拒绝。显式销毁 handle 或订阅 Scope 完成关闭后，可以恢复手动推进或重新绑定；真实 Scope 处于 `closing` 时，tombstone 仍以 `F1_CLOCK_SCOPE_CLOSED` 拒绝直接 step/bind，包含逆序清理前的 abort listener 窗口。关闭中的回调安全退役，不推进，也不制造 callback failure。生命周期／profile／绑定检查保留已接受顺序，先于标量验证。
+
+实例／资源销毁先退役绑定，再清理 core／显示对象；资源 group 持有借用的 page lease。销毁实例不自动关闭调用方持有的实例 Scope。推进后发生未知故障时仅该实例进入 inert 并退役绑定，不承诺 rollback。刻意注入的具名故障验证此边界和 B 实例独立性，不代表自然生产故障。每个实际创建的 handle 都须销毁；从未创建的绑定保持 absent/null，不伪造销毁观察。
+
+### 复现提案与历史证据
+
+拟议可移植后继保留既有 `run.mjs --spine-core <absolute official package directory> --output <absolute fresh external directory>` 命令，以及成对可选 `--webgpu --playwright <absolute existing Playwright index.mjs>` 输入。它需要已构建的当前公开 SDK、严格 TypeScript **7.0.2**、显式提供的精确 **137** 个官方 Core 内容文件，以及位于输入根外的新输出；不安装、不打包 Core。内容清单摘要不是持有特定压缩包的要求。公开重放仍须完成原手动 **12** 用例和 **6** 手动对照，再完成 Clock **10** 用例与 **3** Clock 对照；每个错误副本须先有新完整基线。**9** 通过／**1** pending 的 bootstrap 只为具名故障准备，不是完整 Clock 验收。仅测试 metadata／出处可以投影，语义 oracle、图像与原始字面量保持不变。本段不声称当前公开可移植复现成功。
+
+首轮私有 GPU wrapper 在取得浏览器前停止：将单命令 JSON 数组当作对象读取，触发 `undefined !== 0`。保留的 `INCOMPLETE` 回执是 helper 准入失败。有限后继选择唯一具名命令并核对数组数量，保持产品、oracle 与 guard 字节不变。随后私有运行完成 **10+1** 回读。G09/G10 在 A 销毁与 B 订阅 Scope 关闭后复用原本地 **0.5** 帧。对照完整回读等于正例 **1** 秒帧，但原 **0.5** 中点 `(25,19)` 失败：预期 `[255,0,0,255]`，实际 `[0,0,0,0]`；没有拟合容差或新 oracle。
+
+记录环境为普通 Edge **155.0.4283.45**、Playwright **1.62.1**、默认无附加 flags 的 headless `msedge`、**64×48**、DPR **1**。观察到 contexts／browser／server 及 API 资源／device 清理。物理硬件加速、浏览器执行文件／PID 与 OS 退役仍未观察或核实。Canvas 明确拒绝此纹理 profile；Canvas／WebGL、其他资产／导出、复杂 Spine 功能、UI／3D 合成及生产宿主仍开放。
+
+阅读 [Clock 指南](README.md)、[已保存核验](../../../evidence/spine-f1-clock-verification.json)和[待完成公开投影](../../../evidence/spine-f1-clock-public-projection.json)。
+随后在独立克隆中实际重放公开源码：手动 **12/12** 及 **6** 项原对照、完整 Clock **10/10** 及 **3** 项指定对照通过；具名故障实际执行，获接受用例跳过数为 **0**。独立默认无界面 WebGPU 执行通过 **10+1** 次回读、**30** 个正例采样点和 **120** 个通道，容差 **0**，保持原完整字节关系与限定清理。冷导入／帮助观察 **280** 个模块，Core／GPU／宿主访问均为 **0**。已保存 CPU 集合保留较早的 native-pending 截止状态；独立 native 回执才是实际后继。原创源码与输入身份未变。此处独立保存结果评审、最终仓库门禁和交付仍为 PENDING；完整 Spine **R020/V020 继续 OPEN**。当前后继见所链接的 Clock 核验／投影记录。
+<!-- F1C-DOC-0.37.0-END -->
+
 An opt-in original animation experiment connects genuine Egret resources, immutable meshes and the textured-frame port. Complete Spine support remains open.
 
 工程预览 **0.36.0**，来源 **S089**，限定交付 **V040**，整理日期 **2026-10-12**。本可选实验把独立原创的动画样例接入真实白鹭资源组、资源租约、不可变 Mesh2D 几何与既有纹理帧接口。完整 Spine **R020/V020 继续 OPEN**。本截止点最终公开门禁与 0.36.0 交付为 **PENDING**。

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-11",
+  "updatedAt": "2026-10-12",
   "authority": "Goals confirmed by the user in this project discussion; see the delivery registry separately for implementation and acceptance",
   "items": [
     {
@@ -486,7 +486,8 @@
       "status": "confirmed",
       "sourceIds": [
         "S066",
-        "S089"
+        "S089",
+        "S090"
       ],
       "deliveryIds": [
         "V002",
@@ -496,13 +497,15 @@
         "V020",
         "V007",
         "V008",
-        "V040"
+        "V040",
+        "V041"
       ],
       "decisionIds": [
         "D002",
         "D008",
         "D012",
-        "D016"
+        "D016",
+        "D017"
       ],
       "doc": "en/docs/spine-animation-support-and-acceptance.md",
       "originalF1Experiment": {
@@ -511,13 +514,43 @@
         "fullCapabilityAcceptance": "not_run",
         "status": "OPEN",
         "doc": "en/experiments/spine-f1/README.md"
+      },
+      "originalF1ClockExperiment": {
+        "deliverable": "V041",
+        "source": "S090",
+        "decision": "D017",
+        "decisionStatus": "proposed",
+        "status": "OPEN",
+        "fullCapabilityAcceptance": "not_run",
+        "publicReplay": "PENDING_AT_CURATION_CUTOFF",
+        "record": "evidence/spine-f1-clock-verification.json",
+        "doc": "en/experiments/spine-f1/README.md"
       }
     }
   ],
   "_localization": {
     "canonicalSource": "需求.json",
-    "canonicalSha256": "d546d6177d9390b63b1b11eb3e191db8f10e7c5c65347447edb4c8203a81bb64",
+    "canonicalSha256": "d7bc50726fed150cf1f543da6cefe2cfcc4d1ea9b7b8d33b178d00c25da3b5d1",
     "role": "read_only_translation",
     "language": "en"
+  },
+  "spineF1ClockPortableReplaySuccessor": {
+    "status": "ACTUAL_CURRENT_PUBLIC_PORTABLE_CLOCK_CPU_AND_NATIVE_PASS",
+    "counts": {
+      "manualPassed": 12,
+      "originalControls": 6,
+      "clockPassed": 10,
+      "clockFailed": 0,
+      "clockSkipped": 0,
+      "clockControls": 3,
+      "positiveReadbacks": 10,
+      "separateControlReadbacks": 1,
+      "positivePixelSamples": 30,
+      "positivePixelChannels": 120,
+      "channelTolerance": 0
+    },
+    "record": "evidence/spine-f1-clock-public-projection.json",
+    "fullSpineR020V020": "OPEN",
+    "cutoff": "Actual independent-clone public replay; saved-result review, final gates and delivery still PENDING."
   }
 }

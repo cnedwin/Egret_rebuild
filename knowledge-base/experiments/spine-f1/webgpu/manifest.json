@@ -1,18 +1,40 @@
 {
   "schemaVersion": 1,
   "root": "knowledge-base/experiments/spine-f1/webgpu",
-  "status": "SOURCE_ONLY_PUBLIC_NATIVE_WRAPPER_NOT_RUN",
+  "status": "SOURCE_ONLY_PUBLIC_CLOCK_NATIVE_WRAPPER_NOT_RUN",
   "author": "Egret Engine contributors",
   "license": "Apache-2.0 (original first-party harness only)",
-  "inputKind": "CURRENT_F1_CPU_COMPLETED_NATIVE_HANDOFF",
+  "inputKind": "CURRENT_F1_CLOCK_CPU_COMPLETED_NATIVE_HANDOFF",
   "sourceIdentity": {
-    "originalF1NativeRunnerSHA256": "6dab01a69cfef4a6b47c4d167084fc21d2ec3f84f7d4f7c1296404440304dade",
-    "scope": "Original source provenance only; no historical tree assigned to the current clone and no saved private result substituted for a new run."
+    "originalPublicWrapper": {
+      "logicalIdentity": "original-portable-F1-native-wrapper",
+      "bytes": 46505,
+      "sha256": "e9486c05e05ad2e4751e360dc108acd1905cf5271593772ac33598427a55f214"
+    },
+    "preservedClockMain": {
+      "logicalIdentity": "original-first-party-Clock-native-scene",
+      "bytes": 32815,
+      "sha256": "7b42e529f63e7023133e6c3c5af7d410115d8fa95b3c9ee3b985a22d8b3f2a46"
+    },
+    "originalClockRawWrapper": {
+      "logicalIdentity": "original-first-party-Clock-native-readback-source",
+      "bytes": 37295,
+      "sha256": "d12770a53c6cac3cb4d636e85d2a9707aec589d16c5cc49c08ee064a6a7dad1a"
+    },
+    "recordedSourceReview": {
+      "logicalIdentity": "original-Clock-native-harness-source-only-review",
+      "bytes": 14417,
+      "sha256": "9ed4eba35e868d84121eecde2738a8675ef9bd4e672ebe42bb33c7d1cf71733c",
+      "recordedVerdict": "PASS_FINITE_CLOCK_GPU_HARNESS_SOURCE_REVIEW",
+      "reviewerExecution": "NOT_RUN",
+      "scope": "Historical source-only provenance for retained scene and raw semantic checks; no actual portable CPU admission, browser replay or delivery acceptance."
+    },
+    "scope": "Independently authored first-party source provenance only. Current public inputs, real CPU command witnesses and discovered SDK module closure are re-admitted per run. No historical tree assigned to a current clone; saved historical results never substitute for a new run."
   },
   "originalInputs": {
     "src/f1-manual-bridge.ts": {
-      "bytes": 21835,
-      "sha256": "876213de21022f351b0ff9492880846bb066381233275d237f1921ec8fad9078"
+      "bytes": 28580,
+      "sha256": "57effc17ae12c30eb2fa19c2b21f1a762de89971fe11027cf032c274054f6ef3"
     },
     "src/canonical-baseline.ts": {
       "bytes": 4290,
@@ -37,6 +59,14 @@
     "fixtures/f1-oracle.json": {
       "bytes": 11677,
       "sha256": "79244829b2460589599ba70b4eff21e43e104bfe5e063e69ba5cd47c3fa17c97"
+    },
+    "tests/manual-clock.test.mjs": {
+      "bytes": 38674,
+      "sha256": "6fe5a711718f2c2759ca5981751578c21d1bb74c771b81a68e83b940da228049"
+    },
+    "clock-acceptance-contract.json": {
+      "bytes": 10910,
+      "sha256": "d3bb3e36b64d1b9ad19e128b836480cf33091487de59478ec76e21cd9537a4f2"
     }
   },
   "fixturePaths": {
@@ -45,7 +75,7 @@
     "page": "fixtures/egret-original-page.rgba",
     "oracle": "fixtures/f1-oracle.json"
   },
-  "bridgeEmissionSHA256": "67b680d5237425d9e4bbc8a8dc04995243cc5fb96544c2cc5089978261089ea3",
+  "bridgeEmissionSHA256": "b23956c4baecbc464fee5b7e711369a31c44beaea4994ebf49743397a76895fd",
   "core": {
     "name": "@esotericsoftware/spine-core",
     "version": "4.3.13",
@@ -66,12 +96,13 @@
     "height": 48,
     "pixelRatio": 1,
     "channelTolerance": 0,
-    "submissions": 8,
+    "submissions": 10,
     "channel": "msedge",
     "operationMs": 15000,
     "totalMs": 90000,
     "cooperativeCloseMs": 20000,
-    "outerMs": 120000
+    "outerMs": 120000,
+    "separateControl": 1
   },
   "execution": {
     "nodeVersion": "24.19.0",
@@ -88,71 +119,392 @@
       "id": "F1G01",
       "instance": "A",
       "time": 0,
-      "action": "initial",
-      "expectedFrame": 0
+      "sourceSeconds": 0,
+      "clockState": "running",
+      "engineElapsed": 0,
+      "tickId": 0,
+      "AElapsed": 0,
+      "BElapsed": 0,
+      "AClosed": false,
+      "ABindingRetired": false,
+      "BBound": false,
+      "BSubscriptionScopeState": "open",
+      "BHandleDisposed": null,
+      "expectedFrame": 0,
+      "action": "A bound, source0 baseline, show A",
+      "equalRawBytesTo": [],
+      "sourceClockLength": 2
     },
     {
       "id": "F1G02",
       "instance": "A",
       "time": 0,
-      "action": "same-time repeat",
-      "equalRawBytesTo": "F1G01",
-      "expectedFrame": 0
+      "sourceSeconds": 0,
+      "clockState": "running",
+      "engineElapsed": 0,
+      "tickId": 0,
+      "AElapsed": 0,
+      "BElapsed": 0,
+      "AClosed": false,
+      "ABindingRetired": false,
+      "BBound": false,
+      "BSubscriptionScopeState": "open",
+      "BHandleDisposed": null,
+      "expectedFrame": 0,
+      "action": "Equal source0 produces no tick; repeat",
+      "equalRawBytesTo": [
+        "F1G01"
+      ],
+      "sourceClockLength": 3
     },
     {
       "id": "F1G03",
       "instance": "A",
       "time": 0.5,
-      "action": "exactly two step(.25)",
-      "expectedFrame": 0.5
+      "sourceSeconds": 0.5,
+      "clockState": "running",
+      "engineElapsed": 0.5,
+      "tickId": 2,
+      "AElapsed": 0.5,
+      "BElapsed": 0,
+      "AClosed": false,
+      "ABindingRetired": false,
+      "BBound": false,
+      "BSubscriptionScopeState": "open",
+      "BHandleDisposed": null,
+      "expectedFrame": 0.5,
+      "action": "Source.25 and.5 deliver two original.25 ticks",
+      "equalRawBytesTo": [],
+      "sourceClockLength": 5
     },
     {
       "id": "F1G04",
       "instance": "A",
       "time": 0.5,
-      "action": "same-time repeat",
-      "equalRawBytesTo": "F1G03",
-      "expectedFrame": 0.5
+      "sourceSeconds": 0.75,
+      "clockState": "paused",
+      "engineElapsed": 0.5,
+      "tickId": 2,
+      "AElapsed": 0.5,
+      "BElapsed": 0,
+      "AClosed": false,
+      "ABindingRetired": false,
+      "BBound": false,
+      "BSubscriptionScopeState": "open",
+      "BHandleDisposed": null,
+      "expectedFrame": 0.5,
+      "action": "Pause; source.75 paused dispatches nothing",
+      "equalRawBytesTo": [
+        "F1G03"
+      ],
+      "sourceClockLength": 7
     },
     {
       "id": "F1G05",
       "instance": "A",
       "time": 1,
-      "action": "two more step(.25)",
-      "expectedFrame": 1
+      "sourceSeconds": 1.5,
+      "clockState": "running",
+      "engineElapsed": 1,
+      "tickId": 4,
+      "AElapsed": 1,
+      "BElapsed": 0,
+      "AClosed": false,
+      "ABindingRetired": false,
+      "BBound": false,
+      "BSubscriptionScopeState": "open",
+      "BHandleDisposed": null,
+      "expectedFrame": 1,
+      "action": "Resume, source1 baseline, sources1.25 and1.5 ticks",
+      "equalRawBytesTo": [],
+      "sourceClockLength": 11
     },
     {
       "id": "F1G06",
       "instance": "A",
       "time": 1,
-      "action": "same-time repeat",
-      "equalRawBytesTo": "F1G05",
-      "expectedFrame": 1
+      "sourceSeconds": 1.5,
+      "clockState": "running",
+      "engineElapsed": 1,
+      "tickId": 4,
+      "AElapsed": 1,
+      "BElapsed": 0,
+      "AClosed": false,
+      "ABindingRetired": false,
+      "BBound": false,
+      "BSubscriptionScopeState": "open",
+      "BHandleDisposed": null,
+      "expectedFrame": 1,
+      "action": "Equal source1.5 dispatches nothing; repeat",
+      "equalRawBytesTo": [
+        "F1G05"
+      ],
+      "sourceClockLength": 12
     },
     {
       "id": "F1G07",
       "instance": "B",
       "time": 0,
-      "action": "detach A/show B; A remains live",
-      "expectedFrame": 0
+      "sourceSeconds": 1.5,
+      "clockState": "running",
+      "engineElapsed": 1,
+      "tickId": 4,
+      "AElapsed": 1,
+      "BElapsed": 0,
+      "AClosed": false,
+      "ABindingRetired": false,
+      "BBound": false,
+      "BSubscriptionScopeState": "open",
+      "BHandleDisposed": null,
+      "expectedFrame": 0,
+      "action": "Detach A/show B while A alive",
+      "equalRawBytesTo": [],
+      "sourceClockLength": 13
     },
     {
       "id": "F1G08",
       "instance": "B",
       "time": 0,
-      "action": "A.dispose; B/page remain live",
-      "equalRawBytesTo": "F1G07",
-      "expectedFrame": 0
+      "sourceSeconds": 1.5,
+      "clockState": "running",
+      "engineElapsed": 1,
+      "tickId": 4,
+      "AElapsed": 1,
+      "BElapsed": 0,
+      "AClosed": true,
+      "ABindingRetired": true,
+      "BBound": false,
+      "BSubscriptionScopeState": "open",
+      "BHandleDisposed": null,
+      "expectedFrame": 0,
+      "action": "A.dispose retires A handle/display; B/page live",
+      "equalRawBytesTo": [
+        "F1G07"
+      ],
+      "sourceClockLength": 14
+    },
+    {
+      "id": "F1G09",
+      "instance": "B",
+      "time": 0.5,
+      "sourceSeconds": 2,
+      "clockState": "running",
+      "engineElapsed": 1.5,
+      "tickId": 6,
+      "AElapsed": 1,
+      "BElapsed": 0.5,
+      "AClosed": true,
+      "ABindingRetired": true,
+      "BBound": true,
+      "BSubscriptionScopeState": "open",
+      "BHandleDisposed": false,
+      "expectedFrame": 0.5,
+      "action": "Bind B without seek, source1.75 and2 ticks",
+      "equalRawBytesTo": [
+        "F1G03"
+      ],
+      "sourceClockLength": 17
+    },
+    {
+      "id": "F1G10",
+      "instance": "B",
+      "time": 0.5,
+      "sourceSeconds": 2.25,
+      "clockState": "running",
+      "engineElapsed": 1.75,
+      "tickId": 7,
+      "AElapsed": 1,
+      "BElapsed": 0.5,
+      "AClosed": true,
+      "ABindingRetired": true,
+      "BBound": false,
+      "BSubscriptionScopeState": "closed",
+      "BHandleDisposed": true,
+      "expectedFrame": 0.5,
+      "action": "B subscription Scope abort tick2.25 retires callback before core; after closed B.step(0) inert",
+      "equalRawBytesTo": [
+        "F1G09",
+        "F1G03"
+      ],
+      "sourceClockLength": 24
     }
   ],
   "control": {
     "id": "double-state-step",
-    "from": "animation.update(deltaSeconds);",
-    "to": "animation.update(deltaSeconds * 2);",
-    "changedSHA256": "4d72eeef56b87e4ebc5ef8bd6ccaa79a6b499431a551fb5f09c8c9a944294cff",
+    "from": "            animation.update(deltaSeconds);\n",
+    "to": "            animation.update(deltaSeconds);\n            animation.update(deltaSeconds);\n",
+    "changedSHA256": "02c4d453ece3d31fcb29d8bd097e5824e0855f8eceef6a77072c80e366ce1860",
+    "changedBytes": 27092,
     "generatedAfterCleanPositiveOnly": true,
+    "positiveContextClosedRequired": true,
     "unchangedOracle": true,
-    "expected": "At A.5, original midpoint25,19 red becomes transparent; exact native raw witness plus safe cleanup required."
+    "sourceControl": "Exact independently reviewed F1CM03 owned duplicate AnimationState.update hunk; unmodified official Core and original .5 pixel oracle.",
+    "expected": "Original.5 first25,19 red->transparent; all12288 bytes equal positiveF1G05/originalA1; safeNative",
+    "observation": {
+      "id": "F1D01",
+      "instance": "A",
+      "time": 0.5,
+      "sourceSeconds": 0.5,
+      "clockState": "running",
+      "engineElapsed": 0.5,
+      "tickId": 2,
+      "AElapsed": 0.5,
+      "BElapsed": 0,
+      "AClosed": false,
+      "ABindingRetired": false,
+      "BHandleDisposed": null,
+      "BSubscriptionScopeState": "open",
+      "equalRawBytesTo": [],
+      "sourceClockLength": 4
+    },
+    "sourceClock": [
+      {
+        "op": "A.bindClock",
+        "input": {
+          "scopeId": 4,
+          "source": "initial"
+        },
+        "before": {
+          "clockState": "running",
+          "engineElapsed": 0,
+          "tickId": 0,
+          "AElapsed": 0,
+          "BElapsed": 0,
+          "AClosed": false,
+          "ABindingRetired": null,
+          "BHandleDisposed": null,
+          "BSubscriptionScopeState": "open",
+          "scopeCount": 5
+        },
+        "after": {
+          "clockState": "running",
+          "engineElapsed": 0,
+          "tickId": 0,
+          "AElapsed": 0,
+          "BElapsed": 0,
+          "AClosed": false,
+          "ABindingRetired": false,
+          "BHandleDisposed": null,
+          "BSubscriptionScopeState": "open",
+          "scopeCount": 5
+        },
+        "returnedTick": null,
+        "returnedHandleId": 1,
+        "status": "RETURNED",
+        "failureCode": null
+      },
+      {
+        "op": "advanceTime",
+        "input": {
+          "sourceSeconds": 0
+        },
+        "before": {
+          "clockState": "running",
+          "engineElapsed": 0,
+          "tickId": 0,
+          "AElapsed": 0,
+          "BElapsed": 0,
+          "AClosed": false,
+          "ABindingRetired": false,
+          "BHandleDisposed": null,
+          "BSubscriptionScopeState": "open",
+          "scopeCount": 5
+        },
+        "after": {
+          "clockState": "running",
+          "engineElapsed": 0,
+          "tickId": 0,
+          "AElapsed": 0,
+          "BElapsed": 0,
+          "AClosed": false,
+          "ABindingRetired": false,
+          "BHandleDisposed": null,
+          "BSubscriptionScopeState": "open",
+          "scopeCount": 5
+        },
+        "returnedTick": null,
+        "returnedHandleId": null,
+        "status": "RETURNED",
+        "failureCode": null
+      },
+      {
+        "op": "advanceTime",
+        "input": {
+          "sourceSeconds": 0.25
+        },
+        "before": {
+          "clockState": "running",
+          "engineElapsed": 0,
+          "tickId": 0,
+          "AElapsed": 0,
+          "BElapsed": 0,
+          "AClosed": false,
+          "ABindingRetired": false,
+          "BHandleDisposed": null,
+          "BSubscriptionScopeState": "open",
+          "scopeCount": 5
+        },
+        "after": {
+          "clockState": "running",
+          "engineElapsed": 0.25,
+          "tickId": 1,
+          "AElapsed": 0.25,
+          "BElapsed": 0,
+          "AClosed": false,
+          "ABindingRetired": false,
+          "BHandleDisposed": null,
+          "BSubscriptionScopeState": "open",
+          "scopeCount": 5
+        },
+        "returnedTick": {
+          "deltaSeconds": 0.25,
+          "elapsedSeconds": 0.25,
+          "tickId": 1
+        },
+        "returnedHandleId": null,
+        "status": "RETURNED",
+        "failureCode": null
+      },
+      {
+        "op": "advanceTime",
+        "input": {
+          "sourceSeconds": 0.5
+        },
+        "before": {
+          "clockState": "running",
+          "engineElapsed": 0.25,
+          "tickId": 1,
+          "AElapsed": 0.25,
+          "BElapsed": 0,
+          "AClosed": false,
+          "ABindingRetired": false,
+          "BHandleDisposed": null,
+          "BSubscriptionScopeState": "open",
+          "scopeCount": 5
+        },
+        "after": {
+          "clockState": "running",
+          "engineElapsed": 0.5,
+          "tickId": 2,
+          "AElapsed": 0.5,
+          "BElapsed": 0,
+          "AClosed": false,
+          "ABindingRetired": false,
+          "BHandleDisposed": null,
+          "BSubscriptionScopeState": "open",
+          "scopeCount": 5
+        },
+        "returnedTick": {
+          "deltaSeconds": 0.25,
+          "elapsedSeconds": 0.5,
+          "tickId": 2
+        },
+        "returnedHandleId": null,
+        "status": "RETURNED",
+        "failureCode": null
+      }
+    ],
+    "countedInPositive": false
   },
   "modulePolicy": {
     "bareSpecifiers": [
@@ -168,8 +520,8 @@
     "maxModules": 256,
     "maxBytes": 4194304,
     "maxEdges": 1024,
-    "method": "Literal import/re-export/dynamic-import closure from the pinned current SDK, original emitted bridge and unchanged external official core; nonliteral/unknown modules refused.",
-    "privateRegistry": "Only genuine SDK transitive alias; harness uses public engine/WebGPU exports and original bridge."
+    "method": "Bounded actual literal import/re-export/dynamic-import closure from current public SDK exports, exact unmutated compiled Clock bridge and unchanged external official Core; unknown/nonliteral imports refused. No inherited private module-count or historical SDK-tree binding.",
+    "privateRegistry": "Only genuine SDK transitive alias; harness imports public Engine/WebGPU exports and the first-party Clock bridge."
   },
   "exits": {
     "PASS_F1_NATIVE_SUBSET": 0,
@@ -177,7 +529,7 @@
     "INCOMPLETE": 2,
     "UNSUPPORTED_DEFAULT_ENVIRONMENT": 3
   },
-  "boundary": "Original shallow F1 WebGPU/readback subset. Full Spine R020/V020, Canvas/WebGL/fallback, exported/binary art, PMA/dark tint/blends/mesh/deform/clipping/mixing/events/constraints/physics, mobile/native-platform devices, physical acceleration, performance/energy and legal qualification remain open.",
+  "boundary": "Finite original F1 Clock scheduling/lifecycle and ten positive WebGPU readbacks plus one separate owned duplicate-update control. Existing fixed 0/.5/1 literals and zero channel tolerance retained. Full Spine R020/V020 remains OPEN; Canvas/WebGL/fallback, exported/binary art, PMA/dark tint/blends/mesh/deform/clipping/mixing/events/constraints/physics, mobile/native SDK/physical-device evidence, performance/energy/OS-process retirement and integration/distribution qualification remain open.",
   "authoredFiles": [
     {
       "path": "index.html",
@@ -186,13 +538,1147 @@
     },
     {
       "path": "main.mjs",
-      "bytes": 15875,
-      "sha256": "aa661379769a2617db53590b2c2d53bae1ae095164fae374f1a84322dc504673"
+      "bytes": 32815,
+      "sha256": "7b42e529f63e7023133e6c3c5af7d410115d8fa95b3c9ee3b985a22d8b3f2a46"
     },
     {
       "path": "run.mjs",
-      "bytes": 46505,
-      "sha256": "e9486c05e05ad2e4751e360dc108acd1905cf5271593772ac33598427a55f214"
+      "bytes": 74999,
+      "sha256": "e8ad9acf65396c28c4cdc8021bbc4614e349c0ebab258a331636e8acbd8e772f"
     }
-  ]
+  ],
+  "kind": "F1_CLOCK_DESKTOP_WEBGPU_FINITE_SUCCESSOR",
+  "sourceClock": [
+    {
+      "op": "A.bindClock",
+      "input": {
+        "scopeId": 4,
+        "source": "initial"
+      },
+      "before": {
+        "clockState": "running",
+        "engineElapsed": 0,
+        "tickId": 0,
+        "AElapsed": 0,
+        "BElapsed": 0,
+        "AClosed": false,
+        "ABindingRetired": null,
+        "BHandleDisposed": null,
+        "BSubscriptionScopeState": "open",
+        "scopeCount": 5
+      },
+      "after": {
+        "clockState": "running",
+        "engineElapsed": 0,
+        "tickId": 0,
+        "AElapsed": 0,
+        "BElapsed": 0,
+        "AClosed": false,
+        "ABindingRetired": false,
+        "BHandleDisposed": null,
+        "BSubscriptionScopeState": "open",
+        "scopeCount": 5
+      },
+      "returnedTick": null,
+      "returnedHandleId": 1,
+      "status": "RETURNED",
+      "failureCode": null
+    },
+    {
+      "op": "advanceTime",
+      "input": {
+        "sourceSeconds": 0
+      },
+      "before": {
+        "clockState": "running",
+        "engineElapsed": 0,
+        "tickId": 0,
+        "AElapsed": 0,
+        "BElapsed": 0,
+        "AClosed": false,
+        "ABindingRetired": false,
+        "BHandleDisposed": null,
+        "BSubscriptionScopeState": "open",
+        "scopeCount": 5
+      },
+      "after": {
+        "clockState": "running",
+        "engineElapsed": 0,
+        "tickId": 0,
+        "AElapsed": 0,
+        "BElapsed": 0,
+        "AClosed": false,
+        "ABindingRetired": false,
+        "BHandleDisposed": null,
+        "BSubscriptionScopeState": "open",
+        "scopeCount": 5
+      },
+      "returnedTick": null,
+      "returnedHandleId": null,
+      "status": "RETURNED",
+      "failureCode": null
+    },
+    {
+      "op": "advanceTime",
+      "input": {
+        "sourceSeconds": 0
+      },
+      "before": {
+        "clockState": "running",
+        "engineElapsed": 0,
+        "tickId": 0,
+        "AElapsed": 0,
+        "BElapsed": 0,
+        "AClosed": false,
+        "ABindingRetired": false,
+        "BHandleDisposed": null,
+        "BSubscriptionScopeState": "open",
+        "scopeCount": 5
+      },
+      "after": {
+        "clockState": "running",
+        "engineElapsed": 0,
+        "tickId": 0,
+        "AElapsed": 0,
+        "BElapsed": 0,
+        "AClosed": false,
+        "ABindingRetired": false,
+        "BHandleDisposed": null,
+        "BSubscriptionScopeState": "open",
+        "scopeCount": 5
+      },
+      "returnedTick": null,
+      "returnedHandleId": null,
+      "status": "RETURNED",
+      "failureCode": null
+    },
+    {
+      "op": "advanceTime",
+      "input": {
+        "sourceSeconds": 0.25
+      },
+      "before": {
+        "clockState": "running",
+        "engineElapsed": 0,
+        "tickId": 0,
+        "AElapsed": 0,
+        "BElapsed": 0,
+        "AClosed": false,
+        "ABindingRetired": false,
+        "BHandleDisposed": null,
+        "BSubscriptionScopeState": "open",
+        "scopeCount": 5
+      },
+      "after": {
+        "clockState": "running",
+        "engineElapsed": 0.25,
+        "tickId": 1,
+        "AElapsed": 0.25,
+        "BElapsed": 0,
+        "AClosed": false,
+        "ABindingRetired": false,
+        "BHandleDisposed": null,
+        "BSubscriptionScopeState": "open",
+        "scopeCount": 5
+      },
+      "returnedTick": {
+        "deltaSeconds": 0.25,
+        "elapsedSeconds": 0.25,
+        "tickId": 1
+      },
+      "returnedHandleId": null,
+      "status": "RETURNED",
+      "failureCode": null
+    },
+    {
+      "op": "advanceTime",
+      "input": {
+        "sourceSeconds": 0.5
+      },
+      "before": {
+        "clockState": "running",
+        "engineElapsed": 0.25,
+        "tickId": 1,
+        "AElapsed": 0.25,
+        "BElapsed": 0,
+        "AClosed": false,
+        "ABindingRetired": false,
+        "BHandleDisposed": null,
+        "BSubscriptionScopeState": "open",
+        "scopeCount": 5
+      },
+      "after": {
+        "clockState": "running",
+        "engineElapsed": 0.5,
+        "tickId": 2,
+        "AElapsed": 0.5,
+        "BElapsed": 0,
+        "AClosed": false,
+        "ABindingRetired": false,
+        "BHandleDisposed": null,
+        "BSubscriptionScopeState": "open",
+        "scopeCount": 5
+      },
+      "returnedTick": {
+        "deltaSeconds": 0.25,
+        "elapsedSeconds": 0.5,
+        "tickId": 2
+      },
+      "returnedHandleId": null,
+      "status": "RETURNED",
+      "failureCode": null
+    },
+    {
+      "op": "clock.pause",
+      "input": {},
+      "before": {
+        "clockState": "running",
+        "engineElapsed": 0.5,
+        "tickId": 2,
+        "AElapsed": 0.5,
+        "BElapsed": 0,
+        "AClosed": false,
+        "ABindingRetired": false,
+        "BHandleDisposed": null,
+        "BSubscriptionScopeState": "open",
+        "scopeCount": 5
+      },
+      "after": {
+        "clockState": "paused",
+        "engineElapsed": 0.5,
+        "tickId": 2,
+        "AElapsed": 0.5,
+        "BElapsed": 0,
+        "AClosed": false,
+        "ABindingRetired": false,
+        "BHandleDisposed": null,
+        "BSubscriptionScopeState": "open",
+        "scopeCount": 5
+      },
+      "returnedTick": null,
+      "returnedHandleId": null,
+      "status": "RETURNED",
+      "failureCode": null
+    },
+    {
+      "op": "advanceTime",
+      "input": {
+        "sourceSeconds": 0.75
+      },
+      "before": {
+        "clockState": "paused",
+        "engineElapsed": 0.5,
+        "tickId": 2,
+        "AElapsed": 0.5,
+        "BElapsed": 0,
+        "AClosed": false,
+        "ABindingRetired": false,
+        "BHandleDisposed": null,
+        "BSubscriptionScopeState": "open",
+        "scopeCount": 5
+      },
+      "after": {
+        "clockState": "paused",
+        "engineElapsed": 0.5,
+        "tickId": 2,
+        "AElapsed": 0.5,
+        "BElapsed": 0,
+        "AClosed": false,
+        "ABindingRetired": false,
+        "BHandleDisposed": null,
+        "BSubscriptionScopeState": "open",
+        "scopeCount": 5
+      },
+      "returnedTick": null,
+      "returnedHandleId": null,
+      "status": "RETURNED",
+      "failureCode": null
+    },
+    {
+      "op": "clock.resume",
+      "input": {},
+      "before": {
+        "clockState": "paused",
+        "engineElapsed": 0.5,
+        "tickId": 2,
+        "AElapsed": 0.5,
+        "BElapsed": 0,
+        "AClosed": false,
+        "ABindingRetired": false,
+        "BHandleDisposed": null,
+        "BSubscriptionScopeState": "open",
+        "scopeCount": 5
+      },
+      "after": {
+        "clockState": "running",
+        "engineElapsed": 0.5,
+        "tickId": 2,
+        "AElapsed": 0.5,
+        "BElapsed": 0,
+        "AClosed": false,
+        "ABindingRetired": false,
+        "BHandleDisposed": null,
+        "BSubscriptionScopeState": "open",
+        "scopeCount": 5
+      },
+      "returnedTick": null,
+      "returnedHandleId": null,
+      "status": "RETURNED",
+      "failureCode": null
+    },
+    {
+      "op": "advanceTime",
+      "input": {
+        "sourceSeconds": 1
+      },
+      "before": {
+        "clockState": "running",
+        "engineElapsed": 0.5,
+        "tickId": 2,
+        "AElapsed": 0.5,
+        "BElapsed": 0,
+        "AClosed": false,
+        "ABindingRetired": false,
+        "BHandleDisposed": null,
+        "BSubscriptionScopeState": "open",
+        "scopeCount": 5
+      },
+      "after": {
+        "clockState": "running",
+        "engineElapsed": 0.5,
+        "tickId": 2,
+        "AElapsed": 0.5,
+        "BElapsed": 0,
+        "AClosed": false,
+        "ABindingRetired": false,
+        "BHandleDisposed": null,
+        "BSubscriptionScopeState": "open",
+        "scopeCount": 5
+      },
+      "returnedTick": null,
+      "returnedHandleId": null,
+      "status": "RETURNED",
+      "failureCode": null
+    },
+    {
+      "op": "advanceTime",
+      "input": {
+        "sourceSeconds": 1.25
+      },
+      "before": {
+        "clockState": "running",
+        "engineElapsed": 0.5,
+        "tickId": 2,
+        "AElapsed": 0.5,
+        "BElapsed": 0,
+        "AClosed": false,
+        "ABindingRetired": false,
+        "BHandleDisposed": null,
+        "BSubscriptionScopeState": "open",
+        "scopeCount": 5
+      },
+      "after": {
+        "clockState": "running",
+        "engineElapsed": 0.75,
+        "tickId": 3,
+        "AElapsed": 0.75,
+        "BElapsed": 0,
+        "AClosed": false,
+        "ABindingRetired": false,
+        "BHandleDisposed": null,
+        "BSubscriptionScopeState": "open",
+        "scopeCount": 5
+      },
+      "returnedTick": {
+        "deltaSeconds": 0.25,
+        "elapsedSeconds": 0.75,
+        "tickId": 3
+      },
+      "returnedHandleId": null,
+      "status": "RETURNED",
+      "failureCode": null
+    },
+    {
+      "op": "advanceTime",
+      "input": {
+        "sourceSeconds": 1.5
+      },
+      "before": {
+        "clockState": "running",
+        "engineElapsed": 0.75,
+        "tickId": 3,
+        "AElapsed": 0.75,
+        "BElapsed": 0,
+        "AClosed": false,
+        "ABindingRetired": false,
+        "BHandleDisposed": null,
+        "BSubscriptionScopeState": "open",
+        "scopeCount": 5
+      },
+      "after": {
+        "clockState": "running",
+        "engineElapsed": 1,
+        "tickId": 4,
+        "AElapsed": 1,
+        "BElapsed": 0,
+        "AClosed": false,
+        "ABindingRetired": false,
+        "BHandleDisposed": null,
+        "BSubscriptionScopeState": "open",
+        "scopeCount": 5
+      },
+      "returnedTick": {
+        "deltaSeconds": 0.25,
+        "elapsedSeconds": 1.0,
+        "tickId": 4
+      },
+      "returnedHandleId": null,
+      "status": "RETURNED",
+      "failureCode": null
+    },
+    {
+      "op": "advanceTime",
+      "input": {
+        "sourceSeconds": 1.5
+      },
+      "before": {
+        "clockState": "running",
+        "engineElapsed": 1,
+        "tickId": 4,
+        "AElapsed": 1,
+        "BElapsed": 0,
+        "AClosed": false,
+        "ABindingRetired": false,
+        "BHandleDisposed": null,
+        "BSubscriptionScopeState": "open",
+        "scopeCount": 5
+      },
+      "after": {
+        "clockState": "running",
+        "engineElapsed": 1,
+        "tickId": 4,
+        "AElapsed": 1,
+        "BElapsed": 0,
+        "AClosed": false,
+        "ABindingRetired": false,
+        "BHandleDisposed": null,
+        "BSubscriptionScopeState": "open",
+        "scopeCount": 5
+      },
+      "returnedTick": null,
+      "returnedHandleId": null,
+      "status": "RETURNED",
+      "failureCode": null
+    },
+    {
+      "op": "stage.showB",
+      "input": {},
+      "before": {
+        "clockState": "running",
+        "engineElapsed": 1,
+        "tickId": 4,
+        "AElapsed": 1,
+        "BElapsed": 0,
+        "AClosed": false,
+        "ABindingRetired": false,
+        "BHandleDisposed": null,
+        "BSubscriptionScopeState": "open",
+        "scopeCount": 5
+      },
+      "after": {
+        "clockState": "running",
+        "engineElapsed": 1,
+        "tickId": 4,
+        "AElapsed": 1,
+        "BElapsed": 0,
+        "AClosed": false,
+        "ABindingRetired": false,
+        "BHandleDisposed": null,
+        "BSubscriptionScopeState": "open",
+        "scopeCount": 5
+      },
+      "returnedTick": null,
+      "returnedHandleId": null,
+      "status": "RETURNED",
+      "failureCode": null
+    },
+    {
+      "op": "A.dispose",
+      "input": {},
+      "before": {
+        "clockState": "running",
+        "engineElapsed": 1,
+        "tickId": 4,
+        "AElapsed": 1,
+        "BElapsed": 0,
+        "AClosed": false,
+        "ABindingRetired": false,
+        "BHandleDisposed": null,
+        "BSubscriptionScopeState": "open",
+        "scopeCount": 5
+      },
+      "after": {
+        "clockState": "running",
+        "engineElapsed": 1,
+        "tickId": 4,
+        "AElapsed": 1,
+        "BElapsed": 0,
+        "AClosed": true,
+        "ABindingRetired": true,
+        "BHandleDisposed": null,
+        "BSubscriptionScopeState": "open",
+        "scopeCount": 5
+      },
+      "returnedTick": null,
+      "returnedHandleId": null,
+      "status": "RETURNED",
+      "failureCode": null
+    },
+    {
+      "op": "B.bindClock",
+      "input": {
+        "scopeId": 5,
+        "source": "after-A-close"
+      },
+      "before": {
+        "clockState": "running",
+        "engineElapsed": 1,
+        "tickId": 4,
+        "AElapsed": 1,
+        "BElapsed": 0,
+        "AClosed": true,
+        "ABindingRetired": true,
+        "BHandleDisposed": null,
+        "BSubscriptionScopeState": "open",
+        "scopeCount": 5
+      },
+      "after": {
+        "clockState": "running",
+        "engineElapsed": 1,
+        "tickId": 4,
+        "AElapsed": 1,
+        "BElapsed": 0,
+        "AClosed": true,
+        "ABindingRetired": true,
+        "BHandleDisposed": false,
+        "BSubscriptionScopeState": "open",
+        "scopeCount": 5
+      },
+      "returnedTick": null,
+      "returnedHandleId": 2,
+      "status": "RETURNED",
+      "failureCode": null
+    },
+    {
+      "op": "advanceTime",
+      "input": {
+        "sourceSeconds": 1.75
+      },
+      "before": {
+        "clockState": "running",
+        "engineElapsed": 1,
+        "tickId": 4,
+        "AElapsed": 1,
+        "BElapsed": 0,
+        "AClosed": true,
+        "ABindingRetired": true,
+        "BHandleDisposed": false,
+        "BSubscriptionScopeState": "open",
+        "scopeCount": 5
+      },
+      "after": {
+        "clockState": "running",
+        "engineElapsed": 1.25,
+        "tickId": 5,
+        "AElapsed": 1,
+        "BElapsed": 0.25,
+        "AClosed": true,
+        "ABindingRetired": true,
+        "BHandleDisposed": false,
+        "BSubscriptionScopeState": "open",
+        "scopeCount": 5
+      },
+      "returnedTick": {
+        "deltaSeconds": 0.25,
+        "elapsedSeconds": 1.25,
+        "tickId": 5
+      },
+      "returnedHandleId": null,
+      "status": "RETURNED",
+      "failureCode": null
+    },
+    {
+      "op": "advanceTime",
+      "input": {
+        "sourceSeconds": 2
+      },
+      "before": {
+        "clockState": "running",
+        "engineElapsed": 1.25,
+        "tickId": 5,
+        "AElapsed": 1,
+        "BElapsed": 0.25,
+        "AClosed": true,
+        "ABindingRetired": true,
+        "BHandleDisposed": false,
+        "BSubscriptionScopeState": "open",
+        "scopeCount": 5
+      },
+      "after": {
+        "clockState": "running",
+        "engineElapsed": 1.5,
+        "tickId": 6,
+        "AElapsed": 1,
+        "BElapsed": 0.5,
+        "AClosed": true,
+        "ABindingRetired": true,
+        "BHandleDisposed": false,
+        "BSubscriptionScopeState": "open",
+        "scopeCount": 5
+      },
+      "returnedTick": {
+        "deltaSeconds": 0.25,
+        "elapsedSeconds": 1.5,
+        "tickId": 6
+      },
+      "returnedHandleId": null,
+      "status": "RETURNED",
+      "failureCode": null
+    },
+    {
+      "op": "B.subscriptionScope.dispose",
+      "input": {
+        "scopeId": 5
+      },
+      "before": {
+        "clockState": "running",
+        "engineElapsed": 1.5,
+        "tickId": 6,
+        "AElapsed": 1,
+        "BElapsed": 0.5,
+        "AClosed": true,
+        "ABindingRetired": true,
+        "BHandleDisposed": false,
+        "BSubscriptionScopeState": "open",
+        "scopeCount": 6
+      },
+      "after": {
+        "clockState": "running",
+        "engineElapsed": 1.75,
+        "tickId": 7,
+        "AElapsed": 1,
+        "BElapsed": 0.5,
+        "AClosed": true,
+        "ABindingRetired": true,
+        "BHandleDisposed": true,
+        "BSubscriptionScopeState": "closed",
+        "scopeCount": 6
+      },
+      "returnedTick": null,
+      "returnedHandleId": null,
+      "status": "RETURNED",
+      "failureCode": null
+    },
+    {
+      "op": "B.step",
+      "input": {
+        "deltaSeconds": 0,
+        "closingPhase": "before-tick"
+      },
+      "before": {
+        "clockState": "running",
+        "engineElapsed": 1.5,
+        "tickId": 6,
+        "AElapsed": 1,
+        "BElapsed": 0.5,
+        "AClosed": true,
+        "ABindingRetired": true,
+        "BHandleDisposed": false,
+        "BSubscriptionScopeState": "closing",
+        "scopeCount": 6
+      },
+      "after": {
+        "clockState": "running",
+        "engineElapsed": 1.5,
+        "tickId": 6,
+        "AElapsed": 1,
+        "BElapsed": 0.5,
+        "AClosed": true,
+        "ABindingRetired": true,
+        "BHandleDisposed": false,
+        "BSubscriptionScopeState": "closing",
+        "scopeCount": 6
+      },
+      "returnedTick": null,
+      "returnedHandleId": null,
+      "status": "THREW",
+      "failureCode": "F1_CLOCK_SCOPE_CLOSED"
+    },
+    {
+      "op": "B.bindClock",
+      "input": {
+        "scopeId": 6,
+        "source": "closing-before-tick-probe"
+      },
+      "before": {
+        "clockState": "running",
+        "engineElapsed": 1.5,
+        "tickId": 6,
+        "AElapsed": 1,
+        "BElapsed": 0.5,
+        "AClosed": true,
+        "ABindingRetired": true,
+        "BHandleDisposed": false,
+        "BSubscriptionScopeState": "closing",
+        "scopeCount": 6
+      },
+      "after": {
+        "clockState": "running",
+        "engineElapsed": 1.5,
+        "tickId": 6,
+        "AElapsed": 1,
+        "BElapsed": 0.5,
+        "AClosed": true,
+        "ABindingRetired": true,
+        "BHandleDisposed": false,
+        "BSubscriptionScopeState": "closing",
+        "scopeCount": 6
+      },
+      "returnedTick": null,
+      "returnedHandleId": null,
+      "status": "THREW",
+      "failureCode": "F1_CLOCK_SCOPE_CLOSED"
+    },
+    {
+      "op": "advanceTime",
+      "input": {
+        "sourceSeconds": 2.25
+      },
+      "before": {
+        "clockState": "running",
+        "engineElapsed": 1.5,
+        "tickId": 6,
+        "AElapsed": 1,
+        "BElapsed": 0.5,
+        "AClosed": true,
+        "ABindingRetired": true,
+        "BHandleDisposed": false,
+        "BSubscriptionScopeState": "closing",
+        "scopeCount": 6
+      },
+      "after": {
+        "clockState": "running",
+        "engineElapsed": 1.75,
+        "tickId": 7,
+        "AElapsed": 1,
+        "BElapsed": 0.5,
+        "AClosed": true,
+        "ABindingRetired": true,
+        "BHandleDisposed": true,
+        "BSubscriptionScopeState": "closing",
+        "scopeCount": 6
+      },
+      "returnedTick": {
+        "deltaSeconds": 0.25,
+        "elapsedSeconds": 1.75,
+        "tickId": 7
+      },
+      "returnedHandleId": null,
+      "status": "RETURNED",
+      "failureCode": null
+    },
+    {
+      "op": "B.step",
+      "input": {
+        "deltaSeconds": 0,
+        "closingPhase": "after-tick"
+      },
+      "before": {
+        "clockState": "running",
+        "engineElapsed": 1.75,
+        "tickId": 7,
+        "AElapsed": 1,
+        "BElapsed": 0.5,
+        "AClosed": true,
+        "ABindingRetired": true,
+        "BHandleDisposed": true,
+        "BSubscriptionScopeState": "closing",
+        "scopeCount": 6
+      },
+      "after": {
+        "clockState": "running",
+        "engineElapsed": 1.75,
+        "tickId": 7,
+        "AElapsed": 1,
+        "BElapsed": 0.5,
+        "AClosed": true,
+        "ABindingRetired": true,
+        "BHandleDisposed": true,
+        "BSubscriptionScopeState": "closing",
+        "scopeCount": 6
+      },
+      "returnedTick": null,
+      "returnedHandleId": null,
+      "status": "THREW",
+      "failureCode": "F1_CLOCK_SCOPE_CLOSED"
+    },
+    {
+      "op": "B.bindClock",
+      "input": {
+        "scopeId": 6,
+        "source": "closing-after-tick-probe"
+      },
+      "before": {
+        "clockState": "running",
+        "engineElapsed": 1.75,
+        "tickId": 7,
+        "AElapsed": 1,
+        "BElapsed": 0.5,
+        "AClosed": true,
+        "ABindingRetired": true,
+        "BHandleDisposed": true,
+        "BSubscriptionScopeState": "closing",
+        "scopeCount": 6
+      },
+      "after": {
+        "clockState": "running",
+        "engineElapsed": 1.75,
+        "tickId": 7,
+        "AElapsed": 1,
+        "BElapsed": 0.5,
+        "AClosed": true,
+        "ABindingRetired": true,
+        "BHandleDisposed": true,
+        "BSubscriptionScopeState": "closing",
+        "scopeCount": 6
+      },
+      "returnedTick": null,
+      "returnedHandleId": null,
+      "status": "THREW",
+      "failureCode": "F1_CLOCK_SCOPE_CLOSED"
+    },
+    {
+      "op": "B.step",
+      "input": {
+        "deltaSeconds": 0,
+        "phase": "after-closed"
+      },
+      "before": {
+        "clockState": "running",
+        "engineElapsed": 1.75,
+        "tickId": 7,
+        "AElapsed": 1,
+        "BElapsed": 0.5,
+        "AClosed": true,
+        "ABindingRetired": true,
+        "BHandleDisposed": true,
+        "BSubscriptionScopeState": "closed",
+        "scopeCount": 6
+      },
+      "after": {
+        "clockState": "running",
+        "engineElapsed": 1.75,
+        "tickId": 7,
+        "AElapsed": 1,
+        "BElapsed": 0.5,
+        "AClosed": true,
+        "ABindingRetired": true,
+        "BHandleDisposed": true,
+        "BSubscriptionScopeState": "closed",
+        "scopeCount": 6
+      },
+      "returnedTick": null,
+      "returnedHandleId": null,
+      "status": "RETURNED",
+      "failureCode": null
+    }
+  ],
+  "closingWindow": {
+    "scope": "Separate genuine B subscription Scope only; B instance/resource/display/page remain live",
+    "retainedBeforeClose": [
+      "authentic Scope signal/state",
+      "genuine handle and original isDisposed getter",
+      "B elapsed and Mesh geometry slot identities/content",
+      "Clock state/elapsed/tick/max",
+      "one same-Engine open probe Scope"
+    ],
+    "listener": {
+      "once": true,
+      "assertionsEscapingListener": false,
+      "throwsEscapingListener": false,
+      "recordsUnexpectedSuccessAndFailure": true,
+      "beforeTick": {
+        "scopeState": "closing",
+        "handleDisposed": false,
+        "BElapsed": 0.5,
+        "step0ExpectedCode": "F1_CLOCK_SCOPE_CLOSED",
+        "bindOpenProbeExpectedCode": "F1_CLOCK_SCOPE_CLOSED"
+      },
+      "sourceSample": 2.25,
+      "expectedReturnedTick": {
+        "deltaSeconds": 0.25,
+        "elapsedSeconds": 1.75,
+        "tickId": 7
+      },
+      "afterTick": {
+        "scopeState": "closing",
+        "handleDisposed": true,
+        "BElapsed": 0.5,
+        "geometryUnchanged": true,
+        "step0ExpectedCode": "F1_CLOCK_SCOPE_CLOSED",
+        "bindOpenProbeExpectedCode": "F1_CLOCK_SCOPE_CLOSED"
+      },
+      "advanceError": null,
+      "knownTerminationDiagnosticExpected": null
+    },
+    "outsideListenerAssertions": "Only after dispose returns: captured witness exists, no unexpected error/success, exact two before and two after refusal outcomes, tick committed, Scope closed/handle disposed and B/geometry unchanged.",
+    "afterClosedManualStep": {
+      "deltaSeconds": 0,
+      "expected": "returns normally; exact local elapsed/geometry slot identities/content and Clock before/after unchanged"
+    },
+    "renderDuringListener": false,
+    "rebindAfterClosed": false,
+    "additionalPositiveStep": false
+  },
+  "clockContractIdentity": {
+    "path": "knowledge-base/experiments/spine-f1/clock-acceptance-contract.json",
+    "bytes": 10910,
+    "sha256": "d3bb3e36b64d1b9ad19e128b836480cf33091487de59478ec76e21cd9537a4f2"
+  },
+  "clockAcceptance": {
+    "schemaVersion": 1,
+    "kind": "FIRST_PARTY_FIXED_CLOCK_ACCEPTANCE_CONTRACT",
+    "profile": {
+      "Node": "24.19.0",
+      "TypeScript": "7.0.2",
+      "Playwright": "1.62.1",
+      "browserChannel": "msedge",
+      "headless": true,
+      "callerAddedFlags": [],
+      "maximumDeltaSeconds": 0.25,
+      "width": 64,
+      "height": 48,
+      "pixelRatio": 1,
+      "positionAbsolute": 9.5367431640625E-07,
+      "pixelChannelTolerance": 0,
+      "readbackBytes": 12288
+    },
+    "source": {
+      "bytes": 28580,
+      "sha256": "57effc17ae12c30eb2fa19c2b21f1a762de89971fe11027cf032c274054f6ef3"
+    },
+    "expectedEmission": {
+      "bytes": 27048,
+      "sha256": "b23956c4baecbc464fee5b7e711369a31c44beaea4994ebf49743397a76895fd",
+      "scope": "Existing sealed reviewed emission, not a fabricated future compilation; portable exact same compiler/source/config must reproduce or INCOMPLETE."
+    },
+    "clockTestSource": {
+      "bytes": 35816,
+      "sha256": "c8fa7e41d7604d33918853f20954c85cef5b99bcf7b081b681c8791b4aa0f756",
+      "policy": "Original immutable. New public successor may change only identified admission blocks/comments; record exact original-to-projected hunks, inverse, and semantic block equality."
+    },
+    "projectedClockTest": {
+      "bytes": 38674,
+      "sha256": "6fe5a711718f2c2759ca5981751578c21d1bb74c771b81a68e83b940da228049",
+      "metadataSuccessor": "PCPU-M00 through PCPU-M03; original semantic action bodies/literal geometry unchanged"
+    },
+    "originalSourceReviewProvenance": {
+      "logicalIdentity": "original-clock-implementation-source-and-saved-result-review",
+      "bytes": 22810,
+      "sha256": "98f124b9b4fb2ad6f65df65bc4f4fb5cc209cd3d88dab88c3a85a55e4ddc33f2",
+      "recordedVerdict": "PASS_FINITE_SOURCE_AND_SAVED_RESULT_REVIEW",
+      "recordedOpenFindings": 0,
+      "cutoff": "Source and saved9pass+1pending, not full fault/native acceptance."
+    },
+    "hunkReviewProvenance": {
+      "logicalIdentity": "original-clock-owned-control-and-after-advance-source-input-review",
+      "bytes": 19876,
+      "sha256": "f94397150c0f316a609e1fa65a10150bc60e87b53f8f3c64b36e6a94c0968d48",
+      "recordedVerdict": "PASS_FINITE_OWNED_AFTER_ADVANCE_FAULT_INPUT",
+      "recordedOpenFindings": 0,
+      "cutoff": "Finite source hunk/driver review; reviewer did not execute product."
+    },
+    "savedActualCPUReviewProvenance": {
+      "logicalIdentity": "original-clock-three-controls-and-full-named-fault-saved-result-review",
+      "bytes": 33970,
+      "sha256": "8ddecb4fb213e498d67c80aa06a736282617673816f4794d9355e0031193920e",
+      "recordedVerdict": "PASS_FINITE_SAVED_ACTUAL_CLOCK_CPU_RESULTS",
+      "recordedOpenFindings": 0,
+      "cutoff": "Saved actual three controls and executed Clock10/0skip accepted; no public clone/GPU/delivery acceptance."
+    },
+    "controls": [
+      {
+        "id": "F1CM01",
+        "assignedCase": "F1C04",
+        "marker": "F1C_PROFILE_REFUSAL_REQUIRED",
+        "expectedErrorCode": "ERR_ASSERTION",
+        "expectedExitCode": 1,
+        "before": "    if (maximum > 0.25)\n        throw new EgretError('F1_CLOCK_PROFILE_UNSUPPORTED');\n",
+        "after": "    // Owned F1CM01 control: finite maximum refusal deliberately omitted.\n",
+        "occurrences": 1,
+        "recordedEditedPin": {
+          "bytes": 27036,
+          "sha256": "b7c9f81ef30f9124dcceb39fa34d317e7081da6ad817d1c929056b5f1ef45bd1"
+        },
+        "boundary": "Profile refusal control; returned Engine is disposed in finally before assigned assertion."
+      },
+      {
+        "id": "F1CM02",
+        "assignedCase": "F1C06",
+        "marker": "F1C06 genuine subscription Scope closing gates abort-before-cleanup reentry",
+        "expectedErrorCode": "ERR_ASSERTION",
+        "expectedExitCode": 1,
+        "actual": 0.375,
+        "expected": 0.25,
+        "before": "if (binding.isDisposed() || scopeState(binding.scope) !== 'open' || this.#clock.state() !== 'running')",
+        "after": "if (binding.isDisposed() || this.#clock.state() !== 'running')",
+        "occurrences": 1,
+        "recordedEditedPin": {
+          "bytes": 27008,
+          "sha256": "619d70d5cdcdfd84178e2859cbb7018f90e04f88d052b2d8ac795f35b3f0a9fc"
+        },
+        "boundary": "Only subscription Scope-open term omitted; direct closing tombstone/disposed/running guards retained."
+      },
+      {
+        "id": "F1CM03",
+        "assignedCase": "F1C01",
+        "marker": "F1C_FIXED_CORNER_BIJECTION",
+        "expectedErrorCode": "ERR_ASSERTION",
+        "expectedExitCode": 1,
+        "actual": 0,
+        "expected": 1,
+        "before": "            animation.update(deltaSeconds);\n",
+        "after": "            animation.update(deltaSeconds);\n            animation.update(deltaSeconds);\n",
+        "occurrences": 1,
+        "recordedEditedPin": {
+          "bytes": 27092,
+          "sha256": "02c4d453ece3d31fcb29d8bd097e5824e0855f8eceef6a77072c80e366ce1860"
+        },
+        "boundary": "Local.5 with Core1 fails unchanged literal.5 corner oracle; no fitting."
+      }
+    ],
+    "fault": {
+      "id": "F1C09",
+      "faultName": "F1_INJECTED_AFTER_ADVANCE",
+      "stage": "AFTER_POSITIVE_CORE_UPDATE_APPLY_WORLD_BEFORE_MATERIALIZE",
+      "deltaSeconds": 0.25,
+      "before": "            animation.apply(skeleton);\n            skeleton.updateWorldTransform(Physics.none);\n            const geometries = materialize(renderer.render(skeleton, false, undefined, 2), this.#pages);",
+      "after": "            animation.apply(skeleton);\n            skeleton.updateWorldTransform(Physics.none);\n            if (deltaSeconds === 0.25) throw new Error('F1_INJECTED_AFTER_ADVANCE');\n            const geometries = materialize(renderer.render(skeleton, false, undefined, 2), this.#pages);",
+      "occurrences": 1,
+      "recordedEditedPin": {
+        "bytes": 27133,
+        "sha256": "1c74b492efc156c93308f9dfcfe9e1ec087e992376322dbb9e302218b663b677"
+      },
+      "semanticWitness": "Real Clock commits.25/tick1; CLOCK_CALLBACK_FAILED cause.message exact named fault; A/B local0 and old A geometry unchanged; A handle retired/B live; A.step.125 terminal refusal; later.375/.5/.625/.75 source samples progress B local.5 with original literals and Clock.75/tick5; shared page remains live.",
+      "cleanup": "Existing successful ownedSession finally awaits genuine Engine disposal and then host/provider/zero-timer assertions. Assigned wrong-control throws execute finally cleanup but do not by themselves execute post-success assertions."
+    },
+    "baselineProtocol": {
+      "freshPerOwnedStage": true,
+      "anotherActorBaselineReusable": false,
+      "bootstrap": {
+        "manual": {
+          "passed": 12,
+          "failed": 0,
+          "skipped": 0
+        },
+        "clockOriginal": {
+          "passed": 9,
+          "failed": 0,
+          "skipped": 1,
+          "pendingOnly": "F1C09"
+        },
+        "acceptedFullTen": false
+      },
+      "acceptedClock": {
+        "passed": 10,
+        "failed": 0,
+        "skipped": 0,
+        "requiresExecutedOwnedFault": true
+      },
+      "assignedControls": {
+        "count": 3,
+        "baselinesManual": 12,
+        "baselinesClock": 10,
+        "setup": "F1C00 pass1/0fail/0skip + F1C_ACTUAL_SETUP_COMPLETE",
+        "assigned": "one ERR_ASSERTION failure/exact case/marker/numeric mismatch",
+        "restored": "selected pass1/0fail/0skip"
+      },
+      "mutationAfter": "Both own actual full baseline finish timestamps precede actual mutationStartedAtUTC",
+      "receiptShape": "Actual public ChildReceipt objects, uppercase UTC, raw stdout/stderr Pins; bootstrap array contains exactly two named command objects",
+      "inverse": "Unique inverse restores bytewise expected original working emission; preserve immutable executed mutant/fault module",
+      "actorAdmission": "Actual actor receipt only; contract is static acceptance input, not a generated independent review",
+      "commandTimeoutMs": 30000
+    },
+    "semanticPreservation": {
+      "bridgeSource": {
+        "bytes": 28580,
+        "sha256": "57effc17ae12c30eb2fa19c2b21f1a762de89971fe11027cf032c274054f6ef3"
+      },
+      "originalEmittedBridge": {
+        "bytes": 27048,
+        "sha256": "b23956c4baecbc464fee5b7e711369a31c44beaea4994ebf49743397a76895fd",
+        "scope": "Existing sealed reviewed emission, not a fabricated future compilation; portable exact same compiler/source/config must reproduce or INCOMPLETE."
+      },
+      "publicManualTest": {
+        "bytes": 24090,
+        "sha256": "c83458c064478ced7ab6222e0f219f065562686bc21273998c4dd1e1bb1788ce",
+        "policy": "Byte-exact existing portable test retained, not replaced with private physical-path variant."
+      },
+      "privateClockTest": {
+        "bytes": 35816,
+        "sha256": "c8fa7e41d7604d33918853f20954c85cef5b99bcf7b081b681c8791b4aa0f756",
+        "policy": "Original immutable. New public successor may change only identified admission blocks/comments; record exact original-to-projected hunks, inverse, and semantic block equality."
+      },
+      "publicOracle": {
+        "bytes": 11677,
+        "sha256": "79244829b2460589599ba70b4eff21e43e104bfe5e063e69ba5cd47c3fa17c97",
+        "policy": "Byte-exact existing public metadata projection; no new expected corners, channels, frames, tolerances, fitting or sample coverage."
+      },
+      "immutable": [
+        "src/canonical-baseline.ts",
+        "tests/manual-step.test.mjs",
+        "fixtures/egret-original-slide.spine.json",
+        "fixtures/egret-original-slide.atlas",
+        "fixtures/egret-original-page.rgba",
+        "fixtures/f1-oracle.json",
+        "webgpu/index.html"
+      ],
+      "ClockCaseIds": [
+        "F1C00",
+        "F1C01",
+        "F1C02",
+        "F1C03",
+        "F1C04",
+        "F1C05",
+        "F1C06",
+        "F1C07",
+        "F1C08",
+        "F1C09"
+      ],
+      "ClockBodyBoundary": "Private test provider/ownedSession/originalInstances/clock helpers, F1C00-F1C08 behavior actions, F1C09 mutant import/ownedSession and all cause/time/geometry/lifetime/cleanup assertions unchanged. Only genuine current-file/provenance/fault-receipt admission changes.",
+      "manualControlIds": [
+        "unsupported-additive",
+        "wrong-y",
+        "double-positive-update",
+        "reverse-actual-commands",
+        "omit-instance-scope-open",
+        "injected-after-advance"
+      ],
+      "manualControlPolicy": "Existing exact six IDs, original hunk text, assigned markers/subtests/classifications and fresh12 baselines retained. New bridge contains each original hunk; require unique actual occurrence and exact inverse. Do not inherit old manual emitted SHA for the new Clock source."
+    },
+    "boundary": "Optional original shallow F1 experiment only; named faults deliberately owned. No upstream payload, default SDK/Core dependency, natural fault/rollback/general authenticity guarantee, physicalGPU/nativeSDK/mobile/performance/energy/OS-retirement or fullSpine claim. R020/V020 OPEN. External integration/distribution qualification unverified.",
+    "provenanceMeaning": "Historical recorded reviews are genuine original provenance, not this replay's reviewers or baselines. Replay requires actual fresh command evidence; no private physical review file prerequisite and no generated PASS reviewer result."
+  },
+  "cpuPrerequisites": {
+    "manualTests": 12,
+    "manualControls": 6,
+    "clockTests": 10,
+    "clockControls": 3,
+    "fullClock": "Actual F1C00-F1C09 ten pass/zero fail/zero skip; executed owned named fault is F1C09 inside the ten, not additional coverage.",
+    "bootstrap": "Each stage retains its own twelve manual pass and nine Clock pass plus exactly F1C09 pending before mutation. This is not accepted ten-case coverage.",
+    "commands": "Pinned single ChildReceipt objects; bootstrap raw container is exactly two rows selected by unique command name.",
+    "contract": "Published static first-party source/emission/hunk contract and genuine historical provenance; no mandatory private review path or generated reviewer verdict.",
+    "controls": "Each owned copy retains fresh actual manual12/fullClock10 baselines before wrong-copy mutation, isolated F1C00 setup, assigned specific failure and positive restored assigned case.",
+    "mutation": "Only retained owned emitted copies; genuine public source, unmutated accepted stage, SDK, fixtures, oracle and external Core remain unchanged."
+  }
 }

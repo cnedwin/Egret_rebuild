@@ -1,0 +1,464 @@
+{
+  "schemaVersion": 1,
+  "engineeringLabel": "0.37.0",
+  "sourceId": "S090",
+  "deliverableId": "V041",
+  "decisionId": "D017",
+  "decisionStatus": "proposed",
+  "status": "RECORDED_PRIVATE_CLOCK_ACCEPTANCE_PUBLIC_SUCCESSOR_PENDING",
+  "curatedAtUTC": "2026-10-12T04:45:59.9402699Z",
+  "curatorExecution": "NOT_RUN_SOURCE_AND_SAVED_RESULT_CURATION_ONLY",
+  "sourceBaseMain": "36909c3c1b2b9ef9784cb71d949ef6eba142fc0a",
+  "guide": {
+    "en": "en/experiments/spine-f1/README.md",
+    "Cns": "Cns/experiments/spine-f1/README.md"
+  },
+  "counts": {
+    "originalManualCases": 12,
+    "originalManualPassed": 12,
+    "clockCases": 10,
+    "clockPassed": 10,
+    "clockFailed": 0,
+    "clockSkipped": 0,
+    "assignedClockControls": 3,
+    "privateGpuPositiveReadbacks": 10,
+    "privateGpuAssignedControlReadbacks": 1,
+    "positivePixelSamples": 30,
+    "positivePixelChannels": 120,
+    "pixelChannelTolerance": 0
+  },
+  "clockProfile": {
+    "seam": "createF1ClockSession(options: EngineOptions)",
+    "binding": "instance.bindClock(subscriptionScope)",
+    "scope": "Opt-in first-party original F1 experiment; not default SDK export or full engine architecture",
+    "configuredMaximumDeltaSeconds": 0.25,
+    "perDeliveredTick": "Original genuine delta applied exactly once",
+    "instanceTime": "Independent local elapsed, not assignment from Engine elapsed",
+    "manualAndBinding": "EXCLUSIVE_INCLUDING_ZERO_AND_INVALID_DELTA",
+    "renderCaptureIdle": "INERT",
+    "largerValidMaximum": "F1_CLOCK_PROFILE_UNSUPPORTED_AFTER_GENUINE_STARTUP_WITH_AWAITED_ENGINE_DISPOSAL",
+    "failedDisposal": "F1_CLOCK_SESSION_CLEANUP_FAILED_WITH_EXACT_PRIMARY_CAUSE_AND_CLEANUP_ERRORS",
+    "closing": "Authentic Scope closing tombstone refuses direct step and bind; callback retires without advance",
+    "fault": "Only affected instance terminal; no rollback",
+    "resourceOwnership": "Groups own borrowed page leases; actually created binding handles retire before instance/resource cleanup; absent bindings remain absent/null"
+  },
+  "sourceIdentity": {
+    "firstParty": "Original specification-driven bridge/tests/art under repository Apache-2.0; official Core is a separately attributed external dependency under its own terms",
+    "bridge": {
+      "logicalIdentity": "original-first-party-clock-bridge-source",
+      "bytes": 28580,
+      "sha256": "57effc17ae12c30eb2fa19c2b21f1a762de89971fe11027cf032c274054f6ef3"
+    },
+    "emission": {
+      "logicalIdentity": "original-first-party-clock-bridge-JS",
+      "bytes": 27048,
+      "sha256": "b23956c4baecbc464fee5b7e711369a31c44beaea4994ebf49743397a76895fd"
+    },
+    "declaration": {
+      "logicalIdentity": "original-first-party-clock-bridge-declaration",
+      "bytes": 1194,
+      "sha256": "7a6f4cbba35c136ddfcf360b79ff28aab72fd03cc4ac8c31ae7b482f22aee70c"
+    },
+    "publicProjectionSourceIdentity": "PENDING_SEPARATE_SOURCE_ADOPTION"
+  },
+  "externalCore": {
+    "package": "@esotericsoftware/spine-core",
+    "version": "4.3.13",
+    "sourceCommit": "b7beb2ccbbce667a12c02f44d070644f59b04968",
+    "contentFiles": 137,
+    "contentInventoryDigest": "e3690c1f8fc3c2b8123bfcfe37d50d7f56878fbef8143fe5cd11d0cc97eaf0cf",
+    "digestMeaning": "Exact relative-path/content inventory, not archive identity or possession requirement",
+    "distribution": "EXTERNAL_NOT_BUNDLED_OR_RELICENSED",
+    "source": "https://github.com/EsotericSoftware/spine-runtimes/tree/b7beb2ccbbce667a12c02f44d070644f59b04968/spine-ts/spine-core",
+    "runtimeLicense": "https://esotericsoftware.com/spine-runtimes-license",
+    "editorAgreement": "https://esotericsoftware.com/spine-editor-license#s2",
+    "licensingFAQ": "https://esotericsoftware.com/spine-purchase",
+    "integrationAndDistributionQualification": "UNVERIFIED",
+    "note": "External acquisition, source availability and successful execution establish no individual entitlement; Editor Trial is not runtime integration authority. No new legal clearance was performed during curation."
+  },
+  "cpu": {
+    "status": "PASS_FINITE_CLOCK_CONTROLS_AND_NAMED_FAULT",
+    "actualResult": {
+      "logicalIdentity": "original-private-clock-controls-and-full-suite-actual-result",
+      "bytes": 22806,
+      "sha256": "3ecbd63e7f2b14a0585b3628ddf219d79a7e74facd57146c05a8f688f25d6e21",
+      "distribution": "identity_only_not_distributed"
+    },
+    "independentSavedReview": {
+      "logicalIdentity": "original-clock-three-controls-and-full-named-fault-saved-result-review",
+      "bytes": 33970,
+      "sha256": "8ddecb4fb213e498d67c80aa06a736282617673816f4794d9355e0031193920e",
+      "distribution": "identity_only_not_distributed"
+    },
+    "reviewOpenFindings": 0,
+    "originalManual": "UNCHANGED_12_12",
+    "bootstrap": {
+      "passed": 9,
+      "pending": 1,
+      "scope": "Historical preparation cutoff; not full Clock acceptance"
+    },
+    "fullSuite": {
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0,
+      "namedFaultExecuted": true
+    },
+    "controls": [
+      {
+        "id": "F1CM01",
+        "ownedChange": "Omit profile maximum refusal",
+        "assignedCase": "F1C04",
+        "assignedMarker": "F1C_PROFILE_REFUSAL_REQUIRED"
+      },
+      {
+        "id": "F1CM02",
+        "ownedChange": "Omit genuine Scope closing callback guard",
+        "assignedCase": "F1C06",
+        "actualElapsed": 0.375,
+        "expectedElapsed": 0.25
+      },
+      {
+        "id": "F1CM03",
+        "ownedChange": "Duplicate animation update",
+        "assignedCase": "F1C01",
+        "assignedMarker": "F1C_FIXED_CORNER_BIJECTION"
+      }
+    ],
+    "controlProtocol": "Each owned actor has fresh manual12 and Clock9/1 preparation, genuine setup pass, assigned failure, saved mutant and exact inverse restoration; named fault has independent admission and full10 final suite",
+    "namedFault": {
+      "deliberate": true,
+      "injection": "After genuine Core advancement",
+      "deltaSeconds": 0.25,
+      "callbackError": "CLOCK_CALLBACK_FAILED",
+      "preservedCause": "Exact named injected error",
+      "A": "Terminal, binding retired, no new geometry committed",
+      "B": "Independent four0.125 advances reach local0.5",
+      "BStepSeconds": 0.125,
+      "BSteps": 4,
+      "BElapsedSeconds": 0.5,
+      "naturalFaultObserved": false,
+      "rollbackClaimed": false
+    },
+    "currentInputsAndEmissions": "UNCHANGED_IN_REVIEWED_SAVED_RESULT"
+  },
+  "gpu": {
+    "status": "PASS_F1_NATIVE_SUBSET",
+    "kind": "F1_CLOCK_DESKTOP_WEBGPU_FINITE_SUCCESSOR",
+    "actualResult": {
+      "logicalIdentity": "original-private-clock-gpu-r2-actual-result",
+      "bytes": 451675,
+      "sha256": "708f3ff116697f0091be90c97174fa6a9729f037764ab1e8f58a1e512786f180",
+      "distribution": "identity_only_not_distributed"
+    },
+    "independentSavedReview": {
+      "logicalIdentity": "original-clock-gpu-saved-actual-result-review",
+      "bytes": 33839,
+      "sha256": "1a667730284e715c47334a35bb189da0a6b8e5b229fe88946942603af9e5261d",
+      "distribution": "identity_only_not_distributed"
+    },
+    "reviewOpenFindings": 0,
+    "commandStartedAtUTC": "2026-10-12T04:31:22.3467286Z",
+    "commandFinishedAtUTC": "2026-10-12T04:31:24.7380975Z",
+    "exitCode": 0,
+    "timeout": false,
+    "positiveReadbacks": 10,
+    "separateControlReadbacks": 1,
+    "sourceOperations": 24,
+    "controlOperations": 4,
+    "positiveSampleCounts": [
+      2,
+      2,
+      4,
+      4,
+      3,
+      3,
+      2,
+      2,
+      4,
+      4
+    ],
+    "positiveSamples": 30,
+    "positiveChannels": 120,
+    "channelTolerance": 0,
+    "readbackBytes": 12288,
+    "originalOracleReuse": "G09/G10 reuse original local0.5 frame; no extra oracle, fitting or widened tolerance",
+    "fullByteRepeats": [
+      "G02=G01",
+      "G04=G03",
+      "G06=G05",
+      "G08=G07",
+      "G09=G03",
+      "G10=G09",
+      "G10=G03",
+      "F1D01=G05"
+    ],
+    "assignedControl": {
+      "fullReadback": "Matches positiveG05 original local1 frame",
+      "mismatchAtOriginalTime": 0.5,
+      "x": 25,
+      "y": 19,
+      "expected": [
+        255,
+        0,
+        0,
+        255
+      ],
+      "actual": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "closing": "Genuine Scope closing witness, handle retirement and render inertia observed",
+    "cleanup": "Created-only handles/scopes, resource groups, host, provider and API device closure observed; contexts/browser/server closed and no additional errors",
+    "environment": {
+      "browser": "Edge155.0.4283.45",
+      "playwright": "1.62.1",
+      "channel": "msedge",
+      "headless": true,
+      "callerAddedFlags": [],
+      "width": 64,
+      "height": 48,
+      "pixelRatio": 1,
+      "apiAdapterStrings": [
+        "nvidia",
+        "blackwell"
+      ],
+      "physicalHardwareAcceleration": "UNVERIFIED",
+      "browserExecutablePID": "UNOBSERVED",
+      "OSDescendantRetirement": "UNOBSERVED"
+    },
+    "r1Failure": {
+      "status": "INCOMPLETE",
+      "actualReceipt": {
+        "logicalIdentity": "original-clock-gpu-r1-incomplete-before-browser",
+        "bytes": 1517,
+        "sha256": "c9b7b3c9eda37c62d58a9692f1dd181fef163705a5abf322abf2870289cd3a87",
+        "distribution": "identity_only_not_distributed"
+      },
+      "stage": "BEFORE_BROWSER_ACQUISITION",
+      "windows": 0,
+      "cause": "One-command raw JSON array incorrectly read as an object: undefined !== 0",
+      "failureScope": "Harness receipt admission helper, not Engine/Core/GPU product failure",
+      "preserved": true
+    },
+    "r2Repair": {
+      "savedSourceReview": {
+        "logicalIdentity": "original-clock-gpu-driver-array-successor-source-review",
+        "bytes": 7770,
+        "sha256": "ee0b284a61b9e6d5d0c4e066aac5f0aea535815e13b17225194d078f9613f3d0",
+        "distribution": "identity_only_not_distributed"
+      },
+      "reviewOpenFindings": 0,
+      "change": "Select exactly one named command with raw array and exact cardinality checks",
+      "productOracleAndGuards": "UNCHANGED",
+      "noGuardRelaxation": true
+    }
+  },
+  "historicalReviews": {
+    "implementation": {
+      "logicalIdentity": "original-clock-implementation-source-and-saved-result-review",
+      "bytes": 22810,
+      "sha256": "98f124b9b4fb2ad6f65df65bc4f4fb5cc209cd3d88dab88c3a85a55e4ddc33f2",
+      "distribution": "identity_only_not_distributed"
+    },
+    "controlsInput": {
+      "logicalIdentity": "original-clock-owned-control-and-after-advance-source-input-review",
+      "bytes": 19876,
+      "sha256": "f94397150c0f316a609e1fa65a10150bc60e87b53f8f3c64b36e6a94c0968d48",
+      "distribution": "identity_only_not_distributed"
+    },
+    "originalGpuHarness": {
+      "logicalIdentity": "original-clock-four-path-source-review",
+      "bytes": 14417,
+      "sha256": "9ed4eba35e868d84121eecde2738a8675ef9bd4e672ebe42bb33c7d1cf71733c",
+      "distribution": "identity_only_not_distributed"
+    },
+    "scope": "Source-only reviews and later saved execution reviews retain distinct original cutoffs; reviewers did not execute product"
+  },
+  "previousDelivery": {
+    "sourcePin": {
+      "logicalIdentity": "original-f1-0.36-actual-delivery-successor",
+      "bytes": 1445,
+      "sha256": "3eb92488b7cdd451776322556e20a88c2212d7ada7a22688811bd17d8344c1a5",
+      "distribution": "identity_only_not_distributed"
+    },
+    "actual": {
+      "schemaVersion": 1,
+      "engineeringLabel": "0.36.0",
+      "sourceId": "S089",
+      "deliverableId": "V040",
+      "status": "ACTUAL_DELIVERY_SUCCESSOR",
+      "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/23",
+      "sourceCommit": "f5f5fb2e0f052ee99e24f887c0502cc91306d77a",
+      "mergedMain": "36909c3c1b2b9ef9784cb71d949ef6eba142fc0a",
+      "tree": "d4a765b372d374c75850c94f8130f0cd2a9d7136",
+      "readbackAtUtc": "2026-10-12T03:14:16.977Z",
+      "fullPrecommitGate": {
+        "exitCode": 0,
+        "stdoutSHA256": "fcecc5bd922e046fbce9cc5863b3ead292bd3a0838ad32e29a2d41c61103ce9f",
+        "finishedAtUtc": "2026-10-12T03:07:38.6025207Z"
+      },
+      "mandatoryPushHook": {
+        "exitCode": 0,
+        "stdoutSHA256": "d9d3a80d883249aec34a7bd05b8be0f854c6348edb34612b30f63640fc5779a0",
+        "stderrSHA256": "fb7c74f8f36a4d6d64b7507c774b7f8a685e8903942500a4ff86a804c4dbf858",
+        "finishedAtUtc": "2026-10-12T03:12:11.4735679Z",
+        "coreTests": 2678,
+        "publicationTests": 63,
+        "documents": 149,
+        "criticalSources": 183
+      },
+      "finalFiniteReview": {
+        "bytes": 18160,
+        "sha256": "14cf6151f86e96ca479e714e01f427ec42ff5df449dd91bc08b83de26ccfe17e"
+      },
+      "remoteStatusCount": 0,
+      "remoteCheckCount": 0,
+      "remoteCIPassClaimed": false,
+      "fullSpineR020V020": "OPEN",
+      "scope": "Actual opt-in original manual F1 experiment delivery. Saved source/review/gate cutoffs remain historical; no complete Spine, automatic Clock, mobile SDK or performance acceptance."
+    },
+    "historicalEvidence": "evidence/spine-f1-manual-verification.json and evidence/spine-f1-public-projection.json retain original pending cutoffs unchanged"
+  },
+  "publicSuccessor": {
+    "publicPortableSource": "PENDING_AT_CURATION_CUTOFF",
+    "publicCpuReplay": "PENDING_AT_CURATION_CUTOFF",
+    "publicGpuReplay": "PENDING_AT_CURATION_CUTOFF",
+    "currentFullGates": "PENDING_AT_CURATION_CUTOFF",
+    "finalIndependentBilingualReview": "PENDING_AT_CURATION_CUTOFF",
+    "mandatoryPushHook": "PENDING_AT_CURATION_CUTOFF",
+    "remoteDelivery": "PENDING_AT_CURATION_CUTOFF"
+  },
+  "publicProjection": "evidence/spine-f1-clock-public-projection.json",
+  "remaining": {
+    "fullSpineR020V020": "OPEN",
+    "legacyMigrationR008V006": "OPEN",
+    "areas": [
+      "resources_animation_UI",
+      "3D_composition",
+      "browser_minigame_native_hosts",
+      "utilities",
+      "AI_creator_editor_Agent_loop"
+    ],
+    "canvasTexturedProfile": "EXPLICITLY_UNSUPPORTED",
+    "WebGLPhonesNativeSDK": "NOT_ACCEPTED",
+    "performanceEnergy": "NOT_ACCEPTED",
+    "architecture": "D017_PROPOSED_EXPERIMENT_ONLY_D016_NOT_SUPERSEDED"
+  },
+  "portableReplaySuccessor": {
+    "status": "ACTUAL_CURRENT_PUBLIC_PORTABLE_CLOCK_CPU_AND_NATIVE_PASS",
+    "atUTC": "2026-10-12T05:00:29.267Z",
+    "collection": {
+      "logicalIdentity": "current-public-portable-clock-cpu-collection",
+      "bytes": 177226,
+      "sha256": "0f508d2db16d79deb76a1ec4f54d12dad06b5068ef894ae31d5a78fcbef25c79",
+      "distribution": "identity_only_not_distributed"
+    },
+    "native": {
+      "logicalIdentity": "current-public-portable-clock-native-result",
+      "bytes": 499286,
+      "sha256": "46e03987979bab723c38a20b91500bd66674257d42ed1c86301793a30679eefb",
+      "distribution": "identity_only_not_distributed"
+    },
+    "wrapper": {
+      "logicalIdentity": "current-public-portable-clock-native-wrapper-result",
+      "bytes": 684,
+      "sha256": "0d351b8a99814fd6a5ba4f458311932a82f4a45d3482a8f0710462c63f93377e",
+      "distribution": "identity_only_not_distributed"
+    },
+    "outerDriver": {
+      "logicalIdentity": "current-public-portable-clock-actual-driver-array-six",
+      "bytes": 5475,
+      "sha256": "d646f0a0d00c47d90f6e81fe235b6c223d15081933c2bfceb506a9c72e2ed5d9",
+      "distribution": "identity_only_not_distributed"
+    },
+    "sourceReviews": [
+      {
+        "logicalIdentity": "clock-public-cpu-review",
+        "bytes": 14138,
+        "sha256": "8ac7b90fbb0d2ce7ad130606de5776cb38fb1f1f46df640e3f2fc68907a880a9",
+        "distribution": "identity_only_not_distributed",
+        "verdict": "PASS_FINITE_PORTABLE_CLOCK_CPU_SOURCE_REVIEW",
+        "openFindings": 0,
+        "reviewerExecution": "NOT_RUN_SOURCE_ONLY"
+      },
+      {
+        "logicalIdentity": "clock-public-native-review",
+        "bytes": 8663,
+        "sha256": "956525eb964de98b17fe5b2b2163eaa1ecdaedf80b7e8c739a5ed5cb9f4bd5f9",
+        "distribution": "identity_only_not_distributed",
+        "verdict": "PASS_FINITE_PORTABLE_CLOCK_NATIVE_SOURCE_REVIEW",
+        "openFindings": 0,
+        "reviewerExecution": "NOT_RUN_SOURCE_ONLY"
+      }
+    ],
+    "counts": {
+      "manualPassed": 12,
+      "originalControls": 6,
+      "clockPassed": 10,
+      "clockFailed": 0,
+      "clockSkipped": 0,
+      "clockControls": 3,
+      "positiveReadbacks": 10,
+      "separateControlReadbacks": 1,
+      "positivePixelSamples": 30,
+      "positivePixelChannels": 120,
+      "channelTolerance": 0
+    },
+    "cold": {
+      "resolvedModules": 280,
+      "coreImports": 0,
+      "gpuImports": 0,
+      "hostAccesses": 0
+    },
+    "cpuNativeCutoff": "REQUESTED_PENDING_SEPARATE_ENTRY_PRESERVED",
+    "nativeSuccessor": "ACTUAL_SEPARATE_WRAPPER_EXIT_ZERO",
+    "inputIdentitiesUnchanged": true,
+    "historicalRunsSummed": false,
+    "independentSavedReplayReview": "PENDING",
+    "publicCheckoutReplay": "PENDING",
+    "currentFullGates": "PENDING",
+    "finalPublicReview": "PENDING",
+    "remoteDelivery": "PENDING",
+    "fullSpineR020V020": "OPEN"
+  },
+  "publicationNumericalProseSuccessor": {
+    "status": "FINITE_D017_NUMERIC_TOKEN_ORDER_REPAIR_SOURCE_UNCHANGED",
+    "originalFailure": {
+      "logicalIdentity": "current-publication-structure-failed-on-D017-risk-order",
+      "bytes": 178,
+      "sha256": "44048f18c0b0ffb969fdd91602d75e6c5a4f73caf8562126644fcd6b781df362",
+      "exitCode": 1,
+      "issues": [
+        "parity numerical prose: knowledge-base/Cns/registry/决策.json.items.16.risk"
+      ]
+    },
+    "cause": "Both languages retained the same values. The existing bilingual guard compares ordered numeric tokens; F1 and 0.25 appeared in opposite prose order.",
+    "correction": "Reorder only the Chinese risk phrase, refresh its English canonical identity and derived metadata; do not weaken the guard.",
+    "orderedTokens": [
+      "1",
+      "0.25"
+    ],
+    "engineSourceChanged": false,
+    "oracleChanged": false,
+    "acceptedCloneCPUAndNativeRerun": false,
+    "structureRetry": "PENDING",
+    "publicCheckoutReplay": "PENDING",
+    "fullGate": "PENDING",
+    "delivery": "PENDING"
+  },
+  "portableReplayIndependentReviewSuccessor": {
+    "status": "PASS_FINITE_SAVED_ACTUAL_PUBLIC_CLOCK_CPU_AND_NATIVE_RESULTS",
+    "openFindings": 0,
+    "reviewerExecution": "NOT_RUN_SAVED_RESULT_REVIEW",
+    "source": {
+      "logicalIdentity": "current-public-portable-clock-independent-saved-result-review",
+      "bytes": 23591,
+      "sha256": "d97febef62225cc9a3c3cd99df80beccd2aba65260edb876c32689a871ab094f",
+      "distribution": "identity_only_not_distributed"
+    },
+    "scope": "Actual independent-clone CPU and native results only; full Spine R020/V020 OPEN."
+  }
+}

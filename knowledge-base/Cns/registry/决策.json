@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-10",
+  "updatedAt": "2026-10-12",
   "authority": "技术候选登记；生产选型均未最终批准，局部研究证据不代表完整实现或端到端性能验收",
   "items": [
     {
@@ -987,6 +987,61 @@
       "evidenceScope": "静态资料与候选规格，不代表gate已执行。",
       "doc": "Cns/docs/工程技术架构与项目结构.md",
       "codeOriginConstraint": "R015：白鹭核心依据自有需求和规格独立设计实现；标准与开放项目提供研究依据，公共基础设施作为明确依赖接入并保留版本、来源、声明和修改记录。"
+    },
+    {
+      "id": "D017",
+      "title": "可选 F1 Clock 受信会话与实验出处",
+      "status": "proposed",
+      "proposal": "仅在原创可选实验中通过 createF1ClockSession 捕获真实 Engine Clock，bindClock 使用真实 Scope，按原始 tick delta 推进一次；官方 Core 外置，静态出处合同与当前实际重放分开。",
+      "risk": "有限 F1 profile 仅接受 maxDeltaSeconds <=0.25；超限合法配置需真实启动后清理，关闭／故障不承诺 rollback。私有结果不等于公开复现、产品或许可资格。",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R012",
+        "R015",
+        "R016",
+        "R020"
+      ],
+      "sourceIds": [
+        "S089",
+        "S090"
+      ],
+      "deliveryIds": [
+        "V040",
+        "V041"
+      ],
+      "hypothesisIds": [],
+      "gate": "独立来源／所有权／关闭顺序与原始 oracle；当前公开新输出重放、全部指定对照、默认隔离、双语／来源与必要推送门禁后再决定采用。",
+      "acceptedAt": null,
+      "reviewer": null,
+      "supersedes": null,
+      "evidence": [
+        "evidence/spine-f1-clock-verification.json",
+        "evidence/spine-f1-clock-public-projection.json"
+      ],
+      "evidenceScope": "私有 CPU10／3 对照及桌面 GPU10+1 已保存并有限独立审阅；本决策仍 proposed，不接受整体引擎架构，也不替代 D016。",
+      "doc": "Cns/experiments/spine-f1/README.md",
+      "codeOriginConstraint": "R015：白鹭桥与实验从自有规格独立实现；公开第三方基础库保留出处，官方运行时及许可不移植入本包。"
     }
-  ]
+  ],
+  "spineF1ClockPortableReplaySuccessor": {
+    "status": "ACTUAL_CURRENT_PUBLIC_PORTABLE_CLOCK_CPU_AND_NATIVE_PASS",
+    "counts": {
+      "manualPassed": 12,
+      "originalControls": 6,
+      "clockPassed": 10,
+      "clockFailed": 0,
+      "clockSkipped": 0,
+      "clockControls": 3,
+      "positiveReadbacks": 10,
+      "separateControlReadbacks": 1,
+      "positivePixelSamples": 30,
+      "positivePixelChannels": 120,
+      "channelTolerance": 0
+    },
+    "record": "evidence/spine-f1-clock-public-projection.json",
+    "fullSpineR020V020": "OPEN",
+    "cutoff": "实际独立克隆公开重放；保存结果评审、最终门禁与交付仍为 PENDING。"
+  }
 }

@@ -2288,10 +2288,10 @@
           "scope": "Cold import and help only; not a full default build/test/prepush or animation/device acceptance."
         },
         "precision": {
-          "absolute": 9.5367431640625E-07,
+          "absolute": 9.5367431640625e-7,
           "derivation": "Fixed source-derived bound on original shallow F1 only; qualified host constant premises, no fitting/snapping/automatic widening",
-          "quarterCosAbsoluteMaximum": 2.4E-08,
-          "quarterSinErrorMaximum": 3.552713678800501E-15,
+          "quarterCosAbsoluteMaximum": 2.4e-8,
+          "quarterSinErrorMaximum": 3.552713678800501e-15,
           "pixels": 0,
           "UVColorIndicesTimeIdentity": "EXACT"
         },
@@ -2407,7 +2407,83 @@
       "title": "原创可选 F1 Spine 资源、动画与网格实验",
       "scope": "原创 CPU／手动桥接、已有浏览器观察及新 clone 公开工具执行，有限独立评审通过；最终门禁／交付仍待完成。",
       "limit": "完整 R020/V020、其他资产／特性／后端／宿主、实体硬件／性能及许可资格仍未完成。",
+      "doc": "Cns/experiments/spine-f1/README.md",
+      "deliverySuccessor": {
+        "engineeringLabel": "0.36.0",
+        "status": "ACTUAL_DELIVERY_SUCCESSOR",
+        "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/23",
+        "mergedMain": "36909c3c1b2b9ef9784cb71d949ef6eba142fc0a",
+        "tree": "d4a765b372d374c75850c94f8130f0cd2a9d7136",
+        "fullPrecommitGate": "ACTUAL_EXIT_0",
+        "mandatoryPushHook": "ACTUAL_EXIT_0",
+        "coreTests": 2678,
+        "publicationTests": 63,
+        "documents": 149,
+        "criticalSources": 183,
+        "remoteStatuses": 0,
+        "remoteChecks": 0,
+        "remoteCIPassClaimed": false,
+        "evidence": "evidence/spine-f1-clock-verification.json",
+        "originalPendingCutoffs": "PRESERVED_UNCHANGED"
+      }
+    },
+    {
+      "id": "S090",
+      "type": "first_party_original_f1_clock_experiment_evidence",
+      "researchCheckedAt": "2026-10-12",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R008",
+        "R012",
+        "R015",
+        "R016",
+        "R020"
+      ],
+      "verification": {
+        "status": "PRIVATE_FINITE_CPU_GPU_ACCEPTED_PUBLIC_REPLAY_PENDING",
+        "clockPassed": 10,
+        "assignedClockControls": 3,
+        "originalManualPassed": 12,
+        "privateGpuPositiveReadbacks": 10,
+        "privateGpuControlReadbacks": 1,
+        "positivePixelSamples": 30,
+        "positivePixelChannels": 120,
+        "pixelChannelTolerance": 0,
+        "reviewOpenFindings": 0,
+        "record": "evidence/spine-f1-clock-verification.json",
+        "projectionRecord": "evidence/spine-f1-clock-public-projection.json",
+        "fullSpineR020V020": "OPEN",
+        "publicCutoff": "PENDING_AT_CURATION_CUTOFF"
+      },
+      "urls": [
+        "https://github.com/EsotericSoftware/spine-runtimes/tree/b7beb2ccbbce667a12c02f44d070644f59b04968/spine-ts/spine-core",
+        "https://esotericsoftware.com/spine-runtimes-license"
+      ],
+      "title": "原创可选 F1 Clock 驱动与有限私有验证",
+      "scope": "真实 Clock／Scope 与原始 F1 桥；私有 CPU10、三项错误副本及 GPU10+1 保存证据。首轮 helper 数组准入失败和后继保留。",
+      "limit": "公开可移植重放和当前发布仍 PENDING；官方 Core4.3.13 外置，许可资格未核实。完整 Spine／设备／性能／AI创作／迁移仍未验收。",
       "doc": "Cns/experiments/spine-f1/README.md"
     }
-  ]
+  ],
+  "spineF1ClockPortableReplaySuccessor": {
+    "status": "ACTUAL_CURRENT_PUBLIC_PORTABLE_CLOCK_CPU_AND_NATIVE_PASS",
+    "counts": {
+      "manualPassed": 12,
+      "originalControls": 6,
+      "clockPassed": 10,
+      "clockFailed": 0,
+      "clockSkipped": 0,
+      "clockControls": 3,
+      "positiveReadbacks": 10,
+      "separateControlReadbacks": 1,
+      "positivePixelSamples": 30,
+      "positivePixelChannels": 120,
+      "channelTolerance": 0
+    },
+    "record": "evidence/spine-f1-clock-public-projection.json",
+    "fullSpineR020V020": "OPEN",
+    "cutoff": "实际独立克隆公开重放；保存结果评审、最终门禁与交付仍为 PENDING。"
+  }
 }

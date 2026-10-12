@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "version": "0.36.0",
+  "version": "0.37.0",
   "updatedAt": "2026-10-12",
   "title": "白鹭引擎重构工程",
-  "stage": "original_opt_in_spine_f1_experiment_checkpoint",
+  "stage": "original_opt_in_spine_f1_clock_candidate",
   "publication": "development_preview",
   "registries": {
     "requirements": "Cns/registry/需求.json",
@@ -25,7 +25,7 @@
     "acceptance": "reproducible_test_reports",
     "summaryStatus": "deliverable_registry"
   },
-  "engineImplementation": "partial_independent_display_resources_animation_ui_hosts_spine_planning_original_f1_experiment",
+  "engineImplementation": "partial_independent_spine_f1_clock_private_evidence_public_projection_pending",
   "engineBenchmarksRun": false,
   "creatorTaskTestsRun": false,
   "migrationAcceptanceRun": false,
@@ -541,7 +541,7 @@
     "contract": "Cns/docs/显示内容边界契约.md",
     "evidence": "Cns/docs/显示内容边界证据.md"
   },
-  "latestEngineeringPreview": "0.36.0",
+  "latestEngineeringPreview": "0.37.0",
   "texturedMesh2DImplementation": {
     "version": "0.23.0",
     "status": "bounded_increment_implemented",
@@ -2422,10 +2422,10 @@
         "scope": "Cold import and help only; not a full default build/test/prepush or animation/device acceptance."
       },
       "precision": {
-        "absolute": 9.5367431640625E-07,
+        "absolute": 9.5367431640625e-7,
         "derivation": "Fixed source-derived bound on original shallow F1 only; qualified host constant premises, no fitting/snapping/automatic widening",
-        "quarterCosAbsoluteMaximum": 2.4E-08,
-        "quarterSinErrorMaximum": 3.552713678800501E-15,
+        "quarterCosAbsoluteMaximum": 2.4e-8,
+        "quarterSinErrorMaximum": 3.552713678800501e-15,
         "pixels": 0,
         "UVColorIndicesTimeIdentity": "EXACT"
       },
@@ -2567,5 +2567,74 @@
     "remoteCheckCount": 0,
     "remoteCIPassClaimed": false,
     "scope": "Actual 0.35 delivery successor only. Earlier preparation and review cutoffs remain historical; this record is not a 0.36 gate or Spine acceptance."
+  },
+  "spineF1ClockExperiment": {
+    "engineeringLabel": "0.37.0",
+    "sourceId": "S090",
+    "deliverableId": "V041",
+    "decisionId": "D017",
+    "decisionStatus": "proposed",
+    "status": "PRIVATE_FINITE_ACCEPTANCE_PUBLIC_SUCCESSOR_PENDING",
+    "privateClockCpuPassed": 10,
+    "privateAssignedClockControls": 3,
+    "originalManualPassed": 12,
+    "privateGpuPositiveReadbacks": 10,
+    "privateGpuControlReadbacks": 1,
+    "positivePixelSamples": 30,
+    "positivePixelChannels": 120,
+    "pixelChannelTolerance": 0,
+    "fullSpineR020V020": "OPEN",
+    "legacyMigrationR008V006": "OPEN",
+    "curationExecution": "NOT_RUN",
+    "publicCutoff": {
+      "publicPortableSource": "PENDING_AT_CURATION_CUTOFF",
+      "publicCpuReplay": "PENDING_AT_CURATION_CUTOFF",
+      "publicGpuReplay": "PENDING_AT_CURATION_CUTOFF",
+      "currentFullGates": "PENDING_AT_CURATION_CUTOFF",
+      "finalIndependentBilingualReview": "PENDING_AT_CURATION_CUTOFF",
+      "mandatoryPushHook": "PENDING_AT_CURATION_CUTOFF",
+      "remoteDelivery": "PENDING_AT_CURATION_CUTOFF"
+    },
+    "record": "evidence/spine-f1-clock-verification.json",
+    "projectionRecord": "evidence/spine-f1-clock-public-projection.json",
+    "guide": "Cns/experiments/spine-f1/README.md",
+    "scope": "限定原创 F1 受信 Clock 会话；D017 仅 proposed，不验收整体架构。保留旧手动、bootstrap 及 0.36 pending 历史。"
+  },
+  "spineF1ManualDeliverySuccessor": {
+    "engineeringLabel": "0.36.0",
+    "status": "ACTUAL_DELIVERY_SUCCESSOR",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/23",
+    "mergedMain": "36909c3c1b2b9ef9784cb71d949ef6eba142fc0a",
+    "tree": "d4a765b372d374c75850c94f8130f0cd2a9d7136",
+    "fullPrecommitGate": "ACTUAL_EXIT_0",
+    "mandatoryPushHook": "ACTUAL_EXIT_0",
+    "coreTests": 2678,
+    "publicationTests": 63,
+    "documents": 149,
+    "criticalSources": 183,
+    "remoteStatuses": 0,
+    "remoteChecks": 0,
+    "remoteCIPassClaimed": false,
+    "evidence": "evidence/spine-f1-clock-verification.json",
+    "originalPendingCutoffs": "PRESERVED_UNCHANGED"
+  },
+  "spineF1ClockPortableReplaySuccessor": {
+    "status": "ACTUAL_CURRENT_PUBLIC_PORTABLE_CLOCK_CPU_AND_NATIVE_PASS",
+    "counts": {
+      "manualPassed": 12,
+      "originalControls": 6,
+      "clockPassed": 10,
+      "clockFailed": 0,
+      "clockSkipped": 0,
+      "clockControls": 3,
+      "positiveReadbacks": 10,
+      "separateControlReadbacks": 1,
+      "positivePixelSamples": 30,
+      "positivePixelChannels": 120,
+      "channelTolerance": 0
+    },
+    "record": "evidence/spine-f1-clock-public-projection.json",
+    "fullSpineR020V020": "OPEN",
+    "cutoff": "实际独立克隆公开重放；保存结果评审、最终门禁与交付仍为 PENDING。"
   }
 }
