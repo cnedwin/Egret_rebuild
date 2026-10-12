@@ -595,8 +595,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/CHANGELOG.md",
-      "bytes": 47896,
-      "sha256": "b0d801dc0a0ab45cfc713aba4a99cdc9092ffa7e1d877d1f6a0c9856a8879158",
+      "bytes": 50257,
+      "sha256": "58435ee2f58ef1d419cd785f50099bc1eea04453d3d2b1303ed01205160338f5",
       "identityHistory": [
         {
           "bytes": 25611,
@@ -659,6 +659,11 @@
           "bytes": 46472,
           "sha256": "b6c1348cfe6b90309eb43cf098744d9aa738ffb90cc3849df82b435eb59334e5",
           "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+        },
+        {
+          "bytes": 47896,
+          "sha256": "b0d801dc0a0ab45cfc713aba4a99cdc9092ffa7e1d877d1f6a0c9856a8879158",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
         }
       ]
     },
@@ -749,8 +754,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 21583,
-      "sha256": "ad4fa98ba2427efa319d3038ea39b161c913d172ed1ca411cdaefc34bfbb68e1",
+      "bytes": 23953,
+      "sha256": "0d3579477e69d51d6aeb0ca959949ab81f13489f9aedfa8c485dc9f9ec07b131",
       "identityHistory": [
         {
           "bytes": 12315,
@@ -781,6 +786,11 @@
           "bytes": 20150,
           "sha256": "27014697d5e7b62b4eb673e1cf87b83c1499f06675372c43d239161862bc3bb3",
           "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+        },
+        {
+          "bytes": 21583,
+          "sha256": "ad4fa98ba2427efa319d3038ea39b161c913d172ed1ca411cdaefc34bfbb68e1",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
         }
       ]
     },
@@ -840,14 +850,19 @@
     },
     {
       "path": "knowledge-base/Cns/docs/Spine动画支持需求与验收.md",
-      "bytes": 12964,
-      "sha256": "2ee877814f9fa781fba1224dd09c6a4de1e19229d1eafd8d47740959935e28cf",
+      "bytes": 15504,
+      "sha256": "edf530f3f3d093fcdba7cd656049dfd52c1a6eb8058baaf37f17318571e3f12b",
       "originRole": "Independent first-party Spine requirement and acceptance documentation; no runtime source or assets incorporated.",
       "identityHistory": [
         {
           "bytes": 11531,
           "sha256": "5ef212050b1d4c3fbea260c413502b1bf84a12836b31184ee79ae4dbf92354ff",
           "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+        },
+        {
+          "bytes": 12964,
+          "sha256": "2ee877814f9fa781fba1224dd09c6a4de1e19229d1eafd8d47740959935e28cf",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
         }
       ]
     },
@@ -878,8 +893,15 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/交付计划.md",
-      "bytes": 7659,
-      "sha256": "3bb5ad2395e353c5251164b0e9f57ae6f87289c871284e446564e3290030d06b"
+      "bytes": 10237,
+      "sha256": "0af601ab2cabe66ba358b62a57fc2b9989f2f8dbe95cf735e3a33d0e54646fc6",
+      "identityHistory": [
+        {
+          "bytes": 7659,
+          "sha256": "3bb5ad2395e353c5251164b0e9f57ae6f87289c871284e446564e3290030d06b",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+        }
+      ]
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -950,8 +972,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/工程规划.md",
-      "bytes": 34529,
-      "sha256": "7bf71b6889bf03218929a69ca46490807d5774d1ca14f6a95963ab45dde6161e",
+      "bytes": 37108,
+      "sha256": "bb3a9425cc9b250514fd26ea78bfd06f93a3da634d51f687c66d3500bb3dc499",
       "identityHistory": [
         {
           "bytes": 23962,
@@ -982,6 +1004,11 @@
           "bytes": 32414,
           "sha256": "b0020f623caf99a0d2d6478a963dd3d02abb37097b1447c95e77d40f0b59d94e",
           "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+        },
+        {
+          "bytes": 34529,
+          "sha256": "7bf71b6889bf03218929a69ca46490807d5774d1ca14f6a95963ab45dde6161e",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
         }
       ]
     },
@@ -1276,8 +1303,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/README.md",
-      "bytes": 18997,
-      "sha256": "899af7790b19b1d92b5f3a8e0ec66af71b3b30e09d71860d3cfd652c0deca518",
+      "bytes": 21358,
+      "sha256": "bcbaaf5e24b8bfa3172dc7517191a08288a5789dc4239a6f9236484d5e98cf5e",
       "identityHistory": [
         {
           "bytes": 6319,
@@ -1335,14 +1362,19 @@
           "bytes": 17341,
           "sha256": "9ac33758aa7ba87569da2e0707618a6058866fcb3b9284e124a7046618f4ca91",
           "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+        },
+        {
+          "bytes": 18997,
+          "sha256": "899af7790b19b1d92b5f3a8e0ec66af71b3b30e09d71860d3cfd652c0deca518",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
         }
       ]
     },
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/registry/交付.json",
-      "bytes": 112143,
-      "sha256": "063589eef4b84f88964649a66e8a400cabc509237b24332a041b3b6e12cb6976",
+      "bytes": 116333,
+      "sha256": "fa66344bee66ebd1f8eeeb5e1e3c0eeea2291bbed53fa3ae0596ba4bdaae3b7a",
       "identityHistory": [
         {
           "bytes": 50664,
@@ -1415,6 +1447,11 @@
           "bytes": 97591,
           "sha256": "1faaaea29f9f5150ba43b0993aa134064faa2dbaca96838d8bafda543ca73416",
           "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+        },
+        {
+          "bytes": 112143,
+          "sha256": "063589eef4b84f88964649a66e8a400cabc509237b24332a041b3b6e12cb6976",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
         }
       ]
     },
@@ -1427,14 +1464,26 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/registry/决策.json",
-      "bytes": 41213,
-      "sha256": "e246bfa887d7434d07b28867e7be749b32f9036d745c3363bc7a96268b523663"
+      "bytes": 44617,
+      "sha256": "0aa6c638aaea3cf4ccbb7db9a8c0446e99a92729165c5116fd86a24d4fbcc507",
+      "identityHistory": [
+        {
+          "bytes": 41213,
+          "sha256": "e246bfa887d7434d07b28867e7be749b32f9036d745c3363bc7a96268b523663",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+        },
+        {
+          "bytes": 44620,
+          "sha256": "b082b60421a00cb818e86177551f4b901f3f535a61cd2be98f965d16cee7f899",
+          "scope": "Preserved unpublished Clock candidate before D017 numeric-order publication repair."
+        }
+      ]
     },
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/registry/来源.json",
-      "bytes": 127348,
-      "sha256": "745139e8b1bbac1425415194e8981479a883940082d5eebdb3c0077704840c77",
+      "bytes": 130497,
+      "sha256": "d839a2120fe3830e47f6d1c4bb4f7657b97967520722960e237381324e08b7c1",
       "identityHistory": [
         {
           "bytes": 74667,
@@ -1507,19 +1556,29 @@
           "bytes": 113316,
           "sha256": "243211a409b019eaf354f051db5fb01252d9b21dedeb80fd43bb3f6d34aeb391",
           "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+        },
+        {
+          "bytes": 127348,
+          "sha256": "745139e8b1bbac1425415194e8981479a883940082d5eebdb3c0077704840c77",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
         }
       ]
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/registry/需求.json",
-      "bytes": 14157,
-      "sha256": "d546d6177d9390b63b1b11eb3e191db8f10e7c5c65347447edb4c8203a81bb64",
+      "bytes": 15321,
+      "sha256": "d7bc50726fed150cf1f543da6cefe2cfcc4d1ea9b7b8d33b178d00c25da3b5d1",
       "identityHistory": [
         {
           "bytes": 13892,
           "sha256": "261047023b90aa96e47afdc20937d70552686384b577e4c5f68080d50e2c395f",
           "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+        },
+        {
+          "bytes": 14157,
+          "sha256": "d546d6177d9390b63b1b11eb3e191db8f10e7c5c65347447edb4c8203a81bb64",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
         }
       ]
     },
@@ -1550,8 +1609,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/当前版本.json",
-      "bytes": 99577,
-      "sha256": "1ab900afeffa2c408f8abcad23795acbc0b5b698f7f7cd5b0858892281456b2c",
+      "bytes": 102390,
+      "sha256": "6fc59c023e4f620feb8a3a88e102b912b97035109fe24c1e913a89e5ecb6f6b9",
       "identityHistory": [
         {
           "bytes": 31425,
@@ -1619,6 +1678,11 @@
           "bytes": 87036,
           "sha256": "cad999fc279381730d0d63bdae226d2fcc931c7a2da1d2d767ccaa27ba84c5d1",
           "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+        },
+        {
+          "bytes": 99577,
+          "sha256": "1ab900afeffa2c408f8abcad23795acbc0b5b698f7f7cd5b0858892281456b2c",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
         }
       ]
     },
@@ -1655,8 +1719,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/CHANGELOG.md",
-      "bytes": 56404,
-      "sha256": "63fc9c3428daa38cf692a605c5bc9569d7bbee37e54740ac1f1ba5c06414750f",
+      "bytes": 59035,
+      "sha256": "b372af2b8a6e3553453401674a0e4e69fbaafd9e69bdbd25195945dd3d53895d",
       "identityHistory": [
         {
           "bytes": 31389,
@@ -1719,6 +1783,11 @@
           "bytes": 54844,
           "sha256": "156cf9a034bb1a52497ffda6749adbd3ee139ef012a4fa7cb49b8f0751b1598b",
           "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+        },
+        {
+          "bytes": 56404,
+          "sha256": "63fc9c3428daa38cf692a605c5bc9569d7bbee37e54740ac1f1ba5c06414750f",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
         }
       ]
     },
@@ -1731,8 +1800,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/current-version.json",
-      "bytes": 100257,
-      "sha256": "d58c6a74f2c89d4e6a0facf578190c76e052ae7addcad5e96369480d686e1449",
+      "bytes": 103094,
+      "sha256": "57a19c3161b95db3a031a97d4ac7e41f419518dfc5110d31357b435ada0f5c23",
       "identityHistory": [
         {
           "bytes": 31946,
@@ -1800,6 +1869,11 @@
           "bytes": 87717,
           "sha256": "e502652a09ac0a943f1bbd81eaaf2943219e9365da3eed1bac246a7b7628f47d",
           "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+        },
+        {
+          "bytes": 100257,
+          "sha256": "d58c6a74f2c89d4e6a0facf578190c76e052ae7addcad5e96369480d686e1449",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
         }
       ]
     },
@@ -1932,8 +2006,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-progress.md",
-      "bytes": 24296,
-      "sha256": "abcb7f485e0ae3c2911a41354fa9dec8875a06371ee6267692abcd025cf9a08e",
+      "bytes": 26936,
+      "sha256": "8268f300a74cde2f872898bef295596fe3f9c25ea947814c6a660e6b11d25102",
       "identityHistory": [
         {
           "bytes": 14004,
@@ -1964,6 +2038,11 @@
           "bytes": 22727,
           "sha256": "e578dae06f760d88f8f4b46642cd1c4824b94fd9bf32b7fd9dcbf19af53de2e6",
           "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+        },
+        {
+          "bytes": 24296,
+          "sha256": "abcb7f485e0ae3c2911a41354fa9dec8875a06371ee6267692abcd025cf9a08e",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
         }
       ]
     },
@@ -1976,8 +2055,15 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/delivery-plan.md",
-      "bytes": 10111,
-      "sha256": "15220e85d187c396b6250539bf5e6d7569f7d484e63a58bfb391917b6c19e84c"
+      "bytes": 12981,
+      "sha256": "782958580a37d230c8a4c4f51a3d9462e69afd807bef9a8de31c77c00090f4e4",
+      "identityHistory": [
+        {
+          "bytes": 10111,
+          "sha256": "15220e85d187c396b6250539bf5e6d7569f7d484e63a58bfb391917b6c19e84c",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+        }
+      ]
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -2018,8 +2104,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/engineering-plan.md",
-      "bytes": 41741,
-      "sha256": "16c41b786fee21291e4f56c5df0fd90a22ef6b2f7c1e3767c390f2994766fa39",
+      "bytes": 44612,
+      "sha256": "48b040e2c05cbdddc100b414ae0485cbc3b83185a824801f679e26ee47d51b49",
       "identityHistory": [
         {
           "bytes": 29962,
@@ -2050,6 +2136,11 @@
           "bytes": 39378,
           "sha256": "3256cde4ced1c4d99c7d1baec91e99111bcfc3869a2e76f2e7d35718345c7ce0",
           "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+        },
+        {
+          "bytes": 41741,
+          "sha256": "16c41b786fee21291e4f56c5df0fd90a22ef6b2f7c1e3767c390f2994766fa39",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
         }
       ]
     },
@@ -2205,14 +2296,19 @@
     },
     {
       "path": "knowledge-base/en/docs/spine-animation-support-and-acceptance.md",
-      "bytes": 15240,
-      "sha256": "ec2f9da3ab8867b595a8459b27993ac67de7cd8a852d2f64cf8a89e466c2d869",
+      "bytes": 18077,
+      "sha256": "2c7b9302e8e23d0ba67c5b05a8a403ecb455ea48cc4d8849bec14655b72413bb",
       "originRole": "Independent first-party Spine requirement and acceptance documentation; no runtime source or assets incorporated.",
       "identityHistory": [
         {
           "bytes": 13671,
           "sha256": "2adf9c99bae5e95c30e3e72e5945bc49bb1d7090a8db29d6995cd34500cb6053",
           "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+        },
+        {
+          "bytes": 15240,
+          "sha256": "ec2f9da3ab8867b595a8459b27993ac67de7cd8a852d2f64cf8a89e466c2d869",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
         }
       ]
     },
@@ -2411,8 +2507,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/README.md",
-      "bytes": 21391,
-      "sha256": "cd729ca9b7da02a738b18e0fc8ecb793bec3c49c4fec5a7b7d47d3dc1f8e4a12",
+      "bytes": 24022,
+      "sha256": "ff6d8e31a5fcda99f1a29012e723d136361198d5fec5da33947f8b9da9de0c84",
       "identityHistory": [
         {
           "bytes": 7397,
@@ -2475,20 +2571,37 @@
           "bytes": 19831,
           "sha256": "42037a911b964b87127ce7dcedc4fd455559bfd130071d2253482eb50250845d",
           "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+        },
+        {
+          "bytes": 21391,
+          "sha256": "cd729ca9b7da02a738b18e0fc8ecb793bec3c49c4fec5a7b7d47d3dc1f8e4a12",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
         }
       ]
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/registry/decisions.json",
-      "bytes": 47527,
-      "sha256": "1953c56b8c6cafbea81946a9f6a3ddb9e735d67b243e51d5e03c3f025b42d676"
+      "bytes": 51151,
+      "sha256": "a7bec4f968c413fbd56fd564005ac60cac68f4364c79e32fe944fac526e58515",
+      "identityHistory": [
+        {
+          "bytes": 47527,
+          "sha256": "1953c56b8c6cafbea81946a9f6a3ddb9e735d67b243e51d5e03c3f025b42d676",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+        },
+        {
+          "bytes": 51151,
+          "sha256": "49bd74b716904aa1aa6d5c20333920302a381e6bbb6304c2e48ab495c08e6e5f",
+          "scope": "Preserved unpublished Clock candidate before D017 numeric-order publication repair."
+        }
+      ]
     },
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/registry/deliverables.json",
-      "bytes": 117352,
-      "sha256": "21af0cd3187795d74c6f6e36ecbec9cd79fde32c5587bbc56e92132fc28e9c87",
+      "bytes": 121621,
+      "sha256": "a1178c599073f70c7f23c6ab52625879fbb370366d01818a6523ae0431c2e995",
       "identityHistory": [
         {
           "bytes": 54446,
@@ -2566,6 +2679,11 @@
           "bytes": 102766,
           "sha256": "a30cce4e43ed10b71bb897a2b77a2db0ee93a18fd65d88d454e2c5d4e5de0fc3",
           "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+        },
+        {
+          "bytes": 117352,
+          "sha256": "21af0cd3187795d74c6f6e36ecbec9cd79fde32c5587bbc56e92132fc28e9c87",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
         }
       ]
     },
@@ -2578,21 +2696,26 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/registry/requirements.json",
-      "bytes": 16253,
-      "sha256": "6385f6161fd684b1031b72da27a6b6c449f787475a6685c0459c375bfa2f31d2",
+      "bytes": 17424,
+      "sha256": "342c6eaa0633fe8395a9f92c99fb5850d2f8c29d108de3823ff65ab7a8f77be2",
       "identityHistory": [
         {
           "bytes": 15989,
           "sha256": "c19f36f39573d198256641c8f057a350b4c12d99e6098faba352664646bc8a8f",
           "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+        },
+        {
+          "bytes": 16253,
+          "sha256": "6385f6161fd684b1031b72da27a6b6c449f787475a6685c0459c375bfa2f31d2",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
         }
       ]
     },
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/registry/sources.json",
-      "bytes": 136239,
-      "sha256": "dcfaa9bfbeadba50d906053572c75db7f9d71b3587438613e0f844e7f8e4cb3e",
+      "bytes": 139474,
+      "sha256": "09569f5c35fcbe518f71ebf16a88901cb5344d2c4821f0b2ba29e41e0a65f73d",
       "identityHistory": [
         {
           "bytes": 82270,
@@ -2665,6 +2788,11 @@
           "bytes": 122171,
           "sha256": "c9d017f3d009a6e22e4e49cbe110fa88f2f0c5a659f138d8f1aec0c359caec99",
           "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+        },
+        {
+          "bytes": 136239,
+          "sha256": "dcfaa9bfbeadba50d906053572c75db7f9d71b3587438613e0f844e7f8e4cb3e",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
         }
       ]
     },
@@ -2695,26 +2823,36 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/README.md",
-      "bytes": 3900,
-      "sha256": "4422804c19daf00f779bb5bfe2301850e5b1d29c2567c9e0ea490ba20ea924b4",
+      "bytes": 8059,
+      "sha256": "bcc9088e015cbb959b94da49f40bf6dfe6d01dd5cef8c62810263dec3e0ed746",
       "identityHistory": [
         {
           "bytes": 899,
           "sha256": "8e63ff4d983aa1250fe6ecbb9c57d84b50710822277442b9f0f86f2b46f5e8c9",
           "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+        },
+        {
+          "bytes": 3900,
+          "sha256": "4422804c19daf00f779bb5bfe2301850e5b1d29c2567c9e0ea490ba20ea924b4",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
         }
       ]
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/README.zh-CN.md",
-      "bytes": 3638,
-      "sha256": "0aeaec05c0e046ec409c8a443f47ec7c8e8506b00ee47c494429f32fd7eee5e4",
+      "bytes": 7680,
+      "sha256": "0b09cf72de08bbb3abbd2a534cafe13f0c45dc2fd33363dc6a3ed2af331de50c",
       "identityHistory": [
         {
           "bytes": 637,
           "sha256": "de405d8aa07f107c6f1cd47b6ecc4f85bebf4a36472ae69edaf80389e49ddfa5",
           "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+        },
+        {
+          "bytes": 3638,
+          "sha256": "0aeaec05c0e046ec409c8a443f47ec7c8e8506b00ee47c494429f32fd7eee5e4",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
         }
       ]
     },
@@ -2749,8 +2887,8 @@
     {
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "path": "localization.json",
-      "sha256": "fd9094d485904570aff1e0b39336b6696a7dc83c109841d9143831e52190efa7",
-      "bytes": 207117,
+      "sha256": "5a24fabcc78a2249a41b8c09be9a460778f9aaa33c2f966d129d5449bedbe4fc",
+      "bytes": 207886,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -2829,6 +2967,16 @@
           "bytes": 206365,
           "sha256": "4ec59a0517f4a36869d76fdff455d2d87179d06c8660d5b70a7164c8d0078ad3",
           "scope": "Preserved identity before terminal-LF-only F1 publication successor."
+        },
+        {
+          "bytes": 207117,
+          "sha256": "fd9094d485904570aff1e0b39336b6696a7dc83c109841d9143831e52190efa7",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+        },
+        {
+          "bytes": 207886,
+          "sha256": "4f252e98002ec257169262f874d39927dbdeca38c7e1943c7ed66e784e398886",
+          "scope": "Preserved unpublished Clock candidate before D017 numeric-order publication repair."
         }
       ]
     },
@@ -3526,8 +3674,8 @@
     {
       "path": "README.md",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
-      "sha256": "543e8b47e85220cf383db1236da6277b9893069a8f0ae3a9ee3a41fc5068e413",
-      "bytes": 49508,
+      "sha256": "7dd5301730011fd21081176aa6616aa9244de1b60cc0944fa072372b6570fd67",
+      "bytes": 54551,
       "previousRevisionSha256": "199156443d499d5012f1224263a1a3ee9994e5ba38ee067bceeb2ad865ae8167",
       "previousLayoutPath": "README.en.md",
       "previousLayoutSha256": "f40ec41ca699cd0b9138fbdf4a268080038f583ae11e78c4f37093a6b7095f57",
@@ -3598,13 +3746,18 @@
           "bytes": 46417,
           "sha256": "ec73c9b22c15c02e720d45384f70d4fdc14a8b4b002f4b01c049d3aa9ef9f55c",
           "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+        },
+        {
+          "bytes": 49508,
+          "sha256": "543e8b47e85220cf383db1236da6277b9893069a8f0ae3a9ee3a41fc5068e413",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
         }
       ]
     },
     {
       "path": "README.zh-CN.md",
-      "sha256": "688eaba4bba72c697721360042ac7ae165049ac1ee9a7373c9b7fc04c6ebf75f",
-      "bytes": 48609,
+      "sha256": "ecee2d0e32dbb2485befbe5a57c74f68a143a1b61f3e513d8e0893cf5f4e85af",
+      "bytes": 53652,
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "previousPublicSha256": "7ec80b8575a700b6a2628eb0322f2e770bb2284859f68ec5e0eb6530154a6699",
       "previousRevisionSha256": "7a1d72019db7cb6075d7c3a3bd4075f7c069d527b6e31d992a69333cb126b6c3",
@@ -3682,6 +3835,11 @@
           "bytes": 45526,
           "sha256": "f376aa8debe672b15b6df10e1394763563d1a21d00695f935c6cedd21aec7869",
           "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+        },
+        {
+          "bytes": 48609,
+          "sha256": "688eaba4bba72c697721360042ac7ae165049ac1ee9a7373c9b7fc04c6ebf75f",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
         }
       ]
     },
@@ -6838,27 +6996,37 @@
     },
     {
       "path": "knowledge-base/en/docs/spine-import-plan-evidence.md",
-      "bytes": 4684,
-      "sha256": "c3e7007cdf5dce08c3b316a2d1e9ade9cc83fdc72fbe59c39d90873d42966203",
+      "bytes": 7515,
+      "sha256": "6e222d81382ea7dc74af1fa39888fabeb425bdbcc20c369ef4a3428149bf9e9f",
       "originRole": "First-party independent bounded Spine planner, original verification, paired reading or derived register.",
       "identityHistory": [
         {
           "bytes": 3115,
           "sha256": "4059f6ac9b7f684c61572e6040ce83744143804e24199e50ba7151b893c9b53b",
           "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+        },
+        {
+          "bytes": 4684,
+          "sha256": "c3e7007cdf5dce08c3b316a2d1e9ade9cc83fdc72fbe59c39d90873d42966203",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
         }
       ]
     },
     {
       "path": "knowledge-base/Cns/docs/Spine导入计划证据.md",
-      "bytes": 4107,
-      "sha256": "8d5919a5120de03b03c742f035e936d6b72cd33b76f2aa05d8cfcf150afb788e",
+      "bytes": 6647,
+      "sha256": "ae47feba5dc8b82c109e48c2c16bba454b5f8856c8959b7963629317217fa620",
       "originRole": "First-party independent bounded Spine planner, original verification, paired reading or derived register.",
       "identityHistory": [
         {
           "bytes": 2674,
           "sha256": "08e95d654fd2a5ba4b16abbd0666d59803476fa908ee1b2560771a556d9dfcc1",
           "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+        },
+        {
+          "bytes": 4107,
+          "sha256": "8d5919a5120de03b03c742f035e936d6b72cd33b76f2aa05d8cfcf150afb788e",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
         }
       ]
     },
@@ -6901,15 +7069,29 @@
     },
     {
       "path": "knowledge-base/experiments/spine-f1/manifest.json",
-      "bytes": 11973,
-      "sha256": "eae51f44700f5b5ec51fcfe481f3b1651e323f724918208c04b076d38aae2b81",
-      "originRole": "Original first-party opt-in F1 experiment, paired reading, evidence or derived registry."
+      "bytes": 15169,
+      "sha256": "a8822d67d77a004e577a180ae9034a1e65456a5b9d25284b55a519717209dde4",
+      "originRole": "Original first-party opt-in F1 experiment, paired reading, evidence or derived registry.",
+      "identityHistory": [
+        {
+          "bytes": 11973,
+          "sha256": "eae51f44700f5b5ec51fcfe481f3b1651e323f724918208c04b076d38aae2b81",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+        }
+      ]
     },
     {
       "path": "knowledge-base/experiments/spine-f1/run.mjs",
-      "bytes": 43103,
-      "sha256": "197a1623d6a6a2e71e1b63b06ac6d2499c1355d8eb3c3ba2b3260ab35346006e",
-      "originRole": "Original first-party opt-in F1 experiment, paired reading, evidence or derived registry."
+      "bytes": 61561,
+      "sha256": "d99dba983e93dccf0faf196fe81c03f2381fc3a431d1d8369730a1ae416c2550",
+      "originRole": "Original first-party opt-in F1 experiment, paired reading, evidence or derived registry.",
+      "identityHistory": [
+        {
+          "bytes": 43103,
+          "sha256": "197a1623d6a6a2e71e1b63b06ac6d2499c1355d8eb3c3ba2b3260ab35346006e",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+        }
+      ]
     },
     {
       "path": "knowledge-base/experiments/spine-f1/fixtures/egret-original-page.rgba",
@@ -6943,9 +7125,16 @@
     },
     {
       "path": "knowledge-base/experiments/spine-f1/src/f1-manual-bridge.ts",
-      "bytes": 21835,
-      "sha256": "876213de21022f351b0ff9492880846bb066381233275d237f1921ec8fad9078",
-      "originRole": "Original first-party opt-in F1 experiment, paired reading, evidence or derived registry."
+      "bytes": 28580,
+      "sha256": "57effc17ae12c30eb2fa19c2b21f1a762de89971fe11027cf032c274054f6ef3",
+      "originRole": "Original first-party opt-in F1 experiment, paired reading, evidence or derived registry.",
+      "identityHistory": [
+        {
+          "bytes": 21835,
+          "sha256": "876213de21022f351b0ff9492880846bb066381233275d237f1921ec8fad9078",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+        }
+      ]
     },
     {
       "path": "knowledge-base/experiments/spine-f1/tests/manual-step.test.mjs",
@@ -6961,59 +7150,86 @@
     },
     {
       "path": "knowledge-base/experiments/spine-f1/webgpu/main.mjs",
-      "bytes": 15875,
-      "sha256": "aa661379769a2617db53590b2c2d53bae1ae095164fae374f1a84322dc504673",
-      "originRole": "Original first-party opt-in F1 experiment, paired reading, evidence or derived registry."
+      "bytes": 32815,
+      "sha256": "7b42e529f63e7023133e6c3c5af7d410115d8fa95b3c9ee3b985a22d8b3f2a46",
+      "originRole": "Original first-party opt-in F1 experiment, paired reading, evidence or derived registry.",
+      "identityHistory": [
+        {
+          "bytes": 15875,
+          "sha256": "aa661379769a2617db53590b2c2d53bae1ae095164fae374f1a84322dc504673",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+        }
+      ]
     },
     {
       "path": "knowledge-base/experiments/spine-f1/webgpu/run.mjs",
-      "bytes": 46505,
-      "sha256": "e9486c05e05ad2e4751e360dc108acd1905cf5271593772ac33598427a55f214",
+      "bytes": 74999,
+      "sha256": "e8ad9acf65396c28c4cdc8021bbc4614e349c0ebab258a331636e8acbd8e772f",
       "originRole": "Original first-party opt-in F1 experiment, paired reading, evidence or derived registry.",
       "identityHistory": [
         {
           "bytes": 46506,
           "sha256": "ec973a784233eac2605a6a79a111082b0e296b5b07850b8c9f4b421ed5b76476",
           "scope": "Preserved identity before terminal-LF-only F1 publication successor."
+        },
+        {
+          "bytes": 46505,
+          "sha256": "e9486c05e05ad2e4751e360dc108acd1905cf5271593772ac33598427a55f214",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
         }
       ]
     },
     {
       "path": "knowledge-base/experiments/spine-f1/webgpu/manifest.json",
-      "bytes": 6904,
-      "sha256": "a54535d9551ddc481addf493590c36a7a3f897384badedcd837870fc4dca93d2",
+      "bytes": 52906,
+      "sha256": "f1c5bb6ff1008f8b09afe9245ab363bfd6ada126565e2a98cd15bae9ebb74ff6",
       "originRole": "Original first-party opt-in F1 experiment, paired reading, evidence or derived registry.",
       "identityHistory": [
         {
           "bytes": 6903,
           "sha256": "f4a0256e3af703aa28c2f583800752f66232b10c0589ec371909b966435cbfb8",
           "scope": "Preserved identity before terminal-LF-only F1 publication successor."
+        },
+        {
+          "bytes": 6904,
+          "sha256": "a54535d9551ddc481addf493590c36a7a3f897384badedcd837870fc4dca93d2",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
         }
       ]
     },
     {
       "path": "knowledge-base/en/experiments/spine-f1/README.md",
-      "bytes": 9388,
-      "sha256": "054e04829d0c55334b976595f6f07b1f36733463a336f8fc1c00a4a29635b930",
+      "bytes": 17087,
+      "sha256": "028d7ed99a88d3a5373ab2be456b017f762aa7238ada31161a5ed19fb3f47b40",
       "originRole": "Original first-party opt-in F1 experiment, paired reading, evidence or derived registry.",
       "identityHistory": [
         {
           "bytes": 8858,
           "sha256": "774eedafca3cec090bde8ec52ffee86a14bd0bfd62c362f951158221ae196dc6",
           "scope": "Preserved identity before terminal-LF-only F1 publication successor."
+        },
+        {
+          "bytes": 9388,
+          "sha256": "054e04829d0c55334b976595f6f07b1f36733463a336f8fc1c00a4a29635b930",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
         }
       ]
     },
     {
       "path": "knowledge-base/Cns/experiments/spine-f1/README.md",
-      "bytes": 8646,
-      "sha256": "0056297e9bd4110f67740b82c804dea4ca0bb64d011fd43dbdcb919142f93470",
+      "bytes": 15477,
+      "sha256": "4a47b527cd224eef7e461d640fd31a5ff0952a8bb075818ed29493bfa47720e4",
       "originRole": "Original first-party opt-in F1 experiment, paired reading, evidence or derived registry.",
       "identityHistory": [
         {
           "bytes": 8210,
           "sha256": "0da4d76a4cc2538e8b2f5311dbc08734921fd98c7d0845c990125af4332015ab",
           "scope": "Preserved identity before terminal-LF-only F1 publication successor."
+        },
+        {
+          "bytes": 8646,
+          "sha256": "0056297e9bd4110f67740b82c804dea4ca0bb64d011fd43dbdcb919142f93470",
+          "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
         }
       ]
     },
@@ -7033,6 +7249,44 @@
           "bytes": 21892,
           "sha256": "612403d208e9effd0bc9b93140785f0b133ccc4035d9a3f2a2be0867f1ad9d05",
           "scope": "Preserved identity before terminal-LF-only F1 publication successor."
+        }
+      ]
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f1/tests/manual-clock.test.mjs",
+      "bytes": 38674,
+      "sha256": "6fe5a711718f2c2759ca5981751578c21d1bb74c771b81a68e83b940da228049",
+      "originRole": "Original first-party optional Clock experiment, fixed acceptance contract, evidence or bilingual reading."
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f1/clock-acceptance-contract.json",
+      "bytes": 10910,
+      "sha256": "d3bb3e36b64d1b9ad19e128b836480cf33091487de59478ec76e21cd9537a4f2",
+      "originRole": "Original first-party optional Clock experiment, fixed acceptance contract, evidence or bilingual reading."
+    },
+    {
+      "path": "knowledge-base/evidence/spine-f1-clock-verification.json",
+      "bytes": 19028,
+      "sha256": "f013c42b248323deea7800045bdcc2b562b6813896d3cd1182ca9af79a9fc4db",
+      "originRole": "Original first-party optional Clock experiment, fixed acceptance contract, evidence or bilingual reading.",
+      "identityHistory": [
+        {
+          "bytes": 17341,
+          "sha256": "eb0c49ef87af0623aa46d619c421a6a6b82aa3f03f3d097b4ef7578eec76393a",
+          "scope": "Preserved unpublished Clock candidate before D017 numeric-order publication repair."
+        }
+      ]
+    },
+    {
+      "path": "knowledge-base/evidence/spine-f1-clock-public-projection.json",
+      "bytes": 12707,
+      "sha256": "e0492f762ba780de32cbdcda7106135ee274f480abcefc2922983acdce7eda2b",
+      "originRole": "Original first-party optional Clock experiment, fixed acceptance contract, evidence or bilingual reading.",
+      "identityHistory": [
+        {
+          "bytes": 11020,
+          "sha256": "d1a81f7625b0addd381bf1db65da09fa61b24aa72805a786c70928b7fe05826b",
+          "scope": "Preserved unpublished Clock candidate before D017 numeric-order publication repair."
         }
       ]
     }
@@ -11479,5 +11733,94 @@
     "fullGate": "PENDING_CURRENT_FORMAT_SUCCESSOR",
     "independentDeltaReview": "PENDING",
     "remoteDelivery": "PENDING"
+  },
+  "spineF1ManualDeliverySuccessor": {
+    "schemaVersion": 1,
+    "engineeringLabel": "0.36.0",
+    "sourceId": "S089",
+    "deliverableId": "V040",
+    "status": "ACTUAL_DELIVERY_SUCCESSOR",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/23",
+    "sourceCommit": "f5f5fb2e0f052ee99e24f887c0502cc91306d77a",
+    "mergedMain": "36909c3c1b2b9ef9784cb71d949ef6eba142fc0a",
+    "tree": "d4a765b372d374c75850c94f8130f0cd2a9d7136",
+    "readbackAtUtc": "2026-10-12T03:14:16.977Z",
+    "fullPrecommitGate": {
+      "exitCode": 0,
+      "stdoutSHA256": "fcecc5bd922e046fbce9cc5863b3ead292bd3a0838ad32e29a2d41c61103ce9f",
+      "finishedAtUtc": "2026-10-12T03:07:38.6025207Z"
+    },
+    "mandatoryPushHook": {
+      "exitCode": 0,
+      "stdoutSHA256": "d9d3a80d883249aec34a7bd05b8be0f854c6348edb34612b30f63640fc5779a0",
+      "stderrSHA256": "fb7c74f8f36a4d6d64b7507c774b7f8a685e8903942500a4ff86a804c4dbf858",
+      "finishedAtUtc": "2026-10-12T03:12:11.4735679Z",
+      "coreTests": 2678,
+      "publicationTests": 63,
+      "documents": 149,
+      "criticalSources": 183
+    },
+    "finalFiniteReview": {
+      "bytes": 18160,
+      "sha256": "14cf6151f86e96ca479e714e01f427ec42ff5df449dd91bc08b83de26ccfe17e"
+    },
+    "remoteStatusCount": 0,
+    "remoteCheckCount": 0,
+    "remoteCIPassClaimed": false,
+    "fullSpineR020V020": "OPEN",
+    "scope": "Actual opt-in original manual F1 experiment delivery. Saved source/review/gate cutoffs remain historical; no complete Spine, automatic Clock, mobile SDK or performance acceptance."
+  },
+  "spineF1ClockExperimentWorkPackage": {
+    "engineeringLabel": "0.37.0",
+    "sourceId": "S090",
+    "deliverable": "V041",
+    "decision": "D017",
+    "decisionStatus": "proposed",
+    "sourceBaseCommit": "36909c3c1b2b9ef9784cb71d949ef6eba142fc0a",
+    "record": "knowledge-base/evidence/spine-f1-clock-verification.json",
+    "projectionRecord": "knowledge-base/evidence/spine-f1-clock-public-projection.json",
+    "origin": {
+      "implementation": "Independently authored first-party Clock bridge, tests, optional wrappers and original fixtures under Apache-2.0.",
+      "externalExperimentalInput": {
+        "name": "@esotericsoftware/spine-core",
+        "version": "4.3.13",
+        "sourceCommit": "b7beb2ccbbce667a12c02f44d070644f59b04968",
+        "bundled": false,
+        "license": "Original upstream Spine Runtime License; qualification remains unverified."
+      },
+      "defaultRuntimeDependenciesAdded": []
+    },
+    "acceptedFiniteSource": "SEPARATE_CPU_AND_NATIVE_SOURCE_REVIEWS",
+    "independentCloneReplay": "ACTUAL_CPU_MANUAL12_CONTROLS6_CLOCK10_CONTROLS3_NATIVE10_PLUS1",
+    "publicCheckoutReplay": "PENDING",
+    "finalPublication": "PENDING_AT_PRECOMMIT_METADATA_CUTOFF",
+    "mandatoryPushHook": "PENDING",
+    "remoteDelivery": "PENDING",
+    "fullSpineR020V020": "OPEN"
+  },
+  "spineF1ClockNumericalProseSuccessor": {
+    "status": "FINITE_D017_NUMERIC_TOKEN_ORDER_REPAIR_SOURCE_UNCHANGED",
+    "originalFailure": {
+      "logicalIdentity": "current-publication-structure-failed-on-D017-risk-order",
+      "bytes": 178,
+      "sha256": "44048f18c0b0ffb969fdd91602d75e6c5a4f73caf8562126644fcd6b781df362",
+      "exitCode": 1,
+      "issues": [
+        "parity numerical prose: knowledge-base/Cns/registry/决策.json.items.16.risk"
+      ]
+    },
+    "cause": "Both languages retained the same values. The existing bilingual guard compares ordered numeric tokens; F1 and 0.25 appeared in opposite prose order.",
+    "correction": "Reorder only the Chinese risk phrase, refresh its English canonical identity and derived metadata; do not weaken the guard.",
+    "orderedTokens": [
+      "1",
+      "0.25"
+    ],
+    "engineSourceChanged": false,
+    "oracleChanged": false,
+    "acceptedCloneCPUAndNativeRerun": false,
+    "structureRetry": "PENDING",
+    "publicCheckoutReplay": "PENDING",
+    "fullGate": "PENDING",
+    "delivery": "PENDING"
   }
 }

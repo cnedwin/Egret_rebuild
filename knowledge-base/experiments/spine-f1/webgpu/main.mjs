@@ -1,11 +1,30 @@
 // SPDX-License-Identifier: Apache-2.0
-// Original F1 harness. All geometry comes from the real manual bridge.
+// Original first-party Clock successor of the private manual F1 harness.
+// Source preparation only: execution requires independently accepted full CPU evidence.
 import * as egret from '@egret/engine';
 import { createTexturedWebGPUHost } from '@egret/engine/webgpu';
-import { createF1ManualResources } from '#f1-manual-bridge';
+import { createF1ClockSession } from '#f1-manual-bridge';
 
 const canvas = document.querySelector('#scene');
 const frameOptions = Object.freeze({ width: 64, height: 48, clearColor: 0, clearAlpha: 0 });
+const APPLY = Reflect.apply;
+const SCOPE_STATE = Object.getOwnPropertyDescriptor(egret.Scope.prototype, 'state').get;
+const SCOPE_DISPOSE = egret.Scope.prototype.dispose;
+const ENGINE_ADVANCE = egret.Engine.prototype.advanceTime;
+function retainClock(identity) {
+  const getters = Object.fromEntries(['state', 'elapsedSeconds', 'tickId', 'maxDeltaSeconds'].map(key =>
+    [key, Object.getOwnPropertyDescriptor(identity, key).get]));
+  const pause = identity.pause, resume = identity.resume;
+  return Object.freeze({
+    identity,
+    read: () => Object.fromEntries(Object.entries(getters).map(([key, getter]) => [key, APPLY(getter, identity, [])])),
+    pause: () => APPLY(pause, identity, []),
+    resume: () => APPLY(resume, identity, []),
+  });
+}
+function sameClock(before, after) {
+  return ['state', 'elapsedSeconds', 'tickId', 'maxDeltaSeconds'].every(key => before[key] === after[key]);
+}
 const observe = promise => { promise.catch(() => {}); return promise; };
 async function bounded(promise, label) {
   let timer;
@@ -85,10 +104,11 @@ function snapshot(instance) {
     insist(mesh instanceof egret.Mesh2D && egret.isTexturedGeometry2D(value), 'F1_REAL_BRIDGE_MESH');
     geometry.push({ mesh, value, data: JSON.stringify(value) });
   }
-  return { elapsed: instance.elapsedSeconds, geometry };
+  return { elapsed: instance.elapsedSeconds, displayDisposed: root.isDisposed, childCount: root.numChildren, geometry };
 }
 function unchanged(instance, before) {
   insist(instance.elapsedSeconds === before.elapsed, 'F1_NATIVE_NO_TIME_ADVANCE');
+  insist(instance.display.isDisposed === before.displayDisposed && instance.display.numChildren === before.childCount, 'F1_NATIVE_NO_DISPLAY_MUTATION');
   for (const row of before.geometry) insist(row.mesh.geometry === row.value && JSON.stringify(row.value) === row.data, 'F1_NATIVE_NO_GEOMETRY_MUTATION');
 }
 function pixels(bytes, oracle, id, time) {
@@ -113,12 +133,108 @@ async function run(mode) {
   insist(oracle.nativeSuccessor.channelTolerance === 0, 'F1_FIXED_PIXEL_TOLERANCE');
   const theta = 90 * (3.1415927 / 180);
   insist(Math.cos(0) === 1 && Math.sin(0) === 0 && Math.abs(Math.cos(theta)) <= 2.4e-8 && Math.abs(Math.sin(theta) - 1) <= 2 ** -48, 'F1_BROWSER_TRIG_PREMISES');
-  const report = { schemaVersion: 1, mode, status: 'INCOMPLETE', environment: { userAgent: navigator.userAgent,
-    platform: navigator.platform, browserDPR: devicePixelRatio, isSecureContext, preferredFormat: null },
-    adapter: null, device: null, observations: [], diagnostics: [], uncaptured: [], failure: null,
-    cleanup: { host: null, provider: null, deviceDestroyed: false, deviceLoss: null, failures: [] } };
+  const report = { schemaVersion: 1, kind: 'F1_CLOCK_DESKTOP_WEBGPU_FINITE_SUCCESSOR', mode, status: 'INCOMPLETE',
+    plannedCounts: { positive: 10, separateControl: 1 }, expectedObservations: mode === 'baseline' ? 10 : 1,
+    actualObservationCount: 0, environment: { userAgent: navigator.userAgent,
+      platform: navigator.platform, browserDPR: devicePixelRatio, isSecureContext, preferredFormat: null },
+    adapter: null, device: null, observations: [], sourceClock: [], closingWindow: null,
+    createdBindingFacts: { A: null, B: null }, createdHandles: [], createdScopes: [],
+    diagnostics: [], uncaptured: [], failure: null,
+    cleanup: { host: null, provider: null, clock: null, bindings: { A: null, B: null }, handles: [], scopes: [],
+      deviceDestroyed: false, deviceLoss: null, failures: [] } };
   latest = report;
-  let device, loss, destroyRequested = false, host, engine, resources, p, scope, A, B;
+  let device, loss, destroyRequested = false, host, session, engine, clock, resources, p, scope, A, B;
+  let scopeA, scopeB, subscriptionA, subscriptionB, lastSourceInput = null;
+  const scopes = [], handles = [], primaryBindings = { A: null, B: null };
+  const scopeFact = value => {
+    const record = scopes.find(row => row.value === value);
+    return record ? { id: record.id, role: record.role, state: APPLY(SCOPE_STATE, value, []) } : null;
+  };
+  const handleFact = record => record ? { id: record.id, instance: record.instance, source: record.source,
+    scope: scopeFact(record.scope), isDisposed: APPLY(record.disposed, record.handle, []) } : null;
+  const bindingFacts = () => ({ A: handleFact(primaryBindings.A), B: handleFact(primaryBindings.B) });
+  const scopeFacts = () => scopes.map(row => scopeFact(row.value));
+  function publishFacts() {
+    report.createdBindingFacts = bindingFacts();
+    report.createdHandles = handles.map(handleFact);
+    report.createdScopes = scopeFacts();
+  }
+  function newScope(role) {
+    const value = engine.createScope();
+    scopes.push({ id: scopes.length + 1, role, value });
+    publishFacts();
+    return value;
+  }
+  function rememberHandle(handle, instance, owner, source, primary) {
+    let record = handles.find(row => row.handle === handle);
+    if (!record) {
+      const disposed = Object.getOwnPropertyDescriptor(handle, 'isDisposed')?.get;
+      insist(typeof disposed === 'function' && Object.isFrozen(handle), 'F1_CLOCK_RETURNED_HANDLE');
+      record = { id: handles.length + 1, handle, disposed, instance, scope: owner, source };
+      handles.push(record);
+    }
+    if (primary) primaryBindings[instance] = record;
+    publishFacts();
+    return record;
+  }
+  function lifetimes() {
+    return { resourceScope: scopeFact(scope),
+      A: A ? { elapsedSeconds: A.elapsedSeconds, displayDisposed: A.display.isDisposed, scope: scopeFact(scopeA),
+        binding: handleFact(primaryBindings.A) } : null,
+      B: B ? { elapsedSeconds: B.elapsedSeconds, displayDisposed: B.display.isDisposed, scope: scopeFact(scopeB),
+        binding: handleFact(primaryBindings.B) } : null,
+      bindings: bindingFacts(), handles: handles.map(handleFact), scopes: scopeFacts() };
+  }
+  // Inputs and actual public results are recorded, never a private source-floor getter.
+  function operation(op, input, action) {
+    const row = { sequence: report.sourceClock.length + 1, op, input, status: 'STARTED',
+      clockBefore: clock.read(), lifetimeBefore: lifetimes(), returnedTick: null, returnedHandleId: null, failure: null };
+    report.sourceClock.push(row);
+    try {
+      const result = action();
+      if (op === 'advanceTime') row.returnedTick = result === undefined ? null :
+        { deltaSeconds: result.deltaSeconds, elapsedSeconds: result.elapsedSeconds, tickId: result.tickId };
+      if (op.endsWith('.bindClock') && result !== undefined)
+        row.returnedHandleId = handles.find(record => record.handle === result)?.id ?? null;
+      row.status = 'RETURNED';
+      return result;
+    } catch (cause) {
+      row.status = 'THREW'; row.failure = fault(cause); throw cause;
+    } finally {
+      row.clockAfter = clock.read(); row.lifetimeAfter = lifetimes();
+      publishFacts();
+    }
+  }
+  const advance = source => operation('advanceTime', { sourceSeconds: source }, () => {
+    lastSourceInput = source;
+    return APPLY(ENGINE_ADVANCE, engine, [source]);
+  });
+  function requireClock(state, elapsedSeconds, tickId) {
+    const actual = clock.read();
+    insist(actual.state === state && actual.elapsedSeconds === elapsedSeconds && actual.tickId === tickId &&
+      actual.maxDeltaSeconds === 0.25, 'F1_CLOCK_PUBLIC_STATE', { actual, expected: { state, elapsedSeconds, tickId, maxDeltaSeconds: 0.25 } });
+    return actual;
+  }
+  function sample(source, state, elapsedSeconds, tickId, expectedTick, localA, localB) {
+    const tick = advance(source);
+    insist(expectedTick === null ? tick === undefined :
+      tick?.deltaSeconds === 0.25 && tick.elapsedSeconds === elapsedSeconds && tick.tickId === tickId,
+      'F1_CLOCK_SOURCE_RESULT', { source, actual: tick ?? null, expected: expectedTick });
+    requireClock(state, elapsedSeconds, tickId);
+    insist(A.elapsedSeconds === localA && B.elapsedSeconds === localB, 'F1_CLOCK_LOCAL_TIMES');
+    return tick;
+  }
+  function bind(instance, name, owner, source, primary = true) {
+    const beforeA = snapshot(A), beforeB = snapshot(B), beforeClock = clock.read();
+    const handle = operation(name + '.bindClock', { scopeId: scopeFact(owner).id, source }, () => {
+      const returned = instance.bindClock(owner);
+      rememberHandle(returned, name, owner, source, primary);
+      return returned;
+    });
+    unchanged(A, beforeA); unchanged(B, beforeB);
+    insist(sameClock(beforeClock, clock.read()), 'F1_CLOCK_BIND_INERT');
+    return handle;
+  }
   const event = value => {
     if (report.uncaptured.length >= 32) { report.eventOverflow = true; return; }
     report.uncaptured.push(fault(value.error));
@@ -144,18 +260,48 @@ async function run(mode) {
       enableReadback: true, maxBackingPixels: 3072, maxPendingFrames: 1, maxReadbackBytes: 24576,
       onDiagnostic(value) { if (report.diagnostics.length >= 32) report.eventOverflow = true;
         else report.diagnostics.push({ code: value.code, serial: value.serial, phase: value.phase }); } });
-    engine = await egret.createEngineForProfile({ host }, egret.TEXTURED_FRAME_PROFILE_2D);
-    p = providers(engine, config); scope = engine.createScope();
-    resources = await createF1ManualResources(engine, scope, p.refs);
-    A = resources.createInstance(engine.createScope()); B = resources.createInstance(engine.createScope());
-    const clock = { identity: engine.clock, elapsed: engine.clock.elapsedSeconds, tick: engine.clock.tickId };
-    const originals = snapshot(A).geometry;
+    session = await createF1ClockSession({ host });
+    engine = session.engine;
+    // Capture the genuine facade/getters before provider callbacks or resources exist.
+    clock = retainClock(engine.clock);
+    requireClock('running', 0, 0);
+    report.initialClock = clock.read();
+    p = providers(engine, config); scope = newScope('resource');
+    resources = await session.createResources(scope, p.refs);
+    scopeA = newScope('A-instance'); scopeB = newScope('B-instance');
+    A = resources.createInstance(scopeA); B = resources.createInstance(scopeB);
+    subscriptionA = newScope('A-subscription'); subscriptionB = newScope('B-subscription');
+    const originals = [...snapshot(A).geometry, ...snapshot(B).geometry];
     let lastSerial = host.getStatus().lastSerial;
     const reads = new Map();
-    async function render(id, instance, time, sameAs) {
-      insist(instance.elapsedSeconds === time && B.elapsedSeconds === 0, 'F1_MANUAL_TIMES');
+    // These finite inputs are independent literals; no candidate pose defines an oracle.
+    const plans = [
+      { id: 'F1G01', instance: 'A', time: 0, source: 0, state: 'running', elapsed: 0, tick: 0, A: 0, B: 0, retiredA: false, retiredB: null, same: [] },
+      { id: 'F1G02', instance: 'A', time: 0, source: 0, state: 'running', elapsed: 0, tick: 0, A: 0, B: 0, retiredA: false, retiredB: null, same: ['F1G01'] },
+      { id: 'F1G03', instance: 'A', time: 0.5, source: 0.5, state: 'running', elapsed: 0.5, tick: 2, A: 0.5, B: 0, retiredA: false, retiredB: null, same: [] },
+      { id: 'F1G04', instance: 'A', time: 0.5, source: 0.75, state: 'paused', elapsed: 0.5, tick: 2, A: 0.5, B: 0, retiredA: false, retiredB: null, same: ['F1G03'] },
+      { id: 'F1G05', instance: 'A', time: 1, source: 1.5, state: 'running', elapsed: 1, tick: 4, A: 1, B: 0, retiredA: false, retiredB: null, same: [] },
+      { id: 'F1G06', instance: 'A', time: 1, source: 1.5, state: 'running', elapsed: 1, tick: 4, A: 1, B: 0, retiredA: false, retiredB: null, same: ['F1G05'] },
+      { id: 'F1G07', instance: 'B', time: 0, source: 1.5, state: 'running', elapsed: 1, tick: 4, A: 1, B: 0, retiredA: false, retiredB: null, same: [] },
+      { id: 'F1G08', instance: 'B', time: 0, source: 1.5, state: 'running', elapsed: 1, tick: 4, A: 1, B: 0, retiredA: true, retiredB: null, same: ['F1G07'] },
+      { id: 'F1G09', instance: 'B', time: 0.5, source: 2, state: 'running', elapsed: 1.5, tick: 6, A: 1, B: 0.5, retiredA: true, retiredB: false, same: ['F1G03'] },
+      { id: 'F1G10', instance: 'B', time: 0.5, source: 2.25, state: 'running', elapsed: 1.75, tick: 7, A: 1, B: 0.5, retiredA: true, retiredB: true, same: ['F1G09', 'F1G03'] },
+    ];
+    const controlPlan = { id: 'F1D01', instance: 'A', time: 0.5, source: 0.5, state: 'running',
+      elapsed: 0.5, tick: 2, A: 0.5, B: 0, retiredA: false, retiredB: null, same: [] };
+    async function render(id, instance) {
+      const planned = mode === 'baseline' ? plans[report.observations.length] : controlPlan;
+      insist(planned && planned.id === id && planned.instance === (instance === A ? 'A' : 'B'), 'F1_CLOCK_READBACK_ORDER');
+      insist(instance.elapsedSeconds === planned.time && A.elapsedSeconds === planned.A &&
+        B.elapsedSeconds === planned.B && lastSourceInput === planned.source, 'F1_CLOCK_FRAME_TIMES');
+      requireClock(planned.state, planned.elapsed, planned.tick);
+      const bindings = bindingFacts();
+      insist(bindings.A?.isDisposed === planned.retiredA &&
+        (bindings.B === null ? planned.retiredB === null : bindings.B.isDisposed === planned.retiredB), 'F1_CLOCK_FRAME_BINDINGS');
+      insist(A.display.isDisposed === (planned.retiredA && planned.A === 1) && !B.display.isDisposed, 'F1_CLOCK_FRAME_LIFETIMES');
+      insist(APPLY(SCOPE_STATE, subscriptionB, []) === (id === 'F1G10' ? 'closed' : 'open'), 'F1_CLOCK_SUBSCRIPTION_SCOPE');
       insist(p.counts.pageLoads === 1 && p.counts.pageDisposals === 0 && !p.page().isDisposed, 'F1_SHARED_PAGE_LIVE');
-      const beforeA = snapshot(A), beforeB = snapshot(B);
+      const beforeA = snapshot(A), beforeB = snapshot(B), beforeClock = clock.read(), beforeLifetime = lifetimes();
       const ticket = observe(host.requestReadback());
       let frame;
       try { frame = engine.renderTexturedFrame(frameOptions); }
@@ -176,29 +322,121 @@ async function run(mode) {
         insist(mesh instanceof egret.Mesh2D && mesh.textureLease.value === p.page() && frame.geometries[command.geometryIndex] === mesh.geometry, 'F1_GENUINE_FRAME_GEOMETRY');
       }
       unchanged(A, beforeA); unchanged(B, beforeB);
-      insist(engine.clock === clock.identity && engine.clock.elapsedSeconds === clock.elapsed && engine.clock.tickId === clock.tick, 'F1_NATIVE_NO_CLOCK');
+      const afterClock = clock.read(), afterLifetime = lifetimes();
+      insist(engine.clock === clock.identity && sameClock(beforeClock, afterClock), 'F1_NATIVE_NO_CLOCK');
+      insist(JSON.stringify(beforeLifetime) === JSON.stringify(afterLifetime), 'F1_NATIVE_NO_LIFETIME_MUTATION');
+      // Old immutable values remain content-stable even after disposed Mesh slots clear.
       for (const row of originals) insist(JSON.stringify(row.value) === row.data, 'F1_RETAINED_OLD_GEOMETRY');
-      if (sameAs) { const first = reads.get(sameAs); insist(first && first.every((value, index) => value === readback.bytes[index]), 'F1_REPEAT_COMPLETE_BYTES'); }
+      for (const sameAs of planned.same) {
+        const first = reads.get(sameAs);
+        insist(first && first.length === readback.bytes.length && first.every((value, index) => value === readback.bytes[index]), 'F1_REPEAT_COMPLETE_BYTES');
+      }
       const bytes = [...readback.bytes]; reads.set(id, bytes);
-      const row = { id, time, instance: instance === A ? 'A' : 'B', frameId: frame.frameId, serial: readback.serial,
+      const row = { id, time: planned.time, instance: instance === A ? 'A' : 'B', frameId: frame.frameId, serial: readback.serial,
         width: readback.width, height: readback.height, format: readback.format, sourceFormat: readback.sourceFormat,
-        colorSpace: readback.colorSpace, alphaMode: readback.alphaMode, status, texturedStatus: textured, canvas: metadata, bytes };
+        colorSpace: readback.colorSpace, alphaMode: readback.alphaMode, status, texturedStatus: textured, canvas: metadata,
+        sourceSeconds: lastSourceInput, sourceClockLength: report.sourceClock.length,
+        clockBefore: beforeClock, clockAfter: afterClock, lifetimeBefore: beforeLifetime, lifetimeAfter: afterLifetime,
+        createdBindingFacts: bindings, equalRawBytesTo: [...planned.same],
+        inertia: { elapsedAndGeometryA: true, elapsedAndGeometryB: true, authenticClock: true, lifetimes: true, retainedOldGeometry: true },
+        bytes };
       insist(typeof globalThis.__retainF1Readback === 'function', 'F1_RETAIN_BINDING');
+      // The wrapper independently retains/classifies every raw byte before a pixel assertion.
       await observe(globalThis.__retainF1Readback(row));
       report.observations.push({ ...row, bytes: undefined });
-      pixels(readback.bytes, oracle, id, time);
+      report.actualObservationCount = report.observations.length;
+      pixels(readback.bytes, oracle, id, planned.time);
     }
     engine.stage.addChild(A.display);
+    bind(A, 'A', subscriptionA, 'initial');
+    sample(0, 'running', 0, 0, null, 0, 0);
     if (mode === 'double-state-step') {
-      A.step(0.25); A.step(0.25); await render('F1D01', A, 0.5);
+      sample(0.25, 'running', 0.25, 1, { deltaSeconds: 0.25, elapsedSeconds: 0.25, tickId: 1 }, 0.25, 0);
+      sample(0.5, 'running', 0.5, 2, { deltaSeconds: 0.25, elapsedSeconds: 0.5, tickId: 2 }, 0.5, 0);
+      await render('F1D01', A);
       throw new Error('F1_DOUBLE_STEP_NOT_DETECTED');
     }
-    await render('F1G01', A, 0); await render('F1G02', A, 0, 'F1G01');
-    A.step(0.25); A.step(0.25); await render('F1G03', A, 0.5); await render('F1G04', A, 0.5, 'F1G03');
-    A.step(0.25); A.step(0.25); await render('F1G05', A, 1); await render('F1G06', A, 1, 'F1G05');
-    engine.stage.removeChild(A.display); engine.stage.addChild(B.display);
-    await render('F1G07', B, 0); A.dispose(); await render('F1G08', B, 0, 'F1G07');
-    scope.dispose();
+    await render('F1G01', A);
+    sample(0, 'running', 0, 0, null, 0, 0);
+    await render('F1G02', A);
+    sample(0.25, 'running', 0.25, 1, { deltaSeconds: 0.25, elapsedSeconds: 0.25, tickId: 1 }, 0.25, 0);
+    sample(0.5, 'running', 0.5, 2, { deltaSeconds: 0.25, elapsedSeconds: 0.5, tickId: 2 }, 0.5, 0);
+    await render('F1G03', A);
+    operation('clock.pause', {}, () => clock.pause());
+    requireClock('paused', 0.5, 2);
+    sample(0.75, 'paused', 0.5, 2, null, 0.5, 0);
+    await render('F1G04', A);
+    operation('clock.resume', {}, () => clock.resume());
+    requireClock('running', 0.5, 2);
+    sample(1, 'running', 0.5, 2, null, 0.5, 0);
+    sample(1.25, 'running', 0.75, 3, { deltaSeconds: 0.25, elapsedSeconds: 0.75, tickId: 3 }, 0.75, 0);
+    sample(1.5, 'running', 1, 4, { deltaSeconds: 0.25, elapsedSeconds: 1, tickId: 4 }, 1, 0);
+    await render('F1G05', A);
+    sample(1.5, 'running', 1, 4, null, 1, 0);
+    await render('F1G06', A);
+    operation('stage.showB', {}, () => { engine.stage.removeChild(A.display); engine.stage.addChild(B.display); });
+    await render('F1G07', B);
+    operation('A.dispose', {}, () => A.dispose());
+    await render('F1G08', B);
+    bind(B, 'B', subscriptionB, 'after-A-close');
+    sample(1.75, 'running', 1.25, 5, { deltaSeconds: 0.25, elapsedSeconds: 1.25, tickId: 5 }, 1, 0.25);
+    sample(2, 'running', 1.5, 6, { deltaSeconds: 0.25, elapsedSeconds: 1.5, tickId: 6 }, 1, 0.5);
+    await render('F1G09', B);
+
+    const retainedB = snapshot(B), probeScope = newScope('closing-bind-probe');
+    const witness = { started: false, completed: false, before: null, after: null, refusals: [],
+      advanceTick: null, advanceError: null, listenerFailure: null, afterClosed: null, zeroNoop: null };
+    report.closingWindow = witness;
+    function refusal(phase, op, action) {
+      try {
+        action();
+        witness.refusals.push({ phase, op, returned: true, failure: null });
+      } catch (cause) { witness.refusals.push({ phase, op, returned: false, failure: fault(cause) }); }
+    }
+    subscriptionB.signal.addEventListener('abort', () => {
+      // Cancellation isolates listener failures: collect facts here and assert only outside.
+      witness.started = true;
+      try {
+        witness.before = { scope: scopeFact(subscriptionB), binding: handleFact(primaryBindings.B),
+          elapsedSeconds: B.elapsedSeconds, clock: clock.read() };
+        refusal('before-tick', 'B.step(0)', () => operation('B.step', { deltaSeconds: 0, closingPhase: 'before-tick' }, () => B.step(0)));
+        refusal('before-tick', 'B.bindClock(probe)', () => bind(B, 'B', probeScope, 'closing-before-tick-probe', false));
+        try {
+          const tick = advance(2.25);
+          witness.advanceTick = tick === undefined ? null : { deltaSeconds: tick.deltaSeconds, elapsedSeconds: tick.elapsedSeconds, tickId: tick.tickId };
+        } catch (cause) { witness.advanceError = fault(cause); }
+        witness.after = { scope: scopeFact(subscriptionB), binding: handleFact(primaryBindings.B),
+          elapsedSeconds: B.elapsedSeconds, clock: clock.read() };
+        refusal('after-tick', 'B.step(0)', () => operation('B.step', { deltaSeconds: 0, closingPhase: 'after-tick' }, () => B.step(0)));
+        refusal('after-tick', 'B.bindClock(probe)', () => bind(B, 'B', probeScope, 'closing-after-tick-probe', false));
+      } catch (cause) { witness.listenerFailure = fault(cause); }
+      finally { witness.completed = true; }
+    }, { once: true });
+    operation('B.subscriptionScope.dispose', { scopeId: scopeFact(subscriptionB).id }, () => APPLY(SCOPE_DISPOSE, subscriptionB, []));
+    witness.afterClosed = { scope: scopeFact(subscriptionB), binding: handleFact(primaryBindings.B),
+      elapsedSeconds: B.elapsedSeconds, clock: clock.read(), pageDisposed: p.page().isDisposed, displayDisposed: B.display.isDisposed };
+    insist(witness.started && witness.completed && witness.listenerFailure === null && witness.advanceError === null, 'F1_CLOCK_ABORT_LISTENER_COMPLETED');
+    insist(witness.before?.scope.state === 'closing' && witness.before.binding.isDisposed === false && witness.before.elapsedSeconds === 0.5 &&
+      witness.after?.scope.state === 'closing' && witness.after.binding.isDisposed === true && witness.after.elapsedSeconds === 0.5, 'F1_CLOCK_ABORT_RETIREMENT');
+    const expectedRefusals = [['before-tick', 'B.step(0)'], ['before-tick', 'B.bindClock(probe)'], ['after-tick', 'B.step(0)'], ['after-tick', 'B.bindClock(probe)']];
+    insist(witness.refusals.length === 4 && witness.refusals.every((row, index) => row.phase === expectedRefusals[index][0] &&
+      row.op === expectedRefusals[index][1] && row.returned === false && row.failure?.code === 'F1_CLOCK_SCOPE_CLOSED'), 'F1_CLOCK_ABORT_DIRECT_REFUSALS');
+    insist(witness.advanceTick?.deltaSeconds === 0.25 && witness.advanceTick.elapsedSeconds === 1.75 &&
+      witness.advanceTick.tickId === 7, 'F1_CLOCK_ABORT_REAL_TICK');
+    requireClock('running', 1.75, 7);
+    unchanged(B, retainedB);
+    insist(witness.afterClosed.scope.state === 'closed' && witness.afterClosed.binding.isDisposed === true &&
+      !witness.afterClosed.pageDisposed && !witness.afterClosed.displayDisposed, 'F1_CLOCK_DETACH_ONLY');
+    const beforeZero = snapshot(B), clockBeforeZero = clock.read();
+    operation('B.step', { deltaSeconds: 0, phase: 'after-closed' }, () => B.step(0));
+    unchanged(B, beforeZero);
+    const clockAfterZero = clock.read();
+    insist(sameClock(clockBeforeZero, clockAfterZero), 'F1_CLOCK_CLOSED_ZERO_INERT');
+    witness.zeroNoop = { deltaSeconds: 0, clockBefore: clockBeforeZero, clockAfter: clockAfterZero,
+      elapsedBefore: beforeZero.elapsed, elapsedAfter: B.elapsedSeconds, geometryUnchanged: true };
+    await render('F1G10', B);
+    insist(report.observations.length === 10 && handles.length === 2, 'F1_CLOCK_FINITE_POSITIVE_COUNT');
+    APPLY(SCOPE_DISPOSE, scope, []);
     insist(B.display.isDisposed && p.counts.headerDisposals === 2 && p.counts.pageDisposals === 1, 'F1_SHARED_RESOURCE_RETIREMENT');
     report.status = 'SCENE_COMPLETED';
   } catch (cause) {
@@ -206,8 +444,23 @@ async function run(mode) {
     report.status = cause?.code === 'F1_PIXEL_MISMATCH' ? 'PIXEL_FAIL' : 'INCOMPLETE';
   } finally {
     const cleanup = async action => { try { await action(); } catch (cause) { report.cleanup.failures.push(fault(cause)); } };
-    await cleanup(async () => { resources?.dispose(); scope?.dispose(); });
+    await cleanup(async () => { resources?.dispose(); if (scope) APPLY(SCOPE_DISPOSE, scope, []); });
     if (engine) await cleanup(() => engine.dispose()); else if (host) await cleanup(() => host.close());
+    await cleanup(async () => {
+      report.createdBindingFacts = bindingFacts();
+      report.createdHandles = handles.map(handleFact);
+      report.createdScopes = scopeFacts();
+      report.cleanup.bindings = bindingFacts();
+      report.cleanup.handles = handles.map(handleFact);
+      report.cleanup.scopes = scopeFacts();
+      if (clock) {
+        report.cleanup.clock = clock.read();
+        insist(report.cleanup.clock.state === 'closed', 'F1_CLOCK_CLOSE_UNPROVEN');
+      }
+      // Null means no returned registration; only actual handles must be disposed.
+      insist(report.cleanup.handles.every(row => row.isDisposed === true), 'F1_CLOCK_HANDLE_RETIREMENT_UNPROVEN');
+      insist(report.cleanup.scopes.every(row => row.state === 'closed'), 'F1_CLOCK_SCOPE_RETIREMENT_UNPROVEN');
+    });
     if (host) {
       report.cleanup.host = { status: host.getStatus(), texturedStatus: host.getTexturedStatus() };
       const state = report.cleanup.host;
@@ -222,7 +475,7 @@ async function run(mode) {
       device.removeEventListener('uncapturederror', event);
     } else if (device) {
       // An unsafe/missing return cannot authorize an ordinary borrowed lifetime
-      // success. Bounded browser teardown remains INCOMPLETE evidence.
+      // success. Root's bounded browser teardown remains INCOMPLETE evidence.
       report.cleanup.failures.push({ code: 'F1_BORROW_RETURN_UNPROVEN_DEVICE_NOT_DESTROYED' });
     }
     if (report.diagnostics.length || report.uncaptured.length || report.eventOverflow || report.unexpectedDeviceLoss || report.cleanup.failures.length ||

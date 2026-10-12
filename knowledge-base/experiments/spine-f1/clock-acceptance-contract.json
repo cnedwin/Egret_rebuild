@@ -1,0 +1,224 @@
+{
+  "schemaVersion": 1,
+  "kind": "FIRST_PARTY_FIXED_CLOCK_ACCEPTANCE_CONTRACT",
+  "profile": {
+    "Node": "24.19.0",
+    "TypeScript": "7.0.2",
+    "Playwright": "1.62.1",
+    "browserChannel": "msedge",
+    "headless": true,
+    "callerAddedFlags": [],
+    "maximumDeltaSeconds": 0.25,
+    "width": 64,
+    "height": 48,
+    "pixelRatio": 1,
+    "positionAbsolute": 9.5367431640625e-7,
+    "pixelChannelTolerance": 0,
+    "readbackBytes": 12288
+  },
+  "source": {
+    "bytes": 28580,
+    "sha256": "57effc17ae12c30eb2fa19c2b21f1a762de89971fe11027cf032c274054f6ef3"
+  },
+  "expectedEmission": {
+    "bytes": 27048,
+    "sha256": "b23956c4baecbc464fee5b7e711369a31c44beaea4994ebf49743397a76895fd",
+    "scope": "Existing sealed reviewed emission, not a fabricated future compilation; portable exact same compiler/source/config must reproduce or INCOMPLETE."
+  },
+  "clockTestSource": {
+    "bytes": 35816,
+    "sha256": "c8fa7e41d7604d33918853f20954c85cef5b99bcf7b081b681c8791b4aa0f756",
+    "policy": "Original immutable. New public successor may change only identified admission blocks/comments; record exact original-to-projected hunks, inverse, and semantic block equality."
+  },
+  "projectedClockTest": {
+    "bytes": 38674,
+    "sha256": "6fe5a711718f2c2759ca5981751578c21d1bb74c771b81a68e83b940da228049",
+    "metadataSuccessor": "PCPU-M00 through PCPU-M03; original semantic action bodies/literal geometry unchanged"
+  },
+  "originalSourceReviewProvenance": {
+    "logicalIdentity": "original-clock-implementation-source-and-saved-result-review",
+    "bytes": 22810,
+    "sha256": "98f124b9b4fb2ad6f65df65bc4f4fb5cc209cd3d88dab88c3a85a55e4ddc33f2",
+    "recordedVerdict": "PASS_FINITE_SOURCE_AND_SAVED_RESULT_REVIEW",
+    "recordedOpenFindings": 0,
+    "cutoff": "Source and saved9pass+1pending, not full fault/native acceptance."
+  },
+  "hunkReviewProvenance": {
+    "logicalIdentity": "original-clock-owned-control-and-after-advance-source-input-review",
+    "bytes": 19876,
+    "sha256": "f94397150c0f316a609e1fa65a10150bc60e87b53f8f3c64b36e6a94c0968d48",
+    "recordedVerdict": "PASS_FINITE_OWNED_AFTER_ADVANCE_FAULT_INPUT",
+    "recordedOpenFindings": 0,
+    "cutoff": "Finite source hunk/driver review; reviewer did not execute product."
+  },
+  "savedActualCPUReviewProvenance": {
+    "logicalIdentity": "original-clock-three-controls-and-full-named-fault-saved-result-review",
+    "bytes": 33970,
+    "sha256": "8ddecb4fb213e498d67c80aa06a736282617673816f4794d9355e0031193920e",
+    "recordedVerdict": "PASS_FINITE_SAVED_ACTUAL_CLOCK_CPU_RESULTS",
+    "recordedOpenFindings": 0,
+    "cutoff": "Saved actual three controls and executed Clock10/0skip accepted; no public clone/GPU/delivery acceptance."
+  },
+  "controls": [
+    {
+      "id": "F1CM01",
+      "assignedCase": "F1C04",
+      "marker": "F1C_PROFILE_REFUSAL_REQUIRED",
+      "expectedErrorCode": "ERR_ASSERTION",
+      "expectedExitCode": 1,
+      "before": "    if (maximum > 0.25)\n        throw new EgretError('F1_CLOCK_PROFILE_UNSUPPORTED');\n",
+      "after": "    // Owned F1CM01 control: finite maximum refusal deliberately omitted.\n",
+      "occurrences": 1,
+      "recordedEditedPin": {
+        "bytes": 27036,
+        "sha256": "b7c9f81ef30f9124dcceb39fa34d317e7081da6ad817d1c929056b5f1ef45bd1"
+      },
+      "boundary": "Profile refusal control; returned Engine is disposed in finally before assigned assertion."
+    },
+    {
+      "id": "F1CM02",
+      "assignedCase": "F1C06",
+      "marker": "F1C06 genuine subscription Scope closing gates abort-before-cleanup reentry",
+      "expectedErrorCode": "ERR_ASSERTION",
+      "expectedExitCode": 1,
+      "actual": 0.375,
+      "expected": 0.25,
+      "before": "if (binding.isDisposed() || scopeState(binding.scope) !== 'open' || this.#clock.state() !== 'running')",
+      "after": "if (binding.isDisposed() || this.#clock.state() !== 'running')",
+      "occurrences": 1,
+      "recordedEditedPin": {
+        "bytes": 27008,
+        "sha256": "619d70d5cdcdfd84178e2859cbb7018f90e04f88d052b2d8ac795f35b3f0a9fc"
+      },
+      "boundary": "Only subscription Scope-open term omitted; direct closing tombstone/disposed/running guards retained."
+    },
+    {
+      "id": "F1CM03",
+      "assignedCase": "F1C01",
+      "marker": "F1C_FIXED_CORNER_BIJECTION",
+      "expectedErrorCode": "ERR_ASSERTION",
+      "expectedExitCode": 1,
+      "actual": 0,
+      "expected": 1,
+      "before": "            animation.update(deltaSeconds);\n",
+      "after": "            animation.update(deltaSeconds);\n            animation.update(deltaSeconds);\n",
+      "occurrences": 1,
+      "recordedEditedPin": {
+        "bytes": 27092,
+        "sha256": "02c4d453ece3d31fcb29d8bd097e5824e0855f8eceef6a77072c80e366ce1860"
+      },
+      "boundary": "Local.5 with Core1 fails unchanged literal.5 corner oracle; no fitting."
+    }
+  ],
+  "fault": {
+    "id": "F1C09",
+    "faultName": "F1_INJECTED_AFTER_ADVANCE",
+    "stage": "AFTER_POSITIVE_CORE_UPDATE_APPLY_WORLD_BEFORE_MATERIALIZE",
+    "deltaSeconds": 0.25,
+    "before": "            animation.apply(skeleton);\n            skeleton.updateWorldTransform(Physics.none);\n            const geometries = materialize(renderer.render(skeleton, false, undefined, 2), this.#pages);",
+    "after": "            animation.apply(skeleton);\n            skeleton.updateWorldTransform(Physics.none);\n            if (deltaSeconds === 0.25) throw new Error('F1_INJECTED_AFTER_ADVANCE');\n            const geometries = materialize(renderer.render(skeleton, false, undefined, 2), this.#pages);",
+    "occurrences": 1,
+    "recordedEditedPin": {
+      "bytes": 27133,
+      "sha256": "1c74b492efc156c93308f9dfcfe9e1ec087e992376322dbb9e302218b663b677"
+    },
+    "semanticWitness": "Real Clock commits.25/tick1; CLOCK_CALLBACK_FAILED cause.message exact named fault; A/B local0 and old A geometry unchanged; A handle retired/B live; A.step.125 terminal refusal; later.375/.5/.625/.75 source samples progress B local.5 with original literals and Clock.75/tick5; shared page remains live.",
+    "cleanup": "Existing successful ownedSession finally awaits genuine Engine disposal and then host/provider/zero-timer assertions. Assigned wrong-control throws execute finally cleanup but do not by themselves execute post-success assertions."
+  },
+  "baselineProtocol": {
+    "freshPerOwnedStage": true,
+    "anotherActorBaselineReusable": false,
+    "bootstrap": {
+      "manual": {
+        "passed": 12,
+        "failed": 0,
+        "skipped": 0
+      },
+      "clockOriginal": {
+        "passed": 9,
+        "failed": 0,
+        "skipped": 1,
+        "pendingOnly": "F1C09"
+      },
+      "acceptedFullTen": false
+    },
+    "acceptedClock": {
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0,
+      "requiresExecutedOwnedFault": true
+    },
+    "assignedControls": {
+      "count": 3,
+      "baselinesManual": 12,
+      "baselinesClock": 10,
+      "setup": "F1C00 pass1/0fail/0skip + F1C_ACTUAL_SETUP_COMPLETE",
+      "assigned": "one ERR_ASSERTION failure/exact case/marker/numeric mismatch",
+      "restored": "selected pass1/0fail/0skip"
+    },
+    "mutationAfter": "Both own actual full baseline finish timestamps precede actual mutationStartedAtUTC",
+    "receiptShape": "Actual public ChildReceipt objects, uppercase UTC, raw stdout/stderr Pins; bootstrap array contains exactly two named command objects",
+    "inverse": "Unique inverse restores bytewise expected original working emission; preserve immutable executed mutant/fault module",
+    "actorAdmission": "Actual actor receipt only; contract is static acceptance input, not a generated independent review",
+    "commandTimeoutMs": 30000
+  },
+  "semanticPreservation": {
+    "bridgeSource": {
+      "bytes": 28580,
+      "sha256": "57effc17ae12c30eb2fa19c2b21f1a762de89971fe11027cf032c274054f6ef3"
+    },
+    "originalEmittedBridge": {
+      "bytes": 27048,
+      "sha256": "b23956c4baecbc464fee5b7e711369a31c44beaea4994ebf49743397a76895fd",
+      "scope": "Existing sealed reviewed emission, not a fabricated future compilation; portable exact same compiler/source/config must reproduce or INCOMPLETE."
+    },
+    "publicManualTest": {
+      "bytes": 24090,
+      "sha256": "c83458c064478ced7ab6222e0f219f065562686bc21273998c4dd1e1bb1788ce",
+      "policy": "Byte-exact existing portable test retained, not replaced with private physical-path variant."
+    },
+    "privateClockTest": {
+      "bytes": 35816,
+      "sha256": "c8fa7e41d7604d33918853f20954c85cef5b99bcf7b081b681c8791b4aa0f756",
+      "policy": "Original immutable. New public successor may change only identified admission blocks/comments; record exact original-to-projected hunks, inverse, and semantic block equality."
+    },
+    "publicOracle": {
+      "bytes": 11677,
+      "sha256": "79244829b2460589599ba70b4eff21e43e104bfe5e063e69ba5cd47c3fa17c97",
+      "policy": "Byte-exact existing public metadata projection; no new expected corners, channels, frames, tolerances, fitting or sample coverage."
+    },
+    "immutable": [
+      "src/canonical-baseline.ts",
+      "tests/manual-step.test.mjs",
+      "fixtures/egret-original-slide.spine.json",
+      "fixtures/egret-original-slide.atlas",
+      "fixtures/egret-original-page.rgba",
+      "fixtures/f1-oracle.json",
+      "webgpu/index.html"
+    ],
+    "ClockCaseIds": [
+      "F1C00",
+      "F1C01",
+      "F1C02",
+      "F1C03",
+      "F1C04",
+      "F1C05",
+      "F1C06",
+      "F1C07",
+      "F1C08",
+      "F1C09"
+    ],
+    "ClockBodyBoundary": "Private test provider/ownedSession/originalInstances/clock helpers, F1C00-F1C08 behavior actions, F1C09 mutant import/ownedSession and all cause/time/geometry/lifetime/cleanup assertions unchanged. Only genuine current-file/provenance/fault-receipt admission changes.",
+    "manualControlIds": [
+      "unsupported-additive",
+      "wrong-y",
+      "double-positive-update",
+      "reverse-actual-commands",
+      "omit-instance-scope-open",
+      "injected-after-advance"
+    ],
+    "manualControlPolicy": "Existing exact six IDs, original hunk text, assigned markers/subtests/classifications and fresh12 baselines retained. New bridge contains each original hunk; require unique actual occurrence and exact inverse. Do not inherit old manual emitted SHA for the new Clock source."
+  },
+  "boundary": "Optional original shallow F1 experiment only; named faults deliberately owned. No upstream payload, default SDK/Core dependency, natural fault/rollback/general authenticity guarantee, physicalGPU/nativeSDK/mobile/performance/energy/OS-retirement or fullSpine claim. R020/V020 OPEN. External integration/distribution qualification unverified.",
+  "provenanceMeaning": "Historical recorded reviews are genuine original provenance, not this replay's reviewers or baselines. Replay requires actual fresh command evidence; no private physical review file prerequisite and no generated PASS reviewer result."
+}

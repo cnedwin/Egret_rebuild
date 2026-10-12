@@ -972,6 +972,15 @@
         "source": "S089",
         "acceptance": "bounded_experiment_only_full_capability_not_run",
         "fullSpine": "OPEN"
+      },
+      "originalF1ClockSlice": {
+        "deliverable": "V041",
+        "source": "S090",
+        "decision": "D017",
+        "decisionStatus": "proposed",
+        "acceptance": "bounded_private_experiment_only_public_replay_pending_full_capability_not_run",
+        "fullSpine": "OPEN",
+        "record": "evidence/spine-f1-clock-verification.json"
       }
     },
     {
@@ -2502,10 +2511,10 @@
           "scope": "Cold import and help only; not a full default build/test/prepush or animation/device acceptance."
         },
         "precision": {
-          "absolute": 9.5367431640625E-07,
+          "absolute": 9.5367431640625e-7,
           "derivation": "Fixed source-derived bound on original shallow F1 only; qualified host constant premises, no fitting/snapping/automatic widening",
-          "quarterCosAbsoluteMaximum": 2.4E-08,
-          "quarterSinErrorMaximum": 3.552713678800501E-15,
+          "quarterCosAbsoluteMaximum": 2.4e-8,
+          "quarterSinErrorMaximum": 3.552713678800501e-15,
           "pixels": 0,
           "UVColorIndicesTimeIdentity": "EXACT"
         },
@@ -2623,13 +2632,109 @@
         "evidence/spine-f1-manual-verification.json",
         "evidence/spine-f1-public-projection.json"
       ],
+      "doc": "en/experiments/spine-f1/README.md",
+      "deliverySuccessor": {
+        "engineeringLabel": "0.36.0",
+        "status": "ACTUAL_DELIVERY_SUCCESSOR",
+        "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/23",
+        "mergedMain": "36909c3c1b2b9ef9784cb71d949ef6eba142fc0a",
+        "tree": "d4a765b372d374c75850c94f8130f0cd2a9d7136",
+        "fullPrecommitGate": "ACTUAL_EXIT_0",
+        "mandatoryPushHook": "ACTUAL_EXIT_0",
+        "coreTests": 2678,
+        "publicationTests": 63,
+        "documents": 149,
+        "criticalSources": 183,
+        "remoteStatuses": 0,
+        "remoteChecks": 0,
+        "remoteCIPassClaimed": false,
+        "evidence": "evidence/spine-f1-clock-verification.json",
+        "originalPendingCutoffs": "PRESERVED_UNCHANGED"
+      }
+    },
+    {
+      "id": "V041",
+      "title": "Original opt-in F1 Clock animation-driving experiment",
+      "kind": "original_spine_f1_clock_experiment",
+      "status": "in_progress",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R008",
+        "R012",
+        "R015",
+        "R016",
+        "R020"
+      ],
+      "sourceIds": [
+        "S090"
+      ],
+      "dependsOn": [
+        "V040"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "private_trusted_clock_bridge_and_evidence_public_portable_projection_pending",
+      "acceptance": "bounded_private_CPU10_controls3_GPU10plus1_public_replay_gates_delivery_pending",
+      "candidateEvidence": {
+        "clockPassed": 10,
+        "assignedClockControls": 3,
+        "originalManualPassed": 12,
+        "privateGpuPositiveReadbacks": 10,
+        "privateGpuControlReadbacks": 1,
+        "positivePixelSamples": 30,
+        "positivePixelChannels": 120,
+        "pixelChannelTolerance": 0,
+        "fullSpineR020V020": "OPEN",
+        "record": "evidence/spine-f1-clock-verification.json",
+        "projectionRecord": "evidence/spine-f1-clock-public-projection.json",
+        "publicCutoff": {
+          "publicPortableSource": "PENDING_AT_CURATION_CUTOFF",
+          "publicCpuReplay": "PENDING_AT_CURATION_CUTOFF",
+          "publicGpuReplay": "PENDING_AT_CURATION_CUTOFF",
+          "currentFullGates": "PENDING_AT_CURATION_CUTOFF",
+          "finalIndependentBilingualReview": "PENDING_AT_CURATION_CUTOFF",
+          "mandatoryPushHook": "PENDING_AT_CURATION_CUTOFF",
+          "remoteDelivery": "PENDING_AT_CURATION_CUTOFF"
+        }
+      },
+      "acceptanceCriteria": [
+        "Trusted genuine Clock, once-per-tick original delta, exclusive manual mode, authentic Scope closing and failure boundaries.",
+        "Preserve original oracles/art/manual12 and six controls; complete public Clock10/three controls and separate GPU10+1 replay.",
+        "External Core/default isolation, provenance/bilingual/mandatory gates and actual delivery; infer no full Spine or licensing qualification from this slice."
+      ],
+      "artifacts": [
+        "en/experiments/spine-f1/README.md",
+        "evidence/spine-f1-clock-verification.json",
+        "evidence/spine-f1-clock-public-projection.json"
+      ],
       "doc": "en/experiments/spine-f1/README.md"
     }
   ],
   "_localization": {
     "canonicalSource": "交付.json",
-    "canonicalSha256": "063589eef4b84f88964649a66e8a400cabc509237b24332a041b3b6e12cb6976",
+    "canonicalSha256": "fa66344bee66ebd1f8eeeb5e1e3c0eeea2291bbed53fa3ae0596ba4bdaae3b7a",
     "role": "read_only_translation",
     "language": "en"
+  },
+  "spineF1ClockPortableReplaySuccessor": {
+    "status": "ACTUAL_CURRENT_PUBLIC_PORTABLE_CLOCK_CPU_AND_NATIVE_PASS",
+    "counts": {
+      "manualPassed": 12,
+      "originalControls": 6,
+      "clockPassed": 10,
+      "clockFailed": 0,
+      "clockSkipped": 0,
+      "clockControls": 3,
+      "positiveReadbacks": 10,
+      "separateControlReadbacks": 1,
+      "positivePixelSamples": 30,
+      "positivePixelChannels": 120,
+      "channelTolerance": 0
+    },
+    "record": "evidence/spine-f1-clock-public-projection.json",
+    "fullSpineR020V020": "OPEN",
+    "cutoff": "Actual independent-clone public replay; saved-result review, final gates and delivery still PENDING."
   }
 }

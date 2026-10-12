@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-// Opt-in F1 WebGPU wrapper. No downloads, installs or dependency mutation.
+// Opt-in portable F1 Clock WebGPU successor; no downloads or dependency mutation.
 import fs from 'node:fs/promises';
 import { writeFileSync } from 'node:fs';
 import path from 'node:path';
@@ -78,6 +78,10 @@ const summary = (text, key) => [...text.matchAll(new RegExp(`^# ${key} (\\d+)\\s
 const tapRows = text => [...text.matchAll(/^\s*(not )?ok \d+ - (.+)\s*$/gm)].map(match => ({ failed: match[1] !== undefined, name: match[2].trim() }));
 async function childReceipt(pin, cpuRoot, expectedName, expectedCode) {
   assert.ok(within(cpuRoot, pin.path), 'F1_CPU_RECEIPT_OUTSIDE'); const row = await readJSON(pin);
+  assert.ok(row && typeof row === 'object' && !Array.isArray(row), 'F1_CPU_SINGULAR_RECEIPT_REQUIRED');
+  return childRow(row, cpuRoot, expectedName, expectedCode);
+}
+async function childRow(row, cpuRoot, expectedName, expectedCode) {
   assert.equal(row.name, expectedName); assert.equal(row.exitCode, expectedCode); assert.equal(row.timeout, false);
   assert.equal(row.signal, null); assert.equal(row.launchError, undefined); assert.ok(samePath(row.executable, process.execPath), 'F1_CPU_NODE_IDENTITY');
   assert.ok(Date.parse(row.finishedAtUTC) >= Date.parse(row.startedAtUTC), 'F1_CPU_RECEIPT_TIME');
@@ -87,24 +91,186 @@ async function childReceipt(pin, cpuRoot, expectedName, expectedCode) {
 }
 function baseline(stdout, source) {
   assert.equal(summary(stdout, 'tests'), '12'); assert.equal(summary(stdout, 'pass'), '12'); assert.equal(summary(stdout, 'fail'), '0');
+  assert.equal(summary(stdout, 'skipped'), '0');
   const rows = tapRows(stdout); for (const name of source.setupSubtests) assert.ok(rows.some(row => !row.failed && row.name === name), 'F1_CPU_GENUINE_SETUP');
   assert.ok(!/ERR_MODULE_NOT_FOUND|RENDERER_REQUIRED|INPUT_(?:BYTES|SHA256)_CHANGED/.test(stdout), 'F1_CPU_SETUP_FAILURE');
 }
+
+// Static first-party contracts bind exact hunks. Only retained current-run
+// command rows and raw streams can establish a completed CPU prerequisite.
+const clockIds = Array.from({ length: 10 }, (_, index) => 'F1C' + String(index).padStart(2, '0'));
+const clockArgs = ['--test', '--test-reporter=tap', 'tests/manual-clock.test.mjs'];
+function clockTAP(stdout, mode, assigned) {
+  const pending = mode === 'bootstrap', selected = mode === 'selected', failing = mode === 'assigned';
+  assert.equal(summary(stdout, 'tests'), selected || failing ? '1' : '10');
+  assert.equal(summary(stdout, 'pass'), failing ? '0' : pending ? '9' : selected ? '1' : '10');
+  assert.equal(summary(stdout, 'fail'), failing ? '1' : '0');
+  assert.equal(summary(stdout, 'skipped'), pending ? '1' : '0');
+  const rows = tapRows(stdout).filter(row => /^F1C\d{2} /.test(row.name));
+  assert.equal(rows.length, selected || failing ? 1 : 10, 'F1_CLOCK_RAW_CASE_CARDINALITY');
+  assert.deepEqual(rows.map(row => row.name.slice(0, 5)), selected || failing ? [assigned] : clockIds);
+  for (const row of rows) {
+    assert.equal(row.failed, failing);
+    const skipped = /# SKIP\b/.test(row.name);
+    assert.equal(skipped, pending && row.name.startsWith('F1C09 '), 'F1_CLOCK_PENDING_ONLY_F1C09');
+  }
+  assert.ok(!/ERR_MODULE_NOT_FOUND|RENDERER_REQUIRED|INPUT_(?:BYTES|SHA256)_CHANGED|F1_CLOCK_(?:INPUT|SOURCE)_/.test(stdout), 'F1_CLOCK_SETUP_FAILURE');
+  if (!failing) assert.ok(!/\bERR_ASSERTION\b/.test(stdout), 'F1_CLOCK_UNEXPECTED_ASSERTION');
+}
+function timeOrder(...values) {
+  const times = values.map(value => Date.parse(value));
+  assert.ok(times.every(Number.isFinite), 'F1_CLOCK_REAL_TIMESTAMPS');
+  for (let index = 1; index < times.length; index++) assert.ok(times[index - 1] <= times[index], 'F1_CLOCK_CAUSAL_ORDER');
+}
+function contentIdentity(actual, expected) {
+  assert.equal(actual.bytes, expected.bytes); assert.equal(actual.sha256, expected.sha256);
+}
+function editedBytes(original, definition) {
+  assert.equal(definition.occurrences, 1); const text = original.toString('utf8');
+  assert.equal(text.split(definition.before).length - 1, 1, 'F1_CLOCK_HUNK_UNIQUE');
+  const edited = Buffer.from(text.replace(definition.before, definition.after));
+  contentIdentity({ bytes: edited.length, sha256: hash(edited) }, definition.recordedEditedPin);
+  assert.equal(edited.toString('utf8').split(definition.after).length - 1, 1, 'F1_CLOCK_INVERSE_UNIQUE');
+  assert.deepEqual(Buffer.from(edited.toString('utf8').replace(definition.after, definition.before)), original, 'F1_CLOCK_EXACT_INVERSE');
+  return edited;
+}
+async function mappedClockPin(pin, relative, stage, publicFiles) {
+  const published = publicFiles.get(relative); assert.ok(published, 'F1_CLOCK_PUBLISHED_PIN_REQUIRED');
+  assert.ok(samePath(pin.path, published.path) || samePath(pin.path, path.join(stage, relative)), 'F1_CLOCK_PIN_MAPPING');
+  contentIdentity(pin, published); return checkPin(pin);
+}
+async function ownedStage(stage, handoff, sdk, core, original) {
+  await noLinks(stage);
+  for (const pin of [...handoff.stagedInputs, ...handoff.emittedInputs]) {
+    await checkPin({ ...pin, path: path.join(stage, path.relative(handoff.stage, pin.path)) });
+  }
+  for (const [relative, target] of [['node_modules/@egret/engine', sdk.packageRoots.engine], ['node_modules/@esotericsoftware/spine-core', core.root]]) {
+    assert.ok(samePath(await fs.realpath(path.join(stage, relative)), target), 'F1_CLOCK_GENUINE_OWNED_DEPENDENCY');
+  }
+  assert.deepEqual(await checkPin(await pinFile(path.join(stage, 'out/f1-manual-bridge.js'))), original);
+}
+async function clockCommand(pin, cpuRoot, name, code, cwd, args, mode, assigned) {
+  const result = await childReceipt(pin, cpuRoot, name, code);
+  assert.ok(samePath(result.row.cwd, cwd), 'F1_CLOCK_COMMAND_OWN_STAGE'); assert.deepEqual(result.row.args, args);
+  clockTAP(result.stdout, mode, assigned); return result;
+}
+async function namedFaultProof(record, stage, handoff, collection, source, publicFiles, contract, original, cpuRoot, sdk, core) {
+  assert.equal(record.status, 'ACTUAL_TEN_CLOCK_CASES_WITH_OWNED_NAMED_FAULT'); assert.equal(record.originalInputsUnchanged, true);
+  const manual = await childReceipt(record.bootstrapManual, cpuRoot, 'manual-bootstrap-twelve', 0);
+  assert.ok(samePath(manual.row.cwd, stage)); assert.deepEqual(manual.row.args, ['--test', '--test-reporter=tap', 'tests/manual-step.test.mjs']); baseline(manual.stdout, source);
+  const bootstrap = await clockCommand(record.bootstrapClock, cpuRoot, 'clock-bootstrap-nine-pending', 0, stage, clockArgs, 'bootstrap');
+  timeOrder(manual.row.finishedAtUTC, bootstrap.row.startedAtUTC, bootstrap.row.finishedAtUTC, record.mutationStartedAtUTC);
+  assert.ok(within(cpuRoot, record.actorReceipt.path)); const actor = await readJSON(record.actorReceipt);
+  assert.ok(actor && typeof actor === 'object' && !Array.isArray(actor), 'F1_CLOCK_ACTOR_OBJECT');
+  assert.equal(actor.schemaVersion, 1); assert.equal(actor.kind, 'CURRENT_RUN_OWNED_CLOCK_ACTOR'); assert.equal(actor.status, 'ACTUAL_OWNED_NAMED_FAULT_READY');
+  for (const field of ['review', 'openFindings', 'verdict', 'finalManifestPin']) assert.equal(actor[field], undefined, 'F1_CLOCK_NO_GENERATED_REVIEW');
+  assert.ok(typeof actor.actorId === 'string' && actor.actorId.length > 0); assert.equal(actor.mutationStartedAtUTC, record.mutationStartedAtUTC);
+  assert.equal(actor.faultName, contract.fault.faultName); assert.equal(actor.stage, contract.fault.stage); assert.equal(actor.deltaSeconds, .25);
+  await mappedClockPin(actor.contract, 'clock-acceptance-contract.json', stage, publicFiles);
+  await mappedClockPin(actor.source, 'src/f1-manual-bridge.ts', stage, publicFiles);
+  assert.deepEqual(actor.hunk, { before: contract.fault.before, after: contract.fault.after, occurrences: 1 });
+  assert.ok(samePath(record.originalEmission.path, path.join(stage, 'out/f1-manual-bridge.js'))); assert.deepEqual(actor.originalEmission, record.originalEmission);
+  contentIdentity(record.originalEmission, contract.expectedEmission); assert.deepEqual(await checkPin(record.originalEmission), original);
+  absolute(actor.actorRoot); assert.ok(within(path.dirname(stage), actor.actorRoot) && !samePath(actor.actorRoot, stage), 'F1_CLOCK_FAULT_ACTOR_OWN_PREFIX'); await noLinks(actor.actorRoot);
+  const expectedFault = editedBytes(original, contract.fault);
+  assert.deepEqual(actor.actorEmission, record.preservedExecutedFaultModule);
+  assert.ok(samePath(actor.actorEmission.path, path.join(actor.actorRoot, 'out/f1-owned-after-advance-fault.js')));
+  assert.deepEqual(await checkPin(actor.actorEmission), expectedFault, 'F1_CLOCK_RETAINED_EXECUTED_FAULT');
+  assert.ok(samePath(record.restoredActorEmission.path, path.join(actor.actorRoot, 'out/f1-manual-bridge.js')));
+  assert.deepEqual(await checkPin(record.restoredActorEmission), original);
+  assert.equal(actor.restoration.inverseUnique, true); assert.deepEqual(actor.restoration.restoredOriginalPin, record.restoredActorEmission);
+  assert.deepEqual(actor.restoration.restoredOriginalClock, record.restoredOriginalClock);
+  await ownedStage(actor.actorRoot, handoff, sdk, core, original);
+  assert.equal(actor.baselines.manual.command, 'manual-bootstrap-twelve'); assert.equal(actor.baselines.clockOriginal.command, 'clock-bootstrap-nine-pending');
+  assert.deepEqual(actor.baselines.manual.receipt, actor.baselines.clockOriginal.receipt);
+  assert.ok(within(cpuRoot, actor.baselines.manual.receipt.path));
+  const array = await readJSON(actor.baselines.manual.receipt);
+  assert.ok(Array.isArray(array) && array.length === 2, 'F1_CLOCK_BOOTSTRAP_ARRAY_TWO');
+  assert.equal(new Set(array.map(row => row?.name)).size, 2, 'F1_CLOCK_BOOTSTRAP_NAME_UNIQUE');
+  for (const [name, expected] of [['manual-bootstrap-twelve', manual], ['clock-bootstrap-nine-pending', bootstrap]]) {
+    const candidates = array.filter(row => row?.name === name); assert.equal(candidates.length, 1);
+    assert.deepEqual(candidates[0], expected.row); await childRow(candidates[0], cpuRoot, name, 0);
+  }
+  assert.deepEqual(actor.baselineAcceptance, { manualPassed: 12, manualFailed: 0, clockOriginalPassed: 9, clockOriginalFailed: 0, beforeMutation: true });
+  const restored = await clockCommand(record.restoredOriginalClock, cpuRoot, 'clock-restored-nine-pending', 0, actor.actorRoot, clockArgs, 'bootstrap');
+  timeOrder(record.mutationStartedAtUTC, restored.row.startedAtUTC, restored.row.finishedAtUTC);
+  for (const pin of [record.manifestBeforeAdmission, record.manifestAfterAdmission]) assert.ok(within(cpuRoot, pin.path));
+  const before = await readJSON(record.manifestBeforeAdmission), after = await readJSON(record.manifestAfterAdmission);
+  for (const value of [before, after]) { assert.equal(value.schemaVersion, 2); assert.equal(value.kind, 'CURRENT_F1_MANUAL_CLOCK_REPLAY_STAGE'); }
+  assert.deepEqual(before.clock.faultControl, { status: 'PENDING_OWNED_NAMED_FAULT', receipt: null });
+  assert.deepEqual(after.clock.faultControl, { status: 'ACTUAL_OWNED_NAMED_FAULT_READY', receipt: record.actorReceipt });
+  const normalizedAfter = structuredClone(after); normalizedAfter.clock.faultControl = structuredClone(before.clock.faultControl);
+  assert.deepEqual(normalizedAfter, before, 'F1_CLOCK_ONLY_ACYCLIC_ACTOR_ADMISSION');
+  const full = await clockCommand(record.fullSuite, cpuRoot, 'clock-full-ten', 0, stage, clockArgs, 'full');
+  timeOrder(restored.row.finishedAtUTC, full.row.startedAtUTC, full.row.finishedAtUTC, collection.generatedAtUTC);
+  return { full, actor, record };
+}
+async function clockCPUProof(handoff, collection, source, publicFiles, original, cpuRoot, sdk, core) {
+  assert.deepEqual(source.clockCaseIds, clockIds); assert.equal(source.clockSetupCase, 'F1C00');
+  const clock = collection.clock; assert.ok(clock && !Array.isArray(clock)); assert.deepEqual(handoff.clockContract, clock.contract);
+  assert.deepEqual(handoff.clockProof, { tests: clock.tests, namedFault: clock.namedFault, controls: clock.controls, source: clock.source, emission: clock.emission, contract: clock.contract });
+  const contract = JSON.parse((await mappedClockPin(clock.contract, 'clock-acceptance-contract.json', handoff.stage, publicFiles)).toString('utf8'));
+  contentIdentity(clock.contract, manifest.clockContractIdentity); assert.deepEqual(contract, manifest.clockAcceptance);
+  assert.equal(contract.schemaVersion, 1); assert.equal(contract.kind, 'FIRST_PARTY_FIXED_CLOCK_ACCEPTANCE_CONTRACT');
+  contentIdentity(contract.source, manifest.clockAcceptance.source); contentIdentity(contract.expectedEmission, manifest.clockAcceptance.expectedEmission);
+  for (const key of ['originalSourceReviewProvenance', 'hunkReviewProvenance', 'savedActualCPUReviewProvenance']) assert.deepEqual(contract[key], manifest.clockAcceptance[key]);
+  assert.deepEqual(contract.controls, manifest.clockAcceptance.controls); assert.deepEqual(contract.fault, manifest.clockAcceptance.fault);
+  await mappedClockPin(clock.source, 'src/f1-manual-bridge.ts', handoff.stage, publicFiles); contentIdentity(clock.source, contract.source);
+  contentIdentity(contract.projectedClockTest, publicFiles.get('tests/manual-clock.test.mjs'));
+  assert.ok(samePath(clock.emission.path, path.join(handoff.stage, 'out/f1-manual-bridge.js')));
+  contentIdentity(clock.emission, contract.expectedEmission); assert.deepEqual(await checkPin(clock.emission), original);
+  assert.deepEqual(clock.tests, { total: 10, passed: 10, failed: 0, skipped: 0, receipt: clock.tests.receipt });
+  assert.deepEqual(clock.tests.receipt, clock.namedFault.fullSuite);
+  const canonicalFault = await namedFaultProof(clock.namedFault, handoff.stage, handoff, collection, source, publicFiles, contract, original, cpuRoot, sdk, core);
+  assert.equal(clock.controls.length, 3); assert.deepEqual(clock.controls.map(row => row.id), ['F1CM01', 'F1CM02', 'F1CM03']);
+  const receiptIdentities = new Set([normalized(clock.tests.receipt.path)]);
+  for (let index = 0; index < 3; index++) {
+    const control = clock.controls[index], definition = contract.controls[index], stage = path.join(cpuRoot, 'clock-controls', control.id, 'copy');
+    assert.equal(control.status, 'ACTUAL_FINITE_ASSIGNED_CONTROL_PASS'); assert.equal(control.ownedCopyRestored, true); assert.equal(control.assignedCase, definition.assignedCase);
+    await ownedStage(stage, handoff, sdk, core, original); await mappedClockPin(control.contract, 'clock-acceptance-contract.json', stage, publicFiles);
+    const fault = await namedFaultProof(control.faultPrerequisite, stage, handoff, collection, source, publicFiles, contract, original, cpuRoot, sdk, core);
+    assert.ok(!samePath(fault.actor.actorRoot, canonicalFault.actor.actorRoot), 'F1_CLOCK_NO_CROSS_STAGE_FAULT_REUSE');
+    const manual = await childReceipt(control.baselineManual, cpuRoot, 'manual-full-baseline', 0);
+    assert.ok(samePath(manual.row.cwd, stage)); assert.deepEqual(manual.row.args, ['--test', '--test-reporter=tap', 'tests/manual-step.test.mjs']); baseline(manual.stdout, source);
+    const positive = await clockCommand(control.baselineClock, cpuRoot, 'clock-full-baseline', 0, stage, clockArgs, 'full');
+    timeOrder(fault.full.row.finishedAtUTC, manual.row.startedAtUTC, manual.row.finishedAtUTC, positive.row.startedAtUTC, positive.row.finishedAtUTC, control.mutationStartedAtUTC);
+    assert.ok(samePath(control.originalEmission.path, path.join(stage, 'out/f1-manual-bridge.js'))); contentIdentity(control.originalEmission, contract.expectedEmission);
+    assert.deepEqual(await checkPin(control.originalEmission), original); assert.deepEqual(control.restoredEmission, control.originalEmission);
+    assert.ok(within(path.dirname(stage), control.actorEmission.path) && !samePath(control.actorEmission.path, control.originalEmission.path), 'F1_CLOCK_OWNED_RETAINED_WRONG_COPY');
+    assert.deepEqual(await checkPin(control.actorEmission), editedBytes(original, definition));
+    const setup = await clockCommand(control.setup, cpuRoot, 'clock-setup', 0, stage, ['--test', '--test-reporter=tap', '--test-name-pattern=^F1C00 ', 'tests/manual-clock.test.mjs'], 'selected', 'F1C00');
+    assert.ok(setup.stdout.includes('F1C_ACTUAL_SETUP_COMPLETE'), 'F1_CLOCK_ACTUAL_SETUP_DIAGNOSTIC');
+    const args = ['--test', '--test-reporter=tap', '--test-name-pattern=^' + definition.assignedCase + ' ', 'tests/manual-clock.test.mjs'];
+    const assigned = await clockCommand(control.actor, cpuRoot, 'clock-assigned-fault', 1, stage, args, 'assigned', definition.assignedCase);
+    assert.ok(assigned.stdout.includes(definition.marker)); assert.ok(/^\s*code: ['"]?ERR_ASSERTION['"]?\s*$/m.test(assigned.stdout));
+    if (Object.hasOwn(definition, 'actual')) {
+      assert.ok(new RegExp('^\\s*actual: ' + String(definition.actual).replaceAll('.', '\\.') + '\\s*$', 'm').test(assigned.stdout));
+      assert.ok(new RegExp('^\\s*expected: ' + String(definition.expected).replaceAll('.', '\\.') + '\\s*$', 'm').test(assigned.stdout));
+    }
+    const restored = await clockCommand(control.restored, cpuRoot, 'clock-restored-assigned', 0, stage, args, 'selected', definition.assignedCase);
+    timeOrder(control.mutationStartedAtUTC, setup.row.startedAtUTC, setup.row.finishedAtUTC, assigned.row.startedAtUTC, assigned.row.finishedAtUTC, restored.row.startedAtUTC, restored.row.finishedAtUTC, collection.generatedAtUTC);
+    for (const pin of [control.faultPrerequisite.fullSuite, control.baselineManual, control.baselineClock, control.setup, control.actor, control.restored]) {
+      const key = normalized(pin.path); assert.ok(!receiptIdentities.has(key), 'F1_CLOCK_DISTINCT_OWNED_COMMAND_RECEIPTS'); receiptIdentities.add(key);
+    }
+  }
+}
 async function inputAdmission(inputPin, playwrightEntry) {
   const handoff = await readJSON(inputPin), cpuRoot = path.dirname(inputPin.path);
-  assert.equal(handoff.schemaVersion, 1); assert.equal(handoff.kind, 'CURRENT_F1_CPU_COMPLETED_NATIVE_HANDOFF');
-  assert.deepEqual(Object.keys(handoff).sort(), ['schemaVersion', 'kind', 'cpuCollection', 'canonicalQualification', 'currentSDKSnapshot', 'publicManifest', 'sdk', 'core', 'stage', 'stagedInputs', 'emittedInputs', 'oracle', 'playwright', 'stableNativeProfile', 'aliases', 'nativeAcceptance', 'licensingQualification'].sort(), 'F1_FINITE_HANDOFF_SCHEMA');
+  assert.equal(handoff.schemaVersion, 2); assert.equal(handoff.kind, 'CURRENT_F1_CLOCK_CPU_COMPLETED_NATIVE_HANDOFF');
+  assert.deepEqual(Object.keys(handoff).sort(), ['schemaVersion', 'kind', 'cpuCollection', 'canonicalQualification', 'currentSDKSnapshot', 'publicManifest', 'sdk', 'core', 'stage', 'stagedInputs', 'emittedInputs', 'oracle', 'clockContract', 'clockProof', 'playwright', 'stableNativeProfile', 'aliases', 'nativeAcceptance', 'licensingQualification'].sort(), 'F1_FINITE_HANDOFF_SCHEMA');
   assert.equal(handoff.nativeAcceptance, 'NOT_RUN'); assert.equal(handoff.licensingQualification, 'unverified');
   for (const name of ['cpuCollection', 'canonicalQualification', 'currentSDKSnapshot']) assert.ok(within(cpuRoot, handoff[name].path), 'F1_HANDOFF_RECEIPT_ROOT');
   assert.ok(samePath(handoff.cpuCollection.path, path.join(cpuRoot, 'cpu-collection.json')));
   const collection = await readJSON(handoff.cpuCollection), source = await readJSON(handoff.publicManifest), sdk = await readJSON(handoff.currentSDKSnapshot);
   assert.ok(samePath(handoff.publicManifest.path, path.join(here, '../manifest.json')), 'F1_CURRENT_PUBLIC_MANIFEST');
-  assert.equal(source.schemaVersion, 1); assert.equal(source.root, 'knowledge-base/experiments/spine-f1');
+  assert.equal(source.schemaVersion, 2); assert.equal(source.kind, 'PUBLIC_F1_MANUAL_CLOCK_EXPERIMENT'); assert.equal(source.root, 'knowledge-base/experiments/spine-f1');
+  assert.equal(collection.schemaVersion, 2); assert.equal(collection.kind, 'CURRENT_F1_MANUAL_CLOCK_CPU_COLLECTION');
   assert.equal(collection.status, 'PASS_F1_CPU_SUBSET'); assert.equal(collection.inputIdentitiesUnchanged, true);
   assert.equal(collection.historicalTreeAssignedToCurrentClone, false); assert.deepEqual(collection.before, collection.after);
   assert.deepEqual(collection.publicManifest, handoff.publicManifest); assert.deepEqual(collection.currentSDKSnapshot, handoff.currentSDKSnapshot);
   assert.deepEqual(collection.currentCanonicalQualification, handoff.canonicalQualification);
   assert.deepEqual(collection.originalTests.total, 12); assert.equal(collection.originalTests.passed, 12); assert.equal(collection.originalTests.childContracts, 11);
+  assert.equal(collection.originalTests.failed, 0); assert.equal(collection.originalTests.skipped, 0);
   assert.equal(collection.native, 'REQUESTED_PENDING_SEPARATE_ENTRY');
   assert.equal(collection.runtime.node, 'v24.19.0'); assert.ok(samePath(collection.runtime.executable, process.execPath));
   assert.ok(Number.isFinite(Date.parse(collection.generatedAtUTC)), 'F1_CPU_COMPLETED_CUTOFF');
@@ -116,8 +282,8 @@ async function inputAdmission(inputPin, playwrightEntry) {
     const file = path.resolve(sdk.root, pin.path); assert.ok(within(sdk.root, file));
     const current = { ...pin, path: file }; await checkPin(current); publicFiles.set(pin.path.slice(source.root.length + 1), current);
   }
-  assert.equal(publicFiles.size, 8);
-  assert.equal(collection.before.publicFiles, 8);
+  assert.equal(publicFiles.size, 10); assert.equal(source.files.length, 10);
+  assert.equal(collection.before.publicFiles, 10);
   assert.equal(collection.before.sdkSourceAndDistFiles, sdk.rows.length);
   assert.equal(collection.before.dependenciesAndHelperFiles, sdk.files.length);
   assert.equal(collection.before.coreFiles, 137);
@@ -235,7 +401,7 @@ async function inputAdmission(inputPin, playwrightEntry) {
   const expected = { engine: ['@egret/engine', await exportEntry(sdk.packageRoots.engine, '.'), 'Current clone public export'],
     webgpu: ['@egret/engine/webgpu', await exportEntry(sdk.packageRoots.engine, './webgpu'), 'Current clone public export'],
     spineCore: ['@esotericsoftware/spine-core', path.join(core.root, corePackage.main), 'Unmodified supplied official package'],
-    bridge: ['#f1-manual-bridge', path.join(handoff.stage, 'out/f1-manual-bridge.js'), 'Compiled independently authored original bridge'],
+    bridge: ['#f1-manual-bridge', path.join(handoff.stage, 'out/f1-manual-bridge.js'), 'Current compiled accepted first-party Clock bridge'],
     canonical: ['#f1-canonical', path.join(handoff.stage, 'out/canonical-baseline.js'), 'Compiled independently authored original probe'] };
   assert.deepEqual(Object.keys(aliases).sort(), Object.keys(expected).sort());
   for (const [key, [specifier, entry, provenance]] of Object.entries(expected)) { assert.equal(aliases[key].specifier, specifier); assert.equal(aliases[key].provenance, provenance); assert.ok(samePath(aliases[key].entry, entry), 'F1_PUBLIC_ALIAS_IDENTITY'); }
@@ -290,10 +456,14 @@ async function inputAdmission(inputPin, playwrightEntry) {
   }
   const bridgeBytes = await checkPin(handoff.emittedInputs.find(row => samePath(row.path, aliases.bridge.entry)));
   assert.equal(hash(bridgeBytes), manifest.bridgeEmissionSHA256, 'F1_ORIGINAL_BRIDGE_EMISSION');
+  await clockCPUProof(handoff, collection, source, publicFiles, bridgeBytes, cpuRoot, sdk, core);
   const text = bridgeBytes.toString('utf8'); assert.equal(text.split(manifest.control.from).length - 1, 1, 'F1_NATIVE_DOUBLE_HUNK_UNIQUE');
   const changed = Buffer.from(text.replace(manifest.control.from, manifest.control.to)); assert.equal(hash(changed), manifest.control.changedSHA256);
+  assert.equal(changed.length, manifest.control.changedBytes); assert.equal(changed.toString('utf8').split(manifest.control.to).length - 1, 1);
+  assert.deepEqual(Buffer.from(changed.toString('utf8').replace(manifest.control.to, manifest.control.from)), bridgeBytes, 'F1_NATIVE_CONTROL_INVERSE');
   report.inputAdmission = { cpuCollection: handoff.cpuCollection, qualification: handoff.canonicalQualification, currentSDKSnapshot: handoff.currentSDKSnapshot,
-    publicManifest: handoff.publicManifest, sdkFiles: sdk.rows.length, coreFiles: 137, controls: 6, originalTests: 12,
+    publicManifest: handoff.publicManifest, sdkFiles: sdk.rows.length, coreFiles: 137, originalManualControls: 6, originalTests: 12,
+    clockTests: 10, assignedClockControls: 3, clockContract: handoff.clockContract, clockProof: handoff.clockProof,
     compilerContentDigestSHA256: compiler.contentDigestSHA256, moduleCount: modules.size, edgeCount,
     inputPinCount: inputs.size, contentEnvelopes: [...inventories.values()].map(row => ({ root: row.root, files: row.rows.length, digestSHA256: row.digest })),
     originalSourceIdentityIsNotCurrentCloneTree: true, licensingQualification: 'unverified' };
@@ -301,34 +471,157 @@ async function inputAdmission(inputPin, playwrightEntry) {
   return { changed, oracle, importMap, bridgeURL: importMap['#f1-manual-bridge'], config: mode => Buffer.from(JSON.stringify({ mode, fixtures })) };
 }
 
-// Fixed raw/scene assertions are retained from the original experiment below.
+// Readback assertions use the frozen source plan, never candidate-derived poses.
+function clockCheck(actual, planned) {
+  assert.ok(actual && typeof actual === 'object', 'F1_CLOCK_RAW_REQUIRED');
+  assert.equal(actual.state, planned.clockState);
+  assert.equal(actual.elapsedSeconds, planned.engineElapsed);
+  assert.equal(actual.tickId, planned.tickId);
+  assert.equal(actual.maxDeltaSeconds, .25);
+}
+function lifetimeCheck(actual, planned) {
+  assert.ok(actual?.A && actual?.B && actual.resourceScope, 'F1_LIFETIME_RAW_REQUIRED');
+  assert.equal(actual.resourceScope.state, 'open');
+  assert.equal(actual.A.elapsedSeconds, planned.AElapsed);
+  assert.equal(actual.B.elapsedSeconds, planned.BElapsed);
+  assert.equal(actual.A.displayDisposed, planned.AClosed);
+  assert.equal(actual.B.displayDisposed, false);
+  assert.equal(actual.A.scope.state, 'open'); // Caller Scope remains owned by Engine until final cleanup.
+  assert.equal(actual.B.scope.state, 'open');
+  assert.ok(actual.bindings?.A, 'F1_GENUINE_A_HANDLE_REQUIRED');
+  assert.equal(actual.bindings.A.isDisposed, planned.ABindingRetired);
+  assert.equal(actual.A.binding?.isDisposed, planned.ABindingRetired);
+  assert.equal(actual.bindings.B === null, planned.BHandleDisposed === null);
+  if (planned.BHandleDisposed !== null) {
+    assert.equal(actual.bindings.B.isDisposed, planned.BHandleDisposed);
+    assert.equal(actual.bindings.B.scope.state, planned.BSubscriptionScopeState);
+    assert.equal(actual.B.binding.isDisposed, planned.BHandleDisposed);
+  } else assert.equal(actual.B.binding, null, 'F1_UNBOUND_B_NO_REGISTRATION');
+  assert.ok(Array.isArray(actual.handles) && Array.isArray(actual.scopes));
+  assert.equal(new Set(actual.handles.map(row => row.id)).size, actual.handles.length);
+  assert.equal(actual.handles.length, planned.BHandleDisposed === null ? 1 : 2);
+  for (const handle of actual.handles) {
+    assert.ok(Number.isSafeInteger(handle.id) && handle.id > 0);
+    const assigned = actual.bindings[handle.instance];
+    assert.ok(assigned && assigned.id === handle.id, 'F1_HANDLE_REGISTRATION_BINDING');
+    assert.deepEqual(handle, assigned);
+  }
+  assert.equal(new Set(actual.scopes.map(row => row.id)).size, actual.scopes.length);
+  const bScope = actual.scopes.find(row => row.role === 'B-subscription');
+  assert.ok(bScope); assert.equal(bScope.state, planned.BSubscriptionScopeState);
+}
+function traceLifetimeCheck(actual, planned) {
+  if (planned.ABindingRetired === null) {
+    assert.equal(actual.bindings.A, null); assert.equal(actual.A.binding, null);
+    assert.equal(actual.bindings.B, null); assert.equal(actual.B.binding, null); assert.equal(actual.handles.length, 0);
+    assert.equal(actual.A.elapsedSeconds, 0); assert.equal(actual.B.elapsedSeconds, 0);
+    assert.equal(actual.A.displayDisposed, false); assert.equal(actual.B.displayDisposed, false);
+  } else lifetimeCheck(actual, planned);
+  const roles = ['resource', 'A-instance', 'B-instance', 'A-subscription', 'B-subscription', 'closing-bind-probe'];
+  assert.equal(actual.scopes.length, planned.scopeCount);
+  actual.scopes.forEach((row, index) => { assert.equal(row.id, index + 1); assert.equal(row.role, roles[index]);
+    const state = row.role === 'B-subscription' ? planned.BSubscriptionScopeState : 'open';
+    assert.equal(row.state, state); });
+}
 function rawCheck(row, mode, oracle, seen) {
-  const expectedIds = mode === 'baseline' ? manifest.observations.map(item => item.id) : ['F1D01'];
-  assert.equal(row.id, expectedIds[seen.size], 'F1_READBACK_ORDER');
+  const planned = mode === 'baseline' ? manifest.observations[seen.size] : manifest.control.observation;
+  assert.ok(planned, 'F1_READBACK_EXTRA'); assert.equal(row.id, planned.id, 'F1_READBACK_ORDER');
   assert.equal(row.width, 64); assert.equal(row.height, 48); assert.equal(row.bytes.length, 12288);
   assert.ok(row.bytes.every(value => Number.isInteger(value) && value >= 0 && value <= 255));
   assert.ok(Number.isSafeInteger(row.frameId) && row.frameId > 0 && Number.isSafeInteger(row.serial) && row.serial > 0);
+  assert.equal(row.serial, seen.size + 1, 'F1_EXACT_SUBMISSION_COUNT');
+  assert.equal(row.status.lastSerial, row.serial);
+  assert.equal(row.status.pendingFrames, 0); assert.equal(row.status.pendingUploadBytes, 0);
+  assert.equal(row.status.pendingReadbackBytes, 0); assert.equal(row.status.firstFailure, null);
+  assert.equal(row.texturedStatus.pendingGeometryBytes, 0);
   assert.equal(row.format, 'rgba8unorm'); assert.ok(['rgba8unorm', 'bgra8unorm'].includes(row.sourceFormat));
   assert.equal(row.colorSpace, 'srgb'); assert.equal(row.alphaMode, 'premultiplied');
-  const planned = mode === 'baseline' ? manifest.observations[seen.size] : { time: .5 };
-  assert.equal(row.time, planned.time);
+  assert.deepEqual(row.canvas.backing, [64, 48]); assert.equal(row.canvas.browserDPR, 1); assert.equal(row.canvas.hostPixelRatio, 1);
+  assert.deepEqual(row.canvas.css, { width: 64, height: 48, opacity: '1', transform: 'none', filter: 'none' });
+  assert.equal(row.instance, planned.instance); assert.equal(row.time, planned.time); assert.equal(row.sourceSeconds, planned.sourceSeconds);
+  clockCheck(row.clockBefore, planned); clockCheck(row.clockAfter, planned);
+  assert.deepEqual(row.clockBefore, row.clockAfter, 'F1_CLOCK_RENDER_INERTIA');
+  lifetimeCheck(row.lifetimeBefore, planned); lifetimeCheck(row.lifetimeAfter, planned);
+  assert.deepEqual(row.lifetimeBefore, row.lifetimeAfter, 'F1_LIFETIME_RENDER_INERTIA');
+  assert.deepEqual(row.createdBindingFacts, row.lifetimeAfter.bindings);
+  assert.deepEqual(row.inertia, { elapsedAndGeometryA: true, elapsedAndGeometryB: true, authenticClock: true,
+    lifetimes: true, retainedOldGeometry: true });
+  assert.equal(row.sourceClockLength, planned.sourceClockLength, 'F1_SOURCE_PREFIX_COUNT');
+  assert.deepEqual(row.equalRawBytesTo, planned.equalRawBytesTo);
   const bytes = Buffer.from(row.bytes), failures = [];
   for (const sample of oracle.frames.find(frame => frame.t === row.time).pixels) {
     const [x, y] = sample.xy, actual = [...bytes.subarray(4 * (64 * y + x), 4 * (64 * y + x) + 4)];
     if (!actual.every((value, channel) => value === sample.RGBA[channel])) failures.push({ id: row.id, time: row.time, x, y, expected: sample.RGBA, actual, tolerance: 0 });
   }
-  if (planned.equalRawBytesTo) assert.deepEqual(bytes, seen.get(planned.equalRawBytesTo).bytes, 'F1_FULL_REPEAT_BYTES');
-  seen.set(row.id, { bytes, failures }); return { bytes, failures };
+  for (const id of planned.equalRawBytesTo) {
+    assert.ok(seen.has(id), 'F1_REPEAT_PREDECESSOR'); assert.deepEqual(bytes, seen.get(id).bytes, 'F1_FULL_REPEAT_BYTES');
+  }
+  seen.set(row.id, { bytes, failures, metadata: { ...row, bytes: undefined } }); return { bytes, failures };
 }
-function safeNative(window) {
-  const host = window?.cleanup?.host, p = window?.cleanup?.provider;
+function safeNative(scene) {
+  const host = scene?.cleanup?.host, p = scene?.cleanup?.provider, c = scene?.cleanup;
+  const handles = c?.handles, scopes = c?.scopes, bindings = c?.bindings;
+  // Absent/null is no registration; only real returned handles may be disposed.
+  const realLifetimes = Array.isArray(handles) && handles.length > 0 && Array.isArray(scopes) && scopes.length >= 5 &&
+    new Set(handles.map(row => row.id)).size === handles.length && new Set(scopes.map(row => row.id)).size === scopes.length &&
+    handles.every(row => Number.isSafeInteger(row.id) && row.id > 0 && row.isDisposed === true) &&
+    scopes.every(row => Number.isSafeInteger(row.id) && row.id > 0 && row.state === 'closed') && bindings?.A &&
+    Object.entries(bindings).every(([instance, value]) => value === null || (value.instance === instance && value.isDisposed === true &&
+      handles.some(row => row.id === value.id && JSON.stringify(row) === JSON.stringify(value))));
   return host?.status?.state === 'closed' && host.status.cleanupOutcome === 'safe' &&
     host.status.pendingFrames === 0 && host.status.pendingUploadBytes === 0 && host.status.pendingReadbackBytes === 0 && host.texturedStatus.pendingGeometryBytes === 0 &&
-    window.cleanup.deviceDestroyed === true && window.cleanup.deviceLoss?.destroyRequested === true && window.cleanup.failures.length === 0 &&
-    window.diagnostics.length === 0 && window.uncaptured.length === 0 && !window.eventOverflow && !window.unexpectedDeviceLoss &&
-    p?.headerLoads === 2 && p.headerDisposals === 2 && p.pageLoads === 1 && p.pageDisposals === 1 && p.pageDisposed === true && p.ADisposed === true && p.BDisposed === true;
+    c.deviceDestroyed === true && c.deviceLoss?.destroyRequested === true && c.failures.length === 0 &&
+    scene.diagnostics.length === 0 && scene.uncaptured.length === 0 && !scene.eventOverflow && !scene.unexpectedDeviceLoss &&
+    p?.headerLoads === 2 && p.headerDisposals === 2 && p.pageLoads === 1 && p.pageDisposals === 1 && p.pageDisposed === true && p.ADisposed === true && p.BDisposed === true &&
+    c.clock?.state === 'closed' && c.clock.maxDeltaSeconds === .25 && realLifetimes;
 }
-async function windowRun(mode, origin, oracle) {
+function sceneCheck(scene, mode, seen) {
+  assert.equal(scene.schemaVersion, 1); assert.equal(scene.kind, manifest.kind); assert.equal(scene.mode, mode);
+  assert.deepEqual(scene.plannedCounts, { positive: 10, separateControl: 1 });
+  assert.equal(scene.expectedObservations, mode === 'baseline' ? 10 : 1);
+  assert.equal(scene.actualObservationCount, seen.size);
+  clockCheck(scene.initialClock, { clockState: 'running', engineElapsed: 0, tickId: 0 });
+  assert.deepEqual(JSON.parse(JSON.stringify(scene.observations)), JSON.parse(JSON.stringify([...seen.values()].map(row => row.metadata))), 'F1_RAW_SCENE_PROVENANCE');
+  const expected = mode === 'baseline' ? manifest.sourceClock : manifest.control.sourceClock;
+  const length = seen.size ? (mode === 'baseline' ? manifest.observations[seen.size - 1].sourceClockLength : manifest.control.observation.sourceClockLength) : 0;
+  assert.equal(scene.sourceClock.length, length);
+  for (let index = 0; index < length; index++) {
+    const actual = scene.sourceClock[index], planned = expected[index];
+    assert.equal(actual.sequence, index + 1); assert.equal(actual.op, planned.op);
+    assert.deepEqual(actual.input, planned.input); assert.equal(actual.status, planned.status);
+    assert.equal(actual.returnedHandleId, planned.returnedHandleId);
+    if (planned.failureCode === null) assert.equal(actual.failure, null); else assert.equal(actual.failure?.code, planned.failureCode);
+    assert.deepEqual(actual.returnedTick, planned.returnedTick);
+    clockCheck(actual.clockBefore, planned.before); clockCheck(actual.clockAfter, planned.after);
+    traceLifetimeCheck(actual.lifetimeBefore, planned.before); traceLifetimeCheck(actual.lifetimeAfter, planned.after);
+    assert.equal(actual.lifetimeBefore.A.elapsedSeconds, planned.before.AElapsed);
+    assert.equal(actual.lifetimeBefore.B.elapsedSeconds, planned.before.BElapsed);
+    assert.equal(actual.lifetimeAfter.A.elapsedSeconds, planned.after.AElapsed);
+    assert.equal(actual.lifetimeAfter.B.elapsedSeconds, planned.after.BElapsed);
+  }
+  if (mode === 'baseline' && seen.size === 10) closingCheck(scene.closingWindow);
+}
+function closingCheck(witness) {
+  assert.equal(witness.started, true); assert.equal(witness.completed, true);
+  assert.equal(witness.before.scope.state, 'closing'); assert.equal(witness.before.binding.isDisposed, false);
+  assert.equal(witness.before.elapsedSeconds, .5); clockCheck(witness.before.clock, { clockState: 'running', engineElapsed: 1.5, tickId: 6 });
+  assert.equal(witness.after.scope.state, 'closing'); assert.equal(witness.after.binding.isDisposed, true);
+  assert.equal(witness.after.elapsedSeconds, .5); clockCheck(witness.after.clock, { clockState: 'running', engineElapsed: 1.75, tickId: 7 });
+  assert.equal(witness.advanceError, null); assert.equal(witness.listenerFailure, null);
+  assert.deepEqual(witness.advanceTick, { deltaSeconds: .25, elapsedSeconds: 1.75, tickId: 7 });
+  assert.equal(witness.refusals.length, 4);
+  const expected = [['before-tick', 'B.step(0)'], ['before-tick', 'B.bindClock(probe)'], ['after-tick', 'B.step(0)'], ['after-tick', 'B.bindClock(probe)']];
+  witness.refusals.forEach((row, index) => { assert.equal(row.phase, expected[index][0]); assert.equal(row.op, expected[index][1]);
+    assert.equal(row.returned, false); assert.equal(row.failure?.code, 'F1_CLOCK_SCOPE_CLOSED'); });
+  assert.equal(witness.afterClosed.scope.state, 'closed'); assert.equal(witness.afterClosed.binding.isDisposed, true);
+  assert.equal(witness.afterClosed.elapsedSeconds, .5); assert.equal(witness.afterClosed.pageDisposed, false); assert.equal(witness.afterClosed.displayDisposed, false);
+  clockCheck(witness.afterClosed.clock, { clockState: 'running', engineElapsed: 1.75, tickId: 7 });
+  assert.equal(witness.zeroNoop.deltaSeconds, 0); assert.equal(witness.zeroNoop.elapsedBefore, .5); assert.equal(witness.zeroNoop.elapsedAfter, .5);
+  assert.equal(witness.zeroNoop.geometryUnchanged, true);
+  clockCheck(witness.zeroNoop.clockBefore, { clockState: 'running', engineElapsed: 1.75, tickId: 7 });
+  assert.deepEqual(witness.zeroNoop.clockBefore, witness.zeroNoop.clockAfter);
+}
+async function windowRun(mode, origin, oracle, positiveA1) {
   currentMode = mode;
   const context = await bounded(browser.newContext({ deviceScaleFactor: 1, viewport: { width: 128, height: 96 } }), 'context');
   let page, closed = false;
@@ -352,13 +645,21 @@ async function windowRun(mode, origin, oracle) {
     await bounded(page.waitForFunction(() => globalThis.f1GPUReady === true), 'module-ready');
     result.scene = await bounded(page.evaluate(mode => globalThis.f1GPU.run(mode), mode), `native-${mode}`, 60000);
     await json(`${mode}/scene.json`, result.scene);
-    if (result.scene.status === 'UNSUPPORTED_DEFAULT_ENVIRONMENT') result.status = 'UNSUPPORTED_DEFAULT_ENVIRONMENT';
-    else if (mode === 'baseline') {
+    if (result.scene.status === 'UNSUPPORTED_DEFAULT_ENVIRONMENT') {
+      assert.equal(result.scene.schemaVersion, 1); assert.equal(result.scene.kind, manifest.kind); assert.equal(result.scene.mode, mode);
+      assert.ok(['navigator.gpu absent', 'default adapter null'].includes(result.scene.capability));
+      assert.equal(seen.size, 0); assert.equal(result.scene.observations.length, 0); assert.equal(result.scene.sourceClock.length, 0);
+      assert.equal(result.scene.failure, null); assert.equal(result.scene.cleanup.failures.length, 0);
+      assert.equal(result.scene.diagnostics.length, 0); assert.equal(result.scene.uncaptured.length, 0);
+      result.status = 'UNSUPPORTED_DEFAULT_ENVIRONMENT';
+    }
+    else { sceneCheck(result.scene, mode, seen); }
+    if (result.scene.status !== 'UNSUPPORTED_DEFAULT_ENVIRONMENT' && mode === 'baseline') {
       if (result.scene.status === 'PIXEL_FAIL') {
         // Admit only the first exact original-oracle mismatch, retained before
         // the scene assertion, with independent raw provenance and safe return.
         assert.equal(result.scene.failure?.code, 'F1_PIXEL_MISMATCH');
-        assert.ok(seen.size > 0 && seen.size <= 8, 'F1_PIXEL_FAILURE_RAW_REQUIRED');
+        assert.ok(seen.size > 0 && seen.size <= 10, 'F1_PIXEL_FAILURE_RAW_REQUIRED');
         assert.deepEqual(result.scene.observations.map(row => row.id), [...seen.keys()], 'F1_PIXEL_FAILURE_OBSERVATION_BINDING');
         const retainedRows = [...seen.values()], last = retainedRows.at(-1);
         assert.ok(retainedRows.slice(0, -1).every(row => row.failures.length === 0), 'F1_PIXEL_FAILURE_FIRST_OBSERVATION');
@@ -369,18 +670,26 @@ async function windowRun(mode, origin, oracle) {
         result.status = 'PIXEL_FAIL';
       } else {
         assert.equal(result.scene.status, 'SCENE_COMPLETED', 'F1_NATIVE_POSITIVE_SCENE');
-        assert.equal(seen.size, 8); assert.ok([...seen.values()].every(row => row.failures.length === 0), 'F1_NATIVE_EXACT_PIXELS');
+        assert.equal(seen.size, 10); assert.ok([...seen.values()].every(row => row.failures.length === 0), 'F1_NATIVE_EXACT_PIXELS');
         assert.ok(safeNative(result.scene), 'F1_NATIVE_SAFE_CLEANUP'); result.status = 'PASS_NATIVE_FIXED_F1';
       }
-    } else {
+    } else if (result.scene.status !== 'UNSUPPORTED_DEFAULT_ENVIRONMENT') {
       assert.equal(result.scene.status, 'PIXEL_FAIL'); assert.ok(safeNative(result.scene), 'F1_CONTROL_SAFE_CLEANUP');
       assert.equal(result.scene.failure?.code, 'F1_PIXEL_MISMATCH');
       assert.equal(seen.size, 1);
       const failures = seen.get('F1D01').failures;
       assert.ok(failures.some(row => row.time === .5 && row.x === 25 && row.y === 19 &&
         JSON.stringify(row.expected) === '[255,0,0,255]' && JSON.stringify(row.actual) === '[0,0,0,0]'), 'F1_DOUBLE_STEP_MIDPOINT_NOT_KILLED');
-      assert.equal(result.scene.failure.details.x, 25); assert.equal(result.scene.failure.details.y, 19);
+      assert.deepEqual(result.scene.failure.details, failures[0], 'F1_CONTROL_FIRST_EXACT_MISMATCH');
+      assert.ok(Buffer.isBuffer(positiveA1) && positiveA1.length === 12288, 'F1_POSITIVE_A1_RAW_REQUIRED');
+      assert.deepEqual(seen.get('F1D01').bytes, positiveA1, 'F1_CONTROL_COMPLETE_ORIGINAL_A1_BYTES');
+      result.positiveA1CompleteBytesEqual = true;
       result.status = 'PASS_ASSIGNED_NATIVE_DOUBLE_STEP_CONTROL';
+    }
+    if (mode === 'baseline' && result.status === 'PASS_NATIVE_FIXED_F1') {
+      assert.equal(result.scene.cleanup.handles.length, 2); assert.equal(result.scene.cleanup.scopes.length, 6);
+      const a1 = report.artifacts.find(row => samePath(row.path, path.join(output, 'baseline/F1G05.rgba')));
+      assert.ok(a1 && a1.bytes === 12288, 'F1_POSITIVE_A1_PIN_REQUIRED'); result.positiveA1Raw = a1;
     }
     assert.equal(events.length, 0, 'F1_NATIVE_BROWSER_ERRORS');
     assert.ok(!result.eventOverflow && !result.requestOverflow);
@@ -401,7 +710,7 @@ async function windowRun(mode, origin, oracle) {
 
 async function main(args) {
   if (args.length === 1 && args[0] === '--help') {
-    console.log('Original F1 WebGPU experiment, optional completed-CPU successor.\n' +
+    console.log('Finite F1 Clock WebGPU successor: ten positive observations and one separate owned control.\n' +
       'node webgpu/run.mjs --input <absolute CPU-output/native-input.json> --playwright <absolute existing Playwright/index.mjs> --output <absolute CPU-output/native>\n' +
       'Requires Node 24.19.0, existing Playwright 1.62.1, current complete CPU receipts and default headless Edge. No install or download.\n' +
       'Fresh native output only; retries require a fresh CPU output. Exit 0 PASS; 1 PIXEL_FAIL; 2 INCOMPLETE; 3 UNSUPPORTED_DEFAULT_ENVIRONMENT.\n' +
@@ -427,15 +736,16 @@ async function main(args) {
   }
   manifestBytes = await fs.readFile(path.join(here, 'manifest.json')); manifest = JSON.parse(manifestBytes.toString('utf8'));
   assert.equal(manifest.schemaVersion, 1); assert.equal(manifest.root, 'knowledge-base/experiments/spine-f1/webgpu');
+  assert.equal(manifest.kind, 'F1_CLOCK_DESKTOP_WEBGPU_FINITE_SUCCESSOR'); assert.equal(manifest.inputKind, handoff.kind);
   await fs.mkdir(output); // Existing evidence is never removed or reused.
   executionStarted = Date.now();
-  report = { schemaVersion: 1, status: 'INCOMPLETE', startedAtUTC: new Date().toISOString(), manifestSHA256: hash(manifestBytes),
+  report = { schemaVersion: 1, kind: 'F1_CLOCK_DESKTOP_WEBGPU_FINITE_SUCCESSOR', plannedCounts: { positive: 10, separateControl: 1 }, status: 'INCOMPLETE', startedAtUTC: new Date().toISOString(), manifestSHA256: hash(manifestBytes),
     launch: { channel: 'msedge', headless: true, callerAddedFlags: [], deviceScaleFactor: 1 },
     runner: { pid: process.pid, executable: process.execPath, nodeVersion: process.version },
     edgeExecutableIdentity: 'UNOBSERVED_ACTUAL_CHANNEL_PATH_AND_PID_REQUIRE_SEPARATE_PROCESS_EVIDENCE',
     edgeProcessRetirement: 'UNOBSERVED_COOPERATIVE_API_IS_NOT_OS_PROOF', windows: [], artifacts: [], routes: [], failures: [],
     cleanup: { browserClosed: false, serverClosed: false }, licensingQualification: 'unverified',
-    scope: 'Original shallow F1 WebGPU/readback subset only; no mobile/native-platform/fullSpine/physical acceleration/performance/distribution qualification.' };
+    scope: 'Finite original F1 Clock scheduling, lifecycle and WebGPU/readback subset only; no mobile/native-platform/fullSpine/physical acceleration/performance/distribution qualification.' };
   try {
     timer = setTimeout(() => {
       report.status = 'INCOMPLETE_HARD_DEADLINE'; report.forcedTerminationIsNotSafeCleanup = true;
@@ -470,10 +780,11 @@ async function main(args) {
     browser.on('disconnected', () => { if (!finishing) report.unexpectedBrowserDisconnect = true; });
     report.browserVersion = browser.version(); report.origin = origin;
     const positive = await windowRun('baseline', origin, staged.oracle);
-    if (positive.status === 'PASS_NATIVE_FIXED_F1') {
+    if (positive.status === 'PASS_NATIVE_FIXED_F1' && positive.contextClosed === true) {
       const copied = await save('generated/double-state-step/out/f1-manual-bridge.js', staged.changed);
       addRoute('/control/out/f1-manual-bridge.js', staged.changed, 'text/javascript; charset=utf-8', copied);
-      const control = await windowRun('double-state-step', origin, staged.oracle);
+      const positiveA1 = await checkPin(positive.positiveA1Raw);
+      const control = await windowRun('double-state-step', origin, staged.oracle, positiveA1);
       if (control.status === 'PASS_ASSIGNED_NATIVE_DOUBLE_STEP_CONTROL') report.status = 'PASS_F1_NATIVE_SUBSET';
     } else report.status = positive.status;
     report.routes = requestRows;

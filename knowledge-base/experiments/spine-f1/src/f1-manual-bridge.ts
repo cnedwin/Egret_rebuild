@@ -3,10 +3,12 @@
 // its original license; this bridge is not a public SDK or full Spine support.
 import {
   AssetLease, DisplayObject, DisplayObjectContainer, EgretError, Engine,
-  Mesh2D, Scope, Texture, createTexturedGeometry2D, isTexture,
+  Mesh2D, Scope, TEXTURED_FRAME_PROFILE_2D, Texture, createEngineForProfile,
+  createTexturedGeometry2D, isTexture,
 } from '@egret/engine';
 import type {
-  AssetGroup, AssetRef, ImageData2D, ScopeState, TexturedGeometry2D,
+  AssetGroup, AssetRef, EngineOptions, GameClock, GameClockHandler, GameClockState,
+  GameClockSubscription, GameClockTick, ImageData2D, ScopeState, TexturedGeometry2D,
   TextureRegion2D,
 } from '@egret/engine';
 import {
@@ -24,6 +26,7 @@ export interface F1Instance {
   readonly display: DisplayObjectContainer;
   readonly elapsedSeconds: number;
   step(deltaSeconds: number): void;
+  bindClock(subscriptionScope: Scope): GameClockSubscription;
   dispose(): void;
 }
 export interface F1ResourceRefs {
@@ -31,12 +34,17 @@ export interface F1ResourceRefs {
   readonly atlas: AssetRef<string>;
   readonly page: AssetRef<Texture>;
 }
+export interface F1ClockSession {
+  readonly engine: Engine;
+  createResources(scope: Scope, refs: F1ResourceRefs): Promise<F1Resources>;
+}
 
 // Retain genuine SDK operations, rather than replaceable public instance fields.
 const APPLY = Reflect.apply;
 const SCOPE_STATE = Object.getOwnPropertyDescriptor(Scope.prototype, 'state')!.get!;
 const SCOPE_USE = Scope.prototype.use;
 const CREATE_GROUP = Engine.prototype.createAssetGroup;
+const ENGINE_DISPOSE = Engine.prototype.dispose;
 const LEASE_VALUE = Object.getOwnPropertyDescriptor(AssetLease.prototype, 'value')!.get!;
 const TEXTURE_IMAGE = Object.getOwnPropertyDescriptor(Texture.prototype, 'imageData')!.get!;
 const TEXTURE_RECT = Object.getOwnPropertyDescriptor(Texture.prototype, 'sourceRect')!.get!;
@@ -98,6 +106,52 @@ function header(lease: AssetLease<string> | undefined): string {
 }
 function collectCleanup(action: () => void, errors: unknown[]): void {
   try { action(); } catch (cause) { errors.push(cause); }
+}
+
+interface RetainedClock {
+  state(): GameClockState;
+  onTick(scope: Scope, handler: GameClockHandler): GameClockSubscription;
+}
+
+/** Capture only the Clock returned by our own genuine Engine construction. */
+function retainClock(clock: GameClock): RetainedClock {
+  const readState = Object.getOwnPropertyDescriptor(clock, 'state')!.get!;
+  const readMaximum = Object.getOwnPropertyDescriptor(clock, 'maxDeltaSeconds')!.get!;
+  const onTick = clock.onTick;
+  // A larger valid Engine profile has already started. The factory must await
+  // actual Engine cleanup before it refuses this finite animation experiment.
+  const maximum = APPLY(readMaximum, clock, []) as number;
+  if (maximum > 0.25) throw new EgretError('F1_CLOCK_PROFILE_UNSUPPORTED');
+  APPLY(readState, clock, []);
+  return Object.freeze({
+    state: (): GameClockState => APPLY(readState, clock, []) as GameClockState,
+    onTick: (scope: Scope, handler: GameClockHandler): GameClockSubscription =>
+      APPLY(onTick, clock, [scope, handler]) as GameClockSubscription,
+  });
+}
+
+interface ClockBinding {
+  readonly scope: Scope;
+  readonly handle: GameClockSubscription;
+  isDisposed(): boolean;
+  dispose(): void;
+}
+function retainBinding(scope: Scope, handle: GameClockSubscription): ClockBinding {
+  const readDisposed = Object.getOwnPropertyDescriptor(handle, 'isDisposed')!.get!;
+  const dispose = handle.dispose;
+  return Object.freeze({
+    scope, handle,
+    isDisposed: (): boolean => APPLY(readDisposed, handle, []) as boolean,
+    dispose: (): void => { APPLY(dispose, handle, []); },
+  });
+}
+
+function isKnownOwnerTermination(cause: unknown): boolean {
+  return cause instanceof EgretError && (
+    cause.code === 'F1_RESOURCES_TERMINAL' || cause.code === 'F1_SCOPE_CLOSED' ||
+    cause.code === 'F1_INSTANCE_TERMINAL' || cause.code === 'ASSET_LEASE_RELEASED' ||
+    cause.code === 'TEXTURE_DISPOSED'
+  );
 }
 
 type Dimensions = Readonly<{ width: number; height: number }>;
@@ -227,6 +281,8 @@ class ManualInstance implements F1Instance {
   readonly #pages: WeakMap<object, AssetLease<Texture>>;
   readonly #assertResources: () => void;
   readonly #onRetired: () => void;
+  readonly #clock: RetainedClock | undefined;
+  #binding: ClockBinding | undefined;
   #skeleton: Skeleton | undefined;
   #animation: AnimationState | undefined;
   #renderer: SkeletonRendererCore | undefined;
@@ -237,10 +293,10 @@ class ManualInstance implements F1Instance {
   public constructor(
     scope: Scope, data: SkeletonData, page: AssetLease<Texture>,
     pages: WeakMap<object, AssetLease<Texture>>, assertResources: () => void,
-    onRetired: () => void,
+    onRetired: () => void, clock: RetainedClock | undefined,
   ) {
     this.#scope = scope; this.#page = page; this.#pages = pages;
-    this.#assertResources = assertResources; this.#onRetired = onRetired;
+    this.#assertResources = assertResources; this.#onRetired = onRetired; this.#clock = clock;
     try {
       this.#assertLive(); requireCoreProfile();
       const skeleton = new Skeleton(data), mix = new AnimationStateData(data);
@@ -282,14 +338,81 @@ class ManualInstance implements F1Instance {
       throw new EgretError('F1_INSTANCE_TERMINAL');
     }
   }
+
+  #assertBindingReleased(): void {
+    const binding = this.#binding;
+    if (binding === undefined) return;
+    const state = scopeState(binding.scope);
+    // Retain the closing tombstone even if an abort callback already retired the
+    // genuine handle. Manual movement cannot precede Scope ownership cleanup.
+    if (state === 'closing') throw new EgretError('F1_CLOCK_SCOPE_CLOSED');
+    if (state === 'closed' || binding.isDisposed()) { this.#binding = undefined; return; }
+    throw new EgretError('F1_CLOCK_BOUND');
+  }
+
+  #retireBinding(): void {
+    const binding = this.#binding;
+    if (binding === undefined) return;
+    binding.dispose();
+    if (scopeState(binding.scope) !== 'closing') this.#binding = undefined;
+  }
+
+  #onTick(tick: GameClockTick): undefined {
+    const binding = this.#binding;
+    if (binding === undefined) return undefined;
+    try {
+      // A real Scope abort can reenter advanceTime before reverse cleanup reaches
+      // this handle. Check its intrinsic state before any animation core work.
+      if (binding.isDisposed() || scopeState(binding.scope) !== 'open' || this.#clock!.state() !== 'running') {
+        this.#retireBinding(); return undefined;
+      }
+      try { this.#assertLive(); }
+      catch (cause) {
+        if (!isKnownOwnerTermination(cause)) throw cause;
+        this.#retireBinding(); return undefined;
+      }
+      requireCoreProfile();
+      // Exactly the delivered delta, exactly once: no seek, subdivision or debt.
+      this.#advancePositive(tick.deltaSeconds);
+      return undefined;
+    } catch (cause) {
+      // Retained genuine disposal is synchronous and invokes no external code.
+      // Preserve the exact advance failure for the Clock's own diagnostic/cause.
+      this.#retireBinding();
+      throw cause;
+    }
+  }
+
+  public bindClock(subscriptionScope: Scope): GameClockSubscription {
+    this.#assertLive(); requireCoreProfile(); this.#assertBindingReleased();
+    const clock = this.#clock;
+    if (clock === undefined) throw new EgretError('F1_CLOCK_CONTEXT_REQUIRED');
+    // Authentic affinity, Scope state and capacity admission belong to Clock.
+    // A refused registration publishes no mode, time or geometry change.
+    const handle = clock.onTick(subscriptionScope, (tick: GameClockTick): undefined => this.#onTick(tick));
+    const dispose = handle.dispose;
+    try {
+      this.#binding = retainBinding(subscriptionScope, handle);
+      return handle;
+    } catch (cause) {
+      APPLY(dispose, handle, []);
+      throw cause;
+    }
+  }
+
   public readonly step = (deltaSeconds: number): void => {
-    this.#assertLive(); requireCoreProfile();
+    this.#assertLive(); requireCoreProfile(); this.#assertBindingReleased();
     if (typeof deltaSeconds !== 'number' || !Number.isFinite(deltaSeconds) || deltaSeconds < 0 || deltaSeconds > 0.25) {
       throw new EgretError('F1_DELTA_INVALID');
     }
     if (this.#stepping) throw new EgretError('F1_STEP_REENTRANT');
     // Zero is a true no-op: it preserves both time and existing geometry slots.
     if (deltaSeconds === 0) return;
+    this.#advancePositive(deltaSeconds);
+  };
+
+  #advancePositive(deltaSeconds: number): void {
+    if (this.#stepping) throw new EgretError('F1_STEP_REENTRANT');
     const nextElapsed = this.#elapsed + deltaSeconds;
     if (!Number.isFinite(nextElapsed)) throw new EgretError('F1_ELAPSED_INVALID');
     this.#stepping = true;
@@ -316,12 +439,16 @@ class ManualInstance implements F1Instance {
       if (advanced && this.#lifetime === 'live') this.#lifetime = 'failed';
       throw cause;
     } finally { this.#stepping = false; }
-  };
+  }
   #retire(): void {
     if (this.#lifetime === 'closed') return;
-    this.#lifetime = 'closed'; this.#onRetired();
-    this.#skeleton = undefined; this.#animation = undefined; this.#renderer = undefined;
+    this.#lifetime = 'closed';
     const errors: unknown[] = [];
+    // Own driving retires before core references, leaves or the shared page.
+    collectCleanup(() => this.#retireBinding(), errors);
+    this.#binding = undefined;
+    this.#onRetired();
+    this.#skeleton = undefined; this.#animation = undefined; this.#renderer = undefined;
     for (let index = this.#meshes.length - 1; index >= 0; index--) {
       collectCleanup(() => { APPLY(MESH_DISPOSE, this.#meshes[index]!, []); }, errors);
     }
@@ -339,15 +466,16 @@ class ManualResources implements F1Resources {
   readonly #atlas: TextureAtlas;
   readonly #data: SkeletonData;
   readonly #pages: WeakMap<object, AssetLease<Texture>>;
+  readonly #clock: RetainedClock | undefined;
   readonly #instances = new Set<ManualInstance>();
   #live = true;
   public constructor(
     scope: Scope, headers: RetainedGroup<string>, pageGroup: RetainedGroup<Texture>,
     page: AssetLease<Texture>, atlas: TextureAtlas, data: SkeletonData,
-    pages: WeakMap<object, AssetLease<Texture>>,
+    pages: WeakMap<object, AssetLease<Texture>>, clock: RetainedClock | undefined,
   ) {
     this.#scope = scope; this.#headers = headers; this.#pageGroup = pageGroup;
-    this.#page = page; this.#atlas = atlas; this.#data = data; this.#pages = pages;
+    this.#page = page; this.#atlas = atlas; this.#data = data; this.#pages = pages; this.#clock = clock;
     Object.freeze(this);
   }
   #assertReady(): void {
@@ -363,7 +491,7 @@ class ManualResources implements F1Resources {
     let instance: ManualInstance | undefined;
     try {
       instance = new ManualInstance(scope, this.#data, this.#page, this.#pages,
-        () => this.#assertReady(), () => { if (instance !== undefined) this.#instances.delete(instance); });
+        () => this.#assertReady(), () => { if (instance !== undefined) this.#instances.delete(instance); }, this.#clock);
       this.#instances.add(instance);
       this.#assertReady();
       return instance;
@@ -391,6 +519,13 @@ class ManualResources implements F1Resources {
 /** Real public SDK acquisition and private official-core assembly for original F1. */
 export async function createF1ManualResources(
   engine: Engine, resourceScope: Scope, refs: F1ResourceRefs,
+): Promise<F1Resources> {
+  // This legacy entry deliberately has no authenticated Clock context.
+  return acquireResources(engine, resourceScope, refs, undefined);
+}
+
+async function acquireResources(
+  engine: Engine, resourceScope: Scope, refs: F1ResourceRefs, clock: RetainedClock | undefined,
 ): Promise<F1Resources> {
   let headers: RetainedGroup<string> | undefined, pageGroup: RetainedGroup<Texture> | undefined;
   let atlas: TextureAtlas | undefined, wrapper: PageWrapper | undefined, resources: ManualResources | undefined;
@@ -426,7 +561,7 @@ export async function createF1ManualResources(
     const pages = new WeakMap<object, AssetLease<Texture>>(); pages.set(wrapper, page);
     const data = new SkeletonJson(new AtlasAttachmentLoader(atlas)).readSkeletonData(skeletonText);
     assertDataProfile(data);
-    resources = new ManualResources(resourceScope, headers, pageGroup, page, atlas, data, pages);
+    resources = new ManualResources(resourceScope, headers, pageGroup, page, atlas, data, pages, clock);
     // The ready facade is registered after both groups, giving reverse Scope
     // cleanup the required instance-before-wrapper-before-borrow ordering.
     APPLY(SCOPE_USE, resourceScope, [resources]);
@@ -443,5 +578,27 @@ export async function createF1ManualResources(
       if (headers !== undefined) collectCleanup(headers.dispose, cleanupErrors);
     }
     throw new EgretError('F1_RESOURCE_LOAD_FAILED', { cause, cleanupErrors });
+  }
+}
+
+/** Experiment-only trusted construction; callers supply no Clock or context. */
+export async function createF1ClockSession(options: EngineOptions): Promise<F1ClockSession> {
+  // Preserve SDK option/port/startup admission and its own startup cleanup.
+  const engine = await createEngineForProfile(options, TEXTURED_FRAME_PROFILE_2D);
+  try {
+    const clock = retainClock(engine.clock);
+    return Object.freeze({
+      engine,
+      createResources: (scope: Scope, refs: F1ResourceRefs): Promise<F1Resources> =>
+        acquireResources(engine, scope, refs, clock),
+    });
+  } catch (cause) {
+    // Construction succeeded, so capture/profile refusal must observe genuine
+    // host shutdown. Unsafe or timed-out cleanup cannot become successful refusal.
+    try { await (APPLY(ENGINE_DISPOSE, engine, []) as Promise<void>); }
+    catch (cleanupError) {
+      throw new EgretError('F1_CLOCK_SESSION_CLEANUP_FAILED', { cause, cleanupErrors: [cleanupError] });
+    }
+    throw cause;
   }
 }

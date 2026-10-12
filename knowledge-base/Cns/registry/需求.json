@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-11",
+  "updatedAt": "2026-10-12",
   "authority": "用户在本次项目讨论中确认的目标；实现与验收另查交付登记册",
   "items": [
     {
@@ -486,7 +486,8 @@
       "status": "confirmed",
       "sourceIds": [
         "S066",
-        "S089"
+        "S089",
+        "S090"
       ],
       "deliveryIds": [
         "V002",
@@ -496,13 +497,15 @@
         "V020",
         "V007",
         "V008",
-        "V040"
+        "V040",
+        "V041"
       ],
       "decisionIds": [
         "D002",
         "D008",
         "D012",
-        "D016"
+        "D016",
+        "D017"
       ],
       "doc": "Cns/docs/Spine动画支持需求与验收.md",
       "originalF1Experiment": {
@@ -511,7 +514,37 @@
         "fullCapabilityAcceptance": "not_run",
         "status": "OPEN",
         "doc": "Cns/experiments/spine-f1/README.md"
+      },
+      "originalF1ClockExperiment": {
+        "deliverable": "V041",
+        "source": "S090",
+        "decision": "D017",
+        "decisionStatus": "proposed",
+        "status": "OPEN",
+        "fullCapabilityAcceptance": "not_run",
+        "publicReplay": "PENDING_AT_CURATION_CUTOFF",
+        "record": "evidence/spine-f1-clock-verification.json",
+        "doc": "Cns/experiments/spine-f1/README.md"
       }
     }
-  ]
+  ],
+  "spineF1ClockPortableReplaySuccessor": {
+    "status": "ACTUAL_CURRENT_PUBLIC_PORTABLE_CLOCK_CPU_AND_NATIVE_PASS",
+    "counts": {
+      "manualPassed": 12,
+      "originalControls": 6,
+      "clockPassed": 10,
+      "clockFailed": 0,
+      "clockSkipped": 0,
+      "clockControls": 3,
+      "positiveReadbacks": 10,
+      "separateControlReadbacks": 1,
+      "positivePixelSamples": 30,
+      "positivePixelChannels": 120,
+      "channelTolerance": 0
+    },
+    "record": "evidence/spine-f1-clock-public-projection.json",
+    "fullSpineR020V020": "OPEN",
+    "cutoff": "实际独立克隆公开重放；保存结果评审、最终门禁与交付仍为 PENDING。"
+  }
 }

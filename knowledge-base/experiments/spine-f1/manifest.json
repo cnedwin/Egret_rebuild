@@ -1,6 +1,6 @@
 {
-  "schemaVersion": 1,
-  "status": "ORIGINAL_ONLY_OPT_IN_F1_EXPERIMENT_EXECUTION_REQUIRED",
+  "schemaVersion": 2,
+  "status": "SOURCE_ONLY_PORTABLE_MANUAL_CLOCK_CANDIDATE_EXECUTION_REQUIRED",
   "root": "knowledge-base/experiments/spine-f1",
   "license": "Apache-2.0 for independently authored first-party files only",
   "runtimeProfile": {
@@ -20,8 +20,8 @@
   "files": [
     {
       "path": "knowledge-base/experiments/spine-f1/src/f1-manual-bridge.ts",
-      "bytes": 21835,
-      "sha256": "876213de21022f351b0ff9492880846bb066381233275d237f1921ec8fad9078"
+      "bytes": 28580,
+      "sha256": "57effc17ae12c30eb2fa19c2b21f1a762de89971fe11027cf032c274054f6ef3"
     },
     {
       "path": "knowledge-base/experiments/spine-f1/src/canonical-baseline.ts",
@@ -35,8 +35,8 @@
     },
     {
       "path": "knowledge-base/experiments/spine-f1/run.mjs",
-      "bytes": 43103,
-      "sha256": "197a1623d6a6a2e71e1b63b06ac6d2499c1355d8eb3c3ba2b3260ab35346006e"
+      "bytes": 61561,
+      "sha256": "d99dba983e93dccf0faf196fe81c03f2381fc3a431d1d8369730a1ae416c2550"
     },
     {
       "path": "knowledge-base/experiments/spine-f1/fixtures/egret-original-slide.spine.json",
@@ -57,6 +57,16 @@
       "path": "knowledge-base/experiments/spine-f1/fixtures/f1-oracle.json",
       "bytes": 11677,
       "sha256": "79244829b2460589599ba70b4eff21e43e104bfe5e063e69ba5cd47c3fa17c97"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f1/tests/manual-clock.test.mjs",
+      "bytes": 38674,
+      "sha256": "6fe5a711718f2c2759ca5981751578c21d1bb74c771b81a68e83b940da228049"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f1/clock-acceptance-contract.json",
+      "bytes": 10910,
+      "sha256": "d3bb3e36b64d1b9ad19e128b836480cf33091487de59478ec76e21cd9537a4f2"
     }
   ],
   "helper": {
@@ -154,6 +164,18 @@
       "bytes": 11927,
       "sha256": "8a2d5d68f64b28515945caf2f64eb8a9d5fec4869ad3ad74327de53433c95b7d",
       "projection": "Only enumerated private provenance paths and author; semantic/numeric values unchanged"
+    },
+    {
+      "logicalIdentity": "accepted-finite-clock-bridge-source",
+      "bytes": 28580,
+      "sha256": "57effc17ae12c30eb2fa19c2b21f1a762de89971fe11027cf032c274054f6ef3",
+      "projection": "Byte-identical first-party sealed MCI source, original manual API retained"
+    },
+    {
+      "logicalIdentity": "accepted-original-clock-semantic-test",
+      "bytes": 35816,
+      "sha256": "c8fa7e41d7604d33918853f20954c85cef5b99bcf7b081b681c8791b4aa0f756",
+      "projection": "Only exact enumerated metadata admission/comment hunks; original immutable"
     }
   ],
   "parentTest": "F1 private manual bridge: real setup, named module RED, then fixed acceptance",
@@ -236,18 +258,65 @@
     "height": 48,
     "pixelRatio": 1,
     "channelTolerance": 0,
-    "submissions": 8,
+    "submissions": 10,
     "channel": "msedge",
-    "GPUAcceptance": "Separate optional native harness required",
+    "GPUAcceptance": "Separate optional current Clock native harness and actual same-run CPU proof required",
     "physicalGPUAndOSRetirement": "unverified",
     "operationMs": 15000,
     "totalMs": 90000,
     "cooperativeCloseMs": 20000,
-    "outerMs": 120000
+    "outerMs": 120000,
+    "separateControl": 1
   },
-  "boundary": "Original shallow F1 CPU subset only. CPU port capture/submission is not GPU pixels. Full Spine R020/V020, Canvas/WebGL/fallback, exported/binary art, PMA/dark tint/blends/mesh/deform/clipping/mixing/events/constraints/physics, mobile/native devices, physical acceleration, performance/energy and legal qualification remain open.",
+  "boundary": "Original shallow manual/Clock F1 CPU subset only. Original literal feature/oracle profile unchanged. Actual manual12/six controls and Clock10/three controls required; bootstrap9/pending never accepted as10. CPU port capture/submission is not native GPU pixels. Full Spine R020/V020, Canvas/WebGL/fallback, exported/binary art, PMA/dark tint/blends/mesh/deform/clipping/mixing/events/constraints/physics, mobile/native devices, physical acceleration, performance/energy, OS descendant retirement and legal qualification remain open.",
   "implementationChoice": {
     "maxActiveInstances": 2,
     "scope": "Bounded F1 experiment choice; not a general Spine capability or SDK limit"
+  },
+  "kind": "PUBLIC_F1_MANUAL_CLOCK_EXPERIMENT",
+  "engineeringLabelProposal": "0.37.0",
+  "clockCaseIds": [
+    "F1C00",
+    "F1C01",
+    "F1C02",
+    "F1C03",
+    "F1C04",
+    "F1C05",
+    "F1C06",
+    "F1C07",
+    "F1C08",
+    "F1C09"
+  ],
+  "clockSetupCase": "F1C00",
+  "clock": {
+    "source": {
+      "path": "knowledge-base/experiments/spine-f1/src/f1-manual-bridge.ts",
+      "bytes": 28580,
+      "sha256": "57effc17ae12c30eb2fa19c2b21f1a762de89971fe11027cf032c274054f6ef3"
+    },
+    "acceptanceContract": {
+      "path": "knowledge-base/experiments/spine-f1/clock-acceptance-contract.json",
+      "bytes": 10910,
+      "sha256": "d3bb3e36b64d1b9ad19e128b836480cf33091487de59478ec76e21cd9537a4f2"
+    },
+    "maximumDeltaSeconds": 0.25,
+    "positiveCases": 10,
+    "assignedControls": 3,
+    "faultControl": {
+      "status": "PENDING_OWNED_NAMED_FAULT",
+      "receipt": null
+    },
+    "admission": "Runner supplies current genuine input/core/qualification pins and actual own fault receipt at runtime. Private historical review files are never replay prerequisites.",
+    "bootstrap": "Each own staged root actually runs manual12/0skip and Clock9/F1C09 pending before owned named fault; bootstrap is not accepted10. Full10 executes fault.",
+    "controlBaselines": "Each of three independent owned stages prepares its own fault, then actual fresh manual12/fullClock10 before selected mutation; no cross-actor reuse.",
+    "acceptanceContractKind": "FIRST_PARTY_FIXED_CLOCK_ACCEPTANCE_CONTRACT",
+    "currentProofKind": "CURRENT_F1_MANUAL_CLOCK_CPU_COLLECTION",
+    "nativeHandoffKind": "CURRENT_F1_CLOCK_CPU_COMPLETED_NATIVE_HANDOFF"
+  },
+  "publicProjection": {
+    "kind": "FINITE_PRIVATE_SOURCE_CANDIDATE_NOT_RUN",
+    "placement": "Five authored paths are to be staged in an owned clone at logical root with existing unchanged six public manual/canonical/fixture files. This partial private candidate has no private fallback lookup and is not executable in place.",
+    "historicalInputs": "Existing manual/public-browser and private Clock source/9pending/fullCPU cutoffs remain separate immutable history; no new reviewer verdict or acceptance fabricated.",
+    "sourceOnly": true
   }
 }
