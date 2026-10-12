@@ -288,8 +288,8 @@
     {
       "path": "AGENTS.md",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "sha256": "ca198adafdd84a0e09c47be20ff3a0d3cf3bee4ffa67d3f0add52de8cfa2a923",
-      "bytes": 10223,
+      "sha256": "56dd24457620c1723a765ff5fc7c7139725ee2ab29c1b04e8d36b734b406b6c6",
+      "bytes": 11467,
       "previousRevisionSha256": "7c2716d3a678406ce905b8cd7fd9ef3552bca4e37b8e9456b63b871e4170e0c1",
       "previousLayoutPath": "AGENTS.en.md",
       "previousLayoutSha256": "7e4ccd840b8b23896f9d9e92fe8173693ef37e415d3cebbebb3bfafded8158c5",
@@ -303,13 +303,18 @@
           "bytes": 8337,
           "sha256": "44e3b3d146d90d793cb90ad8171f78684f3ddaec1b05e9c52d1cad970b1351de",
           "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+        },
+        {
+          "bytes": 10223,
+          "sha256": "ca198adafdd84a0e09c47be20ff3a0d3cf3bee4ffa67d3f0add52de8cfa2a923",
+          "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
         }
       ]
     },
     {
       "path": "AGENTS.zh-CN.md",
-      "sha256": "c69bb78281acd74fdc7abe9e6952869f263e03ee0199af189a2f6d3f37b09c17",
-      "bytes": 8793,
+      "sha256": "65f61b145b953479f58a0a3aa0586e9553b36cfdd4d56cc92adb56fba183631e",
+      "bytes": 9860,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousPublicSha256": "d133cdcd7d1f41fe0ce26bee63568cd0c4f23c6e6e7f9828d0768e95f53a05b4",
       "previousRevisionSha256": "f3551dd36ebc3023f8c846f0cdd876b7204c214c7c041e6496271d20c091046c",
@@ -325,6 +330,11 @@
           "bytes": 7111,
           "sha256": "1ba96441c42a24793f92b40b56d0a22536db4f41b620681ac4f8f00d8343b761",
           "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+        },
+        {
+          "bytes": 8793,
+          "sha256": "c69bb78281acd74fdc7abe9e6952869f263e03ee0199af189a2f6d3f37b09c17",
+          "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
         }
       ]
     },
@@ -585,8 +595,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/CHANGELOG.md",
-      "bytes": 42577,
-      "sha256": "e150a74e0346f90f42ce4856666316d6e3e5d998a4d7daf838bd0b2dfd66d226",
+      "bytes": 44920,
+      "sha256": "a891193331a73b985cb85d6b883e73be7b2c79be171c1ff528253e4233570c9f",
       "identityHistory": [
         {
           "bytes": 25611,
@@ -634,6 +644,11 @@
           "bytes": 40107,
           "sha256": "2e65af9b087dab5e7316aa33cbc1d32d66b6b0b90d7e8b956ab39a811df0a451",
           "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+        },
+        {
+          "bytes": 42577,
+          "sha256": "e150a74e0346f90f42ce4856666316d6e3e5d998a4d7daf838bd0b2dfd66d226",
+          "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
         }
       ]
     },
@@ -724,8 +739,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 16262,
-      "sha256": "faf8ab78c6853d7f24835427f7fb737440796ccaca70ab1c6def480ead9b5191",
+      "bytes": 18603,
+      "sha256": "7be61c371d8c258493714b74089d49325efd1bd94f9eac564f4cada116ef0843",
       "identityHistory": [
         {
           "bytes": 12315,
@@ -741,6 +756,11 @@
           "bytes": 13802,
           "sha256": "f98926c189b0c2e5636904cdd140dc11462ec24d1603972472d2b8a23c2631aa",
           "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+        },
+        {
+          "bytes": 16262,
+          "sha256": "faf8ab78c6853d7f24835427f7fb737440796ccaca70ab1c6def480ead9b5191",
+          "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
         }
       ]
     },
@@ -903,8 +923,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/工程规划.md",
-      "bytes": 28526,
-      "sha256": "9dd7f2fa6d813ee684cea4076b2dab530b31f4e42a72682e88beac104fb35c36",
+      "bytes": 30867,
+      "sha256": "a2d31b21980f133609efb55a0ad847b27133204d0d4dd5ae6eef4fe6172da1af",
       "identityHistory": [
         {
           "bytes": 23962,
@@ -920,6 +940,11 @@
           "bytes": 25665,
           "sha256": "f514410ee4e8d6b1247b894f8356e714f237989515d29e313c591bf475ce8277",
           "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+        },
+        {
+          "bytes": 28526,
+          "sha256": "9dd7f2fa6d813ee684cea4076b2dab530b31f4e42a72682e88beac104fb35c36",
+          "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
         }
       ]
     },
@@ -1214,8 +1239,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/README.md",
-      "bytes": 14998,
-      "sha256": "8ed1147c37aa80f5b59697c361b7904f935bd73cb95f7b9e26ef51acebcd9ab7",
+      "bytes": 17341,
+      "sha256": "9ac33758aa7ba87569da2e0707618a6058866fcb3b9284e124a7046618f4ca91",
       "identityHistory": [
         {
           "bytes": 6319,
@@ -1263,14 +1288,19 @@
           "bytes": 12454,
           "sha256": "5d92bc90ff081db964a52878eba09ffe727f787072103428db4b66a07120f21c",
           "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+        },
+        {
+          "bytes": 14998,
+          "sha256": "8ed1147c37aa80f5b59697c361b7904f935bd73cb95f7b9e26ef51acebcd9ab7",
+          "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
         }
       ]
     },
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/registry/交付.json",
-      "bytes": 91429,
-      "sha256": "2e3b7fe872bb4011bb4ba14aa965d8424e9adc967f124fe73c8e00526cfa4405",
+      "bytes": 94886,
+      "sha256": "b14ccee734ceed7e5190473c80365f7116c8a956cd4d45c7afcecb1b8269a960",
       "identityHistory": [
         {
           "bytes": 50664,
@@ -1328,6 +1358,11 @@
           "bytes": 88608,
           "sha256": "12a9d8912f949399c3d8a838c56c6d6682bc57bc6789579f097cdae25580ea4b",
           "scope": "Preserved 54-path MI1 prepublication cutoff."
+        },
+        {
+          "bytes": 91429,
+          "sha256": "2e3b7fe872bb4011bb4ba14aa965d8424e9adc967f124fe73c8e00526cfa4405",
+          "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
         }
       ]
     },
@@ -1346,8 +1381,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/registry/来源.json",
-      "bytes": 108253,
-      "sha256": "9fd7b478420d6d90e2389f6fd5f4f61c38e3232dedcf484163277c62fc2a3560",
+      "bytes": 111062,
+      "sha256": "4794d6981d8bdc4dccca6a09cd435281c9f07949a6b7b71c5fb9251f56d5e719",
       "identityHistory": [
         {
           "bytes": 74667,
@@ -1405,6 +1440,11 @@
           "bytes": 105432,
           "sha256": "2d898b104a66ba49fbcdf6505753ce3a597953928c6aa520573cb456df243483",
           "scope": "Preserved 54-path MI1 prepublication cutoff."
+        },
+        {
+          "bytes": 108253,
+          "sha256": "9fd7b478420d6d90e2389f6fd5f4f61c38e3232dedcf484163277c62fc2a3560",
+          "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
         }
       ]
     },
@@ -1441,8 +1481,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/当前版本.json",
-      "bytes": 83136,
-      "sha256": "f8f5baa605eca36bb3c068e180651fba85b24b03ac3e0d83e7f690643d630aa1",
+      "bytes": 85348,
+      "sha256": "59be73acf1011bec33d9492e20ef233e945176ee40a880cdcb2eb5e46edfff3f",
       "identityHistory": [
         {
           "bytes": 31425,
@@ -1495,6 +1535,11 @@
           "bytes": 80567,
           "sha256": "43c35848f3060f98a6e9ef2a1267986d23845fdefea44c386e8fdc1b2e8442d3",
           "scope": "Preserved 54-path MI1 prepublication cutoff."
+        },
+        {
+          "bytes": 83136,
+          "sha256": "f8f5baa605eca36bb3c068e180651fba85b24b03ac3e0d83e7f690643d630aa1",
+          "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
         }
       ]
     },
@@ -1531,8 +1576,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/CHANGELOG.md",
-      "bytes": 50622,
-      "sha256": "79c0248866be207cf80740c306df4e41e19a13bd66ce96697105ce1b71bb971e",
+      "bytes": 53195,
+      "sha256": "0bfe62097288d04b68954a74a03ab935e15a614f98213f5fb559cb6cd8fb1152",
       "identityHistory": [
         {
           "bytes": 31389,
@@ -1580,6 +1625,11 @@
           "bytes": 47774,
           "sha256": "f0d4025cd3a25cf2182e7fcea27d48b51730e32046bece7d60ee9057883234e2",
           "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+        },
+        {
+          "bytes": 50622,
+          "sha256": "79c0248866be207cf80740c306df4e41e19a13bd66ce96697105ce1b71bb971e",
+          "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
         }
       ]
     },
@@ -1592,8 +1642,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/current-version.json",
-      "bytes": 83813,
-      "sha256": "3efed447036d02f485fa42db1a75ef7c6d05a1586fcc13868b2b63b5e52a13fe",
+      "bytes": 86027,
+      "sha256": "58ef5be11dd43ad6af0d1bd7981554608c399fa363d02281ac0508495dfb6db0",
       "identityHistory": [
         {
           "bytes": 31946,
@@ -1646,6 +1696,11 @@
           "bytes": 81244,
           "sha256": "ab8f5e61618900231ae633e31180be62375aa9e5138441ae7071dd15e46901b9",
           "scope": "Preserved 54-path MI1 prepublication cutoff."
+        },
+        {
+          "bytes": 83813,
+          "sha256": "3efed447036d02f485fa42db1a75ef7c6d05a1586fcc13868b2b63b5e52a13fe",
+          "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
         }
       ]
     },
@@ -1778,8 +1833,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-progress.md",
-      "bytes": 18512,
-      "sha256": "e2d156a4fe0525b7a37f5956e071a7752738b791e730d97b5759f15062a91cef",
+      "bytes": 21083,
+      "sha256": "2ac02ab70ae2ce34007b7ec618236ac3c6560b3bf3caa7c1ba35d70c6cdf88e1",
       "identityHistory": [
         {
           "bytes": 14004,
@@ -1795,6 +1850,11 @@
           "bytes": 15676,
           "sha256": "59e613db79e19be1e77d594fecb4ba2534014e7d6fc919792cc7d4e55418471c",
           "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+        },
+        {
+          "bytes": 18512,
+          "sha256": "e2d156a4fe0525b7a37f5956e071a7752738b791e730d97b5759f15062a91cef",
+          "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
         }
       ]
     },
@@ -1849,8 +1909,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/engineering-plan.md",
-      "bytes": 35163,
-      "sha256": "06b286a4f7e4799a8a5f6d08951eea5594acf096e8ceeecd1c9c400d03c79ac6",
+      "bytes": 37734,
+      "sha256": "afab03392b571b550947c272588099a86aec0409aef2463d2ff4457b1bd4263e",
       "identityHistory": [
         {
           "bytes": 29962,
@@ -1866,6 +1926,11 @@
           "bytes": 31868,
           "sha256": "4e144ae5fda6ac6ecf47a3d94abdd479388245f9fb0198f2c43fd286726094d6",
           "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+        },
+        {
+          "bytes": 35163,
+          "sha256": "06b286a4f7e4799a8a5f6d08951eea5594acf096e8ceeecd1c9c400d03c79ac6",
+          "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
         }
       ]
     },
@@ -2220,8 +2285,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/README.md",
-      "bytes": 17258,
-      "sha256": "f22874f65df0157ad3f4ce12b88e40e6cfe1336267eff6f1434f5f50d0d14db6",
+      "bytes": 19831,
+      "sha256": "42037a911b964b87127ce7dcedc4fd455559bfd130071d2253482eb50250845d",
       "identityHistory": [
         {
           "bytes": 7397,
@@ -2274,6 +2339,11 @@
           "bytes": 14315,
           "sha256": "94ca342c3fd7ec2182a8beb8796e9731781503e9f8d84c4b275efb7f37539301",
           "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+        },
+        {
+          "bytes": 17258,
+          "sha256": "f22874f65df0157ad3f4ce12b88e40e6cfe1336267eff6f1434f5f50d0d14db6",
+          "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
         }
       ]
     },
@@ -2286,8 +2356,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/registry/deliverables.json",
-      "bytes": 96530,
-      "sha256": "10395dc7274f5bf398b83582565caa583410f4577f6921811764b79aa95f7de9",
+      "bytes": 100035,
+      "sha256": "7348bf979497182ecc125f14b6aa6c0a29f31c3a2659e630b310ed20e6fd5f16",
       "identityHistory": [
         {
           "bytes": 54446,
@@ -2350,6 +2420,11 @@
           "bytes": 93709,
           "sha256": "0c9d6b75000ea22a4e2c03763410c90a20b26aa7740cc2264f4629934eb5e9e2",
           "scope": "Preserved 54-path MI1 prepublication cutoff."
+        },
+        {
+          "bytes": 96530,
+          "sha256": "10395dc7274f5bf398b83582565caa583410f4577f6921811764b79aa95f7de9",
+          "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
         }
       ]
     },
@@ -2368,8 +2443,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/registry/sources.json",
-      "bytes": 117071,
-      "sha256": "1e723f20df75911214c986ec00bedf95f018f62309619a44954d8cd420deaa90",
+      "bytes": 119915,
+      "sha256": "b0e2ecd30c937569ac901a693c7034fa46d06f713c5241555c7bb33117e8121c",
       "identityHistory": [
         {
           "bytes": 82270,
@@ -2427,6 +2502,11 @@
           "bytes": 114250,
           "sha256": "c8261feae478b3b8582ed45ad34b4b6bdeed43c2cd14d87873ed750acdf3fa8c",
           "scope": "Preserved 54-path MI1 prepublication cutoff."
+        },
+        {
+          "bytes": 117071,
+          "sha256": "1e723f20df75911214c986ec00bedf95f018f62309619a44954d8cd420deaa90",
+          "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
         }
       ]
     },
@@ -2497,8 +2577,8 @@
     {
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "path": "localization.json",
-      "sha256": "c1cda4769dc9b7442393e5aa31d43d80d59a707a210c0791d7383c236f5e2a09",
-      "bytes": 201465,
+      "sha256": "b77e78827be1fbd70cefef058bb3896cf7c6f679195cac9a04e808209dd3e2de",
+      "bytes": 203346,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -2552,6 +2632,16 @@
           "bytes": 198823,
           "sha256": "a34ebfcf19f189aed6b93f5a8efc6e93b8ddb248d3a9f2d8ffdb8dc2db442655",
           "scope": "Preserved 54-path MI1 prepublication cutoff."
+        },
+        {
+          "bytes": 201465,
+          "sha256": "c1cda4769dc9b7442393e5aa31d43d80d59a707a210c0791d7383c236f5e2a09",
+          "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+        },
+        {
+          "bytes": 203346,
+          "sha256": "18131774429cc89a57ce7d25b360a8a0900e2fb05b61d3cfeb35f679495614f7",
+          "scope": "Preserved identity before the finite 0.34 bilingual README occurrence repair."
         }
       ]
     },
@@ -3242,8 +3332,8 @@
     {
       "path": "README.md",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
-      "sha256": "b5389c4b9ad20dcee4b94d496ebe23690aed5cd495aace88401bbf67ed9bfc1a",
-      "bytes": 38296,
+      "sha256": "26ba35d52e09c918a6c02e10d717c14e3a84f150d5df6758254fc30b0618e861",
+      "bytes": 43225,
       "previousRevisionSha256": "199156443d499d5012f1224263a1a3ee9994e5ba38ee067bceeb2ad865ae8167",
       "previousLayoutPath": "README.en.md",
       "previousLayoutSha256": "f40ec41ca699cd0b9138fbdf4a268080038f583ae11e78c4f37093a6b7095f57",
@@ -3299,13 +3389,18 @@
           "bytes": 32284,
           "sha256": "0d2471bb7585febdbb496df070b6e7f96a9f68483fa8765cbf99c819bd0036ef",
           "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+        },
+        {
+          "bytes": 38296,
+          "sha256": "b5389c4b9ad20dcee4b94d496ebe23690aed5cd495aace88401bbf67ed9bfc1a",
+          "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
         }
       ]
     },
     {
       "path": "README.zh-CN.md",
-      "sha256": "086b2fd18f36c8e29a062118f99c4bc808ea1d9097cd22b93131ce525f40f8e8",
-      "bytes": 37405,
+      "sha256": "ea68880391b6294ed9d9d1641e704688642645e21ce19ef599fc68afc6eaa8fd",
+      "bytes": 42334,
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "previousPublicSha256": "7ec80b8575a700b6a2628eb0322f2e770bb2284859f68ec5e0eb6530154a6699",
       "previousRevisionSha256": "7a1d72019db7cb6075d7c3a3bd4075f7c069d527b6e31d992a69333cb126b6c3",
@@ -3363,6 +3458,16 @@
           "bytes": 31393,
           "sha256": "52daf3df1692fc56205c740c537dde2cf11f11bb5a49823ee482be19c1551802",
           "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+        },
+        {
+          "bytes": 37405,
+          "sha256": "086b2fd18f36c8e29a062118f99c4bc808ea1d9097cd22b93131ce525f40f8e8",
+          "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+        },
+        {
+          "bytes": 39779,
+          "sha256": "e479514a186d893a9c85e6a71fa50b5bc2ce82050c1d52d5c86294a9a00f5006",
+          "scope": "Preserved identity before the finite 0.34 bilingual README occurrence repair."
         }
       ]
     },
@@ -3386,8 +3491,8 @@
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "bytes": 91022,
-      "sha256": "ab1cf21a59b6975c169ebf8fd9aa38aae137c3f138ab7fb97a41df484cd09a62",
+      "bytes": 95134,
+      "sha256": "6127919c9de2ea0a5a8ee3ec568ae8ebdfd04cd81e2884a3bb6ddb9170f50a8e",
       "originRole": "Independent first-party Egret explicit-area picking, bounded verification or paired documentation; CPU and finite-policy evidence with separate browser and whole-engine admission.",
       "identityHistory": [
         {
@@ -3404,6 +3509,11 @@
           "bytes": 79817,
           "sha256": "ad623d9d6e80303b0de8092e2ad51c3b382bd394f52ee3e36c42152268e813c7",
           "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+        },
+        {
+          "bytes": 91022,
+          "sha256": "ab1cf21a59b6975c169ebf8fd9aa38aae137c3f138ab7fb97a41df484cd09a62",
+          "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
         }
       ]
     },
@@ -3656,8 +3766,8 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "bytes": 120578,
-      "sha256": "02b607f7db9cdc45a897530fc013a8aa0fc8dde846f8dfacd6524227bd2b0718",
+      "bytes": 123293,
+      "sha256": "10bb58ece2aef2325fa56ed64b022c27d97c545e8703997c319f38c5b41de6c4",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "identityHistory": [
         {
@@ -3674,6 +3784,11 @@
           "bytes": 109896,
           "sha256": "26dd8f6b22e681c99adb42845fe808e26a8687cb04abd999fecaec23d6ed6500",
           "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+        },
+        {
+          "bytes": 120578,
+          "sha256": "02b607f7db9cdc45a897530fc013a8aa0fc8dde846f8dfacd6524227bd2b0718",
+          "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
         }
       ]
     },
@@ -3685,8 +3800,8 @@
     },
     {
       "path": "tools/check-types.mjs",
-      "bytes": 60660,
-      "sha256": "67002f6602381dcb5f4d75c304acd7af2140ef8f5005e43634643dad20285e88",
+      "bytes": 68576,
+      "sha256": "fbeace1fc6e6f4952b4457e5382e3932843229fa48d919866d69a88642f1d945",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "identityHistory": [
         {
@@ -3703,6 +3818,11 @@
           "bytes": 49790,
           "sha256": "31bbb5df7a3dd4090b9cc12f24a6a8a2ec0ce041b3047b07e00bc5574e839870",
           "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+        },
+        {
+          "bytes": 60660,
+          "sha256": "67002f6602381dcb5f4d75c304acd7af2140ef8f5005e43634643dad20285e88",
+          "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
         }
       ]
     },
@@ -4204,8 +4324,15 @@
     {
       "path": "packages/project/package.json",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 291,
-      "sha256": "e53bb0b35c66844acc80f3faa4557585cff88c98e965f6afcbfd523383b79932"
+      "bytes": 397,
+      "sha256": "295e6bc8d81a4647f5b99355ea27879563ced216fa2af406c65cc78b95f40945",
+      "identityHistory": [
+        {
+          "bytes": 291,
+          "sha256": "e53bb0b35c66844acc80f3faa4557585cff88c98e965f6afcbfd523383b79932",
+          "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+        }
+      ]
     },
     {
       "path": "packages/project/src/api.ts",
@@ -6413,6 +6540,91 @@
           "bytes": 53885,
           "sha256": "d919365e402957d96035aa3ee038498f200677c8375a6519c346c405a0facca4",
           "scope": "Preserved 54-path MI1 prepublication cutoff."
+        }
+      ]
+    },
+    {
+      "path": "packages/project/src/spine/index.ts",
+      "bytes": 444,
+      "sha256": "658bffaa24a5651cb42923e4222307ac841389441a1082c67934363b3d2b8c36",
+      "originRole": "First-party independent bounded Spine planner, original verification, paired reading or derived register."
+    },
+    {
+      "path": "packages/project/src/spine/types.ts",
+      "bytes": 4659,
+      "sha256": "af51a3d886daeaa4eaf4a737e6d7f8fe29f43dd328c539ea8c27b96db400d118",
+      "originRole": "First-party independent bounded Spine planner, original verification, paired reading or derived register."
+    },
+    {
+      "path": "packages/project/src/spine/preflight.ts",
+      "bytes": 44271,
+      "sha256": "9a0be66a05c7fb39829822324dca2f8d5e9734c415065aebcbdc3690c54ad14a",
+      "originRole": "First-party independent bounded Spine planner, original verification, paired reading or derived register."
+    },
+    {
+      "path": "tests/spine-import-plan.test.mjs",
+      "bytes": 51590,
+      "sha256": "9276a3133d9f8f0533762a1662437b9eaaa6505dba7c5a6fbd6b6070a270a678",
+      "originRole": "First-party independent bounded Spine planner, original verification, paired reading or derived register."
+    },
+    {
+      "path": "tests/fixtures/spine-import-plan.mjs",
+      "bytes": 14613,
+      "sha256": "f749270dd7ffb1f929dff5a1fed97e3609ea1d4109acdd44665793f27ca0e0d7",
+      "originRole": "First-party independent bounded Spine planner, original verification, paired reading or derived register."
+    },
+    {
+      "path": "tests/types/spine-import-plan-positive.ts",
+      "bytes": 3826,
+      "sha256": "df00b55e8bfea1a6ba47ef8f6db35915819c157ab63d6302b9bfdcc3ab025e36",
+      "originRole": "First-party independent bounded Spine planner, original verification, paired reading or derived register."
+    },
+    {
+      "path": "tests/types/spine-import-plan-negative.ts",
+      "bytes": 2549,
+      "sha256": "345d935f274eea35e63206423af39eef0653890589ded914bd7270d182a3ffd7",
+      "originRole": "First-party independent bounded Spine planner, original verification, paired reading or derived register."
+    },
+    {
+      "path": "tests/types/spine-import-plan-import-negative.ts",
+      "bytes": 562,
+      "sha256": "8cfc9ed7af8fc91fefbde041a1ae00bc33a5e3ccac8ed4730affec7a385305c5",
+      "originRole": "First-party independent bounded Spine planner, original verification, paired reading or derived register."
+    },
+    {
+      "path": "knowledge-base/en/docs/spine-import-plan-contract.md",
+      "bytes": 7201,
+      "sha256": "8251e6747c8126d32190717cf6a8f9150616e7309ed6c430ecb11fbbb5f45a3a",
+      "originRole": "First-party independent bounded Spine planner, original verification, paired reading or derived register."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/Spine导入计划契约.md",
+      "bytes": 6592,
+      "sha256": "44fa975c93ec221b296a43ba42be0e4e591f89a76b7c46421acf3f0c1b190843",
+      "originRole": "First-party independent bounded Spine planner, original verification, paired reading or derived register."
+    },
+    {
+      "path": "knowledge-base/en/docs/spine-import-plan-evidence.md",
+      "bytes": 3115,
+      "sha256": "4059f6ac9b7f684c61572e6040ce83744143804e24199e50ba7151b893c9b53b",
+      "originRole": "First-party independent bounded Spine planner, original verification, paired reading or derived register."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/Spine导入计划证据.md",
+      "bytes": 2674,
+      "sha256": "08e95d654fd2a5ba4b16abbd0666d59803476fa908ee1b2560771a556d9dfcc1",
+      "originRole": "First-party independent bounded Spine planner, original verification, paired reading or derived register."
+    },
+    {
+      "path": "knowledge-base/evidence/spine-import-plan-verification.json",
+      "bytes": 34845,
+      "sha256": "1faa36dac16685e9bb1cdac553e09efa4c3ee5858e00fd51f9eea91f706e9d0b",
+      "originRole": "First-party independent bounded Spine planner, original verification, paired reading or derived register.",
+      "identityHistory": [
+        {
+          "bytes": 34151,
+          "sha256": "2882a4c89109e054cbb856aa0d4ae6d9167a46b1e553b812c4db6261173feaf1",
+          "scope": "Preserved identity before the finite 0.34 bilingual README occurrence repair."
         }
       ]
     }
@@ -10634,5 +10846,66 @@
     "remoteCheckCount": 0,
     "remoteCIPassClaimed": false,
     "scope": "Observed prior delivery successor; earlier public-scene3d pending cutoffs remain historical."
+  },
+  "spineImportPlanWorkPackage": {
+    "engineeringLabel": "0.34.0",
+    "sourceId": "S087",
+    "deliverable": "V038",
+    "packageVersion": "0.0.0",
+    "protocolVersion": "1.0",
+    "behavior": {
+      "tests": 32,
+      "passed": 32,
+      "failed": 0
+    },
+    "strictTypes": {
+      "positiveConsumers": 1,
+      "negativeDiagnostics": {
+        "ordinary": 22,
+        "imports": 6
+      },
+      "completeOneToOneMatching": true
+    },
+    "focusedPolicy": {
+      "tests": 9,
+      "passed": 9,
+      "failed": 0
+    },
+    "assignedBehaviorControls": 5,
+    "productionBoundaryFiles": 465,
+    "independentImplementationReviewOpenFindings": 0,
+    "fullCurrent": "PENDING_AT_PRECOMMIT_METADATA_CUTOFF",
+    "publication": "PENDING_AT_PRECOMMIT_METADATA_CUTOFF",
+    "independentFinalBilingualMeaningReview": "PENDING",
+    "mandatoryGitPushHook": "PENDING",
+    "remoteDelivery": "PENDING",
+    "fullSpineR020V020": "OPEN",
+    "historicalCutoffsPreserved": true,
+    "record": "knowledge-base/evidence/spine-import-plan-verification.json",
+    "scope": "Optional immutable stable-4.3 JSON/modern-atlas/explicit-page-binding import plan; no animation or renderer acceptance.",
+    "origin": {
+      "implementation": "Independently authored AI-assisted first-party planner, original fixtures, scoped checks and paired documentation under Apache-2.0.",
+      "newRuntimeDependencies": [],
+      "newExternalAssets": [],
+      "retainedParser": "jsonc-parser 3.3.1; existing attributed dependency"
+    },
+    "sourceBaseCommit": "4ae7e71ee72e5f2c46e7dbccd28b27f482294a0c"
+  },
+  "primaryMouseInputDeliverySuccessor": {
+    "engineeringLabel": "0.33.0",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/20",
+    "sourceHead": "baa308e93596f518e32b7bcda786afccbef594e8",
+    "mergedMain": "4ae7e71ee72e5f2c46e7dbccd28b27f482294a0c",
+    "tree": "f340e46f0d88783b268b732dcacbfcf7c45a363a",
+    "mandatoryPushHook": "ACTUAL_PASS",
+    "coreTests": 2631,
+    "publicationTests": 63,
+    "documentPairs": 145,
+    "criticalSources": 174,
+    "localRemoteMainReadbackAtUtc": "2026-10-11T23:31:37.118Z",
+    "remoteStatusCount": 0,
+    "remoteCheckCount": 0,
+    "remoteCIPassClaimed": false,
+    "scope": "Observed delivery successor; earlier MI1 pending cutoffs remain historical."
   }
 }

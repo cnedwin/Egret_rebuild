@@ -12,6 +12,34 @@ Years later, as times change and technology advances, many developers continue t
 
 多年以后，时代变迁，技术革新，依然有很多开发者在鼓励我们。我希望借助 AI 和社区的力量，重建这个游戏引擎。
 
+<!-- SP1A-DOC-0.34.0-BEGIN -->
+## Engineering preview 0.34.0 — Spine import planning
+
+The optional built `@egret/project/spine` entry provides `createSpineImportPlan` and frozen `SPINE_IMPORT_LIMITS`. It prepares an immutable bounded plan from stable 4.3 skeleton JSON, a modern atlas and explicit page-to-asset bindings. Precise diagnostics identify original source locations. Read the [contract](knowledge-base/en/docs/spine-import-plan-contract.md) and [verification record](knowledge-base/evidence/spine-import-plan-verification.json). Successful planning keeps animation semantics and rendering **not_run**, entitlement **unverified** and feature inventory **partial**.
+
+<!-- SP1A-READING-ACTUAL-BEGIN -->
+Current build and production boundary scan passed (465 files). Public planning behavior passed **32/32**; TypeScript **7.0.2** passed one DOM-free positive and **22 + 6** exact unsuppressed negative diagnostics. Focused policy passed **9/9**, and **5** separate owned-copy controls each passed a genuine baseline before failing its assigned mutant witness. Independent finite implementation review has zero open findings. Initial **30/32** exposed a test-helper source-ID assumption; the retained production boundary refusal exposed message wording and exact forwarding punctuation. Narrow repairs preserve the API and guard rules. Final complete publication checks, the mandatory push hook and **0.34.0** remote delivery remain **PENDING** at this cutoff.
+<!-- SP1A-READING-ACTUAL-END -->
+
+The preceding **0.33.0** package was delivered through [PR #20](https://github.com/cnedwin/Egret_rebuild/pull/20), merged to Main `4ae7e71ee72e5f2c46e7dbccd28b27f482294a0c`, tree `f340e46f0d88783b268b732dcacbfcf7c45a363a`. Its complete mandatory push gate passed **2,631/2,631** core and **63/63** publication tests, **145** document pairs and **174** critical comment records. Local/remote Main identity and a clean checkout were verified at **2026-10-11 23:31:37 UTC**. GitHub returned zero statuses and check runs; no remote CI PASS is claimed. Earlier pending cutoffs below remain historical.
+
+Full Spine **R020/V020** remains open. A separately prepared official core artifact and original animation fixture recipe establish research inputs, not executed playback, redistribution rights or product acceptance. Next work connects per-instance animation state and owned mesh frames to the genuine clock, asset leases and renderers. Complete UI, target phones/SDKs, performance, editor/Agent workflows and legacy migration remain in the engineering plan.
+
+### 中文
+
+## 工程预览 0.34.0 — Spine 导入计划
+
+可选构建入口 `@egret/project/spine` 提供 `createSpineImportPlan` 和冻结的 `SPINE_IMPORT_LIMITS`。它根据稳定版 4.3 骨骼 JSON、现代格式图集及显式页面与资源绑定，生成有界、不可变的导入计划；精确诊断指向原始来源位置。见[契约](knowledge-base/Cns/docs/Spine导入计划契约.md)和[验证记录](knowledge-base/evidence/spine-import-plan-verification.json)。计划成功时，动画语义与渲染仍为 **not_run**，许可资格为 **unverified**，特性清单为 **partial**。
+
+<!-- SP1A-READING-ACTUAL-BEGIN -->
+当前构建和生产边界检查通过（465 个文件）。公共计划行为通过 **32/32**；TypeScript **7.0.2** 通过一个无 DOM 正例及 **22 + 6** 条精确、未抑制的负例诊断。限定策略通过 **9/9**；**5** 项独立自有副本对照均先通过真实基线，再在指定变体观察点拒绝。独立有限实现评审无开放问题。最初 **30/32** 暴露测试辅助代码的来源 ID 假设；保留的生产边界拒绝定位到消息措辞和精确类型转发标点。限定修正保留 API 与门禁规则。本截止点的最终完整公开检查、必要推送门禁及 **0.34.0** 远端交付仍为 **PENDING**。
+<!-- SP1A-READING-ACTUAL-END -->
+
+前一版本 **0.33.0** 已经 [PR #20](https://github.com/cnedwin/Egret_rebuild/pull/20) 交付，合并至 Main `4ae7e71ee72e5f2c46e7dbccd28b27f482294a0c`，树 `f340e46f0d88783b268b732dcacbfcf7c45a363a`。必要推送门禁完整通过 **2,631/2,631** 项核心和 **63/63** 项公开检查，并检查 **145** 对文档及 **174** 项关键注释记录。**2026-10-11 23:31:37 UTC** 核对了本地／远端 Main 身份及干净工作区。GitHub 返回零项状态和检查任务，因此不宣称远端 CI 通过。以下早先待完成截止点作为历史保留。
+
+完整 Spine **R020/V020** 仍未完成。另行准备的官方 core 产物与原创动画 fixture 方案确认了研究输入，并未执行播放、确认分发资格或完成产品验收。下一步将每实例动画状态及自有网格帧接入真实时钟、资源租约和渲染器。完整 UI、目标手机／SDK、性能、编辑器／Agent 工作流和旧工程迁移继续列入工程规划。
+<!-- SP1A-DOC-0.34.0-END -->
+
 <!-- MI1-DOC-0.33.0-BEGIN -->
 ## Current engineering preview / 当前工程预览
 

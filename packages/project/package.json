@@ -7,6 +7,10 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./spine": {
+      "types": "./dist/spine/index.d.ts",
+      "import": "./dist/spine/index.js"
     }
   },
   "dependencies": {

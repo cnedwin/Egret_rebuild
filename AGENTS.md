@@ -4,6 +4,15 @@ English | [简体中文](AGENTS.zh-CN.md)
 
 This agreement applies across the repository, including shared knowledge-base experiments, tools, evidence, comments, Issues and PRs. Read [README](README.md), [CONTRIBUTING](CONTRIBUTING.md), [source records](source-origin.json) and the relevant specifications. Work within the user's existing authorization.
 
+<!-- SP1A-DOC-0.34.0-BEGIN -->
+## Spine import planning boundaries
+
+- SP1-A uses the optional built `@egret/project/spine` entry only: two runtime values and eleven type-only names. Default project/engine entries remain separate; the first-party planner adds no runtime dependency, host access or SDK import.
+- Follow the [import contract](knowledge-base/en/docs/spine-import-plan-contract.md). Preserve fixed limits, strict metadata descriptors, scanner-before-visitor precedence, exact original source spans and one-fatal refusal. Planning success does not verify animation, rendering, declared hashes or entitlement.
+- Original programmatic fixtures and public behavior tests consume the emitted entry. Freeze actual unsuppressed compiler tuples; synthetic controls require a fresh complete baseline before each assigned mutant. Source, execution, third-party artifact inspection and final delivery retain separate status.
+- Full R020/V020 requires a separately tested clock/asset/mesh adapter and the versioned feature matrix. Record official runtime attribution and applicable license conditions before distribution. Keep public documentation bilingual and exclude private prompts or personal absolute paths.
+<!-- SP1A-DOC-0.34.0-END -->
+
 ## Architecture and implementation
 
 - Implement Egret's core independently from its specifications. Retain familiar Egret domain names and follow the documented module, API and code conventions. Record research references, third-party dependencies, Egret adapters and first-party implementation separately, with sources and versions.

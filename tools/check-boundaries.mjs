@@ -35,7 +35,7 @@ for (const [name, allowed] of Object.entries(expected)) {
   if (JSON.stringify(internalDependencies) !== JSON.stringify(allowed)) throw new Error(`${name}: dependency DAG mismatch`);
   for (const [dependency, version] of Object.entries(externalAllowed)) if (pkg.dependencies[dependency] !== version) throw new Error(`${name}: external exact pin mismatch`);
   if (!pkg.private || pkg.version !== "0.0.0" || pkg.type !== "module") throw new Error(`${name}: private prototype metadata mismatch`);
-  if (name === 'project' && JSON.stringify(pkg.exports) !== JSON.stringify({'.': {types:'./dist/index.d.ts', import:'./dist/index.js'}})) throw new Error('project: root export mapping mismatch');
+  if (name === 'project' && JSON.stringify(pkg.exports) !== JSON.stringify({'.': {types:'./dist/index.d.ts', import:'./dist/index.js'},'./spine':{types:'./dist/spine/index.d.ts',import:'./dist/spine/index.js'}})) throw new Error('project: root export mapping mismatch');
   if (name === 'runtime' || name === 'engine') {
     const textExports = name === 'runtime' ? {
       '.': {types:'./dist/index.d.ts',import:'./dist/index.js'},
@@ -136,6 +136,32 @@ const typeExports = [...projectDeclaration.matchAll(/export type\s*\{([^}]+)\}\s
 const valueExports = [...projectDeclaration.matchAll(/export\s*\{([^}]+)\}\s*from\s*["'][^"']+["'];?/g)].flatMap(match => match[1].split(',').map(name => name.trim())).sort();
 const declarationRemainder = projectDeclaration.replace(/export(?: type)?\s*\{[^}]+\}\s*from\s*["'][^"']+["'];?/g, '').trim();
 if (JSON.stringify(typeExports) !== JSON.stringify([...projectTypes].sort()) || JSON.stringify(valueExports) !== JSON.stringify(projectValues) || declarationRemainder) throw new Error('project: type-only export surface mismatch');
+// SP1_A_BOUNDARY_BEGIN
+// Optional planning is separate from the retained root and renderer/runtime DAG.
+const spinePlanValues=["SPINE_IMPORT_LIMITS","createSpineImportPlan"];
+const spinePlanTypes=["SpineImportInput","SpineTextSource","SpinePageBinding","SpineProvenance","SpineImportPlan","SpineImportResult","SpineImportDiagnostic","SpineImportDiagnosticCode","SpineSourceSpan","SpinePagePlan","SpineRegionPlan"];
+const spinePlanFacade=await import('@egret/project/spine');
+if(JSON.stringify(Object.keys(spinePlanFacade))!==JSON.stringify(spinePlanValues))throw new Error('SP1-A: exact optional runtime exports mismatch');
+for(const relative of ['src/spine/index.ts','dist/spine/index.d.ts','dist/spine/index.js']){
+  const raw=readFileSync(path.join(root,'packages/project',relative),'utf8');
+  const code=raw.replace(/\/\*[\s\S]*?\*\//g,'').replace(/\/\/[^\n]*/g,'');
+  const declarations=[...code.matchAll(/export(\s+type)?\s*\{([^}]+)\}\s*from\s*['"]([^'"]+)['"]\s*;?/g)];
+  const actualValues=declarations.filter(m=>!m[1]).flatMap(m=>m[2].split(',').map(n=>n.trim())).sort();
+  const actualTypes=declarations.filter(m=>m[1]).flatMap(m=>m[2].split(',').map(n=>n.trim())).sort();
+  const remainder=code.replace(/export(?:\s+type)?\s*\{[^}]+\}\s*from\s*['"][^'"]+['"]\s*;?/g,'').trim();
+  if(JSON.stringify(actualValues)!==JSON.stringify(spinePlanValues)||JSON.stringify(actualTypes)!==JSON.stringify(relative.endsWith('.js')?[]:[...spinePlanTypes].sort())||remainder
+    ||declarations.some(m=>m[3]!== (m[1]?'./types.js':'./preflight.js')))
+    throw new Error('SP1-A: exact optional declaration forwarding mismatch: '+relative);
+}
+if(Object.keys(await import(new URL('../packages/project/dist/spine/types.js',import.meta.url))).length)throw new Error('SP1-A: types module emitted runtime values');
+for(const file of [...files(path.join(root,'packages/project/src')),...files(path.join(root,'packages/project/dist'))]){
+  if(!/\.(?:ts|js)$/.test(file))continue;
+  const relative=path.relative(path.join(root,'packages/project'),file).split(path.sep).join('/');
+  const code=readFileSync(file,'utf8').replace(/\/\*[\s\S]*?\*\//g,'').replace(/\/\/[^\n]*/g,'');
+  if(!/^(?:src|dist)\/spine\//.test(relative)&&/['"][^'"]*(?:^|\/)spine\/[^'"]*['"]/.test(code))throw new Error('SP1-A: optional subtree imported outside its entry: '+relative);
+  if(/^(?:src|dist)\/spine\//.test(relative)&&/\b(?:fetch|XMLHttpRequest|WebSocket|setTimeout|setInterval|setImmediate|queueMicrotask|requestAnimationFrame|TextEncoder|ImageBitmap)\b/.test(code))throw new Error('SP1-A: optional planning entry requests a host: '+relative);
+}
+// SP1_A_BOUNDARY_END
 const facade = await import("@egret/engine");
 const webFacade = await import('@egret/engine/web');
 const gpuFacade = await import('@egret/engine/webgpu');

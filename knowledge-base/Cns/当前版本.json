@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "version": "0.13.0",
+  "version": "0.34.0",
   "updatedAt": "2026-10-12",
   "title": "白鹭引擎重构工程",
-  "stage": "independent_browser_webgpu_rectangle_checkpoint",
+  "stage": "independent_core_optional_spine_planning_checkpoint",
   "publication": "development_preview",
   "registries": {
     "requirements": "Cns/registry/需求.json",
@@ -25,7 +25,7 @@
     "acceptance": "reproducible_test_reports",
     "summaryStatus": "deliverable_registry"
   },
-  "engineImplementation": "partial_independent_cpu_canvas_webgpu_rectangles",
+  "engineImplementation": "partial_independent_display_resources_animation_ui_hosts_spine_planning",
   "engineBenchmarksRun": false,
   "creatorTaskTestsRun": false,
   "migrationAcceptanceRun": false,
@@ -2163,5 +2163,65 @@
     "remoteCheckCount": 0,
     "remoteCIPassClaimed": false,
     "scope": "Observed prior delivery successor; earlier public-scene3d pending cutoffs remain historical."
+  },
+  "previousTopLevelCheckpoint": {
+    "version": "0.13.0",
+    "stage": "independent_browser_webgpu_rectangle_checkpoint",
+    "engineImplementation": "partial_independent_cpu_canvas_webgpu_rectangles",
+    "scope": "Preserved earlier top-level checkpoint; historical nested evidence remains unchanged."
+  },
+  "spineImportPlanImplementation": {
+    "engineeringLabel": "0.34.0",
+    "sourceId": "S087",
+    "deliverable": "V038",
+    "packageVersion": "0.0.0",
+    "protocolVersion": "1.0",
+    "behavior": {
+      "tests": 32,
+      "passed": 32,
+      "failed": 0
+    },
+    "strictTypes": {
+      "positiveConsumers": 1,
+      "negativeDiagnostics": {
+        "ordinary": 22,
+        "imports": 6
+      },
+      "completeOneToOneMatching": true
+    },
+    "focusedPolicy": {
+      "tests": 9,
+      "passed": 9,
+      "failed": 0
+    },
+    "assignedBehaviorControls": 5,
+    "productionBoundaryFiles": 465,
+    "independentImplementationReviewOpenFindings": 0,
+    "fullCurrent": "PENDING_AT_PRECOMMIT_METADATA_CUTOFF",
+    "publication": "PENDING_AT_PRECOMMIT_METADATA_CUTOFF",
+    "independentFinalBilingualMeaningReview": "PENDING",
+    "mandatoryGitPushHook": "PENDING",
+    "remoteDelivery": "PENDING",
+    "fullSpineR020V020": "OPEN",
+    "historicalCutoffsPreserved": true,
+    "doc": "Cns/docs/Spine导入计划契约.md",
+    "evidence": "evidence/spine-import-plan-verification.json"
+  },
+  "primaryMouseInputDeliverySuccessor": {
+    "engineeringLabel": "0.33.0",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/20",
+    "sourceHead": "baa308e93596f518e32b7bcda786afccbef594e8",
+    "mergedMain": "4ae7e71ee72e5f2c46e7dbccd28b27f482294a0c",
+    "tree": "f340e46f0d88783b268b732dcacbfcf7c45a363a",
+    "mandatoryPushHook": "ACTUAL_PASS",
+    "coreTests": 2631,
+    "publicationTests": 63,
+    "documentPairs": 145,
+    "criticalSources": 174,
+    "localRemoteMainReadbackAtUtc": "2026-10-11T23:31:37.118Z",
+    "remoteStatusCount": 0,
+    "remoteCheckCount": 0,
+    "remoteCIPassClaimed": false,
+    "scope": "Observed delivery successor; earlier MI1 pending cutoffs remain historical."
   }
 }
