@@ -2,6 +2,20 @@
 
 English | [简体中文](../../Cns/docs/工程规划.md)
 
+<!-- SP1B-DOC-0.36.0-BEGIN -->
+## Engineering preview 0.36.0 — original F1 Spine experiment
+
+An opt-in original two-region manual bridge connects real resources and owned Mesh2D geometry. Portable CPU execution passed **12/12** original tests and **6** assigned controls, each with a fresh baseline. Complete Spine **R020/V020 remains OPEN**.
+
+Separate browser WebGPU validation recorded **8** positive submissions and **1** assigned double-update error control; a separate **3**-read classification actor verified `PIXEL_FAIL`. These results are not combined. The prepared public CPU/browser reproduction tool also passed in a new clone with the same **8+1** profile; these are repeated observations, not additional feature coverage. Its finite independent review has **0** open findings. The public checkout also passed the same CPU/browser profile. **Final publication gates and 0.36.0 delivery remain PENDING at this cutoff.** Read [the experiment guide](../experiments/spine-f1/README.md), [verification](../../evidence/spine-f1-manual-verification.json) and [projection provenance](../../evidence/spine-f1-public-projection.json) for exact profiles, original oracles, source terms and remaining UI/runtime/creator/migration work.
+
+The preceding **0.35.0** was actually delivered through [PR #22](https://github.com/cnedwin/Egret_rebuild/pull/22). Its recorded gates and Main identities are in the guide/evidence; **0** remote statuses and **0** check runs establish no remote CI PASS. Earlier PENDING cutoffs below remain history.
+<!-- SP1B-DOC-0.36.0-END -->
+### Next packages after the F1 checkpoint
+
+Complete the prepared public browser reproduction review, public-checkout execution and final provenance/bilingual/delivery gates. Then advance genuine source-art import and diagnostics, resource/event/track lifetime and version-correct feature fixtures before extending the animation contract. Validate complex ordered UI and lightweight 3D composition with those actual assets; Canvas/WebGL/fallback and phone/SDK qualification remain explicit work packages. Continue useful runtime/engineering utilities before AI creation interfaces and complete legacy migration, with a finite specification, independent review, actual verification and paired knowledge-base update for each package. No staffing, date, budget or performance commitment is added.
+
+
 <!-- SPH-DOC-0.35.0-BEGIN -->
 ## Engineering preview 0.35.0 — Scope ownership repair
 

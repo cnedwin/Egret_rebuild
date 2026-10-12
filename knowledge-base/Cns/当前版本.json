@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "version": "0.35.0",
+  "version": "0.36.0",
   "updatedAt": "2026-10-12",
   "title": "白鹭引擎重构工程",
-  "stage": "independent_core_scope_private_ownership_checkpoint",
+  "stage": "original_opt_in_spine_f1_experiment_checkpoint",
   "publication": "development_preview",
   "registries": {
     "requirements": "Cns/registry/需求.json",
@@ -25,7 +25,7 @@
     "acceptance": "reproducible_test_reports",
     "summaryStatus": "deliverable_registry"
   },
-  "engineImplementation": "partial_independent_display_resources_animation_ui_hosts_spine_planning",
+  "engineImplementation": "partial_independent_display_resources_animation_ui_hosts_spine_planning_original_f1_experiment",
   "engineBenchmarksRun": false,
   "creatorTaskTestsRun": false,
   "migrationAcceptanceRun": false,
@@ -541,7 +541,7 @@
     "contract": "Cns/docs/显示内容边界契约.md",
     "evidence": "Cns/docs/显示内容边界证据.md"
   },
-  "latestEngineeringPreview": "0.33.0",
+  "latestEngineeringPreview": "0.36.0",
   "texturedMesh2DImplementation": {
     "version": "0.23.0",
     "status": "bounded_increment_implemented",
@@ -931,7 +931,7 @@
     "independentBilingualSharedJsonMeaningReview": "PASS",
     "completeCurrentVerificationSuccessor": {
       "status": "PASS",
-      "startedAtUtc": "2026-10-11T16:10:13.4523180Z",
+      "startedAtUtc": "2026-10-11T16:10:13.452318Z",
       "finishedAtUtc": "2026-10-11T16:12:46.0450223Z",
       "exitCode": 0,
       "timeout": false,
@@ -1025,7 +1025,7 @@
       "scopesAdded": false,
       "currentWholeSuccessor": {
         "status": "PASS",
-        "startedAtUtc": "2026-10-11T16:10:13.4523180Z",
+        "startedAtUtc": "2026-10-11T16:10:13.452318Z",
         "finishedAtUtc": "2026-10-11T16:12:46.0450223Z",
         "exitCode": 0,
         "timeout": false,
@@ -1263,7 +1263,7 @@
       },
       "receipt": {
         "name": "prepush",
-        "startedAtUtc": "2026-10-11T16:52:20.2390410Z",
+        "startedAtUtc": "2026-10-11T16:52:20.239041Z",
         "finishedAtUtc": "2026-10-11T16:55:00.7541332Z",
         "exitCode": 0,
         "timeout": false,
@@ -1745,7 +1745,7 @@
         ],
         "providerDisposals": 2,
         "pendingTimers": 0,
-        "executedAtUTC": "2026-10-11T18:16:49.0455330Z"
+        "executedAtUTC": "2026-10-11T18:16:49.045533Z"
       },
       "focusedSuccessor": {
         "tests": 29,
@@ -1805,7 +1805,7 @@
         "timeout": false,
         "directControls": 2,
         "baselineFirstMutants": 32,
-        "startedAtUTC": "2026-10-11T18:36:27.2672400Z",
+        "startedAtUTC": "2026-10-11T18:36:27.26724Z",
         "finishedAtUTC": "2026-10-11T18:37:50.1908866Z",
         "scope": "preserved_original_34_control_finite_pass",
         "executionTree": "PRIVATE"
@@ -2267,5 +2267,305 @@
     "remoteCheckCount": 0,
     "remoteCIPassClaimed": false,
     "scope": "Observed delivery successor; earlier SP1-A preparation cutoffs remain historical."
+  },
+  "originalSpineF1Experiment": {
+    "verification": {
+      "engineeringLabel": "0.36.0",
+      "sourceId": "S089",
+      "deliverable": "V040",
+      "curatedAtUTC": "2026-10-12T02:32:31.5872691Z",
+      "profile": "Original two-region F1 / official core4.3.13 / manual quarter-second stepping / normal light tint / exact whole page",
+      "cpu": {
+        "status": "PASS_F1_CPU_SUBSET",
+        "originalTests": {
+          "tests": 12,
+          "passed": 12,
+          "failed": 0,
+          "childContracts": 11
+        },
+        "assignedControls": 6,
+        "freshBaselineBeforeEach": {
+          "tests": 12,
+          "passed": 12
+        },
+        "controlIds": [
+          "unsupported-additive",
+          "wrong-y",
+          "double-positive-update",
+          "reverse-actual-commands",
+          "omit-instance-scope-open",
+          "injected-after-advance"
+        ],
+        "SDKSourceAndDistFiles": 737,
+        "dependencyAndHelperFiles": 40,
+        "officialCoreFiles": 137,
+        "reportedBeforeAfterUnchanged": true,
+        "historicalTreeAssignedToCurrentClone": false,
+        "independentSourceAndSavedReceiptReviewOpenFindings": 0,
+        "receipt": {
+          "logicalIdentity": "portable-original-f1-cpu-collection",
+          "bytes": 150135,
+          "sha256": "305dba12851e062d5aa2c232f9a950f251526d9e5fa7ada780effd2b176f0bd7"
+        },
+        "review": {
+          "logicalIdentity": "original-f1-public-source-and-cpu-review",
+          "bytes": 13114,
+          "sha256": "75e5e9cec21027d41b16c055cbfd8213f19601d5f1adacc34c08a542820baba6"
+        },
+        "scope": "Original shallow F1 CPU subset in the recorded clone. Existing compiler/helper packages reused; not a fresh dependency installation or full product acceptance."
+      },
+      "browserRecorded": {
+        "status": "PASS_RECORDED_ORIGINAL_BROWSER_WEBGPU_F1_SUBSET",
+        "positiveSubmissions": 8,
+        "fixedPositiveSamples": 22,
+        "channelComparisons": 88,
+        "channelTolerance": 0,
+        "rawBytesPerReadback": 12288,
+        "fullRepeatGroups": 4,
+        "independentBMatchesOriginalA0": true,
+        "assignedDoubleUpdateReadbacks": 1,
+        "assignedMidpoint": {
+          "x": 25,
+          "y": 19,
+          "time": 0.5,
+          "expected": [
+            255,
+            0,
+            0,
+            255
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "headersLoadedAndReleased": 2,
+        "pageLoadedAndDisposed": 1,
+        "borrowedDeviceClosure": "OBSERVED_API_LIFETIME",
+        "owningDeviceDestroy": "OBSERVED_API_LIFETIME",
+        "physicalGPU": "UNOBSERVED",
+        "OSDescendantRetirement": "UNOBSERVED",
+        "environment": {
+          "browser": "msedge",
+          "version": "155.0.4283.45",
+          "playwright": "1.62.1",
+          "DPR": 1,
+          "defaultAdapterAndDevice": true,
+          "apiVendor": "nvidia",
+          "apiArchitecture": "blackwell",
+          "hardwareIdentityQualified": false
+        },
+        "receipt": {
+          "logicalIdentity": "original-browser-webgpu-f1-collection",
+          "bytes": 173030,
+          "sha256": "51345797a294dad31b89707dfe2b8c986e90455ffe7762017402699efc06daf2"
+        },
+        "independentSavedReceiptReviewOpenFindings": 0,
+        "review": {
+          "logicalIdentity": "original-browser-gpu-and-classification-review",
+          "bytes": 15587,
+          "sha256": "445d08f7cf6d9165c9540b334841f250e48f89b9287e00e091cf4469ea0e2533"
+        },
+        "portablePublicBrowserReproduction": "ACTUAL_NEW_CLONE_PASS_INDEPENDENT_REVIEW_PASS",
+        "scope": "Recorded original desktop browser subset; no public-wrapper reproduction, Canvas/WebGL/mobile/SDK, physical hardware, performance or full Spine claim."
+      },
+      "classificationRecorded": {
+        "status": "ACTUAL_ASSIGNED_BROWSER_PIXEL_FAIL_CLASSIFICATION_PASS",
+        "readbacks": 3,
+        "windowCount": 1,
+        "reportedClassification": "PIXEL_FAIL",
+        "classifiedExitCode": 1,
+        "outerDriverExitCode": 0,
+        "fixedFailureId": "F1G03",
+        "midpoint": {
+          "x": 25,
+          "y": 19,
+          "time": 0.5,
+          "expected": [
+            255,
+            0,
+            0,
+            255
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "tolerance": 0
+        },
+        "retainedCleanupObserved": true,
+        "separateFromPositiveAndDoubleControlCounts": true,
+        "receipt": {
+          "logicalIdentity": "original-browser-pixel-fail-classification",
+          "bytes": 2428,
+          "sha256": "ae6a335c003dd0d09d85489ab4e738d37fe7f4a9fb260a1931fd4c6d77594151"
+        },
+        "scope": "One deliberate owned-route double-update actor exercises valid baseline mismatch classification. Other timeout/setup/loss/refusal branches are not additional executed controls."
+      },
+      "coldImports": {
+        "status": "ACTUAL_CURRENT_CLONE_DEFAULT_AND_EXPERIMENT_COLD_IMPORT_PASS",
+        "modules": 280,
+        "officialCoreImports": 0,
+        "GPUEntryImports": 0,
+        "hostAccesses": 0,
+        "helpExitCode": 0,
+        "receipt": {
+          "logicalIdentity": "original-f1-cold-import-help",
+          "bytes": 791,
+          "sha256": "0b81756243628121e7100899e7b88b9ec01d565917882c60f0e6920b0223d96a"
+        },
+        "stdoutSHA256": "f13da8c8d330fd065e16df99fcf12696bc707dc1d5ff92b3cc665c7cfe36d269",
+        "scope": "Cold import and help only; not a full default build/test/prepush or animation/device acceptance."
+      },
+      "precision": {
+        "absolute": 9.5367431640625E-07,
+        "derivation": "Fixed source-derived bound on original shallow F1 only; qualified host constant premises, no fitting/snapping/automatic widening",
+        "quarterCosAbsoluteMaximum": 2.4E-08,
+        "quarterSinErrorMaximum": 3.552713678800501E-15,
+        "pixels": 0,
+        "UVColorIndicesTimeIdentity": "EXACT"
+      },
+      "independentImplementationReviewOpenFindings": 0,
+      "fullCurrent": "PENDING_AT_CURATION_CUTOFF",
+      "publication": "PENDING_AT_CURATION_CUTOFF",
+      "independentFinalBilingualMeaningReview": "PENDING",
+      "mandatoryGitPushHook": "PENDING",
+      "remoteDelivery": "PENDING",
+      "fullSpineR020V020": "OPEN",
+      "publicReproductionSuccessor": {
+        "status": "ACTUAL_NEW_CLONE_PUBLIC_BROWSER_TOOL_AND_REVIEW_PASS",
+        "startedAtUTC": "2026-10-12T02:29:32.5859746Z",
+        "finishedAtUTC": "2026-10-12T02:29:52.7897889Z",
+        "driverExitCode": 0,
+        "driverTimeout": false,
+        "driverStdoutSHA256": "326135ec9bbff0802aedb080bccc482dcbe6dfdcc077157d88b7f5c66224b6e7",
+        "cpuCollection": {
+          "logicalIdentity": "public-browser-clone-cpu-cutoff",
+          "bytes": 150208,
+          "sha256": "ee68679d45e2cbff11af1322fbdc7f8a89eec528c35dc3460c22acac2eaf84a5"
+        },
+        "cpuOriginalTests": 12,
+        "cpuOriginalPassed": 12,
+        "cpuAssignedControls": 6,
+        "cpuFreshBaselineBeforeEach": 12,
+        "cpuCutoffBrowserStatus": "REQUESTED_PENDING_SEPARATE_ENTRY",
+        "browserReceipt": {
+          "logicalIdentity": "public-browser-clone-webgpu-result",
+          "bytes": 192148,
+          "sha256": "4116b88b1a536fa3f6a714ffdf2adf20e71c17bc0fcc8af060ccfd2d8e040293"
+        },
+        "wrapperResult": {
+          "logicalIdentity": "public-browser-clone-wrapper-successor",
+          "bytes": 686,
+          "sha256": "dcee53e8e61a1bde4598449a9640481d73ebf9285fee3475c32765c17514de09"
+        },
+        "wrapperExitCode": 0,
+        "browserStatus": "PASS_F1_NATIVE_SUBSET",
+        "positiveSubmissions": 8,
+        "assignedDoubleUpdateReadbacks": 1,
+        "fixedPositiveSamples": 22,
+        "channelTolerance": 0,
+        "fullRepeatGroups": 4,
+        "midpoint": {
+          "x": 25,
+          "y": 19,
+          "time": 0.5,
+          "expected": [
+            255,
+            0,
+            0,
+            255
+          ],
+          "controlActual": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "reportedUnchangedInputs": 1651,
+        "sharedResourcesAndApiCleanup": "OBSERVED_BOUNDED_BROWSER_SUBSET",
+        "historicalAndCurrentCountsCombined": false,
+        "sourceAndSavedReceiptReview": "PASS_FINITE_SOURCE_AND_SAVED_RECEIPT_REVIEW",
+        "actualPublicCheckoutExecution": "ACTUAL_PASS_SAME_F1_PROFILE",
+        "fullDefaultAndPublicationGates": "PENDING_AT_CURATION_CUTOFF",
+        "GitHubDelivery": "PENDING_AT_CURATION_CUTOFF",
+        "scope": "Current prepared public CPU/browser tool actually executed in a new clone; separate successor to immutable CPU cutoff and recorded original browser/classification runs. Same F1 feature coverage only; no additional full-Spine/device/performance acceptance.",
+        "independentReviewOpenFindings": 0,
+        "review": {
+          "logicalIdentity": "public-browser-source-and-saved-result-review",
+          "bytes": 13392,
+          "sha256": "2bed625b5395ae293401ee83c76aecce936e69f23ad4f6e66afdf804faeee685"
+        },
+        "publicCheckoutSuccessor": {
+          "status": "ACTUAL_PUBLIC_CHECKOUT_CPU_AND_BROWSER_F1_PASS",
+          "startedAtUTC": "2026-10-12T02:41:04.4548733Z",
+          "finishedAtUTC": "2026-10-12T02:41:18.150398Z",
+          "driverExitCode": 0,
+          "stdoutSHA256": "5a4d83917da05f3e9e36788cfe815c4fbe9c9bceb54a14271d83bc574d93e1df",
+          "cpuCollection": {
+            "logicalIdentity": "public-checkout-cpu-cutoff",
+            "bytes": 150228,
+            "sha256": "26f1d304c22721bfe812afd6b212c041a269327273af70a4f5ffcd87c0c502d7"
+          },
+          "browserReceipt": {
+            "logicalIdentity": "public-checkout-browser-webgpu-result",
+            "bytes": 189183,
+            "sha256": "bdb2b4c28debde459cd752d40375af87e6ad4edee697c0940e9c12516fd2d803"
+          },
+          "wrapperResult": {
+            "logicalIdentity": "public-checkout-browser-wrapper-successor",
+            "bytes": 692,
+            "sha256": "29444b0fe00f0872cc4e13bb368fbf21bdaf25374332e2313e6420c7ba582568"
+          },
+          "cpuOriginalTests": 12,
+          "cpuOriginalPassed": 12,
+          "cpuAssignedControls": 6,
+          "browserStatus": "PASS_F1_NATIVE_SUBSET",
+          "wrapperExitCode": 0,
+          "cpuCutoffBrowserStatus": "REQUESTED_PENDING_SEPARATE_ENTRY",
+          "scope": "Actual public-checkout repetition of the same original F1 CPU/browser profile. Separate phase successor, no summed feature/device/performance coverage."
+        }
+      }
+    },
+    "doc": "Cns/experiments/spine-f1/README.md",
+    "evidence": "evidence/spine-f1-manual-verification.json",
+    "projection": "evidence/spine-f1-public-projection.json"
+  },
+  "scopePrivateOwnershipDeliverySuccessor": {
+    "schemaVersion": 1,
+    "engineeringLabel": "0.35.0",
+    "sourceId": "S088",
+    "deliverableId": "V039",
+    "status": "ACTUAL_DELIVERY_SUCCESSOR",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/22",
+    "sourceCommit": "9b7ff75560b81bed00ec4080c23b16e70a2239cd",
+    "mergedMain": "d16f91c7ef41c9143469b21f4b3ef8b4efd1868e",
+    "tree": "a46b03f314b0f9b6c5c45a74affef498db97a7d6",
+    "readbackAtUtc": "2026-10-12T00:50:43.136Z",
+    "fullPrecommitGate": {
+      "exitCode": 0,
+      "stdoutSHA256": "e43ee7d0f3d7143cb57f47d926cb605ec78d7fbeee48f88abcbfa2f7f1addb91",
+      "finishedAtUtc": "2026-10-12T00:44:10.3662153Z"
+    },
+    "mandatoryPushHook": {
+      "exitCode": 0,
+      "stdoutSHA256": "06a68b0c0e2e3ec9bab4654c7ed7ad5dfa7b8e486a3d93d5ece3cb7f414565bf",
+      "stderrSHA256": "5d4b04e94127d2ac5d6dc0018f7231b1511fdd19253de3415d0fa2544876f200",
+      "finishedAtUtc": "2026-10-12T00:49:38.8003144Z",
+      "coreTests": 2678,
+      "corePassed": 2678,
+      "publicationTests": 63,
+      "documents": 148,
+      "criticalSources": 177
+    },
+    "remoteStatusCount": 0,
+    "remoteCheckCount": 0,
+    "remoteCIPassClaimed": false,
+    "scope": "Actual 0.35 delivery successor only. Earlier preparation and review cutoffs remain historical; this record is not a 0.36 gate or Spine acceptance."
   }
 }

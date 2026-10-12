@@ -1,0 +1,551 @@
+{
+  "schemaVersion": 1,
+  "id": "SPINE_F1_PUBLIC_PROJECTION_0.36.0",
+  "curatedAtUTC": "2026-10-12T02:32:31.5872691Z",
+  "status": "REVIEWED_CPU_AND_BROWSER_PROJECTION_RECORDED_NEW_CLONE_EXECUTION_FINAL_GATES_PENDING",
+  "engineeringLabel": "0.36.0",
+  "authoredCPUFunctionalPaths": 9,
+  "files": [
+    {
+      "path": "knowledge-base/experiments/spine-f1/manifest.json",
+      "bytes": 11973,
+      "sha256": "eae51f44700f5b5ec51fcfe481f3b1651e323f724918208c04b076d38aae2b81"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f1/run.mjs",
+      "bytes": 43103,
+      "sha256": "197a1623d6a6a2e71e1b63b06ac6d2499c1355d8eb3c3ba2b3260ab35346006e"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f1/fixtures/egret-original-page.rgba",
+      "bytes": 1024,
+      "sha256": "0d5994c9c3f7ef2b1931a4270ba630661925096358d35bf1b9ccedd60a9925e4"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f1/fixtures/egret-original-slide.atlas",
+      "bytes": 162,
+      "sha256": "0e4053de057c85b3ca2a6fa4045e7762073c45a54e03c58650feeaf45dfa6401"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f1/fixtures/egret-original-slide.spine.json",
+      "bytes": 935,
+      "sha256": "daa5e953865042464348acd980c638d2df981092a9a5d98b0c5fe224c3b9a515"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f1/fixtures/f1-oracle.json",
+      "bytes": 11677,
+      "sha256": "79244829b2460589599ba70b4eff21e43e104bfe5e063e69ba5cd47c3fa17c97"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f1/src/canonical-baseline.ts",
+      "bytes": 4290,
+      "sha256": "dfb04d5f19ad12867f788d360c0fbb2e1dad927335645411567e917c04a987dd"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f1/src/f1-manual-bridge.ts",
+      "bytes": 21835,
+      "sha256": "876213de21022f351b0ff9492880846bb066381233275d237f1921ec8fad9078"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f1/tests/manual-step.test.mjs",
+      "bytes": 24090,
+      "sha256": "c83458c064478ced7ab6222e0f219f065562686bc21273998c4dd1e1bb1788ce"
+    }
+  ],
+  "originalAndProjectedIdentities": [
+    {
+      "logicalIdentity": "src/f1-manual-bridge.ts",
+      "original": {
+        "bytes": 21835,
+        "sha256": "876213de21022f351b0ff9492880846bb066381233275d237f1921ec8fad9078"
+      },
+      "projected": {
+        "path": "knowledge-base/experiments/spine-f1/src/f1-manual-bridge.ts",
+        "bytes": 21835,
+        "sha256": "876213de21022f351b0ff9492880846bb066381233275d237f1921ec8fad9078"
+      },
+      "byteIdentical": true
+    },
+    {
+      "logicalIdentity": "src/canonical-baseline.ts",
+      "original": {
+        "bytes": 4290,
+        "sha256": "dfb04d5f19ad12867f788d360c0fbb2e1dad927335645411567e917c04a987dd"
+      },
+      "projected": {
+        "path": "knowledge-base/experiments/spine-f1/src/canonical-baseline.ts",
+        "bytes": 4290,
+        "sha256": "dfb04d5f19ad12867f788d360c0fbb2e1dad927335645411567e917c04a987dd"
+      },
+      "byteIdentical": true
+    },
+    {
+      "logicalIdentity": "tests/manual-step.test.mjs",
+      "original": {
+        "bytes": 23761,
+        "sha256": "30e05573e65b5372d102f4bd2791bfff4b1424212f77462fbacbdca41f2ea5e3"
+      },
+      "projected": {
+        "path": "knowledge-base/experiments/spine-f1/tests/manual-step.test.mjs",
+        "bytes": 24090,
+        "sha256": "c83458c064478ced7ab6222e0f219f065562686bc21273998c4dd1e1bb1788ce"
+      },
+      "byteIdentical": false
+    },
+    {
+      "logicalIdentity": "fixtures/egret-original-slide.spine.json",
+      "original": {
+        "bytes": 935,
+        "sha256": "daa5e953865042464348acd980c638d2df981092a9a5d98b0c5fe224c3b9a515"
+      },
+      "projected": {
+        "path": "knowledge-base/experiments/spine-f1/fixtures/egret-original-slide.spine.json",
+        "bytes": 935,
+        "sha256": "daa5e953865042464348acd980c638d2df981092a9a5d98b0c5fe224c3b9a515"
+      },
+      "byteIdentical": true
+    },
+    {
+      "logicalIdentity": "fixtures/egret-original-slide.atlas",
+      "original": {
+        "bytes": 162,
+        "sha256": "0e4053de057c85b3ca2a6fa4045e7762073c45a54e03c58650feeaf45dfa6401"
+      },
+      "projected": {
+        "path": "knowledge-base/experiments/spine-f1/fixtures/egret-original-slide.atlas",
+        "bytes": 162,
+        "sha256": "0e4053de057c85b3ca2a6fa4045e7762073c45a54e03c58650feeaf45dfa6401"
+      },
+      "byteIdentical": true
+    },
+    {
+      "logicalIdentity": "fixtures/egret-original-page.rgba",
+      "original": {
+        "bytes": 1024,
+        "sha256": "0d5994c9c3f7ef2b1931a4270ba630661925096358d35bf1b9ccedd60a9925e4"
+      },
+      "projected": {
+        "path": "knowledge-base/experiments/spine-f1/fixtures/egret-original-page.rgba",
+        "bytes": 1024,
+        "sha256": "0d5994c9c3f7ef2b1931a4270ba630661925096358d35bf1b9ccedd60a9925e4"
+      },
+      "byteIdentical": true
+    },
+    {
+      "logicalIdentity": "fixtures/f1-oracle.json",
+      "original": {
+        "bytes": 11927,
+        "sha256": "8a2d5d68f64b28515945caf2f64eb8a9d5fec4869ad3ad74327de53433c95b7d"
+      },
+      "projected": {
+        "path": "knowledge-base/experiments/spine-f1/fixtures/f1-oracle.json",
+        "bytes": 11677,
+        "sha256": "79244829b2460589599ba70b4eff21e43e104bfe5e063e69ba5cd47c3fa17c97"
+      },
+      "byteIdentical": false
+    },
+    {
+      "logicalIdentity": "manifest.json",
+      "original": {
+        "bytes": 27025,
+        "sha256": "184c448caf4fd05ed63fd05c618a24c4b6936a043be5fe87fb536ed3c6561ae2"
+      },
+      "projected": {
+        "path": "knowledge-base/experiments/spine-f1/manifest.json",
+        "bytes": 11973,
+        "sha256": "eae51f44700f5b5ec51fcfe481f3b1651e323f724918208c04b076d38aae2b81"
+      },
+      "byteIdentical": false
+    },
+    {
+      "logicalIdentity": "run.mjs",
+      "original": null,
+      "projected": {
+        "path": "knowledge-base/experiments/spine-f1/run.mjs",
+        "bytes": 43103,
+        "sha256": "197a1623d6a6a2e71e1b63b06ac6d2499c1355d8eb3c3ba2b3260ab35346006e"
+      },
+      "byteIdentical": false
+    }
+  ],
+  "testMetadataProjection": {
+    "exactHunks": [
+      {
+        "id": "metadata-comment",
+        "from": "// Independently authored private acceptance input. Root executes it after review.",
+        "to": "// Independent original acceptance input; the runner admits current clone inputs.",
+        "inverseFrom": "// Independent original acceptance input; the runner admits current clone inputs.",
+        "inverseTo": "// Independently authored private acceptance input. Root executes it after review."
+      },
+      {
+        "id": "current-clone-sdk-admission",
+        "from": "    assert.equal(graph.head, manifest.base.head);\n    assert.equal(graph.tree, manifest.base.tree);",
+        "to": "    assert.equal(graph.kind, 'CURRENT_CLONE_BUILT_PUBLIC_INPUTS');\n    assert.equal(graph.historicalTreeBinding, false);",
+        "inverseFrom": "    assert.equal(graph.kind, 'CURRENT_CLONE_BUILT_PUBLIC_INPUTS');\n    assert.equal(graph.historicalTreeBinding, false);",
+        "inverseTo": "    assert.equal(graph.head, manifest.base.head);\n    assert.equal(graph.tree, manifest.base.tree);"
+      },
+      {
+        "id": "historical-identity-only-admission",
+        "from": "    for (const pin of manifest.preservedInputs) await checkPin(pin);",
+        "to": "    for (const pin of manifest.preservedInputs) {\n      assert.equal(typeof pin.logicalIdentity, 'string');\n      assert.ok(Number.isSafeInteger(pin.bytes) && pin.bytes > 0);\n      assert.match(pin.sha256, /^[a-f0-9]{64}$/);\n    }",
+        "inverseFrom": "    for (const pin of manifest.preservedInputs) {\n      assert.equal(typeof pin.logicalIdentity, 'string');\n      assert.ok(Number.isSafeInteger(pin.bytes) && pin.bytes > 0);\n      assert.match(pin.sha256, /^[a-f0-9]{64}$/);\n    }",
+        "inverseTo": "    for (const pin of manifest.preservedInputs) await checkPin(pin);"
+      },
+      {
+        "id": "actual-current-numeric-qualification-admission",
+        "from": "    await checkPin(policy.reviewReceipt);\n    await checkPin(policy.constantQualification);\n    const qualified = JSON.parse(await readFile(policy.constantQualification.path, 'utf8'));",
+        "to": "    assert.equal(policy.reviewReceipt.logicalIdentity, 'original-f1-fixed-precision-review');\n    assert.equal(policy.constantQualification.logicalIdentity, 'historical-f1-canonical-qualification');\n    await checkPin(manifest.numericQualification);\n    const qualified = JSON.parse(await readFile(manifest.numericQualification.path, 'utf8'));",
+        "inverseFrom": "    assert.equal(policy.reviewReceipt.logicalIdentity, 'original-f1-fixed-precision-review');\n    assert.equal(policy.constantQualification.logicalIdentity, 'historical-f1-canonical-qualification');\n    await checkPin(manifest.numericQualification);\n    const qualified = JSON.parse(await readFile(manifest.numericQualification.path, 'utf8'));",
+        "inverseTo": "    await checkPin(policy.reviewReceipt);\n    await checkPin(policy.constantQualification);\n    const qualified = JSON.parse(await readFile(policy.constantQualification.path, 'utf8'));"
+      },
+      {
+        "id": "historical-module-comment",
+        "from": "    // Leave Node's native error intact. Root admits RED only when the native\n    // ERR_MODULE_NOT_FOUND names this exact entry, never a dependency/setup URL.",
+        "to": "    // Retain the original module-boundary child contract. This portable run\n    // verifies the compiled entry; missing modules remain INCOMPLETE.",
+        "inverseFrom": "    // Retain the original module-boundary child contract. This portable run\n    // verifies the compiled entry; missing modules remain INCOMPLETE.",
+        "inverseTo": "    // Leave Node's native error intact. Root admits RED only when the native\n    // ERR_MODULE_NOT_FOUND names this exact entry, never a dependency/setup URL."
+      }
+    ],
+    "hunkCount": 5,
+    "eachOriginalAndInverseOccurrence": 1,
+    "forwardReconstructsPublicByteExact": true,
+    "inverseReconstructsOriginalByteExact": true,
+    "allBehaviorAndOracleCodeOutsideHunksByteExact": true,
+    "sourceContractLabelsUnchanged": true,
+    "elevenRuntimeChildContractsUnchanged": true,
+    "fixedMathPositionPixelsGeometryTimeAndFailureMarkersUnchanged": true
+  },
+  "oracleProjection": {
+    "wholeFileByteIdentical": false,
+    "recursiveCompleteEqualityExcludingOnlyAllowedMetadata": true,
+    "retainedSemanticSHA256": "741ea1d4a277c275662df1757f35f9db25fe2a82b74c50ac9edc480fa8f16f19",
+    "numericTokenCount": 259,
+    "numericTokensByteExact": true,
+    "numericTokenSequenceSHA256": "29536fd2fcd3c8a0a77c2fb400f37a3891f367e16bb64f4635d4f3b3c30d8218",
+    "allowedEdits": [
+      "provenance.author",
+      "provenance.originalDesign.path -> logicalIdentity",
+      "numericPolicy.position.reviewReceipt.path -> logicalIdentity",
+      "numericPolicy.position.constantQualification.path -> logicalIdentity"
+    ],
+    "framesPixelsMappingColorsUVIndicesTimePrecisionLimitsUnchanged": true
+  },
+  "sourceReview": {
+    "status": "PASS_FINITE_SOURCE_AND_SAVED_RECEIPT_REVIEW",
+    "openFindings": 0,
+    "receipt": {
+      "logicalIdentity": "original-f1-public-source-and-cpu-review",
+      "bytes": 13114,
+      "sha256": "75e5e9cec21027d41b16c055cbfd8213f19601d5f1adacc34c08a542820baba6"
+    },
+    "scope": "Finite original CPU source/metadata proof and saved raw receipts; no claim of full filesystem replay by the reviewer."
+  },
+  "upstreamBytesIncluded": false,
+  "excludedPayloads": [
+    "official core implementation",
+    "official declarations",
+    "archives",
+    "upstream source maps",
+    "node_modules",
+    "compiled outputs",
+    "upstream sample art",
+    "historical engine bundles",
+    "private prompts and identities"
+  ],
+  "officialCore": {
+    "name": "@esotericsoftware/spine-core",
+    "version": "4.3.13",
+    "gitHead": "b7beb2ccbbce667a12c02f44d070644f59b04968",
+    "regularFileCount": 137,
+    "contentDigestSHA256": "e3690c1f8fc3c2b8123bfcfe37d50d7f56878fbef8143fe5cd11d0cc97eaf0cf",
+    "archiveSHA256": "761d0f03f84ea073e66a55b11758afb7416cd1494ed20d70c534c324225f52b9",
+    "archiveScope": "Historical acquisition provenance; installed-content digest does not establish archive possession",
+    "originalLicense": "Spine Runtimes License Agreement",
+    "licenseUpdated": "2025-04-05",
+    "licenseSHA256": "435774fb793b0f67892899fc934f98009e64fd90ad3ab964117274e279a0f50e",
+    "integrationAndDistributionQualification": "unverified"
+  },
+  "firstPartyLicense": "Apache-2.0 only for independently authored first-party files",
+  "primaryLinks": [
+    "https://esotericsoftware.com/spine-runtimes-license",
+    "https://esotericsoftware.com/spine-editor-license#s2",
+    "https://raw.githubusercontent.com/EsotericSoftware/spine-runtimes/b7beb2ccbbce667a12c02f44d070644f59b04968/spine-ts/README.md",
+    "https://esotericsoftware.com/spine-purchase"
+  ],
+  "rightsBoundary": "Evaluation guidance, Editor Trial, licensed product integration, toolchain-user requirements and redistribution notices are separate. No individual qualification, unconditional SDK exception or clearance follows from execution, founder role or external input.",
+  "portableBrowserProjection": {
+    "status": "ACTUAL_NEW_CLONE_PASS_INDEPENDENT_REVIEW_PASS",
+    "plannedSeparateAuthoredPaths": 4,
+    "actualPublicWrapperAcceptance": "PASS_F1_NATIVE_SUBSET",
+    "sourceAndRuntimeProjectionReview": "PASS_FINITE_SOURCE_AND_SAVED_RECEIPT_REVIEW",
+    "historicalBrowserReceipt": {
+      "logicalIdentity": "original-browser-webgpu-f1-collection",
+      "bytes": 173030,
+      "sha256": "51345797a294dad31b89707dfe2b8c986e90455ffe7762017402699efc06daf2"
+    },
+    "authoredPaths": [
+      {
+        "path": "knowledge-base/experiments/spine-f1/webgpu/index.html",
+        "bytes": 522,
+        "sha256": "8ea24cbe9ec6929bac72faea42a3fdd649f269e6c3d3ac62830f5c14f5eff0c5"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f1/webgpu/main.mjs",
+        "bytes": 15875,
+        "sha256": "aa661379769a2617db53590b2c2d53bae1ae095164fae374f1a84322dc504673"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f1/webgpu/run.mjs",
+        "bytes": 46506,
+        "sha256": "ec973a784233eac2605a6a79a111082b0e296b5b07850b8c9f4b421ed5b76476"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f1/webgpu/manifest.json",
+        "bytes": 6903,
+        "sha256": "f4a0256e3af703aa28c2f583800752f66232b10c0589ec371909b966435cbfb8"
+      }
+    ],
+    "sourceProjectionProof": {
+      "mainHunks": [
+        {
+          "from": "// Original private harness. All geometry comes from the reviewed real bridge.",
+          "to": "// Original F1 harness. All geometry comes from the real manual bridge."
+        },
+        {
+          "from": "from '@f1/private-manual-bridge'",
+          "to": "from '#f1-manual-bridge'"
+        },
+        {
+          "from": "// success. Root's bounded browser teardown remains INCOMPLETE evidence.",
+          "to": "// success. Bounded browser teardown remains INCOMPLETE evidence."
+        }
+      ],
+      "mainAllOtherSourceByteExact": true,
+      "htmlOnlyTitleAndAriaLabelChanged": true,
+      "preservedRunnerFunctions": [
+        "rawCheck",
+        "safeNative",
+        "windowRun"
+      ],
+      "runnerFunctionsIncludingPIXELFAILRepairByteExact": true,
+      "sourceLiteralExtractorCheckedAgainstSavedOriginal": {
+        "modules": 160,
+        "edges": 477,
+        "differentSpecifierSets": 0,
+        "scope": "Source text/data comparison only; current projected execution remains NOT_RUN"
+      }
+    },
+    "currentExecutionSuccessor": {
+      "status": "ACTUAL_NEW_CLONE_PUBLIC_BROWSER_TOOL_AND_REVIEW_PASS",
+      "startedAtUTC": "2026-10-12T02:29:32.5859746Z",
+      "finishedAtUTC": "2026-10-12T02:29:52.7897889Z",
+      "driverExitCode": 0,
+      "driverTimeout": false,
+      "driverStdoutSHA256": "326135ec9bbff0802aedb080bccc482dcbe6dfdcc077157d88b7f5c66224b6e7",
+      "cpuCollection": {
+        "logicalIdentity": "public-browser-clone-cpu-cutoff",
+        "bytes": 150208,
+        "sha256": "ee68679d45e2cbff11af1322fbdc7f8a89eec528c35dc3460c22acac2eaf84a5"
+      },
+      "cpuOriginalTests": 12,
+      "cpuOriginalPassed": 12,
+      "cpuAssignedControls": 6,
+      "cpuFreshBaselineBeforeEach": 12,
+      "cpuCutoffBrowserStatus": "REQUESTED_PENDING_SEPARATE_ENTRY",
+      "browserReceipt": {
+        "logicalIdentity": "public-browser-clone-webgpu-result",
+        "bytes": 192148,
+        "sha256": "4116b88b1a536fa3f6a714ffdf2adf20e71c17bc0fcc8af060ccfd2d8e040293"
+      },
+      "wrapperResult": {
+        "logicalIdentity": "public-browser-clone-wrapper-successor",
+        "bytes": 686,
+        "sha256": "dcee53e8e61a1bde4598449a9640481d73ebf9285fee3475c32765c17514de09"
+      },
+      "wrapperExitCode": 0,
+      "browserStatus": "PASS_F1_NATIVE_SUBSET",
+      "positiveSubmissions": 8,
+      "assignedDoubleUpdateReadbacks": 1,
+      "fixedPositiveSamples": 22,
+      "channelTolerance": 0,
+      "fullRepeatGroups": 4,
+      "midpoint": {
+        "x": 25,
+        "y": 19,
+        "time": 0.5,
+        "expected": [
+          255,
+          0,
+          0,
+          255
+        ],
+        "controlActual": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "reportedUnchangedInputs": 1651,
+      "sharedResourcesAndApiCleanup": "OBSERVED_BOUNDED_BROWSER_SUBSET",
+      "historicalAndCurrentCountsCombined": false,
+      "sourceAndSavedReceiptReview": "PASS_FINITE_SOURCE_AND_SAVED_RECEIPT_REVIEW",
+      "actualPublicCheckoutExecution": "ACTUAL_PASS_SAME_F1_PROFILE",
+      "fullDefaultAndPublicationGates": "PENDING_AT_CURATION_CUTOFF",
+      "GitHubDelivery": "PENDING_AT_CURATION_CUTOFF",
+      "scope": "Current prepared public CPU/browser tool actually executed in a new clone; separate successor to immutable CPU cutoff and recorded original browser/classification runs. Same F1 feature coverage only; no additional full-Spine/device/performance acceptance.",
+      "independentReviewOpenFindings": 0,
+      "review": {
+        "logicalIdentity": "public-browser-source-and-saved-result-review",
+        "bytes": 13392,
+        "sha256": "2bed625b5395ae293401ee83c76aecce936e69f23ad4f6e66afdf804faeee685"
+      },
+      "publicCheckoutSuccessor": {
+        "status": "ACTUAL_PUBLIC_CHECKOUT_CPU_AND_BROWSER_F1_PASS",
+        "startedAtUTC": "2026-10-12T02:41:04.4548733Z",
+        "finishedAtUTC": "2026-10-12T02:41:18.150398Z",
+        "driverExitCode": 0,
+        "stdoutSHA256": "5a4d83917da05f3e9e36788cfe815c4fbe9c9bceb54a14271d83bc574d93e1df",
+        "cpuCollection": {
+          "logicalIdentity": "public-checkout-cpu-cutoff",
+          "bytes": 150228,
+          "sha256": "26f1d304c22721bfe812afd6b212c041a269327273af70a4f5ffcd87c0c502d7"
+        },
+        "browserReceipt": {
+          "logicalIdentity": "public-checkout-browser-webgpu-result",
+          "bytes": 189183,
+          "sha256": "bdb2b4c28debde459cd752d40375af87e6ad4edee697c0940e9c12516fd2d803"
+        },
+        "wrapperResult": {
+          "logicalIdentity": "public-checkout-browser-wrapper-successor",
+          "bytes": 692,
+          "sha256": "29444b0fe00f0872cc4e13bb368fbf21bdaf25374332e2313e6420c7ba582568"
+        },
+        "cpuOriginalTests": 12,
+        "cpuOriginalPassed": 12,
+        "cpuAssignedControls": 6,
+        "browserStatus": "PASS_F1_NATIVE_SUBSET",
+        "wrapperExitCode": 0,
+        "cpuCutoffBrowserStatus": "REQUESTED_PENDING_SEPARATE_ENTRY",
+        "scope": "Actual public-checkout repetition of the same original F1 CPU/browser profile. Separate phase successor, no summed feature/device/performance coverage."
+      }
+    },
+    "authoredPathsCutoff": "Preserved original pre-whitespace-repair source cutoff; see currentAuthoredPaths and formatOnlySuccessor.",
+    "currentAuthoredPaths": [
+      {
+        "path": "knowledge-base/experiments/spine-f1/webgpu/index.html",
+        "bytes": 522,
+        "sha256": "8ea24cbe9ec6929bac72faea42a3fdd649f269e6c3d3ac62830f5c14f5eff0c5"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f1/webgpu/main.mjs",
+        "bytes": 15875,
+        "sha256": "aa661379769a2617db53590b2c2d53bae1ae095164fae374f1a84322dc504673"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f1/webgpu/run.mjs",
+        "bytes": 46505,
+        "sha256": "e9486c05e05ad2e4751e360dc108acd1905cf5271593772ac33598427a55f214"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f1/webgpu/manifest.json",
+        "bytes": 6904,
+        "sha256": "a54535d9551ddc481addf493590c36a7a3f897384badedcd837870fc4dca93d2"
+      }
+    ]
+  },
+  "scopePrivateOwnershipDeliverySuccessor": {
+    "schemaVersion": 1,
+    "engineeringLabel": "0.35.0",
+    "sourceId": "S088",
+    "deliverableId": "V039",
+    "status": "ACTUAL_DELIVERY_SUCCESSOR",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/22",
+    "sourceCommit": "9b7ff75560b81bed00ec4080c23b16e70a2239cd",
+    "mergedMain": "d16f91c7ef41c9143469b21f4b3ef8b4efd1868e",
+    "tree": "a46b03f314b0f9b6c5c45a74affef498db97a7d6",
+    "readbackAtUtc": "2026-10-12T00:50:43.136Z",
+    "fullPrecommitGate": {
+      "exitCode": 0,
+      "stdoutSHA256": "e43ee7d0f3d7143cb57f47d926cb605ec78d7fbeee48f88abcbfa2f7f1addb91",
+      "finishedAtUtc": "2026-10-12T00:44:10.3662153Z"
+    },
+    "mandatoryPushHook": {
+      "exitCode": 0,
+      "stdoutSHA256": "06a68b0c0e2e3ec9bab4654c7ed7ad5dfa7b8e486a3d93d5ece3cb7f414565bf",
+      "stderrSHA256": "5d4b04e94127d2ac5d6dc0018f7231b1511fdd19253de3415d0fa2544876f200",
+      "finishedAtUtc": "2026-10-12T00:49:38.8003144Z",
+      "coreTests": 2678,
+      "corePassed": 2678,
+      "publicationTests": 63,
+      "documents": 148,
+      "criticalSources": 177
+    },
+    "remoteStatusCount": 0,
+    "remoteCheckCount": 0,
+    "remoteCIPassClaimed": false,
+    "scope": "Actual 0.35 delivery successor only. Earlier preparation and review cutoffs remain historical; this record is not a 0.36 gate or Spine acceptance."
+  },
+  "keyEnglishCommentReview": "PENDING_FINAL_PUBLICATION_GATE",
+  "sourceOriginAndLocalization": "PENDING_ROOT_DERIVATION_AFTER_FUNCTIONAL_FREEZE",
+  "publicContentReview": "PENDING_FINAL_REVIEW",
+  "fullSpineR020V020": "OPEN",
+  "totalAuthoredFunctionalPaths": 13,
+  "formatOnlySuccessor": {
+    "status": "ACTUAL_FORMAT_ONLY_SUCCESSOR_CPU_AND_WEBGPU_PASS",
+    "reason": "Git whitespace check refused one extra terminal LF in the browser runner.",
+    "sourceChange": {
+      "before": {
+        "path": "knowledge-base/experiments/spine-f1/webgpu/run.mjs",
+        "bytes": 46506,
+        "sha256": "ec973a784233eac2605a6a79a111082b0e296b5b07850b8c9f4b421ed5b76476"
+      },
+      "after": {
+        "path": "knowledge-base/experiments/spine-f1/webgpu/run.mjs",
+        "bytes": 46505,
+        "sha256": "e9486c05e05ad2e4751e360dc108acd1905cf5271593772ac33598427a55f214"
+      },
+      "removedBytes": 1,
+      "allOtherSourceBytesIdentical": true
+    },
+    "originalManifest": {
+      "path": "knowledge-base/experiments/spine-f1/webgpu/manifest.json",
+      "bytes": 6903,
+      "sha256": "f4a0256e3af703aa28c2f583800752f66232b10c0589ec371909b966435cbfb8"
+    },
+    "currentManifest": {
+      "path": "knowledge-base/experiments/spine-f1/webgpu/manifest.json",
+      "bytes": 6904,
+      "sha256": "a54535d9551ddc481addf493590c36a7a3f897384badedcd837870fc4dca93d2"
+    },
+    "originalResultsRetained": true,
+    "currentExecution": {
+      "startedAtUTC": "2026-10-12T03:00:03.5765913Z",
+      "finishedAtUTC": "2026-10-12T03:00:14.8654512Z",
+      "exitCode": 0,
+      "stdoutSHA256": "4e045bedb90d3eac3306458296ac7a82a086b6a4b4d5e69c97a9441f3a144271",
+      "cpuCollection": {
+        "bytes": 150228,
+        "sha256": "d680b8bd64030b4e130f31ba936c23a96b4f54f06a582f4ef40c50704dd5c402"
+      },
+      "browserReceipt": {
+        "bytes": 189183,
+        "sha256": "96c147492292f2b338ec2667d02ae1e7e8ffcab3e9b1a2a6a3d0f03fc1b55a97"
+      },
+      "wrapperResult": {
+        "bytes": 692,
+        "sha256": "70b3b63bc7208dd0f39681565687234fa383e532a8429ad3c18af27cc57e03c1"
+      },
+      "cpuStatus": "PASS_F1_CPU_SUBSET",
+      "browserStatus": "PASS_F1_NATIVE_SUBSET",
+      "cpuOriginalTests": 12,
+      "assignedCPUControls": 6,
+      "browserPositiveReadbacks": 8,
+      "browserErrorControl": 1,
+      "featureCoverageAdded": false
+    },
+    "fullGate": "PENDING_CURRENT_FORMAT_SUCCESSOR",
+    "independentDeltaReview": "PENDING",
+    "remoteDelivery": "PENDING"
+  }
+}

@@ -1,0 +1,610 @@
+{
+  "schemaVersion": 1,
+  "status": "INDEPENDENT_ORIGINAL_LITERAL_ORACLE_NOT_EXECUTED",
+  "provenance": {
+    "author": "Egret Engine contributors",
+    "license": "Apache-2.0",
+    "derivation": "Hand-derived original region/translation/atlas fixture; copied literals from sealed original design, never read from actual core or candidate output",
+    "originalDesign": {
+      "logicalIdentity": "original-f1-fixture-design",
+      "bytes": 21151,
+      "sha256": "4ec059fb553b61eea3a5d4dbea7d3ed3a844cdf5516426ca57f3d374d0047aed"
+    },
+    "midpointDiscriminator": "At t=.5 original pixel (25,19) red; at erroneous double-advanced t=1 transparent"
+  },
+  "cornerOrder": "screen TL/TR/BR/BL logical bijection; actual core vertex order retained",
+  "mapping": {
+    "x": "24+SpineX",
+    "y": "24-SpineY",
+    "root": [
+      24,
+      24
+    ],
+    "flipYOnce": true
+  },
+  "numericPolicy": {
+    "position": {
+      "status": "ACCEPTED_SEALED_REVIEW_BOUND",
+      "absolute": 9.5367431640625E-07,
+      "reviewReceipt": {
+        "logicalIdentity": "original-f1-fixed-precision-review",
+        "bytes": 21555,
+        "sha256": "b03340649be2411665956beb63998c3a817ba1c9458c392b60053532824d6e1d"
+      },
+      "constantQualification": {
+        "logicalIdentity": "historical-f1-canonical-qualification",
+        "bytes": 11535,
+        "sha256": "f7203e88e7085b6908b7d2dbf0aed7d2a6dd4673fa12391ae51d0377c1e781af"
+      },
+      "scope": "Only original shallow F1 fixture and qualified host; root adopts finite successor, no geometry fitting or automatic widening"
+    },
+    "color": "exact numerator/denominator per channel",
+    "uvs": "exact source-derived corner values",
+    "indices": "exact actual canonical active protocol [0,1,2,2,3,0], plus independent full-quad coverage",
+    "identityAndTime": "exact"
+  },
+  "frames": [
+    {
+      "t": 0,
+      "quads": [
+        {
+          "slot": "back",
+          "bounds": [
+            20,
+            20,
+            28,
+            28
+          ],
+          "corners": [
+            [
+              20,
+              20
+            ],
+            [
+              28,
+              20
+            ],
+            [
+              28,
+              28
+            ],
+            [
+              20,
+              28
+            ]
+          ],
+          "cornerUVs": [
+            [
+              0,
+              0
+            ],
+            [
+              0.5,
+              0
+            ],
+            [
+              0.5,
+              0.5
+            ],
+            [
+              0,
+              0.5
+            ]
+          ],
+          "lightRGBA": [
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              1
+            ]
+          ]
+        },
+        {
+          "slot": "front",
+          "bounds": [
+            24,
+            22,
+            28,
+            26
+          ],
+          "corners": [
+            [
+              24,
+              22
+            ],
+            [
+              28,
+              22
+            ],
+            [
+              28,
+              26
+            ],
+            [
+              24,
+              26
+            ]
+          ],
+          "cornerUVs": [
+            [
+              0.5,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              0.5
+            ],
+            [
+              0.5,
+              0.5
+            ]
+          ],
+          "lightRGBA": [
+            [
+              128,
+              255
+            ],
+            [
+              128,
+              255
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              1
+            ]
+          ]
+        }
+      ],
+      "pixels": [
+        {
+          "xy": [
+            21,
+            21
+          ],
+          "RGBA": [
+            255,
+            0,
+            0,
+            255
+          ]
+        },
+        {
+          "xy": [
+            25,
+            23
+          ],
+          "RGBA": [
+            0,
+            0,
+            255,
+            255
+          ]
+        }
+      ]
+    },
+    {
+      "t": 0.5,
+      "quads": [
+        {
+          "slot": "back",
+          "bounds": [
+            24,
+            18,
+            32,
+            26
+          ],
+          "corners": [
+            [
+              24,
+              18
+            ],
+            [
+              32,
+              18
+            ],
+            [
+              32,
+              26
+            ],
+            [
+              24,
+              26
+            ]
+          ],
+          "cornerUVs": [
+            [
+              0,
+              0
+            ],
+            [
+              0.5,
+              0
+            ],
+            [
+              0.5,
+              0.5
+            ],
+            [
+              0,
+              0.5
+            ]
+          ],
+          "lightRGBA": [
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              1
+            ]
+          ]
+        },
+        {
+          "slot": "front",
+          "bounds": [
+            24,
+            22,
+            28,
+            26
+          ],
+          "corners": [
+            [
+              24,
+              22
+            ],
+            [
+              28,
+              22
+            ],
+            [
+              28,
+              26
+            ],
+            [
+              24,
+              26
+            ]
+          ],
+          "cornerUVs": [
+            [
+              0.5,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              0.5
+            ],
+            [
+              0.5,
+              0.5
+            ]
+          ],
+          "lightRGBA": [
+            [
+              128,
+              255
+            ],
+            [
+              128,
+              255
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              1
+            ]
+          ]
+        }
+      ],
+      "pixels": [
+        {
+          "xy": [
+            30,
+            19
+          ],
+          "RGBA": [
+            255,
+            0,
+            0,
+            255
+          ]
+        },
+        {
+          "xy": [
+            21,
+            21
+          ],
+          "RGBA": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "xy": [
+            25,
+            23
+          ],
+          "RGBA": [
+            0,
+            0,
+            255,
+            255
+          ]
+        },
+        {
+          "xy": [
+            25,
+            19
+          ],
+          "RGBA": [
+            255,
+            0,
+            0,
+            255
+          ],
+          "provenance": "New original midpoint discriminator; transparent at erroneous t=1; old fixture-plan remains unchanged"
+        }
+      ]
+    },
+    {
+      "t": 1,
+      "quads": [
+        {
+          "slot": "back",
+          "bounds": [
+            28,
+            16,
+            36,
+            24
+          ],
+          "corners": [
+            [
+              28,
+              16
+            ],
+            [
+              36,
+              16
+            ],
+            [
+              36,
+              24
+            ],
+            [
+              28,
+              24
+            ]
+          ],
+          "cornerUVs": [
+            [
+              0,
+              0
+            ],
+            [
+              0.5,
+              0
+            ],
+            [
+              0.5,
+              0.5
+            ],
+            [
+              0,
+              0.5
+            ]
+          ],
+          "lightRGBA": [
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              1
+            ]
+          ]
+        },
+        {
+          "slot": "front",
+          "bounds": [
+            24,
+            22,
+            28,
+            26
+          ],
+          "corners": [
+            [
+              24,
+              22
+            ],
+            [
+              28,
+              22
+            ],
+            [
+              28,
+              26
+            ],
+            [
+              24,
+              26
+            ]
+          ],
+          "cornerUVs": [
+            [
+              0.5,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              0.5
+            ],
+            [
+              0.5,
+              0.5
+            ]
+          ],
+          "lightRGBA": [
+            [
+              128,
+              255
+            ],
+            [
+              128,
+              255
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              1
+            ]
+          ]
+        }
+      ],
+      "pixels": [
+        {
+          "xy": [
+            33,
+            17
+          ],
+          "RGBA": [
+            255,
+            0,
+            0,
+            255
+          ]
+        },
+        {
+          "xy": [
+            25,
+            23
+          ],
+          "RGBA": [
+            0,
+            0,
+            255,
+            255
+          ]
+        },
+        {
+          "xy": [
+            21,
+            21
+          ],
+          "RGBA": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    }
+  ],
+  "rawPage": {
+    "filename": "egret-original-page.rgba",
+    "logicalAtlasName": "egret-original-page.png",
+    "width": 16,
+    "height": 16,
+    "bytes": 1024,
+    "origin": "top-left",
+    "alpha": "straight opaque",
+    "recipe": "row-major x,y 0..15: y<8,x<8 red; y<8,x>=8 blue; y>=8,x<8 green; otherwise yellow",
+    "quadrantRGBA": [
+      [
+        255,
+        0,
+        0,
+        255
+      ],
+      [
+        0,
+        0,
+        255,
+        255
+      ],
+      [
+        0,
+        255,
+        0,
+        255
+      ],
+      [
+        255,
+        255,
+        0,
+        255
+      ]
+    ],
+    "generated": "ORIGINAL_PRIVATE_DATA_GENERATED_NOT_RENDERED"
+  },
+  "nativeSuccessor": {
+    "width": 64,
+    "height": 48,
+    "pixelRatio": 1,
+    "clearRGBA": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "format": "rgba8unorm",
+    "colorSpace": "srgb",
+    "alphaMode": "premultiplied",
+    "channelTolerance": 0,
+    "acceptance": "NOT_RUN_CPU_PORT_OBSERVATION_IS_NOT_GPU_PIXELS"
+  },
+  "limits": "Opaque quadrant art does not establish PMA, dark tint, clipping, mesh/deform, export/binary, constraints, mixing, devices/native or performance"
+}

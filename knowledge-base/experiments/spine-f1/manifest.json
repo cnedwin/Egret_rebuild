@@ -1,0 +1,253 @@
+{
+  "schemaVersion": 1,
+  "status": "ORIGINAL_ONLY_OPT_IN_F1_EXPERIMENT_EXECUTION_REQUIRED",
+  "root": "knowledge-base/experiments/spine-f1",
+  "license": "Apache-2.0 for independently authored first-party files only",
+  "runtimeProfile": {
+    "node": "24.19.0",
+    "typescript": "7.0.2",
+    "compiler": "Clone node_modules/typescript/bin/tsc; generated local strict ES2022 DOM config",
+    "install": false,
+    "download": false,
+    "automaticDefaultExecution": false
+  },
+  "historicalDeliveredBase": {
+    "head": "d16f91c7ef41c9143469b21f4b3ef8b4efd1868e",
+    "tree": "a46b03f314b0f9b6c5c45a74affef498db97a7d6",
+    "release": "0.35.0",
+    "qualification": "Historical delivered identity only; a current clone snapshot has no automatic Git tree binding"
+  },
+  "files": [
+    {
+      "path": "knowledge-base/experiments/spine-f1/src/f1-manual-bridge.ts",
+      "bytes": 21835,
+      "sha256": "876213de21022f351b0ff9492880846bb066381233275d237f1921ec8fad9078"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f1/src/canonical-baseline.ts",
+      "bytes": 4290,
+      "sha256": "dfb04d5f19ad12867f788d360c0fbb2e1dad927335645411567e917c04a987dd"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f1/tests/manual-step.test.mjs",
+      "bytes": 24090,
+      "sha256": "c83458c064478ced7ab6222e0f219f065562686bc21273998c4dd1e1bb1788ce"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f1/run.mjs",
+      "bytes": 43103,
+      "sha256": "197a1623d6a6a2e71e1b63b06ac6d2499c1355d8eb3c3ba2b3260ab35346006e"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f1/fixtures/egret-original-slide.spine.json",
+      "bytes": 935,
+      "sha256": "daa5e953865042464348acd980c638d2df981092a9a5d98b0c5fe224c3b9a515"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f1/fixtures/egret-original-slide.atlas",
+      "bytes": 162,
+      "sha256": "0e4053de057c85b3ca2a6fa4045e7762073c45a54e03c58650feeaf45dfa6401"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f1/fixtures/egret-original-page.rgba",
+      "bytes": 1024,
+      "sha256": "0d5994c9c3f7ef2b1931a4270ba630661925096358d35bf1b9ccedd60a9925e4"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f1/fixtures/f1-oracle.json",
+      "bytes": 11677,
+      "sha256": "79244829b2460589599ba70b4eff21e43e104bfe5e063e69ba5cd47c3fa17c97"
+    }
+  ],
+  "helper": {
+    "path": "tests/helpers.mjs",
+    "bytes": 997,
+    "sha256": "20e7dd30f54b3a81d35f666c8370e7f014e4559c68222727bc88fd377efc1af7"
+  },
+  "core": {
+    "name": "@esotericsoftware/spine-core",
+    "version": "4.3.13",
+    "gitHead": "b7beb2ccbbce667a12c02f44d070644f59b04968",
+    "regularFileCount": 137,
+    "contentDigestAlgorithm": "SHA256 of UTF8 JSON ordinal-path-sorted [relative,bytes,sha256] tuples, no trailing newline",
+    "contentDigestSHA256": "e3690c1f8fc3c2b8123bfcfe37d50d7f56878fbef8143fe5cd11d0cc97eaf0cf",
+    "files": [
+      {
+        "path": "package.json",
+        "bytes": 761,
+        "sha256": "25b48d4532d322faa7c740481717d4982409ed2f6229bf66da53212dbe9816b9"
+      },
+      {
+        "path": "README.md",
+        "bytes": 90,
+        "sha256": "ab40919feececb9261d7fccbac6f689e5a1c75d085ea02e4765863edf77eee0c"
+      },
+      {
+        "path": "LICENSE",
+        "bytes": 1468,
+        "sha256": "435774fb793b0f67892899fc934f98009e64fd90ad3ab964117274e279a0f50e"
+      },
+      {
+        "path": "dist/index.js",
+        "bytes": 7605,
+        "sha256": "b9ae0c101868bb7f41d264254699d5b9fff5cc75e69037274c182c8845c866fe"
+      },
+      {
+        "path": "dist/index.d.ts",
+        "bytes": 2335,
+        "sha256": "98dd997bbc4a70cfd526644865c7871847d46190e0281f09472f40638fcee44a"
+      }
+    ],
+    "archive": {
+      "bytes": 1154900,
+      "sha256": "761d0f03f84ea073e66a55b11758afb7416cd1494ed20d70c534c324225f52b9",
+      "scope": "Historical acquisition provenance; installed content checks do not establish archive possession"
+    },
+    "externalOnly": true,
+    "originalLicense": "Spine Runtimes License Agreement, April5 2025",
+    "integrationAndDistributionQualification": "unverified",
+    "licenseLinks": [
+      "https://esotericsoftware.com/spine-runtimes-license",
+      "https://esotericsoftware.com/spine-editor-license#s2",
+      "https://raw.githubusercontent.com/EsotericSoftware/spine-runtimes/b7beb2ccbbce667a12c02f44d070644f59b04968/spine-ts/README.md",
+      "https://esotericsoftware.com/spine-purchase"
+    ]
+  },
+  "preservedInputs": [
+    {
+      "logicalIdentity": "original-f1-fixture-design",
+      "bytes": 21151,
+      "sha256": "4ec059fb553b61eea3a5d4dbea7d3ed3a844cdf5516426ca57f3d374d0047aed"
+    },
+    {
+      "logicalIdentity": "original-f1-fixed-precision-review",
+      "bytes": 21555,
+      "sha256": "b03340649be2411665956beb63998c3a817ba1c9458c392b60053532824d6e1d"
+    },
+    {
+      "logicalIdentity": "historical-f1-canonical-qualification",
+      "bytes": 11535,
+      "sha256": "f7203e88e7085b6908b7d2dbf0aed7d2a6dd4673fa12391ae51d0377c1e781af"
+    }
+  ],
+  "originalSources": [
+    {
+      "logicalIdentity": "original-f1-manual-bridge",
+      "bytes": 21835,
+      "sha256": "876213de21022f351b0ff9492880846bb066381233275d237f1921ec8fad9078",
+      "projection": "byte-identical"
+    },
+    {
+      "logicalIdentity": "original-canonical-probe",
+      "bytes": 4290,
+      "sha256": "dfb04d5f19ad12867f788d360c0fbb2e1dad927335645411567e917c04a987dd",
+      "projection": "byte-identical"
+    },
+    {
+      "logicalIdentity": "original-repaired-manual-tests",
+      "bytes": 23761,
+      "sha256": "30e05573e65b5372d102f4bd2791bfff4b1424212f77462fbacbdca41f2ea5e3",
+      "projection": "Only enumerated metadata admission and comments"
+    },
+    {
+      "logicalIdentity": "original-literal-oracle",
+      "bytes": 11927,
+      "sha256": "8a2d5d68f64b28515945caf2f64eb8a9d5fec4869ad3ad74327de53433c95b7d",
+      "projection": "Only enumerated private provenance paths and author; semantic/numeric values unchanged"
+    }
+  ],
+  "parentTest": "F1 private manual bridge: real setup, named module RED, then fixed acceptance",
+  "setupSubtests": [
+    "admission: exact authored files and genuine public SDK graph",
+    "admission: actual providers, whole-page lease, Texture and Mesh2D before bridge",
+    "assigned first-party module RED: F1_MANUAL_BRIDGE_MODULE_REQUIRED after successful setup",
+    "separately reviewed numeric admission; literal pixels remain exact"
+  ],
+  "controls": [
+    {
+      "id": "unsupported-additive",
+      "kind": "supplement",
+      "expectedStatus": "ACTUAL_SUPPORTED_CORE_UNSUPPORTED_BRIDGE_PROFILE_REFUSED",
+      "statement": "Only original front-slot blend changes in an owned memory variant; genuine core must parse/render additive. Current reviewed bridge assembles data after page acquisition: freeze F1_NORMAL_LIGHT_TINT_REQUIRED under F1_RESOURCE_LOAD_FAILED, exactly2 headers and1 page acquired/retired; no facade."
+    },
+    {
+      "id": "wrong-y",
+      "kind": "behavior-fault",
+      "from": "            positions[vertex * 2 + 1] = -command.positions[vertex * 2 + 1];",
+      "to": "            positions[vertex * 2 + 1] = command.positions[vertex * 2 + 1];",
+      "marker": "F1_EXACT_V",
+      "assignedSubtest": "fixed poses, invalid/zero/manual time, independent instances and old immutable geometry",
+      "allowedFailingSubtests": [
+        "fixed poses, invalid/zero/manual time, independent instances and old immutable geometry",
+        "genuine foreign Scope refuses without retiring valid resources"
+      ],
+      "statement": "Omit sole actual Y conversion in owned emitted copy; original t0 corner-associated V oracle is discriminating."
+    },
+    {
+      "id": "double-positive-update",
+      "kind": "behavior-fault",
+      "from": "            animation.update(deltaSeconds);",
+      "to": "            animation.update(deltaSeconds);\n            animation.update(deltaSeconds);",
+      "marker": "F1_CORNER_BIJECTION_NO_NEAREST_FITTING",
+      "assignedSubtest": "fixed poses, invalid/zero/manual time, independent instances and old immutable geometry",
+      "allowedFailingSubtests": [
+        "fixed poses, invalid/zero/manual time, independent instances and old immutable geometry",
+        "genuine foreign Scope refuses without retiring valid resources"
+      ],
+      "statement": "Duplicate only actual positive AnimationState.update, leaving original elapsed/corners unchanged."
+    },
+    {
+      "id": "reverse-actual-commands",
+      "kind": "behavior-fault",
+      "from": "    for (const command of commands) {",
+      "to": "    for (const command of [...commands].reverse()) {",
+      "marker": "F1_CORNER_BIJECTION_NO_NEAREST_FITTING",
+      "assignedSubtest": "fixed poses, invalid/zero/manual time, independent instances and old immutable geometry",
+      "allowedFailingSubtests": [
+        "fixed poses, invalid/zero/manual time, independent instances and old immutable geometry",
+        "genuine foreign Scope refuses without retiring valid resources"
+      ],
+      "statement": "Reverse only actual canonical command materialization order in owned copy."
+    },
+    {
+      "id": "omit-instance-scope-open",
+      "kind": "behavior-fault",
+      "from": "    #assertLive() {\n        this.#assertResources();\n        requireScopeOpen(this.#scope);",
+      "to": "    #assertLive() {\n        this.#assertResources();",
+      "marker": "F1_CLOSE_CALLBACK_STEP_REFUSED",
+      "assignedSubtest": "instance Scope abort refuses before its reverse cleanup",
+      "allowedFailingSubtests": [
+        "instance Scope abort refuses before its reverse cleanup"
+      ],
+      "statement": "Remove only instance Scope-open check; resource checks stay genuine. Real instance abort callback is the assigned original witness."
+    },
+    {
+      "id": "injected-after-advance",
+      "kind": "supplement",
+      "from": "            animation.apply(skeleton);\n            skeleton.updateWorldTransform(Physics.none);\n            const geometries = materialize(renderer.render(skeleton, false, undefined, 2), this.#pages);",
+      "to": "            animation.apply(skeleton);\n            skeleton.updateWorldTransform(Physics.none);\n            if (deltaSeconds === 0.25) throw new Error('F1_INJECTED_AFTER_ADVANCE');\n            const geometries = materialize(renderer.render(skeleton, false, undefined, 2), this.#pages);",
+      "expectedStatus": "ACTUAL_DELIBERATE_POST_ADVANCE_EXCEPTION_HANDLING",
+      "statement": "One conditional throw after genuine Skeleton/State/apply/world and before materialize inside existing try; A.25 hits exact named fault, A.125 must refuse terminal without hitting injection; B.125fourtimes reaches original .5 geometry. Deliberate injected handling only, not naturally reachable failure."
+    }
+  ],
+  "unsupportedCause": "F1_NORMAL_LIGHT_TINT_REQUIRED",
+  "nativeProfile": {
+    "width": 64,
+    "height": 48,
+    "pixelRatio": 1,
+    "channelTolerance": 0,
+    "submissions": 8,
+    "channel": "msedge",
+    "GPUAcceptance": "Separate optional native harness required",
+    "physicalGPUAndOSRetirement": "unverified",
+    "operationMs": 15000,
+    "totalMs": 90000,
+    "cooperativeCloseMs": 20000,
+    "outerMs": 120000
+  },
+  "boundary": "Original shallow F1 CPU subset only. CPU port capture/submission is not GPU pixels. Full Spine R020/V020, Canvas/WebGL/fallback, exported/binary art, PMA/dark tint/blends/mesh/deform/clipping/mixing/events/constraints/physics, mobile/native devices, physical acceleration, performance/energy and legal qualification remain open.",
+  "implementationChoice": {
+    "maxActiveInstances": 2,
+    "scope": "Bounded F1 experiment choice; not a general Spine capability or SDK limit"
+  }
+}

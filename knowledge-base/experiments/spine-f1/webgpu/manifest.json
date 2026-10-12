@@ -1,0 +1,198 @@
+{
+  "schemaVersion": 1,
+  "root": "knowledge-base/experiments/spine-f1/webgpu",
+  "status": "SOURCE_ONLY_PUBLIC_NATIVE_WRAPPER_NOT_RUN",
+  "author": "Egret Engine contributors",
+  "license": "Apache-2.0 (original first-party harness only)",
+  "inputKind": "CURRENT_F1_CPU_COMPLETED_NATIVE_HANDOFF",
+  "sourceIdentity": {
+    "originalF1NativeRunnerSHA256": "6dab01a69cfef4a6b47c4d167084fc21d2ec3f84f7d4f7c1296404440304dade",
+    "scope": "Original source provenance only; no historical tree assigned to the current clone and no saved private result substituted for a new run."
+  },
+  "originalInputs": {
+    "src/f1-manual-bridge.ts": {
+      "bytes": 21835,
+      "sha256": "876213de21022f351b0ff9492880846bb066381233275d237f1921ec8fad9078"
+    },
+    "src/canonical-baseline.ts": {
+      "bytes": 4290,
+      "sha256": "dfb04d5f19ad12867f788d360c0fbb2e1dad927335645411567e917c04a987dd"
+    },
+    "tests/manual-step.test.mjs": {
+      "bytes": 24090,
+      "sha256": "c83458c064478ced7ab6222e0f219f065562686bc21273998c4dd1e1bb1788ce"
+    },
+    "fixtures/egret-original-slide.spine.json": {
+      "bytes": 935,
+      "sha256": "daa5e953865042464348acd980c638d2df981092a9a5d98b0c5fe224c3b9a515"
+    },
+    "fixtures/egret-original-slide.atlas": {
+      "bytes": 162,
+      "sha256": "0e4053de057c85b3ca2a6fa4045e7762073c45a54e03c58650feeaf45dfa6401"
+    },
+    "fixtures/egret-original-page.rgba": {
+      "bytes": 1024,
+      "sha256": "0d5994c9c3f7ef2b1931a4270ba630661925096358d35bf1b9ccedd60a9925e4"
+    },
+    "fixtures/f1-oracle.json": {
+      "bytes": 11677,
+      "sha256": "79244829b2460589599ba70b4eff21e43e104bfe5e063e69ba5cd47c3fa17c97"
+    }
+  },
+  "fixturePaths": {
+    "skeleton": "fixtures/egret-original-slide.spine.json",
+    "atlas": "fixtures/egret-original-slide.atlas",
+    "page": "fixtures/egret-original-page.rgba",
+    "oracle": "fixtures/f1-oracle.json"
+  },
+  "bridgeEmissionSHA256": "67b680d5237425d9e4bbc8a8dc04995243cc5fb96544c2cc5089978261089ea3",
+  "core": {
+    "name": "@esotericsoftware/spine-core",
+    "version": "4.3.13",
+    "gitHead": "b7beb2ccbbce667a12c02f44d070644f59b04968",
+    "regularFileCount": 137,
+    "contentDigestSHA256": "e3690c1f8fc3c2b8123bfcfe37d50d7f56878fbef8143fe5cd11d0cc97eaf0cf",
+    "externalOnly": true,
+    "integrationAndDistributionQualification": "unverified",
+    "licenseLinks": [
+      "https://esotericsoftware.com/spine-runtimes-license",
+      "https://esotericsoftware.com/spine-editor-license#s2",
+      "https://raw.githubusercontent.com/EsotericSoftware/spine-runtimes/b7beb2ccbbce667a12c02f44d070644f59b04968/spine-ts/README.md",
+      "https://esotericsoftware.com/spine-purchase"
+    ]
+  },
+  "profile": {
+    "width": 64,
+    "height": 48,
+    "pixelRatio": 1,
+    "channelTolerance": 0,
+    "submissions": 8,
+    "channel": "msedge",
+    "operationMs": 15000,
+    "totalMs": 90000,
+    "cooperativeCloseMs": 20000,
+    "outerMs": 120000
+  },
+  "execution": {
+    "nodeVersion": "24.19.0",
+    "playwrightVersion": "1.62.1",
+    "channel": "msedge",
+    "headless": true,
+    "callerAddedFlags": [],
+    "contextDeviceScaleFactor": 1,
+    "freshOutput": "Exactly a new native child of the completed CPU-output directory; collision refusal, no deletion or replacement.",
+    "externalProcessEvidence": "Actual Edge executable, PID and OS retirement are UNOBSERVED; browser version and cooperative API close are separate fields."
+  },
+  "observations": [
+    {
+      "id": "F1G01",
+      "instance": "A",
+      "time": 0,
+      "action": "initial",
+      "expectedFrame": 0
+    },
+    {
+      "id": "F1G02",
+      "instance": "A",
+      "time": 0,
+      "action": "same-time repeat",
+      "equalRawBytesTo": "F1G01",
+      "expectedFrame": 0
+    },
+    {
+      "id": "F1G03",
+      "instance": "A",
+      "time": 0.5,
+      "action": "exactly two step(.25)",
+      "expectedFrame": 0.5
+    },
+    {
+      "id": "F1G04",
+      "instance": "A",
+      "time": 0.5,
+      "action": "same-time repeat",
+      "equalRawBytesTo": "F1G03",
+      "expectedFrame": 0.5
+    },
+    {
+      "id": "F1G05",
+      "instance": "A",
+      "time": 1,
+      "action": "two more step(.25)",
+      "expectedFrame": 1
+    },
+    {
+      "id": "F1G06",
+      "instance": "A",
+      "time": 1,
+      "action": "same-time repeat",
+      "equalRawBytesTo": "F1G05",
+      "expectedFrame": 1
+    },
+    {
+      "id": "F1G07",
+      "instance": "B",
+      "time": 0,
+      "action": "detach A/show B; A remains live",
+      "expectedFrame": 0
+    },
+    {
+      "id": "F1G08",
+      "instance": "B",
+      "time": 0,
+      "action": "A.dispose; B/page remain live",
+      "equalRawBytesTo": "F1G07",
+      "expectedFrame": 0
+    }
+  ],
+  "control": {
+    "id": "double-state-step",
+    "from": "animation.update(deltaSeconds);",
+    "to": "animation.update(deltaSeconds * 2);",
+    "changedSHA256": "4d72eeef56b87e4ebc5ef8bd6ccaa79a6b499431a551fb5f09c8c9a944294cff",
+    "generatedAfterCleanPositiveOnly": true,
+    "unchangedOracle": true,
+    "expected": "At A.5, original midpoint25,19 red becomes transparent; exact native raw witness plus safe cleanup required."
+  },
+  "modulePolicy": {
+    "bareSpecifiers": [
+      "@egret/engine",
+      "@egret/engine/webgpu",
+      "@egret/contracts",
+      "@egret/runtime",
+      "@esotericsoftware/spine-core",
+      "#f1-manual-bridge",
+      "#egret-textured-frame-state",
+      "robust-predicates"
+    ],
+    "maxModules": 256,
+    "maxBytes": 4194304,
+    "maxEdges": 1024,
+    "method": "Literal import/re-export/dynamic-import closure from the pinned current SDK, original emitted bridge and unchanged external official core; nonliteral/unknown modules refused.",
+    "privateRegistry": "Only genuine SDK transitive alias; harness uses public engine/WebGPU exports and original bridge."
+  },
+  "exits": {
+    "PASS_F1_NATIVE_SUBSET": 0,
+    "PIXEL_FAIL": 1,
+    "INCOMPLETE": 2,
+    "UNSUPPORTED_DEFAULT_ENVIRONMENT": 3
+  },
+  "boundary": "Original shallow F1 WebGPU/readback subset. Full Spine R020/V020, Canvas/WebGL/fallback, exported/binary art, PMA/dark tint/blends/mesh/deform/clipping/mixing/events/constraints/physics, mobile/native-platform devices, physical acceleration, performance/energy and legal qualification remain open.",
+  "authoredFiles": [
+    {
+      "path": "index.html",
+      "bytes": 522,
+      "sha256": "8ea24cbe9ec6929bac72faea42a3fdd649f269e6c3d3ac62830f5c14f5eff0c5"
+    },
+    {
+      "path": "main.mjs",
+      "bytes": 15875,
+      "sha256": "aa661379769a2617db53590b2c2d53bae1ae095164fae374f1a84322dc504673"
+    },
+    {
+      "path": "run.mjs",
+      "bytes": 46505,
+      "sha256": "e9486c05e05ad2e4751e360dc108acd1905cf5271593772ac33598427a55f214"
+    }
+  ]
+}

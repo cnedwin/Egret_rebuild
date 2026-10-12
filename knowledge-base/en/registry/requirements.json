@@ -485,7 +485,8 @@
       "statement": "The engine must fully support Spine animation, preserving official semantics and authored effects within a publicly verified version/feature/backend/host matrix. Cover import, editing, complex UI and scene composition, events, resource recovery and applicable legacy migration without silently dropping features.",
       "status": "confirmed",
       "sourceIds": [
-        "S066"
+        "S066",
+        "S089"
       ],
       "deliveryIds": [
         "V002",
@@ -494,7 +495,8 @@
         "V006",
         "V020",
         "V007",
-        "V008"
+        "V008",
+        "V040"
       ],
       "decisionIds": [
         "D002",
@@ -502,12 +504,19 @@
         "D012",
         "D016"
       ],
-      "doc": "en/docs/spine-animation-support-and-acceptance.md"
+      "doc": "en/docs/spine-animation-support-and-acceptance.md",
+      "originalF1Experiment": {
+        "deliverable": "V040",
+        "source": "S089",
+        "fullCapabilityAcceptance": "not_run",
+        "status": "OPEN",
+        "doc": "en/experiments/spine-f1/README.md"
+      }
     }
   ],
   "_localization": {
     "canonicalSource": "需求.json",
-    "canonicalSha256": "261047023b90aa96e47afdc20937d70552686384b577e4c5f68080d50e2c395f",
+    "canonicalSha256": "d546d6177d9390b63b1b11eb3e191db8f10e7c5c65347447edb4c8203a81bb64",
     "role": "read_only_translation",
     "language": "en"
   }
