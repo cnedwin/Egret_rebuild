@@ -1,0 +1,827 @@
+{
+  "schemaVersion": 1,
+  "kind": "F2_A_BOUNDED_SOURCE_PLANNING_VERIFICATION",
+  "engineeringPreviewCandidate": "0.42.0",
+  "specification": "S095",
+  "verification": "V046",
+  "status": "ACCEPTED_FINITE_OBSERVATIONS_RELEASE_PENDING",
+  "evidenceCutoffUtc": "2026-10-12T17:21:06.5985450Z",
+  "documentationPair": [
+    {
+      "path": "knowledge-base/en/docs/spine-mesh-source-plan-evidence.md",
+      "bytes": 10011,
+      "sha256": "3a402c44813b7d9f9dc7df3ef836e3b9732761d4a4a06a716e9cbf0699dfde6e"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/Spine网格源规划证据.md",
+      "bytes": 9016,
+      "sha256": "573116ff1c5fb92336c198f9f49de7ea7a05a14ca66094b2fec1a9515bd9f64d"
+    }
+  ],
+  "scope": {
+    "mode": "opt-in development experiment",
+    "entry": "knowledge-base/experiments/spine-f2/src/index.ts",
+    "factory": "createF2MeshSourcePlan",
+    "input": "public SpineImportInput",
+    "ownership": "Frozen owned input snapshot and immutable source summaries",
+    "SP1": "Exactly one public SP1 call within each factory; preserve its original first refusal before the raw stage",
+    "defaultSDKExportsChanged": false,
+    "newDefaultAPI": false,
+    "newNpmPackage": false,
+    "sourceDependencies": [
+      "@egret/project/spine public entry",
+      "jsonc-parser public entry 3.3.1"
+    ],
+    "sourceDependencyReview": "Accepted finite source review",
+    "actualToolPolicy": "PENDING",
+    "AIContribution": "AI-assisted design, implementation, test authoring and review; independently reviewed contracts and literal witnesses delimit the claims."
+  },
+  "acceptedArtifactIdentities": [
+    {
+      "id": "actual-install-compile-entry-types-review",
+      "bytes": 32691,
+      "sha256": "a4a26fe0e9364345bd18e7b7a6b55a043ddce3e11cf1162008ffb7d6d1c3e8a2",
+      "verdict": "PASS_ACTUAL",
+      "openFindings": 0
+    },
+    {
+      "id": "actual-cpu-behavior-review-r2",
+      "bytes": 13892,
+      "sha256": "c3a45940e110bbcdf0776c4ec05e41c9fe4e61a1df6c447ab05ac9c5063f956d",
+      "verdict": "PASS_ACTUAL",
+      "openFindings": 0
+    },
+    {
+      "id": "product-source-review",
+      "bytes": 10034,
+      "sha256": "474bbbae45cf61b176e897829fb6fa05df3fc5e7014ef471ea8f83066fc461ae",
+      "verdict": "PASS_FINITE_SOURCE_ONLY",
+      "openFindings": 0
+    },
+    {
+      "id": "type-source-review-r2",
+      "bytes": 5241,
+      "sha256": "d16696cfaeea2f57520eadd9c5e9f4b61d83732c64f4a95a6018808dc3d6edec",
+      "verdict": "PASS_SOURCE_ONLY",
+      "openFindings": 0
+    },
+    {
+      "id": "selector-source-review-r2",
+      "bytes": 6783,
+      "sha256": "84beb2f43211f20d6aa1d372727a09b25f146e79f1ff7e4f1b5e60cc46b04a5c",
+      "verdict": "PASS_SOURCE_ONLY",
+      "openFindings": 0
+    },
+    {
+      "id": "shape-priority-source-review",
+      "bytes": 5195,
+      "sha256": "f9bdf976518399abc6b6c7499231502c390e29a1917d5eb8e0783ec580b07cf6",
+      "verdict": "PASS_SOURCE_ONLY",
+      "openFindings": 0
+    }
+  ],
+  "observations": {
+    "installation": {
+      "initialSourceAdoptionExitCode": 0,
+      "initialInstallExitCode": 1,
+      "initialError": "ERR_PNPM_ABORTED_REMOVE_MODULES_DIR_NO_TTY",
+      "retryExitCode": 0,
+      "qualificationExitCode": 0,
+      "retainedArgs": [
+        "--offline",
+        "--frozen-lockfile",
+        "--ignore-scripts"
+      ],
+      "addedArg": "--config.confirmModulesPurge=false",
+      "rootJsoncVersion": "3.3.1",
+      "compilerVersion": "7.0.2",
+      "workspaceLinkOwners": [
+        "packages/contracts",
+        "packages/runtime",
+        "packages/engine",
+        "packages/project"
+      ],
+      "manualNamespaceAliasesCreated": 0,
+      "baselineSDKEmissionIdentitiesMatched": 314
+    },
+    "compileAndEntry": {
+      "compileExitCode": 0,
+      "compileStdoutBytes": 0,
+      "compileStderrBytes": 0,
+      "entryExitCode": 0,
+      "entryNamespace": [
+        "createF2MeshSourcePlan"
+      ],
+      "configuration": "Strict standalone NodeNext/ES2022",
+      "freshDevelopmentVerifierIntegration": "PENDING"
+    },
+    "cpu": {
+      "tests": 16,
+      "pass": 16,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "originalCases": 14,
+      "supplementalCases": 2,
+      "testIds": [
+        "F2A00",
+        "F2A01",
+        "F2A02",
+        "F2A03",
+        "F2A04",
+        "F2A05",
+        "F2A06",
+        "F2A07",
+        "F2A08",
+        "F2A09",
+        "F2A10",
+        "F2A11",
+        "F2A12",
+        "F2A13",
+        "F2A14",
+        "F2A15"
+      ],
+      "scope": "Finite synchronous CPU source planning with genuine public SP1 prerequisites"
+    },
+    "types": {
+      "strict": true,
+      "skipLibCheck": false,
+      "noEmit": true,
+      "positiveExitCode": 0,
+      "positiveDiagnostics": 0,
+      "positiveStdoutBytes": 0,
+      "positiveStderrBytes": 0,
+      "negativeExitCode": 1,
+      "negativeDiagnostics": 39,
+      "sourceIntentMarkers": 39,
+      "missingRelations": 0,
+      "unrelatedDiagnostics": 0,
+      "multilineMessages": 3,
+      "tupleFields": [
+        "file",
+        "line",
+        "column",
+        "code",
+        "message"
+      ],
+      "publicExpectationTable": {
+        "path": "knowledge-base/experiments/spine-f2/type-tests/negative-expectations.json",
+        "bytes": 10385,
+        "sha256": "36b7e09bf71e229037442bd04d32d260a3ea580fa5ab762e7dd46de6e0ee8528"
+      },
+      "messageNormalization": "Only the exact repository root prefix is replaced by <repo>/; complete multiline messages otherwise unchanged.",
+      "rawOutput": "Retained privately, not published",
+      "inventoryOrigin": "Frozen from actual unsuppressed compiler output after genuine setup, not predicted from source markers"
+    }
+  },
+  "validatedSourcePlanning": {
+    "exportVersion": "4.3.13",
+    "encoding": "Independent unweighted mesh coordinates",
+    "rawIndexControlTokens": [
+      "65536",
+      "0.5",
+      "-1",
+      "6"
+    ],
+    "rawIndexVertexRangeFixture": 6,
+    "beforeUint16Narrowing": true,
+    "fieldCompleteShapeOrder": [
+      "vertices array/minimum/even length",
+      "uvs array/equal length",
+      "triangles array/minimum/triplet length"
+    ],
+    "numericOrder": [
+      "budgets",
+      "finite primitive coordinates",
+      "finite primitive UVs within [0,1]",
+      "primitive safeinteger indices in original vertex range"
+    ],
+    "allSkins": true,
+    "numericLookingKeys": "Original source order",
+    "spans": "Original UTF-16 sourceId/offset/length/line/column, including CRLF, astral and escaped pointer witnesses",
+    "perMeshBudget": {
+      "vertices": 4096,
+      "indices": 12288
+    },
+    "staticSetupBudget": {
+      "attachmentReferences": 32,
+      "vertices": 4096,
+      "indices": 12288
+    },
+    "staticSetupMeaning": "Conservative logical references; not Core command, batch or GPU draw counts"
+  },
+  "retainedHistory": {
+    "initialBehavior": {
+      "exitCode": 1,
+      "tests": 14,
+      "pass": 13,
+      "fail": 1,
+      "reason": "F2A07 fixture selector uniqueness refused before its assigned mutant was constructed or invoked; earlier baseline calls were not excluded.",
+      "originalTestSHA256": "c0bc8b78319e435637f604576eaeb1a6f6292dd862004c78ee786b070d37a327",
+      "currentTestSHA256": "6dea6775061e99fd79943b062bed62088f16c82b96f16a32aba7a0b7cd406fd8",
+      "selectorCorrectionLines": 5,
+      "preserved": [
+        "intended mutant bytes",
+        "original offsets",
+        "codes",
+        "pointers",
+        "tokens",
+        "oracles",
+        "strict uniqueness",
+        "whole inverse"
+      ],
+      "failedReceiptAndSourceHistory": "PRESERVED"
+    },
+    "typeManifest": {
+      "mode": "Reviewed source-only metadata successor",
+      "addedExistingSourceIntentMarkers": [
+        "success-has-no-stage",
+        "refusal-has-no-value",
+        "sp1-diagnostics-not-f2-tuple"
+      ],
+      "allFourTypeSourceBytesUnchanged": true,
+      "originalManifestAndFinding": "PRESERVED",
+      "markerInventoryIsPredictedDiagnosticInventory": false
+    },
+    "installation": "Initial NO_TTY setup failure retained separately from compiler and engine behavior"
+  },
+  "currentSourceIdentities": {
+    "product": 4,
+    "rootDevelopmentDependency": 2,
+    "tests": 4,
+    "types": 4,
+    "assets": 7,
+    "total": 21,
+    "productFiles": [
+      {
+        "path": "knowledge-base/experiments/spine-f2/src/index.ts",
+        "bytes": 371,
+        "sha256": "ad5a1a817040ed24984d0a432fed5137ea0a5764f13fee390bf0ce9159120c2d"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/src/source-plan.ts",
+        "bytes": 21562,
+        "sha256": "a75d31f623471e826a2d47f3dc5c3bbc630909e6848d2e30dd37dbf085badf06"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/src/source-view.ts",
+        "bytes": 14661,
+        "sha256": "ac31073339aed467da1ed56e01df70bfdf48791a90a9f22b3fe15a92631debb1"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/tsconfig.json",
+        "bytes": 447,
+        "sha256": "6e10b9e4bf7a2accf247114744865ef956df882cd4647c6a49b3bb10c651e1a0"
+      }
+    ],
+    "rootDevelopmentDependencyFiles": [
+      {
+        "path": "package.json",
+        "bytes": 691,
+        "sha256": "27a1d08d799fbcba6d1264fdf4a51dea807575e24e178f7d360cd3b615e285e3"
+      },
+      {
+        "path": "pnpm-lock.yaml",
+        "bytes": 9017,
+        "sha256": "79383095fd4bb2bb4682a12f9651d9a876a01fc6dc1326d09bc0ad587db23084"
+      }
+    ],
+    "testFiles": [
+      {
+        "path": "knowledge-base/experiments/spine-f2/test/api-presence.test.mjs",
+        "bytes": 646,
+        "sha256": "bd094a167c5817cf62e5af303ee1d14803ec183623bf0dc7290fbaca2483955b"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/test/source-plan.test.mjs",
+        "bytes": 19067,
+        "sha256": "6dea6775061e99fd79943b062bed62088f16c82b96f16a32aba7a0b7cd406fd8"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/test/fixtures.mjs",
+        "bytes": 9954,
+        "sha256": "4387ddc5ca2cbf2c8f7c8438dce77019cb0585f7692b71e30a822d2570e6e1a0"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/test/shape-priority.test.mjs",
+        "bytes": 1647,
+        "sha256": "05a03fec766bb05768e61964d47a4902672962c6f7caab9dde6e89d9c45b0d04"
+      }
+    ],
+    "typeFiles": [
+      {
+        "path": "knowledge-base/experiments/spine-f2/type-tests/positive.ts",
+        "bytes": 4925,
+        "sha256": "7c0d76a383cbce71a06b4d14d0b3db7aa9507727cd5a29a8e67b05ecfba54310"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+        "bytes": 3818,
+        "sha256": "2251b4fe3a6e45f9c8866413c7a90c5f8f1cbef826a5ade58a34c79ce63ab8ec"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/type-tests/tsconfig.positive.json",
+        "bytes": 251,
+        "sha256": "b23f4260c7389f7d90c23138193b970473558b532d4b667e59956c66f5adf710"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/type-tests/tsconfig.negative.json",
+        "bytes": 251,
+        "sha256": "8b04ebcb705a5c450744531a8ddde6dab30e0ee09c8a6706fbefb2412c125587"
+      }
+    ],
+    "assetFiles": [
+      {
+        "path": "knowledge-base/experiments/spine-f2/assets/egret-original-unfold.spine.json",
+        "bytes": 1287,
+        "sha256": "6eabc98e76e45f79526ce38ac7b8cc9f343ab78235b77cccbc5eb9f6f28e8dc4"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/assets/egret-original-unfold.atlas",
+        "bytes": 163,
+        "sha256": "8230859fcf9102078bda1a90d53b15f5a481c55b8407fd17c078cd7d1e736913"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/assets/egret-f2-page-rgba.json",
+        "bytes": 1993,
+        "sha256": "43f6b91935b44df4e28424bfd4a740bdbc4055759b6d2fc141bc6429383ed99a"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/assets/egret-f2-page.rgba",
+        "bytes": 512,
+        "sha256": "c465d00fca2665beef65d4b7a5c83067cb4bdafa52129a10ebaa95a22fc048e9"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/assets/f2-geometry-oracle-candidate.json",
+        "bytes": 3441,
+        "sha256": "441163de2c5dffb9163541b647e79c65a4825a210c6ebaebaf509741b039ac37"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/assets/f2-pixel-oracle-candidate.json",
+        "bytes": 3144,
+        "sha256": "8905607771ddd870de56267dd87db24f062fae0dacfc529d235c3aaaa5d62d71"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/assets/f2-raw-triangle-control-proposals.json",
+        "bytes": 2336,
+        "sha256": "e96d34d2c6809e7eacbaba9ee54ff5475425cb521dc2252cbab483ee97354724"
+      }
+    ],
+    "diagnosticTableIsSeparate": true
+  },
+  "experimentalEmissionProvenance": {
+    "savedReadbackFiles": [
+      {
+        "path": "knowledge-base/experiments/spine-f2/dist/index.js",
+        "bytes": 189,
+        "sha256": "6bec230cd52c060cadb807c68a9ea9ab200b19801d484a97f619c4afcc11e03b"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/dist/index.d.ts",
+        "bytes": 229,
+        "sha256": "56da0934dbf39538a041b4dbeacfa441522ca97e75ed862408be2a6b6d0bda9a"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/dist/source-plan.js",
+        "bytes": 19236,
+        "sha256": "11f252c04d99a8174a564a3b7e34bdaa6b6208c4c2a1a71e7d3c0fb02f8639e3"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/dist/source-plan.d.ts",
+        "bytes": 2436,
+        "sha256": "188e681d4497ef5a51468828bc52014833b8efcab5127f53203c6b0d31c3f559"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/dist/source-view.js",
+        "bytes": 13486,
+        "sha256": "546758c9b722a64ed22e0420abe991ac42d017e6b799a723f3a6b9513f2a1383"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/dist/source-view.d.ts",
+        "bytes": 1451,
+        "sha256": "54adbcab939fdd3d81332b016ac03cb6a0ea107c1f2a9665a4abdca0ce509c5d"
+      }
+    ],
+    "historicalBeforeAfterEquality": "NOT_ESTABLISHED",
+    "reason": "No saved pre-R2 experimental emission snapshot; current readback identities do not establish historical equality."
+  },
+  "assetProvenance": {
+    "files": 7,
+    "owner": "Egret first-party authored literal test materials",
+    "license": "Apache-2.0",
+    "SpineEditorExport": false,
+    "canonicalCoreOrPixelAcceptance": false,
+    "thirdPartyArtworkEntitlement": "Not asserted"
+  },
+  "previousDeliveredBaseline": {
+    "version": "0.41.0",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/28",
+    "main": "758e516410a126483973a1d65eea0c6ca7f57ef6",
+    "tree": "ef0183ba3f555df5fd7a53cb98a677cd01f67356",
+    "publicationTests": 63,
+    "publicationPassed": 63,
+    "coreTests": 2748,
+    "corePassed": 2748,
+    "remoteStatusCount": 0,
+    "remoteCheckRuns": 0,
+    "remoteCombinedState": "pending",
+    "remoteCIPassClaim": false,
+    "scope": "Previously delivered baseline only; not 0.42.0 gates",
+    "deliveryArtifactIdentity": {
+      "id": "previous-0.41-delivery-successor",
+      "bytes": 4459,
+      "sha256": "25db6ca90f7b313010172a1794eaff6cfe9dc61b287a596230949aa26d9bb844"
+    },
+    "reviewArtifactIdentity": {
+      "id": "previous-0.41-actual-delivery-review",
+      "bytes": 29643,
+      "sha256": "39a9e645da096a52c9836bb6e16fe31599a7e5462e66d3ca1de20aa9a42f38c6"
+    }
+  },
+  "pending": {
+    "toolPolicy": "PENDING",
+    "freshDevelopmentVerifierCompileAndIntegration": "PENDING",
+    "wholeRepositoryPrepush": "PENDING",
+    "GitHubDelivery": "PENDING",
+    "controlledFaults": [
+      "F2_SOURCE_VIEW",
+      "F2_INTERNAL_ERROR"
+    ],
+    "faultQualification": "PENDING",
+    "fullProfile": "OPEN",
+    "deformAndAnimation": "OPEN",
+    "resourceIdentity": "OPEN",
+    "CoreCompatibility": "OPEN",
+    "rendering": "OPEN",
+    "licenseEntitlement": "UNVERIFIED",
+    "physicalPhonesAndNative": "OPEN",
+    "fullSpineRequirements": [
+      "R020",
+      "V020"
+    ],
+    "fullSpineAcceptance": "OPEN",
+    "earlierPendingCutoffs": "PRESERVED"
+  },
+  "references": [
+    {
+      "url": "https://github.com/microsoft/node-jsonc-parser",
+      "role": "Public grammar foundation",
+      "version": "3.3.1",
+      "declaredLicense": "MIT"
+    },
+    {
+      "path": "knowledge-base/en/docs/spine-import-plan-contract.md",
+      "role": "Existing public SP1 planning contract"
+    },
+    {
+      "url": "https://esotericsoftware.com/spine-runtimes-license",
+      "role": "Applicable runtime terms, separate from first-party code/assets",
+      "sourceRefreshDate": "2026-10-12",
+      "officialLastUpdated": "2025-04-05"
+    },
+    {
+      "url": "https://esotericsoftware.com/spine-editor-license",
+      "role": "Editor entitlement terms; entitlement not verified",
+      "sourceRefreshDate": "2026-10-12",
+      "officialLastUpdated": "2025-04-05"
+    }
+  ],
+  "publicationBoundary": "Only necessary accepted results, artifact hash identities, repository-relative sources and the public diagnostic table are described. Private raw logs, personal absolute paths and private prompts are excluded. This draft has not passed the pending 0.42 release gates or been published.",
+  "historicalCutoff": {
+    "evidenceCutoffUtc": "2026-10-12T17:21:06.5985450Z",
+    "status": "ACCEPTED_FINITE_OBSERVATIONS_RELEASE_PENDING",
+    "originalDocumentationPair": [
+      {
+        "path": "knowledge-base/en/docs/spine-mesh-source-plan-evidence.md",
+        "bytes": 7170,
+        "sha256": "dc565694b016896e5c8c293fd3958a26fdfe2e9901324d59496e808b6abfb98f"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/Spine网格源规划证据.md",
+        "bytes": 6544,
+        "sha256": "0fa94ceb371821d20304016404afa0c6975fb9ccef3a665253e11be7df56f61d"
+      }
+    ],
+    "historicalFieldPointers": [
+      "/scope",
+      "/acceptedArtifactIdentities",
+      "/observations",
+      "/retainedHistory",
+      "/currentSourceIdentities",
+      "/experimentalEmissionProvenance",
+      "/pending"
+    ],
+    "fieldMeaning": "These unchanged fields describe only the original frozen cutoff. The field named currentSourceIdentities is the original 21-file envelope, not a current adoption guarantee. Original scope.actualToolPolicy and pending fields remain PENDING at that historical cutoff.",
+    "originalSourceFiles": 21,
+    "originalRootPackage": {
+      "path": "package.json",
+      "bytes": 691,
+      "sha256": "27a1d08d799fbcba6d1264fdf4a51dea807575e24e178f7d360cd3b615e285e3"
+    },
+    "priorMissingEmissionSnapshot": "Earlier pre-R2 emission equality remains NOT_ESTABLISHED."
+  },
+  "currentDevelopmentSuccessor": {
+    "evidenceCutoffUtc": "2026-10-12T17:35:13.2950779Z",
+    "status": "ACCEPTED_FINITE_ACTUAL_DEVELOPMENT_VERIFIER_RELEASE_PENDING",
+    "independentReview": {
+      "id": "actual-development-entry-review",
+      "bytes": 12893,
+      "sha256": "5baed747e23dadff9927d1e720ec68583ffebe3614f9c070f9646d6be27c4e74",
+      "verdict": "PASS_ACTUAL",
+      "openFindings": 0
+    },
+    "sourceReview": {
+      "id": "development-tool-wiring-source-review",
+      "bytes": 11619,
+      "sha256": "44751f7f31b0ad2842503cb76e99d55149d24747121f71b5be503cb9a704521d",
+      "verdict": "PASS_SOURCE_ONLY",
+      "openFindings": 0
+    },
+    "actualReceipt": {
+      "id": "completed-development-entry-actors",
+      "bytes": 1667,
+      "sha256": "68d53f7d78bf83db326f9614b4a52fc7a78efe0e0e47ffb24dd75b6e17fcb675",
+      "literalShape": "ARRAY",
+      "actors": [
+        {
+          "name": "adopt-reviewed-development-gate",
+          "exitCode": 0,
+          "timeout": false,
+          "startedAtUtc": "2026-10-12T17:35:11.2767515Z",
+          "finishedAtUtc": "2026-10-12T17:35:11.3644459Z",
+          "stdout": {
+            "bytes": 121,
+            "sha256": "7a512d8de7490805e39093550f80217e60769740f4d7b3a9288d32adc1754e9a"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "name": "development-verifier",
+          "exitCode": 0,
+          "timeout": false,
+          "startedAtUtc": "2026-10-12T17:35:11.3839958Z",
+          "finishedAtUtc": "2026-10-12T17:35:13.2950779Z",
+          "stdout": {
+            "bytes": 19580,
+            "sha256": "324a67c9c8545fcb13116ee4a83c4c5421dc3979f4fa6655945975f2b00975cf"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      ]
+    },
+    "entry": "tools/verify-spine-f2-source.mjs",
+    "entryArguments": [],
+    "acceptance": {
+      "finiteSourceBoundaryAndFiveAssignedControls": "PASS_ACTUAL",
+      "freshStrictStandaloneCompileAndImport": "PASS_ACTUAL",
+      "compilerVersion": "7.0.2",
+      "publicDevelopmentAPIs": [
+        "typescript/unstable/sync",
+        "typescript/unstable/ast"
+      ],
+      "defaultSDKExportsChanged": false,
+      "newDefaultAPI": false,
+      "newNpmPackage": false,
+      "structuralScope": "Fixed-version development source graph/configuration/entry/narrowing; not general security, numerical or full Spine acceptance.",
+      "serviceCleanup": "Accepted source contract disposes snapshots and closes each API session through finally; physical process retirement is not observed or claimed."
+    },
+    "tests": {
+      "files": 4,
+      "tests": 22,
+      "pass": 22,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "behaviorCases": 16,
+      "sourceBoundaryBaseline": 1,
+      "assignedSourceBoundaryControls": 5,
+      "coreSuiteCounts": "SEPARATE_NOT_CLAIMED_BY_THIS_EXECUTION"
+    },
+    "types": {
+      "positiveExitCode": 0,
+      "positiveDiagnostics": 0,
+      "negativeExitCode": 1,
+      "negativeDiagnostics": 39,
+      "allOrderedTuplesAndMessagesMatch": true,
+      "tupleFields": [
+        "file",
+        "line",
+        "column",
+        "code",
+        "message"
+      ],
+      "expectationTable": {
+        "path": "knowledge-base/experiments/spine-f2/type-tests/negative-expectations.json",
+        "bytes": 10385,
+        "sha256": "36b7e09bf71e229037442bd04d32d260a3ea580fa5ab762e7dd46de6e0ee8528"
+      },
+      "messageNormalization": "Only the exact repository root prefix is replaced by <repo>/; complete multiline messages otherwise unchanged."
+    },
+    "currentFiles": [
+      {
+        "path": "tools/verify-spine-f2-source.mjs",
+        "bytes": 7112,
+        "sha256": "441328b7de094b1432f2197fa8c4017df7ae4d551eb00052d6d3b8e0d8ca14c0"
+      },
+      {
+        "path": "tools/spine-f2-source-boundary.mjs",
+        "bytes": 9900,
+        "sha256": "fb70772a371b19724ac681b888d8c459cb361e6862d949c71bbefa6a22e27037"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/test/source-boundary.test.mjs",
+        "bytes": 2822,
+        "sha256": "3ab72f229629e4926fd59874f0c84b306357eebd524692e0a1b7a8ac2257d6cd"
+      },
+      {
+        "path": "package.json",
+        "bytes": 762,
+        "sha256": "b522c278e5f0b4070fec73da2aa336da5c57a4dc189c0855d9e5770f879009bd"
+      },
+      {
+        "path": "tools/verify.mjs",
+        "bytes": 551,
+        "sha256": "9f7cb76cd1ca6911cfc39cd86dc66c0848a0c4d459bf0182798e88bc5dc6183a"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/src/index.ts",
+        "bytes": 371,
+        "sha256": "ad5a1a817040ed24984d0a432fed5137ea0a5764f13fee390bf0ce9159120c2d"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/src/source-plan.ts",
+        "bytes": 21562,
+        "sha256": "a75d31f623471e826a2d47f3dc5c3bbc630909e6848d2e30dd37dbf085badf06"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/src/source-view.ts",
+        "bytes": 14661,
+        "sha256": "ac31073339aed467da1ed56e01df70bfdf48791a90a9f22b3fe15a92631debb1"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/tsconfig.json",
+        "bytes": 447,
+        "sha256": "6e10b9e4bf7a2accf247114744865ef956df882cd4647c6a49b3bb10c651e1a0"
+      },
+      {
+        "path": "pnpm-lock.yaml",
+        "bytes": 9017,
+        "sha256": "79383095fd4bb2bb4682a12f9651d9a876a01fc6dc1326d09bc0ad587db23084"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/type-tests/positive.ts",
+        "bytes": 4925,
+        "sha256": "7c0d76a383cbce71a06b4d14d0b3db7aa9507727cd5a29a8e67b05ecfba54310"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+        "bytes": 3818,
+        "sha256": "2251b4fe3a6e45f9c8866413c7a90c5f8f1cbef826a5ade58a34c79ce63ab8ec"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/type-tests/tsconfig.positive.json",
+        "bytes": 251,
+        "sha256": "b23f4260c7389f7d90c23138193b970473558b532d4b667e59956c66f5adf710"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/type-tests/tsconfig.negative.json",
+        "bytes": 251,
+        "sha256": "8b04ebcb705a5c450744531a8ddde6dab30e0ee09c8a6706fbefb2412c125587"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/type-tests/negative-expectations.json",
+        "bytes": 10385,
+        "sha256": "36b7e09bf71e229037442bd04d32d260a3ea580fa5ab762e7dd46de6e0ee8528"
+      }
+    ],
+    "currentFilesCount": 15,
+    "currentFileGroups": {
+      "developmentToolsAndWiring": 5,
+      "sourceConfigLock": 5,
+      "typesAndActualTable": 5
+    },
+    "sourceEnvelopeMeaning": "Exact accepted development-review order. Original assets and four tests remain pinned only in the original envelope; the new source-boundary test is a separately admitted successor, not an original inventory member.",
+    "sourceBoundaryTest": {
+      "path": "knowledge-base/experiments/spine-f2/test/source-boundary.test.mjs",
+      "bytes": 2822,
+      "sha256": "3ab72f229629e4926fd59874f0c84b306357eebd524692e0a1b7a8ac2257d6cd"
+    },
+    "rootPackage": {
+      "path": "package.json",
+      "bytes": 762,
+      "sha256": "b522c278e5f0b4070fec73da2aa336da5c57a4dc189c0855d9e5770f879009bd"
+    },
+    "rootPackageChange": "Only the reviewed development script addition; separate reviewed tools/verify.mjs hunk includes the new stage after the retained stages. Dependency versions and lock bytes are unchanged.",
+    "experimentalEmissions": {
+      "before": [
+        {
+          "path": "knowledge-base/experiments/spine-f2/dist/index.d.ts",
+          "bytes": 229,
+          "sha256": "56da0934dbf39538a041b4dbeacfa441522ca97e75ed862408be2a6b6d0bda9a"
+        },
+        {
+          "path": "knowledge-base/experiments/spine-f2/dist/index.js",
+          "bytes": 189,
+          "sha256": "6bec230cd52c060cadb807c68a9ea9ab200b19801d484a97f619c4afcc11e03b"
+        },
+        {
+          "path": "knowledge-base/experiments/spine-f2/dist/source-plan.d.ts",
+          "bytes": 2436,
+          "sha256": "188e681d4497ef5a51468828bc52014833b8efcab5127f53203c6b0d31c3f559"
+        },
+        {
+          "path": "knowledge-base/experiments/spine-f2/dist/source-plan.js",
+          "bytes": 19236,
+          "sha256": "11f252c04d99a8174a564a3b7e34bdaa6b6208c4c2a1a71e7d3c0fb02f8639e3"
+        },
+        {
+          "path": "knowledge-base/experiments/spine-f2/dist/source-view.d.ts",
+          "bytes": 1451,
+          "sha256": "54adbcab939fdd3d81332b016ac03cb6a0ea107c1f2a9665a4abdca0ce509c5d"
+        },
+        {
+          "path": "knowledge-base/experiments/spine-f2/dist/source-view.js",
+          "bytes": 13486,
+          "sha256": "546758c9b722a64ed22e0420abe991ac42d017e6b799a723f3a6b9513f2a1383"
+        }
+      ],
+      "after": [
+        {
+          "path": "knowledge-base/experiments/spine-f2/dist/index.d.ts",
+          "bytes": 229,
+          "sha256": "56da0934dbf39538a041b4dbeacfa441522ca97e75ed862408be2a6b6d0bda9a"
+        },
+        {
+          "path": "knowledge-base/experiments/spine-f2/dist/index.js",
+          "bytes": 189,
+          "sha256": "6bec230cd52c060cadb807c68a9ea9ab200b19801d484a97f619c4afcc11e03b"
+        },
+        {
+          "path": "knowledge-base/experiments/spine-f2/dist/source-plan.d.ts",
+          "bytes": 2436,
+          "sha256": "188e681d4497ef5a51468828bc52014833b8efcab5127f53203c6b0d31c3f559"
+        },
+        {
+          "path": "knowledge-base/experiments/spine-f2/dist/source-plan.js",
+          "bytes": 19236,
+          "sha256": "11f252c04d99a8174a564a3b7e34bdaa6b6208c4c2a1a71e7d3c0fb02f8639e3"
+        },
+        {
+          "path": "knowledge-base/experiments/spine-f2/dist/source-view.d.ts",
+          "bytes": 1451,
+          "sha256": "54adbcab939fdd3d81332b016ac03cb6a0ea107c1f2a9665a4abdca0ce509c5d"
+        },
+        {
+          "path": "knowledge-base/experiments/spine-f2/dist/source-view.js",
+          "bytes": 13486,
+          "sha256": "546758c9b722a64ed22e0420abe991ac42d017e6b799a723f3a6b9513f2a1383"
+        }
+      ],
+      "files": 6,
+      "allBytesAndSHA256Equal": true,
+      "authority": {
+        "id": "saved-development-entry-admission",
+        "bytes": 57810,
+        "sha256": "0c3663693031631b98cfc3a37221003f7e0591540b369903d9e664fed830f4c9",
+        "pointer": "/experimentalEmissionsBefore"
+      },
+      "scope": "Saved pre-execution snapshot versus independently accepted actual after-readback for this development execution only. Earlier missing pre-R2 equality remains NOT_ESTABLISHED."
+    },
+    "SDKEmissions": {
+      "files": 314,
+      "allSavedIdentitiesEqual": true,
+      "scope": "Identity readback only, not a repeated SDK algorithm review."
+    },
+    "stillPending": {
+      "wholeRepositoryPrepush": "PENDING",
+      "GitHubDelivery": "PENDING",
+      "remoteCI": "PENDING",
+      "controlledFaults": [
+        "F2_SOURCE_VIEW",
+        "F2_INTERNAL_ERROR"
+      ],
+      "faultQualification": "PENDING",
+      "fullProfile": "OPEN",
+      "deformAndAnimation": "OPEN",
+      "resourceIdentity": "OPEN",
+      "CoreCompatibility": "OPEN",
+      "rendering": "OPEN",
+      "licenseEntitlement": "UNVERIFIED",
+      "physicalPhonesAndNative": "OPEN",
+      "fullSpineRequirements": [
+        "R020",
+        "V020"
+      ],
+      "fullSpineAcceptance": "OPEN"
+    },
+    "publication": "Evidence candidate only; not publicly adopted or published."
+  }
+}

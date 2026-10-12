@@ -259,12 +259,19 @@
     },
     {
       "path": ".gitignore",
-      "sha256": "27e4dfdb22f3796b475c100f56d0345a87066358dd324c276f8ad4aa72c7c6d5",
-      "bytes": 97,
+      "sha256": "7238928eb667257d312dafc3c9d574bdcf8374b981f8b81dca7e22c24785b4c4",
+      "bytes": 140,
       "originRole": "new public contributor documentation/configuration",
       "previousRevisionSha256": "27e4dfdb22f3796b475c100f56d0345a87066358dd324c276f8ad4aa72c7c6d5",
       "previousLayoutPath": ".gitignore",
-      "previousLayoutSha256": "27e4dfdb22f3796b475c100f56d0345a87066358dd324c276f8ad4aa72c7c6d5"
+      "previousLayoutSha256": "27e4dfdb22f3796b475c100f56d0345a87066358dd324c276f8ad4aa72c7c6d5",
+      "identityHistory": [
+        {
+          "bytes": 97,
+          "sha256": "27e4dfdb22f3796b475c100f56d0345a87066358dd324c276f8ad4aa72c7c6d5",
+          "scope": "Preserved prior ignore configuration before excluding only the F2 generated output directory; not a delivery identity."
+        }
+      ]
     },
     {
       "path": "ACKNOWLEDGEMENTS.md",
@@ -1351,10 +1358,10 @@
       "sha256": "eec3c91b28230136fd03948fcc8d9fd253172001864d5c9b76cb500e35826c31"
     },
     {
-      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+      "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/Cns/README.md",
-      "bytes": 28936,
-      "sha256": "12cab66668877044b29a2ea6b8f64110d885fb670551ebdf465613c47f8db0bf",
+      "bytes": 30358,
+      "sha256": "f1a5435204e2c7a1b8d49f12355c0c8165fe6f8185bd3dc18682078a1b5ab361",
       "identityHistory": [
         {
           "bytes": 6319,
@@ -1442,14 +1449,30 @@
           "bytes": 27351,
           "sha256": "a074f49a0c5e4c08b3a1e24d87dc660b0d090dd62742a43cf5f2867e0a4e851d",
           "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+        },
+        {
+          "bytes": 28936,
+          "sha256": "12cab66668877044b29a2ea6b8f64110d885fb670551ebdf465613c47f8db0bf",
+          "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+          "scope": "Recorded identity before F2-A 0.42.0 source curation; historical cutoff retained."
+        },
+        {
+          "bytes": 28936,
+          "sha256": "12cab66668877044b29a2ea6b8f64110d885fb670551ebdf465613c47f8db0bf",
+          "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
+        },
+        {
+          "bytes": 30358,
+          "sha256": "a2a81102e9a14fbee24352fef6c3036a29bbdc040b9fe6653320a1388f7a1051",
+          "scope": "Preserved F2-A R1 public curation snapshot before latest-first README placement; not a GitHub delivery identity."
         }
       ]
     },
     {
-      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+      "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/Cns/registry/交付.json",
-      "bytes": 136594,
-      "sha256": "882363aebc27fae99dc9a52a924801e4c45e53a998c3e13283f7e8610f8c55b3",
+      "bytes": 139751,
+      "sha256": "3a0298da6be4625e7bc220a5b527da65585aefe5ff21f7a26bd48f37c2d3c377",
       "identityHistory": [
         {
           "bytes": 50664,
@@ -1557,6 +1580,17 @@
           "bytes": 130457,
           "sha256": "8d456d99bca195799d8d0e6b025e7a3b10b85f46f6e364a74e9c5a699b8295c1",
           "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+        },
+        {
+          "bytes": 136594,
+          "sha256": "882363aebc27fae99dc9a52a924801e4c45e53a998c3e13283f7e8610f8c55b3",
+          "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+          "scope": "Recorded identity before F2-A 0.42.0 source curation; historical cutoff retained."
+        },
+        {
+          "bytes": 136594,
+          "sha256": "882363aebc27fae99dc9a52a924801e4c45e53a998c3e13283f7e8610f8c55b3",
+          "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
         }
       ]
     },
@@ -1585,10 +1619,10 @@
       ]
     },
     {
-      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+      "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/Cns/registry/来源.json",
-      "bytes": 150483,
-      "sha256": "83c82ba93133ac85a68fd366a7af38bbcae1fd3fe8873d74b32fe76bd7bfd3e3",
+      "bytes": 154008,
+      "sha256": "92b1e960b0eb7b658e1560a96e6a86937cfa83197c1eb5480cd166ef1e70d395",
       "identityHistory": [
         {
           "bytes": 74667,
@@ -1691,14 +1725,25 @@
           "bytes": 144266,
           "sha256": "b3b473a13d522b51e66bbaabb9cee38eda70ae570bb9033a595fbf3ee0c9b78c",
           "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+        },
+        {
+          "bytes": 150483,
+          "sha256": "83c82ba93133ac85a68fd366a7af38bbcae1fd3fe8873d74b32fe76bd7bfd3e3",
+          "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+          "scope": "Recorded identity before F2-A 0.42.0 source curation; historical cutoff retained."
+        },
+        {
+          "bytes": 150483,
+          "sha256": "83c82ba93133ac85a68fd366a7af38bbcae1fd3fe8873d74b32fe76bd7bfd3e3",
+          "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
         }
       ]
     },
     {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/Cns/registry/需求.json",
-      "bytes": 29851,
-      "sha256": "d14ab781082159d7d3286986f32f94c5fb19db45a6a3e320b28226092001960d",
+      "bytes": 32244,
+      "sha256": "f5c53dc6e3dc4091f388f37f8c40c4211bea555674eb1af4a2182b8e0b826a3c",
       "identityHistory": [
         {
           "bytes": 13892,
@@ -1734,6 +1779,17 @@
           "bytes": 26385,
           "sha256": "55ea7d16285a65a37d96a1e2f70625c53f70f94faa0165f6a06d6f5131d0ee13",
           "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+        },
+        {
+          "bytes": 29851,
+          "sha256": "d14ab781082159d7d3286986f32f94c5fb19db45a6a3e320b28226092001960d",
+          "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+          "scope": "Recorded identity before F2-A 0.42.0 source curation; historical cutoff retained."
+        },
+        {
+          "bytes": 29851,
+          "sha256": "d14ab781082159d7d3286986f32f94c5fb19db45a6a3e320b28226092001960d",
+          "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
         }
       ]
     },
@@ -1762,10 +1818,10 @@
       "sha256": "d310b55dbc74df5e0fe9b808f610a88fc4adaf78ab95415b96629b1e99a12633"
     },
     {
-      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+      "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/Cns/当前版本.json",
-      "bytes": 116424,
-      "sha256": "907e58afeb86f50febb700b4775b90979af97629d464903a74c3d33f2e9b3010",
+      "bytes": 118710,
+      "sha256": "92ac8ed2159defa7dfa4c22794793ade0d0aa5ad2c1d076f9cf2cd0eb0509497",
       "identityHistory": [
         {
           "bytes": 31425,
@@ -1863,6 +1919,17 @@
           "bytes": 112764,
           "sha256": "f379c73ba62cb9869a6028827396296bea55c9a8fc1e879aabf1eabf58f30c20",
           "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+        },
+        {
+          "bytes": 116424,
+          "sha256": "907e58afeb86f50febb700b4775b90979af97629d464903a74c3d33f2e9b3010",
+          "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+          "scope": "Recorded identity before F2-A 0.42.0 source curation; historical cutoff retained."
+        },
+        {
+          "bytes": 116424,
+          "sha256": "907e58afeb86f50febb700b4775b90979af97629d464903a74c3d33f2e9b3010",
+          "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
         }
       ]
     },
@@ -2003,10 +2070,10 @@
       "sha256": "7703c2cd385d8a12e9de9bf521ae717b44240922e5e55e517a2fbe4dad3ad604"
     },
     {
-      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+      "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/en/current-version.json",
-      "bytes": 117273,
-      "sha256": "0d74c0c9d19cafdb02a10017310f37befc108eb0c4ae3434a72a6cc8b0a1a269",
+      "bytes": 119570,
+      "sha256": "72dd6b79b98eb70c8e9937c4248a067f0ebb723f33b2fa4c2e4edbbb566756f9",
       "identityHistory": [
         {
           "bytes": 31946,
@@ -2104,6 +2171,17 @@
           "bytes": 113601,
           "sha256": "97924e026aeb7b0ffbd5659eef4136291fe9a115444186b3cd35775158a3a1b2",
           "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+        },
+        {
+          "bytes": 117273,
+          "sha256": "0d74c0c9d19cafdb02a10017310f37befc108eb0c4ae3434a72a6cc8b0a1a269",
+          "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+          "scope": "Recorded identity before F2-A 0.42.0 source curation; historical cutoff retained."
+        },
+        {
+          "bytes": 117273,
+          "sha256": "0d74c0c9d19cafdb02a10017310f37befc108eb0c4ae3434a72a6cc8b0a1a269",
+          "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
         }
       ]
     },
@@ -2760,10 +2838,10 @@
       "sha256": "496798afbdd03d5968e3c947fc146f9f360990e0dd799765b72e731408fa3020"
     },
     {
-      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+      "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/en/README.md",
-      "bytes": 32357,
-      "sha256": "2c2eccb9f395763f34ba9a98906b4832f42bf0a170d270b6468f0361e9ac3700",
+      "bytes": 34027,
+      "sha256": "497543e44b8e377ab97dc85a1105d30c1b0753f90891de888d0a99223c31fc85",
       "identityHistory": [
         {
           "bytes": 7397,
@@ -2856,6 +2934,22 @@
           "bytes": 30606,
           "sha256": "361be88896dcb14b90909fc6450a1acde1969eb169514a048ca7585e3ab0ee2f",
           "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+        },
+        {
+          "bytes": 32357,
+          "sha256": "2c2eccb9f395763f34ba9a98906b4832f42bf0a170d270b6468f0361e9ac3700",
+          "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+          "scope": "Recorded identity before F2-A 0.42.0 source curation; historical cutoff retained."
+        },
+        {
+          "bytes": 32357,
+          "sha256": "2c2eccb9f395763f34ba9a98906b4832f42bf0a170d270b6468f0361e9ac3700",
+          "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
+        },
+        {
+          "bytes": 34027,
+          "sha256": "b6dfeff240f8e865bcce2f1cf35cc459ad105fd9b3a7e4070398c4e3f05d8d75",
+          "scope": "Preserved F2-A R1 public curation snapshot before latest-first README placement; not a GitHub delivery identity."
         }
       ]
     },
@@ -2878,10 +2972,10 @@
       ]
     },
     {
-      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+      "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/en/registry/deliverables.json",
-      "bytes": 142247,
-      "sha256": "bd094c86323fbc20bec4a5562a407822de2198d4ff31852e65d7cab22f15438e",
+      "bytes": 145452,
+      "sha256": "92fb8cef3f234f1f91c636d8235cf7c0c3283562963db106e60d0905d78e41ee",
       "identityHistory": [
         {
           "bytes": 54446,
@@ -2994,6 +3088,17 @@
           "bytes": 136041,
           "sha256": "b920054688670a2ee80909401402f1269ee538400ba7fe92becd6a9f4fbffdcb",
           "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+        },
+        {
+          "bytes": 142247,
+          "sha256": "bd094c86323fbc20bec4a5562a407822de2198d4ff31852e65d7cab22f15438e",
+          "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+          "scope": "Recorded identity before F2-A 0.42.0 source curation; historical cutoff retained."
+        },
+        {
+          "bytes": 142247,
+          "sha256": "bd094c86323fbc20bec4a5562a407822de2198d4ff31852e65d7cab22f15438e",
+          "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
         }
       ]
     },
@@ -3004,10 +3109,10 @@
       "sha256": "812fe04f9eb9081ec22c981a595a40e2535a93fc6ddcda82edd276eecabf5b01"
     },
     {
-      "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+      "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/en/registry/requirements.json",
-      "bytes": 32069,
-      "sha256": "578a79fad14e048dfd4bd2e114c11fcb71662593dc58e31a427e7d7a20dcf9b2",
+      "bytes": 34461,
+      "sha256": "e42adc95041da4fac9901b31f6b22f1aed58149a626111bf1aca19482834f59a",
       "identityHistory": [
         {
           "bytes": 15989,
@@ -3043,14 +3148,25 @@
           "bytes": 28603,
           "sha256": "a642a75c9ef3102ccb632e6d8d84174eb5c98c856b18e022f2f4ce0e54b4b30f",
           "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+        },
+        {
+          "bytes": 32069,
+          "sha256": "578a79fad14e048dfd4bd2e114c11fcb71662593dc58e31a427e7d7a20dcf9b2",
+          "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+          "scope": "Recorded identity before F2-A 0.42.0 source curation; historical cutoff retained."
+        },
+        {
+          "bytes": 32069,
+          "sha256": "578a79fad14e048dfd4bd2e114c11fcb71662593dc58e31a427e7d7a20dcf9b2",
+          "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
         }
       ]
     },
     {
-      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+      "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/en/registry/sources.json",
-      "bytes": 159707,
-      "sha256": "809bc53e0c1c66cebbc5b9c21ac4f40ee9378abda46a136676f6a2f68e281ae4",
+      "bytes": 163278,
+      "sha256": "d398e3338c2b3071b0bcdfb1d4b1cf14de260ddc12194a270b9ba2d410d64458",
       "identityHistory": [
         {
           "bytes": 82270,
@@ -3153,6 +3269,17 @@
           "bytes": 153469,
           "sha256": "bbf6c245bad8191e49caddff39144a06c0415667a3f310d2190ddb7fc9888d99",
           "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+        },
+        {
+          "bytes": 159707,
+          "sha256": "809bc53e0c1c66cebbc5b9c21ac4f40ee9378abda46a136676f6a2f68e281ae4",
+          "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+          "scope": "Recorded identity before F2-A 0.42.0 source curation; historical cutoff retained."
+        },
+        {
+          "bytes": 159707,
+          "sha256": "809bc53e0c1c66cebbc5b9c21ac4f40ee9378abda46a136676f6a2f68e281ae4",
+          "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
         }
       ]
     },
@@ -3295,10 +3422,10 @@
       "previousLayoutSha256": "3b7770d86d5df0f804661c104c7bbed9b1eda0a9ba59cfd891b298483a45941f"
     },
     {
-      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
+      "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "01703ffe6f47ae3ecc352c1c6e38d2d7dcae75c651b150b56c283651a3ae008e",
-      "bytes": 219410,
+      "sha256": "87631fcaa0404c2b1dca11adcca8a0a988775b0f31c6234b4483ca651c45068b",
+      "bytes": 224467,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -3432,6 +3559,32 @@
           "bytes": 217192,
           "sha256": "647173107cb6f9bdcad3cb783471a8d1ee828529ad24cf2e6ad0e30ce8aa4c86",
           "scope": "Preserved NS1 original44 curation cutoff before retained B1 test-only successor."
+        },
+        {
+          "bytes": 219410,
+          "sha256": "01703ffe6f47ae3ecc352c1c6e38d2d7dcae75c651b150b56c283651a3ae008e",
+          "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
+          "scope": "Recorded identity before F2-A 0.42.0 source curation; historical cutoff retained."
+        },
+        {
+          "bytes": 219680,
+          "sha256": "bf62a29b21cdf73d4c755ad2c6cd546bffecc4d2a6fb8ba33449e423c39e16c2",
+          "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
+        },
+        {
+          "bytes": 224467,
+          "sha256": "f1059d075f9c87a2c54ebc4b889e94f44fde6c3116d6839bf6d28c11c27ec993",
+          "scope": "Preserved F2-A R1 public curation snapshot before latest-first README placement; not a GitHub delivery identity."
+        },
+        {
+          "bytes": 224467,
+          "sha256": "18dfc2725876d33c83144a0a1c38d4c2ef15a494366c410eb41d12fa8fa89a7d",
+          "scope": "Preserved F2-A R2 curation before fixing a file-only publication link; not a GitHub delivery identity."
+        },
+        {
+          "bytes": 224467,
+          "sha256": "d6eff8fd76202066d417e6fb3a8a22037a1d75b7b4c6cdf4a175a9167d577109",
+          "scope": "Preserved F2-A link-corrected snapshot before naming repository-root license files within knowledge-base reading boundaries; not a GitHub delivery identity."
         }
       ]
     },
@@ -3445,21 +3598,32 @@
     },
     {
       "path": "package.json",
-      "sha256": "efafc565407f6189689bd8dd0c46d54e54b78827dd4a33981990730d504bb50f",
-      "bytes": 666,
+      "sha256": "b522c278e5f0b4070fec73da2aa336da5c57a4dc189c0855d9e5770f879009bd",
+      "bytes": 762,
       "originalSha256": "dc8b4a1df35b654d52a366010430083495daf807144aa8882b01a0b82fb45234",
-      "originRole": "Original first-party root workspace development dependency declaration; prior origin roles and identities retain their historical scope.",
+      "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "previousRevisionSha256": "dc8b4a1df35b654d52a366010430083495daf807144aa8882b01a0b82fb45234",
       "previousLayoutPath": "package.json",
       "previousLayoutSha256": "dc8b4a1df35b654d52a366010430083495daf807144aa8882b01a0b82fb45234",
-  "identityHistory": [
-    {
-      "bytes": 631,
-      "sha256": "9345ffe23a23ab60936d54f02c9c58a396753580f37e55b796ebe58403a00616",
-      "scope": "Preserved 0.41.0 45-path committed cutoff before tracked root workspace dependency correction.",
-      "originRole": "byte-identical prototype whitelist export"
-    }
-  ]
+      "identityHistory": [
+        {
+          "bytes": 631,
+          "sha256": "9345ffe23a23ab60936d54f02c9c58a396753580f37e55b796ebe58403a00616",
+          "scope": "Preserved 0.41.0 45-path committed cutoff before tracked root workspace dependency correction.",
+          "originRole": "byte-identical prototype whitelist export"
+        },
+        {
+          "bytes": 666,
+          "sha256": "efafc565407f6189689bd8dd0c46d54e54b78827dd4a33981990730d504bb50f",
+          "originRole": "Original first-party root workspace development dependency declaration; prior origin roles and identities retain their historical scope.",
+          "scope": "Recorded identity before F2-A 0.42.0 source curation; historical cutoff retained."
+        },
+        {
+          "bytes": 666,
+          "sha256": "efafc565407f6189689bd8dd0c46d54e54b78827dd4a33981990730d504bb50f",
+          "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
+        }
+      ]
     },
     {
       "path": "packages/contracts/package.json",
@@ -4220,21 +4384,32 @@
     },
     {
       "path": "pnpm-lock.yaml",
-      "sha256": "ccdf71d985350becff1f9d6e41574df69282f41770d0a1a8ac603a98d6fc0d9a",
-      "bytes": 8949,
+      "sha256": "79383095fd4bb2bb4682a12f9651d9a876a01fc6dc1326d09bc0ad587db23084",
+      "bytes": 9017,
       "originalSha256": "f58343405f8b75488966415da04a69edd5cbf01a32076ff08b75132fa476877c",
-      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
+      "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "previousRevisionSha256": "f58343405f8b75488966415da04a69edd5cbf01a32076ff08b75132fa476877c",
       "previousLayoutPath": "pnpm-lock.yaml",
       "previousLayoutSha256": "ed9759a4ae0d1ca6e2d707fd1a324d1eff3b326cb2a8c827eecf14e3ebfb53d4",
-  "identityHistory": [
-    {
-      "bytes": 8851,
-      "sha256": "78d967eade0029dc518bdc2654479982798af4c65d432b1d1b5312d7d4c43af1",
-      "scope": "Preserved 0.41.0 45-path committed cutoff before tracked root workspace dependency correction.",
-      "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope."
-    }
-  ]
+      "identityHistory": [
+        {
+          "bytes": 8851,
+          "sha256": "78d967eade0029dc518bdc2654479982798af4c65d432b1d1b5312d7d4c43af1",
+          "scope": "Preserved 0.41.0 45-path committed cutoff before tracked root workspace dependency correction.",
+          "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope."
+        },
+        {
+          "bytes": 8949,
+          "sha256": "ccdf71d985350becff1f9d6e41574df69282f41770d0a1a8ac603a98d6fc0d9a",
+          "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
+          "scope": "Recorded identity before F2-A 0.42.0 source curation; historical cutoff retained."
+        },
+        {
+          "bytes": 8949,
+          "sha256": "ccdf71d985350becff1f9d6e41574df69282f41770d0a1a8ac603a98d6fc0d9a",
+          "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
+        }
+      ]
     },
     {
       "path": "pnpm-workspace.yaml",
@@ -4267,9 +4442,9 @@
     },
     {
       "path": "README.md",
-      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
-      "sha256": "eef5a43774ffaf46ebc1265b1855b70de7f64e484823cab5618107c8a1c8b9ff",
-      "bytes": 70536,
+      "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
+      "sha256": "4328f09f5b1738ebff62f4e591f8b7858cc0b00fd5d2ed3b2a524b1b700b0a1f",
+      "bytes": 73687,
       "previousRevisionSha256": "199156443d499d5012f1224263a1a3ee9994e5ba38ee067bceeb2ad865ae8167",
       "previousLayoutPath": "README.en.md",
       "previousLayoutSha256": "f40ec41ca699cd0b9138fbdf4a268080038f583ae11e78c4f37093a6b7095f57",
@@ -4370,14 +4545,30 @@
           "bytes": 67161,
           "sha256": "17bb4e730fa2448c32d8f68ba41883d761a1bf342e6eaa081b58154fa00e47ad",
           "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+        },
+        {
+          "bytes": 70536,
+          "sha256": "eef5a43774ffaf46ebc1265b1855b70de7f64e484823cab5618107c8a1c8b9ff",
+          "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+          "scope": "Recorded identity before F2-A 0.42.0 source curation; historical cutoff retained."
+        },
+        {
+          "bytes": 70536,
+          "sha256": "eef5a43774ffaf46ebc1265b1855b70de7f64e484823cab5618107c8a1c8b9ff",
+          "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
+        },
+        {
+          "bytes": 73687,
+          "sha256": "9485c631a09cdcecfdf94ab9f88f185ce9c52c305acb11023b4135d816b3789e",
+          "scope": "Preserved F2-A R1 public curation snapshot before latest-first README placement; not a GitHub delivery identity."
         }
       ]
     },
     {
       "path": "README.zh-CN.md",
-      "sha256": "e90173dda41b4d7e6de0084e992ace05979fb79917a1864547c54c505f72ac6a",
-      "bytes": 69637,
-      "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+      "sha256": "6c502b1a07a87ae15789845393e3737fa7b4a41df79ef1b1a867b2cb7b7c563b",
+      "bytes": 72788,
+      "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "previousPublicSha256": "7ec80b8575a700b6a2628eb0322f2e770bb2284859f68ec5e0eb6530154a6699",
       "previousRevisionSha256": "7a1d72019db7cb6075d7c3a3bd4075f7c069d527b6e31d992a69333cb126b6c3",
       "previousLayoutPath": "README.md",
@@ -4484,6 +4675,22 @@
           "bytes": 66262,
           "sha256": "9384643e5414b165ee7656f80965ad08378e36ca6944bcbf71a8b3ed1660e6bb",
           "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+        },
+        {
+          "bytes": 69637,
+          "sha256": "e90173dda41b4d7e6de0084e992ace05979fb79917a1864547c54c505f72ac6a",
+          "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+          "scope": "Recorded identity before F2-A 0.42.0 source curation; historical cutoff retained."
+        },
+        {
+          "bytes": 69637,
+          "sha256": "e90173dda41b4d7e6de0084e992ace05979fb79917a1864547c54c505f72ac6a",
+          "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
+        },
+        {
+          "bytes": 72788,
+          "sha256": "d7549b61baec3b677ff539ef7799779b1d9d5e109c4e2f579492c480bce720f5",
+          "scope": "Preserved F2-A R1 public curation snapshot before latest-first README placement; not a GitHub delivery identity."
         }
       ]
     },
@@ -4952,13 +5159,26 @@
     },
     {
       "path": "tools/verify.mjs",
-      "sha256": "9c789b762d598c72040992d8ffb9041f75180d39b7556761365ef0998d5b0b4a",
-      "bytes": 525,
+      "sha256": "9f7cb76cd1ca6911cfc39cd86dc66c0848a0c4d459bf0182798e88bc5dc6183a",
+      "bytes": 551,
       "originalSha256": "9c789b762d598c72040992d8ffb9041f75180d39b7556761365ef0998d5b0b4a",
-      "originRole": "byte-identical prototype whitelist export",
+      "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "previousRevisionSha256": "9c789b762d598c72040992d8ffb9041f75180d39b7556761365ef0998d5b0b4a",
       "previousLayoutPath": "tools/verify.mjs",
-      "previousLayoutSha256": "9c789b762d598c72040992d8ffb9041f75180d39b7556761365ef0998d5b0b4a"
+      "previousLayoutSha256": "9c789b762d598c72040992d8ffb9041f75180d39b7556761365ef0998d5b0b4a",
+      "identityHistory": [
+        {
+          "bytes": 525,
+          "sha256": "9c789b762d598c72040992d8ffb9041f75180d39b7556761365ef0998d5b0b4a",
+          "originRole": "byte-identical prototype whitelist export",
+          "scope": "Recorded identity before F2-A 0.42.0 source curation; historical cutoff retained."
+        },
+        {
+          "bytes": 525,
+          "sha256": "9c789b762d598c72040992d8ffb9041f75180d39b7556761365ef0998d5b0b4a",
+          "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
+        }
+      ]
     },
     {
       "path": "tools/webgpu-oracle.mjs",
@@ -8439,6 +8659,210 @@
         "scope": "Preserved 0.41.0 45-path committed cutoff before tracked root workspace dependency correction.",
         "originRole": "Original first-party nine-slice geometry NS1, frozen public fixture, strict gate or paired public documentation/evidence."
       }
+      ]
+    },
+    {
+      "path": "tools/verify-spine-f2-source.mjs",
+      "bytes": 7112,
+      "sha256": "441328b7de094b1432f2197fa8c4017df7ae4d551eb00052d6d3b8e0d8ca14c0",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+    },
+    {
+      "path": "tools/spine-f2-source-boundary.mjs",
+      "bytes": 9900,
+      "sha256": "fb70772a371b19724ac681b888d8c459cb361e6862d949c71bbefa6a22e27037",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2/test/source-boundary.test.mjs",
+      "bytes": 2822,
+      "sha256": "3ab72f229629e4926fd59874f0c84b306357eebd524692e0a1b7a8ac2257d6cd",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2/src/index.ts",
+      "bytes": 371,
+      "sha256": "ad5a1a817040ed24984d0a432fed5137ea0a5764f13fee390bf0ce9159120c2d",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2/src/source-plan.ts",
+      "bytes": 21562,
+      "sha256": "a75d31f623471e826a2d47f3dc5c3bbc630909e6848d2e30dd37dbf085badf06",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2/src/source-view.ts",
+      "bytes": 14661,
+      "sha256": "ac31073339aed467da1ed56e01df70bfdf48791a90a9f22b3fe15a92631debb1",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2/tsconfig.json",
+      "bytes": 447,
+      "sha256": "6e10b9e4bf7a2accf247114744865ef956df882cd4647c6a49b3bb10c651e1a0",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2/type-tests/positive.ts",
+      "bytes": 4925,
+      "sha256": "7c0d76a383cbce71a06b4d14d0b3db7aa9507727cd5a29a8e67b05ecfba54310",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+      "bytes": 3818,
+      "sha256": "2251b4fe3a6e45f9c8866413c7a90c5f8f1cbef826a5ade58a34c79ce63ab8ec",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2/type-tests/tsconfig.positive.json",
+      "bytes": 251,
+      "sha256": "b23f4260c7389f7d90c23138193b970473558b532d4b667e59956c66f5adf710",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2/type-tests/tsconfig.negative.json",
+      "bytes": 251,
+      "sha256": "8b04ebcb705a5c450744531a8ddde6dab30e0ee09c8a6706fbefb2412c125587",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2/type-tests/negative-expectations.json",
+      "bytes": 10385,
+      "sha256": "36b7e09bf71e229037442bd04d32d260a3ea580fa5ab762e7dd46de6e0ee8528",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2/test/source-plan.test.mjs",
+      "bytes": 19067,
+      "sha256": "6dea6775061e99fd79943b062bed62088f16c82b96f16a32aba7a0b7cd406fd8",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2/test/shape-priority.test.mjs",
+      "bytes": 1647,
+      "sha256": "05a03fec766bb05768e61964d47a4902672962c6f7caab9dde6e89d9c45b0d04",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2/test/api-presence.test.mjs",
+      "bytes": 646,
+      "sha256": "bd094a167c5817cf62e5af303ee1d14803ec183623bf0dc7290fbaca2483955b",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2/test/fixtures.mjs",
+      "bytes": 9954,
+      "sha256": "4387ddc5ca2cbf2c8f7c8438dce77019cb0585f7692b71e30a822d2570e6e1a0",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2/assets/egret-original-unfold.spine.json",
+      "bytes": 1287,
+      "sha256": "6eabc98e76e45f79526ce38ac7b8cc9f343ab78235b77cccbc5eb9f6f28e8dc4",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2/assets/egret-original-unfold.atlas",
+      "bytes": 163,
+      "sha256": "8230859fcf9102078bda1a90d53b15f5a481c55b8407fd17c078cd7d1e736913",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2/assets/egret-f2-page-rgba.json",
+      "bytes": 1993,
+      "sha256": "43f6b91935b44df4e28424bfd4a740bdbc4055759b6d2fc141bc6429383ed99a",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2/assets/egret-f2-page.rgba",
+      "bytes": 512,
+      "sha256": "c465d00fca2665beef65d4b7a5c83067cb4bdafa52129a10ebaa95a22fc048e9",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2/assets/f2-geometry-oracle-candidate.json",
+      "bytes": 3441,
+      "sha256": "441163de2c5dffb9163541b647e79c65a4825a210c6ebaebaf509741b039ac37",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2/assets/f2-pixel-oracle-candidate.json",
+      "bytes": 3144,
+      "sha256": "8905607771ddd870de56267dd87db24f062fae0dacfc529d235c3aaaa5d62d71",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2/assets/f2-raw-triangle-control-proposals.json",
+      "bytes": 2336,
+      "sha256": "e96d34d2c6809e7eacbaba9ee54ff5475425cb521dc2252cbab483ee97354724",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+    },
+    {
+      "path": "knowledge-base/en/docs/spine-mesh-source-plan-contract.md",
+      "bytes": 14384,
+      "sha256": "32669f086d7450d2e817969fff38bb99672b479f348d2b744ce9b055ccfa0a8f",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/Spine网格源规划契约.md",
+      "bytes": 13247,
+      "sha256": "4b31939f91adb0b06f5b86d2697374adf04d8a2718153a7920f53beb2be62668",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+    },
+    {
+      "path": "knowledge-base/en/docs/spine-mesh-source-plan-evidence.md",
+      "bytes": 10011,
+      "sha256": "3a402c44813b7d9f9dc7df3ef836e3b9732761d4a4a06a716e9cbf0699dfde6e",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/Spine网格源规划证据.md",
+      "bytes": 9016,
+      "sha256": "573116ff1c5fb92336c198f9f49de7ea7a05a14ca66094b2fec1a9515bd9f64d",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+    },
+    {
+      "path": "knowledge-base/evidence/spine-mesh-source-plan-verification.json",
+      "bytes": 30267,
+      "sha256": "8fce731be3f0789b1c24638a040b29f38357a8f6bd379535a36d81a442ce6683",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload."
+    },
+    {
+      "path": "knowledge-base/en/experiments/spine-f2/README.md",
+      "bytes": 4155,
+      "sha256": "af23819c584cdfa26557d3911594b20b0b8a711049e904fdff8aaa0f2e555328",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload.",
+      "identityHistory": [
+        {
+          "bytes": 4141,
+          "sha256": "93490312325470065f278d2b77d0057dd76f25693a3a048afa09efed05b204fc",
+          "scope": "Preserved F2-A R2 curation before fixing a file-only publication link; not a GitHub delivery identity."
+        },
+        {
+          "bytes": 4173,
+          "sha256": "d794a222b39d79fa82a5f78355c82e2bf9cc8e0d00fd03175e590a3f25995651",
+          "scope": "Preserved F2-A link-corrected snapshot before naming repository-root license files within knowledge-base reading boundaries; not a GitHub delivery identity."
+        }
+      ]
+    },
+    {
+      "path": "knowledge-base/Cns/experiments/spine-f2/README.md",
+      "bytes": 3910,
+      "sha256": "e28e8d259a6ff6014a8a894fc2ff34a2a7d8d0fdd868eafdf2b616688a38a639",
+      "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload.",
+      "identityHistory": [
+        {
+          "bytes": 3899,
+          "sha256": "ca644ef64e68be1516941afd6c80c7ccc03ead83415c011648312940141fbd56",
+          "scope": "Preserved F2-A R2 curation before fixing a file-only publication link; not a GitHub delivery identity."
+        },
+        {
+          "bytes": 3931,
+          "sha256": "122f798d55805b335b417bfea4acf097cbe6eddef65e83656d3df96628160d0b",
+          "scope": "Preserved F2-A link-corrected snapshot before naming repository-root license files within knowledge-base reading boundaries; not a GitHub delivery identity."
+        }
       ]
     }
   ],
@@ -13837,5 +14261,221 @@
     "priorActualBrowserAndTypesRepeated": false,
     "fullPrepush": "PENDING_DISTINCT_FRESH_ACTOR",
     "pushAndMainDelivery": "PENDING"
+  },
+  "spineMeshF2AWorkPackage": {
+    "engineeringLabel": "0.42.0",
+    "sourceId": "S095",
+    "deliverableId": "V046",
+    "status": "BOUNDED_F2_A_SOURCE_CPU_TYPES_POLICY_ACCEPTED_PUBLICATION_PENDING",
+    "record": "knowledge-base/evidence/spine-mesh-source-plan-verification.json",
+    "developmentTests": {
+      "total": 22,
+      "pass": 22,
+      "fail": 0,
+      "skipped": 0,
+      "sourceBehavior": 16,
+      "boundaryTests": 6,
+      "assignedControls": 5
+    },
+    "types": {
+      "positiveDiagnostics": 0,
+      "negativeDiagnostics": 39,
+      "exactObservedTuples": true
+    },
+    "ownedInternalFaultControls": "PENDING",
+    "mandatoryFullPrepush": "PENDING",
+    "mandatoryPushHook": "PENDING",
+    "remoteDelivery": "PENDING",
+    "independentPublicMeaningReview": "PENDING",
+    "fullSpineR020V020": "OPEN",
+    "coreCompatibility": "not_run",
+    "rendering": "not_run",
+    "licenseEntitlement": "unverified",
+    "historicalCutoffsPreserved": true,
+    "origin": "Original first-party design with AI-assisted implementation and bounded independent review.",
+    "dependencies": {
+      "reuse": "jsonc-parser3.3.1",
+      "license": "MIT",
+      "rootDevelopmentDeclaration": true,
+      "SDKDependenciesChanged": false,
+      "compiler": "TypeScript7.0.2",
+      "compilerAPIs": "Development tooling only; not a runtime API promise."
+    },
+    "selectedSourcePins": [
+      {
+        "path": "tools/verify-spine-f2-source.mjs",
+        "bytes": 7112,
+        "sha256": "441328b7de094b1432f2197fa8c4017df7ae4d551eb00052d6d3b8e0d8ca14c0"
+      },
+      {
+        "path": "tools/spine-f2-source-boundary.mjs",
+        "bytes": 9900,
+        "sha256": "fb70772a371b19724ac681b888d8c459cb361e6862d949c71bbefa6a22e27037"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/test/source-boundary.test.mjs",
+        "bytes": 2822,
+        "sha256": "3ab72f229629e4926fd59874f0c84b306357eebd524692e0a1b7a8ac2257d6cd"
+      },
+      {
+        "path": "package.json",
+        "bytes": 762,
+        "sha256": "b522c278e5f0b4070fec73da2aa336da5c57a4dc189c0855d9e5770f879009bd"
+      },
+      {
+        "path": "tools/verify.mjs",
+        "bytes": 551,
+        "sha256": "9f7cb76cd1ca6911cfc39cd86dc66c0848a0c4d459bf0182798e88bc5dc6183a"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/src/index.ts",
+        "bytes": 371,
+        "sha256": "ad5a1a817040ed24984d0a432fed5137ea0a5764f13fee390bf0ce9159120c2d"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/src/source-plan.ts",
+        "bytes": 21562,
+        "sha256": "a75d31f623471e826a2d47f3dc5c3bbc630909e6848d2e30dd37dbf085badf06"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/src/source-view.ts",
+        "bytes": 14661,
+        "sha256": "ac31073339aed467da1ed56e01df70bfdf48791a90a9f22b3fe15a92631debb1"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/tsconfig.json",
+        "bytes": 447,
+        "sha256": "6e10b9e4bf7a2accf247114744865ef956df882cd4647c6a49b3bb10c651e1a0"
+      },
+      {
+        "path": "pnpm-lock.yaml",
+        "bytes": 9017,
+        "sha256": "79383095fd4bb2bb4682a12f9651d9a876a01fc6dc1326d09bc0ad587db23084"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/type-tests/positive.ts",
+        "bytes": 4925,
+        "sha256": "7c0d76a383cbce71a06b4d14d0b3db7aa9507727cd5a29a8e67b05ecfba54310"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/type-tests/negative.ts",
+        "bytes": 3818,
+        "sha256": "2251b4fe3a6e45f9c8866413c7a90c5f8f1cbef826a5ade58a34c79ce63ab8ec"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/type-tests/tsconfig.positive.json",
+        "bytes": 251,
+        "sha256": "b23f4260c7389f7d90c23138193b970473558b532d4b667e59956c66f5adf710"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/type-tests/tsconfig.negative.json",
+        "bytes": 251,
+        "sha256": "8b04ebcb705a5c450744531a8ddde6dab30e0ee09c8a6706fbefb2412c125587"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/type-tests/negative-expectations.json",
+        "bytes": 10385,
+        "sha256": "36b7e09bf71e229037442bd04d32d260a3ea580fa5ab762e7dd46de6e0ee8528"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/test/source-plan.test.mjs",
+        "bytes": 19067,
+        "sha256": "6dea6775061e99fd79943b062bed62088f16c82b96f16a32aba7a0b7cd406fd8"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/test/shape-priority.test.mjs",
+        "bytes": 1647,
+        "sha256": "05a03fec766bb05768e61964d47a4902672962c6f7caab9dde6e89d9c45b0d04"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/test/api-presence.test.mjs",
+        "bytes": 646,
+        "sha256": "bd094a167c5817cf62e5af303ee1d14803ec183623bf0dc7290fbaca2483955b"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/test/fixtures.mjs",
+        "bytes": 9954,
+        "sha256": "4387ddc5ca2cbf2c8f7c8438dce77019cb0585f7692b71e30a822d2570e6e1a0"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/assets/egret-original-unfold.spine.json",
+        "bytes": 1287,
+        "sha256": "6eabc98e76e45f79526ce38ac7b8cc9f343ab78235b77cccbc5eb9f6f28e8dc4"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/assets/egret-original-unfold.atlas",
+        "bytes": 163,
+        "sha256": "8230859fcf9102078bda1a90d53b15f5a481c55b8407fd17c078cd7d1e736913"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/assets/egret-f2-page-rgba.json",
+        "bytes": 1993,
+        "sha256": "43f6b91935b44df4e28424bfd4a740bdbc4055759b6d2fc141bc6429383ed99a"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/assets/egret-f2-page.rgba",
+        "bytes": 512,
+        "sha256": "c465d00fca2665beef65d4b7a5c83067cb4bdafa52129a10ebaa95a22fc048e9"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/assets/f2-geometry-oracle-candidate.json",
+        "bytes": 3441,
+        "sha256": "441163de2c5dffb9163541b647e79c65a4825a210c6ebaebaf509741b039ac37"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/assets/f2-pixel-oracle-candidate.json",
+        "bytes": 3144,
+        "sha256": "8905607771ddd870de56267dd87db24f062fae0dacfc529d235c3aaaa5d62d71"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2/assets/f2-raw-triangle-control-proposals.json",
+        "bytes": 2336,
+        "sha256": "e96d34d2c6809e7eacbaba9ee54ff5475425cb521dc2252cbab483ee97354724"
+      }
+    ],
+    "sourceAcceptance": {
+      "witness": "F2_A_product_source",
+      "bytes": 10034,
+      "sha256": "474bbbae45cf61b176e897829fb6fa05df3fc5e7014ef471ea8f83066fc461ae"
+    },
+    "developmentAcceptance": {
+      "witness": "F2_A_actual_development",
+      "bytes": 12893,
+      "sha256": "5baed747e23dadff9927d1e720ec68583ffebe3614f9c070f9646d6be27c4e74"
+    },
+    "firstPartyLicense": "Apache-2.0",
+    "upstreamSpinePayload": "NONE_BUNDLED"
+  },
+  "nineSliceDeliveryActualSuccessor": {
+    "engineeringLabel": "0.41.0",
+    "status": "ACTUAL_0_41_NINE_SLICE_DELIVERY_SUCCESSOR",
+    "source": {
+      "sha": "607b6ee6b98a38c6a95a63cb79dd65a74c1e8b4b",
+      "tree": "ef0183ba3f555df5fd7a53cb98a677cd01f67356",
+      "files": 47
+    },
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/28",
+    "main": {
+      "status": "ACTUAL_LOCAL_AND_REMOTE_MAIN_MATCH",
+      "head": "758e516410a126483973a1d65eea0c6ca7f57ef6",
+      "tree": "ef0183ba3f555df5fd7a53cb98a677cd01f67356",
+      "atUtc": "2026-10-12T16:35:50.275Z"
+    },
+    "mandatoryPushHook": {
+      "exitCode": 0,
+      "coreTests": 2748,
+      "publicationTests": 63
+    },
+    "remoteChecks": {
+      "statusCount": 0,
+      "checkRuns": 0,
+      "remoteCIPassClaim": false
+    },
+    "independentlyReviewed": {
+      "witness": "NS1_0_41_actual_delivery",
+      "bytes": 29643,
+      "sha256": "39a9e645da096a52c9836bb6e16fe31599a7e5462e66d3ca1de20aa9a42f38c6"
+    },
+    "historicalPendingCutoffsRetained": true
   }
 }

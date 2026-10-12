@@ -1,5 +1,6 @@
 node_modules/
 packages/*/dist/
+/knowledge-base/experiments/spine-f2/dist/
 *.tsbuildinfo
 .pnpm-store/
 work/

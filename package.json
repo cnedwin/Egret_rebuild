@@ -11,8 +11,9 @@
     "check:boundaries": "node tools/check-boundaries.mjs",
     "check:types": "node tools/check-types.mjs",
     "example": "node examples/headless.mjs",
-    "verify": "node tools/verify.mjs"
+    "verify": "node tools/verify.mjs",
+    "verify:spine-f2-source": "node tools/verify-spine-f2-source.mjs"
   },
-  "devDependencies": { "@egret/contracts": "workspace:*", "@egret/runtime": "workspace:*", "typescript": "7.0.2" },
+  "devDependencies": { "@egret/contracts": "workspace:*", "@egret/runtime": "workspace:*", "jsonc-parser": "3.3.1", "typescript": "7.0.2" },
   "dependencies": { "@egret/engine": "workspace:*", "@egret/project": "workspace:*" }
 }

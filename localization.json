@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "revision": "0.41.0",
+  "revision": "0.42.0",
   "canonicalState": "Chinese registries; English JSON is a read-only translation",
   "evidencePolicy": "Machine data, embedded source, historical code and upstream legal originals retain their identities; paired reading versions explain them.",
   "semanticReview": {
@@ -764,8 +764,8 @@
       "zh": "knowledge-base/Cns/README.md",
       "en": "knowledge-base/en/README.md",
       "kind": "public_reading",
-      "enSha256": "2c2eccb9f395763f34ba9a98906b4832f42bf0a170d270b6468f0361e9ac3700",
-      "zhSha256": "12cab66668877044b29a2ea6b8f64110d885fb670551ebdf465613c47f8db0bf"
+      "enSha256": "497543e44b8e377ab97dc85a1105d30c1b0753f90891de888d0a99223c31fc85",
+      "zhSha256": "f1a5435204e2c7a1b8d49f12355c0c8165fe6f8185bd3dc18682078a1b5ab361"
     },
     {
       "zh": "knowledge-base/Cns/templates/ADR决策记录.md",
@@ -848,8 +848,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "eef5a43774ffaf46ebc1265b1855b70de7f64e484823cab5618107c8a1c8b9ff",
-      "zhSha256": "e90173dda41b4d7e6de0084e992ace05979fb79917a1864547c54c505f72ac6a"
+      "enSha256": "4328f09f5b1738ebff62f4e591f8b7858cc0b00fd5d2ed3b2a524b1b700b0a1f",
+      "zhSha256": "6c502b1a07a87ae15789845393e3737fa7b4a41df79ef1b1a867b2cb7b7c563b"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -1125,14 +1125,35 @@
       "zh": "knowledge-base/Cns/docs/九宫格几何NS1证据.md",
       "zhSha256": "2c5e280d7d19c6f92868b5a4dae29bcaa2105fa1de4cf8d9058c716ea89c9945",
       "enSha256": "242a9b4d834ae4f501f7844734ac90e9a9b8f847a1a6e2fb0f6a2927eb3a6061"
+    },
+    {
+      "en": "knowledge-base/en/docs/spine-mesh-source-plan-contract.md",
+      "zh": "knowledge-base/Cns/docs/Spine网格源规划契约.md",
+      "kind": "public_reading",
+      "enSha256": "32669f086d7450d2e817969fff38bb99672b479f348d2b744ce9b055ccfa0a8f",
+      "zhSha256": "4b31939f91adb0b06f5b86d2697374adf04d8a2718153a7920f53beb2be62668"
+    },
+    {
+      "en": "knowledge-base/en/docs/spine-mesh-source-plan-evidence.md",
+      "zh": "knowledge-base/Cns/docs/Spine网格源规划证据.md",
+      "kind": "public_reading",
+      "enSha256": "3a402c44813b7d9f9dc7df3ef836e3b9732761d4a4a06a716e9cbf0699dfde6e",
+      "zhSha256": "573116ff1c5fb92336c198f9f49de7ea7a05a14ca66094b2fec1a9515bd9f64d"
+    },
+    {
+      "en": "knowledge-base/en/experiments/spine-f2/README.md",
+      "zh": "knowledge-base/Cns/experiments/spine-f2/README.md",
+      "kind": "public_reading",
+      "enSha256": "af23819c584cdfa26557d3911594b20b0b8a711049e904fdff8aaa0f2e555328",
+      "zhSha256": "e28e8d259a6ff6014a8a894fc2ff34a2a7d8d0fdd868eafdf2b616688a38a639"
     }
   ],
   "registries": [
     {
       "source": "knowledge-base/Cns/registry/需求.json",
       "target": "knowledge-base/en/registry/requirements.json",
-      "sourceSha256": "d14ab781082159d7d3286986f32f94c5fb19db45a6a3e320b28226092001960d",
-      "targetSha256": "578a79fad14e048dfd4bd2e114c11fcb71662593dc58e31a427e7d7a20dcf9b2"
+      "sourceSha256": "f5c53dc6e3dc4091f388f37f8c40c4211bea555674eb1af4a2182b8e0b826a3c",
+      "targetSha256": "e42adc95041da4fac9901b31f6b22f1aed58149a626111bf1aca19482834f59a"
     },
     {
       "source": "knowledge-base/Cns/registry/决策.json",
@@ -1149,20 +1170,20 @@
     {
       "source": "knowledge-base/Cns/registry/交付.json",
       "target": "knowledge-base/en/registry/deliverables.json",
-      "sourceSha256": "882363aebc27fae99dc9a52a924801e4c45e53a998c3e13283f7e8610f8c55b3",
-      "targetSha256": "bd094c86323fbc20bec4a5562a407822de2198d4ff31852e65d7cab22f15438e"
+      "sourceSha256": "3a0298da6be4625e7bc220a5b527da65585aefe5ff21f7a26bd48f37c2d3c377",
+      "targetSha256": "92fb8cef3f234f1f91c636d8235cf7c0c3283562963db106e60d0905d78e41ee"
     },
     {
       "source": "knowledge-base/Cns/registry/来源.json",
       "target": "knowledge-base/en/registry/sources.json",
-      "sourceSha256": "83c82ba93133ac85a68fd366a7af38bbcae1fd3fe8873d74b32fe76bd7bfd3e3",
-      "targetSha256": "809bc53e0c1c66cebbc5b9c21ac4f40ee9378abda46a136676f6a2f68e281ae4"
+      "sourceSha256": "92b1e960b0eb7b658e1560a96e6a86937cfa83197c1eb5480cd166ef1e70d395",
+      "targetSha256": "d398e3338c2b3071b0bcdfb1d4b1cf14de260ddc12194a270b9ba2d410d64458"
     },
     {
       "source": "knowledge-base/Cns/当前版本.json",
       "target": "knowledge-base/en/current-version.json",
-      "sourceSha256": "907e58afeb86f50febb700b4775b90979af97629d464903a74c3d33f2e9b3010",
-      "targetSha256": "0d74c0c9d19cafdb02a10017310f37befc108eb0c4ae3434a72a6cc8b0a1a269"
+      "sourceSha256": "92ac8ed2159defa7dfa4c22794793ade0d0aa5ad2c1d076f9cf2cd0eb0509497",
+      "targetSha256": "72dd6b79b98eb70c8e9937c4248a067f0ebb723f33b2fa4c2e4edbbb566756f9"
     }
   ],
   "criticalComments": [
@@ -1987,6 +2008,30 @@
     {
       "path": "tests/nine-slice-boundaries.test.mjs",
       "sha256": "2489ce16b482536f368062acde6167bc15ed54280399286eb0a69f5365b0258d"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2/src/index.ts",
+      "sha256": "ad5a1a817040ed24984d0a432fed5137ea0a5764f13fee390bf0ce9159120c2d"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2/src/source-plan.ts",
+      "sha256": "a75d31f623471e826a2d47f3dc5c3bbc630909e6848d2e30dd37dbf085badf06"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2/src/source-view.ts",
+      "sha256": "ac31073339aed467da1ed56e01df70bfdf48791a90a9f22b3fe15a92631debb1"
+    },
+    {
+      "path": "tools/verify-spine-f2-source.mjs",
+      "sha256": "441328b7de094b1432f2197fa8c4017df7ae4d551eb00052d6d3b8e0d8ca14c0"
+    },
+    {
+      "path": "tools/spine-f2-source-boundary.mjs",
+      "sha256": "fb70772a371b19724ac681b888d8c459cb361e6862d949c71bbefa6a22e27037"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2/test/source-boundary.test.mjs",
+      "sha256": "3ab72f229629e4926fd59874f0c84b306357eebd524692e0a1b7a8ac2257d6cd"
     }
   ],
   "historicalSemanticReview": {
@@ -4445,5 +4490,81 @@
       "bytes": 27186,
       "sha256": "bcc4f4072478b69f64b4f61e2f2b0aea88f638c7df1b37daf9026a92c8a29ff9"
     }
+  },
+  "spineMeshF2ACuration": {
+    "engineeringLabel": "0.42.0",
+    "status": "PENDING_INDEPENDENT_FINAL_PUBLIC_MEANING_REVIEW",
+    "pairs": [
+      {
+        "en": "knowledge-base/en/docs/spine-mesh-source-plan-contract.md",
+        "zh": "knowledge-base/Cns/docs/Spine网格源规划契约.md"
+      },
+      {
+        "en": "knowledge-base/en/docs/spine-mesh-source-plan-evidence.md",
+        "zh": "knowledge-base/Cns/docs/Spine网格源规划证据.md"
+      },
+      {
+        "en": "knowledge-base/en/experiments/spine-f2/README.md",
+        "zh": "knowledge-base/Cns/experiments/spine-f2/README.md"
+      }
+    ],
+    "criticalPaths": [
+      "knowledge-base/experiments/spine-f2/src/index.ts",
+      "knowledge-base/experiments/spine-f2/src/source-plan.ts",
+      "knowledge-base/experiments/spine-f2/src/source-view.ts",
+      "tools/verify-spine-f2-source.mjs",
+      "tools/spine-f2-source-boundary.mjs",
+      "knowledge-base/experiments/spine-f2/test/source-boundary.test.mjs"
+    ],
+    "sharedEvidencePin": {
+      "path": "knowledge-base/evidence/spine-mesh-source-plan-verification.json",
+      "bytes": 30267,
+      "sha256": "8fce731be3f0789b1c24638a040b29f38357a8f6bd379535a36d81a442ce6683"
+    },
+    "historicalSemanticReviewsPreserved": true,
+    "sourceAcceptance": {
+      "witness": "F2_A_product_source",
+      "bytes": 10034,
+      "sha256": "474bbbae45cf61b176e897829fb6fa05df3fc5e7014ef471ea8f83066fc461ae"
+    },
+    "developmentAcceptance": {
+      "witness": "F2_A_actual_development_verifier",
+      "bytes": 12893,
+      "sha256": "5baed747e23dadff9927d1e720ec68583ffebe3614f9c070f9646d6be27c4e74"
+    },
+    "fullSpineR020V020": "OPEN",
+    "publication": "PENDING"
+  },
+  "nineSliceDeliveryActualSuccessor": {
+    "engineeringLabel": "0.41.0",
+    "status": "ACTUAL_0_41_NINE_SLICE_DELIVERY_SUCCESSOR",
+    "source": {
+      "sha": "607b6ee6b98a38c6a95a63cb79dd65a74c1e8b4b",
+      "tree": "ef0183ba3f555df5fd7a53cb98a677cd01f67356",
+      "files": 47
+    },
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/28",
+    "main": {
+      "status": "ACTUAL_LOCAL_AND_REMOTE_MAIN_MATCH",
+      "head": "758e516410a126483973a1d65eea0c6ca7f57ef6",
+      "tree": "ef0183ba3f555df5fd7a53cb98a677cd01f67356",
+      "atUtc": "2026-10-12T16:35:50.275Z"
+    },
+    "mandatoryPushHook": {
+      "exitCode": 0,
+      "coreTests": 2748,
+      "publicationTests": 63
+    },
+    "remoteChecks": {
+      "statusCount": 0,
+      "checkRuns": 0,
+      "remoteCIPassClaim": false
+    },
+    "independentlyReviewed": {
+      "witness": "NS1_0_41_actual_delivery",
+      "bytes": 29643,
+      "sha256": "39a9e645da096a52c9836bb6e16fe31599a7e5462e66d3ca1de20aa9a42f38c6"
+    },
+    "historicalPendingCutoffsRetained": true
   }
 }

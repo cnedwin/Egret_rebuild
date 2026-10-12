@@ -12,6 +12,32 @@ Years later, as times change and technology advances, many developers continue t
 
 多年以后，时代变迁，技术革新，依然有很多开发者在鼓励我们。我希望借助 AI 和社区的力量，重建这个游戏引擎。
 
+<!-- F2-A-0.42.0-BEGIN -->
+## Engineering preview 0.42.0 — Spine mesh source planning F2-A
+
+**S095 / V046: finite source-planning CPU, types and policy accepted; full prepush, mandatory push hook and PR/Main delivery remain PENDING.**
+
+The development experiment admits original unweighted mesh sources while preserving public SP1 planning boundaries; default SDK exports do not grow. After separate compilation/import, experiment tests passed 22/22: 16 source behavior and 6 boundary tests, including 5 assigned refusal controls. Positive type diagnostics were 0; negative types had 39 complete actual location/code/message records.
+
+These experiment counts are separate from prior core tests. Version 0.41.0 merged through [PR #28](https://github.com/cnedwin/Egret_rebuild/pull/28), with Main `758e516410a126483973a1d65eea0c6ca7f57ef6` and tree `ef0183ba3f555df5fd7a53cb98a677cd01f67356` read back; its mandatory push hook passed 2748 core and 63 publication tests. Remote statuses/check-runs were both 0; remote CI PASS is not claimed.
+
+[Contract](knowledge-base/en/docs/spine-mesh-source-plan-contract.md) / [Evidence](knowledge-base/en/docs/spine-mesh-source-plan-evidence.md) / [Use and development verification](knowledge-base/en/experiments/spine-f2/README.md).
+
+First-party independent Egret design uses AI assistance for engineering and bounded review; public dependencies retain their own licenses. Two internal fault controls remain pending. This slice establishes no Core, deform, playback, rendering, rights, full Spine R020/V020, legacy migration R008/V006, complete UI/3D, multi-host or performance acceptance. Earlier failures and PENDING sections retain their original cutoffs.
+
+## 工程预览 0.42.0 — Spine 网格源规划 F2-A
+
+**S095 / V046：有限源规划 CPU、类型及策略已接受；完整 prepush、必要 push hook 与 PR/Main 交付仍 PENDING。**
+
+开发实验检查原始非加权网格，保留公共 SP1 规划边界；默认 SDK 不新增导出。独立编译／导入后，实验测试 22/22 通过：16 个源行为与 6 个边界测试，包含 5 个指定拒绝对照。正向类型诊断 0；反向类型有 39 条完整实际位置／code／message 记录。
+
+这些实验数字独立于前序核心测试。0.41.0 经 [PR #28](https://github.com/cnedwin/Egret_rebuild/pull/28) 合并，Main `758e516410a126483973a1d65eea0c6ca7f57ef6`、tree `ef0183ba3f555df5fd7a53cb98a677cd01f67356` 已回读；必要推送 hook 通过 2748 core 与 63 publication。远程 status/check-run 均为 0，不宣称远程 CI PASS。
+
+[契约](knowledge-base/Cns/docs/Spine网格源规划契约.md) / [证据](knowledge-base/Cns/docs/Spine网格源规划证据.md) / [使用与开发验证](knowledge-base/Cns/experiments/spine-f2/README.md).
+
+白鹭第一方独立设计，AI 协助工程实施与有界审计；公共依赖保留各自许可。两个内部故障控制仍待验收；Core、deform、播放、渲染、许可、完整 Spine R020/V020、旧工程迁移 R008/V006、完整 UI/3D、多宿主与性能均不由本切片证明。此前失败和 PENDING 段落保留原截止点。
+<!-- F2-A-0.42.0-END -->
+
 <!-- NS1-DOC-0.41.0-BEGIN -->
 ## Engineering preview 0.41.0 — nine-slice stretch geometry NS1
 
