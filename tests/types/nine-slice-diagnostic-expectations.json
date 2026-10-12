@@ -1,0 +1,712 @@
+{
+  "schemaVersion": 1,
+  "scope": "NS1 actual strict consumer diagnostic inventory",
+  "observedAtUtc": "2026-10-12T13:14:52.645Z",
+  "compiler": {
+    "version": "7.0.2",
+    "nodeVersion": "v24.19.0",
+    "platform": "win32",
+    "arch": "x64",
+    "wrapperPins": [
+      {
+        "path": "node_modules/typescript/package.json",
+        "bytes": 3087,
+        "sha256": "3722b30210616a13a3213ded11575ba6b2dbab10c32a5ef67afca8513e27017e"
+      },
+      {
+        "path": "node_modules/typescript/bin/tsc",
+        "bytes": 44,
+        "sha256": "2219f428a7e55aaf1f7ad85b9b0f0cf5078aeb76ccc9a7c6036c92d48f492ffd"
+      },
+      {
+        "path": "node_modules/typescript/lib/tsc.js",
+        "bytes": 609,
+        "sha256": "cbdfbf11c26ed00dfc073155e316a42d6d6d8a387be61006b82fa9aa93ac572e"
+      },
+      {
+        "path": "node_modules/typescript/lib/getExePath.js",
+        "bytes": 3051,
+        "sha256": "96c10fd3a18e165d7323de8e314ac8d755ad96811f9fbc304a5b3ba4e05285cc"
+      }
+    ],
+    "nativePlatform": {
+      "package": {
+        "path": "@typescript/typescript-win32-x64/package.json",
+        "bytes": 1042,
+        "sha256": "6d8ec7623880a902bb225c53571112e2bbf0273412b2c534070b1193d2be0f6b"
+      },
+      "executable": {
+        "path": "@typescript/typescript-win32-x64/lib/tsc.exe",
+        "bytes": 24520544,
+        "sha256": "f9ecfbdc93753d2c972d66a8d0d75f5bd737fd4a5f88b422d9091ea282bcb2c7"
+      }
+    }
+  },
+  "configurationPins": [
+    {
+      "path": "tsconfig.base.json",
+      "bytes": 446,
+      "sha256": "b7a31fb9f93a93e20bfdcf33c135acb45cb3a6895a8b3e7006bd85214ddc1008"
+    },
+    {
+      "path": "tests/types/tsconfig.json",
+      "bytes": 224,
+      "sha256": "e378996174db2020f9c416fb0599ea1182b3ca3265b3dc56012a688fd3252ad9"
+    },
+    {
+      "path": "tests/types/tsconfig.dom-free.json",
+      "bytes": 56,
+      "sha256": "24bc13fae1f9d98b5d2dc212c9fb4f1f926aeb956f706d8269acbd617c900b49"
+    },
+    {
+      "path": "tests/types/tsconfig.web.json",
+      "bytes": 94,
+      "sha256": "ebd9c73f69f0a3ee587bf6a07a49a33218cdea845d3a243c2df22a89fb18568d"
+    }
+  ],
+  "origin": "Frozen only after independent acceptance of saved actual unsuppressed TypeScript observations. Original source cases precede implementation; no predicted diagnostic codes.",
+  "rawObservationIdentity": {
+    "bytes": 179451,
+    "sha256": "0a16d2a71e60d88de462441af40f45020c52300628adec26538e4bd7c3b2d259",
+    "status": "identity_only_not_distributed"
+  },
+  "messageRootToken": "<SDK_ROOT>",
+  "messageQualification": "Only the SDK root substring is normalized for relocation; indentation, continuations and all other message text remain exact.",
+  "positive": {
+    "fixture": {
+      "path": "tests/types/nine-slice-positive.ts",
+      "bytes": 4329,
+      "sha256": "727dc979adb59101be6fdf0173ded4f3160ec0ed0a1784835350cf41f3622289"
+    },
+    "diagnostics": []
+  },
+  "groups": {
+    "negative": {
+      "fixture": {
+        "path": "tests/types/nine-slice-negative.ts",
+        "bytes": 4035,
+        "sha256": "c87e9473276288054e532cbc36f8765e5c1683c2b3f396067e287d195a5f09d2"
+      },
+      "cases": [
+        {
+          "name": "required-options",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 10,
+          "column": 1,
+          "code": 2554,
+          "message": "Expected 1 arguments, but got 0."
+        },
+        {
+          "name": "no-second-argument",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 12,
+          "column": 36,
+          "code": 2554,
+          "message": "Expected 1 arguments, but got 2."
+        },
+        {
+          "name": "nonnull-options",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 14,
+          "column": 27,
+          "code": 2345,
+          "message": "Argument of type 'null' is not assignable to parameter of type 'NineSliceGeometry2DOptions'."
+        },
+        {
+          "name": "options-not-string",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 16,
+          "column": 27,
+          "code": 2345,
+          "message": "Argument of type 'string' is not assignable to parameter of type 'NineSliceGeometry2DOptions'."
+        },
+        {
+          "name": "source-width-primitive-number",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 18,
+          "column": 41,
+          "code": 2322,
+          "message": "Type 'string' is not assignable to type 'number'."
+        },
+        {
+          "name": "source-height-primitive-number",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 20,
+          "column": 41,
+          "code": 2322,
+          "message": "Type 'boolean' is not assignable to type 'number'."
+        },
+        {
+          "name": "target-width-primitive-number",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 22,
+          "column": 41,
+          "code": 2322,
+          "message": "Type 'bigint' is not assignable to type 'number'."
+        },
+        {
+          "name": "target-height-primitive-number",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 24,
+          "column": 41,
+          "code": 2322,
+          "message": "Type 'Number' is not assignable to type 'number'.\n  'number' is a primitive, but 'Number' is a wrapper object. Prefer using 'number' when possible."
+        },
+        {
+          "name": "left-primitive-number",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 26,
+          "column": 62,
+          "code": 2322,
+          "message": "Type 'string' is not assignable to type 'number'."
+        },
+        {
+          "name": "top-primitive-number",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 28,
+          "column": 62,
+          "code": 2322,
+          "message": "Type 'boolean' is not assignable to type 'number'."
+        },
+        {
+          "name": "right-primitive-number",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 30,
+          "column": 62,
+          "code": 2322,
+          "message": "Type 'bigint' is not assignable to type 'number'."
+        },
+        {
+          "name": "bottom-primitive-number",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 32,
+          "column": 62,
+          "code": 2322,
+          "message": "Type 'Number' is not assignable to type 'number'.\n  'number' is a primitive, but 'Number' is a wrapper object. Prefer using 'number' when possible."
+        },
+        {
+          "name": "required-source-width",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 34,
+          "column": 27,
+          "code": 2741,
+          "message": "Property 'sourceWidth' is missing in type '{ sourceHeight: number; targetWidth: number; targetHeight: number; insets: NineSliceInsets2D; }' but required in type 'NineSliceGeometry2DOptions'."
+        },
+        {
+          "name": "required-source-height",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 36,
+          "column": 27,
+          "code": 2741,
+          "message": "Property 'sourceHeight' is missing in type '{ sourceWidth: number; targetWidth: number; targetHeight: number; insets: NineSliceInsets2D; }' but required in type 'NineSliceGeometry2DOptions'."
+        },
+        {
+          "name": "required-target-width",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 38,
+          "column": 27,
+          "code": 2741,
+          "message": "Property 'targetWidth' is missing in type '{ sourceWidth: number; sourceHeight: number; targetHeight: number; insets: NineSliceInsets2D; }' but required in type 'NineSliceGeometry2DOptions'."
+        },
+        {
+          "name": "required-target-height",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 40,
+          "column": 27,
+          "code": 2741,
+          "message": "Property 'targetHeight' is missing in type '{ sourceWidth: number; sourceHeight: number; targetWidth: number; insets: NineSliceInsets2D; }' but required in type 'NineSliceGeometry2DOptions'."
+        },
+        {
+          "name": "required-insets",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 42,
+          "column": 27,
+          "code": 2741,
+          "message": "Property 'insets' is missing in type '{ sourceWidth: number; sourceHeight: number; targetWidth: number; targetHeight: number; }' but required in type 'NineSliceGeometry2DOptions'."
+        },
+        {
+          "name": "nonnull-insets",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 44,
+          "column": 41,
+          "code": 2322,
+          "message": "Type 'null' is not assignable to type 'NineSliceInsets2D'."
+        },
+        {
+          "name": "insets-not-number",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 46,
+          "column": 41,
+          "code": 2322,
+          "message": "Type 'number' is not assignable to type 'NineSliceInsets2D'."
+        },
+        {
+          "name": "required-left",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 48,
+          "column": 41,
+          "code": 2741,
+          "message": "Property 'left' is missing in type '{ top: number; right: number; bottom: number; }' but required in type 'NineSliceInsets2D'."
+        },
+        {
+          "name": "required-top",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 50,
+          "column": 41,
+          "code": 2741,
+          "message": "Property 'top' is missing in type '{ left: number; right: number; bottom: number; }' but required in type 'NineSliceInsets2D'."
+        },
+        {
+          "name": "required-right",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 52,
+          "column": 41,
+          "code": 2741,
+          "message": "Property 'right' is missing in type '{ left: number; top: number; bottom: number; }' but required in type 'NineSliceInsets2D'."
+        },
+        {
+          "name": "required-bottom",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 54,
+          "column": 41,
+          "code": 2741,
+          "message": "Property 'bottom' is missing in type '{ left: number; top: number; right: number; }' but required in type 'NineSliceInsets2D'."
+        },
+        {
+          "name": "readonly-source-width",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 56,
+          "column": 9,
+          "code": 2540,
+          "message": "Cannot assign to 'sourceWidth' because it is a read-only property."
+        },
+        {
+          "name": "readonly-source-height",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 58,
+          "column": 9,
+          "code": 2540,
+          "message": "Cannot assign to 'sourceHeight' because it is a read-only property."
+        },
+        {
+          "name": "readonly-target-width",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 60,
+          "column": 9,
+          "code": 2540,
+          "message": "Cannot assign to 'targetWidth' because it is a read-only property."
+        },
+        {
+          "name": "readonly-target-height",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 62,
+          "column": 9,
+          "code": 2540,
+          "message": "Cannot assign to 'targetHeight' because it is a read-only property."
+        },
+        {
+          "name": "readonly-insets-reference",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 64,
+          "column": 9,
+          "code": 2540,
+          "message": "Cannot assign to 'insets' because it is a read-only property."
+        },
+        {
+          "name": "readonly-left",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 66,
+          "column": 8,
+          "code": 2540,
+          "message": "Cannot assign to 'left' because it is a read-only property."
+        },
+        {
+          "name": "readonly-top",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 68,
+          "column": 8,
+          "code": 2540,
+          "message": "Cannot assign to 'top' because it is a read-only property."
+        },
+        {
+          "name": "readonly-right",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 70,
+          "column": 8,
+          "code": 2540,
+          "message": "Cannot assign to 'right' because it is a read-only property."
+        },
+        {
+          "name": "readonly-bottom",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 72,
+          "column": 8,
+          "code": 2540,
+          "message": "Cannot assign to 'bottom' because it is a read-only property."
+        },
+        {
+          "name": "canonical-result-not-void",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 74,
+          "column": 7,
+          "code": 2322,
+          "message": "Type 'TexturedGeometry2D' is not assignable to type 'void'."
+        },
+        {
+          "name": "canonical-result-not-promise",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 76,
+          "column": 7,
+          "code": 2739,
+          "message": "Type 'TexturedGeometry2D' is missing the following properties from type 'Promise<TexturedGeometry2D>': then, catch, [Symbol.toStringTag], finally"
+        },
+        {
+          "name": "nominal-result-cannot-be-forged",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 78,
+          "column": 7,
+          "code": 2741,
+          "message": "Property '[texturedGeometry2DBrand]' is missing in type '{ vertexCount: number; indexCount: number; triangleCount: number; logicalByteLength: number; positions: never[]; uvs: never[]; lightColors: never[]; indices: never[]; }' but required in type 'TexturedGeometry2D'."
+        },
+        {
+          "name": "readonly-result-vertex-count",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 81,
+          "column": 10,
+          "code": 2540,
+          "message": "Cannot assign to 'vertexCount' because it is a read-only property."
+        },
+        {
+          "name": "readonly-result-indices-reference",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 83,
+          "column": 10,
+          "code": 2540,
+          "message": "Cannot assign to 'indices' because it is a read-only property."
+        },
+        {
+          "name": "readonly-result-position-element",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 85,
+          "column": 1,
+          "code": 2542,
+          "message": "Index signature in type 'readonly number[]' only permits reading."
+        },
+        {
+          "name": "readonly-result-uv-element",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 87,
+          "column": 1,
+          "code": 2542,
+          "message": "Index signature in type 'readonly number[]' only permits reading."
+        },
+        {
+          "name": "readonly-result-light-element",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 89,
+          "column": 1,
+          "code": 2542,
+          "message": "Index signature in type 'readonly number[]' only permits reading."
+        },
+        {
+          "name": "readonly-result-index-element",
+          "file": "tests/types/nine-slice-negative.ts",
+          "line": 91,
+          "column": 1,
+          "code": 2542,
+          "message": "Index signature in type 'readonly number[]' only permits reading."
+        }
+      ]
+    },
+    "import-negative": {
+      "fixture": {
+        "path": "tests/types/nine-slice-import-negative.ts",
+        "bytes": 4938,
+        "sha256": "77b83e90f24da252a833d06761ba85d806f74893faa9f9193e162dd816ea591c"
+      },
+      "cases": [
+        {
+          "name": "engine-insets-not-value",
+          "file": "tests/types/nine-slice-import-negative.ts",
+          "line": 6,
+          "column": 13,
+          "code": 2339,
+          "message": "Property 'NineSliceInsets2D' does not exist on type 'typeof import(\"<SDK_ROOT>/packages/engine/dist/index\")'."
+        },
+        {
+          "name": "engine-options-not-value",
+          "file": "tests/types/nine-slice-import-negative.ts",
+          "line": 8,
+          "column": 13,
+          "code": 2339,
+          "message": "Property 'NineSliceGeometry2DOptions' does not exist on type 'typeof import(\"<SDK_ROOT>/packages/engine/dist/index\")'."
+        },
+        {
+          "name": "runtime-insets-not-value",
+          "file": "tests/types/nine-slice-import-negative.ts",
+          "line": 10,
+          "column": 14,
+          "code": 2339,
+          "message": "Property 'NineSliceInsets2D' does not exist on type 'typeof import(\"<SDK_ROOT>/packages/runtime/dist/index\")'."
+        },
+        {
+          "name": "runtime-options-not-value",
+          "file": "tests/types/nine-slice-import-negative.ts",
+          "line": 12,
+          "column": 14,
+          "code": 2339,
+          "message": "Property 'NineSliceGeometry2DOptions' does not exist on type 'typeof import(\"<SDK_ROOT>/packages/runtime/dist/index\")'."
+        },
+        {
+          "name": "canvas-no-factory",
+          "file": "tests/types/nine-slice-import-negative.ts",
+          "line": 15,
+          "column": 10,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/web\"' has no exported member 'createNineSliceGeometry2D'."
+        },
+        {
+          "name": "canvas-no-insets-type",
+          "file": "tests/types/nine-slice-import-negative.ts",
+          "line": 17,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/web\"' has no exported member 'NineSliceInsets2D'."
+        },
+        {
+          "name": "canvas-no-options-type",
+          "file": "tests/types/nine-slice-import-negative.ts",
+          "line": 19,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/web\"' has no exported member 'NineSliceGeometry2DOptions'."
+        },
+        {
+          "name": "webgpu-no-factory",
+          "file": "tests/types/nine-slice-import-negative.ts",
+          "line": 21,
+          "column": 10,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/webgpu\"' has no exported member 'createNineSliceGeometry2D'."
+        },
+        {
+          "name": "webgpu-no-insets-type",
+          "file": "tests/types/nine-slice-import-negative.ts",
+          "line": 23,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/webgpu\"' has no exported member 'NineSliceInsets2D'."
+        },
+        {
+          "name": "webgpu-no-options-type",
+          "file": "tests/types/nine-slice-import-negative.ts",
+          "line": 25,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/webgpu\"' has no exported member 'NineSliceGeometry2DOptions'."
+        },
+        {
+          "name": "scene3d-no-factory",
+          "file": "tests/types/nine-slice-import-negative.ts",
+          "line": 27,
+          "column": 10,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/scene3d\"' has no exported member 'createNineSliceGeometry2D'."
+        },
+        {
+          "name": "scene3d-no-insets-type",
+          "file": "tests/types/nine-slice-import-negative.ts",
+          "line": 29,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/scene3d\"' has no exported member 'NineSliceInsets2D'."
+        },
+        {
+          "name": "scene3d-no-options-type",
+          "file": "tests/types/nine-slice-import-negative.ts",
+          "line": 31,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/scene3d\"' has no exported member 'NineSliceGeometry2DOptions'."
+        },
+        {
+          "name": "webgpu-scene3d-no-factory",
+          "file": "tests/types/nine-slice-import-negative.ts",
+          "line": 33,
+          "column": 10,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/webgpu/scene3d\"' has no exported member 'createNineSliceGeometry2D'."
+        },
+        {
+          "name": "webgpu-scene3d-no-insets-type",
+          "file": "tests/types/nine-slice-import-negative.ts",
+          "line": 35,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/webgpu/scene3d\"' has no exported member 'NineSliceInsets2D'."
+        },
+        {
+          "name": "webgpu-scene3d-no-options-type",
+          "file": "tests/types/nine-slice-import-negative.ts",
+          "line": 37,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/webgpu/scene3d\"' has no exported member 'NineSliceGeometry2DOptions'."
+        },
+        {
+          "name": "engine-text-no-factory",
+          "file": "tests/types/nine-slice-import-negative.ts",
+          "line": 39,
+          "column": 10,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/text\"' has no exported member 'createNineSliceGeometry2D'."
+        },
+        {
+          "name": "engine-text-no-insets-type",
+          "file": "tests/types/nine-slice-import-negative.ts",
+          "line": 41,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/text\"' has no exported member 'NineSliceInsets2D'."
+        },
+        {
+          "name": "engine-text-no-options-type",
+          "file": "tests/types/nine-slice-import-negative.ts",
+          "line": 43,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/text\"' has no exported member 'NineSliceGeometry2DOptions'."
+        },
+        {
+          "name": "runtime-text-no-factory",
+          "file": "tests/types/nine-slice-import-negative.ts",
+          "line": 45,
+          "column": 10,
+          "code": 2305,
+          "message": "Module '\"@egret/runtime/text\"' has no exported member 'createNineSliceGeometry2D'."
+        },
+        {
+          "name": "runtime-text-no-insets-type",
+          "file": "tests/types/nine-slice-import-negative.ts",
+          "line": 47,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/runtime/text\"' has no exported member 'NineSliceInsets2D'."
+        },
+        {
+          "name": "runtime-text-no-options-type",
+          "file": "tests/types/nine-slice-import-negative.ts",
+          "line": 49,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/runtime/text\"' has no exported member 'NineSliceGeometry2DOptions'."
+        },
+        {
+          "name": "mouse-input-no-factory",
+          "file": "tests/types/nine-slice-import-negative.ts",
+          "line": 51,
+          "column": 10,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/web/input\"' has no exported member 'createNineSliceGeometry2D'."
+        },
+        {
+          "name": "mouse-input-no-insets-type",
+          "file": "tests/types/nine-slice-import-negative.ts",
+          "line": 53,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/web/input\"' has no exported member 'NineSliceInsets2D'."
+        },
+        {
+          "name": "mouse-input-no-options-type",
+          "file": "tests/types/nine-slice-import-negative.ts",
+          "line": 55,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/web/input\"' has no exported member 'NineSliceGeometry2DOptions'."
+        },
+        {
+          "name": "canvas-text-no-factory",
+          "file": "tests/types/nine-slice-import-negative.ts",
+          "line": 57,
+          "column": 10,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/web/text\"' has no exported member 'createNineSliceGeometry2D'."
+        },
+        {
+          "name": "canvas-text-no-insets-type",
+          "file": "tests/types/nine-slice-import-negative.ts",
+          "line": 59,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/web/text\"' has no exported member 'NineSliceInsets2D'."
+        },
+        {
+          "name": "canvas-text-no-options-type",
+          "file": "tests/types/nine-slice-import-negative.ts",
+          "line": 61,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/web/text\"' has no exported member 'NineSliceGeometry2DOptions'."
+        },
+        {
+          "name": "contracts-no-factory",
+          "file": "tests/types/nine-slice-import-negative.ts",
+          "line": 63,
+          "column": 10,
+          "code": 2305,
+          "message": "Module '\"@egret/contracts\"' has no exported member 'createNineSliceGeometry2D'."
+        },
+        {
+          "name": "contracts-no-insets-type",
+          "file": "tests/types/nine-slice-import-negative.ts",
+          "line": 65,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/contracts\"' has no exported member 'NineSliceInsets2D'."
+        },
+        {
+          "name": "contracts-no-options-type",
+          "file": "tests/types/nine-slice-import-negative.ts",
+          "line": 67,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/contracts\"' has no exported member 'NineSliceGeometry2DOptions'."
+        },
+        {
+          "name": "runtime-no-new-subpath",
+          "file": "tests/types/nine-slice-import-negative.ts",
+          "line": 71,
+          "column": 68,
+          "code": 2307,
+          "message": "Cannot find module '@egret/runtime/nine-slice' or its corresponding type declarations."
+        },
+        {
+          "name": "engine-no-new-subpath",
+          "file": "tests/types/nine-slice-import-negative.ts",
+          "line": 73,
+          "column": 67,
+          "code": 2307,
+          "message": "Cannot find module '@egret/engine/nine-slice' or its corresponding type declarations."
+        },
+        {
+          "name": "runtime-source-not-public",
+          "file": "tests/types/nine-slice-import-negative.ts",
+          "line": 75,
+          "column": 67,
+          "code": 2307,
+          "message": "Cannot find module '@egret/runtime/src/NineSliceGeometry2D.js' or its corresponding type declarations."
+        },
+        {
+          "name": "engine-source-not-public",
+          "file": "tests/types/nine-slice-import-negative.ts",
+          "line": 77,
+          "column": 66,
+          "code": 2307,
+          "message": "Cannot find module '@egret/engine/src/NineSliceGeometry2D.js' or its corresponding type declarations."
+        }
+      ]
+    }
+  },
+  "limits": "Three frozen public consumer surfaces only. Runtime/browser/boundary controls/retained gates/delivery are independently accepted; private original inputs are not distributed."
+}

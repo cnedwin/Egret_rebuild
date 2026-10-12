@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "revision": "0.40.0",
+  "revision": "0.41.0",
   "canonicalState": "Chinese registries; English JSON is a read-only translation",
   "evidencePolicy": "Machine data, embedded source, historical code and upstream legal originals retain their identities; paired reading versions explain them.",
   "semanticReview": {
@@ -141,8 +141,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "05ce4ab71729aeb4cf80bef9259626bf30ff888da9d61bc98b176d9aa3510dbc",
-      "zhSha256": "3076293559107c9780c4949f90434ea42d59b34d56dc4b7394b389df9f32848e"
+      "enSha256": "0b3c80923a41a39d29e62051d7220b8e8f6058f803706ad9c403fb4f0117d3be",
+      "zhSha256": "af4d4b5ddefd54345ef59eadd734d7202bc36ee33a85175d3fdefd954282e6d6"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -288,8 +288,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "d9794691d0cd08f4d2a4e0ffe80edbf4f23e12cc87fd04c7eda348bb1272899c",
-      "zhSha256": "1bb845c56a5119699d3e7987ba071249b6f2a4556c1026874243ce0f78a5b727"
+      "enSha256": "b254d83f85279beb29fb9fa281dab82a8c35768acf97a5d6baff74e1ee88f8fc",
+      "zhSha256": "c0e2b9d602ca3f43c349a8d01a108a16ecb6927a9eef6bf6e04ccef508af2898"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -764,8 +764,8 @@
       "zh": "knowledge-base/Cns/README.md",
       "en": "knowledge-base/en/README.md",
       "kind": "public_reading",
-      "enSha256": "361be88896dcb14b90909fc6450a1acde1969eb169514a048ca7585e3ab0ee2f",
-      "zhSha256": "a074f49a0c5e4c08b3a1e24d87dc660b0d090dd62742a43cf5f2867e0a4e851d"
+      "enSha256": "2c2eccb9f395763f34ba9a98906b4832f42bf0a170d270b6468f0361e9ac3700",
+      "zhSha256": "12cab66668877044b29a2ea6b8f64110d885fb670551ebdf465613c47f8db0bf"
     },
     {
       "zh": "knowledge-base/Cns/templates/ADR决策记录.md",
@@ -799,8 +799,8 @@
       "zh": "knowledge-base/README.zh-CN.md",
       "en": "knowledge-base/README.md",
       "kind": "public_navigation",
-      "enSha256": "6682842a420a04ee497a77d1aa23b5008c5e7af7f33b915689cbfeaa27374802",
-      "zhSha256": "cdd90ffdae73f871432cdad29ed989db403be148ad835e040f9180f26aa595c4"
+      "enSha256": "0f2e47a615ec417bc87104dd71ad3a23b8b9871a1be1a927a363e128a4793530",
+      "zhSha256": "f2a11a2b2e21688ff09f5d43597890e1713af9b6d973ce21ae209e821eaf1458"
     },
     {
       "zh": "LICENSE.zh-CN.md",
@@ -820,8 +820,8 @@
       "zh": "packages/engine/README.zh-CN.md",
       "en": "packages/engine/README.md",
       "kind": "public_reading",
-      "enSha256": "ba2fc7217d8fc21dfc909f0a44911e81565d79e1ea974b8ae74e8d74d27423be",
-      "zhSha256": "5ba8b3da99834c947df783d43f84499d93a92268da199b1a341e27a574454d53"
+      "enSha256": "d5e5df6bb02114036c0ce8bbe8c6e49c33ad44de5f135a18f5cbdbb211f977a1",
+      "zhSha256": "d7cee4179fd83f40b79493608d864914087fb91005dd4365c261eee6dceeb7a7"
     },
     {
       "zh": "packages/project/README.zh-CN.md",
@@ -834,8 +834,8 @@
       "zh": "packages/runtime/README.zh-CN.md",
       "en": "packages/runtime/README.md",
       "kind": "public_reading",
-      "enSha256": "5e6debe13f0a1cbb6bc1ed666bd139af27299fa3339c9068ad65babcc4feb31f",
-      "zhSha256": "85b937597d56d5e91d19bc7b283aaa58e8db9f1766ede996603e0b9914c5ddd6"
+      "enSha256": "08069efa94098a6cf6ab53bc1afc3c6daca7bf2a5983f7755f4dee237adac668",
+      "zhSha256": "84ba84cb09b110f3312c03b2e8e942f294725431885d0e2d723d58beed670ac8"
     },
     {
       "zh": "PUBLICATION.zh-CN.md",
@@ -848,8 +848,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "17bb4e730fa2448c32d8f68ba41883d761a1bf342e6eaa081b58154fa00e47ad",
-      "zhSha256": "9384643e5414b165ee7656f80965ad08378e36ca6944bcbf71a8b3ed1660e6bb"
+      "enSha256": "eef5a43774ffaf46ebc1265b1855b70de7f64e484823cab5618107c8a1c8b9ff",
+      "zhSha256": "e90173dda41b4d7e6de0084e992ace05979fb79917a1864547c54c505f72ac6a"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -1111,16 +1111,28 @@
     {
       "zh": "knowledge-base/Cns/docs/字节写入器BW1证据.md",
       "en": "knowledge-base/en/docs/byte-writer-bw1-evidence.md",
-      "zhSha256": "e23ad49320f45e1a26798ad3883e84e184e37b6a0e3b13650f820ac1ba533b51",
-      "enSha256": "86855fb959abb6f5ed61afeeabbcae93d3626e3540d281c9c5cfb91d0e4abf27"
+      "zhSha256": "4c2c362ca9d4b4e66376658e209787f28df91043ef2d060b0138977e9b099b47",
+      "enSha256": "be3ae31ed8ac46bab9cdc4f476d1dd5ec8bd9158c3b23fb9a5232d3592223b49"
+    },
+    {
+      "zh": "knowledge-base/Cns/docs/九宫格几何NS1契约.md",
+      "en": "knowledge-base/en/docs/nine-slice-geometry-ns1-contract.md",
+      "zhSha256": "b8d08882f7cd318ac40790df6ab435b0ec6d9cd30250bf40cae6a320e23211e1",
+      "enSha256": "13e44e1bc1fa69762ce29b00ca152bd6ea97ee24f4aa209cac21c7ed7b8f1d07"
+    },
+    {
+      "en": "knowledge-base/en/docs/nine-slice-geometry-ns1-evidence.md",
+      "zh": "knowledge-base/Cns/docs/九宫格几何NS1证据.md",
+      "zhSha256": "39ce1195833771263facb27ff08219dd98eee724aee96680e229abaa9c557b8c",
+      "enSha256": "281dcb7fa44b5e424b5e4c1453229b4111a79db723c68d9707f6897b1cb370dc"
     }
   ],
   "registries": [
     {
       "source": "knowledge-base/Cns/registry/需求.json",
       "target": "knowledge-base/en/registry/requirements.json",
-      "sourceSha256": "55ea7d16285a65a37d96a1e2f70625c53f70f94faa0165f6a06d6f5131d0ee13",
-      "targetSha256": "a642a75c9ef3102ccb632e6d8d84174eb5c98c856b18e022f2f4ce0e54b4b30f"
+      "sourceSha256": "d14ab781082159d7d3286986f32f94c5fb19db45a6a3e320b28226092001960d",
+      "targetSha256": "578a79fad14e048dfd4bd2e114c11fcb71662593dc58e31a427e7d7a20dcf9b2"
     },
     {
       "source": "knowledge-base/Cns/registry/决策.json",
@@ -1137,20 +1149,20 @@
     {
       "source": "knowledge-base/Cns/registry/交付.json",
       "target": "knowledge-base/en/registry/deliverables.json",
-      "sourceSha256": "8d456d99bca195799d8d0e6b025e7a3b10b85f46f6e364a74e9c5a699b8295c1",
-      "targetSha256": "b920054688670a2ee80909401402f1269ee538400ba7fe92becd6a9f4fbffdcb"
+      "sourceSha256": "882363aebc27fae99dc9a52a924801e4c45e53a998c3e13283f7e8610f8c55b3",
+      "targetSha256": "bd094c86323fbc20bec4a5562a407822de2198d4ff31852e65d7cab22f15438e"
     },
     {
       "source": "knowledge-base/Cns/registry/来源.json",
       "target": "knowledge-base/en/registry/sources.json",
-      "sourceSha256": "b3b473a13d522b51e66bbaabb9cee38eda70ae570bb9033a595fbf3ee0c9b78c",
-      "targetSha256": "bbf6c245bad8191e49caddff39144a06c0415667a3f310d2190ddb7fc9888d99"
+      "sourceSha256": "83c82ba93133ac85a68fd366a7af38bbcae1fd3fe8873d74b32fe76bd7bfd3e3",
+      "targetSha256": "809bc53e0c1c66cebbc5b9c21ac4f40ee9378abda46a136676f6a2f68e281ae4"
     },
     {
       "source": "knowledge-base/Cns/当前版本.json",
       "target": "knowledge-base/en/current-version.json",
-      "sourceSha256": "f379c73ba62cb9869a6028827396296bea55c9a8fc1e879aabf1eabf58f30c20",
-      "targetSha256": "97924e026aeb7b0ffbd5659eef4136291fe9a115444186b3cd35775158a3a1b2"
+      "sourceSha256": "907e58afeb86f50febb700b4775b90979af97629d464903a74c3d33f2e9b3010",
+      "targetSha256": "0d74c0c9d19cafdb02a10017310f37befc108eb0c4ae3434a72a6cc8b0a1a269"
     }
   ],
   "criticalComments": [
@@ -1854,7 +1866,7 @@
     },
     {
       "path": "tests/webgpu-mesh-host.test.mjs",
-      "sha256": "3812f94f2dfd501a52551ec1b03ba499ff1e2b90b1bfa9fc2a75a5df0692d087"
+      "sha256": "dd7e00a4dc4ea5463c53fd99c80b0971f44adccf7f6ee4d6c83b8102eefc0f44"
     },
     {
       "path": "packages/project/src/spine/index.ts",
@@ -1938,11 +1950,11 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "4f012b45be55f103260379a1a933e33c2f75f0a684764b195e6e59ca3961c795"
+      "sha256": "6e8c33683973af0c135322c529c8bda83577bbed81fb6148354fdfcac8beb0b1"
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "sha256": "cc3d11376b1c14cc2da39b0e87f6d017ab7add80aac8deed4042b89760e36de8"
+      "sha256": "b8a4e2b76af47da379d8d26774a7f28a72417f8ca1144137ac6380dce5c74c90"
     },
     {
       "path": "tests/byte-writer-boundaries.test.mjs",
@@ -1950,7 +1962,31 @@
     },
     {
       "path": "tools/check-types.mjs",
-      "sha256": "dd20698274972687d7625c0932c0e31f7403697023a5f55d312a73e582656df3"
+      "sha256": "8a0d80800e7e102ac0a51a00fdb4d19fa13b4d87e1ae046844f6ca862908e931"
+    },
+    {
+      "path": "packages/runtime/src/NineSliceGeometry2D.ts",
+      "sha256": "84150122949a6693e75d5a7e50a36a3b4372f5b0f58e3f9df968352a52fe182b"
+    },
+    {
+      "path": "tests/nine-slice-geometry.test.mjs",
+      "sha256": "e2b6d824e2404f927928f6ac1c8d8cf5cf4de62dba56ebaf418cb70dfafecdd7"
+    },
+    {
+      "path": "tests/types/nine-slice-positive.ts",
+      "sha256": "727dc979adb59101be6fdf0173ded4f3160ec0ed0a1784835350cf41f3622289"
+    },
+    {
+      "path": "tests/types/nine-slice-negative.ts",
+      "sha256": "c87e9473276288054e532cbc36f8765e5c1683c2b3f396067e287d195a5f09d2"
+    },
+    {
+      "path": "tests/types/nine-slice-import-negative.ts",
+      "sha256": "77b83e90f24da252a833d06761ba85d806f74893faa9f9193e162dd816ea591c"
+    },
+    {
+      "path": "tests/nine-slice-boundaries.test.mjs",
+      "sha256": "2489ce16b482536f368062acde6167bc15ed54280399286eb0a69f5365b0258d"
     }
   ],
   "historicalSemanticReview": {
@@ -4295,5 +4331,112 @@
       "remoteCIPassClaim": false
     },
     "historicalPendingCutoffsRetained": true
+  },
+  "nineSliceNS1Curation": {
+    "engineeringLabel": "0.41.0",
+    "record": "knowledge-base/evidence/nine-slice-geometry-ns1-verification.json",
+    "independentMeaningReview": "PENDING",
+    "completeSemanticParityClaim": false
+  },
+  "byteWriterDeliveryActualSuccessor": {
+    "engineeringLabel": "0.40.0",
+    "status": "ACTUAL_0_40_BYTE_WRITER_DELIVERY_SUCCESSOR",
+    "source": {
+      "sha": "d0a8213b5af8b5e7c1d4dcdb7d2acdf2cbf00ac7",
+      "parent": "ac490f90b7467164e461112a9f572a3269107c02",
+      "tree": "ca1f2f176713e388e09016ae22d610c5c1b95201",
+      "files": 43
+    },
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/27",
+    "main": {
+      "status": "ACTUAL_LOCAL_AND_REMOTE_MAIN_MATCH",
+      "head": "8e1509878252cc2a9295fcc56d7597877d023c85",
+      "tree": "ca1f2f176713e388e09016ae22d610c5c1b95201",
+      "atUtc": "2026-10-12T12:47:48.835Z"
+    },
+    "mandatoryPushHook": {
+      "startedAtUtc": "2026-10-12T12:37:37.1897336Z",
+      "finishedAtUtc": "2026-10-12T12:43:29.3810161Z",
+      "exitCode": 0,
+      "stdoutSHA256": "8f48a07e2ea430e6b0ca931c02ce1122b8d437f65fac8872f23e9892003ff1ec",
+      "stderrSHA256": "61ecb8c2ede0d996fd414724f616f7297d29f7412a44736ec8beec87d5c124aa",
+      "coreTests": 2724,
+      "publicationTests": 63,
+      "documents": 152,
+      "criticalEnglishCommentRecords": 198
+    },
+    "remoteChecks": {
+      "statusCount": 0,
+      "checkRuns": 0,
+      "combinedState": "pending",
+      "remoteCIPassClaim": false
+    },
+    "independentlyReviewed": {
+      "witness": "BW0.40_actual_delivery",
+      "bytes": 25399,
+      "sha256": "557cede85393e9536c7529885daee76bb5573b802a23c8bb9edfa7096862486c"
+    },
+    "historicalPendingCutoffsRetained": true
+  },
+  "nineSliceNS1RetainedB1Successor": {
+    "status": "ACTUAL_RETAINED_B1_SUCCESSOR_FULL_PREPUSH_PENDING",
+    "sourcePin": {
+      "path": "tests/webgpu-mesh-host.test.mjs",
+      "bytes": 94897,
+      "sha256": "dd7e00a4dc4ea5463c53fd99c80b0971f44adccf7f6ee4d6c83b8102eefc0f44"
+    },
+    "originalFullPrepush": {
+      "status": "FAIL",
+      "exitCode": 1,
+      "tests": 2748,
+      "pass": 2747,
+      "fail": 1,
+      "reason": "S01 static lexer refused an unselected legitimate closing-parenthesis division token; no renderer failure was established.",
+      "receipt": {
+        "witness": "original_full_prepush_r3",
+        "bytes": 725,
+        "sha256": "d9a8592c0be69ac50024edc0aaa47431009cb607768472a99b5d38b22f2507e0"
+      }
+    },
+    "sourceCorrection": {
+      "witness": "exact_test_only_division_anchor_correction",
+      "bytes": 7996,
+      "sha256": "9008012b977380c5241ea6819925169c22f602ae0338b3631ef026fb8594af57"
+    },
+    "sourceReview": {
+      "witness": "independent_B1_correction_source_review",
+      "bytes": 7341,
+      "sha256": "db8dfc6d583a3a8d57010d709d9d21185c27e65f81b57fd2a782b2ac38cd842f"
+    },
+    "actualReview": {
+      "witness": "independent_actual_retained_B1_review",
+      "bytes": 10780,
+      "sha256": "9eba38402d37fa1059069474af2e3a8b1bd97d3a6f38fe4777c2b5045807bd9b"
+    },
+    "actualReceipt": {
+      "witness": "actual_default_B1_test_file",
+      "bytes": 777,
+      "sha256": "dee9a66cb39c7c4a03b3cd6aa28b334c49e1f59be47b8dd642e52a7fd1d982e2"
+    },
+    "fileTests": 2,
+    "filePass": 2,
+    "fileFail": 0,
+    "caseCount": 13,
+    "passedCases": 13,
+    "selectedSourceFiles": 5,
+    "selectedDivisionTokens": 11,
+    "filteredLaunch": {
+      "status": "SETUP_REFUSAL_BEFORE_CHILD_SCHEDULE",
+      "reason": "Default Node process-worker options correctly reject --test-name-pattern.",
+      "receipt": {
+        "witness": "original_filtered_launch",
+        "bytes": 1672,
+        "sha256": "0489adf2bfd57a908e6dd9932c42fc166be45a83c6875cda6061eb764ec3631d"
+      }
+    },
+    "productSourceChanged": false,
+    "priorActualBrowserAndTypesRepeated": false,
+    "fullPrepush": "PENDING_DISTINCT_FRESH_ACTOR",
+    "pushAndMainDelivery": "PENDING"
   }
 }

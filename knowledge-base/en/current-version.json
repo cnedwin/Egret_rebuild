@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "version": "0.40.0",
+  "version": "0.41.0",
   "updatedAt": "2026-10-12",
-  "title": "Egret Engine community rebuild — owned ByteWriter BW1",
-  "stage": "bounded_byte_writer_cpu_types_policy_accepted_publication_pending",
+  "title": "Egret Engine community rebuild — nine-slice stretch geometry NS1",
+  "stage": "bounded_nine_slice_cpu_types_policy_browser_accepted_publication_pending",
   "publication": "development_preview",
   "registries": {
     "requirements": "en/registry/requirements.json",
@@ -264,7 +264,7 @@
   },
   "_localization": {
     "canonicalSource": "当前版本.json",
-    "canonicalSha256": "f379c73ba62cb9869a6028827396296bea55c9a8fc1e879aabf1eabf58f30c20",
+    "canonicalSha256": "907e58afeb86f50febb700b4775b90979af97629d464903a74c3d33f2e9b3010",
     "role": "read_only_translation",
     "language": "en"
   },
@@ -547,7 +547,7 @@
     "contract": "en/docs/display-content-bounds-contract.md",
     "evidence": "en/docs/display-content-bounds-evidence.md"
   },
-  "latestEngineeringPreview": "0.40.0",
+  "latestEngineeringPreview": "0.41.0",
   "texturedMesh2DImplementation": {
     "version": "0.23.0",
     "status": "bounded_increment_implemented",
@@ -3009,6 +3009,123 @@
       "checkRuns": 0,
       "combinedState": "pending",
       "remoteCIPassClaim": false
+    },
+    "historicalPendingCutoffsRetained": true
+  },
+  "nineSliceNS1PreviousCheckpoint": {
+    "version": "0.40.0",
+    "stage": "bounded_byte_writer_cpu_types_policy_accepted_publication_pending",
+    "title": "Egret Engine community rebuild — owned ByteWriter BW1",
+    "updatedAt": "2026-10-12"
+  },
+  "nineSliceNS1ActualSuccessor": {
+    "engineeringLabel": "0.41.0",
+    "sourceId": "S094",
+    "deliverableId": "V045",
+    "status": "BOUNDED_NS1_CPU_TYPES_POLICY_BROWSER_ACCEPTED_PUBLICATION_PENDING",
+    "record": "knowledge-base/evidence/nine-slice-geometry-ns1-verification.json",
+    "publicEntries": [
+      "@egret/runtime",
+      "@egret/engine"
+    ],
+    "geometry": {
+      "vertices": 16,
+      "indices": 54,
+      "triangles": 18,
+      "logicalBytes": 1240
+    },
+    "actual": {
+      "cpu": {
+        "tests": 27,
+        "pass": 27,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "nineSliceGroups": 11,
+        "retainedMeshGroups": 6,
+        "retainedGeometryCountIncludingNested": 10
+      },
+      "types": {
+        "positiveDiagnostics": 0,
+        "negativeDiagnostics": 41,
+        "importNegativeDiagnostics": 35
+      },
+      "policy": {
+        "controls": {
+          "tests": 13,
+          "pass": 13,
+          "fail": 0
+        },
+        "guardExitCode": 0
+      },
+      "typeGate": {
+        "exitCode": 0,
+        "unexpectedDiagnostics": 0
+      },
+      "browser": {
+        "exitCode": 0,
+        "cleanupComplete": true,
+        "frameCount": 2,
+        "pixelComparisons": 96,
+        "environment": {
+          "browserVersion": "155.0.4283.45",
+          "channel": "msedge",
+          "headless": true,
+          "flags": "DEFAULT_NO_ADDED_FLAGS",
+          "preferredFormat": "bgra8unorm",
+          "hostPixelRatio": 1,
+          "browserDPR": 1,
+          "isSecureContext": true
+        }
+      }
+    },
+    "observedTypeDiagnosticCount": 76,
+    "independentPublicCuration": "PENDING",
+    "mandatoryFullPrepush": "PENDING",
+    "mandatoryPushHook": "PENDING",
+    "remoteDelivery": "PENDING",
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "historicalCutoffsPreserved": true
+  },
+  "byteWriterDeliveryActualSuccessor": {
+    "engineeringLabel": "0.40.0",
+    "status": "ACTUAL_0_40_BYTE_WRITER_DELIVERY_SUCCESSOR",
+    "source": {
+      "sha": "d0a8213b5af8b5e7c1d4dcdb7d2acdf2cbf00ac7",
+      "parent": "ac490f90b7467164e461112a9f572a3269107c02",
+      "tree": "ca1f2f176713e388e09016ae22d610c5c1b95201",
+      "files": 43
+    },
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/27",
+    "main": {
+      "status": "ACTUAL_LOCAL_AND_REMOTE_MAIN_MATCH",
+      "head": "8e1509878252cc2a9295fcc56d7597877d023c85",
+      "tree": "ca1f2f176713e388e09016ae22d610c5c1b95201",
+      "atUtc": "2026-10-12T12:47:48.835Z"
+    },
+    "mandatoryPushHook": {
+      "startedAtUtc": "2026-10-12T12:37:37.1897336Z",
+      "finishedAtUtc": "2026-10-12T12:43:29.3810161Z",
+      "exitCode": 0,
+      "stdoutSHA256": "8f48a07e2ea430e6b0ca931c02ce1122b8d437f65fac8872f23e9892003ff1ec",
+      "stderrSHA256": "61ecb8c2ede0d996fd414724f616f7297d29f7412a44736ec8beec87d5c124aa",
+      "coreTests": 2724,
+      "publicationTests": 63,
+      "documents": 152,
+      "criticalEnglishCommentRecords": 198
+    },
+    "remoteChecks": {
+      "statusCount": 0,
+      "checkRuns": 0,
+      "combinedState": "pending",
+      "remoteCIPassClaim": false
+    },
+    "independentlyReviewed": {
+      "witness": "BW0.40_actual_delivery",
+      "bytes": 25399,
+      "sha256": "557cede85393e9536c7529885daee76bb5573b802a23c8bb9edfa7096862486c"
     },
     "historicalPendingCutoffsRetained": true
   }

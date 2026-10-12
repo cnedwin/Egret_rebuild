@@ -777,3 +777,167 @@ try{
   console.log('BW1 types PASS: public DOM-free positive and exact individually observed unsuppressed ordinary/optional-import diagnostics. Runtime behavior is separately verified.');
 }
 // BW1_TYPES_END
+
+// NS1_TYPES_BEGIN
+// Standalone addition; original type gates remain byte-for-byte unchanged.
+{
+  const nsFrozenInventory = {"path":"tests/types/nine-slice-diagnostic-expectations.json","bytes":27106,"sha256":"9f6922706a8f846802e6704a6eafed7bd5b3154fb9b0beedfd9c5b4ed7922705"};
+  const nsTools = {portableMessage: function portableMessage(message, repository, platform) {
+  if (typeof message !== 'string') throw Error('NS1 message is not a string');
+  const variants = [...new Set([repository, repository.replaceAll('\\', '/'), repository.replaceAll('/', '\\')])].sort((a, b) => b.length - a.length);
+  let result = message;
+  for (const variant of variants) {
+    const escaped = variant.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    result = result.replace(new RegExp(escaped, platform === 'win32' ? 'gi' : 'g'), '<SDK_ROOT>');
+  }
+  if (/[A-Za-z]:[\\/]|file:\/\/|\/(?:Users|home|tmp|private)\//.test(result)) throw Error('NS1 unclassified absolute path in diagnostic message');
+  return result;
+}, sourceCases: function sourceCases(text, marker, file) {
+  if (!marker) return [];
+  const lines = text.split(/\r?\n/), pattern = new RegExp('^// ' + marker + ' ([a-z0-9-]+)$');
+  const rows = lines.flatMap((line, index) => { const match = pattern.exec(line); return match ? [{ name: match[1], file, markerLine: index + 1, line: index + 2 }] : []; });
+  if (!rows.length || new Set(rows.map(row => row.name)).size !== rows.length || (text.match(new RegExp('\\b' + marker + '\\b', 'g')) ?? []).length !== rows.length)
+    throw Error('NS1 incomplete or duplicate original source markers');
+  const forbidden = new Map([
+    ['runtime-no-new-subpath', '@egret/runtime/nine-slice'], ['engine-no-new-subpath', '@egret/engine/nine-slice'],
+    ['runtime-source-not-public', '@egret/runtime/src/NineSliceGeometry2D.js'], ['engine-source-not-public', '@egret/engine/src/NineSliceGeometry2D.js'],
+  ]);
+  for (let index = 0; index < rows.length; index++) {
+    const row = rows[index], limit = index + 1 < rows.length ? rows[index + 1].markerLine - 1 : lines.length;
+    row.endLine = row.line; while (row.endLine <= limit && !lines[row.endLine - 1].includes(';')) row.endLine++;
+    if (row.endLine > limit) throw Error('NS1 original case has no complete consumer statement');
+    if (marker === 'NSI' && forbidden.has(row.name)) {
+      const literal = '"' + forbidden.get(row.name) + '"', statement = lines[row.line - 1];
+      if (!statement.includes('from ') || statement.indexOf(literal) < 0 || statement.indexOf(literal) !== statement.lastIndexOf(literal)) throw Error('NS1 forbidden route literal missing or duplicated');
+      row.forbiddenSpecifier = forbidden.get(row.name); row.moduleStartColumn = statement.indexOf(literal) + 1; row.moduleEndColumn = row.moduleStartColumn + literal.length - 1;
+    }
+  }
+  if (marker === 'NSI' && rows.filter(row => row.forbiddenSpecifier).length !== 4) throw Error('NS1 four exact forbidden routes required');
+  return rows;
+}, parseDiagnostics: function parseDiagnostics(stdout, stderr, repository, pathAPI) {
+  if (stderr !== '') throw Error('NS1 compiler stderr is not empty');
+  const rows = []; let current = null;
+  for (const raw of stdout.split(/\r?\n/)) {
+    if (!raw.trim()) continue;
+    const header = /^(.+)\((\d+),(\d+)\): error TS(\d+): (.*)$/.exec(raw);
+    if (header) {
+      const absolute = pathAPI.isAbsolute(header[1]) ? pathAPI.resolve(header[1]) : pathAPI.resolve(repository, header[1]);
+      const relative = pathAPI.relative(repository, absolute).replaceAll('\\', '/');
+      if (!relative || pathAPI.isAbsolute(relative) || relative === '..' || relative.startsWith('../')) throw Error('NS1 external diagnostic location');
+      current = { file: relative, line: Number(header[2]), column: Number(header[3]), code: Number(header[4]), message: header[5] };
+      if (![current.line, current.column, current.code].every(value => Number.isSafeInteger(value) && value > 0)) throw Error('NS1 invalid diagnostic coordinates');
+      rows.push(current);
+    } else if (/\berror TS\d+:/.test(raw)) throw Error('NS1 unlocated compiler diagnostic');
+    else if (/^[ \t]+\S/.test(raw) && current) current.message += '\n' + raw;
+    else throw Error('NS1 unrecognized compiler stdout line');
+  }
+  if ((stdout.match(/\berror TS\d+:/g) ?? []).length !== rows.length) throw Error('NS1 unconsumed compiler diagnostic');
+  return rows;
+}, moduleRefusal: function moduleRefusal(row, cases, marker) {
+  if (!/Cannot find module/.test(row.message)) {
+    if (/Cannot find type definition file|Cannot read file|Unknown compiler option|Cannot write file|File ['"].*['"] not found/.test(row.message)) throw Error('NS1 compiler setup refusal');
+    return false;
+  }
+  if (marker !== 'NSI' || row.code !== 2307 || !cases.some(item => item.forbiddenSpecifier && row.file === item.file && row.line === item.line
+    && row.column >= item.moduleStartColumn && row.column <= item.moduleEndColumn
+    && row.message === "Cannot find module '" + item.forbiddenSpecifier + "' or its corresponding type declarations.")) throw Error('NS1 unassigned missing-module refusal');
+  return true;
+}};
+  await (async function ns1TypeGate(frozen, tools) {
+  const nsFs = await import('node:fs'), nsCrypto = await import('node:crypto'), nsPath = await import('node:path');
+  const nsURL = await import('node:url'), nsModule = await import('node:module'), nsChild = await import('node:child_process');
+  const nsRoot = nsPath.resolve(nsURL.fileURLToPath(new URL('..', import.meta.url)));
+  const nsHash = bytes => nsCrypto.createHash('sha256').update(bytes).digest('hex');
+  const nsRead = pin => {
+    if (!pin || typeof pin.path !== 'string' || !pin.path || pin.path.includes('\\') || pin.path.includes(':')
+      || pin.path.split('/').some(part => !part || part === '.' || part === '..')) throw Error('NS1 types: nonportable input pin');
+    const bytes = nsFs.readFileSync(nsPath.join(nsRoot, pin.path));
+    if (bytes.length !== pin.bytes || nsHash(bytes) !== pin.sha256) throw Error('NS1 types: frozen input identity mismatch: ' + pin.path);
+    return bytes;
+  };
+  const nsInventoryBytes = nsRead(frozen), nsInventory = JSON.parse(nsInventoryBytes.toString('utf8'));
+  if (nsInventory.schemaVersion !== 1 || nsInventory.compiler?.version !== '7.0.2' || nsInventory.compiler.platform !== process.platform
+    || nsInventory.compiler.arch !== process.arch || !Array.isArray(nsInventory.positive?.diagnostics) || nsInventory.positive.diagnostics.length !== 0)
+    throw Error('NS1 types: observed strict compiler/positive inventory missing');
+  if (JSON.stringify(nsInventory.compiler.wrapperPins?.map(pin => pin.path)) !== JSON.stringify(['node_modules/typescript/package.json', 'node_modules/typescript/bin/tsc', 'node_modules/typescript/lib/tsc.js', 'node_modules/typescript/lib/getExePath.js'])) throw Error('NS1 types: canonical compiler wrapper inventory mismatch');
+  for (const pin of nsInventory.compiler.wrapperPins) nsRead(pin);
+  if (JSON.parse(nsFs.readFileSync(nsPath.join(nsRoot, 'node_modules/typescript/package.json'), 'utf8')).version !== '7.0.2') throw Error('NS1 types: canonical compiler version mismatch');
+  const nsRequire = nsModule.createRequire(nsFs.realpathSync(nsPath.join(nsRoot, 'node_modules/typescript/lib/getExePath.js')));
+  const nsPlatformName = '@typescript/typescript-' + process.platform + '-' + process.arch;
+  const nsPlatformMetadata = nsRequire.resolve(nsPlatformName + '/package.json');
+  const nsNative = nsPath.join(nsPath.dirname(nsPlatformMetadata), 'lib', process.platform === 'win32' ? 'tsc.exe' : 'tsc');
+  for (const [file, pin] of [[nsPlatformMetadata, nsInventory.compiler.nativePlatform.package], [nsNative, nsInventory.compiler.nativePlatform.executable]]) {
+    const bytes = nsFs.readFileSync(file); if (bytes.length !== pin.bytes || nsHash(bytes) !== pin.sha256) throw Error('NS1 types: actual native compiler owner changed');
+  }
+  const nsMetadata = JSON.parse(nsFs.readFileSync(nsPlatformMetadata, 'utf8'));
+  if (nsMetadata.name !== nsPlatformName || nsMetadata.version !== '7.0.2') throw Error('NS1 types: native compiler platform/version mismatch');
+  const nsConfigPaths = ['tsconfig.base.json', 'tests/types/tsconfig.json', 'tests/types/tsconfig.dom-free.json', 'tests/types/tsconfig.web.json'];
+  if (JSON.stringify(nsInventory.configurationPins?.map(pin => pin.path)) !== JSON.stringify(nsConfigPaths)) throw Error('NS1 types: exact configuration inventory mismatch');
+  for (const pin of nsInventory.configurationPins) nsRead(pin);
+  const nsBase = JSON.parse(nsFs.readFileSync(nsPath.join(nsRoot, nsConfigPaths[0]), 'utf8'));
+  const nsShared = JSON.parse(nsFs.readFileSync(nsPath.join(nsRoot, nsConfigPaths[1]), 'utf8'));
+  const nsDOMFree = JSON.parse(nsFs.readFileSync(nsPath.join(nsRoot, nsConfigPaths[2]), 'utf8'));
+  const nsWeb = JSON.parse(nsFs.readFileSync(nsPath.join(nsRoot, nsConfigPaths[3]), 'utf8'));
+  if (nsBase.compilerOptions?.strict !== true || nsBase.compilerOptions.noUncheckedIndexedAccess !== true
+    || nsBase.compilerOptions.moduleResolution !== 'NodeNext' || JSON.stringify(nsBase.compilerOptions.lib) !== JSON.stringify(['ES2022'])
+    || JSON.stringify(nsBase.compilerOptions.types) !== '[]' || nsShared.extends !== '../../tsconfig.base.json' || nsShared.compilerOptions?.noEmit !== true
+    || nsDOMFree.extends !== './tsconfig.json' || nsWeb.extends !== './tsconfig.json' || JSON.stringify(nsWeb.compilerOptions?.lib) !== JSON.stringify(['ES2022', 'DOM'])) throw Error('NS1 types: original DOM-free/web strict configuration changed');
+  const nsTrials = [
+    { name: 'positive', source: 'nine-slice-positive.ts', base: 'tsconfig.dom-free.json', marker: null, count: 0, inventory: nsInventory.positive },
+    { name: 'negative', source: 'nine-slice-negative.ts', base: 'tsconfig.dom-free.json', marker: 'NSN', count: 41, inventory: nsInventory.groups?.negative },
+    { name: 'import-negative', source: 'nine-slice-import-negative.ts', base: 'tsconfig.web.json', marker: 'NSI', count: 35, inventory: nsInventory.groups?.['import-negative'] },
+  ];
+  const nsTuple = item => JSON.stringify([item.file, item.line, item.column, item.code, item.message]);
+  for (const trial of nsTrials) {
+    trial.file = 'tests/types/' + trial.source;
+    if (trial.inventory?.fixture?.path !== trial.file) throw Error('NS1 types: wrong original consumer path');
+    const bytes = nsRead(trial.inventory.fixture); trial.text = bytes.toString('utf8');
+    if (/@ts-(?:expect-error|ignore|nocheck)/.test(trial.text)) throw Error('NS1 types: suppressed diagnostic');
+    trial.cases = tools.sourceCases(trial.text, trial.marker, trial.file); trial.expected = trial.marker ? trial.inventory.cases : [];
+    if (!Array.isArray(trial.expected) || trial.expected.length !== trial.count || trial.cases.length !== trial.count
+      || new Set(trial.expected.map(item => item.name)).size !== trial.count) throw Error('NS1 types: missing original case inventory');
+    for (let index = 0; index < trial.expected.length; index++) {
+      const item = trial.expected[index], declared = trial.cases[index];
+      if (item.name !== declared.name || item.file !== trial.file || !Number.isSafeInteger(item.line) || item.line < declared.line || item.line > declared.endLine
+        || !Number.isSafeInteger(item.column) || item.column < 1 || !Number.isSafeInteger(item.code) || item.code < 1 || typeof item.message !== 'string'
+        || tools.portableMessage(item.message, nsRoot, process.platform) !== item.message) throw Error('NS1 types: source-case/file/full-message mismatch');
+      tools.moduleRefusal(item, trial.cases, trial.marker);
+    }
+    if (new Set(trial.expected.map(nsTuple)).size !== trial.expected.length) throw Error('NS1 types: duplicate frozen diagnostic tuple');
+    trial.config = 'tests/types/nine-slice-' + trial.name + '.gate.generated.json'; trial.physicalConfig = nsPath.join(nsRoot, trial.config);
+    const relative = nsPath.relative(nsRoot, trial.physicalConfig);
+    if (nsPath.isAbsolute(relative) || relative.startsWith('..') || !relative) throw Error('NS1 types: generated configuration escape');
+  }
+  // All three conflicts are refused before any NS1 write; only a successfully created file is removed.
+  for (const trial of nsTrials) if (nsFs.existsSync(trial.physicalConfig)) throw Error('NS1 types: generated configuration exists');
+  const nsEnvironment = { ...process.env };
+  for (const key of Object.keys(nsEnvironment)) if (/^(?:NODE_OPTIONS|NODE_PATH|NODE_V8_COVERAGE|NODE_COMPILE_CACHE|NODE_REPL_EXTERNAL_MODULE|NODE_TEST_CONTEXT|NODE_TEST_WORKER_ID|DOTNET_STARTUP_HOOKS|DOTNET_ADDITIONAL_DEPS|DOTNET_SHARED_STORE)$/i.test(key)) delete nsEnvironment[key];
+  for (const trial of nsTrials) {
+    if (nsFs.existsSync(trial.physicalConfig)) throw Error('NS1 types: generated configuration collision');
+    let ownedConfig = false, primary = null, cleanup = null, result;
+    try {
+      nsFs.writeFileSync(trial.physicalConfig, JSON.stringify({ extends: './' + trial.base, include: [trial.source] }) + '\n', { flag: 'wx' }); ownedConfig = true;
+      result = nsChild.spawnSync(process.execPath, [nsPath.join(nsRoot, 'node_modules/typescript/bin/tsc'), '--project', trial.config, '--pretty', 'false'],
+        { cwd: nsRoot, encoding: 'utf8', windowsHide: true, env: nsEnvironment, timeout: 30000, maxBuffer: 4194304 });
+    } catch (cause) { primary = cause; }
+    finally { if (ownedConfig) try { nsFs.rmSync(trial.physicalConfig, { force: false, maxRetries: 0 }); } catch (cause) { cleanup = cause; } }
+    if (primary || cleanup) throw new AggregateError([primary, cleanup].filter(Boolean), 'NS1 types: compiler invocation or owned configuration cleanup failed');
+    process.stdout.write(result.stdout ?? ''); process.stderr.write(result.stderr ?? '');
+    if (result.error || result.signal !== null || ![0, 1].includes(result.status)) throw result.error ?? Error('NS1 types: interrupted compiler');
+    const observed = tools.parseDiagnostics(result.stdout ?? '', result.stderr ?? '', nsRoot, nsPath).map(item => ({ ...item, message: tools.portableMessage(item.message, nsRoot, process.platform) }));
+    if (observed.some(item => item.file !== trial.file)) throw Error('NS1 types: unrelated diagnostic file');
+    for (const item of observed) tools.moduleRefusal(item, trial.cases, trial.marker);
+    if (!trial.marker) { if (result.status !== 0 || observed.length !== 0) throw Error('NS1 types: genuine DOM-free positive failed'); continue; }
+    if (result.status !== 1 || observed.length !== trial.expected.length) throw Error('NS1 types: missing/extra diagnostics or negative exit');
+    const remaining = new Map(); for (const item of observed) { const key = nsTuple(item), bucket = remaining.get(key) ?? []; bucket.push(item); remaining.set(key, bucket); }
+    const receipts = trial.expected.map(item => {
+      const key = nsTuple(item), bucket = remaining.get(key); if (bucket?.length !== 1) throw Error('NS1 types: exact file/line/column/code/full-message mismatch: ' + item.name);
+      remaining.delete(key); return { name: item.name, expected: item, actual: bucket[0] };
+    });
+    if (remaining.size) throw Error('NS1 types: duplicate or unassigned diagnostics');
+    console.log('NS1 ' + trial.name + ' exact unsuppressed complete diagnostic receipts: ' + JSON.stringify(receipts));
+  }
+  console.log('NS1 types PASS: original DOM-free positive and complete ordinary/optional-route diagnostics including continuations. Runtime/browser acceptance is separate.');
+})(nsFrozenInventory, nsTools);
+}
+// NS1_TYPES_END

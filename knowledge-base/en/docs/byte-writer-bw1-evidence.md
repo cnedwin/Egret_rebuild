@@ -40,3 +40,11 @@ node tools/prepush.mjs
 ```
 
 Exact current source, emission, type inventory and witness identities are in the [shared verification record](../../evidence/byte-writer-bw1-verification.json). Final full gates, mandatory push and BW1 PR/Main delivery remain PENDING at this curation cutoff. Full Spine R020/V020 and migration R008/V006 remain OPEN; no new GPU/host, phone, performance or complete-product acceptance is established.
+
+<!-- BW1-DELIVERY-0.40.0-SUCCESSOR-BEGIN -->
+
+## Actual delivery successor
+
+ByteWriter 0.40.0 merged through [PR #27](https://github.com/cnedwin/Egret_rebuild/pull/27), with Main `8e1509878252cc2a9295fcc56d7597877d023c85` and tree `ca1f2f176713e388e09016ae22d610c5c1b95201` read back. The mandatory push hook exited 0 with 63 publication and 2724 core checks. Zero remote statuses/check runs do not establish remote CI PASS. Earlier PENDING cutoffs and failure records remain preserved.
+
+<!-- BW1-DELIVERY-0.40.0-SUCCESSOR-END -->

@@ -40,3 +40,11 @@ node tools/prepush.mjs
 ```
 
 精确的当前源码、发射、类型清单与见证身份保存在[共享核验记录](../../evidence/byte-writer-bw1-verification.json)。完整发布门禁、必要推送与 BW1 的 PR/Main 交付在本策展截止点仍为 PENDING。完整 Spine R020/V020 与迁移 R008/V006 保持 OPEN；无新增 GPU／宿主、手机、性能或完整产品验收。
+
+<!-- BW1-DELIVERY-0.40.0-SUCCESSOR-BEGIN -->
+
+## 已完成的交付后继
+
+0.40.0 ByteWriter 已通过 [PR #27](https://github.com/cnedwin/Egret_rebuild/pull/27) 合并；已回读 Main `8e1509878252cc2a9295fcc56d7597877d023c85` 与 tree `ca1f2f176713e388e09016ae22d610c5c1b95201`。必要推送门禁退出码为 0，公开校验 63 项、核心校验 2724 项。远端状态／检查运行数均为零，不能据此声明远端 CI PASS。较早的 PENDING 截止点和失败记录继续保留。
+
+<!-- BW1-DELIVERY-0.40.0-SUCCESSOR-END -->
