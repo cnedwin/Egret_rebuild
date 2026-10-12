@@ -668,3 +668,112 @@ try{
   console.log('SP1-A types PASS: public DOM-free positive, exact observed unsuppressed diagnostics and retained root isolation');
 }finally{for(const file of spineGeneratedConfigs)rmSync(file,{force:true});}
 // SP1_A_TYPES_END
+
+// BW1_TYPES_BEGIN
+// This standalone addition preserves every preceding type check. Its inventory
+// comes from the separately reviewed unsuppressed TS7 observations, not guesses.
+{
+  const bwFs = await import('node:fs');
+  const {createHash: bwCreateHash} = await import('node:crypto');
+  const bwDigest = bytes => bwCreateHash('sha256').update(bytes).digest('hex');
+  const bwInventoryFile = 'tests/types/byte-writer-diagnostic-expectations.json';
+  const bwInventoryBytes = bwFs.readFileSync(path.join(root, bwInventoryFile));
+  if (bwInventoryBytes.length !== 17706 || bwDigest(bwInventoryBytes) !== '3e209f571a29d1e89c5e4deab3fc8f89bf668572d21561fce0d285ffe9e173cf')
+    throw new Error('BW1 types: frozen actual diagnostic inventory identity mismatch');
+  const bwInventory = JSON.parse(bwInventoryBytes.toString('utf8').replace(/^\uFEFF/, ''));
+  if (bwInventory.schemaVersion !== 1 || bwInventory.compiler?.version !== '7.0.2'
+    || !Array.isArray(bwInventory.positive?.diagnostics) || bwInventory.positive.diagnostics.length !== 0)
+    throw new Error('BW1 types: missing actual positive/strict compiler inventory');
+  const bwCompilerBytes = bwFs.readFileSync(path.join(root, 'node_modules/typescript/package.json'));
+  if (JSON.parse(bwCompilerBytes.toString('utf8')).version !== '7.0.2'
+    || bwDigest(bwCompilerBytes) !== '3722b30210616a13a3213ded11575ba6b2dbab10c32a5ef67afca8513e27017e'
+    || bwDigest(bwFs.readFileSync(compiler)) !== '2219f428a7e55aaf1f7ad85b9b0f0cf5078aeb76ccc9a7c6036c92d48f492ffd')
+    throw new Error('BW1 types: observed compiler identity mismatch');
+  const bwTrials = [
+    {name: 'positive', source: 'byte-writer-positive.ts', base: 'tsconfig.dom-free.json', marker: null, count: 0, inventory: bwInventory.positive},
+    {name: 'negative', source: 'byte-writer-negative.ts', base: 'tsconfig.dom-free.json', marker: 'BYTE_WRITER_CASE', count: 41, inventory: bwInventory.groups?.negative},
+    {name: 'import-negative', source: 'byte-writer-import-negative.ts', base: 'tsconfig.web.json', marker: 'BYTE_WRITER_IMPORT_CASE', count: 16, inventory: bwInventory.groups?.['import-negative']},
+  ];
+  const bwTuple = item => JSON.stringify([item.file, item.line, item.column, item.code, item.message]);
+  for (const trial of bwTrials) {
+    trial.file = 'tests/types/' + trial.source;
+    const fixturePin = trial.inventory?.fixture, fixtureBytes = bwFs.readFileSync(path.join(root, trial.file));
+    if (fixturePin?.path !== trial.file || fixturePin.bytes !== fixtureBytes.length || fixturePin.sha256 !== bwDigest(fixtureBytes))
+      throw new Error('BW1 types: observed fixture identity mismatch: ' + trial.file);
+    const fixture = fixtureBytes.toString('utf8');
+    if (/@ts-(?:expect-error|ignore|nocheck)/.test(fixture)) throw new Error('BW1 types: suppression in ' + trial.file);
+    trial.expected = trial.marker ? trial.inventory.cases : [];
+    if (!Array.isArray(trial.expected) || trial.expected.length !== trial.count)
+      throw new Error('BW1 types: incomplete actual diagnostic inventory: ' + trial.name);
+    if (trial.marker) {
+      const markerPattern = new RegExp('^// ' + trial.marker + ' ([a-z0-9-]+)$');
+      const declared = fixture.split(/\r?\n/).flatMap((line, index) => {
+        const match = line.match(markerPattern);
+        return match ? [{name: match[1], line: index + 2}] : [];
+      });
+      if (declared.length !== trial.count || new Set(declared.map(item => item.name)).size !== declared.length
+        || (fixture.match(new RegExp('\\b' + trial.marker + '\\b', 'g')) ?? []).length !== declared.length
+        || trial.expected.some((item, index) => item.name !== declared[index]?.name || item.file !== trial.file || item.line !== declared[index]?.line))
+        throw new Error('BW1 types: exact original authored case/file/line mismatch: ' + trial.file);
+    }
+    if (trial.expected.some(item => typeof item.name !== 'string' || item.file !== trial.file
+      || !Number.isSafeInteger(item.line) || item.line < 1 || !Number.isSafeInteger(item.column) || item.column < 1
+      || !Number.isSafeInteger(item.code) || item.code < 1 || typeof item.message !== 'string')
+      || new Set(trial.expected.map(bwTuple)).size !== trial.expected.length)
+      throw new Error('BW1 types: malformed or duplicate actual diagnostic tuple: ' + trial.name);
+    trial.config = 'tests/types/byte-writer-' + trial.name + '.gate.generated.json';
+    trial.physicalConfig = path.resolve(root, trial.config);
+    if (path.relative(root, trial.physicalConfig).replaceAll('\\', '/') !== trial.config)
+      throw new Error('BW1 types: generated config escapes its SDK root');
+  }
+  // Refuse known setup conflicts for every trial before the first BW1 write or
+  // compiler process; the per-trial check and exclusive write also remain below.
+  for (const trial of bwTrials) {
+    if (bwFs.existsSync(trial.physicalConfig)) throw new Error('BW1 types: generated config already exists: ' + trial.config);
+  }
+  for (const trial of bwTrials) {
+    if (bwFs.existsSync(trial.physicalConfig)) throw new Error('BW1 types: generated config already exists: ' + trial.config);
+    let bwCreated = false, bwCheck;
+    try {
+      bwFs.writeFileSync(trial.physicalConfig, JSON.stringify({extends: './' + trial.base, include: [trial.source]}) + '\n', {flag: 'wx'});
+      bwCreated = true;
+      bwCheck = spawnSync(process.execPath, [compiler, '--project', trial.config, '--pretty', 'false'],
+        {cwd: root, encoding: 'utf8', timeout: 30000, maxBuffer: 12000000, windowsHide: true, shell: false});
+    } finally {
+      if (bwCreated) bwFs.rmSync(trial.physicalConfig);
+    }
+    process.stdout.write(bwCheck.stdout ?? '');
+    process.stderr.write(bwCheck.stderr ?? '');
+    if (bwCheck.error) throw bwCheck.error;
+    if (bwCheck.signal !== null || ![0, 1].includes(bwCheck.status)) throw new Error('BW1 types: interrupted or invalid compiler outcome: ' + trial.name);
+    const stdout = bwCheck.stdout ?? '', stderr = bwCheck.stderr ?? '';
+    const observed = [...stdout.matchAll(/^(.+)\((\d+),(\d+)\): error TS(\d+): (.*)$/gm)].map(match => {
+      const absolute = path.isAbsolute(match[1]) ? match[1] : path.resolve(root, match[1]);
+      return {file: path.relative(root, absolute).replaceAll('\\', '/'), line: Number(match[2]), column: Number(match[3]), code: Number(match[4]), message: match[5]};
+    });
+    const allCompilerErrors = [...(stdout + '\n' + stderr).matchAll(/\berror TS\d+:/g)];
+    if (stderr.trim() !== '' || allCompilerErrors.length !== observed.length || observed.some(item => item.file !== trial.file))
+      throw new Error('BW1 types: unlocated, stderr or external compiler/config diagnostic: ' + trial.name);
+    if (!trial.marker) {
+      if (bwCheck.status !== 0 || observed.length !== 0) throw new Error('BW1 types: unsuppressed DOM-free positive failed');
+      continue;
+    }
+    if (bwCheck.status !== 1 || observed.length !== trial.expected.length)
+      throw new Error('BW1 types: missing/extra diagnostics or wrong negative exit: ' + trial.name);
+    const remaining = new Map();
+    for (const actual of observed) {
+      const key = bwTuple(actual), bucket = remaining.get(key) ?? [];
+      bucket.push(actual); remaining.set(key, bucket);
+    }
+    const receipts = trial.expected.map(expected => {
+      const key = bwTuple(expected), bucket = remaining.get(key);
+      if (bucket?.length !== 1) throw new Error('BW1 types: exact file/line/column/code/message mismatch: ' + expected.name);
+      remaining.delete(key);
+      return {name: expected.name, expected, actual: bucket[0]};
+    });
+    if (remaining.size !== 0) throw new Error('BW1 types: duplicate or unassigned actual diagnostic tuples: ' + trial.name);
+    console.log('BW1 ' + trial.name + ' complete unsuppressed diagnostic receipts: ' + JSON.stringify(receipts));
+  }
+  console.log('BW1 types PASS: public DOM-free positive and exact individually observed unsuppressed ordinary/optional-import diagnostics. Runtime behavior is separately verified.');
+}
+// BW1_TYPES_END

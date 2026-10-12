@@ -269,7 +269,7 @@ for (const name of geometryValues) if (typeof contractsFacade[name] !== 'functio
 // requires actual Engine captures and first-party host refusal in later stages.
 if (contractsFacade.TEXTURED_FRAME_PROFILE_2D !== 'egret.textured-frame2d/1' || facade.TEXTURED_FRAME_PROFILE_2D !== contractsFacade.TEXTURED_FRAME_PROFILE_2D) throw new Error('engine: textured profile literal mismatch');
 // Exact accepted Mesh root plus the opt-in factory and shared literal.
-const texturedRootValues = ['Engine', 'createEngine', 'createEngineForProfile', 'CancellationController', 'EgretError', 'Event', 'createEventType', 'EventDispatcher', 'DisplayObject', 'DisplayObjectContainer', 'Scope', 'Stage', 'AssetManager', 'AssetLease', 'createAssetType', 'createAssetRef', 'Sprite', 'Graphics', ...imageValues, ...geometryValues, 'TEXTURED_FRAME_PROFILE_2D', 'Texture', 'createTexture', 'isTexture', 'Bitmap', 'Mesh2D', 'createSequenceClip', 'SequencePlayer', 'ByteReader', 'BYTE_READER_LIMITS'].sort();
+const texturedRootValues = ['Engine', 'createEngine', 'createEngineForProfile', 'CancellationController', 'EgretError', 'Event', 'createEventType', 'EventDispatcher', 'DisplayObject', 'DisplayObjectContainer', 'Scope', 'Stage', 'AssetManager', 'AssetLease', 'createAssetType', 'createAssetRef', 'Sprite', 'Graphics', ...imageValues, ...geometryValues, 'TEXTURED_FRAME_PROFILE_2D', 'Texture', 'createTexture', 'isTexture', 'Bitmap', 'Mesh2D', 'createSequenceClip', 'SequencePlayer', 'ByteReader', 'BYTE_READER_LIMITS', 'ByteWriter', 'BYTE_WRITER_LIMITS'].sort();
 if (typeof facade.createEngineForProfile !== 'function' || JSON.stringify(Object.keys(facade)) !== JSON.stringify(texturedRootValues)) throw new Error('root: executable textured-frame export surface mismatch');
 const texturedTypes = ['TexturedFrameProfile2D', 'TexturedMeshCommand2D', 'TexturedRenderCommand2D', 'TexturedRenderFrame2D', 'TexturedRenderHostAdapter'];
 for (const [entry, values, declarationPath] of [['contracts', contractsFacade, 'packages/contracts/dist/index.d.ts'], ['root', facade, 'packages/engine/dist/index.d.ts']]) {
@@ -396,7 +396,7 @@ for (const [entry,values,emittedEntry] of textEntries) {
 const expectedRuntimeValues=['CancellationController','EgretError','Scope','createScope','Event','createEventType',
   'EventDispatcher','DisplayObject','DisplayObjectContainer','Stage','createStage','createDisplayInputOperations','reportDiagnostic','AssetManager',
   'createAssetManager','AssetLease','createAssetType','createAssetRef','Sprite','Graphics','collectFrameCommands',
-  'collectFrameContent','collectTexturedFrameContent','Texture','createTexture','isTexture','Bitmap','Mesh2D','createSequenceClip','SequencePlayer','ByteReader','BYTE_READER_LIMITS'].sort();
+  'collectFrameContent','collectTexturedFrameContent','Texture','createTexture','isTexture','Bitmap','Mesh2D','createSequenceClip','SequencePlayer','ByteReader','BYTE_READER_LIMITS','ByteWriter','BYTE_WRITER_LIMITS'].sort();
 if (JSON.stringify(Object.keys(runtimeFacade)) !== JSON.stringify(expectedRuntimeValues)) throw new Error('runtime: unchanged default-root export surface mismatch');
 for (const [entry,values,emittedEntry,valueTarget,typeTarget] of [
   ['runtime/text',runtimeText,'packages/runtime/dist/text/index','./TextRasterCache.js','./types.js'],
@@ -2244,5 +2244,90 @@ for(const file of [...files(path.join(root,'packages/engine/src')),...files(path
   }
 }
 // MI1_BOUNDARY_END
+// BW1_BOUNDARY_BEGIN
+// BW1 runs after all retained policies. The original BR1 clauses and refusal
+// precedence stay intact; only the two root value inventories grow above.
+const byteWriterValues = ['BYTE_WRITER_LIMITS', 'ByteWriter'];
+const byteWriterModuleReference = /["'][^"']*(?:^|\/)ByteWriter\.js["']/;
+// Import optional namespaces here so this BW leak check is independent of the
+// deliberately removed S3D1 block in the retained predecessor comparator.
+const byteWriterEntries = [...textEntries,
+  ['project', projectFacade, 'packages/project/dist/index'],
+  ['scene3d', await import('@egret/engine/scene3d'), 'packages/engine/dist/rendering/scene3d'],
+  ['webgpu/scene3d', await import('@egret/engine/webgpu/scene3d'), 'packages/engine/dist/web/scene3d'],
+  ['web/input', mouseFacade, 'packages/engine/dist/web/input'],
+];
+const byteWriterSourceEntries = {...assetGroupSourceEntries,
+  scene3d: 'packages/engine/rendering/scene3d.ts',
+  'webgpu/scene3d': 'packages/engine/web/scene3d.ts',
+  'web/input': 'packages/engine/web/input.ts',
+};
+const byteWriterModule = await import(new URL('../packages/runtime/dist/ByteWriter.js', import.meta.url));
+if (JSON.stringify(Object.keys(byteWriterModule)) !== JSON.stringify(byteWriterValues))
+  throw new Error('runtime: canonical ByteWriter runtime export surface mismatch');
+for (const name of byteWriterValues) {
+  if (runtimeFacade[name] !== byteWriterModule[name]) throw new Error('runtime: ByteWriter module identity mismatch: ' + name);
+  if (facade[name] !== runtimeFacade[name]) throw new Error('root: ByteWriter runtime identity mismatch: ' + name);
+}
+if (typeof byteWriterModule.ByteWriter !== 'function' || typeof byteWriterModule.BYTE_WRITER_LIMITS !== 'object'
+    || byteWriterModule.BYTE_WRITER_LIMITS === null || !Object.isFrozen(byteWriterModule.BYTE_WRITER_LIMITS)
+    || JSON.stringify(Object.keys(byteWriterModule.BYTE_WRITER_LIMITS)) !== JSON.stringify(['maxBytes'])
+    || byteWriterModule.BYTE_WRITER_LIMITS.maxBytes !== 16777216)
+  throw new Error('runtime: canonical ByteWriter limits/value surface mismatch');
+for (const [entry, values, stem] of byteWriterEntries) {
+  const sourceFile = byteWriterSourceEntries[entry];
+  const checkedFiles = [sourceFile, stem + '.js', stem + '.d.ts'];
+  if (entry !== 'root' && entry !== 'runtime') {
+    const code = checkedFiles.map(file => byteReaderStrip(readFileSync(path.join(root, file), 'utf8'))).join('\n');
+    for (const name of byteWriterValues) if (name in values || new RegExp('\\b' + name + '\\b').test(code))
+      throw new Error(entry + ': root/runtime-only ByteWriter port leaked: ' + name);
+    if (byteWriterModuleReference.test(code)) throw new Error(entry + ': root/runtime-only ByteWriter module leaked');
+    continue;
+  }
+  if (typeof values.ByteWriter !== 'function' || typeof values.BYTE_WRITER_LIMITS !== 'object' || values.BYTE_WRITER_LIMITS === null)
+    throw new Error(entry + ': ByteWriter value surface missing');
+  const target = entry === 'root' ? '@egret/runtime' : './ByteWriter.js';
+  for (const file of checkedFiles) {
+    const code = byteReaderStrip(readFileSync(path.join(root, file), 'utf8'));
+    const ports = [...code.matchAll(/export(\s+type)?\s*\{([^}]+)\}\s*from\s*["']([^"']+)["'];?/g)].filter(match =>
+      byteWriterValues.some(name => new RegExp('\\b' + name + '\\b').test(match[2])) || /(?:^|\/)ByteWriter\.js$/.test(match[3]));
+    const remainder = ports.reduce((text, match) => text.replace(match[0], ''), code);
+    // Each root has one original named value forward, in source and emissions.
+    // An erased alias, split clause or unrelated target is not that forward.
+    if (ports.length !== 1 || ports[0][1] || ports[0][3] !== target
+        || JSON.stringify(ports[0][2].split(',').map(name => name.trim()).sort()) !== JSON.stringify(byteWriterValues)
+        || byteWriterValues.some(name => new RegExp('\\b' + name + '\\b').test(remainder))
+        || byteWriterModuleReference.test(remainder))
+      throw new Error(entry + ': exact ByteWriter value re-export mismatch: ' + file);
+  }
+}
+// ByteOrder remains the original BR1 erased type. This leaf imports it once
+// from ByteReader; it neither declares nor forwards a second public order type.
+for (const file of ['packages/runtime/src/ByteWriter.ts', 'packages/runtime/dist/ByteWriter.d.ts']) {
+  const code = byteReaderStrip(readFileSync(path.join(root, file), 'utf8'));
+  const names = [...code.matchAll(/\bexport\s+(?:declare\s+)?(?:type|interface|function|const|class|enum)\s+(\w+)/g)].map(match => match[1]).sort();
+  const exportCount = (code.replace(/^[ \t]*export[ \t]*\{[ \t]*\}[ \t]*;[ \t]*\r?$/gm, '').match(/\bexport\b/g) ?? []).length;
+  if (JSON.stringify(names) !== JSON.stringify(byteWriterValues) || exportCount !== 2)
+    throw new Error('runtime: canonical ByteWriter declaration/source export surface mismatch: ' + file);
+  const orderPorts = [...code.matchAll(/\bimport(\s+type)?\s*\{([^}]+)\}\s*from\s*["']([^"']+)["'];?/g)].filter(match =>
+    /\bByteOrder\b/.test(match[2]) || /(?:^|\/)ByteReader\.js$/.test(match[3]));
+  const remainder = orderPorts.reduce((text, match) => text.replace(match[0], ''), code);
+  if (orderPorts.length !== 1 || !orderPorts[0][1] || orderPorts[0][2].trim() !== 'ByteOrder'
+      || orderPorts[0][3] !== './ByteReader.js' || byteReaderModuleReference.test(remainder)
+      || /\b(?:type|interface|class|enum|const|function)\s+ByteOrder\b/.test(remainder))
+    throw new Error('runtime: canonical ByteWriter original ByteOrder type import mismatch: ' + file);
+}
+const byteWriterEmitted = byteReaderStrip(readFileSync(path.join(root, 'packages/runtime/dist/ByteWriter.js'), 'utf8'));
+if (/\bByteOrder\b/.test(byteWriterEmitted) || byteReaderModuleReference.test(byteWriterEmitted))
+  throw new Error('runtime: ByteWriter ByteOrder import must be erased');
+// A declaration or triple-slash dependency must not acquire a host ambient.
+// Keep the earlier generic/BR1 refusals authoritative when they already apply.
+for (const file of ['packages/runtime/src/ByteWriter.ts', 'packages/runtime/dist/ByteWriter.js', 'packages/runtime/dist/ByteWriter.d.ts']) {
+  const raw = readFileSync(path.join(root, file), 'utf8'), code = byteReaderStrip(raw);
+  if (forbidden.test(code) || /\b(?:HTMLElement|Document|Window|Navigator|NodeJS)\b/.test(code)
+      || /\/\/\/\s*<reference\s+(?:lib\s*=\s*["']dom(?:\.iterable)?["']|types\s*=\s*["']node["'])/i.test(raw))
+    throw new Error(file + ': host ambient dependency');
+}
+// BW1_BOUNDARY_END
 console.log(`Boundary check PASS: four private workspace packages, actual exports resolution, ${inspected} source/build/declaration files, DOM-free core and exact DOM-only web subtree without Node imports/globals.`);
 

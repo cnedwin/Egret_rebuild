@@ -38,3 +38,4 @@ export { ByteReader, BYTE_READER_LIMITS } from "./ByteReader.js";
 export type { ByteOrder } from "./ByteReader.js";
 export { createDisplayInputOperations } from "./displayInputOperations.js";
 export type { DisplayInputOperations } from "./displayInputOperations.js";
+export { ByteWriter, BYTE_WRITER_LIMITS } from "./ByteWriter.js";

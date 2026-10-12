@@ -56,3 +56,9 @@ await engine.dispose();
 ## 自有二进制读取
 
 根入口导出 `ByteReader` 与冻结的 `BYTE_READER_LIMITS`，以及仅类型 `ByteOrder`。读取器复制符合条件的固定普通 Uint8Array 载荷，默认 bigEndian，提供有界原子标量／复制读取；返回字节是独立副本，释放清除自有引用。既有 Scope 可通过可释放对象形状管理读取器。阅读 [BR1 契约](../../knowledge-base/Cns/docs/字节读取器BR1契约.md)与[已有验证范围](../../knowledge-base/Cns/docs/字节读取器BR1证据.md)。不承诺二进制格式、文字编码或旧 ByteArray 兼容；本准备截止点的 Main 集成与公开门禁仍待完成。
+
+<!-- BW1-DOC-0.40.0-BEGIN -->
+## 自有二进制写入
+
+根入口提供同一个 `ByteWriter` 与冻结的 `BYTE_WRITER_LIMITS`；容量固定，整数严格校验，浮点遵循原生 IEEE 转换。`toUint8Array()` 只复制已提交前缀，`Scope.use(writer)` 使用原有生命周期。ByteOrder 保持纯类型，可选宿主入口不新增写入器。完整范围与分阶段结果见[契约](../../knowledge-base/Cns/docs/字节写入器BW1契约.md)与[证据](../../knowledge-base/Cns/docs/字节写入器BW1证据.md)。包版本、实验性状态和 npm 发布约定不变。
+<!-- BW1-DOC-0.40.0-END -->
