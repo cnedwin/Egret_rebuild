@@ -39,3 +39,5 @@ export type { ByteOrder } from "./ByteReader.js";
 export { createDisplayInputOperations } from "./displayInputOperations.js";
 export type { DisplayInputOperations } from "./displayInputOperations.js";
 export { ByteWriter, BYTE_WRITER_LIMITS } from "./ByteWriter.js";
+export { createNineSliceGeometry2D } from "./NineSliceGeometry2D.js";
+export type { NineSliceInsets2D, NineSliceGeometry2DOptions } from "./NineSliceGeometry2D.js";

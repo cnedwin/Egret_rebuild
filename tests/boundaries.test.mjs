@@ -175,6 +175,26 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
       write(file, readFileSync(path.join(root, file), 'utf8') + "export {ByteWriter,BYTE_WRITER_LIMITS} from '@egret/runtime';\n");
     for (const file of ['node_modules/@egret/engine/index.js', 'node_modules/@egret/runtime/index.js'])
       write(file, readFileSync(path.join(root, file), 'utf8') + "export {ByteWriter,BYTE_WRITER_LIMITS} from '../../../packages/runtime/dist/ByteWriter.js';\n");
+    // NS1_FIXTURE_BEGIN
+    // Retained inert policy baseline only. Copy the actual current NS leaf and
+    // emissions without calling the factory; synthetic contracts/owners remain
+    // inert. Genuine NS policy controls use a separate complete copied graph.
+    for (const file of ['packages/runtime/src/NineSliceGeometry2D.ts', 'packages/runtime/dist/NineSliceGeometry2D.js', 'packages/runtime/dist/NineSliceGeometry2D.d.ts'])
+      write(file, readFileSync(path.join(repository, file)));
+    const nsValuePort = "export {createNineSliceGeometry2D} from './NineSliceGeometry2D.js';\n";
+    const nsTypePort = "export type {NineSliceInsets2D,NineSliceGeometry2DOptions} from './NineSliceGeometry2D.js';\n";
+    for (const file of ['packages/runtime/src/index.ts', 'packages/runtime/dist/index.js', 'packages/runtime/dist/index.d.ts'])
+      write(file, readFileSync(path.join(root, file), 'utf8') + nsValuePort + (file.endsWith('.js') ? '' : nsTypePort));
+    for (const file of ['packages/engine/src/index.ts', 'packages/engine/dist/index.js', 'packages/engine/dist/index.d.ts'])
+      write(file, readFileSync(path.join(root, file), 'utf8') + "export {createNineSliceGeometry2D} from '@egret/runtime';\n" + (file.endsWith('.js') ? '' : "export type {NineSliceInsets2D,NineSliceGeometry2DOptions} from '@egret/runtime';\n"));
+    for (const file of ['node_modules/@egret/engine/index.js', 'node_modules/@egret/runtime/index.js'])
+      write(file, readFileSync(path.join(root, file), 'utf8') + "export {createNineSliceGeometry2D} from '../../../packages/runtime/dist/NineSliceGeometry2D.js';\n");
+    // Bind the pre-existing inert contract name without invoking it. The old
+    // missing-contract-export control must still reach its inventory refusal,
+    // rather than fail earlier while the newly copied leaf module is loading.
+    const nsContractsResolver = 'node_modules/@egret/contracts/index.js';
+    write(nsContractsResolver, readFileSync(path.join(root, nsContractsResolver), 'utf8') + "export function createTexturedGeometry2D() {}\n");
+    // NS1_FIXTURE_END
     // WC1 baseline only: exact opt-in surfaces let retained policy mutants run.
     // The inert synthetic factory reports Node unavailability; it provides no
     // native Canvas, genuine resource, font, TextField or rendering evidence.

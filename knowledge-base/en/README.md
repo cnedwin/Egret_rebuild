@@ -2,6 +2,22 @@
 
 English | [简体中文](../Cns/README.md)
 
+<!-- NS1-DOC-0.41.0-BEGIN -->
+## Engineering preview 0.41.0 — nine-slice stretch geometry NS1
+
+**S094 / V045. Finite CPU, types, policy and browser observations accepted; complete publication gates and delivery remain PENDING.** Fixed-border stretch geometry reuses the existing Mesh2D texture lease; resizing replaces geometry. Runtime/engine roots expose one factory and two readonly types while retaining the original owned geometry identity.
+
+Actual CPU checks passed 27/27: 11 NS groups, 6 Mesh groups and 10 geometry checks including nested cases. Positive type diagnostics were 0; the two intentional negative streams contained 41/35 actual diagnostics, totaling 76 precise location records. Strict type and policy guards exited 0; assigned policy controls passed 13/13. The actual browser completed 2 frames and 96 color-channel comparisons with verified cleanup; see the evidence for the exact environment and scope.
+
+The original NSP09 13/12/1 failure and its finite test-input correction remain separate.
+
+ByteWriter 0.40.0 merged through [PR #27](https://github.com/cnedwin/Egret_rebuild/pull/27), with Main `8e1509878252cc2a9295fcc56d7597877d023c85` and tree `ca1f2f176713e388e09016ae22d610c5c1b95201` read back. The mandatory push hook exited 0 with 63 publication and 2724 core checks. Zero remote statuses/check runs do not establish remote CI PASS. Earlier PENDING cutoffs and failure records remain preserved.
+
+[contract](docs/nine-slice-geometry-ns1-contract.md) / [evidence](docs/nine-slice-geometry-ns1-evidence.md).
+
+This bounded geometry increment contributes to complex 2D UI; it establishes no complete UI/EUI, layout, full Spine, migration, phone energy/performance or native SDK/PC acceptance.
+<!-- NS1-DOC-0.41.0-END -->
+
 <!-- BW1-DOC-0.40.0-BEGIN -->
 ## Engineering preview 0.40.0 — owned ByteWriter
 

@@ -269,7 +269,7 @@ for (const name of geometryValues) if (typeof contractsFacade[name] !== 'functio
 // requires actual Engine captures and first-party host refusal in later stages.
 if (contractsFacade.TEXTURED_FRAME_PROFILE_2D !== 'egret.textured-frame2d/1' || facade.TEXTURED_FRAME_PROFILE_2D !== contractsFacade.TEXTURED_FRAME_PROFILE_2D) throw new Error('engine: textured profile literal mismatch');
 // Exact accepted Mesh root plus the opt-in factory and shared literal.
-const texturedRootValues = ['Engine', 'createEngine', 'createEngineForProfile', 'CancellationController', 'EgretError', 'Event', 'createEventType', 'EventDispatcher', 'DisplayObject', 'DisplayObjectContainer', 'Scope', 'Stage', 'AssetManager', 'AssetLease', 'createAssetType', 'createAssetRef', 'Sprite', 'Graphics', ...imageValues, ...geometryValues, 'TEXTURED_FRAME_PROFILE_2D', 'Texture', 'createTexture', 'isTexture', 'Bitmap', 'Mesh2D', 'createSequenceClip', 'SequencePlayer', 'ByteReader', 'BYTE_READER_LIMITS', 'ByteWriter', 'BYTE_WRITER_LIMITS'].sort();
+const texturedRootValues = ['Engine', 'createEngine', 'createEngineForProfile', 'CancellationController', 'EgretError', 'Event', 'createEventType', 'EventDispatcher', 'DisplayObject', 'DisplayObjectContainer', 'Scope', 'Stage', 'AssetManager', 'AssetLease', 'createAssetType', 'createAssetRef', 'Sprite', 'Graphics', ...imageValues, ...geometryValues, 'TEXTURED_FRAME_PROFILE_2D', 'Texture', 'createTexture', 'isTexture', 'Bitmap', 'Mesh2D', 'createSequenceClip', 'SequencePlayer', 'ByteReader', 'BYTE_READER_LIMITS', 'ByteWriter', 'BYTE_WRITER_LIMITS', 'createNineSliceGeometry2D'].sort();
 if (typeof facade.createEngineForProfile !== 'function' || JSON.stringify(Object.keys(facade)) !== JSON.stringify(texturedRootValues)) throw new Error('root: executable textured-frame export surface mismatch');
 const texturedTypes = ['TexturedFrameProfile2D', 'TexturedMeshCommand2D', 'TexturedRenderCommand2D', 'TexturedRenderFrame2D', 'TexturedRenderHostAdapter'];
 for (const [entry, values, declarationPath] of [['contracts', contractsFacade, 'packages/contracts/dist/index.d.ts'], ['root', facade, 'packages/engine/dist/index.d.ts']]) {
@@ -396,7 +396,7 @@ for (const [entry,values,emittedEntry] of textEntries) {
 const expectedRuntimeValues=['CancellationController','EgretError','Scope','createScope','Event','createEventType',
   'EventDispatcher','DisplayObject','DisplayObjectContainer','Stage','createStage','createDisplayInputOperations','reportDiagnostic','AssetManager',
   'createAssetManager','AssetLease','createAssetType','createAssetRef','Sprite','Graphics','collectFrameCommands',
-  'collectFrameContent','collectTexturedFrameContent','Texture','createTexture','isTexture','Bitmap','Mesh2D','createSequenceClip','SequencePlayer','ByteReader','BYTE_READER_LIMITS','ByteWriter','BYTE_WRITER_LIMITS'].sort();
+  'collectFrameContent','collectTexturedFrameContent','Texture','createTexture','isTexture','Bitmap','Mesh2D','createSequenceClip','SequencePlayer','ByteReader','BYTE_READER_LIMITS','ByteWriter','BYTE_WRITER_LIMITS','createNineSliceGeometry2D'].sort();
 if (JSON.stringify(Object.keys(runtimeFacade)) !== JSON.stringify(expectedRuntimeValues)) throw new Error('runtime: unchanged default-root export surface mismatch');
 for (const [entry,values,emittedEntry,valueTarget,typeTarget] of [
   ['runtime/text',runtimeText,'packages/runtime/dist/text/index','./TextRasterCache.js','./types.js'],
@@ -2329,5 +2329,95 @@ for (const file of ['packages/runtime/src/ByteWriter.ts', 'packages/runtime/dist
     throw new Error(file + ': host ambient dependency');
 }
 // BW1_BOUNDARY_END
+// NS1_BEGIN
+// First-party NS1 structure policy. Numeric geometry and rendered pixels require
+// separate actual tests; this block does not prove the factory algorithm.
+// Own lexical helpers and optional imports keep retained predecessor removal safe.
+const ns1Strip = raw => raw.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/[^\n]*/g, '');
+const ns1Read = file => ns1Strip(readFileSync(path.join(root, file), 'utf8'));
+const ns1Same = (a, b) => JSON.stringify([...a].sort()) === JSON.stringify([...b].sort());
+const ns1Value = 'createNineSliceGeometry2D';
+const ns1Types = ['NineSliceInsets2D', 'NineSliceGeometry2DOptions'];
+const ns1Names = [ns1Value, ...ns1Types];
+const ns1Mentions = code => ns1Names.some(name => new RegExp('\\b' + name + '\\b').test(code));
+const ns1ModuleReference = /["'][^"']*\bNineSliceGeometry2D\.(?:js|ts)["']/;
+function ns1Members(raw) {
+  const names = raw.split(',').map(name => name.trim());
+  return names.every(name => /^[A-Za-z_$][\w$]*$/.test(name)) && new Set(names).size === names.length ? names : null;
+}
+const ns1Module = await import(new URL('../packages/runtime/dist/NineSliceGeometry2D.js', import.meta.url));
+const ns1Runtime = await import('@egret/runtime');
+const ns1Root = await import('@egret/engine');
+if (!ns1Same(Object.keys(ns1Module), [ns1Value]) || typeof ns1Module[ns1Value] !== 'function')
+  throw new Error('NS1: canonical leaf executable surface mismatch');
+if (runtimeFacade[ns1Value] !== ns1Module[ns1Value] || ns1Runtime[ns1Value] !== ns1Module[ns1Value])
+  throw new Error('NS1: runtime canonical factory identity mismatch');
+if (facade[ns1Value] !== ns1Module[ns1Value] || ns1Root[ns1Value] !== ns1Module[ns1Value])
+  throw new Error('NS1: root canonical factory identity mismatch');
+for (const [label, values, source, stem, target] of [
+  ['runtime', ns1Runtime, 'packages/runtime/src/index.ts', 'packages/runtime/dist/index', './NineSliceGeometry2D.js'],
+  ['root', ns1Root, 'packages/engine/src/index.ts', 'packages/engine/dist/index', '@egret/runtime'],
+]) {
+  for (const name of ns1Types) if (name in values) throw new Error('NS1: ' + label + ' type must be erased: ' + name);
+  for (const file of [source, stem + '.js', stem + '.d.ts']) {
+    const code = ns1Read(file), typed = !file.endsWith('.js');
+    const ports = [...code.matchAll(/\bexport(\s+type)?\s*\{([^}]+)\}\s*from\s*["']([^"']+)["'];?/g)]
+      .filter(match => ns1Mentions(match[2]) || ns1ModuleReference.test('"' + match[3] + '"'));
+    const valuePorts = ports.filter(match => !match[1]), typePorts = ports.filter(match => match[1]);
+    const remainder = ports.reduce((text, match) => text.replace(match[0], ''), code);
+    if (valuePorts.length !== 1 || typePorts.length !== (typed ? 1 : 0)
+        || valuePorts[0][3] !== target || !ns1Members(valuePorts[0][2]) || !ns1Same(ns1Members(valuePorts[0][2]), [ns1Value])
+        || (typed && (typePorts[0][3] !== target || !ns1Members(typePorts[0][2]) || !ns1Same(ns1Members(typePorts[0][2]), ns1Types)))
+        || ns1Mentions(remainder) || ns1ModuleReference.test(remainder))
+      throw new Error('NS1: ' + label + ' exact factory/type forwarding mismatch: ' + file);
+  }
+}
+// Only source and declaration own the two interfaces. Emitted JS owns one value.
+for (const file of ['packages/runtime/src/NineSliceGeometry2D.ts', 'packages/runtime/dist/NineSliceGeometry2D.d.ts', 'packages/runtime/dist/NineSliceGeometry2D.js']) {
+  const raw = readFileSync(path.join(root, file), 'utf8'), code = ns1Strip(raw), emitted = file.endsWith('.js');
+  const declared = [...code.matchAll(/\bexport\s+(?:declare\s+)?(function|interface|type|const|let|var|class|enum)\s+([A-Za-z_$][\w$]*)/g)];
+  const exportCount = (code.replace(/^[ \t]*export[ \t]*\{[ \t]*\}[ \t]*;[ \t]*\r?$/gm, '').match(/\bexport\b/g) ?? []).length;
+  const expectedNames = emitted ? [ns1Value] : ns1Names;
+  if (!ns1Same(declared.map(match => match[2]), expectedNames) || exportCount !== expectedNames.length
+      || declared.some(match => match[2] === ns1Value ? match[1] !== 'function' : match[1] !== 'interface'))
+    throw new Error('NS1: canonical leaf export surface mismatch: ' + file);
+  const imports = [...code.matchAll(/\bimport(\s+type)?\s*\{([^}]+)\}\s*from\s*["']([^"']+)["'];?/g)];
+  const declarationsOnly = file.endsWith('.d.ts');
+  const expectedImports = declarationsOnly ? [{type:true, name:'TexturedGeometry2D'}]
+    : emitted ? [{type:false, name:'createTexturedGeometry2D'}]
+      : [{type:false, name:'createTexturedGeometry2D'}, {type:true, name:'TexturedGeometry2D'}];
+  const importRemainder = imports.reduce((text, match) => text.replace(match[0], ''), code);
+  if (imports.length !== expectedImports.length || expectedImports.some(expected =>
+      imports.filter(match => Boolean(match[1]) === expected.type && match[3] === '@egret/contracts'
+        && ns1Members(match[2]) && ns1Same(ns1Members(match[2]), [expected.name])).length !== 1)
+      || /\bimport\b|\bfrom\s*["']/.test(importRemainder))
+    throw new Error('NS1: canonical leaf contracts import mismatch: ' + file);
+  // Retained generic ambient/dependency checks run first and stay authoritative.
+  if (forbidden.test(code) || /\b(?:HTMLElement|Document|Window|Navigator|NodeJS)\b/.test(code)
+      || /\/\/\/\s*<reference\s+(?:lib\s*=\s*["']dom(?:\.iterable)?["']|types\s*=\s*["']node["'])/i.test(raw))
+    throw new Error(file + ': host ambient dependency');
+}
+// This exact map is local to NS1; it uses no S3D1/MI1/BR1/BW1 namespaces.
+const ns1OptionalEntries = [
+  ['contracts', '@egret/contracts', 'packages/contracts/src/index.ts', 'packages/contracts/dist/index'],
+  ['project', '@egret/project', 'packages/project/src/index.ts', 'packages/project/dist/index'],
+  ['project/spine', '@egret/project/spine', 'packages/project/src/spine/index.ts', 'packages/project/dist/spine/index'],
+  ['runtime/text', '@egret/runtime/text', 'packages/runtime/src/text/index.ts', 'packages/runtime/dist/text/index'],
+  ['web', '@egret/engine/web', 'packages/engine/web/index.ts', 'packages/engine/dist/web/index'],
+  ['webgpu', '@egret/engine/webgpu', 'packages/engine/web/webgpu.ts', 'packages/engine/dist/web/webgpu'],
+  ['text', '@egret/engine/text', 'packages/engine/src/text.ts', 'packages/engine/dist/text'],
+  ['web/text', '@egret/engine/web/text', 'packages/engine/web/text.ts', 'packages/engine/dist/web/text'],
+  ['web/input', '@egret/engine/web/input', 'packages/engine/web/input.ts', 'packages/engine/dist/web/input'],
+  ['scene3d', '@egret/engine/scene3d', 'packages/engine/rendering/scene3d.ts', 'packages/engine/dist/rendering/scene3d'],
+  ['webgpu/scene3d', '@egret/engine/webgpu/scene3d', 'packages/engine/web/scene3d.ts', 'packages/engine/dist/web/scene3d'],
+];
+for (const [label, specifier, source, stem] of ns1OptionalEntries) {
+  const values = await import(specifier);
+  const code = [source, stem + '.js', stem + '.d.ts'].map(ns1Read).join('\n');
+  for (const name of ns1Names) if (name in values || new RegExp('\\b' + name + '\\b').test(code))
+    throw new Error('NS1: ' + label + ' root/runtime-only port leaked: ' + name);
+  if (ns1ModuleReference.test(code)) throw new Error('NS1: ' + label + ' root/runtime-only leaf module leaked');
+}
+// NS1_END
 console.log(`Boundary check PASS: four private workspace packages, actual exports resolution, ${inspected} source/build/declaration files, DOM-free core and exact DOM-only web subtree without Node imports/globals.`);
 

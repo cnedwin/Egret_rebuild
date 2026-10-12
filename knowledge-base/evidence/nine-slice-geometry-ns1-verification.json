@@ -1,0 +1,811 @@
+{
+  "schemaVersion": 1,
+  "engineeringLabel": "0.41.0",
+  "sourceId": "S094",
+  "deliverableId": "V045",
+  "status": "BOUNDED_NS1_CPU_TYPES_POLICY_BROWSER_ACCEPTED_PUBLICATION_PENDING",
+  "record": "knowledge-base/evidence/nine-slice-geometry-ns1-verification.json",
+  "publicEntries": [
+    "@egret/runtime",
+    "@egret/engine"
+  ],
+  "geometry": {
+    "vertices": 16,
+    "indices": 54,
+    "triangles": 18,
+    "logicalBytes": 1240
+  },
+  "actual": {
+    "cpu": {
+      "tests": 27,
+      "pass": 27,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "nineSliceGroups": 11,
+      "retainedMeshGroups": 6,
+      "retainedGeometryCountIncludingNested": 10
+    },
+    "types": {
+      "positiveDiagnostics": 0,
+      "negativeDiagnostics": 41,
+      "importNegativeDiagnostics": 35
+    },
+    "policy": {
+      "controls": {
+        "tests": 13,
+        "pass": 13,
+        "fail": 0
+      },
+      "guardExitCode": 0
+    },
+    "typeGate": {
+      "exitCode": 0,
+      "unexpectedDiagnostics": 0
+    },
+    "browser": {
+      "exitCode": 0,
+      "cleanupComplete": true,
+      "frameCount": 2,
+      "pixelComparisons": 96,
+      "environment": {
+        "browserVersion": "155.0.4283.45",
+        "channel": "msedge",
+        "headless": true,
+        "flags": "DEFAULT_NO_ADDED_FLAGS",
+        "preferredFormat": "bgra8unorm",
+        "hostPixelRatio": 1,
+        "browserDPR": 1,
+        "isSecureContext": true
+      }
+    }
+  },
+  "observedTypeDiagnosticCount": 76,
+  "independentPublicCuration": "PENDING",
+  "mandatoryFullPrepush": "PENDING",
+  "mandatoryPushHook": "PENDING",
+  "remoteDelivery": "PENDING",
+  "fullSpineR020V020": "OPEN",
+  "migrationR008V006": "OPEN",
+  "historicalCutoffsPreserved": true,
+  "sourceBase": {
+    "version": "0.40.0",
+    "head": "8e1509878252cc2a9295fcc56d7597877d023c85",
+    "tree": "ca1f2f176713e388e09016ae22d610c5c1b95201"
+  },
+  "cutoffUtc": "2026-10-12T14:31:21.237Z",
+  "origin": "Original first-party Apache-2.0 implementation from independently reviewed Egret specifications and existing public geometry contracts.",
+  "currentSourceFiles": [
+    {
+      "path": "packages/runtime/src/NineSliceGeometry2D.ts",
+      "bytes": 6142,
+      "sha256": "84150122949a6693e75d5a7e50a36a3b4372f5b0f58e3f9df968352a52fe182b"
+    },
+    {
+      "path": "packages/runtime/src/index.ts",
+      "bytes": 2699,
+      "sha256": "872052ab61082df079b053867725d0311c6c46d579aad961806f3f6e7831cc28"
+    },
+    {
+      "path": "packages/engine/src/index.ts",
+      "bytes": 2903,
+      "sha256": "3b8ac1683cf712b54539294a1fb36c834ddec63fc7eb02aa01d9888ba1fe2221"
+    },
+    {
+      "path": "tests/nine-slice-geometry.test.mjs",
+      "bytes": 18997,
+      "sha256": "e2b6d824e2404f927928f6ac1c8d8cf5cf4de62dba56ebaf418cb70dfafecdd7"
+    },
+    {
+      "path": "tests/types/nine-slice-positive.ts",
+      "bytes": 4329,
+      "sha256": "727dc979adb59101be6fdf0173ded4f3160ec0ed0a1784835350cf41f3622289"
+    },
+    {
+      "path": "tests/types/nine-slice-negative.ts",
+      "bytes": 4035,
+      "sha256": "c87e9473276288054e532cbc36f8765e5c1683c2b3f396067e287d195a5f09d2"
+    },
+    {
+      "path": "tests/types/nine-slice-import-negative.ts",
+      "bytes": 4938,
+      "sha256": "77b83e90f24da252a833d06761ba85d806f74893faa9f9193e162dd816ea591c"
+    },
+    {
+      "path": "tools/check-boundaries.mjs",
+      "bytes": 141268,
+      "sha256": "6e8c33683973af0c135322c529c8bda83577bbed81fb6148354fdfcac8beb0b1"
+    },
+    {
+      "path": "tests/boundaries.test.mjs",
+      "bytes": 103546,
+      "sha256": "b8a4e2b76af47da379d8d26774a7f28a72417f8ca1144137ac6380dce5c74c90"
+    },
+    {
+      "path": "tests/nine-slice-boundaries.test.mjs",
+      "bytes": 11375,
+      "sha256": "2489ce16b482536f368062acde6167bc15ed54280399286eb0a69f5365b0258d"
+    },
+    {
+      "path": "tests/types/nine-slice-diagnostic-expectations.json",
+      "bytes": 27106,
+      "sha256": "9f6922706a8f846802e6704a6eafed7bd5b3154fb9b0beedfd9c5b4ed7922705"
+    },
+    {
+      "path": "tools/check-types.mjs",
+      "bytes": 92201,
+      "sha256": "8a0d80800e7e102ac0a51a00fdb4d19fa13b4d87e1ae046844f6ca862908e931"
+    }
+  ],
+  "currentEmittedFiles": [
+    {
+      "path": "packages/runtime/dist/NineSliceGeometry2D.js",
+      "bytes": 5487,
+      "sha256": "06373188c1f7abf86e593387c7ddc3c7ce745927be39bb06b6af840ddc404126"
+    },
+    {
+      "path": "packages/runtime/dist/NineSliceGeometry2D.d.ts",
+      "bytes": 745,
+      "sha256": "938e8d24e7975d85d002b1ae6cd67a13a32354f568edab60f310ce86408a0bfc"
+    },
+    {
+      "path": "packages/runtime/dist/index.js",
+      "bytes": 1510,
+      "sha256": "1353e9c41877858c67b58674955d74516e31ec98a670ff323c396bdf74b32259"
+    },
+    {
+      "path": "packages/runtime/dist/index.d.ts",
+      "bytes": 2732,
+      "sha256": "4f4f4a5a7352aa2cdf3dcb004fa846d67cb317e76a76021a06612a72de325e46"
+    },
+    {
+      "path": "packages/engine/dist/index.js",
+      "bytes": 1094,
+      "sha256": "6d7c675738ef59b1912cd1ca30a995a5e43a4461a45dec9cd1ad7a2ee22baa56"
+    },
+    {
+      "path": "packages/engine/dist/index.d.ts",
+      "bytes": 2938,
+      "sha256": "1f3d7bc21733f452985d2e1be6179cc37dab895dc18d6869447c0b3d8b5305cb"
+    }
+  ],
+  "acceptedActualReviewIdentities": [
+    {
+      "witness": "contract",
+      "bytes": 1812,
+      "sha256": "d7e25e8d23fea67e66c0e77f60dbc3ce5d1e3e4aa6eb977232d1d089b5501f00"
+    },
+    {
+      "witness": "cpu",
+      "bytes": 12380,
+      "sha256": "ce7a7e2507acef341be155d1c4b019de8d5d078c42a78603df4d9ed06b332722"
+    },
+    {
+      "witness": "types",
+      "bytes": 47988,
+      "sha256": "f20d4266bf2159d91549e3110f3dfde4213d302c182b911f78b8c8ab1920d7fd"
+    },
+    {
+      "witness": "policy",
+      "bytes": 8723,
+      "sha256": "53ac202f4d9ec68b715c31bfb3742932fc0b9bc3c7a224820ce0168d4d9f9619"
+    },
+    {
+      "witness": "typeGate",
+      "bytes": 8223,
+      "sha256": "8f7aa900f92ad5837c88c5e28e926fe462825310164dd6931f08a806e9012bf8"
+    },
+    {
+      "witness": "browser",
+      "bytes": 30611,
+      "sha256": "e3310b3e8062c5490b2ef971f2716515b191a041f4a2061cc362c874be120a9f"
+    }
+  ],
+  "sourceReviewIdentities": [
+    {
+      "witness": "source_review_0",
+      "bytes": 12380,
+      "sha256": "ce7a7e2507acef341be155d1c4b019de8d5d078c42a78603df4d9ed06b332722"
+    },
+    {
+      "witness": "source_review_1",
+      "bytes": 47988,
+      "sha256": "f20d4266bf2159d91549e3110f3dfde4213d302c182b911f78b8c8ab1920d7fd"
+    },
+    {
+      "witness": "source_review_2",
+      "bytes": 8723,
+      "sha256": "53ac202f4d9ec68b715c31bfb3742932fc0b9bc3c7a224820ce0168d4d9f9619"
+    },
+    {
+      "witness": "source_review_3",
+      "bytes": 8223,
+      "sha256": "8f7aa900f92ad5837c88c5e28e926fe462825310164dd6931f08a806e9012bf8"
+    }
+  ],
+  "factBindings": [
+    {
+      "publicPointer": "/cpu/tests",
+      "reviewRole": "cpu",
+      "reviewPointer": "/counts/wholeExecutionTests"
+    },
+    {
+      "publicPointer": "/cpu/pass",
+      "reviewRole": "cpu",
+      "reviewPointer": "/counts/pass"
+    },
+    {
+      "publicPointer": "/cpu/fail",
+      "reviewRole": "cpu",
+      "reviewPointer": "/counts/fail"
+    },
+    {
+      "publicPointer": "/cpu/cancelled",
+      "reviewRole": "cpu",
+      "reviewPointer": "/counts/cancelled"
+    },
+    {
+      "publicPointer": "/cpu/skipped",
+      "reviewRole": "cpu",
+      "reviewPointer": "/counts/skipped"
+    },
+    {
+      "publicPointer": "/cpu/todo",
+      "reviewRole": "cpu",
+      "reviewPointer": "/counts/todo"
+    },
+    {
+      "publicPointer": "/cpu/nineSliceGroups",
+      "reviewRole": "cpu",
+      "reviewPointer": "/counts/nineSliceGroups"
+    },
+    {
+      "publicPointer": "/cpu/retainedMeshGroups",
+      "reviewRole": "cpu",
+      "reviewPointer": "/counts/retainedMeshGroups"
+    },
+    {
+      "publicPointer": "/cpu/retainedGeometryCountIncludingNested",
+      "reviewRole": "cpu",
+      "reviewPointer": "/counts/retainedGeometryCountIncludingNested"
+    },
+    {
+      "publicPointer": "/types/positiveDiagnostics",
+      "reviewRole": "types",
+      "reviewPointer": "/derivedObservations/0/diagnostics"
+    },
+    {
+      "publicPointer": "/types/negativeDiagnostics",
+      "reviewRole": "types",
+      "reviewPointer": "/derivedObservations/1/diagnostics"
+    },
+    {
+      "publicPointer": "/types/importNegativeDiagnostics",
+      "reviewRole": "types",
+      "reviewPointer": "/derivedObservations/2/diagnostics"
+    },
+    {
+      "publicPointer": "/policy/guardExitCode",
+      "reviewRole": "policy",
+      "reviewPointer": "/carriedForwardCompleteChecker/exitCode"
+    },
+    {
+      "publicPointer": "/policy/controls/tests",
+      "reviewRole": "policy",
+      "reviewPointer": "/evidenceChecks/controlTestCount"
+    },
+    {
+      "publicPointer": "/policy/controls/pass",
+      "reviewRole": "policy",
+      "reviewPointer": "/evidenceChecks/passCount"
+    },
+    {
+      "publicPointer": "/policy/controls/fail",
+      "reviewRole": "policy",
+      "reviewPointer": "/evidenceChecks/failCount"
+    },
+    {
+      "publicPointer": "/typeGate/exitCode",
+      "reviewRole": "typeGate",
+      "reviewPointer": "/actualActors/1/exitCode"
+    },
+    {
+      "publicPointer": "/typeGate/unexpectedDiagnostics",
+      "reviewRole": "typeGate",
+      "reviewPointer": "/evidenceChecks/unexpectedNS1DiagnosticCount"
+    },
+    {
+      "publicPointer": "/browser/exitCode",
+      "reviewRole": "browser",
+      "reviewPointer": "/publicFacts/exitCode"
+    },
+    {
+      "publicPointer": "/browser/cleanupComplete",
+      "reviewRole": "browser",
+      "reviewPointer": "/publicFacts/cleanupComplete"
+    },
+    {
+      "publicPointer": "/browser/frameCount",
+      "reviewRole": "browser",
+      "reviewPointer": "/publicFacts/frameCount"
+    },
+    {
+      "publicPointer": "/browser/pixelComparisons",
+      "reviewRole": "browser",
+      "reviewPointer": "/publicFacts/pixelComparisons"
+    },
+    {
+      "publicPointer": "/browser/environment/browserVersion",
+      "reviewRole": "browser",
+      "reviewPointer": "/publicFacts/environment/browserVersion"
+    },
+    {
+      "publicPointer": "/browser/environment/channel",
+      "reviewRole": "browser",
+      "reviewPointer": "/publicFacts/environment/channel"
+    },
+    {
+      "publicPointer": "/browser/environment/headless",
+      "reviewRole": "browser",
+      "reviewPointer": "/publicFacts/environment/headless"
+    },
+    {
+      "publicPointer": "/browser/environment/flags",
+      "reviewRole": "browser",
+      "reviewPointer": "/publicFacts/environment/flags"
+    },
+    {
+      "publicPointer": "/browser/environment/preferredFormat",
+      "reviewRole": "browser",
+      "reviewPointer": "/publicFacts/environment/preferredFormat"
+    },
+    {
+      "publicPointer": "/browser/environment/hostPixelRatio",
+      "reviewRole": "browser",
+      "reviewPointer": "/publicFacts/environment/hostPixelRatio"
+    },
+    {
+      "publicPointer": "/browser/environment/browserDPR",
+      "reviewRole": "browser",
+      "reviewPointer": "/publicFacts/environment/browserDPR"
+    },
+    {
+      "publicPointer": "/browser/environment/isSecureContext",
+      "reviewRole": "browser",
+      "reviewPointer": "/publicFacts/environment/isSecureContext"
+    }
+  ],
+  "failureHistory": {
+    "originalNSP09": {
+      "tests": 13,
+      "pass": 12,
+      "fail": 1,
+      "scope": "Original test-only wrong-route control failure preserved; narrowly reviewed named erased type-import successor retained separately.",
+      "originalReceipt": {
+        "witness": "original_policy_controls",
+        "bytes": 2284,
+        "sha256": "a09fc0ddae151c63e41f8ba3f55c5227e4c0ac92960c2ca027453a35373f259f"
+      },
+      "correction": {
+        "witness": "test_only_policy_correction",
+        "bytes": 1700,
+        "sha256": "f215af32242d1a67c3decd6ac729c6437516e78c302f6b67739648e093dae499"
+      },
+      "independentCorrectionReview": {
+        "witness": "test_only_policy_correction_review",
+        "bytes": 5575,
+        "sha256": "c337d88c53f3f11a9fc8ed3479d549143d1f5d3315d93ea7ef9821a11d076562"
+      }
+    },
+    "originalBrowserDeclarationBinding": {
+      "status": "SETUP_FAILURE",
+      "outputAtOriginalCutoff": "NOT_CREATED",
+      "actor": "prepare-binding",
+      "exitCode": 1,
+      "timeout": false,
+      "exactRefusal": "NS_BROWSER_BINDING:SAVED_SOURCE_DECLARATION_REQUIRED:/packages/runtime/dist/displayTreeState.js",
+      "browserActorStarted": false,
+      "classification": "SETUP_FAILURE_NOT_RENDERED_RED",
+      "originalReceipt": {
+        "witness": "original_browser_declaration_binding_failure",
+        "bytes": 2799,
+        "sha256": "077a724d153e70f5aa76f94e12305b5a9c89309990671da58a13e03c012711de"
+      },
+      "originalStderr": {
+        "witness": "original_declaration_binding_refusal",
+        "bytes": 158,
+        "sha256": "b7b68464cc27d5c2f5abda507d2a6509c507e1113155f0e2f00704291c1b9a47"
+      },
+      "historicalCutoffPreserved": true
+    }
+  },
+  "supplementalDeclarationActualSuccessor": {
+    "status": "ACTUAL_REBUILD_DECLARATIONS_FROZEN",
+    "supplementalDeclarations": 68,
+    "authority": {
+      "witness": "final_supplemental_declaration_authority_r2",
+      "bytes": 21512,
+      "sha256": "ff93fcbf83ca82a9c8a7877442c4b860293aad5b69703c97d5fceb162e362b6c"
+    },
+    "independentReview": {
+      "witness": "actual_supplemental_declaration_review",
+      "bytes": 8570,
+      "sha256": "e33a75544ffb12ca2290889e1046b6db0f3661292d589db2480ebd15a7645363"
+    },
+    "finalFreezeReceipt": {
+      "witness": "final_completed_declaration_freeze",
+      "bytes": 918,
+      "sha256": "9f51cc9a9bae4f8d87e509075a1c1891c138cc2cc2ccba1b32ca98a0e74694f8"
+    },
+    "originalFailurePreserved": true,
+    "renderingAcceptanceGrantedByDeclarations": false
+  },
+  "browserComparisonUnit": "RGBA_color_channel",
+  "byteWriterDeliveryActualSuccessor": {
+    "engineeringLabel": "0.40.0",
+    "status": "ACTUAL_0_40_BYTE_WRITER_DELIVERY_SUCCESSOR",
+    "source": {
+      "sha": "d0a8213b5af8b5e7c1d4dcdb7d2acdf2cbf00ac7",
+      "parent": "ac490f90b7467164e461112a9f572a3269107c02",
+      "tree": "ca1f2f176713e388e09016ae22d610c5c1b95201",
+      "files": 43
+    },
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/27",
+    "main": {
+      "status": "ACTUAL_LOCAL_AND_REMOTE_MAIN_MATCH",
+      "head": "8e1509878252cc2a9295fcc56d7597877d023c85",
+      "tree": "ca1f2f176713e388e09016ae22d610c5c1b95201",
+      "atUtc": "2026-10-12T12:47:48.835Z"
+    },
+    "mandatoryPushHook": {
+      "startedAtUtc": "2026-10-12T12:37:37.1897336Z",
+      "finishedAtUtc": "2026-10-12T12:43:29.3810161Z",
+      "exitCode": 0,
+      "stdoutSHA256": "8f48a07e2ea430e6b0ca931c02ce1122b8d437f65fac8872f23e9892003ff1ec",
+      "stderrSHA256": "61ecb8c2ede0d996fd414724f616f7297d29f7412a44736ec8beec87d5c124aa",
+      "coreTests": 2724,
+      "publicationTests": 63,
+      "documents": 152,
+      "criticalEnglishCommentRecords": 198
+    },
+    "remoteChecks": {
+      "statusCount": 0,
+      "checkRuns": 0,
+      "combinedState": "pending",
+      "remoteCIPassClaim": false
+    },
+    "independentlyReviewed": {
+      "witness": "BW0.40_actual_delivery",
+      "bytes": 25399,
+      "sha256": "557cede85393e9536c7529885daee76bb5573b802a23c8bb9edfa7096862486c"
+    },
+    "historicalPendingCutoffsRetained": true
+  },
+  "limits": {
+    "newProductDependencies": [],
+    "physicalDevicePerformance": "NOT_MEASURED",
+    "nativeSdkOrPCProduction": "NOT_ACCEPTED",
+    "completeProduct": false
+  },
+  "retainedB1ActualSuccessor": {
+    "status": "ACTUAL_RETAINED_B1_SUCCESSOR_FULL_PREPUSH_PENDING",
+    "sourcePin": {
+      "path": "tests/webgpu-mesh-host.test.mjs",
+      "bytes": 94897,
+      "sha256": "dd7e00a4dc4ea5463c53fd99c80b0971f44adccf7f6ee4d6c83b8102eefc0f44"
+    },
+    "originalFullPrepush": {
+      "status": "FAIL",
+      "exitCode": 1,
+      "tests": 2748,
+      "pass": 2747,
+      "fail": 1,
+      "reason": "S01 static lexer refused an unselected legitimate closing-parenthesis division token; no renderer failure was established.",
+      "receipt": {
+        "witness": "original_full_prepush_r3",
+        "bytes": 725,
+        "sha256": "d9a8592c0be69ac50024edc0aaa47431009cb607768472a99b5d38b22f2507e0"
+      }
+    },
+    "sourceCorrection": {
+      "witness": "exact_test_only_division_anchor_correction",
+      "bytes": 7996,
+      "sha256": "9008012b977380c5241ea6819925169c22f602ae0338b3631ef026fb8594af57"
+    },
+    "sourceReview": {
+      "witness": "independent_B1_correction_source_review",
+      "bytes": 7341,
+      "sha256": "db8dfc6d583a3a8d57010d709d9d21185c27e65f81b57fd2a782b2ac38cd842f"
+    },
+    "actualReview": {
+      "witness": "independent_actual_retained_B1_review",
+      "bytes": 10780,
+      "sha256": "9eba38402d37fa1059069474af2e3a8b1bd97d3a6f38fe4777c2b5045807bd9b"
+    },
+    "actualReceipt": {
+      "witness": "actual_default_B1_test_file",
+      "bytes": 777,
+      "sha256": "dee9a66cb39c7c4a03b3cd6aa28b334c49e1f59be47b8dd642e52a7fd1d982e2"
+    },
+    "fileTests": 2,
+    "filePass": 2,
+    "fileFail": 0,
+    "caseCount": 13,
+    "passedCases": 13,
+    "selectedSourceFiles": 5,
+    "selectedDivisionTokens": 11,
+    "filteredLaunch": {
+      "status": "SETUP_REFUSAL_BEFORE_CHILD_SCHEDULE",
+      "reason": "Default Node process-worker options correctly reject --test-name-pattern.",
+      "receipt": {
+        "witness": "original_filtered_launch",
+        "bytes": 1672,
+        "sha256": "0489adf2bfd57a908e6dd9932c42fc166be45a83c6875cda6061eb764ec3631d"
+      }
+    },
+    "productSourceChanged": false,
+    "priorActualBrowserAndTypesRepeated": false,
+    "fullPrepush": "PENDING_DISTINCT_FRESH_ACTOR",
+    "pushAndMainDelivery": "PENDING"
+  },
+  "rootDependencyCorrection": {
+    "status": "SAVED_STANDARD_INSTALLATION_ROOT_ALIAS_CORRECTION_FINAL_DELIVERY_PENDING",
+    "priorCommittedScope": {
+      "head": "8fe641f8f7f3e1c2226adfb6d71be83804475a8d",
+      "tree": "bb698013373bb767a9b70ccfb4bcd6807eae179e",
+      "changedPaths": 45
+    },
+    "proposedCorrectedScope": {
+      "changedPaths": 47,
+      "finalFullGate": "PENDING",
+      "finalPush": "PENDING",
+      "pullRequest": "PENDING",
+      "MainDelivery": "PENDING"
+    },
+    "firstPush": {
+      "exitCode": 1,
+      "failure": "ERR_MODULE_NOT_FOUND: root boundary checker could not resolve @egret/contracts.",
+      "classification": "LOCAL_HOOK_DEPENDENCY_SETUP_FAILURE_NOT_SDK_BEHAVIOR_FAILURE",
+      "receipt": {
+        "witness": "first_push_failure",
+        "bytes": 947,
+        "sha256": "69a3aef62cb80df5313607e06ad5c6af34c736f80d0b88e4a0da6e1d187fc91a"
+      }
+    },
+    "ignoredLocalRepair": {
+      "kind": "Junction",
+      "role": "Ignored local root workspace alias only; not a tracked dependency declaration.",
+      "savedRecord": {
+        "witness": "ignored_root_contracts_link_repair",
+        "bytes": 522,
+        "sha256": "e035d8a67e720d67fb98057c9be6186a206f2b25f0c599cc95c4e9ef7c78011e"
+      }
+    },
+    "earlierPushRetry": {
+      "exitCode": 0,
+      "publicationChecks": 63,
+      "coreChecks": 2748,
+      "scope": "Earlier 45-path commit; not the final 47-path correction.",
+      "receipt": {
+        "witness": "earlier_push_retry",
+        "bytes": 953,
+        "sha256": "f338bdf67b6029746d7279a15d37f35336413b3a26d68210567a848973894030"
+      }
+    },
+    "trackedCorrection": {
+      "dependency": "@egret/contracts",
+      "role": "root devDependencies",
+      "specifier": "workspace:*",
+      "lockImporter": ".",
+      "lockVersion": "link:packages/contracts",
+      "sourceCandidate": {
+        "witness": "two_manifest_source_correction",
+        "bytes": 4834,
+        "sha256": "0ec40729f6de5ef7304dbd55f3a195133ffe319e21667d7c1c145c5cef30b291"
+      },
+      "beforePins": [
+        {
+          "path": "package.json",
+          "bytes": 631,
+          "sha256": "9345ffe23a23ab60936d54f02c9c58a396753580f37e55b796ebe58403a00616"
+        },
+        {
+          "path": "pnpm-lock.yaml",
+          "bytes": 8851,
+          "sha256": "78d967eade0029dc518bdc2654479982798af4c65d432b1d1b5312d7d4c43af1"
+        }
+      ],
+      "afterPins": [
+        {
+          "path": "package.json",
+          "bytes": 666,
+          "sha256": "efafc565407f6189689bd8dd0c46d54e54b78827dd4a33981990730d504bb50f"
+        },
+        {
+          "path": "pnpm-lock.yaml",
+          "bytes": 8949,
+          "sha256": "ccdf71d985350becff1f9d6e41574df69282f41770d0a1a8ac603a98d6fc0d9a"
+        }
+      ]
+    },
+    "installationBefore": {
+      "originalOfflineAttempt": {
+        "exitCode": 1,
+        "actualFlags": [
+          "--offline",
+          "--frozen-lockfile",
+          "--ignore-scripts"
+        ],
+        "failure": "ERR_PNPM_NO_OFFLINE_TARBALL: robust-predicates 3.0.3 absent from the selected store.",
+        "classification": "INSTALLATION_SETUP_FAILURE_NOT_SDK_FAILURE",
+        "receipt": {
+          "witness": "original_offline_installation_setup_failure",
+          "bytes": 1971,
+          "sha256": "f6dee4ee6433e6cb9cb5a81a1e752a8a45ad48e3020ab0241aa2220ea197c6ac"
+        }
+      },
+      "completedAttempt": {
+        "commandLabel": "standard-offline-install",
+        "actualFlags": [
+          "--frozen-lockfile",
+          "--ignore-scripts"
+        ],
+        "offlineArgumentPresent": false,
+        "networkMode": "ONLINE_ENABLED_BY_ACTUAL_ARGUMENTS",
+        "commandCount": 2,
+        "allExitCodes": 0,
+        "receipt": {
+          "witness": "actual_installation_before_r2",
+          "bytes": 1951,
+          "sha256": "f2249b6603d30a61aa16d0bfa7018080248890cf06b8c0664d4454616d010cf7"
+        }
+      },
+      "fixture": {
+        "manifestCount": 7,
+        "sourcePins": [
+          {
+            "path": "package.json",
+            "bytes": 631,
+            "sha256": "9345ffe23a23ab60936d54f02c9c58a396753580f37e55b796ebe58403a00616"
+          },
+          {
+            "path": "pnpm-lock.yaml",
+            "bytes": 8851,
+            "sha256": "78d967eade0029dc518bdc2654479982798af4c65d432b1d1b5312d7d4c43af1"
+          },
+          {
+            "path": "pnpm-workspace.yaml",
+            "bytes": 51,
+            "sha256": "f51d3d153b0f3cdbb82186bd1c3eea9066f4e3a15828985952feeee965a75534"
+          },
+          {
+            "path": "packages/contracts/package.json",
+            "bytes": 179,
+            "sha256": "fceaef2ae55a77347ce9f99acd2165d36e991d89c76bf0480ff5048f3e7a94a1"
+          },
+          {
+            "path": "packages/runtime/package.json",
+            "bytes": 327,
+            "sha256": "b9294c479d38614dd8866adcd8775f5d6f43c787d9b08c8ef54371e426cb5032"
+          },
+          {
+            "path": "packages/engine/package.json",
+            "bytes": 1372,
+            "sha256": "891311a277b03b583ef35d45ad862ece747bda8ad04aae12f1fce9ed0e9149df"
+          },
+          {
+            "path": "packages/project/package.json",
+            "bytes": 397,
+            "sha256": "295e6bc8d81a4647f5b99355ea27879563ced216fa2af406c65cc78b95f40945"
+          }
+        ],
+        "manuallyCreatedAliases": 0,
+        "identity": {
+          "witness": "installation_before_source_fixture",
+          "bytes": 1546,
+          "sha256": "e744e83cd7179c45fd5d17fecbceaa69f555dd2bc511b73e6c683cdd298c720e"
+        }
+      },
+      "observation": {
+        "rootContractsPresent": false,
+        "rootContractsTarget": null,
+        "runtimeContractsTarget": "packages/contracts",
+        "inputManifestBytesUnchanged": true,
+        "manuallyCreatedAliases": 0,
+        "identity": {
+          "witness": "installation_before_link_observation",
+          "bytes": 417,
+          "sha256": "c699d212864a0c5ff631f0d9da86545a99a60401dcded229442742465c018eb8"
+        }
+      }
+    },
+    "installationAfter": {
+      "status": "ACTUAL_INSTALLER_OBSERVATIONS_INDEPENDENTLY_ADMITTED_FINITE_WORKSPACE_LINK_SCOPE",
+      "commandCount": 3,
+      "allExitCodes": 0,
+      "actualFlags": [
+        "--offline",
+        "--frozen-lockfile",
+        "--ignore-scripts"
+      ],
+      "startedAtUtc": "2026-10-12T15:43:49.4371243Z",
+      "finishedAtUtc": "2026-10-12T15:43:50.3650965Z",
+      "receipt": {
+        "witness": "actual_installation_after_r1",
+        "bytes": 2847,
+        "sha256": "8ec2e1d136a8a02d6aea5796bf9caccad931ee5942cfd123a02f0a1058da53f3"
+      },
+      "fixture": {
+        "manifestCount": 7,
+        "sourcePins": [
+          {
+            "path": "package.json",
+            "bytes": 666,
+            "sha256": "efafc565407f6189689bd8dd0c46d54e54b78827dd4a33981990730d504bb50f"
+          },
+          {
+            "path": "pnpm-lock.yaml",
+            "bytes": 8949,
+            "sha256": "ccdf71d985350becff1f9d6e41574df69282f41770d0a1a8ac603a98d6fc0d9a"
+          },
+          {
+            "path": "pnpm-workspace.yaml",
+            "bytes": 51,
+            "sha256": "f51d3d153b0f3cdbb82186bd1c3eea9066f4e3a15828985952feeee965a75534"
+          },
+          {
+            "path": "packages/contracts/package.json",
+            "bytes": 179,
+            "sha256": "fceaef2ae55a77347ce9f99acd2165d36e991d89c76bf0480ff5048f3e7a94a1"
+          },
+          {
+            "path": "packages/runtime/package.json",
+            "bytes": 327,
+            "sha256": "b9294c479d38614dd8866adcd8775f5d6f43c787d9b08c8ef54371e426cb5032"
+          },
+          {
+            "path": "packages/engine/package.json",
+            "bytes": 1372,
+            "sha256": "891311a277b03b583ef35d45ad862ece747bda8ad04aae12f1fce9ed0e9149df"
+          },
+          {
+            "path": "packages/project/package.json",
+            "bytes": 397,
+            "sha256": "295e6bc8d81a4647f5b99355ea27879563ced216fa2af406c65cc78b95f40945"
+          }
+        ],
+        "manuallyCreatedAliases": 0,
+        "identity": {
+          "witness": "installation_after_source_fixture",
+          "bytes": 1544,
+          "sha256": "76472b314417f3a623f3ec2c16736999ff30ca755be550e0f1774c89d206537d"
+        }
+      },
+      "observation": {
+        "rootContractsPresent": true,
+        "rootContractsTarget": "packages/contracts",
+        "runtimeContractsTarget": "packages/contracts",
+        "inputManifestBytesUnchanged": true,
+        "manuallyCreatedAliases": 0,
+        "identity": {
+          "witness": "installation_after_link_observation",
+          "bytes": 431,
+          "sha256": "8ad6c968d18c64eacf80d97d89428bd9e903ae9b56c32a11a8a17f8dcd32b40f"
+        }
+      }
+    },
+    "retainedHistory": "All original publication PENDING fields, original B1 failure and earlier 45-path records remain unchanged.",
+    "boundary": "Source declaration and saved manifest-only installer link observations. No new SDK/compiler/browser acceptance, final 47-path push, PR/Main delivery, remote CI or general clean-install guarantee.",
+    "independentSourceReview": {
+      "witness": "independent_two_manifest_source_review",
+      "bytes": 8603,
+      "sha256": "5508fecbf96fa72f8e7af000329c2854d176432bf9822ed3c063291910f96bda"
+    },
+    "independentInstallationReview": {
+      "witness": "independent_actual_standard_installation_review",
+      "bytes": 20197,
+      "sha256": "1e5ed86b6c465918169e638889ca6be20cefcde5d61b47b9094cfee9bf188734"
+    }
+  }
+}

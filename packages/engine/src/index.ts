@@ -28,3 +28,5 @@ export type { SequenceFrameInput, SequenceClipInput, SequenceClip, SequenceRegio
 export { ByteReader, BYTE_READER_LIMITS } from "@egret/runtime";
 export type { ByteOrder } from "@egret/runtime";
 export { ByteWriter, BYTE_WRITER_LIMITS } from "@egret/runtime";
+export { createNineSliceGeometry2D } from "@egret/runtime";
+export type { NineSliceInsets2D, NineSliceGeometry2DOptions } from "@egret/runtime";
