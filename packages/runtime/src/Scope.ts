@@ -18,21 +18,22 @@ function cleanup(value: ScopeValue): void {
 /** Synchronous ownership boundary. Use Engine.createScope() to obtain one. */
 export class Scope {
    #currentState: ScopeState = "open";
-  private readonly values: ScopeValue[] = [];
-  private readonly controller: CancellationController;
+  // Runtime-private ownership paths ignore harmless public old-name shadows.
+  readonly #values: ScopeValue[] = [];
+  readonly #controller: CancellationController;
   readonly #engine: EngineContext;
-  private readonly onClosed: (scope: Scope) => void;
+  readonly #onClosed: (scope: Scope) => void;
   public readonly signal: CancellationSignal;
 
   private constructor(engine: EngineContext, onClosed: (scope: Scope) => void, token: typeof CREATION_TOKEN) {
     if (token !== CREATION_TOKEN) throw new EgretError("SCOPE_FACTORY_REQUIRED");
     this.#engine = engine;
-    this.onClosed = onClosed;
-    this.controller = new CancellationController((diagnostic) => {
+    this.#onClosed = onClosed;
+    this.#controller = new CancellationController((diagnostic) => {
       this.#engine.captureCleanup(diagnostic.cause);
       this.#engine.report(diagnostic);
     });
-    this.signal = this.controller.signal;
+    this.signal = this.#controller.signal;
   }
 
   static {
@@ -46,23 +47,23 @@ export class Scope {
     if (activeRegistrations.has(value)) throw new EgretError("SCOPE_REGISTRATION_ACTIVE");
     activeRegistrations.add(value);
     try {
-      const existingOwner = this.validateAcceptance(value);
+      const existingOwner = this.#validateAcceptance(value);
       if (existingOwner === this) return value;
       preflightBinding(value, this.#engine);
       // Subclass preflight may close a Scope/Engine or mutate the tree. Nothing
       // can invoke user code between the checks below and the ownership commit.
-      this.validateAcceptance(value);
+      this.#validateAcceptance(value);
       const binding = validateBinding(value, this.#engine);
       commitBinding(binding, this.#engine);
       claimOwner(value, this);
-      this.values.push(value);
+      this.#values.push(value);
       return value;
     } finally {
       activeRegistrations.delete(value);
     }
   }
 
-  private validateAcceptance(value: ScopeValue): object | undefined {
+  #validateAcceptance(value: ScopeValue): object | undefined {
     const existingOwner = ownerOf(value);
     if (existingOwner !== undefined && existingOwner !== this) throw new EgretError("OWNERSHIP_CONFLICT");
     const existingEngine = engineOf(value);
@@ -96,9 +97,9 @@ export class Scope {
     if (this.#currentState !== "open") return;
     this.#currentState = "closing";
     try {
-      this.controller.abort(new EgretError("SCOPE_CLOSED"));
-      for (let index = this.values.length - 1; index >= 0; index--) {
-        const value = this.values[index];
+      this.#controller.abort(new EgretError("SCOPE_CLOSED"));
+      for (let index = this.#values.length - 1; index >= 0; index--) {
+        const value = this.#values[index];
         if (value === undefined) continue;
         try { cleanup(value); }
         catch (cause) {
@@ -107,9 +108,9 @@ export class Scope {
         }
       }
     } finally {
-      this.values.length = 0;
+      this.#values.length = 0;
       this.#currentState = "closed";
-      this.onClosed(this);
+      this.#onClosed(this);
     }
   }
 }

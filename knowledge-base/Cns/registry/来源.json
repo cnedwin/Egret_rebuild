@@ -2030,7 +2030,64 @@
       "title": "第一方 Spine 导入计划与有界验证",
       "scope": "稳定版 4.3 JSON、现代图集与显式页面绑定的纯数据计划。",
       "limit": "动画／渲染、二进制、许可资格与完整 Spine 未验收；完整公开门禁待完成。",
-      "doc": "Cns/docs/Spine导入计划契约.md"
+      "doc": "Cns/docs/Spine导入计划契约.md",
+      "deliverySuccessor": {
+        "engineeringLabel": "0.34.0",
+        "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/21",
+        "sourceHead": "3988d8cb093581c69e80610582a92f8d7fc03adb",
+        "mergedMain": "74ca6c3293167d8d3eb253074c0596bd1922db21",
+        "tree": "94e6a96f17b656cb8cd28cd65a75f48575cb0c38",
+        "mandatoryPushHook": "ACTUAL_PASS",
+        "coreTests": 2672,
+        "publicationTests": 63,
+        "documentPairs": 147,
+        "criticalSources": 177,
+        "localRemoteMainReadbackAtUtc": "2026-10-12T00:31:01.816Z",
+        "remoteStatusCount": 0,
+        "remoteCheckCount": 0,
+        "remoteCIPassClaimed": false,
+        "scope": "Observed delivery successor; earlier SP1-A preparation cutoffs remain historical."
+      }
+    },
+    {
+      "id": "S088",
+      "type": "first_party_scope_private_ownership_evidence",
+      "researchCheckedAt": "2026-10-12",
+      "requirementIds": [
+        "R003",
+        "R015",
+        "R016"
+      ],
+      "verification": {
+        "engineeringLabel": "0.35.0",
+        "sourceId": "S088",
+        "deliverable": "V039",
+        "scope": "Four Scope internals use JavaScript private storage/dispatch; existing API and cleanup/error order retained.",
+        "behavior": {
+          "tests": 6,
+          "passed": 6,
+          "failed": 0
+        },
+        "retainedLifecycle": {
+          "tests": 183,
+          "pass": 183,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0
+        },
+        "independentImplementationReviewOpenFindings": 0,
+        "fullCurrent": "PENDING_AT_PRECOMMIT_METADATA_CUTOFF",
+        "publication": "PENDING_AT_PRECOMMIT_METADATA_CUTOFF",
+        "independentFinalBilingualMeaningReview": "PENDING",
+        "mandatoryGitPushHook": "PENDING",
+        "remoteDelivery": "PENDING",
+        "fullSpineR020V020": "OPEN"
+      },
+      "urls": [],
+      "title": "第一方 Scope 私有所有权修复",
+      "scope": "四个内部成员的显式同名属性案例与保留生命周期契约。",
+      "limit": "不代表全部内部成员、安全隔离、GC、设备性能或完整 Spine 验收。",
+      "doc": "Cns/docs/Scope私有所有权.md"
     }
   ]
 }

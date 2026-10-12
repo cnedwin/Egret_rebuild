@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "revision": "0.34.0",
+  "revision": "0.35.0",
   "canonicalState": "Chinese registries; English JSON is a read-only translation",
   "evidencePolicy": "Machine data, embedded source, historical code and upstream legal originals retain their identities; paired reading versions explain them.",
   "semanticReview": {
@@ -141,8 +141,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "0bfe62097288d04b68954a74a03ab935e15a614f98213f5fb559cb6cd8fb1152",
-      "zhSha256": "a891193331a73b985cb85d6b883e73be7b2c79be171c1ff528253e4233570c9f"
+      "enSha256": "156cf9a034bb1a52497ffda6749adbd3ee139ef012a4fa7cb49b8f0751b1598b",
+      "zhSha256": "b6c1348cfe6b90309eb43cf098744d9aa738ffb90cc3849df82b435eb59334e5"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -288,8 +288,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "2ac02ab70ae2ce34007b7ec618236ac3c6560b3bf3caa7c1ba35d70c6cdf88e1",
-      "zhSha256": "7be61c371d8c258493714b74089d49325efd1bd94f9eac564f4cada116ef0843"
+      "enSha256": "e578dae06f760d88f8f4b46642cd1c4824b94fd9bf32b7fd9dcbf19af53de2e6",
+      "zhSha256": "27014697d5e7b62b4eb673e1cf87b83c1499f06675372c43d239161862bc3bb3"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -351,8 +351,8 @@
       "zh": "knowledge-base/Cns/docs/工程规划.md",
       "en": "knowledge-base/en/docs/engineering-plan.md",
       "kind": "public_reading",
-      "enSha256": "afab03392b571b550947c272588099a86aec0409aef2463d2ff4457b1bd4263e",
-      "zhSha256": "a2d31b21980f133609efb55a0ad847b27133204d0d4dd5ae6eef4fe6172da1af"
+      "enSha256": "3256cde4ced1c4d99c7d1baec91e99111bcfc3869a2e76f2e7d35718345c7ce0",
+      "zhSha256": "b0020f623caf99a0d2d6478a963dd3d02abb37097b1447c95e77d40f0b59d94e"
     },
     {
       "zh": "knowledge-base/Cns/docs/术语表.md",
@@ -848,8 +848,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "26ba35d52e09c918a6c02e10d717c14e3a84f150d5df6758254fc30b0618e861",
-      "zhSha256": "ea68880391b6294ed9d9d1641e704688642645e21ce19ef599fc68afc6eaa8fd"
+      "enSha256": "ec73c9b22c15c02e720d45384f70d4fdc14a8b4b002f4b01c049d3aa9ef9f55c",
+      "zhSha256": "f376aa8debe672b15b6df10e1394763563d1a21d00695f935c6cedd21aec7869"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -1081,6 +1081,13 @@
       "kind": "public_reading",
       "enSha256": "4059f6ac9b7f684c61572e6040ce83744143804e24199e50ba7151b893c9b53b",
       "zhSha256": "08e95d654fd2a5ba4b16abbd0666d59803476fa908ee1b2560771a556d9dfcc1"
+    },
+    {
+      "en": "knowledge-base/en/docs/scope-private-ownership.md",
+      "zh": "knowledge-base/Cns/docs/Scope私有所有权.md",
+      "kind": "public_reading",
+      "enSha256": "6f9d5a9985db76cf1e969e1cbb7f742c69747c0d999943a0a49875dde33a9978",
+      "zhSha256": "badc7458c3ad4bd88f4b7126431bee3840a4f0e2eefb0f1eed1fb82d7b6a839a"
     }
   ],
   "registries": [
@@ -1105,20 +1112,20 @@
     {
       "source": "knowledge-base/Cns/registry/交付.json",
       "target": "knowledge-base/en/registry/deliverables.json",
-      "sourceSha256": "b14ccee734ceed7e5190473c80365f7116c8a956cd4d45c7afcecb1b8269a960",
-      "targetSha256": "7348bf979497182ecc125f14b6aa6c0a29f31c3a2659e630b310ed20e6fd5f16"
+      "sourceSha256": "1faaaea29f9f5150ba43b0993aa134064faa2dbaca96838d8bafda543ca73416",
+      "targetSha256": "a30cce4e43ed10b71bb897a2b77a2db0ee93a18fd65d88d454e2c5d4e5de0fc3"
     },
     {
       "source": "knowledge-base/Cns/registry/来源.json",
       "target": "knowledge-base/en/registry/sources.json",
-      "sourceSha256": "4794d6981d8bdc4dccca6a09cd435281c9f07949a6b7b71c5fb9251f56d5e719",
-      "targetSha256": "b0e2ecd30c937569ac901a693c7034fa46d06f713c5241555c7bb33117e8121c"
+      "sourceSha256": "243211a409b019eaf354f051db5fb01252d9b21dedeb80fd43bb3f6d34aeb391",
+      "targetSha256": "c9d017f3d009a6e22e4e49cbe110fa88f2f0c5a659f138d8f1aec0c359caec99"
     },
     {
       "source": "knowledge-base/Cns/当前版本.json",
       "target": "knowledge-base/en/current-version.json",
-      "sourceSha256": "59be73acf1011bec33d9492e20ef233e945176ee40a880cdcb2eb5e46edfff3f",
-      "targetSha256": "58ef5be11dd43ad6af0d1bd7981554608c399fa363d02281ac0508495dfb6db0"
+      "sourceSha256": "cad999fc279381730d0d63bdae226d2fcc931c7a2da1d2d767ccaa27ba84c5d1",
+      "targetSha256": "e502652a09ac0a943f1bbd81eaaf2943219e9365da3eed1bac246a7b7628f47d"
     }
   ],
   "criticalComments": [
@@ -1420,7 +1427,7 @@
     },
     {
       "path": "packages/runtime/src/Scope.ts",
-      "sha256": "4f4a696a2c8eae5fa76d1888b19c7396bfd9b26fd064ea6a1f562661a98ad2b3"
+      "sha256": "c369db2b08df36e22553859c6ec7ccc110550bf32e5cbd3ffca1925f201f3044"
     },
     {
       "path": "packages/runtime/src/Sprite.ts",
@@ -4040,6 +4047,18 @@
       "packages/project/src/spine/preflight.ts"
     ],
     "scope": "Independent optional planner, original fixtures, exact observed type diagnostics and curated paired public reading.",
+    "independentFinalMeaningReview": "PENDING",
+    "completeSemanticParityClaim": false
+  },
+  "scopePrivateOwnershipCuration": {
+    "engineeringLabel": "0.35.0",
+    "documents": [
+      "knowledge-base/en/docs/scope-private-ownership.md",
+      "knowledge-base/Cns/docs/Scope私有所有权.md"
+    ],
+    "criticalSources": [
+      "packages/runtime/src/Scope.ts"
+    ],
     "independentFinalMeaningReview": "PENDING",
     "completeSemanticParityClaim": false
   }

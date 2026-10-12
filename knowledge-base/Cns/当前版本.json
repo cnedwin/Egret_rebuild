@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "version": "0.34.0",
+  "version": "0.35.0",
   "updatedAt": "2026-10-12",
   "title": "白鹭引擎重构工程",
-  "stage": "independent_core_optional_spine_planning_checkpoint",
+  "stage": "independent_core_scope_private_ownership_checkpoint",
   "publication": "development_preview",
   "registries": {
     "requirements": "Cns/registry/需求.json",
@@ -2223,5 +2223,49 @@
     "remoteCheckCount": 0,
     "remoteCIPassClaimed": false,
     "scope": "Observed delivery successor; earlier MI1 pending cutoffs remain historical."
+  },
+  "scopePrivateOwnershipImplementation": {
+    "engineeringLabel": "0.35.0",
+    "sourceId": "S088",
+    "deliverable": "V039",
+    "scope": "Four Scope internals use JavaScript private storage/dispatch; existing API and cleanup/error order retained.",
+    "behavior": {
+      "tests": 6,
+      "passed": 6,
+      "failed": 0
+    },
+    "retainedLifecycle": {
+      "tests": 183,
+      "pass": 183,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "independentImplementationReviewOpenFindings": 0,
+    "fullCurrent": "PENDING_AT_PRECOMMIT_METADATA_CUTOFF",
+    "publication": "PENDING_AT_PRECOMMIT_METADATA_CUTOFF",
+    "independentFinalBilingualMeaningReview": "PENDING",
+    "mandatoryGitPushHook": "PENDING",
+    "remoteDelivery": "PENDING",
+    "fullSpineR020V020": "OPEN",
+    "doc": "Cns/docs/Scope私有所有权.md",
+    "evidence": "evidence/scope-private-ownership-verification.json"
+  },
+  "spineImportPlanDeliverySuccessor": {
+    "engineeringLabel": "0.34.0",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/21",
+    "sourceHead": "3988d8cb093581c69e80610582a92f8d7fc03adb",
+    "mergedMain": "74ca6c3293167d8d3eb253074c0596bd1922db21",
+    "tree": "94e6a96f17b656cb8cd28cd65a75f48575cb0c38",
+    "mandatoryPushHook": "ACTUAL_PASS",
+    "coreTests": 2672,
+    "publicationTests": 63,
+    "documentPairs": 147,
+    "criticalSources": 177,
+    "localRemoteMainReadbackAtUtc": "2026-10-12T00:31:01.816Z",
+    "remoteStatusCount": 0,
+    "remoteCheckCount": 0,
+    "remoteCIPassClaimed": false,
+    "scope": "Observed delivery successor; earlier SP1-A preparation cutoffs remain historical."
   }
 }

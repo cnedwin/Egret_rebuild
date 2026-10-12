@@ -2030,12 +2030,69 @@
       "title": "First-party Spine import planning and bounded verification",
       "scope": "Pure data planning for stable 4.3 JSON, modern atlases and explicit page bindings.",
       "limit": "Animation/rendering, binary, entitlement and complete Spine remain unaccepted; final publication gates pending.",
-      "doc": "en/docs/spine-import-plan-contract.md"
+      "doc": "en/docs/spine-import-plan-contract.md",
+      "deliverySuccessor": {
+        "engineeringLabel": "0.34.0",
+        "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/21",
+        "sourceHead": "3988d8cb093581c69e80610582a92f8d7fc03adb",
+        "mergedMain": "74ca6c3293167d8d3eb253074c0596bd1922db21",
+        "tree": "94e6a96f17b656cb8cd28cd65a75f48575cb0c38",
+        "mandatoryPushHook": "ACTUAL_PASS",
+        "coreTests": 2672,
+        "publicationTests": 63,
+        "documentPairs": 147,
+        "criticalSources": 177,
+        "localRemoteMainReadbackAtUtc": "2026-10-12T00:31:01.816Z",
+        "remoteStatusCount": 0,
+        "remoteCheckCount": 0,
+        "remoteCIPassClaimed": false,
+        "scope": "Observed delivery successor; earlier SP1-A preparation cutoffs remain historical."
+      }
+    },
+    {
+      "id": "S088",
+      "type": "first_party_scope_private_ownership_evidence",
+      "researchCheckedAt": "2026-10-12",
+      "requirementIds": [
+        "R003",
+        "R015",
+        "R016"
+      ],
+      "verification": {
+        "engineeringLabel": "0.35.0",
+        "sourceId": "S088",
+        "deliverable": "V039",
+        "scope": "Four Scope internals use JavaScript private storage/dispatch; existing API and cleanup/error order retained.",
+        "behavior": {
+          "tests": 6,
+          "passed": 6,
+          "failed": 0
+        },
+        "retainedLifecycle": {
+          "tests": 183,
+          "pass": 183,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0
+        },
+        "independentImplementationReviewOpenFindings": 0,
+        "fullCurrent": "PENDING_AT_PRECOMMIT_METADATA_CUTOFF",
+        "publication": "PENDING_AT_PRECOMMIT_METADATA_CUTOFF",
+        "independentFinalBilingualMeaningReview": "PENDING",
+        "mandatoryGitPushHook": "PENDING",
+        "remoteDelivery": "PENDING",
+        "fullSpineR020V020": "OPEN"
+      },
+      "urls": [],
+      "title": "First-party Scope private ownership repair",
+      "scope": "Four explicit old-name shadow cases and retained lifecycle contract.",
+      "limit": "No acceptance of all internals, security isolation, GC, device performance or full Spine.",
+      "doc": "en/docs/scope-private-ownership.md"
     }
   ],
   "_localization": {
     "canonicalSource": "来源.json",
-    "canonicalSha256": "4794d6981d8bdc4dccca6a09cd435281c9f07949a6b7b71c5fb9251f56d5e719",
+    "canonicalSha256": "243211a409b019eaf354f051db5fb01252d9b21dedeb80fd43bb3f6d34aeb391",
     "role": "read_only_translation",
     "language": "en"
   }

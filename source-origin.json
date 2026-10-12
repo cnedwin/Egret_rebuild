@@ -595,8 +595,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/CHANGELOG.md",
-      "bytes": 44920,
-      "sha256": "a891193331a73b985cb85d6b883e73be7b2c79be171c1ff528253e4233570c9f",
+      "bytes": 46472,
+      "sha256": "b6c1348cfe6b90309eb43cf098744d9aa738ffb90cc3849df82b435eb59334e5",
       "identityHistory": [
         {
           "bytes": 25611,
@@ -649,6 +649,11 @@
           "bytes": 42577,
           "sha256": "e150a74e0346f90f42ce4856666316d6e3e5d998a4d7daf838bd0b2dfd66d226",
           "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+        },
+        {
+          "bytes": 44920,
+          "sha256": "a891193331a73b985cb85d6b883e73be7b2c79be171c1ff528253e4233570c9f",
+          "scope": "Preserved identity before 0.35 Scope private ownership repair."
         }
       ]
     },
@@ -739,8 +744,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 18603,
-      "sha256": "7be61c371d8c258493714b74089d49325efd1bd94f9eac564f4cada116ef0843",
+      "bytes": 20150,
+      "sha256": "27014697d5e7b62b4eb673e1cf87b83c1499f06675372c43d239161862bc3bb3",
       "identityHistory": [
         {
           "bytes": 12315,
@@ -761,6 +766,11 @@
           "bytes": 16262,
           "sha256": "faf8ab78c6853d7f24835427f7fb737440796ccaca70ab1c6def480ead9b5191",
           "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+        },
+        {
+          "bytes": 18603,
+          "sha256": "7be61c371d8c258493714b74089d49325efd1bd94f9eac564f4cada116ef0843",
+          "scope": "Preserved identity before 0.35 Scope private ownership repair."
         }
       ]
     },
@@ -923,8 +933,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/工程规划.md",
-      "bytes": 30867,
-      "sha256": "a2d31b21980f133609efb55a0ad847b27133204d0d4dd5ae6eef4fe6172da1af",
+      "bytes": 32414,
+      "sha256": "b0020f623caf99a0d2d6478a963dd3d02abb37097b1447c95e77d40f0b59d94e",
       "identityHistory": [
         {
           "bytes": 23962,
@@ -945,6 +955,11 @@
           "bytes": 28526,
           "sha256": "9dd7f2fa6d813ee684cea4076b2dab530b31f4e42a72682e88beac104fb35c36",
           "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+        },
+        {
+          "bytes": 30867,
+          "sha256": "a2d31b21980f133609efb55a0ad847b27133204d0d4dd5ae6eef4fe6172da1af",
+          "scope": "Preserved identity before 0.35 Scope private ownership repair."
         }
       ]
     },
@@ -1299,8 +1314,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/registry/交付.json",
-      "bytes": 94886,
-      "sha256": "b14ccee734ceed7e5190473c80365f7116c8a956cd4d45c7afcecb1b8269a960",
+      "bytes": 97591,
+      "sha256": "1faaaea29f9f5150ba43b0993aa134064faa2dbaca96838d8bafda543ca73416",
       "identityHistory": [
         {
           "bytes": 50664,
@@ -1363,6 +1378,11 @@
           "bytes": 91429,
           "sha256": "2e3b7fe872bb4011bb4ba14aa965d8424e9adc967f124fe73c8e00526cfa4405",
           "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+        },
+        {
+          "bytes": 94886,
+          "sha256": "b14ccee734ceed7e5190473c80365f7116c8a956cd4d45c7afcecb1b8269a960",
+          "scope": "Preserved identity before 0.35 Scope private ownership repair."
         }
       ]
     },
@@ -1381,8 +1401,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/registry/来源.json",
-      "bytes": 111062,
-      "sha256": "4794d6981d8bdc4dccca6a09cd435281c9f07949a6b7b71c5fb9251f56d5e719",
+      "bytes": 113316,
+      "sha256": "243211a409b019eaf354f051db5fb01252d9b21dedeb80fd43bb3f6d34aeb391",
       "identityHistory": [
         {
           "bytes": 74667,
@@ -1445,6 +1465,11 @@
           "bytes": 108253,
           "sha256": "9fd7b478420d6d90e2389f6fd5f4f61c38e3232dedcf484163277c62fc2a3560",
           "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+        },
+        {
+          "bytes": 111062,
+          "sha256": "4794d6981d8bdc4dccca6a09cd435281c9f07949a6b7b71c5fb9251f56d5e719",
+          "scope": "Preserved identity before 0.35 Scope private ownership repair."
         }
       ]
     },
@@ -1481,8 +1506,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/当前版本.json",
-      "bytes": 85348,
-      "sha256": "59be73acf1011bec33d9492e20ef233e945176ee40a880cdcb2eb5e46edfff3f",
+      "bytes": 87036,
+      "sha256": "cad999fc279381730d0d63bdae226d2fcc931c7a2da1d2d767ccaa27ba84c5d1",
       "identityHistory": [
         {
           "bytes": 31425,
@@ -1540,6 +1565,11 @@
           "bytes": 83136,
           "sha256": "f8f5baa605eca36bb3c068e180651fba85b24b03ac3e0d83e7f690643d630aa1",
           "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+        },
+        {
+          "bytes": 85348,
+          "sha256": "59be73acf1011bec33d9492e20ef233e945176ee40a880cdcb2eb5e46edfff3f",
+          "scope": "Preserved identity before 0.35 Scope private ownership repair."
         }
       ]
     },
@@ -1576,8 +1606,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/CHANGELOG.md",
-      "bytes": 53195,
-      "sha256": "0bfe62097288d04b68954a74a03ab935e15a614f98213f5fb559cb6cd8fb1152",
+      "bytes": 54844,
+      "sha256": "156cf9a034bb1a52497ffda6749adbd3ee139ef012a4fa7cb49b8f0751b1598b",
       "identityHistory": [
         {
           "bytes": 31389,
@@ -1630,6 +1660,11 @@
           "bytes": 50622,
           "sha256": "79c0248866be207cf80740c306df4e41e19a13bd66ce96697105ce1b71bb971e",
           "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+        },
+        {
+          "bytes": 53195,
+          "sha256": "0bfe62097288d04b68954a74a03ab935e15a614f98213f5fb559cb6cd8fb1152",
+          "scope": "Preserved identity before 0.35 Scope private ownership repair."
         }
       ]
     },
@@ -1642,8 +1677,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/current-version.json",
-      "bytes": 86027,
-      "sha256": "58ef5be11dd43ad6af0d1bd7981554608c399fa363d02281ac0508495dfb6db0",
+      "bytes": 87717,
+      "sha256": "e502652a09ac0a943f1bbd81eaaf2943219e9365da3eed1bac246a7b7628f47d",
       "identityHistory": [
         {
           "bytes": 31946,
@@ -1701,6 +1736,11 @@
           "bytes": 83813,
           "sha256": "3efed447036d02f485fa42db1a75ef7c6d05a1586fcc13868b2b63b5e52a13fe",
           "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+        },
+        {
+          "bytes": 86027,
+          "sha256": "58ef5be11dd43ad6af0d1bd7981554608c399fa363d02281ac0508495dfb6db0",
+          "scope": "Preserved identity before 0.35 Scope private ownership repair."
         }
       ]
     },
@@ -1833,8 +1873,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-progress.md",
-      "bytes": 21083,
-      "sha256": "2ac02ab70ae2ce34007b7ec618236ac3c6560b3bf3caa7c1ba35d70c6cdf88e1",
+      "bytes": 22727,
+      "sha256": "e578dae06f760d88f8f4b46642cd1c4824b94fd9bf32b7fd9dcbf19af53de2e6",
       "identityHistory": [
         {
           "bytes": 14004,
@@ -1855,6 +1895,11 @@
           "bytes": 18512,
           "sha256": "e2d156a4fe0525b7a37f5956e071a7752738b791e730d97b5759f15062a91cef",
           "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+        },
+        {
+          "bytes": 21083,
+          "sha256": "2ac02ab70ae2ce34007b7ec618236ac3c6560b3bf3caa7c1ba35d70c6cdf88e1",
+          "scope": "Preserved identity before 0.35 Scope private ownership repair."
         }
       ]
     },
@@ -1909,8 +1954,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/engineering-plan.md",
-      "bytes": 37734,
-      "sha256": "afab03392b571b550947c272588099a86aec0409aef2463d2ff4457b1bd4263e",
+      "bytes": 39378,
+      "sha256": "3256cde4ced1c4d99c7d1baec91e99111bcfc3869a2e76f2e7d35718345c7ce0",
       "identityHistory": [
         {
           "bytes": 29962,
@@ -1931,6 +1976,11 @@
           "bytes": 35163,
           "sha256": "06b286a4f7e4799a8a5f6d08951eea5594acf096e8ceeecd1c9c400d03c79ac6",
           "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+        },
+        {
+          "bytes": 37734,
+          "sha256": "afab03392b571b550947c272588099a86aec0409aef2463d2ff4457b1bd4263e",
+          "scope": "Preserved identity before 0.35 Scope private ownership repair."
         }
       ]
     },
@@ -2356,8 +2406,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/registry/deliverables.json",
-      "bytes": 100035,
-      "sha256": "7348bf979497182ecc125f14b6aa6c0a29f31c3a2659e630b310ed20e6fd5f16",
+      "bytes": 102766,
+      "sha256": "a30cce4e43ed10b71bb897a2b77a2db0ee93a18fd65d88d454e2c5d4e5de0fc3",
       "identityHistory": [
         {
           "bytes": 54446,
@@ -2425,6 +2475,11 @@
           "bytes": 96530,
           "sha256": "10395dc7274f5bf398b83582565caa583410f4577f6921811764b79aa95f7de9",
           "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+        },
+        {
+          "bytes": 100035,
+          "sha256": "7348bf979497182ecc125f14b6aa6c0a29f31c3a2659e630b310ed20e6fd5f16",
+          "scope": "Preserved identity before 0.35 Scope private ownership repair."
         }
       ]
     },
@@ -2443,8 +2498,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/registry/sources.json",
-      "bytes": 119915,
-      "sha256": "b0e2ecd30c937569ac901a693c7034fa46d06f713c5241555c7bb33117e8121c",
+      "bytes": 122171,
+      "sha256": "c9d017f3d009a6e22e4e49cbe110fa88f2f0c5a659f138d8f1aec0c359caec99",
       "identityHistory": [
         {
           "bytes": 82270,
@@ -2507,6 +2562,11 @@
           "bytes": 117071,
           "sha256": "1e723f20df75911214c986ec00bedf95f018f62309619a44954d8cd420deaa90",
           "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+        },
+        {
+          "bytes": 119915,
+          "sha256": "b0e2ecd30c937569ac901a693c7034fa46d06f713c5241555c7bb33117e8121c",
+          "scope": "Preserved identity before 0.35 Scope private ownership repair."
         }
       ]
     },
@@ -2577,8 +2637,8 @@
     {
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "path": "localization.json",
-      "sha256": "b77e78827be1fbd70cefef058bb3896cf7c6f679195cac9a04e808209dd3e2de",
-      "bytes": 203346,
+      "sha256": "3fd9e6fa85a8098771bd5291c55cc958fcc85737c53e0dc6f31a9faa9d17dd53",
+      "bytes": 204066,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -2642,6 +2702,11 @@
           "bytes": 203346,
           "sha256": "18131774429cc89a57ce7d25b360a8a0900e2fb05b61d3cfeb35f679495614f7",
           "scope": "Preserved identity before the finite 0.34 bilingual README occurrence repair."
+        },
+        {
+          "bytes": 203346,
+          "sha256": "b77e78827be1fbd70cefef058bb3896cf7c6f679195cac9a04e808209dd3e2de",
+          "scope": "Preserved identity before 0.35 Scope private ownership repair."
         }
       ]
     },
@@ -3251,14 +3316,21 @@
     },
     {
       "path": "packages/runtime/src/Scope.ts",
-      "sha256": "4f4a696a2c8eae5fa76d1888b19c7396bfd9b26fd064ea6a1f562661a98ad2b3",
-      "bytes": 4704,
+      "sha256": "c369db2b08df36e22553859c6ec7ccc110550bf32e5cbd3ffca1925f201f3044",
+      "bytes": 4765,
       "originalSha256": "840ef7f714e80f2eccca974dfca972dc2e94ecbe74da688f7ebe4c3d9b7ceebd",
       "originRole": "English comment-only projection; exact baseline restoration proven",
       "previousPublicSha256": "840ef7f714e80f2eccca974dfca972dc2e94ecbe74da688f7ebe4c3d9b7ceebd",
       "previousRevisionSha256": "29e9d5da9232ed8347b2a829e069d33daabb1bad296798492a45c7950f43e8ea",
       "previousLayoutPath": "packages/runtime/src/Scope.ts",
-      "previousLayoutSha256": "29e9d5da9232ed8347b2a829e069d33daabb1bad296798492a45c7950f43e8ea"
+      "previousLayoutSha256": "29e9d5da9232ed8347b2a829e069d33daabb1bad296798492a45c7950f43e8ea",
+      "identityHistory": [
+        {
+          "bytes": 4704,
+          "sha256": "4f4a696a2c8eae5fa76d1888b19c7396bfd9b26fd064ea6a1f562661a98ad2b3",
+          "scope": "Preserved identity before 0.35 Scope private ownership repair."
+        }
+      ]
     },
     {
       "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
@@ -3332,8 +3404,8 @@
     {
       "path": "README.md",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
-      "sha256": "26ba35d52e09c918a6c02e10d717c14e3a84f150d5df6758254fc30b0618e861",
-      "bytes": 43225,
+      "sha256": "ec73c9b22c15c02e720d45384f70d4fdc14a8b4b002f4b01c049d3aa9ef9f55c",
+      "bytes": 46417,
       "previousRevisionSha256": "199156443d499d5012f1224263a1a3ee9994e5ba38ee067bceeb2ad865ae8167",
       "previousLayoutPath": "README.en.md",
       "previousLayoutSha256": "f40ec41ca699cd0b9138fbdf4a268080038f583ae11e78c4f37093a6b7095f57",
@@ -3394,13 +3466,18 @@
           "bytes": 38296,
           "sha256": "b5389c4b9ad20dcee4b94d496ebe23690aed5cd495aace88401bbf67ed9bfc1a",
           "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+        },
+        {
+          "bytes": 43225,
+          "sha256": "26ba35d52e09c918a6c02e10d717c14e3a84f150d5df6758254fc30b0618e861",
+          "scope": "Preserved identity before 0.35 Scope private ownership repair."
         }
       ]
     },
     {
       "path": "README.zh-CN.md",
-      "sha256": "ea68880391b6294ed9d9d1641e704688642645e21ce19ef599fc68afc6eaa8fd",
-      "bytes": 42334,
+      "sha256": "f376aa8debe672b15b6df10e1394763563d1a21d00695f935c6cedd21aec7869",
+      "bytes": 45526,
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "previousPublicSha256": "7ec80b8575a700b6a2628eb0322f2e770bb2284859f68ec5e0eb6530154a6699",
       "previousRevisionSha256": "7a1d72019db7cb6075d7c3a3bd4075f7c069d527b6e31d992a69333cb126b6c3",
@@ -3468,6 +3545,11 @@
           "bytes": 39779,
           "sha256": "e479514a186d893a9c85e6a71fa50b5bc2ce82050c1d52d5c86294a9a00f5006",
           "scope": "Preserved identity before the finite 0.34 bilingual README occurrence repair."
+        },
+        {
+          "bytes": 42334,
+          "sha256": "ea68880391b6294ed9d9d1641e704688642645e21ce19ef599fc68afc6eaa8fd",
+          "scope": "Preserved identity before 0.35 Scope private ownership repair."
         }
       ]
     },
@@ -3651,13 +3733,20 @@
     },
     {
       "path": "tests/types/negative.ts",
-      "sha256": "43d89f16928a5052ef155bc078af964e9b73e2c58548fe5906c3b42e30787b13",
+      "sha256": "e60c76f3d5d186657fd291bec3906898427ee1a4bddac67d48aa8276daf74702",
       "bytes": 28368,
       "originalSha256": "f2aba4d444432063b862b42822b392b82d09c8d91458cc80f5478f136115ce7b",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
       "previousRevisionSha256": "f2aba4d444432063b862b42822b392b82d09c8d91458cc80f5478f136115ce7b",
       "previousLayoutPath": "tests/types/negative.ts",
-      "previousLayoutSha256": "90c48447b08872d893675a8a5701e3a75c99d32f63dec9f8e3db4570907dbde2"
+      "previousLayoutSha256": "90c48447b08872d893675a8a5701e3a75c99d32f63dec9f8e3db4570907dbde2",
+      "identityHistory": [
+        {
+          "bytes": 28368,
+          "sha256": "43d89f16928a5052ef155bc078af964e9b73e2c58548fe5906c3b42e30787b13",
+          "scope": "Preserved identity before 0.35 Scope private ownership repair."
+        }
+      ]
     },
     {
       "path": "tests/types/positive.ts",
@@ -3801,7 +3890,7 @@
     {
       "path": "tools/check-types.mjs",
       "bytes": 68576,
-      "sha256": "fbeace1fc6e6f4952b4457e5382e3932843229fa48d919866d69a88642f1d945",
+      "sha256": "8f303321cfd0a75c65381bc8774230e585789a8859205be5052e157b0e474c16",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "identityHistory": [
         {
@@ -3823,6 +3912,11 @@
           "bytes": 60660,
           "sha256": "67002f6602381dcb5f4d75c304acd7af2140ef8f5005e43634643dad20285e88",
           "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+        },
+        {
+          "bytes": 68576,
+          "sha256": "fbeace1fc6e6f4952b4457e5382e3932843229fa48d919866d69a88642f1d945",
+          "scope": "Preserved identity before 0.35 Scope private ownership repair."
         }
       ]
     },
@@ -5631,7 +5725,14 @@
       "path": "tests/types/text-field-supplement-negative.ts",
       "originRole": "First-party CPU TextField source, verification or paired public documentation; version-bound subset only.",
       "bytes": 864,
-      "sha256": "2fdb7d6d4d2bab8edb17d87c96c36903ae1aa1434f62c3400b8b4a89b1ef794a"
+      "sha256": "08ccbf0f15e8b7b472f23df72ef919d396fa06686084f529b43737057514ff1d",
+      "identityHistory": [
+        {
+          "bytes": 864,
+          "sha256": "2fdb7d6d4d2bab8edb17d87c96c36903ae1aa1434f62c3400b8b4a89b1ef794a",
+          "scope": "Preserved identity before 0.35 Scope private ownership repair."
+        }
+      ]
     },
     {
       "path": "tests/text-field-public.test.mjs",
@@ -6627,6 +6728,30 @@
           "scope": "Preserved identity before the finite 0.34 bilingual README occurrence repair."
         }
       ]
+    },
+    {
+      "path": "tests/scope-private-ownership.test.mjs",
+      "bytes": 7494,
+      "sha256": "5b385a2fa025732989cd8ac6647f1b2f0d03dfb1c1b173d25981da77b4a46c56",
+      "originRole": "First-party Scope lifecycle repair, original verification, paired reading or derived registry."
+    },
+    {
+      "path": "knowledge-base/en/docs/scope-private-ownership.md",
+      "bytes": 2006,
+      "sha256": "6f9d5a9985db76cf1e969e1cbb7f742c69747c0d999943a0a49875dde33a9978",
+      "originRole": "First-party Scope lifecycle repair, original verification, paired reading or derived registry."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/Scope私有所有权.md",
+      "bytes": 1768,
+      "sha256": "badc7458c3ad4bd88f4b7126431bee3840a4f0e2eefb0f1eed1fb82d7b6a839a",
+      "originRole": "First-party Scope lifecycle repair, original verification, paired reading or derived registry."
+    },
+    {
+      "path": "knowledge-base/evidence/scope-private-ownership-verification.json",
+      "bytes": 12480,
+      "sha256": "efef7669f7b525de922f52d6d57f5fd31daff73b7566909368ba728a6df0fe6c",
+      "originRole": "First-party Scope lifecycle repair, original verification, paired reading or derived registry."
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",
@@ -10907,5 +11032,55 @@
     "remoteCheckCount": 0,
     "remoteCIPassClaimed": false,
     "scope": "Observed delivery successor; earlier MI1 pending cutoffs remain historical."
+  },
+  "scopePrivateOwnershipWorkPackage": {
+    "engineeringLabel": "0.35.0",
+    "sourceId": "S088",
+    "deliverable": "V039",
+    "scope": "Four Scope internals use JavaScript private storage/dispatch; existing API and cleanup/error order retained.",
+    "behavior": {
+      "tests": 6,
+      "passed": 6,
+      "failed": 0
+    },
+    "retainedLifecycle": {
+      "tests": 183,
+      "pass": 183,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "independentImplementationReviewOpenFindings": 0,
+    "fullCurrent": "PENDING_AT_PRECOMMIT_METADATA_CUTOFF",
+    "publication": "PENDING_AT_PRECOMMIT_METADATA_CUTOFF",
+    "independentFinalBilingualMeaningReview": "PENDING",
+    "mandatoryGitPushHook": "PENDING",
+    "remoteDelivery": "PENDING",
+    "fullSpineR020V020": "OPEN",
+    "record": "knowledge-base/evidence/scope-private-ownership-verification.json",
+    "sourceBaseCommit": "74ca6c3293167d8d3eb253074c0596bd1922db21",
+    "origin": {
+      "implementation": "Independently authored first-party runtime repair and original public lifecycle fixtures under Apache-2.0.",
+      "runtimeDependenciesAdded": [],
+      "externalAssetsAdded": [],
+      "researchRelation": "Existing Egret lifecycle contract and actual first-party reproduction; no upstream implementation reused."
+    }
+  },
+  "spineImportPlanDeliverySuccessor": {
+    "engineeringLabel": "0.34.0",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/21",
+    "sourceHead": "3988d8cb093581c69e80610582a92f8d7fc03adb",
+    "mergedMain": "74ca6c3293167d8d3eb253074c0596bd1922db21",
+    "tree": "94e6a96f17b656cb8cd28cd65a75f48575cb0c38",
+    "mandatoryPushHook": "ACTUAL_PASS",
+    "coreTests": 2672,
+    "publicationTests": 63,
+    "documentPairs": 147,
+    "criticalSources": 177,
+    "localRemoteMainReadbackAtUtc": "2026-10-12T00:31:01.816Z",
+    "remoteStatusCount": 0,
+    "remoteCheckCount": 0,
+    "remoteCIPassClaimed": false,
+    "scope": "Observed delivery successor; earlier SP1-A preparation cutoffs remain historical."
   }
 }

@@ -9,7 +9,7 @@ declare const wrongEngine: {}, wrongScope: {}, wrongCache: {};
 const missingOnlyBrand: TextField = unbranded;
 // TEXT_FIELD_SUPPLEMENT_CASE wrong-engine-argument TS2740
 createTextField(wrongEngine, scope, cache);
-// TEXT_FIELD_SUPPLEMENT_CASE wrong-scope-argument TS2740
+// TEXT_FIELD_SUPPLEMENT_CASE wrong-scope-argument TS2739
 createTextField(engine, wrongScope, cache);
 // TEXT_FIELD_SUPPLEMENT_CASE wrong-cache-argument TS2740
 createTextField(engine, scope, wrongCache);
