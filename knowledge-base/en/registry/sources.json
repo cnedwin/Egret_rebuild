@@ -2566,11 +2566,42 @@
         "record": "knowledge-base/evidence/textured-scene-host-verification.json",
         "recordStatus": "PLANNED_PENDING_FINAL_CURATION"
       }
+    },
+    {
+      "id": "S093",
+      "type": "first_party_byte_writer_contract_and_qualified_cpu_type_policy_acceptance",
+      "researchCheckedAt": "2026-10-12",
+      "requirementIds": [
+        "R003",
+        "R007",
+        "R016",
+        "R017"
+      ],
+      "title": "First-party ByteWriter BW1 contract and finite actual acceptance",
+      "scope": "Fixed-capacity intrinsic scalar/bulk appends, independent snapshots and Scope lifetime; CPU, faults, exact type inventory and assigned boundaries are recorded separately.",
+      "limit": "No file format, legacy ByteArray, full Spine/migration, native SDK or phone/performance acceptance.",
+      "doc": "en/docs/byte-writer-bw1-contract.md",
+      "urls": [
+        "https://github.com/cnedwin/Egret_rebuild"
+      ],
+      "license": "Apache-2.0",
+      "firstPartySourcePaths": [
+        "packages/runtime/src/ByteWriter.ts",
+        "packages/runtime/src/index.ts",
+        "packages/engine/src/index.ts"
+      ],
+      "newThirdPartyDependency": false,
+      "verification": {
+        "status": "BOUNDED_BW1_CPU_TYPES_POLICY_ACCEPTED_FULL_GATES_PUBLICATION_PENDING",
+        "record": "knowledge-base/evidence/byte-writer-bw1-verification.json",
+        "fullPrepush": "PENDING",
+        "delivery": "PENDING"
+      }
     }
   ],
   "_localization": {
     "canonicalSource": "来源.json",
-    "canonicalSha256": "194b207ff16a37cb57b50c51b70faa6901868bf7787d1483511970edb9fcfc1b",
+    "canonicalSha256": "b3b473a13d522b51e66bbaabb9cee38eda70ae570bb9033a595fbf3ee0c9b78c",
     "role": "read_only_translation",
     "language": "en"
   },
@@ -2788,5 +2819,120 @@
     "mandatoryFullPrepush": "PENDING",
     "mandatoryPushHook": "PENDING",
     "remoteDelivery": "PENDING"
+  },
+  "byteWriterBW1ActualSuccessor": {
+    "engineeringLabel": "0.40.0",
+    "sourceId": "S093",
+    "deliverableId": "V044",
+    "status": "BOUNDED_BW1_CPU_TYPES_POLICY_ACCEPTED_FULL_GATES_PUBLICATION_PENDING",
+    "curationExecution": "SOURCE_ONLY_SAVED_FACT_PROJECTION",
+    "record": "knowledge-base/evidence/byte-writer-bw1-verification.json",
+    "publicEntries": [
+      "@egret/runtime",
+      "@egret/engine"
+    ],
+    "maximumBytes": 16777216,
+    "types": {
+      "positiveExitCode": 0,
+      "positiveDiagnostics": 0,
+      "negativeExitCode": 1,
+      "negativeDiagnostics": 41,
+      "importNegativeExitCode": 1,
+      "importNegativeDiagnostics": 16,
+      "inventoryCount": 57,
+      "exactLocatedInventoryMatch": true,
+      "inventoryPin": {
+        "path": "tests/types/byte-writer-diagnostic-expectations.json",
+        "bytes": 17706,
+        "sha256": "3e209f571a29d1e89c5e4deab3fc8f89bf668572d21561fce0d285ffe9e173cf"
+      }
+    },
+    "policy": {
+      "guardExitCode": 0,
+      "controls": {
+        "tests": 17,
+        "pass": 17,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    "strictTypeGate": {
+      "exitCode": 0,
+      "unexpectedDiagnostics": 0
+    },
+    "retainedBoundarySuite": {
+      "status": "PENDING_AT_SOURCE_CURATION",
+      "scope": "The historical complete suite failed before repair. Current targeted predecessor comparisons passed; the unchanged remaining cases and repaired whole suite await final mandatory prepush.",
+      "affectedCurrentControlSummary": {
+        "tests": 16,
+        "pass": 16,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "affectedCurrentControlNames": [
+        "S3D1 new guard extra-cpu-runtime defeats map-adapted predecessor",
+        "S3D1 new guard missing-cpu-runtime defeats map-adapted predecessor",
+        "S3D1 new guard extra-cpu-type defeats map-adapted predecessor",
+        "S3D1 new guard aliased-cpu-type defeats map-adapted predecessor",
+        "S3D1 new guard cpu-type-as-value defeats map-adapted predecessor",
+        "S3D1 new guard extra-web-runtime defeats map-adapted predecessor",
+        "S3D1 new guard extra-web-type defeats map-adapted predecessor",
+        "S3D1 new guard private-web-declaration defeats map-adapted predecessor",
+        "S3D1 new guard old-entry-new-input-type defeats map-adapted predecessor",
+        "S3D1 new guard old-entry-new-host-type defeats map-adapted predecessor",
+        "S3D1 new guard extra-cpu-static-edge defeats map-adapted predecessor",
+        "S3D1 new guard extra-cpu-dynamic-edge defeats map-adapted predecessor",
+        "S3D1 new guard extra-transitive-dynamic-edge defeats map-adapted predecessor",
+        "S3D1 new guard cpu-extra-module-work defeats map-adapted predecessor",
+        "S3D1 new guard wrong-local-output-type defeats map-adapted predecessor",
+        "S3D1 new guard old-entry-extra-facade-edge defeats map-adapted predecessor"
+      ]
+    },
+    "mandatoryFullPrepush": "PENDING",
+    "mandatoryPushHook": "PENDING",
+    "remoteDelivery": "PENDING",
+    "independentPublicCuration": "PENDING",
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "historicalCutoffsPreserved": true
+  },
+  "texturedSceneDeliveryActualSuccessor": {
+    "engineeringLabel": "0.39.0",
+    "status": "ACTUAL_0_39_TEXTURED_SCENE_DELIVERY_SUCCESSOR",
+    "source": {
+      "sha": "e2d90fa8e4f40e5b77e7e3a2393f76aa2a88679c",
+      "parent": "893f1ca86af10a092066dcccdaaa16ac194efded",
+      "tree": "c137666681de663360a9bc153d85e6e71f48bd42",
+      "files": 46
+    },
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/26",
+    "main": {
+      "status": "ACTUAL_LOCAL_AND_REMOTE_MAIN_MATCH",
+      "head": "ac490f90b7467164e461112a9f572a3269107c02",
+      "tree": "c137666681de663360a9bc153d85e6e71f48bd42",
+      "atUtc": "2026-10-12T09:26:22.001Z"
+    },
+    "mandatoryPushHook": {
+      "startedAtUtc": "2026-10-12T09:20:05.7151795Z",
+      "finishedAtUtc": "2026-10-12T09:24:17.5297738Z",
+      "exitCode": 0,
+      "stdoutSHA256": "5524afca778c645419eaecdb070a7617ca472f116dd6b7a22ee928b7236b4f4e",
+      "stderrSHA256": "f4025e9f888363eada934f12492f9d7c03627e01e6fc91373a62e19c454594d7",
+      "coreTests": 2698,
+      "publicationTests": 63,
+      "documents": 150,
+      "criticalEnglishCommentRecords": 189
+    },
+    "remoteChecks": {
+      "statusCount": 0,
+      "checkRuns": 0,
+      "combinedState": "pending",
+      "remoteCIPassClaim": false
+    },
+    "historicalPendingCutoffsRetained": true
   }
 }

@@ -56,3 +56,9 @@ Package version `0.0.0`, protocol `1.0` and experimental API status remain uncha
 ## Owned binary reading
 
 The root exports `ByteReader` and the frozen `BYTE_READER_LIMITS`, plus type-only `ByteOrder`. Readers copy an eligible fixed ordinary Uint8Array payload, default to bigEndian, and support bounded atomic scalar/copy reads. Returned bytes are independent copies; disposal clears owned references. Existing Scope may own a reader through its disposable shape. Read the [BR1 contract](../../knowledge-base/en/docs/byte-reader-br1-contract.md) and [recorded verification scope](../../knowledge-base/en/docs/byte-reader-br1-evidence.md). No binary format, text encoding or legacy ByteArray compatibility is promised. The Main integration and publication checks remain pending at this preparation cutoff.
+
+<!-- BW1-DOC-0.40.0-BEGIN -->
+## Owned binary authoring
+
+The root exposes the original `ByteWriter` and frozen `BYTE_WRITER_LIMITS`: fixed capacity, strict integer domains and native IEEE floating conversion. `toUint8Array()` copies only the committed prefix; `Scope.use(writer)` uses existing lifetime ownership. ByteOrder stays type-only and optional host entries add no writer. See the [contract](../../knowledge-base/en/docs/byte-writer-bw1-contract.md) and [evidence](../../knowledge-base/en/docs/byte-writer-bw1-evidence.md) for the complete scope and separate acceptance stages. Package version, experimental status and npm publication conventions remain unchanged.
+<!-- BW1-DOC-0.40.0-END -->

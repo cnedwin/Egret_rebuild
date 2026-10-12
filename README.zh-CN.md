@@ -12,6 +12,34 @@ Years later, as times change and technology advances, many developers continue t
 
 多年以后，时代变迁，技术革新，依然有很多开发者在鼓励我们。我希望借助 AI 和社区的力量，重建这个游戏引擎。
 
+<!-- BW1-DOC-0.40.0-BEGIN -->
+## Engineering preview 0.40.0 — owned ByteWriter
+
+**S093 / V044. Finite CPU, type and assigned boundary results accepted; final publication gates and delivery remain PENDING.** ByteWriter supplies fixed-capacity strict binary appends, native IEEE floating conversion and independent snapshots of the committed prefix, reusing the original ByteOrder and Scope lifetime.
+
+The build and 37/37 public/regression cases passed: 8 BW groups, 23 ByteReader cases and 6 Scope cases. Separately, 2/2 process-isolated fault test files passed. BW has 24 internal observations and 22 controlled fault hits; these are not extra test cases. Positive type diagnostics were 0; the two intentional negative streams contained 41/16 diagnostics, with 57 exact located/code inventory entries. Strict-type gate and boundary guard exited 0; assigned boundary controls passed 17/17.
+
+Retained complete boundary suite: PENDING_AT_SOURCE_CURATION. This is separate from the finite assigned controls and the pending final complete prepush.
+
+Recorded 0.39.0 delivery successor: textured scene composition was merged through [PR #26](https://github.com/cnedwin/Egret_rebuild/pull/26), with Main `ac490f90b7467164e461112a9f572a3269107c02` and tree `c137666681de663360a9bc153d85e6e71f48bd42` read back locally and remotely. The mandatory push hook completed with exit code 0. Remote statuses and check runs were both zero; remote CI PASS is not claimed. Earlier pending cutoffs and the first failed prepush remain historical records.
+
+Read the [contract](knowledge-base/en/docs/byte-writer-bw1-contract.md) and [evidence](knowledge-base/en/docs/byte-writer-bw1-evidence.md). This original first-party utility increment establishes no file format, legacy ByteArray compatibility, full Spine, migration, native SDK or device/performance acceptance. Historical failures, preparation cutoffs and open work remain visible.
+
+### 中文 / Chinese
+
+## 工程预览 0.40.0 — 自有 ByteWriter
+
+**S093 / V044。有限 CPU、类型和指定边界结果已接受；完整发布门禁与交付仍为 PENDING。** ByteWriter 提供固定容量的严格二进制追加、原生 IEEE 浮点转换和已提交前缀的独立快照，复用原有 ByteOrder 与 Scope 生命周期。
+
+实际构建与 37/37 项公开／回归用例通过，其中包括 8 组 BW、23 项 ByteReader 和 6 项 Scope；另有 2/2 个独立进程故障测试文件通过。BW 的 24 条内部观察包含 22 次受控故障触达，不是额外的测试用例。正向类型诊断为 0，两类刻意负向诊断分别为 41/16，共 57 条精确位置／代码记录。严格类型门禁和边界检查退出码均为 0，指定边界对照为 17/17。
+
+保留完整边界套件状态：PENDING_AT_SOURCE_CURATION。它与指定的有限对照及尚待完成的最终完整 prepush 分别记录。
+
+已记录的 0.39.0 交付后继：纹理场景合成已通过 [PR #26](https://github.com/cnedwin/Egret_rebuild/pull/26) 合并，Main `ac490f90b7467164e461112a9f572a3269107c02` 与 tree `c137666681de663360a9bc153d85e6e71f48bd42` 已在本地和远端回读一致。必要推送门禁退出码为 0。远端状态与检查运行数均为零，不声明远端 CI PASS。较早的待完成截止点与首轮失败 prepush 继续作为历史记录保留。
+
+阅读[契约](knowledge-base/Cns/docs/字节写入器BW1契约.md)与[证据](knowledge-base/Cns/docs/字节写入器BW1证据.md)。这是一项原创实现的第一方工具类工程增量，不构成文件格式、旧 ByteArray 兼容、完整 Spine、迁移、原生 SDK 或设备／性能验收。历史失败、准备截止点与未完成项保持原样。
+<!-- BW1-DOC-0.40.0-END -->
+
 <!-- CHOST-DOC-0.39.0-BEGIN -->
 ## 0.39.0 proposed — textured scene composition
 

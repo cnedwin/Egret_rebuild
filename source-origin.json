@@ -595,8 +595,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/CHANGELOG.md",
-      "bytes": 54487,
-      "sha256": "536a75eef6aa6fdc8a6b6f5161aceb8ef555cc5a4d024f593c99d01657b8c295",
+      "bytes": 56250,
+      "sha256": "3076293559107c9780c4949f90434ea42d59b34d56dc4b7394b389df9f32848e",
       "identityHistory": [
         {
           "bytes": 25611,
@@ -679,6 +679,11 @@
           "bytes": 53786,
           "sha256": "877b54eb6c8bb73c0a3576c7bb6639f5a98d876cd8041163da19fa07b9902249",
           "scope": "Preserved identity before actual browser successor curation."
+        },
+        {
+          "bytes": 54487,
+          "sha256": "536a75eef6aa6fdc8a6b6f5161aceb8ef555cc5a4d024f593c99d01657b8c295",
+          "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
         }
       ]
     },
@@ -769,8 +774,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 28179,
-      "sha256": "c97539638f99aa58ed006f83f3ad2f1d9bea689d6d1af972b2713956fd5330e6",
+      "bytes": 29932,
+      "sha256": "1bb845c56a5119699d3e7987ba071249b6f2a4556c1026874243ce0f78a5b727",
       "identityHistory": [
         {
           "bytes": 12315,
@@ -821,6 +826,11 @@
           "bytes": 27478,
           "sha256": "49ef4d2ddbac5c907031988af97e31d3f36c77f46dace568951c84e285a0406b",
           "scope": "Preserved identity before actual browser successor curation."
+        },
+        {
+          "bytes": 28179,
+          "sha256": "c97539638f99aa58ed006f83f3ad2f1d9bea689d6d1af972b2713956fd5330e6",
+          "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
         }
       ]
     },
@@ -1333,8 +1343,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/README.md",
-      "bytes": 25588,
-      "sha256": "008ebbb9ce5d6f304eb118392177581c7b034e27598a8b86cec415f7dd3c8e2d",
+      "bytes": 27351,
+      "sha256": "a074f49a0c5e4c08b3a1e24d87dc660b0d090dd62742a43cf5f2867e0a4e851d",
       "identityHistory": [
         {
           "bytes": 6319,
@@ -1412,14 +1422,19 @@
           "bytes": 24887,
           "sha256": "8bdd39cdbe5b02d9f3e822cb8303d938d8759465ddbc8ba34c1f69a524be2d82",
           "scope": "Preserved identity before actual browser successor curation."
+        },
+        {
+          "bytes": 25588,
+          "sha256": "008ebbb9ce5d6f304eb118392177581c7b034e27598a8b86cec415f7dd3c8e2d",
+          "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
         }
       ]
     },
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/registry/交付.json",
-      "bytes": 124588,
-      "sha256": "dd3f9bc0fbcdba3e094fc3d41709f730e0f994bc2c051295d41d61695bdb0bcd",
+      "bytes": 130457,
+      "sha256": "8d456d99bca195799d8d0e6b025e7a3b10b85f46f6e364a74e9c5a699b8295c1",
       "identityHistory": [
         {
           "bytes": 50664,
@@ -1512,6 +1527,16 @@
           "bytes": 125633,
           "sha256": "ceab72878927b3fe0bbfa744bdce795779f9833247d4367e19e97438f6685e26",
           "scope": "Preserved identity before actual browser successor curation."
+        },
+        {
+          "bytes": 124588,
+          "sha256": "dd3f9bc0fbcdba3e094fc3d41709f730e0f994bc2c051295d41d61695bdb0bcd",
+          "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
+        },
+        {
+          "bytes": 130404,
+          "sha256": "d143b9df1f15f8af347e71ed5d1f1321819f9647c1e8f0f85c901d378d416db4",
+          "scope": "Preserved original BW1 curation before the V044 primary document metadata correction; original failed pre-push receipt retained."
         }
       ]
     },
@@ -1542,8 +1567,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/registry/来源.json",
-      "bytes": 138413,
-      "sha256": "194b207ff16a37cb57b50c51b70faa6901868bf7787d1483511970edb9fcfc1b",
+      "bytes": 144266,
+      "sha256": "b3b473a13d522b51e66bbaabb9cee38eda70ae570bb9033a595fbf3ee0c9b78c",
       "identityHistory": [
         {
           "bytes": 74667,
@@ -1636,14 +1661,19 @@
           "bytes": 139192,
           "sha256": "0a61af92631fc317d32484d684a759f7fecaf255f351140c2acadf4415e6b561",
           "scope": "Preserved identity before actual browser successor curation."
+        },
+        {
+          "bytes": 138413,
+          "sha256": "194b207ff16a37cb57b50c51b70faa6901868bf7787d1483511970edb9fcfc1b",
+          "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
         }
       ]
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/registry/需求.json",
-      "bytes": 21656,
-      "sha256": "2f6df54a73867a90abea5b0923802f6125741894866949d38b7c78650581fd78",
+      "bytes": 26385,
+      "sha256": "55ea7d16285a65a37d96a1e2f70625c53f70f94faa0165f6a06d6f5131d0ee13",
       "identityHistory": [
         {
           "bytes": 13892,
@@ -1669,6 +1699,11 @@
           "bytes": 20413,
           "sha256": "1cfcc4467ac65ba556f579e42294ca9b988ceee8811be9e33c8f279f300f0230",
           "scope": "Preserved identity before actual browser successor curation."
+        },
+        {
+          "bytes": 21656,
+          "sha256": "2f6df54a73867a90abea5b0923802f6125741894866949d38b7c78650581fd78",
+          "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
         }
       ]
     },
@@ -1699,8 +1734,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/当前版本.json",
-      "bytes": 107873,
-      "sha256": "1f202b71cf1e9b0b49211c7e8882666b5a34d84c29cacc479535cb4d9169d9c8",
+      "bytes": 112764,
+      "sha256": "f379c73ba62cb9869a6028827396296bea55c9a8fc1e879aabf1eabf58f30c20",
       "identityHistory": [
         {
           "bytes": 31425,
@@ -1788,6 +1823,11 @@
           "bytes": 108753,
           "sha256": "889b45a3849fc468e46355e46bfcc645a48ef97b8581974c698e4d91f0c9caa9",
           "scope": "Preserved identity before actual browser successor curation."
+        },
+        {
+          "bytes": 107873,
+          "sha256": "1f202b71cf1e9b0b49211c7e8882666b5a34d84c29cacc479535cb4d9169d9c8",
+          "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
         }
       ]
     },
@@ -1824,8 +1864,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/CHANGELOG.md",
-      "bytes": 63707,
-      "sha256": "f0853643a08f125199c9768f40835806577d05a1919cc4c6575a9bce784c6735",
+      "bytes": 65619,
+      "sha256": "05ce4ab71729aeb4cf80bef9259626bf30ff888da9d61bc98b176d9aa3510dbc",
       "identityHistory": [
         {
           "bytes": 31389,
@@ -1908,6 +1948,11 @@
           "bytes": 62959,
           "sha256": "0b198ae56d890ff2e7891018671a9dcf966d5da46d0b69caa30906daecd068d0",
           "scope": "Preserved identity before actual browser successor curation."
+        },
+        {
+          "bytes": 63707,
+          "sha256": "f0853643a08f125199c9768f40835806577d05a1919cc4c6575a9bce784c6735",
+          "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
         }
       ]
     },
@@ -1920,8 +1965,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/current-version.json",
-      "bytes": 108705,
-      "sha256": "75699e54fd806feda7bfa476b898a23efb830f870990b774a01a62b6294dad5c",
+      "bytes": 113601,
+      "sha256": "97924e026aeb7b0ffbd5659eef4136291fe9a115444186b3cd35775158a3a1b2",
       "identityHistory": [
         {
           "bytes": 31946,
@@ -2009,6 +2054,11 @@
           "bytes": 109591,
           "sha256": "08d28cd6f3b4b76c455dd7f47161930f68733bfa0b18d04293e12590b5813575",
           "scope": "Preserved identity before actual browser successor curation."
+        },
+        {
+          "bytes": 108705,
+          "sha256": "75699e54fd806feda7bfa476b898a23efb830f870990b774a01a62b6294dad5c",
+          "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
         }
       ]
     },
@@ -2141,8 +2191,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-progress.md",
-      "bytes": 31604,
-      "sha256": "0aff2501056e0f2f119e67ad18719b3ce19912f065367ca17aee301a822c1936",
+      "bytes": 33506,
+      "sha256": "d9794691d0cd08f4d2a4e0ffe80edbf4f23e12cc87fd04c7eda348bb1272899c",
       "identityHistory": [
         {
           "bytes": 14004,
@@ -2193,6 +2243,11 @@
           "bytes": 30856,
           "sha256": "2f32de741e655e7dd366c3600e674f23cc829381dd0fe20326fa17e07c8c0630",
           "scope": "Preserved identity before actual browser successor curation."
+        },
+        {
+          "bytes": 31604,
+          "sha256": "0aff2501056e0f2f119e67ad18719b3ce19912f065367ca17aee301a822c1936",
+          "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
         }
       ]
     },
@@ -2657,8 +2712,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/README.md",
-      "bytes": 28694,
-      "sha256": "cc10b49cf0600390428c77d4977fb478a6f863cff9f897013aba33390784b8b4",
+      "bytes": 30606,
+      "sha256": "361be88896dcb14b90909fc6450a1acde1969eb169514a048ca7585e3ab0ee2f",
       "identityHistory": [
         {
           "bytes": 7397,
@@ -2741,6 +2796,11 @@
           "bytes": 27946,
           "sha256": "50292519985183ce9d6c13867a63646dbeedb72051b7b99f562b8b2264dc37f1",
           "scope": "Preserved identity before actual browser successor curation."
+        },
+        {
+          "bytes": 28694,
+          "sha256": "cc10b49cf0600390428c77d4977fb478a6f863cff9f897013aba33390784b8b4",
+          "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
         }
       ]
     },
@@ -2765,8 +2825,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/registry/deliverables.json",
-      "bytes": 130113,
-      "sha256": "82c8f055f1ea68259f91a90447dbbf718ad8f1e85d9ec5830910367e285b5880",
+      "bytes": 136041,
+      "sha256": "b920054688670a2ee80909401402f1269ee538400ba7fe92becd6a9f4fbffdcb",
       "identityHistory": [
         {
           "bytes": 54446,
@@ -2864,6 +2924,16 @@
           "bytes": 131164,
           "sha256": "c794ad9deba08cc88073e656ae664f743fdb6dedcbef10cf22d24e5a3dcace7d",
           "scope": "Preserved identity before actual browser successor curation."
+        },
+        {
+          "bytes": 130113,
+          "sha256": "82c8f055f1ea68259f91a90447dbbf718ad8f1e85d9ec5830910367e285b5880",
+          "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
+        },
+        {
+          "bytes": 135989,
+          "sha256": "fb9ba647631e12c6ccf88ad377da20e01d1884abc83258e8472eb56285908f29",
+          "scope": "Preserved original BW1 curation before the V044 primary document metadata correction; original failed pre-push receipt retained."
         }
       ]
     },
@@ -2876,8 +2946,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/registry/requirements.json",
-      "bytes": 23874,
-      "sha256": "573c071bd0a60396fbcb4511c817f64d010dede6ff526e4a42afb130cc2c419f",
+      "bytes": 28603,
+      "sha256": "a642a75c9ef3102ccb632e6d8d84174eb5c98c856b18e022f2f4ce0e54b4b30f",
       "identityHistory": [
         {
           "bytes": 15989,
@@ -2903,14 +2973,19 @@
           "bytes": 22637,
           "sha256": "a01c03a3843818ad6c3788b92681ae23fe07a1f1aca669143e087b42132025d1",
           "scope": "Preserved identity before actual browser successor curation."
+        },
+        {
+          "bytes": 23874,
+          "sha256": "573c071bd0a60396fbcb4511c817f64d010dede6ff526e4a42afb130cc2c419f",
+          "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
         }
       ]
     },
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/registry/sources.json",
-      "bytes": 147583,
-      "sha256": "0de43c6bfc8628320d7ddbf23d5a20e1fc95e461b5bd17f8b73488f8b8e66372",
+      "bytes": 153469,
+      "sha256": "bbf6c245bad8191e49caddff39144a06c0415667a3f310d2190ddb7fc9888d99",
       "identityHistory": [
         {
           "bytes": 82270,
@@ -3003,6 +3078,11 @@
           "bytes": 148368,
           "sha256": "daf0213079f9ae5938f7f57687d731f1e5d9bc39093cc7c12378ab504844d7fc",
           "scope": "Preserved identity before actual browser successor curation."
+        },
+        {
+          "bytes": 147583,
+          "sha256": "0de43c6bfc8628320d7ddbf23d5a20e1fc95e461b5bd17f8b73488f8b8e66372",
+          "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
         }
       ]
     },
@@ -3033,8 +3113,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/README.md",
-      "bytes": 12718,
-      "sha256": "063929686b783853a77ed43f2bed35dac81ff454654fb5f491dbd6a85c5ec97a",
+      "bytes": 14636,
+      "sha256": "6682842a420a04ee497a77d1aa23b5008c5e7af7f33b915689cbfeaa27374802",
       "identityHistory": [
         {
           "bytes": 899,
@@ -3060,14 +3140,19 @@
           "bytes": 11970,
           "sha256": "3a2c85cc892a077a32817566cb683e661a02bbd1ca65d0714284745e54f3db7a",
           "scope": "Preserved identity before actual browser successor curation."
+        },
+        {
+          "bytes": 12718,
+          "sha256": "063929686b783853a77ed43f2bed35dac81ff454654fb5f491dbd6a85c5ec97a",
+          "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
         }
       ]
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/README.zh-CN.md",
-      "bytes": 11899,
-      "sha256": "7f4355b6a29cba1dc4309b389ef780e2b58dd56ae2bbf39d25327b6b89eba2bf",
+      "bytes": 13670,
+      "sha256": "cdd90ffdae73f871432cdad29ed989db403be148ad835e040f9180f26aa595c4",
       "identityHistory": [
         {
           "bytes": 637,
@@ -3093,6 +3178,11 @@
           "bytes": 11198,
           "sha256": "711d2877424be31534d52a3518b97554a4c3d7b8cacee2ef22356221349de66b",
           "scope": "Preserved identity before actual browser successor curation."
+        },
+        {
+          "bytes": 11899,
+          "sha256": "7f4355b6a29cba1dc4309b389ef780e2b58dd56ae2bbf39d25327b6b89eba2bf",
+          "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
         }
       ]
     },
@@ -3127,8 +3217,8 @@
     {
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "path": "localization.json",
-      "sha256": "1236453b000fce416da1d796c24f7ab55626945ca0ec12904da6d4a06c7db5bb",
-      "bytes": 210363,
+      "sha256": "05c654d9ceefd816ba615f251a61a091a569636e8372f452ce47d164e1e90d37",
+      "bytes": 213903,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -3237,6 +3327,21 @@
           "bytes": 210363,
           "sha256": "2c4db94b04650b23d941943f2b267dcd627a2c2395876c537e0359a70d7e7e46",
           "scope": "Preserved before exact static pin assertion successor."
+        },
+        {
+          "bytes": 210363,
+          "sha256": "1236453b000fce416da1d796c24f7ab55626945ca0ec12904da6d4a06c7db5bb",
+          "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
+        },
+        {
+          "bytes": 213903,
+          "sha256": "7c91a72a9f3fa90a114784622df400c3b7be1cedc9f8a051f78af8bbda956cac",
+          "scope": "Preserved original BW1 curation before the V044 primary document metadata correction; original failed pre-push receipt retained."
+        },
+        {
+          "bytes": 213903,
+          "sha256": "11012aec8ed7d84e21136f35812723523c3ab12ca7bed4f52e1cf8ce08e06cdc",
+          "scope": "Preserved BW1 identity before exact package README terminal-newline normalization; all earlier identities retain their original scope."
         }
       ]
     },
@@ -3388,23 +3493,61 @@
     {
       "path": "packages/engine/README.md",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "sha256": "0f8b79c7c9bf7ecc727416cdbc2548b20f416e93fe3f2ea4e891c53ac4aea447",
-      "bytes": 5268,
+      "sha256": "ba2fc7217d8fc21dfc909f0a44911e81565d79e1ea974b8ae74e8d74d27423be",
+      "bytes": 6695,
       "previousRevisionSha256": "77fa6a7eacbb0c3d386524d6c9ed5fec9f3e91bf393b95a6c3b2498c5ae6b83f",
       "previousLayoutPath": "packages/engine/README.en.md",
-      "previousLayoutSha256": "4a1fba94711cf91b22cd90c641012b842ef7c7fa0be969fc996464f80ebaeae7"
+      "previousLayoutSha256": "4a1fba94711cf91b22cd90c641012b842ef7c7fa0be969fc996464f80ebaeae7",
+      "identityHistory": [
+        {
+          "bytes": 5268,
+          "sha256": "0f8b79c7c9bf7ecc727416cdbc2548b20f416e93fe3f2ea4e891c53ac4aea447",
+          "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
+        },
+        {
+          "bytes": 5993,
+          "sha256": "68bc1b057d1c2a1764209cce4434d3847be3d7d39464bc59da9e7e29b6c70942",
+          "scope": "Actual clean delivered 0.39.0 Main identity before original ByteWriter BW1 0.40.0 curation.",
+          "head": "ac490f90b7467164e461112a9f572a3269107c02",
+          "tree": "c137666681de663360a9bc153d85e6e71f48bd42"
+        },
+        {
+          "bytes": 6696,
+          "sha256": "ad24a317cbfbb4aa8215859cbd0c35178bbc018c92c261fc0dd3cede3e873eb7",
+          "scope": "Preserved BW1 identity before exact package README terminal-newline normalization; all earlier identities retain their original scope."
+        }
+      ]
     },
     {
       "path": "packages/engine/README.zh-CN.md",
-      "sha256": "cb145fea9aead8c4092743c5e138637845d8706369339d00188f50fa2a797172",
-      "bytes": 4653,
+      "sha256": "5ba8b3da99834c947df783d43f84499d93a92268da199b1a341e27a574454d53",
+      "bytes": 5925,
       "originalSha256": "2b39a8a5f988a0c4d7271d30da7f8c04a735149e00b6f0f28f2c59940e5842f0",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "change": "Preserves package responsibilities and lifecycle semantics; removes internal review history wording and adds contributor/source/license links.",
       "previousPublicSha256": "d990d8fa688a458975306d039b066b4a0052af3045e2a8de739f0969fc2a7554",
       "previousRevisionSha256": "efddfc15d95e601711bf37b22d9956b5a43e553c4100e9927c05fce70899ba99",
       "previousLayoutPath": "packages/engine/README.md",
-      "previousLayoutSha256": "ca89388b72916ad819a058cffcd591d7e975130418c01ad827a572f8f1da0be5"
+      "previousLayoutSha256": "ca89388b72916ad819a058cffcd591d7e975130418c01ad827a572f8f1da0be5",
+      "identityHistory": [
+        {
+          "bytes": 4653,
+          "sha256": "cb145fea9aead8c4092743c5e138637845d8706369339d00188f50fa2a797172",
+          "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
+        },
+        {
+          "bytes": 5309,
+          "sha256": "a147b85e45c33ab9319731ba04cdd72a7e1efe035afd41aa5844cd8d1e1006ba",
+          "scope": "Actual clean delivered 0.39.0 Main identity before original ByteWriter BW1 0.40.0 curation.",
+          "head": "ac490f90b7467164e461112a9f572a3269107c02",
+          "tree": "c137666681de663360a9bc153d85e6e71f48bd42"
+        },
+        {
+          "bytes": 5926,
+          "sha256": "506809f4ee5dfb0b5322b3698691f51f6a68c63b1ed573ab1cfa364ad382e64e",
+          "scope": "Preserved BW1 identity before exact package README terminal-newline normalization; all earlier identities retain their original scope."
+        }
+      ]
     },
     {
       "path": "packages/engine/rendering/copyFrame2D.ts",
@@ -3477,8 +3620,8 @@
     },
     {
       "path": "packages/engine/src/index.ts",
-      "sha256": "b23d6cd5c8dfbc1f900ae194012a8dc2c1ce22b7b2bf4c8ee2499b999f1943cf",
-      "bytes": 2693,
+      "sha256": "45e980a60c1190413c6c97885f84d2694fdbf2eb92ad66bb47253554d05f4533",
+      "bytes": 2758,
       "originalSha256": "45f2377ffe6e180815d68b8b2dcbddaca8eaa167c142a356d130da8ce008e2f0",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "previousRevisionSha256": "45f2377ffe6e180815d68b8b2dcbddaca8eaa167c142a356d130da8ce008e2f0",
@@ -3489,6 +3632,11 @@
           "bytes": 2601,
           "sha256": "40351e266e2c9169b1eb57639665c4a234306f2f24b932b11dcbba7dc00aa451",
           "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
+        },
+        {
+          "bytes": 2693,
+          "sha256": "b23d6cd5c8dfbc1f900ae194012a8dc2c1ce22b7b2bf4c8ee2499b999f1943cf",
+          "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
         }
       ]
     },
@@ -3621,23 +3769,61 @@
     {
       "path": "packages/runtime/README.md",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
-      "sha256": "cf25e1b5119a9136c6ad5412e6113e420c734ed75186dff089ae4fded3e8dc00",
-      "bytes": 4156,
+      "sha256": "5e6debe13f0a1cbb6bc1ed666bd139af27299fa3339c9068ad65babcc4feb31f",
+      "bytes": 5583,
       "previousRevisionSha256": "88752546b92c8c859b1c0296f4307db2d6b79cf38f378bac3d0e67bfdb533768",
       "previousLayoutPath": "packages/runtime/README.en.md",
-      "previousLayoutSha256": "97eeca38ec5f73641b226f5e3e724580232040fc1acd0e4cb8e9b692d20e9214"
+      "previousLayoutSha256": "97eeca38ec5f73641b226f5e3e724580232040fc1acd0e4cb8e9b692d20e9214",
+      "identityHistory": [
+        {
+          "bytes": 4156,
+          "sha256": "cf25e1b5119a9136c6ad5412e6113e420c734ed75186dff089ae4fded3e8dc00",
+          "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
+        },
+        {
+          "bytes": 4881,
+          "sha256": "4365178ba25f950e399deaf3f28ff85cedc1e91c52882dd1479951c34cbbedc8",
+          "scope": "Actual clean delivered 0.39.0 Main identity before original ByteWriter BW1 0.40.0 curation.",
+          "head": "ac490f90b7467164e461112a9f572a3269107c02",
+          "tree": "c137666681de663360a9bc153d85e6e71f48bd42"
+        },
+        {
+          "bytes": 5584,
+          "sha256": "77bd61c5376fc2658aed4075e9ab9615209d6ad51987c3915dc8989bfc05ca7a",
+          "scope": "Preserved BW1 identity before exact package README terminal-newline normalization; all earlier identities retain their original scope."
+        }
+      ]
     },
     {
       "path": "packages/runtime/README.zh-CN.md",
-      "sha256": "248043d15ad13ffd194d8d1e55bbdc28354f3465a0ca417a972bbc80c945a2f3",
-      "bytes": 3477,
+      "sha256": "85b937597d56d5e91d19bc7b283aaa58e8db9f1766ede996603e0b9914c5ddd6",
+      "bytes": 4749,
       "originalSha256": "dadf19b00a845d7e8ed154644f2214b720d7acd03f4450a2e9a002be5d085911",
       "originRole": "First-party CPU asset revision or synchronized public documentation",
       "change": "Preserves package responsibilities and lifecycle semantics; removes internal review history wording and adds contributor/source/license links.",
       "previousPublicSha256": "49356bf05a322aecf1be156eeed65baff15797a7d719766a678d928b068e3a76",
       "previousRevisionSha256": "6795d431e8747f242539050112c18b0176dc6cc4237f19ecbff1034cc8a00641",
       "previousLayoutPath": "packages/runtime/README.md",
-      "previousLayoutSha256": "5ff29a37678e52fb6deba246b732a01c0edc217959486a5df72a61e4db1aa32b"
+      "previousLayoutSha256": "5ff29a37678e52fb6deba246b732a01c0edc217959486a5df72a61e4db1aa32b",
+      "identityHistory": [
+        {
+          "bytes": 3477,
+          "sha256": "248043d15ad13ffd194d8d1e55bbdc28354f3465a0ca417a972bbc80c945a2f3",
+          "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
+        },
+        {
+          "bytes": 4133,
+          "sha256": "624b7e5f0021403469011b532028f981c6be178879b6977c932ec0f11afc6b91",
+          "scope": "Actual clean delivered 0.39.0 Main identity before original ByteWriter BW1 0.40.0 curation.",
+          "head": "ac490f90b7467164e461112a9f572a3269107c02",
+          "tree": "c137666681de663360a9bc153d85e6e71f48bd42"
+        },
+        {
+          "bytes": 4750,
+          "sha256": "5560e0925742c7d5bb5c03b308b9b01d068c753c9940455fcf5021656c2af3e2",
+          "scope": "Preserved BW1 identity before exact package README terminal-newline normalization; all earlier identities retain their original scope."
+        }
+      ]
     },
     {
       "path": "packages/runtime/src/AssetLease.ts",
@@ -3813,8 +3999,8 @@
     },
     {
       "path": "packages/runtime/src/index.ts",
-      "sha256": "90d9f473afdab179ee0828f0744911b3173b96441dfccebf99e619c097467135",
-      "bytes": 2468,
+      "sha256": "2810a850dbf48f4f0ad78068c0a7f62cb4387e406b455808f63f42e622de401e",
+      "bytes": 2534,
       "originalSha256": "3af52ebe93ac933d989ceb0f5abadd31e72f9436fda1d2206b3e71d7f1216310",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "previousRevisionSha256": "3af52ebe93ac933d989ceb0f5abadd31e72f9436fda1d2206b3e71d7f1216310",
@@ -3830,6 +4016,11 @@
           "bytes": 2317,
           "sha256": "cbf0e01afa519c806deac1de3e2af616cd489908efdbc0554d0141027a6bbe85",
           "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+        },
+        {
+          "bytes": 2468,
+          "sha256": "90d9f473afdab179ee0828f0744911b3173b96441dfccebf99e619c097467135",
+          "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
         }
       ]
     },
@@ -3941,8 +4132,8 @@
     {
       "path": "README.md",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
-      "sha256": "c7ece775e2d9e127c4b4d79ef7b488caf21ef824d283f61fcc4edf9f58d86869",
-      "bytes": 63448,
+      "sha256": "17bb4e730fa2448c32d8f68ba41883d761a1bf342e6eaa081b58154fa00e47ad",
+      "bytes": 67161,
       "previousRevisionSha256": "199156443d499d5012f1224263a1a3ee9994e5ba38ee067bceeb2ad865ae8167",
       "previousLayoutPath": "README.en.md",
       "previousLayoutSha256": "f40ec41ca699cd0b9138fbdf4a268080038f583ae11e78c4f37093a6b7095f57",
@@ -4033,13 +4224,18 @@
           "bytes": 61998,
           "sha256": "c95e02a61dc4d19396c71968b20c42f89ab301f397614b157499967684234c3b",
           "scope": "Preserved identity before actual browser successor curation."
+        },
+        {
+          "bytes": 63448,
+          "sha256": "c7ece775e2d9e127c4b4d79ef7b488caf21ef824d283f61fcc4edf9f58d86869",
+          "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
         }
       ]
     },
     {
       "path": "README.zh-CN.md",
-      "sha256": "dd06718307875574b034fa49804ae0fc116cf126625eb5a1283f422bdb164828",
-      "bytes": 62549,
+      "sha256": "9384643e5414b165ee7656f80965ad08378e36ca6944bcbf71a8b3ed1660e6bb",
+      "bytes": 66262,
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "previousPublicSha256": "7ec80b8575a700b6a2628eb0322f2e770bb2284859f68ec5e0eb6530154a6699",
       "previousRevisionSha256": "7a1d72019db7cb6075d7c3a3bd4075f7c069d527b6e31d992a69333cb126b6c3",
@@ -4137,6 +4333,11 @@
           "bytes": 61099,
           "sha256": "d57535692b25df1cf8ed7def435c31080f0db04ce7a6882fbe85a3d4de9bc31a",
           "scope": "Preserved identity before actual browser successor curation."
+        },
+        {
+          "bytes": 62549,
+          "sha256": "dd06718307875574b034fa49804ae0fc116cf126625eb5a1283f422bdb164828",
+          "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
         }
       ]
     },
@@ -4160,8 +4361,8 @@
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "bytes": 99957,
-      "sha256": "2b85c3b0968a05204217143df4502da2abde19c3600327314c7a961cbf3da70f",
+      "bytes": 101465,
+      "sha256": "cc3d11376b1c14cc2da39b0e87f6d017ab7add80aac8deed4042b89760e36de8",
       "originRole": "Independent first-party Egret explicit-area picking, bounded verification or paired documentation; CPU and finite-policy evidence with separate browser and whole-engine admission.",
       "identityHistory": [
         {
@@ -4193,6 +4394,11 @@
           "bytes": 96382,
           "sha256": "c9710ab953aa40733eb4f3c15057d60acd31fd4b0c1ee0b232b7e1bba197cb65",
           "scope": "Preserved identity before textured scene host 0.39.0."
+        },
+        {
+          "bytes": 99957,
+          "sha256": "2b85c3b0968a05204217143df4502da2abde19c3600327314c7a961cbf3da70f",
+          "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
         }
       ]
     },
@@ -4452,8 +4658,8 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "bytes": 127414,
-      "sha256": "6badce56ac7660eedf3dda63010bea4334edab1fb7cf104b38fc823956648873",
+      "bytes": 134002,
+      "sha256": "4f012b45be55f103260379a1a933e33c2f75f0a684764b195e6e59ca3961c795",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "identityHistory": [
         {
@@ -4485,6 +4691,11 @@
           "bytes": 124481,
           "sha256": "5016a72a02da03e759a04b622b775cf1185feba7295f830f0f6797d0774942ad",
           "scope": "Preserved identity before textured scene host 0.39.0."
+        },
+        {
+          "bytes": 127414,
+          "sha256": "6badce56ac7660eedf3dda63010bea4334edab1fb7cf104b38fc823956648873",
+          "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
         }
       ]
     },
@@ -4496,8 +4707,8 @@
     },
     {
       "path": "tools/check-types.mjs",
-      "bytes": 68576,
-      "sha256": "8f303321cfd0a75c65381bc8774230e585789a8859205be5052e157b0e474c16",
+      "bytes": 76618,
+      "sha256": "dd20698274972687d7625c0932c0e31f7403697023a5f55d312a73e582656df3",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "identityHistory": [
         {
@@ -4524,6 +4735,11 @@
           "bytes": 68576,
           "sha256": "fbeace1fc6e6f4952b4457e5382e3932843229fa48d919866d69a88642f1d945",
           "scope": "Preserved identity before 0.35 Scope private ownership repair."
+        },
+        {
+          "bytes": 68576,
+          "sha256": "8f303321cfd0a75c65381bc8774230e585789a8859205be5052e157b0e474c16",
+          "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
         }
       ]
     },
@@ -7792,8 +8008,8 @@
     },
     {
       "path": "knowledge-base/evidence/textured-scene-host-verification.json",
-      "bytes": 30603,
-      "sha256": "aae3786c2c2a6801ee1c12615c6d01be3092c4422a212efd131f04428bee26cc",
+      "bytes": 31909,
+      "sha256": "a46ef0dfeb6530f615d1db47b81ab674c08f783959f1cfc1f8cb13d9d99f91f6",
       "originRole": "Original first-party textured scene host, tests, bilingual contract or evidence.",
       "identityHistory": [
         {
@@ -7805,6 +8021,11 @@
           "bytes": 29757,
           "sha256": "7d6262bd3173cbfa5554291397e0c65282b05c5fe04392ca7df53b7699819ed9",
           "scope": "Preserved before exact static pin assertion successor."
+        },
+        {
+          "bytes": 30603,
+          "sha256": "aae3786c2c2a6801ee1c12615c6d01be3092c4422a212efd131f04428bee26cc",
+          "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
         }
       ]
     },
@@ -7843,6 +8064,84 @@
       "bytes": 16384,
       "sha256": "2c3f1bd9cf0b03387638b0211ac7f13607cc54e14dba3d1e3ca20224b9527ada",
       "originRole": "First-party combined-host browser oracle, original synthetic readback or public successor."
+    },
+    {
+      "path": "packages/runtime/src/ByteWriter.ts",
+      "bytes": 8121,
+      "sha256": "3fde5a988ac6899b2fab51b296d28905267b59f1df92ccb49b5d97eac8cf6577",
+      "originRole": "Original first-party ByteWriter BW1 source, literal public fixture, typed boundary control or bilingual documentation/evidence."
+    },
+    {
+      "path": "tests/byte-writer.test.mjs",
+      "bytes": 17791,
+      "sha256": "8bcebef15ba6dadac04dfe93460905c47ec0deeef7bad53b241bf710e4d28cbd",
+      "originRole": "Original first-party ByteWriter BW1 source, literal public fixture, typed boundary control or bilingual documentation/evidence."
+    },
+    {
+      "path": "tests/byte-writer-allocation.test.mjs",
+      "bytes": 9445,
+      "sha256": "319404348177e53b70e366947e55d0d0f41ccffa6dec19e03676c7461d3c6386",
+      "originRole": "Original first-party ByteWriter BW1 source, literal public fixture, typed boundary control or bilingual documentation/evidence."
+    },
+    {
+      "path": "tests/types/byte-writer-positive.ts",
+      "bytes": 4447,
+      "sha256": "2f299fa92a0cc1b3298e0db11bdcf6294044cae3b8f3c0ed5ae525b312c78b62",
+      "originRole": "Original first-party ByteWriter BW1 source, literal public fixture, typed boundary control or bilingual documentation/evidence."
+    },
+    {
+      "path": "tests/types/byte-writer-negative.ts",
+      "bytes": 3418,
+      "sha256": "d932b5b3c6dc487b0255c2f454fe42701d22ee593980f1df4434b8982a7e064e",
+      "originRole": "Original first-party ByteWriter BW1 source, literal public fixture, typed boundary control or bilingual documentation/evidence."
+    },
+    {
+      "path": "tests/types/byte-writer-import-negative.ts",
+      "bytes": 2326,
+      "sha256": "fc47a6e60952eaf81243b3119c353413d9ea2813e4aa1e8db3aef12b562d96f8",
+      "originRole": "Original first-party ByteWriter BW1 source, literal public fixture, typed boundary control or bilingual documentation/evidence."
+    },
+    {
+      "path": "tests/byte-writer-boundaries.test.mjs",
+      "bytes": 9772,
+      "sha256": "ee5b9b65d3bc73669b7db442c743286c1bfbd7c1c6e609313e9776da0bcda0c0",
+      "originRole": "Original first-party ByteWriter BW1 source, literal public fixture, typed boundary control or bilingual documentation/evidence."
+    },
+    {
+      "path": "tests/types/byte-writer-diagnostic-expectations.json",
+      "bytes": 17706,
+      "sha256": "3e209f571a29d1e89c5e4deab3fc8f89bf668572d21561fce0d285ffe9e173cf",
+      "originRole": "Original first-party ByteWriter BW1 source, literal public fixture, typed boundary control or bilingual documentation/evidence."
+    },
+    {
+      "path": "knowledge-base/en/docs/byte-writer-bw1-contract.md",
+      "bytes": 4816,
+      "sha256": "6c3ddb3b06e67fcaba75be12f6702a7a1c4674b8d82dd914701a60ee6c863ffa",
+      "originRole": "Original first-party ByteWriter BW1 source, literal public fixture, typed boundary control or bilingual documentation/evidence."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/字节写入器BW1契约.md",
+      "bytes": 4505,
+      "sha256": "b299b08f5796395fb4f486b8e5e3a2cf04dfc48544f469b38596758e04ad93e5",
+      "originRole": "Original first-party ByteWriter BW1 source, literal public fixture, typed boundary control or bilingual documentation/evidence."
+    },
+    {
+      "path": "knowledge-base/en/docs/byte-writer-bw1-evidence.md",
+      "bytes": 4533,
+      "sha256": "86855fb959abb6f5ed61afeeabbcae93d3626e3540d281c9c5cfb91d0e4abf27",
+      "originRole": "Original first-party ByteWriter BW1 source, literal public fixture, typed boundary control or bilingual documentation/evidence."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/字节写入器BW1证据.md",
+      "bytes": 4059,
+      "sha256": "e23ad49320f45e1a26798ad3883e84e184e37b6a0e3b13650f820ac1ba533b51",
+      "originRole": "Original first-party ByteWriter BW1 source, literal public fixture, typed boundary control or bilingual documentation/evidence."
+    },
+    {
+      "path": "knowledge-base/evidence/byte-writer-bw1-verification.json",
+      "bytes": 16250,
+      "sha256": "af103841b1090bcd28d8b03180f5baaa556211c055efdb4c11f7c15f788c0738",
+      "originRole": "Original first-party ByteWriter BW1 source, literal public fixture, typed boundary control or bilingual documentation/evidence."
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",
@@ -12719,5 +13018,227 @@
     },
     "reviewSHA256": "46a601e61f76606797ac5dca63c4027bceb2063bf3aa6c1477a01596df19b662",
     "scope": "Current executable source-contract identity assertions only; historical source identities and browser acceptance remain separate."
+  },
+  "byteWriterBW1WorkPackage": {
+    "engineeringLabel": "0.40.0",
+    "sourceId": "S093",
+    "deliverable": "V044",
+    "origin": "Original Apache-2.0 implementation from Egret specifications and ECMAScript intrinsics.",
+    "record": "knowledge-base/evidence/byte-writer-bw1-verification.json",
+    "sourceFiles": [
+      {
+        "path": "packages/runtime/src/ByteWriter.ts",
+        "bytes": 8121,
+        "sha256": "3fde5a988ac6899b2fab51b296d28905267b59f1df92ccb49b5d97eac8cf6577"
+      },
+      {
+        "path": "packages/runtime/src/index.ts",
+        "bytes": 2534,
+        "sha256": "2810a850dbf48f4f0ad78068c0a7f62cb4387e406b455808f63f42e622de401e"
+      },
+      {
+        "path": "packages/engine/src/index.ts",
+        "bytes": 2758,
+        "sha256": "45e980a60c1190413c6c97885f84d2694fdbf2eb92ad66bb47253554d05f4533"
+      },
+      {
+        "path": "tests/byte-writer.test.mjs",
+        "bytes": 17791,
+        "sha256": "8bcebef15ba6dadac04dfe93460905c47ec0deeef7bad53b241bf710e4d28cbd"
+      },
+      {
+        "path": "tests/byte-writer-allocation.test.mjs",
+        "bytes": 9445,
+        "sha256": "319404348177e53b70e366947e55d0d0f41ccffa6dec19e03676c7461d3c6386"
+      },
+      {
+        "path": "tests/types/byte-writer-positive.ts",
+        "bytes": 4447,
+        "sha256": "2f299fa92a0cc1b3298e0db11bdcf6294044cae3b8f3c0ed5ae525b312c78b62"
+      },
+      {
+        "path": "tests/types/byte-writer-negative.ts",
+        "bytes": 3418,
+        "sha256": "d932b5b3c6dc487b0255c2f454fe42701d22ee593980f1df4434b8982a7e064e"
+      },
+      {
+        "path": "tests/types/byte-writer-import-negative.ts",
+        "bytes": 2326,
+        "sha256": "fc47a6e60952eaf81243b3119c353413d9ea2813e4aa1e8db3aef12b562d96f8"
+      },
+      {
+        "path": "tools/check-boundaries.mjs",
+        "bytes": 134002,
+        "sha256": "4f012b45be55f103260379a1a933e33c2f75f0a684764b195e6e59ca3961c795"
+      },
+      {
+        "path": "tests/boundaries.test.mjs",
+        "bytes": 101465,
+        "sha256": "cc3d11376b1c14cc2da39b0e87f6d017ab7add80aac8deed4042b89760e36de8"
+      },
+      {
+        "path": "tests/byte-writer-boundaries.test.mjs",
+        "bytes": 9772,
+        "sha256": "ee5b9b65d3bc73669b7db442c743286c1bfbd7c1c6e609313e9776da0bcda0c0"
+      },
+      {
+        "path": "tools/check-types.mjs",
+        "bytes": 76618,
+        "sha256": "dd20698274972687d7625c0932c0e31f7403697023a5f55d312a73e582656df3"
+      },
+      {
+        "path": "tests/types/byte-writer-diagnostic-expectations.json",
+        "bytes": 17706,
+        "sha256": "3e209f571a29d1e89c5e4deab3fc8f89bf668572d21561fce0d285ffe9e173cf"
+      }
+    ],
+    "emittedFiles": [
+      {
+        "path": "packages/runtime/dist/ByteWriter.js",
+        "bytes": 7375,
+        "sha256": "19ab3ae8e6213fd83f915e5ea8dd4baf5e9d1960e021fcf4a12d39b934f2df76"
+      },
+      {
+        "path": "packages/runtime/dist/ByteWriter.d.ts",
+        "bytes": 1176,
+        "sha256": "9635d492462ee280cdf10f04cf9cbd8bb324f00d61b5da463e37fef4baceec6e"
+      },
+      {
+        "path": "packages/runtime/dist/index.js",
+        "bytes": 1440,
+        "sha256": "b0c114d88c93367dc56953db07adeb1a26e49b59092f3018c71bc2c1f2b61ff7"
+      },
+      {
+        "path": "packages/runtime/dist/index.d.ts",
+        "bytes": 2567,
+        "sha256": "790ef29d74a99921e4c87765db30611e41d964cb4ed1776958ede52d6eae80f1"
+      },
+      {
+        "path": "packages/engine/dist/index.js",
+        "bytes": 1034,
+        "sha256": "840424bd730a9d681bb243b7637367b8973bc56b42d835a1b7a4fd293e19923c"
+      },
+      {
+        "path": "packages/engine/dist/index.d.ts",
+        "bytes": 2793,
+        "sha256": "3a7cd6c7fe8e064107d96f75a42a4669fff1ffaff80f79776d864906389b17a5"
+      }
+    ],
+    "independentSourceAndSavedResultReviewIdentities": [
+      {
+        "witness": "red",
+        "bytes": 29569,
+        "sha256": "135bab464bf755c3b0508418383c8a399ac76703ba800af7e3785133109ce58f"
+      },
+      {
+        "witness": "product",
+        "bytes": 20614,
+        "sha256": "ee797e3849265c9cd5f28332e49ca9d2bcb317507961284aa16058c939b0079a"
+      },
+      {
+        "witness": "types",
+        "bytes": 56089,
+        "sha256": "50088216970bdfc3931ae216f6e2a7c1ebfdd027a0f83a304107fa076946b8c9"
+      },
+      {
+        "witness": "policySource",
+        "bytes": 10489,
+        "sha256": "5c6acdb791474f6f5dbe2cfeb4aa7ad33bcf11cc47cc0623914013d5833121a0"
+      },
+      {
+        "witness": "policyActual",
+        "bytes": 13106,
+        "sha256": "a4af0d8ff68c16a12a172f52996e6fe8a420fa27b685828da131bc1725837e2d"
+      },
+      {
+        "witness": "typeGateSource",
+        "bytes": 9213,
+        "sha256": "52080befa8964b8467a2359302e7a2115c9709d1ae3453a6a760f537f623bfaf"
+      },
+      {
+        "witness": "typeGateActual",
+        "bytes": 14413,
+        "sha256": "21cf01d811fd3deebd81711d550f3a54b16e54a30a18dbf2d5a01af0775ce322"
+      },
+      {
+        "witness": "originalPolicySource",
+        "bytes": 14539,
+        "sha256": "d40c49de1879aa0a711a6209df287e307b8199d5ba505c0cbb99570e34459dc1"
+      },
+      {
+        "witness": "policyTestCorrectionSource",
+        "bytes": 10663,
+        "sha256": "d18bf6c99fc16ed77507db54733fde6974932caa56cded98a2f7157b09763060"
+      },
+      {
+        "witness": "productSource",
+        "bytes": 12440,
+        "sha256": "3e3fc210d018aeaf35a673f5ea34f51d9cbeec43bf9f7abd40f0a406e37e9257"
+      },
+      {
+        "witness": "testSource",
+        "bytes": 15226,
+        "sha256": "f338ae78d4ccb1919863bf915d49086187aedb787805975ae476a36440de38f1"
+      },
+      {
+        "witness": "typeSource",
+        "bytes": 16839,
+        "sha256": "4b29d0e435404e31ee2b9232d51b711e1a62a84fa2671381145d8c2b2925f8c4"
+      },
+      {
+        "witness": "typeInventory",
+        "bytes": 7356,
+        "sha256": "fc2d71d62a82b9643d24efea752664620d73e0f73d895d4c8fc4a295de130f3c"
+      },
+      {
+        "witness": "publicBuilderSource",
+        "bytes": 10117,
+        "sha256": "822066ad7128aafb43b13f630b057692fe557ed5a5a2b459f241a17af4aefeb9"
+      },
+      {
+        "witness": "contractPair",
+        "bytes": 7118,
+        "sha256": "207267f1208e675e1c8deb71b8f9274e6868d03e78a37074cd81f6100ecc3009"
+      }
+    ],
+    "independentPublicCuration": "PENDING",
+    "fullRepositoryGate": "PENDING",
+    "remoteDelivery": "PENDING",
+    "newProductDependencies": []
+  },
+  "texturedSceneHostDeliverySuccessor": {
+    "engineeringLabel": "0.39.0",
+    "status": "ACTUAL_0_39_TEXTURED_SCENE_DELIVERY_SUCCESSOR",
+    "source": {
+      "sha": "e2d90fa8e4f40e5b77e7e3a2393f76aa2a88679c",
+      "parent": "893f1ca86af10a092066dcccdaaa16ac194efded",
+      "tree": "c137666681de663360a9bc153d85e6e71f48bd42",
+      "files": 46
+    },
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/26",
+    "main": {
+      "status": "ACTUAL_LOCAL_AND_REMOTE_MAIN_MATCH",
+      "head": "ac490f90b7467164e461112a9f572a3269107c02",
+      "tree": "c137666681de663360a9bc153d85e6e71f48bd42",
+      "atUtc": "2026-10-12T09:26:22.001Z"
+    },
+    "mandatoryPushHook": {
+      "startedAtUtc": "2026-10-12T09:20:05.7151795Z",
+      "finishedAtUtc": "2026-10-12T09:24:17.5297738Z",
+      "exitCode": 0,
+      "stdoutSHA256": "5524afca778c645419eaecdb070a7617ca472f116dd6b7a22ee928b7236b4f4e",
+      "stderrSHA256": "f4025e9f888363eada934f12492f9d7c03627e01e6fc91373a62e19c454594d7",
+      "coreTests": 2698,
+      "publicationTests": 63,
+      "documents": 150,
+      "criticalEnglishCommentRecords": 189
+    },
+    "remoteChecks": {
+      "statusCount": 0,
+      "checkRuns": 0,
+      "combinedState": "pending",
+      "remoteCIPassClaim": false
+    },
+    "historicalPendingCutoffsRetained": true
   }
 }

@@ -1,0 +1,503 @@
+{
+  "schemaVersion": 1,
+  "scope": "BW1 actual strict consumer diagnostic inventory",
+  "observedAtUtc": "2026-10-12T10:09:43.573Z",
+  "compiler": {
+    "version": "7.0.2",
+    "nodeVersion": "v24.19.0",
+    "platform": "win32",
+    "arch": "x64"
+  },
+  "origin": "Frozen from actual unsuppressed postimplementation compiler results; case source markers were authored before implementation, without predicted diagnostic codes.",
+  "rawObservationIdentity": {
+    "path": "actual-types-green-r2/receipt.json",
+    "bytes": 95275,
+    "sha256": "44790c15f85354c22adc9cc9cb3c5d6d2ad2bfe5b16c59aa3e32cf723833c13a",
+    "status": "identity_only_not_distributed"
+  },
+  "positive": {
+    "fixture": {
+      "path": "tests/types/byte-writer-positive.ts",
+      "bytes": 4447,
+      "sha256": "2f299fa92a0cc1b3298e0db11bdcf6294044cae3b8f3c0ed5ae525b312c78b62"
+    },
+    "diagnostics": []
+  },
+  "groups": {
+    "negative": {
+      "fixture": {
+        "path": "tests/types/byte-writer-negative.ts",
+        "bytes": 3418,
+        "sha256": "d932b5b3c6dc487b0255c2f454fe42701d22ee593980f1df4434b8982a7e064e"
+      },
+      "cases": [
+        {
+          "name": "required-capacity",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 10,
+          "column": 1,
+          "code": 2554,
+          "message": "Expected 1-2 arguments, but got 0."
+        },
+        {
+          "name": "numeric-capacity",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 12,
+          "column": 16,
+          "code": 2345,
+          "message": "Argument of type 'string' is not assignable to parameter of type 'number'."
+        },
+        {
+          "name": "unboxed-capacity",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 14,
+          "column": 16,
+          "code": 2345,
+          "message": "Argument of type 'Number' is not assignable to parameter of type 'number'."
+        },
+        {
+          "name": "constructor-endian-literal",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 16,
+          "column": 19,
+          "code": 2345,
+          "message": "Argument of type '\"middleEndian\"' is not assignable to parameter of type 'ByteOrder | undefined'."
+        },
+        {
+          "name": "no-endian-options",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 18,
+          "column": 19,
+          "code": 2345,
+          "message": "Argument of type '{ endian: string; }' is not assignable to parameter of type 'ByteOrder | undefined'."
+        },
+        {
+          "name": "constructor-exact-arity",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 20,
+          "column": 32,
+          "code": 2554,
+          "message": "Expected 1-2 arguments, but got 3."
+        },
+        {
+          "name": "readonly-capacity",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 22,
+          "column": 8,
+          "code": 2540,
+          "message": "Cannot assign to 'capacity' because it is a read-only property."
+        },
+        {
+          "name": "readonly-length",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 24,
+          "column": 8,
+          "code": 2540,
+          "message": "Cannot assign to 'length' because it is a read-only property."
+        },
+        {
+          "name": "readonly-remaining",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 26,
+          "column": 8,
+          "code": 2540,
+          "message": "Cannot assign to 'remainingCapacity' because it is a read-only property."
+        },
+        {
+          "name": "readonly-disposed",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 28,
+          "column": 8,
+          "code": 2540,
+          "message": "Cannot assign to 'disposed' because it is a read-only property."
+        },
+        {
+          "name": "readonly-limit",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 30,
+          "column": 20,
+          "code": 2540,
+          "message": "Cannot assign to 'maxBytes' because it is a read-only property."
+        },
+        {
+          "name": "setter-endian-literal",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 32,
+          "column": 1,
+          "code": 2322,
+          "message": "Type '\"middleEndian\"' is not assignable to type 'ByteOrder'."
+        },
+        {
+          "name": "setter-undefined-not-constructor-default",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 34,
+          "column": 1,
+          "code": 2322,
+          "message": "Type 'undefined' is not assignable to type 'ByteOrder'."
+        },
+        {
+          "name": "numeric-byte",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 36,
+          "column": 18,
+          "code": 2345,
+          "message": "Argument of type 'string' is not assignable to parameter of type 'number'."
+        },
+        {
+          "name": "numeric-unsigned-byte",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 38,
+          "column": 26,
+          "code": 2345,
+          "message": "Argument of type 'string' is not assignable to parameter of type 'number'."
+        },
+        {
+          "name": "numeric-short",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 40,
+          "column": 19,
+          "code": 2345,
+          "message": "Argument of type 'string' is not assignable to parameter of type 'number'."
+        },
+        {
+          "name": "numeric-unsigned-short",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 42,
+          "column": 27,
+          "code": 2345,
+          "message": "Argument of type 'string' is not assignable to parameter of type 'number'."
+        },
+        {
+          "name": "numeric-int",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 44,
+          "column": 17,
+          "code": 2345,
+          "message": "Argument of type 'string' is not assignable to parameter of type 'number'."
+        },
+        {
+          "name": "numeric-unsigned-int",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 46,
+          "column": 25,
+          "code": 2345,
+          "message": "Argument of type 'string' is not assignable to parameter of type 'number'."
+        },
+        {
+          "name": "numeric-float",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 48,
+          "column": 19,
+          "code": 2345,
+          "message": "Argument of type 'string' is not assignable to parameter of type 'number'."
+        },
+        {
+          "name": "numeric-double",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 50,
+          "column": 20,
+          "code": 2345,
+          "message": "Argument of type 'string' is not assignable to parameter of type 'number'."
+        },
+        {
+          "name": "unboxed-scalar",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 52,
+          "column": 17,
+          "code": 2345,
+          "message": "Argument of type 'Number' is not assignable to parameter of type 'number'."
+        },
+        {
+          "name": "scalar-required-value",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 54,
+          "column": 8,
+          "code": 2554,
+          "message": "Expected 1 arguments, but got 0."
+        },
+        {
+          "name": "scalar-exact-arity",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 56,
+          "column": 23,
+          "code": 2554,
+          "message": "Expected 1 arguments, but got 2."
+        },
+        {
+          "name": "bulk-byte-view-only",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 58,
+          "column": 19,
+          "code": 2740,
+          "message": "Type 'DataView<ArrayBuffer>' is missing the following properties from type 'Uint8Array<ArrayBuffer>': BYTES_PER_ELEMENT, copyWithin, every, fill, and 23 more."
+        },
+        {
+          "name": "bulk-shared-backing",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 60,
+          "column": 19,
+          "code": 2345,
+          "message": "Argument of type 'Uint8Array<SharedArrayBuffer>' is not assignable to parameter of type 'Uint8Array<ArrayBuffer>'."
+        },
+        {
+          "name": "bulk-required-source",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 62,
+          "column": 8,
+          "code": 2554,
+          "message": "Expected 1 arguments, but got 0."
+        },
+        {
+          "name": "bulk-exact-arity",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 64,
+          "column": 27,
+          "code": 2554,
+          "message": "Expected 1 arguments, but got 2."
+        },
+        {
+          "name": "snapshot-no-arguments",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 66,
+          "column": 21,
+          "code": 2554,
+          "message": "Expected 0 arguments, but got 1."
+        },
+        {
+          "name": "no-grow",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 68,
+          "column": 8,
+          "code": 2339,
+          "message": "Property 'grow' does not exist on type 'ByteWriter'."
+        },
+        {
+          "name": "no-reset",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 70,
+          "column": 8,
+          "code": 2339,
+          "message": "Property 'reset' does not exist on type 'ByteWriter'."
+        },
+        {
+          "name": "no-seek",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 72,
+          "column": 8,
+          "code": 2339,
+          "message": "Property 'seek' does not exist on type 'ByteWriter'."
+        },
+        {
+          "name": "no-resize",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 74,
+          "column": 8,
+          "code": 2339,
+          "message": "Property 'resize' does not exist on type 'ByteWriter'."
+        },
+        {
+          "name": "scalar-void-not-promise",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 76,
+          "column": 7,
+          "code": 2322,
+          "message": "Type 'void' is not assignable to type 'Promise<void>'."
+        },
+        {
+          "name": "bulk-void-not-snapshot",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 78,
+          "column": 7,
+          "code": 2322,
+          "message": "Type 'void' is not assignable to type 'Uint8Array<ArrayBuffer>'."
+        },
+        {
+          "name": "dispose-void-not-promise",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 80,
+          "column": 7,
+          "code": 2322,
+          "message": "Type 'void' is not assignable to type 'Promise<void>'."
+        },
+        {
+          "name": "snapshot-ordinary-backing",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 82,
+          "column": 7,
+          "code": 2322,
+          "message": "Type 'Uint8Array<ArrayBuffer>' is not assignable to type 'Uint8Array<SharedArrayBuffer>'."
+        },
+        {
+          "name": "nominal-writer-not-public-shape",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 84,
+          "column": 7,
+          "code": 2741,
+          "message": "Property 'byteWriterBrand' is missing in type 'Pick<ByteWriter, keyof ByteWriter>' but required in type 'ByteWriter'."
+        },
+        {
+          "name": "byte-order-domain",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 86,
+          "column": 7,
+          "code": 2322,
+          "message": "Type '\"network\"' is not assignable to type 'ByteOrder'."
+        },
+        {
+          "name": "engine-byte-order-erased",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 88,
+          "column": 6,
+          "code": 2693,
+          "message": "'ByteOrder' only refers to a type, but is being used as a value here."
+        },
+        {
+          "name": "runtime-byte-order-erased",
+          "file": "tests/types/byte-writer-negative.ts",
+          "line": 90,
+          "column": 6,
+          "code": 2693,
+          "message": "'RuntimeByteOrder' only refers to a type, but is being used as a value here."
+        }
+      ]
+    },
+    "import-negative": {
+      "fixture": {
+        "path": "tests/types/byte-writer-import-negative.ts",
+        "bytes": 2326,
+        "sha256": "fc47a6e60952eaf81243b3119c353413d9ea2813e4aa1e8db3aef12b562d96f8"
+      },
+      "cases": [
+        {
+          "name": "canvas-writer",
+          "file": "tests/types/byte-writer-import-negative.ts",
+          "line": 3,
+          "column": 10,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/web\"' has no exported member 'ByteWriter'."
+        },
+        {
+          "name": "canvas-limits",
+          "file": "tests/types/byte-writer-import-negative.ts",
+          "line": 5,
+          "column": 10,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/web\"' has no exported member 'BYTE_WRITER_LIMITS'."
+        },
+        {
+          "name": "webgpu-writer",
+          "file": "tests/types/byte-writer-import-negative.ts",
+          "line": 7,
+          "column": 10,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/webgpu\"' has no exported member 'ByteWriter'."
+        },
+        {
+          "name": "webgpu-limits",
+          "file": "tests/types/byte-writer-import-negative.ts",
+          "line": 9,
+          "column": 10,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/webgpu\"' has no exported member 'BYTE_WRITER_LIMITS'."
+        },
+        {
+          "name": "scene3d-writer",
+          "file": "tests/types/byte-writer-import-negative.ts",
+          "line": 11,
+          "column": 10,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/scene3d\"' has no exported member 'ByteWriter'."
+        },
+        {
+          "name": "scene3d-limits",
+          "file": "tests/types/byte-writer-import-negative.ts",
+          "line": 13,
+          "column": 10,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/scene3d\"' has no exported member 'BYTE_WRITER_LIMITS'."
+        },
+        {
+          "name": "webgpu-scene3d-writer",
+          "file": "tests/types/byte-writer-import-negative.ts",
+          "line": 15,
+          "column": 10,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/webgpu/scene3d\"' has no exported member 'ByteWriter'."
+        },
+        {
+          "name": "webgpu-scene3d-limits",
+          "file": "tests/types/byte-writer-import-negative.ts",
+          "line": 17,
+          "column": 10,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/webgpu/scene3d\"' has no exported member 'BYTE_WRITER_LIMITS'."
+        },
+        {
+          "name": "engine-text-writer",
+          "file": "tests/types/byte-writer-import-negative.ts",
+          "line": 19,
+          "column": 10,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/text\"' has no exported member 'ByteWriter'."
+        },
+        {
+          "name": "engine-text-limits",
+          "file": "tests/types/byte-writer-import-negative.ts",
+          "line": 21,
+          "column": 10,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/text\"' has no exported member 'BYTE_WRITER_LIMITS'."
+        },
+        {
+          "name": "runtime-text-writer",
+          "file": "tests/types/byte-writer-import-negative.ts",
+          "line": 23,
+          "column": 10,
+          "code": 2305,
+          "message": "Module '\"@egret/runtime/text\"' has no exported member 'ByteWriter'."
+        },
+        {
+          "name": "runtime-text-limits",
+          "file": "tests/types/byte-writer-import-negative.ts",
+          "line": 25,
+          "column": 10,
+          "code": 2305,
+          "message": "Module '\"@egret/runtime/text\"' has no exported member 'BYTE_WRITER_LIMITS'."
+        },
+        {
+          "name": "mouse-input-writer",
+          "file": "tests/types/byte-writer-import-negative.ts",
+          "line": 27,
+          "column": 10,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/web/input\"' has no exported member 'ByteWriter'."
+        },
+        {
+          "name": "mouse-input-limits",
+          "file": "tests/types/byte-writer-import-negative.ts",
+          "line": 29,
+          "column": 10,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/web/input\"' has no exported member 'BYTE_WRITER_LIMITS'."
+        },
+        {
+          "name": "canvas-text-writer",
+          "file": "tests/types/byte-writer-import-negative.ts",
+          "line": 31,
+          "column": 10,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/web/text\"' has no exported member 'ByteWriter'."
+        },
+        {
+          "name": "canvas-text-limits",
+          "file": "tests/types/byte-writer-import-negative.ts",
+          "line": 33,
+          "column": 10,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/web/text\"' has no exported member 'BYTE_WRITER_LIMITS'."
+        }
+      ]
+    }
+  },
+  "limits": "These located intentional diagnostics establish only the three frozen consumer surfaces. Runtime behavior, boundary controls, repository gates and delivery are separately accepted."
+}

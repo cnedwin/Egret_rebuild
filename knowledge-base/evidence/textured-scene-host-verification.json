@@ -1171,5 +1171,40 @@
     "reviewSHA256": "46a601e61f76606797ac5dca63c4027bceb2063bf3aa6c1477a01596df19b662",
     "freshCompletePrepush": "PENDING_REQUIRED",
     "browserProductBytesChanged": false
+  },
+  "deliveryActualSuccessor": {
+    "engineeringLabel": "0.39.0",
+    "status": "ACTUAL_0_39_TEXTURED_SCENE_DELIVERY_SUCCESSOR",
+    "source": {
+      "sha": "e2d90fa8e4f40e5b77e7e3a2393f76aa2a88679c",
+      "parent": "893f1ca86af10a092066dcccdaaa16ac194efded",
+      "tree": "c137666681de663360a9bc153d85e6e71f48bd42",
+      "files": 46
+    },
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/26",
+    "main": {
+      "status": "ACTUAL_LOCAL_AND_REMOTE_MAIN_MATCH",
+      "head": "ac490f90b7467164e461112a9f572a3269107c02",
+      "tree": "c137666681de663360a9bc153d85e6e71f48bd42",
+      "atUtc": "2026-10-12T09:26:22.001Z"
+    },
+    "mandatoryPushHook": {
+      "startedAtUtc": "2026-10-12T09:20:05.7151795Z",
+      "finishedAtUtc": "2026-10-12T09:24:17.5297738Z",
+      "exitCode": 0,
+      "stdoutSHA256": "5524afca778c645419eaecdb070a7617ca472f116dd6b7a22ee928b7236b4f4e",
+      "stderrSHA256": "f4025e9f888363eada934f12492f9d7c03627e01e6fc91373a62e19c454594d7",
+      "coreTests": 2698,
+      "publicationTests": 63,
+      "documents": 150,
+      "criticalEnglishCommentRecords": 189
+    },
+    "remoteChecks": {
+      "statusCount": 0,
+      "checkRuns": 0,
+      "combinedState": "pending",
+      "remoteCIPassClaim": false
+    },
+    "historicalPendingCutoffsRetained": true
   }
 }

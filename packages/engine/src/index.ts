@@ -27,3 +27,4 @@ export { createSequenceClip, SequencePlayer } from '@egret/runtime';
 export type { SequenceFrameInput, SequenceClipInput, SequenceClip, SequenceRegion, SequenceSample, SequencePlaybackMode } from '@egret/runtime';
 export { ByteReader, BYTE_READER_LIMITS } from "@egret/runtime";
 export type { ByteOrder } from "@egret/runtime";
+export { ByteWriter, BYTE_WRITER_LIMITS } from "@egret/runtime";

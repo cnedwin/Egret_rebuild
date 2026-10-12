@@ -161,6 +161,20 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
       write(file, readFileSync(path.join(root, file), 'utf8') + "export {ByteReader,BYTE_READER_LIMITS} from '@egret/runtime';\n" + (file.endsWith('.d.ts') ? "export type {ByteOrder} from '@egret/runtime';\n" : ''));
     for (const file of ['node_modules/@egret/engine/index.js', 'node_modules/@egret/runtime/index.js'])
       write(file, readFileSync(path.join(root, file), 'utf8') + "export {ByteReader,BYTE_READER_LIMITS} from '../../../packages/runtime/dist/ByteReader.js';\n");
+    // BW1 baseline only: inert canonical values, not writer behavior. Both
+    // roots and resolver bridges share that module; BR1 order clauses stay intact.
+    const byteWriterBody = 'export class ByteWriter {}\nexport const BYTE_WRITER_LIMITS = Object.freeze({maxBytes:16777216});\n';
+    const byteWriterTypes = 'import type {ByteOrder} from "./ByteReader.js";\nexport declare const BYTE_WRITER_LIMITS: Readonly<{maxBytes:16777216}>;\nexport declare class ByteWriter {}\n';
+    write('packages/runtime/src/ByteWriter.ts', byteWriterTypes);
+    write('packages/runtime/dist/ByteWriter.d.ts', byteWriterTypes);
+    write('packages/runtime/dist/ByteWriter.js', byteWriterBody);
+    const byteWriterPort = "export {ByteWriter,BYTE_WRITER_LIMITS} from './ByteWriter.js';\n";
+    for (const file of ['packages/runtime/src/index.ts', 'packages/runtime/dist/index.js', 'packages/runtime/dist/index.d.ts'])
+      write(file, readFileSync(path.join(root, file), 'utf8') + byteWriterPort);
+    for (const file of ['packages/engine/src/index.ts', 'packages/engine/dist/index.js', 'packages/engine/dist/index.d.ts'])
+      write(file, readFileSync(path.join(root, file), 'utf8') + "export {ByteWriter,BYTE_WRITER_LIMITS} from '@egret/runtime';\n");
+    for (const file of ['node_modules/@egret/engine/index.js', 'node_modules/@egret/runtime/index.js'])
+      write(file, readFileSync(path.join(root, file), 'utf8') + "export {ByteWriter,BYTE_WRITER_LIMITS} from '../../../packages/runtime/dist/ByteWriter.js';\n");
     // WC1 baseline only: exact opt-in surfaces let retained policy mutants run.
     // The inert synthetic factory reports Node unavailability; it provides no
     // native Canvas, genuine resource, font, TextField or rendering evidence.
