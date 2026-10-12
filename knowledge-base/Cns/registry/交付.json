@@ -2790,6 +2790,48 @@
         "performance": "NOT_MEASURED",
         "historicalCutoffsPreserved": true
       }
+    },
+    {
+      "id": "V043",
+      "title": "共享所有者的纹理场景 WebGPU 合成",
+      "kind": "bounded_shared_owner_textured_scene_webgpu_host",
+      "status": "in_progress",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R011",
+        "R015",
+        "R016",
+        "R017",
+        "R018",
+        "R019"
+      ],
+      "sourceIds": [
+        "S092"
+      ],
+      "dependsOn": [
+        "V036",
+        "V042"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "combined_host_finite_cpu_accepted_native_pending",
+      "acceptance": "CPU_ACCEPTED_NATIVE_FULL_GATES_PUBLICATION_PENDING",
+      "acceptanceCriteria": [
+        "真实场景与 Engine 捕获的不透明纹理覆盖层使用四个独立管线角色、两遍渲染、一次提交和最终合成读回。",
+        "联合元数据／存储准入先于有效载荷打包，并保留独立分项、当前故障身份、状态优先级、一次选定 ticket 和捕获快照生命周期。",
+        "已记录的构建、组合12/12、保留48/48、精确正负向类型、边界检查及四项指定边界对照在各自有限范围内通过。",
+        "新原生像素／清理验收、全部必要门禁、独立公共材料整理和可审查交付仍需完成；FullSpine R020/V020 保持 OPEN。"
+      ],
+      "artifacts": [
+        "Cns/docs/textured-scene-host-contract.md",
+        "evidence/textured-scene-host-verification.json"
+      ],
+      "doc": "Cns/docs/textured-scene-host-contract.md",
+      "actualSuccessorField": "texturedSceneActualSuccessor",
+      "publicEvidenceStatus": "PLANNED_PENDING_FINAL_CURATION",
+      "fullSpineR020V020": "OPEN",
+      "historicalCutoffsPreserved": true
     }
   ],
   "spineF1ClockPortableReplaySuccessor": {
@@ -2848,6 +2890,163 @@
     "newGPUExecution": false,
     "fullRepositoryGate": "PENDING",
     "independentSourceAndBilingualReview": "PENDING",
+    "remoteDelivery": "PENDING"
+  },
+  "texturedSceneActualSuccessor": {
+    "engineeringLabel": "0.39.0",
+    "sourceId": "S092",
+    "deliverableId": "V043",
+    "status": "CPU_ACCEPTED_NATIVE_AND_FULL_GATES_PENDING",
+    "curationExecution": "SOURCE_ONLY_NOT_RUN",
+    "publicEntry": "@egret/engine/webgpu/scene3d",
+    "factory": "createTexturedSceneWebGPUHost",
+    "method": "renderSceneTexturedFrame",
+    "clearAlpha": 1,
+    "actualCPU": {
+      "buildExitCode": 0,
+      "combinedTests": {
+        "tests": 12,
+        "pass": 12,
+        "fail": 0,
+        "skipped": 0
+      },
+      "retainedSceneTexturedTests": {
+        "tests": 48,
+        "pass": 48,
+        "fail": 0,
+        "skipped": 0
+      },
+      "positiveTypes": {
+        "exitCode": 0,
+        "diagnostics": 0
+      },
+      "negativeTypes": {
+        "web": 8,
+        "import": 16,
+        "browserDOMFree": 15,
+        "eachExpectedExitCode": 1
+      },
+      "strictTypeGateExitCode": 0,
+      "boundaryGuardExitCode": 0,
+      "assignedBoundaryControls": {
+        "tests": 4,
+        "pass": 4,
+        "fail": 0,
+        "skipped": 0
+      },
+      "independentImplementationReviewOpenFindings": 0
+    },
+    "composition": {
+      "surfaceOwners": 1,
+      "pipelineRoles": 4,
+      "renderPasses": 2,
+      "queueSubmissions": 1,
+      "readbackAfterBothPasses": true
+    },
+    "fullBoundarySuite": {
+      "status": "INCOMPLETE_TIMEOUT",
+      "timeoutSeconds": 180
+    },
+    "mandatoryFullPrepush": "PENDING",
+    "newBrowserGPU": "NOT_RUN_AT_PREPARATION_CUTOFF",
+    "nativeAcceptance": "PENDING",
+    "publication": "PENDING",
+    "independentPublicCuration": "PENDING",
+    "phones": "NOT_RUN",
+    "performance": "NOT_MEASURED",
+    "nativeSDK": "NOT_RUN",
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "contract": "Cns/docs/textured-scene-host-contract.md",
+    "record": "knowledge-base/evidence/textured-scene-host-verification.json",
+    "recordStatus": "PLANNED_PENDING_FINAL_CURATION",
+    "historicalCutoffsPreserved": true,
+    "summary": "显式共享所有者 WebGPU 宿主合成真实不透明 RGB 场景与捕获的纹理 UI；本截止点已接受有限 CPU 源码／测试／类型及指定边界，新原生像素、完整门禁和发布待完成。",
+    "limits": "不构成完整角色／材质／光照／透明场景、手机／性能／原生 SDK 或完整产品验收。FullSpine R020/V020 与迁移 R008/V006 保持 OPEN。"
+  },
+  "matrixAuthoringDeliverySuccessor": {
+    "engineeringLabel": "0.38.0",
+    "status": "ACTUAL_MERGED_MAIN_TREE_VERIFIED",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/25",
+    "sourceCommit": "49746fefa8a4fcfed998dfa11e9ebac9f4d40ef9",
+    "mergedMain": "893f1ca86af10a092066dcccdaaa16ac194efded",
+    "tree": "5960109ca14c9a53ba1cd7ba80d967e6451ad102",
+    "localRemoteMainReadbackAtUtc": "2026-10-12T06:35:44.814Z",
+    "mandatoryPushHookExitCode": 0,
+    "remoteStatusCount": 0,
+    "remoteCheckCount": 0,
+    "remoteCIPassClaimed": false,
+    "historicalPendingCutoffsRetained": true,
+    "summary": "已记录的 0.38.0 PR25/Main 实际交付是较早待交付截止点的后继，不修改历史准备或验收记录；不声明远端 CI PASS。"
+  },
+  "texturedSceneBrowserActualSuccessor": {
+    "status": "ACTUAL_TWO_FRAME_BROWSER_PIXELS_AND_COOPERATIVE_CLEANUP_PASS",
+    "record": "knowledge-base/evidence/textured-scene-host-verification.json",
+    "environment": {
+      "node": "v24.19.0",
+      "browserVersion": "155.0.4283.45",
+      "channel": "msedge",
+      "headless": true,
+      "additionalFlags": [],
+      "deviceScaleFactor": 1
+    },
+    "observations": 2,
+    "fixedPixels": 24,
+    "pixelsPerObservation": 12,
+    "bytesPerObservation": 16384,
+    "rawBuffers": [
+      {
+        "path": "knowledge-base/evidence/textured-scene-host/CHN01.rgba",
+        "bytes": 16384,
+        "sha256": "3b574bfecd5cb364e5aed4f2cf7ee44676af5dc82416c451f7b69b1068ec3a04",
+        "frameId": 1,
+        "serial": 1,
+        "width": 64,
+        "height": 64,
+        "format": "rgba8unorm"
+      },
+      {
+        "path": "knowledge-base/evidence/textured-scene-host/CHN02.rgba",
+        "bytes": 16384,
+        "sha256": "2c3f1bd9cf0b03387638b0211ac7f13607cc54e14dba3d1e3ca20224b9527ada",
+        "frameId": 2,
+        "serial": 2,
+        "width": 64,
+        "height": 64,
+        "format": "rgba8unorm"
+      }
+    ],
+    "sensitivity": {
+      "id": "CHNC01",
+      "status": "EXPECTED_PIXEL_REJECTION",
+      "x": 34,
+      "y": 32,
+      "expected": [
+        0,
+        255,
+        0,
+        255
+      ],
+      "actual": [
+        255,
+        255,
+        0,
+        255
+      ],
+      "rendererMutation": "none",
+      "newBrowserFrames": 0
+    },
+    "nativeCleanup": "PASS",
+    "cooperativeBrowserCleanup": "PASS",
+    "identitiesStable": true,
+    "artifactsStable": true,
+    "osProcessRetirement": "UNBOUND",
+    "browserExecutableIdentity": "UNBOUND",
+    "phonePerformance": "NOT_MEASURED",
+    "fullSpineR020V020": "OPEN",
+    "complete3D": "OPEN",
+    "mandatoryFullPrepush": "PENDING",
+    "mandatoryPushHook": "PENDING",
     "remoteDelivery": "PENDING"
   }
 }

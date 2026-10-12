@@ -8,10 +8,10 @@
   },
   "fixtureSHA256": {
     "tests/types/scene3d-positive.ts": "399eb788eded32dfa82ea54dce6c435b907e4426bd212eb029f5a14417ee5583",
-    "tests/types/scene3d-web-positive.ts": "9def46be4b552e2a64b785b7e8a65a146b04dae74caf14ed5ada4f3b5309ebda",
+    "tests/types/scene3d-web-positive.ts": "d06f49ddd49272f7f73d27de6fca259615dd9fccdfbc7dd0fd07f2482083f6ef",
     "tests/types/scene3d-negative.ts": "e6f2bff09e133432e97b9a60d84bdb042a00024afd1dfc9e7a94a0f04f0c926e",
-    "tests/types/scene3d-web-negative.ts": "b82f7409b95dcaaba7c0e151582d5c4feda3b6c3a81908098cebbb2c0887b72a",
-    "tests/types/scene3d-import-negative.ts": "1b5365dc6901514e96db851eec8c47375b6bc5da922d167678cb5d8a75fa5b0c",
+    "tests/types/scene3d-web-negative.ts": "2397d6b05febeb7bda9cf16bd71afcb7b2dc5267443490bff8015b02c09c4b27",
+    "tests/types/scene3d-import-negative.ts": "174ebe06bda15736b4edecd153da234aa03360b80fd7d86d480f4c5516ab53a3",
     "tests/types/scene3d-web-dom-free-negative.ts": "914d4ae90905f31dabfaa428c3fb37065517340c0dcbb89ac8ebd64b09638cde"
   },
   "cases": {
@@ -108,6 +108,41 @@
         "line": 10,
         "column": 28,
         "code": 2540
+      },
+      {
+        "name": "combined-no-ordinary-overlay",
+        "file": "tests/types/scene3d-web-negative.ts",
+        "line": 23,
+        "column": 45,
+        "code": 2739
+      },
+      {
+        "name": "combined-no-geometry-as-scene",
+        "file": "tests/types/scene3d-web-negative.ts",
+        "line": 25,
+        "column": 39,
+        "code": 2739
+      },
+      {
+        "name": "combined-overlay-required",
+        "file": "tests/types/scene3d-web-negative.ts",
+        "line": 27,
+        "column": 14,
+        "code": 2554
+      },
+      {
+        "name": "combined-sync-not-promise",
+        "file": "tests/types/scene3d-web-negative.ts",
+        "line": 29,
+        "column": 7,
+        "code": 2322
+      },
+      {
+        "name": "combined-existing-option-type",
+        "file": "tests/types/scene3d-web-negative.ts",
+        "line": 31,
+        "column": 99,
+        "code": 2322
       }
     ],
     "import-negative": [
@@ -185,6 +220,41 @@
         "name": "host-type-not-runtime",
         "file": "tests/types/scene3d-import-negative.ts",
         "line": 24,
+        "column": 6,
+        "code": 2693
+      },
+      {
+        "name": "no-root-combined-host-factory",
+        "file": "tests/types/scene3d-import-negative.ts",
+        "line": 27,
+        "column": 9,
+        "code": 2305
+      },
+      {
+        "name": "no-canvas-combined-host-factory",
+        "file": "tests/types/scene3d-import-negative.ts",
+        "line": 29,
+        "column": 9,
+        "code": 2305
+      },
+      {
+        "name": "no-ordinary-webgpu-combined-host-factory",
+        "file": "tests/types/scene3d-import-negative.ts",
+        "line": 31,
+        "column": 9,
+        "code": 2724
+      },
+      {
+        "name": "no-root-combined-host-type",
+        "file": "tests/types/scene3d-import-negative.ts",
+        "line": 33,
+        "column": 14,
+        "code": 2305
+      },
+      {
+        "name": "combined-host-type-not-runtime",
+        "file": "tests/types/scene3d-import-negative.ts",
+        "line": 36,
         "column": 6,
         "code": 2693
       }

@@ -13,14 +13,14 @@ import { ImageProjectionError, planImageProjections, copyProjectionPixels } from
 import type { ProjectionPlan2D, ProjectionView2D } from './imageProjections2D.js';
 import { observed, deferred, cleanupWebGPUBuffer, cleanupWebGPUTexture, observeWebGPUDeviceLoss } from './webgpuLifetime.js';
 import type { OwnedWebGPUBuffer, OwnedWebGPUTexture } from './webgpuLifetime.js';
-import type { B1BuiltinProtocol, B1WebGPUHost } from './b1.js';
+import type { B1BuiltinProtocol, B1WebGPUHost, TexturedB1WebGPUHost } from './b1.js';
 import { admitTexturedFrame2D, TexturedFrameAdmissionError2D } from '../rendering/admitTexturedFrame2D.js';
 import { prepareTexturedDraws2D } from '../rendering/prepareTexturedDraws2D.js';
 import { TexturedPreparationBudget2D } from '../rendering/texturedPreparationBudget2D.js';
 import { TexturedMeshPackingAllocationError } from '../rendering/packTexturedMesh2D.js';
 import { runOwnedPreparationScope } from '../rendering/ownedPreparationFailure2D.js';
 import { planTexturedImageProjections } from './imageProjections2D.js';
-import { prepareTexturedSubmission2D, isTexturedSubmissionAdmissionError2D } from './prepareTexturedSubmission2D.js';
+import { prepareTexturedSubmission2D, planTexturedSubmissionStorage2D, packTexturedSubmission2D, isTexturedSubmissionAdmissionError2D } from './prepareTexturedSubmission2D.js';
 import type { PackedTexturedDraw2D, TexturedSubmissionOwnerSnapshot2D } from './prepareTexturedSubmission2D.js';
 import { admitTexturedWebGPUOptions } from './texturedWebGPUOptions.js';
 import type { TexturedWebGPUHostOptions, TexturedWebGPUConfiguration } from './texturedWebGPUOptions.js';
@@ -79,6 +79,7 @@ function isObject(value: unknown): value is object { return typeof value === 'ob
 // Neither an options field nor a caller-supplied callback selects this mode.
 const B1_MODE = Symbol('owned B1 host mode');
 const TEXTURED_MODE = Symbol('owned textured host mode');
+const TEXTURED_SCENE_MODE = Symbol('owned textured scene host mode');
 const TEXTURED_OWNERS = new WeakSet<object>();
 const TEXTURED_OPTIONS = new WeakMap<object, TexturedWebGPUConfiguration>();
 const B1_PROTOCOL_FIELDS = ['version', 'createSceneFrame3D', 'isSceneFrame3D', 'getScene3DErrorOrigin', 'packMeshGeometry3D', 'getMeshPacking3DErrorOrigin', 'createWebGPUMeshPipeline', 'encodeWebGPUMesh'] as const;
@@ -156,8 +157,8 @@ class WebGPUHostImplementation implements WebGPUHost {
     private readonly lossCell: { notify?: (cause: unknown) => void } = {};
     private timers: { set: typeof globalThis.setTimeout; clear: typeof globalThis.clearTimeout } | undefined;
 
-    public constructor(input: WebGPUHostOptions, mode?: typeof B1_MODE | typeof TEXTURED_MODE) {
-        if (mode === TEXTURED_MODE) {
+    public constructor(input: WebGPUHostOptions, mode?: typeof B1_MODE | typeof TEXTURED_MODE | typeof TEXTURED_SCENE_MODE) {
+        if (mode === TEXTURED_MODE || mode === TEXTURED_SCENE_MODE) {
             try {
                 const admitted = admitTexturedWebGPUOptions(input);
                 this.surface = admitted.surface; Object.defineProperty(this, 'surface', { writable: false, configurable: false });
@@ -187,7 +188,7 @@ class WebGPUHostImplementation implements WebGPUHost {
             this.options = Object.freeze(values); this.borrowed = borrowed; this.callback = callback;
         } catch (cause) { throw error('WEBGPU_OPTIONS_INVALID', cause); }
         }
-        if (mode === B1_MODE) {
+        if (mode === B1_MODE || mode === TEXTURED_SCENE_MODE) {
             // Keep mode and the captured function table in module-owned weak
             // storage; no instance field exposes the token or a mutable registry.
             B1_OWNERS.add(this);
@@ -198,12 +199,19 @@ class WebGPUHostImplementation implements WebGPUHost {
                 getSceneStatus: { value: () => Object.freeze({ host: this.getStatus(), pendingSceneBytes: this.pendingSceneBytes, pendingUniformBytes: this.pendingUniformBytes, pendingDepthBytes: this.pendingDepthBytes }), enumerable: true },
             });
         }
-        if (mode === TEXTURED_MODE) {
+        if (mode === TEXTURED_MODE || mode === TEXTURED_SCENE_MODE) {
             // Own immutable ports preserve the ordinary and B1 prototypes.
             Object.defineProperties(this, {
                 texturedFrameProfile: { value: TEXTURED_FRAME_PROFILE_2D, enumerable: true },
                 renderTexturedFrame: { value: (frame: TexturedRenderFrame2D): undefined => this.renderTexturedOwnedFrame(frame), enumerable: true },
                 getTexturedStatus: { value: (): TexturedWebGPUHostStatus => Object.freeze({ host: this.getStatus(), pendingGeometryBytes: this.pendingGeometryBytes }), enumerable: true },
+            });
+        }
+        if (mode === TEXTURED_SCENE_MODE) {
+            // Explicit opt-in owns both protocols and one submission authority.
+            Object.defineProperty(this, 'renderSceneTexturedFrame', {
+                value: (scene: SceneValue, overlay: TexturedRenderFrame2D): undefined => this.renderSceneTexturedOwnedFrame(scene, overlay),
+                enumerable: true,
             });
         }
     }
@@ -385,18 +393,21 @@ class WebGPUHostImplementation implements WebGPUHost {
             if (synchronous) throw synchronous.cause;
             const rejected = outcomes.find(outcome => outcome.status === 'rejected');
             if (rejected?.status === 'rejected') throw rejected.reason;
-            this.pipeline = (outcomes[scopes.length] as PromiseFulfilledResult<GPURenderPipeline>).value;
-            this.imagePipeline = (outcomes[scopes.length + 1] as PromiseFulfilledResult<GPURenderPipeline>).value;
+            // Scope outcomes do not select pipeline roles. Their own ordered
+            // results retain the old two/three roles and add scene2/textured3.
+            const roles = outcomes.slice(scopes.length) as PromiseFulfilledResult<GPURenderPipeline>[];
+            this.pipeline = roles[0]!.value;
+            this.imagePipeline = roles[1]!.value;
             // Auto group0 is valid only after image pipeline settlement; no scopes span an await.
             const layout = this.method(this.imagePipeline, 'getBindGroupLayout', gate);
             gate(); this.imageLayout = layout(0); gate();
             if (builtin) {
-                this.meshPipeline = (outcomes[scopes.length + 2] as PromiseFulfilledResult<GPURenderPipeline>).value;
+                this.meshPipeline = roles[2]!.value;
                 const meshLayout = this.method(this.meshPipeline, 'getBindGroupLayout', gate);
                 this.meshLayout = meshLayout(0); gate();
             }
             if (TEXTURED_OWNERS.has(this)) {
-                this.texturedPipeline = (outcomes[scopes.length + 2] as PromiseFulfilledResult<GPURenderPipeline>).value;
+                this.texturedPipeline = roles[builtin ? 3 : 2]!.value;
                 const texturedLayout = this.method(this.texturedPipeline, 'getBindGroupLayout', gate);
                 this.texturedLayout = texturedLayout(0); gate();
             }
@@ -516,7 +527,7 @@ class WebGPUHostImplementation implements WebGPUHost {
         if (count > 0 && 64 > this.limits.maxBufferSize) throw new ClassifiedWebGPUFailure('WEBGPU_DEVICE_LIMIT');
         return { scene, functions, sceneBytes, uniformBytes, depthBytes: 0, meshes: [], draws: [] };
     }
-    private packScene(plan: SceneAdmission): void {
+    private packScene(plan: SceneAdmission, trustedFailures?: WeakSet<object>): void {
         const packed = new Map<SceneValue['geometries'][number], PackedMesh>();
         for (const geometry of plan.scene.geometries) {
             let mesh: PackedMesh;
@@ -526,13 +537,17 @@ class WebGPUHostImplementation implements WebGPUHost {
                 // a foreign class/code is never authority for helper mapping.
                 const origin = plan.functions.getMeshPacking3DErrorOrigin(cause);
                 const code = origin === 'budget' ? 'WEBGPU_FRAME_BUDGET' : origin === 'validation' && (cause as { code: string }).code === 'MESH3D_PACK_F32_UNSUPPORTED' ? 'WEBGPU_PRECISION_UNSUPPORTED' : 'WEBGPU_FRAME_INVALID';
-                throw new ClassifiedWebGPUFailure(code, cause);
+                const failure = new ClassifiedWebGPUFailure(code, cause);
+                trustedFailures?.add(failure); throw failure;
             }
             this.active(); packed.set(geometry, mesh); plan.meshes.push(mesh);
         }
         for (const draw of plan.scene.draws) {
             const mesh = packed.get(draw.geometry);
-            if (!mesh) throw new ClassifiedWebGPUFailure('WEBGPU_FRAME_INVALID');
+            if (!mesh) {
+                const failure = new ClassifiedWebGPUFailure('WEBGPU_FRAME_INVALID');
+                trustedFailures?.add(failure); throw failure;
+            }
             // CPU MVP is an immutable 16-number tuple. Upload its column-major
             // float32 ABI directly: no elements property, transpose or Y flip.
             const uniform = new Float32Array(draw.mvp);
@@ -635,6 +650,20 @@ class WebGPUHostImplementation implements WebGPUHost {
         return { pendingFrames: this.ledger.size, pendingUploadBytes: this.pendingUploadBytes, pendingReadbackBytes: this.pendingReadbackBytes,
             pendingTextureBytes: this.pendingTextureBytes, pendingGeometryBytes: this.pendingGeometryBytes, serial: this.lastSerial };
     }
+    private texturedSceneOwnerSnapshot(): TexturedSubmissionOwnerSnapshot2D {
+        return { ...this.texturedOwnerSnapshot(), pendingSceneBytes: this.pendingSceneBytes,
+            pendingUniformBytes: this.pendingUniformBytes, pendingDepthBytes: this.pendingDepthBytes };
+    }
+    /** Mapping requires the exact failure captured by this owned invocation. */
+    private ownedTexturedPreparationError(cause: object): EgretError {
+        if (cause instanceof ImagePackingAllocationError || cause instanceof TexturedMeshPackingAllocationError) return error('WEBGPU_FRAME_INVALID', cause.original);
+        if (cause instanceof TexturedFrameAdmissionError2D) return error(cause.reason === 'backing' ? 'WEBGPU_BACKING_LIMIT' : cause.reason === 'budget' ? 'WEBGPU_FRAME_BUDGET' : 'WEBGPU_FRAME_INVALID', cause);
+        if (cause instanceof ImageProjectionError) return error(cause.reason === 'budget' ? 'WEBGPU_FRAME_BUDGET' : 'WEBGPU_FRAME_INVALID', cause);
+        if (cause instanceof GeometryPreparationError) return error(cause.reason === 'range' ? 'WEBGPU_GEOMETRY_RANGE' : cause.reason === 'budget' ? 'WEBGPU_FRAME_BUDGET' : 'WEBGPU_PRECISION_UNSUPPORTED', cause.cause);
+        if (cause instanceof WebGPUPackingError) return error(cause.reason === 'device' ? 'WEBGPU_DEVICE_LIMIT' : cause.reason === 'budget' ? 'WEBGPU_FRAME_BUDGET' : 'WEBGPU_PRECISION_UNSUPPORTED', cause.cause);
+        if (isTexturedSubmissionAdmissionError2D(cause)) return error(cause.reason === 'device' ? 'WEBGPU_DEVICE_LIMIT' : cause.reason === 'backpressure' ? 'WEBGPU_BACKPRESSURE' : cause.reason === 'serial' ? 'WEBGPU_SERIAL_EXHAUSTED' : 'WEBGPU_FRAME_BUDGET', cause);
+        return error('WEBGPU_FRAME_INVALID', cause);
+    }
     private preflightTextured(frame: TexturedRenderFrame2D): SharedSubmissionPlan2D {
         let ownedFailure: object | undefined;
         try {
@@ -653,17 +682,73 @@ class WebGPUHostImplementation implements WebGPUHost {
         } catch (cause) {
             // Stop/close/terminal state wins even when a concurrent owned allocation throws.
             if (this.state !== 'active') throw this.stateError();
-            if (ownedFailure === cause) {
-                if (cause instanceof ImagePackingAllocationError || cause instanceof TexturedMeshPackingAllocationError) throw error('WEBGPU_FRAME_INVALID', cause.original);
-                if (cause instanceof TexturedFrameAdmissionError2D) throw error(cause.reason === 'backing' ? 'WEBGPU_BACKING_LIMIT' : cause.reason === 'budget' ? 'WEBGPU_FRAME_BUDGET' : 'WEBGPU_FRAME_INVALID', cause);
-                if (cause instanceof ImageProjectionError) throw error(cause.reason === 'budget' ? 'WEBGPU_FRAME_BUDGET' : 'WEBGPU_FRAME_INVALID', cause);
-                if (cause instanceof GeometryPreparationError) throw error(cause.reason === 'range' ? 'WEBGPU_GEOMETRY_RANGE' : cause.reason === 'budget' ? 'WEBGPU_FRAME_BUDGET' : 'WEBGPU_PRECISION_UNSUPPORTED', cause.cause);
-                if (cause instanceof WebGPUPackingError) throw error(cause.reason === 'device' ? 'WEBGPU_DEVICE_LIMIT' : cause.reason === 'budget' ? 'WEBGPU_FRAME_BUDGET' : 'WEBGPU_PRECISION_UNSUPPORTED', cause.cause);
-                if (isTexturedSubmissionAdmissionError2D(cause)) throw error(cause.reason === 'device' ? 'WEBGPU_DEVICE_LIMIT' : cause.reason === 'backpressure' ? 'WEBGPU_BACKPRESSURE' : cause.reason === 'serial' ? 'WEBGPU_SERIAL_EXHAUSTED' : 'WEBGPU_FRAME_BUDGET', cause);
+            if (ownedFailure !== undefined && ownedFailure === cause) {
+                throw this.ownedTexturedPreparationError(cause);
             }
             // Matching classes/codes, previous tokens and arbitrary native throws are foreign.
             throw error('WEBGPU_FRAME_INVALID', cause);
         }
+    }
+    private preflightTexturedScene(sceneInput: SceneValue, overlayInput: TexturedRenderFrame2D): SharedSubmissionPlan2D {
+        let ownedFailure: object | undefined;
+        // A token from another invocation, including an allocation hook's old
+        // private failure, cannot authorize this combined scene classification.
+        let trustedSceneFailures: WeakSet<object> | undefined;
+        try {
+            // This allocation may itself fail or reenter close. Keep it inside
+            // the same state-first failure boundary as all later preparation.
+            const sceneFailures = new WeakSet<object>();
+            trustedSceneFailures = sceneFailures; this.active();
+            const sceneFailure: (code: WebGPUHostErrorCode) => never = code => {
+                const failure = new ClassifiedWebGPUFailure(code);
+                sceneFailures.add(failure); throw failure;
+            };
+            return runOwnedPreparationScope(() => {
+                const functions = B1_FUNCTIONS.get(this);
+                // Authenticate both immutable inputs before either payload read.
+                if (!functions || !functions.isSceneFrame3D(sceneInput)) sceneFailure('WEBGPU_FRAME_INVALID');
+                const frame = readOwnedTexturedFrame(overlayInput);
+                if (frame === undefined) sceneFailure('WEBGPU_FRAME_INVALID');
+                let scene: SceneAdmission;
+                try { scene = this.admitScene(sceneInput); }
+                catch (cause) {
+                    // Genuine metadata admission invokes no caller payload or GPU.
+                    if (cause instanceof ClassifiedWebGPUFailure) sceneFailures.add(cause);
+                    throw cause;
+                }
+                if (frame.clearAlpha !== 1) sceneFailure('WEBGPU_FRAME_INVALID');
+                const options = TEXTURED_OPTIONS.get(this)!;
+                const budget = new TexturedPreparationBudget2D(options);
+                const admitted = admitTexturedFrame2D(frame, options, budget);
+                const projectionPlan = planTexturedImageProjections(frame);
+                const draws = prepareTexturedDraws2D(admitted, options, budget);
+                // Reserve this exact ticket once; preparation may request a later one.
+                const ticket = this.ticket && !this.ticket.bound ? this.ticket : undefined;
+                const storage = planTexturedSubmissionStorage2D({ admitted, draws, projectionPlan, options, hardware: this.limits,
+                    owner: this.texturedSceneOwnerSnapshot(), readback: ticket !== undefined,
+                    sceneReservation: { sceneBytes: scene.sceneBytes, uniformBytes: scene.uniformBytes,
+                        maxSceneBytes: B1_LIMITS.scene, maxUniformBytes: B1_LIMITS.uniform, maxDepthBytes: B1_LIMITS.depth,
+                        maxPendingSceneBytes: B1_LIMITS.pendingScene, maxPendingUniformBytes: B1_LIMITS.pendingUniform, maxPendingDepthBytes: B1_LIMITS.pendingDepth } });
+                scene.depthBytes = storage.sceneStorage!.depthBytes;
+                // Whole admission precedes both domains' payload allocations.
+                this.packScene(scene, sceneFailures); this.active();
+                const plan = packTexturedSubmission2D(storage, budget, () => this.texturedSceneOwnerSnapshot(), undefined, () => this.active());
+                this.active();
+                return { ...plan, ticket, scene };
+            }, failure => { ownedFailure = failure; });
+        } catch (cause) {
+            if (this.state !== 'active') throw this.stateError();
+            // B1 control flow is private; 2D mapping also needs this invocation.
+            if (cause instanceof ClassifiedWebGPUFailure && trustedSceneFailures?.has(cause)) throw cause.publicError;
+            if (ownedFailure !== undefined && ownedFailure === cause) throw this.ownedTexturedPreparationError(cause);
+            throw error('WEBGPU_FRAME_INVALID', cause);
+        }
+    }
+    private renderSceneTexturedOwnedFrame(scene: SceneValue, overlay: TexturedRenderFrame2D): undefined {
+        this.active(); if (this.busy) throw error('WEBGPU_REENTRANT');
+        this.busy = true; this.cpu = deferred<void>();
+        try { return this.submitPrepared(this.preflightTexturedScene(scene, overlay)); }
+        finally { this.busy = false; this.cpu.resolve(); }
     }
     private renderTexturedOwnedFrame(input: TexturedRenderFrame2D): undefined {
         this.active(); if (this.busy) throw error('WEBGPU_REENTRANT');
@@ -914,4 +999,7 @@ export function createB1WebGPUHostInternal(options: WebGPUHostOptions): B1WebGPU
     // The closed constructor branch installs the two own methods. Keep them
     // out of the ordinary class type/prototype; this assertion adds no authority.
     return new WebGPUHostImplementation(options, B1_MODE) as unknown as B1WebGPUHost;
+}
+export function createTexturedB1WebGPUHostInternal(options: TexturedWebGPUHostOptions): TexturedB1WebGPUHost {
+    return new WebGPUHostImplementation(options, TEXTURED_SCENE_MODE) as unknown as TexturedB1WebGPUHost;
 }

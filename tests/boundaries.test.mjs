@@ -13,7 +13,7 @@ const ownedParent = path.resolve(repository, 'work');
 const dependencies = { contracts: [], runtime: ['@egret/contracts'], engine: ['@egret/contracts', '@egret/runtime'], project: ['@egret/contracts'] };
 
 // Synthetic facades prove tool policy/resolution only, never core or native behavior.
-function fixture({ imported, subtree = 'engine/rendering', declared = false, missingImageExport = false, missingGeometryExport, missingGeometryType, missingMesh, splitMesh = false, meshLeak, meshModuleLeak, meshWrongEntry, meshStateSourceValueImport = false, meshStateEmittedValueImport = false, profileLeak, profileModuleLeak, missingTexturedPort, missingProfileFactory = false, profileRegistryImport = false, registryLegitimateHosts = false, registryMapMutation, registryImporterProbe, hitTestMutation, mouseInputMutation, spineImportMutation, /* S3D1_OPTIONS_BEGIN */ scene3dMutation /* S3D1_OPTIONS_END */ }, run) {
+function fixture({ imported, subtree = 'engine/rendering', declared = false, missingImageExport = false, missingGeometryExport, missingGeometryType, missingMesh, splitMesh = false, meshLeak, meshModuleLeak, meshWrongEntry, meshStateSourceValueImport = false, meshStateEmittedValueImport = false, profileLeak, profileModuleLeak, missingTexturedPort, missingProfileFactory = false, profileRegistryImport = false, registryLegitimateHosts = false, registryMapMutation, registryImporterProbe, hitTestMutation, mouseInputMutation, spineImportMutation, combinedSceneMutation, /* S3D1_OPTIONS_BEGIN */ scene3dMutation /* S3D1_OPTIONS_END */ }, run) {
   mkdirSync(ownedParent, { recursive: true });
   const root = mkdtempSync(path.join(ownedParent, 'egret-boundary-policy-'));
   function write(relative, content) {
@@ -330,7 +330,7 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
       write(file,readFileSync(path.join(root,file),'utf8')+names.map(name=>`export function ${name}() {}`).join('\n'));
     }
     const sceneB1='packages/engine/dist/web/b1.js';
-    write(sceneB1,readFileSync(path.join(root,sceneB1),'utf8')+'export function createB1WebGPUHost() {}\n');
+    write(sceneB1,readFileSync(path.join(root,sceneB1),'utf8')+'export function createB1WebGPUHost() {}\nexport function createTexturedB1WebGPUHost() {}\n');
     const cpuTypes=['Matrix4','Math3DErrorCode','MeshGeometry3D','MeshGeometry3DErrorCode','MeshGeometry3DErrorOrigin','SceneProjectionInput3D','SceneDrawInput3D','SceneInput3D','SceneDraw3D','SceneFrame3D','Scene3DErrorCode','Scene3DErrorOrigin'];
     const cpuTypeText="export type {Matrix4} from './matrix4.js';\nexport type {Math3DErrorCode} from './matrix4.js';\nexport type {MeshGeometry3D,MeshGeometry3DErrorCode,MeshGeometry3DErrorOrigin} from './meshGeometry3D.js';\nexport type {SceneProjectionInput3D,SceneDrawInput3D,SceneInput3D,SceneDraw3D,SceneFrame3D,Scene3DErrorCode,Scene3DErrorOrigin} from './sceneFrame3D.js';\nexport interface MeshGeometry3DInput { readonly positions: readonly number[]; readonly colors: readonly number[]; readonly indices: readonly number[]; }\n";
     const cpuValues="export {Math3DError} from './matrix4.js';\nexport {isMeshGeometry3D,MeshGeometry3DError,getMeshGeometry3DErrorOrigin} from './meshGeometry3D.js';\nexport {isSceneFrame3D,Scene3DError,getScene3DErrorOrigin} from './sceneFrame3D.js';\n";
@@ -341,11 +341,11 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
     write('packages/engine/rendering/scene3d.ts',cpuImports+cpuValues+cpuTypeText+matrixSource+'export function createMeshGeometry3D(input: MeshGeometry3DInput): MeshGeometry3D { return createMeshGeometry3DInternal(input); }\nexport function createSceneFrame3D(input: SceneInput3D): SceneFrame3D { return createSceneFrame3DInternal(input); }\n');
     write('packages/engine/dist/rendering/scene3d.js',cpuImports+cpuValues+matrixEmitted+'export function createMeshGeometry3D(input) { return createMeshGeometry3DInternal(input); }\nexport function createSceneFrame3D(input) { return createSceneFrame3DInternal(input); }\n');
     write('packages/engine/dist/rendering/scene3d.d.ts',cpuValues+cpuTypeText+matrixDeclaration+'export declare function createMeshGeometry3D(input: MeshGeometry3DInput): MeshGeometry3D;\nexport declare function createSceneFrame3D(input: SceneInput3D): SceneFrame3D;\n');
-    const browserTypes="import type {RenderFrame2D} from '@egret/contracts';\nimport type {SceneFrame3D} from '../rendering/scene3d.js';\nimport type {WebGPUHost,WebGPUHostOptions,WebGPUHostStatus} from './webgpu.js';\nexport type SceneWebGPUHostOptions = WebGPUHostOptions;\nexport interface SceneWebGPUHostStatus { readonly host: WebGPUHostStatus; readonly pendingSceneBytes: number; readonly pendingUniformBytes: number; readonly pendingDepthBytes: number; }\nexport interface SceneWebGPUHost extends WebGPUHost { renderSceneFrame(scene: SceneFrame3D, overlay: RenderFrame2D): undefined; getSceneStatus(): SceneWebGPUHostStatus; }\n";
-    const browserImport="import {createB1WebGPUHost} from './b1.js';\n";
-    write('packages/engine/web/scene3d.ts',browserImport+browserTypes+'export function createSceneWebGPUHost(options: SceneWebGPUHostOptions): SceneWebGPUHost { return createB1WebGPUHost(options); }\n');
-    write('packages/engine/dist/web/scene3d.js',browserImport+'export function createSceneWebGPUHost(options) { return createB1WebGPUHost(options); }\n');
-    write('packages/engine/dist/web/scene3d.d.ts',browserTypes+'export declare function createSceneWebGPUHost(options: SceneWebGPUHostOptions): SceneWebGPUHost;\n');
+    const browserTypes="import type {RenderFrame2D,TexturedRenderFrame2D} from '@egret/contracts';\nimport type {SceneFrame3D} from '../rendering/scene3d.js';\nimport type {WebGPUHost,WebGPUHostOptions,WebGPUHostStatus,TexturedWebGPUHost,TexturedWebGPUHostOptions} from './webgpu.js';\nexport type {TexturedWebGPUHostOptions} from './webgpu.js';\nexport type SceneWebGPUHostOptions = WebGPUHostOptions;\nexport interface SceneWebGPUHostStatus { readonly host: WebGPUHostStatus; readonly pendingSceneBytes: number; readonly pendingUniformBytes: number; readonly pendingDepthBytes: number; }\nexport interface SceneWebGPUHost extends WebGPUHost { renderSceneFrame(scene: SceneFrame3D, overlay: RenderFrame2D): undefined; getSceneStatus(): SceneWebGPUHostStatus; }\nexport interface TexturedSceneWebGPUHost extends TexturedWebGPUHost, SceneWebGPUHost { renderSceneTexturedFrame(scene: SceneFrame3D, overlay: TexturedRenderFrame2D): undefined; }\n";
+    const browserImport="import {createB1WebGPUHost,createTexturedB1WebGPUHost} from './b1.js';\n";
+    write('packages/engine/web/scene3d.ts',browserImport+browserTypes+'export function createSceneWebGPUHost(options: SceneWebGPUHostOptions): SceneWebGPUHost { return createB1WebGPUHost(options); }\nexport function createTexturedSceneWebGPUHost(options: TexturedWebGPUHostOptions): TexturedSceneWebGPUHost { return createTexturedB1WebGPUHost(options); }\n');
+    write('packages/engine/dist/web/scene3d.js',browserImport+'export function createSceneWebGPUHost(options) { return createB1WebGPUHost(options); }\nexport function createTexturedSceneWebGPUHost(options) { return createTexturedB1WebGPUHost(options); }\n');
+    write('packages/engine/dist/web/scene3d.d.ts',browserTypes+'export declare function createSceneWebGPUHost(options: SceneWebGPUHostOptions): SceneWebGPUHost;\nexport declare function createTexturedSceneWebGPUHost(options: TexturedWebGPUHostOptions): TexturedSceneWebGPUHost;\n');
     write('node_modules/@egret/engine/scene3d.js',"export * from '../../../packages/engine/dist/rendering/scene3d.js';\n");
     write('node_modules/@egret/engine/scene3d-web.js',"export * from '../../../packages/engine/dist/web/scene3d.js';\n");
     // S3D1_FIXTURE_SCAFFOLD_END
@@ -478,6 +478,25 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
       if (before !== '') assert.equal(original.split(before).length - 1, 1, `HT1 mutation anchor is not unique: ${hitTestMutation}`);
       write(file, before === '' ? original + after : original.replace(before, after));
     }
+    // CH_POLICY_MUTATION_BEGIN
+    let combinedSceneBaseline;
+    if(combinedSceneMutation){
+      assert.equal(createHash('sha256').update(readFileSync(path.join(root,'tools/check-boundaries.mjs'))).digest('hex'),checkerHash,'exact combined checker fixture copy');
+      combinedSceneBaseline=spawnSync(process.execPath,['tools/check-boundaries.mjs'],{cwd:root,encoding:'utf8'});assert.ifError(combinedSceneBaseline.error);
+      assert.equal(combinedSceneBaseline.status,0,'combined mutation requires fresh canonical baseline first: '+combinedSceneBaseline.stdout+combinedSceneBaseline.stderr);
+      assert.match(combinedSceneBaseline.stdout,/Boundary check PASS/);
+      const edits={
+        'missing-combined-runtime':['packages/engine/dist/web/scene3d.js','export function createTexturedSceneWebGPUHost(options) { return createTexturedB1WebGPUHost(options); }\n',''],
+        'extra-combined-type':['packages/engine/dist/web/scene3d.d.ts','','export interface ExtraCombinedHostType {}\n'],
+        'old-route-combined-factory':['packages/engine/dist/web/index.d.ts','','export declare function createTexturedSceneWebGPUHost(): undefined;\n'],
+        'wrong-combined-frame':['packages/engine/dist/web/scene3d.d.ts','renderSceneTexturedFrame(scene: SceneFrame3D, overlay: TexturedRenderFrame2D): undefined;','renderSceneTexturedFrame(scene: SceneFrame3D, overlay: RenderFrame2D): undefined;'],
+      };
+      const edit=edits[combinedSceneMutation];assert.ok(edit,'finite assigned combined policy mutation');const [file,before,after]=edit;
+      const original=readFileSync(path.join(root,file),'utf8');
+      if(before!=='')assert.equal(original.split(before).length-1,1,'unique combined policy mutation anchor');
+      write(file,before===''?original+after:original.replace(before,after));
+    }
+    // CH_POLICY_MUTATION_END
     // S3D1_MUTATION_BEGIN
     let sceneComparator;
     if (scene3dMutation) {
@@ -570,6 +589,7 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
     const result = spawnSync(process.execPath, ['tools/check-boundaries.mjs'], { cwd: root, encoding: 'utf8' });
     assert.ifError(result.error);
     /* S3D1_RESULT_BEGIN */ if(sceneComparator)result.mapAdaptedPredecessor=sceneComparator; /* S3D1_RESULT_END */
+    if(combinedSceneBaseline)result.combinedSceneBaseline=combinedSceneBaseline;
     run(result);
   } finally {
     const resolved = path.resolve(root);
@@ -630,6 +650,19 @@ for(const [name,reason]of [
   });
 });
 // S3D1_TESTS_END
+
+// Each assigned control starts from its own complete legal policy fixture.
+for(const [name,reason]of [
+  ['missing-combined-runtime','webgpu/scene3d: exact runtime export surface mismatch'],
+  ['extra-combined-type','webgpu/scene3d: exact type-only export surface mismatch'],
+  ['old-route-combined-factory','web: explicit-only scene name leaked: createTexturedSceneWebGPUHost'],
+  ['wrong-combined-frame','webgpu/scene3d: canonical authoring/Host type mismatch: TexturedSceneWebGPUHost'],
+])test('combined scene host boundary rejects '+name,()=>{
+  fixture({imported:'robust-predicates',combinedSceneMutation:name},result=>{
+    assert.equal(result.combinedSceneBaseline.status,0,'fresh canonical combined baseline completed');
+    assert.equal(result.status,1);assert.ok(result.stderr.includes(reason),'assigned combined reason: '+result.stdout+result.stderr);
+  });
+});
 
 test('boundary checker admits the exact external root only in engine rendering', t => {
   t.diagnostic(`Unmodified checker SHA256 ${checkerHash}; generated minimal workspace, synthetic resolution facades, guarded cleanup.`);

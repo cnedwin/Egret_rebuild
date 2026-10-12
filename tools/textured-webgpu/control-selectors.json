@@ -135,8 +135,8 @@
         ]
       ],
       "target": "packages/engine/dist/web/WebGPUHost.js",
-      "before": "                const options = TEXTURED_OPTIONS.get(this);",
-      "after": "                const options = { ...TEXTURED_OPTIONS.get(this), pixelRatio: 1 };"
+      "before": "    preflightTextured(frame) {\n        let ownedFailure;\n        try {\n            return runOwnedPreparationScope(() => {\n                const options = TEXTURED_OPTIONS.get(this);",
+      "after": "    preflightTextured(frame) {\n        let ownedFailure;\n        try {\n            return runOwnedPreparationScope(() => {\n                const options = { ...TEXTURED_OPTIONS.get(this), pixelRatio: 1 };"
     },
     {
       "id": "C11-wrong-clear",

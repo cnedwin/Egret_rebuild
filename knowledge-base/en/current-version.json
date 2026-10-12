@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "version": "0.38.0",
+  "version": "0.39.0",
   "updatedAt": "2026-10-12",
   "title": "Egret Engine Rebuild",
-  "stage": "proposed_public_matrix_authoring",
+  "stage": "proposed_textured_scene_host_cpu_accepted_native_pending",
   "publication": "development_preview",
   "registries": {
     "requirements": "en/registry/requirements.json",
@@ -25,7 +25,7 @@
     "acceptance": "reproducible_test_reports",
     "summaryStatus": "deliverable_registry"
   },
-  "engineImplementation": "partial_independent_core_public_matrix_authoring_proposed",
+  "engineImplementation": "partial_independent_core_textured_scene_cpu_accepted_native_pending",
   "engineBenchmarksRun": false,
   "creatorTaskTestsRun": false,
   "migrationAcceptanceRun": false,
@@ -214,7 +214,7 @@
   },
   "engineeringSpecificationOnlyThisRevision": false,
   "userDesignObjectiveConfirmedThisRevision": true,
-  "newExperimentScopeThisRevision": "Historical bounded browser WebGPU acceptance at 956; current local CPU/mock/core and desktop Canvas checks; final browser WebGPU run at 1aa0248 on 2026-10-08T21:23:54.294Z observed PASS and unchanged artifacts reviewed at 9d046bf. Scoped bilingual meaning SPEC PASS; operational metadata quality, required prepush and publication remain pending. No Native SDK, physical-device/performance, full UI/3D, editor, migration or CI acceptance.",
+  "newExperimentScopeThisRevision": "An explicit shared-owner WebGPU host composes genuine opaque RGB scene and captured textured UI; CPU source/tests/types/assigned boundaries are accepted at this cutoff, while native pixels, full gates and publication are pending. No complete character/material/lighting/transparent-scene, phone/performance/native SDK or whole-product acceptance. FullSpine R020/V020 and migration R008/V006 remain OPEN.",
   "existingResearchExperimentsRerunThisRevision": false,
   "coreFrameworkImplementation": {
     "artifactRoot": "outputs/白鹭引擎核心框架原型",
@@ -264,7 +264,7 @@
   },
   "_localization": {
     "canonicalSource": "当前版本.json",
-    "canonicalSha256": "41842cd3197337a966106e7a3bfd0c12a1dd6920a2ccb2b025176cb3618de965",
+    "canonicalSha256": "1f202b71cf1e9b0b49211c7e8882666b5a34d84c29cacc479535cb4d9169d9c8",
     "role": "read_only_translation",
     "language": "en"
   },
@@ -547,7 +547,7 @@
     "contract": "en/docs/display-content-bounds-contract.md",
     "evidence": "en/docs/display-content-bounds-evidence.md"
   },
-  "latestEngineeringPreview": "0.38.0",
+  "latestEngineeringPreview": "0.39.0",
   "texturedMesh2DImplementation": {
     "version": "0.23.0",
     "status": "bounded_increment_implemented",
@@ -2731,6 +2731,163 @@
     "newGPUExecution": false,
     "fullRepositoryGate": "PENDING",
     "independentSourceAndBilingualReview": "PENDING",
+    "remoteDelivery": "PENDING"
+  },
+  "texturedSceneActualSuccessor": {
+    "engineeringLabel": "0.39.0",
+    "sourceId": "S092",
+    "deliverableId": "V043",
+    "status": "CPU_ACCEPTED_NATIVE_AND_FULL_GATES_PENDING",
+    "curationExecution": "SOURCE_ONLY_NOT_RUN",
+    "publicEntry": "@egret/engine/webgpu/scene3d",
+    "factory": "createTexturedSceneWebGPUHost",
+    "method": "renderSceneTexturedFrame",
+    "clearAlpha": 1,
+    "actualCPU": {
+      "buildExitCode": 0,
+      "combinedTests": {
+        "tests": 12,
+        "pass": 12,
+        "fail": 0,
+        "skipped": 0
+      },
+      "retainedSceneTexturedTests": {
+        "tests": 48,
+        "pass": 48,
+        "fail": 0,
+        "skipped": 0
+      },
+      "positiveTypes": {
+        "exitCode": 0,
+        "diagnostics": 0
+      },
+      "negativeTypes": {
+        "web": 8,
+        "import": 16,
+        "browserDOMFree": 15,
+        "eachExpectedExitCode": 1
+      },
+      "strictTypeGateExitCode": 0,
+      "boundaryGuardExitCode": 0,
+      "assignedBoundaryControls": {
+        "tests": 4,
+        "pass": 4,
+        "fail": 0,
+        "skipped": 0
+      },
+      "independentImplementationReviewOpenFindings": 0
+    },
+    "composition": {
+      "surfaceOwners": 1,
+      "pipelineRoles": 4,
+      "renderPasses": 2,
+      "queueSubmissions": 1,
+      "readbackAfterBothPasses": true
+    },
+    "fullBoundarySuite": {
+      "status": "INCOMPLETE_TIMEOUT",
+      "timeoutSeconds": 180
+    },
+    "mandatoryFullPrepush": "PENDING",
+    "newBrowserGPU": "NOT_RUN_AT_PREPARATION_CUTOFF",
+    "nativeAcceptance": "PENDING",
+    "publication": "PENDING",
+    "independentPublicCuration": "PENDING",
+    "phones": "NOT_RUN",
+    "performance": "NOT_MEASURED",
+    "nativeSDK": "NOT_RUN",
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "contract": "en/docs/textured-scene-host-contract.md",
+    "record": "knowledge-base/evidence/textured-scene-host-verification.json",
+    "recordStatus": "PLANNED_PENDING_FINAL_CURATION",
+    "historicalCutoffsPreserved": true,
+    "summary": "An explicit shared-owner WebGPU host composes genuine opaque RGB scene and captured textured UI; CPU source/tests/types/assigned boundaries are accepted at this cutoff, while native pixels, full gates and publication are pending.",
+    "limits": "No complete character/material/lighting/transparent-scene, phone/performance/native SDK or whole-product acceptance. FullSpine R020/V020 and migration R008/V006 remain OPEN."
+  },
+  "matrixAuthoringDeliverySuccessor": {
+    "engineeringLabel": "0.38.0",
+    "status": "ACTUAL_MERGED_MAIN_TREE_VERIFIED",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/25",
+    "sourceCommit": "49746fefa8a4fcfed998dfa11e9ebac9f4d40ef9",
+    "mergedMain": "893f1ca86af10a092066dcccdaaa16ac194efded",
+    "tree": "5960109ca14c9a53ba1cd7ba80d967e6451ad102",
+    "localRemoteMainReadbackAtUtc": "2026-10-12T06:35:44.814Z",
+    "mandatoryPushHookExitCode": 0,
+    "remoteStatusCount": 0,
+    "remoteCheckCount": 0,
+    "remoteCIPassClaimed": false,
+    "historicalPendingCutoffsRetained": true,
+    "summary": "Actual recorded 0.38.0 PR25/Main delivery supersedes the earlier pending delivery cutoff without changing historical preparation or acceptance records; remote CI PASS is not claimed."
+  },
+  "texturedSceneBrowserActualSuccessor": {
+    "status": "ACTUAL_TWO_FRAME_BROWSER_PIXELS_AND_COOPERATIVE_CLEANUP_PASS",
+    "record": "knowledge-base/evidence/textured-scene-host-verification.json",
+    "environment": {
+      "node": "v24.19.0",
+      "browserVersion": "155.0.4283.45",
+      "channel": "msedge",
+      "headless": true,
+      "additionalFlags": [],
+      "deviceScaleFactor": 1
+    },
+    "observations": 2,
+    "fixedPixels": 24,
+    "pixelsPerObservation": 12,
+    "bytesPerObservation": 16384,
+    "rawBuffers": [
+      {
+        "path": "knowledge-base/evidence/textured-scene-host/CHN01.rgba",
+        "bytes": 16384,
+        "sha256": "3b574bfecd5cb364e5aed4f2cf7ee44676af5dc82416c451f7b69b1068ec3a04",
+        "frameId": 1,
+        "serial": 1,
+        "width": 64,
+        "height": 64,
+        "format": "rgba8unorm"
+      },
+      {
+        "path": "knowledge-base/evidence/textured-scene-host/CHN02.rgba",
+        "bytes": 16384,
+        "sha256": "2c3f1bd9cf0b03387638b0211ac7f13607cc54e14dba3d1e3ca20224b9527ada",
+        "frameId": 2,
+        "serial": 2,
+        "width": 64,
+        "height": 64,
+        "format": "rgba8unorm"
+      }
+    ],
+    "sensitivity": {
+      "id": "CHNC01",
+      "status": "EXPECTED_PIXEL_REJECTION",
+      "x": 34,
+      "y": 32,
+      "expected": [
+        0,
+        255,
+        0,
+        255
+      ],
+      "actual": [
+        255,
+        255,
+        0,
+        255
+      ],
+      "rendererMutation": "none",
+      "newBrowserFrames": 0
+    },
+    "nativeCleanup": "PASS",
+    "cooperativeBrowserCleanup": "PASS",
+    "identitiesStable": true,
+    "artifactsStable": true,
+    "osProcessRetirement": "UNBOUND",
+    "browserExecutableIdentity": "UNBOUND",
+    "phonePerformance": "NOT_MEASURED",
+    "fullSpineR020V020": "OPEN",
+    "complete3D": "OPEN",
+    "mandatoryFullPrepush": "PENDING",
+    "mandatoryPushHook": "PENDING",
     "remoteDelivery": "PENDING"
   }
 }

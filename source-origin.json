@@ -595,8 +595,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/CHANGELOG.md",
-      "bytes": 52137,
-      "sha256": "30cc3520e92edffc0ffba67daf4ff476a145e808717e91c9cb1f21882812a424",
+      "bytes": 54487,
+      "sha256": "536a75eef6aa6fdc8a6b6f5161aceb8ef555cc5a4d024f593c99d01657b8c295",
       "identityHistory": [
         {
           "bytes": 25611,
@@ -669,6 +669,16 @@
           "bytes": 50257,
           "sha256": "58435ee2f58ef1d419cd785f50099bc1eea04453d3d2b1303ed01205160338f5",
           "scope": "Preserved identity before public matrix authoring 0.38.0."
+        },
+        {
+          "bytes": 52137,
+          "sha256": "30cc3520e92edffc0ffba67daf4ff476a145e808717e91c9cb1f21882812a424",
+          "scope": "Preserved identity before textured scene host 0.39.0."
+        },
+        {
+          "bytes": 53786,
+          "sha256": "877b54eb6c8bb73c0a3576c7bb6639f5a98d876cd8041163da19fa07b9902249",
+          "scope": "Preserved identity before actual browser successor curation."
         }
       ]
     },
@@ -759,8 +769,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 25831,
-      "sha256": "5366ff4755d0ea9f3a152e9abb0347c1854287c8b9c6f169f868e92e037d35fe",
+      "bytes": 28179,
+      "sha256": "c97539638f99aa58ed006f83f3ad2f1d9bea689d6d1af972b2713956fd5330e6",
       "identityHistory": [
         {
           "bytes": 12315,
@@ -801,6 +811,16 @@
           "bytes": 23953,
           "sha256": "0d3579477e69d51d6aeb0ca959949ab81f13489f9aedfa8c485dc9f9ec07b131",
           "scope": "Preserved identity before public matrix authoring 0.38.0."
+        },
+        {
+          "bytes": 25831,
+          "sha256": "5366ff4755d0ea9f3a152e9abb0347c1854287c8b9c6f169f868e92e037d35fe",
+          "scope": "Preserved identity before textured scene host 0.39.0."
+        },
+        {
+          "bytes": 27478,
+          "sha256": "49ef4d2ddbac5c907031988af97e31d3f36c77f46dace568951c84e285a0406b",
+          "scope": "Preserved identity before actual browser successor curation."
         }
       ]
     },
@@ -1313,8 +1333,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/README.md",
-      "bytes": 23238,
-      "sha256": "07cd4c42aa428847811c81b4f720c304e6ad3fe2a8283c7ab56be3391d9f8318",
+      "bytes": 25588,
+      "sha256": "008ebbb9ce5d6f304eb118392177581c7b034e27598a8b86cec415f7dd3c8e2d",
       "identityHistory": [
         {
           "bytes": 6319,
@@ -1382,14 +1402,24 @@
           "bytes": 21358,
           "sha256": "bcbaaf5e24b8bfa3172dc7517191a08288a5789dc4239a6f9236484d5e98cf5e",
           "scope": "Preserved identity before public matrix authoring 0.38.0."
+        },
+        {
+          "bytes": 23238,
+          "sha256": "07cd4c42aa428847811c81b4f720c304e6ad3fe2a8283c7ab56be3391d9f8318",
+          "scope": "Preserved identity before textured scene host 0.39.0."
+        },
+        {
+          "bytes": 24887,
+          "sha256": "8bdd39cdbe5b02d9f3e822cb8303d938d8759465ddbc8ba34c1f69a524be2d82",
+          "scope": "Preserved identity before actual browser successor curation."
         }
       ]
     },
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/registry/交付.json",
-      "bytes": 120546,
-      "sha256": "95061f28fd93d9419694e6bc3a70cb8efe1cc1f76189c9adbd1f7f2b8174cc68",
+      "bytes": 124588,
+      "sha256": "dd3f9bc0fbcdba3e094fc3d41709f730e0f994bc2c051295d41d61695bdb0bcd",
       "identityHistory": [
         {
           "bytes": 50664,
@@ -1472,6 +1502,16 @@
           "bytes": 116333,
           "sha256": "fa66344bee66ebd1f8eeeb5e1e3c0eeea2291bbed53fa3ae0596ba4bdaae3b7a",
           "scope": "Preserved identity before public matrix authoring 0.38.0."
+        },
+        {
+          "bytes": 120546,
+          "sha256": "95061f28fd93d9419694e6bc3a70cb8efe1cc1f76189c9adbd1f7f2b8174cc68",
+          "scope": "Preserved identity before textured scene host 0.39.0."
+        },
+        {
+          "bytes": 125633,
+          "sha256": "ceab72878927b3fe0bbfa744bdce795779f9833247d4367e19e97438f6685e26",
+          "scope": "Preserved identity before actual browser successor curation."
         }
       ]
     },
@@ -1502,8 +1542,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/registry/来源.json",
-      "bytes": 134249,
-      "sha256": "78b5e01c90c805e9dd7b16bd23f8056770c1d8e25526858a390365c4b3369c3d",
+      "bytes": 138413,
+      "sha256": "194b207ff16a37cb57b50c51b70faa6901868bf7787d1483511970edb9fcfc1b",
       "identityHistory": [
         {
           "bytes": 74667,
@@ -1586,14 +1626,24 @@
           "bytes": 130497,
           "sha256": "d839a2120fe3830e47f6d1c4bb4f7657b97967520722960e237381324e08b7c1",
           "scope": "Preserved identity before public matrix authoring 0.38.0."
+        },
+        {
+          "bytes": 134249,
+          "sha256": "78b5e01c90c805e9dd7b16bd23f8056770c1d8e25526858a390365c4b3369c3d",
+          "scope": "Preserved identity before textured scene host 0.39.0."
+        },
+        {
+          "bytes": 139192,
+          "sha256": "0a61af92631fc317d32484d684a759f7fecaf255f351140c2acadf4415e6b561",
+          "scope": "Preserved identity before actual browser successor curation."
         }
       ]
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/registry/需求.json",
-      "bytes": 17108,
-      "sha256": "4b5130fd87959c7b9000c49c5be748dbaa0aebd6be68e124a1caf4ea41bef69f",
+      "bytes": 21656,
+      "sha256": "2f6df54a73867a90abea5b0923802f6125741894866949d38b7c78650581fd78",
       "identityHistory": [
         {
           "bytes": 13892,
@@ -1609,6 +1659,16 @@
           "bytes": 15321,
           "sha256": "d7bc50726fed150cf1f543da6cefe2cfcc4d1ea9b7b8d33b178d00c25da3b5d1",
           "scope": "Preserved identity before public matrix authoring 0.38.0."
+        },
+        {
+          "bytes": 17108,
+          "sha256": "4b5130fd87959c7b9000c49c5be748dbaa0aebd6be68e124a1caf4ea41bef69f",
+          "scope": "Preserved identity before textured scene host 0.39.0."
+        },
+        {
+          "bytes": 20413,
+          "sha256": "1cfcc4467ac65ba556f579e42294ca9b988ceee8811be9e33c8f279f300f0230",
+          "scope": "Preserved identity before actual browser successor curation."
         }
       ]
     },
@@ -1639,8 +1699,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/当前版本.json",
-      "bytes": 105468,
-      "sha256": "41842cd3197337a966106e7a3bfd0c12a1dd6920a2ccb2b025176cb3618de965",
+      "bytes": 107873,
+      "sha256": "1f202b71cf1e9b0b49211c7e8882666b5a34d84c29cacc479535cb4d9169d9c8",
       "identityHistory": [
         {
           "bytes": 31425,
@@ -1718,6 +1778,16 @@
           "bytes": 102390,
           "sha256": "6fc59c023e4f620feb8a3a88e102b912b97035109fe24c1e913a89e5ecb6f6b9",
           "scope": "Preserved identity before public matrix authoring 0.38.0."
+        },
+        {
+          "bytes": 105468,
+          "sha256": "41842cd3197337a966106e7a3bfd0c12a1dd6920a2ccb2b025176cb3618de965",
+          "scope": "Preserved identity before textured scene host 0.39.0."
+        },
+        {
+          "bytes": 108753,
+          "sha256": "889b45a3849fc468e46355e46bfcc645a48ef97b8581974c698e4d91f0c9caa9",
+          "scope": "Preserved identity before actual browser successor curation."
         }
       ]
     },
@@ -1754,8 +1824,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/CHANGELOG.md",
-      "bytes": 61150,
-      "sha256": "65c3bbbcb83119c55b17eb81ce0cdcad407eeea4b19e61cdac9431d561ddfdb6",
+      "bytes": 63707,
+      "sha256": "f0853643a08f125199c9768f40835806577d05a1919cc4c6575a9bce784c6735",
       "identityHistory": [
         {
           "bytes": 31389,
@@ -1828,6 +1898,16 @@
           "bytes": 59035,
           "sha256": "b372af2b8a6e3553453401674a0e4e69fbaafd9e69bdbd25195945dd3d53895d",
           "scope": "Preserved identity before public matrix authoring 0.38.0."
+        },
+        {
+          "bytes": 61150,
+          "sha256": "65c3bbbcb83119c55b17eb81ce0cdcad407eeea4b19e61cdac9431d561ddfdb6",
+          "scope": "Preserved identity before textured scene host 0.39.0."
+        },
+        {
+          "bytes": 62959,
+          "sha256": "0b198ae56d890ff2e7891018671a9dcf966d5da46d0b69caa30906daecd068d0",
+          "scope": "Preserved identity before actual browser successor curation."
         }
       ]
     },
@@ -1840,8 +1920,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/current-version.json",
-      "bytes": 106227,
-      "sha256": "b99934a8c0ac375a3384ab48a21501a6c14f1202c13c9c807ef08f479489c845",
+      "bytes": 108705,
+      "sha256": "75699e54fd806feda7bfa476b898a23efb830f870990b774a01a62b6294dad5c",
       "identityHistory": [
         {
           "bytes": 31946,
@@ -1919,6 +1999,16 @@
           "bytes": 103094,
           "sha256": "57a19c3161b95db3a031a97d4ac7e41f419518dfc5110d31357b435ada0f5c23",
           "scope": "Preserved identity before public matrix authoring 0.38.0."
+        },
+        {
+          "bytes": 106227,
+          "sha256": "b99934a8c0ac375a3384ab48a21501a6c14f1202c13c9c807ef08f479489c845",
+          "scope": "Preserved identity before textured scene host 0.39.0."
+        },
+        {
+          "bytes": 109591,
+          "sha256": "08d28cd6f3b4b76c455dd7f47161930f68733bfa0b18d04293e12590b5813575",
+          "scope": "Preserved identity before actual browser successor curation."
         }
       ]
     },
@@ -2051,8 +2141,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-progress.md",
-      "bytes": 29049,
-      "sha256": "d320ff6cbbb91f0eb74d4b5ec4c53b8c19af1739d509a24e5a9b4003c9d9dd14",
+      "bytes": 31604,
+      "sha256": "0aff2501056e0f2f119e67ad18719b3ce19912f065367ca17aee301a822c1936",
       "identityHistory": [
         {
           "bytes": 14004,
@@ -2093,6 +2183,16 @@
           "bytes": 26936,
           "sha256": "8268f300a74cde2f872898bef295596fe3f9c25ea947814c6a660e6b11d25102",
           "scope": "Preserved identity before public matrix authoring 0.38.0."
+        },
+        {
+          "bytes": 29049,
+          "sha256": "d320ff6cbbb91f0eb74d4b5ec4c53b8c19af1739d509a24e5a9b4003c9d9dd14",
+          "scope": "Preserved identity before textured scene host 0.39.0."
+        },
+        {
+          "bytes": 30856,
+          "sha256": "2f32de741e655e7dd366c3600e674f23cc829381dd0fe20326fa17e07c8c0630",
+          "scope": "Preserved identity before actual browser successor curation."
         }
       ]
     },
@@ -2557,8 +2657,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/README.md",
-      "bytes": 26137,
-      "sha256": "568282686eebdf3151f44e6156411353fce1673e52f06aea1089734e5008b4c2",
+      "bytes": 28694,
+      "sha256": "cc10b49cf0600390428c77d4977fb478a6f863cff9f897013aba33390784b8b4",
       "identityHistory": [
         {
           "bytes": 7397,
@@ -2631,6 +2731,16 @@
           "bytes": 24022,
           "sha256": "ff6d8e31a5fcda99f1a29012e723d136361198d5fec5da33947f8b9da9de0c84",
           "scope": "Preserved identity before public matrix authoring 0.38.0."
+        },
+        {
+          "bytes": 26137,
+          "sha256": "568282686eebdf3151f44e6156411353fce1673e52f06aea1089734e5008b4c2",
+          "scope": "Preserved identity before textured scene host 0.39.0."
+        },
+        {
+          "bytes": 27946,
+          "sha256": "50292519985183ce9d6c13867a63646dbeedb72051b7b99f562b8b2264dc37f1",
+          "scope": "Preserved identity before actual browser successor curation."
         }
       ]
     },
@@ -2655,8 +2765,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/registry/deliverables.json",
-      "bytes": 125974,
-      "sha256": "977cfc186382f71a61f23f4316719db0cc8e36e6802ffb4e2abefc911ec21e0b",
+      "bytes": 130113,
+      "sha256": "82c8f055f1ea68259f91a90447dbbf718ad8f1e85d9ec5830910367e285b5880",
       "identityHistory": [
         {
           "bytes": 54446,
@@ -2744,6 +2854,16 @@
           "bytes": 121621,
           "sha256": "a1178c599073f70c7f23c6ab52625879fbb370366d01818a6523ae0431c2e995",
           "scope": "Preserved identity before public matrix authoring 0.38.0."
+        },
+        {
+          "bytes": 125974,
+          "sha256": "977cfc186382f71a61f23f4316719db0cc8e36e6802ffb4e2abefc911ec21e0b",
+          "scope": "Preserved identity before textured scene host 0.39.0."
+        },
+        {
+          "bytes": 131164,
+          "sha256": "c794ad9deba08cc88073e656ae664f743fdb6dedcbef10cf22d24e5a3dcace7d",
+          "scope": "Preserved identity before actual browser successor curation."
         }
       ]
     },
@@ -2756,8 +2876,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/registry/requirements.json",
-      "bytes": 19275,
-      "sha256": "04c8fcee7a834565182fa4dadb0159d24df3592f3ce1c2b0efbaee53107ae0ce",
+      "bytes": 23874,
+      "sha256": "573c071bd0a60396fbcb4511c817f64d010dede6ff526e4a42afb130cc2c419f",
       "identityHistory": [
         {
           "bytes": 15989,
@@ -2773,14 +2893,24 @@
           "bytes": 17424,
           "sha256": "342c6eaa0633fe8395a9f92c99fb5850d2f8c29d108de3823ff65ab7a8f77be2",
           "scope": "Preserved identity before public matrix authoring 0.38.0."
+        },
+        {
+          "bytes": 19275,
+          "sha256": "04c8fcee7a834565182fa4dadb0159d24df3592f3ce1c2b0efbaee53107ae0ce",
+          "scope": "Preserved identity before textured scene host 0.39.0."
+        },
+        {
+          "bytes": 22637,
+          "sha256": "a01c03a3843818ad6c3788b92681ae23fe07a1f1aca669143e087b42132025d1",
+          "scope": "Preserved identity before actual browser successor curation."
         }
       ]
     },
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/registry/sources.json",
-      "bytes": 143338,
-      "sha256": "6b325fd19713e0a27505093cd9c0a996a55a03540bb7d91bdca27d61114fbb43",
+      "bytes": 147583,
+      "sha256": "0de43c6bfc8628320d7ddbf23d5a20e1fc95e461b5bd17f8b73488f8b8e66372",
       "identityHistory": [
         {
           "bytes": 82270,
@@ -2863,6 +2993,16 @@
           "bytes": 139474,
           "sha256": "09569f5c35fcbe518f71ebf16a88901cb5344d2c4821f0b2ba29e41e0a65f73d",
           "scope": "Preserved identity before public matrix authoring 0.38.0."
+        },
+        {
+          "bytes": 143338,
+          "sha256": "6b325fd19713e0a27505093cd9c0a996a55a03540bb7d91bdca27d61114fbb43",
+          "scope": "Preserved identity before textured scene host 0.39.0."
+        },
+        {
+          "bytes": 148368,
+          "sha256": "daf0213079f9ae5938f7f57687d731f1e5d9bc39093cc7c12378ab504844d7fc",
+          "scope": "Preserved identity before actual browser successor curation."
         }
       ]
     },
@@ -2893,8 +3033,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/README.md",
-      "bytes": 10161,
-      "sha256": "4966f84ecbd1f4b6312a8e404cc044f1278fe7379fe7db0de9f16938b33fb7c2",
+      "bytes": 12718,
+      "sha256": "063929686b783853a77ed43f2bed35dac81ff454654fb5f491dbd6a85c5ec97a",
       "identityHistory": [
         {
           "bytes": 899,
@@ -2910,14 +3050,24 @@
           "bytes": 8059,
           "sha256": "bcc9088e015cbb959b94da49f40bf6dfe6d01dd5cef8c62810263dec3e0ed746",
           "scope": "Preserved identity before public matrix authoring 0.38.0."
+        },
+        {
+          "bytes": 10161,
+          "sha256": "4966f84ecbd1f4b6312a8e404cc044f1278fe7379fe7db0de9f16938b33fb7c2",
+          "scope": "Preserved identity before textured scene host 0.39.0."
+        },
+        {
+          "bytes": 11970,
+          "sha256": "3a2c85cc892a077a32817566cb683e661a02bbd1ca65d0714284745e54f3db7a",
+          "scope": "Preserved identity before actual browser successor curation."
         }
       ]
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/README.zh-CN.md",
-      "bytes": 9548,
-      "sha256": "0005200518461883286e74e760ef2c7276d9c6b4e2076a7a6aaee6b0953e83ca",
+      "bytes": 11899,
+      "sha256": "7f4355b6a29cba1dc4309b389ef780e2b58dd56ae2bbf39d25327b6b89eba2bf",
       "identityHistory": [
         {
           "bytes": 637,
@@ -2933,6 +3083,16 @@
           "bytes": 7680,
           "sha256": "0b09cf72de08bbb3abbd2a534cafe13f0c45dc2fd33363dc6a3ed2af331de50c",
           "scope": "Preserved identity before public matrix authoring 0.38.0."
+        },
+        {
+          "bytes": 9548,
+          "sha256": "0005200518461883286e74e760ef2c7276d9c6b4e2076a7a6aaee6b0953e83ca",
+          "scope": "Preserved identity before textured scene host 0.39.0."
+        },
+        {
+          "bytes": 11198,
+          "sha256": "711d2877424be31534d52a3518b97554a4c3d7b8cacee2ef22356221349de66b",
+          "scope": "Preserved identity before actual browser successor curation."
         }
       ]
     },
@@ -2967,8 +3127,8 @@
     {
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "path": "localization.json",
-      "sha256": "386317f9269895bc877ba3b86b358d4fc6a78aab45b6eaf25649b5448c40aef0",
-      "bytes": 208322,
+      "sha256": "1236453b000fce416da1d796c24f7ab55626945ca0ec12904da6d4a06c7db5bb",
+      "bytes": 210363,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -3062,6 +3222,21 @@
           "bytes": 207886,
           "sha256": "5a24fabcc78a2249a41b8c09be9a460778f9aaa33c2f966d129d5449bedbe4fc",
           "scope": "Preserved identity before public matrix authoring 0.38.0."
+        },
+        {
+          "bytes": 208322,
+          "sha256": "386317f9269895bc877ba3b86b358d4fc6a78aab45b6eaf25649b5448c40aef0",
+          "scope": "Preserved identity before textured scene host 0.39.0."
+        },
+        {
+          "bytes": 209393,
+          "sha256": "aeecfb980bfcd2ede801abe5fc36fffa1fdf74ade660d252bf8fbe9d79e2093c",
+          "scope": "Preserved identity before actual browser successor curation."
+        },
+        {
+          "bytes": 210363,
+          "sha256": "2c4db94b04650b23d941943f2b267dcd627a2c2395876c537e0359a70d7e7e46",
+          "scope": "Preserved before exact static pin assertion successor."
         }
       ]
     },
@@ -3392,11 +3567,18 @@
     },
     {
       "path": "packages/engine/web/WebGPUHost.ts",
-      "sha256": "2679e634e35c3841daa499f59cb3279087b33245267af187ae78995a29019c72",
-      "bytes": 74888,
+      "sha256": "c0e9555e692e19d42ecc0bf443764c5c301d6f76febcf4d16f57c17853254e49",
+      "bytes": 80902,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousLayoutPath": "packages/engine/web/WebGPUHost.ts",
-      "previousLayoutSha256": "f07f59068f1c65f1247500ca8665747bb957d99e07286b16e3d6d08be3da51bc"
+      "previousLayoutSha256": "f07f59068f1c65f1247500ca8665747bb957d99e07286b16e3d6d08be3da51bc",
+      "identityHistory": [
+        {
+          "bytes": 74888,
+          "sha256": "2679e634e35c3841daa499f59cb3279087b33245267af187ae78995a29019c72",
+          "scope": "Preserved identity before textured scene host 0.39.0."
+        }
+      ]
     },
     {
       "path": "packages/engine/web/webgpuLifetime.ts",
@@ -3759,8 +3941,8 @@
     {
       "path": "README.md",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
-      "sha256": "fc712ae50cc8b3d796c7d450f8c4a07707c94aa1c392e5d1b9d336875c0d7f30",
-      "bytes": 58541,
+      "sha256": "c7ece775e2d9e127c4b4d79ef7b488caf21ef824d283f61fcc4edf9f58d86869",
+      "bytes": 63448,
       "previousRevisionSha256": "199156443d499d5012f1224263a1a3ee9994e5ba38ee067bceeb2ad865ae8167",
       "previousLayoutPath": "README.en.md",
       "previousLayoutSha256": "f40ec41ca699cd0b9138fbdf4a268080038f583ae11e78c4f37093a6b7095f57",
@@ -3841,13 +4023,23 @@
           "bytes": 54551,
           "sha256": "7dd5301730011fd21081176aa6616aa9244de1b60cc0944fa072372b6570fd67",
           "scope": "Preserved identity before public matrix authoring 0.38.0."
+        },
+        {
+          "bytes": 58541,
+          "sha256": "fc712ae50cc8b3d796c7d450f8c4a07707c94aa1c392e5d1b9d336875c0d7f30",
+          "scope": "Preserved identity before textured scene host 0.39.0."
+        },
+        {
+          "bytes": 61998,
+          "sha256": "c95e02a61dc4d19396c71968b20c42f89ab301f397614b157499967684234c3b",
+          "scope": "Preserved identity before actual browser successor curation."
         }
       ]
     },
     {
       "path": "README.zh-CN.md",
-      "sha256": "c58142965db3f5eaa022cea2ee0b3139b7c9a32e361012efb29878de580c0c36",
-      "bytes": 57642,
+      "sha256": "dd06718307875574b034fa49804ae0fc116cf126625eb5a1283f422bdb164828",
+      "bytes": 62549,
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "previousPublicSha256": "7ec80b8575a700b6a2628eb0322f2e770bb2284859f68ec5e0eb6530154a6699",
       "previousRevisionSha256": "7a1d72019db7cb6075d7c3a3bd4075f7c069d527b6e31d992a69333cb126b6c3",
@@ -3935,6 +4127,16 @@
           "bytes": 53652,
           "sha256": "ecee2d0e32dbb2485befbe5a57c74f68a143a1b61f3e513d8e0893cf5f4e85af",
           "scope": "Preserved identity before public matrix authoring 0.38.0."
+        },
+        {
+          "bytes": 57642,
+          "sha256": "c58142965db3f5eaa022cea2ee0b3139b7c9a32e361012efb29878de580c0c36",
+          "scope": "Preserved identity before textured scene host 0.39.0."
+        },
+        {
+          "bytes": 61099,
+          "sha256": "d57535692b25df1cf8ed7def435c31080f0db04ce7a6882fbe85a3d4de9bc31a",
+          "scope": "Preserved identity before actual browser successor curation."
         }
       ]
     },
@@ -3958,8 +4160,8 @@
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "bytes": 96382,
-      "sha256": "c9710ab953aa40733eb4f3c15057d60acd31fd4b0c1ee0b232b7e1bba197cb65",
+      "bytes": 99957,
+      "sha256": "2b85c3b0968a05204217143df4502da2abde19c3600327314c7a961cbf3da70f",
       "originRole": "Independent first-party Egret explicit-area picking, bounded verification or paired documentation; CPU and finite-policy evidence with separate browser and whole-engine admission.",
       "identityHistory": [
         {
@@ -3986,6 +4188,11 @@
           "bytes": 95134,
           "sha256": "6127919c9de2ea0a5a8ee3ec568ae8ebdfd04cd81e2884a3bb6ddb9170f50a8e",
           "scope": "Preserved identity before finite Matrix public-port fixture integration correction."
+        },
+        {
+          "bytes": 96382,
+          "sha256": "c9710ab953aa40733eb4f3c15057d60acd31fd4b0c1ee0b232b7e1bba197cb65",
+          "scope": "Preserved identity before textured scene host 0.39.0."
         }
       ]
     },
@@ -4245,8 +4452,8 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "bytes": 124481,
-      "sha256": "5016a72a02da03e759a04b622b775cf1185feba7295f830f0f6797d0774942ad",
+      "bytes": 127414,
+      "sha256": "6badce56ac7660eedf3dda63010bea4334edab1fb7cf104b38fc823956648873",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "identityHistory": [
         {
@@ -4273,6 +4480,11 @@
           "bytes": 123293,
           "sha256": "10bb58ece2aef2325fa56ed64b022c27d97c545e8703997c319f38c5b41de6c4",
           "scope": "Preserved identity before public matrix authoring 0.38.0."
+        },
+        {
+          "bytes": 124481,
+          "sha256": "5016a72a02da03e759a04b622b775cf1185feba7295f830f0f6797d0774942ad",
+          "scope": "Preserved identity before textured scene host 0.39.0."
         }
       ]
     },
@@ -4765,8 +4977,15 @@
     {
       "path": "packages/engine/web/b1.ts",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 2366,
-      "sha256": "9b3e02b47e9328a106783f2ea88baca2066f5bf66b6c66113dd5952872c833b7"
+      "bytes": 2883,
+      "sha256": "18d37f790210bf99797e8832d670ab40cd923c5d67ba0eaf35a9501ae13bbf63",
+      "identityHistory": [
+        {
+          "bytes": 2366,
+          "sha256": "9b3e02b47e9328a106783f2ea88baca2066f5bf66b6c66113dd5952872c833b7",
+          "scope": "Preserved identity before textured scene host 0.39.0."
+        }
+      ]
     },
     {
       "path": "packages/engine/web/canvasImageProjection.ts",
@@ -4783,8 +5002,15 @@
     {
       "path": "packages/engine/web/prepareTexturedSubmission2D.ts",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 12147,
-      "sha256": "39863905140eee9af2c4739d407707901a6397a6cb17a91334fa56d3dfdab9bc"
+      "bytes": 15910,
+      "sha256": "09dd19bff3b2262dbbfe6cb7b478579e31cc2d579f6d27c328eb9de259b8d89b",
+      "identityHistory": [
+        {
+          "bytes": 12147,
+          "sha256": "39863905140eee9af2c4739d407707901a6397a6cb17a91334fa56d3dfdab9bc",
+          "scope": "Preserved identity before textured scene host 0.39.0."
+        }
+      ]
     },
     {
       "path": "packages/engine/web/texturedWebGPUOptions.ts",
@@ -5061,12 +5287,17 @@
       "path": "tests/b1-webgpu-verifier.test.mjs",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
       "bytes": 21544,
-      "sha256": "d2c048b56c196ff0b15305a8edb08fcaae0cbe86307b32ccbec3130440af4140",
+      "sha256": "29d5908d78bb7f7f0cd5a241daa3053711bd44b72cd205529a6689c5ab29b530",
       "identityHistory": [
         {
           "bytes": 17519,
           "sha256": "179e1eebdfa48a9b8d62cbe548b3732d6263d6a788ef2adf27f4aa78ea41c9a5",
           "scope": "Preserved identity before the 0.32 public scene3d preparation."
+        },
+        {
+          "bytes": 21544,
+          "sha256": "d2c048b56c196ff0b15305a8edb08fcaae0cbe86307b32ccbec3130440af4140",
+          "scope": "Preserved before exact static pin assertion successor."
         }
       ]
     },
@@ -5632,8 +5863,15 @@
     {
       "path": "tools/textured-webgpu/control-selectors.json",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 6815,
-      "sha256": "33b8b2e83a5d5ff65c9852c725f8de3b07a65eac17a0e28f94e29f114533de05"
+      "bytes": 7069,
+      "sha256": "8db75218bf7d44f76880a1e8d572dd40246eb0a47a53bb3e9eaa85aa97642e1c",
+      "identityHistory": [
+        {
+          "bytes": 6815,
+          "sha256": "33b8b2e83a5d5ff65c9852c725f8de3b07a65eac17a0e28f94e29f114533de05",
+          "scope": "Preserved before exact verifier compatibility successor."
+        }
+      ]
     },
     {
       "path": "tools/textured-webgpu/fixtures.mjs",
@@ -5680,8 +5918,8 @@
     {
       "path": "tools/verify-webgpu-b1.mjs",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 48332,
-      "sha256": "b9f964458887c23411d92ee91441337ce3559ec7a8e91b9697a1737246719a3f",
+      "bytes": 48355,
+      "sha256": "4cf10a34ce7f00cd44a835b81a1491a09de4e1eaf97d93b0952dc4aa784abc30",
       "identityHistory": [
         {
           "bytes": 38603,
@@ -5697,6 +5935,11 @@
           "bytes": 48108,
           "sha256": "075b34b38bd46c666c461ca8a19b2a4b5b2318b3680d5fbf9b1e6224a8622652",
           "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+        },
+        {
+          "bytes": 48332,
+          "sha256": "b9f964458887c23411d92ee91441337ce3559ec7a8e91b9697a1737246719a3f",
+          "scope": "Preserved identity before actual browser successor curation."
         }
       ]
     },
@@ -6764,9 +7007,16 @@
     },
     {
       "path": "packages/engine/web/scene3d.ts",
-      "bytes": 903,
-      "sha256": "5a85d630b66f0b26ccc2588105a923d050f56ee34f07d00524f84b5dbc221739",
-      "originRole": "First-party independent public scene3d implementation, bounded verification or paired public reading/derived register."
+      "bytes": 1484,
+      "sha256": "f1e659b0eee592caf9eef33974e5468c802884d251c933c7df9ade108fb2d7b3",
+      "originRole": "First-party independent public scene3d implementation, bounded verification or paired public reading/derived register.",
+      "identityHistory": [
+        {
+          "bytes": 903,
+          "sha256": "5a85d630b66f0b26ccc2588105a923d050f56ee34f07d00524f84b5dbc221739",
+          "scope": "Preserved identity before textured scene host 0.39.0."
+        }
+      ]
     },
     {
       "path": "tests/scene3d-public.test.mjs",
@@ -6802,9 +7052,16 @@
     },
     {
       "path": "tests/types/scene3d-web-positive.ts",
-      "bytes": 1481,
-      "sha256": "9def46be4b552e2a64b785b7e8a65a146b04dae74caf14ed5ada4f3b5309ebda",
-      "originRole": "First-party independent public scene3d implementation, bounded verification or paired public reading/derived register."
+      "bytes": 5565,
+      "sha256": "d06f49ddd49272f7f73d27de6fca259615dd9fccdfbc7dd0fd07f2482083f6ef",
+      "originRole": "First-party independent public scene3d implementation, bounded verification or paired public reading/derived register.",
+      "identityHistory": [
+        {
+          "bytes": 1481,
+          "sha256": "9def46be4b552e2a64b785b7e8a65a146b04dae74caf14ed5ada4f3b5309ebda",
+          "scope": "Preserved identity before textured scene host 0.39.0."
+        }
+      ]
     },
     {
       "path": "tests/types/scene3d-negative.ts",
@@ -6814,20 +7071,32 @@
     },
     {
       "path": "tests/types/scene3d-web-negative.ts",
-      "bytes": 440,
-      "sha256": "b82f7409b95dcaaba7c0e151582d5c4feda3b6c3a81908098cebbb2c0887b72a",
-      "originRole": "First-party independent public scene3d implementation, bounded verification or paired public reading/derived register."
+      "bytes": 1654,
+      "sha256": "2397d6b05febeb7bda9cf16bd71afcb7b2dc5267443490bff8015b02c09c4b27",
+      "originRole": "First-party independent public scene3d implementation, bounded verification or paired public reading/derived register.",
+      "identityHistory": [
+        {
+          "bytes": 440,
+          "sha256": "b82f7409b95dcaaba7c0e151582d5c4feda3b6c3a81908098cebbb2c0887b72a",
+          "scope": "Preserved identity before textured scene host 0.39.0."
+        }
+      ]
     },
     {
       "path": "tests/types/scene3d-import-negative.ts",
-      "bytes": 1148,
-      "sha256": "1b5365dc6901514e96db851eec8c47375b6bc5da922d167678cb5d8a75fa5b0c",
+      "bytes": 1844,
+      "sha256": "174ebe06bda15736b4edecd153da234aa03360b80fd7d86d480f4c5516ab53a3",
       "originRole": "First-party independent public scene3d implementation, bounded verification or paired public reading/derived register.",
       "identityHistory": [
         {
           "bytes": 1158,
           "sha256": "a56c248ca16f720c0e65611997d009178c73b41a8f7e5c3c57d9ec33d1395713",
           "scope": "Preserved identity before public matrix authoring 0.38.0."
+        },
+        {
+          "bytes": 1148,
+          "sha256": "1b5365dc6901514e96db851eec8c47375b6bc5da922d167678cb5d8a75fa5b0c",
+          "scope": "Preserved identity before textured scene host 0.39.0."
         }
       ]
     },
@@ -6839,14 +7108,19 @@
     },
     {
       "path": "tests/types/scene3d-diagnostic-expectations.json",
-      "bytes": 8506,
-      "sha256": "edf128a7473e7ee8d644cd6505b11e477321d1ccf93200e03f63bdfb44715e18",
+      "bytes": 10358,
+      "sha256": "5d399ffd1e64fbdf790642f0f5832f629cc8e18e0cf15af907c8be994fefe0d9",
       "originRole": "First-party independent public scene3d implementation, bounded verification or paired public reading/derived register.",
       "identityHistory": [
         {
           "bytes": 8508,
           "sha256": "5a3b838e6355bd414ed2f6f6cc63e2f24d3f88ce2359ccf1866bc9a14f894ad9",
           "scope": "Preserved identity before public matrix authoring 0.38.0."
+        },
+        {
+          "bytes": 8506,
+          "sha256": "edf128a7473e7ee8d644cd6505b11e477321d1ccf93200e03f63bdfb44715e18",
+          "scope": "Preserved identity before textured scene host 0.39.0."
         }
       ]
     },
@@ -6882,8 +7156,8 @@
     },
     {
       "path": "knowledge-base/en/docs/public-scene3d-contract.md",
-      "bytes": 25430,
-      "sha256": "adde33eeed04de145f633afd3c484e67263355e6b98d5e8bc388bdce386b38d1",
+      "bytes": 27985,
+      "sha256": "b23a57bfc54ccf5148a20d0d4113907a1589022d6ad10e8f04bf279bf2853806",
       "originRole": "First-party independent public scene3d implementation, bounded verification or paired public reading/derived register.",
       "identityHistory": [
         {
@@ -6895,13 +7169,23 @@
           "bytes": 19913,
           "sha256": "cfb8d439eddd8112f9ef17fa99d2e4f82a77ed1be95ff94e3f3d5ebd3d0751bd",
           "scope": "Preserved identity before public matrix authoring 0.38.0."
+        },
+        {
+          "bytes": 25430,
+          "sha256": "adde33eeed04de145f633afd3c484e67263355e6b98d5e8bc388bdce386b38d1",
+          "scope": "Preserved identity before textured scene host 0.39.0."
+        },
+        {
+          "bytes": 27237,
+          "sha256": "49fb6d6153928948cc4a1beb865d7fb3c0f80c058924af74567742898af817e0",
+          "scope": "Preserved identity before actual browser successor curation."
         }
       ]
     },
     {
       "path": "knowledge-base/Cns/docs/公共3D场景契约.md",
-      "bytes": 23001,
-      "sha256": "1b2c071f4526fef8f65d2d5944efddeff20433f9d50134011c2901d8e9d8041b",
+      "bytes": 25349,
+      "sha256": "6fcdacce4bd4ac308de7c2401d32d3c26e3b979d886a92b6c15d24391c1d43db",
       "originRole": "First-party independent public scene3d implementation, bounded verification or paired public reading/derived register.",
       "identityHistory": [
         {
@@ -6913,6 +7197,16 @@
           "bytes": 18147,
           "sha256": "3ff393961a7548bd453190f6f23b711b798a2ff47bc19650899c4a8b7d153b7a",
           "scope": "Preserved identity before public matrix authoring 0.38.0."
+        },
+        {
+          "bytes": 23001,
+          "sha256": "1b2c071f4526fef8f65d2d5944efddeff20433f9d50134011c2901d8e9d8041b",
+          "scope": "Preserved identity before textured scene host 0.39.0."
+        },
+        {
+          "bytes": 24648,
+          "sha256": "fee08b5900454008424c8607b0356313d779299b7ee7c963503ccd835ae4e55f",
+          "scope": "Preserved identity before actual browser successor curation."
         }
       ]
     },
@@ -7457,6 +7751,98 @@
           "scope": "Preserved identity before finite Matrix public-port fixture integration correction."
         }
       ]
+    },
+    {
+      "path": "tests/textured-scene-webgpu-host.test.mjs",
+      "bytes": 34775,
+      "sha256": "95d1caa1649be0d498b06e4ad02360ac58a4b52fe3a889fd32b6c9fd6b5dd924",
+      "originRole": "Original first-party textured scene host, tests, bilingual contract or evidence."
+    },
+    {
+      "path": "tests/textured-scene-webgpu-host-fixtures.mjs",
+      "bytes": 5986,
+      "sha256": "0a46419893d46cba263e1180257f1581fe345b31992f95d532495da6e1273a38",
+      "originRole": "Original first-party textured scene host, tests, bilingual contract or evidence."
+    },
+    {
+      "path": "knowledge-base/en/docs/textured-scene-host-contract.md",
+      "bytes": 9837,
+      "sha256": "83d4308af07228f2ab941fa0c4cbb06cbfcce6695aa57dd1ff6abd39857e6ece",
+      "originRole": "Original first-party textured scene host, tests, bilingual contract or evidence.",
+      "identityHistory": [
+        {
+          "bytes": 9048,
+          "sha256": "9c23e450b7d4a378469faba9f6d29df693ac0121aa9b62f97f14dd998fc49257",
+          "scope": "Preserved identity before actual browser successor curation."
+        }
+      ]
+    },
+    {
+      "path": "knowledge-base/Cns/docs/textured-scene-host-contract.md",
+      "bytes": 9257,
+      "sha256": "422d49db8b6ad22a94354186c6d6bd7c71fb0da8faf6741b3c350f136325a3ce",
+      "originRole": "Original first-party textured scene host, tests, bilingual contract or evidence.",
+      "identityHistory": [
+        {
+          "bytes": 8515,
+          "sha256": "5a4196011f7a913e7368086a48a074fb566f719eafff6908a11896fe3e41b75c",
+          "scope": "Preserved identity before actual browser successor curation."
+        }
+      ]
+    },
+    {
+      "path": "knowledge-base/evidence/textured-scene-host-verification.json",
+      "bytes": 30603,
+      "sha256": "aae3786c2c2a6801ee1c12615c6d01be3092c4422a212efd131f04428bee26cc",
+      "originRole": "Original first-party textured scene host, tests, bilingual contract or evidence.",
+      "identityHistory": [
+        {
+          "bytes": 8662,
+          "sha256": "b448593e0691208524841f553c41386d7219b9f97cef298d070afb0d38f17252",
+          "scope": "Preserved identity before actual browser successor curation."
+        },
+        {
+          "bytes": 29757,
+          "sha256": "7d6262bd3173cbfa5554291397e0c65282b05c5fe04392ca7df53b7699819ed9",
+          "scope": "Preserved before exact static pin assertion successor."
+        }
+      ]
+    },
+    {
+      "path": "tools/verify-textured-scene-webgpu.mjs",
+      "bytes": 45404,
+      "sha256": "11b4392791e2ba7c5c95c2c9a615b7af91ac5b5ea3db3d37ddba03d9c32340b9",
+      "originRole": "First-party combined-host browser oracle, original synthetic readback or public successor."
+    },
+    {
+      "path": "tools/textured-scene-webgpu/index.html",
+      "bytes": 1024,
+      "sha256": "f7369d055cee764a66153b5ae9476c7324116c1940f1ab079e4a90ac46793a1f",
+      "originRole": "First-party combined-host browser oracle, original synthetic readback or public successor."
+    },
+    {
+      "path": "tools/textured-scene-webgpu/main.mjs",
+      "bytes": 18671,
+      "sha256": "c9cc2c9b174e5a73cac8618ee50e0f9059057ae2f5584c72ae204fe39a45a9a7",
+      "originRole": "First-party combined-host browser oracle, original synthetic readback or public successor."
+    },
+    {
+      "path": "tools/textured-scene-webgpu/oracle.mjs",
+      "bytes": 23171,
+      "sha256": "3b3d9b186db9a3b93f04cf1006535997c06f7248b0320ad029a38caa90433d9b",
+      "originRole": "First-party combined-host browser oracle, original synthetic readback or public successor."
+    },
+    {
+      "path": "knowledge-base/evidence/textured-scene-host/CHN01.rgba",
+      "bytes": 16384,
+      "sha256": "3b574bfecd5cb364e5aed4f2cf7ee44676af5dc82416c451f7b69b1068ec3a04",
+      "originRole": "First-party combined-host browser oracle, original synthetic readback or public successor."
+    },
+    {
+      "path": "knowledge-base/evidence/textured-scene-host/CHN02.rgba",
+      "bytes": 16384,
+      "sha256": "2c3f1bd9cf0b03387638b0211ac7f13607cc54e14dba3d1e3ca20224b9527ada",
+      "originRole": "First-party combined-host browser oracle, original synthetic readback or public successor."
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",
@@ -12085,5 +12471,253 @@
       "scope": "Original first-party test fixture integration repair; production guards and algorithms remain unchanged.",
       "completeGateAndDelivery": "PENDING"
     }
+  },
+  "publicMatrixAuthoringDeliverySuccessor": {
+    "version": "0.38.0",
+    "source": {
+      "sha": "49746fefa8a4fcfed998dfa11e9ebac9f4d40ef9",
+      "parent": "8f84d5f99281ad051abd2e061b5aff90d6d0f40b",
+      "tree": "5960109ca14c9a53ba1cd7ba80d967e6451ad102",
+      "files": 31
+    },
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/25",
+    "main": {
+      "status": "ACTUAL_LOCAL_AND_REMOTE_MAIN_MATCH",
+      "head": "893f1ca86af10a092066dcccdaaa16ac194efded",
+      "tree": "5960109ca14c9a53ba1cd7ba80d967e6451ad102",
+      "atUtc": "2026-10-12T06:35:44.814Z"
+    },
+    "mandatoryPushHook": {
+      "startedAtUtc": "2026-10-12T06:28:46.5244229Z",
+      "finishedAtUtc": "2026-10-12T06:32:55.7271457Z",
+      "exitCode": 0,
+      "stdoutSHA256": "1ddbc2953a151bd629801a5d6d4dbbb57183cb964ef5c69938d5b3050b26ad59",
+      "stderrSHA256": "da1b0f403fce3faa723ad4a8e3f2abd50aecd5a35ce14596d555b9b5911d2e06",
+      "coreTests": 2682,
+      "publicationTests": 63,
+      "documents": 149,
+      "criticalEnglishCommentRecords": 184
+    },
+    "remoteChecks": {
+      "statusCount": 0,
+      "checkRuns": 0,
+      "combinedState": "pending",
+      "remoteCIPassClaim": false
+    }
+  },
+  "texturedSceneHostWorkPackage": {
+    "engineeringLabel": "0.39.0",
+    "sourceId": "S092",
+    "deliverable": "V043",
+    "record": "knowledge-base/evidence/textured-scene-host-verification.json",
+    "sourceBase": "893f1ca86af10a092066dcccdaaa16ac194efded",
+    "origin": "Original first-party shared-owner composition built from Egret specifications and existing first-party passes. No third-party engine implementation copied; no product dependency added.",
+    "sourceFiles": [
+      {
+        "path": "packages/engine/web/prepareTexturedSubmission2D.ts",
+        "bytes": 15910,
+        "sha256": "09dd19bff3b2262dbbfe6cb7b478579e31cc2d579f6d27c328eb9de259b8d89b"
+      },
+      {
+        "path": "packages/engine/web/WebGPUHost.ts",
+        "bytes": 80902,
+        "sha256": "c0e9555e692e19d42ecc0bf443764c5c301d6f76febcf4d16f57c17853254e49"
+      },
+      {
+        "path": "packages/engine/web/b1.ts",
+        "bytes": 2883,
+        "sha256": "18d37f790210bf99797e8832d670ab40cd923c5d67ba0eaf35a9501ae13bbf63"
+      },
+      {
+        "path": "packages/engine/web/scene3d.ts",
+        "bytes": 1484,
+        "sha256": "f1e659b0eee592caf9eef33974e5468c802884d251c933c7df9ade108fb2d7b3"
+      },
+      {
+        "path": "tests/textured-scene-webgpu-host.test.mjs",
+        "bytes": 34775,
+        "sha256": "95d1caa1649be0d498b06e4ad02360ac58a4b52fe3a889fd32b6c9fd6b5dd924"
+      },
+      {
+        "path": "tests/textured-scene-webgpu-host-fixtures.mjs",
+        "bytes": 5986,
+        "sha256": "0a46419893d46cba263e1180257f1581fe345b31992f95d532495da6e1273a38"
+      },
+      {
+        "path": "tests/types/scene3d-web-positive.ts",
+        "bytes": 5565,
+        "sha256": "d06f49ddd49272f7f73d27de6fca259615dd9fccdfbc7dd0fd07f2482083f6ef"
+      },
+      {
+        "path": "tests/types/scene3d-web-negative.ts",
+        "bytes": 1654,
+        "sha256": "2397d6b05febeb7bda9cf16bd71afcb7b2dc5267443490bff8015b02c09c4b27"
+      },
+      {
+        "path": "tests/types/scene3d-import-negative.ts",
+        "bytes": 1844,
+        "sha256": "174ebe06bda15736b4edecd153da234aa03360b80fd7d86d480f4c5516ab53a3"
+      },
+      {
+        "path": "tools/check-boundaries.mjs",
+        "bytes": 127414,
+        "sha256": "6badce56ac7660eedf3dda63010bea4334edab1fb7cf104b38fc823956648873"
+      },
+      {
+        "path": "tests/boundaries.test.mjs",
+        "bytes": 99957,
+        "sha256": "2b85c3b0968a05204217143df4502da2abde19c3600327314c7a961cbf3da70f"
+      },
+      {
+        "path": "tests/types/scene3d-diagnostic-expectations.json",
+        "bytes": 10358,
+        "sha256": "5d399ffd1e64fbdf790642f0f5832f629cc8e18e0cf15af907c8be994fefe0d9"
+      }
+    ],
+    "independentReview": "PENDING_AT_INITIAL_CURATION_CUTOFF",
+    "fullRepositoryGate": "PENDING",
+    "remoteDelivery": "PENDING"
+  },
+  "texturedSceneHostBrowserActualSuccessor": {
+    "record": "knowledge-base/evidence/textured-scene-host-verification.json",
+    "status": "ACTUAL_TWO_FRAME_BROWSER_PIXELS_AND_COOPERATIVE_CLEANUP_PASS",
+    "sourceFiles": [
+      {
+        "path": "packages/engine/web/prepareTexturedSubmission2D.ts",
+        "bytes": 15910,
+        "sha256": "09dd19bff3b2262dbbfe6cb7b478579e31cc2d579f6d27c328eb9de259b8d89b"
+      },
+      {
+        "path": "packages/engine/web/WebGPUHost.ts",
+        "bytes": 80902,
+        "sha256": "c0e9555e692e19d42ecc0bf443764c5c301d6f76febcf4d16f57c17853254e49"
+      },
+      {
+        "path": "packages/engine/web/b1.ts",
+        "bytes": 2883,
+        "sha256": "18d37f790210bf99797e8832d670ab40cd923c5d67ba0eaf35a9501ae13bbf63"
+      },
+      {
+        "path": "packages/engine/web/scene3d.ts",
+        "bytes": 1484,
+        "sha256": "f1e659b0eee592caf9eef33974e5468c802884d251c933c7df9ade108fb2d7b3"
+      }
+    ],
+    "emittedFiles": [
+      {
+        "path": "packages/engine/dist/web/prepareTexturedSubmission2D.js",
+        "bytes": 10783,
+        "sha256": "38254f2d88f1c4456d2e2a471d2cabdbccbcfd087cc88294e109e602da6d7df0"
+      },
+      {
+        "path": "packages/engine/dist/web/prepareTexturedSubmission2D.d.ts",
+        "bytes": 6120,
+        "sha256": "6d314807ea5f7a558134cdd5f9e0d197f4e8c3e52ed72d08cf4a0329841c81c0"
+      },
+      {
+        "path": "packages/engine/dist/web/WebGPUHost.js",
+        "bytes": 75520,
+        "sha256": "cf5fa99195f808ecedeaa1fcabc51a7c5910d71fbcf7b0145f70a5d1c08db0e7"
+      },
+      {
+        "path": "packages/engine/dist/web/WebGPUHost.d.ts",
+        "bytes": 4489,
+        "sha256": "3901c425c45da83e0a4331ea3945e318335abd78798dd3da6f3ea8be9b802576"
+      },
+      {
+        "path": "packages/engine/dist/web/b1.js",
+        "bytes": 1408,
+        "sha256": "ea0b12fe3693be7d3b1a2dc80c5768045e826e6278428ddca6e9006e66150c2e"
+      },
+      {
+        "path": "packages/engine/dist/web/b1.d.ts",
+        "bytes": 2093,
+        "sha256": "110e6403cef059c24bc4a83192010ec89a41eaafaff215e549ac00b7865345c4"
+      },
+      {
+        "path": "packages/engine/dist/web/scene3d.js",
+        "bytes": 471,
+        "sha256": "84c56083682a75cad68c065da06700cc18d448278144f130411d709fdc7e6f4b"
+      },
+      {
+        "path": "packages/engine/dist/web/scene3d.d.ts",
+        "bytes": 1280,
+        "sha256": "e2533624b4e0035d837e50bc963e1e39e665685daafa5ca1577d894b15085416"
+      }
+    ],
+    "toolFiles": [
+      {
+        "path": "tools/verify-textured-scene-webgpu.mjs",
+        "bytes": 45404,
+        "sha256": "11b4392791e2ba7c5c95c2c9a615b7af91ac5b5ea3db3d37ddba03d9c32340b9"
+      },
+      {
+        "path": "tools/textured-scene-webgpu/index.html",
+        "bytes": 1024,
+        "sha256": "f7369d055cee764a66153b5ae9476c7324116c1940f1ab079e4a90ac46793a1f"
+      },
+      {
+        "path": "tools/textured-scene-webgpu/main.mjs",
+        "bytes": 18671,
+        "sha256": "c9cc2c9b174e5a73cac8618ee50e0f9059057ae2f5584c72ae204fe39a45a9a7"
+      },
+      {
+        "path": "tools/textured-scene-webgpu/oracle.mjs",
+        "bytes": 23171,
+        "sha256": "3b3d9b186db9a3b93f04cf1006535997c06f7248b0320ad029a38caa90433d9b"
+      }
+    ],
+    "publicRaw": [
+      {
+        "path": "knowledge-base/evidence/textured-scene-host/CHN01.rgba",
+        "bytes": 16384,
+        "sha256": "3b574bfecd5cb364e5aed4f2cf7ee44676af5dc82416c451f7b69b1068ec3a04",
+        "frameId": 1,
+        "serial": 1,
+        "width": 64,
+        "height": 64,
+        "format": "rgba8unorm"
+      },
+      {
+        "path": "knowledge-base/evidence/textured-scene-host/CHN02.rgba",
+        "bytes": 16384,
+        "sha256": "2c3f1bd9cf0b03387638b0211ac7f13607cc54e14dba3d1e3ca20224b9527ada",
+        "frameId": 2,
+        "serial": 2,
+        "width": 64,
+        "height": 64,
+        "format": "rgba8unorm"
+      }
+    ],
+    "scope": "Original fixed Egret public fixtures and numerical oracle. Development-only installed Playwright and default Edge; no added product dependency or upstream engine implementation.",
+    "independentResultReview": "PENDING"
+  },
+  "texturedSceneVerifierCompatibilitySuccessor": {
+    "b1": {
+      "before": "Historical Host identity refused the current source before browser launch; 0 submitted frames.",
+      "repair": "Current reviewed Host byte count and SHA only; original B1 oracle, schedule and controls unchanged.",
+      "reviewSHA256": "cb9dbe7e62c095889ad0ec1b3e03c4be5ba31a2b8a5804a73cc057ea8e1aefa6"
+    },
+    "textured": {
+      "before": "C10 short selector matched two Host methods; freeze preparation refused before browser launch.",
+      "repair": "Exact retained-method qualifier only; original pixelRatio1 mutation and all twelve controls unchanged.",
+      "reviewSHA256": "5bb5bd5f6321b73de25762e9c165b6e463494872fb769ddae0fa86684f7a239a"
+    },
+    "nativeAcceptance": "Recorded separately from source-data repairs; historical failed outputs retained."
+  },
+  "texturedSceneStaticPinTestSuccessor": {
+    "path": "tests/b1-webgpu-verifier.test.mjs",
+    "before": {
+      "path": "tests/b1-webgpu-verifier.test.mjs",
+      "bytes": 21544,
+      "sha256": "d2c048b56c196ff0b15305a8edb08fcaae0cbe86307b32ccbec3130440af4140"
+    },
+    "after": {
+      "path": "tests/b1-webgpu-verifier.test.mjs",
+      "bytes": 21544,
+      "sha256": "29d5908d78bb7f7f0cd5a241daa3053711bd44b72cd205529a6689c5ab29b530"
+    },
+    "reviewSHA256": "46a601e61f76606797ac5dca63c4027bceb2063bf3aa6c1477a01596df19b662",
+    "scope": "Current executable source-contract identity assertions only; historical source identities and browser acceptance remain separate."
   }
 }
