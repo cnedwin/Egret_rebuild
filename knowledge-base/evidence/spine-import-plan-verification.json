@@ -1,0 +1,975 @@
+{
+  "schemaVersion": 1,
+  "engineeringLabel": "0.34.0",
+  "sourceId": "S087",
+  "deliverable": "V038",
+  "packageVersion": "0.0.0",
+  "protocolVersion": "1.0",
+  "behavior": {
+    "tests": 32,
+    "passed": 32,
+    "failed": 0
+  },
+  "strictTypes": {
+    "positiveConsumers": 1,
+    "negativeDiagnostics": {
+      "ordinary": 22,
+      "imports": 6
+    },
+    "completeOneToOneMatching": true
+  },
+  "focusedPolicy": {
+    "tests": 9,
+    "passed": 9,
+    "failed": 0
+  },
+  "assignedBehaviorControls": 5,
+  "productionBoundaryFiles": 465,
+  "independentImplementationReviewOpenFindings": 0,
+  "fullCurrent": "PENDING_AT_PRECOMMIT_METADATA_CUTOFF",
+  "publication": "PENDING_AT_PRECOMMIT_METADATA_CUTOFF",
+  "independentFinalBilingualMeaningReview": "PENDING",
+  "mandatoryGitPushHook": "PENDING",
+  "remoteDelivery": "PENDING",
+  "fullSpineR020V020": "OPEN",
+  "historicalCutoffsPreserved": true,
+  "date": "2026-10-12",
+  "preparedAtUtc": "2026-10-12T00:12:17.584Z",
+  "sourceBaseCommit": "4ae7e71ee72e5f2c46e7dbccd28b27f482294a0c",
+  "status": "BOUNDED_SPINE_PLANNING_OBSERVED_FINAL_PUBLICATION_PENDING",
+  "scope": "Optional immutable stable-4.3 JSON/modern-atlas/explicit-page-binding import plan; no animation or renderer acceptance.",
+  "origin": {
+    "implementation": "Independently authored AI-assisted first-party planner, original fixtures, scoped checks and paired documentation under Apache-2.0.",
+    "newRuntimeDependencies": [],
+    "newExternalAssets": [],
+    "retainedParser": "jsonc-parser 3.3.1; existing attributed dependency"
+  },
+  "selectedEngineeringInputs": [
+    {
+      "path": "packages/project/src/spine/index.ts",
+      "bytes": 444,
+      "sha256": "658bffaa24a5651cb42923e4222307ac841389441a1082c67934363b3d2b8c36"
+    },
+    {
+      "path": "packages/project/src/spine/types.ts",
+      "bytes": 4659,
+      "sha256": "af51a3d886daeaa4eaf4a737e6d7f8fe29f43dd328c539ea8c27b96db400d118"
+    },
+    {
+      "path": "packages/project/src/spine/preflight.ts",
+      "bytes": 44271,
+      "sha256": "9a0be66a05c7fb39829822324dca2f8d5e9734c415065aebcbdc3690c54ad14a"
+    },
+    {
+      "path": "packages/project/package.json",
+      "bytes": 397,
+      "sha256": "295e6bc8d81a4647f5b99355ea27879563ced216fa2af406c65cc78b95f40945"
+    },
+    {
+      "path": "tests/spine-import-plan.test.mjs",
+      "bytes": 51590,
+      "sha256": "9276a3133d9f8f0533762a1662437b9eaaa6505dba7c5a6fbd6b6070a270a678"
+    },
+    {
+      "path": "tests/fixtures/spine-import-plan.mjs",
+      "bytes": 14613,
+      "sha256": "f749270dd7ffb1f929dff5a1fed97e3609ea1d4109acdd44665793f27ca0e0d7"
+    },
+    {
+      "path": "tests/types/spine-import-plan-positive.ts",
+      "bytes": 3826,
+      "sha256": "df00b55e8bfea1a6ba47ef8f6db35915819c157ab63d6302b9bfdcc3ab025e36"
+    },
+    {
+      "path": "tests/types/spine-import-plan-negative.ts",
+      "bytes": 2549,
+      "sha256": "345d935f274eea35e63206423af39eef0653890589ded914bd7270d182a3ffd7"
+    },
+    {
+      "path": "tests/types/spine-import-plan-import-negative.ts",
+      "bytes": 562,
+      "sha256": "8cfc9ed7af8fc91fefbde041a1ae00bc33a5e3ccac8ed4730affec7a385305c5"
+    },
+    {
+      "path": "tools/check-types.mjs",
+      "bytes": 68576,
+      "sha256": "fbeace1fc6e6f4952b4457e5382e3932843229fa48d919866d69a88642f1d945"
+    },
+    {
+      "path": "tools/check-boundaries.mjs",
+      "bytes": 123293,
+      "sha256": "10bb58ece2aef2325fa56ed64b022c27d97c545e8703997c319f38c5b41de6c4"
+    },
+    {
+      "path": "tests/boundaries.test.mjs",
+      "bytes": 95134,
+      "sha256": "6127919c9de2ea0a5a8ee3ec568ae8ebdfd04cd81e2884a3bb6ddb9170f50a8e"
+    }
+  ],
+  "publicReadings": [
+    "knowledge-base/en/docs/spine-import-plan-contract.md",
+    "knowledge-base/Cns/docs/Spine导入计划契约.md",
+    "knowledge-base/en/docs/spine-import-plan-evidence.md",
+    "knowledge-base/Cns/docs/Spine导入计划证据.md"
+  ],
+  "actual": {
+    "buildAndCurrentBehavior": {
+      "artifactIdentity": {
+        "bytes": 2160,
+        "sha256": "69d4bfe3f08cf7ba35a0bde522b1840ccb2cae0c613e9ff6bd75664c36f167c5"
+      },
+      "executions": [
+        {
+          "name": "build",
+          "startedAtUtc": "2026-10-12T00:03:02.2928046Z",
+          "finishedAtUtc": "2026-10-12T00:03:02.7952906Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "166710cb105690b244b48c5dcc5672a4c0bc8280e995ae7d2f5bd46141491cea",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "boundaries",
+          "startedAtUtc": "2026-10-12T00:03:02.8158536Z",
+          "finishedAtUtc": "2026-10-12T00:03:03.5907573Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "717128ab09db9706538327db123ed6442a284879ec6449b67c0c2b511add21aa",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "behavior",
+          "startedAtUtc": "2026-10-12T00:03:03.5982936Z",
+          "finishedAtUtc": "2026-10-12T00:03:05.3703991Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "ca0769ac36edb1fb1bf0673e97aa92af993cda3cc7013659a7a47a2636e8a934",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "earlierFocusedGates": {
+      "artifactIdentity": {
+        "bytes": 2928,
+        "sha256": "b735a4c84f72f41b5f73a11dae1ab5d667bd254ad848e8d30f55ab5c2ef8ff8d"
+      },
+      "executions": [
+        {
+          "name": "behavior",
+          "startedAtUtc": "2026-10-12T00:01:21.6176776Z",
+          "finishedAtUtc": "2026-10-12T00:01:23.3709058Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "eda04416064683cc8d47725a4cdfb34a8858f62f3ae18da4059f931f492b5721",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "policy",
+          "startedAtUtc": "2026-10-12T00:01:23.3940546Z",
+          "finishedAtUtc": "2026-10-12T00:01:31.4792772Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "a44b7b3ba697c35dcdf3633c406681f0afb4f41f97b8cf0c61590897fca978c7",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "types",
+          "startedAtUtc": "2026-10-12T00:01:31.4867644Z",
+          "finishedAtUtc": "2026-10-12T00:01:37.1776113Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "93308c0bb9d106123198107ddc07d4959d1db41f1f2379a6283642bedc1b9a47",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "boundaries",
+          "startedAtUtc": "2026-10-12T00:01:37.1855688Z",
+          "finishedAtUtc": "2026-10-12T00:01:37.9893190Z",
+          "exitCode": 1,
+          "timeout": false,
+          "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderrSHA256": "9a4b0793c0608fa2712a184b3a5e37cd30d6c8610550466c68c07f15bf04870b"
+        }
+      ]
+    },
+    "initialBehaviorFailure": {
+      "artifactIdentity": {
+        "bytes": 744,
+        "sha256": "0bbeef95dc277541c21ed8729a6152799cdcf6110cc2f6b16661fd5365422210"
+      },
+      "executions": [
+        {
+          "name": "behavior",
+          "startedAtUtc": "2026-10-12T00:00:06.0336534Z",
+          "finishedAtUtc": "2026-10-12T00:00:07.8532585Z",
+          "exitCode": 1,
+          "timeout": false,
+          "stdoutSHA256": "969a6de578787d755120595e8cd06701068a17f1a1254f4eaa1630d8921487bb",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "typeProbe": {
+      "artifactIdentity": {
+        "bytes": 1048,
+        "sha256": "2676af229bcbc095e58a6032de8d180f02e5b94fb705163db63d9901913693f9"
+      },
+      "executions": [
+        {
+          "name": "positive",
+          "startedAtUtc": "2026-10-12T00:00:06.507Z",
+          "finishedAtUtc": "2026-10-12T00:00:06.599Z",
+          "exitCode": 0,
+          "timeout": false,
+          "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "negative",
+          "startedAtUtc": "2026-10-12T00:00:06.601Z",
+          "finishedAtUtc": "2026-10-12T00:00:06.692Z",
+          "exitCode": 1,
+          "timeout": false,
+          "stdoutSHA256": "924a8bffcaf4cfbd781a9b0937065e68a1ed4d313ea6244d4d665ff047510090",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "import-negative",
+          "startedAtUtc": "2026-10-12T00:00:06.697Z",
+          "finishedAtUtc": "2026-10-12T00:00:06.789Z",
+          "exitCode": 1,
+          "timeout": false,
+          "stdoutSHA256": "ec0f5add002cc3a07f51b2894962ae023fff5686b181eabab78a3f45b5809bee",
+          "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "observedTypes": {
+      "schemaVersion": 1,
+      "status": "OBSERVED_FROZEN_TS7_DIAGNOSTICS",
+      "compiler": {
+        "version": "7.0.2",
+        "tscSHA256": "2219f428a7e55aaf1f7ad85b9b0f0cf5078aeb76ccc9a7c6036c92d48f492ffd",
+        "packageSHA256": "3722b30210616a13a3213ded11575ba6b2dbab10c32a5ef67afca8513e27017e"
+      },
+      "fixtureSHA256": {
+        "tests/types/spine-import-plan-positive.ts": "df00b55e8bfea1a6ba47ef8f6db35915819c157ab63d6302b9bfdcc3ab025e36",
+        "tests/types/spine-import-plan-negative.ts": "345d935f274eea35e63206423af39eef0653890589ded914bd7270d182a3ffd7",
+        "tests/types/spine-import-plan-import-negative.ts": "8cfc9ed7af8fc91fefbde041a1ae00bc33a5e3ccac8ed4730affec7a385305c5"
+      },
+      "cases": {
+        "negative": [
+          {
+            "name": "required-input",
+            "line": 12,
+            "file": "tests/types/spine-import-plan-negative.ts",
+            "column": 1,
+            "code": 2554
+          },
+          {
+            "name": "numeric-text",
+            "line": 14,
+            "file": "tests/types/spine-import-plan-negative.ts",
+            "column": 43,
+            "code": 2322
+          },
+          {
+            "name": "numeric-source-id",
+            "line": 16,
+            "file": "tests/types/spine-import-plan-negative.ts",
+            "column": 34,
+            "code": 2322
+          },
+          {
+            "name": "required-provenance",
+            "line": 18,
+            "file": "tests/types/spine-import-plan-negative.ts",
+            "column": 7,
+            "code": 2741
+          },
+          {
+            "name": "required-provenance-notice",
+            "line": 20,
+            "file": "tests/types/spine-import-plan-negative.ts",
+            "column": 7,
+            "code": 2741
+          },
+          {
+            "name": "no-limit-override",
+            "line": 22,
+            "file": "tests/types/spine-import-plan-negative.ts",
+            "column": 33,
+            "code": 2353
+          },
+          {
+            "name": "no-fetch-callback",
+            "line": 24,
+            "file": "tests/types/spine-import-plan-negative.ts",
+            "column": 33,
+            "code": 2353
+          },
+          {
+            "name": "required-asset-id",
+            "line": 26,
+            "file": "tests/types/spine-import-plan-negative.ts",
+            "column": 7,
+            "code": 2741
+          },
+          {
+            "name": "numeric-asset-id",
+            "line": 28,
+            "file": "tests/types/spine-import-plan-negative.ts",
+            "column": 60,
+            "code": 2322
+          },
+          {
+            "name": "readonly-plan-version",
+            "line": 30,
+            "file": "tests/types/spine-import-plan-negative.ts",
+            "column": 6,
+            "code": 2540
+          },
+          {
+            "name": "readonly-page-name",
+            "line": 32,
+            "file": "tests/types/spine-import-plan-negative.ts",
+            "column": 6,
+            "code": 2540
+          },
+          {
+            "name": "readonly-region-width",
+            "line": 34,
+            "file": "tests/types/spine-import-plan-negative.ts",
+            "column": 8,
+            "code": 2540
+          },
+          {
+            "name": "readonly-output-array",
+            "line": 36,
+            "file": "tests/types/spine-import-plan-negative.ts",
+            "column": 12,
+            "code": 2339
+          },
+          {
+            "name": "readonly-limit",
+            "line": 38,
+            "file": "tests/types/spine-import-plan-negative.ts",
+            "column": 21,
+            "code": 2540
+          },
+          {
+            "name": "exact-input-source",
+            "line": 40,
+            "file": "tests/types/spine-import-plan-negative.ts",
+            "column": 7,
+            "code": 2322
+          },
+          {
+            "name": "no-input-text-span",
+            "line": 42,
+            "file": "tests/types/spine-import-plan-negative.ts",
+            "column": 34,
+            "code": 2322
+          },
+          {
+            "name": "closed-code",
+            "line": 44,
+            "file": "tests/types/spine-import-plan-negative.ts",
+            "column": 7,
+            "code": 2322
+          },
+          {
+            "name": "no-ready-acceptance",
+            "line": 46,
+            "file": "tests/types/spine-import-plan-negative.ts",
+            "column": 7,
+            "code": 2322
+          },
+          {
+            "name": "readonly-diagnostic",
+            "line": 48,
+            "file": "tests/types/spine-import-plan-negative.ts",
+            "column": 12,
+            "code": 2540
+          },
+          {
+            "name": "no-value-in-failure",
+            "line": 50,
+            "file": "tests/types/spine-import-plan-negative.ts",
+            "column": 27,
+            "code": 2339
+          },
+          {
+            "name": "no-type-runtime",
+            "line": 52,
+            "file": "tests/types/spine-import-plan-negative.ts",
+            "column": 6,
+            "code": 2693
+          },
+          {
+            "name": "no-span-runtime",
+            "line": 54,
+            "file": "tests/types/spine-import-plan-negative.ts",
+            "column": 6,
+            "code": 2693
+          }
+        ],
+        "import-negative": [
+          {
+            "name": "no-root-factory",
+            "line": 2,
+            "file": "tests/types/spine-import-plan-import-negative.ts",
+            "column": 9,
+            "code": 2305
+          },
+          {
+            "name": "no-root-limits",
+            "line": 4,
+            "file": "tests/types/spine-import-plan-import-negative.ts",
+            "column": 9,
+            "code": 2305
+          },
+          {
+            "name": "no-root-plan-type",
+            "line": 6,
+            "file": "tests/types/spine-import-plan-import-negative.ts",
+            "column": 14,
+            "code": 2305
+          },
+          {
+            "name": "no-private-planner-import",
+            "line": 8,
+            "file": "tests/types/spine-import-plan-import-negative.ts",
+            "column": 55,
+            "code": 2307
+          },
+          {
+            "name": "no-dom-ambient",
+            "line": 10,
+            "file": "tests/types/spine-import-plan-import-negative.ts",
+            "column": 22,
+            "code": 2304
+          },
+          {
+            "name": "no-node-ambient",
+            "line": 12,
+            "file": "tests/types/spine-import-plan-import-negative.ts",
+            "column": 20,
+            "code": 2503
+          }
+        ]
+      }
+    },
+    "controls": {
+      "artifactIdentity": {
+        "bytes": 95202,
+        "sha256": "302a6ea3df1840dc0403f93f0713ad31846a6f47f4fd9ccbd9f9158f735b677c"
+      },
+      "status": "PASS",
+      "cases": [
+        {
+          "name": "accept-other-series",
+          "baseline": {
+            "startedAtUtc": "2026-10-12T00:11:49.048Z",
+            "finishedAtUtc": "2026-10-12T00:11:49.122Z",
+            "exitCode": 0,
+            "timeout": false,
+            "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "assignedWitness": {
+              "id": "SP1-C01-OTHER-SERIES-REFUSAL",
+              "status": "PASS",
+              "observed": {
+                "ok": false,
+                "diagnostics": [
+                  {
+                    "code": "SPINE_VERSION_MISMATCH",
+                    "severity": "error",
+                    "source": "skeleton",
+                    "pointer": "/skeleton/spine",
+                    "span": {
+                      "source": "skeleton",
+                      "sourceId": "skeleton-original",
+                      "offset": 21,
+                      "length": 8,
+                      "line": 1,
+                      "column": 22
+                    }
+                  }
+                ]
+              },
+              "demonstratedMutation": null
+            }
+          },
+          "mutant": {
+            "startedAtUtc": "2026-10-12T00:11:49.327Z",
+            "finishedAtUtc": "2026-10-12T00:11:49.393Z",
+            "exitCode": 1,
+            "timeout": false,
+            "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "assignedWitness": {
+              "id": "SP1-C01-OTHER-SERIES-REFUSAL",
+              "status": "ASSIGNED_ASSERTION_FAILED",
+              "observed": {
+                "ok": true,
+                "diagnostics": [
+                  {
+                    "code": "SPINE_INVENTORY_PARTIAL",
+                    "severity": "warning",
+                    "source": "skeleton",
+                    "pointer": "",
+                    "span": {
+                      "source": "skeleton",
+                      "sourceId": "skeleton-original",
+                      "offset": 0,
+                      "length": 1,
+                      "line": 1,
+                      "column": 1
+                    }
+                  },
+                  {
+                    "code": "SPINE_PROVENANCE_UNVERIFIED",
+                    "severity": "warning",
+                    "source": "input",
+                    "pointer": ""
+                  }
+                ],
+                "exportVersion": "4.2.13",
+                "pageAssetIds": [
+                  "asset:page"
+                ]
+              },
+              "demonstratedMutation": true
+            }
+          },
+          "restoredCopy": {
+            "targetExactOriginal": true,
+            "completeProductRestored": true,
+            "installedArtifactCopyUnchanged": true,
+            "retainedEvidenceCopies": true
+          }
+        },
+        {
+          "name": "accept-beta",
+          "baseline": {
+            "startedAtUtc": "2026-10-12T00:11:49.796Z",
+            "finishedAtUtc": "2026-10-12T00:11:49.868Z",
+            "exitCode": 0,
+            "timeout": false,
+            "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "assignedWitness": {
+              "id": "SP1-C02-BETA-REFUSAL",
+              "status": "PASS",
+              "observed": {
+                "ok": false,
+                "diagnostics": [
+                  {
+                    "code": "SPINE_VERSION_PRERELEASE",
+                    "severity": "error",
+                    "source": "skeleton",
+                    "pointer": "/skeleton/spine",
+                    "span": {
+                      "source": "skeleton",
+                      "sourceId": "skeleton-original",
+                      "offset": 21,
+                      "length": 13,
+                      "line": 1,
+                      "column": 22
+                    }
+                  }
+                ]
+              },
+              "demonstratedMutation": null
+            }
+          },
+          "mutant": {
+            "startedAtUtc": "2026-10-12T00:11:50.073Z",
+            "finishedAtUtc": "2026-10-12T00:11:50.133Z",
+            "exitCode": 1,
+            "timeout": false,
+            "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "assignedWitness": {
+              "id": "SP1-C02-BETA-REFUSAL",
+              "status": "ASSIGNED_ASSERTION_FAILED",
+              "observed": {
+                "ok": true,
+                "diagnostics": [
+                  {
+                    "code": "SPINE_INVENTORY_PARTIAL",
+                    "severity": "warning",
+                    "source": "skeleton",
+                    "pointer": "",
+                    "span": {
+                      "source": "skeleton",
+                      "sourceId": "skeleton-original",
+                      "offset": 0,
+                      "length": 1,
+                      "line": 1,
+                      "column": 1
+                    }
+                  },
+                  {
+                    "code": "SPINE_PROVENANCE_UNVERIFIED",
+                    "severity": "warning",
+                    "source": "input",
+                    "pointer": ""
+                  }
+                ],
+                "exportVersion": "4.3.13-beta",
+                "pageAssetIds": [
+                  "asset:page"
+                ]
+              },
+              "demonstratedMutation": true
+            }
+          },
+          "restoredCopy": {
+            "targetExactOriginal": true,
+            "completeProductRestored": true,
+            "installedArtifactCopyUnchanged": true,
+            "retainedEvidenceCopies": true
+          }
+        },
+        {
+          "name": "omit-missing-binding-refusal",
+          "baseline": {
+            "startedAtUtc": "2026-10-12T00:11:50.536Z",
+            "finishedAtUtc": "2026-10-12T00:11:50.607Z",
+            "exitCode": 0,
+            "timeout": false,
+            "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "assignedWitness": {
+              "id": "SP1-C03-MISSING-BINDING-REFUSAL",
+              "status": "PASS",
+              "observed": {
+                "ok": false,
+                "diagnostics": [
+                  {
+                    "code": "SPINE_PAGE_BINDING_INVALID",
+                    "severity": "error",
+                    "source": "atlas",
+                    "pointer": "/pages/0",
+                    "span": {
+                      "source": "atlas",
+                      "sourceId": "atlas-original",
+                      "offset": 0,
+                      "length": 8,
+                      "line": 1,
+                      "column": 1
+                    }
+                  }
+                ]
+              },
+              "demonstratedMutation": null
+            }
+          },
+          "mutant": {
+            "startedAtUtc": "2026-10-12T00:11:50.812Z",
+            "finishedAtUtc": "2026-10-12T00:11:50.874Z",
+            "exitCode": 1,
+            "timeout": false,
+            "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "assignedWitness": {
+              "id": "SP1-C03-MISSING-BINDING-REFUSAL",
+              "status": "ASSIGNED_ASSERTION_FAILED",
+              "observed": {
+                "ok": true,
+                "diagnostics": [
+                  {
+                    "code": "SPINE_INVENTORY_PARTIAL",
+                    "severity": "warning",
+                    "source": "skeleton",
+                    "pointer": "",
+                    "span": {
+                      "source": "skeleton",
+                      "sourceId": "skeleton-original",
+                      "offset": 0,
+                      "length": 1,
+                      "line": 1,
+                      "column": 1
+                    }
+                  },
+                  {
+                    "code": "SPINE_PROVENANCE_UNVERIFIED",
+                    "severity": "warning",
+                    "source": "input",
+                    "pointer": ""
+                  }
+                ],
+                "exportVersion": "4.3.13",
+                "pageAssetIds": [
+                  "assigned-mutant:implicit-page"
+                ]
+              },
+              "demonstratedMutation": true
+            }
+          },
+          "restoredCopy": {
+            "targetExactOriginal": true,
+            "completeProductRestored": true,
+            "installedArtifactCopyUnchanged": true,
+            "retainedEvidenceCopies": true
+          }
+        },
+        {
+          "name": "silently-normalize-linear",
+          "baseline": {
+            "startedAtUtc": "2026-10-12T00:11:51.275Z",
+            "finishedAtUtc": "2026-10-12T00:11:51.347Z",
+            "exitCode": 0,
+            "timeout": false,
+            "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "assignedWitness": {
+              "id": "SP1-C04-PRESERVE-LINEAR-CONCERN",
+              "status": "PASS",
+              "observed": {
+                "ok": true,
+                "filters": [
+                  "Linear",
+                  "Nearest"
+                ],
+                "observations": [
+                  {
+                    "kind": "atlas-sampler",
+                    "pointer": "/pages/0/filter",
+                    "span": {
+                      "source": "atlas",
+                      "sourceId": "atlas-original",
+                      "offset": 21,
+                      "length": 22,
+                      "line": 3,
+                      "column": 1
+                    },
+                    "value": "Linear,Nearest"
+                  }
+                ],
+                "diagnostics": [
+                  {
+                    "code": "SPINE_PROFILE_UNSUPPORTED",
+                    "severity": "warning",
+                    "source": "atlas",
+                    "pointer": "/pages/0/filter",
+                    "span": {
+                      "source": "atlas",
+                      "sourceId": "atlas-original",
+                      "offset": 21,
+                      "length": 22,
+                      "line": 3,
+                      "column": 1
+                    }
+                  },
+                  {
+                    "code": "SPINE_INVENTORY_PARTIAL",
+                    "severity": "warning",
+                    "source": "skeleton",
+                    "pointer": "",
+                    "span": {
+                      "source": "skeleton",
+                      "sourceId": "skeleton-original",
+                      "offset": 0,
+                      "length": 1,
+                      "line": 1,
+                      "column": 1
+                    }
+                  },
+                  {
+                    "code": "SPINE_PROVENANCE_UNVERIFIED",
+                    "severity": "warning",
+                    "source": "input",
+                    "pointer": ""
+                  }
+                ]
+              },
+              "demonstratedMutation": null
+            }
+          },
+          "mutant": {
+            "startedAtUtc": "2026-10-12T00:11:51.549Z",
+            "finishedAtUtc": "2026-10-12T00:11:51.611Z",
+            "exitCode": 1,
+            "timeout": false,
+            "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "assignedWitness": {
+              "id": "SP1-C04-PRESERVE-LINEAR-CONCERN",
+              "status": "ASSIGNED_ASSERTION_FAILED",
+              "observed": {
+                "ok": true,
+                "filters": [
+                  "Nearest",
+                  "Nearest"
+                ],
+                "observations": [],
+                "diagnostics": [
+                  {
+                    "code": "SPINE_INVENTORY_PARTIAL",
+                    "severity": "warning",
+                    "source": "skeleton",
+                    "pointer": "",
+                    "span": {
+                      "source": "skeleton",
+                      "sourceId": "skeleton-original",
+                      "offset": 0,
+                      "length": 1,
+                      "line": 1,
+                      "column": 1
+                    }
+                  },
+                  {
+                    "code": "SPINE_PROVENANCE_UNVERIFIED",
+                    "severity": "warning",
+                    "source": "input",
+                    "pointer": ""
+                  }
+                ]
+              },
+              "demonstratedMutation": true
+            }
+          },
+          "restoredCopy": {
+            "targetExactOriginal": true,
+            "completeProductRestored": true,
+            "installedArtifactCopyUnchanged": true,
+            "retainedEvidenceCopies": true
+          }
+        },
+        {
+          "name": "leak-optional-factory-into-root",
+          "baseline": {
+            "startedAtUtc": "2026-10-12T00:11:52.075Z",
+            "finishedAtUtc": "2026-10-12T00:11:52.146Z",
+            "exitCode": 0,
+            "timeout": false,
+            "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "assignedWitness": {
+              "id": "SP1-C05-ROOT-SIX-VALUES",
+              "status": "PASS",
+              "observed": {
+                "rootValues": [
+                  "DEFAULT_PROJECT_LIMITS",
+                  "createProjectStore",
+                  "openProjectHistory",
+                  "parseProjectSnapshot",
+                  "parseProjectTransaction",
+                  "serializeProjectSnapshot"
+                ]
+              },
+              "demonstratedMutation": null
+            }
+          },
+          "mutant": {
+            "startedAtUtc": "2026-10-12T00:11:52.352Z",
+            "finishedAtUtc": "2026-10-12T00:11:52.417Z",
+            "exitCode": 1,
+            "timeout": false,
+            "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "assignedWitness": {
+              "id": "SP1-C05-ROOT-SIX-VALUES",
+              "status": "ASSIGNED_ASSERTION_FAILED",
+              "observed": {
+                "rootValues": [
+                  "DEFAULT_PROJECT_LIMITS",
+                  "createProjectStore",
+                  "createSpineImportPlan",
+                  "openProjectHistory",
+                  "parseProjectSnapshot",
+                  "parseProjectTransaction",
+                  "serializeProjectSnapshot"
+                ]
+              },
+              "demonstratedMutation": true
+            }
+          },
+          "restoredCopy": {
+            "targetExactOriginal": true,
+            "completeProductRestored": true,
+            "installedArtifactCopyUnchanged": true,
+            "retainedEvidenceCopies": true
+          }
+        }
+      ],
+      "sourceBeforeAfterUnchanged": true
+    },
+    "implementationReview": {
+      "artifactIdentity": {
+        "bytes": 10981,
+        "sha256": "80151944be2c80f3a69403dc8421fd7a6a1aa4c0e07d0bd7490d7495bd90b7f6"
+      },
+      "verdict": "PASS_FINITE_IMPLEMENTATION_SUCCESSOR_SCOPE",
+      "openFindings": 0
+    },
+    "retainedOriginalReview": {
+      "artifactIdentity": {
+        "bytes": 9646,
+        "sha256": "d87334167f2ed417695264dd8bfe36d51465b0bf50c8a4c363c33a220a506529"
+      },
+      "verdict": "CHANGES_REQUIRED",
+      "openFindings": 2
+    },
+    "baselineAndMissingInterface": {
+      "artifactIdentity": {
+        "bytes": 1296,
+        "sha256": "208154fef2c7d4b8a895b7286fd615e1445c1a607068fab04b7b1b14f182290c"
+      },
+      "status": "ACTUAL_PUBLIC_ENTRY_RED_AFTER_GENUINE_BASELINE",
+      "errorCode": "ERR_PACKAGE_PATH_NOT_EXPORTED",
+      "inputsUnchanged": 223,
+      "restoredDescriptors": 15
+    }
+  },
+  "precedingDelivery": {
+    "engineeringLabel": "0.33.0",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/20",
+    "sourceHead": "baa308e93596f518e32b7bcda786afccbef594e8",
+    "mergedMain": "4ae7e71ee72e5f2c46e7dbccd28b27f482294a0c",
+    "tree": "f340e46f0d88783b268b732dcacbfcf7c45a363a",
+    "mandatoryPushHook": "ACTUAL_PASS",
+    "coreTests": 2631,
+    "publicationTests": 63,
+    "documentPairs": 145,
+    "criticalSources": 174,
+    "localRemoteMainReadbackAtUtc": "2026-10-11T23:31:37.118Z",
+    "remoteStatusCount": 0,
+    "remoteCheckCount": 0,
+    "remoteCIPassClaimed": false,
+    "scope": "Observed delivery successor; earlier MI1 pending cutoffs remain historical."
+  },
+  "limits": {
+    "animationSemantics": "not_run",
+    "rendering": "not_run",
+    "licenseEntitlement": "unverified",
+    "featureInventory": "partial",
+    "binaryImport": false,
+    "EditorExport": false,
+    "imageDecoding": false,
+    "SpinePlayback": false,
+    "fullUI": false,
+    "full3D": false,
+    "phones": false,
+    "nativeSDK": false,
+    "performance": false,
+    "productionReadiness": false
+  },
+  "browserNativeScope": "OUTSIDE_PURE_PLANNING_SLICE_NOT_PASS",
+  "rights": "Planner records declarations without authenticating hashes, rights or entitlement; no official runtime or upstream asset is distributed by this package.",
+  "publicationFailureHistory": {
+    "stage": "actual_complete_prepush_r1",
+    "exitCode": 1,
+    "timeout": false,
+    "startedAtUtc": "2026-10-12T00:12:44.6851331Z",
+    "finishedAtUtc": "2026-10-12T00:12:45.0909959Z",
+    "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrSHA256": "863c87f64373c60744df64d1a58a0f0140bca9b3a32d3ef4361f65fc96aff047",
+    "reason": "Root README is intentionally bilingual. Its new Chinese companion contained only one language block, causing exact opaque-identifier occurrence drift. Added the same complete bilingual block without changing the gate.",
+    "successor": "PENDING",
+    "productChanged": false
+  }
+}

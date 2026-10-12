@@ -923,7 +923,7 @@
       "id": "V020",
       "title": "完整 Spine 动画能力与集成",
       "kind": "product_capability",
-      "status": "planned",
+      "status": "in_progress",
       "requirementIds": [
         "R002",
         "R003",
@@ -943,7 +943,7 @@
       ],
       "owner": null,
       "dueDate": null,
-      "implementation": "not_started",
+      "implementation": "partial_import_planning_animation_rendering_not_started",
       "acceptance": "not_run",
       "acceptanceCriteria": [
         "精确导出／运行时身份及完整版本功能矩阵，JSON／二进制与图集依赖正确导入，版本不匹配及失败有诊断。",
@@ -956,7 +956,17 @@
       "artifacts": [
         "Cns/docs/Spine动画支持需求与验收.md"
       ],
-      "doc": "Cns/docs/Spine动画支持需求与验收.md"
+      "doc": "Cns/docs/Spine动画支持需求与验收.md",
+      "priorPlanningState": {
+        "status": "planned",
+        "implementation": "not_started",
+        "acceptance": "not_run"
+      },
+      "planningSlice": {
+        "deliverable": "V038",
+        "source": "S087",
+        "acceptance": "bounded_only_full_capability_not_run"
+      }
     },
     {
       "id": "V021",
@@ -2115,7 +2125,94 @@
           "currentEditablePaths": 55,
           "completePublication": "PENDING_FINAL_RERUN"
         }
+      },
+      "deliverySuccessor": {
+        "engineeringLabel": "0.33.0",
+        "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/20",
+        "sourceHead": "baa308e93596f518e32b7bcda786afccbef594e8",
+        "mergedMain": "4ae7e71ee72e5f2c46e7dbccd28b27f482294a0c",
+        "tree": "f340e46f0d88783b268b732dcacbfcf7c45a363a",
+        "mandatoryPushHook": "ACTUAL_PASS",
+        "coreTests": 2631,
+        "publicationTests": 63,
+        "documentPairs": 145,
+        "criticalSources": 174,
+        "localRemoteMainReadbackAtUtc": "2026-10-11T23:31:37.118Z",
+        "remoteStatusCount": 0,
+        "remoteCheckCount": 0,
+        "remoteCIPassClaimed": false,
+        "scope": "Observed delivery successor; earlier MI1 pending cutoffs remain historical."
       }
+    },
+    {
+      "id": "V038",
+      "kind": "bounded_spine_import_plan",
+      "status": "implemented",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R005",
+        "R006",
+        "R007",
+        "R012",
+        "R015",
+        "R016",
+        "R020"
+      ],
+      "sourceIds": [
+        "S087"
+      ],
+      "dependsOn": [],
+      "owner": null,
+      "dueDate": null,
+      "implementation": "independent_optional_dom_node_free_json_atlas_binding_planner",
+      "acceptance": "observed_32_behavior_28_exact_diagnostics_9_policy_5_controls_final_publication_pending",
+      "candidateEvidence": {
+        "engineeringLabel": "0.34.0",
+        "sourceId": "S087",
+        "deliverable": "V038",
+        "packageVersion": "0.0.0",
+        "protocolVersion": "1.0",
+        "behavior": {
+          "tests": 32,
+          "passed": 32,
+          "failed": 0
+        },
+        "strictTypes": {
+          "positiveConsumers": 1,
+          "negativeDiagnostics": {
+            "ordinary": 22,
+            "imports": 6
+          },
+          "completeOneToOneMatching": true
+        },
+        "focusedPolicy": {
+          "tests": 9,
+          "passed": 9,
+          "failed": 0
+        },
+        "assignedBehaviorControls": 5,
+        "productionBoundaryFiles": 465,
+        "independentImplementationReviewOpenFindings": 0,
+        "fullCurrent": "PENDING_AT_PRECOMMIT_METADATA_CUTOFF",
+        "publication": "PENDING_AT_PRECOMMIT_METADATA_CUTOFF",
+        "independentFinalBilingualMeaningReview": "PENDING",
+        "mandatoryGitPushHook": "PENDING",
+        "remoteDelivery": "PENDING",
+        "fullSpineR020V020": "OPEN",
+        "historicalCutoffsPreserved": true
+      },
+      "title": "可选 Spine 导入计划与来源诊断",
+      "acceptanceCriteria": [
+        "精确可选入口、独立固定预算及不可变输出。",
+        "严格版本、完整令牌图集整数、显式绑定与原始来源位置。",
+        "实际公共行为、严格类型、独立对照、来源和双语门禁分别验证。"
+      ],
+      "artifacts": [
+        "Cns/docs/Spine导入计划契约.md",
+        "evidence/spine-import-plan-verification.json"
+      ],
+      "doc": "Cns/docs/Spine导入计划契约.md"
     }
   ]
 }

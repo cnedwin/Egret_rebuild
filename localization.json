@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "revision": "0.27.2",
+  "revision": "0.34.0",
   "canonicalState": "Chinese registries; English JSON is a read-only translation",
   "evidencePolicy": "Machine data, embedded source, historical code and upstream legal originals retain their identities; paired reading versions explain them.",
   "semanticReview": {
@@ -64,8 +64,8 @@
       "zh": "AGENTS.zh-CN.md",
       "en": "AGENTS.md",
       "kind": "public_reading",
-      "enSha256": "ca198adafdd84a0e09c47be20ff3a0d3cf3bee4ffa67d3f0add52de8cfa2a923",
-      "zhSha256": "c69bb78281acd74fdc7abe9e6952869f263e03ee0199af189a2f6d3f37b09c17"
+      "enSha256": "56dd24457620c1723a765ff5fc7c7139725ee2ab29c1b04e8d36b734b406b6c6",
+      "zhSha256": "65f61b145b953479f58a0a3aa0586e9553b36cfdd4d56cc92adb56fba183631e"
     },
     {
       "zh": "CONTRIBUTING.zh-CN.md",
@@ -141,8 +141,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "79c0248866be207cf80740c306df4e41e19a13bd66ce96697105ce1b71bb971e",
-      "zhSha256": "e150a74e0346f90f42ce4856666316d6e3e5d998a4d7daf838bd0b2dfd66d226"
+      "enSha256": "0bfe62097288d04b68954a74a03ab935e15a614f98213f5fb559cb6cd8fb1152",
+      "zhSha256": "a891193331a73b985cb85d6b883e73be7b2c79be171c1ff528253e4233570c9f"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -288,8 +288,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "e2d156a4fe0525b7a37f5956e071a7752738b791e730d97b5759f15062a91cef",
-      "zhSha256": "faf8ab78c6853d7f24835427f7fb737440796ccaca70ab1c6def480ead9b5191"
+      "enSha256": "2ac02ab70ae2ce34007b7ec618236ac3c6560b3bf3caa7c1ba35d70c6cdf88e1",
+      "zhSha256": "7be61c371d8c258493714b74089d49325efd1bd94f9eac564f4cada116ef0843"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -351,8 +351,8 @@
       "zh": "knowledge-base/Cns/docs/工程规划.md",
       "en": "knowledge-base/en/docs/engineering-plan.md",
       "kind": "public_reading",
-      "enSha256": "06b286a4f7e4799a8a5f6d08951eea5594acf096e8ceeecd1c9c400d03c79ac6",
-      "zhSha256": "9dd7f2fa6d813ee684cea4076b2dab530b31f4e42a72682e88beac104fb35c36"
+      "enSha256": "afab03392b571b550947c272588099a86aec0409aef2463d2ff4457b1bd4263e",
+      "zhSha256": "a2d31b21980f133609efb55a0ad847b27133204d0d4dd5ae6eef4fe6172da1af"
     },
     {
       "zh": "knowledge-base/Cns/docs/术语表.md",
@@ -764,8 +764,8 @@
       "zh": "knowledge-base/Cns/README.md",
       "en": "knowledge-base/en/README.md",
       "kind": "public_reading",
-      "enSha256": "f22874f65df0157ad3f4ce12b88e40e6cfe1336267eff6f1434f5f50d0d14db6",
-      "zhSha256": "8ed1147c37aa80f5b59697c361b7904f935bd73cb95f7b9e26ef51acebcd9ab7"
+      "enSha256": "42037a911b964b87127ce7dcedc4fd455559bfd130071d2253482eb50250845d",
+      "zhSha256": "9ac33758aa7ba87569da2e0707618a6058866fcb3b9284e124a7046618f4ca91"
     },
     {
       "zh": "knowledge-base/Cns/templates/ADR决策记录.md",
@@ -848,8 +848,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "b5389c4b9ad20dcee4b94d496ebe23690aed5cd495aace88401bbf67ed9bfc1a",
-      "zhSha256": "086b2fd18f36c8e29a062118f99c4bc808ea1d9097cd22b93131ce525f40f8e8"
+      "enSha256": "26ba35d52e09c918a6c02e10d717c14e3a84f150d5df6758254fc30b0618e861",
+      "zhSha256": "ea68880391b6294ed9d9d1641e704688642645e21ce19ef599fc68afc6eaa8fd"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -1067,6 +1067,20 @@
       "kind": "public_reading",
       "enSha256": "8f7ce85ceff4049c653d7a35ec4deb824da9e2f9675b060889551164c974edc6",
       "zhSha256": "38ed779761a9b555fc7c4476fc5ef003efa0af1b64dee57712c94a8a49e8a408"
+    },
+    {
+      "en": "knowledge-base/en/docs/spine-import-plan-contract.md",
+      "zh": "knowledge-base/Cns/docs/Spine导入计划契约.md",
+      "kind": "public_reading",
+      "enSha256": "8251e6747c8126d32190717cf6a8f9150616e7309ed6c430ecb11fbbb5f45a3a",
+      "zhSha256": "44fa975c93ec221b296a43ba42be0e4e591f89a76b7c46421acf3f0c1b190843"
+    },
+    {
+      "en": "knowledge-base/en/docs/spine-import-plan-evidence.md",
+      "zh": "knowledge-base/Cns/docs/Spine导入计划证据.md",
+      "kind": "public_reading",
+      "enSha256": "4059f6ac9b7f684c61572e6040ce83744143804e24199e50ba7151b893c9b53b",
+      "zhSha256": "08e95d654fd2a5ba4b16abbd0666d59803476fa908ee1b2560771a556d9dfcc1"
     }
   ],
   "registries": [
@@ -1091,20 +1105,20 @@
     {
       "source": "knowledge-base/Cns/registry/交付.json",
       "target": "knowledge-base/en/registry/deliverables.json",
-      "sourceSha256": "2e3b7fe872bb4011bb4ba14aa965d8424e9adc967f124fe73c8e00526cfa4405",
-      "targetSha256": "10395dc7274f5bf398b83582565caa583410f4577f6921811764b79aa95f7de9"
+      "sourceSha256": "b14ccee734ceed7e5190473c80365f7116c8a956cd4d45c7afcecb1b8269a960",
+      "targetSha256": "7348bf979497182ecc125f14b6aa6c0a29f31c3a2659e630b310ed20e6fd5f16"
     },
     {
       "source": "knowledge-base/Cns/registry/来源.json",
       "target": "knowledge-base/en/registry/sources.json",
-      "sourceSha256": "9fd7b478420d6d90e2389f6fd5f4f61c38e3232dedcf484163277c62fc2a3560",
-      "targetSha256": "1e723f20df75911214c986ec00bedf95f018f62309619a44954d8cd420deaa90"
+      "sourceSha256": "4794d6981d8bdc4dccca6a09cd435281c9f07949a6b7b71c5fb9251f56d5e719",
+      "targetSha256": "b0e2ecd30c937569ac901a693c7034fa46d06f713c5241555c7bb33117e8121c"
     },
     {
       "source": "knowledge-base/Cns/当前版本.json",
       "target": "knowledge-base/en/current-version.json",
-      "sourceSha256": "f8f5baa605eca36bb3c068e180651fba85b24b03ac3e0d83e7f690643d630aa1",
-      "targetSha256": "3efed447036d02f485fa42db1a75ef7c6d05a1586fcc13868b2b63b5e52a13fe"
+      "sourceSha256": "59be73acf1011bec33d9492e20ef233e945176ee40a880cdcb2eb5e46edfff3f",
+      "targetSha256": "58ef5be11dd43ad6af0d1bd7981554608c399fa363d02281ac0508495dfb6db0"
     }
   ],
   "criticalComments": [
@@ -1809,6 +1823,18 @@
     {
       "path": "tests/webgpu-mesh-host.test.mjs",
       "sha256": "3812f94f2dfd501a52551ec1b03ba499ff1e2b90b1bfa9fc2a75a5df0692d087"
+    },
+    {
+      "path": "packages/project/src/spine/index.ts",
+      "sha256": "658bffaa24a5651cb42923e4222307ac841389441a1082c67934363b3d2b8c36"
+    },
+    {
+      "path": "packages/project/src/spine/types.ts",
+      "sha256": "af51a3d886daeaa4eaf4a737e6d7f8fe29f43dd328c539ea8c27b96db400d118"
+    },
+    {
+      "path": "packages/project/src/spine/preflight.ts",
+      "sha256": "9a0be66a05c7fb39829822324dca2f8d5e9734c415065aebcbdc3690c54ad14a"
     }
   ],
   "historicalSemanticReview": {
@@ -3999,5 +4025,22 @@
       "currentEditablePaths": 55,
       "completePublication": "PENDING_FINAL_RERUN"
     }
+  },
+  "spineImportPlanCuration": {
+    "engineeringLabel": "0.34.0",
+    "documents": [
+      "knowledge-base/en/docs/spine-import-plan-contract.md",
+      "knowledge-base/Cns/docs/Spine导入计划契约.md",
+      "knowledge-base/en/docs/spine-import-plan-evidence.md",
+      "knowledge-base/Cns/docs/Spine导入计划证据.md"
+    ],
+    "criticalSources": [
+      "packages/project/src/spine/index.ts",
+      "packages/project/src/spine/types.ts",
+      "packages/project/src/spine/preflight.ts"
+    ],
+    "scope": "Independent optional planner, original fixtures, exact observed type diagnostics and curated paired public reading.",
+    "independentFinalMeaningReview": "PENDING",
+    "completeSemanticParityClaim": false
   }
 }

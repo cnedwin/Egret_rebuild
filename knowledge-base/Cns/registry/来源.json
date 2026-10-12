@@ -1954,7 +1954,83 @@
           "completePublication": "PENDING_FINAL_RERUN"
         }
       },
-      "urls": []
+      "urls": [],
+      "deliverySuccessor": {
+        "engineeringLabel": "0.33.0",
+        "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/20",
+        "sourceHead": "baa308e93596f518e32b7bcda786afccbef594e8",
+        "mergedMain": "4ae7e71ee72e5f2c46e7dbccd28b27f482294a0c",
+        "tree": "f340e46f0d88783b268b732dcacbfcf7c45a363a",
+        "mandatoryPushHook": "ACTUAL_PASS",
+        "coreTests": 2631,
+        "publicationTests": 63,
+        "documentPairs": 145,
+        "criticalSources": 174,
+        "localRemoteMainReadbackAtUtc": "2026-10-11T23:31:37.118Z",
+        "remoteStatusCount": 0,
+        "remoteCheckCount": 0,
+        "remoteCIPassClaimed": false,
+        "scope": "Observed delivery successor; earlier MI1 pending cutoffs remain historical."
+      }
+    },
+    {
+      "id": "S087",
+      "type": "first_party_bounded_spine_import_planning_evidence",
+      "researchCheckedAt": "2026-10-12",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R005",
+        "R006",
+        "R007",
+        "R012",
+        "R015",
+        "R016",
+        "R020"
+      ],
+      "verification": {
+        "engineeringLabel": "0.34.0",
+        "sourceId": "S087",
+        "deliverable": "V038",
+        "packageVersion": "0.0.0",
+        "protocolVersion": "1.0",
+        "behavior": {
+          "tests": 32,
+          "passed": 32,
+          "failed": 0
+        },
+        "strictTypes": {
+          "positiveConsumers": 1,
+          "negativeDiagnostics": {
+            "ordinary": 22,
+            "imports": 6
+          },
+          "completeOneToOneMatching": true
+        },
+        "focusedPolicy": {
+          "tests": 9,
+          "passed": 9,
+          "failed": 0
+        },
+        "assignedBehaviorControls": 5,
+        "productionBoundaryFiles": 465,
+        "independentImplementationReviewOpenFindings": 0,
+        "fullCurrent": "PENDING_AT_PRECOMMIT_METADATA_CUTOFF",
+        "publication": "PENDING_AT_PRECOMMIT_METADATA_CUTOFF",
+        "independentFinalBilingualMeaningReview": "PENDING",
+        "mandatoryGitPushHook": "PENDING",
+        "remoteDelivery": "PENDING",
+        "fullSpineR020V020": "OPEN",
+        "historicalCutoffsPreserved": true
+      },
+      "urls": [
+        "https://esotericsoftware.com/spine-atlas-format",
+        "https://github.com/EsotericSoftware/spine-runtimes/tree/b7beb2ccbbce667a12c02f44d070644f59b04968/spine-ts/spine-core"
+      ],
+      "title": "第一方 Spine 导入计划与有界验证",
+      "scope": "稳定版 4.3 JSON、现代图集与显式页面绑定的纯数据计划。",
+      "limit": "动画／渲染、二进制、许可资格与完整 Spine 未验收；完整公开门禁待完成。",
+      "doc": "Cns/docs/Spine导入计划契约.md"
     }
   ]
 }

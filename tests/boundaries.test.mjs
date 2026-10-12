@@ -13,7 +13,7 @@ const ownedParent = path.resolve(repository, 'work');
 const dependencies = { contracts: [], runtime: ['@egret/contracts'], engine: ['@egret/contracts', '@egret/runtime'], project: ['@egret/contracts'] };
 
 // Synthetic facades prove tool policy/resolution only, never core or native behavior.
-function fixture({ imported, subtree = 'engine/rendering', declared = false, missingImageExport = false, missingGeometryExport, missingGeometryType, missingMesh, splitMesh = false, meshLeak, meshModuleLeak, meshWrongEntry, meshStateSourceValueImport = false, meshStateEmittedValueImport = false, profileLeak, profileModuleLeak, missingTexturedPort, missingProfileFactory = false, profileRegistryImport = false, registryLegitimateHosts = false, registryMapMutation, registryImporterProbe, hitTestMutation, mouseInputMutation, /* S3D1_OPTIONS_BEGIN */ scene3dMutation /* S3D1_OPTIONS_END */ }, run) {
+function fixture({ imported, subtree = 'engine/rendering', declared = false, missingImageExport = false, missingGeometryExport, missingGeometryType, missingMesh, splitMesh = false, meshLeak, meshModuleLeak, meshWrongEntry, meshStateSourceValueImport = false, meshStateEmittedValueImport = false, profileLeak, profileModuleLeak, missingTexturedPort, missingProfileFactory = false, profileRegistryImport = false, registryLegitimateHosts = false, registryMapMutation, registryImporterProbe, hitTestMutation, mouseInputMutation, spineImportMutation, /* S3D1_OPTIONS_BEGIN */ scene3dMutation /* S3D1_OPTIONS_END */ }, run) {
   mkdirSync(ownedParent, { recursive: true });
   const root = mkdtempSync(path.join(ownedParent, 'egret-boundary-policy-'));
   function write(relative, content) {
@@ -45,13 +45,13 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
         './scene3d': {types:'./dist/rendering/scene3d.d.ts',import:'./dist/rendering/scene3d.js'},
         './webgpu/scene3d': {types:'./dist/web/scene3d.d.ts',import:'./dist/web/scene3d.js'},
         // S3D1_FIXTURE_MAP_END
-      } : name === 'project' ? {'.':{types:'./dist/index.d.ts',import:'./dist/index.js'}} : undefined;
+      } : name === 'project' ? {'.':{types:'./dist/index.d.ts',import:'./dist/index.js'},'./spine':{types:'./dist/spine/index.d.ts',import:'./dist/spine/index.js'}} : undefined;
       write(`packages/${name}/package.json`, { name: `@egret/${name}`, private: true, version: '0.0.0', type: 'module', dependencies: dependencyMap, ...(packageExports === undefined ? {} : {exports:packageExports}) });
       write(`packages/${name}/tsconfig.json`, { extends: '../../tsconfig.base.json', ...(name === 'project' ? {compilerOptions:{rootDir:'src',outDir:'dist'}} : {}), references: allowed.map(value => ({ path: `../${value.slice('@egret/'.length)}` })) });
       write(`packages/${name}/src/index.ts`, 'export {};\n');
       write(`packages/${name}/dist/index.js`, 'export {};\n');
       const exports = name === 'engine' ? { '.': './index.js', './web': './web.js', './webgpu':'./webgpu.js', './text':'./text.js', './web/text':'./web-text.js', /* S3D1_FIXTURE_RESOLVER_BEGIN */ './scene3d':'./scene3d.js', './webgpu/scene3d':'./scene3d-web.js' /* S3D1_FIXTURE_RESOLVER_END */ }
-        : name === 'runtime' ? { '.': './index.js', './text':'./text.js' } : './index.js';
+        : name === 'runtime' ? { '.': './index.js', './text':'./text.js' } : name === 'project' ? {'.':'./index.js','./spine':'./spine.js'} : './index.js';
       write(`node_modules/@egret/${name}/package.json`, { name: `@egret/${name}`, type: 'module', exports });
       write(`node_modules/@egret/${name}/index.js`, 'export {};\n');
       if (name === 'project') {
@@ -59,6 +59,14 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
         const values = ['DEFAULT_PROJECT_LIMITS','createProjectStore','openProjectHistory','parseProjectSnapshot','parseProjectTransaction','serializeProjectSnapshot'];
         write('node_modules/@egret/project/index.js', values.map(name => `export const ${name}=1;`).join('\n'));
         write('packages/project/dist/index.d.ts', readFileSync(path.join(repository,'packages/project/dist/index.d.ts')));
+        // SP1-A synthetic declaration/resolution fixture, never animation behavior.
+        write('packages/project/src/spine/index.ts',"export {createSpineImportPlan,SPINE_IMPORT_LIMITS} from './preflight.js';\nexport type {SpineImportInput,SpineTextSource,SpinePageBinding,SpineProvenance,SpineImportPlan,SpineImportResult,SpineImportDiagnostic,SpineImportDiagnosticCode,SpineSourceSpan,SpinePagePlan,SpineRegionPlan} from './types.js';\n");
+        write('packages/project/dist/spine/index.d.ts',"export {createSpineImportPlan,SPINE_IMPORT_LIMITS} from './preflight.js';\nexport type {SpineImportInput,SpineTextSource,SpinePageBinding,SpineProvenance,SpineImportPlan,SpineImportResult,SpineImportDiagnostic,SpineImportDiagnosticCode,SpineSourceSpan,SpinePagePlan,SpineRegionPlan} from './types.js';\n");
+        write('packages/project/dist/spine/index.js',"export {createSpineImportPlan,SPINE_IMPORT_LIMITS} from './preflight.js';\n");
+        write('packages/project/dist/spine/preflight.js','export const SPINE_IMPORT_LIMITS=Object.freeze({}); export function createSpineImportPlan() {}\n');
+        write('packages/project/dist/spine/types.js','export {};\n');
+        write('node_modules/@egret/project/spine.js','export const SPINE_IMPORT_LIMITS=Object.freeze({}); export function createSpineImportPlan() {}\n');
+
       }
       if (name === 'engine') {
         write('node_modules/@egret/engine/web.js', 'export function createCanvasHost() {}\n');
@@ -536,6 +544,24 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
       write(file,before===''?original+after:original.replace(before,after));
     }
     // MI1_MUTATION_END
+    // SP1-A_POLICY_MUTATION_BEGIN
+    if(spineImportMutation){
+      const edits={
+        'extra-runtime':['node_modules/@egret/project/spine.js','','export const unexpectedSpine=1;\n'],
+        'extra-type':['packages/project/dist/spine/index.d.ts','','export type {UnexpectedSpine} from "./types.js";\n'],
+        'wrong-forward':['packages/project/src/spine/index.ts',"from './preflight.js'","from './other.js'"],
+        'barrel-work':['packages/project/src/spine/index.ts','','const hiddenWork=1;\n'],
+        'types-runtime':['packages/project/dist/spine/types.js','','export const hiddenTypeRuntime=1;\n'],
+        'private-root-edge':['packages/project/src/SpineProbe.ts','','import type {SpineImportPlan} from "./spine/types.js";\n'],
+        'dom-ambient':['packages/project/src/spine/preflight.ts','','const canvas:HTMLCanvasElement=undefined;\n'],
+        'host-timer':['packages/project/dist/spine/preflight.js','','setTimeout(()=>{},1);\n'],
+      };
+      const edit=edits[spineImportMutation];assert.ok(edit,'finite SP1-A control');
+      const [file,before,after]=edit,original=existsSync(path.join(root,file))?readFileSync(path.join(root,file),'utf8'):'';
+      if(before)assert.equal(original.split(before).length-1,1,'unique SP1-A mutation anchor');
+      write(file,before?original.replace(before,after):original+after);
+    }
+    // SP1-A_POLICY_MUTATION_END
     const result = spawnSync(process.execPath, ['tools/check-boundaries.mjs'], { cwd: root, encoding: 'utf8' });
     assert.ifError(result.error);
     /* S3D1_RESULT_BEGIN */ if(sceneComparator)result.mapAdaptedPredecessor=sceneComparator; /* S3D1_RESULT_END */
@@ -816,3 +842,22 @@ test('HT1 admits only erased root/runtime options and the finite display class m
     });
   });
 });
+
+// SP1_A_POLICY_TESTS_BEGIN
+test('SP1-A exact optional policy baseline preserves retained root',()=>{
+  fixture({imported:'robust-predicates'},r=>{assert.equal(r.status,0,r.stdout+r.stderr);assert.match(r.stdout,/Boundary check PASS/);});
+});
+for(const [name,reason]of [
+  ['extra-runtime','SP1-A: exact optional runtime exports mismatch'],
+  ['extra-type','SP1-A: exact optional declaration forwarding mismatch'],
+  ['wrong-forward','SP1-A: exact optional declaration forwarding mismatch'],
+  ['barrel-work','SP1-A: exact optional declaration forwarding mismatch'],
+  ['types-runtime','SP1-A: types module emitted runtime values'],
+  ['private-root-edge','SP1-A: optional subtree imported outside its entry'],
+  ['dom-ambient','host ambient dependency'],
+  ['host-timer','SP1-A: optional planning entry requests a host'],
+])test('SP1-A policy '+name+' requires fresh complete baseline then exact refusal',()=>{
+  fixture({imported:'robust-predicates'},r=>{assert.equal(r.status,0,r.stdout+r.stderr);assert.match(r.stdout,/Boundary check PASS/);});
+  fixture({imported:'robust-predicates',spineImportMutation:name},r=>{assert.equal(r.status,1,r.stdout+r.stderr);assert.ok(r.stderr.includes(reason),r.stderr);});
+});
+// SP1_A_POLICY_TESTS_END
