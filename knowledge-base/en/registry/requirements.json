@@ -28,7 +28,8 @@
       "statement": "The initial phase covers both 2D games with complex UI and lightweight 3D games; specific scale, quality, and device budgets remain to be defined.",
       "status": "confirmed",
       "sourceIds": [
-        "S001"
+        "S001",
+        "S091"
       ],
       "deliveryIds": [
         "V001",
@@ -41,7 +42,8 @@
         "V025",
         "V026",
         "V027",
-        "V028"
+        "V028",
+        "V042"
       ],
       "decisionIds": [
         "D002",
@@ -49,7 +51,15 @@
         "D007",
         "D008"
       ],
-      "doc": "en/docs/design-philosophy-and-positioning.md"
+      "doc": "en/docs/design-philosophy-and-positioning.md",
+      "matrixAuthoringProposal": {
+        "engineeringLabel": "0.38.0",
+        "sourceId": "S091",
+        "deliverableId": "V042",
+        "status": "SOURCE_ONLY_NOT_RUN",
+        "summary": "Bounded proposal for public matrix authoring/composition; the requirement and broader scene/rendering goals retain separate acceptance.",
+        "doc": "en/docs/public-scene3d-contract.md"
+      }
     },
     {
       "id": "R003",
@@ -57,7 +67,8 @@
       "statement": "The rendering engine and runtime are the project's central components, seeking an approach suitable for the present and continuous iteration over the next two to three years.",
       "status": "confirmed",
       "sourceIds": [
-        "S001"
+        "S001",
+        "S091"
       ],
       "deliveryIds": [
         "V002",
@@ -69,7 +80,8 @@
         "V025",
         "V026",
         "V027",
-        "V028"
+        "V028",
+        "V042"
       ],
       "decisionIds": [
         "D001",
@@ -79,7 +91,15 @@
         "D010",
         "D012"
       ],
-      "doc": "en/docs/technical-architecture.md"
+      "doc": "en/docs/technical-architecture.md",
+      "matrixAuthoringProposal": {
+        "engineeringLabel": "0.38.0",
+        "sourceId": "S091",
+        "deliverableId": "V042",
+        "status": "SOURCE_ONLY_NOT_RUN",
+        "summary": "Bounded proposal for public matrix authoring/composition; the requirement and broader scene/rendering goals retain separate acceptance.",
+        "doc": "en/docs/public-scene3d-contract.md"
+      }
     },
     {
       "id": "R004",
@@ -530,7 +550,7 @@
   ],
   "_localization": {
     "canonicalSource": "需求.json",
-    "canonicalSha256": "d7bc50726fed150cf1f543da6cefe2cfcc4d1ea9b7b8d33b178d00c25da3b5d1",
+    "canonicalSha256": "4b5130fd87959c7b9000c49c5be748dbaa0aebd6be68e124a1caf4ea41bef69f",
     "role": "read_only_translation",
     "language": "en"
   },
@@ -552,5 +572,44 @@
     "record": "evidence/spine-f1-clock-public-projection.json",
     "fullSpineR020V020": "OPEN",
     "cutoff": "Actual independent-clone public replay; saved-result review, final gates and delivery still PENDING."
+  },
+  "matrixAuthoringActualSuccessor": {
+    "status": "ACTUAL_TYPED_PUBLIC_MATRIX_FACADE_GREEN",
+    "record": "knowledge-base/evidence/public-matrix-authoring-verification.json",
+    "oldPublicTests": {
+      "passed": 17,
+      "assignedMissingAPI": 4
+    },
+    "oldPositiveTypes": {
+      "missingExports": 4
+    },
+    "retainedAndPublicTests": {
+      "passed": 168,
+      "failed": 0,
+      "skipped": 0
+    },
+    "publicTests": {
+      "passed": 21,
+      "newCases": 4
+    },
+    "positiveTypes": {
+      "exitCode": 0,
+      "diagnostics": 0
+    },
+    "importNegativeTypes": {
+      "assignedCases": 11,
+      "exitCode": 1
+    },
+    "exactBoundaries": {
+      "exitCode": 0
+    },
+    "strictTypes": {
+      "exitCode": 0
+    },
+    "renderingAlgorithmsChanged": false,
+    "newGPUExecution": false,
+    "fullRepositoryGate": "PENDING",
+    "independentSourceAndBilingualReview": "PENDING",
+    "remoteDelivery": "PENDING"
   }
 }

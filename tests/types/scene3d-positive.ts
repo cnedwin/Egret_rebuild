@@ -17,3 +17,23 @@ if (isMeshGeometry3D(unknownValue)) { const owned: MeshGeometry3D = unknownValue
 if (isSceneFrame3D(unknownValue)) { const owned: SceneFrame3D = unknownValue; void owned.uniformBytes; }
 void captured; void meshOrigin; void sceneOrigin;
 // Output interfaces are structural typing, not a TypeScript authenticity proof.
+
+// Ordinary editor/JSON authoring arrays become typed owned tuples without
+// assertions. These public imports intentionally require the successor API.
+import { createMatrix4, multiplyMatrix4, Math3DError } from '@egret/engine/scene3d';
+import type { Math3DErrorCode } from '@egret/engine/scene3d';
+const authoredParentSource: readonly number[] = [0,1,0,0,-1,0,0,0,0,0,1,0,0,0,0,1];
+const authoredLocalSource: readonly number[] = [1,0,0,0,0,1,0,0,0,0,1,0,3,0,0,1];
+const authoredParent: Matrix4 = createMatrix4(authoredParentSource);
+const authoredLocal: Matrix4 = createMatrix4(authoredLocalSource);
+const authoredProduct: Matrix4 = multiplyMatrix4(authoredParent, authoredLocal);
+const composedDraw: SceneDrawInput3D = { geometry, modelView:authoredProduct };
+const composedInput: SceneInput3D = { projection, draws:[composedDraw] };
+const composedFrame: SceneFrame3D = createSceneFrame3D(composedInput);
+const mathCode: Math3DErrorCode = 'MATH3D_INPUT_READ_FAILED';
+const mathCause: unknown = { id:'typed-public-matrix-cause' };
+const mathError: Math3DError = new Math3DError(mathCode, mathCause);
+const observedMathCode: Math3DErrorCode = mathError.code;
+const observedMathCause: unknown = mathError.cause;
+const standardError: Error = mathError;
+void composedFrame; void observedMathCode; void observedMathCause; void standardError;

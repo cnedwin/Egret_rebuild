@@ -3,6 +3,19 @@
 [English](README.md) | 简体中文
 
 阅读[中文知识库](Cns/README.md)、[技术白皮书](Cns/docs/技术白皮书.md)、[产品需求说明书](Cns/docs/产品需求说明书.md)、[工程规划](Cns/docs/工程规划.md)和[贡献指南](Cns/CONTRIBUTING.md)。
+<!-- MATRIX4-DOC-0.38.0-BEGIN -->
+## 0.38.0 拟议 — 公共 Matrix4 创作
+
+**SOURCE_ONLY / NOT_RUN。S091 / V042** 拟在 `@egret/engine/scene3d` 提供类型化矩阵创作：`createMatrix4`、`multiplyMatrix4` 及原有 `Math3DError` / `Math3DErrorCode` 绑定。编辑器与 JSON 源数组可转换为自有元组，在既有场景捕获前组合变换。方案通过轻量公共转发器复用白鹭独立创作的矩阵算法。
+
+实现、实际 RED/GREEN、公共行为／类型、当前完整门禁及交付均为 **PENDING**。Clock **0.37.0** 交付在**本准备截止点仍为 PENDING**；保留较早记录的结果与截止点。更广的场景／渲染、性能、完整 Spine 及迁移验收继续单独处理。
+
+**已记录的交付后继：** Clock **0.37.0** 已经由 [PR #24](https://github.com/cnedwin/Egret_rebuild/pull/24) 合并，Main `8f84d5f99281ad051abd2e061b5aff90d6d0f40b` 已完成本地与远端读回。这是较早交付检查点的后继，保留原检查点，不构成 Matrix 验收或远端 CI PASS。
+
+拟议 API 与创作示例见[公共场景契约](Cns/docs/公共3D场景契约.md)。
+**实际 0.38.0 后继：**旧公开 SDK 通过 **17** 项原有用例，**4** 项新增用例在具名缺失 API 断言处失败；正向类型消费者报出 **4** 个缺失导出。新构建 SDK 通过 **168/168** 项原数学、投影、场景及公开用例，其中公开用例为 **21/21**。正向消费者编译通过；**11** 项有意导入负例对应真实诊断，精确边界与严格类型门禁通过，非预期失败为 **0**。原数学算法保持不变。此处不新增 GPU、设备或性能验收结论。独立源码／双语评审、完整仓库门禁与交付在本后继截止点仍为 PENDING。见[共享核验记录](evidence/public-matrix-authoring-verification.json)。
+<!-- MATRIX4-DOC-0.38.0-END -->
+
 <!-- F1C-DOC-0.37.0-BEGIN -->
 ## Engineering preview 0.37.0 — opt-in F1 Clock candidate
 

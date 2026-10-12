@@ -28,7 +28,8 @@
       "statement": "首期兼顾复杂UI的2D游戏与轻量3D游戏；具体规模、画质和设备预算待定义。",
       "status": "confirmed",
       "sourceIds": [
-        "S001"
+        "S001",
+        "S091"
       ],
       "deliveryIds": [
         "V001",
@@ -41,7 +42,8 @@
         "V025",
         "V026",
         "V027",
-        "V028"
+        "V028",
+        "V042"
       ],
       "decisionIds": [
         "D002",
@@ -49,7 +51,15 @@
         "D007",
         "D008"
       ],
-      "doc": "Cns/docs/设计理念与定位.md"
+      "doc": "Cns/docs/设计理念与定位.md",
+      "matrixAuthoringProposal": {
+        "engineeringLabel": "0.38.0",
+        "sourceId": "S091",
+        "deliverableId": "V042",
+        "status": "SOURCE_ONLY_NOT_RUN",
+        "summary": "公共矩阵创作与组合的有限提案；需求本身及更广场景／渲染目标仍独立验收。",
+        "doc": "Cns/docs/公共3D场景契约.md"
+      }
     },
     {
       "id": "R003",
@@ -57,7 +67,8 @@
       "statement": "渲染引擎和运行时是项目最核心部分，寻求适合当代与未来两三年持续迭代的方案。",
       "status": "confirmed",
       "sourceIds": [
-        "S001"
+        "S001",
+        "S091"
       ],
       "deliveryIds": [
         "V002",
@@ -69,7 +80,8 @@
         "V025",
         "V026",
         "V027",
-        "V028"
+        "V028",
+        "V042"
       ],
       "decisionIds": [
         "D001",
@@ -79,7 +91,15 @@
         "D010",
         "D012"
       ],
-      "doc": "Cns/docs/技术架构.md"
+      "doc": "Cns/docs/技术架构.md",
+      "matrixAuthoringProposal": {
+        "engineeringLabel": "0.38.0",
+        "sourceId": "S091",
+        "deliverableId": "V042",
+        "status": "SOURCE_ONLY_NOT_RUN",
+        "summary": "公共矩阵创作与组合的有限提案；需求本身及更广场景／渲染目标仍独立验收。",
+        "doc": "Cns/docs/公共3D场景契约.md"
+      }
     },
     {
       "id": "R004",
@@ -546,5 +566,44 @@
     "record": "evidence/spine-f1-clock-public-projection.json",
     "fullSpineR020V020": "OPEN",
     "cutoff": "实际独立克隆公开重放；保存结果评审、最终门禁与交付仍为 PENDING。"
+  },
+  "matrixAuthoringActualSuccessor": {
+    "status": "ACTUAL_TYPED_PUBLIC_MATRIX_FACADE_GREEN",
+    "record": "knowledge-base/evidence/public-matrix-authoring-verification.json",
+    "oldPublicTests": {
+      "passed": 17,
+      "assignedMissingAPI": 4
+    },
+    "oldPositiveTypes": {
+      "missingExports": 4
+    },
+    "retainedAndPublicTests": {
+      "passed": 168,
+      "failed": 0,
+      "skipped": 0
+    },
+    "publicTests": {
+      "passed": 21,
+      "newCases": 4
+    },
+    "positiveTypes": {
+      "exitCode": 0,
+      "diagnostics": 0
+    },
+    "importNegativeTypes": {
+      "assignedCases": 11,
+      "exitCode": 1
+    },
+    "exactBoundaries": {
+      "exitCode": 0
+    },
+    "strictTypes": {
+      "exitCode": 0
+    },
+    "renderingAlgorithmsChanged": false,
+    "newGPUExecution": false,
+    "fullRepositoryGate": "PENDING",
+    "independentSourceAndBilingualReview": "PENDING",
+    "remoteDelivery": "PENDING"
   }
 }

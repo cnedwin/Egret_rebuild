@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "version": "0.37.0",
+  "version": "0.38.0",
   "updatedAt": "2026-10-12",
   "title": "白鹭引擎重构工程",
-  "stage": "original_opt_in_spine_f1_clock_candidate",
+  "stage": "proposed_public_matrix_authoring",
   "publication": "development_preview",
   "registries": {
     "requirements": "Cns/registry/需求.json",
@@ -25,7 +25,7 @@
     "acceptance": "reproducible_test_reports",
     "summaryStatus": "deliverable_registry"
   },
-  "engineImplementation": "partial_independent_spine_f1_clock_private_evidence_public_projection_pending",
+  "engineImplementation": "partial_independent_core_public_matrix_authoring_proposed",
   "engineBenchmarksRun": false,
   "creatorTaskTestsRun": false,
   "migrationAcceptanceRun": false,
@@ -541,7 +541,7 @@
     "contract": "Cns/docs/显示内容边界契约.md",
     "evidence": "Cns/docs/显示内容边界证据.md"
   },
-  "latestEngineeringPreview": "0.37.0",
+  "latestEngineeringPreview": "0.38.0",
   "texturedMesh2DImplementation": {
     "version": "0.23.0",
     "status": "bounded_increment_implemented",
@@ -2636,5 +2636,95 @@
     "record": "evidence/spine-f1-clock-public-projection.json",
     "fullSpineR020V020": "OPEN",
     "cutoff": "实际独立克隆公开重放；保存结果评审、最终门禁与交付仍为 PENDING。"
+  },
+  "publicMatrixAuthoringProposal": {
+    "engineeringLabel": "0.38.0",
+    "sourceId": "S091",
+    "deliverableId": "V042",
+    "status": "SOURCE_ONLY_NOT_RUN",
+    "publicEntry": "@egret/engine/scene3d",
+    "runtimeFunctions": [
+      "createMatrix4",
+      "multiplyMatrix4"
+    ],
+    "diagnosticValue": "Math3DError",
+    "diagnosticType": "Math3DErrorCode",
+    "execution": "NOT_RUN",
+    "firstPartyAlgorithm": "packages/engine/rendering/matrix4.ts",
+    "thinTypedForwarders": true,
+    "renderingAlgorithmsChanged": false,
+    "acceptance": {
+      "implementation": "PENDING",
+      "actualRedGreen": "PENDING",
+      "publicBehavior": "PENDING",
+      "strictTypes": "PENDING",
+      "updatedExportAndGuardInventories": "PENDING",
+      "retainedMathSceneRegressions": "PENDING",
+      "currentFullGates": "PENDING",
+      "independentFinalBilingualReview": "PENDING",
+      "mandatoryPushHook": "PENDING",
+      "remoteDelivery": "PENDING"
+    },
+    "summary": "拟议 Matrix4 创作接口及薄公共转发器，复用原有独立实现；后续场景真实性、精度与预算仍独立准入。",
+    "doc": "Cns/docs/公共3D场景契约.md"
+  },
+  "spineF1ClockDeliverySuccessor": {
+    "engineeringLabel": "0.37.0",
+    "status": "ACTUAL_DELIVERY_SUCCESSOR",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/24",
+    "sourceCommit": "206429369ce1751da616a9d59fecd854cc12491c",
+    "parentMain": "36909c3c1b2b9ef9784cb71d949ef6eba142fc0a",
+    "mergedMain": "8f84d5f99281ad051abd2e061b5aff90d6d0f40b",
+    "tree": "da042bc487de0eca6944a12595c10a790ae0cdc7",
+    "mandatoryPushHook": "ACTUAL_EXIT_0",
+    "coreTests": 2678,
+    "publicationTests": 63,
+    "documentPairs": 149,
+    "criticalSources": 184,
+    "remoteStatusCount": 0,
+    "remoteCheckCount": 0,
+    "remoteCIPassClaimed": false,
+    "localRemoteMainReadbackAtUtc": "2026-10-12T05:34:10.333Z",
+    "originalPendingCutoffs": "PRESERVED_UNCHANGED",
+    "scope": "实际 Clock 交付后继；保留较早准备／curation 截止点。此项不验收 Matrix 或远端 CI。"
+  },
+  "matrixAuthoringActualSuccessor": {
+    "status": "ACTUAL_TYPED_PUBLIC_MATRIX_FACADE_GREEN",
+    "record": "knowledge-base/evidence/public-matrix-authoring-verification.json",
+    "oldPublicTests": {
+      "passed": 17,
+      "assignedMissingAPI": 4
+    },
+    "oldPositiveTypes": {
+      "missingExports": 4
+    },
+    "retainedAndPublicTests": {
+      "passed": 168,
+      "failed": 0,
+      "skipped": 0
+    },
+    "publicTests": {
+      "passed": 21,
+      "newCases": 4
+    },
+    "positiveTypes": {
+      "exitCode": 0,
+      "diagnostics": 0
+    },
+    "importNegativeTypes": {
+      "assignedCases": 11,
+      "exitCode": 1
+    },
+    "exactBoundaries": {
+      "exitCode": 0
+    },
+    "strictTypes": {
+      "exitCode": 0
+    },
+    "renderingAlgorithmsChanged": false,
+    "newGPUExecution": false,
+    "fullRepositoryGate": "PENDING",
+    "independentSourceAndBilingualReview": "PENDING",
+    "remoteDelivery": "PENDING"
   }
 }

@@ -595,8 +595,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/CHANGELOG.md",
-      "bytes": 50257,
-      "sha256": "58435ee2f58ef1d419cd785f50099bc1eea04453d3d2b1303ed01205160338f5",
+      "bytes": 52137,
+      "sha256": "30cc3520e92edffc0ffba67daf4ff476a145e808717e91c9cb1f21882812a424",
       "identityHistory": [
         {
           "bytes": 25611,
@@ -664,6 +664,11 @@
           "bytes": 47896,
           "sha256": "b0d801dc0a0ab45cfc713aba4a99cdc9092ffa7e1d877d1f6a0c9856a8879158",
           "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+        },
+        {
+          "bytes": 50257,
+          "sha256": "58435ee2f58ef1d419cd785f50099bc1eea04453d3d2b1303ed01205160338f5",
+          "scope": "Preserved identity before public matrix authoring 0.38.0."
         }
       ]
     },
@@ -754,8 +759,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 23953,
-      "sha256": "0d3579477e69d51d6aeb0ca959949ab81f13489f9aedfa8c485dc9f9ec07b131",
+      "bytes": 25831,
+      "sha256": "5366ff4755d0ea9f3a152e9abb0347c1854287c8b9c6f169f868e92e037d35fe",
       "identityHistory": [
         {
           "bytes": 12315,
@@ -791,6 +796,11 @@
           "bytes": 21583,
           "sha256": "ad4fa98ba2427efa319d3038ea39b161c913d172ed1ca411cdaefc34bfbb68e1",
           "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+        },
+        {
+          "bytes": 23953,
+          "sha256": "0d3579477e69d51d6aeb0ca959949ab81f13489f9aedfa8c485dc9f9ec07b131",
+          "scope": "Preserved identity before public matrix authoring 0.38.0."
         }
       ]
     },
@@ -1303,8 +1313,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/README.md",
-      "bytes": 21358,
-      "sha256": "bcbaaf5e24b8bfa3172dc7517191a08288a5789dc4239a6f9236484d5e98cf5e",
+      "bytes": 23238,
+      "sha256": "07cd4c42aa428847811c81b4f720c304e6ad3fe2a8283c7ab56be3391d9f8318",
       "identityHistory": [
         {
           "bytes": 6319,
@@ -1367,14 +1377,19 @@
           "bytes": 18997,
           "sha256": "899af7790b19b1d92b5f3a8e0ec66af71b3b30e09d71860d3cfd652c0deca518",
           "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+        },
+        {
+          "bytes": 21358,
+          "sha256": "bcbaaf5e24b8bfa3172dc7517191a08288a5789dc4239a6f9236484d5e98cf5e",
+          "scope": "Preserved identity before public matrix authoring 0.38.0."
         }
       ]
     },
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/registry/交付.json",
-      "bytes": 116333,
-      "sha256": "fa66344bee66ebd1f8eeeb5e1e3c0eeea2291bbed53fa3ae0596ba4bdaae3b7a",
+      "bytes": 120546,
+      "sha256": "95061f28fd93d9419694e6bc3a70cb8efe1cc1f76189c9adbd1f7f2b8174cc68",
       "identityHistory": [
         {
           "bytes": 50664,
@@ -1452,6 +1467,11 @@
           "bytes": 112143,
           "sha256": "063589eef4b84f88964649a66e8a400cabc509237b24332a041b3b6e12cb6976",
           "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+        },
+        {
+          "bytes": 116333,
+          "sha256": "fa66344bee66ebd1f8eeeb5e1e3c0eeea2291bbed53fa3ae0596ba4bdaae3b7a",
+          "scope": "Preserved identity before public matrix authoring 0.38.0."
         }
       ]
     },
@@ -1482,8 +1502,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/registry/来源.json",
-      "bytes": 130497,
-      "sha256": "d839a2120fe3830e47f6d1c4bb4f7657b97967520722960e237381324e08b7c1",
+      "bytes": 134249,
+      "sha256": "78b5e01c90c805e9dd7b16bd23f8056770c1d8e25526858a390365c4b3369c3d",
       "identityHistory": [
         {
           "bytes": 74667,
@@ -1561,14 +1581,19 @@
           "bytes": 127348,
           "sha256": "745139e8b1bbac1425415194e8981479a883940082d5eebdb3c0077704840c77",
           "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+        },
+        {
+          "bytes": 130497,
+          "sha256": "d839a2120fe3830e47f6d1c4bb4f7657b97967520722960e237381324e08b7c1",
+          "scope": "Preserved identity before public matrix authoring 0.38.0."
         }
       ]
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/registry/需求.json",
-      "bytes": 15321,
-      "sha256": "d7bc50726fed150cf1f543da6cefe2cfcc4d1ea9b7b8d33b178d00c25da3b5d1",
+      "bytes": 17108,
+      "sha256": "4b5130fd87959c7b9000c49c5be748dbaa0aebd6be68e124a1caf4ea41bef69f",
       "identityHistory": [
         {
           "bytes": 13892,
@@ -1579,6 +1604,11 @@
           "bytes": 14157,
           "sha256": "d546d6177d9390b63b1b11eb3e191db8f10e7c5c65347447edb4c8203a81bb64",
           "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+        },
+        {
+          "bytes": 15321,
+          "sha256": "d7bc50726fed150cf1f543da6cefe2cfcc4d1ea9b7b8d33b178d00c25da3b5d1",
+          "scope": "Preserved identity before public matrix authoring 0.38.0."
         }
       ]
     },
@@ -1609,8 +1639,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/当前版本.json",
-      "bytes": 102390,
-      "sha256": "6fc59c023e4f620feb8a3a88e102b912b97035109fe24c1e913a89e5ecb6f6b9",
+      "bytes": 105468,
+      "sha256": "41842cd3197337a966106e7a3bfd0c12a1dd6920a2ccb2b025176cb3618de965",
       "identityHistory": [
         {
           "bytes": 31425,
@@ -1683,6 +1713,11 @@
           "bytes": 99577,
           "sha256": "1ab900afeffa2c408f8abcad23795acbc0b5b698f7f7cd5b0858892281456b2c",
           "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+        },
+        {
+          "bytes": 102390,
+          "sha256": "6fc59c023e4f620feb8a3a88e102b912b97035109fe24c1e913a89e5ecb6f6b9",
+          "scope": "Preserved identity before public matrix authoring 0.38.0."
         }
       ]
     },
@@ -1719,8 +1754,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/CHANGELOG.md",
-      "bytes": 59035,
-      "sha256": "b372af2b8a6e3553453401674a0e4e69fbaafd9e69bdbd25195945dd3d53895d",
+      "bytes": 61150,
+      "sha256": "65c3bbbcb83119c55b17eb81ce0cdcad407eeea4b19e61cdac9431d561ddfdb6",
       "identityHistory": [
         {
           "bytes": 31389,
@@ -1788,6 +1823,11 @@
           "bytes": 56404,
           "sha256": "63fc9c3428daa38cf692a605c5bc9569d7bbee37e54740ac1f1ba5c06414750f",
           "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+        },
+        {
+          "bytes": 59035,
+          "sha256": "b372af2b8a6e3553453401674a0e4e69fbaafd9e69bdbd25195945dd3d53895d",
+          "scope": "Preserved identity before public matrix authoring 0.38.0."
         }
       ]
     },
@@ -1800,8 +1840,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/current-version.json",
-      "bytes": 103094,
-      "sha256": "57a19c3161b95db3a031a97d4ac7e41f419518dfc5110d31357b435ada0f5c23",
+      "bytes": 106227,
+      "sha256": "b99934a8c0ac375a3384ab48a21501a6c14f1202c13c9c807ef08f479489c845",
       "identityHistory": [
         {
           "bytes": 31946,
@@ -1874,6 +1914,11 @@
           "bytes": 100257,
           "sha256": "d58c6a74f2c89d4e6a0facf578190c76e052ae7addcad5e96369480d686e1449",
           "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+        },
+        {
+          "bytes": 103094,
+          "sha256": "57a19c3161b95db3a031a97d4ac7e41f419518dfc5110d31357b435ada0f5c23",
+          "scope": "Preserved identity before public matrix authoring 0.38.0."
         }
       ]
     },
@@ -2006,8 +2051,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-progress.md",
-      "bytes": 26936,
-      "sha256": "8268f300a74cde2f872898bef295596fe3f9c25ea947814c6a660e6b11d25102",
+      "bytes": 29049,
+      "sha256": "d320ff6cbbb91f0eb74d4b5ec4c53b8c19af1739d509a24e5a9b4003c9d9dd14",
       "identityHistory": [
         {
           "bytes": 14004,
@@ -2043,6 +2088,11 @@
           "bytes": 24296,
           "sha256": "abcb7f485e0ae3c2911a41354fa9dec8875a06371ee6267692abcd025cf9a08e",
           "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+        },
+        {
+          "bytes": 26936,
+          "sha256": "8268f300a74cde2f872898bef295596fe3f9c25ea947814c6a660e6b11d25102",
+          "scope": "Preserved identity before public matrix authoring 0.38.0."
         }
       ]
     },
@@ -2507,8 +2557,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/README.md",
-      "bytes": 24022,
-      "sha256": "ff6d8e31a5fcda99f1a29012e723d136361198d5fec5da33947f8b9da9de0c84",
+      "bytes": 26137,
+      "sha256": "568282686eebdf3151f44e6156411353fce1673e52f06aea1089734e5008b4c2",
       "identityHistory": [
         {
           "bytes": 7397,
@@ -2576,6 +2626,11 @@
           "bytes": 21391,
           "sha256": "cd729ca9b7da02a738b18e0fc8ecb793bec3c49c4fec5a7b7d47d3dc1f8e4a12",
           "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+        },
+        {
+          "bytes": 24022,
+          "sha256": "ff6d8e31a5fcda99f1a29012e723d136361198d5fec5da33947f8b9da9de0c84",
+          "scope": "Preserved identity before public matrix authoring 0.38.0."
         }
       ]
     },
@@ -2600,8 +2655,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/registry/deliverables.json",
-      "bytes": 121621,
-      "sha256": "a1178c599073f70c7f23c6ab52625879fbb370366d01818a6523ae0431c2e995",
+      "bytes": 125974,
+      "sha256": "977cfc186382f71a61f23f4316719db0cc8e36e6802ffb4e2abefc911ec21e0b",
       "identityHistory": [
         {
           "bytes": 54446,
@@ -2684,6 +2739,11 @@
           "bytes": 117352,
           "sha256": "21af0cd3187795d74c6f6e36ecbec9cd79fde32c5587bbc56e92132fc28e9c87",
           "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+        },
+        {
+          "bytes": 121621,
+          "sha256": "a1178c599073f70c7f23c6ab52625879fbb370366d01818a6523ae0431c2e995",
+          "scope": "Preserved identity before public matrix authoring 0.38.0."
         }
       ]
     },
@@ -2696,8 +2756,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/registry/requirements.json",
-      "bytes": 17424,
-      "sha256": "342c6eaa0633fe8395a9f92c99fb5850d2f8c29d108de3823ff65ab7a8f77be2",
+      "bytes": 19275,
+      "sha256": "04c8fcee7a834565182fa4dadb0159d24df3592f3ce1c2b0efbaee53107ae0ce",
       "identityHistory": [
         {
           "bytes": 15989,
@@ -2708,14 +2768,19 @@
           "bytes": 16253,
           "sha256": "6385f6161fd684b1031b72da27a6b6c449f787475a6685c0459c375bfa2f31d2",
           "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+        },
+        {
+          "bytes": 17424,
+          "sha256": "342c6eaa0633fe8395a9f92c99fb5850d2f8c29d108de3823ff65ab7a8f77be2",
+          "scope": "Preserved identity before public matrix authoring 0.38.0."
         }
       ]
     },
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/registry/sources.json",
-      "bytes": 139474,
-      "sha256": "09569f5c35fcbe518f71ebf16a88901cb5344d2c4821f0b2ba29e41e0a65f73d",
+      "bytes": 143338,
+      "sha256": "6b325fd19713e0a27505093cd9c0a996a55a03540bb7d91bdca27d61114fbb43",
       "identityHistory": [
         {
           "bytes": 82270,
@@ -2793,6 +2858,11 @@
           "bytes": 136239,
           "sha256": "dcfaa9bfbeadba50d906053572c75db7f9d71b3587438613e0f844e7f8e4cb3e",
           "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+        },
+        {
+          "bytes": 139474,
+          "sha256": "09569f5c35fcbe518f71ebf16a88901cb5344d2c4821f0b2ba29e41e0a65f73d",
+          "scope": "Preserved identity before public matrix authoring 0.38.0."
         }
       ]
     },
@@ -2823,8 +2893,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/README.md",
-      "bytes": 8059,
-      "sha256": "bcc9088e015cbb959b94da49f40bf6dfe6d01dd5cef8c62810263dec3e0ed746",
+      "bytes": 10161,
+      "sha256": "4966f84ecbd1f4b6312a8e404cc044f1278fe7379fe7db0de9f16938b33fb7c2",
       "identityHistory": [
         {
           "bytes": 899,
@@ -2835,14 +2905,19 @@
           "bytes": 3900,
           "sha256": "4422804c19daf00f779bb5bfe2301850e5b1d29c2567c9e0ea490ba20ea924b4",
           "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+        },
+        {
+          "bytes": 8059,
+          "sha256": "bcc9088e015cbb959b94da49f40bf6dfe6d01dd5cef8c62810263dec3e0ed746",
+          "scope": "Preserved identity before public matrix authoring 0.38.0."
         }
       ]
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/README.zh-CN.md",
-      "bytes": 7680,
-      "sha256": "0b09cf72de08bbb3abbd2a534cafe13f0c45dc2fd33363dc6a3ed2af331de50c",
+      "bytes": 9548,
+      "sha256": "0005200518461883286e74e760ef2c7276d9c6b4e2076a7a6aaee6b0953e83ca",
       "identityHistory": [
         {
           "bytes": 637,
@@ -2853,6 +2928,11 @@
           "bytes": 3638,
           "sha256": "0aeaec05c0e046ec409c8a443f47ec7c8e8506b00ee47c494429f32fd7eee5e4",
           "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+        },
+        {
+          "bytes": 7680,
+          "sha256": "0b09cf72de08bbb3abbd2a534cafe13f0c45dc2fd33363dc6a3ed2af331de50c",
+          "scope": "Preserved identity before public matrix authoring 0.38.0."
         }
       ]
     },
@@ -2887,8 +2967,8 @@
     {
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "path": "localization.json",
-      "sha256": "5a24fabcc78a2249a41b8c09be9a460778f9aaa33c2f966d129d5449bedbe4fc",
-      "bytes": 207886,
+      "sha256": "386317f9269895bc877ba3b86b358d4fc6a78aab45b6eaf25649b5448c40aef0",
+      "bytes": 208322,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -2977,6 +3057,11 @@
           "bytes": 207886,
           "sha256": "4f252e98002ec257169262f874d39927dbdeca38c7e1943c7ed66e784e398886",
           "scope": "Preserved unpublished Clock candidate before D017 numeric-order publication repair."
+        },
+        {
+          "bytes": 207886,
+          "sha256": "5a24fabcc78a2249a41b8c09be9a460778f9aaa33c2f966d129d5449bedbe4fc",
+          "scope": "Preserved identity before public matrix authoring 0.38.0."
         }
       ]
     },
@@ -3674,8 +3759,8 @@
     {
       "path": "README.md",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
-      "sha256": "7dd5301730011fd21081176aa6616aa9244de1b60cc0944fa072372b6570fd67",
-      "bytes": 54551,
+      "sha256": "fc712ae50cc8b3d796c7d450f8c4a07707c94aa1c392e5d1b9d336875c0d7f30",
+      "bytes": 58541,
       "previousRevisionSha256": "199156443d499d5012f1224263a1a3ee9994e5ba38ee067bceeb2ad865ae8167",
       "previousLayoutPath": "README.en.md",
       "previousLayoutSha256": "f40ec41ca699cd0b9138fbdf4a268080038f583ae11e78c4f37093a6b7095f57",
@@ -3751,13 +3836,18 @@
           "bytes": 49508,
           "sha256": "543e8b47e85220cf383db1236da6277b9893069a8f0ae3a9ee3a41fc5068e413",
           "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+        },
+        {
+          "bytes": 54551,
+          "sha256": "7dd5301730011fd21081176aa6616aa9244de1b60cc0944fa072372b6570fd67",
+          "scope": "Preserved identity before public matrix authoring 0.38.0."
         }
       ]
     },
     {
       "path": "README.zh-CN.md",
-      "sha256": "ecee2d0e32dbb2485befbe5a57c74f68a143a1b61f3e513d8e0893cf5f4e85af",
-      "bytes": 53652,
+      "sha256": "c58142965db3f5eaa022cea2ee0b3139b7c9a32e361012efb29878de580c0c36",
+      "bytes": 57642,
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "previousPublicSha256": "7ec80b8575a700b6a2628eb0322f2e770bb2284859f68ec5e0eb6530154a6699",
       "previousRevisionSha256": "7a1d72019db7cb6075d7c3a3bd4075f7c069d527b6e31d992a69333cb126b6c3",
@@ -3840,6 +3930,11 @@
           "bytes": 48609,
           "sha256": "688eaba4bba72c697721360042ac7ae165049ac1ee9a7373c9b7fc04c6ebf75f",
           "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+        },
+        {
+          "bytes": 53652,
+          "sha256": "ecee2d0e32dbb2485befbe5a57c74f68a143a1b61f3e513d8e0893cf5f4e85af",
+          "scope": "Preserved identity before public matrix authoring 0.38.0."
         }
       ]
     },
@@ -3863,8 +3958,8 @@
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "bytes": 95134,
-      "sha256": "6127919c9de2ea0a5a8ee3ec568ae8ebdfd04cd81e2884a3bb6ddb9170f50a8e",
+      "bytes": 96382,
+      "sha256": "c9710ab953aa40733eb4f3c15057d60acd31fd4b0c1ee0b232b7e1bba197cb65",
       "originRole": "Independent first-party Egret explicit-area picking, bounded verification or paired documentation; CPU and finite-policy evidence with separate browser and whole-engine admission.",
       "identityHistory": [
         {
@@ -3886,6 +3981,11 @@
           "bytes": 91022,
           "sha256": "ab1cf21a59b6975c169ebf8fd9aa38aae137c3f138ab7fb97a41df484cd09a62",
           "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+        },
+        {
+          "bytes": 95134,
+          "sha256": "6127919c9de2ea0a5a8ee3ec568ae8ebdfd04cd81e2884a3bb6ddb9170f50a8e",
+          "scope": "Preserved identity before finite Matrix public-port fixture integration correction."
         }
       ]
     },
@@ -4145,8 +4245,8 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "bytes": 123293,
-      "sha256": "10bb58ece2aef2325fa56ed64b022c27d97c545e8703997c319f38c5b41de6c4",
+      "bytes": 124481,
+      "sha256": "5016a72a02da03e759a04b622b775cf1185feba7295f830f0f6797d0774942ad",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "identityHistory": [
         {
@@ -4168,6 +4268,11 @@
           "bytes": 120578,
           "sha256": "02b607f7db9cdc45a897530fc013a8aa0fc8dde846f8dfacd6524227bd2b0718",
           "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+        },
+        {
+          "bytes": 123293,
+          "sha256": "10bb58ece2aef2325fa56ed64b022c27d97c545e8703997c319f38c5b41de6c4",
+          "scope": "Preserved identity before public matrix authoring 0.38.0."
         }
       ]
     },
@@ -5178,13 +5283,18 @@
     {
       "path": "tests/project-boundaries.test.mjs",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 13797,
-      "sha256": "7cb845862ba8d489a904dc88dc749efec1c0d4e881605843b453eccc4aed9f11",
+      "bytes": 13807,
+      "sha256": "e3faf9f89381265b5be917abfe1ad91437eeaa6496aed6377104cd26d8d2148e",
       "identityHistory": [
         {
           "bytes": 13130,
           "sha256": "3a0c942dbbbcf993b386c71768a525316a16a9e57d5078bfe2548870e5091f4c",
           "scope": "Preserved initial 0.32 source identity before retained exact mapping/copy-fixture repair."
+        },
+        {
+          "bytes": 13797,
+          "sha256": "7cb845862ba8d489a904dc88dc749efec1c0d4e881605843b453eccc4aed9f11",
+          "scope": "Preserved identity before finite Matrix public-port fixture integration correction."
         }
       ]
     },
@@ -6641,9 +6751,16 @@
     },
     {
       "path": "packages/engine/rendering/scene3d.ts",
-      "bytes": 1480,
-      "sha256": "34ade2adf838957258bc6b60ca59083639e5d8a17282ec2368ccbb3d31819bec",
-      "originRole": "First-party independent public scene3d implementation, bounded verification or paired public reading/derived register."
+      "bytes": 2176,
+      "sha256": "dc10f0cec74891a7a9e8fa67427eeeef6e5ac02012d57e1eee213ed9daad7ca3",
+      "originRole": "First-party independent public scene3d implementation, bounded verification or paired public reading/derived register.",
+      "identityHistory": [
+        {
+          "bytes": 1480,
+          "sha256": "34ade2adf838957258bc6b60ca59083639e5d8a17282ec2368ccbb3d31819bec",
+          "scope": "Preserved identity before public matrix authoring 0.38.0."
+        }
+      ]
     },
     {
       "path": "packages/engine/web/scene3d.ts",
@@ -6653,9 +6770,16 @@
     },
     {
       "path": "tests/scene3d-public.test.mjs",
-      "bytes": 16549,
-      "sha256": "1a52c4bd0506ea954c6777ccd05f000bf67d1ece13e4e4179589905f0c66c9f5",
-      "originRole": "First-party independent public scene3d implementation, bounded verification or paired public reading/derived register."
+      "bytes": 20643,
+      "sha256": "f52d9b2c467a27687ac296cb774f4a6e108c253a08924c769b9f763b68b82001",
+      "originRole": "First-party independent public scene3d implementation, bounded verification or paired public reading/derived register.",
+      "identityHistory": [
+        {
+          "bytes": 16549,
+          "sha256": "1a52c4bd0506ea954c6777ccd05f000bf67d1ece13e4e4179589905f0c66c9f5",
+          "scope": "Preserved identity before public matrix authoring 0.38.0."
+        }
+      ]
     },
     {
       "path": "tests/scene3d-public-host.test.mjs",
@@ -6665,9 +6789,16 @@
     },
     {
       "path": "tests/types/scene3d-positive.ts",
-      "bytes": 1815,
-      "sha256": "87687c0f54bf637afcd1d82ea04067afee504f9eab99ee092739f242d96b3f04",
-      "originRole": "First-party independent public scene3d implementation, bounded verification or paired public reading/derived register."
+      "bytes": 3174,
+      "sha256": "399eb788eded32dfa82ea54dce6c435b907e4426bd212eb029f5a14417ee5583",
+      "originRole": "First-party independent public scene3d implementation, bounded verification or paired public reading/derived register.",
+      "identityHistory": [
+        {
+          "bytes": 1815,
+          "sha256": "87687c0f54bf637afcd1d82ea04067afee504f9eab99ee092739f242d96b3f04",
+          "scope": "Preserved identity before public matrix authoring 0.38.0."
+        }
+      ]
     },
     {
       "path": "tests/types/scene3d-web-positive.ts",
@@ -6689,9 +6820,16 @@
     },
     {
       "path": "tests/types/scene3d-import-negative.ts",
-      "bytes": 1158,
-      "sha256": "a56c248ca16f720c0e65611997d009178c73b41a8f7e5c3c57d9ec33d1395713",
-      "originRole": "First-party independent public scene3d implementation, bounded verification or paired public reading/derived register."
+      "bytes": 1148,
+      "sha256": "1b5365dc6901514e96db851eec8c47375b6bc5da922d167678cb5d8a75fa5b0c",
+      "originRole": "First-party independent public scene3d implementation, bounded verification or paired public reading/derived register.",
+      "identityHistory": [
+        {
+          "bytes": 1158,
+          "sha256": "a56c248ca16f720c0e65611997d009178c73b41a8f7e5c3c57d9ec33d1395713",
+          "scope": "Preserved identity before public matrix authoring 0.38.0."
+        }
+      ]
     },
     {
       "path": "tests/types/scene3d-web-dom-free-negative.ts",
@@ -6701,9 +6839,16 @@
     },
     {
       "path": "tests/types/scene3d-diagnostic-expectations.json",
-      "bytes": 8508,
-      "sha256": "5a3b838e6355bd414ed2f6f6cc63e2f24d3f88ce2359ccf1866bc9a14f894ad9",
-      "originRole": "First-party independent public scene3d implementation, bounded verification or paired public reading/derived register."
+      "bytes": 8506,
+      "sha256": "edf128a7473e7ee8d644cd6505b11e477321d1ccf93200e03f63bdfb44715e18",
+      "originRole": "First-party independent public scene3d implementation, bounded verification or paired public reading/derived register.",
+      "identityHistory": [
+        {
+          "bytes": 8508,
+          "sha256": "5a3b838e6355bd414ed2f6f6cc63e2f24d3f88ce2359ccf1866bc9a14f894ad9",
+          "scope": "Preserved identity before public matrix authoring 0.38.0."
+        }
+      ]
     },
     {
       "path": "tools/b1-webgpu/public-composition-oracle.mjs",
@@ -6737,27 +6882,37 @@
     },
     {
       "path": "knowledge-base/en/docs/public-scene3d-contract.md",
-      "bytes": 19913,
-      "sha256": "cfb8d439eddd8112f9ef17fa99d2e4f82a77ed1be95ff94e3f3d5ebd3d0751bd",
+      "bytes": 25430,
+      "sha256": "adde33eeed04de145f633afd3c484e67263355e6b98d5e8bc388bdce386b38d1",
       "originRole": "First-party independent public scene3d implementation, bounded verification or paired public reading/derived register.",
       "identityHistory": [
         {
           "bytes": 19167,
           "sha256": "42e3c1e6737e3e245d9efe184026cbb25be427b87af6199cf1cccfb65894f944",
           "scope": "Preserved pre-final retained integration successor identity."
+        },
+        {
+          "bytes": 19913,
+          "sha256": "cfb8d439eddd8112f9ef17fa99d2e4f82a77ed1be95ff94e3f3d5ebd3d0751bd",
+          "scope": "Preserved identity before public matrix authoring 0.38.0."
         }
       ]
     },
     {
       "path": "knowledge-base/Cns/docs/公共3D场景契约.md",
-      "bytes": 18147,
-      "sha256": "3ff393961a7548bd453190f6f23b711b798a2ff47bc19650899c4a8b7d153b7a",
+      "bytes": 23001,
+      "sha256": "1b2c071f4526fef8f65d2d5944efddeff20433f9d50134011c2901d8e9d8041b",
       "originRole": "First-party independent public scene3d implementation, bounded verification or paired public reading/derived register.",
       "identityHistory": [
         {
           "bytes": 17529,
           "sha256": "b76b6e58889e5d03216c297027b2730159edd24e3d25aea1a3db2180bee52e92",
           "scope": "Preserved pre-final retained integration successor identity."
+        },
+        {
+          "bytes": 18147,
+          "sha256": "3ff393961a7548bd453190f6f23b711b798a2ff47bc19650899c4a8b7d153b7a",
+          "scope": "Preserved identity before public matrix authoring 0.38.0."
         }
       ]
     },
@@ -7287,6 +7442,19 @@
           "bytes": 11020,
           "sha256": "d1a81f7625b0addd381bf1db65da09fa61b24aa72805a786c70928b7fe05826b",
           "scope": "Preserved unpublished Clock candidate before D017 numeric-order publication repair."
+        }
+      ]
+    },
+    {
+      "path": "knowledge-base/evidence/public-matrix-authoring-verification.json",
+      "bytes": 13947,
+      "sha256": "3922818dd7daf47ba860332b38e6f9be6fbf91ef861761186b2ddfc55c014c32",
+      "originRole": "Original first-party public matrix authoring evidence.",
+      "identityHistory": [
+        {
+          "bytes": 11551,
+          "sha256": "399f0411f9b8d700770ce2834be3d8250db75bb72971c362ac139c992fe7c389",
+          "scope": "Preserved identity before finite Matrix public-port fixture integration correction."
         }
       ]
     }
@@ -11822,5 +11990,100 @@
     "publicCheckoutReplay": "PENDING",
     "fullGate": "PENDING",
     "delivery": "PENDING"
+  },
+  "spineF1ClockDeliverySuccessor": {
+    "version": "0.37.0",
+    "source": {
+      "sha": "206429369ce1751da616a9d59fecd854cc12491c",
+      "parent": "36909c3c1b2b9ef9784cb71d949ef6eba142fc0a",
+      "tree": "da042bc487de0eca6944a12595c10a790ae0cdc7",
+      "files": 42
+    },
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/24",
+    "main": {
+      "sha": "8f84d5f99281ad051abd2e061b5aff90d6d0f40b",
+      "tree": "da042bc487de0eca6944a12595c10a790ae0cdc7"
+    },
+    "mandatoryPushHook": {
+      "startedAtUtc": "2026-10-12T05:27:10.5663826Z",
+      "finishedAtUtc": "2026-10-12T05:32:53.0981415Z",
+      "exitCode": 0,
+      "stdoutSHA256": "40e773d848b48cadd71570c15a6369876225dc6ca02d44297e7e5d114d3aedba",
+      "stderrSHA256": "9f7c89854ef9c50ab72a131371b5aa366ffc22b3f47f0f5fdfacde8eda93248e",
+      "coreTests": 2678,
+      "publicationTests": 63,
+      "documents": 149,
+      "criticalEnglishCommentRecords": 184
+    },
+    "remoteChecks": {
+      "statusCount": 0,
+      "checkRuns": 0,
+      "combinedState": "pending",
+      "remoteCIPassClaim": false
+    }
+  },
+  "publicMatrixAuthoringWorkPackage": {
+    "engineeringLabel": "0.38.0",
+    "sourceId": "S091",
+    "deliverable": "V042",
+    "record": "knowledge-base/evidence/public-matrix-authoring-verification.json",
+    "sourceBase": "8f84d5f99281ad051abd2e061b5aff90d6d0f40b",
+    "origin": "Original first-party matrix algorithms reused without modification; original typed facade, regression consumers and exact guards. No third-party implementation copied or dependency added.",
+    "sourceFiles": [
+      {
+        "path": "packages/engine/rendering/scene3d.ts",
+        "bytes": 2176,
+        "sha256": "dc10f0cec74891a7a9e8fa67427eeeef6e5ac02012d57e1eee213ed9daad7ca3"
+      },
+      {
+        "path": "tools/check-boundaries.mjs",
+        "bytes": 124481,
+        "sha256": "5016a72a02da03e759a04b622b775cf1185feba7295f830f0f6797d0774942ad"
+      },
+      {
+        "path": "tests/scene3d-public.test.mjs",
+        "bytes": 20643,
+        "sha256": "f52d9b2c467a27687ac296cb774f4a6e108c253a08924c769b9f763b68b82001"
+      },
+      {
+        "path": "tests/types/scene3d-positive.ts",
+        "bytes": 3174,
+        "sha256": "399eb788eded32dfa82ea54dce6c435b907e4426bd212eb029f5a14417ee5583"
+      },
+      {
+        "path": "tests/types/scene3d-import-negative.ts",
+        "bytes": 1148,
+        "sha256": "1b5365dc6901514e96db851eec8c47375b6bc5da922d167678cb5d8a75fa5b0c"
+      },
+      {
+        "path": "tests/types/scene3d-diagnostic-expectations.json",
+        "bytes": 8506,
+        "sha256": "edf128a7473e7ee8d644cd6505b11e477321d1ccf93200e03f63bdfb44715e18"
+      }
+    ],
+    "actualTestsPassed": 168,
+    "renderingAlgorithmsChanged": false,
+    "independentReview": "PENDING",
+    "fullRepositoryGate": "PENDING",
+    "remoteDelivery": "PENDING",
+    "fixtureIntegrationSuccessor": {
+      "record": "knowledge-base/evidence/public-matrix-authoring-verification.json",
+      "sourceFiles": [
+        {
+          "path": "tests/boundaries.test.mjs",
+          "bytes": 96382,
+          "sha256": "c9710ab953aa40733eb4f3c15057d60acd31fd4b0c1ee0b232b7e1bba197cb65"
+        },
+        {
+          "path": "tests/project-boundaries.test.mjs",
+          "bytes": 13807,
+          "sha256": "e3faf9f89381265b5be917abfe1ad91437eeaa6496aed6377104cd26d8d2148e"
+        }
+      ],
+      "retainedFixtureTestsPassed": 299,
+      "precedingCoreFailures": 235,
+      "scope": "Original first-party test fixture integration repair; production guards and algorithms remain unchanged.",
+      "completeGateAndDelivery": "PENDING"
+    }
   }
 }

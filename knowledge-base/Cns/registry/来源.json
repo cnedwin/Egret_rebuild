@@ -2464,7 +2464,71 @@
       "title": "原创可选 F1 Clock 驱动与有限私有验证",
       "scope": "真实 Clock／Scope 与原始 F1 桥；私有 CPU10、三项错误副本及 GPU10+1 保存证据。首轮 helper 数组准入失败和后继保留。",
       "limit": "公开可移植重放和当前发布仍 PENDING；官方 Core4.3.13 外置，许可资格未核实。完整 Spine／设备／性能／AI创作／迁移仍未验收。",
-      "doc": "Cns/experiments/spine-f1/README.md"
+      "doc": "Cns/experiments/spine-f1/README.md",
+      "deliverySuccessor": {
+        "engineeringLabel": "0.37.0",
+        "status": "ACTUAL_DELIVERY_SUCCESSOR",
+        "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/24",
+        "sourceCommit": "206429369ce1751da616a9d59fecd854cc12491c",
+        "parentMain": "36909c3c1b2b9ef9784cb71d949ef6eba142fc0a",
+        "mergedMain": "8f84d5f99281ad051abd2e061b5aff90d6d0f40b",
+        "tree": "da042bc487de0eca6944a12595c10a790ae0cdc7",
+        "mandatoryPushHook": "ACTUAL_EXIT_0",
+        "coreTests": 2678,
+        "publicationTests": 63,
+        "documentPairs": 149,
+        "criticalSources": 184,
+        "remoteStatusCount": 0,
+        "remoteCheckCount": 0,
+        "remoteCIPassClaimed": false,
+        "localRemoteMainReadbackAtUtc": "2026-10-12T05:34:10.333Z",
+        "originalPendingCutoffs": "PRESERVED_UNCHANGED",
+        "scope": "实际 Clock 交付后继；保留较早准备／curation 截止点。此项不验收 Matrix 或远端 CI。"
+      }
+    },
+    {
+      "id": "S091",
+      "type": "first_party_public_matrix_authoring_specification",
+      "researchCheckedAt": "2026-10-12",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R011",
+        "R015",
+        "R016",
+        "R017",
+        "R018",
+        "R019"
+      ],
+      "verification": {
+        "status": "SOURCE_ONLY_NOT_RUN",
+        "execution": "NOT_RUN",
+        "actual": {
+          "implementation": "PENDING",
+          "actualRedGreen": "PENDING",
+          "publicBehavior": "PENDING",
+          "strictTypes": "PENDING",
+          "updatedExportAndGuardInventories": "PENDING",
+          "retainedMathSceneRegressions": "PENDING",
+          "currentFullGates": "PENDING",
+          "independentFinalBilingualReview": "PENDING",
+          "mandatoryPushHook": "PENDING",
+          "remoteDelivery": "PENDING"
+        }
+      },
+      "urls": [
+        "https://github.com/cnedwin/Egret_rebuild/blob/8f84d5f99281ad051abd2e061b5aff90d6d0f40b/packages/engine/rendering/matrix4.ts"
+      ],
+      "title": "公共 Matrix4 创作与组合的第一方规格",
+      "scope": "类型化公共转发器复用白鹭原有独立矩阵算法；普通 16 槽数组、自有冻结 binary64 结果、列向量右侧先作用与有序捕获。",
+      "limit": "实现和实际验收 PENDING；不保证 float32 可表示性、精确实数运算、整体场景、性能或完整 Spine。场景真实性、精度与预算另行准入。",
+      "doc": "Cns/docs/公共3D场景契约.md",
+      "license": "Apache-2.0",
+      "firstPartySourcePaths": [
+        "packages/engine/rendering/matrix4.ts",
+        "packages/engine/rendering/scene3d.ts"
+      ],
+      "newThirdPartyDependency": false
     }
   ],
   "spineF1ClockPortableReplaySuccessor": {
@@ -2485,5 +2549,44 @@
     "record": "evidence/spine-f1-clock-public-projection.json",
     "fullSpineR020V020": "OPEN",
     "cutoff": "实际独立克隆公开重放；保存结果评审、最终门禁与交付仍为 PENDING。"
+  },
+  "matrixAuthoringActualSuccessor": {
+    "status": "ACTUAL_TYPED_PUBLIC_MATRIX_FACADE_GREEN",
+    "record": "knowledge-base/evidence/public-matrix-authoring-verification.json",
+    "oldPublicTests": {
+      "passed": 17,
+      "assignedMissingAPI": 4
+    },
+    "oldPositiveTypes": {
+      "missingExports": 4
+    },
+    "retainedAndPublicTests": {
+      "passed": 168,
+      "failed": 0,
+      "skipped": 0
+    },
+    "publicTests": {
+      "passed": 21,
+      "newCases": 4
+    },
+    "positiveTypes": {
+      "exitCode": 0,
+      "diagnostics": 0
+    },
+    "importNegativeTypes": {
+      "assignedCases": 11,
+      "exitCode": 1
+    },
+    "exactBoundaries": {
+      "exitCode": 0
+    },
+    "strictTypes": {
+      "exitCode": 0
+    },
+    "renderingAlgorithmsChanged": false,
+    "newGPUExecution": false,
+    "fullRepositoryGate": "PENDING",
+    "independentSourceAndBilingualReview": "PENDING",
+    "remoteDelivery": "PENDING"
   }
 }

@@ -47,7 +47,7 @@ function isolated(action) {
     assert.deepEqual(readFileSync(path.join(root,'packages/contracts/dist/index.js')), contractsRoot);
     // The explicit scene facade must share the original geometry/scene registries.
     // Bridge only the resolution copy; source and emitted package bytes stay real.
-    for(const name of ['meshGeometry3D','sceneFrame3D']) {
+    for(const name of ['matrix4','meshGeometry3D','sceneFrame3D']) {
       const relative='packages/engine/dist/rendering/'+name+'.js';
       const actual=readFileSync(path.join(root,relative));
       const resolution='node_modules/@egret/engine/dist/rendering/'+name+'.js';

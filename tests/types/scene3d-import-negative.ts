@@ -12,8 +12,8 @@ import {getBuiltinB1Protocol} from '@egret/engine/webgpu/scene3d';
 import {packMeshGeometry3D as privatePack} from '@egret/engine/rendering/packMeshGeometry3D';
 // SCENE3D_CASE no-private-protocol-subpath
 import {getBuiltinB1Protocol as privateProtocol} from '@egret/engine/web/b1';
-// SCENE3D_CASE no-public-matrix-constructor
-import {createMatrix4} from '@egret/engine/scene3d';
+// SCENE3D_CASE no-root-matrix-constructor
+import {createMatrix4} from '@egret/engine';
 import type {Matrix4,SceneFrame3D} from '@egret/engine/scene3d';
 import type {SceneWebGPUHost} from '@egret/engine/webgpu/scene3d';
 // SCENE3D_CASE matrix-type-not-runtime

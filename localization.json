@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "revision": "0.37.0",
+  "revision": "0.38.0",
   "canonicalState": "Chinese registries; English JSON is a read-only translation",
   "evidencePolicy": "Machine data, embedded source, historical code and upstream legal originals retain their identities; paired reading versions explain them.",
   "semanticReview": {
@@ -141,8 +141,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "b372af2b8a6e3553453401674a0e4e69fbaafd9e69bdbd25195945dd3d53895d",
-      "zhSha256": "58435ee2f58ef1d419cd785f50099bc1eea04453d3d2b1303ed01205160338f5"
+      "enSha256": "65c3bbbcb83119c55b17eb81ce0cdcad407eeea4b19e61cdac9431d561ddfdb6",
+      "zhSha256": "30cc3520e92edffc0ffba67daf4ff476a145e808717e91c9cb1f21882812a424"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -288,8 +288,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "8268f300a74cde2f872898bef295596fe3f9c25ea947814c6a660e6b11d25102",
-      "zhSha256": "0d3579477e69d51d6aeb0ca959949ab81f13489f9aedfa8c485dc9f9ec07b131"
+      "enSha256": "d320ff6cbbb91f0eb74d4b5ec4c53b8c19af1739d509a24e5a9b4003c9d9dd14",
+      "zhSha256": "5366ff4755d0ea9f3a152e9abb0347c1854287c8b9c6f169f868e92e037d35fe"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -764,8 +764,8 @@
       "zh": "knowledge-base/Cns/README.md",
       "en": "knowledge-base/en/README.md",
       "kind": "public_reading",
-      "enSha256": "ff6d8e31a5fcda99f1a29012e723d136361198d5fec5da33947f8b9da9de0c84",
-      "zhSha256": "bcbaaf5e24b8bfa3172dc7517191a08288a5789dc4239a6f9236484d5e98cf5e"
+      "enSha256": "568282686eebdf3151f44e6156411353fce1673e52f06aea1089734e5008b4c2",
+      "zhSha256": "07cd4c42aa428847811c81b4f720c304e6ad3fe2a8283c7ab56be3391d9f8318"
     },
     {
       "zh": "knowledge-base/Cns/templates/ADR决策记录.md",
@@ -799,8 +799,8 @@
       "zh": "knowledge-base/README.zh-CN.md",
       "en": "knowledge-base/README.md",
       "kind": "public_navigation",
-      "enSha256": "bcc9088e015cbb959b94da49f40bf6dfe6d01dd5cef8c62810263dec3e0ed746",
-      "zhSha256": "0b09cf72de08bbb3abbd2a534cafe13f0c45dc2fd33363dc6a3ed2af331de50c"
+      "enSha256": "4966f84ecbd1f4b6312a8e404cc044f1278fe7379fe7db0de9f16938b33fb7c2",
+      "zhSha256": "0005200518461883286e74e760ef2c7276d9c6b4e2076a7a6aaee6b0953e83ca"
     },
     {
       "zh": "LICENSE.zh-CN.md",
@@ -848,8 +848,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "7dd5301730011fd21081176aa6616aa9244de1b60cc0944fa072372b6570fd67",
-      "zhSha256": "ecee2d0e32dbb2485befbe5a57c74f68a143a1b61f3e513d8e0893cf5f4e85af"
+      "enSha256": "fc712ae50cc8b3d796c7d450f8c4a07707c94aa1c392e5d1b9d336875c0d7f30",
+      "zhSha256": "c58142965db3f5eaa022cea2ee0b3139b7c9a32e361012efb29878de580c0c36"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -1044,8 +1044,8 @@
       "en": "knowledge-base/en/docs/public-scene3d-contract.md",
       "zh": "knowledge-base/Cns/docs/公共3D场景契约.md",
       "kind": "public_reading",
-      "enSha256": "cfb8d439eddd8112f9ef17fa99d2e4f82a77ed1be95ff94e3f3d5ebd3d0751bd",
-      "zhSha256": "3ff393961a7548bd453190f6f23b711b798a2ff47bc19650899c4a8b7d153b7a"
+      "enSha256": "adde33eeed04de145f633afd3c484e67263355e6b98d5e8bc388bdce386b38d1",
+      "zhSha256": "1b2c071f4526fef8f65d2d5944efddeff20433f9d50134011c2901d8e9d8041b"
     },
     {
       "en": "examples/scene3d/README.md",
@@ -1101,8 +1101,8 @@
     {
       "source": "knowledge-base/Cns/registry/需求.json",
       "target": "knowledge-base/en/registry/requirements.json",
-      "sourceSha256": "d7bc50726fed150cf1f543da6cefe2cfcc4d1ea9b7b8d33b178d00c25da3b5d1",
-      "targetSha256": "342c6eaa0633fe8395a9f92c99fb5850d2f8c29d108de3823ff65ab7a8f77be2"
+      "sourceSha256": "4b5130fd87959c7b9000c49c5be748dbaa0aebd6be68e124a1caf4ea41bef69f",
+      "targetSha256": "04c8fcee7a834565182fa4dadb0159d24df3592f3ce1c2b0efbaee53107ae0ce"
     },
     {
       "source": "knowledge-base/Cns/registry/决策.json",
@@ -1119,20 +1119,20 @@
     {
       "source": "knowledge-base/Cns/registry/交付.json",
       "target": "knowledge-base/en/registry/deliverables.json",
-      "sourceSha256": "fa66344bee66ebd1f8eeeb5e1e3c0eeea2291bbed53fa3ae0596ba4bdaae3b7a",
-      "targetSha256": "a1178c599073f70c7f23c6ab52625879fbb370366d01818a6523ae0431c2e995"
+      "sourceSha256": "95061f28fd93d9419694e6bc3a70cb8efe1cc1f76189c9adbd1f7f2b8174cc68",
+      "targetSha256": "977cfc186382f71a61f23f4316719db0cc8e36e6802ffb4e2abefc911ec21e0b"
     },
     {
       "source": "knowledge-base/Cns/registry/来源.json",
       "target": "knowledge-base/en/registry/sources.json",
-      "sourceSha256": "d839a2120fe3830e47f6d1c4bb4f7657b97967520722960e237381324e08b7c1",
-      "targetSha256": "09569f5c35fcbe518f71ebf16a88901cb5344d2c4821f0b2ba29e41e0a65f73d"
+      "sourceSha256": "78b5e01c90c805e9dd7b16bd23f8056770c1d8e25526858a390365c4b3369c3d",
+      "targetSha256": "6b325fd19713e0a27505093cd9c0a996a55a03540bb7d91bdca27d61114fbb43"
     },
     {
       "source": "knowledge-base/Cns/当前版本.json",
       "target": "knowledge-base/en/current-version.json",
-      "sourceSha256": "6fc59c023e4f620feb8a3a88e102b912b97035109fe24c1e913a89e5ecb6f6b9",
-      "targetSha256": "57a19c3161b95db3a031a97d4ac7e41f419518dfc5110d31357b435ada0f5c23"
+      "sourceSha256": "41842cd3197337a966106e7a3bfd0c12a1dd6920a2ccb2b025176cb3618de965",
+      "targetSha256": "b99934a8c0ac375a3384ab48a21501a6c14f1202c13c9c807ef08f479489c845"
     }
   ],
   "criticalComments": [
@@ -1772,7 +1772,7 @@
     },
     {
       "path": "packages/engine/rendering/scene3d.ts",
-      "sha256": "34ade2adf838957258bc6b60ca59083639e5d8a17282ec2368ccbb3d31819bec"
+      "sha256": "dc10f0cec74891a7a9e8fa67427eeeef6e5ac02012d57e1eee213ed9daad7ca3"
     },
     {
       "path": "packages/engine/web/scene3d.ts",
@@ -1788,7 +1788,7 @@
     },
     {
       "path": "tests/scene3d-public.test.mjs",
-      "sha256": "1a52c4bd0506ea954c6777ccd05f000bf67d1ece13e4e4179589905f0c66c9f5"
+      "sha256": "f52d9b2c467a27687ac296cb774f4a6e108c253a08924c769b9f763b68b82001"
     },
     {
       "path": "tests/scene3d-public-host.test.mjs",
@@ -4146,6 +4146,15 @@
     "projectionRecord": "knowledge-base/evidence/spine-f1-clock-public-projection.json",
     "scope": "Original opt-in F1 Clock bridge and independent-clone portable CPU/native replay; full Spine R020/V020 OPEN.",
     "independentFinalMeaningReview": "PENDING_AT_PRECOMMIT_METADATA_CUTOFF",
+    "completeSemanticParityClaim": false
+  },
+  "publicMatrixAuthoringCuration": {
+    "engineeringLabel": "0.38.0",
+    "sourceId": "S091",
+    "deliverable": "V042",
+    "record": "knowledge-base/evidence/public-matrix-authoring-verification.json",
+    "scope": "Existing public scene contract and ten reading/registry pairs; original math reuse and actual finite public/type regressions.",
+    "independentMeaningReview": "PENDING",
     "completeSemanticParityClaim": false
   }
 }

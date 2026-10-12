@@ -167,3 +167,70 @@ test('public reachable aggregate CPU and packed limits use authentic near-cap va
   // CPU/packed limits are coupled; neither cap equality nor defensive packing
   // overflow is claimed. A 65th identity/uniform overflow hits draw admission.
 });
+
+// Matrix authoring stays on the built public namespace. Missing exports must
+// fail these assertions on the old SDK, never module linking or setup.
+import * as matrixAuthoringPublic from '@egret/engine/scene3d';
+function matrixAuthoringAPI(){
+  for(const name of ['createMatrix4','multiplyMatrix4','Math3DError'])
+    assert.equal(typeof matrixAuthoringPublic[name],'function','public-matrix-api missing '+name);
+  return matrixAuthoringPublic;
+}
+// Literal column-major answers: parent rotates +90 degrees about z; local
+// translates +3 along x. Parent*local therefore translates +3 along y.
+const MATRIX_PARENT=[0,1,0,0,-1,0,0,0,0,0,1,0,0,0,0,1];
+const MATRIX_LOCAL=[1,0,0,0,0,1,0,0,0,0,1,0,3,0,0,1];
+const MATRIX_COMPOSED=[0,1,0,0,-1,0,0,0,0,0,1,0,0,3,0,1];
+
+test('public-matrix-authoring-owned-array',()=>{
+  const {createMatrix4}=matrixAuthoringAPI(),source=[...ID];
+  const matrix=createMatrix4(source),other=createMatrix4(source);
+  tuple(matrix,ID);tuple(other,ID);assert.deepEqual(source,ID);
+  assert.notEqual(matrix,source);assert.notEqual(matrix,other);
+  source[0]=9;tuple(matrix,ID);tuple(other,ID);
+});
+test('public-matrix-composition-literal-order',()=>{
+  const {createMatrix4,multiplyMatrix4}=matrixAuthoringAPI();
+  const parent=createMatrix4(MATRIX_PARENT),local=createMatrix4(MATRIX_LOCAL);
+  const composed=multiplyMatrix4(parent,local),reversed=multiplyMatrix4(local,parent);
+  tuple(composed,MATRIX_COMPOSED);
+  tuple(reversed,[0,1,0,0,-1,0,0,0,0,0,1,0,3,0,0,1]);
+  assert.notDeepEqual(composed,reversed);
+  assert.notEqual(composed,parent);assert.notEqual(composed,local);
+  tuple(parent,MATRIX_PARENT);tuple(local,MATRIX_LOCAL);
+});
+test('public-matrix-original-diagnostic',()=>{
+  const {createMatrix4,multiplyMatrix4,Math3DError}=matrixAuthoringAPI();
+  const invalid=caught(()=>createMatrix4([]));
+  assert.ok(invalid instanceof Math3DError);assert.equal(invalid.constructor,Math3DError);
+  assert.equal(invalid.name,'Math3DError');assert.equal(invalid.code,'MATH3D_INPUT_INVALID');
+  assert.equal(invalid.cause,undefined);
+  const cause={id:'public-matrix-caller-cause'},source=[...ID];
+  Object.defineProperty(source,'15',{get(){throw cause;}});
+  const failure=caught(()=>createMatrix4(source));
+  assert.ok(failure instanceof Math3DError);assert.equal(failure.constructor,Math3DError);
+  assert.equal(failure.code,'MATH3D_INPUT_READ_FAILED');assert.equal(failure.cause,cause);
+  const productFailure=caught(()=>multiplyMatrix4(createMatrix4(ID),source));
+  assert.ok(productFailure instanceof Math3DError);assert.equal(productFailure.constructor,Math3DError);
+  assert.equal(productFailure.code,'MATH3D_INPUT_READ_FAILED');assert.equal(productFailure.cause,cause);
+  // The existing scene factory invokes original math and retains its error as
+  // cause. Compare that actual class, without importing any private module.
+  const sceneSource=sceneInput();sceneSource.draws[0].modelView=source;
+  const wrapped=sceneFailure(()=>createSceneFrame3D(sceneSource),'SCENE3D_INPUT_READ_FAILED','source');
+  assert.equal(wrapped.cause.constructor,Math3DError);
+  assert.ok(wrapped.cause instanceof Math3DError);
+  assert.equal(wrapped.cause.code,'MATH3D_INPUT_READ_FAILED');
+  assert.equal(wrapped.cause.cause,cause);
+});
+test('public-composed-matrix-scene-admission',()=>{
+  const {createMatrix4,multiplyMatrix4}=matrixAuthoringAPI();
+  const composed=multiplyMatrix4(createMatrix4(MATRIX_PARENT),createMatrix4(MATRIX_LOCAL));
+  const geometry=triangle(),scene=createSceneFrame3D(sceneInput(geometry,composed));
+  assert.equal(isSceneFrame3D(scene),true);assert.equal(scene.draws[0].geometry,geometry);
+  tuple(composed,MATRIX_COMPOSED);
+  // This admitted orthographic MVP is independent literal data. General
+  // binary64 matrices still face the original scene precision/budget gates.
+  tuple(scene.draws[0].mvp,[0,1,0,0,-1,0,0,0,0,0,.5,0,0,3,1,1]);
+  assert.notEqual(scene.draws[0].mvp,composed);
+  assert.deepEqual([scene.cpuLogicalBytes,scene.sceneBytes,scene.uniformBytes],[168,84,64]);
+});

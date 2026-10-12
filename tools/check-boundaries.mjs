@@ -769,8 +769,8 @@ for (const name of ['assetGroup', 'assetGroupTypes']) for (const [directory, suf
 // RG1_BOUNDARY_END
 // S3D1_BOUNDARY_BEGIN
 // Separate explicit entries do not exempt any earlier private authority guard.
-const sceneCPUValues = ['createMeshGeometry3D','isMeshGeometry3D','MeshGeometry3DError','getMeshGeometry3DErrorOrigin','createSceneFrame3D','isSceneFrame3D','Scene3DError','getScene3DErrorOrigin'];
-const sceneCPUTypes = ['Matrix4','MeshGeometry3DInput','MeshGeometry3D','MeshGeometry3DErrorCode','MeshGeometry3DErrorOrigin','SceneProjectionInput3D','SceneDrawInput3D','SceneInput3D','SceneDraw3D','SceneFrame3D','Scene3DErrorCode','Scene3DErrorOrigin'];
+const sceneCPUValues = ['createMatrix4','multiplyMatrix4','Math3DError','createMeshGeometry3D','isMeshGeometry3D','MeshGeometry3DError','getMeshGeometry3DErrorOrigin','createSceneFrame3D','isSceneFrame3D','Scene3DError','getScene3DErrorOrigin'];
+const sceneCPUTypes = ['Matrix4','Math3DErrorCode','MeshGeometry3DInput','MeshGeometry3D','MeshGeometry3DErrorCode','MeshGeometry3DErrorOrigin','SceneProjectionInput3D','SceneDrawInput3D','SceneInput3D','SceneDraw3D','SceneFrame3D','Scene3DErrorCode','Scene3DErrorOrigin'];
 const sceneWebTypes = ['SceneWebGPUHostOptions','SceneWebGPUHostStatus','SceneWebGPUHost'];
 const sceneRead = file => assetGroupStrip(readFileSync(path.join(root,file),'utf8'));
 const sceneEqual = (a,b) => JSON.stringify([...a].sort()) === JSON.stringify([...b].sort());
@@ -812,8 +812,13 @@ function sceneForward(code, name, target, parameter, label) {
   const importsForFactory=imports.filter(parts=>parts[0]===forwardName);
   if (importsForFactory.length!==1) throw new Error(label+': exact direct factory forwarding mismatch');
   const local=importsForFactory[0][1]??importsForFactory[0][0];
-  const functions=[...code.matchAll(new RegExp('export\\s+function\\s+'+name+'\\s*\\(\\s*'+parameter+'(?:\\s*:[^)]*)?\\s*\\)(?:\\s*:[^{]+)?\\s*\\{([^}]*)\\}','g'))];
-  if (functions.length!==1 || functions[0][1].replace(/\s+/g,'')!=='return'+local+'('+parameter+');')
+  // Operand pairs retain exact order; the existing single-input check stays intact.
+  const parameters=Array.isArray(parameter)?parameter:[parameter];
+  const parameterList=Array.isArray(parameter)
+    ? parameter.map(value=>value+'(?:\\s*:[^,)]+)?').join('\\s*,\\s*')
+    : parameter+'(?:\\s*:[^)]*)?';
+  const functions=[...code.matchAll(new RegExp('export\\s+function\\s+'+name+'\\s*\\(\\s*'+parameterList+'\\s*\\)(?:\\s*:[^{]+)?\\s*\\{([^}]*)\\}','g'))];
+  if (functions.length!==1 || functions[0][1].replace(/\s+/g,'')!=='return'+local+'('+parameters.join(',')+');')
     throw new Error(label+': exact direct factory forwarding mismatch');
 }
 function sceneOnlyProgram(code,kind,factories,localTypes,label) {
@@ -824,18 +829,23 @@ function sceneOnlyProgram(code,kind,factories,localTypes,label) {
     rest=rest.replace(match[0],'');
   }
   for(const [name,inputType,outputType,parameter]of factories) {
+    // Source/declaration operand types and emitted arity remain exact at this port.
+    const parameterList=Array.isArray(parameter)?parameter.join('\\s*,\\s*'):parameter;
+    const typedParameterList=Array.isArray(parameter)
+      ? parameter.map((value,index)=>value+'\\s*:\\s*'+inputType[index]).join('\\s*,\\s*')
+      : parameter+'\\s*:\\s*'+inputType;
     const expression=kind==='emitted'
-      ? 'export\\s+function\\s+'+name+'\\s*\\(\\s*'+parameter+'\\s*\\)\\s*\\{[^}]*\\}'
+      ? 'export\\s+function\\s+'+name+'\\s*\\(\\s*'+parameterList+'\\s*\\)\\s*\\{[^}]*\\}'
       : kind==='declaration'
-      ? 'export\\s+declare\\s+function\\s+'+name+'\\s*\\(\\s*'+parameter+'\\s*:\\s*'+inputType+'\\s*\\)\\s*:\\s*'+outputType+'\\s*;'
-      : 'export\\s+function\\s+'+name+'\\s*\\(\\s*'+parameter+'\\s*:\\s*'+inputType+'\\s*\\)\\s*:\\s*'+outputType+'\\s*\\{[^}]*\\}';
+      ? 'export\\s+declare\\s+function\\s+'+name+'\\s*\\(\\s*'+typedParameterList+'\\s*\\)\\s*:\\s*'+outputType+'\\s*;'
+      : 'export\\s+function\\s+'+name+'\\s*\\(\\s*'+typedParameterList+'\\s*\\)\\s*:\\s*'+outputType+'\\s*\\{[^}]*\\}';
     const match=rest.match(new RegExp(expression));if(!match)throw new Error(label+': exact direct factory signature mismatch: '+name);
     rest=rest.replace(match[0],'');
   }
   if(rest.trim())throw new Error('S3D1: facade contains non-forwarding module code: '+label);
 }
 function sceneCanonicalTypeReexports(code,label) {
-  const targets={Matrix4:'./matrix4.js',MeshGeometry3D:'./meshGeometry3D.js',MeshGeometry3DErrorCode:'./meshGeometry3D.js',MeshGeometry3DErrorOrigin:'./meshGeometry3D.js'};
+  const targets={Matrix4:'./matrix4.js',Math3DErrorCode:'./matrix4.js',MeshGeometry3D:'./meshGeometry3D.js',MeshGeometry3DErrorCode:'./meshGeometry3D.js',MeshGeometry3DErrorOrigin:'./meshGeometry3D.js'};
   for(const name of ['SceneProjectionInput3D','SceneDrawInput3D','SceneInput3D','SceneDraw3D','SceneFrame3D','Scene3DErrorCode','Scene3DErrorOrigin'])targets[name]='./sceneFrame3D.js';
   const exports=[...code.matchAll(/\bexport\s+type\s*\{([^}]+)\}\s*from\s*['"]([^'"]+)['"]\s*;?/g)]
     .flatMap(match=>match[1].split(',').map(name=>({name:name.trim(),target:match[2]})).filter(item=>item.name));
@@ -849,7 +859,7 @@ const sceneWeb=await import('@egret/engine/webgpu/scene3d');
 if (!sceneEqual(Object.keys(sceneCPU),sceneCPUValues)) throw new Error('scene3d: exact runtime export surface mismatch');
 if (!sceneEqual(Object.keys(sceneWeb),['createSceneWebGPUHost'])) throw new Error('webgpu/scene3d: exact runtime export surface mismatch');
 const sceneCPURules={
-  './matrix4.js':{type:['Matrix4']},
+  './matrix4.js':{value:['createMatrix4','multiplyMatrix4','Math3DError'],type:['Matrix4','Math3DErrorCode']},
   './meshGeometry3D.js':{value:['createMeshGeometry3D','isMeshGeometry3D','MeshGeometry3DError','getMeshGeometry3DErrorOrigin'],type:['MeshGeometry3D','MeshGeometry3DErrorCode','MeshGeometry3DErrorOrigin']},
   './sceneFrame3D.js':{value:['createSceneFrame3D','isSceneFrame3D','Scene3DError','getScene3DErrorOrigin'],type:['SceneProjectionInput3D','SceneDrawInput3D','SceneInput3D','SceneDraw3D','SceneFrame3D','Scene3DErrorCode','Scene3DErrorOrigin']},
 };
@@ -863,11 +873,13 @@ for (const [label,file,kind] of [['scene3d source','packages/engine/rendering/sc
   sceneSurface(code,label,sceneCPUValues,kind==='emitted'?[]:sceneCPUTypes);
   sceneClauses(code,label,sceneCPURules);
   if (kind!=='declaration') {
+    sceneForward(code,'createMatrix4','./matrix4.js','input',label);
+    sceneForward(code,'multiplyMatrix4','./matrix4.js',['left','right'],label);
     sceneForward(code,'createMeshGeometry3D','./meshGeometry3D.js','input',label);
     sceneForward(code,'createSceneFrame3D','./sceneFrame3D.js','input',label);
   }
   if(kind!=='emitted')sceneCanonicalTypeReexports(code,label);
-  sceneOnlyProgram(code,kind,[['createMeshGeometry3D','MeshGeometry3DInput','MeshGeometry3D','input'],['createSceneFrame3D','SceneInput3D','SceneFrame3D','input']],kind==='emitted'?[]:[['MeshGeometry3DInput','interface','readonlypositions:readonlynumber[];readonlycolors:readonlynumber[];readonlyindices:readonlynumber[];']],label);
+  sceneOnlyProgram(code,kind,[['createMatrix4','readonly\\s+number\\[\\]','Matrix4','input'],['multiplyMatrix4',['Matrix4','Matrix4'],'Matrix4',['left','right']],['createMeshGeometry3D','MeshGeometry3DInput','MeshGeometry3D','input'],['createSceneFrame3D','SceneInput3D','SceneFrame3D','input']],kind==='emitted'?[]:[['MeshGeometry3DInput','interface','readonlypositions:readonlynumber[];readonlycolors:readonlynumber[];readonlyindices:readonlynumber[];']],label);
   if (kind==='emitted' && sceneCPUTypes.some(name=>new RegExp('\\b'+name+'\\b').test(code))) throw new Error('scene3d: type-only runtime erasure mismatch');
 }
 for (const [label,file,kind] of [['webgpu/scene3d source','packages/engine/web/scene3d.ts','source'],['webgpu/scene3d','packages/engine/dist/web/scene3d.d.ts','declaration'],['webgpu/scene3d emitted','packages/engine/dist/web/scene3d.js','emitted']]) {
@@ -887,11 +899,11 @@ for (const [label,file,kind] of [['webgpu/scene3d source','packages/engine/web/s
 }
 // Original module values, including origin registration and identity predicates,
 // cannot be replaced by a facade-local class/function with a matching shape.
-for (const [target,names] of [['meshGeometry3D',['isMeshGeometry3D','MeshGeometry3DError','getMeshGeometry3DErrorOrigin']],['sceneFrame3D',['isSceneFrame3D','Scene3DError','getScene3DErrorOrigin']]]) {
+for (const [target,names] of [['matrix4',['Math3DError']],['meshGeometry3D',['isMeshGeometry3D','MeshGeometry3DError','getMeshGeometry3DErrorOrigin']],['sceneFrame3D',['isSceneFrame3D','Scene3DError','getScene3DErrorOrigin']]]) {
   const original=await import(new URL('../packages/engine/dist/rendering/'+target+'.js',import.meta.url));
   for (const name of names) if (sceneCPU[name]!==original[name]) throw new Error('scene3d: original module identity mismatch: '+name);
 }
-const sceneNewNames=['MeshGeometry3DInput','createSceneWebGPUHost',...sceneWebTypes];
+const sceneNewNames=['createMatrix4','multiplyMatrix4','Math3DError','Math3DErrorCode','MeshGeometry3DInput','createSceneWebGPUHost',...sceneWebTypes];
 for (const [entry,values,emittedEntry] of [...textEntries,['project',projectFacade,'packages/project/dist/index']]) {
   const text=[sceneRead(assetGroupSourceEntries[entry]),sceneRead(emittedEntry+'.js'),sceneRead(emittedEntry+'.d.ts')].join('\n');
   for (const name of sceneNewNames) if (name in values || new RegExp('\\b'+name+'\\b').test(text)) throw new Error(entry+': explicit-only scene name leaked: '+name);

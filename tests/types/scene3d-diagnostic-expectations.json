@@ -7,11 +7,11 @@
     "tscSHA256": "2219f428a7e55aaf1f7ad85b9b0f0cf5078aeb76ccc9a7c6036c92d48f492ffd"
   },
   "fixtureSHA256": {
-    "tests/types/scene3d-positive.ts": "87687c0f54bf637afcd1d82ea04067afee504f9eab99ee092739f242d96b3f04",
+    "tests/types/scene3d-positive.ts": "399eb788eded32dfa82ea54dce6c435b907e4426bd212eb029f5a14417ee5583",
     "tests/types/scene3d-web-positive.ts": "9def46be4b552e2a64b785b7e8a65a146b04dae74caf14ed5ada4f3b5309ebda",
     "tests/types/scene3d-negative.ts": "e6f2bff09e133432e97b9a60d84bdb042a00024afd1dfc9e7a94a0f04f0c926e",
     "tests/types/scene3d-web-negative.ts": "b82f7409b95dcaaba7c0e151582d5c4feda3b6c3a81908098cebbb2c0887b72a",
-    "tests/types/scene3d-import-negative.ts": "a56c248ca16f720c0e65611997d009178c73b41a8f7e5c3c57d9ec33d1395713",
+    "tests/types/scene3d-import-negative.ts": "1b5365dc6901514e96db851eec8c47375b6bc5da922d167678cb5d8a75fa5b0c",
     "tests/types/scene3d-web-dom-free-negative.ts": "914d4ae90905f31dabfaa428c3fb37065517340c0dcbb89ac8ebd64b09638cde"
   },
   "cases": {
@@ -161,7 +161,7 @@
         "code": 2307
       },
       {
-        "name": "no-public-matrix-constructor",
+        "name": "no-root-matrix-constructor",
         "file": "tests/types/scene3d-import-negative.ts",
         "line": 16,
         "column": 9,
