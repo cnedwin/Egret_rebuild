@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-12",
+  "updatedAt": "2026-10-13",
   "authority": "Source grouping and applicable boundaries; researchCheckedAt is the project's research-check date, not a unified publication date",
   "items": [
     {
@@ -2769,11 +2769,39 @@
         "fullPrepush": "PENDING",
         "delivery": "PENDING"
       }
+    },
+    {
+     "id": "S098",
+     "type": "first_party_named_spritesheet_and_finite_verification",
+     "researchCheckedAt": "2026-10-13",
+     "requirementIds": [
+      "R004",
+      "R012",
+      "R017"
+     ],
+     "title": "Original named SpriteSheet and finite verification",
+     "scope": "createSpriteSheet factory and 2 erased types; genuine full-image lease, immutable names/rectangles, caller-owned Bitmaps and existing sequence-clock composition.",
+     "limit": "Finite named crops only; full Spine R020/V020 and migration R008/V006 remain OPEN; current complete gates and public delivery are PENDING.",
+     "doc": "en/docs/spritesheet-contract.md",
+     "license": "Apache-2.0",
+     "firstPartySourcePaths": [
+      "packages/runtime/src/spriteSheet.ts",
+      "packages/runtime/src/Bitmap.ts",
+      "packages/runtime/src/index.ts",
+      "packages/engine/src/index.ts"
+     ],
+     "newThirdPartyDependency": false,
+     "verification": {
+      "record": "evidence/spritesheet-verification.json",
+      "status": "FINITE_SPRITESHEET_SOURCE_CPU_TYPES_UNITS_POLICY_EXAMPLE_NATIVE_ACCEPTED_PUBLICATION_PENDING",
+      "fullPrepush": "PENDING",
+      "delivery": "PENDING"
+     }
     }
   ],
   "_localization": {
     "canonicalSource": "来源.json",
-    "canonicalSha256": "bebd0ac64cc354ca3947cd8f94a551af9797438cc3e81ee217d2c62186256b00",
+    "canonicalSha256": "a9a81467831ecbb7f0074a3f9b94cf1d8b2a6801ac5643c087101e3af11e8f1b",
     "role": "read_only_translation",
     "language": "en"
   },
@@ -3440,5 +3468,122 @@
       "sha256": "b94f8ee5a66abb5a37474f02d0ff67e5dc6331eb347d4471b39e43cb1c031569"
     },
     "historicalPendingCutoffsPreserved": true
+  },
+  "namedSpriteSheetActualSuccessor": {
+   "engineeringLabel": "0.45.0",
+   "sourceId": "S098",
+   "deliverableId": "V049",
+   "status": "FINITE_SPRITESHEET_SOURCE_CPU_TYPES_UNITS_POLICY_EXAMPLE_NATIVE_ACCEPTED_PUBLICATION_PENDING",
+   "record": "evidence/spritesheet-verification.json",
+   "factory": "createSpriteSheet",
+   "erasedTypes": [
+    "SpriteSheet",
+    "SpriteSheetFrameInput"
+   ],
+   "newRootValues": 1,
+   "newDependencies": false,
+   "newPublicSubpaths": false,
+   "packageVersion": "0.0.0",
+   "protocolVersion": "1.0",
+   "cpu": {
+    "tests": 100,
+    "pass": 100,
+    "retainedTests": 133,
+    "retainedPass": 133,
+    "specificationFamilies": 10
+   },
+   "types": {
+    "positiveDiagnostics": 0,
+    "negativeDiagnostics": 22,
+    "importNegativeDiagnostics": 14,
+    "exactTuples": 36,
+    "continuationLines": 6,
+    "integratedExitCode": 0
+   },
+   "units": {
+    "tests": 10,
+    "pass": 10,
+    "freshChildInvocationsPerCase": 3
+   },
+   "policy": {
+    "tests": 5,
+    "pass": 5,
+    "assignedControls": 4,
+    "retainedTests": 272,
+    "retainedPass": 272
+   },
+   "example": {
+    "rows": 8,
+    "ticks": 6,
+    "loads": 1,
+    "disposals": 1
+   },
+   "native": {
+    "status": "INDEPENDENT_ACTUAL_ACCEPTED_OPAQUE_SUBSET",
+    "submissions": 18,
+    "newCaptures": 16,
+    "replays": 2,
+    "pixels": 576,
+    "channels": 2304,
+    "tolerance": 0,
+    "sourceTicksPerBackend": 6,
+    "rawRGBABytesPerSubmission": 128,
+    "backendRows": 9,
+    "backends": [
+     "canvas",
+     "webgpu"
+    ],
+    "browserVersion": "155.0.4283.45",
+    "channel": "msedge",
+    "headless": true,
+    "addedFlags": [],
+    "node": "v24.19.0",
+    "playwrightVersion": "1.62.1",
+    "playwrightCoreVersion": "1.62.1",
+    "osRelease": "10.0.26300",
+    "osPlatform": "win32",
+    "osArch": "x64",
+    "cleanupAccepted": true,
+    "borrowedHostSafeBeforeApplicationDeviceDestroy": true,
+    "lostReason": "destroyed",
+    "ownedJobAssignedBeforeACK": true,
+    "ownedJobActiveZero": true,
+    "ownedJobClosed": true,
+    "completeRawEOF": true,
+    "fallback": false,
+    "hardwareIdentityPerformanceQualified": false
+   },
+   "fullPrepush": "PENDING_AT_CURATION_CUTOFF",
+   "mandatoryPushHook": "PENDING_AT_CURATION_CUTOFF",
+   "pullRequest": "PENDING_AT_CURATION_CUTOFF",
+   "Main": "PENDING_AT_CURATION_CUTOFF",
+   "remoteCI": "PENDING",
+   "fullSpineR020V020": "OPEN",
+   "migrationR008V006": "OPEN",
+   "licenseEntitlement": "unverified",
+   "historicalCutoffsPreserved": true
+  },
+  "sequencePlaybackDeliveryActualSuccessor": {
+   "engineeringLabel": "0.44.0",
+   "pullRequest": 31,
+   "url": "https://github.com/cnedwin/Egret_rebuild/pull/31",
+   "merged": true,
+   "main": "1dce76a62cd0a4180969949939041f889eb1d923",
+   "tree": "b10ccbc11e9a2db5bacbf913858c8f4dd73f9d26",
+   "publicationTests": 63,
+   "coreTests": 2794,
+   "experimentalTests": 160,
+   "knowledgeBaseIssues": 0,
+   "remoteStatusCount": 0,
+   "remoteCheckRunCount": 0,
+   "remoteCIPassClaim": false,
+   "successorIdentity": {
+    "bytes": 27772,
+    "sha256": "2bddcfc2dc6dc54d1b65f114c276e1d3f3055b8f67730f3c4ada669070565df7"
+   },
+   "independentReviewIdentity": {
+    "bytes": 4855,
+    "sha256": "9164d3265d717c299f9c7ab6b85e22ee4d317c50e3a9334692d90eef68190233"
+   }
   }
 }

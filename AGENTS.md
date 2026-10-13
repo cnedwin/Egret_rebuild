@@ -67,3 +67,11 @@ Discovery and registered inventory paths exclude private execution, dependency a
 ## Authorization
 
 Pushes, releases, deployments and repository administration require actual user authorization. Existing authorization remains applicable to its scope; local generation or verification does not prove remote publication. This agreement grants no account permissions and expands no authorization for external publication, message sending or asset use.
+
+<!-- SS1-PRIVILEGED-UNIT-POLICY-BEGIN -->
+## SpriteSheet original-operation units
+
+`tests/spritesheet-fault.test.mjs` and `tests/spritesheet-fault-child.mjs` form the isolated SS1 original-operation fault units. The child pins only `packages/runtime/dist/Bitmap.js` and `packages/runtime/dist/spriteSheet.js`; its one-module load hook may replace the unique captured original-operation block in Bitmap in memory for counters and one assigned fault/callback. SpriteSheet loads through the public `@egret/engine` facade and its bytes remain unchanged. The sole direct private import is the child's pinned Bitmap module before the public facade loads, to capture the genuine original class before temporarily replacing its `sourceRect` setter and `dispose` prototype method.
+
+Each case requires a fresh genuine no-hook child baseline, a separate assigned child and another fresh no-hook child after restoration. Deregister the hook, restore exact prototype descriptors before ordinary caller/Scope/Engine cleanup, and verify source, emission, configuration, unit and permission bytes plus clone-owned package aliases before and after every child. Hook deregistration does not unload the module cache. Construction faults before a handle exists must not fabricate a Bitmap retirement; successful real construction followed by a crop/terminal failure uses only the captured original disposer, with the primary cause and secondary cleanup errors preserved. These units add no product export or dependency, permit no arbitrary private imports or private imports in ordinary examples/public behavior tests, and establish no physical OOM, GC, security or renderer acceptance.
+<!-- SS1-PRIVILEGED-UNIT-POLICY-END -->

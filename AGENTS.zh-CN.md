@@ -67,3 +67,11 @@ B1 命令用于受影响的 B1 场景渲染，详见[有界验证器](knowledge-
 ## 授权
 
 推送、发行、部署和仓库管理以用户实际授权为准，既有授权在其范围内持续有效。本地生成或验证不代表远端发布完成。本约定不授予账号权限，不扩大外部发布、消息发送或资产使用授权。
+
+<!-- SS1-PRIVILEGED-UNIT-POLICY-BEGIN -->
+## SpriteSheet 原始操作单元
+
+`tests/spritesheet-fault.test.mjs` 与 `tests/spritesheet-fault-child.mjs` 组成隔离的 SS1 原始操作故障单元。子进程仅固定 `packages/runtime/dist/Bitmap.js` 与 `packages/runtime/dist/spriteSheet.js` 的身份；其单模块加载钩子仅可在内存中替换 Bitmap 唯一的原始操作捕获块，用于计数和一项指派故障／回调。SpriteSheet 经公共 `@egret/engine` 外观加载，磁盘字节保持不变。唯一的直接私有导入是子进程在公共外观加载之前导入已固定身份的 Bitmap 模块，以先取得真实原始类，再临时替换其原型的 `sourceRect` setter 与 `dispose` 方法。
+
+每个用例须先在新子进程完成真实、无钩子的基线，再使用独立指派子进程，并在恢复后使用另一个新的无钩子基线子进程。注销钩子，在普通调用者／Scope／Engine 清理之前恢复原型描述符，并在每个子进程前后核对源码、编译产物、配置、单元与权限文件的完整字节以及属于当前克隆的包别名。注销钩子不卸载模块缓存。尚未取得句柄的构造故障不得虚构 Bitmap 退役；真实构造成功后发生裁剪／终止故障，只使用已捕获的原始 disposer，并保留主要原因与次要清理错误。这些单元不增加产品导出或依赖，不授权任意私有导入，也不授权普通示例／公开行为测试私有导入；不能证明物理 OOM、GC、安全性或渲染器验收。
+<!-- SS1-PRIVILEGED-UNIT-POLICY-END -->

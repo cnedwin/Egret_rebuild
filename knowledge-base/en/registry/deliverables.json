@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-12",
+  "updatedAt": "2026-10-13",
   "authority": "Delivery status summary; code, artifacts, and reproducible acceptance evidence separately govern implementation and testing",
   "items": [
     {
@@ -3041,11 +3041,45 @@
       ],
       "fullSpineR020V020": "OPEN",
       "migrationR008V006": "OPEN"
+    },
+    {
+     "id": "V049",
+     "kind": "named_spritesheet",
+     "status": "in_progress",
+     "requirementIds": [
+      "R004",
+      "R012",
+      "R017"
+     ],
+     "sourceIds": [
+      "S098"
+     ],
+     "dependsOn": [
+      "V048"
+     ],
+     "owner": null,
+     "dueDate": null,
+     "title": "Named SpriteSheet and bounded composition",
+     "doc": "en/docs/spritesheet-contract.md",
+     "artifacts": [
+      "en/docs/spritesheet-contract.md",
+      "en/docs/spritesheet-evidence.md",
+      "evidence/spritesheet-verification.json"
+     ],
+     "implementation": "finite_source_cpu_types_units_policy_example_native_accepted",
+     "acceptance": "FINITE_SPRITESHEET_SOURCE_CPU_TYPES_UNITS_POLICY_EXAMPLE_NATIVE_ACCEPTED_PUBLICATION_PENDING",
+     "acceptanceCriteria": [
+      "Authentic full-image lease and owned frozen names/rectangles, caller Bitmap and Scope lifetimes.",
+      "Separate independent public CPU, precise types, original-operation units, package policy, recording example and browser pixel acceptance.",
+      "Current complete gates, mandatory push hook and PR/Main delivery remain required."
+     ],
+     "fullSpineR020V020": "OPEN",
+     "migrationR008V006": "OPEN"
     }
   ],
   "_localization": {
     "canonicalSource": "交付.json",
-    "canonicalSha256": "1c7426d8a9ff38cd238664d44f4f0470f9eacf3da6544b8b5bf37dd250c26c99",
+    "canonicalSha256": "ffa9fea737498c443de1503ee0b7c3f7fb22897d29a7a631be492efd4ddc6185",
     "role": "read_only_translation",
     "language": "en"
   },
@@ -3712,5 +3746,122 @@
       "sha256": "b94f8ee5a66abb5a37474f02d0ff67e5dc6331eb347d4471b39e43cb1c031569"
     },
     "historicalPendingCutoffsPreserved": true
+  },
+  "namedSpriteSheetActualSuccessor": {
+   "engineeringLabel": "0.45.0",
+   "sourceId": "S098",
+   "deliverableId": "V049",
+   "status": "FINITE_SPRITESHEET_SOURCE_CPU_TYPES_UNITS_POLICY_EXAMPLE_NATIVE_ACCEPTED_PUBLICATION_PENDING",
+   "record": "evidence/spritesheet-verification.json",
+   "factory": "createSpriteSheet",
+   "erasedTypes": [
+    "SpriteSheet",
+    "SpriteSheetFrameInput"
+   ],
+   "newRootValues": 1,
+   "newDependencies": false,
+   "newPublicSubpaths": false,
+   "packageVersion": "0.0.0",
+   "protocolVersion": "1.0",
+   "cpu": {
+    "tests": 100,
+    "pass": 100,
+    "retainedTests": 133,
+    "retainedPass": 133,
+    "specificationFamilies": 10
+   },
+   "types": {
+    "positiveDiagnostics": 0,
+    "negativeDiagnostics": 22,
+    "importNegativeDiagnostics": 14,
+    "exactTuples": 36,
+    "continuationLines": 6,
+    "integratedExitCode": 0
+   },
+   "units": {
+    "tests": 10,
+    "pass": 10,
+    "freshChildInvocationsPerCase": 3
+   },
+   "policy": {
+    "tests": 5,
+    "pass": 5,
+    "assignedControls": 4,
+    "retainedTests": 272,
+    "retainedPass": 272
+   },
+   "example": {
+    "rows": 8,
+    "ticks": 6,
+    "loads": 1,
+    "disposals": 1
+   },
+   "native": {
+    "status": "INDEPENDENT_ACTUAL_ACCEPTED_OPAQUE_SUBSET",
+    "submissions": 18,
+    "newCaptures": 16,
+    "replays": 2,
+    "pixels": 576,
+    "channels": 2304,
+    "tolerance": 0,
+    "sourceTicksPerBackend": 6,
+    "rawRGBABytesPerSubmission": 128,
+    "backendRows": 9,
+    "backends": [
+     "canvas",
+     "webgpu"
+    ],
+    "browserVersion": "155.0.4283.45",
+    "channel": "msedge",
+    "headless": true,
+    "addedFlags": [],
+    "node": "v24.19.0",
+    "playwrightVersion": "1.62.1",
+    "playwrightCoreVersion": "1.62.1",
+    "osRelease": "10.0.26300",
+    "osPlatform": "win32",
+    "osArch": "x64",
+    "cleanupAccepted": true,
+    "borrowedHostSafeBeforeApplicationDeviceDestroy": true,
+    "lostReason": "destroyed",
+    "ownedJobAssignedBeforeACK": true,
+    "ownedJobActiveZero": true,
+    "ownedJobClosed": true,
+    "completeRawEOF": true,
+    "fallback": false,
+    "hardwareIdentityPerformanceQualified": false
+   },
+   "fullPrepush": "PENDING_AT_CURATION_CUTOFF",
+   "mandatoryPushHook": "PENDING_AT_CURATION_CUTOFF",
+   "pullRequest": "PENDING_AT_CURATION_CUTOFF",
+   "Main": "PENDING_AT_CURATION_CUTOFF",
+   "remoteCI": "PENDING",
+   "fullSpineR020V020": "OPEN",
+   "migrationR008V006": "OPEN",
+   "licenseEntitlement": "unverified",
+   "historicalCutoffsPreserved": true
+  },
+  "sequencePlaybackDeliveryActualSuccessor": {
+   "engineeringLabel": "0.44.0",
+   "pullRequest": 31,
+   "url": "https://github.com/cnedwin/Egret_rebuild/pull/31",
+   "merged": true,
+   "main": "1dce76a62cd0a4180969949939041f889eb1d923",
+   "tree": "b10ccbc11e9a2db5bacbf913858c8f4dd73f9d26",
+   "publicationTests": 63,
+   "coreTests": 2794,
+   "experimentalTests": 160,
+   "knowledgeBaseIssues": 0,
+   "remoteStatusCount": 0,
+   "remoteCheckRunCount": 0,
+   "remoteCIPassClaim": false,
+   "successorIdentity": {
+    "bytes": 27772,
+    "sha256": "2bddcfc2dc6dc54d1b65f114c276e1d3f3055b8f67730f3c4ada669070565df7"
+   },
+   "independentReviewIdentity": {
+    "bytes": 4855,
+    "sha256": "9164d3265d717c299f9c7ab6b85e22ee4d317c50e3a9334692d90eef68190233"
+   }
   }
 }

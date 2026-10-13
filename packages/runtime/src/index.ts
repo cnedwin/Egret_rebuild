@@ -41,3 +41,5 @@ export type { DisplayInputOperations } from "./displayInputOperations.js";
 export { ByteWriter, BYTE_WRITER_LIMITS } from "./ByteWriter.js";
 export { createNineSliceGeometry2D } from "./NineSliceGeometry2D.js";
 export type { NineSliceInsets2D, NineSliceGeometry2DOptions } from "./NineSliceGeometry2D.js";
+export { createSpriteSheet } from "./spriteSheet.js";
+export type { SpriteSheet, SpriteSheetFrameInput } from "./spriteSheet.js";

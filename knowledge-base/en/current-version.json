@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "version": "0.44.0",
-  "updatedAt": "2026-10-12",
-  "title": "Egret Engine community rebuild — Engine-clock sequence playback",
-  "stage": "finite_sequence_playback_native_accepted_publication_pending",
+  "version": "0.45.0",
+  "updatedAt": "2026-10-13",
+  "title": "Egret community rebuild — Named SpriteSheet",
+  "stage": "finite_named_spritesheet_native_accepted_publication_pending",
   "publication": "development_preview",
   "registries": {
     "requirements": "en/registry/requirements.json",
@@ -214,7 +214,7 @@
   },
   "engineeringSpecificationOnlyThisRevision": false,
   "userDesignObjectiveConfirmedThisRevision": true,
-  "newExperimentScopeThisRevision": "Engine.createSequencePlayback and 3 erased types add bounded Scope-owned explicit-clock sequence control with accepted CPU/types/policy/example and native browser observations. No new root value, dependency or public subpath. Current complete gates, push hook and PR/Main are pending; full Spine R020/V020 and migration R008/V006 remain OPEN.",
+  "newExperimentScopeThisRevision": "createSpriteSheet and 2 erased types provide bounded named crops over a genuine full-image lease and existing Engine sequence composition. Public CPU/types/units/policy/example and the opaque browser subset are independently accepted; final gates/push/PR/Main remain pending. package0.0.0 and protocol1.0 remain unchanged; full Spine R020/V020 and migration R008/V006 remain OPEN.",
   "existingResearchExperimentsRerunThisRevision": false,
   "coreFrameworkImplementation": {
     "artifactRoot": "outputs/白鹭引擎核心框架原型",
@@ -264,7 +264,7 @@
   },
   "_localization": {
     "canonicalSource": "当前版本.json",
-    "canonicalSha256": "707bdf8caedbbf114ec7da78233160f18b1150aa56b258c82f081b46b8a5adc5",
+    "canonicalSha256": "a72a48c40b6ec2e63d877dcda9cb0d7217e4382b6a6873d5b4b78c06858d137c",
     "role": "read_only_translation",
     "language": "en"
   },
@@ -547,7 +547,7 @@
     "contract": "en/docs/display-content-bounds-contract.md",
     "evidence": "en/docs/display-content-bounds-evidence.md"
   },
-  "latestEngineeringPreview": "0.44.0",
+  "latestEngineeringPreview": "0.45.0",
   "texturedMesh2DImplementation": {
     "version": "0.23.0",
     "status": "bounded_increment_implemented",
@@ -3370,5 +3370,127 @@
       "sha256": "b94f8ee5a66abb5a37474f02d0ff67e5dc6331eb347d4471b39e43cb1c031569"
     },
     "historicalPendingCutoffsPreserved": true
+  },
+  "namedSpriteSheetPreviousCheckpoint": {
+   "version": "0.44.0",
+   "record": "evidence/sequence-playback-verification.json",
+   "history": "Original preceding source-curation cutoff retained in its existing fields."
+  },
+  "namedSpriteSheetActualSuccessor": {
+   "engineeringLabel": "0.45.0",
+   "sourceId": "S098",
+   "deliverableId": "V049",
+   "status": "FINITE_SPRITESHEET_SOURCE_CPU_TYPES_UNITS_POLICY_EXAMPLE_NATIVE_ACCEPTED_PUBLICATION_PENDING",
+   "record": "evidence/spritesheet-verification.json",
+   "factory": "createSpriteSheet",
+   "erasedTypes": [
+    "SpriteSheet",
+    "SpriteSheetFrameInput"
+   ],
+   "newRootValues": 1,
+   "newDependencies": false,
+   "newPublicSubpaths": false,
+   "packageVersion": "0.0.0",
+   "protocolVersion": "1.0",
+   "cpu": {
+    "tests": 100,
+    "pass": 100,
+    "retainedTests": 133,
+    "retainedPass": 133,
+    "specificationFamilies": 10
+   },
+   "types": {
+    "positiveDiagnostics": 0,
+    "negativeDiagnostics": 22,
+    "importNegativeDiagnostics": 14,
+    "exactTuples": 36,
+    "continuationLines": 6,
+    "integratedExitCode": 0
+   },
+   "units": {
+    "tests": 10,
+    "pass": 10,
+    "freshChildInvocationsPerCase": 3
+   },
+   "policy": {
+    "tests": 5,
+    "pass": 5,
+    "assignedControls": 4,
+    "retainedTests": 272,
+    "retainedPass": 272
+   },
+   "example": {
+    "rows": 8,
+    "ticks": 6,
+    "loads": 1,
+    "disposals": 1
+   },
+   "native": {
+    "status": "INDEPENDENT_ACTUAL_ACCEPTED_OPAQUE_SUBSET",
+    "submissions": 18,
+    "newCaptures": 16,
+    "replays": 2,
+    "pixels": 576,
+    "channels": 2304,
+    "tolerance": 0,
+    "sourceTicksPerBackend": 6,
+    "rawRGBABytesPerSubmission": 128,
+    "backendRows": 9,
+    "backends": [
+     "canvas",
+     "webgpu"
+    ],
+    "browserVersion": "155.0.4283.45",
+    "channel": "msedge",
+    "headless": true,
+    "addedFlags": [],
+    "node": "v24.19.0",
+    "playwrightVersion": "1.62.1",
+    "playwrightCoreVersion": "1.62.1",
+    "osRelease": "10.0.26300",
+    "osPlatform": "win32",
+    "osArch": "x64",
+    "cleanupAccepted": true,
+    "borrowedHostSafeBeforeApplicationDeviceDestroy": true,
+    "lostReason": "destroyed",
+    "ownedJobAssignedBeforeACK": true,
+    "ownedJobActiveZero": true,
+    "ownedJobClosed": true,
+    "completeRawEOF": true,
+    "fallback": false,
+    "hardwareIdentityPerformanceQualified": false
+   },
+   "fullPrepush": "PENDING_AT_CURATION_CUTOFF",
+   "mandatoryPushHook": "PENDING_AT_CURATION_CUTOFF",
+   "pullRequest": "PENDING_AT_CURATION_CUTOFF",
+   "Main": "PENDING_AT_CURATION_CUTOFF",
+   "remoteCI": "PENDING",
+   "fullSpineR020V020": "OPEN",
+   "migrationR008V006": "OPEN",
+   "licenseEntitlement": "unverified",
+   "historicalCutoffsPreserved": true
+  },
+  "sequencePlaybackDeliveryActualSuccessor": {
+   "engineeringLabel": "0.44.0",
+   "pullRequest": 31,
+   "url": "https://github.com/cnedwin/Egret_rebuild/pull/31",
+   "merged": true,
+   "main": "1dce76a62cd0a4180969949939041f889eb1d923",
+   "tree": "b10ccbc11e9a2db5bacbf913858c8f4dd73f9d26",
+   "publicationTests": 63,
+   "coreTests": 2794,
+   "experimentalTests": 160,
+   "knowledgeBaseIssues": 0,
+   "remoteStatusCount": 0,
+   "remoteCheckRunCount": 0,
+   "remoteCIPassClaim": false,
+   "successorIdentity": {
+    "bytes": 27772,
+    "sha256": "2bddcfc2dc6dc54d1b65f114c276e1d3f3055b8f67730f3c4ada669070565df7"
+   },
+   "independentReviewIdentity": {
+    "bytes": 4855,
+    "sha256": "9164d3265d717c299f9c7ab6b85e22ee4d317c50e3a9334692d90eef68190233"
+   }
   }
 }

@@ -1,0 +1,738 @@
+{
+  "schemaVersion": 1,
+  "kind": "SPRITESHEET_ACTUAL_STRICT_CONSUMER_DIAGNOSTICS",
+  "spdxLicense": "Apache-2.0",
+  "tupleFormat": [
+    "file",
+    "line",
+    "column",
+    "code",
+    "message"
+  ],
+  "compiler": {
+    "name": "typescript",
+    "version": "7.0.2",
+    "entry": "node_modules/typescript/bin/tsc",
+    "pins": [
+      {
+        "path": "node_modules/typescript/package.json",
+        "bytes": 3087,
+        "sha256": "3722b30210616a13a3213ded11575ba6b2dbab10c32a5ef67afca8513e27017e"
+      },
+      {
+        "path": "node_modules/typescript/bin/tsc",
+        "bytes": 44,
+        "sha256": "2219f428a7e55aaf1f7ad85b9b0f0cf5078aeb76ccc9a7c6036c92d48f492ffd"
+      },
+      {
+        "path": "node_modules/typescript/lib/tsc.js",
+        "bytes": 609,
+        "sha256": "cbdfbf11c26ed00dfc073155e316a42d6d6d8a387be61006b82fa9aa93ac572e"
+      },
+      {
+        "path": "node_modules/typescript/lib/getExePath.js",
+        "bytes": 3051,
+        "sha256": "96c10fd3a18e165d7323de8e314ac8d755ad96811f9fbc304a5b3ba4e05285cc"
+      },
+      {
+        "path": "pnpm-lock.yaml",
+        "bytes": 9017,
+        "sha256": "79383095fd4bb2bb4682a12f9651d9a876a01fc6dc1326d09bc0ad587db23084"
+      }
+    ]
+  },
+  "configurationPins": [
+    {
+      "path": "tsconfig.base.json",
+      "bytes": 446,
+      "sha256": "b7a31fb9f93a93e20bfdcf33c135acb45cb3a6895a8b3e7006bd85214ddc1008"
+    },
+    {
+      "path": "tests/types/tsconfig.json",
+      "bytes": 224,
+      "sha256": "e378996174db2020f9c416fb0599ea1182b3ca3265b3dc56012a688fd3252ad9"
+    },
+    {
+      "path": "tests/types/tsconfig.dom-free.json",
+      "bytes": 56,
+      "sha256": "24bc13fae1f9d98b5d2dc212c9fb4f1f926aeb956f706d8269acbd617c900b49"
+    }
+  ],
+  "groups": [
+    {
+      "lane": "positive",
+      "fixture": {
+        "path": "tests/types/spritesheet-positive.ts",
+        "bytes": 2973,
+        "sha256": "5fd14db43500ccd5a59681ffe452e228267b8ac63074cc105bdb11613639b2cc"
+      },
+      "config": {
+        "path": "tests/types/tsconfig.spritesheet-positive.json",
+        "bytes": 556,
+        "sha256": "b23fe040ca35f77291b6d8218e82910cedd7fd881081850937d753cbfb211804"
+      },
+      "expectedExit": 0,
+      "cases": []
+    },
+    {
+      "lane": "negative",
+      "fixture": {
+        "path": "tests/types/spritesheet-negative.ts",
+        "bytes": 2966,
+        "sha256": "0b60b4b5744f82567b3f47f048521091ccb289985cb4a1b469afc28d2b52cc6a"
+      },
+      "config": {
+        "path": "tests/types/tsconfig.spritesheet-negative.json",
+        "bytes": 556,
+        "sha256": "542f072f5f95d43d83607acf868bcfd9f87bec70bb605db920ac969d96eda726"
+      },
+      "expectedExit": 1,
+      "cases": [
+        {
+          "name": "SS1-N01",
+          "markerLine": 15,
+          "statementLine": 16,
+          "statement": "createSpriteSheet(unknownLease, readonlyFrames);",
+          "sourceIntent": "invariant unknown entitlement cannot become a texture lease.",
+          "tuple": [
+            "tests/types/spritesheet-negative.ts",
+            16,
+            19,
+            2379,
+            "Argument of type 'AssetLease<unknown>' is not assignable to parameter of type 'AssetLease<Texture>' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.\n  The types returned by '[LEASE_VALUE](...)' are incompatible between these types.\n    Type 'unknown' is not assignable to type 'Texture'."
+          ]
+        },
+        {
+          "name": "SS1-N02",
+          "markerLine": 17,
+          "statementLine": 18,
+          "statement": "createSpriteSheet(numberLease, readonlyFrames);",
+          "sourceIntent": "a genuine different asset type cannot supply a texture.",
+          "tuple": [
+            "tests/types/spritesheet-negative.ts",
+            18,
+            19,
+            2379,
+            "Argument of type 'AssetLease<number>' is not assignable to parameter of type 'AssetLease<Texture>' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.\n  Types of property '[LEASE_VALUE]' are incompatible.\n    Type '(value: number) => number' is not assignable to type '(value: Texture) => Texture'.\n      Types of parameters 'value' and 'value' are incompatible.\n        Type 'Texture' is not assignable to type 'number'."
+          ]
+        },
+        {
+          "name": "SS1-N03",
+          "markerLine": 19,
+          "statementLine": 20,
+          "statement": "createSpriteSheet(lease.value, readonlyFrames);",
+          "sourceIntent": "Texture is not a lease.",
+          "tuple": [
+            "tests/types/spritesheet-negative.ts",
+            20,
+            19,
+            2739,
+            "Type 'Texture' is missing the following properties from type 'AssetLease<Texture>': leaseId, resourceGeneration, value, release"
+          ]
+        },
+        {
+          "name": "SS1-N04",
+          "markerLine": 21,
+          "statementLine": 22,
+          "statement": "createSpriteSheet(null, readonlyFrames);",
+          "sourceIntent": "required lease is not nullable.",
+          "tuple": [
+            "tests/types/spritesheet-negative.ts",
+            22,
+            19,
+            2345,
+            "Argument of type 'null' is not assignable to parameter of type 'AssetLease<Texture>'."
+          ]
+        },
+        {
+          "name": "SS1-N05",
+          "markerLine": 23,
+          "statementLine": 24,
+          "statement": "createSpriteSheet(lease);",
+          "sourceIntent": "required frames cannot be omitted.",
+          "tuple": [
+            "tests/types/spritesheet-negative.ts",
+            24,
+            1,
+            2554,
+            "Expected 2 arguments, but got 1."
+          ]
+        },
+        {
+          "name": "SS1-N06",
+          "markerLine": 25,
+          "statementLine": 26,
+          "statement": "createSpriteSheet(lease, [{ name: 'red', x: '0', y: 0, width: 2, height: 2 }]);",
+          "sourceIntent": "named rectangles require numeric coordinates.",
+          "tuple": [
+            "tests/types/spritesheet-negative.ts",
+            26,
+            42,
+            2322,
+            "Type 'string' is not assignable to type 'number'."
+          ]
+        },
+        {
+          "name": "SS1-N07",
+          "markerLine": 27,
+          "statementLine": 28,
+          "statement": "createSpriteSheet(lease, [{ name: 7, x: 0, y: 0, width: 2, height: 2 }]);",
+          "sourceIntent": "exact names are primitive strings.",
+          "tuple": [
+            "tests/types/spritesheet-negative.ts",
+            28,
+            29,
+            2322,
+            "Type 'number' is not assignable to type 'string'."
+          ]
+        },
+        {
+          "name": "SS1-N08",
+          "markerLine": 29,
+          "statementLine": 30,
+          "statement": "createSpriteSheet(lease, [{ name: 'red', x: 0, y: 0, width: 2 }]);",
+          "sourceIntent": "all five known fields are required.",
+          "tuple": [
+            "tests/types/spritesheet-negative.ts",
+            30,
+            27,
+            2741,
+            "Property 'height' is missing in type '{ name: string; x: number; y: number; width: number; }' but required in type 'SpriteSheetFrameInput'."
+          ]
+        },
+        {
+          "name": "SS1-N09",
+          "markerLine": 31,
+          "statementLine": 32,
+          "statement": "createSpriteSheet(lease, 'red');",
+          "sourceIntent": "the table is a readonly array, not a string.",
+          "tuple": [
+            "tests/types/spritesheet-negative.ts",
+            32,
+            26,
+            2345,
+            "Argument of type 'string' is not assignable to parameter of type 'readonly SpriteSheetFrameInput[]'."
+          ]
+        },
+        {
+          "name": "SS1-N10",
+          "markerLine": 33,
+          "statementLine": 34,
+          "statement": "createSpriteSheet(lease, undefined);",
+          "sourceIntent": "no optional undefined frame table is declared.",
+          "tuple": [
+            "tests/types/spritesheet-negative.ts",
+            34,
+            26,
+            2345,
+            "Argument of type 'undefined' is not assignable to parameter of type 'readonly SpriteSheetFrameInput[]'."
+          ]
+        },
+        {
+          "name": "SS1-N11",
+          "markerLine": 35,
+          "statementLine": 36,
+          "statement": "createSpriteSheet(lease, readonlyFrames, {});",
+          "sourceIntent": "no provider/options argument is declared.",
+          "tuple": [
+            "tests/types/spritesheet-negative.ts",
+            36,
+            42,
+            2554,
+            "Expected 2 arguments, but got 3."
+          ]
+        },
+        {
+          "name": "SS1-N12",
+          "markerLine": 37,
+          "statementLine": 38,
+          "statement": "new SpriteSheet();",
+          "sourceIntent": "no runtime constructor is supplied for the erased facade.",
+          "tuple": [
+            "tests/types/spritesheet-negative.ts",
+            38,
+            5,
+            2693,
+            "'SpriteSheet' only refers to a type, but is being used as a value here."
+          ]
+        },
+        {
+          "name": "SS1-N13",
+          "markerLine": 39,
+          "statementLine": 40,
+          "statement": "sheet.names.push('extra');",
+          "sourceIntent": "metadata arrays cannot be mutated through the public type.",
+          "tuple": [
+            "tests/types/spritesheet-negative.ts",
+            40,
+            13,
+            2339,
+            "Property 'push' does not exist on type 'readonly string[]'."
+          ]
+        },
+        {
+          "name": "SS1-N14",
+          "markerLine": 41,
+          "statementLine": 42,
+          "statement": "sheet.names = [];",
+          "sourceIntent": "metadata identity is readonly.",
+          "tuple": [
+            "tests/types/spritesheet-negative.ts",
+            42,
+            7,
+            2540,
+            "Cannot assign to 'names' because it is a read-only property."
+          ]
+        },
+        {
+          "name": "SS1-N15",
+          "markerLine": 43,
+          "statementLine": 44,
+          "statement": "region.width = 3;",
+          "sourceIntent": "canonical source regions are readonly.",
+          "tuple": [
+            "tests/types/spritesheet-negative.ts",
+            44,
+            8,
+            2540,
+            "Cannot assign to 'width' because it is a read-only property."
+          ]
+        },
+        {
+          "name": "SS1-N16",
+          "markerLine": 45,
+          "statementLine": 46,
+          "statement": "frame.name = 'changed';",
+          "sourceIntent": "frame descriptors admit readonly input.",
+          "tuple": [
+            "tests/types/spritesheet-negative.ts",
+            46,
+            7,
+            2540,
+            "Cannot assign to 'name' because it is a read-only property."
+          ]
+        },
+        {
+          "name": "SS1-N17",
+          "markerLine": 47,
+          "statementLine": 48,
+          "statement": "engine.createSpriteSheet(lease, readonlyFrames);",
+          "sourceIntent": "the factory does not become an Engine method.",
+          "tuple": [
+            "tests/types/spritesheet-negative.ts",
+            48,
+            8,
+            2339,
+            "Property 'createSpriteSheet' does not exist on type 'Engine'."
+          ]
+        },
+        {
+          "name": "SS1-N18",
+          "markerLine": 49,
+          "statementLine": 50,
+          "statement": "sheet.getRegion(1);",
+          "sourceIntent": "lookup does not coerce numeric keys.",
+          "tuple": [
+            "tests/types/spritesheet-negative.ts",
+            50,
+            17,
+            2345,
+            "Argument of type 'number' is not assignable to parameter of type 'string'."
+          ]
+        },
+        {
+          "name": "SS1-N19",
+          "markerLine": 51,
+          "statementLine": 52,
+          "statement": "sheet.createBitmap();",
+          "sourceIntent": "Bitmap creation requires an exact string name.",
+          "tuple": [
+            "tests/types/spritesheet-negative.ts",
+            52,
+            7,
+            2554,
+            "Expected 1 arguments, but got 0."
+          ]
+        },
+        {
+          "name": "SS1-N20",
+          "markerLine": 53,
+          "statementLine": 54,
+          "statement": "sheet.atlasWidth = 7;",
+          "sourceIntent": "facade dimensions cannot be changed.",
+          "tuple": [
+            "tests/types/spritesheet-negative.ts",
+            54,
+            7,
+            2540,
+            "Cannot assign to 'atlasWidth' because it is a read-only property."
+          ]
+        },
+        {
+          "name": "SS1-N21",
+          "markerLine": 55,
+          "statementLine": 56,
+          "statement": "document.createElement('canvas');",
+          "sourceIntent": "default roots do not admit browser ambient APIs.",
+          "tuple": [
+            "tests/types/spritesheet-negative.ts",
+            56,
+            1,
+            2584,
+            "Cannot find name 'document'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'."
+          ]
+        },
+        {
+          "name": "SS1-N22",
+          "markerLine": 57,
+          "statementLine": 58,
+          "statement": "process.exitCode = 0;",
+          "sourceIntent": "types[] does not admit Node ambient APIs.",
+          "tuple": [
+            "tests/types/spritesheet-negative.ts",
+            58,
+            1,
+            2591,
+            "Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig."
+          ]
+        }
+      ]
+    },
+    {
+      "lane": "import-negative",
+      "fixture": {
+        "path": "tests/types/spritesheet-import-negative.ts",
+        "bytes": 2114,
+        "sha256": "0ca1c5f68b642fda68627ffe948a268e626c4d5a28974a914e69a0b1825353ee"
+      },
+      "config": {
+        "path": "tests/types/tsconfig.spritesheet-import-negative.json",
+        "bytes": 563,
+        "sha256": "be27601564accb21c8e416c14c21135373e7a4308ceb98fdda2c25c14fc30c9c"
+      },
+      "expectedExit": 1,
+      "cases": [
+        {
+          "name": "SS1-I01",
+          "markerLine": 4,
+          "statementLine": 5,
+          "statement": "import { SpriteSheet } from '@egret/engine';",
+          "sourceIntent": "the facade is erased, not a root runtime constructor.",
+          "tuple": [
+            "tests/types/spritesheet-import-negative.ts",
+            5,
+            10,
+            1484,
+            "'SpriteSheet' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled."
+          ]
+        },
+        {
+          "name": "SS1-I02",
+          "markerLine": 6,
+          "statementLine": 7,
+          "statement": "import { SpriteSheetFrameInput } from '@egret/engine';",
+          "sourceIntent": "the frame descriptor is erased.",
+          "tuple": [
+            "tests/types/spritesheet-import-negative.ts",
+            7,
+            10,
+            1484,
+            "'SpriteSheetFrameInput' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled."
+          ]
+        },
+        {
+          "name": "SS1-I03",
+          "markerLine": 8,
+          "statementLine": 9,
+          "statement": "import { SpriteSheet as RuntimeSpriteSheet } from '@egret/runtime';",
+          "sourceIntent": "runtime also erases the canonical facade type.",
+          "tuple": [
+            "tests/types/spritesheet-import-negative.ts",
+            9,
+            10,
+            1484,
+            "'SpriteSheet' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled."
+          ]
+        },
+        {
+          "name": "SS1-I04",
+          "markerLine": 10,
+          "statementLine": 11,
+          "statement": "import { SpriteSheetFrameInput as RuntimeSpriteSheetFrameInput } from '@egret/runtime';",
+          "sourceIntent": "runtime also erases the canonical frame type.",
+          "tuple": [
+            "tests/types/spritesheet-import-negative.ts",
+            11,
+            10,
+            1484,
+            "'SpriteSheetFrameInput' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled."
+          ]
+        },
+        {
+          "name": "SS1-I05",
+          "markerLine": 12,
+          "statementLine": 13,
+          "statement": "import { spriteSheetBitmapOperations } from '@egret/engine';",
+          "sourceIntent": "Bitmap transaction authority stays private to its module.",
+          "tuple": [
+            "tests/types/spritesheet-import-negative.ts",
+            13,
+            10,
+            2305,
+            "Module '\"@egret/engine\"' has no exported member 'spriteSheetBitmapOperations'."
+          ]
+        },
+        {
+          "name": "SS1-I06",
+          "markerLine": 14,
+          "statementLine": 15,
+          "statement": "import { spriteSheetBitmapOperations as RuntimeBitmapOperations } from '@egret/runtime';",
+          "sourceIntent": "the runtime barrel does not leak that authority.",
+          "tuple": [
+            "tests/types/spritesheet-import-negative.ts",
+            15,
+            10,
+            2305,
+            "Module '\"@egret/runtime\"' has no exported member 'spriteSheetBitmapOperations'."
+          ]
+        },
+        {
+          "name": "SS1-I07",
+          "markerLine": 16,
+          "statementLine": 17,
+          "statement": "import { createSpriteSheet as ContractsFactory } from '@egret/contracts';",
+          "sourceIntent": "contracts own no new sheet factory.",
+          "tuple": [
+            "tests/types/spritesheet-import-negative.ts",
+            17,
+            10,
+            2305,
+            "Module '\"@egret/contracts\"' has no exported member 'createSpriteSheet'."
+          ]
+        },
+        {
+          "name": "SS1-I08",
+          "markerLine": 18,
+          "statementLine": 19,
+          "statement": "import type { SpriteSheet as ContractsSheet } from '@egret/contracts';",
+          "sourceIntent": "contracts own no sheet facade type.",
+          "tuple": [
+            "tests/types/spritesheet-import-negative.ts",
+            19,
+            15,
+            2305,
+            "Module '\"@egret/contracts\"' has no exported member 'SpriteSheet'."
+          ]
+        },
+        {
+          "name": "SS1-I09",
+          "markerLine": 20,
+          "statementLine": 21,
+          "statement": "import { createSpriteSheet as ProjectFactory } from '@egret/project';",
+          "sourceIntent": "project root gains no renderer factory.",
+          "tuple": [
+            "tests/types/spritesheet-import-negative.ts",
+            21,
+            10,
+            2305,
+            "Module '\"@egret/project\"' has no exported member 'createSpriteSheet'."
+          ]
+        },
+        {
+          "name": "SS1-I10",
+          "markerLine": 22,
+          "statementLine": 23,
+          "statement": "import type { SpriteSheetFrameInput as ProjectFrame } from '@egret/project';",
+          "sourceIntent": "project root gains no renderer frame descriptor.",
+          "tuple": [
+            "tests/types/spritesheet-import-negative.ts",
+            23,
+            15,
+            2305,
+            "Module '\"@egret/project\"' has no exported member 'SpriteSheetFrameInput'."
+          ]
+        },
+        {
+          "name": "SS1-I11",
+          "markerLine": 24,
+          "statementLine": 25,
+          "statement": "import { createSpriteSheet as TextFactory } from '@egret/engine/text';",
+          "sourceIntent": "explicit text entry gains no image-sheet facade.",
+          "tuple": [
+            "tests/types/spritesheet-import-negative.ts",
+            25,
+            10,
+            2305,
+            "Module '\"@egret/engine/text\"' has no exported member 'createSpriteSheet'."
+          ]
+        },
+        {
+          "name": "SS1-I12",
+          "markerLine": 26,
+          "statementLine": 27,
+          "statement": "import type { SpriteSheet as RuntimeTextSheet } from '@egret/runtime/text';",
+          "sourceIntent": "runtime text entry gains no image-sheet facade.",
+          "tuple": [
+            "tests/types/spritesheet-import-negative.ts",
+            27,
+            15,
+            2305,
+            "Module '\"@egret/runtime/text\"' has no exported member 'SpriteSheet'."
+          ]
+        },
+        {
+          "name": "SS1-I13",
+          "markerLine": 28,
+          "statementLine": 29,
+          "statement": "import { createSpriteSheet as SceneFactory } from '@egret/engine/scene3d';",
+          "sourceIntent": "scene entry gains no 2D named-table factory.",
+          "tuple": [
+            "tests/types/spritesheet-import-negative.ts",
+            29,
+            10,
+            2305,
+            "Module '\"@egret/engine/scene3d\"' has no exported member 'createSpriteSheet'."
+          ]
+        },
+        {
+          "name": "SS1-I14",
+          "markerLine": 30,
+          "statementLine": 31,
+          "statement": "import type { SpriteSheet as SpineSheet } from '@egret/project/spine';",
+          "sourceIntent": "existing opt-in Spine planning entry gains no sheet type.",
+          "tuple": [
+            "tests/types/spritesheet-import-negative.ts",
+            31,
+            15,
+            2305,
+            "Module '\"@egret/project/spine\"' has no exported member 'SpriteSheet'."
+          ]
+        }
+      ]
+    }
+  ],
+  "normalization": {
+    "file": "Forward-slash repository-relative filename; absolute filenames must have the exact current repository prefix.",
+    "message": "Replace only the exact current repository root prefix with <repo>/ if present; retain every other character and continuation indentation.",
+    "aliases": "No package, node_modules, workspace or Junction alias equivalence is inferred."
+  },
+  "observedProvenance": {
+    "scope": "Independently accepted normal Windows host direct compiler observations; integrated gate and runtime/native acceptance remain separate.",
+    "observationBytes": 39155,
+    "observationSha256": "7344f7fe0ae0ec5ea47b59f2a15facdbae7ef1b6c22f497269edc3426b35bfed",
+    "actualReviewBytes": 7045,
+    "actualReviewSha256": "1c04aa4a3341cc2716c18c51f306615457ab7e86a2424abc0ca89930178cfcec",
+    "platform": "win32",
+    "arch": "x64",
+    "runtime": "Node.js 24.19.0",
+    "compiler": "TypeScript 7.0.2",
+    "physicalOwnerObservations": [
+      {
+        "role": "process.execPath",
+        "logical": "current Node runtime",
+        "physical": "current Node runtime",
+        "bytes": 92825416,
+        "sha256": "3602f2bb1a10f2cbab4c36886218a33c1ab3db87290e73b033c46c77147d0237"
+      },
+      {
+        "role": "installed compiler",
+        "logical": "node_modules/.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/lib/tsc.exe",
+        "physical": "node_modules/.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/lib/tsc.exe",
+        "bytes": 24520544,
+        "sha256": "f9ecfbdc93753d2c972d66a8d0d75f5bd737fd4a5f88b422d9091ea282bcb2c7"
+      },
+      {
+        "role": "installed compiler",
+        "logical": "node_modules/.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/package.json",
+        "physical": "node_modules/.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/package.json",
+        "bytes": 1042,
+        "sha256": "6d8ec7623880a902bb225c53571112e2bbf0273412b2c534070b1193d2be0f6b"
+      },
+      {
+        "role": "installed compiler",
+        "logical": "node_modules/typescript/bin/tsc",
+        "physical": "node_modules/.pnpm/typescript@7.0.2/node_modules/typescript/bin/tsc",
+        "bytes": 44,
+        "sha256": "2219f428a7e55aaf1f7ad85b9b0f0cf5078aeb76ccc9a7c6036c92d48f492ffd"
+      },
+      {
+        "role": "installed compiler",
+        "logical": "node_modules/typescript/lib/getExePath.js",
+        "physical": "node_modules/.pnpm/typescript@7.0.2/node_modules/typescript/lib/getExePath.js",
+        "bytes": 3051,
+        "sha256": "96c10fd3a18e165d7323de8e314ac8d755ad96811f9fbc304a5b3ba4e05285cc"
+      },
+      {
+        "role": "installed compiler",
+        "logical": "node_modules/typescript/lib/tsc.js",
+        "physical": "node_modules/.pnpm/typescript@7.0.2/node_modules/typescript/lib/tsc.js",
+        "bytes": 609,
+        "sha256": "cbdfbf11c26ed00dfc073155e316a42d6d6d8a387be61006b82fa9aa93ac572e"
+      },
+      {
+        "role": "installed compiler",
+        "logical": "node_modules/typescript/package.json",
+        "physical": "node_modules/.pnpm/typescript@7.0.2/node_modules/typescript/package.json",
+        "bytes": 3087,
+        "sha256": "3722b30210616a13a3213ded11575ba6b2dbab10c32a5ef67afca8513e27017e"
+      }
+    ],
+    "hostHashesAreProvenanceOnly": true,
+    "portableLiveRule": "Pinned standard launcher/metadata/lock plus current-platform native package ownership and before/after byte identity; no Windows-only hash allowlist.",
+    "laneObservations": [
+      {
+        "lane": "positive",
+        "exitCode": 0,
+        "timeout": false,
+        "diagnostics": 0,
+        "continuationLines": 0,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "lane": "negative",
+        "exitCode": 1,
+        "timeout": false,
+        "diagnostics": 22,
+        "continuationLines": 6,
+        "stdout": {
+          "bytes": 3669,
+          "sha256": "c1c73900f3cd04e4c267679c9646798f26c42a4959a3ecd75d4dad66193e4487"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "lane": "import-negative",
+        "exitCode": 1,
+        "timeout": false,
+        "diagnostics": 14,
+        "continuationLines": 0,
+        "stdout": {
+          "bytes": 2098,
+          "sha256": "744d658a98033d2081b50e877e23726442d486b83ab5cff984ae74af3ccad88d"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    ],
+    "counts": {
+      "diagnostics": 36,
+      "sourceCases": 36,
+      "continuationLines": 6,
+      "positiveDiagnostics": 0,
+      "negativeDiagnostics": 22,
+      "importNegativeDiagnostics": 14
+    }
+  }
+}
