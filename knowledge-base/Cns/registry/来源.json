@@ -2741,6 +2741,34 @@
         "fullPrepush": "PENDING",
         "delivery": "PENDING"
       }
+    },
+    {
+      "id": "S097",
+      "type": "first_party_engine_clock_sequence_playback_and_finite_actual_verification",
+      "researchCheckedAt": "2026-10-12",
+      "requirementIds": [
+        "R004",
+        "R012",
+        "R017"
+      ],
+      "title": "原创 Engine 时钟驱动序列播放与有限核验",
+      "scope": "Engine 实例方法与 3 个擦除类型；真实 Scope、既有纹理租约、显式 tick 与不被渲染推进的播放。",
+      "limit": "仅限有限序列播放；完整 Spine R020/V020 与迁移 R008/V006 保持 OPEN，当前公开交付仍为 PENDING。",
+      "doc": "Cns/docs/时钟驱动序列动画契约.md",
+      "license": "Apache-2.0",
+      "firstPartySourcePaths": [
+        "packages/engine/src/sequencePlaybackTypes.ts",
+        "packages/engine/src/sequencePlayback.ts",
+        "packages/engine/src/Engine.ts",
+        "packages/engine/src/index.ts"
+      ],
+      "newThirdPartyDependency": false,
+      "verification": {
+        "record": "evidence/sequence-playback-verification.json",
+        "status": "FINITE_SEQUENCE_PLAYBACK_SOURCE_CPU_TYPES_POLICY_EXAMPLE_NATIVE_ACCEPTED_PUBLICATION_PENDING",
+        "fullPrepush": "PENDING",
+        "delivery": "PENDING"
+      }
     }
   ],
   "spineF1ClockPortableReplaySuccessor": {
@@ -3327,5 +3355,84 @@
       "sha256": "cfe0a836962c137db63741c2546f2c720a97467be7b9a6e7733cde1729b64013"
     },
     "historicalPendingCutoffsRetained": true
+  },
+  "sequencePlaybackActualSuccessor": {
+    "engineeringLabel": "0.44.0",
+    "sourceId": "S097",
+    "deliverableId": "V048",
+    "status": "FINITE_SEQUENCE_PLAYBACK_SOURCE_CPU_TYPES_POLICY_EXAMPLE_NATIVE_ACCEPTED_PUBLICATION_PENDING",
+    "record": "evidence/sequence-playback-verification.json",
+    "method": "Engine.createSequencePlayback",
+    "erasedTypes": [
+      "SequencePlayback",
+      "SequencePlaybackOptions",
+      "SequencePlaybackState"
+    ],
+    "newRootValues": 0,
+    "newDependencies": false,
+    "newPublicSubpaths": false,
+    "cpu": {
+      "tests": 41,
+      "pass": 41,
+      "sourceFamilies": 25
+    },
+    "types": {
+      "positiveDiagnostics": 0,
+      "negativeDiagnostics": 27,
+      "importNegativeDiagnostics": 13,
+      "exactTuples": 40
+    },
+    "integratedTypes": {
+      "exitCode": 0,
+      "status": "INDEPENDENT_ACTUAL_ACCEPTED"
+    },
+    "policy": {
+      "tests": 5,
+      "assignedControls": 4
+    },
+    "example": {
+      "rows": 5,
+      "loads": 1,
+      "disposals": 1
+    },
+    "native": {
+      "submissions": 18,
+      "newCaptures": 16,
+      "replays": 2,
+      "pixels": 576,
+      "channels": 2304,
+      "tolerance": 0
+    },
+    "fullPrepush": "PENDING_AT_CURATION_CUTOFF",
+    "mandatoryPushHook": "PENDING_AT_CURATION_CUTOFF",
+    "pullRequest": "PENDING_AT_CURATION_CUTOFF",
+    "Main": "PENDING_AT_CURATION_CUTOFF",
+    "remoteCI": "PENDING",
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "licenseEntitlement": "unverified",
+    "historicalCutoffsPreserved": true
+  },
+  "spineLinearProfileF2BDeliveryActualSuccessor": {
+    "engineeringLabel": "0.43.0",
+    "status": "ACTUAL_0_43_DELIVERY_SUCCESSOR",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/30",
+    "merged": true,
+    "Main": "ced3ef008b8c37868c6d1a505a02737451d937e1",
+    "tree": "c42eddecfa6737d12a3093ba0a4067aa9326d702",
+    "mandatoryPushHook": {
+      "publicationTests": 63,
+      "coreTests": 2748,
+      "experimentTests": 160
+    },
+    "remoteStatusCount": 0,
+    "remoteCheckRuns": 0,
+    "remoteCIPassClaim": false,
+    "independentActualReview": {
+      "witness": "priorDelivery",
+      "bytes": 10345,
+      "sha256": "b94f8ee5a66abb5a37474f02d0ff67e5dc6331eb347d4471b39e43cb1c031569"
+    },
+    "historicalPendingCutoffsPreserved": true
   }
 }

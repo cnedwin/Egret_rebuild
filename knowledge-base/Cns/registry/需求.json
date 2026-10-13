@@ -112,7 +112,8 @@
       "status": "confirmed",
       "sourceIds": [
         "S001",
-        "S094"
+        "S094",
+        "S097"
       ],
       "deliveryIds": [
         "V002",
@@ -122,7 +123,8 @@
         "V026",
         "V027",
         "V028",
-        "V045"
+        "V045",
+        "V048"
       ],
       "decisionIds": [
         "D002",
@@ -131,7 +133,14 @@
         "D008",
         "D009"
       ],
-      "doc": "Cns/docs/渲染引擎与运行时.md"
+      "doc": "Cns/docs/渲染引擎与运行时.md",
+      "sequencePlaybackIncrement": {
+        "source": "S097",
+        "deliverable": "V048",
+        "status": "bounded_increment",
+        "fullRequirementAcceptance": "OPEN",
+        "doc": "Cns/docs/时钟驱动序列动画契约.md"
+      }
     },
     {
       "id": "R005",
@@ -301,7 +310,8 @@
       "status": "confirmed",
       "sourceIds": [
         "S001",
-        "S095"
+        "S095",
+        "S097"
       ],
       "deliveryIds": [
         "V001",
@@ -312,7 +322,8 @@
         "V021",
         "V022",
         "V023",
-        "V046"
+        "V046",
+        "V048"
       ],
       "decisionIds": [
         "D002",
@@ -325,7 +336,14 @@
         "D010",
         "D012"
       ],
-      "doc": "Cns/docs/开源实现优先与验证分工.md"
+      "doc": "Cns/docs/开源实现优先与验证分工.md",
+      "sequencePlaybackIncrement": {
+        "source": "S097",
+        "deliverable": "V048",
+        "status": "bounded_increment",
+        "fullRequirementAcceptance": "OPEN",
+        "doc": "Cns/docs/时钟驱动序列动画契约.md"
+      }
     },
     {
       "id": "R013",
@@ -459,7 +477,8 @@
       "status": "confirmed",
       "sourceIds": [
         "S045",
-        "S093"
+        "S093",
+        "S097"
       ],
       "deliveryIds": [
         "V002",
@@ -468,12 +487,20 @@
         "V010",
         "V011",
         "V012",
-        "V044"
+        "V044",
+        "V048"
       ],
       "decisionIds": [
         "D016"
       ],
-      "doc": "Cns/docs/核心框架实现记录.md"
+      "doc": "Cns/docs/核心框架实现记录.md",
+      "sequencePlaybackIncrement": {
+        "source": "S097",
+        "deliverable": "V048",
+        "status": "bounded_increment",
+        "fullRequirementAcceptance": "OPEN",
+        "doc": "Cns/docs/时钟驱动序列动画契约.md"
+      }
     },
     {
       "id": "R018",
@@ -1166,5 +1193,84 @@
       "sha256": "cfe0a836962c137db63741c2546f2c720a97467be7b9a6e7733cde1729b64013"
     },
     "historicalPendingCutoffsRetained": true
+  },
+  "sequencePlaybackActualSuccessor": {
+    "engineeringLabel": "0.44.0",
+    "sourceId": "S097",
+    "deliverableId": "V048",
+    "status": "FINITE_SEQUENCE_PLAYBACK_SOURCE_CPU_TYPES_POLICY_EXAMPLE_NATIVE_ACCEPTED_PUBLICATION_PENDING",
+    "record": "evidence/sequence-playback-verification.json",
+    "method": "Engine.createSequencePlayback",
+    "erasedTypes": [
+      "SequencePlayback",
+      "SequencePlaybackOptions",
+      "SequencePlaybackState"
+    ],
+    "newRootValues": 0,
+    "newDependencies": false,
+    "newPublicSubpaths": false,
+    "cpu": {
+      "tests": 41,
+      "pass": 41,
+      "sourceFamilies": 25
+    },
+    "types": {
+      "positiveDiagnostics": 0,
+      "negativeDiagnostics": 27,
+      "importNegativeDiagnostics": 13,
+      "exactTuples": 40
+    },
+    "integratedTypes": {
+      "exitCode": 0,
+      "status": "INDEPENDENT_ACTUAL_ACCEPTED"
+    },
+    "policy": {
+      "tests": 5,
+      "assignedControls": 4
+    },
+    "example": {
+      "rows": 5,
+      "loads": 1,
+      "disposals": 1
+    },
+    "native": {
+      "submissions": 18,
+      "newCaptures": 16,
+      "replays": 2,
+      "pixels": 576,
+      "channels": 2304,
+      "tolerance": 0
+    },
+    "fullPrepush": "PENDING_AT_CURATION_CUTOFF",
+    "mandatoryPushHook": "PENDING_AT_CURATION_CUTOFF",
+    "pullRequest": "PENDING_AT_CURATION_CUTOFF",
+    "Main": "PENDING_AT_CURATION_CUTOFF",
+    "remoteCI": "PENDING",
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "licenseEntitlement": "unverified",
+    "historicalCutoffsPreserved": true
+  },
+  "spineLinearProfileF2BDeliveryActualSuccessor": {
+    "engineeringLabel": "0.43.0",
+    "status": "ACTUAL_0_43_DELIVERY_SUCCESSOR",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/30",
+    "merged": true,
+    "Main": "ced3ef008b8c37868c6d1a505a02737451d937e1",
+    "tree": "c42eddecfa6737d12a3093ba0a4067aa9326d702",
+    "mandatoryPushHook": {
+      "publicationTests": 63,
+      "coreTests": 2748,
+      "experimentTests": 160
+    },
+    "remoteStatusCount": 0,
+    "remoteCheckRuns": 0,
+    "remoteCIPassClaim": false,
+    "independentActualReview": {
+      "witness": "priorDelivery",
+      "bytes": 10345,
+      "sha256": "b94f8ee5a66abb5a37474f02d0ff67e5dc6331eb347d4471b39e43cb1c031569"
+    },
+    "historicalPendingCutoffsPreserved": true
   }
 }

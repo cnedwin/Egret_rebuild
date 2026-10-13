@@ -2,6 +2,18 @@
 
 [English](../../en/docs/core-progress.md) | 简体中文
 
+<!-- SEQP-0.44.0-CORE-BEGIN -->
+## Engineering preview 0.44.0 — Engine-clock sequence playback / 工程预览 0.44.0 — Engine 时钟驱动序列播放
+
+**S097 / V048：显式 Engine 时钟驱动的序列播放已在已记录的有限阶段内接受；完整 prepush、必要推送 hook 及当前 PR/Main 仍为 PENDING。** 使用 `engine.createSequencePlayback(scope, bitmap, clip, { mode: "once" })` 后调用 `start()`，显式推进 Engine 时钟。控制器支持 once/loop、暂停、恢复和停止，使用真实 Scope 所有权及既有纹理租约。新增 3 个擦除的根入口类型，不新增根运行时值、依赖或公开子路径；渲染不会推进播放。
+
+保存的公开 CPU 测试 41/41 通过；25 类源码行为是另一份清单。正例诊断为 0；两组拒绝消费的类型负例分别为 27/13 条，共 40 个精确元组。策略测试 5/5 通过，包含 4 项指定对照。示例记录 5 行、1 次图集加载和 1 次释放。独立审阅的默认桌面浏览器运行完成 18 次提交（16 个新捕获 + 2 次旧帧重放）、576 个像素、2304 个通道的 0 容差比较及清理。
+
+[契约](../docs/时钟驱动序列动画契约.md) / [证据](../docs/时钟驱动序列动画证据.md) / 原生核验器 (`tools/sequence-playback/README.zh-CN.md`)。这一有限的第一方增量不会关闭完整 Spine R020/V020 或迁移 R008/V006；手机／原生 SDK、性能、物理显示和第三方许可资格分别待验。
+
+已记录的 0.43.0 交付：[PR #30](https://github.com/cnedwin/Egret_rebuild/pull/30) 已合并；Main `ced3ef008b8c37868c6d1a505a02737451d937e1` 与 tree `c42eddecfa6737d12a3093ba0a4067aa9326d702` 已回读。其必要 hook 通过 63 项 publication、2748 项 core 与 160 项实验测试，分别计数。远端 status/check-run 均为零，不构成远端 CI PASS；较早 Pending 截止点保留为历史。
+<!-- SEQP-0.44.0-CORE-END -->
+
 <!-- NS1-DOC-0.41.0-BEGIN -->
 ## 工程预览 0.41.0 — 九宫格拉伸几何 NS1
 

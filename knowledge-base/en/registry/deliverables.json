@@ -3010,11 +3010,42 @@
       "fullSpineR020V020": "OPEN",
       "migrationR008V006": "OPEN",
       "historicalCutoffsPreserved": true
+    },
+    {
+      "id": "V048",
+      "kind": "engine_clock_sequence_playback",
+      "status": "in_progress",
+      "requirementIds": [
+        "R004",
+        "R012",
+        "R017"
+      ],
+      "sourceIds": [
+        "S097"
+      ],
+      "owner": null,
+      "dueDate": null,
+      "title": "Scoped Engine-clock sequence playback controller",
+      "doc": "en/docs/sequence-playback-contract.md",
+      "artifacts": [
+        "en/docs/sequence-playback-contract.md",
+        "en/docs/sequence-playback-evidence.md",
+        "evidence/sequence-playback-verification.json"
+      ],
+      "implementation": "finite_source_cpu_types_policy_example_native_accepted",
+      "acceptance": "FINITE_SEQUENCE_PLAYBACK_SOURCE_CPU_TYPES_POLICY_EXAMPLE_NATIVE_ACCEPTED_PUBLICATION_PENDING",
+      "acceptanceCriteria": [
+        "Authentic caller ownership and explicit Engine-clock once/loop/pause/resume/stop semantics.",
+        "Independent literal CPU, precise types, assigned controls, example and browser observations.",
+        "Current complete gates, push hook and PR/Main delivery remain required."
+      ],
+      "fullSpineR020V020": "OPEN",
+      "migrationR008V006": "OPEN"
     }
   ],
   "_localization": {
     "canonicalSource": "交付.json",
-    "canonicalSha256": "0e543ce0f60e4a79f104a3460b2bec1b0c04e14b814686328accb68632ecbbf5",
+    "canonicalSha256": "1c7426d8a9ff38cd238664d44f4f0470f9eacf3da6544b8b5bf37dd250c26c99",
     "role": "read_only_translation",
     "language": "en"
   },
@@ -3602,5 +3633,84 @@
       "sha256": "cfe0a836962c137db63741c2546f2c720a97467be7b9a6e7733cde1729b64013"
     },
     "historicalPendingCutoffsRetained": true
+  },
+  "sequencePlaybackActualSuccessor": {
+    "engineeringLabel": "0.44.0",
+    "sourceId": "S097",
+    "deliverableId": "V048",
+    "status": "FINITE_SEQUENCE_PLAYBACK_SOURCE_CPU_TYPES_POLICY_EXAMPLE_NATIVE_ACCEPTED_PUBLICATION_PENDING",
+    "record": "evidence/sequence-playback-verification.json",
+    "method": "Engine.createSequencePlayback",
+    "erasedTypes": [
+      "SequencePlayback",
+      "SequencePlaybackOptions",
+      "SequencePlaybackState"
+    ],
+    "newRootValues": 0,
+    "newDependencies": false,
+    "newPublicSubpaths": false,
+    "cpu": {
+      "tests": 41,
+      "pass": 41,
+      "sourceFamilies": 25
+    },
+    "types": {
+      "positiveDiagnostics": 0,
+      "negativeDiagnostics": 27,
+      "importNegativeDiagnostics": 13,
+      "exactTuples": 40
+    },
+    "integratedTypes": {
+      "exitCode": 0,
+      "status": "INDEPENDENT_ACTUAL_ACCEPTED"
+    },
+    "policy": {
+      "tests": 5,
+      "assignedControls": 4
+    },
+    "example": {
+      "rows": 5,
+      "loads": 1,
+      "disposals": 1
+    },
+    "native": {
+      "submissions": 18,
+      "newCaptures": 16,
+      "replays": 2,
+      "pixels": 576,
+      "channels": 2304,
+      "tolerance": 0
+    },
+    "fullPrepush": "PENDING_AT_CURATION_CUTOFF",
+    "mandatoryPushHook": "PENDING_AT_CURATION_CUTOFF",
+    "pullRequest": "PENDING_AT_CURATION_CUTOFF",
+    "Main": "PENDING_AT_CURATION_CUTOFF",
+    "remoteCI": "PENDING",
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "licenseEntitlement": "unverified",
+    "historicalCutoffsPreserved": true
+  },
+  "spineLinearProfileF2BDeliveryActualSuccessor": {
+    "engineeringLabel": "0.43.0",
+    "status": "ACTUAL_0_43_DELIVERY_SUCCESSOR",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/30",
+    "merged": true,
+    "Main": "ced3ef008b8c37868c6d1a505a02737451d937e1",
+    "tree": "c42eddecfa6737d12a3093ba0a4067aa9326d702",
+    "mandatoryPushHook": {
+      "publicationTests": 63,
+      "coreTests": 2748,
+      "experimentTests": 160
+    },
+    "remoteStatusCount": 0,
+    "remoteCheckRuns": 0,
+    "remoteCIPassClaim": false,
+    "independentActualReview": {
+      "witness": "priorDelivery",
+      "bytes": 10345,
+      "sha256": "b94f8ee5a66abb5a37474f02d0ff67e5dc6331eb347d4471b39e43cb1c031569"
+    },
+    "historicalPendingCutoffsPreserved": true
   }
 }

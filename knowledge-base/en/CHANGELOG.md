@@ -2,6 +2,18 @@
 
 English | [简体中文](../Cns/CHANGELOG.md)
 
+<!-- SEQP-0.44.0-CHANGELOG-BEGIN -->
+## Engineering preview 0.44.0 — Engine-clock sequence playback / 工程预览 0.44.0 — Engine 时钟驱动序列播放
+
+**S097 / V048. Explicit Engine-clock sequence playback is accepted within the recorded finite lanes; full prepush, mandatory push hook and current PR/Main remain PENDING.** Use `engine.createSequencePlayback(scope, bitmap, clip, { mode: "once" })`, then `start()`; advance the Engine clock explicitly. The controller supports once/loop, pause, resume and stop, using genuine Scope ownership and the existing texture lease. It adds 3 erased root types and no root runtime value, dependency or public subpath. Rendering stays inert with respect to playback.
+
+Saved public CPU tests passed 41/41; 25 source behavior families are a separate inventory. Positive diagnostics were 0; the two rejected-consumer lanes had 27/13 diagnostics and 40 exact tuples. Policy tests passed 5/5 with 4 assigned controls. The example records 5 rows, 1 atlas load and 1 disposal. The independently reviewed default desktop browser run completed 18 submissions (16 new captures + 2 saved-frame replays), 576 pixels and 2304 channels at tolerance 0, including cleanup.
+
+[Contract](docs/sequence-playback-contract.md) / [Evidence](docs/sequence-playback-evidence.md) / Native verifier (`tools/sequence-playback/README.md`). This finite first-party increment does not close full Spine R020/V020 or migration R008/V006. Phone/native SDK, performance, physical display and third-party entitlement remain separate.
+
+Recorded 0.43.0 delivery: [PR #30](https://github.com/cnedwin/Egret_rebuild/pull/30) merged; Main `ced3ef008b8c37868c6d1a505a02737451d937e1` and tree `c42eddecfa6737d12a3093ba0a4067aa9326d702` were read back. Its mandatory hook passed 63 publication, 2748 core and 160 experimental tests, counted separately. Zero remote statuses/check-runs do not establish remote CI PASS. Earlier Pending cutoffs remain historical.
+<!-- SEQP-0.44.0-CHANGELOG-END -->
+
 <!-- F2-B-0.43.0-CHANGELOG-BEGIN -->
 ## Engineering preview 0.43.0 — Spine linear source profile F2-B / 工程预览 0.43.0 — Spine 线性动画源规格 F2-B
 
