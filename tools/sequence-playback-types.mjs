@@ -6,6 +6,7 @@ import { readFileSync, realpathSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { logicalPath, ownerRelativePath } from './lib/file-identity.mjs';
 
 const seqpRoot = fileURLToPath(new URL('../', import.meta.url));
 const seqpInventoryPath = 'tests/types/sequence-playback-diagnostic-expectations.json';
@@ -28,16 +29,12 @@ function seqpReadPin(pin, owner = seqpRoot) {
 
 function seqpFile(file) {
   const portable = file.replaceAll('\\', '/');
-  const root = path.resolve(seqpRoot).replaceAll('\\', '/').replace(/\/$/, '');
   if (path.isAbsolute(file) || /^[A-Za-z]:\//.test(portable) || portable.startsWith('/')) {
-    const prefix = root + '/';
-    const matches = process.platform === 'win32'
-      ? portable.toLowerCase().startsWith(prefix.toLowerCase()) : portable.startsWith(prefix);
-    if (!matches) seqpFail('diagnostic outside the current repository root');
-    return portable.slice(prefix.length);
+    try { return ownerRelativePath(path.resolve(seqpRoot), file); }
+    catch { seqpFail('diagnostic outside the current repository root'); }
   }
-  if (portable.split('/').some(part => !part || part === '.' || part === '..')) seqpFail('noncanonical diagnostic filename');
-  return portable;
+  try { return logicalPath(portable); }
+  catch { seqpFail('noncanonical diagnostic filename'); }
 }
 
 // Every nonempty line must be a full header or an indented continuation.

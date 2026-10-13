@@ -6,6 +6,7 @@ import { readFileSync, readdirSync, realpathSync, statSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { logicalPath, ownerRelativePath, samePhysicalPath } from './lib/file-identity.mjs';
 
 const root = path.resolve(fileURLToPath(new URL('../', import.meta.url)));
 const inventoryPath = 'tests/types/spritesheet-diagnostic-expectations.json';
@@ -30,14 +31,12 @@ function readPin(pin, owner = root) {
 
 function diagnosticFile(file) {
   const portable = file.replaceAll('\\', '/');
-  const prefix = root.replaceAll('\\', '/') + '/';
-  let relative = portable;
   if (path.isAbsolute(file) || /^[A-Za-z]:\//.test(portable) || portable.startsWith('/')) {
-    if (!portable.startsWith(prefix)) fail('diagnostic outside exact current repository root');
-    relative = portable.slice(prefix.length);
+    try { return ownerRelativePath(root, file); }
+    catch { fail('diagnostic outside exact current repository root'); }
   }
-  if (relative.split('/').some(part => !part || part === '.' || part === '..')) fail('noncanonical diagnostic filename');
-  return relative;
+  try { return logicalPath(portable); }
+  catch { fail('noncanonical diagnostic filename'); }
 }
 
 function diagnosticMessage(message) {
@@ -106,7 +105,7 @@ const compilerOwner = path.dirname(metadataOwner);
 installedOwner(compilerOwner);
 for (const file of compilerPaths.slice(1, 4)) {
   const expected = path.join(compilerOwner, file.slice('node_modules/typescript/'.length));
-  if (realpathSync(path.join(root, file)) !== expected) fail('compiler launcher file has a different physical owner');
+  if (!samePhysicalPath(realpathSync(path.join(root, file)), expected)) fail('compiler launcher file has a different physical owner');
 }
 const requireFromCompiler = createRequire(metadataOwner);
 const nativeName = '@typescript/typescript-' + process.platform + '-' + process.arch;
@@ -119,7 +118,7 @@ if (nativeMetadata.name !== nativeName || nativeMetadata.version !== '7.0.2'
   || !equal(nativeMetadata.os, [process.platform]) || !equal(nativeMetadata.cpu, [process.arch])
   || metadata.optionalDependencies?.[nativeName] !== '7.0.2') fail('standard native compiler owner/version mismatch');
 if (!statSync(path.join(nativeOwner, nativeBinary)).isFile()) fail('native compiler binary missing');
-if (realpathSync(path.join(nativeOwner, nativeBinary)) !== path.join(nativeOwner, nativeBinary)) fail('native compiler binary has a different physical owner');
+if (!samePhysicalPath(realpathSync(path.join(nativeOwner, nativeBinary)), path.join(nativeOwner, nativeBinary))) fail('native compiler binary has a different physical owner');
 
 // Match only the current native package in the locked package/snapshot sections.
 const lockLines = readPin(inventory.compiler.pins[4]).toString('utf8').replaceAll('\r\n', '\n').split('\n');

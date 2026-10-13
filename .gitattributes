@@ -1,0 +1,3 @@
+# Preserve reviewed raw payloads across clone, staging and core.autocrlf settings.
+# Authored UTF-8/LF policy is enforced by the repository hygiene gate.
+* -text

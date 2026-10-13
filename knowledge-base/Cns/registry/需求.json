@@ -111,22 +111,22 @@
       "statement": "支持3D场景、角色、特效，同时高效实现复杂2D UI、骨骼动画和序列帧动画。",
       "status": "confirmed",
       "sourceIds": [
-       "S001",
-       "S094",
-       "S097",
-       "S098"
+        "S001",
+        "S094",
+        "S097",
+        "S098"
       ],
       "deliveryIds": [
-       "V002",
-       "V004",
-       "V021",
-       "V025",
-       "V026",
-       "V027",
-       "V028",
-       "V045",
-       "V048",
-       "V049"
+        "V002",
+        "V004",
+        "V021",
+        "V025",
+        "V026",
+        "V027",
+        "V028",
+        "V045",
+        "V048",
+        "V049"
       ],
       "decisionIds": [
         "D002",
@@ -144,11 +144,11 @@
         "doc": "Cns/docs/时钟驱动序列动画契约.md"
       },
       "namedSpriteSheetIncrement": {
-       "source": "S098",
-       "deliverable": "V049",
-       "status": "bounded_increment",
-       "fullRequirementAcceptance": "OPEN",
-       "doc": "Cns/docs/命名图集契约.md"
+        "source": "S098",
+        "deliverable": "V049",
+        "status": "bounded_increment",
+        "fullRequirementAcceptance": "OPEN",
+        "doc": "Cns/docs/命名图集契约.md"
       }
     },
     {
@@ -318,23 +318,23 @@
       "statement": "当前环境无法实际验证或从零探索代价过高时，优先调查GitHub成熟实现及修复记录；渲染与运行时参考范围扩展到Three.js、Babylon.js、PlayCanvas等。采用已确定的算法和机制，实验集中验证白鹭适配、差异化与真实设备收益，避免重复造轮子。 执行受R015边界约束：成熟原理优先研究，公共库明确依赖，白鹭核心独立实现。",
       "status": "confirmed",
       "sourceIds": [
-       "S001",
-       "S095",
-       "S097",
-       "S098"
+        "S001",
+        "S095",
+        "S097",
+        "S098"
       ],
       "deliveryIds": [
-       "V001",
-       "V002",
-       "V004",
-       "V007",
-       "V008",
-       "V021",
-       "V022",
-       "V023",
-       "V046",
-       "V048",
-       "V049"
+        "V001",
+        "V002",
+        "V004",
+        "V007",
+        "V008",
+        "V021",
+        "V022",
+        "V023",
+        "V046",
+        "V048",
+        "V049"
       ],
       "decisionIds": [
         "D002",
@@ -356,11 +356,11 @@
         "doc": "Cns/docs/时钟驱动序列动画契约.md"
       },
       "namedSpriteSheetIncrement": {
-       "source": "S098",
-       "deliverable": "V049",
-       "status": "bounded_increment",
-       "fullRequirementAcceptance": "OPEN",
-       "doc": "Cns/docs/命名图集契约.md"
+        "source": "S098",
+        "deliverable": "V049",
+        "status": "bounded_increment",
+        "fullRequirementAcceptance": "OPEN",
+        "doc": "Cns/docs/命名图集契约.md"
       }
     },
     {
@@ -462,7 +462,8 @@
       "status": "confirmed",
       "sourceIds": [
         "S042",
-        "S093"
+        "S093",
+        "S099"
       ],
       "deliveryIds": [
         "V001",
@@ -481,7 +482,8 @@
         "V026",
         "V027",
         "V028",
-        "V044"
+        "V044",
+        "V050"
       ],
       "decisionIds": [
         "D016"
@@ -494,21 +496,21 @@
       "statement": "尝试开始编写核心框架和逻辑，明确仍缺的证据支撑与需要研究的对象。",
       "status": "confirmed",
       "sourceIds": [
-       "S045",
-       "S093",
-       "S097",
-       "S098"
+        "S045",
+        "S093",
+        "S097",
+        "S098"
       ],
       "deliveryIds": [
-       "V002",
-       "V009",
-       "V007",
-       "V010",
-       "V011",
-       "V012",
-       "V044",
-       "V048",
-       "V049"
+        "V002",
+        "V009",
+        "V007",
+        "V010",
+        "V011",
+        "V012",
+        "V044",
+        "V048",
+        "V049"
       ],
       "decisionIds": [
         "D016"
@@ -522,11 +524,11 @@
         "doc": "Cns/docs/时钟驱动序列动画契约.md"
       },
       "namedSpriteSheetIncrement": {
-       "source": "S098",
-       "deliverable": "V049",
-       "status": "bounded_increment",
-       "fullRequirementAcceptance": "OPEN",
-       "doc": "Cns/docs/命名图集契约.md"
+        "source": "S098",
+        "deliverable": "V049",
+        "status": "bounded_increment",
+        "fullRequirementAcceptance": "OPEN",
+        "doc": "Cns/docs/命名图集契约.md"
       }
     },
     {
@@ -551,7 +553,8 @@
       "statement": "每次推送GitHub前补全关键代码英文注释，整理可公开的所有文档和知识库，并为阅读文档及共同登记状态提供完整中文与英文版本。完成首批核心源码、文档及知识库后提交指定公开仓库。",
       "status": "confirmed",
       "sourceIds": [
-        "S051"
+        "S051",
+        "S099"
       ],
       "deliveryIds": [
         "V007",
@@ -562,7 +565,8 @@
         "V025",
         "V026",
         "V027",
-        "V028"
+        "V028",
+        "V050"
       ],
       "decisionIds": [],
       "doc": "Cns/docs/双语文档与推送前检查.md"
@@ -634,6 +638,24 @@
         "doc": "Cns/experiments/spine-f2/README.md",
         "record": "evidence/spine-linear-profile-verification.json"
       }
+    },
+    {
+      "id": "R021",
+      "title": "可移植仓库路径与原始字节规范",
+      "statement": "系统修复 Windows 仓库路径身份及 Git／编辑器换行行为，保留完整且区分大小写的逻辑路径和精确原始内容指纹，落实自研文本及真实暂存／提交字节检查，保留历史证据，并通过已授权仓库交付可评审修改。",
+      "status": "confirmed",
+      "sourceIds": [
+        "S099"
+      ],
+      "deliveryIds": [
+        "V050"
+      ],
+      "decisionIds": [],
+      "doc": "Cns/docs/仓库路径身份与换行规范.md",
+      "relatedRequirementIds": [
+        "R016",
+        "R019"
+      ]
     }
   ],
   "spineF1ClockPortableReplaySuccessor": {
@@ -1301,120 +1323,234 @@
     "historicalPendingCutoffsPreserved": true
   },
   "namedSpriteSheetActualSuccessor": {
-   "engineeringLabel": "0.45.0",
-   "sourceId": "S098",
-   "deliverableId": "V049",
-   "status": "FINITE_SPRITESHEET_SOURCE_CPU_TYPES_UNITS_POLICY_EXAMPLE_NATIVE_ACCEPTED_PUBLICATION_PENDING",
-   "record": "evidence/spritesheet-verification.json",
-   "factory": "createSpriteSheet",
-   "erasedTypes": [
-    "SpriteSheet",
-    "SpriteSheetFrameInput"
-   ],
-   "newRootValues": 1,
-   "newDependencies": false,
-   "newPublicSubpaths": false,
-   "packageVersion": "0.0.0",
-   "protocolVersion": "1.0",
-   "cpu": {
-    "tests": 100,
-    "pass": 100,
-    "retainedTests": 133,
-    "retainedPass": 133,
-    "specificationFamilies": 10
-   },
-   "types": {
-    "positiveDiagnostics": 0,
-    "negativeDiagnostics": 22,
-    "importNegativeDiagnostics": 14,
-    "exactTuples": 36,
-    "continuationLines": 6,
-    "integratedExitCode": 0
-   },
-   "units": {
-    "tests": 10,
-    "pass": 10,
-    "freshChildInvocationsPerCase": 3
-   },
-   "policy": {
-    "tests": 5,
-    "pass": 5,
-    "assignedControls": 4,
-    "retainedTests": 272,
-    "retainedPass": 272
-   },
-   "example": {
-    "rows": 8,
-    "ticks": 6,
-    "loads": 1,
-    "disposals": 1
-   },
-   "native": {
-    "status": "INDEPENDENT_ACTUAL_ACCEPTED_OPAQUE_SUBSET",
-    "submissions": 18,
-    "newCaptures": 16,
-    "replays": 2,
-    "pixels": 576,
-    "channels": 2304,
-    "tolerance": 0,
-    "sourceTicksPerBackend": 6,
-    "rawRGBABytesPerSubmission": 128,
-    "backendRows": 9,
-    "backends": [
-     "canvas",
-     "webgpu"
+    "engineeringLabel": "0.45.0",
+    "sourceId": "S098",
+    "deliverableId": "V049",
+    "status": "FINITE_SPRITESHEET_SOURCE_CPU_TYPES_UNITS_POLICY_EXAMPLE_NATIVE_ACCEPTED_PUBLICATION_PENDING",
+    "record": "evidence/spritesheet-verification.json",
+    "factory": "createSpriteSheet",
+    "erasedTypes": [
+      "SpriteSheet",
+      "SpriteSheetFrameInput"
     ],
-    "browserVersion": "155.0.4283.45",
-    "channel": "msedge",
-    "headless": true,
-    "addedFlags": [],
-    "node": "v24.19.0",
-    "playwrightVersion": "1.62.1",
-    "playwrightCoreVersion": "1.62.1",
-    "osRelease": "10.0.26300",
-    "osPlatform": "win32",
-    "osArch": "x64",
-    "cleanupAccepted": true,
-    "borrowedHostSafeBeforeApplicationDeviceDestroy": true,
-    "lostReason": "destroyed",
-    "ownedJobAssignedBeforeACK": true,
-    "ownedJobActiveZero": true,
-    "ownedJobClosed": true,
-    "completeRawEOF": true,
-    "fallback": false,
-    "hardwareIdentityPerformanceQualified": false
-   },
-   "fullPrepush": "PENDING_AT_CURATION_CUTOFF",
-   "mandatoryPushHook": "PENDING_AT_CURATION_CUTOFF",
-   "pullRequest": "PENDING_AT_CURATION_CUTOFF",
-   "Main": "PENDING_AT_CURATION_CUTOFF",
-   "remoteCI": "PENDING",
-   "fullSpineR020V020": "OPEN",
-   "migrationR008V006": "OPEN",
-   "licenseEntitlement": "unverified",
-   "historicalCutoffsPreserved": true
+    "newRootValues": 1,
+    "newDependencies": false,
+    "newPublicSubpaths": false,
+    "packageVersion": "0.0.0",
+    "protocolVersion": "1.0",
+    "cpu": {
+      "tests": 100,
+      "pass": 100,
+      "retainedTests": 133,
+      "retainedPass": 133,
+      "specificationFamilies": 10
+    },
+    "types": {
+      "positiveDiagnostics": 0,
+      "negativeDiagnostics": 22,
+      "importNegativeDiagnostics": 14,
+      "exactTuples": 36,
+      "continuationLines": 6,
+      "integratedExitCode": 0
+    },
+    "units": {
+      "tests": 10,
+      "pass": 10,
+      "freshChildInvocationsPerCase": 3
+    },
+    "policy": {
+      "tests": 5,
+      "pass": 5,
+      "assignedControls": 4,
+      "retainedTests": 272,
+      "retainedPass": 272
+    },
+    "example": {
+      "rows": 8,
+      "ticks": 6,
+      "loads": 1,
+      "disposals": 1
+    },
+    "native": {
+      "status": "INDEPENDENT_ACTUAL_ACCEPTED_OPAQUE_SUBSET",
+      "submissions": 18,
+      "newCaptures": 16,
+      "replays": 2,
+      "pixels": 576,
+      "channels": 2304,
+      "tolerance": 0,
+      "sourceTicksPerBackend": 6,
+      "rawRGBABytesPerSubmission": 128,
+      "backendRows": 9,
+      "backends": [
+        "canvas",
+        "webgpu"
+      ],
+      "browserVersion": "155.0.4283.45",
+      "channel": "msedge",
+      "headless": true,
+      "addedFlags": [],
+      "node": "v24.19.0",
+      "playwrightVersion": "1.62.1",
+      "playwrightCoreVersion": "1.62.1",
+      "osRelease": "10.0.26300",
+      "osPlatform": "win32",
+      "osArch": "x64",
+      "cleanupAccepted": true,
+      "borrowedHostSafeBeforeApplicationDeviceDestroy": true,
+      "lostReason": "destroyed",
+      "ownedJobAssignedBeforeACK": true,
+      "ownedJobActiveZero": true,
+      "ownedJobClosed": true,
+      "completeRawEOF": true,
+      "fallback": false,
+      "hardwareIdentityPerformanceQualified": false
+    },
+    "fullPrepush": "PENDING_AT_CURATION_CUTOFF",
+    "mandatoryPushHook": "PENDING_AT_CURATION_CUTOFF",
+    "pullRequest": "PENDING_AT_CURATION_CUTOFF",
+    "Main": "PENDING_AT_CURATION_CUTOFF",
+    "remoteCI": "PENDING",
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "licenseEntitlement": "unverified",
+    "historicalCutoffsPreserved": true
   },
   "sequencePlaybackDeliveryActualSuccessor": {
-   "engineeringLabel": "0.44.0",
-   "pullRequest": 31,
-   "url": "https://github.com/cnedwin/Egret_rebuild/pull/31",
-   "merged": true,
-   "main": "1dce76a62cd0a4180969949939041f889eb1d923",
-   "tree": "b10ccbc11e9a2db5bacbf913858c8f4dd73f9d26",
-   "publicationTests": 63,
-   "coreTests": 2794,
-   "experimentalTests": 160,
-   "knowledgeBaseIssues": 0,
-   "remoteStatusCount": 0,
-   "remoteCheckRunCount": 0,
-   "remoteCIPassClaim": false,
-   "successorIdentity": {
-    "bytes": 27772,
-    "sha256": "2bddcfc2dc6dc54d1b65f114c276e1d3f3055b8f67730f3c4ada669070565df7"
-   },
-   "independentReviewIdentity": {
-    "bytes": 4855,
-    "sha256": "9164d3265d717c299f9c7ab6b85e22ee4d317c50e3a9334692d90eef68190233"
-   }
+    "engineeringLabel": "0.44.0",
+    "pullRequest": 31,
+    "url": "https://github.com/cnedwin/Egret_rebuild/pull/31",
+    "merged": true,
+    "main": "1dce76a62cd0a4180969949939041f889eb1d923",
+    "tree": "b10ccbc11e9a2db5bacbf913858c8f4dd73f9d26",
+    "publicationTests": 63,
+    "coreTests": 2794,
+    "experimentalTests": 160,
+    "knowledgeBaseIssues": 0,
+    "remoteStatusCount": 0,
+    "remoteCheckRunCount": 0,
+    "remoteCIPassClaim": false,
+    "successorIdentity": {
+      "bytes": 27772,
+      "sha256": "2bddcfc2dc6dc54d1b65f114c276e1d3f3055b8f67730f3c4ada669070565df7"
+    },
+    "independentReviewIdentity": {
+      "bytes": 4855,
+      "sha256": "9164d3265d717c299f9c7ab6b85e22ee4d317c50e3a9334692d90eef68190233"
+    }
+  },
+  "repositoryHygieneActualSuccessor": {
+    "engineeringLabel": "0.45.1",
+    "sourceId": "S099",
+    "deliverableId": "V050",
+    "requirementIds": [
+      "R016",
+      "R019",
+      "R021"
+    ],
+    "status": "FOCUSED_IDENTITY_WRITERS_GIT_WORKING_ACTUAL_ACCEPTED_FULL_GATES_PENDING",
+    "rawBytesAlwaysPreserved": true,
+    "engineRuntimeApiChanged": false,
+    "readOnlyAudit": {
+      "files": 1428,
+      "mixedEOL": 43,
+      "CRLF": 21,
+      "utf8BOM": 1,
+      "scope": "WORKING_PUBLIC_DISCOVERY_ONLY_NOT_GIT_INDEX"
+    },
+    "caseRED": {
+      "pass": 0,
+      "fail": 2,
+      "genuineBaselines": true,
+      "functionalAssertionsReached": true
+    },
+    "writerRED": {
+      "fileLevelPass": 0,
+      "fileLevelFail": 1,
+      "functionalCasesExecuted": false,
+      "missingExport": "canonicalTextBytes"
+    },
+    "focusedGREEN": {
+      "tests": 111,
+      "pass": 111,
+      "fail": 0,
+      "skipped": 0,
+      "buildExitCode": 0,
+      "strictSpriteSheet": {
+        "positive": 0,
+        "negative": 22,
+        "importNegative": 14
+      },
+      "strictSequence": {
+        "positive": 0,
+        "negative": 27,
+        "importNegative": 13
+      },
+      "independentReview": {
+        "bytes": 34429,
+        "sha256": "e020ffbcb07cc55e368fe6dbda7a598603982deee0526ad66c9da6f7bef74ba3",
+        "verdict": "PASS_ACTUAL_FOCUSED_IDENTITY",
+        "scope": "FINITE_SAVED_IDENTITY_BUILD_AND_STRICT_DIAGNOSTICS_ONLY"
+      }
+    },
+    "writers": {
+      "tests": 3,
+      "pass": 3,
+      "fail": 0,
+      "independentReview": {
+        "bytes": 6136,
+        "sha256": "6f1037989acdf5df8d72ecc84077dcc33b78dd92922055de4cf2fee4891f6388",
+        "verdict": "PASS_ACTUAL_NODE_AND_POWERSHELL_TEXT_WRITERS",
+        "scope": "THREE_BOUNDED_WRITER_CASES_ONLY"
+      }
+    },
+    "savedGate": {
+      "isolatedGitTests": 12,
+      "isolatedGitPass": 12,
+      "combinedRelatedTests": 123,
+      "combinedRelatedPass": 123,
+      "knowledgeBaseTestsIncluded": 9,
+      "independentReview": "PASS_ACTUAL_REPOSITORY_HYGIENE_DATA",
+      "nativeBaselineInstances": 14,
+      "independentReviewIdentity": {
+        "bytes": 26838,
+        "sha256": "b415a7a71b76fce86789ea685c133052025d014c884eebb2d465d3296533de8d",
+        "verdict": "PASS_ACTUAL_REPOSITORY_HYGIENE_DATA",
+        "scope": "TWELVE_ISOLATED_GIT_FAMILIES_AND_WORKING_DATA_NOT_CURRENT_COMMITTED_SNAPSHOT"
+      }
+    },
+    "workingHygiene": {
+      "files": 1440,
+      "legacyPreserved": 76,
+      "stagedCompared": 0,
+      "issues": 0,
+      "scope": "WORKING_ONLY",
+      "legacyBaselineRecords": 77
+    },
+    "committedSnapshot": "NOT_RUN",
+    "completeLocalPrepush": "PENDING_AT_CURATION_CUTOFF",
+    "mandatoryPushHook": "NOT_RUN",
+    "pullRequestAndMain": "NOT_RUN",
+    "remoteCI": "NOT_RUN",
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "historicalCutoffsPreserved": true
+  },
+  "namedSpriteSheetDeliveryActualSuccessor": {
+    "engineeringLabel": "0.45.0",
+    "status": "ACTUAL_0_45_DELIVERY_INDEPENDENTLY_ACCEPTED",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/32",
+    "merged": true,
+    "main": "863b29c90b92b62e37ce77cf32e02c4294135a16",
+    "tree": "1c7b706163ab58e41916bdaa8a6d45f74743a4f9",
+    "mandatoryPushHook": {
+      "publicationTests": 63,
+      "coreTests": 2909,
+      "experimentalTests": 160,
+      "knowledgeBaseIssues": 0,
+      "allPassed": true
+    },
+    "remoteCIPassClaim": false,
+    "historicalPendingCutoffsRetained": true
   }
 }

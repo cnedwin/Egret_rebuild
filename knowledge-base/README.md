@@ -3,6 +3,18 @@
 English | [简体中文](README.zh-CN.md)
 
 Explore the [English knowledge base](en/README.md), [technical white paper](en/docs/technical-white-paper.md), [product requirements](en/docs/product-requirements.md), [engineering plan](en/docs/engineering-plan.md), and [contribution guide](en/CONTRIBUTING.md).
+<!-- HYGIENE-0.45.1-BEGIN -->
+## Engineering preview 0.45.1 — Repository path and byte hygiene
+
+**R016 / R019 / R021 · S099 / V050.** Repository tooling now separates complete, case-preserving logical paths from platform-aware physical path comparisons and keeps every file fingerprint bound to raw bytes. The focused independent review accepted 111/111 regressions, the build and separate strict SpriteSheet/Sequence diagnostics. The actual pre-fix case-alias RED (0 passed / 2 assigned failures) remains preserved.
+
+Separate real Node/PowerShell writer execution passed 3/3 with independent acceptance. Saved isolated Git fixtures passed 12/12; a separate related collection passed 123/123, including 9 knowledge-base cases. Those overlapping runs are not added together, and independent Gate saved-result review accepted the finite data as **PASS_ACTUAL_REPOSITORY_HYGIENE_DATA**. Complete local publication gates, committed-snapshot qualification, the mandatory push hook and current PR/Main delivery remain **PENDING at this curation cutoff**. Packages stay private `0.0.0`, host protocol `1.0`; full Spine **R020/V020** and legacy migration **R008/V006** remain **OPEN**.
+
+Previous actual delivery: [PR #32](https://github.com/cnedwin/Egret_rebuild/pull/32) merged 0.45.0 into Main `863b29c90b92b62e37ce77cf32e02c4294135a16`, tree `1c7b706163ab58e41916bdaa8a6d45f74743a4f9`. Its mandatory hook passed 63 publication, 2,909 core and 160 experimental tests as separate suites; knowledge-base issues were 0. Remote CI PASS is not claimed. Earlier PENDING sections retain their original cutoffs.
+
+[Policy](en/docs/repository-identity-and-line-endings.md) / [Evidence](en/docs/repository-hygiene-evidence.md).
+<!-- HYGIENE-0.45.1-END -->
+
 <!-- SS1-0.45.0-BEGIN -->
 ## Engineering preview 0.45.0 — Named SpriteSheet
 

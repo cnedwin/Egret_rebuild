@@ -2,6 +2,18 @@
 
 English | [简体中文](AGENTS.zh-CN.md)
 
+<!-- HYGIENE-0.45.1-POLICY-BEGIN -->
+## Repository path and raw-byte hygiene
+
+Use the shared `tools/lib/file-identity.mjs` helper for verification and delivery tools. Keep complete owner-relative logical paths in canonical POSIX spelling with authored case, and use explicit platform semantics for absolute physical path comparison and containment. A basename match, universal lowercasing or a lexical path match cannot authorize another file identity.
+
+Write newly authored first-party text through `tools/write-repository-text.mjs --path <owner-relative-file>` or `knowledge-base/tools/Write-CanonicalText.ps1 -RelativePath <owner-relative-file> -Text <text>`. Author UTF-8 without BOM, LF and one final newline; preserve interior blank lines and Markdown hard-break spaces. Do not use `Environment.NewLine` to serialize repository text. Keep raw fingerprints byte-exact: never normalize EOL, BOM, Unicode or whitespace during hashing, and never run an authoring formatter over upstream/legal originals, raw receipts, sealed source snapshots or historical evidence. Refresh only reviewed current identities for files actually changed.
+
+Enable both repository-local hooks with `git config --local core.hooksPath .githooks` and preserve their executable Git modes. The pre-commit hook checks working/untracked text and actual staged bytes; the pre-push hook runs the complete `node tools/prepush.mjs --committed` on a clean committed snapshot. Also run the normal `node tools/prepush.mjs` while preparing a change. Fix failures and complete independent source/result and bilingual review before delivery; bypassing hooks or weakening byte checks is not a substitute.
+
+Use `-CheckOnly` when validating the knowledge base. Report source, saved execution, full local gates, actual push/PR/Main and remote CI separately, retaining earlier failures and pending cutoffs. Read the [repository policy](knowledge-base/en/docs/repository-identity-and-line-endings.md) and [bounded evidence](knowledge-base/en/docs/repository-hygiene-evidence.md).
+<!-- HYGIENE-0.45.1-POLICY-END -->
+
 This agreement applies across the repository, including shared knowledge-base experiments, tools, evidence, comments, Issues and PRs. Read [README](README.md), [CONTRIBUTING](CONTRIBUTING.md), [source records](source-origin.json) and the relevant specifications. Work within the user's existing authorization.
 
 <!-- SP1A-DOC-0.34.0-BEGIN -->

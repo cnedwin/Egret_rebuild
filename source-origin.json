@@ -251,8 +251,8 @@
     {
       "path": ".githooks/pre-push",
       "originRole": "New first-party bilingual documentation or publication tooling",
-      "sha256": "372e3377f8d29c40a68ac54ec55124abdea50d761366d93eaeb97eb898f04561",
-      "bytes": 97,
+      "sha256": "5ea5edc866957509d25ae122337dfcc23248d72278ecc47c6606f9ce2b886b7d",
+      "bytes": 109,
       "previousRevisionSha256": "372e3377f8d29c40a68ac54ec55124abdea50d761366d93eaeb97eb898f04561",
       "previousLayoutPath": ".githooks/pre-push",
       "previousLayoutSha256": "372e3377f8d29c40a68ac54ec55124abdea50d761366d93eaeb97eb898f04561"
@@ -295,8 +295,8 @@
     {
       "path": "AGENTS.md",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "sha256": "6552f4fa988e635ffa51ade5156c7e385cd006b1817375bb2fb4f74cab282132",
-      "bytes": 13175,
+      "sha256": "2e0be18bb9696b53693d4fabcd500f3ae70af2f71970c7e8c5f035fdc1d0536a",
+      "bytes": 15248,
       "previousRevisionSha256": "7c2716d3a678406ce905b8cd7fd9ef3552bca4e37b8e9456b63b871e4170e0c1",
       "previousLayoutPath": "AGENTS.en.md",
       "previousLayoutSha256": "7e4ccd840b8b23896f9d9e92fe8173693ef37e415d3cebbebb3bfafded8158c5",
@@ -317,16 +317,16 @@
           "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
         },
         {
-         "bytes": 11467,
-         "sha256": "56dd24457620c1723a765ff5fc7c7139725ee2ab29c1b04e8d36b734b406b6c6",
-         "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          "bytes": 11467,
+          "sha256": "56dd24457620c1723a765ff5fc7c7139725ee2ab29c1b04e8d36b734b406b6c6",
+          "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
         }
       ]
     },
     {
       "path": "AGENTS.zh-CN.md",
-      "sha256": "dc646bdb56ea79fc9178d7ec8e1780e34828d4863845126a32716dad25072312",
-      "bytes": 11454,
+      "sha256": "2dd3424514dbcbf137f36e2f00eb58d56e4ff7994953fdafc1e24f940655743d",
+      "bytes": 13311,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousPublicSha256": "d133cdcd7d1f41fe0ce26bee63568cd0c4f23c6e6e7f9828d0768e95f53a05b4",
       "previousRevisionSha256": "f3551dd36ebc3023f8c846f0cdd876b7204c214c7c041e6496271d20c091046c",
@@ -349,25 +349,25 @@
           "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
         },
         {
-         "bytes": 9860,
-         "sha256": "65f61b145b953479f58a0a3aa0586e9553b36cfdd4d56cc92adb56fba183631e",
-         "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          "bytes": 9860,
+          "sha256": "65f61b145b953479f58a0a3aa0586e9553b36cfdd4d56cc92adb56fba183631e",
+          "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
         }
       ]
     },
     {
       "path": "CONTRIBUTING.md",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "sha256": "dc7bbdf2e9f4c77dc2d28a1423245b646aa065772e0f0e6ca137e8899e003951",
-      "bytes": 7643,
+      "sha256": "7235e931dacd41f50d23e4c90463b42884691d6db0bd8e48c3fe44cfb8784b42",
+      "bytes": 9716,
       "previousRevisionSha256": "cfd1f60cfae8c262a8897e78b542e7f3036c3d492b5bbab79bdd80be80677e4d",
       "previousLayoutPath": "CONTRIBUTING.en.md",
       "previousLayoutSha256": "ea91269863610b03cc682a3656d77b55325631c6b897efb0c6bcb534d5ac5fee"
     },
     {
       "path": "CONTRIBUTING.zh-CN.md",
-      "sha256": "d090ef310eb4b69d3eecb09cbffaecf6dccace78f522e1776f278a3e21e4c9e1",
-      "bytes": 6116,
+      "sha256": "33ae6a7655da1be4d701d31a8009d9677b1103f14cc1f44e8642641e72a48bd9",
+      "bytes": 7973,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousPublicSha256": "da6292f0408cc88f776b7d113924b364dd045b94d3a7541e85d71e1964ed4dae",
       "previousRevisionSha256": "373de5c518c0208d972ceef4c331d8ae81853102ca6aee8dbd1f90064c57bec8",
@@ -612,8 +612,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/CHANGELOG.md",
-      "bytes": 63057,
-      "sha256": "079501cc3d6577274f5f1c55392f8a06a46656c82af9b1022b8e13f2ffe25b3e",
+      "bytes": 64309,
+      "sha256": "b318813681f0c67846bf5313d21431e933a365f5262e4d662820ac9050e5aeb1",
       "identityHistory": [
         {
           "bytes": 25611,
@@ -718,9 +718,9 @@
           "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
         },
         {
-         "bytes": 61229,
-         "sha256": "19a8d0330265302f87dc011700175d9ad384dee262ec40b5bc7e7d3ffe85608f",
-         "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          "bytes": 61229,
+          "sha256": "19a8d0330265302f87dc011700175d9ad384dee262ec40b5bc7e7d3ffe85608f",
+          "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
         }
       ]
     },
@@ -811,8 +811,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 35267,
-      "sha256": "028c7e2188a025520995e91958e4f9d5a263b4c6a39ef2d026795082509c5854",
+      "bytes": 36661,
+      "sha256": "76c749f1d6fefaaef3f29384cea6586a1f0e1cadf289c1b5abe24ef93a26caca",
       "identityHistory": [
         {
           "bytes": 12315,
@@ -880,9 +880,9 @@
           "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
         },
         {
-         "bytes": 33449,
-         "sha256": "2928cea33c19dd353563e4a131af97c3a3ec5f16f6a0fe804157d45b7ef02951",
-         "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          "bytes": 33449,
+          "sha256": "2928cea33c19dd353563e4a131af97c3a3ec5f16f6a0fe804157d45b7ef02951",
+          "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
         }
       ]
     },
@@ -1064,8 +1064,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/工程规划.md",
-      "bytes": 38926,
-      "sha256": "410c102fc429e058782d981e24603754b1630748cb0f963742583a511b9380f0",
+      "bytes": 40475,
+      "sha256": "5934e7b43e4b314e2a88bb540768eba511096ab981afac6a3e978c4b57f256a7",
       "identityHistory": [
         {
           "bytes": 23962,
@@ -1103,9 +1103,9 @@
           "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
         },
         {
-         "bytes": 37108,
-         "sha256": "bb3a9425cc9b250514fd26ea78bfd06f93a3da634d51f687c66d3500bb3dc499",
-         "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          "bytes": 37108,
+          "sha256": "bb3a9425cc9b250514fd26ea78bfd06f93a3da634d51f687c66d3500bb3dc499",
+          "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
         }
       ]
     },
@@ -1400,8 +1400,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/Cns/README.md",
-      "bytes": 38572,
-      "sha256": "39da58e2159049c8967ceb1c811daee6dff4971b7277feeb0ac1e3e4955c8135",
+      "bytes": 40018,
+      "sha256": "6886dca2052ac9de2baa24f30fc6279637604418adb7f2111847a9f30a037192",
       "identityHistory": [
         {
           "bytes": 6319,
@@ -1517,17 +1517,17 @@
           "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
         },
         {
-         "bytes": 36744,
-         "sha256": "bbf48371034b7494cba0e6ad91d70ed9cfa3a30eb7501319a6e2815176008f3b",
-         "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          "bytes": 36744,
+          "sha256": "bbf48371034b7494cba0e6ad91d70ed9cfa3a30eb7501319a6e2815176008f3b",
+          "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
         }
       ]
     },
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/Cns/registry/交付.json",
-      "bytes": 151612,
-      "sha256": "ffa9fea737498c443de1503ee0b7c3f7fb22897d29a7a631be492efd4ddc6185",
+      "bytes": 156495,
+      "sha256": "79c2933c63e83360b0f4352cd106d1daab3f8fa6565b145beeced5efd53bb31a",
       "identityHistory": [
         {
           "bytes": 50664,
@@ -1658,9 +1658,9 @@
           "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
         },
         {
-         "bytes": 147162,
-         "sha256": "1c7426d8a9ff38cd238664d44f4f0470f9eacf3da6544b8b5bf37dd250c26c99",
-         "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          "bytes": 147162,
+          "sha256": "1c7426d8a9ff38cd238664d44f4f0470f9eacf3da6544b8b5bf37dd250c26c99",
+          "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
         }
       ]
     },
@@ -1691,8 +1691,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/Cns/registry/来源.json",
-      "bytes": 166294,
-      "sha256": "a9a81467831ecbb7f0074a3f9b94cf1d8b2a6801ac5643c087101e3af11e8f1b",
+      "bytes": 171734,
+      "sha256": "71529003df299f4a84e6fa404e7312c42d11916a3aa436ee1bb8940e032501ba",
       "identityHistory": [
         {
           "bytes": 74667,
@@ -1818,17 +1818,17 @@
           "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
         },
         {
-         "bytes": 161878,
-         "sha256": "bebd0ac64cc354ca3947cd8f94a551af9797438cc3e81ee217d2c62186256b00",
-         "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          "bytes": 161878,
+          "sha256": "bebd0ac64cc354ca3947cd8f94a551af9797438cc3e81ee217d2c62186256b00",
+          "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
         }
       ]
     },
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/Cns/registry/需求.json",
-      "bytes": 42371,
-      "sha256": "90b7c6d9eacc1dba25ef66bcba03140d96f25adb976a0573c2632dd30cd873c9",
+      "bytes": 46843,
+      "sha256": "d42568a12b23a3bc4cb16f7c5a2090b561995a24c90a8caf6756468347a93fc7",
       "identityHistory": [
         {
           "bytes": 13892,
@@ -1887,9 +1887,9 @@
           "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
         },
         {
-         "bytes": 38366,
-         "sha256": "1b74764004777d1ad3c427a4b1919da5ceb3d2609e6e072f7e57708c6a8388e8",
-         "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          "bytes": 38366,
+          "sha256": "1b74764004777d1ad3c427a4b1919da5ceb3d2609e6e072f7e57708c6a8388e8",
+          "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
         }
       ]
     },
@@ -1920,8 +1920,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/Cns/当前版本.json",
-      "bytes": 128093,
-      "sha256": "a72a48c40b6ec2e63d877dcda9cb0d7217e4382b6a6873d5b4b78c06858d137c",
+      "bytes": 132217,
+      "sha256": "bc061a7a4a130b77dc856c4caf80c6142677ca9e665954c8fff602420fa3dfbf",
       "identityHistory": [
         {
           "bytes": 31425,
@@ -2042,9 +2042,9 @@
           "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
         },
         {
-         "bytes": 124593,
-         "sha256": "707bdf8caedbbf114ec7da78233160f18b1150aa56b258c82f081b46b8a5adc5",
-         "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          "bytes": 124593,
+          "sha256": "707bdf8caedbbf114ec7da78233160f18b1150aa56b258c82f081b46b8a5adc5",
+          "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
         }
       ]
     },
@@ -2081,8 +2081,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/CHANGELOG.md",
-      "bytes": 72924,
-      "sha256": "70ba031c53a3b170ba6eb698e36d0a9f5472830f47b8b1b68ee68facadadfad5",
+      "bytes": 74338,
+      "sha256": "335a6899740010419ab64178394c35c429a81aa640fcd598b0d762528c4a05bf",
       "identityHistory": [
         {
           "bytes": 31389,
@@ -2187,9 +2187,9 @@
           "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
         },
         {
-         "bytes": 70953,
-         "sha256": "ec4f89dfbd1cec1c7ed0f575df0e540956e2921596c4c1dc5552f31eb5fc6b51",
-         "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          "bytes": 70953,
+          "sha256": "ec4f89dfbd1cec1c7ed0f575df0e540956e2921596c4c1dc5552f31eb5fc6b51",
+          "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
         }
       ]
     },
@@ -2202,8 +2202,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/en/current-version.json",
-      "bytes": 128980,
-      "sha256": "0059ec6c791102202b93c60a3b8500c0a1728cd0e9aa70b130336b20b88db523",
+      "bytes": 133103,
+      "sha256": "4c1f93913c6e1b0a036a78b055e47a10bd5bd2707885dfb24661c7618b2b73ac",
       "identityHistory": [
         {
           "bytes": 31946,
@@ -2324,9 +2324,9 @@
           "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
         },
         {
-         "bytes": 125478,
-         "sha256": "369370ef361d0ab5b657d0be7d4d19abd3358a0331414ffaf85ed5ba39053431",
-         "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          "bytes": 125478,
+          "sha256": "369370ef361d0ab5b657d0be7d4d19abd3358a0331414ffaf85ed5ba39053431",
+          "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
         }
       ]
     },
@@ -2459,8 +2459,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-progress.md",
-      "bytes": 39218,
-      "sha256": "253f9274555ff73c4de43c67cbaf6d42000683fd309dc8b17ac24cc5399d6cbc",
+      "bytes": 40771,
+      "sha256": "fff7bd4b44c5561224d80949eab217f8cad748f4cd09de12d38894f09f8c76f0",
       "identityHistory": [
         {
           "bytes": 14004,
@@ -2528,9 +2528,9 @@
           "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
         },
         {
-         "bytes": 37257,
-         "sha256": "759a972beddcffb99e5819f002d975b70ae02c07fbdb3ad02a825c63999f6b5c",
-         "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          "bytes": 37257,
+          "sha256": "759a972beddcffb99e5819f002d975b70ae02c07fbdb3ad02a825c63999f6b5c",
+          "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
         }
       ]
     },
@@ -2592,8 +2592,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/engineering-plan.md",
-      "bytes": 46573,
-      "sha256": "7ba3b720dfff13b328fb609d13c0dace2fb1affb98d8650c74f42f7613216888",
+      "bytes": 48282,
+      "sha256": "7f92a107e827c18ffed31b0fb280b58df60e2cd5ae72376897a3a1814b324d8b",
       "identityHistory": [
         {
           "bytes": 29962,
@@ -2631,9 +2631,9 @@
           "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
         },
         {
-         "bytes": 44612,
-         "sha256": "48b040e2c05cbdddc100b414ae0485cbc3b83185a824801f679e26ee47d51b49",
-         "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          "bytes": 44612,
+          "sha256": "48b040e2c05cbdddc100b414ae0485cbc3b83185a824801f679e26ee47d51b49",
+          "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
         }
       ]
     },
@@ -3000,8 +3000,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/en/README.md",
-      "bytes": 42388,
-      "sha256": "34dc8c617bb4eda8f16d095b059d7f0a35aaf5b23943a6b13a94f1d2b0eba026",
+      "bytes": 43993,
+      "sha256": "8e8ab5d32b30d6703c8e8e2d3941deb462cbc0cf6af61790005b1d2ec4e061fe",
       "identityHistory": [
         {
           "bytes": 7397,
@@ -3122,9 +3122,9 @@
           "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
         },
         {
-         "bytes": 40417,
-         "sha256": "790751edc5b7e66e6031f9e24e920a18a544f3623db0a4bedcf7de1fac073ee3",
-         "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          "bytes": 40417,
+          "sha256": "790751edc5b7e66e6031f9e24e920a18a544f3623db0a4bedcf7de1fac073ee3",
+          "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
         }
       ]
     },
@@ -3149,8 +3149,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/en/registry/deliverables.json",
-      "bytes": 157360,
-      "sha256": "c29e96f255f2544fb9769d50f4c7a9f88da0f5527276779fb79d7164588ae325",
+      "bytes": 162287,
+      "sha256": "0641e218b23677b54584d3d7762c89e70910351820b3f7e39e6d733cd50536d6",
       "identityHistory": [
         {
           "bytes": 54446,
@@ -3286,9 +3286,9 @@
           "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
         },
         {
-         "bytes": 152893,
-         "sha256": "6e546c7920f944515816f537a4564fcb46e34f001b0e992154a353798c80ae90",
-         "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          "bytes": 152893,
+          "sha256": "6e546c7920f944515816f537a4564fcb46e34f001b0e992154a353798c80ae90",
+          "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
         }
       ]
     },
@@ -3301,8 +3301,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/en/registry/requirements.json",
-      "bytes": 44590,
-      "sha256": "fa73884b8b748358dce1d0b73ea50b4067bb190108b71b67bd1f1993138ca0ce",
+      "bytes": 49121,
+      "sha256": "af6441fe2029059948817cb99a764e2543957025f52e378ae0dd343568e69693",
       "identityHistory": [
         {
           "bytes": 15989,
@@ -3361,17 +3361,17 @@
           "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
         },
         {
-         "bytes": 40582,
-         "sha256": "3e4b3bea1cd6991377e8c4a08693e544023158f3c4851e48ad0e24f5f0b9995f",
-         "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          "bytes": 40582,
+          "sha256": "3e4b3bea1cd6991377e8c4a08693e544023158f3c4851e48ad0e24f5f0b9995f",
+          "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
         }
       ]
     },
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/en/registry/sources.json",
-      "bytes": 175679,
-      "sha256": "f556da88cc1a32b869055489e1156074b977fdb061e2e5fad713783bbe9416ad",
+      "bytes": 181254,
+      "sha256": "49ee3e0c2fdba8e06fe975722c3b9fd60b5b6f3c066963a646af28449e96d387",
       "identityHistory": [
         {
           "bytes": 82270,
@@ -3497,9 +3497,9 @@
           "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
         },
         {
-         "bytes": 171222,
-         "sha256": "b94eb644fbcc8cf2e6001c8545c453fcd50d1c718702b0912b5e4730634a41f6",
-         "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          "bytes": 171222,
+          "sha256": "b94eb644fbcc8cf2e6001c8545c453fcd50d1c718702b0912b5e4730634a41f6",
+          "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
         }
       ]
     },
@@ -3530,8 +3530,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/README.md",
-      "bytes": 18371,
-      "sha256": "79b0605214e449a61886fd375a4fcd701baf2ec2442db41873dbe8c1fdc19c78",
+      "bytes": 20114,
+      "sha256": "45084a8f88b9e1529610a16acd96ef225951ca15825a35101859cdd7341f83bd",
       "identityHistory": [
         {
           "bytes": 899,
@@ -3569,17 +3569,17 @@
           "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
         },
         {
-         "bytes": 16394,
-         "sha256": "0f2e47a615ec417bc87104dd71ad3a23b8b9871a1be1a927a363e128a4793530",
-         "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          "bytes": 16394,
+          "sha256": "0f2e47a615ec417bc87104dd71ad3a23b8b9871a1be1a927a363e128a4793530",
+          "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
         }
       ]
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/README.zh-CN.md",
-      "bytes": 17102,
-      "sha256": "18192471c723d558aa7ab3be4117385317ef8ea3a8e52138f1f68f009af19527",
+      "bytes": 18688,
+      "sha256": "c0d04e9c85db0604d957241695962b8db199661aeefe217230f8fda2e6b16ea8",
       "identityHistory": [
         {
           "bytes": 637,
@@ -3617,16 +3617,16 @@
           "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
         },
         {
-         "bytes": 15264,
-         "sha256": "f2a11a2b2e21688ff09f5d43597890e1713af9b6d973ce21ae209e821eaf1458",
-         "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          "bytes": 15264,
+          "sha256": "f2a11a2b2e21688ff09f5d43597890e1713af9b6d973ce21ae209e821eaf1458",
+          "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
         }
       ]
     },
     {
       "path": "knowledge-base/tools/Validate-KnowledgeBase.ps1",
-      "bytes": 12469,
-      "sha256": "b1dcc45807cfc7ba72d3630701a184b48a32196639f24a3db70942448fb66f1d",
+      "bytes": 12756,
+      "sha256": "1e8b1ba6bac62ca3eecaec7bad4d6a73a12387d5c0440eb25468e319715b491c",
       "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately.",
       "identityHistory": [
         {
@@ -3654,8 +3654,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "c30c5d75645d8d3aec2bc1709845194dcbcf66b7f11a6a28cb23d98bb1b9da80",
-      "bytes": 242694,
+      "sha256": "b392c9884b9dde031420dc5a19991476f2fc2774cd4c4581f4e36082405cca89",
+      "bytes": 245557,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -3827,9 +3827,9 @@
           "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
         },
         {
-         "bytes": 240252,
-         "sha256": "7439adcf2d3e7e2a288f110b991dd3ff204a41edb8e7020757817f47b1e5f98d",
-         "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          "bytes": 240252,
+          "sha256": "7439adcf2d3e7e2a288f110b991dd3ff204a41edb8e7020757817f47b1e5f98d",
+          "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
         }
       ]
     },
@@ -4171,9 +4171,9 @@
           "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
         },
         {
-         "bytes": 3019,
-         "sha256": "3d00e1f589e3982e0ed249b14848d4dcd09f8a229d3b4de7a9b8d9d313d7c25d",
-         "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          "bytes": 3019,
+          "sha256": "3d00e1f589e3982e0ed249b14848d4dcd09f8a229d3b4de7a9b8d9d313d7c25d",
+          "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
         }
       ]
     },
@@ -4575,9 +4575,9 @@
           "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
         },
         {
-         "bytes": 2699,
-         "sha256": "872052ab61082df079b053867725d0311c6c46d579aad961806f3f6e7831cc28",
-         "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          "bytes": 2699,
+          "sha256": "872052ab61082df079b053867725d0311c6c46d579aad961806f3f6e7831cc28",
+          "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
         }
       ]
     },
@@ -4708,8 +4708,8 @@
     {
       "path": "README.md",
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
-      "sha256": "e004991b1ab8439ace59854bd085b15d02495283c06eeb9a32c5227cc9a046db",
-      "bytes": 83856,
+      "sha256": "b70c24374439767003f8f499b39ceca939f9849be4424b655244709f0c70a563",
+      "bytes": 86905,
       "previousRevisionSha256": "199156443d499d5012f1224263a1a3ee9994e5ba38ee067bceeb2ad865ae8167",
       "previousLayoutPath": "README.en.md",
       "previousLayoutSha256": "f40ec41ca699cd0b9138fbdf4a268080038f583ae11e78c4f37093a6b7095f57",
@@ -4838,16 +4838,16 @@
           "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
         },
         {
-         "bytes": 80195,
-         "sha256": "8014f170772d0ebf1bb84096033cf17b1246e45df3fc4bf50a9d8884816fa74b",
-         "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          "bytes": 80195,
+          "sha256": "8014f170772d0ebf1bb84096033cf17b1246e45df3fc4bf50a9d8884816fa74b",
+          "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
         }
       ]
     },
     {
       "path": "README.zh-CN.md",
-      "sha256": "ef751c3afa2514c30650f279e2c215859704ed60ba8f030fcc766004bef78cb2",
-      "bytes": 82957,
+      "sha256": "f4159a1a681adf847b59b3bd0189d9f5f6534c0b01cc5225a27887c145641c48",
+      "bytes": 86006,
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "previousPublicSha256": "7ec80b8575a700b6a2628eb0322f2e770bb2284859f68ec5e0eb6530154a6699",
       "previousRevisionSha256": "7a1d72019db7cb6075d7c3a3bd4075f7c069d527b6e31d992a69333cb126b6c3",
@@ -4983,9 +4983,9 @@
           "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
         },
         {
-         "bytes": 79296,
-         "sha256": "d6e1a270856a587149d193a07e68485765e8b150602c25b8f7b1d048c56b2f09",
-         "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          "bytes": 79296,
+          "sha256": "d6e1a270856a587149d193a07e68485765e8b150602c25b8f7b1d048c56b2f09",
+          "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
         }
       ]
     },
@@ -5054,9 +5054,9 @@
           "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
         },
         {
-         "bytes": 103546,
-         "sha256": "b8a4e2b76af47da379d8d26774a7f28a72417f8ca1144137ac6380dce5c74c90",
-         "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          "bytes": 103546,
+          "sha256": "b8a4e2b76af47da379d8d26774a7f28a72417f8ca1144137ac6380dce5c74c90",
+          "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
         }
       ]
     },
@@ -5361,16 +5361,16 @@
           "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
         },
         {
-         "bytes": 141268,
-         "sha256": "6e8c33683973af0c135322c529c8bda83577bbed81fb6148354fdfcac8beb0b1",
-         "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          "bytes": 141268,
+          "sha256": "6e8c33683973af0c135322c529c8bda83577bbed81fb6148354fdfcac8beb0b1",
+          "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
         }
       ]
     },
     {
       "path": "tools/check-publication.mjs",
-      "bytes": 12375,
-      "sha256": "7130901ba3c6c84b106eb78c924a6f36ea3f2b8fc59c28deadb8e326e24f6339",
+      "bytes": 12845,
+      "sha256": "1f4169c9e7db0cf2ceebe74f077f13c4b1f39a8a2747b6271a710d59a934e319",
       "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
     },
     {
@@ -5420,17 +5420,17 @@
           "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
         },
         {
-         "bytes": 92356,
-         "sha256": "1d698b72bcb614a616cd26d1b10497185aa2bdfa5f1ef2a47300e51f259b20de",
-         "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          "bytes": 92356,
+          "sha256": "1d698b72bcb614a616cd26d1b10497185aa2bdfa5f1ef2a47300e51f259b20de",
+          "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
         }
       ]
     },
     {
       "path": "tools/prepush.mjs",
       "originRole": "New first-party bilingual documentation or publication tooling",
-      "sha256": "8ba8600f86c5a0722f9eb2a6ae030a353e8034c36d2e5af3288165fd3c864aa4",
-      "bytes": 1025,
+      "sha256": "2e6afcaafd0f0d73769ecc0c88004f3a93fddf0155a225df8b5b00e3ebebbb25",
+      "bytes": 1455,
       "previousRevisionSha256": "8ba8600f86c5a0722f9eb2a6ae030a353e8034c36d2e5af3288165fd3c864aa4",
       "previousLayoutPath": "tools/prepush.mjs",
       "previousLayoutSha256": "8ba8600f86c5a0722f9eb2a6ae030a353e8034c36d2e5af3288165fd3c864aa4"
@@ -5499,9 +5499,9 @@
           "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
         },
         {
-         "bytes": 581,
-         "sha256": "b51101a8e04f53ac5c400c16a0e7c1e03726b578b45b504a65116eb9f58de2af",
-         "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          "bytes": 581,
+          "sha256": "b51101a8e04f53ac5c400c16a0e7c1e03726b578b45b504a65116eb9f58de2af",
+          "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
         }
       ]
     },
@@ -5545,11 +5545,11 @@
       "sha256": "4ec5edc30223976ba3093edfd2701bb2eb437bc498070a7055b0a005d96c7ea6",
       "originRole": "First-party explicit-time sequence work package; public verifier reuses independently authored first-party opaque collector mechanisms.",
       "identityHistory": [
-       {
-        "bytes": 7744,
-        "sha256": "5608f43b857b4616099873cf441ad63ba3f907e076966dccd573bb9acbf401c6",
-        "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
-       }
+        {
+          "bytes": 7744,
+          "sha256": "5608f43b857b4616099873cf441ad63ba3f907e076966dccd573bb9acbf401c6",
+          "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+        }
       ]
     },
     {
@@ -8947,12 +8947,12 @@
           "sha256": "7c29a9ea02059977c09ece5904f24d944c68c365e922dbfbdc7bf1ad7f74411f",
           "scope": "Preserved NS1 original44 curation cutoff before retained B1 test-only successor."
         },
-      {
-        "bytes": 4286,
-        "sha256": "281dcb7fa44b5e424b5e4c1453229b4111a79db723c68d9707f6897b1cb370dc",
-        "scope": "Preserved 0.41.0 45-path committed cutoff before tracked root workspace dependency correction.",
-        "originRole": "Original first-party nine-slice geometry NS1, frozen public fixture, strict gate or paired public documentation/evidence."
-      }
+        {
+          "bytes": 4286,
+          "sha256": "281dcb7fa44b5e424b5e4c1453229b4111a79db723c68d9707f6897b1cb370dc",
+          "scope": "Preserved 0.41.0 45-path committed cutoff before tracked root workspace dependency correction.",
+          "originRole": "Original first-party nine-slice geometry NS1, frozen public fixture, strict gate or paired public documentation/evidence."
+        }
       ]
     },
     {
@@ -8966,12 +8966,12 @@
           "sha256": "8d8b332d0b9d26c3f9d187afeca6ddf3df9f62dae8e621e9f177ec0b06ee612a",
           "scope": "Preserved NS1 original44 curation cutoff before retained B1 test-only successor."
         },
-      {
-        "bytes": 3785,
-        "sha256": "39ce1195833771263facb27ff08219dd98eee724aee96680e229abaa9c557b8c",
-        "scope": "Preserved 0.41.0 45-path committed cutoff before tracked root workspace dependency correction.",
-        "originRole": "Original first-party nine-slice geometry NS1, frozen public fixture, strict gate or paired public documentation/evidence."
-      }
+        {
+          "bytes": 3785,
+          "sha256": "39ce1195833771263facb27ff08219dd98eee724aee96680e229abaa9c557b8c",
+          "scope": "Preserved 0.41.0 45-path committed cutoff before tracked root workspace dependency correction.",
+          "originRole": "Original first-party nine-slice geometry NS1, frozen public fixture, strict gate or paired public documentation/evidence."
+        }
       ]
     },
     {
@@ -8985,12 +8985,12 @@
           "sha256": "80baba51552d3cc81c26f482b812b231a93b71d5eda1ae86737ffa6380e91e07",
           "scope": "Preserved NS1 original44 curation cutoff before retained B1 test-only successor."
         },
-      {
-        "bytes": 17720,
-        "sha256": "a186174882bf4e4555e56e8bb96f0fa4f6538e527fed0a04e265b73790415c39",
-        "scope": "Preserved 0.41.0 45-path committed cutoff before tracked root workspace dependency correction.",
-        "originRole": "Original first-party nine-slice geometry NS1, frozen public fixture, strict gate or paired public documentation/evidence."
-      }
+        {
+          "bytes": 17720,
+          "sha256": "a186174882bf4e4555e56e8bb96f0fa4f6538e527fed0a04e265b73790415c39",
+          "scope": "Preserved 0.41.0 45-path committed cutoff before tracked root workspace dependency correction.",
+          "originRole": "Original first-party nine-slice geometry NS1, frozen public fixture, strict gate or paired public documentation/evidence."
+        }
       ]
     },
     {
@@ -9432,17 +9432,17 @@
       "sha256": "6ed8fad84f8cb486010f80b73aa577c77c3ed8ec46c9cb2258728fd3f004e900",
       "originRole": "Original Egret first-party sequence playback, tests, tooling or paired publication metadata; Apache-2.0, with AI-assisted authorship and evidence-bounded independent review.",
       "identityHistory": [
-       {
-        "bytes": 20603,
-        "sha256": "a67a5d7437f8fb3d6a927aa596e45730bf1ba2ddd20a06fcba68faf0b29baf36",
-        "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
-       }
+        {
+          "bytes": 20603,
+          "sha256": "a67a5d7437f8fb3d6a927aa596e45730bf1ba2ddd20a06fcba68faf0b29baf36",
+          "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+        }
       ]
     },
     {
       "path": "tools/sequence-playback-types.mjs",
-      "bytes": 14672,
-      "sha256": "d2c855765dd9fba50da9936d4e3a45bd6205b27cd8e8aebc0e1b13c7dbb184bb",
+      "bytes": 14466,
+      "sha256": "00aec8b63900da3ddedbbe4009f677628178be92860e898191012474f6a9cbab",
       "originRole": "Original Egret first-party sequence playback, tests, tooling or paired publication metadata; Apache-2.0, with AI-assisted authorship and evidence-bounded independent review."
     },
     {
@@ -9451,11 +9451,11 @@
       "sha256": "40ea435c86fd122b61d1cacb23381137485d596bf0d4253b6d5259c500d43bc8",
       "originRole": "Original Egret first-party sequence playback, tests, tooling or paired publication metadata; Apache-2.0, with AI-assisted authorship and evidence-bounded independent review.",
       "identityHistory": [
-       {
-        "bytes": 27250,
-        "sha256": "4b82f6309b23481c9cb60bc62fcbab02ac803d0ebbc2e75b15530cb4be1538a0",
-        "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
-       }
+        {
+          "bytes": 27250,
+          "sha256": "4b82f6309b23481c9cb60bc62fcbab02ac803d0ebbc2e75b15530cb4be1538a0",
+          "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+        }
       ]
     },
     {
@@ -9549,184 +9549,286 @@
       "originRole": "Original Egret first-party sequence playback, tests, tooling or paired publication metadata; Apache-2.0, with AI-assisted authorship and evidence-bounded independent review."
     },
     {
-     "path": "examples/spritesheet-headless.mjs",
-     "bytes": 5256,
-     "sha256": "c94a4aefc7598068d6ef3a60f92cc1ca880900dc244ddf268f475a49ba9c659d",
-     "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
+      "path": "examples/spritesheet-headless.mjs",
+      "bytes": 5256,
+      "sha256": "c94a4aefc7598068d6ef3a60f92cc1ca880900dc244ddf268f475a49ba9c659d",
+      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
     },
     {
-     "path": "knowledge-base/Cns/docs/命名图集契约.md",
-     "bytes": 7133,
-     "sha256": "9376edad41c83ae5a475b18dffe84c80accb848585d6f38be5bcbc109f6d055a",
-     "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
+      "path": "knowledge-base/Cns/docs/命名图集契约.md",
+      "bytes": 7133,
+      "sha256": "9376edad41c83ae5a475b18dffe84c80accb848585d6f38be5bcbc109f6d055a",
+      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
     },
     {
-     "path": "knowledge-base/Cns/docs/命名图集证据.md",
-     "bytes": 7666,
-     "sha256": "9b958bfb027a0e2a4f54b5a6c5c10a81cc38283af3228e5fb2aacdfde6c32483",
-     "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
+      "path": "knowledge-base/Cns/docs/命名图集证据.md",
+      "bytes": 7666,
+      "sha256": "9b958bfb027a0e2a4f54b5a6c5c10a81cc38283af3228e5fb2aacdfde6c32483",
+      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
     },
     {
-     "path": "knowledge-base/en/docs/spritesheet-contract.md",
-     "bytes": 7759,
-     "sha256": "19f8189f5b83fff18194887392e8aa85ac968287d35abe42bf18546da42e23e3",
-     "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
+      "path": "knowledge-base/en/docs/spritesheet-contract.md",
+      "bytes": 7759,
+      "sha256": "19f8189f5b83fff18194887392e8aa85ac968287d35abe42bf18546da42e23e3",
+      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
     },
     {
-     "path": "knowledge-base/en/docs/spritesheet-evidence.md",
-     "bytes": 8454,
-     "sha256": "3a8913703338d4a2982e7d9fe287ff84665705e2d33b9c3d9bcc189c7a40e93d",
-     "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
+      "path": "knowledge-base/en/docs/spritesheet-evidence.md",
+      "bytes": 8454,
+      "sha256": "3a8913703338d4a2982e7d9fe287ff84665705e2d33b9c3d9bcc189c7a40e93d",
+      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
     },
     {
-     "path": "knowledge-base/evidence/spritesheet-publication-verification.json",
-     "bytes": 2925,
-     "sha256": "901a68185ca8806a9072f63e13d8877bcba1235d3957b7e0c07c27bc0aeab8a9",
-     "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
+      "path": "knowledge-base/evidence/spritesheet-publication-verification.json",
+      "bytes": 2925,
+      "sha256": "901a68185ca8806a9072f63e13d8877bcba1235d3957b7e0c07c27bc0aeab8a9",
+      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
     },
     {
-     "path": "knowledge-base/evidence/spritesheet-verification.json",
-     "bytes": 9534,
-     "sha256": "3c0938fdf815886d0f62e9259239327386d06fd02f910485e65fbd721d167ea2",
-     "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
+      "path": "knowledge-base/evidence/spritesheet-verification.json",
+      "bytes": 9534,
+      "sha256": "3c0938fdf815886d0f62e9259239327386d06fd02f910485e65fbd721d167ea2",
+      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
     },
     {
-     "path": "packages/runtime/src/spriteSheet.ts",
-     "bytes": 12708,
-     "sha256": "316d3b3739c217be79203312a6c365034ba8829096a0cd0b2050215b34142c77",
-     "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
+      "path": "packages/runtime/src/spriteSheet.ts",
+      "bytes": 12708,
+      "sha256": "316d3b3739c217be79203312a6c365034ba8829096a0cd0b2050215b34142c77",
+      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
     },
     {
-     "path": "tests/spritesheet-api.test.mjs",
-     "bytes": 7901,
-     "sha256": "119df2f95235f92a0a338d2a2f2a852caf45c6dfc7e17942ac44836683401640",
-     "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
+      "path": "tests/spritesheet-api.test.mjs",
+      "bytes": 7901,
+      "sha256": "119df2f95235f92a0a338d2a2f2a852caf45c6dfc7e17942ac44836683401640",
+      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
     },
     {
-     "path": "tests/spritesheet-boundaries.test.mjs",
-     "bytes": 10888,
-     "sha256": "6d7f15a113eea42630078185d909f2c7e9c8e2223a70f08a5b7fee0a1d9380d2",
-     "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
+      "path": "tests/spritesheet-boundaries.test.mjs",
+      "bytes": 10888,
+      "sha256": "6d7f15a113eea42630078185d909f2c7e9c8e2223a70f08a5b7fee0a1d9380d2",
+      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
     },
     {
-     "path": "tests/spritesheet-fault-child.mjs",
-     "bytes": 18065,
-     "sha256": "f352fdb3f79ce0725890ebe033313233e09b226a978b4d49a1124ab21d3721ce",
-     "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
+      "path": "tests/spritesheet-fault-child.mjs",
+      "bytes": 18065,
+      "sha256": "f352fdb3f79ce0725890ebe033313233e09b226a978b4d49a1124ab21d3721ce",
+      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
     },
     {
-     "path": "tests/spritesheet-fault.test.mjs",
-     "bytes": 8157,
-     "sha256": "2eb0d6aa98ae9c0810379364657091d4f2a27da95b62738a84b8f554f1023658",
-     "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
+      "path": "tests/spritesheet-fault.test.mjs",
+      "bytes": 8157,
+      "sha256": "2eb0d6aa98ae9c0810379364657091d4f2a27da95b62738a84b8f554f1023658",
+      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
     },
     {
-     "path": "tests/spritesheet-lifecycle.test.mjs",
-     "bytes": 16307,
-     "sha256": "e8822eb669af409275a8bdd632ed5458aa60d53aa3e56b43203304a36b9c7a9b",
-     "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
+      "path": "tests/spritesheet-lifecycle.test.mjs",
+      "bytes": 16307,
+      "sha256": "e8822eb669af409275a8bdd632ed5458aa60d53aa3e56b43203304a36b9c7a9b",
+      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
     },
     {
-     "path": "tests/spritesheet.test.mjs",
-     "bytes": 28916,
-     "sha256": "216b9938989b9837a3bcda766921774478fdba7eecc3a03028050152a4b49c4b",
-     "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
+      "path": "tests/spritesheet.test.mjs",
+      "bytes": 28916,
+      "sha256": "216b9938989b9837a3bcda766921774478fdba7eecc3a03028050152a4b49c4b",
+      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
     },
     {
-     "path": "tests/types/spritesheet-diagnostic-expectations.json",
-     "bytes": 26690,
-     "sha256": "1716bdfc1edf1231cf02e5f3054d8cfe2c9cb3447d800c0a984b35564e7a37b4",
-     "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
+      "path": "tests/types/spritesheet-diagnostic-expectations.json",
+      "bytes": 26690,
+      "sha256": "1716bdfc1edf1231cf02e5f3054d8cfe2c9cb3447d800c0a984b35564e7a37b4",
+      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
     },
     {
-     "path": "tests/types/spritesheet-import-negative.ts",
-     "bytes": 2114,
-     "sha256": "0ca1c5f68b642fda68627ffe948a268e626c4d5a28974a914e69a0b1825353ee",
-     "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
+      "path": "tests/types/spritesheet-import-negative.ts",
+      "bytes": 2114,
+      "sha256": "0ca1c5f68b642fda68627ffe948a268e626c4d5a28974a914e69a0b1825353ee",
+      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
     },
     {
-     "path": "tests/types/spritesheet-negative.ts",
-     "bytes": 2966,
-     "sha256": "0b60b4b5744f82567b3f47f048521091ccb289985cb4a1b469afc28d2b52cc6a",
-     "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
+      "path": "tests/types/spritesheet-negative.ts",
+      "bytes": 2966,
+      "sha256": "0b60b4b5744f82567b3f47f048521091ccb289985cb4a1b469afc28d2b52cc6a",
+      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
     },
     {
-     "path": "tests/types/spritesheet-positive.ts",
-     "bytes": 2973,
-     "sha256": "5fd14db43500ccd5a59681ffe452e228267b8ac63074cc105bdb11613639b2cc",
-     "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
+      "path": "tests/types/spritesheet-positive.ts",
+      "bytes": 2973,
+      "sha256": "5fd14db43500ccd5a59681ffe452e228267b8ac63074cc105bdb11613639b2cc",
+      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
     },
     {
-     "path": "tests/types/tsconfig.spritesheet-import-negative.json",
-     "bytes": 563,
-     "sha256": "be27601564accb21c8e416c14c21135373e7a4308ceb98fdda2c25c14fc30c9c",
-     "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
+      "path": "tests/types/tsconfig.spritesheet-import-negative.json",
+      "bytes": 563,
+      "sha256": "be27601564accb21c8e416c14c21135373e7a4308ceb98fdda2c25c14fc30c9c",
+      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
     },
     {
-     "path": "tests/types/tsconfig.spritesheet-negative.json",
-     "bytes": 556,
-     "sha256": "542f072f5f95d43d83607acf868bcfd9f87bec70bb605db920ac969d96eda726",
-     "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
+      "path": "tests/types/tsconfig.spritesheet-negative.json",
+      "bytes": 556,
+      "sha256": "542f072f5f95d43d83607acf868bcfd9f87bec70bb605db920ac969d96eda726",
+      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
     },
     {
-     "path": "tests/types/tsconfig.spritesheet-positive.json",
-     "bytes": 556,
-     "sha256": "b23fe040ca35f77291b6d8218e82910cedd7fd881081850937d753cbfb211804",
-     "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
+      "path": "tests/types/tsconfig.spritesheet-positive.json",
+      "bytes": 556,
+      "sha256": "b23fe040ca35f77291b6d8218e82910cedd7fd881081850937d753cbfb211804",
+      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
     },
     {
-     "path": "tools/spritesheet-boundary.mjs",
-     "bytes": 94507,
-     "sha256": "916553a3da594de095dab452fdc20c1e560119fbbb9f34a1a6eced7d79b30e20",
-     "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
+      "path": "tools/spritesheet-boundary.mjs",
+      "bytes": 94507,
+      "sha256": "916553a3da594de095dab452fdc20c1e560119fbbb9f34a1a6eced7d79b30e20",
+      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
     },
     {
-     "path": "tools/spritesheet-types.mjs",
-     "bytes": 16327,
-     "sha256": "7f6ac53518e1ad1bea44a66a00ef2a625b1c05233987b3c7a0ca7819ae630663",
-     "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
+      "path": "tools/spritesheet-types.mjs",
+      "bytes": 16306,
+      "sha256": "a056b27facb999d1ae12c6aa85aa63568302357c805ce3d48c3cb18eae531f1f",
+      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
     },
     {
-     "path": "tools/spritesheet/collector.mjs",
-     "bytes": 54571,
-     "sha256": "d82d7dc5e71000e9d156174a9da7607792eced55c0ae5f53b1287dcb8da59456",
-     "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
+      "path": "tools/spritesheet/collector.mjs",
+      "bytes": 54571,
+      "sha256": "d82d7dc5e71000e9d156174a9da7607792eced55c0ae5f53b1287dcb8da59456",
+      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
     },
     {
-     "path": "tools/spritesheet/console-policy.mjs",
-     "bytes": 672,
-     "sha256": "2fb5b6e865ad1a374d003e36007a61cadcc9bd84f75221bd1bddecde66ef81d8",
-     "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
+      "path": "tools/spritesheet/console-policy.mjs",
+      "bytes": 672,
+      "sha256": "2fb5b6e865ad1a374d003e36007a61cadcc9bd84f75221bd1bddecde66ef81d8",
+      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
     },
     {
-     "path": "tools/spritesheet/file-graph.mjs",
-     "bytes": 9478,
-     "sha256": "6df225a735bbdb3badabfd751b77a47c84ad6a4b8125a3c37a439161faf957dc",
-     "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
+      "path": "tools/spritesheet/file-graph.mjs",
+      "bytes": 9478,
+      "sha256": "6df225a735bbdb3badabfd751b77a47c84ad6a4b8125a3c37a439161faf957dc",
+      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
     },
     {
-     "path": "tools/spritesheet/fixture.mjs",
-     "bytes": 32215,
-     "sha256": "30892d98909bdd8daa179fd4f46b25e397f064272f6cbe1a5eee47396c41197b",
-     "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
+      "path": "tools/spritesheet/fixture.mjs",
+      "bytes": 32215,
+      "sha256": "30892d98909bdd8daa179fd4f46b25e397f064272f6cbe1a5eee47396c41197b",
+      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
     },
     {
-     "path": "tools/spritesheet/oracle.mjs",
-     "bytes": 15892,
-     "sha256": "1b5c22a1d5b112f359d01e00975ccacb46f3bcc892bd5a2c1ded70b79e48aeb6",
-     "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
+      "path": "tools/spritesheet/oracle.mjs",
+      "bytes": 15892,
+      "sha256": "1b5c22a1d5b112f359d01e00975ccacb46f3bcc892bd5a2c1ded70b79e48aeb6",
+      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
     },
     {
-     "path": "tools/spritesheet/README.md",
-     "bytes": 10216,
-     "sha256": "01e6e57ccd60c4f5d034563f1512d6015a5dda7b41cb240c9023feeaa856e96a",
-     "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
+      "path": "tools/spritesheet/README.md",
+      "bytes": 10216,
+      "sha256": "01e6e57ccd60c4f5d034563f1512d6015a5dda7b41cb240c9023feeaa856e96a",
+      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
     },
     {
-     "path": "tools/spritesheet/README.zh-CN.md",
-     "bytes": 9341,
-     "sha256": "46fa6113b6bd632566c39766255a5c5f710cf58b83250a41f8733dad62c4cd21",
-     "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
+      "path": "tools/spritesheet/README.zh-CN.md",
+      "bytes": 9341,
+      "sha256": "46fa6113b6bd632566c39766255a5c5f710cf58b83250a41f8733dad62c4cd21",
+      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
+    },
+    {
+      "path": "tools/lib/file-identity.mjs",
+      "originRole": "Independent first-party repository identity tooling or paired publication material",
+      "bytes": 5065,
+      "sha256": "999b355c6e0d03f17853ee05f33abc9fecbb34ad80607963e11f913a4f815569"
+    },
+    {
+      "path": "tools/check-repository-hygiene.mjs",
+      "originRole": "Independent first-party repository identity tooling or paired publication material",
+      "bytes": 10846,
+      "sha256": "d10a6f7da992e7cbb587849e737abac938953e60c6d7cbea0d3ef63857fd60bb"
+    },
+    {
+      "path": ".gitattributes",
+      "originRole": "Independent first-party repository identity tooling or paired publication material",
+      "bytes": 162,
+      "sha256": "a71857f01d934e3abcdf825018bf7eec861bfd7563794672d3f92ad5e8d71269"
+    },
+    {
+      "path": ".editorconfig",
+      "originRole": "Independent first-party repository identity tooling or paired publication material",
+      "bytes": 452,
+      "sha256": "8ccabe5ef619276735947a5c25893d3319fa50665d443bfef47e9f72912c6bc0"
+    },
+    {
+      "path": "tools/write-repository-text.mjs",
+      "originRole": "Independent first-party repository identity tooling or paired publication material",
+      "bytes": 1939,
+      "sha256": "2bad1f563a59b4c0ab51cd85683198b2ca16af136d86cf99e1ddd52422e818ef"
+    },
+    {
+      "path": "knowledge-base/tools/Write-CanonicalText.ps1",
+      "originRole": "Independent first-party repository identity tooling or paired publication material",
+      "bytes": 1538,
+      "sha256": "3967a19c46312a14dd1a415c7774ef60df74d736cf26b658ae58359438d4637f"
+    },
+    {
+      "path": ".githooks/pre-commit",
+      "originRole": "Independent first-party repository identity tooling or paired publication material",
+      "bytes": 134,
+      "sha256": "203b99e44c26bdc6f61738318ca602b53e14591d2c4fac8c025273d038d2ca87"
+    },
+    {
+      "path": "tests/publication/file-case.test.mjs",
+      "originRole": "Independent first-party repository identity tooling or paired publication material",
+      "bytes": 2237,
+      "sha256": "c54945286ece4b18f33e45c9dabbb75d18626dd54b87f2c49d30150c7e561f68"
+    },
+    {
+      "path": "tests/publication/file-identity.test.mjs",
+      "originRole": "Independent first-party repository identity tooling or paired publication material",
+      "bytes": 10055,
+      "sha256": "575892425d0c1a72cdde9352d0d849242f71ffa3b257879d39ecbd7f39bcc2f7"
+    },
+    {
+      "path": "tests/publication/repository-hygiene.test.mjs",
+      "originRole": "Independent first-party repository identity tooling or paired publication material",
+      "bytes": 13977,
+      "sha256": "43298a3fca4500eb840f583ff06d3d6c54e69fa8da5bcbdd8bc360a98151a6e2"
+    },
+    {
+      "path": "tests/publication/text-writers.test.mjs",
+      "originRole": "Independent first-party repository identity tooling or paired publication material",
+      "bytes": 3044,
+      "sha256": "cd4981451ee6949097e48a0e667c3fbdd0d291578b19729d9e2f145c2acf70e9"
+    },
+    {
+      "path": "tests/publication/powershell-comments.test.mjs",
+      "originRole": "Independent first-party repository identity tooling or paired publication material",
+      "bytes": 1972,
+      "sha256": "80c1d50571b248fcbba9f712ddd8974b157352884eb5703c2c2781eca18a718b"
+    },
+    {
+      "path": "verification/repository-hygiene-baseline.json",
+      "originRole": "Independent first-party repository identity tooling or paired publication material",
+      "bytes": 19467,
+      "sha256": "e64fbcb25f34f9b2184bcd81b14db190984b938478cfef6b38101602dde7287a"
+    },
+    {
+      "path": "knowledge-base/en/docs/repository-identity-and-line-endings.md",
+      "originRole": "Independent first-party repository identity tooling or paired publication material",
+      "bytes": 5174,
+      "sha256": "cf730981f506695f32cfd4966a9ee91ae51f3f64e19da75c5d3386b650e594f5"
+    },
+    {
+      "path": "knowledge-base/en/docs/repository-hygiene-evidence.md",
+      "originRole": "Independent first-party repository identity tooling or paired publication material",
+      "bytes": 8989,
+      "sha256": "eaa0757a357e4655bc3117eb555064d5834a90c4d672abe0a5eac2c5b67c46a0"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/仓库路径身份与换行规范.md",
+      "originRole": "Independent first-party repository identity tooling or paired publication material",
+      "bytes": 4622,
+      "sha256": "cce6331505479a2ecfe93a60176437d7d75bfd83a98de3ef56f7dcd084e4922c"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/仓库路径与换行验证记录.md",
+      "originRole": "Independent first-party repository identity tooling or paired publication material",
+      "bytes": 8082,
+      "sha256": "0f94572494e6c48341373471c54015446e1f67e1ab0d6eb400f9f4918f397a95"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",
@@ -15992,359 +16094,963 @@
     "oldAcceptedReviewsBindHistoricalBytesOnly": true
   },
   "namedSpriteSheetWorkPackage": {
-   "engineeringLabel": "0.45.0",
-   "sourceId": "S098",
-   "deliverableId": "V049",
-   "status": "FINITE_SPRITESHEET_SOURCE_CPU_TYPES_UNITS_POLICY_EXAMPLE_NATIVE_ACCEPTED_PUBLICATION_PENDING",
-   "record": "evidence/spritesheet-verification.json",
-   "factory": "createSpriteSheet",
-   "erasedTypes": [
-    "SpriteSheet",
-    "SpriteSheetFrameInput"
-   ],
-   "newRootValues": 1,
-   "newDependency": false,
-   "newPublicSubpath": false,
-   "firstPartyLicense": "Apache-2.0",
-   "firstPartyOrigin": "Original Egret design, named metadata, tiny RGBA fixture, tests and tooling with AI assistance and finite independent review.",
-   "functionalSourcePins": [
-    {
-     "path": "AGENTS.md",
-     "bytes": 13175,
-     "sha256": "6552f4fa988e635ffa51ade5156c7e385cd006b1817375bb2fb4f74cab282132"
+    "engineeringLabel": "0.45.0",
+    "sourceId": "S098",
+    "deliverableId": "V049",
+    "status": "FINITE_SPRITESHEET_SOURCE_CPU_TYPES_UNITS_POLICY_EXAMPLE_NATIVE_ACCEPTED_PUBLICATION_PENDING",
+    "record": "evidence/spritesheet-verification.json",
+    "factory": "createSpriteSheet",
+    "erasedTypes": [
+      "SpriteSheet",
+      "SpriteSheetFrameInput"
+    ],
+    "newRootValues": 1,
+    "newDependency": false,
+    "newPublicSubpath": false,
+    "firstPartyLicense": "Apache-2.0",
+    "firstPartyOrigin": "Original Egret design, named metadata, tiny RGBA fixture, tests and tooling with AI assistance and finite independent review.",
+    "functionalSourcePins": [
+      {
+        "path": "AGENTS.md",
+        "bytes": 13175,
+        "sha256": "6552f4fa988e635ffa51ade5156c7e385cd006b1817375bb2fb4f74cab282132"
+      },
+      {
+        "path": "AGENTS.zh-CN.md",
+        "bytes": 11454,
+        "sha256": "dc646bdb56ea79fc9178d7ec8e1780e34828d4863845126a32716dad25072312"
+      },
+      {
+        "path": "examples/spritesheet-headless.mjs",
+        "bytes": 5256,
+        "sha256": "c94a4aefc7598068d6ef3a60f92cc1ca880900dc244ddf268f475a49ba9c659d"
+      },
+      {
+        "path": "packages/engine/src/index.ts",
+        "bytes": 3145,
+        "sha256": "635cf6fa45f94afe786df12a0541fcc4df21793e06ecbc70dada72ef4b6a8749"
+      },
+      {
+        "path": "packages/runtime/src/Bitmap.ts",
+        "bytes": 8654,
+        "sha256": "4ec5edc30223976ba3093edfd2701bb2eb437bc498070a7055b0a005d96c7ea6"
+      },
+      {
+        "path": "packages/runtime/src/index.ts",
+        "bytes": 2829,
+        "sha256": "7022c5dbebdacad4a9c69685d7ddb383480fa38a72e9244caafacba46716d03e"
+      },
+      {
+        "path": "packages/runtime/src/spriteSheet.ts",
+        "bytes": 12708,
+        "sha256": "316d3b3739c217be79203312a6c365034ba8829096a0cd0b2050215b34142c77"
+      },
+      {
+        "path": "tests/boundaries.test.mjs",
+        "bytes": 105161,
+        "sha256": "b1abbc3d9aa8a5f86b2e1381455835eab3f23c27810dbe0aec3cae4060975a51"
+      },
+      {
+        "path": "tests/spritesheet-api.test.mjs",
+        "bytes": 7901,
+        "sha256": "119df2f95235f92a0a338d2a2f2a852caf45c6dfc7e17942ac44836683401640"
+      },
+      {
+        "path": "tests/spritesheet-boundaries.test.mjs",
+        "bytes": 10888,
+        "sha256": "6d7f15a113eea42630078185d909f2c7e9c8e2223a70f08a5b7fee0a1d9380d2"
+      },
+      {
+        "path": "tests/spritesheet-fault-child.mjs",
+        "bytes": 18065,
+        "sha256": "f352fdb3f79ce0725890ebe033313233e09b226a978b4d49a1124ab21d3721ce"
+      },
+      {
+        "path": "tests/spritesheet-fault.test.mjs",
+        "bytes": 8157,
+        "sha256": "2eb0d6aa98ae9c0810379364657091d4f2a27da95b62738a84b8f554f1023658"
+      },
+      {
+        "path": "tests/spritesheet-lifecycle.test.mjs",
+        "bytes": 16307,
+        "sha256": "e8822eb669af409275a8bdd632ed5458aa60d53aa3e56b43203304a36b9c7a9b"
+      },
+      {
+        "path": "tests/spritesheet.test.mjs",
+        "bytes": 28916,
+        "sha256": "216b9938989b9837a3bcda766921774478fdba7eecc3a03028050152a4b49c4b"
+      },
+      {
+        "path": "tests/types/sequence-playback-diagnostic-expectations.json",
+        "bytes": 20621,
+        "sha256": "6ed8fad84f8cb486010f80b73aa577c77c3ed8ec46c9cb2258728fd3f004e900"
+      },
+      {
+        "path": "tests/types/spritesheet-diagnostic-expectations.json",
+        "bytes": 26690,
+        "sha256": "1716bdfc1edf1231cf02e5f3054d8cfe2c9cb3447d800c0a984b35564e7a37b4"
+      },
+      {
+        "path": "tests/types/spritesheet-import-negative.ts",
+        "bytes": 2114,
+        "sha256": "0ca1c5f68b642fda68627ffe948a268e626c4d5a28974a914e69a0b1825353ee"
+      },
+      {
+        "path": "tests/types/spritesheet-negative.ts",
+        "bytes": 2966,
+        "sha256": "0b60b4b5744f82567b3f47f048521091ccb289985cb4a1b469afc28d2b52cc6a"
+      },
+      {
+        "path": "tests/types/spritesheet-positive.ts",
+        "bytes": 2973,
+        "sha256": "5fd14db43500ccd5a59681ffe452e228267b8ac63074cc105bdb11613639b2cc"
+      },
+      {
+        "path": "tests/types/tsconfig.spritesheet-import-negative.json",
+        "bytes": 563,
+        "sha256": "be27601564accb21c8e416c14c21135373e7a4308ceb98fdda2c25c14fc30c9c"
+      },
+      {
+        "path": "tests/types/tsconfig.spritesheet-negative.json",
+        "bytes": 556,
+        "sha256": "542f072f5f95d43d83607acf868bcfd9f87bec70bb605db920ac969d96eda726"
+      },
+      {
+        "path": "tests/types/tsconfig.spritesheet-positive.json",
+        "bytes": 556,
+        "sha256": "b23fe040ca35f77291b6d8218e82910cedd7fd881081850937d753cbfb211804"
+      },
+      {
+        "path": "tools/check-boundaries.mjs",
+        "bytes": 141308,
+        "sha256": "ca70d9de2f76a671a4136ddf11baa1a1b852e37849219d9bbc960fb9030f33d4"
+      },
+      {
+        "path": "tools/check-types.mjs",
+        "bytes": 92539,
+        "sha256": "913e7c6cea1152eb54f227ade4b18f0caa3baafbe35ca058388fe9be29685461"
+      },
+      {
+        "path": "tools/sequence-playback-boundary.mjs",
+        "bytes": 27270,
+        "sha256": "40ea435c86fd122b61d1cacb23381137485d596bf0d4253b6d5259c500d43bc8"
+      },
+      {
+        "path": "tools/spritesheet-boundary.mjs",
+        "bytes": 94507,
+        "sha256": "916553a3da594de095dab452fdc20c1e560119fbbb9f34a1a6eced7d79b30e20"
+      },
+      {
+        "path": "tools/spritesheet-types.mjs",
+        "bytes": 16327,
+        "sha256": "7f6ac53518e1ad1bea44a66a00ef2a625b1c05233987b3c7a0ca7819ae630663"
+      },
+      {
+        "path": "tools/spritesheet/collector.mjs",
+        "bytes": 54571,
+        "sha256": "d82d7dc5e71000e9d156174a9da7607792eced55c0ae5f53b1287dcb8da59456"
+      },
+      {
+        "path": "tools/spritesheet/console-policy.mjs",
+        "bytes": 672,
+        "sha256": "2fb5b6e865ad1a374d003e36007a61cadcc9bd84f75221bd1bddecde66ef81d8"
+      },
+      {
+        "path": "tools/spritesheet/file-graph.mjs",
+        "bytes": 9478,
+        "sha256": "6df225a735bbdb3badabfd751b77a47c84ad6a4b8125a3c37a439161faf957dc"
+      },
+      {
+        "path": "tools/spritesheet/fixture.mjs",
+        "bytes": 32215,
+        "sha256": "30892d98909bdd8daa179fd4f46b25e397f064272f6cbe1a5eee47396c41197b"
+      },
+      {
+        "path": "tools/spritesheet/oracle.mjs",
+        "bytes": 15892,
+        "sha256": "1b5c22a1d5b112f359d01e00975ccacb46f3bcc892bd5a2c1ded70b79e48aeb6"
+      },
+      {
+        "path": "tools/spritesheet/README.md",
+        "bytes": 10216,
+        "sha256": "01e6e57ccd60c4f5d034563f1512d6015a5dda7b41cb240c9023feeaa856e96a"
+      },
+      {
+        "path": "tools/spritesheet/README.zh-CN.md",
+        "bytes": 9341,
+        "sha256": "46fa6113b6bd632566c39766255a5c5f710cf58b83250a41f8733dad62c4cd21"
+      },
+      {
+        "path": "tools/verify.mjs",
+        "bytes": 605,
+        "sha256": "c57c013018e3e8a12258c767d516c246bb7877f61cbc37320365de2ce4fcea0b"
+      }
+    ],
+    "adoptedPublicReadingPins": [
+      {
+        "path": "knowledge-base/en/docs/spritesheet-contract.md",
+        "bytes": 7759,
+        "sha256": "19f8189f5b83fff18194887392e8aa85ac968287d35abe42bf18546da42e23e3"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/命名图集契约.md",
+        "bytes": 7133,
+        "sha256": "9376edad41c83ae5a475b18dffe84c80accb848585d6f38be5bcbc109f6d055a"
+      },
+      {
+        "path": "knowledge-base/en/docs/spritesheet-evidence.md",
+        "bytes": 8454,
+        "sha256": "3a8913703338d4a2982e7d9fe287ff84665705e2d33b9c3d9bcc189c7a40e93d"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/命名图集证据.md",
+        "bytes": 7666,
+        "sha256": "9b958bfb027a0e2a4f54b5a6c5c10a81cc38283af3228e5fb2aacdfde6c32483"
+      },
+      {
+        "path": "knowledge-base/evidence/spritesheet-verification.json",
+        "bytes": 9534,
+        "sha256": "3c0938fdf815886d0f62e9259239327386d06fd02f910485e65fbd721d167ea2"
+      }
+    ],
+    "independentAcceptedWitnessIdentities": {
+      "productSource": {
+        "bytes": 9057,
+        "sha256": "9a38c87d11aa031c556c5352b2f304610fc075f442437ab53ab21215d8a4fcb8",
+        "verdict": "PASS_SOURCE_ONLY"
+      },
+      "buildCpu": {
+        "bytes": 18585,
+        "sha256": "21cd32a5f5636869f5b860faa59dec6a1de57eb7c28a7d954a862d56db02db1d",
+        "verdict": "PASS_ACTUAL_BUILD_AND_PUBLIC_CPU"
+      },
+      "typesActual": {
+        "bytes": 255739,
+        "sha256": "6dd93a55d327d235c20a157572027f244c1b24d9e840c2cc0242b3a0510a309d",
+        "verdict": "PASS_ACTUAL_STRICT_TYPES"
+      },
+      "policyActual": {
+        "bytes": 15633,
+        "sha256": "fc6be93ef019d8d4fc9576c8b94ea47a7c4bcc00aea857ca3d6e25714be2e5dc",
+        "verdict": "PASS_ACTUAL_POLICY"
+      },
+      "unitsActual": {
+        "bytes": 18805,
+        "sha256": "a3dd1958bf973bc35c47d09cb57fa8f6fbab8ae011c0591927f53926a159783a",
+        "verdict": "PASS_ACTUAL_PRIVILEGED_UNITS"
+      },
+      "exampleActual": {
+        "bytes": 19092,
+        "sha256": "3cfb193df74dcfb827df7d42b751e2ca619500fd6fe706e23d15a9cae343fba8",
+        "verdict": "PASS_ACTUAL_PUBLIC_COMPOSITION_EXAMPLE"
+      },
+      "nativeSource": {
+        "bytes": 19822,
+        "sha256": "086932ab83b54e891ca6bf044e1287732c5e5a67729650e469853b3787ab67d7",
+        "verdict": "PASS_SOURCE_ONLY"
+      },
+      "nativeActual": {
+        "bytes": 53115,
+        "sha256": "a22ad31eff3e2d3ea9e484d431bb8d789daeb143876eedf022824bf37caa1026",
+        "verdict": "PASS_ACTUAL_SPRITESHEET_OPAQUE_SUBSET"
+      }
     },
-    {
-     "path": "AGENTS.zh-CN.md",
-     "bytes": 11454,
-     "sha256": "dc646bdb56ea79fc9178d7ec8e1780e34828d4863845126a32716dad25072312"
-    },
-    {
-     "path": "examples/spritesheet-headless.mjs",
-     "bytes": 5256,
-     "sha256": "c94a4aefc7598068d6ef3a60f92cc1ca880900dc244ddf268f475a49ba9c659d"
-    },
-    {
-     "path": "packages/engine/src/index.ts",
-     "bytes": 3145,
-     "sha256": "635cf6fa45f94afe786df12a0541fcc4df21793e06ecbc70dada72ef4b6a8749"
-    },
-    {
-     "path": "packages/runtime/src/Bitmap.ts",
-     "bytes": 8654,
-     "sha256": "4ec5edc30223976ba3093edfd2701bb2eb437bc498070a7055b0a005d96c7ea6"
-    },
-    {
-     "path": "packages/runtime/src/index.ts",
-     "bytes": 2829,
-     "sha256": "7022c5dbebdacad4a9c69685d7ddb383480fa38a72e9244caafacba46716d03e"
-    },
-    {
-     "path": "packages/runtime/src/spriteSheet.ts",
-     "bytes": 12708,
-     "sha256": "316d3b3739c217be79203312a6c365034ba8829096a0cd0b2050215b34142c77"
-    },
-    {
-     "path": "tests/boundaries.test.mjs",
-     "bytes": 105161,
-     "sha256": "b1abbc3d9aa8a5f86b2e1381455835eab3f23c27810dbe0aec3cae4060975a51"
-    },
-    {
-     "path": "tests/spritesheet-api.test.mjs",
-     "bytes": 7901,
-     "sha256": "119df2f95235f92a0a338d2a2f2a852caf45c6dfc7e17942ac44836683401640"
-    },
-    {
-     "path": "tests/spritesheet-boundaries.test.mjs",
-     "bytes": 10888,
-     "sha256": "6d7f15a113eea42630078185d909f2c7e9c8e2223a70f08a5b7fee0a1d9380d2"
-    },
-    {
-     "path": "tests/spritesheet-fault-child.mjs",
-     "bytes": 18065,
-     "sha256": "f352fdb3f79ce0725890ebe033313233e09b226a978b4d49a1124ab21d3721ce"
-    },
-    {
-     "path": "tests/spritesheet-fault.test.mjs",
-     "bytes": 8157,
-     "sha256": "2eb0d6aa98ae9c0810379364657091d4f2a27da95b62738a84b8f554f1023658"
-    },
-    {
-     "path": "tests/spritesheet-lifecycle.test.mjs",
-     "bytes": 16307,
-     "sha256": "e8822eb669af409275a8bdd632ed5458aa60d53aa3e56b43203304a36b9c7a9b"
-    },
-    {
-     "path": "tests/spritesheet.test.mjs",
-     "bytes": 28916,
-     "sha256": "216b9938989b9837a3bcda766921774478fdba7eecc3a03028050152a4b49c4b"
-    },
-    {
-     "path": "tests/types/sequence-playback-diagnostic-expectations.json",
-     "bytes": 20621,
-     "sha256": "6ed8fad84f8cb486010f80b73aa577c77c3ed8ec46c9cb2258728fd3f004e900"
-    },
-    {
-     "path": "tests/types/spritesheet-diagnostic-expectations.json",
-     "bytes": 26690,
-     "sha256": "1716bdfc1edf1231cf02e5f3054d8cfe2c9cb3447d800c0a984b35564e7a37b4"
-    },
-    {
-     "path": "tests/types/spritesheet-import-negative.ts",
-     "bytes": 2114,
-     "sha256": "0ca1c5f68b642fda68627ffe948a268e626c4d5a28974a914e69a0b1825353ee"
-    },
-    {
-     "path": "tests/types/spritesheet-negative.ts",
-     "bytes": 2966,
-     "sha256": "0b60b4b5744f82567b3f47f048521091ccb289985cb4a1b469afc28d2b52cc6a"
-    },
-    {
-     "path": "tests/types/spritesheet-positive.ts",
-     "bytes": 2973,
-     "sha256": "5fd14db43500ccd5a59681ffe452e228267b8ac63074cc105bdb11613639b2cc"
-    },
-    {
-     "path": "tests/types/tsconfig.spritesheet-import-negative.json",
-     "bytes": 563,
-     "sha256": "be27601564accb21c8e416c14c21135373e7a4308ceb98fdda2c25c14fc30c9c"
-    },
-    {
-     "path": "tests/types/tsconfig.spritesheet-negative.json",
-     "bytes": 556,
-     "sha256": "542f072f5f95d43d83607acf868bcfd9f87bec70bb605db920ac969d96eda726"
-    },
-    {
-     "path": "tests/types/tsconfig.spritesheet-positive.json",
-     "bytes": 556,
-     "sha256": "b23fe040ca35f77291b6d8218e82910cedd7fd881081850937d753cbfb211804"
-    },
-    {
-     "path": "tools/check-boundaries.mjs",
-     "bytes": 141308,
-     "sha256": "ca70d9de2f76a671a4136ddf11baa1a1b852e37849219d9bbc960fb9030f33d4"
-    },
-    {
-     "path": "tools/check-types.mjs",
-     "bytes": 92539,
-     "sha256": "913e7c6cea1152eb54f227ade4b18f0caa3baafbe35ca058388fe9be29685461"
-    },
-    {
-     "path": "tools/sequence-playback-boundary.mjs",
-     "bytes": 27270,
-     "sha256": "40ea435c86fd122b61d1cacb23381137485d596bf0d4253b6d5259c500d43bc8"
-    },
-    {
-     "path": "tools/spritesheet-boundary.mjs",
-     "bytes": 94507,
-     "sha256": "916553a3da594de095dab452fdc20c1e560119fbbb9f34a1a6eced7d79b30e20"
-    },
-    {
-     "path": "tools/spritesheet-types.mjs",
-     "bytes": 16327,
-     "sha256": "7f6ac53518e1ad1bea44a66a00ef2a625b1c05233987b3c7a0ca7819ae630663"
-    },
-    {
-     "path": "tools/spritesheet/collector.mjs",
-     "bytes": 54571,
-     "sha256": "d82d7dc5e71000e9d156174a9da7607792eced55c0ae5f53b1287dcb8da59456"
-    },
-    {
-     "path": "tools/spritesheet/console-policy.mjs",
-     "bytes": 672,
-     "sha256": "2fb5b6e865ad1a374d003e36007a61cadcc9bd84f75221bd1bddecde66ef81d8"
-    },
-    {
-     "path": "tools/spritesheet/file-graph.mjs",
-     "bytes": 9478,
-     "sha256": "6df225a735bbdb3badabfd751b77a47c84ad6a4b8125a3c37a439161faf957dc"
-    },
-    {
-     "path": "tools/spritesheet/fixture.mjs",
-     "bytes": 32215,
-     "sha256": "30892d98909bdd8daa179fd4f46b25e397f064272f6cbe1a5eee47396c41197b"
-    },
-    {
-     "path": "tools/spritesheet/oracle.mjs",
-     "bytes": 15892,
-     "sha256": "1b5c22a1d5b112f359d01e00975ccacb46f3bcc892bd5a2c1ded70b79e48aeb6"
-    },
-    {
-     "path": "tools/spritesheet/README.md",
-     "bytes": 10216,
-     "sha256": "01e6e57ccd60c4f5d034563f1512d6015a5dda7b41cb240c9023feeaa856e96a"
-    },
-    {
-     "path": "tools/spritesheet/README.zh-CN.md",
-     "bytes": 9341,
-     "sha256": "46fa6113b6bd632566c39766255a5c5f710cf58b83250a41f8733dad62c4cd21"
-    },
-    {
-     "path": "tools/verify.mjs",
-     "bytes": 605,
-     "sha256": "c57c013018e3e8a12258c767d516c246bb7877f61cbc37320365de2ce4fcea0b"
+    "currentPublicMetadataMeaningReview": "PENDING",
+    "sourceAndNativeAcceptanceDoNotCertifyAllMetadata": true,
+    "previousPendingCutoffsPreserved": true,
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "formattingSourceSuccessor": {
+      "status": "SOURCE_ONLY_FORMAT_SUCCESSOR_PENDING_INDEPENDENT_REVIEW_AND_CURRENT_GATES",
+      "change": "Remove exactly one terminalLF from the example and paired contracts; their complete preceding bodies are byte-identical.",
+      "changeZh": "仅移除示例及配对契约各一个末尾LF，此前完整正文逐字节相同。",
+      "files": [
+        {
+          "path": "examples/spritesheet-headless.mjs",
+          "before": {
+            "bytes": 5257,
+            "sha256": "b8724dc69a4515ae99f6a79baaddfec484e29c91c336938ad74144d61c43660d"
+          },
+          "current": {
+            "bytes": 5256,
+            "sha256": "c94a4aefc7598068d6ef3a60f92cc1ca880900dc244ddf268f475a49ba9c659d"
+          },
+          "change": "Exactly one terminalLF removed; all preceding bytes identical."
+        },
+        {
+          "path": "knowledge-base/en/docs/spritesheet-contract.md",
+          "before": {
+            "bytes": 7760,
+            "sha256": "f739f258316d7dd7dcdb79caa527ef1818227b9ac0c25fe19db4aa4596cd4751"
+          },
+          "current": {
+            "bytes": 7759,
+            "sha256": "19f8189f5b83fff18194887392e8aa85ac968287d35abe42bf18546da42e23e3"
+          },
+          "change": "Exactly one terminalLF removed; all preceding bytes identical."
+        },
+        {
+          "path": "knowledge-base/Cns/docs/命名图集契约.md",
+          "before": {
+            "bytes": 7134,
+            "sha256": "86d193af060a2281c9d2e74d913141646765d9d9ac46ed3f05f3b2359830373c"
+          },
+          "current": {
+            "bytes": 7133,
+            "sha256": "9376edad41c83ae5a475b18dffe84c80accb848585d6f38be5bcbc109f6d055a"
+          },
+          "change": "Exactly one terminalLF removed; all preceding bytes identical."
+        }
+      ],
+      "beforeMetadataPins": [
+        {
+          "path": "localization.json",
+          "bytes": 242694,
+          "sha256": "23a7aebfe95b1919bcedaec5c88784a541f97d8a0e467bc6efc4a1a31bcb36be"
+        },
+        {
+          "path": "knowledge-base/evidence/spritesheet-verification.json",
+          "bytes": 7413,
+          "sha256": "0e35d135b6fa5edd5d5d20fea711d8e765daca894950ec120296c69ec30fd5c2"
+        },
+        {
+          "path": "source-origin.json",
+          "bytes": 783366,
+          "sha256": "8071e45394a4ac19af34ae92c3c18aec1c6b68efe22203f575c40dd383a80e1b"
+        }
+      ],
+      "historicalAcceptedWitnessIdentitiesPreserved": true,
+      "newExampleOrNativeExecution": "NOT_RUN",
+      "currentFormatIndependentReviewAndGates": "PENDING",
+      "fullSpineR020V020": "OPEN",
+      "migrationR008V006": "OPEN"
     }
-   ],
-   "adoptedPublicReadingPins": [
-    {
-     "path": "knowledge-base/en/docs/spritesheet-contract.md",
-     "bytes": 7759,
-     "sha256": "19f8189f5b83fff18194887392e8aa85ac968287d35abe42bf18546da42e23e3"
-    },
-    {
-     "path": "knowledge-base/Cns/docs/命名图集契约.md",
-     "bytes": 7133,
-     "sha256": "9376edad41c83ae5a475b18dffe84c80accb848585d6f38be5bcbc109f6d055a"
-    },
-    {
-     "path": "knowledge-base/en/docs/spritesheet-evidence.md",
-     "bytes": 8454,
-     "sha256": "3a8913703338d4a2982e7d9fe287ff84665705e2d33b9c3d9bcc189c7a40e93d"
-    },
-    {
-     "path": "knowledge-base/Cns/docs/命名图集证据.md",
-     "bytes": 7666,
-     "sha256": "9b958bfb027a0e2a4f54b5a6c5c10a81cc38283af3228e5fb2aacdfde6c32483"
-    },
-    {
-     "path": "knowledge-base/evidence/spritesheet-verification.json",
-     "bytes": 9534,
-     "sha256": "3c0938fdf815886d0f62e9259239327386d06fd02f910485e65fbd721d167ea2"
-    }
-   ],
-   "independentAcceptedWitnessIdentities": {
-    "productSource": {
-     "bytes": 9057,
-     "sha256": "9a38c87d11aa031c556c5352b2f304610fc075f442437ab53ab21215d8a4fcb8",
-     "verdict": "PASS_SOURCE_ONLY"
-    },
-    "buildCpu": {
-     "bytes": 18585,
-     "sha256": "21cd32a5f5636869f5b860faa59dec6a1de57eb7c28a7d954a862d56db02db1d",
-     "verdict": "PASS_ACTUAL_BUILD_AND_PUBLIC_CPU"
-    },
-    "typesActual": {
-     "bytes": 255739,
-     "sha256": "6dd93a55d327d235c20a157572027f244c1b24d9e840c2cc0242b3a0510a309d",
-     "verdict": "PASS_ACTUAL_STRICT_TYPES"
-    },
-    "policyActual": {
-     "bytes": 15633,
-     "sha256": "fc6be93ef019d8d4fc9576c8b94ea47a7c4bcc00aea857ca3d6e25714be2e5dc",
-     "verdict": "PASS_ACTUAL_POLICY"
-    },
-    "unitsActual": {
-     "bytes": 18805,
-     "sha256": "a3dd1958bf973bc35c47d09cb57fa8f6fbab8ae011c0591927f53926a159783a",
-     "verdict": "PASS_ACTUAL_PRIVILEGED_UNITS"
-    },
-    "exampleActual": {
-     "bytes": 19092,
-     "sha256": "3cfb193df74dcfb827df7d42b751e2ca619500fd6fe706e23d15a9cae343fba8",
-     "verdict": "PASS_ACTUAL_PUBLIC_COMPOSITION_EXAMPLE"
-    },
-    "nativeSource": {
-     "bytes": 19822,
-     "sha256": "086932ab83b54e891ca6bf044e1287732c5e5a67729650e469853b3787ab67d7",
-     "verdict": "PASS_SOURCE_ONLY"
-    },
-    "nativeActual": {
-     "bytes": 53115,
-     "sha256": "a22ad31eff3e2d3ea9e484d431bb8d789daeb143876eedf022824bf37caa1026",
-     "verdict": "PASS_ACTUAL_SPRITESHEET_OPAQUE_SUBSET"
-    }
-   },
-   "currentPublicMetadataMeaningReview": "PENDING",
-   "sourceAndNativeAcceptanceDoNotCertifyAllMetadata": true,
-   "previousPendingCutoffsPreserved": true,
-   "fullSpineR020V020": "OPEN",
-   "migrationR008V006": "OPEN",
-   "formattingSourceSuccessor": {
-     "status": "SOURCE_ONLY_FORMAT_SUCCESSOR_PENDING_INDEPENDENT_REVIEW_AND_CURRENT_GATES",
-     "change": "Remove exactly one terminalLF from the example and paired contracts; their complete preceding bodies are byte-identical.",
-     "changeZh": "仅移除示例及配对契约各一个末尾LF，此前完整正文逐字节相同。",
-     "files": [
-       {
-         "path": "examples/spritesheet-headless.mjs",
-         "before": {
-           "bytes": 5257,
-           "sha256": "b8724dc69a4515ae99f6a79baaddfec484e29c91c336938ad74144d61c43660d"
-         },
-         "current": {
-           "bytes": 5256,
-           "sha256": "c94a4aefc7598068d6ef3a60f92cc1ca880900dc244ddf268f475a49ba9c659d"
-         },
-         "change": "Exactly one terminalLF removed; all preceding bytes identical."
-       },
-       {
-         "path": "knowledge-base/en/docs/spritesheet-contract.md",
-         "before": {
-           "bytes": 7760,
-           "sha256": "f739f258316d7dd7dcdb79caa527ef1818227b9ac0c25fe19db4aa4596cd4751"
-         },
-         "current": {
-           "bytes": 7759,
-           "sha256": "19f8189f5b83fff18194887392e8aa85ac968287d35abe42bf18546da42e23e3"
-         },
-         "change": "Exactly one terminalLF removed; all preceding bytes identical."
-       },
-       {
-         "path": "knowledge-base/Cns/docs/命名图集契约.md",
-         "before": {
-           "bytes": 7134,
-           "sha256": "86d193af060a2281c9d2e74d913141646765d9d9ac46ed3f05f3b2359830373c"
-         },
-         "current": {
-           "bytes": 7133,
-           "sha256": "9376edad41c83ae5a475b18dffe84c80accb848585d6f38be5bcbc109f6d055a"
-         },
-         "change": "Exactly one terminalLF removed; all preceding bytes identical."
-       }
-     ],
-     "beforeMetadataPins": [
-       {
-         "path": "localization.json",
-         "bytes": 242694,
-         "sha256": "23a7aebfe95b1919bcedaec5c88784a541f97d8a0e467bc6efc4a1a31bcb36be"
-       },
-       {
-         "path": "knowledge-base/evidence/spritesheet-verification.json",
-         "bytes": 7413,
-         "sha256": "0e35d135b6fa5edd5d5d20fea711d8e765daca894950ec120296c69ec30fd5c2"
-       },
-       {
-         "path": "source-origin.json",
-         "bytes": 783366,
-         "sha256": "8071e45394a4ac19af34ae92c3c18aec1c6b68efe22203f575c40dd383a80e1b"
-       }
-     ],
-     "historicalAcceptedWitnessIdentitiesPreserved": true,
-     "newExampleOrNativeExecution": "NOT_RUN",
-     "currentFormatIndependentReviewAndGates": "PENDING",
-     "fullSpineR020V020": "OPEN",
-     "migrationR008V006": "OPEN"
-   }
   },
   "sequencePlaybackDeliveryActualSuccessor": {
-   "engineeringLabel": "0.44.0",
-   "pullRequest": 31,
-   "url": "https://github.com/cnedwin/Egret_rebuild/pull/31",
-   "merged": true,
-   "main": "1dce76a62cd0a4180969949939041f889eb1d923",
-   "tree": "b10ccbc11e9a2db5bacbf913858c8f4dd73f9d26",
-   "publicationTests": 63,
-   "coreTests": 2794,
-   "experimentalTests": 160,
-   "knowledgeBaseIssues": 0,
-   "remoteStatusCount": 0,
-   "remoteCheckRunCount": 0,
-   "remoteCIPassClaim": false,
-   "successorIdentity": {
-    "bytes": 27772,
-    "sha256": "2bddcfc2dc6dc54d1b65f114c276e1d3f3055b8f67730f3c4ada669070565df7"
-   },
-   "independentReviewIdentity": {
-    "bytes": 4855,
-    "sha256": "9164d3265d717c299f9c7ab6b85e22ee4d317c50e3a9334692d90eef68190233"
-   }
+    "engineeringLabel": "0.44.0",
+    "pullRequest": 31,
+    "url": "https://github.com/cnedwin/Egret_rebuild/pull/31",
+    "merged": true,
+    "main": "1dce76a62cd0a4180969949939041f889eb1d923",
+    "tree": "b10ccbc11e9a2db5bacbf913858c8f4dd73f9d26",
+    "publicationTests": 63,
+    "coreTests": 2794,
+    "experimentalTests": 160,
+    "knowledgeBaseIssues": 0,
+    "remoteStatusCount": 0,
+    "remoteCheckRunCount": 0,
+    "remoteCIPassClaim": false,
+    "successorIdentity": {
+      "bytes": 27772,
+      "sha256": "2bddcfc2dc6dc54d1b65f114c276e1d3f3055b8f67730f3c4ada669070565df7"
+    },
+    "independentReviewIdentity": {
+      "bytes": 4855,
+      "sha256": "9164d3265d717c299f9c7ab6b85e22ee4d317c50e3a9334692d90eef68190233"
+    }
+  },
+  "repositoryHygieneWorkPackage": {
+    "engineeringPreview": "0.45.1",
+    "sourceId": "S099",
+    "deliverableId": "V050",
+    "requirementIds": [
+      "R016",
+      "R019",
+      "R021"
+    ],
+    "scope": "SELECTED_CURRENT_REPOSITORY_TOOLING_CONFIGURATION_TESTS_AND_PAIRED_PUBLIC_CURATION_ONLY",
+    "implementationOrigin": "INDEPENDENT_FIRST_PARTY_EGRET_SPECIFICATION_AND_CODE",
+    "codeLicense": "Apache-2.0",
+    "documentationLicense": "Apache-2.0",
+    "newThirdPartyDependency": false,
+    "reference": {
+      "url": "https://git-scm.com/docs/gitattributes",
+      "checkedAt": "2026-10-13",
+      "role": "PRIMARY_SEMANTICS_REFERENCE_NOT_BUNDLED_IMPLEMENTATION"
+    },
+    "rawContentHashes": "ORIGINAL_BYTES_NEVER_NORMALIZED",
+    "logicalPaths": "COMPLETE_OWNER_RELATIVE_POSIX_CASE_PRESERVED",
+    "historicalIdentityFieldsRetained": true,
+    "previousCurrentSubset": [
+      {
+        "path": "tools/check-publication.mjs",
+        "bytes": 12375,
+        "sha256": "7130901ba3c6c84b106eb78c924a6f36ea3f2b8fc59c28deadb8e326e24f6339"
+      },
+      {
+        "path": "tools/spritesheet-types.mjs",
+        "bytes": 16327,
+        "sha256": "7f6ac53518e1ad1bea44a66a00ef2a625b1c05233987b3c7a0ca7819ae630663"
+      },
+      {
+        "path": "tools/sequence-playback-types.mjs",
+        "bytes": 14672,
+        "sha256": "d2c855765dd9fba50da9936d4e3a45bd6205b27cd8e8aebc0e1b13c7dbb184bb"
+      },
+      {
+        "path": "knowledge-base/tools/Validate-KnowledgeBase.ps1",
+        "bytes": 12469,
+        "sha256": "b1dcc45807cfc7ba72d3630701a184b48a32196639f24a3db70942448fb66f1d"
+      },
+      {
+        "path": "tools/prepush.mjs",
+        "bytes": 1025,
+        "sha256": "8ba8600f86c5a0722f9eb2a6ae030a353e8034c36d2e5af3288165fd3c864aa4"
+      },
+      {
+        "path": ".githooks/pre-push",
+        "bytes": 97,
+        "sha256": "372e3377f8d29c40a68ac54ec55124abdea50d761366d93eaeb97eb898f04561"
+      },
+      {
+        "path": "package.json",
+        "bytes": 762,
+        "sha256": "b522c278e5f0b4070fec73da2aa336da5c57a4dc189c0855d9e5770f879009bd"
+      },
+      {
+        "path": "README.zh-CN.md",
+        "bytes": 82957,
+        "sha256": "ef751c3afa2514c30650f279e2c215859704ed60ba8f030fcc766004bef78cb2"
+      },
+      {
+        "path": "CONTRIBUTING.zh-CN.md",
+        "bytes": 6116,
+        "sha256": "d090ef310eb4b69d3eecb09cbffaecf6dccace78f522e1776f278a3e21e4c9e1"
+      },
+      {
+        "path": "README.md",
+        "bytes": 83856,
+        "sha256": "e004991b1ab8439ace59854bd085b15d02495283c06eeb9a32c5227cc9a046db"
+      },
+      {
+        "path": "CONTRIBUTING.md",
+        "bytes": 7643,
+        "sha256": "dc7bbdf2e9f4c77dc2d28a1423245b646aa065772e0f0e6ca137e8899e003951"
+      },
+      {
+        "path": "AGENTS.zh-CN.md",
+        "bytes": 11454,
+        "sha256": "dc646bdb56ea79fc9178d7ec8e1780e34828d4863845126a32716dad25072312"
+      },
+      {
+        "path": "AGENTS.md",
+        "bytes": 13175,
+        "sha256": "6552f4fa988e635ffa51ade5156c7e385cd006b1817375bb2fb4f74cab282132"
+      },
+      {
+        "path": "knowledge-base/README.zh-CN.md",
+        "bytes": 17102,
+        "sha256": "18192471c723d558aa7ab3be4117385317ef8ea3a8e52138f1f68f009af19527"
+      },
+      {
+        "path": "knowledge-base/README.md",
+        "bytes": 18371,
+        "sha256": "79b0605214e449a61886fd375a4fcd701baf2ec2442db41873dbe8c1fdc19c78"
+      },
+      {
+        "path": "knowledge-base/en/registry/sources.json",
+        "bytes": 175679,
+        "sha256": "f556da88cc1a32b869055489e1156074b977fdb061e2e5fad713783bbe9416ad"
+      },
+      {
+        "path": "knowledge-base/en/registry/requirements.json",
+        "bytes": 44590,
+        "sha256": "fa73884b8b748358dce1d0b73ea50b4067bb190108b71b67bd1f1993138ca0ce"
+      },
+      {
+        "path": "knowledge-base/en/registry/deliverables.json",
+        "bytes": 157360,
+        "sha256": "c29e96f255f2544fb9769d50f4c7a9f88da0f5527276779fb79d7164588ae325"
+      },
+      {
+        "path": "knowledge-base/en/README.md",
+        "bytes": 42388,
+        "sha256": "34dc8c617bb4eda8f16d095b059d7f0a35aaf5b23943a6b13a94f1d2b0eba026"
+      },
+      {
+        "path": "knowledge-base/en/docs/engineering-plan.md",
+        "bytes": 46573,
+        "sha256": "7ba3b720dfff13b328fb609d13c0dace2fb1affb98d8650c74f42f7613216888"
+      },
+      {
+        "path": "knowledge-base/en/docs/core-progress.md",
+        "bytes": 39218,
+        "sha256": "253f9274555ff73c4de43c67cbaf6d42000683fd309dc8b17ac24cc5399d6cbc"
+      },
+      {
+        "path": "knowledge-base/en/current-version.json",
+        "bytes": 128980,
+        "sha256": "0059ec6c791102202b93c60a3b8500c0a1728cd0e9aa70b130336b20b88db523"
+      },
+      {
+        "path": "knowledge-base/en/CHANGELOG.md",
+        "bytes": 72924,
+        "sha256": "70ba031c53a3b170ba6eb698e36d0a9f5472830f47b8b1b68ee68facadadfad5"
+      },
+      {
+        "path": "knowledge-base/Cns/当前版本.json",
+        "bytes": 128093,
+        "sha256": "a72a48c40b6ec2e63d877dcda9cb0d7217e4382b6a6873d5b4b78c06858d137c"
+      },
+      {
+        "path": "knowledge-base/Cns/registry/需求.json",
+        "bytes": 42371,
+        "sha256": "90b7c6d9eacc1dba25ef66bcba03140d96f25adb976a0573c2632dd30cd873c9"
+      },
+      {
+        "path": "knowledge-base/Cns/registry/来源.json",
+        "bytes": 166294,
+        "sha256": "a9a81467831ecbb7f0074a3f9b94cf1d8b2a6801ac5643c087101e3af11e8f1b"
+      },
+      {
+        "path": "knowledge-base/Cns/registry/交付.json",
+        "bytes": 151612,
+        "sha256": "ffa9fea737498c443de1503ee0b7c3f7fb22897d29a7a631be492efd4ddc6185"
+      },
+      {
+        "path": "knowledge-base/Cns/README.md",
+        "bytes": 38572,
+        "sha256": "39da58e2159049c8967ceb1c811daee6dff4971b7277feeb0ac1e3e4955c8135"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/工程规划.md",
+        "bytes": 38926,
+        "sha256": "410c102fc429e058782d981e24603754b1630748cb0f963742583a511b9380f0"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/core-progress.md",
+        "bytes": 35267,
+        "sha256": "028c7e2188a025520995e91958e4f9d5a263b4c6a39ef2d026795082509c5854"
+      },
+      {
+        "path": "knowledge-base/Cns/CHANGELOG.md",
+        "bytes": 63057,
+        "sha256": "079501cc3d6577274f5f1c55392f8a06a46656c82af9b1022b8e13f2ffe25b3e"
+      },
+      {
+        "path": "localization.json",
+        "bytes": 242694,
+        "sha256": "c30c5d75645d8d3aec2bc1709845194dcbcf66b7f11a6a28cb23d98bb1b9da80"
+      }
+    ],
+    "currentSelectedPins": [
+      {
+        "path": "tools/lib/file-identity.mjs",
+        "bytes": 5065,
+        "sha256": "999b355c6e0d03f17853ee05f33abc9fecbb34ad80607963e11f913a4f815569"
+      },
+      {
+        "path": "tools/check-publication.mjs",
+        "bytes": 12845,
+        "sha256": "1f4169c9e7db0cf2ceebe74f077f13c4b1f39a8a2747b6271a710d59a934e319"
+      },
+      {
+        "path": "tools/spritesheet-types.mjs",
+        "bytes": 16306,
+        "sha256": "a056b27facb999d1ae12c6aa85aa63568302357c805ce3d48c3cb18eae531f1f"
+      },
+      {
+        "path": "tools/sequence-playback-types.mjs",
+        "bytes": 14466,
+        "sha256": "00aec8b63900da3ddedbbe4009f677628178be92860e898191012474f6a9cbab"
+      },
+      {
+        "path": "tools/check-repository-hygiene.mjs",
+        "bytes": 10846,
+        "sha256": "d10a6f7da992e7cbb587849e737abac938953e60c6d7cbea0d3ef63857fd60bb"
+      },
+      {
+        "path": ".gitattributes",
+        "bytes": 162,
+        "sha256": "a71857f01d934e3abcdf825018bf7eec861bfd7563794672d3f92ad5e8d71269"
+      },
+      {
+        "path": ".editorconfig",
+        "bytes": 452,
+        "sha256": "8ccabe5ef619276735947a5c25893d3319fa50665d443bfef47e9f72912c6bc0"
+      },
+      {
+        "path": "tools/write-repository-text.mjs",
+        "bytes": 1939,
+        "sha256": "2bad1f563a59b4c0ab51cd85683198b2ca16af136d86cf99e1ddd52422e818ef"
+      },
+      {
+        "path": "knowledge-base/tools/Write-CanonicalText.ps1",
+        "bytes": 1538,
+        "sha256": "3967a19c46312a14dd1a415c7774ef60df74d736cf26b658ae58359438d4637f"
+      },
+      {
+        "path": "knowledge-base/tools/Validate-KnowledgeBase.ps1",
+        "bytes": 12756,
+        "sha256": "1e8b1ba6bac62ca3eecaec7bad4d6a73a12387d5c0440eb25468e319715b491c"
+      },
+      {
+        "path": "tools/prepush.mjs",
+        "bytes": 1455,
+        "sha256": "2e6afcaafd0f0d73769ecc0c88004f3a93fddf0155a225df8b5b00e3ebebbb25"
+      },
+      {
+        "path": ".githooks/pre-commit",
+        "bytes": 134,
+        "sha256": "203b99e44c26bdc6f61738318ca602b53e14591d2c4fac8c025273d038d2ca87"
+      },
+      {
+        "path": ".githooks/pre-push",
+        "bytes": 109,
+        "sha256": "5ea5edc866957509d25ae122337dfcc23248d72278ecc47c6606f9ce2b886b7d"
+      },
+      {
+        "path": "tests/publication/file-case.test.mjs",
+        "bytes": 2237,
+        "sha256": "c54945286ece4b18f33e45c9dabbb75d18626dd54b87f2c49d30150c7e561f68"
+      },
+      {
+        "path": "tests/publication/file-identity.test.mjs",
+        "bytes": 10055,
+        "sha256": "575892425d0c1a72cdde9352d0d849242f71ffa3b257879d39ecbd7f39bcc2f7"
+      },
+      {
+        "path": "tests/publication/repository-hygiene.test.mjs",
+        "bytes": 13977,
+        "sha256": "43298a3fca4500eb840f583ff06d3d6c54e69fa8da5bcbdd8bc360a98151a6e2"
+      },
+      {
+        "path": "tests/publication/text-writers.test.mjs",
+        "bytes": 3044,
+        "sha256": "cd4981451ee6949097e48a0e667c3fbdd0d291578b19729d9e2f145c2acf70e9"
+      },
+      {
+        "path": "tests/publication/powershell-comments.test.mjs",
+        "bytes": 1972,
+        "sha256": "80c1d50571b248fcbba9f712ddd8974b157352884eb5703c2c2781eca18a718b"
+      },
+      {
+        "path": "verification/repository-hygiene-baseline.json",
+        "bytes": 19467,
+        "sha256": "e64fbcb25f34f9b2184bcd81b14db190984b938478cfef6b38101602dde7287a"
+      },
+      {
+        "path": "package.json",
+        "bytes": 762,
+        "sha256": "b522c278e5f0b4070fec73da2aa336da5c57a4dc189c0855d9e5770f879009bd"
+      },
+      {
+        "path": "README.zh-CN.md",
+        "bytes": 86006,
+        "sha256": "f4159a1a681adf847b59b3bd0189d9f5f6534c0b01cc5225a27887c145641c48"
+      },
+      {
+        "path": "CONTRIBUTING.zh-CN.md",
+        "bytes": 7973,
+        "sha256": "33ae6a7655da1be4d701d31a8009d9677b1103f14cc1f44e8642641e72a48bd9"
+      },
+      {
+        "path": "README.md",
+        "bytes": 86905,
+        "sha256": "b70c24374439767003f8f499b39ceca939f9849be4424b655244709f0c70a563"
+      },
+      {
+        "path": "CONTRIBUTING.md",
+        "bytes": 9716,
+        "sha256": "7235e931dacd41f50d23e4c90463b42884691d6db0bd8e48c3fe44cfb8784b42"
+      },
+      {
+        "path": "AGENTS.zh-CN.md",
+        "bytes": 13311,
+        "sha256": "2dd3424514dbcbf137f36e2f00eb58d56e4ff7994953fdafc1e24f940655743d"
+      },
+      {
+        "path": "AGENTS.md",
+        "bytes": 15248,
+        "sha256": "2e0be18bb9696b53693d4fabcd500f3ae70af2f71970c7e8c5f035fdc1d0536a"
+      },
+      {
+        "path": "knowledge-base/README.zh-CN.md",
+        "bytes": 18688,
+        "sha256": "c0d04e9c85db0604d957241695962b8db199661aeefe217230f8fda2e6b16ea8"
+      },
+      {
+        "path": "knowledge-base/README.md",
+        "bytes": 20114,
+        "sha256": "45084a8f88b9e1529610a16acd96ef225951ca15825a35101859cdd7341f83bd"
+      },
+      {
+        "path": "knowledge-base/en/registry/sources.json",
+        "bytes": 181254,
+        "sha256": "49ee3e0c2fdba8e06fe975722c3b9fd60b5b6f3c066963a646af28449e96d387"
+      },
+      {
+        "path": "knowledge-base/en/registry/requirements.json",
+        "bytes": 49121,
+        "sha256": "af6441fe2029059948817cb99a764e2543957025f52e378ae0dd343568e69693"
+      },
+      {
+        "path": "knowledge-base/en/registry/deliverables.json",
+        "bytes": 162287,
+        "sha256": "0641e218b23677b54584d3d7762c89e70910351820b3f7e39e6d733cd50536d6"
+      },
+      {
+        "path": "knowledge-base/en/README.md",
+        "bytes": 43993,
+        "sha256": "8e8ab5d32b30d6703c8e8e2d3941deb462cbc0cf6af61790005b1d2ec4e061fe"
+      },
+      {
+        "path": "knowledge-base/en/docs/repository-identity-and-line-endings.md",
+        "bytes": 5174,
+        "sha256": "cf730981f506695f32cfd4966a9ee91ae51f3f64e19da75c5d3386b650e594f5"
+      },
+      {
+        "path": "knowledge-base/en/docs/repository-hygiene-evidence.md",
+        "bytes": 8989,
+        "sha256": "eaa0757a357e4655bc3117eb555064d5834a90c4d672abe0a5eac2c5b67c46a0"
+      },
+      {
+        "path": "knowledge-base/en/docs/engineering-plan.md",
+        "bytes": 48282,
+        "sha256": "7f92a107e827c18ffed31b0fb280b58df60e2cd5ae72376897a3a1814b324d8b"
+      },
+      {
+        "path": "knowledge-base/en/docs/core-progress.md",
+        "bytes": 40771,
+        "sha256": "fff7bd4b44c5561224d80949eab217f8cad748f4cd09de12d38894f09f8c76f0"
+      },
+      {
+        "path": "knowledge-base/en/current-version.json",
+        "bytes": 133103,
+        "sha256": "4c1f93913c6e1b0a036a78b055e47a10bd5bd2707885dfb24661c7618b2b73ac"
+      },
+      {
+        "path": "knowledge-base/en/CHANGELOG.md",
+        "bytes": 74338,
+        "sha256": "335a6899740010419ab64178394c35c429a81aa640fcd598b0d762528c4a05bf"
+      },
+      {
+        "path": "knowledge-base/Cns/当前版本.json",
+        "bytes": 132217,
+        "sha256": "bc061a7a4a130b77dc856c4caf80c6142677ca9e665954c8fff602420fa3dfbf"
+      },
+      {
+        "path": "knowledge-base/Cns/registry/需求.json",
+        "bytes": 46843,
+        "sha256": "d42568a12b23a3bc4cb16f7c5a2090b561995a24c90a8caf6756468347a93fc7"
+      },
+      {
+        "path": "knowledge-base/Cns/registry/来源.json",
+        "bytes": 171734,
+        "sha256": "71529003df299f4a84e6fa404e7312c42d11916a3aa436ee1bb8940e032501ba"
+      },
+      {
+        "path": "knowledge-base/Cns/registry/交付.json",
+        "bytes": 156495,
+        "sha256": "79c2933c63e83360b0f4352cd106d1daab3f8fa6565b145beeced5efd53bb31a"
+      },
+      {
+        "path": "knowledge-base/Cns/README.md",
+        "bytes": 40018,
+        "sha256": "6886dca2052ac9de2baa24f30fc6279637604418adb7f2111847a9f30a037192"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/工程规划.md",
+        "bytes": 40475,
+        "sha256": "5934e7b43e4b314e2a88bb540768eba511096ab981afac6a3e978c4b57f256a7"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/仓库路径身份与换行规范.md",
+        "bytes": 4622,
+        "sha256": "cce6331505479a2ecfe93a60176437d7d75bfd83a98de3ef56f7dcd084e4922c"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/仓库路径与换行验证记录.md",
+        "bytes": 8082,
+        "sha256": "0f94572494e6c48341373471c54015446e1f67e1ab0d6eb400f9f4918f397a95"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/core-progress.md",
+        "bytes": 36661,
+        "sha256": "76c749f1d6fefaaef3f29384cea6586a1f0e1cadf289c1b5abe24ef93a26caca"
+      },
+      {
+        "path": "knowledge-base/Cns/CHANGELOG.md",
+        "bytes": 64309,
+        "sha256": "b318813681f0c67846bf5313d21431e933a365f5262e4d662820ac9050e5aeb1"
+      },
+      {
+        "path": "localization.json",
+        "bytes": 245557,
+        "sha256": "b392c9884b9dde031420dc5a19991476f2fc2774cd4c4581f4e36082405cca89"
+      }
+    ],
+    "currentCriticalEnglishCommentPins": [
+      {
+        "path": "knowledge-base/tools/Validate-KnowledgeBase.ps1",
+        "sha256": "1e8b1ba6bac62ca3eecaec7bad4d6a73a12387d5c0440eb25468e319715b491c"
+      },
+      {
+        "path": "tools/lib/file-identity.mjs",
+        "sha256": "999b355c6e0d03f17853ee05f33abc9fecbb34ad80607963e11f913a4f815569"
+      },
+      {
+        "path": "tools/check-publication.mjs",
+        "sha256": "1f4169c9e7db0cf2ceebe74f077f13c4b1f39a8a2747b6271a710d59a934e319"
+      },
+      {
+        "path": "tools/spritesheet-types.mjs",
+        "sha256": "a056b27facb999d1ae12c6aa85aa63568302357c805ce3d48c3cb18eae531f1f"
+      },
+      {
+        "path": "tools/sequence-playback-types.mjs",
+        "sha256": "00aec8b63900da3ddedbbe4009f677628178be92860e898191012474f6a9cbab"
+      },
+      {
+        "path": "tools/check-repository-hygiene.mjs",
+        "sha256": "d10a6f7da992e7cbb587849e737abac938953e60c6d7cbea0d3ef63857fd60bb"
+      },
+      {
+        "path": "tools/write-repository-text.mjs",
+        "sha256": "2bad1f563a59b4c0ab51cd85683198b2ca16af136d86cf99e1ddd52422e818ef"
+      },
+      {
+        "path": "knowledge-base/tools/Write-CanonicalText.ps1",
+        "sha256": "3967a19c46312a14dd1a415c7774ef60df74d736cf26b658ae58359438d4637f"
+      },
+      {
+        "path": "tools/prepush.mjs",
+        "sha256": "2e6afcaafd0f0d73769ecc0c88004f3a93fddf0155a225df8b5b00e3ebebbb25"
+      }
+    ],
+    "sourceCuration": "PENDING_INDEPENDENT_PUBLIC_MEANING_REVIEW",
+    "PSComments": {
+      "recognition": "ANCHORED_LINE_HASH_ONLY_NOT_AST_BLOCK_OR_HERESTRING",
+      "actualRED": {
+        "tests": 2,
+        "pass": 1,
+        "fail": 1
+      },
+      "actualGREEN": "PENDING",
+      "sourceAndActualIndependentReview": "PENDING"
+    },
+    "boundedActual": {
+      "engineeringLabel": "0.45.1",
+      "sourceId": "S099",
+      "deliverableId": "V050",
+      "requirementIds": [
+        "R016",
+        "R019",
+        "R021"
+      ],
+      "status": "FOCUSED_IDENTITY_WRITERS_GIT_WORKING_ACTUAL_ACCEPTED_FULL_GATES_PENDING",
+      "rawBytesAlwaysPreserved": true,
+      "engineRuntimeApiChanged": false,
+      "readOnlyAudit": {
+        "files": 1428,
+        "mixedEOL": 43,
+        "CRLF": 21,
+        "utf8BOM": 1,
+        "scope": "WORKING_PUBLIC_DISCOVERY_ONLY_NOT_GIT_INDEX"
+      },
+      "caseRED": {
+        "pass": 0,
+        "fail": 2,
+        "genuineBaselines": true,
+        "functionalAssertionsReached": true
+      },
+      "writerRED": {
+        "fileLevelPass": 0,
+        "fileLevelFail": 1,
+        "functionalCasesExecuted": false,
+        "missingExport": "canonicalTextBytes"
+      },
+      "focusedGREEN": {
+        "tests": 111,
+        "pass": 111,
+        "fail": 0,
+        "skipped": 0,
+        "buildExitCode": 0,
+        "strictSpriteSheet": {
+          "positive": 0,
+          "negative": 22,
+          "importNegative": 14
+        },
+        "strictSequence": {
+          "positive": 0,
+          "negative": 27,
+          "importNegative": 13
+        },
+        "independentReview": {
+          "bytes": 34429,
+          "sha256": "e020ffbcb07cc55e368fe6dbda7a598603982deee0526ad66c9da6f7bef74ba3",
+          "verdict": "PASS_ACTUAL_FOCUSED_IDENTITY",
+          "scope": "FINITE_SAVED_IDENTITY_BUILD_AND_STRICT_DIAGNOSTICS_ONLY"
+        }
+      },
+      "writers": {
+        "tests": 3,
+        "pass": 3,
+        "fail": 0,
+        "independentReview": {
+          "bytes": 6136,
+          "sha256": "6f1037989acdf5df8d72ecc84077dcc33b78dd92922055de4cf2fee4891f6388",
+          "verdict": "PASS_ACTUAL_NODE_AND_POWERSHELL_TEXT_WRITERS",
+          "scope": "THREE_BOUNDED_WRITER_CASES_ONLY"
+        }
+      },
+      "savedGate": {
+        "isolatedGitTests": 12,
+        "isolatedGitPass": 12,
+        "combinedRelatedTests": 123,
+        "combinedRelatedPass": 123,
+        "knowledgeBaseTestsIncluded": 9,
+        "independentReview": "PASS_ACTUAL_REPOSITORY_HYGIENE_DATA",
+        "nativeBaselineInstances": 14,
+        "independentReviewIdentity": {
+          "bytes": 26838,
+          "sha256": "b415a7a71b76fce86789ea685c133052025d014c884eebb2d465d3296533de8d",
+          "verdict": "PASS_ACTUAL_REPOSITORY_HYGIENE_DATA",
+          "scope": "TWELVE_ISOLATED_GIT_FAMILIES_AND_WORKING_DATA_NOT_CURRENT_COMMITTED_SNAPSHOT"
+        }
+      },
+      "workingHygiene": {
+        "files": 1440,
+        "legacyPreserved": 76,
+        "stagedCompared": 0,
+        "issues": 0,
+        "scope": "WORKING_ONLY",
+        "legacyBaselineRecords": 77
+      },
+      "committedSnapshot": "NOT_RUN",
+      "completeLocalPrepush": "PENDING_AT_CURATION_CUTOFF",
+      "mandatoryPushHook": "NOT_RUN",
+      "pullRequestAndMain": "NOT_RUN",
+      "remoteCI": "NOT_RUN",
+      "fullSpineR020V020": "OPEN",
+      "migrationR008V006": "OPEN",
+      "historicalCutoffsPreserved": true
+    },
+    "affectedRuntimeScope": "THIS_SELECTED_TOOLING_SLICE_CHANGES_NO_ENGINE_RUNTIME_API",
+    "runtimeEmissionRetention": "REQUIRES_EXPLICIT_BYTE_COMPARISON_NOT_NEW_NATIVE_ACCEPTANCE",
+    "completeLocalPrepush": "PENDING",
+    "currentPushHookPRMain": "NOT_RUN",
+    "remoteCI": "NOT_RUN",
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "privateExecutionLogsDistributed": false,
+    "sourceExecutionByCurationAuthor": false
+  },
+  "namedSpriteSheetDeliveryActualSuccessor": {
+    "engineeringLabel": "0.45.0",
+    "status": "ACTUAL_0_45_DELIVERY_INDEPENDENTLY_ACCEPTED",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/32",
+    "merged": true,
+    "main": "863b29c90b92b62e37ce77cf32e02c4294135a16",
+    "tree": "1c7b706163ab58e41916bdaa8a6d45f74743a4f9",
+    "mandatoryPushHook": {
+      "publicationTests": 63,
+      "coreTests": 2909,
+      "experimentalTests": 160,
+      "knowledgeBaseIssues": 0,
+      "allPassed": true
+    },
+    "remoteCIPassClaim": false,
+    "historicalPendingCutoffsRetained": true
   }
 }

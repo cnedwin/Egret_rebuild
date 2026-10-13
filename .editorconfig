@@ -1,0 +1,14 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = false
+
+# Original evidence, upstream material and legal notices keep their exact bytes.
+[{knowledge-base/evidence/**,knowledge-base/experiments/**,verification/history/**,third-party/**,**/LICENSE*,**/NOTICE*,**/COPYING*,LICENSE*,NOTICE*,COPYING*}]
+charset = unset
+end_of_line = unset
+insert_final_newline = unset
+trim_trailing_whitespace = unset
