@@ -1,0 +1,973 @@
+{
+  "schemaVersion": 2,
+  "kind": "PUBLIC_SEQUENCE_PLAYBACK_VERIFICATION_PROJECTION",
+  "title": "Clock-driven sequence playback verification / 时钟驱动序列动画核验",
+  "workPackage": "0.44.0",
+  "publicationStatus": "DRAFT_PENDING_PAIRED_READING_REVIEW_FULL_PREPUSH_AND_DELIVERY",
+  "proofScope": {
+    "isOriginalExecutionProof": false,
+    "isCryptographicAttestation": false,
+    "availability": "Original receipts, full streams, source identities and independent reviews are retained privately. Named byte counts and SHA-256 digests identify those witnesses; this public projection is a bounded summary, not their publication or an external attestation.",
+    "privatePathsIncluded": false
+  },
+  "readingEditions": {
+    "contractEnglish": "knowledge-base/en/docs/sequence-playback-contract.md",
+    "contractChinese": "knowledge-base/Cns/docs/时钟驱动序列动画契约.md",
+    "evidenceEnglish": "knowledge-base/en/docs/sequence-playback-evidence.md",
+    "evidenceChinese": "knowledge-base/Cns/docs/时钟驱动序列动画证据.md"
+  },
+  "subject": {
+    "publicEntry": "@egret/engine",
+    "erasedTypes": [
+      "SequencePlayback",
+      "SequencePlaybackOptions",
+      "SequencePlaybackState"
+    ],
+    "instanceMethod": "Engine.createSequencePlayback",
+    "standaloneFactory": false,
+    "newRuntimeClass": false,
+    "newPackageEntry": false,
+    "newDependency": false,
+    "productSourcePins": [
+      {
+        "path": "packages/engine/src/sequencePlaybackTypes.ts",
+        "bytes": 838,
+        "sha256": "8ebd2cc9882f1c3ef88e9cff6fe6937461b19ba294944fb9eedbd73e34cd00a8"
+      },
+      {
+        "path": "packages/engine/src/sequencePlayback.ts",
+        "bytes": 13644,
+        "sha256": "dd72d68e12037cbfe4fb47d20e3133ed07ec1af14f88cb76bab1d3241a35c4f6"
+      },
+      {
+        "path": "packages/engine/src/Engine.ts",
+        "bytes": 15897,
+        "sha256": "a2f92a7e3286d3ae08f76982ab3aad81ffa58a795217ead0f9353c27f42974c2"
+      },
+      {
+        "path": "packages/engine/src/index.ts",
+        "bytes": 3019,
+        "sha256": "3d00e1f589e3982e0ed249b14848d4dcd09f8a229d3b4de7a9b8d9d313d7c25d"
+      }
+    ]
+  },
+  "observedCompiler": {
+    "version": "7.0.2",
+    "nativeOwner": "@typescript/typescript-win32-x64@7.0.2",
+    "scope": "Recorded build/type owner only. Other operating systems, devices and renderer acceptance are not established."
+  },
+  "lanes": {
+    "source": {
+      "status": "PASS_SOURCE_ONLY",
+      "scope": "Four first-party product source paths and accepted predecessor contract meaning. Updated reading headers, evidence prose and this projection await independent paired reading review.",
+      "witnesses": [
+        {
+          "name": "product-source-review-r1.json",
+          "bytes": 13040,
+          "sha256": "d7d8bf58b09ce1a5a88abb13bf7bf4149c098cc7d44ec0cb938541f3b9c7ab7b"
+        },
+        {
+          "name": "docs-draft-source-review-r2.json",
+          "bytes": 4739,
+          "sha256": "2a90ba0adbd4bb188db28b885a5dc2a2e6d8e4f2c1b4c0649972e9418bcd5417"
+        }
+      ]
+    },
+    "build": {
+      "status": "PASS_ACTUAL",
+      "actor": {
+        "startedAtUtc": "2026-10-12T21:48:42.9120993Z",
+        "finishedAtUtc": "2026-10-12T21:48:43.5137175Z",
+        "exitCode": 0,
+        "timeout": false,
+        "args": [
+          "tools/build.mjs"
+        ],
+        "name": "build-reviewed-product"
+      },
+      "scope": "Pinned SDK build, including 159 source files and 318 emitted files. Counts identify the build inventory, not behavior test coverage.",
+      "sdkSourceFiles": 159,
+      "sdkEmittedFiles": 318,
+      "witnesses": [
+        {
+          "name": "product-build-and-behavior-actual-review-r2.json",
+          "bytes": 7469,
+          "sha256": "09f780466f6e58e773f23fb6c127598ec74c8c1f10351c5ad3de9a910b666f99"
+        },
+        {
+          "name": "sdk-build-inventory-r1.json",
+          "bytes": 97619,
+          "sha256": "ecb4e2997e9fab4299c9d7efb4bdc7ad6c6f6b3b04adbb26d914f745a6ff0116"
+        },
+        {
+          "name": "receipt.json",
+          "bytes": 776,
+          "sha256": "92e073197c9b42449dbcbc7a19caf9c2782c6a7867b3f005871f28da29bc4348"
+        },
+        {
+          "name": "build-reviewed-product.stdout.log",
+          "bytes": 44,
+          "sha256": "166710cb105690b244b48c5dcc5672a4c0bc8280e995ae7d2f5bd46141491cea"
+        },
+        {
+          "name": "build-reviewed-product.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "cpu": {
+      "status": "PASS_ACTUAL",
+      "scope": "Public API check plus two public CPU behavior/lifecycle files; genuine public Engine, resources, player and clock controls.",
+      "subjectPins": [
+        {
+          "path": "tests/sequence-playback-api.test.mjs",
+          "bytes": 5296,
+          "sha256": "82e9e3cd8b893ed0fa83d6d0611a55b12a5ad7dda6f82d40007991c3646a70d6"
+        },
+        {
+          "path": "tests/sequence-playback.test.mjs",
+          "bytes": 18500,
+          "sha256": "32bcf750eb7fb9acaf9b14d97fa933658375b31007927a2387d50515b348f50a"
+        },
+        {
+          "path": "tests/sequence-playback-lifecycle.test.mjs",
+          "bytes": 19158,
+          "sha256": "cbca99f9e094c61eeb3a1d4dae0513a82fbc8eece6b804d0f81d21db2f3d0de2"
+        }
+      ],
+      "actor": {
+        "name": "new-sequence-playback-behavior",
+        "startedAtUtc": "2026-10-12T21:49:49.667433Z",
+        "finishedAtUtc": "2026-10-12T21:49:49.8452319Z",
+        "exitCode": 0,
+        "timeout": false,
+        "args": [
+          "--test",
+          "tests/sequence-playback-api.test.mjs",
+          "tests/sequence-playback.test.mjs",
+          "tests/sequence-playback-lifecycle.test.mjs"
+        ]
+      },
+      "counters": {
+        "tests": 41,
+        "suites": 0,
+        "pass": 41,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 115.2802
+      },
+      "sourceInventory": {
+        "independentBehaviorFamilies": 25,
+        "meaning": "Source families are separate from the completed Node test count, which includes API and nested tests."
+      },
+      "genuineBaselineMarkers": 1,
+      "genuineTeardownMarkers": 1,
+      "witnesses": [
+        {
+          "name": "product-build-and-behavior-actual-review-r2.json",
+          "bytes": 7469,
+          "sha256": "09f780466f6e58e773f23fb6c127598ec74c8c1f10351c5ad3de9a910b666f99"
+        },
+        {
+          "name": "receipt.json",
+          "bytes": 932,
+          "sha256": "93354829db6a8ea248e6c14471c924d501cc7bdf6505592088372b53eb1fe5a3"
+        },
+        {
+          "name": "new-sequence-playback-behavior.stdout.log",
+          "bytes": 3607,
+          "sha256": "0206b666a02bc8c205819b8715da4e0bed9c57449f320cd8bbdced161fa268be"
+        },
+        {
+          "name": "new-sequence-playback-behavior.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "types": {
+      "status": "PASS_ACTUAL_STANDALONE_AND_COMPLETE_DRIVER",
+      "scope": "Accepted standalone and complete retained/new type driver. These type results do not qualify runtime behavior, whole prepush or other-host tuple equality.",
+      "subjectPins": [
+        {
+          "path": "tests/types/sequence-playback-diagnostic-expectations.json",
+          "bytes": 20603,
+          "sha256": "a67a5d7437f8fb3d6a927aa596e45730bf1ba2ddd20a06fcba68faf0b29baf36"
+        },
+        {
+          "path": "tools/sequence-playback-types.mjs",
+          "bytes": 14672,
+          "sha256": "d2c855765dd9fba50da9936d4e3a45bd6205b27cd8e8aebc0e1b13c7dbb184bb"
+        },
+        {
+          "path": "tools/check-types.mjs",
+          "bytes": 92356,
+          "sha256": "1d698b72bcb614a616cd26d1b10497185aa2bdfa5f1ef2a47300e51f259b20de"
+        }
+      ],
+      "compilerVersion": "7.0.2",
+      "positiveDiagnostics": 0,
+      "negativeDiagnostics": 27,
+      "importNegativeDiagnostics": 13,
+      "completeTuples": 40,
+      "uniqueAssignedMarkers": 40,
+      "continuationLines": 3,
+      "tupleFields": [
+        "file",
+        "line",
+        "column",
+        "code",
+        "completeMessage"
+      ],
+      "allFieldsAndOrderCompared": true,
+      "setupFailures": 0,
+      "extraOrUnlocatedDiagnostics": 0,
+      "childExitCodes": [
+        0,
+        1,
+        1
+      ],
+      "otherHostTupleEquality": "NOT_RUN",
+      "witnesses": [
+        {
+          "name": "type-gate-actual-review-r1.json",
+          "bytes": 5929,
+          "sha256": "0ca219e68cbd83a73dc6ccedb16805a550690cdf9480d37b2bcdedd9d1b29a01"
+        },
+        {
+          "name": "receipt.json",
+          "bytes": 816,
+          "sha256": "116d77dcb79aade34b30a3021deeb37bbd093b2c919faa287dd64d20d56030c1"
+        },
+        {
+          "name": "sequence-playback-live-type-gate.stdout.log",
+          "bytes": 21184,
+          "sha256": "9974bd932bc8f0ed7e77ad74809b2ce6c25fe7a49a4e8c0e7bc1a34c0ce6c130"
+        },
+        {
+          "name": "sequence-playback-live-type-gate.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "standaloneActor": {
+        "name": "sequence-playback-live-type-gate",
+        "startedAtUtc": "2026-10-12T22:14:03.6199894Z",
+        "finishedAtUtc": "2026-10-12T22:14:04.0738853Z",
+        "exitCode": 0,
+        "timeout": false,
+        "args": [
+          "tools/sequence-playback-types.mjs"
+        ]
+      },
+      "standaloneOuterActorCount": 1,
+      "integratedDriver": {
+        "status": "PASS_ACTUAL_COMPLETE_TYPES",
+        "actor": {
+          "name": "complete-retained-and-new-types",
+          "startedAtUtc": "2026-10-12T22:54:07.0481539Z",
+          "finishedAtUtc": "2026-10-12T22:54:13.6539832Z",
+          "exitCode": 0,
+          "timeout": false,
+          "args": [
+            "tools/check-types.mjs"
+          ]
+        },
+        "outerActorCount": 1,
+        "subjectPins": [
+          {
+            "path": "tests/types/sequence-playback-diagnostic-expectations.json",
+            "bytes": 20603,
+            "sha256": "a67a5d7437f8fb3d6a927aa596e45730bf1ba2ddd20a06fcba68faf0b29baf36"
+          },
+          {
+            "path": "tools/sequence-playback-types.mjs",
+            "bytes": 14672,
+            "sha256": "d2c855765dd9fba50da9936d4e3a45bd6205b27cd8e8aebc0e1b13c7dbb184bb"
+          },
+          {
+            "path": "tools/check-types.mjs",
+            "bytes": 92356,
+            "sha256": "1d698b72bcb614a616cd26d1b10497185aa2bdfa5f1ef2a47300e51f259b20de"
+          },
+          {
+            "path": "tests/types/sequence-playback-positive.ts",
+            "bytes": 3344,
+            "sha256": "4d76826aeed4a8f4feb1389314334aef5181b76e3a06fb7b058ac84d2e98ab83"
+          },
+          {
+            "path": "tests/types/tsconfig.sequence-playback-positive.json",
+            "bytes": 562,
+            "sha256": "73a42caf9ba4c4238511068f7826b0b606770125a0aadd38078ae54bd8f4a4a2"
+          },
+          {
+            "path": "tests/types/sequence-playback-negative.ts",
+            "bytes": 4732,
+            "sha256": "de7611109f76afd2ac6b954a69c4c1aa15fa4a1857b46d81ae1489e5da183e9b"
+          },
+          {
+            "path": "tests/types/tsconfig.sequence-playback-negative.json",
+            "bytes": 562,
+            "sha256": "9fdc2c38c3eca3d4fb65a4ae632c79011ae7bd26ef954d96e8929d9831227b86"
+          },
+          {
+            "path": "tests/types/sequence-playback-import-negative.ts",
+            "bytes": 1340,
+            "sha256": "1a10cda3aac9ffb6fc2468c939af176777a717e43377e8caf518317a1feb3819"
+          },
+          {
+            "path": "tests/types/tsconfig.sequence-playback-import-negative.json",
+            "bytes": 569,
+            "sha256": "a152ef3db540abeca5df727c3cf0071754494c0c28dec79788588d38dfa513b4"
+          }
+        ],
+        "productSubjectPointer": "/subject/productSourcePins",
+        "currentSubjectFileCount": 13,
+        "retainedPassSummaries": 16,
+        "retainedDiagnosticTotal": "NOT_SUMMED_OR_INFERRED",
+        "retainedDriverPrefixBytes": 92201,
+        "retainedDriverPrefixSha256": "8a0d80800e7e102ac0a51a00fdb4d19fa13b4d87e1ae046844f6ca862908e931",
+        "retainedPrefixWholeByteExact": true,
+        "delegationBytes": 155,
+        "newBlockLines": 48,
+        "newDiagnostics": {
+          "positive": 0,
+          "negative": 27,
+          "importNegative": 13,
+          "completeTuples": 40,
+          "uniqueMarkers": 40,
+          "continuationLines": 3,
+          "unconsumedNewLines": 0,
+          "setupFailures": 0
+        },
+        "currentSDKEmissionReadbacks": 318,
+        "identityScope": "Current physical readback equality to accepted inventory and successful guarded driver. No unstored type-actor-start/end emission snapshot or new SDK build is invented.",
+        "witnesses": [
+          {
+            "role": "independent complete type review",
+            "name": "integrated-types-actual-review-r1.json",
+            "bytes": 13615,
+            "sha256": "107835af33a8afb4b5060c501c5487ad14ce9d1100401a1dc6997ef024bbcac4"
+          },
+          {
+            "role": "complete type actor receipt",
+            "name": "receipt.json",
+            "bytes": 815,
+            "sha256": "0a0f5fe07c12ef2293516b50c7e5979fbe0ec94a905752176f2943a3134f5d07"
+          },
+          {
+            "role": "complete type stdout",
+            "name": "complete-retained-and-new-types.stdout.log",
+            "bytes": 283280,
+            "sha256": "d465768f9a3594af8495e5da94efa0dcdbc7a70676fcd2b30e0b5e56e29eca2f"
+          },
+          {
+            "role": "complete type stderr",
+            "name": "complete-retained-and-new-types.stderr.log",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      }
+    },
+    "policy": {
+      "sourceStatus": "PASS_SOURCE_ONLY",
+      "actualObservation": "SAVED_ACTORS_EXIT_ZERO",
+      "independentActualReview": "PASS_ACTUAL_POLICY_AND_OWNED_CONTROLS",
+      "scope": "Accepted source/emission policy and genuine-copy mutation controls only; no internal injected-runtime fault, physical retirement or native renderer qualification follows.",
+      "subjectPins": [
+        {
+          "path": "tools/sequence-playback-boundary.mjs",
+          "bytes": 27250,
+          "sha256": "4b82f6309b23481c9cb60bc62fcbab02ac803d0ebbc2e75b15530cb4be1538a0"
+        },
+        {
+          "path": "tools/verify.mjs",
+          "bytes": 581,
+          "sha256": "b51101a8e04f53ac5c400c16a0e7c1e03726b578b45b504a65116eb9f58de2af"
+        },
+        {
+          "path": "tests/sequence-playback-boundaries.test.mjs",
+          "bytes": 10270,
+          "sha256": "03d191b69370f0e49163e4b4134645b8f1d314412c03175769aa8a1434992f40"
+        }
+      ],
+      "actors": [
+        {
+          "name": "sequence-playback-specific-boundary",
+          "startedAtUtc": "2026-10-12T22:33:26.0010346Z",
+          "finishedAtUtc": "2026-10-12T22:33:26.0935341Z",
+          "exitCode": 0,
+          "timeout": false,
+          "args": [
+            "tools/sequence-playback-boundary.mjs"
+          ]
+        },
+        {
+          "name": "sequence-playback-owned-boundary-controls",
+          "startedAtUtc": "2026-10-12T22:33:26.1142699Z",
+          "finishedAtUtc": "2026-10-12T22:33:44.1239579Z",
+          "exitCode": 0,
+          "timeout": false,
+          "args": [
+            "--test",
+            "tests/sequence-playback-boundaries.test.mjs"
+          ]
+        }
+      ],
+      "counters": {
+        "tests": 5,
+        "suites": 0,
+        "pass": 5,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "controlledClasses": [
+        {
+          "id": "SQP-P01",
+          "code": "SEQP_BOUNDARY_PRIVATE_OWNER"
+        },
+        {
+          "id": "SQP-P02",
+          "code": "SEQP_BOUNDARY_TYPES_RUNTIME_VALUE"
+        },
+        {
+          "id": "SQP-P03",
+          "code": "SEQP_BOUNDARY_NONROOT_TYPES"
+        },
+        {
+          "id": "SQP-P04",
+          "code": "SEQP_BOUNDARY_AUTOMATIC_TIME"
+        }
+      ],
+      "protocol": "Fresh full genuine source/emission copy baseline before each assigned paired hunk, sole named refusal, whole-file inverse, complete snapshot equality and restored baseline; owned cleanup failures cannot qualify a target refusal.",
+      "witnesses": [
+        {
+          "role": "independent actual policy/control review",
+          "name": "policy-actual-review-r2.json",
+          "bytes": 10613,
+          "sha256": "d7e629352b3a57760de890636590c3513cdd1716767c1b01b326874ce81472dd"
+        },
+        {
+          "name": "policy-source-review-r2.json",
+          "bytes": 3451,
+          "sha256": "0dea7afd3f831578f69e431853d746780fe4d60fe8b660e80334ab87d27015e7"
+        },
+        {
+          "name": "receipt.json",
+          "bytes": 1683,
+          "sha256": "59443f1f245f956761471a01563f34a42af2b7714ddb02fa729e2be2e6d4b133"
+        },
+        {
+          "name": "sequence-playback-owned-boundary-controls.stdout.log",
+          "bytes": 951,
+          "sha256": "b4336c4fa4f31432a845a14d2cb50a6e0bee1b8cfd813365789c2d0888e879f8"
+        },
+        {
+          "name": "sequence-playback-specific-boundary.stdout.log",
+          "bytes": 177,
+          "sha256": "8ef23c19f039051ff5a9f285b0f684ef7f6e41db7139f697146691dc05e1469a"
+        },
+        {
+          "name": "sequence-playback-specific-boundary.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "sequence-playback-owned-boundary-controls.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "status": "PASS_ACTUAL_POLICY_AND_OWNED_CONTROLS"
+    },
+    "example": {
+      "status": "PASS_ACTUAL_CPU_EXAMPLE",
+      "scope": "Explicit-clock public command capture; renderer submission and native pixels NOT_RUN.",
+      "subjectPins": [
+        {
+          "path": "examples/sequence-playback-headless.mjs",
+          "bytes": 3294,
+          "sha256": "44cf97ee9ee9781da5dc9a23be2a967925f7561e9679d6c4f08904745afffa26"
+        }
+      ],
+      "actors": [
+        {
+          "name": "sequence-playback-example-syntax",
+          "startedAtUtc": "2026-10-12T22:17:25.9044218Z",
+          "finishedAtUtc": "2026-10-12T22:17:25.9645567Z",
+          "exitCode": 0,
+          "timeout": false,
+          "args": [
+            "--check",
+            "examples/sequence-playback-headless.mjs"
+          ]
+        },
+        {
+          "name": "sequence-playback-example",
+          "startedAtUtc": "2026-10-12T22:17:25.9794111Z",
+          "finishedAtUtc": "2026-10-12T22:17:26.0679295Z",
+          "exitCode": 0,
+          "timeout": false,
+          "args": [
+            "examples/sequence-playback-headless.mjs"
+          ]
+        }
+      ],
+      "observations": [
+        {
+          "label": "started-red",
+          "state": "running",
+          "elapsedSeconds": 0,
+          "sampleFrameIndex": 0
+        },
+        {
+          "label": "green",
+          "state": "running",
+          "elapsedSeconds": 0.125,
+          "sampleFrameIndex": 1
+        },
+        {
+          "label": "paused-green",
+          "state": "paused",
+          "elapsedSeconds": 0.125,
+          "sampleFrameIndex": 1
+        },
+        {
+          "label": "resumed-blue",
+          "state": "running",
+          "elapsedSeconds": 0.375,
+          "sampleFrameIndex": 2
+        },
+        {
+          "label": "completed-blue",
+          "state": "completed",
+          "elapsedSeconds": 0.5,
+          "sampleFrameIndex": 2
+        }
+      ],
+      "atlasLoads": 1,
+      "providerDisposalsAfterAwaitedEngineClose": 1,
+      "retainedFinalSampleAfterClose": true,
+      "noDiagnostics": "Assertions in the accepted unchanged example verified an empty diagnostic collection; diagnostics are not a stdout JSON field.",
+      "witnesses": [
+        {
+          "name": "example-actual-review-r1.json",
+          "bytes": 7037,
+          "sha256": "445b63ae497d4fe019364568b16a5b033ac3a711074b1fff803206723777d382"
+        },
+        {
+          "name": "receipt.json",
+          "bytes": 1630,
+          "sha256": "23c3ef41eaee0cc838015be7e70b9e57abcb2e9d0962e55929dc463f7bbba333"
+        },
+        {
+          "name": "sequence-playback-example-syntax.stdout.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "sequence-playback-example-syntax.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "sequence-playback-example.stdout.log",
+          "bytes": 2644,
+          "sha256": "91f908b3b299adcf032ef6a8a3390035e2a1fc1cc5b02b1f48de3e8cf62d0313"
+        },
+        {
+          "name": "sequence-playback-example.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "native": {
+      "sourceQualification": "PASS_SOURCE_ONLY",
+      "actual": "PASS_ACTUAL_NATIVE_OPAQUE_SUBSET",
+      "scope": "One saved owned Windows attempt of the opaque 8x4 Canvas/WebGPU matrix and original-frame replay, with independent actual review. New native observations do not confer unrelated internal fault or broader renderer/profile acceptance.",
+      "subjectPins": [
+        {
+          "path": "tools/sequence-playback/collector.mjs",
+          "bytes": 49694,
+          "sha256": "e42a1721c1e361bd19ad572200bef9fc5790b0953b9939aa4cb3a05680ca7478"
+        },
+        {
+          "path": "tools/sequence-playback/fixture.mjs",
+          "bytes": 27760,
+          "sha256": "21c75da98b60a429436ad97b4569c7a4cee00b2c2e2a30fa352bef8e451a2a5b"
+        },
+        {
+          "path": "tools/sequence-playback/oracle.mjs",
+          "bytes": 13134,
+          "sha256": "008d999fce8834ea43518bfe8402fea0f4ee0706691ff2c9f345d1eeafda0018"
+        },
+        {
+          "path": "tools/sequence-playback/file-graph.mjs",
+          "bytes": 9478,
+          "sha256": "6df225a735bbdb3badabfd751b77a47c84ad6a4b8125a3c37a439161faf957dc"
+        },
+        {
+          "path": "tools/sequence-playback/console-policy.mjs",
+          "bytes": 672,
+          "sha256": "2fb5b6e865ad1a374d003e36007a61cadcc9bd84f75221bd1bddecde66ef81d8"
+        },
+        {
+          "path": "tools/sequence-playback/README.md",
+          "bytes": 11129,
+          "sha256": "3c27d36d2f7e7f4cc7e8fac707965fe6414f419b0f81c4bf2ccadb523faaffa1"
+        },
+        {
+          "path": "tools/sequence-playback/README.zh-CN.md",
+          "bytes": 10352,
+          "sha256": "c6513385a15b7e0409b122978970c8a4da7c43a81f30b8847f1ae6f367afde50"
+        }
+      ],
+      "productSubjectPointer": "/subject/productSourcePins",
+      "actor": {
+        "name": "sequence-playback-native-owned-collection",
+        "startedAtUtc": "2026-10-12T22:44:39.8254199Z",
+        "finishedAtUtc": "2026-10-12T22:44:44.6518407Z",
+        "exitCode": 0,
+        "timeout": false
+      },
+      "outerActorCount": 1,
+      "publicFacts": {
+        "status": "PASS_SEQUENCE_PLAYBACK_OPAQUE_SUBSET",
+        "reviewVerdict": "PASS_ACTUAL_NATIVE_OPAQUE_SUBSET",
+        "openFindings": 0,
+        "submissions": 18,
+        "newCaptures": 16,
+        "replays": 2,
+        "captures": 18,
+        "pixels": 576,
+        "channels": 2304,
+        "mismatches": 0,
+        "tolerance": 0,
+        "backends": {
+          "canvasSubmissions": 9,
+          "webgpuSubmissions": 9,
+          "newCapturesPerBackend": 8,
+          "replaysPerBackend": 1
+        },
+        "defaultEnvironment": {
+          "node": "24.19.0",
+          "playwright": "1.62.1",
+          "playwrightCore": "1.62.1",
+          "browser": "Microsoft Edge",
+          "browserVersion": "155.0.4283.45",
+          "channel": "msedge",
+          "headless": true,
+          "addedFlags": [],
+          "browserEnvironmentOverride": false,
+          "userDataDirOverride": false,
+          "os": {
+            "platform": "win32",
+            "architecture": "x64",
+            "release": "10.0.26300"
+          }
+        },
+        "rig": {
+          "sourceImageWidth": 6,
+          "sourceImageHeight": 2,
+          "sourceImageChannels": 48,
+          "captureWidth": 8,
+          "captureHeight": 4,
+          "devicePixelRatio": 1,
+          "opaqueRectanglesAt": [
+            1,
+            1
+          ],
+          "redSize": [
+            2,
+            2
+          ],
+          "greenSize": [
+            1,
+            2
+          ],
+          "blueSize": [
+            3,
+            1
+          ],
+          "transparentExteriorChannels": 0,
+          "onceFrameSeconds": [
+            0.125,
+            0.25,
+            0.125
+          ],
+          "firstPartyLiteralFixture": true
+        },
+        "clock": {
+          "ticksPerBackend": 5,
+          "maxDeltaSeconds": 0.5,
+          "finalElapsedSeconds": 1.875,
+          "explicitTickDeltas": [
+            0.5,
+            0.5,
+            0.125,
+            0.5,
+            0.25
+          ],
+          "noImplicitCaptureAdvance": true
+        },
+        "retirement": {
+          "browserClosed": true,
+          "serverClosed": true,
+          "contextsClosed": 2,
+          "fixturesCompleted": 2,
+          "hostsClosedSafe": 4,
+          "quarantine": 0,
+          "pendingStartup": 0,
+          "pendingNative": 0,
+          "pendingGPUFrames": 0,
+          "pendingGPUUploadBytes": 0,
+          "pendingGPUReadbackBytes": 0,
+          "cleanupErrors": 0,
+          "fixtureDiagnostics": 0,
+          "fixtureEvents": 0
+        },
+        "resources": {
+          "providerLoadsPerBackend": 1,
+          "providerDisposalsPerBackend": 1,
+          "borrowedBitmapAndLeaseLiveAfterPlaybackScopeClose": true,
+          "callerRetiredOwnResources": true,
+          "cachedSamplesRetainedIdentical": true,
+          "savedOriginalFrameReplayed": true,
+          "distinctReplayHosts": true,
+          "distinctWebGPUReplayDevice": true,
+          "gpuDevicesAcquired": 2,
+          "gpuDevicesDestroyedAfterSafeHostClose": 2,
+          "deviceLossSettledDestroyed": 2
+        },
+        "adapterReportedMetadata": {
+          "vendor": "nvidia",
+          "architecture": "blackwell",
+          "device": "",
+          "description": "",
+          "scope": "Reported adapter strings only; no hardware acceleration, physical scanout or performance inference"
+        },
+        "osProcessClosure": {
+          "jobAssigned": true,
+          "bootstrapMembershipComplete": true,
+          "ackAfterAssignment": true,
+          "retainedWorkerHandle": true,
+          "naturalActiveZero": true,
+          "jobClosed": true,
+          "workerExit": 0,
+          "collectorExit": 0,
+          "actorExit": 0,
+          "timeout": false,
+          "fallback": false,
+          "rawEOFComplete": true,
+          "rawOverflow": false,
+          "lateWork": 0,
+          "quarantine": 0,
+          "observedCumulativeJobProcesses": 15,
+          "scope": "One owned Windows Job attempt; cumulative total is not a process peak or a general PID scan",
+          "forcedTerminationEvents": 0
+        },
+        "advisoryCount": 1,
+        "performanceClaim": false,
+        "fullA2": false,
+        "alphaCalibration": false,
+        "limits": [
+          "Only the saved Canvas and WebGPU opaque 8x4 sequence-playback matrix and original-frame replay are qualified",
+          "No full Spine, migration, full profile, 3D, UI, font, alpha calibration, phone, hardware scanout, performance, license entitlement or remote CI qualification",
+          "No current Git clean state or newly read Git revision is attested"
+        ]
+      },
+      "modelReadback": {
+        "onceTerminalElapsedSeconds": 0.5,
+        "loopFinalElapsedSeconds": 0.875,
+        "loopFinalSamplePositionSeconds": 0.375,
+        "pausedResumedHeldSampleIdentity": true,
+        "savedFramesAndSamplesFrozen": true,
+        "originalImageIdentityRetained": true,
+        "noResamplingForReplay": true,
+        "deviceDestroyOrderingAuthority": "Accepted fixture source checks fulfilled safe host close before destroy; saved retirement snapshots show fulfilled close and destroyed device loss, not independent per-device timestamp traces"
+      },
+      "closedModuleGraph": {
+        "modules": 102,
+        "canvasClosureModules": 67,
+        "webgpuClosureModules": 98,
+        "exactEdgesAndPins": true,
+        "onlyAdmittedGETRoutes": true,
+        "unselectedRequests": 0,
+        "unexpectedBrowserMessages": 0
+      },
+      "inputIdentity": {
+        "selectedBeforeAfterTuplesEqual": true,
+        "compilerBeforeAfterWholeRecordsEqual": true,
+        "currentProductSources": 4,
+        "currentNativeToolFiles": 7,
+        "SDKBuildBound": true,
+        "scope": "Selected source/build/config/compiler and endpoint identities only; no current Git clean state or unstored snapshot is asserted."
+      },
+      "witnesses": [
+        {
+          "role": "independent native actual review",
+          "name": "native-actual-review-r1.json",
+          "bytes": 32597,
+          "sha256": "bfda1f0d94b34aba9fd6c5cb196613a34fdc5d13dc26362d7def04b05f9b16e9"
+        },
+        {
+          "role": "native actor receipt",
+          "name": "receipt.json",
+          "bytes": 945,
+          "sha256": "f12778274c7ebd57e17dfb7763c18c29a7f164143d1e8e044555cb2b1deeac46"
+        },
+        {
+          "role": "native actor stdout",
+          "name": "sequence-playback-native-owned-collection.stdout.log",
+          "bytes": 108,
+          "sha256": "aba8e6fe1c7defea4e7cf697ef58159b544d843637776b35a2eeefa11bfe19df"
+        },
+        {
+          "role": "native actor stderr",
+          "name": "sequence-playback-native-owned-collection.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "role": "native matrix result",
+          "name": "result.json",
+          "bytes": 182230,
+          "sha256": "f1f1f6014c4363a877a68764b5299e687cb48a0b68ffe7c0ae5994192439ce5b"
+        },
+        {
+          "role": "selected inputs before collection",
+          "name": "identity-before.json",
+          "bytes": 265218,
+          "sha256": "8f1f08c0a98c2fd81c033df3b60c8fe5e494f36a99d20da73963156c398c3d18"
+        },
+        {
+          "role": "selected inputs after collection",
+          "name": "identity-after.json",
+          "bytes": 240019,
+          "sha256": "d665260ae0e7e4849678e1d9f4e56e0b38d076d0a14372f9e01fddae4ac90fb6"
+        },
+        {
+          "role": "compiler owner before collection",
+          "name": "compiler-owner-before.json",
+          "bytes": 10224,
+          "sha256": "2cf83c87bf6c82e3ffbd31e6db1803134e4dd1ee2010964d216785b2a8bdd9c1"
+        },
+        {
+          "role": "compiler owner after collection",
+          "name": "compiler-owner-after.json",
+          "bytes": 10224,
+          "sha256": "2cf83c87bf6c82e3ffbd31e6db1803134e4dd1ee2010964d216785b2a8bdd9c1"
+        },
+        {
+          "role": "actual build admission binding",
+          "name": "admission-binding.json",
+          "bytes": 14626,
+          "sha256": "9c05b077ed6a9b2b3737970189dcff7b57185809ffcb29f721f18e888aa8af2f"
+        },
+        {
+          "role": "closed module graph",
+          "name": "module-graph.json",
+          "bytes": 156320,
+          "sha256": "14329f4958e00cb3659f7a6aed0663ee270ac34a7f3e0abbb22200d30592655f"
+        },
+        {
+          "role": "admitted request trace",
+          "name": "requests.json",
+          "bytes": 53803,
+          "sha256": "273a4d81cb02d79acaa101830417aa3b32067ff4f8f976700253e2fa0f4facc5"
+        },
+        {
+          "role": "browser console/events",
+          "name": "browser-events.json",
+          "bytes": 416,
+          "sha256": "b5de42ad46520ef6e0c9c10d9fa75e482788c52fbc80af898d7da1f252d2fff8"
+        },
+        {
+          "role": "literal matrix oracle",
+          "name": "oracle-manifest.json",
+          "bytes": 19075,
+          "sha256": "bd98148b4416edc4be359831058f74b43acfb6bf523fb4f23d6a7e51d39898a5"
+        }
+      ]
+    },
+    "controlledRuntimeFaults": {
+      "status": "PENDING",
+      "scope": "Internal injected-runtime fault controls remain unqualified. Accepted policy mutations alter source/emission copies; accepted public prototype-replacement tests are CPU lifecycle behavior. Neither substitutes for internal fault injection or physical GPU retirement."
+    },
+    "completeGates": {
+      "status": "PENDING",
+      "completeTypeDriver": "PASS_ACTUAL_COMPLETE_TYPES",
+      "completeIntegratedVerifier": "PENDING",
+      "retainedWholeBoundarySuite": "PENDING",
+      "fullPrepush": "PENDING",
+      "pushHook": "PENDING",
+      "scope": "Complete types are accepted separately; no whole-repository prepush or delivery conclusion follows."
+    },
+    "delivery": {
+      "status": "PENDING",
+      "push": "PENDING",
+      "pullRequest": "PENDING",
+      "main": "PENDING",
+      "scope": "No new remote delivery is claimed."
+    }
+  },
+  "namedCapabilityHistory": {
+    "status": "QUALIFIED_EXPECTED_MISSING_FACTORY_BEFORE_IMPLEMENTATION",
+    "scope": "The original capability check completed genuine Engine/manual-player/resource/clock controls and teardown; its assigned refusal established only that the Engine instance factory was missing. Initialization, module setup or cleanup errors are not capability refusals and are not counted as accepted product controls.",
+    "witness": {
+      "name": "baseline-and-named-red-actual-review-r1.json",
+      "bytes": 23117,
+      "sha256": "66429fa13075713b2a841439edde91e0876a8a0d42f92b6666a451346fb9f0a4"
+    }
+  },
+  "openRequirements": [
+    {
+      "id": "R020/V020",
+      "status": "OPEN",
+      "scope": "Full Spine runtime/adapter feature matrix and skeleton integration."
+    },
+    {
+      "id": "R008/V006",
+      "status": "OPEN",
+      "scope": "Complete legacy MovieClip migration."
+    }
+  ],
+  "excludedClaims": [
+    "labels and frame events",
+    "playback rate or finite loop counts",
+    "seek/reset controller API",
+    "trimmed/rotated atlas support",
+    "complete UI",
+    "full Spine or skeleton integration",
+    "complete MovieClip equivalence",
+    "phone or native SDK acceptance",
+    "hardware performance",
+    "physical memory/GC or immediate GPU retirement",
+    "third-party entitlement"
+  ],
+  "provenance": {
+    "implementation": "First-party AI-assisted Egret source and documentation",
+    "license": "Apache-2.0",
+    "thirdPartyAnimationImplementationIncorporated": false,
+    "existingDependencyNoticesRemainApplicable": true
+  },
+  "history": "Prior R1 source/actual pending cutoffs and original execution/review records remain immutable. R2 records separately accepted policy, complete types and the bounded native subset; internal injected faults, full prepush and 0.44.0 remote delivery remain pending.",
+  "readingDate": {
+    "localDate": "2026-10-13",
+    "timezone": "Asia/Kuala_Lumpur",
+    "executionTimestampConvention": "Saved actor timestamps remain UTC on 2026-10-12; local reading date is not substituted for execution dates."
+  },
+  "proposedTracking": {
+    "sourceId": "S097",
+    "verificationId": "V048",
+    "registryStatus": "PENDING_REGISTRATION",
+    "scope": "Proposed metadata identifiers at this reading draft cutoff; this file does not register them."
+  }
+}

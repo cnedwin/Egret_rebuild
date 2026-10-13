@@ -1,0 +1,333 @@
+{
+  "schemaVersion": 1,
+  "engineeringLabel": "0.44.0",
+  "sourceId": "S097",
+  "deliverableId": "V048",
+  "status": "CURATION_CANDIDATE_PENDING_INDEPENDENT_PUBLIC_REVIEW_AND_FULL_GATES",
+  "capabilityRecord": "evidence/sequence-playback-verification.json",
+  "currentLaneSummary": {
+    "engineeringLabel": "0.44.0",
+    "sourceId": "S097",
+    "deliverableId": "V048",
+    "status": "FINITE_SEQUENCE_PLAYBACK_SOURCE_CPU_TYPES_POLICY_EXAMPLE_NATIVE_ACCEPTED_PUBLICATION_PENDING",
+    "record": "evidence/sequence-playback-verification.json",
+    "method": "Engine.createSequencePlayback",
+    "erasedTypes": [
+      "SequencePlayback",
+      "SequencePlaybackOptions",
+      "SequencePlaybackState"
+    ],
+    "newRootValues": 0,
+    "newDependencies": false,
+    "newPublicSubpaths": false,
+    "cpu": {
+      "tests": 41,
+      "pass": 41,
+      "sourceFamilies": 25
+    },
+    "types": {
+      "positiveDiagnostics": 0,
+      "negativeDiagnostics": 27,
+      "importNegativeDiagnostics": 13,
+      "exactTuples": 40
+    },
+    "integratedTypes": {
+      "exitCode": 0,
+      "status": "INDEPENDENT_ACTUAL_ACCEPTED"
+    },
+    "policy": {
+      "tests": 5,
+      "assignedControls": 4
+    },
+    "example": {
+      "rows": 5,
+      "loads": 1,
+      "disposals": 1
+    },
+    "native": {
+      "submissions": 18,
+      "newCaptures": 16,
+      "replays": 2,
+      "pixels": 576,
+      "channels": 2304,
+      "tolerance": 0
+    },
+    "fullPrepush": "PENDING_AT_CURATION_CUTOFF",
+    "mandatoryPushHook": "PENDING_AT_CURATION_CUTOFF",
+    "pullRequest": "PENDING_AT_CURATION_CUTOFF",
+    "Main": "PENDING_AT_CURATION_CUTOFF",
+    "remoteCI": "PENDING",
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "licenseEntitlement": "unverified",
+    "historicalCutoffsPreserved": true
+  },
+  "previousDelivery": {
+    "engineeringLabel": "0.43.0",
+    "status": "ACTUAL_0_43_DELIVERY_SUCCESSOR",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/30",
+    "merged": true,
+    "Main": "ced3ef008b8c37868c6d1a505a02737451d937e1",
+    "tree": "c42eddecfa6737d12a3093ba0a4067aa9326d702",
+    "mandatoryPushHook": {
+      "publicationTests": 63,
+      "coreTests": 2748,
+      "experimentTests": 160
+    },
+    "remoteStatusCount": 0,
+    "remoteCheckRuns": 0,
+    "remoteCIPassClaim": false,
+    "independentActualReview": {
+      "witness": "priorDelivery",
+      "bytes": 10345,
+      "sha256": "b94f8ee5a66abb5a37474f02d0ff67e5dc6331eb347d4471b39e43cb1c031569"
+    },
+    "historicalPendingCutoffsPreserved": true
+  },
+  "independentSavedReviews": {
+    "buildCpu": {
+      "witness": "buildCpu",
+      "bytes": 7469,
+      "sha256": "09f780466f6e58e773f23fb6c127598ec74c8c1f10351c5ad3de9a910b666f99"
+    },
+    "typesActual": {
+      "witness": "typesActual",
+      "bytes": 5929,
+      "sha256": "0ca219e68cbd83a73dc6ccedb16805a550690cdf9480d37b2bcdedd9d1b29a01"
+    },
+    "policyActual": {
+      "witness": "policyActual",
+      "bytes": 10613,
+      "sha256": "d7e629352b3a57760de890636590c3513cdd1716767c1b01b326874ce81472dd"
+    },
+    "exampleActual": {
+      "witness": "exampleActual",
+      "bytes": 7037,
+      "sha256": "445b63ae497d4fe019364568b16a5b033ac3a711074b1fff803206723777d382"
+    },
+    "nativeActual": {
+      "witness": "nativeActual",
+      "bytes": 32597,
+      "sha256": "bfda1f0d94b34aba9fd6c5cb196613a34fdc5d13dc26362d7def04b05f9b16e9"
+    },
+    "readings": {
+      "witness": "readings",
+      "bytes": 8334,
+      "sha256": "d8e7d1903983d4ada3697c78b0248b2d5973d5acd0d4075626dbbd109c025b2f"
+    }
+  },
+  "actualEnvironment": {
+    "browserVersion": "155.0.4283.45",
+    "playwrightVersion": "1.62.1",
+    "osVersion": "10.0.26300",
+    "additionalFlags": [],
+    "physicalHardware": "UNOBSERVED"
+  },
+  "KBStructuralVerification": "PENDING_ROOT_ACTUAL_CHECK",
+  "completePrepush": "PENDING",
+  "mandatoryPushHook": "PENDING",
+  "pullRequest": "PENDING",
+  "Main": "PENDING",
+  "remoteCI": "PENDING",
+  "firstParty": {
+    "license": "Apache-2.0",
+    "design": "Original Egret first-party design and AI-assisted implementation; external dependencies retain separate provenance.",
+    "upstreamSpinePayloadBundled": false
+  },
+  "authorExecutedProductOrBrowser": false,
+  "historicalPendingCutoffsPreserved": true,
+  "fullPrepushFailedAttemptR1": {
+    "status": "R1_FAILED_KB_BOUNDARY",
+    "authority": "INDEPENDENT_SAVED_ACTUAL_FAILURE_CLASSIFICATION",
+    "independentReview": {
+      "name": "full-prepush-failure-actual-review-r1.json",
+      "bytes": 14935,
+      "sha256": "cb0ee3da2722906ba5927e5d7ebae4918cca4d7ca31bd589b1073fe6d57e4b6b",
+      "verdict": "PASS_ACTUAL_FAILURE_CLASSIFICATION",
+      "scope": "Accepts actual failure classification only; full prepush and release acceptance are false."
+    },
+    "startedAtUtc": "2026-10-12T23:36:45.1615314Z",
+    "finishedAtUtc": "2026-10-12T23:41:09.3014979Z",
+    "exitCode": 1,
+    "timeout": false,
+    "knowledgeBaseIssueCount": 30,
+    "issueClass": "LOCAL_REFERENCE_LEAVES_KNOWLEDGE_BASE",
+    "completePrototypeMarker": true,
+    "completePrepushMarker": false,
+    "suiteSummaries": [
+      {
+        "tests": 63,
+        "pass": 63,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      {
+        "tests": 2794,
+        "pass": 2794,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      {
+        "tests": 160,
+        "pass": 160,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    ],
+    "witnesses": [
+      {
+        "name": "full-prepush-failure-summary-r1.json",
+        "bytes": 5468,
+        "sha256": "c342c301529ecc1a4c24a393ccb49a55cb6e2da61cc278279d4985cb7badd96f"
+      },
+      {
+        "name": "receipt.json",
+        "bytes": 803,
+        "sha256": "4c2cada579475a72420e8c16cab7566f32e765426afc3be42cd91268b3ab94b0"
+      },
+      {
+        "name": "complete-prepush-current-source.stdout.log",
+        "bytes": 682056,
+        "sha256": "f530d3838c262e85dd584130e169aac92ef8f9140134de2dd0f062c953c379b8"
+      },
+      {
+        "name": "complete-prepush-current-source.stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "repairCandidate": "SOURCE_ONLY_NOT_VERIFIED",
+    "fullPrepushAcceptance": "PENDING"
+  },
+  "currentKBLinkRepairReadingSuccessor": {
+    "engineeringLabel": "0.44.0",
+    "status": "SOURCE_ONLY_KB_LINK_REPAIR_PENDING_INDEPENDENT_REVIEW_AND_ACTUAL_CHECK",
+    "method": "Only 30 code-file Markdown links become retained labels plus inline repository-relative paths. Validator and meaning/figures/history are unchanged.",
+    "changedMarkdownFiles": 10,
+    "changedCodeLinks": 30,
+    "historicalAcceptedFiveReadingPins": [
+      {
+        "path": "knowledge-base/en/docs/sequence-playback-contract.md",
+        "bytes": 9656,
+        "sha256": "74cc695d102d78a772817d10334b30d7049a260990cf89830bb4f22a13ecdad0"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/时钟驱动序列动画契约.md",
+        "bytes": 8600,
+        "sha256": "c1bcb65669324a287f42cae58271321416bf81c44c1e494beb10081710fd8536"
+      },
+      {
+        "path": "knowledge-base/en/docs/sequence-playback-evidence.md",
+        "bytes": 10148,
+        "sha256": "5245804a4589a0eda717542d242184897a642a4e84640f4f1fa123b5bc059889"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/时钟驱动序列动画证据.md",
+        "bytes": 9357,
+        "sha256": "c1fa51a780f323f86c5b78e070934856a2048ac773a8d8b8cbb4345cd5715fd8"
+      },
+      {
+        "path": "knowledge-base/evidence/sequence-playback-verification.json",
+        "bytes": 35824,
+        "sha256": "156870054ed35cd00b8cf3de38f8a6048646c91686f5623f61888c295ea55ba8"
+      }
+    ],
+    "historicalReview": {
+      "witness": "public-readings-source-review-r2",
+      "bytes": 8334,
+      "sha256": "d8e7d1903983d4ada3697c78b0248b2d5973d5acd0d4075626dbbd109c025b2f",
+      "scope": "Accepts the historical five pins only; no acceptance of repaired current bytes is implied."
+    },
+    "currentFiveReadingPins": [
+      {
+        "path": "knowledge-base/en/docs/sequence-playback-contract.md",
+        "bytes": 9648,
+        "sha256": "b7360a13a2e7b653d4dbf718311d4b846c7369574983ecd9f34521cd83c4e9cd"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/时钟驱动序列动画契约.md",
+        "bytes": 8592,
+        "sha256": "01f236961836641690317db6ba076bc5b8c7a13a755348d7ab40fc083d7e5e83"
+      },
+      {
+        "path": "knowledge-base/en/docs/sequence-playback-evidence.md",
+        "bytes": 10068,
+        "sha256": "b3871dcf8dd4eb76165ab68bbbf767a1027b5f3671f8ee257c2dc2ad60761cc2"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/时钟驱动序列动画证据.md",
+        "bytes": 9277,
+        "sha256": "3602d358896e825d36959bda7a8b2ec68e231c87d8117b075eb7617e1ac81582"
+      },
+      {
+        "path": "knowledge-base/evidence/sequence-playback-verification.json",
+        "bytes": 35824,
+        "sha256": "156870054ed35cd00b8cf3de38f8a6048646c91686f5623f61888c295ea55ba8"
+      }
+    ],
+    "currentMarkdownPins": [
+      {
+        "path": "knowledge-base/en/README.md",
+        "bytes": 40417,
+        "sha256": "790751edc5b7e66e6031f9e24e920a18a544f3623db0a4bedcf7de1fac073ee3"
+      },
+      {
+        "path": "knowledge-base/Cns/README.md",
+        "bytes": 36744,
+        "sha256": "bbf48371034b7494cba0e6ad91d70ed9cfa3a30eb7501319a6e2815176008f3b"
+      },
+      {
+        "path": "knowledge-base/en/CHANGELOG.md",
+        "bytes": 70953,
+        "sha256": "ec4f89dfbd1cec1c7ed0f575df0e540956e2921596c4c1dc5552f31eb5fc6b51"
+      },
+      {
+        "path": "knowledge-base/Cns/CHANGELOG.md",
+        "bytes": 61229,
+        "sha256": "19a8d0330265302f87dc011700175d9ad384dee262ec40b5bc7e7d3ffe85608f"
+      },
+      {
+        "path": "knowledge-base/en/docs/core-progress.md",
+        "bytes": 37257,
+        "sha256": "759a972beddcffb99e5819f002d975b70ae02c07fbdb3ad02a825c63999f6b5c"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/core-progress.md",
+        "bytes": 33449,
+        "sha256": "2928cea33c19dd353563e4a131af97c3a3ec5f16f6a0fe804157d45b7ef02951"
+      },
+      {
+        "path": "knowledge-base/en/docs/sequence-playback-contract.md",
+        "bytes": 9648,
+        "sha256": "b7360a13a2e7b653d4dbf718311d4b846c7369574983ecd9f34521cd83c4e9cd"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/时钟驱动序列动画契约.md",
+        "bytes": 8592,
+        "sha256": "01f236961836641690317db6ba076bc5b8c7a13a755348d7ab40fc083d7e5e83"
+      },
+      {
+        "path": "knowledge-base/en/docs/sequence-playback-evidence.md",
+        "bytes": 10068,
+        "sha256": "b3871dcf8dd4eb76165ab68bbbf767a1027b5f3671f8ee257c2dc2ad60761cc2"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/时钟驱动序列动画证据.md",
+        "bytes": 9277,
+        "sha256": "3602d358896e825d36959bda7a8b2ec68e231c87d8117b075eb7617e1ac81582"
+      }
+    ],
+    "independentCurrentSourceReview": "PENDING",
+    "KBTargetedActual": "NOT_RUN",
+    "fullPrepush": "PENDING",
+    "mandatoryPushHook": "PENDING",
+    "delivery": "PENDING",
+    "historicalCutoffsRetained": true
+  }
+}

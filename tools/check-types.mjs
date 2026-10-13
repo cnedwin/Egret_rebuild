@@ -941,3 +941,8 @@ try{
 })(nsFrozenInventory, nsTools);
 }
 // NS1_TYPES_END
+
+// SEQP_TYPES_BEGIN
+// Delegate only after every retained type gate above has completed.
+await import('./sequence-playback-types.mjs');
+// SEQP_TYPES_END

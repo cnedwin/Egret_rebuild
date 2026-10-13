@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "version": "0.43.0",
+  "version": "0.44.0",
   "updatedAt": "2026-10-12",
-  "title": "Egret Engine community rebuild — Spine linear source profile F2-B",
-  "stage": "bounded_spine_linear_source_profile_cpu_types_policy_development_accepted_publication_pending",
+  "title": "Egret Engine community rebuild — Engine-clock sequence playback",
+  "stage": "finite_sequence_playback_native_accepted_publication_pending",
   "publication": "development_preview",
   "registries": {
     "requirements": "en/registry/requirements.json",
@@ -214,7 +214,7 @@
   },
   "engineeringSpecificationOnlyThisRevision": false,
   "userDesignObjectiveConfirmedThisRevision": true,
-  "newExperimentScopeThisRevision": "An explicit shared-owner WebGPU host composes genuine opaque RGB scene and captured textured UI; CPU source/tests/types/assigned boundaries are accepted at this cutoff, while native pixels, full gates and publication are pending. No complete character/material/lighting/transparent-scene, phone/performance/native SDK or whole-product acceptance. FullSpine R020/V020 and migration R008/V006 remain OPEN.",
+  "newExperimentScopeThisRevision": "Engine.createSequencePlayback and 3 erased types add bounded Scope-owned explicit-clock sequence control with accepted CPU/types/policy/example and native browser observations. No new root value, dependency or public subpath. Current complete gates, push hook and PR/Main are pending; full Spine R020/V020 and migration R008/V006 remain OPEN.",
   "existingResearchExperimentsRerunThisRevision": false,
   "coreFrameworkImplementation": {
     "artifactRoot": "outputs/白鹭引擎核心框架原型",
@@ -264,7 +264,7 @@
   },
   "_localization": {
     "canonicalSource": "当前版本.json",
-    "canonicalSha256": "0feba3376947feca504a4e45fc8285968d9415d45cec4e33b151640863a5a136",
+    "canonicalSha256": "707bdf8caedbbf114ec7da78233160f18b1150aa56b258c82f081b46b8a5adc5",
     "role": "read_only_translation",
     "language": "en"
   },
@@ -547,7 +547,7 @@
     "contract": "en/docs/display-content-bounds-contract.md",
     "evidence": "en/docs/display-content-bounds-evidence.md"
   },
-  "latestEngineeringPreview": "0.43.0",
+  "latestEngineeringPreview": "0.44.0",
   "texturedMesh2DImplementation": {
     "version": "0.23.0",
     "status": "bounded_increment_implemented",
@@ -3284,5 +3284,91 @@
       "sha256": "cfe0a836962c137db63741c2546f2c720a97467be7b9a6e7733cde1729b64013"
     },
     "historicalPendingCutoffsRetained": true
+  },
+  "sequencePlaybackPreviousCheckpoint": {
+    "version": "0.43.0",
+    "title": "Egret Engine community rebuild — Spine linear source profile F2-B",
+    "stage": "bounded_spine_linear_source_profile_cpu_types_policy_development_accepted_publication_pending",
+    "updatedAt": "2026-10-12",
+    "newExperimentScopeThisRevision": "An explicit shared-owner WebGPU host composes genuine opaque RGB scene and captured textured UI; CPU source/tests/types/assigned boundaries are accepted at this cutoff, while native pixels, full gates and publication are pending. No complete character/material/lighting/transparent-scene, phone/performance/native SDK or whole-product acceptance. FullSpine R020/V020 and migration R008/V006 remain OPEN."
+  },
+  "sequencePlaybackActualSuccessor": {
+    "engineeringLabel": "0.44.0",
+    "sourceId": "S097",
+    "deliverableId": "V048",
+    "status": "FINITE_SEQUENCE_PLAYBACK_SOURCE_CPU_TYPES_POLICY_EXAMPLE_NATIVE_ACCEPTED_PUBLICATION_PENDING",
+    "record": "evidence/sequence-playback-verification.json",
+    "method": "Engine.createSequencePlayback",
+    "erasedTypes": [
+      "SequencePlayback",
+      "SequencePlaybackOptions",
+      "SequencePlaybackState"
+    ],
+    "newRootValues": 0,
+    "newDependencies": false,
+    "newPublicSubpaths": false,
+    "cpu": {
+      "tests": 41,
+      "pass": 41,
+      "sourceFamilies": 25
+    },
+    "types": {
+      "positiveDiagnostics": 0,
+      "negativeDiagnostics": 27,
+      "importNegativeDiagnostics": 13,
+      "exactTuples": 40
+    },
+    "integratedTypes": {
+      "exitCode": 0,
+      "status": "INDEPENDENT_ACTUAL_ACCEPTED"
+    },
+    "policy": {
+      "tests": 5,
+      "assignedControls": 4
+    },
+    "example": {
+      "rows": 5,
+      "loads": 1,
+      "disposals": 1
+    },
+    "native": {
+      "submissions": 18,
+      "newCaptures": 16,
+      "replays": 2,
+      "pixels": 576,
+      "channels": 2304,
+      "tolerance": 0
+    },
+    "fullPrepush": "PENDING_AT_CURATION_CUTOFF",
+    "mandatoryPushHook": "PENDING_AT_CURATION_CUTOFF",
+    "pullRequest": "PENDING_AT_CURATION_CUTOFF",
+    "Main": "PENDING_AT_CURATION_CUTOFF",
+    "remoteCI": "PENDING",
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "licenseEntitlement": "unverified",
+    "historicalCutoffsPreserved": true
+  },
+  "spineLinearProfileF2BDeliveryActualSuccessor": {
+    "engineeringLabel": "0.43.0",
+    "status": "ACTUAL_0_43_DELIVERY_SUCCESSOR",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/30",
+    "merged": true,
+    "Main": "ced3ef008b8c37868c6d1a505a02737451d937e1",
+    "tree": "c42eddecfa6737d12a3093ba0a4067aa9326d702",
+    "mandatoryPushHook": {
+      "publicationTests": 63,
+      "coreTests": 2748,
+      "experimentTests": 160
+    },
+    "remoteStatusCount": 0,
+    "remoteCheckRuns": 0,
+    "remoteCIPassClaim": false,
+    "independentActualReview": {
+      "witness": "priorDelivery",
+      "bytes": 10345,
+      "sha256": "b94f8ee5a66abb5a37474f02d0ff67e5dc6331eb347d4471b39e43cb1c031569"
+    },
+    "historicalPendingCutoffsPreserved": true
   }
 }

@@ -1,0 +1,643 @@
+{
+  "schemaVersion": 1,
+  "kind": "SEQUENCE_PLAYBACK_ACTUAL_STRICT_CONSUMER_DIAGNOSTICS",
+  "status": "SAVED_ACTUAL_DATA_FROZEN_REUSABLE_GATE_NOT_RUN",
+  "compiler": {
+    "name": "typescript",
+    "version": "7.0.2",
+    "entry": "node_modules/typescript/bin/tsc",
+    "pins": [
+      {
+        "path": "node_modules/typescript/package.json",
+        "bytes": 3087,
+        "sha256": "3722b30210616a13a3213ded11575ba6b2dbab10c32a5ef67afca8513e27017e"
+      },
+      {
+        "path": "node_modules/typescript/bin/tsc",
+        "bytes": 44,
+        "sha256": "2219f428a7e55aaf1f7ad85b9b0f0cf5078aeb76ccc9a7c6036c92d48f492ffd"
+      },
+      {
+        "path": "node_modules/typescript/lib/tsc.js",
+        "bytes": 609,
+        "sha256": "cbdfbf11c26ed00dfc073155e316a42d6d6d8a387be61006b82fa9aa93ac572e"
+      },
+      {
+        "path": "node_modules/typescript/lib/getExePath.js",
+        "bytes": 3051,
+        "sha256": "96c10fd3a18e165d7323de8e314ac8d755ad96811f9fbc304a5b3ba4e05285cc"
+      },
+      {
+        "path": "pnpm-lock.yaml",
+        "bytes": 9017,
+        "sha256": "79383095fd4bb2bb4682a12f9651d9a876a01fc6dc1326d09bc0ad587db23084"
+      }
+    ],
+    "hostBoundary": "Saved native hashes describe the observed win32-x64 actor only. The reusable gate resolves the standard current platform/arch package under installed dependencies, requires locked 7.0.2 metadata, records its actual binary hash, and runs the same complete tuple checks. Other-host results remain NOT_RUN until actually observed.",
+    "observedNative": {
+      "platform": "win32",
+      "arch": "x64",
+      "package": "@typescript/typescript-win32-x64",
+      "pins": [
+        {
+          "path": "package.json",
+          "bytes": 1042,
+          "sha256": "6d8ec7623880a902bb225c53571112e2bbf0273412b2c534070b1193d2be0f6b"
+        },
+        {
+          "path": "lib/tsc.exe",
+          "bytes": 24520544,
+          "sha256": "f9ecfbdc93753d2c972d66a8d0d75f5bd737fd4a5f88b422d9091ea282bcb2c7"
+        }
+      ]
+    }
+  },
+  "configurationPins": [
+    {
+      "path": "tsconfig.base.json",
+      "bytes": 446,
+      "sha256": "b7a31fb9f93a93e20bfdcf33c135acb45cb3a6895a8b3e7006bd85214ddc1008"
+    },
+    {
+      "path": "tests/types/tsconfig.json",
+      "bytes": 224,
+      "sha256": "e378996174db2020f9c416fb0599ea1182b3ca3265b3dc56012a688fd3252ad9"
+    },
+    {
+      "path": "tests/types/tsconfig.dom-free.json",
+      "bytes": 56,
+      "sha256": "24bc13fae1f9d98b5d2dc212c9fb4f1f926aeb956f706d8269acbd617c900b49"
+    }
+  ],
+  "tupleFormat": [
+    "file",
+    "line",
+    "column",
+    "code",
+    "completeMessage"
+  ],
+  "messagePolicy": "Messages are the complete saved compiler text, including exact continuation indentation and LF separators. No message projection, trimming, or substring matching.",
+  "filePolicy": "Normalize directory separators; only an exact current repository-root prefix may be removed from an absolute diagnostic filename. No other path projection.",
+  "markerPolicy": "Exactly one unique SEQP_TYPE_CASE marker immediately precedes each assigned bad statement; one actual tuple at that statement is required per marker. Counts are derived from the pinned sources.",
+  "curation": {
+    "savedStdoutFullyConsumed": true,
+    "negativeHeaders": 27,
+    "importHeaders": 13,
+    "continuationLines": 3,
+    "absoluteRootMessageProjectionApplied": false,
+    "originalMessagesRetained": true,
+    "positiveUsesFreshSaved0_44Receipt": true
+  },
+  "groups": [
+    {
+      "lane": "positive",
+      "fixture": {
+        "path": "tests/types/sequence-playback-positive.ts",
+        "bytes": 3344,
+        "sha256": "4d76826aeed4a8f4feb1389314334aef5181b76e3a06fb7b058ac84d2e98ab83"
+      },
+      "config": {
+        "path": "tests/types/tsconfig.sequence-playback-positive.json",
+        "bytes": 562,
+        "sha256": "73a42caf9ba4c4238511068f7826b0b606770125a0aadd38078ae54bd8f4a4a2"
+      },
+      "expectedExit": 0,
+      "cases": [],
+      "savedActual": {
+        "receipt": {
+          "name": "actual-new-types-positive-r1/receipt.json",
+          "bytes": 1031,
+          "sha256": "5abbcec8eea9e35527d59f2c553452316407a90c17c74218d2c54e992f4fa474"
+        },
+        "startedAtUtc": "2026-10-12T21:51:16.7944827Z",
+        "finishedAtUtc": "2026-10-12T21:51:16.9024752Z",
+        "exitCode": 0,
+        "timeout": false,
+        "stdout": {
+          "name": "new-sequence-types-positive.stdout.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "name": "new-sequence-types-positive.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "lane": "negative",
+      "fixture": {
+        "path": "tests/types/sequence-playback-negative.ts",
+        "bytes": 4732,
+        "sha256": "de7611109f76afd2ac6b954a69c4c1aa15fa4a1857b46d81ae1489e5da183e9b"
+      },
+      "config": {
+        "path": "tests/types/tsconfig.sequence-playback-negative.json",
+        "bytes": 562,
+        "sha256": "9fdc2c38c3eca3d4fb65a4ae632c79011ae7bd26ef954d96e8929d9831227b86"
+      },
+      "expectedExit": 1,
+      "cases": [
+        {
+          "name": "SEQP-N01",
+          "markerLine": 9,
+          "tuple": [
+            "tests/types/sequence-playback-negative.ts",
+            10,
+            11,
+            2540,
+            "Cannot assign to 'mode' because it is a read-only property."
+          ]
+        },
+        {
+          "name": "SEQP-N02",
+          "markerLine": 14,
+          "tuple": [
+            "tests/types/sequence-playback-negative.ts",
+            15,
+            10,
+            2540,
+            "Cannot assign to 'state' because it is a read-only property."
+          ]
+        },
+        {
+          "name": "SEQP-N03",
+          "markerLine": 19,
+          "tuple": [
+            "tests/types/sequence-playback-negative.ts",
+            20,
+            10,
+            2540,
+            "Cannot assign to 'isDisposed' because it is a read-only property."
+          ]
+        },
+        {
+          "name": "SEQP-N04",
+          "markerLine": 24,
+          "tuple": [
+            "tests/types/sequence-playback-negative.ts",
+            25,
+            10,
+            2540,
+            "Cannot assign to 'elapsedSeconds' because it is a read-only property."
+          ]
+        },
+        {
+          "name": "SEQP-N05",
+          "markerLine": 29,
+          "tuple": [
+            "tests/types/sequence-playback-negative.ts",
+            30,
+            10,
+            2540,
+            "Cannot assign to 'lastSample' because it is a read-only property."
+          ]
+        },
+        {
+          "name": "SEQP-N06",
+          "markerLine": 34,
+          "tuple": [
+            "tests/types/sequence-playback-negative.ts",
+            35,
+            10,
+            2540,
+            "Cannot assign to 'frameIndex' because it is a read-only property."
+          ]
+        },
+        {
+          "name": "SEQP-N07",
+          "markerLine": 39,
+          "tuple": [
+            "tests/types/sequence-playback-negative.ts",
+            40,
+            10,
+            2540,
+            "Cannot assign to 'region' because it is a read-only property."
+          ]
+        },
+        {
+          "name": "SEQP-N08",
+          "markerLine": 44,
+          "tuple": [
+            "tests/types/sequence-playback-negative.ts",
+            45,
+            17,
+            2540,
+            "Cannot assign to 'x' because it is a read-only property."
+          ]
+        },
+        {
+          "name": "SEQP-N09",
+          "markerLine": 49,
+          "tuple": [
+            "tests/types/sequence-playback-negative.ts",
+            50,
+            9,
+            2322,
+            "Type 'SequenceSample | undefined' is not assignable to type 'SequenceSample'.\n  Type 'undefined' is not assignable to type 'SequenceSample'."
+          ]
+        },
+        {
+          "name": "SEQP-N10",
+          "markerLine": 55,
+          "tuple": [
+            "tests/types/sequence-playback-negative.ts",
+            56,
+            9,
+            2322,
+            "Type '\"disposed\"' is not assignable to type 'SequencePlaybackState'."
+          ]
+        },
+        {
+          "name": "SEQP-N11",
+          "markerLine": 61,
+          "tuple": [
+            "tests/types/sequence-playback-negative.ts",
+            62,
+            46,
+            2322,
+            "Type '\"ping-pong\"' is not assignable to type 'SequencePlaybackMode'."
+          ]
+        },
+        {
+          "name": "SEQP-N12",
+          "markerLine": 67,
+          "tuple": [
+            "tests/types/sequence-playback-negative.ts",
+            68,
+            9,
+            2375,
+            "Type '{ mode: undefined; }' is not assignable to type 'SequencePlaybackOptions' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.\n  Types of property 'mode' are incompatible.\n    Type 'undefined' is not assignable to type 'SequencePlaybackMode'."
+          ]
+        },
+        {
+          "name": "SEQP-N13",
+          "markerLine": 73,
+          "tuple": [
+            "tests/types/sequence-playback-negative.ts",
+            74,
+            54,
+            2345,
+            "Argument of type 'null' is not assignable to parameter of type 'SequencePlaybackOptions | undefined'."
+          ]
+        },
+        {
+          "name": "SEQP-N14",
+          "markerLine": 78,
+          "tuple": [
+            "tests/types/sequence-playback-negative.ts",
+            79,
+            54,
+            2559,
+            "Type '\"loop\"' has no properties in common with type 'SequencePlaybackOptions'."
+          ]
+        },
+        {
+          "name": "SEQP-N15",
+          "markerLine": 83,
+          "tuple": [
+            "tests/types/sequence-playback-negative.ts",
+            84,
+            33,
+            2739,
+            "Type 'Bitmap' is missing the following properties from type 'Scope': #private, signal, state, use"
+          ]
+        },
+        {
+          "name": "SEQP-N16",
+          "markerLine": 88,
+          "tuple": [
+            "tests/types/sequence-playback-negative.ts",
+            89,
+            40,
+            2740,
+            "Type 'SequenceClip' is missing the following properties from type 'Bitmap': touchEnabled, hitArea, x, y, and 25 more."
+          ]
+        },
+        {
+          "name": "SEQP-N17",
+          "markerLine": 93,
+          "tuple": [
+            "tests/types/sequence-playback-negative.ts",
+            94,
+            48,
+            2739,
+            "Type 'Bitmap' is missing the following properties from type 'SequenceClip': atlasWidth, atlasHeight, frameCount, durationSeconds"
+          ]
+        },
+        {
+          "name": "SEQP-N18",
+          "markerLine": 98,
+          "tuple": [
+            "tests/types/sequence-playback-negative.ts",
+            99,
+            33,
+            2345,
+            "Argument of type 'undefined' is not assignable to parameter of type 'Scope'."
+          ]
+        },
+        {
+          "name": "SEQP-N19",
+          "markerLine": 103,
+          "tuple": [
+            "tests/types/sequence-playback-negative.ts",
+            104,
+            40,
+            2345,
+            "Argument of type 'undefined' is not assignable to parameter of type 'Bitmap'."
+          ]
+        },
+        {
+          "name": "SEQP-N20",
+          "markerLine": 108,
+          "tuple": [
+            "tests/types/sequence-playback-negative.ts",
+            109,
+            48,
+            2345,
+            "Argument of type 'undefined' is not assignable to parameter of type 'SequenceClip'."
+          ]
+        },
+        {
+          "name": "SEQP-N21",
+          "markerLine": 113,
+          "tuple": [
+            "tests/types/sequence-playback-negative.ts",
+            114,
+            10,
+            2554,
+            "Expected 3-4 arguments, but got 2."
+          ]
+        },
+        {
+          "name": "SEQP-N22",
+          "markerLine": 118,
+          "tuple": [
+            "tests/types/sequence-playback-negative.ts",
+            119,
+            16,
+            2554,
+            "Expected 0 arguments, but got 1."
+          ]
+        },
+        {
+          "name": "SEQP-N23",
+          "markerLine": 123,
+          "tuple": [
+            "tests/types/sequence-playback-negative.ts",
+            124,
+            16,
+            2554,
+            "Expected 0 arguments, but got 1."
+          ]
+        },
+        {
+          "name": "SEQP-N24",
+          "markerLine": 128,
+          "tuple": [
+            "tests/types/sequence-playback-negative.ts",
+            129,
+            9,
+            2322,
+            "Type 'void' is not assignable to type 'number'."
+          ]
+        },
+        {
+          "name": "SEQP-N25",
+          "markerLine": 134,
+          "tuple": [
+            "tests/types/sequence-playback-negative.ts",
+            135,
+            9,
+            2322,
+            "Type 'void' is not assignable to type 'Promise<void>'."
+          ]
+        },
+        {
+          "name": "SEQP-N26",
+          "markerLine": 145,
+          "tuple": [
+            "tests/types/sequence-playback-negative.ts",
+            146,
+            9,
+            2741,
+            "Property '[sequencePlaybackBrand]' is missing in type '{ state: \"idle\"; isDisposed: boolean; elapsedSeconds: number; lastSample: undefined; start(): void; pause(): void; resume(): void; stop(): void; dispose(): void; }' but required in type 'SequencePlayback'."
+          ]
+        },
+        {
+          "name": "SEQP-N27",
+          "markerLine": 151,
+          "tuple": [
+            "tests/types/sequence-playback-negative.ts",
+            152,
+            15,
+            2339,
+            "Property 'player' does not exist on type 'SequencePlayback'."
+          ]
+        }
+      ],
+      "savedActual": {
+        "receipt": {
+          "name": "actual-new-types-negative-r1/receipt.json",
+          "bytes": 1031,
+          "sha256": "be73347cfe614212f8c14eeb6fdba9368c893057c02c78c0e387be39f0b37dc6"
+        },
+        "startedAtUtc": "2026-10-12T21:51:38.9160997Z",
+        "finishedAtUtc": "2026-10-12T21:51:39.0249434Z",
+        "exitCode": 1,
+        "timeout": false,
+        "stdout": {
+          "name": "new-sequence-types-negative.stdout.log",
+          "bytes": 4115,
+          "sha256": "307c41b2640f14d7a528804167eae5c566168fefc8abf380dc59d6c30e8b7a34"
+        },
+        "stderr": {
+          "name": "new-sequence-types-negative.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "lane": "import-negative",
+      "fixture": {
+        "path": "tests/types/sequence-playback-import-negative.ts",
+        "bytes": 1340,
+        "sha256": "1a10cda3aac9ffb6fc2468c939af176777a717e43377e8caf518317a1feb3819"
+      },
+      "config": {
+        "path": "tests/types/tsconfig.sequence-playback-import-negative.json",
+        "bytes": 569,
+        "sha256": "a152ef3db540abeca5df727c3cf0071754494c0c28dec79788588d38dfa513b4"
+      },
+      "expectedExit": 1,
+      "cases": [
+        {
+          "name": "SEQP-I01",
+          "markerLine": 4,
+          "tuple": [
+            "tests/types/sequence-playback-import-negative.ts",
+            5,
+            10,
+            1484,
+            "'SequencePlayback' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled."
+          ]
+        },
+        {
+          "name": "SEQP-I02",
+          "markerLine": 6,
+          "tuple": [
+            "tests/types/sequence-playback-import-negative.ts",
+            7,
+            10,
+            1484,
+            "'SequencePlaybackOptions' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled."
+          ]
+        },
+        {
+          "name": "SEQP-I03",
+          "markerLine": 8,
+          "tuple": [
+            "tests/types/sequence-playback-import-negative.ts",
+            9,
+            10,
+            1484,
+            "'SequencePlaybackState' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled."
+          ]
+        },
+        {
+          "name": "SEQP-I04",
+          "markerLine": 10,
+          "tuple": [
+            "tests/types/sequence-playback-import-negative.ts",
+            11,
+            10,
+            2724,
+            "'\"@egret/engine\"' has no exported member named 'createSequencePlayback'. Did you mean 'SequencePlayback'?"
+          ]
+        },
+        {
+          "name": "SEQP-I05",
+          "markerLine": 12,
+          "tuple": [
+            "tests/types/sequence-playback-import-negative.ts",
+            13,
+            10,
+            2305,
+            "Module '\"@egret/engine\"' has no exported member 'createSequencePlaybackOwner'."
+          ]
+        },
+        {
+          "name": "SEQP-I06",
+          "markerLine": 14,
+          "tuple": [
+            "tests/types/sequence-playback-import-negative.ts",
+            15,
+            15,
+            2724,
+            "'\"@egret/engine\"' has no exported member named 'SequencePlaybackOwner'. Did you mean 'SequencePlayback'?"
+          ]
+        },
+        {
+          "name": "SEQP-I07",
+          "markerLine": 16,
+          "tuple": [
+            "tests/types/sequence-playback-import-negative.ts",
+            17,
+            15,
+            2724,
+            "'\"@egret/engine\"' has no exported member named 'SequencePlaybackContext'. Did you mean 'SequencePlaybackMode'?"
+          ]
+        },
+        {
+          "name": "SEQP-I08",
+          "markerLine": 18,
+          "tuple": [
+            "tests/types/sequence-playback-import-negative.ts",
+            19,
+            10,
+            2724,
+            "'\"@egret/engine\"' has no exported member named 'sequencePlaybackBrand'. Did you mean 'SequencePlayback'?"
+          ]
+        },
+        {
+          "name": "SEQP-I09",
+          "markerLine": 20,
+          "tuple": [
+            "tests/types/sequence-playback-import-negative.ts",
+            21,
+            31,
+            2307,
+            "Cannot find module '@egret/engine/sequencePlayback' or its corresponding type declarations."
+          ]
+        },
+        {
+          "name": "SEQP-I10",
+          "markerLine": 22,
+          "tuple": [
+            "tests/types/sequence-playback-import-negative.ts",
+            23,
+            58,
+            2307,
+            "Cannot find module '@egret/engine/sequencePlaybackTypes' or its corresponding type declarations."
+          ]
+        },
+        {
+          "name": "SEQP-I11",
+          "markerLine": 24,
+          "tuple": [
+            "tests/types/sequence-playback-import-negative.ts",
+            25,
+            15,
+            2724,
+            "'\"@egret/runtime\"' has no exported member named 'SequencePlayback'. Did you mean 'SequencePlaybackMode'?"
+          ]
+        },
+        {
+          "name": "SEQP-I12",
+          "markerLine": 26,
+          "tuple": [
+            "tests/types/sequence-playback-import-negative.ts",
+            27,
+            15,
+            2724,
+            "'\"@egret/runtime\"' has no exported member named 'SequencePlaybackOptions'. Did you mean 'SequencePlaybackMode'?"
+          ]
+        },
+        {
+          "name": "SEQP-I13",
+          "markerLine": 28,
+          "tuple": [
+            "tests/types/sequence-playback-import-negative.ts",
+            29,
+            15,
+            2724,
+            "'\"@egret/runtime\"' has no exported member named 'SequencePlaybackState'. Did you mean 'SequencePlaybackMode'?"
+          ]
+        }
+      ],
+      "savedActual": {
+        "receipt": {
+          "name": "actual-new-types-import-negative-r1/receipt.json",
+          "bytes": 1073,
+          "sha256": "cb84b9812a7f9ecc9d8a22f750e69bad925106a92dd75ee230baf226e3972d76"
+        },
+        "startedAtUtc": "2026-10-12T21:51:39.5425677Z",
+        "finishedAtUtc": "2026-10-12T21:51:39.6493435Z",
+        "exitCode": 1,
+        "timeout": false,
+        "stdout": {
+          "name": "new-sequence-types-import-negative.stdout.log",
+          "bytes": 2299,
+          "sha256": "c99ef7c2cec825be72447b50a5411f3d4c90794aa62d047aed311762fdecb446"
+        },
+        "stderr": {
+          "name": "new-sequence-types-import-negative.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    }
+  ]
+}

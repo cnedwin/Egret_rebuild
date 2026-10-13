@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "version": "0.43.0",
+  "version": "0.44.0",
   "updatedAt": "2026-10-12",
-  "title": "白鹭引擎社区重建 — Spine 线性动画源规格 F2-B",
-  "stage": "bounded_spine_linear_source_profile_cpu_types_policy_development_accepted_publication_pending",
+  "title": "白鹭引擎社区重建 — Engine 时钟驱动序列播放",
+  "stage": "finite_sequence_playback_native_accepted_publication_pending",
   "publication": "development_preview",
   "registries": {
     "requirements": "Cns/registry/需求.json",
@@ -214,7 +214,7 @@
   },
   "engineeringSpecificationOnlyThisRevision": false,
   "userDesignObjectiveConfirmedThisRevision": true,
-  "newExperimentScopeThisRevision": "显式共享所有者 WebGPU 宿主合成真实不透明 RGB 场景与捕获的纹理 UI；本截止点已接受有限 CPU 源码／测试／类型及指定边界，新原生像素、完整门禁和发布待完成。 不构成完整角色／材质／光照／透明场景、手机／性能／原生 SDK 或完整产品验收。FullSpine R020/V020 与迁移 R008/V006 保持 OPEN。",
+  "newExperimentScopeThisRevision": "Engine.createSequencePlayback 与 3 个擦除类型新增有限的 Scope 所有、显式时钟序列控制，CPU／类型／策略／示例及原生浏览器观测已接受。不新增根运行时值、依赖或公开子路径；当前完整门禁、推送 hook 和 PR/Main 待完成，完整 Spine R020/V020 与迁移 R008/V006 保持 OPEN。",
   "existingResearchExperimentsRerunThisRevision": false,
   "coreFrameworkImplementation": {
     "artifactRoot": "outputs/白鹭引擎核心框架原型",
@@ -541,7 +541,7 @@
     "contract": "Cns/docs/显示内容边界契约.md",
     "evidence": "Cns/docs/显示内容边界证据.md"
   },
-  "latestEngineeringPreview": "0.43.0",
+  "latestEngineeringPreview": "0.44.0",
   "texturedMesh2DImplementation": {
     "version": "0.23.0",
     "status": "bounded_increment_implemented",
@@ -3278,5 +3278,91 @@
       "sha256": "cfe0a836962c137db63741c2546f2c720a97467be7b9a6e7733cde1729b64013"
     },
     "historicalPendingCutoffsRetained": true
+  },
+  "sequencePlaybackPreviousCheckpoint": {
+    "version": "0.43.0",
+    "title": "白鹭引擎社区重建 — Spine 线性动画源规格 F2-B",
+    "stage": "bounded_spine_linear_source_profile_cpu_types_policy_development_accepted_publication_pending",
+    "updatedAt": "2026-10-12",
+    "newExperimentScopeThisRevision": "显式共享所有者 WebGPU 宿主合成真实不透明 RGB 场景与捕获的纹理 UI；本截止点已接受有限 CPU 源码／测试／类型及指定边界，新原生像素、完整门禁和发布待完成。 不构成完整角色／材质／光照／透明场景、手机／性能／原生 SDK 或完整产品验收。FullSpine R020/V020 与迁移 R008/V006 保持 OPEN。"
+  },
+  "sequencePlaybackActualSuccessor": {
+    "engineeringLabel": "0.44.0",
+    "sourceId": "S097",
+    "deliverableId": "V048",
+    "status": "FINITE_SEQUENCE_PLAYBACK_SOURCE_CPU_TYPES_POLICY_EXAMPLE_NATIVE_ACCEPTED_PUBLICATION_PENDING",
+    "record": "evidence/sequence-playback-verification.json",
+    "method": "Engine.createSequencePlayback",
+    "erasedTypes": [
+      "SequencePlayback",
+      "SequencePlaybackOptions",
+      "SequencePlaybackState"
+    ],
+    "newRootValues": 0,
+    "newDependencies": false,
+    "newPublicSubpaths": false,
+    "cpu": {
+      "tests": 41,
+      "pass": 41,
+      "sourceFamilies": 25
+    },
+    "types": {
+      "positiveDiagnostics": 0,
+      "negativeDiagnostics": 27,
+      "importNegativeDiagnostics": 13,
+      "exactTuples": 40
+    },
+    "integratedTypes": {
+      "exitCode": 0,
+      "status": "INDEPENDENT_ACTUAL_ACCEPTED"
+    },
+    "policy": {
+      "tests": 5,
+      "assignedControls": 4
+    },
+    "example": {
+      "rows": 5,
+      "loads": 1,
+      "disposals": 1
+    },
+    "native": {
+      "submissions": 18,
+      "newCaptures": 16,
+      "replays": 2,
+      "pixels": 576,
+      "channels": 2304,
+      "tolerance": 0
+    },
+    "fullPrepush": "PENDING_AT_CURATION_CUTOFF",
+    "mandatoryPushHook": "PENDING_AT_CURATION_CUTOFF",
+    "pullRequest": "PENDING_AT_CURATION_CUTOFF",
+    "Main": "PENDING_AT_CURATION_CUTOFF",
+    "remoteCI": "PENDING",
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "licenseEntitlement": "unverified",
+    "historicalCutoffsPreserved": true
+  },
+  "spineLinearProfileF2BDeliveryActualSuccessor": {
+    "engineeringLabel": "0.43.0",
+    "status": "ACTUAL_0_43_DELIVERY_SUCCESSOR",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/30",
+    "merged": true,
+    "Main": "ced3ef008b8c37868c6d1a505a02737451d937e1",
+    "tree": "c42eddecfa6737d12a3093ba0a4067aa9326d702",
+    "mandatoryPushHook": {
+      "publicationTests": 63,
+      "coreTests": 2748,
+      "experimentTests": 160
+    },
+    "remoteStatusCount": 0,
+    "remoteCheckRuns": 0,
+    "remoteCIPassClaim": false,
+    "independentActualReview": {
+      "witness": "priorDelivery",
+      "bytes": 10345,
+      "sha256": "b94f8ee5a66abb5a37474f02d0ff67e5dc6331eb347d4471b39e43cb1c031569"
+    },
+    "historicalPendingCutoffsPreserved": true
   }
 }

@@ -19,6 +19,10 @@ import type { AssetGroupOwner } from './assetGroup.js';
 import type { AssetGroup, AssetGroupOptions } from './assetGroupTypes.js';
 import { createMouseInputOwner } from './mouseInput.js';
 import type { MouseInputOwner } from './mouseInput.js';
+import { createSequencePlaybackOwner } from './sequencePlayback.js';
+import type { SequencePlaybackOwner } from './sequencePlayback.js';
+import type { SequencePlayback, SequencePlaybackOptions } from './sequencePlaybackTypes.js';
+import type { Bitmap, SequenceClip } from '@egret/runtime';
 
 export interface EngineOptions {
   readonly host: HostAdapter;
@@ -53,6 +57,7 @@ function observeRejectedRenderResult(result: unknown): void {
 export class Engine {
   readonly #gameClockOwner: GameClockOwner;
   readonly #tweenOwner: TweenOwner;
+  readonly #sequencePlaybackOwner: SequencePlaybackOwner;
   readonly #assetGroupOwner: AssetGroupOwner;
   readonly #mouseInputOwner: MouseInputOwner;
   readonly #engineScopes = new WeakSet<Scope>();
@@ -115,6 +120,13 @@ export class Engine {
       assertOpen: this.#context.assertOpen,
       isEngineScope: (scope: unknown): scope is Scope => typeof scope === 'object' && scope !== null && this.#engineScopes.has(scope as Scope),
       clock: this.#gameClockOwner.clock,
+    });
+    // Sequence playback borrows the private clock and authentic Scope authority.
+    this.#sequencePlaybackOwner = createSequencePlaybackOwner({
+      assertOpen: this.#context.assertOpen,
+      isEngineScope: (scope: unknown): scope is Scope => typeof scope === 'object' && scope !== null && this.#engineScopes.has(scope as Scope),
+      clock: this.#gameClockOwner.clock,
+      captureCleanup: this.#context.captureCleanup,
     });
     this.clock = this.#gameClockOwner.clock;
     const stage = createStage(this.#context);
@@ -241,6 +253,11 @@ export class Engine {
     return this.#tweenOwner.create(scope, options);
   }
 
+  /** Create an idle, Scope-owned sequence controller without rendering or ticking. */
+  public createSequencePlayback(scope: Scope, bitmap: Bitmap, clip: SequenceClip, options?: SequencePlaybackOptions): SequencePlayback {
+    return this.#sequencePlaybackOwner.create(scope, bitmap, clip, options);
+  }
+
   public createAssetGroup<T>(scope: Scope, refs: readonly AssetRef<T>[], options?: AssetGroupOptions): AssetGroup<T> {
     return this.#assetGroupOwner.create<T>(scope, refs, options);
   }
@@ -258,6 +275,7 @@ export class Engine {
     // Terminal observations change now, before the existing idle barriers wait.
     this.#assetGroupOwner.close();
     this.#tweenOwner.close();
+    this.#sequencePlaybackOwner.close();
     this.#gameClockOwner.close();
     void this.runClose().then(resolveClose, rejectClose);
     return this.closePromise;
