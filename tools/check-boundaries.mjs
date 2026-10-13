@@ -269,7 +269,7 @@ for (const name of geometryValues) if (typeof contractsFacade[name] !== 'functio
 // requires actual Engine captures and first-party host refusal in later stages.
 if (contractsFacade.TEXTURED_FRAME_PROFILE_2D !== 'egret.textured-frame2d/1' || facade.TEXTURED_FRAME_PROFILE_2D !== contractsFacade.TEXTURED_FRAME_PROFILE_2D) throw new Error('engine: textured profile literal mismatch');
 // Exact accepted Mesh root plus the opt-in factory and shared literal.
-const texturedRootValues = ['Engine', 'createEngine', 'createEngineForProfile', 'CancellationController', 'EgretError', 'Event', 'createEventType', 'EventDispatcher', 'DisplayObject', 'DisplayObjectContainer', 'Scope', 'Stage', 'AssetManager', 'AssetLease', 'createAssetType', 'createAssetRef', 'Sprite', 'Graphics', ...imageValues, ...geometryValues, 'TEXTURED_FRAME_PROFILE_2D', 'Texture', 'createTexture', 'isTexture', 'Bitmap', 'Mesh2D', 'createSequenceClip', 'SequencePlayer', 'ByteReader', 'BYTE_READER_LIMITS', 'ByteWriter', 'BYTE_WRITER_LIMITS', 'createNineSliceGeometry2D'].sort();
+const texturedRootValues = ['Engine', 'createEngine', 'createEngineForProfile', 'CancellationController', 'EgretError', 'Event', 'createEventType', 'EventDispatcher', 'DisplayObject', 'DisplayObjectContainer', 'Scope', 'Stage', 'AssetManager', 'AssetLease', 'createAssetType', 'createAssetRef', 'Sprite', 'Graphics', ...imageValues, ...geometryValues, 'TEXTURED_FRAME_PROFILE_2D', 'Texture', 'createTexture', 'isTexture', 'Bitmap', 'Mesh2D', 'createSequenceClip', 'SequencePlayer', 'ByteReader', 'BYTE_READER_LIMITS', 'ByteWriter', 'BYTE_WRITER_LIMITS', 'createNineSliceGeometry2D','createSpriteSheet'].sort();
 if (typeof facade.createEngineForProfile !== 'function' || JSON.stringify(Object.keys(facade)) !== JSON.stringify(texturedRootValues)) throw new Error('root: executable textured-frame export surface mismatch');
 const texturedTypes = ['TexturedFrameProfile2D', 'TexturedMeshCommand2D', 'TexturedRenderCommand2D', 'TexturedRenderFrame2D', 'TexturedRenderHostAdapter'];
 for (const [entry, values, declarationPath] of [['contracts', contractsFacade, 'packages/contracts/dist/index.d.ts'], ['root', facade, 'packages/engine/dist/index.d.ts']]) {
@@ -396,7 +396,7 @@ for (const [entry,values,emittedEntry] of textEntries) {
 const expectedRuntimeValues=['CancellationController','EgretError','Scope','createScope','Event','createEventType',
   'EventDispatcher','DisplayObject','DisplayObjectContainer','Stage','createStage','createDisplayInputOperations','reportDiagnostic','AssetManager',
   'createAssetManager','AssetLease','createAssetType','createAssetRef','Sprite','Graphics','collectFrameCommands',
-  'collectFrameContent','collectTexturedFrameContent','Texture','createTexture','isTexture','Bitmap','Mesh2D','createSequenceClip','SequencePlayer','ByteReader','BYTE_READER_LIMITS','ByteWriter','BYTE_WRITER_LIMITS','createNineSliceGeometry2D'].sort();
+  'collectFrameContent','collectTexturedFrameContent','Texture','createTexture','isTexture','Bitmap','Mesh2D','createSequenceClip','SequencePlayer','ByteReader','BYTE_READER_LIMITS','ByteWriter','BYTE_WRITER_LIMITS','createNineSliceGeometry2D','createSpriteSheet'].sort();
 if (JSON.stringify(Object.keys(runtimeFacade)) !== JSON.stringify(expectedRuntimeValues)) throw new Error('runtime: unchanged default-root export surface mismatch');
 for (const [entry,values,emittedEntry,valueTarget,typeTarget] of [
   ['runtime/text',runtimeText,'packages/runtime/dist/text/index','./TextRasterCache.js','./types.js'],

@@ -312,7 +312,7 @@
             89,
             40,
             2740,
-            "Type 'SequenceClip' is missing the following properties from type 'Bitmap': touchEnabled, hitArea, x, y, and 25 more."
+            "Type 'SequenceClip' is missing the following properties from type 'Bitmap': on, candidates, dispatchEvent, clearListeners, and 25 more."
           ]
         },
         {

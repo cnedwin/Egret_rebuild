@@ -1,0 +1,290 @@
+{
+ "schemaVersion": 1,
+ "kind": "SPRITESHEET_SS1_FINITE_VERIFICATION",
+ "engineeringLabel": "0.45.0",
+ "sourceId": "S098",
+ "deliverableId": "V049",
+ "status": "FINITE_SPRITESHEET_SOURCE_CPU_TYPES_UNITS_POLICY_EXAMPLE_NATIVE_ACCEPTED_PUBLICATION_PENDING",
+ "publicAPI": {
+  "rootValues": [
+   "createSpriteSheet"
+  ],
+  "erasedRootTypes": [
+   "SpriteSheet",
+   "SpriteSheetFrameInput"
+  ],
+  "newEngineMethod": false,
+  "newDependency": false,
+  "newPublicSubpath": false,
+  "newClock": false
+ },
+ "caps": {
+  "frames": 1024,
+  "nameUTF16": 128,
+  "aggregateNameUTF16": 32768
+ },
+ "facts": {
+  "cpu": {
+   "tests": 100,
+   "pass": 100,
+   "fail": 0,
+   "cancelled": 0,
+   "skipped": 0,
+   "todo": 0
+  },
+  "retainedCPU": {
+   "tests": 133,
+   "pass": 133,
+   "fail": 0,
+   "cancelled": 0,
+   "skipped": 0,
+   "todo": 0
+  },
+  "types": {
+   "positiveDiagnostics": 0,
+   "negativeDiagnostics": 22,
+   "importNegativeDiagnostics": 14,
+   "exactTuples": 36,
+   "continuationLines": 6,
+   "integratedGateExitCode": 0,
+   "retainedSequenceNegative": 27,
+   "retainedSequenceImportNegative": 13
+  },
+  "policy": {
+   "tests": 5,
+   "pass": 5,
+   "assignedControls": 4,
+   "retainedTests": 272,
+   "retainedPass": 272
+  },
+  "units": {
+   "tests": 10,
+   "pass": 10,
+   "assignedCases": 10,
+   "freshChildInvocationsPerCase": 3
+  },
+  "example": {
+   "rows": 8,
+   "ticks": 6,
+   "loads": 1,
+   "disposals": 1
+  },
+  "native": {
+   "status": "INDEPENDENT_ACTUAL_ACCEPTED_OPAQUE_SUBSET",
+   "submissions": 18,
+   "newCaptures": 16,
+   "replays": 2,
+   "pixels": 576,
+   "channels": 2304,
+   "tolerance": 0,
+   "sourceTicksPerBackend": 6,
+   "rawRGBABytesPerSubmission": 128,
+   "backendRows": 9,
+   "backends": [
+    "canvas",
+    "webgpu"
+   ],
+   "browserVersion": "155.0.4283.45",
+   "channel": "msedge",
+   "headless": true,
+   "addedFlags": [],
+   "node": "v24.19.0",
+   "playwrightVersion": "1.62.1",
+   "playwrightCoreVersion": "1.62.1",
+   "osRelease": "10.0.26300",
+   "osPlatform": "win32",
+   "osArch": "x64",
+   "cleanupAccepted": true,
+   "borrowedHostSafeBeforeApplicationDeviceDestroy": true,
+   "lostReason": "destroyed",
+   "ownedJobAssignedBeforeACK": true,
+   "ownedJobActiveZero": true,
+   "ownedJobClosed": true,
+   "completeRawEOF": true,
+   "fallback": false,
+   "hardwareIdentityPerformanceQualified": false
+  },
+  "publication": {
+   "meaningReview": "PENDING",
+   "completePrepush": "PENDING",
+   "mandatoryPushHook": "PENDING",
+   "pullRequest": "PENDING",
+   "Main": "PENDING",
+   "remoteCIPassClaim": false
+  }
+ },
+ "independentSavedWitnessIdentities": {
+  "productSource": {
+   "bytes": 9057,
+   "sha256": "9a38c87d11aa031c556c5352b2f304610fc075f442437ab53ab21215d8a4fcb8",
+   "verdict": "PASS_SOURCE_ONLY"
+  },
+  "buildCpu": {
+   "bytes": 18585,
+   "sha256": "21cd32a5f5636869f5b860faa59dec6a1de57eb7c28a7d954a862d56db02db1d",
+   "verdict": "PASS_ACTUAL_BUILD_AND_PUBLIC_CPU"
+  },
+  "typesActual": {
+   "bytes": 255739,
+   "sha256": "6dd93a55d327d235c20a157572027f244c1b24d9e840c2cc0242b3a0510a309d",
+   "verdict": "PASS_ACTUAL_STRICT_TYPES"
+  },
+  "policyActual": {
+   "bytes": 15633,
+   "sha256": "fc6be93ef019d8d4fc9576c8b94ea47a7c4bcc00aea857ca3d6e25714be2e5dc",
+   "verdict": "PASS_ACTUAL_POLICY"
+  },
+  "unitsActual": {
+   "bytes": 18805,
+   "sha256": "a3dd1958bf973bc35c47d09cb57fa8f6fbab8ae011c0591927f53926a159783a",
+   "verdict": "PASS_ACTUAL_PRIVILEGED_UNITS"
+  },
+  "exampleActual": {
+   "bytes": 19092,
+   "sha256": "3cfb193df74dcfb827df7d42b751e2ca619500fd6fe706e23d15a9cae343fba8",
+   "verdict": "PASS_ACTUAL_PUBLIC_COMPOSITION_EXAMPLE"
+  },
+  "nativeSource": {
+   "bytes": 19822,
+   "sha256": "086932ab83b54e891ca6bf044e1287732c5e5a67729650e469853b3787ab67d7",
+   "verdict": "PASS_SOURCE_ONLY"
+  },
+  "nativeActual": {
+   "bytes": 53115,
+   "sha256": "a22ad31eff3e2d3ea9e484d431bb8d789daeb143876eedf022824bf37caa1026",
+   "verdict": "PASS_ACTUAL_SPRITESHEET_OPAQUE_SUBSET"
+  }
+ },
+ "previousDeliveryActualSuccessor": {
+  "engineeringLabel": "0.44.0",
+  "pullRequest": 31,
+  "url": "https://github.com/cnedwin/Egret_rebuild/pull/31",
+  "merged": true,
+  "main": "1dce76a62cd0a4180969949939041f889eb1d923",
+  "tree": "b10ccbc11e9a2db5bacbf913858c8f4dd73f9d26",
+  "publicationTests": 63,
+  "coreTests": 2794,
+  "experimentalTests": 160,
+  "knowledgeBaseIssues": 0,
+  "remoteStatusCount": 0,
+  "remoteCheckRunCount": 0,
+  "remoteCIPassClaim": false,
+  "successorIdentity": {
+   "bytes": 27772,
+   "sha256": "2bddcfc2dc6dc54d1b65f114c276e1d3f3055b8f67730f3c4ada669070565df7"
+  },
+  "independentReviewIdentity": {
+   "bytes": 4855,
+   "sha256": "9164d3265d717c299f9c7ab6b85e22ee4d317c50e3a9334692d90eef68190233"
+  }
+ },
+ "history": {
+  "originalProducer": "Historical PENDING label retained; separate independently accepted build review qualifies exact saved identities.",
+  "firstCPU": "Original ARRAY2 retains build0/CPU1 and missing declared third actor; later CPU100 and retained133 are separate actual successful runs.",
+  "typeR1": "Standalone SS pass / retained Sequence failure / appended SS NOT_REACHED",
+  "typeSuccessor": "Exactly one measured SEQP-N16 TS2740 message changed; source location and all other tuples unchanged; repaired strict integrated driver passed.",
+  "nativeSourceR1": "Two source schema blockers preserved; finite R2 exact plan adapter and product reviewedPins fix do not establish native execution.",
+  "formattingSuccessor": {
+    "status": "SOURCE_ONLY_FORMAT_SUCCESSOR_PENDING_INDEPENDENT_REVIEW_AND_CURRENT_GATES",
+    "change": "Remove exactly one terminalLF from the example and paired contracts; their complete preceding bodies are byte-identical.",
+    "changeZh": "仅移除示例及配对契约各一个末尾LF，此前完整正文逐字节相同。",
+    "files": [
+      {
+        "path": "examples/spritesheet-headless.mjs",
+        "before": {
+          "bytes": 5257,
+          "sha256": "b8724dc69a4515ae99f6a79baaddfec484e29c91c336938ad74144d61c43660d"
+        },
+        "current": {
+          "bytes": 5256,
+          "sha256": "c94a4aefc7598068d6ef3a60f92cc1ca880900dc244ddf268f475a49ba9c659d"
+        },
+        "change": "Exactly one terminalLF removed; all preceding bytes identical."
+      },
+      {
+        "path": "knowledge-base/en/docs/spritesheet-contract.md",
+        "before": {
+          "bytes": 7760,
+          "sha256": "f739f258316d7dd7dcdb79caa527ef1818227b9ac0c25fe19db4aa4596cd4751"
+        },
+        "current": {
+          "bytes": 7759,
+          "sha256": "19f8189f5b83fff18194887392e8aa85ac968287d35abe42bf18546da42e23e3"
+        },
+        "change": "Exactly one terminalLF removed; all preceding bytes identical."
+      },
+      {
+        "path": "knowledge-base/Cns/docs/命名图集契约.md",
+        "before": {
+          "bytes": 7134,
+          "sha256": "86d193af060a2281c9d2e74d913141646765d9d9ac46ed3f05f3b2359830373c"
+        },
+        "current": {
+          "bytes": 7133,
+          "sha256": "9376edad41c83ae5a475b18dffe84c80accb848585d6f38be5bcbc109f6d055a"
+        },
+        "change": "Exactly one terminalLF removed; all preceding bytes identical."
+      }
+    ],
+    "historicalExecutionCutoffsPreserved": true,
+    "previousActualExampleAndNativeSourceIdentitiesUnchanged": true,
+    "exampleAfterFormattingExecution": "NOT_RUN",
+    "nativeAfterFormattingExecution": "NOT_RUN",
+    "currentFormattingPublicationAndDeliveryGates": "PENDING",
+    "newFunctionalNativePerformanceOrFullSpineClaim": false
+  }
+ },
+ "origin": {
+  "firstPartyLicense": "Apache-2.0",
+  "firstParty": "Original Egret SpriteSheet design, original tiny RGBA atlas and tests; AI-assisted implementation and finite independent review.",
+  "existingDependencyNotices": "Preserved separately",
+  "noNewUpstreamPayload": true,
+  "thirdPartyEntitlements": "unverified"
+ },
+ "remaining": {
+  "fullSpineR020V020": "OPEN",
+  "migrationR008V006": "OPEN",
+  "completeUIEUI": "OPEN",
+  "phonesNativeSDK": "NOT_ACCEPTED",
+  "physicalHardwareOSPerformance": "NOT_QUALIFIED"
+ },
+ "curation": {
+  "state": "SOURCE_CANDIDATE_PENDING_INDEPENDENT_PUBLIC_REVIEW_AND_ACTUAL_GATES",
+  "reviewedWholePublicMeaning": "PENDING",
+  "finalCurrentIdentityDerivation": "DERIVED_AFTER_INDEPENDENT_NATIVE_ACCEPTANCE",
+  "validatorRecordExcluded": true
+ },
+ "nativeEvidence": {
+  "startedAtUtc": "2026-10-13T04:13:02.2072968Z",
+  "finishedAtUtc": "2026-10-13T04:13:06.6220315Z",
+  "exitCode": 0,
+  "timeout": false,
+  "reviewIdentity": {
+   "bytes": 53115,
+   "sha256": "a22ad31eff3e2d3ea9e484d431bb8d789daeb143876eedf022824bf37caa1026"
+  },
+  "resultIdentity": {
+   "bytes": 236542,
+   "sha256": "1289b1b66b50972b4c2c2942156f297ac07b5402b599713d3dbef0a0db3623fc"
+  },
+  "rawReceiptIdentity": {
+   "bytes": 909,
+   "sha256": "b28a925f6cabc0df56ecba00d7f067d605bb1e15744f8e45a67b9d766383a19c"
+  },
+  "rawStdoutIdentity": {
+   "bytes": 108,
+   "sha256": "fe0aed0585d429800f3f025ef0de29dbdff32bc4384985279a8c7d09ead24dfc"
+  },
+  "literalMaskSHA256": {
+   "R": "be38c42c7375b64f2ce0a0b699a22ddef58840b45a0d6d89b33fa99166c76393",
+   "G": "805748f3141d1c7a2b20ed49536ac9db7d4ba953862becaaf07809b869d2c238",
+   "B": "d617cc9eb1d703d80ff03cb20d3b6c09c64e79ede94f801ad7d781d23fe03ce3"
+  },
+  "beforeAfterIdentityRows": 708,
+  "servedOriginalModuleRows": 103,
+  "admittedLoopbackRequests": 328,
+  "cooperativeCleanup": "Accepted within the fixed opaque run",
+  "ownedJobRetirement": "Recorded assignment-before-ACK, activeZero, Job closed, complete EOF, no fallback",
+  "physicalHardwarePerformance": "NOT_QUALIFIED"
+ }
+}

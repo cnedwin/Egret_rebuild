@@ -195,6 +195,19 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
     const nsContractsResolver = 'node_modules/@egret/contracts/index.js';
     write(nsContractsResolver, readFileSync(path.join(root, nsContractsResolver), 'utf8') + "export function createTexturedGeometry2D() {}\n");
     // NS1_FIXTURE_END
+    // SS1 baseline is an inert policy surface, never genuine atlas/Bitmap behavior.
+    // Both synthetic roots share this sole factory; erased names stay out of JS.
+    const spriteSheetFixtureBody = 'export function createSpriteSheet() {}\n';
+    const spriteSheetFixtureTypes = 'export interface SpriteSheetFrameInput {}\nexport interface SpriteSheet {}\nexport declare function createSpriteSheet(): SpriteSheet;\n';
+    write('packages/runtime/src/spriteSheet.ts', spriteSheetFixtureTypes);
+    write('packages/runtime/dist/spriteSheet.d.ts', spriteSheetFixtureTypes);
+    write('packages/runtime/dist/spriteSheet.js', spriteSheetFixtureBody);
+    for (const file of ['packages/runtime/src/index.ts', 'packages/runtime/dist/index.js', 'packages/runtime/dist/index.d.ts'])
+      write(file, readFileSync(path.join(root, file), 'utf8') + "export {createSpriteSheet} from './spriteSheet.js';\n" + (file.endsWith('.js') ? '' : "export type {SpriteSheet,SpriteSheetFrameInput} from './spriteSheet.js';\n"));
+    for (const file of ['packages/engine/src/index.ts', 'packages/engine/dist/index.js', 'packages/engine/dist/index.d.ts'])
+      write(file, readFileSync(path.join(root, file), 'utf8') + "export {createSpriteSheet} from '@egret/runtime';\n" + (file.endsWith('.js') ? '' : "export type {SpriteSheet,SpriteSheetFrameInput} from '@egret/runtime';\n"));
+    for (const file of ['node_modules/@egret/engine/index.js', 'node_modules/@egret/runtime/index.js'])
+      write(file, readFileSync(path.join(root, file), 'utf8') + "export {createSpriteSheet} from '../../../packages/runtime/dist/spriteSheet.js';\n");
     // WC1 baseline only: exact opt-in surfaces let retained policy mutants run.
     // The inert synthetic factory reports Node unavailability; it provides no
     // native Canvas, genuine resource, font, TextField or rendering evidence.

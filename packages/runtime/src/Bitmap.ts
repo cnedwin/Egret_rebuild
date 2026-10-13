@@ -12,6 +12,13 @@ import type { EngineContext } from "./ownership.js";
 import { isTexture, readTextureSnapshot } from "./Texture.js";
 import type { Texture, TextureSnapshot2D } from "./Texture.js";
 
+/** Internal-only original Bitmap operations; neither public root forwards this port. */
+export let spriteSheetBitmapOperations: Readonly<{
+  construct(lease: AssetLease<Texture>): Bitmap;
+  setCrop(bitmap: Bitmap, region: TextureRegion2D): void;
+  dispose(bitmap: Bitmap): void;
+}>;
+
 const mutations = new WeakSet<object>();
 
 function assertBitmap(value: unknown): void {
@@ -96,6 +103,19 @@ export class Bitmap extends DisplayObject {
     engine.assertOpen();
     commitBinding([this], engine);
     writeBitmapState(this, captureState(textureLease, snapshot.sourceRect));
+  }
+
+  static {
+    // Capture originals before callers can patch this prototype or load a later facade.
+    const OriginalBitmap = this;
+    const setCrop = Object.getOwnPropertyDescriptor(this.prototype, "sourceRect")!.set!;
+    const dispose = this.prototype.dispose;
+    const apply = Reflect.apply;
+    spriteSheetBitmapOperations = Object.freeze({
+      construct: (lease: AssetLease<Texture>): Bitmap => new OriginalBitmap(lease),
+      setCrop: (bitmap: Bitmap, region: TextureRegion2D): void => { apply(setCrop, bitmap, [region]); },
+      dispose: (bitmap: Bitmap): void => { apply(dispose, bitmap, []); },
+    });
   }
 
   public get textureLease(): AssetLease<Texture> | undefined {

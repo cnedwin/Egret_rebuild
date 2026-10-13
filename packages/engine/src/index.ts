@@ -31,3 +31,5 @@ export { ByteWriter, BYTE_WRITER_LIMITS } from "@egret/runtime";
 export { createNineSliceGeometry2D } from "@egret/runtime";
 export type { NineSliceInsets2D, NineSliceGeometry2DOptions } from "@egret/runtime";
 export type { SequencePlayback, SequencePlaybackState, SequencePlaybackOptions } from './sequencePlaybackTypes.js';
+export { createSpriteSheet } from "@egret/runtime";
+export type { SpriteSheet, SpriteSheetFrameInput } from "@egret/runtime";

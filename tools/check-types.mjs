@@ -946,3 +946,8 @@ try{
 // Delegate only after every retained type gate above has completed.
 await import('./sequence-playback-types.mjs');
 // SEQP_TYPES_END
+
+// SPRITESHEET_TYPES_BEGIN
+// Run the mandatory SpriteSheet lane only after every retained type gate has completed.
+await import('./spritesheet-types.mjs');
+// SPRITESHEET_TYPES_END

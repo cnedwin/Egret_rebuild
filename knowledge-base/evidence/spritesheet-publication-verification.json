@@ -1,0 +1,125 @@
+{
+ "schemaVersion": 1,
+ "kind": "SPRITESHEET_SS1_PUBLICATION_CURATION",
+ "engineeringLabel": "0.45.0",
+ "sourceId": "S098",
+ "deliverableId": "V049",
+ "status": "SOURCE_CANDIDATE_PENDING_INDEPENDENT_PUBLIC_REVIEW_AND_ACTUAL_GATES",
+ "sharedEvidence": "evidence/spritesheet-verification.json",
+ "acceptedFiniteLanes": [
+  "source",
+  "build",
+  "publicCPU",
+  "strictTypes",
+  "privilegedUnits",
+  "policy",
+  "recordingExample",
+  "opaqueCanvasWebGPU"
+ ],
+ "counts": {
+  "cpu": {
+   "tests": 100,
+   "pass": 100,
+   "fail": 0,
+   "cancelled": 0,
+   "skipped": 0,
+   "todo": 0
+  },
+  "retainedCPU": {
+   "tests": 133,
+   "pass": 133,
+   "fail": 0,
+   "cancelled": 0,
+   "skipped": 0,
+   "todo": 0
+  },
+  "types": {
+   "positiveDiagnostics": 0,
+   "negativeDiagnostics": 22,
+   "importNegativeDiagnostics": 14,
+   "exactTuples": 36,
+   "continuationLines": 6,
+   "integratedGateExitCode": 0,
+   "retainedSequenceNegative": 27,
+   "retainedSequenceImportNegative": 13
+  },
+  "policy": {
+   "tests": 5,
+   "pass": 5,
+   "assignedControls": 4,
+   "retainedTests": 272,
+   "retainedPass": 272
+  },
+  "units": {
+   "tests": 10,
+   "pass": 10,
+   "assignedCases": 10,
+   "freshChildInvocationsPerCase": 3
+  },
+  "example": {
+   "rows": 8,
+   "ticks": 6,
+   "loads": 1,
+   "disposals": 1
+  },
+  "native": {
+   "status": "INDEPENDENT_ACTUAL_ACCEPTED_OPAQUE_SUBSET",
+   "submissions": 18,
+   "newCaptures": 16,
+   "replays": 2,
+   "pixels": 576,
+   "channels": 2304,
+   "tolerance": 0,
+   "sourceTicksPerBackend": 6,
+   "rawRGBABytesPerSubmission": 128,
+   "backendRows": 9,
+   "backends": [
+    "canvas",
+    "webgpu"
+   ],
+   "browserVersion": "155.0.4283.45",
+   "channel": "msedge",
+   "headless": true,
+   "addedFlags": [],
+   "node": "v24.19.0",
+   "playwrightVersion": "1.62.1",
+   "playwrightCoreVersion": "1.62.1",
+   "osRelease": "10.0.26300",
+   "osPlatform": "win32",
+   "osArch": "x64",
+   "cleanupAccepted": true,
+   "borrowedHostSafeBeforeApplicationDeviceDestroy": true,
+   "lostReason": "destroyed",
+   "ownedJobAssignedBeforeACK": true,
+   "ownedJobActiveZero": true,
+   "ownedJobClosed": true,
+   "completeRawEOF": true,
+   "fallback": false,
+   "hardwareIdentityPerformanceQualified": false
+  },
+  "publication": {
+   "meaningReview": "PENDING",
+   "completePrepush": "PENDING",
+   "mandatoryPushHook": "PENDING",
+   "pullRequest": "PENDING",
+   "Main": "PENDING",
+   "remoteCIPassClaim": false
+  }
+ },
+ "functionalPinCount": 35,
+ "publicEnvelopePaths": 28,
+ "modifiedPublicPaths": 22,
+ "newPublicPaths": 6,
+ "packageVersion": "0.0.0",
+ "packagePrivate": true,
+ "hostProtocol": "1.0",
+ "completeCurrentGates": "PENDING",
+ "mandatoryPushHook": "PENDING",
+ "PRMain": "PENDING",
+ "historicalCutoffsPreserved": true,
+ "currentWholePublicMeaningReview": "PENDING",
+ "globalSemanticPassClaim": false,
+ "validatorActualReport": "EXCLUDED_FROM_SOURCE_CANDIDATE",
+ "fullSpineR020V020": "OPEN",
+ "migrationR008V006": "OPEN"
+}
