@@ -2,6 +2,7 @@ import {readFile,readdir,stat,lstat} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {logicalPath,fingerprintFile,samePhysicalPath,ownerRelativePath} from './lib/file-identity.mjs';
 const sha=b=>createHash('sha256').update(b).digest('hex');
 const han=/\p{Script=Han}/u;
 const identity=s=>/^(?:https?:\/\/|[RDHVS]\d{3}$|(?:outputs|docs|knowledge-base|registry|experiments|evidence|templates|proposals|work|packages|tests|tools|verification)\/)/.test(s)||/\.(?:md|json|mjs|ts|png|gltf|bin|zip)(?:$|#)/.test(s);
@@ -15,7 +16,7 @@ const sealedVendor=new Map([
 const sealedOriginal=new Map([
  ['knowledge-base/experiments/asset-reference-probe/assets/RiggedSimple/LICENSE.md','4343fbd97e5ecfc4c872a85cb1d755a3006f8848e15135fd6c4534839909bdbb']
 ]);
-const validPath=p=>typeof p==='string'&&p.length>0&&!p.includes('\\')&&!p.includes(':')&&!p.startsWith('/')&&p.split('/').every(x=>x&&x!=='.'&&x!=='..'&&!/[.\s]$/.test(x));
+const validPath=p=>{try{logicalPath(p);return true;}catch{return false;}};
 const excluded=p=>p.split('/').some(x=>ignored.has(x.toLowerCase())||/^\.env(?:\.|$)/i.test(x))&&!sealedVendor.has(p);
 const preservedAncestor=p=>[...sealedVendor.keys()].some(x=>x===p||x.startsWith(p+'/'));
 
@@ -119,9 +120,14 @@ export async function checkPublication(inputRoot){
   try{
    let current=root;
    for(const component of rel.split('/')){current=path.join(current,component);if((await lstat(current)).isSymbolicLink()){issues.push(`outside or symbolic file: ${rel}`);return;}}
-   const bytes=await readFile(full);if(sha(bytes)!==hash)issues.push(`hash stale: ${rel}`);return bytes.toString('utf8');
+   // A Windows-readable case alias must not inherit another portable file key.
+   const pin=fingerprintFile(root,rel);
+   const bytes=await readFile(full);
+   // Bind parsing to the same raw snapshot that supplies this hash comparison.
+   if(pin.sha256!==hash||sha(bytes)!==hash)issues.push(`hash stale: ${rel}`);
+   return bytes.toString('utf8');
   }
-  catch{issues.push(`missing: ${rel}`);}
+  catch(error){issues.push(error?.message?.includes('spelling differs')?`path spelling mismatch: ${rel}`:`missing: ${rel}`);}
  }
  for(const item of inventory.documents??[]){
   paired.add(item.zh);paired.add(item.en);
@@ -137,7 +143,10 @@ export async function checkPublication(inputRoot){
     if(!dest.startsWith(root+path.sep)){issues.push(`outside link: ${rel} -> ${target}`);continue;}
     const destRel=path.relative(root,dest).replaceAll('\\','/');
     if(excluded(destRel)||destRel.toLowerCase().endsWith('.tsbuildinfo')){issues.push(`excluded link: ${rel} -> ${target}`);continue;}
-    try{if(!(await stat(dest)).isFile())issues.push(`missing linked file: ${rel} -> ${target}`);}catch{issues.push(`missing link: ${rel} -> ${target}`);}
+    try{
+     if(!(await stat(dest)).isFile())issues.push(`missing linked file: ${rel} -> ${target}`);
+     else fingerprintFile(root,ownerRelativePath(root,dest));
+    }catch{issues.push(`missing or noncanonical link: ${rel} -> ${target}`);}
    }
   }
   // A presence-only check misses a damaged duplicate occurrence in an evidence table.
@@ -160,7 +169,7 @@ export async function checkPublication(inputRoot){
  for(const item of inventory.criticalComments??[]){
   const body=await verifyFile(item.path,item.sha256);
   // Inspect comment text itself so following English code cannot satisfy the rule.
-  const comments=body?.match(/\/\*[\s\S]*?\*\/|\/\/[^\r\n]*/g)??[];
+  const comments=body?.match(/\.ps1$/i.test(item.path)?/^[ \t]*#[^\r\n]*/gm:/\/\*[\s\S]*?\*\/|\/\/[^\r\n]*/g)??[];
   if(body!==undefined&&!comments.some(s=>!han.test(s)&&(s.match(/\b[A-Za-z]{3,}\b/g)??[]).length>=3))issues.push(`missing English comment: ${item.path}`);
  }
  const critical=new Set((inventory.criticalComments??[]).map(x=>x.path));
@@ -170,7 +179,7 @@ export async function checkPublication(inputRoot){
  return {documents:inventory.documents?.length??0,registryViews:inventory.registries?.length??0,criticalSourceFiles:inventory.criticalComments?.length??0,issues};
 }
 const script=fileURLToPath(import.meta.url);
-if(process.argv[1]&&path.resolve(process.argv[1])===script){
+if(process.argv[1]&&samePhysicalPath(path.resolve(process.argv[1]),script)){
  const result=await checkPublication(fileURLToPath(new URL('..',import.meta.url)));
  if(result.issues.length){console.error(JSON.stringify(result,null,2));process.exitCode=1;}
  else console.log(JSON.stringify({...result,scope:'Structural identities/parity/links only; author review supplies translation meaning and public-content authorization.'}));

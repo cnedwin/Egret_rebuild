@@ -1,0 +1,685 @@
+{
+  "schemaVersion": 1,
+  "baseMain": "863b29c90b92b62e37ce77cf32e02c4294135a16",
+  "scope": "Exact unchanged legacy text and original legal/upstream byte exceptions; no future edited-text exception.",
+  "legacyText": [
+    {
+      "path": ".gitignore",
+      "bytes": 140,
+      "sha256": "7238928eb667257d312dafc3c9d574bdcf8374b981f8b81dca7e22c24785b4c4",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "README.md",
+      "bytes": 83856,
+      "sha256": "e004991b1ab8439ace59854bd085b15d02495283c06eeb9a32c5227cc9a046db",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "README.zh-CN.md",
+      "bytes": 82957,
+      "sha256": "ef751c3afa2514c30650f279e2c215859704ed60ba8f030fcc766004bef78cb2",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "examples/canvas-text/assets/provenance.json",
+      "bytes": 1509,
+      "sha256": "2a970cd2a600ed8af4fa44bee7fcf30d505b2d2d32c2bac0747816445dcfac2d",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "examples/hit-test/README.md",
+      "bytes": 4493,
+      "sha256": "0d6484f779f5de19387513791b0cc2f9e00da9faf37cea4a5525a1786a5c84d5",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "examples/hit-test/README.zh-CN.md",
+      "bytes": 4036,
+      "sha256": "7d64a80ce972676df4e02fe6833897ad4b4866e75215fdb361a139fb3bddaa8f",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "knowledge-base/Cns/CHANGELOG.md",
+      "bytes": 63057,
+      "sha256": "079501cc3d6577274f5f1c55392f8a06a46656c82af9b1022b8e13f2ffe25b3e",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "knowledge-base/Cns/README.md",
+      "bytes": 38572,
+      "sha256": "39da58e2159049c8967ceb1c811daee6dff4971b7277feeb0ac1e3e4955c8135",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "knowledge-base/Cns/docs/3d-foundation.md",
+      "bytes": 6640,
+      "sha256": "f8aa4ed10d7424b3336e8aa5c4e8119d7cfc267db33d4cd64ae797fb04a11e38",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "knowledge-base/Cns/docs/core-progress.md",
+      "bytes": 35267,
+      "sha256": "028c7e2188a025520995e91958e4f9d5a263b4c6a39ef2d026795082509c5854",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "knowledge-base/Cns/docs/工程规划.md",
+      "bytes": 38926,
+      "sha256": "410c102fc429e058782d981e24603754b1630748cb0f963742583a511b9380f0",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "knowledge-base/Cns/docs/文字栅格T1证据.md",
+      "bytes": 20240,
+      "sha256": "ce28c7b2f87c75ad5583ccf94400f511dba957b2ed430b3349c7d7add04649a4",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "knowledge-base/Cns/docs/显示拾取示例.md",
+      "bytes": 4928,
+      "sha256": "0accd87786662dd8f63bb2c72e0d3c147a65d25a606706b96b88bebb9c4c44cf",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "knowledge-base/Cns/docs/游戏时间核心契约.md",
+      "bytes": 8534,
+      "sha256": "fc67d70a95abeb696c248bf98e55dc0d3789dffc1f0f5bb12ed5ed4478fa2e8c",
+      "violations": [
+        "FINAL_LF"
+      ]
+    },
+    {
+      "path": "knowledge-base/Cns/registry/决策.json",
+      "bytes": 44617,
+      "sha256": "0aa6c638aaea3cf4ccbb7db9a8c0446e99a92729165c5116fd86a24d4fbcc507",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "knowledge-base/en/CHANGELOG.md",
+      "bytes": 72924,
+      "sha256": "70ba031c53a3b170ba6eb698e36d0a9f5472830f47b8b1b68ee68facadadfad5",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "knowledge-base/en/README.md",
+      "bytes": 42388,
+      "sha256": "34dc8c617bb4eda8f16d095b059d7f0a35aaf5b23943a6b13a94f1d2b0eba026",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "knowledge-base/en/docs/3d-foundation.md",
+      "bytes": 7527,
+      "sha256": "469bb9059de6563f62e329b7ff4a4adc85ad0fc3d98170c6f001629ca41d34fb",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "knowledge-base/en/docs/core-progress.md",
+      "bytes": 39218,
+      "sha256": "253f9274555ff73c4de43c67cbaf6d42000683fd309dc8b17ac24cc5399d6cbc",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "knowledge-base/en/docs/display-picking-example.md",
+      "bytes": 5422,
+      "sha256": "c4c73ff0b3b95619f05276af2f578262de5efa429daaa48bbc89ea09b6663754",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "knowledge-base/en/docs/engineering-plan.md",
+      "bytes": 46573,
+      "sha256": "7ba3b720dfff13b328fb609d13c0dace2fb1affb98d8650c74f42f7613216888",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "knowledge-base/en/docs/game-clock-contract.md",
+      "bytes": 9284,
+      "sha256": "7f0a0024b12c9531fd4092443f1e7c386bdaef1eef77acb52c96da9a56c1ae68",
+      "violations": [
+        "FINAL_LF"
+      ]
+    },
+    {
+      "path": "knowledge-base/en/docs/text-raster-t1-evidence.md",
+      "bytes": 23127,
+      "sha256": "fcce324e37cf8cf70622bc84fb9b4c9e65418f5477b45f7081d6229b89a70500",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "knowledge-base/en/registry/decisions.json",
+      "bytes": 51151,
+      "sha256": "a7bec4f968c413fbd56fd564005ac60cac68f4364c79e32fe944fac526e58515",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "knowledge-base/evidence/asset-reference-lifecycle-source-snapshot-audit.json",
+      "bytes": 80909,
+      "sha256": "e14287eb58e5c9825ff17435ca07da5431a394a4a8fff4bdf6261b8771fafc2d",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "knowledge-base/evidence/asset-reference-source-snapshot-audit.json",
+      "bytes": 86524,
+      "sha256": "821c23c0b6e379e10155ec0137c0bf5b40921b7f6d585f7ce9b029747dd72b5f",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "knowledge-base/evidence/b1-public-browser.json",
+      "bytes": 4163,
+      "sha256": "d0338a7328262f645f5918ed5448335681552711fa02d2ea1e50218c4a6c9113",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "knowledge-base/evidence/core-framework-code-review-final.json",
+      "bytes": 19648,
+      "sha256": "04d78ba574b8bf5a4c34e5ef8bf20caa0e438efb1356aca85416d6a64e7d7182",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "knowledge-base/evidence/reference-render-lifecycle.json",
+      "bytes": 30238,
+      "sha256": "46834f477aac316ee2afab4d61c424260751177a965bad6c2aebb53aeb57a83b",
+      "violations": [
+        "EXTRA_EOF_BLANK"
+      ]
+    },
+    {
+      "path": "knowledge-base/evidence/spine-f1-clock-public-projection.json",
+      "bytes": 12707,
+      "sha256": "e0492f762ba780de32cbdcda7106135ee274f480abcefc2922983acdce7eda2b",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "knowledge-base/evidence/spine-f1-clock-verification.json",
+      "bytes": 19028,
+      "sha256": "f013c42b248323deea7800045bdcc2b562b6813896d3cd1182ca9af79a9fc4db",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "knowledge-base/evidence/spine-f1-manual-verification.json",
+      "bytes": 13676,
+      "sha256": "0109855d27a7081be1c15ba8db324ee97dc9f7b8f7cf17ce995572c885abf5bd",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "knowledge-base/evidence/spine-f1-public-projection.json",
+      "bytes": 25154,
+      "sha256": "3043716ce3870a350ec886330377fa9a57bdc585a36396ed75110eb13a084927",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "knowledge-base/evidence/spritesheet-verification.json",
+      "bytes": 9534,
+      "sha256": "3c0938fdf815886d0f62e9259239327386d06fd02f910485e65fbd721d167ea2",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "knowledge-base/evidence/text-raster-t1-verification.json",
+      "bytes": 96362,
+      "sha256": "4577bb06e36f15822fbc01773b932e96679ddd950e08017ec82061244e54437e",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "knowledge-base/experiments/asset-reference-probe/assets/RiggedSimple/metadata.json",
+      "bytes": 652,
+      "sha256": "ba12c1f9a24124bdfbd171528db2eece6edbb7c75a7192dadfb043212067c664",
+      "violations": [
+        "FINAL_LF"
+      ]
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f1/fixtures/f1-oracle.json",
+      "bytes": 11677,
+      "sha256": "79244829b2460589599ba70b4eff21e43e104bfe5e063e69ba5cd47c3fa17c97",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "knowledge-base/tools/Validate-KnowledgeBase.ps1",
+      "bytes": 12469,
+      "sha256": "b1dcc45807cfc7ba72d3630701a184b48a32196639f24a3db70942448fb66f1d",
+      "violations": [
+        "BOM"
+      ]
+    },
+    {
+      "path": "knowledge-base/核验记录.json",
+      "bytes": 142528,
+      "sha256": "903f9a6a8ea8dc0ce8f94c7d268b890a79dfed6e1914d6e5c60535b411212a91",
+      "violations": [
+        "CR",
+        "FINAL_LF"
+      ]
+    },
+    {
+      "path": "packages/contracts/src/Diagnostic.ts",
+      "bytes": 485,
+      "sha256": "ce61e4d90319f55febc2782ca5e1a7329984cf6cfdf14955cc3a20dbdd5920ad",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "packages/contracts/src/RenderFrame2D.ts",
+      "bytes": 1692,
+      "sha256": "621103ce9ef7dbe0850c049fdb26972cb61d555f8597b11c60e6eb36677e0b93",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "packages/engine/package.json",
+      "bytes": 1372,
+      "sha256": "891311a277b03b583ef35d45ad862ece747bda8ad04aae12f1fce9ed0e9149df",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "packages/engine/rendering/matrix4.ts",
+      "bytes": 4834,
+      "sha256": "7bbf23719fc7d9566276778281f2e22ae84c658d3181474d8d50ad6dc08ea27c",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "packages/engine/src/Engine.ts",
+      "bytes": 15897,
+      "sha256": "a2f92a7e3286d3ae08f76982ab3aad81ffa58a795217ead0f9353c27f42974c2",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "packages/engine/src/createEngine.ts",
+      "bytes": 1408,
+      "sha256": "626ab89ddf8ecfb248e6ef62e5c088a9439d78657b6e005e23e7da9fedd6b0cc",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "packages/engine/web/CanvasHost.ts",
+      "bytes": 11376,
+      "sha256": "82236ce1a291da6409007c42ecc767b2cb382d23eabf65efc6707dd9806f6642",
+      "violations": [
+        "EXTRA_EOF_BLANK"
+      ]
+    },
+    {
+      "path": "packages/runtime/src/DisplayObject.ts",
+      "bytes": 4999,
+      "sha256": "58d3211f349f28d21c520631029971e87b784a17745cde8f34e746d3fc349f3f",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "packages/runtime/src/DisplayObjectContainer.ts",
+      "bytes": 5999,
+      "sha256": "743f19d599a573c82be0438df25b3c76d6144f70de66828a6e31b42c3e2faed1",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "packages/runtime/src/Graphics.ts",
+      "bytes": 1270,
+      "sha256": "e84deaaefeec9e9bbe25d1447aba980ebefa5c981af73d71a611fe45898443a9",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "packages/runtime/src/Sprite.ts",
+      "bytes": 442,
+      "sha256": "a3175515cdeedc283199870cd683e541acf208f04330c63c3f5f5eee2e328bba",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "packages/runtime/src/displayVisualState.ts",
+      "bytes": 1785,
+      "sha256": "0bee8a7e5136f59c3301ec4d829bceaf5a01aff6f0d770dd6a2952ed31110f21",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "packages/runtime/src/frameCapture.ts",
+      "bytes": 5950,
+      "sha256": "1bb80a1e17a15f1b9e5858259b2bbcf77d97e5899218e5c4589268ba4b20b958",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "packages/runtime/src/index.ts",
+      "bytes": 2829,
+      "sha256": "7022c5dbebdacad4a9c69685d7ddb383480fa38a72e9244caafacba46716d03e",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "source-origin.json",
+      "bytes": 786021,
+      "sha256": "0cef479f06aca8f2446b3da41868ccf55cd7c6382a7f9011cd8c147e9f7d3c4d",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "tests/boundaries.test.mjs",
+      "bytes": 105161,
+      "sha256": "b1abbc3d9aa8a5f86b2e1381455835eab3f23c27810dbe0aec3cae4060975a51",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "tests/canvas-host.test.mjs",
+      "bytes": 8067,
+      "sha256": "91a83b4004d13822b54b6fab2cd9332b247c176c83204bd78db7a4d11a5ba46f",
+      "violations": [
+        "EXTRA_EOF_BLANK"
+      ]
+    },
+    {
+      "path": "tests/fixtures/project/edit.transaction.json",
+      "bytes": 317,
+      "sha256": "7777ff2f1e26487ab26d64d7a97656f6e1c1b75d0ed94c7df3f39d52328f0e69",
+      "violations": [
+        "FINAL_LF"
+      ]
+    },
+    {
+      "path": "tests/fixtures/project/empty.history.json",
+      "bytes": 307,
+      "sha256": "8c9ff3a2b9039c457f0a5fc69c915253f203c438885af3aed5e1bb340ff22cb2",
+      "violations": [
+        "FINAL_LF"
+      ]
+    },
+    {
+      "path": "tests/fixtures/project/empty.snapshot.json",
+      "bytes": 247,
+      "sha256": "b20c3b5ac792dfa840174b620ba9488db90ae9a36458957a103ca44e998bb4f5",
+      "violations": [
+        "FINAL_LF"
+      ]
+    },
+    {
+      "path": "tests/frame.test.mjs",
+      "bytes": 13574,
+      "sha256": "98d19222e951d237e63e82ad465bcd5b7b260f73ad8cb0a6dd46f89f7d7e4cad",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "tests/game-clock.test.mjs",
+      "bytes": 43474,
+      "sha256": "96271fc6eaaa872d37f160fb4002d651b334ec9a1511b5ea1ab59aa68207e8bc",
+      "violations": [
+        "FINAL_LF"
+      ]
+    },
+    {
+      "path": "tests/matrix4.test.mjs",
+      "bytes": 17574,
+      "sha256": "b40dbdd65f856cafe680956c8e1d8985468c7b85ee32f60fb69ff4d01f116fc4",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "tests/mouse-input-lifecycle.test.mjs",
+      "bytes": 35956,
+      "sha256": "fcbd141042f6009bc7d109ed711c28242bcff72a42b876c708b64611c91ee7e6",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "tests/project-boundaries.test.mjs",
+      "bytes": 13807,
+      "sha256": "e3faf9f89381265b5be917abfe1ad91437eeaa6496aed6377104cd26d8d2148e",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "tests/publication/knowledge-base-check-only.test.mjs",
+      "bytes": 12955,
+      "sha256": "6e4d2ca28bd8c2beae032c14ecd3ba3a6549113e34f546c086d40d5a7a5918f6",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "tests/scene3d-public.test.mjs",
+      "bytes": 20643,
+      "sha256": "f52d9b2c467a27687ac296cb774f4a6e108c253a08924c769b9f763b68b82001",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "tests/types/negative.ts",
+      "bytes": 28368,
+      "sha256": "e60c76f3d5d186657fd291bec3906898427ee1a4bddac67d48aa8276daf74702",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "tests/types/scene3d-positive.ts",
+      "bytes": 3174,
+      "sha256": "399eb788eded32dfa82ea54dce6c435b907e4426bd212eb029f5a14417ee5583",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "tests/webgpu-mesh-host.test.mjs",
+      "bytes": 94897,
+      "sha256": "dd7e00a4dc4ea5463c53fd99c80b0971f44adccf7f6ee4d6c83b8102eefc0f44",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "third-party/jsonc-parser-3.3.1.LICENSE",
+      "bytes": 1092,
+      "sha256": "c3a24c02d678e5f0711623dcf3ab3f243b273c2633f638a1fa8e35fb7c7f8e4d",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "tools/check-boundaries.mjs",
+      "bytes": 141308,
+      "sha256": "ca70d9de2f76a671a4136ddf11baa1a1b852e37849219d9bbc960fb9030f33d4",
+      "violations": [
+        "CR",
+        "EXTRA_EOF_BLANK"
+      ]
+    },
+    {
+      "path": "tools/textured-webgpu/collection-inputs.json",
+      "bytes": 625,
+      "sha256": "cdede8fedfbb2bc5f23f44381e2b470693b5d205953c7c2a371d2f257368d4d6",
+      "violations": [
+        "CR",
+        "FINAL_LF"
+      ]
+    },
+    {
+      "path": "tools/textured-webgpu/control-selectors.json",
+      "bytes": 7069,
+      "sha256": "8db75218bf7d44f76880a1e8d572dd40246eb0a47a53bb3e9eaa85aa97642e1c",
+      "violations": [
+        "CR",
+        "FINAL_LF"
+      ]
+    },
+    {
+      "path": "verification/code-export-stage.json",
+      "bytes": 37021,
+      "sha256": "ef3a6b6971f7e6ffcb2d26c4eaa3df4d1f26974a4eb8cb68603943e06ebfd79e",
+      "violations": [
+        "CR"
+      ]
+    },
+    {
+      "path": "verification/history/comment-source-0.10.0/packages/runtime/src/DisplayObject.ts",
+      "bytes": 1224,
+      "sha256": "d64dde4b35ca2cf929ae14a2f99b59f7e0efbb02cb5a363ff0ff6975b5aadebd",
+      "violations": [
+        "EXTRA_EOF_BLANK"
+      ]
+    },
+    {
+      "path": "verification/history/knowledge-base-validation-0.11.0.json",
+      "bytes": 103653,
+      "sha256": "5946477d9b5c55c7babd12fd11b274fee68a5d60def40c1d317ffae1d42ae624",
+      "violations": [
+        "CR",
+        "FINAL_LF"
+      ]
+    },
+    {
+      "path": "verification/history/knowledge-base-validation-0.12.0.json",
+      "bytes": 102510,
+      "sha256": "4952a4b00a9097a60f1ede3379ffb059f755fae1c6211aa91f006c581de59003",
+      "violations": [
+        "FINAL_LF"
+      ]
+    }
+  ],
+  "preservedOriginals": [
+    {
+      "path": "LICENSE",
+      "bytes": 11357,
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    {
+      "path": "LICENSE.zh-CN.md",
+      "bytes": 9428,
+      "sha256": "3b7770d86d5df0f804661c104c7bbed9b1eda0a9ba59cfd891b298483a45941f"
+    },
+    {
+      "path": "NOTICE",
+      "bytes": 1238,
+      "sha256": "45ca1fe45273afe691d3bf0d34d22c7541dac7da389a85665a8df9d8b992f070"
+    },
+    {
+      "path": "knowledge-base/Cns/experiments/asset-reference-probe/assets/RiggedSimple/LICENSE.md",
+      "bytes": 1106,
+      "sha256": "0566f621e10a6598d228db3418e35ea6986c8d76cc7eb3634b5484ddb12ac202"
+    },
+    {
+      "path": "knowledge-base/en/experiments/asset-reference-probe/assets/RiggedSimple/LICENSE.md",
+      "bytes": 781,
+      "sha256": "4343fbd97e5ecfc4c872a85cb1d755a3006f8848e15135fd6c4534839909bdbb"
+    },
+    {
+      "path": "knowledge-base/experiments/asset-reference-probe/assets/RiggedSimple/LICENSE.md",
+      "bytes": 781,
+      "sha256": "4343fbd97e5ecfc4c872a85cb1d755a3006f8848e15135fd6c4534839909bdbb"
+    },
+    {
+      "path": "knowledge-base/experiments/asset-reference-probe/vendor/three/r186/LICENSE",
+      "bytes": 1081,
+      "sha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc"
+    },
+    {
+      "path": "knowledge-base/experiments/asset-reference-probe/vendor/three/r186/build/three.core.js",
+      "bytes": 1458113,
+      "sha256": "9edde002b066a9a05676a6127f67735b62baf399bdea529f2f7e31657da769e6"
+    },
+    {
+      "path": "knowledge-base/experiments/asset-reference-probe/vendor/three/r186/build/three.module.js",
+      "bytes": 662772,
+      "sha256": "9052042d676cb0fdc1ddfefe193053f34b7ac0513a616fdac4535d49987812ea"
+    },
+    {
+      "path": "third-party/jsonc-parser-3.3.1.LICENSE",
+      "bytes": 1092,
+      "sha256": "c3a24c02d678e5f0711623dcf3ab3f243b273c2633f638a1fa8e35fb7c7f8e4d"
+    },
+    {
+      "path": "third-party/robust-predicates-3.0.3.LICENSE",
+      "bytes": 1210,
+      "sha256": "88d9b4eb60579c191ec391ca04c16130572d7eedc4a86daa58bf28c6e14c9bcd"
+    }
+  ]
+}

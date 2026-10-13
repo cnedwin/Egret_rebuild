@@ -1,4 +1,4 @@
-﻿param([string]$Root = (Split-Path -Parent $PSScriptRoot), [switch]$CheckOnly)
+param([string]$Root = (Split-Path -Parent $PSScriptRoot), [switch]$CheckOnly)
 
 $ErrorActionPreference = 'Stop'
 $kbRoot = [IO.Path]::GetFullPath($Root)
@@ -200,7 +200,8 @@ foreach ($file in $candidateFiles) {
 
 $hashes = @()
 foreach ($file in Get-ChildItem -LiteralPath $kbRoot -Recurse -File | Where-Object { $_.FullName -ne (Join-Path $kbRoot $current.validation) }) {
-    $hashes += [ordered]@{ path=$file.FullName.Substring($kbPrefix.Length).Replace('\','/'); sha256=(Get-FileHash -LiteralPath $file.FullName -Algorithm SHA256).Hash }
+    # Keep owner-relative POSIX spelling and one SHA representation; hash raw bytes.
+    $hashes += [ordered]@{ path=[IO.Path]::GetRelativePath($kbRoot, $file.FullName).Replace('\','/'); sha256=(Get-FileHash -LiteralPath $file.FullName -Algorithm SHA256).Hash.ToLowerInvariant() }
 }
 $report = [ordered]@{
     schemaVersion=1
@@ -221,7 +222,9 @@ $reportPath = Join-Path $kbRoot $current.validation
 if (-not ([IO.Path]::GetFullPath($reportPath)).StartsWith($kbPrefix, [StringComparison]::OrdinalIgnoreCase)) { throw 'Report path leaves knowledge base' }
 # Hooks validate the current tree without rewriting tracked historical evidence.
 if (-not $CheckOnly) {
-    [IO.File]::WriteAllText($reportPath, ($report | ConvertTo-Json -Depth 12), (New-Object Text.UTF8Encoding($false)))
+    # Explicit LF serialization is independent of Windows Environment.NewLine.
+    $json = ($report | ConvertTo-Json -Depth 12).Replace([string]([char]13) + [char]10, [string][char]10)
+    [IO.File]::WriteAllText($reportPath, $json.TrimEnd([char]10) + [char]10, [Text.UTF8Encoding]::new($false))
 }
 Write-Output ("KB {0}: {1}; records={2}; markdown={3}; links={4}; references={5}; issues={6}" -f $current.version,$report.status,$allItems.Count,$docs.Count,$localLinkCount,$referenceCount,$issues.Count)
 if ($issues.Count -gt 0) { $issues | ForEach-Object { Write-Output $_ }; exit 1 }

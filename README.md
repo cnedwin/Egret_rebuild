@@ -12,6 +12,26 @@ Years later, as times change and technology advances, many developers continue t
 
 多年以后，时代变迁，技术革新，依然有很多开发者在鼓励我们。我希望借助 AI 和社区的力量，重建这个游戏引擎。
 
+<!-- HYGIENE-0.45.1-BEGIN -->
+## Engineering preview 0.45.1 — Repository path and byte hygiene
+
+**R016 / R019 / R021 · S099 / V050.** Repository tooling now separates complete, case-preserving logical paths from platform-aware physical path comparisons and keeps every file fingerprint bound to raw bytes. The focused independent review accepted 111/111 regressions, the build and separate strict SpriteSheet/Sequence diagnostics. The actual pre-fix case-alias RED (0 passed / 2 assigned failures) remains preserved.
+
+Separate real Node/PowerShell writer execution passed 3/3 with independent acceptance. Saved isolated Git fixtures passed 12/12; a separate related collection passed 123/123, including 9 knowledge-base cases. Those overlapping runs are not added together, and independent Gate saved-result review accepted the finite data as **PASS_ACTUAL_REPOSITORY_HYGIENE_DATA**. Complete local publication gates, committed-snapshot qualification, the mandatory push hook and current PR/Main delivery remain **PENDING at this curation cutoff**. Packages stay private `0.0.0`, host protocol `1.0`; full Spine **R020/V020** and legacy migration **R008/V006** remain **OPEN**.
+
+Previous actual delivery: [PR #32](https://github.com/cnedwin/Egret_rebuild/pull/32) merged 0.45.0 into Main `863b29c90b92b62e37ce77cf32e02c4294135a16`, tree `1c7b706163ab58e41916bdaa8a6d45f74743a4f9`. Its mandatory hook passed 63 publication, 2,909 core and 160 experimental tests as separate suites; knowledge-base issues were 0. Remote CI PASS is not claimed. Earlier PENDING sections retain their original cutoffs.
+
+## 工程预览 0.45.1 — 仓库路径与字节规范
+
+**R016 / R019 / R021 · S099 / V050。** 仓库工具现在分别处理完整、保留大小写的逻辑路径和按平台语义比较的物理路径，文件指纹始终绑定原始字节。限定独立评审接受 111/111 项回归、构建及分别执行的 SpriteSheet／Sequence 严格诊断；修复前真实大小写别名 RED（0 项通过／2 项指定失败）继续保留。
+
+另行真实 Node／PowerShell 写入执行通过 3/3 并已独立接受；保存的隔离 Git 对照通过 12/12，独立相关集合通过 123/123，其中包括 9 项知识库用例。各次重叠运行不累加，Gate 保存结果独立评审已按 **PASS_ACTUAL_REPOSITORY_HYGIENE_DATA** 接受有限数据。完整本机公开门禁、提交快照资格、必要推送钩子及本次 PR/Main 交付在**此整理截止点继续 PENDING**。package 仍为私有 `0.0.0`，宿主协议为 `1.0`；完整 Spine **R020/V020** 和旧工程迁移 **R008/V006** 保持 **OPEN**。
+
+前一版本实际交付：[PR #32](https://github.com/cnedwin/Egret_rebuild/pull/32) 将 0.45.0 合入 Main `863b29c90b92b62e37ce77cf32e02c4294135a16`，树 `1c7b706163ab58e41916bdaa8a6d45f74743a4f9`。其必要钩子分别通过 63 项 publication、2,909 项 core 和 160 项实验测试，知识库问题为 0；不宣称远端 CI PASS。较早 PENDING 章节保留原截止点。
+
+[Policy](knowledge-base/en/docs/repository-identity-and-line-endings.md) / [Evidence](knowledge-base/en/docs/repository-hygiene-evidence.md) / [中文规范](knowledge-base/Cns/docs/仓库路径身份与换行规范.md) / [中文证据](knowledge-base/Cns/docs/仓库路径与换行验证记录.md)。
+<!-- HYGIENE-0.45.1-END -->
+
 <!-- SS1-0.45.0-BEGIN -->
 ## Engineering preview 0.45.0 — Named SpriteSheet / 工程预览 0.45.0 — 命名图集
 

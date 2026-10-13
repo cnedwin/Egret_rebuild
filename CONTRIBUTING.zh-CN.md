@@ -2,6 +2,18 @@
 
 [English](CONTRIBUTING.md) | 简体中文
 
+<!-- HYGIENE-0.45.1-POLICY-BEGIN -->
+## 仓库路径与原始字节规范
+
+验证和交付工具使用共享 `tools/lib/file-identity.mjs`，完整所属根内逻辑路径使用规范 POSIX 写法并保留创作大小写；绝对物理路径比较与包含检查使用明确的平台语义。文件名相同、统一转小写或词法路径等价不能授权另一个文件身份。
+
+新创作第一方文本通过 `tools/write-repository-text.mjs --path <owner-relative-file>` 或 `knowledge-base/tools/Write-CanonicalText.ps1 -RelativePath <owner-relative-file> -Text <text>` 写入，采用不带 BOM 的 UTF-8、LF 和一个末尾换行，保留内部空行及 Markdown 硬换行空格。不得用 `Environment.NewLine` 序列化仓库文本。原始指纹严格保留字节，计算哈希时不得规范化 EOL、BOM、Unicode 或空白；不得对上游／法律原件、原始回执、封存源码快照或历史证据运行创作格式化器。仅刷新确有修改且经过评审的当前文件身份。
+
+通过 `git config --local core.hooksPath .githooks` 启用两个仓库本地钩子，并保留其 Git 可执行模式。pre-commit 检查工作／未跟踪文本及实际暂存字节；pre-push 对干净已提交快照运行完整 `node tools/prepush.mjs --committed`。准备修改时还须运行普通 `node tools/prepush.mjs`。修复失败并完成独立源码／结果与双语评审后再交付，不能以跳过钩子或放宽字节检查替代修复。
+
+知识库验证采用 `-CheckOnly`。分别记录源码、保存的执行、完整本机门禁、实际推送／PR／Main 和远端 CI，保留早先失败与待完成截止点。阅读[仓库规范](knowledge-base/Cns/docs/仓库路径身份与换行规范.md)与[限定证据](knowledge-base/Cns/docs/仓库路径与换行验证记录.md)。
+<!-- HYGIENE-0.45.1-POLICY-END -->
+
 历史 0.13.0 矩形检查点见单独的[实现与验证记录](knowledge-base/Cns/docs/WebGPU矩形实现证据.md)；源码身份、结果及待办保留当时范围，不代表当前产品验收。
 
 先查看[README](README.zh-CN.md)、[知识库](knowledge-base/Cns/README.md)和[来源记录](source-origin.json)。现阶段可以改进三个headless包，提交生命周期、显示树或事件的反例与修复；也可校勘文档、补来源、提出接口设计，以及提供自有或获授权的迁移与文字样本。

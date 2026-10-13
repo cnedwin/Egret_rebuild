@@ -1,0 +1,3 @@
+#!/bin/sh
+# Check new/untracked text and actual staged bytes before a commit is created.
+exec node tools/check-repository-hygiene.mjs
