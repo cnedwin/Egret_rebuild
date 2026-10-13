@@ -5,6 +5,7 @@ import {spawnSync} from 'node:child_process';
 import {createRequire} from 'node:module';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
+import {ownerRelativePath,samePhysicalPath} from '../tools/lib/file-identity.mjs';
 
 const repository=fileURLToPath(new URL('..',import.meta.url));
 const parent=path.join(repository,'work');
@@ -67,6 +68,58 @@ function isolated(action) {
   }
 }
 
+// A successful whole gate also reaches the retained native compiler/type owners.
+// Copy those real inputs; all generated sources/configurations stay inside this fixture.
+function prepareTypeFixture({root}) {
+  const copy=relative=>{
+    const target=path.join(root,relative);
+    ownerRelativePath(root,target);
+    mkdirSync(path.dirname(target),{recursive:true});
+    cpSync(path.join(repository,relative),target,{recursive:true});
+  };
+  copy('tests/types');
+  for(const relative of [
+    'packages/engine/tests/geometry-contract-types.ts',
+    'packages/engine/tests/profile-contract-types.ts',
+    'package.json','pnpm-lock.yaml','tsconfig.base.json',
+    'tools/check-types.mjs','tools/sequence-playback-types.mjs',
+    'tools/spritesheet-types.mjs','tools/lib/file-identity.mjs',
+  ]) copy(relative);
+
+  // Read-only stock compiler inputs are copied, never mocked or linked outside the owner.
+  const compilerOwner=realpathSync(path.join(repository,'node_modules/typescript'));
+  const compilerMetadata=JSON.parse(readFileSync(path.join(compilerOwner,'package.json'),'utf8'));
+  assert.equal(compilerMetadata.name,'typescript');
+  assert.equal(compilerMetadata.version,'7.0.2');
+  const nativeName='@typescript/typescript-'+process.platform+'-'+process.arch;
+  const nativeOwner=path.dirname(realpathSync(createRequire(path.join(compilerOwner,'package.json')).resolve(nativeName+'/package.json')));
+  const nativeMetadata=JSON.parse(readFileSync(path.join(nativeOwner,'package.json'),'utf8'));
+  assert.equal(nativeMetadata.name,nativeName);
+  assert.equal(nativeMetadata.version,compilerMetadata.version);
+  const compilerTarget=path.join(root,'node_modules/typescript');
+  const nativeTarget=path.join(root,'node_modules',nativeName);
+  ownerRelativePath(root,compilerTarget);ownerRelativePath(root,nativeTarget);
+  mkdirSync(path.dirname(nativeTarget),{recursive:true});
+  cpSync(compilerOwner,compilerTarget,{recursive:true});
+  cpSync(nativeOwner,nativeTarget,{recursive:true});
+  assert.deepEqual(readFileSync(path.join(compilerTarget,'package.json')),readFileSync(path.join(compilerOwner,'package.json')));
+  assert.deepEqual(readFileSync(path.join(nativeTarget,'package.json')),readFileSync(path.join(nativeOwner,'package.json')));
+
+  // Type gates qualify physical public aliases against the four genuine copied packages.
+  // Runtime boundary controls above retain their distinct resolution copies and bridges.
+  for(const name of ['contracts','runtime','engine','project']) {
+    const alias=path.join(root,'node_modules/@egret',name),target=path.join(root,'packages',name);
+    if(!samePhysicalPath(realpathSync(alias),realpathSync(target))) {
+      assert.equal(ownerRelativePath(realpathSync(root),realpathSync(alias)),'node_modules/@egret/'+name);
+      rmSync(alias,{recursive:true,force:false});
+      symlinkSync(target,alias,'junction');
+    }
+    assert.equal(ownerRelativePath(realpathSync(root),realpathSync(alias)),'packages/'+name);
+    assert.equal(samePhysicalPath(realpathSync(alias),realpathSync(target)),true);
+  }
+  assert.deepEqual(readFileSync(path.join(root,'tools/check-types.mjs')),readFileSync(path.join(repository,'tools/check-types.mjs')));
+}
+
 test('actual built public root contains precisely the six values and 29 type-only exports',async()=>{
   assert.deepEqual(Object.keys(await import('@egret/project')),values);
   const appendix=readFileSync(path.join(repository,'tests/fixtures/project/api-signatures.txt'),'utf8');
@@ -113,21 +166,15 @@ for(const [name,change,reason]of mutations) test(`isolated actual package mutati
   t.diagnostic(`${name}: exit ${result.status}; ${result.stderr.match(/^Error: .+/m)?.[0]}`);
 }));
 
-test('strict public project consumers and unsuppressed diagnostic locations run through the actual type gate',()=>{
-  const result=run(['tools/check-types.mjs']);assert.equal(result.status,0,result.stdout+result.stderr);assert.match(result.stdout,/Project type fixtures PASS: 29 type-only exports/);
-});
+test('strict public project consumers and unsuppressed diagnostic locations run through the actual type gate',()=>isolated(fixture=>{
+  prepareTypeFixture(fixture);
+  const result=run(['tools/check-types.mjs'],fixture.root);assert.ifError(result.error);assert.equal(result.status,0,result.stdout+result.stderr);assert.match(result.stdout,/Project type fixtures PASS: 29 type-only exports/);
+  assert.match(result.stdout,/Sequence playback types PASS/);
+  assert.match(result.stdout,/SpriteSheet types PASS/);
+}));
 
 test('real compiler negatives with unchanged error count reject incorrect expected code and location',t=>isolated(({root,write})=>{
-  cpSync(path.join(repository,'tests/types'),path.join(root,'tests/types'),{recursive:true});
-  // Existing positive consumers resolve both opaque contracts through these unchanged type-only bridges.
-  mkdirSync(path.join(root,'packages/engine/tests'),{recursive:true});
-  for(const name of ['geometry-contract-types.ts','profile-contract-types.ts'])
-    cpSync(path.join(repository,'packages/engine/tests',name),path.join(root,'packages/engine/tests',name));
-  write('tsconfig.base.json',readFileSync(path.join(repository,'tsconfig.base.json'),'utf8'));
-  const checker=readFileSync(path.join(repository,'tools/check-types.mjs'),'utf8');
-  // The installed compiler is read-only outside the fixture; package/type inputs
-  // and the expectation mutations stay in this isolated actual-copy workspace.
-  write('tools/check-types.mjs',checker.replace('path.join(root, "node_modules/typescript/bin/tsc")',JSON.stringify(path.join(repository,'node_modules/typescript/bin/tsc'))));
+  prepareTypeFixture({root});
   const original=readFileSync(path.join(root,'tests/types/project-negative.ts'),'utf8');
   for(const [name,changed,reason]of [
     ['code',original.replace('PROJECT_CASE project-entity TS2322','PROJECT_CASE project-entity TS9999'),/Project negative project-entity: missing exact line 15 \/ TS9999/],

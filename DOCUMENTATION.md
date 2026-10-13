@@ -6,6 +6,7 @@ Start with the topic you need. Complete knowledge-base reading editions live in 
 
 | Topic | English | 中文 |
 | --- | --- | --- |
+| Optional browser PNG textures | [Contract](knowledge-base/en/docs/browser-png-contract.md) · [Plan](knowledge-base/en/docs/browser-png-implementation-plan.md) · [Native CLI](knowledge-base/en/docs/browser-png-native-plan.md) · [Evidence](knowledge-base/en/docs/browser-png-evidence.md) | [契约](knowledge-base/Cns/docs/浏览器PNG纹理Provider契约.md) · [计划](knowledge-base/Cns/docs/浏览器PNG实施计划.md) · [原生 CLI](knowledge-base/Cns/docs/浏览器PNG原生验证计划.md) · [证据](knowledge-base/Cns/docs/浏览器PNG验证证据.md) |
 | Project introduction and versions | [README](README.md) · [Changelog](knowledge-base/en/CHANGELOG.md) | [README](README.zh-CN.md) · [变更记录](knowledge-base/Cns/CHANGELOG.md) |
 | Product direction | [Positioning](knowledge-base/en/docs/design-philosophy-and-positioning.md) · [Requirements](knowledge-base/en/docs/product-requirements.md) | [设计理念与定位](knowledge-base/Cns/docs/设计理念与定位.md) · [产品需求](knowledge-base/Cns/docs/产品需求说明书.md) |
 | Architecture and delivery | [White paper](knowledge-base/en/docs/technical-white-paper.md) · [Engineering plan](knowledge-base/en/docs/engineering-plan.md) · [Delivery plan](knowledge-base/en/docs/delivery-plan.md) | [技术白皮书](knowledge-base/Cns/docs/技术白皮书.md) · [工程规划](knowledge-base/Cns/docs/工程规划.md) · [交付计划](knowledge-base/Cns/docs/交付计划.md) |

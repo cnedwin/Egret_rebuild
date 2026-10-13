@@ -1,0 +1,1412 @@
+{
+  "schemaVersion": 1,
+  "kind": "BROWSER_PNG_ACTUAL_STRICT_CONSUMER_DIAGNOSTICS",
+  "tupleFormat": [
+    "file",
+    "line",
+    "column",
+    "code",
+    "message"
+  ],
+  "compiler": {
+    "name": "typescript",
+    "version": "7.0.2",
+    "entry": "node_modules/typescript/bin/tsc",
+    "pins": [
+      {
+        "path": "node_modules/typescript/package.json",
+        "bytes": 3087,
+        "sha256": "3722b30210616a13a3213ded11575ba6b2dbab10c32a5ef67afca8513e27017e"
+      },
+      {
+        "path": "node_modules/typescript/bin/tsc",
+        "bytes": 44,
+        "sha256": "2219f428a7e55aaf1f7ad85b9b0f0cf5078aeb76ccc9a7c6036c92d48f492ffd"
+      },
+      {
+        "path": "node_modules/typescript/lib/tsc.js",
+        "bytes": 609,
+        "sha256": "cbdfbf11c26ed00dfc073155e316a42d6d6d8a387be61006b82fa9aa93ac572e"
+      },
+      {
+        "path": "node_modules/typescript/lib/getExePath.js",
+        "bytes": 3051,
+        "sha256": "96c10fd3a18e165d7323de8e314ac8d755ad96811f9fbc304a5b3ba4e05285cc"
+      },
+      {
+        "path": "pnpm-lock.yaml",
+        "bytes": 9017,
+        "sha256": "79383095fd4bb2bb4682a12f9651d9a876a01fc6dc1326d09bc0ad587db23084"
+      }
+    ]
+  },
+  "sourceCollection": {
+    "bytes": 65442,
+    "sha256": "17197b25342bd4d6221450b29d3a6f033aa5905534ed36f02ca3199700cfc6b9",
+    "scope": "Actual five strict compilation lanes; complete unsuppressed diagnostics, separate from runtime/native results."
+  },
+  "productPins": [
+    {
+      "path": "packages/engine/package.json",
+      "bytes": 1470,
+      "sha256": "21a95638b25541c97b8da9cb8c406ec183a9b4271c446c8c590c2b04b3b99077"
+    },
+    {
+      "path": "packages/engine/web/image.ts",
+      "bytes": 358,
+      "sha256": "beb530b0351e1c235ca75a27a831e0df491d6be7dc057ba6c6eca09492280359"
+    },
+    {
+      "path": "packages/engine/web/BrowserTextureProvider.ts",
+      "bytes": 26925,
+      "sha256": "f3653ea77a29979f43f18c95405223ad1d2a72a647d40391705668f9ea504993"
+    },
+    {
+      "path": "packages/engine/dist/web/image.js",
+      "bytes": 234,
+      "sha256": "28c0f728e5a1cdf35414806409623500267376b19a4a06f296310ee4d674d9c3"
+    },
+    {
+      "path": "packages/engine/dist/web/image.d.ts",
+      "bytes": 346,
+      "sha256": "11e0348e549ed825d0c7e00c5864d1df9a2f24fa4ab2cbf7c43ad66e3d26c0ca"
+    },
+    {
+      "path": "packages/engine/dist/web/BrowserTextureProvider.js",
+      "bytes": 26201,
+      "sha256": "06f49a72039f95d0fd3c23bb409db658672bb10b512b4ca9b256064b419e1d90"
+    },
+    {
+      "path": "packages/engine/dist/web/BrowserTextureProvider.d.ts",
+      "bytes": 1130,
+      "sha256": "44418045d02c256a6814b74abdda44b5ed1f1433618479a4aade9ddc08f30257"
+    }
+  ],
+  "configurationPins": [
+    {
+      "path": "tsconfig.base.json",
+      "bytes": 446,
+      "sha256": "b7a31fb9f93a93e20bfdcf33c135acb45cb3a6895a8b3e7006bd85214ddc1008"
+    },
+    {
+      "path": "tsconfig.json",
+      "bytes": 369,
+      "sha256": "d9253848fbde9041d0f7540553dbabc7f723856e7f4513358d41aa0384fab0ef"
+    },
+    {
+      "path": "packages/contracts/tsconfig.json",
+      "bytes": 135,
+      "sha256": "65830141c9e37d6d5a604ae796c5fe8b9258040f9e1f29547c0b238829b989d6"
+    },
+    {
+      "path": "packages/runtime/tsconfig.json",
+      "bytes": 181,
+      "sha256": "ed31ec963ca62cee11d41071686c8a3dc58554155e120f52d1747254087f1bac"
+    },
+    {
+      "path": "packages/engine/tsconfig.json",
+      "bytes": 207,
+      "sha256": "ac07062d5460bb112739e3ef98e2f16f7479b1f4a18c7add69c46c2880ac68a4"
+    },
+    {
+      "path": "packages/engine/tsconfig.rendering.json",
+      "bytes": 307,
+      "sha256": "f5a7e4fe1d79c140d9472417b8ddfbd0104929a982cdf61dae247735f1b6f13a"
+    },
+    {
+      "path": "packages/engine/tsconfig.web.json",
+      "bytes": 356,
+      "sha256": "c1db022356fde98656725aff6d5e795d8a54bed48046fecb49b33c3c73f2bea3"
+    },
+    {
+      "path": "packages/project/tsconfig.json",
+      "bytes": 217,
+      "sha256": "77bce36f3e9727b65bad73927abbf5ef3391453d2ff407f2740e4f7c83783567"
+    }
+  ],
+  "lanes": [
+    {
+      "lane": "positive",
+      "expectedExit": 0,
+      "sourcePin": {
+        "path": "tests/types/browser-png-positive.ts",
+        "bytes": 4907,
+        "sha256": "7b33a5d82b5977ebab3b83f9154560622682856281e0815329ec9f1b873f03d9"
+      },
+      "configPin": {
+        "path": "tests/types/tsconfig.browser-png-positive.json",
+        "bytes": 548,
+        "sha256": "d6d38193f58d268bc0b02ca2f17d7cce3ac4df13c8cddc587609bd8073d5a1b8"
+      },
+      "markers": [],
+      "diagnostics": []
+    },
+    {
+      "lane": "negative",
+      "expectedExit": 1,
+      "sourcePin": {
+        "path": "tests/types/browser-png-negative.ts",
+        "bytes": 5335,
+        "sha256": "553609803e5b79853f80c78c09c4f45a0902dc4233756d500be7cca98157f878"
+      },
+      "configPin": {
+        "path": "tests/types/tsconfig.browser-png-negative.json",
+        "bytes": 548,
+        "sha256": "9706a88d5d43945670d86a384625f3b4b67a7238923d6980d36b201c31f278c2"
+      },
+      "markers": [
+        {
+          "name": "BIP1-N01",
+          "line": 25,
+          "statement": "createBrowserTextureProvider({});",
+          "intent": "the required reader is absent."
+        },
+        {
+          "name": "BIP1-N02",
+          "line": 27,
+          "statement": "createBrowserTextureProvider({ readBytes: () => new Uint8Array(new ArrayBuffer(8)) });",
+          "intent": "a synchronous byte value is not the promised source signature."
+        },
+        {
+          "name": "BIP1-N03",
+          "line": 29,
+          "statement": "createBrowserTextureProvider({ readBytes: () => Promise.resolve('png') });",
+          "intent": "wrong promised scalar return."
+        },
+        {
+          "name": "BIP1-N04",
+          "line": 31,
+          "statement": "createBrowserTextureProvider({ readBytes: () => Promise.resolve(new Uint8Array(new SharedArrayBuffer(8))) });",
+          "intent": "shared backing is not the specified ArrayBuffer source type."
+        },
+        {
+          "name": "BIP1-N05",
+          "line": 33,
+          "statement": "createBrowserTextureProvider({ readBytes: () => Promise.resolve(new Uint8ClampedArray(new ArrayBuffer(8))) });",
+          "intent": "clamped bytes are not the input Uint8Array signature."
+        },
+        {
+          "name": "BIP1-N06",
+          "line": 35,
+          "statement": "createBrowserTextureProvider({ readBytes: (_ref: AssetRef<number>, _context: AssetLoadContext) => Promise.resolve(new Uint8Array(new ArrayBuffer(8))) });",
+          "intent": "the reader cannot substitute an invariant number ref."
+        },
+        {
+          "name": "BIP1-N07",
+          "line": 37,
+          "statement": "createBrowserTextureProvider(null);",
+          "intent": "required options are nonnull."
+        },
+        {
+          "name": "BIP1-N08",
+          "line": 39,
+          "statement": "createBrowserTextureProvider({ readBytes: null });",
+          "intent": "the required callback is nonnull."
+        },
+        {
+          "name": "BIP1-N09",
+          "line": 41,
+          "statement": "createBrowserTextureProvider({ readBytes, ports: null });",
+          "intent": "supplied ports are nonnull."
+        },
+        {
+          "name": "BIP1-N10",
+          "line": 43,
+          "statement": "createBrowserTextureProvider({ readBytes, ports: undefined });",
+          "intent": "exact optional ports cannot be supplied as undefined."
+        },
+        {
+          "name": "BIP1-N11",
+          "line": 45,
+          "statement": "createBrowserTextureProvider({ readBytes, ports: { decode } });",
+          "intent": "supplied ports need both functions."
+        },
+        {
+          "name": "BIP1-N12",
+          "line": 47,
+          "statement": "createBrowserTextureProvider({ readBytes, ports: { decode: () => undefined, createCanvas } });",
+          "intent": "decode cannot return void."
+        },
+        {
+          "name": "BIP1-N13",
+          "line": 49,
+          "statement": "createBrowserTextureProvider({ readBytes, ports: { decode: unknownDecode, createCanvas } });",
+          "intent": "unknown decode output cannot supply the ImageBitmap contract."
+        },
+        {
+          "name": "BIP1-N14",
+          "line": 51,
+          "statement": "createBrowserTextureProvider({ readBytes, ports: { decode, createCanvas: () => ({ width: 1, height: 1 }) } });",
+          "intent": "the surface function must return a Canvas element."
+        },
+        {
+          "name": "BIP1-N15",
+          "line": 53,
+          "statement": "const wrongOrientation: BrowserPngDecodeOptions = { ...decodeOptions, imageOrientation: 'flipY' };",
+          "intent": "orientation has the exact admitted literal."
+        },
+        {
+          "name": "BIP1-N16",
+          "line": 55,
+          "statement": "const wrongPremultiplication: BrowserPngDecodeOptions = { ...decodeOptions, premultiplyAlpha: 'premultiply' };",
+          "intent": "premultiplication has the exact admitted literal."
+        },
+        {
+          "name": "BIP1-N17",
+          "line": 57,
+          "statement": "const wrongConversion: BrowserPngDecodeOptions = { ...decodeOptions, colorSpaceConversion: 'default' };",
+          "intent": "conversion has the exact admitted literal."
+        },
+        {
+          "name": "BIP1-N18",
+          "line": 59,
+          "statement": "provider.profile = 'png-rgb-rgba8-browser-normalized-v1';",
+          "intent": "provider profile is readonly."
+        },
+        {
+          "name": "BIP1-N19",
+          "line": 61,
+          "statement": "provider.isClosed = false;",
+          "intent": "provider closure state is readonly."
+        },
+        {
+          "name": "BIP1-N20",
+          "line": 63,
+          "statement": "options.readBytes = readBytes;",
+          "intent": "options callback is readonly."
+        },
+        {
+          "name": "BIP1-N21",
+          "line": 65,
+          "statement": "options.ports = ports;",
+          "intent": "options ports slot is readonly."
+        },
+        {
+          "name": "BIP1-N22",
+          "line": 67,
+          "statement": "ports.decode = decode;",
+          "intent": "captured decode port is readonly."
+        },
+        {
+          "name": "BIP1-N23",
+          "line": 69,
+          "statement": "ports.createCanvas = createCanvas;",
+          "intent": "captured Canvas port is readonly."
+        },
+        {
+          "name": "BIP1-N24",
+          "line": 71,
+          "statement": "decodeOptions.imageOrientation = 'from-image';",
+          "intent": "decode-option field is readonly."
+        },
+        {
+          "name": "BIP1-N25",
+          "line": 73,
+          "statement": "provider.dispose({});",
+          "intent": "disposal requires a Texture value."
+        },
+        {
+          "name": "BIP1-N26",
+          "line": 75,
+          "statement": "const synchronousClose: void = provider.close();",
+          "intent": "close produces Promise<void>, not synchronous void."
+        },
+        {
+          "name": "BIP1-N27",
+          "line": 77,
+          "statement": "scope.use(provider);",
+          "intent": "a value-parameter disposer is not Scope's no-argument Disposable."
+        },
+        {
+          "name": "BIP1-N28",
+          "line": 79,
+          "statement": "provider.load(numberRef, context);",
+          "intent": "load requires the invariant Texture ref."
+        },
+        {
+          "name": "BIP1-N29",
+          "line": 81,
+          "statement": "provider.load(textureRef);",
+          "intent": "load requires its context argument."
+        },
+        {
+          "name": "BIP1-N30",
+          "line": 83,
+          "statement": "const numberProvider: AssetProvider<number> = provider;",
+          "intent": "the Texture provider is not a provider of number values."
+        },
+        {
+          "name": "BIP1-N31",
+          "line": 85,
+          "statement": "provider.close(texture);",
+          "intent": "close accepts no value argument."
+        },
+        {
+          "name": "BIP1-N32",
+          "line": 87,
+          "statement": "const asynchronousDispose: Promise<void> = provider.dispose(texture);",
+          "intent": "disposal is synchronous void, not a promised completion."
+        }
+      ],
+      "diagnostics": [
+        {
+          "file": "tests/types/browser-png-negative.ts",
+          "line": 25,
+          "column": 30,
+          "code": 2741,
+          "message": "Property 'readBytes' is missing in type '{}' but required in type 'BrowserTextureProviderOptions'."
+        },
+        {
+          "file": "tests/types/browser-png-negative.ts",
+          "line": 27,
+          "column": 49,
+          "code": 2739,
+          "message": "Type 'Uint8Array<ArrayBuffer>' is missing the following properties from type 'Promise<Uint8Array<ArrayBuffer>>': then, catch, finally"
+        },
+        {
+          "file": "tests/types/browser-png-negative.ts",
+          "line": 29,
+          "column": 49,
+          "code": 2322,
+          "message": "Type 'Promise<string>' is not assignable to type 'Promise<Uint8Array<ArrayBuffer>>'.\n  Type 'string' is not assignable to type 'Uint8Array<ArrayBuffer>'."
+        },
+        {
+          "file": "tests/types/browser-png-negative.ts",
+          "line": 31,
+          "column": 49,
+          "code": 2322,
+          "message": "Type 'Promise<Uint8Array<SharedArrayBuffer>>' is not assignable to type 'Promise<Uint8Array<ArrayBuffer>>'.\n  Type 'Uint8Array<SharedArrayBuffer>' is not assignable to type 'Uint8Array<ArrayBuffer>'.\n    Type 'SharedArrayBuffer' is not assignable to type 'ArrayBuffer'.\n      Types of property '[Symbol.toStringTag]' are incompatible.\n        Type '\"SharedArrayBuffer\"' is not assignable to type '\"ArrayBuffer\"'."
+        },
+        {
+          "file": "tests/types/browser-png-negative.ts",
+          "line": 33,
+          "column": 49,
+          "code": 2322,
+          "message": "Type 'Promise<Uint8ClampedArray<ArrayBuffer>>' is not assignable to type 'Promise<Uint8Array<ArrayBuffer>>'.\n  Type 'Uint8ClampedArray<ArrayBuffer>' is not assignable to type 'Uint8Array<ArrayBuffer>'.\n    Types of property '[Symbol.toStringTag]' are incompatible.\n      Type '\"Uint8ClampedArray\"' is not assignable to type '\"Uint8Array\"'."
+        },
+        {
+          "file": "tests/types/browser-png-negative.ts",
+          "line": 35,
+          "column": 32,
+          "code": 2322,
+          "message": "Type '(_ref: AssetRef<number>, _context: AssetLoadContext) => Promise<Uint8Array<ArrayBuffer>>' is not assignable to type '(ref: AssetRef<Texture>, context: AssetLoadContext) => Promise<Uint8Array<ArrayBuffer>>'.\n  Types of parameters '_ref' and 'ref' are incompatible.\n    Type 'AssetRef<Texture>' is not assignable to type 'AssetRef<number>'.\n      The types of 'type.is' are incompatible between these types.\n        Type '(value: unknown) => value is Texture' is not assignable to type '(value: unknown) => value is number'.\n          Type predicate 'value is Texture' is not assignable to 'value is number'.\n            Type 'Texture' is not assignable to type 'number'."
+        },
+        {
+          "file": "tests/types/browser-png-negative.ts",
+          "line": 37,
+          "column": 30,
+          "code": 2345,
+          "message": "Argument of type 'null' is not assignable to parameter of type 'BrowserTextureProviderOptions'."
+        },
+        {
+          "file": "tests/types/browser-png-negative.ts",
+          "line": 39,
+          "column": 32,
+          "code": 2322,
+          "message": "Type 'null' is not assignable to type '(ref: AssetRef<Texture>, context: AssetLoadContext) => Promise<Uint8Array<ArrayBuffer>>'."
+        },
+        {
+          "file": "tests/types/browser-png-negative.ts",
+          "line": 41,
+          "column": 43,
+          "code": 2322,
+          "message": "Type 'null' is not assignable to type 'BrowserPngPorts'."
+        },
+        {
+          "file": "tests/types/browser-png-negative.ts",
+          "line": 43,
+          "column": 30,
+          "code": 2379,
+          "message": "Argument of type '{ readBytes: (ref: AssetRef<Texture>, context: AssetLoadContext) => Promise<Uint8Array<ArrayBuffer>>; ports: undefined; }' is not assignable to parameter of type 'BrowserTextureProviderOptions' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.\n  Types of property 'ports' are incompatible.\n    Type 'undefined' is not assignable to type 'BrowserPngPorts'."
+        },
+        {
+          "file": "tests/types/browser-png-negative.ts",
+          "line": 45,
+          "column": 43,
+          "code": 2741,
+          "message": "Property 'createCanvas' is missing in type '{ decode: (blob: Blob, options: BrowserPngDecodeOptions) => Promise<ImageBitmap>; }' but required in type 'BrowserPngPorts'."
+        },
+        {
+          "file": "tests/types/browser-png-negative.ts",
+          "line": 47,
+          "column": 66,
+          "code": 2322,
+          "message": "Type 'undefined' is not assignable to type 'Promise<ImageBitmap>'."
+        },
+        {
+          "file": "tests/types/browser-png-negative.ts",
+          "line": 49,
+          "column": 52,
+          "code": 2322,
+          "message": "Type '(blob: Blob, options: BrowserPngDecodeOptions) => Promise<unknown>' is not assignable to type '(blob: Blob, options: BrowserPngDecodeOptions) => Promise<ImageBitmap>'.\n  Type 'Promise<unknown>' is not assignable to type 'Promise<ImageBitmap>'.\n    Type 'unknown' is not assignable to type 'ImageBitmap'."
+        },
+        {
+          "file": "tests/types/browser-png-negative.ts",
+          "line": 51,
+          "column": 80,
+          "code": 2740,
+          "message": "Type '{ width: number; height: number; }' is missing the following properties from type 'HTMLCanvasElement': captureStream, getContext, toBlob, toDataURL, and 323 more."
+        },
+        {
+          "file": "tests/types/browser-png-negative.ts",
+          "line": 53,
+          "column": 71,
+          "code": 2322,
+          "message": "Type '\"flipY\"' is not assignable to type '\"from-image\"'."
+        },
+        {
+          "file": "tests/types/browser-png-negative.ts",
+          "line": 55,
+          "column": 77,
+          "code": 2322,
+          "message": "Type '\"premultiply\"' is not assignable to type '\"none\"'."
+        },
+        {
+          "file": "tests/types/browser-png-negative.ts",
+          "line": 57,
+          "column": 70,
+          "code": 2322,
+          "message": "Type '\"default\"' is not assignable to type '\"none\"'."
+        },
+        {
+          "file": "tests/types/browser-png-negative.ts",
+          "line": 59,
+          "column": 10,
+          "code": 2540,
+          "message": "Cannot assign to 'profile' because it is a read-only property."
+        },
+        {
+          "file": "tests/types/browser-png-negative.ts",
+          "line": 61,
+          "column": 10,
+          "code": 2540,
+          "message": "Cannot assign to 'isClosed' because it is a read-only property."
+        },
+        {
+          "file": "tests/types/browser-png-negative.ts",
+          "line": 63,
+          "column": 9,
+          "code": 2540,
+          "message": "Cannot assign to 'readBytes' because it is a read-only property."
+        },
+        {
+          "file": "tests/types/browser-png-negative.ts",
+          "line": 65,
+          "column": 9,
+          "code": 2540,
+          "message": "Cannot assign to 'ports' because it is a read-only property."
+        },
+        {
+          "file": "tests/types/browser-png-negative.ts",
+          "line": 67,
+          "column": 7,
+          "code": 2540,
+          "message": "Cannot assign to 'decode' because it is a read-only property."
+        },
+        {
+          "file": "tests/types/browser-png-negative.ts",
+          "line": 69,
+          "column": 7,
+          "code": 2540,
+          "message": "Cannot assign to 'createCanvas' because it is a read-only property."
+        },
+        {
+          "file": "tests/types/browser-png-negative.ts",
+          "line": 71,
+          "column": 15,
+          "code": 2540,
+          "message": "Cannot assign to 'imageOrientation' because it is a read-only property."
+        },
+        {
+          "file": "tests/types/browser-png-negative.ts",
+          "line": 73,
+          "column": 18,
+          "code": 2740,
+          "message": "Type '{}' is missing the following properties from type 'Texture': textureBrand, imageData, sourceRect, width, and 3 more."
+        },
+        {
+          "file": "tests/types/browser-png-negative.ts",
+          "line": 75,
+          "column": 7,
+          "code": 2322,
+          "message": "Type 'Promise<void>' is not assignable to type 'void'."
+        },
+        {
+          "file": "tests/types/browser-png-negative.ts",
+          "line": 77,
+          "column": 11,
+          "code": 2345,
+          "message": "Argument of type 'BrowserTextureProvider' is not assignable to parameter of type 'ScopeValue'.\n  Type 'BrowserTextureProvider' is not assignable to type 'Disposable'.\n    Types of property 'dispose' are incompatible.\n      Type '(value: Texture) => void' is not assignable to type '() => void'.\n        Target signature provides too few arguments. Expected 1 or more, but got 0."
+        },
+        {
+          "file": "tests/types/browser-png-negative.ts",
+          "line": 79,
+          "column": 15,
+          "code": 2345,
+          "message": "Argument of type 'AssetRef<number>' is not assignable to parameter of type 'AssetRef<Texture>'.\n  The types of 'type.is' are incompatible between these types.\n    Type '(value: unknown) => value is number' is not assignable to type '(value: unknown) => value is Texture'.\n      Type predicate 'value is number' is not assignable to 'value is Texture'.\n        Type 'number' is not assignable to type 'Texture'."
+        },
+        {
+          "file": "tests/types/browser-png-negative.ts",
+          "line": 81,
+          "column": 10,
+          "code": 2554,
+          "message": "Expected 2 arguments, but got 1."
+        },
+        {
+          "file": "tests/types/browser-png-negative.ts",
+          "line": 83,
+          "column": 7,
+          "code": 2322,
+          "message": "Type 'BrowserTextureProvider' is not assignable to type 'AssetProvider<number>'.\n  Types of property 'load' are incompatible.\n    Type '(ref: AssetRef<Texture>, context: AssetLoadContext) => Promise<Texture>' is not assignable to type '(ref: AssetRef<number>, context: AssetLoadContext) => Promise<number>'.\n      Types of parameters 'ref' and 'ref' are incompatible.\n        Type 'AssetRef<number>' is not assignable to type 'AssetRef<Texture>'.\n          The types of 'type.is' are incompatible between these types.\n            Type '(value: unknown) => value is number' is not assignable to type '(value: unknown) => value is Texture'.\n              Type predicate 'value is number' is not assignable to 'value is Texture'.\n                Type 'number' is not assignable to type 'Texture'."
+        },
+        {
+          "file": "tests/types/browser-png-negative.ts",
+          "line": 85,
+          "column": 16,
+          "code": 2554,
+          "message": "Expected 0 arguments, but got 1."
+        },
+        {
+          "file": "tests/types/browser-png-negative.ts",
+          "line": 87,
+          "column": 7,
+          "code": 2322,
+          "message": "Type 'void' is not assignable to type 'Promise<void>'."
+        }
+      ]
+    },
+    {
+      "lane": "import-negative",
+      "expectedExit": 1,
+      "sourcePin": {
+        "path": "tests/types/browser-png-import-negative.ts",
+        "bytes": 10430,
+        "sha256": "c5d8b5ccf21219ad1138911b7f43324e5c6c36eaa421e70fd87ac753a6d624c2"
+      },
+      "configPin": {
+        "path": "tests/types/tsconfig.browser-png-import-negative.json",
+        "bytes": 555,
+        "sha256": "59c527cf54598564a71525b00774762036a30a415a26a92fbee77c971a57c99b"
+      },
+      "markers": [
+        {
+          "name": "BIP1-I01",
+          "line": 6,
+          "statement": "import { BrowserPngDecodeOptions } from '@egret/engine/web/image';",
+          "intent": "BrowserPngDecodeOptions is erased on the optional route."
+        },
+        {
+          "name": "BIP1-I02",
+          "line": 8,
+          "statement": "import { BrowserPngPorts } from '@egret/engine/web/image';",
+          "intent": "BrowserPngPorts is erased on the optional route."
+        },
+        {
+          "name": "BIP1-I03",
+          "line": 10,
+          "statement": "import { BrowserTextureProviderOptions } from '@egret/engine/web/image';",
+          "intent": "BrowserTextureProviderOptions is erased on the optional route."
+        },
+        {
+          "name": "BIP1-I04",
+          "line": 12,
+          "statement": "import { BrowserTextureProvider } from '@egret/engine/web/image';",
+          "intent": "BrowserTextureProvider is erased on the optional route."
+        },
+        {
+          "name": "BIP1-I05",
+          "line": 14,
+          "statement": "import { createBrowserTextureProvider as EngineImageFactory } from '@egret/engine';",
+          "intent": "the @egret/engine entry has no browser image factory."
+        },
+        {
+          "name": "BIP1-I06",
+          "line": 16,
+          "statement": "import type { BrowserPngDecodeOptions as EngineBrowserPngDecodeOptions } from '@egret/engine';",
+          "intent": "the @egret/engine entry has no BrowserPngDecodeOptions type."
+        },
+        {
+          "name": "BIP1-I07",
+          "line": 18,
+          "statement": "import type { BrowserPngPorts as EngineBrowserPngPorts } from '@egret/engine';",
+          "intent": "the @egret/engine entry has no BrowserPngPorts type."
+        },
+        {
+          "name": "BIP1-I08",
+          "line": 20,
+          "statement": "import type { BrowserTextureProviderOptions as EngineBrowserTextureProviderOptions } from '@egret/engine';",
+          "intent": "the @egret/engine entry has no BrowserTextureProviderOptions type."
+        },
+        {
+          "name": "BIP1-I09",
+          "line": 22,
+          "statement": "import type { BrowserTextureProvider as EngineBrowserTextureProvider } from '@egret/engine';",
+          "intent": "the @egret/engine entry has no BrowserTextureProvider type."
+        },
+        {
+          "name": "BIP1-I10",
+          "line": 24,
+          "statement": "import { createBrowserTextureProvider as RuntimeImageFactory } from '@egret/runtime';",
+          "intent": "the @egret/runtime entry has no browser image factory."
+        },
+        {
+          "name": "BIP1-I11",
+          "line": 26,
+          "statement": "import type { BrowserPngDecodeOptions as RuntimeBrowserPngDecodeOptions } from '@egret/runtime';",
+          "intent": "the @egret/runtime entry has no BrowserPngDecodeOptions type."
+        },
+        {
+          "name": "BIP1-I12",
+          "line": 28,
+          "statement": "import type { BrowserPngPorts as RuntimeBrowserPngPorts } from '@egret/runtime';",
+          "intent": "the @egret/runtime entry has no BrowserPngPorts type."
+        },
+        {
+          "name": "BIP1-I13",
+          "line": 30,
+          "statement": "import type { BrowserTextureProviderOptions as RuntimeBrowserTextureProviderOptions } from '@egret/runtime';",
+          "intent": "the @egret/runtime entry has no BrowserTextureProviderOptions type."
+        },
+        {
+          "name": "BIP1-I14",
+          "line": 32,
+          "statement": "import type { BrowserTextureProvider as RuntimeBrowserTextureProvider } from '@egret/runtime';",
+          "intent": "the @egret/runtime entry has no BrowserTextureProvider type."
+        },
+        {
+          "name": "BIP1-I15",
+          "line": 34,
+          "statement": "import { createBrowserTextureProvider as ContractsImageFactory } from '@egret/contracts';",
+          "intent": "the @egret/contracts entry has no browser image factory."
+        },
+        {
+          "name": "BIP1-I16",
+          "line": 36,
+          "statement": "import type { BrowserPngDecodeOptions as ContractsBrowserPngDecodeOptions } from '@egret/contracts';",
+          "intent": "the @egret/contracts entry has no BrowserPngDecodeOptions type."
+        },
+        {
+          "name": "BIP1-I17",
+          "line": 38,
+          "statement": "import type { BrowserPngPorts as ContractsBrowserPngPorts } from '@egret/contracts';",
+          "intent": "the @egret/contracts entry has no BrowserPngPorts type."
+        },
+        {
+          "name": "BIP1-I18",
+          "line": 40,
+          "statement": "import type { BrowserTextureProviderOptions as ContractsBrowserTextureProviderOptions } from '@egret/contracts';",
+          "intent": "the @egret/contracts entry has no BrowserTextureProviderOptions type."
+        },
+        {
+          "name": "BIP1-I19",
+          "line": 42,
+          "statement": "import type { BrowserTextureProvider as ContractsBrowserTextureProvider } from '@egret/contracts';",
+          "intent": "the @egret/contracts entry has no BrowserTextureProvider type."
+        },
+        {
+          "name": "BIP1-I20",
+          "line": 44,
+          "statement": "import { createBrowserTextureProvider as CanvasImageFactory } from '@egret/engine/web';",
+          "intent": "the @egret/engine/web entry has no browser image factory."
+        },
+        {
+          "name": "BIP1-I21",
+          "line": 46,
+          "statement": "import type { BrowserPngDecodeOptions as CanvasBrowserPngDecodeOptions } from '@egret/engine/web';",
+          "intent": "the @egret/engine/web entry has no BrowserPngDecodeOptions type."
+        },
+        {
+          "name": "BIP1-I22",
+          "line": 48,
+          "statement": "import type { BrowserPngPorts as CanvasBrowserPngPorts } from '@egret/engine/web';",
+          "intent": "the @egret/engine/web entry has no BrowserPngPorts type."
+        },
+        {
+          "name": "BIP1-I23",
+          "line": 50,
+          "statement": "import type { BrowserTextureProviderOptions as CanvasBrowserTextureProviderOptions } from '@egret/engine/web';",
+          "intent": "the @egret/engine/web entry has no BrowserTextureProviderOptions type."
+        },
+        {
+          "name": "BIP1-I24",
+          "line": 52,
+          "statement": "import type { BrowserTextureProvider as CanvasBrowserTextureProvider } from '@egret/engine/web';",
+          "intent": "the @egret/engine/web entry has no BrowserTextureProvider type."
+        },
+        {
+          "name": "BIP1-I25",
+          "line": 54,
+          "statement": "import { createBrowserTextureProvider as TextImageFactory } from '@egret/engine/text';",
+          "intent": "the @egret/engine/text entry has no browser image factory."
+        },
+        {
+          "name": "BIP1-I26",
+          "line": 56,
+          "statement": "import type { BrowserPngDecodeOptions as TextBrowserPngDecodeOptions } from '@egret/engine/text';",
+          "intent": "the @egret/engine/text entry has no BrowserPngDecodeOptions type."
+        },
+        {
+          "name": "BIP1-I27",
+          "line": 58,
+          "statement": "import type { BrowserPngPorts as TextBrowserPngPorts } from '@egret/engine/text';",
+          "intent": "the @egret/engine/text entry has no BrowserPngPorts type."
+        },
+        {
+          "name": "BIP1-I28",
+          "line": 60,
+          "statement": "import type { BrowserTextureProviderOptions as TextBrowserTextureProviderOptions } from '@egret/engine/text';",
+          "intent": "the @egret/engine/text entry has no BrowserTextureProviderOptions type."
+        },
+        {
+          "name": "BIP1-I29",
+          "line": 62,
+          "statement": "import type { BrowserTextureProvider as TextBrowserTextureProvider } from '@egret/engine/text';",
+          "intent": "the @egret/engine/text entry has no BrowserTextureProvider type."
+        },
+        {
+          "name": "BIP1-I30",
+          "line": 64,
+          "statement": "import { createBrowserTextureProvider as CanvasTextImageFactory } from '@egret/engine/web/text';",
+          "intent": "the @egret/engine/web/text entry has no browser image factory."
+        },
+        {
+          "name": "BIP1-I31",
+          "line": 66,
+          "statement": "import type { BrowserPngDecodeOptions as CanvasTextBrowserPngDecodeOptions } from '@egret/engine/web/text';",
+          "intent": "the @egret/engine/web/text entry has no BrowserPngDecodeOptions type."
+        },
+        {
+          "name": "BIP1-I32",
+          "line": 68,
+          "statement": "import type { BrowserPngPorts as CanvasTextBrowserPngPorts } from '@egret/engine/web/text';",
+          "intent": "the @egret/engine/web/text entry has no BrowserPngPorts type."
+        },
+        {
+          "name": "BIP1-I33",
+          "line": 70,
+          "statement": "import type { BrowserTextureProviderOptions as CanvasTextBrowserTextureProviderOptions } from '@egret/engine/web/text';",
+          "intent": "the @egret/engine/web/text entry has no BrowserTextureProviderOptions type."
+        },
+        {
+          "name": "BIP1-I34",
+          "line": 72,
+          "statement": "import type { BrowserTextureProvider as CanvasTextBrowserTextureProvider } from '@egret/engine/web/text';",
+          "intent": "the @egret/engine/web/text entry has no BrowserTextureProvider type."
+        },
+        {
+          "name": "BIP1-I35",
+          "line": 74,
+          "statement": "import { createBrowserTextureProvider as InputImageFactory } from '@egret/engine/web/input';",
+          "intent": "the @egret/engine/web/input entry has no browser image factory."
+        },
+        {
+          "name": "BIP1-I36",
+          "line": 76,
+          "statement": "import type { BrowserPngDecodeOptions as InputBrowserPngDecodeOptions } from '@egret/engine/web/input';",
+          "intent": "the @egret/engine/web/input entry has no BrowserPngDecodeOptions type."
+        },
+        {
+          "name": "BIP1-I37",
+          "line": 78,
+          "statement": "import type { BrowserPngPorts as InputBrowserPngPorts } from '@egret/engine/web/input';",
+          "intent": "the @egret/engine/web/input entry has no BrowserPngPorts type."
+        },
+        {
+          "name": "BIP1-I38",
+          "line": 80,
+          "statement": "import type { BrowserTextureProviderOptions as InputBrowserTextureProviderOptions } from '@egret/engine/web/input';",
+          "intent": "the @egret/engine/web/input entry has no BrowserTextureProviderOptions type."
+        },
+        {
+          "name": "BIP1-I39",
+          "line": 82,
+          "statement": "import type { BrowserTextureProvider as InputBrowserTextureProvider } from '@egret/engine/web/input';",
+          "intent": "the @egret/engine/web/input entry has no BrowserTextureProvider type."
+        },
+        {
+          "name": "BIP1-I40",
+          "line": 84,
+          "statement": "import { createBrowserTextureProvider as WebGPUImageFactory } from '@egret/engine/webgpu';",
+          "intent": "the @egret/engine/webgpu entry has no browser image factory."
+        },
+        {
+          "name": "BIP1-I41",
+          "line": 86,
+          "statement": "import type { BrowserPngDecodeOptions as WebGPUBrowserPngDecodeOptions } from '@egret/engine/webgpu';",
+          "intent": "the @egret/engine/webgpu entry has no BrowserPngDecodeOptions type."
+        },
+        {
+          "name": "BIP1-I42",
+          "line": 88,
+          "statement": "import type { BrowserPngPorts as WebGPUBrowserPngPorts } from '@egret/engine/webgpu';",
+          "intent": "the @egret/engine/webgpu entry has no BrowserPngPorts type."
+        },
+        {
+          "name": "BIP1-I43",
+          "line": 90,
+          "statement": "import type { BrowserTextureProviderOptions as WebGPUBrowserTextureProviderOptions } from '@egret/engine/webgpu';",
+          "intent": "the @egret/engine/webgpu entry has no BrowserTextureProviderOptions type."
+        },
+        {
+          "name": "BIP1-I44",
+          "line": 92,
+          "statement": "import type { BrowserTextureProvider as WebGPUBrowserTextureProvider } from '@egret/engine/webgpu';",
+          "intent": "the @egret/engine/webgpu entry has no BrowserTextureProvider type."
+        },
+        {
+          "name": "BIP1-I45",
+          "line": 94,
+          "statement": "import { createBrowserTextureProvider as SceneImageFactory } from '@egret/engine/scene3d';",
+          "intent": "the @egret/engine/scene3d entry has no browser image factory."
+        },
+        {
+          "name": "BIP1-I46",
+          "line": 96,
+          "statement": "import type { BrowserPngDecodeOptions as SceneBrowserPngDecodeOptions } from '@egret/engine/scene3d';",
+          "intent": "the @egret/engine/scene3d entry has no BrowserPngDecodeOptions type."
+        },
+        {
+          "name": "BIP1-I47",
+          "line": 98,
+          "statement": "import type { BrowserPngPorts as SceneBrowserPngPorts } from '@egret/engine/scene3d';",
+          "intent": "the @egret/engine/scene3d entry has no BrowserPngPorts type."
+        },
+        {
+          "name": "BIP1-I48",
+          "line": 100,
+          "statement": "import type { BrowserTextureProviderOptions as SceneBrowserTextureProviderOptions } from '@egret/engine/scene3d';",
+          "intent": "the @egret/engine/scene3d entry has no BrowserTextureProviderOptions type."
+        },
+        {
+          "name": "BIP1-I49",
+          "line": 102,
+          "statement": "import type { BrowserTextureProvider as SceneBrowserTextureProvider } from '@egret/engine/scene3d';",
+          "intent": "the @egret/engine/scene3d entry has no BrowserTextureProvider type."
+        },
+        {
+          "name": "BIP1-I50",
+          "line": 104,
+          "statement": "import { createBrowserTextureProvider as WebGPUSceneImageFactory } from '@egret/engine/webgpu/scene3d';",
+          "intent": "the @egret/engine/webgpu/scene3d entry has no browser image factory."
+        },
+        {
+          "name": "BIP1-I51",
+          "line": 106,
+          "statement": "import type { BrowserPngDecodeOptions as WebGPUSceneBrowserPngDecodeOptions } from '@egret/engine/webgpu/scene3d';",
+          "intent": "the @egret/engine/webgpu/scene3d entry has no BrowserPngDecodeOptions type."
+        },
+        {
+          "name": "BIP1-I52",
+          "line": 108,
+          "statement": "import type { BrowserPngPorts as WebGPUSceneBrowserPngPorts } from '@egret/engine/webgpu/scene3d';",
+          "intent": "the @egret/engine/webgpu/scene3d entry has no BrowserPngPorts type."
+        },
+        {
+          "name": "BIP1-I53",
+          "line": 110,
+          "statement": "import type { BrowserTextureProviderOptions as WebGPUSceneBrowserTextureProviderOptions } from '@egret/engine/webgpu/scene3d';",
+          "intent": "the @egret/engine/webgpu/scene3d entry has no BrowserTextureProviderOptions type."
+        },
+        {
+          "name": "BIP1-I54",
+          "line": 112,
+          "statement": "import type { BrowserTextureProvider as WebGPUSceneBrowserTextureProvider } from '@egret/engine/webgpu/scene3d';",
+          "intent": "the @egret/engine/webgpu/scene3d entry has no BrowserTextureProvider type."
+        }
+      ],
+      "diagnostics": [
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 6,
+          "column": 10,
+          "code": 1484,
+          "message": "'BrowserPngDecodeOptions' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 8,
+          "column": 10,
+          "code": 1484,
+          "message": "'BrowserPngPorts' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 10,
+          "column": 10,
+          "code": 1484,
+          "message": "'BrowserTextureProviderOptions' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 12,
+          "column": 10,
+          "code": 1484,
+          "message": "'BrowserTextureProvider' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 14,
+          "column": 10,
+          "code": 2305,
+          "message": "Module '\"@egret/engine\"' has no exported member 'createBrowserTextureProvider'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 16,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine\"' has no exported member 'BrowserPngDecodeOptions'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 18,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine\"' has no exported member 'BrowserPngPorts'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 20,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine\"' has no exported member 'BrowserTextureProviderOptions'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 22,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine\"' has no exported member 'BrowserTextureProvider'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 24,
+          "column": 10,
+          "code": 2305,
+          "message": "Module '\"@egret/runtime\"' has no exported member 'createBrowserTextureProvider'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 26,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/runtime\"' has no exported member 'BrowserPngDecodeOptions'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 28,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/runtime\"' has no exported member 'BrowserPngPorts'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 30,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/runtime\"' has no exported member 'BrowserTextureProviderOptions'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 32,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/runtime\"' has no exported member 'BrowserTextureProvider'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 34,
+          "column": 10,
+          "code": 2305,
+          "message": "Module '\"@egret/contracts\"' has no exported member 'createBrowserTextureProvider'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 36,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/contracts\"' has no exported member 'BrowserPngDecodeOptions'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 38,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/contracts\"' has no exported member 'BrowserPngPorts'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 40,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/contracts\"' has no exported member 'BrowserTextureProviderOptions'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 42,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/contracts\"' has no exported member 'BrowserTextureProvider'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 44,
+          "column": 10,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/web\"' has no exported member 'createBrowserTextureProvider'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 46,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/web\"' has no exported member 'BrowserPngDecodeOptions'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 48,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/web\"' has no exported member 'BrowserPngPorts'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 50,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/web\"' has no exported member 'BrowserTextureProviderOptions'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 52,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/web\"' has no exported member 'BrowserTextureProvider'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 54,
+          "column": 10,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/text\"' has no exported member 'createBrowserTextureProvider'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 56,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/text\"' has no exported member 'BrowserPngDecodeOptions'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 58,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/text\"' has no exported member 'BrowserPngPorts'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 60,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/text\"' has no exported member 'BrowserTextureProviderOptions'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 62,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/text\"' has no exported member 'BrowserTextureProvider'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 64,
+          "column": 10,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/web/text\"' has no exported member 'createBrowserTextureProvider'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 66,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/web/text\"' has no exported member 'BrowserPngDecodeOptions'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 68,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/web/text\"' has no exported member 'BrowserPngPorts'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 70,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/web/text\"' has no exported member 'BrowserTextureProviderOptions'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 72,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/web/text\"' has no exported member 'BrowserTextureProvider'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 74,
+          "column": 10,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/web/input\"' has no exported member 'createBrowserTextureProvider'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 76,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/web/input\"' has no exported member 'BrowserPngDecodeOptions'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 78,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/web/input\"' has no exported member 'BrowserPngPorts'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 80,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/web/input\"' has no exported member 'BrowserTextureProviderOptions'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 82,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/web/input\"' has no exported member 'BrowserTextureProvider'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 84,
+          "column": 10,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/webgpu\"' has no exported member 'createBrowserTextureProvider'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 86,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/webgpu\"' has no exported member 'BrowserPngDecodeOptions'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 88,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/webgpu\"' has no exported member 'BrowserPngPorts'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 90,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/webgpu\"' has no exported member 'BrowserTextureProviderOptions'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 92,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/webgpu\"' has no exported member 'BrowserTextureProvider'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 94,
+          "column": 10,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/scene3d\"' has no exported member 'createBrowserTextureProvider'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 96,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/scene3d\"' has no exported member 'BrowserPngDecodeOptions'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 98,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/scene3d\"' has no exported member 'BrowserPngPorts'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 100,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/scene3d\"' has no exported member 'BrowserTextureProviderOptions'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 102,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/scene3d\"' has no exported member 'BrowserTextureProvider'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 104,
+          "column": 10,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/webgpu/scene3d\"' has no exported member 'createBrowserTextureProvider'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 106,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/webgpu/scene3d\"' has no exported member 'BrowserPngDecodeOptions'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 108,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/webgpu/scene3d\"' has no exported member 'BrowserPngPorts'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 110,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/webgpu/scene3d\"' has no exported member 'BrowserTextureProviderOptions'."
+        },
+        {
+          "file": "tests/types/browser-png-import-negative.ts",
+          "line": 112,
+          "column": 15,
+          "code": 2305,
+          "message": "Module '\"@egret/engine/webgpu/scene3d\"' has no exported member 'BrowserTextureProvider'."
+        }
+      ]
+    },
+    {
+      "lane": "dom-free-positive",
+      "expectedExit": 0,
+      "sourcePin": {
+        "path": "tests/types/browser-png-dom-free-positive.ts",
+        "bytes": 2396,
+        "sha256": "9829ee93d3e236788c6a80179ee3186635216be1f82b3a527fb8765c34d1e4b5"
+      },
+      "configPin": {
+        "path": "tests/types/tsconfig.browser-png-dom-free-positive.json",
+        "bytes": 544,
+        "sha256": "e1076e472fd73fc93a9d6195790478bbd37f8afa28875cf1729542260d02803f"
+      },
+      "markers": [],
+      "diagnostics": []
+    },
+    {
+      "lane": "dom-free-negative",
+      "expectedExit": 1,
+      "sourcePin": {
+        "path": "tests/types/browser-png-dom-free-negative.ts",
+        "bytes": 833,
+        "sha256": "03a5d2de88d687a711f7b042b866c1d39e1928b6ca53260f989654568184ed17"
+      },
+      "configPin": {
+        "path": "tests/types/tsconfig.browser-png-dom-free-negative.json",
+        "bytes": 544,
+        "sha256": "7a1ad02ae19de72bb95ee7229e030f3cabefc84340222671e3c57f3092238b1b"
+      },
+      "markers": [
+        {
+          "name": "BIP1-DN01",
+          "line": 8,
+          "statement": "document;",
+          "intent": "DOM document is not a default-root ambient capability."
+        },
+        {
+          "name": "BIP1-DN02",
+          "line": 10,
+          "statement": "window;",
+          "intent": "DOM window is not a default-root ambient capability."
+        },
+        {
+          "name": "BIP1-DN03",
+          "line": 12,
+          "statement": "let forbiddenBitmap: ImageBitmap;",
+          "intent": "ImageBitmap is not a default-root ambient type."
+        },
+        {
+          "name": "BIP1-DN04",
+          "line": 14,
+          "statement": "new Blob([]);",
+          "intent": "Blob is not a default-root ambient constructor."
+        },
+        {
+          "name": "BIP1-DN05",
+          "line": 16,
+          "statement": "process;",
+          "intent": "Node process is not a default-root ambient capability."
+        },
+        {
+          "name": "BIP1-DN06",
+          "line": 18,
+          "statement": "let forbiddenCanvas: HTMLCanvasElement;",
+          "intent": "HTMLCanvasElement is not a default-root ambient type."
+        }
+      ],
+      "diagnostics": [
+        {
+          "file": "tests/types/browser-png-dom-free-negative.ts",
+          "line": 8,
+          "column": 1,
+          "code": 2584,
+          "message": "Cannot find name 'document'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'."
+        },
+        {
+          "file": "tests/types/browser-png-dom-free-negative.ts",
+          "line": 10,
+          "column": 1,
+          "code": 2304,
+          "message": "Cannot find name 'window'."
+        },
+        {
+          "file": "tests/types/browser-png-dom-free-negative.ts",
+          "line": 12,
+          "column": 22,
+          "code": 2304,
+          "message": "Cannot find name 'ImageBitmap'."
+        },
+        {
+          "file": "tests/types/browser-png-dom-free-negative.ts",
+          "line": 14,
+          "column": 5,
+          "code": 2304,
+          "message": "Cannot find name 'Blob'."
+        },
+        {
+          "file": "tests/types/browser-png-dom-free-negative.ts",
+          "line": 16,
+          "column": 1,
+          "code": 2591,
+          "message": "Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig."
+        },
+        {
+          "file": "tests/types/browser-png-dom-free-negative.ts",
+          "line": 18,
+          "column": 22,
+          "code": 2304,
+          "message": "Cannot find name 'HTMLCanvasElement'."
+        }
+      ]
+    }
+  ],
+  "normalization": "Owner-qualified physical filenames are represented as complete portable repository paths; original raw logs and full diagnostic messages remain unchanged."
+}

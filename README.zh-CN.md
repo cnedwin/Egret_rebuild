@@ -12,6 +12,28 @@ Years later, as times change and technology advances, many developers continue t
 
 多年以后，时代变迁，技术革新，依然有很多开发者在鼓励我们。我希望借助 AI 和社区的力量，重建这个游戏引擎。
 
+<!-- BIP1-0.46.0-BEGIN -->
+## Engineering preview 0.46.0 — Optional browser PNG textures
+
+**R004 / R012 / R015 / R016 / R019 / R021 · S100 / V051.** The optional browser PNG adapter has independently accepted source, 4/4 terminal regressions, 95/95 public CPU/cold cases, five strict lanes (0/32/54/0/6 diagnostics), the public type gate, 17/17 new policy cases with 272/272 retained boundary cases, and 39/39 observer UNIT cases. Counts describe separate scopes and are not added together. Native collector R2 source, adoption/syntax and input preparation are accepted. Independent saved-result review accepted the bounded default-browser Canvas/WebGPU PNG subset as PASS_ACTUAL_BOUNDED_NATIVE_PNG_BROWSER_SUBSET_ONLY, with 6 submissions / 192 pixels / 768 channels at tolerance 0. Complete current repository/prepush gates, this increment's push/PR/Main and remote CI acceptance remain PENDING.
+
+Support is bounded to 8-bit RGB/RGBA noninterlaced still PNG, with browser-normalized straight sRGB RGBA8 output. This is not lossless decoding of every PNG: Canvas may lose hidden RGB and translucent precision. The adapter preserves existing engine.assets lease, Texture, SpriteSheet, Bitmap and clock ownership. Application shutdown retires Engine/manager demand and separately awaits provider.close(). Default core entries remain DOM-free; the sole optional factory and four erased interfaces add no runtime dependency. Four occupied jobs, 8 MiB per input and 32 MiB occupied encoded-byte budget remain the explicit limits. Full Spine R020/V020 and legacy migration R008/V006 remain OPEN.
+
+Read the [contract](knowledge-base/en/docs/browser-png-contract.md) · [implementation plan](knowledge-base/en/docs/browser-png-implementation-plan.md) · [native schedule and CLI](knowledge-base/en/docs/browser-png-native-plan.md) · [evidence and retained repairs](knowledge-base/en/docs/browser-png-evidence.md).
+
+Previous completed delivery: [PR #33](https://github.com/cnedwin/Egret_rebuild/pull/33) merged 0.45.1 into Main `8fb5384a8517f20318ead797ce031c6a321a7b9e`, tree `56e49e879d93fae351c948375e0ec12f21c739ab`. Its separate mandatory-hook suites passed 137/137 publication, 2,909/2,909 core and 160/160 experimental tests; knowledge-base issues were 0. This successor does not rewrite earlier PENDING cutoffs or claim remote CI acceptance.
+
+## 工程预览 0.46.0 — 可选浏览器 PNG 纹理
+
+**R004 / R012 / R015 / R016 / R019 / R021 · S100 / V051.** 可选浏览器 PNG 适配器的源码、4/4 终态回归、95/95 公开 CPU／冷导入用例、五组严格类型诊断（0/32/54/0/6）、公开类型门禁、17/17 新策略用例及 272/272 保留边界用例、39/39 观察器 UNIT 用例均已独立接受。各计数属于不同范围，不合并。原生采集器 R2 源码、采用／语法及输入准备已接受。独立保存结果评审已按 PASS_ACTUAL_BOUNDED_NATIVE_PNG_BROWSER_SUBSET_ONLY 接受限定默认浏览器 Canvas／WebGPU PNG 子集，包含 6 次提交／192 个像素／768 个通道，容差 0。当前完整仓库／推送门禁、本增量推送／PR／Main 与远端 CI 验收仍为 PENDING。
+
+支持范围限定为 8 位 RGB／RGBA、非隔行的静态 PNG，输出是经浏览器规范化的 straight sRGB RGBA8。这不保证所有 PNG 的无损解码：Canvas 可能丢失隐藏 RGB 与半透明精度。适配器沿用 engine.assets 租约、Texture、SpriteSheet、Bitmap 与时钟的既有所有权。应用关闭时先退役 Engine／资源管理器需求，再单独等待 provider.close()。默认核心入口仍不依赖 DOM；唯一可选工厂与四个擦除接口不增加运行时依赖。上限仍为四个占用任务、每份输入 8 MiB 与占用编码字节合计 32 MiB。完整 Spine R020/V020 与旧工程迁移 R008/V006 仍为 OPEN。
+
+阅读 [契约](knowledge-base/Cns/docs/浏览器PNG纹理Provider契约.md) · [实施计划](knowledge-base/Cns/docs/浏览器PNG实施计划.md) · [原生验证安排与 CLI](knowledge-base/Cns/docs/浏览器PNG原生验证计划.md) · [证据与保留修复记录](knowledge-base/Cns/docs/浏览器PNG验证证据.md).
+
+此前已完成交付：[PR #33](https://github.com/cnedwin/Egret_rebuild/pull/33) 将 0.45.1 合并到 Main `8fb5384a8517f20318ead797ce031c6a321a7b9e`，树 `56e49e879d93fae351c948375e0ec12f21c739ab`。强制推送门禁分别通过 137/137 公开材料、2,909/2,909 核心及 160/160 实验测试，知识库问题为 0。此后继记录保留旧 PENDING 截止点，不宣称远端 CI 验收。
+<!-- BIP1-0.46.0-END -->
+
 <!-- HYGIENE-0.45.1-BEGIN -->
 ## Engineering preview 0.45.1 — Repository path and byte hygiene
 
@@ -395,6 +417,7 @@ The delivered **0.31.0** successor was merged through [PR #18](https://github.co
 
 | 检查点 | 主要解决的问题 | 记录 |
 | --- | --- | --- |
+| 0.46.0 | 可选限定浏览器 PNG 纹理与既有资源／动画所有权；CPU／类型／策略及默认浏览器 Canvas／WebGPU 子集已接受，完整门禁与交付待完成。 | [详情](knowledge-base/Cns/docs/浏览器PNG验证证据.md) |
 | 未发行 | 英文优先的社区入口、独立的 `en/` 与 `Cns/` 知识库、英文文件名、创始人介绍与双语 Changelog。精简文档入口，集中历史研究，便于查阅。 | [详情](knowledge-base/Cns/docs/documentation-layout.md) |
 | 0.33.0 | Scope 所有的主鼠标输入：公共行为／生命周期 98/98、一个正例及 26/15/5 精确类型负例、MI1 策略 21/21、原生基线及六项对照、七项既有桌面门禁通过。完整边界重跑、最终公开／推送门禁和本次交付待完成。 | [契约](knowledge-base/Cns/docs/主鼠标输入契约.md) |
 | 0.32.0 | 显式拥有型低层 3D 场景帧与 WebGPU 场景/UI 合成。公共行为 35/35、边界 238/238、精确严格类型、保留集成 161/161 及重新执行的固定桌面像素通过；最终公开运行与交付单独跟踪。 | [契约](knowledge-base/Cns/docs/公共3D场景契约.md) |
@@ -440,6 +463,7 @@ These are engineering and knowledge-base checkpoints, newest first, rather than 
 
 | Checkpoint | Main problem addressed | Record |
 | --- | --- | --- |
+| 0.46.0 | Optional bounded browser PNG textures with existing asset/animation ownership; CPU/type/policy and default-browser Canvas/WebGPU subset accepted; complete gates and delivery pending. | [Details](knowledge-base/en/docs/browser-png-evidence.md) |
 | Unreleased | English-first community entry, separate `en/` and `Cns/` knowledge-base editions, English filenames, founder introduction and bilingual Changelog. Simplified document entries and grouped historical research for easier navigation. | [Details](knowledge-base/en/docs/documentation-layout.md) |
 | 0.33.0 | Scope-owned primary mouse input: public behavior/lifecycle 98/98, one positive + 26/15/5 exact type negatives, MI1 policy 21/21, native baseline + six controls and seven retained desktop gates pass. Full boundary rerun, final publication/push gate and current delivery remain pending. | [Contract](knowledge-base/en/docs/primary-mouse-input-contract.md) |
 | 0.32.0 | Explicit owned low-level 3D scene frames and WebGPU scene/UI composition. Public behavior 35/35, boundaries 238/238, exact strict types, retained integration 161/161 and fresh fixed desktop pixels pass; final publication and delivery are tracked separately. | [Contract](knowledge-base/en/docs/public-scene3d-contract.md) |

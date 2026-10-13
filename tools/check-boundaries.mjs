@@ -47,6 +47,7 @@ for (const [name, allowed] of Object.entries(expected)) {
       './text': {types:'./dist/text.d.ts',import:'./dist/text.js'},
       './web/text': {types:'./dist/web/text.d.ts',import:'./dist/web/text.js'},
       './web/input': {types:'./dist/web/input.d.ts',import:'./dist/web/input.js'},
+      './web/image': {types:'./dist/web/image.d.ts',import:'./dist/web/image.js'},
       // S3D1_MAP_BEGIN
       './scene3d': {types:'./dist/rendering/scene3d.d.ts',import:'./dist/rendering/scene3d.js'},
       './webgpu/scene3d': {types:'./dist/web/scene3d.d.ts',import:'./dist/web/scene3d.js'},
@@ -2420,4 +2421,3 @@ for (const [label, specifier, source, stem] of ns1OptionalEntries) {
 }
 // NS1_END
 console.log(`Boundary check PASS: four private workspace packages, actual exports resolution, ${inspected} source/build/declaration files, DOM-free core and exact DOM-only web subtree without Node imports/globals.`);
-

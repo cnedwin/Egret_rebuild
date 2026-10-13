@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "license": "Apache-2.0",
+  "origin": "INDEPENDENT_FIRST_PARTY_LITERAL_PIXEL_FIXTURES",
+  "sourceId": "S100",
+  "notes": {
+    "en": "Exact original encoded bytes copied without regeneration. Standard-library encoding sanity is separate from browser decoding and renderer acceptance.",
+    "zh": "精确复制原始编码字节，不重新生成。标准库编码自检与浏览器解码、渲染器验收分开。"
+  },
+  "originalGenerationIdentity": {
+    "bytes": 2171,
+    "sha256": "e7386bbe17837e868f3ef1ea2dd433356310ccb19edcef1b499b8b2f4e646f57"
+  },
+  "originalGeneratorIdentity": {
+    "bytes": 3165,
+    "sha256": "6a1220a162eab98b44a2769ea71fb8959fe4a763b7dc9ac0f3fc8fcdbe651766"
+  },
+  "generationQualification": "ACCEPTED_STANDARD_LIBRARY_ENCODER_SANITY_ONLY",
+  "fixtures": [
+    {
+      "path": "rgb-red-green.png",
+      "bytes": 72,
+      "sha256": "917780f34b6e830eceb3a99e7c5794af705f16193ba8b2d415c86b24aa0cc78d",
+      "width": 2,
+      "height": 1,
+      "bitDepth": 8,
+      "colorType": 2,
+      "interlace": 0,
+      "colorMetadata": "UNTAGGED",
+      "chunkTypes": [
+        "IHDR",
+        "IDAT",
+        "IEND"
+      ],
+      "literalRgba": [
+        255,
+        0,
+        0,
+        255,
+        0,
+        255,
+        0,
+        255
+      ]
+    },
+    {
+      "path": "rgba-red-transparent-black.png",
+      "bytes": 72,
+      "sha256": "b94f4bc3c8e745088406b8f87bd06c99c6bbc2cd2646b9948a4cab0b89084ab0",
+      "width": 2,
+      "height": 1,
+      "bitDepth": 8,
+      "colorType": 6,
+      "interlace": 0,
+      "colorMetadata": "UNTAGGED",
+      "chunkTypes": [
+        "IHDR",
+        "IDAT",
+        "IEND"
+      ],
+      "literalRgba": [
+        255,
+        0,
+        0,
+        255,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "notEstablished": [
+    "GENERAL_PNG_LOSSLESSNESS",
+    "PERFORMANCE",
+    "ENERGY",
+    "PHONE_OR_NATIVE_SDK_ACCEPTANCE"
+  ]
+}
