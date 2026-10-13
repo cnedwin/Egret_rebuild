@@ -2,6 +2,18 @@
 
 English | [简体中文](../Cns/CHANGELOG.md)
 
+<!-- BIP1-0.46.0-BEGIN -->
+## Engineering preview 0.46.0 — Optional browser PNG textures
+
+**R004 / R012 / R015 / R016 / R019 / R021 · S100 / V051.** The optional browser PNG adapter has independently accepted source, 4/4 terminal regressions, 95/95 public CPU/cold cases, five strict lanes (0/32/54/0/6 diagnostics), the public type gate, 17/17 new policy cases with 272/272 retained boundary cases, and 39/39 observer UNIT cases. Counts describe separate scopes and are not added together. Native collector R2 source, adoption/syntax and input preparation are accepted. Independent saved-result review accepted the bounded default-browser Canvas/WebGPU PNG subset as PASS_ACTUAL_BOUNDED_NATIVE_PNG_BROWSER_SUBSET_ONLY, with 6 submissions / 192 pixels / 768 channels at tolerance 0. Complete current repository/prepush gates, this increment's push/PR/Main and remote CI acceptance remain PENDING.
+
+Support is bounded to 8-bit RGB/RGBA noninterlaced still PNG, with browser-normalized straight sRGB RGBA8 output. This is not lossless decoding of every PNG: Canvas may lose hidden RGB and translucent precision. The adapter preserves existing engine.assets lease, Texture, SpriteSheet, Bitmap and clock ownership. Application shutdown retires Engine/manager demand and separately awaits provider.close(). Default core entries remain DOM-free; the sole optional factory and four erased interfaces add no runtime dependency. Four occupied jobs, 8 MiB per input and 32 MiB occupied encoded-byte budget remain the explicit limits. Full Spine R020/V020 and legacy migration R008/V006 remain OPEN.
+
+Read the [contract](docs/browser-png-contract.md) · [implementation plan](docs/browser-png-implementation-plan.md) · [native schedule and CLI](docs/browser-png-native-plan.md) · [evidence and retained repairs](docs/browser-png-evidence.md).
+
+Previous completed delivery: [PR #33](https://github.com/cnedwin/Egret_rebuild/pull/33) merged 0.45.1 into Main `8fb5384a8517f20318ead797ce031c6a321a7b9e`, tree `56e49e879d93fae351c948375e0ec12f21c739ab`. Its separate mandatory-hook suites passed 137/137 publication, 2,909/2,909 core and 160/160 experimental tests; knowledge-base issues were 0. This successor does not rewrite earlier PENDING cutoffs or claim remote CI acceptance.
+<!-- BIP1-0.46.0-END -->
+
 <!-- HYGIENE-0.45.1-BEGIN -->
 ## Engineering preview 0.45.1 — Repository path and byte hygiene
 

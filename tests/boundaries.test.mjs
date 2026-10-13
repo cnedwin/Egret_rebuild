@@ -41,6 +41,7 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
         './text': {types:'./dist/text.d.ts',import:'./dist/text.js'},
         './web/text': {types:'./dist/web/text.d.ts',import:'./dist/web/text.js'},
         './web/input': {types:'./dist/web/input.d.ts',import:'./dist/web/input.js'},
+        './web/image': {types:'./dist/web/image.d.ts',import:'./dist/web/image.js'},
         // S3D1_FIXTURE_MAP_BEGIN
         './scene3d': {types:'./dist/rendering/scene3d.d.ts',import:'./dist/rendering/scene3d.js'},
         './webgpu/scene3d': {types:'./dist/web/scene3d.d.ts',import:'./dist/web/scene3d.js'},
@@ -50,7 +51,7 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
       write(`packages/${name}/tsconfig.json`, { extends: '../../tsconfig.base.json', ...(name === 'project' ? {compilerOptions:{rootDir:'src',outDir:'dist'}} : {}), references: allowed.map(value => ({ path: `../${value.slice('@egret/'.length)}` })) });
       write(`packages/${name}/src/index.ts`, 'export {};\n');
       write(`packages/${name}/dist/index.js`, 'export {};\n');
-      const exports = name === 'engine' ? { '.': './index.js', './web': './web.js', './webgpu':'./webgpu.js', './text':'./text.js', './web/text':'./web-text.js', /* S3D1_FIXTURE_RESOLVER_BEGIN */ './scene3d':'./scene3d.js', './webgpu/scene3d':'./scene3d-web.js' /* S3D1_FIXTURE_RESOLVER_END */ }
+      const exports = name === 'engine' ? { '.': './index.js', './web': './web.js', './webgpu':'./webgpu.js', './text':'./text.js', './web/text':'./web-text.js', './web/image':'./web-image.js', /* S3D1_FIXTURE_RESOLVER_BEGIN */ './scene3d':'./scene3d.js', './webgpu/scene3d':'./scene3d-web.js' /* S3D1_FIXTURE_RESOLVER_END */ }
         : name === 'runtime' ? { '.': './index.js', './text':'./text.js' } : name === 'project' ? {'.':'./index.js','./spine':'./spine.js'} : './index.js';
       write(`node_modules/@egret/${name}/package.json`, { name: `@egret/${name}`, type: 'module', exports });
       write(`node_modules/@egret/${name}/index.js`, 'export {};\n');

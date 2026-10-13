@@ -48,8 +48,8 @@
       "action": "move-pair",
       "previousZhSha256": "307647eb71a1d1da7fa2423937b32459c5c22b4e355698d149fb7bca23cda053",
       "previousEnSha256": "8c112cb88f191a32591c76cbf0cc497486cf19efa1bc2fce0438a0be08e99d13",
-      "currentZhSha256": "258ebbe83b30b418a21309a8981531bc6105a08f62a55d36b4455359760dd0a7",
-      "currentEnSha256": "3e73932c80f14a49edc8dccd1b2f7a6e5be7231bc372f0fff140d8fb1ba47043"
+      "currentZhSha256": "2ccfc0f0f6890d3e1b92c75a64b306cb357b1758c08a1438eb1ca86a5d802c84",
+      "currentEnSha256": "a5b637ccc62d1484955dcfcce0a9652344170d9273042b67ee89f07f6a8da9a5"
     },
     {
       "oldZh": "examples/canvas-scene/README.md",
@@ -84,8 +84,8 @@
       "action": "move-pair",
       "previousZhSha256": "f43625255269c8801af0929179a9aab32cbca58094e4a842797e39171fc549b0",
       "previousEnSha256": "e8b100ccbd9d0fb99237a564f484f7fa6dbf008191570fa58f3e481c05c3e9f9",
-      "currentZhSha256": "6502e7f2600cd3858777f31c0ad8b29f5281bc59484dbde245e9b59b7afa5335",
-      "currentEnSha256": "03392805386b45a5f86ce3a795bfa4d836a180f52cdcddd66cd0a4fb002ee339"
+      "currentZhSha256": "2f68e1f559164f5cdf4e114a8013f7f339eec86653fe520c783717f0d3712d1c",
+      "currentEnSha256": "b961650aef12447ae65d87dbe00ee00af672d9d462b879ca9abcbfea48344048"
     },
     {
       "oldZh": "knowledge-base/CONTRIBUTING.md",
@@ -156,8 +156,8 @@
       "action": "move-pair",
       "previousZhSha256": "96722b4dfc8e1ae6989c6b8956ffbbcdb8d6703400b4b1b8ba1ca443c9aed17e",
       "previousEnSha256": "b6fa739d6b9f1ba36e1cb329876be61487cccc38a4362bd08867d134934453b2",
-      "currentZhSha256": "a673477bac3c490f6cdc251b05708036b9c0223ab3046a83fde550c80d2b97e4",
-      "currentEnSha256": "c0574b8bac64d81eed9693a818d71a2b0a644236e3a974eb0492a677278ad87d"
+      "currentZhSha256": "9877139f1b310801daf195477a36315086230e928a04884542335e19163b5ba5",
+      "currentEnSha256": "eb758867f80e8d24e9feea30788065939416d63a24822adccfd0c55b0a3ec840"
     },
     {
       "oldZh": "knowledge-base/docs/工程技术架构与项目结构.md",
@@ -264,8 +264,8 @@
       "action": "move-pair",
       "previousZhSha256": "0fe85ec0d2cdd61f1ba4526733587c5f4a62136d6040bfa69785e910880b833a",
       "previousEnSha256": "e058d52bd20ece9e2da9b35167781d8a2aa54fa0e4961905f1266dee56b5d223",
-      "currentZhSha256": "3bb5ad2395e353c5251164b0e9f57ae6f87289c871284e446564e3290030d06b",
-      "currentEnSha256": "15220e85d187c396b6250539bf5e6d7569f7d484e63a58bfb391917b6c19e84c"
+      "currentZhSha256": "86d099fa00f5b780aeae02d4cce785fa707f048d59f6fd3f8aa6256574b81796",
+      "currentEnSha256": "3c00e04b3f9739a3a5da9503109759d23901b102cdb2a8263095998a402b2cca"
     },
     {
       "oldZh": "knowledge-base/docs/竞品演进与生态.md",
@@ -840,8 +840,8 @@
       "action": "move-pair",
       "previousZhSha256": "372e5b07d4980eb45d8338424c8d970b7725e324e6b3397916944b0529c55ec7",
       "previousEnSha256": "ed88646659467d718a30c3bfff14b41c28debbcb786e7bf816ee68819f612887",
-      "currentZhSha256": "d1cabfab188b34b8ae394dc698a04cb7563e7948b98bf74e669a7f51f343abe4",
-      "currentEnSha256": "973f2ec5f1c10eddc90e84d72c1efb5fd5d89e84647fa8d8b638359399f98ac1"
+      "currentZhSha256": "d579d77dc95f6b76cd744abcb617d549c8442cb5dacc91e9445016c5c593f56c",
+      "currentEnSha256": "b2972737af19a4e4428a71bfc6898e75626925cd193686d5752c5969d8038970"
     },
     {
       "oldZh": "knowledge-base/templates/实现来源记录.md",
@@ -960,8 +960,8 @@
       "action": "move-pair",
       "previousZhSha256": "803a40dd8bfd0f98ade51c8ba736790509aae12a6e045a8ea688b3ff5d01cdcf",
       "previousEnSha256": "40a2ef2f686aba4a10279c417dfe17879bb6396b3b80dd75b26bd09c87d665f9",
-      "currentZhSha256": "d61980f3024ff2ca33e63878731d0f63ffd0da1163dacdae8699950321c4cf15",
-      "currentEnSha256": "e893776f5590b13468a4312ed6d36e0be0a6b41b0bcf2f0ab8a8212f475fcc36"
+      "currentZhSha256": "e258e088b92d750973d56663272645d0c37f3361b377203ecb697d406fad6b47",
+      "currentEnSha256": "18145850270bf958a69c82f6c0f617df3e021244718076846c4c6fb6c9c12870"
     },
     {
       "oldZh": "knowledge-base/docs/WebGPU矩形执行合同.md",
@@ -1080,8 +1080,8 @@
       "action": "move-pair",
       "previousZhSha256": "61639f120f4ed3aa77c4ffd41cf377e447dcac20e9562322c103e2e6b44c3990",
       "previousEnSha256": "60c77a11dc614191ba1d98fa488301a344839cc672df01e2c632048d85e8d376",
-      "currentZhSha256": "3d8489e9da3849db05e5183634f4a9ea95b70f404ce02a104180f95e936acaf8",
-      "currentEnSha256": "4beb5b2b00afd534ba0e75005cb69fd7b3bf55822aa69bde82de6eb7bc20df56"
+      "currentZhSha256": "6fb4da4c3a46db08ea13e4c7aa0d9345f2384788c52bd462bcee578cbe8233ed",
+      "currentEnSha256": "9469fdd94a0e969040e38595713f8f14b3c8b538eb0d0cb4e0f4309b7c453932"
     },
     {
       "oldZh": "knowledge-base/docs/3d-foundation.md",
@@ -1594,6 +1594,38 @@
       "action": "new-first-party-pair",
       "currentZhSha256": "f217769146df71c10b54b61c20f5641e392fd78757702f99099fafefd73f1298",
       "currentEnSha256": "1505749f59079bf4ac7c6064adb2084ca30f5ea83771df6fcca8046b89ddd4fd"
+    },
+    {
+      "newZh": "knowledge-base/Cns/docs/浏览器PNG纹理Provider契约.md",
+      "newEn": "knowledge-base/en/docs/browser-png-contract.md",
+      "kind": "public_reading",
+      "action": "new-first-party-pair",
+      "currentZhSha256": "db3b860bb2de89537944e59df67cf1fa582a2e0a3c37bc0ec38bdb06be0f9298",
+      "currentEnSha256": "f5867cf69b387725d8c0ecaa80c4310586889476f56b9e2c6a195c22df069a93"
+    },
+    {
+      "newZh": "knowledge-base/Cns/docs/浏览器PNG实施计划.md",
+      "newEn": "knowledge-base/en/docs/browser-png-implementation-plan.md",
+      "kind": "public_reading",
+      "action": "new-first-party-pair",
+      "currentZhSha256": "606497b1f926fe7710da4d1418411242b0bfaa2cebc70d59f5c215e933ffa16d",
+      "currentEnSha256": "0c8fe2486c46257f2a070c5741631f89aafb3c29792bf93e5ee643dd08ebb54f"
+    },
+    {
+      "newZh": "knowledge-base/Cns/docs/浏览器PNG原生验证计划.md",
+      "newEn": "knowledge-base/en/docs/browser-png-native-plan.md",
+      "kind": "public_reading",
+      "action": "new-first-party-pair",
+      "currentZhSha256": "93308ceaa70ef66fc08c0e7897c62c122171e6479bbf45a6215b0b39a4459086",
+      "currentEnSha256": "fd671857559328648d96726e9eda4a57d8cc234b4514d744e2e83d4e9e2ea5ee"
+    },
+    {
+      "newZh": "knowledge-base/Cns/docs/浏览器PNG验证证据.md",
+      "newEn": "knowledge-base/en/docs/browser-png-evidence.md",
+      "kind": "public_reading",
+      "action": "new-first-party-pair",
+      "currentZhSha256": "540a74c7c952f854e852c02d6d476da0cd7d3439b27b79e3edad8f20726fff15",
+      "currentEnSha256": "e7c93cbe9b52bf737773fec797848b4617b151363be8c343877d9e181d536539"
     }
   ],
   "registries": [
@@ -1954,5 +1986,11 @@
       }
     ],
     "historyPolicy": "Retired reading identities are historical; current paths are in documents. Raw evidence and historical source digests remain unchanged."
+  },
+  "browserPngCuration": {
+    "engineeringPreview": "0.46.0",
+    "cutoff": "2026-10-14",
+    "scope": "FOUR_CURRENT_PAIRED_FIRST_PARTY_READING_EDITIONS_ONLY",
+    "historicalRowsPreserved": true
   }
 }

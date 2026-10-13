@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-13",
+  "updatedAt": "2026-10-14",
   "authority": "Goals confirmed by the user in this project discussion; see the delivery registry separately for implementation and acceptance",
   "items": [
     {
@@ -114,7 +114,8 @@
         "S001",
         "S094",
         "S097",
-        "S098"
+        "S098",
+        "S100"
       ],
       "deliveryIds": [
         "V002",
@@ -321,7 +322,8 @@
         "S001",
         "S095",
         "S097",
-        "S098"
+        "S098",
+        "S100"
       ],
       "deliveryIds": [
         "V001",
@@ -417,7 +419,8 @@
       "statement": "Design and implement Egret core independently from its own requirements and specifications; standards and open projects supply research foundations, while public infrastructure enters as explicit dependencies with versions, sources, notices, and modification records retained.",
       "status": "confirmed",
       "sourceIds": [
-        "S038"
+        "S038",
+        "S100"
       ],
       "deliveryIds": [
         "V001",
@@ -463,7 +466,8 @@
       "sourceIds": [
         "S042",
         "S093",
-        "S099"
+        "S099",
+        "S100"
       ],
       "deliveryIds": [
         "V001",
@@ -554,7 +558,8 @@
       "status": "confirmed",
       "sourceIds": [
         "S051",
-        "S099"
+        "S099",
+        "S100"
       ],
       "deliveryIds": [
         "V007",
@@ -645,7 +650,8 @@
       "statement": "Systematically repair Windows repository path identity and Git/editor line-ending behavior. Preserve complete case-sensitive logical paths and exact raw content fingerprints, enforce authored text and real staged/committed byte checks, retain historical evidence, and deliver reviewed changes through the authorized repository.",
       "status": "confirmed",
       "sourceIds": [
-        "S099"
+        "S099",
+        "S100"
       ],
       "deliveryIds": [
         "V050"
@@ -658,12 +664,6 @@
       ]
     }
   ],
-  "_localization": {
-    "canonicalSource": "需求.json",
-    "canonicalSha256": "d42568a12b23a3bc4cb16f7c5a2090b561995a24c90a8caf6756468347a93fc7",
-    "role": "read_only_translation",
-    "language": "en"
-  },
   "spineF1ClockPortableReplaySuccessor": {
     "status": "ACTUAL_CURRENT_PUBLIC_PORTABLE_CLOCK_CPU_AND_NATIVE_PASS",
     "counts": {
@@ -1558,5 +1558,24 @@
     },
     "remoteCIPassClaim": false,
     "historicalPendingCutoffsRetained": true
+  },
+  "browserPngRequirementLinks": {
+    "sourceId": "S100",
+    "deliverableId": "V051",
+    "requirementIds": [
+      "R004",
+      "R012",
+      "R015",
+      "R016",
+      "R019",
+      "R021"
+    ],
+    "scope": "BOUNDED_ADAPTER_CONTRIBUTION_NOT_FULL_REQUIREMENT_ACCEPTANCE"
+  },
+  "_localization": {
+    "canonicalSource": "需求.json",
+    "canonicalSha256": "60cfed815402e5bb491ffc5511f75c2d5b4e9f3d04c9af4cd7d2523c964808bd",
+    "role": "read_only_translation",
+    "language": "en"
   }
 }

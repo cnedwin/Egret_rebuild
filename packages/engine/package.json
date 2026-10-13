@@ -32,6 +32,10 @@
       "types": "./dist/web/input.d.ts",
       "import": "./dist/web/input.js"
     },
+    "./web/image": {
+      "types": "./dist/web/image.d.ts",
+      "import": "./dist/web/image.js"
+    },
     "./web/text": {
       "types": "./dist/web/text.d.ts",
       "import": "./dist/web/text.js"

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-13",
+  "updatedAt": "2026-10-14",
   "authority": "来源分组与适用边界；researchCheckedAt是项目研究核查日期，非统一发布日期",
   "items": [
     {
@@ -2288,10 +2288,10 @@
           "scope": "Cold import and help only; not a full default build/test/prepush or animation/device acceptance."
         },
         "precision": {
-          "absolute": 9.5367431640625E-07,
+          "absolute": 9.5367431640625e-7,
           "derivation": "Fixed source-derived bound on original shallow F1 only; qualified host constant premises, no fitting/snapping/automatic widening",
-          "quarterCosAbsoluteMaximum": 2.4E-08,
-          "quarterSinErrorMaximum": 3.552713678800501E-15,
+          "quarterCosAbsoluteMaximum": 2.4e-8,
+          "quarterSinErrorMaximum": 3.552713678800501e-15,
           "pixels": 0,
           "UVColorIndicesTimeIdentity": "EXACT"
         },
@@ -2834,6 +2834,340 @@
         "status": "BOUNDED_IDENTITY_WRITERS_GIT_WORKING_ACTUAL_ACCEPTED_FULL_GATES_PENDING",
         "fullPrepush": "PENDING",
         "delivery": "NOT_RUN"
+      }
+    },
+    {
+      "id": "S100",
+      "type": "first_party_optional_browser_png_adapter_and_bounded_verification",
+      "researchCheckedAt": "2026-10-13",
+      "requirementIds": [
+        "R004",
+        "R012",
+        "R015",
+        "R016",
+        "R019",
+        "R021"
+      ],
+      "title": "独立可选浏览器 PNG 纹理适配器与限定核验",
+      "scope": "依照白鹭资源与渲染契约独立实现可选入口、字节所有权、浏览器解码与终态清理，配套公开 CPU、严格类型、策略与原生采集器。官方规范是语义资料，不打包其实现。",
+      "limit": "支持限定静态 PNG；CPU、类型、策略、观察器 UNIT、原生输入准备与默认浏览器 Canvas／WebGPU 子集已独立接受。完整门禁与交付待完成。无设备性能、全量 PNG、完整 Spine 或迁移验收。",
+      "doc": "Cns/docs/浏览器PNG纹理Provider契约.md",
+      "license": "Apache-2.0",
+      "firstPartySourcePaths": [
+        "packages/engine/web/image.ts",
+        "packages/engine/web/BrowserTextureProvider.ts",
+        "tools/browser-png-boundary.mjs",
+        "tools/browser-png-types.mjs",
+        "tools/verify-browser-png.mjs",
+        "tools/browser-png/native-observer.mjs",
+        "tools/browser-png/collector.mjs",
+        "tools/browser-png/fixture.mjs",
+        "tools/browser-png/file-graph.mjs",
+        "tools/browser-png/oracle.mjs"
+      ],
+      "references": [
+        {
+          "url": "https://www.w3.org/TR/2025/REC-png-3-20250624/",
+          "publishedAt": "2025-06-24",
+          "researchCheckedAt": "2026-10-13",
+          "scope": "PNG 第三版规范，用于限定文件结构与颜色资料；不复制实现。"
+        },
+        {
+          "url": "https://html.spec.whatwg.org/multipage/imagebitmap-and-animations.html",
+          "researchCheckedAt": "2026-10-13",
+          "scope": "ImageBitmap 方向、预乘及颜色选项的规范依据；不保证底层 Canvas 无损。"
+        },
+        {
+          "url": "https://html.spec.whatwg.org/multipage/canvas.html",
+          "researchCheckedAt": "2026-10-13",
+          "scope": "Canvas 与图像读回规范依据；记录浏览器规范化与预乘精度边界。"
+        }
+      ],
+      "newThirdPartyDependency": false,
+      "verification": {
+        "doc": "Cns/docs/浏览器PNG验证证据.md",
+        "status": "BOUNDED_CPU_TYPES_POLICY_UNITS_AND_NATIVE_BROWSER_SUBSET_ACCEPTED_FULL_GATES_DELIVERY_PENDING",
+        "terminalRegressions": {
+          "passed": 4,
+          "total": 4
+        },
+        "publicCpuCold": {
+          "passed": 95,
+          "total": 95
+        },
+        "strictDiagnosticCounts": [
+          0,
+          32,
+          54,
+          0,
+          6
+        ],
+        "strictExitCodes": [
+          0,
+          1,
+          1,
+          0,
+          1
+        ],
+        "typeGate": "ACCEPTED",
+        "newPolicy": {
+          "passed": 17,
+          "total": 17
+        },
+        "retainedBoundaries": {
+          "passed": 272,
+          "total": 272
+        },
+        "observerUnits": {
+          "passed": 39,
+          "total": 39
+        },
+        "native": {
+          "collectorSource": "ACCEPTED_R2",
+          "adoptionAndSyntax": "ACCEPTED",
+          "inputPreparation": "ACCEPTED",
+          "browserObservation": "PASS_SAVED_RESULT",
+          "browserIndependentReview": "ACCEPTED_BOUNDED_NATIVE_SUBSET",
+          "browserReviewVerdict": "PASS_ACTUAL_BOUNDED_NATIVE_PNG_BROWSER_SUBSET_ONLY",
+          "browserReviewStatus": "SAVED_NATIVE_SUBSET_ACCEPTED",
+          "browserReviewIdentity": {
+            "bytes": 37111,
+            "sha256": "34080f219a352d1713f93f511761c746f8adb9711c85e3d89472f3b83a58d728"
+          },
+          "fullPrepush": "PENDING",
+          "delivery": "NOT_RUN",
+          "remoteCi": "NOT_CLAIMED"
+        },
+        "fullSpineR020V020": "OPEN",
+        "migrationR008V006": "OPEN"
+      },
+      "nativeActualSuccessor": {
+        "scope": "TWO_ORIGINAL_PNG_DEFAULT_HEADLESS_CANVAS_WEBGPU_SUBSET_ONLY",
+        "verdict": "PASS_ACTUAL_BOUNDED_NATIVE_PNG_BROWSER_SUBSET_ONLY",
+        "status": "SAVED_NATIVE_SUBSET_ACCEPTED",
+        "openFindings": 0,
+        "reviewIdentity": {
+          "bytes": 37111,
+          "sha256": "34080f219a352d1713f93f511761c746f8adb9711c85e3d89472f3b83a58d728"
+        },
+        "originalResultIdentity": {
+          "bytes": 71027,
+          "sha256": "41f6a2627329ab42603178bcb33a556d99b5cb0c22e5b9eac1acb15ded088a29"
+        },
+        "originalPacketFileCount": 47,
+        "publicFacts": {
+          "browserVersion": "155.0.4283.45",
+          "nodeVersion": "v24.19.0",
+          "backends": [
+            "canvas",
+            "webgpu"
+          ],
+          "renderedSubmissions": 6,
+          "newCaptures": 4,
+          "savedReplays": 2,
+          "completeRawReadbacks": 6,
+          "pixelsCompared": 192,
+          "channelsCompared": 768,
+          "pixelTolerance": 0,
+          "pixelMismatches": 0,
+          "nativeDecodeInvocations": 4,
+          "nativeBitmapCloseReturned": 4,
+          "nativeSourceReadbacks": 4,
+          "zeroDimensionResetReturned": 8,
+          "wrongOracleControls": 2,
+          "extraControlSubmissions": 0,
+          "extraControlReadbacks": 0,
+          "nativeOriginalBlobs": 4,
+          "nativeSourceImageAndReadbackFiles": 8,
+          "sourceBytesPerFile": 8,
+          "requests": 180,
+          "primaryOccurred": false,
+          "cleanupErrors": 0,
+          "pendingTickets": 0,
+          "contextsClosed": true,
+          "browserClosed": true,
+          "serverClosed": true,
+          "finalGateAndDeliveryAccepted": false
+        },
+        "sourceBindings": {
+          "relativeOwner": "REPOSITORY_ROOT",
+          "productSourcePins": [
+            {
+              "path": "packages/engine/web/image.ts",
+              "bytes": 358,
+              "sha256": "beb530b0351e1c235ca75a27a831e0df491d6be7dc057ba6c6eca09492280359"
+            },
+            {
+              "path": "packages/engine/web/BrowserTextureProvider.ts",
+              "bytes": 26925,
+              "sha256": "f3653ea77a29979f43f18c95405223ad1d2a72a647d40391705668f9ea504993"
+            },
+            {
+              "path": "packages/engine/package.json",
+              "bytes": 1470,
+              "sha256": "21a95638b25541c97b8da9cb8c406ec183a9b4271c446c8c590c2b04b3b99077"
+            }
+          ],
+          "emissionPins": [
+            {
+              "path": "packages/engine/dist/web/image.js",
+              "bytes": 234,
+              "sha256": "28c0f728e5a1cdf35414806409623500267376b19a4a06f296310ee4d674d9c3"
+            },
+            {
+              "path": "packages/engine/dist/web/image.d.ts",
+              "bytes": 346,
+              "sha256": "11e0348e549ed825d0c7e00c5864d1df9a2f24fa4ab2cbf7c43ad66e3d26c0ca"
+            },
+            {
+              "path": "packages/engine/dist/web/BrowserTextureProvider.js",
+              "bytes": 26201,
+              "sha256": "06f49a72039f95d0fd3c23bb409db658672bb10b512b4ca9b256064b419e1d90"
+            },
+            {
+              "path": "packages/engine/dist/web/BrowserTextureProvider.d.ts",
+              "bytes": 1130,
+              "sha256": "44418045d02c256a6814b74abdda44b5ed1f1433618479a4aade9ddc08f30257"
+            }
+          ],
+          "testSourcePins": [
+            {
+              "path": "tests/browser-png-terminal-retirement.test.mjs",
+              "bytes": 5630,
+              "sha256": "3472bf3e2f43f0c7e75aceb4ac8ebf5b8e351685dac9573b5af44a2d8b984679"
+            },
+            {
+              "path": "tests/browser-png-fixture.mjs",
+              "bytes": 8465,
+              "sha256": "5ab653c0dda8a0b11cb7c4e4f338fd36f9f4ad63cd899c7c15c3728a20bd46b4"
+            },
+            {
+              "path": "tests/browser-png.test.mjs",
+              "bytes": 19683,
+              "sha256": "892ac302146405c1445cd909365476816eb2f74e992ae2c97d287b5d5856f363"
+            },
+            {
+              "path": "tests/browser-png-lifecycle.test.mjs",
+              "bytes": 17413,
+              "sha256": "e5d7fb0f255bbbd81c297f0394d70acd500d7e95b36fd28aa4384eb0495d8d25"
+            },
+            {
+              "path": "tests/browser-png-assets.test.mjs",
+              "bytes": 11799,
+              "sha256": "cd34503fb2c64f008e81e34e9b8ba12bee53091d2208e54b31b2c21921ab6135"
+            },
+            {
+              "path": "tests/browser-png-api.test.mjs",
+              "bytes": 2391,
+              "sha256": "73dde147eb894aa75c87b823cef836bd0fb2a8a73255f84ea5b9ac8f15e2bb0e"
+            },
+            {
+              "path": "tests/browser-png-cold-child.mjs",
+              "bytes": 5253,
+              "sha256": "10fcb73913dfad2330714175793634d2d8198ff14bd6574ed49346b4cd3c4182"
+            }
+          ],
+          "configPins": [
+            {
+              "path": "package.json",
+              "bytes": 762,
+              "sha256": "b522c278e5f0b4070fec73da2aa336da5c57a4dc189c0855d9e5770f879009bd"
+            },
+            {
+              "path": "packages/contracts/tsconfig.json",
+              "bytes": 135,
+              "sha256": "65830141c9e37d6d5a604ae796c5fe8b9258040f9e1f29547c0b238829b989d6"
+            },
+            {
+              "path": "packages/engine/tsconfig.json",
+              "bytes": 207,
+              "sha256": "ac07062d5460bb112739e3ef98e2f16f7479b1f4a18c7add69c46c2880ac68a4"
+            },
+            {
+              "path": "packages/engine/tsconfig.rendering.json",
+              "bytes": 307,
+              "sha256": "f5a7e4fe1d79c140d9472417b8ddfbd0104929a982cdf61dae247735f1b6f13a"
+            },
+            {
+              "path": "packages/engine/tsconfig.web.json",
+              "bytes": 356,
+              "sha256": "c1db022356fde98656725aff6d5e795d8a54bed48046fecb49b33c3c73f2bea3"
+            },
+            {
+              "path": "packages/project/tsconfig.json",
+              "bytes": 217,
+              "sha256": "77bce36f3e9727b65bad73927abbf5ef3391453d2ff407f2740e4f7c83783567"
+            },
+            {
+              "path": "packages/runtime/tsconfig.json",
+              "bytes": 181,
+              "sha256": "ed31ec963ca62cee11d41071686c8a3dc58554155e120f52d1747254087f1bac"
+            },
+            {
+              "path": "pnpm-lock.yaml",
+              "bytes": 9017,
+              "sha256": "79383095fd4bb2bb4682a12f9651d9a876a01fc6dc1326d09bc0ad587db23084"
+            },
+            {
+              "path": "pnpm-workspace.yaml",
+              "bytes": 51,
+              "sha256": "f51d3d153b0f3cdbb82186bd1c3eea9066f4e3a15828985952feeee965a75534"
+            },
+            {
+              "path": "tools/build.mjs",
+              "bytes": 694,
+              "sha256": "bc69aaa3fa1f01329e1a90c6f05dee06875ba74d406e76dd15349044d4e56737"
+            },
+            {
+              "path": "tools/lib/file-identity.mjs",
+              "bytes": 5065,
+              "sha256": "999b355c6e0d03f17853ee05f33abc9fecbb34ad80607963e11f913a4f815569"
+            },
+            {
+              "path": "tsconfig.base.json",
+              "bytes": 446,
+              "sha256": "b7a31fb9f93a93e20bfdcf33c135acb45cb3a6895a8b3e7006bd85214ddc1008"
+            },
+            {
+              "path": "tsconfig.json",
+              "bytes": 369,
+              "sha256": "d9253848fbde9041d0f7540553dbabc7f723856e7f4513358d41aa0384fab0ef"
+            }
+          ],
+          "collectorSourcePins": [
+            {
+              "path": "tools/verify-browser-png.mjs",
+              "bytes": 1478,
+              "sha256": "408c13c069651c489b697549923dc24125e38fb7d0100d8355ad1688b86f663e"
+            },
+            {
+              "path": "tools/browser-png/collector.mjs",
+              "bytes": 28594,
+              "sha256": "df5becb13ed3824913e1ac0c6e267c7485b79654989fe53527b219ad8eb51085"
+            },
+            {
+              "path": "tools/browser-png/fixture.mjs",
+              "bytes": 26680,
+              "sha256": "653b9a7dec131a68be845cf883b75ec51cb17cabc10788c48986291e2eb0bc6b"
+            },
+            {
+              "path": "tools/browser-png/file-graph.mjs",
+              "bytes": 25486,
+              "sha256": "34583c4eca298370f82865ca65b92d736939af893d1ca1353c77d6b7980a0075"
+            },
+            {
+              "path": "tools/browser-png/oracle.mjs",
+              "bytes": 5395,
+              "sha256": "23de6d1ec3f94997cc543d1c2d08aa34cbad57a9159ad8cb9cbf7954f00f3e11"
+            }
+          ]
+        },
+        "ownershipAndCleanup": "SOURCE_ASSERTIONS_AND_SAVED_SNAPSHOTS_MEDIATED",
+        "runtimeAfterPacket": "NOT_SEPARATELY_PERSISTED",
+        "httpResponseBodyPacket": "NOT_SEPARATELY_PERSISTED",
+        "physicalReclamationProof": false,
+        "fullSpineR020V020": "OPEN",
+        "migrationR008V006": "OPEN"
       }
     }
   ],
@@ -3731,5 +4065,29 @@
     },
     "remoteCIPassClaim": false,
     "historicalPendingCutoffsRetained": true
+  },
+  "repositoryHygieneDeliveryActualSuccessor": {
+    "engineeringPreview": "0.45.1",
+    "status": "ACTUAL_DELIVERY_ACCEPTED",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/33",
+    "mainMergeCommit": "8fb5384a8517f20318ead797ce031c6a321a7b9e",
+    "mainTree": "56e49e879d93fae351c948375e0ec12f21c739ab",
+    "independentSuites": {
+      "publication": {
+        "passed": 137,
+        "total": 137
+      },
+      "core": {
+        "passed": 2909,
+        "total": 2909
+      },
+      "experimental": {
+        "passed": 160,
+        "total": 160
+      }
+    },
+    "knowledgeBaseIssues": 0,
+    "remoteCi": "NOT_CLAIMED",
+    "historicalPendingCutoffsPreserved": true
   }
 }

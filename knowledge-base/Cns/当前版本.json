@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "version": "0.45.1",
-  "updatedAt": "2026-10-13",
-  "title": "白鹭引擎社区重建 — 仓库路径与字节规范",
-  "stage": "BOUNDED_REPOSITORY_IDENTITY_WRITERS_GIT_WORKING_ACCEPTED_FULL_GATES_PENDING",
+  "version": "0.46.0",
+  "updatedAt": "2026-10-14",
+  "title": "白鹭引擎社区重建 — 可选浏览器 PNG 纹理",
+  "stage": "BOUNDED_NATIVE_PNG_AND_TYPE_ISOLATION_GREEN_CONCURRENT_ACCEPTED_FULL_PREPUSH_RERUN_DELIVERY_PENDING",
   "publication": "development_preview",
   "registries": {
     "requirements": "Cns/registry/需求.json",
@@ -80,7 +80,11 @@
     "byteReaderBR1Contract": "Cns/docs/字节读取器BR1契约.md",
     "byteReaderBR1Evidence": "Cns/docs/字节读取器BR1证据.md",
     "repositoryIdentityAndLineEndings": "Cns/docs/仓库路径身份与换行规范.md",
-    "repositoryHygieneEvidence": "Cns/docs/仓库路径与换行验证记录.md"
+    "repositoryHygieneEvidence": "Cns/docs/仓库路径与换行验证记录.md",
+    "browserPngContract": "Cns/docs/浏览器PNG纹理Provider契约.md",
+    "browserPngImplementationPlan": "Cns/docs/浏览器PNG实施计划.md",
+    "browserPngNativePlan": "Cns/docs/浏览器PNG原生验证计划.md",
+    "browserPngEvidence": "Cns/docs/浏览器PNG验证证据.md"
   },
   "architectureContractProbesRun": true,
   "browserApiPixelProbesRun": true,
@@ -216,7 +220,7 @@
   },
   "engineeringSpecificationOnlyThisRevision": false,
   "userDesignObjectiveConfirmedThisRevision": true,
-  "newExperimentScopeThisRevision": "createSpriteSheet 与 2 个擦除类型提供真实整图租约上的有限命名裁剪，以及既有 Engine 序列播放组合。公开 CPU／类型／单元／策略／示例及不透明浏览器子集已独立接受，最终门禁／推送／PR/Main 待完成。package0.0.0、protocol1.0 保持不变；完整 Spine R020/V020 和迁移 R008/V006 保持 OPEN。",
+  "newExperimentScopeThisRevision": "0.46.0 增加限定可选浏览器 PNG Provider、公开 CPU／类型／策略控制及已接受的默认浏览器 Canvas／WebGPU 原生结果。当前完整门禁与交付待完成。",
   "existingResearchExperimentsRerunThisRevision": false,
   "coreFrameworkImplementation": {
     "artifactRoot": "outputs/白鹭引擎核心框架原型",
@@ -543,7 +547,7 @@
     "contract": "Cns/docs/显示内容边界契约.md",
     "evidence": "Cns/docs/显示内容边界证据.md"
   },
-  "latestEngineeringPreview": "0.45.0",
+  "latestEngineeringPreview": "0.46.0",
   "texturedMesh2DImplementation": {
     "version": "0.23.0",
     "status": "bounded_increment_implemented",
@@ -2424,10 +2428,10 @@
         "scope": "Cold import and help only; not a full default build/test/prepush or animation/device acceptance."
       },
       "precision": {
-        "absolute": 9.5367431640625E-07,
+        "absolute": 9.5367431640625e-7,
         "derivation": "Fixed source-derived bound on original shallow F1 only; qualified host constant premises, no fitting/snapping/automatic widening",
-        "quarterCosAbsoluteMaximum": 2.4E-08,
-        "quarterSinErrorMaximum": 3.552713678800501E-15,
+        "quarterCosAbsoluteMaximum": 2.4e-8,
+        "quarterSinErrorMaximum": 3.552713678800501e-15,
         "pixels": 0,
         "UVColorIndicesTimeIdentity": "EXACT"
       },
@@ -3608,5 +3612,438 @@
     },
     "remoteCIPassClaim": false,
     "historicalPendingCutoffsRetained": true
+  },
+  "repositoryHygieneDeliveryActualSuccessor": {
+    "engineeringPreview": "0.45.1",
+    "status": "ACTUAL_DELIVERY_ACCEPTED",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/33",
+    "mainMergeCommit": "8fb5384a8517f20318ead797ce031c6a321a7b9e",
+    "mainTree": "56e49e879d93fae351c948375e0ec12f21c739ab",
+    "independentSuites": {
+      "publication": {
+        "passed": 137,
+        "total": 137
+      },
+      "core": {
+        "passed": 2909,
+        "total": 2909
+      },
+      "experimental": {
+        "passed": 160,
+        "total": 160
+      }
+    },
+    "knowledgeBaseIssues": 0,
+    "remoteCi": "NOT_CLAIMED",
+    "historicalPendingCutoffsPreserved": true
+  },
+  "browserPngActualSuccessor": {
+    "engineeringPreview": "0.46.0",
+    "sourceId": "S100",
+    "deliverableId": "V051",
+    "requirementIds": [
+      "R004",
+      "R012",
+      "R015",
+      "R016",
+      "R019",
+      "R021"
+    ],
+    "terminalRegressions": {
+      "passed": 4,
+      "total": 4
+    },
+    "publicCpuCold": {
+      "passed": 95,
+      "total": 95
+    },
+    "strictDiagnosticCounts": [
+      0,
+      32,
+      54,
+      0,
+      6
+    ],
+    "strictExitCodes": [
+      0,
+      1,
+      1,
+      0,
+      1
+    ],
+    "typeGate": "ACCEPTED",
+    "newPolicy": {
+      "passed": 17,
+      "total": 17
+    },
+    "retainedBoundaries": {
+      "passed": 272,
+      "total": 272
+    },
+    "observerUnits": {
+      "passed": 39,
+      "total": 39
+    },
+    "native": {
+      "collectorSource": "ACCEPTED_R2",
+      "adoptionAndSyntax": "ACCEPTED",
+      "inputPreparation": "ACCEPTED",
+      "browserObservation": "PASS_SAVED_RESULT",
+      "browserIndependentReview": "ACCEPTED_BOUNDED_NATIVE_SUBSET",
+      "browserReviewVerdict": "PASS_ACTUAL_BOUNDED_NATIVE_PNG_BROWSER_SUBSET_ONLY",
+      "browserReviewStatus": "SAVED_NATIVE_SUBSET_ACCEPTED",
+      "browserReviewIdentity": {
+        "bytes": 37111,
+        "sha256": "34080f219a352d1713f93f511761c746f8adb9711c85e3d89472f3b83a58d728"
+      },
+      "fullPrepush": "PENDING",
+      "delivery": "NOT_RUN",
+      "remoteCi": "NOT_CLAIMED"
+    },
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "newThirdPartyDependency": false,
+    "packageVersionChanged": false,
+    "hostProtocolChanged": false
+  },
+  "browserPngNativeActualSuccessor": {
+    "scope": "TWO_ORIGINAL_PNG_DEFAULT_HEADLESS_CANVAS_WEBGPU_SUBSET_ONLY",
+    "verdict": "PASS_ACTUAL_BOUNDED_NATIVE_PNG_BROWSER_SUBSET_ONLY",
+    "status": "SAVED_NATIVE_SUBSET_ACCEPTED",
+    "openFindings": 0,
+    "reviewIdentity": {
+      "bytes": 37111,
+      "sha256": "34080f219a352d1713f93f511761c746f8adb9711c85e3d89472f3b83a58d728"
+    },
+    "originalResultIdentity": {
+      "bytes": 71027,
+      "sha256": "41f6a2627329ab42603178bcb33a556d99b5cb0c22e5b9eac1acb15ded088a29"
+    },
+    "originalPacketFileCount": 47,
+    "publicFacts": {
+      "browserVersion": "155.0.4283.45",
+      "nodeVersion": "v24.19.0",
+      "backends": [
+        "canvas",
+        "webgpu"
+      ],
+      "renderedSubmissions": 6,
+      "newCaptures": 4,
+      "savedReplays": 2,
+      "completeRawReadbacks": 6,
+      "pixelsCompared": 192,
+      "channelsCompared": 768,
+      "pixelTolerance": 0,
+      "pixelMismatches": 0,
+      "nativeDecodeInvocations": 4,
+      "nativeBitmapCloseReturned": 4,
+      "nativeSourceReadbacks": 4,
+      "zeroDimensionResetReturned": 8,
+      "wrongOracleControls": 2,
+      "extraControlSubmissions": 0,
+      "extraControlReadbacks": 0,
+      "nativeOriginalBlobs": 4,
+      "nativeSourceImageAndReadbackFiles": 8,
+      "sourceBytesPerFile": 8,
+      "requests": 180,
+      "primaryOccurred": false,
+      "cleanupErrors": 0,
+      "pendingTickets": 0,
+      "contextsClosed": true,
+      "browserClosed": true,
+      "serverClosed": true,
+      "finalGateAndDeliveryAccepted": false
+    },
+    "sourceBindings": {
+      "relativeOwner": "REPOSITORY_ROOT",
+      "productSourcePins": [
+        {
+          "path": "packages/engine/web/image.ts",
+          "bytes": 358,
+          "sha256": "beb530b0351e1c235ca75a27a831e0df491d6be7dc057ba6c6eca09492280359"
+        },
+        {
+          "path": "packages/engine/web/BrowserTextureProvider.ts",
+          "bytes": 26925,
+          "sha256": "f3653ea77a29979f43f18c95405223ad1d2a72a647d40391705668f9ea504993"
+        },
+        {
+          "path": "packages/engine/package.json",
+          "bytes": 1470,
+          "sha256": "21a95638b25541c97b8da9cb8c406ec183a9b4271c446c8c590c2b04b3b99077"
+        }
+      ],
+      "emissionPins": [
+        {
+          "path": "packages/engine/dist/web/image.js",
+          "bytes": 234,
+          "sha256": "28c0f728e5a1cdf35414806409623500267376b19a4a06f296310ee4d674d9c3"
+        },
+        {
+          "path": "packages/engine/dist/web/image.d.ts",
+          "bytes": 346,
+          "sha256": "11e0348e549ed825d0c7e00c5864d1df9a2f24fa4ab2cbf7c43ad66e3d26c0ca"
+        },
+        {
+          "path": "packages/engine/dist/web/BrowserTextureProvider.js",
+          "bytes": 26201,
+          "sha256": "06f49a72039f95d0fd3c23bb409db658672bb10b512b4ca9b256064b419e1d90"
+        },
+        {
+          "path": "packages/engine/dist/web/BrowserTextureProvider.d.ts",
+          "bytes": 1130,
+          "sha256": "44418045d02c256a6814b74abdda44b5ed1f1433618479a4aade9ddc08f30257"
+        }
+      ],
+      "testSourcePins": [
+        {
+          "path": "tests/browser-png-terminal-retirement.test.mjs",
+          "bytes": 5630,
+          "sha256": "3472bf3e2f43f0c7e75aceb4ac8ebf5b8e351685dac9573b5af44a2d8b984679"
+        },
+        {
+          "path": "tests/browser-png-fixture.mjs",
+          "bytes": 8465,
+          "sha256": "5ab653c0dda8a0b11cb7c4e4f338fd36f9f4ad63cd899c7c15c3728a20bd46b4"
+        },
+        {
+          "path": "tests/browser-png.test.mjs",
+          "bytes": 19683,
+          "sha256": "892ac302146405c1445cd909365476816eb2f74e992ae2c97d287b5d5856f363"
+        },
+        {
+          "path": "tests/browser-png-lifecycle.test.mjs",
+          "bytes": 17413,
+          "sha256": "e5d7fb0f255bbbd81c297f0394d70acd500d7e95b36fd28aa4384eb0495d8d25"
+        },
+        {
+          "path": "tests/browser-png-assets.test.mjs",
+          "bytes": 11799,
+          "sha256": "cd34503fb2c64f008e81e34e9b8ba12bee53091d2208e54b31b2c21921ab6135"
+        },
+        {
+          "path": "tests/browser-png-api.test.mjs",
+          "bytes": 2391,
+          "sha256": "73dde147eb894aa75c87b823cef836bd0fb2a8a73255f84ea5b9ac8f15e2bb0e"
+        },
+        {
+          "path": "tests/browser-png-cold-child.mjs",
+          "bytes": 5253,
+          "sha256": "10fcb73913dfad2330714175793634d2d8198ff14bd6574ed49346b4cd3c4182"
+        }
+      ],
+      "configPins": [
+        {
+          "path": "package.json",
+          "bytes": 762,
+          "sha256": "b522c278e5f0b4070fec73da2aa336da5c57a4dc189c0855d9e5770f879009bd"
+        },
+        {
+          "path": "packages/contracts/tsconfig.json",
+          "bytes": 135,
+          "sha256": "65830141c9e37d6d5a604ae796c5fe8b9258040f9e1f29547c0b238829b989d6"
+        },
+        {
+          "path": "packages/engine/tsconfig.json",
+          "bytes": 207,
+          "sha256": "ac07062d5460bb112739e3ef98e2f16f7479b1f4a18c7add69c46c2880ac68a4"
+        },
+        {
+          "path": "packages/engine/tsconfig.rendering.json",
+          "bytes": 307,
+          "sha256": "f5a7e4fe1d79c140d9472417b8ddfbd0104929a982cdf61dae247735f1b6f13a"
+        },
+        {
+          "path": "packages/engine/tsconfig.web.json",
+          "bytes": 356,
+          "sha256": "c1db022356fde98656725aff6d5e795d8a54bed48046fecb49b33c3c73f2bea3"
+        },
+        {
+          "path": "packages/project/tsconfig.json",
+          "bytes": 217,
+          "sha256": "77bce36f3e9727b65bad73927abbf5ef3391453d2ff407f2740e4f7c83783567"
+        },
+        {
+          "path": "packages/runtime/tsconfig.json",
+          "bytes": 181,
+          "sha256": "ed31ec963ca62cee11d41071686c8a3dc58554155e120f52d1747254087f1bac"
+        },
+        {
+          "path": "pnpm-lock.yaml",
+          "bytes": 9017,
+          "sha256": "79383095fd4bb2bb4682a12f9651d9a876a01fc6dc1326d09bc0ad587db23084"
+        },
+        {
+          "path": "pnpm-workspace.yaml",
+          "bytes": 51,
+          "sha256": "f51d3d153b0f3cdbb82186bd1c3eea9066f4e3a15828985952feeee965a75534"
+        },
+        {
+          "path": "tools/build.mjs",
+          "bytes": 694,
+          "sha256": "bc69aaa3fa1f01329e1a90c6f05dee06875ba74d406e76dd15349044d4e56737"
+        },
+        {
+          "path": "tools/lib/file-identity.mjs",
+          "bytes": 5065,
+          "sha256": "999b355c6e0d03f17853ee05f33abc9fecbb34ad80607963e11f913a4f815569"
+        },
+        {
+          "path": "tsconfig.base.json",
+          "bytes": 446,
+          "sha256": "b7a31fb9f93a93e20bfdcf33c135acb45cb3a6895a8b3e7006bd85214ddc1008"
+        },
+        {
+          "path": "tsconfig.json",
+          "bytes": 369,
+          "sha256": "d9253848fbde9041d0f7540553dbabc7f723856e7f4513358d41aa0384fab0ef"
+        }
+      ],
+      "collectorSourcePins": [
+        {
+          "path": "tools/verify-browser-png.mjs",
+          "bytes": 1478,
+          "sha256": "408c13c069651c489b697549923dc24125e38fb7d0100d8355ad1688b86f663e"
+        },
+        {
+          "path": "tools/browser-png/collector.mjs",
+          "bytes": 28594,
+          "sha256": "df5becb13ed3824913e1ac0c6e267c7485b79654989fe53527b219ad8eb51085"
+        },
+        {
+          "path": "tools/browser-png/fixture.mjs",
+          "bytes": 26680,
+          "sha256": "653b9a7dec131a68be845cf883b75ec51cb17cabc10788c48986291e2eb0bc6b"
+        },
+        {
+          "path": "tools/browser-png/file-graph.mjs",
+          "bytes": 25486,
+          "sha256": "34583c4eca298370f82865ca65b92d736939af893d1ca1353c77d6b7980a0075"
+        },
+        {
+          "path": "tools/browser-png/oracle.mjs",
+          "bytes": 5395,
+          "sha256": "23de6d1ec3f94997cc543d1c2d08aa34cbad57a9159ad8cb9cbf7954f00f3e11"
+        }
+      ]
+    },
+    "ownershipAndCleanup": "SOURCE_ASSERTIONS_AND_SAVED_SNAPSHOTS_MEDIATED",
+    "runtimeAfterPacket": "NOT_SEPARATELY_PERSISTED",
+    "httpResponseBodyPacket": "NOT_SEPARATELY_PERSISTED",
+    "physicalReclamationProof": false,
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN"
+  },
+  "browserPngTypeIsolationSuccessor": {
+    "status": "SOURCE_RED_ISOLATED_GREEN_AND_CONCURRENT_CONTROLS_ACCEPTED_FULL_RERUN_PENDING",
+    "originalFullPrepush": {
+      "status": "FAILED_RETAINED_ATTEMPT",
+      "exitCode": 1,
+      "publication": {
+        "pass": 137,
+        "tests": 137
+      },
+      "core": {
+        "pass": 3062,
+        "tests": 3064,
+        "fail": 2
+      },
+      "downstream": "F2_SOURCE_FINAL_HEADLESS_FINAL_KNOWLEDGE_BASE_NOT_RUN",
+      "reviewIdentity": {
+        "bytes": 3045,
+        "sha256": "e70a252d0d8ac8547f041d3fd8df8b294cce060e0a461de307e50007988a91ae"
+      }
+    },
+    "sourceDiagnosis": {
+      "status": "ACCEPTED_SOURCE_DIAGNOSIS_ONLY",
+      "reviewIdentity": {
+        "bytes": 12117,
+        "sha256": "7a93c1eac8b82db762b29b21daa2af5677de09f92b409d04e7f4616f6b263862"
+      },
+      "originalFailureInstantNameProof": false
+    },
+    "originalRed": {
+      "status": "ACCEPTED_GENERATED_TYPE_GIT_INVENTORY_DRIFT_RED_ONLY",
+      "pass": 1,
+      "fail": 0,
+      "savedChangedNulSnapshots": 33,
+      "polls": 50,
+      "actuallyObservedGeneratedPaths": 40,
+      "finalMembershipRestored": true,
+      "samplingExhaustive": false,
+      "sourceContentCorruptionClaim": false,
+      "reviewIdentity": {
+        "bytes": 24834,
+        "sha256": "a11a63e4513773aa9ae5f7cb4bb700af46a51bfa75ec2e19a19ca0eafa0d47c0"
+      }
+    },
+    "sourceRepair": {
+      "status": "INDEPENDENT_SOURCE_ACCEPTED",
+      "proposedCurrentCodePin": {
+        "path": "tests/project-boundaries.test.mjs",
+        "bytes": 16334,
+        "sha256": "fb8484018a9399912662352498ab1bb5e2687cd34f8279c89a91948fa28800de"
+      },
+      "reviewIdentity": {
+        "bytes": 7830,
+        "sha256": "99602b447e914f75b4035fb4795a165f3cde12ad22f6cb4aa036190746a41248"
+      },
+      "originalGateBytesChanged": false,
+      "newRuntimeDependency": false,
+      "globalSerialization": false
+    },
+    "adoptedSourceReadback": {
+      "status": "CURRENT_RAW_C_MATCH",
+      "pin": {
+        "path": "tests/project-boundaries.test.mjs",
+        "bytes": 16334,
+        "sha256": "fb8484018a9399912662352498ab1bb5e2687cd34f8279c89a91948fa28800de"
+      }
+    },
+    "isolatedGreen": {
+      "pass": 1,
+      "fail": 0,
+      "savedGitInventoryChanges": 0,
+      "polls": 55,
+      "finalInventoryNames": 1486,
+      "finalMembershipRestored": true,
+      "samplingExhaustive": false
+    },
+    "concurrentControls": {
+      "tests": 48,
+      "pass": 48,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "projectTests": 31,
+      "pngPolicyTests": 17,
+      "projectDiagnosticVariants": 2,
+      "diagnosticsPerVariant": 28
+    },
+    "independentGreenReview": {
+      "verdict": "PASS_ACTUAL_ISOLATED_TYPE_GATE_INVENTORY_AND_CONCURRENT_POLICY_ONLY",
+      "openFindings": 0,
+      "identity": {
+        "bytes": 29164,
+        "sha256": "7a803233948cbb192494bbb37531b0a335ba0ba88c7836ae044ed81f5e98e0fe"
+      }
+    },
+    "fullCurrentPrepushRerun": "PENDING",
+    "delivery": "NOT_RUN",
+    "remoteCi": "NOT_CLAIMED",
+    "originalRawSourceBeforeAfter": {
+      "files": 934,
+      "rawSetsEqual": true,
+      "beforeIdentity": {
+        "bytes": 164578,
+        "sha256": "6dd6b33c0c3e6c8f112516f095e625f3a9809d6c026203c4b72e7a4fad2428e6"
+      },
+      "afterIdentity": {
+        "bytes": 164740,
+        "sha256": "93fb90fb52a1f7320cff8e127371eb272c3d3da33a5084848543a5a7474edad0"
+      },
+      "separatePerFixtureInventoryReceipts": false
+    }
   }
 }

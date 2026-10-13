@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-13",
+  "updatedAt": "2026-10-14",
   "authority": "用户在本次项目讨论中确认的目标；实现与验收另查交付登记册",
   "items": [
     {
@@ -114,7 +114,8 @@
         "S001",
         "S094",
         "S097",
-        "S098"
+        "S098",
+        "S100"
       ],
       "deliveryIds": [
         "V002",
@@ -321,7 +322,8 @@
         "S001",
         "S095",
         "S097",
-        "S098"
+        "S098",
+        "S100"
       ],
       "deliveryIds": [
         "V001",
@@ -417,7 +419,8 @@
       "statement": "白鹭核心依据自有需求和规格独立设计实现；标准与开放项目提供研究依据，公共基础设施作为明确依赖接入并保留版本、来源、声明和修改记录。",
       "status": "confirmed",
       "sourceIds": [
-        "S038"
+        "S038",
+        "S100"
       ],
       "deliveryIds": [
         "V001",
@@ -463,7 +466,8 @@
       "sourceIds": [
         "S042",
         "S093",
-        "S099"
+        "S099",
+        "S100"
       ],
       "deliveryIds": [
         "V001",
@@ -554,7 +558,8 @@
       "status": "confirmed",
       "sourceIds": [
         "S051",
-        "S099"
+        "S099",
+        "S100"
       ],
       "deliveryIds": [
         "V007",
@@ -645,7 +650,8 @@
       "statement": "系统修复 Windows 仓库路径身份及 Git／编辑器换行行为，保留完整且区分大小写的逻辑路径和精确原始内容指纹，落实自研文本及真实暂存／提交字节检查，保留历史证据，并通过已授权仓库交付可评审修改。",
       "status": "confirmed",
       "sourceIds": [
-        "S099"
+        "S099",
+        "S100"
       ],
       "deliveryIds": [
         "V050"
@@ -1552,5 +1558,18 @@
     },
     "remoteCIPassClaim": false,
     "historicalPendingCutoffsRetained": true
+  },
+  "browserPngRequirementLinks": {
+    "sourceId": "S100",
+    "deliverableId": "V051",
+    "requirementIds": [
+      "R004",
+      "R012",
+      "R015",
+      "R016",
+      "R019",
+      "R021"
+    ],
+    "scope": "BOUNDED_ADAPTER_CONTRIBUTION_NOT_FULL_REQUIREMENT_ACCEPTANCE"
   }
 }
