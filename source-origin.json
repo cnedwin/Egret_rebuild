@@ -19015,5 +19015,314 @@
         "performanceImprovementClaim": false
       }
     }
+  },
+  "containerRemoveChildrenDeliveryActualSuccessor": {
+    "engineeringPreview": "0.49.0",
+    "status": "ACTUAL_REVIEWED_CONTAINER_BATCH_DETACHMENT_DELIVERED_TO_MAIN",
+    "successorRecordedOn": "2026-10-14",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/37",
+    "featureHead": "c95bde158a0ec941ff9e494da5b1567465ff2d8b",
+    "mainMergeCommit": "01e8e8063c2f2234b66486beba8bc9529f1f77b0",
+    "mainTree": "3585d370cc637edde2a94856909daa6bc74960d4",
+    "orderedMainParents": [
+      "cca65d0322807e53bfa3f7cc7fbcf8d903dcbc59",
+      "c95bde158a0ec941ff9e494da5b1567465ff2d8b"
+    ],
+    "actualDeliveryReview": {
+      "bytes": 32724,
+      "sha256": "24283690c4f8a83ad9755a8f2e337019b7f98058f3635c55362605c5ad6be371"
+    },
+    "mainObservationCutoffUtc": "2026-10-14T09:09:42.2204805Z",
+    "remoteStatuses": 0,
+    "remoteCheckRuns": 0,
+    "remoteCombinedState": "pending",
+    "remoteCIPassClaim": false,
+    "historicalCurationPendingPreserved": true
+  },
+  "displayContainerChildIndexWorkPackage": {
+    "engineeringPreview": "0.50.0",
+    "sourceId": "S104",
+    "deliverableId": "V055",
+    "requirementIds": [
+      "R002",
+      "R004",
+      "R011",
+      "R012",
+      "R015",
+      "R016",
+      "R019",
+      "R021"
+    ],
+    "implementationOrigin": "Independent first-party read-only Container/private-tree identity query from Egret contracts.",
+    "codeLicense": "Apache-2.0",
+    "documentationLicense": "Apache-2.0",
+    "currentProductPins": [
+      {
+        "path": "packages/runtime/src/DisplayObjectContainer.ts",
+        "bytes": 6812,
+        "sha256": "8e58777cc2bcfb91ca484a541db93e93aaf3c71142b6b1c913016664cece3160"
+      },
+      {
+        "path": "packages/runtime/src/displayTreeState.ts",
+        "bytes": 6045,
+        "sha256": "f617e693b121693c6a564655f8d285ee23106e741e7567c2d4d08835b2f5eec8"
+      }
+    ],
+    "publicGuides": [
+      "knowledge-base/en/docs/container-child-index-contract.md",
+      "knowledge-base/Cns/docs/容器子节点索引契约.md",
+      "knowledge-base/en/docs/container-child-index-evidence.md",
+      "knowledge-base/Cns/docs/容器子节点索引证据.md",
+      "knowledge-base/en/docs/container-child-index-implementation-plan.md",
+      "knowledge-base/Cns/docs/容器子节点索引工程计划.md"
+    ],
+    "AIContribution": "AI-assisted source/tests/bilingual preparation with separately scoped author/reviewer roles.",
+    "acceptance": {
+      "curationCutoff": "2026-10-14",
+      "status": "BOUNDED_PRODUCT_BUILD_CPU_TYPES_CURRENT_POLICY_AND_NATIVE_ACCEPTED_PUBLIC_SOURCE_REVIEW_PREPUSH_DELIVERY_PENDING",
+      "productSourceReview": {
+        "bytes": 12734,
+        "sha256": "0596de2843a6e14188b1c70aa66025c6385aa53f0bbfa990e25d40a10fecd5f3",
+        "verdict": "PASS_SOURCE_PRODUCT_TWO_FILES_ONLY",
+        "openFindings": 0
+      },
+      "coreTypesActualReview": {
+        "bytes": 54476,
+        "sha256": "d238a44d80b3be8d5725c823356512cfc497210033bca49dd30727347a5c0e74",
+        "verdict": "PASS_ACTUAL_CORE_BUILD_CPU_AND_STRICT_TYPES_ONLY",
+        "openFindings": 0
+      },
+      "baselineActualReview": {
+        "bytes": 21554,
+        "sha256": "11fe71266d0f1103784fe0e3725324a82451f4c5f713acd0dabff36e0f508a3f",
+        "verdict": "PASS_ACTUAL_ROUTINE_SETUP_GENUINE_BASELINE_AND_NAMED_MISSING_METHOD_RED_ONLY",
+        "openFindings": 0
+      },
+      "productSourceFiles": 2,
+      "builtJSAndDTSFiles": 4,
+      "buildExitCode": 0,
+      "focusedCPU": {
+        "tests": 128,
+        "pass": 128,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "API": 1,
+        "behavior": 5,
+        "new": 6,
+        "retained": 122,
+        "fullRepositorySuite": false
+      },
+      "strictTypes": {
+        "compiler": "7.0.2",
+        "lanes": 2,
+        "parallelOriginalLanes": true,
+        "positiveDiagnostics": 0,
+        "positiveExitCode": 0,
+        "negativeDiagnostics": 12,
+        "negativeExitCode": 1,
+        "completeActualUnsuppressedTuples": 12,
+        "integratedDriverActual": "INDEPENDENTLY_ACCEPTED_BY_CURRENT_CODE_ACTUAL_REVIEW",
+        "integratedDriverSourceReview": {
+          "bytes": 15592,
+          "sha256": "aa6fda0c30abea6ef820e388aece8f3be5d678c048d3a6ac135531d0ed8c0f2d",
+          "verdict": "PASS_SOURCE_STRICT_TYPES_DRIVER_AND_CURRENT_DIAGNOSTIC_INTEGRATION_ONLY",
+          "openFindings": 0
+        },
+        "retainedDcaCurrentInputSourceReview": {
+          "bytes": 6541,
+          "sha256": "4826af4b08447d23445b448f80b31e5f2c6b5b129e973699a1e9c46de89fc19b",
+          "verdict": "PASS_SOURCE_RETAINED_DCA_CURRENT_DECLARATION_PIN_ONLY",
+          "openFindings": 0
+        },
+        "observedCurrentCommands": {
+          "CGI": {
+            "exitCode": 0,
+            "positiveDiagnostics": 0,
+            "negativeTuples": 12
+          },
+          "retainedDCA": {
+            "exitCode": 0,
+            "positiveDiagnostics": 0,
+            "negativeTuples": 10
+          },
+          "timeout": false,
+          "stderrBytes": 0,
+          "independentFullPolicyCredit": false
+        }
+      },
+      "history": {
+        "genuineOldOrderedOperationsAndCleanupBeforeNamedRED": true,
+        "namedMissingMemberLine": 45,
+        "originalCoreR1": {
+          "tests": 128,
+          "pass": 122,
+          "fail": 6,
+          "reason": "OLD_BUILD_MISSING_METHOD_AFTER_REPORTED_ADOPTION_OWNER_PREFLIGHT_REFUSAL",
+          "productDefectClaim": false,
+          "originalReceiptsAndStreamsPreserved": true,
+          "adoptionPreflightIndependentReceipt": "NOT_FABRICATED"
+        }
+      },
+      "native": {
+        "sourceReview": {
+          "bytes": 31028,
+          "sha256": "0e7965f2cb0e9d9bc737035aceb107027ad6f130e86d5be081bed3de8525daa5",
+          "verdict": "PASS_SOURCE_NATIVE_CGI_CANVAS_WEBGPU_CALLER_COMPOSITION_ONLY",
+          "openFindings": 0
+        },
+        "sourceFiles": 6,
+        "sourceAcceptedAndAdopted": true,
+        "actual": "COMPLETED_ORIGINAL_BOUNDED_CANVAS_AND_WEBGPU",
+        "acceptance": "PASS_ACTUAL_NATIVE_BOUNDED_CONTAINER_CHILD_INDEX_CANVAS_AND_WEBGPU_ONLY",
+        "plannedBackends": [
+          "canvas",
+          "webgpu"
+        ],
+        "plannedStepsPerBackend": 3,
+        "plannedSubmissions": 6,
+        "plannedCaptures": 4,
+        "plannedReplays": 2,
+        "plannedWidth": 24,
+        "plannedHeight": 24,
+        "plannedDPR": 1,
+        "plannedChannels": 13824,
+        "pixelTolerance": 0,
+        "scene": "QUERY_A_INDEX_THEN_EXISTING_SET_CHILD_INDEX_C_TO_C_A_B",
+        "managedTextureLeaseRendered": false,
+        "listenerAndLeasePreservation": "REQUIRED_NOT_NATIVE_OBSERVED",
+        "sameLiveEngineSavedReplay": true,
+        "physicalAdapterIdentity": "UNOBSERVED",
+        "originalSourceCutoff": {
+          "actual": "NOT_RUN",
+          "acceptance": "PENDING",
+          "rawHistoryPreserved": true
+        },
+        "actualReview": {
+          "bytes": 47500,
+          "sha256": "f7152fa73d0d90712e5819b15c2db154cd5e3d86828772383e4519f7058c61ea",
+          "verdict": "PASS_ACTUAL_NATIVE_BOUNDED_CONTAINER_CHILD_INDEX_CANVAS_AND_WEBGPU_ONLY",
+          "openFindings": 0
+        },
+        "secondaryLimitedReview": {
+          "bytes": 72489,
+          "sha256": "961638b871fde52b60edd9ba9aa8eb9f75a5f4b352c599fc0f3d02d98bdcf20f",
+          "verdict": "PASS_ACTUAL_BOUNDED_CGI_NATIVE_PIXELS_AND_NORMAL_CLEANUP_ONLY",
+          "openFindings": 0
+        },
+        "actualCounts": {
+          "actualNativeMainCases": 2,
+          "actualNativeMainPasses": 2,
+          "positiveCanvasSubmissions": 3,
+          "renderedSubmissions": 6,
+          "completeRawReadbacks": 6,
+          "newCaptures": 4,
+          "savedReplays": 2,
+          "pixelsCompared": 3456,
+          "channelsCompared": 13824,
+          "producerShape": "Literal top-level result fields; no aggregate object invented"
+        },
+        "pixelQualification": {
+          "width": 24,
+          "height": 24,
+          "DPR": 1,
+          "fullRawBuffers": 6,
+          "bytesPerBuffer": 2304,
+          "channelsCompared": 13824,
+          "pixelTolerance": 0,
+          "mismatches": 0,
+          "literalOracleRows": 48,
+          "savedN1N3ByteEqualPerBackend": true,
+          "sameEngineAlive": true,
+          "alphaScope": "OPAQUE_RECTANGLES_AND_ZERO_TRANSPARENT_CLEAR_ONLY"
+        },
+        "sceneOwnership": {
+          "initialOrder": [
+            "A",
+            "B",
+            "C"
+          ],
+          "callerAfterOrder": [
+            "C",
+            "A",
+            "B"
+          ],
+          "queryDrivenCallerIndex": 0,
+          "exactDirectParentsAndLiveNodesPreserved": true,
+          "managedCPUTextureLeaseNotRendered": true,
+          "listenerAndLeasePreservation": "BOUNDED_ORIGINAL_OBSERVATIONS_ACCEPTED"
+        },
+        "normalCleanupAccepted": true,
+        "sourceAndGraphStable": true,
+        "runtimeQualification": {
+          "channel": "msedge",
+          "browserVersion": "155.0.4283.45",
+          "NodeVersion": "24.19.0",
+          "extraLaunchFlags": false,
+          "admissionRuntimeCatalogRows": 175,
+          "basis": "Authenticated original producer before/after checks plus saved stable flags and bounded admission/catalog metadata equality; selected Node/Playwright/Edge identities are bound.",
+          "independentBeforeAfter175RowArraysPresent": false,
+          "independentSecondSDKRehashClaim": false
+        },
+        "notRunOrUnknown": {
+          "physicalGPUModel": "UNKNOWN_NOT_ACCEPTED",
+          "forcedTimeoutOrCancellation": "NOT_RUN",
+          "wrongOracleOrAssignedFailureControls": "NOT_RUN",
+          "failedCleanupAcceptance": "NOT_RUN",
+          "phonesPlatformsPerformancePowerGCOOM": "NOT_RUN",
+          "fullSpineMigrationAI": "OPEN"
+        }
+      },
+      "currentFullPolicy": "INDEPENDENTLY_ACCEPTED_ORIGINAL_NINE_CURRENT_GATES",
+      "fullPrepush": "PENDING",
+      "publicSourceBilingualReview": "PENDING",
+      "pushHook": "NOT_RUN_0_50",
+      "GitHubDelivery": "NOT_RUN_0_50",
+      "remoteCI": "NOT_CLAIMED",
+      "fullSpineR020V020": "OPEN",
+      "migrationR008V006": "OPEN",
+      "fullUIAndAdvanced3D": "OPEN",
+      "AIInterfaces": "OPEN",
+      "physicalDevicePerformance": "UNVERIFIED",
+      "packageVersion": "0.0.0",
+      "hostProtocol": "1.0",
+      "newThirdPartyDependency": false,
+      "observedCurrentCodeExecution": {
+        "commandExitCode": 0,
+        "timeout": false,
+        "stderrBytes": 0,
+        "verifyPhases": 9,
+        "startedAtUtc": "2026-10-14T10:09:46.3408544Z",
+        "finishedAtUtc": "2026-10-14T10:14:52.1489340Z",
+        "stdoutSHA256": "bb82e8bcd2e345e7de11e033f3848c16635cf4940175509e190f77315e104fd6",
+        "Core": {
+          "tests": 3091,
+          "pass": 3091,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0
+        },
+        "retainedSpineSourceChecks": {
+          "tests": 160,
+          "pass": 160,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0
+        },
+        "currentCGITypeNegativeTuples": 12,
+        "retainedDCATypeNegativeTuples": 10,
+        "nativeAcceptance": false,
+        "curatedPublicPrepushAcceptance": false,
+        "committedPushHookAcceptance": false,
+        "independentAcceptedAtOriginalObservedCutoff": false
+      },
+      "currentCodeActualReview": {
+        "bytes": 49494,
+        "sha256": "f81ec27fdf1d0bf5c9fe5c120eecf7bc6049aab47056b1a61531c29f824f1d34",
+        "verdict": "PASS_ACTUAL_CURRENT_CODE_AND_POLICY_GATES_ONLY",
+        "openFindings": 0
+      }
+    }
   }
 }

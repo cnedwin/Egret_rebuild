@@ -2,6 +2,8 @@
 
 English | [简体中文](ACKNOWLEDGEMENTS.zh-CN.md)
 
+Independent 0.50 direct-child index querying reuses first-party Egret Container/tree/Scope/resource/frame contracts and original fixtures. AI assisted source/tests/bilingual preparation with separate source and saved-result review. No new third-party dependency is introduced; existing license and notice credits remain applicable.
+
 Independent 0.49 batch detachment reuses first-party Egret Container/tree/Scope/resource/frame contracts and original fixtures. AI assisted source/tests/bilingual preparation with separate source and saved-result review. No new third-party dependency is introduced; existing license and notice credits remain applicable.
 
 ## NineSliceBitmap first-party reuse — 0.48.0

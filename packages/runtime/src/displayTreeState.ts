@@ -36,6 +36,18 @@ export function childrenOf(node: DisplayObject): readonly DisplayObject[] {
 export function childCountOf(node: DisplayObject): number { return childLists.get(node as DisplayObjectContainer)?.length ?? 0; }
 export function childAtOf(node: DisplayObject, index: number): DisplayObject | undefined { return childLists.get(node as DisplayObjectContainer)?.[index]; }
 
+/** Read the exact direct-child index in O(n), without a snapshot or callbacks. */
+export function childIndexOf(parent: DisplayObjectContainer, child: DisplayObject): number {
+  const list = readChildList(parent);
+  if (list === undefined) throw new EgretError("INVALID_DISPLAY_CONTAINER");
+  if (readParent(child) !== parent) throw new EgretError("NOT_A_CHILD");
+  // Scan authoritative identity directly; public getters and Array.indexOf are not authority.
+  for (let index = 0; index < list.length; index++) {
+    if (list[index] === child) return index;
+  }
+  throw new EgretError("DISPLAY_TREE_INVARIANT");
+}
+
 export function assertLive(node: DisplayObject): void {
   if (terminated.has(node)) throw new EgretError("OBJECT_DISPOSED");
 }

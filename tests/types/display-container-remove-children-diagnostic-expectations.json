@@ -237,8 +237,8 @@
     },
     {
       "path": "packages/runtime/dist/DisplayObjectContainer.d.ts",
-      "bytes": 1102,
-      "sha256": "80651833b6562c0071e46eb09e1fea8556476b5075dc5fc3badaedc657bf7acc"
+      "bytes": 1237,
+      "sha256": "83e5340de7ffa1da9d367129e87f54e540e353b70b5be13df3a0802fd1e24034"
     },
     {
       "path": "packages/runtime/dist/EgretError.d.ts",

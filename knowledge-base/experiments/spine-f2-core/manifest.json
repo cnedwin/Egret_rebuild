@@ -145,7 +145,7 @@
     {
       "path": "tests/policy-cold.mjs",
       "bytes": 19249,
-      "sha256": "5fe249b12d0c9948e8adb60abc195fcc771678833ca371cf756eab32515872a6"
+      "sha256": "81d4bd2f34949e584f3ea892ede57fa3d022ffa98be2376ffe3e125b1c5e8fc9"
     },
     {
       "path": "tests/resources-transaction.mjs",

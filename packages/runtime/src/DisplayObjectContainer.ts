@@ -2,7 +2,7 @@ import { DisplayObject } from "./DisplayObject.js";
 import { registerDisplayHitContainer, readDisplayTouchChildren, writeDisplayTouchChildren } from './displayHitState.js';
 import { EgretError } from "./EgretError.js";
 import { ASSERT_ATTACHABLE, ASSERT_BINDABLE, OWNERSHIP_CHILDREN, commitBinding, engineInSubtree, engineOf, ownerOf, preflightBinding, validateBinding } from "./ownership.js";
-import { assertAttachable, assertContainer, assertLive, assertNoCycle, attachNode, childAtOf, childCountOf, childrenOf, detachChildren, detachNode, isTerminated, parentOf, registerContainer, removeNode, setNodeIndex } from "./displayTreeState.js";
+import { assertAttachable, assertContainer, assertLive, assertNoCycle, attachNode, childAtOf, childCountOf, childIndexOf, childrenOf, detachChildren, detachNode, isDisplayNode, isTerminated, parentOf, registerContainer, removeNode, setNodeIndex } from "./displayTreeState.js";
 
 // Carries the initiating owner's boundary through unowned intermediate containers.
 const disposalBoundaries = new WeakMap<DisplayObject, { readonly owner: object | undefined }>();
@@ -77,6 +77,16 @@ export class DisplayObjectContainer extends DisplayObject {
     const child = childAtOf(this, index);
     if (child === undefined) throw new EgretError("INVALID_INDEX");
     return child;
+  }
+
+  /** Return a genuine direct child's current zero-based index without mutation. */
+  public getChildIndex(child: DisplayObject): number {
+    // Authenticate before affinity; retain Engine-first receiver lifetime checks.
+    assertContainer(this);
+    engineOf(this)?.assertOpen(); assertLive(this);
+    if (!isDisplayNode(child)) throw new EgretError("INVALID_DISPLAY_OBJECT");
+    assertLive(child);
+    return childIndexOf(this, child);
   }
 
   public setChildIndex(child: DisplayObject, index: number): void {
