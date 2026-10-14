@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-14",
+  "updatedAt": "2026-10-15",
   "authority": "Delivery status summary; code, artifacts, and reproducible acceptance evidence separately govern implementation and testing",
   "items": [
     {
@@ -5823,6 +5823,79 @@
           "remoteCIPassClaim": false
         }
       }
+    },
+    {
+      "id": "V057",
+      "kind": "engineering_preview",
+      "status": "in_progress",
+      "requirementIds": [
+        "R002",
+        "R004",
+        "R011",
+        "R012",
+        "R015",
+        "R016",
+        "R019",
+        "R021"
+      ],
+      "sourceIds": [
+        "S106"
+      ],
+      "dependsOn": [
+        "V056"
+      ],
+      "owner": "project",
+      "dueDate": null,
+      "title": "Engineering preview 0.52.0 — display anchor offsets · Source draft",
+      "doc": "en/docs/display-anchor-offsets-contract.md",
+      "artifacts": [
+        "en/docs/display-anchor-offsets-contract.md",
+        "en/docs/display-anchor-offsets-evidence.md",
+        "en/docs/display-anchor-offsets-implementation-plan.md",
+        "evidence/display-anchor-offsets-verification.json"
+      ],
+      "implementation": "Inherited finite scalar accessors and one shared transform path; exact zero compatibility and resource ownership are retained.",
+      "acceptance": "Accepted code and bounded Native evidence; public bilingual review and final delivery remain pending.",
+      "acceptanceCriteria": [
+        "Preserve the complete contract and historical raw observations.",
+        "Complete publication review, full prepush, mandatory hooks and separately qualified delivery."
+      ],
+      "verification": {
+        "engineeringPreview": "0.52.0",
+        "sourceId": "S106",
+        "deliverableId": "V057",
+        "curationDate": "2026-10-15",
+        "status": "CURRENT_CODE_AND_BOUNDED_NATIVE_ACCEPTED_PUBLIC_DELIVERY_PENDING",
+        "record": "knowledge-base/evidence/display-anchor-offsets-verification.json",
+        "contract": "en/docs/display-anchor-offsets-contract.md",
+        "evidence": "en/docs/display-anchor-offsets-evidence.md",
+        "plan": "en/docs/display-anchor-offsets-implementation-plan.md",
+        "focusedCPU": {
+          "pass": 211,
+          "new": 18,
+          "retained": 193
+        },
+        "completeCode": {
+          "phases": 9,
+          "Core": 3131,
+          "SpineSource": 160
+        },
+        "native": {
+          "mainReadbacks": 10,
+          "mainChannels": 23040,
+          "separateControlMainCredit": 0,
+          "wrongPivotPixels": 72,
+          "wrongPivotChannels": 144
+        },
+        "publicSourceBilingualReview": "PENDING",
+        "fullPrepush": "PENDING",
+        "mandatoryHooks": "PENDING",
+        "newGitDelivery": "PENDING",
+        "remoteCIPassClaim": false,
+        "fullSpineR020V020": "OPEN",
+        "migrationR008V006": "OPEN",
+        "historicalCutoffsPreserved": true
+      }
     }
   ],
   "spineF1ClockPortableReplaySuccessor": {
@@ -6746,7 +6819,7 @@
   },
   "_localization": {
     "canonicalSource": "交付.json",
-    "canonicalSha256": "cc3895208631cc05ed4475f0f21cd21b1cef38501cdf3e5463f1130745c49282",
+    "canonicalSha256": "42dbfcb3d6ae6cad29c432eecd52c8931263c87a098304d2cb3126bd2ac68ca2",
     "role": "read_only_translation",
     "language": "en"
   },
@@ -6769,5 +6842,56 @@
     },
     "remoteCIPassClaim": false,
     "historicalPublicPendingCutoffsPreserved": true
+  },
+  "displayAnchorOffsetsWorkPackage": {
+    "engineeringPreview": "0.52.0",
+    "sourceId": "S106",
+    "deliverableId": "V057",
+    "curationDate": "2026-10-15",
+    "status": "CURRENT_CODE_AND_BOUNDED_NATIVE_ACCEPTED_PUBLIC_DELIVERY_PENDING",
+    "record": "knowledge-base/evidence/display-anchor-offsets-verification.json",
+    "contract": "en/docs/display-anchor-offsets-contract.md",
+    "evidence": "en/docs/display-anchor-offsets-evidence.md",
+    "plan": "en/docs/display-anchor-offsets-implementation-plan.md",
+    "focusedCPU": {
+      "pass": 211,
+      "new": 18,
+      "retained": 193
+    },
+    "completeCode": {
+      "phases": 9,
+      "Core": 3131,
+      "SpineSource": 160
+    },
+    "native": {
+      "mainReadbacks": 10,
+      "mainChannels": 23040,
+      "separateControlMainCredit": 0,
+      "wrongPivotPixels": 72,
+      "wrongPivotChannels": 144
+    },
+    "publicSourceBilingualReview": "PENDING",
+    "fullPrepush": "PENDING",
+    "mandatoryHooks": "PENDING",
+    "newGitDelivery": "PENDING",
+    "remoteCIPassClaim": false,
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "historicalCutoffsPreserved": true
+  },
+  "containerAddChildAtDeliveryActualSuccessor": {
+    "engineeringPreview": "0.51.0",
+    "recordedOn": "2026-10-15",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/39",
+    "featureHead": "8b667d85a7cf22c041406351c47d6213c9e40b3d",
+    "main": "0afc8020d30bf4f30a982c671a905bf6786293c4",
+    "tree": "43cea3da992cdfaa100857060f52ccea4284a834",
+    "independentReview": {
+      "bytes": 45021,
+      "sha256": "10f7f529ebd9b3e015da452edf537ddc3087a5bdc63da155ec1a720cc51877d8",
+      "identityOnlyNotDistributed": true
+    },
+    "historicalPublicPendingCutoffsPreserved": true,
+    "remoteCIPassClaim": false
   }
 }

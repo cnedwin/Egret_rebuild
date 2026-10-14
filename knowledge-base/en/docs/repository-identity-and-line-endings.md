@@ -12,6 +12,8 @@ Physical command and filesystem locations are a different domain. Tooling accept
 
 Compiler diagnostic paths use the same owner conversion. The compiler's line, column, code and full message stay exact. A changed diagnostic message is a changed result, never something path normalization may hide.
 
+Keep raw-payload hashing, complete case-preserving logical paths, and structured pin fields as separate contracts. Newly authored closed pin literals use the documented field order `path`, `bytes`, `sha256` and allow exactly those fields. Compare logical pins using their complete closed fields or an explicitly documented canonical shape; object-property insertion order is not file identity. A required serialization order describes the pin representation, while raw SHA-256 still authenticates the payload. Do not normalize EOL, BOM, Unicode, case, or logical path spelling before recording fingerprints. Apply explicit Windows semantics only to comparisons of physical filesystem paths.
+
 ## Preserve raw bytes before computing a fingerprint
 
 SHA-256 always covers the original bytes. Never normalize CRLF, a BOM, source text, Unicode or whitespace while computing a source fingerprint. Path representation can be portable while content identity remains exact.

@@ -2,6 +2,18 @@
 
 [English](README.md) | 简体中文
 
+<!-- AO-0.52.0-DRAFT-BEGIN -->
+## 工程预览 0.52.0 — 显式显示枢轴
+
+**S106 / V057 · 2026-10-15。** 继承的 `anchorOffsetX` 与 `anchorOffsetY` 使元素在缩放／旋转时以其位置放置指定枢轴。坐标、接收者局部边界、裁剪、命中和捕获遵循同一契约；零偏移保留原始矩阵字节。
+
+独立当前代码接受覆盖 Core 3131/3131 与保留 Spine 源码 160/160。独立接受的桌面不透明 Canvas/WebGPU 执行覆盖 10 次主读回、23040 个通道，容差为 0；独立 Canvas 对照的主用例记账为 0。
+
+阅读[契约](Cns/docs/显示锚点偏移契约.md)、[证据](Cns/docs/显示锚点偏移证据.md)和[剩余计划](Cns/docs/显示锚点偏移工程计划.md)。本截止点的公开源码／双语评审、正常 prepush、强制 hook 及新增 0.52 交付仍为 PENDING。完整 Spine R020/V020、迁移 R008/V006、完整 EUI／布局、高级 3D、AI、字体／设备及性能保持 OPEN 或未验证。
+
+有日期的前次交付为 [PR #39](https://github.com/cnedwin/Egret_rebuild/pull/39)，Main `0afc8020d30bf4f30a982c671a905bf6786293c4`、tree `43cea3da992cdfaa100857060f52ccea4284a834`。原 0.51 公开 PENDING 截止点保留为历史；不声明远端 CI PASS。
+<!-- AO-0.52.0-DRAFT-END -->
+
 <!-- ADI-0.51.0-DRAFT-BEGIN -->
 ## 工程预览 0.51.0 — 按索引插入子节点 · 源码草稿
 

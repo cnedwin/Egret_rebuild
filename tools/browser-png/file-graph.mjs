@@ -185,11 +185,12 @@ function literalImports(text, filename, declaration = false) {
  * fixture/schedule pins use private absolute paths and stay metadata-separated.
  */
 export function freezeBrowserPngGraph({ repositoryRoot, collectorFiles, fixturePins, schedulePin, profile = 'browser-png' }) {
-  requireGraph(profile === 'browser-png' || profile === 'nine-slice-bitmap' || profile === 'display-container-remove-children' || profile === 'display-container-child-index' || profile === 'display-container-add-child-at', 'EXPLICIT_PROFILE');
+  requireGraph(profile === 'browser-png' || profile === 'nine-slice-bitmap' || profile === 'display-container-remove-children' || profile === 'display-container-child-index' || profile === 'display-container-add-child-at' || profile === 'display-anchor-offsets', 'EXPLICIT_PROFILE');
   const nineSlice = profile === 'nine-slice-bitmap', removeChildren = profile === 'display-container-remove-children';
   const childIndex = profile === 'display-container-child-index';
   const addChildAt = profile === 'display-container-add-child-at';
-  const literalScene = nineSlice || removeChildren || childIndex || addChildAt;
+  const anchorOffsets = profile === 'display-anchor-offsets';
+  const literalScene = nineSlice || removeChildren || childIndex || addChildAt || anchorOffsets;
   requireGraph(typeof repositoryRoot === 'string' && path.isAbsolute(repositoryRoot), 'REPOSITORY_ROOT');
   const root = realpathSync(repositoryRoot);
   requireGraph(samePhysicalPath(root, repositoryRoot), 'REPOSITORY_ALIAS');
@@ -387,7 +388,7 @@ export function freezeBrowserPngGraph({ repositoryRoot, collectorFiles, fixtureP
         requireGraph(!literalScene && route === '/fixture.mjs' && imported.specifier === './native-observer.mjs', 'COLLECTOR_RELATIVE_IMPORT', { specifier: imported.specifier });
         to = visitCollector('/native-observer.mjs');
       } else {
-        requireGraph(route === '/fixture.mjs' && (removeChildren || childIndex || addChildAt ? ['@egret/engine'] : nineSlice ? ['@egret/engine', '@egret/engine/webgpu', '@egret/engine/web']
+        requireGraph(route === '/fixture.mjs' && (removeChildren || childIndex || addChildAt || anchorOffsets ? ['@egret/engine'] : nineSlice ? ['@egret/engine', '@egret/engine/webgpu', '@egret/engine/web']
           : ['@egret/engine', '@egret/engine/web/image']).includes(imported.specifier), 'COLLECTOR_PUBLIC_IMPORT', { specifier: imported.specifier });
         const target = publicTarget(imported.specifier, 'import'); alias(imported.specifier, target); to = visitProduct(target);
       }
@@ -395,7 +396,7 @@ export function freezeBrowserPngGraph({ repositoryRoot, collectorFiles, fixtureP
     }
     return route;
   }
-  const commonEntries = removeChildren || childIndex || addChildAt ? ['@egret/engine'] : nineSlice ? ['@egret/engine', '@egret/engine/web'] : ['@egret/engine', '@egret/engine/web/image'];
+  const commonEntries = removeChildren || childIndex || addChildAt || anchorOffsets ? ['@egret/engine'] : nineSlice ? ['@egret/engine', '@egret/engine/web'] : ['@egret/engine', '@egret/engine/web/image'];
   const backendRoots = [];
   for (const backend of scheduleData.backends) {
     const specifiers = [...commonEntries, backend === 'canvas' ? '@egret/engine/web' : '@egret/engine/webgpu'], roots = [];

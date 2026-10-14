@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "version": "0.51.0",
-  "updatedAt": "2026-10-14",
-  "title": "工程预览 0.51.0 — 按索引插入子节点 · 源码草稿",
-  "stage": "DRAFT_SOURCE_PREVIEW_CURRENT_CODE_AND_BOUNDED_NATIVE_ACCEPTED_PUBLIC_DELIVERY_PENDING",
+  "version": "0.52.0",
+  "updatedAt": "2026-10-15",
+  "title": "工程预览 0.52.0 — 显示锚点偏移 · 源码草稿",
+  "stage": "CURRENT_CODE_AND_BOUNDED_NATIVE_ACCEPTED_PUBLIC_DELIVERY_PENDING",
   "publication": "source_draft_development_preview",
   "registries": {
     "requirements": "Cns/registry/需求.json",
@@ -561,7 +561,7 @@
     "contract": "Cns/docs/显示内容边界契约.md",
     "evidence": "Cns/docs/显示内容边界证据.md"
   },
-  "latestEngineeringPreview": "0.50.0",
+  "latestEngineeringPreview": "0.52.0",
   "texturedMesh2DImplementation": {
     "version": "0.23.0",
     "status": "bounded_increment_implemented",
@@ -6538,5 +6538,64 @@
       "physicalGPUPhonesFontsPerformanceFullSpine": "UNVERIFIED_OR_OPEN",
       "remoteCIPassClaim": false
     }
+  },
+  "displayAnchorOffsetsPreviousCheckpoint": {
+    "version": "0.51.0",
+    "updatedAt": "2026-10-14",
+    "title": "工程预览 0.51.0 — 按索引插入子节点 · 源码草稿",
+    "stage": "DRAFT_SOURCE_PREVIEW_CURRENT_CODE_AND_BOUNDED_NATIVE_ACCEPTED_PUBLIC_DELIVERY_PENDING",
+    "latestEngineeringPreview": "0.50.0",
+    "publication": "source_draft_development_preview"
+  },
+  "displayAnchorOffsetsWorkPackage": {
+    "engineeringPreview": "0.52.0",
+    "sourceId": "S106",
+    "deliverableId": "V057",
+    "curationDate": "2026-10-15",
+    "status": "CURRENT_CODE_AND_BOUNDED_NATIVE_ACCEPTED_PUBLIC_DELIVERY_PENDING",
+    "record": "knowledge-base/evidence/display-anchor-offsets-verification.json",
+    "contract": "Cns/docs/显示锚点偏移契约.md",
+    "evidence": "Cns/docs/显示锚点偏移证据.md",
+    "plan": "Cns/docs/显示锚点偏移工程计划.md",
+    "focusedCPU": {
+      "pass": 211,
+      "new": 18,
+      "retained": 193
+    },
+    "completeCode": {
+      "phases": 9,
+      "Core": 3131,
+      "SpineSource": 160
+    },
+    "native": {
+      "mainReadbacks": 10,
+      "mainChannels": 23040,
+      "separateControlMainCredit": 0,
+      "wrongPivotPixels": 72,
+      "wrongPivotChannels": 144
+    },
+    "publicSourceBilingualReview": "PENDING",
+    "fullPrepush": "PENDING",
+    "mandatoryHooks": "PENDING",
+    "newGitDelivery": "PENDING",
+    "remoteCIPassClaim": false,
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "historicalCutoffsPreserved": true
+  },
+  "containerAddChildAtDeliveryActualSuccessor": {
+    "engineeringPreview": "0.51.0",
+    "recordedOn": "2026-10-15",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/39",
+    "featureHead": "8b667d85a7cf22c041406351c47d6213c9e40b3d",
+    "main": "0afc8020d30bf4f30a982c671a905bf6786293c4",
+    "tree": "43cea3da992cdfaa100857060f52ccea4284a834",
+    "independentReview": {
+      "bytes": 45021,
+      "sha256": "10f7f529ebd9b3e015da452edf537ddc3087a5bdc63da155ec1a720cc51877d8",
+      "identityOnlyNotDistributed": true
+    },
+    "historicalPublicPendingCutoffsPreserved": true,
+    "remoteCIPassClaim": false
   }
 }

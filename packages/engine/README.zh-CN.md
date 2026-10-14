@@ -2,6 +2,12 @@
 
 [English](README.md) | 简体中文
 
+## 工程预览 0.52.0 — 显示锚点偏移
+
+现有显示类继承有限 number 属性 `anchorOffsetX` 与 `anchorOffsetY`，默认 +0。指定枢轴使缩放／旋转在坐标、逻辑边界、裁剪、显式命中及帧捕获中保持一致，并保留原零偏移字节。阅读[当前契约](../../knowledge-base/Cns/docs/显示锚点偏移契约.md)和[有限证据](../../knowledge-base/Cns/docs/显示锚点偏移证据.md)。
+
+**以下模块旧说明保留早于 0.52.0 的原截止点。** 其中早先的待完成表述限定原版本；当前接受范围由所链接的新证据确定。完整 EUI／布局和完整 Spine 仍为 OPEN。
+
 DisplayObjectContainer.getChildIndex(child: DisplayObject): number 只读查询精确当前直接子节点，以 O(n) 扫描私有真实顺序，不建立列表快照／缓存，不修改树、转移 owner、操作资源或调用显示回调。Sprite／Stage 继承，根值／类型、子入口、依赖及协议不变。 阅读 [0.50 契约](../../knowledge-base/Cns/docs/容器子节点索引契约.md).
 
 `DisplayObjectContainer.removeChildren(): void` 清空显示层，同时保留节点、后代、资源及清理所有者。它认证真实接收者，空容器也先检查 Engine 再检查接收者生命周期，在全部直接边校验后无调用者 hook 提交；Sprite 和 Stage 继承方法，根值／类型、规格、依赖和协议不变。 阅读 [0.49 契约](../../knowledge-base/Cns/docs/容器清空子节点契约.md).

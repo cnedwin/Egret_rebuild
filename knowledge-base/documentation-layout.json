@@ -12,8 +12,8 @@
       "action": "move-pair",
       "previousZhSha256": "c2eace3a18292062c40c9a2aa517a83f3ce3943943ba53f47266f390f8e12d87",
       "previousEnSha256": "5d6d5be4b0a4f2cebc9cd5f019ec8c56fd45ba34104a4cbe392c74c2443261f2",
-      "currentZhSha256": "0798ef27b74532862d534141f98e8ae2e88ade43fd2ae389afcdd0cfdaa05bc8",
-      "currentEnSha256": "a1c2a6c24191730a0d875bd8302d1d5e08d21eb359d0df3ad202fea2d32b5531"
+      "currentZhSha256": "a049c885258dc5dc6028dadc505ddedb56f7698921c1a5af5aa19599ee9be8a6",
+      "currentEnSha256": "76da7304b2048cf4e10478ae915949885bc867a0def4714ca87f7e7af97bb5cc"
     },
     {
       "oldZh": "AGENTS.md",
@@ -84,8 +84,8 @@
       "action": "move-pair",
       "previousZhSha256": "f43625255269c8801af0929179a9aab32cbca58094e4a842797e39171fc549b0",
       "previousEnSha256": "e8b100ccbd9d0fb99237a564f484f7fa6dbf008191570fa58f3e481c05c3e9f9",
-      "currentZhSha256": "2f68e1f559164f5cdf4e114a8013f7f339eec86653fe520c783717f0d3712d1c",
-      "currentEnSha256": "b961650aef12447ae65d87dbe00ee00af672d9d462b879ca9abcbfea48344048"
+      "currentZhSha256": "1bdf9aa9923d856d1ee3ddee3f1f91c35a01ecd85240d747f8cbec3e9d29561b",
+      "currentEnSha256": "3c766513b56d54cb4148ecdd8fab44b149dd1455d50516b134b8b90e1f93e2d9"
     },
     {
       "oldZh": "knowledge-base/CONTRIBUTING.md",
@@ -840,8 +840,8 @@
       "action": "move-pair",
       "previousZhSha256": "372e5b07d4980eb45d8338424c8d970b7725e324e6b3397916944b0529c55ec7",
       "previousEnSha256": "ed88646659467d718a30c3bfff14b41c28debbcb786e7bf816ee68819f612887",
-      "currentZhSha256": "d579d77dc95f6b76cd744abcb617d549c8442cb5dacc91e9445016c5c593f56c",
-      "currentEnSha256": "b2972737af19a4e4428a71bfc6898e75626925cd193686d5752c5969d8038970"
+      "currentZhSha256": "ba88bab2461d0291302f2a1a7f74ecf8ad5fa0bae42ae1596a2473dac33e0d82",
+      "currentEnSha256": "da7387089052816564c24d75469d73727408cae5944a248f001ccfbc669849f7"
     },
     {
       "oldZh": "knowledge-base/templates/实现来源记录.md",
@@ -924,8 +924,8 @@
       "action": "move-pair",
       "previousZhSha256": "43dedd7c762d66456f0505ec5080d664e69bc9f19e8483598e78af5339ab7079",
       "previousEnSha256": "e1ec54dcd7979bc433657230dc8b943b680a44defae7eab5a39d1540877de61b",
-      "currentZhSha256": "cb145fea9aead8c4092743c5e138637845d8706369339d00188f50fa2a797172",
-      "currentEnSha256": "0f8b79c7c9bf7ecc727416cdbc2548b20f416e93fe3f2ea4e891c53ac4aea447"
+      "currentZhSha256": "2ce99c878da2deec4b5384b086a847942f96b0ed8a88d18cea8fe51752e9435c",
+      "currentEnSha256": "22697e9bd074dccafc7f46cd4ddf50171dd993a4b0bd32ca16fedfa38eb292ee"
     },
     {
       "oldZh": "packages/runtime/README.md",
@@ -936,8 +936,8 @@
       "action": "move-pair",
       "previousZhSha256": "5ff29a37678e52fb6deba246b732a01c0edc217959486a5df72a61e4db1aa32b",
       "previousEnSha256": "97eeca38ec5f73641b226f5e3e724580232040fc1acd0e4cb8e9b692d20e9214",
-      "currentZhSha256": "248043d15ad13ffd194d8d1e55bbdc28354f3465a0ca417a972bbc80c945a2f3",
-      "currentEnSha256": "cf25e1b5119a9136c6ad5412e6113e420c734ed75186dff089ae4fded3e8dc00"
+      "currentZhSha256": "60a8cd04f744385a4a16f221918492696305f709caf29dd0353c6c6ccafad9b9",
+      "currentEnSha256": "8571506ee7d882304af52ec30d898801374f49b2f551bd6a48caa14e6c15ae4e"
     },
     {
       "oldZh": "PUBLICATION.md",
@@ -960,8 +960,8 @@
       "action": "move-pair",
       "previousZhSha256": "803a40dd8bfd0f98ade51c8ba736790509aae12a6e045a8ea688b3ff5d01cdcf",
       "previousEnSha256": "40a2ef2f686aba4a10279c417dfe17879bb6396b3b80dd75b26bd09c87d665f9",
-      "currentZhSha256": "e258e088b92d750973d56663272645d0c37f3361b377203ecb697d406fad6b47",
-      "currentEnSha256": "18145850270bf958a69c82f6c0f617df3e021244718076846c4c6fb6c9c12870"
+      "currentZhSha256": "a8704762502a2c0683475ff9e54e19195125d5fc4cd48adf9739569ae31a00e7",
+      "currentEnSha256": "425a0906f3658f41a5e3931e29d4b9a86c3d1271b098d85aed1fa61742a82a7a"
     },
     {
       "oldZh": "knowledge-base/docs/WebGPU矩形执行合同.md",
@@ -1668,6 +1668,36 @@
         "enSha256": "8c785289d6a4513b6bf89ebed81a606fe352b202cdd50157a423c347554816fa",
         "zhSha256": "e7ecfac10f80aec20a8220242849482a66a257e169fe457ac7f2d66081b5dbda"
       }
+    },
+    {
+      "newEn": "knowledge-base/en/docs/display-anchor-offsets-contract.md",
+      "newZh": "knowledge-base/Cns/docs/显示锚点偏移契约.md",
+      "kind": "public_reading",
+      "action": "add-current-pair",
+      "currentEnSha256": "094262e9c8e39aac78cbdd8fbba9a3c8009b6fbacf7ff211ab3ce030bd26b11d",
+      "currentZhSha256": "170b429f483499b0db2d2bae1c94d881ccaa57836720688bc318714a84fb5105",
+      "engineeringPreview": "0.52.0",
+      "status": "SOURCE_DRAFT_REVIEW_PENDING"
+    },
+    {
+      "newEn": "knowledge-base/en/docs/display-anchor-offsets-evidence.md",
+      "newZh": "knowledge-base/Cns/docs/显示锚点偏移证据.md",
+      "kind": "public_reading",
+      "action": "add-current-pair",
+      "currentEnSha256": "3411f956e85c8e09dfef5fc4a78a78ac07cc71c4a796090a4c4cad0925ab7e48",
+      "currentZhSha256": "a159b44328bd33a17d266784d142c43b9cac3f4f521f129c442a0e8f3cc27765",
+      "engineeringPreview": "0.52.0",
+      "status": "SOURCE_DRAFT_REVIEW_PENDING"
+    },
+    {
+      "newEn": "knowledge-base/en/docs/display-anchor-offsets-implementation-plan.md",
+      "newZh": "knowledge-base/Cns/docs/显示锚点偏移工程计划.md",
+      "kind": "public_reading",
+      "action": "add-current-pair",
+      "currentEnSha256": "ee0cf41d043af4ba1914bbdce153209c31bfd2791e2a7eb0023bd3d8327f32f2",
+      "currentZhSha256": "73e746098ee1c89e74d7ca1f90b93f7ebdde5038638dd5505bc1f190ffe2945e",
+      "engineeringPreview": "0.52.0",
+      "status": "SOURCE_DRAFT_REVIEW_PENDING"
     }
   ],
   "registries": [
@@ -2047,5 +2077,13 @@
       "historicalRowsPreserved": true
     },
     "curation": "R3_CURRENT_CODE_AND_BOUNDED_NATIVE_ACCEPTED_PUBLIC_DELIVERY_PENDING"
+  },
+  "displayAnchorOffsetsCuration": {
+    "engineeringPreview": "0.52.0",
+    "date": "2026-10-15",
+    "newReadingPairs": 3,
+    "existingPolicyPairUpdated": true,
+    "historyPreserved": true,
+    "publicSourceBilingualReview": "PENDING"
   }
 }

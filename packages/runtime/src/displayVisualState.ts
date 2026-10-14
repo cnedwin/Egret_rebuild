@@ -1,6 +1,6 @@
 import type { Rectangle2D } from "@egret/contracts";
 import type { DisplayObject } from "./DisplayObject.js";
-import { assertLive } from "./displayTreeState.js";
+import { assertLive, isDisplayNode } from "./displayTreeState.js";
 import { engineOf } from "./ownership.js";
 import { EgretError } from "./EgretError.js";
 
@@ -13,6 +13,8 @@ export interface Primitive {
 export interface VisualState {
   x: number;
   y: number;
+  anchorOffsetX: number;
+  anchorOffsetY: number;
   scaleX: number;
   scaleY: number;
   rotation: number;
@@ -28,12 +30,32 @@ const states = new WeakMap<DisplayObject, VisualState>();
 export function registerVisual(node: DisplayObject): void {
   states.set(node, {
     x: 0, y: 0, scaleX: 1, scaleY: 1, rotation: 0, alpha: 1,
+    anchorOffsetX: 0, anchorOffsetY: 0,
     visible: true, clipRect: undefined, primitives: [],
   });
 }
 
 export function visualOf(node: DisplayObject): VisualState {
   return states.get(node)!;
+}
+
+type AnchorAxis = "anchorOffsetX" | "anchorOffsetY";
+
+/** Authenticate private node identity before lifecycle or caller values. */
+function anchorState(receiver: unknown): VisualState {
+  if (!isDisplayNode(receiver as object)) throw new EgretError("INVALID_DISPLAY_OBJECT");
+  return visualOf(receiver as DisplayObject);
+}
+
+export function readAnchorOffset(receiver: unknown, axis: AnchorAxis): number {
+  return anchorState(receiver)[axis];
+}
+
+export function writeAnchorOffset(receiver: unknown, axis: AnchorAxis, value: unknown): void {
+  const state = anchorState(receiver);
+  assertVisualMutable(receiver as DisplayObject);
+  if (!finite(value)) throw new EgretError("DISPLAY_VALUE_INVALID");
+  state[axis] = value;
 }
 
 export function assertVisualMutable(node: DisplayObject): void {

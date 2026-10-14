@@ -853,5 +853,125 @@
     }
   ],
   "inputBoundary": "Current Source-frozen complete public declaration, consumer, config, helper and stock compiler closure; not a compiler file-access trace. Original saved tuples and raw stdout remain independent.",
-  "timeBoundary": "Original Root positive and negative NoEmit executions are saved observations. New delegated standalone/full type-gate Source is not actual execution or independent admission."
+  "timeBoundary": "Original Root positive and negative NoEmit executions are saved observations. New delegated standalone/full type-gate Source is not actual execution or independent admission.",
+  "currentInputIdentitySuccessor": {
+    "kind": "ANCHOR_CURRENT_DECLARATION_IDENTITY_SUCCESSOR",
+    "rows": [
+      {
+        "path": "packages/runtime/dist/DisplayObject.d.ts",
+        "bytes": 2555,
+        "sha256": "508cab574f1552cbfd3af464173b03fdb83f7ec774872bc658bca6a3ceb3c732"
+      }
+    ],
+    "productSourceReviewSHA256": "10163fc564f735fe5ef51163fd36856afec7a19389440208bc0d8768810233c7",
+    "historicalBoundary": "Original inputPins/groups/tuples/stdout/observedExecution retain all their bytes. Only these separately bound current rows override raw identity checks for the current declaration."
+  },
+  "currentDeclarationSuccessor": {
+    "schemaVersion": 1,
+    "kind": "ANCHOR_CURRENT_DECLARATION_DIAGNOSTIC_SUCCESSOR",
+    "status": "OBSERVED_FROZEN_TS7_DIAGNOSTICS",
+    "lane": "negative",
+    "expectedExit": 1,
+    "declarationPin": {
+      "path": "packages/runtime/dist/DisplayObject.d.ts",
+      "bytes": 2555,
+      "sha256": "508cab574f1552cbfd3af464173b03fdb83f7ec774872bc658bca6a3ceb3c732"
+    },
+    "tuples": [
+      [
+        "tests/types/display-container-add-child-at-negative.ts",
+        6,
+        11,
+        2554,
+        "Expected 2 arguments, but got 1."
+      ],
+      [
+        "tests/types/display-container-add-child-at-negative.ts",
+        8,
+        29,
+        2345,
+        "Argument of type 'string' is not assignable to parameter of type 'number'."
+      ],
+      [
+        "tests/types/display-container-add-child-at-negative.ts",
+        10,
+        29,
+        2345,
+        "Argument of type 'null' is not assignable to parameter of type 'number'."
+      ],
+      [
+        "tests/types/display-container-add-child-at-negative.ts",
+        12,
+        29,
+        2345,
+        "Argument of type 'undefined' is not assignable to parameter of type 'number'."
+      ],
+      [
+        "tests/types/display-container-add-child-at-negative.ts",
+        14,
+        22,
+        2345,
+        "Argument of type 'number' is not assignable to parameter of type 'DisplayObject'."
+      ],
+      [
+        "tests/types/display-container-add-child-at-negative.ts",
+        16,
+        22,
+        2345,
+        "Argument of type 'null' is not assignable to parameter of type 'DisplayObject'."
+      ],
+      [
+        "tests/types/display-container-add-child-at-negative.ts",
+        18,
+        22,
+        2345,
+        "Argument of type 'undefined' is not assignable to parameter of type 'DisplayObject'."
+      ],
+      [
+        "tests/types/display-container-add-child-at-negative.ts",
+        20,
+        22,
+        2740,
+        "Type '{ parent: DisplayObjectContainer; }' is missing the following properties from type 'DisplayObject': on, candidates, dispatchEvent, clearListeners, and 22 more."
+      ],
+      [
+        "tests/types/display-container-add-child-at-negative.ts",
+        22,
+        32,
+        2554,
+        "Expected 2 arguments, but got 3."
+      ],
+      [
+        "tests/types/display-container-add-child-at-negative.ts",
+        24,
+        7,
+        2322,
+        "Type 'Sprite' is not assignable to type 'number'."
+      ]
+    ],
+    "originalStdout": "tests/types/display-container-add-child-at-negative.ts(6,11): error TS2554: Expected 2 arguments, but got 1.\ntests/types/display-container-add-child-at-negative.ts(8,29): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.\ntests/types/display-container-add-child-at-negative.ts(10,29): error TS2345: Argument of type 'null' is not assignable to parameter of type 'number'.\ntests/types/display-container-add-child-at-negative.ts(12,29): error TS2345: Argument of type 'undefined' is not assignable to parameter of type 'number'.\ntests/types/display-container-add-child-at-negative.ts(14,22): error TS2345: Argument of type 'number' is not assignable to parameter of type 'DisplayObject'.\ntests/types/display-container-add-child-at-negative.ts(16,22): error TS2345: Argument of type 'null' is not assignable to parameter of type 'DisplayObject'.\ntests/types/display-container-add-child-at-negative.ts(18,22): error TS2345: Argument of type 'undefined' is not assignable to parameter of type 'DisplayObject'.\ntests/types/display-container-add-child-at-negative.ts(20,22): error TS2740: Type '{ parent: DisplayObjectContainer; }' is missing the following properties from type 'DisplayObject': on, candidates, dispatchEvent, clearListeners, and 22 more.\ntests/types/display-container-add-child-at-negative.ts(22,32): error TS2554: Expected 2 arguments, but got 3.\ntests/types/display-container-add-child-at-negative.ts(24,7): error TS2322: Type 'Sprite' is not assignable to type 'number'.\n",
+    "observedExecution": {
+      "exitCode": 1,
+      "timeout": false,
+      "startedAtUtc": "2026-10-14T16:38:16.7218616Z",
+      "finishedAtUtc": "2026-10-14T16:38:16.8857232Z",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--project",
+        "tests/types/tsconfig.display-container-add-child-at-negative.json",
+        "--pretty",
+        "false"
+      ],
+      "stdout": {
+        "bytes": 1522,
+        "sha256": "4861b0eb7c2c215b5855ef7ea71b183ed80b87dd60a652459f40f6f6fcdb3b71"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "receiptSHA256": "eb364f7cc00f43cb0c13b8f56ad7116925dac9b3212cd02d9493d51fa24fa79e"
+    },
+    "historicalBoundary": "Original groups retain original raw stdout and tuples. This separate current successor records the genuine later DisplayObject shape."
+  }
 }

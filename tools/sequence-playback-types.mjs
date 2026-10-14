@@ -184,7 +184,40 @@ const seqpTrials = seqpInventory.groups.map(group => {
     if (tuples.has(key)) seqpFail('duplicate frozen diagnostic tuple');
     tuples.add(key);
   }
-  return { group, file, config };
+  // Preserve and validate every historical named tuple above before selecting
+  // the separately authenticated current Bitmap-shape negative vector.
+  const expectedCurrentSourcePins = [{"path":"packages/runtime/src/DisplayObject.ts","bytes":5566,"sha256":"e50f33d0d107ffa9176854ad08f8e153ca6991af1604adf3affd6497d7d156b3"},{"path":"packages/runtime/dist/DisplayObject.d.ts","bytes":2555,"sha256":"508cab574f1552cbfd3af464173b03fdb83f7ec774872bc658bca6a3ceb3c732"}];
+  const successor = seqpInventory.currentDeclarationSuccessor;
+  if (successor?.schemaVersion !== 1 || successor.kind !== 'ANCHOR_INHERITED_BITMAP_CURRENT_NEGATIVE_DIAGNOSTIC_SUCCESSOR'
+    || successor.status !== 'SAVED_GENUINE_CURRENT_COMPILER_OBSERVATION_NEW_GATE_NOT_RUN'
+    || successor.lane !== 'negative' || successor.expectedExit !== 1
+    || !seqpEqual(successor.sourcePins, expectedCurrentSourcePins)) seqpFail('current source successor changed');
+  for (const pin of expectedCurrentSourcePins) seqpReadPin(pin);
+  let currentCases = group.cases;
+  if (group.lane === 'negative') {
+    const expectedRaw = {"bytes":4133,"sha256":"6c19f988695b1e37c5e756c79596da4f60ad0ecb5cba90d2a619260ac9a85e86"};
+    const original = successor.observedExecution;
+    if (!seqpEqual(successor.fixture, group.fixture) || !seqpEqual(successor.config, group.config)
+      || !original || original.exitCode !== 1 || original.timeout !== false
+      || !seqpEqual(original.stdout, expectedRaw) || original.stderr?.bytes !== 0
+      || original.stderr.sha256 !== 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+      || original.receiptSHA256 !== '90cac61810b3e1c3641835fea219c06b61a5ce162c366740d440f64259718367'
+      || typeof successor.originalStdout !== 'string' || !Array.isArray(successor.cases)
+      || successor.cases.length !== group.cases.length) seqpFail('current negative provenance differs');
+    const bytes = Buffer.from(successor.originalStdout, 'utf8');
+    if (bytes.length !== expectedRaw.bytes || seqpHash(bytes) !== expectedRaw.sha256
+      || !seqpEqual(seqpParse(bytes.toString('utf8'), ''), successor.cases.map(item=>item.tuple)))
+      seqpFail('current complete raw negative diagnostics differ');
+    for (let index = 0; index < group.cases.length; index++) {
+      const current = successor.cases[index], historical = group.cases[index];
+      if (current.name !== historical.name || current.markerLine !== historical.markerLine
+        || !Array.isArray(current.tuple) || current.tuple.length !== 5
+        || !seqpEqual(current.tuple.slice(0,4), historical.tuple.slice(0,4)))
+        seqpFail('current named source intent or tuple location differs');
+    }
+    currentCases = successor.cases;
+  }
+  return { group, file, config, currentCases, currentSourcePins: expectedCurrentSourcePins };
 });
 
 const seqpEnvironment = { ...process.env };
@@ -197,6 +230,7 @@ function seqpRecheck(trial) {
   for (const pin of seqpInventory.configurationPins) seqpReadPin(pin);
   seqpReadPin(trial.group.fixture);
   seqpReadPin(trial.group.config);
+  for (const pin of trial.currentSourcePins) seqpReadPin(pin);
 }
 // Positive controls execute first. Negatives never substitute for a missing setup.
 for (const trial of seqpTrials) {
@@ -211,10 +245,10 @@ for (const trial of seqpTrials) {
   }
   seqpRecheck(trial);
   const observed = seqpParse(result.stdout ?? '', result.stderr ?? '');
-  const expected = trial.group.cases.map(item => item.tuple);
+  const expected = trial.currentCases.map(item => item.tuple);
   if (observed.some(item => item[0] !== trial.file) || new Set(observed.map(item => JSON.stringify(item))).size !== observed.length
     || !seqpEqual(observed, expected)) seqpFail('missing/extra/duplicate or changed complete diagnostic in ' + trial.group.lane);
   console.log('Sequence playback ' + trial.group.lane + ' live exact diagnostics: ' + JSON.stringify(
-    trial.group.cases.map((item, index) => ({ name: item.name, expected: item.tuple, actual: observed[index] }))));
+    trial.currentCases.map((item, index) => ({ name: item.name, expected: item.tuple, actual: observed[index] }))));
 }
 console.log('Sequence playback types PASS: fresh strict positive and complete unsuppressed marker diagnostics; runtime acceptance remains separate.');

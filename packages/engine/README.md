@@ -2,6 +2,12 @@
 
 English | [简体中文](README.zh-CN.md)
 
+## Engineering preview 0.52.0 — display anchor offsets
+
+Existing display classes inherit finite-number `anchorOffsetX` and `anchorOffsetY`, default +0. The authored pivot places scale/rotation coherently across coordinates, logical bounds, clipping, explicit picking and frame capture, with original zero-offset bytes retained. Read the [current contract](../../knowledge-base/en/docs/display-anchor-offsets-contract.md) and [bounded evidence](../../knowledge-base/en/docs/display-anchor-offsets-evidence.md).
+
+**Historical module notes below retain their earlier cutoffs, dated before 0.52.0.** Their earlier pending statements describe those editions; the linked current evidence defines today's accepted scope. Complete EUI/layout and full Spine remain OPEN.
+
 DisplayObjectContainer.getChildIndex(child: DisplayObject): number is a read-only query of the exact current direct child. It scans the authoritative private order in O(n), with no list snapshot/cache, tree mutation, owner transfer, resource operation or display callback. Sprite/Stage inherit it; root values/types, subpaths, dependencies and protocol are unchanged. Read the [0.50 contract](../../knowledge-base/en/docs/container-child-index-contract.md).
 
 `DisplayObjectContainer.removeChildren(): void` clears a display layer while keeping its nodes, descendants, resources and cleanup owners alive. It authenticates the genuine receiver, checks Engine before receiver lifetime even when empty, preflights every direct edge and commits without caller hooks. Sprite and Stage inherit the method; root values/types, profiles, dependencies and protocol remain unchanged. Read the [0.49 contract](../../knowledge-base/en/docs/container-remove-children-contract.md).

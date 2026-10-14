@@ -14,14 +14,15 @@ if (args.length === 1 && args[0] === '--help') {
   const removeChildren = args[0] === '--display-container-remove-children';
   const childIndex = args[0] === '--display-container-child-index';
   const addChildAt = args[0] === '--display-container-add-child-at';
-  const selected = nineSlice || removeChildren || childIndex || addChildAt ? args.slice(1) : args;
+  const anchorOffsets = args[0] === '--display-anchor-offsets';
+  const selected = nineSlice || removeChildren || childIndex || addChildAt || anchorOffsets ? args.slice(1) : args;
   if (selected.length !== 4 || selected[0] !== '--admission' || selected[2] !== '--output'
     || !path.isAbsolute(selected[1]) || !path.isAbsolute(selected[3])) throw new TypeError('Exact admission/output options required');
   const owner = path.dirname(selected[1]), relative = ownerRelativePath(owner, selected[1]), pin = fingerprintFile(owner, relative);
   const raw = readFileSync(selected[1]);
   if (raw.length !== pin.bytes || createHash('sha256').update(raw).digest('hex') !== pin.sha256) throw new TypeError('Admission raw read drift');
   const result = await collectBrowserPng({ admissionPin: { ...pin, path: selected[1] }, output: selected[3],
-    ...(addChildAt ? { profile:'display-container-add-child-at' } : childIndex ? { profile:'display-container-child-index' } : nineSlice ? { profile:'nine-slice-bitmap' } : removeChildren ? { profile:'display-container-remove-children' } : {}) });
+    ...(anchorOffsets ? { profile:'display-anchor-offsets' } : addChildAt ? { profile:'display-container-add-child-at' } : childIndex ? { profile:'display-container-child-index' } : nineSlice ? { profile:'nine-slice-bitmap' } : removeChildren ? { profile:'display-container-remove-children' } : {}) });
   process.stdout.write(JSON.stringify({ status: result.status, renderedSubmissions: result.renderedSubmissions,
     channelsCompared: result.channelsCompared, output: selected[3] }) + '\n');
   if (result.status !== 'PASS') process.exitCode = 1;

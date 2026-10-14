@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "profile": "display-anchor-offsets",
+  "backends": [
+    "canvas",
+    "webgpu"
+  ],
+  "fixtures": [],
+  "frame": {
+    "width": 24,
+    "height": 24,
+    "pixelRatio": 1,
+    "pixelTolerance": 0,
+    "clearColor": 0,
+    "clearAlpha": 0
+  },
+  "stepsPerBackend": [
+    {
+      "id": "N1",
+      "scene": "baseline-zero-pivot"
+    },
+    {
+      "id": "N2",
+      "scene": "pivot-four-three"
+    },
+    {
+      "id": "N3",
+      "scene": "scale-two-one"
+    },
+    {
+      "id": "N4",
+      "scene": "local-clip-four-six"
+    },
+    {
+      "id": "N5",
+      "replay": "N1",
+      "sameEngineAlive": true
+    }
+  ],
+  "plannedTotals": {
+    "renderSubmissions": 10,
+    "newCaptures": 8,
+    "savedReplays": 2,
+    "channelsCompared": 23040
+  },
+  "negativeControls": [
+    {
+      "id": "C1",
+      "backend": "canvas",
+      "baseline": "N1",
+      "freshEngine": true,
+      "operation": "keep-zero-pivot-instead-of-four-three",
+      "expected": "literal-mismatch",
+      "expectedMismatchedPixels": 72,
+      "expectedMismatchedChannels": 144,
+      "additionalSubmissions": 2,
+      "additionalReadbacks": 2,
+      "mainCredit": 0
+    }
+  ],
+  "literalGeometry": {
+    "stage": "identity, no transformed parent",
+    "red": {
+      "x": 8,
+      "y": 8,
+      "localRect": {
+        "x": 0,
+        "y": 0,
+        "width": 8,
+        "height": 6
+      },
+      "color": 16711680,
+      "alpha": 1
+    },
+    "pivot": {
+      "x": 4,
+      "y": 3
+    },
+    "scale": {
+      "x": 2,
+      "y": 1
+    },
+    "clipRect": {
+      "x": 0,
+      "y": 0,
+      "width": 4,
+      "height": 6
+    }
+  },
+  "input": "Real Scope-owned opaque Sprite; transparent black clear; no PNG/Texture/font/SDK/private product import",
+  "sourceOnly": true
+}

@@ -60,6 +60,7 @@ export function admitBrowserPngCollection(admissionPin, output, profile = 'brows
   if (profile === 'display-container-remove-children') return admitNineSliceBitmap(admission, output, true);
   if (profile === 'display-container-child-index') return admitNineSliceBitmap(admission, output, false, true);
   if (profile === 'display-container-add-child-at') return admitNineSliceBitmap(admission, output, false, false, true);
+  if (profile === 'display-anchor-offsets') return admitNineSliceBitmap(admission, output, false, false, false, true);
   requireData(profile === 'browser-png', 'Explicit collector profile required');
   requireData(admission.schemaVersion === 1 && admission.status === 'BIP1_NATIVE_SOURCE_AND_ACTUAL_INPUTS_ADMITTED', 'Native source/actual admission missing');
   requireData(samePhysicalPath(admission.sourceFilesRoot, admission.graphInputs.repositoryRoot), 'Graph has another source owner');
@@ -156,19 +157,20 @@ export function admitBrowserPngCollection(admissionPin, output, profile = 'brows
 
 // One finite additional scene shares the existing pin reader, graph and lifecycle.
 // It consumes original reviewed Source/build facts; it never qualifies its own review.
-function admitNineSliceBitmap(admission, output, removeChildren = false, childIndex = false, addChildAt = false) {
+function admitNineSliceBitmap(admission, output, removeChildren = false, childIndex = false, addChildAt = false, anchorOffsets = false) {
   const sourceRoles=['plan','productSource','collectorSource'], actualRoles=['missingEntryRed','cpu','build','strictTypes','policy'];
   // The new opt-in scene reuses the original eight-role raw binding checks.
-  const profile=addChildAt?'display-container-add-child-at':childIndex?'display-container-child-index':removeChildren?'display-container-remove-children':'nine-slice-bitmap';
-  const leafDirectory=addChildAt?'display-container-add-child-at-native':childIndex?'display-container-child-index-native':removeChildren?'display-container-remove-children-native':'nine-slice-bitmap-native';
-  const sourcePaths=addChildAt?['packages/runtime/src/DisplayObjectContainer.ts','packages/runtime/src/displayTreeState.ts','packages/runtime/src/ownership.ts']
+  const profile=anchorOffsets?'display-anchor-offsets':addChildAt?'display-container-add-child-at':childIndex?'display-container-child-index':removeChildren?'display-container-remove-children':'nine-slice-bitmap';
+  const leafDirectory=anchorOffsets?'display-anchor-offsets-native':addChildAt?'display-container-add-child-at-native':childIndex?'display-container-child-index-native':removeChildren?'display-container-remove-children-native':'nine-slice-bitmap-native';
+  const sourcePaths=anchorOffsets?['packages/runtime/src/DisplayObject.ts','packages/runtime/src/displayVisualState.ts','packages/runtime/src/displayTransform.ts']
+    :addChildAt?['packages/runtime/src/DisplayObjectContainer.ts','packages/runtime/src/displayTreeState.ts','packages/runtime/src/ownership.ts']
     :removeChildren||childIndex?['packages/runtime/src/DisplayObjectContainer.ts','packages/runtime/src/displayTreeState.ts']
     :['packages/runtime/src/NineSliceBitmap.ts','packages/runtime/src/Mesh2D.ts',
     'packages/runtime/src/meshDisplayState.ts','packages/runtime/src/index.ts','packages/engine/src/index.ts','packages/runtime/src/Texture.ts'];
   const emittedPaths=sourcePaths.flatMap(key=>[key.replace('/src/','/dist/').replace(/\.ts$/,'.js'),key.replace('/src/','/dist/').replace(/\.ts$/,'.d.ts')]);
   const collectorPaths=['tools/verify-browser-png.mjs','tools/browser-png/collector.mjs','tools/browser-png/file-graph.mjs',
     'tools/'+leafDirectory+'/fixture.mjs','tools/'+leafDirectory+'/oracle.mjs'];
-  const status=addChildAt?'DISPLAY_CONTAINER_ADD_CHILD_AT_NATIVE_SOURCE_AND_ACTUAL_INPUTS_ADMITTED':childIndex?'DISPLAY_CONTAINER_CHILD_INDEX_NATIVE_SOURCE_AND_ACTUAL_INPUTS_ADMITTED':removeChildren?'DISPLAY_CONTAINER_REMOVE_CHILDREN_NATIVE_SOURCE_AND_ACTUAL_INPUTS_ADMITTED':'NINE_SLICE_BITMAP_NATIVE_SOURCE_AND_ACTUAL_INPUTS_ADMITTED';
+  const status=anchorOffsets?'DISPLAY_ANCHOR_OFFSETS_NATIVE_SOURCE_AND_ACTUAL_INPUTS_ADMITTED':addChildAt?'DISPLAY_CONTAINER_ADD_CHILD_AT_NATIVE_SOURCE_AND_ACTUAL_INPUTS_ADMITTED':childIndex?'DISPLAY_CONTAINER_CHILD_INDEX_NATIVE_SOURCE_AND_ACTUAL_INPUTS_ADMITTED':removeChildren?'DISPLAY_CONTAINER_REMOVE_CHILDREN_NATIVE_SOURCE_AND_ACTUAL_INPUTS_ADMITTED':'NINE_SLICE_BITMAP_NATIVE_SOURCE_AND_ACTUAL_INPUTS_ADMITTED';
   requireData(admission.schemaVersion===1&&admission.status===status
     &&admission.graphInputs?.profile===profile&&samePhysicalPath(admission.sourceFilesRoot,admission.graphInputs.repositoryRoot),'Exact bounded scene source/actual admission');
   const root=admission.sourceFilesRoot,expectedCollectors=[{path:'tools/'+leafDirectory+'/fixture.mjs',role:'fixture',route:'/fixture.mjs'},
@@ -221,15 +223,23 @@ export async function collectBrowserPng({ admissionPin, output, profile = 'brows
   const nineSlice = profile === 'nine-slice-bitmap';
   const removeChildren = profile === 'display-container-remove-children', childIndex = profile === 'display-container-child-index';
   const addChildAt = profile === 'display-container-add-child-at';
-  const literalScene = nineSlice || removeChildren || childIndex || addChildAt;
+  const anchorOffsets = profile === 'display-anchor-offsets';
+  const literalScene = nineSlice || removeChildren || childIndex || addChildAt || anchorOffsets;
   const qualified = admitBrowserPngCollection(admissionPin, output, profile);
   const { admission, graph } = qualified;
-  const leafOracle = addChildAt ? await import('../display-container-add-child-at-native/oracle.mjs')
+  const leafOracle = anchorOffsets ? await import('../display-anchor-offsets-native/oracle.mjs')
+    : addChildAt ? await import('../display-container-add-child-at-native/oracle.mjs')
     : childIndex ? await import('../display-container-child-index-native/oracle.mjs')
     : removeChildren ? await import('../display-container-remove-children-native/oracle.mjs')
     : nineSlice ? await import('../nine-slice-bitmap-native/oracle.mjs') : null;
   const scheduleBytes = Buffer.from(graph.schedulePin.bodyBase64, 'base64'), schedule = JSON.parse(scheduleBytes);
-  requireData(addChildAt ? equal(schedule.backends,['canvas','webgpu']) && schedule.profile===profile && schedule.frame.pixelTolerance===0
+  requireData(anchorOffsets ? equal(schedule.backends,['canvas','webgpu']) && schedule.profile===profile && schedule.frame.pixelTolerance===0
+    && schedule.frame.width===24 && schedule.frame.height===24 && schedule.frame.pixelRatio===1
+    && schedule.frame.clearColor===0 && schedule.frame.clearAlpha===0 && schedule.plannedTotals.renderSubmissions===10
+    && schedule.plannedTotals.newCaptures===8 && schedule.plannedTotals.savedReplays===2 && schedule.plannedTotals.channelsCompared===23040
+    && equal(schedule.stepsPerBackend,[{id:'N1',scene:'baseline-zero-pivot'},{id:'N2',scene:'pivot-four-three'},{id:'N3',scene:'scale-two-one'},{id:'N4',scene:'local-clip-four-six'},{id:'N5',replay:'N1',sameEngineAlive:true}])
+    && equal(schedule.negativeControls,[{id:'C1',backend:'canvas',baseline:'N1',freshEngine:true,operation:'keep-zero-pivot-instead-of-four-three',expected:'literal-mismatch',expectedMismatchedPixels:72,expectedMismatchedChannels:144,additionalSubmissions:2,additionalReadbacks:2,mainCredit:0}])
+    : addChildAt ? equal(schedule.backends,['canvas','webgpu']) && schedule.profile===profile && schedule.frame.pixelTolerance===0
     && schedule.frame.width===24 && schedule.frame.height===24 && schedule.frame.pixelRatio===1
     && schedule.frame.clearColor===0 && schedule.frame.clearAlpha===0 && schedule.plannedTotals.renderSubmissions===10
     && schedule.plannedTotals.newCaptures===8 && schedule.plannedTotals.savedReplays===2 && schedule.plannedTotals.channelsCompared===23040
@@ -262,6 +272,7 @@ export async function collectBrowserPng({ admissionPin, output, profile = 'brows
   const removeChildrenEntered = new Set();
   const childIndexEntered = new Set();
   const addChildAtEntered = new Set();
+  const anchorOffsetsEntered = new Set();
   const wrongControls = [];
   const fail = cause => { if (!primaryOccurred) { primaryOccurred = true; primary = cause; } };
   const handled = value => { const promise = Promise.resolve(value); promise.catch(() => undefined); return promise; };
@@ -290,7 +301,8 @@ export async function collectBrowserPng({ admissionPin, output, profile = 'brows
   const importMapText = JSON.stringify(graph.importMap), importMapHash = createHash('sha256').update(importMapText).digest('base64');
   for (const backend of schedule.backends) {
     const host = backend === 'canvas' ? '@egret/engine/web' : '@egret/engine/webgpu';
-    const entry = addChildAt ? canonicalTextBytes(`import * as hostEntry from '${host}';\nimport { createDisplayContainerAddChildAtFixture } from '/fixture.mjs';\nwindow.__bipCreate = () => createDisplayContainerAddChildAtFixture({backend:'${backend}',hostEntry});\nwindow.__bip = window.__bipCreate();\nwindow.__bipReady = true;\n`)
+    const entry = anchorOffsets ? canonicalTextBytes(`import * as hostEntry from '${host}';\nimport { createDisplayAnchorOffsetsFixture } from '/fixture.mjs';\nwindow.__bipCreate = () => createDisplayAnchorOffsetsFixture({backend:'${backend}',hostEntry});\nwindow.__bip = window.__bipCreate();\nwindow.__bipReady = true;\n`)
+      : addChildAt ? canonicalTextBytes(`import * as hostEntry from '${host}';\nimport { createDisplayContainerAddChildAtFixture } from '/fixture.mjs';\nwindow.__bipCreate = () => createDisplayContainerAddChildAtFixture({backend:'${backend}',hostEntry});\nwindow.__bip = window.__bipCreate();\nwindow.__bipReady = true;\n`)
       : childIndex ? canonicalTextBytes(`import * as hostEntry from '${host}';\nimport { createDisplayContainerChildIndexFixture } from '/fixture.mjs';\nwindow.__bip = createDisplayContainerChildIndexFixture({backend:'${backend}',hostEntry});\nwindow.__bipReady = true;\n`)
       : removeChildren ? canonicalTextBytes(`import * as hostEntry from '${host}';\nimport { createDisplayContainerRemoveChildrenFixture } from '/fixture.mjs';\nwindow.__bip = createDisplayContainerRemoveChildrenFixture({backend:'${backend}',hostEntry});\nwindow.__bipReady = true;\n`)
       : nineSlice ? canonicalTextBytes("import { createNineSliceBitmapFixture } from '/fixture.mjs';\nwindow.__bip = createNineSliceBitmapFixture();\nwindow.__bipReady = true;\n")
@@ -353,18 +365,20 @@ export async function collectBrowserPng({ admissionPin, output, profile = 'brows
         requireData(graph.fixturePins.some(item => item.bytes === originalBytes.length && item.sha256 === hash(originalBytes)), 'Actual original Blob bytes differ', 'BIP_NATIVE_ASSERTION');
         writeFileSync(path.join(output, backend + '-native-blob-' + index + '.png'), originalBytes, { flag: 'wx' });
       }
-      for (const step of (addChildAt ? ['N1','N2','N3','N4','N5'] : ['N1', 'N2', 'N3'])) {
+      for (const step of (addChildAt || anchorOffsets ? ['N1','N2','N3','N4','N5'] : ['N1', 'N2', 'N3'])) {
         if (nineSlice) nineSliceMainEntered = true;
         if (removeChildren) removeChildrenEntered.add(backend);
         if (childIndex) childIndexEntered.add(backend);
         if (addChildAt) addChildAtEntered.add(backend);
+        if (anchorOffsets) anchorOffsetsEntered.add(backend);
         const packet = await bounded(track(owner.page.evaluate(name => window.__bip.collectStep(name), step), backend + '.' + step), 'original ' + backend + '/' + step);
         // Save complete original bytes before comparison; no fitting of expectations.
         writeJson(backend + '-' + step + '.json', packet);
         requireData(Array.isArray(packet.raw) && packet.raw.length === (literalScene ? 2304 : 128)
           && packet.raw.every(byte => Number.isInteger(byte) && byte >= 0 && byte <= 255), 'Original readback byte envelope', 'BIP_NATIVE_ASSERTION');
         writeFileSync(path.join(output, backend + '-' + step + '.rgba'), Buffer.from(packet.raw), { flag: 'wx' });
-        const comparison = addChildAt ? leafOracle.inspectDisplayContainerAddChildAtCapture(packet)
+        const comparison = anchorOffsets ? leafOracle.inspectDisplayAnchorOffsetsCapture(packet)
+          : addChildAt ? leafOracle.inspectDisplayContainerAddChildAtCapture(packet)
           : childIndex ? leafOracle.inspectDisplayContainerChildIndexCapture(packet)
           : removeChildren ? leafOracle.inspectDisplayContainerRemoveChildrenCapture(packet)
           : nineSlice ? leafOracle.inspectNineSliceBitmapCapture(packet) : inspectBrowserPngCapture(packet, schedule); writeJson(backend + '-' + step + '-comparison.json', comparison);
@@ -399,20 +413,28 @@ export async function collectBrowserPng({ admissionPin, output, profile = 'brows
         &&owner.fixtureClose.newCaptures===4&&owner.fixtureClose.savedReplays===1&&owner.fixtureClose.ports[0].renderSubmissions===5
         &&(backend==='canvas'||owner.fixtureClose.ports[0].deviceDestroyed&&owner.fixtureClose.ports[0].deviceLoss?.reason==='destroyed'),
       'Genuine indexed-insertion main retirement','BIP_NATIVE_CLOSE_UNSAFE');
-      if (addChildAt && backend==='canvas') {
+       if (anchorOffsets) requireData(owner.fixtureClose.ports.length===1 && owner.fixtureClose.scopeState==='closed'
+         &&owner.fixtureClose.allSceneNodesDisposed&&owner.fixtureClose.diagnostics.length===0
+         &&owner.fixtureClose.newCaptures===4&&owner.fixtureClose.savedReplays===1&&owner.fixtureClose.ports[0].renderSubmissions===5
+         &&(backend==='canvas'||owner.fixtureClose.ports[0].deviceDestroyed&&owner.fixtureClose.ports[0].deviceLoss?.reason==='destroyed'),
+       'Genuine anchor-offset main retirement','BIP_NATIVE_CLOSE_UNSAFE');
+      if ((addChildAt || anchorOffsets) && backend==='canvas') {
         owner.controlStarted=true;
         const setup=await bounded(track(owner.page.evaluate(deadlines=>{
-          window.__adiControl=window.__bipCreate();return window.__adiControl.start({...deadlines,mode:'wrong-index-control'});
-        },{operationDeadline,cleanupDeadline}),'control.C1.start'),'fresh genuine control Engine');
+          window.__adiControl=window.__bipCreate();return window.__adiControl.start(deadlines);
+        },{operationDeadline,cleanupDeadline,mode:anchorOffsets?'wrong-pivot-control':'wrong-index-control'}),'control.C1.start'),'fresh genuine control Engine');
         writeJson('C1-native-ledger-start.json',setup);
         requireData(!setup.primaryOccurred&&setup.cleanupErrors.length===0,'Fresh control setup','BIP_NATIVE_ASSERTION');
         const baseline=await bounded(track(owner.page.evaluate(()=>window.__adiControl.collectStep('N1')),'control.C1.baseline'),'fresh complete baseline');
         writeJson('C1-baseline.json',baseline);writeFileSync(path.join(output,'C1-baseline.rgba'),Buffer.from(baseline.raw),{flag:'wx'});
-        const baselineComparison=leafOracle.inspectDisplayContainerAddChildAtCapture(baseline);writeJson('C1-baseline-comparison.json',baselineComparison);
+        const baselineComparison=anchorOffsets?leafOracle.inspectDisplayAnchorOffsetsCapture(baseline):leafOracle.inspectDisplayContainerAddChildAtCapture(baseline);writeJson('C1-baseline-comparison.json',baselineComparison);
         requireData(baselineComparison.pass,'Fresh baseline must pass','BIP_NATIVE_ASSERTION');
-        const packet=await bounded(track(owner.page.evaluate(()=>window.__adiControl.collectStep('C1')),'control.C1.wrong-index'),'genuine wrong public index');
-        writeJson('C1-wrong-index.json',packet);writeFileSync(path.join(output,'C1-wrong-index.rgba'),Buffer.from(packet.raw),{flag:'wx'});
-        const comparison=leafOracle.inspectDisplayContainerAddChildAtWrongIndexControl(packet);writeJson('C1-wrong-index-comparison.json',comparison);
+        const controlName=anchorOffsets?'wrong-pivot':'wrong-index';
+        const packet=await bounded(track(owner.page.evaluate(()=>window.__adiControl.collectStep('C1')),'control.C1.'+controlName),'genuine wrong public scalar/index');
+        writeJson('C1-'+controlName+'.json',packet);writeFileSync(path.join(output,'C1-'+controlName+'.rgba'),Buffer.from(packet.raw),{flag:'wx'});
+        const comparison=anchorOffsets?leafOracle.inspectDisplayAnchorOffsetsWrongPivotControl(packet):leafOracle.inspectDisplayContainerAddChildAtWrongIndexControl(packet);
+        writeJson('C1-'+controlName+'-comparison.json',comparison);
+        if(anchorOffsets)requireData(comparison.mismatchedPixels===72&&comparison.mismatchedChannels===144,'Exact wrong-zero-pivot discrimination','BIP_NATIVE_ASSERTION');
         requireData(comparison.pass,'Actual assigned mismatch must discriminate','BIP_NATIVE_ASSERTION');
         owner.controlFixtureClose=await bounded(track(owner.page.evaluate(()=>window.__adiControl.close()),'control.C1.close'),'control retirement',true);
         writeJson('C1-retirement.json',owner.controlFixtureClose);
@@ -425,6 +447,7 @@ export async function collectBrowserPng({ admissionPin, output, profile = 'brows
         owner.controlRetired=true;
         wrongControls.push({backend,id:'C1',pass:comparison.pass,baselinePass:baselineComparison.pass,
           expected:'literal-mismatch',mismatchedChannels:comparison.mismatchedChannels,
+          ...(anchorOffsets?{mismatchedPixels:comparison.mismatchedPixels}:{}),
           additionalSubmissions:2,additionalReadbacks:2,mainCredit:0,retirement:owner.controlFixtureClose});
       }
       await bounded(track(owner.context.close(), 'context.close.' + backend), 'context close', true); owner.closeFulfilled = true;
@@ -434,7 +457,7 @@ export async function collectBrowserPng({ admissionPin, output, profile = 'brows
   finally {
     closing = true;
     for (const owner of [...contexts].reverse()) {
-      if (addChildAt && owner.controlStarted && !owner.controlRetired && owner.page && !owner.page.isClosed()) try {
+      if ((addChildAt || anchorOffsets) && owner.controlStarted && !owner.controlRetired && owner.page && !owner.page.isClosed()) try {
         owner.controlFixtureClose=await bounded(track(owner.page.evaluate(()=>window.__adiControl?.close()),'failure.control.C1.close'),'failure control retirement',true);
         writeJson('C1-failure-retirement.json',owner.controlFixtureClose??{fixtureWasNotCreated:true});
         requireData(owner.controlFixtureClose&&owner.controlFixtureClose.cleanupErrors?.length===0
@@ -460,7 +483,13 @@ export async function collectBrowserPng({ admissionPin, output, profile = 'brows
     original(admissionPin); original(admission.graphPin); for (const row of admission.reviewPins) original(row.pin);
     writeJson('module-graph-after.json', after);
   } catch (cause) { cleanupErrors.push(cause); }
-  const pending = tickets.filter(row => !row.settled), complete = addChildAt ? results.length===10&&results.every(row=>row.comparison.pass)
+  const pending = tickets.filter(row => !row.settled), complete = anchorOffsets ? results.length===10&&results.every(row=>row.comparison.pass)
+    &&wrongControls.length===1&&wrongControls[0].pass&&wrongControls[0].baselinePass&&wrongControls[0].additionalSubmissions===2&&wrongControls[0].additionalReadbacks===2
+    &&wrongControls[0].mainCredit===0&&wrongControls[0].mismatchedPixels===72&&wrongControls[0].mismatchedChannels===144
+    &&results.reduce((sum,row)=>sum+row.comparison.channelsCompared,0)===23040
+    &&['canvas','webgpu'].every(backend=>equal(results.find(row=>row.backend===backend&&row.step==='N1')?.packet.raw,
+      results.find(row=>row.backend===backend&&row.step==='N5')?.packet.raw))
+    : addChildAt ? results.length===10&&results.every(row=>row.comparison.pass)
     &&wrongControls.length===1&&wrongControls[0].pass&&wrongControls[0].baselinePass&&wrongControls[0].additionalSubmissions===2&&wrongControls[0].additionalReadbacks===2
     &&results.reduce((sum,row)=>sum+row.comparison.channelsCompared,0)===23040
     &&['canvas','webgpu'].every(backend=>equal(results.find(row=>row.backend===backend&&row.step==='N1')?.packet.raw,
@@ -483,9 +512,11 @@ export async function collectBrowserPng({ admissionPin, output, profile = 'brows
       ...(nineSlice?['NLB_NATIVE_TIMEOUT','NLB_NATIVE_DEADLINE','NLB_NATIVE_UNAVAILABLE','NLB_NATIVE_CLOSE_UNSAFE']:[]),
       ...(removeChildren?['DCA_NATIVE_TIMEOUT','DCA_NATIVE_DEADLINE','DCA_NATIVE_UNAVAILABLE','DCA_NATIVE_CLOSE_UNSAFE']:[]),
       ...(childIndex?['CGI_NATIVE_TIMEOUT','CGI_NATIVE_DEADLINE','CGI_NATIVE_UNAVAILABLE','CGI_NATIVE_CLOSE_UNSAFE']:[]),
-       ...(addChildAt?['ADI_NATIVE_TIMEOUT','ADI_NATIVE_DEADLINE','ADI_NATIVE_UNAVAILABLE','ADI_NATIVE_CLOSE_UNSAFE']:[])].includes(primary?.code);
+       ...(addChildAt?['ADI_NATIVE_TIMEOUT','ADI_NATIVE_DEADLINE','ADI_NATIVE_UNAVAILABLE','ADI_NATIVE_CLOSE_UNSAFE']:[]),
+       ...(anchorOffsets?['AO_NATIVE_TIMEOUT','AO_NATIVE_DEADLINE','AO_NATIVE_UNAVAILABLE','AO_NATIVE_CLOSE_UNSAFE']:[])].includes(primary?.code);
   const result = { schemaVersion: 1, status: incomplete ? 'INCOMPLETE' : primaryOccurred || !complete ? 'FAIL' : 'PASS',
-    scope: addChildAt ? 'DisplayObjectContainer.addChildAt public indexed-order/reparent/saved replay; desktop opaque Canvas/WebGPU only'
+    scope: anchorOffsets ? 'DisplayObject.anchorOffsetX/anchorOffsetY public pivot/scale/local-clip and exact same-live saved replay; desktop opaque Canvas/WebGPU only'
+      : addChildAt ? 'DisplayObjectContainer.addChildAt public indexed-order/reparent/saved replay; desktop opaque Canvas/WebGPU only'
       : childIndex ? 'DisplayObjectContainer.getChildIndex caller reorder/saved replay with live Scope resource/event state; desktop ordinary Canvas/WebGPU only'
       : removeChildren ? 'DisplayObjectContainer.removeChildren desktop Canvas/WebGPU ordinary opaque rectangles; no PNG decoding'
       : nineSlice ? 'NineSliceBitmap default desktop WebGPU literal cropped panel; no PNG decoding' : 'BIP1 bounded desktop default-browser PNG/opaque-transparent-black composition only',
@@ -493,6 +524,12 @@ export async function collectBrowserPng({ admissionPin, output, profile = 'brows
       canvasRefusalCases:contexts[0]?.fixtureClose?.canvasRefusal?.status==='PASS_REFUSAL_ONLY'?2:0,positiveCanvasSubmissions:0} : {}),
     ...(removeChildren ? {profile,actualNativeMainCases:removeChildrenEntered.size,
       actualNativeMainPasses:!incomplete&&!primaryOccurred&&complete?removeChildrenEntered.size:0,
+      positiveCanvasSubmissions:contexts.find(row=>row.backend==='canvas')?.fixtureClose?.ports[0]?.renderSubmissions??0} : {}),
+    ...(anchorOffsets ? {profile,actualNativeMainCases:anchorOffsetsEntered.size,
+      actualNativeMainPasses:!incomplete&&!primaryOccurred&&complete?anchorOffsetsEntered.size:0,
+      actualNegativeControlCases:wrongControls.length,actualNegativeControlPasses:wrongControls.filter(row=>row.pass).length,
+      additionalControlSubmissions:wrongControls.reduce((sum,row)=>sum+row.additionalSubmissions,0),
+      additionalControlReadbacks:wrongControls.reduce((sum,row)=>sum+row.additionalReadbacks,0),
       positiveCanvasSubmissions:contexts.find(row=>row.backend==='canvas')?.fixtureClose?.ports[0]?.renderSubmissions??0} : {}),
     ...(addChildAt ? {profile,actualNativeMainCases:addChildAtEntered.size,
       actualNativeMainPasses:!incomplete&&!primaryOccurred&&complete?addChildAtEntered.size:0,

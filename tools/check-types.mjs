@@ -971,3 +971,8 @@ await import('./display-container-child-index-types.mjs');
 // Run indexed insertion consumers after every retained strict type owner.
 await import('./display-container-add-child-at-types.mjs');
 // ADI_TYPES_END
+
+// AO_TYPES_BEGIN
+// Check inherited anchor scalars after every retained strict type owner.
+await import('./display-anchor-offsets-types.mjs');
+// AO_TYPES_END
