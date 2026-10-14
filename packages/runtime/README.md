@@ -2,6 +2,8 @@
 
 English | [简体中文](README.zh-CN.md)
 
+`DisplayObjectContainer.removeChildren(): void` clears a display layer while keeping its nodes, descendants, resources and cleanup owners alive. It authenticates the genuine receiver, checks Engine before receiver lifetime even when empty, preflights every direct edge and commits without caller hooks. Sprite and Stage inherit the method; root values/types, profiles, dependencies and protocol remain unchanged. Read the [0.49 contract](../../knowledge-base/en/docs/container-remove-children-contract.md).
+
 Engineering preview 0.48.0 adds `NineSliceBitmap` and erased `NineSliceBitmapOptions` at the Runtime/Engine roots. It borrows a genuine Texture lease and resizes fixed-border NS1 content; positive rendering uses the explicit textured WebGPU host, while Canvas mesh is refused. See the [contract](../../knowledge-base/en/docs/nine-slice-bitmap-contract.md) and [bounded evidence](../../knowledge-base/en/docs/nine-slice-bitmap-evidence.md).
 
 Inherited `getBounds` reads authoritative receiver-local content with type-only `BoundsQueryOptions`, explicit node/primitive budgets and a fresh frozen result. Read the [bounds contract](../../knowledge-base/en/docs/display-content-bounds-contract.md).

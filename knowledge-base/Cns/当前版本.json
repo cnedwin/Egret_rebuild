@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "version": "0.48.0",
+  "version": "0.49.0",
   "updatedAt": "2026-10-14",
-  "title": "白鹭引擎社区重建 — NineSliceBitmap 固定边框背景",
-  "stage": "BOUNDED_NINE_SLICE_BITMAP_SOURCE_CPU_TYPES_CODE_GATES_AND_NATIVE_ACCEPTED_PUBLICATION_AND_DELIVERY_PENDING",
+  "title": "工程预览 0.49.0 — 分离全部直接显示子节点",
+  "stage": "BOUNDED_PRODUCT_CPU_TYPES_CURRENT_CODE_POLICY_AND_NATIVE_ACCEPTED_PUBLICATION_DELIVERY_PENDING",
   "publication": "development_preview",
   "registries": {
     "requirements": "Cns/registry/需求.json",
@@ -89,7 +89,10 @@
     "spineCoreManualBridgeEvidence": "Cns/docs/SpineCore手动网格桥接证据.md",
     "nineSliceBitmapContract": "Cns/docs/九宫格位图契约.md",
     "nineSliceBitmapEvidence": "Cns/docs/九宫格位图证据.md",
-    "nineSliceBitmapNativeVerifier": "Cns/docs/九宫格位图原生核验指南.md"
+    "nineSliceBitmapNativeVerifier": "Cns/docs/九宫格位图原生核验指南.md",
+    "displayContainerRemoveChildrenContract": "Cns/docs/容器清空子节点契约.md",
+    "displayContainerRemoveChildrenEvidence": "Cns/docs/容器清空子节点证据.md",
+    "displayContainerRemoveChildrenNativeVerifier": "Cns/docs/容器清空子节点原生核验指南.md"
   },
   "architectureContractProbesRun": true,
   "browserApiPixelProbesRun": true,
@@ -552,7 +555,7 @@
     "contract": "Cns/docs/显示内容边界契约.md",
     "evidence": "Cns/docs/显示内容边界证据.md"
   },
-  "latestEngineeringPreview": "0.48.0",
+  "latestEngineeringPreview": "0.49.0",
   "texturedMesh2DImplementation": {
     "version": "0.23.0",
     "status": "bounded_increment_implemented",
@@ -4719,6 +4722,280 @@
       "currentRawPinsMatchOriginalApprovedSources": true,
       "fullPublicPrepushQualified": false,
       "optionalF2CoreSDKReplayQualified": false
+    }
+  },
+  "displayContainerRemoveChildrenPreviousCheckpoint": {
+    "version": "0.48.0",
+    "title": "白鹭引擎社区重建 — NineSliceBitmap 固定边框背景",
+    "stage": "BOUNDED_NINE_SLICE_BITMAP_SOURCE_CPU_TYPES_CODE_GATES_AND_NATIVE_ACCEPTED_PUBLICATION_AND_DELIVERY_PENDING",
+    "updatedAt": "2026-10-14"
+  },
+  "nineSliceBitmapDeliveryActualSuccessor": {
+    "engineeringPreview": "0.48.0",
+    "status": "ACTUAL_REVIEWED_BOUNDED_NINE_SLICE_DELIVERED_TO_MAIN",
+    "successorRecordedOn": "2026-10-14",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/36",
+    "featureHead": "f1f4bcbe5b12171f5077e66775d8bd1a9b771b44",
+    "mainMergeCommit": "cca65d0322807e53bfa3f7cc7fbcf8d903dcbc59",
+    "mainTree": "bc5c205ee988aa6aa4245391068a6ee73120594e",
+    "orderedMainParents": [
+      "5ae877705d76a470ec942a29cfe0212f069da6fb",
+      "f1f4bcbe5b12171f5077e66775d8bd1a9b771b44"
+    ],
+    "actualDeliveryReview": {
+      "bytes": 23921,
+      "sha256": "ed81928a4679970fbe9a20000d3a5a175e92759694afb9a3477feee8b2c57c8c"
+    },
+    "remoteStatuses": 0,
+    "remoteCheckRuns": 0,
+    "remoteCombinedState": "pending",
+    "remoteCIPassClaim": false,
+    "historicalCurationPendingPreserved": true
+  },
+  "displayContainerRemoveChildrenActualSuccessor": {
+    "engineeringPreview": "0.49.0",
+    "sourceId": "S103",
+    "deliverableId": "V054",
+    "doc": "Cns/docs/容器清空子节点契约.md",
+    "evidence": "Cns/docs/容器清空子节点证据.md",
+    "native": {
+      "actual": "COMPLETED_R2_BOUNDED_CANVAS_AND_WEBGPU",
+      "acceptance": "PASS_ACTUAL_NATIVE_BOUNDED_CONTAINER_REMOVE_CHILDREN_CANVAS_AND_WEBGPU_ONLY",
+      "plannedBackends": [
+        "canvas",
+        "webgpu"
+      ],
+      "plannedStepsPerBackend": 3,
+      "plannedSubmissions": 6,
+      "plannedNewCaptures": 4,
+      "plannedSavedReplays": 2,
+      "plannedWidth": 24,
+      "plannedHeight": 24,
+      "plannedDPR": 1,
+      "plannedChannels": 13824,
+      "pixelTolerance": 0,
+      "scene": "ORDINARY_OPAQUE_RECTANGLES_NO_TEXTURE_PNG_FONT_SDK",
+      "adapterIdentity": "UNOBSERVED",
+      "originalSourceCutoff": {
+        "actual": "NOT_RUN",
+        "acceptance": "PENDING",
+        "rawCutoffPreserved": true
+      },
+      "currentSourceReview": {
+        "bytes": 16920,
+        "sha256": "c5bc3db02765c859fe6e6f6beb302d004ada06fea5045f35ef476d58b23b2943",
+        "verdict": "PASS_SOURCE_NATIVE_DCA_ORDINARY_OPTIONAL_IMAGES_REPAIR_ONLY",
+        "openFindings": 0
+      },
+      "currentFixturePin": {
+        "bytes": 13226,
+        "sha256": "4569bd14ceafeb4367beee68c945facb7ffe84d5decb3682e63dc08f33326fd9"
+      },
+      "R1Failure": {
+        "review": {
+          "bytes": 23238,
+          "sha256": "b5280ccc4fe862ad0270b1f0f6a4416672853eab9d96dda4662b1ea0989b4803",
+          "verdict": "NEEDS_REPAIR_NAMED_FIXTURE_FRAME_CONTRACT",
+          "openFindings": 1
+        },
+        "stage": "CANVAS_N1_OPTIONAL_IMAGES_ASSERTION_BEFORE_RENDER",
+        "aggregateRenderedSubmissions": null,
+        "aggregateNewCaptures": null,
+        "aggregateSavedReplays": null,
+        "completeRawReadbacks": 0,
+        "fixtureLedger": {
+          "newCaptures": 1,
+          "savedReplays": 0,
+          "renderSubmissions": 0
+        },
+        "webGPUStarted": false,
+        "GPUIdentitySampled": false,
+        "EngineScopeContextBrowserServerCleanup": true
+      },
+      "R2Repair": {
+        "scope": "TWO_FIXTURE_SPANS_ACCEPT_OPTIONAL_IMAGES",
+        "otherFiveSourcesUnchanged": true,
+        "oracleScheduleToleranceReaderCleanupBudgetUnchanged": true,
+        "productRemoveChildrenBugClaim": false,
+        "actualSuccessClaim": false
+      },
+      "actualReview": {
+        "bytes": 68856,
+        "sha256": "a6cc7e6cf9b42181c410e885b4561c3637027b4e26be3a280b4d91e1df3c42ea",
+        "verdict": "PASS_ACTUAL_NATIVE_BOUNDED_CONTAINER_REMOVE_CHILDREN_CANVAS_AND_WEBGPU_ONLY",
+        "openFindings": 0
+      },
+      "currentR2": {
+        "mainCases": 2,
+        "mainPasses": 2,
+        "renderSubmissions": 6,
+        "completeRawReadbacks": 6,
+        "newCaptures": 4,
+        "savedReplays": 2,
+        "pixelsCompared": 3456,
+        "channelsCompared": 13824,
+        "width": 24,
+        "height": 24,
+        "DPR": 1,
+        "pixelTolerance": 0,
+        "mismatches": 0,
+        "positiveCanvasSubmissions": 3,
+        "sameLiveEngineSavedN1Replay": true,
+        "N1N3Whole2304ByteBuffersIdenticalPerBackend": true,
+        "graphEntries": 368,
+        "installedRuntimePins": 175,
+        "graphsAndRuntimeStable": true,
+        "ScopeHostDeviceContextBrowserServerCleanupComplete": true,
+        "primaryErrors": 0,
+        "cleanupErrors": 0,
+        "pendingTickets": 0,
+        "browserVersion": "155.0.4283.45",
+        "extraLaunchFlags": false,
+        "physicalAdapterIdentity": "UNOBSERVED",
+        "forcedTimeoutPaths": "NOT_RUN",
+        "wrongOracleControls": "NOT_RUN",
+        "alphaScope": "OPAQUE_RECTANGLES_AND_ZERO_TRANSPARENT_CLEAR_ONLY",
+        "CanvasAlphaMetadata": "straight",
+        "WebGPUAlphaMetadata": "premultiplied",
+        "alternateTranslucentAlphaAccepted": false,
+        "resultPin": {
+          "bytes": 67995,
+          "sha256": "4f5e2a939a4d2dab692d660603b00d8f95f68911598eef9ad920ab2017bfc73f"
+        }
+      }
+    },
+    "curationCutoff": "2026-10-14",
+    "status": "BOUNDED_PRODUCT_CPU_TYPES_CURRENT_CODE_POLICY_AND_NATIVE_ACCEPTED_PUBLICATION_DELIVERY_PENDING",
+    "productSourceReview": {
+      "bytes": 9310,
+      "sha256": "3197a3d27783dee19ca8477110cb88e34a78e40c21bc75699c42c1edf1caa0ad",
+      "verdict": "PASS_SOURCE_PRODUCT_TWO_FILES_ONLY",
+      "openFindings": 0
+    },
+    "coreTypesActualReview": {
+      "bytes": 16831,
+      "sha256": "1b8c72cf09802434feaa6678e3ee8e093000a24767f2af8b5905a82126a64bc3",
+      "verdict": "PASS_ACTUAL_CORE_BUILD_CPU_AND_STRICT_TYPES_ONLY",
+      "openFindings": 0
+    },
+    "baselineActualReview": {
+      "bytes": 18459,
+      "sha256": "caa01ec34b2d6e2b24b11484af04dba57aab41cf3ba67a15938eea59b5705015",
+      "verdict": "PASS_ACTUAL_ROUTINE_SETUP_GENUINE_BASELINE_AND_NAMED_MISSING_METHOD_RED_ONLY",
+      "openFindings": 0
+    },
+    "focusedCPU": {
+      "tests": 122,
+      "pass": 122,
+      "fail": 0,
+      "API": 1,
+      "behavior": 5,
+      "retained": 116,
+      "fullRepositorySuite": false
+    },
+    "strictTypes": {
+      "lanes": 2,
+      "parallelOriginalLanes": true,
+      "positiveDiagnostics": 0,
+      "positiveExitCode": 0,
+      "negativeDiagnostics": 10,
+      "negativeExitCode": 1,
+      "completeActualUnsuppressedTuples": 10,
+      "negativeLines": [
+        5,
+        9,
+        11,
+        13,
+        15,
+        17,
+        19,
+        21,
+        23,
+        25
+      ],
+      "newDriverActual": "ACCEPTED_BY_ORIGINAL_CURRENT_CODE_POLICY_REVIEW",
+      "integratedOldLanesPassed": true
+    },
+    "history": {
+      "genuineOldSingleDetachAndCleanupBeforeNamedMissingMemberRED": true,
+      "namedMissingMemberLine": 42,
+      "testSourceR1Refusal": "DCA-TS01_CLEANUP_SOURCE_ONLY",
+      "testSourceR2CleanupRepairAccepted": true,
+      "cleanupFaultSimulation": "NOT_RUN"
+    },
+    "support": {
+      "twoFrozen489RowTables": true,
+      "changedRawRowsPerTable": 6,
+      "unchangedRowsPerTable": 483,
+      "originalPinRefusalThenFreshGatePass": true,
+      "fullCurrentPolicyActual": "ACCEPTED_ORIGINAL_R1_DEFAULT_NINE_GATES_RETAINED_UNCHANGED_CLOSURE_AT_R2"
+    },
+    "fullPrepush": "PENDING",
+    "publicSourceBilingualReview": "PENDING",
+    "pushHook": "NOT_RUN_0_49",
+    "GitHubDelivery": "NOT_RUN_0_49",
+    "remoteCI": "NOT_CLAIMED",
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "fullUI": "OPEN",
+    "physicalDevicePerformance": "UNVERIFIED",
+    "packageVersion": "0.0.0",
+    "hostProtocol": "1.0",
+    "newThirdPartyDependency": false,
+    "currentCodeActualReview": {
+      "bytes": 21979,
+      "sha256": "babf53e4c7a9d3616f90087ed2b72efe9d142ec13ba161f1db61aa6249e3b375",
+      "verdict": "PASS_ACTUAL_CURRENT_CODE_AND_POLICY_GATES_ONLY",
+      "openFindings": 0
+    },
+    "currentR2DefaultClosureReview": {
+      "bytes": 18055,
+      "sha256": "836e81fe8f11c5a8370ea270bbec1e39e064759b1ee03d6c8da0a774666080c1",
+      "verdict": "PASS_ACTUAL_DEFAULT_CODE_POLICY_RETAINED_BY_UNCHANGED_INPUT_CLOSURE_ONLY",
+      "openFindings": 0
+    },
+    "currentCodeExecution": {
+      "originalRun": "R1",
+      "verifyPhases": 9,
+      "commandExitCode": 0,
+      "timeout": false,
+      "stderrBytes": 0,
+      "stdoutSHA256": "8a148300885bfe76da050b71410fbce520c6c26d0d868b204f95c5ec914abdea",
+      "startedAtUtc": "2026-10-14T07:38:52.3912859Z",
+      "finishedAtUtc": "2026-10-14T07:44:06.9244094Z",
+      "ordinaryCore": {
+        "tests": 3085,
+        "pass": 3085,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "retainedF2SourceChecks": {
+        "tests": 160,
+        "pass": 160,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "R2NineGateRerun": false,
+      "retainedOptionalSDKPoseOrColdAcceptance": false,
+      "curatedPublicationGateAcceptance": false
+    },
+    "partialCoreAttempt": {
+      "status": "INCOMPLETE_TIMEOUT_RETAINED",
+      "outerBudgetMs": 300000,
+      "timeout": true,
+      "exitCode": -1,
+      "stderrBytes": 0,
+      "partialStdoutSHA256": "04767f2020e32ca9b842498d80786eee0097ef392b8f9b9a6028d8267b50a748",
+      "fullRegressionAccepted": false
+    },
+    "currentRunnerBudget": {
+      "outerVerifyJobMs": 900000,
+      "innerAssertionsAndChildLimitsChanged": false,
+      "performanceImprovementClaim": false
     }
   }
 }

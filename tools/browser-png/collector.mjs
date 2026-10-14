@@ -57,6 +57,7 @@ function containedOutput(owner, output, repositoryRoot) {
 export function admitBrowserPngCollection(admissionPin, output, profile = 'browser-png') {
   const admission = JSON.parse(original(admissionPin));
   if (profile === 'nine-slice-bitmap') return admitNineSliceBitmap(admission, output);
+  if (profile === 'display-container-remove-children') return admitNineSliceBitmap(admission, output, true);
   requireData(profile === 'browser-png', 'Explicit collector profile required');
   requireData(admission.schemaVersion === 1 && admission.status === 'BIP1_NATIVE_SOURCE_AND_ACTUAL_INPUTS_ADMITTED', 'Native source/actual admission missing');
   requireData(samePhysicalPath(admission.sourceFilesRoot, admission.graphInputs.repositoryRoot), 'Graph has another source owner');
@@ -153,17 +154,22 @@ export function admitBrowserPngCollection(admissionPin, output, profile = 'brows
 
 // One finite additional scene shares the existing pin reader, graph and lifecycle.
 // It consumes original reviewed Source/build facts; it never qualifies its own review.
-function admitNineSliceBitmap(admission, output) {
+function admitNineSliceBitmap(admission, output, removeChildren = false) {
   const sourceRoles=['plan','productSource','collectorSource'], actualRoles=['missingEntryRed','cpu','build','strictTypes','policy'];
-  const sourcePaths=['packages/runtime/src/NineSliceBitmap.ts','packages/runtime/src/Mesh2D.ts',
+  // The new opt-in scene reuses the original eight-role raw binding checks.
+  const profile=removeChildren?'display-container-remove-children':'nine-slice-bitmap';
+  const leafDirectory=removeChildren?'display-container-remove-children-native':'nine-slice-bitmap-native';
+  const sourcePaths=removeChildren?['packages/runtime/src/DisplayObjectContainer.ts','packages/runtime/src/displayTreeState.ts']
+    :['packages/runtime/src/NineSliceBitmap.ts','packages/runtime/src/Mesh2D.ts',
     'packages/runtime/src/meshDisplayState.ts','packages/runtime/src/index.ts','packages/engine/src/index.ts','packages/runtime/src/Texture.ts'];
   const emittedPaths=sourcePaths.flatMap(key=>[key.replace('/src/','/dist/').replace(/\.ts$/,'.js'),key.replace('/src/','/dist/').replace(/\.ts$/,'.d.ts')]);
   const collectorPaths=['tools/verify-browser-png.mjs','tools/browser-png/collector.mjs','tools/browser-png/file-graph.mjs',
-    'tools/nine-slice-bitmap-native/fixture.mjs','tools/nine-slice-bitmap-native/oracle.mjs'];
-  requireData(admission.schemaVersion===1&&admission.status==='NINE_SLICE_BITMAP_NATIVE_SOURCE_AND_ACTUAL_INPUTS_ADMITTED'
-    &&admission.graphInputs?.profile==='nine-slice-bitmap'&&samePhysicalPath(admission.sourceFilesRoot,admission.graphInputs.repositoryRoot),'Exact NineSlice source/actual admission');
-  const root=admission.sourceFilesRoot,expectedCollectors=[{path:'tools/nine-slice-bitmap-native/fixture.mjs',role:'fixture',route:'/fixture.mjs'},
-    ...collectorPaths.filter(key=>key!=='tools/nine-slice-bitmap-native/fixture.mjs').map(path=>({path,role:'host-only'}))];
+    'tools/'+leafDirectory+'/fixture.mjs','tools/'+leafDirectory+'/oracle.mjs'];
+  const status=removeChildren?'DISPLAY_CONTAINER_REMOVE_CHILDREN_NATIVE_SOURCE_AND_ACTUAL_INPUTS_ADMITTED':'NINE_SLICE_BITMAP_NATIVE_SOURCE_AND_ACTUAL_INPUTS_ADMITTED';
+  requireData(admission.schemaVersion===1&&admission.status===status
+    &&admission.graphInputs?.profile===profile&&samePhysicalPath(admission.sourceFilesRoot,admission.graphInputs.repositoryRoot),'Exact bounded scene source/actual admission');
+  const root=admission.sourceFilesRoot,expectedCollectors=[{path:'tools/'+leafDirectory+'/fixture.mjs',role:'fixture',route:'/fixture.mjs'},
+    ...collectorPaths.filter(key=>key!=='tools/'+leafDirectory+'/fixture.mjs').map(path=>({path,role:'host-only'}))];
   requireData(equal(admission.graphInputs.collectorFiles,expectedCollectors),'Exact NineSlice collector Source inventory');
   const reviews=new Map();requireData(Array.isArray(admission.reviewPins)&&admission.reviewPins.length===sourceRoles.length+actualRoles.length,'Exact NineSlice review roles');
   for(const row of admission.reviewPins){
@@ -210,11 +216,17 @@ function admitNineSliceBitmap(admission, output) {
 
 export async function collectBrowserPng({ admissionPin, output, profile = 'browser-png' }) {
   const nineSlice = profile === 'nine-slice-bitmap';
+  const removeChildren = profile === 'display-container-remove-children', literalScene = nineSlice || removeChildren;
   const qualified = admitBrowserPngCollection(admissionPin, output, profile);
   const { admission, graph } = qualified;
-  const leafOracle = nineSlice ? await import('../nine-slice-bitmap-native/oracle.mjs') : null;
+  const leafOracle = removeChildren ? await import('../display-container-remove-children-native/oracle.mjs')
+    : nineSlice ? await import('../nine-slice-bitmap-native/oracle.mjs') : null;
   const scheduleBytes = Buffer.from(graph.schedulePin.bodyBase64, 'base64'), schedule = JSON.parse(scheduleBytes);
-  requireData(nineSlice ? equal(schedule.backends,['webgpu']) && schedule.profile===profile && schedule.frame.pixelTolerance===0
+  requireData(removeChildren ? equal(schedule.backends,['canvas','webgpu']) && schedule.profile===profile && schedule.frame.pixelTolerance===0
+    && schedule.frame.width===24 && schedule.frame.height===24 && schedule.plannedTotals.renderSubmissions===6
+    && schedule.plannedTotals.newCaptures===4 && schedule.plannedTotals.savedReplays===2
+    && equal(schedule.stepsPerBackend,[{id:'N1',scene:'before'},{id:'N2',scene:'after-remove-children'},{id:'N3',replay:'N1',sameEngineAlive:true}])
+    : nineSlice ? equal(schedule.backends,['webgpu']) && schedule.profile===profile && schedule.frame.pixelTolerance===0
     && schedule.frame.width===24 && schedule.frame.height===24 && schedule.plannedTotals.renderSubmissions===3
     && schedule.plannedTotals.newCaptures===2 && schedule.plannedTotals.savedReplays===1
     && equal(schedule.stepsPerBackend,[{id:'N1',target:[16,12]},{id:'N2',target:[12,16]},{id:'N3',replay:'N1',afterOriginRetirement:true}])
@@ -230,6 +242,7 @@ export async function collectBrowserPng({ admissionPin, output, profile = 'brows
   let primaryOccurred = false, primary, closing = false, browser, server, browserVersion;
   let browserCloseFulfilled = false, serverCloseFulfilled = false;
   let nineSliceMainEntered = false;
+  const removeChildrenEntered = new Set();
   const wrongControls = [];
   const fail = cause => { if (!primaryOccurred) { primaryOccurred = true; primary = cause; } };
   const handled = value => { const promise = Promise.resolve(value); promise.catch(() => undefined); return promise; };
@@ -258,7 +271,8 @@ export async function collectBrowserPng({ admissionPin, output, profile = 'brows
   const importMapText = JSON.stringify(graph.importMap), importMapHash = createHash('sha256').update(importMapText).digest('base64');
   for (const backend of schedule.backends) {
     const host = backend === 'canvas' ? '@egret/engine/web' : '@egret/engine/webgpu';
-    const entry = nineSlice ? canonicalTextBytes("import { createNineSliceBitmapFixture } from '/fixture.mjs';\nwindow.__bip = createNineSliceBitmapFixture();\nwindow.__bipReady = true;\n")
+    const entry = removeChildren ? canonicalTextBytes(`import * as hostEntry from '${host}';\nimport { createDisplayContainerRemoveChildrenFixture } from '/fixture.mjs';\nwindow.__bip = createDisplayContainerRemoveChildrenFixture({backend:'${backend}',hostEntry});\nwindow.__bipReady = true;\n`)
+      : nineSlice ? canonicalTextBytes("import { createNineSliceBitmapFixture } from '/fixture.mjs';\nwindow.__bip = createNineSliceBitmapFixture();\nwindow.__bipReady = true;\n")
       : canonicalTextBytes(`import * as hostEntry from '${host}';\nimport { createBrowserPngFixture } from '/fixture.mjs';\nconst response = await fetch('/schedule.json', {redirect:'error'});\nif (!response.ok) throw new Error('BIP_SCHEDULE_RESPONSE');\nconst schedule = await response.json();\nwindow.__bip = createBrowserPngFixture({backend:'${backend}',hostEntry,schedule});\nwindow.__bipReady = true;\n`);
     const html = canonicalTextBytes(`<!doctype html><meta charset="utf-8"><link rel="icon" href="/favicon.ico"><style>body{margin:0;background:transparent}</style><script type="importmap">${importMapText}</script><script type="module" src="/entry-${backend}.mjs"></script>\n`);
     route('/entry-' + backend + '.mjs', entry, 'text/javascript', backend); route('/' + backend, html, 'text/html', backend);
@@ -305,14 +319,14 @@ export async function collectBrowserPng({ admissionPin, output, profile = 'brows
       await bounded(track(owner.page.waitForFunction(() => window.__bipReady === true, undefined, { timeout: 20_000 }), 'entry.' + backend), 'entry module');
       const setup = await bounded(track(owner.page.evaluate(deadlines => window.__bip.start(deadlines), { operationDeadline, cleanupDeadline }), 'fixture.start.' + backend), 'native resource setup');
       writeJson(backend + '-native-ledger-start.json', setup);
-      requireData(!setup.primaryOccurred && setup.cleanupErrors.length === 0 && (nineSlice || setup.observerRestored), 'Native resource setup/refusal', 'BIP_NATIVE_ASSERTION');
+      requireData(!setup.primaryOccurred && setup.cleanupErrors.length === 0 && (literalScene || setup.observerRestored), 'Native resource setup/refusal', 'BIP_NATIVE_ASSERTION');
       for (const [index, image] of setup.sourceImages.entries()) {
         writeFileSync(path.join(output, backend + '-source-image-' + index + '.rgba'), Buffer.from(image.bytes), { flag: 'wx' });
       }
-      const nativeReadbacks = nineSlice ? [] : setup.operations.filter(row => row.operation === 'canvas-readback' && row.phase === 'returned');
+      const nativeReadbacks = literalScene ? [] : setup.operations.filter(row => row.operation === 'canvas-readback' && row.phase === 'returned');
       for (const [index, row] of nativeReadbacks.entries()) writeFileSync(path.join(output,
         backend + '-native-source-readback-' + index + '.rgba'), Buffer.from(row.readback.bytes), { flag: 'wx' });
-      const nativeBlobs = nineSlice ? [] : setup.operations.filter(row => row.operation === 'decode' && row.phase === 'returned');
+      const nativeBlobs = literalScene ? [] : setup.operations.filter(row => row.operation === 'decode' && row.phase === 'returned');
       for (const [index, row] of nativeBlobs.entries()) {
         const originalBytes = Buffer.from(row.blob.bytes);
         requireData(graph.fixturePins.some(item => item.bytes === originalBytes.length && item.sha256 === hash(originalBytes)), 'Actual original Blob bytes differ', 'BIP_NATIVE_ASSERTION');
@@ -320,17 +334,19 @@ export async function collectBrowserPng({ admissionPin, output, profile = 'brows
       }
       for (const step of ['N1', 'N2', 'N3']) {
         if (nineSlice) nineSliceMainEntered = true;
+        if (removeChildren) removeChildrenEntered.add(backend);
         const packet = await bounded(track(owner.page.evaluate(name => window.__bip.collectStep(name), step), backend + '.' + step), 'original ' + backend + '/' + step);
         // Save complete original bytes before comparison; no fitting of expectations.
         writeJson(backend + '-' + step + '.json', packet);
-        requireData(Array.isArray(packet.raw) && packet.raw.length === (nineSlice ? 2304 : 128)
+        requireData(Array.isArray(packet.raw) && packet.raw.length === (literalScene ? 2304 : 128)
           && packet.raw.every(byte => Number.isInteger(byte) && byte >= 0 && byte <= 255), 'Original readback byte envelope', 'BIP_NATIVE_ASSERTION');
         writeFileSync(path.join(output, backend + '-' + step + '.rgba'), Buffer.from(packet.raw), { flag: 'wx' });
-        const comparison = nineSlice ? leafOracle.inspectNineSliceBitmapCapture(packet) : inspectBrowserPngCapture(packet, schedule); writeJson(backend + '-' + step + '-comparison.json', comparison);
+        const comparison = removeChildren ? leafOracle.inspectDisplayContainerRemoveChildrenCapture(packet)
+          : nineSlice ? leafOracle.inspectNineSliceBitmapCapture(packet) : inspectBrowserPngCapture(packet, schedule); writeJson(backend + '-' + step + '-comparison.json', comparison);
         results.push({ backend, step, packet, comparison });
         requireData(comparison.pass, 'Original literal comparison failed', 'BIP_NATIVE_ASSERTION');
       }
-      if (!nineSlice) {
+      if (!literalScene) {
         const wrong = inspectWrongOracle(results.find(row => row.backend === backend && row.step === 'N2').packet, schedule);
         writeJson(backend + '-wrong-oracle.json', wrong); requireData(wrong.pass, 'Wrong-oracle classification failed', 'BIP_NATIVE_ASSERTION');
         wrongControls.push({ backend, pass: wrong.pass, additionalSubmissions: 0, additionalReadbacks: 0 });
@@ -343,6 +359,10 @@ export async function collectBrowserPng({ admissionPin, output, profile = 'brows
         &&owner.fixtureClose.textureRetired&&owner.fixtureClose.scopeState==='closed'&&owner.fixtureClose.leafDisposed&&owner.fixtureClose.borrowedLeaseDropped
         &&owner.fixtureClose.loads===1&&owner.fixtureClose.disposals===1&&owner.fixtureClose.diagnostics.length===0
         &&owner.fixtureClose.canvasRefusal?.status==='PASS_REFUSAL_ONLY'&&owner.fixtureClose.canvasRefusal.positiveCanvasSubmissions===0,'Genuine NineSlice retirement/Canvas refusal','BIP_NATIVE_CLOSE_UNSAFE');
+      if (removeChildren) requireData(owner.fixtureClose.ports.length===1 && owner.fixtureClose.scopeState==='closed'
+        &&owner.fixtureClose.allSceneNodesDisposed && owner.fixtureClose.diagnostics.length===0
+        &&(backend==='canvas'||owner.fixtureClose.ports[0].deviceDestroyed&&owner.fixtureClose.ports[0].deviceLoss?.reason==='destroyed'),
+      'Genuine Container scene and native retirement','BIP_NATIVE_CLOSE_UNSAFE');
       await bounded(track(owner.context.close(), 'context.close.' + backend), 'context close', true); owner.closeFulfilled = true;
       for (const entry of graph.entryAliases.filter(row => row.backend === backend)) requireData(requests.some(row => row.backend === backend && row.route === entry.route), 'Required public root was not requested', 'BIP_NATIVE_ASSERTION');
     }
@@ -369,18 +389,27 @@ export async function collectBrowserPng({ admissionPin, output, profile = 'brows
     original(admissionPin); original(admission.graphPin); for (const row of admission.reviewPins) original(row.pin);
     writeJson('module-graph-after.json', after);
   } catch (cause) { cleanupErrors.push(cause); }
-  const pending = tickets.filter(row => !row.settled), complete = nineSlice ? results.length===3&&results.every(row=>row.comparison.pass)
+  const pending = tickets.filter(row => !row.settled), complete = removeChildren ? results.length===6&&results.every(row=>row.comparison.pass)
+    &&wrongControls.length===0&&results.reduce((sum,row)=>sum+row.comparison.channelsCompared,0)===13824
+    &&['canvas','webgpu'].every(backend=>equal(results.find(row=>row.backend===backend&&row.step==='N1')?.packet.raw,
+      results.find(row=>row.backend===backend&&row.step==='N3')?.packet.raw))
+    : nineSlice ? results.length===3&&results.every(row=>row.comparison.pass)
     &&wrongControls.length===0&&results.reduce((sum,row)=>sum+row.comparison.channelsCompared,0)===6912
     &&equal(results[0].packet.raw,results[2].packet.raw)
     : results.length === 6 && results.every(row => row.comparison.pass) && wrongControls.length === 2
     && results.reduce((sum, row) => sum + row.comparison.channelsCompared, 0) === 768;
   const incomplete = pending.length > 0 || cleanupErrors.length > 0 || !stable || browser || server
     || primaryOccurred && ['BIP_NATIVE_TIMEOUT','BIP_NATIVE_DEADLINE','BIP_NATIVE_UNAVAILABLE','BIP_NATIVE_CLOSE_UNSAFE',
-      ...(nineSlice?['NLB_NATIVE_TIMEOUT','NLB_NATIVE_DEADLINE','NLB_NATIVE_UNAVAILABLE','NLB_NATIVE_CLOSE_UNSAFE']:[])].includes(primary?.code);
+      ...(nineSlice?['NLB_NATIVE_TIMEOUT','NLB_NATIVE_DEADLINE','NLB_NATIVE_UNAVAILABLE','NLB_NATIVE_CLOSE_UNSAFE']:[]),
+      ...(removeChildren?['DCA_NATIVE_TIMEOUT','DCA_NATIVE_DEADLINE','DCA_NATIVE_UNAVAILABLE','DCA_NATIVE_CLOSE_UNSAFE']:[])].includes(primary?.code);
   const result = { schemaVersion: 1, status: incomplete ? 'INCOMPLETE' : primaryOccurred || !complete ? 'FAIL' : 'PASS',
-    scope: nineSlice ? 'NineSliceBitmap default desktop WebGPU literal cropped panel; no PNG decoding' : 'BIP1 bounded desktop default-browser PNG/opaque-transparent-black composition only',
+    scope: removeChildren ? 'DisplayObjectContainer.removeChildren desktop Canvas/WebGPU ordinary opaque rectangles; no PNG decoding'
+      : nineSlice ? 'NineSliceBitmap default desktop WebGPU literal cropped panel; no PNG decoding' : 'BIP1 bounded desktop default-browser PNG/opaque-transparent-black composition only',
     ...(nineSlice ? {profile,actualNativeMainCases:nineSliceMainEntered?1:0,actualNativeMainPasses:!incomplete&&!primaryOccurred&&complete?1:0,
       canvasRefusalCases:contexts[0]?.fixtureClose?.canvasRefusal?.status==='PASS_REFUSAL_ONLY'?2:0,positiveCanvasSubmissions:0} : {}),
+    ...(removeChildren ? {profile,actualNativeMainCases:removeChildrenEntered.size,
+      actualNativeMainPasses:!incomplete&&!primaryOccurred&&complete?removeChildrenEntered.size:0,
+      positiveCanvasSubmissions:contexts.find(row=>row.backend==='canvas')?.fixtureClose?.ports[0]?.renderSubmissions??0} : {}),
     admissionPin, startedAtUtc: new Date(startedAt).toISOString(), finishedAtUtc: new Date().toISOString(), browserVersion,
     primaryOccurred, primary: primaryOccurred ? occurrence(primary) : null, cleanupErrors: cleanupErrors.map(occurrence),
     beforeAfterGraphStable: stable, sourceAndInstalledRuntimePinsStable: stable && cleanupErrors.length === 0,

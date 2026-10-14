@@ -956,3 +956,8 @@ await import('./spritesheet-types.mjs');
 // Retain every previous strict lane before checking the new display leaf.
 await import('./nine-slice-bitmap-types.mjs');
 // NLB_TYPES_END
+
+// DCA_TYPES_BEGIN
+// Run both mandatory public consumer lanes after every retained strict type owner.
+await import('./display-container-remove-children-types.mjs');
+// DCA_TYPES_END

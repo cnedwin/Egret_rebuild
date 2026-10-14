@@ -185,12 +185,13 @@ function literalImports(text, filename, declaration = false) {
  * fixture/schedule pins use private absolute paths and stay metadata-separated.
  */
 export function freezeBrowserPngGraph({ repositoryRoot, collectorFiles, fixturePins, schedulePin, profile = 'browser-png' }) {
-  requireGraph(profile === 'browser-png' || profile === 'nine-slice-bitmap', 'EXPLICIT_PROFILE');
-  const nineSlice = profile === 'nine-slice-bitmap';
+  requireGraph(profile === 'browser-png' || profile === 'nine-slice-bitmap' || profile === 'display-container-remove-children', 'EXPLICIT_PROFILE');
+  const nineSlice = profile === 'nine-slice-bitmap', removeChildren = profile === 'display-container-remove-children';
+  const literalScene = nineSlice || removeChildren;
   requireGraph(typeof repositoryRoot === 'string' && path.isAbsolute(repositoryRoot), 'REPOSITORY_ROOT');
   const root = realpathSync(repositoryRoot);
   requireGraph(samePhysicalPath(root, repositoryRoot), 'REPOSITORY_ALIAS');
-  requireGraph(Array.isArray(collectorFiles) && Array.isArray(fixturePins) && fixturePins.length === (nineSlice ? 0 : 2), 'INPUT_ARRAYS');
+  requireGraph(Array.isArray(collectorFiles) && Array.isArray(fixturePins) && fixturePins.length === (literalScene ? 0 : 2), 'INPUT_ARRAYS');
   const files = new Map(), modules = new Map(), edges = [], declarationEdges = [], hostFilePins = [], entryAliases = [];
   const aliases = new Map(), packageRecords = new Map(), configurations = [], dependencyOwners = new Map();
   let totalBytes = 0;
@@ -210,8 +211,8 @@ export function freezeBrowserPngGraph({ repositoryRoot, collectorFiles, fixtureP
   const read = (relative, role) => retain(rawFileFingerprint(root, logicalPath(relative)), role);
   const schedule = externalPin(schedulePin), scheduleData = jsonBody(schedule);
   requireGraph(JSON.stringify(scheduleData.backends) === JSON.stringify(nineSlice ? ['webgpu'] : ['canvas', 'webgpu']), 'BACKEND_SCHEDULE');
-  requireGraph(!nineSlice || scheduleData.profile === profile, 'NINE_SLICE_SCHEDULE_PROFILE');
-  requireGraph(Array.isArray(scheduleData.fixtures) && scheduleData.fixtures.length === (nineSlice ? 0 : 2), 'FIXTURE_SCHEDULE');
+  requireGraph(!literalScene || scheduleData.profile === profile, 'NINE_SLICE_SCHEDULE_PROFILE');
+  requireGraph(Array.isArray(scheduleData.fixtures) && scheduleData.fixtures.length === (literalScene ? 0 : 2), 'FIXTURE_SCHEDULE');
   retain(schedule, 'literal-schedule', 'private-original');
   const originals = fixturePins.map(row => {
     const actual = externalPin(row), route = exactRoute(row.route);
@@ -262,7 +263,7 @@ export function freezeBrowserPngGraph({ repositoryRoot, collectorFiles, fixtureP
       servedCollector.set(row.route, { ...record, route: row.route, role: row.role });
     }
   }
-  requireGraph(servedCollector.size === (nineSlice ? 1 : 2) && (!nineSlice || servedCollector.has('/fixture.mjs')), 'COLLECTOR_ROOTS');
+  requireGraph(servedCollector.size === (literalScene ? 1 : 2) && (!literalScene || servedCollector.has('/fixture.mjs')), 'COLLECTOR_ROOTS');
   function alias(specifier, target) {
     const route = '/' + target;
     if (aliases.has(specifier)) requireGraph(aliases.get(specifier) === route, 'ALIAS_CONFLICT', { specifier });
@@ -304,7 +305,7 @@ export function freezeBrowserPngGraph({ repositoryRoot, collectorFiles, fixtureP
       requireGraph(engine.data.dependencies?.[name] === '3.0.3', 'DEPENDENCY_VERSION');
       const linkPath = path.join(root, 'packages', 'engine', 'node_modules', name), dependencyRoot = realpathSync(linkPath);
       const contained = ownerRelativePath(root, dependencyRoot);
-      requireGraph(nineSlice ? contained === 'node_modules/' + name
+      requireGraph(literalScene ? contained === 'node_modules/' + name
         : contained.startsWith('node_modules/.pnpm/') && contained.endsWith('/node_modules/' + name), 'DEPENDENCY_OWNER', { path: dependencyRoot });
       const manifest = rawFileFingerprint(dependencyRoot, 'package.json'), data = jsonBody(manifest);
       requireGraph(data.name === name && data.version === engine.data.dependencies[name] && data.type === 'module'
@@ -381,10 +382,10 @@ export function freezeBrowserPngGraph({ repositoryRoot, collectorFiles, fixtureP
       requireGraph(imported.kind === 'static', 'COLLECTOR_DYNAMIC_IMPORT');
       let to;
       if (imported.specifier.startsWith('./') || imported.specifier.startsWith('../')) {
-        requireGraph(!nineSlice && route === '/fixture.mjs' && imported.specifier === './native-observer.mjs', 'COLLECTOR_RELATIVE_IMPORT', { specifier: imported.specifier });
+        requireGraph(!literalScene && route === '/fixture.mjs' && imported.specifier === './native-observer.mjs', 'COLLECTOR_RELATIVE_IMPORT', { specifier: imported.specifier });
         to = visitCollector('/native-observer.mjs');
       } else {
-        requireGraph(route === '/fixture.mjs' && (nineSlice ? ['@egret/engine', '@egret/engine/webgpu', '@egret/engine/web']
+        requireGraph(route === '/fixture.mjs' && (removeChildren ? ['@egret/engine'] : nineSlice ? ['@egret/engine', '@egret/engine/webgpu', '@egret/engine/web']
           : ['@egret/engine', '@egret/engine/web/image']).includes(imported.specifier), 'COLLECTOR_PUBLIC_IMPORT', { specifier: imported.specifier });
         const target = publicTarget(imported.specifier, 'import'); alias(imported.specifier, target); to = visitProduct(target);
       }
@@ -392,7 +393,7 @@ export function freezeBrowserPngGraph({ repositoryRoot, collectorFiles, fixtureP
     }
     return route;
   }
-  const commonEntries = nineSlice ? ['@egret/engine', '@egret/engine/web'] : ['@egret/engine', '@egret/engine/web/image'];
+  const commonEntries = removeChildren ? ['@egret/engine'] : nineSlice ? ['@egret/engine', '@egret/engine/web'] : ['@egret/engine', '@egret/engine/web/image'];
   const backendRoots = [];
   for (const backend of scheduleData.backends) {
     const specifiers = [...commonEntries, backend === 'canvas' ? '@egret/engine/web' : '@egret/engine/webgpu'], roots = [];
@@ -401,7 +402,7 @@ export function freezeBrowserPngGraph({ repositoryRoot, collectorFiles, fixtureP
       requireGraph(declaration === target.replace(/\.js$/, '.d.ts'), 'ENTRY_TYPES_RELATION', { specifier });
       alias(specifier, target); roots.push(visitProduct(target)); entryAliases.push({ backend, specifier, route: '/' + target, declaration });
     }
-    roots.push(visitCollector('/fixture.mjs')); if (!nineSlice) roots.push(visitCollector('/native-observer.mjs'));
+    roots.push(visitCollector('/fixture.mjs')); if (!literalScene) roots.push(visitCollector('/native-observer.mjs'));
     backendRoots.push({ backend, roots });
   }
   if (dependencyOwners.has('robust-predicates')) aliases.set('robust-predicates', dependencyOwners.get('robust-predicates').routePrefix + 'index.js');
@@ -417,7 +418,7 @@ export function freezeBrowserPngGraph({ repositoryRoot, collectorFiles, fixtureP
   const moduleRoutes = [...modules.values()].sort((a, b) => a.route.localeCompare(b.route, 'en'));
   requireGraph(moduleRoutes.every(row => row.path.endsWith('.js') || row.path.endsWith('.mjs')), 'SERVED_EXTENSION');
   return freezeData({ schemaVersion: 1, status: 'FROZEN_INPUTS_NOT_EXECUTED', repositoryRoot: root,
-    ...(nineSlice ? { profile } : {}),
+    ...(literalScene ? { profile } : {}),
     filePins: [...files.values()].sort((a, b) => (a.owner + ':' + a.path).localeCompare(b.owner + ':' + b.path, 'en')),
     moduleRoutes, importMap: { imports: Object.fromEntries([...aliases].sort(([a], [b]) => a.localeCompare(b, 'en'))) },
     entryAliases, importEdges: edges, declarationEdges, backendClosures, fixturePins: originals, schedulePin: schedule,

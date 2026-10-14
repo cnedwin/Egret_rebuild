@@ -10,9 +10,17 @@ const terminated = new WeakSet<object>();
 const roots = new WeakSet<object>();
 const parents = new WeakMap<DisplayObject, DisplayObjectContainer>();
 const childLists = new WeakMap<DisplayObjectContainer, DisplayObject[]>();
+// The batch path uses captured original operations, never caller getters/hooks.
+const readChildList = childLists.get.bind(childLists);
+const readParent = parents.get.bind(parents);
+const deleteParent = parents.delete.bind(parents);
 
 export function registerNode(node: DisplayObject): void { nodes.add(node); }
 export function registerContainer(node: DisplayObjectContainer): void { childLists.set(node, []); }
+/** Authenticate an actual registered container without inspecting its shape. */
+export function assertContainer(value: object): void {
+  if (readChildList(value as DisplayObjectContainer) === undefined) throw new EgretError("INVALID_DISPLAY_CONTAINER");
+}
 export function markStageRoot(node: DisplayObject): void { roots.add(node); }
 /** Identity-only authentication never reads a forged or proxied Stage. */
 export function isStageRoot(value: unknown): value is Stage { return roots.has(value as object); }
@@ -71,6 +79,23 @@ export function attachNode(parent: DisplayObjectContainer, child: DisplayObject)
 export function removeNode(parent: DisplayObjectContainer, child: DisplayObject): void {
   if (parentOf(child) !== parent) throw new EgretError("NOT_A_CHILD");
   detachNode(child);
+}
+
+/** Preflight every direct edge, then detach the batch without user callbacks. */
+export function detachChildren(parent: DisplayObjectContainer): void {
+  const list = readChildList(parent);
+  if (list === undefined) throw new EgretError("INVALID_DISPLAY_CONTAINER");
+  // No edge changes until the entire private list agrees with parent authority.
+  for (let index = 0; index < list.length; index++) {
+    const child = list[index];
+    if (child === undefined || readParent(child) !== parent) throw new EgretError("DISPLAY_TREE_INVARIANT");
+  }
+  // Keep descendants, cleanup owners and permanent Engine affinity unchanged.
+  for (let index = 0; index < list.length; index++) {
+    const child = list[index];
+    if (child !== undefined) deleteParent(child);
+  }
+  list.length = 0;
 }
 
 export function setNodeIndex(parent: DisplayObjectContainer, child: DisplayObject, index: number): void {

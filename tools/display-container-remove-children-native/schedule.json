@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "profile": "display-container-remove-children",
+  "backends": ["canvas", "webgpu"],
+  "fixtures": [],
+  "frame": {"width": 24, "height": 24, "pixelTolerance": 0},
+  "stepsPerBackend": [{"id":"N1","scene":"before"},{"id":"N2","scene":"after-remove-children"},{"id":"N3","replay":"N1","sameEngineAlive":true}],
+  "plannedTotals": {"renderSubmissions":6,"newCaptures":4,"savedReplays":2},
+  "input": "Ordinary opaque Sprite rectangles and transparent clear; no PNG, texture, SDK or font decoding",
+  "sourceOnly": true
+}

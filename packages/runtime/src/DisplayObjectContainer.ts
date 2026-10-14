@@ -2,7 +2,7 @@ import { DisplayObject } from "./DisplayObject.js";
 import { registerDisplayHitContainer, readDisplayTouchChildren, writeDisplayTouchChildren } from './displayHitState.js';
 import { EgretError } from "./EgretError.js";
 import { ASSERT_ATTACHABLE, ASSERT_BINDABLE, OWNERSHIP_CHILDREN, commitBinding, engineInSubtree, engineOf, ownerOf, preflightBinding, validateBinding } from "./ownership.js";
-import { assertAttachable, assertLive, assertNoCycle, attachNode, childAtOf, childCountOf, childrenOf, detachNode, isTerminated, parentOf, registerContainer, removeNode, setNodeIndex } from "./displayTreeState.js";
+import { assertAttachable, assertContainer, assertLive, assertNoCycle, attachNode, childAtOf, childCountOf, childrenOf, detachChildren, detachNode, isTerminated, parentOf, registerContainer, removeNode, setNodeIndex } from "./displayTreeState.js";
 
 // Carries the initiating owner's boundary through unowned intermediate containers.
 const disposalBoundaries = new WeakMap<DisplayObject, { readonly owner: object | undefined }>();
@@ -62,6 +62,14 @@ export class DisplayObjectContainer extends DisplayObject {
     engineOf(this)?.assertOpen(); assertLive(this); assertLive(child);
     removeNode(this, child);
     return child;
+  }
+
+  /** Detach every direct child without disposing nodes or transferring owners. */
+  public removeChildren(): void {
+    // Authenticate before reading affinity; preserve Engine-first life checks.
+    assertContainer(this);
+    engineOf(this)?.assertOpen(); assertLive(this);
+    detachChildren(this);
   }
 
   public getChildAt(index: number): DisplayObject {
@@ -124,4 +132,3 @@ export class DisplayObjectContainer extends DisplayObject {
     if (failures.length !== 0) throw new EgretError("DISPLAY_TREE_CLEANUP_FAILED", { cause: failures[0], cleanupErrors: failures.slice(1) });
   }
 }
-
