@@ -83,7 +83,7 @@ function prepareTypeFixture({root}) {
     'packages/engine/tests/profile-contract-types.ts',
     'package.json','pnpm-lock.yaml','tsconfig.base.json',
     'tools/check-types.mjs','tools/sequence-playback-types.mjs',
-    'tools/spritesheet-types.mjs','tools/lib/file-identity.mjs',
+    'tools/spritesheet-types.mjs','tools/nine-slice-bitmap-types.mjs','tools/lib/file-identity.mjs',
   ]) copy(relative);
 
   // Read-only stock compiler inputs are copied, never mocked or linked outside the owner.

@@ -951,3 +951,8 @@ await import('./sequence-playback-types.mjs');
 // Run the mandatory SpriteSheet lane only after every retained type gate has completed.
 await import('./spritesheet-types.mjs');
 // SPRITESHEET_TYPES_END
+
+// NLB_TYPES_BEGIN
+// Retain every previous strict lane before checking the new display leaf.
+await import('./nine-slice-bitmap-types.mjs');
+// NLB_TYPES_END

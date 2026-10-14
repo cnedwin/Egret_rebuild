@@ -2,6 +2,20 @@
 
 [English](README.md) | 简体中文
 
+<!-- NLB-0.48.0-BEGIN -->
+## 工程预览 0.48.0 — NineSliceBitmap 固定边框背景
+
+**S102 / V053。** `NineSliceBitmap` 从真实 Texture 裁剪取得源尺寸，借用调用者租约，以一次 `resize` 调整固定边框背景并保留旧帧。Runtime／Engine 根入口新增一个类值和一个擦除 options 类型，复用独立 NS1 几何及既有纹理渲染；不增加第三方依赖。
+
+独立接受的专项 CPU 为 71/71（十四项 NLB、一项独立 TXI、五十六项保留回归）；严格类型为三组 0/17/8 诊断，共二十五个实际未抑制完整元组。记录型示例为两个尺寸／两个帧、一次加载／释放、零 timer，不是原生像素验证。原四项源码拒绝及两项真实 RED 继续保留；Engine 关闭反例保持 source-only。
+
+2026-10-14 的独立评审已经接受全部九个代码验证阶段，普通测试 3079/3079、保留 F2 源码测试 160/160。真实 WebGPU 的一个主例完成三份 24×24 读回、两次捕获及一次资源退役后重放，6912 个通道零容差通过；两项 Canvas 拒绝、正向 Canvas 提交为零，adapter 身份未观察。整理后公开材料门禁、双语审阅及 0.48 推送／PR/Main 仍待完成。完整 EUI／布局、Spine R020/V020 与迁移 R008/V006 保持 OPEN；package 私有 0.0.0，宿主协议 1.0。
+
+阅读[契约](Cns/docs/九宫格位图契约.md)、[证据](Cns/docs/九宫格位图证据.md)和[原生核验指南](Cns/docs/九宫格位图原生核验指南.md)。
+
+2026-10-14 的交付后继：[PR #35](https://github.com/cnedwin/Egret_rebuild/pull/35) 已将有限 0.47.0 Spine 手动桥接合入 Main `5ae877705d76a470ec942a29cfe0212f069da6fb`，tree `60d224ec1ed6bc0824cd2f93871595809d3c21d5`，功能提交 `29e6f97d1d594efe3a49f9c530b1728a4756fe2c`。这与新 NineSlice 基线准入分别记录；旧 PENDING 截止点保留。远端状态／check run 为 0/0、汇总 pending，不构成 CI PASS。
+<!-- NLB-0.48.0-END -->
+
 <!-- F2C-0.47.0-BEGIN -->
 ## 工程预览 0.47.0 — Spine Core 手动网格桥接
 

@@ -12,11 +12,11 @@ export interface MeshCaptureState {
 // One authoritative content slot; erased imports avoid a display-class backedge.
 const states = new WeakMap<object, MeshCaptureState | undefined>();
 
-/** Registration survives clearing and terminal disposal of an authentic Mesh. */
+/** Slot registration survives cleanup; it is not display-class identity. */
 export function hasMeshState(value: unknown): boolean { return states.has(value as object); }
 
 /** Cached content conveys no active lease entitlement or live Texture authority. */
 export function readMeshState(node: DisplayObject): MeshCaptureState | undefined { return states.get(node); }
 
-/** Only Mesh2D writes this slot after its private identity and lifecycle checks. */
+/** Authentic Mesh2D/NineSliceBitmap operations publish only privately admitted content. */
 export function writeMeshState(node: DisplayObject, value: MeshCaptureState | undefined): void { states.set(node, value); }

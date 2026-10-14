@@ -1,0 +1,451 @@
+{
+  "schemaVersion": 1,
+  "kind": "NINE_SLICE_BITMAP_ACTUAL_STRICT_DIAGNOSTICS",
+  "status": "OBSERVED_FROZEN_TS7_DIAGNOSTICS",
+  "tupleFormat": [
+    "file",
+    "line",
+    "column",
+    "code",
+    "message"
+  ],
+  "compiler": {
+    "name": "typescript",
+    "version": "7.0.2",
+    "entry": "node_modules/typescript/bin/tsc",
+    "observedPlatform": "win32"
+  },
+  "inputPins": [
+    {
+      "path": "node_modules/typescript/package.json",
+      "bytes": 3087,
+      "sha256": "3722b30210616a13a3213ded11575ba6b2dbab10c32a5ef67afca8513e27017e"
+    },
+    {
+      "path": "node_modules/typescript/bin/tsc",
+      "bytes": 44,
+      "sha256": "2219f428a7e55aaf1f7ad85b9b0f0cf5078aeb76ccc9a7c6036c92d48f492ffd"
+    },
+    {
+      "path": "node_modules/typescript/lib/tsc.js",
+      "bytes": 609,
+      "sha256": "cbdfbf11c26ed00dfc073155e316a42d6d6d8a387be61006b82fa9aa93ac572e"
+    },
+    {
+      "path": "node_modules/typescript/lib/getExePath.js",
+      "bytes": 3051,
+      "sha256": "96c10fd3a18e165d7323de8e314ac8d755ad96811f9fbc304a5b3ba4e05285cc"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "bytes": 9017,
+      "sha256": "79383095fd4bb2bb4682a12f9651d9a876a01fc6dc1326d09bc0ad587db23084"
+    },
+    {
+      "path": "tsconfig.base.json",
+      "bytes": 446,
+      "sha256": "b7a31fb9f93a93e20bfdcf33c135acb45cb3a6895a8b3e7006bd85214ddc1008"
+    },
+    {
+      "path": "tests/types/tsconfig.json",
+      "bytes": 224,
+      "sha256": "e378996174db2020f9c416fb0599ea1182b3ca3265b3dc56012a688fd3252ad9"
+    },
+    {
+      "path": "tests/types/tsconfig.dom-free.json",
+      "bytes": 56,
+      "sha256": "24bc13fae1f9d98b5d2dc212c9fb4f1f926aeb956f706d8269acbd617c900b49"
+    },
+    {
+      "path": "tests/types/tsconfig.web.json",
+      "bytes": 94,
+      "sha256": "ebd9c73f69f0a3ee587bf6a07a49a33218cdea845d3a243c2df22a89fb18568d"
+    },
+    {
+      "path": "tests/types/nine-slice-bitmap-positive.ts",
+      "bytes": 2739,
+      "sha256": "d127a385b7efee3fb08594c46f8efaa802d94ffd754553fc90a499dac2e8a046"
+    },
+    {
+      "path": "tests/types/tsconfig.nine-slice-bitmap-positive.json",
+      "bytes": 290,
+      "sha256": "e6016eb386d96bb0843d6e102432c0817d67333824bf9aa511b9f40dfa6ce006"
+    },
+    {
+      "path": "tests/types/nine-slice-bitmap-negative.ts",
+      "bytes": 2340,
+      "sha256": "763690aad0d90c3b4939641156753e621510afc9b6f05c516ba80547c183bc34"
+    },
+    {
+      "path": "tests/types/tsconfig.nine-slice-bitmap-negative.json",
+      "bytes": 290,
+      "sha256": "8c92108f7c9f662ff7436550afab0ff8bea398e3ea61c3f8a001f1996a312916"
+    },
+    {
+      "path": "tests/types/nine-slice-bitmap-import-negative.ts",
+      "bytes": 1280,
+      "sha256": "b38f8a3970519a9d2dc19d3959f844930b0467b804c987d92840e042afbfe15f"
+    },
+    {
+      "path": "tests/types/tsconfig.nine-slice-bitmap-import-negative.json",
+      "bytes": 292,
+      "sha256": "733e303f279c776824c1f311af8db6f1e3978bb24b60a78dcd089a3c71d742de"
+    },
+    {
+      "path": "packages/runtime/dist/NineSliceBitmap.d.ts",
+      "bytes": 1137,
+      "sha256": "3b416fea7ed69624c1e5d3ff4ee33897f985d0bee05dcd5709be0549ed90820e"
+    },
+    {
+      "path": "packages/runtime/dist/index.d.ts",
+      "bytes": 2986,
+      "sha256": "1293ef5b07c5099629e235627099f2646c9e6b2d0c786909bd35a2d0eef4c666"
+    },
+    {
+      "path": "packages/engine/dist/index.d.ts",
+      "bytes": 3292,
+      "sha256": "ba0d66bb51b4db0f196a4c863b0b75d10f88c451d2d590dcf80b9fb0a153d196"
+    }
+  ],
+  "groups": [
+    {
+      "lane": "positive",
+      "expectedExit": 0,
+      "cases": [],
+      "tuples": [],
+      "observedExecution": {
+        "exitCode": 0,
+        "timeout": false,
+        "startedAtUtc": "2026-10-14T04:25:43.2344471Z",
+        "finishedAtUtc": "2026-10-14T04:25:43.3951175Z",
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "lane": "negative",
+      "expectedExit": 1,
+      "cases": [
+        {
+          "name": "NLB-N01",
+          "line": 11
+        },
+        {
+          "name": "NLB-N02",
+          "line": 13
+        },
+        {
+          "name": "NLB-N03",
+          "line": 15
+        },
+        {
+          "name": "NLB-N04",
+          "line": 17
+        },
+        {
+          "name": "NLB-N05",
+          "line": 19
+        },
+        {
+          "name": "NLB-N06",
+          "line": 21
+        },
+        {
+          "name": "NLB-N07",
+          "line": 23
+        },
+        {
+          "name": "NLB-N08",
+          "line": 25
+        },
+        {
+          "name": "NLB-N09",
+          "line": 27
+        },
+        {
+          "name": "NLB-N10",
+          "line": 29
+        },
+        {
+          "name": "NLB-N11",
+          "line": 31
+        },
+        {
+          "name": "NLB-N12",
+          "line": 33
+        },
+        {
+          "name": "NLB-N13",
+          "line": 35
+        },
+        {
+          "name": "NLB-N14",
+          "line": 37
+        },
+        {
+          "name": "NLB-N15",
+          "line": 39
+        },
+        {
+          "name": "NLB-N16",
+          "line": 41
+        },
+        {
+          "name": "NLB-N17",
+          "line": 43
+        }
+      ],
+      "tuples": [
+        [
+          "tests/types/nine-slice-bitmap-negative.ts",
+          11,
+          21,
+          2379,
+          "Argument of type 'AssetLease<unknown>' is not assignable to parameter of type 'AssetLease<Texture>' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.\n  The types returned by '[LEASE_VALUE](...)' are incompatible between these types.\n    Type 'unknown' is not assignable to type 'Texture'."
+        ],
+        [
+          "tests/types/nine-slice-bitmap-negative.ts",
+          13,
+          21,
+          2739,
+          "Type 'Texture' is missing the following properties from type 'AssetLease<Texture>': leaseId, resourceGeneration, value, release"
+        ],
+        [
+          "tests/types/nine-slice-bitmap-negative.ts",
+          15,
+          1,
+          2554,
+          "Expected 2 arguments, but got 1."
+        ],
+        [
+          "tests/types/nine-slice-bitmap-negative.ts",
+          17,
+          37,
+          2554,
+          "Expected 2 arguments, but got 3."
+        ],
+        [
+          "tests/types/nine-slice-bitmap-negative.ts",
+          19,
+          30,
+          2322,
+          "Type 'string' is not assignable to type 'number'."
+        ],
+        [
+          "tests/types/nine-slice-bitmap-negative.ts",
+          21,
+          28,
+          2741,
+          "Property 'insets' is missing in type '{ width: number; height: number; }' but required in type 'NineSliceBitmapOptions'."
+        ],
+        [
+          "tests/types/nine-slice-bitmap-negative.ts",
+          23,
+          53,
+          2741,
+          "Property 'bottom' is missing in type '{ left: number; top: number; right: number; }' but required in type 'NineSliceInsets2D'."
+        ],
+        [
+          "tests/types/nine-slice-bitmap-negative.ts",
+          25,
+          7,
+          2554,
+          "Expected 2 arguments, but got 1."
+        ],
+        [
+          "tests/types/nine-slice-bitmap-negative.ts",
+          27,
+          14,
+          2345,
+          "Argument of type 'string' is not assignable to parameter of type 'number'."
+        ],
+        [
+          "tests/types/nine-slice-bitmap-negative.ts",
+          29,
+          7,
+          2540,
+          "Cannot assign to 'targetWidth' because it is a read-only property."
+        ],
+        [
+          "tests/types/nine-slice-bitmap-negative.ts",
+          31,
+          7,
+          2540,
+          "Cannot assign to 'textureLease' because it is a read-only property."
+        ],
+        [
+          "tests/types/nine-slice-bitmap-negative.ts",
+          33,
+          14,
+          2540,
+          "Cannot assign to 'left' because it is a read-only property."
+        ],
+        [
+          "tests/types/nine-slice-bitmap-negative.ts",
+          35,
+          7,
+          2740,
+          "Type 'DisplayObject' is missing the following properties from type 'NineSliceBitmap': nineSliceBitmapBrand, textureLease, targetWidth, targetHeight, and 2 more."
+        ],
+        [
+          "tests/types/nine-slice-bitmap-negative.ts",
+          37,
+          7,
+          2339,
+          "Property 'setContent' does not exist on type 'NineSliceBitmap'."
+        ],
+        [
+          "tests/types/nine-slice-bitmap-negative.ts",
+          39,
+          7,
+          2339,
+          "Property 'sourceRect' does not exist on type 'NineSliceBitmap'."
+        ],
+        [
+          "tests/types/nine-slice-bitmap-negative.ts",
+          41,
+          1,
+          2584,
+          "Cannot find name 'document'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'."
+        ],
+        [
+          "tests/types/nine-slice-bitmap-negative.ts",
+          43,
+          1,
+          2591,
+          "Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig."
+        ]
+      ],
+      "observedExecution": {
+        "exitCode": 1,
+        "timeout": false,
+        "startedAtUtc": "2026-10-14T04:25:43.2496323Z",
+        "finishedAtUtc": "2026-10-14T04:25:43.4043171Z",
+        "stdout": {
+          "bytes": 2811,
+          "sha256": "8a2dcc66571a49c7cf18f15eaa0ac72da823ee0b7fad78e7915b95059d4cdd14"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "lane": "import-negative",
+      "expectedExit": 1,
+      "cases": [
+        {
+          "name": "NLB-I01",
+          "line": 4
+        },
+        {
+          "name": "NLB-I02",
+          "line": 6
+        },
+        {
+          "name": "NLB-I03",
+          "line": 8
+        },
+        {
+          "name": "NLB-I04",
+          "line": 10
+        },
+        {
+          "name": "NLB-I05",
+          "line": 12
+        },
+        {
+          "name": "NLB-I06",
+          "line": 14
+        },
+        {
+          "name": "NLB-I07",
+          "line": 16
+        },
+        {
+          "name": "NLB-I08",
+          "line": 18
+        }
+      ],
+      "tuples": [
+        [
+          "tests/types/nine-slice-bitmap-import-negative.ts",
+          4,
+          10,
+          1484,
+          "'NineSliceBitmapOptions' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled."
+        ],
+        [
+          "tests/types/nine-slice-bitmap-import-negative.ts",
+          6,
+          10,
+          1484,
+          "'NineSliceBitmapOptions' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled."
+        ],
+        [
+          "tests/types/nine-slice-bitmap-import-negative.ts",
+          8,
+          10,
+          2305,
+          "Module '\"@egret/contracts\"' has no exported member 'NineSliceBitmap'."
+        ],
+        [
+          "tests/types/nine-slice-bitmap-import-negative.ts",
+          10,
+          10,
+          2305,
+          "Module '\"@egret/engine/web\"' has no exported member 'NineSliceBitmap'."
+        ],
+        [
+          "tests/types/nine-slice-bitmap-import-negative.ts",
+          12,
+          10,
+          2305,
+          "Module '\"@egret/engine/webgpu\"' has no exported member 'NineSliceBitmap'."
+        ],
+        [
+          "tests/types/nine-slice-bitmap-import-negative.ts",
+          14,
+          10,
+          2305,
+          "Module '\"@egret/engine/scene3d\"' has no exported member 'NineSliceBitmap'."
+        ],
+        [
+          "tests/types/nine-slice-bitmap-import-negative.ts",
+          16,
+          10,
+          2305,
+          "Module '\"@egret/engine/text\"' has no exported member 'NineSliceBitmap'."
+        ],
+        [
+          "tests/types/nine-slice-bitmap-import-negative.ts",
+          18,
+          10,
+          2305,
+          "Module '\"@egret/runtime/text\"' has no exported member 'NineSliceBitmap'."
+        ]
+      ],
+      "observedExecution": {
+        "exitCode": 1,
+        "timeout": false,
+        "startedAtUtc": "2026-10-14T04:25:43.2345226Z",
+        "finishedAtUtc": "2026-10-14T04:25:43.5238161Z",
+        "stdout": {
+          "bytes": 1242,
+          "sha256": "ce34077a1a0b45233a8bcbf899d2783a20a550062a059c7485ad91482cc495be"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    }
+  ]
+}

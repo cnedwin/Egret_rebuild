@@ -2,6 +2,10 @@
 
 English | [简体中文](ACKNOWLEDGEMENTS.zh-CN.md)
 
+## NineSliceBitmap first-party reuse — 0.48.0
+
+The independently authored leaf and original pixel/diagnostic fixtures reuse Egret’s NS1 geometry, Texture, Mesh2D, AssetLease, Scope, bounds and owned-frame contracts. The native fixture extends existing first-party PNG collection mechanisms through an explicit mode and decodes no PNG. AI assisted source, tests and bilingual preparation; separate author/reviewer roles and saved tool execution qualify their recorded scopes. No competing-engine implementation or new third-party dependency is included. Existing dependency/notice credits remain applicable. Read the [contract](knowledge-base/en/docs/nine-slice-bitmap-contract.md) and [evidence](knowledge-base/en/docs/nine-slice-bitmap-evidence.md).
+
 ## 0.16.0 declaration and 3D references
 
 [jsonc-parser](https://github.com/microsoft/node-jsonc-parser/tree/v3.3.1) 3.3.1 by Microsoft Corporation supplies public-root createScanner/visit under MIT for the existing private project adapter and declaration analysis. Its existing MIT notice and dependency pin remain applicable. The RES profile/report/fixtures and CPU 3D contracts/implementation were independently authored. Founder-supplied historical RES declaration semantics informed compatibility research; exact version/module closure remains unverified and historical private source is not distributed. See [the declaration scope](knowledge-base/en/docs/legacy-res-declarations.md).

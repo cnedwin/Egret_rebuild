@@ -12,6 +12,32 @@ Years later, as times change and technology advances, many developers continue t
 
 多年以后，时代变迁，技术革新，依然有很多开发者在鼓励我们。我希望借助 AI 和社区的力量，重建这个游戏引擎。
 
+<!-- NLB-0.48.0-BEGIN -->
+## Engineering preview 0.48.0 — NineSliceBitmap fixed-border backgrounds
+
+**S102 / V053.** `NineSliceBitmap` derives source dimensions from a genuine Texture crop, borrows the caller’s lease and resizes a fixed-border background in one operation while retaining old frames. Runtime/Engine roots add one class value and one erased options type, reusing independent NS1 geometry and existing textured rendering; no third-party dependency is added.
+
+Independent focused CPU acceptance is 71/71 (fourteen NLB, one independent TXI and fifty-six retained regressions); three strict lanes produced 0/17/8 diagnostics, twenty-five complete actual unsuppressed tuples. The recording example has two sizes/two frames, one load/disposal and zero timers; it is not native pixel verification. Four original source refusals and two genuine RED observations remain; the Engine-closing counterexample stays source-only.
+
+Independent review dated 2026-10-14 accepted all nine code-verification phases, ordinary tests 3079/3079 and retained F2 source tests 160/160. One real WebGPU main case completed three 24×24 readbacks, two captures and one replay after origin retirement: 6912 channels passed at zero tolerance. Two Canvas refusals had zero positive Canvas submissions; adapter identity was unobserved. Curated public-content gates, bilingual review and 0.48 push/PR/Main remain pending. Full EUI/layout, Spine R020/V020 and migration R008/V006 remain OPEN; packages stay private 0.0.0, host protocol 1.0.
+
+Read the [contract](knowledge-base/en/docs/nine-slice-bitmap-contract.md), [evidence](knowledge-base/en/docs/nine-slice-bitmap-evidence.md) and [native verifier guide](knowledge-base/en/docs/nine-slice-bitmap-native-verifier.md).
+
+Dated 2026-10-14 delivery successor: [PR #35](https://github.com/cnedwin/Egret_rebuild/pull/35) merged the bounded 0.47.0 Spine manual bridge into Main `5ae877705d76a470ec942a29cfe0212f069da6fb`, tree `60d224ec1ed6bc0824cd2f93871595809d3c21d5`, from feature `29e6f97d1d594efe3a49f9c530b1728a4756fe2c`. This is separate from new NineSlice baseline admission; old PENDING cutoffs remain. Remote statuses/check runs 0/0 with combined pending do not establish CI PASS.
+
+## 工程预览 0.48.0 — NineSliceBitmap 固定边框背景
+
+**S102 / V053。** `NineSliceBitmap` 从真实 Texture 裁剪取得源尺寸，借用调用者租约，以一次 `resize` 调整固定边框背景并保留旧帧。Runtime／Engine 根入口新增一个类值和一个擦除 options 类型，复用独立 NS1 几何及既有纹理渲染；不增加第三方依赖。
+
+独立接受的专项 CPU 为 71/71（十四项 NLB、一项独立 TXI、五十六项保留回归）；严格类型为三组 0/17/8 诊断，共二十五个实际未抑制完整元组。记录型示例为两个尺寸／两个帧、一次加载／释放、零 timer，不是原生像素验证。原四项源码拒绝及两项真实 RED 继续保留；Engine 关闭反例保持 source-only。
+
+2026-10-14 的独立评审已经接受全部九个代码验证阶段，普通测试 3079/3079、保留 F2 源码测试 160/160。真实 WebGPU 的一个主例完成三份 24×24 读回、两次捕获及一次资源退役后重放，6912 个通道零容差通过；两项 Canvas 拒绝、正向 Canvas 提交为零，adapter 身份未观察。整理后公开材料门禁、双语审阅及 0.48 推送／PR/Main 仍待完成。完整 EUI／布局、Spine R020/V020 与迁移 R008/V006 保持 OPEN；package 私有 0.0.0，宿主协议 1.0。
+
+阅读[契约](knowledge-base/Cns/docs/九宫格位图契约.md)、[证据](knowledge-base/Cns/docs/九宫格位图证据.md)和[原生核验指南](knowledge-base/Cns/docs/九宫格位图原生核验指南.md)。
+
+2026-10-14 的交付后继：[PR #35](https://github.com/cnedwin/Egret_rebuild/pull/35) 已将有限 0.47.0 Spine 手动桥接合入 Main `5ae877705d76a470ec942a29cfe0212f069da6fb`，tree `60d224ec1ed6bc0824cd2f93871595809d3c21d5`，功能提交 `29e6f97d1d594efe3a49f9c530b1728a4756fe2c`。这与新 NineSlice 基线准入分别记录；旧 PENDING 截止点保留。远端状态／check run 为 0/0、汇总 pending，不构成 CI PASS。
+<!-- NLB-0.48.0-END -->
+
 <!-- F2C-0.47.0-BEGIN -->
 ## Engineering preview 0.47.0 — Spine Core manual mesh bridge
 
