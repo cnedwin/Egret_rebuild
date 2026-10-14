@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "revision": "0.50.0",
+  "revision": "0.51.0",
   "canonicalState": "Chinese registries; English JSON is a read-only translation",
   "evidencePolicy": "Machine data, embedded source, historical code and upstream legal originals retain their identities; paired reading versions explain them.",
   "semanticReview": {
@@ -57,8 +57,8 @@
       "zh": "ACKNOWLEDGEMENTS.zh-CN.md",
       "en": "ACKNOWLEDGEMENTS.md",
       "kind": "public_reading",
-      "enSha256": "8e92ece0260d26304c81e495a2292cb91b7a8c9e791d6d86feb5a794895ba724",
-      "zhSha256": "94f47680968087d9394d2c0db1877638eefd17f879c547ef5d7fd69a9d5db1c1"
+      "enSha256": "594b557222256ea668e5ee66b0d10a3b3ea876d91679d84c4f1c65a5d73922b7",
+      "zhSha256": "7f36c75582d9de51a47d9504fea6fdba402a78d12a92974267efaa4b57115297"
     },
     {
       "zh": "AGENTS.zh-CN.md",
@@ -141,8 +141,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "6398e0dfd1ddbafaa589c2c0513779d2f49a0c78aa862ae298f882462dd585fc",
-      "zhSha256": "777dec5a5d9dc16022414bd89b635525ce6466df378ff381bbcb39d9c861f815"
+      "enSha256": "b84a0e918bea9274347f78686303549debab91c8c37720efb009569b13776563",
+      "zhSha256": "74e5a7fcb6856dfd3bc5ff4dc062016cbac8caf9c905245d25789d640cad73ea"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -764,8 +764,8 @@
       "zh": "knowledge-base/Cns/README.md",
       "en": "knowledge-base/en/README.md",
       "kind": "public_reading",
-      "enSha256": "1fe097e26170e15f2a4336632ba0bedb375020577998c2bc79622a43ef0288c2",
-      "zhSha256": "016c9f395d04f214ceb9d9a08bcf3aa80e073477911ee77a6fefa27be1d4103a"
+      "enSha256": "295b70c13d119562ce8650c0020e2ce799bed954c03c54a6755307b68e3badae",
+      "zhSha256": "a619532d2a8f3aba8850336a52684e47108e81328b9bbdc4434de8729ffa38d0"
     },
     {
       "zh": "knowledge-base/Cns/templates/ADR决策记录.md",
@@ -799,8 +799,8 @@
       "zh": "knowledge-base/README.zh-CN.md",
       "en": "knowledge-base/README.md",
       "kind": "public_navigation",
-      "enSha256": "a2fb77f9fcbc45172317ae0865c399c91eb4fa9fd62a8b9c806e0e010c5ed42a",
-      "zhSha256": "c8f74c268d9ba6252aac6e7988863ed9d70522d3a85ab036b237371fae9f77e9"
+      "enSha256": "430f17cf87072bb56e69a5203885e996b2e69b08bf3dba9e6ce56e5da164511e",
+      "zhSha256": "35458679ef338a7d87329dfb8b1b52981423c58422fae4333d80e0e6afc4faee"
     },
     {
       "zh": "LICENSE.zh-CN.md",
@@ -848,8 +848,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "96f786a560763b1dc4a663bbaecf1a75087f41344470756af73824c79995e531",
-      "zhSha256": "5b66d3c4c7f3040c777549f03b2b518f41454e3ee6543f24968eff9616b8a07a"
+      "enSha256": "3a3d9917aeb57a80a1f3fe474b63fbf7a99d8f21de4559f5f092b136a6681bca",
+      "zhSha256": "280db0bc8459c297fd0ebae11fa3f86838d7a8dfbbd1d114f7a6fc19c479837d"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -1328,14 +1328,35 @@
       "kind": "public_reading",
       "enSha256": "a7c40e1f4188811b37482309ce64ec9d201fbfde48f8734d1ba0e6cd336ef7cd",
       "zhSha256": "a6c48dda9c96a757f6d4388e765f6364f3801dfe693cc6824876707e06c45b05"
+    },
+    {
+      "zh": "knowledge-base/Cns/docs/容器按索引插入契约.md",
+      "en": "knowledge-base/en/docs/container-add-child-at-contract.md",
+      "kind": "public_reading",
+      "enSha256": "e8ca6ac088df930f3f818d2c86de9ebec27d56c800075ee2613d22cc71e24361",
+      "zhSha256": "71eb5ce0fb9f903b564f3a61edeac8b007eb2874d4c3f5632b157b5a04d647de"
+    },
+    {
+      "zh": "knowledge-base/Cns/docs/容器按索引插入证据.md",
+      "en": "knowledge-base/en/docs/container-add-child-at-evidence.md",
+      "kind": "public_reading",
+      "enSha256": "bdc2962c4d840819a834c04cd66fa7b12b187ac87e8b8973a3d5e4af1dfb0a17",
+      "zhSha256": "fcadd1990732c1d8fc14f2029767184c94296eecbdac2c5936fe3daca08288f8"
+    },
+    {
+      "zh": "knowledge-base/Cns/docs/容器按索引插入工程计划.md",
+      "en": "knowledge-base/en/docs/container-add-child-at-implementation-plan.md",
+      "kind": "public_reading",
+      "enSha256": "85fc673c98fc9c6b5eb70515f43919780f99a1ca472212bf573c17bcd08310c5",
+      "zhSha256": "52bd7e16cdaec5003500fdfa9335f5dceea4627c95c0380a5c9d0fd5f15d32f3"
     }
   ],
   "registries": [
     {
       "source": "knowledge-base/Cns/registry/需求.json",
       "target": "knowledge-base/en/registry/requirements.json",
-      "sourceSha256": "e82c665b6d8efaf92d1f9985de37a5db86287ecc5cddd00499468c97cc810e2f",
-      "targetSha256": "6d20abdad32c2eb99ef04427fb176f115517cb746e3d640bafb433995c67f335"
+      "sourceSha256": "accc7b83ad3793f53b7b6909039ccf8e9b2fb97e8f8d74ed911b2a9fc0b88482",
+      "targetSha256": "e353b2f5a018cd774832b5a14aa14cd5a95ce28d72c57a74554c184cfc0067b6"
     },
     {
       "source": "knowledge-base/Cns/registry/决策.json",
@@ -1352,20 +1373,20 @@
     {
       "source": "knowledge-base/Cns/registry/交付.json",
       "target": "knowledge-base/en/registry/deliverables.json",
-      "sourceSha256": "a3e605ec3356eded4aa4091d921642c0c597b2f288a8d3a49747611ec9ff93c4",
-      "targetSha256": "e9914a0eff54eeb5d4b543e39e23b404f2e4b1df884bbf7fe0f90f06f279d287"
+      "sourceSha256": "cc3895208631cc05ed4475f0f21cd21b1cef38501cdf3e5463f1130745c49282",
+      "targetSha256": "63e0ff4ce5351d969a64e2c1e6214ce488928004f050561f8ab34d259d51db72"
     },
     {
       "source": "knowledge-base/Cns/registry/来源.json",
       "target": "knowledge-base/en/registry/sources.json",
-      "sourceSha256": "5c8b923daa3df9cf189c036213429645cd4b081d88ade8015029d4ae2c39b34e",
-      "targetSha256": "c3fb27a60ebeff3cec8bd46519adb7adf33b59733aaacd3323e894ca5cdd7d2e"
+      "sourceSha256": "98bb38a8f1003a7cd360a3b311cb05abb83ebdda5f6b47f3d2b0e85fe3a9f86d",
+      "targetSha256": "144e1dbf7144a8693d0b878b864b52ca3ffd4053f06f7085129397c5cd7f3081"
     },
     {
       "source": "knowledge-base/Cns/当前版本.json",
       "target": "knowledge-base/en/current-version.json",
-      "sourceSha256": "bcab99a7799647c5da007b0be95c5b75a6c9e7f7bbd50c10c00cabd91e213442",
-      "targetSha256": "6343811e4c910f1c91e564c83642f0a36d77bcc31159fa6d06279d877db38f39"
+      "sourceSha256": "5556716d1467d35ca0163fa95786fba0c534db0c97dd6b80692025a7c0596d43",
+      "targetSha256": "38ebb9894d4783771a1fe931cdd14862b8f88a7a95593ed06090ea0a8f1b170f"
     }
   ],
   "criticalComments": [
@@ -1647,7 +1668,7 @@
     },
     {
       "path": "packages/runtime/src/DisplayObjectContainer.ts",
-      "sha256": "8e58777cc2bcfb91ca484a541db93e93aaf3c71142b6b1c913016664cece3160"
+      "sha256": "3b77ccc45a6cd1d84598ed24f73df5f17cb5818acba09fa26b691324591f11be"
     },
     {
       "path": "packages/runtime/src/EgretError.ts",
@@ -1691,7 +1712,7 @@
     },
     {
       "path": "packages/runtime/src/displayTreeState.ts",
-      "sha256": "f617e693b121693c6a564655f8d285ee23106e741e7567c2d4d08835b2f5eec8"
+      "sha256": "49c01515dbc47a797a59ccb2371935daf3931fa1f47e15021717f0ae0a3a6603"
     },
     {
       "path": "packages/runtime/src/displayVisualState.ts",
@@ -1707,7 +1728,7 @@
     },
     {
       "path": "packages/runtime/src/ownership.ts",
-      "sha256": "2a71e3d75994f86ad9817dea349b3ce58344e55c9dc1e6d664a69add599a758a"
+      "sha256": "5e7ed7dc3ec77f5b122c4e5e1c690dae14b479b4cfc0687a6c101cb31fcb22e7"
     },
     {
       "path": "packages/engine/rendering/sceneFrame3D.ts",
@@ -2165,7 +2186,7 @@
     },
     {
       "path": "tools/check-types.mjs",
-      "sha256": "b73d95a6140f8a4870ee3fef5bdd4a5c14fba2a293b20fa311f24dfcf575e88a"
+      "sha256": "add2ba6161ff9af513ba8ab7f75a84b0b70f1941d41763dd1b1a1ea00c4e041b"
     },
     {
       "path": "packages/runtime/src/NineSliceGeometry2D.ts",
@@ -2297,7 +2318,7 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "sha256": "70d478df2a95d3d5bfdd56672fb153290266445242406d87d290a92dbc78edfd"
+      "sha256": "612e3f6461da003c8274fa177fae936cb68a29b0ebe4afa37b7b020f8ea7e7e1"
     },
     {
       "path": "tools/browser-png-types.mjs",
@@ -2309,11 +2330,11 @@
     },
     {
       "path": "tools/verify-browser-png.mjs",
-      "sha256": "1df941a65df61975ca8152b3c1fb0a9ce9366df45b27e31e45671bb8d10e0628"
+      "sha256": "d9cec38234286c63d77607497ca9e38c4dbc5d37e30efead144ed3ab9f0d4d89"
     },
     {
       "path": "tools/browser-png/collector.mjs",
-      "sha256": "42b092dc0ae2678f9a06f238ebdb9b5e0bb504a19ef1f844a7fa13c0668102a4"
+      "sha256": "cb6b44cb1f60d4792c89222bb9389e779c77315dc20b070b6e8a5d50fc684f46"
     },
     {
       "path": "tools/browser-png/fixture.mjs",
@@ -2321,7 +2342,7 @@
     },
     {
       "path": "tools/browser-png/file-graph.mjs",
-      "sha256": "3f5a5ca579e2679b448159e34c12b84d5a470fbd36de00688f7ea7aef5004173"
+      "sha256": "4d9b2c9dbf2a0d6f0475db4df6557d659e43400a768fd9a679927f8fcf89704e"
     },
     {
       "path": "tools/browser-png/oracle.mjs",
@@ -2329,7 +2350,7 @@
     },
     {
       "path": "tests/project-boundaries.test.mjs",
-      "sha256": "caa961a732a5b962307ae4e3874884eb517062fb60d19a4f054248f650c4bf40"
+      "sha256": "3cd137a3fe77f257062bc3da2c818adf3047ad420121446301e8c142af1acdec"
     },
     {
       "path": "knowledge-base/experiments/spine-f2-core/src/types.ts",
@@ -2397,7 +2418,7 @@
     },
     {
       "path": "knowledge-base/experiments/spine-f2-core/tests/policy-cold.mjs",
-      "sha256": "81d4bd2f34949e584f3ea892ede57fa3d022ffa98be2376ffe3e125b1c5e8fc9"
+      "sha256": "758696c0b554a18364e46995013823c8634fc658e4f106323426a4669071a136"
     },
     {
       "path": "knowledge-base/experiments/spine-f2-core/tests/resources-transaction.mjs",
@@ -2445,7 +2466,7 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "sha256": "e8fe8557c1c52553023cf2655b1048f4b1d4ad62967d9014559647dbb9976e00"
+      "sha256": "269314f4142fedc1a35b077259b0181b75817dc59c37fe7951141545a0271637"
     },
     {
       "path": "tools/sequence-playback-boundary.mjs",
@@ -2498,6 +2519,22 @@
     {
       "path": "tools/display-container-child-index-native/oracle.mjs",
       "sha256": "a7b33e33727dd1fa785b82eedeb7d4e7ca8fbbefa7d76c008393603f40e411fd"
+    },
+    {
+      "path": "tests/display-container-add-child-at-api.test.mjs",
+      "sha256": "2a9ad0248df6bfec5ff9c729e00eb9acf919f1fcd9b1e525fa12938fac0698c2"
+    },
+    {
+      "path": "tests/display-container-add-child-at.test.mjs",
+      "sha256": "b24d4584c659965677375eff5b05c8307f97d9fe896d96a528d16f505b3249bb"
+    },
+    {
+      "path": "tests/types/display-container-add-child-at-positive.ts",
+      "sha256": "d81dfd1847df82347bdfca4722695c553b9e5980aa9fd0b3a93a88d3f7b9a964"
+    },
+    {
+      "path": "tests/types/display-container-add-child-at-negative.ts",
+      "sha256": "100dfa73fa4703de6945c2634ff7d942e5fcf69b65b2e2eb51e27aa7afdee0a1"
     }
   ],
   "historicalSemanticReview": {
@@ -5653,5 +5690,114 @@
     "status": "CURRENT_SOURCE_CANDIDATE_PENDING_INDEPENDENT_SOURCE_BILINGUAL_REVIEW",
     "newReadingPairs": 3,
     "historicalPendingCutoffsPreserved": true
+  },
+  "containerChildIndexDeliveryActualSuccessor": {
+    "engineeringPreview": "0.50.0",
+    "status": "DATED_ACTUAL_DELIVERY_SUCCESSOR_HISTORICAL_CUTOFFS_RETAINED",
+    "recordedOn": "2026-10-14",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/38",
+    "mainMergeCommit": "13200c72dd51d35d12e84c6d1c81dfeaef94af53",
+    "mainTree": "c6f1a791f649c96606fb5e2a1b2a096c2a3f027b",
+    "independentDeliveryReview": {
+      "bytes": 49739,
+      "sha256": "11c3fb557c1a357aa05302ffac47d29ad1aa49ded4e7634ea06e2467cda109e0"
+    },
+    "rootDataSuccessor": {
+      "bytes": 38855,
+      "sha256": "8a0c3f151a97ed318d0ab3bbe5575b8ff30377839d370a83119d504fb99a3c28",
+      "scope": "PR_MERGE_MAIN_CURRENT_CLEAN_POINTER_PROJECTION_ONLY",
+      "addsIndependentReview": false
+    },
+    "remoteCIPassClaim": false,
+    "historicalPublicPendingCutoffsPreserved": true
+  },
+  "displayContainerAddChildAtCuration": {
+    "engineeringPreview": "0.51.0",
+    "status": "SOURCE_DRAFT_PUBLIC_BILINGUAL_REVIEW_PENDING",
+    "newReadingPairs": 3,
+    "pairInventoryRows": 186,
+    "criticalCommentInventoryRows": 285,
+    "countsAreInventoryNotQualityAcceptance": true,
+    "adoptedSourceFilesAtCutoff": 25,
+    "typeSupportSourceFilesPendingAtCutoff": 0,
+    "finalPendingPins": "PUBLIC_SOURCE_BILINGUAL_PREPUSH_HOOKS_DELIVERY_PENDING",
+    "historicalCutoffsPreserved": true,
+    "laterDefaultGateFailureSuccessor": {
+      "recordedOn": "2026-10-14",
+      "kind": "LATER_ROOT_OBSERVED_FAILED_DEFAULT_GATE_NOT_INDEPENDENT_ACCEPTANCE",
+      "exitCode": 1,
+      "timeout": false,
+      "stderrBytes": 0,
+      "finishedAtUtc": "2026-10-14T13:29:13.0103029Z",
+      "stdout": {
+        "bytes": 677068,
+        "sha256": "ac40a4244da66ad075c16660430204a466854b08c1a5fa8196c2352806446491"
+      },
+      "Core": {
+        "tests": 3113,
+        "pass": 3112,
+        "fail": 1,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "retainedFailure": "B1_S01_EMITTED_VM_LOADING_BEFORE_STARTUP",
+      "rootObservedFacilityRefusal": "unsupported executable facility",
+      "rootObservedLastEdge": "ownership.js",
+      "finalSpinePhase": "NOT_ATTEMPTED",
+      "completeNinePhasePASS": false,
+      "independentActualReview": "PENDING",
+      "diagnosis": "PENDING; possible Function.prototype captured-helper interaction is an inference, not a confirmed cause or fix",
+      "earlierFocused82AndOriginal0_10AcceptanceUnchanged": true,
+      "originalPendingDraftCutoffPreserved": true
+    },
+    "r1Cutoff": {
+      "engineeringPreview": "0.51.0",
+      "status": "SOURCE_DRAFT_PUBLIC_BILINGUAL_REVIEW_PENDING",
+      "newReadingPairs": 3,
+      "pairInventoryRows": 186,
+      "criticalCommentInventoryRows": 285,
+      "countsAreInventoryNotQualityAcceptance": true,
+      "adoptedSourceFilesAtCutoff": 9,
+      "typeSupportSourceFilesPendingAtCutoff": 8,
+      "finalPendingPins": "LATER_REVIEWED_CURATOR_REQUIRED",
+      "historicalCutoffsPreserved": true,
+      "laterDefaultGateFailureSuccessor": {
+        "recordedOn": "2026-10-14",
+        "kind": "LATER_ROOT_OBSERVED_FAILED_DEFAULT_GATE_NOT_INDEPENDENT_ACCEPTANCE",
+        "exitCode": 1,
+        "timeout": false,
+        "stderrBytes": 0,
+        "finishedAtUtc": "2026-10-14T13:29:13.0103029Z",
+        "stdout": {
+          "bytes": 677068,
+          "sha256": "ac40a4244da66ad075c16660430204a466854b08c1a5fa8196c2352806446491"
+        },
+        "Core": {
+          "tests": 3113,
+          "pass": 3112,
+          "fail": 1,
+          "cancelled": 0,
+          "skipped": 0
+        },
+        "retainedFailure": "B1_S01_EMITTED_VM_LOADING_BEFORE_STARTUP",
+        "rootObservedFacilityRefusal": "unsupported executable facility",
+        "rootObservedLastEdge": "ownership.js",
+        "finalSpinePhase": "NOT_ATTEMPTED",
+        "completeNinePhasePASS": false,
+        "independentActualReview": "PENDING",
+        "diagnosis": "PENDING; possible Function.prototype captured-helper interaction is an inference, not a confirmed cause or fix",
+        "earlierFocused82AndOriginal0_10AcceptanceUnchanged": true,
+        "originalPendingDraftCutoffPreserved": true
+      }
+    },
+    "curation": "R3_CURRENT_CODE_AND_BOUNDED_NATIVE_ACCEPTED_PUBLIC_DELIVERY_PENDING",
+    "currentCriticalRowsRefreshed": 10,
+    "nativeActualReview": {
+      "bytes": 59975,
+      "sha256": "334c304b4ad1f2b66e6beddb8f40f89b8b08b11d7b9cd0d5e41b95c5a057c370",
+      "verdict": "PASS_ACTUAL_NATIVE_INDEXED_ORDER_REPARENT_SAVED_REPLAY_CANVAS_WEBGPU_ONLY",
+      "openFindings": 0,
+      "identityOnlyNotDistributed": true
+    }
   }
 }

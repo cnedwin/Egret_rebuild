@@ -2,6 +2,12 @@
 
 English | [简体中文](ACKNOWLEDGEMENTS.zh-CN.md)
 
+<!-- ADI-0.51.0-DRAFT-ACK-BEGIN -->
+Independent 0.51.0 indexed insertion is first-party Apache-2.0 work authored from Egret specifications and familiar Container/tree/Scope/resource contracts. Original fixtures and critical English comments accompany the implementation. AI assisted source/tests/bilingual preparation; independent Source, saved-result and publication/language reviews retain separate scopes. No competing-engine source is transplanted and no third-party dependency is added. Existing license and notice credits remain applicable. This public text remains a Source draft.
+Current adopted Source identities, accepted code verification and the independently accepted bounded desktop Native successor are recorded in the dated R3 evidence. Public/source/bilingual review and delivery gates remain pending.
+
+<!-- ADI-0.51.0-DRAFT-ACK-END -->
+
 Independent 0.50 direct-child index querying reuses first-party Egret Container/tree/Scope/resource/frame contracts and original fixtures. AI assisted source/tests/bilingual preparation with separate source and saved-result review. No new third-party dependency is introduced; existing license and notice credits remain applicable.
 
 Independent 0.49 batch detachment reuses first-party Egret Container/tree/Scope/resource/frame contracts and original fixtures. AI assisted source/tests/bilingual preparation with separate source and saved-result review. No new third-party dependency is introduced; existing license and notice credits remain applicable.

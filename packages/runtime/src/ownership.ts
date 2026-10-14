@@ -1,6 +1,8 @@
 import type { Diagnostic } from "@egret/contracts";
 import { EgretError } from "./EgretError.js";
-import { assertLive, childrenOf, isDisplayNode } from "./displayTreeState.js";
+import { assertLive, captureChildInsertion, childrenOf, isDisplayNode, prepareCapturedInsertionTree, publishCapturedInsertionTree, validateCapturedInsertionNode, validateCapturedInsertionRoots, validateCapturedInsertionSource } from "./displayTreeState.js";
+import type { CapturedInsertionNode, PreparedInsertionTree } from "./displayTreeState.js";
+import type { DisplayObjectContainer } from "./DisplayObjectContainer.js";
 import type { Scope } from './Scope.js';
 import type { DisplayObject } from './DisplayObject.js';
 import type { AssetGroupOperations } from './assetManagerOwnerState.js';
@@ -86,4 +88,90 @@ export function commitBinding(values: readonly object[], engine: EngineContext):
 export function bind(value: object, engine: EngineContext): void {
   preflightBinding(value, engine);
   commitBinding(validateBinding(value, engine), engine);
+}
+
+
+// The new finite coordinator owns captured affinity reads/writes, separate from legacy bind.
+const readInsertionEngine = engines.get.bind(engines);
+const writeInsertionEngine = engines.set.bind(engines);
+const InsertionBindingSet = Set;
+const insertionBindingHas = Set.prototype.has.call.bind(Set.prototype.has) as (set: Set<unknown>, value: unknown) => boolean;
+const insertionBindingAdd = Set.prototype.add.call.bind(Set.prototype.add) as (set: Set<unknown>, value: unknown) => Set<unknown>;
+
+interface CapturedInsertionAffinity {
+  readonly record: CapturedInsertionNode;
+  readonly engine: EngineContext | undefined;
+}
+
+/** This plan stays inside runtime-private modules and is consumed once by addChildAt. */
+export interface PreparedChildInsertion {
+  readonly tree: PreparedInsertionTree;
+  readonly receiverAffinities: readonly CapturedInsertionAffinity[];
+  readonly incomingAffinities: readonly CapturedInsertionAffinity[];
+  readonly engine: EngineContext | undefined;
+  readonly stagedBindings: readonly DisplayObject[];
+}
+
+function captureInsertionAffinities(records: readonly CapturedInsertionNode[]): CapturedInsertionAffinity[] {
+  const affinities: CapturedInsertionAffinity[] = [];
+  for (let index = 0; index < records.length; index++) {
+    const record = records[index]!;
+    affinities[index] = { record, engine: readInsertionEngine(record.node as object) };
+  }
+  return affinities;
+}
+
+function firstInsertionEngine(records: readonly CapturedInsertionAffinity[]): EngineContext | undefined {
+  for (let index = 0; index < records.length; index++) {
+    const engine = records[index]!.engine;
+    if (engine !== undefined) return engine;
+  }
+  return undefined;
+}
+
+function validateInsertionAffinities(records: readonly CapturedInsertionAffinity[], engine: EngineContext | undefined): void {
+  for (let index = 0; index < records.length; index++) {
+    const current = records[index]!;
+    validateCapturedInsertionNode(current.record);
+    if (current.engine !== undefined && current.engine !== engine) throw new EgretError("ENGINE_MISMATCH");
+  }
+}
+
+/** One post-last-hook capture supplies Engine selection, validation and all preparation. */
+export function prepareChildInsertion(receiver: DisplayObjectContainer, child: DisplayObject, index: number): PreparedChildInsertion {
+  const capture = captureChildInsertion(receiver, child);
+  const receiverAffinities = captureInsertionAffinities(capture.receiverTree);
+  const incomingAffinities = captureInsertionAffinities(capture.incomingTree);
+  const engine = firstInsertionEngine(receiverAffinities) ?? firstInsertionEngine(incomingAffinities);
+  engine?.assertOpen();
+  validateCapturedInsertionRoots(capture, index);
+  // Both complete trees are always validated, including a wholly Engine-free capture.
+  validateInsertionAffinities(receiverAffinities, engine);
+  validateInsertionAffinities(incomingAffinities, engine);
+  validateCapturedInsertionSource(capture);
+  const tree = prepareCapturedInsertionTree(capture, index);
+  const stagedBindings: DisplayObject[] = [];
+  const seen = new InsertionBindingSet<unknown>();
+  if (engine !== undefined) {
+    for (let treeIndex = 0; treeIndex < 2; treeIndex++) {
+      const records = treeIndex === 0 ? receiverAffinities : incomingAffinities;
+      for (let position = 0; position < records.length; position++) {
+        const current = records[position]!, node = current.record.node;
+        if (current.engine === undefined && node !== undefined && !insertionBindingHas(seen, node)) {
+          insertionBindingAdd(seen, node);
+          stagedBindings[stagedBindings.length] = node;
+        }
+      }
+    }
+  }
+  // Every explicit list, value and plan allocation finishes before the first outer write.
+  return { tree, receiverAffinities, incomingAffinities, engine, stagedBindings };
+}
+
+/** Straight-line commit has no hook, validation, explicit allocation or ownership write. */
+export function publishPreparedChildInsertion(plan: PreparedChildInsertion): void {
+  if (plan.engine !== undefined) {
+    for (let index = 0; index < plan.stagedBindings.length; index++) writeInsertionEngine(plan.stagedBindings[index]!, plan.engine);
+  }
+  publishCapturedInsertionTree(plan.tree);
 }

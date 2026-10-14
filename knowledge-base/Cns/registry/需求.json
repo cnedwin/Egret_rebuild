@@ -33,7 +33,8 @@
         "S094",
         "S102",
         "S103",
-        "S104"
+        "S104",
+        "S105"
       ],
       "deliveryIds": [
         "V001",
@@ -51,7 +52,8 @@
         "V045",
         "V053",
         "V054",
-        "V055"
+        "V055",
+        "V056"
       ],
       "decisionIds": [
         "D002",
@@ -125,7 +127,8 @@
         "S101",
         "S102",
         "S103",
-        "S104"
+        "S104",
+        "S105"
       ],
       "deliveryIds": [
         "V002",
@@ -141,7 +144,8 @@
         "V052",
         "V053",
         "V054",
-        "V055"
+        "V055",
+        "V056"
       ],
       "decisionIds": [
         "D002",
@@ -310,7 +314,8 @@
       "status": "confirmed",
       "sourceIds": [
         "S001",
-        "S104"
+        "S104",
+        "S105"
       ],
       "deliveryIds": [
         "V001",
@@ -322,7 +327,8 @@
         "V026",
         "V027",
         "V028",
-        "V055"
+        "V055",
+        "V056"
       ],
       "decisionIds": [
         "D012"
@@ -343,7 +349,8 @@
         "S101",
         "S102",
         "S103",
-        "S104"
+        "S104",
+        "S105"
       ],
       "deliveryIds": [
         "V001",
@@ -360,7 +367,8 @@
         "V052",
         "V053",
         "V054",
-        "V055"
+        "V055",
+        "V056"
       ],
       "decisionIds": [
         "D002",
@@ -448,7 +456,8 @@
         "S101",
         "S102",
         "S103",
-        "S104"
+        "S104",
+        "S105"
       ],
       "deliveryIds": [
         "V001",
@@ -468,7 +477,8 @@
         "V052",
         "V053",
         "V054",
-        "V055"
+        "V055",
+        "V056"
       ],
       "decisionIds": [
         "D001",
@@ -503,7 +513,8 @@
         "S101",
         "S102",
         "S103",
-        "S104"
+        "S104",
+        "S105"
       ],
       "deliveryIds": [
         "V001",
@@ -527,7 +538,8 @@
         "V052",
         "V053",
         "V054",
-        "V055"
+        "V055",
+        "V056"
       ],
       "decisionIds": [
         "D016"
@@ -603,7 +615,8 @@
         "S101",
         "S102",
         "S103",
-        "S104"
+        "S104",
+        "S105"
       ],
       "deliveryIds": [
         "V007",
@@ -619,7 +632,8 @@
         "V052",
         "V053",
         "V054",
-        "V055"
+        "V055",
+        "V056"
       ],
       "decisionIds": [],
       "doc": "Cns/docs/双语文档与推送前检查.md"
@@ -705,14 +719,16 @@
         "S101",
         "S102",
         "S103",
-        "S104"
+        "S104",
+        "S105"
       ],
       "deliveryIds": [
         "V050",
         "V052",
         "V053",
         "V054",
-        "V055"
+        "V055",
+        "V056"
       ],
       "decisionIds": [],
       "doc": "Cns/docs/仓库路径身份与换行规范.md",
@@ -1629,5 +1645,21 @@
       "R021"
     ],
     "scope": "BOUNDED_ADAPTER_CONTRIBUTION_NOT_FULL_REQUIREMENT_ACCEPTANCE"
+  },
+  "displayContainerAddChildAtDraft": {
+    "engineeringPreview": "0.51.0",
+    "sourceId": "S105",
+    "deliverableId": "V056",
+    "status": "DRAFT_SOURCE_PREVIEW_CURRENT_CODE_AND_BOUNDED_NATIVE_ACCEPTED_PUBLIC_DELIVERY_PENDING",
+    "acceptanceScope": "CURRENT_CODE_AND_BOUNDED_DESKTOP_NATIVE_ONLY",
+    "historicalRequirementsUnchanged": true,
+    "r1Cutoff": {
+      "engineeringPreview": "0.51.0",
+      "sourceId": "S105",
+      "deliverableId": "V056",
+      "status": "DRAFT_SOURCE_PREVIEW_BOUNDED_PRODUCT_BUILD_CPU_ORIGINAL_TYPES_ACCEPTED_OTHER_GATES_PENDING",
+      "acceptanceScope": "FOCUSED_PRODUCT_CPU_ORIGINAL_TYPES_ONLY",
+      "historicalRequirementsUnchanged": true
+    }
   }
 }

@@ -1626,6 +1626,48 @@
       "action": "new-first-party-pair",
       "currentZhSha256": "540a74c7c952f854e852c02d6d476da0cd7d3439b27b79e3edad8f20726fff15",
       "currentEnSha256": "e7c93cbe9b52bf737773fec797848b4617b151363be8c343877d9e181d536539"
+    },
+    {
+      "newEn": "knowledge-base/en/docs/container-add-child-at-contract.md",
+      "newZh": "knowledge-base/Cns/docs/容器按索引插入契约.md",
+      "kind": "public_reading",
+      "action": "add-current-pair",
+      "currentEnSha256": "e8ca6ac088df930f3f818d2c86de9ebec27d56c800075ee2613d22cc71e24361",
+      "currentZhSha256": "71eb5ce0fb9f903b564f3a61edeac8b007eb2874d4c3f5632b157b5a04d647de",
+      "engineeringPreview": "0.51.0",
+      "status": "SOURCE_DRAFT_REVIEW_PENDING",
+      "r1ReadingPins": {
+        "enSha256": "412a21a998bd641dc6006698206a5c40fc3fc7b5c3ed77b0f89abd859699e801",
+        "zhSha256": "8695ebf81b28e78119973bd1b250adadfbba597532dc2c256d92d394f05f4e54"
+      }
+    },
+    {
+      "newEn": "knowledge-base/en/docs/container-add-child-at-evidence.md",
+      "newZh": "knowledge-base/Cns/docs/容器按索引插入证据.md",
+      "kind": "public_reading",
+      "action": "add-current-pair",
+      "currentEnSha256": "bdc2962c4d840819a834c04cd66fa7b12b187ac87e8b8973a3d5e4af1dfb0a17",
+      "currentZhSha256": "fcadd1990732c1d8fc14f2029767184c94296eecbdac2c5936fe3daca08288f8",
+      "engineeringPreview": "0.51.0",
+      "status": "SOURCE_DRAFT_REVIEW_PENDING",
+      "r1ReadingPins": {
+        "enSha256": "7c3e1d0c63e25024e543708bbdd6173e2d8b2c93a3af8e7fbd05d584ea2f1169",
+        "zhSha256": "05a55ae3f032f9763e0d8aaf9d272de03d4fa5b468b8e26bab99ab069e41c101"
+      }
+    },
+    {
+      "newEn": "knowledge-base/en/docs/container-add-child-at-implementation-plan.md",
+      "newZh": "knowledge-base/Cns/docs/容器按索引插入工程计划.md",
+      "kind": "public_reading",
+      "action": "add-current-pair",
+      "currentEnSha256": "85fc673c98fc9c6b5eb70515f43919780f99a1ca472212bf573c17bcd08310c5",
+      "currentZhSha256": "52bd7e16cdaec5003500fdfa9335f5dceea4627c95c0380a5c9d0fd5f15d32f3",
+      "engineeringPreview": "0.51.0",
+      "status": "SOURCE_DRAFT_REVIEW_PENDING",
+      "r1ReadingPins": {
+        "enSha256": "8c785289d6a4513b6bf89ebed81a606fe352b202cdd50157a423c347554816fa",
+        "zhSha256": "e7ecfac10f80aec20a8220242849482a66a257e169fe457ac7f2d66081b5dbda"
+      }
     }
   ],
   "registries": [
@@ -1992,5 +2034,18 @@
     "cutoff": "2026-10-14",
     "scope": "FOUR_CURRENT_PAIRED_FIRST_PARTY_READING_EDITIONS_ONLY",
     "historicalRowsPreserved": true
+  },
+  "displayContainerAddChildAtDraft": {
+    "engineeringPreview": "0.51.0",
+    "newReadingPairs": 3,
+    "status": "SOURCE_DRAFT_REVIEW_PENDING",
+    "historicalRowsPreserved": true,
+    "r1Cutoff": {
+      "engineeringPreview": "0.51.0",
+      "newReadingPairs": 3,
+      "status": "SOURCE_DRAFT_REVIEW_PENDING",
+      "historicalRowsPreserved": true
+    },
+    "curation": "R3_CURRENT_CODE_AND_BOUNDED_NATIVE_ACCEPTED_PUBLIC_DELIVERY_PENDING"
   }
 }

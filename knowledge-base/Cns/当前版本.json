@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "version": "0.50.0",
+  "version": "0.51.0",
   "updatedAt": "2026-10-14",
-  "title": "工程预览 0.50.0 — 查询直接子节点当前索引",
-  "stage": "BOUNDED_PRODUCT_BUILD_CPU_TYPES_CURRENT_POLICY_AND_NATIVE_ACCEPTED_PUBLIC_SOURCE_REVIEW_PREPUSH_DELIVERY_PENDING",
-  "publication": "development_preview",
+  "title": "工程预览 0.51.0 — 按索引插入子节点 · 源码草稿",
+  "stage": "DRAFT_SOURCE_PREVIEW_CURRENT_CODE_AND_BOUNDED_NATIVE_ACCEPTED_PUBLIC_DELIVERY_PENDING",
+  "publication": "source_draft_development_preview",
   "registries": {
     "requirements": "Cns/registry/需求.json",
     "decisions": "Cns/registry/决策.json",
@@ -95,7 +95,10 @@
     "displayContainerRemoveChildrenNativeVerifier": "Cns/docs/容器清空子节点原生核验指南.md",
     "displayContainerChildIndexContract": "Cns/docs/容器子节点索引契约.md",
     "displayContainerChildIndexEvidence": "Cns/docs/容器子节点索引证据.md",
-    "displayContainerChildIndexImplementationPlan": "Cns/docs/容器子节点索引工程计划.md"
+    "displayContainerChildIndexImplementationPlan": "Cns/docs/容器子节点索引工程计划.md",
+    "containerAddChildAtContract": "Cns/docs/容器按索引插入契约.md",
+    "containerAddChildAtEvidence": "Cns/docs/容器按索引插入证据.md",
+    "containerAddChildAtPlan": "Cns/docs/容器按索引插入工程计划.md"
   },
   "architectureContractProbesRun": true,
   "browserApiPixelProbesRun": true,
@@ -5280,6 +5283,1260 @@
       "sha256": "f81ec27fdf1d0bf5c9fe5c120eecf7bc6049aab47056b1a61531c29f824f1d34",
       "verdict": "PASS_ACTUAL_CURRENT_CODE_AND_POLICY_GATES_ONLY",
       "openFindings": 0
+    }
+  },
+  "containerChildIndexDeliveryActualSuccessor": {
+    "engineeringPreview": "0.50.0",
+    "status": "DATED_ACTUAL_DELIVERY_SUCCESSOR_HISTORICAL_CUTOFFS_RETAINED",
+    "recordedOn": "2026-10-14",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/38",
+    "mainMergeCommit": "13200c72dd51d35d12e84c6d1c81dfeaef94af53",
+    "mainTree": "c6f1a791f649c96606fb5e2a1b2a096c2a3f027b",
+    "independentDeliveryReview": {
+      "bytes": 49739,
+      "sha256": "11c3fb557c1a357aa05302ffac47d29ad1aa49ded4e7634ea06e2467cda109e0"
+    },
+    "rootDataSuccessor": {
+      "bytes": 38855,
+      "sha256": "8a0c3f151a97ed318d0ab3bbe5575b8ff30377839d370a83119d504fb99a3c28",
+      "scope": "PR_MERGE_MAIN_CURRENT_CLEAN_POINTER_PROJECTION_ONLY",
+      "addsIndependentReview": false
+    },
+    "remoteCIPassClaim": false,
+    "historicalPublicPendingCutoffsPreserved": true
+  },
+  "displayContainerAddChildAtWorkPackage": {
+    "engineeringPreview": "0.51.0",
+    "sourceId": "S105",
+    "deliverableId": "V056",
+    "curationCutoff": "2026-10-14",
+    "draftStatus": "DRAFT_SOURCE_PREVIEW_CURRENT_CODE_AND_BOUNDED_NATIVE_ACCEPTED_PUBLIC_DELIVERY_PENDING",
+    "productSourceReview": {
+      "bytes": 56762,
+      "sha256": "1e96e48155341fcbd587e181681994054f02ac826358cb732c2b4ddf1c7166bf",
+      "verdict": "PASS_SOURCE_CONTAINER_ADD_CHILD_AT_THREE_RUNTIME_FILES_ONLY",
+      "openFindings": 0,
+      "identityOnlyNotDistributed": true
+    },
+    "coreTypesActualReview": {
+      "bytes": 78406,
+      "sha256": "60e062bb991095866f0d84dc720bf007787ff4b0091105bd5a29a9a5461d20d8",
+      "verdict": "PASS_ACTUAL_CURRENT_FOCUSED_CPU_AND_ORIGINAL_STRICT_TYPES_ONLY",
+      "openFindings": 0,
+      "identityOnlyNotDistributed": true
+    },
+    "productSourceFiles": 3,
+    "builtJSAndDTSFiles": 6,
+    "buildExitCode": 0,
+    "focusedCPU": {
+      "tests": 82,
+      "pass": 82,
+      "new": 22,
+      "retained": 60,
+      "API": 1,
+      "behavior": 21,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "fullRepositorySuite": false
+    },
+    "originalStrictTypes": {
+      "compiler": "7.0.2",
+      "positiveExitCode": 0,
+      "positiveDiagnostics": 0,
+      "negativeExitCode": 1,
+      "completeActualUnsuppressedTuples": 10,
+      "negativeStdout": {
+        "bytes": 1522,
+        "sha256": "496a62ee16eb4028b6d928b013fc2c197409b08b1f1bda5860092f40356a69d1"
+      },
+      "integratedDriverActual": "INDEPENDENT_ACCEPTED_STANDALONE_AND_CURRENT_FULL_CODE_PHASE"
+    },
+    "genuineNamedRED": {
+      "marker": "DISPLAY_CONTAINER_ADD_CHILD_AT_REQUIRED",
+      "sourceLine": 49,
+      "sourceColumn": 10,
+      "APIExitCode": 1,
+      "oldOperationsAndCompleteCleanupBeforeMarker": true
+    },
+    "typeSupport": {
+      "sourceFiles": 8,
+      "independentSourceReview": "ACCEPTED",
+      "adoption": "ROOT_ADOPTED_REVIEWED_SOURCE",
+      "actualStandaloneAndFullDriver": "INDEPENDENT_ACCEPTED_CURRENT_CODE_SCOPE",
+      "currentInputRows": 73,
+      "standardLibraryRows": 57,
+      "inventoryFactOnly": true,
+      "review": {
+        "bytes": 256592,
+        "sha256": "7c82f330d48ac42ce2d46353568a51d514a217f90a2e54832de75c4ec8fc5b61",
+        "verdict": "PASS_SOURCE_ADI_STRICT_DRIVER_AND_EIGHT_SUPPORT_FILES_ONLY",
+        "openFindings": 0,
+        "identityOnlyNotDistributed": true
+      }
+    },
+    "sourceHistory": {
+      "initialPrivateGraphCountAssertion": 498,
+      "actualGraphRows": 489,
+      "changedRows": 9,
+      "unchangedRows": 480,
+      "initialToolFailureAndFourPartialOutputsPreserved": true
+    },
+    "native": {
+      "R1Source": "NEEDS_REVISION",
+      "duplicateLexicalFinding": 1,
+      "offsetObservations": 4,
+      "R1IsNotActualPixelExecution": true,
+      "R2NarrowSourceRepairAndPeerReview": "INDEPENDENT_SOURCE_ACCEPTED",
+      "actual": "INDEPENDENT_ACCEPTED_DESKTOP_OPAQUE_CANVAS_WEBGPU_ONLY",
+      "plannedOnly": {
+        "backends": 2,
+        "submissionsPerBackend": 5,
+        "readbacks": 10,
+        "channels": 23040
+      },
+      "actualCounts": {
+        "backends": [
+          "canvas",
+          "webgpu"
+        ],
+        "stepsPerBackend": [
+          "N1",
+          "N2",
+          "N3",
+          "N4",
+          "N5"
+        ],
+        "renderedSubmissions": 10,
+        "completeRawReadbacks": 10,
+        "newCaptures": 8,
+        "savedReplays": 2,
+        "pixelsCompared": 5760,
+        "channelsCompared": 23040,
+        "positiveCanvasSubmissions": 5,
+        "pixelTolerance": 0,
+        "mismatchedPixels": 0,
+        "mismatchedChannels": 0
+      },
+      "sourceReview": {
+        "bytes": 6205,
+        "sha256": "56e7ce18f45ed46c8d0dc41c2c981d20b2806ac0f1f8f6e57bb315a2b29aaa2e",
+        "verdict": "PASS_SOURCE_R2_FINITE_REPAIR",
+        "openFindings": 0,
+        "identityOnlyNotDistributed": true
+      },
+      "graphAdmission": "SOURCE_QUALIFIED_PREPARATION_AND_SAVED_ACTUAL_ACCEPTED",
+      "parseOnlyJSChecks": {
+        "files": 5,
+        "exitCodes": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "qualifiesNativeExecution": false
+      },
+      "actualReview": {
+        "bytes": 59975,
+        "sha256": "334c304b4ad1f2b66e6beddb8f40f89b8b08b11d7b9cd0d5e41b95c5a057c370",
+        "verdict": "PASS_ACTUAL_NATIVE_INDEXED_ORDER_REPARENT_SAVED_REPLAY_CANVAS_WEBGPU_ONLY",
+        "openFindings": 0,
+        "identityOnlyNotDistributed": true
+      },
+      "rawRGBAFiles": [
+        {
+          "artifactKey": "native-browser-r1/C1-baseline.rgba",
+          "bytes": 2304,
+          "sha256": "69f7e64f2763f6c88b577ae961dfddee86ec608d6035f99f3e82d1353c70ad4a"
+        },
+        {
+          "artifactKey": "native-browser-r1/C1-wrong-index.rgba",
+          "bytes": 2304,
+          "sha256": "017fbf89b2052f3a724369041826203bec8abe6f0da4bdc4b613c2a6cc469a54"
+        },
+        {
+          "artifactKey": "native-browser-r1/canvas-N1.rgba",
+          "bytes": 2304,
+          "sha256": "69f7e64f2763f6c88b577ae961dfddee86ec608d6035f99f3e82d1353c70ad4a"
+        },
+        {
+          "artifactKey": "native-browser-r1/canvas-N2.rgba",
+          "bytes": 2304,
+          "sha256": "1bc87c7e2e73a5e4bcb75ff785e23a71fa6e723f3d8e34fcb8995e6e72688dda"
+        },
+        {
+          "artifactKey": "native-browser-r1/canvas-N3.rgba",
+          "bytes": 2304,
+          "sha256": "017fbf89b2052f3a724369041826203bec8abe6f0da4bdc4b613c2a6cc469a54"
+        },
+        {
+          "artifactKey": "native-browser-r1/canvas-N4.rgba",
+          "bytes": 2304,
+          "sha256": "6766ef77ce5553d69035b201f8000b8884181f7b0e000a848cd8c4442ddccc41"
+        },
+        {
+          "artifactKey": "native-browser-r1/canvas-N5.rgba",
+          "bytes": 2304,
+          "sha256": "69f7e64f2763f6c88b577ae961dfddee86ec608d6035f99f3e82d1353c70ad4a"
+        },
+        {
+          "artifactKey": "native-browser-r1/webgpu-N1.rgba",
+          "bytes": 2304,
+          "sha256": "69f7e64f2763f6c88b577ae961dfddee86ec608d6035f99f3e82d1353c70ad4a"
+        },
+        {
+          "artifactKey": "native-browser-r1/webgpu-N2.rgba",
+          "bytes": 2304,
+          "sha256": "1bc87c7e2e73a5e4bcb75ff785e23a71fa6e723f3d8e34fcb8995e6e72688dda"
+        },
+        {
+          "artifactKey": "native-browser-r1/webgpu-N3.rgba",
+          "bytes": 2304,
+          "sha256": "017fbf89b2052f3a724369041826203bec8abe6f0da4bdc4b613c2a6cc469a54"
+        },
+        {
+          "artifactKey": "native-browser-r1/webgpu-N4.rgba",
+          "bytes": 2304,
+          "sha256": "6766ef77ce5553d69035b201f8000b8884181f7b0e000a848cd8c4442ddccc41"
+        },
+        {
+          "artifactKey": "native-browser-r1/webgpu-N5.rgba",
+          "bytes": 2304,
+          "sha256": "69f7e64f2763f6c88b577ae961dfddee86ec608d6035f99f3e82d1353c70ad4a"
+        }
+      ],
+      "separateCanvasControl": {
+        "id": "C1",
+        "freshBaseline": true,
+        "baselineRawEqualsMainN1": true,
+        "additionalSubmissions": 2,
+        "additionalReadbacks": 2,
+        "mainCredit": 0,
+        "mismatchedPixels": 64,
+        "mismatchedChannels": 128
+      },
+      "savedPNGFiles": 0
+    },
+    "currentNinePhaseVerification": "INDEPENDENT_ACCEPTED_CURRENT_NINE_CODE_PHASES_ONLY",
+    "currentFullCoreCount": 3113,
+    "policyAcceptance": "CURRENT_CODE_AND_SOURCE_QUALIFIED_NATIVE_ADMISSION_ACCEPTED",
+    "publicSourceBilingualReview": "PENDING",
+    "fullPrepush": "PENDING",
+    "mandatoryHooks": "PENDING",
+    "newGitDelivery": "PENDING",
+    "remoteCIPassClaim": false,
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "EUILayout": "OPEN",
+    "advanced3D": "OPEN",
+    "AI": "OPEN",
+    "phonesPlatformsPerformance": "UNVERIFIED",
+    "packageVersion": "0.0.0",
+    "packagePrivate": true,
+    "hostProtocol": "1.0",
+    "newThirdPartyDependency": false,
+    "historicalCutoffsPreserved": true,
+    "laterDefaultGateFailureSuccessor": {
+      "recordedOn": "2026-10-14",
+      "kind": "LATER_ROOT_OBSERVED_FAILED_DEFAULT_GATE_NOT_INDEPENDENT_ACCEPTANCE",
+      "exitCode": 1,
+      "timeout": false,
+      "stderrBytes": 0,
+      "finishedAtUtc": "2026-10-14T13:29:13.0103029Z",
+      "stdout": {
+        "bytes": 677068,
+        "sha256": "ac40a4244da66ad075c16660430204a466854b08c1a5fa8196c2352806446491"
+      },
+      "Core": {
+        "tests": 3113,
+        "pass": 3112,
+        "fail": 1,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "retainedFailure": "B1_S01_EMITTED_VM_LOADING_BEFORE_STARTUP",
+      "rootObservedFacilityRefusal": "unsupported executable facility",
+      "rootObservedLastEdge": "ownership.js",
+      "finalSpinePhase": "NOT_ATTEMPTED",
+      "completeNinePhasePASS": false,
+      "independentActualReview": "PENDING",
+      "diagnosis": "PENDING; possible Function.prototype captured-helper interaction is an inference, not a confirmed cause or fix",
+      "earlierFocused82AndOriginal0_10AcceptanceUnchanged": true,
+      "originalPendingDraftCutoffPreserved": true
+    },
+    "repairClosureSuccessor": {
+      "recordedOn": "2026-10-14",
+      "kind": "INDEPENDENT_ACCEPTED_EQUIVALENT_CAPTURE_REPAIR_SUCCESSOR",
+      "sourceReview": {
+        "bytes": 11600,
+        "sha256": "3d47db4bb265c9b6ee7a94aacca2a94402d274f817e8aedd4209d33477ba4540",
+        "verdict": "PASS_SOURCE_CAPTURED_SET_NATIVE_OPERATION_EQUIVALENCE_ONLY",
+        "openFindings": 0,
+        "identityOnlyNotDistributed": true
+      },
+      "actualReview": {
+        "bytes": 66271,
+        "sha256": "feec92e16b762659755c075d5cece8d0a8c8b2c5da1c877330903a744d891a3c",
+        "verdict": "PASS_ACTUAL_CURRENT_REPAIR_BUILD_82CPU_13B1_CONTROLS_ONLY",
+        "openFindings": 0,
+        "identityOnlyNotDistributed": true
+      },
+      "supportSourceReview": {
+        "bytes": 2671,
+        "sha256": "b33e795accd394f20a1366f25de0613c1d4c09e68a4790575afb7cd7e083e909",
+        "verdict": "PASS_SOURCE_TWO_FOUR_ROW_IDENTITY_REFRESHES_ONLY",
+        "openFindings": 0,
+        "identityOnlyNotDistributed": true
+      },
+      "failureCause": "The unchanged retained B1 lexical guard rejects the bare Function identifier while traversing the ownership emission before linking/evaluation/startup; displayTreeState contained the same spelling.",
+      "fix": "Four captured Set helper expressions use Set.prototype.has.call.bind(Set.prototype.has) and the add counterpart, preserving the captured native dispatch under the same trusted intrinsic boundary.",
+      "sourceFiles": 2,
+      "expressionSpans": 4,
+      "guardTestPolicyUnchanged": true,
+      "currentBuildExitCode": 0,
+      "focusedCPU": {
+        "tests": 82,
+        "pass": 82,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "new": 22,
+        "retained": 60
+      },
+      "B1": {
+        "wrapper": {
+          "tests": 2,
+          "suites": 0,
+          "pass": 2,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        "attempts": 13,
+        "slotStatus": "PASSED",
+        "all13OriginalChildrenPASSED": true,
+        "allStartedAndClosedWithExit0": true
+      },
+      "originalFailureIsStillFailed": true,
+      "currentProductPins": [
+        {
+          "path": "packages/runtime/src/DisplayObjectContainer.ts",
+          "bytes": 8088,
+          "sha256": "3b77ccc45a6cd1d84598ed24f73df5f17cb5818acba09fa26b691324591f11be"
+        },
+        {
+          "path": "packages/runtime/src/displayTreeState.ts",
+          "bytes": 16961,
+          "sha256": "49c01515dbc47a797a59ccb2371935daf3931fa1f47e15021717f0ae0a3a6603"
+        },
+        {
+          "path": "packages/runtime/src/ownership.ts",
+          "bytes": 8348,
+          "sha256": "5e7ed7dc3ec77f5b122c4e5e1c690dae14b479b4cfc0687a6c101cb31fcb22e7"
+        }
+      ],
+      "currentEmissionPins": [
+        {
+          "path": "packages/runtime/dist/DisplayObjectContainer.js",
+          "bytes": 8630,
+          "sha256": "f379a1da5a940710864a92b00349aa6d11b1de2b580b06f8f736c8131321a673"
+        },
+        {
+          "path": "packages/runtime/dist/DisplayObjectContainer.d.ts",
+          "bytes": 1398,
+          "sha256": "25efac66478e4d27b2499fc8e235df14b7c58b654b9a437c5e38ec9e6683e1a8"
+        },
+        {
+          "path": "packages/runtime/dist/displayTreeState.js",
+          "bytes": 14361,
+          "sha256": "38326617da524e14a0f317efc7b5681fb93956488547f259f6810584d6751f9a"
+        },
+        {
+          "path": "packages/runtime/dist/displayTreeState.d.ts",
+          "bytes": 5304,
+          "sha256": "687b4fd56cc46ab3ec170179496291e1c1c1f1e1a56f689ffe692c65210c82fd"
+        },
+        {
+          "path": "packages/runtime/dist/ownership.js",
+          "bytes": 6389,
+          "sha256": "edddc009cb0ef968341666cf2558fed8a3cfcf6cf16c100a6ff744bb894af490"
+        },
+        {
+          "path": "packages/runtime/dist/ownership.d.ts",
+          "bytes": 3102,
+          "sha256": "798e0ad10e1a414ef64a18c52cdefac359ae459ae09e2a99e504d5f8e5caf33b"
+        }
+      ]
+    },
+    "completeCodeSuccessor": {
+      "recordedOn": "2026-10-14",
+      "reviewedAtUtc": "2026-10-14T14:20:44.443Z",
+      "kind": "INDEPENDENT_ACCEPTED_CURRENT_NINE_CODE_PHASE_SUCCESSOR",
+      "review": {
+        "bytes": 262199,
+        "sha256": "5b4516bd58e875d25559b8426f4ed8ee6e9d7268afd3f40c55680f070d1863df",
+        "verdict": "PASS_ACTUAL_NINE_CURRENT_CODE_GATES_ONLY",
+        "openFindings": 0,
+        "identityOnlyNotDistributed": true
+      },
+      "finishedAtUtc": "2026-10-14T14:05:03.6526382Z",
+      "exitCode": 0,
+      "timeout": false,
+      "stdout": {
+        "bytes": 767379,
+        "sha256": "fa26e2af1f0f46c98f6372bd42f81ec6a7631b45ddc87461af8ea6510e91ee9e"
+      },
+      "stderrBytes": 0,
+      "phases": [
+        {
+          "ordinal": 1,
+          "name": "build",
+          "completed": true
+        },
+        {
+          "ordinal": 2,
+          "name": "check-boundaries",
+          "completed": true
+        },
+        {
+          "ordinal": 3,
+          "name": "spritesheet-boundary",
+          "completed": true
+        },
+        {
+          "ordinal": 4,
+          "name": "sequence-playback-boundary",
+          "completed": true
+        },
+        {
+          "ordinal": 5,
+          "name": "browser-png-boundary",
+          "completed": true
+        },
+        {
+          "ordinal": 6,
+          "name": "check-types",
+          "completed": true
+        },
+        {
+          "ordinal": 7,
+          "name": "browser-png-types",
+          "completed": true
+        },
+        {
+          "ordinal": 8,
+          "name": "test",
+          "completed": true
+        },
+        {
+          "ordinal": 9,
+          "name": "verify-spine-f2-source",
+          "completed": true
+        }
+      ],
+      "Core": {
+        "tests": 3113,
+        "suites": 0,
+        "pass": 3113,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 337323.071
+      },
+      "SpineSource": {
+        "tests": 160,
+        "suites": 0,
+        "pass": 160,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 1596.4507
+      },
+      "strictGroups": [
+        {
+          "name": "adi-original-strict-gate",
+          "currentInputRows": 73,
+          "standardLibraryRows": 57,
+          "diagnosticCounts": [
+            0,
+            10
+          ],
+          "completeOriginalVectorsRetained": true,
+          "originalAndFullVectorsEqual": true
+        },
+        {
+          "name": "retained-cgi-original-strict-gate",
+          "currentInputRows": 72,
+          "standardLibraryRows": 57,
+          "diagnosticCounts": [
+            0,
+            12
+          ],
+          "completeOriginalVectorsRetained": true,
+          "originalAndFullVectorsEqual": true
+        },
+        {
+          "name": "retained-dca-original-strict-gate",
+          "currentInputRows": 72,
+          "standardLibraryRows": 57,
+          "diagnosticCounts": [
+            0,
+            10
+          ],
+          "completeOriginalVectorsRetained": true,
+          "originalAndFullVectorsEqual": true
+        }
+      ],
+      "distinctAdoptedSourceFiles": 25,
+      "currentAdoptedSourcePins": [
+        {
+          "path": "knowledge-base/experiments/spine-f2-core/manifest.json",
+          "bytes": 8516,
+          "sha256": "b260fe1632d4793b8abee3df90d442c59fe117b61f9a4504b9b9262a42d3bbc1"
+        },
+        {
+          "path": "knowledge-base/experiments/spine-f2-core/tests/policy-cold.mjs",
+          "bytes": 19249,
+          "sha256": "758696c0b554a18364e46995013823c8634fc658e4f106323426a4669071a136"
+        },
+        {
+          "path": "packages/runtime/src/DisplayObjectContainer.ts",
+          "bytes": 8088,
+          "sha256": "3b77ccc45a6cd1d84598ed24f73df5f17cb5818acba09fa26b691324591f11be"
+        },
+        {
+          "path": "packages/runtime/src/displayTreeState.ts",
+          "bytes": 16961,
+          "sha256": "49c01515dbc47a797a59ccb2371935daf3931fa1f47e15021717f0ae0a3a6603"
+        },
+        {
+          "path": "packages/runtime/src/ownership.ts",
+          "bytes": 8348,
+          "sha256": "5e7ed7dc3ec77f5b122c4e5e1c690dae14b479b4cfc0687a6c101cb31fcb22e7"
+        },
+        {
+          "path": "tests/display-container-add-child-at-api.test.mjs",
+          "bytes": 3528,
+          "sha256": "2a9ad0248df6bfec5ff9c729e00eb9acf919f1fcd9b1e525fa12938fac0698c2"
+        },
+        {
+          "path": "tests/display-container-add-child-at.test.mjs",
+          "bytes": 29440,
+          "sha256": "b24d4584c659965677375eff5b05c8307f97d9fe896d96a528d16f505b3249bb"
+        },
+        {
+          "path": "tests/project-boundaries.test.mjs",
+          "bytes": 16519,
+          "sha256": "3cd137a3fe77f257062bc3da2c818adf3047ad420121446301e8c142af1acdec"
+        },
+        {
+          "path": "tests/types/display-container-add-child-at-diagnostic-expectations.json",
+          "bytes": 29629,
+          "sha256": "a3fe6402ef54796f8d91bd42b0eb4fc54ee71ad718311b25df58b4fe00de57ce"
+        },
+        {
+          "path": "tests/types/display-container-add-child-at-negative.ts",
+          "bytes": 1005,
+          "sha256": "100dfa73fa4703de6945c2634ff7d942e5fcf69b65b2e2eb51e27aa7afdee0a1"
+        },
+        {
+          "path": "tests/types/display-container-add-child-at-positive.ts",
+          "bytes": 1761,
+          "sha256": "d81dfd1847df82347bdfca4722695c553b9e5980aa9fd0b3a93a88d3f7b9a964"
+        },
+        {
+          "path": "tests/types/display-container-child-index-diagnostic-expectations.json",
+          "bytes": 29714,
+          "sha256": "325998371acb7a6cb06f0dd6230a49df9b772e374a3f5eb49418ae9f9f506be8"
+        },
+        {
+          "path": "tests/types/display-container-remove-children-diagnostic-expectations.json",
+          "bytes": 29007,
+          "sha256": "09def6b9f7508a1a02b7d31e8f9b7060a95e5c211ab139633a9d5373e4aa0dba"
+        },
+        {
+          "path": "tests/types/tsconfig.display-container-add-child-at-negative.json",
+          "bytes": 266,
+          "sha256": "5e708ef94bff314113d18b5fb2dfacc4b62156bb68d671c6febb80dc73b4b0c6"
+        },
+        {
+          "path": "tests/types/tsconfig.display-container-add-child-at-positive.json",
+          "bytes": 266,
+          "sha256": "798dc5ef1a8a7a0ca62d9e596922362e823a10772d09e5d45a24d8465d5e5303"
+        },
+        {
+          "path": "tools/browser-png-boundary.mjs",
+          "bytes": 97570,
+          "sha256": "612e3f6461da003c8274fa177fae936cb68a29b0ebe4afa37b7b020f8ea7e7e1"
+        },
+        {
+          "path": "tools/browser-png/collector.mjs",
+          "bytes": 51325,
+          "sha256": "cb6b44cb1f60d4792c89222bb9389e779c77315dc20b070b6e8a5d50fc684f46"
+        },
+        {
+          "path": "tools/browser-png/file-graph.mjs",
+          "bytes": 26755,
+          "sha256": "4d9b2c9dbf2a0d6f0475db4df6557d659e43400a768fd9a679927f8fcf89704e"
+        },
+        {
+          "path": "tools/check-types.mjs",
+          "bytes": 93234,
+          "sha256": "add2ba6161ff9af513ba8ab7f75a84b0b70f1941d41763dd1b1a1ea00c4e041b"
+        },
+        {
+          "path": "tools/display-container-add-child-at-native/fixture.mjs",
+          "bytes": 14486,
+          "sha256": "a016d98bb32f4508ddea2451158b9bdd5427b6d6d604123e54966ecb5faca962"
+        },
+        {
+          "path": "tools/display-container-add-child-at-native/oracle.mjs",
+          "bytes": 6900,
+          "sha256": "8dd34dee1608719ecf4f018ebcb28ef0b0354f267eb925f999b45298ec4a88d2"
+        },
+        {
+          "path": "tools/display-container-add-child-at-native/schedule.json",
+          "bytes": 1781,
+          "sha256": "af8790c656793b7de83a2f74d472425ef090213c1d28c99959d048ba0cdda8ab"
+        },
+        {
+          "path": "tools/display-container-add-child-at-types.mjs",
+          "bytes": 15274,
+          "sha256": "80bd3c700f3fda7a25ba26068c2f7109afa4eea5f5a9bdbcdaac08ae12512b93"
+        },
+        {
+          "path": "tools/spritesheet-boundary.mjs",
+          "bytes": 95994,
+          "sha256": "269314f4142fedc1a35b077259b0181b75817dc59c37fe7951141545a0271637"
+        },
+        {
+          "path": "tools/verify-browser-png.mjs",
+          "bytes": 2134,
+          "sha256": "d9cec38234286c63d77607497ca9e38c4dbc5d37e30efead144ed3ab9f0d4d89"
+        }
+      ],
+      "sourceIdentityQualification": {
+        "review": {
+          "bytes": 262199,
+          "sha256": "5b4516bd58e875d25559b8426f4ed8ee6e9d7268afd3f40c55680f070d1863df",
+          "verdict": "PASS_ACTUAL_NINE_CURRENT_CODE_GATES_ONLY",
+          "openFindings": 0,
+          "identityOnlyNotDistributed": true
+        },
+        "jsonPointer": "/currentAdoptedSourcePins",
+        "producerRole": "Actual",
+        "sourceAuthority": "GENUINE_SOURCE_REVIEWS_AND_ADOPTIONS_BOUND_BY_ACTUAL_REVIEW"
+      },
+      "codeOnly": true,
+      "nativeActual": "NOT_RUN_AT_R2_CUTOFF",
+      "nativeGraphAdmission": "PENDING_AT_R2_CUTOFF",
+      "publicLanguagePrepushHooksDelivery": "PENDING",
+      "originalFullR1FailurePreserved": true,
+      "fullSpineProductAcceptance": false
+    },
+    "r1Cutoff": {
+      "schemaVersion": 1,
+      "kind": "DISPLAY_CONTAINER_ADD_CHILD_AT_BOUNDED_PUBLIC_DRAFT_EVIDENCE",
+      "engineeringPreview": "0.51.0",
+      "sourceId": "S105",
+      "deliverableId": "V056",
+      "publicationSourceDraft": true,
+      "curationCutoff": "2026-10-14",
+      "draftStatus": "DRAFT_SOURCE_PREVIEW_BOUNDED_PRODUCT_BUILD_CPU_ORIGINAL_TYPES_ACCEPTED_OTHER_GATES_PENDING",
+      "productSourceReview": {
+        "bytes": 56762,
+        "sha256": "1e96e48155341fcbd587e181681994054f02ac826358cb732c2b4ddf1c7166bf",
+        "verdict": "PASS_SOURCE_CONTAINER_ADD_CHILD_AT_THREE_RUNTIME_FILES_ONLY",
+        "openFindings": 0,
+        "identityOnlyNotDistributed": true
+      },
+      "coreTypesActualReview": {
+        "bytes": 78406,
+        "sha256": "60e062bb991095866f0d84dc720bf007787ff4b0091105bd5a29a9a5461d20d8",
+        "verdict": "PASS_ACTUAL_CURRENT_FOCUSED_CPU_AND_ORIGINAL_STRICT_TYPES_ONLY",
+        "openFindings": 0,
+        "identityOnlyNotDistributed": true
+      },
+      "productSourceFiles": 3,
+      "builtJSAndDTSFiles": 6,
+      "buildExitCode": 0,
+      "focusedCPU": {
+        "tests": 82,
+        "pass": 82,
+        "new": 22,
+        "retained": 60,
+        "API": 1,
+        "behavior": 21,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "fullRepositorySuite": false
+      },
+      "originalStrictTypes": {
+        "compiler": "7.0.2",
+        "positiveExitCode": 0,
+        "positiveDiagnostics": 0,
+        "negativeExitCode": 1,
+        "completeActualUnsuppressedTuples": 10,
+        "negativeStdout": {
+          "bytes": 1522,
+          "sha256": "496a62ee16eb4028b6d928b013fc2c197409b08b1f1bda5860092f40356a69d1"
+        },
+        "integratedDriverActual": "PENDING_AT_DRAFT_CUTOFF"
+      },
+      "genuineNamedRED": {
+        "marker": "DISPLAY_CONTAINER_ADD_CHILD_AT_REQUIRED",
+        "sourceLine": 49,
+        "sourceColumn": 10,
+        "APIExitCode": 1,
+        "oldOperationsAndCompleteCleanupBeforeMarker": true
+      },
+      "typeSupport": {
+        "sourceFiles": 8,
+        "independentSourceReview": "PENDING_AT_DRAFT_CUTOFF",
+        "adoption": "PENDING_AT_DRAFT_CUTOFF",
+        "actualStandaloneAndFullDriver": "PENDING_AT_DRAFT_CUTOFF",
+        "currentInputRows": 73,
+        "standardLibraryRows": 57,
+        "inventoryFactOnly": true
+      },
+      "sourceHistory": {
+        "initialPrivateGraphCountAssertion": 498,
+        "actualGraphRows": 489,
+        "changedRows": 9,
+        "unchangedRows": 480,
+        "initialToolFailureAndFourPartialOutputsPreserved": true
+      },
+      "native": {
+        "R1Source": "NEEDS_REVISION",
+        "duplicateLexicalFinding": 1,
+        "offsetObservations": 4,
+        "R1IsNotActualPixelExecution": true,
+        "R2NarrowSourceRepairAndPeerReview": "PENDING_AT_DRAFT_CUTOFF",
+        "actual": "PENDING_AT_DRAFT_CUTOFF",
+        "plannedOnly": {
+          "backends": 2,
+          "submissionsPerBackend": 5,
+          "readbacks": 10,
+          "channels": 23040
+        },
+        "actualCounts": null
+      },
+      "currentNinePhaseVerification": "PENDING_AT_DRAFT_CUTOFF",
+      "currentFullCoreCount": null,
+      "policyAcceptance": "PENDING_AT_DRAFT_CUTOFF",
+      "publicSourceBilingualReview": "PENDING",
+      "fullPrepush": "PENDING",
+      "mandatoryHooks": "PENDING",
+      "newGitDelivery": "PENDING",
+      "remoteCIPassClaim": false,
+      "fullSpineR020V020": "OPEN",
+      "migrationR008V006": "OPEN",
+      "EUILayout": "OPEN",
+      "advanced3D": "OPEN",
+      "AI": "OPEN",
+      "phonesPlatformsPerformance": "UNVERIFIED",
+      "packageVersion": "0.0.0",
+      "packagePrivate": true,
+      "hostProtocol": "1.0",
+      "newThirdPartyDependency": false,
+      "historicalCutoffsPreserved": true,
+      "currentKnownAdoptedSourcePins": [
+        {
+          "path": "packages/runtime/src/DisplayObjectContainer.ts",
+          "bytes": 8088,
+          "sha256": "3b77ccc45a6cd1d84598ed24f73df5f17cb5818acba09fa26b691324591f11be"
+        },
+        {
+          "path": "packages/runtime/src/displayTreeState.ts",
+          "bytes": 16963,
+          "sha256": "37df520ff295928e46c43c2e82b57e91869a2d154cdbc7d407922d8104864438"
+        },
+        {
+          "path": "packages/runtime/src/ownership.ts",
+          "bytes": 8350,
+          "sha256": "c679018988f422333d9018be536ad43761c8768a3686f391a2fa151121c06a1f"
+        },
+        {
+          "path": "tests/display-container-add-child-at-api.test.mjs",
+          "bytes": 3528,
+          "sha256": "2a9ad0248df6bfec5ff9c729e00eb9acf919f1fcd9b1e525fa12938fac0698c2"
+        },
+        {
+          "path": "tests/display-container-add-child-at.test.mjs",
+          "bytes": 29440,
+          "sha256": "b24d4584c659965677375eff5b05c8307f97d9fe896d96a528d16f505b3249bb"
+        },
+        {
+          "path": "tests/types/display-container-add-child-at-positive.ts",
+          "bytes": 1761,
+          "sha256": "d81dfd1847df82347bdfca4722695c553b9e5980aa9fd0b3a93a88d3f7b9a964"
+        },
+        {
+          "path": "tests/types/display-container-add-child-at-negative.ts",
+          "bytes": 1005,
+          "sha256": "100dfa73fa4703de6945c2634ff7d942e5fcf69b65b2e2eb51e27aa7afdee0a1"
+        },
+        {
+          "path": "tests/types/tsconfig.display-container-add-child-at-positive.json",
+          "bytes": 266,
+          "sha256": "798dc5ef1a8a7a0ca62d9e596922362e823a10772d09e5d45a24d8465d5e5303"
+        },
+        {
+          "path": "tests/types/tsconfig.display-container-add-child-at-negative.json",
+          "bytes": 266,
+          "sha256": "5e708ef94bff314113d18b5fb2dfacc4b62156bb68d671c6febb80dc73b4b0c6"
+        }
+      ],
+      "currentProductEmissionPins": [
+        {
+          "path": "packages/runtime/dist/DisplayObjectContainer.js",
+          "bytes": 8630,
+          "sha256": "f379a1da5a940710864a92b00349aa6d11b1de2b580b06f8f736c8131321a673"
+        },
+        {
+          "path": "packages/runtime/dist/DisplayObjectContainer.d.ts",
+          "bytes": 1398,
+          "sha256": "25efac66478e4d27b2499fc8e235df14b7c58b654b9a437c5e38ec9e6683e1a8"
+        },
+        {
+          "path": "packages/runtime/dist/displayTreeState.js",
+          "bytes": 14363,
+          "sha256": "a69e25c8ed935d764f4d1246f1f0d2996a7927c57ffc17435c691e925ffe9eab"
+        },
+        {
+          "path": "packages/runtime/dist/displayTreeState.d.ts",
+          "bytes": 5304,
+          "sha256": "687b4fd56cc46ab3ec170179496291e1c1c1f1e1a56f689ffe692c65210c82fd"
+        },
+        {
+          "path": "packages/runtime/dist/ownership.js",
+          "bytes": 6391,
+          "sha256": "6f4b8ff71ff9bc9c61d691b9f24dfa0dc67e4c527397ee3b915e1137acbedfe5"
+        },
+        {
+          "path": "packages/runtime/dist/ownership.d.ts",
+          "bytes": 3102,
+          "sha256": "798e0ad10e1a414ef64a18c52cdefac359ae459ae09e2a99e504d5f8e5caf33b"
+        }
+      ],
+      "priorDelivery": {
+        "engineeringPreview": "0.50.0",
+        "status": "DATED_ACTUAL_DELIVERY_SUCCESSOR_HISTORICAL_CUTOFFS_RETAINED",
+        "recordedOn": "2026-10-14",
+        "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/38",
+        "mainMergeCommit": "13200c72dd51d35d12e84c6d1c81dfeaef94af53",
+        "mainTree": "c6f1a791f649c96606fb5e2a1b2a096c2a3f027b",
+        "independentDeliveryReview": {
+          "bytes": 49739,
+          "sha256": "11c3fb557c1a357aa05302ffac47d29ad1aa49ded4e7634ea06e2467cda109e0"
+        },
+        "rootDataSuccessor": {
+          "bytes": 38855,
+          "sha256": "8a0c3f151a97ed318d0ab3bbe5575b8ff30377839d370a83119d504fb99a3c28",
+          "scope": "PR_MERGE_MAIN_CURRENT_CLEAN_POINTER_PROJECTION_ONLY",
+          "addsIndependentReview": false
+        },
+        "remoteCIPassClaim": false,
+        "historicalPublicPendingCutoffsPreserved": true
+      },
+      "laterDefaultGateFailureSuccessor": {
+        "recordedOn": "2026-10-14",
+        "kind": "LATER_ROOT_OBSERVED_FAILED_DEFAULT_GATE_NOT_INDEPENDENT_ACCEPTANCE",
+        "exitCode": 1,
+        "timeout": false,
+        "stderrBytes": 0,
+        "finishedAtUtc": "2026-10-14T13:29:13.0103029Z",
+        "stdout": {
+          "bytes": 677068,
+          "sha256": "ac40a4244da66ad075c16660430204a466854b08c1a5fa8196c2352806446491"
+        },
+        "Core": {
+          "tests": 3113,
+          "pass": 3112,
+          "fail": 1,
+          "cancelled": 0,
+          "skipped": 0
+        },
+        "retainedFailure": "B1_S01_EMITTED_VM_LOADING_BEFORE_STARTUP",
+        "rootObservedFacilityRefusal": "unsupported executable facility",
+        "rootObservedLastEdge": "ownership.js",
+        "finalSpinePhase": "NOT_ATTEMPTED",
+        "completeNinePhasePASS": false,
+        "independentActualReview": "PENDING",
+        "diagnosis": "PENDING; possible Function.prototype captured-helper interaction is an inference, not a confirmed cause or fix",
+        "earlierFocused82AndOriginal0_10AcceptanceUnchanged": true,
+        "originalPendingDraftCutoffPreserved": true
+      }
+    },
+    "currentKnownAdoptedSourcePins": [
+      {
+        "path": "knowledge-base/experiments/spine-f2-core/manifest.json",
+        "bytes": 8516,
+        "sha256": "b260fe1632d4793b8abee3df90d442c59fe117b61f9a4504b9b9262a42d3bbc1"
+      },
+      {
+        "path": "knowledge-base/experiments/spine-f2-core/tests/policy-cold.mjs",
+        "bytes": 19249,
+        "sha256": "758696c0b554a18364e46995013823c8634fc658e4f106323426a4669071a136"
+      },
+      {
+        "path": "packages/runtime/src/DisplayObjectContainer.ts",
+        "bytes": 8088,
+        "sha256": "3b77ccc45a6cd1d84598ed24f73df5f17cb5818acba09fa26b691324591f11be"
+      },
+      {
+        "path": "packages/runtime/src/displayTreeState.ts",
+        "bytes": 16961,
+        "sha256": "49c01515dbc47a797a59ccb2371935daf3931fa1f47e15021717f0ae0a3a6603"
+      },
+      {
+        "path": "packages/runtime/src/ownership.ts",
+        "bytes": 8348,
+        "sha256": "5e7ed7dc3ec77f5b122c4e5e1c690dae14b479b4cfc0687a6c101cb31fcb22e7"
+      },
+      {
+        "path": "tests/display-container-add-child-at-api.test.mjs",
+        "bytes": 3528,
+        "sha256": "2a9ad0248df6bfec5ff9c729e00eb9acf919f1fcd9b1e525fa12938fac0698c2"
+      },
+      {
+        "path": "tests/display-container-add-child-at.test.mjs",
+        "bytes": 29440,
+        "sha256": "b24d4584c659965677375eff5b05c8307f97d9fe896d96a528d16f505b3249bb"
+      },
+      {
+        "path": "tests/project-boundaries.test.mjs",
+        "bytes": 16519,
+        "sha256": "3cd137a3fe77f257062bc3da2c818adf3047ad420121446301e8c142af1acdec"
+      },
+      {
+        "path": "tests/types/display-container-add-child-at-diagnostic-expectations.json",
+        "bytes": 29629,
+        "sha256": "a3fe6402ef54796f8d91bd42b0eb4fc54ee71ad718311b25df58b4fe00de57ce"
+      },
+      {
+        "path": "tests/types/display-container-add-child-at-negative.ts",
+        "bytes": 1005,
+        "sha256": "100dfa73fa4703de6945c2634ff7d942e5fcf69b65b2e2eb51e27aa7afdee0a1"
+      },
+      {
+        "path": "tests/types/display-container-add-child-at-positive.ts",
+        "bytes": 1761,
+        "sha256": "d81dfd1847df82347bdfca4722695c553b9e5980aa9fd0b3a93a88d3f7b9a964"
+      },
+      {
+        "path": "tests/types/display-container-child-index-diagnostic-expectations.json",
+        "bytes": 29714,
+        "sha256": "325998371acb7a6cb06f0dd6230a49df9b772e374a3f5eb49418ae9f9f506be8"
+      },
+      {
+        "path": "tests/types/display-container-remove-children-diagnostic-expectations.json",
+        "bytes": 29007,
+        "sha256": "09def6b9f7508a1a02b7d31e8f9b7060a95e5c211ab139633a9d5373e4aa0dba"
+      },
+      {
+        "path": "tests/types/tsconfig.display-container-add-child-at-negative.json",
+        "bytes": 266,
+        "sha256": "5e708ef94bff314113d18b5fb2dfacc4b62156bb68d671c6febb80dc73b4b0c6"
+      },
+      {
+        "path": "tests/types/tsconfig.display-container-add-child-at-positive.json",
+        "bytes": 266,
+        "sha256": "798dc5ef1a8a7a0ca62d9e596922362e823a10772d09e5d45a24d8465d5e5303"
+      },
+      {
+        "path": "tools/browser-png-boundary.mjs",
+        "bytes": 97570,
+        "sha256": "612e3f6461da003c8274fa177fae936cb68a29b0ebe4afa37b7b020f8ea7e7e1"
+      },
+      {
+        "path": "tools/browser-png/collector.mjs",
+        "bytes": 51325,
+        "sha256": "cb6b44cb1f60d4792c89222bb9389e779c77315dc20b070b6e8a5d50fc684f46"
+      },
+      {
+        "path": "tools/browser-png/file-graph.mjs",
+        "bytes": 26755,
+        "sha256": "4d9b2c9dbf2a0d6f0475db4df6557d659e43400a768fd9a679927f8fcf89704e"
+      },
+      {
+        "path": "tools/check-types.mjs",
+        "bytes": 93234,
+        "sha256": "add2ba6161ff9af513ba8ab7f75a84b0b70f1941d41763dd1b1a1ea00c4e041b"
+      },
+      {
+        "path": "tools/display-container-add-child-at-native/fixture.mjs",
+        "bytes": 14486,
+        "sha256": "a016d98bb32f4508ddea2451158b9bdd5427b6d6d604123e54966ecb5faca962"
+      },
+      {
+        "path": "tools/display-container-add-child-at-native/oracle.mjs",
+        "bytes": 6900,
+        "sha256": "8dd34dee1608719ecf4f018ebcb28ef0b0354f267eb925f999b45298ec4a88d2"
+      },
+      {
+        "path": "tools/display-container-add-child-at-native/schedule.json",
+        "bytes": 1781,
+        "sha256": "af8790c656793b7de83a2f74d472425ef090213c1d28c99959d048ba0cdda8ab"
+      },
+      {
+        "path": "tools/display-container-add-child-at-types.mjs",
+        "bytes": 15274,
+        "sha256": "80bd3c700f3fda7a25ba26068c2f7109afa4eea5f5a9bdbcdaac08ae12512b93"
+      },
+      {
+        "path": "tools/spritesheet-boundary.mjs",
+        "bytes": 95994,
+        "sha256": "269314f4142fedc1a35b077259b0181b75817dc59c37fe7951141545a0271637"
+      },
+      {
+        "path": "tools/verify-browser-png.mjs",
+        "bytes": 2134,
+        "sha256": "d9cec38234286c63d77607497ca9e38c4dbc5d37e30efead144ed3ab9f0d4d89"
+      }
+    ],
+    "currentProductEmissionPins": [
+      {
+        "path": "packages/runtime/dist/DisplayObjectContainer.js",
+        "bytes": 8630,
+        "sha256": "f379a1da5a940710864a92b00349aa6d11b1de2b580b06f8f736c8131321a673"
+      },
+      {
+        "path": "packages/runtime/dist/DisplayObjectContainer.d.ts",
+        "bytes": 1398,
+        "sha256": "25efac66478e4d27b2499fc8e235df14b7c58b654b9a437c5e38ec9e6683e1a8"
+      },
+      {
+        "path": "packages/runtime/dist/displayTreeState.js",
+        "bytes": 14361,
+        "sha256": "38326617da524e14a0f317efc7b5681fb93956488547f259f6810584d6751f9a"
+      },
+      {
+        "path": "packages/runtime/dist/displayTreeState.d.ts",
+        "bytes": 5304,
+        "sha256": "687b4fd56cc46ab3ec170179496291e1c1c1f1e1a56f689ffe692c65210c82fd"
+      },
+      {
+        "path": "packages/runtime/dist/ownership.js",
+        "bytes": 6389,
+        "sha256": "edddc009cb0ef968341666cf2558fed8a3cfcf6cf16c100a6ff744bb894af490"
+      },
+      {
+        "path": "packages/runtime/dist/ownership.d.ts",
+        "bytes": 3102,
+        "sha256": "798e0ad10e1a414ef64a18c52cdefac359ae459ae09e2a99e504d5f8e5caf33b"
+      }
+    ],
+    "r2NativeCutoff": {
+      "curationCutoff": "2026-10-14T14:20:44.443Z",
+      "draftStatus": "DRAFT_SOURCE_PREVIEW_CURRENT_NINE_CODE_GATES_ACCEPTED_NATIVE_PUBLIC_DELIVERY_PENDING",
+      "native": {
+        "R1Source": "NEEDS_REVISION",
+        "duplicateLexicalFinding": 1,
+        "offsetObservations": 4,
+        "R1IsNotActualPixelExecution": true,
+        "R2NarrowSourceRepairAndPeerReview": "INDEPENDENT_SOURCE_ACCEPTED",
+        "actual": "NOT_RUN_AT_R2_CUTOFF",
+        "plannedOnly": {
+          "backends": 2,
+          "submissionsPerBackend": 5,
+          "readbacks": 10,
+          "channels": 23040
+        },
+        "actualCounts": null,
+        "sourceReview": {
+          "bytes": 6205,
+          "sha256": "56e7ce18f45ed46c8d0dc41c2c981d20b2806ac0f1f8f6e57bb315a2b29aaa2e",
+          "verdict": "PASS_SOURCE_R2_FINITE_REPAIR",
+          "openFindings": 0,
+          "identityOnlyNotDistributed": true
+        },
+        "graphAdmission": "PENDING_AT_R2_CUTOFF",
+        "parseOnlyJSChecks": {
+          "files": 5,
+          "exitCodes": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "qualifiesNativeExecution": false
+        }
+      }
+    },
+    "nativeActualSuccessor": {
+      "recordedOn": "2026-10-14",
+      "kind": "INDEPENDENT_ACCEPTED_BOUNDED_NATIVE_RGBA_SUCCESSOR",
+      "review": {
+        "bytes": 59975,
+        "sha256": "334c304b4ad1f2b66e6beddb8f40f89b8b08b11d7b9cd0d5e41b95c5a057c370",
+        "verdict": "PASS_ACTUAL_NATIVE_INDEXED_ORDER_REPARENT_SAVED_REPLAY_CANVAS_WEBGPU_ONLY",
+        "openFindings": 0,
+        "identityOnlyNotDistributed": true
+      },
+      "scope": "Desktop opaque Canvas/WebGPU indexed insertion, reparent and same-live saved-frame replay only",
+      "finishedAtUtc": "2026-10-14T14:35:58.8362143Z",
+      "exitCode": 0,
+      "timeout": false,
+      "originalResult": {
+        "artifactKey": "native-browser-r1/result.json",
+        "bytes": 70668,
+        "sha256": "910e0e6ece2bca308f7ca1036580e2bb134e3751dd10c32c0557fbb5d046919f"
+      },
+      "mainCounts": {
+        "backends": [
+          "canvas",
+          "webgpu"
+        ],
+        "stepsPerBackend": [
+          "N1",
+          "N2",
+          "N3",
+          "N4",
+          "N5"
+        ],
+        "renderedSubmissions": 10,
+        "completeRawReadbacks": 10,
+        "newCaptures": 8,
+        "savedReplays": 2,
+        "pixelsCompared": 5760,
+        "channelsCompared": 23040,
+        "positiveCanvasSubmissions": 5,
+        "pixelTolerance": 0,
+        "mismatchedPixels": 0,
+        "mismatchedChannels": 0
+      },
+      "rawRGBAFiles": [
+        {
+          "artifactKey": "native-browser-r1/C1-baseline.rgba",
+          "bytes": 2304,
+          "sha256": "69f7e64f2763f6c88b577ae961dfddee86ec608d6035f99f3e82d1353c70ad4a"
+        },
+        {
+          "artifactKey": "native-browser-r1/C1-wrong-index.rgba",
+          "bytes": 2304,
+          "sha256": "017fbf89b2052f3a724369041826203bec8abe6f0da4bdc4b613c2a6cc469a54"
+        },
+        {
+          "artifactKey": "native-browser-r1/canvas-N1.rgba",
+          "bytes": 2304,
+          "sha256": "69f7e64f2763f6c88b577ae961dfddee86ec608d6035f99f3e82d1353c70ad4a"
+        },
+        {
+          "artifactKey": "native-browser-r1/canvas-N2.rgba",
+          "bytes": 2304,
+          "sha256": "1bc87c7e2e73a5e4bcb75ff785e23a71fa6e723f3d8e34fcb8995e6e72688dda"
+        },
+        {
+          "artifactKey": "native-browser-r1/canvas-N3.rgba",
+          "bytes": 2304,
+          "sha256": "017fbf89b2052f3a724369041826203bec8abe6f0da4bdc4b613c2a6cc469a54"
+        },
+        {
+          "artifactKey": "native-browser-r1/canvas-N4.rgba",
+          "bytes": 2304,
+          "sha256": "6766ef77ce5553d69035b201f8000b8884181f7b0e000a848cd8c4442ddccc41"
+        },
+        {
+          "artifactKey": "native-browser-r1/canvas-N5.rgba",
+          "bytes": 2304,
+          "sha256": "69f7e64f2763f6c88b577ae961dfddee86ec608d6035f99f3e82d1353c70ad4a"
+        },
+        {
+          "artifactKey": "native-browser-r1/webgpu-N1.rgba",
+          "bytes": 2304,
+          "sha256": "69f7e64f2763f6c88b577ae961dfddee86ec608d6035f99f3e82d1353c70ad4a"
+        },
+        {
+          "artifactKey": "native-browser-r1/webgpu-N2.rgba",
+          "bytes": 2304,
+          "sha256": "1bc87c7e2e73a5e4bcb75ff785e23a71fa6e723f3d8e34fcb8995e6e72688dda"
+        },
+        {
+          "artifactKey": "native-browser-r1/webgpu-N3.rgba",
+          "bytes": 2304,
+          "sha256": "017fbf89b2052f3a724369041826203bec8abe6f0da4bdc4b613c2a6cc469a54"
+        },
+        {
+          "artifactKey": "native-browser-r1/webgpu-N4.rgba",
+          "bytes": 2304,
+          "sha256": "6766ef77ce5553d69035b201f8000b8884181f7b0e000a848cd8c4442ddccc41"
+        },
+        {
+          "artifactKey": "native-browser-r1/webgpu-N5.rgba",
+          "bytes": 2304,
+          "sha256": "69f7e64f2763f6c88b577ae961dfddee86ec608d6035f99f3e82d1353c70ad4a"
+        }
+      ],
+      "savedPNGFiles": 0,
+      "savedReplay": {
+        "step": "N5",
+        "savedFrame": "N1",
+        "currentTree": "N4",
+        "sameLiveEngine": true,
+        "exactSavedN1": true,
+        "rawN5EqualsN1": true
+      },
+      "separateCanvasControl": {
+        "id": "C1",
+        "freshBaseline": true,
+        "baselineRawEqualsMainN1": true,
+        "additionalSubmissions": 2,
+        "additionalReadbacks": 2,
+        "mainCredit": 0,
+        "mismatchedPixels": 64,
+        "mismatchedChannels": 128
+      },
+      "cleanup": {
+        "primaryOccurred": false,
+        "cleanupErrors": [],
+        "pendingTicketIds": [],
+        "outerTickets32AllSettledFulfilled": true,
+        "browserCloseFulfilled": true,
+        "serverCloseFulfilled": true,
+        "allThreeRetiredScopesClosed": true,
+        "allSceneNodesDisposed": true,
+        "WebGPURetirementSafe": true
+      },
+      "graph": {
+        "counts": {
+          "files": 368,
+          "modules": 105,
+          "declarations": 112,
+          "sourceFiles": 112,
+          "totalBytes": 1466422
+        },
+        "admissionBeforeAfterRawEqual": true,
+        "admittedGraph": {
+          "bytes": 1078563,
+          "sha256": "80c469aae38d930083ca2e14796e3188b9c6a8197466773a2099231acf15b4e6"
+        }
+      },
+      "runtime": {
+        "admittedRows": 175,
+        "actorRecordedBeforeAfterStable": true,
+        "laterIndependentCurrentAuthentication": {
+          "rawPinCount": 175,
+          "bytes": 116779934,
+          "allMatched": true,
+          "method": "Current size and SHA256 authentication against the exact admitted original175 rows only; no dependency discovery or fresh runtime catalog.",
+          "notRetrospectivePerFileBeforeAfterArrays": true
+        },
+        "perFileRetrospectiveBeforeAfterArraysExist": false,
+        "browserVersion": "155.0.4283.45",
+        "channel": "msedge",
+        "customExecutablePath": false,
+        "extraLaunchFlags": []
+      },
+      "publicSourceBilingualPrepushHooksAndNewDelivery": "PENDING",
+      "physicalGPUPhonesFontsPerformanceFullSpine": "UNVERIFIED_OR_OPEN",
+      "remoteCIPassClaim": false
     }
   }
 }
