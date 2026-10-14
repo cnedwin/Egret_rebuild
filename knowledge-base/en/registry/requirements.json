@@ -35,7 +35,8 @@
         "S103",
         "S104",
         "S105",
-        "S106"
+        "S106",
+        "S107"
       ],
       "deliveryIds": [
         "V001",
@@ -55,7 +56,8 @@
         "V054",
         "V055",
         "V056",
-        "V057"
+        "V057",
+        "V058"
       ],
       "decisionIds": [
         "D002",
@@ -71,6 +73,13 @@
         "status": "SOURCE_ONLY_NOT_RUN",
         "summary": "Bounded proposal for public matrix authoring/composition; the requirement and broader scene/rendering goals retain separate acceptance.",
         "doc": "en/docs/public-scene3d-contract.md"
+      },
+      "anchoredAtlasPlaybackIncrement": {
+        "sourceId": "S107",
+        "deliverableId": "V058",
+        "status": "bounded_existing_API_example",
+        "fullRequirementAcceptance": "OPEN",
+        "doc": "en/docs/anchored-atlas-playback-contract.md"
       }
     },
     {
@@ -131,7 +140,8 @@
         "S103",
         "S104",
         "S105",
-        "S106"
+        "S106",
+        "S107"
       ],
       "deliveryIds": [
         "V002",
@@ -149,7 +159,8 @@
         "V054",
         "V055",
         "V056",
-        "V057"
+        "V057",
+        "V058"
       ],
       "decisionIds": [
         "D002",
@@ -172,6 +183,13 @@
         "status": "bounded_increment",
         "fullRequirementAcceptance": "OPEN",
         "doc": "en/docs/spritesheet-contract.md"
+      },
+      "anchoredAtlasPlaybackIncrement": {
+        "sourceId": "S107",
+        "deliverableId": "V058",
+        "status": "bounded_existing_API_example",
+        "fullRequirementAcceptance": "OPEN",
+        "doc": "en/docs/anchored-atlas-playback-contract.md"
       }
     },
     {
@@ -320,7 +338,8 @@
         "S001",
         "S104",
         "S105",
-        "S106"
+        "S106",
+        "S107"
       ],
       "deliveryIds": [
         "V001",
@@ -334,12 +353,20 @@
         "V028",
         "V055",
         "V056",
-        "V057"
+        "V057",
+        "V058"
       ],
       "decisionIds": [
         "D012"
       ],
-      "doc": "en/archive/round-1-research.md"
+      "doc": "en/archive/round-1-research.md",
+      "anchoredAtlasPlaybackIncrement": {
+        "sourceId": "S107",
+        "deliverableId": "V058",
+        "status": "bounded_existing_API_example",
+        "fullRequirementAcceptance": "OPEN",
+        "doc": "en/docs/anchored-atlas-playback-contract.md"
+      }
     },
     {
       "id": "R012",
@@ -357,7 +384,8 @@
         "S103",
         "S104",
         "S105",
-        "S106"
+        "S106",
+        "S107"
       ],
       "deliveryIds": [
         "V001",
@@ -376,7 +404,8 @@
         "V054",
         "V055",
         "V056",
-        "V057"
+        "V057",
+        "V058"
       ],
       "decisionIds": [
         "D002",
@@ -403,6 +432,13 @@
         "status": "bounded_increment",
         "fullRequirementAcceptance": "OPEN",
         "doc": "en/docs/spritesheet-contract.md"
+      },
+      "anchoredAtlasPlaybackIncrement": {
+        "sourceId": "S107",
+        "deliverableId": "V058",
+        "status": "bounded_existing_API_example",
+        "fullRequirementAcceptance": "OPEN",
+        "doc": "en/docs/anchored-atlas-playback-contract.md"
       }
     },
     {
@@ -466,7 +502,8 @@
         "S103",
         "S104",
         "S105",
-        "S106"
+        "S106",
+        "S107"
       ],
       "deliveryIds": [
         "V001",
@@ -488,7 +525,8 @@
         "V054",
         "V055",
         "V056",
-        "V057"
+        "V057",
+        "V058"
       ],
       "decisionIds": [
         "D001",
@@ -508,7 +546,14 @@
         "D015",
         "D016"
       ],
-      "doc": "en/docs/independent-implementation-and-dependency-policy.md"
+      "doc": "en/docs/independent-implementation-and-dependency-policy.md",
+      "anchoredAtlasPlaybackIncrement": {
+        "sourceId": "S107",
+        "deliverableId": "V058",
+        "status": "bounded_existing_API_example",
+        "fullRequirementAcceptance": "OPEN",
+        "doc": "en/docs/anchored-atlas-playback-contract.md"
+      }
     },
     {
       "id": "R016",
@@ -525,7 +570,8 @@
         "S103",
         "S104",
         "S105",
-        "S106"
+        "S106",
+        "S107"
       ],
       "deliveryIds": [
         "V001",
@@ -551,12 +597,20 @@
         "V054",
         "V055",
         "V056",
-        "V057"
+        "V057",
+        "V058"
       ],
       "decisionIds": [
         "D016"
       ],
-      "doc": "en/docs/engineering-architecture-and-project-structure.md"
+      "doc": "en/docs/engineering-architecture-and-project-structure.md",
+      "anchoredAtlasPlaybackIncrement": {
+        "sourceId": "S107",
+        "deliverableId": "V058",
+        "status": "bounded_existing_API_example",
+        "fullRequirementAcceptance": "OPEN",
+        "doc": "en/docs/anchored-atlas-playback-contract.md"
+      }
     },
     {
       "id": "R017",
@@ -629,7 +683,8 @@
         "S103",
         "S104",
         "S105",
-        "S106"
+        "S106",
+        "S107"
       ],
       "deliveryIds": [
         "V007",
@@ -647,10 +702,18 @@
         "V054",
         "V055",
         "V056",
-        "V057"
+        "V057",
+        "V058"
       ],
       "decisionIds": [],
-      "doc": "en/docs/bilingual-documentation-and-prepush-checks.md"
+      "doc": "en/docs/bilingual-documentation-and-prepush-checks.md",
+      "anchoredAtlasPlaybackIncrement": {
+        "sourceId": "S107",
+        "deliverableId": "V058",
+        "status": "bounded_existing_API_example",
+        "fullRequirementAcceptance": "OPEN",
+        "doc": "en/docs/anchored-atlas-playback-contract.md"
+      }
     },
     {
       "id": "R020",
@@ -735,7 +798,8 @@
         "S103",
         "S104",
         "S105",
-        "S106"
+        "S106",
+        "S107"
       ],
       "deliveryIds": [
         "V050",
@@ -744,14 +808,22 @@
         "V054",
         "V055",
         "V056",
-        "V057"
+        "V057",
+        "V058"
       ],
       "decisionIds": [],
       "doc": "en/docs/repository-identity-and-line-endings.md",
       "relatedRequirementIds": [
         "R016",
         "R019"
-      ]
+      ],
+      "anchoredAtlasPlaybackIncrement": {
+        "sourceId": "S107",
+        "deliverableId": "V058",
+        "status": "bounded_existing_API_example",
+        "fullRequirementAcceptance": "OPEN",
+        "doc": "en/docs/anchored-atlas-playback-contract.md"
+      }
     }
   ],
   "spineF1ClockPortableReplaySuccessor": {
@@ -1664,7 +1736,7 @@
   },
   "_localization": {
     "canonicalSource": "需求.json",
-    "canonicalSha256": "9ef14d664c2acb5a7a53ef562a9bbd0e32b271d0638854ca155ce512fde851f5",
+    "canonicalSha256": "0f25caf0acf698a001c6e21c59d40398436908650a718b3f9ce81e047f2c8d97",
     "role": "read_only_translation",
     "language": "en"
   },
@@ -1730,6 +1802,58 @@
     "independentReview": {
       "bytes": 45021,
       "sha256": "10f7f529ebd9b3e015da452edf537ddc3087a5bdc63da155ec1a720cc51877d8",
+      "identityOnlyNotDistributed": true
+    },
+    "historicalPublicPendingCutoffsPreserved": true,
+    "remoteCIPassClaim": false
+  },
+  "anchoredAtlasPlaybackWorkPackage": {
+    "engineeringPreview": "0.53.0",
+    "sourceId": "S107",
+    "deliverableId": "V058",
+    "curationDate": "2026-10-15",
+    "status": "CURRENT_CODE_AND_BOUNDED_NATIVE_ACCEPTED_PUBLIC_DELIVERY_PENDING",
+    "record": "knowledge-base/evidence/anchored-atlas-playback-verification.json",
+    "focusedCPU": {
+      "pass": 16
+    },
+    "completeCode": {
+      "phases": 9,
+      "Core": 3147,
+      "SpineSource": 160
+    },
+    "native": {
+      "mainReadbacks": 14,
+      "mainChannels": 32256,
+      "pixelTolerance": 0,
+      "mismatchedPixels": 0,
+      "mismatchedChannels": 0,
+      "separateCanvasAdditionalReadbacks": 2,
+      "separateControlMainCredit": 0,
+      "controlDifferingPixels": 48,
+      "controlDifferingChannels": 96
+    },
+    "publicSourceBilingualReview": "PENDING",
+    "fullPrepush": "PENDING",
+    "mandatoryHooks": "PENDING",
+    "newGitDelivery": "PENDING",
+    "remoteCIPassClaim": false,
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "historicalCutoffsPreserved": true,
+    "contract": "en/docs/anchored-atlas-playback-contract.md",
+    "evidence": "en/docs/anchored-atlas-playback-evidence.md",
+    "plan": "en/docs/anchored-atlas-playback-implementation-plan.md"
+  },
+  "displayAnchorOffsetsDeliveryActualSuccessor": {
+    "engineeringPreview": "0.52.0",
+    "recordedOn": "2026-10-15",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/40",
+    "main": "d1debacedcbc068dc4c3b26fa9876181e23c4864",
+    "tree": "33adba3e1ea744091adc623ea1398102e54a9b43",
+    "independentReview": {
+      "bytes": 48911,
+      "sha256": "e2ce215c1610db2aa4749e5ad96103d28eab6a50ca64dfdfa31b6ac30891bd20",
       "identityOnlyNotDistributed": true
     },
     "historicalPublicPendingCutoffsPreserved": true,

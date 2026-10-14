@@ -2,6 +2,14 @@
 
 English | [简体中文](../Cns/README.md)
 
+<!-- AAP-0.53.0-BEGIN -->
+## Engineering preview 0.53.0 — one runnable resource/animation chain
+
+**S107 / V058 · 2026-10-15.** The anchored atlas playground connects a genuine asset lease, named frames, shared clock playback, authored Bitmap pivot and explicit Canvas/WebGPU presentation. Read the [example](../../examples/anchored-atlas-playback/README.md), [contract](docs/anchored-atlas-playback-contract.md), [evidence](docs/anchored-atlas-playback-evidence.md) and [remaining plan](docs/anchored-atlas-playback-implementation-plan.md).
+
+Independent current CPU/code acceptance covers 16 focused tests, all 9 code phases, Core 3147/3147 and retained Spine Source 160/160. Desktop Edge 155.0.4283.45 Canvas/WebGPU acceptance covers 14 main readbacks and 32256 channels with zero mismatches at tolerance 0; the separate fresh Canvas control contributes 0 main cases. Final public Source/bilingual review, prepush/hooks and new delivery remain PENDING. Full Spine R020/V020, migration R008/V006, complete UI/3D/AI and devices/performance remain open or unverified. Preceding 0.52 delivery is PR #40; earlier recorded cutoffs stay historical.
+<!-- AAP-0.53.0-END -->
+
 <!-- AO-0.52.0-DRAFT-BEGIN -->
 ## Engineering preview 0.52.0 — authored display pivots
 

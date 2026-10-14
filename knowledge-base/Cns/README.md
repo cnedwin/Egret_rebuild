@@ -2,6 +2,14 @@
 
 [English](../en/README.md) | 简体中文
 
+<!-- AAP-0.53.0-BEGIN -->
+## 工程预览 0.53.0 — 可运行资源／动画链
+
+**S107 / V058 · 2026-10-15。** 锚点图集示例连接真实资源租约、具名帧、共用时钟播放、Bitmap 指定枢轴及显式 Canvas／WebGPU 呈现。阅读[示例](../../examples/anchored-atlas-playback/README.zh-CN.md)、[契约](docs/锚点图集播放契约.md)、[证据](docs/锚点图集播放证据.md)和[剩余计划](docs/锚点图集播放工程计划.md)。
+
+独立当前 CPU／代码接受覆盖 16 项专项测试、全部 9 个代码阶段、Core 3147/3147 和保留 Spine 源码 160/160。桌面 Edge 155.0.4283.45 Canvas/WebGPU 验收覆盖 14 次主读取、32256 通道，在容差 0 下零差异；独立全新 Canvas 对照计入 0 个主案例。 最终公开 Source/双语评审、prepush/hooks 与新增交付保持 PENDING。完整 Spine R020/V020、迁移 R008/V006、完整 UI／3D／AI 及设备／性能保持开放或未验证。前次 0.52 已通过 PR #40 交付；早先记录的截止点保持历史范围。
+<!-- AAP-0.53.0-END -->
+
 <!-- AO-0.52.0-DRAFT-BEGIN -->
 ## 工程预览 0.52.0 — 显式显示枢轴
 

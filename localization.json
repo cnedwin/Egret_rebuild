@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "revision": "0.52.0",
+  "revision": "0.53.0",
   "canonicalState": "Chinese registries; English JSON is a read-only translation",
   "evidencePolicy": "Machine data, embedded source, historical code and upstream legal originals retain their identities; paired reading versions explain them.",
   "semanticReview": {
@@ -57,8 +57,8 @@
       "zh": "ACKNOWLEDGEMENTS.zh-CN.md",
       "en": "ACKNOWLEDGEMENTS.md",
       "kind": "public_reading",
-      "enSha256": "76da7304b2048cf4e10478ae915949885bc867a0def4714ca87f7e7af97bb5cc",
-      "zhSha256": "a049c885258dc5dc6028dadc505ddedb56f7698921c1a5af5aa19599ee9be8a6"
+      "enSha256": "9b9264df0b5d2160e4192b65cca804306d3ab0f4a6ab35e807d781fc16433828",
+      "zhSha256": "0f2e16216bc7efa86a3317184aa37a8ba2ddf94b46579aab4a7a71d07cbf7713"
     },
     {
       "zh": "AGENTS.zh-CN.md",
@@ -141,8 +141,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "3c766513b56d54cb4148ecdd8fab44b149dd1455d50516b134b8b90e1f93e2d9",
-      "zhSha256": "1bdf9aa9923d856d1ee3ddee3f1f91c35a01ecd85240d747f8cbec3e9d29561b"
+      "enSha256": "eb9c1d533a4a8c4f45dd96b2f48afa747a16ef75b35e37ac6a297241183dd1bd",
+      "zhSha256": "3c3bfae1ace19bc7c783281f16b2f2c740a5a9cc84d601285667ef757100226a"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -764,8 +764,8 @@
       "zh": "knowledge-base/Cns/README.md",
       "en": "knowledge-base/en/README.md",
       "kind": "public_reading",
-      "enSha256": "da7387089052816564c24d75469d73727408cae5944a248f001ccfbc669849f7",
-      "zhSha256": "ba88bab2461d0291302f2a1a7f74ecf8ad5fa0bae42ae1596a2473dac33e0d82"
+      "enSha256": "1b6bbc3a147a2fa2f1e1072c823769eb0bf295e1b020ccef8a21110eebc6cfad",
+      "zhSha256": "64ac28f9531d7c37307e98cd959a20b375e4114092648929c50d5e1fd06a4aaa"
     },
     {
       "zh": "knowledge-base/Cns/templates/ADR决策记录.md",
@@ -799,8 +799,8 @@
       "zh": "knowledge-base/README.zh-CN.md",
       "en": "knowledge-base/README.md",
       "kind": "public_navigation",
-      "enSha256": "c818119fbfb28455ea314f149ee3643797c751ff0f4b187b3ab1bf2007d18ed4",
-      "zhSha256": "9436e99706e34293c2ff4a0b85e845347367ce7621f813969e4670f883b2b932"
+      "enSha256": "2c6162b7b44ed77d18cf8182c4c7741bcf82a241c164ce20de4054751ef0b383",
+      "zhSha256": "e245f1141135aef91173d446e6cdc16ddc907e59017b0e73cc8c17861b86adaf"
     },
     {
       "zh": "LICENSE.zh-CN.md",
@@ -848,8 +848,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "425a0906f3658f41a5e3931e29d4b9a86c3d1271b098d85aed1fa61742a82a7a",
-      "zhSha256": "a8704762502a2c0683475ff9e54e19195125d5fc4cd48adf9739569ae31a00e7"
+      "enSha256": "a0a89b124ef8a841aa1305d496bc68d3f7d220db3a5fc05c288523c91baf9cc9",
+      "zhSha256": "d27a57e7d3afacc43eb95d87ad09484ac64de5a646cc7612e7e412dccfc8bdbf"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -1370,14 +1370,42 @@
       "kind": "public_reading",
       "enSha256": "ee0cf41d043af4ba1914bbdce153209c31bfd2791e2a7eb0023bd3d8327f32f2",
       "zhSha256": "73e746098ee1c89e74d7ca1f90b93f7ebdde5038638dd5505bc1f190ffe2945e"
+    },
+    {
+      "en": "examples/anchored-atlas-playback/README.md",
+      "zh": "examples/anchored-atlas-playback/README.zh-CN.md",
+      "kind": "public_reading",
+      "enSha256": "d14ea861b3ca9ba5050c217460b30311d22931b0ea857a4ab5d9fc47adad34d2",
+      "zhSha256": "a7d00a591b69998c945a78d2d27ea6d496d93cc0e4e8ed074df73d83df68f848"
+    },
+    {
+      "en": "knowledge-base/en/docs/anchored-atlas-playback-contract.md",
+      "zh": "knowledge-base/Cns/docs/锚点图集播放契约.md",
+      "kind": "public_reading",
+      "enSha256": "3c8f339b0b1ed5a68392e8d5ca6161b49d19d8ea4daad7a5360cfe1a3434eaac",
+      "zhSha256": "5e8a19c2461aab0eabc8011bf9e194035474058b85b52fcf5979340777c12b03"
+    },
+    {
+      "en": "knowledge-base/en/docs/anchored-atlas-playback-evidence.md",
+      "zh": "knowledge-base/Cns/docs/锚点图集播放证据.md",
+      "kind": "public_reading",
+      "enSha256": "a132221697377d759cedf83ae231659b2f3e92cdb839435268a0a966c4274310",
+      "zhSha256": "65004016f1b48db5bc0417b3ce682bbce1746250b450bd9604156e570b81ac47"
+    },
+    {
+      "en": "knowledge-base/en/docs/anchored-atlas-playback-implementation-plan.md",
+      "zh": "knowledge-base/Cns/docs/锚点图集播放工程计划.md",
+      "kind": "public_reading",
+      "enSha256": "be929d57b75e32e4ab88071f580577052c3e986fb395055ce69ca218363898ca",
+      "zhSha256": "d8c6b416c821d4b6754e8726ccab7ef518be71e5a0c66cb24d1d3d7ab9b6b937"
     }
   ],
   "registries": [
     {
       "source": "knowledge-base/Cns/registry/需求.json",
       "target": "knowledge-base/en/registry/requirements.json",
-      "sourceSha256": "9ef14d664c2acb5a7a53ef562a9bbd0e32b271d0638854ca155ce512fde851f5",
-      "targetSha256": "84fa4651222c6216e12113b8dd9baec9eb1e7f8222ed1065d51f0b7d06a40b58"
+      "sourceSha256": "0f25caf0acf698a001c6e21c59d40398436908650a718b3f9ce81e047f2c8d97",
+      "targetSha256": "25a65d72b147c0ee2729e0379e62c83945b6d8c694fdad907096e36d82531ba9"
     },
     {
       "source": "knowledge-base/Cns/registry/决策.json",
@@ -1394,20 +1422,20 @@
     {
       "source": "knowledge-base/Cns/registry/交付.json",
       "target": "knowledge-base/en/registry/deliverables.json",
-      "sourceSha256": "42dbfcb3d6ae6cad29c432eecd52c8931263c87a098304d2cb3126bd2ac68ca2",
-      "targetSha256": "be63ba8d8a57e0f3b8f667e3b550aa950479ed53d47efa9c84ee7b4ffdb4d2e2"
+      "sourceSha256": "adc29bf7955d4c4c7777f144ae4619c8d3e9d9bf1ff587ebc41d16cf19229812",
+      "targetSha256": "51513c9c84bcb9673b3838beda2fd3255456421f6899dcc8a164f7cb84031d31"
     },
     {
       "source": "knowledge-base/Cns/registry/来源.json",
       "target": "knowledge-base/en/registry/sources.json",
-      "sourceSha256": "4d0759b41e50493b27b0e423e8f435432c6a39d7746a7c7e8756a54ebdc1f880",
-      "targetSha256": "927a8ba514260ceb730fe0befb9bd3562464546549ab0781f87d12adf71a4818"
+      "sourceSha256": "31eb36ae3f01bd7a8cc0027907a6823e262593c32df77309327bc0c3f7b750f5",
+      "targetSha256": "c512537309adafe62e543d081e7f0afa5f688f5f019eeed074a450288d92aa4c"
     },
     {
       "source": "knowledge-base/Cns/当前版本.json",
       "target": "knowledge-base/en/current-version.json",
-      "sourceSha256": "2f2bbdd0d304fd4758abc7ba70c7cd8312cf71683fa2688c9b834295298ea99e",
-      "targetSha256": "0e6fcc181d9277f352afa13c23ee5175d7343e72fbee4d03fab26108989aa744"
+      "sourceSha256": "7385bdcf5ed3cebaadf701654f3212b65f3890f67032173cc2c952a5eca62864",
+      "targetSha256": "79f7a9fed85e6f455a7e4875237610a44f7677135c81d99aaa3130e6d9c060cf"
     }
   ],
   "criticalComments": [
@@ -1999,7 +2027,7 @@
     },
     {
       "path": "knowledge-base/tools/Validate-KnowledgeBase.ps1",
-      "sha256": "1e8b1ba6bac62ca3eecaec7bad4d6a73a12387d5c0440eb25468e319715b491c"
+      "sha256": "f715975437bfd9360ef9b81531459d1c3ebdbf4a106f2c22f02ea8db87e96630"
     },
     {
       "path": "packages/runtime/src/displayHitState.ts",
@@ -2588,6 +2616,18 @@
     {
       "path": "tools/display-anchor-offsets-native/oracle.mjs",
       "sha256": "c9a7332ac0f17c175824a60526fac4fef14c2b74a22c28f78fffa4cb11268b9a"
+    },
+    {
+      "path": "examples/anchored-atlas-playback/session.mjs",
+      "sha256": "fafcd0494081da76b6df89c36cc5d0bd614afbf3b592001c7c63a0922ed38153"
+    },
+    {
+      "path": "examples/anchored-atlas-playback/main.mjs",
+      "sha256": "3608b776e0eb98005969c6dcdcff70609dfdea305b023173f79cd5bda4b67de9"
+    },
+    {
+      "path": "tests/anchored-atlas-playback-example.test.mjs",
+      "sha256": "d397c419333a0168f6234a74a644df4572a78dea8107d01963dd187675c192d2"
     }
   ],
   "historicalSemanticReview": {
@@ -5867,5 +5907,136 @@
     "newCriticalRows": 8,
     "oldReviewCutoffsPreserved": true,
     "record": "knowledge-base/evidence/display-anchor-offsets-verification.json"
+  },
+  "anchoredAtlasPlaybackCuration": {
+    "date": "2026-10-15",
+    "engineeringPreview": "0.53.0",
+    "sourceId": "S107",
+    "deliverableId": "V058",
+    "sourceOnly": true,
+    "publicSourceBilingualReview": "PENDING",
+    "newReadingPairs": 4,
+    "readingPairRows": 193,
+    "criticalCommentRows": 296,
+    "newCriticalRows": 3,
+    "oldReviewCutoffsPreserved": true,
+    "rawArchivePairs": [
+      {
+        "source": "README.md",
+        "archive": "knowledge-base/en/archive/root-readme-through-0.52.0.md.txt",
+        "path": "knowledge-base/en/archive/root-readme-through-0.52.0.md.txt",
+        "bytes": 118890,
+        "sha256": "425a0906f3658f41a5e3931e29d4b9a86c3d1271b098d85aed1fa61742a82a7a",
+        "role": "exact_raw_historical_data_not_translated_reading"
+      },
+      {
+        "source": "README.zh-CN.md",
+        "archive": "knowledge-base/Cns/archive/根说明截至0.52.0.md.txt",
+        "path": "knowledge-base/Cns/archive/根说明截至0.52.0.md.txt",
+        "bytes": 117864,
+        "sha256": "a8704762502a2c0683475ff9e54e19195125d5fc4cd48adf9739569ae31a00e7",
+        "role": "exact_raw_historical_data_not_translated_reading"
+      }
+    ],
+    "record": "knowledge-base/evidence/anchored-atlas-playback-verification.json"
+  },
+  "anchoredAtlasPlaybackPublicationPrerequisiteSuccessor": {
+    "date": "2026-10-15",
+    "kind": "EXACT_TWO_REPOSITORY_READING_TARGET_REGISTRATION",
+    "priorPublic32SourceReview": {
+      "bytes": 40942,
+      "sha256": "409672e5e3b4b9337fb83c6b3bc13ea8c5713fd6fc784e0cbff76a019b3bdaa8",
+      "identityOnlyNotDistributed": true,
+      "verdict": "PASS_SOURCE_BILINGUAL_PUBLIC_32_ONLY",
+      "openFindings": 0
+    },
+    "firstNormalPrepush": {
+      "stage": "knowledge-base",
+      "exitCode": 1,
+      "timeout": false,
+      "stderrEmpty": true,
+      "records": 209,
+      "markdown": 339,
+      "links": 2789,
+      "references": 1460,
+      "issues": 8,
+      "stdout": {
+        "bytes": 1008,
+        "sha256": "e48d8753e2026d9c6a9c6ddaeed6c1b7b7d13c10bb51144d430a14193cf47f0a",
+        "identityOnlyNotDistributed": true
+      },
+      "independentFailureQualification": {
+        "bytes": 15909,
+        "sha256": "7f8b52748919e545bb1e6a41f79739698be3919e32e8eedebe5e5e2b6662c476",
+        "identityOnlyNotDistributed": true,
+        "verdict": "QUALIFIED_ACTUAL_EARLY_KB_FAILURE_FULL_NODE_PREPUSH_NOT_ATTEMPTED",
+        "openOriginalIssues": 8
+      },
+      "savedLogBoundary": "Preserved saved text files; not an original raw binary pipe capture.",
+      "laterStages": "NOT_ATTEMPTED"
+    },
+    "repair": {
+      "literalAddedTargets": [
+        "examples/anchored-atlas-playback/README.md",
+        "examples/anchored-atlas-playback/README.zh-CN.md"
+      ],
+      "literalTargetCountBefore": 7,
+      "literalTargetCountAfter": 9,
+      "currentValidatorPin": {
+        "path": "knowledge-base/tools/Validate-KnowledgeBase.ps1",
+        "bytes": 12999,
+        "sha256": "f715975437bfd9360ef9b81531459d1c3ebdbf4a106f2c22f02ea8db87e96630"
+      },
+      "processLocalUTF8Diagnostics": true,
+      "inputAndRawFileHashesUnchanged": true,
+      "allOtherValidatorBytesPreserved": true,
+      "guardsUnchanged": true
+    },
+    "diagnosticEncodingProbe": {
+      "result": {
+        "bytes": 3030,
+        "sha256": "a5e9b0aef1c769a29b196590547c60079ad79d43954ac7044a358046c8fa6746",
+        "identityOnlyNotDistributed": true
+      },
+      "scope": "Root-recorded two literal Console.Write processes; no KB/project actor run",
+      "cases": [
+        {
+          "mode": "default",
+          "exitCode": 0,
+          "stderrBytes": 0,
+          "utf8Roundtrip": false,
+          "stdoutBytes": 23,
+          "stdoutSha256": "db8200ea076862e83f52906ba41a21ad99c6a143398a299431c6e51553e4f80e"
+        },
+        {
+          "mode": "explicit-utf8",
+          "exitCode": 0,
+          "stderrBytes": 0,
+          "utf8Roundtrip": true,
+          "stdoutBytes": 33,
+          "stdoutSha256": "459b90da81954694c80d4ae642e5056966b42d1150760d1bc1dbce892b3dfbca"
+        }
+      ],
+      "originalKBLogBoundary": "Saved text log bytes are preserved; they are not an original raw binary pipe capture.",
+      "processLocalOnly": true
+    },
+    "publicScope": {
+      "previousFiles": 32,
+      "currentFiles": 33,
+      "trackedModified": 22,
+      "newFiles": 11
+    },
+    "SourceReview": "PENDING_R2",
+    "normalFullPrepushRetry": "PENDING",
+    "mandatoryHooks": "PENDING",
+    "newGitDelivery": "PENDING",
+    "acceptedCodeAndNativeUnchanged": true,
+    "historicalCutoffsPreserved": true,
+    "readingPairRows": 193,
+    "criticalRows": 296,
+    "newReadingPairs": 0,
+    "newCriticalRows": 0,
+    "changedCriticalRows": 1,
+    "priorR1CurationPreserved": true
   }
 }

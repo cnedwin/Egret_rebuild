@@ -1,0 +1,469 @@
+{
+  "schemaVersion": 1,
+  "kind": "BOUNDED_FIRST_PARTY_ANCHORED_ATLAS_PLAYBACK_EVIDENCE",
+  "engineeringPreview": "0.53.0",
+  "sourceId": "S107",
+  "deliverableId": "V058",
+  "curationDate": "2026-10-15",
+  "status": "CURRENT_CODE_AND_BOUNDED_NATIVE_ACCEPTED_PUBLIC_DELIVERY_PENDING",
+  "record": "knowledge-base/evidence/anchored-atlas-playback-verification.json",
+  "focusedCPU": {
+    "pass": 16
+  },
+  "completeCode": {
+    "phases": 9,
+    "Core": 3147,
+    "SpineSource": 160
+  },
+  "native": {
+    "mainReadbacks": 14,
+    "mainChannels": 32256,
+    "pixelTolerance": 0,
+    "mismatchedPixels": 0,
+    "mismatchedChannels": 0,
+    "separateCanvasAdditionalReadbacks": 2,
+    "separateControlMainCredit": 0,
+    "controlDifferingPixels": 48,
+    "controlDifferingChannels": 96
+  },
+  "publicSourceBilingualReview": "PENDING",
+  "fullPrepush": "PENDING",
+  "mandatoryHooks": "PENDING",
+  "newGitDelivery": "PENDING",
+  "remoteCIPassClaim": false,
+  "fullSpineR020V020": "OPEN",
+  "migrationR008V006": "OPEN",
+  "historicalCutoffsPreserved": true,
+  "scope": "Existing public API composition; no Engine/runtime/export/dependency change",
+  "currentSourcePins": [
+    {
+      "path": "examples/anchored-atlas-playback/session.mjs",
+      "bytes": 9529,
+      "sha256": "fafcd0494081da76b6df89c36cc5d0bd614afbf3b592001c7c63a0922ed38153"
+    },
+    {
+      "path": "examples/anchored-atlas-playback/main.mjs",
+      "bytes": 4651,
+      "sha256": "3608b776e0eb98005969c6dcdcff70609dfdea305b023173f79cd5bda4b67de9"
+    },
+    {
+      "path": "examples/anchored-atlas-playback/index.html",
+      "bytes": 2962,
+      "sha256": "7551c87d6af75f72c763f2cf2dba0053218f168aef9a599ce9d0e0b54df35b13"
+    },
+    {
+      "path": "tests/anchored-atlas-playback-example.test.mjs",
+      "bytes": 20604,
+      "sha256": "d397c419333a0168f6234a74a644df4572a78dea8107d01963dd187675c192d2"
+    }
+  ],
+  "sourceReviewBindings": {
+    "application": {
+      "bytes": 8354,
+      "sha256": "cf52b30b7147eadd06fa6693b27bea371bece17740af308108bc0a5cd281df52",
+      "identityOnlyNotDistributed": true
+    },
+    "fixture": {
+      "bytes": 1767,
+      "sha256": "f5e81f92d7a153f79c8f8e2aa7ce05ef2584d9c90fbc1ac4fb4a2f94d305309a",
+      "identityOnlyNotDistributed": true
+    }
+  },
+  "originalSetupFocusedReview": {
+    "bytes": 61137,
+    "sha256": "43167f47e50c0191f0fddabde646c0a8be180be8fbdb13fa46de2010553515d6",
+    "identityOnlyNotDistributed": true,
+    "focusedTests": 16,
+    "priorHTMLCodeCutoffPreserved": true
+  },
+  "currentNineCodeReview": {
+    "bytes": 31002,
+    "sha256": "b6ac19f6542e2346b2c6e94beda53ee9caea74029142a1f94f30c22e3af771da",
+    "identityOnlyNotDistributed": true,
+    "verdict": "PASS_ACTUAL_NINE_CURRENT_CODE_GATES_ONLY",
+    "coreTestSummary": {
+      "tests": 3147,
+      "suites": 0,
+      "pass": 3147,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "spineSourceTestSummary": {
+      "tests": 160,
+      "suites": 0,
+      "pass": 160,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    }
+  },
+  "preservedNativeFailure": {
+    "bytes": 32407,
+    "sha256": "998779f6198c458fe76b5370c4e0803257625b09ec001db995e95bfef81ca686",
+    "identityOnlyNotDistributed": true,
+    "status": "QUALIFIED_ACTUAL_NATIVE_R1_FAILURE_WITH_METADATA_PREFLIGHT_PASS",
+    "metadataCasesPassed": 16,
+    "pixelsAccepted": 0,
+    "outcome": "Canvas readiness timeout; one missing HTML private alias repaired by reviewed Source successor; original timeout and successful retry retain separate cutoffs"
+  },
+  "acceptedNative": {
+    "review": {
+      "bytes": 64966,
+      "sha256": "cbb5df5f7487aa2d34564aef01185218fa1d83a49e1a4504518c753a9a0fe533",
+      "identityOnlyNotDistributed": true,
+      "verdict": "PASS_ACTUAL_NATIVE_DOM_ONLY",
+      "openFindings": 0
+    },
+    "originalResult": {
+      "bytes": 83454,
+      "sha256": "dbd5be4863eab3a783308fd16a5d41b9ace12b25bf299543086b6b83b20267a7",
+      "identityOnlyNotDistributed": true
+    },
+    "environment": {
+      "browserChannel": "msedge",
+      "browserVersion": "155.0.4283.45",
+      "customFlags": [],
+      "physicalGpuIdentityObserved": false
+    },
+    "metadataPreflight": {
+      "cases": 16,
+      "allPass": true,
+      "mainCredit": 0,
+      "pixelReadbacks": 0
+    },
+    "main": {
+      "backends": [
+        "canvas",
+        "webgpu"
+      ],
+      "width": 24,
+      "height": 24,
+      "pixelRatio": 1,
+      "mainReadbacks": 14,
+      "mainChannels": 32256,
+      "pixelTolerance": 0,
+      "mismatchedPixels": 0,
+      "mismatchedChannels": 0,
+      "separateCanvasAdditionalReadbacks": 2,
+      "separateControlMainCredit": 0,
+      "controlDifferingPixels": 48,
+      "controlDifferingChannels": 96
+    },
+    "savedPresentation": {
+      "N6": [
+        {
+          "backend": "canvas",
+          "N6equalsN1Bytes": true,
+          "unchangedSavedHandle": true,
+          "sameEngineAlive": true,
+          "liveColor": "blue",
+          "presentedColor": "red",
+          "sourceSeconds": 0.5,
+          "hostInputObjectLedgerRecorded": false
+        },
+        {
+          "backend": "webgpu",
+          "N6equalsN1Bytes": true,
+          "unchangedSavedHandle": true,
+          "sameEngineAlive": true,
+          "liveColor": "blue",
+          "presentedColor": "red",
+          "sourceSeconds": 0.5,
+          "hostInputObjectLedgerRecorded": false
+        }
+      ],
+      "actualCaptureCounterRecorded": false,
+      "browserHostInputFrameObjectLedgerRecorded": false,
+      "sourceBoundPlan": {
+        "newCaptures": 12,
+        "savedReplays": 2
+      },
+      "sourceBoundPlanIsObservedCounter": false,
+      "CPURecordingHostIdentityProofIsSeparate": true
+    },
+    "separateCanvasControl": {
+      "additionalReadbacks": 2,
+      "mainCredit": 0,
+      "baselineMismatches": 0,
+      "omittedStepDifferingPixels": 48,
+      "omittedStepDifferingChannels": 96
+    },
+    "retirement": {
+      "sessions": 3,
+      "loadsPerSession": 1,
+      "disposalsPerSession": 1,
+      "ScopesBitmapTextureClosed": true,
+      "outerTickets": 64,
+      "outerPending": 0,
+      "safeWebGPU": true,
+      "WebGPUPendingFrames": 0,
+      "WebGPUPendingUploadBytes": 0,
+      "WebGPUPendingReadbackBytes": 0
+    },
+    "stability": {
+      "actorRecordedGraphBeforeAfterStable": true,
+      "actorRecordedRuntimeBeforeAfterStable": true,
+      "reviewerLaterAuthenticatedGraphCount": 368,
+      "reviewerLaterAuthenticatedRuntimeCount": 175,
+      "reviewerLaterAuthenticationIsNotActorObservation": true
+    },
+    "rawRGBAOriginals": [
+      {
+        "role": "canvas-N1.rgba",
+        "bytes": 2304,
+        "sha256": "bc4d2a62765f100ee5a26090a0abffabe1e181b4c94db0155438a9d66d8f11b5",
+        "identityOnlyNotDistributed": true
+      },
+      {
+        "role": "canvas-N2.rgba",
+        "bytes": 2304,
+        "sha256": "cffe44b12a0c2c37609adf46a7c040821df8ab4a4088444e3b99c0eab3641f07",
+        "identityOnlyNotDistributed": true
+      },
+      {
+        "role": "canvas-N3.rgba",
+        "bytes": 2304,
+        "sha256": "cffe44b12a0c2c37609adf46a7c040821df8ab4a4088444e3b99c0eab3641f07",
+        "identityOnlyNotDistributed": true
+      },
+      {
+        "role": "canvas-N4.rgba",
+        "bytes": 2304,
+        "sha256": "bc4d2a62765f100ee5a26090a0abffabe1e181b4c94db0155438a9d66d8f11b5",
+        "identityOnlyNotDistributed": true
+      },
+      {
+        "role": "canvas-N5.rgba",
+        "bytes": 2304,
+        "sha256": "cffe44b12a0c2c37609adf46a7c040821df8ab4a4088444e3b99c0eab3641f07",
+        "identityOnlyNotDistributed": true
+      },
+      {
+        "role": "canvas-N6.rgba",
+        "bytes": 2304,
+        "sha256": "bc4d2a62765f100ee5a26090a0abffabe1e181b4c94db0155438a9d66d8f11b5",
+        "identityOnlyNotDistributed": true
+      },
+      {
+        "role": "canvas-N7.rgba",
+        "bytes": 2304,
+        "sha256": "cffe44b12a0c2c37609adf46a7c040821df8ab4a4088444e3b99c0eab3641f07",
+        "identityOnlyNotDistributed": true
+      },
+      {
+        "role": "control-C1-baseline.rgba",
+        "bytes": 2304,
+        "sha256": "bc4d2a62765f100ee5a26090a0abffabe1e181b4c94db0155438a9d66d8f11b5",
+        "identityOnlyNotDistributed": true
+      },
+      {
+        "role": "control-C1-omitted-Step.rgba",
+        "bytes": 2304,
+        "sha256": "bc4d2a62765f100ee5a26090a0abffabe1e181b4c94db0155438a9d66d8f11b5",
+        "identityOnlyNotDistributed": true
+      },
+      {
+        "role": "webgpu-N1.rgba",
+        "bytes": 2304,
+        "sha256": "bc4d2a62765f100ee5a26090a0abffabe1e181b4c94db0155438a9d66d8f11b5",
+        "identityOnlyNotDistributed": true
+      },
+      {
+        "role": "webgpu-N2.rgba",
+        "bytes": 2304,
+        "sha256": "cffe44b12a0c2c37609adf46a7c040821df8ab4a4088444e3b99c0eab3641f07",
+        "identityOnlyNotDistributed": true
+      },
+      {
+        "role": "webgpu-N3.rgba",
+        "bytes": 2304,
+        "sha256": "cffe44b12a0c2c37609adf46a7c040821df8ab4a4088444e3b99c0eab3641f07",
+        "identityOnlyNotDistributed": true
+      },
+      {
+        "role": "webgpu-N4.rgba",
+        "bytes": 2304,
+        "sha256": "bc4d2a62765f100ee5a26090a0abffabe1e181b4c94db0155438a9d66d8f11b5",
+        "identityOnlyNotDistributed": true
+      },
+      {
+        "role": "webgpu-N5.rgba",
+        "bytes": 2304,
+        "sha256": "cffe44b12a0c2c37609adf46a7c040821df8ab4a4088444e3b99c0eab3641f07",
+        "identityOnlyNotDistributed": true
+      },
+      {
+        "role": "webgpu-N6.rgba",
+        "bytes": 2304,
+        "sha256": "bc4d2a62765f100ee5a26090a0abffabe1e181b4c94db0155438a9d66d8f11b5",
+        "identityOnlyNotDistributed": true
+      },
+      {
+        "role": "webgpu-N7.rgba",
+        "bytes": 2304,
+        "sha256": "cffe44b12a0c2c37609adf46a7c040821df8ab4a4088444e3b99c0eab3641f07",
+        "identityOnlyNotDistributed": true
+      }
+    ],
+    "rawRGBAFileCount": 16,
+    "savedPNGCount": 0,
+    "scope": "Bounded desktop DOM/Canvas/WebGPU page only; no physical GPU, fonts, phones, native SDK, performance, full Spine, publication or delivery acceptance"
+  },
+  "precedingDelivery": {
+    "engineeringPreview": "0.52.0",
+    "recordedOn": "2026-10-15",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/40",
+    "main": "d1debacedcbc068dc4c3b26fa9876181e23c4864",
+    "tree": "33adba3e1ea744091adc623ea1398102e54a9b43",
+    "independentReview": {
+      "bytes": 48911,
+      "sha256": "e2ce215c1610db2aa4749e5ad96103d28eab6a50ca64dfdfa31b6ac30891bd20",
+      "identityOnlyNotDistributed": true
+    },
+    "historicalPublicPendingCutoffsPreserved": true,
+    "remoteCIPassClaim": false
+  },
+  "rawReadmeArchives": [
+    {
+      "source": "README.md",
+      "target": "knowledge-base/en/archive/root-readme-through-0.52.0.md.txt",
+      "path": "knowledge-base/en/archive/root-readme-through-0.52.0.md.txt",
+      "bytes": 118890,
+      "sha256": "425a0906f3658f41a5e3931e29d4b9a86c3d1271b098d85aed1fa61742a82a7a"
+    },
+    {
+      "source": "README.zh-CN.md",
+      "target": "knowledge-base/Cns/archive/根说明截至0.52.0.md.txt",
+      "path": "knowledge-base/Cns/archive/根说明截至0.52.0.md.txt",
+      "bytes": 117864,
+      "sha256": "a8704762502a2c0683475ff9e54e19195125d5fc4cd48adf9739569ae31a00e7"
+    }
+  ],
+  "founderPrefixes": [
+    {
+      "source": "README.md",
+      "prefixBytes": 841,
+      "prefixSHA256": "9d2cd94e60185431606d974bea23593437c181d8bc9f9927cf0a45e6fb46e2e5",
+      "endsImmediatelyBefore": "<!-- AO-0.52.0-DRAFT-BEGIN -->",
+      "preserveExact": true
+    },
+    {
+      "source": "README.zh-CN.md",
+      "prefixBytes": 835,
+      "prefixSHA256": "3c8eec3344154fef7116dfb9a5089ac742ee62b625e0d3f03a24a1909c75871e",
+      "endsImmediatelyBefore": "<!-- AO-0.52.0-DRAFT-BEGIN -->",
+      "preserveExact": true
+    }
+  ],
+  "packageVersion": "0.0.0",
+  "privatePackages": true,
+  "hostProtocol": "1.0",
+  "newThirdPartyDependency": false,
+  "unverified": [
+    "Full Spine R020/V020",
+    "Migration R008/V006",
+    "Complete V002/V004/V005",
+    "Complete EUI/layout",
+    "Fonts/IME/PNG decode",
+    "Advanced3D/AI",
+    "Physical GPU/mobileNativeSDK/phones",
+    "Performance/energy/GC",
+    "RemoteCI"
+  ],
+  "publicationPrerequisiteSuccessor": {
+    "date": "2026-10-15",
+    "kind": "EXACT_TWO_REPOSITORY_READING_TARGET_REGISTRATION",
+    "priorPublic32SourceReview": {
+      "bytes": 40942,
+      "sha256": "409672e5e3b4b9337fb83c6b3bc13ea8c5713fd6fc784e0cbff76a019b3bdaa8",
+      "identityOnlyNotDistributed": true,
+      "verdict": "PASS_SOURCE_BILINGUAL_PUBLIC_32_ONLY",
+      "openFindings": 0
+    },
+    "firstNormalPrepush": {
+      "stage": "knowledge-base",
+      "exitCode": 1,
+      "timeout": false,
+      "stderrEmpty": true,
+      "records": 209,
+      "markdown": 339,
+      "links": 2789,
+      "references": 1460,
+      "issues": 8,
+      "stdout": {
+        "bytes": 1008,
+        "sha256": "e48d8753e2026d9c6a9c6ddaeed6c1b7b7d13c10bb51144d430a14193cf47f0a",
+        "identityOnlyNotDistributed": true
+      },
+      "independentFailureQualification": {
+        "bytes": 15909,
+        "sha256": "7f8b52748919e545bb1e6a41f79739698be3919e32e8eedebe5e5e2b6662c476",
+        "identityOnlyNotDistributed": true,
+        "verdict": "QUALIFIED_ACTUAL_EARLY_KB_FAILURE_FULL_NODE_PREPUSH_NOT_ATTEMPTED",
+        "openOriginalIssues": 8
+      },
+      "savedLogBoundary": "Preserved saved text files; not an original raw binary pipe capture.",
+      "laterStages": "NOT_ATTEMPTED"
+    },
+    "repair": {
+      "literalAddedTargets": [
+        "examples/anchored-atlas-playback/README.md",
+        "examples/anchored-atlas-playback/README.zh-CN.md"
+      ],
+      "literalTargetCountBefore": 7,
+      "literalTargetCountAfter": 9,
+      "currentValidatorPin": {
+        "path": "knowledge-base/tools/Validate-KnowledgeBase.ps1",
+        "bytes": 12999,
+        "sha256": "f715975437bfd9360ef9b81531459d1c3ebdbf4a106f2c22f02ea8db87e96630"
+      },
+      "processLocalUTF8Diagnostics": true,
+      "inputAndRawFileHashesUnchanged": true,
+      "allOtherValidatorBytesPreserved": true,
+      "guardsUnchanged": true
+    },
+    "diagnosticEncodingProbe": {
+      "result": {
+        "bytes": 3030,
+        "sha256": "a5e9b0aef1c769a29b196590547c60079ad79d43954ac7044a358046c8fa6746",
+        "identityOnlyNotDistributed": true
+      },
+      "scope": "Root-recorded two literal Console.Write processes; no KB/project actor run",
+      "cases": [
+        {
+          "mode": "default",
+          "exitCode": 0,
+          "stderrBytes": 0,
+          "utf8Roundtrip": false,
+          "stdoutBytes": 23,
+          "stdoutSha256": "db8200ea076862e83f52906ba41a21ad99c6a143398a299431c6e51553e4f80e"
+        },
+        {
+          "mode": "explicit-utf8",
+          "exitCode": 0,
+          "stderrBytes": 0,
+          "utf8Roundtrip": true,
+          "stdoutBytes": 33,
+          "stdoutSha256": "459b90da81954694c80d4ae642e5056966b42d1150760d1bc1dbce892b3dfbca"
+        }
+      ],
+      "originalKBLogBoundary": "Saved text log bytes are preserved; they are not an original raw binary pipe capture.",
+      "processLocalOnly": true
+    },
+    "publicScope": {
+      "previousFiles": 32,
+      "currentFiles": 33,
+      "trackedModified": 22,
+      "newFiles": 11
+    },
+    "SourceReview": "PENDING_R2",
+    "normalFullPrepushRetry": "PENDING",
+    "mandatoryHooks": "PENDING",
+    "newGitDelivery": "PENDING",
+    "acceptedCodeAndNativeUnchanged": true,
+    "historicalCutoffsPreserved": true
+  }
+}

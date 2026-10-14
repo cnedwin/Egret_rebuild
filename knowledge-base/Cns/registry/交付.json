@@ -5896,6 +5896,81 @@
         "migrationR008V006": "OPEN",
         "historicalCutoffsPreserved": true
       }
+    },
+    {
+      "id": "V058",
+      "kind": "engineering_preview",
+      "status": "in_progress",
+      "requirementIds": [
+        "R002",
+        "R004",
+        "R011",
+        "R012",
+        "R015",
+        "R016",
+        "R019",
+        "R021"
+      ],
+      "sourceIds": [
+        "S107"
+      ],
+      "dependsOn": [
+        "V057"
+      ],
+      "owner": "project",
+      "dueDate": null,
+      "title": "工程预览 0.53.0 — 锚点图集播放示例",
+      "doc": "Cns/docs/锚点图集播放契约.md",
+      "artifacts": [
+        "Cns/docs/锚点图集播放契约.md",
+        "Cns/docs/锚点图集播放证据.md",
+        "Cns/docs/锚点图集播放工程计划.md",
+        "evidence/anchored-atlas-playback-verification.json"
+      ],
+      "implementation": "示例本地会话组合现有公共 API；不新增 Engine 导出、runtime 改动、依赖或自动调度。",
+      "acceptance": "当前代码与有限 Native 接受分别限定；最终公开双语评审和交付仍待完成。",
+      "acceptanceCriteria": [
+        "保留完整契约、原始失败和历史截止点。",
+        "完成公开整理评审、完整 prepush、强制 hooks 和单独限定交付。"
+      ],
+      "verification": {
+        "engineeringPreview": "0.53.0",
+        "sourceId": "S107",
+        "deliverableId": "V058",
+        "curationDate": "2026-10-15",
+        "status": "CURRENT_CODE_AND_BOUNDED_NATIVE_ACCEPTED_PUBLIC_DELIVERY_PENDING",
+        "record": "knowledge-base/evidence/anchored-atlas-playback-verification.json",
+        "focusedCPU": {
+          "pass": 16
+        },
+        "completeCode": {
+          "phases": 9,
+          "Core": 3147,
+          "SpineSource": 160
+        },
+        "native": {
+          "mainReadbacks": 14,
+          "mainChannels": 32256,
+          "pixelTolerance": 0,
+          "mismatchedPixels": 0,
+          "mismatchedChannels": 0,
+          "separateCanvasAdditionalReadbacks": 2,
+          "separateControlMainCredit": 0,
+          "controlDifferingPixels": 48,
+          "controlDifferingChannels": 96
+        },
+        "publicSourceBilingualReview": "PENDING",
+        "fullPrepush": "PENDING",
+        "mandatoryHooks": "PENDING",
+        "newGitDelivery": "PENDING",
+        "remoteCIPassClaim": false,
+        "fullSpineR020V020": "OPEN",
+        "migrationR008V006": "OPEN",
+        "historicalCutoffsPreserved": true,
+        "contract": "Cns/docs/锚点图集播放契约.md",
+        "evidence": "Cns/docs/锚点图集播放证据.md",
+        "plan": "Cns/docs/锚点图集播放工程计划.md"
+      }
     }
   ],
   "spineF1ClockPortableReplaySuccessor": {
@@ -6883,6 +6958,58 @@
     "independentReview": {
       "bytes": 45021,
       "sha256": "10f7f529ebd9b3e015da452edf537ddc3087a5bdc63da155ec1a720cc51877d8",
+      "identityOnlyNotDistributed": true
+    },
+    "historicalPublicPendingCutoffsPreserved": true,
+    "remoteCIPassClaim": false
+  },
+  "anchoredAtlasPlaybackWorkPackage": {
+    "engineeringPreview": "0.53.0",
+    "sourceId": "S107",
+    "deliverableId": "V058",
+    "curationDate": "2026-10-15",
+    "status": "CURRENT_CODE_AND_BOUNDED_NATIVE_ACCEPTED_PUBLIC_DELIVERY_PENDING",
+    "record": "knowledge-base/evidence/anchored-atlas-playback-verification.json",
+    "focusedCPU": {
+      "pass": 16
+    },
+    "completeCode": {
+      "phases": 9,
+      "Core": 3147,
+      "SpineSource": 160
+    },
+    "native": {
+      "mainReadbacks": 14,
+      "mainChannels": 32256,
+      "pixelTolerance": 0,
+      "mismatchedPixels": 0,
+      "mismatchedChannels": 0,
+      "separateCanvasAdditionalReadbacks": 2,
+      "separateControlMainCredit": 0,
+      "controlDifferingPixels": 48,
+      "controlDifferingChannels": 96
+    },
+    "publicSourceBilingualReview": "PENDING",
+    "fullPrepush": "PENDING",
+    "mandatoryHooks": "PENDING",
+    "newGitDelivery": "PENDING",
+    "remoteCIPassClaim": false,
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "historicalCutoffsPreserved": true,
+    "contract": "Cns/docs/锚点图集播放契约.md",
+    "evidence": "Cns/docs/锚点图集播放证据.md",
+    "plan": "Cns/docs/锚点图集播放工程计划.md"
+  },
+  "displayAnchorOffsetsDeliveryActualSuccessor": {
+    "engineeringPreview": "0.52.0",
+    "recordedOn": "2026-10-15",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/40",
+    "main": "d1debacedcbc068dc4c3b26fa9876181e23c4864",
+    "tree": "33adba3e1ea744091adc623ea1398102e54a9b43",
+    "independentReview": {
+      "bytes": 48911,
+      "sha256": "e2ce215c1610db2aa4749e5ad96103d28eab6a50ca64dfdfa31b6ac30891bd20",
       "identityOnlyNotDistributed": true
     },
     "historicalPublicPendingCutoffsPreserved": true,
