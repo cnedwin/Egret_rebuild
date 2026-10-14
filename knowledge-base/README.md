@@ -2,6 +2,24 @@
 
 English | [简体中文](README.zh-CN.md)
 
+<!-- F2C-0.47.0-BEGIN -->
+## Engineering preview 0.47.0 — Spine Core manual mesh bridge
+
+**R004 / R012 / R015 / R016 / R019 / R020 / R021 · S101 / V052.** The optional F2-C experiment connects genuine Egret resources/display ownership to external official Core 4.3.13 for bounded unweighted-mesh manual absolute translate/deform sampling, two resident instances and owned immutable geometry. Default SDK entries gain no Core dependency or export. Independent acceptance covers ten main CPU cases, four separate resource transactions, fourteen type lanes (twenty-five actual unsuppressed diagnostic tuples) and one G1 callback observer with separate ordinary before/after baselines. The post-implementation ordinary default suite passed 3064/3064. Counts stay separate; the numerical bound covers only the original five-point fixture.
+
+Controlled copied-source execution is independently accepted: ten separate complete original baselines, two discriminating mutants and three fault units, with five successful restorations. These repetitions do not increase unique main-case, type-lane or diagnostic-tuple counts.
+
+Fixed policy/cold/help observations are separately accepted: eight default roots, 145 reachable keys, 1416 literal relations and seven fresh children. Negative filesystem/DOM/scheduler observations cover selected operations; they do not prove universal absence.
+
+Independent native R2 review accepted one F2C11 default-Edge WebGPU case: seven submissions / seven 64 × 48 readbacks at DPR 1, five literal pixels / twenty channels and two complete repeat/backward frames / 24576 channels matched at tolerance zero. Canvas refused separately with zero submissions; cleanup passed. The opaque fixture does not qualify alternate alpha modes, adapter identity was not recorded, and these are not device-performance results.
+
+At the 2026-10-14 curation cutoff, complete current publication/push gates and 0.47.0 PR/Main remain pending. Full Spine R020/V020 and migration R008/V006 remain OPEN; Clock/mixing, weighted meshes, phone/platform performance and entitlement are outside this acceptance. The external SDK is not bundled: entitlement unknown, distribution clearance unverified; packages remain private 0.0.0 and host protocol 1.0.
+
+Read the [contract and guide](en/docs/spine-core-manual-bridge.md) and [verification/open work](en/docs/spine-core-manual-bridge-evidence.md).
+
+Previous 0.46.0 delivery merged through [PR #34](https://github.com/cnedwin/Egret_rebuild/pull/34) at 2026-10-13T18:18:51Z: Main `562543ea10d9a6b8124561a7027811f3f7dede4c`, tree `ff54205b5e4ba83bfbb75867226e1cbca0e27a32`. Separate local/mandatory-hook suites passed 137/137 publication, 3064/3064 core and 160/160 experimental tests; 1486 committed raw blobs had zero issues. Remote statuses/check runs 0/0 with combined pending do not establish remote CI PASS. Earlier PENDING cutoffs remain historical.
+<!-- F2C-0.47.0-END -->
+
 <!-- BIP1-0.46.0-BEGIN -->
 ## Engineering preview 0.46.0 — Optional browser PNG textures
 

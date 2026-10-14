@@ -1,0 +1,50 @@
+{
+  "skeleton": { "spine": "4.3.13" },
+  "bones": [
+    { "name": "root", "x": 4, "y": 6 },
+    { "name": "child", "parent": "root", "x": 0, "y": 0 }
+  ],
+  "slots": [
+    { "name": "meshSlot", "bone": "child", "attachment": "quad", "color": "ffffffff", "blend": "normal" }
+  ],
+  "skins": [
+    {
+      "name": "default",
+      "attachments": {
+        "meshSlot": {
+          "quad": {
+            "type": "mesh",
+            "path": "meshRegion",
+            "vertices": [0, 0, 8, 0, 8, 8, 0, 8],
+            "uvs": [0, 0, 1, 0, 1, 1, 0, 1],
+            "triangles": [0, 1, 2, 2, 3, 0]
+          }
+        }
+      }
+    }
+  ],
+  "animations": {
+    "bend": {
+      "bones": {
+        "child": {
+          "translate": [
+            { "time": 0, "x": 0, "y": 0 },
+            { "time": 1, "x": 4, "y": 2 }
+          ]
+        }
+      },
+      "attachments": {
+        "default": {
+          "meshSlot": {
+            "quad": {
+              "deform": [
+                { "time": 0 },
+                { "time": 1, "offset": 3, "vertices": [2, -2, 0, 4] }
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

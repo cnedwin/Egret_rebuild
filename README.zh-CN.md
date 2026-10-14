@@ -12,6 +12,40 @@ Years later, as times change and technology advances, many developers continue t
 
 多年以后，时代变迁，技术革新，依然有很多开发者在鼓励我们。我希望借助 AI 和社区的力量，重建这个游戏引擎。
 
+<!-- F2C-0.47.0-BEGIN -->
+## Engineering preview 0.47.0 — Spine Core manual mesh bridge
+
+**R004 / R012 / R015 / R016 / R019 / R020 / R021 · S101 / V052.** The optional F2-C experiment connects genuine Egret resources/display ownership to external official Core 4.3.13 for bounded unweighted-mesh manual absolute translate/deform sampling, two resident instances and owned immutable geometry. Default SDK entries gain no Core dependency or export. Independent acceptance covers ten main CPU cases, four separate resource transactions, fourteen type lanes (twenty-five actual unsuppressed diagnostic tuples) and one G1 callback observer with separate ordinary before/after baselines. The post-implementation ordinary default suite passed 3064/3064. Counts stay separate; the numerical bound covers only the original five-point fixture.
+
+Controlled copied-source execution is independently accepted: ten separate complete original baselines, two discriminating mutants and three fault units, with five successful restorations. These repetitions do not increase unique main-case, type-lane or diagnostic-tuple counts.
+
+Fixed policy/cold/help observations are separately accepted: eight default roots, 145 reachable keys, 1416 literal relations and seven fresh children. Negative filesystem/DOM/scheduler observations cover selected operations; they do not prove universal absence.
+
+Independent native R2 review accepted one F2C11 default-Edge WebGPU case: seven submissions / seven 64 × 48 readbacks at DPR 1, five literal pixels / twenty channels and two complete repeat/backward frames / 24576 channels matched at tolerance zero. Canvas refused separately with zero submissions; cleanup passed. The opaque fixture does not qualify alternate alpha modes, adapter identity was not recorded, and these are not device-performance results.
+
+At the 2026-10-14 curation cutoff, complete current publication/push gates and 0.47.0 PR/Main remain pending. Full Spine R020/V020 and migration R008/V006 remain OPEN; Clock/mixing, weighted meshes, phone/platform performance and entitlement are outside this acceptance. The external SDK is not bundled: entitlement unknown, distribution clearance unverified; packages remain private 0.0.0 and host protocol 1.0.
+
+Read the [contract and guide](knowledge-base/en/docs/spine-core-manual-bridge.md) and [verification/open work](knowledge-base/en/docs/spine-core-manual-bridge-evidence.md).
+
+Previous 0.46.0 delivery merged through [PR #34](https://github.com/cnedwin/Egret_rebuild/pull/34) at 2026-10-13T18:18:51Z: Main `562543ea10d9a6b8124561a7027811f3f7dede4c`, tree `ff54205b5e4ba83bfbb75867226e1cbca0e27a32`. Separate local/mandatory-hook suites passed 137/137 publication, 3064/3064 core and 160/160 experimental tests; 1486 committed raw blobs had zero issues. Remote statuses/check runs 0/0 with combined pending do not establish remote CI PASS. Earlier PENDING cutoffs remain historical.
+
+## 工程预览 0.47.0 — Spine Core 手动网格桥接
+
+**R004 / R012 / R015 / R016 / R019 / R020 / R021 · S101 / V052。** 可选 F2-C 实验将真实白鹭资源、显示树与外部官方 Core 4.3.13 连接，支持限定非加权 mesh 的手动绝对时间 translate／deform 采样、两个驻留实例与自有不可变几何。默认 SDK 不增加 Core 依赖或导出。已独立接受十项主 CPU、四项独立资源事务、十四组类型（二十五个实际未抑制诊断元组）和一项 G1 回调观察器；后者具有单独的前后普通基线。实现后普通默认套件通过 3064/3064。各次执行范围分别计数，数值界仅适用于原始五点夹具。
+
+受控复制源码执行已独立接受：十次独立完整原始基线、两个可区分变异与三个故障单元，五次恢复均通过。它们不增加主用例、类型组或诊断元组的唯一计数。
+
+固定策略／冷导入／help 观察另行接受：八个默认根入口、145 个可达键、1416 条字面关系及七个新子进程。同步文件访问、DOM 与调度的负向观察限定于所选操作；不能推导普遍不存在。
+
+独立原生 R2 评审接受一项 F2C11 默认 Edge WebGPU 用例：七次提交／七份 64 × 48 读回、DPR 1，五个字面像素／二十个通道及两个完整重复／后退帧／24576 个通道以零容差一致。Canvas 另行拒绝且提交为零；清理通过。不透明夹具不验收其他 alpha 模式，未记录 adapter 身份；这些不是设备性能证据。
+
+本整理截止点为 2026-10-14：当前完整公开／推送门禁及 0.47.0 PR/Main 仍待完成。完整 Spine R020/V020 与迁移 R008/V006 保持 OPEN；Clock／混合、加权网格、手机／平台性能及许可资格不在本次接受范围。外部 SDK 不打包，许可资格 unknown、分发资格 unverified；package 保持私有 0.0.0，宿主协议 1.0。
+
+阅读[契约与指南](knowledge-base/Cns/docs/SpineCore手动网格桥接.md)和[验证与待完成工作](knowledge-base/Cns/docs/SpineCore手动网格桥接证据.md)。
+
+前一版本 0.46.0 已经 [PR #34](https://github.com/cnedwin/Egret_rebuild/pull/34) 于 2026-10-13T18:18:51Z 合并，Main `562543ea10d9a6b8124561a7027811f3f7dede4c`、tree `ff54205b5e4ba83bfbb75867226e1cbca0e27a32`。分别执行的本机／必要推送钩子套件通过 137/137 公开材料、3064/3064 核心及 160/160 实验测试；1486 个提交原始 blob 检查的问题为零。远端状态／check run 为 0/0、汇总 pending，不宣称远端 CI PASS。保留此前 PENDING 截止点。
+<!-- F2C-0.47.0-END -->
+
 <!-- BIP1-0.46.0-BEGIN -->
 ## Engineering preview 0.46.0 — Optional browser PNG textures
 

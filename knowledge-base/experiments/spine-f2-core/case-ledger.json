@@ -1,0 +1,34 @@
+{
+  "status": "SOURCE_ONLY_NOT_RUN",
+  "actualMainExecutedCases": 0,
+  "prerequisites": {
+    "id": "F2C00",
+    "countedAsMain": false
+  },
+  "mainCpuIds": [
+    "F2C01",
+    "F2C02",
+    "F2C03",
+    "F2C04",
+    "F2C05",
+    "F2C06",
+    "F2C07",
+    "F2C08",
+    "F2C09",
+    "F2C10"
+  ],
+  "native": {
+    "id": "F2C11",
+    "status": "TASK5_PENDING_NOT_RUN"
+  },
+  "task4ControlsPending": [
+    "Core compatibility/yDown",
+    "post-Core throw before materialization",
+    "creation rollback and cleanup cause controls",
+    "failed-instance quota release",
+    "owned-source mutants wrong Y, omit deform/reset, pooled alias"
+  ],
+  "publicPageControlBoundary": "Genuine ImageData2D fixes colorSpace/alpha/origin/format. Invalid objects are not fabricated as genuine textures.",
+  "typeDiagnosticTuples": null,
+  "typeExitStatuses": null
+}

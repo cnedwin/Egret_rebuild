@@ -1,0 +1,22 @@
+// SPDX-License-Identifier: Apache-2.0
+import { createF2CoreResources } from '../dist/index.js';
+import type { F2CoreCreateOptions, F2CoreResources, F2CoreInstance, F2CoreInstanceState } from '../dist/index.js';
+import type { Engine, Scope, Texture, AssetRef, DisplayObjectContainer } from '@egret/engine';
+import type { SpineImportInput } from '@egret/project/spine';
+type Equal<A,B> = (<T>()=>T extends A?1:2) extends (<T>()=>T extends B?1:2) ? true : false;
+type Check<T extends true> = T;
+type Values = Check<Equal<keyof typeof import('../dist/index.js'), 'createF2CoreResources'>>;
+type Factory = Check<Equal<typeof createF2CoreResources,(engine:Engine,resourceScope:Scope,options:F2CoreCreateOptions)=>Promise<F2CoreResources>>>;
+type Options = Check<Equal<keyof F2CoreCreateOptions,'input'|'pageRef'>>;
+type Input = Check<Equal<F2CoreCreateOptions['input'],SpineImportInput>>;
+type Page = Check<Equal<F2CoreCreateOptions['pageRef'],AssetRef<Texture>>>;
+type Resources = Check<Equal<keyof F2CoreResources,'isDisposed'|'createInstance'|'dispose'>>;
+type Instance = Check<Equal<keyof F2CoreInstance,'display'|'state'|'sampleTimeSeconds'|'sampleAt'|'dispose'>>;
+type Display = Check<Equal<F2CoreInstance['display'],DisplayObjectContainer|undefined>>;
+type State = Check<Equal<F2CoreInstanceState,'live'|'failed'|'disposed'>>;
+type Admission = Check<Equal<Parameters<F2CoreResources['createInstance']>,[instanceScope:Scope,animationName:string]>>;
+type Sampling = Check<Equal<Parameters<F2CoreInstance['sampleAt']>,[seconds:number]>>;
+declare const engine:Engine,resourceScope:Scope,instanceScope:Scope,input:SpineImportInput,pageRef:AssetRef<Texture>;
+const options:F2CoreCreateOptions={input,pageRef};
+const result:Promise<F2CoreResources>=createF2CoreResources(engine,resourceScope,options);
+result.then(resources=>{const instance:F2CoreInstance=resources.createInstance(instanceScope,'bend');instance.sampleAt(0.5);instance.dispose();resources.dispose();});

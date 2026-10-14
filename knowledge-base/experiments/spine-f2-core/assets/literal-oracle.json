@@ -1,0 +1,427 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "F2C-ORIGINAL-FIXTURE-R1",
+  "status": "SOURCE_ONLY_LITERAL_ORACLE_NOT_EXECUTED",
+  "designRevision": "spec-candidate-r2",
+  "caseIds": [
+    "F2C00",
+    "F2C03",
+    "F2C04",
+    "F2C05",
+    "F2C11"
+  ],
+  "derivation": "Hand-authored ideal p + translation + deformed local vertex; one final Y inversion. No Core, bridge, planner or current helper produced these expectations.",
+  "animationName": "bend",
+  "sourceVersion": "4.3.13",
+  "durationSeconds": 1,
+  "fixture": {
+    "bones": [
+      {
+        "name": "root",
+        "parentIndex": -1,
+        "x": 4,
+        "y": 6
+      },
+      {
+        "name": "child",
+        "parentIndex": 0,
+        "x": 0,
+        "y": 0
+      }
+    ],
+    "slotName": "meshSlot",
+    "attachmentName": "quad",
+    "regionName": "meshRegion",
+    "vertexCount": 4,
+    "indexCount": 6,
+    "setupPositions": [
+      0,
+      0,
+      8,
+      0,
+      8,
+      8,
+      0,
+      8
+    ],
+    "regionUVs": [
+      0,
+      0,
+      1,
+      0,
+      1,
+      1,
+      0,
+      1
+    ],
+    "triangleIndices": [
+      0,
+      1,
+      2,
+      2,
+      3,
+      0
+    ],
+    "translateKeys": [
+      {
+        "time": 0,
+        "x": 0,
+        "y": 0
+      },
+      {
+        "time": 1,
+        "x": 4,
+        "y": 2
+      }
+    ],
+    "deformKeys": [
+      {
+        "time": 0
+      },
+      {
+        "time": 1,
+        "offset": 3,
+        "vertices": [
+          2,
+          -2,
+          0,
+          4
+        ]
+      }
+    ],
+    "fullDeformComponentCount": 8,
+    "sourceDeclaredTimelineCount": 2,
+    "sourceDeclaredKeyframeCount": 4,
+    "sourceDeclaredExpandedDeformScalarCount": 16
+  },
+  "idealSamples": [
+    {
+      "timeSeconds": 0,
+      "positions": [
+        4,
+        -6,
+        12,
+        -6,
+        12,
+        -14,
+        4,
+        -14
+      ]
+    },
+    {
+      "timeSeconds": 0.25,
+      "positions": [
+        5,
+        -6.5,
+        13,
+        -7,
+        12.5,
+        -14.5,
+        6,
+        -14.5
+      ]
+    },
+    {
+      "timeSeconds": 0.5,
+      "positions": [
+        6,
+        -7,
+        14,
+        -8,
+        13,
+        -15,
+        8,
+        -15
+      ]
+    },
+    {
+      "timeSeconds": 0.75,
+      "positions": [
+        7,
+        -7.5,
+        15,
+        -9,
+        13.5,
+        -15.5,
+        10,
+        -15.5
+      ]
+    },
+    {
+      "timeSeconds": 1,
+      "positions": [
+        8,
+        -8,
+        16,
+        -10,
+        14,
+        -16,
+        12,
+        -16
+      ]
+    }
+  ],
+  "invariantGeometry": {
+    "uvs": [
+      0,
+      0,
+      0.5,
+      0,
+      0.5,
+      0.5,
+      0,
+      0.5
+    ],
+    "indices": [
+      0,
+      1,
+      2,
+      2,
+      3,
+      0
+    ],
+    "lightColors": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "absoluteTolerance": 0
+  },
+  "analyticalPositionBound": {
+    "applicableTimesSeconds": [
+      0,
+      0.25,
+      0.5,
+      0.75,
+      1
+    ],
+    "absolutePerComponent": 0.0000019073486328125,
+    "exactExpression": "2^-19",
+    "relativeTolerance": 0,
+    "hostQualificationCaseId": "F2C00",
+    "hostQualification": "NOT_RUN_REQUIRED_BEFORE_ANY_POSE_OBSERVATION",
+    "delta": 2.4e-8,
+    "tauExpression": "2^-40",
+    "uExpression": "2^-53",
+    "qExpression": "90 * (3.1415927 / 180)",
+    "hostPremises": [
+      "|cos(0)-1| <= tau",
+      "|sin(0)| <= tau",
+      "|cos(q)| <= delta + tau",
+      "|sin(q)-1| <= delta^2/2 + tau"
+    ],
+    "eExpression": "delta + 2*tau",
+    "gamma8Expression": "8*u/(1-8*u)",
+    "twoBoneTransformDeviationExpression": "28*e + 12*e^2",
+    "affineRoundingBoundExpression": "R = 2^-40 > 128*gamma8",
+    "preCastWorldMagnitudeUpperBound": 32,
+    "float32HalfULPBoundExpression": "2^-20",
+    "totalDeviationExpression": "28*e + 12*e^2 + R + 2^-20 < 0.000001626 < 2^-19",
+    "policy": "Fixed before SDK execution; no fitting, widening, arbitrary-time, other-fixture or universal ECMAScript trig claim."
+  },
+  "resetAndRetention": {
+    "repeatTimeAfterLastSampleSeconds": 0.5,
+    "backwardTimeAfterRepeatSeconds": 0.25,
+    "earlierSameHostActualSampleAbsoluteTolerance": 0,
+    "capturedGeometryAndFrameIdentity": "unchanged",
+    "capturedGeometryAndFrameBytesAbsoluteTolerance": 0,
+    "repeatAlsoRequiresUnchangedIdealBound": true,
+    "otherInstanceMustNotChangeCapturedBytes": true
+  },
+  "page": {
+    "width": 16,
+    "height": 16,
+    "pixelFormat": "rgba8unorm",
+    "colorSpace": "srgb",
+    "alphaMode": "straight",
+    "origin": "top-left",
+    "logicalRGBABytes": 1024,
+    "region": {
+      "x": 0,
+      "y": 0,
+      "width": 8,
+      "height": 8,
+      "rotation": 0,
+      "offsetLeft": 0,
+      "offsetBottom": 0,
+      "originalWidth": 8,
+      "originalHeight": 8,
+      "index": -1
+    },
+    "minFilter": "Nearest",
+    "magFilter": "Nearest",
+    "repeat": "none",
+    "pma": false,
+    "colorRectangles": [
+      {
+        "x": 0,
+        "y": 0,
+        "width": 4,
+        "height": 4,
+        "rgba": [
+          255,
+          0,
+          0,
+          255
+        ]
+      },
+      {
+        "x": 4,
+        "y": 0,
+        "width": 4,
+        "height": 4,
+        "rgba": [
+          0,
+          255,
+          0,
+          255
+        ]
+      },
+      {
+        "x": 0,
+        "y": 4,
+        "width": 4,
+        "height": 4,
+        "rgba": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "x": 4,
+        "y": 4,
+        "width": 4,
+        "height": 4,
+        "rgba": [
+          255,
+          255,
+          0,
+          255
+        ]
+      }
+    ],
+    "allOtherPixelsRGBA": [
+      255,
+      0,
+      255,
+      255
+    ],
+    "pagePixelAbsoluteTolerance": 0
+  },
+  "native": {
+    "caseId": "F2C11",
+    "execution": "NOT_RUN",
+    "genuineObjectsRequired": [
+      "Engine",
+      "Stage",
+      "Texture provider",
+      "Mesh2D"
+    ],
+    "host": {
+      "width": 64,
+      "height": 48,
+      "dpr": 1,
+      "clearRGBA": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "browserChannel": "msedge",
+      "headless": true,
+      "extraLaunchFlags": [],
+      "backend": "explicit textured WebGPU"
+    },
+    "rootPosition": {
+      "x": 16,
+      "y": 24
+    },
+    "sampleTimeSeconds": 0,
+    "pixelSamples": [
+      {
+        "x": 21,
+        "y": 17,
+        "rgba": [
+          255,
+          0,
+          0,
+          255
+        ]
+      },
+      {
+        "x": 26,
+        "y": 17,
+        "rgba": [
+          0,
+          255,
+          0,
+          255
+        ]
+      },
+      {
+        "x": 21,
+        "y": 11,
+        "rgba": [
+          0,
+          0,
+          255,
+          255
+        ]
+      },
+      {
+        "x": 26,
+        "y": 11,
+        "rgba": [
+          255,
+          255,
+          0,
+          255
+        ]
+      },
+      {
+        "x": 19,
+        "y": 15,
+        "rgba": [
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "rgbaAbsoluteTolerance": 0,
+    "wholeFrameRepeatAbsoluteTolerance": 0,
+    "furtherObligations": [
+      "moving/deforming nonblank frames",
+      "preserved captured geometry"
+    ],
+    "negativeControl": "Canvas textured-profile refusal is a refusal control, not Canvas mesh acceptance.",
+    "boundary": "CPU submission is not native pixels, phone or physical-GPU proof; unsupported backend and precision errors remain visible."
+  },
+  "actualExecutedCases": 0,
+  "admission": {
+    "sourceProfile": "not_run",
+    "coreCompatibility": "not_run",
+    "poseNumerics": "not_run",
+    "resourceIdentity": "not_run",
+    "playback": "not_run",
+    "rendering": "not_run",
+    "nativePixels": "not_run",
+    "licenseEntitlement": "unverified"
+  }
+}
