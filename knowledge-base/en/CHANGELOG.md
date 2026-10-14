@@ -2,6 +2,16 @@
 
 English | [简体中文](../Cns/CHANGELOG.md)
 
+<!-- AAP-0.53.0-BEGIN -->
+## Engineering preview 0.53.0 — anchored atlas playback playground
+
+**S107 / V058 · 2026-10-15.** A runnable public example joins a genuine asset lease, named red/blue SpriteSheet crops, Engine-clock sequence playback, authored Bitmap pivots and explicit Canvas/WebGPU presentation. Step/Pause/Resume and exact saved/live replay expose the ownership and timing chain without a new Engine API, dependency or automatic timer.
+
+Independent current acceptance covers 16 public-consumer tests, all 9 code phases, Core 3147/3147 and retained Spine Source 160/160. Desktop Edge 155.0.4283.45 Canvas/WebGPU acceptance covers 14 main readbacks and 32256 channels with zero mismatches at tolerance 0; the separate fresh Canvas control contributes 0 main cases. Public Source/bilingual review, normal full prepush, mandatory hooks and new delivery remain PENDING; remote CI PASS is not claimed. The preceding 0.52 package was delivered through PR #40. Earlier failures and PENDING cutoffs retain their original scopes.
+
+Read the [example guide](../../examples/anchored-atlas-playback/README.md), [contract](docs/anchored-atlas-playback-contract.md), [evidence](docs/anchored-atlas-playback-evidence.md) and [remaining plan](docs/anchored-atlas-playback-implementation-plan.md). Full Spine R020/V020, migration R008/V006, complete EUI/layout, advanced3D/AI and fonts/devices/performance remain OPEN or unverified.
+<!-- AAP-0.53.0-END -->
+
 <!-- AO-0.52.0-DRAFT-BEGIN -->
 ## Engineering preview 0.52.0 — authored display pivots
 

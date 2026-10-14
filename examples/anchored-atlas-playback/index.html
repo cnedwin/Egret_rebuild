@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Egret anchored atlas playground / 白鹭锚点图集示例</title>
+<link rel="icon" href="/examples/canvas-scene/favicon.svg">
+<script type="importmap">{"imports":{"#egret-textured-frame-state":"/packages/engine/dist/internal/texturedFrameState.js","@egret/engine":"/packages/engine/dist/index.js","@egret/engine/web":"/packages/engine/dist/web/index.js","@egret/engine/webgpu":"/packages/engine/dist/web/webgpu.js","@egret/runtime":"/packages/runtime/dist/index.js","@egret/contracts":"/packages/contracts/dist/index.js","robust-predicates":"/packages/engine/node_modules/robust-predicates/index.js"}}</script>
+<style>
+body{font:17px/1.6 system-ui;margin:0;background:#f2f5f9;color:#172033}
+main{max-width:760px;margin:auto;padding:28px 20px}
+h1{font-size:1.8rem;line-height:1.3}
+canvas{display:block;border:1px solid #738299;image-rendering:pixelated;background:#fff}
+button,select{font:inherit;padding:8px 12px;margin:4px 6px 4px 0}
+button:focus-visible,select:focus-visible{outline:3px solid #306aca;outline-offset:2px}
+button:disabled{opacity:.5}
+.controls{margin:16px 0}#status{white-space:pre-line;min-height:5em}
+.note{font-size:.9rem;color:#46566b}
+</style>
+</head>
+<body><main>
+<h1>Anchored atlas playground<br><span lang="zh-CN">锚点图集动画示例</span></h1>
+<p>Step through two original atlas frames. Pause the animation, then replay its saved first frame.<br>
+<span lang="zh-CN">逐步播放两帧原创图集动画；暂停动画后，可以重放保存的首帧。</span></p>
+<label>Renderer / 渲染器 <select id="backend"><option value="canvas">Canvas</option><option value="webgpu">WebGPU</option></select></label>
+<p class="note">Changing the renderer starts a fresh session. WebGPU must be available in your browser.<br>
+<span lang="zh-CN">切换渲染器将启动新会话。使用 WebGPU 需要浏览器支持。</span></p>
+<canvas id="scene" width="192" height="192" aria-label="Red or blue atlas frame / 红色或蓝色图集帧"></canvas>
+<div class="controls" aria-label="Animation controls / 动画控制">
+<button id="step" disabled>Step 0.125 s / 前进</button>
+<button id="pause" disabled>Pause / 暂停</button>
+<button id="resume" disabled>Resume / 恢复</button>
+<button id="replay" disabled>Replay baseline / 重放首帧</button>
+<button id="live" disabled>Show live / 显示当前帧</button>
+<button id="close">Close / 关闭</button>
+</div>
+<p id="status" role="status" aria-live="polite" data-state="starting">Starting / 启动中</p>
+<p class="note">Time advances only when you press Step. These browser controls are an example, not an EUI layout system.<br>
+<span lang="zh-CN">只有点击“前进”才推进时间。这些浏览器控件用于演示，不代表完整 EUI 布局系统。</span></p>
+</main><script type="module" src="./main.mjs"></script></body>
+</html>

@@ -2,6 +2,10 @@
 
 English | [简体中文](ACKNOWLEDGEMENTS.zh-CN.md)
 
+<!-- AAP-0.53.0-BEGIN -->
+The 0.53 anchored atlas playground is independent first-party Apache-2.0 composition of existing Egret public APIs. Its programmatic red/blue atlas and consumer fixtures are original work; no external art, font, codec or competing-engine implementation is an input. AI assisted Source and bilingual preparation. Independent Source, original execution, language/publication and delivery reviews retain separate scopes. Existing notices, package-private0.0.0, host protocol1.0 and dependencies remain unchanged.
+<!-- AAP-0.53.0-END -->
+
 <!-- AO-0.52.0-DRAFT-ACK-BEGIN -->
 Independent 0.52.0 anchor offsets are first-party Apache-2.0 work authored from Egret specifications and familiar display contracts, with original fixtures and English critical comments. AI assisted Source/tests/bilingual preparation; independent Source, saved-result and language/delivery reviews retain separate scopes. Competing-engine implementations were not inputs to this package. The bounded changes add no third-party dependency; existing licenses and notices remain applicable.
 <!-- AO-0.52.0-DRAFT-ACK-END -->

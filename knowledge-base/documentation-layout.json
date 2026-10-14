@@ -12,8 +12,8 @@
       "action": "move-pair",
       "previousZhSha256": "c2eace3a18292062c40c9a2aa517a83f3ce3943943ba53f47266f390f8e12d87",
       "previousEnSha256": "5d6d5be4b0a4f2cebc9cd5f019ec8c56fd45ba34104a4cbe392c74c2443261f2",
-      "currentZhSha256": "a049c885258dc5dc6028dadc505ddedb56f7698921c1a5af5aa19599ee9be8a6",
-      "currentEnSha256": "76da7304b2048cf4e10478ae915949885bc867a0def4714ca87f7e7af97bb5cc"
+      "currentZhSha256": "0f2e16216bc7efa86a3317184aa37a8ba2ddf94b46579aab4a7a71d07cbf7713",
+      "currentEnSha256": "9b9264df0b5d2160e4192b65cca804306d3ab0f4a6ab35e807d781fc16433828"
     },
     {
       "oldZh": "AGENTS.md",
@@ -84,8 +84,8 @@
       "action": "move-pair",
       "previousZhSha256": "f43625255269c8801af0929179a9aab32cbca58094e4a842797e39171fc549b0",
       "previousEnSha256": "e8b100ccbd9d0fb99237a564f484f7fa6dbf008191570fa58f3e481c05c3e9f9",
-      "currentZhSha256": "1bdf9aa9923d856d1ee3ddee3f1f91c35a01ecd85240d747f8cbec3e9d29561b",
-      "currentEnSha256": "3c766513b56d54cb4148ecdd8fab44b149dd1455d50516b134b8b90e1f93e2d9"
+      "currentZhSha256": "3c3bfae1ace19bc7c783281f16b2f2c740a5a9cc84d601285667ef757100226a",
+      "currentEnSha256": "eb9c1d533a4a8c4f45dd96b2f48afa747a16ef75b35e37ac6a297241183dd1bd"
     },
     {
       "oldZh": "knowledge-base/CONTRIBUTING.md",
@@ -840,8 +840,8 @@
       "action": "move-pair",
       "previousZhSha256": "372e5b07d4980eb45d8338424c8d970b7725e324e6b3397916944b0529c55ec7",
       "previousEnSha256": "ed88646659467d718a30c3bfff14b41c28debbcb786e7bf816ee68819f612887",
-      "currentZhSha256": "ba88bab2461d0291302f2a1a7f74ecf8ad5fa0bae42ae1596a2473dac33e0d82",
-      "currentEnSha256": "da7387089052816564c24d75469d73727408cae5944a248f001ccfbc669849f7"
+      "currentZhSha256": "64ac28f9531d7c37307e98cd959a20b375e4114092648929c50d5e1fd06a4aaa",
+      "currentEnSha256": "1b6bbc3a147a2fa2f1e1072c823769eb0bf295e1b020ccef8a21110eebc6cfad"
     },
     {
       "oldZh": "knowledge-base/templates/实现来源记录.md",
@@ -960,8 +960,8 @@
       "action": "move-pair",
       "previousZhSha256": "803a40dd8bfd0f98ade51c8ba736790509aae12a6e045a8ea688b3ff5d01cdcf",
       "previousEnSha256": "40a2ef2f686aba4a10279c417dfe17879bb6396b3b80dd75b26bd09c87d665f9",
-      "currentZhSha256": "a8704762502a2c0683475ff9e54e19195125d5fc4cd48adf9739569ae31a00e7",
-      "currentEnSha256": "425a0906f3658f41a5e3931e29d4b9a86c3d1271b098d85aed1fa61742a82a7a"
+      "currentZhSha256": "d27a57e7d3afacc43eb95d87ad09484ac64de5a646cc7612e7e412dccfc8bdbf",
+      "currentEnSha256": "a0a89b124ef8a841aa1305d496bc68d3f7d220db3a5fc05c288523c91baf9cc9"
     },
     {
       "oldZh": "knowledge-base/docs/WebGPU矩形执行合同.md",
@@ -1698,6 +1698,46 @@
       "currentZhSha256": "73e746098ee1c89e74d7ca1f90b93f7ebdde5038638dd5505bc1f190ffe2945e",
       "engineeringPreview": "0.52.0",
       "status": "SOURCE_DRAFT_REVIEW_PENDING"
+    },
+    {
+      "newEn": "examples/anchored-atlas-playback/README.md",
+      "newZh": "examples/anchored-atlas-playback/README.zh-CN.md",
+      "kind": "public_reading",
+      "action": "add-current-pair",
+      "currentEnSha256": "d14ea861b3ca9ba5050c217460b30311d22931b0ea857a4ab5d9fc47adad34d2",
+      "currentZhSha256": "a7d00a591b69998c945a78d2d27ea6d496d93cc0e4e8ed074df73d83df68f848",
+      "engineeringPreview": "0.53.0",
+      "status": "SOURCE_DRAFT_REVIEW_PENDING"
+    },
+    {
+      "newEn": "knowledge-base/en/docs/anchored-atlas-playback-contract.md",
+      "newZh": "knowledge-base/Cns/docs/锚点图集播放契约.md",
+      "kind": "public_reading",
+      "action": "add-current-pair",
+      "currentEnSha256": "3c8f339b0b1ed5a68392e8d5ca6161b49d19d8ea4daad7a5360cfe1a3434eaac",
+      "currentZhSha256": "5e8a19c2461aab0eabc8011bf9e194035474058b85b52fcf5979340777c12b03",
+      "engineeringPreview": "0.53.0",
+      "status": "SOURCE_DRAFT_REVIEW_PENDING"
+    },
+    {
+      "newEn": "knowledge-base/en/docs/anchored-atlas-playback-evidence.md",
+      "newZh": "knowledge-base/Cns/docs/锚点图集播放证据.md",
+      "kind": "public_reading",
+      "action": "add-current-pair",
+      "currentEnSha256": "a132221697377d759cedf83ae231659b2f3e92cdb839435268a0a966c4274310",
+      "currentZhSha256": "65004016f1b48db5bc0417b3ce682bbce1746250b450bd9604156e570b81ac47",
+      "engineeringPreview": "0.53.0",
+      "status": "SOURCE_DRAFT_REVIEW_PENDING"
+    },
+    {
+      "newEn": "knowledge-base/en/docs/anchored-atlas-playback-implementation-plan.md",
+      "newZh": "knowledge-base/Cns/docs/锚点图集播放工程计划.md",
+      "kind": "public_reading",
+      "action": "add-current-pair",
+      "currentEnSha256": "be929d57b75e32e4ab88071f580577052c3e986fb395055ce69ca218363898ca",
+      "currentZhSha256": "d8c6b416c821d4b6754e8726ccab7ef518be71e5a0c66cb24d1d3d7ab9b6b937",
+      "engineeringPreview": "0.53.0",
+      "status": "SOURCE_DRAFT_REVIEW_PENDING"
     }
   ],
   "registries": [
@@ -2085,5 +2125,39 @@
     "existingPolicyPairUpdated": true,
     "historyPreserved": true,
     "publicSourceBilingualReview": "PENDING"
+  },
+  "anchoredAtlasPlaybackCuration": {
+    "engineeringPreview": "0.53.0",
+    "date": "2026-10-15",
+    "newReadingPairs": 4,
+    "historyPreserved": true,
+    "publicSourceBilingualReview": "PENDING",
+    "rawReadmeArchives": [
+      {
+        "source": "README.md",
+        "archive": "knowledge-base/en/archive/root-readme-through-0.52.0.md.txt",
+        "path": "knowledge-base/en/archive/root-readme-through-0.52.0.md.txt",
+        "bytes": 118890,
+        "sha256": "425a0906f3658f41a5e3931e29d4b9a86c3d1271b098d85aed1fa61742a82a7a",
+        "role": "exact_raw_historical_data_not_translated_reading"
+      },
+      {
+        "source": "README.zh-CN.md",
+        "archive": "knowledge-base/Cns/archive/根说明截至0.52.0.md.txt",
+        "path": "knowledge-base/Cns/archive/根说明截至0.52.0.md.txt",
+        "bytes": 117864,
+        "sha256": "a8704762502a2c0683475ff9e54e19195125d5fc4cd48adf9739569ae31a00e7",
+        "role": "exact_raw_historical_data_not_translated_reading"
+      }
+    ],
+    "rawArchiveReadingRowsAdded": 0
+  },
+  "anchoredAtlasPlaybackPublicationPrerequisiteSuccessor": {
+    "date": "2026-10-15",
+    "currentPublicFileCount": 33,
+    "newReadingPairs": 0,
+    "historyPreserved": true,
+    "SourceReview": "PENDING_R2",
+    "normalFullPrepushRetry": "PENDING"
   }
 }

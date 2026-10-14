@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "version": "0.52.0",
+  "version": "0.53.0",
   "updatedAt": "2026-10-15",
-  "title": "Engineering preview 0.52.0 — display anchor offsets · Source draft",
-  "stage": "CURRENT_CODE_AND_BOUNDED_NATIVE_ACCEPTED_PUBLIC_DELIVERY_PENDING",
+  "title": "Engineering preview 0.53.0 — anchored atlas playback playground",
+  "stage": "SOURCE_PREVIEW_CURRENT_CODE_AND_BOUNDED_NATIVE_ACCEPTED_PUBLIC_DELIVERY_PENDING",
   "publication": "source_draft_development_preview",
   "registries": {
     "requirements": "en/registry/requirements.json",
@@ -561,7 +561,7 @@
     "contract": "en/docs/display-content-bounds-contract.md",
     "evidence": "en/docs/display-content-bounds-evidence.md"
   },
-  "latestEngineeringPreview": "0.52.0",
+  "latestEngineeringPreview": "0.53.0",
   "texturedMesh2DImplementation": {
     "version": "0.23.0",
     "status": "bounded_increment_implemented",
@@ -3722,7 +3722,7 @@
   },
   "_localization": {
     "canonicalSource": "当前版本.json",
-    "canonicalSha256": "2f2bbdd0d304fd4758abc7ba70c7cd8312cf71683fa2688c9b834295298ea99e",
+    "canonicalSha256": "7385bdcf5ed3cebaadf701654f3212b65f3890f67032173cc2c952a5eca62864",
     "role": "read_only_translation",
     "language": "en"
   },
@@ -6599,6 +6599,66 @@
     "independentReview": {
       "bytes": 45021,
       "sha256": "10f7f529ebd9b3e015da452edf537ddc3087a5bdc63da155ec1a720cc51877d8",
+      "identityOnlyNotDistributed": true
+    },
+    "historicalPublicPendingCutoffsPreserved": true,
+    "remoteCIPassClaim": false
+  },
+  "anchoredAtlasPlaybackPreviousCheckpoint": {
+    "version": "0.52.0",
+    "updatedAt": "2026-10-15",
+    "title": "Engineering preview 0.52.0 — display anchor offsets · Source draft",
+    "stage": "CURRENT_CODE_AND_BOUNDED_NATIVE_ACCEPTED_PUBLIC_DELIVERY_PENDING",
+    "latestEngineeringPreview": "0.52.0",
+    "publication": "source_draft_development_preview"
+  },
+  "anchoredAtlasPlaybackWorkPackage": {
+    "engineeringPreview": "0.53.0",
+    "sourceId": "S107",
+    "deliverableId": "V058",
+    "curationDate": "2026-10-15",
+    "status": "CURRENT_CODE_AND_BOUNDED_NATIVE_ACCEPTED_PUBLIC_DELIVERY_PENDING",
+    "record": "knowledge-base/evidence/anchored-atlas-playback-verification.json",
+    "focusedCPU": {
+      "pass": 16
+    },
+    "completeCode": {
+      "phases": 9,
+      "Core": 3147,
+      "SpineSource": 160
+    },
+    "native": {
+      "mainReadbacks": 14,
+      "mainChannels": 32256,
+      "pixelTolerance": 0,
+      "mismatchedPixels": 0,
+      "mismatchedChannels": 0,
+      "separateCanvasAdditionalReadbacks": 2,
+      "separateControlMainCredit": 0,
+      "controlDifferingPixels": 48,
+      "controlDifferingChannels": 96
+    },
+    "publicSourceBilingualReview": "PENDING",
+    "fullPrepush": "PENDING",
+    "mandatoryHooks": "PENDING",
+    "newGitDelivery": "PENDING",
+    "remoteCIPassClaim": false,
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "historicalCutoffsPreserved": true,
+    "contract": "en/docs/anchored-atlas-playback-contract.md",
+    "evidence": "en/docs/anchored-atlas-playback-evidence.md",
+    "plan": "en/docs/anchored-atlas-playback-implementation-plan.md"
+  },
+  "displayAnchorOffsetsDeliveryActualSuccessor": {
+    "engineeringPreview": "0.52.0",
+    "recordedOn": "2026-10-15",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/40",
+    "main": "d1debacedcbc068dc4c3b26fa9876181e23c4864",
+    "tree": "33adba3e1ea744091adc623ea1398102e54a9b43",
+    "independentReview": {
+      "bytes": 48911,
+      "sha256": "e2ce215c1610db2aa4749e5ad96103d28eab6a50ca64dfdfa31b6ac30891bd20",
       "identityOnlyNotDistributed": true
     },
     "historicalPublicPendingCutoffsPreserved": true,
