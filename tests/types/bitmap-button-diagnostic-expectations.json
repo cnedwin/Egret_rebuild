@@ -1,0 +1,981 @@
+{
+  "schemaVersion": 1,
+  "kind": "BITMAP_BUTTON_ACTUAL_STRICT_DIAGNOSTICS",
+  "status": "OBSERVED_FROZEN_TS7_DIAGNOSTICS",
+  "tupleFormat": [
+    "file",
+    "line",
+    "column",
+    "code",
+    "message"
+  ],
+  "inputPins": [
+    {
+      "path": "tools/lib/file-identity.mjs",
+      "bytes": 5065,
+      "sha256": "999b355c6e0d03f17853ee05f33abc9fecbb34ad80607963e11f913a4f815569"
+    },
+    {
+      "path": "node_modules/typescript/package.json",
+      "bytes": 3087,
+      "sha256": "3722b30210616a13a3213ded11575ba6b2dbab10c32a5ef67afca8513e27017e"
+    },
+    {
+      "path": "node_modules/typescript/bin/tsc",
+      "bytes": 44,
+      "sha256": "2219f428a7e55aaf1f7ad85b9b0f0cf5078aeb76ccc9a7c6036c92d48f492ffd"
+    },
+    {
+      "path": "node_modules/typescript/lib/tsc.js",
+      "bytes": 609,
+      "sha256": "cbdfbf11c26ed00dfc073155e316a42d6d6d8a387be61006b82fa9aa93ac572e"
+    },
+    {
+      "path": "node_modules/typescript/lib/getExePath.js",
+      "bytes": 3051,
+      "sha256": "96c10fd3a18e165d7323de8e314ac8d755ad96811f9fbc304a5b3ba4e05285cc"
+    },
+    {
+      "path": "package.json",
+      "bytes": 762,
+      "sha256": "b522c278e5f0b4070fec73da2aa336da5c57a4dc189c0855d9e5770f879009bd"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "bytes": 9017,
+      "sha256": "79383095fd4bb2bb4682a12f9651d9a876a01fc6dc1326d09bc0ad587db23084"
+    },
+    {
+      "path": "tsconfig.base.json",
+      "bytes": 446,
+      "sha256": "b7a31fb9f93a93e20bfdcf33c135acb45cb3a6895a8b3e7006bd85214ddc1008"
+    },
+    {
+      "path": "tests/types/tsconfig.json",
+      "bytes": 224,
+      "sha256": "e378996174db2020f9c416fb0599ea1182b3ca3265b3dc56012a688fd3252ad9"
+    },
+    {
+      "path": "tests/types/tsconfig.dom-free.json",
+      "bytes": 56,
+      "sha256": "24bc13fae1f9d98b5d2dc212c9fb4f1f926aeb956f706d8269acbd617c900b49"
+    },
+    {
+      "path": "tests/types/bitmap-button-positive.ts",
+      "bytes": 2224,
+      "sha256": "5bc705820a318e0c83f61cd3471fdb3acc334942f1326355fe75c1516d7798c6"
+    },
+    {
+      "path": "tests/types/tsconfig.bitmap-button-positive.json",
+      "bytes": 249,
+      "sha256": "581ffbbf4d9a9919223067e3624f9e3b1a3501bb93abe9fdbcfdbfecb668a099"
+    },
+    {
+      "path": "tests/types/bitmap-button-negative.ts",
+      "bytes": 1987,
+      "sha256": "caa7f2ecea52209dc4f7a37daaf184ba909877e0ea36acd71a79534f9a702980"
+    },
+    {
+      "path": "tests/types/tsconfig.bitmap-button-negative.json",
+      "bytes": 249,
+      "sha256": "3ec931a5f8f017fc3578fa28cd8ae3ea0f334c425ca29884d9e16f139381baeb"
+    },
+    {
+      "path": "packages/contracts/package.json",
+      "bytes": 179,
+      "sha256": "fceaef2ae55a77347ce9f99acd2165d36e991d89c76bf0480ff5048f3e7a94a1"
+    },
+    {
+      "path": "packages/runtime/package.json",
+      "bytes": 327,
+      "sha256": "b9294c479d38614dd8866adcd8775f5d6f43c787d9b08c8ef54371e426cb5032"
+    },
+    {
+      "path": "packages/engine/package.json",
+      "bytes": 1470,
+      "sha256": "21a95638b25541c97b8da9cb8c406ec183a9b4271c446c8c590c2b04b3b99077"
+    },
+    {
+      "path": "packages/contracts/dist/CancellationSignal.d.ts",
+      "bytes": 558,
+      "sha256": "879eb0ae6c8b5b305930f8770298f286259992a69b6653a25ea24b1944fe0a45"
+    },
+    {
+      "path": "packages/contracts/dist/Diagnostic.d.ts",
+      "bytes": 532,
+      "sha256": "6f1d73cb7d31a3bf11427f6b856eb1b2ea0cb28eefbc9b67c0518652ee612c59"
+    },
+    {
+      "path": "packages/contracts/dist/Disposable.d.ts",
+      "bytes": 441,
+      "sha256": "989546b49c6a87bfc04487d6fe166aeea81650049efbbd7615476d36021b88c5"
+    },
+    {
+      "path": "packages/contracts/dist/HostAdapter.d.ts",
+      "bytes": 907,
+      "sha256": "2830519734a7957ffa6aa70998f01f87f1d00f80bafcc4fc114133b5c38d5458"
+    },
+    {
+      "path": "packages/contracts/dist/ImageData2D.d.ts",
+      "bytes": 1563,
+      "sha256": "48984b068c63562aae1abb3c2561573aeeb31e1f390595ec357dbd87a61673a7"
+    },
+    {
+      "path": "packages/contracts/dist/Point2D.d.ts",
+      "bytes": 193,
+      "sha256": "f0d8ca89c643a80fd96031ef8267969fd12c212a319ce8ddb3f8b81e0f8c76e5"
+    },
+    {
+      "path": "packages/contracts/dist/ProjectFormat.generated.d.ts",
+      "bytes": 4161,
+      "sha256": "6feed3c80a4ceb9d9c6b2c299ee5e5d11a2f5c0b145b58e855ce8443e3b2de11"
+    },
+    {
+      "path": "packages/contracts/dist/RenderFrame2D.d.ts",
+      "bytes": 1799,
+      "sha256": "a1bceb2e8135c3fea5fb981c661ac45244ed792899c7fb3f2cf7ff9934e83492"
+    },
+    {
+      "path": "packages/contracts/dist/TexturedGeometry2D.d.ts",
+      "bytes": 1186,
+      "sha256": "dbc403a70e6ebdd39346260c3a965b1ac8dbb3e5bfcad21c402d34d4ae0f500e"
+    },
+    {
+      "path": "packages/contracts/dist/TexturedRenderFrame2D.d.ts",
+      "bytes": 1634,
+      "sha256": "11f7c7967e2142906717c2c2a744611cff6e435b3021e9d537ba61a3cd0ab351"
+    },
+    {
+      "path": "packages/contracts/dist/index.d.ts",
+      "bytes": 1619,
+      "sha256": "b714fec938e235591ddfadc53fa72ba183aaea506267aadaebe5abe65e22c10f"
+    },
+    {
+      "path": "packages/engine/dist/Engine.d.ts",
+      "bytes": 3094,
+      "sha256": "d09b9a79bfdba155467bc678f8914adce08c33236b05b268bdc7cb4fed4ba7d2"
+    },
+    {
+      "path": "packages/engine/dist/assetGroupTypes.d.ts",
+      "bytes": 570,
+      "sha256": "79152aa2f2e6e401c20370d029cdc9317aeeacd98cff785e5b62f5f9c530412a"
+    },
+    {
+      "path": "packages/engine/dist/bitmapButton.d.ts",
+      "bytes": 292,
+      "sha256": "ff3c33fb014e1c89756b468050f3ec26b0153f857bd041b111b2fd9e3fc838f1"
+    },
+    {
+      "path": "packages/engine/dist/bitmapButtonTypes.d.ts",
+      "bytes": 1122,
+      "sha256": "0d2d18b911c3a6a7b0b4240fec1c0b8425d81811cac7ed557b294c9a9ae0a04c"
+    },
+    {
+      "path": "packages/engine/dist/createEngine.d.ts",
+      "bytes": 265,
+      "sha256": "52df9ef4a105e19b7d2927e76015d6e759c15f44c63d9e662217a067e1085ea4"
+    },
+    {
+      "path": "packages/engine/dist/createEngineForProfile.d.ts",
+      "bytes": 375,
+      "sha256": "569e16cc9cf48279f900d6e04fe7ea69a7df3fdc810f9c9f7ce04d08c1890610"
+    },
+    {
+      "path": "packages/engine/dist/gameClock.d.ts",
+      "bytes": 1051,
+      "sha256": "6570f41ff138b59aae0d0b53ad70d36dd14ecc96a805440bb3d1f9a6d23b63a2"
+    },
+    {
+      "path": "packages/engine/dist/gameClockTypes.d.ts",
+      "bytes": 1059,
+      "sha256": "e582e2aa4aa3e80a2907db49dc5e3fd54c1008241530e8dc8c97ee6c411061a0"
+    },
+    {
+      "path": "packages/engine/dist/index.d.ts",
+      "bytes": 3292,
+      "sha256": "ba0d66bb51b4db0f196a4c863b0b75d10f88c451d2d590dcf80b9fb0a153d196"
+    },
+    {
+      "path": "packages/engine/dist/internal/mouseInputFactoryState.d.ts",
+      "bytes": 2847,
+      "sha256": "ee0f110477892343ec32e895c303ca2f81854dcdb7914367a633c0531f12f7bc"
+    },
+    {
+      "path": "packages/engine/dist/mouseInput.d.ts",
+      "bytes": 4458,
+      "sha256": "453cab6df05b0baf3e42d11f158ec13706e5c963231930f7f43b80b8cf46e44d"
+    },
+    {
+      "path": "packages/engine/dist/mouseInputTypes.d.ts",
+      "bytes": 1341,
+      "sha256": "aab7cf8b75f56dd5d68e070a4bca0c9657aceadfcb35cde55e5fb731e14dcf18"
+    },
+    {
+      "path": "packages/engine/dist/sequencePlaybackTypes.d.ts",
+      "bytes": 798,
+      "sha256": "7670a7b455167beca3aab6729261ac0ad1eb980327e67d13f12132570e67c5cf"
+    },
+    {
+      "path": "packages/engine/dist/tweenTypes.d.ts",
+      "bytes": 903,
+      "sha256": "398c52fa8e854640a9aeac542610a87c7ce1f856e9cb1d88eab4eb000c1821b9"
+    },
+    {
+      "path": "packages/engine/dist/web/MouseInput.d.ts",
+      "bytes": 284,
+      "sha256": "6b172ebb3ff3c7cf349feaea9d5291b4ee4c6af5866f2205d3be9c26e815e65e"
+    },
+    {
+      "path": "packages/engine/dist/web/input.d.ts",
+      "bytes": 477,
+      "sha256": "cf4ffaea56d4e80feb4b41f306ab4a9883e385c0689499b66dc080a2f7e1a916"
+    },
+    {
+      "path": "packages/runtime/dist/AssetLease.d.ts",
+      "bytes": 1384,
+      "sha256": "2885d23e59a1480e14b938e821f36b6d88d656c579c3b3d5c2ea1232c21d02d2"
+    },
+    {
+      "path": "packages/runtime/dist/AssetManager.d.ts",
+      "bytes": 2431,
+      "sha256": "09a4874125059aa2cd2cce4783356e40682aa3f1b14f663f366974e00d3e6cdf"
+    },
+    {
+      "path": "packages/runtime/dist/AssetRef.d.ts",
+      "bytes": 1045,
+      "sha256": "70269fb27fab57ef723cbf110b319b6eaf25cb6fafea6a4f7298b502da74f038"
+    },
+    {
+      "path": "packages/runtime/dist/Bitmap.d.ts",
+      "bytes": 1904,
+      "sha256": "f58469f07c7c262882867b91d2759a23c327ec4d69725cc82d3798af10e66f8e"
+    },
+    {
+      "path": "packages/runtime/dist/ByteReader.d.ts",
+      "bytes": 1113,
+      "sha256": "cb1d6ea88a6b328d8743586de2b3227695ec465d791287b6324cfc51ebccc1f1"
+    },
+    {
+      "path": "packages/runtime/dist/ByteWriter.d.ts",
+      "bytes": 1176,
+      "sha256": "9635d492462ee280cdf10f04cf9cbd8bb324f00d61b5da463e37fef4baceec6e"
+    },
+    {
+      "path": "packages/runtime/dist/CancellationController.d.ts",
+      "bytes": 460,
+      "sha256": "3830c9f09cfcf3e65045ec15d15e40ec0c135643094052de87a391ab9e2c39d3"
+    },
+    {
+      "path": "packages/runtime/dist/DisplayObject.d.ts",
+      "bytes": 2555,
+      "sha256": "508cab574f1552cbfd3af464173b03fdb83f7ec774872bc658bca6a3ceb3c732"
+    },
+    {
+      "path": "packages/runtime/dist/DisplayObjectContainer.d.ts",
+      "bytes": 1398,
+      "sha256": "25efac66478e4d27b2499fc8e235df14b7c58b654b9a437c5e38ec9e6683e1a8"
+    },
+    {
+      "path": "packages/runtime/dist/EgretError.d.ts",
+      "bytes": 429,
+      "sha256": "64a9381cf216c798abb4edbfa2297920a772d98da3d6e6c252d5b6b53d77beb6"
+    },
+    {
+      "path": "packages/runtime/dist/Event.d.ts",
+      "bytes": 1932,
+      "sha256": "07783b2abf657e3f04642a169bd85f2738335023fa1fa0223039a17e8a2633c0"
+    },
+    {
+      "path": "packages/runtime/dist/EventDispatcher.d.ts",
+      "bytes": 1315,
+      "sha256": "33f2fc85b97cd9ef9e3992088d48e8dcfe7b645fc5be8fb7dcb9dd39904e8832"
+    },
+    {
+      "path": "packages/runtime/dist/Graphics.d.ts",
+      "bytes": 457,
+      "sha256": "7a85b42e6dddedbb38f5386f5770abfd3200b2df9e06c3ccad8fa7a9afcda1b9"
+    },
+    {
+      "path": "packages/runtime/dist/Mesh2D.d.ts",
+      "bytes": 958,
+      "sha256": "68825a8697c0e211d0fbaa0aea1e288ccd836f3145d6f7e25329f59ee2accdba"
+    },
+    {
+      "path": "packages/runtime/dist/NineSliceBitmap.d.ts",
+      "bytes": 1137,
+      "sha256": "3b416fea7ed69624c1e5d3ff4ee33897f985d0bee05dcd5709be0549ed90820e"
+    },
+    {
+      "path": "packages/runtime/dist/NineSliceGeometry2D.d.ts",
+      "bytes": 745,
+      "sha256": "938e8d24e7975d85d002b1ae6cd67a13a32354f568edab60f310ce86408a0bfc"
+    },
+    {
+      "path": "packages/runtime/dist/Scope.d.ts",
+      "bytes": 776,
+      "sha256": "db9af884acd7e62fe89f71f9525da55046a000652c02be27ff6813d0ae9fa2ac"
+    },
+    {
+      "path": "packages/runtime/dist/SequencePlayer.d.ts",
+      "bytes": 621,
+      "sha256": "eaeacc493b410347e8a8b0e213124e76671025654bfb3548a9930a55b9155562"
+    },
+    {
+      "path": "packages/runtime/dist/Sprite.d.ts",
+      "bytes": 340,
+      "sha256": "441f96533f1c2ba3922b4fcce500ea57210481b04583cae06ee2f257f37a98bc"
+    },
+    {
+      "path": "packages/runtime/dist/Stage.d.ts",
+      "bytes": 773,
+      "sha256": "a17ef53c3acfd5c24562775d833982267f8935756d1e7e2cc826e65e29949af7"
+    },
+    {
+      "path": "packages/runtime/dist/Texture.d.ts",
+      "bytes": 1055,
+      "sha256": "77c4e29aa324f4b3bc8dd47d296802c2bfff0cf7a9303271b29b8bb7e73da0d3"
+    },
+    {
+      "path": "packages/runtime/dist/assetManagerOwnerState.d.ts",
+      "bytes": 2182,
+      "sha256": "e3aeb01ae81c8c318bd8e35e9c63691658833953d10351cfa817838fcfaae6bb"
+    },
+    {
+      "path": "packages/runtime/dist/assetState.d.ts",
+      "bytes": 1604,
+      "sha256": "daa71107f0cd3f24d4cb33ac8c2fcf5eff15c18955c84d0262cafaa0c3335b69"
+    },
+    {
+      "path": "packages/runtime/dist/bitmapDisplayState.d.ts",
+      "bytes": 948,
+      "sha256": "290b3a937e4c388387b490382b18b08844771236430c337cb9c352f6513669d8"
+    },
+    {
+      "path": "packages/runtime/dist/diagnostics.d.ts",
+      "bytes": 305,
+      "sha256": "85d3079ff62e0bf3df95281a5a2917e021310c52acc7d662ee859986e5d86a03"
+    },
+    {
+      "path": "packages/runtime/dist/displayBounds.d.ts",
+      "bytes": 471,
+      "sha256": "ce01298209c912f1da370e604289c2e48cc100f20f7dfefcf1758c3b42965d1b"
+    },
+    {
+      "path": "packages/runtime/dist/displayCoordinates.d.ts",
+      "bytes": 459,
+      "sha256": "4a686f27518c2702d7a3382fcbe31cf9ae652be5a06527579d7e4f5a63707326"
+    },
+    {
+      "path": "packages/runtime/dist/displayHitTest.d.ts",
+      "bytes": 459,
+      "sha256": "f188955114496a0f76b79afb17e2f205519db53405f25606c8c0649c591899d5"
+    },
+    {
+      "path": "packages/runtime/dist/displayInputOperations.d.ts",
+      "bytes": 709,
+      "sha256": "5b8b2729d9b3c10efccce66d5715762f8a9465f92718e779695e3db1337326cd"
+    },
+    {
+      "path": "packages/runtime/dist/displayTreeState.d.ts",
+      "bytes": 5304,
+      "sha256": "687b4fd56cc46ab3ec170179496291e1c1c1f1e1a56f689ffe692c65210c82fd"
+    },
+    {
+      "path": "packages/runtime/dist/frameCapture.d.ts",
+      "bytes": 643,
+      "sha256": "65e1557f23d4d32f1103d81705ad0eda79c30e7c0c907a5fb5758d1eafd3b8bb"
+    },
+    {
+      "path": "packages/runtime/dist/index.d.ts",
+      "bytes": 2986,
+      "sha256": "1293ef5b07c5099629e235627099f2646c9e6b2d0c786909bd35a2d0eef4c666"
+    },
+    {
+      "path": "packages/runtime/dist/ownership.d.ts",
+      "bytes": 3102,
+      "sha256": "798e0ad10e1a414ef64a18c52cdefac359ae459ae09e2a99e504d5f8e5caf33b"
+    },
+    {
+      "path": "packages/runtime/dist/sequenceClip.d.ts",
+      "bytes": 1307,
+      "sha256": "0e231b69f8357740656ac952e9c146ca4fc80a08cf85653f71b70042fbdce2f6"
+    },
+    {
+      "path": "packages/runtime/dist/spriteSheet.d.ts",
+      "bytes": 1249,
+      "sha256": "a096f426d7715a0d8f0399cd26d646856022e19b63ee0f278ec35a9f72ff76b8"
+    },
+    {
+      "path": "packages/runtime/dist/texturedFrameCapture.d.ts",
+      "bytes": 581,
+      "sha256": "e2854fa47aa7cbf865e488f8e46ed617b558c69bdfc5bd5239338e6a04a21bb1"
+    }
+  ],
+  "nativeLibraryPins": [
+    {
+      "path": "lib/lib.decorators.d.ts",
+      "bytes": 13153,
+      "sha256": "1ce14b81c5cc821994aa8ec1d42b220dd41b27fcc06373bce3958af7421b77d4"
+    },
+    {
+      "path": "lib/lib.decorators.legacy.d.ts",
+      "bytes": 1287,
+      "sha256": "b3a048b3e9302ef9a34ef4ebb9aecfb28b66abb3bce577206a79fee559c230da"
+    },
+    {
+      "path": "lib/lib.es2015.collection.d.ts",
+      "bytes": 5627,
+      "sha256": "f0b6b1d3624fb143656dd86a8dd3e1950b7e65f218319b47bde52f65d47e2e4b"
+    },
+    {
+      "path": "lib/lib.es2015.core.d.ts",
+      "bytes": 22821,
+      "sha256": "770011bd32a52f929fc98fbf9976c1fa9d80b6445171c02b08627fdba9778933"
+    },
+    {
+      "path": "lib/lib.es2015.d.ts",
+      "bytes": 1202,
+      "sha256": "3f88bedbeb09c6f5a6645cb24c7c55f1aa22d19ae96c8e6959cbd8b85a707bc6"
+    },
+    {
+      "path": "lib/lib.es2015.generator.d.ts",
+      "bytes": 2518,
+      "sha256": "00343ca5b2e3d48fa5df1db6e32ea2a59afab09590274a6cccb1dbae82e60c7c"
+    },
+    {
+      "path": "lib/lib.es2015.iterable.d.ts",
+      "bytes": 18185,
+      "sha256": "ebd9f816d4002697cb2864bea1f0b70a103124e18a8cd9645eeccc09bdf80ab4"
+    },
+    {
+      "path": "lib/lib.es2015.promise.d.ts",
+      "bytes": 3161,
+      "sha256": "2c1afac30a01772cd2a9a298a7ce7706b5892e447bb46bdbeef720f7b5da77ad"
+    },
+    {
+      "path": "lib/lib.es2015.proxy.d.ts",
+      "bytes": 5212,
+      "sha256": "7b0225f483e4fa685625ebe43dd584bb7973bbd84e66a6ba7bbe175ee1048b4f"
+    },
+    {
+      "path": "lib/lib.es2015.reflect.d.ts",
+      "bytes": 6454,
+      "sha256": "c0a4b8ac6ce74679c1da2b3795296f5896e31c38e888469a8e0f99dc3305de60"
+    },
+    {
+      "path": "lib/lib.es2015.symbol.d.ts",
+      "bytes": 1608,
+      "sha256": "83e3871cda2abd4421970fa923cca51a9ce8cdbece6f898285643ab030cb80f3"
+    },
+    {
+      "path": "lib/lib.es2015.symbol.wellknown.d.ts",
+      "bytes": 10971,
+      "sha256": "c5079c53f0f141a0698faa903e76cb41cd664e3efb01cc17a5c46ec2eb0bef42"
+    },
+    {
+      "path": "lib/lib.es2016.array.include.d.ts",
+      "bytes": 5165,
+      "sha256": "32cafbc484dea6b0ab62cf8473182bbcb23020d70845b406f80b7526f38ae862"
+    },
+    {
+      "path": "lib/lib.es2016.d.ts",
+      "bytes": 926,
+      "sha256": "7fe93b39b810eadd916be8db880dd7f0f7012a5cc6ffb62de8f62a2117fa6f1f"
+    },
+    {
+      "path": "lib/lib.es2016.intl.d.ts",
+      "bytes": 1445,
+      "sha256": "fca4cdcb6d6c5ef18a869003d02c9f0fd95df8cfaf6eb431cd3376bc034cad36"
+    },
+    {
+      "path": "lib/lib.es2017.arraybuffer.d.ts",
+      "bytes": 876,
+      "sha256": "b93ec88115de9a9dc1b602291b85baf825c85666bf25985cc5f698073892b467"
+    },
+    {
+      "path": "lib/lib.es2017.d.ts",
+      "bytes": 1123,
+      "sha256": "bb0074cc08b84a2374af33d8bf044b80851ccc9e719a5e202eacf40db2c31600"
+    },
+    {
+      "path": "lib/lib.es2017.date.d.ts",
+      "bytes": 1877,
+      "sha256": "f5c06dcc3fe849fcb297c247865a161f995cc29de7aa823afdd75aaaddc1419b"
+    },
+    {
+      "path": "lib/lib.es2017.intl.d.ts",
+      "bytes": 1410,
+      "sha256": "c7b3542146734342e440a84b213384bfa188835537ddbda50d30766f0593aff9"
+    },
+    {
+      "path": "lib/lib.es2017.object.d.ts",
+      "bytes": 2434,
+      "sha256": "b77e16112127a4b169ef0b8c3a4d730edf459c5f25fe52d5e436a6919206c4d7"
+    },
+    {
+      "path": "lib/lib.es2017.sharedmemory.d.ts",
+      "bytes": 7170,
+      "sha256": "fbffd9337146eff822c7c00acbb78b01ea7ea23987f6c961eba689349e744f8c"
+    },
+    {
+      "path": "lib/lib.es2017.string.d.ts",
+      "bytes": 2540,
+      "sha256": "6aaeba1e4f228fda4e9175e34d96807e2c6dc984d0b37a772b3af9365a456681"
+    },
+    {
+      "path": "lib/lib.es2017.typedarrays.d.ts",
+      "bytes": 1503,
+      "sha256": "ce6180fa19b1cccd07ee7f7dbb9a367ac19c0ed160573e4686425060b6df7f57"
+    },
+    {
+      "path": "lib/lib.es2018.asyncgenerator.d.ts",
+      "bytes": 2653,
+      "sha256": "3f02e2476bccb9dbe21280d6090f0df17d2f66b74711489415a8aa4df73c9675"
+    },
+    {
+      "path": "lib/lib.es2018.asynciterable.d.ts",
+      "bytes": 2218,
+      "sha256": "45e3ab34c1c013c8ab2dc1ba4c80c780744b13b5676800ae2e3be27ae862c40c"
+    },
+    {
+      "path": "lib/lib.es2018.d.ts",
+      "bytes": 1049,
+      "sha256": "1a7daebe4f45fb03d9ec53d60008fbf9ac45a697fdc89e4ce218bc94b94f94d6"
+    },
+    {
+      "path": "lib/lib.es2018.intl.d.ts",
+      "bytes": 2982,
+      "sha256": "805c86f6cca8d7702a62a844856dbaa2a3fd2abef0536e65d48732441dde5b5b"
+    },
+    {
+      "path": "lib/lib.es2018.promise.d.ts",
+      "bytes": 1314,
+      "sha256": "e42e397f1a5a77994f0185fd1466520691456c772d06bf843e5084ceb879a0ad"
+    },
+    {
+      "path": "lib/lib.es2018.regexp.d.ts",
+      "bytes": 1193,
+      "sha256": "f4c2b41f90c95b1c532ecc874bd3c111865793b23aebcc1c3cbbabcd5d76ffb0"
+    },
+    {
+      "path": "lib/lib.es2019.array.d.ts",
+      "bytes": 3124,
+      "sha256": "ab26191cfad5b66afa11b8bf935ef1cd88fabfcb28d30b2dfa6fad877d050332"
+    },
+    {
+      "path": "lib/lib.es2019.d.ts",
+      "bytes": 1032,
+      "sha256": "f94b133a3cb14a288803be545ac2683e0d0ff6661bcd37e31aaaec54fc382aed"
+    },
+    {
+      "path": "lib/lib.es2019.intl.d.ts",
+      "bytes": 919,
+      "sha256": "689da16f46e647cef0d64b0def88910e818a5877ca5379ede156ca3afb780ac3"
+    },
+    {
+      "path": "lib/lib.es2019.object.d.ts",
+      "bytes": 1434,
+      "sha256": "2088bc26531e38fb05eedac2951480db5309f6be3fa4a08d2221abb0f5b4200d"
+    },
+    {
+      "path": "lib/lib.es2019.string.d.ts",
+      "bytes": 1489,
+      "sha256": "cb9d366c425fea79716a8fb3af0d78e6b22ebbab3bd64d25063b42dc9f531c1e"
+    },
+    {
+      "path": "lib/lib.es2019.symbol.d.ts",
+      "bytes": 967,
+      "sha256": "500934a8089c26d57ebdb688fc9757389bb6207a3c8f0674d68efa900d2abb34"
+    },
+    {
+      "path": "lib/lib.es2020.bigint.d.ts",
+      "bytes": 38258,
+      "sha256": "bc21cc8b6fee4f4c2440d08035b7ea3c06b3511314c8bab6bef7a92de58a2593"
+    },
+    {
+      "path": "lib/lib.es2020.d.ts",
+      "bytes": 1162,
+      "sha256": "f59d0650799f8782fd74cf73c19223730c6d1b9198671b1c5b3a38e1188b5953"
+    },
+    {
+      "path": "lib/lib.es2020.date.d.ts",
+      "bytes": 2917,
+      "sha256": "7ca53d13d2957003abb47922a71866ba7cb2068f8d154877c596d63c359fed25"
+    },
+    {
+      "path": "lib/lib.es2020.intl.d.ts",
+      "bytes": 22394,
+      "sha256": "db839fa0625981ae6e20a55e079c3613184310ca246879245b294573e7cc6926"
+    },
+    {
+      "path": "lib/lib.es2020.number.d.ts",
+      "bytes": 1548,
+      "sha256": "b7bf9377723203b5a6a4b920164df22d56a43f593269ba6ae1fdc97774b68855"
+    },
+    {
+      "path": "lib/lib.es2020.promise.d.ts",
+      "bytes": 1764,
+      "sha256": "54725f8c4df3d900cb4dac84b64689ce29548da0b4e9b7c2de61d41c79293611"
+    },
+    {
+      "path": "lib/lib.es2020.sharedmemory.d.ts",
+      "bytes": 5089,
+      "sha256": "e5594bc3076ac29e6c1ebda77939bc4c8833de72f654b6e376862c0473199323"
+    },
+    {
+      "path": "lib/lib.es2020.string.d.ts",
+      "bytes": 2451,
+      "sha256": "2f3eb332c2d73e729f3364fcc0c2b375e72a121e8157d25a82d67a138c83a95c"
+    },
+    {
+      "path": "lib/lib.es2020.symbol.wellknown.d.ts",
+      "bytes": 1566,
+      "sha256": "6f4427f9642ce8d500970e4e69d1397f64072ab73b97e476b4002a646ac743b1"
+    },
+    {
+      "path": "lib/lib.es2021.d.ts",
+      "bytes": 997,
+      "sha256": "8a15b4607d9a499e2dbeed9ec0d3c0d7372c850b2d5f1fb259e8f6d41d468a84"
+    },
+    {
+      "path": "lib/lib.es2021.intl.d.ts",
+      "bytes": 8206,
+      "sha256": "a917a49ac94cd26b754ab84e113369a75d1a47a710661d7cd25e961cc797065f"
+    },
+    {
+      "path": "lib/lib.es2021.promise.d.ts",
+      "bytes": 2223,
+      "sha256": "db9709688f82c9e5f65a119c64d835f906efe5f559d08b11642d56eb85b79357"
+    },
+    {
+      "path": "lib/lib.es2021.string.d.ts",
+      "bytes": 1553,
+      "sha256": "4b25b8c874acd1a4cf8444c3617e037d444d19080ac9f634b405583fd10ce1f7"
+    },
+    {
+      "path": "lib/lib.es2021.weakref.d.ts",
+      "bytes": 3132,
+      "sha256": "37be57d7c90cf1f8112ee2636a068d8fd181289f82b744160ec56a7dc158a9f5"
+    },
+    {
+      "path": "lib/lib.es2022.array.d.ts",
+      "bytes": 4637,
+      "sha256": "6d3261badeb7843d157ef3e6f5d1427d0eeb0af0cf9df84a62cfd29fd47ac86e"
+    },
+    {
+      "path": "lib/lib.es2022.d.ts",
+      "bytes": 1069,
+      "sha256": "26e0fe14baee4e127f4365d1ae0b276f400562e45e19e35fd2d4c296684715e6"
+    },
+    {
+      "path": "lib/lib.es2022.error.d.ts",
+      "bytes": 2340,
+      "sha256": "195daca651dde22f2167ac0d0a05e215308119a3100f5e6268e8317d05a92526"
+    },
+    {
+      "path": "lib/lib.es2022.intl.d.ts",
+      "bytes": 7653,
+      "sha256": "8b11e4285cd2bb164a4dc09248bdec69e9842517db4ca47c1ba913011e44ff2f"
+    },
+    {
+      "path": "lib/lib.es2022.object.d.ts",
+      "bytes": 1046,
+      "sha256": "0508571a52475e245b02bc50fa1394065a0a3d05277fbf5120c3784b85651799"
+    },
+    {
+      "path": "lib/lib.es2022.regexp.d.ts",
+      "bytes": 1304,
+      "sha256": "fc611fea8d30ea72c6bbfb599c9b4d393ce22e2f5bfef2172534781e7d138104"
+    },
+    {
+      "path": "lib/lib.es2022.string.d.ts",
+      "bytes": 1116,
+      "sha256": "8f9af488f510c3015af3cc8c267a9e9d96c4dd38a1fdff0e11dc5a544711415b"
+    },
+    {
+      "path": "lib/lib.es5.d.ts",
+      "bytes": 218947,
+      "sha256": "6388847232654d7fcbed7fe89ea511a65ad1f5104b41e905c43f90910e1408b6"
+    }
+  ],
+  "originalCompilerObservation": {
+    "platform": "win32",
+    "arch": "x64",
+    "version": "7.0.2",
+    "nativePackage": "@typescript/typescript-win32-x64",
+    "nativeMetadataPin": {
+      "path": "package.json",
+      "bytes": 1042,
+      "sha256": "6d8ec7623880a902bb225c53571112e2bbf0273412b2c534070b1193d2be0f6b"
+    },
+    "nativeBinaryPin": {
+      "path": "lib/tsc.exe",
+      "bytes": 24520544,
+      "sha256": "f9ecfbdc93753d2c972d66a8d0d75f5bd737fd4a5f88b422d9091ea282bcb2c7"
+    },
+    "nativeLibraryCount": 57
+  },
+  "inputDomains": {
+    "compilerConsumerInputCount": 79,
+    "sharedIdentityHelperCount": 1,
+    "driverInputCount": 80,
+    "importedDeclarationCount": 63,
+    "standardLibraryCount": 57,
+    "closureMethod": "Original public consumer declaration closure agrees with independent completed Actual review; separate stock --listFilesOnly captured actual compiler file access. No candidate driver was evaluated."
+  },
+  "groups": [
+    {
+      "lane": "positive",
+      "expectedExit": 0,
+      "cases": [],
+      "observedExecution": {
+        "startedAtUtc": "2026-10-14T21:35:32.0731054Z",
+        "finishedAtUtc": "2026-10-14T21:35:32.1817437Z",
+        "exitCode": 0,
+        "timeout": false,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "originalStdout": "",
+      "tuples": []
+    },
+    {
+      "lane": "negative",
+      "expectedExit": 1,
+      "cases": [
+        {
+          "name": "forbidden-default-root-factory",
+          "line": 6
+        },
+        {
+          "name": "required-options",
+          "line": 11
+        },
+        {
+          "name": "genuine-input",
+          "line": 13
+        },
+        {
+          "name": "genuine-lease",
+          "line": 15
+        },
+        {
+          "name": "strict-boolean",
+          "line": 17
+        },
+        {
+          "name": "no-null-default",
+          "line": 19
+        },
+        {
+          "name": "numeric-crop",
+          "line": 21
+        },
+        {
+          "name": "all-three-skins",
+          "line": 23
+        },
+        {
+          "name": "function-callback",
+          "line": 25
+        },
+        {
+          "name": "readonly-display",
+          "line": 27
+        },
+        {
+          "name": "readonly-state",
+          "line": 29
+        },
+        {
+          "name": "writable-enabled-still-boolean",
+          "line": 31
+        },
+        {
+          "name": "no-hover-state",
+          "line": 33
+        },
+        {
+          "name": "private-handle-brand",
+          "line": 35
+        },
+        {
+          "name": "no-manual-activation",
+          "line": 37
+        },
+        {
+          "name": "readonly-options",
+          "line": 39
+        },
+        {
+          "name": "erased-control-type",
+          "line": 41
+        },
+        {
+          "name": "erased-options-type",
+          "line": 43
+        },
+        {
+          "name": "erased-state-type",
+          "line": 45
+        }
+      ],
+      "observedExecution": {
+        "startedAtUtc": "2026-10-14T21:35:31.5160835Z",
+        "finishedAtUtc": "2026-10-14T21:35:31.6286410Z",
+        "exitCode": 1,
+        "timeout": false,
+        "stdout": {
+          "bytes": 2659,
+          "sha256": "5e6b9b633a52b69bd5b28849927fbb5c81bd8bde7dd99fea16308a88dac7e990"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "originalStdout": "tests/types/bitmap-button-negative.ts(6,9): error TS2305: Module '\"@egret/engine\"' has no exported member 'createBitmapButton'.\ntests/types/bitmap-button-negative.ts(11,1): error TS2554: Expected 1 arguments, but got 0.\ntests/types/bitmap-button-negative.ts(13,32): error TS2739: Type '{}' is missing the following properties from type 'MouseInput': [MOUSE_INPUT], state, events, dispose\ntests/types/bitmap-button-negative.ts(15,32): error TS2739: Type '{}' is missing the following properties from type 'AssetLease<Texture>': leaseId, resourceGeneration, value, release\ntests/types/bitmap-button-negative.ts(17,32): error TS2322: Type 'string' is not assignable to type 'boolean'.\ntests/types/bitmap-button-negative.ts(19,32): error TS2322: Type 'null' is not assignable to type 'boolean'.\ntests/types/bitmap-button-negative.ts(21,68): error TS2322: Type 'string' is not assignable to type 'number'.\ntests/types/bitmap-button-negative.ts(23,32): error TS2741: Property 'disabled' is missing in type '{ up: TextureRegion2D; pressed: TextureRegion2D; }' but required in type '{ readonly up: TextureRegion2D; readonly pressed: TextureRegion2D; readonly disabled: TextureRegion2D; }'.\ntests/types/bitmap-button-negative.ts(25,32): error TS2322: Type 'number' is not assignable to type '(payload: MouseInputPayload) => void'.\ntests/types/bitmap-button-negative.ts(27,8): error TS2540: Cannot assign to 'display' because it is a read-only property.\ntests/types/bitmap-button-negative.ts(29,8): error TS2540: Cannot assign to 'state' because it is a read-only property.\ntests/types/bitmap-button-negative.ts(31,1): error TS2322: Type 'number' is not assignable to type 'boolean'.\ntests/types/bitmap-button-negative.ts(33,7): error TS2322: Type '\"hover\"' is not assignable to type 'BitmapButtonState'.\ntests/types/bitmap-button-negative.ts(35,7): error TS2741: Property '[BITMAP_BUTTON_BRAND]' is missing in type '{ display: Bitmap; state: \"up\"; enabled: true; dispose(): void; }' but required in type 'BitmapButton'.\ntests/types/bitmap-button-negative.ts(37,8): error TS2339: Property 'activate' does not exist on type 'BitmapButton'.\ntests/types/bitmap-button-negative.ts(39,9): error TS2540: Cannot assign to 'enabled' because it is a read-only property.\ntests/types/bitmap-button-negative.ts(41,6): error TS2693: 'BitmapButton' only refers to a type, but is being used as a value here.\ntests/types/bitmap-button-negative.ts(43,6): error TS2693: 'BitmapButtonOptions' only refers to a type, but is being used as a value here.\ntests/types/bitmap-button-negative.ts(45,6): error TS2693: 'BitmapButtonState' only refers to a type, but is being used as a value here.\n",
+      "tuples": [
+        [
+          "tests/types/bitmap-button-negative.ts",
+          6,
+          9,
+          2305,
+          "Module '\"@egret/engine\"' has no exported member 'createBitmapButton'."
+        ],
+        [
+          "tests/types/bitmap-button-negative.ts",
+          11,
+          1,
+          2554,
+          "Expected 1 arguments, but got 0."
+        ],
+        [
+          "tests/types/bitmap-button-negative.ts",
+          13,
+          32,
+          2739,
+          "Type '{}' is missing the following properties from type 'MouseInput': [MOUSE_INPUT], state, events, dispose"
+        ],
+        [
+          "tests/types/bitmap-button-negative.ts",
+          15,
+          32,
+          2739,
+          "Type '{}' is missing the following properties from type 'AssetLease<Texture>': leaseId, resourceGeneration, value, release"
+        ],
+        [
+          "tests/types/bitmap-button-negative.ts",
+          17,
+          32,
+          2322,
+          "Type 'string' is not assignable to type 'boolean'."
+        ],
+        [
+          "tests/types/bitmap-button-negative.ts",
+          19,
+          32,
+          2322,
+          "Type 'null' is not assignable to type 'boolean'."
+        ],
+        [
+          "tests/types/bitmap-button-negative.ts",
+          21,
+          68,
+          2322,
+          "Type 'string' is not assignable to type 'number'."
+        ],
+        [
+          "tests/types/bitmap-button-negative.ts",
+          23,
+          32,
+          2741,
+          "Property 'disabled' is missing in type '{ up: TextureRegion2D; pressed: TextureRegion2D; }' but required in type '{ readonly up: TextureRegion2D; readonly pressed: TextureRegion2D; readonly disabled: TextureRegion2D; }'."
+        ],
+        [
+          "tests/types/bitmap-button-negative.ts",
+          25,
+          32,
+          2322,
+          "Type 'number' is not assignable to type '(payload: MouseInputPayload) => void'."
+        ],
+        [
+          "tests/types/bitmap-button-negative.ts",
+          27,
+          8,
+          2540,
+          "Cannot assign to 'display' because it is a read-only property."
+        ],
+        [
+          "tests/types/bitmap-button-negative.ts",
+          29,
+          8,
+          2540,
+          "Cannot assign to 'state' because it is a read-only property."
+        ],
+        [
+          "tests/types/bitmap-button-negative.ts",
+          31,
+          1,
+          2322,
+          "Type 'number' is not assignable to type 'boolean'."
+        ],
+        [
+          "tests/types/bitmap-button-negative.ts",
+          33,
+          7,
+          2322,
+          "Type '\"hover\"' is not assignable to type 'BitmapButtonState'."
+        ],
+        [
+          "tests/types/bitmap-button-negative.ts",
+          35,
+          7,
+          2741,
+          "Property '[BITMAP_BUTTON_BRAND]' is missing in type '{ display: Bitmap; state: \"up\"; enabled: true; dispose(): void; }' but required in type 'BitmapButton'."
+        ],
+        [
+          "tests/types/bitmap-button-negative.ts",
+          37,
+          8,
+          2339,
+          "Property 'activate' does not exist on type 'BitmapButton'."
+        ],
+        [
+          "tests/types/bitmap-button-negative.ts",
+          39,
+          9,
+          2540,
+          "Cannot assign to 'enabled' because it is a read-only property."
+        ],
+        [
+          "tests/types/bitmap-button-negative.ts",
+          41,
+          6,
+          2693,
+          "'BitmapButton' only refers to a type, but is being used as a value here."
+        ],
+        [
+          "tests/types/bitmap-button-negative.ts",
+          43,
+          6,
+          2693,
+          "'BitmapButtonOptions' only refers to a type, but is being used as a value here."
+        ],
+        [
+          "tests/types/bitmap-button-negative.ts",
+          45,
+          6,
+          2693,
+          "'BitmapButtonState' only refers to a type, but is being used as a value here."
+        ]
+      ]
+    }
+  ]
+}

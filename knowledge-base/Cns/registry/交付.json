@@ -5971,6 +5971,157 @@
         "evidence": "Cns/docs/锚点图集播放证据.md",
         "plan": "Cns/docs/锚点图集播放工程计划.md"
       }
+    },
+    {
+      "id": "V059",
+      "kind": "engineering_preview",
+      "status": "in_progress",
+      "requirementIds": [
+        "R002",
+        "R004",
+        "R011",
+        "R012",
+        "R015",
+        "R016",
+        "R019",
+        "R021"
+      ],
+      "sourceIds": [
+        "S108"
+      ],
+      "dependsOn": [
+        "V058"
+      ],
+      "owner": "project",
+      "dueDate": null,
+      "title": "工程预览 0.54.0 — 共享输入位图按钮",
+      "doc": "Cns/docs/位图按钮契约.md",
+      "artifacts": [
+        "Cns/docs/位图按钮契约.md",
+        "Cns/docs/位图按钮核验.md",
+        "Cns/docs/位图按钮实施计划.md",
+        "evidence/bitmap-button-verification.json"
+      ],
+      "implementation": "一个可选工厂与三个擦除类型；使用真实 Bitmap、Scope、借用租约与共享输入，不增加监听器、依赖或时钟。",
+      "acceptance": "当前本地代码与有限桌面 Native 已独立验收；最终公开评审和交付仍待完成。",
+      "acceptanceCriteria": [
+        "保留所选契约、原始失败与历史截点。",
+        "完成有限浏览器、双语公开、正常推送前门禁、必需钩子及单独交付验收。"
+      ],
+      "verification": {
+        "engineeringPreview": "0.54.0",
+        "sourceId": "S108",
+        "deliverableId": "V059",
+        "curationDate": "2026-10-15",
+        "status": "CURRENT_CODE_AND_BOUNDED_NATIVE_ACCEPTED_PUBLIC_DELIVERY_PENDING",
+        "record": "knowledge-base/evidence/bitmap-button-verification.json",
+        "focusedCPU": {
+          "pass": 163,
+          "new": 65,
+          "retained": 98
+        },
+        "completeCode": {
+          "phases": 9,
+          "Core": 3218,
+          "SpineSource": 160
+        },
+        "strict": {
+          "positiveDiagnostics": 0,
+          "negativeDiagnostics": 19,
+          "inputPins": 80,
+          "importedDeclarations": 63,
+          "standardLibraries": 57
+        },
+        "nativeSource": {
+          "status": "ACCEPTED_R2_GENUINE_PRODUCER_COMPATIBILITY_ONLY",
+          "review": {
+            "bytes": 6714,
+            "sha256": "3fa9b1d59447616bdcaadec9d811738db3663155ec7c3db83b64ad0794b68c9f",
+            "identityOnlyNotDistributed": true
+          }
+        },
+        "nativeActual": {
+          "status": "ACCEPTED_BOUNDED_DESKTOP_DOM_NATIVE_ONLY",
+          "independentReview": {
+            "bytes": 82186,
+            "sha256": "ebae093f16cfc4c4bcc5bb4a1de3fc1ccab383b3e95cf86c7f2e9a38569ef529",
+            "identityOnlyNotDistributed": true
+          },
+          "originalResult": {
+            "bytes": 229769,
+            "sha256": "85245b34ca8d4396470065df956899f375964e95ebdb279436a368534618c66b",
+            "identityOnlyNotDistributed": true
+          },
+          "browser": "Edge155.0.4283.45",
+          "launch": "default headless, no custom flags",
+          "width": 24,
+          "height": 24,
+          "pixelRatio": 1,
+          "mainReadbacks": 38,
+          "mainRowsPerBackend": 19,
+          "mainChannels": 87552,
+          "pixelTolerance": 0,
+          "mismatchedPixels": 0,
+          "mismatchedChannels": 0,
+          "rawRGBAOriginals": 40,
+          "metadataPackets": 40,
+          "separateFreshCanvas": {
+            "additionalReadbacks": 2,
+            "wrongOraclePixels": 48,
+            "wrongOracleChannels": 96,
+            "mainCredit": 0
+          },
+          "retirement": {
+            "sessions": 3,
+            "eachSessionLoads": 1,
+            "eachSessionProviderDisposals": 1,
+            "allDependenciesClosed": true,
+            "cachedClosePromiseIdentity": true,
+            "originalWebGPUReadbacks": 19,
+            "allOriginalWebGPUReadbacksFulfilled": true,
+            "webgpuCleanupOutcome": "safe",
+            "pendingFrames": 0,
+            "pendingUploadBytes": 0,
+            "pendingReadbackBytes": 0,
+            "pendingOuterOperationTickets": 0,
+            "outerOperationTickets": 161,
+            "allOuterOperationTicketsFulfilled": true
+          },
+          "allowedRequests": 252,
+          "recordedPageErrors": 0,
+          "graphRows": 376,
+          "runtimeRows": 175,
+          "actorBeforeAfterStable": true,
+          "laterReviewerCurrentReadbackDistinct": true,
+          "observedCaptures": null,
+          "observedReplays": null,
+          "actualCaptureCounterRecorded": false,
+          "hostInputObjectLedgerRecorded": false,
+          "savedPNGOriginals": 0,
+          "scope": "Ordinary desktop DOM primary-mouse behavior and opaque Canvas/WebGPU frames only; Window blur is an explicit DOM Event, not hardware or OS-focus evidence."
+        },
+        "publicSourceBilingualReview": "PENDING",
+        "fullPrepush": "PENDING",
+        "mandatoryHooks": "PENDING",
+        "newGitDelivery": "PENDING",
+        "remoteCIPassClaim": false,
+        "fullSpineR020V020": "OPEN",
+        "migrationR008V006": "OPEN",
+        "historicalCutoffsPreserved": true,
+        "contract": "Cns/docs/位图按钮契约.md",
+        "evidence": "Cns/docs/位图按钮核验.md",
+        "plan": "Cns/docs/位图按钮实施计划.md",
+        "r1NativePendingCutoff": {
+          "status": "CURRENT_CODE_ACCEPTED_NATIVE_PUBLIC_DELIVERY_PENDING",
+          "nativeActual": {
+            "status": "PENDING",
+            "mainReadbacks": null,
+            "mainChannels": null,
+            "observedCaptures": null,
+            "observedReplays": null
+          }
+        }
+      }
     }
   ],
   "spineF1ClockPortableReplaySuccessor": {
@@ -7010,6 +7161,136 @@
     "independentReview": {
       "bytes": 48911,
       "sha256": "e2ce215c1610db2aa4749e5ad96103d28eab6a50ca64dfdfa31b6ac30891bd20",
+      "identityOnlyNotDistributed": true
+    },
+    "historicalPublicPendingCutoffsPreserved": true,
+    "remoteCIPassClaim": false
+  },
+  "bitmapButtonWorkPackage": {
+    "engineeringPreview": "0.54.0",
+    "sourceId": "S108",
+    "deliverableId": "V059",
+    "curationDate": "2026-10-15",
+    "status": "CURRENT_CODE_AND_BOUNDED_NATIVE_ACCEPTED_PUBLIC_DELIVERY_PENDING",
+    "record": "knowledge-base/evidence/bitmap-button-verification.json",
+    "focusedCPU": {
+      "pass": 163,
+      "new": 65,
+      "retained": 98
+    },
+    "completeCode": {
+      "phases": 9,
+      "Core": 3218,
+      "SpineSource": 160
+    },
+    "strict": {
+      "positiveDiagnostics": 0,
+      "negativeDiagnostics": 19,
+      "inputPins": 80,
+      "importedDeclarations": 63,
+      "standardLibraries": 57
+    },
+    "nativeSource": {
+      "status": "ACCEPTED_R2_GENUINE_PRODUCER_COMPATIBILITY_ONLY",
+      "review": {
+        "bytes": 6714,
+        "sha256": "3fa9b1d59447616bdcaadec9d811738db3663155ec7c3db83b64ad0794b68c9f",
+        "identityOnlyNotDistributed": true
+      }
+    },
+    "nativeActual": {
+      "status": "ACCEPTED_BOUNDED_DESKTOP_DOM_NATIVE_ONLY",
+      "independentReview": {
+        "bytes": 82186,
+        "sha256": "ebae093f16cfc4c4bcc5bb4a1de3fc1ccab383b3e95cf86c7f2e9a38569ef529",
+        "identityOnlyNotDistributed": true
+      },
+      "originalResult": {
+        "bytes": 229769,
+        "sha256": "85245b34ca8d4396470065df956899f375964e95ebdb279436a368534618c66b",
+        "identityOnlyNotDistributed": true
+      },
+      "browser": "Edge155.0.4283.45",
+      "launch": "default headless, no custom flags",
+      "width": 24,
+      "height": 24,
+      "pixelRatio": 1,
+      "mainReadbacks": 38,
+      "mainRowsPerBackend": 19,
+      "mainChannels": 87552,
+      "pixelTolerance": 0,
+      "mismatchedPixels": 0,
+      "mismatchedChannels": 0,
+      "rawRGBAOriginals": 40,
+      "metadataPackets": 40,
+      "separateFreshCanvas": {
+        "additionalReadbacks": 2,
+        "wrongOraclePixels": 48,
+        "wrongOracleChannels": 96,
+        "mainCredit": 0
+      },
+      "retirement": {
+        "sessions": 3,
+        "eachSessionLoads": 1,
+        "eachSessionProviderDisposals": 1,
+        "allDependenciesClosed": true,
+        "cachedClosePromiseIdentity": true,
+        "originalWebGPUReadbacks": 19,
+        "allOriginalWebGPUReadbacksFulfilled": true,
+        "webgpuCleanupOutcome": "safe",
+        "pendingFrames": 0,
+        "pendingUploadBytes": 0,
+        "pendingReadbackBytes": 0,
+        "pendingOuterOperationTickets": 0,
+        "outerOperationTickets": 161,
+        "allOuterOperationTicketsFulfilled": true
+      },
+      "allowedRequests": 252,
+      "recordedPageErrors": 0,
+      "graphRows": 376,
+      "runtimeRows": 175,
+      "actorBeforeAfterStable": true,
+      "laterReviewerCurrentReadbackDistinct": true,
+      "observedCaptures": null,
+      "observedReplays": null,
+      "actualCaptureCounterRecorded": false,
+      "hostInputObjectLedgerRecorded": false,
+      "savedPNGOriginals": 0,
+      "scope": "Ordinary desktop DOM primary-mouse behavior and opaque Canvas/WebGPU frames only; Window blur is an explicit DOM Event, not hardware or OS-focus evidence."
+    },
+    "publicSourceBilingualReview": "PENDING",
+    "fullPrepush": "PENDING",
+    "mandatoryHooks": "PENDING",
+    "newGitDelivery": "PENDING",
+    "remoteCIPassClaim": false,
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "historicalCutoffsPreserved": true,
+    "contract": "Cns/docs/位图按钮契约.md",
+    "evidence": "Cns/docs/位图按钮核验.md",
+    "plan": "Cns/docs/位图按钮实施计划.md",
+    "r1NativePendingCutoff": {
+      "status": "CURRENT_CODE_ACCEPTED_NATIVE_PUBLIC_DELIVERY_PENDING",
+      "nativeActual": {
+        "status": "PENDING",
+        "mainReadbacks": null,
+        "mainChannels": null,
+        "observedCaptures": null,
+        "observedReplays": null
+      }
+    }
+  },
+  "anchoredAtlasPlaybackDeliveryActualSuccessor": {
+    "engineeringPreview": "0.53.0",
+    "recordedOn": "2026-10-15",
+    "status": "ACTUAL_PR_MERGE_AND_PRIMARY_MAIN_SYNC_ACCEPTED",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/41",
+    "featureHead": "5c4e1e89a4b02e2d3caa3db24a2bd040fa89ed7b",
+    "main": "19ab683e132ec8777e54508f6bae09d44e02c559",
+    "tree": "2c9d42a17580754d1b114284a6db7deaf2477818",
+    "independentReview": {
+      "bytes": 64282,
+      "sha256": "6c281311c1547b764fd315c38359ef3ba097da6cf2e928e5d257dad6f4bd2b86",
       "identityOnlyNotDistributed": true
     },
     "historicalPublicPendingCutoffsPreserved": true,

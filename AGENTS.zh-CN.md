@@ -41,7 +41,7 @@
 <!-- MI1-AGENT-POLICY-BEGIN -->
 ## 主鼠标输入边界
 
-- MI1 公开使用仅通过构建后的 `@egret/engine` 与可选 `@egret/engine/web/input`。可选入口只导出 `createMouseInput` 与契约中的六个类型；默认 Engine／Canvas／WebGPU 入口不增加该 API。Runtime 显示装配端口不通过 Engine 公开，核心保持无 DOM／Node。详见[契约](knowledge-base/Cns/docs/主鼠标输入契约.md)与[验证记录](knowledge-base/evidence/primary-mouse-input-verification.json)。
+- MI1 公开使用仅通过构建后的 `@egret/engine` 与可选 `@egret/engine/web/input`。可选入口导出 `createMouseInput`、`createBitmapButton` 与九个擦除契约类型；默认 Engine／Canvas／WebGPU 入口不增加输入或按钮 API。按钮消费者遵守[所选契约](knowledge-base/Cns/docs/位图按钮契约.md)、借用资源所有权及完整路由后的最终命中复查。Runtime 显示装配端口不通过 Engine 公开，核心保持无 DOM／Node。详见[契约](knowledge-base/Cns/docs/主鼠标输入契约.md)与[验证记录](knowledge-base/evidence/primary-mouse-input-verification.json)。
 - `tests/mouse-input.test.mjs` 与 `tests/mouse-input-lifecycle.test.mjs` 使用真实公共 SDK 对象及受控浏览器端口，不私有导入产品，不复制命中或事件算法，也不声明真实 DOM／原生验收。实际浏览器与受控单元的结果分别记录。
 - `#egret-mouse-input` 仅按精确包映射连接已命名的浏览器输入模块及声明到核心产物；共享验证器只允许显式固定映射和有限闭包，不授权通配符、任意私有导入或新产品导出。每项新策略变异必须先在独立完整夹具中通过当前基线；类型负例冻结实际未抑制诊断，待测表不得标作 PASS。
 - MI1 证据分别记录源码、构建／公共接口、行为／生命周期、类型、策略、原生及最终公开／交付状态，保留失败与修正。公开内容不包含私有提示词、委派文件、未经整理的对话或个人绝对路径。

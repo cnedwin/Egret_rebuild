@@ -17,7 +17,7 @@ export async function loadPublicSDK(input=false) {
   if(!input)return publicRoot;
   assert.deepEqual(metadata.exports['./web/input'],{types:'./dist/web/input.d.ts',import:'./dist/web/input.js'});
   publicInput??=await import(new URL(metadata.exports['./web/input'].import,packageURL));
-  assert.deepEqual(Object.keys(publicInput),['createMouseInput']);
+  assert.deepEqual(Object.keys(publicInput),['createBitmapButton','createMouseInput']);
   return {...publicRoot,...publicInput};
 }
 

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "revision": "0.53.0",
+  "revision": "0.54.0",
   "canonicalState": "Chinese registries; English JSON is a read-only translation",
   "evidencePolicy": "Machine data, embedded source, historical code and upstream legal originals retain their identities; paired reading versions explain them.",
   "semanticReview": {
@@ -64,8 +64,8 @@
       "zh": "AGENTS.zh-CN.md",
       "en": "AGENTS.md",
       "kind": "public_reading",
-      "enSha256": "4aa7d5cbd1c7d029a5c2582769801648e206f43042ca3a5c45e0e7e9e0a52cc2",
-      "zhSha256": "bede15184ae43c6cb5fb660cbe19b02c9dd005d9dda2d2278b32bd7381879b37"
+      "enSha256": "a0d5e5f08f6422869bcc4630f81e5543e5cee7b6823a5dd15e2570b2836dcb64",
+      "zhSha256": "5edd0af5bb705682b09a50f4843f9b07b3d6d0f6d97be0fb24936d8491e0c6c0"
     },
     {
       "zh": "CONTRIBUTING.zh-CN.md",
@@ -141,8 +141,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "eb9c1d533a4a8c4f45dd96b2f48afa747a16ef75b35e37ac6a297241183dd1bd",
-      "zhSha256": "3c3bfae1ace19bc7c783281f16b2f2c740a5a9cc84d601285667ef757100226a"
+      "enSha256": "479c22af1564924d8e4bb2f1b4347eeea3a74eac4d15ba6a4e10fb2b59a45bf7",
+      "zhSha256": "b57ce8dd31e92753c450b8704e41c56ee57d8e407731ea2c4fe7da1353c8ffda"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -288,8 +288,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "9469fdd94a0e969040e38595713f8f14b3c8b538eb0d0cb4e0f4309b7c453932",
-      "zhSha256": "6fb4da4c3a46db08ea13e4c7aa0d9345f2384788c52bd462bcee578cbe8233ed"
+      "enSha256": "08441a374fbcc860ffc3afdc392f6fe9b6988d0874688c335350b793bbb21273",
+      "zhSha256": "c9ae76bd908b1f901c8682bfa75eba85e8b9d3040dca137c9b3ae2e6a370b6d3"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -764,8 +764,8 @@
       "zh": "knowledge-base/Cns/README.md",
       "en": "knowledge-base/en/README.md",
       "kind": "public_reading",
-      "enSha256": "1b6bbc3a147a2fa2f1e1072c823769eb0bf295e1b020ccef8a21110eebc6cfad",
-      "zhSha256": "64ac28f9531d7c37307e98cd959a20b375e4114092648929c50d5e1fd06a4aaa"
+      "enSha256": "54e433c6ed6834cc62f34d90c7e1e24a0758d0f8589879d1287ccf0964f5386b",
+      "zhSha256": "0bcee84083654405f04bd48c8a4e943b0d0a29eb1ccd9f8e98c9fe8f79d1756a"
     },
     {
       "zh": "knowledge-base/Cns/templates/ADR决策记录.md",
@@ -799,8 +799,8 @@
       "zh": "knowledge-base/README.zh-CN.md",
       "en": "knowledge-base/README.md",
       "kind": "public_navigation",
-      "enSha256": "2c6162b7b44ed77d18cf8182c4c7741bcf82a241c164ce20de4054751ef0b383",
-      "zhSha256": "e245f1141135aef91173d446e6cdc16ddc907e59017b0e73cc8c17861b86adaf"
+      "enSha256": "43b59b5618dd437aea2d1c635b12607209874d998c6800931fcf26829ac6e8bb",
+      "zhSha256": "99e6ba7342a73f9f6908cfcabf58b898a5a71ead6bfaa61763cf8c1cdae6bb7e"
     },
     {
       "zh": "LICENSE.zh-CN.md",
@@ -848,8 +848,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "a0a89b124ef8a841aa1305d496bc68d3f7d220db3a5fc05c288523c91baf9cc9",
-      "zhSha256": "d27a57e7d3afacc43eb95d87ad09484ac64de5a646cc7612e7e412dccfc8bdbf"
+      "enSha256": "8d58a85abde3cf3967a30fd7e9dcd28834bcf7a9635ecd745fdccc9ff45214f4",
+      "zhSha256": "972e65e6725ab83d56645ec766b07f49fde4ac317faf2b8b75307a5513c2989c"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -1398,6 +1398,34 @@
       "kind": "public_reading",
       "enSha256": "be929d57b75e32e4ab88071f580577052c3e986fb395055ce69ca218363898ca",
       "zhSha256": "d8c6b416c821d4b6754e8726ccab7ef518be71e5a0c66cb24d1d3d7ab9b6b937"
+    },
+    {
+      "en": "knowledge-base/en/docs/bitmap-button-contract.md",
+      "zh": "knowledge-base/Cns/docs/位图按钮契约.md",
+      "kind": "public_reading",
+      "enSha256": "a87b54dc272ceb15baabd5fb17c1eb0f9fa4b85c42a5eb558a847afec1e68066",
+      "zhSha256": "45a8e8bd35102d3f20b62881dd7dbb4c26968d5cfd0a5d8e37aeb5ced0acdebb"
+    },
+    {
+      "en": "knowledge-base/en/docs/bitmap-button-evidence.md",
+      "zh": "knowledge-base/Cns/docs/位图按钮核验.md",
+      "kind": "public_reading",
+      "enSha256": "9daef448f9dbea634b2b0389b392e1b5014847ada9f35ad93b0aa780753b7720",
+      "zhSha256": "98f7ad7c9c823ed6022ff235d368edd844269897256791188cb0e0b10e6a25a8"
+    },
+    {
+      "en": "knowledge-base/en/docs/bitmap-button-implementation-plan.md",
+      "zh": "knowledge-base/Cns/docs/位图按钮实施计划.md",
+      "kind": "public_reading",
+      "enSha256": "9e47323ba6bedf7158343266d9ec37b139a8385103c9f5f35dfe89fc2c2e751e",
+      "zhSha256": "e8eb1f040abd0f7578e8a5a91a07060f4e626c555fc1d11849c44c583b2ef15d"
+    },
+    {
+      "en": "examples/bitmap-button/README.md",
+      "zh": "examples/bitmap-button/README.zh-CN.md",
+      "kind": "public_reading",
+      "enSha256": "f7be3b7d2947cbf1b81f42312220bad56aa1dc55f1d608cff8b165d3c1992b4b",
+      "zhSha256": "29c45ee9cb9e7836100cc677a3d50e78cfc1221a7e32a547a36ad1536b567fa1"
     }
   ],
   "registries": [
@@ -1422,20 +1450,20 @@
     {
       "source": "knowledge-base/Cns/registry/交付.json",
       "target": "knowledge-base/en/registry/deliverables.json",
-      "sourceSha256": "adc29bf7955d4c4c7777f144ae4619c8d3e9d9bf1ff587ebc41d16cf19229812",
-      "targetSha256": "51513c9c84bcb9673b3838beda2fd3255456421f6899dcc8a164f7cb84031d31"
+      "sourceSha256": "2437570c2cdb57870be3e1e4b3e7311bf78e1c58e240d6d9499df6db1cbd71cb",
+      "targetSha256": "89a5f0bbcd300e1cbfa763383c651fd183212a4e26034dde8cfe0a2af7512fcb"
     },
     {
       "source": "knowledge-base/Cns/registry/来源.json",
       "target": "knowledge-base/en/registry/sources.json",
-      "sourceSha256": "31eb36ae3f01bd7a8cc0027907a6823e262593c32df77309327bc0c3f7b750f5",
-      "targetSha256": "c512537309adafe62e543d081e7f0afa5f688f5f019eeed074a450288d92aa4c"
+      "sourceSha256": "73714af46938b43f66990a96568f0593d1dc753083f2615688c9a7e982100c81",
+      "targetSha256": "59640e2f2f447fa2b77521f7c04d923b2295b9936da0fcd1eac10970efd6ad28"
     },
     {
       "source": "knowledge-base/Cns/当前版本.json",
       "target": "knowledge-base/en/current-version.json",
-      "sourceSha256": "7385bdcf5ed3cebaadf701654f3212b65f3890f67032173cc2c952a5eca62864",
-      "targetSha256": "79f7a9fed85e6f455a7e4875237610a44f7677135c81d99aaa3130e6d9c060cf"
+      "sourceSha256": "ab4c38a11b0ee30ffeaa1b4fae6b880b30c08c2cbd5cf27e76bdfc73e36f63d7",
+      "targetSha256": "b33b20378e2d66536830582de1c31f2962c415bf6e03147f8eb8b676c3d20f85"
     }
   ],
   "criticalComments": [
@@ -2027,7 +2055,7 @@
     },
     {
       "path": "knowledge-base/tools/Validate-KnowledgeBase.ps1",
-      "sha256": "f715975437bfd9360ef9b81531459d1c3ebdbf4a106f2c22f02ea8db87e96630"
+      "sha256": "717a1a4edd6834e1f860f2c455519a1a4cf01587e7761c46be367cdd45740a27"
     },
     {
       "path": "packages/runtime/src/displayHitState.ts",
@@ -2103,7 +2131,7 @@
     },
     {
       "path": "packages/engine/src/mouseInput.ts",
-      "sha256": "842be3c1d4eac3769b09ada4fb5e8be36685ade97275d8dc99d2bdf6a5d02401"
+      "sha256": "b8ada0f5e3a2a5f22e53e8dec494d612818404463dfe112c737504ee5e840fe0"
     },
     {
       "path": "packages/engine/src/mouseInputTypes.ts",
@@ -2111,7 +2139,7 @@
     },
     {
       "path": "packages/engine/src/internal/mouseInputFactoryState.ts",
-      "sha256": "78c734d3b181ec621d12eb7dbdd9ea98be844243207d90cf7bca660480da01ae"
+      "sha256": "ef3d075050fc7f29c9dd7d94f7542cf23e11e6c9b59a037f5f0f41afa738142f"
     },
     {
       "path": "packages/engine/web/MouseInput.ts",
@@ -2119,7 +2147,7 @@
     },
     {
       "path": "packages/engine/web/input.ts",
-      "sha256": "2e4145f2d372cb9a9c9e19a284da7885e8af7b3dafdc6967d2e72f9afb7a3318"
+      "sha256": "4c90ee48e9228cfab06a45235587e9337118e9a4391a2975e9e6f6b44657fdab"
     },
     {
       "path": "tools/verify-mouse-input-canvas.mjs",
@@ -2223,11 +2251,11 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "81dcf6503697cec54d16dd4636863900df414c56aef68747511e1cfc7181a197"
+      "sha256": "797f75dc6e1002fa612737ef6414cd45eada151675d917a4c007b24ca46c889e"
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "sha256": "61884a7b65e64588aef4b93456e2e120f8313066ab33bfa45b1e1f45f48119a3"
+      "sha256": "9787766b07ad69861010158f9223f72641bfe236440b29f4738f69f9510a05fc"
     },
     {
       "path": "tests/byte-writer-boundaries.test.mjs",
@@ -2235,7 +2263,7 @@
     },
     {
       "path": "tools/check-types.mjs",
-      "sha256": "8615cde79a99d8e4d060ed647e2c4f9342dbabc670f72b96c25eeb7c8c812784"
+      "sha256": "2ae321c7c9a89c31d9337280a56390094ee13c405f3b5c670759050420db19d1"
     },
     {
       "path": "packages/runtime/src/NineSliceGeometry2D.ts",
@@ -2367,7 +2395,7 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "sha256": "e80aa84ab58023b9720939b3a4c3be43cebfb7003afa76913279fd35bc0c2ae9"
+      "sha256": "df8cf52aec8a9e0cc1f2a888a8185b696f4eba2eef290683b9d1d65479e0082c"
     },
     {
       "path": "tools/browser-png-types.mjs",
@@ -2399,7 +2427,7 @@
     },
     {
       "path": "tests/project-boundaries.test.mjs",
-      "sha256": "93208f573a59dee798a92e80f893a4511678154917c028baf71056944d6286ae"
+      "sha256": "096eeeee1f83319d1ef32df968a3ace85c9a9db995925d010e71376ae9a895ce"
     },
     {
       "path": "knowledge-base/experiments/spine-f2-core/src/types.ts",
@@ -2515,11 +2543,11 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "sha256": "e79ea97e5bd00aaf3495a451a2c1b62e45e9abe1ca354ba6cde76be70c95a69c"
+      "sha256": "7acc0ebf58b6680a47c810e3e0cd2acfaea634dcb078cfcfc253c20857b833d6"
     },
     {
       "path": "tools/sequence-playback-boundary.mjs",
-      "sha256": "0fc8f9307edd9dd32be12faba8d7eb5e71c18aa745d085e2d80a088a58be37ae"
+      "sha256": "3743b29b5ee85e562215261de557bacf76177b634a26e15e824856d73c853533"
     },
     {
       "path": "tests/display-container-remove-children-api.test.mjs",
@@ -2628,6 +2656,38 @@
     {
       "path": "tests/anchored-atlas-playback-example.test.mjs",
       "sha256": "d397c419333a0168f6234a74a644df4572a78dea8107d01963dd187675c192d2"
+    },
+    {
+      "path": "packages/engine/src/bitmapButtonTypes.ts",
+      "sha256": "2845fcb9c5a21cc8a7ae3320b1fc4aa848080b984d64a252466797a2139bbd64"
+    },
+    {
+      "path": "packages/engine/src/bitmapButton.ts",
+      "sha256": "23e54e21d0df126e598cb3e929e7d306accc04a79cad34e418ba94df2fba9fac"
+    },
+    {
+      "path": "examples/bitmap-button/main.mjs",
+      "sha256": "053d06c4f0c1911471b20683dd6292166a5402313969d89563ae38ee6f8c0611"
+    },
+    {
+      "path": "examples/bitmap-button/session.mjs",
+      "sha256": "0c0b7e8bfc6fad18d70847be013979bb13fcf81c095dd41528c76f92b276680d"
+    },
+    {
+      "path": "tests/bitmap-button-api.test.mjs",
+      "sha256": "b73e535e90ec54f29e4adbbb5f965cb9f8a9aa497ebc70fc5d7042a7529ef67e"
+    },
+    {
+      "path": "tests/bitmap-button.test.mjs",
+      "sha256": "70d00c83780c261bd7a9d1923bee1ef695483d31e460b485ec3f6666baf3665f"
+    },
+    {
+      "path": "tests/bitmap-button-lifecycle.test.mjs",
+      "sha256": "fbdfdf20ff0e4e04169b279d7f12bcb7dc76b20e9fd7a80b89c8aa4f76ee06e5"
+    },
+    {
+      "path": "tools/bitmap-button-types.mjs",
+      "sha256": "792ea25c61a5815f32df80bc5cfe5a1f646452ca927e0022ee7f43d6deaf1e4a"
     }
   ],
   "historicalSemanticReview": {
@@ -6038,5 +6098,29 @@
     "newCriticalRows": 0,
     "changedCriticalRows": 1,
     "priorR1CurationPreserved": true
+  },
+  "bitmapButtonCuration": {
+    "date": "2026-10-15",
+    "engineeringPreview": "0.54.0",
+    "sourceId": "S108",
+    "deliverableId": "V059",
+    "sourceOnly": true,
+    "newReadingPairs": 4,
+    "readingPairRows": 197,
+    "criticalCommentRows": 304,
+    "newCriticalRows": 8,
+    "oldReviewCutoffsPreserved": true,
+    "record": "knowledge-base/evidence/bitmap-button-verification.json",
+    "publicSourceBilingualReview": "PENDING",
+    "fullPrepush": "PENDING",
+    "mandatoryHooks": "PENDING",
+    "newGitDelivery": "PENDING",
+    "remoteCIPassClaim": false,
+    "nativeActualStatus": "ACCEPTED_BOUNDED_DESKTOP_DOM_NATIVE_ONLY",
+    "nativeActualReview": {
+      "bytes": 82186,
+      "sha256": "ebae093f16cfc4c4bcc5bb4a1de3fc1ccab383b3e95cf86c7f2e9a38569ef529",
+      "identityOnlyNotDistributed": true
+    }
   }
 }

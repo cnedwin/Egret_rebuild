@@ -416,19 +416,24 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
     // MI1_FIXTURE_SCAFFOLD_BEGIN
     // Inert canonical policy inputs, never picker/event/native behavior evidence.
     const mouseTypes=['MouseInputOptions','MouseInput','MouseInputState','MouseInputEvents','MouseInputPayload','MouseInputCancelReason'];
-    const mouseBarrel="export {createMouseInput} from './MouseInput.js';\nexport type {"+mouseTypes.join(',')+"} from '#egret-mouse-input';\n";
+    const buttonTypes=['BitmapButton','BitmapButtonOptions','BitmapButtonState'];
+    const buttonForward="export {createBitmapButton} from '#egret-mouse-input';\n";
+    const mouseBarrel="export {createMouseInput} from './MouseInput.js';\nexport type {"+mouseTypes.join(',')+"} from '#egret-mouse-input';\n"+buttonForward+"export type {"+buttonTypes.join(',')+"} from '#egret-mouse-input';\n";
     write('packages/engine/web/input.ts',mouseBarrel);write('packages/engine/dist/web/input.d.ts',mouseBarrel);
-    write('packages/engine/dist/web/input.js',"export {createMouseInput} from './MouseInput.js';\n");
+    write('packages/engine/dist/web/input.js',"export {createMouseInput} from './MouseInput.js';\n"+buttonForward);
     write('node_modules/@egret/engine/mouse-input.js',"export * from '../../../packages/engine/dist/web/input.js';\n");
     const resolverFile='node_modules/@egret/engine/package.json',resolver=JSON.parse(readFileSync(path.join(root,resolverFile),'utf8'));
     write(resolverFile,{...resolver,exports:{...resolver.exports,'./web/input':'./mouse-input.js'}});
     const mouseTypeScaffold=mouseTypes.map(name=>'export type '+name+' = unknown;\n').join('');
     write('packages/engine/src/mouseInputTypes.ts',mouseTypeScaffold);write('packages/engine/dist/mouseInputTypes.d.ts',mouseTypeScaffold);write('packages/engine/dist/mouseInputTypes.js','export {};\n');
+    const buttonTypeScaffold=buttonTypes.map(name=>'export type '+name+' = unknown;\n').join('');
+    write('packages/engine/src/bitmapButtonTypes.ts',buttonTypeScaffold);write('packages/engine/dist/bitmapButtonTypes.d.ts',buttonTypeScaffold);write('packages/engine/dist/bitmapButtonTypes.js','export {};\n');
+    write('packages/engine/src/bitmapButton.ts','export function createBitmapButton(options) {}\n');write('packages/engine/dist/bitmapButton.js','export function createBitmapButton(options) {}\n');
     const browserInput="import {createMouseInputWithNative} from '#egret-mouse-input';\nexport function createMouseInput(options) { return createMouseInputWithNative(options); }\n";
     write('packages/engine/web/MouseInput.ts',browserInput);write('packages/engine/dist/web/MouseInput.js',browserInput);
     write('packages/engine/dist/web/MouseInput.d.ts',"import type {MouseInputOptions,MouseInput} from '#egret-mouse-input';\nexport declare function createMouseInput(options:MouseInputOptions):MouseInput;\n");
     const ownerSource="import {CancellationController,EgretError} from '@egret/runtime';\nexport function createMouseInputOwner(engine, assembly) {\nconst sample = new CancellationController().signal;\nconst originalSignals = new WeakMap();\nlet started=false;\nif (!started) throw new EgretError('MOUSE_INPUT_INVALID');\n}\nexport function createMouseInputWithNative(options) {}\nexport type {"+mouseTypes.join(',')+"} from './mouseInputTypes.js';\n";
-    write('packages/engine/src/mouseInput.ts',ownerSource);write('packages/engine/dist/mouseInput.js','export function createMouseInputWithNative(options) {}\n');
+    write('packages/engine/src/mouseInput.ts',ownerSource);write('packages/engine/dist/mouseInput.js',"export function createMouseInputWithNative(options) {}\nexport {createBitmapButton} from './bitmapButton.js';\n");
     write('packages/engine/dist/mouseInput.d.ts','export declare function createMouseInputWithNative(options:unknown):unknown;\nexport type {'+mouseTypes.join(',')+"} from './mouseInputTypes.js';\n");
     for(const file of ['packages/engine/src/internal/mouseInputFactoryState.ts','packages/engine/dist/internal/mouseInputFactoryState.js'])write(file,'export function markMouseInputEngineStarted(engine) {}\n');
     write('packages/engine/src/startEngine.ts',"import {markMouseInputEngineStarted} from './internal/mouseInputFactoryState.js';\nexport async function startEngine(host,engine) { await host.start?.(); markMouseInputEngineStarted(engine); return engine; }\n");
@@ -605,6 +610,12 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
       const baseline=spawnSync(process.execPath,['tools/check-boundaries.mjs'],{cwd:root,encoding:'utf8'});assert.ifError(baseline.error);
       assert.equal(baseline.status,0,'MI1 mutation requires canonical baseline first: '+baseline.stdout+baseline.stderr);assert.match(baseline.stdout,/Boundary check PASS/);
       const edits={
+        'button-root-type-leak':['packages/engine/dist/index.d.ts','','export interface BitmapButton {}\n'],
+        'button-types-runtime':['packages/engine/dist/bitmapButtonTypes.js','','export const ButtonTypeRuntime=1;\n'],
+        'button-private-target':['packages/engine/src/ProbeButton.ts','',"import type {BitmapButton} from './bitmapButtonTypes.js';\n"],
+        'button-core-dom':['packages/engine/src/bitmapButton.ts','','const element=document;\n'],
+        'button-core-clock':['packages/engine/src/bitmapButton.ts','','const clock=Date;\n'],
+        'button-wrong-forward':['packages/engine/web/input.ts',"export {createBitmapButton} from '#egret-mouse-input';","export {createBitmapButton} from './MouseInput.js';"],
         'extra-runtime':['packages/engine/dist/web/input.js','','export function extraMouseInput() {}\n'],
         'extra-type':['packages/engine/dist/web/input.d.ts','','export interface ExtraMouseInput {}\n'],
         'type-as-value':['packages/engine/dist/web/input.d.ts','export type {MouseInputOptions','export {MouseInputOptions'],
@@ -668,6 +679,12 @@ test('MI1 canonical policy baseline preserves every retained facade and exact al
   fixture({imported:'robust-predicates'},result=>{assert.equal(result.status,0,result.stdout+result.stderr);assert.match(result.stdout,/Boundary check PASS/);});
 });
 for(const [name,reason]of [
+  ['button-root-type-leak','MI1: input leaks outside optional entry'],
+  ['button-types-runtime','BITMAP_BUTTON: types emitted runtime values'],
+  ['button-private-target','MI1: private input target imported outside named paths'],
+  ['button-core-dom','host ambient dependency'],
+  ['button-core-clock','MI1: input automatic timing dependency'],
+  ['button-wrong-forward','MI1: exact optional forwarding mismatch'],
   ['extra-runtime','MI1: exact optional runtime export surface mismatch'],
   ['extra-type','MI1: exact optional export surface mismatch'],
   ['type-as-value','MI1: exact optional export surface mismatch'],

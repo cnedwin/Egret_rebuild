@@ -1,0 +1,333 @@
+// SPDX-License-Identifier: Apache-2.0
+// Complete strict public-consumer diagnostics are frozen from original stock compiler output.
+import {spawnSync} from 'node:child_process';
+import {createHash} from 'node:crypto';
+import {readFileSync,realpathSync} from 'node:fs';
+import {createRequire} from 'node:module';
+import path from 'node:path';
+import {fileURLToPath,pathToFileURL} from 'node:url';
+
+const root=realpathSync(fileURLToPath(new URL('../',import.meta.url)));
+const fail=message=>{throw Error('BitmapButton types: '+message);};
+const hash=raw=>createHash('sha256').update(raw).digest('hex');
+const equal=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+const empty={bytes:0,sha256:'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'};
+if(process.argv.length!==2)fail('this gate accepts no arguments');
+// Raw authentication precedes import of the shared physical/logical identity boundary.
+const helperFile=path.join(root,'tools/lib/file-identity.mjs'),helperRaw=readFileSync(helperFile);
+if(helperRaw.length!==5065||hash(helperRaw)!=='999b355c6e0d03f17853ee05f33abc9fecbb34ad80607963e11f913a4f815569')fail('changed shared helper before import');
+const {fingerprintFile,logicalPath,ownerRelativePath,samePhysicalPath}=await import(pathToFileURL(helperFile).href);
+if(!equal(fingerprintFile(root,'tools/lib/file-identity.mjs'),{path:'tools/lib/file-identity.mjs',bytes:helperRaw.length,sha256:hash(helperRaw)}))fail('shared helper physical identity differs');
+const inventory=JSON.parse(readFileSync(path.join(root,'tests/types/bitmap-button-diagnostic-expectations.json'),'utf8'));
+const expectedInputPaths=[
+  "tools/lib/file-identity.mjs",
+  "node_modules/typescript/package.json",
+  "node_modules/typescript/bin/tsc",
+  "node_modules/typescript/lib/tsc.js",
+  "node_modules/typescript/lib/getExePath.js",
+  "package.json",
+  "pnpm-lock.yaml",
+  "tsconfig.base.json",
+  "tests/types/tsconfig.json",
+  "tests/types/tsconfig.dom-free.json",
+  "tests/types/bitmap-button-positive.ts",
+  "tests/types/tsconfig.bitmap-button-positive.json",
+  "tests/types/bitmap-button-negative.ts",
+  "tests/types/tsconfig.bitmap-button-negative.json",
+  "packages/contracts/package.json",
+  "packages/runtime/package.json",
+  "packages/engine/package.json",
+  "packages/contracts/dist/CancellationSignal.d.ts",
+  "packages/contracts/dist/Diagnostic.d.ts",
+  "packages/contracts/dist/Disposable.d.ts",
+  "packages/contracts/dist/HostAdapter.d.ts",
+  "packages/contracts/dist/ImageData2D.d.ts",
+  "packages/contracts/dist/Point2D.d.ts",
+  "packages/contracts/dist/ProjectFormat.generated.d.ts",
+  "packages/contracts/dist/RenderFrame2D.d.ts",
+  "packages/contracts/dist/TexturedGeometry2D.d.ts",
+  "packages/contracts/dist/TexturedRenderFrame2D.d.ts",
+  "packages/contracts/dist/index.d.ts",
+  "packages/engine/dist/Engine.d.ts",
+  "packages/engine/dist/assetGroupTypes.d.ts",
+  "packages/engine/dist/bitmapButton.d.ts",
+  "packages/engine/dist/bitmapButtonTypes.d.ts",
+  "packages/engine/dist/createEngine.d.ts",
+  "packages/engine/dist/createEngineForProfile.d.ts",
+  "packages/engine/dist/gameClock.d.ts",
+  "packages/engine/dist/gameClockTypes.d.ts",
+  "packages/engine/dist/index.d.ts",
+  "packages/engine/dist/internal/mouseInputFactoryState.d.ts",
+  "packages/engine/dist/mouseInput.d.ts",
+  "packages/engine/dist/mouseInputTypes.d.ts",
+  "packages/engine/dist/sequencePlaybackTypes.d.ts",
+  "packages/engine/dist/tweenTypes.d.ts",
+  "packages/engine/dist/web/MouseInput.d.ts",
+  "packages/engine/dist/web/input.d.ts",
+  "packages/runtime/dist/AssetLease.d.ts",
+  "packages/runtime/dist/AssetManager.d.ts",
+  "packages/runtime/dist/AssetRef.d.ts",
+  "packages/runtime/dist/Bitmap.d.ts",
+  "packages/runtime/dist/ByteReader.d.ts",
+  "packages/runtime/dist/ByteWriter.d.ts",
+  "packages/runtime/dist/CancellationController.d.ts",
+  "packages/runtime/dist/DisplayObject.d.ts",
+  "packages/runtime/dist/DisplayObjectContainer.d.ts",
+  "packages/runtime/dist/EgretError.d.ts",
+  "packages/runtime/dist/Event.d.ts",
+  "packages/runtime/dist/EventDispatcher.d.ts",
+  "packages/runtime/dist/Graphics.d.ts",
+  "packages/runtime/dist/Mesh2D.d.ts",
+  "packages/runtime/dist/NineSliceBitmap.d.ts",
+  "packages/runtime/dist/NineSliceGeometry2D.d.ts",
+  "packages/runtime/dist/Scope.d.ts",
+  "packages/runtime/dist/SequencePlayer.d.ts",
+  "packages/runtime/dist/Sprite.d.ts",
+  "packages/runtime/dist/Stage.d.ts",
+  "packages/runtime/dist/Texture.d.ts",
+  "packages/runtime/dist/assetManagerOwnerState.d.ts",
+  "packages/runtime/dist/assetState.d.ts",
+  "packages/runtime/dist/bitmapDisplayState.d.ts",
+  "packages/runtime/dist/diagnostics.d.ts",
+  "packages/runtime/dist/displayBounds.d.ts",
+  "packages/runtime/dist/displayCoordinates.d.ts",
+  "packages/runtime/dist/displayHitTest.d.ts",
+  "packages/runtime/dist/displayInputOperations.d.ts",
+  "packages/runtime/dist/displayTreeState.d.ts",
+  "packages/runtime/dist/frameCapture.d.ts",
+  "packages/runtime/dist/index.d.ts",
+  "packages/runtime/dist/ownership.d.ts",
+  "packages/runtime/dist/sequenceClip.d.ts",
+  "packages/runtime/dist/spriteSheet.d.ts",
+  "packages/runtime/dist/texturedFrameCapture.d.ts"
+];
+const expectedLibraryPaths=[
+  "lib/lib.decorators.d.ts",
+  "lib/lib.decorators.legacy.d.ts",
+  "lib/lib.es2015.collection.d.ts",
+  "lib/lib.es2015.core.d.ts",
+  "lib/lib.es2015.d.ts",
+  "lib/lib.es2015.generator.d.ts",
+  "lib/lib.es2015.iterable.d.ts",
+  "lib/lib.es2015.promise.d.ts",
+  "lib/lib.es2015.proxy.d.ts",
+  "lib/lib.es2015.reflect.d.ts",
+  "lib/lib.es2015.symbol.d.ts",
+  "lib/lib.es2015.symbol.wellknown.d.ts",
+  "lib/lib.es2016.array.include.d.ts",
+  "lib/lib.es2016.d.ts",
+  "lib/lib.es2016.intl.d.ts",
+  "lib/lib.es2017.arraybuffer.d.ts",
+  "lib/lib.es2017.d.ts",
+  "lib/lib.es2017.date.d.ts",
+  "lib/lib.es2017.intl.d.ts",
+  "lib/lib.es2017.object.d.ts",
+  "lib/lib.es2017.sharedmemory.d.ts",
+  "lib/lib.es2017.string.d.ts",
+  "lib/lib.es2017.typedarrays.d.ts",
+  "lib/lib.es2018.asyncgenerator.d.ts",
+  "lib/lib.es2018.asynciterable.d.ts",
+  "lib/lib.es2018.d.ts",
+  "lib/lib.es2018.intl.d.ts",
+  "lib/lib.es2018.promise.d.ts",
+  "lib/lib.es2018.regexp.d.ts",
+  "lib/lib.es2019.array.d.ts",
+  "lib/lib.es2019.d.ts",
+  "lib/lib.es2019.intl.d.ts",
+  "lib/lib.es2019.object.d.ts",
+  "lib/lib.es2019.string.d.ts",
+  "lib/lib.es2019.symbol.d.ts",
+  "lib/lib.es2020.bigint.d.ts",
+  "lib/lib.es2020.d.ts",
+  "lib/lib.es2020.date.d.ts",
+  "lib/lib.es2020.intl.d.ts",
+  "lib/lib.es2020.number.d.ts",
+  "lib/lib.es2020.promise.d.ts",
+  "lib/lib.es2020.sharedmemory.d.ts",
+  "lib/lib.es2020.string.d.ts",
+  "lib/lib.es2020.symbol.wellknown.d.ts",
+  "lib/lib.es2021.d.ts",
+  "lib/lib.es2021.intl.d.ts",
+  "lib/lib.es2021.promise.d.ts",
+  "lib/lib.es2021.string.d.ts",
+  "lib/lib.es2021.weakref.d.ts",
+  "lib/lib.es2022.array.d.ts",
+  "lib/lib.es2022.d.ts",
+  "lib/lib.es2022.error.d.ts",
+  "lib/lib.es2022.intl.d.ts",
+  "lib/lib.es2022.object.d.ts",
+  "lib/lib.es2022.regexp.d.ts",
+  "lib/lib.es2022.string.d.ts",
+  "lib/lib.es5.d.ts"
+];
+const expectedCaseStatements=[
+  {
+    "name": "forbidden-default-root-factory",
+    "statement": "import {createBitmapButton as forbiddenRootFactory} from '@egret/engine';"
+  },
+  {
+    "name": "required-options",
+    "statement": "createBitmapButton();"
+  },
+  {
+    "name": "genuine-input",
+    "statement": "createBitmapButton({...options,input:{}});"
+  },
+  {
+    "name": "genuine-lease",
+    "statement": "createBitmapButton({...options,textureLease:{}});"
+  },
+  {
+    "name": "strict-boolean",
+    "statement": "createBitmapButton({...options,enabled:'true'});"
+  },
+  {
+    "name": "no-null-default",
+    "statement": "createBitmapButton({...options,enabled:null});"
+  },
+  {
+    "name": "numeric-crop",
+    "statement": "createBitmapButton({...options,skins:{...options.skins,up:{x:0,y:0,width:'8',height:6}}});"
+  },
+  {
+    "name": "all-three-skins",
+    "statement": "createBitmapButton({...options,skins:{up:options.skins.up,pressed:options.skins.pressed}});"
+  },
+  {
+    "name": "function-callback",
+    "statement": "createBitmapButton({...options,onActivate:0});"
+  },
+  {
+    "name": "readonly-display",
+    "statement": "button.display=bitmap;"
+  },
+  {
+    "name": "readonly-state",
+    "statement": "button.state='up';"
+  },
+  {
+    "name": "writable-enabled-still-boolean",
+    "statement": "button.enabled=1;"
+  },
+  {
+    "name": "no-hover-state",
+    "statement": "const state:BitmapButtonState='hover';"
+  },
+  {
+    "name": "private-handle-brand",
+    "statement": "const forged:BitmapButton={display:bitmap,state:'up',enabled:true,dispose(){}};"
+  },
+  {
+    "name": "no-manual-activation",
+    "statement": "button.activate();"
+  },
+  {
+    "name": "readonly-options",
+    "statement": "options.enabled=true;"
+  },
+  {
+    "name": "erased-control-type",
+    "statement": "void BitmapButton;"
+  },
+  {
+    "name": "erased-options-type",
+    "statement": "void BitmapButtonOptions;"
+  },
+  {
+    "name": "erased-state-type",
+    "statement": "void BitmapButtonState;"
+  }
+];
+if(inventory.schemaVersion!==1||inventory.kind!=='BITMAP_BUTTON_ACTUAL_STRICT_DIAGNOSTICS'
+ ||inventory.status!=='OBSERVED_FROZEN_TS7_DIAGNOSTICS'
+ ||!equal(inventory.tupleFormat,['file','line','column','code','message'])
+ ||!equal(inventory.inputPins?.map(row=>row.path),expectedInputPaths)
+ ||!equal(inventory.nativeLibraryPins?.map(row=>row.path),expectedLibraryPaths)
+ ||!equal(inventory.groups?.map(group=>group.lane),['positive','negative']))fail('malformed frozen complete input/diagnostic inventory');
+for(const row of inventory.inputPins){
+ if(logicalPath(row.path)!==row.path||!equal(fingerprintFile(root,row.path),row))fail('changed raw current input: '+row.path);
+}
+const wrapperOwner=realpathSync(path.join(root,'node_modules/typescript'));
+const wrapperPackage=JSON.parse(readFileSync(path.join(wrapperOwner,'package.json'),'utf8'));
+if(wrapperPackage.name!=='typescript'||wrapperPackage.version!=='7.0.2')fail('official compiler wrapper version differs');
+const nativeName='@typescript/typescript-'+process.platform+'-'+process.arch;
+const nativeMetadataFile=createRequire(path.join(wrapperOwner,'package.json')).resolve(nativeName+'/package.json');
+const nativeOwner=realpathSync(path.dirname(nativeMetadataFile));
+const nativePackage=JSON.parse(readFileSync(nativeMetadataFile,'utf8'));
+if(nativePackage.name!==nativeName||nativePackage.version!==wrapperPackage.version
+ ||!samePhysicalPath(nativeOwner,realpathSync(path.join(root,'node_modules',nativeName)),process.platform))fail('foreign native compiler owner/version');
+// The unmodified installed wrapper chooses the executable for the actual platform/architecture.
+const {default:getExePath}=await import(pathToFileURL(path.join(wrapperOwner,'lib/getExePath.js')).href);
+let selectedExecutable=getExePath();
+if(process.platform==='win32'&&selectedExecutable.startsWith('\\\\?\\')){
+ const ordinary=selectedExecutable.slice(4);
+ selectedExecutable=ordinary.startsWith('UNC\\')?'\\\\'+ordinary.slice(4):ordinary;
+}
+const nativeBinaryPath='lib/tsc'+(process.platform==='win32'?'.exe':'');
+if(ownerRelativePath(nativeOwner,realpathSync(selectedExecutable),process.platform)!==nativeBinaryPath)fail('stock wrapper executable leaves selected native owner');
+for(const row of inventory.nativeLibraryPins){
+ if(logicalPath(row.path)!==row.path||!equal(fingerprintFile(nativeOwner,row.path),row))fail('changed ES2022 standard library: '+row.path);
+}
+const originalCompiler=inventory.originalCompilerObservation;
+if(!originalCompiler||typeof originalCompiler.platform!=='string'||!originalCompiler.platform
+ ||typeof originalCompiler.arch!=='string'||!originalCompiler.arch
+ ||originalCompiler.nativePackage!=='@typescript/typescript-'+originalCompiler.platform+'-'+originalCompiler.arch
+ ||originalCompiler.version!==wrapperPackage.version||originalCompiler.nativeLibraryCount!==expectedLibraryPaths.length)fail('malformed original compiler provenance');
+// Original native binary identity binds its observed host without substituting that host on another platform.
+if(process.platform===originalCompiler.platform&&process.arch===originalCompiler.arch){
+ for(const row of [originalCompiler.nativeMetadataPin,originalCompiler.nativeBinaryPin]){
+  if(logicalPath(row.path)!==row.path||!equal(fingerprintFile(nativeOwner,row.path),row))fail('changed observed native compiler artifact');
+ }
+}
+for(const name of ['contracts','runtime','engine']){
+ if(!samePhysicalPath(realpathSync(path.join(root,'node_modules/@egret',name)),realpathSync(path.join(root,'packages',name)),process.platform))fail('foreign public workspace alias: '+name);
+}
+const currentCompiler={platform:process.platform,arch:process.arch,version:nativePackage.version,nativePackage:nativeName,
+ nativeMetadataPin:fingerprintFile(nativeOwner,'package.json'),nativeBinaryPin:fingerprintFile(nativeOwner,nativeBinaryPath),nativeLibraryCount:expectedLibraryPaths.length};
+function tuplesFrom(raw){
+ const text=new TextDecoder('utf-8',{fatal:true}).decode(raw),tuples=[];
+ // Parsing may recognize diagnostic line endings; fingerprints always retain the complete raw bytes.
+ for(const line of text.replaceAll('\r\n','\n').split('\n')){
+  if(line==='')continue;
+  const match=/^(.+)\((\d+),(\d+)\): error TS(\d+): (.+)$/.exec(line);
+  if(match){
+   const absolute=path.isAbsolute(match[1])?match[1]:path.resolve(root,match[1]);
+   tuples.push([ownerRelativePath(root,absolute,process.platform),Number(match[2]),Number(match[3]),Number(match[4]),match[5]]);
+  }else if(/^ {2,}\S/.test(line)&&tuples.length)tuples.at(-1)[4]+='\n'+line;
+  else fail('unlocated or unconsumed compiler output');
+ }
+ return tuples;
+}
+for(const group of inventory.groups){
+ const file='tests/types/bitmap-button-'+group.lane+'.ts';
+ const config='tests/types/tsconfig.bitmap-button-'+group.lane+'.json';
+ const expectedExit=group.lane==='positive'?0:1;
+ const expectedRaw=group.lane==='positive'?empty:{"bytes":2659,"sha256":"5e6b9b633a52b69bd5b28849927fbb5c81bd8bde7dd99fea16308a88dac7e990"};
+ const original=group.observedExecution;
+ if(group.expectedExit!==expectedExit||!original||original.exitCode!==expectedExit||original.timeout!==false
+  ||!equal(original.stdout,expectedRaw)||!equal(original.stderr,empty)||typeof group.originalStdout!=='string')fail('changed original compiler observation');
+ const originalRaw=Buffer.from(group.originalStdout,'utf8');
+ if(originalRaw.length!==expectedRaw.bytes||hash(originalRaw)!==expectedRaw.sha256
+  ||!Array.isArray(group.tuples)||!equal(tuplesFrom(originalRaw),group.tuples))fail('frozen tuples differ from complete original stdout');
+ const source=readFileSync(path.join(root,file),'utf8');
+ if(/@ts-(?:expect-error|ignore|nocheck)\b/.test(source))fail('suppressed source diagnostics');
+ const cases=group.lane==='positive'?[]:expectedCaseStatements.map(row=>{
+  const found=source.split('\n').flatMap((line,index)=>line===row.statement?[index+1]:[]);
+  if(found.length!==1)fail('missing or duplicate original negative statement: '+row.name);
+  return {name:row.name,line:found[0]};
+ });
+ // This includes the actual unmarked forbidden-root import, not only marker-adjacent statements.
+ if(!equal(cases,group.cases)||new Set(cases.map(row=>row.name)).size!==cases.length
+  ||!equal(group.tuples.map(row=>row[0]),cases.map(()=>file))
+  ||!equal(group.tuples.map(row=>row[1]),cases.map(row=>row.line)))fail('incomplete or unrelated exact source/diagnostic assignment');
+ const args=['node_modules/typescript/bin/tsc','--noEmit','--project',config,'--pretty','false'];
+ const result=spawnSync(process.execPath,args,{cwd:root,timeout:60000,maxBuffer:4*1024*1024});
+ if(result.error||result.signal!==null||result.status!==expectedExit||!Buffer.isBuffer(result.stdout)
+  ||!Buffer.isBuffer(result.stderr)||result.stderr.length!==0)fail('compiler setup/exit/stderr failure');
+ const tuples=tuplesFrom(result.stdout);
+ if(tuples.some(tuple=>tuple[0]!==file||tuple[3]===2307||/[A-Za-z]:[\\/]|file:\/\//.test(tuple[4]))
+  ||!equal(tuples,group.tuples))fail('missing, duplicate, extra or changed complete diagnostic tuple');
+ console.log('BitmapButton exact strict lane receipt: '+JSON.stringify({lane:group.lane,args,exitCode:result.status,signal:result.signal,timeout:false,
+  stdout:{bytes:result.stdout.length,sha256:hash(result.stdout)},stderr:{bytes:result.stderr.length,sha256:hash(result.stderr)},tuples,inputCount:inventory.inputPins.length,compiler:currentCompiler}));
+}
+console.log('BitmapButton strict public consumers PASS; runtime, browser and delivery acceptance remain separate.');

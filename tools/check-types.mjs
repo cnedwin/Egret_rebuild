@@ -976,3 +976,8 @@ await import('./display-container-add-child-at-types.mjs');
 // Check inherited anchor scalars after every retained strict type owner.
 await import('./display-anchor-offsets-types.mjs');
 // AO_TYPES_END
+
+// BITMAP_BUTTON_TYPES_BEGIN
+// Preserve every retained strict lane before checking the optional Button contract.
+await import('./bitmap-button-types.mjs');
+// BITMAP_BUTTON_TYPES_END

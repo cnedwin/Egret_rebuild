@@ -88,7 +88,7 @@ for (const [name, allowed] of Object.entries(expected)) {
         }
       } else if (imported === '#egret-mouse-input') {
         const relative=path.relative(dir,file).split(path.sep).join('/');
-        if(name!=='engine'||!['web/input.ts','web/MouseInput.ts','dist/web/input.d.ts','dist/web/MouseInput.js','dist/web/MouseInput.d.ts'].includes(relative))
+        if(name!=='engine'||!['web/input.ts','web/MouseInput.ts','dist/web/input.js','dist/web/input.d.ts','dist/web/MouseInput.js','dist/web/MouseInput.d.ts'].includes(relative))
           throw new Error('MI1: private mouse input alias imported outside exact browser ports: '+relative);
       } else if (imported === '#egret-textured-frame-state') {
         // Only these two first-party adapters may share the Engine-owned registry.
@@ -2200,6 +2200,9 @@ for (const [file,edges] of Object.entries(sceneLiteralClosure)) {
 // MI1_BOUNDARY_BEGIN
 // This finite opt-in policy adds no wildcard package/private-import permission.
 const mousePublicTypes=['MouseInputOptions','MouseInput','MouseInputState','MouseInputEvents','MouseInputPayload','MouseInputCancelReason'];
+const buttonPublicTypes=['BitmapButton','BitmapButtonOptions','BitmapButtonState'];
+const inputPublicValues=['createBitmapButton','createMouseInput'];
+const buttonPrivateNames=['BitmapButtonAssociation','BitmapButtonInputPort','assertBitmapButtonScopeOrigin','registerMouseInputScope','registerMouseInputInstance','requireBitmapButtonInput','bitmapButtonOperations'];
 const mousePrivateNames=['createMouseInputOwner','createMouseInputWithNative','MouseInputOwner','MouseInputAssembly','MouseInputEnginePort','MouseInputNativeFactory','MouseInputNativePorts','MouseInputNativePair','MouseInputNativeKind','MouseInputNativeListener','MouseInputPoint','registerMouseInputEngine','requireMouseInputEngine','markMouseInputEngineStarted'];
 const mouseRead=file=>assetGroupStrip(readFileSync(path.join(root,file),'utf8'));
 const mouseSame=(a,b)=>JSON.stringify([...a].sort())===JSON.stringify([...b].sort());
@@ -2219,27 +2222,38 @@ function mouseEdges(code,label) {
   return clauses.map(match=>({kind:match[2]?'type':'value',target:match[4],names:match[3].split(',').map(value=>value.trim().split(/\s+as\s+/)[0]).filter(Boolean)}));
 }
 const mouseFacade=await import('@egret/engine/web/input');
-if(!mouseSame(Object.keys(mouseFacade),['createMouseInput'])||typeof mouseFacade.createMouseInput!=='function')throw new Error('MI1: exact optional runtime export surface mismatch');
+if(!mouseSame(Object.keys(mouseFacade),inputPublicValues)||inputPublicValues.some(name=>typeof mouseFacade[name]!=='function'))throw new Error('MI1: exact optional runtime export surface mismatch');
 for(const [file,hasTypes]of [['packages/engine/web/input.ts',true],['packages/engine/dist/web/input.js',false],['packages/engine/dist/web/input.d.ts',true]]) {
   const code=mouseRead(file),surface=mouseExports(code,file);
-  if(!mouseSame(surface.values,['createMouseInput'])||!mouseSame(surface.types,hasTypes?mousePublicTypes:[]))throw new Error('MI1: exact optional export surface mismatch: '+file);
+  if(!mouseSame(surface.values,inputPublicValues)||!mouseSame(surface.types,hasTypes?[...mousePublicTypes,...buttonPublicTypes]:[]))throw new Error('MI1: exact optional export surface mismatch: '+file);
   const clauses=mouseEdges(code,file);
-  if(clauses.length!==(hasTypes?2:1)||clauses.some(clause=>clause.kind==='value'?(clause.target!=='./MouseInput.js'||!mouseSame(clause.names,['createMouseInput'])):(clause.target!=='#egret-mouse-input'||!mouseSame(clause.names,mousePublicTypes))))
+  const expectedClauses=[
+    {kind:'value',target:'./MouseInput.js',names:['createMouseInput']},
+    ...(hasTypes?[{kind:'type',target:'#egret-mouse-input',names:mousePublicTypes}]:[]),
+    {kind:'value',target:'#egret-mouse-input',names:['createBitmapButton']},
+    ...(hasTypes?[{kind:'type',target:'#egret-mouse-input',names:buttonPublicTypes}]:[]),
+  ];
+  if(clauses.length!==expectedClauses.length||expectedClauses.some(expected=>clauses.filter(clause=>clause.kind===expected.kind&&clause.target===expected.target&&mouseSame(clause.names,expected.names)).length!==1))
     throw new Error('MI1: exact optional forwarding mismatch: '+file);
   if(code.replace(/\bexport(?:\s+type)?\s*\{[^}]+\}\s*from\s*['"][^'"]+['"]\s*;?/g,'').trim())throw new Error('MI1: input barrel performs module work: '+file);
 }
 const mouseEntryFiles=[['root',facade,'packages/engine/dist/index'],['web',webFacade,'packages/engine/dist/web/index'],['webgpu',gpuFacade,'packages/engine/dist/web/webgpu'],['runtime',runtimeFacade,'packages/runtime/dist/index'],['text',engineText,'packages/engine/dist/text']];
 for(const [label,values,entry]of mouseEntryFiles) {
   const declared=mouseRead(entry+'.d.ts');
-  const prohibited=[...mousePublicTypes,'createMouseInput',...mousePrivateNames,...(label==='runtime'?[]:['createDisplayInputOperations','DisplayInputOperations'])];
+  const prohibited=[...mousePublicTypes,...buttonPublicTypes,...inputPublicValues,...mousePrivateNames,...buttonPrivateNames,...(label==='runtime'?[]:['createDisplayInputOperations','DisplayInputOperations'])];
   for(const name of prohibited)if(name in values||new RegExp('\\b'+name+'\\b').test(declared))throw new Error('MI1: input leaks outside optional entry: '+label+'/'+name);
-  if(/(?:mouseInput|MouseInput|web\/input|#egret-mouse-input)/.test(declared))throw new Error('MI1: private input declaration edge leaks outside optional entry: '+label);
+  if(/(?:mouseInput|MouseInput|bitmapButton|BitmapButton|web\/input|#egret-mouse-input)/.test(declared))throw new Error('MI1: private input declaration edge leaks outside optional entry: '+label);
 }
 for(const file of ['packages/engine/src/mouseInputTypes.ts','packages/engine/dist/mouseInputTypes.d.ts']) {
   const surface=mouseExports(mouseRead(file),file);if(surface.values.length||!mouseSame(surface.types,mousePublicTypes))throw new Error('MI1: canonical six erased input types mismatch: '+file);
 }
+for(const file of ['packages/engine/src/bitmapButtonTypes.ts','packages/engine/dist/bitmapButtonTypes.d.ts']) {
+  const surface=mouseExports(mouseRead(file),file);
+  if(surface.values.length||!mouseSame(surface.types,buttonPublicTypes))throw new Error('BITMAP_BUTTON: canonical three erased types mismatch: '+file);
+}
+if(Object.keys(await import(new URL('../packages/engine/dist/bitmapButtonTypes.js',import.meta.url))).length)throw new Error('BITMAP_BUTTON: types emitted runtime values');
 if(Object.keys(await import(new URL('../packages/engine/dist/mouseInputTypes.js',import.meta.url))).length)throw new Error('MI1: input types emitted runtime values');
-for(const file of ['packages/engine/src/mouseInput.ts','packages/engine/src/mouseInputTypes.ts','packages/engine/src/internal/mouseInputFactoryState.ts','packages/engine/dist/mouseInput.js','packages/engine/dist/mouseInputTypes.js','packages/engine/dist/internal/mouseInputFactoryState.js','packages/runtime/src/displayInputOperations.ts','packages/runtime/dist/displayInputOperations.js']) {
+for(const file of ['packages/engine/src/bitmapButton.ts','packages/engine/src/bitmapButtonTypes.ts','packages/engine/dist/bitmapButton.js','packages/engine/dist/bitmapButtonTypes.js','packages/engine/src/mouseInput.ts','packages/engine/src/mouseInputTypes.ts','packages/engine/src/internal/mouseInputFactoryState.ts','packages/engine/dist/mouseInput.js','packages/engine/dist/mouseInputTypes.js','packages/engine/dist/internal/mouseInputFactoryState.js','packages/runtime/src/displayInputOperations.ts','packages/runtime/dist/displayInputOperations.js']) {
   const raw=readFileSync(path.join(root,file),'utf8'),code=mouseRead(file);
   if(/\b(?:document|window|HTMLCanvasElement|HTMLElement|Document|Window|PointerEvent|MouseEvent|EventTarget|CSSStyleDeclaration|DOMRect|GPUDevice|NodeJS|process|Buffer|require)\b|['"]node:/.test(code)
     ||/\/\/\/\s*<reference\s+(?:lib\s*=\s*['"]dom(?:\.iterable)?['"]|types\s*=\s*['"]node['"])/i.test(raw))throw new Error('MI1: input core host ambient dependency: '+file);
@@ -2269,12 +2283,16 @@ for(const file of ['packages/runtime/src/displayInputOperations.ts','packages/ru
 // Exact new target ownership; unrelated files never acquire input authority by
 // importing a dormant value, an erased type, or a dynamic relative edge.
 const mouseApprovedTargets={
-  'src/mouseInput.js':['src/Engine.ts','src/internal/mouseInputFactoryState.ts'],
-  'dist/mouseInput.js':['dist/Engine.js','dist/Engine.d.ts','dist/internal/mouseInputFactoryState.js','dist/internal/mouseInputFactoryState.d.ts'],
-  'src/mouseInputTypes.js':['src/mouseInput.ts'],
-  'dist/mouseInputTypes.js':['dist/mouseInput.js','dist/mouseInput.d.ts'],
-  'src/internal/mouseInputFactoryState.js':['src/mouseInput.ts','src/startEngine.ts'],
-  'dist/internal/mouseInputFactoryState.js':['dist/mouseInput.js','dist/startEngine.js'],
+  'src/mouseInput.js':['src/Engine.ts','src/internal/mouseInputFactoryState.ts','src/bitmapButton.ts'],
+  'dist/mouseInput.js':['dist/Engine.js','dist/Engine.d.ts','dist/internal/mouseInputFactoryState.js','dist/internal/mouseInputFactoryState.d.ts','dist/bitmapButton.js','dist/bitmapButton.d.ts'],
+  'src/mouseInputTypes.js':['src/mouseInput.ts','src/bitmapButton.ts','src/bitmapButtonTypes.ts','src/internal/mouseInputFactoryState.ts'],
+  'dist/mouseInputTypes.js':['dist/mouseInput.js','dist/mouseInput.d.ts','dist/bitmapButton.js','dist/bitmapButton.d.ts','dist/bitmapButtonTypes.d.ts','dist/internal/mouseInputFactoryState.d.ts'],
+  'src/bitmapButton.js':['src/mouseInput.ts'],
+  'dist/bitmapButton.js':['dist/mouseInput.js','dist/mouseInput.d.ts'],
+  'src/bitmapButtonTypes.js':['src/mouseInput.ts','src/bitmapButton.ts'],
+  'dist/bitmapButtonTypes.js':['dist/mouseInput.d.ts','dist/bitmapButton.d.ts'],
+  'src/internal/mouseInputFactoryState.js':['src/mouseInput.ts','src/startEngine.ts','src/bitmapButton.ts'],
+  'dist/internal/mouseInputFactoryState.js':['dist/mouseInput.js','dist/mouseInput.d.ts','dist/startEngine.js','dist/bitmapButton.js'],
 };
 for(const file of [...files(path.join(root,'packages/engine/src')),...files(path.join(root,'packages/engine/web')),...files(path.join(root,'packages/engine/dist'))]) {
   if(!/\.(?:ts|js)$/.test(file))continue;const relative=path.relative(path.join(root,'packages/engine'),file).split(path.sep).join('/'),code=assetGroupStrip(readFileSync(file,'utf8'));
