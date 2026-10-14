@@ -2,6 +2,20 @@
 
 English | [简体中文](README.zh-CN.md)
 
+<!-- DCA-0.49.0-BEGIN -->
+## Engineering preview 0.49.0 — detach all direct display children
+
+**S103 / V054.** `DisplayObjectContainer.removeChildren(): void` clears a display layer while keeping its nodes, descendants, resources and cleanup owners alive. It authenticates the genuine receiver, checks Engine before receiver lifetime even when empty, preflights every direct edge and commits without caller hooks. Sprite and Stage inherit the method; root values/types, profiles, dependencies and protocol remain unchanged.
+
+Independent acceptance covers 122 focused CPU tests (one API, five behavior and 116 retained) and two parallel original strict lanes: zero positive diagnostics and ten complete actual unsuppressed negative tuples. Genuine old behavior and cleanup preceded the named missing-member RED. The new strict driver and all nine current default code/policy gates are independently accepted: Core 3085/3085 and retained F2 Source checks 160/160. Native R1 failed in its fixture before submission; independent review separately accepted R2 Canvas/WebGPU execution: six full 24×24 readbacks, four captures/two same-live-Engine replays, 13824 channels at zero tolerance. Publication remains pending. Source cleanup repair does not establish executed cleanup faults.
+
+Read the [contract](en/docs/container-remove-children-contract.md), [evidence](en/docs/container-remove-children-evidence.md) / [native schedule](en/docs/container-remove-children-native-verifier.md).
+
+Dated 2026-10-14 successor: [PR #36](https://github.com/cnedwin/Egret_rebuild/pull/36) delivered bounded 0.48.0 NineSliceBitmap to Main `cca65d0322807e53bfa3f7cc7fbcf8d903dcbc59`, tree `bc5c205ee988aa6aa4245391068a6ee73120594e`, from feature `f1f4bcbe5b12171f5077e66775d8bd1a9b771b44`. Original 0.48 curation PENDING cutoffs remain historical. Remote statuses/check runs 0/0 and combined pending do not establish CI PASS.
+
+Full Spine R020/V020, migration R008/V006, complete UI/layout, advanced 3D and target-device/performance acceptance remain OPEN or unverified. Packages stay private 0.0.0, host protocol 1.0.
+<!-- DCA-0.49.0-END -->
+
 <!-- NLB-0.48.0-BEGIN -->
 ## Engineering preview 0.48.0 — NineSliceBitmap fixed-border backgrounds
 

@@ -2,6 +2,8 @@
 
 [English](README.md) | 简体中文
 
+`DisplayObjectContainer.removeChildren(): void` 清空显示层，同时保留节点、后代、资源及清理所有者。它认证真实接收者，空容器也先检查 Engine 再检查接收者生命周期，在全部直接边校验后无调用者 hook 提交；Sprite 和 Stage 继承方法，根值／类型、规格、依赖和协议不变。 阅读 [0.49 契约](../../knowledge-base/Cns/docs/容器清空子节点契约.md).
+
 工程预览 0.48.0 在 Runtime／Engine 根入口新增 `NineSliceBitmap` 及擦除类型 `NineSliceBitmapOptions`，借用真实 Texture 租约调整固定边框 NS1 内容；正向渲染使用显式纹理 WebGPU 宿主，Canvas mesh 被拒绝。阅读[契约](../../knowledge-base/Cns/docs/九宫格位图契约.md)及[有限证据](../../knowledge-base/Cns/docs/九宫格位图证据.md)。
 
 根门面导出类型专用 `BoundsQueryOptions` 与继承的 `getBounds`，复用只读 `Rectangle2D`，见[接收者局部边界契约](../../knowledge-base/Cns/docs/显示内容边界契约.md)；布局及命中测试仍待完成。

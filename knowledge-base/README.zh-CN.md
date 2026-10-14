@@ -2,6 +2,20 @@
 
 [English](README.md) | 简体中文
 
+<!-- DCA-0.49.0-BEGIN -->
+## 工程预览 0.49.0 — 分离全部直接显示子节点
+
+**S103 / V054.** `DisplayObjectContainer.removeChildren(): void` 清空显示层，同时保留节点、后代、资源及清理所有者。它认证真实接收者，空容器也先检查 Engine 再检查接收者生命周期，在全部直接边校验后无调用者 hook 提交；Sprite 和 Stage 继承方法，根值／类型、规格、依赖和协议不变。
+
+独立接受 122 项专项 CPU（API 一项、行为五项、保留 116 项），及两组原始并行严格类型：正例零诊断，负例十个实际未抑制完整元组。具名缺成员 RED 前已完成真实旧行为及清理。新严格 driver 及全部九个当前默认代码／策略门禁已独立接受：Core 3085/3085、保留 F2 源码检查 160/160。Native R1 在提交前于夹具中失败，独立评审另行接受 R2 Canvas／WebGPU：六份完整 24×24 读回、四次捕获／两次同存活 Engine 重放，13824 通道零容差；公开发布仍待完成；源码清理修复不等于执行过清理故障。
+
+阅读[契约](Cns/docs/容器清空子节点契约.md), [evidence](Cns/docs/容器清空子节点证据.md) / [native schedule](Cns/docs/容器清空子节点原生核验指南.md).
+
+2026-10-14 有日期后继：[PR #36](https://github.com/cnedwin/Egret_rebuild/pull/36) 将有限 0.48.0 NineSliceBitmap 交付至 Main `cca65d0322807e53bfa3f7cc7fbcf8d903dcbc59`，tree `bc5c205ee988aa6aa4245391068a6ee73120594e`，功能提交 `f1f4bcbe5b12171f5077e66775d8bd1a9b771b44`。原 0.48 整理 PENDING 截止点保留为历史；远端状态／check run 为 0/0、汇总 pending，不等于 CI PASS。
+
+完整 Spine R020/V020、迁移 R008/V006、完整 UI／布局、高级 3D 及目标设备／性能接受保持 OPEN 或未验证；package 私有 0.0.0、宿主协议 1.0。
+<!-- DCA-0.49.0-END -->
+
 <!-- NLB-0.48.0-BEGIN -->
 ## 工程预览 0.48.0 — NineSliceBitmap 固定边框背景
 
