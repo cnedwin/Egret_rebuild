@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Egret bitmap buttons / 白鹭位图按钮</title>
+<link rel="icon" href="/examples/canvas-scene/favicon.svg">
+<script type="importmap">{"imports":{"#egret-textured-frame-state":"/packages/engine/dist/internal/texturedFrameState.js","#egret-mouse-input":"/packages/engine/dist/mouseInput.js","@egret/engine":"/packages/engine/dist/index.js","@egret/engine/web/input":"/packages/engine/dist/web/input.js","@egret/engine/web":"/packages/engine/dist/web/index.js","@egret/engine/webgpu":"/packages/engine/dist/web/webgpu.js","@egret/runtime":"/packages/runtime/dist/index.js","@egret/contracts":"/packages/contracts/dist/index.js","robust-predicates":"/packages/engine/node_modules/robust-predicates/index.js"}}</script>
+<style>
+body{font:17px/1.6 system-ui;margin:0;background:#f2f5f9;color:#172033}
+main{max-width:800px;margin:auto;padding:28px 20px}
+h1{font-size:1.8rem;line-height:1.3}
+canvas{display:block;border:0;padding:0;object-fit:fill;outline:1px solid #738299;image-rendering:pixelated;background:#fff}
+button,select{font:inherit;padding:8px 12px;margin:4px 6px 4px 0}
+button:focus-visible,select:focus-visible{outline:3px solid #306aca;outline-offset:2px}
+button:disabled{opacity:.5}
+.controls{margin:16px 0}#status{white-space:pre-line;min-height:7em}
+.note{font-size:.9rem;color:#46566b}
+</style>
+</head>
+<body><main>
+<h1>Bitmap buttons<br><span lang="zh-CN">位图按钮</span></h1>
+<p>Press either red button with the primary mouse button. Blue means pressed; gray means disabled.<br>
+<span lang="zh-CN">用鼠标主键按下任一红色按钮。蓝色表示按下，灰色表示禁用。</span></p>
+<label>Renderer / 渲染器 <select id="backend"><option value="canvas">Canvas</option><option value="webgpu">WebGPU</option></select></label>
+<p class="note">Changing the renderer starts a fresh session. WebGPU requires browser support.<br>
+<span lang="zh-CN">切换渲染器将启动新会话。WebGPU 需要浏览器支持。</span></p>
+<canvas id="scene" width="192" height="128" aria-label="Two shared-input bitmap buttons / 共享输入的两个位图按钮"></canvas>
+<div class="controls" aria-label="Example controls / 示例控制">
+<button id="enabled" disabled>Disable first / 禁用第一个</button>
+<button id="recreate" disabled>Dispose first / 释放第一个</button>
+<button id="layout" disabled>Isolate first / 单独显示第一个</button>
+<button id="replay" disabled>Replay saved up / 重放保存的抬起帧</button>
+<button id="live" disabled>Show live / 显示当前状态</button>
+<button id="close">Close / 关闭</button>
+</div>
+<p id="status" role="status" aria-live="polite" data-state="starting">Starting / 启动中</p>
+<p class="note">Release inside to activate once; release outside or move focus away from the browser window to cancel.
+Both buttons share one input and one original atlas. Disposing the first leaves the second usable.<br>
+<span lang="zh-CN">在按钮内松开可激活一次；在外部松开或使浏览器窗口失去焦点可取消。
+两个按钮共享同一输入和同一原创图集。释放第一个后，第二个仍可使用。</span></p>
+<p class="note">Saved-up replay presents the original captured frame without changing live controls.
+Show live returns to their current state. This is a desktop mouse example, not a complete UI or layout system.<br>
+<span lang="zh-CN">重放抬起帧会显示原始捕获画面，不改变当前按钮。点击“显示当前状态”可返回当前画面。
+这是桌面鼠标示例，不代表完整 UI 或布局系统。</span></p>
+</main><script type="module" src="./main.mjs"></script></body>
+</html>

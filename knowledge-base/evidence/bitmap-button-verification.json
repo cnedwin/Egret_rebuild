@@ -1,0 +1,457 @@
+{
+  "schemaVersion": 1,
+  "engineeringPreview": "0.54.0",
+  "sourceId": "S108",
+  "deliverableId": "V059",
+  "date": "2026-10-15",
+  "status": "CURRENT_CODE_AND_BOUNDED_NATIVE_ACCEPTED_PUBLIC_DELIVERY_PENDING",
+  "contract": "knowledge-base/en/docs/bitmap-button-contract.md",
+  "source": {
+    "status": "INDEPENDENTLY_REVIEWED_CURRENT_FIVE_PRODUCT_FILES",
+    "firstParty": true,
+    "license": "Apache-2.0",
+    "implementationInputs": "Egret specifications and shipped first-party public contracts; independently authored implementation, consumer fixtures and expected behavior.",
+    "aiAssistance": "AI-assisted implementation, fixtures and bilingual preparation; finite independent Source and saved-result reviews have separate authority.",
+    "productPins": [
+      {
+        "path": "packages/engine/src/bitmapButton.ts",
+        "bytes": 14377,
+        "sha256": "23e54e21d0df126e598cb3e929e7d306accc04a79cad34e418ba94df2fba9fac"
+      },
+      {
+        "path": "packages/engine/src/bitmapButtonTypes.ts",
+        "bytes": 1066,
+        "sha256": "2845fcb9c5a21cc8a7ae3320b1fc4aa848080b984d64a252466797a2139bbd64"
+      },
+      {
+        "path": "packages/engine/src/internal/mouseInputFactoryState.ts",
+        "bytes": 5963,
+        "sha256": "ef3d075050fc7f29c9dd7d94f7542cf23e11e6c9b59a037f5f0f41afa738142f"
+      },
+      {
+        "path": "packages/engine/src/mouseInput.ts",
+        "bytes": 21978,
+        "sha256": "b8ada0f5e3a2a5f22e53e8dec494d612818404463dfe112c737504ee5e840fe0"
+      },
+      {
+        "path": "packages/engine/web/input.ts",
+        "bytes": 442,
+        "sha256": "4c90ee48e9228cfab06a45235587e9337118e9a4391a2975e9e6f6b44657fdab"
+      }
+    ],
+    "adoptedCodePins": [
+      {
+        "path": "examples/bitmap-button/index.html",
+        "bytes": 3761,
+        "sha256": "9a74e7c6fc1a6e5037d2ba5f367024f06c834a4d24160517d1e56330f5e21bc9"
+      },
+      {
+        "path": "examples/bitmap-button/main.mjs",
+        "bytes": 6034,
+        "sha256": "053d06c4f0c1911471b20683dd6292166a5402313969d89563ae38ee6f8c0611"
+      },
+      {
+        "path": "examples/bitmap-button/session.mjs",
+        "bytes": 11884,
+        "sha256": "0c0b7e8bfc6fad18d70847be013979bb13fcf81c095dd41528c76f92b276680d"
+      },
+      {
+        "path": "packages/engine/src/bitmapButton.ts",
+        "bytes": 14377,
+        "sha256": "23e54e21d0df126e598cb3e929e7d306accc04a79cad34e418ba94df2fba9fac"
+      },
+      {
+        "path": "packages/engine/src/bitmapButtonTypes.ts",
+        "bytes": 1066,
+        "sha256": "2845fcb9c5a21cc8a7ae3320b1fc4aa848080b984d64a252466797a2139bbd64"
+      },
+      {
+        "path": "packages/engine/src/internal/mouseInputFactoryState.ts",
+        "bytes": 5963,
+        "sha256": "ef3d075050fc7f29c9dd7d94f7542cf23e11e6c9b59a037f5f0f41afa738142f"
+      },
+      {
+        "path": "packages/engine/src/mouseInput.ts",
+        "bytes": 21978,
+        "sha256": "b8ada0f5e3a2a5f22e53e8dec494d612818404463dfe112c737504ee5e840fe0"
+      },
+      {
+        "path": "packages/engine/web/input.ts",
+        "bytes": 442,
+        "sha256": "4c90ee48e9228cfab06a45235587e9337118e9a4391a2975e9e6f6b44657fdab"
+      },
+      {
+        "path": "tests/bitmap-button-api.test.mjs",
+        "bytes": 8074,
+        "sha256": "b73e535e90ec54f29e4adbbb5f965cb9f8a9aa497ebc70fc5d7042a7529ef67e"
+      },
+      {
+        "path": "tests/bitmap-button-lifecycle.test.mjs",
+        "bytes": 15772,
+        "sha256": "fbdfdf20ff0e4e04169b279d7f12bcb7dc76b20e9fd7a80b89c8aa4f76ee06e5"
+      },
+      {
+        "path": "tests/bitmap-button.test.mjs",
+        "bytes": 10511,
+        "sha256": "70d00c83780c261bd7a9d1923bee1ef695483d31e460b485ec3f6666baf3665f"
+      },
+      {
+        "path": "tests/boundaries.test.mjs",
+        "bytes": 109154,
+        "sha256": "9787766b07ad69861010158f9223f72641bfe236440b29f4738f69f9510a05fc"
+      },
+      {
+        "path": "tests/mouse-input.test.mjs",
+        "bytes": 27127,
+        "sha256": "e5be34b37ddd23fc870713ca19471524bba3d42f61a3d9d8c2a72df6a4c5bdeb"
+      },
+      {
+        "path": "tests/project-boundaries.test.mjs",
+        "bytes": 16592,
+        "sha256": "096eeeee1f83319d1ef32df968a3ace85c9a9db995925d010e71376ae9a895ce"
+      },
+      {
+        "path": "tests/types/bitmap-button-diagnostic-expectations.json",
+        "bytes": 33622,
+        "sha256": "ae049a05cad200c3ffa327697eef0132232f33276edb256a92b652f70f59d598"
+      },
+      {
+        "path": "tests/types/bitmap-button-negative.ts",
+        "bytes": 1987,
+        "sha256": "caa7f2ecea52209dc4f7a37daaf184ba909877e0ea36acd71a79534f9a702980"
+      },
+      {
+        "path": "tests/types/bitmap-button-positive.ts",
+        "bytes": 2224,
+        "sha256": "5bc705820a318e0c83f61cd3471fdb3acc334942f1326355fe75c1516d7798c6"
+      },
+      {
+        "path": "tests/types/tsconfig.bitmap-button-negative.json",
+        "bytes": 249,
+        "sha256": "3ec931a5f8f017fc3578fa28cd8ae3ea0f334c425ca29884d9e16f139381baeb"
+      },
+      {
+        "path": "tests/types/tsconfig.bitmap-button-positive.json",
+        "bytes": 249,
+        "sha256": "581ffbbf4d9a9919223067e3624f9e3b1a3501bb93abe9fdbcfdbfecb668a099"
+      },
+      {
+        "path": "tools/bitmap-button-types.mjs",
+        "bytes": 16544,
+        "sha256": "792ea25c61a5815f32df80bc5cfe5a1f646452ca927e0022ee7f43d6deaf1e4a"
+      },
+      {
+        "path": "tools/browser-png-boundary.mjs",
+        "bytes": 98414,
+        "sha256": "df8cf52aec8a9e0cc1f2a888a8185b696f4eba2eef290683b9d1d65479e0082c"
+      },
+      {
+        "path": "tools/check-boundaries.mjs",
+        "bytes": 146938,
+        "sha256": "797f75dc6e1002fa612737ef6414cd45eada151675d917a4c007b24ca46c889e"
+      },
+      {
+        "path": "tools/check-types.mjs",
+        "bytes": 93580,
+        "sha256": "2ae321c7c9a89c31d9337280a56390094ee13c405f3b5c670759050420db19d1"
+      },
+      {
+        "path": "tools/sequence-playback-boundary.mjs",
+        "bytes": 27464,
+        "sha256": "3743b29b5ee85e562215261de557bacf76177b634a26e15e824856d73c853533"
+      },
+      {
+        "path": "tools/spritesheet-boundary.mjs",
+        "bytes": 96838,
+        "sha256": "7acc0ebf58b6680a47c810e3e0cd2acfaea634dcb078cfcfc253c20857b833d6"
+      }
+    ],
+    "emissionPins": [
+      {
+        "path": "packages/engine/dist/bitmapButtonTypes.js",
+        "bytes": 56,
+        "sha256": "677cb08087029f466e1d8d8227baa313ab59fe97f9fe9737eff454205b038b3c"
+      },
+      {
+        "path": "packages/engine/dist/bitmapButtonTypes.d.ts",
+        "bytes": 1122,
+        "sha256": "0d2d18b911c3a6a7b0b4240fec1c0b8425d81811cac7ed557b294c9a9ae0a04c"
+      },
+      {
+        "path": "packages/engine/dist/bitmapButton.js",
+        "bytes": 13700,
+        "sha256": "1e6540a6ad9c25749dda3d404df2571fd16a053be13849b89b1dda4d44237b77"
+      },
+      {
+        "path": "packages/engine/dist/bitmapButton.d.ts",
+        "bytes": 292,
+        "sha256": "ff3c33fb014e1c89756b468050f3ec26b0153f857bd041b111b2fd9e3fc838f1"
+      },
+      {
+        "path": "packages/engine/dist/internal/mouseInputFactoryState.js",
+        "bytes": 4356,
+        "sha256": "bfb0f749f658c2365e8d8a3605f0de8269e2d27cb978a689ef6f3af0b149bbe9"
+      },
+      {
+        "path": "packages/engine/dist/internal/mouseInputFactoryState.d.ts",
+        "bytes": 2847,
+        "sha256": "ee0f110477892343ec32e895c303ca2f81854dcdb7914367a633c0531f12f7bc"
+      },
+      {
+        "path": "packages/engine/dist/mouseInput.js",
+        "bytes": 18823,
+        "sha256": "57e636eab8f68308e868ca6b9fb249879d3e214507c25d912379c97461ece03f"
+      },
+      {
+        "path": "packages/engine/dist/mouseInput.d.ts",
+        "bytes": 4458,
+        "sha256": "453cab6df05b0baf3e42d11f158ec13706e5c963231930f7f43b80b8cf46e44d"
+      },
+      {
+        "path": "packages/engine/dist/web/input.js",
+        "bytes": 228,
+        "sha256": "e9279a344270805e83bddd7afdacbe499d7e5a88b305a852301dd168a866eb4b"
+      },
+      {
+        "path": "packages/engine/dist/web/input.d.ts",
+        "bytes": 477,
+        "sha256": "cf4ffaea56d4e80feb4b41f306ab4a9883e385c0689499b66dc080a2f7e1a916"
+      }
+    ],
+    "sourceReviewIdentities": [
+      {
+        "role": "product",
+        "bytes": 15196,
+        "sha256": "adfd3b2b056f46ec58aff8f4f09e6559e6707bd6060882da31092f36e8a1631a"
+      },
+      {
+        "role": "fixtures",
+        "bytes": 36442,
+        "sha256": "0132c174a1cbe4426f4e0756d71307d277d42041704616bcab97fadc0364cfa8"
+      },
+      {
+        "role": "retained-export",
+        "bytes": 3729,
+        "sha256": "00b1c5ad7c8f3b8e4c7e44010344caef867a53e69f156f6611c1f8b8fa06c1d6"
+      },
+      {
+        "role": "example",
+        "bytes": 25134,
+        "sha256": "d3d12840d3f1f2c78a3668813bf4052a64d4e5d4ccad436aeb1988e3c2a93f66"
+      },
+      {
+        "role": "strict-support",
+        "bytes": 4917,
+        "sha256": "43bc2813eca38797d697bd0ab3c5dac4f2f18ba9d0ed3595887aa53ba71e9a76"
+      },
+      {
+        "role": "boundary-support",
+        "bytes": 8777,
+        "sha256": "53dd4258f25956878b0bae9564a48119417106b491b84b89a42b75c2cd12cede"
+      },
+      {
+        "role": "boundary-repair",
+        "bytes": 10194,
+        "sha256": "c25b99f858924a3ff0ef4849325a34f33fab3959c6eed252fdb3e42f6bc4a72b"
+      },
+      {
+        "role": "graph-support",
+        "bytes": 19135,
+        "sha256": "d337ee7ca53772d7df7d0e7c7d7ab33eca29b8b626cbfd4cda9b2daea3002d34"
+      },
+      {
+        "role": "sequence-boundary-support",
+        "bytes": 16118,
+        "sha256": "3a1cb287e5839b8bae5e6c6633ddddbbb1e551617031a5e12895c874b0d073dc"
+      }
+    ]
+  },
+  "acceptedCode": {
+    "independentReview": {
+      "bytes": 78069,
+      "sha256": "edc12594ca2de0c65c891bf6b6f8e4ee718c28207ccf0ec3a3116fc252527b53",
+      "identityOnlyNotDistributed": true
+    },
+    "phaseOrder": [
+      "build",
+      "check-boundaries",
+      "spritesheet-boundary",
+      "sequence-playback-boundary",
+      "browser-png-boundary",
+      "check-types",
+      "browser-png-types",
+      "test",
+      "verify-spine-f2-source"
+    ],
+    "completedAtUtc": "2026-10-14T22:01:04.7020967Z",
+    "core": {
+      "tests": 3218,
+      "suites": 0,
+      "pass": 3218,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "spineSource": {
+      "tests": 160,
+      "suites": 0,
+      "pass": 160,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "focused": {
+      "pass": 163,
+      "new": 65,
+      "retained": 98,
+      "overlappingNotAdded": true
+    },
+    "strict": {
+      "positiveDiagnostics": 0,
+      "negativeDiagnostics": 19,
+      "completeUnsuppressedVectors": true,
+      "inputCount": 80,
+      "importedDeclarationCount": 63,
+      "standardLibraryCount": 57,
+      "independentAndIntegratedReceiptsAgree": true
+    }
+  },
+  "nativeSource": {
+    "status": "ACCEPTED_R2_GENUINE_PRODUCER_COMPATIBILITY_ONLY",
+    "review": {
+      "bytes": 6714,
+      "sha256": "3fa9b1d59447616bdcaadec9d811738db3663155ec7c3db83b64ad0794b68c9f",
+      "identityOnlyNotDistributed": true
+    }
+  },
+  "nativeActual": {
+    "status": "ACCEPTED_BOUNDED_DESKTOP_DOM_NATIVE_ONLY",
+    "independentReview": {
+      "bytes": 82186,
+      "sha256": "ebae093f16cfc4c4bcc5bb4a1de3fc1ccab383b3e95cf86c7f2e9a38569ef529",
+      "identityOnlyNotDistributed": true
+    },
+    "originalResult": {
+      "bytes": 229769,
+      "sha256": "85245b34ca8d4396470065df956899f375964e95ebdb279436a368534618c66b",
+      "identityOnlyNotDistributed": true
+    },
+    "browser": "Edge155.0.4283.45",
+    "launch": "default headless, no custom flags",
+    "width": 24,
+    "height": 24,
+    "pixelRatio": 1,
+    "mainReadbacks": 38,
+    "mainRowsPerBackend": 19,
+    "mainChannels": 87552,
+    "pixelTolerance": 0,
+    "mismatchedPixels": 0,
+    "mismatchedChannels": 0,
+    "rawRGBAOriginals": 40,
+    "metadataPackets": 40,
+    "separateFreshCanvas": {
+      "additionalReadbacks": 2,
+      "wrongOraclePixels": 48,
+      "wrongOracleChannels": 96,
+      "mainCredit": 0
+    },
+    "retirement": {
+      "sessions": 3,
+      "eachSessionLoads": 1,
+      "eachSessionProviderDisposals": 1,
+      "allDependenciesClosed": true,
+      "cachedClosePromiseIdentity": true,
+      "originalWebGPUReadbacks": 19,
+      "allOriginalWebGPUReadbacksFulfilled": true,
+      "webgpuCleanupOutcome": "safe",
+      "pendingFrames": 0,
+      "pendingUploadBytes": 0,
+      "pendingReadbackBytes": 0,
+      "pendingOuterOperationTickets": 0,
+      "outerOperationTickets": 161,
+      "allOuterOperationTicketsFulfilled": true
+    },
+    "allowedRequests": 252,
+    "recordedPageErrors": 0,
+    "graphRows": 376,
+    "runtimeRows": 175,
+    "actorBeforeAfterStable": true,
+    "laterReviewerCurrentReadbackDistinct": true,
+    "observedCaptures": null,
+    "observedReplays": null,
+    "actualCaptureCounterRecorded": false,
+    "hostInputObjectLedgerRecorded": false,
+    "savedPNGOriginals": 0,
+    "scope": "Ordinary desktop DOM primary-mouse behavior and opaque Canvas/WebGPU frames only; Window blur is an explicit DOM Event, not hardware or OS-focus evidence."
+  },
+  "preservedCounterexamples": {
+    "apiBaseline": "Genuine prior resource/input/display/capture and cleanup completed before the missing factory assertion.",
+    "product": "Foreign genuine Scope and forged Scope must retain distinct existing admission errors; finite reviewed repair preserves ENGINE_MISMATCH.",
+    "fixtures": [
+      "Nested browser listener accounting corrected after complete genuine setup.",
+      "Mutation during the complete activate route exercises the Button-specific final repick."
+    ],
+    "codeAttempts": [
+      "Optional emitted alias permission was missing.",
+      "One private declaration sender was missing from the exact permitted list.",
+      "Three sequence-checker entry identities were stale."
+    ],
+    "nativeSource": "Initial Source assessment retained; genuine producer-field compatibility repair accepted independently. No browser execution is inferred from Source review.",
+    "rawHistory": "Original failures, Source revisions and logs remain unchanged at their original cutoffs."
+  },
+  "previousDelivery": {
+    "engineeringPreview": "0.53.0",
+    "recordedOn": "2026-10-15",
+    "status": "ACTUAL_PR_MERGE_AND_PRIMARY_MAIN_SYNC_ACCEPTED",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/41",
+    "featureHead": "5c4e1e89a4b02e2d3caa3db24a2bd040fa89ed7b",
+    "main": "19ab683e132ec8777e54508f6bae09d44e02c559",
+    "tree": "2c9d42a17580754d1b114284a6db7deaf2477818",
+    "independentReview": {
+      "bytes": 64282,
+      "sha256": "6c281311c1547b764fd315c38359ef3ba097da6cf2e928e5d257dad6f4bd2b86",
+      "identityOnlyNotDistributed": true
+    },
+    "historicalPublicPendingCutoffsPreserved": true,
+    "remoteCIPassClaim": false
+  },
+  "publicSourceBilingualReview": "PENDING",
+  "fullPrepush": "PENDING",
+  "mandatoryHooks": "PENDING",
+  "newGitDelivery": "PENDING",
+  "remoteCIPassClaim": false,
+  "openRequirements": [
+    "Full Spine R020/V020",
+    "Migration R008/V006",
+    "Complete EUI/layout",
+    "Hover/keyboard/touch/accessibility",
+    "Advanced 3D",
+    "AI tooling",
+    "Fonts/IME",
+    "Phones/native SDKs",
+    "Physical GPU identity",
+    "Performance/energy/GC"
+  ],
+  "scopeBoundary": {
+    "newDependency": false,
+    "newHostProtocol": false,
+    "defaultEntriesGainButtonAPI": false,
+    "unbundledEngineEagerlyLoadsButtonModule": true,
+    "zeroLoadingOrBundleAdvantageClaim": false,
+    "NativeActualAccepted": true,
+    "publicSourceAccepted": false,
+    "remoteCIPassClaim": false
+  },
+  "r1NativePendingCutoff": {
+    "status": "CURRENT_CODE_ACCEPTED_NATIVE_PUBLIC_DELIVERY_PENDING",
+    "nativeActual": {
+      "status": "PENDING",
+      "mainReadbacks": null,
+      "mainChannels": null,
+      "observedCaptures": null,
+      "observedReplays": null
+    }
+  }
+}
