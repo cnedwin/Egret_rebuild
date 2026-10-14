@@ -3168,6 +3168,380 @@
         "physicalReclamationProof": false,
         "fullSpineR020V020": "OPEN",
         "migrationR008V006": "OPEN"
+      },
+      "deliveryActualSuccessor": {
+        "engineeringPreview": "0.46.0",
+        "status": "ACTUAL_DELIVERY_ACCEPTED",
+        "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/34",
+        "mergedAt": "2026-10-13T18:18:51Z",
+        "mainMergeCommit": "562543ea10d9a6b8124561a7027811f3f7dede4c",
+        "mainTree": "ff54205b5e4ba83bfbb75867226e1cbca0e27a32",
+        "independentSuites": {
+          "publication": {
+            "passed": 137,
+            "total": 137
+          },
+          "core": {
+            "passed": 3064,
+            "total": 3064
+          },
+          "experimental": {
+            "passed": 160,
+            "total": 160
+          }
+        },
+        "mandatoryPushHookSuites": {
+          "publication": {
+            "passed": 137,
+            "total": 137
+          },
+          "core": {
+            "passed": 3064,
+            "total": 3064
+          },
+          "experimental": {
+            "passed": 160,
+            "total": 160
+          }
+        },
+        "committedRawBlobs": 1486,
+        "committedByteIssues": 0,
+        "remoteStatuses": 0,
+        "remoteCheckRuns": 0,
+        "remoteCombinedState": "pending",
+        "remoteCIPassClaim": false,
+        "historicalPendingCutoffsPreserved": true
+      }
+    },
+    {
+      "id": "S101",
+      "type": "first_party_optional_external_spine_core_manual_adapter",
+      "researchCheckedAt": "2026-10-14",
+      "requirementIds": [
+        "R004",
+        "R012",
+        "R015",
+        "R016",
+        "R019",
+        "R020",
+        "R021"
+      ],
+      "title": "Independent Spine Core manual mesh bridge and finite verification",
+      "scope": "Independent optional adapter built from Egret resource/display contracts, externally consuming official Core 4.3.13; no copied pose/deform algorithm or bundled SDK.",
+      "limit": "Finite manual CPU, types, resources, callback, faults/mutants, fixed policy/cold and default-browser WebGPU observations are accepted; complete current gates and delivery remain separately pending. Full Spine and migration remain OPEN; entitlement is unknown.",
+      "doc": "en/docs/spine-core-manual-bridge.md",
+      "license": "Apache-2.0",
+      "firstPartySourcePaths": [
+        "knowledge-base/experiments/spine-f2-core/src/index.ts",
+        "knowledge-base/experiments/spine-f2-core/src/types.ts",
+        "knowledge-base/experiments/spine-f2-core/src/resources.ts",
+        "knowledge-base/experiments/spine-f2-core/src/instance.ts",
+        "knowledge-base/experiments/spine-f2-core/src/geometry.ts"
+      ],
+      "references": [
+        {
+          "url": "https://github.com/EsotericSoftware/spine-runtimes/tree/b7beb2ccbbce667a12c02f44d070644f59b04968/spine-ts/spine-core",
+          "revision": "b7beb2ccbbce667a12c02f44d070644f59b04968",
+          "researchCheckedAt": "2026-10-14",
+          "scope": "Official 4.3.13 compatibility reference; external SDK, no copied pose/deform implementation."
+        },
+        {
+          "url": "https://github.com/EsotericSoftware/spine-runtimes/blob/b7beb2ccbbce667a12c02f44d070644f59b04968/LICENSE",
+          "noticeDate": "2025-04-05",
+          "researchCheckedAt": "2026-10-14",
+          "scope": "Applicable external Spine Runtimes License; entitlement and distribution remain unverified."
+        },
+        {
+          "url": "https://esotericsoftware.com/spine-runtimes-license",
+          "researchCheckedAt": "2026-10-14",
+          "scope": "Official runtime licensing guidance; no project entitlement conclusion."
+        },
+        {
+          "url": "https://esotericsoftware.com/spine-editor-license",
+          "researchCheckedAt": "2026-10-14",
+          "scope": "Official Editor terms referenced by runtime licensing; no project entitlement conclusion."
+        }
+      ],
+      "externalExperimentalRuntime": {
+        "package": "@esotericsoftware/spine-core",
+        "version": "4.3.13",
+        "license": "LicenseRef-Spine-Runtimes",
+        "suppliedExternally": true,
+        "bundled": false,
+        "files": 137,
+        "sha256TupleTree": "e3690c1f8fc3c2b8123bfcfe37d50d7f56878fbef8143fe5cd11d0cc97eaf0cf",
+        "entitlement": "unknown",
+        "redistributionClearance": "unverified"
+      },
+      "verification": {
+        "doc": "en/docs/spine-core-manual-bridge-evidence.md",
+        "curationCutoff": "2026-10-14",
+        "status": "BOUNDED_MANUAL_CPU_TYPES_CONTROLS_POLICY_COLD_AND_NATIVE_ACCEPTED_PUBLICATION_DELIVERY_PENDING",
+        "genuinePrerequisites": "ACCEPTED_SEPARATE_F2C00",
+        "originalMissingBehaviorRED": {
+          "mainExecuted": 10,
+          "mainFailed": 10,
+          "nonTimeout": true,
+          "cause": "F2C_BRIDGE_NOT_IMPLEMENTED"
+        },
+        "intermediateResourceStage": {
+          "mainPassed": 3,
+          "mainUnimplemented": 7,
+          "resourcePartialsPassed": 4,
+          "resourcePartialsTotal": 4
+        },
+        "manualCPU": {
+          "mainExecuted": 10,
+          "mainPassed": 10,
+          "mainFailed": 0,
+          "mainTimeouts": 0
+        },
+        "types": {
+          "lanes": 14,
+          "positiveExitCode": 0,
+          "negativeLanes": 13,
+          "negativeExitCode": 1,
+          "actualUnsuppressedDiagnosticTuples": 25,
+          "rawChildAndCLIStreams": 56
+        },
+        "resourcePartials": {
+          "passed": 4,
+          "total": 4,
+          "mainCredit": 0
+        },
+        "callbackObserver": {
+          "passed": 1,
+          "total": 1,
+          "separateOriginalBaselinesBeforeAndAfter": true,
+          "oldSourceCounterfactualClaim": false
+        },
+        "controlledFaultsMutants": {
+          "status": "ACCEPTED_BOUNDED_COPIED_SOURCE_CONTROLS_ONLY",
+          "separateCompleteOriginalBaselines": 10,
+          "discriminatingMutants": 2,
+          "controlledFaultUnits": 3,
+          "assignedControls": 5,
+          "inverseRestorations": 5,
+          "restorationFailures": 0,
+          "originalInputsBeforeAfterExact": true,
+          "uniqueTypeLanes": 14,
+          "uniqueDiagnosticTuples": 25,
+          "uniqueMainFamilies": 10,
+          "repetitionsAreNotUniqueCases": true,
+          "currentRecipeRevision": "SOURCE_PREPARED_PAIRED_GUIDE_ROWS_FRESH_CURRENT_EXECUTION_PENDING",
+          "originalAcceptedController": {
+            "bytes": 23178,
+            "sha256": "3cd946ad0a5153bc40aeab8e9667b2c81c453a38c27f390dcb09b03574ced4ff"
+          }
+        },
+        "helpMissingBehaviorRED": {
+          "status": "ACCEPTED_GENUINE_ORIGINAL_RUNNER_HELP_RED_ONLY",
+          "mainExecuted": 0,
+          "poseExecuted": 0,
+          "nativeExecuted": 0,
+          "typeLanesExecuted": 0
+        },
+        "defaultRepositoryRegression": {
+          "passed": 3064,
+          "total": 3064,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "scope": "POST_TASK3_ORDINARY_SUITE_NOT_COMPLETE_PUBLICATION_GATE"
+        },
+        "reviews": {
+          "manualPose": {
+            "bytes": 20153,
+            "sha256": "669efda9d0e9f13ae8acc1b3a59a656e0aed85cd0057a2e343007406aad75b91",
+            "verdict": "PASS_ACTUAL_TASK3_CPU_POSE_STAGE_ONLY",
+            "openFindings": 0
+          },
+          "callbackObserver": {
+            "bytes": 24847,
+            "sha256": "2b0eab36445a945a83d2dc2a510a0b9a85950a621e11d7984a2fcbad55e83b80",
+            "verdict": "PASS_ACTUAL_G1_REENTRY_OBSERVER_ONLY",
+            "openFindings": 0
+          },
+          "controlledFaultsMutants": {
+            "bytes": 836037,
+            "sha256": "8e2159db6895a300fe79194130c99ea4e3e66fcfb0b7814f65651945dbba9c8a",
+            "verdict": "PASS_ACTUAL_TASK4_BOUNDED_CONTROLS_ONLY",
+            "openFindings": 0
+          },
+          "helpMissingBehaviorRED": {
+            "bytes": 10288,
+            "sha256": "2eb86b1312472a904671dd3607624e65bdd3c2e595ca0f1e6ad6fe11081fd03a",
+            "verdict": "PASS_ACTUAL_HELP_MISSING_BEHAVIOR_RED_ONLY",
+            "openFindings": 0
+          },
+          "policyColdHelp": {
+            "bytes": 20246,
+            "sha256": "5e6c2a342f2e63a9465a895c8970d20e964f045e7e0f8ce4de9da8b847e71452",
+            "verdict": "PASS_ACTUAL_R3_POLICY_COLD_HELP_BOUNDED",
+            "openFindings": 0
+          },
+          "native": {
+            "bytes": 29651,
+            "sha256": "929c8e3f63066f43c796918dc840de6f1501fbea8ee0f2e191c44fbc61165225",
+            "verdict": "PASS_ACTUAL_NATIVE_BOUNDED_MANUAL_MESH_DEFORM_WEBGPU_ONLY",
+            "openFindings": 0
+          }
+        },
+        "sourcePolicyColdImport": {
+          "status": "ACCEPTED_FIXED_STATIC_AND_SELECTED_COLD_HELP_OBSERVATIONS_ONLY",
+          "defaultRuntimeDeclarationRoots": 8,
+          "reachableKeys": 145,
+          "literalImportRelations": 1416,
+          "freshChildren": 7,
+          "childPasses": 7,
+          "ordinaryPredecessors": 3,
+          "auditedNegativeLanes": 3,
+          "positiveControlLanes": 1,
+          "mainPoseNativeTypeCredit": 0,
+          "fullSDKCounts": {
+            "files": 137,
+            "javaScript": 66,
+            "declarations": 64
+          },
+          "publicSDKClosures": {
+            "javaScript": 64,
+            "declarations": 63
+          },
+          "selectedOperationsOnly": true,
+          "universalAccessAbsenceClaim": false
+        },
+        "policyPrerequisiteFailure": {
+          "status": "RETAINED_SETUP_REFUSAL_NOT_BEHAVIOR_RED",
+          "expectedJavaScriptFiles": 64,
+          "actualJavaScriptFiles": 66,
+          "actualDeclarationFiles": 64,
+          "fullSDKFiles": 137,
+          "unusedIIFEBundles": 2,
+          "coldMainNativeExecuted": 0,
+          "sourceCountScopeRepairPending": false,
+          "SDKBytesOrVersionChanged": false,
+          "successor": "ACCEPTED_R3_FIXED_FULL_ARTIFACT_VERSUS_PUBLIC_CLOSURE_SCOPES"
+        },
+        "nativeF2C11": {
+          "status": "ACCEPTED_BOUNDED_ORIGINAL_MANUAL_MESH_DEFORM_WEBGPU_ONLY",
+          "qualifiedRun": "R2",
+          "actualNativeCases": 1,
+          "passedNativeCases": 1,
+          "submissions": 7,
+          "originalReadbacks": 7,
+          "width": 64,
+          "height": 48,
+          "DPR": 1,
+          "sampleTimes": [
+            0,
+            0.25,
+            0.5,
+            0.75,
+            1,
+            0.5,
+            0.25
+          ],
+          "literalPixels": 5,
+          "literalChannels": 20,
+          "literalTolerance": 0,
+          "repeatBackwardWholeFrames": 2,
+          "repeatBackwardChannels": 24576,
+          "repeatBackwardTolerance": 0,
+          "sourceGraph": {
+            "frozenFiles": 588,
+            "modules": 195,
+            "SDKPublicRuntimeModules": 64,
+            "exactJsoncExtensionlessAliases": 5,
+            "allNamedModulesExecutedClaim": false
+          },
+          "PNG": {
+            "encodedBytes": 108,
+            "logicalRGBABytes": 1024,
+            "literalPagePixels": 256,
+            "independentDecodeAndBrowserPixelsExact": true,
+            "sourceAlpha": "straight",
+            "readbackAlpha": "premultiplied",
+            "alternateAlphaAccepted": false
+          },
+          "largestActualFixturePositionDeviation": 4.76837158203125e-7,
+          "fixedAbsolutePositionBound": 0.0000019073486328125,
+          "noFittingOrWidening": true,
+          "oldGeometryFrameGuards": "SOURCE_BACKED_IN_MEMORY_NO_EXTRA_RAW_OLD_FRAME_SNAPSHOTS",
+          "canvasRefusal": {
+            "code": "ENGINE_RENDER_PROFILE_UNSUPPORTED",
+            "submissions": 0
+          },
+          "browser": {
+            "version": "155.0.4283.45",
+            "channel": "msedge",
+            "headless": true,
+            "extraFlags": [],
+            "Playwright": "1.62.1",
+            "Node": "v24.19.0",
+            "adapterInfo": "NOT_RECORDED",
+            "hardwareSoftwareIdentity": "UNOBSERVED"
+          },
+          "cleanup": {
+            "pageLoads": 1,
+            "providerRetirements": 1,
+            "instanceResourcesDisposed": true,
+            "ScopesClosed": true,
+            "textureRetired": true,
+            "deviceDestroyRequested": true,
+            "deviceLossReason": "destroyed",
+            "pendingTickets": 0,
+            "diagnostics": 0,
+            "cleanupErrors": 0,
+            "contextBrowserServerClosed": true
+          },
+          "currentSourceRuntimeStableWithinRun": true,
+          "requiredOuterDeadlineMs": 240000,
+          "actualOuterDeadlineMs": 240000,
+          "forcedCancellationPaths": "NOT_EXERCISED",
+          "failedCleanupPaths": "NOT_EXERCISED",
+          "physicalGPUOrPerformanceAcceptance": false,
+          "fullSpineAccepted": false,
+          "clockAccepted": false,
+          "earlierCleanR1Retained": {
+            "outerDeadlineMs": 180000,
+            "requiredOuterDeadlineMs": 240000,
+            "addsUniqueNativeCaseCredit": false,
+            "sourceAdmissionRuntimeUnchanged": true
+          }
+        },
+        "completeCurrentPrepush": "PENDING",
+        "mandatoryPushHook": "NOT_RUN_0_47",
+        "pullRequestAndMain": "NOT_RUN_0_47",
+        "remoteCI": "NOT_CLAIMED",
+        "fullSpineR020V020": "OPEN",
+        "migrationR008V006": "OPEN",
+        "entitlement": "unknown",
+        "redistributionClearance": "unverified",
+        "performanceAcceptance": "none",
+        "historicalFailuresPreserved": true,
+        "separateScopesNotSummed": true,
+        "ordinaryAfterHelpRepair": {
+          "status": "ACTUAL_CPU_GREEN_BOUNDED",
+          "standaloneBuildExitCode": 0,
+          "genuineF2C00": "PASS",
+          "namespace": "PASS",
+          "repeatedMainPassed": 10,
+          "repeatedTypeLanes": 14,
+          "repeatedDiagnosticTuples": 25,
+          "commandExitCode": 0,
+          "timeout": false,
+          "addsUniqueCoverage": false,
+          "coldNativeAcceptance": false,
+          "chronology": "AFTER_HELP_REPAIR_BEFORE_R3_CONTROLLER_ADOPTION_NOT_AFTER_SEVEN_R3_CHILDREN"
+        },
+        "repositoryTextRepair": {
+          "scope": "FIRST_PARTY_AUTHORED_FILE_CANONICALIZATION_AND_EXISTING_AGENT_POLICY_CLARIFICATION_ONLY",
+          "gitignoreOnlyCarriageReturnsRemoved": 1,
+          "gitignoreRuleContentOrderChanged": false,
+          "legacyBaselineChanged": false,
+          "policyExceptionsChanged": false,
+          "preservedOriginalsTouched": false
+        }
       }
     }
   ],
@@ -4092,7 +4466,7 @@
   },
   "_localization": {
     "canonicalSource": "来源.json",
-    "canonicalSha256": "9216ad26769fea710c10adcd397f95ef7d1d743240ffc6bf0b9dcb7415d0be8c",
+    "canonicalSha256": "4bf9960f0335725e3e5cbc500a62441ef461fd706f9d0c15a00247c8f6993a2b",
     "role": "read_only_translation",
     "language": "en"
   }

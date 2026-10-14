@@ -1,0 +1,20 @@
+{
+  "candidateId": "F2C-ORIGINAL-FIXTURE-R1",
+  "skeletonId": "original-f2c.spine.json",
+  "atlasId": "original-f2c.atlas",
+  "pageName": "original-f2c-page.png",
+  "assetId": "egret-f2c-original-page",
+  "provenance": {
+    "origin": "Egret original programmatic F2-C numerical fixture",
+    "license": "Apache-2.0",
+    "notice": "First-party original numerical source and pixel fixture; no Editor-export certification or commercial art."
+  },
+  "fixtureReview": {
+    "bytes": 11617,
+    "sha256": "d86dd9ce2690899902d62f81f3cdd00d678c40ab2e4cf2d50f193fa23f675bd1"
+  },
+  "rights": {
+    "original": "Apache-2.0",
+    "sdk": "external-only supplied 4.3.13; unknown entitlement; no redistribution clearance"
+  }
+}

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "revision": "0.45.0",
+  "revision": "0.47.0",
   "canonicalState": "Chinese registries; English JSON is a read-only translation",
   "evidencePolicy": "Machine data, embedded source, historical code and upstream legal originals retain their identities; paired reading versions explain them.",
   "semanticReview": {
@@ -64,8 +64,8 @@
       "zh": "AGENTS.zh-CN.md",
       "en": "AGENTS.md",
       "kind": "public_reading",
-      "enSha256": "2e0be18bb9696b53693d4fabcd500f3ae70af2f71970c7e8c5f035fdc1d0536a",
-      "zhSha256": "2dd3424514dbcbf137f36e2f00eb58d56e4ff7994953fdafc1e24f940655743d"
+      "enSha256": "4aa7d5cbd1c7d029a5c2582769801648e206f43042ca3a5c45e0e7e9e0a52cc2",
+      "zhSha256": "bede15184ae43c6cb5fb660cbe19b02c9dd005d9dda2d2278b32bd7381879b37"
     },
     {
       "zh": "CONTRIBUTING.zh-CN.md",
@@ -141,8 +141,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "b961650aef12447ae65d87dbe00ee00af672d9d462b879ca9abcbfea48344048",
-      "zhSha256": "2f68e1f559164f5cdf4e114a8013f7f339eec86653fe520c783717f0d3712d1c"
+      "enSha256": "10541fda628abe15b31a741035bbca1f28dd9a327f95287d862ef5af69449ffb",
+      "zhSha256": "1afab45d46f7981b56701922f94a7bd9461c4749367628a5f4286707b8932098"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -764,8 +764,8 @@
       "zh": "knowledge-base/Cns/README.md",
       "en": "knowledge-base/en/README.md",
       "kind": "public_reading",
-      "enSha256": "b2972737af19a4e4428a71bfc6898e75626925cd193686d5752c5969d8038970",
-      "zhSha256": "d579d77dc95f6b76cd744abcb617d549c8442cb5dacc91e9445016c5c593f56c"
+      "enSha256": "51265b9048fe2f0b278303094085f33181a1ecb1788cd65e6ecd57bae6c6b35c",
+      "zhSha256": "b854e9ae5b47d84439cf86c3e6530d91b110a15336d279676723f99229a8807d"
     },
     {
       "zh": "knowledge-base/Cns/templates/ADR决策记录.md",
@@ -799,8 +799,8 @@
       "zh": "knowledge-base/README.zh-CN.md",
       "en": "knowledge-base/README.md",
       "kind": "public_navigation",
-      "enSha256": "c7bf9c30b9248981579668723b315d96d704ac407dd1361bd0b63c742a4949b1",
-      "zhSha256": "899ba5b6c769452318f6b7dcd734cd3e50bfd219d8fc61406a46ed634e9f039e"
+      "enSha256": "c950cd4457bd933c5bc460e4b15525694747adffba988ce9fd449bf73773e418",
+      "zhSha256": "34562f2350732bb30ff01db5865ae1805afd2b106c4db816257d3f27856c726e"
     },
     {
       "zh": "LICENSE.zh-CN.md",
@@ -848,8 +848,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "18145850270bf958a69c82f6c0f617df3e021244718076846c4c6fb6c9c12870",
-      "zhSha256": "e258e088b92d750973d56663272645d0c37f3361b377203ecb697d406fad6b47"
+      "enSha256": "80666dc9202f91d97480f34e71d26da44077a430b3f180a4ab21c11a093a636c",
+      "zhSha256": "f7a495be3295ed639912fe697a8c9372106f58856c9aab0b565caae12cfb8509"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -1244,14 +1244,35 @@
       "kind": "public_reading",
       "enSha256": "e7c93cbe9b52bf737773fec797848b4617b151363be8c343877d9e181d536539",
       "zhSha256": "540a74c7c952f854e852c02d6d476da0cd7d3439b27b79e3edad8f20726fff15"
+    },
+    {
+      "en": "knowledge-base/en/docs/spine-core-manual-bridge.md",
+      "zh": "knowledge-base/Cns/docs/SpineCore手动网格桥接.md",
+      "kind": "public_reading",
+      "enSha256": "4a6fda9f1c7aa312fd46185f407b98466b3223c48f75bc6a8c4ad58c8f235260",
+      "zhSha256": "994203fe8e34e6d4825754c65081de487a56b18617c495969a973b618e9478cf"
+    },
+    {
+      "en": "knowledge-base/en/docs/spine-core-manual-bridge-evidence.md",
+      "zh": "knowledge-base/Cns/docs/SpineCore手动网格桥接证据.md",
+      "kind": "public_reading",
+      "enSha256": "7baee291a2c3962fb6a2f18cffbc964b5aa61c83e3a42f1cd440667085166696",
+      "zhSha256": "2f817929570f3d447f3ec67a7fede1f1918fa558a62da2af0b63d4544c1e50ea"
+    },
+    {
+      "en": "knowledge-base/en/experiments/spine-f2-core/README.md",
+      "zh": "knowledge-base/Cns/experiments/spine-f2-core/README.md",
+      "kind": "public_reading",
+      "enSha256": "e6515456eecfcb4f54bc960a3bc8db27be8e6f597b8918d6aab99a75cfbd4ee1",
+      "zhSha256": "7903b77b824f9604f77a92ebf2fce85646c4d44f43f4af1451289396bc513c8d"
     }
   ],
   "registries": [
     {
       "source": "knowledge-base/Cns/registry/需求.json",
       "target": "knowledge-base/en/registry/requirements.json",
-      "sourceSha256": "60cfed815402e5bb491ffc5511f75c2d5b4e9f3d04c9af4cd7d2523c964808bd",
-      "targetSha256": "65aa207f76528c493bd4fe9ddd2282c0286b579da69a6b29c8d4dd134410fdc8"
+      "sourceSha256": "0c6acda309312c3dcdaeecd93fb400184daf63ca1f228def949e9e0c461078ce",
+      "targetSha256": "14b0bf96477aea82d6e701628a6c651e4c8efaab163e198f14b2d43150447837"
     },
     {
       "source": "knowledge-base/Cns/registry/决策.json",
@@ -1268,20 +1289,20 @@
     {
       "source": "knowledge-base/Cns/registry/交付.json",
       "target": "knowledge-base/en/registry/deliverables.json",
-      "sourceSha256": "8627aa48b704fa57892d71b2474cfe12d4fd84a3c64d005967ddc2c5ff2339db",
-      "targetSha256": "c07b594972f82176b410ef50b4d801da60124f9c75be6a54c5182ffc511d7e8b"
+      "sourceSha256": "e5dfde6eb39205cd406b751b4742098808c986b2b405b46c011a8471a6a32f40",
+      "targetSha256": "9b15234468360ba29d6b0f9045ec3452c63869e90386328dd493ba5746062343"
     },
     {
       "source": "knowledge-base/Cns/registry/来源.json",
       "target": "knowledge-base/en/registry/sources.json",
-      "sourceSha256": "9216ad26769fea710c10adcd397f95ef7d1d743240ffc6bf0b9dcb7415d0be8c",
-      "targetSha256": "0c7b1cdbaf478a62a2c44132fc2b03d7412b27208a7de63897a2804e93dc8794"
+      "sourceSha256": "4bf9960f0335725e3e5cbc500a62441ef461fd706f9d0c15a00247c8f6993a2b",
+      "targetSha256": "b787e98f76e6ebd50b02fb6da9e362df1554042be66d7018eb45ba98238f2fbb"
     },
     {
       "source": "knowledge-base/Cns/当前版本.json",
       "target": "knowledge-base/en/current-version.json",
-      "sourceSha256": "d7519c4b28ef0117a9dd37199e429cb4c881edfae815f13e75fe429aa56102e4",
-      "targetSha256": "afd3be958587efb064c4ce924f4f979a3b337a3cbda12bf76806dc4adfce6e6b"
+      "sourceSha256": "6eb314097d22a1730a864e5e3ccc8010d957094d0ff821bb9b7757b5cc55c57c",
+      "targetSha256": "24fcbd1e0619092d6d6ad532251b626bb3c97957938e624b549e1903ede8e58f"
     }
   ],
   "criticalComments": [
@@ -2246,6 +2267,86 @@
     {
       "path": "tests/project-boundaries.test.mjs",
       "sha256": "fb8484018a9399912662352498ab1bb5e2687cd34f8279c89a91948fa28800de"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2-core/src/types.ts",
+      "sha256": "3178ceb8fd3629a8076801bffdd0304c4da9306b5b882d54754b4ed1739d8cbc"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2-core/src/resources.ts",
+      "sha256": "59d825be3787478a29b42567cbc6f512f1be8d3c1fc3b86c7be1aa1e7e04ba40"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2-core/src/instance.ts",
+      "sha256": "4e0fd1059128acfcc54a8ecabc1677410b18221888f0ad20902086ea912faa96"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2-core/src/geometry.ts",
+      "sha256": "fc37d10f9944637d50a8efb28f8d547950c133a98bd54a7b3ca8b392c6ec03f2"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2-core/controls/baseline.mjs",
+      "sha256": "ecbb7cd51855a80b3c0e4c02ebbb88e97e12938bf06b7a1cb0f97dc376e045c3"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2-core/controls/fault.mjs",
+      "sha256": "4e6ef3f48370b0d934adbc83f8a1668de4bbe064d3958f9214e43dc44e784ad7"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2-core/controls/run.mjs",
+      "sha256": "898357db6b31af2ff1e8cfeee839234cd2d40e93b940c78a29d73e246532e0a6"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2-core/native/fixture.mjs",
+      "sha256": "36dd59695121aaabf699ca0d3b71bba40b4f9db1977a7f25d9de989bae1fcf20"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2-core/native/graph.mjs",
+      "sha256": "4f2b28d3574509bc8308eb3222566bfddc8b6e0bf1794fd3fe00afed930bded2"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2-core/native/oracle.mjs",
+      "sha256": "87d64e46f4c13204f1c837f16bc52e633ad3a72603c201682dce8aef673bb0a2"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2-core/native/verify.mjs",
+      "sha256": "7e0c14f96371d7ad7e0685a5e98dbebbb0093d847bdb5fa451d29fef94fa954f"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2-core/run.mjs",
+      "sha256": "38aa86b14efe8a10d1a848550ba6b8eb3188384461f943cdd7d60d7e90c92dae"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2-core/tests/cold-child.mjs",
+      "sha256": "96feb3c377ff7fcc6284c1a52939e9897ba5b83823d68e11e94a1045a66ea0a2"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2-core/tests/cpu.mjs",
+      "sha256": "453fb9496028dc2c9ab9acab3fbfcf6b0db0eef50893acd8a153d538fd4fd424"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2-core/tests/fixture.mjs",
+      "sha256": "b8ae94cf4a14039f4c7966672c2e772c71d7c7974a2fe7cdc84af54254db5538"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2-core/tests/namespace.mjs",
+      "sha256": "248f4b2cc954ada2a75e90e937a630ada86ababdaedb1a0bd5bd05fa9b57ddf6"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2-core/tests/policy-cold.mjs",
+      "sha256": "d01bc8246d2526752b6de6771ac8c9c424e46752c0fd8ca673be563b05a5b547"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2-core/tests/resources-transaction.mjs",
+      "sha256": "43a0438a81d3ef5b07508289b056214a9bb6571e8db4a442c7750246df43d3ee"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2-core/tests/sample-reentry.mjs",
+      "sha256": "a4da2fa559670d8d839950b328d612c77f92ce17000565f0bc67595dc1587e47"
+    },
+    {
+      "path": "knowledge-base/experiments/spine-f2-core/type-tests/check-lane.mjs",
+      "sha256": "25500932fc3545b5b710c6ec55cdaf6bf06afdd9386ae1ac31bad57428c94a7b"
     }
   ],
   "historicalSemanticReview": {
@@ -5248,5 +5349,67 @@
       "green": "INDEPENDENT_ACTUAL_ACCEPTED",
       "currentFullGate": "PENDING_RERUN"
     }
+  },
+  "browserPngDeliveryActualSuccessor": {
+    "engineeringPreview": "0.46.0",
+    "status": "ACTUAL_DELIVERY_ACCEPTED",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/34",
+    "mergedAt": "2026-10-13T18:18:51Z",
+    "mainMergeCommit": "562543ea10d9a6b8124561a7027811f3f7dede4c",
+    "mainTree": "ff54205b5e4ba83bfbb75867226e1cbca0e27a32",
+    "independentSuites": {
+      "publication": {
+        "passed": 137,
+        "total": 137
+      },
+      "core": {
+        "passed": 3064,
+        "total": 3064
+      },
+      "experimental": {
+        "passed": 160,
+        "total": 160
+      }
+    },
+    "mandatoryPushHookSuites": {
+      "publication": {
+        "passed": 137,
+        "total": 137
+      },
+      "core": {
+        "passed": 3064,
+        "total": 3064
+      },
+      "experimental": {
+        "passed": 160,
+        "total": 160
+      }
+    },
+    "committedRawBlobs": 1486,
+    "committedByteIssues": 0,
+    "remoteStatuses": 0,
+    "remoteCheckRuns": 0,
+    "remoteCombinedState": "pending",
+    "remoteCIPassClaim": false,
+    "historicalPendingCutoffsPreserved": true
+  },
+  "spineCoreManualF2CCuration": {
+    "engineeringPreview": "0.47.0",
+    "status": "SOURCE_ONLY_PUBLIC_CANDIDATE_INDEPENDENT_BILINGUAL_REVIEW_PENDING",
+    "newReadingPairs": 3,
+    "externalSDKBundled": false,
+    "rawSourceManifestQualification": "SOURCE_CANDIDATE_FORTY_FIVE_ROWS_CURRENT_PIN_REVIEW_PENDING",
+    "currentSourceManifestPin": {
+      "path": "knowledge-base/experiments/spine-f2-core/manifest.json",
+      "bytes": 8516,
+      "sha256": "31fedb11b99991c6b60a76018331086e958fc0fec218dd01b09529e08538c566"
+    },
+    "acceptedExecutionScope": "BOUNDED_MANUAL_CPU_TYPES_CONTROLS_POLICY_COLD_AND_NATIVE_ACCEPTED_PUBLICATION_DELIVERY_PENDING",
+    "completeCurrentGates": "PENDING",
+    "delivery": "NOT_RUN_0_47",
+    "remoteCIPassClaim": false,
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "historicalPendingCutoffsPreserved": true
   }
 }

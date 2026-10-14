@@ -8,3 +8,4 @@ work/
 .env.*
 !.env.example
 *.log
+/knowledge-base/experiments/spine-f2-core/dist/

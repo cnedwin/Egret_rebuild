@@ -1,0 +1,11 @@
+original-f2c-page.png
+size: 16, 16
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+pma: false
+meshRegion
+rotate: false
+bounds: 0, 0, 8, 8
+offsets: 0, 0, 8, 8
+index: -1

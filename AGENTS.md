@@ -12,6 +12,8 @@ Write newly authored first-party text through `tools/write-repository-text.mjs -
 Enable both repository-local hooks with `git config --local core.hooksPath .githooks` and preserve their executable Git modes. The pre-commit hook checks working/untracked text and actual staged bytes; the pre-push hook runs the complete `node tools/prepush.mjs --committed` on a clean committed snapshot. Also run the normal `node tools/prepush.mjs` while preparing a change. Fix failures and complete independent source/result and bilingual review before delivery; bypassing hooks or weakening byte checks is not a substitute.
 
 Use `-CheckOnly` when validating the knowledge base. Report source, saved execution, full local gates, actual push/PR/Main and remote CI separately, retaining earlier failures and pending cutoffs. Read the [repository policy](knowledge-base/en/docs/repository-identity-and-line-endings.md) and [bounded evidence](knowledge-base/en/docs/repository-hygiene-evidence.md).
+When changing existing first-party text, serialize the complete new file through the canonical writer; appending canonical text to a legacy CRLF prefix still violates the authored-file policy. An unchanged legacy pin is exempt only while all original bytes remain identical; preserved originals, sealed evidence and legal/upstream files remain untouched.
+
 <!-- HYGIENE-0.45.1-POLICY-END -->
 
 This agreement applies across the repository, including shared knowledge-base experiments, tools, evidence, comments, Issues and PRs. Read [README](README.md), [CONTRIBUTING](CONTRIBUTING.md), [source records](source-origin.json) and the relevant specifications. Work within the user's existing authorization.

@@ -1,0 +1,84 @@
+{
+  "status": "SOURCE_LANES_NOT_RUN",
+  "suppression": false,
+  "lanes": [
+    {
+      "file": "negative-fake-texture.ts",
+      "expectedRule": "PUBLIC_TEXTURE_NOMINAL_IDENTITY",
+      "actualDiagnosticTuples": null,
+      "actualExitStatus": null
+    },
+    {
+      "file": "negative-fake-ref.ts",
+      "expectedRule": "PUBLIC_ASSET_REF_VALUE_TYPE",
+      "actualDiagnosticTuples": null,
+      "actualExitStatus": null
+    },
+    {
+      "file": "negative-wrong-page-value.ts",
+      "expectedRule": "TEXTURE_REF_INVARIANCE",
+      "actualDiagnosticTuples": null,
+      "actualExitStatus": null
+    },
+    {
+      "file": "negative-wrong-engine.ts",
+      "expectedRule": "PUBLIC_ENGINE_IDENTITY",
+      "actualDiagnosticTuples": null,
+      "actualExitStatus": null
+    },
+    {
+      "file": "negative-wrong-scope.ts",
+      "expectedRule": "PUBLIC_SCOPE_IDENTITY",
+      "actualDiagnosticTuples": null,
+      "actualExitStatus": null
+    },
+    {
+      "file": "negative-wrong-name.ts",
+      "expectedRule": "PRIMITIVE_STRING_ANIMATION_NAME",
+      "actualDiagnosticTuples": null,
+      "actualExitStatus": null
+    },
+    {
+      "file": "negative-wrong-time.ts",
+      "expectedRule": "PRIMITIVE_NUMBER_SAMPLE_TIME",
+      "actualDiagnosticTuples": null,
+      "actualExitStatus": null
+    },
+    {
+      "file": "negative-erased-types.ts",
+      "expectedRule": "ERASED_INTERFACE_VALUES",
+      "actualDiagnosticTuples": null,
+      "actualExitStatus": null
+    },
+    {
+      "file": "negative-forbidden-core-export.ts",
+      "expectedRule": "NO_CORE_EXPORT_VALUES",
+      "actualDiagnosticTuples": null,
+      "actualExitStatus": null
+    },
+    {
+      "file": "negative-forbidden-clock-export.ts",
+      "expectedRule": "NO_CLOCK_EXPORT_VALUES",
+      "actualDiagnosticTuples": null,
+      "actualExitStatus": null
+    },
+    {
+      "file": "negative-forbidden-instance-core.ts",
+      "expectedRule": "NO_CORE_OR_DELTA_PLAYBACK_SURFACE",
+      "actualDiagnosticTuples": null,
+      "actualExitStatus": null
+    },
+    {
+      "file": "negative-extra-option.ts",
+      "expectedRule": "EXACT_PROPOSED_OPTIONS",
+      "actualDiagnosticTuples": null,
+      "actualExitStatus": null
+    },
+    {
+      "file": "negative-readonly-properties.ts",
+      "expectedRule": "READONLY_OBSERVATION_SURFACE",
+      "actualDiagnosticTuples": null,
+      "actualExitStatus": null
+    }
+  ]
+}

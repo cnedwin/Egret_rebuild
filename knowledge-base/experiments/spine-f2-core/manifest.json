@@ -1,0 +1,282 @@
+{
+  "schemaVersion": 1,
+  "status": "SOURCE_ONLY_CANDIDATE_NOT_RUN",
+  "entry": {
+    "runtimeValues": [
+      "createF2CoreResources"
+    ],
+    "erasedTypes": [
+      "F2CoreCreateOptions",
+      "F2CoreResources",
+      "F2CoreInstanceState",
+      "F2CoreInstance"
+    ]
+  },
+  "sdk": {
+    "package": "@esotericsoftware/spine-core",
+    "version": "4.3.13",
+    "files": 137,
+    "sha256TupleTree": "e3690c1f8fc3c2b8123bfcfe37d50d7f56878fbef8143fe5cd11d0cc97eaf0cf",
+    "suppliedExternally": true,
+    "entitlement": "unknown",
+    "redistributionClearance": "unverified"
+  },
+  "sourceFiles": [
+    {
+      "path": "assets/literal-oracle.json",
+      "bytes": 7810,
+      "sha256": "fb675e3a4ddc72ea16fe57da81ba9cb580ca501f971a18fae8b92bf8e4bc37d5"
+    },
+    {
+      "path": "assets/origin.json",
+      "bytes": 716,
+      "sha256": "da995db682a2e63600b5d316d4a8eca7fae3c52a48aa9765bfe12e806a1f94d3"
+    },
+    {
+      "path": "assets/original-f2c-page.png",
+      "bytes": 108,
+      "sha256": "e0237a15e76d51f238a872cd6156a888b620d4ff4b5fe971454994c591114c44"
+    },
+    {
+      "path": "assets/original-f2c-page.rgba",
+      "bytes": 1024,
+      "sha256": "1acb16d4c63ea3ad31d8fae1cd3e421a1cd81c34df3e1bf79d5d20af9ae65d08"
+    },
+    {
+      "path": "assets/original-f2c.atlas",
+      "bytes": 175,
+      "sha256": "9e7b440d416de7aee7fb66976aecc76c0e02deaa4ea3d9c908f8fec9eb1312db"
+    },
+    {
+      "path": "assets/original-f2c.spine.json",
+      "bytes": 1128,
+      "sha256": "101f26ae5caeabd2de0b2967ce9ee4d1e138ffb09acb621663f1be13c8b54d61"
+    },
+    {
+      "path": "case-ledger.json",
+      "bytes": 846,
+      "sha256": "022f2b4d307034d57f8f43d7bd43fdd5549381745f67441a2ef5a5884b90c256"
+    },
+    {
+      "path": "controls/baseline.mjs",
+      "bytes": 6213,
+      "sha256": "ecbb7cd51855a80b3c0e4c02ebbb88e97e12938bf06b7a1cb0f97dc376e045c3"
+    },
+    {
+      "path": "controls/fault.mjs",
+      "bytes": 8264,
+      "sha256": "4e6ef3f48370b0d934adbc83f8a1668de4bbe064d3958f9214e43dc44e784ad7"
+    },
+    {
+      "path": "controls/run.mjs",
+      "bytes": 23554,
+      "sha256": "898357db6b31af2ff1e8cfeee839234cd2d40e93b940c78a29d73e246532e0a6"
+    },
+    {
+      "path": "native/fixture.mjs",
+      "bytes": 17011,
+      "sha256": "36dd59695121aaabf699ca0d3b71bba40b4f9db1977a7f25d9de989bae1fcf20"
+    },
+    {
+      "path": "native/graph.mjs",
+      "bytes": 18882,
+      "sha256": "4f2b28d3574509bc8308eb3222566bfddc8b6e0bf1794fd3fe00afed930bded2"
+    },
+    {
+      "path": "native/oracle.mjs",
+      "bytes": 3314,
+      "sha256": "87d64e46f4c13204f1c837f16bc52e633ad3a72603c201682dce8aef673bb0a2"
+    },
+    {
+      "path": "native/verify.mjs",
+      "bytes": 25288,
+      "sha256": "7e0c14f96371d7ad7e0685a5e98dbebbb0093d847bdb5fa451d29fef94fa954f"
+    },
+    {
+      "path": "run.mjs",
+      "bytes": 10134,
+      "sha256": "38aa86b14efe8a10d1a848550ba6b8eb3188384461f943cdd7d60d7e90c92dae"
+    },
+    {
+      "path": "src/geometry.ts",
+      "bytes": 3641,
+      "sha256": "fc37d10f9944637d50a8efb28f8d547950c133a98bd54a7b3ca8b392c6ec03f2"
+    },
+    {
+      "path": "src/index.ts",
+      "bytes": 204,
+      "sha256": "7c2befa6e161ac7d65da0dd77dfc4d06b161a1e7347bbaa90771c6d7c18b7da9"
+    },
+    {
+      "path": "src/instance.ts",
+      "bytes": 12670,
+      "sha256": "4e0fd1059128acfcc54a8ecabc1677410b18221888f0ad20902086ea912faa96"
+    },
+    {
+      "path": "src/resources.ts",
+      "bytes": 24340,
+      "sha256": "59d825be3787478a29b42567cbc6f512f1be8d3c1fc3b86c7be1aa1e7e04ba40"
+    },
+    {
+      "path": "src/types.ts",
+      "bytes": 825,
+      "sha256": "3178ceb8fd3629a8076801bffdd0304c4da9306b5b882d54754b4ed1739d8cbc"
+    },
+    {
+      "path": "tests/cold-child.mjs",
+      "bytes": 9019,
+      "sha256": "96feb3c377ff7fcc6284c1a52939e9897ba5b83823d68e11e94a1045a66ea0a2"
+    },
+    {
+      "path": "tests/cpu.mjs",
+      "bytes": 10589,
+      "sha256": "453fb9496028dc2c9ab9acab3fbfcf6b0db0eef50893acd8a153d538fd4fd424"
+    },
+    {
+      "path": "tests/fixture.mjs",
+      "bytes": 9152,
+      "sha256": "b8ae94cf4a14039f4c7966672c2e772c71d7c7974a2fe7cdc84af54254db5538"
+    },
+    {
+      "path": "tests/namespace.mjs",
+      "bytes": 245,
+      "sha256": "248f4b2cc954ada2a75e90e937a630ada86ababdaedb1a0bd5bd05fa9b57ddf6"
+    },
+    {
+      "path": "tests/policy-cold.mjs",
+      "bytes": 19249,
+      "sha256": "d01bc8246d2526752b6de6771ac8c9c424e46752c0fd8ca673be563b05a5b547"
+    },
+    {
+      "path": "tests/resources-transaction.mjs",
+      "bytes": 15264,
+      "sha256": "43a0438a81d3ef5b07508289b056214a9bb6571e8db4a442c7750246df43d3ee"
+    },
+    {
+      "path": "tests/sample-reentry.mjs",
+      "bytes": 14417,
+      "sha256": "a4da2fa559670d8d839950b328d612c77f92ce17000565f0bc67595dc1587e47"
+    },
+    {
+      "path": "tsconfig.json",
+      "bytes": 480,
+      "sha256": "5f7c5dc14be3c75a41b680a7f32b0b7f3901283747fd9c519a700ba3b748dfa7"
+    },
+    {
+      "path": "type-tests/check-lane.mjs",
+      "bytes": 5032,
+      "sha256": "25500932fc3545b5b710c6ec55cdaf6bf06afdd9386ae1ac31bad57428c94a7b"
+    },
+    {
+      "path": "type-tests/negative-erased-types.ts",
+      "bytes": 632,
+      "sha256": "0435100b53287f85871e39e72f2ff4a4556a7b8ffed3a41f8b0af384d1e6b94b"
+    },
+    {
+      "path": "type-tests/negative-extra-option.ts",
+      "bytes": 612,
+      "sha256": "1369e363cd3aaedbb72c36cb693f794970d4b86ce34bf01b94e73f22e913574c"
+    },
+    {
+      "path": "type-tests/negative-fake-ref.ts",
+      "bytes": 611,
+      "sha256": "c80c98ce575d7a8d4f4c267c1fdbf2849b697ea25cd3d1cde541f6652a18e1aa"
+    },
+    {
+      "path": "type-tests/negative-fake-texture.ts",
+      "bytes": 610,
+      "sha256": "8fb1f613b9cdfdfa69be6abb9a136732d1af78619e4311021c2c23a2ca8498d5"
+    },
+    {
+      "path": "type-tests/negative-forbidden-clock-export.ts",
+      "bytes": 631,
+      "sha256": "3f45471847d4fe78a9966a8ebe08d10e3b5ee4ced49de8e9cf663545c2d3021e"
+    },
+    {
+      "path": "type-tests/negative-forbidden-core-export.ts",
+      "bytes": 662,
+      "sha256": "3e91c07788d38d27b12082c7e63f52eb24bbe450c5ad040ca669693983df7676"
+    },
+    {
+      "path": "type-tests/negative-forbidden-instance-core.ts",
+      "bytes": 595,
+      "sha256": "34d32bae22145b0a7812e10bc0cc516cc4030c744ccf10048b694ed5ed664133"
+    },
+    {
+      "path": "type-tests/negative-lanes.json",
+      "bytes": 2393,
+      "sha256": "14c7a44d5a6e4c0aa8d9863922a081ef0273d130b4fe328949572ff125bfab3c"
+    },
+    {
+      "path": "type-tests/negative-readonly-properties.ts",
+      "bytes": 646,
+      "sha256": "2c773de7f3afc7ab84771b9aaa024ee1e54862256a6065df73ac4dcf3cbe040d"
+    },
+    {
+      "path": "type-tests/negative-wrong-engine.ts",
+      "bytes": 589,
+      "sha256": "bea17bb101c1156411476c30b90850fc29333f68e5406fdd1b893d6ae03ef497"
+    },
+    {
+      "path": "type-tests/negative-wrong-name.ts",
+      "bytes": 575,
+      "sha256": "b799be8edd10b75a02fe9921623ac3fbd877ebd5fd8bac15f85eadbc2e7e9bf7"
+    },
+    {
+      "path": "type-tests/negative-wrong-page-value.ts",
+      "bytes": 641,
+      "sha256": "a782410594ee97fd58367ad04d339fbc6debab2830405850701d6bfa234a6f22"
+    },
+    {
+      "path": "type-tests/negative-wrong-scope.ts",
+      "bytes": 628,
+      "sha256": "330dc73f8b001e1c2940ce61b37d4de6e0c96b6731ac0f2987db570b4a7bcbe6"
+    },
+    {
+      "path": "type-tests/negative-wrong-time.ts",
+      "bytes": 566,
+      "sha256": "5b8630a560e9a6ee028e20182d00cbd614478766a8bad484b86787ec2791186f"
+    },
+    {
+      "path": "type-tests/positive.ts",
+      "bytes": 1964,
+      "sha256": "78ff088bae5eb2b060febdbe8d36839e705070a962b1d6609f9895759683d5de"
+    },
+    {
+      "path": "type-tests/tsconfig.positive.json",
+      "bytes": 167,
+      "sha256": "8d169f9c05741fde90b888536ab912571b8e8841714877ba6801f711cbc67fec"
+    }
+  ],
+  "toolFiles": [
+    {
+      "path": "tools/lib/file-identity.mjs",
+      "bytes": 5065,
+      "sha256": "999b355c6e0d03f17853ee05f33abc9fecbb34ad80607963e11f913a4f815569"
+    }
+  ],
+  "mainCpuIds": [
+    "F2C01",
+    "F2C02",
+    "F2C03",
+    "F2C04",
+    "F2C05",
+    "F2C06",
+    "F2C07",
+    "F2C08",
+    "F2C09",
+    "F2C10"
+  ],
+  "sourceActualExecutedCases": 0,
+  "native": {
+    "id": "F2C11",
+    "status": "TASK5_PENDING_NOT_RUN"
+  },
+  "typeLanes": "type-tests/negative-lanes.json",
+  "caseLedger": "case-ledger.json",
+  "documentation": {
+    "owner": "repository",
+    "en": "knowledge-base/en/experiments/spine-f2-core/README.md",
+    "Cns": "knowledge-base/Cns/experiments/spine-f2-core/README.md"
+  }
+}

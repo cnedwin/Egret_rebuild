@@ -12,6 +12,8 @@
 通过 `git config --local core.hooksPath .githooks` 启用两个仓库本地钩子，并保留其 Git 可执行模式。pre-commit 检查工作／未跟踪文本及实际暂存字节；pre-push 对干净已提交快照运行完整 `node tools/prepush.mjs --committed`。准备修改时还须运行普通 `node tools/prepush.mjs`。修复失败并完成独立源码／结果与双语评审后再交付，不能以跳过钩子或放宽字节检查替代修复。
 
 知识库验证采用 `-CheckOnly`。分别记录源码、保存的执行、完整本机门禁、实际推送／PR／Main 和远端 CI，保留早先失败与待完成截止点。阅读[仓库规范](knowledge-base/Cns/docs/仓库路径身份与换行规范.md)与[限定证据](knowledge-base/Cns/docs/仓库路径与换行验证记录.md)。
+修改已有第一方文本时，必须通过标准写入器序列化完整的新文件；向旧 CRLF 前缀追加标准文本仍违反新编写文件规范。历史 pin 只有在全部原字节保持一致时才享有未修改豁免；保留原件、封存证据及法律／上游文件保持不变。
+
 <!-- HYGIENE-0.45.1-POLICY-END -->
 
 本约定适用于全仓库，包括知识库共享实验、工具、证据、注释、Issue 与 PR。先读 [README](README.zh-CN.md)、[贡献指南](CONTRIBUTING.zh-CN.md)、[来源记录](source-origin.json)与相关规格，按用户既有授权范围开展工作。
