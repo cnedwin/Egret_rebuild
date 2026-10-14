@@ -158,8 +158,19 @@ if (inventory.schemaVersion !== 1 || inventory.kind !== 'DISPLAY_CONTAINER_REMOV
   || !equal(inventory.tupleFormat, ['file','line','column','code','message'])
   || !equal(inventory.inputPins?.map(row => row.path), expectedInputs)
   || !equal(inventory.nativeLibraryPins?.map(row => row.path), expectedNativeLibraries)) fail('original observations or complete current inputs are malformed');
+// Keep the original closed-key inventory and bind only the observed current row.
+const currentInputSuccessor = inventory.currentInputIdentitySuccessor;
+const historicalDeclaration = {"path":"packages/runtime/dist/DisplayObject.d.ts","bytes":2244,"sha256":"1e93468b7bfe10c4a953f2d1ed0cae350f32e1292d77b28007a2f272381d394d"};
+const currentDeclarationRows = [{"path":"packages/runtime/dist/DisplayObject.d.ts","bytes":2555,"sha256":"508cab574f1552cbfd3af464173b03fdb83f7ec774872bc658bca6a3ceb3c732"}];
+if (currentInputSuccessor?.kind !== 'ANCHOR_CURRENT_DECLARATION_IDENTITY_SUCCESSOR'
+  || currentInputSuccessor.productSourceReviewSHA256 !== '10163fc564f735fe5ef51163fd36856afec7a19389440208bc0d8768810233c7'
+  || !equal(currentInputSuccessor.rows, currentDeclarationRows)
+  || !equal(inventory.inputPins.find(row=>row.path===historicalDeclaration.path), historicalDeclaration))
+  fail('current declaration input successor differs');
 for (const row of inventory.inputPins) {
-  if (logicalPath(row.path) !== row.path || !equal(fingerprintFile(root, row.path), row)) fail('changed complete raw input: ' + row.path);
+  const effective = currentDeclarationRows.find(current=>current.path===row.path) ?? row;
+  if (logicalPath(row.path) !== row.path || !equal(fingerprintFile(root, row.path), effective))
+    fail('changed complete raw input: ' + row.path);
 }
 const wrapperOwner = realpathSync(path.join(root, 'node_modules/typescript'));
 const wrapperPackage = JSON.parse(readFileSync(path.join(wrapperOwner, 'package.json'), 'utf8'));

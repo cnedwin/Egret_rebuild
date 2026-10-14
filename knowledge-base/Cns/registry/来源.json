@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-14",
+  "updatedAt": "2026-10-15",
   "authority": "来源分组与适用边界；researchCheckedAt是项目研究核查日期，非统一发布日期",
   "items": [
     {
@@ -5570,6 +5570,68 @@
           "remoteCIPassClaim": false
         }
       }
+    },
+    {
+      "id": "S106",
+      "type": "first_party_display_anchor_offsets",
+      "researchCheckedAt": "2026-10-15",
+      "requirementIds": [
+        "R002",
+        "R004",
+        "R011",
+        "R012",
+        "R015",
+        "R016",
+        "R019",
+        "R021"
+      ],
+      "title": "工程预览 0.52.0 — 显示锚点偏移 · 源码草稿",
+      "scope": "作者定义的显示枢轴贯通坐标、局部边界、裁剪、显式拾取与保存捕获。已接受的当前代码和有界桌面 Native 结果，与待完成的公开整理及交付分别记录。",
+      "limit": "完整 EUI／布局、完整 Spine、迁移、高级 3D、AI、字体、目标设备及性能保持开放或未验证。",
+      "doc": "Cns/docs/显示锚点偏移契约.md",
+      "license": "Apache-2.0",
+      "firstPartySourcePaths": [
+        "packages/runtime/src/DisplayObject.ts",
+        "packages/runtime/src/displayVisualState.ts",
+        "packages/runtime/src/displayTransform.ts"
+      ],
+      "newThirdPartyDependency": false,
+      "verification": {
+        "engineeringPreview": "0.52.0",
+        "sourceId": "S106",
+        "deliverableId": "V057",
+        "curationDate": "2026-10-15",
+        "status": "CURRENT_CODE_AND_BOUNDED_NATIVE_ACCEPTED_PUBLIC_DELIVERY_PENDING",
+        "record": "knowledge-base/evidence/display-anchor-offsets-verification.json",
+        "contract": "Cns/docs/显示锚点偏移契约.md",
+        "evidence": "Cns/docs/显示锚点偏移证据.md",
+        "plan": "Cns/docs/显示锚点偏移工程计划.md",
+        "focusedCPU": {
+          "pass": 211,
+          "new": 18,
+          "retained": 193
+        },
+        "completeCode": {
+          "phases": 9,
+          "Core": 3131,
+          "SpineSource": 160
+        },
+        "native": {
+          "mainReadbacks": 10,
+          "mainChannels": 23040,
+          "separateControlMainCredit": 0,
+          "wrongPivotPixels": 72,
+          "wrongPivotChannels": 144
+        },
+        "publicSourceBilingualReview": "PENDING",
+        "fullPrepush": "PENDING",
+        "mandatoryHooks": "PENDING",
+        "newGitDelivery": "PENDING",
+        "remoteCIPassClaim": false,
+        "fullSpineR020V020": "OPEN",
+        "migrationR008V006": "OPEN",
+        "historicalCutoffsPreserved": true
+      }
     }
   ],
   "spineF1ClockPortableReplaySuccessor": {
@@ -6510,5 +6572,56 @@
     },
     "remoteCIPassClaim": false,
     "historicalPublicPendingCutoffsPreserved": true
+  },
+  "displayAnchorOffsetsWorkPackage": {
+    "engineeringPreview": "0.52.0",
+    "sourceId": "S106",
+    "deliverableId": "V057",
+    "curationDate": "2026-10-15",
+    "status": "CURRENT_CODE_AND_BOUNDED_NATIVE_ACCEPTED_PUBLIC_DELIVERY_PENDING",
+    "record": "knowledge-base/evidence/display-anchor-offsets-verification.json",
+    "contract": "Cns/docs/显示锚点偏移契约.md",
+    "evidence": "Cns/docs/显示锚点偏移证据.md",
+    "plan": "Cns/docs/显示锚点偏移工程计划.md",
+    "focusedCPU": {
+      "pass": 211,
+      "new": 18,
+      "retained": 193
+    },
+    "completeCode": {
+      "phases": 9,
+      "Core": 3131,
+      "SpineSource": 160
+    },
+    "native": {
+      "mainReadbacks": 10,
+      "mainChannels": 23040,
+      "separateControlMainCredit": 0,
+      "wrongPivotPixels": 72,
+      "wrongPivotChannels": 144
+    },
+    "publicSourceBilingualReview": "PENDING",
+    "fullPrepush": "PENDING",
+    "mandatoryHooks": "PENDING",
+    "newGitDelivery": "PENDING",
+    "remoteCIPassClaim": false,
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "historicalCutoffsPreserved": true
+  },
+  "containerAddChildAtDeliveryActualSuccessor": {
+    "engineeringPreview": "0.51.0",
+    "recordedOn": "2026-10-15",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/39",
+    "featureHead": "8b667d85a7cf22c041406351c47d6213c9e40b3d",
+    "main": "0afc8020d30bf4f30a982c671a905bf6786293c4",
+    "tree": "43cea3da992cdfaa100857060f52ccea4284a834",
+    "independentReview": {
+      "bytes": 45021,
+      "sha256": "10f7f529ebd9b3e015da452edf537ddc3087a5bdc63da155ec1a720cc51877d8",
+      "identityOnlyNotDistributed": true
+    },
+    "historicalPublicPendingCutoffsPreserved": true,
+    "remoteCIPassClaim": false
   }
 }

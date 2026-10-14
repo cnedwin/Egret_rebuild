@@ -841,5 +841,17 @@
     }
   ],
   "inputBoundary": "Current Source-frozen configuration/package/declaration/standard-library closure, not a runtime file-access trace. Original saved compiler tuples and raw streams remain independent.",
-  "timeBoundary": "The two original executions overlap in time; neither is recorded as a prerequisite sequential run of the other."
+  "timeBoundary": "The two original executions overlap in time; neither is recorded as a prerequisite sequential run of the other.",
+  "currentInputIdentitySuccessor": {
+    "kind": "ANCHOR_CURRENT_DECLARATION_IDENTITY_SUCCESSOR",
+    "rows": [
+      {
+        "path": "packages/runtime/dist/DisplayObject.d.ts",
+        "bytes": 2555,
+        "sha256": "508cab574f1552cbfd3af464173b03fdb83f7ec774872bc658bca6a3ceb3c732"
+      }
+    ],
+    "productSourceReviewSHA256": "10163fc564f735fe5ef51163fd36856afec7a19389440208bc0d8768810233c7",
+    "historicalBoundary": "Original inputPins/groups/tuples/stdout/observedExecution retain all their bytes. Only these separately bound current rows override raw identity checks for the current declaration."
+  }
 }

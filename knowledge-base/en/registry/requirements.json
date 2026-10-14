@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-14",
+  "updatedAt": "2026-10-15",
   "authority": "Goals confirmed by the user in this project discussion; see the delivery registry separately for implementation and acceptance",
   "items": [
     {
@@ -34,7 +34,8 @@
         "S102",
         "S103",
         "S104",
-        "S105"
+        "S105",
+        "S106"
       ],
       "deliveryIds": [
         "V001",
@@ -53,7 +54,8 @@
         "V053",
         "V054",
         "V055",
-        "V056"
+        "V056",
+        "V057"
       ],
       "decisionIds": [
         "D002",
@@ -128,7 +130,8 @@
         "S102",
         "S103",
         "S104",
-        "S105"
+        "S105",
+        "S106"
       ],
       "deliveryIds": [
         "V002",
@@ -145,7 +148,8 @@
         "V053",
         "V054",
         "V055",
-        "V056"
+        "V056",
+        "V057"
       ],
       "decisionIds": [
         "D002",
@@ -315,7 +319,8 @@
       "sourceIds": [
         "S001",
         "S104",
-        "S105"
+        "S105",
+        "S106"
       ],
       "deliveryIds": [
         "V001",
@@ -328,7 +333,8 @@
         "V027",
         "V028",
         "V055",
-        "V056"
+        "V056",
+        "V057"
       ],
       "decisionIds": [
         "D012"
@@ -350,7 +356,8 @@
         "S102",
         "S103",
         "S104",
-        "S105"
+        "S105",
+        "S106"
       ],
       "deliveryIds": [
         "V001",
@@ -368,7 +375,8 @@
         "V053",
         "V054",
         "V055",
-        "V056"
+        "V056",
+        "V057"
       ],
       "decisionIds": [
         "D002",
@@ -457,7 +465,8 @@
         "S102",
         "S103",
         "S104",
-        "S105"
+        "S105",
+        "S106"
       ],
       "deliveryIds": [
         "V001",
@@ -478,7 +487,8 @@
         "V053",
         "V054",
         "V055",
-        "V056"
+        "V056",
+        "V057"
       ],
       "decisionIds": [
         "D001",
@@ -514,7 +524,8 @@
         "S102",
         "S103",
         "S104",
-        "S105"
+        "S105",
+        "S106"
       ],
       "deliveryIds": [
         "V001",
@@ -539,7 +550,8 @@
         "V053",
         "V054",
         "V055",
-        "V056"
+        "V056",
+        "V057"
       ],
       "decisionIds": [
         "D016"
@@ -616,7 +628,8 @@
         "S102",
         "S103",
         "S104",
-        "S105"
+        "S105",
+        "S106"
       ],
       "deliveryIds": [
         "V007",
@@ -633,7 +646,8 @@
         "V053",
         "V054",
         "V055",
-        "V056"
+        "V056",
+        "V057"
       ],
       "decisionIds": [],
       "doc": "en/docs/bilingual-documentation-and-prepush-checks.md"
@@ -720,7 +734,8 @@
         "S102",
         "S103",
         "S104",
-        "S105"
+        "S105",
+        "S106"
       ],
       "deliveryIds": [
         "V050",
@@ -728,7 +743,8 @@
         "V053",
         "V054",
         "V055",
-        "V056"
+        "V056",
+        "V057"
       ],
       "decisionIds": [],
       "doc": "en/docs/repository-identity-and-line-endings.md",
@@ -1648,7 +1664,7 @@
   },
   "_localization": {
     "canonicalSource": "需求.json",
-    "canonicalSha256": "accc7b83ad3793f53b7b6909039ccf8e9b2fb97e8f8d74ed911b2a9fc0b88482",
+    "canonicalSha256": "9ef14d664c2acb5a7a53ef562a9bbd0e32b271d0638854ca155ce512fde851f5",
     "role": "read_only_translation",
     "language": "en"
   },
@@ -1667,5 +1683,56 @@
       "acceptanceScope": "FOCUSED_PRODUCT_CPU_ORIGINAL_TYPES_ONLY",
       "historicalRequirementsUnchanged": true
     }
+  },
+  "displayAnchorOffsetsWorkPackage": {
+    "engineeringPreview": "0.52.0",
+    "sourceId": "S106",
+    "deliverableId": "V057",
+    "curationDate": "2026-10-15",
+    "status": "CURRENT_CODE_AND_BOUNDED_NATIVE_ACCEPTED_PUBLIC_DELIVERY_PENDING",
+    "record": "knowledge-base/evidence/display-anchor-offsets-verification.json",
+    "contract": "en/docs/display-anchor-offsets-contract.md",
+    "evidence": "en/docs/display-anchor-offsets-evidence.md",
+    "plan": "en/docs/display-anchor-offsets-implementation-plan.md",
+    "focusedCPU": {
+      "pass": 211,
+      "new": 18,
+      "retained": 193
+    },
+    "completeCode": {
+      "phases": 9,
+      "Core": 3131,
+      "SpineSource": 160
+    },
+    "native": {
+      "mainReadbacks": 10,
+      "mainChannels": 23040,
+      "separateControlMainCredit": 0,
+      "wrongPivotPixels": 72,
+      "wrongPivotChannels": 144
+    },
+    "publicSourceBilingualReview": "PENDING",
+    "fullPrepush": "PENDING",
+    "mandatoryHooks": "PENDING",
+    "newGitDelivery": "PENDING",
+    "remoteCIPassClaim": false,
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "historicalCutoffsPreserved": true
+  },
+  "containerAddChildAtDeliveryActualSuccessor": {
+    "engineeringPreview": "0.51.0",
+    "recordedOn": "2026-10-15",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/39",
+    "featureHead": "8b667d85a7cf22c041406351c47d6213c9e40b3d",
+    "main": "0afc8020d30bf4f30a982c671a905bf6786293c4",
+    "tree": "43cea3da992cdfaa100857060f52ccea4284a834",
+    "independentReview": {
+      "bytes": 45021,
+      "sha256": "10f7f529ebd9b3e015da452edf537ddc3087a5bdc63da155ec1a720cc51877d8",
+      "identityOnlyNotDistributed": true
+    },
+    "historicalPublicPendingCutoffsPreserved": true,
+    "remoteCIPassClaim": false
   }
 }

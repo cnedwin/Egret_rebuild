@@ -850,5 +850,139 @@
     }
   ],
   "inputBoundary": "Current complete public declaration/consumer/config/helper/compiler input identities belong to this exact adopted CGI build; original stdout/observed executions retain their original saved facts. These pins are not a future automatic update or ignored stale Primary dist.",
-  "timeBoundary": "Original positive and negative independent NoEmit consumer executions only; standalone and full delegated type gate Source are pending actual execution."
+  "timeBoundary": "Original positive and negative independent NoEmit consumer executions only; standalone and full delegated type gate Source are pending actual execution.",
+  "currentInputIdentitySuccessor": {
+    "kind": "ANCHOR_CURRENT_DECLARATION_IDENTITY_SUCCESSOR",
+    "rows": [
+      {
+        "path": "packages/runtime/dist/DisplayObject.d.ts",
+        "bytes": 2555,
+        "sha256": "508cab574f1552cbfd3af464173b03fdb83f7ec774872bc658bca6a3ceb3c732"
+      }
+    ],
+    "productSourceReviewSHA256": "10163fc564f735fe5ef51163fd36856afec7a19389440208bc0d8768810233c7",
+    "historicalBoundary": "Original inputPins/groups/tuples/stdout/observedExecution retain all their bytes. Only these separately bound current rows override raw identity checks for the current declaration."
+  },
+  "currentDeclarationSuccessor": {
+    "schemaVersion": 1,
+    "kind": "ANCHOR_CURRENT_DECLARATION_DIAGNOSTIC_SUCCESSOR",
+    "status": "OBSERVED_FROZEN_TS7_DIAGNOSTICS",
+    "lane": "negative",
+    "expectedExit": 1,
+    "declarationPin": {
+      "path": "packages/runtime/dist/DisplayObject.d.ts",
+      "bytes": 2555,
+      "sha256": "508cab574f1552cbfd3af464173b03fdb83f7ec774872bc658bca6a3ceb3c732"
+    },
+    "tuples": [
+      [
+        "tests/types/display-container-child-index-negative.ts",
+        4,
+        10,
+        2305,
+        "Module '\"@egret/engine\"' has no exported member 'getChildIndex'."
+      ],
+      [
+        "tests/types/display-container-child-index-negative.ts",
+        7,
+        11,
+        2554,
+        "Expected 1 arguments, but got 0."
+      ],
+      [
+        "tests/types/display-container-child-index-negative.ts",
+        9,
+        25,
+        2345,
+        "Argument of type 'null' is not assignable to parameter of type 'DisplayObject'."
+      ],
+      [
+        "tests/types/display-container-child-index-negative.ts",
+        11,
+        25,
+        2740,
+        "Type '{ parent: DisplayObjectContainer; }' is missing the following properties from type 'DisplayObject': on, candidates, dispatchEvent, clearListeners, and 22 more."
+      ],
+      [
+        "tests/types/display-container-child-index-negative.ts",
+        13,
+        25,
+        2345,
+        "Argument of type 'number' is not assignable to parameter of type 'DisplayObject'."
+      ],
+      [
+        "tests/types/display-container-child-index-negative.ts",
+        15,
+        25,
+        2345,
+        "Argument of type 'string' is not assignable to parameter of type 'DisplayObject'."
+      ],
+      [
+        "tests/types/display-container-child-index-negative.ts",
+        17,
+        7,
+        2322,
+        "Type 'number' is not assignable to type 'void'."
+      ],
+      [
+        "tests/types/display-container-child-index-negative.ts",
+        19,
+        7,
+        2322,
+        "Type 'number' is not assignable to type 'string'."
+      ],
+      [
+        "tests/types/display-container-child-index-negative.ts",
+        21,
+        32,
+        2554,
+        "Expected 1 arguments, but got 2."
+      ],
+      [
+        "tests/types/display-container-child-index-negative.ts",
+        23,
+        7,
+        2339,
+        "Property 'getChildIndex' does not exist on type 'DisplayObject'."
+      ],
+      [
+        "tests/types/display-container-child-index-negative.ts",
+        25,
+        6,
+        2584,
+        "Cannot find name 'document'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'."
+      ],
+      [
+        "tests/types/display-container-child-index-negative.ts",
+        27,
+        6,
+        2591,
+        "Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig."
+      ]
+    ],
+    "originalStdout": "tests/types/display-container-child-index-negative.ts(4,10): error TS2305: Module '\"@egret/engine\"' has no exported member 'getChildIndex'.\ntests/types/display-container-child-index-negative.ts(7,11): error TS2554: Expected 1 arguments, but got 0.\ntests/types/display-container-child-index-negative.ts(9,25): error TS2345: Argument of type 'null' is not assignable to parameter of type 'DisplayObject'.\ntests/types/display-container-child-index-negative.ts(11,25): error TS2740: Type '{ parent: DisplayObjectContainer; }' is missing the following properties from type 'DisplayObject': on, candidates, dispatchEvent, clearListeners, and 22 more.\ntests/types/display-container-child-index-negative.ts(13,25): error TS2345: Argument of type 'number' is not assignable to parameter of type 'DisplayObject'.\ntests/types/display-container-child-index-negative.ts(15,25): error TS2345: Argument of type 'string' is not assignable to parameter of type 'DisplayObject'.\ntests/types/display-container-child-index-negative.ts(17,7): error TS2322: Type 'number' is not assignable to type 'void'.\ntests/types/display-container-child-index-negative.ts(19,7): error TS2322: Type 'number' is not assignable to type 'string'.\ntests/types/display-container-child-index-negative.ts(21,32): error TS2554: Expected 1 arguments, but got 2.\ntests/types/display-container-child-index-negative.ts(23,7): error TS2339: Property 'getChildIndex' does not exist on type 'DisplayObject'.\ntests/types/display-container-child-index-negative.ts(25,6): error TS2584: Cannot find name 'document'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.\ntests/types/display-container-child-index-negative.ts(27,6): error TS2591: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.\n",
+    "observedExecution": {
+      "exitCode": 1,
+      "timeout": false,
+      "startedAtUtc": "2026-10-14T16:38:15.8548243Z",
+      "finishedAtUtc": "2026-10-14T16:38:15.9873105Z",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--project",
+        "tests/types/tsconfig.display-container-child-index-negative.json",
+        "--pretty",
+        "false"
+      ],
+      "stdout": {
+        "bytes": 1907,
+        "sha256": "46e4d7c10f565f5680cfff884c52dcb914f8ea76621e611590911e50855a30c2"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "receiptSHA256": "e8aa592ca1cb74d8cf651e71ceaaf0737a04ebcdecc3446fd9998b57f4803484"
+    },
+    "historicalBoundary": "Original groups retain original raw stdout and tuples. This separate current successor records the genuine later DisplayObject shape."
+  }
 }

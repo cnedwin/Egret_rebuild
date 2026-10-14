@@ -2,6 +2,10 @@
 
 English | [简体中文](ACKNOWLEDGEMENTS.zh-CN.md)
 
+<!-- AO-0.52.0-DRAFT-ACK-BEGIN -->
+Independent 0.52.0 anchor offsets are first-party Apache-2.0 work authored from Egret specifications and familiar display contracts, with original fixtures and English critical comments. AI assisted Source/tests/bilingual preparation; independent Source, saved-result and language/delivery reviews retain separate scopes. Competing-engine implementations were not inputs to this package. The bounded changes add no third-party dependency; existing licenses and notices remain applicable.
+<!-- AO-0.52.0-DRAFT-ACK-END -->
+
 <!-- ADI-0.51.0-DRAFT-ACK-BEGIN -->
 Independent 0.51.0 indexed insertion is first-party Apache-2.0 work authored from Egret specifications and familiar Container/tree/Scope/resource contracts. Original fixtures and critical English comments accompany the implementation. AI assisted source/tests/bilingual preparation; independent Source, saved-result and publication/language reviews retain separate scopes. No competing-engine source is transplanted and no third-party dependency is added. Existing license and notice credits remain applicable. This public text remains a Source draft.
 Current adopted Source identities, accepted code verification and the independently accepted bounded desktop Native successor are recorded in the dated R3 evidence. Public/source/bilingual review and delivery gates remain pending.

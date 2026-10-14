@@ -10,12 +10,24 @@ export function composeDisplayTransform(p: Matrix2D, s: VisualState): Matrix2D {
   const b = sin * s.scaleX;
   const c = -sin * s.scaleY;
   const d = cos * s.scaleY;
-  return {
+  // Keep the original zero-pivot expressions, including signed-zero behavior.
+  if (s.anchorOffsetX === 0 && s.anchorOffsetY === 0) return {
     a: p.a * a + p.c * b,
     b: p.b * a + p.d * b,
     c: p.a * c + p.c * d,
     d: p.b * c + p.d * d,
     tx: p.a * s.x + p.c * s.y + p.tx,
     ty: p.b * s.x + p.d * s.y + p.ty,
+  };
+  // Subtract the transformed local pivot before composing with the parent.
+  const localX = s.x - a * s.anchorOffsetX - c * s.anchorOffsetY;
+  const localY = s.y - b * s.anchorOffsetX - d * s.anchorOffsetY;
+  return {
+    a: p.a * a + p.c * b,
+    b: p.b * a + p.d * b,
+    c: p.a * c + p.c * d,
+    d: p.b * c + p.d * d,
+    tx: p.a * localX + p.c * localY + p.tx,
+    ty: p.b * localX + p.d * localY + p.ty,
   };
 }

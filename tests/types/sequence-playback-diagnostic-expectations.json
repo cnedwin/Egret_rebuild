@@ -639,5 +639,357 @@
         }
       }
     }
-  ]
+  ],
+  "currentDeclarationSuccessor": {
+    "schemaVersion": 1,
+    "kind": "ANCHOR_INHERITED_BITMAP_CURRENT_NEGATIVE_DIAGNOSTIC_SUCCESSOR",
+    "status": "SAVED_GENUINE_CURRENT_COMPILER_OBSERVATION_NEW_GATE_NOT_RUN",
+    "lane": "negative",
+    "expectedExit": 1,
+    "sourcePins": [
+      {
+        "path": "packages/runtime/src/DisplayObject.ts",
+        "bytes": 5566,
+        "sha256": "e50f33d0d107ffa9176854ad08f8e153ca6991af1604adf3affd6497d7d156b3"
+      },
+      {
+        "path": "packages/runtime/dist/DisplayObject.d.ts",
+        "bytes": 2555,
+        "sha256": "508cab574f1552cbfd3af464173b03fdb83f7ec774872bc658bca6a3ceb3c732"
+      }
+    ],
+    "fixture": {
+      "path": "tests/types/sequence-playback-negative.ts",
+      "bytes": 4732,
+      "sha256": "de7611109f76afd2ac6b954a69c4c1aa15fa4a1857b46d81ae1489e5da183e9b"
+    },
+    "config": {
+      "path": "tests/types/tsconfig.sequence-playback-negative.json",
+      "bytes": 562,
+      "sha256": "9fdc2c38c3eca3d4fb65a4ae632c79011ae7bd26ef954d96e8929d9831227b86"
+    },
+    "cases": [
+      {
+        "name": "SEQP-N01",
+        "markerLine": 9,
+        "tuple": [
+          "tests/types/sequence-playback-negative.ts",
+          10,
+          11,
+          2540,
+          "Cannot assign to 'mode' because it is a read-only property."
+        ]
+      },
+      {
+        "name": "SEQP-N02",
+        "markerLine": 14,
+        "tuple": [
+          "tests/types/sequence-playback-negative.ts",
+          15,
+          10,
+          2540,
+          "Cannot assign to 'state' because it is a read-only property."
+        ]
+      },
+      {
+        "name": "SEQP-N03",
+        "markerLine": 19,
+        "tuple": [
+          "tests/types/sequence-playback-negative.ts",
+          20,
+          10,
+          2540,
+          "Cannot assign to 'isDisposed' because it is a read-only property."
+        ]
+      },
+      {
+        "name": "SEQP-N04",
+        "markerLine": 24,
+        "tuple": [
+          "tests/types/sequence-playback-negative.ts",
+          25,
+          10,
+          2540,
+          "Cannot assign to 'elapsedSeconds' because it is a read-only property."
+        ]
+      },
+      {
+        "name": "SEQP-N05",
+        "markerLine": 29,
+        "tuple": [
+          "tests/types/sequence-playback-negative.ts",
+          30,
+          10,
+          2540,
+          "Cannot assign to 'lastSample' because it is a read-only property."
+        ]
+      },
+      {
+        "name": "SEQP-N06",
+        "markerLine": 34,
+        "tuple": [
+          "tests/types/sequence-playback-negative.ts",
+          35,
+          10,
+          2540,
+          "Cannot assign to 'frameIndex' because it is a read-only property."
+        ]
+      },
+      {
+        "name": "SEQP-N07",
+        "markerLine": 39,
+        "tuple": [
+          "tests/types/sequence-playback-negative.ts",
+          40,
+          10,
+          2540,
+          "Cannot assign to 'region' because it is a read-only property."
+        ]
+      },
+      {
+        "name": "SEQP-N08",
+        "markerLine": 44,
+        "tuple": [
+          "tests/types/sequence-playback-negative.ts",
+          45,
+          17,
+          2540,
+          "Cannot assign to 'x' because it is a read-only property."
+        ]
+      },
+      {
+        "name": "SEQP-N09",
+        "markerLine": 49,
+        "tuple": [
+          "tests/types/sequence-playback-negative.ts",
+          50,
+          9,
+          2322,
+          "Type 'SequenceSample | undefined' is not assignable to type 'SequenceSample'.\n  Type 'undefined' is not assignable to type 'SequenceSample'."
+        ]
+      },
+      {
+        "name": "SEQP-N10",
+        "markerLine": 55,
+        "tuple": [
+          "tests/types/sequence-playback-negative.ts",
+          56,
+          9,
+          2322,
+          "Type '\"disposed\"' is not assignable to type 'SequencePlaybackState'."
+        ]
+      },
+      {
+        "name": "SEQP-N11",
+        "markerLine": 61,
+        "tuple": [
+          "tests/types/sequence-playback-negative.ts",
+          62,
+          46,
+          2322,
+          "Type '\"ping-pong\"' is not assignable to type 'SequencePlaybackMode'."
+        ]
+      },
+      {
+        "name": "SEQP-N12",
+        "markerLine": 67,
+        "tuple": [
+          "tests/types/sequence-playback-negative.ts",
+          68,
+          9,
+          2375,
+          "Type '{ mode: undefined; }' is not assignable to type 'SequencePlaybackOptions' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.\n  Types of property 'mode' are incompatible.\n    Type 'undefined' is not assignable to type 'SequencePlaybackMode'."
+        ]
+      },
+      {
+        "name": "SEQP-N13",
+        "markerLine": 73,
+        "tuple": [
+          "tests/types/sequence-playback-negative.ts",
+          74,
+          54,
+          2345,
+          "Argument of type 'null' is not assignable to parameter of type 'SequencePlaybackOptions | undefined'."
+        ]
+      },
+      {
+        "name": "SEQP-N14",
+        "markerLine": 78,
+        "tuple": [
+          "tests/types/sequence-playback-negative.ts",
+          79,
+          54,
+          2559,
+          "Type '\"loop\"' has no properties in common with type 'SequencePlaybackOptions'."
+        ]
+      },
+      {
+        "name": "SEQP-N15",
+        "markerLine": 83,
+        "tuple": [
+          "tests/types/sequence-playback-negative.ts",
+          84,
+          33,
+          2739,
+          "Type 'Bitmap' is missing the following properties from type 'Scope': #private, signal, state, use"
+        ]
+      },
+      {
+        "name": "SEQP-N16",
+        "markerLine": 88,
+        "tuple": [
+          "tests/types/sequence-playback-negative.ts",
+          89,
+          40,
+          2740,
+          "Type 'SequenceClip' is missing the following properties from type 'Bitmap': on, candidates, dispatchEvent, clearListeners, and 27 more."
+        ]
+      },
+      {
+        "name": "SEQP-N17",
+        "markerLine": 93,
+        "tuple": [
+          "tests/types/sequence-playback-negative.ts",
+          94,
+          48,
+          2739,
+          "Type 'Bitmap' is missing the following properties from type 'SequenceClip': atlasWidth, atlasHeight, frameCount, durationSeconds"
+        ]
+      },
+      {
+        "name": "SEQP-N18",
+        "markerLine": 98,
+        "tuple": [
+          "tests/types/sequence-playback-negative.ts",
+          99,
+          33,
+          2345,
+          "Argument of type 'undefined' is not assignable to parameter of type 'Scope'."
+        ]
+      },
+      {
+        "name": "SEQP-N19",
+        "markerLine": 103,
+        "tuple": [
+          "tests/types/sequence-playback-negative.ts",
+          104,
+          40,
+          2345,
+          "Argument of type 'undefined' is not assignable to parameter of type 'Bitmap'."
+        ]
+      },
+      {
+        "name": "SEQP-N20",
+        "markerLine": 108,
+        "tuple": [
+          "tests/types/sequence-playback-negative.ts",
+          109,
+          48,
+          2345,
+          "Argument of type 'undefined' is not assignable to parameter of type 'SequenceClip'."
+        ]
+      },
+      {
+        "name": "SEQP-N21",
+        "markerLine": 113,
+        "tuple": [
+          "tests/types/sequence-playback-negative.ts",
+          114,
+          10,
+          2554,
+          "Expected 3-4 arguments, but got 2."
+        ]
+      },
+      {
+        "name": "SEQP-N22",
+        "markerLine": 118,
+        "tuple": [
+          "tests/types/sequence-playback-negative.ts",
+          119,
+          16,
+          2554,
+          "Expected 0 arguments, but got 1."
+        ]
+      },
+      {
+        "name": "SEQP-N23",
+        "markerLine": 123,
+        "tuple": [
+          "tests/types/sequence-playback-negative.ts",
+          124,
+          16,
+          2554,
+          "Expected 0 arguments, but got 1."
+        ]
+      },
+      {
+        "name": "SEQP-N24",
+        "markerLine": 128,
+        "tuple": [
+          "tests/types/sequence-playback-negative.ts",
+          129,
+          9,
+          2322,
+          "Type 'void' is not assignable to type 'number'."
+        ]
+      },
+      {
+        "name": "SEQP-N25",
+        "markerLine": 134,
+        "tuple": [
+          "tests/types/sequence-playback-negative.ts",
+          135,
+          9,
+          2322,
+          "Type 'void' is not assignable to type 'Promise<void>'."
+        ]
+      },
+      {
+        "name": "SEQP-N26",
+        "markerLine": 145,
+        "tuple": [
+          "tests/types/sequence-playback-negative.ts",
+          146,
+          9,
+          2741,
+          "Property '[sequencePlaybackBrand]' is missing in type '{ state: \"idle\"; isDisposed: boolean; elapsedSeconds: number; lastSample: undefined; start(): void; pause(): void; resume(): void; stop(): void; dispose(): void; }' but required in type 'SequencePlayback'."
+        ]
+      },
+      {
+        "name": "SEQP-N27",
+        "markerLine": 151,
+        "tuple": [
+          "tests/types/sequence-playback-negative.ts",
+          152,
+          15,
+          2339,
+          "Property 'player' does not exist on type 'SequencePlayback'."
+        ]
+      }
+    ],
+    "originalStdout": "tests/types/sequence-playback-negative.ts(10,11): error TS2540: Cannot assign to 'mode' because it is a read-only property.\ntests/types/sequence-playback-negative.ts(15,10): error TS2540: Cannot assign to 'state' because it is a read-only property.\ntests/types/sequence-playback-negative.ts(20,10): error TS2540: Cannot assign to 'isDisposed' because it is a read-only property.\ntests/types/sequence-playback-negative.ts(25,10): error TS2540: Cannot assign to 'elapsedSeconds' because it is a read-only property.\ntests/types/sequence-playback-negative.ts(30,10): error TS2540: Cannot assign to 'lastSample' because it is a read-only property.\ntests/types/sequence-playback-negative.ts(35,10): error TS2540: Cannot assign to 'frameIndex' because it is a read-only property.\ntests/types/sequence-playback-negative.ts(40,10): error TS2540: Cannot assign to 'region' because it is a read-only property.\ntests/types/sequence-playback-negative.ts(45,17): error TS2540: Cannot assign to 'x' because it is a read-only property.\ntests/types/sequence-playback-negative.ts(50,9): error TS2322: Type 'SequenceSample | undefined' is not assignable to type 'SequenceSample'.\n  Type 'undefined' is not assignable to type 'SequenceSample'.\ntests/types/sequence-playback-negative.ts(56,9): error TS2322: Type '\"disposed\"' is not assignable to type 'SequencePlaybackState'.\ntests/types/sequence-playback-negative.ts(62,46): error TS2322: Type '\"ping-pong\"' is not assignable to type 'SequencePlaybackMode'.\ntests/types/sequence-playback-negative.ts(68,9): error TS2375: Type '{ mode: undefined; }' is not assignable to type 'SequencePlaybackOptions' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.\n  Types of property 'mode' are incompatible.\n    Type 'undefined' is not assignable to type 'SequencePlaybackMode'.\ntests/types/sequence-playback-negative.ts(74,54): error TS2345: Argument of type 'null' is not assignable to parameter of type 'SequencePlaybackOptions | undefined'.\ntests/types/sequence-playback-negative.ts(79,54): error TS2559: Type '\"loop\"' has no properties in common with type 'SequencePlaybackOptions'.\ntests/types/sequence-playback-negative.ts(84,33): error TS2739: Type 'Bitmap' is missing the following properties from type 'Scope': #private, signal, state, use\ntests/types/sequence-playback-negative.ts(89,40): error TS2740: Type 'SequenceClip' is missing the following properties from type 'Bitmap': on, candidates, dispatchEvent, clearListeners, and 27 more.\ntests/types/sequence-playback-negative.ts(94,48): error TS2739: Type 'Bitmap' is missing the following properties from type 'SequenceClip': atlasWidth, atlasHeight, frameCount, durationSeconds\ntests/types/sequence-playback-negative.ts(99,33): error TS2345: Argument of type 'undefined' is not assignable to parameter of type 'Scope'.\ntests/types/sequence-playback-negative.ts(104,40): error TS2345: Argument of type 'undefined' is not assignable to parameter of type 'Bitmap'.\ntests/types/sequence-playback-negative.ts(109,48): error TS2345: Argument of type 'undefined' is not assignable to parameter of type 'SequenceClip'.\ntests/types/sequence-playback-negative.ts(114,10): error TS2554: Expected 3-4 arguments, but got 2.\ntests/types/sequence-playback-negative.ts(119,16): error TS2554: Expected 0 arguments, but got 1.\ntests/types/sequence-playback-negative.ts(124,16): error TS2554: Expected 0 arguments, but got 1.\ntests/types/sequence-playback-negative.ts(129,9): error TS2322: Type 'void' is not assignable to type 'number'.\ntests/types/sequence-playback-negative.ts(135,9): error TS2322: Type 'void' is not assignable to type 'Promise<void>'.\ntests/types/sequence-playback-negative.ts(146,9): error TS2741: Property '[sequencePlaybackBrand]' is missing in type '{ state: \"idle\"; isDisposed: boolean; elapsedSeconds: number; lastSample: undefined; start(): void; pause(): void; resume(): void; stop(): void; dispose(): void; }' but required in type 'SequencePlayback'.\ntests/types/sequence-playback-negative.ts(152,15): error TS2339: Property 'player' does not exist on type 'SequencePlayback'.\n",
+    "observedExecution": {
+      "exitCode": 1,
+      "timeout": false,
+      "startedAtUtc": "2026-10-14T16:58:37.7360720Z",
+      "finishedAtUtc": "2026-10-14T16:58:37.8363663Z",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--project",
+        "tests/types/tsconfig.sequence-playback-negative.json",
+        "--pretty",
+        "false"
+      ],
+      "stdout": {
+        "bytes": 4133,
+        "sha256": "6c19f988695b1e37c5e756c79596da4f60ad0ecb5cba90d2a619260ac9a85e86"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "receiptSHA256": "90cac61810b3e1c3641835fea219c06b61a5ce162c366740d440f64259718367"
+    },
+    "boundary": "Current original unsuppressed complete vector after inherited anchor scalars. All historical groups/compiler/config/fixture pins and savedActual remain unchanged. This successor does not claim execution or acceptance of the revised reusable gate."
+  }
 }

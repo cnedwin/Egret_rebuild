@@ -2,6 +2,18 @@
 
 English | [简体中文](../Cns/CHANGELOG.md)
 
+<!-- AO-0.52.0-DRAFT-BEGIN -->
+## Engineering preview 0.52.0 — authored display pivots
+
+**S106 / V057 · 2026-10-15.** Inherited `anchorOffsetX` and `anchorOffsetY` keep an element's authored pivot at its position during scale/rotation. Coordinates, receiver-local bounds, clipping, picking and captures share the selected contract; zero offsets preserve original matrix bytes.
+
+Independent current code acceptance covers Core 3131/3131 and retained Spine Source 160/160. Independently accepted desktop opaque Canvas/WebGPU execution covers 10 main readbacks and 23040 channels at tolerance 0, with a separate Canvas control credited 0 main cases.
+
+Read the [contract](docs/display-anchor-offsets-contract.md), [evidence](docs/display-anchor-offsets-evidence.md) and [remaining plan](docs/display-anchor-offsets-implementation-plan.md). Public/source/bilingual review, normal prepush, mandatory hooks and new 0.52 delivery remain PENDING at this cutoff. Full Spine R020/V020, migration R008/V006, complete EUI/layout, advanced 3D, AI, fonts/devices and performance remain OPEN or unverified.
+
+The dated preceding delivery is [PR #39](https://github.com/cnedwin/Egret_rebuild/pull/39), Main `0afc8020d30bf4f30a982c671a905bf6786293c4`, tree `43cea3da992cdfaa100857060f52ccea4284a834`. Original 0.51 public-PENDING cutoffs remain history; remote CI PASS is not claimed.
+<!-- AO-0.52.0-DRAFT-END -->
+
 <!-- ADI-0.51.0-DRAFT-BEGIN -->
 ## Engineering preview 0.51.0 — indexed child insertion · Source draft
 

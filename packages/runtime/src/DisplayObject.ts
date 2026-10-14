@@ -5,7 +5,7 @@ import type { BoundsQueryOptions } from './displayBounds.js';
 import { queryDisplayPoint } from './displayCoordinates.js';
 import type { CoordinateQueryOptions } from './displayCoordinates.js';
 import { EgretError } from './EgretError.js';
-import { assertVisualMutable, copyRect, finite, unit, registerVisual, visualOf } from './displayVisualState.js';
+import { assertVisualMutable, copyRect, finite, unit, registerVisual, visualOf, readAnchorOffset, writeAnchorOffset } from './displayVisualState.js';
 import { EventDispatcher } from "./EventDispatcher.js";
 import { ASSERT_ATTACHABLE, ASSERT_BINDABLE, OWNERSHIP_CHILDREN } from "./ownership.js";
 import type { DisplayObjectContainer } from "./DisplayObjectContainer.js";
@@ -25,6 +25,13 @@ export class DisplayObject extends EventDispatcher {
   public set x(value:number) { assertVisualMutable(this); if(!finite(value)) throw new EgretError('DISPLAY_VALUE_INVALID'); visualOf(this).x=value; }
   public get y():number { return visualOf(this).y; }
   public set y(value:number) { assertVisualMutable(this); if(!finite(value)) throw new EgretError('DISPLAY_VALUE_INVALID'); visualOf(this).y=value; }
+  /** Local pivot in logical pixels; finite values are stored without coercion. */
+  public get anchorOffsetX(): number { return readAnchorOffset(this, "anchorOffsetX"); }
+  public set anchorOffsetX(value: number) { writeAnchorOffset(this, "anchorOffsetX", value); }
+  /** The pivot remains readable after disposal; writes obey node/Engine life. */
+  public get anchorOffsetY(): number { return readAnchorOffset(this, "anchorOffsetY"); }
+  public set anchorOffsetY(value: number) { writeAnchorOffset(this, "anchorOffsetY", value); }
+
   public get scaleX():number { return visualOf(this).scaleX; }
   public set scaleX(value:number) { assertVisualMutable(this); if(!finite(value)) throw new EgretError('DISPLAY_VALUE_INVALID'); visualOf(this).scaleX=value; }
   public get scaleY():number { return visualOf(this).scaleY; }
@@ -71,5 +78,3 @@ export class DisplayObject extends EventDispatcher {
     this.clearListeners();
   }
 }
-
-

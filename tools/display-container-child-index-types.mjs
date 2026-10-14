@@ -158,8 +158,19 @@ if (inventory.schemaVersion !== 1 || inventory.kind !== 'DISPLAY_CONTAINER_CHILD
   || !equal(inventory.tupleFormat, ['file','line','column','code','message'])
   || !equal(inventory.inputPins?.map(row => row.path), expectedInputs)
   || !equal(inventory.nativeLibraryPins?.map(row => row.path), expectedNativeLibraries)) fail('original observations or complete current inputs are malformed');
+// Keep the original closed-key inventory and bind only the observed current row.
+const currentInputSuccessor = inventory.currentInputIdentitySuccessor;
+const historicalDeclaration = {"path":"packages/runtime/dist/DisplayObject.d.ts","bytes":2244,"sha256":"1e93468b7bfe10c4a953f2d1ed0cae350f32e1292d77b28007a2f272381d394d"};
+const currentDeclarationRows = [{"path":"packages/runtime/dist/DisplayObject.d.ts","bytes":2555,"sha256":"508cab574f1552cbfd3af464173b03fdb83f7ec774872bc658bca6a3ceb3c732"}];
+if (currentInputSuccessor?.kind !== 'ANCHOR_CURRENT_DECLARATION_IDENTITY_SUCCESSOR'
+  || currentInputSuccessor.productSourceReviewSHA256 !== '10163fc564f735fe5ef51163fd36856afec7a19389440208bc0d8768810233c7'
+  || !equal(currentInputSuccessor.rows, currentDeclarationRows)
+  || !equal(inventory.inputPins.find(row=>row.path===historicalDeclaration.path), historicalDeclaration))
+  fail('current declaration input successor differs');
 for (const row of inventory.inputPins) {
-  if (logicalPath(row.path) !== row.path || !equal(fingerprintFile(root, row.path), row)) fail('changed complete raw input: ' + row.path);
+  const effective = currentDeclarationRows.find(current=>current.path===row.path) ?? row;
+  if (logicalPath(row.path) !== row.path || !equal(fingerprintFile(root, row.path), effective))
+    fail('changed complete raw input: ' + row.path);
 }
 const wrapperOwner = realpathSync(path.join(root, 'node_modules/typescript'));
 const wrapperPackage = JSON.parse(readFileSync(path.join(wrapperOwner, 'package.json'), 'utf8'));
@@ -220,6 +231,26 @@ for (const group of inventory.groups) {
   const originalRaw = Buffer.from(group.originalStdout, 'utf8');
   if (originalRaw.length !== expectedRaw.bytes || hash(originalRaw) !== expectedRaw.sha256) fail('original unsuppressed stdout bytes differ');
   if (!Array.isArray(group.tuples) || !equal(tuplesFrom(originalRaw), group.tuples)) fail('frozen tuples differ from their original raw output');
+  // Validate original history above before the actual current declaration successor.
+  let currentExpectedTuples = group.tuples;
+  if (group.lane === 'negative') {
+    const successor = inventory.currentDeclarationSuccessor;
+    const expectedCurrentRaw = {"bytes":1907,"sha256":"46e4d7c10f565f5680cfff884c52dcb914f8ea76621e611590911e50855a30c2"};
+    const currentOriginal = successor?.observedExecution;
+    if (successor?.schemaVersion !== 1 || successor.kind !== 'ANCHOR_CURRENT_DECLARATION_DIAGNOSTIC_SUCCESSOR'
+      || successor.status !== 'OBSERVED_FROZEN_TS7_DIAGNOSTICS' || successor.lane !== 'negative'
+      || successor.expectedExit !== 1 || !currentOriginal || currentOriginal.exitCode !== 1 || currentOriginal.timeout !== false
+      || !equal(currentOriginal.stdout, expectedCurrentRaw) || currentOriginal.stderr?.bytes !== 0
+      || currentOriginal.stderr.sha256 !== 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+      || currentOriginal.receiptSHA256 !== 'e8aa592ca1cb74d8cf651e71ceaaf0737a04ebcdecc3446fd9998b57f4803484'
+      || !equal(successor.declarationPin, fingerprintFile(root, 'packages/runtime/dist/DisplayObject.d.ts'))
+      || typeof successor.originalStdout !== 'string') fail('current declaration successor provenance differs');
+    const currentRaw = Buffer.from(successor.originalStdout, 'utf8');
+    if (currentRaw.length !== expectedCurrentRaw.bytes || hash(currentRaw) !== expectedCurrentRaw.sha256
+      || !Array.isArray(successor.tuples) || !equal(tuplesFrom(currentRaw), successor.tuples))
+      fail('current complete unsuppressed successor output differs');
+    currentExpectedTuples = successor.tuples;
+  }
   const source = readFileSync(path.join(root, file), 'utf8');
   if (/@ts-(?:expect-error|ignore|nocheck)\b/.test(source)) fail('suppressed source diagnostics');
   const cases = source.split('\n').flatMap((line,index) => {
@@ -234,7 +265,7 @@ for (const group of inventory.groups) {
     || !Buffer.isBuffer(result.stderr) || result.stderr.length !== 0) fail('compiler setup/exit/stderr failure');
   const tuples = tuplesFrom(result.stdout);
   if (tuples.some(tuple=>tuple[0]!==file || tuple[3]===2307 || /[A-Za-z]:[\\/]|file:\/\//.test(tuple[4]))
-    || !equal(tuples,group.tuples) || tuples.length !== cases.length
+    || !equal(tuples,currentExpectedTuples) || tuples.length !== cases.length
     || !equal(tuples.map(tuple=>tuple[1]),cases.map(row=>row.line))) fail('missing, extra, unrelated or changed complete diagnostic');
   console.log('DisplayObjectContainer.getChildIndex ' + group.lane + ' exact strict diagnostics: ' + JSON.stringify(tuples));
 }
