@@ -961,3 +961,8 @@ await import('./nine-slice-bitmap-types.mjs');
 // Run both mandatory public consumer lanes after every retained strict type owner.
 await import('./display-container-remove-children-types.mjs');
 // DCA_TYPES_END
+
+// CGI_TYPES_BEGIN
+// Run the direct-child query consumers only after every retained strict type lane.
+await import('./display-container-child-index-types.mjs');
+// CGI_TYPES_END

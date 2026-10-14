@@ -12,6 +12,32 @@ Years later, as times change and technology advances, many developers continue t
 
 多年以后，时代变迁，技术革新，依然有很多开发者在鼓励我们。我希望借助 AI 和社区的力量，重建这个游戏引擎。
 
+<!-- CGI-0.50.0-BEGIN -->
+## Engineering preview 0.50.0 — query a direct child’s current index
+
+**S104 / V055.** DisplayObjectContainer.getChildIndex(child: DisplayObject): number is a read-only query of the exact current direct child. It scans the authoritative private order in O(n), with no list snapshot/cache, tree mutation, owner transfer, resource operation or display callback. Sprite/Stage inherit it; root values/types, subpaths, dependencies and protocol are unchanged.
+
+Independent acceptance covers the two-file product/four JS-DTS emissions, build exit 0, focused CPU 128/128 (six new and 122 retained) and two overlapping original strict lanes with 0/12 diagnostics and twelve complete unsuppressed tuples. Genuine old operations/cleanup preceded the named missing-member RED. The earlier old-build 122-pass/6-fail attempt remains historical and is not a product defect. Native source is accepted. All nine current code phases later completed successfully (Core 3091/3091 and retained Spine Source checks 160/160), including current strict CGI 0/12 and retained DCA 0/10; independent saved-result review has accepted this scope. Native Canvas/WebGPU is separately accepted: two cases, six full 24×24 readbacks/four captures/two same-live-Engine replays, 13824 channels at zero tolerance. Public Source/bilingual review and prepush/hook/delivery remain pending.
+
+Read the [contract](knowledge-base/en/docs/container-child-index-contract.md), [evidence](knowledge-base/en/docs/container-child-index-evidence.md) / [implementation plan](knowledge-base/en/docs/container-child-index-implementation-plan.md).
+
+Dated 2026-10-14 successor: [PR #37](https://github.com/cnedwin/Egret_rebuild/pull/37) delivered bounded 0.49.0 batch detachment to Main `01e8e8063c2f2234b66486beba8bc9529f1f77b0`, tree `3585d370cc637edde2a94856909daa6bc74960d4`, from feature `c95bde158a0ec941ff9e494da5b1567465ff2d8b`. Original 0.49 curation PENDING cutoffs/failures remain historical; zero remote statuses/check runs with combined pending are not CI PASS.
+
+Full Spine R020/V020, migration R008/V006, EUI/layout, advanced 3D, AI interfaces and phone/platform/performance acceptance remain OPEN or unverified. Packages stay private 0.0.0, host protocol 1.0.
+
+## 工程预览 0.50.0 — 查询直接子节点当前索引
+
+**S104 / V055.** DisplayObjectContainer.getChildIndex(child: DisplayObject): number 只读查询精确当前直接子节点，以 O(n) 扫描私有真实顺序，不建立列表快照／缓存，不修改树、转移 owner、操作资源或调用显示回调。Sprite／Stage 继承，根值／类型、子入口、依赖及协议不变。
+
+独立接受两文件产品／四项 JS-DTS、构建 exit 0、专项 CPU 128/128（新增六项、保留 122 项），及两组重叠原始严格类型 0/12 诊断、十二个完整未抑制元组。具名缺成员 RED 前真实旧操作／清理已完成；此前旧 build 的 122 通过／6 失败保留为历史，不是产品缺陷。原生源码已接受；之后全部九个当前代码阶段实际成功完成（Core 3091/3091、保留 Spine 源码检查 160/160），包含当前 CGI 0/12 与保留 DCA 0/10 严格类型，独立保存结果评审已接受该范围；Native Canvas／WebGPU 另行接受两个后端例、六份完整 24×24 读回／四次捕获／两次同存活 Engine 重放，13824 通道零容差。公开源码／双语审阅及 prepush／hook／交付仍待完成。
+
+阅读[契约](knowledge-base/Cns/docs/容器子节点索引契约.md), [evidence](knowledge-base/Cns/docs/容器子节点索引证据.md) / [implementation plan](knowledge-base/Cns/docs/容器子节点索引工程计划.md).
+
+2026-10-14 有日期后继：[PR #37](https://github.com/cnedwin/Egret_rebuild/pull/37) 将有限 0.49.0 批量分离交付至 Main `01e8e8063c2f2234b66486beba8bc9529f1f77b0`，tree `3585d370cc637edde2a94856909daa6bc74960d4`，功能提交 `c95bde158a0ec941ff9e494da5b1567465ff2d8b`；原 0.49 整理 PENDING 截止点／失败保留为历史，远端状态／check run 为零、汇总 pending 不等于 CI PASS。
+
+完整 Spine R020/V020、迁移 R008/V006、EUI／布局、高级 3D、AI 接口及手机／平台／性能接受保持 OPEN 或未验证；package 私有 0.0.0、宿主协议 1.0。
+<!-- CGI-0.50.0-END -->
+
 <!-- DCA-0.49.0-BEGIN -->
 ## Engineering preview 0.49.0 — detach all direct display children
 

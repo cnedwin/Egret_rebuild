@@ -2,6 +2,20 @@
 
 English | [简体中文](../Cns/CHANGELOG.md)
 
+<!-- CGI-0.50.0-BEGIN -->
+## Engineering preview 0.50.0 — query a direct child’s current index
+
+**S104 / V055.** DisplayObjectContainer.getChildIndex(child: DisplayObject): number is a read-only query of the exact current direct child. It scans the authoritative private order in O(n), with no list snapshot/cache, tree mutation, owner transfer, resource operation or display callback. Sprite/Stage inherit it; root values/types, subpaths, dependencies and protocol are unchanged.
+
+Independent acceptance covers the two-file product/four JS-DTS emissions, build exit 0, focused CPU 128/128 (six new and 122 retained) and two overlapping original strict lanes with 0/12 diagnostics and twelve complete unsuppressed tuples. Genuine old operations/cleanup preceded the named missing-member RED. The earlier old-build 122-pass/6-fail attempt remains historical and is not a product defect. Native source is accepted. All nine current code phases later completed successfully (Core 3091/3091 and retained Spine Source checks 160/160), including current strict CGI 0/12 and retained DCA 0/10; independent saved-result review has accepted this scope. Native Canvas/WebGPU is separately accepted: two cases, six full 24×24 readbacks/four captures/two same-live-Engine replays, 13824 channels at zero tolerance. Public Source/bilingual review and prepush/hook/delivery remain pending.
+
+Read the [contract](docs/container-child-index-contract.md), [evidence](docs/container-child-index-evidence.md) / [implementation plan](docs/container-child-index-implementation-plan.md).
+
+Dated 2026-10-14 successor: [PR #37](https://github.com/cnedwin/Egret_rebuild/pull/37) delivered bounded 0.49.0 batch detachment to Main `01e8e8063c2f2234b66486beba8bc9529f1f77b0`, tree `3585d370cc637edde2a94856909daa6bc74960d4`, from feature `c95bde158a0ec941ff9e494da5b1567465ff2d8b`. Original 0.49 curation PENDING cutoffs/failures remain historical; zero remote statuses/check runs with combined pending are not CI PASS.
+
+Full Spine R020/V020, migration R008/V006, EUI/layout, advanced 3D, AI interfaces and phone/platform/performance acceptance remain OPEN or unverified. Packages stay private 0.0.0, host protocol 1.0.
+<!-- CGI-0.50.0-END -->
+
 <!-- DCA-0.49.0-BEGIN -->
 ## Engineering preview 0.49.0 — detach all direct display children
 

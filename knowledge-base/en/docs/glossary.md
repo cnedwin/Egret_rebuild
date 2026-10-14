@@ -21,3 +21,4 @@ English | [简体中文](../../Cns/docs/术语表.md)
 | ADR | A versioned technical decision and rationale, including status, alternatives, and verification basis |
 | Skills / MCP | Task knowledge and tool-access methods; engine tools own actual project semantics and verification |
 | Public candidate | Local documentation curated for future public collaboration; public release and applicable authorization confirmation are not yet complete |
+| Direct-child index | Current zero-based position of a genuine direct child; a read-only O(n) query, not a cached position or descendant search |
