@@ -2,6 +2,20 @@
 
 English | [简体中文](../Cns/README.md)
 
+<!-- ADI-0.51.0-DRAFT-BEGIN -->
+## Engineering preview 0.51.0 — indexed child insertion · Source draft
+
+**S105 / V056 · 2026-10-14.** `DisplayObjectContainer.addChildAt<T extends DisplayObject>(child: T, index: number): T` places an exact object at a layer in one operation. Integer [0,n] includes -0 and append at n. Same-parent index is the final position; n aliases the last position. Current-source reparent preserves other siblings, the subtree and cleanup owners. Sprite/Stage inherit the member; Stage cannot become a child.
+
+**R3 current Source draft · accepted code successor, 2026-10-14.** The independently reviewed complete run finished at 14:05:03 UTC: all 9 code phases completed, Core 3113/3113 and Spine source checks 160/160, with zero failures, cancellations or skips. Original standalone strict consumers and the complete types phase retain ADI 0/10, CGI 0/12 and DCA 0/10 complete unsuppressed diagnostic vectors. The accepted Actual review is 262199 bytes / 5b4516bd58e875d25559b8426f4ed8ee6e9d7268afd3f40c55680f070d1863df. This accepts current local code verification only; full Spine product R020/V020 stays OPEN.
+
+The authenticated current union contains 25 distinct adopted Source files, including reviewed native support and retained readers. Current product identities bind 3 Source files and 6 JS/DTS outputs; the repaired 2 Source files and 2 JS emissions replace their earlier identities, while all 3 declarations retain their earlier accepted bytes. **R3 Native successor · 2026-10-14.** The independently accepted desktop opaque Canvas/WebGPU run finished at 14:35:58 UTC. Main execution completed 10 submissions and 10 full raw RGBA readbacks, covering 5760 pixels and 23040 channels at tolerance 0 with no mismatches. There were 8 new captures and 2 saved replays. N5 reused the exact saved N1 frame on the same live Engine while the current N4 tree remained mutated. The fresh Canvas C1 control used 2 additional submissions and 2 readbacks, with main credit 0; its deliberate wrong index produced the expected 64 mismatched pixels and 128 mismatched channels. The accepted Native review is 59975 bytes / 334c304b4ad1f2b66e6beddb8f40f89b8b08b11d7b9cd0d5e41b95c5a057c370. Saved evidence contains raw RGBA files; no PNG files were saved. Scope/Engine/host/context/browser/server retirement completed safely, with no primary or cleanup error and no pending tickets. The collector recorded stability for 175 admitted runtime pins; the reviewer separately authenticated the current 175 pins. That later observation does not invent per-file retrospective before/after arrays. Public/source/bilingual review, normal full prepush, mandatory hooks and new 0.51 Git delivery remain PENDING. Physical GPU identity, fonts, phones, performance and complete Spine remain unverified or OPEN; remote CI PASS is not claimed. Read the [contract](docs/container-add-child-at-contract.md), [evidence](docs/container-add-child-at-evidence.md) and [remaining plan](docs/container-add-child-at-implementation-plan.md).
+
+Dated 2026-10-14 preceding-delivery successor: [PR #38](https://github.com/cnedwin/Egret_rebuild/pull/38) delivered bounded 0.50.0 to Main `13200c72dd51d35d12e84c6d1c81dfeaef94af53`, tree `c6f1a791f649c96606fb5e2a1b2a096c2a3f027b`. Original 0.50 public-PENDING cutoffs remain history; the later Root DATA pointer projection adds no independent review or remote CI PASS.
+
+Full Spine R020/V020, migration R008/V006, complete EUI/layout, advanced 3D, AI and phones/platforms/performance remain OPEN or unverified. First-party source follows Egret specifications and familiar APIs, with English critical comments and attributed AI assistance. Packages remain private 0.0.0, protocol 1.0 and dependencies/notices unchanged.
+<!-- ADI-0.51.0-DRAFT-END -->
+
 <!-- CGI-0.50.0-BEGIN -->
 ## Engineering preview 0.50.0 — query a direct child’s current index
 

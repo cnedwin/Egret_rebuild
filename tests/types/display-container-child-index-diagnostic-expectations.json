@@ -237,8 +237,8 @@
     },
     {
       "path": "packages/runtime/dist/DisplayObjectContainer.d.ts",
-      "bytes": 1237,
-      "sha256": "83e5340de7ffa1da9d367129e87f54e540e353b70b5be13df3a0802fd1e24034"
+      "bytes": 1398,
+      "sha256": "25efac66478e4d27b2499fc8e235df14b7c58b654b9a437c5e38ec9e6683e1a8"
     },
     {
       "path": "packages/runtime/dist/EgretError.d.ts",
@@ -352,8 +352,8 @@
     },
     {
       "path": "packages/runtime/dist/ownership.d.ts",
-      "bytes": 1953,
-      "sha256": "cc7f672f01c6f30d4a84d3b4dbd47ede8207ef4a32abfe7d368561df6d769221"
+      "bytes": 3102,
+      "sha256": "798e0ad10e1a414ef64a18c52cdefac359ae459ae09e2a99e504d5f8e5caf33b"
     },
     {
       "path": "packages/runtime/dist/sequenceClip.d.ts",

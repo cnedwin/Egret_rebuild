@@ -1,8 +1,8 @@
 import { DisplayObject } from "./DisplayObject.js";
 import { registerDisplayHitContainer, readDisplayTouchChildren, writeDisplayTouchChildren } from './displayHitState.js';
 import { EgretError } from "./EgretError.js";
-import { ASSERT_ATTACHABLE, ASSERT_BINDABLE, OWNERSHIP_CHILDREN, commitBinding, engineInSubtree, engineOf, ownerOf, preflightBinding, validateBinding } from "./ownership.js";
-import { assertAttachable, assertContainer, assertLive, assertNoCycle, attachNode, childAtOf, childCountOf, childIndexOf, childrenOf, detachChildren, detachNode, isDisplayNode, isTerminated, parentOf, registerContainer, removeNode, setNodeIndex } from "./displayTreeState.js";
+import { ASSERT_ATTACHABLE, ASSERT_BINDABLE, OWNERSHIP_CHILDREN, commitBinding, engineInSubtree, engineOf, ownerOf, preflightBinding, prepareChildInsertion, publishPreparedChildInsertion, validateBinding } from "./ownership.js";
+import { assertAttachable, assertContainer, assertLive, assertNoCycle, assertChildInsertionIndex, attachNode, childAtOf, childCountOf, childIndexOf, childrenOf, detachChildren, detachNode, isDisplayNode, isTerminated, parentOf, registerContainer, removeNode, setNodeIndex } from "./displayTreeState.js";
 
 // Carries the initiating owner's boundary through unowned intermediate containers.
 const disposalBoundaries = new WeakMap<DisplayObject, { readonly owner: object | undefined }>();
@@ -54,6 +54,36 @@ export class DisplayObjectContainer extends DisplayObject {
     ];
     if (binding !== undefined && finalEngine !== undefined) commitBinding(binding, finalEngine);
     attachNode(this, child);
+    return child;
+  }
+
+
+  /** Insert at an inclusive index; subclass callbacks finish before one private plan. */
+  public addChildAt<T extends DisplayObject>(child: T, index: number): T {
+    // Authenticate and apply this API's fixed refusal order before any display hook.
+    assertContainer(this);
+    const receiverWasBound = engineOf(this) !== undefined;
+    const receiverEngine = engineInSubtree(this);
+    receiverEngine?.assertOpen();
+    assertLive(this);
+    if (!isDisplayNode(child)) throw new EgretError("INVALID_DISPLAY_OBJECT");
+    const engine = receiverEngine ?? engineInSubtree(child);
+    engine?.assertOpen();
+    assertAttachable(child);
+    assertNoCycle(this, child);
+    assertChildInsertionIndex(this, index);
+    this.assertUsable();
+    child[ASSERT_ATTACHABLE]();
+    if (engine !== undefined) {
+      if (receiverWasBound) {
+        engine.assertOpen();
+        this[ASSERT_BINDABLE]();
+      } else preflightBinding(this, engine);
+      preflightBinding(child, engine);
+    }
+    // No earlier tree/list/binding plan survives these callback-capable preflights.
+    const plan = prepareChildInsertion(this, child, index);
+    publishPreparedChildInsertion(plan);
     return child;
   }
 

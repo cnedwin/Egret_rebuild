@@ -12,6 +12,32 @@ Years later, as times change and technology advances, many developers continue t
 
 多年以后，时代变迁，技术革新，依然有很多开发者在鼓励我们。我希望借助 AI 和社区的力量，重建这个游戏引擎。
 
+<!-- ADI-0.51.0-DRAFT-BEGIN -->
+## Engineering preview 0.51.0 — indexed child insertion · Source draft
+
+**S105 / V056 · 2026-10-14.** `DisplayObjectContainer.addChildAt<T extends DisplayObject>(child: T, index: number): T` places an exact object at a layer in one operation. Integer [0,n] includes -0 and append at n. Same-parent index is the final position; n aliases the last position. Current-source reparent preserves other siblings, the subtree and cleanup owners. Sprite/Stage inherit the member; Stage cannot become a child.
+
+**R3 current Source draft · accepted code successor, 2026-10-14.** The independently reviewed complete run finished at 14:05:03 UTC: all 9 code phases completed, Core 3113/3113 and Spine source checks 160/160, with zero failures, cancellations or skips. Original standalone strict consumers and the complete types phase retain ADI 0/10, CGI 0/12 and DCA 0/10 complete unsuppressed diagnostic vectors. The accepted Actual review is 262199 bytes / 5b4516bd58e875d25559b8426f4ed8ee6e9d7268afd3f40c55680f070d1863df. This accepts current local code verification only; full Spine product R020/V020 stays OPEN.
+
+The authenticated current union contains 25 distinct adopted Source files, including reviewed native support and retained readers. Current product identities bind 3 Source files and 6 JS/DTS outputs; the repaired 2 Source files and 2 JS emissions replace their earlier identities, while all 3 declarations retain their earlier accepted bytes. **R3 Native successor · 2026-10-14.** The independently accepted desktop opaque Canvas/WebGPU run finished at 14:35:58 UTC. Main execution completed 10 submissions and 10 full raw RGBA readbacks, covering 5760 pixels and 23040 channels at tolerance 0 with no mismatches. There were 8 new captures and 2 saved replays. N5 reused the exact saved N1 frame on the same live Engine while the current N4 tree remained mutated. The fresh Canvas C1 control used 2 additional submissions and 2 readbacks, with main credit 0; its deliberate wrong index produced the expected 64 mismatched pixels and 128 mismatched channels. The accepted Native review is 59975 bytes / 334c304b4ad1f2b66e6beddb8f40f89b8b08b11d7b9cd0d5e41b95c5a057c370. Saved evidence contains raw RGBA files; no PNG files were saved. Scope/Engine/host/context/browser/server retirement completed safely, with no primary or cleanup error and no pending tickets. The collector recorded stability for 175 admitted runtime pins; the reviewer separately authenticated the current 175 pins. That later observation does not invent per-file retrospective before/after arrays. Public/source/bilingual review, normal full prepush, mandatory hooks and new 0.51 Git delivery remain PENDING. Physical GPU identity, fonts, phones, performance and complete Spine remain unverified or OPEN; remote CI PASS is not claimed. Read the [contract](knowledge-base/en/docs/container-add-child-at-contract.md), [evidence](knowledge-base/en/docs/container-add-child-at-evidence.md) and [remaining plan](knowledge-base/en/docs/container-add-child-at-implementation-plan.md).
+
+Dated 2026-10-14 preceding-delivery successor: [PR #38](https://github.com/cnedwin/Egret_rebuild/pull/38) delivered bounded 0.50.0 to Main `13200c72dd51d35d12e84c6d1c81dfeaef94af53`, tree `c6f1a791f649c96606fb5e2a1b2a096c2a3f027b`. Original 0.50 public-PENDING cutoffs remain history; the later Root DATA pointer projection adds no independent review or remote CI PASS.
+
+Full Spine R020/V020, migration R008/V006, complete EUI/layout, advanced 3D, AI and phones/platforms/performance remain OPEN or unverified. First-party source follows Egret specifications and familiar APIs, with English critical comments and attributed AI assistance. Packages remain private 0.0.0, protocol 1.0 and dependencies/notices unchanged.
+
+## 工程预览 0.51.0 — 按索引插入子节点 · 源码草稿
+
+**S105 / V056 · 2026-10-14。** `DisplayObjectContainer.addChildAt<T extends DisplayObject>(child: T, index: number): T` 一次操作将精确对象放到指定层。整数 [0,n] 包含 -0 和 n 追加；同父 index 表示最终位置，n 是末尾位置别名。按当前来源换父节点保留其他兄弟、子树及清理所有者。Sprite／Stage 继承该成员，Stage 不能成为子节点。
+
+**R3 当前源码草稿 · 已接受的代码验证后继，2026-10-14。** 经独立审阅的完整运行在 14:05:03 UTC 结束：全部 9 项代码阶段完成，Core 3113/3113、Spine 源码检查 160/160，失败、取消、跳过均为零。原始独立严格类型使用方和完整类型阶段保留 ADI 0/10、CGI 0/12、DCA 0/10 完整未抑制诊断向量。已接受的实际结果审阅为 262199 bytes / 5b4516bd58e875d25559b8426f4ed8ee6e9d7268afd3f40c55680f070d1863df。该接受仅覆盖当前本地代码验证；完整 Spine 产品 R020/V020 保持 OPEN。
+
+经认证的当前清单包含 25 个不同的已采用源码文件，其中包括经审阅的 Native 支持和保留的读取器。当前产品身份绑定 3 个源码文件和 6 项 JS/DTS；修复后的 2 个源码文件和 2 项 JS 产物替换旧身份，全部 3 项声明继续保留此前已接受的字节。**R3 Native 后继 · 2026-10-14。** 经独立接受的桌面不透明 Canvas／WebGPU 运行在 14:35:58 UTC 结束。主运行完成 10 次提交、10 份完整原始 RGBA 读回，比较 5760 个像素和 23040 个通道，容差 0，均无差异。实际有 8 次新捕获、2 次保存帧重放。N5 在同一存活 Engine 上使用精确保存的 N1 帧，而当前 N4 树仍保持变更。另行的新鲜 Canvas C1 对照增加 2 次提交和 2 份读回，主运行计入 0；其故意错误索引产生预期的 64 个差异像素和 128 个差异通道。已接受的 Native 审阅为 59975 bytes / 334c304b4ad1f2b66e6beddb8f40f89b8b08b11d7b9cd0d5e41b95c5a057c370。保存的证据为原始 RGBA 文件，没有保存 PNG 文件。Scope／Engine／host／context／browser／server 均完成安全退役，没有主错误、清理错误或待处理 ticket。采集器记录了 175 项已接受 runtime pin 的稳定状态；审阅者另行认证了当前 175 项 pin。该后续观察不虚构逐文件回溯 before／after 数组。公开源码／双语审阅、普通完整 prepush、强制 hook、新 0.51 Git 交付仍为 PENDING。物理 GPU 身份、字体、手机、性能及完整 Spine 仍未验证或 OPEN，不宣称远端 CI PASS。阅读[契约](knowledge-base/Cns/docs/容器按索引插入契约.md)、[证据](knowledge-base/Cns/docs/容器按索引插入证据.md)及[剩余计划](knowledge-base/Cns/docs/容器按索引插入工程计划.md)。
+
+2026-10-14 上一交付有日期后继：[PR #38](https://github.com/cnedwin/Egret_rebuild/pull/38) 将有限 0.50.0 交付到 Main `13200c72dd51d35d12e84c6d1c81dfeaef94af53`、tree `c6f1a791f649c96606fb5e2a1b2a096c2a3f027b`。原 0.50 公开 PENDING 截止点保留为历史；后续 Root DATA 指针投影不增加独立审阅或远端 CI PASS。
+
+完整 Spine R020/V020、迁移 R008/V006、完整 EUI／布局、高级 3D、AI、手机／平台／性能仍为 OPEN 或未验证。第一方源码遵循白鹭规格和熟悉 API，包含关键英文注释并注明 AI 协助；package 保持私有 0.0.0，协议 1.0，依赖／notice 不变。
+<!-- ADI-0.51.0-DRAFT-END -->
+
 <!-- CGI-0.50.0-BEGIN -->
 ## Engineering preview 0.50.0 — query a direct child’s current index
 
