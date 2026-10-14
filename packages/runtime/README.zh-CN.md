@@ -2,6 +2,8 @@
 
 [English](README.md) | 简体中文
 
+工程预览 0.48.0 在 Runtime／Engine 根入口新增 `NineSliceBitmap` 及擦除类型 `NineSliceBitmapOptions`，借用真实 Texture 租约调整固定边框 NS1 内容；正向渲染使用显式纹理 WebGPU 宿主，Canvas mesh 被拒绝。阅读[契约](../../knowledge-base/Cns/docs/九宫格位图契约.md)及[有限证据](../../knowledge-base/Cns/docs/九宫格位图证据.md)。
+
 继承的 `getBounds` 读取权威接收者局部内容，提供类型专用 `BoundsQueryOptions`、显式节点／图元预算及全新冻结结果，见[边界契约](../../knowledge-base/Cns/docs/显示内容边界契约.md)。
 
 继承的显示坐标查询使用真实显示状态、有界祖先／生命周期检查及可选的 `CoordinateQueryOptions`。 阅读[坐标契约](../../knowledge-base/Cns/docs/显示坐标查询契约.md)。

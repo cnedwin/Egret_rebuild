@@ -18336,5 +18336,383 @@
       "bytes": 8516,
       "sha256": "31fedb11b99991c6b60a76018331086e958fc0fec218dd01b09529e08538c566"
     }
+  },
+  "spineCoreManualDeliveryActualSuccessor": {
+    "engineeringPreview": "0.47.0",
+    "status": "ACTUAL_BOUNDED_SPINE_DELIVERED_TO_MAIN",
+    "recordedAtUtc": "2026-10-14T03:39:26.1793766Z",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/35",
+    "featureHead": "29e6f97d1d594efe3a49f9c530b1728a4756fe2c",
+    "mainMergeCommit": "5ae877705d76a470ec942a29cfe0212f069da6fb",
+    "mainTree": "60d224ec1ed6bc0824cd2f93871595809d3c21d5",
+    "actualDeliveryReview": {
+      "bytes": 39667,
+      "sha256": "80b5bdd40d548d59e53ef3ccd0f73f27dd82a62c883ae26910337168956d9bf4",
+      "verdict": "PASS_ACTUAL_REVIEWED_PR_MERGE_AND_EXACT_MAIN_ONLY"
+    },
+    "recordScope": "SPINE_DELIVERY_SEPARATE_FROM_NEXT_NINE_SLICE_BASELINE_ADMISSION",
+    "remoteStatuses": 0,
+    "remoteCheckRuns": 0,
+    "remoteCombinedState": "pending",
+    "remoteCIPassClaim": false,
+    "historicalPendingCutoffsPreserved": true,
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "SDKEntitlement": "unverified",
+    "SDKRedistributionClearance": "unverified"
+  },
+  "nineSliceBitmapWorkPackage": {
+    "engineeringPreview": "0.48.0",
+    "sourceId": "S102",
+    "deliverableId": "V053",
+    "requirementIds": [
+      "R002",
+      "R004",
+      "R012",
+      "R015",
+      "R016",
+      "R019",
+      "R021"
+    ],
+    "implementationOrigin": "Independent first-party fixed-border display leaf reusing Egret NS1/resource/capture specifications; no competing-engine implementation.",
+    "codeLicense": "Apache-2.0",
+    "documentationLicense": "Apache-2.0",
+    "AIContribution": "AI-assisted source/test/document preparation with separate author/reviewer roles and exact saved tool execution; review scope is explicit.",
+    "existingMechanisms": [
+      "NS1 geometry",
+      "Texture live snapshots",
+      "Mesh2D identity and shared capture slot",
+      "AssetLease",
+      "Scope",
+      "owned textured frame",
+      "bounds",
+      "first-party PNG collector explicit mode"
+    ],
+    "newThirdPartyDependency": false,
+    "newShaderOrDecoder": false,
+    "packageVersionChanged": false,
+    "hostProtocolChanged": false,
+    "currentCodePins": [
+      {
+        "path": "packages/runtime/src/NineSliceBitmap.ts",
+        "bytes": 7685,
+        "sha256": "6a30231add832d3a8e08bfc7c4712acfaf0b01ea7ea5949366ff2d50dede94c5"
+      },
+      {
+        "path": "packages/runtime/src/Mesh2D.ts",
+        "bytes": 4808,
+        "sha256": "fe5a67a4687fe1f62102ac7bd1325abbca0062cc4c7ff11a057410cc93b196b0"
+      },
+      {
+        "path": "packages/runtime/src/meshDisplayState.ts",
+        "bytes": 1125,
+        "sha256": "5031089dffd37563c20b65873e4d244addd2d07e3018ce8a89e2c73df0b54cf3"
+      },
+      {
+        "path": "packages/runtime/src/index.ts",
+        "bytes": 2951,
+        "sha256": "b6762fbdfe804da27a3d36caba9642cf763da2e9e3fb6bdacfb28a941fb164a9"
+      },
+      {
+        "path": "packages/engine/src/index.ts",
+        "bytes": 3257,
+        "sha256": "4bde50160dbf3350ba5b261e8ac6e48cbdeebfa277f55e68120ee0ca734caf7c"
+      },
+      {
+        "path": "packages/runtime/src/Texture.ts",
+        "bytes": 4149,
+        "sha256": "35e564962d77300cdab9738201cebdb4cc52d01b6c2559ef5734ce79c7795820"
+      }
+    ],
+    "publicGuides": [
+      "knowledge-base/en/docs/nine-slice-bitmap-contract.md",
+      "knowledge-base/Cns/docs/九宫格位图契约.md",
+      "knowledge-base/en/docs/nine-slice-bitmap-evidence.md",
+      "knowledge-base/Cns/docs/九宫格位图证据.md",
+      "knowledge-base/en/docs/nine-slice-bitmap-native-verifier.md",
+      "knowledge-base/Cns/docs/九宫格位图原生核验指南.md"
+    ],
+    "acceptance": {
+      "curationCutoff": "2026-10-14",
+      "status": "BOUNDED_NINE_SLICE_BITMAP_SOURCE_CPU_TYPES_CODE_GATES_AND_NATIVE_ACCEPTED_PUBLICATION_AND_DELIVERY_PENDING",
+      "productSource": {
+        "files": 6,
+        "verdict": "PASS_SOURCE_PRODUCT_SIX_FILES_ONLY",
+        "openFindings": 0
+      },
+      "focusedCPU": {
+        "tests": 71,
+        "pass": 71,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "NLB": 14,
+        "independentTXI": 1,
+        "retained": 56,
+        "fullRepositorySuite": false
+      },
+      "recordingExample": {
+        "targetSizes": [
+          [
+            16,
+            12
+          ],
+          [
+            12,
+            16
+          ]
+        ],
+        "frames": 2,
+        "providerLoads": 1,
+        "providerDisposals": 1,
+        "pendingTimers": 0,
+        "scopeState": "closed",
+        "nativePixelsVerified": false
+      },
+      "strictTypes": {
+        "compiler": "7.0.2",
+        "lanes": 3,
+        "positiveDOMFreeExit": 0,
+        "positiveDiagnostics": 0,
+        "ordinaryNegativeExit": 1,
+        "ordinaryNegativeDiagnostics": 17,
+        "importNegativeWebParentExit": 1,
+        "importNegativeDiagnostics": 8,
+        "actualUnsuppressedCompleteTuples": 25,
+        "originalJobsOverlap": true,
+        "sequentialPositiveBeforeNegativeClaim": false
+      },
+      "coreActualReview": {
+        "bytes": 58408,
+        "sha256": "511640cd3eb19d61a26c70fcac6078ec8f13f671abaf09c9894d8095411e1c1e",
+        "verdict": "PASS_ACTUAL_CORE_BUILD_CPU_EXAMPLE_AND_STRICT_TYPES_ONLY",
+        "openFindings": 0
+      },
+      "retainedHistory": {
+        "namedActualRED": 2,
+        "initialSourceRefusals": 4,
+        "engineClosingCounterexample": "SOURCE_ONLY_NOT_EXECUTED",
+        "rawSourcesAndEvidencePreserved": true
+      },
+      "native": {
+        "sourceFiles": 6,
+        "sourceReviewedAndAdopted": true,
+        "actualExecution": "COMPLETED_BOUNDED_ROOT_OBSERVED_RESULT",
+        "actualAcceptance": "PASS_ACTUAL_NATIVE_BOUNDED_NINE_SLICE_BITMAP_WEBGPU_ONLY",
+        "plannedSubmissions": 3,
+        "plannedCaptures": 2,
+        "plannedReplays": 1,
+        "plannedWidth": 24,
+        "plannedHeight": 24,
+        "plannedChannels": 6912,
+        "plannedTolerance": 0,
+        "plannedCanvasRefusals": 2,
+        "positiveCanvasSubmissions": 0,
+        "PNGDecode": false,
+        "originalSourceCutoff": {
+          "actualExecution": "NOT_RUN_AT_DRAFT_CUTOFF",
+          "actualAcceptance": "PENDING",
+          "rawHistoricalCutoffPreserved": true
+        },
+        "actualMainCases": 1,
+        "actualMainPasses": 1,
+        "actualSubmissions": 3,
+        "actualCompleteRawReadbacks": 3,
+        "actualCaptures": 2,
+        "actualReplays": 1,
+        "width": 24,
+        "height": 24,
+        "DPR": 1,
+        "pixelsCompared": 1728,
+        "channelsCompared": 6912,
+        "pixelTolerance": 0,
+        "actualCanvasRefusals": 2,
+        "pendingTickets": 0,
+        "cleanupErrors": 0,
+        "primaryErrors": 0,
+        "contextBrowserServerClosed": true,
+        "beforeAfterGraphStable": true,
+        "sourceAndInstalledRuntimePinsStable": true,
+        "browserChannel": "msedge",
+        "browserVersion": "155.0.4283.45",
+        "extraLaunchFlags": false,
+        "adapterIdentity": "UNOBSERVED",
+        "resultPin": {
+          "bytes": 42010,
+          "sha256": "c955cac7b6bdee440292d94cef031b827dc513c7718fd8a10c59a6c491917027"
+        },
+        "startedAtUtc": "2026-10-14T05:36:05.033Z",
+        "finishedAtUtc": "2026-10-14T05:36:17.869Z",
+        "actualReview": {
+          "bytes": 31911,
+          "sha256": "322d78b8ac6ccb8be63312a07236e9f38272e96315f507fab8826cabfd964d10",
+          "verdict": "PASS_ACTUAL_NATIVE_BOUNDED_NINE_SLICE_BITMAP_WEBGPU_ONLY",
+          "openFindings": 0
+        },
+        "wholeSavedReplayBytes": 2304,
+        "N1N3BytesIdentical": true,
+        "outerTicketsSettled": 14,
+        "innerTicketsSettled": 15,
+        "applicationOwnedDevicesDestroyed": 2,
+        "graphEntries": 368,
+        "installedRuntimePins": 175,
+        "forcedTimeoutPaths": "NOT_RUN",
+        "failedCleanupPaths": "NOT_RUN",
+        "wrongOracleControls": 0,
+        "actualCountercontrolAcceptance": false
+      },
+      "completeCurrentGates": "ALL_NINE_CODE_VERIFY_PHASES_INDEPENDENTLY_ACCEPTED_CURATED_PUBLICATION_GATES_PENDING",
+      "publicSourceBilingualReview": "PENDING",
+      "mandatoryPushHook": "NOT_RUN_0_48",
+      "pullRequestAndMain": "NOT_RUN_0_48",
+      "remoteCI": "NOT_CLAIMED",
+      "fullEUIAndLayout": "OPEN",
+      "fullSpineR020V020": "OPEN",
+      "migrationR008V006": "OPEN",
+      "packageVersion": "0.0.0",
+      "hostProtocol": "1.0",
+      "newThirdPartyDependency": false,
+      "physicalGPUOrPerformanceAcceptance": false,
+      "originalFullCodeGate": {
+        "status": "FAILED_RETAINED_ATTEMPT",
+        "commandExitCode": 1,
+        "timeout": false,
+        "stderrBytes": 0,
+        "stdoutBytes": 1456058,
+        "stdoutSHA256": "85c69f68080725815925c4b5475305e8c3a7c2e3d9f33216222cacdc3056c604",
+        "passedPrefixPhases": 7,
+        "ordinary": {
+          "tests": 3079,
+          "pass": 2831,
+          "fail": 248,
+          "skipped": 0
+        },
+        "retainedF2": "NOT_REACHED",
+        "sourceDiagnosis": "SYNTHETIC_SINGLETON_RESOLVER_AND_COPIED_TYPE_DRIVER_FIXTURE_INTEGRATION",
+        "diagnosisAndRepairActualAcceptance": "SOURCE_SUCCESSORS_AND_CURRENT_CODE_EXECUTION_INDEPENDENTLY_ACCEPTED",
+        "repairPaths": [
+          "tests/boundaries.test.mjs",
+          "tests/project-boundaries.test.mjs"
+        ],
+        "productGateRefusalRulesChanged": false,
+        "failuresAreNotDistinctEngineBugCount": true
+      },
+      "fixtureIntegration": {
+        "sourceScope": "TWO_EXISTING_FIXTURES_ONLY_NO_PRODUCT_GATE_OR_REFUSAL_RULE_CHANGE",
+        "initialSourceReview": {
+          "bytes": 13048,
+          "sha256": "c65e8e343e33432a0c875d450db40f6fa251e725957ad9fb0d74bc0583343f65",
+          "verdict": "PASS_SOURCE_FIXTURE_INTEGRATION_ONLY",
+          "openFindings": 0,
+          "adoptedFiles": 2
+        },
+        "focusedAfterInitialSource": {
+          "tests": 303,
+          "pass": 56,
+          "fail": 247,
+          "skipped": 0,
+          "cancelled": 0,
+          "todo": 0,
+          "status": "FAILED_RETAINED_ATTEMPT",
+          "sourceSingletonRefusalResolved": true,
+          "copiedProjectTypeDriverPassed": true,
+          "remainingDiagnosis": "SYNTHETIC_WEB_IMAGE_ENTRY_MISSING",
+          "distinctEngineBugClaim": false
+        },
+        "imageSourceSuccessor": {
+          "bytes": 15246,
+          "sha256": "5fbfae1eda65dd3c7a169e50ad18b42cc15cf4fd7fdf7b26613d35f90d4279ec",
+          "verdict": "PASS_SOURCE_FIXTURE_INTEGRATION_ONLY",
+          "openFindings": 0,
+          "adoptedFiles": 1,
+          "addedBytes": 387,
+          "change": "EXPLICIT_EMPTY_SYNTHETIC_SOURCE_JS_DTS_AND_EXISTING_RESOLVER_BRIDGE"
+        },
+        "namedBaselineBeforeSuccessorAdoption": {
+          "sourceState": "EARLIER_FIXTURE_BEFORE_IMAGE_SUCCESSOR_ADOPTION",
+          "status": "FAILED_RETAINED_ATTEMPT",
+          "qualifiesSuccessor": false
+        },
+        "namedBaselineAfterSuccessorAdoption": {
+          "status": "ACCEPTED_NAMED_BASELINE_ONLY",
+          "tests": 1,
+          "pass": 1,
+          "fail": 0,
+          "skipped": 0,
+          "cancelled": 0,
+          "independentSavedResultReview": "ACCEPTED_BY_CURRENT_CODE_ACTUAL_REVIEW",
+          "fullFocusedOrRepositoryAcceptance": false
+        },
+        "completeCurrentFocusedAndFull": "CURRENT_FOCUSED_AND_ALL_NINE_CODE_VERIFY_PHASES_INDEPENDENTLY_ACCEPTED",
+        "focusedAfterImageSuccessor": {
+          "status": "ACCEPTED_COMPLETE_FOCUSED_FIXTURES_ONLY",
+          "tests": 303,
+          "pass": 303,
+          "fail": 0,
+          "skipped": 0,
+          "cancelled": 0,
+          "todo": 0,
+          "commandExitCode": 0,
+          "timeout": false,
+          "stderrBytes": 0,
+          "stdoutSHA256": "e4e6f66d369852eb1cdd1ec054582f23d1aebaf58cfb22c8037b20cddad3c42c",
+          "durationMs": 256064.3497,
+          "independentSavedResultReview": "ACCEPTED_BY_CURRENT_CODE_ACTUAL_REVIEW",
+          "fullRepositoryAcceptance": false
+        }
+      },
+      "currentTypeInputGate": {
+        "actualExitCode": 0,
+        "exactCurrentInputs": 18,
+        "originalCompleteDiagnosticTuples": 25
+      },
+      "currentWholeCodeExecution": {
+        "status": "ACCEPTED_ALL_NINE_CURRENT_CODE_VERIFY_PHASES_ONLY",
+        "commandExitCode": 0,
+        "timeout": false,
+        "stderrBytes": 0,
+        "stdoutBytes": 756325,
+        "stdoutSHA256": "7f6455350e7759995af57af089e7d007ecf6754750c26935b6e57ecda11fe680",
+        "startedAtUtc": "2026-10-14T05:26:48.3383646Z",
+        "finishedAtUtc": "2026-10-14T05:31:59.3693045Z",
+        "verifyPhases": 9,
+        "ordinary": {
+          "tests": 3079,
+          "pass": 3079,
+          "fail": 0,
+          "skipped": 0
+        },
+        "retainedF2Source": {
+          "tests": 160,
+          "pass": 160,
+          "fail": 0,
+          "skipped": 0
+        },
+        "independentSavedResultReview": "ACCEPTED_BY_CURRENT_CODE_ACTUAL_REVIEW",
+        "currentPublicationCandidateAdopted": false,
+        "curatedPrepushAndPushHookQualified": false,
+        "nativeQualified": false
+      },
+      "retainedSpineReader": {
+        "scope": "EXACT_READER_CONSTANT_AND_CURRENT_MANIFEST_ROW_ONLY",
+        "sourceReviewedAndAdopted": true,
+        "algorithmsChanged": false,
+        "historicalSourceResultIdentitiesRewritten": false,
+        "originalFailedFullGateF2Reached": false,
+        "currentWholeCodeExecutionF2Reached": true,
+        "independentCurrentActualReview": "ACCEPTED_CURRENT_READER_AND_F2_SOURCE_GATE_ONLY"
+      },
+      "currentCodeActualReview": {
+        "bytes": 47704,
+        "sha256": "7c1ea8e7c84c8827c248b2a7507cf343f1c895e0d23978f74788d4b3c59e5925",
+        "verdict": "PASS_ACTUAL_CURRENT_CODE_BOUNDARY_TYPE_AND_DEFAULT_GATES_ONLY",
+        "openFindings": 0,
+        "currentAdoptedSourceFiles": 24,
+        "currentRawPinsMatchOriginalApprovedSources": true,
+        "fullPublicPrepushQualified": false,
+        "optionalF2CoreSDKReplayQualified": false
+      }
+    },
+    "historicalPendingCutoffsPreserved": true
   }
 }

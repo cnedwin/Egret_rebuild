@@ -30,7 +30,8 @@
       "sourceIds": [
         "S001",
         "S091",
-        "S094"
+        "S094",
+        "S102"
       ],
       "deliveryIds": [
         "V001",
@@ -45,7 +46,8 @@
         "V027",
         "V028",
         "V042",
-        "V045"
+        "V045",
+        "V053"
       ],
       "decisionIds": [
         "D002",
@@ -116,7 +118,8 @@
         "S097",
         "S098",
         "S100",
-        "S101"
+        "S101",
+        "S102"
       ],
       "deliveryIds": [
         "V002",
@@ -129,7 +132,8 @@
         "V045",
         "V048",
         "V049",
-        "V052"
+        "V052",
+        "V053"
       ],
       "decisionIds": [
         "D002",
@@ -326,7 +330,8 @@
         "S097",
         "S098",
         "S100",
-        "S101"
+        "S101",
+        "S102"
       ],
       "deliveryIds": [
         "V001",
@@ -340,7 +345,8 @@
         "V046",
         "V048",
         "V049",
-        "V052"
+        "V052",
+        "V053"
       ],
       "decisionIds": [
         "D002",
@@ -425,7 +431,8 @@
       "sourceIds": [
         "S038",
         "S100",
-        "S101"
+        "S101",
+        "S102"
       ],
       "deliveryIds": [
         "V001",
@@ -442,7 +449,8 @@
         "V026",
         "V027",
         "V028",
-        "V052"
+        "V052",
+        "V053"
       ],
       "decisionIds": [
         "D001",
@@ -474,7 +482,8 @@
         "S093",
         "S099",
         "S100",
-        "S101"
+        "S101",
+        "S102"
       ],
       "deliveryIds": [
         "V001",
@@ -495,7 +504,8 @@
         "V028",
         "V044",
         "V050",
-        "V052"
+        "V052",
+        "V053"
       ],
       "decisionIds": [
         "D016"
@@ -568,7 +578,8 @@
         "S051",
         "S099",
         "S100",
-        "S101"
+        "S101",
+        "S102"
       ],
       "deliveryIds": [
         "V007",
@@ -581,7 +592,8 @@
         "V027",
         "V028",
         "V050",
-        "V052"
+        "V052",
+        "V053"
       ],
       "decisionIds": [],
       "doc": "en/docs/bilingual-documentation-and-prepush-checks.md"
@@ -664,11 +676,13 @@
       "sourceIds": [
         "S099",
         "S100",
-        "S101"
+        "S101",
+        "S102"
       ],
       "deliveryIds": [
         "V050",
-        "V052"
+        "V052",
+        "V053"
       ],
       "decisionIds": [],
       "doc": "en/docs/repository-identity-and-line-endings.md",
@@ -1588,7 +1602,7 @@
   },
   "_localization": {
     "canonicalSource": "需求.json",
-    "canonicalSha256": "0c6acda309312c3dcdaeecd93fb400184daf63ca1f228def949e9e0c461078ce",
+    "canonicalSha256": "0fc07a1aaf121e74448f5c166044e23224a22d5035f94205b8fa12b1a8a9d351",
     "role": "read_only_translation",
     "language": "en"
   }

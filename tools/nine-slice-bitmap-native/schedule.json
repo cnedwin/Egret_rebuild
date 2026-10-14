@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "profile": "nine-slice-bitmap",
+  "backends": ["webgpu"],
+  "fixtures": [],
+  "frame": {"width": 24, "height": 24, "pixelTolerance": 0},
+  "stepsPerBackend": [{"id":"N1","target":[16,12]},{"id":"N2","target":[12,16]},{"id":"N3","replay":"N1","afterOriginRetirement":true}],
+  "plannedTotals": {"renderSubmissions":3,"newCaptures":2,"savedReplays":1},
+  "input": "Original literal ImageData2D pixels; no PNG, SDK or font decoding",
+  "sourceOnly": true
+}

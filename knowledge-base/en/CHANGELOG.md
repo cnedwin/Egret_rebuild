@@ -2,6 +2,20 @@
 
 English | [简体中文](../Cns/CHANGELOG.md)
 
+<!-- NLB-0.48.0-BEGIN -->
+## Engineering preview 0.48.0 — NineSliceBitmap fixed-border backgrounds
+
+**S102 / V053.** `NineSliceBitmap` derives source dimensions from a genuine Texture crop, borrows the caller’s lease and resizes a fixed-border background in one operation while retaining old frames. Runtime/Engine roots add one class value and one erased options type, reusing independent NS1 geometry and existing textured rendering; no third-party dependency is added.
+
+Independent focused CPU acceptance is 71/71 (fourteen NLB, one independent TXI and fifty-six retained regressions); three strict lanes produced 0/17/8 diagnostics, twenty-five complete actual unsuppressed tuples. The recording example has two sizes/two frames, one load/disposal and zero timers; it is not native pixel verification. Four original source refusals and two genuine RED observations remain; the Engine-closing counterexample stays source-only.
+
+Independent review dated 2026-10-14 accepted all nine code-verification phases, ordinary tests 3079/3079 and retained F2 source tests 160/160. One real WebGPU main case completed three 24×24 readbacks, two captures and one replay after origin retirement: 6912 channels passed at zero tolerance. Two Canvas refusals had zero positive Canvas submissions; adapter identity was unobserved. Curated public-content gates, bilingual review and 0.48 push/PR/Main remain pending. Full EUI/layout, Spine R020/V020 and migration R008/V006 remain OPEN; packages stay private 0.0.0, host protocol 1.0.
+
+Read the [contract](docs/nine-slice-bitmap-contract.md), [evidence](docs/nine-slice-bitmap-evidence.md) and [native verifier guide](docs/nine-slice-bitmap-native-verifier.md).
+
+Dated 2026-10-14 delivery successor: [PR #35](https://github.com/cnedwin/Egret_rebuild/pull/35) merged the bounded 0.47.0 Spine manual bridge into Main `5ae877705d76a470ec942a29cfe0212f069da6fb`, tree `60d224ec1ed6bc0824cd2f93871595809d3c21d5`, from feature `29e6f97d1d594efe3a49f9c530b1728a4756fe2c`. This is separate from new NineSlice baseline admission; old PENDING cutoffs remain. Remote statuses/check runs 0/0 with combined pending do not establish CI PASS.
+<!-- NLB-0.48.0-END -->
+
 <!-- F2C-0.47.0-BEGIN -->
 ## Engineering preview 0.47.0 — Spine Core manual mesh bridge
 

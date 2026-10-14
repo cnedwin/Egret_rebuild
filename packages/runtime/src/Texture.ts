@@ -2,6 +2,9 @@ import { isImageData2D } from "@egret/contracts";
 import type { ImageData2D, TextureRegion2D } from "@egret/contracts";
 import { EgretError } from "./EgretError.js";
 
+// Capture the original intrinsic before descriptor callbacks can replace it;
+// Texture snapshots must not introduce late callbacks inside resource checkpoints.
+const freeze = Object.freeze;
 const CREATION_TOKEN: unique symbol = Symbol("egret.textureFactory");
 interface TextureState {
   readonly image: ImageData2D | undefined;
@@ -18,7 +21,7 @@ function stateOf(value: unknown): TextureState {
 
 /** Snapshot every known field before validation; no callbacks occur at commit. */
 function copyRegion(image: ImageData2D, input: TextureRegion2D | undefined): TextureRegion2D {
-  if (input === undefined) return Object.freeze({ x: 0, y: 0, width: image.width, height: image.height });
+  if (input === undefined) return freeze({ x: 0, y: 0, width: image.width, height: image.height });
   try {
     if (input === null || typeof input !== "object") throw new TypeError("Texture region must be a record");
     const x = input.x, y = input.y, width = input.width, height = input.height;
@@ -30,7 +33,7 @@ function copyRegion(image: ImageData2D, input: TextureRegion2D | undefined): Tex
     if (!Number.isSafeInteger(right) || !Number.isSafeInteger(bottom) || right > image.width || bottom > image.height) {
       throw new RangeError("Texture region exceeds its image");
     }
-    return Object.freeze({ x: x === 0 ? 0 : x, y: y === 0 ? 0 : y, width, height });
+    return freeze({ x: x === 0 ? 0 : x, y: y === 0 ? 0 : y, width, height });
   } catch (cause) {
     throw new EgretError("TEXTURE_REGION_INVALID", { cause });
   }
@@ -42,7 +45,7 @@ export class Texture {
 
   private constructor(image: ImageData2D, sourceRect: TextureRegion2D, token: typeof CREATION_TOKEN) {
     if (token !== CREATION_TOKEN) throw new EgretError("TEXTURE_FACTORY_REQUIRED");
-    states.set(this, Object.freeze({ image, sourceRect }));
+    states.set(this, freeze({ image, sourceRect }));
   }
 
   static {
@@ -58,7 +61,7 @@ export class Texture {
   /** Drop only the wrapper reference; saved image values keep their own pixels. */
   public dispose(): void {
     const state = stateOf(this);
-    if (state.image !== undefined) states.set(this, Object.freeze({ image: undefined, sourceRect: state.sourceRect }));
+    if (state.image !== undefined) states.set(this, freeze({ image: undefined, sourceRect: state.sourceRect }));
   }
 }
 
@@ -79,5 +82,5 @@ export interface TextureSnapshot2D {
 export function readTextureSnapshot(texture: Texture): TextureSnapshot2D {
   const state = stateOf(texture);
   if (state.image === undefined) throw new EgretError("TEXTURE_DISPOSED");
-  return Object.freeze({ image: state.image, sourceRect: state.sourceRect });
+  return freeze({ image: state.image, sourceRect: state.sourceRect });
 }

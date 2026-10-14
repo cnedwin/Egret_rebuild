@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "revision": "0.47.0",
+  "revision": "0.48.0",
   "canonicalState": "Chinese registries; English JSON is a read-only translation",
   "evidencePolicy": "Machine data, embedded source, historical code and upstream legal originals retain their identities; paired reading versions explain them.",
   "semanticReview": {
@@ -57,8 +57,8 @@
       "zh": "ACKNOWLEDGEMENTS.zh-CN.md",
       "en": "ACKNOWLEDGEMENTS.md",
       "kind": "public_reading",
-      "enSha256": "a1c2a6c24191730a0d875bd8302d1d5e08d21eb359d0df3ad202fea2d32b5531",
-      "zhSha256": "0798ef27b74532862d534141f98e8ae2e88ade43fd2ae389afcdd0cfdaa05bc8"
+      "enSha256": "459c49130d906b53cfe43f134a1471f839fb1824033304fe9c878664262cf691",
+      "zhSha256": "a9fc2a9b2dd1f66fd3a141ba01c7b9e9ade9d05eb197369c1c12ead29ab2866d"
     },
     {
       "zh": "AGENTS.zh-CN.md",
@@ -113,8 +113,8 @@
       "zh": "knowledge-base/Cns/ACKNOWLEDGEMENTS.md",
       "en": "knowledge-base/en/ACKNOWLEDGEMENTS.md",
       "kind": "public_reading",
-      "enSha256": "c9b5990f3bd2c72a8ec22a162d2f1d987977abcc0977adbdc9bc89123bd8f67b",
-      "zhSha256": "903dfab1d8534312c45a8c91f639e3f52bf077ae1f9fefbce676b3330fc6203e"
+      "enSha256": "6d6e40a1590a56e4c86e9ed3b9c6cf8f766417c157246e33bf32f0446b41b330",
+      "zhSha256": "808e16e5fb9cbe8a101131e2f42074b8e810a8cfec24540e3ef91780945fd3c4"
     },
     {
       "en": "knowledge-base/en/archive/round-1-research.md",
@@ -141,8 +141,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "10541fda628abe15b31a741035bbca1f28dd9a327f95287d862ef5af69449ffb",
-      "zhSha256": "1afab45d46f7981b56701922f94a7bd9461c4749367628a5f4286707b8932098"
+      "enSha256": "16c76a5a5a70a6aaf897b8c2492606a60ff51205495fc8955a1ef6bf09b26c97",
+      "zhSha256": "6cb435e5ab222ffd73998fde656ff041858fc9a1051fa500e4f60a04cae741a7"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -764,8 +764,8 @@
       "zh": "knowledge-base/Cns/README.md",
       "en": "knowledge-base/en/README.md",
       "kind": "public_reading",
-      "enSha256": "51265b9048fe2f0b278303094085f33181a1ecb1788cd65e6ecd57bae6c6b35c",
-      "zhSha256": "b854e9ae5b47d84439cf86c3e6530d91b110a15336d279676723f99229a8807d"
+      "enSha256": "d4cf870d8079c1c0cd5d424dd06d8072e6b76d45400d812de343a9d59c6e375e",
+      "zhSha256": "b00e6013ed7a7f7c185bbc0ae9fd7e1a429830e12ecf69f2ce849fe26188e374"
     },
     {
       "zh": "knowledge-base/Cns/templates/ADR决策记录.md",
@@ -799,8 +799,8 @@
       "zh": "knowledge-base/README.zh-CN.md",
       "en": "knowledge-base/README.md",
       "kind": "public_navigation",
-      "enSha256": "c950cd4457bd933c5bc460e4b15525694747adffba988ce9fd449bf73773e418",
-      "zhSha256": "34562f2350732bb30ff01db5865ae1805afd2b106c4db816257d3f27856c726e"
+      "enSha256": "c3586f52f26b74c138854d1c33a9bfbe566acd4750cfd0fad7c3099502ae4179",
+      "zhSha256": "3fc07b1c7250a606f306cc5f4ff5844264500df5ed4dd4415bc5b2e7fe414308"
     },
     {
       "zh": "LICENSE.zh-CN.md",
@@ -820,8 +820,8 @@
       "zh": "packages/engine/README.zh-CN.md",
       "en": "packages/engine/README.md",
       "kind": "public_reading",
-      "enSha256": "d5e5df6bb02114036c0ce8bbe8c6e49c33ad44de5f135a18f5cbdbb211f977a1",
-      "zhSha256": "d7cee4179fd83f40b79493608d864914087fb91005dd4365c261eee6dceeb7a7"
+      "enSha256": "09cfebc2e8ae6df0054c6736ff8d51aa3f6b88a3213c6b3505267e9779ede0b8",
+      "zhSha256": "0b5fe412e63ceded699500e7b22ddc135654df766afa2ffdafa39b1e29b8acbc"
     },
     {
       "zh": "packages/project/README.zh-CN.md",
@@ -834,8 +834,8 @@
       "zh": "packages/runtime/README.zh-CN.md",
       "en": "packages/runtime/README.md",
       "kind": "public_reading",
-      "enSha256": "08069efa94098a6cf6ab53bc1afc3c6daca7bf2a5983f7755f4dee237adac668",
-      "zhSha256": "84ba84cb09b110f3312c03b2e8e942f294725431885d0e2d723d58beed670ac8"
+      "enSha256": "4a1f3dce3f669ebe5ff5eb651b6a2cbb3b450498faf5c85531a5e0b1794e25c5",
+      "zhSha256": "44b5a6552ebd8dbdd99a674ce8048f9f18af0209cb7db9387e72ed57c5698561"
     },
     {
       "zh": "PUBLICATION.zh-CN.md",
@@ -848,8 +848,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "80666dc9202f91d97480f34e71d26da44077a430b3f180a4ab21c11a093a636c",
-      "zhSha256": "f7a495be3295ed639912fe697a8c9372106f58856c9aab0b565caae12cfb8509"
+      "enSha256": "a8994d4dfb975135c315e362367cb28d505abf7a2b1f3f74c708309d5e517788",
+      "zhSha256": "fbc229b7b999939697f74b96f325c6ac050148caa4ad8efd0e2e852d86728268"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -1265,14 +1265,35 @@
       "kind": "public_reading",
       "enSha256": "e6515456eecfcb4f54bc960a3bc8db27be8e6f597b8918d6aab99a75cfbd4ee1",
       "zhSha256": "7903b77b824f9604f77a92ebf2fce85646c4d44f43f4af1451289396bc513c8d"
+    },
+    {
+      "en": "knowledge-base/en/docs/nine-slice-bitmap-contract.md",
+      "zh": "knowledge-base/Cns/docs/九宫格位图契约.md",
+      "kind": "public_reading",
+      "enSha256": "8a7e2497a4374f47f1b9d4fed5038dd8f66bde766fee7ad661ea759b0190a154",
+      "zhSha256": "5edc87c379432ed1bf8ef32c76a93d1bce5b12a2e7384823e1dcdefef7994825"
+    },
+    {
+      "en": "knowledge-base/en/docs/nine-slice-bitmap-evidence.md",
+      "zh": "knowledge-base/Cns/docs/九宫格位图证据.md",
+      "kind": "public_reading",
+      "enSha256": "a14d8ac5cc5f7fee8f466a23760a1d95822ced7c4263ee92cd5035866419699c",
+      "zhSha256": "1b3f2f78c4f6eab907b1824e58a801ae53a82f09a47f701c51150c8021bb2d25"
+    },
+    {
+      "en": "knowledge-base/en/docs/nine-slice-bitmap-native-verifier.md",
+      "zh": "knowledge-base/Cns/docs/九宫格位图原生核验指南.md",
+      "kind": "public_reading",
+      "enSha256": "b4c1f0e50b60b520e5b915c085b452051701cd8267a6c97889fdab87eb61117c",
+      "zhSha256": "ad34cb14e60270987faa8dc0fe5351ccae844a9121f664f20fc774a4c9b85926"
     }
   ],
   "registries": [
     {
       "source": "knowledge-base/Cns/registry/需求.json",
       "target": "knowledge-base/en/registry/requirements.json",
-      "sourceSha256": "0c6acda309312c3dcdaeecd93fb400184daf63ca1f228def949e9e0c461078ce",
-      "targetSha256": "14b0bf96477aea82d6e701628a6c651e4c8efaab163e198f14b2d43150447837"
+      "sourceSha256": "0fc07a1aaf121e74448f5c166044e23224a22d5035f94205b8fa12b1a8a9d351",
+      "targetSha256": "84972f8e590d3ca99d8d8b91cfff47e9a814c38a1c88c7ebd41ded49d5685071"
     },
     {
       "source": "knowledge-base/Cns/registry/决策.json",
@@ -1289,20 +1310,20 @@
     {
       "source": "knowledge-base/Cns/registry/交付.json",
       "target": "knowledge-base/en/registry/deliverables.json",
-      "sourceSha256": "e5dfde6eb39205cd406b751b4742098808c986b2b405b46c011a8471a6a32f40",
-      "targetSha256": "9b15234468360ba29d6b0f9045ec3452c63869e90386328dd493ba5746062343"
+      "sourceSha256": "5dc6891b25c3e493bcb5f0ad212250af9b9f513a394e16a8b26e43cacb203472",
+      "targetSha256": "873a382c82d82fd100ca0c7cd9a3ab1bcd64fd32beb1846d690153365a0872fe"
     },
     {
       "source": "knowledge-base/Cns/registry/来源.json",
       "target": "knowledge-base/en/registry/sources.json",
-      "sourceSha256": "4bf9960f0335725e3e5cbc500a62441ef461fd706f9d0c15a00247c8f6993a2b",
-      "targetSha256": "b787e98f76e6ebd50b02fb6da9e362df1554042be66d7018eb45ba98238f2fbb"
+      "sourceSha256": "de5f51902498ae06b7d287824ab8fd950d0402e0d433844235254423100e9ff9",
+      "targetSha256": "816068754cc051d8cb491bc0c59484997e680806ba64b3e018a87923dbf43143"
     },
     {
       "source": "knowledge-base/Cns/当前版本.json",
       "target": "knowledge-base/en/current-version.json",
-      "sourceSha256": "6eb314097d22a1730a864e5e3ccc8010d957094d0ff821bb9b7757b5cc55c57c",
-      "targetSha256": "24fcbd1e0619092d6d6ad532251b626bb3c97957938e624b549e1903ede8e58f"
+      "sourceSha256": "d0c19038f459d5ee72d97d07623bb910f680d8d83ba11cfa9d28beadd0659983",
+      "targetSha256": "9da8e220e4839e6a87ae2f5d08cfc9ee510ffeb0deeee73fa25249ccf602dc37"
     }
   ],
   "criticalComments": [
@@ -1616,7 +1637,7 @@
     },
     {
       "path": "packages/runtime/src/Texture.ts",
-      "sha256": "0022669cef2b2df2e3d3ddbb85378247297b3049e7708f0e26a362af62884cc5"
+      "sha256": "35e564962d77300cdab9738201cebdb4cc52d01b6c2559ef5734ce79c7795820"
     },
     {
       "path": "packages/runtime/src/assetState.ts",
@@ -1778,7 +1799,7 @@
     },
     {
       "path": "packages/runtime/src/Mesh2D.ts",
-      "sha256": "df37a3c6380d911ec919aafe67b80d714fabadd972c83dd80c3083aaf4b73756"
+      "sha256": "fe5a67a4687fe1f62102ac7bd1325abbca0062cc4c7ff11a057410cc93b196b0"
     },
     {
       "path": "packages/runtime/src/meshCaptureSnapshot.ts",
@@ -1786,7 +1807,7 @@
     },
     {
       "path": "packages/runtime/src/meshDisplayState.ts",
-      "sha256": "20cbd2d5c681fd49efd0c3d22e8505d0632896b46c598d0925a9f064dae6c251"
+      "sha256": "5031089dffd37563c20b65873e4d244addd2d07e3018ce8a89e2c73df0b54cf3"
     },
     {
       "path": "packages/runtime/src/texturedFrameBudget.ts",
@@ -2090,11 +2111,11 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "fb4a263ab47a8558b4c8423492af7fdbe2155327a161f196cf5932e297b443f4"
+      "sha256": "81dcf6503697cec54d16dd4636863900df414c56aef68747511e1cfc7181a197"
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "sha256": "30445b8329ff1ca45e382a1da21d2c812f69c4e9c188e281ed681463119570c5"
+      "sha256": "61884a7b65e64588aef4b93456e2e120f8313066ab33bfa45b1e1f45f48119a3"
     },
     {
       "path": "tests/byte-writer-boundaries.test.mjs",
@@ -2102,7 +2123,7 @@
     },
     {
       "path": "tools/check-types.mjs",
-      "sha256": "913e7c6cea1152eb54f227ade4b18f0caa3baafbe35ca058388fe9be29685461"
+      "sha256": "fecb6917e2eeb2a6ca4881aa28a5cee4c36f014333b2a60c5a83d1e1fe8b4b91"
     },
     {
       "path": "packages/runtime/src/NineSliceGeometry2D.ts",
@@ -2222,7 +2243,7 @@
     },
     {
       "path": "tools/prepush.mjs",
-      "sha256": "2e6afcaafd0f0d73769ecc0c88004f3a93fddf0155a225df8b5b00e3ebebbb25"
+      "sha256": "270daf1b4ede28710d4809b58cfb6a037c1c1c4bd8df12985da6499ecb1a24e0"
     },
     {
       "path": "packages/engine/web/image.ts",
@@ -2234,7 +2255,7 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "sha256": "8be0fd3cd0dc1498a2987ebc486ea72c4caa2fd7b856837294ae6b3767563d61"
+      "sha256": "99a10f2f4a959a28b428c27040ec1ea20c12cfe2be38b78e56be85b7428f76ed"
     },
     {
       "path": "tools/browser-png-types.mjs",
@@ -2246,11 +2267,11 @@
     },
     {
       "path": "tools/verify-browser-png.mjs",
-      "sha256": "408c13c069651c489b697549923dc24125e38fb7d0100d8355ad1688b86f663e"
+      "sha256": "9cfa78c5256c2c32215e1b51c0d8eff0f63bf058ac735b46d21f964396fb292f"
     },
     {
       "path": "tools/browser-png/collector.mjs",
-      "sha256": "df5becb13ed3824913e1ac0c6e267c7485b79654989fe53527b219ad8eb51085"
+      "sha256": "b5bcc197d0578c04440510e85c06a879afdecd6fe0a05f057182ebdcffbf445c"
     },
     {
       "path": "tools/browser-png/fixture.mjs",
@@ -2258,7 +2279,7 @@
     },
     {
       "path": "tools/browser-png/file-graph.mjs",
-      "sha256": "34583c4eca298370f82865ca65b92d736939af893d1ca1353c77d6b7980a0075"
+      "sha256": "241879a451ee71aabc5aa9ca4e230aaecde3236b0159fcd8dea1f4287a00dcb5"
     },
     {
       "path": "tools/browser-png/oracle.mjs",
@@ -2266,7 +2287,7 @@
     },
     {
       "path": "tests/project-boundaries.test.mjs",
-      "sha256": "fb8484018a9399912662352498ab1bb5e2687cd34f8279c89a91948fa28800de"
+      "sha256": "6ef65586a145c5a6e4bfb909b82f0fb60d177035f75355526857635c9657e3bb"
     },
     {
       "path": "knowledge-base/experiments/spine-f2-core/src/types.ts",
@@ -2334,7 +2355,7 @@
     },
     {
       "path": "knowledge-base/experiments/spine-f2-core/tests/policy-cold.mjs",
-      "sha256": "d01bc8246d2526752b6de6771ac8c9c424e46752c0fd8ca673be563b05a5b547"
+      "sha256": "791f5ad309b4d81537717ae709a751070435e3564851c18cdc914394836db183"
     },
     {
       "path": "knowledge-base/experiments/spine-f2-core/tests/resources-transaction.mjs",
@@ -2347,6 +2368,46 @@
     {
       "path": "knowledge-base/experiments/spine-f2-core/type-tests/check-lane.mjs",
       "sha256": "25500932fc3545b5b710c6ec55cdaf6bf06afdd9386ae1ac31bad57428c94a7b"
+    },
+    {
+      "path": "packages/runtime/src/NineSliceBitmap.ts",
+      "sha256": "6a30231add832d3a8e08bfc7c4712acfaf0b01ea7ea5949366ff2d50dede94c5"
+    },
+    {
+      "path": "examples/nine-slice-bitmap-headless.mjs",
+      "sha256": "60b48831a98bd88b404d6bf1ddbf333f56591b69e825763e4a0e26f9904aa919"
+    },
+    {
+      "path": "tests/nine-slice-bitmap-api.test.mjs",
+      "sha256": "489a4033210e27566b9fd36ccccc7f3bd6f11ef5f49a149da552fe10f2ea99ee"
+    },
+    {
+      "path": "tests/nine-slice-bitmap.test.mjs",
+      "sha256": "ed808a79b1c6dfe3909949e6b4413211f51a6d69224716bf0c53772a7e85d396"
+    },
+    {
+      "path": "tests/texture-intrinsics.test.mjs",
+      "sha256": "b0a8cbfe6f3b1320ec2bc743e321e0c7ad9bc1e7286f3ec46f2a80d0d0573148"
+    },
+    {
+      "path": "tools/nine-slice-bitmap-types.mjs",
+      "sha256": "bb0564d4380bdae97d97b89fc28e64f948201da27557bf65b2bf1b2acf074704"
+    },
+    {
+      "path": "tools/nine-slice-bitmap-native/fixture.mjs",
+      "sha256": "90ae72ec3b694867aaaf7246a77d69af00d9d697bf7de1d55ed6efeb255b6afd"
+    },
+    {
+      "path": "tools/nine-slice-bitmap-native/oracle.mjs",
+      "sha256": "4c0516f4d2bea54cb0a7a00a3fd8a76923b85210488bcf070ce0fc2cc2c3f0a8"
+    },
+    {
+      "path": "tools/spritesheet-boundary.mjs",
+      "sha256": "619d81c0fee30b27e94d4c956b825fe1a64ff2d124f66e11dd9e1e7b71c5ded4"
+    },
+    {
+      "path": "tools/sequence-playback-boundary.mjs",
+      "sha256": "0fc8f9307edd9dd32be12faba8d7eb5e71c18aa745d085e2d80a088a58be37ae"
     }
   ],
   "historicalSemanticReview": {
@@ -5410,6 +5471,40 @@
     "remoteCIPassClaim": false,
     "fullSpineR020V020": "OPEN",
     "migrationR008V006": "OPEN",
+    "historicalPendingCutoffsPreserved": true
+  },
+  "spineCoreManualDeliveryActualSuccessor": {
+    "engineeringPreview": "0.47.0",
+    "status": "ACTUAL_BOUNDED_SPINE_DELIVERED_TO_MAIN",
+    "recordedAtUtc": "2026-10-14T03:39:26.1793766Z",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/35",
+    "featureHead": "29e6f97d1d594efe3a49f9c530b1728a4756fe2c",
+    "mainMergeCommit": "5ae877705d76a470ec942a29cfe0212f069da6fb",
+    "mainTree": "60d224ec1ed6bc0824cd2f93871595809d3c21d5",
+    "actualDeliveryReview": {
+      "bytes": 39667,
+      "sha256": "80b5bdd40d548d59e53ef3ccd0f73f27dd82a62c883ae26910337168956d9bf4",
+      "verdict": "PASS_ACTUAL_REVIEWED_PR_MERGE_AND_EXACT_MAIN_ONLY"
+    },
+    "recordScope": "SPINE_DELIVERY_SEPARATE_FROM_NEXT_NINE_SLICE_BASELINE_ADMISSION",
+    "remoteStatuses": 0,
+    "remoteCheckRuns": 0,
+    "remoteCombinedState": "pending",
+    "remoteCIPassClaim": false,
+    "historicalPendingCutoffsPreserved": true,
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "SDKEntitlement": "unverified",
+    "SDKRedistributionClearance": "unverified"
+  },
+  "nineSliceBitmapCuration": {
+    "engineeringPreview": "0.48.0",
+    "status": "CURRENT_SOURCE_CANDIDATE_PENDING_INDEPENDENT_SOURCE_BILINGUAL_REVIEW",
+    "newReadingPairs": 3,
+    "acceptedScope": "BOUNDED_NINE_SLICE_BITMAP_SOURCE_CPU_TYPES_CODE_GATES_AND_NATIVE_ACCEPTED_PUBLICATION_AND_DELIVERY_PENDING",
+    "completeCurrentGates": "ALL_NINE_CODE_VERIFY_PHASES_INDEPENDENTLY_ACCEPTED_CURATED_PUBLICATION_GATES_PENDING",
+    "delivery": "NOT_RUN_0_48",
+    "remoteCIPassClaim": false,
     "historicalPendingCutoffsPreserved": true
   }
 }

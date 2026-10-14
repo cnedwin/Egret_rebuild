@@ -2,6 +2,10 @@
 
 [English](ACKNOWLEDGEMENTS.md) | 简体中文
 
+## NineSliceBitmap 第一方复用 — 0.48.0
+
+独立编写的叶节点与原始像素／诊断夹具复用白鹭 NS1 几何、Texture、Mesh2D、AssetLease、Scope、边界及自有帧契约；原生夹具通过显式模式扩展已有第一方 PNG 采集机制，不解码 PNG。AI 协助源码、测试及双语准备，分别的作者／审阅者角色与保存工具执行只验收记录范围。不包含竞品实现或新第三方依赖，已有依赖／notice 鸣谢继续适用。阅读[契约](knowledge-base/Cns/docs/九宫格位图契约.md)与[证据](knowledge-base/Cns/docs/九宫格位图证据.md)。
+
 ## 0.16.0 声明与 3D 参考来源
 
 Microsoft Corporation 的 [jsonc-parser](https://github.com/microsoft/node-jsonc-parser/tree/v3.3.1) 3.3.1 以 MIT 提供公共根 createScanner／visit，供既有私有工程适配器与声明分析使用。已有 MIT 声明和依赖固定值继续适用。RES profile／报告／fixture 与 CPU 3D 契约／实现独立编写。创始人提供的历史 RES 声明语义用于兼容性研究；准确版本／模块闭合仍未验证，不分发历史私有源码。见[声明范围](knowledge-base/Cns/docs/legacy-res-declarations.md)。

@@ -5,7 +5,7 @@ import type { AssetLease } from "./AssetLease.js";
 import { DisplayObject } from "./DisplayObject.js";
 import { assertLive, isTerminated } from "./displayTreeState.js";
 import { EgretError } from "./EgretError.js";
-import { hasMeshState, readMeshState, writeMeshState } from "./meshDisplayState.js";
+import { readMeshState, writeMeshState } from "./meshDisplayState.js";
 import type { MeshCaptureState } from "./meshDisplayState.js";
 import { commitBinding, engineOf } from "./ownership.js";
 import type { EngineContext } from "./ownership.js";
@@ -13,10 +13,13 @@ import { isTexture, readTextureSnapshot } from "./Texture.js";
 import type { Texture, TextureSnapshot2D } from "./Texture.js";
 
 const mutations = new WeakSet<object>();
+const identities = new WeakSet<object>();
+const hasIdentity = identities.has.bind(identities);
+const registerIdentity = identities.add.bind(identities);
 
-/** Mesh identity is the registered private slot, including cleared slots. */
+/** Class identity survives clear/dispose; another textured leaf gains no Mesh methods. */
 function assertMesh(value: unknown): void {
-  if (!hasMeshState(value)) throw new EgretError("MESH_INVALID");
+  if (!hasIdentity(value as object)) throw new EgretError("MESH_INVALID");
 }
 
 function contentState(lease: AssetLease<Texture>, geometry: TexturedGeometry2D, sourceRect: TextureRegion2D): MeshCaptureState {
@@ -60,6 +63,7 @@ export class Mesh2D extends DisplayObject {
     engine.assertOpen();
     commitBinding([this], engine);
     writeMeshState(this, contentState(textureLease, geometry, snapshot.sourceRect));
+    registerIdentity(this);
   }
 
   /** Cached identity-only reads remain valid after clear or terminal disposal. */

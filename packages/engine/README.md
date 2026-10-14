@@ -2,6 +2,8 @@
 
 English | [简体中文](README.zh-CN.md)
 
+Engineering preview 0.48.0 adds `NineSliceBitmap` and erased `NineSliceBitmapOptions` at the Runtime/Engine roots. It borrows a genuine Texture lease and resizes fixed-border NS1 content; positive rendering uses the explicit textured WebGPU host, while Canvas mesh is refused. See the [contract](../../knowledge-base/en/docs/nine-slice-bitmap-contract.md) and [bounded evidence](../../knowledge-base/en/docs/nine-slice-bitmap-evidence.md).
+
 The root facade exports type-only `BoundsQueryOptions` and inherited `getBounds`, reusing readonly `Rectangle2D`. Read the [receiver-local bounds contract](../../knowledge-base/en/docs/display-content-bounds-contract.md); layout and hit testing remain pending.
 
 The root facade exports type-only `Point2D`/`CoordinateQueryOptions` and inherits `localToGlobal`/`globalToLocal` on display classes. Read the [coordinate contract](../../knowledge-base/en/docs/display-coordinate-query-contract.md).

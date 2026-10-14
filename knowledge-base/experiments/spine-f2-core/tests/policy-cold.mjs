@@ -11,7 +11,7 @@ const experiment = fileURLToPath(new URL('../', import.meta.url));
 const repository = fileURLToPath(new URL('../../../../', import.meta.url));
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
 const HELPER = { path: 'tools/lib/file-identity.mjs', bytes: 5065, sha256: '999b355c6e0d03f17853ee05f33abc9fecbb34ad80607963e11f913a4f815569' };
-const READER = { path: 'tools/browser-png/file-graph.mjs', bytes: 25486, sha256: '34583c4eca298370f82865ca65b92d736939af893d1ca1353c77d6b7980a0075' };
+const READER = { path: 'tools/browser-png/file-graph.mjs', bytes: 26173, sha256: '241879a451ee71aabc5aa9ca4e230aaecde3236b0159fcd8dea1f4287a00dcb5' };
 const privateAliases = Object.freeze({
   '#egret-textured-frame-state': { import: 'packages/engine/dist/internal/texturedFrameState.js', types: 'packages/engine/dist/internal/texturedFrameState.d.ts', parents: ['packages/engine/dist/web/CanvasHost.js', 'packages/engine/dist/web/WebGPUHost.js'] },
   '#egret-mouse-input': { import: 'packages/engine/dist/mouseInput.js', types: 'packages/engine/dist/mouseInput.d.ts', parents: ['packages/engine/dist/web/MouseInput.js', 'packages/engine/dist/web/MouseInput.d.ts', 'packages/engine/dist/web/input.d.ts'] },

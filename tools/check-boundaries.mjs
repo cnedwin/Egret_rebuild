@@ -196,6 +196,45 @@ for (const [entry, declarationPath, target] of [
   const exports = [...declaration.matchAll(/export(\s+type)?\s*\{([^}]+)\}\s*from\s*["']([^"']+)["'];?/g)].flatMap(match => match[2].split(',').filter(name => name.trim() === 'Mesh2D').map(() => ({typeOnly:!!match[1], target:match[3]})));
   if (exports.length !== 1 || exports[0].typeOnly || exports[0].target !== target) throw new Error(`${entry}: exact Mesh2D value declaration re-export mismatch`);
 }
+// NLB1 forwards one canonical value and one erased options type on its owners.
+if (typeof runtimeFacade.NineSliceBitmap !== 'function' || facade.NineSliceBitmap !== runtimeFacade.NineSliceBitmap) throw new Error('NLB1: root/runtime singleton identity mismatch');
+for (const [entry, values, prefix, target] of [
+  ['root', facade, 'packages/engine', '@egret/runtime'],
+  ['runtime', runtimeFacade, 'packages/runtime', './NineSliceBitmap.js'],
+]) {
+  if ('NineSliceBitmapOptions' in values) throw new Error(entry + ': NLB1 options must be erased');
+  for (const relative of [prefix + '/src/index.ts', prefix + '/dist/index.d.ts', prefix + '/dist/index.js']) {
+    const code = readFileSync(path.join(root, relative), 'utf8');
+    const ports = [...code.matchAll(/export(\s+type)?\s*\{([^}]+)\}\s*from\s*["']([^"']+)["'];?/g)]
+      .flatMap(match => match[2].split(',').map(member => ({ member: member.trim(), typeOnly: !!match[1], target: match[3] })));
+    for (const [name, typeOnly] of [['NineSliceBitmap', false], ['NineSliceBitmapOptions', true]]) {
+      const named = ports.filter(port => new RegExp('\\b' + name + '\\b').test(port.member));
+      const expected = typeOnly && relative.endsWith('.js') ? 0 : 1;
+      if (named.length !== expected || named.some(port => port.member !== name || port.typeOnly !== typeOnly || port.target !== target)) throw new Error(relative + ': NLB1 canonical barrel forwarding mismatch: ' + name);
+    }
+  }
+}
+// Other existing public routes keep their current surface and no panel authority.
+for (const [entry, values, emittedEntry] of [
+  ['contracts', contractsFacade, 'packages/contracts/dist/index'],
+  ['web', webFacade, 'packages/engine/dist/web/index'],
+  ['webgpu', gpuFacade, 'packages/engine/dist/web/webgpu'],
+  ['project', projectFacade, 'packages/project/dist/index'],
+  ['project/spine', spinePlanFacade, 'packages/project/dist/spine/index'],
+  ['runtime/text', await import('@egret/runtime/text'), 'packages/runtime/dist/text/index'],
+  ['engine/text', await import('@egret/engine/text'), 'packages/engine/dist/text'],
+  ['web/text', await import('@egret/engine/web/text'), 'packages/engine/dist/web/text'],
+  ['web/input', await import('@egret/engine/web/input'), 'packages/engine/dist/web/input'],
+  ['web/image', await import('@egret/engine/web/image'), 'packages/engine/dist/web/image'],
+  ['scene3d', await import('@egret/engine/scene3d'), 'packages/engine/dist/rendering/scene3d'],
+  ['webgpu/scene3d', await import('@egret/engine/webgpu/scene3d'), 'packages/engine/dist/web/scene3d'],
+]) {
+  const code = readFileSync(path.join(root, emittedEntry + '.d.ts'), 'utf8') + '\n' + readFileSync(path.join(root, emittedEntry + '.js'), 'utf8');
+  if (Object.values(values).includes(runtimeFacade.NineSliceBitmap) || /\b(?:NineSliceBitmap|NineSliceBitmapOptions)\b/.test(code)) throw new Error(entry + ': NLB1 panel surface belongs only to runtime/root');
+}
+const nineSliceBitmapDeclaration = readFileSync(path.join(root, 'packages/runtime/dist/NineSliceBitmap.d.ts'), 'utf8');
+const nineSliceBitmapDeclaredNames = [...nineSliceBitmapDeclaration.matchAll(/\bexport\s+(?:declare\s+)?(?:type|interface|function|const|class|enum)\s+(\w+)/g)].map(match => match[1]).sort();
+if (JSON.stringify(nineSliceBitmapDeclaredNames) !== JSON.stringify(['NineSliceBitmap', 'NineSliceBitmapOptions'])) throw new Error('runtime: NLB1 exact leaf declaration surface mismatch');
 const meshStateSource = readFileSync(path.join(root, 'packages/runtime/src/meshDisplayState.ts'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/[^\n]*/g, '');
 for (const match of meshStateSource.matchAll(/\bimport\b/g)) if (!/^import\s+type\b/.test(meshStateSource.slice(match.index))) throw new Error('runtime: Mesh state source imports must be type-only');
 const meshStateEmitted = readFileSync(path.join(root, 'packages/runtime/dist/meshDisplayState.js'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/[^\n]*/g, '');
@@ -270,7 +309,7 @@ for (const name of geometryValues) if (typeof contractsFacade[name] !== 'functio
 // requires actual Engine captures and first-party host refusal in later stages.
 if (contractsFacade.TEXTURED_FRAME_PROFILE_2D !== 'egret.textured-frame2d/1' || facade.TEXTURED_FRAME_PROFILE_2D !== contractsFacade.TEXTURED_FRAME_PROFILE_2D) throw new Error('engine: textured profile literal mismatch');
 // Exact accepted Mesh root plus the opt-in factory and shared literal.
-const texturedRootValues = ['Engine', 'createEngine', 'createEngineForProfile', 'CancellationController', 'EgretError', 'Event', 'createEventType', 'EventDispatcher', 'DisplayObject', 'DisplayObjectContainer', 'Scope', 'Stage', 'AssetManager', 'AssetLease', 'createAssetType', 'createAssetRef', 'Sprite', 'Graphics', ...imageValues, ...geometryValues, 'TEXTURED_FRAME_PROFILE_2D', 'Texture', 'createTexture', 'isTexture', 'Bitmap', 'Mesh2D', 'createSequenceClip', 'SequencePlayer', 'ByteReader', 'BYTE_READER_LIMITS', 'ByteWriter', 'BYTE_WRITER_LIMITS', 'createNineSliceGeometry2D','createSpriteSheet'].sort();
+const texturedRootValues = ['Engine', 'createEngine', 'createEngineForProfile', 'CancellationController', 'EgretError', 'Event', 'createEventType', 'EventDispatcher', 'DisplayObject', 'DisplayObjectContainer', 'Scope', 'Stage', 'AssetManager', 'AssetLease', 'createAssetType', 'createAssetRef', 'Sprite', 'Graphics', ...imageValues, ...geometryValues, 'TEXTURED_FRAME_PROFILE_2D', 'Texture', 'createTexture', 'isTexture', 'Bitmap', 'Mesh2D', 'NineSliceBitmap', 'createSequenceClip', 'SequencePlayer', 'ByteReader', 'BYTE_READER_LIMITS', 'ByteWriter', 'BYTE_WRITER_LIMITS', 'createNineSliceGeometry2D','createSpriteSheet'].sort();
 if (typeof facade.createEngineForProfile !== 'function' || JSON.stringify(Object.keys(facade)) !== JSON.stringify(texturedRootValues)) throw new Error('root: executable textured-frame export surface mismatch');
 const texturedTypes = ['TexturedFrameProfile2D', 'TexturedMeshCommand2D', 'TexturedRenderCommand2D', 'TexturedRenderFrame2D', 'TexturedRenderHostAdapter'];
 for (const [entry, values, declarationPath] of [['contracts', contractsFacade, 'packages/contracts/dist/index.d.ts'], ['root', facade, 'packages/engine/dist/index.d.ts']]) {
@@ -397,7 +436,7 @@ for (const [entry,values,emittedEntry] of textEntries) {
 const expectedRuntimeValues=['CancellationController','EgretError','Scope','createScope','Event','createEventType',
   'EventDispatcher','DisplayObject','DisplayObjectContainer','Stage','createStage','createDisplayInputOperations','reportDiagnostic','AssetManager',
   'createAssetManager','AssetLease','createAssetType','createAssetRef','Sprite','Graphics','collectFrameCommands',
-  'collectFrameContent','collectTexturedFrameContent','Texture','createTexture','isTexture','Bitmap','Mesh2D','createSequenceClip','SequencePlayer','ByteReader','BYTE_READER_LIMITS','ByteWriter','BYTE_WRITER_LIMITS','createNineSliceGeometry2D','createSpriteSheet'].sort();
+  'collectFrameContent','collectTexturedFrameContent','Texture','createTexture','isTexture','Bitmap','Mesh2D','NineSliceBitmap','createSequenceClip','SequencePlayer','ByteReader','BYTE_READER_LIMITS','ByteWriter','BYTE_WRITER_LIMITS','createNineSliceGeometry2D','createSpriteSheet'].sort();
 if (JSON.stringify(Object.keys(runtimeFacade)) !== JSON.stringify(expectedRuntimeValues)) throw new Error('runtime: unchanged default-root export surface mismatch');
 for (const [entry,values,emittedEntry,valueTarget,typeTarget] of [
   ['runtime/text',runtimeText,'packages/runtime/dist/text/index','./TextRasterCache.js','./types.js'],

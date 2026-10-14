@@ -74,6 +74,10 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
         write('node_modules/@egret/engine/webgpu.js', 'export function createTexturedWebGPUHost() {}\nexport function createWebGPUHost() {}\n');
         write('packages/engine/dist/web/index.js', 'export function createCanvasHost() {}\n');
         write('packages/engine/dist/web/webgpu.js', 'export function createTexturedWebGPUHost() {}\nexport function createWebGPUHost() {}\n');
+        // The mapped image route is an empty inert policy namespace, never a provider.
+        for (const file of ['packages/engine/web/image.ts', 'packages/engine/dist/web/image.js', 'packages/engine/dist/web/image.d.ts'])
+          write(file, 'export {};\n');
+        write('node_modules/@egret/engine/web-image.js', "export * from '../../../packages/engine/dist/web/image.js';\n");
       }
     }
     // These are synthetic policy/resolution surfaces, never engine execution proof.
@@ -196,6 +200,18 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
     const nsContractsResolver = 'node_modules/@egret/contracts/index.js';
     write(nsContractsResolver, readFileSync(path.join(root, nsContractsResolver), 'utf8') + "export function createTexturedGeometry2D() {}\n");
     // NS1_FIXTURE_END
+    // NLB1 supplies only inert canonical policy/resolution surfaces, never display behavior.
+    // Both resolver roots forward the same sole class; options remain erased from JS.
+    const nineSliceBitmapFixtureTypes = 'export interface NineSliceBitmapOptions {}\nexport declare class NineSliceBitmap {}\n';
+    write('packages/runtime/src/NineSliceBitmap.ts', nineSliceBitmapFixtureTypes);
+    write('packages/runtime/dist/NineSliceBitmap.d.ts', nineSliceBitmapFixtureTypes);
+    write('packages/runtime/dist/NineSliceBitmap.js', 'export class NineSliceBitmap {}\n');
+    for (const file of ['packages/runtime/src/index.ts', 'packages/runtime/dist/index.js', 'packages/runtime/dist/index.d.ts'])
+      write(file, readFileSync(path.join(root, file), 'utf8') + "export {NineSliceBitmap} from './NineSliceBitmap.js';\n" + (file.endsWith('.js') ? '' : "export type {NineSliceBitmapOptions} from './NineSliceBitmap.js';\n"));
+    for (const file of ['packages/engine/src/index.ts', 'packages/engine/dist/index.js', 'packages/engine/dist/index.d.ts'])
+      write(file, readFileSync(path.join(root, file), 'utf8') + "export {NineSliceBitmap} from '@egret/runtime';\n" + (file.endsWith('.js') ? '' : "export type {NineSliceBitmapOptions} from '@egret/runtime';\n"));
+    for (const file of ['node_modules/@egret/engine/index.js', 'node_modules/@egret/runtime/index.js'])
+      write(file, readFileSync(path.join(root, file), 'utf8') + "export {NineSliceBitmap} from '../../../packages/runtime/dist/NineSliceBitmap.js';\n");
     // SS1 baseline is an inert policy surface, never genuine atlas/Bitmap behavior.
     // Both synthetic roots share this sole factory; erased names stay out of JS.
     const spriteSheetFixtureBody = 'export function createSpriteSheet() {}\n';
