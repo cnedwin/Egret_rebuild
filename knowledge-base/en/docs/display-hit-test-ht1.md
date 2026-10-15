@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/显示命中HT1.md) · [Coordinates](display-coordinate-query-contract.md) · [Display-tree scaling](display-tree-scaling.md)
 
-Engineering preview **0.29.0** adds explicit logical picking to the existing display tree. Applications author local rectangles and ask their genuine Engine-owned Stage for the topmost eligible object. The independently implemented CPU slice, targeted behavior, strict types and finite boundary controls have recorded results below. Complete current verification and six affected existing desktop renderer regressions passed. The private-plan browser picking supplement, independent bilingual meaning review, mandatory Git push hook and delivery remain **PENDING**. Workspace packages remain private `0.0.0`; protocol pins remain `1.0`.
+Engineering preview **0.29.0** adds explicit logical picking to the existing display tree. Applications author local rectangles and ask their genuine Engine-owned Stage for the topmost eligible object. The independently implemented CPU slice, targeted behavior, strict types and finite boundary controls have recorded results below. Complete current verification and six affected existing desktop renderer regressions passed. The private-plan browser picking supplement, independent bilingual meaning review, mandatory Git push hook and delivery remain **PENDING**. Workspace packages remain private `0.0.0`; protocol pins remain `1.0`. These verification and pending-delivery statements retain the original 0.29.0 cutoff; they are not a new assessment of later picking integrations.
 
 ## Public API and example
 
@@ -104,4 +104,4 @@ Independent review added literal Stage-clip and singular-ancestor regressions. A
 
 HT1 provides authored rectangular logical picking. DOM pointer-to-logical conversion, event routing, gestures, accessibility, automatic layout/content bounds, alpha/pixel/texture/TextField coverage and historical TouchEvent compatibility require separate designs and acceptance. Browser picking/phone behavior, performance, full UI, Spine, 3D input and complete migration are not established by this CPU increment.
 
-The implementation, fixtures and documentation are AI-assisted independent first-party Egret work under **Apache-2.0**. Existing first-party matrix, tree and lifetime mechanisms are reused without selecting a competitor implementation. No dependency or external asset is added. Previous rendering/font records, their legal notices, failures and source cutoffs retain their original scope.
+The implementation, fixtures and documentation are AI-assisted independent first-party Egret work under **Apache-2.0**. The implementation composes existing first-party matrix, tree and lifetime contracts. No dependency or external asset is added. Previous rendering/font records, their legal notices, failures and source cutoffs retain their original scope.

@@ -35,7 +35,7 @@ The report's fileExistence, decoding, execution and migration fields always rema
 
 Strict parsing uses the existing [jsonc-parser 3.3.1](https://github.com/microsoft/node-jsonc-parser/tree/v3.3.1) public-root createScanner/visit APIs under its MIT license. The declaration profile, report organization and test fixtures were independently authored from first-party contracts. Founder-supplied historical RES declaration semantics informed compatibility research; exact historical version/module closure remains unverified. Public materials preserve that provenance without distributing historical private source or project archives.
 
-The accepted exact three-file range has saved 20 focused/772 full passes and three finite independent reviews with no findings. These source tests use independently authored declaration fixtures, rather than legacy-game migration. Historical source/test identities are in the [declaration verification summary](../../evidence/legacy-res-declarations-verification.json). This documentation work reran none of those checks; final public review/push gates remain pending.
+The accepted exact three-file range has saved 20 focused/772 full passes and three finite independent reviews with no findings. These source tests use independently authored declaration fixtures, rather than legacy-game migration. Historical source/test identities are in the [declaration verification summary](../../evidence/legacy-res-declarations-verification.json). No additional execution is recorded here; final public review/push gates were pending at this verification cutoff.
 
 ## Complete migration remains required
 

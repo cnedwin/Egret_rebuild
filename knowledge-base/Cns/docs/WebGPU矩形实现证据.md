@@ -1,12 +1,12 @@
 # WebGPU 矩形实现证据——修订 0.6
 
-**发布检查点历史与最终原生绑定：** 下文已接受956原生结果保留原身份；在 `1aa0248` 运行前检查点，仅注释重建绑定当时仍待执行。随后仅注释入口重建的真实浏览器WebGPU运行在 `1aa0248a1ff6d8e54c42d631072223bb50483814`、2026-10-08T21:23:54.294Z以0退出并记录PASS：42帧、1709项原始断言、84张PNG截图、6808项合成断言、8项预期反例及0项意外错误。7项反例变异生产代码副本，1项为合成断言。233项源码/构建/工具/依赖清单身份在该运行前后相等，且与当时仅文档和元数据变更的后继版本一致。实际运行由验证作者执行；独立修正及原生绑定复审、最终语义凭据和发布仍待完成。见[仅注释证明](../../evidence/webgpu-entry-comment-proof.json)、[整理验证](../../evidence/webgpu-verification.json)及[范围审查记录](../../evidence/webgpu-review.json)。
-
 2026-10-09。[Complete English](../../en/docs/webgpu-rectangle-implementation-evidence.md) · [规范合同](WebGPU矩形执行合同.md) · [实施计划](WebGPU矩形实施计划.md)。
 
-本文件是实验性浏览器矩形执行的有界已记录证据。数值 CPU 修复已取得范围内 SPEC/QUALITY 审查接受；随后完整原生运行与整项审查在修复源码取得 **PASS / SPEC PASS / QUALITY PASS**，公开证据核对及发布仍 PENDING。本草稿读取已有凭据，不宣称新执行、完整人工图像审计或最终公开批准。
+本文件是实验性浏览器矩形执行的有界已记录证据。数值 CPU 修复已取得范围内 SPEC/QUALITY 审查接受；随后完整原生运行与整项审查在修复源码取得 **PASS / SPEC PASS / QUALITY PASS**，公开证据核对及发布仍 PENDING。本摘要依据保存凭据，不建立额外执行、完整人工图像审计或最终公开批准。
 
 ## 证据状态与时间顺序
+
+**发布检查点历史与最终原生绑定：** 下文已接受956原生结果保留原身份；在 `1aa0248` 运行前检查点，仅注释重建绑定当时仍待执行。随后仅注释入口重建的真实浏览器WebGPU运行在 `1aa0248a1ff6d8e54c42d631072223bb50483814`、2026-10-08T21:23:54.294Z以0退出并记录PASS：42帧、1709项原始断言、84张PNG截图、6808项合成断言、8项预期反例及0项意外错误。7项反例变异生产代码副本，1项为合成断言。233项源码/构建/工具/依赖清单身份在该运行前后相等，且与当时仅文档和元数据变更的后继版本一致。实际运行由验证作者执行；独立修正及原生绑定复审、最终语义凭据和发布仍待完成。见[仅注释证明](../../evidence/webgpu-entry-comment-proof.json)、[整理验证](../../evidence/webgpu-verification.json)及[范围审查记录](../../evidence/webgpu-review.json)。
 
 | 范围 | 已记录状态 | 边界 |
 | --- | --- | --- |
@@ -71,7 +71,7 @@ Inspector helper 曾因错误相对模块 URL 在几何运行前失败，修正�
 
 捕获的 device limits（与 adapter limits 分开）：maxTextureDimension2D=8192、maxBufferSize=268435456、maxVertexBuffers=8、maxVertexAttributes=16、maxVertexBufferArrayStride=2048、maxColorAttachments=8、maxColorAttachmentBytesPerSample=32。adapter 报告限制依次为 16384、2147483648、8、30、2048、8、128。nvidia/blackwell/isFallbackAdapter=false 为报告元数据，不认证硬件加速。
 
-原样 F4 原始检查及 nested readback/disabled × black/white 四组合成通过。84 张截图均有自动像素合成检查，不宣称全部 84 张接受人工视觉检查。完整审查者独立解码全部四张 F4 PNG 加 painter-readback-white.png（五图、20 个具名采样），视觉检查 nested-disabled-white.png、painter-readback-white.png。另一个更早视觉检查覆盖 nested-readback-black.png、nested-disabled-white.png。这些有限检查与全部 84 张自动比较分开，本草稿任务自身未检查图像。浏览器截图证明记录 CSS/backing/DPR/scale 下的合成，不证明物理扫描输出。
+原样 F4 原始检查及 nested readback/disabled × black/white 四组合成通过。84 张截图均有自动像素合成检查，不宣称全部 84 张接受人工视觉检查。完整审查者独立解码全部四张 F4 PNG 加 painter-readback-white.png（五图、20 个具名采样），视觉检查 nested-disabled-white.png、painter-readback-white.png。另一个更早视觉检查覆盖 nested-readback-black.png、nested-disabled-white.png。这些有限检查与全部 84 张自动比较分开，本摘要不建立额外图像检查。浏览器截图证明记录 CSS/backing/DPR/scale 下的合成，不证明物理扫描输出。
 
 八个预期失败反例分为**七个复制生产代码的原生修改**（no-op、reversed order、removed diamond clip、double premultiply、translated geometry、missing clear、nominal-DPR substitution）和**一个仅断言端合成缓存字节案例**（cached-missing-clear-reset）。各自记录预期断言失败。反例副本不是接受的生产代码；记录 originalProductPreserved=true、result exitStatus=0。合成案例不是第八个原生 GPU 修改。
 
@@ -137,7 +137,7 @@ Inspector helper 曾因错误相对模块 URL 在几何运行前失败，修正�
 | 历史原生尝试 6 | 9f3d12543d6e39b94b7cbd45589c352aaad3fdf4137627e691061bf06e7197fc |
 | 历史 native-third 日志 | 56266723d7472810bdef88edea601b229e762a20d985f4d9b12c67a18972613f |
 
-当前公开源码引用：RenderFrame2D (`packages/contracts/src/RenderFrame2D.ts`)、准备 (`packages/engine/rendering/prepareRectangles2D.ts`)、GPU host (`packages/engine/web/WebGPUHost.ts`)、pass (`packages/engine/web/webgpuPass.ts`)、数值回归 (`tests/geometry-webgpu-numeric.test.mjs`)、原生 harness (`tools/verify-webgpu.mjs`)、独立 oracle (`tools/webgpu-oracle.mjs`)。草稿核对链接存在/源码身份，完整实施接受仍取决于实际审查。
+当前公开源码引用：RenderFrame2D (`packages/contracts/src/RenderFrame2D.ts`)、准备 (`packages/engine/rendering/prepareRectangles2D.ts`)、GPU host (`packages/engine/web/WebGPUHost.ts`)、pass (`packages/engine/web/webgpuPass.ts`)、数值回归 (`tests/geometry-webgpu-numeric.test.mjs`)、原生 harness (`tools/verify-webgpu.mjs`)、独立 oracle (`tools/webgpu-oracle.mjs`)。这些引用标识已记录源码对象；完整实施接受仍取决于实际审查。
 
 ## 依赖证据与来源引用边界
 

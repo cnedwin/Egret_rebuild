@@ -2,6 +2,8 @@
 
 [English](README.md) | 简体中文
 
+白鹭实验性公共门面，装配 `@egret/runtime` 与 `@egret/contracts`，管理逻辑生命周期、显示／帧访问、CPU 资源及 surface 独占预留；物理资源和安全归还由宿主负责。根入口保持无 DOM，独立 `@egret/engine/web` 导出 `createCanvasHost`，`@egret/engine/webgpu` 显式启用 WebGPU。Engine 为渲染准备固定使用 `robust-predicates` 3.0.3。
+
 ## 工程预览 0.52.0 — 显示锚点偏移
 
 现有显示类继承有限 number 属性 `anchorOffsetX` 与 `anchorOffsetY`，默认 +0。指定枢轴使缩放／旋转在坐标、逻辑边界、裁剪、显式命中及帧捕获中保持一致，并保留原零偏移字节。阅读[当前契约](../../knowledge-base/Cns/docs/显示锚点偏移契约.md)和[有限证据](../../knowledge-base/Cns/docs/显示锚点偏移证据.md)。
@@ -17,8 +19,6 @@ DisplayObjectContainer.getChildIndex(child: DisplayObject): number 只读查询�
 根门面导出类型专用 `BoundsQueryOptions` 与继承的 `getBounds`，复用只读 `Rectangle2D`，见[接收者局部边界契约](../../knowledge-base/Cns/docs/显示内容边界契约.md)；布局及命中测试仍待完成。
 
 根入口导出仅类型的 `Point2D`／`CoordinateQueryOptions`，显示类继承 `localToGlobal`／`globalToLocal`。 阅读[坐标契约](../../knowledge-base/Cns/docs/显示坐标查询契约.md)。
-
-白鹭实验性公共门面，装配 `@egret/runtime` 与 `@egret/contracts`，管理逻辑生命周期、显示／帧访问、CPU 资源及 surface 独占预留；物理资源和安全归还由宿主负责。根入口保持无 DOM，独立 `@egret/engine/web` 导出 `createCanvasHost`，`@egret/engine/webgpu` 显式启用 WebGPU。Engine 为渲染准备固定使用 `robust-predicates` 3.0.3。
 
 ## 公共 API 与生命周期
 

@@ -30,7 +30,7 @@ The application owns six target/type/callback/capture pairs: pointerdown, three 
 | Native browser input, DOM pair retirement, pixels and five projection controls | **PASS_DESKTOP_HT1_CANVAS_SUBSET**: Edge 154.0.4258.62, ten baseline rows and five assigned controls. Baseline owned-pair cleanup and deliberate omission sensitivity are distinct observations. |
 | Pure verifier admission | **PASS 32/32**; synthetic admission/classifier checks, separate from native execution. |
 | Complete local verification | **PASS**: build, type fixtures and boundaries; core **2377/2377**, structural publication **63/63**; **140** pairs, **6** registry views, **154** critical source files; KB **159** records, **243** Markdown files, **1997** links, **955** references, **0** issues; headless closed with **0** pending timers. Scope counts are not summed. |
-| Final independent bilingual meaning, actual Git push hook and delivery | **PENDING**. |
+| Final independent bilingual meaning, actual Git push hook and delivery at the original pre-delivery checkpoint | **PENDING**. |
 
 The six isolated contexts saved 30 artifacts, including **424 target + 424 reference raw RGBA bytes**. Baseline Close removed all six owned native pairs with zero outstanding; the omit-retirement control deliberately retained six pairs and was detected. The collector closed every context and restored its observer. All contexts recorded zero errors and retained exactly two Canvas readback advisories each. The first native result remains **INCOMPLETE**; its records were not rewritten. V3 classifies only the exact known readback hint as advisory, without changing CanvasHost attributes, SDK, case actions or pixel oracle. Other warnings/errors remain fatal.
 

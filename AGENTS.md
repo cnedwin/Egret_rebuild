@@ -50,6 +50,8 @@ This agreement applies across the repository, including shared knowledge-base ex
 
 ## Public contributions and evidence
 
+Write explanatory documents in a neutral project voice: user needs, constraints, design reasoning, interfaces and delivery. Keep conversational prompts, respondent roles and routine drafting history out of the narrative. Preserve technical decisions, dated evidence, sources and accurate AI attribution; never invent an individual's thoughts or promote unverified work.
+
 Use professional, objective and friendly language. Explain changes through Egret's target scenarios, independent design, interfaces and reproducible results. Design records connect questions, options, evidence, counterexamples and conclusions. Technical comparisons identify material versions and test conditions; performance goals and measured results remain separate.
 
 State the actual scope of AI assistance, source material and author review. Retain references and acknowledgements; distinguish mechanism research, experimental dependencies, product dependencies and development tools. Preserve third-party attribution, copyright, licenses, NOTICE files and asset provenance. First-party code and documentation remain Apache-2.0.

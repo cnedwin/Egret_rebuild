@@ -4,7 +4,7 @@ English | [简体中文](README.zh-CN.md)
 
 This first-party verifier observes a real Engine clock driving public `engine.createSequencePlayback`, then explicit capture/render and immutable-frame replay. It consumes `@egret/engine` and selected `/web` or `/webgpu` public hosts. It uses no explicit player, private sampler, product stub or manual crop. Existing `tools/sequence-player` observations remain historical and cannot qualify the new controller.
 
-This source is a candidate for independent review. No browser result follows from these files or the completeness numbers below.
+Source files alone do not establish browser success. The counts below define the protocol requirements; consult the saved result for an actual attempt.
 
 ## Prerequisites and invocation
 

@@ -42,4 +42,4 @@ That source study established named mc/global res access, repeated duration span
 
 ## Remaining validation
 
-Default-worker and whole-repository regression for this subject remain UNRUN. Atlas reads/decoding, actual exporter/project coverage, renderer offset placement, labels/events/blank-frame playback, native pixels, device performance and complete migration remain UNRUN. Separate renderer evidence cannot certify this converter's image/playback path. The API remains internal, and its acceptance fields stay unverified even after focused CPU success.
+At the original focused-evidence cutoff, default-worker and whole-repository regression for this subject were UNRUN. Atlas reads/decoding, actual exporter/project coverage, renderer offset placement, labels/events/blank-frame playback, native pixels, device performance and complete migration remain UNRUN. Separate renderer evidence cannot certify this converter's image/playback path. The API remains internal, and its acceptance fields stay unverified even after focused CPU success.

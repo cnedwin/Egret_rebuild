@@ -6,7 +6,7 @@ Candidate 0.12.0. Authority: [Display and Frame Execution Contract](display-and-
 
 ## Global Constraints
 
-- Existing Apache-2.0 attribution and independent authorship remain. No original private source or competitor implementation is an input to these changes.
+- Existing Apache-2.0 attribution and independent authorship remain. These changes extend the repository's first-party display and frame contracts.
 - Keep the dependency DAG contracts → none, runtime → contracts, engine → contracts/runtime. Root core uses strict ES2022, types=[], and no DOM/Node ambient globals.
 - Public behavior tests and examples consume built `@egret/engine`; browser tests may consume `@egret/engine/web`. Internal factories and the collector are never reexported by the facade.
 - Preserve all existing behavior checks. Use literal geometric/pixel oracles, fail-first tests and explicit adversarial lifecycle cases.

@@ -2,7 +2,7 @@
 
 English | [简体中文](../../../Cns/experiments/spine-f2/README.md)
 
-Engineering preview 0.42.0 candidate, for synchronous source planning. The saved development run succeeded; independent acceptance and publication remain pending at this draft cutoff. Status: [contract](../../docs/spine-mesh-source-plan-contract.md), [evidence](../../docs/spine-mesh-source-plan-evidence.md), [shared verification](../../../evidence/spine-mesh-source-plan-verification.json).
+This synchronous source-planning guide preserves the engineering preview 0.42.0 record. Its saved development run succeeded; independent acceptance and publication were pending at that original draft cutoff. Status: [contract](../../docs/spine-mesh-source-plan-contract.md), [evidence](../../docs/spine-mesh-source-plan-evidence.md), [shared verification](../../../evidence/spine-mesh-source-plan-verification.json).
 
 ## Install and verify
 

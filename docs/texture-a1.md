@@ -1,6 +1,6 @@
 # Texture A1: immutable CPU images and attributed geometry
 
-A1 provides CPU values, borrowed display nodes, saved frames and private geometry preparation. Production Canvas and WebGPU hosts still reject image commands before resize, draw or queue mutation. There is no sampled image rendering, browser certification or GPU lifetime certification in A1. All A2 gates below are UNRUN.
+This document records A1's original CPU-only contract: CPU values, borrowed display nodes, saved frames and private geometry preparation. At that cutoff, production Canvas and WebGPU hosts rejected image commands before resize, draw or queue mutation. A1 establishes no sampled image rendering, browser certification or GPU lifetime certification. The A2 gates below are UNRUN within this historical A1 record.
 
 ## Ownership and identity
 

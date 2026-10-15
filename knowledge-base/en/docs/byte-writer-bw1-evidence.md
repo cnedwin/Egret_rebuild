@@ -2,11 +2,11 @@
 
 English | [简体中文](../../Cns/docs/字节写入器BW1证据.md)
 
-This record binds the first-party BW1 implementation to independently saved actual results. The implementation is original work from Egret specifications and ECMAScript intrinsics under Apache-2.0, with no added product dependency. Byte order reuses the existing ByteReader type. Curation reads saved facts and performs no new product execution.
+This record binds the first-party BW1 implementation to independently saved actual results. The implementation is original work from Egret specifications and ECMAScript intrinsics under Apache-2.0, with no added product dependency. Byte order reuses the existing ByteReader type. This document reports saved facts and adds no product execution.
 
 ## Engineering preview 0.40.0 — owned ByteWriter
 
-**S093 / V044. Finite CPU, type and assigned boundary results accepted; final publication gates and delivery remain PENDING.** ByteWriter supplies fixed-capacity strict binary appends, native IEEE floating conversion and independent snapshots of the committed prefix, reusing the original ByteOrder and Scope lifetime.
+**S093 / V044. Finite CPU, type and assigned boundary results accepted; final publication gates and delivery were PENDING at the original checkpoint.** ByteWriter supplies fixed-capacity strict binary appends, native IEEE floating conversion and independent snapshots of the committed prefix, reusing the original ByteOrder and Scope lifetime.
 
 The build and 37/37 public/regression cases passed: 8 BW groups, 23 ByteReader cases and 6 Scope cases. Separately, 2/2 process-isolated fault test files passed. BW has 24 internal observations and 22 controlled fault hits; these are not extra test cases. Positive type diagnostics were 0; the two intentional negative streams contained 41/16 diagnostics, with 57 exact located/code inventory entries. Strict-type gate and boundary guard exited 0; assigned boundary controls passed 17/17.
 
@@ -39,7 +39,7 @@ node --test --test-reporter=tap tests/byte-writer-boundaries.test.mjs
 node tools/prepush.mjs
 ```
 
-Exact current source, emission, type inventory and witness identities are in the [shared verification record](../../evidence/byte-writer-bw1-verification.json). Final full gates, mandatory push and BW1 PR/Main delivery remain PENDING at this curation cutoff. Full Spine R020/V020 and migration R008/V006 remain OPEN; no new GPU/host, phone, performance or complete-product acceptance is established.
+Exact current source, emission, type inventory and witness identities are in the [shared verification record](../../evidence/byte-writer-bw1-verification.json). Final full gates, mandatory push and BW1 PR/Main delivery were PENDING at the original pre-delivery cutoff. Full Spine R020/V020 and migration R008/V006 remain OPEN; no new GPU/host, phone, performance or complete-product acceptance is established.
 
 <!-- BW1-DELIVERY-0.40.0-SUCCESSOR-BEGIN -->
 

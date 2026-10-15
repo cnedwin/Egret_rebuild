@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/文字显示TF1证据.md) · [Contract](text-field-tf1-contract.md) · [Shared record](../../evidence/text-field-tf1-verification.json)
 
-Prepared 2026-10-11. The saved results concern the explicit-line, noneditable TF1 leaf and existing CPU resource/display contracts. Independent review accepted the fourteen-file source slice within a source-only scope and separately audited the completed bounded CPU results. Each execution retains its own binding. Complete existing prototype verification subsequently passed; native TextField, current public prepush and remote delivery remain **PENDING**.
+Prepared 2026-10-11. The saved results concern the explicit-line, noneditable TF1 leaf and existing CPU resource/display contracts. Independent review accepted the fourteen-file source slice within a source-only scope and separately audited the completed bounded CPU results. Each execution retains its own binding. Complete existing prototype verification subsequently passed. Native TextField, public prepush and remote delivery were **PENDING** at this prepared record's cutoff.
 
 ## Closed observations
 
@@ -43,9 +43,9 @@ Strict-type history remains intact: `types-r1` failed the positive consumer's un
 
 The source review found zero actionable issues in fourteen files. Separate reviews closed the construction finding, two type-coverage findings, public-fixture corrections, large-tree setup and legacy collector metadata/count corrections. The independent saved-CPU audit verified 24 closed receipts and 48 raw streams, with zero actionable findings. It excluded the then-running `verify-r1`; the later whole result has its own receipt and is not retroactively covered by that audit. These reviewers performed source/saved-result review, not execution.
 
-The implementation and these documents are first-party, AI-assisted work composing existing Egret text/resource/image/ownership/display contracts. This is bounded provenance, not global-originality or training-source certification. Code and documentation retain [Apache-2.0](https://github.com/cnedwin/Egret_rebuild/blob/main/LICENSE); existing third-party notices remain separate. No competitor implementation or new dependency is introduced by this evidence package.
+The implementation and these documents are first-party, AI-assisted work composing existing Egret text/resource/image/ownership/display contracts. The attribution identifies the implementation and its reused contracts. Code and documentation retain [Apache-2.0](https://github.com/cnedwin/Egret_rebuild/blob/main/LICENSE); existing third-party notices remain separate. This evidence package retains the existing dependency set.
 
-CPU literal pixels and complete prototype gates do not establish fonts, native TextField, CJK coverage, performance, phones, Native SDKs, Spine, 3D, complete UI or migration acceptance. Those requirements remain open. Native TF1, current public prepush and remote delivery need separately reviewed actual successors; this cutoff awards none of them.
+CPU literal pixels and complete prototype gates do not establish fonts, native TextField, CJK coverage, performance, phones, Native SDKs, Spine, 3D, complete UI or migration acceptance. Those requirements remain open. Native TF1, public prepush and remote delivery required separately reviewed actual successors; this historical cutoff establishes none of them.
 
 ## Later closed saved-result reviews
 
@@ -55,7 +55,7 @@ A separate saved renderer-freeze review matched 702 inputs and 548 emitted files
 
 ## Later current renderer regression observations
 
-Root subsequently ran the five existing routes against the selected current TF1 core/build. Each used a fresh one-use release and the unchanged owned launcher, default Edge, route guards and retirement limits. Actual owner and runner receipts closed PASS with assignment before ACK, complete output EOF, stable pins, active process count zero, closed Job and no fallback or additional browser flags. The shared record binds each receipt by byte length and SHA256; the private raw outputs remain outside public reading material.
+Five existing routes were subsequently executed against the selected TF1 core/build. Each used a fresh one-use release and the unchanged owned launcher, default Edge, route guards and retirement limits. The process-owner and route-runner receipts reported PASS: assignment preceded ACK, output reached complete EOF, pins stayed stable, active process count reached zero and the Job closed, with no fallback or additional browser flags. The shared record binds each receipt by byte length and SHA256; the private raw outputs remain outside public reading material.
 
 | Existing route | Actual result | One-use release | Input pins | Cumulative Job processes |
 | --- | --- | --- | --- | --- |
@@ -65,7 +65,7 @@ Root subsequently ran the five existing routes against the selected current TF1 
 | `textured` | PASS | `4d2fcc73f4f192c0613cfcc443aa8a76` | 1693 | 88 |
 | `sequence` | PASS | `be89ae23ab95d1041effae73d507efb6` | 1693 | 17 |
 
-These are five route executions, not five newly implemented TextField tests. Cumulative process counts are observations, not peak resource measurements. The selected renderer graph still excludes the explicit text entry, factory and runtime TextField leaf. This closes the current existing renderer regressions; native TextField/font/UI, phones and performance acceptance remain open. The historical renderer-freeze cutoff above remains unchanged.
+These are five route executions, not five newly implemented TextField tests. Cumulative process counts are observations, not peak resource measurements. The selected renderer graph still excludes the explicit text entry, factory and runtime TextField leaf. The recorded run completed these existing renderer regression gates; native TextField/font/UI, phones and performance acceptance remain open. The historical renderer-freeze cutoff above remains unchanged.
 
 Before any owner/browser started, the first binding attempt rejected the whole-core input receipt's two same-identity duplicate paths. The first failed invocation did not capture owned raw streams; no raw hash is fabricated for it. A separately reviewed private correction accepts only same-identity duplicate input records, keeps source uniqueness and conflicting-identity refusal, and still charges every input record to the byte budget. Original failure and source-only review cutoffs remain preserved. The five later actual bindings and launches passed; no product source, browser flag, rendering oracle or capacity limit was changed for this correction. Independent saved-result review, final mandatory prepush and remote delivery retain separate records.
 

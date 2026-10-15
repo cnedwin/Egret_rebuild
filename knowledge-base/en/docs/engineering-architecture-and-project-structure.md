@@ -2,24 +2,15 @@
 
 English | [简体中文](../../Cns/docs/工程技术架构与项目结构.md)
 
-The historical 0.13.0 rectangle checkpoint has its own [implementation and verification record](webgpu-rectangle-implementation-evidence.md). Its source identities, results and pending work retain their recorded scope; they do not establish current product acceptance.
+The repository structure separates game semantics, execution, platform services and project tools. Familiar display, event, resource and animation interfaces give developers a stable vocabulary; explicit ownership and package dependencies keep those interfaces usable in headless tests, browser builds and future native integrations.
 
+R016 and D016 connect familiar object semantics to explicit engineering boundaries. The directory plan below describes the full product structure; components enter as their actual responsibilities and consumers emerge. [Core progress](core-progress.md) identifies implemented packages. Project services, wider graphics/host packages, native providers, editor and migration retain their own work.
 
-## Historical 0.12.0 display and frame candidate scope
-
-The successor work package is defined by the [display and frame contract](display-and-frame-execution-contract.md) and [implementation plan](display-and-frame-implementation-plan.md): display transforms, inherited visibility/alpha and local rectangle clipping, Sprite-owned Graphics rectangle fills, and immutable CPU frame capture/submission. The implemented first execution adapter is Canvas through the separate @egret/engine/web entry; the core root retains its DOM-free boundary. Bounded implementation checks passed: 97/97 core behavior tests, 25 negative type diagnostics and real desktop Canvas pixels/pointer interaction. Scoped independent review passed after the recorded cross-realm rejection correction. Remote publication is tracked separately. Final scoped results belong in the [implementation record](display-and-frame-implementation-record.md) and [verification](../../evidence/display-frame-verification.json).
-
-This work package does not establish complete text/texture/animation/UI/3D execution, GPU or Native support, target-device performance, editors, Agent services, or complete migration. Earlier headless, CPU asset and third-party research records retain their original versions, counts, hashes and scope; their results are not new display-frame acceptance.
-
-Version: 0.1 candidate specification · Knowledge base 0.9.0 · Updated: October 8, 2026.
-
-R016 confirms the objectives of completely redefining architecture and code standards, retaining Egret naming, and modernizing structure/APIs. D016 records the candidate tradeoffs below. Directories, packages, APIs, and gates have not been completely implemented or accepted; the [first core-slice record](core-framework-implementation-record.md) describes the implemented headless subset. “Must” in these rules describes proposed engineering constraints.
-
-[Public APIs and naming](public-api-design-and-naming.md) · [Code standards and gates](code-standards-and-quality-gates.md) · [Runtime semantic architecture](technical-architecture.md) · [Rendering design](rendering-engine-and-runtime.md)
+[Public APIs and naming](public-api-design-and-naming.md) · [Code standards and gates](code-standards-and-quality-gates.md) · [Runtime architecture](technical-architecture.md) · [Rendering design](rendering-engine-and-runtime.md) · [First core record](core-framework-implementation-record.md)
 
 ## 1. Recommended direction and design rationale
 
-Recommend a TS/Rust monorepo with “layered packages + familiar object APIs + a data-oriented execution core.” Familiarity stays in game semantics: display objects, display lists, events, stages, resources, and animation. Modernization appears in modules, ownership, project contracts, tool feedback, and target-specific builds. There is no need to convert all scenes to ECS or make every browser work carry complete Rust/WASM or a native VM.
+The proposed long-term structure is a TS/Rust monorepo with “layered packages + familiar object APIs + a data-oriented execution core.” Familiarity stays in game semantics: display objects, display lists, events, stages, resources, and animation. Modernization appears in modules, ownership, project contracts, tool feedback, and target-specific builds. There is no need to convert all scenes to ECS or make every browser work carry complete Rust/WASM or a native VM.
 
 | Structural approach | Benefits | Main costs | Candidate judgment |
 | --- | --- | --- | --- |
@@ -31,7 +22,7 @@ Here, “mature data-oriented core” means mechanisms such as dirty queues, bat
 
 ## 2. Initial directory and package budget
 
-Directory/package names are candidates pending review; actual public npm scope availability is unverified. First establish 9 TS workspace packages and 3 public package identities. The editor and MCP are applications; host adapters start as directories within packages, without immediately creating separately published packages for every platform. Create the 3 candidate Rust crates only when they have actual native-stage responsibilities. This does not mean repository creation in this round or acceptance of a complete Rust selection.
+Directory/package names are candidates pending review; actual public npm scope availability is unverified. The full initial product structure budgets 9 TS workspace packages and 3 public package identities; introduce each when its implemented responsibility requires it. The editor and MCP are applications; host adapters start as directories within packages, without immediately creating separately published packages for every platform. Create the 3 candidate Rust crates only when they have actual native-stage responsibilities. This diagram budgets responsibilities rather than precreating every directory; the complete Rust selection remains open.
 
 ```text
 egret/
@@ -93,7 +84,7 @@ runtime/graphics/hosts must not depend on project, toolchain, editor, CLI, Agent
 
 Pure contracts trigger no DOM, GPU, files, networking, threads, timers, VM initialization, or global registration. Export type contracts separately from executable validators; public type imports must not automatically include all project-schema validators in bundles. Persistent JSON schemas, protocol schemas, and generated TS/Rust types have one authoritative source file. Generated artifacts are rebuildable; do not manually edit two separate copies of a contract.
 
-The package dependency graph does not mean every export imports whole packages. The root entry retains only createEngine and basic 2D types. Access stage through an Engine instance, without automatically importing native, 3D, or EUI. `/web` assembles browser hosts and WebGPU/WebGL executors; `/scene3d`, `/eui`, and `/animation` are explicit build exits/capability boundaries. Later consumers and version cadence determine actual independent release packages. Public names/subpaths await registry availability checks and API review.
+The package dependency graph does not mean every export imports whole packages. The intended root boundary exposes instance assembly and basic 2D APIs; exact implemented exports are frozen by the current package inventory. Access stage through an Engine instance, without automatically importing native, 3D, or EUI. `/web` assembles browser hosts and WebGPU/WebGL executors; `/scene3d`, `/eui`, and `/animation` are explicit build exits/capability boundaries. Later consumers and version cadence determine actual independent release packages. Public names/subpaths await registry availability checks and API review.
 
 Inject host capabilities through ports rather than asking “is this WeChat/Android?” in every layer. Performance hotspots may use explicit internal extension points, but arbitrary `internal` imports cannot bypass resource generations, device owners, or persistence-format versions.
 
@@ -166,7 +157,7 @@ Public packages may share versions for early management; engine versions, projec
 4. Add a second backend for the same scenes and verify capability/quality/recovery; complete UI, skeletal animation, 3D, and text item by item.
 5. Then evaluate WASM/native modules and SDKs against actual bottlenecks. Legacy-migration specifications participate throughout; complete migration passes V006 acceptance.
 
-Verification includes dependency DAGs/prohibited reverse references, public-export snapshots, schema/code-generation consistency, minimal 2D/mixed/native target-package composition, multiple-engine isolation, shutdown and invalid generations, old asynchronous results, device recovery, equivalent-function/image-quality comparisons, consecutive AI changes, and complete legacy migration. This document defines future gates only, without claiming these checks have run. Performance numbers, initial platforms, and team schedules remain unconfirmed.
+Verification includes dependency DAGs/prohibited reverse references, public-export snapshots, schema/code-generation consistency, minimal 2D/mixed/native target-package composition, multiple-engine isolation, shutdown and invalid generations, old asynchronous results, device recovery, equivalent-function/image-quality comparisons, consecutive AI changes, and complete legacy migration. These are broader product gates; the current package records identify which bounded checks have actually run. Performance numbers, initial platforms, and team schedules remain unconfirmed.
 
 ## Related contracts and conditions not yet accepted
 
@@ -179,4 +170,15 @@ Related contracts: technical architecture; rendering engine and runtime; AI crea
 
 ## Implemented 0.13 boundaries
 
-The actual internal DAG remains engine → runtime/contracts and runtime → contracts. DOM-free `engine/rendering` has its own ES2022 composite compiler project referencing contracts only; browser `engine/web` references it and retains separate output. robust-predicates 3.0.3 is the exact external package-root exception, not a TS project reference or a new internal package. The two browser entries remain isolated. Future graphics/hosts/native package proposals above are broader candidate architecture, not implemented directory claims. GPU buffer ownership resides in WebGPUHost; current CPU asset disposal does not establish future texture lifetime.
+This historical checkpoint established engine → runtime/contracts and runtime → contracts. The DOM-free `engine/rendering` ES2022 composite project references contracts; browser `engine/web` references it with separate output. robust-predicates 3.0.3 is an exact external package-root exception, rather than a project reference or new internal package. GPU buffer ownership resides in WebGPUHost. The checkpoint's CPU asset disposal did not establish later texture lifetimes. Later bounded entries extend this implementation without turning the proposed graphics/hosts/native package diagram into an implemented directory claim.
+
+## Historical 0.12.0 display and frame candidate scope
+
+The [display/frame contract](display-and-frame-execution-contract.md), [plan](display-and-frame-implementation-plan.md), [implementation record](display-and-frame-implementation-record.md) and [verification](../../evidence/display-frame-verification.json) preserve the original transform, visibility/alpha, rectangular clip, Sprite Graphics and immutable CPU frame scope. Its first execution adapter was Canvas at the separate `@egret/engine/web` entry. The original 97/97 behavior checks, 25 negative type diagnostics and desktop Canvas/pointer observations passed after the cross-realm rejection correction; remote publication was tracked separately. These remain the original cutoff, with complete text, textures, animation, UI, 3D, devices, editors, Agents and migration outside that package.
+
+The separate [0.13 rectangle record](webgpu-rectangle-implementation-evidence.md) preserves its own identities, results and pending work. Historical evidence is read alongside later package records, rather than promoted to current whole-product acceptance.
+
+
+## Design baseline
+
+The broader engineering specification was recorded on October 8, 2026, candidate 0.1/knowledge base 0.9.0. Future package names and budgets remain proposals beyond actual implemented responsibilities. Current delivery identities are maintained in core progress and the changelog.

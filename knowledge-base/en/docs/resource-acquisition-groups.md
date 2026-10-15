@@ -2,13 +2,13 @@
 
 English | [简体中文](../../Cns/docs/资源批量获取.md) · [Resource core](resource-core-implementation-record.md)
 
-Prospective engineering checkpoint **0.31.0** · Workspace packages **0.0.0**, private · Protocol **1.0**, unchanged · Experimental CPU slice. Document date: **2026-10-12**. Evidence cutoff: **2026-10-11 18:50:31 UTC**.
+Recorded engineering checkpoint **0.31.0** · Workspace packages **0.0.0**, private · Protocol **1.0**, unchanged · Experimental CPU slice. Document date: **2026-10-12**. Evidence cutoff: **2026-10-11 18:50:31 UTC**.
 
-RG1 gives a resource-backed scene one bounded acquisition owner. The candidate is integrated in the public working tree: its build and two-texture CPU example passed, together with **86/86** combined CPU checks (**29** RG1 and **57** retained resource/lifecycle checks). Earlier private strict types and the corrected **35/35** finite policy controls also passed. Seven existing browser profiles passed within their recorded limits; they do not exercise a group-based browser application. Complete current checks, bilingual/publication review, the mandatory push hook and RG1 remote delivery remain **PENDING**. These checkpoint numbers do not announce an npm release.
+RG1 gives a resource-backed scene one bounded acquisition owner. The recorded build and two-texture CPU example passed, together with **86/86** combined CPU checks (**29** RG1 and **57** retained resource/lifecycle checks). Earlier private strict types and the corrected **35/35** finite policy controls also passed. Seven existing browser profiles passed within their recorded limits; they do not exercise a group-based browser application. Complete current checks, bilingual/publication review, the mandatory push hook and RG1 remote delivery were **PENDING** at that evidence cutoff. These checkpoint numbers do not announce an npm release.
 
 ## API and use
 
-The candidate adds one Engine instance method and three engine-root **type-only** exports: `AssetGroup`, `AssetGroupState`, `AssetGroupOptions`.
+RG1 adds one Engine instance method and three engine-root **type-only** exports: `AssetGroup`, `AssetGroupState`, `AssetGroupOptions`.
 
 ```ts
 createAssetGroup<T>(
@@ -20,7 +20,7 @@ createAssetGroup<T>(
 
 The opaque frozen group exposes readonly `state`, `ready: Promise<readonly AssetLease<T>[]>`, and `dispose(): void`. States are `pending`, `ready`, `failed`, `disposed`. Input is homogeneous and invariant in `T`; there is no heterogeneous tuple overload. The required private type brand prevents structural fabrication without emitting a runtime brand. There is no group constructor, root factory, new group subpath or runtime group facade.
 
-The caller registers providers and supplies a `HostAdapter`. This candidate usage uses the existing genuine Texture/Bitmap API; it illustrates CPU fixtures, with no downloading, decoding or GPU upload:
+The caller registers providers and supplies a `HostAdapter`. This example uses the existing genuine Texture/Bitmap API; it illustrates CPU fixtures, with no downloading, decoding or GPU upload:
 
 ```ts
 import {
@@ -109,6 +109,6 @@ Earlier setup failures, the original missing-feature RED, the initial 34-control
 
 The preceding **0.30.0** example checkpoint was delivered through [PR #17](https://github.com/cnedwin/Egret_rebuild/pull/17), with local and remote Main identities verified. That receipt belongs to 0.30.0 and supplies no RG1 delivery result.
 
-This independently authored first-party increment reuses the existing manager/ref/lease machinery, with Codex assistance and finite review, under the project's Apache-2.0 license. It adds no external dependency, competitor-source adoption or package/export-map change. It supports resource-backed scene startup toward existing **R002/R003**, engineering **R011/R015/R016/R017**, and public collaboration **R018/R019**; it does not complete those broader requirements. Registry entries **S084/V035** record this increment as in progress at the frozen cutoff.
+This independently authored first-party increment reuses the existing manager/ref/lease machinery, with Codex assistance and finite review, under the project's Apache-2.0 license. The external dependency set and package/export map remain unchanged. It supports resource-backed scene startup toward existing **R002/R003**, engineering **R011/R015/R016/R017**, and public collaboration **R018/R019**; it does not complete those broader requirements. Registry entries **S084/V035** record this increment as in progress at the frozen cutoff.
 
 Full Spine remains required under [R020/V020](spine-animation-support-and-acceptance.md). RG1 supplies partial-load cleanup and instance ownership groundwork only. Spine import, atlas, official version/feature/license matrix, pose, playback, events, rendering, recovery, complete UI/3D and migration remain separate unfinished obligations.

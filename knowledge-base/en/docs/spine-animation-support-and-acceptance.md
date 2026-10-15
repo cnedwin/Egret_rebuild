@@ -2,32 +2,9 @@
 
 English | [简体中文](../../Cns/docs/Spine动画支持需求与验收.md)
 
-<!-- F1C-DOC-0.37.0-BEGIN -->
-## Engineering preview 0.37.0 — opt-in F1 Clock candidate
+R020 requires full Spine support as part of Egret's animation, rendering and creation workflow. A Spine asset must retain its authored behavior while sharing scene composition, resource lifetime and game timing with the rest of the work. Complete support therefore includes correct semantics, pixels, ownership, creator operations and verified target hosts.
 
-**S090 / V041** records the original F1 Clock experiment; **D017 remains proposed** and concerns only its trusted session and explicit opt-in provenance. Saved private CPU execution passed **10/10** Clock cases, including the named after-advance fault, and **3** assigned wrong-copy controls with fresh baselines. The original manual **12/12** remains unchanged. Saved private desktop WebGPU execution passed **10** positive readbacks and **1** separate double-update control: **30** original positive samples, **120** channels, tolerance **0**, with full-byte repeats and bounded cleanup. Counts are not added to historical runs.
-
-**Portable public Clock source/replay, current full gates, final bilingual review, mandatory push and 0.37.0 delivery are PENDING at this curation cutoff.** Private results do not substitute for them. The former 0.36.0 blocks below retain their historical pending cutoff; 0.36.0 was subsequently delivered through [PR #23](https://github.com/cnedwin/Egret_rebuild/pull/23), Main `36909c3c1b2b9ef9784cb71d949ef6eba142fc0a`.
-
-Official external `@esotericsoftware/spine-core@4.3.13` is attributed, neither bundled nor relicensed. Integration/distribution qualification remains unverified. Complete Spine **R020/V020 remains OPEN**; these observations establish no phone/Native SDK, physical GPU, OS process retirement, performance/energy or complete-product acceptance.
-
-V020 remains in_progress with full-capability acceptance not_run. This slice adds genuine Clock-driving evidence for original F1 only and does not complete the version/feature/backend/host matrix.
-
-Read [Clock guide](../experiments/spine-f1/README.md), [saved verification](../../evidence/spine-f1-clock-verification.json) and [pending public projection](../../evidence/spine-f1-clock-public-projection.json).
-A subsequent actual replay of the public source in an independent clone passed manual **12/12** with **6** original controls and full Clock **10/10** with **3** assigned controls; the named fault actually executed, with **0** skipped accepted cases. Separate default-headless WebGPU execution passed **10+1** readbacks, **30** positive samples and **120** channels at tolerance **0**, retaining original full-byte relations and bounded cleanup. Cold import/help observed **280** modules and **0** Core/GPU/host accesses. The saved CPU collection retains its earlier native-pending cutoff; the separate native receipt is the actual successor. Original source and input identities remained unchanged. Independent saved-result review, final repository gates and delivery remain PENDING here; full Spine **R020/V020 remains OPEN**. See the current successor in the linked Clock verification/projection records.
-<!-- F1C-DOC-0.37.0-END -->
-
-Updated: 2026-10-10. R020 is a confirmed product requirement: Egret must fully support Spine animation. V020 is planned, with implementation `not_started` and acceptance `not_run`. This amendment adds a delivery obligation; it establishes no implemented Spine capability, performance result, dependency installation or release. Earlier animation experiments and S027 retain their original scope.
-<!-- SP1B-DOC-0.36.0-BEGIN -->
-## Engineering preview 0.36.0 — original F1 Spine experiment
-
-An opt-in original two-region manual bridge connects real resources and owned Mesh2D geometry. Portable CPU execution passed **12/12** original tests and **6** assigned controls, each with a fresh baseline. Complete Spine **R020/V020 remains OPEN**.
-
-Separate browser WebGPU validation recorded **8** positive submissions and **1** assigned double-update error control; a separate **3**-read classification actor verified `PIXEL_FAIL`. These results are not combined. The prepared public CPU/browser reproduction tool also passed in a new clone with the same **8+1** profile; these are repeated observations, not additional feature coverage. Its finite independent review has **0** open findings. The public checkout also passed the same CPU/browser profile. **Final publication gates and 0.36.0 delivery remain PENDING at this cutoff.** Read [the experiment guide](../experiments/spine-f1/README.md), [verification](../../evidence/spine-f1-manual-verification.json) and [projection provenance](../../evidence/spine-f1-public-projection.json) for exact profiles, original oracles, source terms and remaining UI/runtime/creator/migration work.
-
-The preceding **0.35.0** was actually delivered through [PR #22](https://github.com/cnedwin/Egret_rebuild/pull/22). Its recorded gates and Main identities are in the guide/evidence; **0** remote statuses and **0** check runs establish no remote CI PASS. Earlier PENDING cutoffs below remain history.
-<!-- SP1B-DOC-0.36.0-END -->
-
+V020 remains open. Import planning and original manual/Clock-driven F1 experiments establish limited prerequisites; they do not establish full version/feature/backend compatibility. [Core progress](core-progress.md) identifies the current preview. The contract below defines what remains necessary for complete acceptance, with historical experiment cutoffs kept at the end.
 
 ## Product requirement and the meaning of complete support
 
@@ -41,7 +18,7 @@ As checked on 2026-10-10, the official API documentation identifies 4.3 as the c
 
 The initial implementation proposal evaluates 4.3 first and 4.2 as the preceding compatibility series. Inventory 3.8, 4.0, 4.1 and custom integrations when authorized legacy projects require them; no historical series is declared supported by this document. Exact packages/commits, supported export patches and assets are pinned before implementation acceptance. Do not infer the latest published package from a repository manifest or assume an editor patch number equals a runtime package patch number. Beta adoption is separate and never silently replaces a stable project dependency.
 
-Each matrix row records export version, runtime identity, JSON/binary format, feature profile, Egret build, rendering backend, host/device/OS identity, asset rights, actual result and evidence location. At present all Egret Spine rows are unverified. Target-host rollout follows the existing platform plan; this amendment sets no first-release host order or date.
+Each matrix row records export version, runtime identity, JSON/binary format, feature profile, Egret build, rendering backend, host/device/OS identity, asset rights, actual result and evidence location. Complete version/feature/backend/host rows remain unverified; bounded original F1 experiments have separate evidence and do not complete a matrix row. Target-host rollout follows the existing platform plan; this design fixes no first-release host order or date.
 
 ## Candidate integration boundary
 
@@ -83,12 +60,42 @@ Pixel references need fixed assets, inputs, clocks, cameras, color/alpha convent
 
 V020 is a required Spine capability work package, owned jointly by V002 rendering/runtime and V004 resources/animation, with their host/creator integration through V005 and legacy comparison through V006. Its registered prerequisite is V001's authorized samples and baselines; SP1–SP4 also require the relevant resource, rendering, project and host interfaces to be ready. These are integration gates, not a requirement that all four complete products be accepted before Spine work can pass. The existing final product dependency sets are preserved, and their R020 acceptance criteria explicitly include Spine. Do not mark full V002/V004/V005/V006 delivery accepted while applicable R020 obligations remain open.
 
-No duration, staffing or performance budget is committed by this amendment. V020 becomes accepted only with reproducible implementation, complete selected-version features, actual declared-host rows, source/dependency/asset provenance, notices and review. Document review, a library's feature list or pre-push success cannot satisfy that gate.
+No duration, staffing or performance budget is committed. V020 becomes accepted only with reproducible implementation, complete selected-version features, actual declared-host rows, source/dependency/asset provenance, notices and review. Document review, a library's feature list or pre-push success cannot satisfy that gate.
 
 ## Licensing, attribution and evidence limits
 
 Spine Runtimes use the [Spine Runtimes License Agreement](https://esotericsoftware.com/spine-runtimes-license), with integration/distribution conditions in section 2 of the [Spine Editor License Agreement](https://esotericsoftware.com/spine-editor-license). They are not covered by Egret's Apache-2.0 license. For toolkit use, the official terms describe Spine Editor license requirements for users creating or modifying software containing the runtimes and retention of applicable notices. Review the exact release/distribution arrangement before integration; an optional adapter does not waive those conditions. This is a source-based engineering constraint, not a completed legal assessment of a future distribution.
 
-Keep independently authored Egret integration, unmodified/modified third-party runtime code and assets separately attributed. Do not copy competitors' Spine adapters. Preserve upstream notices and track asset redistribution rights independently from runtime licensing. No runtime source or example asset is incorporated by this amendment.
+Keep independently authored Egret integration, unmodified/modified third-party runtime code and assets separately attributed. Egret integration follows its own specification; any third-party code remains explicitly attributed under its applicable terms. Preserve upstream notices and track asset redistribution rights independently from runtime licensing. The original requirement/design document itself incorporates no runtime source or example assets.
 
-Sources: S066 records the project owner's new requirement; S067 records the current official technical documentation; S068 records the official license texts, checked on 2026-10-10. Research supports the candidate and acceptance design only. No Spine dependency, source execution, browser pixels, phone test or native validation has been performed for V020.
+Sources S066, S067 and S068 record respectively the October 10, 2026 requirement, official technical documentation and official license texts. That original design review installed/executed no dependency and produced no pixels, phone or native validation. Later F1 experiments are separately recorded below; complete V020 acceptance remains not_run.
+
+
+## Historical requirement and bounded experiments
+
+The October 10, 2026 requirement registration recorded V020 planned / implementation not_started / acceptance not_run. S027 and earlier animation work retained their own scopes. The later F1 checkpoint records V020 in_progress with full-capability acceptance not_run. Neither state means that the complete matrix passed. Original failure and PENDING labels below remain their own dated observations.
+
+<!-- SP1B-DOC-0.36.0-BEGIN -->
+## Engineering preview 0.36.0 — original F1 Spine experiment
+
+An opt-in original two-region manual bridge connects real resources and owned Mesh2D geometry. Portable CPU execution passed **12/12** original tests and **6** assigned controls, each with a fresh baseline. Complete Spine **R020/V020 remains OPEN**.
+
+Separate browser WebGPU validation recorded **8** positive submissions and **1** assigned double-update error control; a separate **3**-read classification actor verified `PIXEL_FAIL`. These results are not combined. The prepared public CPU/browser reproduction tool also passed in a new clone with the same **8+1** profile; these are repeated observations, not additional feature coverage. Its finite independent review has **0** open findings. The public checkout also passed the same CPU/browser profile. **Final publication gates and 0.36.0 delivery remain PENDING at this cutoff.** Read [the experiment guide](../experiments/spine-f1/README.md), [verification](../../evidence/spine-f1-manual-verification.json) and [projection provenance](../../evidence/spine-f1-public-projection.json) for exact profiles, original oracles, source terms and remaining UI/runtime/creator/migration work.
+
+The preceding **0.35.0** was actually delivered through [PR #22](https://github.com/cnedwin/Egret_rebuild/pull/22). Its recorded gates and Main identities are in the guide/evidence; **0** remote statuses and **0** check runs establish no remote CI PASS. Earlier PENDING cutoffs below remain history.
+<!-- SP1B-DOC-0.36.0-END -->
+
+<!-- F1C-DOC-0.37.0-BEGIN -->
+## Engineering preview 0.37.0 — opt-in F1 Clock candidate
+
+**S090 / V041** records the original F1 Clock experiment; **D017 remains proposed** and concerns only its trusted session and explicit opt-in provenance. Saved private CPU execution passed **10/10** Clock cases, including the named after-advance fault, and **3** assigned wrong-copy controls with fresh baselines. The original manual **12/12** remains unchanged. Saved private desktop WebGPU execution passed **10** positive readbacks and **1** separate double-update control: **30** original positive samples, **120** channels, tolerance **0**, with full-byte repeats and bounded cleanup. Counts are not added to historical runs.
+
+**Portable public Clock source/replay, current full gates, final bilingual review, mandatory push and 0.37.0 delivery are PENDING at this curation cutoff.** Private results do not substitute for them. The former 0.36.0 blocks below retain their historical pending cutoff; 0.36.0 was subsequently delivered through [PR #23](https://github.com/cnedwin/Egret_rebuild/pull/23), Main `36909c3c1b2b9ef9784cb71d949ef6eba142fc0a`.
+
+Official external `@esotericsoftware/spine-core@4.3.13` is attributed, neither bundled nor relicensed. Integration/distribution qualification remains unverified. Complete Spine **R020/V020 remains OPEN**; these observations establish no phone/Native SDK, physical GPU, OS process retirement, performance/energy or complete-product acceptance.
+
+V020 remains in_progress with full-capability acceptance not_run. This slice adds genuine Clock-driving evidence for original F1 only and does not complete the version/feature/backend/host matrix.
+
+Read [Clock guide](../experiments/spine-f1/README.md), [saved verification](../../evidence/spine-f1-clock-verification.json) and [pending public projection](../../evidence/spine-f1-clock-public-projection.json).
+A subsequent actual replay of the public source in an independent clone passed manual **12/12** with **6** original controls and full Clock **10/10** with **3** assigned controls; the named fault actually executed, with **0** skipped accepted cases. Separate default-headless WebGPU execution passed **10+1** readbacks, **30** positive samples and **120** channels at tolerance **0**, retaining original full-byte relations and bounded cleanup. Cold import/help observed **280** modules and **0** Core/GPU/host accesses. The saved CPU collection retains its earlier native-pending cutoff; the separate native receipt is the actual successor. Original source and input identities remained unchanged. Independent saved-result review, final repository gates and delivery remain PENDING here; full Spine **R020/V020 remains OPEN**. See the current successor in the linked Clock verification/projection records.
+<!-- F1C-DOC-0.37.0-END -->

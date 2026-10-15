@@ -13,7 +13,7 @@ This work package does not establish complete text/texture/animation/UI/3D execu
 
 Version: 0.1 · Knowledge base 0.9.0 · October 8, 2026 · Artifact version 0.0.0 (development prototype).
 
-Under R017, this round moves from candidate architecture into actual core implementation. The artifact is in the `白鹭引擎核心框架原型` directory alongside the knowledge base; code, configuration, tests, examples, and provenance notices accompany it. The project follows open-source development practices from day one. The current delivery is a local development prototype; a public repository and release packages have not been published. The [first implementation plan](core-framework-first-slice-plan.md) defines its scope.
+The R017 implementation milestone moved from candidate architecture into an actual core prototype. The artifact is in the `白鹭引擎核心框架原型` directory alongside the knowledge base; code, configuration, tests, examples, and provenance notices accompany it. The project follows open-source development practices from day one. At that initial delivery, the artifact was a local development prototype; its public repository and release packages had not been published. The [first implementation plan](core-framework-first-slice-plan.md) defines its scope.
 
 ## Implemented scope
 
@@ -43,11 +43,11 @@ Developers can install locked dependencies at the artifact root following its RE
 
 AI authored the core code against Egret candidate specifications and original behavior samples, retaining tests, provenance declarations, and records for human review. The current core has no third-party runtime dependencies. The development compiler and research references retain their own attribution. Provenance records trace implementation inputs; complete provenance and rights review still require independent work and cannot be replaced by passing tests or AI review.
 
-Specification-input digests in the source provenance inventory bind to internally retained knowledge-base 0.7.0 bytes. This round's 0.8.0 status/title changes do not rewrite historical implementation inputs. Source, test, and build digests bind to the final artifact delivered in this round.
+Specification-input digests in the source provenance inventory bind to internally retained knowledge-base 0.7.0 bytes. The 0.8.0 status/title revision preserves the historical implementation inputs. Source, test, and build digests bind to the final artifact at that implementation checkpoint.
 
 ## Next slice and evidence gaps
 
-The recommended next slice connects these instances and the tree to versioned/generational resource lifecycles, dirty updates, and frame extraction lists, then adds a minimal 2D drawing backend while retaining complex UI painter order. The first slice has no per-frame scheduling or graphics-recovery logic.
+At the initial delivery, the recommended next slice was to connect these instances and the tree to versioned/generational resource lifecycles, dirty updates, and frame extraction lists, then add a minimal 2D drawing backend while retaining complex UI painter order. The first slice has no per-frame scheduling or graphics-recovery logic.
 
 In parallel, address the [evidence gaps and research checklist](core-framework-evidence-gaps.md): executable legacy golden projects; text indexing/shaping/line-breaking contracts; dual-backend formats/recovery rules; the first SDK host; sustained AI editing tasks; and real-device correctness/cost. Mature text and graphics foundations should first be studied through standards and pinned source; Egret scene/resource/execution contracts should be written independently.
 

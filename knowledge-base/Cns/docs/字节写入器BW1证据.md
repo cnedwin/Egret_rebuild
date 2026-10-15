@@ -2,11 +2,11 @@
 
 [English](../../en/docs/byte-writer-bw1-evidence.md) | 简体中文
 
-本记录绑定第一方 BW1 实现与独立保存的实际结果。源码按白鹭规格及 ECMAScript 内建操作原创实现，采用 Apache-2.0；不新增产品依赖。字节序复用原有 ByteReader 类型。策展读取已有证据，不新增产品执行。
+本记录绑定第一方 BW1 实现与独立保存的实际结果。源码按白鹭规格及 ECMAScript 内建操作原创实现，采用 Apache-2.0；不新增产品依赖。字节序复用原有 ByteReader 类型。本文记录已有证据，不新增产品执行。
 
 ## 工程预览 0.40.0 — 自有 ByteWriter
 
-**S093 / V044。有限 CPU、类型和指定边界结果已接受；完整发布门禁与交付仍为 PENDING。** ByteWriter 提供固定容量的严格二进制追加、原生 IEEE 浮点转换和已提交前缀的独立快照，复用原有 ByteOrder 与 Scope 生命周期。
+**S093 / V044。有限 CPU、类型和指定边界结果已接受；原始截止点的完整发布门禁与交付为 PENDING。** ByteWriter 提供固定容量的严格二进制追加、原生 IEEE 浮点转换和已提交前缀的独立快照，复用原有 ByteOrder 与 Scope 生命周期。
 
 实际构建与 37/37 项公开／回归用例通过，其中包括 8 组 BW、23 项 ByteReader 和 6 项 Scope；另有 2/2 个独立进程故障测试文件通过。BW 的 24 条内部观察包含 22 次受控故障触达，不是额外的测试用例。正向类型诊断为 0，两类刻意负向诊断分别为 41/16，共 57 条精确位置／代码记录。严格类型门禁和边界检查退出码均为 0，指定边界对照为 17/17。
 
@@ -39,7 +39,7 @@ node --test --test-reporter=tap tests/byte-writer-boundaries.test.mjs
 node tools/prepush.mjs
 ```
 
-精确的当前源码、发射、类型清单与见证身份保存在[共享核验记录](../../evidence/byte-writer-bw1-verification.json)。完整发布门禁、必要推送与 BW1 的 PR/Main 交付在本策展截止点仍为 PENDING。完整 Spine R020/V020 与迁移 R008/V006 保持 OPEN；无新增 GPU／宿主、手机、性能或完整产品验收。
+精确的当前源码、发射、类型清单与见证身份保存在[共享核验记录](../../evidence/byte-writer-bw1-verification.json)。在原始交付前截止点，完整发布门禁、必要推送与 BW1 的 PR/Main 交付为 PENDING。完整 Spine R020/V020 与迁移 R008/V006 保持 OPEN；无新增 GPU／宿主、手机、性能或完整产品验收。
 
 <!-- BW1-DELIVERY-0.40.0-SUCCESSOR-BEGIN -->
 

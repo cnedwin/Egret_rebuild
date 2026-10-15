@@ -8,7 +8,7 @@ The optional browser PNG adapter has independently accepted source, 4/4 terminal
 
 The sections retained below record the earlier 2026-10-13 source/documentation cutoff. Their NOT_RUN statements retain that historical scope; the current successor in this section takes precedence for status, while the behavior and frozen numeric schedule remain unchanged.
 
-Documentation draft cutoff: 2026-10-13, after independent acceptance of the repaired policy integration. This records bounded source and saved execution evidence. Native browser PNG/rendering execution, complete repository/prepush gates and this increment's GitHub delivery are NOT_RUN. See the [developer contract](browser-png-contract.md), [implementation plan](browser-png-implementation-plan.md) and [frozen native plan](browser-png-native-plan.md).
+Original evidence-record cutoff: 2026-10-13, after independent acceptance of the repaired policy integration. This records bounded source and saved execution evidence. Native browser PNG/rendering execution, complete repository/prepush gates and this increment's GitHub delivery are NOT_RUN. See the [developer contract](browser-png-contract.md), [implementation plan](browser-png-implementation-plan.md) and [frozen native plan](browser-png-native-plan.md).
 
 ## Accepted evidence, kept separate
 

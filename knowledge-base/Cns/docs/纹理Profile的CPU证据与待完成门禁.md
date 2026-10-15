@@ -95,7 +95,7 @@ Task 6 先通过有效复制包基线，再于执行新规则前到达真实旧 
 
 ## 桌面原生结果与边界
 
-第一方夹具及有理数通道预期在原生采集前已冻结。已验收运行产生 37 个窗口、27 份正向及 19 份对照观察、46 份 RGBA 像素记录及 92 张原生画布黑／白 PNG。原始 21 个用例包含 47 个独立字面量采样点（188 个通道）；保留帧重放后共有 56 次正向采样比较。零通道必须精确为零，非零通道沿用先前固定的一字节边界。完整 reset buffer 为零，作者退休后重放仍保留已保存帧身份。
+第一方夹具及有理数通道预期在原生采集前已冻结。已验收运行产生 37 个窗口、27 份正向及 19 份对照观察、46 份 RGBA 像素记录及 92 张原生画布黑／白 PNG。原始 21 个用例包含 47 个独立字面量采样点（188 个通道）；保留帧重放后共有 56 次正向采样比较。零通道必须精确为零，非零通道沿用先前固定的一字节边界。完整 reset buffer 为零，来源场景退役后重放仍保留已保存帧身份。
 
 12 项复制产品对照分别只修改一个选定产品文件，全部到达各自指定的 16 个窗口。错误 opacity 在保留原 shader layout 后触发预定像素差异；名义 DPR 违反冻结的自有 metadata schema；错误 clear 违反完整 reset buffer 预期。设置拒绝或不支持设备不计为灵敏对照。13 次 capture 与 50 次完整三角色 registry 重读均符合选定源码／emission／副本身份。
 
@@ -103,7 +103,7 @@ Task 6 先通过有效复制包基线，再于执行新规则前到达真实旧 
 
 环境为 Windows x64 10.0.26300、Node 24.19.0、Playwright 1.62.1 及默认无头 Edge 154.0.4258.62，未添加 GPU flags。adapter 报告 NVIDIA／blackwell，脱敏 device／description 字符串为空。冻结的已服务 WGSL 完成真实异步 pipeline 创建、提交与 readback；没有单独 getCompilationInfo trace 或原生 descriptor 拦截。结论仅覆盖这个报告环境中的固定用例，不验收手机、多 adapter、实体屏幕输出、性能、电耗、Native SDK、完整 A2／3D／UI／字体、Spine 或迁移。
 
-首次尝试保持 INCOMPLETE：最初移除 shader opacity 同时移除了自动推断 binding，随后漂亮打印报告超过固定上限。已评审后继修改真实 opacity uniform 并保留 shader／layout，紧凑 JSON 保留全部字段。原始失败仍是历史记录，没有修改像素预期、tolerance 或上限。既有旧验证器图检查仅为无 DOM／GPU 的私有错误来源模块添加精确例外；SequencePlayer 补齐其已有 registry 精确 alias；旧 WebGPU 报告采用同样无损空白修改。其先前报告超限导致的整个 owner INCOMPLETE 与后续成功运行分开保留。
+首次尝试保持 INCOMPLETE：最初移除 shader opacity 同时移除了自动推断 binding，随后缩进格式 JSON 报告超过固定上限。已评审后继修改真实 opacity uniform 并保留 shader／layout，紧凑 JSON 保留全部字段。原始失败仍是历史记录，没有修改像素预期、tolerance 或上限。既有旧验证器图检查仅为无 DOM／GPU 的私有错误来源模块添加精确例外；SequencePlayer 补齐其已有 registry 精确 alias；旧 WebGPU 报告采用同样无损空白修改。其先前报告超限导致的整个 owner INCOMPLETE 与后续成功运行分开保留。
 
 单独受影响桌面运行记录：Canvas 14 项检查，矩形 WebGPU 42 帧／1,709 项原始检查／84 张 PNG／6,808 项合成检查，有界 B1 7 个正向帧／5 项预设对照／11 次提交，以及 SequencePlayer 8 次 capture／256 个不透明像素／1,024 个通道。矩形 WebGPU 的八项反例由七项原生副本故障及一项明确合成的缓存 reset 断言组成。四条受影响运行的保存结果及其外层进程退休独立审阅在这些既有范围内通过，保留预期编译器／设备丢失拒绝及独立合成断言。最终公开候选验证与远程交付分别记录。见[结构化证据](../../evidence/textured-mesh2d-verification.json)。
 

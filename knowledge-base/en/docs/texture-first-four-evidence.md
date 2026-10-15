@@ -16,4 +16,4 @@ Eight Hosts and contexts closed safely, pending ledgers were zero, and the four 
 
 Every native channel bound is null and the numeric verdict remains **UNKNOWN**: **numericAcceptance=false, wholeA2=false**. Recorded residual maxima are descriptive observations, not tolerance selection. The remaining fourteen cases, Task5b/G5/Task6, confirmation, controls and replay remain incomplete.
 
-Adapter-reported names do not prove hardware acceleration or performance. Timings and memory/process caps are execution guards. This collection does not establish visible Bitmap sequence playback, Native app/SDK, phones, fonts, DragonBones, physical scanout or whole-engine acceptance. Document curation performed no new browser execution or numeric acceptance.
+Adapter-reported names do not prove hardware acceleration or performance. Timings and memory/process caps are execution guards. This collection does not establish visible Bitmap sequence playback, Native app/SDK, phones, fonts, DragonBones, physical scanout or whole-engine acceptance. This record provides no additional browser execution or numeric acceptance.

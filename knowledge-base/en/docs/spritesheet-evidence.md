@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/命名图集证据.md)
 
-Engineering preview 0.45.0; S098 / V049. This reading records independently accepted source, build, public CPU, strict consumer types, controlled original-operation units, package policy, recording example and a finite opaque Canvas/WebGPU experiment. Current complete publication gates, push hook and 0.45 PR/Main remain PENDING at this curation cutoff. Authoring this reading does not execute the product.
+Engineering preview 0.45.0; S098 / V049. This reading records independently accepted source, build, public CPU, strict consumer types, controlled original-operation units, package policy, recording example and a finite opaque Canvas/WebGPU experiment. At this historical pre-delivery cutoff, complete publication gates, push hook and 0.45 PR/Main were PENDING.
 
 ## Capability and ownership
 
@@ -10,7 +10,7 @@ Engineering preview 0.45.0; S098 / V049. This reading records independently acce
 
 `createBitmap(name)` creates a genuine caller-owned Bitmap borrowing that same lease. The sheet neither owns those Bitmaps nor releases the caller lease. Sheet retirement stops new Bitmap creation while immutable names, dimensions and regions remain readable. Existing Bitmaps can continue under their own resource lifetime and the delivered `Engine.createSequencePlayback`. Ordinary metadata access after retirement grants no renewed rendering entitlement.
 
-Read the [contract](spritesheet-contract.md) for complete staging, limits, lifecycle/error precedence and the bounded original-Bitmap prototype qualification. The public example is `examples/spritesheet-headless.mjs`; tool/code paths here are literal references, not new KB external hyperlinks.
+Read the [contract](spritesheet-contract.md) for complete staging, limits, lifecycle/error precedence and the bounded original-Bitmap prototype qualification. The public example is `examples/spritesheet-headless.mjs`.
 
 ## Separate measured lanes
 

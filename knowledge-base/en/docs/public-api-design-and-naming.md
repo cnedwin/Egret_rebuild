@@ -2,22 +2,9 @@
 
 English | [简体中文](../../Cns/docs/公共API设计与命名规范.md)
 
-Public inherited `localToGlobal`/`globalToLocal` queries return a fresh readonly `Point2D` in logical space. Missing coordinates independently default to zero; the third argument is `CoordinateQueryOptions`. Ancestor budgets, authentic receiver/lifetime checks and the exact stored-matrix inverse are defined by the [coordinate contract](display-coordinate-query-contract.md). The legacy mutable-output adapter remains pending.
+Egret APIs express display lists, stages, events, resources and animation in familiar domain terms. Explicit Engine instances, ownership and module boundaries make those semantics predictable across tools and hosts. Developers should be able to understand what a call reads, changes, owns and terminates without knowing the rendering backend.
 
-The historical 0.13.0 rectangle checkpoint has its own [implementation and verification record](webgpu-rectangle-implementation-evidence.md). Its source identities, results and pending work retain their recorded scope; they do not establish current product acceptance.
-
-
-## Historical 0.12.0 display and frame candidate scope
-
-The successor work package is defined by the [display and frame contract](display-and-frame-execution-contract.md) and [implementation plan](display-and-frame-implementation-plan.md): display transforms, inherited visibility/alpha and local rectangle clipping, Sprite-owned Graphics rectangle fills, and immutable CPU frame capture/submission. The implemented first execution adapter is Canvas through the separate @egret/engine/web entry; the core root retains its DOM-free boundary. Bounded implementation checks passed: 97/97 core behavior tests, 25 negative type diagnostics and real desktop Canvas pixels/pointer interaction. Scoped independent review passed after the recorded cross-realm rejection correction. Remote publication is tracked separately. Final scoped results belong in the [implementation record](display-and-frame-implementation-record.md) and [verification](../../evidence/display-frame-verification.json).
-
-The display contract owns concrete interfaces and error codes. x/y, scaleX/scaleY, rotation, alpha, visible, clipRect and the Graphics rectangle subset do not establish compatibility with legacy scrollRect, Texture, TextField, TouchEvent or the complete display API. frameId numbers successful captures within one engine; it is not a persistent project ID or asset generation.
-
-This work package does not establish complete text/texture/animation/UI/3D execution, GPU or Native support, target-device performance, editors, Agent services, or complete migration. Earlier headless, CPU asset and third-party research records retain their original versions, counts, hashes and scope; their results are not new display-frame acceptance.
-
-Version: 0.1 candidate specification · Knowledge base 0.9.0 · Updated: October 8, 2026.
-
-This specification preserves Egret's display-list, stage, event, and animation language in new projects while adopting modularity, explicit instances, and verifiable lifecycles. R016 confirms the objective of redefining complete architecture and standards; D016 carries the candidate design. Package names, methods, and complete examples have not had a stable release or complete acceptance. The [first core-slice record](core-framework-implementation-record.md) lists the compiled and verified subset. See [engineering technical architecture](engineering-architecture-and-project-structure.md) for engineering boundaries and [code standards](code-standards-and-quality-gates.md) for implementation requirements.
+R016 defines this design objective and D016 records the wider candidate contract. Implemented surfaces are documented in their package contracts and [core progress](core-progress.md). Names in the broader GUI, 3D and compatibility design are proposals until their capabilities are implemented and verified. [Engineering architecture](engineering-architecture-and-project-structure.md) defines dependencies; [quality standards](code-standards-and-quality-gates.md) defines implementation and release checks.
 
 ## Egret identity and naming table
 
@@ -42,15 +29,17 @@ Private members gain no public commitment from historical `$` or underscore pref
 
 Candidate public identities are `@egret/engine`, `@egret/project`, and `@egret/cli`. npm scope/name availability must still be checked before publication. New code defaults to named imports, while `import * as egret from "@egret/engine"` can retain the call appearance. This is an ESM module object and creates no global variable. EUI can use `import * as eui from "@egret/engine/eui"`.
 
-The root entry exports basic 2D and `createEngine`; `/web`, `/eui`, `/scene3d`, `/animation`, and `/compat` are explicit entry points. Import does not create a GPU, start a clock, download resources, or register global plugins. `createEngine({host, graphics, features})` starts asynchronously and returns Engine; failed startup cleans up acquired owned resources. One page can create multiple instances. Their stages, clocks, events, and resource leases do not depend on a global “current engine.” Objects bind to Engine when registered in Scope or first attached; detach retains the binding. Cross-Engine attachment, scope ownership takeover, or binding instance resources is an error. Shared source assets are acquired separately in each instance; immutable math/style values may be shared. Backend and host construction comes from explicit adapters assembled at the entry point.
+The proposed full product exposes basic 2D and `createEngine` at its root, with explicit `/web`, `/eui`, `/scene3d`, `/animation` and `/compat` capability boundaries. Current subpaths are determined by the implemented package exports. Import does not create a GPU, start a clock, download resources, or register global plugins. `createEngine({host, graphics, features})` starts asynchronously and returns Engine; failed startup cleans up acquired owned resources. One page can create multiple instances. Their stages, clocks, events, and resource leases do not depend on a global “current engine.” Objects bind to Engine when registered in Scope or first attached; detach retains the binding. Cross-Engine attachment, scope ownership takeover, or binding instance resources is an error. Shared source assets are acquired separately in each instance; immutable math/style values may be shared. Backend and host construction comes from explicit adapters assembled at the entry point.
 
 Public types do not default to complete DOM or Node declarations; browser-specific HTMLCanvasElement appears only in `/web`. `features` consists of explicitly imported capability factories rather than arbitrary strings automatically registering all modules. `/compat` includes runtime compatibility facilities only, not the entire development-time legacy-project converter.
 
 ## Properties and queries
 
+Public inherited `localToGlobal`/`globalToLocal` queries return a fresh readonly `Point2D` in logical space. Missing coordinates independently default to zero; the third argument is `CoordinateQueryOptions`. Ancestor budgets, authentic receiver/lifetime checks and the exact stored-matrix inverse are defined by the [coordinate contract](display-coordinate-query-contract.md). The legacy mutable-output adapter remains pending.
+
 `x/y/scaleX/scaleY/alpha/rotation/visible/touchEnabled` retain accessible properties. Frequent changes first enter CPU logical state and dirty queues, then are extracted at defined frame stages. Property assignments do not cross languages individually or synchronously wait for the GPU. Queries such as `getBounds` read CPU-known state; operations needing layout refresh are explicitly named `validateLayout`, without hiding an entire render frame in ordinary getters.
 
-Display-tree members offer read-only iteration or snapshots; no directly mutable children array is exposed. `addChild` maintains a single parent and explicit order; reattachment does not destroy objects. 2D `width/height` express untransformed logical layout size; rules for explicit and natural content sizes are documented by object type. `getBounds` measures content in the receiver's local space, including descendant transforms and excluding the receiver's own and ancestor transforms; see the [bounded contract](display-content-bounds-contract.md). Other coordinate spaces, the legacy mutable-output adapter, layout sizing/invalidation and hit testing remain pending. Size behavior is not uniform across historical snapshots. Do not automatically convert every old width assignment to scale; migration comparisons depend on version, subclass, and EUI layout mode.
+Display-tree members offer read-only iteration or snapshots; no directly mutable children array is exposed. `addChild` maintains a single parent and explicit order; reattachment does not destroy objects. 2D `width/height` express untransformed logical layout size; rules for explicit and natural content sizes are documented by object type. `getBounds` measures content in the receiver's local space, including descendant transforms and excluding the receiver's own and ancestor transforms; see the [bounded contract](display-content-bounds-contract.md). The broader coordinate-space adapters, legacy mutable output and complete layout sizing/invalidation remain design work. Logical picking has its own bounded implemented contract; it does not establish complete legacy hit-test compatibility. Size behavior is not uniform across historical snapshots. Do not automatically convert every old width assignment to scale; migration comparisons depend on version, subclass, and EUI layout mode.
 
 2D coordinates use logical pixels independent of device pixel density, with top-left origin, x rightward, and y downward; retain degrees for historical `rotation`. 3D defaults to right-handed coordinates, Y up, and cameras facing local -Z, with world units defined as meters. `rotation` uses Quaternion; Euler helpers are explicitly named `setEulerRadians`, without mixing 2D degrees. Asset import records coordinate and unit conversions. Game clocks and new animation durations default to seconds, using `durationSeconds` when names need distinction; compatibility entry points explicitly convert legacy Tween milliseconds.
 
@@ -62,11 +51,11 @@ Candidate `assets.acquire(ref, {signal})` returns `Promise<AssetLease<T>>`. `ref
 
 Bitmap borrows a logical Texture without implicitly acquiring another lease. Its creator retains the lease until every borrower has stopped using it. Lease release immediately invalidates its own use entitlement; physical GPU resources are reclaimed only after the last valid reference and in-flight use complete. Device rebuild replaces GPU projections only; logical resource identity and gameplay state persist by contract. Raw WebGPU/WebGL handles are advanced internal extensions, not the Bitmap texture interface.
 
-The implemented `Bitmap.sourceRect` is an additive member of the already-exported Bitmap class. It selects an absolute crop within the Texture's immutable original view while borrowing the same lease; selected geometry does not mutate Texture or grant entitlement. See the [region contract](bitmap-region-contract.md) and [bounded CPU evidence](bitmap-region-evidence.md). The sampler stays internal; visible sequence output awaits separate verification.
+The implemented `Bitmap.sourceRect` is an additive member of the already-exported Bitmap class. It selects an absolute crop within the Texture's immutable original view while borrowing the same lease; selected geometry does not mutate Texture or grant entitlement. See the [region contract](bitmap-region-contract.md) and [bounded CPU evidence](bitmap-region-evidence.md). The sampler stays internal; the original crop checkpoint did not itself verify later visible sequence output.
 
 ## Cross-host cancellation protocol
 
-Public signals use a DOM-free, minimal readonly CancellationSignal protocol: aborted, reason, addEventListener("abort", listener, {once?}), and removeEventListener("abort", listener). Listeners do not depend on DOM Event types. reason is undefined before cancellation and stable afterward. Abort happens once; listeners added when already aborted receive no replay. Each operation checks aborted, registers, and checks again. Scope enters closing before notification; listeners added during notification do not execute, removed listeners are skipped, and exceptions become collected diagnostics without blocking later cancellation or cleanup. The pure core implements this protocol. Browser adapters must accept standard AbortSignal through real type-compatibility checks; required hosts provide equivalent adapters. The first slice has compiled and verified the minimal cancellation protocol; browser and mini-game adapters have not passed acceptance. Existing AbortController in mini-games is not a prerequisite.
+Public signals use a DOM-free, minimal readonly CancellationSignal protocol: aborted, reason, addEventListener("abort", listener, {once?}), and removeEventListener("abort", listener). Listeners do not depend on DOM Event types. reason is undefined before cancellation and stable afterward. Abort happens once; listeners added when already aborted receive no replay. Each operation checks aborted, registers, and checks again. Scope enters closing before notification; listeners added during notification do not execute, removed listeners are skipped, and exceptions become collected diagnostics without blocking later cancellation or cleanup. The pure core implements this protocol. Browser adapters must accept standard AbortSignal through real type-compatibility checks; required hosts provide equivalent adapters. The first slice compiled and verified the minimal cancellation protocol. Later bounded browser adapters retain their individual acceptance records; a complete browser/mini-game matrix remains open. Existing AbortController in mini-games is not a prerequisite.
 
 ## Scope and shutdown order
 
@@ -90,7 +79,7 @@ Input, gameplay animation events, and GPU device epochs have separate numbering.
 
 ## Proposed call appearance
 
-The example below shows the complete candidate contract, including unimplemented capabilities such as Bitmap/TouchEvent. There is no published package or compilation result for this complete example; see the [core framework implementation record](core-framework-implementation-record.md) for the first subset. The subsequent CPU asset service is separately scoped by the [asset contract](resource-core-contract.md) and [implementation record](resource-core-implementation-record.md). Host adapters and generated project references provide `host` and `assets.logo`.
+The example below illustrates the broader candidate contract, including the unimplemented TouchEvent compatibility appearance. Bitmap exists in the bounded core, but this complete example is not a compiled teaching sample; see the [core framework implementation record](core-framework-implementation-record.md) for the first subset. The subsequent CPU asset service is separately scoped by the [asset contract](resource-core-contract.md) and [implementation record](resource-core-implementation-record.md). Host adapters and generated project references provide `host` and `assets.logo`.
 
 ```ts
 import { Bitmap, EgretError, TouchEvent, createEngine } from "@egret/engine";
@@ -123,9 +112,9 @@ try {
   throw error;
 }
 
-// 关闭界面时：先解绑/取消，再销毁logo，最后释放纹理租约。
+// Close the screen: cancel subscriptions, dispose the logo, then release its lease.
 screen.dispose();
-// 宿主或作品退出时：等待整次运行关闭。
+// Await the complete Engine shutdown when the host or work exits.
 await engine.dispose();
 ```
 
@@ -133,10 +122,17 @@ The source comments describe this cleanup order: when closing the screen, first 
 
 ## Compatibility and versions
 
-New defaults are `on`, typed AssetRef, Scope, ESM, and Engine services. Migrators identify old `addEventListener(type, listener, thisObject, ...)`, static `RES` entry points, namespaces/global scripts, EXML, old Tween timing, and internal-field access. `/compat` retains necessary adapters for supported old behaviors. Event removal cannot generate a new bound function each time; handler/thisObject/capture identity must remain stable. RES was not reviewed method by method in this round, so one-to-one new methods for all old resource calls cannot be promised.
+New defaults are `on`, typed AssetRef, Scope, ESM, and Engine services. Migrators identify old `addEventListener(type, listener, thisObject, ...)`, static `RES` entry points, namespaces/global scripts, EXML, old Tween timing, and internal-field access. `/compat` retains necessary adapters for supported old behaviors. Event removal cannot generate a new bound function each time; handler/thisObject/capture identity must remain stable. Existing bounded RES evidence does not establish a one-to-one method mapping for every historical resource call.
 
 Compatibility separately checks public types, module/bundling resolution, external behavior, and project/resource/bridge formats. Semantic changes to stable interfaces also count as breaking changes and publish migration rules and deprecation information. Mark experimental APIs explicitly; they do not become permanent default examples. Initially, the three public packages may release in lockstep. projectSchema, resourceFormat, bridgeProtocol, and toolProtocol each have independent versions and compatibility ranges.
 
 Complete R008/V006 migration, continued editing, target publication, and updates remain part of the first complete release objective. Retaining names or passing type checks cannot replace it. Specification acceptance covers multiple-Engine isolation, size/order, once reentrancy, cancellation races, late Scope results, lease sharing, color/coordinates, and old-project comparisons; see the [engineering-structure gates](engineering-architecture-and-project-structure.md).
 
 Language mechanism reference: [TypeScript modules and type exports](https://www.typescriptlang.org/docs/handbook/modules/reference.html). ESM mechanisms support this entry-point design but do not establish that actual release packages already trim on demand.
+
+
+## Historical checkpoints and evidence
+
+This wider API specification originated on October 8, 2026, version 0.1/knowledge base 0.9.0. The [first core record](core-framework-implementation-record.md) preserves its verified subset. The [0.12 display contract](display-and-frame-execution-contract.md), [plan](display-and-frame-implementation-plan.md), [record](display-and-frame-implementation-record.md) and [verification](../../evidence/display-frame-verification.json) retain transform, alpha/visibility, local clip, Graphics rectangles and immutable CPU capture/submission evidence:97/97 behavior tests, 25 negative diagnostics and desktop Canvas/pointer observations after cross-realm correction. The [0.13 rectangle record](webgpu-rectangle-implementation-evidence.md) is separate.
+
+At those cutoffs, their display subset did not establish legacy scrollRect/Texture/TextField/TouchEvent compatibility, complete rendering, hosts, devices, creator tools or migration. frameId identifies successful captures within one Engine, not project identity or resource generation. Later bounded features retain their own records rather than changing those original results.

@@ -2,56 +2,52 @@
 
 English | [简体中文](CONTRIBUTING.zh-CN.md)
 
-<!-- HYGIENE-0.45.1-POLICY-BEGIN -->
-## Repository path and raw-byte hygiene
+Egret welcomes contributions to the engine, examples, tools, design and documentation. Start with the [capability overview](knowledge-base/en/docs/core-progress.md) and the contract for the subsystem being changed. The public repository is [cnedwin/Egret_rebuild](https://github.com/cnedwin/Egret_rebuild).
 
-Use the shared `tools/lib/file-identity.mjs` helper for verification and delivery tools. Keep complete owner-relative logical paths in canonical POSIX spelling with authored case, and use explicit platform semantics for absolute physical path comparison and containment. A basename match, universal lowercasing or a lexical path match cannot authorize another file identity.
+## Contributions you can make now
 
-Write newly authored first-party text through `tools/write-repository-text.mjs --path <owner-relative-file>` or `knowledge-base/tools/Write-CanonicalText.ps1 -RelativePath <owner-relative-file> -Text <text>`. Author UTF-8 without BOM, LF and one final newline; preserve interior blank lines and Markdown hard-break spaces. Do not use `Environment.NewLine` to serialize repository text. Keep raw fingerprints byte-exact: never normalize EOL, BOM, Unicode or whitespace during hashing, and never run an authoring formatter over upstream/legal originals, raw receipts, sealed source snapshots or historical evidence. Refresh only reviewed current identities for files actually changed.
+- Improve display, resource, animation, input and host behavior through documented public contracts and meaningful regressions.
+- Develop the creation, project-editing and migration workflows in the engineering plan.
+- Supply authorized game/UI/animation samples and real-host or target-device verification.
+- Improve documentation, translation and reproducibility, with sources supporting technical conclusions.
 
-Enable both repository-local hooks with `git config --local core.hooksPath .githooks` and preserve their executable Git modes. The pre-commit hook checks working/untracked text and actual staged bytes; the pre-push hook runs the complete `node tools/prepush.mjs --committed` on a clean committed snapshot. Also run the normal `node tools/prepush.mjs` while preparing a change. Fix failures and complete independent source/result and bilingual review before delivery; bypassing hooks or weakening byte checks is not a substitute.
+Use the [RFC template](knowledge-base/en/templates/rfc-proposal.md) for changes that need a design discussion and the [ADR template](knowledge-base/en/templates/adr-decision-record.md) for reviewed decisions.
 
-Use `-CheckOnly` when validating the knowledge base. Report source, saved execution, full local gates, actual push/PR/Main and remote CI separately, retaining earlier failures and pending cutoffs. Read the [repository policy](knowledge-base/en/docs/repository-identity-and-line-endings.md) and [bounded evidence](knowledge-base/en/docs/repository-hygiene-evidence.md).
-<!-- HYGIENE-0.45.1-POLICY-END -->
+## Submission and review
 
-The historical 0.13.0 rectangle checkpoint has its own [implementation and verification record](knowledge-base/en/docs/webgpu-rectangle-implementation-evidence.md). Its source identities, results and pending work retain their recorded scope; they do not establish current product acceptance.
+Keep each contribution focused. Explain the problem, resulting behavior, affected contracts and compatibility, sources and verification. Include reproduction steps for a bug and explain any remaining limitations. Public API changes require synchronized specifications and appropriate regressions.
 
-Start with the [README](README.md), [knowledge base](knowledge-base/en/README.md), and [source record](source-origin.json). At this stage, you can improve the three headless packages, submit lifecycle, display-tree, or event counterexamples and fixes, correct documentation, add sources, propose interface designs, and provide migration and text samples that you own or are authorized to share.
+Use Issues and PRs for repository contributions. A proposal's recorded status changes only after review; a draft or successful build is not a completed product feature. Maintain technical discussion around the problem, evidence and tradeoffs.
 
-This candidate is a development preview. Its remote is [cnedwin/Egret_rebuild](https://github.com/cnedwin/Egret_rebuild); consult repository branches and PRs for submission and review status. No npm packages have been published. Issues, PRs, and maintenance responsibilities follow the repository's actual configuration. First-party code and documentation use the existing Apache-2.0 license; third-party notices stay with their files. Individual contributors and review responsibilities still need public registration.
+## Reproducing existing core checks
 
-## Change descriptions
+Use Node.js 24.19.0, pnpm 11.25.0 and TypeScript 7.0.2. From the repository root:
 
-Each contribution should explain the problem, scope, related specifications, implementation sources, and verification results. Update design and migration documentation when public interfaces change. Register a candidate design as a decision only after review. Discuss technical effects, evidence, and reproduction steps, and retain attribution and versions for upstream projects.
+    pnpm install --frozen-lockfile --ignore-scripts
+    git config --local core.hooksPath .githooks
+    node tools/verify.mjs
+    node examples/headless.mjs
 
-Design and write the independent core from Egret specifications. Record third-party libraries as explicit dependencies, including versions, applicable licenses, and modifications. Code contributions must include an [implementation source record](knowledge-base/en/templates/implementation-origin-record.md), describing the materials actually used, AI participation, generated scope, and author review. Resolve source questions against the specific inputs and implementation, and limit conclusions to the scope actually checked.
+Before every push, run the complete node tools/prepush.mjs. It includes publication, code/type/boundary, headless and knowledge-base checks. The pre-commit hook checks staged raw bytes and the pre-push hook checks the clean committed snapshot. Fix failures through this normal flow. Rendering changes additionally require the affected actual-browser checks in [AGENTS](AGENTS.md).
 
-## Verification
+## Engineering and API policies
 
-Use fixed Node.js 24.19.0, pnpm 11.25.0, and TypeScript 7.0.2. After `pnpm install --frozen-lockfile --ignore-scripts`, run `node tools/verify.mjs` and `node examples/headless.mjs`. Select meaningful regressions appropriate to the change; record the environment, commands, inputs, outputs, and uncovered items.
+Follow the [project structure](knowledge-base/en/docs/engineering-architecture-and-project-structure.md), [API conventions](knowledge-base/en/docs/public-api-design-and-naming.md) and [quality policy](knowledge-base/en/docs/code-standards-and-quality-gates.md). Preserve package boundaries, explicit resource ownership and the DOM/Node-free core. Use the [path and raw-byte policy](knowledge-base/en/docs/repository-identity-and-line-endings.md) for exact identities and canonical first-party text.
 
-The existing prototype baseline consists of 44/44 behavioral checks and 11 negative type assertions, limited to CPU and a simulated host. Verify real GPU, Native, hosts, performance, and CI separately. Package manifest `private: true`, version 0.0.0, exports, and dependency direction belong to the current checking contract; explain the effects of upgrades or publication-setting changes separately.
+## Sources, AI, and public content
 
-For game-clock changes, build through the normal verification flow, then use `node --test tests/game-clock.test.mjs` for public behavior and `node --test tests/game-clock-boundaries.test.mjs` for baseline-first source controls. Freeze literal source seconds, callback order, genuine Scope/resource ownership and cleanup causes before running. Preserve existing failure records and distinguish the complete core run from a later changed fixture. CPU clock checks do not establish browser/GPU pixels, performance or automatic animation; the mandatory prepush and affected browser policies below still apply. Read the [clock contract](knowledge-base/en/docs/game-clock-contract.md) and [evidence](knowledge-base/en/docs/game-clock-evidence.md).
+First-party code and documentation use Apache-2.0. Keep third-party notices and asset attribution. Record implementation materials, dependencies, AI assistance and review using the [origin record](knowledge-base/en/templates/implementation-origin-record.md). Contributors remain responsible for the submitted behavior, source rights and verification.
 
-## Publishable materials
+Public documents describe the project in a coherent, neutral voice: purpose, constraints, reasoning, contracts and results. Cite relevant work without presenting the product as a response to a conversation or a sequence of instructions. Retain substantive decision history and sources in their records. Do not attribute unrecorded thoughts to individuals.
 
-Submit distributable code, samples, and technical summaries. Contributions must exclude private original packages, credentials, personal data, and content lacking publication authorization. Present historical research through necessary source categories and technical conclusions. See the [knowledge-base contribution guide](knowledge-base/en/CONTRIBUTING.md) and [independent implementation policy](knowledge-base/en/docs/independent-implementation-and-dependency-policy.md) for details.
+Exclude credentials, private configuration, unauthorized original projects and unedited private discussions. Research and dependency use follow the [implementation policy](knowledge-base/en/docs/independent-implementation-and-dependency-policy.md).
 
-## Bilingual and public-content checks before every push
+## Bilingual checks and push hook
 
-Before every push to GitHub, organize all publishable documentation and knowledge-base content, maintain complete Chinese and English reading versions, and add English comments to critical code. Generate English registry views from the authoritative Chinese records, keeping IDs, statuses, numbers, and sources consistent; retain the original identity of raw evidence, code snapshots, and upstream licenses. After reviewing sources, attribution, publishable content, and translation meaning, run `node tools/prepush.mjs`, which includes bilingual checks and core verification. Machine checks do not replace the author's review of publication authorization and translation meaning.
-
-After cloning locally, run `git config --local core.hooksPath .githooks` to enable the repository's push hook; it runs the same checks. CI and contributors must run this command, and must fix failures rather than bypass the hook. This agreement applies to all subsequent pushes. See the [bilingual policy](knowledge-base/en/docs/bilingual-documentation-and-prepush-checks.md).
+Maintain complete English and Chinese readings. Keep knowledge-base editions in en/ and Cns/, default repository readings in English, and Chinese companions in .zh-CN.md. Review meaning in both languages before refreshing current identities and registry views. Critical code comments are English. See the [bilingual checks](knowledge-base/en/docs/bilingual-documentation-and-prepush-checks.md) and [layout policy](knowledge-base/en/docs/documentation-layout.md).
 
 ## Browser gates and publication inventory
 
-`node tools/prepush.mjs` remains mandatory before every push and checks publication structure, core/type/boundaries, headless behavior and KB structure. It does not launch a browser. Rendering changes additionally use `node tools/verify-canvas.mjs --playwright <installed-playwright-module> --channel msedge --output <private-output-directory>` and the separate `node tools/verify-webgpu.mjs --playwright <installed-playwright-module> --channel msedge --output <private-output-directory>` as affected. Use the accepted pinned dependencies; preserve default browser launch with no extra flags. Recorded unchanged-build evidence may be retained with explicit identity comparison.
+The prepush checks do not start a browser. Select the documented Canvas/WebGPU gates according to the change and retain their actual environments and results. Earlier results can be reused only for explicitly compared unchanged identities. Source publication, browser behavior, target-device performance and remote CI have separate records.
 
-Discovery and registered inventory paths exclude private execution/dependency/generated trees case-insensitively on Windows. Listings cannot override exclusions. Public AGENTS documents remain valid. Only the exact two sealed Three r186 research build paths/hashes remain exceptions. Structural checks do not create translation meaning or public review approval.
-
-For affected B1 scene-rendering changes, also run `node tools/verify-webgpu-b1.mjs --playwright "<absolute-installed-playwright-package-directory>" --channel msedge --output "<absolute-new-output-directory-outside-repository>"` with your own installed-package and fresh repository-external output paths. See the [bounded B1 browser verifier](knowledge-base/en/docs/b1-browser-verifier.md). Keep the default prepush browser-free; a fresh complete prepush must separately pass before pushing.
-
-## International community documentation
-
-Public introductions are English first, followed by Chinese. Keep complete knowledge-base reading editions under `knowledge-base/en/` and `knowledge-base/Cns/`, with English filenames in the English tree. Shared experiment code, raw evidence, historical source identities and upstream legal originals keep their provenance. Record design choices with questions, options, sources, counterexamples and conclusions; use professional, respectful public wording. Review source attribution, publishable content and both language editions, complete critical English code comments, and run the full prepush before every GitHub push. See the [layout policy](knowledge-base/en/docs/documentation-layout.md).
+Private execution, dependency caches and generated files are excluded from the public inventory. Raw evidence, historical source identities and upstream legal originals retain their provenance. [The publication guide](PUBLICATION.md) describes remote delivery.

@@ -2,19 +2,19 @@
 
 English | [简体中文](../../Cns/docs/核心框架首段实现计划.md)
 
-Version: 0.1 · October 8, 2026 · Status: execution plan for the first slice; bounded implementation of the three responsibility-based packages is complete. See the [core framework implementation record](core-framework-implementation-record.md) for actual results. The steps below retain the original plan and do not constitute new execution records.
+The first core slice established the lifecycle foundation needed by later rendering and resource features: cancellation, Scope ownership, display trees, typed events and Engine shutdown. A small headless host made those semantics executable without depending on a browser or GPU. The bounded three-package implementation is complete; actual results and failure/correction history are in the [implementation record](core-framework-implementation-record.md).
 
-**Goal:** Implement the already specified cancellation, Scope, display tree, events, and Engine lifecycle contracts as a small independent TS core slice that can be compiled, run, and reviewed.
+## Scope and design rationale
 
-**Architecture:** Follow the delivered candidate engineering/API specifications and create three actual responsibility-based packages—contracts, runtime, and engine—in an independent artifact directory. Do not yet create other candidate packages without responsibilities. Run through a headless host port that can later connect to graphics executors. Write this first core slice independently to the candidate specifications, retaining origins for reference research and third-party development dependencies.
+The slice uses contracts, runtime and engine as responsibility boundaries. It independently implements the [engineering structure](engineering-architecture-and-project-structure.md), [public API](public-api-design-and-naming.md) and [quality](code-standards-and-quality-gates.md) lifecycle subset. Additional packages wait for actual consumers. A headless host port permits later graphics adapters without putting platform globals into the core.
 
-**Tech Stack:** The project pins TypeScript 7.0.2, ESM, and a pnpm workspace. Node 24's built-in test runner is used only for development verification. There are no third-party runtime dependencies. The compiler version determines only the tools for this prototype verification; it does not constitute full acceptance of the D013 toolchain.
+Pinned TypeScript 7.0.2, ESM and pnpm support strict prototype verification; Node 24's built-in test runner is a development tool. No third-party runtime dependency is introduced. These choices do not close the wider D013 toolchain decision.
 
-**Spec:** [Engineering structure](engineering-architecture-and-project-structure.md), [public APIs](public-api-design-and-naming.md), and [code standards](code-standards-and-quality-gates.md). This plan covers their lifecycle and display-tree subset, not completion of the full specifications.
+The following constraints and tasks describe the original October 8, 2026 version 0.1 work package. They retain its design and verification procedure, not a new pending implementation list or a new execution claim. Current successors are summarized in [core progress](core-progress.md).
 
 ## Global Constraints
 
-- The artifact root is `outputs/白鹭引擎核心框架原型`, development version 0.0.0. See the [core framework implementation record](core-framework-implementation-record.md) for execution reports and failure chains. The project is built as open source from day one. This slice is a local prototype; the public repository and release package have not been published. File hashes track current artifacts.
+- The artifact root is `outputs/白鹭引擎核心框架原型`, development version 0.0.0. See the [core framework implementation record](core-framework-implementation-record.md) for execution reports and failure chains. The project is built as open source from day one. At the original checkpoint this was a local prototype, before its public repository/release delivery. File hashes track current artifacts.
 - The core independently implements Egret specifications and standards. Research sources, third-party code, and development tools have separate attribution records; the third-party compiler has an explicit version and license entry.
 - The core uses strict types, noUncheckedIndexedAccess, exactOptionalPropertyTypes, and verbatimModuleSyntax. Its lib is only ES2022, types is empty, and implicit DOM/Node types are prohibited in the core. Node tests/tools use mjs.
 - TypeScript class names use PascalCase, members camelCase, and main-class files PascalCase. Retain the language of Event, DisplayObject, DisplayObjectContainer, Stage, Engine, and Scope.
@@ -45,12 +45,12 @@ Version: 0.1 · October 8, 2026 · Status: execution plan for the first slice; b
 - `HostAdapter` includes surface identity, optional asynchronous start, optional stop, asynchronous close, and a `setTimeout(callback, delayMs) -> cancelTimer` port, without requiring DOM/Node. `createEngine({host, shutdownTimeoutMs?, onDiagnostic?}) -> Promise<Engine>`. The prototype's default shutdown deadline is 1000 milliseconds, a positive finite integer; it is a failure boundary rather than a performance target.
 - `Engine.stage`, `Engine.createScope()`, and `Engine.dispose() -> Promise<void>`. Graphics features, asset services, and features are outside this slice.
 
-- [ ] Write failing behavioral tests for cancellation/Scope/events/display trees/Engine, using manually derived order and real objects, rather than generating expectations from internal data structures. First establish loadable unimplemented methods, proving behavioral assertion failures rather than only missing-module errors.
-- [ ] Run failing tests and retain failure output and covered behavior; each new behavior fails before implementation. Code goes into the artifact; failing versions remain in work and do not contaminate the final runtime directory.
-- [ ] Implement these interfaces and invariants, splitting necessary internal mechanisms into files by responsibility. Do not add generic frameworks without consumers.
-- [ ] Install the pinned development compiler with dependency lifecycle scripts disabled and generate a lockfile. Run a full strict build, core dependency checks, and positive/negative compile-time type examples.
-- [ ] Run the complete prototype tests and headless example to demonstrate linkage among shutdown, events, Scope, and the display tree. Record commands, actual versions, results, source hashes, known limitations, and implementation origins.
-- [ ] Independently review specification coverage and code quality. Fix significant issues and run corresponding regressions; retain initial-review and correction evidence. Without Git, use file hashes and a source-file review package in place of commit diffs.
+- Write failing behavioral tests for cancellation/Scope/events/display trees/Engine, using manually derived order and real objects, rather than generating expectations from internal data structures. First establish loadable unimplemented methods, proving behavioral assertion failures rather than only missing-module errors.
+- Run failing tests and retain failure output and covered behavior; each new behavior fails before implementation. Code goes into the artifact; failing versions remain in work and do not contaminate the final runtime directory.
+- Implement these interfaces and invariants, splitting necessary internal mechanisms into files by responsibility. Do not add generic frameworks without consumers.
+- Install the pinned development compiler with dependency lifecycle scripts disabled and generate a lockfile. Run a full strict build, core dependency checks, and positive/negative compile-time type examples.
+- Run the complete prototype tests and headless example to demonstrate linkage among shutdown, events, Scope, and the display tree. Record commands, actual versions, results, source hashes, known limitations, and implementation origins.
+- Independently review specification coverage and code quality. Fix significant issues and run corresponding regressions; retain initial-review and correction evidence. Without Git, use file hashes and a source-file review package in place of commit diffs.
 
 ## Task 2: Evidence and knowledge-base integration
 
@@ -58,12 +58,12 @@ Version: 0.1 · October 8, 2026 · Status: execution plan for the first slice; b
 
 **Interfaces:** Receive Task 1's actual artifacts and reports. Evidence contains artifactRoot and relative file hashes; do not label this slice a complete renderer or migration tool.
 
-- [ ] Preserve the 0.7.0 verification baseline; do not rewrite existing experiment or source evidence.
-- [ ] Target research gaps and list existing evidence, research subjects, minimum verification, and affected decisions item by item. Real-device gaps do not prevent GPU-free core work.
-- [ ] Register V002 as having started a local independent core; formal acceptance remains not_run. Keep V003–V006 unimplemented and do not upgrade advantage hypotheses.
-- [ ] After integration, rerun compilation, all tests, the example, and source-boundary checks, then register actual results.
-- [ ] Verify knowledge-base references, historical completeness, and new artifact hashes; deliver the code entry point, verified capabilities, and next evidence priorities.
+- Preserve the 0.7.0 verification baseline; do not rewrite existing experiment or source evidence.
+- Target research gaps and list existing evidence, research subjects, minimum verification, and affected decisions item by item. Real-device gaps do not prevent GPU-free core work.
+- Record the first-slice cutoff: V002 local independent core started, complete acceptance not_run, V003–V006 unimplemented and advantage hypotheses unchanged. Later packages keep separate successor records.
+- After integration, rerun compilation, all tests, the example, and source-boundary checks, then register actual results.
+- Verify knowledge-base references, historical completeness, and new artifact hashes; deliver the code entry point, verified capabilities, and next evidence priorities.
 
 ## Interpretation boundaries
 
-R017 establishes the start of the first core-framework and logic implementation slice, following earlier specifications and limiting this slice's scope. It does not accept all candidate technical tradeoffs. Complete rendering, resource management, cross-platform performance, and one-click migration retain separate delivery gates. Implementation and independent review are recorded separately. Shared code changes must be integrated into the same version; research gaps can be checked in parallel.
+Development proceeds through verifiable increments under R017. This initial increment does not select every candidate architecture. Complete rendering, resources, cross-platform performance, AI tooling and R008/V006 migration retain their own gates. Implementation evidence and independent review remain separate; shared contracts integrate into one version while research gaps can be investigated in parallel.

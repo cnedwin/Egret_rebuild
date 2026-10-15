@@ -5,7 +5,7 @@ English | [简体中文](../../Cns/docs/3d-foundation.md)
 <!-- S3D1-DOC-0.32.0-BEGIN -->
 ## Current public scene checkpoint: 0.32.0 (S3D1)
 
-Verified implementation: public behavior **35/35**, boundaries **238/238**, **2** positive type consumers and **10 + 3 + 11 + 15** exact negative diagnostics pass. Retained integration checks **161/161** and fresh fixed headless Edge composition pass after independently reviewed repairs. Full final publication and current delivery remain pending at this curation cutoff; the linked scene contract records exact scopes and successors.
+Verified implementation: public behavior **35/35**, boundaries **238/238**, **2** positive type consumers and **10 + 3 + 11 + 15** exact negative diagnostics pass. Retained integration checks **161/161** and fresh fixed headless Edge composition pass after independently reviewed repairs. Full final publication and delivery were pending at this recorded checkpoint; the linked scene contract records exact scopes and successors.
 
 **Initial source/API observation (historical cutoff):**
 

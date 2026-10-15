@@ -4,7 +4,7 @@
 
 这个第一方工具观察真实 Engine 时钟驱动公开实例方法 `engine.createSequencePlayback`，随后显式捕获、渲染并重放不可变帧。仅使用 `@egret/engine` 和所选 `/web` 或 `/webgpu` 公开宿主，不使用显式 player、私有 sampler、产品 stub 或手工 crop。既有 `tools/sequence-player` 结果保留历史边界，不能作为新控制器验收。
 
-此源码是等待独立评审的候选。文件和下列完整性目标不表示浏览器已通过。
+源码文件本身不表示浏览器运行通过。下列数量定义协议要求；具体尝试的结果以保存记录为准。
 
 ## 前提与运行入口
 

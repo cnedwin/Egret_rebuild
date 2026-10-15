@@ -2,33 +2,35 @@
 
 English | [简体中文](../../Cns/docs/知识库维护.md)
 
-[README](../README.md) is the entry point; the [current version](../current-version.json) points to effective materials. Status authority is centralized in [requirements](../registry/requirements.json), [decisions](../registry/decisions.json), [hypotheses](../registry/hypotheses.json), [delivery](../registry/deliverables.json), and [sources](../registry/sources.json). This and other explanatory documents do not duplicate complete registries.
+The knowledge base is maintained with the engine. Product documents explain goals and reasoning; contracts define behavior; registries track decisions and delivery; verification records describe reproducible observations. [The reading index](../README.md) and [current version](../current-version.json) provide entry points.
 
 ## Update order
 
-1. Register sources, dates, access scope, and evidence, distinguishing official statements, observations, and inferences.
-2. Link facts or hypotheses, decisions, requirements, deliverables, and experimental acceptance into a “source → fact/hypothesis → decision → requirement → delivery → experimental acceptance → new evidence” chain.
-3. Update affected explanatory documents and version entry points, explain reasons, and retain superseded conclusions and evidence boundaries.
-4. In PowerShell 7 at the knowledge-base root, run `pwsh -NoProfile -File tools\Validate-KnowledgeBase.ps1` to check IDs, links, references, and sensitive-content markers, then have a reviewer confirm content. The tool does not fetch external pages or replace content/authorization review.
+1. Record the source, date, version and evidence scope. Separate observations from hypotheses.
+2. Connect affected requirements, decisions, implementation and acceptance records using their stable IDs.
+3. Update the relevant explanatory documents in both languages, including the reason for a changed design. Keep the main narrative focused on the current coherent design.
+4. Refresh current document identities and English registry views. Validate links and shared status, then review technical meaning and translation.
 
-Candidate architectures remain proposed/awaiting verification. Plans, passing tool checks, or complete documents cannot replace implementation acceptance. When new evidence disproves a hypothesis, record the original conclusion, counterevidence, and affected items rather than silently overwriting it.
+Run the structural checker from the knowledge-base root:
 
-## Proposed responsibilities and cadence
+    pwsh -NoProfile -File tools/Validate-KnowledgeBase.ps1 -CheckOnly
 
-The project lead confirms scope changes; material maintainers organize registries; domain reviewers check technical evidence; acceptance reviewers check reproducible results. All roles await appointment. State when one person holds multiple roles.
+Relative links in knowledge-base documents stay within the `knowledge-base` tree. Refer to repository-root policies, contribution guides and acknowledgements through their canonical GitHub URLs.
 
-Update after evidence, decision, or delivery changes; periodically review invalid sources, unverified hypotheses, and unassigned items. Register maintenance cadence and responsibilities in community governance. R009 carries knowledge-base/community requirements; R018 confirms public collaboration from early development. Curate design processes, sources, discussions, and verification according to the [public communication policy](open-source-collaboration-and-public-communication.md). Manage release directories and restricted original materials separately.
+## Responsibilities and cadence
+
+Maintainers review scope and integration; domain reviewers check contracts and evidence; contributors keep sources and examples reproducible. Publish role assignments through community governance. Update records when evidence, design or delivery changes, and periodically check broken sources and unresolved work.
 
 ## Maintaining open-source references
 
-R012 and [research/verification responsibilities](open-source-research-and-validation-roles.md) establish source-first research: record complete commits, files/functions, licenses, repaired issues, adoption methods, hypotheses, and replacement conditions. Separate current pages from historical tags; do not combine versions into one implementation-verification claim. Fixed-version source establishes mechanisms; adapter experiments establish Egret integration; real devices establish performance and support. Record the three separately.
-
-Established mature principles may advance engineering. Under R015, separately manage explicit public dependencies, independent implementation from own specifications, and research references. After upstream upgrades, check affected contracts/regressions and record the scope of source reading, test reading, and actual test execution. Explicitly register business inputs and normalization policies; manage historical source under existing permissions.
+Record the consulted version or commit, relevant mechanism, license and actual use. Research references, product dependencies and integration experiments serve different roles. Keep citations beside the conclusions they support and collect credits in [Acknowledgements](https://github.com/cnedwin/Egret_rebuild/blob/main/ACKNOWLEDGEMENTS.md). A reference implementation informs analysis; Egret's own contract and tests determine its behavior.
 
 ## Maintaining implementation sources
 
-Follow the [independent implementation and third-party dependency policy](independent-implementation-and-dependency-policy.md). Synchronize the [implementation source record](../templates/implementation-origin-record.md) whenever core implementation or dependencies change, explaining independently written scope, references, explicit dependencies, AI participation, and verification. Research dependencies and results retain attribution. Maintain release notices, source review, and technical verification separately.
+Follow the [implementation and dependency policy](independent-implementation-and-dependency-policy.md). Describe the materials used, first-party scope, dependencies, AI assistance and review in the [origin record](../templates/implementation-origin-record.md). Record upgrades and affected verification.
 
 ## Public copies and historical evidence
 
-When curating text or environment paths for public collaboration, record editing type, original material digests, and applicable versions. Numerical results, technical conclusions, source identity, and revision facts remain traceable. Historical review digests bind the files as they were reviewed; current document evolution does not expand that scope. Public projects provide current source and reproducible verification entry points; release inventories identify included materials and materials not distributed.
+Write design documents in neutral project language. Explain the problem, constraints, alternatives and chosen approach without reproducing conversations or respondent roles. Material technical changes belong in a decision or dated verification record; routine drafting history stays in version control. Do not attribute unrecorded thoughts or conclusions to an individual.
+
+Reading documents can be reorganized as the product matures. Preserve source attribution, numerical results, uncertainty, original evidence and the scope of earlier reviews. Historical hashes continue to identify historical files; current text has its own identity. Update both editions together so they remain one product plan.

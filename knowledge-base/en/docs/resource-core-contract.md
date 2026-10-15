@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/资源核心合同.md)
 
-Date: 2026-10-08. Status: specification for the next experimental implementation slice, not acceptance of a rendering backend or a complete resource product.
+Original specification: 2026-10-08, for an experimental implementation slice. It does not establish acceptance of a rendering backend or a complete resource product.
 
 This slice implements `engine.assets`, following the asynchronous acquisition, typed references, and Scope ownership in the [public API contract](public-api-design-and-naming.md). It manages CPU values returned by providers; it does not implement download protocols, image/font/model decoding, GPU upload, budgets/LRU, persistent manifests, or device recovery. Providers own their network/decoding work and response to cancellation. They must not hand in-flight GPU handles to this slice for synchronous cleanup.
 
@@ -36,4 +36,4 @@ If a signal adapter fails to register/remove a listener, preserve a diagnostic a
 
 Use first-party provider boundaries and controllable Promises to verify sharing, individual cancellation, last-waiter cancellation, late success/failure after cancellation, reentry during closure, interleaved generations, failure retry, type validation, and Scope/Engine integration. Also run the core with a genuinely asynchronous provider example. Test output only proves this CPU contract, not GPU fences, performance, package size, power use, or migration success.
 
-Design inputs are this project's [public API contract](public-api-design-and-naming.md), [engineering plan](engineering-plan.md), and [asynchronous resource research record](../../evidence/async-resource-probe-results.json). The latter's 25 cases are manually interleaved research and are not presented as evidence from this execution. Whole-lifecycle cancellation in the reference chain differs from cancellation of a wait in this acquisition API. Code is independently authored without copying research probes or third-party implementations; existing public research retains its provenance and licensing in the original records.
+Design inputs are this project's [public API contract](public-api-design-and-naming.md), [engineering plan](engineering-plan.md), and [asynchronous resource research record](../../evidence/async-resource-probe-results.json). The latter's 25 cases are manually interleaved research, not resource-core implementation test results. Whole-lifecycle cancellation in the reference chain differs from cancellation of a wait in this acquisition API. The first-party implementation follows these contracts; public research retains its provenance and licensing in the original records.

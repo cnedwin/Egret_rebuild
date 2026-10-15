@@ -22599,5 +22599,73 @@
     },
     "historicalPublicPendingCutoffsPreserved": true,
     "remoteCIPassClaim": false
+  },
+  "documentationEditorial": {
+    "date": "2026-10-15",
+    "engineeringPreview": "0.54.0",
+    "kind": "documentation_only",
+    "scope": "English and Chinese reading narratives, navigation and current registry prose; original legal and identity-bound experimental records retain their own scopes.",
+    "preparation": "AI-assisted first-party editorial preparation and separate independent reading review. Code provenance, third-party attribution and previous execution records are preserved.",
+    "behaviorChanged": false,
+    "readingIdentityAuthority": {
+      "path": "localization.json",
+      "bytes": 293198,
+      "sha256": "d67fe454f65a16c99de7576d4ae397aa47b6c19b651ce7ea546b70d019d46fec",
+      "readingPairs": 197,
+      "registryViews": 6
+    },
+    "reviews": [
+      {
+        "role": "root_navigation",
+        "pairs": 14,
+        "bytes": 22606,
+        "sha256": "0490e9b4e0083ee42a36467540bcca81dc2195d1572c6464761b47683ae79ff1",
+        "verdict": "PASS_SOURCE_AND_BILINGUAL_ROOT14_PAIRS_AND_UNCHANGED_REGISTRY6_PAIRS_LINK_SUCCESSOR_ONLY",
+        "status": "identity_only_not_distributed"
+      },
+      {
+        "role": "strategy",
+        "pairs": 19,
+        "bytes": 15098,
+        "sha256": "e1486a4774f80d2cb135f3a26054e8ed1e6de970acd4e7a5a04acbbc551a19a9",
+        "verdict": "PASS_SOURCE_EDITORIAL_STRATEGY_READING_ONLY",
+        "status": "identity_only_not_distributed"
+      },
+      {
+        "role": "technical_parent",
+        "pairs": 74,
+        "bytes": 9119,
+        "sha256": "7260c35506e194da0ceec36b039b4bcd9fb491d2540df8cea9d92ae41df370e8",
+        "verdict": "PASS_SOURCE_AND_BILINGUAL_TECHNICAL_PARENT74_PAIRS_ONLY",
+        "status": "identity_only_not_distributed"
+      },
+      {
+        "role": "technical_transfer",
+        "pairs": 25,
+        "bytes": 20192,
+        "sha256": "1820ea28e34115644b14fcdb4e54cf8c9e9cf3052bbc0d944ae6afbef0c91eeb",
+        "verdict": "PASS_SOURCE_AND_BILINGUAL_TRANSFERRED_TECHNICAL25_PAIRS_ONLY",
+        "status": "identity_only_not_distributed"
+      },
+      {
+        "role": "research",
+        "pairs": 65,
+        "bytes": 44121,
+        "sha256": "0397111a11f0adca8f0fe2fbe3878bc6994b9a445771dd2e0d48ee25054c7d12",
+        "verdict": "PASS_SOURCE_EDITORIAL_RESEARCH_READING_ONLY",
+        "status": "identity_only_not_distributed"
+      }
+    ],
+    "historicalFileRowsPreserved": true,
+    "historicalFileListScope": "Existing files rows bind their recorded version-specific snapshots; current reading identities are in localization.json.",
+    "performanceAcceptanceExpanded": false,
+    "knowledgeBaseLinkScopeRepair": {
+      "date": "2026-10-15",
+      "relativeRootLinksReplaced": 14,
+      "affectedReadingFiles": 10,
+      "maintenancePolicyParagraphs": 2,
+      "firstPartyCodeChanged": false,
+      "scope": "Canonical repository URLs preserve links to root contribution, acknowledgement, documentation and contributor-policy files within the knowledge-base navigation contract."
+    }
   }
 }

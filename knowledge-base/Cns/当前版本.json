@@ -3,8 +3,8 @@
   "version": "0.54.0",
   "updatedAt": "2026-10-15",
   "title": "工程预览 0.54.0 — 共享输入位图按钮",
-  "stage": "SOURCE_PREVIEW_CURRENT_CODE_AND_BOUNDED_NATIVE_ACCEPTED_PUBLIC_DELIVERY_PENDING",
-  "publication": "source_draft_development_preview",
+  "stage": "INTEGRATED_ENGINEERING_PREVIEW_CURRENT_CODE_AND_BOUNDED_NATIVE_ACCEPTED",
+  "publication": "public_source_engineering_preview",
   "registries": {
     "requirements": "Cns/registry/需求.json",
     "decisions": "Cns/registry/决策.json",
@@ -21,11 +21,11 @@
   "authority": {
     "scope": "user_confirmed_requirements",
     "technicalChoices": "decision_registry_plus_accepted_ADR",
-    "implementation": "versioned_local_source_artifacts_and_future_repository",
+    "implementation": "versioned_source_artifacts_and_repository_history",
     "acceptance": "reproducible_test_reports",
     "summaryStatus": "deliverable_registry"
   },
-  "engineImplementation": "partial_independent_core_textured_scene_cpu_accepted_native_pending",
+  "engineImplementation": "partial_independent_core_with_recorded_desktop_canvas_webgpu_subsets",
   "engineBenchmarksRun": false,
   "creatorTaskTestsRun": false,
   "migrationAcceptanceRun": false,
@@ -6798,5 +6798,37 @@
     },
     "historicalPublicPendingCutoffsPreserved": true,
     "remoteCIPassClaim": false
+  },
+  "historicalCurrentVersionStage": {
+    "stage": "SOURCE_PREVIEW_CURRENT_CODE_AND_BOUNDED_NATIVE_ACCEPTED_PUBLIC_DELIVERY_PENDING",
+    "publication": "source_draft_development_preview",
+    "engineImplementation": "partial_independent_core_textured_scene_cpu_accepted_native_pending",
+    "authorityImplementation": "versioned_local_source_artifacts_and_future_repository"
+  },
+  "bitmapButtonDeliveryActualSuccessor": {
+    "engineeringPreview": "0.54.0",
+    "recordedOn": "2026-10-15",
+    "status": "ACTUAL_PR_MERGE_AND_PRIMARY_MAIN_SYNC_ACCEPTED",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/42",
+    "featureHead": "bf6e9217f8b855bc61cfd7f6b4d36e3a97b527ad",
+    "main": "efd2a9c91fb6cfe633214b50b82cf7952941452a",
+    "tree": "2b39b8439a5b30ce3572edc162e8a7a916a76185",
+    "independentReview": {
+      "bytes": 14778,
+      "sha256": "702721eff05be5150c39e6ab19aca367517f7dbd65397b15387592f722199663",
+      "identityOnlyNotDistributed": true
+    },
+    "historicalPublicPendingCutoffsPreserved": true,
+    "remoteCIPassClaim": false
+  },
+  "documentationEditorial": {
+    "date": "2026-10-15",
+    "kind": "documentation_only",
+    "registeredReadingPairs": 197,
+    "engineBehaviorChanged": false,
+    "sourceAttributionPreserved": true,
+    "reviewStatus": "independent_reading_review_complete",
+    "independentReviewCount": 5,
+    "productExecutionScope": "unchanged"
   }
 }

@@ -2,7 +2,7 @@
 
 English | [简体中文](README.zh-CN.md)
 
-This first-party tool projects the existing opaque Bitmap collector into the public [SequencePlayer contract](../../knowledge-base/en/docs/sequence-player-contract.md). It exercises `egret.createSequenceClip` and `egret.SequencePlayer` from the root public entry, plus the selected `/web` or `/webgpu` public host entry. It never imports a private sampler or manually assigns the Bitmap crop. The separately reviewed fresh public-player observation and its exact source identities are recorded in the [contract acceptance section](../../knowledge-base/en/docs/sequence-player-contract.md#recorded-acceptance--2026-10-10); earlier Bitmap evidence remains a distinct prerequisite.
+This first-party tool verifies the public [SequencePlayer contract](../../knowledge-base/en/docs/sequence-player-contract.md). It exercises `egret.createSequenceClip` and `egret.SequencePlayer` from the root public entry, plus the selected `/web` or `/webgpu` public host entry. It never imports a private sampler or manually assigns the Bitmap crop. The separately reviewed fresh public-player observation and its exact source identities are recorded in the [contract acceptance section](../../knowledge-base/en/docs/sequence-player-contract.md#recorded-acceptance--2026-10-10); earlier Bitmap evidence remains a distinct prerequisite.
 
 ## Run prerequisites and command
 

@@ -2,6 +2,8 @@
 
 English | [简体中文](../../../Cns/experiments/spine-f1/README.md)
 
+This optional experiment connects original animation fixtures to Egret resources, immutable meshes and the textured-frame port. The 0.36.0 and 0.37.0 sections below preserve their own historical verification and publication cutoffs; pending statements belong to those records, not a fresh assessment.
+
 <!-- F1C-DOC-0.37.0-BEGIN -->
 ## Engineering preview 0.37.0 — opt-in F1 Clock candidate
 

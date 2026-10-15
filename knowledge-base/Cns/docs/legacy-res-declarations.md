@@ -35,7 +35,7 @@ group.keys 按字面逗号分割。空字符串产生零引用；其他输入保
 
 严格解析复用既有 [jsonc-parser 3.3.1](https://github.com/microsoft/node-jsonc-parser/tree/v3.3.1) 公共根 createScanner／visit API，适用其 MIT 许可。声明 profile、报告组织与测试 fixture 按自有契约独立编写。创始人提供的历史 RES 声明语义用于兼容性研究；准确历史版本及模块闭合仍未验证。公开材料保留这项来源背景，不分发历史私有源码或工程包。
 
-接受的准确三文件范围记录 20 项专项及 772 项完整检查通过，三个有限独立审查未发现问题；这些是自建声明 fixture 的源码测试，不是旧游戏迁移。历史源码和测试身份见[声明验证摘要](../../evidence/legacy-res-declarations-verification.json)。本次文档整理未重跑这些检查，最终公开审查／推送门禁仍待完成。
+接受的准确三文件范围记录 20 项专项及 772 项完整检查通过，三个有限独立审查未发现问题；这些是自建声明 fixture 的源码测试，不是旧游戏迁移。历史源码和测试身份见[声明验证摘要](../../evidence/legacy-res-declarations-verification.json)。此处未记录新增执行；最终公开审查／推送门禁在该验证截止点待完成。
 
 ## 完整迁移仍需完成
 

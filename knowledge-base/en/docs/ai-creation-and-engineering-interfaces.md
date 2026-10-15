@@ -2,24 +2,21 @@
 
 English | [简体中文](../../Cns/docs/AI创作与工程接口.md)
 
-The candidate objective is to let AI understand the current work, make local changes, receive feedback, and keep iterating. R006 requires integration with the Agent, Skills, and MCP ecosystems. The specific engineering protocols and tools remain to be implemented; connecting a model must not be equated with reliable creation.
+AI creation is useful when a tool can understand an existing game, make a bounded change and verify the result without erasing unrelated work. Egret therefore exposes project operations, build tasks and runtime diagnostics through the same semantics used by visual and code tools. R006 includes Agent, Skills and MCP integration; reliable end-to-end creation remains an implementation and acceptance goal.
 
 ## Shared engineering semantics
 
-Objects and resources use stable IDs; their paths, names, and scene positions may change. The project, resource format, engine version, and target host configuration each have separately pinned versions. Visual interfaces, code tools, and AI operations share the same reference checks, change commands, builds, and diagnostics.
+Stable object and resource IDs survive renaming, moves and scene rearrangement. Project schemas, resource formats, engine versions and target-host configurations are pinned separately. All editing clients share reference validation, commands, builds and diagnostics, so a change means the same thing regardless of the interface that requested it.
 
-The runtime scene is authoritative state; GPU or native mirrors can be rebuilt. The editable project records the facts of creation. Temporary playtest state must not be written back to the project without an explicit choice. Developer-generated business code is still a program that must be compiled, run, and verified; structured editing cannot replace gameplay tests.
+The editable project owns persistent creation data. A running instance owns temporary gameplay state; GPU and native projections are rebuildable. Playtest changes enter the project only through an explicit application. Generated business code follows ordinary compilation, runtime and gameplay verification; structured editing supplies useful constraints but cannot establish behavior by itself.
 
 ## The change loop
 
-1. Read the target objects, references, versions, capabilities, and performance budgets; define this operation's intent and completion conditions.
-2. Generate a clearly scoped diff and list the potential effects on resources, rules, and interactions.
-3. Apply the change under a version precondition; reread on conflicts and retain a snapshot from before the change.
-4. Wait for resource import and builds to finish, then obtain diagnostics that identify the object, resource, code, and stage.
-5. Playtest and replay key inputs, checking expected behavior, existing gameplay, visuals, and performance budgets.
-6. Repair within a bounded number of attempts and cost; report results or remaining issues and support undo and retry.
+A change begins with the target objects, references, versions, capabilities, budgets and completion conditions. The tool produces a scoped diff, explains effects on resources and interactions, and applies it against a version precondition. A conflict requires a fresh read. The pre-change snapshot remains available for recovery.
 
-Tool responses should include the task ID, project version, status, diff, diagnostics, artifacts, and acceptance results. Asynchronous import, build, and test operations need query, cancellation, timeout, and recovery semantics; retries must state their idempotency. Chat text without locatable context must not be the sole machine feedback.
+Import and build tasks then produce diagnostics tied to the original object, asset, code and stage. Playtesting replays key inputs and checks intended behavior, existing gameplay, visuals and applicable performance budgets. Repairs have bounded attempts and cost. The result includes remaining issues and an actionable undo or retry path.
+
+Every task response carries its task ID, input/output project versions, status, diff, diagnostics, artifacts and actual acceptance results. Long tasks expose query, cancellation, timeout and recovery; retries declare idempotency. Late results cannot overwrite a newer project. Locatable structured feedback complements explanations.
 
 ## Candidate capability groups
 
@@ -31,8 +28,10 @@ Tool responses should include the task ID, project version, status, diff, diagno
 | Playtesting and diagnostics | Input replay, object state, screenshots, and frame-time analysis | Repeatable results, object origins, and measurement definitions |
 | Versions and recovery | Undo, compare, continue repairs, and update old projects | Conflicts, cancellation, failure recovery, and data consistency |
 
-Skills provide task knowledge and operating procedures; MCP provides tool discovery and invocation; engine interfaces own project semantics and correctness. Different models and clients should be supported. Model selection, cost, and hosting remain undecided. For the protocol basis, see the [MCP tools specification](https://modelcontextprotocol.io/specification/2025-06-18/server/tools).
+Skills carry task knowledge and operating procedures. MCP supplies tool discovery and invocation, while project services own editing semantics and correctness. Different models and clients can use that boundary; model, cost and hosting choices remain undecided. The [MCP tools specification](https://modelcontextprotocol.io/specification/2025-06-18/server/tools) is the protocol reference.
 
 ## Acceptance approach
 
-Run multiple consecutive rounds of changes on the same work and record requirements met, preservation of unrelated functionality, successful undo, human takeover, waiting time, and cost. Test new creators separately from people with mobile-game experience. Diagnostics can guide optimization but do not prove that it works; AI changes require behavioral and visual revalidation. H005 and V003 correspond to the [hypotheses](../../Cns/registry/假设.json) and [deliverables](../../Cns/registry/交付.json). For bringing old projects into the same loop, see the [migration requirements](legacy-project-migration.md).
+Evaluate consecutive changes to the same work: whether requirements are met, unrelated behavior survives, undo succeeds, and failures permit human takeover. Record waiting, repair attempts and cost. Test new creators and experienced mobile developers separately. Optimization suggestions require behavioral, visual and measured revalidation.
+
+H005 and V003 are tracked in the [hypotheses](../../Cns/registry/假设.json) and [deliverables](../../Cns/registry/交付.json). [Legacy migration](legacy-project-migration.md) brings converted projects into this same editable, verifiable loop. Current core progress provides prerequisites; it does not establish completion of these interfaces.

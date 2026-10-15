@@ -52,7 +52,9 @@ Trim offsets, rotated atlas regions, frame labels/events, automatic playback, sk
 
 ## Execution plan and verification
 
-1. Independently review this EN/CN specification before implementing. Reuse the already isolated `egret/webgpu` worktree; preserve prior evidence.
+The following requirements record the original implementation plan; the dated acceptance section below records what was actually verified.
+
+1. Review matching English/Chinese specifications against the selected baseline and preserve prior evidence. The original plan named the isolated `egret/webgpu` worktree.
 2. Add behavior tests importing the built public root. Observe a missing-capability failure before changing product code, then implement the small runtime class, authoritative Bitmap binding helper and public exports. Add public type checks.
 3. Use an independently specified 6×2 atlas with red 2×2, green 1×2 and blue 3×1 crops and durations 0.125/0.25/0.125 seconds. Verify exact crop/geometry at 0/0.125/0.375/0.5, backward seeks, once/loop boundaries, one load/exact lease, immutable saved-frame isolation, forged receivers, failures, overrides and retirement. Expectations use literals, not sampler-derived oracles.
 4. Add a reproducible browser example using only public engine/web/WebGPU entries. Fixed-time opaque pixels and saved-frame replay must be checked on Canvas and WebGPU with the default installed browser. Existing opaque crop evidence is a separate prerequisite; the player requires its own current-build observation. Do not extend opaque evidence to alpha precision, performance, devices or full A2.
@@ -70,4 +72,4 @@ The interactive example has source/syntax review but its UI has not been browser
 
 ## Source policy
 
-This package is independently authored against the existing first-party clip, Bitmap, resource and frame contracts. No third-party animation implementation or dependency is incorporated. Study references and third-party notices elsewhere retain their original attribution and evidence boundaries.
+This first-party package is authored against the existing clip, Bitmap, resource and frame contracts and uses the existing dependency set. Study references and third-party notices retain their original attribution and evidence boundaries.

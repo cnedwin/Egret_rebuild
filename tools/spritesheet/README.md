@@ -4,7 +4,7 @@ English | [简体中文](README.zh-CN.md)
 
 This first-party Apache-2.0 verifier composes public `createSpriteSheet` with the existing Engine-clock sequence controller. One original CPU atlas and one manager-issued lease supply two genuine caller-owned Bitmaps: the animated actor and a static named icon. The selected public Canvas and WebGPU hosts render captured authentic frames. It uses no private product import, copied validator, explicit player, renderer patch or third-party asset.
 
-These files are a source candidate. Syntax, browser execution and independent saved-result review are **NOT_RUN** for this candidate. The numbers below are completeness requirements, not measured results. Earlier sequence-playback results cannot qualify the new SpriteSheet fixture.
+The original source-candidate record classified syntax, browser execution and independent saved-result review as **NOT_RUN**. That historical cutoff remains separate from later attempts. The numbers below define completeness requirements, not measured results; earlier sequence-playback results do not qualify this SpriteSheet fixture.
 
 ## Invocation and prerequisites
 

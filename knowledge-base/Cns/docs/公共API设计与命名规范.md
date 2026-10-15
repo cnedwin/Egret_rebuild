@@ -2,22 +2,9 @@
 
 [English](../../en/docs/public-api-design-and-naming.md) | 简体中文
 
-公共继承的 `localToGlobal`／`globalToLocal` 查询在逻辑空间返回全新的只读 `Point2D`。缺失坐标分别默认为零；第三个参数是 `CoordinateQueryOptions`。祖先预算、真实接收者／生命周期检查及已存储矩阵精确逆算见[坐标契约](显示坐标查询契约.md)。旧版可变输出适配器仍待完成。
+白鹭API用熟悉的领域语言表达显示列表、舞台、事件、资源与动画。显式Engine实例、归属和模块边界使这些语义在工具与宿主间可预测。开发者无需理解渲染后端，也应知道调用读取什么、改变什么、拥有什么以及终结什么。
 
-历史 0.13.0 矩形检查点见单独的[实现与验证记录](WebGPU矩形实现证据.md)；源码身份、结果及待办保留当时范围，不代表当前产品验收。
-
-
-## 历史0.12.0显示与帧候选范围
-
-后续工作包按[显示与帧合同](显示与帧执行合同.md)及[实现计划](显示与帧执行实现计划.md)推进：显示变换、继承可见性/透明度与本地矩形裁剪、Sprite 所属 Graphics 的矩形填充，以及不可变 CPU 帧捕获/提交。首个已实现执行适配器为独立 @egret/engine/web 入口的 Canvas，核心根入口保留无 DOM 边界。限定实现检查已通过：97/97核心行为测试、25项负类型诊断及真实桌面Canvas像素/指针交互。跨realm拒绝修正后有限独立审阅通过；远端发布另行记录。最终限定结果由[实现记录](显示与帧执行实现记录.md)和[验证](../../evidence/display-frame-verification.json)承载。
-
-具体接口及错误码以显示合同为准。x/y、scaleX/scaleY、rotation、alpha、visible、clipRect 与 Graphics 矩形子集不代表旧 scrollRect、Texture、TextField、TouchEvent 或完整显示 API 的兼容。frameId 是引擎内成功捕获序号，不是持久工程 ID 或资源代际。
-
-本包不验收完整文本/纹理/动画/UI/3D 执行、GPU 或 Native 支持、目标设备性能、编辑器、Agent 服务或完整迁移。此前 headless、CPU 资源与第三方研究记录保留原版本、数量、hash 和范围，不转为新显示帧验收。
-
-版本：0.1候选规范 · 知识库0.9.0 · 更新：2026年10月8日。
-
-本规范让新工程保留白鹭的显示列表、舞台、事件与动画语言，同时采用模块化、显式实例和可验证生命周期。R016确认重新制定完整架构与规范的目标，D016承载候选设计；包名、方法和完整示例尚未稳定发布或完整验收；[首段核心记录](核心框架实现记录.md)列出已编译验证的子集。工程边界见[工程技术架构](工程技术架构与项目结构.md)，实现要求见[代码规范](代码规范与质量门禁.md)。
+R016定义这一目标，D016记录更广候选合同。已实现表面由各包合同及[核心进展](core-progress.md)说明；更广GUI、三维和兼容设计中的名称在能力实现验证前保持提案。[工程架构](工程技术架构与项目结构.md)规定依赖，[质量规范](代码规范与质量门禁.md)规定实现与发行检查。
 
 ## 白鹭辨识度与命名表
 
@@ -42,15 +29,17 @@
 
 候选公共身份为`@egret/engine`、`@egret/project`、`@egret/cli`；npm scope和名称可用性仍待发布前核对。新代码默认命名导入，也可使用`import * as egret from "@egret/engine"`保留调用外观；这属于ESM模块对象，不创建全局变量。EUI可用`import * as eui from "@egret/engine/eui"`。
 
-根入口导出基础2D和`createEngine`，`/web`、`/eui`、`/scene3d`、`/animation`、`/compat`各自显式。import不创建GPU、启动时钟、下载资源或注册全局插件。`createEngine({host, graphics, features})`异步启动并返回Engine；启动失败清理已取得的自有资源。一个页面可以建立多个实例，实例之间的舞台、时钟、事件和资源租约不依赖全局“当前引擎”。对象在Scope登记或首次挂载时绑定Engine；detach不解除绑定，跨Engine挂载、scope接管或绑定实例资源均报错。共享源资产在各实例分别acquire；不可变数学/样式值可共享。后端和宿主构造来自明确adapter，由入口装配。
+完整产品提案在根入口提供基础二维和`createEngine`，以`/web`、`/eui`、`/scene3d`、`/animation`和`/compat`明确能力边界；当前子路径以已实现包的exports为准。import不创建GPU、启动时钟、下载资源或注册全局插件。`createEngine({host, graphics, features})`异步启动并返回Engine；启动失败清理已取得的自有资源。一个页面可以建立多个实例，实例之间的舞台、时钟、事件和资源租约不依赖全局“当前引擎”。对象在Scope登记或首次挂载时绑定Engine；detach不解除绑定，跨Engine挂载、scope接管或绑定实例资源均报错。共享源资产在各实例分别acquire；不可变数学/样式值可共享。后端和宿主构造来自明确adapter，由入口装配。
 
 公共类型默认不依赖完整DOM或Node声明；浏览器专有HTMLCanvasElement只出现在`/web`入口。`features`由显式导入的能力工厂构成，不以任意字符串触发所有模块自动注册。`/compat`只带运行兼容设施，不能带整个开发时旧工程转换器。
 
 ## 属性与查询
 
+公共继承的 `localToGlobal`／`globalToLocal` 查询在逻辑空间返回全新的只读 `Point2D`。缺失坐标分别默认为零；第三个参数是 `CoordinateQueryOptions`。祖先预算、真实接收者／生命周期检查及已存储矩阵精确逆算见[坐标契约](显示坐标查询契约.md)。旧版可变输出适配器仍待完成。
+
 `x/y/scaleX/scaleY/alpha/rotation/visible/touchEnabled`保留易懂属性；频繁变更先进入CPU逻辑状态与脏队列，确定帧阶段再提取。设置属性不逐次跨语言或同步等待GPU。`getBounds`等查询读CPU已知状态；需要布局刷新的操作命名为显式`validateLayout`，不能在普通getter中隐藏整帧渲染。
 
-显示树成员只读迭代或返回快照，不开放可直接修改的children数组。`addChild`保持单一父节点和明确顺序；重挂载不销毁对象。2D `width/height`表示未变换的逻辑布局尺寸，显式尺寸与内容自然尺寸规则按对象类型记录；`getBounds`在接收者局部空间测量内容，计入后代变换、排除接收者自身及祖先变换，见[有界契约](显示内容边界契约.md)；其他坐标空间、旧式可变输出适配器、布局尺寸／失效机制及命中测试仍待完成。历史快照的尺寸行为不统一，不自动把所有旧width赋值改成scale；迁移按版本、子类、EUI布局模式建立对照。
+显示树成员只读迭代或返回快照，不开放可直接修改的children数组。`addChild`保持单一父节点和明确顺序；重挂载不销毁对象。2D `width/height`表示未变换的逻辑布局尺寸，显式尺寸与内容自然尺寸规则按对象类型记录；`getBounds`在接收者局部空间测量内容，计入后代变换、排除接收者自身及祖先变换，见[有界契约](显示内容边界契约.md)；更广坐标空间适配、旧式可变输出及完整布局尺寸/失效机制仍待完成；逻辑拾取有独立有限实现合同，不代表全部旧命中语义兼容。历史快照的尺寸行为不统一，不自动把所有旧width赋值改成scale；迁移按版本、子类、EUI布局模式建立对照。
 
 2D坐标采用独立于设备像素密度的逻辑像素，原点左上、x向右、y向下；保留历史`rotation`的角度单位。3D默认右手系、Y向上、相机朝局部-Z，世界单位约定为米；`rotation`使用Quaternion，Euler辅助方法明确命名`setEulerRadians`，不混用2D角度。资产导入记录坐标、单位转换。游戏时钟和新动画持续时间默认秒，名字需要区分时用`durationSeconds`；旧Tween毫秒由兼容入口显式转换。
 
@@ -62,11 +51,11 @@
 
 Bitmap借用逻辑Texture，不隐式再取得租约；创建者保持租约直到所有借用者不再使用。租约release立即失效自己的使用权，物理GPU资源要等最后有效引用和在途使用完成后回收。设备重建只更换GPU投影，逻辑资源身份和玩法状态按合同保留。原始WebGPU/WebGL句柄属于进阶内部扩展，不成为Bitmap纹理接口。
 
-已实施的 `Bitmap.sourceRect` 是已导出 Bitmap 类的公开成员增量；借用同一租约时，在 Texture 不可变原视图内选择绝对裁剪。所选几何不修改 Texture，也不授予使用权。见[区域契约](bitmap-region-contract.md)和[有限 CPU 证据](bitmap-region-evidence.md)。采样器仍为内部组件，可见序列输出须单独验证。
+已实施的 `Bitmap.sourceRect` 是已导出 Bitmap 类的公开成员增量；借用同一租约时，在 Texture 不可变原视图内选择绝对裁剪。所选几何不修改 Texture，也不授予使用权。见[区域契约](bitmap-region-contract.md)和[有限 CPU 证据](bitmap-region-evidence.md)。采样器仍为内部组件，原裁剪检查点本身没有验证后来的可见序列输出。
 
 ## 跨宿主取消协议
 
-公开signal采用DOM-free的CancellationSignal最小只读协议：aborted、reason、addEventListener("abort", listener, {once?})与removeEventListener("abort", listener)，listener不依赖DOM Event类型。reason在取消前为undefined，取消后稳定；abort只发生一次，已经aborted时新监听不补发，各操作先检查aborted再登记并复查。Scope先置closing再通知，通知中新增监听不执行，已移除监听跳过；异常收集为诊断而不阻断后续取消或清理。纯核心实现此协议，浏览器adapter需以真实类型兼容检查接受标准AbortSignal，必要宿主提供同合同适配。首段已编译验证最小取消协议，浏览器与小游戏适配尚未验收；不把小游戏已有AbortController作为前提。
+公开signal采用DOM-free的CancellationSignal最小只读协议：aborted、reason、addEventListener("abort", listener, {once?})与removeEventListener("abort", listener)，listener不依赖DOM Event类型。reason在取消前为undefined，取消后稳定；abort只发生一次，已经aborted时新监听不补发，各操作先检查aborted再登记并复查。Scope先置closing再通知，通知中新增监听不执行，已移除监听跳过；异常收集为诊断而不阻断后续取消或清理。纯核心实现此协议，浏览器adapter需以真实类型兼容检查接受标准AbortSignal，必要宿主提供同合同适配。首段已编译验证最小取消协议，后续有限浏览器适配分别保留验收记录，完整浏览器/小游戏矩阵仍开放；不把小游戏已有AbortController作为前提。
 
 ## Scope与关闭顺序
 
@@ -90,7 +79,7 @@ handler抛错向当前调用者传播，finally恢复派发内部状态；Engine
 
 ## 拟议调用外观
 
-下例展示包含尚未实现 Bitmap/TouchEvent 等能力的完整候选合同，尚无已发布包或该完整示例的编译结果；首段子集见[核心框架实现记录](核心框架实现记录.md)，后续 CPU 资产服务由[资源合同](资源核心合同.md)与[实现记录](资源核心实现记录.md)单独限定。`host`与`assets.logo`由宿主adapter和生成的工程引用提供。
+下例展示更广候选合同及尚未实现的TouchEvent兼容外观；Bitmap已存在于有限核心，但此完整示例不是已编译教学样例；首段子集见[核心框架实现记录](核心框架实现记录.md)，后续 CPU 资产服务由[资源合同](资源核心合同.md)与[实现记录](资源核心实现记录.md)单独限定。`host`与`assets.logo`由宿主adapter和生成的工程引用提供。
 
 ```ts
 import { Bitmap, EgretError, TouchEvent, createEngine } from "@egret/engine";
@@ -123,9 +112,9 @@ try {
   throw error;
 }
 
-// 关闭界面时：先解绑/取消，再销毁logo，最后释放纹理租约。
+// Close the screen: cancel subscriptions, dispose the logo, then release its lease.
 screen.dispose();
-// 宿主或作品退出时：等待整次运行关闭。
+// Await the complete Engine shutdown when the host or work exits.
 await engine.dispose();
 ```
 
@@ -133,10 +122,17 @@ await engine.dispose();
 
 ## 兼容与版本
 
-新默认使用`on`、typed AssetRef、Scope、ESM和Engine服务。旧`addEventListener(type, listener, thisObject, ...)`、`RES`静态入口、namespace/全局脚本、EXML、旧Tween计时及内部字段访问由迁移器识别；已支持的旧行为在`/compat`保留必要适配。事件remove不能每次bind生成新函数，handler/thisObject/capture身份必须稳定。RES本轮没有逐方法核查，不能承诺所有旧资源调用已有一对一新方法。
+新默认使用`on`、typed AssetRef、Scope、ESM和Engine服务。旧`addEventListener(type, listener, thisObject, ...)`、`RES`静态入口、namespace/全局脚本、EXML、旧Tween计时及内部字段访问由迁移器识别；已支持的旧行为在`/compat`保留必要适配。事件remove不能每次bind生成新函数，handler/thisObject/capture身份必须稳定。既有有限RES证据不建立全部历史资源调用的一对一方法映射。
 
 兼容分别核查公共类型、模块/打包解析、外部行为及工程/资源/桥接格式。稳定接口的语义变化也算破坏性变更，发布迁移规则与弃用信息；experimental明确标注，不成为永久默认示例。初期三个公共包可以锁步发布，projectSchema、resourceFormat、bridgeProtocol和toolProtocol各自独立版本与兼容范围。
 
 R008/V006的完整迁移、持续编辑、目标发布和更新仍是首个完整发布目标；保留名字或通过类型检查都不能替代它。规范验收覆盖多个Engine隔离、尺寸/排序、once重入、取消竞态、Scope迟到、租约共享、颜色/坐标与旧工程对照，见[工程结构门槛](工程技术架构与项目结构.md)。
 
 语言机制参考：[TypeScript模块与类型导出](https://www.typescriptlang.org/docs/handbook/modules/reference.html)。ESM机制支持这套入口设计，不证明实际发行包已经按需裁剪。
+
+
+## 历史检查点与证据
+
+更广API规范起于2026年10月8日版本0.1/知识库0.9.0。[首段核心记录](核心框架实现记录.md)保留已验证子集。[0.12显示合同](显示与帧执行合同.md)、[计划](显示与帧执行实现计划.md)、[记录](显示与帧执行实现记录.md)及[验证](../../evidence/display-frame-verification.json)保留变换、alpha/可见性、本地clip、Graphics矩形和不可变CPU捕获/提交证据：跨realm修正后97/97行为测试、25条负例诊断及桌面Canvas/指针观察。[0.13矩形记录](WebGPU矩形实现证据.md)另存。
+
+当时显示子集不建立旧scrollRect/Texture/TextField/TouchEvent兼容、完整渲染、宿主、设备、创作工具或迁移验收。frameId是同一Engine内成功捕获身份，不是工程身份或资源代际。后续有限能力由自身记录说明，不改写原结果。

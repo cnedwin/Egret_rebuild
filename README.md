@@ -12,54 +12,41 @@ Years later, as times change and technology advances, many developers continue t
 
 多年以后，时代变迁，技术革新，依然有很多开发者在鼓励我们。我希望借助 AI 和社区的力量，重建这个游戏引擎。
 
-<!-- BB-0.54.0-BEGIN -->
-## Engineering preview 0.54.0 — shared-input bitmap buttons
+## What we are building
 
-**S108 / V059 · 2026-10-15.** One reusable 2D control connects a genuine Bitmap, borrowed atlas lease, Scope lifetime and shared primary-mouse input. Press, enable and release operations commit the skin state; a final pick after the complete activate route determines one callback entitlement. The [two-button example](examples/bitmap-button/README.md) offers explicit Canvas/WebGPU, enable/disable, dispose/recreate and saved/live presentation.
+Egret Engine is an open-source game-engine rebuild for creators working with AI and for developers bringing mobile-game experience to the Web. The product centers on complex 2D interfaces and lightweight 3D, with a small rendering/runtime foundation, explicit resource ownership and a shared project model for code, visual tools and agents.
 
-Independent acceptance covers all nine local code phases, Core 3218/3218 and retained Spine Source 160/160; focused checks passed 163/163, and strict types produced 0 positive diagnostics and matched all 19 negative diagnostics. Independently accepted desktop Edge 155.0.4283.45 Canvas/WebGPU execution completed 38 main readbacks and 87552 channels at tolerance 0 with no mismatches. A fresh Canvas control adds 2 separate readbacks with main credit 0; its intentionally wrong blue expectation differs by 48 pixels and 96 channels. Final public bilingual review, normal prepush, mandatory hooks and new delivery remain PENDING. These overlapping counts are not added.
+The repository contains an executable engineering preview. Display trees, resource leases, animation, browser input and selected Canvas/WebGPU rendering paths are available within their documented contracts. Full UI tooling, complete Spine support, target-platform SDKs and automated legacy-project migration remain in development.
 
-Read the [contract](knowledge-base/en/docs/bitmap-button-contract.md), [evidence](knowledge-base/en/docs/bitmap-button-evidence.md) and [remaining plan](knowledge-base/en/docs/bitmap-button-implementation-plan.md). The preceding 0.53 package was delivered through [PR #41](https://github.com/cnedwin/Egret_rebuild/pull/41); older sections below retain their original cutoffs, including recorded PENDING states. Complete EUI/layout, full Spine R020/V020, migration R008/V006, advanced 3D, AI, devices and performance remain open or unverified.
+## Current version
 
-### Five recent changes
-
-| Preview | Useful capability |
-| --- | --- |
-| 0.54.0 | Reusable shared-input bitmap buttons and a two-control example. |
-| 0.53.0 | Runnable resource, atlas, clock-animation and display composition. |
-| 0.52.0 | Authored pivots shared by capture, coordinates, bounds and picking. |
-| 0.51.0 | Indexed insertion, same-parent positioning and reparenting. |
-| 0.50.0 | Queries over genuine current direct-child order. |
-<!-- BB-0.54.0-END -->
-
-<!-- AAP-0.53.0-BEGIN -->
-## Build and try the current playground
-
-Engineering preview **0.53.0** · S107 / V058. The [anchored atlas playground](examples/anchored-atlas-playback/README.md) loads one genuine asset lease, creates named red/blue frames, plays them through the Engine clock, and positions a Bitmap around its authored pivot. Manual Step/Pause/Resume and saved/live presentation make the complete resource → animation → display → host chain visible.
-
-Build with the fixed Node (`node tools/build.mjs`), serve the repository root over local HTTP, then open `/examples/anchored-atlas-playback/`. Canvas is the default; WebGPU is an explicit choice with visible unavailability. No automatic timer, new Engine API or dependency is added.
-
-Current independent CPU/code acceptance covers 16 public-consumer tests, all 9 code phases, Core 3147/3147 and retained Spine Source 160/160. Desktop Edge 155.0.4283.45 Canvas/WebGPU acceptance covers 14 main readbacks and 32256 channels with zero mismatches at tolerance 0; the separate fresh Canvas control contributes 0 main cases. Public Source/bilingual review, normal full prepush, mandatory hooks and new 0.53 delivery remain PENDING; no remote CI PASS is claimed.
-
-Read the [contract](knowledge-base/en/docs/anchored-atlas-playback-contract.md), [evidence](knowledge-base/en/docs/anchored-atlas-playback-evidence.md) and [remaining plan](knowledge-base/en/docs/anchored-atlas-playback-implementation-plan.md). The preceding 0.52 pivot package was delivered through [PR #40](https://github.com/cnedwin/Egret_rebuild/pull/40); its earlier PENDING passages remain historical.
+Engineering preview **0.54.0** was integrated through [PR #42](https://github.com/cnedwin/Egret_rebuild/pull/42). Workspace packages remain private at 0.0.0 and the host protocol remains 1.0. The [capability overview](knowledge-base/en/docs/core-progress.md) explains what is implemented and which verification each subsystem has.
 
 ## Five recent changes
 
-| Preview | Useful capability |
-| --- | --- |
-| 0.53.0 | [Runnable anchored atlas composition](examples/anchored-atlas-playback/README.md), with explicit time and one owned resource chain. |
-| 0.52.0 | [Authored display pivots](knowledge-base/en/docs/display-anchor-offsets-contract.md) shared by capture, coordinates, bounds, clipping and picking. |
-| 0.51.0 | [Indexed child insertion](knowledge-base/en/docs/container-add-child-at-contract.md) with same-parent positioning and reparenting. |
-| 0.50.0 | [Direct-child index queries](knowledge-base/en/docs/container-child-index-contract.md) over genuine current order. |
-| 0.49.0 | [Detach all direct children](knowledge-base/en/docs/container-remove-children-contract.md) while retaining their cleanup owners. |
+| Version / 版本 | Main change | 主要变化 |
+| --- | --- | --- |
+| 0.54.0 | Shared-input bitmap buttons with pressed/disabled skins and final activation picking | 共享输入位图按钮、按下与禁用皮肤、激活前最终命中复查 |
+| 0.53.0 | Runnable atlas/animation playground with explicit pivots and saved/live frames | 图集与动画可运行示例、显式锚点和保存／实时画面 |
+| 0.52.0 | Display anchor offsets shared by rendering, coordinates and picking | 渲染、坐标转换与拾取共用显示对象锚点 |
+| 0.51.0 | Indexed display-child insertion with preserved ownership | 按索引插入显示子对象并保持所有权语义 |
+| 0.50.0 | Query the current index of a direct display child | 查询直接显示子对象的当前索引 |
 
-See the [complete changelog](knowledge-base/en/CHANGELOG.md), [knowledge base](knowledge-base/en/README.md), and [raw README snapshot through 0.52](knowledge-base/en/archive/root-readme-through-0.52.0.md.txt). The snapshot preserves the complete previous README bytes, including original links and recorded cutoffs; it is historical raw data rather than current navigation.
+[Full Changelog](knowledge-base/en/CHANGELOG.md) · [Engineering plan](knowledge-base/en/docs/engineering-plan.md)
 
-## Scope and contribution
+## Build and try the current playground
 
-This is an independent community rebuild from Egret specifications and familiar APIs, with first-party Apache-2.0 code, attributed AI assistance and separate Source/execution/delivery evidence. Packages remain private 0.0.0 and host protocol 1.0. Read [contribution guidance](CONTRIBUTING.md) and [acknowledgements](ACKNOWLEDGEMENTS.md).
+Use the recorded Node.js 24.19.0, pnpm 11.25.0 and TypeScript 7.0.2 toolchain. From the repository root:
 
-Full Spine R020/V020, migration R008/V006, complete EUI/layout, advanced 3D, AI, fonts/IME, target devices/native SDKs and performance remain OPEN or unverified. Current examples and bounded checks do not close complete product acceptance.
+    pnpm install --frozen-lockfile --ignore-scripts
+    git config --local core.hooksPath .githooks
+    node tools/verify.mjs
+    node examples/headless.mjs
 
-Both exact raw archives: [English raw](knowledge-base/en/archive/root-readme-through-0.52.0.md.txt) · [Cns raw](knowledge-base/Cns/archive/根说明截至0.52.0.md.txt). They are unchanged historical data, not newly translated reading pages.
-<!-- AAP-0.53.0-END -->
+Run the [two-button example](examples/bitmap-button/README.md) for Canvas/WebGPU interaction, or the [atlas playground](examples/anchored-atlas-playback/README.md) for resources and animation. Their guides describe the local HTTP server and supported browser paths.
+
+## Read and contribute
+
+Start with [product direction](knowledge-base/en/docs/design-philosophy-and-positioning.md), [requirements](knowledge-base/en/docs/product-requirements.md) and the [technical white paper](knowledge-base/en/docs/technical-white-paper.md). Use the [documentation guide](DOCUMENTATION.md) to find API contracts and verification records.
+
+Contributions follow the [contribution guide](CONTRIBUTING.md). First-party code and documentation use [Apache-2.0](LICENSE); dependencies and research assets retain their own notices. [Acknowledgements](ACKNOWLEDGEMENTS.md) and [source records](source-origin.json) describe their roles and AI-assisted work.

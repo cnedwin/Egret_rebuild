@@ -2,6 +2,8 @@
 
 English | [简体中文](README.zh-CN.md)
 
+Egret's experimental public facade assembles `@egret/runtime` and `@egret/contracts`. It manages logical lifecycle, display/frame access, CPU assets and exclusive surface reservations; hosts manage physical resources and safe return. The root entry remains DOM-free. The separate `@egret/engine/web` entry exports `createCanvasHost`; `@egret/engine/webgpu` explicitly enables WebGPU. Engine pins `robust-predicates` 3.0.3 for rendering preparation.
+
 ## Engineering preview 0.52.0 — display anchor offsets
 
 Existing display classes inherit finite-number `anchorOffsetX` and `anchorOffsetY`, default +0. The authored pivot places scale/rotation coherently across coordinates, logical bounds, clipping, explicit picking and frame capture, with original zero-offset bytes retained. Read the [current contract](../../knowledge-base/en/docs/display-anchor-offsets-contract.md) and [bounded evidence](../../knowledge-base/en/docs/display-anchor-offsets-evidence.md).
@@ -17,8 +19,6 @@ Engineering preview 0.48.0 adds `NineSliceBitmap` and erased `NineSliceBitmapOpt
 The root facade exports type-only `BoundsQueryOptions` and inherited `getBounds`, reusing readonly `Rectangle2D`. Read the [receiver-local bounds contract](../../knowledge-base/en/docs/display-content-bounds-contract.md); layout and hit testing remain pending.
 
 The root facade exports type-only `Point2D`/`CoordinateQueryOptions` and inherits `localToGlobal`/`globalToLocal` on display classes. Read the [coordinate contract](../../knowledge-base/en/docs/display-coordinate-query-contract.md).
-
-Egret's experimental public facade assembles `@egret/runtime` and `@egret/contracts`. It manages logical lifecycle, display/frame access, CPU assets and exclusive surface reservations; hosts manage physical resources and safe return. The root entry remains DOM-free. The separate `@egret/engine/web` entry exports `createCanvasHost`; `@egret/engine/webgpu` explicitly enables WebGPU. Engine pins `robust-predicates` 3.0.3 for rendering preparation.
 
 ## Public API and lifecycle
 

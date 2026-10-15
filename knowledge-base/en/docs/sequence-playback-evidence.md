@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/时钟驱动序列动画证据.md)
 
-This record covers the 0.44.0 clock-driven sequence playback work package. Product source, build, public CPU behavior, standalone and complete strict types, source-policy controls, the CPU example and the bounded native Canvas/WebGPU opaque subset have accepted records. Internal injected-runtime fault controls, full prepush and remote delivery remain pending.
+This record covers the 0.44.0 clock-driven sequence playback work package. Product source, build, public CPU behavior, standalone and complete strict types, source-policy controls, the CPU example and the bounded native Canvas/WebGPU opaque subset have accepted records. Internal injected-runtime fault controls, full prepush and remote delivery remain pending. These are the original recorded acceptance and pending cutoffs, not a fresh assessment of later delivery.
 
 Reading date: 2026-10-13 (Asia/Kuala_Lumpur). Saved execution timestamps remain UTC on 2026-10-12. S097/V048 are proposed metadata identifiers; registration is pending at this draft cutoff.
 

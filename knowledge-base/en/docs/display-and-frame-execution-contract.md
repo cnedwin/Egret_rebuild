@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/显示与帧执行合同.md)
 
-Version: candidate 0.12.0. This is the independent implementation specification; acceptance will follow actual evidence. Existing Apache-2.0 licensing, Egret naming, strict TypeScript, and the absence of an implicit global Stage remain binding.
+This contract defines the original 0.12.0 rectangle-display scope. Implementation acceptance is recorded separately from the specification. Existing Apache-2.0 licensing, Egret naming, strict TypeScript, and the absence of an implicit global Stage remain binding.
 
 This work package renders two-dimensional rectangle scenes with the independent core. Complete text, textures, skeletons, filters, 3D, GPU backends, general input hit testing, and complete migration remain required project deliverables; this package does not replace their acceptance. Canvas is the first backend executing this contract. Later WebGPU/WebGL backends consume the same bounded protocol; Canvas experiments do not establish GPU or phone performance.
 

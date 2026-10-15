@@ -2,7 +2,7 @@
 
 [English](README.md) | 简体中文
 
-本第一方工具把既有不透明 Bitmap collector 投影为公共 [SequencePlayer 合同](../../knowledge-base/Cns/docs/显式时间序列播放器契约.md) 的验证器。它使用 root 公共入口的 `egret.createSequenceClip` 和 `egret.SequencePlayer`，以及选定的 `/web` 或 `/webgpu` 公共宿主入口，不导入私有 sampler，也不手工赋值 Bitmap 裁剪区域。另行审阅的公共播放器新观察及其确切源码身份见[契约验收段](../../knowledge-base/Cns/docs/显式时间序列播放器契约.md#已记录验收--2026-10-10)；此前 Bitmap 证据保持为独立前置验证。
+本第一方工具是公共 [SequencePlayer 合同](../../knowledge-base/Cns/docs/显式时间序列播放器契约.md) 的验证器。它使用 root 公共入口的 `egret.createSequenceClip` 和 `egret.SequencePlayer`，以及选定的 `/web` 或 `/webgpu` 公共宿主入口，不导入私有 sampler，也不手工赋值 Bitmap 裁剪区域。另行审阅的公共播放器新观察及其确切源码身份见[契约验收段](../../knowledge-base/Cns/docs/显式时间序列播放器契约.md#已记录验收--2026-10-10)；此前 Bitmap 证据保持为独立前置验证。
 
 ## 前置条件与命令
 

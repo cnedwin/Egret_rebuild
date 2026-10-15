@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/标量补间证据.md) · [Shared evidence](../../evidence/scalar-tween-verification.json)
 
-**Engineering preview 0.26.0**; private manifests remain **0.0.0**, tool protocol **1.0**. Build, public behavior, affected regressions and strict types passed. Production boundaries cover 399 files. Preserving failures and timeout, whole verify-r2 passed 2,131/2,131 with 23 unique boundary controls. Final public checks/GitHub delivery are **PENDING**.
+**Engineering preview 0.26.0**; private manifests remain **0.0.0**, tool protocol **1.0**. Build, public behavior, affected regressions and strict types passed. Production boundaries cover 399 files. Preserving failures and timeout, whole verify-r2 passed 2,131/2,131 with 23 unique boundary controls. Final public checks/GitHub delivery were **PENDING** at the original pre-delivery cutoff.
 
 ## What was exercised
 
@@ -27,7 +27,7 @@ Real Engine, Scope and borrowed display resources support independent easing lit
 | verify-r1 | FAIL: 2,130/2,131 | TW10 received a different refusal after the valid baseline; no skips. |
 | boundaryBrand-r1 | PASS: 1/1 | Exact expected-reason fixture successor; strict earlier facade rejection witnessed. |
 | verify-r2 | PASS: 2,131/2,131 | Complete current core verifier; 23 unique boundary controls within this run, not a standalone rerun. |
-| Final publication checks and GitHub delivery | PENDING | No push, merge or remote CI result is supplied here. |
+| Final publication checks and GitHub delivery at the original cutoff | PENDING | This earlier result set contains no push, merge or remote CI result. |
 
 Strict types matched 20 ordinary and 11 isolated named Tween negatives by file, line and code. The 265 diagnostic lines include old suites, not new Tween behavior cases. Public 31/31 and 32/32 overlap; regressions, types, scans and whole tests have separate scopes and are not summed.
 
@@ -43,13 +43,13 @@ Boundaries-r1 mistook the quoted `from` key for import syntax. Successor source 
 
 ## Provenance and limits
 
-First-party AI-assisted source and spec-derived fixtures received independent source/output review. No competitor/vendored animation implementation or new dependency was added. Existing licensing/attribution applies; shared records contain identities, not private paths/raw logs.
+First-party AI-assisted source and spec-derived fixtures received independent source/output review. The implementation retains the existing dependency set. Existing licensing/attribution applies; shared records contain identities, not private paths/raw logs.
 
 These CPU results exclude browser/native animation, fonts/TextField/Spine, full legacy Tween, chains/loops/custom easing, migration, phones/performance and physical memory. Source-bound successors preserve failures, incomplete attempts and review cutoffs.
 
 ## Later delivery closure — 2026-10-11
 
-The PENDING statements above describe the earlier source-verification cutoff. The following saved delivery record closes publication for the recorded 0.26.0 source commit; this later appendix is intended for a subsequent publication.
+The PENDING statements above describe the earlier source-verification cutoff. The following saved delivery record closes publication for the recorded 0.26.0 source commit; this later appendix preserves that delivery as a separate record.
 
 The first push attempt passed 2,131 core tests and 52 publication tests, but the mandatory hook failed because two LICENSE references in the English/Chinese contract pair left the knowledge-base root. The narrow correction replaced those targets with the repository's existing public LICENSE URL and refreshed their derived identities. It changed no product code, license terms or gate policy. The failed attempt remains part of the history.
 

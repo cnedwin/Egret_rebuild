@@ -2,56 +2,35 @@
 
 English | [简体中文](../../Cns/docs/双语文档与推送前检查.md)
 
-The historical 0.13.0 rectangle checkpoint has its own [implementation and verification record](webgpu-rectangle-implementation-evidence.md). Its source identities, results and pending work retain their recorded scope; they do not establish current product acceptance.
-
-
-## Historical 0.12.0 display and frame candidate scope
-
-The successor work package is defined by the [display and frame contract](display-and-frame-execution-contract.md) and [implementation plan](display-and-frame-implementation-plan.md): display transforms, inherited visibility/alpha and local rectangle clipping, Sprite-owned Graphics rectangle fills, and immutable CPU frame capture/submission. The implemented first execution adapter is Canvas through the separate @egret/engine/web entry; the core root retains its DOM-free boundary. Bounded implementation checks passed: 97/97 core behavior tests, 25 negative type diagnostics and real desktop Canvas pixels/pointer interaction. Scoped independent review passed after the recorded cross-realm rejection correction. Remote publication is tracked separately. Final scoped results belong in the [implementation record](display-and-frame-implementation-record.md) and [verification](../../evidence/display-frame-verification.json).
-
-Register complete Chinese/English pairs for the new contract, plan and implementation record. Record real-browser acceptance separately rather than infer it from existing prepush checks. Historical English-comment restoration proofs retain original code identities; changed core and web sources use new current digests. Refresh localization after all document, registry and origin edits, then run final gates and freeze the export.
-
-This work package does not establish complete text/texture/animation/UI/3D execution, GPU or Native support, target-device performance, editors, Agent services, or complete migration. Earlier headless, CPU asset and third-party research records retain their original versions, counts, hashes and scope; their results are not new display-frame acceptance.
-
-Version: 0.1 · Knowledge base 0.10.0 · October 8, 2026.
-
-Egret collaborates publicly with developers worldwide. Before every push to GitHub, organize public documentation and knowledge-base content, complete Chinese and English reading versions and English comments for critical code, then run checks. This requirement applies to code, documentation, and evidence updates and is registered as R019.
+Egret maintains complete English and Chinese readings for its global community. R019 applies to documentation, code and evidence updates: prepare both editions, source attribution and critical English comments before every GitHub push.
 
 ## Reading versions and shared status
 
-All knowledge-base reading documents use `knowledge-base/Cns/` for Chinese and `knowledge-base/en/` for English. English documents use meaningful English filenames; Chinese filenames may retain their established names. Outside the knowledge base, default documentation basenames provide the English reading version, and complete Chinese companions use `.zh-CN.md`. The repository README introduces the project in English first, followed by a Chinese introduction and a link to the complete Chinese companion. Language counterparts link to each other, and navigation changes are synchronized. API identifiers, requirement and decision IDs, original URLs, technical versions and shared statuses remain consistent. Language-neutral data, source code, raw evidence, file digests and original license notices retain their paths and identities. Translations distinguish proposals, partial implementations and acceptance, preserving conditions, unknowns and failed-attempt history.
+Knowledge-base readings live in en/ and Cns/. English paths use English names; default repository/package/example documents are English, with .zh-CN.md companions. Each pair links to its counterpart. Keep API names, IDs, versions, numbers, sources and acceptance conditions consistent.
 
-The requirements, decisions, hypotheses, delivery, and source registries have one authoritative status set. English JSON files are read-only projections of the Chinese registries, retaining the same IDs, statuses, dependencies, dates, and numerical values, and recording the Chinese source and its digest. Contributors first maintain shared status and Chinese descriptions, then synchronize English. The two language versions must not become independently evolving product plans.
-
-Test data, source snapshots, execution-log excerpts, file digests, and original upstream licenses are shared evidence and retain their original identity. Reading documents provide bilingual explanations and entry points. Translation does not rewrite embedded source, test inputs, or old report results. Chinese explanations of existing English upstream licenses are informational translations; original license notices remain applicable.
+Chinese registries are authoritative. English JSON views record their Chinese source and digest while preserving IDs, states, dates, dependencies and numbers. They express one shared product state. Code, original logs, sealed evidence, assets and upstream legal notices retain their own identities.
 
 ## English code comments
 
-Describe public interfaces and critical internal boundaries in English: responsibilities, ownership, cancellation and cleanup order, reentrancy protection, error propagation, and host-shutdown limitations. Comments explain easily misunderstood contracts and reasons, without line-by-line restatement. Comments on display trees, events, Scope, and Engine lifecycle must match implementation and existing tests.
-
-The historical 0.10.0 round added comments only, without changing runtime behavior. The 0.12.0 successor adds display/frame and Canvas behavior with separately bound evidence. Record explanatory edits and actual implementation changes separately; core code changes still require corresponding specifications and regressions. Source records retain previously reviewed versions; the current commented version uses its own digests and actual verification.
+Use English comments for responsibilities and contracts that are easy to misunderstand: ownership, cancellation, cleanup, reentrancy, errors and host lifetime. Explain the reason for an invariant rather than restating each line. Comments and specifications must agree with implementation.
 
 ## Checks for every push
 
-1. Review public scope; remove communication unsuitable for publication, credentials, personal data, and unauthorized assets. Retain research references, actual dependencies, and acknowledgements. Use the [public communication policy](open-source-collaboration-and-public-communication.md) and [independent implementation policy](independent-implementation-and-dependency-policy.md).
-2. Update Chinese documents and registries and complete corresponding English versions. Check language inventory, source-version digests, links, numbers, sources, and registered status. Confirm that English does not describe goals or hypotheses as delivered capabilities.
-3. Complete English comments for critical code and check consistency with public contracts and current implementation.
-4. Run repository pre-push checks. Core checks include build, package resolution and boundaries, type samples, behavioral tests, and the headless example. Record knowledge-base structural and bilingual check results separately.
-5. Select files for commit against an explicit public inventory. Retain applicable licenses and third-party notices; exclude dependency caches, build artifacts, private original packages, and internal execution materials.
-6. After checks pass, push the branch and submit for review. Record actual remote commits, PRs, merges, and releases according to their respective statuses.
+1. Review the contribution's public scope, sources, dependencies and attribution.
+2. Complete both reading editions and synchronize registry views, links and current identities.
+3. Complete critical English comments and review their technical meaning.
+4. Run node tools/prepush.mjs on the final candidate. It includes publication structure, build, boundaries, types, behavior, headless examples and knowledge-base checks.
+5. Commit the reviewed files with the repository hooks enabled. The pre-commit hook checks staged raw bytes; the pre-push hook runs the complete checks on the clean committed snapshot.
+6. Verify the pushed commit, PR and merged content as actual remote actions.
 
-The repository provides an installable pre-push hook and a standalone checking entry. See the [repository contribution guide](../CONTRIBUTING.md) for hook installation and commands. Machine checks verify coverage, digests, structure, and declared conditions. Contributors and reviewers still check technical meaning, publication authorization, and English expression.
+Enable hooks with git config --local core.hooksPath .githooks. Checks use exact bytes and the [repository path and line-ending policy](repository-identity-and-line-endings.md).
 
 ## Translation and review
 
-See the [glossary](glossary.md) for consistent terminology. Understand contracts in complete paragraphs before translating. Do not replace bounded facts with unverified promotional conclusions. Keep sources near supported conclusions; acknowledgements do not replace actual dependency identity or release notices.
-
-Synchronize language inventories and source digests after adding documents, moving paths, or changing text. Original historical digests remain bound to old versions; English companions are explicitly reading translations. Both Chinese and English accept community revisions. Changes to critical facts must synchronize both reading versions and shared registered status.
-
-Rendering changes also require the separate real-browser command documented in the Canvas example README. Default `node tools/prepush.mjs` remains structural/headless; assets are checked separately with `node examples/assets.mjs`.
+Use the [glossary](glossary.md) for consistent terminology. Translate complete technical statements, including their conditions and uncertainty. Keep goals, partial implementation and verified results distinct. Inventory and hash checks verify coverage and identity; contributors and reviewers remain responsible for meaning.
 
 ## Browser gates and publication inventory
 
-`node tools/prepush.mjs` remains mandatory before every push and checks publication structure, core/type/boundaries, headless behavior and KB structure. It does not launch a browser. Rendering changes additionally use `node tools/verify-canvas.mjs --playwright <installed-playwright-module> --channel msedge --output <private-output-directory>` and the separate `node tools/verify-webgpu.mjs --playwright <installed-playwright-module> --channel msedge --output <private-output-directory>` as affected. Use the accepted pinned dependencies; preserve default browser launch with no extra flags. Recorded unchanged-build evidence may be retained with explicit identity comparison.
+The normal prepush does not launch a browser. Rendering changes require the affected actual-browser gates in [AGENTS](https://github.com/cnedwin/Egret_rebuild/blob/main/AGENTS.md), with recorded dependencies and default launch settings. Reuse earlier results only with explicit comparison of the relevant unchanged source/build identities.
 
-Discovery and registered inventory paths exclude private execution/dependency/generated trees case-insensitively on Windows. Listings cannot override exclusions. Public AGENTS documents remain valid. Only the exact two sealed Three r186 research build paths/hashes remain exceptions. Structural checks do not create translation meaning or public review approval.
+Keep dependency caches, generated outputs, private configuration, credentials and unedited internal discussions outside the public inventory. Shared evidence and legal originals retain their provenance; reading updates do not rewrite their results.

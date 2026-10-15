@@ -1,6 +1,6 @@
-# Display content bounds — proposed bounded contract
+# Display content bounds — bounded contract
 
-Status: bounded public implementation with recorded CPU/type and affected desktop observations plus scoped independent source and saved-render reviews. Bilingual public-material review, final prepush and stacked remote delivery remain separately pending.
+The 2026-10-10 record covers a bounded public implementation, CPU/type and affected desktop observations, and scoped independent source and saved-render reviews. Bilingual public-material review, final prepush and stacked remote delivery were separately pending at that cutoff.
 
 ## Public surface and purpose
 
@@ -59,6 +59,6 @@ The proposal is first-party design from current authoritative code and requireme
 
 [简体中文](../../Cns/docs/显示内容边界契约.md) · [Bounded evidence](display-content-bounds-evidence.md) · [Compact record](../../evidence/content-bounds-verification.json)
 
-The original title, normative body, literal validation plan and provenance above are preserved as authored. This isolated appendix records the actual successor: baseline build succeeded and all 18 registered callbacks failed at authentic getBounds availability; the focused successor passed 157/157 including 18 bounds callbacks. Positive/DOM-free type checks passed with 81 root + 5 web + 28 project = 114 expected negative diagnostics, including 13 bounds additions. Core verification passed 1063/1063 and 306 boundary files; headless execution closed with zero pending timers.
+The normative semantics, original validation plan and provenance above retain their initial scope. This appendix records the actual execution successor: baseline build succeeded and all 18 registered callbacks failed at authentic getBounds availability; the focused successor passed 157/157 including 18 bounds callbacks. Positive/DOM-free type checks passed with 81 root + 5 web + 28 project = 114 expected negative diagnostics, including 13 bounds additions. Core verification passed 1063/1063 and 306 boundary files; headless execution closed with zero pending timers.
 
 Fresh saved desktop Canvas reported 14 checks; rectangle WebGPU reported 42 frames, 1709 raw checks, 84 PNGs, 6808 composition checks and 8 counterexamples; B1 reported 7 positive frames, 5 counterexamples and 11 submissions. Each 391-file inventory was stable. These observations do not execute bounds arithmetic on the GPU; B1 OS descendant retirement is UNBOUND. The scoped source audit reported PASS_SOURCE_WITH_LIMITS with zero unresolved P1/P2, including whole Bitmap extraction equivalence. The independent saved-render audit reported PASS_SAVED_RENDER_WITH_LIMITS with zero unresolved P1/P2. Bilingual public-material review, complete prepush and actual stacked delivery are separately pending. Exact execution, retained source-preparation guard failure/header-only test projection and source/review identities are in the paired evidence and compact record; overlapping suite counts are not additive.

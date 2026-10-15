@@ -13,12 +13,12 @@ At the documentation cutoff **2026-10-11 22:52:43 UTC**, the final Engine build 
 
 Default headless Edge **154.0.4258.62** with Playwright **1.62.1** passed the fixed desktop Canvas mouse subset: **1** genuine native baseline and **6** assigned controls cover literal events, logical points, RGBA witnesses and observed physical listener cleanup. The ordinary HTTP example passed, and collector policy/grammar units passed **13/13**. All **7** retained desktop gates—Canvas, WebGPU, B1, textured rendering, sequence animation, Canvas text and picking—passed their existing bounded profiles. This establishes neither phones, arbitrary UI/3D, OS reclamation nor a performance lead.
 
-**The complete 259-case boundary rerun, final publication/bilingual checks, mandatory pre-push gate and current 0.33.0 remote delivery remain PENDING.** The earlier timeout and full **258/259** result retain their original artifacts; the latter exposed one expected-message mismatch. Focused **21/21** is its finite successor, not a complete rerun. Other earlier failures retain their recorded identities and cutoffs in the verification record.
+**At that historical cutoff, the complete 259-case boundary rerun, final publication/bilingual checks, mandatory pre-push gate and 0.33.0 remote delivery were PENDING.** The earlier timeout and full **258/259** result retain their original artifacts; the latter exposed one expected-message mismatch. Focused **21/21** is its finite successor, not a complete rerun. Other earlier failures retain their recorded identities and cutoffs in the verification record.
 <!-- MI1-CURRENT-EVIDENCE-END -->
 
 ## Optional entry and use
 
-`@egret/engine/web/input` exports one function, `createMouseInput`, and six types: `MouseInputOptions`, `MouseInput`, `MouseInputState`, `MouseInputEvents`, `MouseInputPayload` and `MouseInputCancelReason`. The default Engine, Canvas and WebGPU entries do not export this API. Importing the optional entry does not acquire browser resources or schedule work.
+The original 0.33.0 MI1 surface adds one function, `createMouseInput`, and six types to `@egret/engine/web/input`: `MouseInputOptions`, `MouseInput`, `MouseInputState`, `MouseInputEvents`, `MouseInputPayload` and `MouseInputCancelReason`. The default Engine, Canvas and WebGPU entries do not export this API. Importing the optional entry does not acquire browser resources or schedule work.
 
 Use an already started genuine Engine and its genuine open Scope. The adapter uses the original Host surface and Stage captured during Engine assembly. Its fixed logical dimensions must be finite and positive. `maxNodes` defaults to `4096` and accepts integers from `1` through `65536`; the existing hit-test budget applies to the complete tree.
 

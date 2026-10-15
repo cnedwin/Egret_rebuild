@@ -1,7 +1,5 @@
 # WebGPU 矩形执行合同——修订 0.6
 
-**发布检查点历史与最终原生绑定：** 下文已接受956原生结果保留原身份；在 `1aa0248` 运行前检查点，仅注释重建绑定当时仍待执行。随后仅注释入口重建的真实浏览器WebGPU运行在 `1aa0248a1ff6d8e54c42d631072223bb50483814`、2026-10-08T21:23:54.294Z以0退出并记录PASS：42帧、1709项原始断言、84张PNG截图、6808项合成断言、8项预期反例及0项意外错误。7项反例变异生产代码副本，1项为合成断言。233项源码/构建/工具/依赖清单身份在该运行前后相等，且与当时仅文档和元数据变更的后继版本一致。实际运行由验证作者执行；独立修正及原生绑定复审、最终语义凭据和发布仍待完成。见[仅注释证明](../../evidence/webgpu-entry-comment-proof.json)、[整理验证](../../evidence/webgpu-verification.json)及[范围审查记录](../../evidence/webgpu-review.json)。
-
 2026-10-09。修订 **0.6**，范围为实验性浏览器矩形执行。有界完整原生 gate 已独立审查为 **PASS**，公开证据核对及交付仍 **PENDING**。[Complete English](../../en/docs/webgpu-rectangle-execution-contract.md) 与本中文版均包含完整规范合同。[实施计划](WebGPU矩形实施计划.md)定义验收，[实现证据](WebGPU矩形实现证据.md)区分 CPU 证据、已接受有界原生结果及待完成公开交付。
 
 0.6 保留 0.5 两遍打包的分配边界，仅改变规范参数 `t===1` 的受保护交点构造。严格 `0<t<1` 的算术及其他 API、默认值、入口、Canvas 兼容性、预算、拓扑、float32 和生命周期要求不变。帧复制/准备与集成 host/pass/生命周期实现继承已接受状态。源码修订 `956e2f9894dc8e27291ffd0210a6cd8b4e651eab` 的范围内数值修复取得 SPEC PASS、QUALITY PASS，已记录核心套件为 177/177。历史原生 F4 失败仍属于失败，CPU 修复不证明原生像素、浏览器合成或发布就绪。
@@ -187,6 +185,8 @@ render 同步复制/准备/预留，非空上传新建 VERTEX|COPY_DST buffer、
 意外 device loss、完成证明拒绝、scope 台账破坏、清理抛错或无法证明安全归还时，尽力清理自有资源并以含原因的 CLOSE_UNSAFE 拒绝；cleanupOutcome=unsafe、state=closed。正常 close 为 safe/closed。不销毁借用 device，不移除 canvas，不清他人监听，不把 loss/map 拒绝/timeout 转为成功绘制或安全 close。所有重复 close 返回严格同一 Promise，包括拒绝。驱动/获取挂起可使其一直 pending；Engine 超时只拒绝调用者，不取消或释放。现有 Engine 对 close 拒绝继续 quarantine，真正成功的延迟 close 可按当前规则释放。渲染失败与清理结果是两件事，不新增强制释放 API。
 
 ## 7. 证据边界
+
+**发布检查点历史与最终原生绑定：** 下文已接受956原生结果保留原身份；在 `1aa0248` 运行前检查点，仅注释重建绑定当时仍待执行。随后仅注释入口重建的真实浏览器WebGPU运行在 `1aa0248a1ff6d8e54c42d631072223bb50483814`、2026-10-08T21:23:54.294Z以0退出并记录PASS：42帧、1709项原始断言、84张PNG截图、6808项合成断言、8项预期反例及0项意外错误。7项反例变异生产代码副本，1项为合成断言。233项源码/构建/工具/依赖清单身份在该运行前后相等，且与当时仅文档和元数据变更的后继版本一致。实际运行由验证作者执行；独立修正及原生绑定复审、最终语义凭据和发布仍待完成。见[仅注释证明](../../evidence/webgpu-entry-comment-proof.json)、[整理验证](../../evidence/webgpu-verification.json)及[范围审查记录](../../evidence/webgpu-review.json)。
 
 保存的纯环境探针时间为 2026-10-08T16:37:08.788Z（本地日期 2026-10-09），报告 Edge 154.0.4258.62、Playwright 1.62.1、headless msedge、无额外 flags、安全 loopback、首选 bgra8unorm、maxTextureDimension2D 8192、maxBufferSize 268435456。适配器报告元数据为 nvidia/blackwell/isFallbackAdapter=false，不认证硬件加速。另一个 4×4 rgba8unorm 常量 clear 得到 [127,64,32,255]，与 [128,64,32,255] 差 ≤1，三个 scopes 均 null、无意外错误。这只建立前提可行性，不证明矩形执行器、shader、生产 canvas 读回、合成或性能；属于已记录历史证据，不是本次新运行探针。
 

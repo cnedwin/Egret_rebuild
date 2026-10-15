@@ -32,7 +32,7 @@ The build includes the existing project-format generator check. The type tool mu
 
 ## Provenance and limits
 
-Code, fixtures and documentation are first-party Apache-2.0 work assisted by AI. The product and public behavior/type fixture were authored separately and independently reviewed. Historical Egret ByteArray provides naming familiarity; no historical or competitor implementation was copied and no ByteArray compatibility is promised. No dependency, package version or protocol pin changes. New binary format support, text encoding, writing/streaming, Spine decoding, rendering/hosts, physical devices, performance and full migration retain separate obligations. Existing renderer evidence requires an explicit unchanged-identity comparison before it is reused; BR1 adds no native rendering result.
+Code, fixtures and documentation are first-party Apache-2.0 work assisted by AI. The product and public behavior/type fixture were authored separately and independently reviewed. Historical Egret ByteArray provides naming familiarity; ByteArray compatibility is not promised. No dependency, package version or protocol pin changes. New binary format support, text encoding, writing/streaming, Spine decoding, rendering/hosts, physical devices, performance and full migration retain separate obligations. Existing renderer evidence requires an explicit unchanged-identity comparison before it is reused; BR1 adds no native rendering result.
 
 ## Verified Main integration successor
 
