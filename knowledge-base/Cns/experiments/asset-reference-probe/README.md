@@ -45,7 +45,7 @@ WebGL2 明确 alpha=true、premultipliedAlpha=true、antialias=false、preserveD
 
 绿色主报告：`../../evidence/asset-reference-probe-results.json` 与 `asset-reference-probe.png`。每次 runId 对应独立 JSON/PNG，不把红版/变异重复次数叠加为主报告数量。四种变异分别移除 renderer reset、提前释放共享资源、忽略 required preflight、遗漏恢复 UI init，均有真实失败报告与 history/ 下源码快照。
 
-初次独立审阅与 root 的 12 项绿色证据保留；R1/R2 后主计数增加为实际 17 项。新增 5 项 red→green：shader/text 初始化清理、真实示例重复加载/pagehide/异常重试。post-report 原生文本异常的 runner oracle 有单独变异证据：主 17 项仍通过，但新 runner 正确报告 demoSmoke 失败并 exit 1，未伪造主案例失败数量。
+初次独立审阅与集成复跑保留 12 项通过记录；R1/R2 将实测主套件扩展为 17 项。新增 5 项 red→green 覆盖 shader/text 初始化清理、真实示例重复加载/pagehide/异常重试。独立的 runner-oracle 变异注入 post-report 原生文本异常：主 17 项仍全部通过，demoSmoke 失败，runner 退出码为 1。主用例与 demoSmoke 的结果分别记录。
 
 历史源码快照以最小空间保留 authored modules；复现时将快照的 authored files 临时覆盖本目录，同一固定 vendor/assets/sources.json 保持不变，运行 runner，随后恢复绿色 authored files。历史报告内 SHA256 能与该快照核对。不要直接从 history/ 启动服务器；上游依赖仅存放在本实验根目录。
 

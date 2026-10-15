@@ -74,4 +74,4 @@ Cleanup releases borrows, not targets. Synchronous Scope disposal may release re
 
 Forged/foreign Scope gives `TWEEN_SCOPE_INVALID`; authentic closing/closed gives `SCOPE_CLOSED`. Ownership/clock registration errors, including `CLOCK_CALLBACK_LIMIT`, retain their rules.
 
-AI-assisted first-party work uses Egret contracts/scalar mathematics under [Apache-2.0](https://github.com/cnedwin/Egret_rebuild/blob/main/LICENSE); no third-party engine copy/new dependencies. Discovery/arbitration, chains/wait/call/loops, scheduling, full UI/skeletons/Spine, legacy compatibility and production performance remain separate. Convert legacy milliseconds to seconds.
+AI-assisted first-party work uses Egret contracts/scalar mathematics under [Apache-2.0](https://github.com/cnedwin/Egret_rebuild/blob/main/LICENSE) and retains the existing dependency set. Discovery/arbitration, chains/wait/call/loops, scheduling, full UI/skeletons/Spine, legacy compatibility and production performance remain separate. Convert legacy milliseconds to seconds.

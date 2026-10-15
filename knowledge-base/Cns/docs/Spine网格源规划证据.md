@@ -34,7 +34,7 @@ F2-A 增加了需主动启用的开发实验 `knowledge-base/experiments/spine-f
 
 先前已交付基线为 **0.41.0**、[PR #28](https://github.com/cnedwin/Egret_rebuild/pull/28)、Main `758e516410a126483973a1d65eea0c6ca7f57ef6`、tree `ef0183ba3f555df5fd7a53cb98a677cd01f67356`。其实际 mandatory push hook 通过公开检查 **63/63**、核心检查 **2748/2748**。这些属于先前版本的观察，不是 0.42.0 的门禁。截止该时点，远端 status/check 记录为空且为 pending；这不构成远端 CI PASS。原先的待验证截止状态继续保留。
 
-## 截止本轮仍未完成的事项
+## 该证据截止点的未完成事项
 
 0.42.0 的工具 policy 实际执行、开发 verifier 的重新编译/集成、全仓库 pre-push 检查及 GitHub 交付均为 **PENDING**。`F2_SOURCE_VIEW` 与 `F2_INTERNAL_ERROR` 两项受控故障见证也为 **PENDING**。完整 profile 语义、deform/动画、资源身份、Core 兼容、渲染、许可权益、实体手机/native 行为及完整 Spine **R020/V020** 仍为 **OPEN**。这项有限源规划结果不会升级它们的验收标志。
 
@@ -44,7 +44,7 @@ F2-A 增加了需主动启用的开发实验 `knowledge-base/experiments/spine-f
 
 已完成的入口实际使用 TypeScript **7.0.2** 公共开发 API `typescript/unstable/sync` 和 `typescript/unstable/ast`。有限源码边界检查验证了既有公共 SP1 路径、Core 路径拒绝、配置、入口表面及缩窄控制。这属于开发工具的结构性证据，没有建立通用安全性或数值正确性保证。严格类型正例编译报告 **0 条诊断**；未抑制的负例编译器退出 **1**，全部 **39** 条有序文件/行/列/code/完整 message 元组与既有实际预期表一致。精确仓库前缀归一化及多行消息保留规则没有变化。
 
-当前根 `package.json` 为 **762 字节**，SHA-256 `b522c278e5f0b4070fec73da2aa336da5c57a4dc189c0855d9e5770f879009bd`；经评审的修改增加了开发验证 script。另行评审的 `tools/verify.mjs` 修改在既有验证阶段之后加入该入口。**691 字节**的根文件身份只在原截止时点有效。依赖版本与 lockfile 保持不变。共享 JSON 区分原有 **21 文件**源码范围和当前 **15 文件**开发评审范围；新增准入的源码边界测试不会追加入原测试清单。
+开发入口检查点的根 `package.json` 为 **762 字节**，SHA-256 `b522c278e5f0b4070fec73da2aa336da5c57a4dc189c0855d9e5770f879009bd`；经评审的修改增加了开发验证 script。另行评审的 `tools/verify.mjs` 修改在既有验证阶段之后加入该入口。**691 字节**的根文件身份只在原截止时点有效。依赖版本与 lockfile 保持不变。共享 JSON 区分原有 **21 文件**源码范围和当前 **15 文件**开发评审范围；新增准入的源码边界测试不会追加入原测试清单。
 
 对于本次开发执行，重新编译之前保存的 **6** 份实验构建产物与之后的 **6** 份产物，其字节数及 SHA-256 均相同。全部 **314** 份已保存 SDK 构建产物身份也继续一致。这次新观察到的等式没有补造较早行为后继缺失的快照。有限源码边界控制与这次开发入口在新截止时点已经接受；原待验证字段继续作为历史保留。全量 **0.42.0** pre-push 检查、GitHub 交付及远端 CI 仍为 **PENDING**。两项故障控制及原先开放的 profile、deform、资源、Core、渲染、许可、手机/native 和 **R020/V020** 边界保持原状态。
 

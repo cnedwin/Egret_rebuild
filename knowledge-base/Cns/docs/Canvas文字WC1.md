@@ -2,7 +2,7 @@
 
 [English](../../en/docs/canvas-text-wc1-canvas.md) | 简体中文 · [T1 缓存](文字栅格T1契约.md) · [TF1 显示](文字显示TF1契约.md)
 
-工程预览 **0.28.0** 为既有 TextRasterCache、TextField、Scope、Engine 与 CanvasHost 新增显式 Canvas 文字提供者。当前 CPU／类型检查、完整当前验证与固定原生 Canvas 观察在下述范围内通过；独立双语语义审阅、必要 Git 推送钩子与交付单独记录。工作区包保持 private `0.0.0`，协议固定值保持 `1.0`。
+工程预览 **0.28.0** 为既有 TextRasterCache、TextField、Scope、Engine 与 CanvasHost 新增显式 Canvas 文字提供者。当前 CPU／类型检查、完整当前验证与固定原生 Canvas 观察在下述范围内通过；独立双语语义审阅、必要 Git 推送钩子与交付单独记录。工作区包保持 private `0.0.0`，协议固定值保持 `1.0`。 下方执行结果与待交付状态属于原始 0.28.0 记录，不是新的交付评估。
 
 ## 公开使用与字体所有权
 

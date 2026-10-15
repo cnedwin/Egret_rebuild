@@ -2,9 +2,11 @@
 
 English | [简体中文](../../Cns/docs/旧工程迁移.md)
 
-Updated: 2026-10-08. Status: the delivery requirement is confirmed; tools are not implemented and acceptance has not run. The basis is confirmed requirements, engineering-plan registers, and targeted static review of historical archives. Source-code existence does not establish that a version builds or that a project can migrate successfully.
+Migration must carry an existing game into an independently editable Egret project while preserving its behavior, assets and publication path. R008 makes complete one-click migration a formal product deliverable: deterministic conversion and bounded Agent repair work together, followed by old/new comparison, continued editing and real target-platform publication.
 
-[Knowledge base home](../README.md) · [Delivery plan](delivery-plan.md) · [Technical architecture](technical-architecture.md) · [Requirements register](../../Cns/registry/需求.json) · [Hypotheses register](../../Cns/registry/假设.json)
+This requires more than compatible names. Display order, coordinates, input, animation timing, resource ownership and persistent state all affect observable behavior. Legacy samples therefore participate in core interface design and become regression assets for later upgrades. Migration tools and full-project acceptance remain unfinished; [core progress](core-progress.md) describes current prerequisites.
+
+[Knowledge base home](../README.md) · [Delivery plan](delivery-plan.md) · [Technical architecture](technical-architecture.md) · [Requirements](../../Cns/registry/需求.json) · [Hypotheses](../../Cns/registry/假设.json)
 
 ## Commitment and success conditions
 
@@ -48,3 +50,7 @@ H006 verifies low intervention and execution consistency. Fix and register the s
 Migration participates from core design onward in API, event, layout, animation, state, and storage semantics. The compatibility layer is independent and trimmable; prefer mapping projects to the new structure. Build reports state which legacy modules remain and their size/runtime costs; do not force all historical runtime code into every new work. Stable object identities, project/resource versions, and tool protocols jointly support later AI changes and recovery.
 
 V001 establishes real samples, baselines, and matrices; V002 verifies rendering/runtime semantics; V003 provides diagnosable and recoverable AI engineering interfaces; V004 ensures resource and animation conversion; V005 completes the workbench and target-platform publication; V006 delivers tools and passes acceptance on real complete projects; V007 retains rules, evidence, and regression indexes. Passing legacy projects enter a fixed regression suite for every core upgrade. Revalidate before upgrades and record blocking failures or support-matrix changes.
+
+## Evidence context
+
+The October 8, 2026 requirements and engineering-plan cutoff recorded tools unimplemented and acceptance not run. Targeted static review of historical archives provided mechanism and version leads, without executing legacy builds or device tests. Archived source existence is not evidence of buildability or successful migration. Later core deliveries do not close R008/V006 or replace the complete-project support matrix.

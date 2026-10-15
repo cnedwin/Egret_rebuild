@@ -65,4 +65,4 @@ if (result.ok) {
 
 格式研究参考[官方图集格式](https://esotericsoftware.com/spine-atlas-format)、固定版本 [TextureAtlas 源码](https://github.com/EsotericSoftware/spine-runtimes/blob/b7beb2ccbbce667a12c02f44d070644f59b04968/spine-ts/spine-core/src/TextureAtlas.ts)及 [SkeletonJson 源码](https://github.com/EsotericSoftware/spine-runtimes/blob/b7beb2ccbbce667a12c02f44d070644f59b04968/spine-ts/spine-core/src/SkeletonJson.ts)。白鹭独立定义计划、所有权、预算、严格接纳和诊断。夹具是原创程序化 Apache-2.0 数据，不是获得许可的 Editor 导出。
 
-实际源码、行为、类型、反例和交付结果见[证据说明](Spine导入计划证据.md)与[验证记录](../../evidence/spine-import-plan-verification.json)。源码研究和拟议测试预期不替代实际结果。官方运行库的动画/渲染集成并行推进；此规划工具不会成为它的前置阻碍。
+实际源码、行为、类型、反例和交付结果见[证据说明](Spine导入计划证据.md)与[验证记录](../../evidence/spine-import-plan-verification.json)。源码研究和拟议测试预期不替代实际结果。官方运行库的动画/渲染集成属于独立工作，不以此规划工具作为额外前置条件。

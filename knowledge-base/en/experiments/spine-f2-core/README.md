@@ -2,7 +2,7 @@
 
 English | [简体中文](../../../Cns/experiments/spine-f2-core/README.md)
 
-Engineering preview **0.47.0** · **S101 / V052**. Read the complete [contract and guide](../../docs/spine-core-manual-bridge.md) and [verification/open work](../../docs/spine-core-manual-bridge-evidence.md). Shared implementation, original assets and bounded observers live in `knowledge-base/experiments/spine-f2-core`; these reading editions replace the historical shared stub.
+Engineering preview **0.47.0** · **S101 / V052**. Read the complete [contract and guide](../../docs/spine-core-manual-bridge.md) and [verification/open work](../../docs/spine-core-manual-bridge-evidence.md). Shared implementation, original assets and bounded observers live in `knowledge-base/experiments/spine-f2-core`.
 
 This optional experiment exposes one factory and four erased types for genuine Egret resource/display ownership and bounded manual unweighted-mesh translate/deform sampling through externally supplied official Core 4.3.13. Default engine/runtime/project entries gain no Core dependency.
 

@@ -2,7 +2,7 @@
 
 [English](README.md) | 简体中文
 
-本实验性 S3D1 示例只从构建后的公共入口 `@egret/engine`、`@egret/engine/scene3d`、`@egret/engine/webgpu/scene3d` 导入。它创建两个不可变的带索引 XYZ/RGB 四边形，由调用者提供相机空间的 model-view 矩阵，通过真实 Engine Stage 捕获普通屏幕 UI，再由一个场景 Host 按场景、UI 的顺序提交。候选准备阶段的原生验证结果为 **PENDING（待执行）**。
+本实验性 S3D1 示例只从构建后的公共入口 `@egret/engine`、`@egret/engine/scene3d`、`@egret/engine/webgpu/scene3d` 导入。它创建两个不可变的带索引 XYZ/RGB 四边形，由调用者提供相机空间的 model-view 矩阵，通过真实 Engine Stage 捕获普通屏幕 UI，再由一个场景 Host 按场景、UI 的顺序提交。原始准备记录将原生验证标为 **PENDING（待执行）**。
 
 沿用仓库已有的 Node.js 24.19.0、pnpm 11.25.0、TypeScript 7.0.2 环境。在仓库根目录执行 `node tools/build.mjs`，然后执行 `node tools/serve-canvas.mjs`。在输出的本机回环地址打开 `/examples/scene3d/index.html`。使用支持 WebGPU 的浏览器，无需启动参数或软件适配器请求。按 Ctrl+C 停止服务器。
 

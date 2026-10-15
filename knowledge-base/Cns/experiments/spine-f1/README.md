@@ -2,6 +2,8 @@
 
 [English](../../../en/experiments/spine-f1/README.md) | 简体中文
 
+本可选实验把原创动画样例接入白鹭资源、不可变网格与纹理帧接口。下方 0.36.0 与 0.37.0 段落各自保留历史核验及发布截止点；其中待完成状态属于对应记录，不是新的现状评估。
+
 <!-- F1C-DOC-0.37.0-BEGIN -->
 ## 工程预览 0.37.0 — 可选 F1 Clock 候选
 
@@ -32,8 +34,6 @@
 阅读 [Clock 指南](README.md)、[已保存核验](../../../evidence/spine-f1-clock-verification.json)和[待完成公开投影](../../../evidence/spine-f1-clock-public-projection.json)。
 随后在独立克隆中实际重放公开源码：手动 **12/12** 及 **6** 项原对照、完整 Clock **10/10** 及 **3** 项指定对照通过；具名故障实际执行，获接受用例跳过数为 **0**。独立默认无界面 WebGPU 执行通过 **10+1** 次回读、**30** 个正例采样点和 **120** 个通道，容差 **0**，保持原完整字节关系与限定清理。冷导入／帮助观察 **280** 个模块，Core／GPU／宿主访问均为 **0**。已保存 CPU 集合保留较早的 native-pending 截止状态；独立 native 回执才是实际后继。原创源码与输入身份未变。此处独立保存结果评审、最终仓库门禁和交付仍为 PENDING；完整 Spine **R020/V020 继续 OPEN**。当前后继见所链接的 Clock 核验／投影记录。
 <!-- F1C-DOC-0.37.0-END -->
-
-An opt-in original animation experiment connects genuine Egret resources, immutable meshes and the textured-frame port. Complete Spine support remains open.
 
 工程预览 **0.36.0**，来源 **S089**，限定交付 **V040**，整理日期 **2026-10-12**。本可选实验把独立原创的动画样例接入真实白鹭资源组、资源租约、不可变 Mesh2D 几何与既有纹理帧接口。完整 Spine **R020/V020 继续 OPEN**。本截止点最终公开门禁与 0.36.0 交付为 **PENDING**。
 

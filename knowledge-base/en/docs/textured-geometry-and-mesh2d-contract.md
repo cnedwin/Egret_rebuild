@@ -2,6 +2,8 @@
 
 English | [简体中文](../../Cns/docs/自有纹理几何与Mesh2D契约.md) · [Evidence and checkpoints](textured-geometry-and-mesh2d-evidence.md)
 
+The package gives developers immutable indexed XY/UV/light-RGBA geometry, a textured display leaf, retained ordered frames and an explicit rendering profile. CPU ownership can be accepted separately. Package completion requires a real browser to draw a deformable textured Mesh2D between existing rectangles and Bitmaps, preserving order, clipping, tint, alpha and retained-frame ownership.
+
 Engineering checkpoint **0.23.0**, prepared 2026-10-11. Owned textured geometry, Mesh2D, immutable profile frames and the explicit WebGPU host have bounded CPU, strict-type and desktop native evidence. The native run passed all 11 calibration and 10 held-out windows, with all 16 assigned windows detecting their 12 independently copied faults. Independent saved-result review accepted this one recorded Windows/Edge/NVIDIA environment. Public reproduction tooling, final paired-material review, current complete pre-push and remote delivery are separately recorded; this document does not infer them from a native PASS.
 
 GPU plan Task 1 accepted the private shared ledger and optional preparation/packing seams after 31/31 helper and 37/37 affected legacy cases, at its checkpoint of 216 source/fixture files and 328 emissions. Task 2 accepted full-tuple Mesh CPU preparation, represented packing and ordered rectangle/image/Mesh dispatch after a fresh build, 90/90 combined cases (the retained 31 budget cases plus 59 Mesh cases) and a separate 37/37 affected legacy run. Its fresh runner binds 236 selected source/fixture inputs and 340 emissions. Those historical helper checks do not establish the later host or native pixels. The API blocks and numeric host requirements below remain the adopted specification.
@@ -11,8 +13,6 @@ Task 3 subsequently passed 155/155 combined CPU cases (31 budget, 59 Mesh and 65
 Task 6 passed the strict positive consumer and checked 19 individually located unsuppressed new diagnostics, 33/33 new policy cases and 299/299 retained policy cases. Its source scan passed at the recorded 363-file boundary; later native-only additions retain separate provenance. The fixed comparator passed 208/208 CPU units with unchanged expectations and tolerances. Constructed byte arrays and metadata checks establish comparator behavior, without validating native shader compilation, pixels or copied-production sensitivity.
 
 ## Surface and compatibility
-
-The package gives developers immutable indexed XY/UV/light-RGBA geometry, a textured display leaf, retained ordered frames and an explicit rendering profile. CPU ownership can be accepted separately. Package completion requires a real browser to draw a deformable textured Mesh2D between existing rectangles and Bitmaps, preserving order, clipping, tint, alpha and retained-frame ownership.
 
 ### Implemented CPU declarations
 

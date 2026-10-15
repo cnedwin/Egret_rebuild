@@ -2,27 +2,13 @@
 
 English | [简体中文](ACKNOWLEDGEMENTS.zh-CN.md)
 
-<!-- AAP-0.53.0-BEGIN -->
-The 0.53 anchored atlas playground is independent first-party Apache-2.0 composition of existing Egret public APIs. Its programmatic red/blue atlas and consumer fixtures are original work; no external art, font, codec or competing-engine implementation is an input. AI assisted Source and bilingual preparation. Independent Source, original execution, language/publication and delivery reviews retain separate scopes. Existing notices, package-private0.0.0, host protocol1.0 and dependencies remain unchanged.
-<!-- AAP-0.53.0-END -->
+Egret benefits from open standards, development tools and published engineering research. The credits below describe each material's actual role; applicable licenses and notices remain with their files.
 
-<!-- AO-0.52.0-DRAFT-ACK-BEGIN -->
-Independent 0.52.0 anchor offsets are first-party Apache-2.0 work authored from Egret specifications and familiar display contracts, with original fixtures and English critical comments. AI assisted Source/tests/bilingual preparation; independent Source, saved-result and language/delivery reviews retain separate scopes. Competing-engine implementations were not inputs to this package. The bounded changes add no third-party dependency; existing licenses and notices remain applicable.
-<!-- AO-0.52.0-DRAFT-ACK-END -->
+## First-party work and AI assistance
 
-<!-- ADI-0.51.0-DRAFT-ACK-BEGIN -->
-Independent 0.51.0 indexed insertion is first-party Apache-2.0 work authored from Egret specifications and familiar Container/tree/Scope/resource contracts. Original fixtures and critical English comments accompany the implementation. AI assisted source/tests/bilingual preparation; independent Source, saved-result and publication/language reviews retain separate scopes. No competing-engine source is transplanted and no third-party dependency is added. Existing license and notice credits remain applicable. This public text remains a Source draft.
-Current adopted Source identities, accepted code verification and the independently accepted bounded desktop Native successor are recorded in the dated R3 evidence. Public/source/bilingual review and delivery gates remain pending.
+Egret's display, resource, animation, input and UI modules are developed from the project's own API and lifecycle contracts. Existing first-party geometry and ownership systems are shared across the corresponding components and examples. Original programmatic fixtures accompany these implementations.
 
-<!-- ADI-0.51.0-DRAFT-ACK-END -->
-
-Independent 0.50 direct-child index querying reuses first-party Egret Container/tree/Scope/resource/frame contracts and original fixtures. AI assisted source/tests/bilingual preparation with separate source and saved-result review. No new third-party dependency is introduced; existing license and notice credits remain applicable.
-
-Independent 0.49 batch detachment reuses first-party Egret Container/tree/Scope/resource/frame contracts and original fixtures. AI assisted source/tests/bilingual preparation with separate source and saved-result review. No new third-party dependency is introduced; existing license and notice credits remain applicable.
-
-## NineSliceBitmap first-party reuse — 0.48.0
-
-The independently authored leaf and original pixel/diagnostic fixtures reuse Egret’s NS1 geometry, Texture, Mesh2D, AssetLease, Scope, bounds and owned-frame contracts. The native fixture extends existing first-party PNG collection mechanisms through an explicit mode and decodes no PNG. AI assisted source, tests and bilingual preparation; separate author/reviewer roles and saved tool execution qualify their recorded scopes. No competing-engine implementation or new third-party dependency is included. Existing dependency/notice credits remain applicable. Read the [contract](knowledge-base/en/docs/nine-slice-bitmap-contract.md) and [evidence](knowledge-base/en/docs/nine-slice-bitmap-evidence.md).
+AI tools assist code, tests and bilingual documentation. Contributors review the resulting work, and implementation provenance and verification are recorded in [source-origin.json](source-origin.json) and the linked technical records. Per-version origin and review records retain their original scope.
 
 ## 0.16.0 declaration and 3D references
 

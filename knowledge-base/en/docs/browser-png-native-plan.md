@@ -8,7 +8,7 @@ The optional browser PNG adapter has independently accepted source, 4/4 terminal
 
 The sections retained below record the earlier 2026-10-13 source/documentation cutoff. Their NOT_RUN statements retain that historical scope; the current successor in this section takes precedence for status, while the behavior and frozen numeric schedule remain unchanged.
 
-Current public native plan draft, 2026-10-13. The schedule has independent source acceptance. The six-operation observer has accepted source and 39/39 controlled UNIT results; these are not native browser results. Product CPU/cold and strict-type evidence is accepted, current policy controls are independently accepted, and the native collector is being prepared as source. Native browser execution, full repository gates and delivery are NOT_RUN. All native counts below are requirements, not observed passes. See the [contract](browser-png-contract.md), [implementation plan](browser-png-implementation-plan.md) and [evidence](browser-png-evidence.md).
+Original native-plan record dated 2026-10-13. The schedule has independent source acceptance. The six-operation observer has accepted source and 39/39 controlled UNIT results; these are not native browser results. Product CPU/cold and strict-type evidence is accepted, current policy controls are independently accepted, and the native collector is being prepared as source. Native browser execution, full repository gates and delivery are NOT_RUN. All native counts below are requirements, not observed passes. See the [contract](browser-png-contract.md), [implementation plan](browser-png-implementation-plan.md) and [evidence](browser-png-evidence.md).
 
 ## Original input and output authority
 

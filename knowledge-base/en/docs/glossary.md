@@ -16,7 +16,7 @@ English | [简体中文](../../Cns/docs/术语表.md)
 | First interaction | The player can complete the defined first effective action after cold startup; displaying a loading page is insufficient |
 | Sustained performance | Frame time, input, memory, power, and thermal behavior after prolonged operation |
 | P95 / P99 | The 95th/99th percentiles of sampled frame times; definitions state whether stalls, background periods, and loading are included |
-| Perfect execution after migration | The user's ultimate goal: passing agreed behavior, visual, state, and platform comparisons within declared supported scope |
+| Perfect execution after migration | Migration acceptance across agreed behavior, visual, state, and platform comparisons within the declared supported scope |
 | RFC | A discussable requirement or approach proposal; it does not imply acceptance |
 | ADR | A versioned technical decision and rationale, including status, alternatives, and verification basis |
 | Skills / MCP | Task knowledge and tool-access methods; engine tools own actual project semantics and verification |

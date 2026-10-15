@@ -6,16 +6,18 @@ This bounded 0.54.0 increment builds one reusable 2D control on genuine display,
 
 ## Completed code work
 
-- Specify exact ownership, ordered option reads, skin admission, native-origin gestures, final activation repick and terminal cleanup.
-- Establish the genuine missing-factory baseline before implementation; independently review five product files and seven public-consumer fixtures, preserving the foreign-Scope finding and finite repairs.
-- Build the original two-control Canvas/WebGPU example and independent strict consumer driver; preserve every retained input regression and exact unsuppressed diagnostic.
-- Run all nine normal code phases. Current local execution completed Core 3218/3218 and retained Spine Source 160/160; independent result acceptance is recorded separately in the evidence document.
+- The control contract defines ownership, ordered option reads, skin admission, native-origin gestures, final activation repick and terminal cleanup.
+- A genuine missing-factory baseline preceded implementation. Five product files and seven public-consumer fixtures were reviewed; the foreign-Scope finding and finite repairs remain recorded.
+- The original two-control Canvas/WebGPU example and strict consumer driver retain every input regression and exact unsuppressed diagnostic.
+- All nine normal code phases completed at the code-verification checkpoint: Core 3218/3218 and retained Spine Source 160/160. The evidence document records the independent result assessment.
 
-- Independently review the current browser verifier, literal full-frame oracle and explicit import graph; close the genuine producer-field compatibility finding before execution.
+- Browser verification uses a reviewed verifier, literal full-frame oracle and explicit import graph. The producer-field compatibility finding was resolved before execution.
 
-- Qualify actual Canvas/WebGPU interaction, saved/live presentation, shared routing, isolated negative control and complete retirement from original saved results.
+- Saved results cover Canvas/WebGPU interaction, saved/live presentation, shared routing, the isolated negative control and complete retirement.
 
 ## Remaining package acceptance
+
+The following checklist preserves the pre-delivery planning cutoff, rather than current delivery status.
 
 - Review paired public documentation, provenance and English comments; run normal repository/publication/prepush gates and mandatory Git hooks.
 - Commit, push, open a reviewable PR and merge through the authorized repository flow. Each stage requires its own observed result; no remote CI pass is inferred.

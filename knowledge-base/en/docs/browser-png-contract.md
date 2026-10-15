@@ -8,7 +8,7 @@ The optional browser PNG adapter has independently accepted source, 4/4 terminal
 
 The sections retained below record the earlier 2026-10-13 source/documentation cutoff. Their NOT_RUN statements retain that historical scope; the current successor in this section takes precedence for status, while the behavior and frozen numeric schedule remain unchanged.
 
-Current public documentation draft, 2026-10-13. The specification and current implementation have independent source acceptance; bounded CPU/cold, strict-type and observer UNIT evidence is accepted. Current owned-copy policy controls also have independent actual acceptance. Native browser validation, full repository gates and delivery remain pending. See [evidence and retained failures](browser-png-evidence.md), [implementation plan](browser-png-implementation-plan.md) and [native schedule](browser-png-native-plan.md). This is one optional browser resource adapter with the profile below.
+Original source record dated 2026-10-13. The specification and current implementation have independent source acceptance; bounded CPU/cold, strict-type and observer UNIT evidence is accepted. Current owned-copy policy controls also have independent actual acceptance. Native browser validation, full repository gates and delivery remain pending. See [evidence and retained failures](browser-png-evidence.md), [implementation plan](browser-png-implementation-plan.md) and [native schedule](browser-png-native-plan.md). This is one optional browser resource adapter with the profile below.
 
 ## 1. Public boundary and ownership
 

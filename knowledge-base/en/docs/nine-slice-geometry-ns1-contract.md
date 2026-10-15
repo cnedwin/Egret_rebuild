@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/九宫格几何NS1契约.md)
 
-Prepared 2026-10-12. **SOURCE_ONLY · NOT_RUN.** This document specifies an experimental CPU geometry factory for fixed-border panels in complex 2D interfaces, within R002/R004. Implementation, strict-type checks and renderer acceptance require separately recorded evidence. Complete UI/EUI, layout and full Spine support remain outside this contract; R020/V020 remains **OPEN**.
+Original specification cutoff: 2026-10-12, **SOURCE_ONLY · NOT_RUN**. This document specifies an experimental CPU geometry factory for fixed-border panels in complex 2D interfaces, within R002/R004. Implementation, strict-type checks and renderer acceptance require separately recorded evidence. Complete UI/EUI, layout and full Spine support remain outside this contract; R020/V020 remains **OPEN**.
 
 ## Public surface and ownership
 
@@ -84,6 +84,6 @@ function resizePanel(mesh: Mesh2D, textureLease: AssetLease<Texture>): void {
 }
 ```
 
-Contract review does not establish a CPU/type/GPU PASS, a shipped API or cross-device behavior. Actual implementation and independent verification will be recorded separately, including real immutable captures, complete readback buffers, resource cleanup and the environment boundary. No phone, native SDK, comparative performance or complete UI/Spine claim follows from this specification.
+Contract review does not establish a CPU/type/GPU PASS, a shipped API or cross-device behavior. Actual implementation and independent verification require separate records, including real immutable captures, complete readback buffers, resource cleanup and the environment boundary. No phone, native SDK, comparative performance or complete UI/Spine claim follows from this specification.
 
 Related existing contracts: [owned textured geometry and Mesh2D](textured-geometry-and-mesh2d-contract.md), [Scope ownership](scope-private-ownership.md). NS1 is an independently authored extension of these first-party public contracts.

@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/显示锚点偏移工程计划.md)
 
-Engineering preview 0.52.0 · S106 / V057. [Contract](display-anchor-offsets-contract.md) and [evidence](display-anchor-offsets-evidence.md) are the maintenance entrypoints. Keep Source, original execution, independent review and delivery as separate records.
+Engineering preview 0.52.0 · S106 / V057. [Contract](display-anchor-offsets-contract.md) and [evidence](display-anchor-offsets-evidence.md) are the maintenance entrypoints. Source, original execution, independent review and delivery are separate records. The unchecked publication work below preserves this code/native checkpoint's historical cutoff, not current delivery status.
 
 ## Implemented finite package
 
@@ -15,7 +15,7 @@ Engineering preview 0.52.0 · S106 / V057. [Contract](display-anchor-offsets-con
 - [x] Independently qualify all 9 current code phases, Core 3131/3131 and retained Spine Source 160/160.
 - [x] Review/adopt six bounded Native Source files and complete the original desktop opaque rectangle/replay/control run. Independent Native status is INDEPENDENT_ACCEPTED_DESKTOP_OPAQUE_CANVAS_WEBGPU_ONLY.
 
-The current adopted union has 29 files. Private preparation utilities and public documentation are separate scopes. No dependency, renderer port, frame schema, owner/affinity/lease contract, package private 0.0.0 or host protocol 1.0 changes.
+The adopted union at this checkpoint had 29 files. Private preparation utilities and public documentation are separate scopes. No dependency, renderer port, frame schema, owner/affinity/lease contract, package private 0.0.0 or host protocol 1.0 changes.
 
 ## Current publication work
 

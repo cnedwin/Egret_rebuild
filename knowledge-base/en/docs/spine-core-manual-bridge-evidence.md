@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/SpineCore手动网格桥接证据.md)
 
-Engineering preview **0.47.0** · **S101 / V052**. This record separates accepted source, saved execution, controlled observations, complete local gates and remote delivery. The [contract and guide](spine-core-manual-bridge.md) define the finite F2-C interface. The current curation cutoff is **2026-10-14**: bounded manual CPU and desktop WebGPU observations are independently accepted; final publication gates and delivery remain pending.
+Engineering preview **0.47.0** · **S101 / V052**. This record separates accepted source, saved execution, controlled observations, complete local gates and remote delivery. The [contract and guide](spine-core-manual-bridge.md) define the finite F2-C interface. The recorded curation cutoff is **2026-10-14**: bounded manual CPU and desktop WebGPU observations are independently accepted; final publication gates and delivery remain pending.
 
 ## Accepted finite stages
 
@@ -59,7 +59,7 @@ The first native invocation completed cleanly but its configured outer deadline 
 
 Current first-party repository text must also satisfy raw-byte hygiene after it changes. The experiment's ignore-rule append made the historical `.gitignore` exemption inapplicable; its one retained CR was removed without changing rule content/order. The reviewed candidate uses canonical LF, retains the exact before snapshot and does not alter any exception, legacy baseline or upstream original.
 
-The complete guides now live in separate English/Chinese reading trees, replacing the historical shared stub. The controls staging recipe removes that one obsolete README suffix and adds two exact repository-relative guide rows; it has no wildcard or optional missing-file skip. The source manifest retains forty-five qualified code/data rows and replaces its dangling documentation pointer with the explicit paired repository paths. Previous control results retain their original controller identity; fresh execution of this narrow recipe revision remains part of the pending current verification gate. Core implementation and native input qualifications are unaffected by these documentation/tooling changes.
+The reproduction guides use paired English and Chinese reading paths. The controls staging recipe removes that one obsolete README suffix and adds two exact repository-relative guide rows; it has no wildcard or optional missing-file skip. The source manifest retains forty-five qualified code/data rows and replaces its dangling documentation pointer with the explicit paired repository paths. Previous control results retain their original controller identity; fresh execution of this narrow recipe revision remains part of the pending current verification gate. Core implementation and native input qualifications are unaffected by these documentation/tooling changes.
 
 ## Previous PNG delivery successor
 

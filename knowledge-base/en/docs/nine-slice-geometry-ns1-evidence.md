@@ -4,7 +4,7 @@
 
 ## Engineering preview 0.41.0 — nine-slice stretch geometry NS1
 
-**S094 / V045. Finite CPU, types, policy and browser observations accepted; complete publication gates and delivery remain PENDING.** Fixed-border stretch geometry reuses the existing Mesh2D texture lease; resizing replaces geometry. Runtime/engine roots expose one factory and two readonly types while retaining the original owned geometry identity.
+**S094 / V045. At this historical cutoff, finite CPU, types, policy and browser observations were accepted; complete publication gates and delivery were PENDING.** Fixed-border stretch geometry reuses the existing Mesh2D texture lease; resizing replaces geometry. Runtime/engine roots expose one factory and two readonly types while retaining the original owned geometry identity.
 
 Actual CPU checks passed 27/27: 11 NS groups, 6 Mesh groups and 10 geometry checks including nested cases. Positive type diagnostics were 0; the two intentional negative streams contained 41/35 actual diagnostics, totaling 76 precise location records. Strict type and policy guards exited 0; assigned policy controls passed 13/13. The actual browser completed 2 frames and 96 color-channel comparisons with verified cleanup; see the evidence for the exact environment and scope.
 
@@ -41,13 +41,13 @@ Actual browser environment and scope:
 }
 ```
 
-Earlier contracts and original stage cutoffs remain unchanged. This curation is not completion evidence for full prepush, mandatory push or PR/Main delivery.
+Earlier contracts and original stage cutoffs remain unchanged. This record does not establish completion of full prepush, mandatory push or PR/Main delivery.
 
 <!-- NS1-B1-FULL-GATE-SUCCESSOR-BEGIN -->
 
 ## Actual retained host-verifier successor
 
-The original full gate retains its 2748/2747/1 failure: S01 static scanning did not recognize one legitimate division expression in the new nine-slice module. The correction adds only that exact module/expression anchor and updates selected witnesses to five source files and eleven division tokens, preserving generic refusals. The retained test file passed 2/2 with its original default launch, completing all thirteen child cases. An earlier name-filtered launch was rejected before the child schedule by the strict process environment and remains separate setup history. Renderer code was unchanged; prior actual browser/type observations were not repeated. A new complete gate, push and Main delivery still require distinct acceptance.
+The original full gate retains its 2748/2747/1 failure: S01 static scanning did not recognize one legitimate division expression in the new nine-slice module. The correction adds only that exact module/expression anchor and updates selected witnesses to five source files and eleven division tokens, preserving generic refusals. The retained test file passed 2/2 with its original default launch, completing all thirteen child cases. An earlier name-filtered launch was rejected before the child schedule by the strict process environment and remains separate setup history. Renderer code was unchanged; prior actual browser/type observations were not repeated. At this successor's cutoff, a new complete gate, push and Main delivery still required distinct acceptance.
 
 <!-- NS1-B1-FULL-GATE-SUCCESSOR-END -->
 

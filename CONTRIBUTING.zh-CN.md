@@ -2,56 +2,52 @@
 
 [English](CONTRIBUTING.md) | 简体中文
 
-<!-- HYGIENE-0.45.1-POLICY-BEGIN -->
-## 仓库路径与原始字节规范
+白鹭欢迎引擎、示例、工具、设计与文档方面的贡献。请先阅读[能力与进展总览](knowledge-base/Cns/docs/core-progress.md)，再查阅受影响子系统的契约。公开仓库为 [cnedwin/Egret_rebuild](https://github.com/cnedwin/Egret_rebuild)。
 
-验证和交付工具使用共享 `tools/lib/file-identity.mjs`，完整所属根内逻辑路径使用规范 POSIX 写法并保留创作大小写；绝对物理路径比较与包含检查使用明确的平台语义。文件名相同、统一转小写或词法路径等价不能授权另一个文件身份。
+## 当前可以参与的工作
 
-新创作第一方文本通过 `tools/write-repository-text.mjs --path <owner-relative-file>` 或 `knowledge-base/tools/Write-CanonicalText.ps1 -RelativePath <owner-relative-file> -Text <text>` 写入，采用不带 BOM 的 UTF-8、LF 和一个末尾换行，保留内部空行及 Markdown 硬换行空格。不得用 `Environment.NewLine` 序列化仓库文本。原始指纹严格保留字节，计算哈希时不得规范化 EOL、BOM、Unicode 或空白；不得对上游／法律原件、原始回执、封存源码快照或历史证据运行创作格式化器。仅刷新确有修改且经过评审的当前文件身份。
+- 按公共契约改进显示、资源、动画、输入和宿主行为，补充有意义的回归用例。
+- 按工程规划推进创作、工程编辑及迁移流程。
+- 提供获授权的游戏、界面和动画样本，以及真实宿主或目标设备验证。
+- 改进文档、翻译与复现方法，为技术结论补充来源。
 
-通过 `git config --local core.hooksPath .githooks` 启用两个仓库本地钩子，并保留其 Git 可执行模式。pre-commit 检查工作／未跟踪文本及实际暂存字节；pre-push 对干净已提交快照运行完整 `node tools/prepush.mjs --committed`。准备修改时还须运行普通 `node tools/prepush.mjs`。修复失败并完成独立源码／结果与双语评审后再交付，不能以跳过钩子或放宽字节检查替代修复。
+需要设计讨论的改动可使用 [RFC 模板](knowledge-base/Cns/templates/RFC提案.md)，已审阅的决策使用 [ADR 模板](knowledge-base/Cns/templates/ADR决策记录.md)登记。
 
-知识库验证采用 `-CheckOnly`。分别记录源码、保存的执行、完整本机门禁、实际推送／PR／Main 和远端 CI，保留早先失败与待完成截止点。阅读[仓库规范](knowledge-base/Cns/docs/仓库路径身份与换行规范.md)与[限定证据](knowledge-base/Cns/docs/仓库路径与换行验证记录.md)。
-<!-- HYGIENE-0.45.1-POLICY-END -->
+## 提交与审阅
 
-历史 0.13.0 矩形检查点见单独的[实现与验证记录](knowledge-base/Cns/docs/WebGPU矩形实现证据.md)；源码身份、结果及待办保留当时范围，不代表当前产品验收。
+每项贡献围绕明确问题组织，说明改动后的行为、受影响契约与兼容性、来源和验证。缺陷修复应提供复现步骤，并说明剩余限制。公共 API 变化同步更新规格与相应回归。
 
-先查看[README](README.zh-CN.md)、[知识库](knowledge-base/Cns/README.md)和[来源记录](source-origin.json)。现阶段可以改进三个headless包，提交生命周期、显示树或事件的反例与修复；也可校勘文档、补来源、提出接口设计，以及提供自有或获授权的迁移与文字样本。
+仓库贡献通过 Issue 与 PR 进行。方案经审阅后再更新其登记状态，草稿或构建成功不等于完整产品能力交付。技术讨论围绕问题、证据和取舍展开。
 
-本候选为开发预览，远端为[cnedwin/Egret_rebuild](https://github.com/cnedwin/Egret_rebuild)，提交与评审状态见仓库分支和PR；尚未发布npm包。Issue、PR和维护职责按仓库实际配置执行。第一方代码与文档采用既有Apache-2.0，第三方声明随文件保留。具体贡献者与评审职责仍待公开登记。
+## 复现现有核心检查
 
-## 变更说明
+使用 Node.js 24.19.0、pnpm 11.25.0 和 TypeScript 7.0.2，在仓库根目录执行：
 
-每项贡献说明问题、范围、关联规格、实现来源和验证结果。公共接口变化同步设计与迁移说明，候选设计通过评审后再登记为决策。沟通围绕技术影响、证据与复现步骤，保留上游项目的归属和版本。
+    pnpm install --frozen-lockfile --ignore-scripts
+    git config --local core.hooksPath .githooks
+    node tools/verify.mjs
+    node examples/headless.mjs
 
-自主核心按白鹭规格独立设计和编写；第三方库作为显式依赖记录版本、适用许可与修改。代码贡献填写[实现来源记录](knowledge-base/Cns/templates/实现来源记录.md)，说明实际资料、AI参与、生成范围和作者复核。来源问题结合具体输入与实现解决，结论限于实际检查范围。
+每次推送前运行完整 node tools/prepush.mjs，完成公开结构、代码／类型／依赖边界、无界面示例和知识库检查。提交前钩子检查暂存原始字节，推送前钩子检查干净的已提交快照。按正常流程修复失败。渲染改动还需执行 [AGENTS](AGENTS.zh-CN.md) 中适用的真实浏览器检查。
 
-## 验证
+## 工程与 API 规范
 
-使用固定Node.js 24.19.0、pnpm 11.25.0与TypeScript 7.0.2。执行`pnpm install --frozen-lockfile --ignore-scripts`后，运行`node tools/verify.mjs`及`node examples/headless.mjs`。按变化选择有意义的回归，记录环境、命令、输入、输出和未覆盖项。
+遵循[工程结构](knowledge-base/Cns/docs/工程技术架构与项目结构.md)、[API 规范](knowledge-base/Cns/docs/公共API设计与命名规范.md)和[质量要求](knowledge-base/Cns/docs/代码规范与质量门禁.md)，保持包边界、明确的资源所有权和不依赖 DOM/Node 的核心。文件身份及第一方文本使用[路径与原始字节规范](knowledge-base/Cns/docs/仓库路径身份与换行规范.md)。
 
-现有原型基线为44/44行为检查和11项负类型断言，限于CPU与模拟host。真实GPU、Native、宿主、性能和CI另行验证。包清单的`private: true`、版本0.0.0、exports与依赖方向属于当前检查合同；升级或发布设置的变化需单独说明影响。
+## 来源、AI 与公开内容
 
-游戏时钟变更先通过常规验证流程构建，再用 `node --test tests/game-clock.test.mjs` 检查公共行为，用 `node --test tests/game-clock-boundaries.test.mjs` 运行真实基线先行的源码对照。执行前固定字面源时间、回调顺序、真实 Scope／资源归属及清理原因；保留既有失败，区分完整核心运行与之后改变的 fixture。CPU 时钟检查不证明浏览器／GPU 像素、性能或自动动画；下方必需 prepush 及受影响浏览器规则继续适用。阅读[时钟契约](knowledge-base/Cns/docs/游戏时间核心契约.md)及[证据](knowledge-base/Cns/docs/游戏时间核心证据.md)。
+第一方代码和文档采用 Apache-2.0，第三方声明与资产署名随材料保留。按[来源记录](knowledge-base/Cns/templates/实现来源记录.md)说明实现资料、依赖、AI 辅助与审阅。贡献者对提交的行为、来源权利和验证负责。
 
-## 可公开资料
+公开文档以连贯、中性的项目口吻说明目的、约束、推导、契约与结果，引用相关工作，不将产品叙述组织成对话答复或指令清单。实质性决策历史与来源进入对应记录，不把未记录的个人想法归于任何人。
 
-提交可分发代码、样本和技术摘要。私有原包、凭据、个人数据和未获公开授权的内容不进入贡献；历史研究以必要的来源种类和技术结论呈现。详细流程见[知识库贡献指南](knowledge-base/Cns/CONTRIBUTING.md)与[独立实现规范](knowledge-base/Cns/docs/独立实现与第三方依赖规范.md)。
+凭据、私有配置、未获授权的旧工程及未整理的内部交流不进入仓库。研究与依赖使用遵循[实现规范](knowledge-base/Cns/docs/独立实现与第三方依赖规范.md)。
 
-## 每次推送前的双语与公开检查
+## 双语检查与推送钩子
 
-每次推送到GitHub前，整理全部可公开的文档和知识库，保持完整中文及英文阅读版本，并补全关键代码的英文注释。登记册英文视图从中文权威记录生成，保持ID、状态、数字与来源一致；原始证据、代码快照和上游许可保持原始身份。完成来源、归属、可公开内容与翻译语义复核后，运行`node tools/prepush.mjs`，该命令包含双语检查及核心验证。机器检查不能替代作者对公开授权和翻译含义的复核。
+维护完整中英文阅读版本。知识库分别放在 en/ 和 Cns/，仓库默认阅读文档用英文，中文伴随文件用 .zh-CN.md。更新当前身份和登记册视图前，审阅两种语言的含义。关键代码注释使用英文。详见[双语检查](knowledge-base/Cns/docs/双语文档与推送前检查.md)和[目录规范](knowledge-base/Cns/docs/documentation-layout.md)。
 
-本地克隆后可执行`git config --local core.hooksPath .githooks`启用仓库推送钩子；钩子执行同一检查。CI与贡献者均执行该命令，禁止以跳过钩子代替修复。该约定适用于所有后续推送，详情见[双语规范](knowledge-base/Cns/docs/双语文档与推送前检查.md)。
+## 浏览器检查与公开清单
 
-## 浏览器门禁与公开清单
+prepush 不启动浏览器。按改动选取已定义的 Canvas/WebGPU 检查，并记录实际环境和结果；复用旧结果时，明确核对相关身份未变。源码公开、浏览器行为、目标设备性能与远端 CI 分别记录。
 
-每次推送必须执行`node tools/prepush.mjs`，检查公开结构、核心/类型/边界、headless行为与知识库结构；它不启动浏览器。渲染变更按影响另执行`node tools/verify-canvas.mjs --playwright <installed-playwright-module> --channel msedge --output <private-output-directory>`与独立`node tools/verify-webgpu.mjs --playwright <installed-playwright-module> --channel msedge --output <private-output-directory>`。使用已接受的固定依赖，浏览器默认启动无附加flags；源码身份比对相同的既有构建结果可明确注明后保留。
-
-发现与登记路径均按Windows大小写不敏感方式排除私有执行、依赖及生成目录；清单不能覆盖排除规则。普通公开AGENTS文档仍有效；仅保留两个精确路径/hash的Three r186历史研究构建例外。结构检查不能产生翻译含义或公开审阅批准。
-
-受影响的 B1 场景渲染变更还应执行 `node tools/verify-webgpu-b1.mjs --playwright "<absolute-installed-playwright-package-directory>" --channel msedge --output "<absolute-new-output-directory-outside-repository>"`，使用自己的安装包路径和仓库外全新输出路径。见[有限 B1 浏览器验证器](knowledge-base/Cns/docs/b1-browser-verifier.md)。默认 prepush 不启动浏览器；推送前必须另行通过新完整检查。
-
-## 国际社区文档约定
-
-公开简介英文优先，随后附中文。完整知识库阅读版本分别放在 `knowledge-base/en/` 与 `knowledge-base/Cns/`，英文目录内使用英文文件名。共享实验代码、原始证据、历史源码身份与上游许可原件保留出处。设计记录使用问题、选项、依据、反例及结论，公开表达保持专业、客观与友善。每次推送 GitHub 前复核来源、公开范围及完整双语版本，补全关键代码英文注释，并运行完整 prepush。见[目录规范](knowledge-base/Cns/docs/documentation-layout.md)。
+私有执行输出、依赖缓存和生成文件不进入公开清单。原始证据、历史源码身份及上游法律原件保留来源。远端交付流程见[发布指南](PUBLICATION.zh-CN.md)。

@@ -2,7 +2,7 @@
 
 简体中文 | [English](../../../en/experiments/spine-f2/README.md)
 
-工程预览 0.42.0 同步源规划候选。保存的开发运行成功；本稿截止时，独立接纳与发布仍待完成。状态见本语言[契约](../../docs/Spine网格源规划契约.md)、[证据](../../docs/Spine网格源规划证据.md)及[共享验证记录](../../../evidence/spine-mesh-source-plan-verification.json)。
+本同步源规划指南保留工程预览 0.42.0 记录。保存的开发运行成功；在原稿截止时，独立接纳与发布仍待完成。状态见本语言[契约](../../docs/Spine网格源规划契约.md)、[证据](../../docs/Spine网格源规划证据.md)及[共享验证记录](../../../evidence/spine-mesh-source-plan-verification.json)。
 
 ## 安装与验证
 

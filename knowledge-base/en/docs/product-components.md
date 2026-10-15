@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/产品组成.md)
 
-The new Egret is a system spanning creation, execution, and publication. The module boundaries below are a candidate organization. Consult the [requirements](../../Cns/registry/需求.json) and [deliverables](../../Cns/registry/交付.json) for confirmed product requirements and implementation status respectively. No installable new Egret product currently exists.
+Egret connects creation, execution and publication through a shared project model. Rendering and Runtime provide the runnable foundation; project services, asset processing and creator tools make that foundation editable and deliverable. The following responsibility map describes the full product direction. Current bounded core packages are tracked in [core progress](core-progress.md); the [requirements](../../Cns/registry/需求.json) and [deliverables](../../Cns/registry/交付.json) distinguish formal scope from completed work. A private SDK preview is not a complete installable creator product.
 
 | Component | Responsibilities and main outputs | Key boundary | Related deliverable |
 | --- | --- | --- | --- |
@@ -18,16 +18,16 @@ The new Egret is a system spanning creation, execution, and publication. The mod
 
 ## How a change passes through these components
 
-A creator asks to “replace a 3D character while preserving the outfit UI's interactions.” Tools first locate the character, animations, materials, and references; check resources and target-host capabilities; propose a local diff; perform import and changes; preview and replay outfit operations; confirm rendering, events, and budgets; and generate a publishable artifact. On failure, return to a version that remains editable.
+Replacing a character while preserving its outfit interface starts with stable references to the character, animation, materials and UI rules. Project services check resources and target capabilities, prepare a local diff, then apply import and edits to a known version. The real Runtime previews the result and replays outfit interactions. Rendering, events and relevant budgets are checked before export; failure returns to an editable version.
 
-AI, the editor, and the publishing system should use the same location, version, and diagnostic semantics. The candidate does not require all tools to launch at once, and it does not predetermine the editor framework, cloud services, business model, or plugin marketplace.
+AI, visual tools and publishing use the same location, version and diagnostic contracts. Components can arrive incrementally without committing in advance to an editor framework, cloud service, commercial model or marketplace.
 
 ## Boundaries between independent development and integration
 
-Egret needs to own consistency across the rendering runtime, creation-project semantics, and migration. Mature components may be evaluated for fonts, codecs, foundational libraries, or specialist capabilities, but quality, package size, platform, version, and licensing costs must be recorded before adoption. The historical practice of “developing everything ourselves” is a source of experience, not an automatic requirement to rebuild every new module.
+Egret owns consistency across Runtime semantics, persistent projects and migration. Fonts, codecs and specialist libraries may be explicit dependencies when their quality, size, platform, version, license and maintenance costs are understood. Component selection follows requirements and technical evidence.
 
-The community first participates in defining interfaces and acceptance, then contributes implementations along the selected module boundaries. Tool forms and dependency choices go through proposals and enter the [decision record](decisions-and-open-questions.md).
+Community work starts with reviewable interfaces and acceptance examples, then implementations within selected boundaries. Proposals and replacements retain their reasoning in the [decision record](decisions-and-open-questions.md).
 
 ## Independent core and public dependencies
 
-R015 requires an independently implemented core. Egret writes scene/UI, frame scheduling and composition, resource lifecycles, animation semantics, project transactions, and migration rules to its own specifications; general-purpose public libraries are integrated as explicit dependencies. Core code and dependency capabilities are disclosed separately under the [independent implementation and third-party dependency rules](independent-implementation-and-dependency-policy.md).
+R015 requires scene/UI semantics, scheduling/composition, resource lifecycle, animation contracts, project transactions and migration rules to follow independently authored Egret specifications. General-purpose dependencies keep their identities. The [implementation policy](independent-implementation-and-dependency-policy.md) records source origins, third-party capabilities and license obligations separately, including AI-assisted work under ordinary review and verification.

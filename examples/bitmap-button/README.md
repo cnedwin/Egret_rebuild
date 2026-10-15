@@ -10,4 +10,4 @@ Preview is 192Ã—128. `?preset=verification&backend=canvas` selects the fixed 24Ã
 
 Public input routes queue one coalesced application microtask to capture committed state. Saved replay submits the original saved-up frame without changing live Button state or activation counters. The verification-only WebGPU Host adapter arms its original public readback before each original submission. No product export or diagnostic hook is added.
 
-Control Scopes retire before input/resource Scopes; Close awaits startup, provider work and Engine disposal. No external art, copied input algorithm, automatic game clock or dependency is used. Read the [contract](../../knowledge-base/en/docs/bitmap-button-contract.md) and [evidence](../../knowledge-base/en/docs/bitmap-button-evidence.md).
+Control Scopes retire before input/resource Scopes; Close awaits startup, provider work and Engine disposal. The atlas uses original programmatic pixels; the example adds no automatic game clock or dependency. Read the [contract](../../knowledge-base/en/docs/bitmap-button-contract.md) and [evidence](../../knowledge-base/en/docs/bitmap-button-evidence.md).

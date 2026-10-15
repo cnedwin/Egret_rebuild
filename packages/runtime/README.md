@@ -2,6 +2,8 @@
 
 English | [简体中文](README.zh-CN.md)
 
+Egret's experimental logic package depends only on `@egret/contracts`. It receives event descriptors, synchronous cleanup values and narrow lifecycle ports injected by Engine, and provides cancellation, Scope, display trees, synchronous dispatch and CPU asset acquisition/leases. It maintains Scope ownership, object-to-Engine binding, parent/child relationships and event state.
+
 ## Engineering preview 0.52.0 — display anchor offsets
 
 Existing display classes inherit finite-number `anchorOffsetX` and `anchorOffsetY`, default +0. The authored pivot places scale/rotation coherently across coordinates, logical bounds, clipping, explicit picking and frame capture, with original zero-offset bytes retained. Read the [current contract](../../knowledge-base/en/docs/display-anchor-offsets-contract.md) and [bounded evidence](../../knowledge-base/en/docs/display-anchor-offsets-evidence.md).
@@ -17,8 +19,6 @@ Engineering preview 0.48.0 adds `NineSliceBitmap` and erased `NineSliceBitmapOpt
 Inherited `getBounds` reads authoritative receiver-local content with type-only `BoundsQueryOptions`, explicit node/primitive budgets and a fresh frozen result. Read the [bounds contract](../../knowledge-base/en/docs/display-content-bounds-contract.md).
 
 Inherited display coordinate queries use authentic display state, bounded ancestor/lifetime checks and optional `CoordinateQueryOptions`. Read the [coordinate contract](../../knowledge-base/en/docs/display-coordinate-query-contract.md).
-
-Egret's experimental logic package depends only on `@egret/contracts`. It receives event descriptors, synchronous cleanup values and narrow lifecycle ports injected by Engine, and provides cancellation, Scope, display trees, synchronous dispatch and CPU asset acquisition/leases. It maintains Scope ownership, object-to-Engine binding, parent/child relationships and event state.
 
 ## Ownership and cleanup
 

@@ -2,7 +2,7 @@
 
 English | [简体中文](README.zh-CN.md)
 
-This experimental S3D1 example imports only the built public entries `@egret/engine`, `@egret/engine/scene3d` and `@egret/engine/webgpu/scene3d`. It creates two immutable indexed XYZ/RGB quads, supplies camera-space model-view matrices, captures ordinary screen UI through a genuine Engine Stage, and submits scene then UI through one scene Host. Its native verification outcome is **PENDING** at candidate preparation.
+This experimental S3D1 example imports only the built public entries `@egret/engine`, `@egret/engine/scene3d` and `@egret/engine/webgpu/scene3d`. It creates two immutable indexed XYZ/RGB quads, supplies camera-space model-view matrices, captures ordinary screen UI through a genuine Engine Stage, and submits scene then UI through one scene Host. The original preparation record marks native verification **PENDING**.
 
 Use the repository's existing Node.js 24.19.0, pnpm 11.25.0 and TypeScript 7.0.2 setup. From the repository root, build with `node tools/build.mjs`, then run `node tools/serve-canvas.mjs`. Open the printed loopback origin at `/examples/scene3d/index.html`. Use a browser with WebGPU support; no launch flags or software adapter requests are needed. Stop the server with Ctrl+C.
 

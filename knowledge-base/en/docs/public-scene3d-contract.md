@@ -2,7 +2,9 @@
 
 English | [简体中文](../../Cns/docs/公共3D场景契约.md)
 
-Proposed documentation checkpoint **0.32.0**, package **S3D1**. Source **S085** and delivery **V036** are reserved for enrollment; their availability was verified, and registration and acceptance remain pending. This independently designed interface exposes the current first-party owned geometry, scene capture and browser Host algorithms through small typed forwarders. First-party code and documentation remain Apache-2.0; no dependency is added. Workspace packages remain private `0.0.0`, protocol `1.0`.
+This document retains the 0.32.0 scene interface and the separate 0.38.0 Matrix4 and 0.39.0 composition records. Each proposal, NOT_RUN or PENDING label belongs to its own recorded cutoff; later execution successors are identified separately.
+
+Original **0.32.0** contract record, package **S3D1**. Source **S085** and delivery **V036** were checked as available; registration and acceptance were pending at that original cutoff. This independently designed interface exposes the current first-party owned geometry, scene capture and browser Host algorithms through small typed forwarders. First-party code and documentation remain Apache-2.0; no dependency is added. Workspace packages remain private `0.0.0`, protocol `1.0`.
 
 The delivered **0.31.0** resource-group successor was merged through [PR #18](https://github.com/cnedwin/Egret_rebuild/pull/18) to Main `b4062e134af7b923ab6c2c16381004bc1c62ee3c`, tree `5bf7e05cf88e15ca66d1b8b6e26e2c442cbfcf7a`. On that base, the genuine baseline preceded a missing-map interface **RED** at **2026-10-11 19:43:55 UTC**. The three public product files were adopted, built and checked for interface **GREEN** at **2026-10-11 19:54:25–19:54:26 UTC**. Independent source review found **0** open findings in those files. These observations confirm the bounded source and public API reachability only. **Behavior, types, policy, native and final gates are PENDING.** The [shared verification record](../../evidence/scene3d-public-verification.json) is the designated evidence destination; its publication and completed gate results are pending. Historical internal scene and browser results retain their original subjects and cutoffs.
 
@@ -11,7 +13,7 @@ The delivered **0.31.0** resource-group successor was merged through [PR #18](ht
 
 **CPU scope accepted; native, full gates and publication pending. S092 / V043.** The explicit `createTexturedSceneWebGPUHost` draws an opaque RGB scene and a genuine Engine-captured textured overlay through one owner, two passes and one submission. Set `clearAlpha: 1` and use `renderSceneTexturedFrame`; existing factories and captured-frame lifetime remain unchanged.
 
-Recorded actual results cover the build, combined tests **12/12**, retained scene/textured tests **48/48**, positive types with **0** diagnostics, complete negative inventories **8/16/15**, the boundary guard and four assigned boundary controls **4/4**. This documentation curation is **SOURCE_ONLY / NOT_RUN** and does not add product execution.
+Recorded actual results cover the build, combined tests **12/12**, retained scene/textured tests **48/48**, positive types with **0** diagnostics, complete negative inventories **8/16/15**, the boundary guard and four assigned boundary controls **4/4**. The original source-preparation record is **SOURCE_ONLY / NOT_RUN**; the observations above retain their separate execution scope.
 
 The **180-second** full boundary-suite attempt is **INCOMPLETE**. Mandatory full prepush and publication remain **PENDING**. New browser/GPU execution is **NOT_RUN at this preparation cutoff**; physical phones, performance and native SDK acceptance remain unclaimed. FullSpine **R020/V020** and migration **R008/V006** remain **OPEN**.
 

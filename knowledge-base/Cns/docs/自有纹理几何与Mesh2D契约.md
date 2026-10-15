@@ -2,6 +2,8 @@
 
 [English](../../en/docs/textured-geometry-and-mesh2d-contract.md) | 简体中文 · [证据与检查点](自有纹理几何与Mesh2D证据.md)
 
+该工作包提供不可变索引 XY/UV/light-RGBA 几何、纹理显示叶子、保留顺序的自有帧及显式渲染 profile。CPU 所有权可单独验收；整个包完成须由实际浏览器在既有矩形与 Bitmap 之间绘制可变形纹理 Mesh2D，保持顺序、裁剪、着色、alpha 与保留帧所有权。
+
 工程检查点 **0.23.0**，整理于 2026-10-11。自有纹理几何、Mesh2D、不可变 profile 帧及显式 WebGPU 宿主已有有界 CPU、严格类型和桌面原生证据。原生运行的 11 个 calibration 与 10 个 held-out 窗口通过，16 个指定对照窗口全部检出了 12 项独立副本故障。独立保存结果审阅验收了此次记录的 Windows／Edge／NVIDIA 单一环境。公开复现工具、最终双语材料审阅、当前完整推送前检查和远端交付分别记录，本文不从原生 PASS 推断这些结论。
 
 GPU 计划 Task 1 经 31/31 项 helper 与 37/37 项受影响旧用例后，验收私有共享 ledger 及可选准备/packing 接点；该检查点为 216 项源码/夹具与 328 项 emission。Task 2 经新构建、90/90 项合并用例（保留的 31 项预算加 59 项 Mesh）及单独 37/37 项受影响旧运行后，验收完整 tuple 的 Mesh CPU 准备、表示后 packing 与 rectangle/image/Mesh 有序 dispatch。新 runner 绑定 236 项选定源码/夹具输入及 340 项 emission。这些历史 helper 检查不建立后续宿主或原生像素证据。下文 API 块及宿主数值要求保持既有采用规格。
@@ -11,8 +13,6 @@ Task 3 随后通过 155/155 项合并 CPU 用例（31 项预算、59 项 Mesh、
 Task 6 通过严格 positive 消费者，核验 19 项单独定位且未抑制的新诊断，33/33 项新策略及 299/299 项保留策略用例通过。源码扫描在所记录的 363 文件边界通过；后续 native-only 新增文件保留单独来源范围。固定比较器在预期与 tolerance 不变的条件下，208/208 项 CPU 单元检查通过。构造字节数组与 metadata 检查建立比较器行为证据，不验证原生 shader 编译、像素或复制产品灵敏度。
 
 ## 接口与兼容性
-
-该工作包提供不可变索引 XY/UV/light-RGBA 几何、纹理显示叶子、保留顺序的自有帧及显式渲染 profile。CPU 所有权可单独验收；整个包完成须由实际浏览器在既有矩形与 Bitmap 之间绘制可变形纹理 Mesh2D，保持顺序、裁剪、着色、alpha 与保留帧所有权。
 
 ### 已实现的 CPU 声明
 

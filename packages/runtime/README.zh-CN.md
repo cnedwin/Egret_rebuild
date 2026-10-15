@@ -2,6 +2,8 @@
 
 [English](README.md) | 简体中文
 
+白鹭实验性逻辑包，仅依赖 `@egret/contracts`。接收事件描述符、同步清理值及 Engine 注入的窄生命周期端口，提供取消、Scope、显示树、同步派发和 CPU 资源获取／租约，维持 Scope 所有权、对象与 Engine 绑定、父子关系及事件状态。
+
 ## 工程预览 0.52.0 — 显示锚点偏移
 
 现有显示类继承有限 number 属性 `anchorOffsetX` 与 `anchorOffsetY`，默认 +0。指定枢轴使缩放／旋转在坐标、逻辑边界、裁剪、显式命中及帧捕获中保持一致，并保留原零偏移字节。阅读[当前契约](../../knowledge-base/Cns/docs/显示锚点偏移契约.md)和[有限证据](../../knowledge-base/Cns/docs/显示锚点偏移证据.md)。
@@ -17,8 +19,6 @@ DisplayObjectContainer.getChildIndex(child: DisplayObject): number 只读查询�
 继承的 `getBounds` 读取权威接收者局部内容，提供类型专用 `BoundsQueryOptions`、显式节点／图元预算及全新冻结结果，见[边界契约](../../knowledge-base/Cns/docs/显示内容边界契约.md)。
 
 继承的显示坐标查询使用真实显示状态、有界祖先／生命周期检查及可选的 `CoordinateQueryOptions`。 阅读[坐标契约](../../knowledge-base/Cns/docs/显示坐标查询契约.md)。
-
-白鹭实验性逻辑包，仅依赖 `@egret/contracts`。接收事件描述符、同步清理值及 Engine 注入的窄生命周期端口，提供取消、Scope、显示树、同步派发和 CPU 资源获取／租约，维持 Scope 所有权、对象与 Engine 绑定、父子关系及事件状态。
 
 ## 所有权与清理
 

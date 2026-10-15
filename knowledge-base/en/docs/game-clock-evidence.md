@@ -45,7 +45,7 @@ GC19 is explicitly static-only: safe ID admission, finite strictly increasing el
 
 ## Scope and sources
 
-The source is first-party Egret specification-driven, AI-assisted engineering. Existing Engine, Scope, resource and explicit SequencePlayer contracts are reused; no external scheduler implementation or dependency is added. This describes the selected implementation materials, not a global originality or training-provenance certification. First-party code and documentation retain [Apache-2.0](https://github.com/cnedwin/Egret_rebuild/blob/main/LICENSE), and existing third-party notices stay unchanged.
+The source is first-party Egret specification-driven, AI-assisted engineering. Existing Engine, Scope, resource and explicit SequencePlayer contracts are reused; no external scheduler implementation or dependency is added. This attribution covers the selected implementation materials. First-party code and documentation retain [Apache-2.0](https://github.com/cnedwin/Egret_rebuild/blob/main/LICENSE), and existing third-party notices stay unchanged.
 
 The previous **0.24.0** [T1 evidence](text-raster-t1-evidence.md), including recorded PR #9/Main delivery, keeps its own failures and acceptance boundaries. Browser fonts/TextField, automatic foreground/background drivers, Tween/MovieClip, full UI/3D/Spine, phones/Native SDKs, power/performance and complete migration remain open. Final current publication results require their own review and delivery record.
 

@@ -2,7 +2,7 @@
 
 [English](../../en/docs/nine-slice-geometry-ns1-contract.md) | 简体中文
 
-整理于 2026-10-12。**SOURCE_ONLY · NOT_RUN。** 本文定义一个实验性 CPU 几何工厂，为复杂 2D 界面中的固定边框面板服务，范围属于 R002/R004。实现、严格类型检查和渲染器验收需要单独记录的证据。完整 UI/EUI、布局及完整 Spine 支持不在本契约范围内；R020/V020 保持 **OPEN**。
+原始规格截止点：2026-10-12，**SOURCE_ONLY · NOT_RUN**。本文定义一个实验性 CPU 几何工厂，为复杂 2D 界面中的固定边框面板服务，范围属于 R002/R004。实现、严格类型检查和渲染器验收需要单独记录的证据。完整 UI/EUI、布局及完整 Spine 支持不在本契约范围内；R020/V020 保持 **OPEN**。
 
 ## 公共接口与所有权
 
@@ -84,6 +84,6 @@ function resizePanel(mesh: Mesh2D, textureLease: AssetLease<Texture>): void {
 }
 ```
 
-契约评审不建立 CPU/类型/GPU PASS、已交付 API 或跨设备行为。实际实现与独立验证将单独记录，包括真实不可变捕获帧、完整回读缓冲、资源清理和环境边界。本规格不推出手机、原生 SDK、竞品性能比较或完整 UI/Spine 结论。
+契约评审不建立 CPU/类型/GPU PASS、已交付 API 或跨设备行为。实际实现与独立验证需要单独记录，包括真实不可变捕获帧、完整回读缓冲、资源清理和环境边界。本规格不推出手机、原生 SDK、竞品性能比较或完整 UI/Spine 结论。
 
 相关既有契约：[自有纹理几何与 Mesh2D](自有纹理几何与Mesh2D契约.md)、[Scope 所有权](Scope私有所有权.md)。NS1 是基于这些第一方公共契约独立编写的扩展。

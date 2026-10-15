@@ -2,53 +2,17 @@
 
 English | [简体中文](../../Cns/docs/技术白皮书.md)
 
-## Requirement amendment — 2026-10-10: Spine
+Egret is being built around a shared project model, a rendering and resource Runtime, and tools that let people and Agents edit the same game safely. Complex 2D interfaces, animation and lightweight 3D place different demands on ordering, data flow and lifecycle. The architecture gives those workloads separate execution paths while keeping project identity, resource ownership and host contracts consistent.
 
-R020 requires full Spine support. Evaluate official version-matched Spine semantics behind an optional, independently authored Egret rendering/resource/lifecycle adapter. WebGPU/WebGL must preserve meshes, constraints, slot order, clipping, tint and events; ordinary Canvas cannot be assumed feature-equivalent. Non-Spine projects must not acquire the dependency by default. Native implementation and exact dependencies remain candidates; Spine licensing is separate from Egret Apache-2.0. See the [Spine integration boundary and gates](spine-animation-support-and-acceptance.md). V020 has no implementation or acceptance evidence.
+This paper explains the constraints, execution contracts and verification path behind that direction. The [current core preview](core-progress.md) supplies bounded runnable capabilities; complete UI, 3D, Spine, creator and migration outcomes remain development goals.
 
-Version: 0.7 candidate draft · Updated: October 8, 2026. This document refines new Egret's technical tradeoffs, contracts, and verification path; specific selections still await verification and decisions. Round three's real-asset reference chain passed 17 adaptation checks and a separate example smoke check, and runnable research code exists; see [round-three integration](../archive/round-3-research.md#execution). Round two's 64 CPU contract/layout/batch checks (13 events, 25 resources, 18 UI, 8 batches) and 7 local WebGL2 checks, totaling 71, retain their original scope/failure records. Knowledge base 0.7.0 only refined candidate engineering architecture/API/code standards, adding or rerunning no programs at that time. Version 0.8.0 added strict compilation and headless verification of the [first independent core slice](core-framework-implementation-record.md), without rerunning old research programs. Bounded research evidence does not constitute new-engine, complete rendering-prototype, performance, real-host, or legacy-migration acceptance.
-
-[Product requirements](product-requirements.md) · [Engineering plan](engineering-plan.md) · [Research review](../archive/round-1-research.md#research) · [Round-one verification](../archive/round-1-research.md#execution) · [Round-one audit](../archive/round-1-research.md#audit) · [Round-two verification](../archive/round-2-research.md#execution) · [Round-two audit](../archive/round-2-research.md#audit)
+[Product requirements](product-requirements.md) · [Engineering plan](engineering-plan.md) · [Requirements register](../../Cns/registry/需求.json) · [First independent core record](core-framework-implementation-record.md)
 
 ## Design objectives and levels of evidence
 
-Confirmed objectives serve new creators using AI to make games, combining complex 2D UI and lightweight 3D with rendering/runtime at the core, and formally delivering one-click AI migration of old projects. Historical efficiency, interface migration, and tool-integration experience determine research priorities; today's lead still requires measurement. The [requirements register](../../Cns/registry/需求.json) owns specific requirements.
+The product serves new creators and experienced game developers through a common editable project. Rendering and Runtime correctness support complex UI, 2D animation and lightweight 3D; R008 additionally requires complete one-click migration, continued editing and real publication of legacy projects. Historical engineering experience informs test selection, while comparative benefit requires equivalent workloads and image quality.
 
-Use four evidence levels: requirement records establish project objectives; official/static materials describe mechanisms/version scope; independent programs verify actually executed contracts; only complete products and real-device comparisons prove delivery/performance. These levels cannot promote one another. H001–H008 remain `untested`, D001–D016 remain `proposed`; V002 has a local independent headless core, with complete rendering/formal acceptance unfinished. Product implementation for V003–V006 remains `not_started`. The Khronos page cited in round two is an editor's draft reference according to its `editorDraft` identity, not a final approved standard. Specification descriptions are not implementation, performance, or host acceptance.
-
-Round one's 26 architecture-model and 7 local-browser checks remain in the original [technical verification record](../archive/round-1-research.md#execution), without being overwritten by round two. Current round-two evidence and explicit boundaries follow. The 71 registered cases include boundary characterization and counterexamples for wrong strategies; they are not product acceptance items or exhaustive state-space coverage.
-
-| Research group/current result | Actual coverage | Claims this cannot establish |
-| --- | --- | --- |
-| [Events 13/13](../../evidence/reliable-event-probe-results.json) | In-memory outbox, contiguous consumption watermarks, ACK identity, retransmission/deduplication, backpressure, state-reset counterexamples | Persistent delivery, process-crash recovery, cross-process exactly-once, real audio/network bridging |
-| [Resources 25/25](../../evidence/async-resource-probe-results.json) | Independent leases, decode/upload states, task/device generations, late callbacks, explicit fences, failed retries | Real decode, driver upload/release, thread safety, real OOM, resource performance |
-| [Nested UI 18/18](../../evidence/nested-ui-probe-results.json) | Bounded vertical layout, size dependencies, structural editing, rectangular clip/hit tests, external glyph-width fixtures | Complete EUI, real font shaping/IME, arbitrary constraint layout, local-world-update performance |
-| [Independent batches 8/8](../../evidence/batch-state-probe-results.json) | Ordered adjacent batching, independent consumer reads of texture/pipeline/clip, capacity boundaries | Arbitrary masks, filters, complete materials, GPU performance advantage |
-| [Mixed graphics 7/7](../../evidence/mixed-scene-probe-results.json) | Local desktop WebGL2 procedural geometry, actual batched pixels, perspective cube, two rigid geometry segments, frame atlas, fixed-frame recovery | Real character/skeletal asset import, complete animation, WebGPU scene backends, phone/mini-game/native hosts, FPS/power advantages |
-
-## Three development paths and candidate direction
-
-| Path | Benefits | Main costs | Judgment at this stage |
-| --- | --- | --- | --- |
-| TS creation/logic, workload-based rendering, optional WASM/native core | Close to Web development ecosystems, easy AI project operations, on-demand trimming/local replacement | Multi-backend/cross-language contracts still need maintenance; hotspot movement down the stack needs measurement | Retain as candidate prototype direction; local research is not final approval |
-| Move all core code to C++ or Rust/WASM first, then add scripting interfaces | Centralized native resource/computation strategies | Initialization, module size, bridging, debugging, host limits may offset computation gains | Comparison for computation hotspots/native routes; not fully adopted for now |
-| Integrate a mature rendering kernel, building Egret creation/migration layers on it | Some 3D capability can arrive faster | UI semantics, package size, resource lifecycles, platforms, licenses may be constrained by the foundation | Three renderer/glTF/animation is only the executed reference chain. Implement Egret's independent core separately; prospective production dependencies state public-component attribution/cost separately. |
-
-The candidate direction unifies project/resource semantics, separately organizes UI/2D and 3D execution, and shares necessary devices, resources, and scheduling. Actual bottlenecks drive performance optimization. TS, WASM, or WebGPU names alone create no advantage. [Historical Cocos JSB costs](https://docs.cocos.com/creator/3.8/manual/en/advanced-topics/jsb-optimizations.html) and [Emscripten interoperability documentation](https://emscripten.org/docs/porting/connecting_cpp_and_javascript/Interacting-with-code.html) support careful transfer/lifecycle design, not cross-engine speed rankings.
-
-## Mature implementations as an engineering starting point
-
-R012 requires first understanding mature community principles; R015 requires independently written Egret core code and explicit public-dependency attribution. The first real-asset chain uses Three's mature renderer, GLTFLoader, and AnimationMixer, retaining package-size, state-handoff, UI-composition, lifecycle, and replacement boundaries. Babylon/PlayCanvas provide mechanism/replacement comparisons. Ordinary Web text uses mature Canvas whole-line/run measurement and drawing; high-frequency numbers/fixed short labels use controlled atlases. General glTF/KTX2 libraries can be explicit dependencies. Foundational track/skeletal principles need no reinvention; Egret's animation/resource core independently follows its own specifications.
-
-See [open-source reference implementations and adoption plan](open-source-reference-implementations-and-adoption.md) for pinned commits, specific functions, licenses, fixed issues, and Egret adaptation boundaries. The first reference chain pins Three r186 and has run, passing 17/17 bounded adaptation checks; see [round-three integration](../archive/round-3-research.md#execution). Historical r180 source research and the current executed version remain separate. Product/device acceptance still confirms cross-host fonts/IME, complete complex-UI/3D combinations, target package size, and benefits.
-
-## Boundary corrections from real-asset integration
-
-Current work reuses mature glTF import, skeleton cloning, animation sampling, and rendering; Egret adapts shared CPU resources, independent instance poses, same-context UI state handoff, and recovery. Actual skinned frames and text UI after recovery are nonempty and byte-for-byte identical at fixed frames; this covers only one 2-joint cylinder. Graphics availability, uploaded resources, and work interactivity must be separate states; context restored cannot substitute for work acceptance.
-
-Recovery-cleanup regression found old GPU allocation listeners still holding old handles. On loss, the adapter revokes GPU allocations while retaining shared CPU resources; the mature renderer reuploads after recovery. CPU bundle ownership ends only after the final instance exits. These lifecycles cannot share one “destroyed” flag. Initialization failure and exit while an example awaits startup must also clean up or reject late ownership; see the [audit](../archive/round-3-research.md#audit).
-
-The current untrimmed five JS modules and embedded assets total 2,313,137 bytes. Per-file gzip9 totals 461,988 bytes and Brotli11 350,491 bytes, both local estimates only. The initial 2D profile should avoid 3D modules; 3D needs target-build trimming and host-specific initial-package/first-interaction measurements. The reference chain establishes no small-package or fast-loading advantage.
+Evidence has four distinct roles: requirements define the intended product; official and static references explain versioned mechanisms; executed independent programs establish bounded contracts; complete product and device acceptance establish delivery and performance. Each claim is read at the scope and date of its supporting record.
 
 ## Project, logic, and execution state
 
@@ -74,6 +38,16 @@ flowchart TD
 Persistent projects contain source assets, scenes, rules, and business code; runtime logic owns game state/events; GPU/C++ execution mirrors are rebuildable. Permanent project-object identity is separate from runtime-handle slot/generation, preventing incorrect location after destruction, copying, or asynchronous callbacks. Build caches derive from content/tools/target configurations and may be discarded/rebuilt; they cannot become the only originals.
 
 Public APIs retain clear scene/component/UI expression without requiring creators to understand memory layouts. Compact hotspot data, SoA, object pools, and C++ cores are evaluated beneath the API. Independent trimmable adapters/migration rules carry legacy semantics without forcing every new work to include all historical runtime code.
+
+## Three development paths and candidate direction
+
+| Path | Benefits | Main costs | Judgment at this stage |
+| --- | --- | --- | --- |
+| TS creation/logic, workload-based rendering, optional WASM/native core | Close to Web development ecosystems, easy AI project operations, on-demand trimming/local replacement | Multi-backend/cross-language contracts still need maintenance; hotspot movement down the stack needs measurement | Retain as candidate prototype direction; local research is not final approval |
+| Move all core code to C++ or Rust/WASM first, then add scripting interfaces | Centralized native resource/computation strategies | Initialization, module size, bridging, debugging, host limits may offset computation gains | Comparison for computation hotspots/native routes; not fully adopted for now |
+| Integrate a mature rendering kernel, building Egret creation/migration layers on it | Some 3D capability can arrive faster | UI semantics, package size, resource lifecycles, platforms, licenses may be constrained by the foundation | Three renderer/glTF/animation is only the executed reference chain. Implement Egret's independent core separately; prospective production dependencies state public-component attribution/cost separately. |
+
+The candidate direction unifies project/resource semantics, separately organizes UI/2D and 3D execution, and shares necessary devices, resources, and scheduling. Actual bottlenecks drive performance optimization. TS, WASM, or WebGPU names alone create no advantage. [Historical Cocos JSB costs](https://docs.cocos.com/creator/3.8/manual/en/advanced-topics/jsb-optimizations.html) and [Emscripten interoperability documentation](https://emscripten.org/docs/porting/connecting_cpp_and_javascript/Interacting-with-code.html) support careful transfer/lifecycle design, not cross-engine speed rankings.
 
 ## Rendering strategies and frame plans
 
@@ -107,6 +81,10 @@ Reclamation after final release also depends on unfinished use on the current de
 
 Builds generate resources, module/split-package manifests, shader variants, and dependencies by target profiles. Transcoder download/initialization/CPU/upload costs count toward first playability; fonts/icons may have quality exceptions. Web shaders may still compile on clients. Asynchronous pipelines supply waitable readiness/failure points, not zero-stutter promises. [KTX2 technical materials](https://registry.khronos.org/KTX/specs/2.0/ktxspec.v2.html) and the [GPUDevice interface](https://gpuweb.github.io/types/interfaces/GPUDevice) inform mechanisms within their version scope only.
 
+### Full Spine integration
+
+R020 requires full, version-matched Spine semantics behind an optional, independently authored Egret rendering/resource/lifecycle adapter. WebGPU and WebGL must preserve meshes, constraints, slot order, clipping, tint and events. Canvas capability is evaluated explicitly; a limited Canvas path cannot stand in for equivalent full support. Projects without Spine must avoid the dependency by default. Native implementation and exact dependencies remain candidates, and Spine licensing remains separate from Egret's Apache-2.0 license. [V020 and the integration gates](spine-animation-support-and-acceptance.md) remain open at product scope.
+
 ## Backends, bridging, and recovery
 
 GPU contracts are advised to share resource descriptions, material semantics, state, and lifecycles, permitting differences in specific WebGPU/WebGL2 commands/shaders. After probing adapters, check actual device features/limits. WebGL1 needs, shader-language generation, and native providers such as Dawn still await host/cost experiments. Modern API abstractions cannot be forced down to the weakest backend, nor can enhanced paths become independent project systems.
@@ -133,15 +111,7 @@ People, Agents, and visual tools share versioned project commands, reference che
 
 R008 must participate alongside core interfaces in events, coordinates, layout, animation, resources, and storage semantics. Apply deterministic conversion first, then Agent repair, with complete old/new behavior, visuals, state, platform, and performance comparisons for acceptance. R008 retains complete one-click migration, continued editing, and real publication as final formal delivery. Import/build success is intermediate only. V006 depends on V001–V005 and cannot skip V005's workbench/real-publication loop. Unobtainable old baselines record blockers rather than invented perfect execution.
 
-## Tradeoffs and next-round gates
-
-Round two has partly executed events, asynchronous resources, nested UI, independent batch consumption, and actual mixed rendering in bounded models/procedural scenes. These cannot all still be described as “not started.” Procedural mixed content includes only a 12-triangle perspective cube, two rigid bone segments, a Canvas English texture, and a 3×1 colored frame atlas, without real 3D character import, complete 2D skeletal/skinning constraints/attachments, real font quality, or complex animation events.
-
-The first real-asset chain, limited Canvas text, shared state, and recovery have run. Next integrate old 2D skeletal semantic golden samples, complete 3D characters, and complex UI; refine frame/resource/interaction readiness, font providers, and target-build trimming. Egret continues to add adaptation differences and its own contracts only. Converge benchmarks/host/device budgets together, targeting complete 2D skeletal/3D characters, decode/upload, real fonts/input, and mixed UI. Actual fences/device performance receive separate acceptance where measurable. Then measure cold start/input/sustained load on real phones/hosts and add persistent-event/external-side-effect boundaries, complete AI editing, and old/new migration comparisons. Judge H001–H008 or accept/reject/replace D001–D016 only after complete measurements and product acceptance on equivalent content/image quality.
-
-Competitors' modern backends, 2D restructuring, CLIs, and AI tools continue evolving. [This round's review](../archive/round-1-research.md#research) retains their versions, mechanisms, and verification scope. Egret focuses on complex UI/lightweight 3D, stable project semantics, and measured loops. Sustained advantage over the next two to three years requires continuing work/regression verification.
-
-## Candidate backend, compilation, and native Runtime additions
+## Backend, compilation, and native Runtime design
 
 Under the [low-level selection design](graphics-backends-and-native-runtime-selection.md), organize the new architecture around WebGPU resource models, maintain WebGL compatibility, and restrict Canvas to declared offscreen text/limited 2D. Separate stable TS7 and fast preview/type checks/resources/native builds. Introduce Rust by module while retaining C++ dependencies; graphics libraries and VMs remain independent. Record mainline source, formal releases, and actual host acceptance separately. Steam/GPU AI remain extensions and cannot replace first-release complex UI/migration.
 
@@ -149,6 +119,47 @@ Under the [low-level selection design](graphics-backends-and-native-runtime-sele
 
 Execute the [independent implementation and third-party dependency rules](independent-implementation-and-dependency-policy.md). Egret core code independently follows its own specifications; reference research records mechanisms, versions, and applicability limits. Public graphics APIs, VMs, compilers, fonts, and transcoders retain third-party identity. The Three reference chain accurately records use of mature rendering, import, and animation capabilities; execution results do not establish an independent Egret kernel. New modules submit origin records, design rationale, and equivalent-function/image-quality comparisons. Independently implementing known principles does not require inventing new algorithms; Egret objectives and actual evidence determine improvements.
 
+## Mature implementations as an engineering starting point
+
+R012 makes established algorithms and publicly documented mechanisms part of engineering evaluation; R015 requires independent Egret core implementation and explicit third-party attribution. Public standards, general-purpose libraries and reference experiments retain their own identity. The executed research chain uses Three's renderer, GLTFLoader and AnimationMixer; Babylon and PlayCanvas appear as mechanism comparisons. Canvas text measurement/drawing and explicit glTF/KTX2 dependencies are evaluated for their actual contracts, integration costs and licenses.
+
+The [reference-implementation record](open-source-reference-implementations-and-adoption.md) identifies commits, functions, licenses, fixes and adaptation boundaries. The executed Three r186 chain passed 17/17 bounded adaptation checks and a separate smoke check; historical r180 source research remains distinct. These results describe that reference integration, not an independently implemented Egret renderer or complete cross-host acceptance.
+
+## Boundary corrections from real-asset integration
+
+Current work reuses mature glTF import, skeleton cloning, animation sampling, and rendering; Egret adapts shared CPU resources, independent instance poses, same-context UI state handoff, and recovery. Actual skinned frames and text UI after recovery are nonempty and byte-for-byte identical at fixed frames; this covers only one 2-joint cylinder. Graphics availability, uploaded resources, and work interactivity must be separate states; context restored cannot substitute for work acceptance.
+
+Recovery-cleanup regression found old GPU allocation listeners still holding old handles. On loss, the adapter revokes GPU allocations while retaining shared CPU resources; the mature renderer reuploads after recovery. CPU bundle ownership ends only after the final instance exits. These lifecycles cannot share one “destroyed” flag. Initialization failure and exit while an example awaits startup must also clean up or reject late ownership; see the [audit](../archive/round-3-research.md#audit).
+
+The current untrimmed five JS modules and embedded assets total 2,313,137 bytes. Per-file gzip9 totals 461,988 bytes and Brotli11 350,491 bytes, both local estimates only. The initial 2D profile should avoid 3D modules; 3D needs target-build trimming and host-specific initial-package/first-interaction measurements. The reference chain establishes no small-package or fast-loading advantage.
+
+## Historical research and verification scope
+
+The [round-one review](../archive/round-1-research.md#research), [26 architecture-model and 7 local-browser checks](../archive/round-1-research.md#execution), and [audit](../archive/round-1-research.md#audit) remain original research. Round two ran 64 CPU checks (13 events, 25 resources, 18 UI and 8 batches) and 7 local WebGL2 checks, totaling 71, including deliberate counterexamples. [Execution](../archive/round-2-research.md#execution) and [audit](../archive/round-2-research.md#audit) retain their failures and corrections. Round three's [real-asset integration](../archive/round-3-research.md#execution) and [audit](../archive/round-3-research.md#audit) have a separate scope.
+
+Knowledge base 0.7.0 refined architecture, API and code standards without new program runs. Version 0.8.0 added strict compilation and headless verification of the first independent core without rerunning old research. These histories establish neither complete engine acceptance nor host, migration or performance acceptance.
+
+| Research group/current result | Actual coverage | Claims this cannot establish |
+| --- | --- | --- |
+| [Events 13/13](../../evidence/reliable-event-probe-results.json) | In-memory outbox, contiguous consumption watermarks, ACK identity, retransmission/deduplication, backpressure, state-reset counterexamples | Persistent delivery, process-crash recovery, cross-process exactly-once, real audio/network bridging |
+| [Resources 25/25](../../evidence/async-resource-probe-results.json) | Independent leases, decode/upload states, task/device generations, late callbacks, explicit fences, failed retries | Real decode, driver upload/release, thread safety, real OOM, resource performance |
+| [Nested UI 18/18](../../evidence/nested-ui-probe-results.json) | Bounded vertical layout, size dependencies, structural editing, rectangular clip/hit tests, external glyph-width fixtures | Complete EUI, real font shaping/IME, arbitrary constraint layout, local-world-update performance |
+| [Independent batches 8/8](../../evidence/batch-state-probe-results.json) | Ordered adjacent batching, independent consumer reads of texture/pipeline/clip, capacity boundaries | Arbitrary masks, filters, complete materials, GPU performance advantage |
+| [Mixed graphics 7/7](../../evidence/mixed-scene-probe-results.json) | Local desktop WebGL2 procedural geometry, actual batched pixels, perspective cube, two rigid geometry segments, frame atlas, fixed-frame recovery | Real character/skeletal asset import, complete animation, WebGPU scene backends, phone/mini-game/native hosts, FPS/power advantages |
+
+## Tradeoffs and next-round gates
+
+Round two has partly executed events, asynchronous resources, nested UI, independent batch consumption, and actual mixed rendering in bounded models/procedural scenes. These cannot all still be described as “not started.” Procedural mixed content includes only a 12-triangle perspective cube, two rigid bone segments, a Canvas English texture, and a 3×1 colored frame atlas, without real 3D character import, complete 2D skeletal/skinning constraints/attachments, real font quality, or complex animation events.
+
+The first real-asset chain, limited Canvas text, shared state, and recovery have run. Next integrate old 2D skeletal semantic golden samples, complete 3D characters, and complex UI; refine frame/resource/interaction readiness, font providers, and target-build trimming. Egret continues to add adaptation differences and its own contracts only. Converge benchmarks/host/device budgets together, targeting complete 2D skeletal/3D characters, decode/upload, real fonts/input, and mixed UI. Actual fences/device performance receive separate acceptance where measurable. Then measure cold start/input/sustained load on real phones/hosts and add persistent-event/external-side-effect boundaries, complete AI editing, and old/new migration comparisons. Judge H001–H008 or accept/reject/replace D001–D016 only after complete measurements and product acceptance on equivalent content/image quality.
+
+Versioned external comparisons remain in the [research record](../archive/round-1-research.md#research). Future decisions depend on measured correctness, startup, responsiveness, sustained load and ownership behavior on the intended hosts, with equivalent content and quality. No projected multi-year advantage is an acceptance result.
+
 ## Engineering structure and public code contracts
 
-R016 confirms modern engineering and Egret-style requirements. D016's [engineering structure](engineering-architecture-and-project-structure.md), [API and naming](public-api-design-and-naming.md), and [code standards and gates](code-standards-and-quality-gates.md) refine package dependencies, public entry points, Scope/leases, events, native boundaries, Agent transactions, and quality checks. Names/APIs are candidates. The [first independent core slice](core-framework-implementation-record.md) has been strictly compiled and verified for the headless subset/package boundaries. Complete APIs, GPU/platforms, CI, and complete migration have not passed acceptance.
+R016 connects the [engineering structure](engineering-architecture-and-project-structure.md), [public API and naming](public-api-design-and-naming.md), and [quality gates](code-standards-and-quality-gates.md). Each implemented package freezes its actual entry points, Scope/lease contracts, events and failure behavior. Broader design names remain candidates until their package is selected and verified. The bounded core record and current 0.54 delivery coexist with open complete-platform CI and migration acceptance.
+
+
+## Design baseline notes
+
+The original technical design was dated October 8, 2026, with R020 added October 10. At that cutoff H001–H008 were untested, D001–D016 proposed, V002 had a local headless core with wider acceptance unfinished and V003–V006 were not_started. Later narrow packages do not rewrite those observations. The cited Khronos editorDraft remains a draft reference.

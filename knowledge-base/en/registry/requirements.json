@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "updatedAt": "2026-10-15",
-  "authority": "Goals confirmed by the user in this project discussion; see the delivery registry separately for implementation and acceptance",
+  "authority": "Project requirements baseline; implementation progress and acceptance results are maintained in the delivery registry.",
   "items": [
     {
       "id": "R001",
@@ -304,7 +304,7 @@
     {
       "id": "R010",
       "title": "Iteration research and independent positioning",
-      "statement": "Study the last two years of iteration in Cocos, Laya, and Godot and changes in the industry ecosystem; learn problem-solving approaches to establish Egret's independent positioning and differentiated strengths.",
+      "statement": "Study the recent two-year evolution of major open-source game engines and their ecosystems, analyze technical constraints and solution mechanisms, and establish Egret's independent positioning and differentiated strengths.",
       "status": "confirmed",
       "sourceIds": [
         "S001"
@@ -1736,7 +1736,7 @@
   },
   "_localization": {
     "canonicalSource": "需求.json",
-    "canonicalSha256": "0f25caf0acf698a001c6e21c59d40398436908650a718b3f9ce81e047f2c8d97",
+    "canonicalSha256": "966db3bb4d9d779c842e929fc44794edd839742c0615e06237f9e050b323d5b3",
     "role": "read_only_translation",
     "language": "en"
   },

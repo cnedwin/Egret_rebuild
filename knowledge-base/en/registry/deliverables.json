@@ -7045,7 +7045,7 @@
   },
   "_localization": {
     "canonicalSource": "交付.json",
-    "canonicalSha256": "2437570c2cdb57870be3e1e4b3e7311bf78e1c58e240d6d9499df6db1cbd71cb",
+    "canonicalSha256": "5dc581297289230d5dea25b0e991e3aa9bd29f88d4c817e91ad144f22e46110f",
     "role": "read_only_translation",
     "language": "en"
   },
@@ -7297,6 +7297,22 @@
     "independentReview": {
       "bytes": 64282,
       "sha256": "6c281311c1547b764fd315c38359ef3ba097da6cf2e928e5d257dad6f4bd2b86",
+      "identityOnlyNotDistributed": true
+    },
+    "historicalPublicPendingCutoffsPreserved": true,
+    "remoteCIPassClaim": false
+  },
+  "bitmapButtonDeliveryActualSuccessor": {
+    "engineeringPreview": "0.54.0",
+    "recordedOn": "2026-10-15",
+    "status": "ACTUAL_PR_MERGE_AND_PRIMARY_MAIN_SYNC_ACCEPTED",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/42",
+    "featureHead": "bf6e9217f8b855bc61cfd7f6b4d36e3a97b527ad",
+    "main": "efd2a9c91fb6cfe633214b50b82cf7952941452a",
+    "tree": "2b39b8439a5b30ce3572edc162e8a7a916a76185",
+    "independentReview": {
+      "bytes": 14778,
+      "sha256": "702721eff05be5150c39e6ab19aca367517f7dbd65397b15387592f722199663",
       "identityOnlyNotDistributed": true
     },
     "historicalPublicPendingCutoffsPreserved": true,

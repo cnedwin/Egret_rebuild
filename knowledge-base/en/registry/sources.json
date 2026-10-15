@@ -5,10 +5,10 @@
   "items": [
     {
       "id": "S001",
-      "title": "User-confirmed project requirements",
+      "title": "Project requirements baseline",
       "type": "user_confirmation",
       "researchCheckedAt": "2026-10-08",
-      "scope": "User confirmations in this Egret project conversation enter R001 through R012; R012 establishes the research/engineering principle of prioritizing open-source implementations.",
+      "scope": "Project requirement records cover R001 through R012; R012 defines research and engineering principles based on analysis of open-source implementations.",
       "limit": "Does not approve specific selections, establish functionality, confirm team/budget, or authorize public release.",
       "urls": [],
       "doc": "en/docs/design-philosophy-and-positioning.md"
@@ -29,7 +29,7 @@
       "type": "official_repository",
       "researchCheckedAt": "2026-10-08",
       "scope": "Official design intent of TypeScript APIs resembling AS3.",
-      "limit": "The public repository does not establish the completeness/latest state of the user's private projects; review applicable license scope separately.",
+      "limit": "The public repository does not establish the completeness or recency of the original historical project packages; license applicability is checked separately.",
       "urls": [
         "https://github.com/egret-labs/egret-core#typescript"
       ],
@@ -158,7 +158,7 @@
       "title": "Static research summary of original Egret projects",
       "type": "private_archive_static_review",
       "researchCheckedAt": "2026-10-08",
-      "scope": "Original engineering package supplied by the user; inventory of version branches/modules, EUI updates/reuse, resource tools, and historical adapters.",
+      "scope": "Original project packages support the inventory of versions, branches, modules, EUI update/reuse, resource tools and historical adapters.",
       "limit": "Original packages and line-level evidence are outside public candidate directories; not built or executed, and completeness of all products is unproven.",
       "urls": [],
       "doc": "en/docs/historical-assets-and-research-boundaries.md"
@@ -168,7 +168,7 @@
       "title": "Static research summary of additional Runtime",
       "type": "private_archive_static_review",
       "researchCheckedAt": "2026-10-08",
-      "scope": "Subsequent Runtime supplied by the user; static mechanisms for bridging, display lists, GLES, resources, and Harmony projects.",
+      "scope": "The later Runtime project supports static analysis of bridging, display lists, GLES, resources and Harmony mechanisms.",
       "limit": "Does not establish all-platform completeness/current buildability/performance advantages/licenses; source and signing configuration are not public.",
       "urls": [],
       "doc": "en/docs/historical-assets-and-research-boundaries.md"
@@ -191,7 +191,7 @@
       "type": "official_sources_refreshed",
       "researchCheckedAt": "2026-10-08",
       "scope": "12 key claims and 27 official sources; checked Cocos/Laya/Godot versions/evolution, CLI/AI tools, Web backends, and interoperability; see research JSON for individual versions/dates.",
-      "limit": "All are documentary/source statements, without competitor execution or cross-engine performance tests; retain Laya date conflicts and IDE items not reverified; failed access is not interpreted as missing capabilities.",
+      "limit": "Conclusions cover documentation and source declarations only; comparison engines and cross-engine performance tests were not run. Laya date conflicts and unverified IDE items remain; access failures do not establish missing capabilities.",
       "urls": [
         "https://www.cocos.com/creator-download",
         "https://github.com/cocos/cocos4/releases/tag/4.0.0-alpha.34",
@@ -264,7 +264,7 @@
       "title": "Official debugging reference for WebGL context-recovery timing",
       "type": "official_specification_and_source",
       "researchCheckedAt": "2026-10-08",
-      "scope": "Khronos WEBGL_lose_context and Chromium public source allowing recovery after event dispatch support the explanation of delaying recovery requests in this test.",
+      "scope": "Khronos WEBGL_lose_context and Chromium source permitting recovery after public event dispatch explain the experiment's deferred recovery request.",
       "limit": "Reading Chromium HEAD is not an exact binary call trace of current Edge; results fit the explanation without proving a unique root cause across all browsers.",
       "urls": [
         "https://registry.khronos.org/webgl/extensions/WEBGL_lose_context/",
@@ -494,8 +494,8 @@
       "title": "Open-source reference integration and independent read-only AI audit",
       "type": "independent_AI_source_review_and_integration",
       "researchCheckedAt": "2026-10-08",
-      "scope": "Reviewed key source/tag mappings, separating original-source facts, Egret proposals, adaptation requirements, and unknown performance; retained original reports and NFC wording corrections, and established reuse/verification responsibilities.",
-      "limit": "Not human approval or code-execution acceptance; no new probes, upstream installation, or performance experiments this round. Original two-round results do not gain coverage.",
+      "scope": "Review of key source and tag mappings distinguishes original facts, Egret design, adapter conditions and performance unknowns; original reports and the NFC wording correction are retained, with component-adoption and verification responsibilities defined.",
+      "limit": "Material review does not establish code-execution acceptance. That research added no probe, upstream installation or performance experiment, and the two earlier rounds retain their coverage.",
       "urls": [],
       "artifacts": [
         "evidence/reference-independent-audit.json",
@@ -563,7 +563,7 @@
       "title": "Founder's additional backend, compilation, and native-extension intent",
       "type": "user_confirmed_context",
       "scope": "Canvas-to-WebGL, WASM exploration, and historical compilation-optimization experience; intent to research native App/SDK and future desktop, graphics APIs, and GPU AI.",
-      "limit": "Historical efficiency is a user statement; new-technology adoption, numerical budgets, and an initial Steam release are unapproved.",
+      "limit": "Historical efficiency comes from the founder's account; new technology choices, numerical budgets and an initial Steam release remain undecided.",
       "urls": [],
       "artifacts": [
         "evidence/backend-founder-context.json"
@@ -757,7 +757,7 @@
       "title": "Current Google Playground/Unity Spark capabilities and future plans",
       "type": "official_product_documentation_and_announcement_research",
       "scope": "10/7 launch, source ZIP and draft/public versions in current help materials; Spark plans for professional 3D, runtime, and asset ecosystems.",
-      "limit": "Separate current Playground from future Spark; export does not establish platform open source, self-hosting, or project round trips. No generation/execution/export measurements; does not establish that competitors lack unpublished capabilities.",
+      "limit": "Current Playground and future Spark are recorded separately. Export does not establish platform source availability, self-hosting or project round-tripping. Generation, execution and export were not tested, and undisclosed capabilities were not assessed.",
       "urls": [
         "https://blog.google/innovation-and-ai/technology/ai/playground-experimental-gaming-platform/",
         "https://playground.google/helpcenter",
@@ -773,7 +773,7 @@
     },
     {
       "id": "S042",
-      "title": "Founder requirement for modern engineering architecture/APIs and Egret naming",
+      "title": "Engineering architecture, API and Egret naming conventions",
       "type": "founder_instruction",
       "scope": "Fully redefine technical architecture/code standards, retain Egret naming habits, and modernize project structure/APIs while preserving familiarity.",
       "limit": "Confirms goals without automatically accepting specific selections/code gates or establishing implementation.",
@@ -819,7 +819,7 @@
     },
     {
       "id": "S045",
-      "title": "Founder requirements to start core implementation and evidence checks",
+      "title": "Core implementation and evidence-review scope",
       "type": "founder_instruction",
       "scope": "Begin implementing core framework/logic and investigate evidence gaps and research subjects.",
       "limit": "Does not accept the complete technical-candidate set, authorize public release, or predict performance/full-product success.",
@@ -888,7 +888,7 @@
       "id": "S048",
       "title": "Independent code/integration review evidence for the core slice",
       "type": "independent_AI_scoped_code_and_document_review",
-      "scope": "Initial review of all new core files, necessary revisions, limited final review, and input hashes; three consistency corrections from document pre-review and bounded post-generation checks are listed separately.",
+      "scope": "Initial core-source review, necessary repairs, scoped final review and input hashes; three document-consistency corrections and post-generation checks are recorded separately.",
       "limit": "Limited code-quality/specification and document-evidence consistency checks, without authority to grant product/performance/originality/license acceptance.",
       "researchCheckedAt": "2026-10-08",
       "artifacts": [
@@ -901,7 +901,7 @@
     },
     {
       "id": "S049",
-      "title": "Early public collaboration and community communication requirements",
+      "title": "Early-development public collaboration and community communication",
       "type": "project_owner_instruction",
       "scope": "Use public collaboration for code, design processes, documentation, and the knowledge base from early development. Communicate professionally/objectively, protect communication/materials unsuitable for publication, retain research references/acknowledgements, and demonstrate Egret's independent design/innovation.",
       "limit": "Confirms public-development direction and communication standards; repository accounts, licenses, and actual publication status are registered separately, without changing technical/product acceptance.",
@@ -927,7 +927,7 @@
     },
     {
       "id": "S051",
-      "title": "Bilingual public materials and initial GitHub submission requirements",
+      "title": "Bilingual public materials and initial GitHub delivery",
       "type": "project_owner_instruction",
       "scope": "Before every GitHub push, complete English comments for critical code, organize all publishable documents/knowledge-base content, and provide complete Chinese/English reading documents and shared registered-status views. After completing initial core source, documentation, and the knowledge base, submit to the designated public repository.",
       "limit": "Establishes bilingual/pre-push steps without expanding technical implementation, performance, migration, or host acceptance. Actual submission depends on verified authorization for remote writes.",
@@ -977,7 +977,7 @@
       "id": "S055",
       "title": "Scoped display/frame and Canvas independent review",
       "type": "independent_ai_code_and_contract_review",
-      "scope": "Scoped independent implementation review after the cross-realm correction plus final branch review of changed bilingual semantics/evidence identities; author public/translation self-review is separate and this metadata scoped re-review remains pending.",
+      "scope": "Scoped implementation review after the cross-realm correction and final-branch bilingual meaning/evidence-identity review are recorded separately; author text review and the then-pending metadata review retain their own cutoffs.",
       "limit": "No GPU, Native, physical phone, device/performance benchmark, full UI/textures/animation/3D, complete migration, CI or full-product acceptance. Browser results are desktop observations, not universal allocation limits.",
       "researchCheckedAt": "2026-10-09",
       "artifacts": [
@@ -1109,7 +1109,7 @@
       "id": "S066",
       "title": "Project owner confirms complete Spine support",
       "type": "project_owner_instruction",
-      "scope": "The new product requirement that the engine must perfectly support Spine animation.",
+      "scope": "Product requirement for complete Spine animation support.",
       "limit": "Requirement confirmation is not implementation, dependency adoption or compatibility acceptance; it does not establish performance or all-version support.",
       "researchCheckedAt": "2026-10-10",
       "doc": "en/docs/spine-animation-support-and-acceptance.md"
@@ -2809,7 +2809,7 @@
       ],
       "title": "Independent repository identity tooling and bounded actual verification",
       "scope": "First-party path/byte helper, publication and diagnostic integrations, authored text writers and repository hygiene enforcement. Official Git documentation supplies attribute semantics, with independent Egret implementation and bounded review.",
-      "limit": "Bounded identity, writer, isolated Git and working-data execution accepted; complete local gates, current push/PR/Main and remote CI remain pending. This establishes no engine runtime or device performance acceptance.",
+      "limit": "The scoped identity, writing, isolated Git and working-data execution were accepted. Complete local checks, push/PR/Main and remote CI were pending at that record's cutoff; it does not establish engine-runtime or device-performance acceptance.",
       "doc": "en/docs/repository-identity-and-line-endings.md",
       "license": "Apache-2.0",
       "firstPartySourcePaths": [
@@ -6762,7 +6762,7 @@
   },
   "_localization": {
     "canonicalSource": "来源.json",
-    "canonicalSha256": "73714af46938b43f66990a96568f0593d1dc753083f2615688c9a7e982100c81",
+    "canonicalSha256": "7db5fc67136bd66b56a67206e0d6bd7c4231824a30239f2212add44293fd2833",
     "role": "read_only_translation",
     "language": "en"
   },
@@ -7014,6 +7014,22 @@
     "independentReview": {
       "bytes": 64282,
       "sha256": "6c281311c1547b764fd315c38359ef3ba097da6cf2e928e5d257dad6f4bd2b86",
+      "identityOnlyNotDistributed": true
+    },
+    "historicalPublicPendingCutoffsPreserved": true,
+    "remoteCIPassClaim": false
+  },
+  "bitmapButtonDeliveryActualSuccessor": {
+    "engineeringPreview": "0.54.0",
+    "recordedOn": "2026-10-15",
+    "status": "ACTUAL_PR_MERGE_AND_PRIMARY_MAIN_SYNC_ACCEPTED",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/42",
+    "featureHead": "bf6e9217f8b855bc61cfd7f6b4d36e3a97b527ad",
+    "main": "efd2a9c91fb6cfe633214b50b82cf7952941452a",
+    "tree": "2b39b8439a5b30ce3572edc162e8a7a916a76185",
+    "independentReview": {
+      "bytes": 14778,
+      "sha256": "702721eff05be5150c39e6ab19aca367517f7dbd65397b15387592f722199663",
       "identityOnlyNotDistributed": true
     },
     "historicalPublicPendingCutoffsPreserved": true,

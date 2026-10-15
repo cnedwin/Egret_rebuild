@@ -12,54 +12,41 @@ Years later, as times change and technology advances, many developers continue t
 
 多年以后，时代变迁，技术革新，依然有很多开发者在鼓励我们。我希望借助 AI 和社区的力量，重建这个游戏引擎。
 
-<!-- BB-0.54.0-BEGIN -->
-## 工程预览 0.54.0 — 共享输入位图按钮
+## 我们正在构建的产品
 
-**S108 / V059 · 2026-10-15。** 一个可复用二维按钮将真实 Bitmap、借用图集租约、Scope 生命周期和共享主鼠标输入连接起来。按下、更改启用状态和释放均提交皮肤状态；完整 activate 路由后的最终命中复查决定是否执行一次激活回调。[双按钮示例](examples/bitmap-button/README.zh-CN.md)提供显式 Canvas/WebGPU、启用/禁用、释放/重建及保存/实时画面。
+白鹭引擎面向使用 AI 创作游戏的新创作者，也服务于希望将手游制作经验带到 Web 的开发者。产品以复杂二维界面和轻量三维内容为中心，通过精简的渲染与运行时、明确的资源所有权，以及代码、可视化工具和 Agent 共用的工程模型，支撑持续创作。
 
-独立验收覆盖九个本地代码阶段、核心 3218/3218、保留 Spine 源码 160/160；聚焦检查为 163/163，类型正例 0 诊断、负例完整匹配 19 项。独立验收的桌面 Edge 155.0.4283.45 Canvas/WebGPU 执行完成 38 次主读回和 87552 通道比较，容差 0、差异 0。新鲜 Canvas 对照另有 2 次读回、主案例计分 0；刻意错误的蓝色预期相差 48 像素和 96 通道。最终公开双语评审、正常 prepush、必需钩子及本轮交付仍为 PENDING。上述计数范围重叠，不能相加。
+当前仓库提供可运行的工程预览。显示树、资源租约、动画、浏览器输入及部分 Canvas/WebGPU 渲染路径，均有各自的接口契约和验证范围。完整 UI 工具、完整 Spine 支持、目标平台 SDK 和旧工程自动迁移仍在开发中。
 
-参阅[契约](knowledge-base/Cns/docs/位图按钮契约.md)、[核验](knowledge-base/Cns/docs/位图按钮核验.md)与[剩余计划](knowledge-base/Cns/docs/位图按钮实施计划.md)。前一工作包 0.53 已通过 [PR #41](https://github.com/cnedwin/Egret_rebuild/pull/41) 交付；下方旧章节保留原始截点，包括当时的 PENDING。完整 EUI/布局、完整 Spine R020/V020、迁移 R008/V006、高级 3D、AI、设备和性能仍开放或未验证。
+## 当前版本
 
-### 最近五项有用变化
+工程预览 **0.54.0** 已通过 [PR #42](https://github.com/cnedwin/Egret_rebuild/pull/42) 合入主干。工作区包仍为 private、版本 0.0.0，宿主协议仍为 1.0。[能力与进展总览](knowledge-base/Cns/docs/core-progress.md)说明各子系统已实现的内容和验证范围。
 
-| 预览 | 可用能力 |
-| --- | --- |
-| 0.54.0 | 可复用共享输入位图按钮和双控件示例。 |
-| 0.53.0 | 可运行的资源、图集、时钟动画与显示组合。 |
-| 0.52.0 | 捕获、坐标、边界和命中共同使用作者枢轴。 |
-| 0.51.0 | 按索引插入及同父级定位、跨父级重挂载。 |
-| 0.50.0 | 查询真实当前直接子项的顺序。 |
-<!-- BB-0.54.0-END -->
+## 最近五次更新
 
-<!-- AAP-0.53.0-BEGIN -->
-## 构建并运行当前示例
+| Version / 版本 | Main change | 主要变化 |
+| --- | --- | --- |
+| 0.54.0 | Shared-input bitmap buttons with pressed/disabled skins and final activation picking | 共享输入位图按钮、按下与禁用皮肤、激活前最终命中复查 |
+| 0.53.0 | Runnable atlas/animation playground with explicit pivots and saved/live frames | 图集与动画可运行示例、显式锚点和保存／实时画面 |
+| 0.52.0 | Display anchor offsets shared by rendering, coordinates and picking | 渲染、坐标转换与拾取共用显示对象锚点 |
+| 0.51.0 | Indexed display-child insertion with preserved ownership | 按索引插入显示子对象并保持所有权语义 |
+| 0.50.0 | Query the current index of a direct display child | 查询直接显示子对象的当前索引 |
 
-工程预览 **0.53.0** · S107 / V058。[锚点图集示例](examples/anchored-atlas-playback/README.zh-CN.md) 获取唯一真实资源租约、创建红／蓝具名帧、通过 Engine 时钟播放，并围绕指定枢轴放置 Bitmap。手动前进／暂停／恢复与保存／当前呈现，使资源 → 动画 → 显示 → 宿主完整链路可见。
+[完整变更记录](knowledge-base/Cns/CHANGELOG.md) · [工程规划](knowledge-base/Cns/docs/工程规划.md)
 
-使用固定 Node 构建（`node tools/build.mjs`），通过本地 HTTP 提供仓库根目录，再打开 `/examples/anchored-atlas-playback/`。默认 Canvas；显式选择 WebGPU，不可用时明确显示。不新增自动定时器、Engine API 或依赖。
+## 构建与运行示例
 
-当前独立 CPU／代码接受覆盖 16 项公开消费者测试、全部 9 个代码阶段、Core 3147/3147 和保留 Spine 源码 160/160。桌面 Edge 155.0.4283.45 Canvas/WebGPU 验收覆盖 14 次主读取、32256 通道，在容差 0 下零差异；独立全新 Canvas 对照计入 0 个主案例。公开源码／双语评审、正常完整 prepush、强制 hook 与新增 0.53 交付仍为 PENDING，不声明远端 CI PASS。
+使用已记录的 Node.js 24.19.0、pnpm 11.25.0 和 TypeScript 7.0.2 工具链，在仓库根目录执行：
 
-阅读[契约](knowledge-base/Cns/docs/锚点图集播放契约.md)、[证据](knowledge-base/Cns/docs/锚点图集播放证据.md)和[剩余计划](knowledge-base/Cns/docs/锚点图集播放工程计划.md)。前次 0.52 枢轴包已通过 [PR #40](https://github.com/cnedwin/Egret_rebuild/pull/40) 交付，早先的 PENDING 段落保留为历史。
+    pnpm install --frozen-lockfile --ignore-scripts
+    git config --local core.hooksPath .githooks
+    node tools/verify.mjs
+    node examples/headless.mjs
 
-## 最近五项变化
+[双按钮示例](examples/bitmap-button/README.zh-CN.md)展示 Canvas/WebGPU 交互，[图集示例](examples/anchored-atlas-playback/README.zh-CN.md)展示资源与动画。各自指南说明本地 HTTP 服务与支持的浏览器运行方式。
 
-| 预览 | 实用能力 |
-| --- | --- |
-| 0.53.0 | [可运行锚点图集组合](examples/anchored-atlas-playback/README.zh-CN.md)，具有显式时间和唯一资源所有权链。 |
-| 0.52.0 | [显示枢轴](knowledge-base/Cns/docs/显示锚点偏移契约.md)，由捕获、坐标、边界、裁剪与拾取共同使用。 |
-| 0.51.0 | [按索引插入子节点](knowledge-base/Cns/docs/容器按索引插入契约.md)，支持同父最终位置与换父节点。 |
-| 0.50.0 | [直接子节点索引查询](knowledge-base/Cns/docs/容器子节点索引契约.md)，读取真实当前顺序。 |
-| 0.49.0 | [分离全部直接子节点](knowledge-base/Cns/docs/容器清空子节点契约.md)，保留其清理所有者。 |
+## 阅读与参与
 
-参阅[完整更新日志](knowledge-base/Cns/CHANGELOG.md)、[知识库](knowledge-base/Cns/README.md)及[截至 0.52 的 README 原始快照](knowledge-base/Cns/archive/根说明截至0.52.0.md.txt)。快照保留完整旧 README 字节，包括原链接与记录截止点；它是历史原始数据，不是当前导航。
+建议从[产品定位](knowledge-base/Cns/docs/设计理念与定位.md)、[产品需求](knowledge-base/Cns/docs/产品需求说明书.md)和[技术白皮书](knowledge-base/Cns/docs/技术白皮书.md)开始，再通过[文档导航](DOCUMENTATION.zh-CN.md)查阅接口契约与验证记录。
 
-## 范围与贡献
-
-本项目依据 Egret 规格与熟悉 API 独立开展社区重建，采用第一方 Apache-2.0 代码、明确归属的 AI 辅助，并将源码／执行／交付证据分别记录。包保持私有 0.0.0，宿主协议为 1.0。阅读[贡献指引](CONTRIBUTING.zh-CN.md)和[致谢](ACKNOWLEDGEMENTS.zh-CN.md)。
-
-完整 Spine R020/V020、迁移 R008/V006、完整 EUI／布局、高级 3D、AI、字体／IME、目标设备／Native SDK 及性能保持 OPEN 或未验证；当前示例和有界检查不等于完整产品接受。
-
-两份精确原始档案：[English raw](knowledge-base/en/archive/root-readme-through-0.52.0.md.txt) · [Cns raw](knowledge-base/Cns/archive/根说明截至0.52.0.md.txt)。它们是未改写的历史数据，不是新翻译的阅读页。
-<!-- AAP-0.53.0-END -->
+社区贡献遵循[贡献指南](CONTRIBUTING.zh-CN.md)。第一方代码与文档采用 [Apache-2.0](LICENSE)，依赖与研究资产保留各自声明。[鸣谢](ACKNOWLEDGEMENTS.zh-CN.md)和[来源记录](source-origin.json)说明相关项目及 AI 辅助工作的实际角色。

@@ -74,6 +74,6 @@ Cleanup that cannot be proved complete is quarantined without invented refunds o
 
 ## Independence and later work
 
-This first-party design composes existing Egret resource, image, ownership and cancellation contracts, with AI-assisted implementation. Its process declaration is bounded provenance, not a certification of global originality or model training sources. Code and documentation retain Apache-2.0; existing third-party notices and research rights remain separate. Native font backends require separate design, provenance and acceptance.
+This first-party design composes existing Egret resource, image, ownership and cancellation contracts, with AI-assisted implementation. This attribution covers the identified implementation and reused contracts. Code and documentation retain Apache-2.0; existing third-party notices and research rights remain separate. Native font backends require separate design, provenance and acceptance.
 
 T2 must establish actual browser fonts, raster surfaces/background work, TextField/layout and target-platform behavior. Spine, complete UI/3D, phones, Native SDKs, shaping, performance and full migration retain their existing open requirements. Earlier 0.23.0 Mesh2D/native evidence is historical rendering evidence and cannot prove text acceptance.

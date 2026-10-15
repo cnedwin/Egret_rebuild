@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/Canvas文字WC1.md) · [T1 cache](text-raster-t1-contract.md) · [TF1 display](text-field-tf1-contract.md)
 
-Engineering preview **0.28.0** adds an explicit Canvas text provider for the existing TextRasterCache, TextField, Scope, Engine and CanvasHost. Current CPU/type checks, complete current verification and fixed native Canvas observations passed within the scopes below; independent bilingual meaning review, the mandatory Git push hook and delivery remain separate. Workspace packages remain private `0.0.0` and protocol pins remain `1.0`.
+Engineering preview **0.28.0** adds an explicit Canvas text provider for the existing TextRasterCache, TextField, Scope, Engine and CanvasHost. Current CPU/type checks, complete current verification and fixed native Canvas observations passed within the scopes below; independent bilingual meaning review, the mandatory Git push hook and delivery remain separate. Workspace packages remain private `0.0.0` and protocol pins remain `1.0`. The execution and pending-delivery statuses below belong to this original 0.28.0 record; they are not a fresh delivery assessment.
 
 ## Public use and font ownership
 

@@ -12,4 +12,4 @@ The verifier uses default headless Edge at 900 × 700 with deviceScaleFactor 2, 
 node tools/verify-mouse-input-canvas.mjs --repository <absolute-built-repository> --playwright <absolute-installed-playwright-package> --channel msedge --output <fresh-absolute-directory-outside-repository>
 ```
 
-Source preparation alone establishes no behavior result. Actual results and source identities belong in the generated receipt. This desktop subset does not establish touch/pen, capture, full UI, phones, Native SDKs or performance. Successful listener calls and post-close inertness do not establish browser/OS memory reclamation.
+Use the generated receipt to identify the executed build, its source identities and actual behavior result. This desktop subset does not establish touch/pen, capture, full UI, phones, Native SDKs or performance. Successful listener calls and post-close inertness do not establish browser/OS memory reclamation.

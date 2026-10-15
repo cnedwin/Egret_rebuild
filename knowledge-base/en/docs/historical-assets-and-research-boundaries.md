@@ -19,7 +19,7 @@ The public Egret repository also describes the similarity between TypeScript API
 
 These are read-only static summaries. The projects were not executed, dependencies were not installed, and neither old nor new engines were built. The first package does not contain all latest source code; the additional Runtime package does not establish completeness across all platforms and historical tools.
 
-## Mechanisms to study and reuse rules
+## Research mechanisms and adoption conditions
 
 EUI phased invalidation and component reuse are suitable for complex-UI prototypes; native bulk commands are suitable for researching fixed cross-language costs; resource predownload and caching are suitable for researching the first playable experience. Benefits from adjacent batching, caching, and native execution depend on draw order, invalidation rate, uploads, memory, and bridging, and require end-to-end measurement.
 

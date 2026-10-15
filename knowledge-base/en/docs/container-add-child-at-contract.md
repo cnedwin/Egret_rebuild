@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/容器按索引插入契约.md)
 
-**0.51.0 R3 Source publication draft · S105 / V056 · 2026-10-14.** The unchanged accepted contract is now supported by independently accepted current code verification: all 9 phases, Core 3113/3113 and Spine source checks 160/160; original strict ADI 0/10, CGI 0/12 and DCA 0/10 vectors. Bounded desktop opaque Canvas/WebGPU Native execution is independently accepted: 10 main raw readbacks and 23040 channel comparisons. Public/source/bilingual review, prepush/hooks and 0.51 delivery remain PENDING. Earlier cutoffs and the failed first full attempt are retained in the paired evidence.
+**Historical 0.51.0 R3 verification snapshot · S105 / V056 · 2026-10-14.** At this checkpoint, independent code verification supported the contract: all 9 phases, Core 3113/3113 and Spine source checks 160/160; original strict ADI 0/10, CGI 0/12 and DCA 0/10 vectors. Independently accepted bounded desktop opaque Canvas/WebGPU execution comprised 10 main raw readbacks and 23040 channel comparisons. Public/source/bilingual review, prepush/hooks and 0.51 delivery were PENDING at this historical cutoff; that status does not describe current delivery. Earlier cutoffs and the failed first full attempt remain in the paired evidence.
 
 ## Public operation
 

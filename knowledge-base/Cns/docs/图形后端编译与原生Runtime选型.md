@@ -2,11 +2,11 @@
 
 [English](../../en/docs/graphics-backends-and-native-runtime-selection.md) | 简体中文
 
-版本：0.1 候选设计 · 所属知识库：0.6.1 · 更新：2026年10月8日。
+图形后端须在真实宿主约束中保留作品的渲染语义。设计方向采用显式WebGPU式资源、pipeline和pass，维护WebGL兼容执行器，单独声明Canvas文字/离屏或有限二维profile；由一个选定主surface owner协调合成与资源生命周期。
 
-新白鹭建议采用面向 WebGPU 的图形架构，同时维护 WebGL 兼容执行器；Canvas 主要提供文字与离屏内容，有限纯 2D 回退单独定义。开发语言继续采用 TypeScript，把快速预览、类型检查、资源构建和原生编译拆开。原生 Runtime 先建立可替换的图形、脚本与宿主接口，再按收益逐模块引入 Rust，保留 C++ 成熟依赖。桌面扩展与 GPU AI 通过可选能力接入，不要求每个作品携带全部模块。
+开发反馈和运行执行具有不同成本。TypeScript预览、诊断、资源构建与原生编译分为独立流水线。原生接入提供可替换图形、脚本及宿主接口，Rust模块与C++依赖按具体职责选择；桌面服务和GPU-AI增强保持可选。
 
-目标是复杂 UI、2D 动画和轻量 3D 的完整作品体验、快速迭代及低加载成本。S033补充的历史编译时间属于历史经验；Rust、WebGPU 或新编译器的名称不能证明今天的性能收益。当前第三轮 17 项桌面 WebGL2 参考检查保持原范围，本轮选型研究不增加它的覆盖或通过数量。技术候选仍待对应产品与设备验收。
+目标是加载和迭代可预测的完整复杂UI、二维动画及轻量三维作品。[核心进展](core-progress.md)说明已实现预览，本文不批准全部未来后端/VM/宿主矩阵。下述外部观察是2026年10月8日研究快照（候选0.1、知识库0.6.1），不是新一轮调查。S033编译历史及独立17项桌面WebGL2参考检查保留原范围；语言名称与厂商测量均不能证明白鹭性能收益。
 
 ## 三种建设路径
 
@@ -26,9 +26,9 @@ Canvas 可以在离屏 surface 上测量、绘制文字和部分矢量，变更�
 
 WebGL 后端以 WebGL2 为目标；WebGL1 的有限 2D 兼容仅在目标宿主或旧工程样本确有需要时纳入。Canvas-only profile 只覆盖声明的 2D 功能，不能兜底完整 3D、任意滤镜或 GPU compute。必要效果无等价实现时导出阻断；可选质量降级写入作品 profile。后端在资源创建前选定，设备丢失先恢复原执行器；若需降级，通过可重建 CPU 来源和运行状态重新创建 surface/资源，不宣称零成本热切换。
 
-[GPUWeb 当前实施状态](https://github.com/gpuweb/gpuweb/wiki/Implementation-Status)于2026年10月2日更新，主流浏览器已按 OS、GPU 和版本扩大正式支持；驱动黑名单、硬件加速、安全上下文及实际 adapter 仍有条件。微信官方 Canvas 类型声明和抖音小游戏渲染文档目前能确认的仍是 2D/WebGL 路径；检索没有取得它们的 WebGPU 保证，不据此断言绝对不能支持。Meta、Discord 和 Telegram 的 SDK/iframe/WebView 同样不能继承桌面浏览器的全部能力。详见[宿主与 GPU AI 研究](../../evidence/backend-host-ai-research.json)。
+[10月8日研究记录的GPUWeb实施状态](https://github.com/gpuweb/gpuweb/wiki/Implementation-Status)于2026年10月2日更新，主流浏览器已按 OS、GPU 和版本扩大正式支持；驱动黑名单、硬件加速、安全上下文及实际 adapter 仍有条件。微信官方 Canvas 类型声明和抖音小游戏渲染文档目前能确认的仍是 2D/WebGL 路径；检索没有取得它们的 WebGPU 保证，不据此断言绝对不能支持。Meta、Discord 和 Telegram 的 SDK/iframe/WebView 同样不能继承桌面浏览器的全部能力。详见[宿主与 GPU AI 研究](../../evidence/backend-host-ai-research.json)。
 
-[Three.js 官方设计](https://threejs.org/manual/pages/webgpurenderer)已经采用 WebGPU 加 WebGL2 fallback，但其材质、后处理迁移需要改变，当前说明仍保留实验性和某些场景 WebGL 更好的边界。它支持方向判断，不能证明新白鹭已经完成双后端。WebGPU 版本不能直接照搬上一轮 WebGL resetState 适配：新的资源布局、pipeline cache、command encoder 与 device 恢复责任需重新验证。
+[Three.js 官方设计](https://threejs.org/manual/pages/webgpurenderer)已经采用 WebGPU 加 WebGL2 fallback，但其材质、后处理迁移需要改变，当时说明保留实验性和某些场景 WebGL 更好的边界。它支持方向判断，不能证明新白鹭已经完成双后端。WebGPU 版本不能直接照搬上一轮 WebGL resetState 适配：新的资源布局、pipeline cache、command encoder 与 device 恢复责任需重新验证。
 
 ## 底层合同与领先空间
 
@@ -48,7 +48,7 @@ WebGL 后端以 WebGL2 为目标；WebGL1 的有限 2D 兼容仅在目标宿主�
 
 ## 编译与调试链路
 
-新工程应锁定当前稳定 TypeScript 语义与工具版本，并把开发迭代拆成独立流水线：源码变更先快速转译与局部替换；后台增量类型检查输出对应工程版本的诊断；资源按内容哈希转换；发行阶段执行完整类型、能力、资源和目标构建检查。编辑器、CLI 与 Agent 使用同一配置和结构化诊断，不能由预览已显示推导发行可用。
+工程锁定选定的TypeScript语义与工具版本，并把开发迭代拆成独立流水线：源码变更先快速转译与局部替换；后台增量类型检查输出对应工程版本的诊断；资源按内容哈希转换；发行阶段执行完整类型、能力、资源和目标构建检查。编辑器、CLI 与 Agent 使用同一配置和结构化诊断，不能由预览已显示推导发行可用。
 
 截至2026年10月8日，[Microsoft 发布列表](https://github.com/microsoft/TypeScript/releases)与[发布包元数据](https://registry.npmjs.org/typescript/latest)均指向 TypeScript 7.0.2；Go 原生重写已于[7月8日正式发布](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/)。建议锁此版本作为新项目 CLI/LSP 候选基线，不再把主线描述成 tsgo preview。这里的原生编译器是开发工具，游戏仍输出 JS，不会因为升级而变成原生机器码或直接提高运行帧率。官方公开工程全量构建约8–12倍的对比属于厂商测量，未在白鹭复测。
 
@@ -78,9 +78,9 @@ Rust 适合新建的资源所有权、调度、命令校验和并发基础模块
 
 图形库先比较 Rust wgpu 与 C++ Dawn 的维护、后端能力和 SDK 接入成本，选择一个主要实现，保留接口替换能力；不同时维护多套完整 renderer。GL 兼容或 bgfx 可以作为特定需求对照，不能无限叠加所有抽象层。底层库的公开支持表、主线代码和已验收支持等级分别记录，未构建的代码不能标为白鹭支持。
 
-[wgpu 官方后端表](https://github.com/gfx-rs/wgpu)列有 Vulkan、Metal、D3D12 和 GL，没有直接 D3D11。Dawn 当前主线已有[D3D11实现](https://github.com/google/dawn/tree/main/src/dawn/native/d3d11)与[借用 ID3D11Device 的接口](https://github.com/google/dawn/blob/main/include/dawn/native/D3D11Backend.h)，比部分 README/support 表更靠前；主线存在不证明某个 release 或白鹭构建已通过。若原生 SDK 需要接入现有 D3D11 App，Dawn 是重点对照；若现代后端与 Rust 管理是优先目标，wgpu 是优先候选。首先限定为可审查的对照范围，不预先承诺双库生产支持。GL 兼容、D3D11 接入和现代完整图形能力不是同一承诺。
+[wgpu 官方后端表](https://github.com/gfx-rs/wgpu)列有 Vulkan、Metal、D3D12 和 GL，没有直接 D3D11。10月8日审阅发现Dawn主线已有[D3D11实现](https://github.com/google/dawn/tree/main/src/dawn/native/d3d11)与[借用 ID3D11Device 的接口](https://github.com/google/dawn/blob/main/include/dawn/native/D3D11Backend.h)，比部分 README/support 表更靠前；主线存在不证明某个 release 或白鹭构建已通过。若原生 SDK 需要接入现有 D3D11 App，Dawn 是重点对照；若现代后端与 Rust 管理是优先目标，wgpu 是优先候选。首先限定为可审查的对照范围，不预先承诺双库生产支持。GL 兼容、D3D11 接入和现代完整图形能力不是同一承诺。
 
-本次官方 release/docs 核查的 Rust wgpu 为30.0.1，独立 C 绑定 wgpu-native release 为29.0.1.1；不能混用其头文件、库或假定两个项目同步升级。Dawn 主线观察与本次发现的 nightly release 分别记录，不把主线文件冒充该发布二进制。SDK 声明 owned/borrowed device 模式，核对 same-device 限制、外部资源导入、BeginAccess/EndAccess 或相应同步、resource state、fence、提交/释放顺序和关闭线程；这些是后端扩展，不能自动映射为浏览器标准 WebGPU 的共享能力。无法直接导入时明确复制/合成路径并计成本。
+10月8日官方release/docs核查的 Rust wgpu 为30.0.1，独立 C 绑定 wgpu-native release 为29.0.1.1；不能混用其头文件、库或假定两个项目同步升级。Dawn 主线观察与本次发现的 nightly release 分别记录，不把主线文件冒充该发布二进制。SDK 声明 owned/borrowed device 模式，核对 same-device 限制、外部资源导入、BeginAccess/EndAccess 或相应同步、resource state、fence、提交/释放顺序和关闭线程；这些是后端扩展，不能自动映射为浏览器标准 WebGPU 的共享能力。无法直接导入时明确复制/合成路径并计成本。
 
 历史说明中的VM称谓由档案核对为V8。补充档案有多套 V8 头文件目录与 JSVM 适配路径；CMake 的默认条件选择 JSVM，同时还能看到无条件 V8 预编译库链接，实际生效的 VM 与二进制版本需构建核查。不能把最高版本目录当运行版本，更不能据此声称已升级或变快。私有条目证据保存在内部资料，公开候选只登记有限结论。
 
@@ -111,3 +111,8 @@ WebGPU compute 不等于直接开放 Tensor Core/NPU，也不等于可调用 DLS
 ## 独立实现的选型约束
 
 R015及[独立实现与第三方依赖规范](独立实现与第三方依赖规范.md)约束后续代码任务：WebGPU/WebGL执行、UI合成与资源合同依白鹭规格独立编写；wgpu/Dawn、VM、编译器、字体或转码器可作为显式公共依赖。Three/Babylon/PlayCanvas内部实现用于研究，不摘取后冒充核心；若库形式接入产品，须明确第三方归属和实际自写范围。既有17项参考结果不证明自主后端已完成。
+
+
+## 证据与实现边界
+
+候选合同与实际原生二进制、SDK资格及设备验收分开。浏览器包交付不选定原生图形库或VM。AI辅助工程遵循所链接独立实现规范的来源及普通源码/许可审查；来源研究、独立核心、明确公共依赖及执行比较分别保留身份。

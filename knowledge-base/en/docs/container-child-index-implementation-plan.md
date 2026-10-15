@@ -2,11 +2,11 @@
 
 English | [简体中文](../../Cns/docs/容器子节点索引工程计划.md)
 
-**0.50.0 · S104 / V055.** The product/build/focused CPU/original strict-type, current code policy and bounded native milestones are independently accepted. Public review/adoption/prepush/delivery remain pending; implementation, native results, publication and delivery retain separate status.
+**0.50.0 · S104 / V055.** The product/build/focused CPU/original strict-type, current code policy and bounded native milestones are independently accepted. Public review/adoption/prepush/delivery were pending at this historical implementation/native checkpoint; those records do not describe current delivery status.
 
-1. Accepted: the minimal strict driver follows every retained lane and its exact entry is copied into isolated project fixtures; original twelve complete unsuppressed tuples and compiler/config/JS-DTS bindings remain.
-2. Accepted: all nine current policy/default gates complete with exact reviewed source identities, preserving refusal controls and earlier failures. The original saved-result review records the bounded 3091 Core / 160 Spine Source suites.
-3. Accepted: the explicit native mode uses existing first-party collection; independent saved-result review qualifies full original pixels/graphs/ownership/normal cleanup in its bounded scene.
+1. Strict support: the minimal strict driver follows every retained lane and its exact entry is copied into isolated project fixtures; original twelve complete unsuppressed tuples and compiler/config/JS-DTS bindings remain.
+2. Policy verification: all nine recorded policy/default gates complete with exact reviewed source identities, preserving refusal controls and earlier failures. The original saved-result review records the bounded 3091 Core / 160 Spine Source suites.
+3. Native evidence: the explicit native mode uses existing first-party collection; independent saved-result review qualifies full original pixels/graphs/ownership/normal cleanup in its bounded scene.
 4. Refresh necessary current English comment/source/document identities, bilingual registry views and glossary/navigation; independent public Source/bilingual review precedes adoption.
 5. Run existing normal prepush and committed push hook, then qualify exact push/PR/Main observations under existing authorization. Remote CI is reported separately.
 

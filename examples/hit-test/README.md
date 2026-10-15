@@ -2,7 +2,7 @@
 
 English | [简体中文](README.zh-CN.md)
 
-Engineering preview **0.30.0** composes the existing Stage query, typed events and CanvasHost in a small authored-rectangle application. The adopted public-entry headless checks passed **12/12**. The fresh desktop successor passed **PASS_DESKTOP_HT1_CANVAS_SUBSET** in default Edge **154.0.4258.62**: ten baseline rows and five assigned controls cover real mouse input, typed routes, Canvas pixels and an independent six-pair native listener ledger. Pure admission checks passed **32/32** separately; counts from these scopes are not summed. Complete local verification passed: build, type fixtures and package boundaries; core **2377/2377** and structural publication **63/63**. Localization checked **140** pairs, **6** registry views and **154** critical source files. Knowledge-base validation checked **159** records, **243** Markdown files, **1997** links and **955** references with **0** issues; the headless lifecycle closed with **0** pending timers. These are separate scopes, not a combined test count. Final independent bilingual meaning review, the mandatory Git push hook and delivery remain **PENDING**.
+Engineering preview **0.30.0** composes the existing Stage query, typed events and CanvasHost in a small authored-rectangle application.
 
 ## Run from the repository root
 
@@ -27,6 +27,10 @@ Click with the primary mouse button. Upper visibility demonstrates overlapping t
 [main.mjs](main.mjs) exports only scalar `readSnapshot()` observations and shared `close()`; evaluating the module does not wait for user closure. These are example ports, not new SDK exports.
 
 ## Recorded checks
+
+Historical verification record for engineering preview 0.30.0:
+
+The adopted public-entry headless checks passed **12/12**. The fresh desktop successor passed **PASS_DESKTOP_HT1_CANVAS_SUBSET** in default Edge **154.0.4258.62**: ten baseline rows and five assigned controls cover real mouse input, typed routes, Canvas pixels and an independent six-pair native listener ledger. Pure admission checks passed **32/32** separately; counts from these scopes are not summed. Complete local verification passed: build, type fixtures and package boundaries; core **2377/2377** and structural publication **63/63**. Localization checked **140** pairs, **6** registry views and **154** critical source files. Knowledge-base validation checked **159** records, **243** Markdown files, **1997** links and **955** references with **0** issues; the headless lifecycle closed with **0** pending timers. These are separate scopes, not a combined test count. Final independent bilingual meaning review, the mandatory Git push hook and delivery remain **PENDING**.
 
 ```text
 node --test tests/hit-test-scene.test.mjs

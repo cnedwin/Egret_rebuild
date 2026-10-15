@@ -2,7 +2,7 @@
 
 [English](../../en/docs/text-field-tf1-evidence.md) | 简体中文 · [契约](文字显示TF1契约.md) · [共享记录](../../evidence/text-field-tf1-verification.json)
 
-准备日期 2026-10-11。保存结果针对显式行、不可编辑的 TF1 叶节点及既有 CPU 资源/显示契约。独立审阅在仅源码范围接受十四文件切片，并单独审计已完成的限定 CPU 结果。每次执行保留各自身份。完整既有 prototype 验证随后通过；原生 TextField、当前公开 prepush 和远程交付仍为 **PENDING**。
+准备日期 2026-10-11。保存结果针对显式行、不可编辑的 TF1 叶节点及既有 CPU 资源/显示契约。独立审阅在仅源码范围接受十四文件切片，并单独审计已完成的限定 CPU 结果。每次执行保留各自身份。完整既有 prototype 验证随后通过；原生 TextField、公开 prepush 和远程交付在该记录整理截止点为 **PENDING**。
 
 ## 已闭合观察
 
@@ -43,9 +43,9 @@ TF05 检查原子替换、替代、迟到结算和提供者失败保留。TF06 �
 
 源码审阅在十四文件中未发现可行动问题。不同审阅分别关闭构造发现、两个类型覆盖发现、公开夹具修正、大树 setup 和 legacy collector 元数据/计数修正。独立保存 CPU 审计核对 24 份闭合收据和 48 份 raw stream，没有可行动发现。它排除了当时执行中的 `verify-r1`；后续完整结果有自己的收据，不追溯纳入该审计。这些评审者进行源码/保存结果审阅，不执行验证。
 
-实现与本文档属于第一方、AI 辅助工作，组合既有 Egret 文字/资源/图像/所有权/显示契约。这是限定来源说明，不认证全球原创性或训练来源。代码和文档保持 [Apache-2.0](https://github.com/cnedwin/Egret_rebuild/blob/main/LICENSE)，既有第三方声明独立保留。本证据包未引入竞品实现或新依赖。
+实现与本文档属于第一方、AI 辅助工作，组合既有 Egret 文字/资源/图像/所有权/显示契约。来源说明标识该实现及其复用契约。代码和文档保持 [Apache-2.0](https://github.com/cnedwin/Egret_rebuild/blob/main/LICENSE)，既有第三方声明独立保留。本证据包保留既有依赖集合。
 
-CPU 字面像素和完整 prototype 门禁不证明字体、原生 TextField、CJK 覆盖、性能、手机、Native SDK、Spine、3D、完整 UI 或迁移验收；这些要求保持开放。原生 TF1、当前公开 prepush 与远程交付需分别审阅实际后继；本截止不授予这些结果。
+CPU 字面像素和完整 prototype 门禁不证明字体、原生 TextField、CJK 覆盖、性能、手机、Native SDK、Spine、3D、完整 UI 或迁移验收；这些要求保持开放。原生 TF1、公开 prepush 与远程交付在当时需要分别审阅实际后继；该历史截止点不建立这些结果。
 
 ## 后续闭合保存结果审阅
 
@@ -55,7 +55,7 @@ CPU 字面像素和完整 prototype 门禁不证明字体、原生 TextField、C
 
 ## 后续当前渲染回归观察
 
-根代理随后针对选定的当前 TF1 核心／构建运行五条既有路径；每条使用新的单次 release、未改动的受控 launcher、默认 Edge、原路径守卫和退役上限。实际 owner 与 runner 收据均闭合 PASS，记录 assignment 先于 ACK、输出 EOF 完整、输入身份稳定、活跃进程数为零、Job 已关闭，无 fallback 或额外浏览器参数。共享记录以字节长度和 SHA256 绑定每份收据；私有原始输出不进入公开阅读材料。
+随后针对选定 TF1 核心／构建执行五条既有路径；每条使用新的单次 release、未改动的受控 launcher、默认 Edge、原路径守卫和退役上限。进程拥有者与路径运行器收据均记录 PASS：进程分配 assignment 先于 ACK 确认，输出达到完整 EOF，输入身份稳定，活跃进程数归零并关闭 Job，无 fallback 或额外浏览器参数。共享记录以字节长度和 SHA256 绑定每份收据；私有原始输出不进入公开阅读材料。
 
 | 既有路径 | 实际结果 | 单次 release | 输入 pins | Job 累计进程 |
 | --- | --- | --- | --- | --- |
@@ -65,7 +65,7 @@ CPU 字面像素和完整 prototype 门禁不证明字体、原生 TextField、C
 | `textured` | PASS | `4d2fcc73f4f192c0613cfcc443aa8a76` | 1693 | 88 |
 | `sequence` | PASS | `be89ae23ab95d1041effae73d507efb6` | 1693 | 17 |
 
-这是五次路径执行，不是五个新实现的 TextField 测试；累计进程数是观察值，不是资源峰值测量。选定 renderer 图仍不含显式文字入口、工厂和 runtime TextField 叶。这关闭了当前既有渲染回归；原生 TextField／字体／UI、手机和性能验收仍开放。前文历史 renderer freeze 截止点保持不变。
+这是五次路径执行，不是五个新实现的 TextField 测试；累计进程数是观察值，不是资源峰值测量。选定 renderer 图仍不含显式文字入口、工厂和 runtime TextField 叶。该运行完成这些既有渲染回归门禁；原生 TextField／字体／UI、手机和性能验收仍开放。前文历史 renderer freeze 截止点保持不变。
 
 首次绑定在 owner／浏览器启动前，拒绝了 whole-core 输入收据中两个同身份重复路径。首次失败调用未捕获 owned raw streams，不为其编造原输出哈希。另行审阅的私有修正只接受同身份重复输入记录，保留源码唯一性及冲突身份拒绝，且仍对每条输入记录计收字节预算。原失败与源码审阅截止点均保留；后续五次实际绑定及启动通过。本修正未改变产品源码、浏览器参数、渲染 oracle 或容量上限。独立保存结果审阅、最终强制 prepush 和远端交付保持分别记录。
 

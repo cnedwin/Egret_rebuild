@@ -8,7 +8,7 @@ Independent 0.49 batch detachment reuses first-party Egret Container/tree/Scope/
 
 ## NineSliceBitmap first-party reuse — 0.48.0
 
-The independently authored leaf and original pixel/diagnostic fixtures reuse Egret’s NS1 geometry, Texture, Mesh2D, AssetLease, Scope, bounds and owned-frame contracts. The native fixture extends existing first-party PNG collection mechanisms through an explicit mode and decodes no PNG. AI assisted source, tests and bilingual preparation; separate author/reviewer roles and saved tool execution qualify their recorded scopes. No competing-engine implementation or new third-party dependency is included. Existing dependency/notice credits remain applicable. Read the [contract](docs/nine-slice-bitmap-contract.md) and [evidence](docs/nine-slice-bitmap-evidence.md).
+The independently authored leaf and original pixel/diagnostic fixtures reuse Egret’s NS1 geometry, Texture, Mesh2D, AssetLease, Scope, bounds and owned-frame contracts. The native fixture extends existing first-party PNG collection mechanisms through an explicit mode and decodes no PNG. AI assisted source, tests and bilingual preparation; separate author/reviewer roles and saved tool execution qualify their recorded scopes. The increment keeps the existing dependency set and its license/notice credits. Read the [contract](docs/nine-slice-bitmap-contract.md) and [evidence](docs/nine-slice-bitmap-evidence.md).
 
 ## 0.16.0 declaration and 3D references
 

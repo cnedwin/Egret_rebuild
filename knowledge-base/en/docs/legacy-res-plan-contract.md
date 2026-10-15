@@ -19,7 +19,7 @@ The inherited bounds are 4096 resource declarations/files, 1024 groups and 16,38
 
 `resourceRoot` must be a primitive, nonempty portable relative prefix. The analyzer first checks primitive text/root inputs, Unicode and early text/root budgets, then strict JSON, then portable-root admission. An early root limit of 4096 code units/UTF-8 bytes does not relax the portable path limit: an admitted root and each joined project path must fit 1024 UTF-8 bytes. Portable components reject backslashes, empty/`.`/`..` components, trailing spaces/dots, reserved names and invalid characters. These are lexical project-path rules, not platform filesystem resolution.
 
-For an invented declaration URL `images/hero.png` and root `assets`, the copy intent uses `assets/images/hero.png` for both `sourcePath` and `destinationPath`. Each is interpreted relative to its separate original/output project root. No file is examined, and `assets` is not added again.
+For an illustrative declaration URL `images/hero.png` and root `assets`, the copy intent uses `assets/images/hero.png` for both `sourcePath` and `destinationPath`. Each is interpreted relative to its separate original/output project root. No file is examined, and `assets` is not added again.
 
 `incomplete` is an analyzer report status. Planner invariant or native allocation/publication failures may throw; the API does not promise to convert every such failure into an incomplete report. They still publish no partial plan.
 
@@ -33,4 +33,4 @@ Every result, plan, array and plan record is freshly owned and frozen. The inter
 
 ## Execution boundary
 
-A copy intention grants no permission to overwrite files and makes no claim about realpath/symlink containment or actual contents. File reads, hashes, decoding, copying, transactions, runtime resource installation and complete project migration require separate implementation and validation. The focused CPU evidence covers the intent mapping, and the selected combined source set passed current whole-repository verification: 901/901 tests plus build, boundary and type gates. This result does not establish migration acceptance; the paired evidence preserves the earlier failed repository attempt.
+A copy intention grants no permission to overwrite files and makes no claim about realpath/symlink containment or actual contents. File reads, hashes, decoding, copying, transactions, runtime resource installation and complete project migration require separate implementation and validation. The focused CPU evidence covers the intent mapping. At the recorded implementation checkpoint, the combined source set passed whole-repository verification: 901/901 tests plus build, boundary and type gates. This result does not establish migration acceptance; the paired evidence preserves the earlier failed repository attempt.

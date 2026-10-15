@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/时钟驱动序列动画契约.md)
 
-Status: design and product source, build, public CPU behavior, standalone and complete strict types, source-policy controls, the CPU example and the bounded native Canvas/WebGPU opaque subset have accepted records for the 0.44.0 work package. Internal injected-runtime fault controls, full prepush and delivery remain pending. See the [verification record](sequence-playback-evidence.md) for each lane's scope.
+Status: design and product source, build, public CPU behavior, standalone and complete strict types, source-policy controls, the CPU example and the bounded native Canvas/WebGPU opaque subset have accepted records for the 0.44.0 work package. At that original acceptance cutoff, internal injected-runtime fault controls, full prepush and delivery were pending. See the [verification record](sequence-playback-evidence.md) for each lane's scope.
 
 Use the public headless example (`examples/sequence-playback-headless.mjs`) after the normal build: `node examples/sequence-playback-headless.mjs`. It demonstrates explicit-clock command capture; browser rendering is verified separately.
 
@@ -79,8 +79,8 @@ Start/resume application failure retires the handle and throws the original play
 
 The independent oracle uses an original 6×2 atlas: red 2×2, green 1×2 and blue 3×1 crops with durations 0.125, 0.25 and 0.125 seconds. Literal boundaries, paused gaps, real capacities, resource identity, dispatch order, prototype capture and cleanup are separate controls. Missing aliases, modules or host setup cannot qualify as the named missing-capability test.
 
-Actual counts and environment identities belong in the paired verification record after execution. Existing explicit-player browser evidence is historical and does not accept this new controller. New browser observations must exercise genuine clock-driven once/loop playback, pause recovery and saved-frame replay through public Canvas/WebGPU entries.
+The paired verification record holds actual counts and environment identities at each execution cutoff. Existing explicit-player browser evidence is historical and does not accept this new controller. New browser observations must exercise genuine clock-driven once/loop playback, pause recovery and saved-frame replay through public Canvas/WebGPU entries.
 
 Labels, frame events, playback rate, finite loop counts, seek/reset, trimmed or rotated atlases, complete UI, skeleton integration, full Spine support and complete legacy MovieClip migration retain separate contracts and acceptance. No performance, phone, native SDK or third-party license conclusion follows from this work package.
 
-This is first-party, AI-assisted Egret code and documentation under Apache-2.0, developed against the project's existing clip, player, resource, clock and lifecycle contracts. No third-party animation implementation is incorporated; existing dependency notices and research attribution remain applicable.
+This is first-party, AI-assisted Egret code and documentation under Apache-2.0, developed against the project's existing clip, player, resource, clock and lifecycle contracts. Existing dependency notices and research attribution remain applicable to the reused materials.

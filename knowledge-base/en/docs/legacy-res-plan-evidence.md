@@ -2,7 +2,7 @@
 
 [简体中文](../../Cns/docs/legacy-res-plan-evidence.md) · [Contract](legacy-res-plan-contract.md)
 
-The current `packages/project/src/legacy-res-plan.ts` passed a build and **14/14 focused tests**, with zero failures or skips, in `tests/legacy-res-plan.test.mjs`. The saved fixed-runtime Node.js run exited zero, closed its direct process and ended both output streams; selected source/test identities remained stable. An independent source-only review also found no issues; that review did not execute tests and is distinct from the actual run.
+The recorded `packages/project/src/legacy-res-plan.ts` source passed a build and **14/14 focused tests**, with zero failures or skips, in `tests/legacy-res-plan.test.mjs`. The saved fixed-runtime Node.js run exited zero, closed its direct process and ended both output streams; selected source/test identities remained stable. An independent source-only review also found no issues; that review did not execute tests and is distinct from the actual run.
 
 The focused tests cover first-occurrence file deduplication, aliases and type preservation, resource/group order and repeated references, a recognized empty manifest, fresh deeply frozen results, primitive input refusal, strict JSON and path precedence, nested prefixes, Unicode/collision rules, unsupported schemas and formats, unresolved keys, warning order and late-invalid paths. A synchronous fault injected into `JSON.parse`, restored afterward, checks an `incomplete` result with no plan. These tests operate on text and declarations, not real asset files.
 
@@ -21,7 +21,7 @@ An earlier default repository attempt produced **900/901 passes, one failure**. 
 | Planner source | 3,782 | `b1149868f617583ae74860405fbe468e70b32b51940e308741962891eed789a7` |
 | Focused test | 12,345 | `d1e8d5247396f624b718aeaf4cd7715ac70c91341f47c1cd84e9dd60dbbdef6e` |
 
-The [local compact evidence index](../../evidence/legacy-res-plan-cpu-evidence.json) contains the reconciled actual source/run projection. GitHub publication remains pending.
+The [local compact evidence index](../../evidence/legacy-res-plan-cpu-evidence.json) contains the reconciled actual source/run projection. GitHub publication was pending at this record's cutoff.
 
 ## Open verification
 

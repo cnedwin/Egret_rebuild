@@ -5,10 +5,10 @@
   "items": [
     {
       "id": "S001",
-      "title": "用户确认的项目要求",
+      "title": "项目需求基线",
       "type": "user_confirmation",
       "researchCheckedAt": "2026-10-08",
-      "scope": "本次白鹭项目对话中的用户确认，原意进入R001至R012；R012确定开源实现优先的研究和工程原则。",
+      "scope": "项目需求记录覆盖 R001 至 R012；R012 确定基于开源实现分析的研究与工程原则。",
       "limit": "不代表具体选型批准、功能实现、团队预算或公开发布授权。",
       "urls": [],
       "doc": "Cns/docs/设计理念与定位.md"
@@ -29,7 +29,7 @@
       "type": "official_repository",
       "researchCheckedAt": "2026-10-08",
       "scope": "TypeScript与AS3相近API的官方设计意图。",
-      "limit": "公开仓库并不代表用户私有工程完整最新；许可证适用范围分开核查。",
+      "limit": "公开仓库不代表历史原始工程包完整且最新；许可证适用范围分别核查。",
       "urls": [
         "https://github.com/egret-labs/egret-core#typescript"
       ],
@@ -158,7 +158,7 @@
       "title": "原白鹭工程静态研究摘要",
       "type": "private_archive_static_review",
       "researchCheckedAt": "2026-10-08",
-      "scope": "用户提供原工程包；版本分支/模块、EUI更新复用、资源工具与历史适配盘点。",
+      "scope": "原始工程包用于版本、分支、模块、EUI 更新复用、资源工具及历史适配盘点。",
       "limit": "原包及行级证据不在公开候选目录；未构建、未执行、未证明全部产品完整。",
       "urls": [],
       "doc": "Cns/docs/历史资产与研究边界.md"
@@ -168,7 +168,7 @@
       "title": "补充Runtime静态研究摘要",
       "type": "private_archive_static_review",
       "researchCheckedAt": "2026-10-08",
-      "scope": "用户补充后续Runtime；桥接、显示列表、GLES、资源与Harmony工程静态机制。",
+      "scope": "后续 Runtime 工程用于桥接、显示列表、GLES、资源与 Harmony 静态机制分析。",
       "limit": "未证明全平台完整/当前可构建/性能优势/许可；源码和签名配置不公开。",
       "urls": [],
       "doc": "Cns/docs/历史资产与研究边界.md"
@@ -191,7 +191,7 @@
       "type": "official_sources_refreshed",
       "researchCheckedAt": "2026-10-08",
       "scope": "12项关键主张与27条官方来源；核对Cocos/Laya/Godot版本与演进、CLI/AI工具、Web后端及互操作；逐条版本和日期见研究JSON。",
-      "limit": "全部是资料/源码声明，无竞品运行或跨引擎性能测试；Laya部分日期冲突与IDE未重验项保留；访问失败不解释为能力缺失。",
+      "limit": "结论限于资料与源码声明，未运行对照引擎或跨引擎性能测试；Laya 日期冲突与 IDE 未重验项保留，访问失败不解释为能力缺失。",
       "urls": [
         "https://www.cocos.com/creator-download",
         "https://github.com/cocos/cocos4/releases/tag/4.0.0-alpha.34",
@@ -264,7 +264,7 @@
       "title": "WebGL上下文恢复时序的官方调试参考",
       "type": "official_specification_and_source",
       "researchCheckedAt": "2026-10-08",
-      "scope": "Khronos WEBGL_lose_context与Chromium公开事件派发后允许恢复的源码；支持本轮测试延后恢复申请的解释。",
+      "scope": "Khronos WEBGL_lose_context 与 Chromium 允许在公开事件派发后恢复的源码，解释实验中延后申请恢复的机制。",
       "limit": "读取Chromium HEAD源码不是当前Edge精确二进制调用追踪；结果与解释一致，不证明全部浏览器的唯一根因。",
       "urls": [
         "https://registry.khronos.org/webgl/extensions/WEBGL_lose_context/",
@@ -494,8 +494,8 @@
       "title": "开源参考整合与独立AI只读审计",
       "type": "independent_AI_source_review_and_integration",
       "researchCheckedAt": "2026-10-08",
-      "scope": "复核关键源码与标签映射，区分原文事实、白鹭提议、适配要求及性能未知；保留原始报告和NFC文案修正，建立复用及验证分工。",
-      "limit": "非人类批准或代码运行验收；本轮没有新增probe、上游安装或性能实验，原两轮结果不扩大覆盖。",
+      "scope": "关键源码与标签映射审阅，区分原文事实、白鹭设计、适配条件及性能未知；保留原始报告与 NFC 文字修正，明确组件采用及验证分工。",
+      "limit": "资料审阅不构成代码执行验收；对应研究未新增 probe、上游安装或性能实验，既有两轮结果的覆盖范围保持不变。",
       "urls": [],
       "artifacts": [
         "evidence/reference-independent-audit.json",
@@ -563,7 +563,7 @@
       "title": "创始人补充后端编译及原生扩展意图",
       "type": "user_confirmed_context",
       "scope": "Canvas到WebGL、WASM探索、历史编译优化经验；原生App/SDK及未来桌面、图形API和GPU AI研究意图。",
-      "limit": "历史效率为用户陈述；新技术采纳、数字预算和首发Steam未批准。",
+      "limit": "历史效率来自创始人回述；新技术选择、数字预算及 Steam 首发仍待决策。",
       "urls": [],
       "artifacts": [
         "evidence/backend-founder-context.json"
@@ -757,7 +757,7 @@
       "title": "Google Playground与Unity Spark当前能力和未来计划",
       "type": "official_product_documentation_and_announcement_research",
       "scope": "10月7日发布、当前帮助中的源码ZIP和草稿/公开版；Spark未来专业3D、runtime与资产生态计划。",
-      "limit": "当前Playground与未来Spark分开；导出不等于平台开源、自部署或工程往返；没有生成/运行/导出实测，不证明竞品缺少未公开能力。",
+      "limit": "当前 Playground 与未来 Spark 分开记录；导出不等于平台开源、自部署或工程往返。未进行生成、运行和导出实测，也未评估未公开能力。",
       "urls": [
         "https://blog.google/innovation-and-ai/technology/ai/playground-experimental-gaming-platform/",
         "https://playground.google/helpcenter",
@@ -773,7 +773,7 @@
     },
     {
       "id": "S042",
-      "title": "创始人要求现代工程架构API与白鹭命名规范",
+      "title": "工程架构、API 与白鹭命名约定",
       "type": "founder_instruction",
       "scope": "完整重新制定技术架构与代码规范，保留白鹭命名习惯，现代化项目结构/API并保持亲切感。",
       "limit": "确认目标，不自动接受具体选型或代码门禁，不证明已有实现。",
@@ -819,7 +819,7 @@
     },
     {
       "id": "S045",
-      "title": "创始人启动核心实现与证据核查要求",
+      "title": "核心实现与证据核查范围",
       "type": "founder_instruction",
       "scope": "核心框架和逻辑开始实现，核查证据缺口与研究对象。",
       "limit": "不接受整套技术候选，不授权公开发布，不预判性能或完整产品通过。",
@@ -888,7 +888,7 @@
       "id": "S048",
       "title": "核心切片独立代码与整合审阅证据",
       "type": "independent_AI_scoped_code_and_document_review",
-      "scope": "本次core完整新文件初审、必要修订、限定终审及输入hash；文档预审三项一致性修订与生成后限定核查另列。",
+      "scope": "核心源码初审、必要修订、限定终审及输入哈希；文档的三项一致性修正与生成后核查分别记录。",
       "limit": "有限代码质量/规格及文档证据一致性核查，不授予产品/性能/原创或许可证验收权。",
       "researchCheckedAt": "2026-10-08",
       "artifacts": [
@@ -901,7 +901,7 @@
     },
     {
       "id": "S049",
-      "title": "开发初期公开协作与社区表达要求",
+      "title": "开发初期的公开协作与社区沟通",
       "type": "project_owner_instruction",
       "scope": "代码、设计过程、文档及知识库从开发初期采用公开协作；公开表达专业客观，保护不适合公开的交流和资料，保留研究出处与鸣谢，展示白鹭的独立设计与创新。",
       "limit": "确认公开开发方向与表达标准；仓库账号、许可证和实际发布状态另行登记，不改变技术与产品验收。",
@@ -927,7 +927,7 @@
     },
     {
       "id": "S051",
-      "title": "双语公开材料与首批GitHub提交要求",
+      "title": "双语公开材料与首批 GitHub 交付",
       "type": "project_owner_instruction",
       "scope": "每次推送GitHub前补全关键代码英文注释，整理可公开的所有文档和知识库，并为阅读文档及共同登记状态提供完整中文与英文版本。完成首批核心源码、文档及知识库后提交指定公开仓库。",
       "limit": "确定双语和推送前步骤；不扩大技术实现、性能、迁移或宿主验收。实际提交取决于已核验的远端写入授权。",
@@ -977,7 +977,7 @@
       "id": "S055",
       "title": "显示与帧及Canvas有限独立审阅",
       "type": "independent_ai_code_and_contract_review",
-      "scope": "跨realm修正后有限独立实现审阅及最终分支的变更双语语义/证据身份审阅；作者公开表达与翻译自审另行标明，本次元数据有限复审尚待完成。",
+      "scope": "跨 realm 修正后的限定实现审阅、最终分支双语语义与证据身份审阅分别记录；作者文字复核与当时待完成的元数据复审保留各自截点。",
       "limit": "不验收GPU、Native、实体手机、性能、完整UI/文字/纹理/动画/3D、完整迁移、CI或完整产品；浏览器仅为桌面观察，不是通用分配上限。",
       "researchCheckedAt": "2026-10-09",
       "artifacts": [
@@ -1109,7 +1109,7 @@
       "id": "S066",
       "title": "项目所有者确认完整 Spine 支持",
       "type": "project_owner_instruction",
-      "scope": "本次新增引擎须完美支持 Spine 动画的产品需求。",
+      "scope": "完整 Spine 动画支持的产品需求。",
       "limit": "需求确认不是实现、依赖采用或兼容验收；不预判性能及全版本支持。",
       "researchCheckedAt": "2026-10-10",
       "doc": "Cns/docs/Spine动画支持需求与验收.md"
@@ -2809,7 +2809,7 @@
       ],
       "title": "独立仓库身份工具与限定实际核验",
       "scope": "第一方路径／字节工具、公开与诊断集成、自研文本写入器及仓库规范检查；官方 Git 文档说明属性语义，白鹭独立实现并进行限定评审。",
-      "limit": "限定身份、写入、隔离 Git 与工作数据执行已接受；完整本机门禁、本次推送／PR／Main 与远端 CI 仍待完成，不构成引擎运行时或设备性能验收。",
+      "limit": "限定的身份、写入、隔离 Git 与工作数据执行已接受；相应记录截点的完整本机检查、推送／PR／Main 与远端 CI 待完成，不构成引擎运行时或设备性能验收。",
       "doc": "Cns/docs/仓库路径身份与换行规范.md",
       "license": "Apache-2.0",
       "firstPartySourcePaths": [
@@ -7008,6 +7008,22 @@
     "independentReview": {
       "bytes": 64282,
       "sha256": "6c281311c1547b764fd315c38359ef3ba097da6cf2e928e5d257dad6f4bd2b86",
+      "identityOnlyNotDistributed": true
+    },
+    "historicalPublicPendingCutoffsPreserved": true,
+    "remoteCIPassClaim": false
+  },
+  "bitmapButtonDeliveryActualSuccessor": {
+    "engineeringPreview": "0.54.0",
+    "recordedOn": "2026-10-15",
+    "status": "ACTUAL_PR_MERGE_AND_PRIMARY_MAIN_SYNC_ACCEPTED",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/42",
+    "featureHead": "bf6e9217f8b855bc61cfd7f6b4d36e3a97b527ad",
+    "main": "efd2a9c91fb6cfe633214b50b82cf7952941452a",
+    "tree": "2b39b8439a5b30ce3572edc162e8a7a916a76185",
+    "independentReview": {
+      "bytes": 14778,
+      "sha256": "702721eff05be5150c39e6ab19aca367517f7dbd65397b15387592f722199663",
       "identityOnlyNotDistributed": true
     },
     "historicalPublicPendingCutoffsPreserved": true,

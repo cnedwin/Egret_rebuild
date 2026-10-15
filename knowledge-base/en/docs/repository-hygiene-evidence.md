@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/仓库路径与换行验证记录.md)
 
-Proposed engineering preview 0.45.1 repairs repository path identity and authored text handling. This curation separates the read-only diagnosis, actual pre-fix regression and independently accepted focused successor. Complete local gates, remote CI and 0.45.1 delivery are not accepted here.
+Proposed engineering preview 0.45.1 repairs repository path identity and authored text handling. This dated record separates the read-only diagnosis, actual pre-fix regression and independently accepted focused successor. Complete local gates, remote CI and 0.45.1 delivery are not accepted here.
 
 ## Read-only byte diagnosis
 
@@ -73,7 +73,7 @@ The proposed policy preserves Git payload bytes with `* -text`, uses UTF-8/LF ed
 | Actual 0.45.1 mandatory push hook, PR merge and Main readback | NOT_RUN |
 | Remote CI acceptance for 0.45.1 | NOT_RUN |
 
-Later measured results must be appended as separately qualified successors. No future test count, commit identity or passing result is assigned by this curation. Preserved upstream/legal originals and historical evidence are not bulk reformatted or rehashed. Repository tooling work is linked to modern engineering R016, bilingual publication R019 and the new path/raw-byte hygiene requirement R021; no engine runtime acceptance follows.
+Later measured results must be appended as separately qualified successors. This record assigns no future test count, commit identity or passing result. Preserved upstream/legal originals and historical evidence are not bulk reformatted or rehashed. Repository tooling work is linked to modern engineering R016, bilingual publication R019 and the new path/raw-byte hygiene requirement R021; no engine runtime acceptance follows.
 
 ## Previous actual delivery: 0.45.0
 

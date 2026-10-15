@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/显示内容边界证据.md) · [Contract](display-content-bounds-contract.md) · [Compact record](../../evidence/content-bounds-verification.json)
 
-Status: recorded bounded execution and scoped independent source and saved-render reviews. Bilingual public-material review, final prepush and remote delivery remain separately pending.
+Status: recorded bounded execution and scoped independent source and saved-render reviews. At the original evidence cutoff, bilingual public-material review, final prepush and remote delivery were separately pending.
 
 The public inherited `DisplayObject.getBounds(options?: BoundsQueryOptions)` measures authoritative Graphics rectangles and an occupied Bitmap's cached crop size in the receiver's local space. Its own and ancestor transforms are excluded; descendant direct corners are included. Each success supplies a fresh frozen readonly `Rectangle2D`. The engineering label is **0.22.0**; packages remain private **0.0.0** and protocol pins **1.0**.
 
@@ -28,8 +28,8 @@ These observations exercise the affected emitted rendering graph; **bounds arith
 
 ## Origin, review and publication
 
-Codex assisted the independently authored first-party specification, behavior/type fixtures, implementation, source-equivalence work and curation. No historical/competitor implementation source was copied and no new third-party dependency was introduced. First-party code/docs retain Apache-2.0. The origin record describes this work package's actual authoring, reuse and review scope.
+Codex assisted the independently authored first-party specification, behavior/type fixtures, implementation, source-equivalence work and documentation. The implementation uses the existing dependency set. First-party code/docs retain Apache-2.0. The origin record describes this work package's actual authoring, reuse and review scope.
 
 The whole Bitmap extraction matched the original after the exact single-table/type move and **1 has / 9 get / 6 set** substitutions. An initial source-preparation CRLF guard refused before writing; the corrected helper detected the actual line endings. That retained guard failure was not an engine regression failure. The private candidate test header alone became a publishable English comment after RED; executable fixture bytes were preserved.
 
-The scoped independent source review reported **PASS_SOURCE_WITH_LIMITS**, with zero unresolved P1/P2. Its reviewer authored the specification/plan but neither production code nor behavior/type fixtures; a separate independent design review is retained. The final audit includes 27 stable source/test/type/tool pins and the actual public test successor. Original paired contract bodies remain unchanged except an isolated status paragraph and acceptance appendix. Execution, current curation hashes and independent source/render/bilingual review are distinct identities. Current hashes cannot retrospectively establish an older run or audit. Bilingual public-material review, final complete prepush and actual stacked remote delivery remain separate pending gates.
+The scoped independent source review reported **PASS_SOURCE_WITH_LIMITS**, with zero unresolved P1/P2. Its reviewer authored the specification/plan but neither production code nor behavior/type fixtures; a separate independent design review is retained. The final audit includes 27 stable source/test/type/tool pins and the actual public test successor. Original paired contract bodies remain unchanged except an isolated status paragraph and acceptance appendix. Execution, published-document hashes and independent source/render/bilingual review have distinct identities. Current hashes cannot retrospectively establish an older run or audit. At that pre-delivery cutoff, bilingual public-material review, final complete prepush and actual stacked remote delivery were separate pending gates.

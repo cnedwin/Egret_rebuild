@@ -26,7 +26,7 @@ The Source-bound schedule has 12 captures and 2 saved replays across the two bac
 
 The preceding 0.52 package was delivered through PR #40 to Main d1debacedcbc068dc4c3b26fa9876181e23c4864, tree 33adba3e1ea744091adc623ea1398102e54a9b43. Its independent delivery review is 48911 bytes / e2ce215c1610db2aa4749e5ad96103d28eab6a50ca64dfdfa31b6ac30891bd20. Earlier PENDING cutoffs stay historical in their original records and exact raw README archives.
 
-Current public Source/bilingual review, normal full prepush, mandatory hooks and new 0.53 commit/push/PR/Main remain PENDING; no remote CI PASS is claimed. Full Spine R020/V020, migration R008/V006, complete V002/V004/V005, EUI/layout, advanced3D/AI, fonts, devices and performance remain OPEN or unverified. See the [shared record](../../evidence/anchored-atlas-playback-verification.json) and [remaining plan](anchored-atlas-playback-implementation-plan.md).
+At this historical pre-delivery cutoff, public Source/bilingual review, normal full prepush, mandatory hooks and new 0.53 commit/push/PR/Main were PENDING; no remote CI PASS is claimed. Full Spine R020/V020, migration R008/V006, complete V002/V004/V005, EUI/layout, advanced3D/AI, fonts, devices and performance remain OPEN or unverified. See the [shared record](../../evidence/anchored-atlas-playback-verification.json) and [remaining plan](anchored-atlas-playback-implementation-plan.md).
 
 ## Publication prerequisite successor — 2026-10-15
 
@@ -34,4 +34,4 @@ The prior 32-file Source/bilingual review passed with no open findings (40942 by
 
 The bounded successor registers those two exact guide files and changes the count comment to nine; path/containment and other guards remain intact. The same process now explicitly emits UTF-8 diagnostics. The separate default-output label encoding observation does not remove or create any of the eight real link issues; original saved text log bytes remain unchanged; those logs are not an original raw binary pipe capture. File input and raw hashing policy are unchanged.
 
-The current public scope is 33 files (22 tracked modifications and 11 additions). This Source-only repair and a fresh normal full prepush remain pending independent review/execution; mandatory hooks and new delivery are also pending. Accepted Core 3147/3147, Spine Source 160/160 and Native 14 main readbacks / 32256 channels retain their prior scopes and identities. The original R1 public record and failed prepush are not overwritten.
+The current public scope is 33 files (22 tracked modifications and 11 additions). At the repair-draft cutoff, this Source-only repair and a fresh normal full prepush were pending independent review/execution; mandatory hooks and new delivery were also pending. Accepted Core 3147/3147, Spine Source 160/160 and Native 14 main readbacks / 32256 channels retain their prior scopes and identities. The original R1 public record and failed prepush are not overwritten.

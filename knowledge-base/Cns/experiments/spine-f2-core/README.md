@@ -2,7 +2,7 @@
 
 [English](../../../en/experiments/spine-f2-core/README.md) | 简体中文
 
-工程预览 **0.47.0** · **S101 / V052**。阅读完整的[契约与指南](../../docs/SpineCore手动网格桥接.md)及[验证／待完成工作](../../docs/SpineCore手动网格桥接证据.md)。共享实现、原始资产及有限观察器位于 `knowledge-base/experiments/spine-f2-core`；阅读版本替代历史共享占位介绍。
+工程预览 **0.47.0** · **S101 / V052**。阅读完整的[契约与指南](../../docs/SpineCore手动网格桥接.md)及[验证／待完成工作](../../docs/SpineCore手动网格桥接证据.md)。共享实现、原始资产及有限观察器位于 `knowledge-base/experiments/spine-f2-core`。
 
 可选实验公开一个工厂与四个擦除类型，使用真实白鹭资源／显示所有权，经外部提供的官方 Core 4.3.13 完成有限、手动、非加权网格的 translate／deform 采样。默认 Engine／Runtime／Project 入口不增加 Core 依赖。
 

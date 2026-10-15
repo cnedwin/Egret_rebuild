@@ -82,6 +82,6 @@ The example assumes an 8 × 8 source view. Shutdown retires the owning Scope/Eng
 
 ## Provenance and remaining work
 
-The leaf, class identity repair, captured Texture intrinsic, tests and original fixtures are independently authored **Apache-2.0** Egret work. They reuse first-party NS1, Texture, Mesh2D, AssetLease, Scope, capture and bounds contracts. AI assisted source/test/document preparation; independent source and saved-result review qualify only their recorded scopes. No competing-engine implementation, new dependency, shader, decoder, frame format or SDK protocol is introduced. Packages remain private **0.0.0**, host protocol **1.0**.
+The leaf, class identity repair, captured Texture intrinsic, tests and original fixtures are independently authored **Apache-2.0** Egret work. They reuse first-party NS1, Texture, Mesh2D, AssetLease, Scope, capture and bounds contracts. AI assisted source/test/document preparation; independent source and saved-result review qualify only their recorded scopes. The increment adds no dependency, shader, decoder, frame format or SDK protocol. Packages remain private **0.0.0**, host protocol **1.0**.
 
 This background leaf does not implement full EUI/layout, scrolling/input controls, tiling, rotated/trimmed atlases, old scale9Grid migration or 3D materials. Full Spine **R020/V020** and migration **R008/V006 remain OPEN**. Mobile/native SDKs, platform hosts, fonts, physical GPU/GC, power and comparative performance remain separate work.

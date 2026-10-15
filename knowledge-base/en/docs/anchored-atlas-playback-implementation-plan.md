@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/锚点图集播放工程计划.md)
 
-Engineering preview 0.53.0 · S107 / V058. Maintain the [contract](anchored-atlas-playback-contract.md), [evidence](anchored-atlas-playback-evidence.md) and [example guide](../../../examples/anchored-atlas-playback/README.md) together. Source, original execution, independent acceptance and delivery remain separate.
+Engineering preview 0.53.0 · S107 / V058. Maintain the [contract](anchored-atlas-playback-contract.md), [evidence](anchored-atlas-playback-evidence.md) and [example guide](../../../examples/anchored-atlas-playback/README.md) together. Source, original execution, independent acceptance and delivery are recorded separately. The unchecked publication tasks below preserve the code/native checkpoint's historical cutoff, not current delivery status.
 
 ## Implemented and accepted current code
 

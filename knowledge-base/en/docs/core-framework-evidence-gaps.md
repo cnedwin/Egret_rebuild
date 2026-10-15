@@ -2,40 +2,26 @@
 
 English | [简体中文](../../Cns/docs/核心框架证据缺口与研究清单.md)
 
-The historical 0.13.0 rectangle checkpoint has its own [implementation and verification record](webgpu-rectangle-implementation-evidence.md). Its source identities, results and pending work retain their recorded scope; they do not establish current product acceptance.
+Evidence gaps identify the next observable result needed to make a sound design decision. Egret can advance lifecycle, display and CPU resource work independently of a final native library or device matrix. Complete fonts/input, mixed rendering, creator tasks and migration need additional samples and host evidence rather than more general mechanism surveys.
 
+## How to use this map
 
-## Historical 0.12.0 display and frame candidate scope
+G001–G008 connect a question to source inputs, minimum validation, the decision it informs and the claims that remain unproven. G001's bounded independent core is implemented; later display/resource/input packages are summarized in [core progress](core-progress.md). G002/G003 refine unresolved text and backend contracts. G004–G006 obtain actual host, legacy and creator inputs. G007/G008 establish real text/device/SDK behavior and costs. None of the latter groups needs to block unrelated GPU-free work.
 
-The successor work package is defined by the [display and frame contract](display-and-frame-execution-contract.md) and [implementation plan](display-and-frame-implementation-plan.md): display transforms, inherited visibility/alpha and local rectangle clipping, Sprite-owned Graphics rectangle fills, and immutable CPU frame capture/submission. The implemented first execution adapter is Canvas through the separate @egret/engine/web entry; the core root retains its DOM-free boundary. Bounded implementation checks passed: 97/97 core behavior tests, 25 negative type diagnostics and real desktop Canvas pixels/pointer interaction. Scoped independent review passed after the recorded cross-realm rejection correction. Remote publication is tracked separately. Final scoped results belong in the [implementation record](display-and-frame-implementation-record.md) and [verification](../../evidence/display-frame-verification.json).
+This map originated on October 8, 2026 in knowledge base 0.8.0. Its source-path checks, prior-study statements and insufficient-evidence descriptions below are that dated research baseline, not claims that later independently authored WebGPU or input packages never ran. Current package records provide successors. Opening a repository entry was a path check; the study did not add a new SHA-pinned full source review or execute its proposed validations.
 
-This work package does not establish complete text/texture/animation/UI/3D execution, GPU or Native support, target-device performance, editors, Agent services, or complete migration. Earlier headless, CPU asset and third-party research records retain their original versions, counts, hashes and scope; their results are not new display-frame acceptance.
-
-Date: 2026-10-08. Status: recommendations for subsequent research/validation. The original research executed no product or new experiment. This page entered knowledge base 0.8.0.
-
-Pure TS Scope, cancellation, synchronous events, a display tree, and GPU-free Engine lifecycle can be independently implemented immediately. The first slice has now started and passed bounded validation; see the [core framework implementation record](core-framework-implementation-record.md) for actual results and remaining differences. Do not automatically turn the unexecuted boundaries below into a complete-contract pass. These eight priorities follow implementation needs; the last seven do not block the small slice or preaccept graphics libraries, VMs, font dependencies, or performance conclusions.
-
-Candidate contracts have document-level counterexample review. The real glTF+Canvas UI research chain passed 17/17 on local desktop WebGL2 only. Evidence excludes a complete new core, WebGPU product backend, native SDK/VM, real IME, AI tasks, and complete legacy-project acceptance.
-
-This research used existing evidence indexes/candidate contracts and checked official documentation/main-repository entry points. Opening source pages counts only as path checking. No new full source review pinned to SHA was added. Earlier pinned research retains only the narrow paths explicitly recorded in its indexes.
-
-| Category | Priority | Next output |
-| --- | --- | --- |
-| Can be written now | G001 core-contract implementation | Compilable declarations and CPU behavior evidence |
-| Public source/standards needed next | G002 text contracts; G003 dual-backend capabilities/recovery | Narrow pinned-version research and Egret specifications |
-| Real samples/target hosts | G004 SDK/VM host; G005 complete legacy projects; G006 AI creation tasks | Authorized samples, host contracts, acceptance oracles |
-| Real devices required | G007 fonts/IME; G008 GPU and native/VM | Correctness/cost records for declared hosts and release builds |
+The original glTF+Canvas reference chain passed 17/17 on local desktop WebGL2. It did not establish complete independent rendering, native SDK/VM, IME, creator-task or legacy-project acceptance. The [first core record](core-framework-implementation-record.md) separately qualifies lifecycle progress.
 
 ## Can be written now
 
 ### G001 Priority 1
 
-**Question:** Can candidate Scope, cancellation, event, display-tree, and Engine contracts become a compilable independent core that is consistent under reentrancy, exceptions, and late results?
+**Design objective:** Establish independent lifecycle state machines that remain consistent under reentrancy, exceptions and late results. The first bounded implementation now supplies evidence; wider compatibility and host/GPU conditions remain separate.
 
 **Subjects and paths:**
 
-- Project candidate contracts and six counterexample groups. Paths: docs/公共API设计与命名规范.md; evidence/api-lifecycle-challenge-final.json. Verification scope: read this round.
-- [WHATWG AbortSignal semantics](https://dom.spec.whatwg.org/#interface-abortsignal). Scope: official standard entry checked this round, as a browser-adaptation constraint only; new display-tree events do not claim complete DOM compatibility.
+- Project candidate contracts and six counterexample groups. Paths: docs/公共API设计与命名规范.md; evidence/api-lifecycle-challenge-final.json. Verification scope: read in the dated baseline.
+- [WHATWG AbortSignal semantics](https://dom.spec.whatwg.org/#interface-abortsignal). Scope: official standard entry checked in the dated baseline, as a browser-adaptation constraint only; new display-tree events do not claim complete DOM compatibility.
 
 **Insufficient existing evidence:** Six counterexample groups were resolved in documentation; that review explicitly neither compiled nor executed. The subsequent first slice compiled/validated DOM-free/Node-free cancellation, Scope, synchronous events, display tree, and headless lifecycle. Actual scope is in the [implementation record](core-framework-implementation-record.md). Browser type adaptation for standard AbortSignal and real hosts remain unaccepted. Existing asynchronous-resource/reliable-queue models retain their own research scopes.
 
@@ -63,7 +49,7 @@ Evidence index, relative to knowledge-base root: evidence/api-lifecycle-challeng
 - [HarfBuzz shaping/clusters](https://github.com/harfbuzz/harfbuzz/blob/main/src/hb-shape.cc). Paths: harfbuzz/harfbuzz: src/hb-shape.cc, src/hb-buffer.cc; select relevant tests after pinning SHA. Scope: file entries checked only; neither line-by-line review nor SHA lock completed.
 - [Official HarfBuzz cluster contract](https://harfbuzz.github.io/working-with-harfbuzz-clusters.html). Scope: official explanation read; glyph clusters are not automatically editor-caret/Unicode-grapheme contracts.
 - [FreeType coverage/raster boundaries](https://freetype.org/freetype2/docs/reference/ft2-character_mapping.html). Paths: freetype/freetype: src/base/ftobjs.c, include/freetype/freetype.h. Scope: API explanation read; ftobjs.c entry checked without implementation review.
-- [Existing pinned Pixi text chain](https://github.com/pixijs/pixijs/blob/5b41ee37fd36c61e089113345a8f12cf1c3323cf/src/scene/text/canvas/CanvasTextMetrics.ts). Paths: pixijs/pixijs@5b41ee37fd36c61e089113345a8f12cf1c3323cf: src/scene/text/canvas/CanvasTextMetrics.ts, CanvasTextGenerator.ts; src/scene/text/shared/AbstractTextSystem.ts. Scope: read in existing reference-pixi-text; not reread this round.
+- [Existing pinned Pixi text chain](https://github.com/pixijs/pixijs/blob/5b41ee37fd36c61e089113345a8f12cf1c3323cf/src/scene/text/canvas/CanvasTextMetrics.ts). Paths: pixijs/pixijs@5b41ee37fd36c61e089113345a8f12cf1c3323cf: src/scene/text/canvas/CanvasTextMetrics.ts, CanvasTextGenerator.ts; src/scene/text/shared/AbstractTextSystem.ts. Scope: read in existing reference-pixi-text; not reread in that study.
 - [Unicode line breaking/graphemes](https://www.unicode.org/reports/tr14/); [additional official entry](https://www.unicode.org/reports/tr29/). Scope: standard entries checked; pin versions/test data next.
 
 **Insufficient existing evidence:** Narrow Pixi/PlayCanvas/Babylon source research supports whole-line Canvas baselines/fontEpoch caches. Actual fonts were not inspected, HarfBuzz/FreeType were not run, and cross-provider indexing/shaping/line-breaking contracts are undefined. One system-font smoke string cannot establish them.
@@ -88,11 +74,11 @@ Evidence index: evidence/reference-pixi-text.json; evidence/reference-text-ui.js
 
 - [WebGPU capability/loss specification](https://www.w3.org/TR/webgpu/). Scope: specification checked; actual device features/limits are separate from adapter, and lost-device objects cannot remain in use.
 - [WebGL2 specification](https://registry.khronos.org/webgl/specs/latest/2.0/). Scope: entry checked; read specific format/recovery sections next.
-- [Babylon baseline with format/external-resource paths](https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/core/src/Engines/webgpuEngine.pure.ts). Paths: BabylonJS/Babylon.js@cbe5bb36998fdde6bd93d76e67813ff571a535db: packages/dev/core/src/Engines/webgpuEngine.pure.ts, thinEngine.pure.ts, abstractEngine.pure.ts. Scope: narrow paths read in reference-render-lifecycle; no new review this round.
+- [Babylon baseline with format/external-resource paths](https://github.com/BabylonJS/Babylon.js/blob/cbe5bb36998fdde6bd93d76e67813ff571a535db/packages/dev/core/src/Engines/webgpuEngine.pure.ts). Paths: BabylonJS/Babylon.js@cbe5bb36998fdde6bd93d76e67813ff571a535db: packages/dev/core/src/Engines/webgpuEngine.pure.ts, thinEngine.pure.ts, abstractEngine.pure.ts. Scope: narrow paths read in reference-render-lifecycle; no new review in that study.
 - [Pinned Three baseline/current migration limits](https://threejs.org/manual/pages/webgpurenderer). Paths: mrdoob/three.js@0af9729d0c143a86a1d725d6e2c3ad83301f3f34: src/renderers/webgpu/WebGPURenderer.js; next check WebGPUBackend/WebGLBackend/format mappings at the same SHA. Scope: current official manual checked; it is not equivalent to all r180 behavior.
 - [PlayCanvas recovery/format mapping](https://developer.playcanvas.com/user-manual/graphics/advanced-rendering/device-loss/). Paths: playcanvas/engine@cfef43d306b2b55a2c0742e4994221f6d2463957: src/platform/graphics/webgpu/webgpu-graphics-device.js, webgl/webgl-graphics-device.js, plus adjacent texture/render-target implementations. Scope: official recovery documentation checked; narrow pinned-source review is from existing indexes.
 
-**Insufficient existing evidence:** Owner/epoch, CPU sources, asynchronous-recovery cancellation, and real WebGL context loss are covered. Dual-backend formats/sampling/colors/external textures are not exhausted; independent WebGPU has not run. The Three reference version also differs from current-manual wording.
+**Insufficient existing evidence:** Owner/epoch, CPU sources, asynchronous-recovery cancellation, and real WebGL context loss are covered. Dual-backend formats/sampling/colors/external textures are not exhausted; at the original research cutoff independent WebGPU had not run. The Three reference version also differs from current-manual wording.
 
 Evidence index: evidence/reference-render-lifecycle.json; evidence/backend-graphics-research.json; evidence/asset-reference-probe-results.json.
 
@@ -102,7 +88,7 @@ Evidence index: evidence/reference-render-lifecycle.json; evidence/backend-graph
 2. Write independent ResourceDescriptor/PassDescriptor/recovery topology. Each resource declares CPU retention, reload, generator, or explicit discard; ready must include restored contents and a presentable first frame.
 3. Establish small golden samples for required effects: translucent UI, nested clips, offscreen filter/cache, MSAA resolve, screenshot readback. Validate resource rejection/generation models first; real backends/loss belong to G008.
 
-**Decision triggered:** Bound first-backend profiles for D002–D005/D010, canvas-recreation/fallback policy, and recovery-event meaning. Keep independent backends separate from competitor research chains.
+**Decision triggered:** Bound first-backend profiles for D002–D005/D010, canvas-recreation/fallback policy, and recovery-event meaning. Keep independent backends separate from third-party reference integrations.
 
 **Still unproven:** Faster WebGPU, recovery from actual driver resets, mini-game support, or full functional equivalence across backends.
 
@@ -114,7 +100,7 @@ Evidence index: evidence/reference-render-lifecycle.json; evidence/backend-graph
 
 **Subjects and paths:**
 
-- Minimal SDK host in the first authorized target App. Pending paths: host window/surface creation, render-thread callback, device/queue export, external textures, exit/foreground/background samples. Register versions with source authorization. Scope: no confirmed first hosts or real samples; current Windows environment cannot decide the user's initial platform.
+- Minimal SDK host in the first authorized target App. Pending paths: host window/surface creation, render-thread callback, device/queue export, external textures, exit/foreground/background samples. Register versions with source authorization. Scope: no confirmed first hosts or real samples; available Windows environment does not determine the initial product platform.
 - [wgpu interoperability](https://docs.rs/wgpu/30.0.1/wgpu/struct.Device.html). Paths: gfx-rs/wgpu: wgpu/src/api/device.rs and target wgpu-hal backend; lock release SHA on adoption. Scope: public 30.0.1 API checked, not proof of SDK borrowed-device implementation; lock Rust-library and wgpu-native versions separately.
 - [Dawn borrowed devices/shared textures](https://github.com/google/dawn/blob/main/include/dawn/native/D3D11Backend.h); [additional official entry](https://github.com/google/dawn/blob/main/docs/dawn/features/shared_texture_memory.md). Paths: google/dawn: include/dawn/native/D3D11Backend.h, docs/dawn/features/shared_texture_memory.md, target backend/tests. Scope: D3D11 header retrieval failed; existing index contains static mainline observations only. shared_texture_memory entry was accessible; next pin revision/check binaries.
 - [Target VM embedding](https://v8.dev/docs/embed); [additional official entry](https://developer.apple.com/documentation/javascriptcore). Paths: v8/v8: include/v8-array-buffer.h, include/v8-isolate.h, include/v8-microtask-queue.h; Apple targets use system JavaScriptCore public APIs; add other VMs only if hosts require them. Scope: V8 embedding explanation checked; Apple page only a dynamic entry, with no specific APIs reviewed. No builds or VM performance ranking.
@@ -187,7 +173,7 @@ Evidence index: docs/AI创作与工程接口.md; registry/交付.json; docs/公�
 
 **Subjects and paths:**
 
-- [Initial browser/mini-platform/native HostServices text/IME](https://www.w3.org/TR/uievents/#events-compositionevents). Paths: after G004/G006 converge, register OS/device/host/SDK/font versions and input methods, at least initial Web hosts/first native target. Do not automatically claim other platforms. Scope: official test reference only; no IME review/execution this round.
+- [Initial browser/mini-platform/native HostServices text/IME](https://www.w3.org/TR/uievents/#events-compositionevents). Paths: after G004/G006 converge, register OS/device/host/SDK/font versions and input methods, at least initial Web hosts/first native target. Do not automatically claim other platforms. Scope: official test reference only; no IME review/execution in that study.
 - [Real fonts/text golden samples](https://harfbuzz.github.io/what-does-harfbuzz-do.html). Paths: G002 authorized font binaries/coverage/golden samples; Pixi CanvasTextPipe recovery, HarfBuzz/FreeType, or system providers as declarable dependencies. Scope: official explanation read; adoption awaits contracts/device results.
 
 **Insufficient existing evidence:** Canvas system-font smoke checks one passage and cache/epoch only. No controlled simplified/traditional/CJK coverage, real composition, caret/selection, mobile DPI, or cache/upload budgets. HarfBuzz shaping does not manage host IME.
@@ -210,7 +196,7 @@ Evidence index: evidence/reference-text-ui.json; evidence/reference-pixi-text.js
 
 **Subjects and paths:**
 
-- [Independent backends/declared-host mixed golden sample](https://www.w3.org/TR/webgpu/). Paths: G003 minimum effects plus G005/G006 representative works. Babylon/Three/PlayCanvas are pinned mechanism/behavior comparisons, not independent product execution chains. Scope: desktop WebGL2 chain exists; independent WebGPU product has not run.
+- [Independent backends/declared-host mixed golden sample](https://www.w3.org/TR/webgpu/). Paths: G003 minimum effects plus G005/G006 representative works. Babylon/Three/PlayCanvas are pinned mechanism/behavior comparisons, not independent product execution chains. Scope: desktop WebGL2 chain exists; at the original research cutoff independent WebGPU product execution had not run.
 - [Thin SDK build for a primary graphics candidate/target VM](https://docs.rs/wgpu/30.0.1/wgpu/struct.Device.html); [additional official entry](https://v8.dev/docs/embed). Paths: G004-pinned wgpu or Dawn, target backend, and one primary VM. Build an equivalent thin comparison for another candidate only when a choice needs evidence; add no blanket multi-VM support. Scope: no native build/package/VM/FFI/borrowed-device measurements.
 
 **Insufficient existing evidence:**17/17 is headless desktop WebGL2 at 640×400 DPR 1, without timing/energy, WebGPU, production mini-platform, or native SDK. Simulated fences/static VM studies do not establish real in-flight completion, GC/ArrayBuffer lifetime, or device sharing.
@@ -230,20 +216,24 @@ Evidence index: evidence/asset-reference-probe-results.json; evidence/browser-pr
 
 ## Execution boundaries
 
-Advance G001 immediately. G002/G003 can refine specifications in parallel. G004/G005/G006 obtain real inputs before selection/acceptance. Run G007/G008 once implementations/target hosts exist. Acquire legacy golden projects alongside the core to expose compatibility gaps before freezing public semantics.
+Advance the next unresolved contract using the smallest meaningful consumer. Text/backend specifications can progress alongside real host, legacy and creator-sample acquisition. Device/SDK execution follows an actual implementation and target host. Obtain legacy golden projects while public semantics are still being designed.
 
-Do not repeat recorded general-principle studies of whole-line Canvas caching, UI painter order, owners/epochs, recovery sources, or late tasks. The next batch adds only unresolved contracts, real inputs, and execution evidence.
+Retain existing work on Canvas whole-line caches, painter order, owners/epochs, recovery sources and late tasks. Add research where a contract or integration behavior remains unresolved; pin the version and read the narrow implementation/tests actually used. This preserves the distinction between reference mechanisms and Egret's own implementation.
 
-- Official Dawn googlesource D3D11Backend.h and the GitHub counterpart failed retrieval. Retain failure records without upgrading indexed mainline observations to release capabilities.
-- Official JavaScriptCore is a dynamic page; only entry information was obtained, without claiming specific APIs were read.
-- Some public repository pages were path checks only. Every subsequent source study must pin SHA, actually read narrow files/tests, and separately record read/execution states.
-- The specified MCP 2025-06-18 version was browsed as an existing design reference, without claims of latest protocol/client compatibility.
-- All minimum validations are future recommendations and were not executed this round. No performance/support/migration acceptance is upgraded.
+### Original research limitations
+
+- Dawn googlesource and GitHub D3D11Backend.h retrieval failed; indexed mainline observations were not promoted to release capabilities.
+- JavaScriptCore yielded only a dynamic entry, with no specific APIs reviewed.
+- Some source pages were path checks only; later source studies require SHA, narrow file/test reading and separate read/execution states.
+- MCP2025-06-18 was a specified design reference, without a latest-version or client-compatibility claim.
+- The minimum validations in this original study were recommendations, not executed results or new performance/support/migration acceptance.
 
 ## Risks
 
-- Late real legacy projects may force rework of event/dimension/font/animation contracts. G005 should establish goldens alongside the core.
-- Choosing graphics libraries/VMs before hosts are confirmed hides borrowed-device, IME, and package restrictions until later.
-- Treating 17 reference-chain cases or GPU-free tests as product acceptance conceals independent-renderer, complete-migration, and sustained-AI-task gaps.
+Late legacy samples can force event, dimension, font and animation redesign. Selecting graphics or VM dependencies before the host contract can hide device borrowing, IME and package restrictions. Treating17 reference cases or GPU-free tests as complete acceptance obscures independent-renderer, migration and sustained creator-task gaps.
 
-This checklist does not update D001–D016 or V001–V006. R008/V006 complete migration, continued editing, real publishing, and updates remain final delivery requirements.
+This map itself does not change D001–D016 or V001–V006. R008/V006 still requires complete migration, continued editing, real publishing and updates.
+
+## Historical display checkpoints
+
+The [0.12 contract](display-and-frame-execution-contract.md), [plan](display-and-frame-implementation-plan.md), [record](display-and-frame-implementation-record.md) and [verification](../../evidence/display-frame-verification.json) preserve 97/97 behavior checks, 25 negative diagnostics and desktop Canvas/pointer observations after cross-realm correction. The [0.13 rectangle record](webgpu-rectangle-implementation-evidence.md) has separate source identities/results. These were bounded display/capture checkpoints, not complete text/texture/animation/UI/3D, Native/device, editor/Agent or migration acceptance.

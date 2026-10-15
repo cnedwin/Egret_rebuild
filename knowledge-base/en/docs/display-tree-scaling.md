@@ -44,7 +44,7 @@ The actual corrected-source successor build and targeted display/scaling/cancell
 
 An earlier whole-core run passed **2,227/2,227**, before the ninth closing-hook test and corrected guard; it is intermediate evidence, not final-source verification. Final complete current verification/prepush and affected browser regression gates remain **PENDING**, as do independent finite review and delivery. The baseline failures and preparation cutoff above remain preserved.
 
-The change uses AI-assisted independent first-party diagnosis, specifications, implementation and separately authored fixtures under Apache-2.0. No external implementation code is copied and no third-party dependency is added. This bounded workflow declaration is not a global originality certification. Browser, device, GPU, phone, performance leadership, complete Spine and full migration acceptance are excluded.
+The change uses AI-assisted independent first-party diagnosis, specifications, implementation and separately authored fixtures under Apache-2.0. The implementation retains the existing dependency set. Browser, device, GPU, phone, performance leadership, complete Spine and full migration acceptance are excluded.
 
 ## Observed corrected workload and desktop successor
 

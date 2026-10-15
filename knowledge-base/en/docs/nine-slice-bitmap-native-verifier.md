@@ -40,7 +40,7 @@ Two separate Canvas negatives require `ENGINE_RENDER_PROFILE_UNSUPPORTED` during
 
 Startup, submission and readback retain their original asynchronous tickets. Before safe return, the fixture checks no pending frame/upload/readback/geometry work, closes the borrowed host, then destroys each application-owned device and observes its loss. Timeout or unsettled originals retain ownership/quarantine and incomplete cleanup. The collector separately owns loopback, context/browser closure, output recording and before/after source/runtime identity checks. Source obligations and successful ordinary cleanup do not by themselves establish forced cancellation or failing-cleanup path acceptance.
 
-The accepted ordinary run settled fourteen outer/fifteen inner tickets, destroyed two application-owned devices and closed context/browser/server without pending tickets or primary/cleanup errors. Source/runtime/graph records were stable; default headless Edge 155.0.4283.45 added no launch flags. Adapter identity was **UNOBSERVED**. Forced-timeout/failed-cleanup paths were not run, and no wrong-oracle countercontrol was executed. Public-content gates and GitHub delivery remain separate pending stages.
+The accepted ordinary run settled fourteen outer/fifteen inner tickets, destroyed two application-owned devices and closed context/browser/server without pending tickets or primary/cleanup errors. Source/runtime/graph records were stable; default headless Edge 155.0.4283.45 added no launch flags. Adapter identity was **UNOBSERVED**. Forced-timeout/failed-cleanup paths were not run, and no wrong-oracle countercontrol was executed. At that Native acceptance checkpoint, public-content gates and GitHub delivery were separate pending stages.
 
 ## Scope and provenance
 

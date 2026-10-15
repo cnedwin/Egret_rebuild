@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/templates/RFC提案.md)
 
-> Copy this template to submit a local proposal; once the repository workflow is enabled, it may accompany an Issue / PR. This file is not an approved decision.
+> Use this template to submit a proposal with its Issue / PR. This file records an approach for review, not an approved decision.
 
 - Proposal ID: RFC-NEW
 - Author / date / version: to be completed
