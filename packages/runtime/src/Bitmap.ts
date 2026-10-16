@@ -1,13 +1,13 @@
 import type { TextureRegion2D } from "@egret/contracts";
 import { isAssetLease, readAssetLeaseValue } from "./AssetLease.js";
-import type { AssetLease } from "./AssetLease.js";
+import { AssetLease } from "./AssetLease.js";
 import { DisplayObject } from "./DisplayObject.js";
 import { hasBitmapState, readBitmapState, writeBitmapState } from "./bitmapDisplayState.js";
 import type { BitmapCaptureState } from "./bitmapDisplayState.js";
 export type { BitmapCaptureState } from "./bitmapDisplayState.js";
 import { assertLive, isTerminated } from "./displayTreeState.js";
 import { EgretError } from "./EgretError.js";
-import { commitBinding, engineOf } from "./ownership.js";
+import { claimOwner, ownerOf, commitBinding, engineOf } from "./ownership.js";
 import type { EngineContext } from "./ownership.js";
 import { isTexture, readTextureSnapshot } from "./Texture.js";
 import type { Texture, TextureSnapshot2D } from "./Texture.js";
@@ -20,6 +20,80 @@ export let spriteSheetBitmapOperations: Readonly<{
 }>;
 
 const mutations = new WeakSet<object>();
+type ResourceTargetOperations = Parameters<NonNullable<EngineContext['registerBitmapResourceTarget']>>[1];
+const resourceTargetOperations = new WeakMap<EngineContext, ResourceTargetOperations>();
+const freezeResourceOperations = Object.freeze;
+const releaseResourceLease = AssetLease.prototype.release;
+const applyResourceOperation = Reflect.apply;
+
+/** Exact context and opaque prepared provenance stay inside this runtime module. */
+function operationsFor(context: EngineContext): ResourceTargetOperations {
+  let operations = resourceTargetOperations.get(context);
+  if (operations !== undefined) return operations;
+  const preparedStates = new WeakMap<object, { readonly bitmap: Bitmap; readonly state: BitmapCaptureState }>();
+  const affinity = (value: object): void => {
+    if (engineOf(value) !== context) throw new EgretError('ENGINE_MISMATCH');
+  };
+  const liveBinding = (bitmap: Bitmap, expected?: object): BitmapCaptureState => {
+    affinity(bitmap);
+    const state = readBitmapBinding(bitmap);
+    // A changed binding wins before any external entitlement revocation.
+    if (expected !== undefined && state !== expected) throw new EgretError('BITMAP_RESOURCE_BINDING_CHANGED');
+    if (state === undefined) throw new EgretError('BITMAP_RESOURCE_TEXTURE_REQUIRED');
+    readBitmapImage(state.lease);
+    return state;
+  };
+  operations = freezeResourceOperations({
+    capture(bitmap: Bitmap, expected?: object): object { return liveBinding(bitmap, expected); },
+    prepare(bitmap: Bitmap, lease: AssetLease<Texture>): object {
+      affinity(bitmap); affinity(lease);
+      liveBinding(bitmap);
+      const snapshot = readBitmapImage(lease);
+      // Use the captured intrinsic; no late public setter or freeze callback.
+      const state: BitmapCaptureState = freezeResourceOperations({
+        lease, sourceRect: snapshot.sourceRect, width: snapshot.sourceRect.width, height: snapshot.sourceRect.height,
+      });
+      preparedStates.set(state, { bitmap, state });
+      return state;
+    },
+    commit(bitmap: Bitmap, expected: object, prepared: object): void {
+      affinity(bitmap); assertBitmap(bitmap);
+      const entry = preparedStates.get(prepared);
+      if (entry === undefined || entry.bitmap !== bitmap) throw new EgretError('BITMAP_RESOURCE_PREPARED_INVALID');
+      affinity(entry.state.lease);
+      assertLive(bitmap); context.assertOpen();
+      if (mutations.has(bitmap)) throw new EgretError('BITMAP_MUTATION_REENTRANT');
+      const current = readBitmapState(bitmap);
+      if (current !== expected) throw new EgretError('BITMAP_RESOURCE_BINDING_CHANGED');
+      // Both entitlements are fresh even when expected state identity is unchanged.
+      if (current === undefined) throw new EgretError('BITMAP_RESOURCE_TEXTURE_REQUIRED');
+      readBitmapImage(current.lease); readBitmapImage(entry.state.lease);
+      preparedStates.delete(prepared);
+      writeBitmapState(bitmap, entry.state);
+    },
+    clearIfCurrent(bitmap: Bitmap, expected: object): boolean {
+      affinity(bitmap); assertBitmap(bitmap);
+      const current = readBitmapState(bitmap);
+      if (current === undefined || current !== expected) return false;
+      writeBitmapState(bitmap, undefined);
+      return true;
+    },
+    claim(bitmap: Bitmap, lease: AssetLease<Texture>, owner: object): void {
+      affinity(bitmap); affinity(lease);
+      assertBitmap(bitmap); assertLive(bitmap); context.assertOpen();
+      if (!isAssetLease(lease) || ownerOf(lease) !== undefined) throw new EgretError('BITMAP_RESOURCE_LEASE_INVALID');
+      readAssetLeaseValue(lease);
+      claimOwner(lease, owner);
+    },
+    release(lease: AssetLease<Texture>): void {
+      affinity(lease);
+      if (!isAssetLease(lease)) throw new EgretError('BITMAP_RESOURCE_LEASE_INVALID');
+      applyResourceOperation(releaseResourceLease, lease, []);
+    },
+  });
+  resourceTargetOperations.set(context, operations);
+  return operations;
+}
 
 function assertBitmap(value: unknown): void {
   if (!hasBitmapState(value as object)) throw new EgretError("BITMAP_INVALID");
@@ -103,6 +177,8 @@ export class Bitmap extends DisplayObject {
     engine.assertOpen();
     commitBinding([this], engine);
     writeBitmapState(this, captureState(textureLease, snapshot.sourceRect));
+    // Genuine Engine registration is private; custom runtime contexts own their callback.
+    engine.registerBitmapResourceTarget?.(this, operationsFor(engine));
   }
 
   static {

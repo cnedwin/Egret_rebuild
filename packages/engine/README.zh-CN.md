@@ -4,6 +4,12 @@
 
 白鹭实验性公共门面，装配 `@egret/runtime` 与 `@egret/contracts`，管理逻辑生命周期、显示／帧访问、CPU 资源及 surface 独占预留；物理资源和安全归还由宿主负责。根入口保持无 DOM，独立 `@egret/engine/web` 导出 `createCanvasHost`，`@egret/engine/webgpu` 显式启用 WebGPU。Engine 为渲染准备固定使用 `robust-predicates` 3.0.3。
 
+## 工程预览 0.56.0 — 可恢复位图资源替换
+
+`Engine.createBitmapResourceSlot(scope, bitmap)` 通过既有 `@egret/engine` 根入口，为一个持久 Bitmap 增加显式异步替换。根入口仅新增擦除类型名称 `BitmapResourceSlot` 与 `BitmapResourceSlotState`；本增量不新增运行时导出值、公共子入口或依赖，保持 Host 协议。初始绑定继续借用，槽仅拥有新获取的替换租约。请求等待、失败或取消时保留先前可用绑定，只有最新已接受意图可以提交。取消或被新请求取代会拒绝对应 Promise；校验、冲突、生命周期和清理错误依规格处理。
+
+参阅[规格](../../knowledge-base/Cns/docs/位图资源槽规格.md)、[证据](../../knowledge-base/Cns/docs/位图资源槽核验.md)及[组合示例](../../examples/bitmap-resource-slot/README.zh-CN.md)。替换成功表示已提交有效资源绑定；GPU 呈现、多资源事务及动画重定向分别承担验收义务。聚焦行为、严格消费者及记录的桌面 Canvas/WebGPU 组合已通过各自限定检查；完整本地／公开门禁及仓库交付在所链接证据中分别记录，完整 UI 与 Spine 保持 OPEN。
+
 ## 工程预览 0.55.0 — 显式本地线性布局
 
 可选已构建入口 `@egret/engine/layout` 提供 `planLinearLayout` 及四个擦除接口，由调用方提供数字尺寸、选择成员并应用局部坐标。规划器无 DOM/Node 依赖，不写场景，不增加默认 API、依赖或 SDK Host 协议，也不完成自动 EUI 布局。参阅[规格](../../knowledge-base/Cns/docs/local-linear-layout-spec.md)、[证据](../../knowledge-base/Cns/docs/local-linear-layout-evidence.md)和[双按钮示例](../../examples/linear-layout/README.zh-CN.md)。已记录的桌面 Canvas/WebGPU 检查覆盖固定双 Button 流程；环境及边界见证据记录。

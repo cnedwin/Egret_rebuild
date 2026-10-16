@@ -1,3 +1,6 @@
+import type { AssetLease } from './AssetLease.js';
+import type { Texture } from './Texture.js';
+import type { Bitmap } from './Bitmap.js';
 import type { Diagnostic } from "@egret/contracts";
 import { EgretError } from "./EgretError.js";
 import { assertLive, captureChildInsertion, childrenOf, isDisplayNode, prepareCapturedInsertionTree, publishCapturedInsertionTree, validateCapturedInsertionNode, validateCapturedInsertionRoots, validateCapturedInsertionSource } from "./displayTreeState.js";
@@ -9,6 +12,15 @@ import type { AssetGroupOperations } from './assetManagerOwnerState.js';
 
 /** Internal instance port; runtime never imports the Engine implementation. */
 export interface EngineContext {
+  /** @internal Genuine Bitmap assembly; no runtime root forwards these operations. */
+  readonly registerBitmapResourceTarget?: (bitmap: Bitmap, operations: Readonly<{
+    capture(bitmap: Bitmap, expected?: object): object;
+    prepare(bitmap: Bitmap, lease: AssetLease<Texture>): object;
+    commit(bitmap: Bitmap, expected: object, prepared: object): void;
+    claim(bitmap: Bitmap, lease: AssetLease<Texture>, owner: object): void;
+    release(lease: AssetLease<Texture>): void;
+    clearIfCurrent(bitmap: Bitmap, expected: object): boolean;
+  }>) => void;
   assertOpen(): void;
   report(diagnostic: Diagnostic): void;
   captureCleanup(cause: unknown): void;

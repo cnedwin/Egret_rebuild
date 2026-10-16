@@ -4,6 +4,8 @@ English | [简体中文](DOCUMENTATION.zh-CN.md)
 
 Read the product documents in the order below, then follow the relevant subsystem contracts. Complete editions are available in the [English knowledge base](knowledge-base/en/README.md) and [中文知识库](knowledge-base/Cns/README.md).
 
+The 0.56 resource-slot increment combines recoverable binding replacement with a recorded desktop Canvas/WebGPU example. The specification, evidence and example define its current behavior and verification scope.
+
 ## Product and engineering
 
 | Topic | Document |
@@ -127,6 +129,9 @@ Read the product documents in the order below, then follow the relevant subsyste
 - [Bitmap buttons](knowledge-base/en/docs/bitmap-button-contract.md)
 - [Bitmap buttons — verification](knowledge-base/en/docs/bitmap-button-evidence.md)
 - [Bitmap buttons — engineering plan](knowledge-base/en/docs/bitmap-button-implementation-plan.md)
+- [Bitmap resource-slot specification](knowledge-base/en/docs/bitmap-resource-slot-spec.md)
+- [Bitmap resource-slot verification](knowledge-base/en/docs/bitmap-resource-slot-evidence.md)
+- [Bitmap resource replacement composition example](examples/bitmap-resource-slot/README.md)
 
 ## Sources and maintenance
 

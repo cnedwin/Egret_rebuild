@@ -2,7 +2,7 @@
 
 [English](README.md) | 简体中文
 
-0.55.0 的[本地线性布局](Cns/docs/local-linear-layout-spec.md)通过纯函数规划矩形，再由调用方显式应用到双 Button 菜单。使用流程及桌面验证边界见[证据记录](Cns/docs/local-linear-layout-evidence.md)。
+0.56.0 的[位图资源槽](Cns/docs/位图资源槽规格.md)为同一个持久 Bitmap 增加显式替换：借用初始绑定，在请求等待或拒绝时保留先前可用绑定，只有最新已接受意图可以提交。参阅[证据记录](Cns/docs/位图资源槽核验.md)和[组合示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/bitmap-resource-slot/README.md)。聚焦行为、严格消费者及记录的桌面 Canvas/WebGPU 组合已通过各自限定检查；完整本地／公开门禁及仓库交付在所链接证据中分别记录。
 
 知识库围绕产品定位、技术架构、公共契约和交付组织，提供两套完整阅读版本：
 

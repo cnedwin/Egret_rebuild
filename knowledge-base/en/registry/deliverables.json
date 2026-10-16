@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-15",
+  "updatedAt": "2026-10-16",
   "authority": "Delivery status summary; code, artifacts, and reproducible acceptance evidence separately govern implementation and testing",
   "items": [
     {
@@ -6265,6 +6265,199 @@
         "evidence": "en/docs/local-linear-layout-evidence.md",
         "example": "https://github.com/cnedwin/Egret_rebuild/blob/main/examples/linear-layout/README.md"
       }
+    },
+    {
+      "id": "V061",
+      "kind": "engineering_preview",
+      "status": "in_progress",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R011",
+        "R012",
+        "R015",
+        "R016",
+        "R019",
+        "R021"
+      ],
+      "sourceIds": [
+        "S110"
+      ],
+      "dependsOn": [
+        "V060"
+      ],
+      "owner": "project",
+      "dueDate": null,
+      "title": "0.56.0 recoverable bitmap resource slot",
+      "doc": "en/docs/bitmap-resource-slot-spec.md",
+      "artifacts": [
+        "en/docs/bitmap-resource-slot-spec.md",
+        "en/docs/bitmap-resource-slot-evidence.md"
+      ],
+      "implementation": "Engine.createBitmapResourceSlot preserves target identity, borrows the initial binding and owns only leases acquired by the slot; replacement, failure, cancellation, manual binding conflicts and lifecycle cleanup follow the latest accepted intent.",
+      "acceptance": "Bounded local behavior, type, source-policy and desktop readback results are recorded. Current public files have separate independent source and bilingual review; metadata integration, pre-push, hooks and Git delivery retain separate outcomes.",
+      "acceptanceCriteria": [
+        "Preserve initial borrowing and subsequent owned-lease boundaries; keep the old binding during pending, failed or cancelled work, let the latest accepted intent win and retire stale delivery.",
+        "Handle manual rebinding, resource revocation, reentry and Scope/Engine closure under the selected contract; distinguish custom-context unit checks from genuine Engine behavior.",
+        "Match complete stock-compiler diagnostics and declaration closures to selected inventories, retaining original streams and finite data successors for existing strict consumers.",
+        "Retain complete original desktop Canvas/WebGPU readbacks for ordinary and wrong-color runs, claiming correctness only for specified sample points.",
+        "Preserve historical provenance, bilingual review cutoffs and requirement states; the pre-publication record predicts no subsequent delivery outcome."
+      ],
+      "verification": {
+        "engineeringPreview": "0.56.0",
+        "sourceId": "S110",
+        "deliverableId": "V061",
+        "date": "2026-10-16",
+        "status": "BOUNDED_LOCAL_RESULTS_AT_PREPUBLICATION_CUTOFF",
+        "factory": "Engine.createBitmapResourceSlot",
+        "publicEntry": "@egret/engine",
+        "erasedTypes": [
+          "BitmapResourceSlot",
+          "BitmapResourceSlotState"
+        ],
+        "newRootRuntimeValues": [],
+        "newPublicSubpaths": [],
+        "newDependency": false,
+        "hostProtocolChanged": false,
+        "contract": "en/docs/bitmap-resource-slot-spec.md",
+        "evidence": "en/docs/bitmap-resource-slot-evidence.md",
+        "example": "https://github.com/cnedwin/Egret_rebuild/blob/main/examples/bitmap-resource-slot/README.md",
+        "build": {
+          "status": "PASS",
+          "includedInCompleteVerification": true
+        },
+        "focusedCPU": {
+          "status": "PASS",
+          "modules": 9,
+          "tests": 115,
+          "pass": 115,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        "interleavingsAndLifecycle": {
+          "status": "COVERED_IN_SELECTED_115_TEST_RUN",
+          "separateRuntimeAcceptance": false
+        },
+        "authorityUnits": {
+          "status": "COVERED_IN_SELECTED_115_TEST_RUN",
+          "boundary": "PUBLIC_RUNTIME_CUSTOM_CONTEXT_UNIT_DISTINCT_FROM_GENUINE_ENGINE_CASES"
+        },
+        "strict": {
+          "status": "PASS",
+          "compilerVersion": "7.0.2",
+          "positiveDiagnostics": 0,
+          "negativeDiagnostics": 30,
+          "declarationsPerConsumer": 57,
+          "nativeLibrariesPerConsumer": 57,
+          "domAmbientTypes": false,
+          "nodeAmbientTypes": false
+        },
+        "sourceBoundary": {
+          "status": "PASS",
+          "defaultRuntimeValueExports": 39,
+          "sourceCopyBaselines": 13,
+          "assignedRefusals": 13,
+          "productExecution": false
+        },
+        "normalHosts": {
+          "status": "PASS",
+          "backends": [
+            "Canvas",
+            "WebGPU"
+          ],
+          "boundary": "RECORDED_DESKTOP_CHECKS_ONLY"
+        },
+        "nativeSource": {
+          "status": "SOURCE_SNAPSHOT_AUTHENTICATED",
+          "inventoryFiles": 221,
+          "modules": 108,
+          "canvasClosure": 73,
+          "webgpuClosure": 104,
+          "browserExecutionClaim": false
+        },
+        "nativeActual": {
+          "status": "PASS_BOUNDED_DESKTOP_COMPOSITION",
+          "ordinaryContexts": 2,
+          "controlContexts": 2,
+          "ordinaryCheckpoints": 28,
+          "controlCheckpoints": 28,
+          "ancillaryStartupReads": 4,
+          "rawRGBAFrames": 60,
+          "authenticatedRawBytes": 184320,
+          "ordinaryPointChannels": 672,
+          "controlPointChannels": 672,
+          "ordinaryPointMismatches": 0,
+          "assignedControlPointMismatches": 2,
+          "fulfilledOriginalWebGPUReadbackPromises": 30,
+          "allPixelCorrectness": false,
+          "physicalDeviceAcceptance": false,
+          "performanceAcceptance": false
+        },
+        "completeCode": {
+          "status": "PASS",
+          "command": "node tools/verify.mjs",
+          "testSummaries": [
+            {
+              "scope": "Core public/unit/structural regressions",
+              "tests": 3358,
+              "suites": 0,
+              "pass": 3358,
+              "fail": 0,
+              "cancelled": 0,
+              "skipped": 0,
+              "todo": 0
+            },
+            {
+              "scope": "Separate retained Spine source experiment",
+              "tests": 160,
+              "suites": 0,
+              "pass": 160,
+              "fail": 0,
+              "cancelled": 0,
+              "skipped": 0,
+              "todo": 0
+            }
+          ],
+          "boundary": "LOCAL_PROTOTYPE_GATES_AND_SEPARATELY_IDENTIFIED_EXPERIMENT_TESTS",
+          "priorFailedFullRun": {
+            "tests": 3349,
+            "pass": 3347,
+            "fail": 2,
+            "fixtureRepairPaths": [
+              "tests/project-boundaries.test.mjs",
+              "tests/spritesheet-fault.test.mjs",
+              "tests/spritesheet-fault-child.mjs"
+            ]
+          }
+        },
+        "sourceReview": {
+          "status": "APPROVED_SELECTED_PRODUCT_SOURCE",
+          "productSources": 5,
+          "productDeclarations": 5,
+          "wholeEngineAcceptance": false
+        },
+        "publicSourceBilingualReview": {
+          "status": "APPROVED_EXACT_CURRENT_READING_FILES",
+          "currentFiles": 22,
+          "changedOrNewPairs": 11,
+          "totalPairs": 203,
+          "unchangedPairsRetainingPriorCutoffs": 192,
+          "metadataIntegrationReviewIncluded": false
+        },
+        "fullPrepush": "PENDING_AT_PREPUBLICATION_DOCUMENTATION_CUTOFF",
+        "mandatoryHooks": "PENDING_AT_PREPUBLICATION_DOCUMENTATION_CUTOFF",
+        "newGitDelivery": "PENDING_AT_PREPUBLICATION_DOCUMENTATION_CUTOFF",
+        "remoteCI": "NO_REMOTE_CI_PASS_OBSERVED_AT_THIS_CUTOFF",
+        "remoteCIPassClaim": false,
+        "fullSpineR020V020": "OPEN",
+        "migrationR008V006": "OPEN",
+        "generalGameUI": "OPEN",
+        "historicalCutoffsPreserved": true,
+        "defaultAPIChanged": true
+      }
     }
   ],
   "spineF1ClockPortableReplaySuccessor": {
@@ -7188,7 +7381,7 @@
   },
   "_localization": {
     "canonicalSource": "交付.json",
-    "canonicalSha256": "d2fd59be0eb70e71f60f81927052f9d9f463fe09654b9644d03401aeefa3b863",
+    "canonicalSha256": "0abef5d4962cdfa151c3e3e88d165eb9dd5bccdde00ce199fb8b7c4d89a03dec",
     "role": "read_only_translation",
     "language": "en"
   },

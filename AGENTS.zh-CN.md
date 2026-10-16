@@ -38,6 +38,15 @@
 - 实验性 `tools/verify-webgpu-b1.mjs` 的普通样例通过精确生成的 import map 导入构建后的 `@egret/engine`、`@egret/engine/scene3d`、`@egret/engine/webgpu/scene3d`。唯一直接私有产品导入为 `packages/engine/dist/web/webgpuMeshPass.js`，仅用于绑定源码的固定原生 WGSL 编译／N4 诊断。服务范围仅限验证器显式模块白名单、这些公共入口的有限字面量导入闭包及固定别名；N1–N5 各自在仓库外的一次性副本中只修改一个已记录的构建文件。S1／S2／SN1 是独立的真实 Engine／Stage／Scope／Bitmap 组合阶段，SN1 只遗漏指定父节点裁剪。原有 oracle 与七正例／五控制／十一次绘制／8214 次比较的计划保持不变。本例外不允许普通示例或公开行为测试私有导入产品模块，也不授权新的产品导出或任意诊断钩子。
 - 公共行为变化同步规格、来源记录与必要回归。记录实际环境、未验证项、反例及修复；第三方研究或历史测试不替代自主产品验收。
 
+<!-- BRS-0.56.0-POLICY-BEGIN -->
+## 位图资源替换边界
+
+- 已构建 `@egret/engine` 根入口增加 `Engine.createBitmapResourceSlot(scope, bitmap)`，以及准确两个擦除类型 `BitmapResourceSlot` 与 `BitmapResourceSlotState`。保持包依赖图、无 DOM/Node 核心、私有装配 authority 和既有 Host 协议。槽借用初始有效绑定，仅拥有自己获取的新替换租约，只允许最新已接受意图提交。遵循[所选规格](knowledge-base/Cns/docs/位图资源槽规格.md)、[证据记录](knowledge-base/Cns/docs/位图资源槽核验.md)及[公共示例](examples/bitmap-resource-slot/README.zh-CN.md)。
+- `tests/bitmap-resource-slot-authority-unit.test.mjs` 与 `tests/bitmap-resource-slot-authority-supplement.test.mjs` 是限定 UNIT 夹具，可通过已构建公共 `@egret/runtime` 契约与真实公共 runtime 对象构造自定义 context，并观察该构造登记的操作；外部目标对照使用真实公共 Engine。这项权限不增加 SDK 私有导入、加载 hook、原型拦截或产品导出，普通公共行为夹具及示例继续使用公共 SDK。
+- `tools/bitmap-resource-slot-types.mjs` 与 `tools/bitmap-resource-slot-boundary.mjs` 的专用 strict 和源码边界义务须与既有完整检查共同执行。冻结实际未抑制的诊断元组；每项指定类型／策略变异都须先取得全新完整基线，再单独观察拒绝。保持准确的选定公共类型、私有捕获／提交／清理桥、源码／产物身份及已声明依赖边界。
+- 原生组合须先独立审阅完整输入闭包快照，再由 `tools/verify-bitmap-resource-slot.mjs` 使用固定 Playwright 1.62.1、默认 Edge 且无额外 flags 执行。保留原始 import-map 反例、完整普通上下文及独立错误颜色上下文、未修改 RGBA 原始产物与清理记录。像素比较范围为六个字面采样点，完整帧留存用于复核。源码、UNIT、行为、strict／策略、浏览器、完整门禁与 PR/Main 交付分别记状态；完整 UI、Spine R020/V020 和迁移 R008/V006 保持 OPEN。
+<!-- BRS-0.56.0-POLICY-END -->
+
 <!-- LL-0.55.0-POLICY-BEGIN -->
 ## 显式本地布局边界
 

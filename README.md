@@ -20,17 +20,19 @@ The repository contains an executable engineering preview. Display trees, resour
 
 ## Current version
 
-Engineering preview **0.55.0** adds explicit local linear layout: call `planLinearLayout` for immutable rectangle placements, then apply coordinates through existing display APIs. The [two-button layout example](examples/linear-layout/README.md) demonstrates horizontal/vertical placement, membership filtering, disabled states and saved/live frames. Recorded desktop Canvas/WebGPU checks cover the fixed two-Button workflow; their environment and limits are in the evidence record. Read the [specification](knowledge-base/en/docs/local-linear-layout-spec.md), [evidence](knowledge-base/en/docs/local-linear-layout-evidence.md) and [version history](knowledge-base/en/CHANGELOG.md). Workspace packages remain private 0.0.0; the host protocol remains 1.0.
+Engineering preview **0.56.0** focuses on recoverable resource replacement. `Engine.createBitmapResourceSlot(scope, bitmap)` provides explicit Texture replacement for one persistent Bitmap, with the erased `BitmapResourceSlot` and `BitmapResourceSlotState` types. The initial lease remains borrowed; the slot owns only fresh replacement leases. The prior usable binding survives pending, failed or cancelled requests, and only the latest accepted intent may commit. Cancellation and supersession reject their request Promises; detailed validation, conflict and lifetime errors follow the [specification](knowledge-base/en/docs/bitmap-resource-slot-spec.md). Read the [evidence](knowledge-base/en/docs/bitmap-resource-slot-evidence.md), [example guide](examples/bitmap-resource-slot/README.md) and [version history](knowledge-base/en/CHANGELOG.md).
+
+Focused behavior, strict consumers and the recorded desktop Canvas/WebGPU composition have passed their bounded checks. Full local/public gates and repository delivery are recorded separately in the linked evidence. The previous 0.55 layout increment was delivered through [PR #44](https://github.com/cnedwin/Egret_rebuild/pull/44). Workspace packages remain private 0.0.0; the host protocol remains 1.0.
 
 ## Five recent changes
 
 | Version / 版本 | Main change | 主要变化 |
 | --- | --- | --- |
+| 0.56.0 | Recoverable single-Bitmap resource replacement with latest accepted intent | 可恢复的单 Bitmap 资源替换与最新已接受意图 |
 | 0.55.0 | Explicit local linear planning and a two-button composition example | 显式本地线性规划与双按钮组合示例 |
 | 0.54.0 | Shared-input bitmap buttons with pressed/disabled skins and final activation picking | 共享输入位图按钮、按下与禁用皮肤、激活前最终命中复查 |
 | 0.53.0 | Runnable atlas/animation playground with explicit pivots and saved/live frames | 图集与动画可运行示例、显式锚点和保存／实时画面 |
 | 0.52.0 | Display anchor offsets shared by rendering, coordinates and picking | 渲染、坐标转换与拾取共用显示对象锚点 |
-| 0.51.0 | Indexed display-child insertion with preserved ownership | 按索引插入显示子对象并保持所有权语义 |
 
 [Full Changelog](knowledge-base/en/CHANGELOG.md) · [Engineering plan](knowledge-base/en/docs/engineering-plan.md)
 
@@ -43,7 +45,7 @@ Use the recorded Node.js 24.19.0, pnpm 11.25.0 and TypeScript 7.0.2 toolchain. F
     node tools/verify.mjs
     node examples/headless.mjs
 
-Try the [layout example](examples/linear-layout/README.md) for explicit planning and Button composition, or run the [two-button example](examples/bitmap-button/README.md) for Canvas/WebGPU interaction, or the [atlas playground](examples/anchored-atlas-playback/README.md) for resources and animation. Their guides describe the local HTTP server and supported browser paths.
+The [resource replacement example](examples/bitmap-resource-slot/README.md) composes a persistent Bitmap, transformed clipping and independent Buttons; its bounded desktop Canvas/WebGPU checks are recorded in the linked evidence. Try the [layout example](examples/linear-layout/README.md) for explicit planning and Button composition, the [two-button example](examples/bitmap-button/README.md) for Canvas/WebGPU interaction, or the [atlas playground](examples/anchored-atlas-playback/README.md) for resources and animation. Their guides describe the local HTTP server and supported browser paths.
 
 ## Read and contribute
 

@@ -5,6 +5,8 @@ import type { Diagnostic, DiagnosticHandler, HostAdapter } from "@egret/contract
 import { EgretError, createScope, createStage, createAssetManager, reportDiagnostic, createDisplayInputOperations } from "@egret/runtime";
 import type { AssetGroupOperations, AssetManager, AssetRef, Scope, Stage } from "@egret/runtime";
 import type { EngineContext } from "@egret/runtime";
+import { createBitmapResourceSlotOwner } from './bitmapResourceSlot.js';
+import type { BitmapResourceSlot, BitmapResourceSlotOwner } from './bitmapResourceSlot.js';
 import { closeHost } from "./closeHost.js";
 import { registerTexturedFrame } from './internal/texturedFrameState.js';
 import { createGameClockOwner } from './gameClock.js';
@@ -59,6 +61,8 @@ export class Engine {
   readonly #tweenOwner: TweenOwner;
   readonly #sequencePlaybackOwner: SequencePlaybackOwner;
   readonly #assetGroupOwner: AssetGroupOwner;
+  readonly #bitmapResourceSlotOwner: BitmapResourceSlotOwner;
+  readonly #bitmapResourceTargets = new WeakMap<Bitmap, Parameters<NonNullable<EngineContext['registerBitmapResourceTarget']>>[1]>();
   readonly #mouseInputOwner: MouseInputOwner;
   readonly #engineScopes = new WeakSet<Scope>();
   private frameBusy = false;
@@ -106,6 +110,9 @@ export class Engine {
         if (this.#currentState === "closing") this.cleanupErrors.push(cause);
       },
       registerTextFieldCache: textFields.registerCache,
+      registerBitmapResourceTarget: (bitmap: Bitmap, operations: Parameters<NonNullable<EngineContext['registerBitmapResourceTarget']>>[1]): void => {
+        this.#bitmapResourceTargets.set(bitmap, operations);
+      },
       registerAssetGroupOperations: (operations: AssetGroupOperations): void => { assetGroupOperations = operations; },
     });
     // The inert owner precedes publication and uses private Scope membership.
@@ -138,6 +145,11 @@ export class Engine {
     this.stage = stage;
     this.assets = createAssetManager(this.#context);
     // Authentic manager construction captured the operations before publication.
+    this.#bitmapResourceSlotOwner = createBitmapResourceSlotOwner({
+      assertOpen: this.#context.assertOpen,
+      isEngineScope: (scope: unknown): scope is Scope => typeof scope === 'object' && scope !== null && this.#engineScopes.has(scope as Scope),
+      report: this.#context.report, captureCleanup: this.#context.captureCleanup,
+    }, assetGroupOperations!, this.#bitmapResourceTargets);
     this.#assetGroupOwner = createAssetGroupOwner({
       assertOpen: this.#context.assertOpen,
       isEngineScope: (scope: unknown): scope is Scope => typeof scope === 'object' && scope !== null && this.#engineScopes.has(scope as Scope),
@@ -258,6 +270,11 @@ export class Engine {
     return this.#sequencePlaybackOwner.create(scope, bitmap, clip, options);
   }
 
+  /** Preserve the current image while an explicitly requested replacement loads. */
+  public createBitmapResourceSlot(scope: Scope, bitmap: Bitmap): BitmapResourceSlot {
+    return this.#bitmapResourceSlotOwner.create(scope, bitmap);
+  }
+
   public createAssetGroup<T>(scope: Scope, refs: readonly AssetRef<T>[], options?: AssetGroupOptions): AssetGroup<T> {
     return this.#assetGroupOwner.create<T>(scope, refs, options);
   }
@@ -270,7 +287,8 @@ export class Engine {
     this.closePromise = new Promise<void>((resolve, reject) => { resolveClose = resolve; rejectClose = reject; });
     // Cache the result before abort/cleanup/diagnostic callbacks can reenter.
     this.#currentState = "closing";
-    // Gate browser input before any callback-capable owner shutdown or idle wait.
+    this.#bitmapResourceSlotOwner.close();
+    // Retire browser input before the remaining callback-capable owners or idle wait.
     this.#mouseInputOwner.close();
     // Terminal observations change now, before the existing idle barriers wait.
     this.#assetGroupOwner.close();
@@ -314,8 +332,3 @@ export class Engine {
     }
   }
 }
-
-
-
-
-

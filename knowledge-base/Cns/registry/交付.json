@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-15",
+  "updatedAt": "2026-10-16",
   "authority": "交付状态摘要；代码、产物和可复现验收证据分别作为实现与测试权威",
   "items": [
     {
@@ -6264,6 +6264,199 @@
         "contract": "Cns/docs/local-linear-layout-spec.md",
         "evidence": "Cns/docs/local-linear-layout-evidence.md",
         "example": "https://github.com/cnedwin/Egret_rebuild/blob/main/examples/linear-layout/README.md"
+      }
+    },
+    {
+      "id": "V061",
+      "kind": "engineering_preview",
+      "status": "in_progress",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R011",
+        "R012",
+        "R015",
+        "R016",
+        "R019",
+        "R021"
+      ],
+      "sourceIds": [
+        "S110"
+      ],
+      "dependsOn": [
+        "V060"
+      ],
+      "owner": "project",
+      "dueDate": null,
+      "title": "0.56.0 可恢复位图资源槽",
+      "doc": "Cns/docs/位图资源槽规格.md",
+      "artifacts": [
+        "Cns/docs/位图资源槽规格.md",
+        "Cns/docs/位图资源槽核验.md"
+      ],
+      "implementation": "Engine.createBitmapResourceSlot 保持目标身份，初始绑定仅借用，后续仅拥有槽获取的租约；按最新已接受意图处理替换、失败、取消、手工改绑冲突及生命周期清理。",
+      "acceptance": "已记录有限本地行为、类型、源码边界和桌面读回结果；当前公开文件另经独立源码与双语审查，元数据集成、推送前验证、hooks 和 Git 交付各自保留独立结果。",
+      "acceptanceCriteria": [
+        "保持初始借用和后续自有租约边界，等待、失败及取消保留原绑定；最新已接受意图胜出，过期交付被回收。",
+        "按选定契约处理手工改绑、资源撤销、重入及 Scope／Engine 关闭；自定义上下文单元检查与真实 Engine 行为分开。",
+        "真实原版编译器的完整诊断及声明闭包匹配指定清单，保留原始流与既有严格消费者的有限数据后继。",
+        "桌面 Canvas／WebGPU 普通流程及错误颜色对照保留完整原始读回，只对规定采样点主张正确性。",
+        "保留历史来源、双语审查截止和需求状态；发布前记录不预言后续交付结果。"
+      ],
+      "verification": {
+        "engineeringPreview": "0.56.0",
+        "sourceId": "S110",
+        "deliverableId": "V061",
+        "date": "2026-10-16",
+        "status": "BOUNDED_LOCAL_RESULTS_AT_PREPUBLICATION_CUTOFF",
+        "factory": "Engine.createBitmapResourceSlot",
+        "publicEntry": "@egret/engine",
+        "erasedTypes": [
+          "BitmapResourceSlot",
+          "BitmapResourceSlotState"
+        ],
+        "newRootRuntimeValues": [],
+        "newPublicSubpaths": [],
+        "newDependency": false,
+        "hostProtocolChanged": false,
+        "contract": "Cns/docs/位图资源槽规格.md",
+        "evidence": "Cns/docs/位图资源槽核验.md",
+        "example": "https://github.com/cnedwin/Egret_rebuild/blob/main/examples/bitmap-resource-slot/README.md",
+        "build": {
+          "status": "PASS",
+          "includedInCompleteVerification": true
+        },
+        "focusedCPU": {
+          "status": "PASS",
+          "modules": 9,
+          "tests": 115,
+          "pass": 115,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        "interleavingsAndLifecycle": {
+          "status": "COVERED_IN_SELECTED_115_TEST_RUN",
+          "separateRuntimeAcceptance": false
+        },
+        "authorityUnits": {
+          "status": "COVERED_IN_SELECTED_115_TEST_RUN",
+          "boundary": "PUBLIC_RUNTIME_CUSTOM_CONTEXT_UNIT_DISTINCT_FROM_GENUINE_ENGINE_CASES"
+        },
+        "strict": {
+          "status": "PASS",
+          "compilerVersion": "7.0.2",
+          "positiveDiagnostics": 0,
+          "negativeDiagnostics": 30,
+          "declarationsPerConsumer": 57,
+          "nativeLibrariesPerConsumer": 57,
+          "domAmbientTypes": false,
+          "nodeAmbientTypes": false
+        },
+        "sourceBoundary": {
+          "status": "PASS",
+          "defaultRuntimeValueExports": 39,
+          "sourceCopyBaselines": 13,
+          "assignedRefusals": 13,
+          "productExecution": false
+        },
+        "normalHosts": {
+          "status": "PASS",
+          "backends": [
+            "Canvas",
+            "WebGPU"
+          ],
+          "boundary": "RECORDED_DESKTOP_CHECKS_ONLY"
+        },
+        "nativeSource": {
+          "status": "SOURCE_SNAPSHOT_AUTHENTICATED",
+          "inventoryFiles": 221,
+          "modules": 108,
+          "canvasClosure": 73,
+          "webgpuClosure": 104,
+          "browserExecutionClaim": false
+        },
+        "nativeActual": {
+          "status": "PASS_BOUNDED_DESKTOP_COMPOSITION",
+          "ordinaryContexts": 2,
+          "controlContexts": 2,
+          "ordinaryCheckpoints": 28,
+          "controlCheckpoints": 28,
+          "ancillaryStartupReads": 4,
+          "rawRGBAFrames": 60,
+          "authenticatedRawBytes": 184320,
+          "ordinaryPointChannels": 672,
+          "controlPointChannels": 672,
+          "ordinaryPointMismatches": 0,
+          "assignedControlPointMismatches": 2,
+          "fulfilledOriginalWebGPUReadbackPromises": 30,
+          "allPixelCorrectness": false,
+          "physicalDeviceAcceptance": false,
+          "performanceAcceptance": false
+        },
+        "completeCode": {
+          "status": "PASS",
+          "command": "node tools/verify.mjs",
+          "testSummaries": [
+            {
+              "scope": "Core public/unit/structural regressions",
+              "tests": 3358,
+              "suites": 0,
+              "pass": 3358,
+              "fail": 0,
+              "cancelled": 0,
+              "skipped": 0,
+              "todo": 0
+            },
+            {
+              "scope": "Separate retained Spine source experiment",
+              "tests": 160,
+              "suites": 0,
+              "pass": 160,
+              "fail": 0,
+              "cancelled": 0,
+              "skipped": 0,
+              "todo": 0
+            }
+          ],
+          "boundary": "LOCAL_PROTOTYPE_GATES_AND_SEPARATELY_IDENTIFIED_EXPERIMENT_TESTS",
+          "priorFailedFullRun": {
+            "tests": 3349,
+            "pass": 3347,
+            "fail": 2,
+            "fixtureRepairPaths": [
+              "tests/project-boundaries.test.mjs",
+              "tests/spritesheet-fault.test.mjs",
+              "tests/spritesheet-fault-child.mjs"
+            ]
+          }
+        },
+        "sourceReview": {
+          "status": "APPROVED_SELECTED_PRODUCT_SOURCE",
+          "productSources": 5,
+          "productDeclarations": 5,
+          "wholeEngineAcceptance": false
+        },
+        "publicSourceBilingualReview": {
+          "status": "APPROVED_EXACT_CURRENT_READING_FILES",
+          "currentFiles": 22,
+          "changedOrNewPairs": 11,
+          "totalPairs": 203,
+          "unchangedPairsRetainingPriorCutoffs": 192,
+          "metadataIntegrationReviewIncluded": false
+        },
+        "fullPrepush": "PENDING_AT_PREPUBLICATION_DOCUMENTATION_CUTOFF",
+        "mandatoryHooks": "PENDING_AT_PREPUBLICATION_DOCUMENTATION_CUTOFF",
+        "newGitDelivery": "PENDING_AT_PREPUBLICATION_DOCUMENTATION_CUTOFF",
+        "remoteCI": "NO_REMOTE_CI_PASS_OBSERVED_AT_THIS_CUTOFF",
+        "remoteCIPassClaim": false,
+        "fullSpineR020V020": "OPEN",
+        "migrationR008V006": "OPEN",
+        "generalGameUI": "OPEN",
+        "historicalCutoffsPreserved": true,
+        "defaultAPIChanged": true
       }
     }
   ],

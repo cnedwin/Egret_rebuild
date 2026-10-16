@@ -152,8 +152,8 @@
     },
     {
       "path": "packages/engine/dist/Engine.d.ts",
-      "bytes": 3094,
-      "sha256": "d09b9a79bfdba155467bc678f8914adce08c33236b05b268bdc7cb4fed4ba7d2"
+      "bytes": 3328,
+      "sha256": "9904b53a624ab5be83a28c4a906791edf1fd1e8a5cd383bb2bf98d4d510463b3"
     },
     {
       "path": "packages/engine/dist/assetGroupTypes.d.ts",
@@ -192,8 +192,8 @@
     },
     {
       "path": "packages/engine/dist/index.d.ts",
-      "bytes": 3292,
-      "sha256": "ba0d66bb51b4db0f196a4c863b0b75d10f88c451d2d590dcf80b9fb0a153d196"
+      "bytes": 3384,
+      "sha256": "95a6634d04cdfd26da39286b072a2c2095f8c605cc23c075e2c5e574289c3b06"
     },
     {
       "path": "packages/engine/dist/internal/mouseInputFactoryState.d.ts",
@@ -247,8 +247,8 @@
     },
     {
       "path": "packages/runtime/dist/Bitmap.d.ts",
-      "bytes": 1904,
-      "sha256": "f58469f07c7c262882867b91d2759a23c327ec4d69725cc82d3798af10e66f8e"
+      "bytes": 1899,
+      "sha256": "d685c189d20bba4d2e8d468652d6f0fcf056ff0ba2e6c92edabb89f948074608"
     },
     {
       "path": "packages/runtime/dist/ByteReader.d.ts",
@@ -392,8 +392,8 @@
     },
     {
       "path": "packages/runtime/dist/ownership.d.ts",
-      "bytes": 3102,
-      "sha256": "798e0ad10e1a414ef64a18c52cdefac359ae459ae09e2a99e504d5f8e5caf33b"
+      "bytes": 3832,
+      "sha256": "9e30b94122df22e2039b42a0ef1f64a99c68f1373ed05660848f4d7d257c3ea4"
     },
     {
       "path": "packages/runtime/dist/sequenceClip.d.ts",

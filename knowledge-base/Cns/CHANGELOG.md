@@ -4,6 +4,12 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 0.56.0 — 可恢复位图资源替换
+
+`Engine.createBitmapResourceSlot(scope, bitmap)` 通过既有根入口，为一个持久 Bitmap 增加显式异步 Texture 替换，并增加擦除类型 `BitmapResourceSlot` 与 `BitmapResourceSlotState`。槽借用初始绑定，仅拥有新替换租约。请求等待、失败或取消时保留先前可用绑定，只有最新已接受意图可以提交；取消或被新请求取代会拒绝对应请求 Promise。参阅[规格](docs/位图资源槽规格.md)、[证据及剩余验收](docs/位图资源槽核验.md)和[组合示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/bitmap-resource-slot/README.md)。
+
+聚焦行为、严格消费者及记录的桌面 Canvas/WebGPU 组合已通过各自限定检查；完整本地／公开门禁及仓库交付在所链接证据中分别记录，完整 UI、Spine R020/V020 与旧工程迁移 R008/V006 保持 OPEN。前一个 0.55 增量已通过 [PR #44](https://github.com/cnedwin/Egret_rebuild/pull/44) 交付，Main 为 `f6b7968db89febfdbe00fb1322f208ab2135f68f`；较早条目继续保留各自历史证据截止点。
+
 ## 0.55.0 — 显式本地线性布局
 
 可选 `@egret/engine/layout` 将显式数字记录转换为冻结的局部矩形计划，调用方负责过滤成员、排列子对象并应用坐标。双 Button 示例连接既有共享输入、借用程序化图集、嵌套裁剪及保存/实时帧。参阅[规格](docs/local-linear-layout-spec.md)及[验证范围](docs/local-linear-layout-evidence.md)。
