@@ -18,13 +18,19 @@ Egret Engine is an open-source game-engine rebuild for creators working with AI 
 
 The repository contains an executable engineering preview. Display trees, resource leases, animation, browser input and selected Canvas/WebGPU rendering paths are available within their documented contracts. Full UI tooling, complete Spine support, target-platform SDKs and automated legacy-project migration remain in development.
 
-## Current version
+## Current version — 0.60.0
 
-The **0.59.0 engineering preview candidate** implements normalized single-page atlas frames with the explicit `'trim-rotation-v1'` profile. SpriteSheet and SequenceClip preserve a sprite's logical canvas when transparent margins are removed or pixels are packed clockwise by 90 degrees. Bitmap placement and natural dimensions stay consistent across animation frames; omitted or `undefined` profiles keep the existing rectangle behavior.
+The **0.60.0 engineering preview** converts supported single-page atlas metadata with an explicit PNG binding into standard SpriteSheet and SequenceClip inputs. The optional `@egret/project/atlas` entry reuses the existing animation and resource-ownership model, so the resulting plan can be composed through the public Engine factories.
 
-The [trimmed-atlas example](examples/trimmed-atlas-playback/README.md) composes two independent once/loop actors from one immutable clip, with anchors and parent clipping. Read the [layout contract](knowledge-base/en/docs/atlas-frame-layout-contract.md) and [evidence and limits](knowledge-base/en/docs/atlas-frame-layout-evidence.md) for input, ownership and verification details.
+Read the [contract](knowledge-base/en/docs/atlas-import-plan-contract.md), [evidence and limits](knowledge-base/en/docs/atlas-import-plan-evidence.md) and [composition example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/atlas-import-playback/README.md). The supported profile is `aseprite-json-array-1.3.18.6-v1`; real exporter compatibility and entitlement remain unverified.
 
-At the 2026-10-17 authoring cutoff, SDK behavior, strict consumers and source-boundary checks have accepted results. The separately reviewed desktop Canvas and textured WebGPU runs completed six fresh contexts and 30 full RGBA readbacks, including assigned controls and saved-frame replay after origin retirement. Final publication/prepush checks and 0.59 Git/remote delivery remain pending. Workspace packages remain private 0.0.0; the Host protocol remains 1.0.
+The recorded desktop Canvas/WebGPU composition passed its bounded four-readback verification. Workspace packages remain private 0.0.0; Host protocol remains 1.0.
+
+## Delivered normalized atlas frames — 0.59.0
+
+The preceding 0.59 increment was delivered through [PR #48](https://github.com/cnedwin/Egret_rebuild/pull/48), Main `44f49f9d97a7baebc400fd4940541529dc33d147`.
+
+Normalized trim/clockwise90 runtime behavior follows the [layout contract](knowledge-base/en/docs/atlas-frame-layout-contract.md); the original 30 browser readbacks remain a separate accepted domain.
 
 ## Prepared resource groups — 0.58.0
 
@@ -52,6 +58,7 @@ Focused behavior, strict consumers and the recorded desktop Canvas/WebGPU compos
 
 | Version / 版本 | Main change | 主要变化 |
 | --- | --- | --- |
+| 0.60.0 | Strict single-page atlas metadata planning with explicit PNG binding | 严格单页图集元数据规划与显式 PNG 绑定 |
 | 0.59.0 | Normalized trimmed and clockwise90 atlas frames with stable logical dimensions | 标准化裁边与顺时针90度图集帧，保持逻辑尺寸 |
 | 0.58.0 | Atomic multi-Bitmap binding and prepared two-layer outfits | 多 Bitmap 原子绑定与双层组合换装 |
 | 0.57.0 | Real-resource scene composition connecting resources, animation, text and input | 连接资源、动画、文本与输入的真实资源场景组合 |

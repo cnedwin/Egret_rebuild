@@ -26,8 +26,18 @@ function seqpbRead(root, file) {
   if (!seqpbContains(root, physical) || !lstatSync(physical).isFile()) seqpbFail('SEQP_BOUNDARY_INPUT', 'Source escaped owner: ' + file);
   return readFileSync(physical);
 }
+
+// Retain the historical pin and admit only the reviewed optional-entry successor.
+// This is one complete path and two exact raw identities, never a path wildcard.
+function seqpbAtlasPackageSuccessor(expected, raw) {
+  return expected?.path === 'packages/project/package.json'
+    && expected.bytes === 397 && expected.sha256 === '295e6bc8d81a4647f5b99355ea27879563ced216fa2af406c65cc78b95f40945'
+    && raw.length === 503 && seqpbHash(raw) === '4b4380142316c6ab2f0727eab44c80eff2a21640c701871c6ace3a0ab1b276af';
+}
+
 function seqpbPin(root, pin, code) {
   const bytes = seqpbRead(root, pin.path);
+  if (seqpbAtlasPackageSuccessor(pin, bytes)) return;
   if (bytes.length !== pin.bytes || seqpbHash(bytes) !== pin.sha256) seqpbFail(code, 'Source identity changed: ' + pin.path);
 }
 

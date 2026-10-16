@@ -21,6 +21,7 @@ Egret connects complex 2D interfaces and lightweight 3D with a rendering/runtime
 | Creation and compatibility | [AI/project interfaces](docs/ai-creation-and-engineering-interfaces.md) |
 | Creation and compatibility | [Spine support](docs/spine-animation-support-and-acceptance.md) |
 | Creation and compatibility | [Legacy migration](docs/legacy-project-migration.md) |
+| Current integration | [Atlas import planner](docs/atlas-import-plan-contract.md) · [Evidence](docs/atlas-import-plan-evidence.md) |
 | Current integration | [Atlas-frame layout](docs/atlas-frame-layout-contract.md) · [Evidence](docs/atlas-frame-layout-evidence.md) |
 | Current integration | [Prepared resource groups](docs/prepared-resource-groups-spec.md) |
 | Current integration | [Real-resource scene](docs/resource-scene-integration.md) |
@@ -28,6 +29,16 @@ Egret connects complex 2D interfaces and lightweight 3D with a rendering/runtime
 | Status and participation | [Changelog](CHANGELOG.md) |
 | Status and participation | [Contributing](https://github.com/cnedwin/Egret_rebuild/blob/main/CONTRIBUTING.md) |
 | Sources | [Acknowledgements](https://github.com/cnedwin/Egret_rebuild/blob/main/ACKNOWLEDGEMENTS.md) |
+
+## Atlas import planning — 0.60.0
+
+The **0.60.0 engineering preview** adds the optional `@egret/project/atlas` entry: strict single-page Aseprite stable-marker JSON-array planning with one explicit PNG binding. Its two runtime values and sixteen erased types produce owned, frozen inputs for the existing SpriteSheet and SequenceClip factories. The exact profile is `aseprite-json-array-1.3.18.6-v1`; exporter output compatibility, declared hashes and entitlement remain unverified.
+
+Read the [contract](docs/atlas-import-plan-contract.md) and [evidence and limits](docs/atlas-import-plan-evidence.md).
+
+Independently accepted saved results are focused planner 47/47, the earlier normal SDK run with core 3625/3625 and separate F2 160/160, and the distinct CPU firstGREEN 5/5. These overlapping scopes are not added together. Independent review also accepts the selected new Native Canvas/WebGPU four-readback result. Final integrated gates/prepush and 0.60 Git/remote delivery remain pending. Workspace packages remain private 0.0.0; Host protocol remains 1.0.
+
+The preceding 0.59 increment was delivered through [PR #48](https://github.com/cnedwin/Egret_rebuild/pull/48), Main `44f49f9d97a7baebc400fd4940541529dc33d147`. Earlier 0.59 readings and evidence retain their original authoring cutoffs; the new delivery statement does not rewrite them. No remote statuses or check runs were reported, so no CI pass is inferred.
 
 ## Normalized atlas frames — 0.59.0
 

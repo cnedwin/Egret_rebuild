@@ -21,19 +21,30 @@
 | 创作与兼容 | [AI 与工程接口](docs/AI创作与工程接口.md) |
 | 创作与兼容 | [Spine 支持](docs/Spine动画支持需求与验收.md) |
 | 创作与兼容 | [旧工程迁移](docs/旧工程迁移.md) |
+| 当前集成 | [图集导入规划](docs/atlas-import-plan-contract.md) · [证据](docs/atlas-import-plan-evidence.md) |
 | 当前集成 | [图集帧布局](docs/atlas-frame-layout-contract.md) · [证据](docs/atlas-frame-layout-evidence.md) |
 | 当前集成 | [资源组合准备](docs/prepared-resource-groups-spec.md) |
 | 当前集成 | [真实资源场景](docs/resource-scene-integration.md) |
 | 进展与参与 | [能力与进展](docs/core-progress.md) |
 | 进展与参与 | [变更记录](CHANGELOG.md) |
-| 进展与参与 | [贡献指南](https://github.com/cnedwin/Egret_rebuild/blob/main/CONTRIBUTING.zh-CN.md) |
-| 资料来源 | [鸣谢](https://github.com/cnedwin/Egret_rebuild/blob/main/ACKNOWLEDGEMENTS.zh-CN.md) |
+| 进展与参与 | [贡献指南](https://github.com/cnedwin/Egret_rebuild/blob/main/CONTRIBUTING.md) |
+| 资料来源 | [鸣谢](https://github.com/cnedwin/Egret_rebuild/blob/main/ACKNOWLEDGEMENTS.md) |
+
+## 图集导入规划 — 0.60.0
+
+**0.60.0 工程预览**增加可选 `@egret/project/atlas` 入口，以一个显式 PNG 绑定规划严格单页 Aseprite stable-marker JSON-array。两个运行时值与十六个擦除类型为既有 SpriteSheet、SequenceClip 工厂生成自有、冻结的输入。精确 profile 为 `aseprite-json-array-1.3.18.6-v1`；exporter 输出兼容性、声明 hash 与许可资格仍未验证。
+
+参阅[契约](docs/atlas-import-plan-contract.md)及[证据与限制](docs/atlas-import-plan-evidence.md)。
+
+已独立接受的保存结果分别为聚焦 planner 47/47、较早正常 SDK 核心 3625/3625 与单独 F2 160/160，以及独立 CPU firstGREEN 5/5；这些重叠范围不相加。独立审查还接受所选新增 Native Canvas/WebGPU 四次读回结果。最终集成门禁/prepush 及 0.60 Git/远端交付仍待完成。工作区包仍为 private、版本 0.0.0，Host 协议仍为 1.0。
+
+前一 0.59 增量已通过 [PR #48](https://github.com/cnedwin/Egret_rebuild/pull/48) 交付，Main 为 `44f49f9d97a7baebc400fd4940541529dc33d147`。较早 0.59 读物和证据保留原编写截止点，新增交付说明不改写它们。未报告远端 status 或 check run，不据此推断 CI 通过。
 
 ## 标准化图集帧 — 0.59.0
 
 **0.59.0 工程预览候选**已实现通过显式 `'trim-rotation-v1'` profile 使用标准化单页图集帧。SpriteSheet 和 SequenceClip 在裁去透明边缘或将像素顺时针旋转 90 度打包后，仍保留精灵的逻辑画布。动画各帧的 Bitmap 放置与自然尺寸保持一致；省略 profile 或传入 `undefined` 保留原矩形行为。
 
-[裁边图集示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/trimmed-atlas-playback/README.zh-CN.md)使用同一个不可变 clip 组合两个独立 once/loop actor，并演示 anchor 与 parent clip。输入、所有权及验证细节见[布局契约](docs/atlas-frame-layout-contract.md)和[证据与边界](docs/atlas-frame-layout-evidence.md)。
+[裁边图集示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/trimmed-atlas-playback/README.md)使用同一个不可变 clip 组合两个独立 once/loop actor，并演示 anchor 与 parent clip。输入、所有权及验证细节见[布局契约](docs/atlas-frame-layout-contract.md)和[证据与边界](docs/atlas-frame-layout-evidence.md)。
 
 截至 2026-10-17 编写截止点，SDK 行为、严格消费者及源码边界检查已有接受结果。另经独立审查的桌面 Canvas 和纹理 WebGPU 运行完成六个全新上下文及 30 次完整 RGBA 读回，覆盖指定突变对照及原资源退役后的保存帧重放。最终公开内容/prepush 检查与 0.59 Git/远端交付仍待完成。工作区包仍为 private、版本 0.0.0，Host 协议仍为 1.0。
 
@@ -43,11 +54,11 @@
 
 已记录的桌面 Canvas 与 WebGPU 检查通过六个独立上下文，保留 54 份原始 RGBA 读回，覆盖独立的旧图层对照、真实鼠标选择、动画边界，以及原始读取尚未结束时关闭。该结果只适用于有限桌面范围；通用依赖清单、更多内容类型、完整 UI、Spine、生产宿主、移动性能和物理内存验收仍保持开放。
 
-参阅[规格](docs/prepared-resource-groups-spec.md)、[证据与边界](docs/prepared-resource-groups-evidence.md)及[示例指南](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/prepared-resource-groups/README.zh-CN.md)。
+参阅[规格](docs/prepared-resource-groups-spec.md)、[证据与边界](docs/prepared-resource-groups-evidence.md)及[示例指南](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/prepared-resource-groups/README.md)。
 
 ## 真实资源场景 — 0.57.0
 
-工程预览 **0.57.0** 通过既有公开 Engine API，组合真实 PNG 资源、共享图集播放、文本与鼠标输入。默认使用 Canvas，纹理 WebGPU 场景作为显式选择的实验路径。资源准备、画面就绪、输入就绪及安全关闭具有各自边界。参阅[集成记录](docs/resource-scene-integration.md)和[示例指南](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/resource-scene/README.zh-CN.md)。
+工程预览 **0.57.0** 通过既有公开 Engine API，组合真实 PNG 资源、共享图集播放、文本与鼠标输入。默认使用 Canvas，纹理 WebGPU 场景作为显式选择的实验路径。资源准备、画面就绪、输入就绪及安全关闭具有各自边界。参阅[集成记录](docs/resource-scene-integration.md)和[示例指南](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/resource-scene/README.md)。
 
 桌面 Canvas/WebGPU 流程已完成七个独立上下文，保留 64 份原始 RGBA 画面；在记录的环境中，固定点与字体区域比较、错误对照和完整关闭均通过。手机、跨环境字体、性能与能耗验收仍保持开放。
 
@@ -61,7 +72,7 @@
 
 ## 接口契约与示例
 
-[文档导航](https://github.com/cnedwin/Egret_rebuild/blob/main/DOCUMENTATION.zh-CN.md)提供各子系统的契约、证据与可运行示例。详细契约定义所有权、有序读取、错误及资源释放行为；示例指南说明受支持路径的运行方法。
+[文档导航](https://github.com/cnedwin/Egret_rebuild/blob/main/DOCUMENTATION.md)提供各子系统的契约、证据与可运行示例。详细契约定义所有权、有序读取、错误及资源释放行为；示例指南说明受支持路径的运行方法。
 
 ## 登记与历史
 

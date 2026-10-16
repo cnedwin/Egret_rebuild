@@ -18,13 +18,19 @@ Years later, as times change and technology advances, many developers continue t
 
 当前仓库提供可运行的工程预览。显示树、资源租约、动画、浏览器输入及部分 Canvas/WebGPU 渲染路径，均有各自的接口契约和验证范围。完整 UI 工具、完整 Spine 支持、目标平台 SDK 和旧工程自动迁移仍在开发中。
 
-## 当前版本
+## 当前版本 — 0.60.0
 
-**0.59.0 工程预览候选**已实现通过显式 `'trim-rotation-v1'` profile 使用标准化单页图集帧。SpriteSheet 和 SequenceClip 在裁去透明边缘或将像素顺时针旋转 90 度打包后，仍保留精灵的逻辑画布。动画各帧的 Bitmap 放置与自然尺寸保持一致；省略 profile 或传入 `undefined` 保留原矩形行为。
+**0.60.0 工程预览**将受支持的单页图集元数据与显式 PNG 绑定转换为标准 SpriteSheet、SequenceClip 输入。可选 `@egret/project/atlas` 入口复用既有动画和资源所有权模型，生成的计划可通过公开 Engine 工厂进行组合。
 
-[裁边图集示例](examples/trimmed-atlas-playback/README.zh-CN.md)使用同一个不可变 clip 组合两个独立 once/loop actor，并演示 anchor 与 parent clip。输入、所有权及验证细节见[布局契约](knowledge-base/Cns/docs/atlas-frame-layout-contract.md)和[证据与边界](knowledge-base/Cns/docs/atlas-frame-layout-evidence.md)。
+参阅[契约](knowledge-base/Cns/docs/atlas-import-plan-contract.md)、[证据与限制](knowledge-base/Cns/docs/atlas-import-plan-evidence.md)及[组合示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/atlas-import-playback/README.md)。受支持的 profile 为 `aseprite-json-array-1.3.18.6-v1`；实际 exporter 兼容性与许可资格仍未验证。
 
-截至 2026-10-17 编写截止点，SDK 行为、严格消费者及源码边界检查已有接受结果。另经独立审查的桌面 Canvas 和纹理 WebGPU 运行完成六个全新上下文及 30 次完整 RGBA 读回，覆盖指定突变对照及原资源退役后的保存帧重放。最终公开内容/prepush 检查与 0.59 Git/远端交付仍待完成。工作区包仍为 private、版本 0.0.0，Host 协议仍为 1.0。
+记录的桌面 Canvas/WebGPU 组合通过其有限四次读回验证。工作区包仍为 private、版本 0.0.0，Host 协议仍为 1.0。
+
+## 已交付标准化图集帧 — 0.59.0
+
+前一 0.59 增量已通过 [PR #48](https://github.com/cnedwin/Egret_rebuild/pull/48) 交付，Main 为 `44f49f9d97a7baebc400fd4940541529dc33d147`。
+
+标准化 trim/clockwise90 runtime 行为遵循[布局契约](knowledge-base/Cns/docs/atlas-frame-layout-contract.md)，原 30 次浏览器读回仍为单独接受领域。
 
 ## 资源组合准备 — 0.58.0
 
@@ -52,6 +58,7 @@ Years later, as times change and technology advances, many developers continue t
 
 | Version / 版本 | Main change | 主要变化 |
 | --- | --- | --- |
+| 0.60.0 | Strict single-page atlas metadata planning with explicit PNG binding | 严格单页图集元数据规划与显式 PNG 绑定 |
 | 0.59.0 | Normalized trimmed and clockwise90 atlas frames with stable logical dimensions | 标准化裁边与顺时针90度图集帧，保持逻辑尺寸 |
 | 0.58.0 | Atomic multi-Bitmap binding and prepared two-layer outfits | 多 Bitmap 原子绑定与双层组合换装 |
 | 0.57.0 | Real-resource scene composition connecting resources, animation, text and input | 连接资源、动画、文本与输入的真实资源场景组合 |

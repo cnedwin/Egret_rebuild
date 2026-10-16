@@ -30,6 +30,10 @@
 
 ## 子系统参考
 
+- [图集导入计划契约](knowledge-base/Cns/docs/atlas-import-plan-contract.md)
+- [图集导入计划证据](knowledge-base/Cns/docs/atlas-import-plan-evidence.md)
+- [图集导入组合示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/atlas-import-playback/README.md)
+
 - [CPU 场景快照契约](knowledge-base/Cns/docs/3d-cpu-scene-contract.md)
 - [CPU 场景实现证据](knowledge-base/Cns/docs/3d-cpu-scene-evidence.md)
 - [3D CPU 基础与后续渲染边界](knowledge-base/Cns/docs/3d-foundation.md)

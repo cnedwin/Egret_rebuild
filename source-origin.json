@@ -401,8 +401,8 @@
     {
       "path": "DOCUMENTATION.md",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
-      "sha256": "2bc86913a3043b4bad285ee052ed0728fe31cb18a611e17a14ef1ad96b624b29",
-      "bytes": 7389,
+      "sha256": "d978e0b3ffe077a00cc21ed5c8fb9f1a3197e404fdc831789673546c6206559a",
+      "bytes": 12942,
       "previousRevisionSha256": "ef35dafcd765aeacdce5c0d14362dc5f30319b84dd3d1693d9d6a769f7162f99",
       "previousLayoutPath": "DOCUMENTATION.en.md",
       "previousLayoutSha256": "4921b952a38aa70c692db7b37cda758e6e58942ea097761ee72d36f42a6ae31b",
@@ -438,8 +438,8 @@
     {
       "path": "DOCUMENTATION.zh-CN.md",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
-      "sha256": "3fc40b0d139cddfe9d2a9ee3100ab453db36c7d771151056533a13019ca14104",
-      "bytes": 7084,
+      "sha256": "6806b018dfa8cfd3b187a537a5878e05a106b90b8043d341ce202beaeba0ba8a",
+      "bytes": 11713,
       "previousRevisionSha256": "22f3073e3a0096efc4c92fce0aed95a81bdbaa6b1e50ed6432a1ed597c86a8d4",
       "previousLayoutPath": "DOCUMENTATION.md",
       "previousLayoutSha256": "421ba91329f03b9ace090842a7eeaabce268c8cce6ec89d7ccd05b6b15e44bfd",
@@ -612,8 +612,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/CHANGELOG.md",
-      "bytes": 64309,
-      "sha256": "b318813681f0c67846bf5313d21431e933a365f5262e4d662820ac9050e5aeb1",
+      "bytes": 15979,
+      "sha256": "ac70914743e675ccc25db0a25d765eb49ea81aaf8367ed60765d056503a98794",
       "identityHistory": [
         {
           "bytes": 25611,
@@ -811,8 +811,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 36661,
-      "sha256": "76c749f1d6fefaaef3f29384cea6586a1f0e1cadf289c1b5abe24ef93a26caca",
+      "bytes": 11596,
+      "sha256": "13565b349fc347c8473372aa486f1b24c3c4df74d8307714109322a08a60846b",
       "identityHistory": [
         {
           "bytes": 12315,
@@ -1004,8 +1004,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/产品需求说明书.md",
-      "bytes": 20026,
-      "sha256": "f34fac1de90cad1b367f621adcb98991e554fd15ff3b95dcc8ccbe5eb24c2417"
+      "bytes": 15281,
+      "sha256": "67696e47b838b5fd2fabccf9597203659dd00e46dcceb6713db39ca7d0f05f60"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -1400,8 +1400,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/Cns/README.md",
-      "bytes": 40018,
-      "sha256": "6886dca2052ac9de2baa24f30fc6279637604418adb7f2111847a9f30a037192",
+      "bytes": 8573,
+      "sha256": "3b48b35db7a766dd46bdd8a9128979f443d31b98b0a23dabc31a79eb89f6111e",
       "identityHistory": [
         {
           "bytes": 6319,
@@ -1526,8 +1526,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/Cns/registry/交付.json",
-      "bytes": 156495,
-      "sha256": "79c2933c63e83360b0f4352cd106d1daab3f8fa6565b145beeced5efd53bb31a",
+      "bytes": 369186,
+      "sha256": "4117989cf3fefad766b780a7cdbd1b70f3a69a91fc89051f0876bb1af1621e4a",
       "identityHistory": [
         {
           "bytes": 50664,
@@ -1691,8 +1691,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/Cns/registry/来源.json",
-      "bytes": 171734,
-      "sha256": "71529003df299f4a84e6fa404e7312c42d11916a3aa436ee1bb8940e032501ba",
+      "bytes": 388318,
+      "sha256": "45a1d19d826cecc677d27a1554232ac35a924135fa948cd072205cb1d1f5a85a",
       "identityHistory": [
         {
           "bytes": 74667,
@@ -1827,8 +1827,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/Cns/registry/需求.json",
-      "bytes": 46843,
-      "sha256": "d42568a12b23a3bc4cb16f7c5a2090b561995a24c90a8caf6756468347a93fc7",
+      "bytes": 55324,
+      "sha256": "22aae9a7830f9f519c21bd450691cdf352a9e6d281b990fddffded2aa347279e",
       "identityHistory": [
         {
           "bytes": 13892,
@@ -1920,8 +1920,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/Cns/当前版本.json",
-      "bytes": 132217,
-      "sha256": "bc061a7a4a130b77dc856c4caf80c6142677ca9e665954c8fff602420fa3dfbf",
+      "bytes": 316022,
+      "sha256": "204790bfacf17106f1da7503f1657b3b756d2bc9c51f82f687c5337e1d73597c",
       "identityHistory": [
         {
           "bytes": 31425,
@@ -2051,8 +2051,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
-      "bytes": 112684,
-      "sha256": "1d5a7b53c0b143d1e4d28afbb10cfe945680235c0434960a9c29dc8f89dfdd24"
+      "bytes": 136391,
+      "sha256": "266bdc2cd4e751009135e4b71b001bed4a25a5ebf8bf44a6970be81f20a3befa"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -2081,8 +2081,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/CHANGELOG.md",
-      "bytes": 74338,
-      "sha256": "335a6899740010419ab64178394c35c429a81aa640fcd598b0d762528c4a05bf",
+      "bytes": 17925,
+      "sha256": "e66d3a5d0897729dd3e3d3484e75e6350c2032c2df2d3d1fe058e3e8603e6d65",
       "identityHistory": [
         {
           "bytes": 31389,
@@ -2202,8 +2202,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/en/current-version.json",
-      "bytes": 133103,
-      "sha256": "4c1f93913c6e1b0a036a78b055e47a10bd5bd2707885dfb24661c7618b2b73ac",
+      "bytes": 317327,
+      "sha256": "2ae899cf1eddf08e8ec174b3c14197e2f80cf92ba112bfe1fb092ca880bcf46c",
       "identityHistory": [
         {
           "bytes": 31946,
@@ -2459,8 +2459,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-progress.md",
-      "bytes": 40771,
-      "sha256": "fff7bd4b44c5561224d80949eab217f8cad748f4cd09de12d38894f09f8c76f0",
+      "bytes": 13185,
+      "sha256": "ac32601e9c407b4bcfffe707ca43f7a19ed67d0f8f6cf3582b8d2f8d96d1f8c0",
       "identityHistory": [
         {
           "bytes": 14004,
@@ -2730,8 +2730,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/product-requirements.md",
-      "bytes": 25078,
-      "sha256": "7e3a40f328c16c1ac0355ab250a9b43529975b63a49f8bb54358f4c4deb227d4"
+      "bytes": 18940,
+      "sha256": "ba94b8a19733c5d1d79c520392af6e2d1f4bdf3284b8105fa56100e6449c6817"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -3000,8 +3000,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/en/README.md",
-      "bytes": 43993,
-      "sha256": "8e8ab5d32b30d6703c8e8e2d3941deb462cbc0cf6af61790005b1d2ec4e061fe",
+      "bytes": 9761,
+      "sha256": "bc9156845e1d8cfc93e43ee816b95f27ac20ad6efbe12abf91f8e6ea39dfe73d",
       "identityHistory": [
         {
           "bytes": 7397,
@@ -3149,8 +3149,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/en/registry/deliverables.json",
-      "bytes": 162287,
-      "sha256": "0641e218b23677b54584d3d7762c89e70910351820b3f7e39e6d733cd50536d6",
+      "bytes": 376632,
+      "sha256": "f76a96bcab7b82f253f7c1bda21aa4eb84ba139e0327577f9e711462f0b9e4f7",
       "identityHistory": [
         {
           "bytes": 54446,
@@ -3301,8 +3301,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/en/registry/requirements.json",
-      "bytes": 49121,
-      "sha256": "af6441fe2029059948817cb99a764e2543957025f52e378ae0dd343568e69693",
+      "bytes": 57704,
+      "sha256": "052154a434a6d5c0b9fdb5f42d6d8da6e70384b6c584160a96b1d4d1060fc1dc",
       "identityHistory": [
         {
           "bytes": 15989,
@@ -3370,8 +3370,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/en/registry/sources.json",
-      "bytes": 181254,
-      "sha256": "49ee3e0c2fdba8e06fe975722c3b9fd60b5b6f3c066963a646af28449e96d387",
+      "bytes": 398872,
+      "sha256": "e4fc7e5b84c9ebd30b545fc7de076acd5faa0ed2269f4514340bad6002869135",
       "identityHistory": [
         {
           "bytes": 82270,
@@ -3530,8 +3530,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/README.md",
-      "bytes": 20114,
-      "sha256": "45084a8f88b9e1529610a16acd96ef225951ca15825a35101859cdd7341f83bd",
+      "bytes": 2766,
+      "sha256": "b971b08257838330c2fdd0a3cd712754c2edc93a3b1fc70a1030f4d0c1238433",
       "identityHistory": [
         {
           "bytes": 899,
@@ -3578,8 +3578,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/README.zh-CN.md",
-      "bytes": 18688,
-      "sha256": "c0d04e9c85db0604d957241695962b8db199661aeefe217230f8fda2e6b16ea8",
+      "bytes": 2253,
+      "sha256": "e953cdac876b1302f1c223cc2bb93ff89ffeb50cacf63d0627cf1b0a48e90803",
       "identityHistory": [
         {
           "bytes": 637,
@@ -3654,8 +3654,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "b392c9884b9dde031420dc5a19991476f2fc2774cd4c4581f4e36082405cca89",
-      "bytes": 245557,
+      "sha256": "6daf8f0cb198b1c83f4158c66c454d9e9ce60bfce8b04129dd06842c9b1e4bf2",
+      "bytes": 331962,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -4284,14 +4284,14 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "packages/project/README.md",
-      "bytes": 5059,
-      "sha256": "4f19388a9a090f3d0738f04c39b2fcd0b75bfda472d71eb5c26e02ff0baab5fb"
+      "bytes": 5803,
+      "sha256": "aa28ea645a4f7dc6ef84d6393b75e0a3a9110f0351f6dba9cd3644d45845e508"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "packages/project/README.zh-CN.md",
-      "bytes": 4240,
-      "sha256": "85a77e4381c7bd8338666e40f0bf12585eb5b700b14708e53fe6aee93c8020aa"
+      "bytes": 4902,
+      "sha256": "d2362b96cefa2c7e42e19a5de81ed4c8852e2b3dc7c1e855f096387c14610da5"
     },
     {
       "path": "packages/runtime/package.json",
@@ -4708,8 +4708,8 @@
     {
       "path": "README.md",
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
-      "sha256": "b70c24374439767003f8f499b39ceca939f9849be4424b655244709f0c70a563",
-      "bytes": 86905,
+      "sha256": "dd5b06ee72b2b1bb48613714b15de461cae0df6d336731be0b601cf849c4f1f7",
+      "bytes": 9386,
       "previousRevisionSha256": "199156443d499d5012f1224263a1a3ee9994e5ba38ee067bceeb2ad865ae8167",
       "previousLayoutPath": "README.en.md",
       "previousLayoutSha256": "f40ec41ca699cd0b9138fbdf4a268080038f583ae11e78c4f37093a6b7095f57",
@@ -4846,8 +4846,8 @@
     },
     {
       "path": "README.zh-CN.md",
-      "sha256": "f4159a1a681adf847b59b3bd0189d9f5f6534c0b01cc5225a27887c145641c48",
-      "bytes": 86006,
+      "sha256": "95a33e81a777e4ed523ff337b23037bd9c680bcdf5a2b2039cee6c448a21e8ab",
+      "bytes": 8712,
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "previousPublicSha256": "7ec80b8575a700b6a2628eb0322f2e770bb2284859f68ec5e0eb6530154a6699",
       "previousRevisionSha256": "7a1d72019db7cb6075d7c3a3bd4075f7c069d527b6e31d992a69333cb126b6c3",
@@ -5009,8 +5009,8 @@
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "bytes": 105161,
-      "sha256": "b1abbc3d9aa8a5f86b2e1381455835eab3f23c27810dbe0aec3cae4060975a51",
+      "bytes": 109925,
+      "sha256": "44538865cd79f5df76882461d21622b54216aba6663b43b45bebef065e199b9b",
       "originRole": "Independent first-party Egret explicit-area picking, bounded verification or paired documentation; CPU and finite-policy evidence with separate browser and whole-engine admission.",
       "identityHistory": [
         {
@@ -5316,8 +5316,8 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "bytes": 141308,
-      "sha256": "ca70d9de2f76a671a4136ddf11baa1a1b852e37849219d9bbc960fb9030f33d4",
+      "bytes": 147087,
+      "sha256": "e679b9354f6ce86a38b9f196e90a936c119b5bd3082fbaff45ac3e6a418e8d91",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "identityHistory": [
         {
@@ -5375,8 +5375,8 @@
     },
     {
       "path": "tools/check-types.mjs",
-      "bytes": 92539,
-      "sha256": "913e7c6cea1152eb54f227ade4b18f0caa3baafbe35ca058388fe9be29685461",
+      "bytes": 94441,
+      "sha256": "085c06cbe6a90003d22c6bbca3d26960d8bcf8ba052487292b5775dd2c2f9277",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "identityHistory": [
         {
@@ -5474,8 +5474,8 @@
     },
     {
       "path": "tools/verify.mjs",
-      "sha256": "c57c013018e3e8a12258c767d516c246bb7877f61cbc37320365de2ce4fcea0b",
-      "bytes": 605,
+      "sha256": "1eb6002b379dad28ecf6e4d735f281343e900e664901f56bfb585f2ee9667b03",
+      "bytes": 870,
       "originalSha256": "9c789b762d598c72040992d8ffb9041f75180d39b7556761365ef0998d5b0b4a",
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "previousRevisionSha256": "9c789b762d598c72040992d8ffb9041f75180d39b7556761365ef0998d5b0b4a",
@@ -5973,8 +5973,8 @@
     {
       "path": "packages/project/package.json",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 397,
-      "sha256": "295e6bc8d81a4647f5b99355ea27879563ced216fa2af406c65cc78b95f40945",
+      "bytes": 503,
+      "sha256": "4b4380142316c6ab2f0727eab44c80eff2a21640c701871c6ace3a0ab1b276af",
       "identityHistory": [
         {
           "bytes": 291,
@@ -6448,8 +6448,8 @@
     {
       "path": "tests/project-boundaries.test.mjs",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 13807,
-      "sha256": "e3faf9f89381265b5be917abfe1ad91437eeaa6496aed6377104cd26d8d2148e",
+      "bytes": 16764,
+      "sha256": "5348a416b20a1481c280fb98344b61d0b3f1f175cf49dcfa7f8da136f0e2f2c2",
       "identityHistory": [
         {
           "bytes": 13130,
@@ -9447,8 +9447,8 @@
     },
     {
       "path": "tools/sequence-playback-boundary.mjs",
-      "bytes": 27270,
-      "sha256": "40ea435c86fd122b61d1cacb23381137485d596bf0d4253b6d5259c500d43bc8",
+      "bytes": 28597,
+      "sha256": "bc9be907952a9113833886db51a94edd6eddb2e6886d7b6311b4ddea164503bd",
       "originRole": "Original Egret first-party sequence playback, tests, tooling or paired publication metadata; Apache-2.0, with AI-assisted authorship and evidence-bounded independent review.",
       "identityHistory": [
         {
@@ -9676,8 +9676,8 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "bytes": 94507,
-      "sha256": "916553a3da594de095dab452fdc20c1e560119fbbb9f34a1a6eced7d79b30e20",
+      "bytes": 102581,
+      "sha256": "8c020a5f04a20c93b549c08d20bddc68af3e26b6a873259dcfb75a113b1a0f71",
       "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
     },
     {
@@ -9829,6 +9829,204 @@
       "originRole": "Independent first-party repository identity tooling or paired publication material",
       "bytes": 8082,
       "sha256": "0f94572494e6c48341373471c54015446e1f67e1ab0d6eb400f9f4918f397a95"
+    },
+    {
+      "path": "packages/project/src/atlas/index.ts",
+      "bytes": 495,
+      "sha256": "182930a58f07ab8acfb415aaad53f705b9178f2229b6bb5a9c872cdece96f065",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+    },
+    {
+      "path": "packages/project/src/atlas/types.ts",
+      "bytes": 4560,
+      "sha256": "e83a07146ac069144d6abff1080e8df49fa7e1e35d8c45ccb792e5eb4e875315",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+    },
+    {
+      "path": "packages/project/src/atlas/input.ts",
+      "bytes": 7012,
+      "sha256": "4193cd78d88a030f4af1a28e5f920788ab210bb47bbc70d49fa720febf784748",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+    },
+    {
+      "path": "packages/project/src/atlas/json.ts",
+      "bytes": 7206,
+      "sha256": "041010cc3adfc83acb42b081a94a57aefdc38997ce18bef0317ff2351c8661ef",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+    },
+    {
+      "path": "packages/project/src/atlas/plan.ts",
+      "bytes": 13063,
+      "sha256": "d06ca255f7f6e7ad56da2a7d22f3d6af149c51ea62efdcc8e5832c5a4b2759ef",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+    },
+    {
+      "path": "tests/atlas-import.test.mjs",
+      "bytes": 34335,
+      "sha256": "abcdbad26d8ccc5a2a828aad38efce17a18b4453a4a2854893fc735bfcf06475",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+    },
+    {
+      "path": "tests/atlas-import-admission.test.mjs",
+      "bytes": 9046,
+      "sha256": "579f58650f4b63e72ebf8e9946a322dcffa1ce4dba7727ad182f3bf207084a35",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+    },
+    {
+      "path": "tests/atlas-import-heldout.test.mjs",
+      "bytes": 34895,
+      "sha256": "57ac242e837e967ab7d8ab02e1b20bf6c2cbd8d989f49615c334eef87aea8297",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+    },
+    {
+      "path": "tools/bitmap-binding-ticket-boundary.mjs",
+      "bytes": 15977,
+      "sha256": "45f0cc0fcff89dae302e4fccd0dedf013bca97c76af0529261c3f1a81715bf5b",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+    },
+    {
+      "path": "tools/bitmap-resource-slot-boundary.mjs",
+      "bytes": 15388,
+      "sha256": "57209d8fc725359450b4661ad6075e03d349b68f08a3dbf85f83d3de355f80ae",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+    },
+    {
+      "path": "tools/browser-png-boundary.mjs",
+      "bytes": 104796,
+      "sha256": "8d4a6fd68e8ed348ff9f7f32a8df7ca0f3cc921fe7350eaa420f69dabd9a1704",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+    },
+    {
+      "path": "tests/types/atlas-import-diagnostic-expectations.json",
+      "bytes": 255007,
+      "sha256": "49eb0ef3e09162f87f9abbd8d727ce823f522638a2e091a44762e1617aa3dc17",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+    },
+    {
+      "path": "tests/types/atlas-import-import-negative.ts",
+      "bytes": 548,
+      "sha256": "87b271fa20f8930d4c76189e4b97e4f904f6101b845c9f3d885e12eb5def127d",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+    },
+    {
+      "path": "tests/types/atlas-import-negative.ts",
+      "bytes": 1005,
+      "sha256": "fb24fcbd8ac53eaf140c33f453eaff35de3ecf3c1a943270b45fc34967d1c8b9",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+    },
+    {
+      "path": "tests/types/atlas-import-positive.ts",
+      "bytes": 2815,
+      "sha256": "014fcdc26b36b2186028dba758f59024cfae9691433766c573a505f9dc7e36b6",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+    },
+    {
+      "path": "tests/types/tsconfig.atlas-import-import-negative.json",
+      "bytes": 584,
+      "sha256": "ccf6c73ea98b8ebe9cf3899ceb8c8aecc0e522995d51198413e3041a4587c418",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+    },
+    {
+      "path": "tests/types/tsconfig.atlas-import-negative.json",
+      "bytes": 577,
+      "sha256": "99cc1cb1a0f2b935ab4dcdd086d416fabf71540183e6c53ac96a2f71e96624c5",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+    },
+    {
+      "path": "tests/types/tsconfig.atlas-import-positive.json",
+      "bytes": 577,
+      "sha256": "f7b9f8d6f66724436c4ee887e49185ad1d89608d0aa1d30846a0a6514957d7dc",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+    },
+    {
+      "path": "tools/atlas-import-boundary.mjs",
+      "bytes": 10072,
+      "sha256": "7af4653657a9c9b015d3eac0e170c49065e331795894e3e38e886bebdaa8232f",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+    },
+    {
+      "path": "tools/atlas-import-types.mjs",
+      "bytes": 6001,
+      "sha256": "c013f098d84808d5552e0d31e8b8887ea4c7272ac85fb5e15c3714c8563cd96f",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+    },
+    {
+      "path": "tests/atlas-import-composition.test.mjs",
+      "bytes": 21132,
+      "sha256": "d24c8c56f39edeadab113a827970dc2579920c260f898152e7f3b28cec183053",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+    },
+    {
+      "path": "examples/atlas-import-playback/session.mjs",
+      "bytes": 9620,
+      "sha256": "339e5a8bc3c47cda6625a24455e7ed6cd264321017c18049833122e0eb52402a",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+    },
+    {
+      "path": "tools/atlas-import/native-fixture.mjs",
+      "bytes": 8750,
+      "sha256": "50f14db3f4f4be4b493667be819929a645e11d3344ca767425deb94a7833ffee",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+    },
+    {
+      "path": "tools/atlas-import/scenario.mjs",
+      "bytes": 11205,
+      "sha256": "7527be9c38684e9b7656e6ded8c2a693a58bfe6883674a3b45e728de1f7991e2",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+    },
+    {
+      "path": "tools/atlas-frame/boundary.mjs",
+      "bytes": 44492,
+      "sha256": "342b643fcdf9697acf5132c6a4b37531a76a5415ed6b9cf085540f30476ebbb6",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+    },
+    {
+      "path": "tools/atlas-frame/prepare-native.mjs",
+      "bytes": 21638,
+      "sha256": "0c6bc00a737ccc48c067cb227528714b49b90dd9fd7447c71a154ecdbc215802",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+    },
+    {
+      "path": "tools/verify-atlas-frame.mjs",
+      "bytes": 26381,
+      "sha256": "5e476d35765dadcbe957aa48836cfa5eb4fa320215a0655e7e3903c4b531099f",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+    },
+    {
+      "path": "knowledge-base/en/docs/atlas-import-plan-contract.md",
+      "bytes": 25323,
+      "sha256": "481bf796786ca466790ec4724b7979e0c080ae6f5c54bfde53ae6424bf4c9f41",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/atlas-import-plan-contract.md",
+      "bytes": 22934,
+      "sha256": "ccf2f1c5bce7887a919b667f64d99c92b88203c55741df5d2e296339e72084fc",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+    },
+    {
+      "path": "knowledge-base/en/docs/atlas-import-plan-evidence.md",
+      "bytes": 10737,
+      "sha256": "0dfffde9d4c14b20ab84ada3ff50f43eb82ee5126b38246edbc8c0eb28e42291",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/atlas-import-plan-evidence.md",
+      "bytes": 9390,
+      "sha256": "e3e8e045d6414be04ff85e05c6d8ae3f76e203caecac5c5a996e01d544632385",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+    },
+    {
+      "path": "examples/atlas-import-playback/README.md",
+      "bytes": 4063,
+      "sha256": "96f784e3d2937cad0e7d877c9fc3e1fdf400cadb6757f8162617f1a66bc2145b",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+    },
+    {
+      "path": "examples/atlas-import-playback/README.zh-CN.md",
+      "bytes": 3538,
+      "sha256": "8eebf61aa2cb5127870f4cbad129d18f9dc8cfd00a62eb01c1379a7bc3bad03e",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",
@@ -25860,5 +26058,3099 @@
     "completeP03": "OPEN",
     "historicalPendingCutoffsPreserved": true,
     "currentAtlasFrameDeliveryEstablished": false
+  },
+  "atlasImportPlanWorkPackage": {
+    "engineeringPreview": "0.60.0",
+    "sourceId": "S114",
+    "deliverableId": "V065",
+    "date": "2026-10-17",
+    "status": "SDK_CPU_AND_SELECTED_FINITE_NATIVE_ACCEPTED_FINAL_PUBLIC_REVIEW_GATES_AND_DELIVERY_PENDING",
+    "scopeStatus": "BOUNDED_ASEPRITE_STABLE_MARKER_SINGLE_PAGE_UNROTATED_PLANNING",
+    "contract": "en/docs/atlas-import-plan-contract.md",
+    "evidence": "en/docs/atlas-import-plan-evidence.md",
+    "example": "https://github.com/cnedwin/Egret_rebuild/blob/main/examples/atlas-import-playback/README.md",
+    "optionalEntry": "@egret/project/atlas",
+    "newPackageSubpaths": 1,
+    "newSDKRuntimeExports": 2,
+    "newSDKTypeExports": 16,
+    "runtimeValues": [
+      "createAtlasImportPlan",
+      "ATLAS_IMPORT_LIMITS"
+    ],
+    "defaultProjectRootReexports": false,
+    "engineMethodsAdded": [],
+    "newRuntimeCodeDependency": false,
+    "packageVersionUnchanged": "0.0.0",
+    "hostProtocolChanged": false,
+    "hostProtocolVersion": "1.0",
+    "profile": "aseprite-json-array-1.3.18.6-v1",
+    "exportVersion": "1.3.18.6",
+    "focusedPlanner": {
+      "status": "INDEPENDENTLY_ACCEPTED_SAVED_RESULT",
+      "tests": 47,
+      "pass": 47,
+      "fail": 0
+    },
+    "normalSdk": {
+      "status": "INDEPENDENTLY_ACCEPTED_EARLIER_NORMAL_RUN",
+      "stages": 14,
+      "coreTests": 3625,
+      "corePass": 3625,
+      "separateF2Tests": 160,
+      "separateF2Pass": 160,
+      "finalPrepush": false
+    },
+    "cpu": {
+      "status": "INDEPENDENTLY_ACCEPTED_FROZEN_SOURCE_AND_FIRST_GREEN",
+      "tests": 5,
+      "pass": 5,
+      "fail": 0,
+      "browserAcceptance": false
+    },
+    "native": {
+      "status": "SELECTED_R2_SOURCE_NODE_PREPARATION_AND_FINITE_SAVED_BROWSER_RESULTS_ACCEPTED",
+      "independentSourceAcceptance": "accepted",
+      "resultAcceptance": "accepted",
+      "actualNodePreparationProfiles": 2,
+      "actualSnapshotOnlyProfiles": 2,
+      "browserExecutionAtSourceReviewCutoff": false,
+      "browserLaunchAuthorization": "separately_authorized_after_source_review",
+      "newAcceptedReadbacks": 4,
+      "plannedReadbacks": 4,
+      "plannedWidth": 24,
+      "plannedHeight": 16,
+      "browserExecutesParser": false,
+      "actualSavedBrowserReports": 2,
+      "actualContexts": 2,
+      "actualPages": 2,
+      "actualSelectedReadbacks": 4,
+      "actualWidth": 24,
+      "actualHeight": 16,
+      "bytesPerReadback": 1536,
+      "tolerance": 0,
+      "mismatchedBytes": 0,
+      "console": 0,
+      "pageErrors": 0,
+      "failures": 0,
+      "cleanupErrors": 0,
+      "pendingOriginalTasks": 0,
+      "browserBinaryIdentity": "UNBOUND",
+      "actualEnvironment": {
+        "node": "v24.19.0",
+        "platform": "win32",
+        "arch": "x64",
+        "release": "10.0.26300",
+        "browserChannel": "msedge",
+        "extraLaunchFlags": [],
+        "playwrightVersion": "1.62.1",
+        "viewport": {
+          "width": 640,
+          "height": 480
+        },
+        "deviceScaleFactor": 1,
+        "browserVersion": "155.0.4283.45"
+      },
+      "readbackContextAttributes": {
+        "canvas": {
+          "alpha": true,
+          "colorSpace": "srgb",
+          "colorType": "unorm8",
+          "willReadFrequently": true
+        },
+        "webgpu": null
+      },
+      "savedBrowserReports": [
+        {
+          "profile": "canvas-2d",
+          "status": "PASS",
+          "bytes": 1172487,
+          "sha256": "79050d163a028202cd8195b20b9bc9ac000c5567590ff853760f54e0ab5f3f49"
+        },
+        {
+          "profile": "webgpu-textured-2d",
+          "status": "PASS",
+          "bytes": 1173235,
+          "sha256": "0b63e089d982fb4fd4572d3f6f7d20309f61d2fa4df9f30900b6f837339634b4"
+        }
+      ],
+      "sourceAndPreparationIndependentReview": [
+        {
+          "bytes": 3739,
+          "sha256": "16e8cb5aba6bc49d05d838514c3264454aebeb1182bcc2aa08d19ecd57c376c5",
+          "role": "report.md"
+        },
+        {
+          "bytes": 10403,
+          "sha256": "1da2b37c36974713fa22fa8213cb0b96daa996d00a8a93540e2f48f0666107a2",
+          "role": "verdict.json"
+        },
+        {
+          "bytes": 32479,
+          "sha256": "84c3d6d106fc6de872d84f2e4ed0e2a838e0561c048ddc976a1472fbedbdf8f6",
+          "role": "manifest.json"
+        }
+      ],
+      "historicalReadbacksUnchanged": 30,
+      "earlierR1ReadbacksPreserved": 4,
+      "earlierR1CanvasWholeRun": "FAIL_WARNING",
+      "earlierR1WebGPUWholeRun": "PASS",
+      "selectedR2Readbacks": 4,
+      "finalSavedResultIndependentReview": "accepted",
+      "scope": "Finite desktop Node-to-browser plan composition; browser does not execute parser. No device/performance/VRAM/exporter acceptance.",
+      "independentResultOpenFindings": 0,
+      "resultIndependentReview": [
+        {
+          "kind": "independent-result-report",
+          "bytes": 2607,
+          "sha256": "19d7ffaa53eda9e812be0817345e289efe615d0f107a73ea375fe3f9950acda0"
+        },
+        {
+          "kind": "independent-result-verdict",
+          "bytes": 13314,
+          "sha256": "5562de695272072b0650d16d85380e2d1613d8a38b5bca0b47f821a97192ff73"
+        },
+        {
+          "kind": "independent-result-manifest",
+          "bytes": 6964,
+          "sha256": "26c3b889e9d7c03432c7eb7a2aa53fc958d29ba68d5dbe3cf03d25fce63c8bba"
+        }
+      ],
+      "afterOutputEvidence": {
+        "status": "ACCURATE_LATE_OBSERVATION_SEPARATELY_TIMED_AND_INDEPENDENTLY_CLOSED",
+        "originalErrorPreserved": true,
+        "originalNativeOutputAbsentTrueWasInaccurate": true,
+        "lateIntervalStart": "2026-10-16T21:50:57.598Z",
+        "lateIntervalEnd": "2026-10-16T21:51:19.717Z",
+        "nativeOutputAbsent": [
+          false,
+          false
+        ],
+        "reportExists": [
+          true,
+          true
+        ],
+        "browserRerun": false,
+        "pixelRecomparison": false,
+        "pins": [
+          {
+            "kind": "after-output-correction-report",
+            "bytes": 1927,
+            "sha256": "2172b522303686ee7534ec0f9f01d9f602ee2cd28899d463282cf159b054d132"
+          },
+          {
+            "kind": "after-output-correction-manifest",
+            "bytes": 12050,
+            "sha256": "2a546fe7fe6a184a9443b662ec9a9ea704c64a0b9396e714c703ffd2eb32554f"
+          },
+          {
+            "kind": "late-after-output-observation",
+            "bytes": 1946099,
+            "sha256": "e47955732f1006ae51331c22c038394e86d638419f06178573a58c8d19cfc23d"
+          }
+        ]
+      },
+      "currentSourcePins": [
+        {
+          "path": "tools/atlas-import/native-fixture.mjs",
+          "bytes": 8750,
+          "sha256": "50f14db3f4f4be4b493667be819929a645e11d3344ca767425deb94a7833ffee"
+        },
+        {
+          "path": "tools/atlas-import/scenario.mjs",
+          "bytes": 11205,
+          "sha256": "7527be9c38684e9b7656e6ded8c2a693a58bfe6883674a3b45e728de1f7991e2"
+        },
+        {
+          "path": "tools/atlas-frame/boundary.mjs",
+          "bytes": 44492,
+          "sha256": "342b643fcdf9697acf5132c6a4b37531a76a5415ed6b9cf085540f30476ebbb6"
+        },
+        {
+          "path": "tools/atlas-frame/prepare-native.mjs",
+          "bytes": 21638,
+          "sha256": "0c6bc00a737ccc48c067cb227528714b49b90dd9fd7447c71a154ecdbc215802"
+        },
+        {
+          "path": "tools/verify-atlas-frame.mjs",
+          "bytes": 26381,
+          "sha256": "5e476d35765dadcbe957aa48836cfa5eb4fa320215a0655e7e3903c4b531099f"
+        }
+      ],
+      "sourcePinScope": "INDEPENDENT_SOURCE_AND_SAVED_NODE_PREPARATION_ACCEPTED_BROWSER_RESULT_SEPARATE"
+    },
+    "exporterArtifact": "unverified",
+    "assetPixels": "not_run_by_planner",
+    "hashVerification": "declared_unverified",
+    "licenseEntitlement": "unverified",
+    "fullPrepush": "pending",
+    "mandatoryHooks": "pending",
+    "newGitDelivery": "pending",
+    "remoteCIPassClaim": false,
+    "fullP04": "OPEN",
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "historicalCutoffsPreserved": true,
+    "publicSourceBilingualReview": {
+      "status": "pending",
+      "candidateReadingPairs": 11,
+      "unchangedPairsRetainPriorCutoffs": true
+    },
+    "currentCodeSourcePins": [
+      {
+        "path": "packages/project/src/atlas/index.ts",
+        "bytes": 495,
+        "sha256": "182930a58f07ab8acfb415aaad53f705b9178f2229b6bb5a9c872cdece96f065"
+      },
+      {
+        "path": "packages/project/src/atlas/types.ts",
+        "bytes": 4560,
+        "sha256": "e83a07146ac069144d6abff1080e8df49fa7e1e35d8c45ccb792e5eb4e875315"
+      },
+      {
+        "path": "packages/project/src/atlas/input.ts",
+        "bytes": 7012,
+        "sha256": "4193cd78d88a030f4af1a28e5f920788ab210bb47bbc70d49fa720febf784748"
+      },
+      {
+        "path": "packages/project/src/atlas/json.ts",
+        "bytes": 7206,
+        "sha256": "041010cc3adfc83acb42b081a94a57aefdc38997ce18bef0317ff2351c8661ef"
+      },
+      {
+        "path": "packages/project/src/atlas/plan.ts",
+        "bytes": 13063,
+        "sha256": "d06ca255f7f6e7ad56da2a7d22f3d6af149c51ea62efdcc8e5832c5a4b2759ef"
+      },
+      {
+        "path": "packages/project/package.json",
+        "bytes": 503,
+        "sha256": "4b4380142316c6ab2f0727eab44c80eff2a21640c701871c6ace3a0ab1b276af"
+      },
+      {
+        "path": "tools/check-boundaries.mjs",
+        "bytes": 147087,
+        "sha256": "e679b9354f6ce86a38b9f196e90a936c119b5bd3082fbaff45ac3e6a418e8d91"
+      },
+      {
+        "path": "tests/atlas-import.test.mjs",
+        "bytes": 34335,
+        "sha256": "abcdbad26d8ccc5a2a828aad38efce17a18b4453a4a2854893fc735bfcf06475"
+      },
+      {
+        "path": "tests/atlas-import-admission.test.mjs",
+        "bytes": 9046,
+        "sha256": "579f58650f4b63e72ebf8e9946a322dcffa1ce4dba7727ad182f3bf207084a35"
+      },
+      {
+        "path": "tests/atlas-import-heldout.test.mjs",
+        "bytes": 34895,
+        "sha256": "57ac242e837e967ab7d8ab02e1b20bf6c2cbd8d989f49615c334eef87aea8297"
+      },
+      {
+        "path": "tests/boundaries.test.mjs",
+        "bytes": 109925,
+        "sha256": "44538865cd79f5df76882461d21622b54216aba6663b43b45bebef065e199b9b"
+      },
+      {
+        "path": "tests/project-boundaries.test.mjs",
+        "bytes": 16764,
+        "sha256": "5348a416b20a1481c280fb98344b61d0b3f1f175cf49dcfa7f8da136f0e2f2c2"
+      },
+      {
+        "path": "tools/bitmap-binding-ticket-boundary.mjs",
+        "bytes": 15977,
+        "sha256": "45f0cc0fcff89dae302e4fccd0dedf013bca97c76af0529261c3f1a81715bf5b"
+      },
+      {
+        "path": "tools/bitmap-resource-slot-boundary.mjs",
+        "bytes": 15388,
+        "sha256": "57209d8fc725359450b4661ad6075e03d349b68f08a3dbf85f83d3de355f80ae"
+      },
+      {
+        "path": "tools/browser-png-boundary.mjs",
+        "bytes": 104796,
+        "sha256": "8d4a6fd68e8ed348ff9f7f32a8df7ca0f3cc921fe7350eaa420f69dabd9a1704"
+      },
+      {
+        "path": "tools/check-types.mjs",
+        "bytes": 94441,
+        "sha256": "085c06cbe6a90003d22c6bbca3d26960d8bcf8ba052487292b5775dd2c2f9277"
+      },
+      {
+        "path": "tools/sequence-playback-boundary.mjs",
+        "bytes": 28597,
+        "sha256": "bc9be907952a9113833886db51a94edd6eddb2e6886d7b6311b4ddea164503bd"
+      },
+      {
+        "path": "tools/spritesheet-boundary.mjs",
+        "bytes": 102581,
+        "sha256": "8c020a5f04a20c93b549c08d20bddc68af3e26b6a873259dcfb75a113b1a0f71"
+      },
+      {
+        "path": "tools/verify.mjs",
+        "bytes": 870,
+        "sha256": "1eb6002b379dad28ecf6e4d735f281343e900e664901f56bfb585f2ee9667b03"
+      },
+      {
+        "path": "tests/types/atlas-import-diagnostic-expectations.json",
+        "bytes": 255007,
+        "sha256": "49eb0ef3e09162f87f9abbd8d727ce823f522638a2e091a44762e1617aa3dc17"
+      },
+      {
+        "path": "tests/types/atlas-import-import-negative.ts",
+        "bytes": 548,
+        "sha256": "87b271fa20f8930d4c76189e4b97e4f904f6101b845c9f3d885e12eb5def127d"
+      },
+      {
+        "path": "tests/types/atlas-import-negative.ts",
+        "bytes": 1005,
+        "sha256": "fb24fcbd8ac53eaf140c33f453eaff35de3ecf3c1a943270b45fc34967d1c8b9"
+      },
+      {
+        "path": "tests/types/atlas-import-positive.ts",
+        "bytes": 2815,
+        "sha256": "014fcdc26b36b2186028dba758f59024cfae9691433766c573a505f9dc7e36b6"
+      },
+      {
+        "path": "tests/types/tsconfig.atlas-import-import-negative.json",
+        "bytes": 584,
+        "sha256": "ccf6c73ea98b8ebe9cf3899ceb8c8aecc0e522995d51198413e3041a4587c418"
+      },
+      {
+        "path": "tests/types/tsconfig.atlas-import-negative.json",
+        "bytes": 577,
+        "sha256": "99cc1cb1a0f2b935ab4dcdd086d416fabf71540183e6c53ac96a2f71e96624c5"
+      },
+      {
+        "path": "tests/types/tsconfig.atlas-import-positive.json",
+        "bytes": 577,
+        "sha256": "f7b9f8d6f66724436c4ee887e49185ad1d89608d0aa1d30846a0a6514957d7dc"
+      },
+      {
+        "path": "tools/atlas-import-boundary.mjs",
+        "bytes": 10072,
+        "sha256": "7af4653657a9c9b015d3eac0e170c49065e331795894e3e38e886bebdaa8232f"
+      },
+      {
+        "path": "tools/atlas-import-types.mjs",
+        "bytes": 6001,
+        "sha256": "c013f098d84808d5552e0d31e8b8887ea4c7272ac85fb5e15c3714c8563cd96f"
+      },
+      {
+        "path": "tests/atlas-import-composition.test.mjs",
+        "bytes": 21132,
+        "sha256": "d24c8c56f39edeadab113a827970dc2579920c260f898152e7f3b28cec183053"
+      },
+      {
+        "path": "examples/atlas-import-playback/session.mjs",
+        "bytes": 9620,
+        "sha256": "339e5a8bc3c47cda6625a24455e7ed6cd264321017c18049833122e0eb52402a"
+      },
+      {
+        "path": "tools/atlas-import/native-fixture.mjs",
+        "bytes": 8750,
+        "sha256": "50f14db3f4f4be4b493667be819929a645e11d3344ca767425deb94a7833ffee"
+      },
+      {
+        "path": "tools/atlas-import/scenario.mjs",
+        "bytes": 11205,
+        "sha256": "7527be9c38684e9b7656e6ded8c2a693a58bfe6883674a3b45e728de1f7991e2"
+      },
+      {
+        "path": "tools/atlas-frame/boundary.mjs",
+        "bytes": 44492,
+        "sha256": "342b643fcdf9697acf5132c6a4b37531a76a5415ed6b9cf085540f30476ebbb6"
+      },
+      {
+        "path": "tools/atlas-frame/prepare-native.mjs",
+        "bytes": 21638,
+        "sha256": "0c6bc00a737ccc48c067cb227528714b49b90dd9fd7447c71a154ecdbc215802"
+      },
+      {
+        "path": "tools/verify-atlas-frame.mjs",
+        "bytes": 26381,
+        "sha256": "5e476d35765dadcbe957aa48836cfa5eb4fa320215a0655e7e3903c4b531099f"
+      }
+    ],
+    "currentPublicPins": [
+      {
+        "path": "README.md",
+        "bytes": 9386,
+        "sha256": "dd5b06ee72b2b1bb48613714b15de461cae0df6d336731be0b601cf849c4f1f7"
+      },
+      {
+        "path": "README.zh-CN.md",
+        "bytes": 8712,
+        "sha256": "95a33e81a777e4ed523ff337b23037bd9c680bcdf5a2b2039cee6c448a21e8ab"
+      },
+      {
+        "path": "DOCUMENTATION.md",
+        "bytes": 12942,
+        "sha256": "d978e0b3ffe077a00cc21ed5c8fb9f1a3197e404fdc831789673546c6206559a"
+      },
+      {
+        "path": "DOCUMENTATION.zh-CN.md",
+        "bytes": 11713,
+        "sha256": "6806b018dfa8cfd3b187a537a5878e05a106b90b8043d341ce202beaeba0ba8a"
+      },
+      {
+        "path": "knowledge-base/README.md",
+        "bytes": 2766,
+        "sha256": "b971b08257838330c2fdd0a3cd712754c2edc93a3b1fc70a1030f4d0c1238433"
+      },
+      {
+        "path": "knowledge-base/README.zh-CN.md",
+        "bytes": 2253,
+        "sha256": "e953cdac876b1302f1c223cc2bb93ff89ffeb50cacf63d0627cf1b0a48e90803"
+      },
+      {
+        "path": "knowledge-base/en/README.md",
+        "bytes": 9761,
+        "sha256": "bc9156845e1d8cfc93e43ee816b95f27ac20ad6efbe12abf91f8e6ea39dfe73d"
+      },
+      {
+        "path": "knowledge-base/Cns/README.md",
+        "bytes": 8573,
+        "sha256": "3b48b35db7a766dd46bdd8a9128979f443d31b98b0a23dabc31a79eb89f6111e"
+      },
+      {
+        "path": "knowledge-base/en/CHANGELOG.md",
+        "bytes": 17925,
+        "sha256": "e66d3a5d0897729dd3e3d3484e75e6350c2032c2df2d3d1fe058e3e8603e6d65"
+      },
+      {
+        "path": "knowledge-base/Cns/CHANGELOG.md",
+        "bytes": 15979,
+        "sha256": "ac70914743e675ccc25db0a25d765eb49ea81aaf8367ed60765d056503a98794"
+      },
+      {
+        "path": "knowledge-base/en/docs/core-progress.md",
+        "bytes": 13185,
+        "sha256": "ac32601e9c407b4bcfffe707ca43f7a19ed67d0f8f6cf3582b8d2f8d96d1f8c0"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/core-progress.md",
+        "bytes": 11596,
+        "sha256": "13565b349fc347c8473372aa486f1b24c3c4df74d8307714109322a08a60846b"
+      },
+      {
+        "path": "knowledge-base/en/docs/product-requirements.md",
+        "bytes": 18940,
+        "sha256": "ba94b8a19733c5d1d79c520392af6e2d1f4bdf3284b8105fa56100e6449c6817"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/产品需求说明书.md",
+        "bytes": 15281,
+        "sha256": "67696e47b838b5fd2fabccf9597203659dd00e46dcceb6713db39ca7d0f05f60"
+      },
+      {
+        "path": "packages/project/README.md",
+        "bytes": 5803,
+        "sha256": "aa28ea645a4f7dc6ef84d6393b75e0a3a9110f0351f6dba9cd3644d45845e508"
+      },
+      {
+        "path": "packages/project/README.zh-CN.md",
+        "bytes": 4902,
+        "sha256": "d2362b96cefa2c7e42e19a5de81ed4c8852e2b3dc7c1e855f096387c14610da5"
+      },
+      {
+        "path": "knowledge-base/en/docs/atlas-import-plan-contract.md",
+        "bytes": 25323,
+        "sha256": "481bf796786ca466790ec4724b7979e0c080ae6f5c54bfde53ae6424bf4c9f41"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/atlas-import-plan-contract.md",
+        "bytes": 22934,
+        "sha256": "ccf2f1c5bce7887a919b667f64d99c92b88203c55741df5d2e296339e72084fc"
+      },
+      {
+        "path": "knowledge-base/en/docs/atlas-import-plan-evidence.md",
+        "bytes": 10737,
+        "sha256": "0dfffde9d4c14b20ab84ada3ff50f43eb82ee5126b38246edbc8c0eb28e42291"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/atlas-import-plan-evidence.md",
+        "bytes": 9390,
+        "sha256": "e3e8e045d6414be04ff85e05c6d8ae3f76e203caecac5c5a996e01d544632385"
+      },
+      {
+        "path": "examples/atlas-import-playback/README.md",
+        "bytes": 4063,
+        "sha256": "96f784e3d2937cad0e7d877c9fc3e1fdf400cadb6757f8162617f1a66bc2145b"
+      },
+      {
+        "path": "examples/atlas-import-playback/README.zh-CN.md",
+        "bytes": 3538,
+        "sha256": "8eebf61aa2cb5127870f4cbad129d18f9dc8cfd00a62eb01c1379a7bc3bad03e"
+      }
+    ],
+    "currentPinScope": "CURRENT_NAMED_CODE_AND_READING_BYTES_ONLY_NO_METADATA_SELF_HASH",
+    "independentlyAuthoredFirstParty": true,
+    "implementationSourcePaths": [
+      "packages/project/src/atlas/index.ts",
+      "packages/project/src/atlas/types.ts",
+      "packages/project/src/atlas/input.ts",
+      "packages/project/src/atlas/json.ts",
+      "packages/project/src/atlas/plan.ts"
+    ],
+    "retainedDependency": {
+      "name": "jsonc-parser",
+      "version": "3.3.1",
+      "license": "MIT",
+      "publicRootAPIs": [
+        "createScanner",
+        "visit"
+      ],
+      "notice": "third-party/jsonc-parser-3.3.1.LICENSE",
+      "newDependency": false
+    },
+    "researchLicenseBoundary": "Aseprite exporter/app/ver research is EULA-scoped; src/doc MIT is not whole-application permission; no upstream code/assets distributed by this planner.",
+    "nativeSourceIndependentAcceptance": "accepted"
+  },
+  "atlasFrameLayoutDeliveryActualSuccessor": {
+    "engineeringPreview": "0.59.0",
+    "status": "DELIVERED_LATER_SUCCESSOR_ORIGINAL_CUTOFFS_PRESERVED",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/48",
+    "main": "44f49f9d97a7baebc400fd4940541529dc33d147",
+    "tree": "3b0ae063c29c8bdb697f678cdce8a9fa13d3c6d2",
+    "localGate": {
+      "publicationTests": 137,
+      "coreTests": 3578,
+      "separateF2Tests": 160,
+      "verifyStages": 13
+    },
+    "remoteStatuses": 0,
+    "remoteCheckRuns": 0,
+    "remoteCIPassClaim": false,
+    "historicalWorkPackageUnchanged": true
+  },
+  "atlasImportPlanMetadataSuccessor": {
+    "status": "CURRENT_CANDIDATE_IDENTITIES_FINAL_REVIEW_GATES_DELIVERY_PENDING",
+    "previousSourceOrigin": {
+      "path": "source-origin.json",
+      "bytes": 1140326,
+      "sha256": "7de8accb6849666a33cfcbbbebfdef26b0a06869e0e817b35f2be9078eab8b5d"
+    },
+    "previousCurrentFileRecords": [
+      {
+        "path": "packages/project/package.json",
+        "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+        "bytes": 397,
+        "sha256": "295e6bc8d81a4647f5b99355ea27879563ced216fa2af406c65cc78b95f40945",
+        "identityHistory": [
+          {
+            "bytes": 291,
+            "sha256": "e53bb0b35c66844acc80f3faa4557585cff88c98e965f6afcbfd523383b79932",
+            "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+          }
+        ]
+      },
+      {
+        "path": "tools/check-boundaries.mjs",
+        "bytes": 141308,
+        "sha256": "ca70d9de2f76a671a4136ddf11baa1a1b852e37849219d9bbc960fb9030f33d4",
+        "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+        "identityHistory": [
+          {
+            "bytes": 63980,
+            "sha256": "dbad3b9a875a48be9b21665250ce905bfea7c916f184cf44ad4f40c6d22f6d6e",
+            "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
+          },
+          {
+            "bytes": 74430,
+            "sha256": "51745ac03560d1a9821c6961cb24ba8540b64b832e8289c750f0c161ea686092",
+            "scope": "Preserved identity before the 0.32 public scene3d preparation."
+          },
+          {
+            "bytes": 109896,
+            "sha256": "26dd8f6b22e681c99adb42845fe808e26a8687cb04abd999fecaec23d6ed6500",
+            "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+          },
+          {
+            "bytes": 120578,
+            "sha256": "02b607f7db9cdc45a897530fc013a8aa0fc8dde846f8dfacd6524227bd2b0718",
+            "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+          },
+          {
+            "bytes": 123293,
+            "sha256": "10bb58ece2aef2325fa56ed64b022c27d97c545e8703997c319f38c5b41de6c4",
+            "scope": "Preserved identity before public matrix authoring 0.38.0."
+          },
+          {
+            "bytes": 124481,
+            "sha256": "5016a72a02da03e759a04b622b775cf1185feba7295f830f0f6797d0774942ad",
+            "scope": "Preserved identity before textured scene host 0.39.0."
+          },
+          {
+            "bytes": 127414,
+            "sha256": "6badce56ac7660eedf3dda63010bea4334edab1fb7cf104b38fc823956648873",
+            "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
+          },
+          {
+            "bytes": 134002,
+            "sha256": "4f012b45be55f103260379a1a933e33c2f75f0a684764b195e6e59ca3961c795",
+            "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+          },
+          {
+            "bytes": 141268,
+            "sha256": "6e8c33683973af0c135322c529c8bda83577bbed81fb6148354fdfcac8beb0b1",
+            "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          }
+        ]
+      },
+      {
+        "path": "tests/boundaries.test.mjs",
+        "bytes": 105161,
+        "sha256": "b1abbc3d9aa8a5f86b2e1381455835eab3f23c27810dbe0aec3cae4060975a51",
+        "originRole": "Independent first-party Egret explicit-area picking, bounded verification or paired documentation; CPU and finite-policy evidence with separate browser and whole-engine admission.",
+        "identityHistory": [
+          {
+            "bytes": 49876,
+            "sha256": "2eb6deae78280003d708a83ca1d40dbe22c560ba6b82498fa16597ede7f703ce",
+            "scope": "Preserved retained synthetic fixture before minimal RG1 canonical interface repair."
+          },
+          {
+            "bytes": 53695,
+            "sha256": "8a011b06a897131c7a4295f892de6db6c0060131e8e509f8267ece60f5eaa90d",
+            "scope": "Preserved identity before the 0.32 public scene3d preparation."
+          },
+          {
+            "bytes": 79817,
+            "sha256": "ad623d9d6e80303b0de8092e2ad51c3b382bd394f52ee3e36c42152268e813c7",
+            "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+          },
+          {
+            "bytes": 91022,
+            "sha256": "ab1cf21a59b6975c169ebf8fd9aa38aae137c3f138ab7fb97a41df484cd09a62",
+            "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+          },
+          {
+            "bytes": 95134,
+            "sha256": "6127919c9de2ea0a5a8ee3ec568ae8ebdfd04cd81e2884a3bb6ddb9170f50a8e",
+            "scope": "Preserved identity before finite Matrix public-port fixture integration correction."
+          },
+          {
+            "bytes": 96382,
+            "sha256": "c9710ab953aa40733eb4f3c15057d60acd31fd4b0c1ee0b232b7e1bba197cb65",
+            "scope": "Preserved identity before textured scene host 0.39.0."
+          },
+          {
+            "bytes": 99957,
+            "sha256": "2b85c3b0968a05204217143df4502da2abde19c3600327314c7a961cbf3da70f",
+            "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
+          },
+          {
+            "bytes": 101465,
+            "sha256": "cc3d11376b1c14cc2da39b0e87f6d017ab7add80aac8deed4042b89760e36de8",
+            "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+          },
+          {
+            "bytes": 103546,
+            "sha256": "b8a4e2b76af47da379d8d26774a7f28a72417f8ca1144137ac6380dce5c74c90",
+            "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          }
+        ]
+      },
+      {
+        "path": "tests/project-boundaries.test.mjs",
+        "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
+        "bytes": 13807,
+        "sha256": "e3faf9f89381265b5be917abfe1ad91437eeaa6496aed6377104cd26d8d2148e",
+        "identityHistory": [
+          {
+            "bytes": 13130,
+            "sha256": "3a0c942dbbbcf993b386c71768a525316a16a9e57d5078bfe2548870e5091f4c",
+            "scope": "Preserved initial 0.32 source identity before retained exact mapping/copy-fixture repair."
+          },
+          {
+            "bytes": 13797,
+            "sha256": "7cb845862ba8d489a904dc88dc749efec1c0d4e881605843b453eccc4aed9f11",
+            "scope": "Preserved identity before finite Matrix public-port fixture integration correction."
+          }
+        ]
+      },
+      {
+        "path": "tools/check-types.mjs",
+        "bytes": 92539,
+        "sha256": "913e7c6cea1152eb54f227ade4b18f0caa3baafbe35ca058388fe9be29685461",
+        "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+        "identityHistory": [
+          {
+            "bytes": 38869,
+            "sha256": "fe674b06bfb8d44a6afc79c7569c965ce6af252240bd0ce9b2d3996b8bdbc444",
+            "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
+          },
+          {
+            "bytes": 43356,
+            "sha256": "8f27c5100f494045d2763f584d2cdd54dd4701efe8d67a44e9c23948d12d54bf",
+            "scope": "Preserved identity before the 0.32 public scene3d preparation."
+          },
+          {
+            "bytes": 49790,
+            "sha256": "31bbb5df7a3dd4090b9cc12f24a6a8a2ec0ce041b3047b07e00bc5574e839870",
+            "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+          },
+          {
+            "bytes": 60660,
+            "sha256": "67002f6602381dcb5f4d75c304acd7af2140ef8f5005e43634643dad20285e88",
+            "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+          },
+          {
+            "bytes": 68576,
+            "sha256": "fbeace1fc6e6f4952b4457e5382e3932843229fa48d919866d69a88642f1d945",
+            "scope": "Preserved identity before 0.35 Scope private ownership repair."
+          },
+          {
+            "bytes": 68576,
+            "sha256": "8f303321cfd0a75c65381bc8774230e585789a8859205be5052e157b0e474c16",
+            "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
+          },
+          {
+            "bytes": 76618,
+            "sha256": "dd20698274972687d7625c0932c0e31f7403697023a5f55d312a73e582656df3",
+            "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+          },
+          {
+            "bytes": 92201,
+            "sha256": "8a0d80800e7e102ac0a51a00fdb4d19fa13b4d87e1ae046844f6ca862908e931",
+            "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
+          },
+          {
+            "bytes": 92356,
+            "sha256": "1d698b72bcb614a616cd26d1b10497185aa2bdfa5f1ef2a47300e51f259b20de",
+            "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          }
+        ]
+      },
+      {
+        "path": "tools/sequence-playback-boundary.mjs",
+        "bytes": 27270,
+        "sha256": "40ea435c86fd122b61d1cacb23381137485d596bf0d4253b6d5259c500d43bc8",
+        "originRole": "Original Egret first-party sequence playback, tests, tooling or paired publication metadata; Apache-2.0, with AI-assisted authorship and evidence-bounded independent review.",
+        "identityHistory": [
+          {
+            "bytes": 27250,
+            "sha256": "4b82f6309b23481c9cb60bc62fcbab02ac803d0ebbc2e75b15530cb4be1538a0",
+            "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          }
+        ]
+      },
+      {
+        "path": "tools/spritesheet-boundary.mjs",
+        "bytes": 94507,
+        "sha256": "916553a3da594de095dab452fdc20c1e560119fbbb9f34a1a6eced7d79b30e20",
+        "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
+      },
+      {
+        "path": "tools/verify.mjs",
+        "sha256": "c57c013018e3e8a12258c767d516c246bb7877f61cbc37320365de2ce4fcea0b",
+        "bytes": 605,
+        "originalSha256": "9c789b762d598c72040992d8ffb9041f75180d39b7556761365ef0998d5b0b4a",
+        "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
+        "previousRevisionSha256": "9c789b762d598c72040992d8ffb9041f75180d39b7556761365ef0998d5b0b4a",
+        "previousLayoutPath": "tools/verify.mjs",
+        "previousLayoutSha256": "9c789b762d598c72040992d8ffb9041f75180d39b7556761365ef0998d5b0b4a",
+        "identityHistory": [
+          {
+            "bytes": 525,
+            "sha256": "9c789b762d598c72040992d8ffb9041f75180d39b7556761365ef0998d5b0b4a",
+            "originRole": "byte-identical prototype whitelist export",
+            "scope": "Recorded identity before F2-A 0.42.0 source curation; historical cutoff retained."
+          },
+          {
+            "bytes": 525,
+            "sha256": "9c789b762d598c72040992d8ffb9041f75180d39b7556761365ef0998d5b0b4a",
+            "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
+          },
+          {
+            "bytes": 551,
+            "sha256": "9f7cb76cd1ca6911cfc39cd86dc66c0848a0c4d459bf0182798e88bc5dc6183a",
+            "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
+          },
+          {
+            "bytes": 581,
+            "sha256": "b51101a8e04f53ac5c400c16a0e7c1e03726b578b45b504a65116eb9f58de2af",
+            "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          }
+        ]
+      },
+      {
+        "path": "README.md",
+        "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
+        "sha256": "b70c24374439767003f8f499b39ceca939f9849be4424b655244709f0c70a563",
+        "bytes": 86905,
+        "previousRevisionSha256": "199156443d499d5012f1224263a1a3ee9994e5ba38ee067bceeb2ad865ae8167",
+        "previousLayoutPath": "README.en.md",
+        "previousLayoutSha256": "f40ec41ca699cd0b9138fbdf4a268080038f583ae11e78c4f37093a6b7095f57",
+        "identityHistory": [
+          {
+            "bytes": 18791,
+            "sha256": "e893776f5590b13468a4312ed6d36e0be0a6b41b0bcf2f0ab8a8212f475fcc36",
+            "recordedBeforeSuccessor": "0.29.0",
+            "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+          },
+          {
+            "bytes": 23201,
+            "sha256": "4be695a82242f09dbd250feec906026fb7feff8dc13cef97d992fb00822087b2",
+            "recordedBeforeSuccessor": "0.29.0",
+            "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+          },
+          {
+            "bytes": 23511,
+            "sha256": "374814b9365d55960938e4621b6a3a9580e2e4ff4b21812792ef6fa2c21129c3",
+            "scope": "Preserved identity before the 0.30 preparation successor."
+          },
+          {
+            "bytes": 24568,
+            "sha256": "4c7d59715adb9792888855dec679e7849a18dd07f6ce6b9c7676b53750781510",
+            "scope": "Preserved identity before the actual 0.30 native factual successor."
+          },
+          {
+            "bytes": 25190,
+            "sha256": "f673b62562d5ec9c7e9238aa120fbde935a634c2362bdbb0042282512378bd33",
+            "scope": "Preserved identity before complete-gate factual successor."
+          },
+          {
+            "bytes": 25791,
+            "sha256": "3c8f4ea89da6c082b05e7b3a2b49fcc29ce3f0f0107a941ffe856070098ef1e3",
+            "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
+          },
+          {
+            "bytes": 28265,
+            "sha256": "d4b00dd8f8a362c9e0356227077cc60931c508ad0d8de302272a09be1241f9e7",
+            "scope": "Preserved identity before the 0.32 public scene3d preparation."
+          },
+          {
+            "bytes": 30562,
+            "sha256": "0473d3e50afcde96e7999a3c153093a862f2d652610c72eb0dffcd37b71d10b8",
+            "scope": "Preserved pre-final retained integration successor identity."
+          },
+          {
+            "bytes": 32288,
+            "sha256": "59f2f32ac6e114d4250f8192d8ddb063876ba626752ae7de2074d5f18d6d161d",
+            "scope": "Preserved complete r3 verification cutoff before independently identified editorial-only language/table correction."
+          },
+          {
+            "bytes": 32284,
+            "sha256": "0d2471bb7585febdbb496df070b6e7f96a9f68483fa8765cbf99c819bd0036ef",
+            "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+          },
+          {
+            "bytes": 38296,
+            "sha256": "b5389c4b9ad20dcee4b94d496ebe23690aed5cd495aace88401bbf67ed9bfc1a",
+            "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+          },
+          {
+            "bytes": 43225,
+            "sha256": "26ba35d52e09c918a6c02e10d717c14e3a84f150d5df6758254fc30b0618e861",
+            "scope": "Preserved identity before 0.35 Scope private ownership repair."
+          },
+          {
+            "bytes": 46417,
+            "sha256": "ec73c9b22c15c02e720d45384f70d4fdc14a8b4b002f4b01c049d3aa9ef9f55c",
+            "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+          },
+          {
+            "bytes": 49508,
+            "sha256": "543e8b47e85220cf383db1236da6277b9893069a8f0ae3a9ee3a41fc5068e413",
+            "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+          },
+          {
+            "bytes": 54551,
+            "sha256": "7dd5301730011fd21081176aa6616aa9244de1b60cc0944fa072372b6570fd67",
+            "scope": "Preserved identity before public matrix authoring 0.38.0."
+          },
+          {
+            "bytes": 58541,
+            "sha256": "fc712ae50cc8b3d796c7d450f8c4a07707c94aa1c392e5d1b9d336875c0d7f30",
+            "scope": "Preserved identity before textured scene host 0.39.0."
+          },
+          {
+            "bytes": 61998,
+            "sha256": "c95e02a61dc4d19396c71968b20c42f89ab301f397614b157499967684234c3b",
+            "scope": "Preserved identity before actual browser successor curation."
+          },
+          {
+            "bytes": 63448,
+            "sha256": "c7ece775e2d9e127c4b4d79ef7b488caf21ef824d283f61fcc4edf9f58d86869",
+            "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
+          },
+          {
+            "bytes": 67161,
+            "sha256": "17bb4e730fa2448c32d8f68ba41883d761a1bf342e6eaa081b58154fa00e47ad",
+            "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+          },
+          {
+            "bytes": 70536,
+            "sha256": "eef5a43774ffaf46ebc1265b1855b70de7f64e484823cab5618107c8a1c8b9ff",
+            "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+            "scope": "Recorded identity before F2-A 0.42.0 source curation; historical cutoff retained."
+          },
+          {
+            "bytes": 70536,
+            "sha256": "eef5a43774ffaf46ebc1265b1855b70de7f64e484823cab5618107c8a1c8b9ff",
+            "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
+          },
+          {
+            "bytes": 73687,
+            "sha256": "9485c631a09cdcecfdf94ab9f88f185ce9c52c305acb11023b4135d816b3789e",
+            "scope": "Preserved F2-A R1 public curation snapshot before latest-first README placement; not a GitHub delivery identity."
+          },
+          {
+            "bytes": 73687,
+            "sha256": "4328f09f5b1738ebff62f4e591f8b7858cc0b00fd5d2ed3b2a524b1b700b0a1f",
+            "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
+          },
+          {
+            "bytes": 76383,
+            "sha256": "950c6d9826ecf8db1ea8afdfe609b8b973baacf3f971f5860d048a9439b69949",
+            "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
+          },
+          {
+            "bytes": 80195,
+            "sha256": "8014f170772d0ebf1bb84096033cf17b1246e45df3fc4bf50a9d8884816fa74b",
+            "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          }
+        ]
+      },
+      {
+        "path": "README.zh-CN.md",
+        "sha256": "f4159a1a681adf847b59b3bd0189d9f5f6534c0b01cc5225a27887c145641c48",
+        "bytes": 86006,
+        "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
+        "previousPublicSha256": "7ec80b8575a700b6a2628eb0322f2e770bb2284859f68ec5e0eb6530154a6699",
+        "previousRevisionSha256": "7a1d72019db7cb6075d7c3a3bd4075f7c069d527b6e31d992a69333cb126b6c3",
+        "previousLayoutPath": "README.md",
+        "previousLayoutSha256": "cee280b670fe7cfc795c2724de3bc6ccfd26373a872381b953a2aad40bb26151",
+        "identityHistory": [
+          {
+            "bytes": 18408,
+            "sha256": "d61980f3024ff2ca33e63878731d0f63ffd0da1163dacdae8699950321c4cf15",
+            "recordedBeforeSuccessor": "0.29.0",
+            "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+          },
+          {
+            "bytes": 22628,
+            "sha256": "9738c168eb8f208b6f6254072f2d8926f6bd8f10db8677b6e5bc571e2e44982a",
+            "recordedBeforeSuccessor": "0.29.0",
+            "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+          },
+          {
+            "bytes": 22939,
+            "sha256": "58f841289c66b1ae2b60ab015d179fc99ab57b1e4d48616c4c95233c943a18b8",
+            "scope": "Preserved identity before the 0.30 preparation successor."
+          },
+          {
+            "bytes": 23959,
+            "sha256": "ac6987ffc48050f6b6ddc83427b53b4e0d508107dcc753f8fbfe7f4ec83f7fbf",
+            "scope": "Preserved identity before the actual 0.30 native factual successor."
+          },
+          {
+            "bytes": 24529,
+            "sha256": "780e7355df87382542f8386ad59b6d1d9aa102815293448219f075601ed9425e",
+            "scope": "Preserved identity before complete-gate factual successor."
+          },
+          {
+            "bytes": 25134,
+            "sha256": "91f843173ea050ef050d7b44c7a616d248b1b39a612c96dcf3a3c290f403bd10",
+            "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
+          },
+          {
+            "bytes": 27378,
+            "sha256": "7e3af36191ac5f923b7a15b7d2f65df0f21a686986adf4dfa69f248aa57c445a",
+            "scope": "Preserved identity before the 0.32 public scene3d preparation."
+          },
+          {
+            "bytes": 29675,
+            "sha256": "c85dee4a44b0fabc344a737bbd7bc5f4d8f9d951c0cae8cf92c3d4dfb6af5e5e",
+            "scope": "Preserved pre-final retained integration successor identity."
+          },
+          {
+            "bytes": 31393,
+            "sha256": "b8e0ae4f9a5f58254b1d290ad4a74a21fc3249c2fc942e3769f808fb710e2a39",
+            "scope": "Preserved complete r3 verification cutoff before independently identified editorial-only language/table correction."
+          },
+          {
+            "bytes": 31393,
+            "sha256": "52daf3df1692fc56205c740c537dde2cf11f11bb5a49823ee482be19c1551802",
+            "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+          },
+          {
+            "bytes": 37405,
+            "sha256": "086b2fd18f36c8e29a062118f99c4bc808ea1d9097cd22b93131ce525f40f8e8",
+            "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+          },
+          {
+            "bytes": 39779,
+            "sha256": "e479514a186d893a9c85e6a71fa50b5bc2ce82050c1d52d5c86294a9a00f5006",
+            "scope": "Preserved identity before the finite 0.34 bilingual README occurrence repair."
+          },
+          {
+            "bytes": 42334,
+            "sha256": "ea68880391b6294ed9d9d1641e704688642645e21ce19ef599fc68afc6eaa8fd",
+            "scope": "Preserved identity before 0.35 Scope private ownership repair."
+          },
+          {
+            "bytes": 45526,
+            "sha256": "f376aa8debe672b15b6df10e1394763563d1a21d00695f935c6cedd21aec7869",
+            "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+          },
+          {
+            "bytes": 48609,
+            "sha256": "688eaba4bba72c697721360042ac7ae165049ac1ee9a7373c9b7fc04c6ebf75f",
+            "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+          },
+          {
+            "bytes": 53652,
+            "sha256": "ecee2d0e32dbb2485befbe5a57c74f68a143a1b61f3e513d8e0893cf5f4e85af",
+            "scope": "Preserved identity before public matrix authoring 0.38.0."
+          },
+          {
+            "bytes": 57642,
+            "sha256": "c58142965db3f5eaa022cea2ee0b3139b7c9a32e361012efb29878de580c0c36",
+            "scope": "Preserved identity before textured scene host 0.39.0."
+          },
+          {
+            "bytes": 61099,
+            "sha256": "d57535692b25df1cf8ed7def435c31080f0db04ce7a6882fbe85a3d4de9bc31a",
+            "scope": "Preserved identity before actual browser successor curation."
+          },
+          {
+            "bytes": 62549,
+            "sha256": "dd06718307875574b034fa49804ae0fc116cf126625eb5a1283f422bdb164828",
+            "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
+          },
+          {
+            "bytes": 66262,
+            "sha256": "9384643e5414b165ee7656f80965ad08378e36ca6944bcbf71a8b3ed1660e6bb",
+            "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+          },
+          {
+            "bytes": 69637,
+            "sha256": "e90173dda41b4d7e6de0084e992ace05979fb79917a1864547c54c505f72ac6a",
+            "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+            "scope": "Recorded identity before F2-A 0.42.0 source curation; historical cutoff retained."
+          },
+          {
+            "bytes": 69637,
+            "sha256": "e90173dda41b4d7e6de0084e992ace05979fb79917a1864547c54c505f72ac6a",
+            "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
+          },
+          {
+            "bytes": 72788,
+            "sha256": "d7549b61baec3b677ff539ef7799779b1d9d5e109c4e2f579492c480bce720f5",
+            "scope": "Preserved F2-A R1 public curation snapshot before latest-first README placement; not a GitHub delivery identity."
+          },
+          {
+            "bytes": 72788,
+            "sha256": "6c502b1a07a87ae15789845393e3737fa7b4a41df79ef1b1a867b2cb7b7c563b",
+            "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
+          },
+          {
+            "bytes": 75484,
+            "sha256": "e08847e13278eba9da0d2294694dda3bdb193125b067c900e75f437300f0c615",
+            "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
+          },
+          {
+            "bytes": 79296,
+            "sha256": "d6e1a270856a587149d193a07e68485765e8b150602c25b8f7b1d048c56b2f09",
+            "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          }
+        ]
+      },
+      {
+        "path": "DOCUMENTATION.md",
+        "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+        "sha256": "2bc86913a3043b4bad285ee052ed0728fe31cb18a611e17a14ef1ad96b624b29",
+        "bytes": 7389,
+        "previousRevisionSha256": "ef35dafcd765aeacdce5c0d14362dc5f30319b84dd3d1693d9d6a769f7162f99",
+        "previousLayoutPath": "DOCUMENTATION.en.md",
+        "previousLayoutSha256": "4921b952a38aa70c692db7b37cda758e6e58942ea097761ee72d36f42a6ae31b",
+        "identityHistory": [
+          {
+            "bytes": 5829,
+            "sha256": "3e73932c80f14a49edc8dccd1b2f7a6e5be7231bc372f0fff140d8fb1ba47043",
+            "recordedBeforeSuccessor": "0.29.0",
+            "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+          },
+          {
+            "bytes": 6713,
+            "sha256": "19c196d625d99ccc7f520ce10e3b4307e6670076a1f0bc5049286c420eb1b9b5",
+            "scope": "Preserved identity before the 0.30 preparation successor."
+          },
+          {
+            "bytes": 7008,
+            "sha256": "e8af6a20e16c249c4003bc67bca77231e7b60a9b89292363589684c643c46e45",
+            "scope": "Preserved identity before the actual 0.30 native factual successor."
+          },
+          {
+            "bytes": 7064,
+            "sha256": "c204f1b6d3f98b040bf59c5098f0f036ebcfb9e986c46e269ae9f10d53aad47a",
+            "scope": "Preserved identity before complete-gate factual successor."
+          },
+          {
+            "bytes": 7111,
+            "sha256": "a90bcbb5e52442fa75f7bd7ad46dcba19abc8d78dcb0b9e9948c5f54e0a03be8",
+            "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
+          }
+        ]
+      },
+      {
+        "path": "DOCUMENTATION.zh-CN.md",
+        "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+        "sha256": "3fc40b0d139cddfe9d2a9ee3100ab453db36c7d771151056533a13019ca14104",
+        "bytes": 7084,
+        "previousRevisionSha256": "22f3073e3a0096efc4c92fce0aed95a81bdbaa6b1e50ed6432a1ed597c86a8d4",
+        "previousLayoutPath": "DOCUMENTATION.md",
+        "previousLayoutSha256": "421ba91329f03b9ace090842a7eeaabce268c8cce6ec89d7ccd05b6b15e44bfd",
+        "identityHistory": [
+          {
+            "bytes": 5528,
+            "sha256": "258ebbe83b30b418a21309a8981531bc6105a08f62a55d36b4455359760dd0a7",
+            "recordedBeforeSuccessor": "0.29.0",
+            "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+          },
+          {
+            "bytes": 6408,
+            "sha256": "a6b757b88e96bb1399b55b90dad0c9f19c377bad065aa87bbabd03116764c557",
+            "scope": "Preserved identity before the 0.30 preparation successor."
+          },
+          {
+            "bytes": 6703,
+            "sha256": "e2cb444be9743505f4643b30a78f75e1f3496126b4bed48ec60a318b126da05d",
+            "scope": "Preserved identity before the actual 0.30 native factual successor."
+          },
+          {
+            "bytes": 6759,
+            "sha256": "d49b9caee1b78ac16e8f9fdc2ee4531256cb0b41f0abb2659da67fb625f9dc58",
+            "scope": "Preserved identity before complete-gate factual successor."
+          },
+          {
+            "bytes": 6806,
+            "sha256": "4275596c6abb8c11e319f2b968b57b40ebca9e768df72525c3a7a32449cdcc92",
+            "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
+          }
+        ]
+      },
+      {
+        "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+        "path": "knowledge-base/README.md",
+        "bytes": 20114,
+        "sha256": "45084a8f88b9e1529610a16acd96ef225951ca15825a35101859cdd7341f83bd",
+        "identityHistory": [
+          {
+            "bytes": 899,
+            "sha256": "8e63ff4d983aa1250fe6ecbb9c57d84b50710822277442b9f0f86f2b46f5e8c9",
+            "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+          },
+          {
+            "bytes": 3900,
+            "sha256": "4422804c19daf00f779bb5bfe2301850e5b1d29c2567c9e0ea490ba20ea924b4",
+            "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+          },
+          {
+            "bytes": 8059,
+            "sha256": "bcc9088e015cbb959b94da49f40bf6dfe6d01dd5cef8c62810263dec3e0ed746",
+            "scope": "Preserved identity before public matrix authoring 0.38.0."
+          },
+          {
+            "bytes": 10161,
+            "sha256": "4966f84ecbd1f4b6312a8e404cc044f1278fe7379fe7db0de9f16938b33fb7c2",
+            "scope": "Preserved identity before textured scene host 0.39.0."
+          },
+          {
+            "bytes": 11970,
+            "sha256": "3a2c85cc892a077a32817566cb683e661a02bbd1ca65d0714284745e54f3db7a",
+            "scope": "Preserved identity before actual browser successor curation."
+          },
+          {
+            "bytes": 12718,
+            "sha256": "063929686b783853a77ed43f2bed35dac81ff454654fb5f491dbd6a85c5ec97a",
+            "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
+          },
+          {
+            "bytes": 14636,
+            "sha256": "6682842a420a04ee497a77d1aa23b5008c5e7af7f33b915689cbfeaa27374802",
+            "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+          },
+          {
+            "bytes": 16394,
+            "sha256": "0f2e47a615ec417bc87104dd71ad3a23b8b9871a1be1a927a363e128a4793530",
+            "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          }
+        ]
+      },
+      {
+        "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+        "path": "knowledge-base/README.zh-CN.md",
+        "bytes": 18688,
+        "sha256": "c0d04e9c85db0604d957241695962b8db199661aeefe217230f8fda2e6b16ea8",
+        "identityHistory": [
+          {
+            "bytes": 637,
+            "sha256": "de405d8aa07f107c6f1cd47b6ecc4f85bebf4a36472ae69edaf80389e49ddfa5",
+            "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+          },
+          {
+            "bytes": 3638,
+            "sha256": "0aeaec05c0e046ec409c8a443f47ec7c8e8506b00ee47c494429f32fd7eee5e4",
+            "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+          },
+          {
+            "bytes": 7680,
+            "sha256": "0b09cf72de08bbb3abbd2a534cafe13f0c45dc2fd33363dc6a3ed2af331de50c",
+            "scope": "Preserved identity before public matrix authoring 0.38.0."
+          },
+          {
+            "bytes": 9548,
+            "sha256": "0005200518461883286e74e760ef2c7276d9c6b4e2076a7a6aaee6b0953e83ca",
+            "scope": "Preserved identity before textured scene host 0.39.0."
+          },
+          {
+            "bytes": 11198,
+            "sha256": "711d2877424be31534d52a3518b97554a4c3d7b8cacee2ef22356221349de66b",
+            "scope": "Preserved identity before actual browser successor curation."
+          },
+          {
+            "bytes": 11899,
+            "sha256": "7f4355b6a29cba1dc4309b389ef780e2b58dd56ae2bbf39d25327b6b89eba2bf",
+            "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
+          },
+          {
+            "bytes": 13670,
+            "sha256": "cdd90ffdae73f871432cdad29ed989db403be148ad835e040f9180f26aa595c4",
+            "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+          },
+          {
+            "bytes": 15264,
+            "sha256": "f2a11a2b2e21688ff09f5d43597890e1713af9b6d973ce21ae209e821eaf1458",
+            "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          }
+        ]
+      },
+      {
+        "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
+        "path": "knowledge-base/en/README.md",
+        "bytes": 43993,
+        "sha256": "8e8ab5d32b30d6703c8e8e2d3941deb462cbc0cf6af61790005b1d2ec4e061fe",
+        "identityHistory": [
+          {
+            "bytes": 7397,
+            "sha256": "973f2ec5f1c10eddc90e84d72c1efb5fd5d89e84647fa8d8b638359399f98ac1",
+            "recordedBeforeSuccessor": "0.29.0",
+            "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+          },
+          {
+            "bytes": 9665,
+            "sha256": "3e3390d2daa265b4ee47ea684a8cdcb471e5d69b36efe4f9fbbf1a6dce85db39",
+            "recordedBeforeSuccessor": "0.29.0",
+            "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+          },
+          {
+            "bytes": 9767,
+            "sha256": "e1b71caeacbe40b84953a961ac25ae704446a7d0790edc0521be263070e97717",
+            "scope": "Preserved identity before the 0.30 preparation successor."
+          },
+          {
+            "bytes": 10284,
+            "sha256": "195d4c73cc867c385333fb0090f8f6cf4acedfb7fd79ba99f06bd2d366c52415",
+            "scope": "Preserved identity before the actual 0.30 native factual successor."
+          },
+          {
+            "bytes": 10766,
+            "sha256": "d2d8e0f087190b100ddff39f0a032c03ed5d9e6cfb0a0e84da6a086012ed8756",
+            "scope": "Preserved identity before complete-gate factual successor."
+          },
+          {
+            "bytes": 11218,
+            "sha256": "6e346aafffd62ee471377f3a4b53dca52f8acb6c7283b84423e8a41eb3d4c6fb",
+            "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
+          },
+          {
+            "bytes": 12729,
+            "sha256": "a9e0bb655fa5e3d68809bad799a85f3563a38c97e91ffd56b008a6e9c72a5e51",
+            "scope": "Preserved identity before the 0.32 public scene3d preparation."
+          },
+          {
+            "bytes": 13761,
+            "sha256": "3a2504d38a8da3f2082ac976693a44166eeabcb6d55bbf0469516bd64e5bd9d1",
+            "scope": "Preserved pre-final retained integration successor identity."
+          },
+          {
+            "bytes": 14319,
+            "sha256": "811e1218f63a3b5df438abc4b86dc7a17a551159eb4982b24276bdf5e1c1db19",
+            "scope": "Preserved complete r3 verification cutoff before independently identified editorial-only language/table correction."
+          },
+          {
+            "bytes": 14315,
+            "sha256": "94ca342c3fd7ec2182a8beb8796e9731781503e9f8d84c4b275efb7f37539301",
+            "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+          },
+          {
+            "bytes": 17258,
+            "sha256": "f22874f65df0157ad3f4ce12b88e40e6cfe1336267eff6f1434f5f50d0d14db6",
+            "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+          },
+          {
+            "bytes": 19831,
+            "sha256": "42037a911b964b87127ce7dcedc4fd455559bfd130071d2253482eb50250845d",
+            "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+          },
+          {
+            "bytes": 21391,
+            "sha256": "cd729ca9b7da02a738b18e0fc8ecb793bec3c49c4fec5a7b7d47d3dc1f8e4a12",
+            "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+          },
+          {
+            "bytes": 24022,
+            "sha256": "ff6d8e31a5fcda99f1a29012e723d136361198d5fec5da33947f8b9da9de0c84",
+            "scope": "Preserved identity before public matrix authoring 0.38.0."
+          },
+          {
+            "bytes": 26137,
+            "sha256": "568282686eebdf3151f44e6156411353fce1673e52f06aea1089734e5008b4c2",
+            "scope": "Preserved identity before textured scene host 0.39.0."
+          },
+          {
+            "bytes": 27946,
+            "sha256": "50292519985183ce9d6c13867a63646dbeedb72051b7b99f562b8b2264dc37f1",
+            "scope": "Preserved identity before actual browser successor curation."
+          },
+          {
+            "bytes": 28694,
+            "sha256": "cc10b49cf0600390428c77d4977fb478a6f863cff9f897013aba33390784b8b4",
+            "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
+          },
+          {
+            "bytes": 30606,
+            "sha256": "361be88896dcb14b90909fc6450a1acde1969eb169514a048ca7585e3ab0ee2f",
+            "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+          },
+          {
+            "bytes": 32357,
+            "sha256": "2c2eccb9f395763f34ba9a98906b4832f42bf0a170d270b6468f0361e9ac3700",
+            "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+            "scope": "Recorded identity before F2-A 0.42.0 source curation; historical cutoff retained."
+          },
+          {
+            "bytes": 32357,
+            "sha256": "2c2eccb9f395763f34ba9a98906b4832f42bf0a170d270b6468f0361e9ac3700",
+            "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
+          },
+          {
+            "bytes": 34027,
+            "sha256": "b6dfeff240f8e865bcce2f1cf35cc459ad105fd9b3a7e4070398c4e3f05d8d75",
+            "scope": "Preserved F2-A R1 public curation snapshot before latest-first README placement; not a GitHub delivery identity."
+          },
+          {
+            "bytes": 34027,
+            "sha256": "497543e44b8e377ab97dc85a1105d30c1b0753f90891de888d0a99223c31fc85",
+            "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
+          },
+          {
+            "bytes": 36663,
+            "sha256": "af115ffcbd261ce231fd77fff3ee99ad8a93969699fd9da8062e0047606f3d15",
+            "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
+          },
+          {
+            "bytes": 40417,
+            "sha256": "790751edc5b7e66e6031f9e24e920a18a544f3623db0a4bedcf7de1fac073ee3",
+            "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          }
+        ]
+      },
+      {
+        "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
+        "path": "knowledge-base/Cns/README.md",
+        "bytes": 40018,
+        "sha256": "6886dca2052ac9de2baa24f30fc6279637604418adb7f2111847a9f30a037192",
+        "identityHistory": [
+          {
+            "bytes": 6319,
+            "sha256": "d1cabfab188b34b8ae394dc698a04cb7563e7948b98bf74e669a7f51f343abe4",
+            "recordedBeforeSuccessor": "0.29.0",
+            "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+          },
+          {
+            "bytes": 8355,
+            "sha256": "2397b4f84c7ee3d796005588718b57a1322be2e0e848dce1059eadf647bc5143",
+            "recordedBeforeSuccessor": "0.29.0",
+            "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+          },
+          {
+            "bytes": 8458,
+            "sha256": "8f4b56786cb1f37875ae8f2d942f5c24c81122a9de2e1cdf04d70057abe79df4",
+            "scope": "Preserved identity before the 0.30 preparation successor."
+          },
+          {
+            "bytes": 8923,
+            "sha256": "4f0e2959c74bdcdacaaf94d17d8194a1fa367598833b879de94cc5043e4d5aec",
+            "scope": "Preserved identity before the actual 0.30 native factual successor."
+          },
+          {
+            "bytes": 9353,
+            "sha256": "c49e49f1de9b12724b02650dcc966d2532ce09305e974498aa9204c4a5291ad2",
+            "scope": "Preserved identity before complete-gate factual successor."
+          },
+          {
+            "bytes": 9804,
+            "sha256": "24bfce06a106b4344c9de7a51cb9deec65a0558941f3916f9a2d1ec4018a222c",
+            "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
+          },
+          {
+            "bytes": 11057,
+            "sha256": "a8337454a66c0c034293d02feba6b1a0beef887a59d3190abc1a28efa46e329b",
+            "scope": "Preserved identity before the 0.32 public scene3d preparation."
+          },
+          {
+            "bytes": 11957,
+            "sha256": "375b7f1e1493d310ea5e1f3ace0cefc3208cd541914a6e53c0550c5f2ca2aedf",
+            "scope": "Preserved pre-final retained integration successor identity."
+          },
+          {
+            "bytes": 12454,
+            "sha256": "5d92bc90ff081db964a52878eba09ffe727f787072103428db4b66a07120f21c",
+            "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+          },
+          {
+            "bytes": 14998,
+            "sha256": "8ed1147c37aa80f5b59697c361b7904f935bd73cb95f7b9e26ef51acebcd9ab7",
+            "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+          },
+          {
+            "bytes": 17341,
+            "sha256": "9ac33758aa7ba87569da2e0707618a6058866fcb3b9284e124a7046618f4ca91",
+            "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+          },
+          {
+            "bytes": 18997,
+            "sha256": "899af7790b19b1d92b5f3a8e0ec66af71b3b30e09d71860d3cfd652c0deca518",
+            "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+          },
+          {
+            "bytes": 21358,
+            "sha256": "bcbaaf5e24b8bfa3172dc7517191a08288a5789dc4239a6f9236484d5e98cf5e",
+            "scope": "Preserved identity before public matrix authoring 0.38.0."
+          },
+          {
+            "bytes": 23238,
+            "sha256": "07cd4c42aa428847811c81b4f720c304e6ad3fe2a8283c7ab56be3391d9f8318",
+            "scope": "Preserved identity before textured scene host 0.39.0."
+          },
+          {
+            "bytes": 24887,
+            "sha256": "8bdd39cdbe5b02d9f3e822cb8303d938d8759465ddbc8ba34c1f69a524be2d82",
+            "scope": "Preserved identity before actual browser successor curation."
+          },
+          {
+            "bytes": 25588,
+            "sha256": "008ebbb9ce5d6f304eb118392177581c7b034e27598a8b86cec415f7dd3c8e2d",
+            "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
+          },
+          {
+            "bytes": 27351,
+            "sha256": "a074f49a0c5e4c08b3a1e24d87dc660b0d090dd62742a43cf5f2867e0a4e851d",
+            "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+          },
+          {
+            "bytes": 28936,
+            "sha256": "12cab66668877044b29a2ea6b8f64110d885fb670551ebdf465613c47f8db0bf",
+            "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+            "scope": "Recorded identity before F2-A 0.42.0 source curation; historical cutoff retained."
+          },
+          {
+            "bytes": 28936,
+            "sha256": "12cab66668877044b29a2ea6b8f64110d885fb670551ebdf465613c47f8db0bf",
+            "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
+          },
+          {
+            "bytes": 30358,
+            "sha256": "a2a81102e9a14fbee24352fef6c3036a29bbdc040b9fe6653320a1388f7a1051",
+            "scope": "Preserved F2-A R1 public curation snapshot before latest-first README placement; not a GitHub delivery identity."
+          },
+          {
+            "bytes": 30358,
+            "sha256": "f1a5435204e2c7a1b8d49f12355c0c8165fe6f8185bd3dc18682078a1b5ab361",
+            "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
+          },
+          {
+            "bytes": 32992,
+            "sha256": "91ae89f61f70dbf2d6117d2a3f6e3ff8ca4ca16525d085b85a6838277b3faf0e",
+            "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
+          },
+          {
+            "bytes": 36744,
+            "sha256": "bbf48371034b7494cba0e6ad91d70ed9cfa3a30eb7501319a6e2815176008f3b",
+            "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          }
+        ]
+      },
+      {
+        "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+        "path": "knowledge-base/en/CHANGELOG.md",
+        "bytes": 74338,
+        "sha256": "335a6899740010419ab64178394c35c429a81aa640fcd598b0d762528c4a05bf",
+        "identityHistory": [
+          {
+            "bytes": 31389,
+            "sha256": "03392805386b45a5f86ce3a795bfa4d836a180f52cdcddd66cd0a4fb002ee339",
+            "recordedBeforeSuccessor": "0.29.0",
+            "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+          },
+          {
+            "bytes": 39845,
+            "sha256": "e26c89685f90317f2642ed8e00b9ccad49c5fa4ee75b1220c846f0def8abfadc",
+            "recordedBeforeSuccessor": "0.29.0",
+            "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+          },
+          {
+            "bytes": 39942,
+            "sha256": "a1fcbc306cbccf36f3347e17a70b6c8b9c7f5f8368c3f96ab89ac8152d9e2f42",
+            "scope": "Preserved identity before the 0.30 preparation successor."
+          },
+          {
+            "bytes": 41776,
+            "sha256": "b53ee2c2fb1746633e09a7c1f4d069049d1a0bb41a372e087634fe91d9374ab8",
+            "scope": "Preserved identity before the actual 0.30 native factual successor."
+          },
+          {
+            "bytes": 43247,
+            "sha256": "b0883be5b664631a3e8dd46d950c2ab190c9bd7d9ca87cab74997a5bedc2fecc",
+            "scope": "Preserved identity before complete-gate factual successor."
+          },
+          {
+            "bytes": 44029,
+            "sha256": "bf9bd10549a35cbdc6bed78a4fd3be497ea7fc57494bfbb23d3072ed16f063dc",
+            "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
+          },
+          {
+            "bytes": 45830,
+            "sha256": "2bb053752b41f79b202046f0d97e3c8965fa79049a32c9ee53f975fe1e242a35",
+            "scope": "Preserved identity before the 0.32 public scene3d preparation."
+          },
+          {
+            "bytes": 47041,
+            "sha256": "dca1afa112f376bb1b2634f7ee92b9db0bd85c018221be15b6f843652968fdf6",
+            "scope": "Preserved pre-final retained integration successor identity."
+          },
+          {
+            "bytes": 47774,
+            "sha256": "f0d4025cd3a25cf2182e7fcea27d48b51730e32046bece7d60ee9057883234e2",
+            "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+          },
+          {
+            "bytes": 50622,
+            "sha256": "79c0248866be207cf80740c306df4e41e19a13bd66ce96697105ce1b71bb971e",
+            "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+          },
+          {
+            "bytes": 53195,
+            "sha256": "0bfe62097288d04b68954a74a03ab935e15a614f98213f5fb559cb6cd8fb1152",
+            "scope": "Preserved identity before 0.35 Scope private ownership repair."
+          },
+          {
+            "bytes": 54844,
+            "sha256": "156cf9a034bb1a52497ffda6749adbd3ee139ef012a4fa7cb49b8f0751b1598b",
+            "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+          },
+          {
+            "bytes": 56404,
+            "sha256": "63fc9c3428daa38cf692a605c5bc9569d7bbee37e54740ac1f1ba5c06414750f",
+            "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+          },
+          {
+            "bytes": 59035,
+            "sha256": "b372af2b8a6e3553453401674a0e4e69fbaafd9e69bdbd25195945dd3d53895d",
+            "scope": "Preserved identity before public matrix authoring 0.38.0."
+          },
+          {
+            "bytes": 61150,
+            "sha256": "65c3bbbcb83119c55b17eb81ce0cdcad407eeea4b19e61cdac9431d561ddfdb6",
+            "scope": "Preserved identity before textured scene host 0.39.0."
+          },
+          {
+            "bytes": 62959,
+            "sha256": "0b198ae56d890ff2e7891018671a9dcf966d5da46d0b69caa30906daecd068d0",
+            "scope": "Preserved identity before actual browser successor curation."
+          },
+          {
+            "bytes": 63707,
+            "sha256": "f0853643a08f125199c9768f40835806577d05a1919cc4c6575a9bce784c6735",
+            "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
+          },
+          {
+            "bytes": 65619,
+            "sha256": "05ce4ab71729aeb4cf80bef9259626bf30ff888da9d61bc98b176d9aa3510dbc",
+            "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+          },
+          {
+            "bytes": 67370,
+            "sha256": "0b3c80923a41a39d29e62051d7220b8e8f6058f803706ad9c403fb4f0117d3be",
+            "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
+          },
+          {
+            "bytes": 68939,
+            "sha256": "ac10555210463b08ac6b26d0a59206cbb337372ba4c534d0e032da8dbdcabcf6",
+            "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
+          },
+          {
+            "bytes": 70953,
+            "sha256": "ec4f89dfbd1cec1c7ed0f575df0e540956e2921596c4c1dc5552f31eb5fc6b51",
+            "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          }
+        ]
+      },
+      {
+        "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+        "path": "knowledge-base/Cns/CHANGELOG.md",
+        "bytes": 64309,
+        "sha256": "b318813681f0c67846bf5313d21431e933a365f5262e4d662820ac9050e5aeb1",
+        "identityHistory": [
+          {
+            "bytes": 25611,
+            "sha256": "6502e7f2600cd3858777f31c0ad8b29f5281bc59484dbde245e9b59b7afa5335",
+            "recordedBeforeSuccessor": "0.29.0",
+            "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+          },
+          {
+            "bytes": 33038,
+            "sha256": "8252f7aec4367d0eb8eb03bd83963151f632717aa59821f28d77975d22b94971",
+            "recordedBeforeSuccessor": "0.29.0",
+            "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+          },
+          {
+            "bytes": 33132,
+            "sha256": "c4b1ee0e923859033ede32b2613cf67b654b036793f085ac81046dca7c505d9d",
+            "scope": "Preserved identity before the 0.30 preparation successor."
+          },
+          {
+            "bytes": 34764,
+            "sha256": "5c87cce762460e332b38ef0144a33ff14ae7fdd59394bc7a9cbbbaae572416c8",
+            "scope": "Preserved identity before the actual 0.30 native factual successor."
+          },
+          {
+            "bytes": 36041,
+            "sha256": "510aa786baa2908f6b5d9e861435389a5e0ef32a1356f8184d93f9956f4748c6",
+            "scope": "Preserved identity before complete-gate factual successor."
+          },
+          {
+            "bytes": 36739,
+            "sha256": "c57da1511d6e379064ed28399c9b62bc170cae5d382e070c020a13ad899fa1de",
+            "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
+          },
+          {
+            "bytes": 38335,
+            "sha256": "b63b2b6ab160c565e71fc65ab57fdd0b859876f29a7700244791f12a26d8421c",
+            "scope": "Preserved identity before the 0.32 public scene3d preparation."
+          },
+          {
+            "bytes": 39419,
+            "sha256": "59f8b83f9b49c322f3460dfa6740da821fecd929d72530838bcd0fa445c2020d",
+            "scope": "Preserved pre-final retained integration successor identity."
+          },
+          {
+            "bytes": 40107,
+            "sha256": "2e65af9b087dab5e7316aa33cbc1d32d66b6b0b90d7e8b956ab39a811df0a451",
+            "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+          },
+          {
+            "bytes": 42577,
+            "sha256": "e150a74e0346f90f42ce4856666316d6e3e5d998a4d7daf838bd0b2dfd66d226",
+            "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+          },
+          {
+            "bytes": 44920,
+            "sha256": "a891193331a73b985cb85d6b883e73be7b2c79be171c1ff528253e4233570c9f",
+            "scope": "Preserved identity before 0.35 Scope private ownership repair."
+          },
+          {
+            "bytes": 46472,
+            "sha256": "b6c1348cfe6b90309eb43cf098744d9aa738ffb90cc3849df82b435eb59334e5",
+            "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+          },
+          {
+            "bytes": 47896,
+            "sha256": "b0d801dc0a0ab45cfc713aba4a99cdc9092ffa7e1d877d1f6a0c9856a8879158",
+            "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+          },
+          {
+            "bytes": 50257,
+            "sha256": "58435ee2f58ef1d419cd785f50099bc1eea04453d3d2b1303ed01205160338f5",
+            "scope": "Preserved identity before public matrix authoring 0.38.0."
+          },
+          {
+            "bytes": 52137,
+            "sha256": "30cc3520e92edffc0ffba67daf4ff476a145e808717e91c9cb1f21882812a424",
+            "scope": "Preserved identity before textured scene host 0.39.0."
+          },
+          {
+            "bytes": 53786,
+            "sha256": "877b54eb6c8bb73c0a3576c7bb6639f5a98d876cd8041163da19fa07b9902249",
+            "scope": "Preserved identity before actual browser successor curation."
+          },
+          {
+            "bytes": 54487,
+            "sha256": "536a75eef6aa6fdc8a6b6f5161aceb8ef555cc5a4d024f593c99d01657b8c295",
+            "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
+          },
+          {
+            "bytes": 56250,
+            "sha256": "3076293559107c9780c4949f90434ea42d59b34d56dc4b7394b389df9f32848e",
+            "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+          },
+          {
+            "bytes": 57835,
+            "sha256": "af4d4b5ddefd54345ef59eadd734d7202bc36ee33a85175d3fdefd954282e6d6",
+            "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
+          },
+          {
+            "bytes": 59283,
+            "sha256": "f27fa0b720750624253565a5142fe1ef10d9f44035e060356841d4fcdfda0449",
+            "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
+          },
+          {
+            "bytes": 61229,
+            "sha256": "19a8d0330265302f87dc011700175d9ad384dee262ec40b5bc7e7d3ffe85608f",
+            "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          }
+        ]
+      },
+      {
+        "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+        "path": "knowledge-base/en/docs/core-progress.md",
+        "bytes": 40771,
+        "sha256": "fff7bd4b44c5561224d80949eab217f8cad748f4cd09de12d38894f09f8c76f0",
+        "identityHistory": [
+          {
+            "bytes": 14004,
+            "sha256": "4beb5b2b00afd534ba0e75005cb69fd7b3bf55822aa69bde82de6eb7bc20df56",
+            "scope": "Preserved identity before the 0.32 public scene3d preparation."
+          },
+          {
+            "bytes": 15081,
+            "sha256": "e773fb3e63c87ed831b000f97a481b264a7906ff51cef767de9932f9be1ffa9a",
+            "scope": "Preserved pre-final retained integration successor identity."
+          },
+          {
+            "bytes": 15676,
+            "sha256": "59e613db79e19be1e77d594fecb4ba2534014e7d6fc919792cc7d4e55418471c",
+            "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+          },
+          {
+            "bytes": 18512,
+            "sha256": "e2d156a4fe0525b7a37f5956e071a7752738b791e730d97b5759f15062a91cef",
+            "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+          },
+          {
+            "bytes": 21083,
+            "sha256": "2ac02ab70ae2ce34007b7ec618236ac3c6560b3bf3caa7c1ba35d70c6cdf88e1",
+            "scope": "Preserved identity before 0.35 Scope private ownership repair."
+          },
+          {
+            "bytes": 22727,
+            "sha256": "e578dae06f760d88f8f4b46642cd1c4824b94fd9bf32b7fd9dcbf19af53de2e6",
+            "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+          },
+          {
+            "bytes": 24296,
+            "sha256": "abcb7f485e0ae3c2911a41354fa9dec8875a06371ee6267692abcd025cf9a08e",
+            "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+          },
+          {
+            "bytes": 26936,
+            "sha256": "8268f300a74cde2f872898bef295596fe3f9c25ea947814c6a660e6b11d25102",
+            "scope": "Preserved identity before public matrix authoring 0.38.0."
+          },
+          {
+            "bytes": 29049,
+            "sha256": "d320ff6cbbb91f0eb74d4b5ec4c53b8c19af1739d509a24e5a9b4003c9d9dd14",
+            "scope": "Preserved identity before textured scene host 0.39.0."
+          },
+          {
+            "bytes": 30856,
+            "sha256": "2f32de741e655e7dd366c3600e674f23cc829381dd0fe20326fa17e07c8c0630",
+            "scope": "Preserved identity before actual browser successor curation."
+          },
+          {
+            "bytes": 31604,
+            "sha256": "0aff2501056e0f2f119e67ad18719b3ce19912f065367ca17aee301a822c1936",
+            "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
+          },
+          {
+            "bytes": 33506,
+            "sha256": "d9794691d0cd08f4d2a4e0ffe80edbf4f23e12cc87fd04c7eda348bb1272899c",
+            "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+          },
+          {
+            "bytes": 35247,
+            "sha256": "b254d83f85279beb29fb9fa281dab82a8c35768acf97a5d6baff74e1ee88f8fc",
+            "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
+          },
+          {
+            "bytes": 37257,
+            "sha256": "759a972beddcffb99e5819f002d975b70ae02c07fbdb3ad02a825c63999f6b5c",
+            "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          }
+        ]
+      },
+      {
+        "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+        "path": "knowledge-base/Cns/docs/core-progress.md",
+        "bytes": 36661,
+        "sha256": "76c749f1d6fefaaef3f29384cea6586a1f0e1cadf289c1b5abe24ef93a26caca",
+        "identityHistory": [
+          {
+            "bytes": 12315,
+            "sha256": "3d8489e9da3849db05e5183634f4a9ea95b70f404ce02a104180f95e936acaf8",
+            "scope": "Preserved identity before the 0.32 public scene3d preparation."
+          },
+          {
+            "bytes": 13260,
+            "sha256": "4c8f2eec7d83afbc56f4d34210cdc21035b18b165d712d0a836fd246ad7f3c86",
+            "scope": "Preserved pre-final retained integration successor identity."
+          },
+          {
+            "bytes": 13802,
+            "sha256": "f98926c189b0c2e5636904cdd140dc11462ec24d1603972472d2b8a23c2631aa",
+            "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+          },
+          {
+            "bytes": 16262,
+            "sha256": "faf8ab78c6853d7f24835427f7fb737440796ccaca70ab1c6def480ead9b5191",
+            "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+          },
+          {
+            "bytes": 18603,
+            "sha256": "7be61c371d8c258493714b74089d49325efd1bd94f9eac564f4cada116ef0843",
+            "scope": "Preserved identity before 0.35 Scope private ownership repair."
+          },
+          {
+            "bytes": 20150,
+            "sha256": "27014697d5e7b62b4eb673e1cf87b83c1499f06675372c43d239161862bc3bb3",
+            "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+          },
+          {
+            "bytes": 21583,
+            "sha256": "ad4fa98ba2427efa319d3038ea39b161c913d172ed1ca411cdaefc34bfbb68e1",
+            "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+          },
+          {
+            "bytes": 23953,
+            "sha256": "0d3579477e69d51d6aeb0ca959949ab81f13489f9aedfa8c485dc9f9ec07b131",
+            "scope": "Preserved identity before public matrix authoring 0.38.0."
+          },
+          {
+            "bytes": 25831,
+            "sha256": "5366ff4755d0ea9f3a152e9abb0347c1854287c8b9c6f169f868e92e037d35fe",
+            "scope": "Preserved identity before textured scene host 0.39.0."
+          },
+          {
+            "bytes": 27478,
+            "sha256": "49ef4d2ddbac5c907031988af97e31d3f36c77f46dace568951c84e285a0406b",
+            "scope": "Preserved identity before actual browser successor curation."
+          },
+          {
+            "bytes": 28179,
+            "sha256": "c97539638f99aa58ed006f83f3ad2f1d9bea689d6d1af972b2713956fd5330e6",
+            "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
+          },
+          {
+            "bytes": 29932,
+            "sha256": "1bb845c56a5119699d3e7987ba071249b6f2a4556c1026874243ce0f78a5b727",
+            "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+          },
+          {
+            "bytes": 31507,
+            "sha256": "c0e2b9d602ca3f43c349a8d01a108a16ecb6927a9eef6bf6e04ccef508af2898",
+            "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
+          },
+          {
+            "bytes": 33449,
+            "sha256": "2928cea33c19dd353563e4a131af97c3a3ec5f16f6a0fe804157d45b7ef02951",
+            "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          }
+        ]
+      },
+      {
+        "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+        "path": "knowledge-base/en/docs/product-requirements.md",
+        "bytes": 25078,
+        "sha256": "7e3a40f328c16c1ac0355ab250a9b43529975b63a49f8bb54358f4c4deb227d4"
+      },
+      {
+        "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+        "path": "knowledge-base/Cns/docs/产品需求说明书.md",
+        "bytes": 20026,
+        "sha256": "f34fac1de90cad1b367f621adcb98991e554fd15ff3b95dcc8ccbe5eb24c2417"
+      },
+      {
+        "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+        "path": "packages/project/README.md",
+        "bytes": 5059,
+        "sha256": "4f19388a9a090f3d0738f04c39b2fcd0b75bfda472d71eb5c26e02ff0baab5fb"
+      },
+      {
+        "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+        "path": "packages/project/README.zh-CN.md",
+        "bytes": 4240,
+        "sha256": "85a77e4381c7bd8338666e40f0bf12585eb5b700b14708e53fe6aee93c8020aa"
+      },
+      {
+        "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
+        "path": "knowledge-base/Cns/registry/来源.json",
+        "bytes": 171734,
+        "sha256": "71529003df299f4a84e6fa404e7312c42d11916a3aa436ee1bb8940e032501ba",
+        "identityHistory": [
+          {
+            "bytes": 74667,
+            "sha256": "6a99cc0acaa9f9f4f8b13861d7e4ed819648409565ccdeb6093034b01e5bd775",
+            "recordedBeforeSuccessor": "0.29.0",
+            "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+          },
+          {
+            "bytes": 79185,
+            "sha256": "144f0d002729e4cded9bf7df786a08d1bbc0b62944cda0b1740967ed3d91dd86",
+            "recordedBeforeSuccessor": "0.29.0",
+            "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+          },
+          {
+            "bytes": 79442,
+            "sha256": "e1e872f20c756bab15648a3f836a1bd7e6ad5ae8a448f7f32d390e7a5f5d2d4a",
+            "scope": "Preserved identity before the 0.30 preparation successor."
+          },
+          {
+            "bytes": 80607,
+            "sha256": "38fb84b460146e8ea0bfbc8dc3db9376e8b5896f347378b010890a8da0a02f74",
+            "scope": "Preserved identity before the actual 0.30 native factual successor."
+          },
+          {
+            "bytes": 84556,
+            "sha256": "26a548c256e1f1f597cdac41631589c9b0e56d8a80b3fdf21379e8ebfcd0654b",
+            "scope": "Preserved identity before the actual 0.30 native factual successor."
+          },
+          {
+            "bytes": 84561,
+            "sha256": "520fdd38aa0dfc71572f006f4aee47d9cb85e6debd82e6b93d4237a3730c5892",
+            "scope": "Preserved identity before complete-gate factual successor."
+          },
+          {
+            "bytes": 87968,
+            "sha256": "51855cfab06bbcf10bddd5ef54180476e39b75b0a28c6001e3d5b0433a9b1858",
+            "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
+          },
+          {
+            "bytes": 97322,
+            "sha256": "273e46dc752cb3a0990ddf28c88fa78df01b97e9b7ae8c39bac9b09846e664b1",
+            "scope": "Preserved identity before the 0.32 public scene3d preparation."
+          },
+          {
+            "bytes": 101160,
+            "sha256": "4f9c1801ceab2c58dcce8496655b2864fd36ff783d5a09fe140541b3985ebd76",
+            "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+          },
+          {
+            "bytes": 104860,
+            "sha256": "78fbe42dc9d7a7a6d0547c18b1811340b0f83ff1069b55bf95cd2ff67a91d50f",
+            "scope": "Preserved pre-order-repair metadata cutoff."
+          },
+          {
+            "bytes": 105432,
+            "sha256": "2d898b104a66ba49fbcdf6505753ce3a597953928c6aa520573cb456df243483",
+            "scope": "Preserved 54-path MI1 prepublication cutoff."
+          },
+          {
+            "bytes": 108253,
+            "sha256": "9fd7b478420d6d90e2389f6fd5f4f61c38e3232dedcf484163277c62fc2a3560",
+            "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+          },
+          {
+            "bytes": 111062,
+            "sha256": "4794d6981d8bdc4dccca6a09cd435281c9f07949a6b7b71c5fb9251f56d5e719",
+            "scope": "Preserved identity before 0.35 Scope private ownership repair."
+          },
+          {
+            "bytes": 113316,
+            "sha256": "243211a409b019eaf354f051db5fb01252d9b21dedeb80fd43bb3f6d34aeb391",
+            "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+          },
+          {
+            "bytes": 127348,
+            "sha256": "745139e8b1bbac1425415194e8981479a883940082d5eebdb3c0077704840c77",
+            "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+          },
+          {
+            "bytes": 130497,
+            "sha256": "d839a2120fe3830e47f6d1c4bb4f7657b97967520722960e237381324e08b7c1",
+            "scope": "Preserved identity before public matrix authoring 0.38.0."
+          },
+          {
+            "bytes": 134249,
+            "sha256": "78b5e01c90c805e9dd7b16bd23f8056770c1d8e25526858a390365c4b3369c3d",
+            "scope": "Preserved identity before textured scene host 0.39.0."
+          },
+          {
+            "bytes": 139192,
+            "sha256": "0a61af92631fc317d32484d684a759f7fecaf255f351140c2acadf4415e6b561",
+            "scope": "Preserved identity before actual browser successor curation."
+          },
+          {
+            "bytes": 138413,
+            "sha256": "194b207ff16a37cb57b50c51b70faa6901868bf7787d1483511970edb9fcfc1b",
+            "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
+          },
+          {
+            "bytes": 144266,
+            "sha256": "b3b473a13d522b51e66bbaabb9cee38eda70ae570bb9033a595fbf3ee0c9b78c",
+            "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+          },
+          {
+            "bytes": 150483,
+            "sha256": "83c82ba93133ac85a68fd366a7af38bbcae1fd3fe8873d74b32fe76bd7bfd3e3",
+            "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+            "scope": "Recorded identity before F2-A 0.42.0 source curation; historical cutoff retained."
+          },
+          {
+            "bytes": 150483,
+            "sha256": "83c82ba93133ac85a68fd366a7af38bbcae1fd3fe8873d74b32fe76bd7bfd3e3",
+            "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
+          },
+          {
+            "bytes": 154008,
+            "sha256": "92b1e960b0eb7b658e1560a96e6a86937cfa83197c1eb5480cd166ef1e70d395",
+            "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
+          },
+          {
+            "bytes": 158311,
+            "sha256": "3e0bea95d0229a656ac5b2aa7b835f9b94bb7e8fdfb44785f59ac9a117399794",
+            "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
+          },
+          {
+            "bytes": 161878,
+            "sha256": "bebd0ac64cc354ca3947cd8f94a551af9797438cc3e81ee217d2c62186256b00",
+            "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          }
+        ]
+      },
+      {
+        "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
+        "path": "knowledge-base/en/registry/sources.json",
+        "bytes": 181254,
+        "sha256": "49ee3e0c2fdba8e06fe975722c3b9fd60b5b6f3c066963a646af28449e96d387",
+        "identityHistory": [
+          {
+            "bytes": 82270,
+            "sha256": "b2c8b63cf5c2bdadc3ed07e5d89cfc73b906cd25d29630bdb9e47d64ca6033b0",
+            "recordedBeforeSuccessor": "0.29.0",
+            "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+          },
+          {
+            "bytes": 87274,
+            "sha256": "ae3e3ac9c4e1cc61f22a8b9b41761e8ea5431fc4f0c1c8e6695eee847bb96a05",
+            "recordedBeforeSuccessor": "0.29.0",
+            "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+          },
+          {
+            "bytes": 87597,
+            "sha256": "6c0d817a4a7825e018d568ae649b39af2781a7baa68def2560a83c19b497c852",
+            "scope": "Preserved identity before the 0.30 preparation successor."
+          },
+          {
+            "bytes": 88876,
+            "sha256": "6704dee503850cda2816ca1a76794361fde7b590446933b01195bdd284ccc367",
+            "scope": "Preserved identity before the actual 0.30 native factual successor."
+          },
+          {
+            "bytes": 92947,
+            "sha256": "cdd642a660981309fe92dedb1c5aafb81f0ce78542635612ac0ea3d8ecd9a030",
+            "scope": "Preserved identity before the actual 0.30 native factual successor."
+          },
+          {
+            "bytes": 92947,
+            "sha256": "48abeec66ddb53ccbacb6f138e64b496aa15031709f18e1a34309b8d110a2dba",
+            "scope": "Preserved identity before complete-gate factual successor."
+          },
+          {
+            "bytes": 96492,
+            "sha256": "bfce2ac670d6a6b47cdf562af7263c438a0d073243a185e185e7d37fcb11d488",
+            "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
+          },
+          {
+            "bytes": 105996,
+            "sha256": "bb0a9cc89703083abb3163a7a8de0568d3846ca1d5aeacce65dc84dbeb04ce5f",
+            "scope": "Preserved identity before the 0.32 public scene3d preparation."
+          },
+          {
+            "bytes": 109908,
+            "sha256": "69107b36aaa20ee96de933deb6190d7772d53d490c561b558589f3eaee8d6765",
+            "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+          },
+          {
+            "bytes": 113678,
+            "sha256": "a2e91182b286502cdcb368a8c274d38986567388b3a1a0c06108cb047719de1d",
+            "scope": "Preserved pre-order-repair metadata cutoff."
+          },
+          {
+            "bytes": 114250,
+            "sha256": "c8261feae478b3b8582ed45ad34b4b6bdeed43c2cd14d87873ed750acdf3fa8c",
+            "scope": "Preserved 54-path MI1 prepublication cutoff."
+          },
+          {
+            "bytes": 117071,
+            "sha256": "1e723f20df75911214c986ec00bedf95f018f62309619a44954d8cd420deaa90",
+            "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+          },
+          {
+            "bytes": 119915,
+            "sha256": "b0e2ecd30c937569ac901a693c7034fa46d06f713c5241555c7bb33117e8121c",
+            "scope": "Preserved identity before 0.35 Scope private ownership repair."
+          },
+          {
+            "bytes": 122171,
+            "sha256": "c9d017f3d009a6e22e4e49cbe110fa88f2f0c5a659f138d8f1aec0c359caec99",
+            "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+          },
+          {
+            "bytes": 136239,
+            "sha256": "dcfaa9bfbeadba50d906053572c75db7f9d71b3587438613e0f844e7f8e4cb3e",
+            "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+          },
+          {
+            "bytes": 139474,
+            "sha256": "09569f5c35fcbe518f71ebf16a88901cb5344d2c4821f0b2ba29e41e0a65f73d",
+            "scope": "Preserved identity before public matrix authoring 0.38.0."
+          },
+          {
+            "bytes": 143338,
+            "sha256": "6b325fd19713e0a27505093cd9c0a996a55a03540bb7d91bdca27d61114fbb43",
+            "scope": "Preserved identity before textured scene host 0.39.0."
+          },
+          {
+            "bytes": 148368,
+            "sha256": "daf0213079f9ae5938f7f57687d731f1e5d9bc39093cc7c12378ab504844d7fc",
+            "scope": "Preserved identity before actual browser successor curation."
+          },
+          {
+            "bytes": 147583,
+            "sha256": "0de43c6bfc8628320d7ddbf23d5a20e1fc95e461b5bd17f8b73488f8b8e66372",
+            "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
+          },
+          {
+            "bytes": 153469,
+            "sha256": "bbf6c245bad8191e49caddff39144a06c0415667a3f310d2190ddb7fc9888d99",
+            "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+          },
+          {
+            "bytes": 159707,
+            "sha256": "809bc53e0c1c66cebbc5b9c21ac4f40ee9378abda46a136676f6a2f68e281ae4",
+            "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+            "scope": "Recorded identity before F2-A 0.42.0 source curation; historical cutoff retained."
+          },
+          {
+            "bytes": 159707,
+            "sha256": "809bc53e0c1c66cebbc5b9c21ac4f40ee9378abda46a136676f6a2f68e281ae4",
+            "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
+          },
+          {
+            "bytes": 163278,
+            "sha256": "d398e3338c2b3071b0bcdfb1d4b1cf14de260ddc12194a270b9ba2d410d64458",
+            "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
+          },
+          {
+            "bytes": 167634,
+            "sha256": "5cc5768e8c15b5e84283cccfa0db4013e5d5e593be26ebdbac979ca995eeadbf",
+            "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
+          },
+          {
+            "bytes": 171222,
+            "sha256": "b94eb644fbcc8cf2e6001c8545c453fcd50d1c718702b0912b5e4730634a41f6",
+            "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          }
+        ]
+      },
+      {
+        "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
+        "path": "knowledge-base/Cns/registry/交付.json",
+        "bytes": 156495,
+        "sha256": "79c2933c63e83360b0f4352cd106d1daab3f8fa6565b145beeced5efd53bb31a",
+        "identityHistory": [
+          {
+            "bytes": 50664,
+            "sha256": "0cb910c45635ddbe39e7d9676e1a3d37a7ff3c20d1c25002a82c2481ca9952ed",
+            "recordedBeforeSuccessor": "0.29.0",
+            "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+          },
+          {
+            "bytes": 58973,
+            "sha256": "3174b489b8b1ed7604015ce3394c9594c9c94cc7e8a587f52b35c6425b581c77",
+            "recordedBeforeSuccessor": "0.29.0",
+            "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+          },
+          {
+            "bytes": 59131,
+            "sha256": "99a04be2a8bbed2a4b9a53e3347928872c50800a574122916042b865364d6182",
+            "scope": "Preserved identity before the 0.30 preparation successor."
+          },
+          {
+            "bytes": 61271,
+            "sha256": "dfd75c438967ea42b5f9208434fcffe8700a2f39926412df73668ccad502258f",
+            "scope": "Preserved identity before the actual 0.30 native factual successor."
+          },
+          {
+            "bytes": 65766,
+            "sha256": "a00bb3aec0fbaf17efa3bbf55c29fe0cb1719327cc4fafea0b6384b474f9723f",
+            "scope": "Preserved identity before the actual 0.30 native factual successor."
+          },
+          {
+            "bytes": 65771,
+            "sha256": "6ddb6262ecc892b2549c02582c73d778a140209a33d6f7337c5057162126c0ce",
+            "scope": "Preserved identity before complete-gate factual successor."
+          },
+          {
+            "bytes": 69668,
+            "sha256": "8b8b81fa4fe6686257ad94a2a33312ff2327b161cbb9d22c4ff79ff74a74ab88",
+            "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
+          },
+          {
+            "bytes": 79480,
+            "sha256": "67001cd06bc8e7c8a3ad29bcc39fa87ace5e83b72efb9bc4b8c2e8cfbafc5069",
+            "scope": "Preserved identity before the 0.32 public scene3d preparation."
+          },
+          {
+            "bytes": 83782,
+            "sha256": "c4f271b5bb09f71ecf57c09fa5398bca0ac81826651690afecbd9fe0a5da6dcc",
+            "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+          },
+          {
+            "bytes": 88036,
+            "sha256": "109a13242e9cd255a8bb0af2d2ab17c2d548a4e14ebc64ccf6a2e8cc54c9ccc0",
+            "scope": "Preserved pre-order-repair metadata cutoff."
+          },
+          {
+            "bytes": 88608,
+            "sha256": "12a9d8912f949399c3d8a838c56c6d6682bc57bc6789579f097cdae25580ea4b",
+            "scope": "Preserved 54-path MI1 prepublication cutoff."
+          },
+          {
+            "bytes": 91429,
+            "sha256": "2e3b7fe872bb4011bb4ba14aa965d8424e9adc967f124fe73c8e00526cfa4405",
+            "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+          },
+          {
+            "bytes": 94886,
+            "sha256": "b14ccee734ceed7e5190473c80365f7116c8a956cd4d45c7afcecb1b8269a960",
+            "scope": "Preserved identity before 0.35 Scope private ownership repair."
+          },
+          {
+            "bytes": 97591,
+            "sha256": "1faaaea29f9f5150ba43b0993aa134064faa2dbaca96838d8bafda543ca73416",
+            "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+          },
+          {
+            "bytes": 112143,
+            "sha256": "063589eef4b84f88964649a66e8a400cabc509237b24332a041b3b6e12cb6976",
+            "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+          },
+          {
+            "bytes": 116333,
+            "sha256": "fa66344bee66ebd1f8eeeb5e1e3c0eeea2291bbed53fa3ae0596ba4bdaae3b7a",
+            "scope": "Preserved identity before public matrix authoring 0.38.0."
+          },
+          {
+            "bytes": 120546,
+            "sha256": "95061f28fd93d9419694e6bc3a70cb8efe1cc1f76189c9adbd1f7f2b8174cc68",
+            "scope": "Preserved identity before textured scene host 0.39.0."
+          },
+          {
+            "bytes": 125633,
+            "sha256": "ceab72878927b3fe0bbfa744bdce795779f9833247d4367e19e97438f6685e26",
+            "scope": "Preserved identity before actual browser successor curation."
+          },
+          {
+            "bytes": 124588,
+            "sha256": "dd3f9bc0fbcdba3e094fc3d41709f730e0f994bc2c051295d41d61695bdb0bcd",
+            "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
+          },
+          {
+            "bytes": 130404,
+            "sha256": "d143b9df1f15f8af347e71ed5d1f1321819f9647c1e8f0f85c901d378d416db4",
+            "scope": "Preserved original BW1 curation before the V044 primary document metadata correction; original failed pre-push receipt retained."
+          },
+          {
+            "bytes": 130457,
+            "sha256": "8d456d99bca195799d8d0e6b025e7a3b10b85f46f6e364a74e9c5a699b8295c1",
+            "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+          },
+          {
+            "bytes": 136594,
+            "sha256": "882363aebc27fae99dc9a52a924801e4c45e53a998c3e13283f7e8610f8c55b3",
+            "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+            "scope": "Recorded identity before F2-A 0.42.0 source curation; historical cutoff retained."
+          },
+          {
+            "bytes": 136594,
+            "sha256": "882363aebc27fae99dc9a52a924801e4c45e53a998c3e13283f7e8610f8c55b3",
+            "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
+          },
+          {
+            "bytes": 139751,
+            "sha256": "3a0298da6be4625e7bc220a5b527da65585aefe5ff21f7a26bd48f37c2d3c377",
+            "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
+          },
+          {
+            "bytes": 143644,
+            "sha256": "0e543ce0f60e4a79f104a3460b2bec1b0c04e14b814686328accb68632ecbbf5",
+            "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
+          },
+          {
+            "bytes": 147162,
+            "sha256": "1c7426d8a9ff38cd238664d44f4f0470f9eacf3da6544b8b5bf37dd250c26c99",
+            "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          }
+        ]
+      },
+      {
+        "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
+        "path": "knowledge-base/en/registry/deliverables.json",
+        "bytes": 162287,
+        "sha256": "0641e218b23677b54584d3d7762c89e70910351820b3f7e39e6d733cd50536d6",
+        "identityHistory": [
+          {
+            "bytes": 54446,
+            "sha256": "1b1dbb30bd281d4af34c1822601e63057fd53793fdb3ac08ca51f999fa680bd8",
+            "recordedBeforeSuccessor": "0.29.0",
+            "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+          },
+          {
+            "bytes": 63297,
+            "sha256": "14ba730c6b25c28c1d44de1692f6c1a5d7e112cd0580dd91cd0c40d64194955d",
+            "recordedBeforeSuccessor": "0.29.0",
+            "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+          },
+          {
+            "bytes": 63482,
+            "sha256": "916ea957273e0114cbb6747210abe42b7a3d2567a48d1dd7e084437c18c519ef",
+            "scope": "Preserved identity before the 0.30 preparation successor."
+          },
+          {
+            "bytes": 65753,
+            "sha256": "d759158a97ef4eaef304541ebaecfa023ad95b09c69f9590bf0437a3d8279a1a",
+            "scope": "Preserved identity before the actual 0.30 native factual successor."
+          },
+          {
+            "bytes": 70424,
+            "sha256": "943d72a0c195db39d633e0d7fead298d14c925b95e3f1bd725539e24d96a2727",
+            "scope": "Preserved identity before the actual 0.30 native factual successor."
+          },
+          {
+            "bytes": 70424,
+            "sha256": "f2a0cfa1bb51cd0e992d4655d4a8d0b12e8f6e0a918902f6858c288db83f24cc",
+            "scope": "Preserved identity before complete-gate factual successor."
+          },
+          {
+            "bytes": 74488,
+            "sha256": "ed7ea4a4a67ea40d2e452aa273327b773bfa6b150f2329229ba665084ea115cd",
+            "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
+          },
+          {
+            "bytes": 84422,
+            "sha256": "b9324a3fdfb9fa03778dc34eb60f9c6e2182eae3868275cf51569d21834f6b26",
+            "scope": "Preserved identity before the 0.32 public scene3d preparation."
+          },
+          {
+            "bytes": 88800,
+            "sha256": "3b3f566d7c7498840cb34aec105b95e59a3c66397bc5ac4d80ce2688fcc64770",
+            "scope": "Preserved initial 0.32 preparation before one English 3D title parity repair."
+          },
+          {
+            "bytes": 88803,
+            "sha256": "f63f80eff5f293aa44572832a46dc355f0a479bf30a43c1166ea5fce31331604",
+            "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+          },
+          {
+            "bytes": 93137,
+            "sha256": "2c4124c5e39374cc89aa1e00c3c3b430af4409e473921e4553703bbf96fe41a9",
+            "scope": "Preserved pre-order-repair metadata cutoff."
+          },
+          {
+            "bytes": 93709,
+            "sha256": "0c9d6b75000ea22a4e2c03763410c90a20b26aa7740cc2264f4629934eb5e9e2",
+            "scope": "Preserved 54-path MI1 prepublication cutoff."
+          },
+          {
+            "bytes": 96530,
+            "sha256": "10395dc7274f5bf398b83582565caa583410f4577f6921811764b79aa95f7de9",
+            "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+          },
+          {
+            "bytes": 100035,
+            "sha256": "7348bf979497182ecc125f14b6aa6c0a29f31c3a2659e630b310ed20e6fd5f16",
+            "scope": "Preserved identity before 0.35 Scope private ownership repair."
+          },
+          {
+            "bytes": 102766,
+            "sha256": "a30cce4e43ed10b71bb897a2b77a2db0ee93a18fd65d88d454e2c5d4e5de0fc3",
+            "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+          },
+          {
+            "bytes": 117352,
+            "sha256": "21af0cd3187795d74c6f6e36ecbec9cd79fde32c5587bbc56e92132fc28e9c87",
+            "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+          },
+          {
+            "bytes": 121621,
+            "sha256": "a1178c599073f70c7f23c6ab52625879fbb370366d01818a6523ae0431c2e995",
+            "scope": "Preserved identity before public matrix authoring 0.38.0."
+          },
+          {
+            "bytes": 125974,
+            "sha256": "977cfc186382f71a61f23f4316719db0cc8e36e6802ffb4e2abefc911ec21e0b",
+            "scope": "Preserved identity before textured scene host 0.39.0."
+          },
+          {
+            "bytes": 131164,
+            "sha256": "c794ad9deba08cc88073e656ae664f743fdb6dedcbef10cf22d24e5a3dcace7d",
+            "scope": "Preserved identity before actual browser successor curation."
+          },
+          {
+            "bytes": 130113,
+            "sha256": "82c8f055f1ea68259f91a90447dbbf718ad8f1e85d9ec5830910367e285b5880",
+            "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
+          },
+          {
+            "bytes": 135989,
+            "sha256": "fb9ba647631e12c6ccf88ad377da20e01d1884abc83258e8472eb56285908f29",
+            "scope": "Preserved original BW1 curation before the V044 primary document metadata correction; original failed pre-push receipt retained."
+          },
+          {
+            "bytes": 136041,
+            "sha256": "b920054688670a2ee80909401402f1269ee538400ba7fe92becd6a9f4fbffdcb",
+            "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+          },
+          {
+            "bytes": 142247,
+            "sha256": "bd094c86323fbc20bec4a5562a407822de2198d4ff31852e65d7cab22f15438e",
+            "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+            "scope": "Recorded identity before F2-A 0.42.0 source curation; historical cutoff retained."
+          },
+          {
+            "bytes": 142247,
+            "sha256": "bd094c86323fbc20bec4a5562a407822de2198d4ff31852e65d7cab22f15438e",
+            "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
+          },
+          {
+            "bytes": 145452,
+            "sha256": "92fb8cef3f234f1f91c636d8235cf7c0c3283562963db106e60d0905d78e41ee",
+            "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
+          },
+          {
+            "bytes": 149379,
+            "sha256": "7c105d019acf83fbdfad4372e16667c3338aff803174e388b9945ba31aadea07",
+            "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
+          },
+          {
+            "bytes": 152893,
+            "sha256": "6e546c7920f944515816f537a4564fcb46e34f001b0e992154a353798c80ae90",
+            "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          }
+        ]
+      },
+      {
+        "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
+        "path": "knowledge-base/Cns/registry/需求.json",
+        "bytes": 46843,
+        "sha256": "d42568a12b23a3bc4cb16f7c5a2090b561995a24c90a8caf6756468347a93fc7",
+        "identityHistory": [
+          {
+            "bytes": 13892,
+            "sha256": "261047023b90aa96e47afdc20937d70552686384b577e4c5f68080d50e2c395f",
+            "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+          },
+          {
+            "bytes": 14157,
+            "sha256": "d546d6177d9390b63b1b11eb3e191db8f10e7c5c65347447edb4c8203a81bb64",
+            "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+          },
+          {
+            "bytes": 15321,
+            "sha256": "d7bc50726fed150cf1f543da6cefe2cfcc4d1ea9b7b8d33b178d00c25da3b5d1",
+            "scope": "Preserved identity before public matrix authoring 0.38.0."
+          },
+          {
+            "bytes": 17108,
+            "sha256": "4b5130fd87959c7b9000c49c5be748dbaa0aebd6be68e124a1caf4ea41bef69f",
+            "scope": "Preserved identity before textured scene host 0.39.0."
+          },
+          {
+            "bytes": 20413,
+            "sha256": "1cfcc4467ac65ba556f579e42294ca9b988ceee8811be9e33c8f279f300f0230",
+            "scope": "Preserved identity before actual browser successor curation."
+          },
+          {
+            "bytes": 21656,
+            "sha256": "2f6df54a73867a90abea5b0923802f6125741894866949d38b7c78650581fd78",
+            "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
+          },
+          {
+            "bytes": 26385,
+            "sha256": "55ea7d16285a65a37d96a1e2f70625c53f70f94faa0165f6a06d6f5131d0ee13",
+            "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+          },
+          {
+            "bytes": 29851,
+            "sha256": "d14ab781082159d7d3286986f32f94c5fb19db45a6a3e320b28226092001960d",
+            "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+            "scope": "Recorded identity before F2-A 0.42.0 source curation; historical cutoff retained."
+          },
+          {
+            "bytes": 29851,
+            "sha256": "d14ab781082159d7d3286986f32f94c5fb19db45a6a3e320b28226092001960d",
+            "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
+          },
+          {
+            "bytes": 32244,
+            "sha256": "f5c53dc6e3dc4091f388f37f8c40c4211bea555674eb1af4a2182b8e0b826a3c",
+            "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
+          },
+          {
+            "bytes": 35197,
+            "sha256": "d969946187f80c757bc1628bc3271b11fd024c9f032fdf82c76ed12a40165d77",
+            "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
+          },
+          {
+            "bytes": 38366,
+            "sha256": "1b74764004777d1ad3c427a4b1919da5ceb3d2609e6e072f7e57708c6a8388e8",
+            "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          }
+        ]
+      },
+      {
+        "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
+        "path": "knowledge-base/en/registry/requirements.json",
+        "bytes": 49121,
+        "sha256": "af6441fe2029059948817cb99a764e2543957025f52e378ae0dd343568e69693",
+        "identityHistory": [
+          {
+            "bytes": 15989,
+            "sha256": "c19f36f39573d198256641c8f057a350b4c12d99e6098faba352664646bc8a8f",
+            "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+          },
+          {
+            "bytes": 16253,
+            "sha256": "6385f6161fd684b1031b72da27a6b6c449f787475a6685c0459c375bfa2f31d2",
+            "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+          },
+          {
+            "bytes": 17424,
+            "sha256": "342c6eaa0633fe8395a9f92c99fb5850d2f8c29d108de3823ff65ab7a8f77be2",
+            "scope": "Preserved identity before public matrix authoring 0.38.0."
+          },
+          {
+            "bytes": 19275,
+            "sha256": "04c8fcee7a834565182fa4dadb0159d24df3592f3ce1c2b0efbaee53107ae0ce",
+            "scope": "Preserved identity before textured scene host 0.39.0."
+          },
+          {
+            "bytes": 22637,
+            "sha256": "a01c03a3843818ad6c3788b92681ae23fe07a1f1aca669143e087b42132025d1",
+            "scope": "Preserved identity before actual browser successor curation."
+          },
+          {
+            "bytes": 23874,
+            "sha256": "573c071bd0a60396fbcb4511c817f64d010dede6ff526e4a42afb130cc2c419f",
+            "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
+          },
+          {
+            "bytes": 28603,
+            "sha256": "a642a75c9ef3102ccb632e6d8d84174eb5c98c856b18e022f2f4ce0e54b4b30f",
+            "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+          },
+          {
+            "bytes": 32069,
+            "sha256": "578a79fad14e048dfd4bd2e114c11fcb71662593dc58e31a427e7d7a20dcf9b2",
+            "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+            "scope": "Recorded identity before F2-A 0.42.0 source curation; historical cutoff retained."
+          },
+          {
+            "bytes": 32069,
+            "sha256": "578a79fad14e048dfd4bd2e114c11fcb71662593dc58e31a427e7d7a20dcf9b2",
+            "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
+          },
+          {
+            "bytes": 34461,
+            "sha256": "e42adc95041da4fac9901b31f6b22f1aed58149a626111bf1aca19482834f59a",
+            "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
+          },
+          {
+            "bytes": 37428,
+            "sha256": "3b7d7f0255b11e1a1b0415fb81820c7920b4a37b07a81b00722bd8b55f7caab2",
+            "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
+          },
+          {
+            "bytes": 40582,
+            "sha256": "3e4b3bea1cd6991377e8c4a08693e544023158f3c4851e48ad0e24f5f0b9995f",
+            "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          }
+        ]
+      },
+      {
+        "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
+        "path": "knowledge-base/Cns/当前版本.json",
+        "bytes": 132217,
+        "sha256": "bc061a7a4a130b77dc856c4caf80c6142677ca9e665954c8fff602420fa3dfbf",
+        "identityHistory": [
+          {
+            "bytes": 31425,
+            "sha256": "4b7357a1a8aafc101536ee5f59c41e9348099ca05764644017e43237a1f1320c",
+            "recordedBeforeSuccessor": "0.29.0",
+            "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+          },
+          {
+            "bytes": 49974,
+            "sha256": "d7f1cfbf11e6115721b867d0172e5cc2a53d3b41b5193c854f895c365175a97b",
+            "recordedBeforeSuccessor": "0.29.0",
+            "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+          },
+          {
+            "bytes": 52164,
+            "sha256": "4dfbcbc593c826e8422f7c81020e292ce3c87be595ffd42c704f98772a8a626b",
+            "scope": "Preserved identity before the 0.30 preparation successor."
+          },
+          {
+            "bytes": 56649,
+            "sha256": "cb066c96e1c68475c9510b2ec2463dca1a5ee2e7a65b66396b1aa976eb6ed399",
+            "scope": "Preserved identity before the actual 0.30 native factual successor."
+          },
+          {
+            "bytes": 63599,
+            "sha256": "2ed599e7f1523072b34b7cd927efa94cc89d95c4006e715a244ab583a272f3de",
+            "scope": "Preserved identity before complete-gate factual successor."
+          },
+          {
+            "bytes": 65825,
+            "sha256": "1010c39e079cc04785b1fdef93035e13eebdfc1754ce1ca0bf66d38416c31b40",
+            "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
+          },
+          {
+            "bytes": 74455,
+            "sha256": "4fc3fbf6b38ab5adb0c5091d631983a42d938ecafaad194b0ba4c86f13026f65",
+            "scope": "Preserved identity before the 0.32 public scene3d preparation."
+          },
+          {
+            "bytes": 77282,
+            "sha256": "735843f22065b0b783e49d320bf4e8e7bb5e2468d9fab9f6027f331e648a9f35",
+            "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+          },
+          {
+            "bytes": 80043,
+            "sha256": "52045a27ae09c6c787cc96461b5c6cd5a36d58a311ce22347aad84f7599ce505",
+            "scope": "Preserved pre-order-repair metadata cutoff."
+          },
+          {
+            "bytes": 80567,
+            "sha256": "43c35848f3060f98a6e9ef2a1267986d23845fdefea44c386e8fdc1b2e8442d3",
+            "scope": "Preserved 54-path MI1 prepublication cutoff."
+          },
+          {
+            "bytes": 83136,
+            "sha256": "f8f5baa605eca36bb3c068e180651fba85b24b03ac3e0d83e7f690643d630aa1",
+            "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+          },
+          {
+            "bytes": 85348,
+            "sha256": "59be73acf1011bec33d9492e20ef233e945176ee40a880cdcb2eb5e46edfff3f",
+            "scope": "Preserved identity before 0.35 Scope private ownership repair."
+          },
+          {
+            "bytes": 87036,
+            "sha256": "cad999fc279381730d0d63bdae226d2fcc931c7a2da1d2d767ccaa27ba84c5d1",
+            "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+          },
+          {
+            "bytes": 99577,
+            "sha256": "1ab900afeffa2c408f8abcad23795acbc0b5b698f7f7cd5b0858892281456b2c",
+            "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+          },
+          {
+            "bytes": 102390,
+            "sha256": "6fc59c023e4f620feb8a3a88e102b912b97035109fe24c1e913a89e5ecb6f6b9",
+            "scope": "Preserved identity before public matrix authoring 0.38.0."
+          },
+          {
+            "bytes": 105468,
+            "sha256": "41842cd3197337a966106e7a3bfd0c12a1dd6920a2ccb2b025176cb3618de965",
+            "scope": "Preserved identity before textured scene host 0.39.0."
+          },
+          {
+            "bytes": 108753,
+            "sha256": "889b45a3849fc468e46355e46bfcc645a48ef97b8581974c698e4d91f0c9caa9",
+            "scope": "Preserved identity before actual browser successor curation."
+          },
+          {
+            "bytes": 107873,
+            "sha256": "1f202b71cf1e9b0b49211c7e8882666b5a34d84c29cacc479535cb4d9169d9c8",
+            "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
+          },
+          {
+            "bytes": 112764,
+            "sha256": "f379c73ba62cb9869a6028827396296bea55c9a8fc1e879aabf1eabf58f30c20",
+            "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+          },
+          {
+            "bytes": 116424,
+            "sha256": "907e58afeb86f50febb700b4775b90979af97629d464903a74c3d33f2e9b3010",
+            "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+            "scope": "Recorded identity before F2-A 0.42.0 source curation; historical cutoff retained."
+          },
+          {
+            "bytes": 116424,
+            "sha256": "907e58afeb86f50febb700b4775b90979af97629d464903a74c3d33f2e9b3010",
+            "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
+          },
+          {
+            "bytes": 118710,
+            "sha256": "92ac8ed2159defa7dfa4c22794793ade0d0aa5ad2c1d076f9cf2cd0eb0509497",
+            "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
+          },
+          {
+            "bytes": 121620,
+            "sha256": "0feba3376947feca504a4e45fc8285968d9415d45cec4e33b151640863a5a136",
+            "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
+          },
+          {
+            "bytes": 124593,
+            "sha256": "707bdf8caedbbf114ec7da78233160f18b1150aa56b258c82f081b46b8a5adc5",
+            "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          }
+        ]
+      },
+      {
+        "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
+        "path": "knowledge-base/en/current-version.json",
+        "bytes": 133103,
+        "sha256": "4c1f93913c6e1b0a036a78b055e47a10bd5bd2707885dfb24661c7618b2b73ac",
+        "identityHistory": [
+          {
+            "bytes": 31946,
+            "sha256": "611d08e35d7116f18e6bc17eca15ec1fe18d0541e929d33c945f06d5c39a2ac5",
+            "recordedBeforeSuccessor": "0.29.0",
+            "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+          },
+          {
+            "bytes": 50563,
+            "sha256": "485771e9e1a576599d4f9d491768dc0b10ed4591e1bc92318defa4ea40f91743",
+            "recordedBeforeSuccessor": "0.29.0",
+            "scope": "Previous recorded identity; exact original evidence dates and historical source tables remain unchanged."
+          },
+          {
+            "bytes": 52753,
+            "sha256": "b4301d5a9dfb23b2ec1c62a30e389d286390fd4bf9d92634c97f1c12842337d7",
+            "scope": "Preserved identity before the 0.30 preparation successor."
+          },
+          {
+            "bytes": 57242,
+            "sha256": "79abe243e0402031bedcd7b8d33b6733c7ba57b8155661eaefe4f4123b91f519",
+            "scope": "Preserved identity before the actual 0.30 native factual successor."
+          },
+          {
+            "bytes": 64201,
+            "sha256": "9355971c4a58986249e1001aad4de954fdb317f32080419c55eb2f8b79c1612f",
+            "scope": "Preserved identity before complete-gate factual successor."
+          },
+          {
+            "bytes": 66445,
+            "sha256": "5786debf8a04919e77378ceb62b8808b6e95e71b3795bbe488ea641468b7aec6",
+            "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
+          },
+          {
+            "bytes": 75083,
+            "sha256": "9e713912271eadab4c3d5cfc33a52424549d823154767bc9bfebacf2e564c33e",
+            "scope": "Preserved identity before the 0.32 public scene3d preparation."
+          },
+          {
+            "bytes": 77939,
+            "sha256": "604825c24a905279dd7ef9acf86e4c120641dd7bc75c00bb9d7e716018dcded9",
+            "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+          },
+          {
+            "bytes": 80720,
+            "sha256": "9e5da9a9606e3afb91be3f7ccbea882b4bc4090760d833f032df9622979461be",
+            "scope": "Preserved pre-order-repair metadata cutoff."
+          },
+          {
+            "bytes": 81244,
+            "sha256": "ab8f5e61618900231ae633e31180be62375aa9e5138441ae7071dd15e46901b9",
+            "scope": "Preserved 54-path MI1 prepublication cutoff."
+          },
+          {
+            "bytes": 83813,
+            "sha256": "3efed447036d02f485fa42db1a75ef7c6d05a1586fcc13868b2b63b5e52a13fe",
+            "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+          },
+          {
+            "bytes": 86027,
+            "sha256": "58ef5be11dd43ad6af0d1bd7981554608c399fa363d02281ac0508495dfb6db0",
+            "scope": "Preserved identity before 0.35 Scope private ownership repair."
+          },
+          {
+            "bytes": 87717,
+            "sha256": "e502652a09ac0a943f1bbd81eaaf2943219e9365da3eed1bac246a7b7628f47d",
+            "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+          },
+          {
+            "bytes": 100257,
+            "sha256": "d58c6a74f2c89d4e6a0facf578190c76e052ae7addcad5e96369480d686e1449",
+            "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+          },
+          {
+            "bytes": 103094,
+            "sha256": "57a19c3161b95db3a031a97d4ac7e41f419518dfc5110d31357b435ada0f5c23",
+            "scope": "Preserved identity before public matrix authoring 0.38.0."
+          },
+          {
+            "bytes": 106227,
+            "sha256": "b99934a8c0ac375a3384ab48a21501a6c14f1202c13c9c807ef08f479489c845",
+            "scope": "Preserved identity before textured scene host 0.39.0."
+          },
+          {
+            "bytes": 109591,
+            "sha256": "08d28cd6f3b4b76c455dd7f47161930f68733bfa0b18d04293e12590b5813575",
+            "scope": "Preserved identity before actual browser successor curation."
+          },
+          {
+            "bytes": 108705,
+            "sha256": "75699e54fd806feda7bfa476b898a23efb830f870990b774a01a62b6294dad5c",
+            "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
+          },
+          {
+            "bytes": 113601,
+            "sha256": "97924e026aeb7b0ffbd5659eef4136291fe9a115444186b3cd35775158a3a1b2",
+            "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+          },
+          {
+            "bytes": 117273,
+            "sha256": "0d74c0c9d19cafdb02a10017310f37befc108eb0c4ae3434a72a6cc8b0a1a269",
+            "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
+            "scope": "Recorded identity before F2-A 0.42.0 source curation; historical cutoff retained."
+          },
+          {
+            "bytes": 117273,
+            "sha256": "0d74c0c9d19cafdb02a10017310f37befc108eb0c4ae3434a72a6cc8b0a1a269",
+            "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
+          },
+          {
+            "bytes": 119570,
+            "sha256": "72dd6b79b98eb70c8e9937c4248a067f0ebb723f33b2fa4c2e4edbbb566756f9",
+            "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
+          },
+          {
+            "bytes": 122501,
+            "sha256": "c14fc2cacc80c032af86d232d5ebadbf588de1d336bb653ce1c7dcf4b15e5e1c",
+            "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
+          },
+          {
+            "bytes": 125478,
+            "sha256": "369370ef361d0ab5b657d0be7d4d19abd3358a0331414ffaf85ed5ba39053431",
+            "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          }
+        ]
+      },
+      {
+        "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
+        "path": "knowledge-base/documentation-layout.json",
+        "bytes": 112684,
+        "sha256": "1d5a7b53c0b143d1e4d28afbb10cfe945680235c0434960a9c29dc8f89dfdd24"
+      },
+      {
+        "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
+        "path": "localization.json",
+        "sha256": "b392c9884b9dde031420dc5a19991476f2fc2774cd4c4581f4e36082405cca89",
+        "bytes": 245557,
+        "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
+        "previousLayoutPath": "localization.json",
+        "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
+        "identityHistory": [
+          {
+            "bytes": 180599,
+            "sha256": "aab26e596ad1b6a118ac1bd8071f8279e9568561f8661790179f29029ed4d20f",
+            "scope": "Preserved listed localization identity before the finite 0.31 current-inventory correction."
+          },
+          {
+            "bytes": 193257,
+            "sha256": "1514fc3539699c72dda35a4ef44405970b757cec1f7bb1fd42ffedb2bd8ee80f",
+            "scope": "Preserved meaning-reviewed localization identity before factual review enrollment."
+          },
+          {
+            "bytes": 193315,
+            "sha256": "c86a8a9a979d97887233645ece67a99727610e927c9e5747f842fead3921ffc5",
+            "scope": "Preserved identity before the 0.32 public scene3d preparation."
+          },
+          {
+            "bytes": 195605,
+            "sha256": "a82383291208e246ecc0862b7650afca5bf7d938cad94571ea5bf893a034e54a",
+            "scope": "Preserved initial 0.32 preparation before one English 3D title parity repair."
+          },
+          {
+            "bytes": 195605,
+            "sha256": "c514e19474782b20542238f27109b8c58d38a4077d1adddc5fdc654fdf780fb1",
+            "scope": "Preserved initial 0.32 source identity before retained exact mapping/copy-fixture repair."
+          },
+          {
+            "bytes": 195605,
+            "sha256": "072fc317ce3753105fe2fdbeedc6bd703604a9dd6e76235c0ea8ce617256c932",
+            "scope": "Preserved pre-final retained integration successor identity."
+          },
+          {
+            "bytes": 195605,
+            "sha256": "b2dd757eb635474ab29e6673cb93f54081799e8ad979bf9483a72b2ecd49f4ce",
+            "scope": "Preserved complete r3 verification cutoff before independently identified editorial-only language/table correction."
+          },
+          {
+            "bytes": 195605,
+            "sha256": "fede765db637dc8c0e81eaae0386e9898561950334e917a360d25cd28a0a695d",
+            "scope": "Preserved identity before the 0.33 primary mouse input preparation."
+          },
+          {
+            "bytes": 198823,
+            "sha256": "9d37cf0748aba0d90f1e8bf5a50e1f053ef7f15c3087461831af2d77aeb2604b",
+            "scope": "Preserved pre-order-repair metadata cutoff."
+          },
+          {
+            "bytes": 198823,
+            "sha256": "a34ebfcf19f189aed6b93f5a8efc6e93b8ddb248d3a9f2d8ffdb8dc2db442655",
+            "scope": "Preserved 54-path MI1 prepublication cutoff."
+          },
+          {
+            "bytes": 201465,
+            "sha256": "c1cda4769dc9b7442393e5aa31d43d80d59a707a210c0791d7383c236f5e2a09",
+            "scope": "Preserved identity before the 0.34 bounded Spine import-planning preparation."
+          },
+          {
+            "bytes": 203346,
+            "sha256": "18131774429cc89a57ce7d25b360a8a0900e2fb05b61d3cfeb35f679495614f7",
+            "scope": "Preserved identity before the finite 0.34 bilingual README occurrence repair."
+          },
+          {
+            "bytes": 203346,
+            "sha256": "b77e78827be1fbd70cefef058bb3896cf7c6f679195cac9a04e808209dd3e2de",
+            "scope": "Preserved identity before 0.35 Scope private ownership repair."
+          },
+          {
+            "bytes": 204066,
+            "sha256": "3fd9e6fa85a8098771bd5291c55cc958fcc85737c53e0dc6f31a9faa9d17dd53",
+            "scope": "Preserved identity before original F1 experiment 0.36.0 publication."
+          },
+          {
+            "bytes": 206365,
+            "sha256": "4ec59a0517f4a36869d76fdff455d2d87179d06c8660d5b70a7164c8d0078ad3",
+            "scope": "Preserved identity before terminal-LF-only F1 publication successor."
+          },
+          {
+            "bytes": 207117,
+            "sha256": "fd9094d485904570aff1e0b39336b6696a7dc83c109841d9143831e52190efa7",
+            "scope": "Preserved identity before original F1 Clock experiment 0.37.0 publication."
+          },
+          {
+            "bytes": 207886,
+            "sha256": "4f252e98002ec257169262f874d39927dbdeca38c7e1943c7ed66e784e398886",
+            "scope": "Preserved unpublished Clock candidate before D017 numeric-order publication repair."
+          },
+          {
+            "bytes": 207886,
+            "sha256": "5a24fabcc78a2249a41b8c09be9a460778f9aaa33c2f966d129d5449bedbe4fc",
+            "scope": "Preserved identity before public matrix authoring 0.38.0."
+          },
+          {
+            "bytes": 208322,
+            "sha256": "386317f9269895bc877ba3b86b358d4fc6a78aab45b6eaf25649b5448c40aef0",
+            "scope": "Preserved identity before textured scene host 0.39.0."
+          },
+          {
+            "bytes": 209393,
+            "sha256": "aeecfb980bfcd2ede801abe5fc36fffa1fdf74ade660d252bf8fbe9d79e2093c",
+            "scope": "Preserved identity before actual browser successor curation."
+          },
+          {
+            "bytes": 210363,
+            "sha256": "2c4db94b04650b23d941943f2b267dcd627a2c2395876c537e0359a70d7e7e46",
+            "scope": "Preserved before exact static pin assertion successor."
+          },
+          {
+            "bytes": 210363,
+            "sha256": "1236453b000fce416da1d796c24f7ab55626945ca0ec12904da6d4a06c7db5bb",
+            "scope": "Preserved identity before original ByteWriter BW1 0.40.0 curation."
+          },
+          {
+            "bytes": 213903,
+            "sha256": "7c91a72a9f3fa90a114784622df400c3b7be1cedc9f8a051f78af8bbda956cac",
+            "scope": "Preserved original BW1 curation before the V044 primary document metadata correction; original failed pre-push receipt retained."
+          },
+          {
+            "bytes": 213903,
+            "sha256": "11012aec8ed7d84e21136f35812723523c3ab12ca7bed4f52e1cf8ce08e06cdc",
+            "scope": "Preserved BW1 identity before exact package README terminal-newline normalization; all earlier identities retain their original scope."
+          },
+          {
+            "bytes": 213903,
+            "sha256": "05c654d9ceefd816ba615f251a61a091a569636e8372f452ce47d164e1e90d37",
+            "scope": "Preserved recorded identity before NS1 0.41.0 public curation."
+          },
+          {
+            "bytes": 217192,
+            "sha256": "647173107cb6f9bdcad3cb783471a8d1ee828529ad24cf2e6ad0e30ce8aa4c86",
+            "scope": "Preserved NS1 original44 curation cutoff before retained B1 test-only successor."
+          },
+          {
+            "bytes": 219410,
+            "sha256": "01703ffe6f47ae3ecc352c1c6e38d2d7dcae75c651b150b56c283651a3ae008e",
+            "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
+            "scope": "Recorded identity before F2-A 0.42.0 source curation; historical cutoff retained."
+          },
+          {
+            "bytes": 219680,
+            "sha256": "bf62a29b21cdf73d4c755ad2c6cd546bffecc4d2a6fb8ba33449e423c39e16c2",
+            "scope": "Actual independently admitted Main0.41 before this curation; distinct from earlier recorded snapshots."
+          },
+          {
+            "bytes": 224467,
+            "sha256": "f1059d075f9c87a2c54ebc4b889e94f44fde6c3116d6839bf6d28c11c27ec993",
+            "scope": "Preserved F2-A R1 public curation snapshot before latest-first README placement; not a GitHub delivery identity."
+          },
+          {
+            "bytes": 224467,
+            "sha256": "18dfc2725876d33c83144a0a1c38d4c2ef15a494366c410eb41d12fa8fa89a7d",
+            "scope": "Preserved F2-A R2 curation before fixing a file-only publication link; not a GitHub delivery identity."
+          },
+          {
+            "bytes": 224467,
+            "sha256": "d6eff8fd76202066d417e6fb3a8a22037a1d75b7b4c6cdf4a175a9167d577109",
+            "scope": "Preserved F2-A link-corrected snapshot before naming repository-root license files within knowledge-base reading boundaries; not a GitHub delivery identity."
+          },
+          {
+            "bytes": 224467,
+            "sha256": "87631fcaa0404c2b1dca11adcca8a0a988775b0f31c6234b4483ca651c45068b",
+            "scope": "Preserved current identity before the finite 0.43.0 F2-B publication candidate; all prior historical identities retain their scopes."
+          },
+          {
+            "bytes": 230525,
+            "sha256": "649c726d1768c73fda5c89154807430cc41c437596ec1806bcc1cdc7ce0afd2f",
+            "scope": "Preserved recorded identity before the finite 0.44.0 sequence playback curation; existing historical source scopes remain unchanged."
+          },
+          {
+            "bytes": 240252,
+            "sha256": "7439adcf2d3e7e2a288f110b991dd3ff204a41edb8e7020757817f47b1e5f98d",
+            "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+          }
+        ]
+      }
+    ],
+    "preservedHistoricalWorkPackage": "atlasFrameLayoutWorkPackage",
+    "fileInventoryScope": "Named current code/readings and ten metadata peers; source-origin self excluded. Historical embedded evidence and original/previous identity fields remain unchanged.",
+    "metadataDependencyOrder": [
+      "readings-and-code",
+      "Chinese-authority-and-English-views",
+      "documentation-layout",
+      "localization",
+      "source-origin"
+    ]
   }
 }

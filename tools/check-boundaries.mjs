@@ -35,7 +35,7 @@ for (const [name, allowed] of Object.entries(expected)) {
   if (JSON.stringify(internalDependencies) !== JSON.stringify(allowed)) throw new Error(`${name}: dependency DAG mismatch`);
   for (const [dependency, version] of Object.entries(externalAllowed)) if (pkg.dependencies[dependency] !== version) throw new Error(`${name}: external exact pin mismatch`);
   if (!pkg.private || pkg.version !== "0.0.0" || pkg.type !== "module") throw new Error(`${name}: private prototype metadata mismatch`);
-  if (name === 'project' && JSON.stringify(pkg.exports) !== JSON.stringify({'.': {types:'./dist/index.d.ts', import:'./dist/index.js'},'./spine':{types:'./dist/spine/index.d.ts',import:'./dist/spine/index.js'}})) throw new Error('project: root export mapping mismatch');
+  if (name === 'project' && JSON.stringify(pkg.exports) !== JSON.stringify({'.': {types:'./dist/index.d.ts', import:'./dist/index.js'},'./spine':{types:'./dist/spine/index.d.ts',import:'./dist/spine/index.js'},'./atlas':{types:'./dist/atlas/index.d.ts',import:'./dist/atlas/index.js'}})) throw new Error('project: root export mapping mismatch');
   if (name === 'runtime' || name === 'engine') {
     const textExports = name === 'runtime' ? {
       '.': {types:'./dist/index.d.ts',import:'./dist/index.js'},

@@ -999,3 +999,6 @@ await import('./bitmap-binding-ticket-types.mjs');
 
 // Preserve retained strict lanes before the explicit atlas-layout extension.
 await import('./atlas-frame-types.mjs');
+
+// Preserve every retained strict lane before the optional atlas importer.
+await (await import('./atlas-import-types.mjs')).runAtlasImportTypes();

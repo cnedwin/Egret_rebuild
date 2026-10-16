@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-15",
+  "updatedAt": "2026-10-17",
   "authority": "Project requirements baseline; implementation progress and acceptance results are maintained in the delivery registry.",
   "items": [
     {
@@ -141,7 +141,8 @@
         "S104",
         "S105",
         "S106",
-        "S107"
+        "S107",
+        "S114"
       ],
       "deliveryIds": [
         "V002",
@@ -160,7 +161,8 @@
         "V055",
         "V056",
         "V057",
-        "V058"
+        "V058",
+        "V065"
       ],
       "decisionIds": [
         "D002",
@@ -1736,7 +1738,7 @@
   },
   "_localization": {
     "canonicalSource": "需求.json",
-    "canonicalSha256": "966db3bb4d9d779c842e929fc44794edd839742c0615e06237f9e050b323d5b3",
+    "canonicalSha256": "22aae9a7830f9f519c21bd450691cdf352a9e6d281b990fddffded2aa347279e",
     "role": "read_only_translation",
     "language": "en"
   },

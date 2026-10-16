@@ -4,9 +4,21 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 0.60.0 候选 — 图集导入规划
+
+**0.60.0 工程预览**增加可选 `@egret/project/atlas` 入口，以一个显式 PNG 绑定规划严格单页 Aseprite stable-marker JSON-array。两个运行时值与十六个擦除类型为既有 SpriteSheet、SequenceClip 工厂生成自有、冻结的输入。精确 profile 为 `aseprite-json-array-1.3.18.6-v1`；exporter 输出兼容性、声明 hash 与许可资格仍未验证。
+
+参阅[契约](docs/atlas-import-plan-contract.md)及[证据与限制](docs/atlas-import-plan-evidence.md)。
+
+已独立接受的保存结果分别为聚焦 planner 47/47、较早正常 SDK 核心 3625/3625 与单独 F2 160/160，以及独立 CPU firstGREEN 5/5；这些重叠范围不相加。独立审查还接受所选新增 Native Canvas/WebGPU 四次读回结果。最终集成门禁/prepush 及 0.60 Git/远端交付仍待完成。工作区包仍为 private、版本 0.0.0，Host 协议仍为 1.0。
+
+## 0.59.0 交付更新
+
+前一 0.59 增量已通过 [PR #48](https://github.com/cnedwin/Egret_rebuild/pull/48) 交付，Main 为 `44f49f9d97a7baebc400fd4940541529dc33d147`。较早 0.59 读物和证据保留原编写截止点，新增交付说明不改写它们。未报告远端 status 或 check run，不据此推断 CI 通过。
+
 ## 0.59.0 候选 — 标准化图集帧 — 2026-10-17
 
-现有 SpriteSheet 与 SequenceClip 工厂的显式 `'trim-rotation-v1'` profile 支持带透明裁边和顺时针90度打包的单页帧。拥有的 layout 通过 Bitmap 和现有序列播放保留逻辑尺寸与放置，默认矩形路径保持兼容。参阅[契约](docs/atlas-frame-layout-contract.md)、[证据与边界](docs/atlas-frame-layout-evidence.md)和[示例指南](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/trimmed-atlas-playback/README.zh-CN.md)。
+现有 SpriteSheet 与 SequenceClip 工厂的显式 `'trim-rotation-v1'` profile 支持带透明裁边和顺时针90度打包的单页帧。拥有的 layout 通过 Bitmap 和现有序列播放保留逻辑尺寸与放置，默认矩形路径保持兼容。参阅[契约](docs/atlas-frame-layout-contract.md)、[证据与边界](docs/atlas-frame-layout-evidence.md)和[示例指南](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/trimmed-atlas-playback/README.md)。
 
 已获独立接受的十二阶段 SDK `node tools/verify.mjs` 运行通过 **3559/3559 项核心测试**及单独的 **160/160 项 Spine 实验测试**，两套的 failed/cancelled/skipped/todo 均为 **0**。单独的桌面 Canvas 与纹理 WebGPU 验证通过六个全新上下文和 30 次零容差完整 RGBA 读回，包括指定突变对照及原资源退役后的重放。当前验证器增加了第十三个图集源码边界阶段；截至本次编写，完整重跑、最终公开内容/prepush、0.59 Git 交付与远端 CI 仍待完成。此前失败与修复保留在所链接证据中。exporter 导入、多页、pivot/nine-slice 导入、动画 retarget、controller seek/rate/events、完整 Spine R020/V020、迁移 R008/V006 以及物理设备/性能接受保持 OPEN。
 
@@ -16,11 +28,11 @@
 
 已记录的桌面 Canvas 与 WebGPU 检查通过六个独立上下文，保留 54 份原始 RGBA 读回，覆盖独立的旧图层对照、真实鼠标选择、动画边界，以及原始读取尚未结束时关闭。该结果只适用于有限桌面范围；通用依赖清单、更多内容类型、完整 UI、Spine、生产宿主、移动性能和物理内存验收仍保持开放。
 
-参阅[规格](docs/prepared-resource-groups-spec.md)、[证据与边界](docs/prepared-resource-groups-evidence.md)及[示例指南](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/prepared-resource-groups/README.zh-CN.md)。
+参阅[规格](docs/prepared-resource-groups-spec.md)、[证据与边界](docs/prepared-resource-groups-evidence.md)及[示例指南](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/prepared-resource-groups/README.md)。
 
 ## 0.57.0 — 真实资源场景集成
 
-工程预览 **0.57.0** 通过既有公开 Engine API，组合真实 PNG 资源、共享图集播放、文本与鼠标输入。默认使用 Canvas，纹理 WebGPU 场景作为显式选择的实验路径。资源准备、画面就绪、输入就绪及安全关闭具有各自边界。参阅[集成记录](docs/resource-scene-integration.md)和[示例指南](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/resource-scene/README.zh-CN.md)。
+工程预览 **0.57.0** 通过既有公开 Engine API，组合真实 PNG 资源、共享图集播放、文本与鼠标输入。默认使用 Canvas，纹理 WebGPU 场景作为显式选择的实验路径。资源准备、画面就绪、输入就绪及安全关闭具有各自边界。参阅[集成记录](docs/resource-scene-integration.md)和[示例指南](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/resource-scene/README.md)。
 
 桌面 Canvas/WebGPU 流程已完成七个独立上下文，保留 64 份原始 RGBA 画面；在记录的环境中，固定点与字体区域比较、错误对照和完整关闭均通过。手机、跨环境字体、性能与能耗验收仍保持开放。
 
@@ -276,6 +288,6 @@ Bitmap 区域接纳／捕获与 B1 浏览器验证器建立独立的图像和场
 
 ## 历史验证记录
 
-早期结果、失败、修正及 PENDING 状态，按原日期和源码身份保存在对应证据及[固定版本详细记录](https://github.com/cnedwin/Egret_rebuild/blob/efd2a9c91fb6cfe633214b50b82cf7952941452a/knowledge-base/Cns/CHANGELOG.md)中，表达历史检查点，不代表当前集成状态。本页记录各版本主要变化，详细测试数值随相关实验或子系统维护。
+早期结果、失败、修正及 PENDING 状态，按原日期和源码身份保存在对应证据及[固定版本详细记录](https://github.com/cnedwin/Egret_rebuild/blob/efd2a9c91fb6cfe633214b50b82cf7952941452a/knowledge-base/en/CHANGELOG.md)中，表达历史检查点，不代表当前集成状态。本页记录各版本主要变化，详细测试数值随相关实验或子系统维护。
 
 完整 Spine 支持于 2026-10-10 登记为 R020/V020，上述导入、网格及手动 Core 实验尚未完成这项要求。旧工程自动迁移 R008/V006 仍未完成。

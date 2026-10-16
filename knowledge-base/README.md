@@ -2,6 +2,14 @@
 
 English | [简体中文](README.zh-CN.md)
 
+## Atlas import planning — 0.60.0
+
+The **0.60.0 engineering preview** adds the optional `@egret/project/atlas` entry: strict single-page Aseprite stable-marker JSON-array planning with one explicit PNG binding. Its two runtime values and sixteen erased types produce owned, frozen inputs for the existing SpriteSheet and SequenceClip factories. The exact profile is `aseprite-json-array-1.3.18.6-v1`; exporter output compatibility, declared hashes and entitlement remain unverified.
+
+Read the [contract](en/docs/atlas-import-plan-contract.md) and [evidence and limits](en/docs/atlas-import-plan-evidence.md).
+
+Independently accepted saved results are focused planner 47/47, the earlier normal SDK run with core 3625/3625 and separate F2 160/160, and the distinct CPU firstGREEN 5/5. These overlapping scopes are not added together. Independent review also accepts the selected new Native Canvas/WebGPU four-readback result. Final integrated gates/prepush and 0.60 Git/remote delivery remain pending. Workspace packages remain private 0.0.0; Host protocol remains 1.0.
+
 The 0.56.0 [Bitmap resource slot](en/docs/bitmap-resource-slot-spec.md) adds explicit replacement for one persistent Bitmap: borrow the initial binding, retain the prior usable binding while a request is pending or rejected, and commit only the latest accepted intent. Read the [evidence record](en/docs/bitmap-resource-slot-evidence.md) and [composition example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/bitmap-resource-slot/README.md). Focused behavior, strict consumers and the recorded desktop Canvas/WebGPU composition have passed their bounded checks. Full local/public gates and repository delivery are recorded separately in the linked evidence.
 
 The knowledge base explains Egret's product direction, architecture, public contracts and delivery. Choose a complete reading edition:

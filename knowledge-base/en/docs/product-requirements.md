@@ -6,6 +6,8 @@ Egret is an open-source game-engine project for creating, running and maintainin
 
 This document defines product obligations and acceptance scenarios. The [current core preview](core-progress.md) provides runnable prerequisites; complete creator tools, host coverage, performance, market validation and migration remain open.
 
+The 0.60 [atlas import planner](atlas-import-plan-contract.md) is a bounded prerequisite for R004 resource/animation import: strict selected metadata plus an explicit PNG binding becomes normalized factory input. Its [evidence](atlas-import-plan-evidence.md) separates metadata, SDK/CPU, Native and delivery acceptance. It does not close V004, full P04, general asset discovery, exporter compatibility, full Spine R020/V020 or migration R008/V006.
+
 ## Objectives, audiences, and confirmation boundaries
 
 The primary audience is new creators using AI to make games. Mobile-game developers entering AI-assisted production are also an important audience. R001–R017 define the original product and engineering scope: complex 2D UI, lightweight 3D scenes/characters/effects, skeletal and frame animation, a rendering engine/runtime foundation, open engineering interfaces, legacy Egret migration and a maintained community knowledge base.

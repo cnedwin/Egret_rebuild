@@ -4,6 +4,10 @@ English | [简体中文](README.zh-CN.md)
 
 `@egret/project` provides a synchronous headless project transaction core: immutable authored snapshots, atomic edits, retained-target restore, durable retry through canonical journals and bounded admission. The private workspace package remains version `0.0.0`; project/history/tool protocols remain `1.0`. It depends on `@egret/contracts` and the exact parser dependency described below. Editor, legacy migration and target delivery acceptance remain separate.
 
+## Optional atlas metadata planning
+
+Import `createAtlasImportPlan` and `ATLAS_IMPORT_LIMITS` from `@egret/project/atlas`; sixteen erased types describe strict input, owned plans and diagnostics. The root does not re-export them. The selected `aseprite-json-array-1.3.18.6-v1` profile requires one explicit PNG binding and refuses rotation and unsupported metadata. Read the [contract](../../knowledge-base/en/docs/atlas-import-plan-contract.md) and [evidence](../../knowledge-base/en/docs/atlas-import-plan-evidence.md). The planner reuses the retained jsonc-parser 3.3.1 foundation without a new dependency and imports no Engine/Runtime/Host. Package version remains private 0.0.0; hashes, exporter artifacts and rights remain declarations.
+
 ## Public API
 
 The root exports exactly `DEFAULT_PROJECT_LIMITS`, `parseProjectSnapshot`, `serializeProjectSnapshot`, `parseProjectTransaction`, `createProjectStore` and `openProjectHistory`, plus 29 type-only declarations. A store exposes `limits`, `earliestRevision`, `getSnapshot`, `commit` and `exportHistory`. Expected failures return bounded diagnostics; committed and replayed results include immutable receipts. These experimental interfaces do not assert API stability.

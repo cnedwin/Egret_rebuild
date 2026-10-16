@@ -37,6 +37,7 @@ export function parseCollectorArguments(args){
   return {configPath:values.get('--config'),configSha256:values.get('--config-sha256'),snapshotOnly};
 }
 export function validateConfig(value){
+  if(value?.schemaVersion===2)return validateImportConfig(value);
   requireThat(exactKeys(value,['schemaVersion','repositoryRoot','taskRoot','snapshot','output','playwrightRoot','nativeScenario','closures','fixture','oracle'])&&value.schemaVersion===1,'Exact config schema required');
   for(const key of ['repositoryRoot','taskRoot','snapshot','output','playwrightRoot'])requireThat(absolute(value[key]),'Absolute config path required '+key);
   requireThat(exactKeys(value.nativeScenario,['profile','kind'])&&['canvas-2d','webgpu-textured-2d'].includes(value.nativeScenario.profile)
@@ -179,7 +180,9 @@ export function moduleImports(source){
   }
   return result;
 }
-export async function collectAtlasFrameSource(repository){
+export async function collectAtlasFrameSource(repository,kind='ordinary'){
+  const importer=kind==='atlas-import-v1';
+  requireThat(importer||['ordinary','rotation-sign','trim-y-constant'].includes(kind),'Exact collection selector');
   const identity=await authenticateIdentity(repository),owners=new Map([['repository',repository]]),files=new Map(),routes=new Map(),modules=new Map();
   const aliases=[],read=(owner,relative,pin)=>{const value=readPinned(identity,owners.get(owner),relative,pin);files.set(owner+':'+relative,{owner,...value.pin});return value;};
   const addRoute=(route,raw,contentType)=>{
@@ -187,7 +190,7 @@ export async function collectAtlasFrameSource(repository){
   };
   const rootMetadata={};
   for(const key of ['package.json','pnpm-lock.yaml','pnpm-workspace.yaml','tsconfig.base.json','tsconfig.json','tools/build.mjs',
-    'tools/generate-project-format.mjs',HELPER,'AGENTS.md','LICENSE',...PUBLIC_TEXT])read('repository',key);
+    'tools/generate-project-format.mjs',HELPER,'AGENTS.md','LICENSE',...PUBLIC_TEXT,...(importer?IMPORT_TEXT:[])])read('repository',key);
   read('repository','tests/helpers.mjs',{bytes:997,sha256:'20e7dd30f54b3a81d35f666c8370e7f014e4559c68222727bc88fd377efc1af7'});
   for(const name of ['contracts','runtime','engine','project']){
     const base='packages/'+name;
@@ -241,7 +244,7 @@ export async function collectAtlasFrameSource(repository){
     aliases.push({alias,physicalOwner:fs.realpathSync(target),workspace:name});
   }
   for(const [relative,bytes,sha256] of ASSETS){const input=read('repository',relative,{bytes,sha256});
-    if(relative.startsWith(APP+'assets/'))addRoute('/'+relative,input.raw,relative.endsWith('.png')?'image/png':'application/json; charset=utf-8');}
+    if(relative.startsWith(APP+'assets/')&&(!importer||relative.endsWith('.png')))addRoute('/'+relative,input.raw,relative.endsWith('.png')?'image/png':'application/json; charset=utf-8');}
   const htmlInput=read('repository',APP+'index.html'),html=decode(htmlInput.raw);
   const scripts=[...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi)];
   requireThat(scripts.length===2&&scripts[0][1]===' type="importmap"'&&scripts[1][1]===' type="module" src="./main.mjs"'&&scripts[1][2]==='','Fixed authored HTML scripts required');
@@ -257,7 +260,7 @@ export async function collectAtlasFrameSource(repository){
     const expected='./'+target[1].slice(('packages/'+packageName+'/').length);
     requireThat(metadata?.import===expected&&metadata?.types===expected.replace(/\.js$/,'.d.ts'),'Public entry/alias declaration differs '+name);
   }
-  const appModules=new Set([APP+'main.mjs',APP+'session.mjs',APP+'image.mjs','tools/atlas-frame/native-fixture.mjs','tools/atlas-frame/scenario.mjs']);
+  const appModules=new Set(importer?['examples/atlas-import-playback/session.mjs',APP+'image.mjs','tools/atlas-import/native-fixture.mjs','tools/atlas-import/scenario.mjs']:[APP+'main.mjs',APP+'session.mjs',APP+'image.mjs','tools/atlas-frame/native-fixture.mjs','tools/atlas-frame/scenario.mjs']);
   function visit(owner,relative){
     identity.logicalPath(relative);const key=owner+':'+relative;if(modules.has(key))return modules.get(key);
     requireThat(modules.size<256,'Closed module count exceeded');
@@ -285,8 +288,9 @@ export async function collectAtlasFrameSource(repository){
     }
     addRoute(route,input.raw,'text/javascript; charset=utf-8');return record;
   }
-  visit('repository',APP+'main.mjs');visit('repository','tools/atlas-frame/native-fixture.mjs');
-  addRoute('/'+APP+'index.html',htmlInput.raw,'text/html; charset=utf-8');
+  if(importer)visit('repository','tools/atlas-import/native-fixture.mjs');
+  else {visit('repository',APP+'main.mjs');visit('repository','tools/atlas-frame/native-fixture.mjs');
+    addRoute('/'+APP+'index.html',htmlInput.raw,'text/html; charset=utf-8');}
   const bytes=[...routes.values()].reduce((sum,row)=>sum+row.bytes.length,0);requireThat(bytes<16_777_216,'Closed route byte budget exceeded');
   for(const pin of files.values())equal(readPinned(identity,owners.get(pin.owner),pin.path).pin,{path:pin.path,bytes:pin.bytes,sha256:pin.sha256},'Input drift before closure');
   return {identity,routes,snapshot:{schemaVersion:1,sourceOnly:true,owners:Object.fromEntries(owners),aliases,buildResolutions,importMap,
@@ -389,4 +393,101 @@ async function cli(){
 if(process.argv[1]&&fs.existsSync(process.argv[1])){
   const physical=process.platform==='win32'?path.win32:path.posix;
   if(physical.relative(fs.realpathSync(process.argv[1]),fileURLToPath(import.meta.url))==='')await cli();
+}
+
+// The importer has a separate exact schema. The schema-1 validator above is intentionally retained.
+export const IMPORT_TEXT=Object.freeze(['examples/atlas-import-playback/session.mjs','tests/atlas-import-composition.test.mjs',
+  'tools/atlas-import/native-fixture.mjs','tools/atlas-import/scenario.mjs']);
+function validateImportConfig(value){
+  requireThat(exactKeys(value,['schemaVersion','repositoryRoot','taskRoot','snapshot','output','playwrightRoot','nativeScenario','closures','fixture','importInput','oracle'])&&value.schemaVersion===2,'Exact importer config schema');
+  for(const key of ['repositoryRoot','taskRoot','snapshot','output','playwrightRoot'])requireThat(absolute(value[key]),'Absolute importer owner '+key);
+  requireThat(exactKeys(value.nativeScenario,['profile','kind'])&&['canvas-2d','webgpu-textured-2d'].includes(value.nativeScenario.profile)&&value.nativeScenario.kind==='atlas-import-v1','Exact versioned importer case');
+  requireThat(Array.isArray(value.closures)&&value.closures.length===1&&exactKeys(value.closures[0],['role','repositoryRoot'])
+    &&value.closures[0].role==='healthy'&&value.closures[0].repositoryRoot===value.repositoryRoot,'Importer healthy closure only');
+  requireThat(exactKeys(value.fixture,['path','route','exportName','bytes','sha256'])&&value.fixture.route==='/tools/atlas-import/native-fixture.mjs'
+    &&value.fixture.exportName==='runAtlasImportNativeFixture','Fixed importer fixture');
+  const pin=record=>requireThat(exactKeys(record,['path','bytes','sha256'])&&absolute(record.path)&&Number.isSafeInteger(record.bytes)&&record.bytes>0&&/^[a-f0-9]{64}$/.test(record.sha256),'Exact importer raw pin');
+  pin({path:value.fixture.path,bytes:value.fixture.bytes,sha256:value.fixture.sha256});
+  requireThat(exactKeys(value.importInput,['ownerRoot','input','metadata','receipt','plan'])&&absolute(value.importInput.ownerRoot),'Exact input owner');
+  for(const key of ['input','metadata','receipt','plan'])pin(value.importInput[key]);
+  requireThat(exactKeys(value.oracle,['ownerRoot','source','manifest','frameA','frameB'])&&absolute(value.oracle.ownerRoot),'Exact oracle owner');
+  for(const key of ['source','manifest','frameA','frameB'])pin(value.oracle[key]);return value;
+}
+export const IMPORT_ENV_KEYS=Object.freeze(['HOMEDRIVE','HOMEPATH','LOGONSERVER','PATH','SYSTEMDRIVE','SYSTEMROOT','TEMP','USERDOMAIN','USERNAME','USERPROFILE','WINDIR']);
+export function canonicalSystemDirectory(value,identity){
+  requireThat(absolute(value)&&!/[\\/](?:\.{1,2})(?:[\\/]|$)/.test(value),'Canonical OS directory path required');
+  const real=fs.realpathSync(value);requireThat(identity.samePhysicalPath(value,real,'win32'),'OS directory aliases refused');
+  let current=path.parse(real).root;
+  for(const part of real.slice(current.length).split(path.sep).filter(Boolean)){
+    requireThat(fs.readdirSync(current).includes(part),'OS directory spelling');current=path.join(current,part);
+    requireThat(!fs.lstatSync(current).isSymbolicLink()&&fs.lstatSync(current).isDirectory(),'OS directory symbolic member refused');
+  }
+  requireThat(fs.lstatSync(real).isDirectory()&&!fs.lstatSync(real).isSymbolicLink(),'Physical OS directory required');return real;
+}
+export function importChildEnvironment(identity){
+  if(process.platform!=='win32')return {environmentPolicy:'empty-v1',systemRootSource:null,environment:{}};
+  const selected=Object.entries(process.env).filter(([key])=>key.toUpperCase()==='SYSTEMROOT');
+  requireThat(selected.length===1&&typeof selected[0][1]==='string'&&selected[0][1].length>0,'One parent SYSTEMROOT OS value required');
+  const [key,value]=selected[0],canonicalDirectory=canonicalSystemDirectory(value,identity);
+  return {environmentPolicy:'win32-os-init-v1',systemRootSource:{key,value,canonicalDirectory},
+    environment:Object.fromEntries(IMPORT_ENV_KEYS.map(key=>[key,key==='SYSTEMROOT'?canonicalDirectory:'']))};
+}
+export async function validateImportArtifacts(config,configPath,identity,fixedStdin){
+  const H=fs.realpathSync(config.repositoryRoot),D=fs.realpathSync(path.dirname(H));
+  requireThat(path.basename(H)==='healthy'&&!fs.lstatSync(H).isSymbolicLink(),'Fixed healthy owner');
+  const fixed=(actual,expected)=>requireThat(actual===expected&&identity.samePhysicalPath(actual,expected),'Exact importer physical destination');
+  fixed(configPath,path.join(D,'config.json'));fixed(config.snapshot,path.join(D,'snapshot.json'));fixed(config.output,path.join(D,'native-output'));
+  fixed(config.importInput.ownerRoot,path.join(D,'import-input'));fixed(config.oracle.ownerRoot,path.join(D,'oracle'));
+  identity.ownerRelativePath(config.taskRoot,D);
+  const source=await import('../atlas-import/scenario.mjs');
+  const IMPORT_PLANNER_STDIN=fixedStdin??(await import('./prepare-native.mjs')).IMPORT_PLANNER_STDIN;
+  const read=(root,key,record)=>{fixed(record.path,path.join(root,key));return readPinned(identity,root,key,record);};
+  const input=read(config.importInput.ownerRoot,'input.json',config.importInput.input),metadata=read(config.importInput.ownerRoot,'metadata.json',config.importInput.metadata);
+  equal(decode(input.raw),source.serialize(source.fixedInput()),'Complete fixed input bytes');equal(decode(metadata.raw),source.METADATA,'Complete metadata bytes');
+  const receipt=read(config.importInput.ownerRoot,'node-parser-receipt.json',config.importInput.receipt),plan=read(config.importInput.ownerRoot,'plan.json',config.importInput.plan);
+  equal(decode(plan.raw),source.serialize(source.EXPECTED_PLAN),'Actual complete normalized plan artifact');
+  const r=strictJSON(receipt.raw);equal(decode(receipt.raw),source.serialize(r),'Canonical actual receipt bytes');
+  requireThat(exactKeys(r,['schemaVersion','kind','execution','child'])&&r.schemaVersion===1&&r.kind==='ATLAS_IMPORT_NODE_PARSER_RECEIPT_V1','Closed Node receipt');
+  const e=r.execution,c=r.child;
+  requireThat(exactKeys(e,['command','node','stdin','environmentPolicy','systemRootSource','environment','started','finished','exitCode','signal','timedOut','error','stdout','stderr']),'Closed execution receipt');
+  const command={exe:process.execPath,args:['--input-type=module'],cwd:H,shell:false,windowsHide:true,timeoutMs:120000,maxBufferBytes:16777216,encoding:null,stdio:['pipe','pipe','pipe']};
+  equal(e.command,command,'Exact actual child command/options');
+  const nodeOwner=fs.realpathSync(path.dirname(process.execPath)),node={ownerRoot:nodeOwner,...readPinned(identity,nodeOwner,path.basename(process.execPath)).pin};
+  equal(e.node,node,'Actual child Node executable identity');
+  const channel=(record,bytes)=>{requireThat(exactKeys(record,['bytes','sha256','base64']),'Closed actual byte channel');equal(record,{bytes:bytes.length,sha256:HASH(bytes),base64:bytes.toString('base64')},'Exact actual byte channel');};
+  channel(e.stdin,Buffer.from(IMPORT_PLANNER_STDIN));channel(e.stdout,Buffer.from(e.stdout.base64,'base64'));channel(e.stderr,Buffer.alloc(0));
+  requireThat(e.exitCode===0&&e.signal===null&&e.timedOut===false&&e.error===null&&new Date(e.started).toISOString()===e.started
+    &&new Date(e.finished).toISOString()===e.finished&&e.finished>=e.started,'Actual successful UTC child receipt');
+  equal(e.child,undefined,'No alternate child selector');
+  requireThat(exactKeys(c,['schemaVersion','kind','platform','environment','actualInput','rawInputs','publicEntry','result','freezeObservations','planArtifact'])
+    &&c.schemaVersion===1&&c.kind==='ATLAS_IMPORT_NODE_CALL_RESULT_V1','Closed child result');
+  equal(decode(Buffer.from(e.stdout.base64,'base64')),source.serialize(c),'Actual child stdout only');
+  requireThat(c.platform===process.platform,'Actual child platform differs');
+  if(c.platform==='win32'){
+    equal(Object.keys(e.environment).sort(),IMPORT_ENV_KEYS,'Passed environment raw key set');
+    requireThat(exactKeys(e.systemRootSource,['key','value','canonicalDirectory'])&&e.systemRootSource.key.toUpperCase()==='SYSTEMROOT','Recorded sole OS source');
+    requireThat(canonicalSystemDirectory(e.systemRootSource.value,identity)===e.systemRootSource.canonicalDirectory,'Recorded parent canonical OS directory');
+    requireThat(e.environmentPolicy==='win32-os-init-v1'&&e.environment.SYSTEMROOT===e.systemRootSource.canonicalDirectory,'Actual OS initialization value');
+    for(const key of IMPORT_ENV_KEYS)if(key!=='SYSTEMROOT')equal(e.environment[key],'','No extra environment selector');
+    requireThat(canonicalSystemDirectory(c.environment.SYSTEMROOT,identity)===c.environment.SYSTEMROOT,'Actual child canonical OS directory');
+  }else{equal(e.environmentPolicy,'empty-v1','Non-Windows policy');equal(e.systemRootSource,null,'No OS value');equal(e.environment,{},'Empty environment');}
+  equal(Object.keys(c.environment).sort(),Object.keys(e.environment).sort(),'Complete actual child environment keys');
+  for(const key of Object.keys(e.environment))equal(c.environment[key],e.environment[key],'Complete actual child environment value '+key);
+  equal(c.actualInput,source.fixedInput(),'Complete actual public planner argument');equal(c.result,{ok:true,value:source.EXPECTED_PLAN,diagnostics:[]},'Complete actual planner result');
+  equal(c.freezeObservations,{plan:true,ownedContainers:true},'Live public plan ownership observations');
+  const png=readPinned(identity,H,APP+'assets/atlas.png'),owned=(root,pin)=>({ownerRoot:root,...pin});
+  equal(c.rawInputs,{input:owned(config.importInput.ownerRoot,input.pin),metadata:owned(config.importInput.ownerRoot,metadata.pin),originalPng:owned(H,png.pin)},'Raw input identities actually consumed');
+  equal(c.publicEntry,{specifier:'@egret/project/atlas',ownerRoot:H,resolutionBase:H,
+    package:readPinned(identity,H,'packages/project/package.json').pin,entry:readPinned(identity,H,'packages/project/dist/atlas/index.js').pin},'Actual public export closure');
+  equal(c.planArtifact,{ownerRoot:config.importInput.ownerRoot,...plan.pin,serialization:'utf8-json-2space-lf-final-newline-v1'},'Actual saved plan identity');
+  const oracleSource=read(H,'tools/atlas-import/scenario.mjs',config.oracle.source),manifest=read(config.oracle.ownerRoot,'oracle.json',config.oracle.manifest);
+  equal(decode(manifest.raw),source.serialize(source.ORACLE),'Portable literal oracle manifest');
+  const frames={};for(const [index,key] of ['frameA','frameB'].entries()){
+    const row=source.ORACLE.frames[index],actual=read(config.oracle.ownerRoot,row.path,config.oracle[key]);
+    equal({bytes:actual.raw.length,sha256:HASH(actual.raw)},{bytes:row.bytes,sha256:row.sha256},'Fixed independent oracle identity');
+    requireThat(actual.raw.equals(Buffer.from(source.literalOracleBytes(row.id))),'Complete independent literal oracle bytes');frames[row.id]=actual.raw;
+  }
+  return {source,receipt:r,pins:{input:input.pin,metadata:metadata.pin,receipt:receipt.pin,plan:plan.pin,oracleSource:oracleSource.pin,oracleManifest:manifest.pin,
+    frameA:readPinned(identity,config.oracle.ownerRoot,'expected-frame-a.rgba').pin,frameB:readPinned(identity,config.oracle.ownerRoot,'expected-frame-b.rgba').pin},
+    frames,importIdentity:{input:input.pin,metadata:metadata.pin,receipt:receipt.pin,plan:plan.pin}};
 }
