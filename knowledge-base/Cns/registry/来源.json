@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-15",
+  "updatedAt": "2026-10-16",
   "authority": "来源分组与适用边界；researchCheckedAt是项目研究核查日期，非统一发布日期",
   "items": [
     {
@@ -5972,6 +5972,189 @@
         "contract": "Cns/docs/local-linear-layout-spec.md",
         "evidence": "Cns/docs/local-linear-layout-evidence.md",
         "example": "https://github.com/cnedwin/Egret_rebuild/blob/main/examples/linear-layout/README.md"
+      }
+    },
+    {
+      "id": "S110",
+      "type": "first_party_bitmap_resource_slot",
+      "researchCheckedAt": "2026-10-16",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R011",
+        "R012",
+        "R015",
+        "R016",
+        "R019",
+        "R021"
+      ],
+      "title": "0.56.0 可恢复位图资源槽",
+      "scope": "当前第一方 Bitmap、运行时所有权及 Engine 实现、选定声明、严格消费者和桌面组合的有限源码与结果审查。",
+      "limit": "仅涵盖单 Bitmap 替换；真实资源场景、多资源换装、动画、完整 UI、Spine、通用 3D 及生产宿主需求保持开放，桌面采样不构成设备或性能验收。",
+      "doc": "Cns/docs/位图资源槽规格.md",
+      "license": "Apache-2.0",
+      "firstPartySourcePaths": [
+        "packages/runtime/src/Bitmap.ts",
+        "packages/runtime/src/ownership.ts",
+        "packages/engine/src/Engine.ts",
+        "packages/engine/src/index.ts",
+        "packages/engine/src/bitmapResourceSlot.ts"
+      ],
+      "newThirdPartyDependency": false,
+      "verification": {
+        "engineeringPreview": "0.56.0",
+        "sourceId": "S110",
+        "deliverableId": "V061",
+        "date": "2026-10-16",
+        "status": "BOUNDED_LOCAL_RESULTS_AT_PREPUBLICATION_CUTOFF",
+        "factory": "Engine.createBitmapResourceSlot",
+        "publicEntry": "@egret/engine",
+        "erasedTypes": [
+          "BitmapResourceSlot",
+          "BitmapResourceSlotState"
+        ],
+        "newRootRuntimeValues": [],
+        "newPublicSubpaths": [],
+        "newDependency": false,
+        "hostProtocolChanged": false,
+        "contract": "Cns/docs/位图资源槽规格.md",
+        "evidence": "Cns/docs/位图资源槽核验.md",
+        "example": "https://github.com/cnedwin/Egret_rebuild/blob/main/examples/bitmap-resource-slot/README.md",
+        "build": {
+          "status": "PASS",
+          "includedInCompleteVerification": true
+        },
+        "focusedCPU": {
+          "status": "PASS",
+          "modules": 9,
+          "tests": 115,
+          "pass": 115,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        "interleavingsAndLifecycle": {
+          "status": "COVERED_IN_SELECTED_115_TEST_RUN",
+          "separateRuntimeAcceptance": false
+        },
+        "authorityUnits": {
+          "status": "COVERED_IN_SELECTED_115_TEST_RUN",
+          "boundary": "PUBLIC_RUNTIME_CUSTOM_CONTEXT_UNIT_DISTINCT_FROM_GENUINE_ENGINE_CASES"
+        },
+        "strict": {
+          "status": "PASS",
+          "compilerVersion": "7.0.2",
+          "positiveDiagnostics": 0,
+          "negativeDiagnostics": 30,
+          "declarationsPerConsumer": 57,
+          "nativeLibrariesPerConsumer": 57,
+          "domAmbientTypes": false,
+          "nodeAmbientTypes": false
+        },
+        "sourceBoundary": {
+          "status": "PASS",
+          "defaultRuntimeValueExports": 39,
+          "sourceCopyBaselines": 13,
+          "assignedRefusals": 13,
+          "productExecution": false
+        },
+        "normalHosts": {
+          "status": "PASS",
+          "backends": [
+            "Canvas",
+            "WebGPU"
+          ],
+          "boundary": "RECORDED_DESKTOP_CHECKS_ONLY"
+        },
+        "nativeSource": {
+          "status": "SOURCE_SNAPSHOT_AUTHENTICATED",
+          "inventoryFiles": 221,
+          "modules": 108,
+          "canvasClosure": 73,
+          "webgpuClosure": 104,
+          "browserExecutionClaim": false
+        },
+        "nativeActual": {
+          "status": "PASS_BOUNDED_DESKTOP_COMPOSITION",
+          "ordinaryContexts": 2,
+          "controlContexts": 2,
+          "ordinaryCheckpoints": 28,
+          "controlCheckpoints": 28,
+          "ancillaryStartupReads": 4,
+          "rawRGBAFrames": 60,
+          "authenticatedRawBytes": 184320,
+          "ordinaryPointChannels": 672,
+          "controlPointChannels": 672,
+          "ordinaryPointMismatches": 0,
+          "assignedControlPointMismatches": 2,
+          "fulfilledOriginalWebGPUReadbackPromises": 30,
+          "allPixelCorrectness": false,
+          "physicalDeviceAcceptance": false,
+          "performanceAcceptance": false
+        },
+        "completeCode": {
+          "status": "PASS",
+          "command": "node tools/verify.mjs",
+          "testSummaries": [
+            {
+              "scope": "Core public/unit/structural regressions",
+              "tests": 3358,
+              "suites": 0,
+              "pass": 3358,
+              "fail": 0,
+              "cancelled": 0,
+              "skipped": 0,
+              "todo": 0
+            },
+            {
+              "scope": "Separate retained Spine source experiment",
+              "tests": 160,
+              "suites": 0,
+              "pass": 160,
+              "fail": 0,
+              "cancelled": 0,
+              "skipped": 0,
+              "todo": 0
+            }
+          ],
+          "boundary": "LOCAL_PROTOTYPE_GATES_AND_SEPARATELY_IDENTIFIED_EXPERIMENT_TESTS",
+          "priorFailedFullRun": {
+            "tests": 3349,
+            "pass": 3347,
+            "fail": 2,
+            "fixtureRepairPaths": [
+              "tests/project-boundaries.test.mjs",
+              "tests/spritesheet-fault.test.mjs",
+              "tests/spritesheet-fault-child.mjs"
+            ]
+          }
+        },
+        "sourceReview": {
+          "status": "APPROVED_SELECTED_PRODUCT_SOURCE",
+          "productSources": 5,
+          "productDeclarations": 5,
+          "wholeEngineAcceptance": false
+        },
+        "publicSourceBilingualReview": {
+          "status": "APPROVED_EXACT_CURRENT_READING_FILES",
+          "currentFiles": 22,
+          "changedOrNewPairs": 11,
+          "totalPairs": 203,
+          "unchangedPairsRetainingPriorCutoffs": 192,
+          "metadataIntegrationReviewIncluded": false
+        },
+        "fullPrepush": "PENDING_AT_PREPUBLICATION_DOCUMENTATION_CUTOFF",
+        "mandatoryHooks": "PENDING_AT_PREPUBLICATION_DOCUMENTATION_CUTOFF",
+        "newGitDelivery": "PENDING_AT_PREPUBLICATION_DOCUMENTATION_CUTOFF",
+        "remoteCI": "NO_REMOTE_CI_PASS_OBSERVED_AT_THIS_CUTOFF",
+        "remoteCIPassClaim": false,
+        "fullSpineR020V020": "OPEN",
+        "migrationR008V006": "OPEN",
+        "generalGameUI": "OPEN",
+        "historicalCutoffsPreserved": true,
+        "defaultAPIChanged": true
       }
     }
   ],

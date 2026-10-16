@@ -4,9 +4,15 @@ English | [简体中文](../../Cns/docs/core-progress.md)
 
 The core is developed through executable increments that connect display, resources, animation, input and host execution. This page summarizes the current interfaces and remaining product work; each linked contract contains the exact behavior and verification scope.
 
+## Recoverable Bitmap resource replacement — 0.56.0
+
+`Engine.createBitmapResourceSlot(scope, bitmap)` keeps one Bitmap identity while replacing its Texture. The root adds only the erased `BitmapResourceSlot` and `BitmapResourceSlotState` names. The initial binding is borrowed; only fresh acquired replacement leases are owned by the slot. Pending, failed and cancelled requests retain the prior usable binding, and only the latest accepted intent may commit. Rejection, binding-conflict and lifecycle details follow the [specification](bitmap-resource-slot-spec.md). Read the [evidence](bitmap-resource-slot-evidence.md) and [composition example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/bitmap-resource-slot/README.md). Focused behavior, strict consumers and the recorded desktop Canvas/WebGPU composition have passed their bounded checks. Full local/public gates and repository delivery are recorded separately in the linked evidence.
+
 ## Explicit local layout — 0.55.0
 
 The pure `planLinearLayout` function in `@egret/engine/layout` returns a frozen rectangle plan. Callers choose membership and apply coordinates through existing display APIs; the two-Button example composes layout, shared input and saved/live frames. Recorded desktop Canvas/WebGPU checks cover the fixed two-Button workflow; their environment and limits are in the evidence record. Read the [specification](local-linear-layout-spec.md) and [evidence](local-linear-layout-evidence.md).
+
+The 0.55 increment was merged through [PR #44](https://github.com/cnedwin/Egret_rebuild/pull/44), Main `f6b7968db89febfdbe00fb1322f208ab2135f68f`, tree `86e9d3da4831f4bbbc6a20545c4434ecc9a5b791`. That delivered cutoff is preserved separately from the 0.56 evidence.
 
 ## Previous integration — 0.54.0
 
@@ -17,7 +23,7 @@ Engineering preview **0.54.0** was merged through [PR #42](https://github.com/cn
 | Area | Available engineering scope | Reference |
 | --- | --- | --- |
 | Display and input | DisplayObject/Container, transforms and pivots, coordinates/bounds, authored hit areas, primary mouse routing and bitmap buttons. | [Contract and scope](bitmap-button-contract.md) |
-| Resources | Typed references, shared acquisition, leases, Scope cleanup, acquisition groups, textures, named SpriteSheet crops and an optional PNG provider. | [Contract and scope](resource-acquisition-groups.md) |
+| Resources | Typed references, shared acquisition, leases, Scope cleanup, acquisition groups, textures, named SpriteSheet crops and an optional PNG provider; recoverable single-Bitmap replacement in 0.56 has bounded behavior, type and desktop rendering evidence. | [Acquisition scope](resource-acquisition-groups.md), [replacement specification](bitmap-resource-slot-spec.md) |
 | Animation | Explicit game time, scalar Tween, atlas sequence sampling and Engine-clock sequence playback. | [Contract and scope](sequence-playback-contract.md) |
 | 2D presentation | Immutable frame capture, Canvas/WebGPU paths, textured geometry/Mesh2D and NineSliceBitmap within their declared profiles. | [Contract and scope](textured-geometry-and-mesh2d-contract.md) |
 | Text | Text-raster orchestration, a noneditable TextField and a selected Canvas text integration. | [Contract and scope](text-field-tf1-contract.md) |
@@ -38,7 +44,7 @@ GitHub reported no statuses or check runs for PR #42. The local verification abo
 ## Next work and contributions
 
 - Extend UI composition beyond explicit local planning, followed by touch, keyboard, focus, accessibility and editing.
-- Resource-backed visual replacement with cancellation, stale-result suppression and recoverable publication.
+- Integrate real-resource scenes, multi-resource outfit changes, recovery and animation retargeting with explicit ownership and host limits.
 - Complete versioned Spine support under **R020/V020**, including its feature/backend/host matrix.
 - Extended 3D scenes, characters and effects, with asset and lifetime integration.
 - Production browser/mini-game/native hosts and target-device typography and performance.

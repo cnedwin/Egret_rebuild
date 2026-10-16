@@ -24,8 +24,8 @@
       "action": "move-pair",
       "previousZhSha256": "ca2be6243c614a900ed12f1b46649155f215a4827e04818e025bad8d03f8af9e",
       "previousEnSha256": "7e72f6245d7c86551dc2640356416b8b06a2d80872f262daf227f98142eac7ae",
-      "currentZhSha256": "b0c5f09d32ba6b53c4e72719c3c01a4a727584bd68822b97214c1354f02192d1",
-      "currentEnSha256": "7cf724f18d07e5caef68b68120fa68123a1acdadead14be1df7432bdf1affb3e"
+      "currentZhSha256": "82f158f0eff99f707cfc76b519135255fd24de3baee4bdd280cf9004015f4501",
+      "currentEnSha256": "b69de1a6805375a50d9c9c26fe74384b7092c6367619287c25bca27c9bb98330"
     },
     {
       "oldZh": "CONTRIBUTING.md",
@@ -48,8 +48,8 @@
       "action": "move-pair",
       "previousZhSha256": "307647eb71a1d1da7fa2423937b32459c5c22b4e355698d149fb7bca23cda053",
       "previousEnSha256": "8c112cb88f191a32591c76cbf0cc497486cf19efa1bc2fce0438a0be08e99d13",
-      "currentZhSha256": "2ccfc0f0f6890d3e1b92c75a64b306cb357b1758c08a1438eb1ca86a5d802c84",
-      "currentEnSha256": "a5b637ccc62d1484955dcfcce0a9652344170d9273042b67ee89f07f6a8da9a5"
+      "currentZhSha256": "e9fb1b1dce741b41d3e86e37fb6fa281549a114ca6d52f3f6ef9ed4c42fbeffe",
+      "currentEnSha256": "aa2ec25cf465d7a229bb6e8d3b327771eb08e15abf160259c603686d88a25bf7"
     },
     {
       "oldZh": "examples/canvas-scene/README.md",
@@ -84,8 +84,8 @@
       "action": "move-pair",
       "previousZhSha256": "f43625255269c8801af0929179a9aab32cbca58094e4a842797e39171fc549b0",
       "previousEnSha256": "e8b100ccbd9d0fb99237a564f484f7fa6dbf008191570fa58f3e481c05c3e9f9",
-      "currentZhSha256": "ee1ef4ec3c63e7387ee64028426d2b6fd8614acde30e57182c08053d4bdcd449",
-      "currentEnSha256": "a3eb97c9d7efc4dae5258234644a6af4239539b18e0c5fa7408568a0164884e0"
+      "currentZhSha256": "d306914c54976645019d4ffb8f5452258a5d7d8cc33cd9bd31439fff21990ed7",
+      "currentEnSha256": "36e3aa6d28798e67b791bdaa2de0e19d80a0364be517188374ffcf4ed2ab0d22"
     },
     {
       "oldZh": "knowledge-base/CONTRIBUTING.md",
@@ -840,8 +840,8 @@
       "action": "move-pair",
       "previousZhSha256": "372e5b07d4980eb45d8338424c8d970b7725e324e6b3397916944b0529c55ec7",
       "previousEnSha256": "ed88646659467d718a30c3bfff14b41c28debbcb786e7bf816ee68819f612887",
-      "currentZhSha256": "792b5a66a78b77cc99efbccbc7ce65b626ff77c68a1f2bff045e1e5bc3beba32",
-      "currentEnSha256": "c2f9acbd26eaadf0881f1d0570d7d02d3b7475bfad8dc5518e620907a3809559"
+      "currentZhSha256": "2b31d507ad2fa23ce5d26f667cf87994833f201cee15cee8267bcfcb15cbbf64",
+      "currentEnSha256": "c3df734c74adee396b95f4e2c4fdead99488ab01a2085241daf9ee9ac84cf874"
     },
     {
       "oldZh": "knowledge-base/templates/实现来源记录.md",
@@ -924,8 +924,8 @@
       "action": "move-pair",
       "previousZhSha256": "43dedd7c762d66456f0505ec5080d664e69bc9f19e8483598e78af5339ab7079",
       "previousEnSha256": "e1ec54dcd7979bc433657230dc8b943b680a44defae7eab5a39d1540877de61b",
-      "currentZhSha256": "ec5fc4cb60d5ed074af52557a14a8f74111e50d2212059da4872dc37df94e9a1",
-      "currentEnSha256": "fc2a799035845f7ff246573db193b5da4f9ff613c8b89bb2c38d174c880165a4"
+      "currentZhSha256": "7eea7e6c014380cfdecb3cac0c637afc682b28cd508da837f9f4cfa26cec1eac",
+      "currentEnSha256": "f885056e9e9884c194ce42b88e4d2d0d0d55c25f4c250e32e2a914eead87f2c4"
     },
     {
       "oldZh": "packages/runtime/README.md",
@@ -960,8 +960,8 @@
       "action": "move-pair",
       "previousZhSha256": "803a40dd8bfd0f98ade51c8ba736790509aae12a6e045a8ea688b3ff5d01cdcf",
       "previousEnSha256": "40a2ef2f686aba4a10279c417dfe17879bb6396b3b80dd75b26bd09c87d665f9",
-      "currentZhSha256": "886f8415777e133f44146ec3fff5ac7744183619dd1610a6b948de9b0ed860b9",
-      "currentEnSha256": "eb02a4b126c5059694b530538e7fc5a6f8b759c97103743cacf8ae64d2efa4a6"
+      "currentZhSha256": "3026a8df47e7bd94c055095eaf071bdc533b36c42c6c9a85ef333bb350da0ada",
+      "currentEnSha256": "c603b51bb9f3fc00d3c2082c3173ab6e2442615284b1464d9a6106a9ab1f49b3"
     },
     {
       "oldZh": "knowledge-base/docs/WebGPU矩形执行合同.md",
@@ -1080,8 +1080,8 @@
       "action": "move-pair",
       "previousZhSha256": "61639f120f4ed3aa77c4ffd41cf377e447dcac20e9562322c103e2e6b44c3990",
       "previousEnSha256": "60c77a11dc614191ba1d98fa488301a344839cc672df01e2c632048d85e8d376",
-      "currentZhSha256": "2ab2d9f152a883d5d3d851c9eb85ff0accacec2e30e3f18c332e94ee8c2a6f62",
-      "currentEnSha256": "7b3179da60cb463d10cdf61449ea42b09a56b37ed6808d797b12edd869af8115"
+      "currentZhSha256": "a40eb5b587b10b7f9806acb8f5449901afa7b3fed55f1b480a6227eeee1ce312",
+      "currentEnSha256": "34113498b4e86748f1e2206286f3d0fb3821c71b112361d261604584405523f0"
     },
     {
       "oldZh": "knowledge-base/docs/3d-foundation.md",
@@ -1808,6 +1808,36 @@
       "currentZhSha256": "f74351394da032ace9816b1486ab78c5320b6272ae2e90235f2477a4524079a6",
       "engineeringPreview": "0.55.0",
       "status": "CURRENT_READING_SOURCE"
+    },
+    {
+      "newEn": "knowledge-base/en/docs/bitmap-resource-slot-spec.md",
+      "newZh": "knowledge-base/Cns/docs/位图资源槽规格.md",
+      "kind": "public_reading",
+      "action": "add-current-pair",
+      "currentEnSha256": "db831c59a066ff2b1ff44d80cd7cf17418b254114ce1049dc862e8075680042d",
+      "currentZhSha256": "0d9b5a13ec630a1a90192535a96869d41a32be714a8c8c2c8e0ee17d8bb88036",
+      "engineeringPreview": "0.56.0",
+      "status": "CURRENT_READING_SOURCE"
+    },
+    {
+      "newEn": "knowledge-base/en/docs/bitmap-resource-slot-evidence.md",
+      "newZh": "knowledge-base/Cns/docs/位图资源槽核验.md",
+      "kind": "public_reading",
+      "action": "add-current-pair",
+      "currentEnSha256": "89a57b5fceb5da65af6d794a09644ccd29d8fd0e8f71ac68348de5a3ec77ac06",
+      "currentZhSha256": "96f7ecc96ef813ebe33a3c8a8aef41e57928a18ef8f954096b33f18fe8825241",
+      "engineeringPreview": "0.56.0",
+      "status": "CURRENT_READING_SOURCE"
+    },
+    {
+      "newEn": "examples/bitmap-resource-slot/README.md",
+      "newZh": "examples/bitmap-resource-slot/README.zh-CN.md",
+      "kind": "public_reading",
+      "action": "add-current-pair",
+      "currentEnSha256": "487dcfd4a141760566e4f47e793d5c06b39914e27169caa8030e7280f787eb42",
+      "currentZhSha256": "910756852f02dd1567c39e45ee639848ef29241af5377c4323a941caeaf8e9f1",
+      "engineeringPreview": "0.56.0",
+      "status": "CURRENT_READING_SOURCE"
     }
   ],
   "registries": [
@@ -2243,6 +2273,14 @@
     "date": "2026-10-15",
     "newReadingPairs": 3,
     "changedExistingReadingPairs": 7,
+    "preservedOriginalsUnchanged": true,
+    "historicalCutoffsPreserved": true
+  },
+  "bitmapResourceSlotCuration": {
+    "engineeringPreview": "0.56.0",
+    "date": "2026-10-16",
+    "newReadingPairs": 3,
+    "changedExistingReadingPairs": 8,
     "preservedOriginalsUnchanged": true,
     "historicalCutoffsPreserved": true
   }

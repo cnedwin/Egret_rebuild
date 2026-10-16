@@ -28,7 +28,9 @@ Egret connects complex 2D interfaces and lightweight 3D with a rendering/runtime
 
 ## Current engineering state
 
-Engineering preview **0.55.0** adds explicit local linear planning: callers select membership and apply placements to existing Buttons. Read the [specification](docs/local-linear-layout-spec.md), [evidence](docs/local-linear-layout-evidence.md) and [example guide](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/linear-layout/README.md). Recorded desktop Canvas/WebGPU checks cover the fixed two-Button workflow; their environment and limits are in the evidence record. The [capability overview](docs/core-progress.md) describes wider interfaces and remaining work. Workspace packages remain private 0.0.0; the host protocol remains 1.0.
+Engineering preview **0.56.0** focuses on recoverable resource replacement. `Engine.createBitmapResourceSlot(scope, bitmap)` replaces the Texture of one persistent Bitmap through the existing root entry, adding the erased `BitmapResourceSlot` and `BitmapResourceSlotState` types. The slot borrows the initial binding and owns fresh replacement leases; pending, failed or cancelled requests preserve the prior usable binding, and only the latest accepted intent may commit. Promise rejection and lifecycle details follow the [specification](docs/bitmap-resource-slot-spec.md). Read the [evidence](docs/bitmap-resource-slot-evidence.md) and [example guide](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/bitmap-resource-slot/README.md). Focused behavior, strict consumers and the recorded desktop Canvas/WebGPU composition have passed their bounded checks. Full local/public gates and repository delivery are recorded separately in the linked evidence.
+
+The previous 0.55 layout increment was delivered through [PR #44](https://github.com/cnedwin/Egret_rebuild/pull/44). The [capability overview](docs/core-progress.md) describes wider interfaces and remaining work. Workspace packages remain private 0.0.0; the host protocol remains 1.0.
 
 ## API contracts and examples
 

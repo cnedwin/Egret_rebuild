@@ -23137,5 +23137,614 @@
     "humanReadingChanged": false,
     "validatorChanged": false,
     "fullPrepushOrDeliveryClaim": false
+  },
+  "bitmapResourceSlotWorkPackage": {
+    "engineeringPreview": "0.56.0",
+    "sourceId": "S110",
+    "deliverableId": "V061",
+    "date": "2026-10-16",
+    "status": "BOUNDED_LOCAL_RESULTS_AT_PREPUBLICATION_CUTOFF",
+    "factory": "Engine.createBitmapResourceSlot",
+    "publicEntry": "@egret/engine",
+    "erasedTypes": [
+      "BitmapResourceSlot",
+      "BitmapResourceSlotState"
+    ],
+    "newRootRuntimeValues": [],
+    "newPublicSubpaths": [],
+    "newDependency": false,
+    "hostProtocolChanged": false,
+    "contract": "en/docs/bitmap-resource-slot-spec.md",
+    "evidence": "en/docs/bitmap-resource-slot-evidence.md",
+    "example": "https://github.com/cnedwin/Egret_rebuild/blob/main/examples/bitmap-resource-slot/README.md",
+    "build": {
+      "status": "PASS",
+      "includedInCompleteVerification": true
+    },
+    "focusedCPU": {
+      "status": "PASS",
+      "modules": 9,
+      "tests": 115,
+      "pass": 115,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "interleavingsAndLifecycle": {
+      "status": "COVERED_IN_SELECTED_115_TEST_RUN",
+      "separateRuntimeAcceptance": false
+    },
+    "authorityUnits": {
+      "status": "COVERED_IN_SELECTED_115_TEST_RUN",
+      "boundary": "PUBLIC_RUNTIME_CUSTOM_CONTEXT_UNIT_DISTINCT_FROM_GENUINE_ENGINE_CASES"
+    },
+    "strict": {
+      "status": "PASS",
+      "compilerVersion": "7.0.2",
+      "positiveDiagnostics": 0,
+      "negativeDiagnostics": 30,
+      "declarationsPerConsumer": 57,
+      "nativeLibrariesPerConsumer": 57,
+      "domAmbientTypes": false,
+      "nodeAmbientTypes": false
+    },
+    "sourceBoundary": {
+      "status": "PASS",
+      "defaultRuntimeValueExports": 39,
+      "sourceCopyBaselines": 13,
+      "assignedRefusals": 13,
+      "productExecution": false
+    },
+    "normalHosts": {
+      "status": "PASS",
+      "backends": [
+        "Canvas",
+        "WebGPU"
+      ],
+      "boundary": "RECORDED_DESKTOP_CHECKS_ONLY"
+    },
+    "nativeSource": {
+      "status": "SOURCE_SNAPSHOT_AUTHENTICATED",
+      "inventoryFiles": 221,
+      "modules": 108,
+      "canvasClosure": 73,
+      "webgpuClosure": 104,
+      "browserExecutionClaim": false
+    },
+    "nativeActual": {
+      "status": "PASS_BOUNDED_DESKTOP_COMPOSITION",
+      "ordinaryContexts": 2,
+      "controlContexts": 2,
+      "ordinaryCheckpoints": 28,
+      "controlCheckpoints": 28,
+      "ancillaryStartupReads": 4,
+      "rawRGBAFrames": 60,
+      "authenticatedRawBytes": 184320,
+      "ordinaryPointChannels": 672,
+      "controlPointChannels": 672,
+      "ordinaryPointMismatches": 0,
+      "assignedControlPointMismatches": 2,
+      "fulfilledOriginalWebGPUReadbackPromises": 30,
+      "allPixelCorrectness": false,
+      "physicalDeviceAcceptance": false,
+      "performanceAcceptance": false
+    },
+    "completeCode": {
+      "status": "PASS",
+      "command": "node tools/verify.mjs",
+      "testSummaries": [
+        {
+          "scope": "Core public/unit/structural regressions",
+          "tests": 3358,
+          "suites": 0,
+          "pass": 3358,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        {
+          "scope": "Separate retained Spine source experiment",
+          "tests": 160,
+          "suites": 0,
+          "pass": 160,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        }
+      ],
+      "boundary": "LOCAL_PROTOTYPE_GATES_AND_SEPARATELY_IDENTIFIED_EXPERIMENT_TESTS",
+      "priorFailedFullRun": {
+        "tests": 3349,
+        "pass": 3347,
+        "fail": 2,
+        "fixtureRepairPaths": [
+          "tests/project-boundaries.test.mjs",
+          "tests/spritesheet-fault.test.mjs",
+          "tests/spritesheet-fault-child.mjs"
+        ]
+      }
+    },
+    "sourceReview": {
+      "status": "APPROVED_SELECTED_PRODUCT_SOURCE",
+      "productSources": 5,
+      "productDeclarations": 5,
+      "wholeEngineAcceptance": false
+    },
+    "publicSourceBilingualReview": {
+      "status": "APPROVED_EXACT_CURRENT_READING_FILES",
+      "currentFiles": 22,
+      "changedOrNewPairs": 11,
+      "totalPairs": 203,
+      "unchangedPairsRetainingPriorCutoffs": 192,
+      "metadataIntegrationReviewIncluded": false
+    },
+    "fullPrepush": "PENDING_AT_PREPUBLICATION_DOCUMENTATION_CUTOFF",
+    "mandatoryHooks": "PENDING_AT_PREPUBLICATION_DOCUMENTATION_CUTOFF",
+    "newGitDelivery": "PENDING_AT_PREPUBLICATION_DOCUMENTATION_CUTOFF",
+    "remoteCI": "NO_REMOTE_CI_PASS_OBSERVED_AT_THIS_CUTOFF",
+    "remoteCIPassClaim": false,
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "generalGameUI": "OPEN",
+    "historicalCutoffsPreserved": true,
+    "defaultAPIChanged": true,
+    "independentlyAuthoredFirstParty": true,
+    "implementationInputs": "Independently authored from the selected specification and the project's existing Runtime, Engine and public API contracts, using the registered dependencies.",
+    "aiAssistance": "AI coding agents contributed implementation, tests and documentation; independent agents reviewed selected source, bilingual meaning and saved actual results.",
+    "criticalCommentsLanguage": "en",
+    "currentCodeSourcePins": [
+      {
+        "path": "packages/runtime/src/Bitmap.ts",
+        "bytes": 12761,
+        "sha256": "43e3351b85f6d7057058d104fe6f47f0075e9e750501be4c0ca097c9eb1a4192"
+      },
+      {
+        "path": "packages/runtime/src/ownership.ts",
+        "bytes": 9048,
+        "sha256": "962a6cfc0a18b9b74c18c982e7f47788b8a8e109293ec7c6aadff36432e70750"
+      },
+      {
+        "path": "packages/engine/src/Engine.ts",
+        "bytes": 17136,
+        "sha256": "007a8500141c1ee60a58b3c028fcd68dec176c356f7321b1eec7941df7dfe416"
+      },
+      {
+        "path": "packages/engine/src/index.ts",
+        "bytes": 3349,
+        "sha256": "480ade737b53c8f9dba922d9db1c83c7fc0c104e99f11d46623227570c99efd6"
+      },
+      {
+        "path": "packages/engine/src/bitmapResourceSlot.ts",
+        "bytes": 12435,
+        "sha256": "e9a2c675b6b9d897b446e46aa3198905fff899207b68262fbccd312d711aba8b"
+      },
+      {
+        "path": "examples/bitmap-resource-slot/index.html",
+        "bytes": 2171,
+        "sha256": "ae086fce98ae0f6503e737120d12e52e29403663a1b0acb9a26190645aab74c8"
+      },
+      {
+        "path": "tests/bitmap-resource-slot-api.test.mjs",
+        "bytes": 6686,
+        "sha256": "eb4ed91d57ea0e5bc31afdb7d51392e50c79bc56b8f9c626a555ff4ff7d23a1a"
+      },
+      {
+        "path": "tests/bitmap-resource-slot-authority-supplement.test.mjs",
+        "bytes": 6554,
+        "sha256": "096d33e68f8e960dac8cdeacf1e3e2d5802657a2ead322602ce8e3bbff05fe86"
+      },
+      {
+        "path": "tests/bitmap-resource-slot-authority-unit.test.mjs",
+        "bytes": 18753,
+        "sha256": "905d8c5fa536a74b6c8da5aa1c21e22748ff3f788b1204f9d88b88ada082ea60"
+      },
+      {
+        "path": "tests/bitmap-resource-slot-behavior.test.mjs",
+        "bytes": 15059,
+        "sha256": "15f8f2f070499198fd36f0cf9a8fbc7eed873a3ebedaff6c02dd90dafed0d3a5"
+      },
+      {
+        "path": "tests/bitmap-resource-slot-binding-revocation.test.mjs",
+        "bytes": 9336,
+        "sha256": "d3b0167ea9f893f96157c51e198a12408e2865a112963ead329704f07ada34a4"
+      },
+      {
+        "path": "tests/bitmap-resource-slot-composition.test.mjs",
+        "bytes": 3347,
+        "sha256": "8c923a7b4b8b863e5d9e860ac3e4d90ebf4fbc873fe4c69df4f80f2566db9069"
+      },
+      {
+        "path": "tests/bitmap-resource-slot-controlled-browser.mjs",
+        "bytes": 8547,
+        "sha256": "3345f3c22b7fa70066a0c40a9ba10a405664b00f20aaa94b57583170d54a1295"
+      },
+      {
+        "path": "tests/bitmap-resource-slot-fixtures.mjs",
+        "bytes": 8181,
+        "sha256": "7b4a317de470f496db4750aacdc28abbcaed7449f7a60a66a8f124c774666aec"
+      },
+      {
+        "path": "tests/bitmap-resource-slot-interleavings.test.mjs",
+        "bytes": 10458,
+        "sha256": "b50fe9d5cc246edbee165fe99039ee5a67faed64a96e80539a574a25fe0e9e7f"
+      },
+      {
+        "path": "tests/bitmap-resource-slot-lifecycle.test.mjs",
+        "bytes": 19645,
+        "sha256": "72ee4e0fee01811c8c7f4091d1e9a8c3e77c022c7f540c5d0cbb7bb1b672ae75"
+      },
+      {
+        "path": "tests/bitmap-resource-slot.test.mjs",
+        "bytes": 5904,
+        "sha256": "d7e38666ceb58f8b4ac639a6d1747264c2905ed2e7495e2bb64166fdc46fd8aa"
+      },
+      {
+        "path": "tests/types/bitmap-resource-slot-diagnostic-expectations.json",
+        "bytes": 60544,
+        "sha256": "0d38a7b7952e48353ac14d580da7c127f0e20ff101f7b6d7f364a8cedc900873"
+      },
+      {
+        "path": "tests/types/bitmap-resource-slot-negative.ts",
+        "bytes": 3220,
+        "sha256": "d5da3a2dd3f51c5d8c3ef16a13c5c1948cb23a90e302b5381d1a557c2cdb43f3"
+      },
+      {
+        "path": "tests/types/bitmap-resource-slot-positive.ts",
+        "bytes": 1928,
+        "sha256": "13d97fd90d5065970e4a26af44c2d9a7d67eb5c868b6874207c2a4d6b3ef20d0"
+      },
+      {
+        "path": "tests/types/tsconfig.bitmap-resource-slot-negative.json",
+        "bytes": 288,
+        "sha256": "94461130d68e10a1e20b599d1a4a0752d1e528193001ef37145f5d036c9b6caa"
+      },
+      {
+        "path": "tests/types/tsconfig.bitmap-resource-slot-positive.json",
+        "bytes": 288,
+        "sha256": "e3a822aae2aaa0433d6647a4c43491530e13cc5d8a228865f439a77ce4fdce8c"
+      },
+      {
+        "path": "tests/types/bitmap-button-diagnostic-expectations.json",
+        "bytes": 33622,
+        "sha256": "6ab592ec10dd67abb2ae608482d698a7ea4d4a5775a878b85066d94a998da22d"
+      },
+      {
+        "path": "tests/types/display-anchor-offsets-diagnostic-expectations.json",
+        "bytes": 28928,
+        "sha256": "3c626d72f898e59a37558814dab7c1b5bd78d84cf36c3a65e4cb6cd34bab9e91"
+      },
+      {
+        "path": "tests/types/display-container-add-child-at-diagnostic-expectations.json",
+        "bytes": 35214,
+        "sha256": "5e7b93363eb0e6ba5e27a20f755a47444362063104685cf3dbe8b2da166c353a"
+      },
+      {
+        "path": "tests/types/display-container-child-index-diagnostic-expectations.json",
+        "bytes": 36182,
+        "sha256": "99235ac47d3a3c089f5eef088c543b581ac1af6e5075db232e287e0561b004d6"
+      },
+      {
+        "path": "tests/types/display-container-remove-children-diagnostic-expectations.json",
+        "bytes": 29625,
+        "sha256": "03599fe9c843275fd3c3dfad7741d858f83fd4e38e0836c10ce9a6585557f6f8"
+      },
+      {
+        "path": "tests/types/linear-layout-diagnostic-expectations.json",
+        "bytes": 63961,
+        "sha256": "028f058f3cc6ebef63a423f642dc588561c1da3446cc57f2a31a9f6adc6244f1"
+      },
+      {
+        "path": "tests/types/nine-slice-bitmap-diagnostic-expectations.json",
+        "bytes": 12804,
+        "sha256": "1bd48c4d77de042ec681c87d5337bee1a5f9e76685d997aec433919670432972"
+      },
+      {
+        "path": "tools/bitmap-resource-slot-policy.json",
+        "bytes": 14780,
+        "sha256": "36563946a759ed8ab49f48abdec1dda4a63d22c3c1a6203d37c2cddc326b2c38"
+      },
+      {
+        "path": "tools/verify.mjs",
+        "bytes": 683,
+        "sha256": "a94d72919d6d7a2935609328f6b35052dd6ac0a087bc77fb81a7cbdd02bdd4d0"
+      },
+      {
+        "path": "tests/spritesheet-fault.test.mjs",
+        "bytes": 8158,
+        "sha256": "7a405d99b840424f3e7e3db7f2357d3698e4044cf513366cc1c2722cf9b6660d"
+      },
+      {
+        "path": "tests/spritesheet-fault-child.mjs",
+        "bytes": 18066,
+        "sha256": "9b16f66b969b49ad923bf9afc13e3fb8386d640fafecffb978b0ecddb9087bba"
+      },
+      {
+        "path": "tools/bitmap-resource-slot-types.mjs",
+        "bytes": 10489,
+        "sha256": "454abe1eb4fafc7c805e8c806d61e6f592e8c7a5345fd4a2d23316b5b500bf73"
+      },
+      {
+        "path": "tools/bitmap-resource-slot-boundary.mjs",
+        "bytes": 14831,
+        "sha256": "58acd0b9c6b2d3a29fa614aeb1b58c23763107b8f0f43cacbc7a42d90d575f82"
+      },
+      {
+        "path": "tools/verify-bitmap-resource-slot.mjs",
+        "bytes": 37116,
+        "sha256": "370abf032df5ba478a714f3dd57f784c795a586fd03aeecb393748ee0dfd8cc2"
+      },
+      {
+        "path": "examples/bitmap-resource-slot/main.mjs",
+        "bytes": 14973,
+        "sha256": "18b65a8855987f443138969bfb38e02ef1822249207261966fa5be1636ff3d08"
+      },
+      {
+        "path": "tools/check-types.mjs",
+        "bytes": 93963,
+        "sha256": "65443a42af6c298e41c437f699a703ecc410c66c2916a57577987f3dc0003528"
+      },
+      {
+        "path": "tools/spritesheet-boundary.mjs",
+        "bytes": 98240,
+        "sha256": "ea41030b4f7486396042dadef0143fe4a51d97811ae3f6f1d0eeaecec2181282"
+      },
+      {
+        "path": "tools/browser-png-boundary.mjs",
+        "bytes": 99818,
+        "sha256": "4486c7456af63c09844d054e22aa00a073ec9c33dec92f89970b05e183f69f59"
+      },
+      {
+        "path": "tools/sequence-playback-boundary.mjs",
+        "bytes": 28025,
+        "sha256": "aad98f4497e35bf543f2241371e9098f081d06672e5df979fc5a217c835baa97"
+      },
+      {
+        "path": "tests/project-boundaries.test.mjs",
+        "bytes": 16663,
+        "sha256": "90593cf603b8d011d8c197c74f2356f841d1cf6be54bd29158efcd8a8f240fd3"
+      }
+    ],
+    "currentProductSourcePins": [
+      {
+        "path": "packages/runtime/src/Bitmap.ts",
+        "bytes": 12761,
+        "sha256": "43e3351b85f6d7057058d104fe6f47f0075e9e750501be4c0ca097c9eb1a4192"
+      },
+      {
+        "path": "packages/runtime/src/ownership.ts",
+        "bytes": 9048,
+        "sha256": "962a6cfc0a18b9b74c18c982e7f47788b8a8e109293ec7c6aadff36432e70750"
+      },
+      {
+        "path": "packages/engine/src/Engine.ts",
+        "bytes": 17136,
+        "sha256": "007a8500141c1ee60a58b3c028fcd68dec176c356f7321b1eec7941df7dfe416"
+      },
+      {
+        "path": "packages/engine/src/index.ts",
+        "bytes": 3349,
+        "sha256": "480ade737b53c8f9dba922d9db1c83c7fc0c104e99f11d46623227570c99efd6"
+      },
+      {
+        "path": "packages/engine/src/bitmapResourceSlot.ts",
+        "bytes": 12435,
+        "sha256": "e9a2c675b6b9d897b446e46aa3198905fff899207b68262fbccd312d711aba8b"
+      }
+    ],
+    "currentProductEmissionPins": [
+      {
+        "path": "packages/runtime/dist/Bitmap.js",
+        "bytes": 12112,
+        "sha256": "f06e4cc39a54d7631e20339f32f5d96355835b0061f26735caa641a19938bca6"
+      },
+      {
+        "path": "packages/runtime/dist/Bitmap.d.ts",
+        "bytes": 1899,
+        "sha256": "d685c189d20bba4d2e8d468652d6f0fcf056ff0ba2e6c92edabb89f948074608"
+      },
+      {
+        "path": "packages/runtime/dist/ownership.js",
+        "bytes": 6389,
+        "sha256": "edddc009cb0ef968341666cf2558fed8a3cfcf6cf16c100a6ff744bb894af490"
+      },
+      {
+        "path": "packages/runtime/dist/ownership.d.ts",
+        "bytes": 3832,
+        "sha256": "9e30b94122df22e2039b42a0ef1f64a99c68f1373ed05660848f4d7d257c3ea4"
+      },
+      {
+        "path": "packages/engine/dist/Engine.js",
+        "bytes": 14555,
+        "sha256": "000b23fcf26d4dfeb645c45418943fc2d781a5151be99d59c2731592d107a5e2"
+      },
+      {
+        "path": "packages/engine/dist/Engine.d.ts",
+        "bytes": 3328,
+        "sha256": "9904b53a624ab5be83a28c4a906791edf1fd1e8a5cd383bb2bf98d4d510463b3"
+      },
+      {
+        "path": "packages/engine/dist/index.js",
+        "bytes": 1196,
+        "sha256": "d34379ae7b19c048f90b23cc97a819a3037dec8a49ef5c4f330a9e3ed7db6192"
+      },
+      {
+        "path": "packages/engine/dist/index.d.ts",
+        "bytes": 3384,
+        "sha256": "95a6634d04cdfd26da39286b072a2c2095f8c605cc23c075e2c5e574289c3b06"
+      },
+      {
+        "path": "packages/engine/dist/bitmapResourceSlot.js",
+        "bytes": 10956,
+        "sha256": "27a628aa27688f37f789455d4be4e802a7d7e46bd88bd6279304a2f9cfd2b73e"
+      },
+      {
+        "path": "packages/engine/dist/bitmapResourceSlot.d.ts",
+        "bytes": 1260,
+        "sha256": "3432f949713060763588c44e983002c64ea96cdc63b9b2c09e21fbcc63ff489d"
+      }
+    ],
+    "currentPublicPins": [
+      {
+        "path": "README.zh-CN.md",
+        "bytes": 5018,
+        "sha256": "3026a8df47e7bd94c055095eaf071bdc533b36c42c6c9a85ef333bb350da0ada"
+      },
+      {
+        "path": "README.md",
+        "bytes": 5361,
+        "sha256": "c603b51bb9f3fc00d3c2082c3173ab6e2442615284b1464d9a6106a9ab1f49b3"
+      },
+      {
+        "path": "AGENTS.zh-CN.md",
+        "bytes": 16900,
+        "sha256": "82f158f0eff99f707cfc76b519135255fd24de3baee4bdd280cf9004015f4501"
+      },
+      {
+        "path": "AGENTS.md",
+        "bytes": 19275,
+        "sha256": "b69de1a6805375a50d9c9c26fe74384b7092c6367619287c25bca27c9bb98330"
+      },
+      {
+        "path": "packages/engine/README.zh-CN.md",
+        "bytes": 11321,
+        "sha256": "7eea7e6c014380cfdecb3cac0c637afc682b28cd508da837f9f4cfa26cec1eac"
+      },
+      {
+        "path": "packages/engine/README.md",
+        "bytes": 12849,
+        "sha256": "f885056e9e9884c194ce42b88e4d2d0d0d55c25f4c250e32e2a914eead87f2c4"
+      },
+      {
+        "path": "DOCUMENTATION.zh-CN.md",
+        "bytes": 11422,
+        "sha256": "e9fb1b1dce741b41d3e86e37fb6fa281549a114ca6d52f3f6ef9ed4c42fbeffe"
+      },
+      {
+        "path": "DOCUMENTATION.md",
+        "bytes": 12633,
+        "sha256": "aa2ec25cf465d7a229bb6e8d3b327771eb08e15abf160259c603686d88a25bf7"
+      },
+      {
+        "path": "knowledge-base/README.zh-CN.md",
+        "bytes": 1311,
+        "sha256": "fa7eaa064f5f5716723257089b525d8afe68c415a05cfdad9bae9737feb57cbf"
+      },
+      {
+        "path": "knowledge-base/README.md",
+        "bytes": 1695,
+        "sha256": "c911624614dd3f304b892d6f7c8b0ea98ffc26aae0c51cfc4ef2902bcb3f209a"
+      },
+      {
+        "path": "knowledge-base/Cns/README.md",
+        "bytes": 3788,
+        "sha256": "2b31d507ad2fa23ce5d26f667cf87994833f201cee15cee8267bcfcb15cbbf64"
+      },
+      {
+        "path": "knowledge-base/en/README.md",
+        "bytes": 4394,
+        "sha256": "c3df734c74adee396b95f4e2c4fdead99488ab01a2085241daf9ee9ac84cf874"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/core-progress.md",
+        "bytes": 6486,
+        "sha256": "a40eb5b587b10b7f9806acb8f5449901afa7b3fed55f1b480a6227eeee1ce312"
+      },
+      {
+        "path": "knowledge-base/en/docs/core-progress.md",
+        "bytes": 7543,
+        "sha256": "34113498b4e86748f1e2206286f3d0fb3821c71b112361d261604584405523f0"
+      },
+      {
+        "path": "knowledge-base/Cns/CHANGELOG.md",
+        "bytes": 11372,
+        "sha256": "d306914c54976645019d4ffb8f5452258a5d7d8cc33cd9bd31439fff21990ed7"
+      },
+      {
+        "path": "knowledge-base/en/CHANGELOG.md",
+        "bytes": 12763,
+        "sha256": "36e3aa6d28798e67b791bdaa2de0e19d80a0364be517188374ffcf4ed2ab0d22"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/位图资源槽规格.md",
+        "bytes": 9164,
+        "sha256": "0d9b5a13ec630a1a90192535a96869d41a32be714a8c8c2c8e0ee17d8bb88036"
+      },
+      {
+        "path": "knowledge-base/en/docs/bitmap-resource-slot-spec.md",
+        "bytes": 10121,
+        "sha256": "db831c59a066ff2b1ff44d80cd7cf17418b254114ce1049dc862e8075680042d"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/位图资源槽核验.md",
+        "bytes": 5953,
+        "sha256": "96f7ecc96ef813ebe33a3c8a8aef41e57928a18ef8f954096b33f18fe8825241"
+      },
+      {
+        "path": "knowledge-base/en/docs/bitmap-resource-slot-evidence.md",
+        "bytes": 6868,
+        "sha256": "89a57b5fceb5da65af6d794a09644ccd29d8fd0e8f71ac68348de5a3ec77ac06"
+      },
+      {
+        "path": "examples/bitmap-resource-slot/README.zh-CN.md",
+        "bytes": 3815,
+        "sha256": "910756852f02dd1567c39e45ee639848ef29241af5377c4323a941caeaf8e9f1"
+      },
+      {
+        "path": "examples/bitmap-resource-slot/README.md",
+        "bytes": 4449,
+        "sha256": "487dcfd4a141760566e4f47e793d5c06b39914e27169caa8030e7280f787eb42"
+      },
+      {
+        "path": "knowledge-base/Cns/registry/来源.json",
+        "bytes": 315377,
+        "sha256": "71a1c2a7c2d014f1d4425589a2249d4015ed05139b6df04b86568cef54385fdb"
+      },
+      {
+        "path": "knowledge-base/en/registry/sources.json",
+        "bytes": 325767,
+        "sha256": "2f539fd20526ce24c6e3329df7b278526355709e109e1f65eadf5aa81b752e4d"
+      },
+      {
+        "path": "knowledge-base/Cns/registry/交付.json",
+        "bytes": 300086,
+        "sha256": "0abef5d4962cdfa151c3e3e88d165eb9dd5bccdde00ce199fb8b7c4d89a03dec"
+      },
+      {
+        "path": "knowledge-base/en/registry/deliverables.json",
+        "bytes": 307268,
+        "sha256": "1d92539a6ea474184edf050b1c38d469be7715f03e25d0d71f7a103c49659500"
+      },
+      {
+        "path": "knowledge-base/Cns/当前版本.json",
+        "bytes": 255345,
+        "sha256": "058440f39913aba69730c450d6b388379f5c3e31414b211cc2987bcc33b968ac"
+      },
+      {
+        "path": "knowledge-base/en/current-version.json",
+        "bytes": 256491,
+        "sha256": "14d75d5c1a384a55093ca95c9734312552ae27957e3b26c57a5e539555887703"
+      },
+      {
+        "path": "knowledge-base/documentation-layout.json",
+        "bytes": 127734,
+        "sha256": "da422407afa3e82d41acce22afa651170dbc54be8f6ff860b2f9664b053b1566"
+      },
+      {
+        "path": "localization.json",
+        "bytes": 307915,
+        "sha256": "20e211faf24f01302cd0f62d80a39ecfd11e70a4846806434facf1687a1645d2"
+      }
+    ],
+    "currentReadingPairRows": 203,
+    "currentCriticalCommentRows": 314,
+    "historical938RowsPreserved": true,
+    "selfIdentityPolicy": "This file is excluded from its own raw inventory; the external candidate manifest and actual repository history bind the complete bytes.",
+    "semanticReviewScope": {
+      "unchanged192": "Each prior review cutoff is retained.",
+      "changedOrNew11": "Exactly eleven current English/Chinese reading pairs: eight revised existing pairs and three new pairs. Each of the 192 unchanged pairs retains its previous review cutoff; no whole-inventory fresh review is asserted."
+    }
   }
 }

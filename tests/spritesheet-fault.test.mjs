@@ -65,7 +65,7 @@ function aliases() {
 const initialAliases = aliases();
 const initialSdk = sdkSnapshot();
 for (const [relative, bytes, sha256] of [
-  ['packages/runtime/dist/Bitmap.js', 7905, '0ef6158d9d3dd21fe4f623c8e24a265dc62bf57e5a57a848f774c0312e9a52f3'],
+  ['packages/runtime/dist/Bitmap.js', 12112, 'f06e4cc39a54d7631e20339f32f5d96355835b0061f26735caa641a19938bca6'],
   ['packages/runtime/dist/spriteSheet.js', 10813, '654ccff10a7896ee9d008041f099855f7f42663b544017daec2e9b9010a4ba71'],
 ]) assert.deepEqual(pin(relative), { path: relative, bytes, sha256 }, 'original qualified compiled module');
 

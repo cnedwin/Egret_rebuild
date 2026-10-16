@@ -4,6 +4,12 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## 0.56.0 — recoverable Bitmap resource replacement
+
+`Engine.createBitmapResourceSlot(scope, bitmap)` adds explicit asynchronous Texture replacement for one persistent Bitmap through the existing root entry, with the erased `BitmapResourceSlot` and `BitmapResourceSlotState` types. It borrows the initial binding and owns only fresh replacement leases. The prior usable binding remains during pending, failed or cancelled requests; only the latest accepted intent may commit. Cancellation and supersession reject their request Promises. Read the [specification](docs/bitmap-resource-slot-spec.md), [evidence and remaining acceptance](docs/bitmap-resource-slot-evidence.md) and [composition example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/bitmap-resource-slot/README.md).
+
+Focused behavior, strict consumers and the recorded desktop Canvas/WebGPU composition have passed their bounded checks. Full local/public gates and repository delivery are recorded separately in the linked evidence. Complete UI, Spine R020/V020 and legacy migration R008/V006 remain OPEN. The prior 0.55 increment was delivered through [PR #44](https://github.com/cnedwin/Egret_rebuild/pull/44), Main `f6b7968db89febfdbe00fb1322f208ab2135f68f`; earlier entries retain their own historical evidence cutoffs.
+
 ## 0.55.0 — explicit local linear layout
 
 The optional `@egret/engine/layout` entry turns explicit numeric records into a frozen local rectangle plan. Callers filter membership, arrange children and apply coordinates. A two-Button example composes existing shared input, a borrowed programmatic atlas, nested clipping and saved/live frames. Read the [specification](docs/local-linear-layout-spec.md) and [verification scope](docs/local-linear-layout-evidence.md).

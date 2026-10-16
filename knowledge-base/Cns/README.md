@@ -28,7 +28,9 @@
 
 ## 当前工程状态
 
-工程预览 **0.55.0** 增加显式本地线性规划，调用方选择成员并将位置应用到既有 Button。参阅[规格](docs/local-linear-layout-spec.md)、[证据](docs/local-linear-layout-evidence.md)及[示例指南](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/linear-layout/README.zh-CN.md)。已记录的桌面 Canvas/WebGPU 检查覆盖固定双 Button 流程；环境及边界见证据记录。 更广泛的已实现接口及剩余工作见[能力与进展](docs/core-progress.md)。工作区包仍为 private、版本 0.0.0，宿主协议仍为 1.0。
+工程预览 **0.56.0** 提供可恢复的资源替换。`Engine.createBitmapResourceSlot(scope, bitmap)` 通过既有根入口替换同一个持久 Bitmap 的 Texture，增加擦除类型 `BitmapResourceSlot` 与 `BitmapResourceSlotState`。槽借用初始绑定、拥有新替换租约；请求等待、失败或取消时保留先前可用绑定，只有最新已接受意图可以提交。Promise 拒绝及生命周期细节遵循[规格](docs/位图资源槽规格.md)，参阅[证据](docs/位图资源槽核验.md)和[示例指南](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/bitmap-resource-slot/README.md)。聚焦行为、严格消费者及记录的桌面 Canvas/WebGPU 组合已通过各自限定检查；完整本地／公开门禁及仓库交付在所链接证据中分别记录。
+
+前一个 0.55 布局增量已通过 [PR #44](https://github.com/cnedwin/Egret_rebuild/pull/44) 交付。更广泛的接口及剩余工作见[能力与进展](docs/core-progress.md)。工作区包仍为 private、版本 0.0.0，宿主协议仍为 1.0。
 
 ## 接口契约与示例
 

@@ -4,9 +4,15 @@
 
 核心工程通过可运行增量连接显示、资源、动画、输入与宿主执行。本页概述当前接口及后续产品工作，链接的契约说明精确行为与验证范围。
 
+## 可恢复位图资源替换 — 0.56.0
+
+`Engine.createBitmapResourceSlot(scope, bitmap)` 在替换 Texture 时保持同一 Bitmap 身份，根入口仅新增擦除类型名称 `BitmapResourceSlot` 与 `BitmapResourceSlotState`。初始绑定继续借用，槽仅拥有新获取的替换租约；请求等待、失败或取消时保留先前可用绑定，只有最新已接受意图可以提交。拒绝、绑定冲突及生命周期细节遵循[规格](位图资源槽规格.md)，参阅[证据](位图资源槽核验.md)和[组合示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/bitmap-resource-slot/README.md)。聚焦行为、严格消费者及记录的桌面 Canvas/WebGPU 组合已通过各自限定检查；完整本地／公开门禁及仓库交付在所链接证据中分别记录。
+
 ## 显式本地布局 — 0.55.0
 
 `@egret/engine/layout` 的纯函数 `planLinearLayout` 生成冻结矩形计划。调用方选择成员，再通过既有 display API 应用坐标；双 Button 示例展示布局、共享输入及保存/实时帧的组合。已记录的桌面 Canvas/WebGPU 检查覆盖固定双 Button 流程；环境及边界见证据记录。 参阅[规格](local-linear-layout-spec.md)和[证据](local-linear-layout-evidence.md)。
+
+0.55 增量已通过 [PR #44](https://github.com/cnedwin/Egret_rebuild/pull/44) 合并，Main 为 `f6b7968db89febfdbe00fb1322f208ab2135f68f`，tree 为 `86e9d3da4831f4bbbc6a20545c4434ecc9a5b791`。该已交付截止点与 0.56 证据分别保留。
 
 ## 前次集成 — 0.54.0
 
@@ -17,7 +23,7 @@
 | 领域 | 当前工程能力 | 参考 |
 | --- | --- | --- |
 | 显示与输入 | DisplayObject/Container、变换与锚点、坐标／bounds、显式命中区域、主鼠标路由与位图按钮。 | [契约与范围](位图按钮契约.md) |
-| 资源 | 类型化引用、共享获取、租约、Scope 释放、获取组、纹理、命名 SpriteSheet 裁剪及可选 PNG Provider。 | [契约与范围](资源批量获取.md) |
+| 资源 | 类型化引用、共享获取、租约、Scope 释放、获取组、纹理、命名 SpriteSheet 裁剪及可选 PNG Provider；0.56 的可恢复单 Bitmap 替换已有受限行为、类型及桌面渲染证据。 | [获取范围](资源批量获取.md)、[替换规格](位图资源槽规格.md) |
 | 动画 | 显式游戏时间、标量 Tween、图集序列采样及 Engine 时钟序列播放。 | [契约与范围](时钟驱动序列动画契约.md) |
 | 二维呈现 | 不可变画面捕获、Canvas/WebGPU 路径、纹理几何／Mesh2D 及各自规格中的 NineSliceBitmap。 | [契约与范围](自有纹理几何与Mesh2D契约.md) |
 | 文字 | 文字栅格编排、非编辑 TextField 及选定 Canvas 文字集成。 | [契约与范围](文字显示TF1契约.md) |
@@ -38,7 +44,7 @@ GitHub 未为 PR #42 返回状态或检查运行，以上本地验证与远端 C
 ## 后续工作与贡献
 
 - 在显式本地规划器之外继续完善 UI 组合，以及触摸、键盘、焦点、无障碍和编辑。
-- 支持取消、过期结果抑制及可恢复发布的资源视觉替换。
+- 继续集成真实资源场景、多资源换装、恢复及动画重定向，明确所有权与宿主边界。
 - 按 **R020/V020** 完成版本化 Spine 支持及功能／后端／宿主矩阵。
 - 扩展三维场景、角色和特效，连接资产及生命周期。
 - 生产浏览器／小游戏／原生宿主，以及目标设备文字与性能。

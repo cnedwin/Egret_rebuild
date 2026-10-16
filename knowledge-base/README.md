@@ -2,7 +2,7 @@
 
 English | [简体中文](README.zh-CN.md)
 
-The 0.55.0 [local linear-layout planner](en/docs/local-linear-layout-spec.md) computes rectangle placements through a pure function; callers apply them to a two-Button menu. Read the [evidence record](en/docs/local-linear-layout-evidence.md) for the workflow and desktop verification limits.
+The 0.56.0 [Bitmap resource slot](en/docs/bitmap-resource-slot-spec.md) adds explicit replacement for one persistent Bitmap: borrow the initial binding, retain the prior usable binding while a request is pending or rejected, and commit only the latest accepted intent. Read the [evidence record](en/docs/bitmap-resource-slot-evidence.md) and [composition example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/bitmap-resource-slot/README.md). Focused behavior, strict consumers and the recorded desktop Canvas/WebGPU composition have passed their bounded checks. Full local/public gates and repository delivery are recorded separately in the linked evidence.
 
 The knowledge base explains Egret's product direction, architecture, public contracts and delivery. Choose a complete reading edition:
 

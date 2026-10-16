@@ -4,6 +4,8 @@
 
 建议按下列顺序了解产品与工程，再查阅所需子系统的接口契约。知识库提供完整 [English](knowledge-base/en/README.md) 和[简体中文](knowledge-base/Cns/README.md)版本。
 
+0.56 资源槽增量组合了可恢复绑定替换及已记录的桌面 Canvas/WebGPU 示例，所链接规格、证据与示例限定当前行为及核验范围。
+
 ## 产品与工程
 
 | 主题 | 文档 |
@@ -127,6 +129,9 @@
 - [位图按钮](knowledge-base/Cns/docs/位图按钮契约.md)
 - [位图按钮核验](knowledge-base/Cns/docs/位图按钮核验.md)
 - [位图按钮工程计划](knowledge-base/Cns/docs/位图按钮实施计划.md)
+- [位图资源槽规格](knowledge-base/Cns/docs/位图资源槽规格.md)
+- [位图资源槽核验](knowledge-base/Cns/docs/位图资源槽核验.md)
+- [位图资源替换组合示例](examples/bitmap-resource-slot/README.zh-CN.md)
 
 ## 来源与维护
 

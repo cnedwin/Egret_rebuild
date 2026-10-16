@@ -35,3 +35,4 @@ export type { NineSliceBitmapOptions } from "@egret/runtime";
 export type { SequencePlayback, SequencePlaybackState, SequencePlaybackOptions } from './sequencePlaybackTypes.js';
 export { createSpriteSheet } from "@egret/runtime";
 export type { SpriteSheet, SpriteSheetFrameInput } from "@egret/runtime";
+export type { BitmapResourceSlot, BitmapResourceSlotState } from './bitmapResourceSlot.js';

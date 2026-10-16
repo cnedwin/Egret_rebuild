@@ -986,3 +986,8 @@ await import('./bitmap-button-types.mjs');
 // Run the optional planner consumers only after every retained strict type lane.
 await import('./linear-layout-types.mjs');
 // LINEAR_LAYOUT_TYPES_END
+
+// BITMAP_RESOURCE_SLOT_TYPES_BEGIN
+// Preserve every retained strict lane before checking resource-slot consumers.
+await import('./bitmap-resource-slot-types.mjs');
+// BITMAP_RESOURCE_SLOT_TYPES_END
