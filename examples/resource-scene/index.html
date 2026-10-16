@@ -1,0 +1,145 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Egret resource scene / 白鹭资源场景</title>
+  <link rel="icon" href="data:,">
+  <style>
+    body{font:16px/1.5 system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px 32px;color:#17202a;background:#f6f7f9}
+    h1,h2{line-height:1.25}h2{font-size:1.1rem}a{color:#1656a0}
+    nav,.controls{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+    fieldset{margin:16px 0;padding:12px;border:1px solid #bac3ce;border-radius:6px}
+    legend{font-weight:600;padding:0 6px}label{display:inline-flex;align-items:center;gap:6px}
+    button,select{font:inherit;padding:6px 10px}button{cursor:pointer}button:disabled{cursor:default}
+    button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #1656a0;outline-offset:3px}
+    canvas{display:block;width:576px;max-width:100%;height:auto;margin:16px 0;border:0;padding:0;background:#000;image-rendering:pixelated}
+    .readiness{display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;margin:12px 0}
+    .readiness output{font-weight:600}#status{min-height:1.5em}
+    details{margin:16px 0}summary{cursor:pointer}pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:18rem;overflow:auto;padding:12px;background:#e8edf3}
+    .note{color:#445266;font-size:.95rem}
+  </style>
+  <script type="importmap">
+  {
+    "imports": {
+      "@egret/engine": "../../packages/engine/dist/index.js",
+      "@egret/engine/web": "../../packages/engine/dist/web/index.js",
+      "@egret/engine/text": "../../packages/engine/dist/text.js",
+      "@egret/engine/web/text": "../../packages/engine/dist/web/text.js",
+      "@egret/engine/web/image": "../../packages/engine/dist/web/image.js",
+      "@egret/engine/web/input": "../../packages/engine/dist/web/input.js",
+      "@egret/engine/scene3d": "../../packages/engine/dist/rendering/scene3d.js",
+      "@egret/engine/webgpu/scene3d": "../../packages/engine/dist/web/scene3d.js",
+      "@egret/runtime": "../../packages/runtime/dist/index.js",
+      "@egret/runtime/text": "../../packages/runtime/dist/text/index.js",
+      "@egret/contracts": "../../packages/contracts/dist/index.js",
+      "#egret-mouse-input": "../../packages/engine/dist/mouseInput.js",
+      "#egret-textured-frame-state": "../../packages/engine/dist/internal/texturedFrameState.js",
+      "robust-predicates": "../../packages/engine/node_modules/robust-predicates/index.js"
+    }
+  }
+  </script>
+</head>
+<body>
+  <header>
+    <h1>Resource scene / <span lang="zh-CN">资源场景</span></h1>
+    <p>Two pilots share an animated atlas and change outfits independently. Select a pilot in the scene or use the controls below.<br><span lang="zh-CN">两名角色共享动画图集，可独立换装。点击场景中的角色，或使用下方控件选择。</span></p>
+    <nav aria-label="Rendering profile / 渲染模式">
+      <a id="profile-canvas" href="?profile=canvas-2d">Canvas 2D / 普通 Canvas</a>
+      <a id="profile-webgpu" href="?profile=webgpu-scene-textured">Experimental WebGPU scene / 实验性 WebGPU 场景</a>
+    </nav>
+    <p class="note">Canvas presents the 2D scene. The experimental WebGPU profile adds a fixed opaque 3D background with the same screen UI; it requires a supported browser.<br><span lang="zh-CN">Canvas 呈现二维场景。实验性 WebGPU 模式在同一屏幕 UI 后加入固定的不透明三维背景，需要浏览器支持。</span></p>
+  </header>
+  <main>
+    <section aria-labelledby="scene-heading">
+      <h2 id="scene-heading">Preview / <span lang="zh-CN">场景预览</span></h2>
+      <p id="scene-description">The selected pilot has a white surround. Selection stays with that pilot when it is removed, and returns with it on re-entry.<br><span lang="zh-CN">被选角色带白色外框。移除后保留其选择身份，重新进入时恢复选择。</span></p>
+      <canvas id="scene" width="192" height="128" role="img" aria-label="Two animated pilots with independent outfits / 两名可独立换装的动画角色" aria-describedby="scene-description">Your browser needs Canvas support to display this scene. / 此场景需要浏览器支持 Canvas。</canvas>
+      <div class="readiness" aria-label="Scene readiness / 场景就绪状态">
+        <label for="resource-status">Resources / 资源</label><output id="resource-status">Not ready / 尚未就绪</output>
+        <label for="presentation-status">Frame / 画面</label><output id="presentation-status">No completed frame / 尚无已完成画面</output>
+        <label for="interactive-status">Input / 交互</label><output id="interactive-status">Not ready / 尚未就绪</output>
+        <label for="selection-status">Selection / 当前选择</label><output id="selection-status">Left pilot / 左侧角色</output>
+      </div>
+      <p id="status" role="status" aria-live="polite">Starting / 正在启动</p>
+    </section>
+
+    <fieldset>
+      <legend>Pilot and outfit / 角色与服装</legend>
+      <div class="controls">
+        <label for="pilot">Pilot / 角色
+          <select id="pilot" disabled><option value="pilot-left">Left / 左侧</option><option value="pilot-right">Right / 右侧</option></select>
+        </label>
+        <label for="outfit">Outfit / 服装
+          <select id="outfit" disabled><option value="A">A · Red / 红</option><option value="B">B · Green / 绿</option><option value="C">C · Blue / 蓝</option><option value="D">D · Yellow / 黄</option></select>
+        </label>
+        <button id="replace-outfit" type="button" disabled>Change outfit / 换装</button>
+        <button id="cancel-outfit" type="button" disabled>Cancel change / 取消换装</button>
+      </div>
+      <p class="note">The committed outfit stays visible while a change is pending, fails or is cancelled.<br><span lang="zh-CN">换装等待、失败或取消时，保留此前已生效的服装。</span></p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Animation and view / 动画与视图</legend>
+      <div class="controls">
+        <button id="advance" type="button" disabled>Step 0.125 s / 前进 0.125 秒</button>
+        <button id="pause" type="button" disabled>Pause pilot / 暂停角色</button>
+        <button id="resume" type="button" disabled>Resume pilot / 继续角色</button>
+        <label for="clip"><input id="clip" type="checkbox" disabled>Show left half / 显示左半部分</label>
+        <label for="rotation"><input id="rotation" type="checkbox" disabled>Rotate 90° / 旋转 90°</label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Atlas and presence / 图集与角色进出</legend>
+      <div class="controls">
+        <label for="atlas">Atlas / 图集
+          <select id="atlas" disabled><option value="v1">v1 · Warm head / 暖色头部</option><option value="v2">v2 · Cyan head / 青色头部</option></select>
+        </label>
+        <button id="replace-atlas" type="button" disabled>Change atlas / 更换图集</button>
+        <button id="remove" type="button" disabled>Remove pilot / 移除角色</button>
+        <button id="reenter" type="button" disabled>Re-enter pilot / 角色重进</button>
+      </div>
+      <p class="note">Changing the atlas starts that pilot's animation from the first frame. The other pilot keeps its own playback.<br><span lang="zh-CN">更换图集后，该角色从首帧开始播放；另一角色保持独立播放。</span></p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Scene session / 场景会话</legend>
+      <div class="controls">
+        <button id="replay-saved" type="button" disabled>Replay saved baseline / 回放保存的初始帧</button>
+        <button id="restart" type="button" disabled>Rebuild scene / 重建场景</button>
+        <button id="close" type="button">Close / 关闭</button>
+      </div>
+      <p class="note">Rebuild is available when the scene has no pending work. It retains the committed choices and restarts animation from the first frame.<br><span lang="zh-CN">无等待工作时可重建场景，保留已生效的选择，并从动画首帧重新开始。</span></p>
+    </fieldset>
+
+    <details id="diagnostics">
+      <summary>Resource delivery diagnostics / 资源交付诊断</summary>
+      <fieldset>
+        <legend>Pending delivery / 等待交付</legend>
+        <div class="controls">
+          <label for="hold-next"><input id="hold-next" type="checkbox" disabled>Hold next image delivery / 延迟下一张图像交付</label>
+          <label for="held-source">Held image / 等待图像
+            <select id="held-source" disabled><option value="">None / 暂无</option></select>
+          </label>
+          <button id="release-source" type="button" disabled>Release delivery / 交付图像</button>
+          <label for="failure-kind">Failure value / 失败值
+            <select id="failure-kind" disabled><option value="error">Error / 错误对象</option><option value="undefined">undefined / 未定义值</option></select>
+          </label>
+          <button id="fail-source" type="button" disabled>Fail delivery / 交付失败</button>
+        </div>
+        <p class="note">These controls delay or fail delivery of fetched image bytes. Cancelling an outfit change does not promise that the underlying image work stops.<br><span lang="zh-CN">这些控件延迟或拒绝已获取图像字节的交付。取消换装不表示底层图像工作一定停止。</span></p>
+      </fieldset>
+    </details>
+
+    <section aria-labelledby="trace-heading">
+      <h2 id="trace-heading">Recent activity / <span lang="zh-CN">最近活动</span></h2>
+      <p id="trace-description" class="note">Up to 256 entries; closing remains available when this limit is reached.<br><span lang="zh-CN">最多记录 256 条；达到上限时仍可关闭。</span></p>
+      <pre id="trace" tabindex="0" aria-label="Recent scene activity / 最近场景活动" aria-describedby="trace-description">No activity yet / 暂无活动</pre>
+    </section>
+    <noscript>This example needs JavaScript. / 此示例需要启用 JavaScript。</noscript>
+  </main>
+  <script type="module" src="./main.mjs"></script>
+</body>
+</html>

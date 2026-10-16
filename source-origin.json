@@ -23746,5 +23746,328 @@
       "unchanged192": "Each prior review cutoff is retained.",
       "changedOrNew11": "Exactly eleven current English/Chinese reading pairs: eight revised existing pairs and three new pairs. Each of the 192 unchanged pairs retains its previous review cutoff; no whole-inventory fresh review is asserted."
     }
+  },
+  "bitmapResourceSlotDeliveryActualSuccessor": {
+    "engineeringPreview": "0.56.0",
+    "status": "DELIVERED_TO_MAIN",
+    "pullRequest": 45,
+    "url": "https://github.com/cnedwin/Egret_rebuild/pull/45",
+    "main": "19c308af4d7c9590f886c8105d5d678e708184c5",
+    "independentReview": {
+      "bytes": 24681,
+      "sha256": "52f2fdd849ab93d8e0d857b899bfe71e01e5eccd3e4f3e7ce9a4142cee17c1b6"
+    },
+    "historicalPublicPendingCutoffsPreserved": true,
+    "remoteCIPassClaim": false
+  },
+  "resourceSceneWorkPackage": {
+    "engineeringPreview": "0.57.0",
+    "sourceId": "S111",
+    "deliverableId": "V062",
+    "date": "2026-10-16",
+    "status": "IN_PROGRESS_AT_RECORDED_CUTOFF",
+    "contract": "en/docs/resource-scene-integration.md",
+    "evidence": "en/docs/resource-scene-integration.md",
+    "example": "https://github.com/cnedwin/Egret_rebuild/blob/main/examples/resource-scene/README.md",
+    "newRuntimeCodeDependency": false,
+    "defaultPublicAPIChanged": false,
+    "hostProtocolChanged": false,
+    "sourceAndBehavior": {
+      "focusedCPU": {
+        "savedStdout": {
+          "sha256": "36f54916ab309a522e01f409cc1e36fb66a993cbfee2e28aa05442495fc713cf",
+          "bytes": 6105
+        },
+        "cutoff": "Accepted Session badge repair; followed by separate current Main Source and native checks",
+        "passed": 58,
+        "cancelled": 0,
+        "skipped": 0,
+        "failed": 0,
+        "todo": 0,
+        "tests": 58
+      },
+      "currentMainSource": {
+        "tests": 5,
+        "passed": 5,
+        "savedStdout": {
+          "sha256": "e545aa744e98b6eeedcd36ab37466323e962a5695bc2919e7736e0750e4e29a8",
+          "bytes": 711
+        },
+        "failed": 0
+      },
+      "sourceBoundary": {
+        "gpuClosure": 104,
+        "files": 398,
+        "canvasStaticClosure": 87,
+        "policyTests": 10,
+        "sourceOnly": true,
+        "routes": 139,
+        "modules": 124,
+        "aliases": 14
+      },
+      "packageAPI": {
+        "newRuntimeCodeDependency": false,
+        "newSDKRuntimeExports": 0,
+        "newSDKTypeExports": 0,
+        "hostProtocolChanged": false
+      }
+    },
+    "nativeActual": {
+      "status": "RECORDED_BOUNDED_DESKTOP_BROWSER_RESULT",
+      "result": {
+        "bytes": 3987690,
+        "sha256": "8c2ec563c6acc92bb628f671af39b2c00ef858ede08f76258a4ed79eb1048451"
+      },
+      "sourceSnapshot": {
+        "bytes": 292427,
+        "sha256": "197a6704b8988cefb841b08687357bbdfc1c86be7289594f3886552a4d6359c4"
+      },
+      "independentReview": {
+        "bytes": 4142,
+        "sha256": "62c7a5cc0d805f5c974e5d5410295b4ff59b5a02565a733d28995290f3a799db"
+      },
+      "facts": {
+        "runCount": 7,
+        "ordinaryContexts": 2,
+        "negativeContexts": 5,
+        "rawFrameCount": 64,
+        "ordinaryRawFrameCount": 54,
+        "negativeRawFrameCount": 10,
+        "status": "PASS_FINITE_RECORDED_DESKTOP_RESOURCE_SCENE",
+        "accepted": true,
+        "pendingOperations": 0,
+        "resourcesRetired": true,
+        "ordinaryLiteralPointsEach": 348,
+        "fixedCJKPixelsEach": 27648,
+        "observedCJKChangedChannels": 0,
+        "fixedEnvironment": "Windows10.0.26300 x64 / Edge155.0.4283.45 / Playwright1.62.1",
+        "physicalDeviceAcceptance": false,
+        "performanceAcceptance": false
+      }
+    },
+    "publicSourceBilingualReview": {
+      "status": "APPROVED_EXACT_CHANGED_READING_FILES",
+      "readingPairs": 6,
+      "independentReview": {
+        "bytes": 3857,
+        "sha256": "972b009ed2720324e77c956bfe9b8f06cff2ef06fc22770fa95fa00265eb7f67"
+      }
+    },
+    "fullPrepush": "PENDING_AT_METADATA_CUTOFF",
+    "mandatoryHooks": "PENDING_AT_METADATA_CUTOFF",
+    "newGitDelivery": "PENDING_AT_METADATA_CUTOFF",
+    "remoteCIPassClaim": false,
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "generalGameUI": "OPEN",
+    "physicalDeviceAcceptance": false,
+    "performanceAcceptance": false,
+    "historicalCutoffsPreserved": true,
+    "independentlyAuthoredFirstParty": true,
+    "assetRights": "Original PNG/font provenance and applicable upstream font/legal declarations remain unchanged.",
+    "currentCodeSourcePins": [
+      {
+        "path": "tools/verify.mjs",
+        "bytes": 787,
+        "sha256": "12433db068ac14ec910bd6951eed6e58b3860a95593620b573f46ffe03981bd8"
+      },
+      {
+        "path": "examples/resource-scene/assets/NotoSansSC-OFL.txt",
+        "bytes": 4388,
+        "sha256": "1c05c68c34f9708415aada51f17e1b0092d2cea709bf4a94cd38114f9e73d7d9"
+      },
+      {
+        "path": "examples/resource-scene/assets/NotoSansSC-fixed.woff2",
+        "bytes": 1796,
+        "sha256": "9e435555e47102d40ace35211158051b45c131bce1fc7c1daca871b2386ec895"
+      },
+      {
+        "path": "examples/resource-scene/assets/NotoSansSC.source.css",
+        "bytes": 348,
+        "sha256": "afa8bcf0f8a6d2e5b13ed4912a26083371abaad6163bbc564e6e3d88a83a24ed"
+      },
+      {
+        "path": "examples/resource-scene/assets/atlas-v1.png",
+        "bytes": 130,
+        "sha256": "54f5a801227112caf56f4d3bef92d1018d19dddd85ca13b08099300a62532fdd"
+      },
+      {
+        "path": "examples/resource-scene/assets/atlas-v2.png",
+        "bytes": 129,
+        "sha256": "006e69af587d0471da17b1fa5c40949ffc3f2ec21bab0ce4f73d77bd18e8fea2"
+      },
+      {
+        "path": "examples/resource-scene/assets/outfit-A.png",
+        "bytes": 83,
+        "sha256": "376a6eaaeb1ca8861b6a0ee62db3edbb0ec926648f8c20cfd5f6e57c1bf44960"
+      },
+      {
+        "path": "examples/resource-scene/assets/outfit-B.png",
+        "bytes": 80,
+        "sha256": "c37296e1b63b40da2e17d8cc31d88819f35f52e1d219abc367288fda45ceaa78"
+      },
+      {
+        "path": "examples/resource-scene/assets/outfit-C.png",
+        "bytes": 81,
+        "sha256": "e27c682265405cf30b6cbe9dc453ea2d7d01235e6c2512286f9fc7e1603dbd66"
+      },
+      {
+        "path": "examples/resource-scene/assets/outfit-D.png",
+        "bytes": 83,
+        "sha256": "d2c3b3461b2b5d8e6a48608c83528efe78c6a0d3b219dc0038c23ccf016c3f98"
+      },
+      {
+        "path": "examples/resource-scene/assets/provenance.json",
+        "bytes": 6685,
+        "sha256": "5d1776c591bb05605ac19186736096d679908243fe64efa1ceafc1c4520d5b5c"
+      },
+      {
+        "path": "examples/resource-scene/gpu-scene.mjs",
+        "bytes": 3235,
+        "sha256": "7198b11ef70e18e5447f1c792b5b30fa26a6582decf2acbdab147c17f381e4a1"
+      },
+      {
+        "path": "examples/resource-scene/index.html",
+        "bytes": 10322,
+        "sha256": "aa997124f8c0582038f03a35206a89dc2490723e2070f12e10a335b6ea20e60d"
+      },
+      {
+        "path": "examples/resource-scene/main.mjs",
+        "bytes": 38946,
+        "sha256": "3621c5714c04efab75b7cb199c6ecb4b14d931d47acd167be3fb241729298bc5"
+      },
+      {
+        "path": "examples/resource-scene/session.mjs",
+        "bytes": 20354,
+        "sha256": "3401291ac9c88af57b9478ed8eb36a30e2936e27241f82bdafa2827eb948eb17"
+      },
+      {
+        "path": "tests/resource-scene-assets.test.mjs",
+        "bytes": 13012,
+        "sha256": "a6b27c8c4c833ffdb2ca2af12c1a34998dc552522dd657ad2d8dacaea8f59b2b"
+      },
+      {
+        "path": "tests/resource-scene-boundary.test.mjs",
+        "bytes": 8923,
+        "sha256": "253640b105c83cef54943835c280aca0b6438c47ae373276faa91af46275d896"
+      },
+      {
+        "path": "tests/resource-scene-browser-source.test.mjs",
+        "bytes": 7638,
+        "sha256": "afb5953d3c53aa3e20f610623c6aea636cee110b7d2d9c8faf99461dc00b11b5"
+      },
+      {
+        "path": "tests/resource-scene-gpu.test.mjs",
+        "bytes": 10985,
+        "sha256": "bcc8add34ee3ce3abb900f813acea9121b63f285f093b31f86db20790391914b"
+      },
+      {
+        "path": "tests/resource-scene-session-heldout.test.mjs",
+        "bytes": 12204,
+        "sha256": "41783803d94eebe649f0617b0bbdc91226ed280bb62ca54b4276d3e5ab032ebd"
+      },
+      {
+        "path": "tests/resource-scene-session.test.mjs",
+        "bytes": 32536,
+        "sha256": "8e03fc67237ce70946a50adefcb2daf2cff63fa301ff95473e3982472ce63fd6"
+      },
+      {
+        "path": "tools/resource-scene-boundary.mjs",
+        "bytes": 25753,
+        "sha256": "10c52ae5f7c33d1550c9231956297bb041c7a8cb67af8c19b0fdf41842bc4cd4"
+      },
+      {
+        "path": "tools/resource-scene/author-assets.mjs",
+        "bytes": 9481,
+        "sha256": "b404bfdf936ffc6caffe0a99ba9fb1ae0288890ce9dce9649518462bb9f1c03f"
+      },
+      {
+        "path": "tools/resource-scene/oracle.mjs",
+        "bytes": 5536,
+        "sha256": "cbe5e58f681d032eecfb726bbe6e18945d4488b818f7b932f3f4606cd2e0c887"
+      },
+      {
+        "path": "tools/resource-scene/reference/left.rgba",
+        "bytes": 12288,
+        "sha256": "f972dbeb2c4d4f314b4ab922a4ec9afd7569ec156eb90c4757cf3a728bcee394"
+      },
+      {
+        "path": "tools/resource-scene/reference/manifest.json",
+        "bytes": 4364,
+        "sha256": "3fd92da19b29877da856e104d857b606305745baf280a9f3258d41a166247e8a"
+      },
+      {
+        "path": "tools/resource-scene/reference/right.rgba",
+        "bytes": 12288,
+        "sha256": "941dc2c181e97c65da54d60969c27b140a8431abd75c4da8a10ff08d3569092b"
+      },
+      {
+        "path": "tools/verify-resource-scene.mjs",
+        "bytes": 52727,
+        "sha256": "5f020c61a54408fbd7efff68f1b1968a8ea11d4bac5a8b47690457159a3e91d0"
+      }
+    ],
+    "currentPublicPins": [
+      {
+        "path": "README.md",
+        "bytes": 6573,
+        "sha256": "87c5460b17fb4662962f7a62a4710ac6676350766e6230af1c4c2f84ba17f2f8"
+      },
+      {
+        "path": "README.zh-CN.md",
+        "bytes": 6098,
+        "sha256": "b8136e265f7f964d26c722d7cd3bffacb1b6cbcdb320d2e01339e5bdd94cdd41"
+      },
+      {
+        "path": "examples/resource-scene/README.md",
+        "bytes": 5125,
+        "sha256": "52c82d41c0af41ca95596a5566359ef345a6de351929ee7d9da41fe369200c1a"
+      },
+      {
+        "path": "examples/resource-scene/README.zh-CN.md",
+        "bytes": 4440,
+        "sha256": "071bbb3e65d251ef94c428696a1c407d31555b25d4343b6b1c17e8a6e6747001"
+      },
+      {
+        "path": "knowledge-base/en/CHANGELOG.md",
+        "bytes": 13894,
+        "sha256": "bc47848dbccfb75437fd0ea88657afc8250749d20f0047deca52b299594ef6f1"
+      },
+      {
+        "path": "knowledge-base/Cns/CHANGELOG.md",
+        "bytes": 12367,
+        "sha256": "f11d8189af13c1df27e125f7f7c5ce470c4dedf2d504e3f074d7a5be6e6dcc99"
+      },
+      {
+        "path": "knowledge-base/en/README.md",
+        "bytes": 5566,
+        "sha256": "4ab17ac259f4efc7f473615d7f3cafab3d162483b60c4d42ee6f33a13c623eca"
+      },
+      {
+        "path": "knowledge-base/Cns/README.md",
+        "bytes": 4820,
+        "sha256": "cb1dd9cde9fc3bafcd106566413db834a1f656a43640815baaedbfbdce0984d6"
+      },
+      {
+        "path": "knowledge-base/en/docs/core-progress.md",
+        "bytes": 8648,
+        "sha256": "b4e9ac09e1b7e64c3f173db041f6363576ea21ff3c44d3f8ddf01312b3bfc849"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/core-progress.md",
+        "bytes": 7452,
+        "sha256": "4195325cf2971f5997a69235c49b0f3f1dfc8fb53bbdd9335483a12eda20ca5a"
+      },
+      {
+        "path": "knowledge-base/en/docs/resource-scene-integration.md",
+        "bytes": 9809,
+        "sha256": "41ed75dbb20dc238dbf82b557a7f4539a8a2a372ed9ba1f3774cc994d04844df"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/resource-scene-integration.md",
+        "bytes": 8760,
+        "sha256": "8eccdd518b4944621dee49ea8ec851ad7faa5a1d279609601c91d76860741792"
+      }
+    ]
   }
 }

@@ -84,8 +84,8 @@
       "action": "move-pair",
       "previousZhSha256": "f43625255269c8801af0929179a9aab32cbca58094e4a842797e39171fc549b0",
       "previousEnSha256": "e8b100ccbd9d0fb99237a564f484f7fa6dbf008191570fa58f3e481c05c3e9f9",
-      "currentZhSha256": "d306914c54976645019d4ffb8f5452258a5d7d8cc33cd9bd31439fff21990ed7",
-      "currentEnSha256": "36e3aa6d28798e67b791bdaa2de0e19d80a0364be517188374ffcf4ed2ab0d22"
+      "currentZhSha256": "f11d8189af13c1df27e125f7f7c5ce470c4dedf2d504e3f074d7a5be6e6dcc99",
+      "currentEnSha256": "bc47848dbccfb75437fd0ea88657afc8250749d20f0047deca52b299594ef6f1"
     },
     {
       "oldZh": "knowledge-base/CONTRIBUTING.md",
@@ -840,8 +840,8 @@
       "action": "move-pair",
       "previousZhSha256": "372e5b07d4980eb45d8338424c8d970b7725e324e6b3397916944b0529c55ec7",
       "previousEnSha256": "ed88646659467d718a30c3bfff14b41c28debbcb786e7bf816ee68819f612887",
-      "currentZhSha256": "2b31d507ad2fa23ce5d26f667cf87994833f201cee15cee8267bcfcb15cbbf64",
-      "currentEnSha256": "c3df734c74adee396b95f4e2c4fdead99488ab01a2085241daf9ee9ac84cf874"
+      "currentZhSha256": "cb1dd9cde9fc3bafcd106566413db834a1f656a43640815baaedbfbdce0984d6",
+      "currentEnSha256": "4ab17ac259f4efc7f473615d7f3cafab3d162483b60c4d42ee6f33a13c623eca"
     },
     {
       "oldZh": "knowledge-base/templates/实现来源记录.md",
@@ -960,8 +960,8 @@
       "action": "move-pair",
       "previousZhSha256": "803a40dd8bfd0f98ade51c8ba736790509aae12a6e045a8ea688b3ff5d01cdcf",
       "previousEnSha256": "40a2ef2f686aba4a10279c417dfe17879bb6396b3b80dd75b26bd09c87d665f9",
-      "currentZhSha256": "3026a8df47e7bd94c055095eaf071bdc533b36c42c6c9a85ef333bb350da0ada",
-      "currentEnSha256": "c603b51bb9f3fc00d3c2082c3173ab6e2442615284b1464d9a6106a9ab1f49b3"
+      "currentZhSha256": "b8136e265f7f964d26c722d7cd3bffacb1b6cbcdb320d2e01339e5bdd94cdd41",
+      "currentEnSha256": "87c5460b17fb4662962f7a62a4710ac6676350766e6230af1c4c2f84ba17f2f8"
     },
     {
       "oldZh": "knowledge-base/docs/WebGPU矩形执行合同.md",
@@ -1080,8 +1080,8 @@
       "action": "move-pair",
       "previousZhSha256": "61639f120f4ed3aa77c4ffd41cf377e447dcac20e9562322c103e2e6b44c3990",
       "previousEnSha256": "60c77a11dc614191ba1d98fa488301a344839cc672df01e2c632048d85e8d376",
-      "currentZhSha256": "a40eb5b587b10b7f9806acb8f5449901afa7b3fed55f1b480a6227eeee1ce312",
-      "currentEnSha256": "34113498b4e86748f1e2206286f3d0fb3821c71b112361d261604584405523f0"
+      "currentZhSha256": "4195325cf2971f5997a69235c49b0f3f1dfc8fb53bbdd9335483a12eda20ca5a",
+      "currentEnSha256": "b4e9ac09e1b7e64c3f173db041f6363576ea21ff3c44d3f8ddf01312b3bfc849"
     },
     {
       "oldZh": "knowledge-base/docs/3d-foundation.md",
@@ -1838,6 +1838,26 @@
       "currentZhSha256": "910756852f02dd1567c39e45ee639848ef29241af5377c4323a941caeaf8e9f1",
       "engineeringPreview": "0.56.0",
       "status": "CURRENT_READING_SOURCE"
+    },
+    {
+      "newEn": "examples/resource-scene/README.md",
+      "newZh": "examples/resource-scene/README.zh-CN.md",
+      "kind": "public_reading",
+      "action": "add-current-pair",
+      "currentEnSha256": "52c82d41c0af41ca95596a5566359ef345a6de351929ee7d9da41fe369200c1a",
+      "currentZhSha256": "071bbb3e65d251ef94c428696a1c407d31555b25d4343b6b1c17e8a6e6747001",
+      "engineeringPreview": "0.57.0",
+      "status": "CURRENT_READING_SOURCE"
+    },
+    {
+      "newEn": "knowledge-base/en/docs/resource-scene-integration.md",
+      "newZh": "knowledge-base/Cns/docs/resource-scene-integration.md",
+      "kind": "public_reading",
+      "action": "add-current-pair",
+      "currentEnSha256": "41ed75dbb20dc238dbf82b557a7f4539a8a2a372ed9ba1f3774cc994d04844df",
+      "currentZhSha256": "8eccdd518b4944621dee49ea8ec851ad7faa5a1d279609601c91d76860741792",
+      "engineeringPreview": "0.57.0",
+      "status": "CURRENT_READING_SOURCE"
     }
   ],
   "registries": [
@@ -2281,6 +2301,14 @@
     "date": "2026-10-16",
     "newReadingPairs": 3,
     "changedExistingReadingPairs": 8,
+    "preservedOriginalsUnchanged": true,
+    "historicalCutoffsPreserved": true
+  },
+  "resourceSceneCuration": {
+    "engineeringPreview": "0.57.0",
+    "date": "2026-10-16",
+    "newReadingPairs": 2,
+    "changedExistingReadingPairs": 4,
     "preservedOriginalsUnchanged": true,
     "historicalCutoffsPreserved": true
   }

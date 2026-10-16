@@ -1,0 +1,167 @@
+{
+  "schemaVersion": 1,
+  "artifact": "egret-resource-scene-assets",
+  "records": [
+    {
+      "path": "examples/resource-scene/assets/atlas-v1.png",
+      "bytes": 130,
+      "sha256": "54f5a801227112caf56f4d3bef92d1018d19dddd85ca13b08099300a62532fdd",
+      "origin": "first-party",
+      "license": "Apache-2.0",
+      "generator": {
+        "path": "tools/resource-scene/author-assets.mjs",
+        "bytes": 9481,
+        "sha256": "b404bfdf936ffc6caffe0a99ba9fb1ae0288890ce9dce9649518462bb9f1c03f"
+      },
+      "width": 32,
+      "height": 16,
+      "bitDepth": 8,
+      "colorType": 6,
+      "interlace": 0
+    },
+    {
+      "path": "examples/resource-scene/assets/atlas-v2.png",
+      "bytes": 129,
+      "sha256": "006e69af587d0471da17b1fa5c40949ffc3f2ec21bab0ce4f73d77bd18e8fea2",
+      "origin": "first-party",
+      "license": "Apache-2.0",
+      "generator": {
+        "path": "tools/resource-scene/author-assets.mjs",
+        "bytes": 9481,
+        "sha256": "b404bfdf936ffc6caffe0a99ba9fb1ae0288890ce9dce9649518462bb9f1c03f"
+      },
+      "width": 32,
+      "height": 16,
+      "bitDepth": 8,
+      "colorType": 6,
+      "interlace": 0
+    },
+    {
+      "path": "examples/resource-scene/assets/outfit-A.png",
+      "bytes": 83,
+      "sha256": "376a6eaaeb1ca8861b6a0ee62db3edbb0ec926648f8c20cfd5f6e57c1bf44960",
+      "origin": "first-party",
+      "license": "Apache-2.0",
+      "generator": {
+        "path": "tools/resource-scene/author-assets.mjs",
+        "bytes": 9481,
+        "sha256": "b404bfdf936ffc6caffe0a99ba9fb1ae0288890ce9dce9649518462bb9f1c03f"
+      },
+      "width": 16,
+      "height": 16,
+      "bitDepth": 8,
+      "colorType": 6,
+      "interlace": 0
+    },
+    {
+      "path": "examples/resource-scene/assets/outfit-B.png",
+      "bytes": 80,
+      "sha256": "c37296e1b63b40da2e17d8cc31d88819f35f52e1d219abc367288fda45ceaa78",
+      "origin": "first-party",
+      "license": "Apache-2.0",
+      "generator": {
+        "path": "tools/resource-scene/author-assets.mjs",
+        "bytes": 9481,
+        "sha256": "b404bfdf936ffc6caffe0a99ba9fb1ae0288890ce9dce9649518462bb9f1c03f"
+      },
+      "width": 16,
+      "height": 16,
+      "bitDepth": 8,
+      "colorType": 6,
+      "interlace": 0
+    },
+    {
+      "path": "examples/resource-scene/assets/outfit-C.png",
+      "bytes": 81,
+      "sha256": "e27c682265405cf30b6cbe9dc453ea2d7d01235e6c2512286f9fc7e1603dbd66",
+      "origin": "first-party",
+      "license": "Apache-2.0",
+      "generator": {
+        "path": "tools/resource-scene/author-assets.mjs",
+        "bytes": 9481,
+        "sha256": "b404bfdf936ffc6caffe0a99ba9fb1ae0288890ce9dce9649518462bb9f1c03f"
+      },
+      "width": 16,
+      "height": 16,
+      "bitDepth": 8,
+      "colorType": 6,
+      "interlace": 0
+    },
+    {
+      "path": "examples/resource-scene/assets/outfit-D.png",
+      "bytes": 83,
+      "sha256": "d2c3b3461b2b5d8e6a48608c83528efe78c6a0d3b219dc0038c23ccf016c3f98",
+      "origin": "first-party",
+      "license": "Apache-2.0",
+      "generator": {
+        "path": "tools/resource-scene/author-assets.mjs",
+        "bytes": 9481,
+        "sha256": "b404bfdf936ffc6caffe0a99ba9fb1ae0288890ce9dce9649518462bb9f1c03f"
+      },
+      "width": 16,
+      "height": 16,
+      "bitDepth": 8,
+      "colorType": 6,
+      "interlace": 0
+    }
+  ],
+  "reused": [
+    {
+      "path": "tools/browser-png/assets/rgb-red-green.png",
+      "bytes": 72,
+      "sha256": "917780f34b6e830eceb3a99e7c5794af705f16193ba8b2d415c86b24aa0cc78d",
+      "origin": "retained-first-party",
+      "rights": "Apache-2.0; original encoded badge fixture, reused without regeneration."
+    },
+    {
+      "path": "examples/canvas-text/assets/ahem.ttf",
+      "bytes": 22572,
+      "sha256": "f0a92cd0cc45735591c9b5b1fa8aecd5194e8dc518895ca22af94a46c23550dc",
+      "origin": "retained-upstream",
+      "rights": "Public domain; original Creative Commons Zero fallback in Ahem-COPYING.txt, without assigning a different SPDX version.",
+      "originalURL": "https://www.w3.org/Style/CSS/Test/Fonts/Ahem/ahem.ttf"
+    },
+    {
+      "path": "examples/canvas-text/assets/Ahem-README.txt",
+      "bytes": 2456,
+      "sha256": "e5314468f94f7d9caf62bd8f6871ebf81c96827254043dac95814c943852d40e",
+      "origin": "retained-upstream",
+      "rights": "Original Ahem documentation retained unchanged with its copyright and rights record.",
+      "originalURL": "https://www.w3.org/Style/CSS/Test/Fonts/Ahem/README"
+    },
+    {
+      "path": "examples/canvas-text/assets/Ahem-COPYING.txt",
+      "bytes": 1928,
+      "sha256": "3100f58a80de8fcd9dee4280dc4e52a45cc25a2084006e6b8fb5750708a388f8",
+      "origin": "retained-upstream",
+      "rights": "Original public-domain and Creative Commons Zero fallback declaration; unchanged legal original.",
+      "originalURL": "https://www.w3.org/Style/CSS/Test/Fonts/Ahem/COPYING"
+    },
+    {
+      "path": "examples/resource-scene/assets/NotoSansSC-fixed.woff2",
+      "bytes": 1796,
+      "sha256": "9e435555e47102d40ace35211158051b45c131bce1fc7c1daca871b2386ec895",
+      "origin": "retained-upstream",
+      "rights": "OFL-1.1; Copyright 2014-2021 Adobe, reserved name Source. Original publisher-provided Noto Sans SC normal-400 subset; no local conversion.",
+      "originalURL": "https://fonts.gstatic.com/l/font?kit=k3kCo84MPvpLmixcA63oeAL7Iqp5IZJF9bmaG9_FnYlVe9Q3Qtesf4SJmOwP43a3q8b8OtU&skey=cf0bb10b5602fdc3&v=v41"
+    },
+    {
+      "path": "examples/resource-scene/assets/NotoSansSC.source.css",
+      "bytes": 348,
+      "sha256": "afa8bcf0f8a6d2e5b13ed4912a26083371abaad6163bbc564e6e3d88a83a24ed",
+      "origin": "retained-upstream",
+      "rights": "Unmodified publisher response retained as retrieval provenance. It is not an Egret-authored stylesheet and is not applied by the example.",
+      "originalURL": "https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400&text=%E5%B7%A6%E5%8F%B3%E4%BE%A7%E5%B7%B2%E9%80%89%E6%8B%A9%20&display=block"
+    },
+    {
+      "path": "examples/resource-scene/assets/NotoSansSC-OFL.txt",
+      "bytes": 4388,
+      "sha256": "1c05c68c34f9708415aada51f17e1b0092d2cea709bf4a94cd38114f9e73d7d9",
+      "origin": "retained-upstream",
+      "rights": "OFL-1.1; original upstream copyright and license, retained without text normalization.",
+      "originalURL": "https://raw.githubusercontent.com/google/fonts/2894aab31764f10f29c421bdfd2340d3b382d384/ofl/notosanssc/OFL.txt"
+    }
+  ],
+  "encoding": "RGBA8 noninterlaced PNG, transparent black, filter 0, Node standard-library zlib level 9.",
+  "acceptance": "Encoded identity and independent literal art checks are separate from actual browser decoding, font glyphs, rendering and performance."
+}

@@ -4,9 +4,17 @@ English | [简体中文](../../Cns/docs/core-progress.md)
 
 The core is developed through executable increments that connect display, resources, animation, input and host execution. This page summarizes the current interfaces and remaining product work; each linked contract contains the exact behavior and verification scope.
 
+## Real-resource scene integration — 0.57.0
+
+Engineering preview **0.57.0** combines real PNG resources, shared atlas playback, text and mouse input through existing public Engine APIs. Canvas is the default; the textured WebGPU scene is an explicit experimental choice. Resource preparation, presentation readiness, input readiness and safe shutdown have separate boundaries. Read the [integration record](resource-scene-integration.md) and [example guide](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/resource-scene/README.md).
+
+The recorded desktop Canvas/WebGPU workflow completed seven fresh contexts and retained 64 original RGBA frames. Fixed-point and font-region comparisons, negative controls and retirement passed in the documented environment. Phone, cross-environment font, performance and energy acceptance remain open.
+
 ## Recoverable Bitmap resource replacement — 0.56.0
 
 `Engine.createBitmapResourceSlot(scope, bitmap)` keeps one Bitmap identity while replacing its Texture. The root adds only the erased `BitmapResourceSlot` and `BitmapResourceSlotState` names. The initial binding is borrowed; only fresh acquired replacement leases are owned by the slot. Pending, failed and cancelled requests retain the prior usable binding, and only the latest accepted intent may commit. Rejection, binding-conflict and lifecycle details follow the [specification](bitmap-resource-slot-spec.md). Read the [evidence](bitmap-resource-slot-evidence.md) and [composition example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/bitmap-resource-slot/README.md). Focused behavior, strict consumers and the recorded desktop Canvas/WebGPU composition have passed their bounded checks. Full local/public gates and repository delivery are recorded separately in the linked evidence.
+
+The 0.56 resource-replacement increment was delivered through [PR #45](https://github.com/cnedwin/Egret_rebuild/pull/45), Main `19c308af4d7c9590f886c8105d5d678e708184c5`. Earlier verification records retain their original cutoffs.
 
 ## Explicit local layout — 0.55.0
 
@@ -44,7 +52,7 @@ GitHub reported no statuses or check runs for PR #42. The local verification abo
 ## Next work and contributions
 
 - Extend UI composition beyond explicit local planning, followed by touch, keyboard, focus, accessibility and editing.
-- Integrate real-resource scenes, multi-resource outfit changes, recovery and animation retargeting with explicit ownership and host limits.
+- Validate and extend the real-resource example toward multi-resource outfit changes, recovery and animation retargeting with explicit ownership and host limits.
 - Complete versioned Spine support under **R020/V020**, including its feature/backend/host matrix.
 - Extended 3D scenes, characters and effects, with asset and lifetime integration.
 - Production browser/mini-game/native hosts and target-device typography and performance.

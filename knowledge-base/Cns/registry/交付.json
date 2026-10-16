@@ -6458,6 +6458,141 @@
         "historicalCutoffsPreserved": true,
         "defaultAPIChanged": true
       }
+    },
+    {
+      "id": "V062",
+      "kind": "engineering_preview",
+      "status": "in_progress",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R011",
+        "R012",
+        "R015",
+        "R016",
+        "R019",
+        "R021"
+      ],
+      "sourceIds": [
+        "S111"
+      ],
+      "dependsOn": [
+        "V061"
+      ],
+      "owner": "project",
+      "dueDate": null,
+      "title": "0.57.0 真实资源场景集成",
+      "doc": "Cns/docs/resource-scene-integration.md",
+      "artifacts": [
+        "Cns/docs/resource-scene-integration.md"
+      ],
+      "implementation": "组合既有公开 Engine API，明确资源、显示、输入与安全回收屏障。",
+      "acceptance": "源码与 CPU 检查、固定字体证据和原生浏览器观察分别保留结果；发布和交付按实际截止记录。",
+      "verification": {
+        "engineeringPreview": "0.57.0",
+        "sourceId": "S111",
+        "deliverableId": "V062",
+        "date": "2026-10-16",
+        "status": "IN_PROGRESS_AT_RECORDED_CUTOFF",
+        "contract": "Cns/docs/resource-scene-integration.md",
+        "evidence": "Cns/docs/resource-scene-integration.md",
+        "example": "https://github.com/cnedwin/Egret_rebuild/blob/main/examples/resource-scene/README.md",
+        "newRuntimeCodeDependency": false,
+        "defaultPublicAPIChanged": false,
+        "hostProtocolChanged": false,
+        "sourceAndBehavior": {
+          "focusedCPU": {
+            "savedStdout": {
+              "sha256": "36f54916ab309a522e01f409cc1e36fb66a993cbfee2e28aa05442495fc713cf",
+              "bytes": 6105
+            },
+            "cutoff": "Accepted Session badge repair; followed by separate current Main Source and native checks",
+            "passed": 58,
+            "cancelled": 0,
+            "skipped": 0,
+            "failed": 0,
+            "todo": 0,
+            "tests": 58
+          },
+          "currentMainSource": {
+            "tests": 5,
+            "passed": 5,
+            "savedStdout": {
+              "sha256": "e545aa744e98b6eeedcd36ab37466323e962a5695bc2919e7736e0750e4e29a8",
+              "bytes": 711
+            },
+            "failed": 0
+          },
+          "sourceBoundary": {
+            "gpuClosure": 104,
+            "files": 398,
+            "canvasStaticClosure": 87,
+            "policyTests": 10,
+            "sourceOnly": true,
+            "routes": 139,
+            "modules": 124,
+            "aliases": 14
+          },
+          "packageAPI": {
+            "newRuntimeCodeDependency": false,
+            "newSDKRuntimeExports": 0,
+            "newSDKTypeExports": 0,
+            "hostProtocolChanged": false
+          }
+        },
+        "nativeActual": {
+          "status": "RECORDED_BOUNDED_DESKTOP_BROWSER_RESULT",
+          "result": {
+            "bytes": 3987690,
+            "sha256": "8c2ec563c6acc92bb628f671af39b2c00ef858ede08f76258a4ed79eb1048451"
+          },
+          "sourceSnapshot": {
+            "bytes": 292427,
+            "sha256": "197a6704b8988cefb841b08687357bbdfc1c86be7289594f3886552a4d6359c4"
+          },
+          "independentReview": {
+            "bytes": 4142,
+            "sha256": "62c7a5cc0d805f5c974e5d5410295b4ff59b5a02565a733d28995290f3a799db"
+          },
+          "facts": {
+            "runCount": 7,
+            "ordinaryContexts": 2,
+            "negativeContexts": 5,
+            "rawFrameCount": 64,
+            "ordinaryRawFrameCount": 54,
+            "negativeRawFrameCount": 10,
+            "status": "PASS_FINITE_RECORDED_DESKTOP_RESOURCE_SCENE",
+            "accepted": true,
+            "pendingOperations": 0,
+            "resourcesRetired": true,
+            "ordinaryLiteralPointsEach": 348,
+            "fixedCJKPixelsEach": 27648,
+            "observedCJKChangedChannels": 0,
+            "fixedEnvironment": "Windows10.0.26300 x64 / Edge155.0.4283.45 / Playwright1.62.1",
+            "physicalDeviceAcceptance": false,
+            "performanceAcceptance": false
+          }
+        },
+        "publicSourceBilingualReview": {
+          "status": "APPROVED_EXACT_CHANGED_READING_FILES",
+          "readingPairs": 6,
+          "independentReview": {
+            "bytes": 3857,
+            "sha256": "972b009ed2720324e77c956bfe9b8f06cff2ef06fc22770fa95fa00265eb7f67"
+          }
+        },
+        "fullPrepush": "PENDING_AT_METADATA_CUTOFF",
+        "mandatoryHooks": "PENDING_AT_METADATA_CUTOFF",
+        "newGitDelivery": "PENDING_AT_METADATA_CUTOFF",
+        "remoteCIPassClaim": false,
+        "fullSpineR020V020": "OPEN",
+        "migrationR008V006": "OPEN",
+        "generalGameUI": "OPEN",
+        "physicalDeviceAcceptance": false,
+        "performanceAcceptance": false,
+        "historicalCutoffsPreserved": true
+      }
     }
   ],
   "spineF1ClockPortableReplaySuccessor": {
@@ -7755,5 +7890,18 @@
     "contract": "Cns/docs/local-linear-layout-spec.md",
     "evidence": "Cns/docs/local-linear-layout-evidence.md",
     "example": "https://github.com/cnedwin/Egret_rebuild/blob/main/examples/linear-layout/README.md"
+  },
+  "bitmapResourceSlotDeliveryActualSuccessor": {
+    "engineeringPreview": "0.56.0",
+    "status": "DELIVERED_TO_MAIN",
+    "pullRequest": 45,
+    "url": "https://github.com/cnedwin/Egret_rebuild/pull/45",
+    "main": "19c308af4d7c9590f886c8105d5d678e708184c5",
+    "independentReview": {
+      "bytes": 24681,
+      "sha256": "52f2fdd849ab93d8e0d857b899bfe71e01e5eccd3e4f3e7ce9a4142cee17c1b6"
+    },
+    "historicalPublicPendingCutoffsPreserved": true,
+    "remoteCIPassClaim": false
   }
 }

@@ -1,111 +1,133 @@
 {
   "schemaVersion": 1,
-  "revision": "0.56.0",
+  "revision": "0.57.0",
   "canonicalState": "Chinese registries; English JSON is a read-only translation",
   "evidencePolicy": "Machine data, embedded source, historical code and upstream legal originals retain their identities; paired reading versions explain them.",
   "semanticReview": {
-    "engineeringPreview": "0.56.0",
+    "engineeringPreview": "0.57.0",
     "date": "2026-10-16",
     "status": "reviewed_with_scope",
-    "scope": "Exactly eleven current English/Chinese reading pairs: eight revised existing pairs and three new pairs. Each of the 192 unchanged pairs retains its previous review cutoff; no whole-inventory fresh review is asserted.",
-    "unchangedPairs": 192,
-    "changedOrNewPairs": 11,
-    "totalPairs": 203,
+    "scope": "Exactly 6 changed/new reading pairs have the supplied independent review; the other 199 pairs retain their previous cutoffs.",
+    "unchangedPairs": 199,
+    "changedOrNewPairs": 6,
+    "totalPairs": 205,
     "priorReview": {
-      "engineeringPreview": "0.55.0",
-      "date": "2026-10-15",
+      "engineeringPreview": "0.56.0",
+      "date": "2026-10-16",
       "status": "reviewed_with_scope",
-      "scope": "Ten changed/new 0.55 reading pairs and the complete finite publication metadata were independently reviewed in the accepted R2 source/bilingual report. The unchanged 190 pairs retain the prior 0.54 editorial review cutoff. This successor corrects structured identity parity and records the genuine review; it changes no human reading, product code or acceptance scope.",
-      "unchangedPairs": 190,
-      "changedOrNewPairs": 10,
-      "totalPairs": 200,
+      "scope": "Exactly eleven current English/Chinese reading pairs: eight revised existing pairs and three new pairs. Each of the 192 unchanged pairs retains its previous review cutoff; no whole-inventory fresh review is asserted.",
+      "unchangedPairs": 192,
+      "changedOrNewPairs": 11,
+      "totalPairs": 203,
       "priorReview": {
-        "engineeringPreview": "0.54.0",
+        "engineeringPreview": "0.55.0",
         "date": "2026-10-15",
         "status": "reviewed_with_scope",
-        "scope": "All 197 registered bilingual reading pairs were assigned full author reads and disjoint independent editorial review. Review covers project narrative, paired meaning, attribution, links and preserved historical boundaries; it does not expand product or performance acceptance.",
-        "method": {
-          "en": "Organize active documentation around goals, constraints, design choices, workflows and acceptance. Preserve dated evidence, source attribution, legal notices and accurate AI-assisted contribution records.",
-          "zh-CN": "当前文档按目标、约束、设计取舍、使用流程与验收组织；保留带日期的证据、来源鸣谢、法律声明及准确的 AI 辅助贡献记录。"
+        "scope": "Ten changed/new 0.55 reading pairs and the complete finite publication metadata were independently reviewed in the accepted R2 source/bilingual report. The unchanged 190 pairs retain the prior 0.54 editorial review cutoff. This successor corrects structured identity parity and records the genuine review; it changes no human reading, product code or acceptance scope.",
+        "unchangedPairs": 190,
+        "changedOrNewPairs": 10,
+        "totalPairs": 200,
+        "priorReview": {
+          "engineeringPreview": "0.54.0",
+          "date": "2026-10-15",
+          "status": "reviewed_with_scope",
+          "scope": "All 197 registered bilingual reading pairs were assigned full author reads and disjoint independent editorial review. Review covers project narrative, paired meaning, attribution, links and preserved historical boundaries; it does not expand product or performance acceptance.",
+          "method": {
+            "en": "Organize active documentation around goals, constraints, design choices, workflows and acceptance. Preserve dated evidence, source attribution, legal notices and accurate AI-assisted contribution records.",
+            "zh-CN": "当前文档按目标、约束、设计取舍、使用流程与验收组织；保留带日期的证据、来源鸣谢、法律声明及准确的 AI 辅助贡献记录。"
+          },
+          "reviews": [
+            {
+              "role": "root_navigation",
+              "pairs": 14,
+              "bytes": 22606,
+              "sha256": "0490e9b4e0083ee42a36467540bcca81dc2195d1572c6464761b47683ae79ff1",
+              "verdict": "PASS_SOURCE_AND_BILINGUAL_ROOT14_PAIRS_AND_UNCHANGED_REGISTRY6_PAIRS_LINK_SUCCESSOR_ONLY",
+              "status": "identity_only_not_distributed"
+            },
+            {
+              "role": "strategy",
+              "pairs": 19,
+              "bytes": 15098,
+              "sha256": "e1486a4774f80d2cb135f3a26054e8ed1e6de970acd4e7a5a04acbbc551a19a9",
+              "verdict": "PASS_SOURCE_EDITORIAL_STRATEGY_READING_ONLY",
+              "status": "identity_only_not_distributed"
+            },
+            {
+              "role": "technical_parent",
+              "pairs": 74,
+              "bytes": 9119,
+              "sha256": "7260c35506e194da0ceec36b039b4bcd9fb491d2540df8cea9d92ae41df370e8",
+              "verdict": "PASS_SOURCE_AND_BILINGUAL_TECHNICAL_PARENT74_PAIRS_ONLY",
+              "status": "identity_only_not_distributed"
+            },
+            {
+              "role": "technical_transfer",
+              "pairs": 25,
+              "bytes": 20192,
+              "sha256": "1820ea28e34115644b14fcdb4e54cf8c9e9cf3052bbc0d944ae6afbef0c91eeb",
+              "verdict": "PASS_SOURCE_AND_BILINGUAL_TRANSFERRED_TECHNICAL25_PAIRS_ONLY",
+              "status": "identity_only_not_distributed"
+            },
+            {
+              "role": "research",
+              "pairs": 65,
+              "bytes": 44121,
+              "sha256": "0397111a11f0adca8f0fe2fbe3878bc6994b9a445771dd2e0d48ee25054c7d12",
+              "verdict": "PASS_SOURCE_EDITORIAL_RESEARCH_READING_ONLY",
+              "status": "identity_only_not_distributed"
+            }
+          ],
+          "publication": "PENDING_ACTUAL_CURRENT_HOOK_AND_REMOTE_DELIVERY",
+          "priorReviewsRetainOriginalScopes": true,
+          "productBehaviorChanged": false
         },
-        "reviews": [
-          {
-            "role": "root_navigation",
-            "pairs": 14,
-            "bytes": 22606,
-            "sha256": "0490e9b4e0083ee42a36467540bcca81dc2195d1572c6464761b47683ae79ff1",
-            "verdict": "PASS_SOURCE_AND_BILINGUAL_ROOT14_PAIRS_AND_UNCHANGED_REGISTRY6_PAIRS_LINK_SUCCESSOR_ONLY",
-            "status": "identity_only_not_distributed"
+        "currentReviewAuthority": {
+          "engineeringPreview": "0.55.0",
+          "changedOrNewPairs": 10,
+          "unchangedPairsRetainingPriorCutoff": 190,
+          "totalPairs": 200,
+          "independentReview": {
+            "bytes": 21744,
+            "sha256": "7cd7b97a1f755d664d84e4e972e77b5078ec7c7f31f30b41477dbc9f9af96a2d",
+            "identityOnlyNotDistributed": true
           },
-          {
-            "role": "strategy",
-            "pairs": 19,
-            "bytes": 15098,
-            "sha256": "e1486a4774f80d2cb135f3a26054e8ed1e6de970acd4e7a5a04acbbc551a19a9",
-            "verdict": "PASS_SOURCE_EDITORIAL_STRATEGY_READING_ONLY",
-            "status": "identity_only_not_distributed"
+          "verdict": "PASS_SOURCE_FINAL_PUBLICATION_CANDIDATE29_BILINGUAL_MEANING_AND_BOUNDED_R3_ADOPTER",
+          "reviewedExactCandidate": {
+            "bytes": 19165,
+            "sha256": "def6e44dd1feee4d2e12b2197794478180808778334ecaa8855451df503bae46",
+            "identityOnlyNotDistributed": true
           },
-          {
-            "role": "technical_parent",
-            "pairs": 74,
-            "bytes": 9119,
-            "sha256": "7260c35506e194da0ceec36b039b4bcd9fb491d2540df8cea9d92ae41df370e8",
-            "verdict": "PASS_SOURCE_AND_BILINGUAL_TECHNICAL_PARENT74_PAIRS_ONLY",
-            "status": "identity_only_not_distributed"
-          },
-          {
-            "role": "technical_transfer",
-            "pairs": 25,
-            "bytes": 20192,
-            "sha256": "1820ea28e34115644b14fcdb4e54cf8c9e9cf3052bbc0d944ae6afbef0c91eeb",
-            "verdict": "PASS_SOURCE_AND_BILINGUAL_TRANSFERRED_TECHNICAL25_PAIRS_ONLY",
-            "status": "identity_only_not_distributed"
-          },
-          {
-            "role": "research",
-            "pairs": 65,
-            "bytes": 44121,
-            "sha256": "0397111a11f0adca8f0fe2fbe3878bc6994b9a445771dd2e0d48ee25054c7d12",
-            "verdict": "PASS_SOURCE_EDITORIAL_RESEARCH_READING_ONLY",
-            "status": "identity_only_not_distributed"
-          }
-        ],
-        "publication": "PENDING_ACTUAL_CURRENT_HOOK_AND_REMOTE_DELIVERY",
-        "priorReviewsRetainOriginalScopes": true,
-        "productBehaviorChanged": false
+          "scope": "Exact accepted R2 publication29/source bilingual review; this metadata integration successor receives separate bounded review."
+        },
+        "productAcceptanceExpanded": false
       },
       "currentReviewAuthority": {
-        "engineeringPreview": "0.55.0",
-        "changedOrNewPairs": 10,
-        "unchangedPairsRetainingPriorCutoff": 190,
-        "totalPairs": 200,
+        "engineeringPreview": "0.56.0",
+        "changedOrNewPairs": 11,
+        "unchangedPairsRetainingPriorCutoff": 192,
+        "totalPairs": 203,
         "independentReview": {
-          "bytes": 21744,
-          "sha256": "7cd7b97a1f755d664d84e4e972e77b5078ec7c7f31f30b41477dbc9f9af96a2d",
+          "bytes": 413455,
+          "sha256": "119865ee153613aac2fbb9e346a0c287d6d376e459019e3d5c1eed5b68380bdf",
           "identityOnlyNotDistributed": true
         },
-        "verdict": "PASS_SOURCE_FINAL_PUBLICATION_CANDIDATE29_BILINGUAL_MEANING_AND_BOUNDED_R3_ADOPTER",
-        "reviewedExactCandidate": {
-          "bytes": 19165,
-          "sha256": "def6e44dd1feee4d2e12b2197794478180808778334ecaa8855451df503bae46",
-          "identityOnlyNotDistributed": true
-        },
-        "scope": "Exact accepted R2 publication29/source bilingual review; this metadata integration successor receives separate bounded review."
+        "verdict": "EXACT_CURRENT_11_READING_PAIRS_ONLY_METADATA_INTEGRATION_REVIEW_SEPARATE",
+        "scope": "Exactly eleven current English/Chinese reading pairs: eight revised existing pairs and three new pairs. Each of the 192 unchanged pairs retains its previous review cutoff; no whole-inventory fresh review is asserted."
       },
       "productAcceptanceExpanded": false
     },
     "currentReviewAuthority": {
-      "engineeringPreview": "0.56.0",
-      "changedOrNewPairs": 11,
-      "unchangedPairsRetainingPriorCutoff": 192,
-      "totalPairs": 203,
+      "engineeringPreview": "0.57.0",
+      "changedOrNewPairs": 6,
+      "unchangedPairsRetainingPriorCutoff": 199,
+      "totalPairs": 205,
       "independentReview": {
-        "bytes": 413455,
-        "sha256": "119865ee153613aac2fbb9e346a0c287d6d376e459019e3d5c1eed5b68380bdf",
+        "bytes": 3857,
+        "sha256": "972b009ed2720324e77c956bfe9b8f06cff2ef06fc22770fa95fa00265eb7f67",
         "identityOnlyNotDistributed": true
       },
-      "verdict": "EXACT_CURRENT_11_READING_PAIRS_ONLY_METADATA_INTEGRATION_REVIEW_SEPARATE",
-      "scope": "Exactly eleven current English/Chinese reading pairs: eight revised existing pairs and three new pairs. Each of the 192 unchanged pairs retains its previous review cutoff; no whole-inventory fresh review is asserted."
+      "scope": "Exact supplied reading subjects; metadata and product results retain separate review scopes."
     },
     "productAcceptanceExpanded": false
   },
@@ -198,8 +220,8 @@
       "zh": "knowledge-base/Cns/CHANGELOG.md",
       "en": "knowledge-base/en/CHANGELOG.md",
       "kind": "public_reading",
-      "enSha256": "36e3aa6d28798e67b791bdaa2de0e19d80a0364be517188374ffcf4ed2ab0d22",
-      "zhSha256": "d306914c54976645019d4ffb8f5452258a5d7d8cc33cd9bd31439fff21990ed7"
+      "enSha256": "bc47848dbccfb75437fd0ea88657afc8250749d20f0047deca52b299594ef6f1",
+      "zhSha256": "f11d8189af13c1df27e125f7f7c5ce470c4dedf2d504e3f074d7a5be6e6dcc99"
     },
     {
       "zh": "knowledge-base/Cns/CONTRIBUTING.md",
@@ -345,8 +367,8 @@
       "zh": "knowledge-base/Cns/docs/core-progress.md",
       "en": "knowledge-base/en/docs/core-progress.md",
       "kind": "public_reading",
-      "enSha256": "34113498b4e86748f1e2206286f3d0fb3821c71b112361d261604584405523f0",
-      "zhSha256": "a40eb5b587b10b7f9806acb8f5449901afa7b3fed55f1b480a6227eeee1ce312"
+      "enSha256": "b4e9ac09e1b7e64c3f173db041f6363576ea21ff3c44d3f8ddf01312b3bfc849",
+      "zhSha256": "4195325cf2971f5997a69235c49b0f3f1dfc8fb53bbdd9335483a12eda20ca5a"
     },
     {
       "zh": "knowledge-base/Cns/docs/决策与开放问题.md",
@@ -821,8 +843,8 @@
       "zh": "knowledge-base/Cns/README.md",
       "en": "knowledge-base/en/README.md",
       "kind": "public_reading",
-      "enSha256": "c3df734c74adee396b95f4e2c4fdead99488ab01a2085241daf9ee9ac84cf874",
-      "zhSha256": "2b31d507ad2fa23ce5d26f667cf87994833f201cee15cee8267bcfcb15cbbf64"
+      "enSha256": "4ab17ac259f4efc7f473615d7f3cafab3d162483b60c4d42ee6f33a13c623eca",
+      "zhSha256": "cb1dd9cde9fc3bafcd106566413db834a1f656a43640815baaedbfbdce0984d6"
     },
     {
       "zh": "knowledge-base/Cns/templates/ADR决策记录.md",
@@ -905,8 +927,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "c603b51bb9f3fc00d3c2082c3173ab6e2442615284b1464d9a6106a9ab1f49b3",
-      "zhSha256": "3026a8df47e7bd94c055095eaf071bdc533b36c42c6c9a85ef333bb350da0ada"
+      "enSha256": "87c5460b17fb4662962f7a62a4710ac6676350766e6230af1c4c2f84ba17f2f8",
+      "zhSha256": "b8136e265f7f964d26c722d7cd3bffacb1b6cbcdb320d2e01339e5bdd94cdd41"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -1525,6 +1547,20 @@
       "kind": "public_reading",
       "enSha256": "487dcfd4a141760566e4f47e793d5c06b39914e27169caa8030e7280f787eb42",
       "zhSha256": "910756852f02dd1567c39e45ee639848ef29241af5377c4323a941caeaf8e9f1"
+    },
+    {
+      "zh": "examples/resource-scene/README.zh-CN.md",
+      "en": "examples/resource-scene/README.md",
+      "kind": "public_reading",
+      "enSha256": "52c82d41c0af41ca95596a5566359ef345a6de351929ee7d9da41fe369200c1a",
+      "zhSha256": "071bbb3e65d251ef94c428696a1c407d31555b25d4343b6b1c17e8a6e6747001"
+    },
+    {
+      "zh": "knowledge-base/Cns/docs/resource-scene-integration.md",
+      "en": "knowledge-base/en/docs/resource-scene-integration.md",
+      "kind": "public_reading",
+      "enSha256": "41ed75dbb20dc238dbf82b557a7f4539a8a2a372ed9ba1f3774cc994d04844df",
+      "zhSha256": "8eccdd518b4944621dee49ea8ec851ad7faa5a1d279609601c91d76860741792"
     }
   ],
   "registries": [
@@ -1549,20 +1585,20 @@
     {
       "source": "knowledge-base/Cns/registry/交付.json",
       "target": "knowledge-base/en/registry/deliverables.json",
-      "sourceSha256": "0abef5d4962cdfa151c3e3e88d165eb9dd5bccdde00ce199fb8b7c4d89a03dec",
-      "targetSha256": "1d92539a6ea474184edf050b1c38d469be7715f03e25d0d71f7a103c49659500"
+      "sourceSha256": "b411b05a511840f67c613e0d012773df7e81330d6af53735471c6eb2bb8846c8",
+      "targetSha256": "c2ba03d2fc45db7b5e231251ad496df3c61e860c5fcfc88b5922606312b84950"
     },
     {
       "source": "knowledge-base/Cns/registry/来源.json",
       "target": "knowledge-base/en/registry/sources.json",
-      "sourceSha256": "71a1c2a7c2d014f1d4425589a2249d4015ed05139b6df04b86568cef54385fdb",
-      "targetSha256": "2f539fd20526ce24c6e3329df7b278526355709e109e1f65eadf5aa81b752e4d"
+      "sourceSha256": "7ff809004c8d5fa37a0a715fa0f4a33f9a53650e7bcfa5462432bc4d25a7f90e",
+      "targetSha256": "9b1a85e67d1e938c993a76c20517e192fc45dbe088e4d607a12f670bc76dcc0e"
     },
     {
       "source": "knowledge-base/Cns/当前版本.json",
       "target": "knowledge-base/en/current-version.json",
-      "sourceSha256": "058440f39913aba69730c450d6b388379f5c3e31414b211cc2987bcc33b968ac",
-      "targetSha256": "14d75d5c1a384a55093ca95c9734312552ae27957e3b26c57a5e539555887703"
+      "sourceSha256": "085528c53038a7c4b4af34c0db1acf9daf036ce0b5bdc7c78458d319e39626b8",
+      "targetSha256": "08a71e98f6f4d0a647d01d16c40c4d76561c0bf5773f9133f382551cd3d76862"
     }
   ],
   "criticalComments": [
@@ -2827,6 +2863,62 @@
     {
       "path": "examples/bitmap-resource-slot/main.mjs",
       "sha256": "18b65a8855987f443138969bfb38e02ef1822249207261966fa5be1636ff3d08"
+    },
+    {
+      "path": "tools/verify.mjs",
+      "sha256": "12433db068ac14ec910bd6951eed6e58b3860a95593620b573f46ffe03981bd8"
+    },
+    {
+      "path": "examples/resource-scene/gpu-scene.mjs",
+      "sha256": "7198b11ef70e18e5447f1c792b5b30fa26a6582decf2acbdab147c17f381e4a1"
+    },
+    {
+      "path": "examples/resource-scene/main.mjs",
+      "sha256": "3621c5714c04efab75b7cb199c6ecb4b14d931d47acd167be3fb241729298bc5"
+    },
+    {
+      "path": "examples/resource-scene/session.mjs",
+      "sha256": "3401291ac9c88af57b9478ed8eb36a30e2936e27241f82bdafa2827eb948eb17"
+    },
+    {
+      "path": "tests/resource-scene-assets.test.mjs",
+      "sha256": "a6b27c8c4c833ffdb2ca2af12c1a34998dc552522dd657ad2d8dacaea8f59b2b"
+    },
+    {
+      "path": "tests/resource-scene-boundary.test.mjs",
+      "sha256": "253640b105c83cef54943835c280aca0b6438c47ae373276faa91af46275d896"
+    },
+    {
+      "path": "tests/resource-scene-browser-source.test.mjs",
+      "sha256": "afb5953d3c53aa3e20f610623c6aea636cee110b7d2d9c8faf99461dc00b11b5"
+    },
+    {
+      "path": "tests/resource-scene-gpu.test.mjs",
+      "sha256": "bcc8add34ee3ce3abb900f813acea9121b63f285f093b31f86db20790391914b"
+    },
+    {
+      "path": "tests/resource-scene-session-heldout.test.mjs",
+      "sha256": "41783803d94eebe649f0617b0bbdc91226ed280bb62ca54b4276d3e5ab032ebd"
+    },
+    {
+      "path": "tests/resource-scene-session.test.mjs",
+      "sha256": "8e03fc67237ce70946a50adefcb2daf2cff63fa301ff95473e3982472ce63fd6"
+    },
+    {
+      "path": "tools/resource-scene-boundary.mjs",
+      "sha256": "10c52ae5f7c33d1550c9231956297bb041c7a8cb67af8c19b0fdf41842bc4cd4"
+    },
+    {
+      "path": "tools/resource-scene/author-assets.mjs",
+      "sha256": "b404bfdf936ffc6caffe0a99ba9fb1ae0288890ce9dce9649518462bb9f1c03f"
+    },
+    {
+      "path": "tools/resource-scene/oracle.mjs",
+      "sha256": "cbe5e58f681d032eecfb726bbe6e18945d4488b818f7b932f3f4606cd2e0c887"
+    },
+    {
+      "path": "tools/verify-resource-scene.mjs",
+      "sha256": "5f020c61a54408fbd7efff68f1b1968a8ea11d4bac5a8b47690457159a3e91d0"
     }
   ],
   "historicalSemanticReview": {
