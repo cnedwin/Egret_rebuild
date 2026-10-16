@@ -4,9 +4,17 @@
 
 核心工程通过可运行增量连接显示、资源、动画、输入与宿主执行。本页概述当前接口及后续产品工作，链接的契约说明精确行为与验证范围。
 
+## 真实资源场景集成 — 0.57.0
+
+工程预览 **0.57.0** 通过既有公开 Engine API，组合真实 PNG 资源、共享图集播放、文本与鼠标输入。默认使用 Canvas，纹理 WebGPU 场景作为显式选择的实验路径。资源准备、画面就绪、输入就绪及安全关闭具有各自边界。参阅[集成记录](resource-scene-integration.md)和[示例指南](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/resource-scene/README.zh-CN.md)。
+
+桌面 Canvas/WebGPU 流程已完成七个独立上下文，保留 64 份原始 RGBA 画面；在记录的环境中，固定点与字体区域比较、错误对照和完整关闭均通过。手机、跨环境字体、性能与能耗验收仍保持开放。
+
 ## 可恢复位图资源替换 — 0.56.0
 
 `Engine.createBitmapResourceSlot(scope, bitmap)` 在替换 Texture 时保持同一 Bitmap 身份，根入口仅新增擦除类型名称 `BitmapResourceSlot` 与 `BitmapResourceSlotState`。初始绑定继续借用，槽仅拥有新获取的替换租约；请求等待、失败或取消时保留先前可用绑定，只有最新已接受意图可以提交。拒绝、绑定冲突及生命周期细节遵循[规格](位图资源槽规格.md)，参阅[证据](位图资源槽核验.md)和[组合示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/bitmap-resource-slot/README.md)。聚焦行为、严格消费者及记录的桌面 Canvas/WebGPU 组合已通过各自限定检查；完整本地／公开门禁及仓库交付在所链接证据中分别记录。
+
+0.56 资源替换增量已通过 [PR #45](https://github.com/cnedwin/Egret_rebuild/pull/45) 交付，Main 为 `19c308af4d7c9590f886c8105d5d678e708184c5`；早期核验记录保留各自原有截止点。
 
 ## 显式本地布局 — 0.55.0
 
@@ -44,7 +52,7 @@ GitHub 未为 PR #42 返回状态或检查运行，以上本地验证与远端 C
 ## 后续工作与贡献
 
 - 在显式本地规划器之外继续完善 UI 组合，以及触摸、键盘、焦点、无障碍和编辑。
-- 继续集成真实资源场景、多资源换装、恢复及动画重定向，明确所有权与宿主边界。
+- 继续核验并扩展真实资源示例，推进多资源换装、恢复及动画重定向，明确所有权与宿主边界。
 - 按 **R020/V020** 完成版本化 Spine 支持及功能／后端／宿主矩阵。
 - 扩展三维场景、角色和特效，连接资产及生命周期。
 - 生产浏览器／小游戏／原生宿主，以及目标设备文字与性能。

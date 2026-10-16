@@ -1,0 +1,140 @@
+{
+  "schemaVersion": 1,
+  "kind": "INDEPENDENT_FIXED_FONT_CANVAS_REFERENCE",
+  "method": "Direct browser Canvas2D reference without Egret, its text provider, scene or rendering output",
+  "font": {
+    "path": "examples/resource-scene/assets/NotoSansSC-fixed.woff2",
+    "bytes": 1796,
+    "sha256": "9e435555e47102d40ace35211158051b45c131bce1fc7c1daca871b2386ec895",
+    "weight": 400,
+    "style": "normal",
+    "license": "OFL-1.1",
+    "copyright": "Copyright 2014-2021 Adobe; reserved name Source",
+    "originalURL": "https://fonts.gstatic.com/l/font?kit=k3kCo84MPvpLmixcA63oeAL7Iqp5IZJF9bmaG9_FnYlVe9Q3Qtesf4SJmOwP43a3q8b8OtU&skey=cf0bb10b5602fdc3&v=v41",
+    "internalVersion": "NOT_PARSED"
+  },
+  "environment": {
+    "browser": "Microsoft Edge",
+    "browserVersion": "155.0.4283.45",
+    "playwrightVersion": "1.62.1",
+    "platform": "win32",
+    "arch": "x64",
+    "release": "10.0.26300",
+    "browserLanguage": "zh-CN",
+    "extraLaunchFlags": []
+  },
+  "parameters": {
+    "fontSize": 12,
+    "lineHeight": 16,
+    "density": 1,
+    "fill": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "locale": "zh-CN",
+    "direction": "ltr",
+    "baseline": "alphabetic",
+    "baselineY": 16,
+    "originX": 4,
+    "lineTop": 4,
+    "colorSpace": "srgb",
+    "rgba": "unpremultiplied-native-Canvas-getImageData"
+  },
+  "strings": [
+    {
+      "id": "left",
+      "text": "左侧 已选择",
+      "width": 128,
+      "height": 24,
+      "rgba": {
+        "path": "left.rgba",
+        "bytes": 12288,
+        "sha256": "f972dbeb2c4d4f314b4ab922a4ec9afd7569ec156eb90c4757cf3a728bcee394"
+      },
+      "metrics": {
+        "width": 62.68798828125,
+        "actualBoundingBoxLeft": 0,
+        "actualBoundingBoxRight": 62.68798828125,
+        "actualBoundingBoxAscent": 10,
+        "actualBoundingBoxDescent": 1,
+        "fontBoundingBoxAscent": 14,
+        "fontBoundingBoxDescent": 3,
+        "emHeightAscent": null,
+        "emHeightDescent": null,
+        "hangingBaseline": 11.199999809265137,
+        "alphabeticBaseline": 0,
+        "ideographicBaseline": -1.44000244140625
+      }
+    },
+    {
+      "id": "right",
+      "text": "右侧 已选择",
+      "width": 128,
+      "height": 24,
+      "rgba": {
+        "path": "right.rgba",
+        "bytes": 12288,
+        "sha256": "941dc2c181e97c65da54d60969c27b140a8431abd75c4da8a10ff08d3569092b"
+      },
+      "metrics": {
+        "width": 62.68798828125,
+        "actualBoundingBoxLeft": 0,
+        "actualBoundingBoxRight": 62.68798828125,
+        "actualBoundingBoxAscent": 10,
+        "actualBoundingBoxDescent": 1,
+        "fontBoundingBoxAscent": 14,
+        "fontBoundingBoxDescent": 3,
+        "emHeightAscent": null,
+        "emHeightDescent": null,
+        "hangingBaseline": 11.199999809265137,
+        "alphabeticBaseline": 0,
+        "ideographicBaseline": -1.44000244140625
+      }
+    }
+  ],
+  "composition": {
+    "sourceRegion": [
+      4,
+      4,
+      64,
+      16
+    ],
+    "sceneRegion": [
+      72,
+      8,
+      64,
+      16
+    ],
+    "translation": [
+      68,
+      4
+    ],
+    "opaqueAndAlphaTolerance": 0,
+    "antialiasedRGBTolerance": 1,
+    "roundingBoundary": "At partially transparent text pixels only, one RGB byte accounts for premultiplied UNORM blending; opaque pixels and alpha remain exact."
+  },
+  "provenance": {
+    "originalReport": {
+      "bytes": 35172,
+      "sha256": "b4aa7aad2d8541c51ce28d7d17ab331e273113a2a5ab6cceb6d286f1139af41b"
+    },
+    "independentSource": {
+      "bytes": 17274,
+      "sha256": "9e3f0945e74fd5f18550b4d48e7da033582b1ef460d3c6cf5b82af5144f3c635"
+    },
+    "independentResultReview": {
+      "bytes": 14187,
+      "sha256": "b544eb8446e203da3dd40d96297eef7b128938a82fb3a173d767c3859e2134fb"
+    },
+    "rawRgbaCopiedWithoutConversion": true
+  },
+  "limits": [
+    "Only the two fixed strings in the exact recorded font/browser/OS profile are selected.",
+    "Exact face load/membership and separate DOM font-source corroboration do not inspect Canvas internal selection or cmap.",
+    "No general Chinese typography, fallback, IME, mobile, memory, energy or performance acceptance.",
+    "A different browser/OS must provide and review a new independent reference before claiming this comparison.",
+    "Original font bytes and OFL remain unchanged; these are measurement outputs rather than a font rewrite."
+  ]
+}

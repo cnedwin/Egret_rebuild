@@ -4,6 +4,16 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## 0.57.0 — real-resource scene integration
+
+Engineering preview **0.57.0** combines real PNG resources, shared atlas playback, text and mouse input through existing public Engine APIs. Canvas is the default; the textured WebGPU scene is an explicit experimental choice. Resource preparation, presentation readiness, input readiness and safe shutdown have separate boundaries. Read the [integration record](docs/resource-scene-integration.md) and [example guide](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/resource-scene/README.md).
+
+The recorded desktop Canvas/WebGPU workflow completed seven fresh contexts and retained 64 original RGBA frames. Fixed-point and font-region comparisons, negative controls and retirement passed in the documented environment. Phone, cross-environment font, performance and energy acceptance remain open.
+
+## 0.56.0 delivery update — 2026-10-16
+
+The 0.56 resource-replacement increment was delivered through [PR #45](https://github.com/cnedwin/Egret_rebuild/pull/45), Main `19c308af4d7c9590f886c8105d5d678e708184c5`. Earlier verification records retain their original cutoffs.
+
 ## 0.56.0 — recoverable Bitmap resource replacement
 
 `Engine.createBitmapResourceSlot(scope, bitmap)` adds explicit asynchronous Texture replacement for one persistent Bitmap through the existing root entry, with the erased `BitmapResourceSlot` and `BitmapResourceSlotState` types. It borrows the initial binding and owns only fresh replacement leases. The prior usable binding remains during pending, failed or cancelled requests; only the latest accepted intent may commit. Cancellation and supersession reject their request Promises. Read the [specification](docs/bitmap-resource-slot-spec.md), [evidence and remaining acceptance](docs/bitmap-resource-slot-evidence.md) and [composition example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/bitmap-resource-slot/README.md).

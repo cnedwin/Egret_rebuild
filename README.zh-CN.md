@@ -20,14 +20,23 @@ Years later, as times change and technology advances, many developers continue t
 
 ## 当前版本
 
+工程预览 **0.57.0** 通过既有公开 Engine API，组合真实 PNG 资源、共享图集播放、文本与鼠标输入。默认使用 Canvas，纹理 WebGPU 场景作为显式选择的实验路径。资源准备、画面就绪、输入就绪及安全关闭具有各自边界。参阅[集成记录](knowledge-base/Cns/docs/resource-scene-integration.md)和[示例指南](examples/resource-scene/README.zh-CN.md)。
+
+桌面 Canvas/WebGPU 流程已完成七个独立上下文，保留 64 份原始 RGBA 画面；在记录的环境中，固定点与字体区域比较、错误对照和完整关闭均通过。手机、跨环境字体、性能与能耗验收仍保持开放。
+
+## 已交付的资源替换 — 0.56.0
+
+0.56 资源替换增量已通过 [PR #45](https://github.com/cnedwin/Egret_rebuild/pull/45) 交付，Main 为 `19c308af4d7c9590f886c8105d5d678e708184c5`；早期核验记录保留各自原有截止点。
+
 工程预览 **0.56.0** 提供可恢复的资源替换。`Engine.createBitmapResourceSlot(scope, bitmap)` 为同一个持久 Bitmap 提供显式 Texture 替换，并增加擦除类型 `BitmapResourceSlot` 与 `BitmapResourceSlotState`。初始租约继续借用，槽仅拥有替换请求实际获取的新租约。请求等待、失败或取消时保留先前可用绑定；只有最新已接受意图可以提交。取消和被新请求取代会拒绝各自请求的 Promise，精确校验、冲突及生命周期错误遵循[规格](knowledge-base/Cns/docs/位图资源槽规格.md)。参阅[证据](knowledge-base/Cns/docs/位图资源槽核验.md)、[示例指南](examples/bitmap-resource-slot/README.zh-CN.md)及[版本历史](knowledge-base/Cns/CHANGELOG.md)。
 
 聚焦行为、严格消费者及记录的桌面 Canvas/WebGPU 组合已通过各自限定检查；完整本地／公开门禁及仓库交付在所链接证据中分别记录。前一个 0.55 布局增量已通过 [PR #44](https://github.com/cnedwin/Egret_rebuild/pull/44) 交付。工作区包仍为 private、版本 0.0.0，宿主协议仍为 1.0。
 
-## 最近五次更新
+## 最近更新
 
 | Version / 版本 | Main change | 主要变化 |
 | --- | --- | --- |
+| 0.57.0 | Real-resource scene composition connecting resources, animation, text and input | 连接资源、动画、文本与输入的真实资源场景组合 |
 | 0.56.0 | Recoverable single-Bitmap resource replacement with latest accepted intent | 可恢复的单 Bitmap 资源替换与最新已接受意图 |
 | 0.55.0 | Explicit local linear planning and a two-button composition example | 显式本地线性规划与双按钮组合示例 |
 | 0.54.0 | Shared-input bitmap buttons with pressed/disabled skins and final activation picking | 共享输入位图按钮、按下与禁用皮肤、激活前最终命中复查 |
