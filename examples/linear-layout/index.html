@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Egret explicit linear layout / 白鹭显式线性布局</title>
+<link rel="icon" href="/examples/canvas-scene/favicon.svg">
+<script type="importmap">{"imports":{"#egret-textured-frame-state":"/packages/engine/dist/internal/texturedFrameState.js","#egret-mouse-input":"/packages/engine/dist/mouseInput.js","@egret/engine":"/packages/engine/dist/index.js","@egret/engine/layout":"/packages/engine/dist/layout.js","@egret/engine/web/input":"/packages/engine/dist/web/input.js","@egret/engine/web":"/packages/engine/dist/web/index.js","@egret/engine/webgpu":"/packages/engine/dist/web/webgpu.js","@egret/runtime":"/packages/runtime/dist/index.js","@egret/contracts":"/packages/contracts/dist/index.js","robust-predicates":"/packages/engine/node_modules/robust-predicates/index.js"}}</script>
+<style>
+body{font:17px/1.6 system-ui;margin:0;background:#f2f5f9;color:#172033}
+main{max-width:860px;margin:auto;padding:28px 20px}h1{font-size:1.8rem;line-height:1.3}
+canvas{display:block;width:192px;height:192px;border:0;padding:0;object-fit:fill;outline:1px solid #738299;image-rendering:pixelated;background:#fff}
+button,select{font:inherit;padding:8px 12px;margin:4px 6px 4px 0}
+button:focus-visible,select:focus-visible{outline:3px solid #306aca;outline-offset:2px}
+button:disabled{opacity:.5}.controls{margin:16px 0}#status{white-space:pre-line;min-height:10em}
+.note{font-size:.9rem;color:#46566b}
+</style>
+</head>
+<body><main>
+<h1>Explicit linear layout<br><span lang="zh-CN">显式线性布局</span></h1>
+<p>Choose a plan, then click the red bitmap buttons. Blue means pressed; gray means disabled.<br>
+<span lang="zh-CN">选择布局计划，再点击红色位图按钮。蓝色表示按下，灰色表示禁用。</span></p>
+<label>Renderer / 渲染器 <select id="backend"><option value="canvas">Canvas</option><option value="webgpu">WebGPU</option></select></label>
+<p class="note">Switching renderer safely closes the current Engine before starting a fresh page. WebGPU requires browser support.<br>
+<span lang="zh-CN">切换渲染器会先安全关闭当前引擎，再启动新页面。WebGPU 需要浏览器支持。</span></p>
+<canvas id="scene" width="24" height="24" aria-label="Two genuine bitmap buttons in nested clipped containers / 嵌套裁剪容器中的两个真实位图按钮"></canvas>
+<div class="controls" aria-label="Layout actions / 布局操作">
+<button id="horizontal" disabled>Horizontal / 横向</button>
+<button id="vertical" disabled>Vertical / 纵向</button>
+<button id="filter" disabled>Hide and filter first / 隐藏并过滤第一个</button>
+<button id="reinsert" disabled>Reinsert first after second / 将第一个重插到第二个之后</button>
+<button id="disabled" disabled>Disable first / 禁用第一个</button>
+<button id="enabled" disabled>Enable first / 启用第一个</button>
+<button id="invalid" disabled>Reject invalid gap / 拒绝无效间距</button>
+<button id="replay" disabled>Replay saved horizontal / 重放保存的横向帧</button>
+<button id="live" disabled>Show live / 显示当前状态</button>
+<button id="close">Close / 关闭</button>
+</div>
+<p id="status" role="status" aria-live="polite" data-state="starting">Starting / 启动中</p>
+<p class="note">The caller supplies two 8 × 6 records, gap 2 and padding 2. Horizontal extent is 22 × 10; vertical extent is 12 × 18.
+The 24 × 24 scene is enlarged eight times with CSS. Nested containers add (3,3); the outer clip cuts the horizontal second button's right edge.<br>
+<span lang="zh-CN">调用方提供两个 8 × 6 记录、间距 2 和内边距 2。横向范围为 22 × 10，纵向范围为 12 × 18。
+24 × 24 场景通过 CSS 放大八倍。嵌套容器增加 (3,3) 偏移，外层裁剪切去横向第二个按钮的右侧。</span></p>
+<p class="note">Filtering, child order and applying coordinates are explicit caller actions. They retain the original two controls, shared input and borrowed atlas.
+An invalid plan is rejected before any scene write, so the previous scene remains usable. This is not automatic layout or rollback.<br>
+<span lang="zh-CN">过滤、子节点顺序及坐标应用均由调用方显式完成，保留原始两个控件、共享输入及借用图集。
+无效计划在任何场景写入之前被拒绝，因此原场景仍可使用。这不代表自动布局或回滚。</span></p>
+<p class="note">Saved horizontal replay submits the original captured frame while the live tree keeps its vertical, filtered or reordered state.
+Show live returns to current controls. Filtering and reordering keep the last selected axis; Horizontal and Vertical restore both enabled controls.<br>
+<span lang="zh-CN">重放横向帧会提交原始捕获帧，实时树仍保留纵向、过滤或重排状态。“显示当前状态”返回当前控件。
+过滤及重排保留上次选择的方向；“横向”和“纵向”恢复两个已启用控件。</span></p>
+</main><script type="module" src="./main.mjs"></script></body>
+</html>

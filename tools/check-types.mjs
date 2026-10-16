@@ -981,3 +981,8 @@ await import('./display-anchor-offsets-types.mjs');
 // Preserve every retained strict lane before checking the optional Button contract.
 await import('./bitmap-button-types.mjs');
 // BITMAP_BUTTON_TYPES_END
+
+// LINEAR_LAYOUT_TYPES_BEGIN
+// Run the optional planner consumers only after every retained strict type lane.
+await import('./linear-layout-types.mjs');
+// LINEAR_LAYOUT_TYPES_END

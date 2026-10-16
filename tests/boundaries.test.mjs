@@ -39,6 +39,7 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
         './webgpu': gpuExport,
         './web': {types:'./dist/web/index.d.ts',import:'./dist/web/index.js'},
         './text': {types:'./dist/text.d.ts',import:'./dist/text.js'},
+        './layout': {types:'./dist/layout.d.ts',import:'./dist/layout.js'},
         './web/text': {types:'./dist/web/text.d.ts',import:'./dist/web/text.js'},
         './web/input': {types:'./dist/web/input.d.ts',import:'./dist/web/input.js'},
         './web/image': {types:'./dist/web/image.d.ts',import:'./dist/web/image.js'},
@@ -51,7 +52,7 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
       write(`packages/${name}/tsconfig.json`, { extends: '../../tsconfig.base.json', ...(name === 'project' ? {compilerOptions:{rootDir:'src',outDir:'dist'}} : {}), references: allowed.map(value => ({ path: `../${value.slice('@egret/'.length)}` })) });
       write(`packages/${name}/src/index.ts`, 'export {};\n');
       write(`packages/${name}/dist/index.js`, 'export {};\n');
-      const exports = name === 'engine' ? { '.': './index.js', './web': './web.js', './webgpu':'./webgpu.js', './text':'./text.js', './web/text':'./web-text.js', './web/image':'./web-image.js', /* S3D1_FIXTURE_RESOLVER_BEGIN */ './scene3d':'./scene3d.js', './webgpu/scene3d':'./scene3d-web.js' /* S3D1_FIXTURE_RESOLVER_END */ }
+      const exports = name === 'engine' ? { '.': './index.js', './web': './web.js', './webgpu':'./webgpu.js', './text':'./text.js', './layout':'./layout.js', './web/text':'./web-text.js', './web/image':'./web-image.js', /* S3D1_FIXTURE_RESOLVER_BEGIN */ './scene3d':'./scene3d.js', './webgpu/scene3d':'./scene3d-web.js' /* S3D1_FIXTURE_RESOLVER_END */ }
         : name === 'runtime' ? { '.': './index.js', './text':'./text.js' } : name === 'project' ? {'.':'./index.js','./spine':'./spine.js'} : './index.js';
       write(`node_modules/@egret/${name}/package.json`, { name: `@egret/${name}`, type: 'module', exports });
       write(`node_modules/@egret/${name}/index.js`, 'export {};\n');
@@ -78,6 +79,13 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
         for (const file of ['packages/engine/web/image.ts', 'packages/engine/dist/web/image.js', 'packages/engine/dist/web/image.d.ts'])
           write(file, 'export {};\n');
         write('node_modules/@egret/engine/web-image.js', "export * from '../../../packages/engine/dist/web/image.js';\n");
+        // The optional layout namespace is inert here, like the image route above;
+        // synthetic boundary controls establish policy, without running a planner.
+        for (const file of ['packages/engine/src/layout.ts', 'packages/engine/src/layoutTypes.ts',
+          'packages/engine/dist/layout.js', 'packages/engine/dist/layout.d.ts',
+          'packages/engine/dist/layoutTypes.js', 'packages/engine/dist/layoutTypes.d.ts'])
+          write(file, 'export {};\n');
+        write('node_modules/@egret/engine/layout.js', "export * from '../../../packages/engine/dist/layout.js';\n");
       }
     }
     // These are synthetic policy/resolution surfaces, never engine execution proof.

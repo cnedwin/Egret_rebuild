@@ -1,0 +1,23 @@
+// SPDX-License-Identifier: Apache-2.0
+import {planLinearLayout} from '@egret/engine/layout';
+import type {LinearLayoutItem,LinearLayoutOptions,LinearLayoutPlacement,LinearLayoutPlan} from '@egret/engine/layout';
+import type * as Root from '@egret/engine';
+import type * as Input from '@egret/engine/web/input';
+type Equal<A,B>=(<T>()=>T extends A?1:2) extends (<T>()=>T extends B?1:2)?true:false;
+type Expect<T extends true>=T;
+type Factory=Expect<Equal<typeof planLinearLayout,(options:LinearLayoutOptions)=>LinearLayoutPlan>>;
+type Options=Expect<Equal<LinearLayoutOptions,{readonly axis:'horizontal'|'vertical';readonly items:readonly LinearLayoutItem[];readonly gap?:number;readonly padding?:number;readonly crossAlign?:'start'|'center'|'end'}>>;
+type Item=Expect<Equal<LinearLayoutItem,{readonly width:number;readonly height:number}>>;
+type Placement=Expect<Equal<LinearLayoutPlacement,{readonly index:number;readonly x:number;readonly y:number;readonly width:number;readonly height:number}>>;
+type Plan=Expect<Equal<LinearLayoutPlan,{readonly width:number;readonly height:number;readonly placements:readonly LinearLayoutPlacement[]}>>;
+type RootBoundary=Expect<Equal<Extract<'planLinearLayout',keyof typeof Root>,never>>;
+type InputBoundary=Expect<Equal<Extract<'planLinearLayout',keyof typeof Input>,never>>;
+const items:readonly LinearLayoutItem[]=[{width:8,height:6},{width:4,height:2}] as const;
+const options:LinearLayoutOptions={axis:'horizontal',items,gap:2,padding:1,crossAlign:'center'};
+const result:LinearLayoutPlan=planLinearLayout(options);
+const rows:readonly LinearLayoutPlacement[]=result.placements;
+const horizontal:LinearLayoutPlan=planLinearLayout({axis:'horizontal',items});
+const vertical:LinearLayoutPlan=planLinearLayout({axis:'vertical',items:[]});
+const widths:readonly number[]=rows.map(row=>row.width);
+void [horizontal,vertical,widths];
+export type ExactLinearLayoutContract=Factory|Options|Item|Placement|Plan|RootBoundary|InputBoundary;

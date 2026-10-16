@@ -28,7 +28,7 @@ Egret connects complex 2D interfaces and lightweight 3D with a rendering/runtime
 
 ## Current engineering state
 
-Engineering preview **0.54.0** is integrated through [PR #42](https://github.com/cnedwin/Egret_rebuild/pull/42). The [capability overview](docs/core-progress.md) separates available interfaces, recorded verification and remaining product work. Package versions remain private 0.0.0; the host protocol remains 1.0.
+Engineering preview **0.55.0** adds explicit local linear planning: callers select membership and apply placements to existing Buttons. Read the [specification](docs/local-linear-layout-spec.md), [evidence](docs/local-linear-layout-evidence.md) and [example guide](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/linear-layout/README.md). Recorded desktop Canvas/WebGPU checks cover the fixed two-Button workflow; their environment and limits are in the evidence record. The [capability overview](docs/core-progress.md) describes wider interfaces and remaining work. Workspace packages remain private 0.0.0; the host protocol remains 1.0.
 
 ## API contracts and examples
 

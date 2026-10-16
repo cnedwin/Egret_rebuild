@@ -38,6 +38,12 @@
 - 实验性 `tools/verify-webgpu-b1.mjs` 的普通样例通过精确生成的 import map 导入构建后的 `@egret/engine`、`@egret/engine/scene3d`、`@egret/engine/webgpu/scene3d`。唯一直接私有产品导入为 `packages/engine/dist/web/webgpuMeshPass.js`，仅用于绑定源码的固定原生 WGSL 编译／N4 诊断。服务范围仅限验证器显式模块白名单、这些公共入口的有限字面量导入闭包及固定别名；N1–N5 各自在仓库外的一次性副本中只修改一个已记录的构建文件。S1／S2／SN1 是独立的真实 Engine／Stage／Scope／Bitmap 组合阶段，SN1 只遗漏指定父节点裁剪。原有 oracle 与七正例／五控制／十一次绘制／8214 次比较的计划保持不变。本例外不允许普通示例或公开行为测试私有导入产品模块，也不授权新的产品导出或任意诊断钩子。
 - 公共行为变化同步规格、来源记录与必要回归。记录实际环境、未验证项、反例及修复；第三方研究或历史测试不替代自主产品验收。
 
+<!-- LL-0.55.0-POLICY-BEGIN -->
+## 显式本地布局边界
+
+可选已构建入口 `@egret/engine/layout` 仅提供纯规划函数 `planLinearLayout` 及四个擦除接口，保持核心无 DOM/Node，不改变默认入口或 SDK Host 协议。调用方提供尺寸、显式过滤成员，并通过既有 display API 应用返回坐标；规划器不写场景，也不保证自动 EUI 布局。遵循[布局规格](knowledge-base/Cns/docs/local-linear-layout-spec.md)，按[证据记录](knowledge-base/Cns/docs/local-linear-layout-evidence.md)分别限定源文件、聚焦/strict、完整代码及真实浏览器验收。
+<!-- LL-0.55.0-POLICY-END -->
+
 <!-- MI1-AGENT-POLICY-BEGIN -->
 ## 主鼠标输入边界
 

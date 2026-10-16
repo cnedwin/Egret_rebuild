@@ -24,8 +24,8 @@
       "action": "move-pair",
       "previousZhSha256": "ca2be6243c614a900ed12f1b46649155f215a4827e04818e025bad8d03f8af9e",
       "previousEnSha256": "7e72f6245d7c86551dc2640356416b8b06a2d80872f262daf227f98142eac7ae",
-      "currentZhSha256": "5edd0af5bb705682b09a50f4843f9b07b3d6d0f6d97be0fb24936d8491e0c6c0",
-      "currentEnSha256": "a0d5e5f08f6422869bcc4630f81e5543e5cee7b6823a5dd15e2570b2836dcb64"
+      "currentZhSha256": "b0c5f09d32ba6b53c4e72719c3c01a4a727584bd68822b97214c1354f02192d1",
+      "currentEnSha256": "7cf724f18d07e5caef68b68120fa68123a1acdadead14be1df7432bdf1affb3e"
     },
     {
       "oldZh": "CONTRIBUTING.md",
@@ -84,8 +84,8 @@
       "action": "move-pair",
       "previousZhSha256": "f43625255269c8801af0929179a9aab32cbca58094e4a842797e39171fc549b0",
       "previousEnSha256": "e8b100ccbd9d0fb99237a564f484f7fa6dbf008191570fa58f3e481c05c3e9f9",
-      "currentZhSha256": "b57ce8dd31e92753c450b8704e41c56ee57d8e407731ea2c4fe7da1353c8ffda",
-      "currentEnSha256": "479c22af1564924d8e4bb2f1b4347eeea3a74eac4d15ba6a4e10fb2b59a45bf7"
+      "currentZhSha256": "ee1ef4ec3c63e7387ee64028426d2b6fd8614acde30e57182c08053d4bdcd449",
+      "currentEnSha256": "a3eb97c9d7efc4dae5258234644a6af4239539b18e0c5fa7408568a0164884e0"
     },
     {
       "oldZh": "knowledge-base/CONTRIBUTING.md",
@@ -840,8 +840,8 @@
       "action": "move-pair",
       "previousZhSha256": "372e5b07d4980eb45d8338424c8d970b7725e324e6b3397916944b0529c55ec7",
       "previousEnSha256": "ed88646659467d718a30c3bfff14b41c28debbcb786e7bf816ee68819f612887",
-      "currentZhSha256": "0bcee84083654405f04bd48c8a4e943b0d0a29eb1ccd9f8e98c9fe8f79d1756a",
-      "currentEnSha256": "54e433c6ed6834cc62f34d90c7e1e24a0758d0f8589879d1287ccf0964f5386b"
+      "currentZhSha256": "792b5a66a78b77cc99efbccbc7ce65b626ff77c68a1f2bff045e1e5bc3beba32",
+      "currentEnSha256": "c2f9acbd26eaadf0881f1d0570d7d02d3b7475bfad8dc5518e620907a3809559"
     },
     {
       "oldZh": "knowledge-base/templates/实现来源记录.md",
@@ -924,8 +924,8 @@
       "action": "move-pair",
       "previousZhSha256": "43dedd7c762d66456f0505ec5080d664e69bc9f19e8483598e78af5339ab7079",
       "previousEnSha256": "e1ec54dcd7979bc433657230dc8b943b680a44defae7eab5a39d1540877de61b",
-      "currentZhSha256": "2ce99c878da2deec4b5384b086a847942f96b0ed8a88d18cea8fe51752e9435c",
-      "currentEnSha256": "22697e9bd074dccafc7f46cd4ddf50171dd993a4b0bd32ca16fedfa38eb292ee"
+      "currentZhSha256": "ec5fc4cb60d5ed074af52557a14a8f74111e50d2212059da4872dc37df94e9a1",
+      "currentEnSha256": "fc2a799035845f7ff246573db193b5da4f9ff613c8b89bb2c38d174c880165a4"
     },
     {
       "oldZh": "packages/runtime/README.md",
@@ -960,8 +960,8 @@
       "action": "move-pair",
       "previousZhSha256": "803a40dd8bfd0f98ade51c8ba736790509aae12a6e045a8ea688b3ff5d01cdcf",
       "previousEnSha256": "40a2ef2f686aba4a10279c417dfe17879bb6396b3b80dd75b26bd09c87d665f9",
-      "currentZhSha256": "972e65e6725ab83d56645ec766b07f49fde4ac317faf2b8b75307a5513c2989c",
-      "currentEnSha256": "8d58a85abde3cf3967a30fd7e9dcd28834bcf7a9635ecd745fdccc9ff45214f4"
+      "currentZhSha256": "886f8415777e133f44146ec3fff5ac7744183619dd1610a6b948de9b0ed860b9",
+      "currentEnSha256": "eb02a4b126c5059694b530538e7fc5a6f8b759c97103743cacf8ae64d2efa4a6"
     },
     {
       "oldZh": "knowledge-base/docs/WebGPU矩形执行合同.md",
@@ -1080,8 +1080,8 @@
       "action": "move-pair",
       "previousZhSha256": "61639f120f4ed3aa77c4ffd41cf377e447dcac20e9562322c103e2e6b44c3990",
       "previousEnSha256": "60c77a11dc614191ba1d98fa488301a344839cc672df01e2c632048d85e8d376",
-      "currentZhSha256": "c9ae76bd908b1f901c8682bfa75eba85e8b9d3040dca137c9b3ae2e6a370b6d3",
-      "currentEnSha256": "08441a374fbcc860ffc3afdc392f6fe9b6988d0874688c335350b793bbb21273"
+      "currentZhSha256": "2ab2d9f152a883d5d3d851c9eb85ff0accacec2e30e3f18c332e94ee8c2a6f62",
+      "currentEnSha256": "7b3179da60cb463d10cdf61449ea42b09a56b37ed6808d797b12edd869af8115"
     },
     {
       "oldZh": "knowledge-base/docs/3d-foundation.md",
@@ -1778,6 +1778,36 @@
       "currentZhSha256": "29c45ee9cb9e7836100cc677a3d50e78cfc1221a7e32a547a36ad1536b567fa1",
       "engineeringPreview": "0.54.0",
       "status": "SOURCE_CANDIDATE_REVIEW_PENDING"
+    },
+    {
+      "newEn": "knowledge-base/en/docs/local-linear-layout-spec.md",
+      "newZh": "knowledge-base/Cns/docs/local-linear-layout-spec.md",
+      "kind": "public_reading",
+      "action": "add-current-pair",
+      "currentEnSha256": "330f8998305c4a9a8cf31c6212cdbb7718ed1a0dbcdc28bf58e55602d802b9eb",
+      "currentZhSha256": "ce85733373af3c86f28d8bdf47ed3ac2d3aa7c62f62ec0601f62d78b4bded723",
+      "engineeringPreview": "0.55.0",
+      "status": "CURRENT_READING_SOURCE"
+    },
+    {
+      "newEn": "knowledge-base/en/docs/local-linear-layout-evidence.md",
+      "newZh": "knowledge-base/Cns/docs/local-linear-layout-evidence.md",
+      "kind": "public_reading",
+      "action": "add-current-pair",
+      "currentEnSha256": "4e18e741a6ca4c09e08350e9f144403c8585436f6430d5665f8f6072ffaaf6b4",
+      "currentZhSha256": "a94e775a3e3f924ba8ad440bf0125794264090769725fc6e0cf8fbbc3dbeb59d",
+      "engineeringPreview": "0.55.0",
+      "status": "CURRENT_READING_SOURCE"
+    },
+    {
+      "newEn": "examples/linear-layout/README.md",
+      "newZh": "examples/linear-layout/README.zh-CN.md",
+      "kind": "public_reading",
+      "action": "add-current-pair",
+      "currentEnSha256": "390aeaf2d9c3f5a8fc4b760a3c87f59e4fd2eca725c3d15b86fadab49ed06fe5",
+      "currentZhSha256": "f74351394da032ace9816b1486ab78c5320b6272ae2e90235f2477a4524079a6",
+      "engineeringPreview": "0.55.0",
+      "status": "CURRENT_READING_SOURCE"
     }
   ],
   "registries": [
@@ -2207,5 +2237,13 @@
     "historyPreserved": true,
     "publicSourceBilingualReview": "PENDING",
     "nativeActualStatus": "ACCEPTED_BOUNDED_DESKTOP_DOM_NATIVE_ONLY"
+  },
+  "localLinearLayoutCuration": {
+    "engineeringPreview": "0.55.0",
+    "date": "2026-10-15",
+    "newReadingPairs": 3,
+    "changedExistingReadingPairs": 7,
+    "preservedOriginalsUnchanged": true,
+    "historicalCutoffsPreserved": true
   }
 }

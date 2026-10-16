@@ -28,7 +28,7 @@
 
 ## 当前工程状态
 
-工程预览 **0.54.0** 已通过 [PR #42](https://github.com/cnedwin/Egret_rebuild/pull/42) 合入主干。[能力与进展总览](docs/core-progress.md)分别说明可用接口、已记录的验证和后续产品工作。工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。
+工程预览 **0.55.0** 增加显式本地线性规划，调用方选择成员并将位置应用到既有 Button。参阅[规格](docs/local-linear-layout-spec.md)、[证据](docs/local-linear-layout-evidence.md)及[示例指南](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/linear-layout/README.zh-CN.md)。已记录的桌面 Canvas/WebGPU 检查覆盖固定双 Button 流程；环境及边界见证据记录。 更广泛的已实现接口及剩余工作见[能力与进展](docs/core-progress.md)。工作区包仍为 private、版本 0.0.0，宿主协议仍为 1.0。
 
 ## 接口契约与示例
 

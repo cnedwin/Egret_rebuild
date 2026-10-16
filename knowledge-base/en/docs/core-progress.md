@@ -4,7 +4,11 @@ English | [简体中文](../../Cns/docs/core-progress.md)
 
 The core is developed through executable increments that connect display, resources, animation, input and host execution. This page summarizes the current interfaces and remaining product work; each linked contract contains the exact behavior and verification scope.
 
-## Current integrated version
+## Explicit local layout — 0.55.0
+
+The pure `planLinearLayout` function in `@egret/engine/layout` returns a frozen rectangle plan. Callers choose membership and apply coordinates through existing display APIs; the two-Button example composes layout, shared input and saved/live frames. Recorded desktop Canvas/WebGPU checks cover the fixed two-Button workflow; their environment and limits are in the evidence record. Read the [specification](local-linear-layout-spec.md) and [evidence](local-linear-layout-evidence.md).
+
+## Previous integration — 0.54.0
 
 Engineering preview **0.54.0** was merged through [PR #42](https://github.com/cnedwin/Egret_rebuild/pull/42). Main is efd2a9c91fb6cfe633214b50b82cf7952941452a, tree 2b39b8439a5b30ce3572edc162e8a7a916a76185. Workspace packages remain private 0.0.0; host protocol remains 1.0.
 
@@ -23,7 +27,7 @@ Engineering preview **0.54.0** was merged through [PR #42](https://github.com/cn
 
 The default core is DOM/Node-free. Canvas and WebGPU are explicit browser entries. Display assembly, time advancement, capture and submission have distinct contracts. Resource leases and Scope/Engine ownership make cancellation and retirement explicit.
 
-## Current verification
+## Integrated 0.54 verification
 
 The recorded 0.54 work completed all nine local code phases, Core **3218/3218**, retained Spine Source **160/160**, and focused Button checks **163/163**. The Button type positive produced **0** diagnostics and its negative consumer matched **19** diagnostics. The normal prepush and mandatory commit/push hooks completed, and the merged tree was compared with the reviewed files.
 
@@ -33,7 +37,7 @@ GitHub reported no statuses or check runs for PR #42. The local verification abo
 
 ## Next work and contributions
 
-- Reusable layout and richer UI composition, followed by touch, keyboard, focus, accessibility and editing.
+- Extend UI composition beyond explicit local planning, followed by touch, keyboard, focus, accessibility and editing.
 - Resource-backed visual replacement with cancellation, stale-result suppression and recoverable publication.
 - Complete versioned Spine support under **R020/V020**, including its feature/backend/host matrix.
 - Extended 3D scenes, characters and effects, with asset and lifetime integration.

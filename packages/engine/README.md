@@ -4,6 +4,10 @@ English | [简体中文](README.zh-CN.md)
 
 Egret's experimental public facade assembles `@egret/runtime` and `@egret/contracts`. It manages logical lifecycle, display/frame access, CPU assets and exclusive surface reservations; hosts manage physical resources and safe return. The root entry remains DOM-free. The separate `@egret/engine/web` entry exports `createCanvasHost`; `@egret/engine/webgpu` explicitly enables WebGPU. Engine pins `robust-predicates` 3.0.3 for rendering preparation.
 
+## Engineering preview 0.55.0 — explicit local linear layout
+
+The optional built `@egret/engine/layout` entry provides `planLinearLayout` and four erased interfaces. Callers supply numeric dimensions, select membership and apply local coordinates. The planner is DOM/Node-free, writes no scene, and adds no default API, dependency or SDK Host protocol; automatic EUI layout remains open. Read the [specification](../../knowledge-base/en/docs/local-linear-layout-spec.md), [evidence](../../knowledge-base/en/docs/local-linear-layout-evidence.md) and [two-button example](../../examples/linear-layout/README.md). Recorded desktop Canvas/WebGPU checks cover the fixed two-Button workflow; their environment and limits are in the evidence record.
+
 ## Engineering preview 0.52.0 — display anchor offsets
 
 Existing display classes inherit finite-number `anchorOffsetX` and `anchorOffsetY`, default +0. The authored pivot places scale/rotation coherently across coordinates, logical bounds, clipping, explicit picking and frame capture, with original zero-offset bytes retained. Read the [current contract](../../knowledge-base/en/docs/display-anchor-offsets-contract.md) and [bounded evidence](../../knowledge-base/en/docs/display-anchor-offsets-evidence.md).

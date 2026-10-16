@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "version": "0.54.0",
+  "version": "0.55.0",
   "updatedAt": "2026-10-15",
-  "title": "Engineering preview 0.54.0 — shared-input bitmap buttons",
-  "stage": "INTEGRATED_ENGINEERING_PREVIEW_CURRENT_CODE_AND_BOUNDED_NATIVE_ACCEPTED",
+  "title": "Engineering preview 0.55.0 — explicit local linear layout",
+  "stage": "CODE_AND_BOUNDED_DESKTOP_NATIVE_ACCEPTED",
   "publication": "public_source_engineering_preview",
   "registries": {
     "requirements": "en/registry/requirements.json",
@@ -101,7 +101,9 @@
     "containerAddChildAtPlan": "en/docs/container-add-child-at-implementation-plan.md",
     "bitmapButtonContract": "en/docs/bitmap-button-contract.md",
     "bitmapButtonEvidence": "en/docs/bitmap-button-evidence.md",
-    "bitmapButtonPlan": "en/docs/bitmap-button-implementation-plan.md"
+    "bitmapButtonPlan": "en/docs/bitmap-button-implementation-plan.md",
+    "localLinearLayoutSpec": "en/docs/local-linear-layout-spec.md",
+    "localLinearLayoutEvidence": "en/docs/local-linear-layout-evidence.md"
   },
   "architectureContractProbesRun": true,
   "browserApiPixelProbesRun": true,
@@ -564,7 +566,7 @@
     "contract": "en/docs/display-content-bounds-contract.md",
     "evidence": "en/docs/display-content-bounds-evidence.md"
   },
-  "latestEngineeringPreview": "0.54.0",
+  "latestEngineeringPreview": "0.55.0",
   "texturedMesh2DImplementation": {
     "version": "0.23.0",
     "status": "bounded_increment_implemented",
@@ -3725,7 +3727,7 @@
   },
   "_localization": {
     "canonicalSource": "当前版本.json",
-    "canonicalSha256": "e8f2685c4b1d640036e305f6897596bd3679c03e8658d119c8d740c5a6f13bd5",
+    "canonicalSha256": "81ac35b6d60e14c243e29421579fa015616c5a1e4eda874bac45c72ab0e150b3",
     "role": "read_only_translation",
     "language": "en"
   },
@@ -6836,5 +6838,121 @@
     "reviewStatus": "independent_reading_review_complete",
     "independentReviewCount": 5,
     "productExecutionScope": "unchanged"
+  },
+  "localLinearLayoutPreviousCheckpoint": {
+    "version": "0.54.0",
+    "updatedAt": "2026-10-15",
+    "title": "Engineering preview 0.54.0 — shared-input bitmap buttons",
+    "stage": "INTEGRATED_ENGINEERING_PREVIEW_CURRENT_CODE_AND_BOUNDED_NATIVE_ACCEPTED",
+    "publication": "public_source_engineering_preview",
+    "latestEngineeringPreview": "0.54.0"
+  },
+  "localLinearLayoutWorkPackage": {
+    "engineeringPreview": "0.55.0",
+    "sourceId": "S109",
+    "deliverableId": "V060",
+    "date": "2026-10-15",
+    "status": "CODE_AND_BOUNDED_DESKTOP_NATIVE_ACCEPTED",
+    "optionalPublicEntry": "@egret/engine/layout",
+    "runtimeExports": [
+      "planLinearLayout"
+    ],
+    "erasedInterfaces": [
+      "LinearLayoutItem",
+      "LinearLayoutOptions",
+      "LinearLayoutPlacement",
+      "LinearLayoutPlan"
+    ],
+    "build": "SAVED_EXIT_0",
+    "focused": {
+      "pass": 25,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "task1FullCode": {
+      "phases": 9,
+      "Core": 3243,
+      "retainedSpineSource": 160,
+      "independentReview": {
+        "bytes": 50006,
+        "sha256": "db0f056e8a315b316509e47a44ab7c0ef10396d885e8f8ea829c829026b29f1d",
+        "identityOnlyNotDistributed": true
+      },
+      "cutoff": "Task 1 API fixture before the later startup-barrier application revision; Core and Spine counts are separate."
+    },
+    "strict": {
+      "positiveDiagnostics": 0,
+      "negativeDiagnostics": 24,
+      "fullUnsuppressedTupleMatch": true
+    },
+    "task2API": {
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "independentReview": {
+        "bytes": 12906,
+        "sha256": "3207cbaadc313d233f3980a9780f27e362432a9d5a9f9305621a88b839292c44",
+        "identityOnlyNotDistributed": true
+      },
+      "cutoff": "One integration test contains the source-defined semantic/startup assertions. This separate run does not rewrite the earlier full-suite cutoff."
+    },
+    "normalHosts": {
+      "status": "ACCEPTED_EXISTING_RENDERER_SUITES_ONLY",
+      "independentReview": {
+        "bytes": 1193649,
+        "sha256": "68bad02924655710672e930d307b8896fb3537de720f4173cf5d4fe828f7a791",
+        "identityOnlyNotDistributed": true
+      },
+      "notAddedToLayoutTotals": true
+    },
+    "nativeActual": {
+      "status": "ACCEPTED_BOUNDED_DESKTOP_CANVAS_WEBGPU_ONLY",
+      "independentReview": {
+        "bytes": 19559,
+        "sha256": "66f5583095ad63e2b3b683a733fa229d89b69a73e91a89b9139326854da1062b",
+        "identityOnlyNotDistributed": true
+      },
+      "browser": "Edge 155.0.4283.45",
+      "launch": "default headless; no custom flags",
+      "width": 24,
+      "height": 24,
+      "pixelRatio": 1,
+      "presentationsPerBackend": 19,
+      "mainReadbacks": 36,
+      "mainChannels": 82944,
+      "ancillaryReadbacks": 2,
+      "separateFreshCanvasReadbacks": 3,
+      "rawRGBAOriginals": 41,
+      "mainMismatchedPixels": 0,
+      "mainMismatchedChannels": 0,
+      "pixelTolerance": 0,
+      "wrongExpectation": {
+        "pixels": 84,
+        "channels": 168,
+        "mainCredit": 0
+      },
+      "webGPUOriginalTickets": 19,
+      "allOriginalTicketsFulfilled": true,
+      "retiredSessions": 3,
+      "scope": "Fixed desktop browser schedule only; no Native SDK, phone, hardware/performance, full EUI, fonts or general Host acceptance."
+    },
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "firstPartyLicense": "Apache-2.0",
+    "newDependency": false,
+    "defaultAPIChanged": false,
+    "hostProtocolChanged": false,
+    "finalPublicationReview": "RECORDED_SEPARATELY",
+    "delivery": "Repository commits, pull requests and Main history determine actual delivery; no unpublished future commit identity is embedded.",
+    "remoteCIPassClaim": false,
+    "historicalCutoffsPreserved": true,
+    "contract": "en/docs/local-linear-layout-spec.md",
+    "evidence": "en/docs/local-linear-layout-evidence.md",
+    "example": "https://github.com/cnedwin/Egret_rebuild/blob/main/examples/linear-layout/README.md"
   }
 }

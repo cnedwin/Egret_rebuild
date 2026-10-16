@@ -20,17 +20,17 @@ The repository contains an executable engineering preview. Display trees, resour
 
 ## Current version
 
-Engineering preview **0.54.0** was integrated through [PR #42](https://github.com/cnedwin/Egret_rebuild/pull/42). Workspace packages remain private at 0.0.0 and the host protocol remains 1.0. The [capability overview](knowledge-base/en/docs/core-progress.md) explains what is implemented and which verification each subsystem has.
+Engineering preview **0.55.0** adds explicit local linear layout: call `planLinearLayout` for immutable rectangle placements, then apply coordinates through existing display APIs. The [two-button layout example](examples/linear-layout/README.md) demonstrates horizontal/vertical placement, membership filtering, disabled states and saved/live frames. Recorded desktop Canvas/WebGPU checks cover the fixed two-Button workflow; their environment and limits are in the evidence record. Read the [specification](knowledge-base/en/docs/local-linear-layout-spec.md), [evidence](knowledge-base/en/docs/local-linear-layout-evidence.md) and [version history](knowledge-base/en/CHANGELOG.md). Workspace packages remain private 0.0.0; the host protocol remains 1.0.
 
 ## Five recent changes
 
 | Version / 版本 | Main change | 主要变化 |
 | --- | --- | --- |
+| 0.55.0 | Explicit local linear planning and a two-button composition example | 显式本地线性规划与双按钮组合示例 |
 | 0.54.0 | Shared-input bitmap buttons with pressed/disabled skins and final activation picking | 共享输入位图按钮、按下与禁用皮肤、激活前最终命中复查 |
 | 0.53.0 | Runnable atlas/animation playground with explicit pivots and saved/live frames | 图集与动画可运行示例、显式锚点和保存／实时画面 |
 | 0.52.0 | Display anchor offsets shared by rendering, coordinates and picking | 渲染、坐标转换与拾取共用显示对象锚点 |
 | 0.51.0 | Indexed display-child insertion with preserved ownership | 按索引插入显示子对象并保持所有权语义 |
-| 0.50.0 | Query the current index of a direct display child | 查询直接显示子对象的当前索引 |
 
 [Full Changelog](knowledge-base/en/CHANGELOG.md) · [Engineering plan](knowledge-base/en/docs/engineering-plan.md)
 
@@ -43,7 +43,7 @@ Use the recorded Node.js 24.19.0, pnpm 11.25.0 and TypeScript 7.0.2 toolchain. F
     node tools/verify.mjs
     node examples/headless.mjs
 
-Run the [two-button example](examples/bitmap-button/README.md) for Canvas/WebGPU interaction, or the [atlas playground](examples/anchored-atlas-playback/README.md) for resources and animation. Their guides describe the local HTTP server and supported browser paths.
+Try the [layout example](examples/linear-layout/README.md) for explicit planning and Button composition, or run the [two-button example](examples/bitmap-button/README.md) for Canvas/WebGPU interaction, or the [atlas playground](examples/anchored-atlas-playback/README.md) for resources and animation. Their guides describe the local HTTP server and supported browser paths.
 
 ## Read and contribute
 
