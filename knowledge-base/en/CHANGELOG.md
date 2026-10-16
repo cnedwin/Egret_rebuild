@@ -4,6 +4,18 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## 0.60.0 candidate — atlas import planning
+
+The **0.60.0 engineering preview** adds the optional `@egret/project/atlas` entry: strict single-page Aseprite stable-marker JSON-array planning with one explicit PNG binding. Its two runtime values and sixteen erased types produce owned, frozen inputs for the existing SpriteSheet and SequenceClip factories. The exact profile is `aseprite-json-array-1.3.18.6-v1`; exporter output compatibility, declared hashes and entitlement remain unverified.
+
+Read the [contract](docs/atlas-import-plan-contract.md) and [evidence and limits](docs/atlas-import-plan-evidence.md).
+
+Independently accepted saved results are focused planner 47/47, the earlier normal SDK run with core 3625/3625 and separate F2 160/160, and the distinct CPU firstGREEN 5/5. These overlapping scopes are not added together. Independent review also accepts the selected new Native Canvas/WebGPU four-readback result. Final integrated gates/prepush and 0.60 Git/remote delivery remain pending. Workspace packages remain private 0.0.0; Host protocol remains 1.0.
+
+## 0.59.0 delivery update
+
+The preceding 0.59 increment was delivered through [PR #48](https://github.com/cnedwin/Egret_rebuild/pull/48), Main `44f49f9d97a7baebc400fd4940541529dc33d147`. Earlier 0.59 readings and evidence retain their original authoring cutoffs; the new delivery statement does not rewrite them. No remote statuses or check runs were reported, so no CI pass is inferred.
+
 ## 0.59.0 candidate — normalized atlas frames — 2026-10-17
 
 The explicit `'trim-rotation-v1'` profile on the existing SpriteSheet and SequenceClip factories supports single-page frames with transparent trim and clockwise90 packing. Owned layout preserves logical dimensions and placement through Bitmap and existing sequence playback, while the default rectangle path remains compatible. Read the [contract](docs/atlas-frame-layout-contract.md), [evidence and limits](docs/atlas-frame-layout-evidence.md) and [example guide](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/trimmed-atlas-playback/README.md).

@@ -32,8 +32,19 @@ function read(root, relative) {
   if (!inside(root, physical) || !lstatSync(physical).isFile()) failure('SS1_BOUNDARY_INPUT', 'File escaped its owner: ' + relative);
   return readFileSync(physical);
 }
+
+// Retain the historical pin and admit only the reviewed optional-entry successor.
+// This is one complete path and two exact raw identities, never a path wildcard.
+function ss1AtlasPackageSuccessor(expected, raw) {
+  return expected?.path === 'packages/project/package.json'
+    && expected.bytes === 397 && expected.sha256 === '295e6bc8d81a4647f5b99355ea27879563ced216fa2af406c65cc78b95f40945'
+    && raw.length === 503 && hash(raw) === '4b4380142316c6ab2f0727eab44c80eff2a21640c701871c6ace3a0ab1b276af';
+}
+
+const ss1AtlasGraphSuccessor = [{"path":"packages/project/dist/atlas/index.d.ts","bytes":491,"sha256":"9393ab919b1072d4c1f057b9a26fcaa38eaee950cc3c746ad4aac31c00c33f0b"},{"path":"packages/project/dist/atlas/index.js","bytes":173,"sha256":"a456071c6197d60a76de988719413fef7e81170cf993576b738ebe6e44aea88f"},{"path":"packages/project/dist/atlas/input.d.ts","bytes":806,"sha256":"e6ecd38ec234bf1b58c226937356c5173912f6429196d210a07813ab424ddc75"},{"path":"packages/project/dist/atlas/input.js","bytes":6640,"sha256":"6a3586152d7e26d53c6e0fbcda27997a61d43f673c4162349fa27e457b73efa8"},{"path":"packages/project/dist/atlas/json.d.ts","bytes":753,"sha256":"7d49c80cd9d76e62859f6e807fa61c0e3a09cae890147d33e6a1a51dfeef9810"},{"path":"packages/project/dist/atlas/json.js","bytes":7131,"sha256":"30dfdee2df12e4a5a128510315937ea14f234556b905657804fa93ba2eda78b4"},{"path":"packages/project/dist/atlas/plan.d.ts","bytes":169,"sha256":"e0d008c1120ee2e00c71afac27d6acc5a63f1f62a99ff5a8d36ed16d6aae8c77"},{"path":"packages/project/dist/atlas/plan.js","bytes":13391,"sha256":"f9d6f97fb433c35fd91c9cefbc5d94498b93e40476dc11f360a6fc3ad52002a4"},{"path":"packages/project/dist/atlas/types.d.ts","bytes":4795,"sha256":"6d87509408d64a0ab706bef9d2188b072595f4758269a866aad227792d91e4e5"},{"path":"packages/project/dist/atlas/types.js","bytes":44,"sha256":"01ae2a5b120382f9a648ced7ee8507493a134f216d100fc61600c6c9738235d2"},{"path":"packages/project/src/atlas/index.ts","bytes":495,"sha256":"182930a58f07ab8acfb415aaad53f705b9178f2229b6bb5a9c872cdece96f065"},{"path":"packages/project/src/atlas/input.ts","bytes":7012,"sha256":"4193cd78d88a030f4af1a28e5f920788ab210bb47bbc70d49fa720febf784748"},{"path":"packages/project/src/atlas/json.ts","bytes":7206,"sha256":"041010cc3adfc83acb42b081a94a57aefdc38997ce18bef0317ff2351c8661ef"},{"path":"packages/project/src/atlas/plan.ts","bytes":13063,"sha256":"d06ca255f7f6e7ad56da2a7d22f3d6af149c51ea62efdcc8e5832c5a4b2759ef"},{"path":"packages/project/src/atlas/types.ts","bytes":4560,"sha256":"e83a07146ac069144d6abff1080e8df49fa7e1e35d8c45ccb792e5eb4e875315"}];
 function pin(root, expected, code) {
   const bytes = read(root, expected.path);
+  if (ss1AtlasPackageSuccessor(expected, bytes)) return;
   if (bytes.length !== expected.bytes || hash(bytes) !== expected.sha256) failure(code, 'Identity changed: ' + expected.path);
 }
 
@@ -238,8 +249,12 @@ function run() {
     }
   };
   for (const name of ['contracts', 'runtime', 'engine', 'project']) for (const area of ['src', 'dist', ...(name === 'engine' ? ['web', 'rendering'] : [])]) walkCode('packages/' + name + '/' + area);
-  if (!equal(actualNames.sort(), graphPins.map(item => item.path))) failure('SS1_BOUNDARY_SOURCE_OWNER', 'Complete four-package source/emission path inventory changed');
-  for (const expected of graphPins) pin(root, expected, 'SS1_BOUNDARY_SOURCE_OWNER');
+  const projectPin = configurationPins.find(pin => pin.path === 'packages/project/package.json');
+  // Derive a closed successor without altering any retained graph row.
+  const expectedGraph = ss1AtlasPackageSuccessor(projectPin, read(root, projectPin.path))
+    ? [...graphPins, ...ss1AtlasGraphSuccessor] : graphPins;
+  if (!equal(actualNames.sort(), expectedGraph.map(item => item.path).sort())) failure('SS1_BOUNDARY_SOURCE_OWNER', 'Complete four-package source/emission path inventory changed');
+  for (const expected of expectedGraph) pin(root, expected, 'SS1_BOUNDARY_SOURCE_OWNER');
   compiler(root, owned);
   if (owned) {
     if (!equal(inventory(root), owned.pins)) failure('SS1_BOUNDARY_COPY', 'Successful full snapshot differs from receipt');

@@ -11,6 +11,10 @@
     "./spine": {
       "types": "./dist/spine/index.d.ts",
       "import": "./dist/spine/index.js"
+    },
+    "./atlas": {
+      "types": "./dist/atlas/index.d.ts",
+      "import": "./dist/atlas/index.js"
     }
   },
   "dependencies": {

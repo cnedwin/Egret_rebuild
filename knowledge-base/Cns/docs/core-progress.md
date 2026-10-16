@@ -4,9 +4,19 @@
 
 核心工程通过可运行增量连接显示、资源、动画、输入与宿主执行。本页概述当前接口及后续产品工作，链接的契约说明精确行为与验证范围。
 
+## 图集导入规划 — 0.60.0 候选
+
+**0.60.0 工程预览**增加可选 `@egret/project/atlas` 入口，以一个显式 PNG 绑定规划严格单页 Aseprite stable-marker JSON-array。两个运行时值与十六个擦除类型为既有 SpriteSheet、SequenceClip 工厂生成自有、冻结的输入。精确 profile 为 `aseprite-json-array-1.3.18.6-v1`；exporter 输出兼容性、声明 hash 与许可资格仍未验证。
+
+参阅[契约](atlas-import-plan-contract.md)及[证据与限制](atlas-import-plan-evidence.md)。
+
+已独立接受的保存结果分别为聚焦 planner 47/47、较早正常 SDK 核心 3625/3625 与单独 F2 160/160，以及独立 CPU firstGREEN 5/5；这些重叠范围不相加。独立审查还接受所选新增 Native Canvas/WebGPU 四次读回结果。最终集成门禁/prepush 及 0.60 Git/远端交付仍待完成。工作区包仍为 private、版本 0.0.0，Host 协议仍为 1.0。
+
+前一 0.59 增量已通过 [PR #48](https://github.com/cnedwin/Egret_rebuild/pull/48) 交付，Main 为 `44f49f9d97a7baebc400fd4940541529dc33d147`。较早 0.59 读物和证据保留原编写截止点，新增交付说明不改写它们。未报告远端 status 或 check run，不据此推断 CI 通过。
+
 ## 标准化图集帧 — 0.59.0 候选
 
-显式 `'trim-rotation-v1'` profile 通过一个擦除的 readonly `AtlasFrameLayout` 类型扩展现有 SpriteSheet 和 SequenceClip 工厂。带透明裁边及顺时针90度打包的 crop 通过 Bitmap、SequencePlayer 和 SequencePlayback 保留原始逻辑画布。两个 frame collector 均以 `M * S` 合成图像放置，parent clip、anchor 和 child 坐标仍使用原 display matrix。默认/undefined profile 保留原矩形路径。完整输入、精确 lease 与所有权规则见[契约](atlas-frame-layout-contract.md)、[证据](atlas-frame-layout-evidence.md)和[示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/trimmed-atlas-playback/README.zh-CN.md)。
+显式 `'trim-rotation-v1'` profile 通过一个擦除的 readonly `AtlasFrameLayout` 类型扩展现有 SpriteSheet 和 SequenceClip 工厂。带透明裁边及顺时针90度打包的 crop 通过 Bitmap、SequencePlayer 和 SequencePlayback 保留原始逻辑画布。两个 frame collector 均以 `M * S` 合成图像放置，parent clip、anchor 和 child 坐标仍使用原 display matrix。默认/undefined profile 保留原矩形路径。完整输入、精确 lease 与所有权规则见[契约](atlas-frame-layout-contract.md)、[证据](atlas-frame-layout-evidence.md)和[示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/trimmed-atlas-playback/README.md)。
 
 经独立审查的十二阶段 SDK `node tools/verify.mjs` 运行通过 **3559/3559 项核心测试**及单独的 **160/160 项 Spine 实验测试**，两套的 failed/cancelled/skipped/todo 均为 **0**。该次运行完成构建、严格消费者和源码边界阶段。另经独立审查的桌面 Canvas 与纹理 WebGPU 运行通过六个全新上下文、30 次零容差完整 RGBA 读回，覆盖 once/loop 时间、持有时间恢复、anchor、parent clip、每后端两个指定突变对照，以及原资源退役后的保存帧重放。当前验证器增加了第十三个图集源码边界阶段；截至本次编写，完整重跑、最终公开内容/prepush、0.59 Git 交付及远端 CI 仍待完成。
 
@@ -18,11 +28,11 @@
 
 已记录的桌面 Canvas 与 WebGPU 检查通过六个独立上下文，保留 54 份原始 RGBA 读回，覆盖独立的旧图层对照、真实鼠标选择、动画边界，以及原始读取尚未结束时关闭。该结果只适用于有限桌面范围；通用依赖清单、更多内容类型、完整 UI、Spine、生产宿主、移动性能和物理内存验收仍保持开放。
 
-参阅[规格](prepared-resource-groups-spec.md)、[证据与边界](prepared-resource-groups-evidence.md)及[示例指南](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/prepared-resource-groups/README.zh-CN.md)。
+参阅[规格](prepared-resource-groups-spec.md)、[证据与边界](prepared-resource-groups-evidence.md)及[示例指南](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/prepared-resource-groups/README.md)。
 
 ## 真实资源场景集成 — 0.57.0
 
-工程预览 **0.57.0** 通过既有公开 Engine API，组合真实 PNG 资源、共享图集播放、文本与鼠标输入。默认使用 Canvas，纹理 WebGPU 场景作为显式选择的实验路径。资源准备、画面就绪、输入就绪及安全关闭具有各自边界。参阅[集成记录](resource-scene-integration.md)和[示例指南](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/resource-scene/README.zh-CN.md)。
+工程预览 **0.57.0** 通过既有公开 Engine API，组合真实 PNG 资源、共享图集播放、文本与鼠标输入。默认使用 Canvas，纹理 WebGPU 场景作为显式选择的实验路径。资源准备、画面就绪、输入就绪及安全关闭具有各自边界。参阅[集成记录](resource-scene-integration.md)和[示例指南](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/resource-scene/README.md)。
 
 桌面 Canvas/WebGPU 流程已完成七个独立上下文，保留 64 份原始 RGBA 画面；在记录的环境中，固定点与字体区域比较、错误对照和完整关闭均通过。手机、跨环境字体、性能与能耗验收仍保持开放。
 
@@ -82,6 +92,6 @@ GitHub 未为 PR #42 返回状态或检查运行，以上本地验证与远端 C
 
 ## 历史工程证据
 
-[变更记录](../CHANGELOG.md)说明各增量的主要作用。早期详细结果、失败与准备截点保存在子系统证据及[固定版本进展记录](https://github.com/cnedwin/Egret_rebuild/blob/efd2a9c91fb6cfe633214b50b82cf7952941452a/knowledge-base/Cns/docs/core-progress.md)中。历史计数和哈希继续标识原始源码，后续阅读整理不重新执行或扩大其结论。
+[变更记录](../CHANGELOG.md)说明各增量的主要作用。早期详细结果、失败与准备截点保存在子系统证据及[固定版本进展记录](https://github.com/cnedwin/Egret_rebuild/blob/efd2a9c91fb6cfe633214b50b82cf7952941452a/knowledge-base/en/docs/core-progress.md)中。历史计数和哈希继续标识原始源码，后续阅读整理不重新执行或扩大其结论。
 
-可复现改动与审阅流程见[贡献指南](https://github.com/cnedwin/Egret_rebuild/blob/main/CONTRIBUTING.zh-CN.md)。第一方实现、外部依赖和研究参考分别保留来源及许可。
+可复现改动与审阅流程见[贡献指南](https://github.com/cnedwin/Egret_rebuild/blob/main/CONTRIBUTING.md)。第一方实现、外部依赖和研究参考分别保留来源及许可。

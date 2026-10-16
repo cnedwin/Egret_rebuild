@@ -28,7 +28,16 @@ const {fingerprintFile,logicalPath,samePhysicalPath}=await import(helperURL.href
 if(!samePhysicalPath(root,declaredRoot,platform))bbtbFail('BBT_BOUNDARY_INPUT','Physical owner differs');
 const seen=new Map();
 function read(file){logicalPath(file);const pin=fingerprintFile(root,file),raw=readFileSync(path.join(root,file));if(pin.bytes!==raw.length||pin.sha256!==hash(raw))bbtbFail('BBT_BOUNDARY_SOURCE_DRIFT',file);seen.set(file,pin);return raw;}
-function pinCheck(pin,code){const raw=read(pin.path);if(raw.length!==pin.bytes||hash(raw)!==pin.sha256)bbtbFail(code,'Changed complete source identity: '+pin.path);}
+
+// Retain the historical pin and admit only the reviewed optional-entry successor.
+// This is one complete path and two exact raw identities, never a path wildcard.
+function bbtbAtlasPackageSuccessor(expected, raw) {
+  return expected?.path === 'packages/project/package.json'
+    && expected.bytes === 397 && expected.sha256 === '295e6bc8d81a4647f5b99355ea27879563ced216fa2af406c65cc78b95f40945'
+    && raw.length === 503 && hash(raw) === '4b4380142316c6ab2f0727eab44c80eff2a21640c701871c6ace3a0ab1b276af';
+}
+
+function pinCheck(pin,code){const raw=read(pin.path);if(bbtbAtlasPackageSuccessor(pin,raw))return;if(raw.length!==pin.bytes||hash(raw)!==pin.sha256)bbtbFail(code,'Changed complete source identity: '+pin.path);}
 const policyPin={"path":"tools/bitmap-binding-ticket-policy.json","bytes":17818,"sha256":"7ce0ebb22e6e018f2d498ccc24d6fcda46a48254542178e22d604c5fa109c9c0"};
 pinCheck(policyPin,'BBT_BOUNDARY_POLICY_IDENTITY');
 const policy=JSON.parse(read(policyPin.path));

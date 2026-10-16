@@ -30,6 +30,10 @@ The 0.56 resource-slot increment combines recoverable binding replacement with a
 
 ## Subsystem reference
 
+- [Atlas import planning contract](knowledge-base/en/docs/atlas-import-plan-contract.md)
+- [Atlas import planning evidence](knowledge-base/en/docs/atlas-import-plan-evidence.md)
+- [Atlas import composition example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/atlas-import-playback/README.md)
+
 - [CPU scene snapshot contract](knowledge-base/en/docs/3d-cpu-scene-contract.md)
 - [CPU scene implementation evidence](knowledge-base/en/docs/3d-cpu-scene-evidence.md)
 - [3D CPU foundation and future rendering boundaries](knowledge-base/en/docs/3d-foundation.md)

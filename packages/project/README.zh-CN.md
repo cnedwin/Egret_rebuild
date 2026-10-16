@@ -4,6 +4,10 @@
 
 `@egret/project` 提供同步 headless 工程事务核心：不可变创作快照、原子编辑、保留目标恢复、通过规范历史持久重试及有界准入。私有 workspace 包保持版本 `0.0.0`，工程／历史／工具协议保持 `1.0`。依赖 `@egret/contracts` 及下文说明的固定解析器。编辑器、旧工程迁移和目标交付须分别验收。
 
+## 可选图集元数据规划
+
+从 `@egret/project/atlas` 导入 `createAtlasImportPlan`、`ATLAS_IMPORT_LIMITS`，十六个擦除类型描述严格输入、自有 plan 与诊断；根入口不转导出。所选 `aseprite-json-array-1.3.18.6-v1` profile 要求一个显式 PNG 绑定，拒绝旋转及不支持 metadata。参阅[契约](../../knowledge-base/Cns/docs/atlas-import-plan-contract.md)及[证据](../../knowledge-base/Cns/docs/atlas-import-plan-evidence.md)。planner 复用既有 jsonc-parser 3.3.1 foundation，不新增依赖，不导入 Engine/Runtime/Host。包保持 private、版本 0.0.0，hash、exporter 制品与权利仍只是声明。
+
 ## 公开 API
 
 包根恰好导出`DEFAULT_PROJECT_LIMITS`、`parseProjectSnapshot`、`serializeProjectSnapshot`、`parseProjectTransaction`、`createProjectStore`及`openProjectHistory`，另有29项仅类型声明。Store提供`limits`、`earliestRevision`、`getSnapshot`、`commit`和`exportHistory`。预期失败返回有界诊断；提交及重放结果包含不可变回执。实验性接口不承诺API稳定。
