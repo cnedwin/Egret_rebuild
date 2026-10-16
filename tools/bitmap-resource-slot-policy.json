@@ -433,8 +433,8 @@
   "oldRootPins": [
     {
       "path": "packages/engine/src/index.ts",
-      "bytes": 3257,
-      "sha256": "4bde50160dbf3350ba5b261e8ac6e48cbdeebfa277f55e68120ee0ca734caf7c"
+      "bytes": 3326,
+      "sha256": "1af076a11a6aa37d98e3139173df834f15ea66bda2644aacab7bdcf7965ba9a5"
     },
     {
       "path": "packages/engine/dist/index.js",
@@ -443,14 +443,14 @@
     },
     {
       "path": "packages/engine/dist/index.d.ts",
-      "bytes": 3292,
-      "sha256": "ba0d66bb51b4db0f196a4c863b0b75d10f88c451d2d590dcf80b9fb0a153d196"
+      "bytes": 3361,
+      "sha256": "c1c9d76789567df7b264ee6e80efde10f52cc55986dc83f8ae4d288495b70ff0"
     }
   ],
   "oldEngineDeclarationPin": {
     "path": "packages/engine/dist/Engine.d.ts",
-    "bytes": 3094,
-    "sha256": "d09b9a79bfdba155467bc678f8914adce08c33236b05b268bdc7cb4fed4ba7d2"
+    "bytes": 3344,
+    "sha256": "75520485dc8925fc40e8bb46ba9496994a6e81edcad45ad4c650c2d620eba467"
   },
   "workspacePins": [
     {

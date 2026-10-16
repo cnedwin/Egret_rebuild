@@ -21,13 +21,22 @@ Egret connects complex 2D interfaces and lightweight 3D with a rendering/runtime
 | Creation and compatibility | [AI/project interfaces](docs/ai-creation-and-engineering-interfaces.md) |
 | Creation and compatibility | [Spine support](docs/spine-animation-support-and-acceptance.md) |
 | Creation and compatibility | [Legacy migration](docs/legacy-project-migration.md) |
+| Current integration | [Prepared resource groups](docs/prepared-resource-groups-spec.md) |
 | Current integration | [Real-resource scene](docs/resource-scene-integration.md) |
 | Status and participation | [Capability overview](docs/core-progress.md) |
 | Status and participation | [Changelog](CHANGELOG.md) |
 | Status and participation | [Contributing](https://github.com/cnedwin/Egret_rebuild/blob/main/CONTRIBUTING.md) |
 | Sources | [Acknowledgements](https://github.com/cnedwin/Egret_rebuild/blob/main/ACKNOWLEDGEMENTS.md) |
 
-## Current engineering state
+## Prepared resource groups — 0.58.0
+
+Engineering preview **0.58.0** adds `Engine.captureBitmapBindings(scope, targets)` and the erased `BitmapBindingTicket` type. The prepared-outfit example waits for both clothing textures and commits their bindings together. Pending, failed, cancelled and obsolete changes preserve the working outfit; a ticket refuses to overwrite a later caller binding.
+
+Recorded desktop Canvas and WebGPU checks passed six fresh contexts with 54 original RGBA readbacks, including separate old-layer controls, genuine mouse selection, animation boundaries and shutdown with original reads still pending. This is finite desktop evidence. General dependency manifests, additional content types, full UI, Spine, production hosts, mobile performance and physical-memory acceptance remain open.
+
+Read the [contract](docs/prepared-resource-groups-spec.md), [evidence and limits](docs/prepared-resource-groups-evidence.md) and [example guide](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/prepared-resource-groups/README.md).
+
+## Real-resource scene — 0.57.0
 
 Engineering preview **0.57.0** combines real PNG resources, shared atlas playback, text and mouse input through existing public Engine APIs. Canvas is the default; the textured WebGPU scene is an explicit experimental choice. Resource preparation, presentation readiness, input readiness and safe shutdown have separate boundaries. Read the [integration record](docs/resource-scene-integration.md) and [example guide](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/resource-scene/README.md).
 

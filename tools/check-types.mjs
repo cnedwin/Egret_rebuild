@@ -991,3 +991,8 @@ await import('./linear-layout-types.mjs');
 // Preserve every retained strict lane before checking resource-slot consumers.
 await import('./bitmap-resource-slot-types.mjs');
 // BITMAP_RESOURCE_SLOT_TYPES_END
+
+// BITMAP_BINDING_TICKET_TYPES_BEGIN
+// Preserve retained strict lanes before replaying borrowed binding-ticket consumers.
+await import('./bitmap-binding-ticket-types.mjs');
+// BITMAP_BINDING_TICKET_TYPES_END

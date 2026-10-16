@@ -31,8 +31,56 @@ function operationsFor(context: EngineContext): ResourceTargetOperations {
   let operations = resourceTargetOperations.get(context);
   if (operations !== undefined) return operations;
   const preparedStates = new WeakMap<object, { readonly bitmap: Bitmap; readonly state: BitmapCaptureState }>();
+
+  interface BatchCapture {
+    readonly targets: readonly Bitmap[];
+    readonly expected: readonly BitmapCaptureState[];
+  }
+  interface BatchPrepared {
+    readonly captured: object;
+    readonly states: readonly BitmapCaptureState[];
+  }
+  interface BatchPublication {
+    readonly targets: readonly Bitmap[];
+    readonly states: readonly BitmapCaptureState[];
+    active: boolean;
+  }
+  const batchCaptures = new WeakMap<object, BatchCapture>();
+  const batchPreparedStates = new WeakMap<object, BatchPrepared>();
+  const batchPublications = new WeakMap<object, BatchPublication>();
   const affinity = (value: object): void => {
     if (engineOf(value) !== context) throw new EgretError('ENGINE_MISMATCH');
+  };
+
+  const batchAffinity = (targets: readonly Bitmap[]): void => {
+    for (let index = 0; index < targets.length; index++) {
+      affinity(targets[index]!); assertBitmap(targets[index]!);
+    }
+  };
+  const batchLife = (targets: readonly Bitmap[]): void => {
+    context.assertOpen();
+    for (let index = 0; index < targets.length; index++) assertLive(targets[index]!);
+  };
+  const capturedBatch = (captured: object): BatchCapture => {
+    const entry = batchCaptures.get(captured);
+    if (entry === undefined) throw new EgretError('BITMAP_RESOURCE_PREPARED_INVALID');
+    return entry;
+  };
+  const expectedBatch = (entry: BatchCapture): void => {
+    // Complete the entire token pass before reading even the first entitlement.
+    for (let index = 0; index < entry.targets.length; index++) {
+      if (readBitmapState(entry.targets[index]!) !== entry.expected[index]) {
+        throw new EgretError('BITMAP_RESOURCE_BINDING_CHANGED');
+      }
+    }
+  };
+  const batchImage = (lease: AssetLease<Texture>): TextureSnapshot2D => {
+    if (!isAssetLease(lease)) throw new EgretError('BITMAP_LEASE_INVALID');
+    affinity(lease);
+    return readBitmapImage(lease);
+  };
+  const oldBatchImages = (entry: BatchCapture): void => {
+    for (let index = 0; index < entry.expected.length; index++) batchImage(entry.expected[index]!.lease);
   };
   const liveBinding = (bitmap: Bitmap, expected?: object): BitmapCaptureState => {
     affinity(bitmap);
@@ -89,6 +137,85 @@ function operationsFor(context: EngineContext): ResourceTargetOperations {
       affinity(lease);
       if (!isAssetLease(lease)) throw new EgretError('BITMAP_RESOURCE_LEASE_INVALID');
       applyResourceOperation(releaseResourceLease, lease, []);
+    },
+    captureBatch(targets: readonly Bitmap[]): object {
+      if (!Array.isArray(targets) || targets.length < 1 || targets.length > 128) {
+        throw new EgretError('BITMAP_BINDING_TARGETS_INVALID');
+      }
+      const copied: Bitmap[] = [], seen = new Set<Bitmap>();
+      for (let index = 0; index < targets.length; index++) {
+        const bitmap = targets[index]!;
+        affinity(bitmap); assertBitmap(bitmap);
+        if (seen.has(bitmap)) throw new EgretError('BITMAP_BINDING_TARGETS_INVALID');
+        seen.add(bitmap); copied.push(bitmap);
+      }
+      batchLife(copied);
+      const expected: BitmapCaptureState[] = [];
+      for (let index = 0; index < copied.length; index++) {
+        const state = readBitmapState(copied[index]!);
+        if (state === undefined) throw new EgretError('BITMAP_RESOURCE_TEXTURE_REQUIRED');
+        expected.push(state);
+      }
+      for (let index = 0; index < expected.length; index++) batchImage(expected[index]!.lease);
+      const captured = freezeResourceOperations({});
+      batchCaptures.set(captured, freezeResourceOperations({
+        targets: freezeResourceOperations(copied), expected: freezeResourceOperations(expected),
+      }));
+      return captured;
+    },
+    prepareBatch(captured: object, members: readonly AssetLease<Texture>[]): object {
+      const entry = capturedBatch(captured);
+      batchAffinity(entry.targets); batchLife(entry.targets);
+      if (!Array.isArray(members) || members.length !== entry.targets.length) {
+        throw new EgretError('BITMAP_BINDING_MEMBERS_INVALID');
+      }
+      const leases: AssetLease<Texture>[] = [];
+      for (let index = 0; index < entry.targets.length; index++) leases.push(members[index]!);
+      batchLife(entry.targets);
+      expectedBatch(entry);
+      oldBatchImages(entry);
+      const snapshots: TextureSnapshot2D[] = [];
+      for (let index = 0; index < leases.length; index++) snapshots.push(batchImage(leases[index]!));
+      const states: BitmapCaptureState[] = [];
+      for (let index = 0; index < snapshots.length; index++) {
+        const snapshot = snapshots[index]!;
+        states.push(freezeResourceOperations({ lease: leases[index]!, sourceRect: snapshot.sourceRect,
+          width: snapshot.sourceRect.width, height: snapshot.sourceRect.height }));
+      }
+      const prepared = freezeResourceOperations({});
+      batchPreparedStates.set(prepared, freezeResourceOperations({ captured, states: freezeResourceOperations(states) }));
+      return prepared;
+    },
+    commitBatch(captured: object, prepared: object): object {
+      const entry = capturedBatch(captured);
+      batchAffinity(entry.targets);
+      const candidate = batchPreparedStates.get(prepared);
+      if (candidate === undefined || candidate.captured !== captured) throw new EgretError('BITMAP_RESOURCE_PREPARED_INVALID');
+      batchLife(entry.targets);
+      for (let index = 0; index < entry.targets.length; index++) {
+        if (mutations.has(entry.targets[index]!)) throw new EgretError('BITMAP_MUTATION_REENTRANT');
+      }
+      expectedBatch(entry);
+      oldBatchImages(entry);
+      for (let index = 0; index < candidate.states.length; index++) batchImage(candidate.states[index]!.lease);
+      // Allocate publication/provenance before consuming the plan or writing any target.
+      const publication = freezeResourceOperations({});
+      batchPublications.set(publication, { targets: entry.targets, states: candidate.states, active: true });
+      batchPreparedStates.delete(prepared);
+      for (let index = 0; index < entry.targets.length; index++) writeBitmapState(entry.targets[index]!, candidate.states[index]!);
+      return publication;
+    },
+    clearBatchIfCurrent(publication: object): void {
+      const entry = batchPublications.get(publication);
+      if (entry === undefined) throw new EgretError('BITMAP_RESOURCE_PREPARED_INVALID');
+      batchAffinity(entry.targets);
+      if (!entry.active) return;
+      entry.active = false;
+      // Cleanup is valid during closing, after target disposal or lease revocation.
+      for (let index = 0; index < entry.targets.length; index++) {
+        const target = entry.targets[index]!;
+        if (readBitmapState(target) === entry.states[index]) writeBitmapState(target, undefined);
+      }
     },
   });
   resourceTargetOperations.set(context, operations);

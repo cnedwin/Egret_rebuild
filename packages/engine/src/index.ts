@@ -36,3 +36,4 @@ export type { SequencePlayback, SequencePlaybackState, SequencePlaybackOptions }
 export { createSpriteSheet } from "@egret/runtime";
 export type { SpriteSheet, SpriteSheetFrameInput } from "@egret/runtime";
 export type { BitmapResourceSlot, BitmapResourceSlotState } from './bitmapResourceSlot.js';
+export type { BitmapBindingTicket } from './bitmapBindingTicket.js';

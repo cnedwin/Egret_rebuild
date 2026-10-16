@@ -7,6 +7,8 @@ import type { AssetGroupOperations, AssetManager, AssetRef, Scope, Stage } from 
 import type { EngineContext } from "@egret/runtime";
 import { createBitmapResourceSlotOwner } from './bitmapResourceSlot.js';
 import type { BitmapResourceSlot, BitmapResourceSlotOwner } from './bitmapResourceSlot.js';
+import { createBitmapBindingOwner } from './bitmapBindingTicket.js';
+import type { BitmapBindingOwner, BitmapBindingTicket } from './bitmapBindingTicket.js';
 import { closeHost } from "./closeHost.js";
 import { registerTexturedFrame } from './internal/texturedFrameState.js';
 import { createGameClockOwner } from './gameClock.js';
@@ -62,6 +64,7 @@ export class Engine {
   readonly #sequencePlaybackOwner: SequencePlaybackOwner;
   readonly #assetGroupOwner: AssetGroupOwner;
   readonly #bitmapResourceSlotOwner: BitmapResourceSlotOwner;
+  readonly #bitmapBindingOwner: BitmapBindingOwner;
   readonly #bitmapResourceTargets = new WeakMap<Bitmap, Parameters<NonNullable<EngineContext['registerBitmapResourceTarget']>>[1]>();
   readonly #mouseInputOwner: MouseInputOwner;
   readonly #engineScopes = new WeakSet<Scope>();
@@ -144,6 +147,10 @@ export class Engine {
     });
     this.stage = stage;
     this.assets = createAssetManager(this.#context);
+    this.#bitmapBindingOwner = createBitmapBindingOwner({
+      assertOpen: this.#context.assertOpen,
+      isEngineScope: (scope: unknown): scope is Scope => typeof scope === 'object' && scope !== null && this.#engineScopes.has(scope as Scope),
+    }, this.#bitmapResourceTargets);
     // Authentic manager construction captured the operations before publication.
     this.#bitmapResourceSlotOwner = createBitmapResourceSlotOwner({
       assertOpen: this.#context.assertOpen,
@@ -275,6 +282,11 @@ export class Engine {
     return this.#bitmapResourceSlotOwner.create(scope, bitmap);
   }
 
+  /** Capture exact Bitmap bindings before asynchronously preparing a borrowed group. */
+  public captureBitmapBindings(scope: Scope, targets: readonly Bitmap[]): BitmapBindingTicket {
+    return this.#bitmapBindingOwner.capture(scope, targets);
+  }
+
   public createAssetGroup<T>(scope: Scope, refs: readonly AssetRef<T>[], options?: AssetGroupOptions): AssetGroup<T> {
     return this.#assetGroupOwner.create<T>(scope, refs, options);
   }
@@ -287,6 +299,7 @@ export class Engine {
     this.closePromise = new Promise<void>((resolve, reject) => { resolveClose = resolve; rejectClose = reject; });
     // Cache the result before abort/cleanup/diagnostic callbacks can reenter.
     this.#currentState = "closing";
+    this.#bitmapBindingOwner.close();
     this.#bitmapResourceSlotOwner.close();
     // Retire browser input before the remaining callback-capable owners or idle wait.
     this.#mouseInputOwner.close();
