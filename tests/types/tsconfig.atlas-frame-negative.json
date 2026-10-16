@@ -1,0 +1,6 @@
+{
+  "extends": "./tsconfig.spritesheet-positive.json",
+  "include": [
+    "atlas-frame-negative.ts"
+  ]
+}

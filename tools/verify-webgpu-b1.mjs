@@ -217,6 +217,9 @@ const allowedModules = new Set([
     'displayTransform', 'displayTreeState', 'displayVisualState', 'EgretError', 'Event', 'EventDispatcher', 'frameCapture', 'Graphics', 'imageFrameBudget',
     'index', 'Mesh2D', 'meshCaptureSnapshot', 'meshDisplayState', 'ownership', 'Scope', 'sequenceClip', 'SequencePlayer', 'Sprite', 'Stage',
     'textDisplayState', 'Texture', 'texturedFrameBudget', 'texturedFrameCapture'].map(name => `packages/runtime/dist/${name}.js`),
+  // Exact current public literal closure; no additional entries or resolver aliases.
+  ...['bitmapResourceSlot', 'bitmapBindingTicket', 'bitmapButton', 'sequencePlayback'].map(name => `packages/engine/dist/${name}.js`),
+  ...['atlasFrameLayout', 'bitmapAtlasPlacement', 'ByteWriter', 'NineSliceGeometry2D', 'NineSliceBitmap', 'spriteSheet'].map(name => `packages/runtime/dist/${name}.js`),
   'packages/engine/node_modules/robust-predicates/index.js',
   ...['incircle', 'insphere', 'orient2d', 'orient3d', 'util'].map(name => `packages/engine/node_modules/robust-predicates/esm/${name}.js`),
 ]);

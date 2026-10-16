@@ -182,8 +182,8 @@
     },
     {
       "path": "packages/engine/dist/index.d.ts",
-      "bytes": 3453,
-      "sha256": "f19924c7a0c6f3ffd3ab0ad56a498b1044dbf6f38e990ecaaba53f7511830323"
+      "bytes": 3509,
+      "sha256": "2f18be0cac8dd50528882438002625f23c24ce4945308419dd4f67ffcaf47271"
     },
     {
       "path": "packages/engine/dist/sequencePlaybackTypes.d.ts",
@@ -212,8 +212,8 @@
     },
     {
       "path": "packages/runtime/dist/Bitmap.d.ts",
-      "bytes": 1899,
-      "sha256": "d685c189d20bba4d2e8d468652d6f0fcf056ff0ba2e6c92edabb89f948074608"
+      "bytes": 2135,
+      "sha256": "f0b750c75909d8a5ebab613f7dbfdead941e0c33b22a3c2e8bdb054bbd0b959b"
     },
     {
       "path": "packages/runtime/dist/ByteReader.d.ts",
@@ -312,8 +312,8 @@
     },
     {
       "path": "packages/runtime/dist/bitmapDisplayState.d.ts",
-      "bytes": 948,
-      "sha256": "290b3a937e4c388387b490382b18b08844771236430c337cb9c352f6513669d8"
+      "bytes": 1051,
+      "sha256": "906b318dc33b153ecddb9b15b220a171b7c179e992a7f58fca5c5f7445ce3465"
     },
     {
       "path": "packages/runtime/dist/diagnostics.d.ts",
@@ -352,8 +352,8 @@
     },
     {
       "path": "packages/runtime/dist/index.d.ts",
-      "bytes": 2986,
-      "sha256": "1293ef5b07c5099629e235627099f2646c9e6b2d0c786909bd35a2d0eef4c666"
+      "bytes": 3049,
+      "sha256": "dbfe6572dd526c8bb9c35271f16a1244c93ff9b7474cac813efd1f1e11e6e3d4"
     },
     {
       "path": "packages/runtime/dist/ownership.d.ts",
@@ -362,13 +362,13 @@
     },
     {
       "path": "packages/runtime/dist/sequenceClip.d.ts",
-      "bytes": 1307,
-      "sha256": "0e231b69f8357740656ac952e9c146ca4fc80a08cf85653f71b70042fbdce2f6"
+      "bytes": 1480,
+      "sha256": "09c7e3e0d5c6fb0f24dfb5848c57b581e71f7df8c507d608a99de7982c8fea9b"
     },
     {
       "path": "packages/runtime/dist/spriteSheet.d.ts",
-      "bytes": 1249,
-      "sha256": "a096f426d7715a0d8f0399cd26d646856022e19b63ee0f278ec35a9f72ff76b8"
+      "bytes": 1457,
+      "sha256": "eee14d3ca6d5d162742d3367e5b68a34407cd2eb2ee2b20ee4c188bc134f2cfa"
     },
     {
       "path": "packages/runtime/dist/texturedFrameCapture.d.ts",
@@ -973,5 +973,55 @@
       "receiptSHA256": "eb364f7cc00f43cb0c13b8f56ad7116925dac9b3212cd02d9493d51fa24fa79e"
     },
     "historicalBoundary": "Original groups retain original raw stdout and tuples. This separate current successor records the genuine later DisplayObject shape."
+  },
+  "sdkCurrentDeclarationObservation": {
+    "kind": "TR1_CURRENT_INPUT_SUCCESSOR",
+    "rawReceipts": [
+      {
+        "name": "sdk-retained-display-container-add-child-at-positive-observe-r1",
+        "startedAtUtc": "2026-10-16T16:03:56.6613423Z",
+        "finishedAtUtc": "2026-10-16T16:03:56.7711935Z",
+        "exitCode": 0,
+        "timeout": false,
+        "args": [
+          "node_modules/typescript/bin/tsc",
+          "-p",
+          "tests/types/tsconfig.display-container-add-child-at-positive.json",
+          "--pretty",
+          "false"
+        ],
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "name": "sdk-retained-display-container-add-child-at-negative-observe-r1",
+        "startedAtUtc": "2026-10-16T16:03:57.1592556Z",
+        "finishedAtUtc": "2026-10-16T16:03:57.2735520Z",
+        "exitCode": 1,
+        "timeout": false,
+        "args": [
+          "node_modules/typescript/bin/tsc",
+          "-p",
+          "tests/types/tsconfig.display-container-add-child-at-negative.json",
+          "--pretty",
+          "false"
+        ],
+        "stdout": {
+          "bytes": 1522,
+          "sha256": "4861b0eb7c2c215b5855ef7ea71b183ed80b87dd60a652459f40f6f6fcdb3b71"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    ],
+    "historicalFieldsPreserved": "Original group tuples/stdout/execution and existing anchor successors remain unchanged; current pins only for authenticated changed TR1 files."
   }
 }

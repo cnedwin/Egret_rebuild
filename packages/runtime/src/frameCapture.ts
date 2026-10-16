@@ -1,3 +1,4 @@
+import { bitmapAtlasPlacement } from './bitmapAtlasPlacement.js';
 import type { Matrix2D, Rectangle2D, RectangleCommand2D, ClipRectangle2D, RenderCommand2D, ImageData2D } from "@egret/contracts";
 import type { Stage } from "./Stage.js";
 import type { DisplayObject } from "./DisplayObject.js";
@@ -75,13 +76,15 @@ function capture(stage: Stage, mode: "content" | "rectangles"): CapturedContent2
     if (bitmap !== undefined) {
       // Cached geometry is checked before effective-alpha suppression or lease
       // resolution. A cleared slot needs neither geometry nor entitlement.
-      const rect = geometry(matrix, { x: 0, y: 0, width: bitmap.width, height: bitmap.height });
+      const placement = bitmap.layout === undefined ? undefined : bitmapAtlasPlacement(bitmap, matrix);
+      const bitmapMatrix = placement?.matrix ?? matrix;
+      const rect = geometry(bitmapMatrix, placement?.rect ?? { x: 0, y: 0, width: bitmap.width, height: bitmap.height });
       if (alpha !== 0) {
         const snapshot = readBitmapImage(bitmap.lease);
         if (mode === "rectangles") throw new EgretError("FRAME_IMAGE_UNSUPPORTED");
         const sourceRect = Object.freeze({ ...bitmap.sourceRect });
         const imageIndex = budget!.register(snapshot.image, sourceRect);
-        commands.push(Object.freeze({ kind: "image", matrix, rect, alpha, clips, imageIndex, sourceRect }));
+        commands.push(Object.freeze({ kind: "image", matrix: bitmapMatrix, rect, alpha, clips, imageIndex, sourceRect }));
       }
     }
     // Legacy frames cannot encode an occupied Mesh, including empty or retired

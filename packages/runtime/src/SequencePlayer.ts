@@ -1,5 +1,5 @@
 import type { AssetLease } from './AssetLease.js';
-import { Bitmap, readBitmapBinding, readBitmapImage } from './Bitmap.js';
+import { Bitmap, applyBitmapAtlasFrame, readBitmapBinding, readBitmapImage } from './Bitmap.js';
 import { EgretError } from './EgretError.js';
 import { commitBinding, engineOf } from './ownership.js';
 import { sampleSequenceClip } from './sequenceClip.js';
@@ -55,7 +55,8 @@ export class SequencePlayer {
     if (target?.lease !== binding.lease) throw new EgretError('SEQ_BINDING_CHANGED');
     readBitmapImage(binding.lease);
     const sample = sampleSequenceClip(binding.clip, elapsedSeconds, { mode: binding.mode });
-    Reflect.apply(setCrop, binding.bitmap, [sample.region]);
+    if (sample.region.layout === undefined) Reflect.apply(setCrop, binding.bitmap, [sample.region]);
+    else applyBitmapAtlasFrame(binding.bitmap, sample.region);
     // Crop and natural geometry have committed; only now publish the sample.
     state.lastSample = sample;
     return sample;

@@ -4,6 +4,12 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
+## 0.59.0 候选 — 标准化图集帧 — 2026-10-17
+
+现有 SpriteSheet 与 SequenceClip 工厂的显式 `'trim-rotation-v1'` profile 支持带透明裁边和顺时针90度打包的单页帧。拥有的 layout 通过 Bitmap 和现有序列播放保留逻辑尺寸与放置，默认矩形路径保持兼容。参阅[契约](docs/atlas-frame-layout-contract.md)、[证据与边界](docs/atlas-frame-layout-evidence.md)和[示例指南](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/trimmed-atlas-playback/README.zh-CN.md)。
+
+已获独立接受的十二阶段 SDK `node tools/verify.mjs` 运行通过 **3559/3559 项核心测试**及单独的 **160/160 项 Spine 实验测试**，两套的 failed/cancelled/skipped/todo 均为 **0**。单独的桌面 Canvas 与纹理 WebGPU 验证通过六个全新上下文和 30 次零容差完整 RGBA 读回，包括指定突变对照及原资源退役后的重放。当前验证器增加了第十三个图集源码边界阶段；截至本次编写，完整重跑、最终公开内容/prepush、0.59 Git 交付与远端 CI 仍待完成。此前失败与修复保留在所链接证据中。exporter 导入、多页、pivot/nine-slice 导入、动画 retarget、controller seek/rate/events、完整 Spine R020/V020、迁移 R008/V006 以及物理设备/性能接受保持 OPEN。
+
 ## 0.58.0 — Bitmap 原子绑定与组合换装
 
 工程预览 **0.58.0** 增加 `Engine.captureBitmapBindings(scope, targets)` 及擦除类型 `BitmapBindingTicket`。组合换装示例等待两张服装纹理全部就绪，再同时提交两个图层的绑定。请求等待、失败、取消或被后续请求替代时保留可用服装；票据拒绝覆盖调用方之后设置的绑定。

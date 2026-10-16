@@ -45,3 +45,5 @@ export { NineSliceBitmap } from "./NineSliceBitmap.js";
 export type { NineSliceBitmapOptions } from "./NineSliceBitmap.js";
 export { createSpriteSheet } from "./spriteSheet.js";
 export type { SpriteSheet, SpriteSheetFrameInput } from "./spriteSheet.js";
+
+export type { AtlasFrameLayout } from './atlasFrameLayout.js';

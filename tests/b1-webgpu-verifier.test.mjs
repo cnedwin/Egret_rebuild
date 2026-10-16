@@ -4,8 +4,9 @@ import { spawn } from 'node:child_process';
 import { mkdtemp, mkdir, writeFile, readFile, readdir, realpath, lstat, rm, symlink } from 'node:fs/promises';
 import { dirname, join, parse, resolve, relative, isAbsolute, sep } from 'node:path';
 import { tmpdir } from 'node:os';
-import { fileURLToPath } from 'node:url';
-import { randomUUID } from 'node:crypto';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { randomUUID, createHash } from 'node:crypto';
+import { runInNewContext } from 'node:vm';
 
 // These paths become repository-relative when this candidate is adopted into tests/.
 const repository = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -349,4 +350,51 @@ test('S06 collector pins the current Host and retains both schedules separately'
   assert.match(source, /allowedModules\.has\(name\)/);
   assert.match(source, /maximumSubmittedFrames: 11/); assert.match(source, /maximumSubmittedFrames: 3/);
   assert.match(source, /baselinePixelComparisons !== 14/); assert.match(source, /window\.frames\.reduce\([^\n]*8214/);
+});
+
+async function emittedClosurePolicy() {
+  const source = await readFile(cli, 'utf8');
+  const start = source.indexOf('const aliases = '), end = source.indexOf('function shaderText(body)');
+  assert.ok(start >= 0 && end > start, 'The selected finite collector source must exist');
+  const { resolveB1Dependency } = await import(pathToFileURL(join(repository, 'tools/b1-webgpu/registryProvenance.mjs')).href);
+  const served = new Map();
+  // Evaluate only the verifier's policy declarations and collector, never emitted SDK code or main().
+  const policy = runInNewContext(source.slice(start, end) + '\n({ aliases, entryNames, allowedModules, collect })', {
+    repository: await realpath(repository), sep, assert, resolve, readFile, realpath, resolveB1Dependency,
+    served, identities: new Map(), hash: body => createHash('sha256').update(body).digest('hex'),
+  }, { timeout: 1000 });
+  assert.deepEqual(JSON.parse(JSON.stringify(policy.aliases)), {
+    '#egret-textured-frame-state': 'packages/engine/dist/internal/texturedFrameState.js',
+    '@egret/contracts': 'packages/contracts/dist/index.js', '@egret/runtime': 'packages/runtime/dist/index.js',
+    '@egret/engine': 'packages/engine/dist/index.js', '@egret/engine/scene3d': 'packages/engine/dist/rendering/scene3d.js',
+    '@egret/engine/webgpu/scene3d': 'packages/engine/dist/web/scene3d.js',
+    'robust-predicates': 'packages/engine/node_modules/robust-predicates/index.js',
+  });
+  assert.deepEqual(Array.from(policy.entryNames), [
+    'packages/engine/dist/index.js', 'packages/engine/dist/rendering/scene3d.js',
+    'packages/engine/dist/web/scene3d.js', 'packages/engine/dist/web/webgpuMeshPass.js',
+  ]);
+  assert.match(source, /served\.size < 128/);
+  assert.match(source, /body\.length <= 1024 \* 1024/);
+  assert.match(source, /emitted <= 4 \* 1024 \* 1024/);
+  return { ...policy, served };
+}
+
+test('S07 the finite native collector admits the actual current emitted public closure', async t => {
+  const policy = await emittedClosurePolicy();
+  for (const entry of policy.entryNames) await policy.collect(entry);
+  const bytes = [...policy.served.values()].reduce((sum, value) => sum + value.body.length, 0);
+  assert.ok(policy.served.size <= 128); assert.ok(bytes <= 4 * 1024 * 1024);
+  t.diagnostic(`Actual emitted closure: ${policy.served.size} modules, ${bytes} bytes; SDK code was read, never evaluated`);
+});
+
+test('S08 the finite native collector still refuses an unrelated emitted module', async () => {
+  const policy = await emittedClosurePolicy();
+  const unrelated = 'packages/engine/dist/web/BrowserTextureProvider.js';
+  assert.ok((await readFile(join(repository, unrelated))).length > 0, 'The refused module really exists');
+  assert.equal(policy.allowedModules.has(unrelated), false);
+  await assert.rejects(policy.collect(unrelated), error => {
+    assert.equal(error.message, `Unapproved public native dependency: ${unrelated}`); return true;
+  });
+  assert.equal(policy.served.size, 0, 'Refused code must not enter the served closure');
 });

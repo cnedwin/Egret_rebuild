@@ -98,13 +98,13 @@
     },
     {
       "path": "packages/runtime/dist/index.d.ts",
-      "bytes": 2986,
-      "sha256": "1293ef5b07c5099629e235627099f2646c9e6b2d0c786909bd35a2d0eef4c666"
+      "bytes": 3049,
+      "sha256": "dbfe6572dd526c8bb9c35271f16a1244c93ff9b7474cac813efd1f1e11e6e3d4"
     },
     {
       "path": "packages/engine/dist/index.d.ts",
-      "bytes": 3453,
-      "sha256": "f19924c7a0c6f3ffd3ab0ad56a498b1044dbf6f38e990ecaaba53f7511830323"
+      "bytes": 3509,
+      "sha256": "2f18be0cac8dd50528882438002625f23c24ce4945308419dd4f67ffcaf47271"
     }
   ],
   "groups": [
@@ -447,5 +447,77 @@
         }
       }
     }
-  ]
+  ],
+  "sdkCurrentDeclarationObservation": {
+    "kind": "TR1_CURRENT_INPUT_SUCCESSOR",
+    "rawReceipts": [
+      {
+        "name": "sdk-retained-nine-slice-bitmap-positive-observe-r1",
+        "startedAtUtc": "2026-10-16T16:03:52.8416861Z",
+        "finishedAtUtc": "2026-10-16T16:03:52.9537507Z",
+        "exitCode": 0,
+        "timeout": false,
+        "args": [
+          "node_modules/typescript/bin/tsc",
+          "-p",
+          "tests/types/tsconfig.nine-slice-bitmap-positive.json",
+          "--pretty",
+          "false"
+        ],
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "name": "sdk-retained-nine-slice-bitmap-negative-observe-r1",
+        "startedAtUtc": "2026-10-16T16:03:53.3665694Z",
+        "finishedAtUtc": "2026-10-16T16:03:53.5248263Z",
+        "exitCode": 1,
+        "timeout": false,
+        "args": [
+          "node_modules/typescript/bin/tsc",
+          "-p",
+          "tests/types/tsconfig.nine-slice-bitmap-negative.json",
+          "--pretty",
+          "false"
+        ],
+        "stdout": {
+          "bytes": 2811,
+          "sha256": "8a2dcc66571a49c7cf18f15eaa0ac72da823ee0b7fad78e7915b95059d4cdd14"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "name": "sdk-retained-nine-slice-bitmap-import-negative-observe-r1",
+        "startedAtUtc": "2026-10-16T16:03:53.9206136Z",
+        "finishedAtUtc": "2026-10-16T16:03:54.1793479Z",
+        "exitCode": 1,
+        "timeout": false,
+        "args": [
+          "node_modules/typescript/bin/tsc",
+          "-p",
+          "tests/types/tsconfig.nine-slice-bitmap-import-negative.json",
+          "--pretty",
+          "false"
+        ],
+        "stdout": {
+          "bytes": 1242,
+          "sha256": "ce34077a1a0b45233a8bcbf899d2783a20a550062a059c7485ad91482cc495be"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    ],
+    "historicalFieldsPreserved": "Original group tuples/stdout/execution and existing anchor successors remain unchanged; current pins only for authenticated changed TR1 files."
+  }
 }

@@ -6,6 +6,8 @@ Status: design and product source, build, public CPU behavior, standalone and co
 
 Use the public headless example (`examples/sequence-playback-headless.mjs`) after the normal build: `node examples/sequence-playback-headless.mjs`. It demonstrates explicit-clock command capture; browser rendering is verified separately.
 
+Default rectangle clips keep the contract below. A clip created with the explicit `'trim-rotation-v1'` profile carries normalized trim/clockwise90 layout through existing playback; once/loop, pause/resume and exact-lease ownership retain their established semantics. The [layout contract](atlas-frame-layout-contract.md) and [evidence](atlas-frame-layout-evidence.md) define this extension separately from the original playback acceptance.
+
 ## Purpose and public API
 
 `Engine.createSequencePlayback` connects an existing `SequenceClip` and `Bitmap` to the Engine's explicit game clock. It reuses `SequencePlayer` for frame selection, crop admission and exact resource binding. The caller continues to load resources, submit source time and render frames.

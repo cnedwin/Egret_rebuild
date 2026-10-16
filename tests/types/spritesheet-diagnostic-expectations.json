@@ -155,7 +155,7 @@
             24,
             1,
             2554,
-            "Expected 2 arguments, but got 1."
+            "Expected 2-3 arguments, but got 1."
           ]
         },
         {
@@ -238,8 +238,8 @@
             "tests/types/spritesheet-negative.ts",
             36,
             42,
-            2554,
-            "Expected 2 arguments, but got 3."
+            2345,
+            "Argument of type '{}' is not assignable to parameter of type '\"trim-rotation-v1\"'."
           ]
         },
         {
@@ -734,5 +734,32 @@
       "negativeDiagnostics": 22,
       "importNegativeDiagnostics": 14
     }
+  },
+  "currentSuccessorObservation": {
+    "receipt": [
+      {
+        "name": "sdk-retained-ss-types-negative-observe-r1",
+        "startedAtUtc": "2026-10-16T15:54:38.6237925Z",
+        "finishedAtUtc": "2026-10-16T15:54:38.7621258Z",
+        "exitCode": 1,
+        "timeout": false,
+        "args": [
+          "node_modules/typescript/bin/tsc",
+          "-p",
+          "tests/types/tsconfig.spritesheet-negative.json",
+          "--pretty",
+          "false"
+        ],
+        "stdout": {
+          "bytes": 3721,
+          "sha256": "b74b821e2a1b4d3593737ab1bbfe98f2febfae9e8f83aff2f784997b3079ce12"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    ],
+    "originalProvenancePreserved": true
   }
 }

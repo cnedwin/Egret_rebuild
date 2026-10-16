@@ -1,0 +1,128 @@
+{
+  "schemaVersion": 1,
+  "asset": "atlas.png",
+  "origin": "Original first-party fixture authored for P04-TR1 with AI assistance",
+  "license": "Apache-2.0",
+  "thirdPartySources": [],
+  "width": 6,
+  "height": 6,
+  "format": "RGBA8",
+  "transparentBackground": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "colors": {
+    "red": [
+      255,
+      0,
+      0,
+      255
+    ],
+    "green": [
+      0,
+      255,
+      0,
+      255
+    ],
+    "blue": [
+      0,
+      0,
+      255,
+      255
+    ],
+    "yellow": [
+      255,
+      255,
+      0,
+      255
+    ],
+    "magenta": [
+      255,
+      0,
+      255,
+      255
+    ],
+    "cyan": [
+      0,
+      255,
+      255,
+      255
+    ]
+  },
+  "frames": [
+    {
+      "name": "A",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 2,
+        "height": 3
+      },
+      "layout": {
+        "sourceWidth": 4,
+        "sourceHeight": 5,
+        "trimX": 1,
+        "trimY": 1,
+        "packedRotation": 0
+      },
+      "duration": 0.125,
+      "packedRows": [
+        [
+          "red",
+          "green"
+        ],
+        [
+          "blue",
+          "yellow"
+        ],
+        [
+          "magenta",
+          "cyan"
+        ]
+      ]
+    },
+    {
+      "name": "B",
+      "crop": {
+        "x": 3,
+        "y": 0,
+        "width": 2,
+        "height": 3
+      },
+      "layout": {
+        "sourceWidth": 4,
+        "sourceHeight": 5,
+        "trimX": 1,
+        "trimY": 2,
+        "packedRotation": 90
+      },
+      "duration": 0.25,
+      "packedRows": [
+        [
+          "yellow",
+          "red"
+        ],
+        [
+          "magenta",
+          "green"
+        ],
+        [
+          "cyan",
+          "blue"
+        ]
+      ]
+    }
+  ],
+  "rgba": {
+    "order": "top-left row-major RGBA8, tightly packed",
+    "bytes": 144,
+    "sha256": "f3204e58b0d3d908860c0b2c936b8ad0f6275e2550afee5a7ae8ffbb0f26540a"
+  },
+  "png": {
+    "encoding": "PNG RGBA8; filter 0; one zlib stored DEFLATE block; no ancillary chunks",
+    "bytes": 218,
+    "sha256": "35a3ecea0d79c5684d17a5dbfa56bf0cc5ebf52a34f6e8ceafe740c742a1437f"
+  }
+}

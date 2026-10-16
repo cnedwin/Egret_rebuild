@@ -1,0 +1,637 @@
+{
+  "kind": "ATLAS_FRAME_ACTUAL_STRICT_DIAGNOSTICS",
+  "status": "OBSERVED_FROZEN_TS7_DIAGNOSTICS",
+  "tupleFormat": [
+    "file",
+    "line",
+    "column",
+    "code",
+    "message"
+  ],
+  "inputPins": [
+    {
+      "path": "tools/lib/file-identity.mjs",
+      "bytes": 5065,
+      "sha256": "999b355c6e0d03f17853ee05f33abc9fecbb34ad80607963e11f913a4f815569"
+    },
+    {
+      "path": "tsconfig.base.json",
+      "bytes": 446,
+      "sha256": "b7a31fb9f93a93e20bfdcf33c135acb45cb3a6895a8b3e7006bd85214ddc1008"
+    },
+    {
+      "path": "tests/types/tsconfig.json",
+      "bytes": 224,
+      "sha256": "e378996174db2020f9c416fb0599ea1182b3ca3265b3dc56012a688fd3252ad9"
+    },
+    {
+      "path": "tests/types/tsconfig.dom-free.json",
+      "bytes": 56,
+      "sha256": "24bc13fae1f9d98b5d2dc212c9fb4f1f926aeb956f706d8269acbd617c900b49"
+    },
+    {
+      "path": "tests/types/tsconfig.spritesheet-positive.json",
+      "bytes": 556,
+      "sha256": "b23fe040ca35f77291b6d8218e82910cedd7fd881081850937d753cbfb211804"
+    },
+    {
+      "path": "node_modules/typescript/package.json",
+      "bytes": 3087,
+      "sha256": "3722b30210616a13a3213ded11575ba6b2dbab10c32a5ef67afca8513e27017e"
+    },
+    {
+      "path": "node_modules/typescript/bin/tsc",
+      "bytes": 44,
+      "sha256": "2219f428a7e55aaf1f7ad85b9b0f0cf5078aeb76ccc9a7c6036c92d48f492ffd"
+    },
+    {
+      "path": "node_modules/typescript/lib/tsc.js",
+      "bytes": 609,
+      "sha256": "cbdfbf11c26ed00dfc073155e316a42d6d6d8a387be61006b82fa9aa93ac572e"
+    },
+    {
+      "path": "node_modules/typescript/lib/getExePath.js",
+      "bytes": 3051,
+      "sha256": "96c10fd3a18e165d7323de8e314ac8d755ad96811f9fbc304a5b3ba4e05285cc"
+    },
+    {
+      "path": "packages/contracts/package.json",
+      "bytes": 179,
+      "sha256": "fceaef2ae55a77347ce9f99acd2165d36e991d89c76bf0480ff5048f3e7a94a1"
+    },
+    {
+      "path": "packages/runtime/package.json",
+      "bytes": 327,
+      "sha256": "b9294c479d38614dd8866adcd8775f5d6f43c787d9b08c8ef54371e426cb5032"
+    },
+    {
+      "path": "packages/engine/package.json",
+      "bytes": 1567,
+      "sha256": "e01d48a51c0845783afeec93ffcc7674c7980797cd6a9c58cc74ec3f13d2e0c5"
+    },
+    {
+      "path": "packages/contracts/dist/CancellationSignal.d.ts",
+      "bytes": 558,
+      "sha256": "879eb0ae6c8b5b305930f8770298f286259992a69b6653a25ea24b1944fe0a45"
+    },
+    {
+      "path": "packages/contracts/dist/Diagnostic.d.ts",
+      "bytes": 532,
+      "sha256": "6f1d73cb7d31a3bf11427f6b856eb1b2ea0cb28eefbc9b67c0518652ee612c59"
+    },
+    {
+      "path": "packages/contracts/dist/Disposable.d.ts",
+      "bytes": 441,
+      "sha256": "989546b49c6a87bfc04487d6fe166aeea81650049efbbd7615476d36021b88c5"
+    },
+    {
+      "path": "packages/contracts/dist/HostAdapter.d.ts",
+      "bytes": 907,
+      "sha256": "2830519734a7957ffa6aa70998f01f87f1d00f80bafcc4fc114133b5c38d5458"
+    },
+    {
+      "path": "packages/contracts/dist/ImageData2D.d.ts",
+      "bytes": 1563,
+      "sha256": "48984b068c63562aae1abb3c2561573aeeb31e1f390595ec357dbd87a61673a7"
+    },
+    {
+      "path": "packages/contracts/dist/Point2D.d.ts",
+      "bytes": 193,
+      "sha256": "f0d8ca89c643a80fd96031ef8267969fd12c212a319ce8ddb3f8b81e0f8c76e5"
+    },
+    {
+      "path": "packages/contracts/dist/ProjectFormat.generated.d.ts",
+      "bytes": 4161,
+      "sha256": "6feed3c80a4ceb9d9c6b2c299ee5e5d11a2f5c0b145b58e855ce8443e3b2de11"
+    },
+    {
+      "path": "packages/contracts/dist/RenderFrame2D.d.ts",
+      "bytes": 1799,
+      "sha256": "a1bceb2e8135c3fea5fb981c661ac45244ed792899c7fb3f2cf7ff9934e83492"
+    },
+    {
+      "path": "packages/contracts/dist/TexturedGeometry2D.d.ts",
+      "bytes": 1186,
+      "sha256": "dbc403a70e6ebdd39346260c3a965b1ac8dbb3e5bfcad21c402d34d4ae0f500e"
+    },
+    {
+      "path": "packages/contracts/dist/TexturedRenderFrame2D.d.ts",
+      "bytes": 1634,
+      "sha256": "11f7c7967e2142906717c2c2a744611cff6e435b3021e9d537ba61a3cd0ab351"
+    },
+    {
+      "path": "packages/contracts/dist/index.d.ts",
+      "bytes": 1619,
+      "sha256": "b714fec938e235591ddfadc53fa72ba183aaea506267aadaebe5abe65e22c10f"
+    },
+    {
+      "path": "packages/engine/dist/Engine.d.ts",
+      "bytes": 3578,
+      "sha256": "2d3861e95f9411f060b7ab0a1febd74ed40e883038f822d4a8df3af0a84cd727"
+    },
+    {
+      "path": "packages/engine/dist/assetGroupTypes.d.ts",
+      "bytes": 570,
+      "sha256": "79152aa2f2e6e401c20370d029cdc9317aeeacd98cff785e5b62f5f9c530412a"
+    },
+    {
+      "path": "packages/engine/dist/bitmapBindingTicket.d.ts",
+      "bytes": 882,
+      "sha256": "74384e0772282729962db5fe7e7c0708296326ff5e03609138ade702299b5aa4"
+    },
+    {
+      "path": "packages/engine/dist/bitmapResourceSlot.d.ts",
+      "bytes": 1260,
+      "sha256": "3432f949713060763588c44e983002c64ea96cdc63b9b2c09e21fbcc63ff489d"
+    },
+    {
+      "path": "packages/engine/dist/createEngine.d.ts",
+      "bytes": 265,
+      "sha256": "52df9ef4a105e19b7d2927e76015d6e759c15f44c63d9e662217a067e1085ea4"
+    },
+    {
+      "path": "packages/engine/dist/createEngineForProfile.d.ts",
+      "bytes": 375,
+      "sha256": "569e16cc9cf48279f900d6e04fe7ea69a7df3fdc810f9c9f7ce04d08c1890610"
+    },
+    {
+      "path": "packages/engine/dist/gameClock.d.ts",
+      "bytes": 1051,
+      "sha256": "6570f41ff138b59aae0d0b53ad70d36dd14ecc96a805440bb3d1f9a6d23b63a2"
+    },
+    {
+      "path": "packages/engine/dist/gameClockTypes.d.ts",
+      "bytes": 1059,
+      "sha256": "e582e2aa4aa3e80a2907db49dc5e3fd54c1008241530e8dc8c97ee6c411061a0"
+    },
+    {
+      "path": "packages/engine/dist/index.d.ts",
+      "bytes": 3509,
+      "sha256": "2f18be0cac8dd50528882438002625f23c24ce4945308419dd4f67ffcaf47271"
+    },
+    {
+      "path": "packages/engine/dist/sequencePlaybackTypes.d.ts",
+      "bytes": 798,
+      "sha256": "7670a7b455167beca3aab6729261ac0ad1eb980327e67d13f12132570e67c5cf"
+    },
+    {
+      "path": "packages/engine/dist/tweenTypes.d.ts",
+      "bytes": 903,
+      "sha256": "398c52fa8e854640a9aeac542610a87c7ce1f856e9cb1d88eab4eb000c1821b9"
+    },
+    {
+      "path": "packages/runtime/dist/AssetLease.d.ts",
+      "bytes": 1384,
+      "sha256": "2885d23e59a1480e14b938e821f36b6d88d656c579c3b3d5c2ea1232c21d02d2"
+    },
+    {
+      "path": "packages/runtime/dist/AssetManager.d.ts",
+      "bytes": 2431,
+      "sha256": "09a4874125059aa2cd2cce4783356e40682aa3f1b14f663f366974e00d3e6cdf"
+    },
+    {
+      "path": "packages/runtime/dist/AssetRef.d.ts",
+      "bytes": 1045,
+      "sha256": "70269fb27fab57ef723cbf110b319b6eaf25cb6fafea6a4f7298b502da74f038"
+    },
+    {
+      "path": "packages/runtime/dist/Bitmap.d.ts",
+      "bytes": 2135,
+      "sha256": "f0b750c75909d8a5ebab613f7dbfdead941e0c33b22a3c2e8bdb054bbd0b959b"
+    },
+    {
+      "path": "packages/runtime/dist/ByteReader.d.ts",
+      "bytes": 1113,
+      "sha256": "cb1d6ea88a6b328d8743586de2b3227695ec465d791287b6324cfc51ebccc1f1"
+    },
+    {
+      "path": "packages/runtime/dist/ByteWriter.d.ts",
+      "bytes": 1176,
+      "sha256": "9635d492462ee280cdf10f04cf9cbd8bb324f00d61b5da463e37fef4baceec6e"
+    },
+    {
+      "path": "packages/runtime/dist/CancellationController.d.ts",
+      "bytes": 460,
+      "sha256": "3830c9f09cfcf3e65045ec15d15e40ec0c135643094052de87a391ab9e2c39d3"
+    },
+    {
+      "path": "packages/runtime/dist/DisplayObject.d.ts",
+      "bytes": 2555,
+      "sha256": "508cab574f1552cbfd3af464173b03fdb83f7ec774872bc658bca6a3ceb3c732"
+    },
+    {
+      "path": "packages/runtime/dist/DisplayObjectContainer.d.ts",
+      "bytes": 1398,
+      "sha256": "25efac66478e4d27b2499fc8e235df14b7c58b654b9a437c5e38ec9e6683e1a8"
+    },
+    {
+      "path": "packages/runtime/dist/EgretError.d.ts",
+      "bytes": 429,
+      "sha256": "64a9381cf216c798abb4edbfa2297920a772d98da3d6e6c252d5b6b53d77beb6"
+    },
+    {
+      "path": "packages/runtime/dist/Event.d.ts",
+      "bytes": 1932,
+      "sha256": "07783b2abf657e3f04642a169bd85f2738335023fa1fa0223039a17e8a2633c0"
+    },
+    {
+      "path": "packages/runtime/dist/EventDispatcher.d.ts",
+      "bytes": 1315,
+      "sha256": "33f2fc85b97cd9ef9e3992088d48e8dcfe7b645fc5be8fb7dcb9dd39904e8832"
+    },
+    {
+      "path": "packages/runtime/dist/Graphics.d.ts",
+      "bytes": 457,
+      "sha256": "7a85b42e6dddedbb38f5386f5770abfd3200b2df9e06c3ccad8fa7a9afcda1b9"
+    },
+    {
+      "path": "packages/runtime/dist/Mesh2D.d.ts",
+      "bytes": 958,
+      "sha256": "68825a8697c0e211d0fbaa0aea1e288ccd836f3145d6f7e25329f59ee2accdba"
+    },
+    {
+      "path": "packages/runtime/dist/NineSliceBitmap.d.ts",
+      "bytes": 1137,
+      "sha256": "3b416fea7ed69624c1e5d3ff4ee33897f985d0bee05dcd5709be0549ed90820e"
+    },
+    {
+      "path": "packages/runtime/dist/NineSliceGeometry2D.d.ts",
+      "bytes": 745,
+      "sha256": "938e8d24e7975d85d002b1ae6cd67a13a32354f568edab60f310ce86408a0bfc"
+    },
+    {
+      "path": "packages/runtime/dist/Scope.d.ts",
+      "bytes": 776,
+      "sha256": "db9af884acd7e62fe89f71f9525da55046a000652c02be27ff6813d0ae9fa2ac"
+    },
+    {
+      "path": "packages/runtime/dist/SequencePlayer.d.ts",
+      "bytes": 621,
+      "sha256": "eaeacc493b410347e8a8b0e213124e76671025654bfb3548a9930a55b9155562"
+    },
+    {
+      "path": "packages/runtime/dist/Sprite.d.ts",
+      "bytes": 340,
+      "sha256": "441f96533f1c2ba3922b4fcce500ea57210481b04583cae06ee2f257f37a98bc"
+    },
+    {
+      "path": "packages/runtime/dist/Stage.d.ts",
+      "bytes": 773,
+      "sha256": "a17ef53c3acfd5c24562775d833982267f8935756d1e7e2cc826e65e29949af7"
+    },
+    {
+      "path": "packages/runtime/dist/Texture.d.ts",
+      "bytes": 1055,
+      "sha256": "77c4e29aa324f4b3bc8dd47d296802c2bfff0cf7a9303271b29b8bb7e73da0d3"
+    },
+    {
+      "path": "packages/runtime/dist/assetManagerOwnerState.d.ts",
+      "bytes": 2182,
+      "sha256": "e3aeb01ae81c8c318bd8e35e9c63691658833953d10351cfa817838fcfaae6bb"
+    },
+    {
+      "path": "packages/runtime/dist/assetState.d.ts",
+      "bytes": 1604,
+      "sha256": "daa71107f0cd3f24d4cb33ac8c2fcf5eff15c18955c84d0262cafaa0c3335b69"
+    },
+    {
+      "path": "packages/runtime/dist/atlasFrameLayout.d.ts",
+      "bytes": 983,
+      "sha256": "d3aa9317e01e8038819d1e3bf577ff144378915baeee986c8407643d419c6c5a"
+    },
+    {
+      "path": "packages/runtime/dist/bitmapDisplayState.d.ts",
+      "bytes": 1051,
+      "sha256": "906b318dc33b153ecddb9b15b220a171b7c179e992a7f58fca5c5f7445ce3465"
+    },
+    {
+      "path": "packages/runtime/dist/diagnostics.d.ts",
+      "bytes": 305,
+      "sha256": "85d3079ff62e0bf3df95281a5a2917e021310c52acc7d662ee859986e5d86a03"
+    },
+    {
+      "path": "packages/runtime/dist/displayBounds.d.ts",
+      "bytes": 471,
+      "sha256": "ce01298209c912f1da370e604289c2e48cc100f20f7dfefcf1758c3b42965d1b"
+    },
+    {
+      "path": "packages/runtime/dist/displayCoordinates.d.ts",
+      "bytes": 459,
+      "sha256": "4a686f27518c2702d7a3382fcbe31cf9ae652be5a06527579d7e4f5a63707326"
+    },
+    {
+      "path": "packages/runtime/dist/displayHitTest.d.ts",
+      "bytes": 459,
+      "sha256": "f188955114496a0f76b79afb17e2f205519db53405f25606c8c0649c591899d5"
+    },
+    {
+      "path": "packages/runtime/dist/displayInputOperations.d.ts",
+      "bytes": 709,
+      "sha256": "5b8b2729d9b3c10efccce66d5715762f8a9465f92718e779695e3db1337326cd"
+    },
+    {
+      "path": "packages/runtime/dist/displayTreeState.d.ts",
+      "bytes": 5304,
+      "sha256": "687b4fd56cc46ab3ec170179496291e1c1c1f1e1a56f689ffe692c65210c82fd"
+    },
+    {
+      "path": "packages/runtime/dist/frameCapture.d.ts",
+      "bytes": 643,
+      "sha256": "65e1557f23d4d32f1103d81705ad0eda79c30e7c0c907a5fb5758d1eafd3b8bb"
+    },
+    {
+      "path": "packages/runtime/dist/index.d.ts",
+      "bytes": 3049,
+      "sha256": "dbfe6572dd526c8bb9c35271f16a1244c93ff9b7474cac813efd1f1e11e6e3d4"
+    },
+    {
+      "path": "packages/runtime/dist/ownership.d.ts",
+      "bytes": 4100,
+      "sha256": "2fbb46cdf1aa876df0593e93b3164e73622bcf0bc6772b64c4316a3b204d30c1"
+    },
+    {
+      "path": "packages/runtime/dist/sequenceClip.d.ts",
+      "bytes": 1480,
+      "sha256": "09c7e3e0d5c6fb0f24dfb5848c57b581e71f7df8c507d608a99de7982c8fea9b"
+    },
+    {
+      "path": "packages/runtime/dist/spriteSheet.d.ts",
+      "bytes": 1457,
+      "sha256": "eee14d3ca6d5d162742d3367e5b68a34407cd2eb2ee2b20ee4c188bc134f2cfa"
+    },
+    {
+      "path": "packages/runtime/dist/texturedFrameCapture.d.ts",
+      "bytes": 581,
+      "sha256": "e2854fa47aa7cbf865e488f8e46ed617b558c69bdfc5bd5239338e6a04a21bb1"
+    }
+  ],
+  "groups": [
+    {
+      "lane": "positive",
+      "fixture": {
+        "path": "tests/types/atlas-frame-positive.ts",
+        "bytes": 1071,
+        "sha256": "c8046ec104eed922407c88a927b06c83145a4ab1542ff47cf340091fe276346e"
+      },
+      "config": {
+        "path": "tests/types/tsconfig.atlas-frame-positive.json",
+        "bytes": 106,
+        "sha256": "6832af0c8696afa733e24add3f46b87f028ecf0e7b546b67d39eb7e9dfd5e5ea"
+      },
+      "expectedExit": 0,
+      "cases": [],
+      "tuples": [],
+      "observation": [
+        {
+          "name": "sdk-atlas-types-positive-observe-r1",
+          "startedAtUtc": "2026-10-16T15:54:36.4943397Z",
+          "finishedAtUtc": "2026-10-16T15:54:36.6320229Z",
+          "exitCode": 0,
+          "timeout": false,
+          "args": [
+            "node_modules/typescript/bin/tsc",
+            "-p",
+            "tests/types/tsconfig.atlas-frame-positive.json",
+            "--pretty",
+            "false"
+          ],
+          "stdout": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      ]
+    },
+    {
+      "lane": "negative",
+      "fixture": {
+        "path": "tests/types/atlas-frame-negative.ts",
+        "bytes": 943,
+        "sha256": "1435d4139da76d06ffe6e03896096ece08bc0280f184335318aac837a229e682"
+      },
+      "config": {
+        "path": "tests/types/tsconfig.atlas-frame-negative.json",
+        "bytes": 106,
+        "sha256": "aba35e84e69502e12ab5f7db506cb7995ff507c215ab0ba039f88060bf678d28"
+      },
+      "expectedExit": 1,
+      "cases": [
+        {
+          "name": "profile-spelling",
+          "line": 9
+        },
+        {
+          "name": "profile-type",
+          "line": 11
+        },
+        {
+          "name": "rotation-enumeration",
+          "line": 13
+        },
+        {
+          "name": "readonly-layout",
+          "line": 15
+        },
+        {
+          "name": "readonly-region-layout",
+          "line": 17
+        },
+        {
+          "name": "readonly-lookup-layout",
+          "line": 19
+        },
+        {
+          "name": "forged-receiver",
+          "line": 21
+        },
+        {
+          "name": "erased-layout",
+          "line": 23
+        }
+      ],
+      "tuples": [
+        [
+          "tests/types/atlas-frame-negative.ts",
+          9,
+          28,
+          2345,
+          "Argument of type '\"trim-rotation-v2\"' is not assignable to parameter of type '\"trim-rotation-v1\"'."
+        ],
+        [
+          "tests/types/atlas-frame-negative.ts",
+          11,
+          23,
+          2345,
+          "Argument of type '{}' is not assignable to parameter of type '\"trim-rotation-v1\"'."
+        ],
+        [
+          "tests/types/atlas-frame-negative.ts",
+          13,
+          75,
+          2322,
+          "Type '180' is not assignable to type '0 | 90'."
+        ],
+        [
+          "tests/types/atlas-frame-negative.ts",
+          15,
+          8,
+          2540,
+          "Cannot assign to 'trimX' because it is a read-only property."
+        ],
+        [
+          "tests/types/atlas-frame-negative.ts",
+          17,
+          8,
+          2540,
+          "Cannot assign to 'layout' because it is a read-only property."
+        ],
+        [
+          "tests/types/atlas-frame-negative.ts",
+          19,
+          22,
+          2540,
+          "Cannot assign to 'layout' because it is a read-only property."
+        ],
+        [
+          "tests/types/atlas-frame-negative.ts",
+          21,
+          7,
+          2739,
+          "Type '{}' is missing the following properties from type 'SequencePlayer': applyAt, lastSample, isDisposed, dispose"
+        ],
+        [
+          "tests/types/atlas-frame-negative.ts",
+          23,
+          5,
+          2693,
+          "'AtlasFrameLayout' only refers to a type, but is being used as a value here."
+        ]
+      ],
+      "observation": [
+        {
+          "name": "sdk-atlas-types-negative-observe-r2",
+          "startedAtUtc": "2026-10-16T15:56:23.1493259Z",
+          "finishedAtUtc": "2026-10-16T15:56:23.2959210Z",
+          "exitCode": 1,
+          "timeout": false,
+          "args": [
+            "node_modules/typescript/bin/tsc",
+            "-p",
+            "tests/types/tsconfig.atlas-frame-negative.json",
+            "--pretty",
+            "false"
+          ],
+          "stdout": {
+            "bytes": 1065,
+            "sha256": "7ff75cc762706ef164f6ab4179f32651fd4a002c995f56301231e4166a46ee01"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      ]
+    },
+    {
+      "lane": "import-negative",
+      "fixture": {
+        "path": "tests/types/atlas-frame-import-negative.ts",
+        "bytes": 599,
+        "sha256": "4a5dbd6eb8278c83e0c5c046bbe7e1cdf94b1e7fcc33b5234714b8abfccf3d62"
+      },
+      "config": {
+        "path": "tests/types/tsconfig.atlas-frame-import-negative.json",
+        "bytes": 113,
+        "sha256": "a9d91215b0048bd087ace44ea8a09de23c69f9a464a94b88c48483c51408ed29"
+      },
+      "expectedExit": 1,
+      "cases": [
+        {
+          "name": "private-bridge-root",
+          "line": 3
+        },
+        {
+          "name": "private-helper-root",
+          "line": 5
+        },
+        {
+          "name": "private-layout-subpath",
+          "line": 7
+        },
+        {
+          "name": "private-bitmap-subpath",
+          "line": 9
+        },
+        {
+          "name": "unrelated-optional-entry",
+          "line": 11
+        }
+      ],
+      "tuples": [
+        [
+          "tests/types/atlas-frame-import-negative.ts",
+          3,
+          9,
+          2305,
+          "Module '\"@egret/engine\"' has no exported member 'applyBitmapAtlasFrame'."
+        ],
+        [
+          "tests/types/atlas-frame-import-negative.ts",
+          5,
+          9,
+          2305,
+          "Module '\"@egret/runtime\"' has no exported member 'bitmapAtlasPlacement'."
+        ],
+        [
+          "tests/types/atlas-frame-import-negative.ts",
+          7,
+          37,
+          2307,
+          "Cannot find module '@egret/runtime/atlasFrameLayout' or its corresponding type declarations."
+        ],
+        [
+          "tests/types/atlas-frame-import-negative.ts",
+          9,
+          47,
+          2307,
+          "Cannot find module '@egret/runtime/Bitmap' or its corresponding type declarations."
+        ],
+        [
+          "tests/types/atlas-frame-import-negative.ts",
+          11,
+          14,
+          2305,
+          "Module '\"@egret/engine/layout\"' has no exported member 'AtlasFrameLayout'."
+        ]
+      ],
+      "observation": [
+        {
+          "name": "sdk-atlas-types-import-negative-observe-r2",
+          "startedAtUtc": "2026-10-16T15:56:23.8499593Z",
+          "finishedAtUtc": "2026-10-16T15:56:23.9880789Z",
+          "exitCode": 1,
+          "timeout": false,
+          "args": [
+            "node_modules/typescript/bin/tsc",
+            "-p",
+            "tests/types/tsconfig.atlas-frame-import-negative.json",
+            "--pretty",
+            "false"
+          ],
+          "stdout": {
+            "bytes": 716,
+            "sha256": "7b961ec6ce42bfc3c6dca9a9166c600f01aba5680399048393038b97c88df530"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      ]
+    }
+  ]
+}

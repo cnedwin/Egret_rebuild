@@ -13,6 +13,8 @@ sampleSequenceClip(clip: SequenceClip, elapsedSeconds: number,
 ): SequenceSample
 ```
 
+下述构造和采样规则说明默认矩形路径。`createSequenceClip` 可选的第二个 `'trim-rotation-v1'` 参数增加拥有的标准化帧 layout，不改变时间规则；省略 profile 或传入 `undefined` 保留原有行为。此显式扩展及独立接受范围见[布局契约](atlas-frame-layout-contract.md)和[证据](atlas-frame-layout-evidence.md)。
+
 ## 构造
 
 输入须自有 `atlasWidth`、`atlasHeight` 和包含 1–1024 条记录的稠密 `frames` 数组。每帧须自有 `x`、`y`、`width`、`height`、`durationSeconds`。图集尺寸和区域大小是正安全整数，坐标是非负安全整数；区域边界须在安全整数范围内，并落在独立声明的图集尺寸内。
