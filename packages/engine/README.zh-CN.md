@@ -4,6 +4,10 @@
 
 白鹭实验性公共门面，装配 `@egret/runtime` 与 `@egret/contracts`，管理逻辑生命周期、显示／帧访问、CPU 资源及 surface 独占预留；物理资源和安全归还由宿主负责。根入口保持无 DOM，独立 `@egret/engine/web` 导出 `createCanvasHost`，`@egret/engine/webgpu` 显式启用 WebGPU。Engine 为渲染准备固定使用 `robust-predicates` 3.0.3。
 
+## 工程预览 0.55.0 — 显式本地线性布局
+
+可选已构建入口 `@egret/engine/layout` 提供 `planLinearLayout` 及四个擦除接口，由调用方提供数字尺寸、选择成员并应用局部坐标。规划器无 DOM/Node 依赖，不写场景，不增加默认 API、依赖或 SDK Host 协议，也不完成自动 EUI 布局。参阅[规格](../../knowledge-base/Cns/docs/local-linear-layout-spec.md)、[证据](../../knowledge-base/Cns/docs/local-linear-layout-evidence.md)和[双按钮示例](../../examples/linear-layout/README.zh-CN.md)。已记录的桌面 Canvas/WebGPU 检查覆盖固定双 Button 流程；环境及边界见证据记录。
+
 ## 工程预览 0.52.0 — 显示锚点偏移
 
 现有显示类继承有限 number 属性 `anchorOffsetX` 与 `anchorOffsetY`，默认 +0。指定枢轴使缩放／旋转在坐标、逻辑边界、裁剪、显式命中及帧捕获中保持一致，并保留原零偏移字节。阅读[当前契约](../../knowledge-base/Cns/docs/显示锚点偏移契约.md)和[有限证据](../../knowledge-base/Cns/docs/显示锚点偏移证据.md)。

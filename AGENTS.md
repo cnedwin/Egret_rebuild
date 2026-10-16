@@ -38,6 +38,12 @@ This agreement applies across the repository, including shared knowledge-base ex
 - The experimental `tools/verify-webgpu-b1.mjs` ordinary fixture imports built `@egret/engine`, `@egret/engine/scene3d` and `@egret/engine/webgpu/scene3d` through its exact generated import maps. Its only direct private product import is `packages/engine/dist/web/webgpuMeshPass.js` for the source-bound fixed native WGSL compilation/N4 diagnostic. Serving is limited to the verifier's explicit module allowlist and those public entries' bounded literal-import closure and fixed aliases; N1–N5 each alter exactly one recorded emitted file in repository-external disposable copies. S1/S2/SN1 are a separate genuine Engine/Stage/Scope/Bitmap composition stage; SN1 omits only the named parent clip. The original oracle and seven-baseline/five-control/eleven-render/8214-comparison schedule remain unchanged. This exception permits no private product imports in ordinary examples or public behavior tests and grants no new product export or arbitrary diagnostic hook.
 - When public behavior changes, update its specifications, source records and necessary regressions. Record actual environments, unverified items, counterexamples and repairs. Third-party research and historical tests do not replace independent product acceptance.
 
+<!-- LL-0.55.0-POLICY-BEGIN -->
+## Explicit local-layout boundaries
+
+The optional built `@egret/engine/layout` entry provides only the pure `planLinearLayout` function and four erased interfaces. Keep the core DOM/Node-free and preserve default entries and the SDK Host protocol. Callers supply dimensions, filter membership explicitly and apply returned coordinates through existing display APIs; the planner does not write scenes or guarantee automatic EUI layout. Follow the [layout specification](knowledge-base/en/docs/local-linear-layout-spec.md) and separate source, focused/strict, full-code and actual browser acceptance in the [evidence record](knowledge-base/en/docs/local-linear-layout-evidence.md).
+<!-- LL-0.55.0-POLICY-END -->
+
 <!-- MI1-AGENT-POLICY-BEGIN -->
 ## Primary mouse input boundaries
 

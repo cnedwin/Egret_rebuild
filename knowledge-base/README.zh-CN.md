@@ -2,6 +2,8 @@
 
 [English](README.md) | 简体中文
 
+0.55.0 的[本地线性布局](Cns/docs/local-linear-layout-spec.md)通过纯函数规划矩形，再由调用方显式应用到双 Button 菜单。使用流程及桌面验证边界见[证据记录](Cns/docs/local-linear-layout-evidence.md)。
+
 知识库围绕产品定位、技术架构、公共契约和交付组织，提供两套完整阅读版本：
 
 - [English](en/README.md)

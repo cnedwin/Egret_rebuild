@@ -4,11 +4,15 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## 0.55.0 — explicit local linear layout
+
+The optional `@egret/engine/layout` entry turns explicit numeric records into a frozen local rectangle plan. Callers filter membership, arrange children and apply coordinates. A two-Button example composes existing shared input, a borrowed programmatic atlas, nested clipping and saved/live frames. Read the [specification](docs/local-linear-layout-spec.md) and [verification scope](docs/local-linear-layout-evidence.md).
+
 ## Documentation maintenance — 2026-10-15
 
 Reorganized the public narrative around product goals, design reasoning, contracts and delivery. Product documents, navigation and bilingual readings are maintained together; sources, licenses and original experimental evidence remain traceable. This editorial change adds no engine capability.
 
-## Current integration
+## Previous integration — 0.54.0
 
 Engineering preview 0.54.0 was integrated through [PR #42](https://github.com/cnedwin/Egret_rebuild/pull/42), Main efd2a9c91fb6cfe633214b50b82cf7952941452a, tree 2b39b8439a5b30ce3572edc162e8a7a916a76185. Its recorded full local checks passed Core 3218/3218 and Spine Source 160/160; desktop Canvas/WebGPU checks completed 38 main readbacks and 87552 channel comparisons at tolerance 0. These are distinct, overlapping verification scopes. Remote CI had no reported checks; no CI pass is inferred.
 

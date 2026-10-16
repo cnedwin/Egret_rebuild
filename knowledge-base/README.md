@@ -2,6 +2,8 @@
 
 English | [简体中文](README.zh-CN.md)
 
+The 0.55.0 [local linear-layout planner](en/docs/local-linear-layout-spec.md) computes rectangle placements through a pure function; callers apply them to a two-Button menu. Read the [evidence record](en/docs/local-linear-layout-evidence.md) for the workflow and desktop verification limits.
+
 The knowledge base explains Egret's product direction, architecture, public contracts and delivery. Choose a complete reading edition:
 
 - [English](en/README.md)

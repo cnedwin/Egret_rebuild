@@ -48,8 +48,8 @@
   "productPins": [
     {
       "path": "packages/engine/package.json",
-      "bytes": 1470,
-      "sha256": "21a95638b25541c97b8da9cb8c406ec183a9b4271c446c8c590c2b04b3b99077"
+      "bytes": 1567,
+      "sha256": "e01d48a51c0845783afeec93ffcc7674c7980797cd6a9c58cc74ec3f13d2e0c5"
     },
     {
       "path": "packages/engine/web/image.ts",

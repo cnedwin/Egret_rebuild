@@ -20,17 +20,17 @@ Years later, as times change and technology advances, many developers continue t
 
 ## 当前版本
 
-工程预览 **0.54.0** 已通过 [PR #42](https://github.com/cnedwin/Egret_rebuild/pull/42) 合入主干。工作区包仍为 private、版本 0.0.0，宿主协议仍为 1.0。[能力与进展总览](knowledge-base/Cns/docs/core-progress.md)说明各子系统已实现的内容和验证范围。
+工程预览 **0.55.0** 增加显式本地线性布局：调用 `planLinearLayout` 得到不可变矩形位置，再通过现有显示 API 应用坐标。[双按钮布局示例](examples/linear-layout/README.zh-CN.md)展示横向/纵向、成员过滤、禁用状态及保存/实时帧。已记录的桌面 Canvas/WebGPU 检查覆盖固定双 Button 流程；环境及边界见证据记录。 参阅[规格](knowledge-base/Cns/docs/local-linear-layout-spec.md)、[证据](knowledge-base/Cns/docs/local-linear-layout-evidence.md)及[版本历史](knowledge-base/Cns/CHANGELOG.md)。工作区包仍为 private、版本 0.0.0，宿主协议仍为 1.0。
 
 ## 最近五次更新
 
 | Version / 版本 | Main change | 主要变化 |
 | --- | --- | --- |
+| 0.55.0 | Explicit local linear planning and a two-button composition example | 显式本地线性规划与双按钮组合示例 |
 | 0.54.0 | Shared-input bitmap buttons with pressed/disabled skins and final activation picking | 共享输入位图按钮、按下与禁用皮肤、激活前最终命中复查 |
 | 0.53.0 | Runnable atlas/animation playground with explicit pivots and saved/live frames | 图集与动画可运行示例、显式锚点和保存／实时画面 |
 | 0.52.0 | Display anchor offsets shared by rendering, coordinates and picking | 渲染、坐标转换与拾取共用显示对象锚点 |
 | 0.51.0 | Indexed display-child insertion with preserved ownership | 按索引插入显示子对象并保持所有权语义 |
-| 0.50.0 | Query the current index of a direct display child | 查询直接显示子对象的当前索引 |
 
 [完整变更记录](knowledge-base/Cns/CHANGELOG.md) · [工程规划](knowledge-base/Cns/docs/工程规划.md)
 
@@ -43,7 +43,7 @@ Years later, as times change and technology advances, many developers continue t
     node tools/verify.mjs
     node examples/headless.mjs
 
-[双按钮示例](examples/bitmap-button/README.zh-CN.md)展示 Canvas/WebGPU 交互，[图集示例](examples/anchored-atlas-playback/README.zh-CN.md)展示资源与动画。各自指南说明本地 HTTP 服务与支持的浏览器运行方式。
+[布局示例](examples/linear-layout/README.zh-CN.md)展示显式规划与按钮组合；[双按钮示例](examples/bitmap-button/README.zh-CN.md)展示 Canvas/WebGPU 交互，[图集示例](examples/anchored-atlas-playback/README.zh-CN.md)展示资源与动画。各自指南说明本地 HTTP 服务与支持的浏览器运行方式。
 
 ## 阅读与参与
 

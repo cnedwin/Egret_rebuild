@@ -22667,5 +22667,475 @@
       "firstPartyCodeChanged": false,
       "scope": "Canonical repository URLs preserve links to root contribution, acknowledgement, documentation and contributor-policy files within the knowledge-base navigation contract."
     }
+  },
+  "localLinearLayoutWorkPackage": {
+    "engineeringPreview": "0.55.0",
+    "sourceId": "S109",
+    "deliverableId": "V060",
+    "date": "2026-10-15",
+    "status": "CODE_AND_BOUNDED_DESKTOP_NATIVE_ACCEPTED",
+    "optionalPublicEntry": "@egret/engine/layout",
+    "runtimeExports": [
+      "planLinearLayout"
+    ],
+    "erasedInterfaces": [
+      "LinearLayoutItem",
+      "LinearLayoutOptions",
+      "LinearLayoutPlacement",
+      "LinearLayoutPlan"
+    ],
+    "build": "SAVED_EXIT_0",
+    "focused": {
+      "pass": 25,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "task1FullCode": {
+      "phases": 9,
+      "Core": 3243,
+      "retainedSpineSource": 160,
+      "independentReview": {
+        "bytes": 50006,
+        "sha256": "db0f056e8a315b316509e47a44ab7c0ef10396d885e8f8ea829c829026b29f1d",
+        "identityOnlyNotDistributed": true
+      },
+      "cutoff": "Task 1 API fixture before the later startup-barrier application revision; Core and Spine counts are separate."
+    },
+    "strict": {
+      "positiveDiagnostics": 0,
+      "negativeDiagnostics": 24,
+      "fullUnsuppressedTupleMatch": true
+    },
+    "task2API": {
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "independentReview": {
+        "bytes": 12906,
+        "sha256": "3207cbaadc313d233f3980a9780f27e362432a9d5a9f9305621a88b839292c44",
+        "identityOnlyNotDistributed": true
+      },
+      "cutoff": "One integration test contains the source-defined semantic/startup assertions. This separate run does not rewrite the earlier full-suite cutoff."
+    },
+    "normalHosts": {
+      "status": "ACCEPTED_EXISTING_RENDERER_SUITES_ONLY",
+      "independentReview": {
+        "bytes": 1193649,
+        "sha256": "68bad02924655710672e930d307b8896fb3537de720f4173cf5d4fe828f7a791",
+        "identityOnlyNotDistributed": true
+      },
+      "notAddedToLayoutTotals": true
+    },
+    "nativeActual": {
+      "status": "ACCEPTED_BOUNDED_DESKTOP_CANVAS_WEBGPU_ONLY",
+      "independentReview": {
+        "bytes": 19559,
+        "sha256": "66f5583095ad63e2b3b683a733fa229d89b69a73e91a89b9139326854da1062b",
+        "identityOnlyNotDistributed": true
+      },
+      "browser": "Edge 155.0.4283.45",
+      "launch": "default headless; no custom flags",
+      "width": 24,
+      "height": 24,
+      "pixelRatio": 1,
+      "presentationsPerBackend": 19,
+      "mainReadbacks": 36,
+      "mainChannels": 82944,
+      "ancillaryReadbacks": 2,
+      "separateFreshCanvasReadbacks": 3,
+      "rawRGBAOriginals": 41,
+      "mainMismatchedPixels": 0,
+      "mainMismatchedChannels": 0,
+      "pixelTolerance": 0,
+      "wrongExpectation": {
+        "pixels": 84,
+        "channels": 168,
+        "mainCredit": 0
+      },
+      "webGPUOriginalTickets": 19,
+      "allOriginalTicketsFulfilled": true,
+      "retiredSessions": 3,
+      "scope": "Fixed desktop browser schedule only; no Native SDK, phone, hardware/performance, full EUI, fonts or general Host acceptance."
+    },
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "firstPartyLicense": "Apache-2.0",
+    "newDependency": false,
+    "defaultAPIChanged": false,
+    "hostProtocolChanged": false,
+    "finalPublicationReview": "RECORDED_SEPARATELY",
+    "delivery": "Repository commits, pull requests and Main history determine actual delivery; no unpublished future commit identity is embedded.",
+    "remoteCIPassClaim": false,
+    "historicalCutoffsPreserved": true,
+    "independentlyAuthoredFirstParty": true,
+    "implementationInputs": "Selected first-party Egret specification and existing genuine public interfaces; no external implementation code copied.",
+    "aiAssistance": "Codex-assisted implementation, fixtures and bilingual preparation; independent source and saved-result reviews retain their finite authority.",
+    "programmaticAtlas": "Original first-party bitmap-button programmatic atlas reused through its existing session.",
+    "criticalCommentsLanguage": "en",
+    "currentCodeSourcePins": [
+      {
+        "path": "packages/engine/src/layout.ts",
+        "bytes": 5432,
+        "sha256": "64227cd76bda5818ff2c257b1c94b2825dac385c915efb77f1ab21153f5d5580"
+      },
+      {
+        "path": "packages/engine/src/layoutTypes.ts",
+        "bytes": 1021,
+        "sha256": "715bb4bc43264e8884f06f3a1f2e18d9855739b33a747bb3deb19b6374c8f8ac"
+      },
+      {
+        "path": "packages/engine/package.json",
+        "bytes": 1567,
+        "sha256": "e01d48a51c0845783afeec93ffcc7674c7980797cd6a9c58cc74ec3f13d2e0c5"
+      },
+      {
+        "path": "tools/check-boundaries.mjs",
+        "bytes": 147012,
+        "sha256": "1a87be5c485f5d7ffd15ddf9c191c4a87cb96e89ae1566874116d79e0cb5ef85"
+      },
+      {
+        "path": "tools/check-types.mjs",
+        "bytes": 93762,
+        "sha256": "4052c672b0bc8ed5d19d59ae949b5e6590a91352aa7c99359bfff30c5a754490"
+      },
+      {
+        "path": "tests/linear-layout-inputs.test.mjs",
+        "bytes": 15149,
+        "sha256": "e07f2c49a6c4b5c192d929bbc4fdb0fdce0e56bbb0ba1acc0eba6b9e20ea5234"
+      },
+      {
+        "path": "tests/linear-layout.test.mjs",
+        "bytes": 7213,
+        "sha256": "4088ee98b713bd5b53268f3b18f67ae295cbae532fe2d49b605d241271eb9c87"
+      },
+      {
+        "path": "tests/types/linear-layout-negative.ts",
+        "bytes": 2378,
+        "sha256": "651776ce93e7762fef360a0e9698b1778f5c18ff6fc22105c9b565fdf19cbb61"
+      },
+      {
+        "path": "tests/types/linear-layout-positive.ts",
+        "bytes": 1975,
+        "sha256": "4222847a3f4b515bf7267b3b03818c638e2d8031f4264244dd4ff1e0b493dbea"
+      },
+      {
+        "path": "tests/types/tsconfig.linear-layout-negative.json",
+        "bytes": 301,
+        "sha256": "077a8519441bcfba4eb6d7e143945eea2a9a7ef7a079edcf7945a956a8abab87"
+      },
+      {
+        "path": "tests/types/tsconfig.linear-layout-positive.json",
+        "bytes": 301,
+        "sha256": "ef4aad2b3d24db9b55fe58413f0954431e0d8d353183e48c0c80fb5aa12603a7"
+      },
+      {
+        "path": "tools/linear-layout-types.mjs",
+        "bytes": 10385,
+        "sha256": "02a691c2e66eb7d817bcf8dea1a70f908337d9b064b36797f3fea0c2a06e73a8"
+      },
+      {
+        "path": "tests/types/linear-layout-diagnostic-expectations.json",
+        "bytes": 63384,
+        "sha256": "cdf4c7dadbc33ef5c8bdafeaa0f624663d15cd8d0ba0f61c10d524b13bdbd41d"
+      },
+      {
+        "path": "examples/linear-layout/index.html",
+        "bytes": 5125,
+        "sha256": "a0a631f203b1b3fbccfb81cbe0acb9e823e032d56052ed55a70d7e6b0a68fd61"
+      },
+      {
+        "path": "examples/linear-layout/main.mjs",
+        "bytes": 6870,
+        "sha256": "aa16826adf6b2d1302bd3c4d387e7e41e9ed8d8def5699e5482e85b6bc94c3c2"
+      },
+      {
+        "path": "examples/linear-layout/session.mjs",
+        "bytes": 10775,
+        "sha256": "520699ac6e7c7482125c067bb00428ab93002ba45ad9842379384e511e2acf7f"
+      },
+      {
+        "path": "tests/linear-layout-api.test.mjs",
+        "bytes": 15305,
+        "sha256": "043c2e152f44214efbd678334749a50ddf134c42a9d158cb9ca07045dcc56114"
+      },
+      {
+        "path": "tools/spritesheet-boundary.mjs",
+        "bytes": 97806,
+        "sha256": "eef21bbff6afd441fa08df3bbad788097824e80359eed3b2c11c36869860f948"
+      },
+      {
+        "path": "tools/sequence-playback-boundary.mjs",
+        "bytes": 28025,
+        "sha256": "5b566d93ec78c511ecef646a74fc213eaabd8b91025ffd4e91a5603ea0ffe3d2"
+      },
+      {
+        "path": "tools/browser-png-boundary.mjs",
+        "bytes": 99384,
+        "sha256": "11447a4825d38f8712fea1b28c2f10f4378decc63331e1ee6ab3b483cf441367"
+      },
+      {
+        "path": "tests/types/browser-png-diagnostic-expectations.json",
+        "bytes": 57506,
+        "sha256": "4ab0641a5179df250e6f8e771a79955e96448972e2ad3c6fb61b6ac35945d0b7"
+      },
+      {
+        "path": "tests/types/bitmap-button-diagnostic-expectations.json",
+        "bytes": 33622,
+        "sha256": "a5b8c746d8e574813d2ca51c2c802257f4971d25b780cfbd62ea91ef0d1355d6"
+      },
+      {
+        "path": "tests/types/display-anchor-offsets-diagnostic-expectations.json",
+        "bytes": 28928,
+        "sha256": "14e1ee4cade44a30f0ba71284ea85a80f42e03012b03e1cf83c33dd33da372f8"
+      },
+      {
+        "path": "tests/types/display-container-add-child-at-diagnostic-expectations.json",
+        "bytes": 35214,
+        "sha256": "3ba3592f830cb96bfd07b2d3ee16132c090fb5c08bb15deb2471002415e9a3be"
+      },
+      {
+        "path": "tests/types/display-container-child-index-diagnostic-expectations.json",
+        "bytes": 36182,
+        "sha256": "f6af9b09d3bdc421a06e44af61cbed7779387d8a01dde6bcb2282b88f4e91a8a"
+      },
+      {
+        "path": "tests/types/display-container-remove-children-diagnostic-expectations.json",
+        "bytes": 29625,
+        "sha256": "adb4d159e2a83d982f741b891f18d77b8171938795fc370dc76994cf597fff5e"
+      },
+      {
+        "path": "tests/boundaries.test.mjs",
+        "bytes": 109850,
+        "sha256": "d0937e4f15f5417f20093ed8fe2cd57a1262e6297c0c637625570cc7acdeaf13"
+      },
+      {
+        "path": "tests/project-boundaries.test.mjs",
+        "bytes": 16624,
+        "sha256": "438cd1ad16aa8d08434da29f26d801d67717429a4f3660f9012e433f04ce02d9"
+      }
+    ],
+    "currentProductSourcePins": [
+      {
+        "path": "packages/engine/src/layout.ts",
+        "bytes": 5432,
+        "sha256": "64227cd76bda5818ff2c257b1c94b2825dac385c915efb77f1ab21153f5d5580"
+      },
+      {
+        "path": "packages/engine/src/layoutTypes.ts",
+        "bytes": 1021,
+        "sha256": "715bb4bc43264e8884f06f3a1f2e18d9855739b33a747bb3deb19b6374c8f8ac"
+      },
+      {
+        "path": "packages/engine/package.json",
+        "bytes": 1567,
+        "sha256": "e01d48a51c0845783afeec93ffcc7674c7980797cd6a9c58cc74ec3f13d2e0c5"
+      }
+    ],
+    "currentProductEmissionPins": [
+      {
+        "path": "packages/engine/dist/layout.js",
+        "bytes": 5349,
+        "sha256": "7e8b71d24685d3e1ca5109919bad86c1abcc216a551696450f5a79bf336daafd"
+      },
+      {
+        "path": "packages/engine/dist/layoutTypes.js",
+        "bytes": 50,
+        "sha256": "44b48892f14e36e43e26f929c9874339dfb4c976cabf3d712f8a409005b6b17e"
+      },
+      {
+        "path": "packages/engine/dist/layout.d.ts",
+        "bytes": 421,
+        "sha256": "68e15d413ec3a4b1bdf50459cd4dd5b91cfc74ea141fa6a0eb16767cab696e37"
+      },
+      {
+        "path": "packages/engine/dist/layoutTypes.d.ts",
+        "bytes": 1050,
+        "sha256": "5d9402bb33d6228b99960f37e74165adacbb3700a57c4a9c5c3840d4b61f7f04"
+      }
+    ],
+    "sourceReview": {
+      "bytes": 174208,
+      "sha256": "e90ecad7239073e898f774a85d4ee2d8ea22ff6326245f2bc3860dc2b6182dfe",
+      "identityOnlyNotDistributed": true
+    },
+    "cpuPrerequisiteReview": {
+      "bytes": 33146,
+      "sha256": "5faf4c523222d8e77d13c11c5a12015bd948a4e47403010f3a4c033bed51178d",
+      "identityOnlyNotDistributed": true
+    },
+    "currentPublicPins": [
+      {
+        "path": "knowledge-base/en/docs/local-linear-layout-spec.md",
+        "bytes": 9344,
+        "sha256": "330f8998305c4a9a8cf31c6212cdbb7718ed1a0dbcdc28bf58e55602d802b9eb"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/local-linear-layout-spec.md",
+        "bytes": 8509,
+        "sha256": "ce85733373af3c86f28d8bdf47ed3ac2d3aa7c62f62ec0601f62d78b4bded723"
+      },
+      {
+        "path": "knowledge-base/en/docs/local-linear-layout-evidence.md",
+        "bytes": 6125,
+        "sha256": "4e18e741a6ca4c09e08350e9f144403c8585436f6430d5665f8f6072ffaaf6b4"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/local-linear-layout-evidence.md",
+        "bytes": 5217,
+        "sha256": "a94e775a3e3f924ba8ad440bf0125794264090769725fc6e0cf8fbbc3dbeb59d"
+      },
+      {
+        "path": "examples/linear-layout/README.md",
+        "bytes": 3497,
+        "sha256": "390aeaf2d9c3f5a8fc4b760a3c87f59e4fd2eca725c3d15b86fadab49ed06fe5"
+      },
+      {
+        "path": "examples/linear-layout/README.zh-CN.md",
+        "bytes": 3136,
+        "sha256": "f74351394da032ace9816b1486ab78c5320b6272ae2e90235f2477a4524079a6"
+      },
+      {
+        "path": "README.md",
+        "bytes": 4616,
+        "sha256": "eb02a4b126c5059694b530538e7fc5a6f8b759c97103743cacf8ae64d2efa4a6"
+      },
+      {
+        "path": "README.zh-CN.md",
+        "bytes": 4335,
+        "sha256": "886f8415777e133f44146ec3fff5ac7744183619dd1610a6b948de9b0ed860b9"
+      },
+      {
+        "path": "knowledge-base/README.md",
+        "bytes": 1314,
+        "sha256": "e5c4b9ccdfba3fe3048f012ea2f1791262f9a9fd2f29fdba9b703c401cfce8ea"
+      },
+      {
+        "path": "knowledge-base/en/README.md",
+        "bytes": 3795,
+        "sha256": "c2f9acbd26eaadf0881f1d0570d7d02d3b7475bfad8dc5518e620907a3809559"
+      },
+      {
+        "path": "knowledge-base/en/CHANGELOG.md",
+        "bytes": 11460,
+        "sha256": "a3eb97c9d7efc4dae5258234644a6af4239539b18e0c5fa7408568a0164884e0"
+      },
+      {
+        "path": "knowledge-base/en/docs/core-progress.md",
+        "bytes": 6122,
+        "sha256": "7b3179da60cb463d10cdf61449ea42b09a56b37ed6808d797b12edd869af8115"
+      },
+      {
+        "path": "knowledge-base/README.zh-CN.md",
+        "bytes": 984,
+        "sha256": "915a9dad0a398076e56fad2a077ebcf3da0b1ac1a0e4dc982d67f7503925b043"
+      },
+      {
+        "path": "knowledge-base/Cns/README.md",
+        "bytes": 3309,
+        "sha256": "792b5a66a78b77cc99efbccbc7ce65b626ff77c68a1f2bff045e1e5bc3beba32"
+      },
+      {
+        "path": "knowledge-base/Cns/CHANGELOG.md",
+        "bytes": 10237,
+        "sha256": "ee1ef4ec3c63e7387ee64028426d2b6fd8614acde30e57182c08053d4bdcd449"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/core-progress.md",
+        "bytes": 5259,
+        "sha256": "2ab2d9f152a883d5d3d851c9eb85ff0accacec2e30e3f18c332e94ee8c2a6f62"
+      },
+      {
+        "path": "knowledge-base/Cns/registry/来源.json",
+        "bytes": 308959,
+        "sha256": "a95a8cbb80fb00cac9c7b4636fa9177fb8aa61f097b71db9cada1ca4d6abfd2a"
+      },
+      {
+        "path": "knowledge-base/Cns/registry/交付.json",
+        "bytes": 292909,
+        "sha256": "d2fd59be0eb70e71f60f81927052f9d9f463fe09654b9644d03401aeefa3b863"
+      },
+      {
+        "path": "knowledge-base/Cns/当前版本.json",
+        "bytes": 250070,
+        "sha256": "81ac35b6d60e14c243e29421579fa015616c5a1e4eda874bac45c72ab0e150b3"
+      },
+      {
+        "path": "knowledge-base/en/registry/sources.json",
+        "bytes": 319237,
+        "sha256": "dd9acc3b50015f43e74da949f75e32ba3dc6fdf7d15d0f32aebffbd89df2b85c"
+      },
+      {
+        "path": "knowledge-base/en/registry/deliverables.json",
+        "bytes": 299808,
+        "sha256": "e08ddce0530e5233351df4d75d90e2e78a6a17b563d4442f32fef4b8dc08e3d7"
+      },
+      {
+        "path": "knowledge-base/en/current-version.json",
+        "bytes": 251142,
+        "sha256": "3b69bce5bca0183d1b940cc037c1f04c2ee2de1df62ba261254da6183100594c"
+      },
+      {
+        "path": "knowledge-base/documentation-layout.json",
+        "bytes": 126051,
+        "sha256": "006bdcfe9b18a3881050fde21612fe43b7ce8d5058666be8b10e97d47c009c45"
+      },
+      {
+        "path": "localization.json",
+        "bytes": 298999,
+        "sha256": "3e0ac63b5f5369aba9cd6802477a8d3bda0fd76a811dfe1d94439e416fd5ae83"
+      },
+      {
+        "path": "AGENTS.md",
+        "bytes": 16915,
+        "sha256": "7cf724f18d07e5caef68b68120fa68123a1acdadead14be1df7432bdf1affb3e"
+      },
+      {
+        "path": "AGENTS.zh-CN.md",
+        "bytes": 14780,
+        "sha256": "b0c5f09d32ba6b53c4e72719c3c01a4a727584bd68822b97214c1354f02192d1"
+      },
+      {
+        "path": "packages/engine/README.md",
+        "bytes": 11414,
+        "sha256": "fc2a799035845f7ff246573db193b5da4f9ff613c8b89bb2c38d174c880165a4"
+      },
+      {
+        "path": "packages/engine/README.zh-CN.md",
+        "bytes": 10118,
+        "sha256": "ec5fc4cb60d5ed074af52557a14a8f74111e50d2212059da4872dc37df94e9a1"
+      }
+    ],
+    "selfIdentityPolicy": "This file is excluded from its own raw inventory. The external candidate manifest and actual repository history bind the complete version without a self-hash cycle.",
+    "historical938RowsPreserved": true,
+    "currentReadingPairRows": 200,
+    "currentCriticalCommentRows": 309,
+    "semanticReviewScope": {
+      "unchanged190": "Prior editorial review cutoff retained.",
+      "changedOrNew10": "Final independent bilingual/source review is recorded separately; prior review is not reused for changed bytes."
+    }
+  },
+  "localLinearLayoutMetadataIntegrationSuccessor": {
+    "engineeringPreview": "0.55.0",
+    "date": "2026-10-15",
+    "scope": "Structured metadata integration only. The six canonical example identity values use the same English GitHub URL in both registry editions; Chinese Markdown navigation remains localized. The accepted independent R2 ten-pair review is recorded with the required reviewed_with_scope status, while unchanged190 retain their previous cutoff.",
+    "acceptedR2SourceBilingualReview": {
+      "bytes": 21744,
+      "sha256": "7cd7b97a1f755d664d84e4e972e77b5078ec7c7f31f30b41477dbc9f9af96a2d",
+      "identityOnlyNotDistributed": true
+    },
+    "preservedFirstStructuralFailure": {
+      "bytes": 694,
+      "sha256": "c980e100c2dd55ff544497a2897c841d38a3987ebd062431576e9bdd2ba66b35",
+      "identityOnlyNotDistributed": true
+    },
+    "productCodeChanged": false,
+    "humanReadingChanged": false,
+    "validatorChanged": false,
+    "fullPrepushOrDeliveryClaim": false
   }
 }

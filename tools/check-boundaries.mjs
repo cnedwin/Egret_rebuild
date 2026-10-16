@@ -45,6 +45,7 @@ for (const [name, allowed] of Object.entries(expected)) {
       './webgpu': {types:'./dist/web/webgpu.d.ts',import:'./dist/web/webgpu.js'},
       './web': {types:'./dist/web/index.d.ts',import:'./dist/web/index.js'},
       './text': {types:'./dist/text.d.ts',import:'./dist/text.js'},
+      './layout': {types:'./dist/layout.d.ts',import:'./dist/layout.js'},
       './web/text': {types:'./dist/web/text.d.ts',import:'./dist/web/text.js'},
       './web/input': {types:'./dist/web/input.d.ts',import:'./dist/web/input.js'},
       './web/image': {types:'./dist/web/image.d.ts',import:'./dist/web/image.js'},
