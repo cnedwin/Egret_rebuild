@@ -996,3 +996,6 @@ await import('./bitmap-resource-slot-types.mjs');
 // Preserve retained strict lanes before replaying borrowed binding-ticket consumers.
 await import('./bitmap-binding-ticket-types.mjs');
 // BITMAP_BINDING_TICKET_TYPES_END
+
+// Preserve retained strict lanes before the explicit atlas-layout extension.
+await import('./atlas-frame-types.mjs');

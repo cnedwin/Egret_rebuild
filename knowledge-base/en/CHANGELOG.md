@@ -4,6 +4,12 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## 0.59.0 candidate — normalized atlas frames — 2026-10-17
+
+The explicit `'trim-rotation-v1'` profile on the existing SpriteSheet and SequenceClip factories supports single-page frames with transparent trim and clockwise90 packing. Owned layout preserves logical dimensions and placement through Bitmap and existing sequence playback, while the default rectangle path remains compatible. Read the [contract](docs/atlas-frame-layout-contract.md), [evidence and limits](docs/atlas-frame-layout-evidence.md) and [example guide](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/trimmed-atlas-playback/README.md).
+
+The independently accepted 12-stage SDK `node tools/verify.mjs` run passed **3559/3559 core tests** and a separate **160/160 Spine experiment tests**, with failed/cancelled/skipped/todo all **0** in each suite. Separate desktop Canvas and textured WebGPU verification passed six fresh contexts and 30 complete RGBA readbacks at zero tolerance, including assigned controls and replay after origin retirement. The current verifier adds a thirteenth atlas source-boundary phase; its complete rerun, final publication/prepush, 0.59 Git delivery and remote CI remain pending at this authoring cutoff. Earlier failures and repairs are retained in the linked evidence. Exporter imports, multipage, pivot/nine-slice import, animated retarget, controller seek/rate/events, full Spine R020/V020, migration R008/V006 and physical-device/performance acceptance remain OPEN.
+
 ## 0.58.0 — Atomic Bitmap bindings and prepared outfits
 
 Engineering preview **0.58.0** adds `Engine.captureBitmapBindings(scope, targets)` and the erased `BitmapBindingTicket` type. The prepared-outfit example waits for both clothing textures and commits their bindings together. Pending, failed, cancelled and obsolete changes preserve the working outfit; a ticket refuses to overwrite a later caller binding.

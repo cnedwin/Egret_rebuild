@@ -84,8 +84,8 @@
       "action": "move-pair",
       "previousZhSha256": "f43625255269c8801af0929179a9aab32cbca58094e4a842797e39171fc549b0",
       "previousEnSha256": "e8b100ccbd9d0fb99237a564f484f7fa6dbf008191570fa58f3e481c05c3e9f9",
-      "currentZhSha256": "511fd3b6aec764850ed42ce0f83f4f79b9cbe3d24e448679837a1b33202ccff3",
-      "currentEnSha256": "1cca6a92a117a6f76900c37cc4620c971cf9e946f0f4d9812e2355f62388f894"
+      "currentZhSha256": "46e5463718476e2d8a12a63d13a5b83a583129bf2b6e73d1fd8a9927583fff57",
+      "currentEnSha256": "b8b1ec14de9e0ec33e1cc0333f284a8c82867419163d00d25f2c5723ded152a3"
     },
     {
       "oldZh": "knowledge-base/CONTRIBUTING.md",
@@ -840,8 +840,8 @@
       "action": "move-pair",
       "previousZhSha256": "372e5b07d4980eb45d8338424c8d970b7725e324e6b3397916944b0529c55ec7",
       "previousEnSha256": "ed88646659467d718a30c3bfff14b41c28debbcb786e7bf816ee68819f612887",
-      "currentZhSha256": "8e2581e229b1f7a35c4aea7a46799b42b665ecc363fe3c617a88265bf74a69cf",
-      "currentEnSha256": "6d5f404f5208e617f0d780953bc66a90182edd0c7dc3a73c62f8cf9f861d80af"
+      "currentZhSha256": "14c8d6aa682759299715aa849dbd2295db778a1e88d7f68111a6e7022ad5ebcb",
+      "currentEnSha256": "887fd061fa4f3fcb4bfac7396ed546776be6865bd0e6cbf3b84bac4c8b491b57"
     },
     {
       "oldZh": "knowledge-base/templates/实现来源记录.md",
@@ -960,8 +960,8 @@
       "action": "move-pair",
       "previousZhSha256": "803a40dd8bfd0f98ade51c8ba736790509aae12a6e045a8ea688b3ff5d01cdcf",
       "previousEnSha256": "40a2ef2f686aba4a10279c417dfe17879bb6396b3b80dd75b26bd09c87d665f9",
-      "currentZhSha256": "b9af7ee339a26e4ce8f660e658a1b35763c97b95af3240a551966306a530388b",
-      "currentEnSha256": "51a216ca189290aa569f46db7271d98da3eb5638d6c205d94ae6dcbec79c63d3"
+      "currentZhSha256": "ace6a5fc523d0f4b5fe33d72f0dc2278b2a98921b785eabfd5bc14e65e31ce37",
+      "currentEnSha256": "4f18aeebbafb8b24d77a8639477e98eb2257300c473742ec76b9832f73973e7a"
     },
     {
       "oldZh": "knowledge-base/docs/WebGPU矩形执行合同.md",
@@ -1080,8 +1080,8 @@
       "action": "move-pair",
       "previousZhSha256": "61639f120f4ed3aa77c4ffd41cf377e447dcac20e9562322c103e2e6b44c3990",
       "previousEnSha256": "60c77a11dc614191ba1d98fa488301a344839cc672df01e2c632048d85e8d376",
-      "currentZhSha256": "2aa5d2724f30e1ac5ae63931a100440bd7b4862e358c8a47acc39fc2acc880e7",
-      "currentEnSha256": "069060c0e0b72a42b6c798d14355b335c7ae6c37a2f58a814ac5f87763716630"
+      "currentZhSha256": "cbbcf159619e007f181f508f0806ddc0a942ad7f6e6b69091dbd302f15ff0aa7",
+      "currentEnSha256": "87f86410068914ad015b764930c750df0399409c444a501eda45985648269d39"
     },
     {
       "oldZh": "knowledge-base/docs/3d-foundation.md",
@@ -1188,8 +1188,8 @@
       "action": "move-pair",
       "previousZhSha256": "77df8c4ee440f89dca5768a1900d35d261829e291df63f5f7fef1ab114e41205",
       "previousEnSha256": "aa99a4bac3edab4d1070c247c9c7b04845dede5791400fabcbf8ae5be98868d0",
-      "currentZhSha256": "a262155bb89d583a5c3ea7d408e3dc1fb5db65b9a0546b811092b1c5cc9f91b5",
-      "currentEnSha256": "eab09f99c0f680dd1e11fadf25a4287e12dbf836d08151c80815402eb089b7e6"
+      "currentZhSha256": "21dbd7ec776d2713a62c0109564b94b921bfd976e02df8e39836dbd6dfda4909",
+      "currentEnSha256": "e95c319f419935ad673db1de1c614681ee9f20f1eae88d48ae2eba64935c2fe1"
     },
     {
       "oldZh": "knowledge-base/docs/sequence-clip-evidence.zh-CN.md",
@@ -1488,8 +1488,8 @@
       "newEn": "knowledge-base/en/docs/sequence-player-contract.md",
       "kind": "public_reading",
       "action": "new-first-party-pair",
-      "currentZhSha256": "6db7ac80073b070891071594a90f4c79fc36590fa22b1644523511c4c93bb64b",
-      "currentEnSha256": "c72e33c31d0dc02d680112c9ab19a61b4147aaa1f79718dadc3944e4d9f8961d"
+      "currentZhSha256": "94654849ec78453d508d1757513b525dda38eccb62f548ccda60884170a422f3",
+      "currentEnSha256": "70fae7a3fca1db7a5c6d5672dd8c684dc943e38cefec1c1f9385f4151815ab46"
     },
     {
       "newZh": "examples/sequence-player/README.zh-CN.md",
@@ -1887,6 +1887,66 @@
       "currentEnSha256": "4f41eb92aeee41fa842e1223d958ab95c4f8787108c9c1947cac98389d023489",
       "currentZhSha256": "411d49a8d295c818532b5b315a93cc411f59a15571d9ade3fcd8276ae5b59fc1",
       "engineeringPreview": "0.58.0",
+      "status": "CURRENT_READING_SOURCE"
+    },
+    {
+      "newEn": "knowledge-base/en/docs/spritesheet-contract.md",
+      "newZh": "knowledge-base/Cns/docs/命名图集契约.md",
+      "kind": "public_reading",
+      "action": "register-existing-current-pair",
+      "currentEnSha256": "95e0612d020f6b34449526e2129d12a8110aa7482eecde20cece69e74d40b926",
+      "currentZhSha256": "3731630a26b2a7d1792aabfe5a09946b608c89cae0d48af7e7e644139a45c80d",
+      "engineeringPreview": "0.59.0",
+      "status": "CURRENT_READING_SOURCE"
+    },
+    {
+      "newEn": "knowledge-base/en/docs/sequence-playback-contract.md",
+      "newZh": "knowledge-base/Cns/docs/时钟驱动序列动画契约.md",
+      "kind": "public_reading",
+      "action": "register-existing-current-pair",
+      "currentEnSha256": "0bfb0833daf603e25bb3dcd51ba112915d840a4908314a8dc65b107e114d3501",
+      "currentZhSha256": "322ad240d6485937d225875706e2fca3a0044a4159f621cf71f4b91bfd8d8711",
+      "engineeringPreview": "0.59.0",
+      "status": "CURRENT_READING_SOURCE"
+    },
+    {
+      "newEn": "knowledge-base/en/docs/repository-identity-and-line-endings.md",
+      "newZh": "knowledge-base/Cns/docs/仓库路径身份与换行规范.md",
+      "kind": "public_reading",
+      "action": "register-existing-current-pair",
+      "currentEnSha256": "b11a523786dd2901fd0cff7f3e64d8f58d0e64498ded830647c04aa2600a02de",
+      "currentZhSha256": "f9ced09202b2977e2c1473f998ca602e554d3de568e880b9121b97fb9b616318",
+      "engineeringPreview": "0.59.0",
+      "status": "CURRENT_READING_SOURCE"
+    },
+    {
+      "newEn": "knowledge-base/en/docs/atlas-frame-layout-contract.md",
+      "newZh": "knowledge-base/Cns/docs/atlas-frame-layout-contract.md",
+      "kind": "public_reading",
+      "action": "add-current-pair",
+      "currentEnSha256": "5d82f5f946b6b06915e39fa50911dea21fc9bb03eff48788848a453ec3a5c36e",
+      "currentZhSha256": "ce9625c8dbacb4d22f9434a15e16ff92d090567a7db28361e6b7b6cb55f95300",
+      "engineeringPreview": "0.59.0",
+      "status": "CURRENT_READING_SOURCE"
+    },
+    {
+      "newEn": "knowledge-base/en/docs/atlas-frame-layout-evidence.md",
+      "newZh": "knowledge-base/Cns/docs/atlas-frame-layout-evidence.md",
+      "kind": "public_reading",
+      "action": "add-current-pair",
+      "currentEnSha256": "0f908bfbb54f39b31239b4cb40862f91da2584955226980bfbd8f7c8a2b994cd",
+      "currentZhSha256": "43292463eccb37d28eb54b0affec21d582869aac4abf1efd35ea0f3469dbc7d9",
+      "engineeringPreview": "0.59.0",
+      "status": "CURRENT_READING_SOURCE"
+    },
+    {
+      "newEn": "examples/trimmed-atlas-playback/README.md",
+      "newZh": "examples/trimmed-atlas-playback/README.zh-CN.md",
+      "kind": "public_reading",
+      "action": "add-current-pair",
+      "currentEnSha256": "85754c829edb73780d93225b6d38fb9c40ee6097015cff91de890703a8ed2c59",
+      "currentZhSha256": "7951d302a819ac8214a340e30f4f4674f2ebd9016267d77ef4f272ddbf7b1c14",
+      "engineeringPreview": "0.59.0",
       "status": "CURRENT_READING_SOURCE"
     }
   ],
@@ -2348,6 +2408,17 @@
     "newReadingPairs": 3,
     "changedExistingReadingPairs": 5,
     "reviewedPairs": 8,
+    "unchangedReviewedPairs": 0,
+    "preservedOriginalsUnchanged": true,
+    "historicalCutoffsPreserved": true
+  },
+  "atlasFrameLayoutCuration": {
+    "engineeringPreview": "0.59.0",
+    "date": "2026-10-17",
+    "newReadingPairs": 3,
+    "backfilledExistingLayoutPairs": 3,
+    "changedExistingReadingPairs": 9,
+    "reviewedPairs": 12,
     "unchangedReviewedPairs": 0,
     "preservedOriginalsUnchanged": true,
     "historicalCutoffsPreserved": true

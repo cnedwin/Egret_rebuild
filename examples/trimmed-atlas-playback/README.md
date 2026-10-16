@@ -1,0 +1,17 @@
+# Trimmed atlas playback
+
+English | [简体中文](README.zh-CN.md)
+
+Build the repository with `node tools/build.mjs`, serve the repository over HTTP and open `examples/trimmed-atlas-playback/index.html`. The Canvas example decodes the original first-party 6×6 PNG, checks its encoded SHA256 and all 144 decoded channels, then uses only public Engine and Canvas APIs. No external artwork is needed.
+
+Start both handles and advance manual source time in 1/16-second steps. The left handle plays once; the right loops. Pause/resume affects only the left handle. Both Bitmaps keep logical 4×5 bounds while the packed 2×3 crops differ in trim and clockwise packing. The two handles share one immutable clip and have independent exact leases. Close retires playback, display owners, the owned leases, Texture and Engine/Host; reload to start a fresh session.
+
+`trim-rotation-v1` explicitly opts in to the five-field layout. Clockwise 90 describes packed pixels; the captured image command applies their inverse rotation inside the ordinary display transform. Setting ordinary `sourceRect` clears layout. Rebinding a new exact lease invalidates an old player even if its Texture is the same. The sheet and playback borrow their leases; the session's Scope owns acquired leases.
+
+The separate native collector has two exact profiles, `canvas-2d` and `webgpu-textured-2d`. Independently reviewed desktop Edge runs completed 11 ordinary readbacks per backend, including replay of the unchanged saved N01 frame after all original owners and Host retired. Two additional control contexts per backend each ran a fresh healthy B@.125 Page, closed it, then ran an assigned product build in a new Page on another origin. All 30 full 24×16 RGBA readbacks across six fresh contexts matched their literal masks at zero tolerance; assigned outputs also differed from the healthy masks. See the [evidence and environment](../../knowledge-base/en/docs/atlas-frame-layout-evidence.md) and [layout contract](../../knowledge-base/en/docs/atlas-frame-layout-contract.md). Final publication/prepush and 0.59 Git/remote delivery remain pending at the 2026-10-17 authoring cutoff.
+
+Prepare each finite case with `node tools/atlas-frame/prepare-native.mjs --repository <absolute-repository> --task-root <absolute-private-task-root> --destination <new-absolute-private-directory> --playwright-root <installed-playwright-1.62.1-directory> --profile <profile> --kind <ordinary|rotation-sign|trim-y-constant>`. The helper creates disposable owners and records actual compiler inputs, outputs and raw logs. It never modifies the selected development repository. Private configuration, snapshots and raw artifacts stay outside the public repository.
+
+Run the helper's returned command ending in `--snapshot-only`. It produces `SOURCE_ONLY_NO_BROWSER`. After independent review of the complete closure, actual build receipts, toolkit, fixture, oracle and assigned diff, run the exact same config path and raw SHA256 without `--snapshot-only`. The collector launches default Edge with pinned Playwright/core 1.62.1 and no extra flags. A source snapshot is not browser acceptance. Assigned control failures in setup, module loading, readback or cleanup never count as a detected product mutation.
+
+This finite scene adds no exporter importer, multipage atlas, pivot/nine-slice adapter, seek/rate/frame events, animated retargeting, device recovery, target-phone performance or physical-memory guarantee. First-party code and original artwork are Apache-2.0; artwork provenance is in `assets/provenance.json`.

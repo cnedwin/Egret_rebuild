@@ -4,6 +4,8 @@ English | [简体中文](../../Cns/docs/命名图集契约.md)
 
 Engineering preview 0.45.0. This first-party increment gives named icons and sequence animation one immutable rectangle table over one genuine atlas lease. It adds `createSpriteSheet` and the type-only `SpriteSheet` / `SpriteSheetFrameInput` to the built Engine and Runtime roots. It introduces no dependency, public subpath, Engine instance method or second animation clock.
 
+This SS1 reading describes the established default rectangle path. The optional third `'trim-rotation-v1'` argument extends `createSpriteSheet` with normalized trim/clockwise90 layout; omitted or `undefined` profiles preserve the behavior below. See the separate [layout contract](atlas-frame-layout-contract.md) and [evidence](atlas-frame-layout-evidence.md); the original SS1 evidence keeps its scope.
+
 ## Public interface
 
 ```ts

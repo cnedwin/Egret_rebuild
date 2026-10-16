@@ -21,12 +21,21 @@
 | 创作与兼容 | [AI 与工程接口](docs/AI创作与工程接口.md) |
 | 创作与兼容 | [Spine 支持](docs/Spine动画支持需求与验收.md) |
 | 创作与兼容 | [旧工程迁移](docs/旧工程迁移.md) |
+| 当前集成 | [图集帧布局](docs/atlas-frame-layout-contract.md) · [证据](docs/atlas-frame-layout-evidence.md) |
 | 当前集成 | [资源组合准备](docs/prepared-resource-groups-spec.md) |
 | 当前集成 | [真实资源场景](docs/resource-scene-integration.md) |
 | 进展与参与 | [能力与进展](docs/core-progress.md) |
 | 进展与参与 | [变更记录](CHANGELOG.md) |
 | 进展与参与 | [贡献指南](https://github.com/cnedwin/Egret_rebuild/blob/main/CONTRIBUTING.zh-CN.md) |
 | 资料来源 | [鸣谢](https://github.com/cnedwin/Egret_rebuild/blob/main/ACKNOWLEDGEMENTS.zh-CN.md) |
+
+## 标准化图集帧 — 0.59.0
+
+**0.59.0 工程预览候选**已实现通过显式 `'trim-rotation-v1'` profile 使用标准化单页图集帧。SpriteSheet 和 SequenceClip 在裁去透明边缘或将像素顺时针旋转 90 度打包后，仍保留精灵的逻辑画布。动画各帧的 Bitmap 放置与自然尺寸保持一致；省略 profile 或传入 `undefined` 保留原矩形行为。
+
+[裁边图集示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/trimmed-atlas-playback/README.zh-CN.md)使用同一个不可变 clip 组合两个独立 once/loop actor，并演示 anchor 与 parent clip。输入、所有权及验证细节见[布局契约](docs/atlas-frame-layout-contract.md)和[证据与边界](docs/atlas-frame-layout-evidence.md)。
+
+截至 2026-10-17 编写截止点，SDK 行为、严格消费者及源码边界检查已有接受结果。另经独立审查的桌面 Canvas 和纹理 WebGPU 运行完成六个全新上下文及 30 次完整 RGBA 读回，覆盖指定突变对照及原资源退役后的保存帧重放。最终公开内容/prepush 检查与 0.59 Git/远端交付仍待完成。工作区包仍为 private、版本 0.0.0，Host 协议仍为 1.0。
 
 ## 资源组合准备 — 0.58.0
 

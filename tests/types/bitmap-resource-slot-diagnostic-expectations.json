@@ -132,8 +132,8 @@
     },
     {
       "path": "packages/engine/dist/index.d.ts",
-      "bytes": 3453,
-      "sha256": "f19924c7a0c6f3ffd3ab0ad56a498b1044dbf6f38e990ecaaba53f7511830323"
+      "bytes": 3509,
+      "sha256": "2f18be0cac8dd50528882438002625f23c24ce4945308419dd4f67ffcaf47271"
     },
     {
       "path": "packages/engine/dist/sequencePlaybackTypes.d.ts",
@@ -177,13 +177,13 @@
     },
     {
       "path": "packages/runtime/dist/Bitmap.d.ts",
-      "bytes": 1899,
-      "sha256": "d685c189d20bba4d2e8d468652d6f0fcf056ff0ba2e6c92edabb89f948074608"
+      "bytes": 2135,
+      "sha256": "f0b750c75909d8a5ebab613f7dbfdead941e0c33b22a3c2e8bdb054bbd0b959b"
     },
     {
       "path": "packages/runtime/dist/bitmapDisplayState.d.ts",
-      "bytes": 948,
-      "sha256": "290b3a937e4c388387b490382b18b08844771236430c337cb9c352f6513669d8"
+      "bytes": 1051,
+      "sha256": "906b318dc33b153ecddb9b15b220a171b7c179e992a7f58fca5c5f7445ce3465"
     },
     {
       "path": "packages/runtime/dist/ByteReader.d.ts",
@@ -267,8 +267,8 @@
     },
     {
       "path": "packages/runtime/dist/index.d.ts",
-      "bytes": 2986,
-      "sha256": "1293ef5b07c5099629e235627099f2646c9e6b2d0c786909bd35a2d0eef4c666"
+      "bytes": 3049,
+      "sha256": "dbfe6572dd526c8bb9c35271f16a1244c93ff9b7474cac813efd1f1e11e6e3d4"
     },
     {
       "path": "packages/runtime/dist/Mesh2D.d.ts",
@@ -297,8 +297,8 @@
     },
     {
       "path": "packages/runtime/dist/sequenceClip.d.ts",
-      "bytes": 1307,
-      "sha256": "0e231b69f8357740656ac952e9c146ca4fc80a08cf85653f71b70042fbdce2f6"
+      "bytes": 1480,
+      "sha256": "09c7e3e0d5c6fb0f24dfb5848c57b581e71f7df8c507d608a99de7982c8fea9b"
     },
     {
       "path": "packages/runtime/dist/SequencePlayer.d.ts",
@@ -312,8 +312,8 @@
     },
     {
       "path": "packages/runtime/dist/spriteSheet.d.ts",
-      "bytes": 1249,
-      "sha256": "a096f426d7715a0d8f0399cd26d646856022e19b63ee0f278ec35a9f72ff76b8"
+      "bytes": 1457,
+      "sha256": "eee14d3ca6d5d162742d3367e5b68a34407cd2eb2ee2b20ee4c188bc134f2cfa"
     },
     {
       "path": "packages/runtime/dist/Stage.d.ts",
@@ -379,6 +379,11 @@
       "path": "packages/engine/dist/bitmapBindingTicket.d.ts",
       "bytes": 882,
       "sha256": "74384e0772282729962db5fe7e7c0708296326ff5e03609138ade702299b5aa4"
+    },
+    {
+      "path": "packages/runtime/dist/atlasFrameLayout.d.ts",
+      "bytes": 983,
+      "sha256": "d3aa9317e01e8038819d1e3bf577ff144378915baeee986c8407643d419c6c5a"
     }
   ],
   "nativeLibraryPins": [
@@ -803,8 +808,8 @@
         },
         {
           "path": "packages/engine/dist/index.d.ts",
-          "bytes": 3453,
-          "sha256": "f19924c7a0c6f3ffd3ab0ad56a498b1044dbf6f38e990ecaaba53f7511830323"
+          "bytes": 3509,
+          "sha256": "2f18be0cac8dd50528882438002625f23c24ce4945308419dd4f67ffcaf47271"
         },
         {
           "path": "packages/engine/dist/sequencePlaybackTypes.d.ts",
@@ -842,14 +847,19 @@
           "sha256": "daa71107f0cd3f24d4cb33ac8c2fcf5eff15c18955c84d0262cafaa0c3335b69"
         },
         {
+          "path": "packages/runtime/dist/atlasFrameLayout.d.ts",
+          "bytes": 983,
+          "sha256": "d3aa9317e01e8038819d1e3bf577ff144378915baeee986c8407643d419c6c5a"
+        },
+        {
           "path": "packages/runtime/dist/Bitmap.d.ts",
-          "bytes": 1899,
-          "sha256": "d685c189d20bba4d2e8d468652d6f0fcf056ff0ba2e6c92edabb89f948074608"
+          "bytes": 2135,
+          "sha256": "f0b750c75909d8a5ebab613f7dbfdead941e0c33b22a3c2e8bdb054bbd0b959b"
         },
         {
           "path": "packages/runtime/dist/bitmapDisplayState.d.ts",
-          "bytes": 948,
-          "sha256": "290b3a937e4c388387b490382b18b08844771236430c337cb9c352f6513669d8"
+          "bytes": 1051,
+          "sha256": "906b318dc33b153ecddb9b15b220a171b7c179e992a7f58fca5c5f7445ce3465"
         },
         {
           "path": "packages/runtime/dist/ByteReader.d.ts",
@@ -933,8 +943,8 @@
         },
         {
           "path": "packages/runtime/dist/index.d.ts",
-          "bytes": 2986,
-          "sha256": "1293ef5b07c5099629e235627099f2646c9e6b2d0c786909bd35a2d0eef4c666"
+          "bytes": 3049,
+          "sha256": "dbfe6572dd526c8bb9c35271f16a1244c93ff9b7474cac813efd1f1e11e6e3d4"
         },
         {
           "path": "packages/runtime/dist/Mesh2D.d.ts",
@@ -963,8 +973,8 @@
         },
         {
           "path": "packages/runtime/dist/sequenceClip.d.ts",
-          "bytes": 1307,
-          "sha256": "0e231b69f8357740656ac952e9c146ca4fc80a08cf85653f71b70042fbdce2f6"
+          "bytes": 1480,
+          "sha256": "09c7e3e0d5c6fb0f24dfb5848c57b581e71f7df8c507d608a99de7982c8fea9b"
         },
         {
           "path": "packages/runtime/dist/SequencePlayer.d.ts",
@@ -978,8 +988,8 @@
         },
         {
           "path": "packages/runtime/dist/spriteSheet.d.ts",
-          "bytes": 1249,
-          "sha256": "a096f426d7715a0d8f0399cd26d646856022e19b63ee0f278ec35a9f72ff76b8"
+          "bytes": 1457,
+          "sha256": "eee14d3ca6d5d162742d3367e5b68a34407cd2eb2ee2b20ee4c188bc134f2cfa"
         },
         {
           "path": "packages/runtime/dist/Stage.d.ts",
@@ -996,7 +1006,36 @@
           "bytes": 581,
           "sha256": "e2854fa47aa7cbf865e488f8e46ed617b558c69bdfc5bd5239338e6a04a21bb1"
         }
-      ]
+      ],
+      "currentSuccessorObservation": {
+        "receipt": [
+          {
+            "name": "sdk-bitmap-resource-slot-positive-observe-r1",
+            "startedAtUtc": "2026-10-16T15:57:42.6546067Z",
+            "finishedAtUtc": "2026-10-16T15:57:42.7862997Z",
+            "exitCode": 0,
+            "timeout": false,
+            "args": [
+              "node_modules/typescript/bin/tsc",
+              "-p",
+              "tests/types/tsconfig.bitmap-resource-slot-positive.json",
+              "--pretty",
+              "false",
+              "--listFiles"
+            ],
+            "stdout": {
+              "bytes": 17846,
+              "sha256": "2eeadffdee7e07a86ad3acea87acb58921008f7fbe9310d4efa378d57473e402"
+            },
+            "stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        ],
+        "declarationCount": 59,
+        "unchangedDiagnosticTuples": true
+      }
     },
     {
       "lane": "negative",
@@ -1324,8 +1363,8 @@
         },
         {
           "path": "packages/engine/dist/index.d.ts",
-          "bytes": 3453,
-          "sha256": "f19924c7a0c6f3ffd3ab0ad56a498b1044dbf6f38e990ecaaba53f7511830323"
+          "bytes": 3509,
+          "sha256": "2f18be0cac8dd50528882438002625f23c24ce4945308419dd4f67ffcaf47271"
         },
         {
           "path": "packages/engine/dist/sequencePlaybackTypes.d.ts",
@@ -1363,14 +1402,19 @@
           "sha256": "daa71107f0cd3f24d4cb33ac8c2fcf5eff15c18955c84d0262cafaa0c3335b69"
         },
         {
+          "path": "packages/runtime/dist/atlasFrameLayout.d.ts",
+          "bytes": 983,
+          "sha256": "d3aa9317e01e8038819d1e3bf577ff144378915baeee986c8407643d419c6c5a"
+        },
+        {
           "path": "packages/runtime/dist/Bitmap.d.ts",
-          "bytes": 1899,
-          "sha256": "d685c189d20bba4d2e8d468652d6f0fcf056ff0ba2e6c92edabb89f948074608"
+          "bytes": 2135,
+          "sha256": "f0b750c75909d8a5ebab613f7dbfdead941e0c33b22a3c2e8bdb054bbd0b959b"
         },
         {
           "path": "packages/runtime/dist/bitmapDisplayState.d.ts",
-          "bytes": 948,
-          "sha256": "290b3a937e4c388387b490382b18b08844771236430c337cb9c352f6513669d8"
+          "bytes": 1051,
+          "sha256": "906b318dc33b153ecddb9b15b220a171b7c179e992a7f58fca5c5f7445ce3465"
         },
         {
           "path": "packages/runtime/dist/ByteReader.d.ts",
@@ -1454,8 +1498,8 @@
         },
         {
           "path": "packages/runtime/dist/index.d.ts",
-          "bytes": 2986,
-          "sha256": "1293ef5b07c5099629e235627099f2646c9e6b2d0c786909bd35a2d0eef4c666"
+          "bytes": 3049,
+          "sha256": "dbfe6572dd526c8bb9c35271f16a1244c93ff9b7474cac813efd1f1e11e6e3d4"
         },
         {
           "path": "packages/runtime/dist/Mesh2D.d.ts",
@@ -1484,8 +1528,8 @@
         },
         {
           "path": "packages/runtime/dist/sequenceClip.d.ts",
-          "bytes": 1307,
-          "sha256": "0e231b69f8357740656ac952e9c146ca4fc80a08cf85653f71b70042fbdce2f6"
+          "bytes": 1480,
+          "sha256": "09c7e3e0d5c6fb0f24dfb5848c57b581e71f7df8c507d608a99de7982c8fea9b"
         },
         {
           "path": "packages/runtime/dist/SequencePlayer.d.ts",
@@ -1499,8 +1543,8 @@
         },
         {
           "path": "packages/runtime/dist/spriteSheet.d.ts",
-          "bytes": 1249,
-          "sha256": "a096f426d7715a0d8f0399cd26d646856022e19b63ee0f278ec35a9f72ff76b8"
+          "bytes": 1457,
+          "sha256": "eee14d3ca6d5d162742d3367e5b68a34407cd2eb2ee2b20ee4c188bc134f2cfa"
         },
         {
           "path": "packages/runtime/dist/Stage.d.ts",
@@ -1639,7 +1683,36 @@
           "name": "no-handle-constructor",
           "line": 70
         }
-      ]
+      ],
+      "currentSuccessorObservation": {
+        "receipt": [
+          {
+            "name": "sdk-bitmap-resource-slot-negative-observe-r1",
+            "startedAtUtc": "2026-10-16T15:57:43.3497744Z",
+            "finishedAtUtc": "2026-10-16T15:57:43.4819598Z",
+            "exitCode": 1,
+            "timeout": false,
+            "args": [
+              "node_modules/typescript/bin/tsc",
+              "-p",
+              "tests/types/tsconfig.bitmap-resource-slot-negative.json",
+              "--pretty",
+              "false",
+              "--listFiles"
+            ],
+            "stdout": {
+              "bytes": 22672,
+              "sha256": "09ad10d851a07d3850109e7b1809bca156cc8be60f7ef71f72acc506ccbb6308"
+            },
+            "stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        ],
+        "declarationCount": 59,
+        "unchangedDiagnosticTuples": true
+      }
     }
   ],
   "boundary": "Original stock TypeScript diagnostics and complete consumed paths remain byte-identical after SC04. The one ownership declaration identity was re-frozen from fresh completed compiler/listFilesOnly observations; prior inventory drift was genuinely refused. Runtime, browser, full-gate and delivery acceptance remain separate."

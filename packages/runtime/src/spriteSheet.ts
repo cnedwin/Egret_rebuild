@@ -2,17 +2,22 @@
 import type { Disposable, ImageData2D, TextureRegion2D } from "@egret/contracts";
 import { isAssetLease } from "./AssetLease.js";
 import type { AssetLease } from "./AssetLease.js";
-import { readBitmapImage, spriteSheetBitmapOperations } from "./Bitmap.js";
+import { applyBitmapAtlasFrame, readBitmapImage, spriteSheetBitmapOperations } from "./Bitmap.js";
 import type { Bitmap } from "./Bitmap.js";
 import { EgretError } from "./EgretError.js";
 import { commitBinding, engineOf } from "./ownership.js";
 import type { EngineContext } from "./ownership.js";
 import type { Texture, TextureSnapshot2D } from "./Texture.js";
 
+import { captureAtlasFrameLayout, copyAtlasFrameLayout } from './atlasFrameLayout.js';
+import type { AtlasFrameLayout } from './atlasFrameLayout.js';
+type AtlasRegion = TextureRegion2D & { readonly layout?: AtlasFrameLayout };
+
 declare const SPRITE_SHEET_BRAND: unique symbol;
 
-/** One untrimmed absolute rectangle, indexed by its exact UTF-16 name. */
+/** One packed absolute rectangle, indexed by its exact UTF-16 name. */
 export interface SpriteSheetFrameInput {
+  readonly layout?: AtlasFrameLayout;
   readonly name: string;
   readonly x: number;
   readonly y: number;
@@ -28,7 +33,7 @@ export interface SpriteSheet extends Disposable {
   readonly atlasWidth: number;
   readonly atlasHeight: number;
   readonly isDisposed: boolean;
-  getRegion(name: string): TextureRegion2D;
+  getRegion(name: string): AtlasRegion;
   createBitmap(name: string): Bitmap;
   dispose(): void;
 }
@@ -36,7 +41,7 @@ export interface SpriteSheet extends Disposable {
 interface SheetState {
   readonly engine: EngineContext;
   readonly names: readonly string[];
-  readonly regions: ReadonlyMap<string, TextureRegion2D>;
+  readonly regions: ReadonlyMap<string, AtlasRegion>;
   readonly atlasWidth: number;
   readonly atlasHeight: number;
   lease: AssetLease<Texture> | undefined;
@@ -51,6 +56,7 @@ interface FieldRead {
 }
 
 interface StagedFrame {
+  readonly layout?: ReturnType<typeof captureAtlasFrameLayout>;
   readonly name: FieldRead;
   readonly x: FieldRead;
   readonly y: FieldRead;
@@ -58,7 +64,7 @@ interface StagedFrame {
   readonly height: FieldRead;
 }
 
-interface ValidatedFrame extends TextureRegion2D {
+interface ValidatedFrame extends AtlasRegion {
   readonly name: string;
 }
 
@@ -103,7 +109,7 @@ function own(input: object, key: string, revalidate: () => void): boolean {
   return readSource(() => apply(hasOwnProperty, input, [key]) as boolean, revalidate);
 }
 
-function readField(input: object, key: keyof SpriteSheetFrameInput, revalidate: () => void): FieldRead {
+function readField(input: object, key: string, revalidate: () => void): FieldRead {
   const present = own(input, key, revalidate);
   const value = present
     ? readSource(() => (input as unknown as Record<string, unknown>)[key], revalidate)
@@ -112,7 +118,7 @@ function readField(input: object, key: keyof SpriteSheetFrameInput, revalidate: 
 }
 
 /** Missing known fields are staged; a later read occurrence keeps its priority. */
-function stageFrames(input: readonly SpriteSheetFrameInput[], revalidate: () => void): readonly StagedFrame[] {
+function stageFrames(input: readonly SpriteSheetFrameInput[], revalidate: () => void, atlasLayout: boolean): readonly StagedFrame[] {
   if (!readSource(() => arrayIsArray(input), revalidate)) throw new EgretError("SPRITE_SHEET_INPUT_INVALID");
   if (!own(input, "length", revalidate)) throw new EgretError("SPRITE_SHEET_INPUT_INVALID");
   const length: unknown = readSource(() => input.length, revalidate);
@@ -131,7 +137,9 @@ function stageFrames(input: readonly SpriteSheetFrameInput[], revalidate: () => 
     const y = readField(record, "y", revalidate);
     const width = readField(record, "width", revalidate);
     const height = readField(record, "height", revalidate);
-    staged.push({ name, x, y, width, height });
+    const layout = atlasLayout ? captureAtlasFrameLayout(record,
+      (source, key) => readField(source, key, revalidate), callback => readSource(callback, revalidate)) : undefined;
+    staged.push({ name, x, y, width, height, ...(layout === undefined ? {} : { layout }) });
   }
   return staged;
 }
@@ -151,7 +159,7 @@ function coordinate(value: unknown, positive: boolean): number {
   return value === 0 ? 0 : value;
 }
 
-function findRegion(state: SheetState, name: unknown): TextureRegion2D {
+function findRegion(state: SheetState, name: unknown): AtlasRegion {
   const key = qualifyName(name);
   const region = state.regions.get(key);
   if (region === undefined) throw new EgretError("SPRITE_SHEET_FRAME_UNKNOWN");
@@ -211,7 +219,8 @@ function createBitmap(receiver: unknown, name: unknown): Bitmap {
     const region = findRegion(state, name);
     bitmap = bitmapOperation(() => spriteSheetBitmapOperations.construct(lease));
     assertCreationLive(state, lease);
-    bitmapOperation(() => spriteSheetBitmapOperations.setCrop(bitmap!, region));
+    if (region.layout === undefined) bitmapOperation(() => spriteSheetBitmapOperations.setCrop(bitmap!, region));
+    else bitmapOperation(() => applyBitmapAtlasFrame(bitmap!, region));
     assertCreationLive(state, lease);
     // Return no cache or ownership claim: the caller owns the genuine Bitmap.
     return bitmap;
@@ -234,7 +243,7 @@ function createFacade(): SpriteSheet {
     get atlasWidth(): number { return receiverState(this).atlasWidth; },
     get atlasHeight(): number { return receiverState(this).atlasHeight; },
     get isDisposed(): boolean { return receiverState(this).disposed; },
-    getRegion(this: SpriteSheet, name: string): TextureRegion2D { return findRegion(receiverState(this), name); },
+    getRegion(this: SpriteSheet, name: string): AtlasRegion { return findRegion(receiverState(this), name); },
     createBitmap(this: SpriteSheet, name: string): Bitmap { receiverState(this); return createBitmap(this, name); },
     dispose(this: SpriteSheet): void {
       const state = receiverState(this);
@@ -249,13 +258,14 @@ function createFacade(): SpriteSheet {
 }
 
 /** Build one exact-name table from a genuine full-image lease without acquiring another resource. */
-export function createSpriteSheet(atlasLease: AssetLease<Texture>, frames: readonly SpriteSheetFrameInput[]): SpriteSheet {
+export function createSpriteSheet(atlasLease: AssetLease<Texture>, frames: readonly SpriteSheetFrameInput[], profile?: 'trim-rotation-v1'): SpriteSheet {
   if (!isAssetLease(atlasLease)) throw new EgretError("SPRITE_SHEET_LEASE_INVALID");
   const engine = engineOf(atlasLease)!;
   const snapshot = readAtlas(engine, atlasLease);
   const { image } = snapshot;
+  if (profile !== undefined && profile !== 'trim-rotation-v1') throw new EgretError('SPRITE_SHEET_INPUT_INVALID');
   const revalidate = (): void => { readAtlas(engine, atlasLease, image); };
-  const staged = stageFrames(frames, revalidate);
+  const staged = stageFrames(frames, revalidate, profile !== undefined);
   const validated: ValidatedFrame[] = [];
   const seenNames = new Set<string>();
   let totalNameUnits = 0;
@@ -276,13 +286,15 @@ export function createSpriteSheet(atlasLease: AssetLease<Texture>, frames: reado
       throw new EgretError("SPRITE_SHEET_REGION_INVALID");
     }
     seenNames.add(name);
-    validated.push({ name, x, y, width, height });
+    const layout = frame.layout === undefined ? undefined : copyAtlasFrameLayout(frame.layout, width, height,
+      kind => { throw new EgretError(kind === 'shape' ? 'SPRITE_SHEET_INPUT_INVALID' : 'SPRITE_SHEET_REGION_INVALID'); });
+    validated.push({ name, x, y, width, height, ...(layout === undefined ? {} : { layout }) });
   }
   // Allocate public-owned crops only after the complete staged table qualifies.
   const names: string[] = [];
-  const regions = new Map<string, TextureRegion2D>();
+  const regions = new Map<string, AtlasRegion>();
   for (const frame of validated) {
-    regions.set(frame.name, Object.freeze({ x: frame.x, y: frame.y, width: frame.width, height: frame.height }));
+    regions.set(frame.name, Object.freeze({ x: frame.x, y: frame.y, width: frame.width, height: frame.height, ...(frame.layout === undefined ? {} : { layout: frame.layout }) }));
     names.push(frame.name);
   }
   const state: SheetState = {

@@ -1,4 +1,7 @@
+import { captureAtlasFrameLayout, copyAtlasFrameLayout } from './atlasFrameLayout.js';
+import type { AtlasFrameLayout } from './atlasFrameLayout.js';
 export interface SequenceFrameInput {
+  readonly layout?: AtlasFrameLayout;
   readonly x: number; readonly y: number; readonly width: number; readonly height: number;
   readonly durationSeconds: number;
 }
@@ -16,6 +19,7 @@ export interface SequenceClip {
   readonly durationSeconds: number;
 }
 export interface SequenceRegion {
+  readonly layout?: AtlasFrameLayout;
   readonly x: number; readonly y: number; readonly width: number; readonly height: number;
 }
 export interface SequenceSample {
@@ -86,8 +90,9 @@ function nonnegativeFinite(value: unknown): value is number {
 }
 function positiveZero(value: number): number { return value === 0 ? 0 : value; }
 
-export function createSequenceClip(input: unknown): SequenceClip {
+export function createSequenceClip(input: unknown, profile?: 'trim-rotation-v1'): SequenceClip {
   const source = admitObject(input);
+  if (profile !== undefined && profile !== 'trim-rotation-v1') throw new SequenceClipError('SEQ_INPUT_INVALID');
   // Capture all required own fields in order before interpreting their values.
   // Missing fields do not suppress a later source fault in this capture stage.
   const widthField = captureOwn(source, 'atlasWidth');
@@ -112,19 +117,24 @@ export function createSequenceClip(input: unknown): SequenceClip {
     const frameWidthField = captureOwn(frame, 'width');
     const frameHeightField = captureOwn(frame, 'height');
     const durationField = captureOwn(frame, 'durationSeconds');
+    const capturedLayout = profile === undefined ? undefined : captureAtlasFrameLayout(frame, captureOwn, callback => {
+      try { return callback(); } catch (cause) { throw new SequenceClipError('SEQ_READ_FAILED', cause); }
+    });
     if (!xField.present || !yField.present || !frameWidthField.present || !frameHeightField.present || !durationField.present) throw new SequenceClipError('SEQ_INPUT_INVALID');
 
     const x = xField.value, y = yField.value, width = frameWidthField.value, height = frameHeightField.value;
     if (!nonnegativeSafeInteger(x) || !nonnegativeSafeInteger(y) || !positiveSafeInteger(width) || !positiveSafeInteger(height)) throw new SequenceClipError('SEQ_REGION_INVALID');
     const right = x + width, bottom = y + height;
     if (!Number.isSafeInteger(right) || !Number.isSafeInteger(bottom) || right > atlasWidth || bottom > atlasHeight) throw new SequenceClipError('SEQ_REGION_INVALID');
+    const layout = capturedLayout === undefined ? undefined : copyAtlasFrameLayout(capturedLayout, width, height,
+      kind => { throw new SequenceClipError(kind === 'shape' ? 'SEQ_INPUT_INVALID' : 'SEQ_REGION_INVALID'); });
     const duration = durationField.value;
     if (typeof duration !== 'number' || !Number.isFinite(duration) || duration <= 0) throw new SequenceClipError('SEQ_TIME_INVALID');
     // Seconds stay binary64, including positive subnormals. Each input-order
     // increment must survive rounding; no integer-tick or float32 conversion.
     const end = durationSeconds + duration;
     if (!Number.isFinite(end) || end <= durationSeconds) throw new SequenceClipError('SEQ_TIME_INVALID');
-    regions.push({ x: positiveZero(x), y: positiveZero(y), width, height });
+    regions.push({ x: positiveZero(x), y: positiveZero(y), width, height, ...(layout === undefined ? {} : { layout }) });
     ends.push(end); durationSeconds = end;
   }
   for (const region of regions) Object.freeze(region);

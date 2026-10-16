@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="data:,">
+<title>Trimmed atlas playback</title>
+<script type="importmap">{"imports":{"@egret/engine":"../../packages/engine/dist/index.js","@egret/engine/web":"../../packages/engine/dist/web/index.js","@egret/engine/webgpu":"../../packages/engine/dist/web/webgpu.js","@egret/runtime":"../../packages/runtime/dist/index.js","@egret/contracts":"../../packages/contracts/dist/index.js","#egret-mouse-input":"../../packages/engine/dist/mouseInput.js","#egret-textured-frame-state":"../../packages/engine/dist/internal/texturedFrameState.js","robust-predicates":"../../packages/engine/node_modules/robust-predicates/index.js"}}</script>
+<style>body{font:16px system-ui;max-width:850px;margin:2rem auto;padding:0 1rem}canvas{width:480px;height:320px;image-rendering:pixelated;background:#eee;border:1px solid #bbb}button{padding:.5rem;margin:.2rem}pre{white-space:pre-wrap;font-size:12px}</style>
+<h1>Trimmed atlas playback</h1>
+<p>Two independent playback handles share one immutable clip. The left plays once; the right loops. Each step advances manual source time by 1/16 second.</p>
+<canvas id="scene" width="24" height="16"></canvas>
+<p><button id="start">Start both</button><button id="step">Step 1/16 s</button><button id="pause">Pause / resume left</button><button id="close">Close</button></p>
+<pre id="status">Loading original atlas…</pre>
+<script type="module" src="./main.mjs"></script>
+</html>

@@ -1,3 +1,5 @@
+import { captureAtlasFrameLayout, copyAtlasFrameLayout } from './atlasFrameLayout.js';
+import type { SequenceRegion } from './sequenceClip.js';
 import type { TextureRegion2D } from "@egret/contracts";
 import { isAssetLease, readAssetLeaseValue } from "./AssetLease.js";
 import { AssetLease } from "./AssetLease.js";
@@ -20,6 +22,7 @@ export let spriteSheetBitmapOperations: Readonly<{
 }>;
 
 const mutations = new WeakSet<object>();
+const freezeAtlasState = Object.freeze;
 type ResourceTargetOperations = Parameters<NonNullable<EngineContext['registerBitmapResourceTarget']>>[1];
 const resourceTargetOperations = new WeakMap<EngineContext, ResourceTargetOperations>();
 const freezeResourceOperations = Object.freeze;
@@ -403,4 +406,34 @@ export function readBitmapImage(lease: AssetLease<Texture>): TextureSnapshot2D {
   const value = readAssetLeaseValue(lease);
   if (!isTexture(value)) throw new EgretError("BITMAP_TEXTURE_INVALID");
   return readTextureSnapshot(value);
+}
+
+/** Private complete-frame bridge; public crop setters deliberately ignore layout. */
+export function applyBitmapAtlasFrame(bitmap: Bitmap, region: SequenceRegion): void {
+  const engine = beginMutation(bitmap);
+  try {
+    const previous = readBitmapState(bitmap);
+    if (previous === undefined) throw new EgretError('BITMAP_TEXTURE_REQUIRED');
+    readBitmapImage(previous.lease);
+    const fields = readRegion(region);
+    const captured = captureAtlasFrameLayout(region, (source, key) => {
+      try {
+        const present = Object.hasOwn(source, key);
+        return { present, value: present ? (source as Record<string, unknown>)[key] : undefined };
+      } catch (cause) { throw new EgretError('BITMAP_REGION_INVALID', { cause }); }
+    }, callback => {
+      try { return callback(); } catch (cause) { throw new EgretError('BITMAP_REGION_INVALID', { cause }); }
+    });
+    revalidateMutation(bitmap, engine, previous);
+    const snapshot = readBitmapImage(previous.lease);
+    const sourceRect = copyRegion(snapshot.sourceRect, fields);
+    const layout = copyAtlasFrameLayout(captured, sourceRect.width, sourceRect.height,
+      () => { throw new EgretError('BITMAP_REGION_INVALID'); });
+    const next = freezeAtlasState({ lease: previous.lease, sourceRect, layout,
+      width: layout.sourceWidth, height: layout.sourceHeight });
+    revalidateMutation(bitmap, engine, previous);
+    readBitmapImage(previous.lease);
+    // Publish one new token, even for identical crop/layout scalars (ABA protection).
+    writeBitmapState(bitmap, next);
+  } finally { mutations.delete(bitmap); }
 }

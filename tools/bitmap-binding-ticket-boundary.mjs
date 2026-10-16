@@ -29,7 +29,7 @@ if(!samePhysicalPath(root,declaredRoot,platform))bbtbFail('BBT_BOUNDARY_INPUT','
 const seen=new Map();
 function read(file){logicalPath(file);const pin=fingerprintFile(root,file),raw=readFileSync(path.join(root,file));if(pin.bytes!==raw.length||pin.sha256!==hash(raw))bbtbFail('BBT_BOUNDARY_SOURCE_DRIFT',file);seen.set(file,pin);return raw;}
 function pinCheck(pin,code){const raw=read(pin.path);if(raw.length!==pin.bytes||hash(raw)!==pin.sha256)bbtbFail(code,'Changed complete source identity: '+pin.path);}
-const policyPin={"path":"tools/bitmap-binding-ticket-policy.json","bytes":17818,"sha256":"922ced53d05167171ad12d1d4d71cb1b5685674df5050e2445f5d41812fd0b05"};
+const policyPin={"path":"tools/bitmap-binding-ticket-policy.json","bytes":17818,"sha256":"7ce0ebb22e6e018f2d498ccc24d6fcda46a48254542178e22d604c5fa109c9c0"};
 pinCheck(policyPin,'BBT_BOUNDARY_POLICY_IDENTITY');
 const policy=JSON.parse(read(policyPin.path));
 const bbtbTypes=policy.types;

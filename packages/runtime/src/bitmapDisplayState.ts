@@ -1,9 +1,11 @@
+import type { AtlasFrameLayout } from './atlasFrameLayout.js';
 import type { DisplayObject } from './DisplayObject.js';
 import type { AssetLease } from './AssetLease.js';
 import type { Texture } from './Texture.js';
 import type { TextureRegion2D } from '@egret/contracts';
 
 export interface BitmapCaptureState {
+  readonly layout?: AtlasFrameLayout;
   readonly lease: AssetLease<Texture>;
   readonly sourceRect: TextureRegion2D;
   readonly width: number;

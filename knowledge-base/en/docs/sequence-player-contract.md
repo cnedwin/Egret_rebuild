@@ -4,6 +4,8 @@ English | [简体中文](../../Cns/docs/显式时间序列播放器契约.md)
 
 Status: implemented, with bounded CPU/type and opaque desktop browser acceptance recorded below, 2026-10-10. This work package connects owned sequence metadata to an existing Bitmap.
 
+Default rectangle clips retain the application contract below. Clips created with the explicit `'trim-rotation-v1'` profile apply the complete owned crop/layout through the same `SequencePlayer`; exact-lease, time and ownership rules remain in force. See the [layout contract](atlas-frame-layout-contract.md) and [evidence](atlas-frame-layout-evidence.md) for that extension, separate from the historical results below.
+
 ## Public interface
 
 The root `@egret/engine` entry and the runtime barrel expose `createSequenceClip`, `SequencePlayer`, and the types `SequenceClipInput`, `SequenceFrameInput`, `SequenceClip`, `SequenceRegion`, `SequenceSample`, `SequencePlaybackMode`. The factory accepts `unknown` for validation; the input types document the valid shape.

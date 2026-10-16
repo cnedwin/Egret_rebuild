@@ -13,6 +13,8 @@ sampleSequenceClip(clip: SequenceClip, elapsedSeconds: number,
 ): SequenceSample
 ```
 
+The construction and sampling rules below describe the default rectangle path. The optional second `'trim-rotation-v1'` argument to `createSequenceClip` adds owned normalized frame layout without changing timing; omitted or `undefined` profiles keep the existing behavior. See the [layout contract](atlas-frame-layout-contract.md) and [evidence](atlas-frame-layout-evidence.md) for that explicit extension and its separate acceptance.
+
 ## Construction
 
 Input owns `atlasWidth`, `atlasHeight` and a dense `frames` array containing 1–1024 records. Each frame owns `x`, `y`, `width`, `height` and `durationSeconds`. Atlas dimensions and region sizes are positive safe integers; coordinates are nonnegative safe integers. Region extents must safely fit the independently declared atlas dimensions.

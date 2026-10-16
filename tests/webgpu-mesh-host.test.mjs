@@ -392,18 +392,18 @@ assert.deepEqual(exactFile(PROGRAM,true),PROGRAM_IDENTITY);assert.deepEqual(exac
 const receipt={schemaVersion:1,caseId:CASE,pid:process.pid,ppid:process.ppid,node:process.version,execArgv:process.execArgv,argv:process.argv,cwd:normal(process.cwd()),program:PROGRAM_IDENTITY,config:CONFIG_IDENTITY,context:{isMainThread,threadId,NODE_TEST_CONTEXT:{present:Object.hasOwn(process.env,'NODE_TEST_CONTEXT'),value:process.env.NODE_TEST_CONTEXT??null},NODE_TEST_WORKER_ID:{present:Object.hasOwn(process.env,'NODE_TEST_WORKER_ID'),value:process.env.NODE_TEST_WORKER_ID??null}},environment:driverEnvironmentReceipt,status:complete&&!operationTimedOut&&!assertionFailure&&!cleanupTimedOut&&!driverCallbackFailure&&cleanupFailures.length===0&&unhandled.length===0?'PASSED':'FAILED',operationTimedOut,cleanupTimedOut,driverCallbackFailure,assertionFailure,cleanupFailures,cleanupOutcomes,unhandledRejections:unhandled.length,forbiddenAttempts,syntheticThrows,startupEvidence,staticEdges,dynamicEdges,staticClosures,divisionWitnesses,events:EVENTS};
 function projectRepositoryURLs(receipt){
   const prefix=pathToFileURL(config.repository+'/').href,projected=JSON.parse(JSON.stringify(receipt));
-  const encode=value=>typeof value==='string'&&value.startsWith(prefix)?{repositoryURL:value.slice(prefix.length)}:value;
+  const encode=value=>typeof value==='string'&&value.startsWith(prefix)?{u:value.slice(prefix.length)}:value;
   const fields=record=>{for(const key of ['parent','specifier','url'])if(Object.hasOwn(record,key))record[key]=encode(record[key]);};
   for(const row of [...projected.staticEdges,...projected.dynamicEdges,...projected.divisionWitnesses,...projected.events])fields(row);
   for(const closure of projected.staticClosures)closure.modules=closure.modules.map(encode);
   // The transport changes representation only. Prove full observed data returns exactly.
   const restored=JSON.parse(JSON.stringify(projected));
-  const decode=value=>value!==null&&typeof value==='object'&&Object.hasOwn(value,'repositoryURL')?prefix+value.repositoryURL:value;
+  const decode=value=>value!==null&&typeof value==='object'&&Object.hasOwn(value,'u')?prefix+value.u:value;
   const restore=record=>{for(const key of ['parent','specifier','url'])if(Object.hasOwn(record,key))record[key]=decode(record[key]);};
   for(const row of [...restored.staticEdges,...restored.dynamicEdges,...restored.divisionWitnesses,...restored.events])restore(row);
   for(const closure of restored.staticClosures)closure.modules=closure.modules.map(decode);
   assert.deepEqual(restored,receipt,'lossless observed URL projection');
-  return {schemaVersion:2,encoding:'egret.b1-repository-url-prefix/1',repositoryURLPrefix:prefix,receipt:projected};
+  return {schemaVersion:3,encoding:'egret.b1-repository-url-prefix/2',repositoryURLPrefix:prefix,receipt:projected};
 }
 validateData(receipt);const receiptBytes=Buffer.from(JSON.stringify(projectRepositoryURLs(receipt))+'\n');assert.ok(receiptBytes.length<=LIMITS.receiptBytes);fs.writeFileSync(RECEIPT_PATH,receiptBytes,{flag:'wx'});process.stdout.write(JSON.stringify({kind:'DRIVER_RECEIPT',caseId:CASE,path:RECEIPT_PATH,bytes:receiptBytes.length,sha256:digest(receiptBytes),status:receipt.status})+'\n');if(receipt.status!=='PASSED')process.exitCode=1;
 /* B1_DRIVER_END */
@@ -491,10 +491,12 @@ function exactKeys(value,keys){assert.ok(value!==null&&typeof value==='object'&&
 function checkEvents(events){assert.ok(Array.isArray(events)&&events.length<=QUOTAS.events);const shapes={RESOLVE_ATTEMPT:['parent','specifier','url'],RESOLVE_RETURN:['parent','specifier','url'],LOAD_ATTEMPT:['url'],LOAD_RETURN:['url','bytes','sha256'],FORBIDDEN_ATTEMPT:['phase','url'],SYNTHETIC_REJECTION:['url'],STATIC_ONLY:['modules','tokens','constructed','linked','evaluated'],ORDINARY_LIFECYCLE:['ownership','uniformLimit','closed'],FACADE_NEGATIVE:['entry'],FACTORY_NEGATIVE:['wholePrototypeChain'],EXPLICIT_ENTRY_CACHED:['url'],COLD_LIFECYCLE:['readback','twoPasses','closed'],AUTHENTIC_PROTOCOL:['sevenActualReferences','stableIdentity','predicateNoReads'],HOST_BEHAVIORS:['namedAssertions'],STARTUP_SETTLED:['code','synthetic','causeSame','cancelled','gpuEvents','closed'],OPERATION_DEADLINE:[]};const gpu={push:['filter'],pipeline:['pipeline','uniform'],layout:['pipeline'],buffer:['size','usage'],texture:['format'],destroyTexture:['format'],textureView:['format'],writeBuffer:['byteLength','offset','usage'],writeTexture:['byteLength'],bindGroup:['bindings'],pass:['colorLoad','hasDepth','depthFormat','depthClear','depthStore'],uiPipeline:['pipeline'],addListener:[],removeListener:[],deviceDestroy:[],pop:[],shader:[],sampler:[],destroyBuffer:[],unmap:[],map:[],encoder:[],draw:[],drawIndexed:[],end:[],copy:[],finish:[],configure:[],unconfigure:[],target:[],targetView:[],context:[],acquireDevice:[],preferred:[],adapter:[],submit:[],fence:[]};for(const event of events){assert.equal(typeof event.kind,'string');if(event.kind==='GPU'){assert.ok(Object.hasOwn(gpu,event.operation));exactKeys(event,['kind','fixture','operation',...gpu[event.operation]]);assert.ok(Number.isSafeInteger(event.fixture)&&event.fixture>=0);}else{assert.ok(Object.hasOwn(shapes,event.kind));exactKeys(event,['kind',...shapes[event.kind]]);}}}
 function decodeRepositoryURLs(transport,repository){
   exactKeys(transport,['schemaVersion','encoding','repositoryURLPrefix','receipt']);
-  assert.equal(transport.schemaVersion,2);assert.equal(transport.encoding,'egret.b1-repository-url-prefix/1');
+  const key=transport.schemaVersion===2&&transport.encoding==='egret.b1-repository-url-prefix/1'?'repositoryURL'
+    :transport.schemaVersion===3&&transport.encoding==='egret.b1-repository-url-prefix/2'?'u':null;
+  assert.notEqual(key,null,'unsupported lossless URL transport');
   const prefix=pathToFileURL(repository+'/').href;assert.equal(transport.repositoryURLPrefix,prefix,'source-bound repository URL prefix');
   const receipt=JSON.parse(JSON.stringify(transport.receipt));
-  const decode=value=>{if(value===null||typeof value!=='object')return value;exactKeys(value,['repositoryURL']);const suffix=value.repositoryURL;assert.equal(typeof suffix,'string');assert.ok(suffix.length>0&&!suffix.startsWith('/')&&!suffix.includes('\\')&&!suffix.includes('?')&&!suffix.includes('#'),'canonical projected suffix');const url=prefix+suffix;assert.equal(pathToFileURL(fileURLToPath(url)).href,url,'canonical projected URL');assert.ok(fileURLToPath(url).replaceAll('\\','/').startsWith(repository+'/'),'projected URL stays in repository');return url;};
+  const decode=value=>{if(value===null||typeof value!=='object')return value;exactKeys(value,[key]);const suffix=value[key];assert.equal(typeof suffix,'string');assert.ok(suffix.length>0&&!suffix.startsWith('/')&&!suffix.includes('\\')&&!suffix.includes('?')&&!suffix.includes('#'),'canonical projected suffix');const url=prefix+suffix;assert.equal(pathToFileURL(fileURLToPath(url)).href,url,'canonical projected URL');assert.ok(fileURLToPath(url).replaceAll('\\','/').startsWith(repository+'/'),'projected URL stays in repository');return url;};
   const fields=record=>{for(const key of ['parent','specifier','url'])if(Object.hasOwn(record,key))record[key]=decode(record[key]);};
   for(const row of [...receipt.staticEdges,...receipt.dynamicEdges,...receipt.divisionWitnesses,...receipt.events])fields(row);
   for(const closure of receipt.staticClosures)closure.modules=closure.modules.map(decode);
@@ -693,5 +695,22 @@ test('B1 fixed thirteen-case emitted loading and owned host contract', {timeout:
     try{if(fs.existsSync(failurePath))failurePath=output+'/slot-failure.json';writeData(failurePath,slot);failureOutput=fileDescriptor(failurePath);}catch(writeCause){failureOutput={failed:true,failure:observerFailure('SLOT_OUTPUT',writeCause,performance.now())};}
     trace.emit('SLOT_FINISHED',{status:slot.status,attempts:attemptLedger.length,notAttempted:slot.notAttempted,slot:failureOutput});
     throw cause;
+  }
+});
+
+// A shorter representation must preserve every selected URL occurrence and all other fields.
+test('B1 compact v3 URL transport is lossless and rejects mixed representations',()=>{
+  const repository='C:/egret-owned-fixture',prefix='file:///C:/egret-owned-fixture/';
+  const projected={staticEdges:[{parent:{u:'packages/engine/dist/index.js'},specifier:'./Engine.js',url:{u:'packages/engine/dist/Engine.js'}}],dynamicEdges:[{parent:{u:'packages/engine/dist/web/WebGPUHost.js'},specifier:'./b1.js',url:{u:'packages/engine/dist/web/b1.js'}}],divisionWitnesses:[{url:{u:'packages/runtime/dist/sequenceClip.js'},sha256:'fixed',anchors:[]}],events:[{kind:'RESOLVE_ATTEMPT',parent:null,specifier:{u:'packages/runtime/dist/index.js'},url:'node:fs'},{kind:'LOAD_RETURN',url:{u:'packages/runtime/dist/index.js'},bytes:7,sha256:'unchanged'},{kind:'GPU',fixture:0,operation:'submit'}],staticClosures:[{name:'core',modules:[{u:'packages/contracts/dist/index.js'},'node:fs']}]};
+  const transport={schemaVersion:3,encoding:'egret.b1-repository-url-prefix/2',repositoryURLPrefix:prefix,receipt:projected};
+  const expected={staticEdges:[{parent:prefix+'packages/engine/dist/index.js',specifier:'./Engine.js',url:prefix+'packages/engine/dist/Engine.js'}],dynamicEdges:[{parent:prefix+'packages/engine/dist/web/WebGPUHost.js',specifier:'./b1.js',url:prefix+'packages/engine/dist/web/b1.js'}],divisionWitnesses:[{url:prefix+'packages/runtime/dist/sequenceClip.js',sha256:'fixed',anchors:[]}],events:[{kind:'RESOLVE_ATTEMPT',parent:null,specifier:prefix+'packages/runtime/dist/index.js',url:'node:fs'},{kind:'LOAD_RETURN',url:prefix+'packages/runtime/dist/index.js',bytes:7,sha256:'unchanged'},{kind:'GPU',fixture:0,operation:'submit'}],staticClosures:[{name:'core',modules:[prefix+'packages/contracts/dist/index.js','node:fs']}]};
+  assert.deepEqual(decodeRepositoryURLs(transport,repository),expected);assert.equal(transport.receipt,projected);
+  for(const pair of [[2,transport.encoding],[3,'egret.b1-repository-url-prefix/1'],[4,transport.encoding]])assert.throws(()=>decodeRepositoryURLs({...transport,schemaVersion:pair[0],encoding:pair[1]},repository));
+  assert.throws(()=>decodeRepositoryURLs({...transport,repositoryURLPrefix:'file:///C:/foreign/'},repository),{message:/^source-bound repository URL prefix/});
+  for(const value of [{repositoryURL:'a.js'},{u:'a.js',repositoryURL:'a.js'},{u:'a.js',extra:1},{u:1},['a.js']]){
+    const altered=JSON.parse(JSON.stringify(transport));altered.receipt.events[1].url=value;assert.throws(()=>decodeRepositoryURLs(altered,repository));
+  }
+  for(const suffix of ['', '../outside.js','/absolute.js','a?query','a#fragment','a/../b.js','a%2fb.js']){
+    const altered=JSON.parse(JSON.stringify(transport));altered.receipt.events[1].url={u:suffix};assert.throws(()=>decodeRepositoryURLs(altered,repository));
   }
 });

@@ -4,6 +4,14 @@ English | [简体中文](../../Cns/docs/core-progress.md)
 
 The core is developed through executable increments that connect display, resources, animation, input and host execution. This page summarizes the current interfaces and remaining product work; each linked contract contains the exact behavior and verification scope.
 
+## Normalized atlas frames — 0.59.0 candidate
+
+The explicit `'trim-rotation-v1'` profile extends the existing SpriteSheet and SequenceClip factories with one erased readonly `AtlasFrameLayout` type. Trimmed and clockwise90-packed crops retain their original logical canvas through Bitmap, SequencePlayer and SequencePlayback. Both frame collectors compose image placement as `M * S` while parent clips, anchors and child coordinates retain their display matrix. Default/undefined profiles keep the existing rectangle path. The [contract](atlas-frame-layout-contract.md), [evidence](atlas-frame-layout-evidence.md) and [example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/trimmed-atlas-playback/README.md) define the complete input, exact-lease and ownership rules.
+
+The independently reviewed 12-stage SDK `node tools/verify.mjs` run passed **3559/3559 core tests** and a separate Spine experiment suite with **160/160 tests**, each with failed/cancelled/skipped/todo **0**. Build, strict consumers and source-boundary stages completed in that run. Separately reviewed desktop Canvas and textured WebGPU runs passed six fresh contexts and 30 complete RGBA readbacks at zero tolerance, covering once/loop timing, held-time resume, anchors, parent clipping, two assigned controls per backend and saved-frame replay after origin retirement. The current verifier adds a thirteenth atlas source-boundary phase; its complete rerun, final publication/prepush, 0.59 Git delivery and remote CI remain pending at this authoring cutoff.
+
+This bounded increment does not close the wider P03/P04/P05 program. Exporter imports, multipage, pivot/nine-slice import, animated-resource transactions and recovery, controller seek/rate/events, complete UI, full Spine R020/V020, migration R008/V006, physical GPU/mobile behavior, memory and performance remain OPEN. Workspace packages remain private 0.0.0; Host protocol remains 1.0.
+
 ## Prepared resource groups — 0.58.0
 
 Engineering preview **0.58.0** adds `Engine.captureBitmapBindings(scope, targets)` and the erased `BitmapBindingTicket` type. The prepared-outfit example waits for both clothing textures and commits their bindings together. Pending, failed, cancelled and obsolete changes preserve the working outfit; a ticket refuses to overwrite a later caller binding.
@@ -40,7 +48,7 @@ Engineering preview **0.54.0** was merged through [PR #42](https://github.com/cn
 | --- | --- | --- |
 | Display and input | DisplayObject/Container, transforms and pivots, coordinates/bounds, authored hit areas, primary mouse routing and bitmap buttons. | [Contract and scope](bitmap-button-contract.md) |
 | Resources | Typed references, shared acquisition, leases, Scope cleanup, acquisition groups, textures, named SpriteSheet crops and an optional PNG provider; recoverable single-Bitmap replacement in 0.56 has bounded behavior, type and desktop rendering evidence. | [Acquisition scope](resource-acquisition-groups.md), [replacement specification](bitmap-resource-slot-spec.md) |
-| Animation | Explicit game time, scalar Tween, atlas sequence sampling and Engine-clock sequence playback. | [Contract and scope](sequence-playback-contract.md) |
+| Animation | Explicit game time, scalar Tween, atlas sequence sampling and Engine-clock sequence playback; normalized trim/clockwise90 frames have SDK and bounded desktop Canvas/WebGPU evidence. | [Playback](sequence-playback-contract.md), [frame layout](atlas-frame-layout-contract.md) |
 | 2D presentation | Immutable frame capture, Canvas/WebGPU paths, textured geometry/Mesh2D and NineSliceBitmap within their declared profiles. | [Contract and scope](textured-geometry-and-mesh2d-contract.md) |
 | Text | Text-raster orchestration, a noneditable TextField and a selected Canvas text integration. | [Contract and scope](text-field-tf1-contract.md) |
 | 3D | CPU geometry/matrices, owned scene frames and selected explicit browser mesh/scene routes. | [Contract and scope](public-scene3d-contract.md) |

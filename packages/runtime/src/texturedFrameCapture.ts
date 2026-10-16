@@ -1,3 +1,4 @@
+import { bitmapAtlasPlacement } from './bitmapAtlasPlacement.js';
 import type { ClipRectangle2D, ImageData2D, Matrix2D, Rectangle2D, TexturedGeometry2D, TexturedRenderCommand2D } from '@egret/contracts';
 import type { Stage } from './Stage.js';
 import type { DisplayObject } from './DisplayObject.js';
@@ -154,11 +155,13 @@ export function collectTexturedFrameContent(stage: Stage): CapturedTexturedConte
     const bitmap = bitmapCaptureState(node);
     if ((bitmap !== undefined) !== admitted.bitmapOccupied) throw new EgretError('DISPLAY_TREE_INVARIANT');
     if (bitmap !== undefined) {
-      const rect = rectangle(matrix, { x: 0, y: 0, width: bitmap.width, height: bitmap.height });
+      const placement = bitmap.layout === undefined ? undefined : bitmapAtlasPlacement(bitmap, matrix);
+      const bitmapMatrix = placement?.matrix ?? matrix;
+      const rect = rectangle(bitmapMatrix, placement?.rect ?? { x: 0, y: 0, width: bitmap.width, height: bitmap.height });
       const snapshot = readBitmapImage(bitmap.lease);
       const imageIndex = images.register(snapshot.image, bitmap.sourceRect);
       const commandClipRecords = commandClips();
-      const command = Object.freeze({ kind: 'image' as const, matrix, rect, alpha, clips: commandClipRecords, imageIndex, sourceRect: bitmap.sourceRect });
+      const command = Object.freeze({ kind: 'image' as const, matrix: bitmapMatrix, rect, alpha, clips: commandClipRecords, imageIndex, sourceRect: bitmap.sourceRect });
       commands.push(command);
     }
     const mesh = readMeshState(node);

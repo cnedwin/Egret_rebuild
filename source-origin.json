@@ -24717,5 +24717,1148 @@
         "sha256": "411d49a8d295c818532b5b315a93cc411f59a15571d9ade3fcd8276ae5b59fc1"
       }
     ]
+  },
+  "atlasFrameLayoutWorkPackage": {
+    "engineeringPreview": "0.59.0",
+    "sourceId": "S113",
+    "deliverableId": "V064",
+    "date": "2026-10-17",
+    "status": "IN_PROGRESS_AT_RECORDED_CUTOFF",
+    "metadataCutoff": "2026-10-17 FINAL_68_CODE_24_READING_SOURCE_AND_NEW_FINITE_NATIVE_ACCEPTED_RETAINED_FINAL_GATES_DELIVERY_PENDING",
+    "scopeStatus": "PARTIAL_P04_NORMALIZED_SINGLE_PAGE_TRIM_CW90",
+    "contract": "en/docs/atlas-frame-layout-contract.md",
+    "evidence": "en/docs/atlas-frame-layout-evidence.md",
+    "example": "https://github.com/cnedwin/Egret_rebuild/blob/main/examples/trimmed-atlas-playback/README.md",
+    "newRuntimeCodeDependency": false,
+    "defaultPublicAPIChanged": true,
+    "newSDKRuntimeExports": 0,
+    "newSDKTypeExports": 1,
+    "engineMethodsAdded": [],
+    "erasedTypesAdded": [
+      "AtlasFrameLayout"
+    ],
+    "optInProfile": "trim-rotation-v1",
+    "factoriesExtended": [
+      "createSpriteSheet",
+      "createSequenceClip"
+    ],
+    "newPackageSubpaths": 0,
+    "hostProtocolChanged": false,
+    "packageVersionUnchanged": "0.0.0",
+    "sourceAndBehavior": {
+      "status": "PASS_RECORDED_FINITE_SOURCE_CPU_SCOPES_ONLY",
+      "records": [
+        {
+          "kind": "sdk-source-and-focused-cutoff",
+          "status": "PASS_BOUNDED_SOURCE_AND_SAVED_FOCUSED",
+          "subjectPaths": [
+            "packages/engine/src/index.ts",
+            "packages/runtime/src/Bitmap.ts",
+            "packages/runtime/src/SequencePlayer.ts",
+            "packages/runtime/src/bitmapDisplayState.ts",
+            "packages/runtime/src/frameCapture.ts",
+            "packages/runtime/src/index.ts",
+            "packages/runtime/src/sequenceClip.ts",
+            "packages/runtime/src/spriteSheet.ts",
+            "packages/runtime/src/texturedFrameCapture.ts",
+            "packages/runtime/src/atlasFrameLayout.ts",
+            "packages/runtime/src/bitmapAtlasPlacement.ts"
+          ],
+          "facts": {
+            "reviewedSourceTestAssetPins": 25,
+            "frozenProductionSourceFiles": 11,
+            "focusedTests": 48,
+            "focusedPass": 48,
+            "focusedFail": 0,
+            "guardCommandsExitZero": 9,
+            "sourceAcceptanceOnly": true,
+            "nativeAcceptance": false
+          },
+          "evidenceIdentities": [
+            {
+              "bytes": 2034,
+              "sha256": "16663d8edddb0c9209b16afcfde44b22fec072342b6066f673e555a443629810"
+            },
+            {
+              "bytes": 1889,
+              "sha256": "596bd64938ccce4a31efc7dc9532ec34bc1144acedddb82392d2bff593c160ed"
+            }
+          ]
+        },
+        {
+          "kind": "recorded-sdk-whole-twelve-stage-cutoff",
+          "status": "PASS_RECORDED_TWELVE_STAGE_SDK_ONLY",
+          "subjectPaths": [
+            "examples/trimmed-atlas-playback/assets/atlas.png",
+            "examples/trimmed-atlas-playback/assets/provenance.json",
+            "packages/engine/src/index.ts",
+            "packages/runtime/src/Bitmap.ts",
+            "packages/runtime/src/SequencePlayer.ts",
+            "packages/runtime/src/atlasFrameLayout.ts",
+            "packages/runtime/src/bitmapAtlasPlacement.ts",
+            "packages/runtime/src/bitmapDisplayState.ts",
+            "packages/runtime/src/frameCapture.ts",
+            "packages/runtime/src/index.ts",
+            "packages/runtime/src/sequenceClip.ts",
+            "packages/runtime/src/spriteSheet.ts",
+            "packages/runtime/src/texturedFrameCapture.ts",
+            "tests/atlas-frame-admission.test.mjs",
+            "tests/atlas-frame-bitmap.test.mjs",
+            "tests/atlas-frame-capture.test.mjs",
+            "tests/atlas-frame-fixture.mjs",
+            "tests/atlas-frame-heldout.test.mjs",
+            "tests/atlas-frame-oracle-unit.test.mjs",
+            "tests/atlas-frame-playback.test.mjs",
+            "tests/project-boundaries.test.mjs",
+            "tests/spritesheet-fault-child.mjs",
+            "tests/spritesheet-fault.test.mjs",
+            "tests/types/atlas-frame-diagnostic-expectations.json",
+            "tests/types/atlas-frame-import-negative.ts",
+            "tests/types/atlas-frame-negative.ts",
+            "tests/types/atlas-frame-positive.ts",
+            "tests/types/bitmap-binding-ticket-diagnostic-expectations.json",
+            "tests/types/bitmap-button-diagnostic-expectations.json",
+            "tests/types/bitmap-resource-slot-diagnostic-expectations.json",
+            "tests/types/display-anchor-offsets-diagnostic-expectations.json",
+            "tests/types/display-container-add-child-at-diagnostic-expectations.json",
+            "tests/types/display-container-child-index-diagnostic-expectations.json",
+            "tests/types/display-container-remove-children-diagnostic-expectations.json",
+            "tests/types/linear-layout-diagnostic-expectations.json",
+            "tests/types/nine-slice-bitmap-diagnostic-expectations.json",
+            "tests/types/spritesheet-diagnostic-expectations.json",
+            "tests/types/tsconfig.atlas-frame-import-negative.json",
+            "tests/types/tsconfig.atlas-frame-negative.json",
+            "tests/types/tsconfig.atlas-frame-positive.json",
+            "tests/webgpu-mesh-host.test.mjs",
+            "tools/atlas-frame-types.mjs",
+            "tools/atlas-frame/author-assets.mjs",
+            "tools/atlas-frame/oracle.mjs",
+            "tools/bitmap-binding-ticket-boundary.mjs",
+            "tools/bitmap-binding-ticket-policy.json",
+            "tools/bitmap-binding-ticket-types.mjs",
+            "tools/bitmap-resource-slot-boundary.mjs",
+            "tools/bitmap-resource-slot-policy.json",
+            "tools/browser-png-boundary.mjs",
+            "tools/check-types.mjs",
+            "tools/sequence-playback-boundary.mjs",
+            "tools/spritesheet-boundary.mjs"
+          ],
+          "facts": {
+            "stages": 12,
+            "recordedChangedInputPins": 53,
+            "recordedClosurePins": 1379,
+            "tests": 3559,
+            "pass": 3559,
+            "fail": 0,
+            "cancelled": 0,
+            "skipped": 0,
+            "todo": 0,
+            "spineExperimentTests": 160,
+            "spineExperimentPass": 160,
+            "spineExperimentFail": 0,
+            "spineExperimentCancelled": 0,
+            "spineExperimentSkipped": 0,
+            "spineExperimentTodo": 0,
+            "currentThirteenStageGate": "PENDING_AT_METADATA_CUTOFF",
+            "publicationPrepush": false,
+            "nativeAcceptance": false,
+            "fullSpineAcceptance": false,
+            "earlierFailuresPreserved": true
+          },
+          "evidenceIdentities": [
+            {
+              "bytes": 10891,
+              "sha256": "4d8b2f9d638c3aa076e123fe6a35abe3d877d8357bf912e6413de7eeaabe8538"
+            }
+          ]
+        },
+        {
+          "kind": "pure-oracle-units",
+          "status": "PASS_PURE_NODE_UNITS_ONLY",
+          "subjectPaths": [
+            "tools/atlas-frame/oracle.mjs",
+            "tools/atlas-frame/author-assets.mjs",
+            "tests/atlas-frame-oracle-unit.test.mjs",
+            "examples/trimmed-atlas-playback/assets/atlas.png",
+            "examples/trimmed-atlas-playback/assets/provenance.json"
+          ],
+          "facts": {
+            "tests": 23,
+            "pass": 23,
+            "fail": 0,
+            "cancelled": 0,
+            "skipped": 0,
+            "todo": 0,
+            "nativeAcceptance": false
+          },
+          "evidenceIdentities": [
+            {
+              "bytes": 29669,
+              "sha256": "4538454d119b5de8ca5aba04828b928d7677a2bd917f0cc83d6a4479d3d04561"
+            }
+          ]
+        },
+        {
+          "kind": "genuine-public-cpu-and-source-policy",
+          "status": "PASS_BOUNDED_CPU_AND_SOURCE_POLICY",
+          "subjectPaths": [
+            "examples/trimmed-atlas-playback/session.mjs",
+            "tools/atlas-frame/scenario.mjs",
+            "tools/atlas-frame/boundary.mjs",
+            "tests/atlas-frame-boundary.test.mjs",
+            "tests/atlas-frame-native-source.test.mjs",
+            "tests/atlas-frame-session.test.mjs"
+          ],
+          "facts": {
+            "tests": 17,
+            "pass": 17,
+            "fail": 0,
+            "cancelled": 0,
+            "skipped": 0,
+            "todo": 0,
+            "genuinePublicCpuTests": 3,
+            "sourcePolicyTests": 14,
+            "nativeAcceptance": false,
+            "setupFailuresAndCauseCorrectionsPreserved": true
+          },
+          "evidenceIdentities": [
+            {
+              "bytes": 4857,
+              "sha256": "b72d33f2e98a27ac5dcf66359be23cf539727a0c523b6264509a76de56e3ef04"
+            },
+            {
+              "bytes": 1616,
+              "sha256": "1ac86522067b27c024aab69013707c16f607542efd814dac297fc572632dc747"
+            }
+          ]
+        },
+        {
+          "kind": "current-source-integration-and-registration",
+          "status": "APPROVED_CURRENT_SOURCE_STAGE_ONLY",
+          "subjectPaths": [
+            "examples/trimmed-atlas-playback/assets/atlas.png",
+            "examples/trimmed-atlas-playback/assets/provenance.json",
+            "examples/trimmed-atlas-playback/image.mjs",
+            "examples/trimmed-atlas-playback/index.html",
+            "examples/trimmed-atlas-playback/main.mjs",
+            "examples/trimmed-atlas-playback/session.mjs",
+            "packages/engine/src/index.ts",
+            "packages/runtime/src/Bitmap.ts",
+            "packages/runtime/src/SequencePlayer.ts",
+            "packages/runtime/src/atlasFrameLayout.ts",
+            "packages/runtime/src/bitmapAtlasPlacement.ts",
+            "packages/runtime/src/bitmapDisplayState.ts",
+            "packages/runtime/src/frameCapture.ts",
+            "packages/runtime/src/index.ts",
+            "packages/runtime/src/sequenceClip.ts",
+            "packages/runtime/src/spriteSheet.ts",
+            "packages/runtime/src/texturedFrameCapture.ts",
+            "tests/atlas-frame-admission.test.mjs",
+            "tests/atlas-frame-bitmap.test.mjs",
+            "tests/atlas-frame-boundary.test.mjs",
+            "tests/atlas-frame-capture.test.mjs",
+            "tests/atlas-frame-fixture.mjs",
+            "tests/atlas-frame-heldout.test.mjs",
+            "tests/atlas-frame-native-source.test.mjs",
+            "tests/atlas-frame-oracle-unit.test.mjs",
+            "tests/atlas-frame-playback.test.mjs",
+            "tests/atlas-frame-session.test.mjs",
+            "tests/project-boundaries.test.mjs",
+            "tests/spritesheet-fault-child.mjs",
+            "tests/spritesheet-fault.test.mjs",
+            "tests/types/atlas-frame-diagnostic-expectations.json",
+            "tests/types/atlas-frame-import-negative.ts",
+            "tests/types/atlas-frame-negative.ts",
+            "tests/types/atlas-frame-positive.ts",
+            "tests/types/bitmap-binding-ticket-diagnostic-expectations.json",
+            "tests/types/bitmap-button-diagnostic-expectations.json",
+            "tests/types/bitmap-resource-slot-diagnostic-expectations.json",
+            "tests/types/display-anchor-offsets-diagnostic-expectations.json",
+            "tests/types/display-container-add-child-at-diagnostic-expectations.json",
+            "tests/types/display-container-child-index-diagnostic-expectations.json",
+            "tests/types/display-container-remove-children-diagnostic-expectations.json",
+            "tests/types/linear-layout-diagnostic-expectations.json",
+            "tests/types/nine-slice-bitmap-diagnostic-expectations.json",
+            "tests/types/spritesheet-diagnostic-expectations.json",
+            "tests/types/tsconfig.atlas-frame-import-negative.json",
+            "tests/types/tsconfig.atlas-frame-negative.json",
+            "tests/types/tsconfig.atlas-frame-positive.json",
+            "tests/webgpu-mesh-host.test.mjs",
+            "tools/atlas-frame-types.mjs",
+            "tools/atlas-frame/author-assets.mjs",
+            "tools/atlas-frame/boundary.mjs",
+            "tools/atlas-frame/native-fixture.mjs",
+            "tools/atlas-frame/oracle.mjs",
+            "tools/atlas-frame/prepare-native.mjs",
+            "tools/atlas-frame/scenario.mjs",
+            "tools/bitmap-binding-ticket-boundary.mjs",
+            "tools/bitmap-binding-ticket-policy.json",
+            "tools/bitmap-binding-ticket-types.mjs",
+            "tools/bitmap-resource-slot-boundary.mjs",
+            "tools/bitmap-resource-slot-policy.json",
+            "tools/browser-png-boundary.mjs",
+            "tools/check-types.mjs",
+            "tools/sequence-playback-boundary.mjs",
+            "tools/spritesheet-boundary.mjs",
+            "tools/verify-atlas-frame.mjs",
+            "tools/verify.mjs",
+            "tools/verify-webgpu-b1.mjs",
+            "tests/b1-webgpu-verifier.test.mjs"
+          ],
+          "facts": {
+            "preRepairCurrentCodeDataFiles": 66,
+            "finalCurrentCodeDataFiles": 68,
+            "finalReadingFiles": 24,
+            "finalReviewedSubjects": 92,
+            "defaultCurrentVerificationStages": 13,
+            "wholeCurrentThirteenStageExecution": "PENDING_AT_METADATA_CUTOFF",
+            "metadataResultApproval": false,
+            "delivery059Established": false
+          },
+          "evidenceIdentities": [
+            {
+              "bytes": 1616,
+              "sha256": "1ac86522067b27c024aab69013707c16f607542efd814dac297fc572632dc747"
+            },
+            {
+              "bytes": 3042,
+              "sha256": "14b9287b3527848227ed1315c2ac7eaceddcde07a552842ce900e8496389583e"
+            },
+            {
+              "bytes": 2094,
+              "sha256": "ca0bc11cffd8a7f8ad33e27923564c71a7a898a2ec1ff121b718e28032d1710f"
+            }
+          ]
+        },
+        {
+          "kind": "retained-b1-finite-closure-source-repair",
+          "status": "PASS_BOUNDED_SOURCE_AND_SAVED_REPAIR_CPU_ONLY",
+          "subjectPaths": [
+            "tools/verify-webgpu-b1.mjs",
+            "tests/b1-webgpu-verifier.test.mjs"
+          ],
+          "facts": {
+            "oldAllowlist": 96,
+            "newAllowlist": 106,
+            "completeLiteralGraphModules": 106,
+            "addedFiniteSourcePins": 10,
+            "trimRotationModules": 2,
+            "preexistingModules": 8,
+            "literalEdges": 322,
+            "graphBytes": 630902,
+            "maximumModuleBytes": 75520,
+            "newFocusedTests": 2,
+            "newFocusedPass": 2,
+            "existingFocusedTests": 130,
+            "existingFocusedPass": 130,
+            "changedProductionSdkFiles": 0,
+            "quotasChanged": false,
+            "privateImportExceptionExpanded": false,
+            "retainedNativeResultAcceptance": "PENDING_INDEPENDENT_REVIEW"
+          },
+          "evidenceIdentities": [
+            {
+              "bytes": 2094,
+              "sha256": "ca0bc11cffd8a7f8ad33e27923564c71a7a898a2ec1ff121b718e28032d1710f"
+            }
+          ]
+        }
+      ]
+    },
+    "nativeActual": {
+      "status": "PARTIAL_FINITE_DESKTOP_NATIVE_ACCEPTED_RETAINED_GATES_AND_DELIVERY_PENDING",
+      "records": [
+        {
+          "kind": "native-source-compiler-and-served-closure",
+          "status": "APPROVED_FINITE_ACTUAL_CLOSURES_ONLY",
+          "subjectPaths": [
+            "examples/trimmed-atlas-playback/assets/atlas.png",
+            "examples/trimmed-atlas-playback/assets/provenance.json",
+            "examples/trimmed-atlas-playback/image.mjs",
+            "examples/trimmed-atlas-playback/index.html",
+            "examples/trimmed-atlas-playback/main.mjs",
+            "examples/trimmed-atlas-playback/session.mjs",
+            "packages/engine/src/index.ts",
+            "packages/runtime/src/atlasFrameLayout.ts",
+            "packages/runtime/src/Bitmap.ts",
+            "packages/runtime/src/bitmapAtlasPlacement.ts",
+            "packages/runtime/src/bitmapDisplayState.ts",
+            "packages/runtime/src/frameCapture.ts",
+            "packages/runtime/src/index.ts",
+            "packages/runtime/src/sequenceClip.ts",
+            "packages/runtime/src/SequencePlayer.ts",
+            "packages/runtime/src/spriteSheet.ts",
+            "packages/runtime/src/texturedFrameCapture.ts",
+            "tools/atlas-frame/author-assets.mjs",
+            "tools/atlas-frame/boundary.mjs",
+            "tools/atlas-frame/native-fixture.mjs",
+            "tools/atlas-frame/oracle.mjs",
+            "tools/atlas-frame/prepare-native.mjs",
+            "tools/atlas-frame/scenario.mjs"
+          ],
+          "facts": {
+            "cases": 6,
+            "roles": 10,
+            "uniqueRawFiles": 14896,
+            "observedBrowserContextsAtClosureCutoff": 0,
+            "observedFramesAtClosureCutoff": 0,
+            "pixelsAcceptedAtClosureCutoff": false,
+            "compilerMapsBuildinfoAndToolkitIdentitiesAccepted": true
+          },
+          "evidenceIdentities": [
+            {
+              "bytes": 24057,
+              "sha256": "d9a33afa55ea2faf3385a231248cca6be5e7d8c239b724e917b07373e1aa129d"
+            }
+          ]
+        },
+        {
+          "kind": "normalized-atlas-desktop-native",
+          "status": "PASS_FINITE_DESKTOP_NATIVE_ACCEPTED_R1",
+          "subjectPaths": [
+            "examples/trimmed-atlas-playback/assets/atlas.png",
+            "examples/trimmed-atlas-playback/assets/provenance.json",
+            "examples/trimmed-atlas-playback/image.mjs",
+            "examples/trimmed-atlas-playback/index.html",
+            "examples/trimmed-atlas-playback/main.mjs",
+            "examples/trimmed-atlas-playback/session.mjs",
+            "packages/engine/src/index.ts",
+            "packages/runtime/src/atlasFrameLayout.ts",
+            "packages/runtime/src/Bitmap.ts",
+            "packages/runtime/src/bitmapAtlasPlacement.ts",
+            "packages/runtime/src/bitmapDisplayState.ts",
+            "packages/runtime/src/frameCapture.ts",
+            "packages/runtime/src/index.ts",
+            "packages/runtime/src/sequenceClip.ts",
+            "packages/runtime/src/SequencePlayer.ts",
+            "packages/runtime/src/spriteSheet.ts",
+            "packages/runtime/src/texturedFrameCapture.ts",
+            "tools/atlas-frame/author-assets.mjs",
+            "tools/atlas-frame/boundary.mjs",
+            "tools/atlas-frame/native-fixture.mjs",
+            "tools/atlas-frame/oracle.mjs",
+            "tools/atlas-frame/prepare-native.mjs",
+            "tools/atlas-frame/scenario.mjs"
+          ],
+          "facts": {
+            "contexts": 6,
+            "pages": 10,
+            "rawFrames": 30,
+            "renderWidth": 24,
+            "renderHeight": 16,
+            "deviceScaleFactor": 1,
+            "rgbaBytesPerFrame": 1536,
+            "pixelsCompared": 11520,
+            "channelsCompared": 46080,
+            "differingChannels": 0,
+            "assignedControlsDetected": 4,
+            "savedDistinctN01Replays": 2,
+            "ordinarySequencesPassed": 2,
+            "cleanupErrors": 0,
+            "pendingOriginalTasks": 0,
+            "allOriginalOwnersHostsContextsBrowsersServersClosed": true,
+            "actualLoadedHttpRoleHashesMatched": true,
+            "sourceToolkitRoleBeforeAfterExact": true,
+            "canvasWillReadFrequentlyWarnings": 1,
+            "warningPreserved": true,
+            "node": "24.19.0",
+            "platform": "win32",
+            "arch": "x64",
+            "windowsRelease": "10.0.26300",
+            "browserChannel": "msedge",
+            "browserVersion": "155.0.4283.45",
+            "playwrightVersion": "1.62.1",
+            "playwrightCoreVersion": "1.62.1",
+            "extraLaunchFlags": [],
+            "viewportWidth": 640,
+            "viewportHeight": 480,
+            "laterReadingSuccessorsAreBrowserExecutedBytes": false,
+            "physicalGpuMemoryAcceptance": false,
+            "mobilePerformanceAcceptance": false
+          },
+          "evidenceIdentities": [
+            {
+              "bytes": 21137,
+              "sha256": "7e4a1d9f7e815d08f69209941e2b7ae7ebfd307bcedd534b850a13b8d830948b"
+            },
+            {
+              "bytes": 24057,
+              "sha256": "d9a33afa55ea2faf3385a231248cca6be5e7d8c239b724e917b07373e1aa129d"
+            }
+          ]
+        },
+        {
+          "kind": "retained-b1-original-prebrowser-failure",
+          "status": "FAILED_PRE_BROWSER_PRESERVED_PENDING_RETAINED_RESULT_REVIEW",
+          "subjectPaths": [
+            "tools/verify-webgpu-b1.mjs",
+            "tests/b1-webgpu-verifier.test.mjs"
+          ],
+          "facts": {
+            "originalExitCode": 1,
+            "contexts": 0,
+            "rawFrames": 0,
+            "cause": "FINITE_LITERAL_IMPORT_ALLOWLIST_OMITTED_TEN_AUTHENTIC_DEPENDENCIES",
+            "completeGraphModules": 106,
+            "missingDependencies": 10,
+            "trimRotationDependencies": 2,
+            "preexistingDependencies": 8,
+            "originalFailureBytesPreserved": true,
+            "freshRetainedResultAccepted": false,
+            "allAffectedRetainedGatesAccepted": false
+          },
+          "evidenceIdentities": [
+            {
+              "bytes": 2094,
+              "sha256": "ca0bc11cffd8a7f8ad33e27923564c71a7a898a2ec1ff121b718e28032d1710f"
+            }
+          ]
+        },
+        {
+          "kind": "metadata-authoring-and-delivery-cutoff",
+          "status": "PENDING_FINAL_GATES_AND_DELIVERY",
+          "subjectPaths": [
+            "README.md",
+            "README.zh-CN.md",
+            "knowledge-base/en/docs/atlas-frame-layout-evidence.md",
+            "knowledge-base/Cns/docs/atlas-frame-layout-evidence.md",
+            "tools/verify.mjs"
+          ],
+          "facts": {
+            "fullPrepush": "PENDING_AT_METADATA_CUTOFF",
+            "mandatoryHooks": "PENDING_AT_METADATA_CUTOFF",
+            "currentThirteenStageGate": "PENDING_AT_METADATA_CUTOFF",
+            "newGitDelivery": "PENDING_AT_METADATA_CUTOFF",
+            "remoteCIPassClaim": false,
+            "fullP04": "OPEN",
+            "exporterImporters": "OPEN",
+            "multiPageAtlas": "OPEN",
+            "pivotImporter": "OPEN",
+            "nineSliceImporter": "OPEN",
+            "animatedRetarget": "OPEN",
+            "seek": "OPEN",
+            "rate": "OPEN",
+            "events": "OPEN",
+            "fullSpineR020V020": "OPEN",
+            "migrationR008V006": "OPEN",
+            "physicalGpuMemoryAndMobilePerformance": "OPEN"
+          },
+          "evidenceIdentities": [
+            {
+              "bytes": 7624,
+              "sha256": "cd56f0544807bf3254efc03805ea4d49ca4a5bb6d7b30d6f414919c281330b23"
+            },
+            {
+              "bytes": 1616,
+              "sha256": "1ac86522067b27c024aab69013707c16f607542efd814dac297fc572632dc747"
+            },
+            {
+              "bytes": 2094,
+              "sha256": "ca0bc11cffd8a7f8ad33e27923564c71a7a898a2ec1ff121b718e28032d1710f"
+            }
+          ]
+        }
+      ]
+    },
+    "publicSourceBilingualReview": {
+      "status": "APPROVED_EXACT_METADATA_INPUTS",
+      "readingPairs": 12,
+      "reviewedPairs": 12,
+      "changedOrNewPairs": 12,
+      "unchangedReviewedPairs": 0,
+      "factEnvelope": {
+        "bytes": 44035,
+        "sha256": "1bac5a45bbbd3b1d74eb5d44b6af4a41519ba231ad7b2004bbe3a4a4937c5c44"
+      },
+      "independentReviews": [
+        {
+          "bytes": 2034,
+          "sha256": "16663d8edddb0c9209b16afcfde44b22fec072342b6066f673e555a443629810"
+        },
+        {
+          "bytes": 1889,
+          "sha256": "596bd64938ccce4a31efc7dc9532ec34bc1144acedddb82392d2bff593c160ed"
+        },
+        {
+          "bytes": 10891,
+          "sha256": "4d8b2f9d638c3aa076e123fe6a35abe3d877d8357bf912e6413de7eeaabe8538"
+        },
+        {
+          "bytes": 29669,
+          "sha256": "4538454d119b5de8ca5aba04828b928d7677a2bd917f0cc83d6a4479d3d04561"
+        },
+        {
+          "bytes": 4857,
+          "sha256": "b72d33f2e98a27ac5dcf66359be23cf539727a0c523b6264509a76de56e3ef04"
+        },
+        {
+          "bytes": 1616,
+          "sha256": "1ac86522067b27c024aab69013707c16f607542efd814dac297fc572632dc747"
+        },
+        {
+          "bytes": 3042,
+          "sha256": "14b9287b3527848227ed1315c2ac7eaceddcde07a552842ce900e8496389583e"
+        },
+        {
+          "bytes": 24057,
+          "sha256": "d9a33afa55ea2faf3385a231248cca6be5e7d8c239b724e917b07373e1aa129d"
+        },
+        {
+          "bytes": 21137,
+          "sha256": "7e4a1d9f7e815d08f69209941e2b7ae7ebfd307bcedd534b850a13b8d830948b"
+        },
+        {
+          "bytes": 7624,
+          "sha256": "cd56f0544807bf3254efc03805ea4d49ca4a5bb6d7b30d6f414919c281330b23"
+        },
+        {
+          "bytes": 2264,
+          "sha256": "255d288a02d840cbf9aa65f9d2428eaeba13e8c26b013637d4ff0e9ae63befcf"
+        },
+        {
+          "bytes": 2094,
+          "sha256": "ca0bc11cffd8a7f8ad33e27923564c71a7a898a2ec1ff121b718e28032d1710f"
+        },
+        {
+          "bytes": 1835,
+          "sha256": "cf8254be96557b1a872ac889d7157a1e6bf41e27ced6ffedbd1a85e7a8a33bd5"
+        }
+      ]
+    },
+    "fullPrepush": "PENDING_AT_METADATA_CUTOFF",
+    "mandatoryHooks": "PENDING_AT_METADATA_CUTOFF",
+    "newGitDelivery": "PENDING_AT_METADATA_CUTOFF",
+    "remoteCIPassClaim": false,
+    "fullP04": "OPEN",
+    "exporterImporters": "OPEN",
+    "multiPageAtlas": "OPEN",
+    "animatedRetarget": "OPEN",
+    "generalGameUI": "OPEN",
+    "fullSpineR020V020": "OPEN",
+    "migrationR008V006": "OPEN",
+    "physicalDeviceAcceptance": false,
+    "performanceAcceptance": false,
+    "physicalResidentAndTemporaryGpuBytes": "UNMEASURED",
+    "historicalCutoffsPreserved": true,
+    "independentlyAuthoredFirstParty": true,
+    "copiedCompetitorCode": false,
+    "currentCodeSourcePins": [
+      {
+        "path": "examples/trimmed-atlas-playback/assets/atlas.png",
+        "bytes": 218,
+        "sha256": "35a3ecea0d79c5684d17a5dbfa56bf0cc5ebf52a34f6e8ceafe740c742a1437f"
+      },
+      {
+        "path": "examples/trimmed-atlas-playback/assets/provenance.json",
+        "bytes": 2092,
+        "sha256": "da7ffd5e9a2650522ed55922ba3f72c14af58216c13118f53a7820e624430f3c"
+      },
+      {
+        "path": "examples/trimmed-atlas-playback/image.mjs",
+        "bytes": 1905,
+        "sha256": "e7e6c21b34ae746285ce16924a8a679a6f372b5acc3e18e2c54ec8e067a43c5c"
+      },
+      {
+        "path": "examples/trimmed-atlas-playback/index.html",
+        "bytes": 1549,
+        "sha256": "07b7b4d9870091960082c6c25cc3d8d0bc73898f6f4e0adee4dfb5101e5d2eb5"
+      },
+      {
+        "path": "examples/trimmed-atlas-playback/main.mjs",
+        "bytes": 1493,
+        "sha256": "37928cd693bf7718a5db51e67133cbc5285db6003a4b0312018c42e76675e4ae"
+      },
+      {
+        "path": "examples/trimmed-atlas-playback/session.mjs",
+        "bytes": 7557,
+        "sha256": "70e2ef05758d624bac801a730558804bbc96b40112471dd3ad1673a0f6eed5e6"
+      },
+      {
+        "path": "packages/engine/src/index.ts",
+        "bytes": 3475,
+        "sha256": "c3af513385381ba023c396b9bebc262eb03f300fb2d083e6c76ae08810360cc5"
+      },
+      {
+        "path": "packages/runtime/src/atlasFrameLayout.ts",
+        "bytes": 2507,
+        "sha256": "b8b417c238d20dab92550f73258e99caa3eda96b317ebb94117f87dfa49b6ba8"
+      },
+      {
+        "path": "packages/runtime/src/Bitmap.ts",
+        "bytes": 20761,
+        "sha256": "29e8bfcdd5a7c5fa5044090a8b490b0c52cbca3e5d1a002313bcca9ff5870088"
+      },
+      {
+        "path": "packages/runtime/src/bitmapAtlasPlacement.ts",
+        "bytes": 1866,
+        "sha256": "4788c344d2d03fe449d1d4901878b610993f3cf931e4591a2fe574a3a88b5365"
+      },
+      {
+        "path": "packages/runtime/src/bitmapDisplayState.ts",
+        "bytes": 1294,
+        "sha256": "0b258a13dd9f19fe94fd461ce811a9e2f81b210ccc908370c05ea1b2ecc1ecaf"
+      },
+      {
+        "path": "packages/runtime/src/frameCapture.ts",
+        "bytes": 6214,
+        "sha256": "c06357dc38d16923be079910fb30e0ec6ea12f9e7a3d50e28973e4767682bfae"
+      },
+      {
+        "path": "packages/runtime/src/index.ts",
+        "bytes": 3015,
+        "sha256": "d18e00809b0bd48ecb380e33233988225e85cd348935f7fe72617fb2ebdb3bba"
+      },
+      {
+        "path": "packages/runtime/src/sequenceClip.ts",
+        "bytes": 9515,
+        "sha256": "9bda5884f85f0cf3144eae8cab0f7743b2a1b2c37b179d71a6ef9f60bdcb8d4d"
+      },
+      {
+        "path": "packages/runtime/src/SequencePlayer.ts",
+        "bytes": 3430,
+        "sha256": "35cf192e082c3250db05b1d80fa0d1474489c0df99f96703d89bf74376ffa2e5"
+      },
+      {
+        "path": "packages/runtime/src/spriteSheet.ts",
+        "bytes": 13879,
+        "sha256": "e7648b5d68967b3d9f1a8c67ccf0d68c08ef8a509daf31daccb4bc7a341abbc6"
+      },
+      {
+        "path": "packages/runtime/src/texturedFrameCapture.ts",
+        "bytes": 12156,
+        "sha256": "765d7fb216afd8d82d74a46a0efdbdcbd2ab9402f6d695499be2498043651fa2"
+      },
+      {
+        "path": "tests/atlas-frame-admission.test.mjs",
+        "bytes": 5534,
+        "sha256": "dc7f26e75a485f60d90fe13506d252556841322187d2b7d37f7b72543403234d"
+      },
+      {
+        "path": "tests/atlas-frame-bitmap.test.mjs",
+        "bytes": 5729,
+        "sha256": "db9138e63fce528f289f8005f2163433aedb0a3e7da945826380058636a843f2"
+      },
+      {
+        "path": "tests/atlas-frame-boundary.test.mjs",
+        "bytes": 10899,
+        "sha256": "75bec637d97ab3537018968f43bb6952b3d8e2c4030b7dd0078a22255a204f93"
+      },
+      {
+        "path": "tests/atlas-frame-capture.test.mjs",
+        "bytes": 5021,
+        "sha256": "41b4d5e6cb0a670649ae01653f35508c7ae20d7a5b8ecef263dc049371102c44"
+      },
+      {
+        "path": "tests/atlas-frame-fixture.mjs",
+        "bytes": 1412,
+        "sha256": "e8ac6b0a721a05a4521104b7de2fe14e23d46227cd2f6b12031e6e513e7f6237"
+      },
+      {
+        "path": "tests/atlas-frame-heldout.test.mjs",
+        "bytes": 14329,
+        "sha256": "e78212078d29fb69554ad05a1a62272b6088f409a96cfed722a0a68d4e22c0d5"
+      },
+      {
+        "path": "tests/atlas-frame-native-source.test.mjs",
+        "bytes": 5697,
+        "sha256": "dd25142f51db55a1ee0a4f94c19d3e89d8851cdd6c0d3bb914bf9e0523387d90"
+      },
+      {
+        "path": "tests/atlas-frame-oracle-unit.test.mjs",
+        "bytes": 7646,
+        "sha256": "8fa63ee86daf2b38cb1fc890075eb465ef81c5ab436d895ecd64650b1b189e8b"
+      },
+      {
+        "path": "tests/atlas-frame-playback.test.mjs",
+        "bytes": 2048,
+        "sha256": "d64e4853aeb1d080fb8c3c96960e7ce877d5f2f2ca0e18a094b80d32b4771afa"
+      },
+      {
+        "path": "tests/atlas-frame-session.test.mjs",
+        "bytes": 5177,
+        "sha256": "a14de4c0ef5d75c99d0c24ef848e7089b572551e9a84f78848b6f82ed2b60e5e"
+      },
+      {
+        "path": "tests/b1-webgpu-verifier.test.mjs",
+        "bytes": 24646,
+        "sha256": "a898e81ba83c36ebf5ae76c3408a7944c2b7ac082488e2716fb59711ba5828d7"
+      },
+      {
+        "path": "tests/project-boundaries.test.mjs",
+        "bytes": 16733,
+        "sha256": "64a04f950f0b637eefdb42e18ab435a1e67f0915139032500671a37d2f7ef48d"
+      },
+      {
+        "path": "tests/spritesheet-fault-child.mjs",
+        "bytes": 18066,
+        "sha256": "769e48d0016de2f460093938b42cefef7a23379057974c9a32cb0be5155f925a"
+      },
+      {
+        "path": "tests/spritesheet-fault.test.mjs",
+        "bytes": 8158,
+        "sha256": "e2fbf7c024a26a7464ab6ea87e6f100d468b1f5a32cfee268999ea25f5e8a994"
+      },
+      {
+        "path": "tests/types/atlas-frame-diagnostic-expectations.json",
+        "bytes": 20134,
+        "sha256": "83870870571f8557d7e959d2f4c02d98ec7b71669adedfa8b1ba6f1f5514a867"
+      },
+      {
+        "path": "tests/types/atlas-frame-import-negative.ts",
+        "bytes": 599,
+        "sha256": "4a5dbd6eb8278c83e0c5c046bbe7e1cdf94b1e7fcc33b5234714b8abfccf3d62"
+      },
+      {
+        "path": "tests/types/atlas-frame-negative.ts",
+        "bytes": 943,
+        "sha256": "1435d4139da76d06ffe6e03896096ece08bc0280f184335318aac837a229e682"
+      },
+      {
+        "path": "tests/types/atlas-frame-positive.ts",
+        "bytes": 1071,
+        "sha256": "c8046ec104eed922407c88a927b06c83145a4ab1542ff47cf340091fe276346e"
+      },
+      {
+        "path": "tests/types/bitmap-binding-ticket-diagnostic-expectations.json",
+        "bytes": 64589,
+        "sha256": "127c40e89c1a60e93ad269c6a367816fdb49c25eb3fed170e547851d8ae4ad33"
+      },
+      {
+        "path": "tests/types/bitmap-button-diagnostic-expectations.json",
+        "bytes": 35351,
+        "sha256": "8452176daf5828ae697f157af5e3d9a9d5302e57c0799da4f91a26d0ca117514"
+      },
+      {
+        "path": "tests/types/bitmap-resource-slot-diagnostic-expectations.json",
+        "bytes": 63685,
+        "sha256": "a237b2e9a6dff502d72d37af0c5a4a972f72fecbcb3d6483fab45c9b2c0d5994"
+      },
+      {
+        "path": "tests/types/display-anchor-offsets-diagnostic-expectations.json",
+        "bytes": 30693,
+        "sha256": "2ef85e75dade3a0732592ecb3ff509f31baf454edebaf3054c25bcdb76096f3a"
+      },
+      {
+        "path": "tests/types/display-container-add-child-at-diagnostic-expectations.json",
+        "bytes": 37011,
+        "sha256": "1ad57086252372df8349c28109ac51c458f77a95560cbef1782615a1a320d15f"
+      },
+      {
+        "path": "tests/types/display-container-child-index-diagnostic-expectations.json",
+        "bytes": 37975,
+        "sha256": "a09cc887b82f9fef08f22f15833904ef29a338d95bd2f8a24ce57a407529806b"
+      },
+      {
+        "path": "tests/types/display-container-remove-children-diagnostic-expectations.json",
+        "bytes": 31434,
+        "sha256": "03bdd12e62a5802bde0ea9889441882c87dfbf017156528cb41576f7d7830dc4"
+      },
+      {
+        "path": "tests/types/linear-layout-diagnostic-expectations.json",
+        "bytes": 66840,
+        "sha256": "f199c91c76e4abf663b58d25253be6f94c2cf541db360046ea36bfe71f13e509"
+      },
+      {
+        "path": "tests/types/nine-slice-bitmap-diagnostic-expectations.json",
+        "bytes": 15289,
+        "sha256": "55b454fa512d1595279ac448df372b1aee34988da422250178a66fe5c93863d0"
+      },
+      {
+        "path": "tests/types/spritesheet-diagnostic-expectations.json",
+        "bytes": 27559,
+        "sha256": "3e0beab7716f7954f7b181dcf88fadcdda357e33f307df74544a5baea41d1da8"
+      },
+      {
+        "path": "tests/types/tsconfig.atlas-frame-import-negative.json",
+        "bytes": 113,
+        "sha256": "a9d91215b0048bd087ace44ea8a09de23c69f9a464a94b88c48483c51408ed29"
+      },
+      {
+        "path": "tests/types/tsconfig.atlas-frame-negative.json",
+        "bytes": 106,
+        "sha256": "aba35e84e69502e12ab5f7db506cb7995ff507c215ab0ba039f88060bf678d28"
+      },
+      {
+        "path": "tests/types/tsconfig.atlas-frame-positive.json",
+        "bytes": 106,
+        "sha256": "6832af0c8696afa733e24add3f46b87f028ecf0e7b546b67d39eb7e9dfd5e5ea"
+      },
+      {
+        "path": "tests/webgpu-mesh-host.test.mjs",
+        "bytes": 97849,
+        "sha256": "974834c8e72eae63321568fed79bbfca0659e0e35fac4fda8cdb2f9f9b35caf4"
+      },
+      {
+        "path": "tools/atlas-frame-types.mjs",
+        "bytes": 3046,
+        "sha256": "04e04290255b54ab348c130669a2cd8511828b7e867eda4b9d55d15b5213f2bc"
+      },
+      {
+        "path": "tools/atlas-frame/author-assets.mjs",
+        "bytes": 4365,
+        "sha256": "83e56a9f0d855d545d787a4bfa88c46df055709ff20d99c95141575a53422d44"
+      },
+      {
+        "path": "tools/atlas-frame/boundary.mjs",
+        "bytes": 32785,
+        "sha256": "21e86768ec845873b3a3ece78bded03887629645166cae8120c6cf4bf60a8c9e"
+      },
+      {
+        "path": "tools/atlas-frame/native-fixture.mjs",
+        "bytes": 8883,
+        "sha256": "2566323bf28c29e6358079beb84df7fc1038da71a7f8ce3d288ac5b01960c08b"
+      },
+      {
+        "path": "tools/atlas-frame/oracle.mjs",
+        "bytes": 4036,
+        "sha256": "7d5e5f1418bd030d455024de4f31499fd6bd34b5bc5779baac06d792c9ab2c16"
+      },
+      {
+        "path": "tools/atlas-frame/prepare-native.mjs",
+        "bytes": 10075,
+        "sha256": "168534d65285c20ac43755ec00c1e2de9912bbbf5c8352b80c9566920fa28258"
+      },
+      {
+        "path": "tools/atlas-frame/scenario.mjs",
+        "bytes": 6313,
+        "sha256": "be063a5b97f564489e97544f17600ce258dc2331f8cac25efd191d600de51de6"
+      },
+      {
+        "path": "tools/bitmap-binding-ticket-boundary.mjs",
+        "bytes": 15420,
+        "sha256": "b898d80a1545b1b58b9e1eafc8bd330c32d97529116cad1cf7f72c67920df109"
+      },
+      {
+        "path": "tools/bitmap-binding-ticket-policy.json",
+        "bytes": 17818,
+        "sha256": "7ce0ebb22e6e018f2d498ccc24d6fcda46a48254542178e22d604c5fa109c9c0"
+      },
+      {
+        "path": "tools/bitmap-binding-ticket-types.mjs",
+        "bytes": 12806,
+        "sha256": "1831745ff95be3c102b2e471539cda8726de0d999592f18499d8b909bd102766"
+      },
+      {
+        "path": "tools/bitmap-resource-slot-boundary.mjs",
+        "bytes": 14831,
+        "sha256": "06bd2b73d7e497dccf8c2a38df4298e391192bc626f53d7e5dc34abcf932c501"
+      },
+      {
+        "path": "tools/bitmap-resource-slot-policy.json",
+        "bytes": 14722,
+        "sha256": "4842eb32adefb7bfb3427f508f19d37da77db489f188ca38e7ef3501fa6e5ffd"
+      },
+      {
+        "path": "tools/browser-png-boundary.mjs",
+        "bytes": 101115,
+        "sha256": "a34561aae348cdde284a199af5e2b88156cc7ace6bd0a445a23a9a1dafb37667"
+      },
+      {
+        "path": "tools/check-types.mjs",
+        "bytes": 94293,
+        "sha256": "6cc8292c2c3b7b9e585d08335b63c483a30e9591844a73e16013018a0ce6b97d"
+      },
+      {
+        "path": "tools/sequence-playback-boundary.mjs",
+        "bytes": 28025,
+        "sha256": "19080c0d5d4406e76e2b771f18b3d2446bebee763bf82ae34610f8e65d253bdd"
+      },
+      {
+        "path": "tools/spritesheet-boundary.mjs",
+        "bytes": 99595,
+        "sha256": "fdfe3c1ed1634618fd1023ecc2e29da8fab97fdf1ea398a326eb53b8d7c538c1"
+      },
+      {
+        "path": "tools/verify-atlas-frame.mjs",
+        "bytes": 23267,
+        "sha256": "0dbd4fc55fbba74225005a1767072ee863d3ee8b044f33a9d64d3dcd1133c998"
+      },
+      {
+        "path": "tools/verify-webgpu-b1.mjs",
+        "bytes": 48746,
+        "sha256": "4936a79d40fbc831d3d4a99b616c1222119fb42a1bbf4d1af5882e9ca02db809"
+      },
+      {
+        "path": "tools/verify.mjs",
+        "bytes": 845,
+        "sha256": "56a61542bc79aac91da46c7516df17ba0083daa8fd9508ac4b41b7d7dd4267a6"
+      }
+    ],
+    "currentPublicPins": [
+      {
+        "path": "README.md",
+        "bytes": 9216,
+        "sha256": "4f18aeebbafb8b24d77a8639477e98eb2257300c473742ec76b9832f73973e7a"
+      },
+      {
+        "path": "README.zh-CN.md",
+        "bytes": 8557,
+        "sha256": "ace6a5fc523d0f4b5fe33d72f0dc2278b2a98921b785eabfd5bc14e65e31ce37"
+      },
+      {
+        "path": "knowledge-base/en/README.md",
+        "bytes": 8199,
+        "sha256": "887fd061fa4f3fcb4bfac7396ed546776be6865bd0e6cbf3b84bac4c8b491b57"
+      },
+      {
+        "path": "knowledge-base/Cns/README.md",
+        "bytes": 7242,
+        "sha256": "14c8d6aa682759299715aa849dbd2295db778a1e88d7f68111a6e7022ad5ebcb"
+      },
+      {
+        "path": "knowledge-base/en/CHANGELOG.md",
+        "bytes": 16461,
+        "sha256": "b8b1ec14de9e0ec33e1cc0333f284a8c82867419163d00d25f2c5723ded152a3"
+      },
+      {
+        "path": "knowledge-base/Cns/CHANGELOG.md",
+        "bytes": 14724,
+        "sha256": "46e5463718476e2d8a12a63d13a5b83a583129bf2b6e73d1fd8a9927583fff57"
+      },
+      {
+        "path": "knowledge-base/en/docs/core-progress.md",
+        "bytes": 11758,
+        "sha256": "87f86410068914ad015b764930c750df0399409c444a501eda45985648269d39"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/core-progress.md",
+        "bytes": 10381,
+        "sha256": "cbbcf159619e007f181f508f0806ddc0a942ad7f6e6b69091dbd302f15ff0aa7"
+      },
+      {
+        "path": "knowledge-base/en/docs/spritesheet-contract.md",
+        "bytes": 8164,
+        "sha256": "95e0612d020f6b34449526e2129d12a8110aa7482eecde20cece69e74d40b926"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/命名图集契约.md",
+        "bytes": 7493,
+        "sha256": "3731630a26b2a7d1792aabfe5a09946b608c89cae0d48af7e7e644139a45c80d"
+      },
+      {
+        "path": "knowledge-base/en/docs/sequence-clip-contract.md",
+        "bytes": 4514,
+        "sha256": "e95c319f419935ad673db1de1c614681ee9f20f1eae88d48ae2eba64935c2fe1"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/sequence-clip-contract.md",
+        "bytes": 4004,
+        "sha256": "21dbd7ec776d2713a62c0109564b94b921bfd976e02df8e39836dbd6dfda4909"
+      },
+      {
+        "path": "knowledge-base/en/docs/sequence-player-contract.md",
+        "bytes": 10033,
+        "sha256": "70fae7a3fca1db7a5c6d5672dd8c684dc943e38cefec1c1f9385f4151815ab46"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
+        "bytes": 8804,
+        "sha256": "94654849ec78453d508d1757513b525dda38eccb62f548ccda60884170a422f3"
+      },
+      {
+        "path": "knowledge-base/en/docs/sequence-playback-contract.md",
+        "bytes": 10095,
+        "sha256": "0bfb0833daf603e25bb3dcd51ba112915d840a4908314a8dc65b107e114d3501"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/时钟驱动序列动画契约.md",
+        "bytes": 8990,
+        "sha256": "322ad240d6485937d225875706e2fca3a0044a4159f621cf71f4b91bfd8d8711"
+      },
+      {
+        "path": "knowledge-base/en/docs/repository-identity-and-line-endings.md",
+        "bytes": 6769,
+        "sha256": "b11a523786dd2901fd0cff7f3e64d8f58d0e64498ded830647c04aa2600a02de"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/仓库路径身份与换行规范.md",
+        "bytes": 6054,
+        "sha256": "f9ced09202b2977e2c1473f998ca602e554d3de568e880b9121b97fb9b616318"
+      },
+      {
+        "path": "knowledge-base/en/docs/atlas-frame-layout-contract.md",
+        "bytes": 11768,
+        "sha256": "5d82f5f946b6b06915e39fa50911dea21fc9bb03eff48788848a453ec3a5c36e"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/atlas-frame-layout-contract.md",
+        "bytes": 10511,
+        "sha256": "ce9625c8dbacb4d22f9434a15e16ff92d090567a7db28361e6b7b6cb55f95300"
+      },
+      {
+        "path": "knowledge-base/en/docs/atlas-frame-layout-evidence.md",
+        "bytes": 17154,
+        "sha256": "0f908bfbb54f39b31239b4cb40862f91da2584955226980bfbd8f7c8a2b994cd"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/atlas-frame-layout-evidence.md",
+        "bytes": 15840,
+        "sha256": "43292463eccb37d28eb54b0affec21d582869aac4abf1efd35ea0f3469dbc7d9"
+      },
+      {
+        "path": "examples/trimmed-atlas-playback/README.md",
+        "bytes": 3575,
+        "sha256": "85754c829edb73780d93225b6d38fb9c40ee6097015cff91de890703a8ed2c59"
+      },
+      {
+        "path": "examples/trimmed-atlas-playback/README.zh-CN.md",
+        "bytes": 3323,
+        "sha256": "7951d302a819ac8214a340e30f4f4674f2ebd9016267d77ef4f272ddbf7b1c14"
+      }
+    ]
+  },
+  "preparedResourceGroupsDeliveryActualSuccessor": {
+    "engineeringPreview": "0.58.0",
+    "status": "FINITE_PREPARED_RESOURCE_GROUPS_WORK_PACKAGE_DELIVERED_TO_MAIN",
+    "repository": "cnedwin/Egret_rebuild",
+    "pullRequest": "https://github.com/cnedwin/Egret_rebuild/pull/47",
+    "main": "3580a7baace14753af844d34c4ac078c609fce16",
+    "tree": "343934fa0c450ae0e8648b7ffe20a1677291bbc7",
+    "checkpointIdentity": {
+      "bytes": 3568,
+      "sha256": "c74fc660560768dd1dd660bfc7328314dd7b1058c4f22d27c876249f3bbe64a8"
+    },
+    "originalReviewIdentities": [
+      {
+        "kind": "sourceReview",
+        "bytes": 49476,
+        "sha256": "065e8f5f7ef08d48d96d9fa072c5870146881e886c990d4f319af20645024d9b"
+      },
+      {
+        "kind": "localGateReview",
+        "bytes": 30707,
+        "sha256": "4fbd2bbb85911872224ce723609aadeaedf86cb264fe91e4acb8a38ba209c839"
+      },
+      {
+        "kind": "commitReview",
+        "bytes": 50975,
+        "sha256": "39d80dd392647e3290c4ea2fd32e0162524e9636d816ba67082534b9c48388d5"
+      },
+      {
+        "kind": "actualPushReview",
+        "bytes": 5358,
+        "sha256": "8c6126d6f5d242e29e081e0c902556e4f00f530f596b613f49f4b30ef22c9dde"
+      },
+      {
+        "kind": "mergeResult",
+        "bytes": 1885,
+        "sha256": "a638752e620bc3c81516f9a7d4c9ad233bfb317e83f05469cbb917782ca6fc55"
+      },
+      {
+        "kind": "privateNativeReview",
+        "bytes": 15793,
+        "sha256": "7dbe207cceab67e1a479f945f9fdf8aed34462b8e3945f0213f751198bb865d5"
+      },
+      {
+        "kind": "publicNativeReview",
+        "bytes": 7849,
+        "sha256": "639151808cc67eb0b750dcd1ceba1e4542ace6f0740e28fbc1a7e64309b07b09"
+      }
+    ],
+    "remoteReportedChecks": 0,
+    "remoteCIPassClaim": false,
+    "completeP03": "OPEN",
+    "historicalPendingCutoffsPreserved": true,
+    "currentAtlasFrameDeliveryEstablished": false
   }
 }

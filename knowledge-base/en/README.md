@@ -21,12 +21,21 @@ Egret connects complex 2D interfaces and lightweight 3D with a rendering/runtime
 | Creation and compatibility | [AI/project interfaces](docs/ai-creation-and-engineering-interfaces.md) |
 | Creation and compatibility | [Spine support](docs/spine-animation-support-and-acceptance.md) |
 | Creation and compatibility | [Legacy migration](docs/legacy-project-migration.md) |
+| Current integration | [Atlas-frame layout](docs/atlas-frame-layout-contract.md) · [Evidence](docs/atlas-frame-layout-evidence.md) |
 | Current integration | [Prepared resource groups](docs/prepared-resource-groups-spec.md) |
 | Current integration | [Real-resource scene](docs/resource-scene-integration.md) |
 | Status and participation | [Capability overview](docs/core-progress.md) |
 | Status and participation | [Changelog](CHANGELOG.md) |
 | Status and participation | [Contributing](https://github.com/cnedwin/Egret_rebuild/blob/main/CONTRIBUTING.md) |
 | Sources | [Acknowledgements](https://github.com/cnedwin/Egret_rebuild/blob/main/ACKNOWLEDGEMENTS.md) |
+
+## Normalized atlas frames — 0.59.0
+
+The **0.59.0 engineering preview candidate** implements normalized single-page atlas frames with the explicit `'trim-rotation-v1'` profile. SpriteSheet and SequenceClip preserve a sprite's logical canvas when transparent margins are removed or pixels are packed clockwise by 90 degrees. Bitmap placement and natural dimensions stay consistent across animation frames; omitted or `undefined` profiles keep the existing rectangle behavior.
+
+The [trimmed-atlas example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/trimmed-atlas-playback/README.md) composes two independent once/loop actors from one immutable clip, with anchors and parent clipping. Read the [layout contract](docs/atlas-frame-layout-contract.md) and [evidence and limits](docs/atlas-frame-layout-evidence.md) for input, ownership and verification details.
+
+At the 2026-10-17 authoring cutoff, SDK behavior, strict consumers and source-boundary checks have accepted results. The separately reviewed desktop Canvas and textured WebGPU runs completed six fresh contexts and 30 full RGBA readbacks, including assigned controls and saved-frame replay after origin retirement. Final publication/prepush checks and 0.59 Git/remote delivery remain pending. Workspace packages remain private 0.0.0; the Host protocol remains 1.0.
 
 ## Prepared resource groups — 0.58.0
 

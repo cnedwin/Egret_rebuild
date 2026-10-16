@@ -20,6 +20,14 @@ The repository contains an executable engineering preview. Display trees, resour
 
 ## Current version
 
+The **0.59.0 engineering preview candidate** implements normalized single-page atlas frames with the explicit `'trim-rotation-v1'` profile. SpriteSheet and SequenceClip preserve a sprite's logical canvas when transparent margins are removed or pixels are packed clockwise by 90 degrees. Bitmap placement and natural dimensions stay consistent across animation frames; omitted or `undefined` profiles keep the existing rectangle behavior.
+
+The [trimmed-atlas example](examples/trimmed-atlas-playback/README.md) composes two independent once/loop actors from one immutable clip, with anchors and parent clipping. Read the [layout contract](knowledge-base/en/docs/atlas-frame-layout-contract.md) and [evidence and limits](knowledge-base/en/docs/atlas-frame-layout-evidence.md) for input, ownership and verification details.
+
+At the 2026-10-17 authoring cutoff, SDK behavior, strict consumers and source-boundary checks have accepted results. The separately reviewed desktop Canvas and textured WebGPU runs completed six fresh contexts and 30 full RGBA readbacks, including assigned controls and saved-frame replay after origin retirement. Final publication/prepush checks and 0.59 Git/remote delivery remain pending. Workspace packages remain private 0.0.0; the Host protocol remains 1.0.
+
+## Prepared resource groups — 0.58.0
+
 Engineering preview **0.58.0** adds `Engine.captureBitmapBindings(scope, targets)` and the erased `BitmapBindingTicket` type. The prepared-outfit example waits for both clothing textures and commits their bindings together. Pending, failed, cancelled and obsolete changes preserve the working outfit; a ticket refuses to overwrite a later caller binding.
 
 Recorded desktop Canvas and WebGPU checks passed six fresh contexts with 54 original RGBA readbacks, including separate old-layer controls, genuine mouse selection, animation boundaries and shutdown with original reads still pending. This is finite desktop evidence. General dependency manifests, additional content types, full UI, Spine, production hosts, mobile performance and physical-memory acceptance remain open.
@@ -44,6 +52,7 @@ Focused behavior, strict consumers and the recorded desktop Canvas/WebGPU compos
 
 | Version / 版本 | Main change | 主要变化 |
 | --- | --- | --- |
+| 0.59.0 | Normalized trimmed and clockwise90 atlas frames with stable logical dimensions | 标准化裁边与顺时针90度图集帧，保持逻辑尺寸 |
 | 0.58.0 | Atomic multi-Bitmap binding and prepared two-layer outfits | 多 Bitmap 原子绑定与双层组合换装 |
 | 0.57.0 | Real-resource scene composition connecting resources, animation, text and input | 连接资源、动画、文本与输入的真实资源场景组合 |
 | 0.56.0 | Recoverable single-Bitmap resource replacement with latest accepted intent | 可恢复的单 Bitmap 资源替换与最新已接受意图 |

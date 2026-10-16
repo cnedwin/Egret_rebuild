@@ -4,6 +4,14 @@
 
 核心工程通过可运行增量连接显示、资源、动画、输入与宿主执行。本页概述当前接口及后续产品工作，链接的契约说明精确行为与验证范围。
 
+## 标准化图集帧 — 0.59.0 候选
+
+显式 `'trim-rotation-v1'` profile 通过一个擦除的 readonly `AtlasFrameLayout` 类型扩展现有 SpriteSheet 和 SequenceClip 工厂。带透明裁边及顺时针90度打包的 crop 通过 Bitmap、SequencePlayer 和 SequencePlayback 保留原始逻辑画布。两个 frame collector 均以 `M * S` 合成图像放置，parent clip、anchor 和 child 坐标仍使用原 display matrix。默认/undefined profile 保留原矩形路径。完整输入、精确 lease 与所有权规则见[契约](atlas-frame-layout-contract.md)、[证据](atlas-frame-layout-evidence.md)和[示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/trimmed-atlas-playback/README.zh-CN.md)。
+
+经独立审查的十二阶段 SDK `node tools/verify.mjs` 运行通过 **3559/3559 项核心测试**及单独的 **160/160 项 Spine 实验测试**，两套的 failed/cancelled/skipped/todo 均为 **0**。该次运行完成构建、严格消费者和源码边界阶段。另经独立审查的桌面 Canvas 与纹理 WebGPU 运行通过六个全新上下文、30 次零容差完整 RGBA 读回，覆盖 once/loop 时间、持有时间恢复、anchor、parent clip、每后端两个指定突变对照，以及原资源退役后的保存帧重放。当前验证器增加了第十三个图集源码边界阶段；截至本次编写，完整重跑、最终公开内容/prepush、0.59 Git 交付及远端 CI 仍待完成。
+
+此有限增量不关闭更广泛的 P03/P04/P05 工作范围。exporter 导入、多页、pivot/nine-slice 导入、动画资源事务与恢复、controller seek/rate/events、完整 UI、完整 Spine R020/V020、迁移 R008/V006、物理 GPU/移动端行为、内存和性能保持 OPEN。工作区包仍为 private、版本 0.0.0，Host 协议为 1.0。
+
 ## 资源组合准备 — 0.58.0
 
 工程预览 **0.58.0** 增加 `Engine.captureBitmapBindings(scope, targets)` 及擦除类型 `BitmapBindingTicket`。组合换装示例等待两张服装纹理全部就绪，再同时提交两个图层的绑定。请求等待、失败、取消或被后续请求替代时保留可用服装；票据拒绝覆盖调用方之后设置的绑定。
@@ -40,7 +48,7 @@
 | --- | --- | --- |
 | 显示与输入 | DisplayObject/Container、变换与锚点、坐标／bounds、显式命中区域、主鼠标路由与位图按钮。 | [契约与范围](位图按钮契约.md) |
 | 资源 | 类型化引用、共享获取、租约、Scope 释放、获取组、纹理、命名 SpriteSheet 裁剪及可选 PNG Provider；0.56 的可恢复单 Bitmap 替换已有受限行为、类型及桌面渲染证据。 | [获取范围](资源批量获取.md)、[替换规格](位图资源槽规格.md) |
-| 动画 | 显式游戏时间、标量 Tween、图集序列采样及 Engine 时钟序列播放。 | [契约与范围](时钟驱动序列动画契约.md) |
+| 动画 | 显式游戏时间、标量 Tween、图集序列采样及 Engine 时钟序列播放；标准化 trim/顺时针90度帧已有 SDK 及有限桌面 Canvas/WebGPU 证据。 | [播放](时钟驱动序列动画契约.md)、[帧布局](atlas-frame-layout-contract.md) |
 | 二维呈现 | 不可变画面捕获、Canvas/WebGPU 路径、纹理几何／Mesh2D 及各自规格中的 NineSliceBitmap。 | [契约与范围](自有纹理几何与Mesh2D契约.md) |
 | 文字 | 文字栅格编排、非编辑 TextField 及选定 Canvas 文字集成。 | [契约与范围](文字显示TF1契约.md) |
 | 三维 | CPU 几何／矩阵、自有场景画面及选定的显式浏览器网格／场景路径。 | [契约与范围](公共3D场景契约.md) |

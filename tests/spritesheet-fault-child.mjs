@@ -13,8 +13,8 @@ assert.ok(stages.has(stage) && cases.has(caseId) && extra.length === 0, 'SS1_UNI
 const bitmapUrl = new URL('../packages/runtime/dist/Bitmap.js', import.meta.url);
 const sheetUrl = new URL('../packages/runtime/dist/spriteSheet.js', import.meta.url);
 const pins = [
-  [bitmapUrl, 18394, 'a64acde05b3e99f36d1fa82e476bc71109946816aa4a3984e57087535bccdf41'],
-  [sheetUrl, 10813, '654ccff10a7896ee9d008041f099855f7f42663b544017daec2e9b9010a4ba71'],
+  [bitmapUrl, 20300, '473606fd7d65c1c41c1d6bb4625cf5f3f5b2c0fc90adf5e94b80dac4f75a8892'],
+  [sheetUrl, 11792, 'e7cd446abde11eb22e77881768a685067ea2d83ff2a0d10d62de784fefbcd7fd'],
 ];
 function digest(bytes) { return createHash('sha256').update(bytes).digest('hex'); }
 function assertDisk() {
