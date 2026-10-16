@@ -178,9 +178,9 @@ function seqpbRun() {
   }
   if (!/^\s*createSequencePlayback\(scope: Scope, bitmap: Bitmap, clip: SequenceClip, options\?: SequencePlaybackOptions\): SequencePlayback;$/m.test(seqpbRead(root, 'packages/engine/dist/Engine.d.ts').toString('utf8'))) seqpbFail('SEQP_BOUNDARY_ENGINE_METHOD', 'Engine factory declaration changed');
   // Current admitted declaration identities close renamed/extra assembly ports.
-  seqpbPin(root, {"path":"packages/engine/dist/Engine.d.ts","bytes":3328,"sha256":"9904b53a624ab5be83a28c4a906791edf1fd1e8a5cd383bb2bf98d4d510463b3"}, 'SEQP_BOUNDARY_ENGINE_METHOD');
+  seqpbPin(root, {"path":"packages/engine/dist/Engine.d.ts","bytes":3578,"sha256":"2d3861e95f9411f060b7ab0a1febd74ed40e883038f822d4a8df3af0a84cd727"}, 'SEQP_BOUNDARY_ENGINE_METHOD');
   seqpbPin(root, {"path":"packages/engine/dist/sequencePlaybackTypes.d.ts","bytes":798,"sha256":"7670a7b455167beca3aab6729261ac0ad1eb980327e67d13f12132570e67c5cf"}, 'SEQP_BOUNDARY_CANONICAL_TYPES');
-  for (const pin of [{"path":"packages/engine/src/index.ts","bytes":3349,"sha256":"480ade737b53c8f9dba922d9db1c83c7fc0c104e99f11d46623227570c99efd6"},{"path":"packages/engine/dist/index.js","bytes":1196,"sha256":"d34379ae7b19c048f90b23cc97a819a3037dec8a49ef5c4f330a9e3ed7db6192"},{"path":"packages/engine/dist/index.d.ts","bytes":3384,"sha256":"95a6634d04cdfd26da39286b072a2c2095f8c605cc23c075e2c5e574289c3b06"}]) seqpbPin(root, pin, 'SEQP_BOUNDARY_ROOT_INTERFACE_IDENTITY');
+  for (const pin of [{"path":"packages/engine/src/index.ts","bytes":3418,"sha256":"08c8e6b9ea3b1c7d29a753a8f601546e8c3ed428f762d2155edcfad4f1403c9c"},{"path":"packages/engine/dist/index.js","bytes":1196,"sha256":"d34379ae7b19c048f90b23cc97a819a3037dec8a49ef5c4f330a9e3ed7db6192"},{"path":"packages/engine/dist/index.d.ts","bytes":3453,"sha256":"f19924c7a0c6f3ffd3ab0ad56a498b1044dbf6f38e990ecaaba53f7511830323"}]) seqpbPin(root, pin, 'SEQP_BOUNDARY_ROOT_INTERFACE_IDENTITY');
   for (const pin of seqpbPackages) {
     const pkg = JSON.parse(seqpbRead(root, pin.path).toString('utf8'));
     if (/sequencePlayback(?:Types)?/.test(JSON.stringify({ exports: pkg.exports, imports: pkg.imports }))) seqpbFail('SEQP_BOUNDARY_PRIVATE_EXPORT', 'Private sequence leaf became a package entry/port');

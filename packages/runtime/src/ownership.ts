@@ -20,6 +20,10 @@ export interface EngineContext {
     claim(bitmap: Bitmap, lease: AssetLease<Texture>, owner: object): void;
     release(lease: AssetLease<Texture>): void;
     clearIfCurrent(bitmap: Bitmap, expected: object): boolean;
+    captureBatch(targets: readonly Bitmap[]): object;
+    prepareBatch(captured: object, members: readonly AssetLease<Texture>[]): object;
+    commitBatch(captured: object, prepared: object): object;
+    clearBatchIfCurrent(publication: object): void;
   }>) => void;
   assertOpen(): void;
   report(diagnostic: Diagnostic): void;

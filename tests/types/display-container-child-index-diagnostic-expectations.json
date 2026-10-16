@@ -152,8 +152,8 @@
     },
     {
       "path": "packages/engine/dist/Engine.d.ts",
-      "bytes": 3328,
-      "sha256": "9904b53a624ab5be83a28c4a906791edf1fd1e8a5cd383bb2bf98d4d510463b3"
+      "bytes": 3578,
+      "sha256": "2d3861e95f9411f060b7ab0a1febd74ed40e883038f822d4a8df3af0a84cd727"
     },
     {
       "path": "packages/engine/dist/assetGroupTypes.d.ts",
@@ -182,8 +182,8 @@
     },
     {
       "path": "packages/engine/dist/index.d.ts",
-      "bytes": 3384,
-      "sha256": "95a6634d04cdfd26da39286b072a2c2095f8c605cc23c075e2c5e574289c3b06"
+      "bytes": 3453,
+      "sha256": "f19924c7a0c6f3ffd3ab0ad56a498b1044dbf6f38e990ecaaba53f7511830323"
     },
     {
       "path": "packages/engine/dist/sequencePlaybackTypes.d.ts",
@@ -352,8 +352,8 @@
     },
     {
       "path": "packages/runtime/dist/ownership.d.ts",
-      "bytes": 3832,
-      "sha256": "9e30b94122df22e2039b42a0ef1f64a99c68f1373ed05660848f4d7d257c3ea4"
+      "bytes": 4100,
+      "sha256": "2fbb46cdf1aa876df0593e93b3164e73622bcf0bc6772b64c4316a3b204d30c1"
     },
     {
       "path": "packages/runtime/dist/sequenceClip.d.ts",

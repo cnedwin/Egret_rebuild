@@ -29,7 +29,7 @@ if(!samePhysicalPath(root,declaredRoot,platform))brsbFail('BRS_BOUNDARY_INPUT','
 const seen=new Map();
 function read(file){logicalPath(file);const pin=fingerprintFile(root,file),raw=readFileSync(path.join(root,file));if(pin.bytes!==raw.length||pin.sha256!==hash(raw))brsbFail('BRS_BOUNDARY_SOURCE_DRIFT',file);seen.set(file,pin);return raw;}
 function pinCheck(pin,code){const raw=read(pin.path);if(raw.length!==pin.bytes||hash(raw)!==pin.sha256)brsbFail(code,'Changed complete source identity: '+pin.path);}
-const policyPin={"path":"tools/bitmap-resource-slot-policy.json","bytes":14780,"sha256":"36563946a759ed8ab49f48abdec1dda4a63d22c3c1a6203d37c2cddc326b2c38"};
+const policyPin={"path":"tools/bitmap-resource-slot-policy.json","bytes":14780,"sha256":"d5333d5bcdc5c2360c4470da25e53742b7a435a60ccc1a05b2a7669c2e6ff9ac"};
 pinCheck(policyPin,'BRS_BOUNDARY_POLICY_IDENTITY');
 const policy=JSON.parse(read(policyPin.path));
 const brsbTypes=policy.types;

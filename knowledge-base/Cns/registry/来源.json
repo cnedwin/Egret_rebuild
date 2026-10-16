@@ -6299,6 +6299,371 @@
         "performanceAcceptance": false,
         "historicalCutoffsPreserved": true
       }
+    },
+    {
+      "id": "S112",
+      "type": "first_party_prepared_resource_groups",
+      "researchCheckedAt": "2026-10-16",
+      "requirementIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R007"
+      ],
+      "title": "0.58.0 位图绑定票据与预备换装",
+      "scope": "第一方同步位图绑定票据，以及基于既有 AssetGroup 所有权、采用最新请求规则并明确显示与回收屏障的预备换装应用。",
+      "limit": "本轮有限位图与换装范围不代表通用清单、未来 3D 预备、完整 P03、UI、Spine、迁移、物理内存、临时 GPU 分配或目标设备性能验收完成。",
+      "doc": "Cns/docs/prepared-resource-groups-spec.md",
+      "license": "Apache-2.0",
+      "firstPartySourcePaths": [
+        "examples/prepared-resource-groups/application.mjs",
+        "examples/prepared-resource-groups/coordinator.mjs",
+        "examples/prepared-resource-groups/dependencies.mjs",
+        "examples/prepared-resource-groups/index.html",
+        "examples/prepared-resource-groups/main.mjs",
+        "examples/prepared-resource-groups/session.mjs",
+        "examples/prepared-resource-groups/source.mjs",
+        "packages/engine/src/bitmapBindingTicket.ts",
+        "packages/engine/src/Engine.ts",
+        "packages/engine/src/index.ts",
+        "packages/runtime/src/Bitmap.ts",
+        "packages/runtime/src/ownership.ts",
+        "tests/bitmap-binding-ticket-authority-unit.test.mjs",
+        "tests/bitmap-binding-ticket-heldout.test.mjs",
+        "tests/bitmap-binding-ticket.test.mjs",
+        "tests/prepared-outfit-coordinator-heldout.test.mjs",
+        "tests/prepared-outfit-coordinator.test.mjs",
+        "tests/prepared-outfit-source-options.test.mjs",
+        "tests/prepared-outfit-source.test.mjs",
+        "tests/prepared-resource-scene-session.test.mjs",
+        "tests/project-boundaries.test.mjs",
+        "tests/spritesheet-fault-child.mjs",
+        "tests/spritesheet-fault.test.mjs",
+        "tests/types/bitmap-binding-ticket-negative.ts",
+        "tests/types/bitmap-binding-ticket-positive.ts",
+        "tools/bitmap-binding-ticket-boundary.mjs",
+        "tools/bitmap-binding-ticket-types.mjs",
+        "tools/bitmap-resource-slot-boundary.mjs",
+        "tools/browser-png-boundary.mjs",
+        "tools/check-types.mjs",
+        "tools/prepared-resource-groups/native-fixture.mjs",
+        "tools/prepared-resource-groups/oracle.mjs",
+        "tools/prepared-resource-groups/prepare-native-config.mjs",
+        "tools/sequence-playback-boundary.mjs",
+        "tools/spritesheet-boundary.mjs",
+        "tools/verify-prepared-resource-groups.mjs",
+        "tools/verify.mjs",
+        "tests/prepared-resource-oracle.test.mjs"
+      ],
+      "newRuntimeCodeDependency": false,
+      "verification": {
+        "engineeringPreview": "0.58.0",
+        "sourceId": "S112",
+        "deliverableId": "V063",
+        "date": "2026-10-16",
+        "status": "IN_PROGRESS_AT_RECORDED_CUTOFF",
+        "scopeStatus": "PARTIAL_BITMAP_TICKET_PREPARED_OUTFIT",
+        "contract": "Cns/docs/prepared-resource-groups-spec.md",
+        "evidence": "Cns/docs/prepared-resource-groups-evidence.md",
+        "example": "https://github.com/cnedwin/Egret_rebuild/blob/main/examples/prepared-resource-groups/README.md",
+        "newRuntimeCodeDependency": false,
+        "defaultPublicAPIChanged": true,
+        "newSDKRuntimeExports": 0,
+        "newSDKTypeExports": 1,
+        "engineMethodsAdded": [
+          "captureBitmapBindings"
+        ],
+        "erasedTypesAdded": [
+          "BitmapBindingTicket"
+        ],
+        "defaultValueExports": 39,
+        "newPackageSubpaths": 0,
+        "hostProtocolChanged": false,
+        "packageVersionUnchanged": "0.0.0",
+        "sourceAndBehavior": {
+          "status": "PASS_RECORDED_FOCUSED_SCOPES_ONLY",
+          "records": [
+            {
+              "facts": {
+                "receiptIdentity": {
+                  "bytes": 3044,
+                  "sha256": "264594f9b093dfac4bbc953608e9ced858c1b585030ddad2c0ae81a0f6d42f6d"
+                },
+                "tests": 39,
+                "pass": 39,
+                "sourceReviewIdentity": {
+                  "bytes": 2998,
+                  "sha256": "7eadb3f0e87ce2eef7a6f4d2e9b1d4282f8b98bc9ebc09ca6a7612bb798c68f8"
+                }
+              },
+              "status": "PASS_BOUNDED",
+              "kind": "binding-ticket",
+              "evidenceIds": [
+                "BbtActual",
+                "SdkSourceReview"
+              ]
+            },
+            {
+              "facts": {
+                "tests": 17,
+                "reviewIdentity": {
+                  "bytes": 7011,
+                  "sha256": "3f2065b82a8650e8a32010d0140c66fb91a626bc0d59d1fe8b948958fa6365e1"
+                },
+                "pass": 17
+              },
+              "status": "PASS_BOUNDED",
+              "kind": "outfit-coordinator",
+              "evidenceIds": [
+                "CoordinatorActual"
+              ]
+            },
+            {
+              "facts": {
+                "tests": 18,
+                "reviewIdentity": {
+                  "bytes": 2966,
+                  "sha256": "e8f67a35afcafa12bde4ac1dfb5325e49f2a06df3263c9d95fad3c01f900854a"
+                },
+                "pass": 18
+              },
+              "status": "PASS_BOUNDED",
+              "kind": "outfit-source",
+              "evidenceIds": [
+                "SourceActual"
+              ]
+            },
+            {
+              "facts": {
+                "receiptIdentity": {
+                  "bytes": 1946,
+                  "sha256": "71f0aa8a57bf2323ffd06ea0683ec91dbc59ebc831e38228d7ca194fd93ba0e1"
+                },
+                "tests": 10,
+                "pass": 10,
+                "sourceReviewIdentity": {
+                  "bytes": 4336,
+                  "sha256": "166eea9b6d43ced8afb2ae3f75344e539c2f22f9b392558985363fdc89652d97"
+                }
+              },
+              "status": "PASS_BOUNDED",
+              "kind": "scene-session",
+              "evidenceIds": [
+                "SessionActual",
+                "SessionSourceReview"
+              ]
+            },
+            {
+              "facts": {
+                "receiptIdentity": {
+                  "bytes": 1942,
+                  "sha256": "4dde5afc3ca81728bc0c584a465300a8f68ba862fe02bc2c904e6ab1bddf09cb"
+                },
+                "tests": 10,
+                "nativeAcceptance": false,
+                "pass": 10,
+                "sourceReviewIdentity": {
+                  "bytes": 1110,
+                  "sha256": "7827c3b8929d44aaeb64c20c3498bf9c02b5f16bb57e725df640aa84954ddb69"
+                }
+              },
+              "status": "PASS_VERIFIER_UNITS_ONLY",
+              "kind": "independent-oracle-synthetic-units",
+              "evidenceIds": [
+                "OracleActual",
+                "PublicOracleSourceReview"
+              ]
+            },
+            {
+              "facts": {
+                "assignedPolicyControls": 8,
+                "newTicketNegativeDiagnosticTuples": 27,
+                "freshPolicyBaselines": 8,
+                "dataReviewIdentity": {
+                  "bytes": 5522,
+                  "sha256": "5fd1c7a87a5914302ba0656cf5eb68620755551946f3a197a00a5bbd736e09a1"
+                },
+                "policyReviewIdentity": {
+                  "bytes": 5643,
+                  "sha256": "b065388fe2fe4f2112499735e43f7d4f859d4bf21e00a783a11605b9fdec63bb"
+                },
+                "retainedTypeDrivers": 8
+              },
+              "status": "PASS_BOUNDED",
+              "kind": "strict-and-source-policy",
+              "evidenceIds": [
+                "PolicyActual",
+                "RetainedDataReview"
+              ]
+            }
+          ]
+        },
+        "nativeActual": {
+          "status": "PASS_FINITE_DESKTOP_SCOPES_ONLY",
+          "records": [
+            {
+              "facts": {
+                "cases": 8,
+                "lateFontAddAfter": 0,
+                "reviewIdentity": {
+                  "bytes": 5356,
+                  "sha256": "a736eef75fb6174428fba2e47bebb3bda8cf390b869e6be3878321ad670635a9"
+                },
+                "pass": 8,
+                "lateFontAddBefore": 1,
+                "freshProviderBaselines": 8
+              },
+              "status": "PASS_BOUNDED_NATIVE_PAIR",
+              "kind": "dependency-font-close-regression",
+              "evidenceIds": [
+                "DependencyNativeReview"
+              ]
+            },
+            {
+              "facts": {
+                "contexts": 6,
+                "ordinaryContexts": 2,
+                "negativeContexts": 4,
+                "rawFrames": 54,
+                "ordinaryContextFrames": 34,
+                "negativeContextFrames": 20,
+                "savedRGBABytes": 5308416,
+                "literalPointsPerFrame": 49,
+                "pointComparisons": 2646,
+                "glyphPixelsPerFrame": 1024,
+                "glyphChangedChannels": 0,
+                "assignedWrongLayerContexts": 4,
+                "assignedWrongPointsEach": 9,
+                "trustedRightSelections": 6,
+                "retiredOwnerGroups": 12,
+                "pendingOriginalTasks": 0,
+                "physicalMemoryAcceptance": false,
+                "phonePerformanceAcceptance": false,
+                "reviewIdentity": {
+                  "bytes": 15793,
+                  "sha256": "7dbe207cceab67e1a479f945f9fdf8aed34462b8e3945f0213f751198bb865d5"
+                }
+              },
+              "status": "PASS_FINITE_MATRIX",
+              "kind": "retained-scene-native-matrix",
+              "evidenceIds": [
+                "SceneNativeReview"
+              ]
+            },
+            {
+              "facts": {
+                "contexts": 6,
+                "ordinaryContexts": 2,
+                "negativeContexts": 4,
+                "rawFrames": 54,
+                "ordinaryContextFrames": 34,
+                "negativeContextFrames": 20,
+                "savedRGBABytes": 5308416,
+                "literalPointsPerFrame": 49,
+                "pointComparisons": 2646,
+                "glyphPixelsPerFrame": 1024,
+                "glyphChangedChannels": 0,
+                "assignedWrongLayerContexts": 4,
+                "assignedWrongPointsEach": 9,
+                "trustedRightSelections": 6,
+                "retiredOwnerGroups": 12,
+                "pendingOriginalTasks": 0,
+                "physicalMemoryAcceptance": false,
+                "phonePerformanceAcceptance": false,
+                "reviewIdentity": {
+                  "bytes": 7849,
+                  "sha256": "639151808cc67eb0b750dcd1ceba1e4542ace6f0740e28fbc1a7e64309b07b09"
+                }
+              },
+              "status": "PASS_FINITE_MATRIX_REPRODUCTION",
+              "kind": "public-tool-native-reproduction",
+              "evidenceIds": [
+                "PublicReplayReview",
+                "PublicToolSourceReview"
+              ]
+            }
+          ]
+        },
+        "publicSourceBilingualReview": {
+          "status": "APPROVED_EXACT_METADATA_INPUTS",
+          "readingPairs": 8,
+          "reviewedPairs": 8,
+          "changedOrNewPairs": 8,
+          "unchangedReviewedPairs": 0,
+          "factEnvelope": {
+            "bytes": 19785,
+            "sha256": "0603bcb18c9876238eda4d271e73868acfe62970c1158ed28fbb88ebf1fdfd3c"
+          },
+          "independentReviews": [
+            {
+              "bytes": 3265,
+              "sha256": "c86ab27a5a56d55b18fb095bb38b9f0eede4a5eb24bd69b346a47725beb3d71c"
+            },
+            {
+              "bytes": 5933,
+              "sha256": "c04eb83fe623a3cad25fdfd210f04d6d92a289225527fe76705a9b7cfa50dd23"
+            },
+            {
+              "bytes": 4226,
+              "sha256": "fa88184c46cb17291c4611764e1111fa0735db36934030cf472e01e7fba4511c"
+            },
+            {
+              "bytes": 2998,
+              "sha256": "7eadb3f0e87ce2eef7a6f4d2e9b1d4282f8b98bc9ebc09ca6a7612bb798c68f8"
+            },
+            {
+              "bytes": 5522,
+              "sha256": "5fd1c7a87a5914302ba0656cf5eb68620755551946f3a197a00a5bbd736e09a1"
+            },
+            {
+              "bytes": 5643,
+              "sha256": "b065388fe2fe4f2112499735e43f7d4f859d4bf21e00a783a11605b9fdec63bb"
+            },
+            {
+              "bytes": 4336,
+              "sha256": "166eea9b6d43ced8afb2ae3f75344e539c2f22f9b392558985363fdc89652d97"
+            },
+            {
+              "bytes": 5356,
+              "sha256": "a736eef75fb6174428fba2e47bebb3bda8cf390b869e6be3878321ad670635a9"
+            },
+            {
+              "bytes": 15793,
+              "sha256": "7dbe207cceab67e1a479f945f9fdf8aed34462b8e3945f0213f751198bb865d5"
+            },
+            {
+              "bytes": 7849,
+              "sha256": "639151808cc67eb0b750dcd1ceba1e4542ace6f0740e28fbc1a7e64309b07b09"
+            },
+            {
+              "bytes": 1537,
+              "sha256": "5c4f2eb44112d713f959133365ae179fbfb50ce1a4009cedad88f7b1bfb8911e"
+            },
+            {
+              "bytes": 1110,
+              "sha256": "7827c3b8929d44aaeb64c20c3498bf9c02b5f16bb57e725df640aa84954ddb69"
+            },
+            {
+              "bytes": 5065,
+              "sha256": "d7f256cf6a628153e3a97e9974d24523fe1ad4186fd72dcf63ae2eb912e3707f"
+            }
+          ]
+        },
+        "fullPrepush": "PENDING_AT_METADATA_CUTOFF",
+        "mandatoryHooks": "PENDING_AT_METADATA_CUTOFF",
+        "newGitDelivery": "PENDING_AT_METADATA_CUTOFF",
+        "remoteCIPassClaim": false,
+        "fullP03": "OPEN",
+        "p03A1GeneralManifest": "OPEN",
+        "p03A3Future3D": "OPEN",
+        "generalGameUI": "OPEN",
+        "fullSpineR020V020": "OPEN",
+        "migrationR008V006": "OPEN",
+        "physicalDeviceAcceptance": false,
+        "performanceAcceptance": false,
+        "physicalResidentAndTemporaryGpuBytes": "UNMEASURED",
+        "historicalCutoffsPreserved": true
+      }
     }
   ],
   "spineF1ClockPortableReplaySuccessor": {

@@ -82,7 +82,7 @@ function prepareTypeFixture({root}) {
     'packages/engine/tests/geometry-contract-types.ts',
     'packages/engine/tests/profile-contract-types.ts',
     'package.json','pnpm-lock.yaml','tsconfig.base.json',
-    'tools/check-types.mjs','tools/sequence-playback-types.mjs','tools/bitmap-resource-slot-types.mjs',
+    'tools/check-types.mjs','tools/sequence-playback-types.mjs','tools/bitmap-resource-slot-types.mjs','tools/bitmap-binding-ticket-types.mjs',
     'tools/spritesheet-types.mjs','tools/nine-slice-bitmap-types.mjs','tools/display-container-remove-children-types.mjs','tools/display-container-child-index-types.mjs','tools/display-container-add-child-at-types.mjs','tools/display-anchor-offsets-types.mjs','tools/bitmap-button-types.mjs','tools/linear-layout-types.mjs','tools/lib/file-identity.mjs',
   ]) copy(relative);
 

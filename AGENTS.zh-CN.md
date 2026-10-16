@@ -42,7 +42,7 @@
 ## 位图资源替换边界
 
 - 已构建 `@egret/engine` 根入口增加 `Engine.createBitmapResourceSlot(scope, bitmap)`，以及准确两个擦除类型 `BitmapResourceSlot` 与 `BitmapResourceSlotState`。保持包依赖图、无 DOM/Node 核心、私有装配 authority 和既有 Host 协议。槽借用初始有效绑定，仅拥有自己获取的新替换租约，只允许最新已接受意图提交。遵循[所选规格](knowledge-base/Cns/docs/位图资源槽规格.md)、[证据记录](knowledge-base/Cns/docs/位图资源槽核验.md)及[公共示例](examples/bitmap-resource-slot/README.zh-CN.md)。
-- `tests/bitmap-resource-slot-authority-unit.test.mjs` 与 `tests/bitmap-resource-slot-authority-supplement.test.mjs` 是限定 UNIT 夹具，可通过已构建公共 `@egret/runtime` 契约与真实公共 runtime 对象构造自定义 context，并观察该构造登记的操作；外部目标对照使用真实公共 Engine。这项权限不增加 SDK 私有导入、加载 hook、原型拦截或产品导出，普通公共行为夹具及示例继续使用公共 SDK。
+- `tests/bitmap-resource-slot-authority-unit.test.mjs`、`tests/bitmap-binding-ticket-authority-unit.test.mjs` 与 `tests/bitmap-resource-slot-authority-supplement.test.mjs` 是限定 UNIT 夹具，可通过已构建公共 `@egret/runtime` 契约与真实公共 runtime 对象构造自定义 context，并观察该构造登记的操作；外部目标对照使用真实公共 Engine。这项权限不增加 SDK 私有导入、加载 hook、原型拦截或产品导出，普通公共行为夹具及示例继续使用公共 SDK。
 - `tools/bitmap-resource-slot-types.mjs` 与 `tools/bitmap-resource-slot-boundary.mjs` 的专用 strict 和源码边界义务须与既有完整检查共同执行。冻结实际未抑制的诊断元组；每项指定类型／策略变异都须先取得全新完整基线，再单独观察拒绝。保持准确的选定公共类型、私有捕获／提交／清理桥、源码／产物身份及已声明依赖边界。
 - 原生组合须先独立审阅完整输入闭包快照，再由 `tools/verify-bitmap-resource-slot.mjs` 使用固定 Playwright 1.62.1、默认 Edge 且无额外 flags 执行。保留原始 import-map 反例、完整普通上下文及独立错误颜色上下文、未修改 RGBA 原始产物与清理记录。像素比较范围为六个字面采样点，完整帧留存用于复核。源码、UNIT、行为、strict／策略、浏览器、完整门禁与 PR/Main 交付分别记状态；完整 UI、Spine R020/V020 和迁移 R008/V006 保持 OPEN。
 <!-- BRS-0.56.0-POLICY-END -->

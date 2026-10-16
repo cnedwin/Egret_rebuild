@@ -1,0 +1,555 @@
+{
+  "schemaVersion": 1,
+  "kind": "BITMAP_BINDING_TICKET_FINITE_INTERFACE_POLICY",
+  "source": "First-party P03 finite successor of the retained BitmapResourceSlot policy. Pre-0.58 public root/Engine declaration identities were captured before implementation; five current reviewed source paths and their actual build emissions are selected explicitly. No product module is evaluated.",
+  "types": [
+    "BitmapBindingTicket"
+  ],
+  "rootValues": [
+    "AssetLease",
+    "AssetManager",
+    "BYTE_READER_LIMITS",
+    "BYTE_WRITER_LIMITS",
+    "Bitmap",
+    "ByteReader",
+    "ByteWriter",
+    "CancellationController",
+    "DisplayObject",
+    "DisplayObjectContainer",
+    "EgretError",
+    "Engine",
+    "Event",
+    "EventDispatcher",
+    "Graphics",
+    "IMAGE_LIMITS_2D",
+    "Mesh2D",
+    "NineSliceBitmap",
+    "Scope",
+    "SequencePlayer",
+    "Sprite",
+    "Stage",
+    "TEXTURED_FRAME_PROFILE_2D",
+    "Texture",
+    "copyImageData2DPixels",
+    "createAssetRef",
+    "createAssetType",
+    "createEngine",
+    "createEngineForProfile",
+    "createEventType",
+    "createImageData2D",
+    "createNineSliceGeometry2D",
+    "createSequenceClip",
+    "createSpriteSheet",
+    "createTexture",
+    "createTexturedGeometry2D",
+    "isImageData2D",
+    "isTexture",
+    "isTexturedGeometry2D"
+  ],
+  "packages": [
+    {
+      "path": "packages/contracts/package.json",
+      "bytes": 179,
+      "sha256": "fceaef2ae55a77347ce9f99acd2165d36e991d89c76bf0480ff5048f3e7a94a1"
+    },
+    {
+      "path": "packages/runtime/package.json",
+      "bytes": 327,
+      "sha256": "b9294c479d38614dd8866adcd8775f5d6f43c787d9b08c8ef54371e426cb5032"
+    },
+    {
+      "path": "packages/engine/package.json",
+      "bytes": 1567,
+      "sha256": "e01d48a51c0845783afeec93ffcc7674c7980797cd6a9c58cc74ec3f13d2e0c5"
+    },
+    {
+      "path": "packages/project/package.json",
+      "bytes": 397,
+      "sha256": "295e6bc8d81a4647f5b99355ea27879563ced216fa2af406c65cc78b95f40945"
+    }
+  ],
+  "configurations": [
+    {
+      "path": "tsconfig.base.json",
+      "bytes": 446,
+      "sha256": "b7a31fb9f93a93e20bfdcf33c135acb45cb3a6895a8b3e7006bd85214ddc1008"
+    },
+    {
+      "path": "tsconfig.json",
+      "bytes": 369,
+      "sha256": "d9253848fbde9041d0f7540553dbabc7f723856e7f4513358d41aa0384fab0ef"
+    },
+    {
+      "path": "packages/contracts/tsconfig.json",
+      "bytes": 135,
+      "sha256": "65830141c9e37d6d5a604ae796c5fe8b9258040f9e1f29547c0b238829b989d6"
+    },
+    {
+      "path": "packages/runtime/tsconfig.json",
+      "bytes": 181,
+      "sha256": "ed31ec963ca62cee11d41071686c8a3dc58554155e120f52d1747254087f1bac"
+    },
+    {
+      "path": "packages/engine/tsconfig.json",
+      "bytes": 207,
+      "sha256": "ac07062d5460bb112739e3ef98e2f16f7479b1f4a18c7add69c46c2880ac68a4"
+    },
+    {
+      "path": "packages/engine/tsconfig.rendering.json",
+      "bytes": 307,
+      "sha256": "f5a7e4fe1d79c140d9472417b8ddfbd0104929a982cdf61dae247735f1b6f13a"
+    },
+    {
+      "path": "packages/engine/tsconfig.web.json",
+      "bytes": 356,
+      "sha256": "c1db022356fde98656725aff6d5e795d8a54bed48046fecb49b33c3c73f2bea3"
+    },
+    {
+      "path": "packages/project/tsconfig.json",
+      "bytes": 217,
+      "sha256": "77bce36f3e9727b65bad73927abbf5ef3391453d2ff407f2740e4f7c83783567"
+    }
+  ],
+  "stableEntries": [
+    {
+      "path": "packages/contracts/src/index.ts",
+      "bytes": 1585,
+      "sha256": "75d513766f2d2087ec0a07f097dff7abf5739289f3f9d0bf0e372576467a94c5"
+    },
+    {
+      "path": "packages/contracts/dist/index.js",
+      "bytes": 304,
+      "sha256": "cd9227c66a8fc34729ecb9a4e462fd432fe5b9be76dc25950f44f3c3725ba95c"
+    },
+    {
+      "path": "packages/contracts/dist/index.d.ts",
+      "bytes": 1619,
+      "sha256": "b714fec938e235591ddfadc53fa72ba183aaea506267aadaebe5abe65e22c10f"
+    },
+    {
+      "path": "packages/runtime/src/index.ts",
+      "bytes": 2951,
+      "sha256": "b6762fbdfe804da27a3d36caba9642cf763da2e9e3fb6bdacfb28a941fb164a9"
+    },
+    {
+      "path": "packages/runtime/dist/index.js",
+      "bytes": 1620,
+      "sha256": "4fd1a98e92b80394a74fe547db1aef39cf663619b61bc5d03be4499d09146eb3"
+    },
+    {
+      "path": "packages/runtime/dist/index.d.ts",
+      "bytes": 2986,
+      "sha256": "1293ef5b07c5099629e235627099f2646c9e6b2d0c786909bd35a2d0eef4c666"
+    },
+    {
+      "path": "packages/runtime/src/text/index.ts",
+      "bytes": 172,
+      "sha256": "550f5349821f81ed9257780a1e4b5a409afe52e370c90a5fef6334ec7a06191f"
+    },
+    {
+      "path": "packages/runtime/dist/text/index.js",
+      "bytes": 172,
+      "sha256": "9c68180bcfbbcc01fb762501f660ad8e61da9929799c5b55e7518382c764e7ab"
+    },
+    {
+      "path": "packages/runtime/dist/text/index.d.ts",
+      "bytes": 207,
+      "sha256": "04cdff5643d9a816ee0c396158533c1d082968853933cd939838de309dfb259d"
+    },
+    {
+      "path": "packages/engine/web/webgpu.ts",
+      "bytes": 451,
+      "sha256": "84a69d7c3de60a5e3f83cd0d31cb6cd0bcabdebe5553a89abe0fb3f07540c3cb"
+    },
+    {
+      "path": "packages/engine/dist/web/webgpu.js",
+      "bytes": 190,
+      "sha256": "ae83c0c5f2cb2797e81a72ceaac2b7b19060a985fb3bc201b264881a34e62f31"
+    },
+    {
+      "path": "packages/engine/dist/web/webgpu.d.ts",
+      "bytes": 409,
+      "sha256": "d2d9e0f5d317dd8ff2a1c536a4fb9c68b0b068da137492daa1e93bddeacc2b8e"
+    },
+    {
+      "path": "packages/engine/rendering/scene3d.ts",
+      "bytes": 2176,
+      "sha256": "dc10f0cec74891a7a9e8fa67427eeeef6e5ac02012d57e1eee213ed9daad7ca3"
+    },
+    {
+      "path": "packages/engine/dist/rendering/scene3d.js",
+      "bytes": 1324,
+      "sha256": "4d71aed1486089f3da2c59fcb3d81b8067008c63d1565e89b9d3f74d419b247c"
+    },
+    {
+      "path": "packages/engine/dist/rendering/scene3d.d.ts",
+      "bytes": 1275,
+      "sha256": "4efe7c389cb1e312124984b6a6b8ed02115a2a131a937e0f83c70f06406d5c3e"
+    },
+    {
+      "path": "packages/engine/web/scene3d.ts",
+      "bytes": 1484,
+      "sha256": "f1e659b0eee592caf9eef33974e5468c802884d251c933c7df9ade108fb2d7b3"
+    },
+    {
+      "path": "packages/engine/dist/web/scene3d.js",
+      "bytes": 471,
+      "sha256": "84c56083682a75cad68c065da06700cc18d448278144f130411d709fdc7e6f4b"
+    },
+    {
+      "path": "packages/engine/dist/web/scene3d.d.ts",
+      "bytes": 1280,
+      "sha256": "e2533624b4e0035d837e50bc963e1e39e665685daafa5ca1577d894b15085416"
+    },
+    {
+      "path": "packages/engine/web/index.ts",
+      "bytes": 122,
+      "sha256": "1c06c610493ff706ed07983a2bdd826aaf8a2b3af8c88563ad99e1324f2a7e4e"
+    },
+    {
+      "path": "packages/engine/dist/web/index.js",
+      "bytes": 85,
+      "sha256": "5df04a30354456e0d8a316ba156a4a8b9b43f5ff7c8601ac2e0b41af4c7fd27d"
+    },
+    {
+      "path": "packages/engine/dist/web/index.d.ts",
+      "bytes": 157,
+      "sha256": "8633bffa640fd23f9c3a6b6c1683ba447ea875e5822ddc9cc5cbd265316f0300"
+    },
+    {
+      "path": "packages/engine/src/text.ts",
+      "bytes": 985,
+      "sha256": "d52c84ce6a50057d13c95291b81a120bb57bd6507ba9b237693aeaa9f84f8175"
+    },
+    {
+      "path": "packages/engine/dist/text.js",
+      "bytes": 227,
+      "sha256": "7259c2f8f859bc5dd8a17055f0be1b906652fbd47e6965dedbfb96bb25236964"
+    },
+    {
+      "path": "packages/engine/dist/text.d.ts",
+      "bytes": 1038,
+      "sha256": "44cc298f7bf35cce45cea088c81b1e5902055fb4463f3b701723de4fe9100e5a"
+    },
+    {
+      "path": "packages/engine/web/input.ts",
+      "bytes": 442,
+      "sha256": "4c90ee48e9228cfab06a45235587e9337118e9a4391a2975e9e6f6b44657fdab"
+    },
+    {
+      "path": "packages/engine/dist/web/input.js",
+      "bytes": 228,
+      "sha256": "e9279a344270805e83bddd7afdacbe499d7e5a88b305a852301dd168a866eb4b"
+    },
+    {
+      "path": "packages/engine/dist/web/input.d.ts",
+      "bytes": 477,
+      "sha256": "cf4ffaea56d4e80feb4b41f306ab4a9883e385c0689499b66dc080a2f7e1a916"
+    },
+    {
+      "path": "packages/engine/web/text.ts",
+      "bytes": 161,
+      "sha256": "f80a1cc204922ca45c180fb82f3860522852108922af25a200df3c27c0654047"
+    },
+    {
+      "path": "packages/engine/dist/web/text.js",
+      "bytes": 193,
+      "sha256": "d128297057cbd480b05d25a65a982be3d1d72da47fee51cabb230d8d1db5b81b"
+    },
+    {
+      "path": "packages/engine/dist/web/text.d.ts",
+      "bytes": 195,
+      "sha256": "ba992555448590fbe7bc6777a367f68c71e4ebcbd6d3d34c5999403f204eafe1"
+    },
+    {
+      "path": "packages/project/src/index.ts",
+      "bytes": 932,
+      "sha256": "95f833ab8c6b93e4b7eb33a0d403c73142648a36b2736a159407bda3eeb6ed2e"
+    },
+    {
+      "path": "packages/project/dist/index.js",
+      "bytes": 390,
+      "sha256": "302a10921ab9ed63d6601738650a845b4219ac25c505d8b669e3ec6eff309710"
+    },
+    {
+      "path": "packages/project/dist/index.d.ts",
+      "bytes": 804,
+      "sha256": "f3cf8e24297a0fb50c3d01b002b563c9c3e6f06fbe925d5233fcf7bf7ba53217"
+    },
+    {
+      "path": "packages/project/src/spine/index.ts",
+      "bytes": 444,
+      "sha256": "658bffaa24a5651cb42923e4222307ac841389441a1082c67934363b3d2b8c36"
+    },
+    {
+      "path": "packages/project/dist/spine/index.js",
+      "bytes": 232,
+      "sha256": "d559e5dbf5a9373ace8bc26ea1dbebbc8afa67439fc62a85eefb17a2c50d373e"
+    },
+    {
+      "path": "packages/project/dist/spine/index.d.ts",
+      "bytes": 351,
+      "sha256": "ef6a841b06f8e69e2db5cba87ef3030e7f43ca46c087de3764c136bb334de88a"
+    },
+    {
+      "path": "packages/engine/src/layout.ts",
+      "bytes": 5432,
+      "sha256": "64227cd76bda5818ff2c257b1c94b2825dac385c915efb77f1ab21153f5d5580"
+    },
+    {
+      "path": "packages/engine/dist/layout.js",
+      "bytes": 5349,
+      "sha256": "7e8b71d24685d3e1ca5109919bad86c1abcc216a551696450f5a79bf336daafd"
+    },
+    {
+      "path": "packages/engine/dist/layout.d.ts",
+      "bytes": 421,
+      "sha256": "68e15d413ec3a4b1bdf50459cd4dd5b91cfc74ea141fa6a0eb16767cab696e37"
+    },
+    {
+      "path": "packages/engine/web/image.ts",
+      "bytes": 358,
+      "sha256": "beb530b0351e1c235ca75a27a831e0df491d6be7dc057ba6c6eca09492280359"
+    },
+    {
+      "path": "packages/engine/dist/web/image.js",
+      "bytes": 234,
+      "sha256": "28c0f728e5a1cdf35414806409623500267376b19a4a06f296310ee4d674d9c3"
+    },
+    {
+      "path": "packages/engine/dist/web/image.d.ts",
+      "bytes": 346,
+      "sha256": "11e0348e549ed825d0c7e00c5864d1df9a2f24fa4ab2cbf7c43ad66e3d26c0ca"
+    }
+  ],
+  "entries": [
+    {
+      "package": "contracts",
+      "entry": ".",
+      "source": "packages/contracts/src/index.ts",
+      "js": "packages/contracts/dist/index.js",
+      "declaration": "packages/contracts/dist/index.d.ts"
+    },
+    {
+      "package": "runtime",
+      "entry": ".",
+      "source": "packages/runtime/src/index.ts",
+      "js": "packages/runtime/dist/index.js",
+      "declaration": "packages/runtime/dist/index.d.ts"
+    },
+    {
+      "package": "runtime",
+      "entry": "./text",
+      "source": "packages/runtime/src/text/index.ts",
+      "js": "packages/runtime/dist/text/index.js",
+      "declaration": "packages/runtime/dist/text/index.d.ts"
+    },
+    {
+      "package": "engine",
+      "entry": ".",
+      "source": "packages/engine/src/index.ts",
+      "js": "packages/engine/dist/index.js",
+      "declaration": "packages/engine/dist/index.d.ts"
+    },
+    {
+      "package": "engine",
+      "entry": "./webgpu",
+      "source": "packages/engine/web/webgpu.ts",
+      "js": "packages/engine/dist/web/webgpu.js",
+      "declaration": "packages/engine/dist/web/webgpu.d.ts"
+    },
+    {
+      "package": "engine",
+      "entry": "./scene3d",
+      "source": "packages/engine/rendering/scene3d.ts",
+      "js": "packages/engine/dist/rendering/scene3d.js",
+      "declaration": "packages/engine/dist/rendering/scene3d.d.ts"
+    },
+    {
+      "package": "engine",
+      "entry": "./webgpu/scene3d",
+      "source": "packages/engine/web/scene3d.ts",
+      "js": "packages/engine/dist/web/scene3d.js",
+      "declaration": "packages/engine/dist/web/scene3d.d.ts"
+    },
+    {
+      "package": "engine",
+      "entry": "./web",
+      "source": "packages/engine/web/index.ts",
+      "js": "packages/engine/dist/web/index.js",
+      "declaration": "packages/engine/dist/web/index.d.ts"
+    },
+    {
+      "package": "engine",
+      "entry": "./text",
+      "source": "packages/engine/src/text.ts",
+      "js": "packages/engine/dist/text.js",
+      "declaration": "packages/engine/dist/text.d.ts"
+    },
+    {
+      "package": "engine",
+      "entry": "./web/input",
+      "source": "packages/engine/web/input.ts",
+      "js": "packages/engine/dist/web/input.js",
+      "declaration": "packages/engine/dist/web/input.d.ts"
+    },
+    {
+      "package": "engine",
+      "entry": "./web/text",
+      "source": "packages/engine/web/text.ts",
+      "js": "packages/engine/dist/web/text.js",
+      "declaration": "packages/engine/dist/web/text.d.ts"
+    },
+    {
+      "package": "project",
+      "entry": ".",
+      "source": "packages/project/src/index.ts",
+      "js": "packages/project/dist/index.js",
+      "declaration": "packages/project/dist/index.d.ts"
+    },
+    {
+      "package": "project",
+      "entry": "./spine",
+      "source": "packages/project/src/spine/index.ts",
+      "js": "packages/project/dist/spine/index.js",
+      "declaration": "packages/project/dist/spine/index.d.ts"
+    },
+    {
+      "package": "engine",
+      "entry": "./web/image",
+      "source": "packages/engine/web/image.ts",
+      "js": "packages/engine/dist/web/image.js",
+      "declaration": "packages/engine/dist/web/image.d.ts"
+    },
+    {
+      "package": "engine",
+      "entry": "./layout",
+      "source": "packages/engine/src/layout.ts",
+      "js": "packages/engine/dist/layout.js",
+      "declaration": "packages/engine/dist/layout.d.ts"
+    }
+  ],
+  "oldRootPins": [
+    {
+      "path": "packages/engine/src/index.ts",
+      "bytes": 3349,
+      "sha256": "480ade737b53c8f9dba922d9db1c83c7fc0c104e99f11d46623227570c99efd6"
+    },
+    {
+      "path": "packages/engine/dist/index.js",
+      "bytes": 1196,
+      "sha256": "d34379ae7b19c048f90b23cc97a819a3037dec8a49ef5c4f330a9e3ed7db6192"
+    },
+    {
+      "path": "packages/engine/dist/index.d.ts",
+      "bytes": 3384,
+      "sha256": "95a6634d04cdfd26da39286b072a2c2095f8c605cc23c075e2c5e574289c3b06"
+    }
+  ],
+  "oldEngineDeclarationPin": {
+    "path": "packages/engine/dist/Engine.d.ts",
+    "bytes": 3328,
+    "sha256": "9904b53a624ab5be83a28c4a906791edf1fd1e8a5cd383bb2bf98d4d510463b3"
+  },
+  "workspacePins": [
+    {
+      "path": "package.json",
+      "bytes": 762,
+      "sha256": "b522c278e5f0b4070fec73da2aa336da5c57a4dc189c0855d9e5770f879009bd"
+    },
+    {
+      "path": "pnpm-workspace.yaml",
+      "bytes": 51,
+      "sha256": "f51d3d153b0f3cdbb82186bd1c3eea9066f4e3a15828985952feeee965a75534"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "bytes": 9017,
+      "sha256": "79383095fd4bb2bb4682a12f9651d9a876a01fc6dc1326d09bc0ad587db23084"
+    }
+  ],
+  "selectedProductPins": [
+    {
+      "path": "packages/engine/src/Engine.ts",
+      "bytes": 17918,
+      "sha256": "f95da9e6b179eae6de228d7d2091d1ab4da93a08cfb6d009874bb3c186bcdc7e"
+    },
+    {
+      "path": "packages/engine/dist/Engine.js",
+      "bytes": 15166,
+      "sha256": "f7b7519b7e74500db3cb8b9338937e80a7f730d11c5e9b2eea14dba094e1a058"
+    },
+    {
+      "path": "packages/engine/dist/Engine.d.ts",
+      "bytes": 3578,
+      "sha256": "2d3861e95f9411f060b7ab0a1febd74ed40e883038f822d4a8df3af0a84cd727"
+    },
+    {
+      "path": "packages/engine/src/bitmapBindingTicket.ts",
+      "bytes": 7544,
+      "sha256": "9956863e485077e94f1a0871d0f48e154335e79926aadd8c3b00a7b1140c0158"
+    },
+    {
+      "path": "packages/engine/dist/bitmapBindingTicket.js",
+      "bytes": 6424,
+      "sha256": "e73da40785fee46bced473aefd0ea5d30bff97491f9461072cb56e31779e4b52"
+    },
+    {
+      "path": "packages/engine/dist/bitmapBindingTicket.d.ts",
+      "bytes": 882,
+      "sha256": "74384e0772282729962db5fe7e7c0708296326ff5e03609138ade702299b5aa4"
+    },
+    {
+      "path": "packages/engine/src/index.ts",
+      "bytes": 3418,
+      "sha256": "08c8e6b9ea3b1c7d29a753a8f601546e8c3ed428f762d2155edcfad4f1403c9c"
+    },
+    {
+      "path": "packages/engine/dist/index.js",
+      "bytes": 1196,
+      "sha256": "d34379ae7b19c048f90b23cc97a819a3037dec8a49ef5c4f330a9e3ed7db6192"
+    },
+    {
+      "path": "packages/engine/dist/index.d.ts",
+      "bytes": 3453,
+      "sha256": "f19924c7a0c6f3ffd3ab0ad56a498b1044dbf6f38e990ecaaba53f7511830323"
+    },
+    {
+      "path": "packages/runtime/src/Bitmap.ts",
+      "bytes": 18978,
+      "sha256": "530ffce522288a3ceaaf4d1e16d0700b63facb05f00d810bccb7dc8399898015"
+    },
+    {
+      "path": "packages/runtime/dist/Bitmap.js",
+      "bytes": 18394,
+      "sha256": "a64acde05b3e99f36d1fa82e476bc71109946816aa4a3984e57087535bccdf41"
+    },
+    {
+      "path": "packages/runtime/dist/Bitmap.d.ts",
+      "bytes": 1899,
+      "sha256": "d685c189d20bba4d2e8d468652d6f0fcf056ff0ba2e6c92edabb89f948074608"
+    },
+    {
+      "path": "packages/runtime/src/ownership.ts",
+      "bytes": 9300,
+      "sha256": "9e2c3e2287c84eb9c2e500e55df74f7d9db74159a9bc5747c678fbf25cd27d09"
+    },
+    {
+      "path": "packages/runtime/dist/ownership.js",
+      "bytes": 6389,
+      "sha256": "edddc009cb0ef968341666cf2558fed8a3cfcf6cf16c100a6ff744bb894af490"
+    },
+    {
+      "path": "packages/runtime/dist/ownership.d.ts",
+      "bytes": 4100,
+      "sha256": "2fbb46cdf1aa876df0593e93b3164e73622bcf0bc6772b64c4316a3b204d30c1"
+    }
+  ],
+  "coreClosureMembership": {
+    "source": "packages/engine/src/bitmapBindingTicket.ts",
+    "js": "packages/engine/dist/bitmapBindingTicket.js",
+    "declaration": "packages/engine/dist/bitmapBindingTicket.d.ts",
+    "engineImport": "./bitmapBindingTicket.js",
+    "classification": "ordinary engine core; default root and Canvas closure; no optional GFX authority"
+  }
+}

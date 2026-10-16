@@ -182,8 +182,8 @@
     },
     {
       "path": "packages/engine/dist/Engine.d.ts",
-      "bytes": 3328,
-      "sha256": "9904b53a624ab5be83a28c4a906791edf1fd1e8a5cd383bb2bf98d4d510463b3"
+      "bytes": 3578,
+      "sha256": "2d3861e95f9411f060b7ab0a1febd74ed40e883038f822d4a8df3af0a84cd727"
     },
     {
       "path": "packages/engine/dist/gameClock.d.ts",
@@ -197,8 +197,8 @@
     },
     {
       "path": "packages/engine/dist/index.d.ts",
-      "bytes": 3384,
-      "sha256": "95a6634d04cdfd26da39286b072a2c2095f8c605cc23c075e2c5e574289c3b06"
+      "bytes": 3453,
+      "sha256": "f19924c7a0c6f3ffd3ab0ad56a498b1044dbf6f38e990ecaaba53f7511830323"
     },
     {
       "path": "packages/engine/dist/internal/mouseInputFactoryState.d.ts",
@@ -382,8 +382,8 @@
     },
     {
       "path": "packages/runtime/dist/ownership.d.ts",
-      "bytes": 3832,
-      "sha256": "9e30b94122df22e2039b42a0ef1f64a99c68f1373ed05660848f4d7d257c3ea4"
+      "bytes": 4100,
+      "sha256": "2fbb46cdf1aa876df0593e93b3164e73622bcf0bc6772b64c4316a3b204d30c1"
     },
     {
       "path": "packages/runtime/dist/Scope.d.ts",
@@ -429,6 +429,11 @@
       "path": "packages/engine/dist/bitmapResourceSlot.d.ts",
       "bytes": 1260,
       "sha256": "3432f949713060763588c44e983002c64ea96cdc63b9b2c09e21fbcc63ff489d"
+    },
+    {
+      "path": "packages/engine/dist/bitmapBindingTicket.d.ts",
+      "bytes": 882,
+      "sha256": "74384e0772282729962db5fe7e7c0708296326ff5e03609138ade702299b5aa4"
     }
   ],
   "nativeLibraryPins": [
@@ -867,6 +872,11 @@
           "sha256": "79152aa2f2e6e401c20370d029cdc9317aeeacd98cff785e5b62f5f9c530412a"
         },
         {
+          "path": "packages/engine/dist/bitmapBindingTicket.d.ts",
+          "bytes": 882,
+          "sha256": "74384e0772282729962db5fe7e7c0708296326ff5e03609138ade702299b5aa4"
+        },
+        {
           "path": "packages/engine/dist/bitmapButton.d.ts",
           "bytes": 292,
           "sha256": "ff3c33fb014e1c89756b468050f3ec26b0153f857bd041b111b2fd9e3fc838f1"
@@ -893,8 +903,8 @@
         },
         {
           "path": "packages/engine/dist/Engine.d.ts",
-          "bytes": 3328,
-          "sha256": "9904b53a624ab5be83a28c4a906791edf1fd1e8a5cd383bb2bf98d4d510463b3"
+          "bytes": 3578,
+          "sha256": "2d3861e95f9411f060b7ab0a1febd74ed40e883038f822d4a8df3af0a84cd727"
         },
         {
           "path": "packages/engine/dist/gameClock.d.ts",
@@ -908,8 +918,8 @@
         },
         {
           "path": "packages/engine/dist/index.d.ts",
-          "bytes": 3384,
-          "sha256": "95a6634d04cdfd26da39286b072a2c2095f8c605cc23c075e2c5e574289c3b06"
+          "bytes": 3453,
+          "sha256": "f19924c7a0c6f3ffd3ab0ad56a498b1044dbf6f38e990ecaaba53f7511830323"
         },
         {
           "path": "packages/engine/dist/internal/mouseInputFactoryState.d.ts",
@@ -1093,8 +1103,8 @@
         },
         {
           "path": "packages/runtime/dist/ownership.d.ts",
-          "bytes": 3832,
-          "sha256": "9e30b94122df22e2039b42a0ef1f64a99c68f1373ed05660848f4d7d257c3ea4"
+          "bytes": 4100,
+          "sha256": "2fbb46cdf1aa876df0593e93b3164e73622bcf0bc6772b64c4316a3b204d30c1"
         },
         {
           "path": "packages/runtime/dist/Scope.d.ts",
@@ -1494,6 +1504,11 @@
           "sha256": "79152aa2f2e6e401c20370d029cdc9317aeeacd98cff785e5b62f5f9c530412a"
         },
         {
+          "path": "packages/engine/dist/bitmapBindingTicket.d.ts",
+          "bytes": 882,
+          "sha256": "74384e0772282729962db5fe7e7c0708296326ff5e03609138ade702299b5aa4"
+        },
+        {
           "path": "packages/engine/dist/bitmapResourceSlot.d.ts",
           "bytes": 1260,
           "sha256": "3432f949713060763588c44e983002c64ea96cdc63b9b2c09e21fbcc63ff489d"
@@ -1510,8 +1525,8 @@
         },
         {
           "path": "packages/engine/dist/Engine.d.ts",
-          "bytes": 3328,
-          "sha256": "9904b53a624ab5be83a28c4a906791edf1fd1e8a5cd383bb2bf98d4d510463b3"
+          "bytes": 3578,
+          "sha256": "2d3861e95f9411f060b7ab0a1febd74ed40e883038f822d4a8df3af0a84cd727"
         },
         {
           "path": "packages/engine/dist/gameClock.d.ts",
@@ -1525,8 +1540,8 @@
         },
         {
           "path": "packages/engine/dist/index.d.ts",
-          "bytes": 3384,
-          "sha256": "95a6634d04cdfd26da39286b072a2c2095f8c605cc23c075e2c5e574289c3b06"
+          "bytes": 3453,
+          "sha256": "f19924c7a0c6f3ffd3ab0ad56a498b1044dbf6f38e990ecaaba53f7511830323"
         },
         {
           "path": "packages/engine/dist/layout.d.ts",
@@ -1685,8 +1700,8 @@
         },
         {
           "path": "packages/runtime/dist/ownership.d.ts",
-          "bytes": 3832,
-          "sha256": "9e30b94122df22e2039b42a0ef1f64a99c68f1373ed05660848f4d7d257c3ea4"
+          "bytes": 4100,
+          "sha256": "2fbb46cdf1aa876df0593e93b3164e73622bcf0bc6772b64c4316a3b204d30c1"
         },
         {
           "path": "packages/runtime/dist/Scope.d.ts",
