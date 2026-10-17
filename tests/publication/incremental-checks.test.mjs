@@ -218,8 +218,8 @@ function baselineFixture(){
  const f=maintenanceFixture();
  for(const name of ['contracts','runtime','engine','project'])for(const area of ['src','dist',...(name==='engine'?['web','rendering']:[])])fs.mkdirSync(path.join(f.root,'packages',name,area),{recursive:true});
  const pin=f.pin('packages/project/src/value.ts');
- f.put('tools/spritesheet-boundary.mjs','const graphPins = '+JSON.stringify([pin])+';\nconst configurationPins = [];\nconst ss1AtlasGraphSuccessor = [];\n');
- f.put('tools/browser-png-boundary.mjs','const acceptedSnapshot = '+JSON.stringify({graph:[pin],stablePins:[]})+';\nconst atlasGraphSuccessor = [];\n');
+ f.put('tools/spritesheet-boundary.mjs','const graphPins = '+JSON.stringify([pin])+';\nconst configurationPins = [];\nconst ss1AtlasGraphSuccessor = [];\nconst m11WarmSubmissionGraphSuccessor = [];\n');
+ f.put('tools/browser-png-boundary.mjs','const acceptedSnapshot = '+JSON.stringify({graph:[pin],stablePins:[]})+';\nconst atlasGraphSuccessor = [];\nconst m11WarmSubmissionGraphSuccessor = [];\n');
  f.put('tools/sequence-playback-boundary.mjs','const seqpbPackages = [];\nconst seqpbStableEntries = '+JSON.stringify([pin])+';\nconst seqpbConfigurations = [];\n');
  const extra=f.pin('packages/engine/src/value.ts');
  for(const [stem,kind]of [['bitmap-resource-slot','BITMAP_RESOURCE_SLOT_FINITE_INTERFACE_POLICY'],['bitmap-binding-ticket','BITMAP_BINDING_TICKET_FINITE_INTERFACE_POLICY']]){
@@ -227,7 +227,7 @@ function baselineFixture(){
   f.put('tools/'+stem+'-policy.json',JSON.stringify(policy));f.put('tools/'+stem+'-boundary.mjs','const policyPin = '+JSON.stringify(f.pin('tools/'+stem+'-policy.json'))+';\n');
  }
  f.put('tests/types/atlas-import-diagnostic-expectations.json',JSON.stringify({kind:'ATLAS_IMPORT_ACTUAL_STRICT_DIAGNOSTICS',status:'OBSERVED_FROZEN_TS7_DIAGNOSTICS',sourcePolicy:{modules:[extra],configurationPins:[]}}));
- f.put('tools/atlas-import-boundary.mjs','const inventoryPin = '+JSON.stringify(f.pin('tests/types/atlas-import-diagnostic-expectations.json'))+';\n');
+ f.put('tools/atlas-import-boundary.mjs','const inventoryPin = '+JSON.stringify(f.pin('tests/types/atlas-import-diagnostic-expectations.json'))+';\nconst m11WarmSubmissionGraphSuccessor = [];\n');
  for(const owner of ['tools/spritesheet-boundary.mjs','tools/browser-png-boundary.mjs'])f.put(owner,fs.readFileSync(path.join(f.root,owner),'utf8')+'const imageResidencySuccessors = '+JSON.stringify([{path:extra.path,base:{bytes:0,sha256:'0'.repeat(64)},current:{bytes:extra.bytes,sha256:extra.sha256}}])+';\n');
  return f;
 }
@@ -346,7 +346,7 @@ test('complete graph proposals expose unlisted code separately from named succes
   const file='packages/project/dist/new.js';f.put(file,'export {};\n');
   const p=m.prepareBaselineReview(f.root);assert.equal(p.graphCoverage.length,3);
   for(const group of p.graphCoverage){assert.ok(group.unlisted.some(pin=>pin.path===file));assert.ok(group.baseBinding);}
-  assert.equal(p.declarations.filter(x=>x.binding.includes('Successor')).length,2);
+  assert.equal(p.declarations.filter(x=>x.binding.includes('Successor')).length,5);
  }finally{f.close();}
 });
 
@@ -692,5 +692,31 @@ test('inline fixture drift and missing inputs preserve raw comparisons without d
  const m=await compilerTool(),f=inlineCompilerFixture();try{
   const file='tests/types/spine-import-plan-negative.ts',raw=fs.readFileSync(path.join(f.root,file));
   for(const missing of [false,true]){f.put(file,raw);const p=m.prepareCompilerReview(f.root,{inlinePolicies:true});assert.equal(p.references.find(x=>x.owner==='repository'&&x.path===file).identity,'same');if(missing)fs.unlinkSync(path.join(f.root,file));else f.put(file,Buffer.concat([raw,Buffer.from('\n// drift')]));assert.throws(()=>m.verifyCompilerProposal(f.root,p,{inlinePolicies:true}),/changed/);const fresh=m.prepareCompilerReview(f.root,{inlinePolicies:true});assert.equal(fresh.references.find(x=>x.owner==='repository'&&x.path===file).identity,missing?'missing':'different');}
+ }finally{f.close();}
+});
+
+// UNIT: maintenance records raw declarations; it does not grant source admission.
+test('M1.1 maintenance keeps three explicit successor owners and cross-owner graph coverage',async()=>{
+ const m=await maintenance(),f=baselineFixture();try{
+  const file='packages/engine/web/webgpuBufferPool.ts';f.put(file,'export {};\n');const pin=f.pin(file);
+  const owners=['tools/spritesheet-boundary.mjs','tools/browser-png-boundary.mjs','tools/atlas-import-boundary.mjs'];
+  for(const owner of owners){const raw=fs.readFileSync(path.join(f.root,owner),'utf8');f.put(owner,raw.replace('const m11WarmSubmissionGraphSuccessor = [];','const m11WarmSubmissionGraphSuccessor = '+JSON.stringify([pin])+';'));}
+  const unlisted='packages/engine/web/unregistered.ts';f.put(unlisted,'export {};\n');
+  const p=m.prepareBaselineReview(f.root);
+  assert.equal(p.declarations.length,27);assert.equal(p.policyLinks.length,3);assert.equal(p.successorPairs.length,2);
+  assert.deepEqual(p.declarations.filter(row=>row.binding==='m11WarmSubmissionGraphSuccessor').map(row=>row.owner),owners);
+  for(const [index,coverage]of p.graphCoverage.entries()){
+   assert.deepEqual(coverage.warmSuccessor,{owner:owners[index],binding:'m11WarmSubmissionGraphSuccessor'});
+   assert.equal(coverage.unlisted.some(row=>row.path===file),false);
+   assert.ok(coverage.unlisted.some(row=>row.path===unlisted));
+  }
+  assert.deepEqual(p.references.find(row=>row.path===file).references.map(row=>[row.owner,row.binding,row.branch]),owners.map(owner=>[owner,'m11WarmSubmissionGraphSuccessor','expected']));
+  const historical=p.references.find(row=>row.path==='packages/engine/src/value.ts').references;
+  assert.equal(historical.filter(row=>row.binding==='imageResidencySuccessors'&&row.branch==='base').length,2);
+  assert.equal(historical.filter(row=>row.binding==='imageResidencySuccessors'&&row.branch==='current').length,2);
+  assert.equal(m.verifyMaintenanceProposal(f.root,p),true);
+  f.put(file,'export const changed = 1;\n');
+  assert.throws(()=>m.verifyMaintenanceProposal(f.root,p),/changed/);
+  assert.ok(m.prepareBaselineReview(f.root).declarations.filter(row=>row.binding==='m11WarmSubmissionGraphSuccessor').every(row=>row.rows[0].identity==='different'));
  }finally{f.close();}
 });

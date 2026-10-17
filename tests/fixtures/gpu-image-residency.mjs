@@ -199,7 +199,9 @@ export async function withGpu(run, options) {
 }
 export const imagesOf = f => f.textures.filter(t => t.isImage);
 export const writesOf = f => f.calls.filter(c => c[0] === 'writeTexture');
-export const bindingsOf = f => f.calls.filter(c => c[0] === 'binding').map(c => c[1].descriptor.entries[0].resource.texture);
+// Observe the actually selected texture on every draw, including reused bindings.
+// Native binding creation remains separately available as the 'binding' call log.
+export const bindingsOf = f => f.calls.filter(c => c[0] === 'setBindGroup').map(c => c[2].descriptor.entries[0].resource.texture);
 export function admitted(record) { if (record.threw) throw record.error; assert.equal(record.value, undefined); }
 export async function submitSafe(f, h, input, render = value => h.renderFrame(value)) {
   const record = f.capture(() => render(input)); admitted(record); await record.finish(); await h.whenIdle(); return record;
@@ -278,22 +280,36 @@ export async function prepareReady(f, h, inputs) {
 // The permanent suite calls this with buffer; READY images have longer lifetime.
 export async function retirementBaseline(kind) {
   return withAuthored(a => withGpu(async f => {
-    const h = f.host({ maxPendingFrames: 4 }); await f.ready(h);
+    const h = f.host({ maxPendingFrames: 4, enableReadback: kind === 'buffer' }); await f.ready(h);
     const saved = a.capture(), nested = frame([view(image(1, 1, new Uint8Array([1, 2, 3, 255])))]);
     let triggered = 0, pending, upload, inner;
     f.hooks[kind === 'image' ? 'destroyTexture' : 'destroyBuffer'] = resource => {
-      if (triggered || (kind === 'image' && !resource.isImage)) return;
+      if (triggered || (kind === 'image' ? !resource.isImage : resource.descriptor.usage !== 9)) return;
       triggered++; pending = h.getStatus().pendingFrames; upload = h.getStatus().pendingUploadBytes;
       inner = f.capture(() => h.renderFrame(nested)); admitted(inner);
       assert.equal(h.getStatus().lastSerial, 2); assert.equal(h.getStatus().pendingFrames, 2);
     };
+    // A genuine mapped readback buffer is transient even when vertex/uniform
+    // returns are reserved. The pre-bound ticket is never changed by reentry.
+    const ticket = kind === 'buffer' ? h.requestReadback() : undefined; ticket?.catch(() => {});
     const outer = f.capture(() => h.renderFrame(saved)); admitted(outer);
-    await outer.finish(); assert.equal(triggered, 1, 'retirement hook must actually run');
+    await outer.finish(); if (ticket) await ticket;
+    assert.equal(triggered, 1, 'retirement hook must actually run');
     assert.equal(pending, 1); assert.equal(upload, 112); assert.equal(h.getStatus().pendingFrames, 1);
-    assert.ok(outer.buffers.every(b => b.destroyed === 1)); if (kind === 'image') assert.equal(outer.textures[0].destroyed, 1);
+    if (kind === 'buffer') {
+      const staging = outer.buffers.find(buffer => buffer.descriptor.usage === 9);
+      assert.ok(staging); assert.equal(staging.destroyed, 1); assert.equal(staging.unmapped, 1);
+      const eligible = outer.buffers.filter(buffer => buffer.descriptor.usage !== 9);
+      assert.equal(eligible.length, 2); assert.ok(eligible.every(buffer => buffer.destroyed === 0));
+      assert.equal(inner.buffers.length, 2, 'cleanup reentry must create its own vertex and uniform while outer returns remain reserved');
+      assert.ok(inner.buffers.every(buffer => !eligible.includes(buffer)), 'retiring reservations are not reusable during cleanup');
+    } else {
+      assert.ok(outer.buffers.every(buffer => buffer.destroyed === 1)); assert.equal(outer.textures[0].destroyed, 1);
+    }
     await inner.finish(); await h.whenIdle(); await f.close(h);
-    console.log(JSON.stringify({ baseline: kind, triggered, outerPending: pending, outerUpload: upload,
-      finalSerial: h.getStatus().lastSerial, borrowedDestroyed: 0 }));
+    assert.ok(outer.buffers.every(buffer => buffer.destroyed === 1));
+    console.log(JSON.stringify({ baseline: kind, cleanupResource: kind === 'buffer' ? 'staging' : 'image', triggered,
+      outerPending: pending, outerUpload: upload, finalSerial: h.getStatus().lastSerial, borrowedDestroyed: 0 }));
   }));
 }
 

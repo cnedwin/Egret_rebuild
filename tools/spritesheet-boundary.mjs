@@ -7,6 +7,11 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
+// One reviewed M1.1 group: all eleven raw identities must match before graph derivation.
+const m11WarmSubmissionGraphSuccessor = [{"path":"packages/engine/web/WebGPUHost.ts","bytes":102838,"sha256":"bf33f8aa63f14103ff947f79f77527a28dfd0cf15468cc84abda6c8cd15007e0"},{"path":"packages/engine/dist/web/WebGPUHost.js","bytes":96436,"sha256":"f6f1727bdd06903f66dcb5918476c0c0c9d5d5f93cf9acb714c4d6e5b7cc3615"},{"path":"packages/engine/web/prepareTexturedSubmission2D.ts","bytes":17192,"sha256":"71dd8092df666f38ab7fa214ea9ec34fa2eaf13b5cf4cc039326308767fb9820"},{"path":"packages/engine/dist/web/prepareTexturedSubmission2D.js","bytes":11567,"sha256":"3bde4c2c3eb9570eedb6d6519776425224f6e35a52fb21ec5664448451fff485"},{"path":"packages/engine/dist/web/prepareTexturedSubmission2D.d.ts","bytes":6946,"sha256":"df22e84d752cfc96083920bf5ea01edd28947056c0c007d8023c0e53bb1fd5ee"},{"path":"packages/engine/web/webgpuBufferPool.ts","bytes":18097,"sha256":"a96a3f4655b178a814d3988ab6886255bb34b9613ba84b885854df4c53840957"},{"path":"packages/engine/dist/web/webgpuBufferPool.js","bytes":14951,"sha256":"8692118b05b645d50c15f68a77ecca7b839165f2653f980c4dfbe1ec937caef1"},{"path":"packages/engine/dist/web/webgpuBufferPool.d.ts","bytes":2052,"sha256":"54ffe7bd4fd62fca0ecec2f250fd8cd2dfbfbcfe3724df3ddf8f341c95dcfb27"},{"path":"packages/engine/web/webgpuBindingCache.ts","bytes":9982,"sha256":"22bc0399ce8c9401e103746c7aa24cac073204c852cc2cd3bc27bf8be7513b81"},{"path":"packages/engine/dist/web/webgpuBindingCache.js","bytes":8374,"sha256":"74bcda1b46f7ec63e46cb9a412c97ee353763d21e1375053663567ebdcfabea3"},{"path":"packages/engine/dist/web/webgpuBindingCache.d.ts","bytes":1018,"sha256":"6f7476892b229d2f478736cdb0b5a6c2640e462807d209d990665444ba856397"}];
+const m11WarmSubmissionReplacementPaths = ["packages/engine/web/WebGPUHost.ts","packages/engine/dist/web/WebGPUHost.js","packages/engine/web/prepareTexturedSubmission2D.ts","packages/engine/dist/web/prepareTexturedSubmission2D.js","packages/engine/dist/web/prepareTexturedSubmission2D.d.ts"];
+const m11WarmSubmissionAdditionPaths = ["packages/engine/web/webgpuBufferPool.ts","packages/engine/dist/web/webgpuBufferPool.js","packages/engine/dist/web/webgpuBufferPool.d.ts","packages/engine/web/webgpuBindingCache.ts","packages/engine/dist/web/webgpuBindingCache.js","packages/engine/dist/web/webgpuBindingCache.d.ts"];
+
 const repository = realpathSync(fileURLToPath(new URL('../', import.meta.url)));
 const publicTypes = ['SpriteSheet', 'SpriteSheetFrameInput'];
 const privateNames = new Set(['spriteSheetBitmapOperations', 'SPRITE_SHEET_BRAND', 'SheetState', 'StagedFrame', 'FieldRead']);
@@ -225,6 +230,26 @@ function compiler(root, owned) {
     if (!copied.equals(bytes)) failure('SS1_BOUNDARY_COMPILER_OWNER', 'Copied native compiler owner differs from original');
   }
 }
+
+// The fixed five replacements and six additions never infer authority from paths.
+function m11WarmSubmissionGraph(root, base, actualNames) {
+  const rows = m11WarmSubmissionGraphSuccessor, replacements = m11WarmSubmissionReplacementPaths, additions = m11WarmSubmissionAdditionPaths;
+  const expectedPaths = [...replacements, ...additions], present = new Set(actualNames), basePaths = new Set(base.map(row => row.path));
+  if (rows.length !== 11 || !equal(rows.map(row => row.path).sort(), [...expectedPaths].sort())
+      || rows.some(row => !equal(Object.keys(row).sort(), ['bytes', 'path', 'sha256']) || !Number.isSafeInteger(row.bytes) || row.bytes < 0 || !/^[a-f0-9]{64}$/.test(row.sha256))
+      || replacements.some(file => !basePaths.has(file)) || additions.some(file => basePaths.has(file))) {
+    failure('SS1_BOUNDARY_SOURCE_OWNER', 'Invalid finite M1.1 successor declaration');
+  }
+  if (!additions.some(file => present.has(file))) return undefined;
+  for (const row of rows) {
+    if (!present.has(row.path)) failure('SS1_BOUNDARY_SOURCE_OWNER', 'Incomplete M1.1 successor: ' + row.path);
+    const raw = read(root, row.path);
+    if (raw.length !== row.bytes || hash(raw) !== row.sha256) failure('SS1_BOUNDARY_SOURCE_OWNER', 'M1.1 whole-group raw identity differs: ' + row.path);
+  }
+  const reviewed = new Map(rows.map(row => [row.path, row]));
+  return [...base.map(row => reviewed.get(row.path) ?? row), ...additions.map(file => reviewed.get(file))];
+}
+
 function run() {
   const options = new Map(), args = process.argv.slice(2);
   while (args.length) {
@@ -259,13 +284,20 @@ function run() {
   for (const name of ['contracts', 'runtime', 'engine', 'project']) for (const area of ['src', 'dist', ...(name === 'engine' ? ['web', 'rendering'] : [])]) walkCode('packages/' + name + '/' + area);
   const projectPin = configurationPins.find(pin => pin.path === 'packages/project/package.json');
   // Derive a closed successor without altering any retained graph row.
-  const expectedGraph = ss1AtlasPackageSuccessor(projectPin, read(root, projectPin.path))
-    ? [...graphPins, ...ss1AtlasGraphSuccessor] : graphPins;
+  const atlas = ss1AtlasPackageSuccessor(projectPin, read(root, projectPin.path));
+  const originalGraph = atlas ? [...graphPins, ...ss1AtlasGraphSuccessor] : graphPins;
+  // M1.1 extends the reviewed Atlas graph and current image-residency pair.
+  const currentGraph = originalGraph.map(row => {
+    const pair = imageResidencySuccessors.find(pair => pair.path === row.path);
+    return pair && row.bytes === pair.base.bytes && row.sha256 === pair.base.sha256 ? { path: row.path, ...pair.current } : row;
+  });
+  const warmGraph = atlas ? m11WarmSubmissionGraph(root, currentGraph, actualNames) : undefined;
+  const expectedGraph = warmGraph ?? originalGraph;
   if (!equal(actualNames.sort(), expectedGraph.map(item => item.path).sort())) failure('SS1_BOUNDARY_SOURCE_OWNER', 'Complete four-package source/emission path inventory changed');
   for (const expected of expectedGraph) pin(root, expected, 'SS1_BOUNDARY_SOURCE_OWNER');
   // Neither one-sided base/current mixture is a reviewed complete Host successor.
   const hostRows = imageResidencySuccessors.map(row => ({ row, raw: read(root, row.path) }));
-  if (!['base', 'current'].some(version => hostRows.every(({ row, raw }) =>
+  if (!warmGraph && !['base', 'current'].some(version => hostRows.every(({ row, raw }) =>
     raw.length === row[version].bytes && hash(raw) === row[version].sha256))) {
     failure('SS1_BOUNDARY_SOURCE_OWNER', 'The complete Host source/emission successor pair differs');
   }

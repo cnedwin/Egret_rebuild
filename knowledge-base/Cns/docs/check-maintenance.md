@@ -43,7 +43,7 @@ node tools/prepare-check-maintenance.mjs --check ../catalog-proposal.json
 | tools/bitmap-binding-ticket-policy.json | 上述六项，另加 selectedProductPins |
 | tests/types/atlas-import-diagnostic-expectations.json | sourcePolicy.modules、sourcePolicy.configurationPins |
 
-原有和新增所有者共登记 24 项普通指纹声明、三条策略文件引用，以及两项独立表示的 Host 成对声明。数量说明当前实现的登记范围，不代表仓库全部义务。JSON 重复键（含转义后同名的键）、畸形选择字段/指纹及单个声明内重复路径都会被拒绝，不会递归收集新增 JSON 字段。新增选择字段只接受规定的工作区配置、四包源码/产物/类型测试和 tests/types 配置范围，拒绝依赖及私有路径。在此单仓库读取器中，Atlas 的 inputPins、编译器字段和 jsoncPins 仅由 JSON 文件原始字节绑定。下方独立的已登记编译器流程会读取选定的依赖输入；两种流程都不授予验收。
+原有和新增所有者共登记 27 项普通指纹声明、三条策略文件引用，以及两项独立表示的 Host 成对声明。数量说明当前实现的登记范围，不代表仓库全部义务。JSON 重复键（含转义后同名的键）、畸形选择字段/指纹及单个声明内重复路径都会被拒绝，不会递归收集新增 JSON 字段。新增选择字段只接受规定的工作区配置、四包源码/产物/类型测试和 tests/types 配置范围，拒绝依赖及私有路径。在此单仓库读取器中，Atlas 的 inputPins、编译器字段和 jsoncPins 仅由 JSON 文件原始字节绑定。下方独立的已登记编译器流程会读取选定的依赖输入；两种流程都不授予验收。
 
 四组 oldRootPins/oldEngineDeclarationPin 标注 comparison: transformed-baseline-raw-observation。真实门禁会去除指定新增内容后再与历史基线比较，因此这里的原始差异不意味着应更新旧指纹；必须查看原有变换并单独验证预期接口。必需的 JSON 所有者文件缺失会拒绝准备，声明目标缺失则继续在条目中显示。
 
@@ -127,6 +127,8 @@ node tools/prepare-compiler-maintenance.mjs --check "$(Resolve-Path ../inline-po
 原生宿主相等关系只描述保存的元数据/二进制分支，不会跳过或通过整个门禁。读取器仍观察固定 Windows x64 依赖包；其他读取宿主不会改变所选编译器所有者，也不证明兼容性。历史与内联预期共享反向引用索引，各自保留来源及比较强度。数据不一致会明确列出，不选择有效输入、不替换历史。每项条件记录均为 admission: not-evaluated，完整提案仍为 acceptance: none。
 
 目标文件或 JSON 声明变化时，重新生成提案，结合未修改的严格门禁评审差异。门禁源码变化时，先评审门禁及其测试，再显式更新固定源码登记及必要适配器；不自动刷新指纹，不回退到其他解析方式。同步中英文说明、运行实际控制、完成独立评审，并保留完整本地/推送/PR 检查。这份有限登记表不迁移任意内联表达式、其他源码策略变换或全部验收体系。真人/fork 和设备/性能限制继续开放。
+
+三个当前 M1.1 提交复用表各绑定十一项精确源码、产物和声明身份：五项变更节点与六项新增私有辅助模块节点。选择后继必须整表匹配，不能逐行混用不同代际。原始图谱、图像驻留成对声明与 Atlas 诊断清单继续保留。图谱覆盖只关联明确登记的同所有者表，以及 Atlas 的一组跨所有者表。维护提案报告这些关系，不授予准入。
 
 ## 测试清单范围
 

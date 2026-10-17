@@ -30,9 +30,11 @@ test('SUPPORT genuine Engine Scope lease Bitmap Mesh scene and original GPU proo
     assert.equal(h.getSceneStatus().pendingUniformBytes, 64);
     assert.equal(h.getSceneStatus().pendingDepthBytes, 256);
     await r.finish(); assert.equal((await ticket).serial, 1); await h.whenIdle();
-    assert.ok(r.buffers.every(b => b.destroyed === 1));
+    assert.ok(r.buffers.filter(b => b.descriptor.usage !== 9).every(b => b.destroyed === 0));
+    assert.ok(r.buffers.filter(b => b.descriptor.usage === 9).every(b => b.destroyed === 1));
     assert.equal(f.open, 0); assert.ok(f.scopes.length >= 9);
     await f.close(h); assert.equal(texture.destroyed, 1);
+    assert.ok(r.buffers.every(b => b.destroyed === 1));
     assert.equal(f.calls.filter(c => c[0] === 'deviceDestroy').length, 0);
   }));
 });

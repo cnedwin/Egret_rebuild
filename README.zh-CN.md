@@ -25,6 +25,10 @@ Years later, as times change and technology advances, many developers continue t
 
 当前仓库提供可运行的工程预览。显示树、资源租约、动画、浏览器输入及部分 Canvas/WebGPU 渲染路径，均有各自的接口契约和验证范围。完整 UI 工具、完整 Spine 支持、目标平台 SDK 和旧工程自动迁移仍在开发中。
 
+## 评审中 — M1.1 提交复用
+
+当前 M1.1 候选减少重复图像准备、缓冲创建与绑定创建，保留公开 API 和原准入规则。参阅[契约](knowledge-base/Cns/docs/warm-submission-contract.md)与[验证状态](knowledge-base/Cns/docs/warm-submission-evidence.md)；尚不宣称帧耗时或移动端性能提升。
+
 ## 当前版本 — 0.61.0
 
 **0.61.0 工程预览**增加由各 WebGPU Host 独立管理的内部图像缓存，复用已安全完成的精确裁剪 GPU 图像。LRU 机制维持 32 MiB 逻辑图像池和最多 256 个可复用条目，保留原公开准入、渲染模式与生命周期管理，不增加公开 API 或依赖。
@@ -88,7 +92,7 @@ Years later, as times change and technology advances, many developers continue t
 
 开发环境指定使用 **Node.js 26.7.0**，在 `package.json`、`.node-version` 和 `.nvmrc` 中固定精确版本。pnpm 11.25.0 与 TypeScript 7.0.2 保持不变。执行下列命令前，请在终端选择 Node 26.7.0 并通过 `node --version` 确认。
 
-当前处于工具链切换阶段。历史 Node 24.19.0 验证结果保留原始环境，部分固定环境浏览器采集工具仍限定该版本。Node 26.7.0 下的完整仓库与浏览器验证尚待完成，修改版本配置不等于兼容性已通过。在仓库根目录执行：
+当前贡献流程及已迁移的浏览器流程使用 Node 26.7.0。历史 Node 24.19.0 回执保留原始环境。每类浏览器验证仍需当前输入和实际执行，修改版本配置本身不代表兼容性已通过。在仓库根目录执行：
 
     pnpm setup:dev
     pnpm check:quick

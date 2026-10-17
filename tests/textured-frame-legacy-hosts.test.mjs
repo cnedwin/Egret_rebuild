@@ -210,7 +210,19 @@ test('H02 default WebGPU legacy port refuses authentic textured frames before qu
     assert.equal(host.getStatus().pendingUploadBytes, 144); assert.equal(host.getStatus().pendingReadbackBytes, 0);
     assert.equal(f.buffers.length, 1); assert.equal(f.textures.length, 0); assert.equal(f.fences.length, 1);
     assert.equal(f.calls.filter(call => call[0] === 'writeBuffer').length, 1); assert.equal(f.calls.filter(call => call[0] === 'submit').length, 1);
-    await f.settle(); await host.whenIdle(); assert.equal(host.getStatus().pendingFrames, 0); assert.equal(f.buffers[0].destroyed, 1);
+    const buffer = f.buffers[0];
+    assert.equal(buffer.destroyed, 0); assert.equal(f.calls.find(call => call[0] === 'setVertexBuffer')[2], buffer);
+    await f.settle(); await host.whenIdle(); assert.equal(host.getStatus().pendingFrames, 0); assert.equal(host.getStatus().pendingUploadBytes, 0); assert.equal(buffer.destroyed, 0);
+    assert.equal(host.renderFrame(frames.legacy), undefined);
+    assert.equal(host.getStatus().lastSerial, 2); assert.equal(host.getStatus().pendingFrames, 1);
+    assert.equal(host.getStatus().pendingUploadBytes, 144); assert.equal(host.getStatus().pendingReadbackBytes, 0);
+    assert.equal(f.buffers.length, 1); assert.equal(f.textures.length, 0); assert.equal(f.fences.length, 2); assert.equal(buffer.destroyed, 0);
+    const writes = f.calls.filter(call => call[0] === 'writeBuffer'), selections = f.calls.filter(call => call[0] === 'setVertexBuffer');
+    assert.equal(writes.length, 2); assert.equal(selections.length, 2); assert.equal(f.calls.filter(call => call[0] === 'submit').length, 2);
+    assert.equal(writes.every(call => call[1] === buffer), true); assert.equal(selections.every(call => call[2] === buffer), true);
+    await f.settle(); await host.whenIdle(); assert.equal(host.getStatus().pendingFrames, 0); assert.equal(host.getStatus().pendingUploadBytes, 0); assert.equal(buffer.destroyed, 0);
+    await f.close(host); assert.equal(buffer.destroyed, 1);
+    await f.close(host); assert.equal(buffer.destroyed, 1);
   } finally { await f.close(host); }
 });
 

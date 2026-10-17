@@ -17,7 +17,7 @@ function fixture() {
   const f={events:[],buffers:[],textures:[],fences:[],writes:[],pipelines:[],holdFence:false,deviceDestroyed:0,depthDestroyGetterReads:0};
   const event=(kind,fields={})=>{f.events.push({kind,...fields});};
   const queue={
-    writeBuffer(buffer,offset,data){assert.equal(this,queue);event('writeBuffer',{byteLength:data.byteLength,offset,usage:buffer.usage});f.writes.push({usage:buffer.usage,bytes:new Uint8Array(data.buffer??data,data.byteOffset??0,data.byteLength).slice()});},
+    writeBuffer(buffer,offset,data){assert.equal(this,queue);event('writeBuffer',{byteLength:data.byteLength,offset,usage:buffer.usage});f.writes.push({buffer,usage:buffer.usage,bytes:new Uint8Array(data.buffer??data,data.byteOffset??0,data.byteLength).slice()});},
     writeTexture(destination,data){assert.equal(this,queue);event('writeTexture',{byteLength:data.byteLength});},
     submit(commands){assert.equal(this,queue);assert.equal(commands.length,1);event('submit');},
     onSubmittedWorkDone(){assert.equal(this,queue);event('fence');if(f.fenceFailure)return Promise.reject(f.fenceFailure);if(!f.holdFence)return Promise.resolve();let resolve;const promise=new Promise(r=>{resolve=r;});f.fences.push(resolve);return promise;}
@@ -40,7 +40,7 @@ function fixture() {
     createCommandEncoder(){assert.equal(this,device);event('encoder');const encoder={
       beginRenderPass(descriptor){assert.equal(this,encoder);const depth=descriptor.depthStencilAttachment;event('pass',{colorLoad:descriptor.colorAttachments[0].loadOp,hasDepth:depth!==undefined,depthFormat:depth?.view.texture.format??null,depthClear:depth?.depthClearValue??null,depthStore:depth?.depthStoreOp??null});const pass={
         setPipeline(pipeline){assert.equal(this,pass);if(pipeline.kind!=='mesh')event('uiPipeline',{pipeline:pipeline.kind});},
-        setViewport(){assert.equal(this,pass);},setScissorRect(){assert.equal(this,pass);},setVertexBuffer(){assert.equal(this,pass);},setIndexBuffer(){assert.equal(this,pass);},setBindGroup(){assert.equal(this,pass);},
+        setViewport(){assert.equal(this,pass);},setScissorRect(){assert.equal(this,pass);},setVertexBuffer(slot,buffer){assert.equal(this,pass);event('selectedVertex',{slot,buffer});},setIndexBuffer(buffer){assert.equal(this,pass);event('selectedIndex',{buffer});},setBindGroup(slot,binding){assert.equal(this,pass);event('selectedBinding',{slot,binding});},
         draw(){assert.equal(this,pass);event('draw');},drawIndexed(){assert.equal(this,pass);event('drawIndexed');f.onDrawIndexed?.();},end(){assert.equal(this,pass);event('end');}};return pass;},
       copyTextureToBuffer(){assert.equal(this,encoder);event('copy');},finish(){assert.equal(this,encoder);event('finish');return {};}};return encoder;}
   };
@@ -112,10 +112,31 @@ test('public-host-repeated-identity-packs-once-with-independent-uniforms-and-set
     const uniforms=f.writes.filter(write=>write.usage===72);assert.equal(uniforms.length,2);
     for(const write of uniforms)assert.deepEqual([...new Float32Array(write.bytes.buffer)],[1,0,0,0,0,1,0,0,0,0,.5,0,0,0,1.5,1]);
     assert.equal(f.events.filter(e=>e.kind==='drawIndexed').length,2);assert.equal(f.events.filter(e=>e.kind==='submit').length,1);
+    const firstVertices=f.events.filter(e=>e.kind==='selectedVertex').map(e=>e.buffer),firstIndices=f.events.filter(e=>e.kind==='selectedIndex').map(e=>e.buffer),firstBindings=f.events.filter(e=>e.kind==='selectedBinding').map(e=>e.binding);
+    assert.equal(firstVertices.length,2);assert.equal(firstIndices.length,2);assert.equal(firstBindings.length,2);
+    assert.equal(firstVertices[0],firstVertices[1]);assert.equal(firstIndices[0],firstIndices[1]);
+    assert.notEqual(firstBindings[0].descriptor.entries[0].resource.buffer,firstBindings[1].descriptor.entries[0].resource.buffer);
+    assert.equal(f.buffers.every(b=>b.destroyed===0),true);
     f.releaseFences();await h.whenIdle();assert.deepEqual([h.getSceneStatus().pendingSceneBytes,h.getSceneStatus().pendingUniformBytes,h.getSceneStatus().pendingDepthBytes,h.getStatus().pendingUploadBytes],[0,0,0,0]);
-    assert.equal(f.buffers.every(b=>b.destroyed===1),true);assert.equal(f.textures.every(t=>t.destroyed===1),true);
-    // Geometry is immutable CPU data; a later frame obtains fresh GPU uploads.
-    h.renderSceneFrame(value,overlay());await h.whenIdle();assert.equal(f.events.filter(e=>e.kind==='buffer'&&e.size===72).length,2);
+    assert.equal(f.buffers.every(b=>b.destroyed===0),true);assert.equal(f.textures.every(t=>t.destroyed===1),true);
+    // Settled buffers are rewritten and selected again; depth remains transient.
+    f.holdFence=true;h.renderSceneFrame(value,overlay());
+    assert.deepEqual([h.getSceneStatus().pendingSceneBytes,h.getSceneStatus().pendingUniformBytes,h.getSceneStatus().pendingDepthBytes,h.getStatus().pendingUploadBytes],[84,128,4,212]);
+    assert.equal(f.buffers.length,4);assert.equal(f.events.filter(e=>e.kind==='bindGroup').length,2);assert.equal(f.writes.length,8);
+    const warmVertices=f.events.filter(e=>e.kind==='selectedVertex').slice(2),warmIndices=f.events.filter(e=>e.kind==='selectedIndex').slice(2),warmBindings=f.events.filter(e=>e.kind==='selectedBinding').slice(2);
+    assert.equal(warmVertices.length,2);assert.equal(warmIndices.length,2);assert.equal(warmBindings.length,2);
+    assert.equal(warmVertices.every(e=>e.buffer===firstVertices[0]),true);assert.equal(warmIndices.every(e=>e.buffer===firstIndices[0]),true);
+    assert.equal(warmBindings.every(e=>firstBindings.includes(e.binding)),true);assert.notEqual(warmBindings[0].binding,warmBindings[1].binding);
+    const warmUniforms=f.writes.filter(write=>write.usage===72).slice(2);assert.equal(warmUniforms.length,2);
+    assert.notEqual(warmUniforms[0].buffer,warmUniforms[1].buffer);
+    assert.equal(warmUniforms.every(write=>warmBindings.some(e=>e.binding.descriptor.entries[0].resource.buffer===write.buffer)),true);
+    for(const write of warmUniforms)assert.deepEqual([...new Float32Array(write.bytes.buffer)],[1,0,0,0,0,1,0,0,0,0,.5,0,0,0,1.5,1]);
+    assert.equal(f.events.filter(e=>e.kind==='drawIndexed').length,4);assert.equal(f.events.filter(e=>e.kind==='submit').length,2);
+    assert.equal(f.buffers.every(b=>b.destroyed===0),true);
+    f.releaseFences();await h.whenIdle();assert.deepEqual([h.getSceneStatus().pendingSceneBytes,h.getSceneStatus().pendingUniformBytes,h.getSceneStatus().pendingDepthBytes,h.getStatus().pendingUploadBytes],[0,0,0,0]);
+    assert.equal(f.buffers.every(b=>b.destroyed===0),true);assert.equal(f.textures.length,2);assert.equal(f.textures.every(t=>t.destroyed===1),true);
+    await h.close();assert.equal(f.buffers.every(b=>b.destroyed===1),true);
+    await h.close();assert.equal(f.buffers.every(b=>b.destroyed===1),true);assert.equal(f.textures.every(t=>t.destroyed===1),true);
   });
 });
 test('public-host-same-value-distinct-identity-and-empty-draw-charges',async()=>{

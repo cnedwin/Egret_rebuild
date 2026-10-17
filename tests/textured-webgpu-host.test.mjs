@@ -309,22 +309,28 @@ test('H04/L02 painter barriers preserve order, shared crop and per-command bindi
   }));
 });
 
-test('L01 geometry is unique within one frame, per pending replay, and retires out of order once', async () => {
+test('L01 geometry charges stay per pending replay while settled buffers return out of order', async () => {
   await withFrames(a => withGPU(async f => {
     const h = await active(f, { maxPendingGeometryBytes: 408 });
-    const one = f.proof(() => h.renderTexturedFrame(a.triangle)); admitted(one);
-    const two = f.proof(() => h.renderTexturedFrame(a.triangle)); admitted(two); status(h, { serial: 2, frames: 2, geometry: 408, upload: 224 });
-    await two.finish(); status(h, { serial: 2, frames: 1, geometry: 204, upload: 112 });
+    const one = f.proof(() => h.renderTexturedFrame(a.triangle)); admitted(one); const first = f.buffers.slice();
+    const two = f.proof(() => h.renderTexturedFrame(a.triangle)); admitted(two); const second = f.buffers.slice(first.length);
+    assert.equal(first.length, 2); assert.equal(second.length, 2); assert.ok(second.every(buffer => !first.includes(buffer)));
+    status(h, { serial: 2, frames: 2, geometry: 408, upload: 224 });
+    await two.finish(); status(h, { serial: 2, frames: 1, geometry: 204, upload: 112 }); assert.ok(f.buffers.every(b => b.destroyed === 0));
     await one.finish(); status(h, { serial: 2, frames: 0, geometry: 0, upload: 0 });
     await two.finish(); await one.finish(); status(h, { serial: 2, frames: 0, geometry: 0, upload: 0 });
-    const repeat = f.proof(() => h.renderTexturedFrame(a.repeated)); admitted(repeat); status(h, { serial: 3, frames: 1, geometry: 204, upload: 224 }); await repeat.finish();
-    assert.ok(f.buffers.every(b => b.destroyed === 1));
+    const repeat = f.proof(() => h.renderTexturedFrame(a.repeated)); admitted(repeat); status(h, { serial: 3, frames: 1, geometry: 204, upload: 224 });
+    const writes = f.calls.filter(c => c[0] === 'writeBuffer').slice(-4);
+    assert.equal(f.buffers.length, 4); assert.equal(new Set(writes.map(c => c[1])).size, 4); assert.ok(writes.every(c => f.buffers.includes(c[1])));
+    await repeat.finish(); assert.ok(f.buffers.every(b => b.destroyed === 0));
     // Out-of-order proof elects the second cold texture; replay borrows that winner.
     assert.equal(f.textures.length, 2); assert.deepEqual(f.textures.map(t => t.destroyed), [1, 0]);
     const closing = observe(h.close()); await f.pump(); await closing;
     assert.ok(f.buffers.every(b => b.destroyed === 1)); assert.ok(f.textures.every(t => t.destroyed === 1));
+    await h.close(); assert.ok(f.buffers.every(b => b.destroyed === 1));
   }));
 });
+
 test('L01 geometry cap407 rejects second replay before serial and keeps armed ticket reusable', async () => {
   await withFrames(a => withGPU(async f => {
     const h = await active(f, { maxPendingGeometryBytes: 407, enableReadback: true }); const one = f.proof(() => h.renderTexturedFrame(a.triangle)); admitted(one);
@@ -347,21 +353,26 @@ test('L02 upload upper bounds retain packed collapse and admission224/223 withou
     }); })();
   });
 });
-test('L02 ticket binds once and fence/map/scope each hold their own record in either order', async () => {
+test('L02 ticket binds once and every proof holds exclusive buffers before bounded idle retention', async () => {
   await withFrames(a => {
     return (async () => { for (const order of ['map-first', 'fence-first']) await withGPU(async f => {
       const h = await active(f, { enableReadback: true }), ticket = observe(h.requestReadback()), settled = watched(ticket);
-      const selected = f.proof(() => h.renderTexturedFrame(a.triangle)); admitted(selected); const replay = f.proof(() => h.renderTexturedFrame(a.triangle)); admitted(replay);
+      const selected = f.proof(() => h.renderTexturedFrame(a.triangle)); admitted(selected); const selectedBuffers = f.buffers.slice();
+      const replay = f.proof(() => h.renderTexturedFrame(a.triangle)); admitted(replay); const replayBuffers = f.buffers.slice(selectedBuffers.length);
+      assert.equal(selectedBuffers.length, 3); assert.equal(replayBuffers.length, 2); assert.ok(replayBuffers.every(buffer => !selectedBuffers.includes(buffer)));
       assert.equal(selected.maps.length, 1); assert.equal(replay.maps.length, 0); status(h, { serial: 2, frames: 2, geometry: 408, upload: 224, readback: 2304 });
       if (order === 'map-first') selected.resolveMaps(); else selected.resolveFences(); selected.settleScopes(); await tick(); assert.equal(settled.settled, false);
-      await replay.finish(); status(h, { serial: 2, frames: 1, geometry: 204, upload: 112, readback: 2304 });
+      await replay.finish(); status(h, { serial: 2, frames: 1, geometry: 204, upload: 112, readback: 2304 }); assert.ok(f.buffers.every(b => b.destroyed === 0));
       if (order === 'map-first') selected.resolveFences(); else selected.resolveMaps(); await tick(); const result = await ticket;
       assert.equal(result.serial, 1); assert.equal(result.frameId, a.triangle.frameId); assert.equal(result.bytes.byteLength, 256);
-      status(h, { serial: 2, frames: 0, geometry: 0, upload: 0 }); const staging = f.buffers.find(b => b.descriptor.usage === 9); assert.equal(staging.unmapped, 1);
-      await h.whenIdle(); assert.ok(f.buffers.every(b => b.destroyed === 1));
+      status(h, { serial: 2, frames: 0, geometry: 0, upload: 0 }); const staging = f.buffers.find(b => b.descriptor.usage === 9); assert.equal(staging.unmapped, 1); assert.equal(staging.destroyed, 1);
+      await h.whenIdle(); assert.ok(f.buffers.filter(b => b !== staging).every(b => b.destroyed === 0));
+      const closing = observe(h.close()); await f.pump(); await closing; assert.ok(f.buffers.every(b => b.destroyed === 1));
+      await h.close(); assert.ok(f.buffers.every(b => b.destroyed === 1));
     }); })();
   });
 });
+
 test('L02 independent scope retains geometry after map and queue success before ticket resolution', async () => {
   await withFrames(a => withGPU(async f => {
     const h = await active(f, { enableReadback: true }), ticket = observe(h.requestReadback()), done = watched(ticket);

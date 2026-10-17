@@ -52,7 +52,7 @@ export type PackedTexturedDraw2D =
 export interface TexturedSubmissionPlan2D {
     readonly frame: TexturedRenderFrame2D; readonly width: number; readonly height: number;
     readonly draws: PackedTexturedDraw2D[]; readonly upload: number; readonly geometryBytes: number;
-    readonly projectionPlan: ProjectionPlan2D; readonly projections: Uint8Array<ArrayBuffer>[];
+    readonly projectionPlan: ProjectionPlan2D; readonly projections: (Uint8Array<ArrayBuffer> | undefined)[];
     readonly rowPitch: number; readonly staging: number; readonly output: number; readonly ticket: undefined; readonly scene: undefined;
 }
 /** This seam is private. The real host always selects the captured first-party table. */
@@ -184,10 +184,13 @@ const FIRST_PARTY_OPERATIONS: TexturedPayloadOperations2D = Object.freeze({
     uniform: (alpha: number) => new Float32Array([alpha, 0, 0, 0]),
 });
 
-/** Allocate a previously admitted whole plan, then recheck its sole owner. */
-export function packTexturedSubmission2D(storage: TexturedSubmissionStorage2D, budget: TexturedPreparationBudget2D,
-    readOwner: () => TexturedSubmissionOwnerSnapshot2D, operations: TexturedPayloadOperations2D = FIRST_PARTY_OPERATIONS,
-    checkActive?: () => void): TexturedSubmissionPlan2D {
+export interface PackedTexturedPayload2D {
+    readonly storage: TexturedSubmissionStorage2D;
+    readonly draws: PackedTexturedDraw2D[];
+}
+/** Packing reveals actual coverage before the Host selects qualified resident views. */
+export function packTexturedDrawPayloads2D(storage: TexturedSubmissionStorage2D, budget: TexturedPreparationBudget2D,
+    operations: TexturedPayloadOperations2D = FIRST_PARTY_OPERATIONS, checkActive?: () => void): PackedTexturedPayload2D {
     const request = storage.request;
     const draws: PackedTexturedDraw2D[] = [];
     for (let i = 0; i < request.draws.length; i++) {
@@ -202,14 +205,32 @@ export function packTexturedSubmission2D(storage: TexturedSubmissionStorage2D, b
             else draws.push({ kind: 'mesh', packed: packed as PackedTexturedMesh2D, viewIndex, alpha: record.command.alpha, uniform: undefined });
         }
     }
-    const projections: Uint8Array<ArrayBuffer>[] = [];
-    for (const view of request.projectionPlan.views) { const pixels = operations.copy(view); checkActive?.(); projections.push(pixels); }
+    return { storage, draws };
+}
+/** Only the Host's exact current READY hit set authorizes an omitted pixel payload. */
+export function materializeTexturedSubmission2D(payload: PackedTexturedPayload2D, residentViews: ReadonlySet<number>,
+    readOwner: () => TexturedSubmissionOwnerSnapshot2D, operations: TexturedPayloadOperations2D = FIRST_PARTY_OPERATIONS,
+    checkActive?: () => void): TexturedSubmissionPlan2D {
+    const { storage, draws } = payload, request = storage.request;
+    const projections: (Uint8Array<ArrayBuffer> | undefined)[] = [];
+    for (let index = 0; index < request.projectionPlan.views.length; index++) {
+        const pixels = residentViews.has(index) ? undefined : operations.copy(request.projectionPlan.views[index]!);
+        checkActive?.(); projections.push(pixels);
+    }
     for (const draw of draws) if (draw.kind !== 'rect' && draw.packed.vertexCount > 0) { draw.uniform = operations.uniform(draw.alpha); checkActive?.(); }
     // No serial, reservation or ticket changes occur in this helper.
     capacities(storage, readOwner());
     return { frame: storage.frame, width: storage.width, height: storage.height, draws, upload: storage.upload,
         geometryBytes: storage.geometryBytes, projectionPlan: request.projectionPlan, projections,
         rowPitch: storage.rowPitch, staging: storage.staging, output: storage.output, ticket: undefined, scene: undefined };
+}
+
+/** The original private facade retains its complete cold operation sequence. */
+export function packTexturedSubmission2D(storage: TexturedSubmissionStorage2D, budget: TexturedPreparationBudget2D,
+    readOwner: () => TexturedSubmissionOwnerSnapshot2D, operations: TexturedPayloadOperations2D = FIRST_PARTY_OPERATIONS,
+    checkActive?: () => void): TexturedSubmissionPlan2D {
+    return materializeTexturedSubmission2D(packTexturedDrawPayloads2D(storage, budget, operations, checkActive),
+        new Set<number>(), readOwner, operations, checkActive);
 }
 
 /** Preserve the existing textured-only planner-then-payload sequence. */

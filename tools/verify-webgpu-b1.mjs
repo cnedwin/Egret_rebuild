@@ -211,7 +211,7 @@ const allowedModules = new Set([
     'packedOrientation', 'packedPosition2D', 'packImageVertices2D', 'packMeshGeometry3D', 'packTexturedMesh2D', 'prepareImages2D', 'prepareMixedDraws2D',
     'prepareRectangles2D', 'prepareTexturedDraws2D', 'prepareTexturedMesh2D', 'projection3D', 'sceneFrame3D', 'scene3d', 'texturedPreparationBudget2D'].map(name => `packages/engine/dist/rendering/${name}.js`),
   ...['b1', 'imageProjections2D', 'prepareTexturedSubmission2D', 'scene3d', 'texturedWebGPUOptions', 'WebGPUHost', 'webgpuImagePass', 'webgpuLifetime',
-    'webgpuMeshPass', 'webgpuPass', 'webgpuTexturedPass'].map(name => `packages/engine/dist/web/${name}.js`),
+    'webgpuMeshPass', 'webgpuPass', 'webgpuTexturedPass', 'webgpuBufferPool', 'webgpuBindingCache'].map(name => `packages/engine/dist/web/${name}.js`),
   ...['AssetLease', 'AssetManager', 'assetManagerOwnerState', 'AssetRef', 'Bitmap', 'bitmapDisplayState', 'ByteReader', 'CancellationController',
     'coordinateInverse', 'diagnostics', 'displayBounds', 'displayCoordinates', 'displayHitState', 'displayHitTest', 'displayInputOperations', 'DisplayObject', 'DisplayObjectContainer',
     'displayTransform', 'displayTreeState', 'displayVisualState', 'EgretError', 'Event', 'EventDispatcher', 'frameCapture', 'Graphics', 'imageFrameBudget',
@@ -266,7 +266,7 @@ async function prepareCopy(id) {
   const target = ['N2', 'N3'].includes(id) ? host : mesh, original = served.get('/' + target).body;
   const source = original.toString('utf8'); let patch;
   if (id === 'N1') patch = replaceOne(source, /depthCompare: 'greater'/g, value => value.replace("'greater'", "'less'"));
-  if (id === 'N2') patch = replaceOne(source, /const uniform = this\.ownedBuffer\(64, 64 \| 8, record, gate\);\r?\n\s*touchedQueue = true;\r?\n\s*this\.write\(uniform\.buffer, 0, draw\.uniform\);/g,
+  if (id === 'N2') patch = replaceOne(source, /for \(const draw of p\.scene\.draws\) \{\r?\n\s*const lease = this\.submissionBuffer\(record, bufferRequest\+\+, gate\), uniform = lease\.handle\.resource;\r?\n\s*touchedQueue = true;\r?\n\s*this\.write\(uniform\.buffer, 0, draw\.uniform\);/g,
     value => value.replace('draw.uniform', 'p.scene.draws[0].uniform'));
   if (id === 'N3') patch = replaceOne(source, /for \(const draw of p\.draws\) \{\r?\n\s*if \(draw\.kind === 'rect'\)\r?\n\s*encodeWebGPURectangles/g,
     value => value.replace('of p.draws)', 'of [...p.draws].reverse())'));
@@ -326,8 +326,8 @@ try {
   assert.deepEqual(packageExports['./scene3d'], { types: './dist/rendering/scene3d.d.ts', import: './dist/rendering/scene3d.js' });
   assert.deepEqual(packageExports['./webgpu/scene3d'], { types: './dist/web/scene3d.d.ts', import: './dist/web/scene3d.js' });
   const currentHost = await identity(resolve(repository, 'packages/engine/web/WebGPUHost.ts'));
-  assert.equal(currentHost.bytes, 92002, 'Native acceptance must bind the current reviewed shared scene/textured Host; historical identities remain separate');
-  assert.equal(currentHost.sha256, 'd3d75dbdb3e1fe906301344e06ac25275189e8f7fe481abff1b98563f9fc832a');
+  assert.equal(currentHost.bytes, 102838, 'Native acceptance must bind the current reviewed shared scene/textured Host; historical identities remain separate');
+  assert.equal(currentHost.sha256, 'bf33f8aa63f14103ff947f79f77527a28dfd0cf15468cc84abda6c8cd15007e0');
   report.publicRoute = { entries: entryNames.slice(0, 3), packageExports: { './scene3d': packageExports['./scene3d'], './webgpu/scene3d': packageExports['./webgpu/scene3d'] },
     hostSource: currentHost, privateDiagnostic: 'packages/engine/dist/web/webgpuMeshPass.js', allowedModules: [...allowedModules].sort() };
   const emitted = [...served.values()].reduce((sum, value) => sum + value.body.length, 0); assert.ok(emitted <= 4 * 1024 * 1024);

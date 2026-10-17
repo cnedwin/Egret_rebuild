@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## M1.1 candidate — warm WebGPU submission
+
+M1.1 adds completion-safe vertex/index/uniform buffer reuse and complete-key binding reuse, and avoids covered warm image crop copies. The bounded caches preserve original admission, painter order and public APIs. Read the [contract](docs/warm-submission-contract.md) and [current evidence](docs/warm-submission-evidence.md). Actual operation counts, native image checks, performance and repository delivery remain separate acceptance domains.
+
 ## 0.61.0 — experimental WebGPU image residency
 
 The **0.61.0 engineering preview** adds an internal image cache with per-Host ownership, reusing exact cropped GPU images after safe completion. Its LRU mechanism keeps a 32 MiB logical image pool and at most 256 ready entries, preserving existing public admission, rendering profiles and lifecycle management. It adds no public API or dependency.

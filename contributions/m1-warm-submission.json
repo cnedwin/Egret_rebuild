@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "knowledge-base/Cns/docs/warm-submission-contract.md",
+      "originRole": "First-party warm-submission contract and evidence, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/warm-submission-evidence.md",
+      "originRole": "First-party warm-submission contract and evidence, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/warm-submission-contract.md",
+      "originRole": "First-party warm-submission contract and evidence, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/warm-submission-evidence.md",
+      "originRole": "First-party warm-submission contract and evidence, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/web/webgpuBindingCache.ts",
+      "originRole": "First-party private WebGPU reuse implementation, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/webgpuBufferPool.ts",
+      "originRole": "First-party private WebGPU reuse implementation, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/atlas-import-boundary.test.mjs",
+      "originRole": "First-party bounded verification tools and fixtures, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/webgpu-submission-binding-private.test.mjs",
+      "originRole": "First-party bounded verification tools and fixtures, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/webgpu-submission-buffer-private.test.mjs",
+      "originRole": "First-party bounded verification tools and fixtures, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/webgpu-submission-controls.test.mjs",
+      "originRole": "First-party bounded verification tools and fixtures, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/webgpu-submission-precedence.test.mjs",
+      "originRole": "First-party bounded verification tools and fixtures, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/webgpu-submission-preparation.test.mjs",
+      "originRole": "First-party bounded verification tools and fixtures, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/webgpu-submission-return-order.test.mjs",
+      "originRole": "First-party bounded verification tools and fixtures, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/webgpu-submission-reuse-lifecycle.test.mjs",
+      "originRole": "First-party bounded verification tools and fixtures, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/webgpu-submission-reuse.test.mjs",
+      "originRole": "First-party bounded verification tools and fixtures, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/verify-warm-submission-controls.mjs",
+      "originRole": "First-party bounded verification tools and fixtures, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/verify-webgpu-submission-reuse.mjs",
+      "originRole": "First-party bounded verification tools and fixtures, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/webgpu-submission-reuse/fixture.mjs",
+      "originRole": "First-party bounded verification tools and fixtures, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/webgpu-submission-reuse/oracle.mjs",
+      "originRole": "First-party bounded verification tools and fixtures, authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/warm-submission-contract.md",
+      "zh": "knowledge-base/Cns/docs/warm-submission-contract.md"
+    },
+    {
+      "en": "knowledge-base/en/docs/warm-submission-evidence.md",
+      "zh": "knowledge-base/Cns/docs/warm-submission-evidence.md"
+    }
+  ]
+}

@@ -272,6 +272,10 @@ const privateTexturedGPU = [
   'PackedTexturedDraw2D', 'TexturedPayloadOperations2D', 'TexturedSubmissionAdmissionError2D',
   'isTexturedSubmissionAdmissionError2D', 'planTexturedSubmissionStorage2D', 'FIRST_PARTY_OPERATIONS',
   'TexturedSubmissionPlan2D', 'prepareTexturedSubmission2D',
+  'PackedTexturedPayload2D', 'packTexturedDrawPayloads2D', 'materializeTexturedSubmission2D',
+  'createWebGPUBufferPool', 'SubmissionBufferRole', 'SubmissionBufferRequest', 'BufferHandle',
+  'SubmissionBufferLease', 'BufferReusePlan', 'BufferReturnPlan', 'WebGPUBufferPool',
+  'createWebGPUBindingCache', 'DrawBindingKey', 'DrawBindingCandidate', 'WebGPUBindingCache',
   'planTexturedImageProjections', 'createWebGPUTexturedPipeline', 'createWebGPUTexturedMeshPipeline', 'encodeWebGPUTexturedMesh',
   'TEXTURED_MODE', 'TEXTURED_OWNERS', 'TEXTURED_OPTIONS', 'TEXTURED_FUNCTIONS', 'TEXTURED_LIMITS',
   'SharedSubmissionPlan2D', 'TexturedConfiguration', 'TexturedWebGPUConfiguration', 'admitTexturedWebGPUOptions',
@@ -283,6 +287,7 @@ const privateTexturedGPUModules = [
   'texturedPreparationBudget2D', 'prepareTexturedMesh2D', 'packTexturedMesh2D',
   'prepareTexturedDraws2D', 'admitTexturedFrame2D', 'ownedPreparationFailure2D',
   'prepareTexturedSubmission2D', 'texturedWebGPUOptions', 'webgpuTexturedPass', 'webgpuTexturedMeshPass',
+  'webgpuBufferPool', 'webgpuBindingCache',
 ];
 const publicTexturedGPUTypes = ['TexturedWebGPUHost', 'TexturedWebGPUHostOptions', 'TexturedWebGPUHostStatus'];
 for (const [entry, values, emittedEntry] of meshEntries) {
@@ -1151,6 +1156,22 @@ const sceneLiteralClosure = {
     ],
     [
       "static",
+      "./webgpuBindingCache.js"
+    ],
+    [
+      "static",
+      "./webgpuBindingCache.js"
+    ],
+    [
+      "static",
+      "./webgpuBufferPool.js"
+    ],
+    [
+      "static",
+      "./webgpuBufferPool.js"
+    ],
+    [
+      "static",
       "./webgpuImagePass.js"
     ],
     [
@@ -1720,6 +1741,14 @@ const sceneLiteralClosure = {
     ],
     [
       "static",
+      "./webgpuBindingCache.js"
+    ],
+    [
+      "static",
+      "./webgpuBufferPool.js"
+    ],
+    [
+      "static",
       "./webgpuImagePass.js"
     ],
     [
@@ -2182,8 +2211,35 @@ const sceneLiteralClosure = {
       "static",
       "@egret/contracts"
     ]
+  ],
+  "packages/engine/web/webgpuBufferPool.ts": [
+    [
+      "static",
+      "./webgpuLifetime.js"
+    ]
+  ],
+  "packages/engine/dist/web/webgpuBufferPool.js": [],
+  "packages/engine/dist/web/webgpuBufferPool.d.ts": [
+    [
+      "static",
+      "./webgpuLifetime.js"
+    ]
+  ],
+  "packages/engine/web/webgpuBindingCache.ts": [
+    [
+      "static",
+      "./webgpuBufferPool.js"
+    ]
+  ],
+  "packages/engine/dist/web/webgpuBindingCache.js": [],
+  "packages/engine/dist/web/webgpuBindingCache.d.ts": [
+    [
+      "static",
+      "./webgpuBufferPool.js"
+    ]
   ]
 };
+
 function sceneGraphEdges(code) {
   return [...code.matchAll(/\b(?:from\s*|import\s*\(\s*|import\s*)['"]([^'"]+)['"]/g)]
     .map(match=>[/^import\s*\(/.test(match[0])?'dynamic':'static',match[1]])
