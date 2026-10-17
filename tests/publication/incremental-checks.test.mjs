@@ -640,3 +640,57 @@ test('registered successors stay separate from original raw expectations',async(
   const p=m.prepareCompilerReview(f.root),groups=p.declarations.filter(x=>x.owner===file);assert.equal(groups.find(x=>x.selector==='inputPins').rows.find(x=>x.path==='packages/engine/dist/index.d.ts').identity,'different');assert.equal(groups.find(x=>x.selector==='currentInputIdentitySuccessor.rows').rows[0].identity,'same');assert.equal(p.acceptance,'none');
  }finally{f.close();}
 });
+
+
+// Genuine source bytes authenticate extraction; synthetic dependencies are never executed.
+function inlineCompilerFixture(){
+ const f=compilerFixture();
+ for(const name of ['check-types','bitmap-resource-slot-types','bitmap-binding-ticket-types','linear-layout-types','bitmap-button-types','display-anchor-offsets-types','display-container-add-child-at-types','display-container-child-index-types','display-container-remove-children-types','sequence-playback-types'])f.put('tools/'+name+'.mjs',fs.readFileSync(new URL('../../tools/'+name+'.mjs',import.meta.url)));
+ for(const [family,lanes]of [['mouse-input',['positive','negative','import-negative','dom-free-negative']],['spine-import-plan',['positive','negative','import-negative']]])for(const lane of lanes){const file='tests/types/'+family+'-'+lane+'.ts';f.put(file,fs.readFileSync(new URL('../../'+file,import.meta.url)));}
+ for(const name of ['display-container-add-child-at','display-container-child-index','display-container-remove-children','sequence-playback']){
+  const file='tests/types/'+name+'-diagnostic-expectations.json',v=JSON.parse(fs.readFileSync(path.join(f.root,file))),original=JSON.parse(fs.readFileSync(new URL('../../'+file,import.meta.url)));
+  if(name==='sequence-playback')v.currentDeclarationSuccessor.sourcePins=original.currentDeclarationSuccessor.sourcePins;
+  else {v.currentInputIdentitySuccessor.rows=original.currentInputIdentitySuccessor.rows;v.inputPins.push(original.inputPins.find(x=>x.path==='packages/runtime/dist/DisplayObject.d.ts'));}
+  f.put(file,JSON.stringify(v));
+ }
+ return f;
+}
+test('inline policy mode is explicit on preparation and freshness checking',async()=>{
+ const m=await compilerTool(),f=inlineCompilerFixture();try{
+  assert.deepEqual(m.parseCompilerOptions(['--inline-policies']),{inlinePolicies:true});
+  assert.deepEqual(m.parseCompilerOptions(['--check',path.resolve('review.json'),'--inline-policies']),{inlinePolicies:true,check:path.resolve('review.json')});
+  for(const args of [['--inline-policies','--inline-policies'],['--gate','evil.mjs'],['--check','relative.json']])assert.throws(()=>m.parseCompilerOptions(args));
+  for(const options of [{inlinePolicies:'true'},{sourcePins:[]},{inlinePolicies:true,extra:true}])assert.throws(()=>m.prepareCompilerReview(f.root,options));
+  const plain=m.prepareCompilerReview(f.root),p=m.prepareCompilerReview(f.root,{inlinePolicies:true});assert.equal(plain.inlinePolicies,null);assert.equal(p.acceptance,'none');assert.equal(p.schemaVersion,3);
+  assert.equal(m.verifyCompilerProposal(f.root,p,{inlinePolicies:true}).status,'current-inputs');assert.throws(()=>m.verifyCompilerProposal(f.root,p),/mode/i);assert.throws(()=>m.verifyCompilerProposal(f.root,plain,{inlinePolicies:true}),/mode/i);
+ }finally{f.close();}
+});
+test('sealed inline declarations preserve digest strength source spans and conditional review limits',async()=>{
+ const m=await compilerTool(),f=inlineCompilerFixture();try{
+  const p=m.prepareCompilerReview(f.root,{inlinePolicies:true}),inline=p.inlinePolicies;assert.equal(inline.sources.length,10);assert.equal(inline.literals.length,9);assert.equal(inline.conditions.length,12);
+  for(const literal of [...inline.literals,...inline.conditions.filter(x=>x.branch).map(x=>x.branch)]){const raw=fs.readFileSync(path.join(f.root,literal.owner)),selected=raw.subarray(literal.startByte,literal.endByte);assert.equal(selected.length,literal.bytes);assert.equal(createHash('sha256').update(selected).digest('hex'),literal.sha256);}
+  const rows=p.declarations.filter(x=>x.owner==='tools/check-types.mjs').flatMap(x=>x.rows);assert.equal(rows.length,11);assert(rows.every(x=>x.comparison==='sha256-only'&&!Object.hasOwn(x.expected,'bytes')));
+  const native=inline.conditions.filter(x=>x.kind==='saved-native-host');assert.equal(native.length,8);assert(native.every(x=>x.admission==='not-evaluated'&&x.savedHost.platform==='win32'&&x.readerHost.platform===process.platform));
+  assert(inline.conditions.filter(x=>x.kind==='container-successor').every(x=>x.historyAgreement&&x.successorAgreement));assert.equal(inline.conditions.find(x=>x.kind==='sequence-negative-successor').sourceAgreement,true);
+ }finally{f.close();}
+});
+test('any registered gate byte change refuses opt-in extraction and invalidates default freshness',async()=>{
+ const m=await compilerTool(),f=inlineCompilerFixture();try{
+  const paths=m.prepareCompilerReview(f.root,{inlinePolicies:true}).inlinePolicies.sources.map(x=>x.path);
+  for(const file of paths){const raw=fs.readFileSync(path.join(f.root,file));const baseline=m.prepareCompilerReview(f.root,{inlinePolicies:true}),plain=m.prepareCompilerReview(f.root);try{f.put(file,Buffer.concat([raw,Buffer.from('\n// changed policy source\n')]));assert.throws(()=>m.prepareCompilerReview(f.root,{inlinePolicies:true}),/reviewed.*source|source.*review/i);assert.throws(()=>m.verifyCompilerProposal(f.root,baseline,{inlinePolicies:true}));assert.throws(()=>m.verifyCompilerProposal(f.root,plain),/changed/);}finally{f.put(file,raw);}}
+  const file='tools/check-types.mjs',raw=fs.readFileSync(path.join(f.root,file));f.put(file,Buffer.concat([Buffer.from('/* fake declaration context\n'),raw,Buffer.from('\n*/')]));assert.throws(()=>m.prepareCompilerReview(f.root,{inlinePolicies:true}),/source/i);
+ }finally{f.close();}
+});
+test('condition disagreements remain observations and never silently replace history',async()=>{
+ const m=await compilerTool(),f=inlineCompilerFixture();try{
+  const file='tests/types/display-container-child-index-diagnostic-expectations.json',raw=fs.readFileSync(path.join(f.root,file)),p=m.prepareCompilerReview(f.root,{inlinePolicies:true}),v=JSON.parse(raw);v.currentInputIdentitySuccessor.rows[0].sha256='0'.repeat(64);f.put(file,JSON.stringify(v));
+  assert.throws(()=>m.verifyCompilerProposal(f.root,p,{inlinePolicies:true}),/changed/);const r=m.prepareCompilerReview(f.root,{inlinePolicies:true}),condition=r.inlinePolicies.conditions.find(x=>x.kind==='container-successor'&&x.inventory===file);assert.equal(condition.historyAgreement,true);assert.equal(condition.successorAgreement,false);assert.equal(condition.admission,'not-evaluated');
+  const declarations=r.declarations.filter(x=>x.owner==='tools/display-container-child-index-types.mjs');assert.equal(declarations.length,2);assert.notEqual(declarations[0].rows[0].expected.sha256,declarations[1].rows[0].expected.sha256);
+ }finally{f.close();}
+});
+test('inline fixture drift and missing inputs preserve raw comparisons without diagnostic execution',async()=>{
+ const m=await compilerTool(),f=inlineCompilerFixture();try{
+  const file='tests/types/spine-import-plan-negative.ts',raw=fs.readFileSync(path.join(f.root,file));
+  for(const missing of [false,true]){f.put(file,raw);const p=m.prepareCompilerReview(f.root,{inlinePolicies:true});assert.equal(p.references.find(x=>x.owner==='repository'&&x.path===file).identity,'same');if(missing)fs.unlinkSync(path.join(f.root,file));else f.put(file,Buffer.concat([raw,Buffer.from('\n// drift')]));assert.throws(()=>m.verifyCompilerProposal(f.root,p,{inlinePolicies:true}),/changed/);const fresh=m.prepareCompilerReview(f.root,{inlinePolicies:true});assert.equal(fresh.references.find(x=>x.owner==='repository'&&x.path===file).identity,missing?'missing':'different');}
+ }finally{f.close();}
+});

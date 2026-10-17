@@ -90,7 +90,7 @@ node tools/prepare-compiler-maintenance.mjs > ../compiler-proposal.json
 node tools/prepare-compiler-maintenance.mjs --check "$(Resolve-Path ../compiler-proposal.json)"
 ~~~
 
-schemaVersion 2 提案覆盖当前 tests/types 下全部 17 份 diagnostic-expectations JSON 记录中的选定字段。登记 11 份 inputPins 清单：Atlas 导入/帧布局、BitmapResourceSlot、BitmapBindingTicket、LinearLayout、BitmapButton、显示锚点偏移、三项容器操作和九宫格 Bitmap；Atlas 的 sourcePolicy.jsoncPins 单独保留。历史格式适配器覆盖浏览器 PNG、SpriteSheet、序列帧播放、ByteWriter、九宫格和 scene3d，读取各自已登记的编译器/配置/产品/夹具指纹；最后三类绑定 tools/check-types.mjs 作为严格检查入口。此目录不包含全部内联编译器策略或独立实验。
+schemaVersion 3 提案覆盖当前 tests/types 下全部 17 份 diagnostic-expectations JSON 记录中的选定字段。登记 11 份 inputPins 清单：Atlas 导入/帧布局、BitmapResourceSlot、BitmapBindingTicket、LinearLayout、BitmapButton、显示锚点偏移、三项容器操作和九宫格 Bitmap；Atlas 的 sourcePolicy.jsoncPins 单独保留。历史格式适配器覆盖浏览器 PNG、SpriteSheet、序列帧播放、ByteWriter、九宫格和 scene3d，读取各自已登记的编译器/配置/产品/夹具指纹；最后三类绑定 tools/check-types.mjs 作为严格检查入口。此目录不包含全部内联编译器策略或独立实验。
 
 八组 nativeLibraryPins 仅属于 compiler-native，保留原有 lib/lib.es*.d.ts 和装饰器声明路径。分别核对已保存的 win32/x64 包身份及固定元数据/二进制指纹。序列帧播放和历史九宫格采用各自明确的原生指纹路径写法。包装包中的同名文件或相同字节不能代替原生所有者。读取器仅接受已登记布局；其他平台或布局需显式评审适配器。版本元数据只作观察，不代表准入新版本。
 
@@ -100,9 +100,33 @@ schemaVersion 2 提案覆盖当前 tests/types 下全部 17 份 diagnostic-expec
 
 容器的 currentInputIdentitySuccessor.rows，以及序列帧 currentDeclarationSuccessor 的源码/夹具/配置指纹，与原始输入并列保留。它们不替换历史行，也不证明后续诊断语义。其他后续观察、标准输出、诊断元组、闭包及私有回执/运行时路径保持不解释状态，由所属 JSON 原始字节绑定。不会递归发现指纹并访问历史路径。全部语义、编译器、条件及版本边界继续由原门禁验证。
 
-coverage 列出登记文件名，以及将来新增但未登记的匹配文件名。不解析或跟随未知文件；它们的出现会使旧提案过期，并指出待评审缺口。这是文件名覆盖，不代表全部策略覆盖或对未知文件内容的认证。--check 重新生成并比较整个提案，包括实现/门禁/JSON 字节、所选所有者和依赖成员。schemaVersion 1 提案须重新生成。current-inputs 结果始终保持 acceptance: none。
+coverage 列出登记文件名，以及将来新增但未登记的匹配文件名。不解析或跟随未知文件；它们的出现会使旧提案过期，并指出待评审缺口。这是文件名覆盖，不代表全部策略覆盖或对未知文件内容的认证。--check 重新生成并比较整个提案，包括实现/门禁/JSON 字节、所选所有者和依赖成员。schemaVersion 1 和 2 提案须重新生成。current-inputs 结果始终保持 acceptance: none。
 
 单独修改基线之前，结合原严格入口评审变化或缺失行。保留原始证据、完整本地/推送/PR 门禁及独立评审。真人/外部 fork 上手（#52）、其他策略流程（#53）和设备/宿主/完整 Spine/性能验收（#54）继续开放。此流程减少手工比较工作，不宣称实测检查提速。
+
+## 内联编译器策略与条件关系
+
+维护已登记的内联策略时，在既有编译器命令中添加 --inline-policies，执行 --check 时再次指定。保存的提案不会自行启用模式。默认与内联提案均升级为 schemaVersion 3，旧提案须重新生成；不带此参数的默认命令仍可使用，不认证附加的内联源码登记表。
+
+~~~powershell
+node tools/prepare-compiler-maintenance.mjs --inline-policies > ../inline-policy-proposal.json
+node tools/prepare-compiler-maintenance.mjs --check "$(Resolve-Path ../inline-policy-proposal.json)" --inline-policies
+~~~
+
+显式启用的登记表覆盖十个原始门禁文件中的 14 项数据适配器：
+
+| 适配器 | 评审输出 | 仍由原门禁执行 |
+| --- | --- | --- |
+| 鼠标输入与 Spine 导入内联清单（2 项） | 编译器/夹具仅摘要比较、保存/安装版本相等关系及已认证字面量区间 | 完整结构、抑制标记、命名用例、诊断及编译器执行检查 |
+| 保存的原生宿主关系（8 项） | 读取宿主与保存平台/架构相等关系、精确分支区间及元数据/二进制字段关联 | 当前宿主原生所有者/版本/可执行文件检查、无条件标准库比较及重放 |
+| 容器声明后继（3 项） | 历史与后续指纹分别保留，与对应 JSON 声明逐项比较 | 类型标记、产品评审哈希、完整输入成员、回退规则及后续诊断检查 |
+| 序列帧播放后继（1 项） | 源码指纹一致性及登记的负例分支关系 | 后继来源、夹具/配置、原始输出、命名元组及实际诊断选择 |
+
+读取初始化数据之前，先认证整个门禁的原始字节数及 SHA-256。只解码已评审的 JSON 字面量；源码区间使用 UTF-8 字节偏移，结束位置不包含在内，不使用 UTF-16 字符位置。工具不导入门禁、不执行 JavaScript，也不解析任意条件。字面量之外的源码修改、注释中的相似声明及条件表达式变化均需重新评审源码登记；这些拒绝只证明源码认证，不代表通用 JavaScript 解析覆盖。
+
+原生宿主相等关系只描述保存的元数据/二进制分支，不会跳过或通过整个门禁。读取器仍观察固定 Windows x64 依赖包；其他读取宿主不会改变所选编译器所有者，也不证明兼容性。历史与内联预期共享反向引用索引，各自保留来源及比较强度。数据不一致会明确列出，不选择有效输入、不替换历史。每项条件记录均为 admission: not-evaluated，完整提案仍为 acceptance: none。
+
+目标文件或 JSON 声明变化时，重新生成提案，结合未修改的严格门禁评审差异。门禁源码变化时，先评审门禁及其测试，再显式更新固定源码登记及必要适配器；不自动刷新指纹，不回退到其他解析方式。同步中英文说明、运行实际控制、完成独立评审，并保留完整本地/推送/PR 检查。这份有限登记表不迁移任意内联表达式、其他源码策略变换或全部验收体系。真人/fork 和设备/性能限制继续开放。
 
 ## 测试清单范围
 
