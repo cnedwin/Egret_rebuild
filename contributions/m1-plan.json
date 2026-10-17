@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "knowledge-base/en/docs/m1-rendering-resource-plan.md",
+      "originRole": "First-party M1 architecture and implementation plan, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/m1-rendering-resource-plan.md",
+      "originRole": "First-party M1 architecture and implementation plan, authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/m1-rendering-resource-plan.md",
+      "zh": "knowledge-base/Cns/docs/m1-rendering-resource-plan.md"
+    }
+  ]
+}

@@ -2,15 +2,17 @@
 
 English | [中文](../../Cns/docs/m0-community-foundations.md)
 
-## Delivery scope
+## Current scope — 2026-10-18
 
-M0 increments implement environment, contribution and community foundations. Engine package source, public behavior and dependency versions are unchanged. Node moves to 26.7.0; pnpm 11.25.0 and TypeScript 7.0.2 remain pinned; complete Windows tooling uses PowerShell 7.6.5. Existing engineering preview 0.61.0 remains distinct from this infrastructure delivery.
+M0 infrastructure through PR #71 is merged at main ca62c980f372683dcb156bc5c284f4036a60f4cc. Node 26.7.0, pnpm 11.25.0, TypeScript 7.0.2 and PowerShell 7.6.5 are fixed. These increments did not change engine package behavior; the product remains engineering preview 0.61.0. The [M1 plan](m1-rendering-resource-plan.md) defines the next engineering entry without declaring full M0 acceptance.
 
-| Package | This increment | Remaining M0 acceptance |
+| Package | Delivered technical scope | Remaining acceptance |
 | --- | --- | --- |
-| A Independent onboarding | Read-only doctor, repeatable setup, local visual example, bilingual guide | Independent human newcomer rehearsal and supported-environment timing targets |
-| B Practical contributions | Templates, quick/full checks, current-ledger generation, risk-selected local feedback, eight browser entries, three resource families, five additional literal-scene profiles and public CI | Historical profile migration and external-fork rehearsal; full merge gates retained |
-| C Sustained collaboration | Discussions, Topics, five public Milestones, linked public Project, scoped Issues and maintainer routing | Human participation and staffed response targets; API Project automation still lacks permission |
+| A Independent onboarding | Doctor/setup, clean Chinese/space-path rehearsals, visual example and paired guide | Uninvolved human/fork rehearsal in #52; recorded single-machine timings are not general promises |
+| B Practical contributions | Controlled current ledgers, isolated declarations, dependency-aware local checks, current/resource/historical Node 26 workflows, bounded maintenance tools, public CI and protected main | Map original #53 acceptance to retained execution records before closure; any missing domain-specific evidence stays explicit; full merge gates remain |
+| C Sustained collaboration | Discussions, linked public Project, M0–M4 milestones and scoped Issues, actual maintainer routing | Independent participants and staffed response targets; Project API automation remains unavailable but does not block the working board |
+
+Further generic maintenance automation is not an M1 prerequisite. Unregistered policies continue through their existing review/gates; add tooling only when a concrete planned change requires it. Human, device and asset-entitlement gaps remain open. The sections below retain historical dates, failures and delivery cutoffs rather than rewriting them as current results.
 
 ## Environment and verification
 
@@ -42,7 +44,7 @@ Independent AI review identified and repaired four issues: file allowlist aliase
 
 Initial onboarding tests reproduced missing tools before implementation, then passed diagnostics and HTTP access checks. Clean setup exposed a hardcoded old-Node pnpm wrapper and implicit dependency layout; the documented selected runtime and explicit setup address these causes. The Canvas example was actually opened in the in-app browser, with ready resources/frame/input, blue outfit replacement and a 0.125-second animation step observed. This is an onboarding smoke test, not the fixed-browser graphics acceptance matrix. Full local gates, independent review and remote CI must pass before integration; PR checks carry their exact candidate results.
 
-M0 remains open for architecture/scenario/budget freezing, human rehearsal, broader dependency-aware engine-test selection and remaining host/tool migration. Use the [getting-started guide](getting-started.md) and [public milestones](https://github.com/cnedwin/Egret_rebuild/milestones).
+M0 remains open for complete architecture/device/asset qualification and independent human/fork rehearsal. Dependency-aware feedback and current historical-domain entry migration are delivered within their documented scope; complete merge gates and domain-specific evidence remain required. Use the [getting-started guide](getting-started.md) and [public milestones](https://github.com/cnedwin/Egret_rebuild/milestones).
 
 The [architecture and engineering plan](architecture-and-engineering-plan.md) retains the complete M0–M4 scope and acceptance criteria. This increment implements only the foundation subset above.
 
@@ -50,7 +52,7 @@ The [architecture and engineering plan](architecture-and-engineering-plan.md) re
 
 The [public Project](https://github.com/users/cnedwin/projects/2) is linked from the repository Projects tab. Its Delivery view shows Status, Milestone and labels. Backlog means unscheduled, Ready means scoped for participation, In Progress means active work, In Review means a candidate awaiting checks/review, Blocked requires a named dependency, and Done requires acceptance evidence. Issue bodies define scope/dependencies/acceptance and the integration contact; Milestones identify M0–M4. Use the board as the live status source rather than copying mutable progress into every document. No assignees, dates or additional maintainers are invented.
 
-The newcomer entry is [#52](https://github.com/cnedwin/Egret_rebuild/issues/52), labeled `good first issue` and `help wanted`, with file entry, expected result, verification and review contact. [#53](https://github.com/cnedwin/Egret_rebuild/issues/53) retains contribution-gate/ledger engineering; [#54](https://github.com/cnedwin/Egret_rebuild/issues/54) retains scenario, Spine and device-budget freezing. M1–M4 are coherent planned work packages in [#55](https://github.com/cnedwin/Egret_rebuild/issues/55), [#56](https://github.com/cnedwin/Egret_rebuild/issues/56), [#57](https://github.com/cnedwin/Egret_rebuild/issues/57) and [#58](https://github.com/cnedwin/Egret_rebuild/issues/58), not authorization to start engine work before M0 acceptance. The merged foundation [PR #51](https://github.com/cnedwin/Egret_rebuild/pull/51) supplies the completed infrastructure evidence.
+The newcomer entry is [#52](https://github.com/cnedwin/Egret_rebuild/issues/52), labeled `good first issue` and `help wanted`, with file entry, expected result, verification and review contact. [#53](https://github.com/cnedwin/Egret_rebuild/issues/53) retains contribution-gate/ledger engineering; [#54](https://github.com/cnedwin/Egret_rebuild/issues/54) retains scenario, Spine and device-budget freezing. M1–M4 are coherent planned work packages in [#55](https://github.com/cnedwin/Egret_rebuild/issues/55), [#56](https://github.com/cnedwin/Egret_rebuild/issues/56), [#57](https://github.com/cnedwin/Egret_rebuild/issues/57) and [#58](https://github.com/cnedwin/Egret_rebuild/issues/58), subject to the revised engineering entry in the [M1 plan](m1-rendering-resource-plan.md); complete M0 human/device acceptance is still separate. The merged foundation [PR #51](https://github.com/cnedwin/Egret_rebuild/pull/51) supplies the completed infrastructure evidence.
 
 ### Technical newcomer rehearsal
 
@@ -79,14 +81,13 @@ Preview-package publication requires explicit release scope, export/type/import 
 
 | Obligation | Current boundary and next action |
 | --- | --- |
-| Independent human and external fork | No uninvolved participant is available in this run. Keep #52 open; a volunteer completes the public checklist and maintainer handles first-run CI approval |
-| Controlled metadata integration and risk selection | Current ledgers and conservative local selection are implemented. Full push/merge gates remain; broader risk-based engine test selection requires separate dependency and refusal evidence |
-| Active browser-tool migration | Eight current suites, three resource families and five additional literal-scene profiles have recorded Node 26 results. Historical texture/sequence/SpriteSheet domains retain separate migration acceptance in #53 |
-| Scenario/Spine/device/budget freeze | #54 requires authorized representative assets, exact version/feature decisions and target tiers. No connected target-phone session; unavailable device rows stay unexecuted; do not invent numerical budgets |
-| API Project automation | Scoped token query is denied; manual/browser maintenance of the public board works. No wider token was issued |
-| Staffing | @cnedwin is the integration contact; no second human reviewer or response SLA is presumed |
+| Independent human/external fork | #52 stays open until an uninvolved volunteer completes the public flow; AI execution and maintainer-account CI cannot replace it |
+| Contribution maintenance acceptance | #53 receives a finite mapping of its original criteria to PR #60–#71 evidence; close only covered engineering scope, retaining any specific missing proof. Do not add universal parser or policy-automation requirements |
+| Renderer-dependent verification | Current Node 26 entry migration is delivered. Each new renderer must obtain fresh applicable source/browser/retirement acceptance; the old collector's result cannot certify new pixels |
+| Scenarios, Spine and target tiers | M1 desktop contracts and targets are fixed in its plan. #54 keeps exact Editor exports, complete version-derived inventory, distribution qualification and unavailable device/host budgets/results open; no support claim follows from planning |
+| Project API and staffing | Board operation is available; API automation lacks scope. @cnedwin is the integration contact; no second human reviewer or response SLA is invented |
 
-Full M0 stays open. This increment adds community infrastructure, reproducibility evidence and release-handoff criteria; it does not implement new engine features or certify product performance.
+Full M0 remains open. Reviewed engineering entry allows independent M1 work; missing human/device evidence is not converted to a pass.
 
 The diagnostic repair is confined to verification tooling. TypeScript renders non-ASCII UTF-16 units as Unicode escapes inside quoted import types. The converter now derives accepted spellings only from the complete known checkout owner and requires a following path separator; a sibling owner such as sdk-other cannot match sdk. The original message suffix, logical file keys, raw file bytes and frozen expected diagnostic tuples remain unchanged. Focused controls first failed for the escaped owner, sibling prefix and case-sensitive foreign path, then all nine onboarding tests passed. This does not authorize arbitrary diagnostic decoding or path normalization for hashes.
 

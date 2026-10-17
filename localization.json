@@ -1830,22 +1830,22 @@
       "en": "knowledge-base/en/docs/getting-started.md",
       "zh": "knowledge-base/Cns/docs/getting-started.md",
       "kind": "public_reading",
-      "enSha256": "5becccc82154c3618bd3f8958264da92d465d584e9be894dff28e207b06e09dc",
-      "zhSha256": "90aa6f7262b39a04f290365c107e180453d63b4a5592e8bc974a146c7e8f9a53"
+      "enSha256": "3b2d66edd675cc00e8918d3522869cf9e1fb176eb4fbda5e9e88712dfefa328c",
+      "zhSha256": "8f36e9ea53d56d5e2d3d0115c1ceb72345fa6599c6840561504c4f06104dc21d"
     },
     {
       "en": "knowledge-base/en/docs/m0-community-foundations.md",
       "zh": "knowledge-base/Cns/docs/m0-community-foundations.md",
       "kind": "public_reading",
-      "enSha256": "5c1c7162773cbab557af46b196e90cdd11813fcbdabd46c5a08d6d5db5efb84b",
-      "zhSha256": "fa99f695e01b3b4781ae9984a9b79f7e60b5b63fe4c064b0e4693132aed4f31c"
+      "enSha256": "cfc0ecb900d69cebdc155bb0b4301129c231d65031fea6e2404d6c7ef9300433",
+      "zhSha256": "c0b20169c15d26a477520ae3a2a55aaae408ff50c81b511d795cb6f500ff6039"
     },
     {
       "en": "knowledge-base/en/docs/architecture-and-engineering-plan.md",
       "zh": "knowledge-base/Cns/docs/architecture-and-engineering-plan.md",
       "kind": "public_reading",
-      "enSha256": "6a13641cc49f1783600f3b53e03aaa6ede8b66183cd84ea897233091b14706b3",
-      "zhSha256": "b93ba89ebdf61c640e68d1085fcf5c3b44b735c731255b4874279b203231f4d6"
+      "enSha256": "a9afab40602ed1335327d2ab410b9a6ba3b3c89e5df778eb45d0034280d3bafd",
+      "zhSha256": "6e99b94e20a562a7ccb01dea322955c8af1e0ddc2bacc134a3d0d80c9c6c8aa5"
     },
     {
       "en": "knowledge-base/en/docs/resource-browser-workflow.md",
@@ -1872,8 +1872,15 @@
       "en": "knowledge-base/en/docs/check-maintenance.md",
       "zh": "knowledge-base/Cns/docs/check-maintenance.md",
       "kind": "public_reading",
-      "enSha256": "1b0dd2fda051c820913bd0d57220696414267214061ce52d3681ad938e426bff",
-      "zhSha256": "bcde09a2d208c45f3c140046508925bc06c5d86d21f0ead40b8a68710eaba01f"
+      "enSha256": "9ea7633f599662b234f784e8201c7e0da1a5561beb33e574bcafd94542a57e87",
+      "zhSha256": "a83e6c9b3369c4bfd58f95ea6700a1bcb7728b2bf3ab84e08d4c1577ca3c98e6"
+    },
+    {
+      "en": "knowledge-base/en/docs/m1-rendering-resource-plan.md",
+      "zh": "knowledge-base/Cns/docs/m1-rendering-resource-plan.md",
+      "kind": "public_reading",
+      "enSha256": "3cd514d58389d5fee3de08a86bee2253155200729f1c6dbbd693e99fe25e08a8",
+      "zhSha256": "e93ddf4baf8b5f0d61e5b25b184d33fa0cd0b07ad5e3b41e9cf03dac88f1f4fc"
     }
   ],
   "registries": [
