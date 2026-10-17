@@ -90,7 +90,7 @@ node tools/prepare-compiler-maintenance.mjs > ../compiler-proposal.json
 node tools/prepare-compiler-maintenance.mjs --check "$(Resolve-Path ../compiler-proposal.json)"
 ~~~
 
-The schemaVersion 2 proposal covers selected fields in all 17 current tests/types diagnostic-expectations JSON records. It registers 11 inputPins inventories: Atlas import/frame, BitmapResourceSlot, BitmapBindingTicket, LinearLayout, BitmapButton, display anchor offsets, the three container operations and nine-slice Bitmap. Atlas sourcePolicy.jsoncPins remains separate. Explicit legacy adapters cover browser PNG, SpriteSheet, sequence playback, ByteWriter, nine-slice and scene3d. These adapters read their registered compiler/configuration/product/fixture pins; the three final families bind tools/check-types.mjs as their strict actor. This catalog does not include every inline compiler policy or separate experiment.
+The schemaVersion 3 proposal covers selected fields in all 17 current tests/types diagnostic-expectations JSON records. It registers 11 inputPins inventories: Atlas import/frame, BitmapResourceSlot, BitmapBindingTicket, LinearLayout, BitmapButton, display anchor offsets, the three container operations and nine-slice Bitmap. Atlas sourcePolicy.jsoncPins remains separate. Explicit legacy adapters cover browser PNG, SpriteSheet, sequence playback, ByteWriter, nine-slice and scene3d. These adapters read their registered compiler/configuration/product/fixture pins; the three final families bind tools/check-types.mjs as their strict actor. This catalog does not include every inline compiler policy or separate experiment.
 
 Eight nativeLibraryPins lists belong exclusively to compiler-native, using their original lib/lib.es*.d.ts and decorator declaration paths. Their saved win32/x64 package identity and fixed metadata/binary pins are checked separately. Sequence playback and legacy nine-slice use their own explicit native pin spellings. A matching basename or matching bytes in the wrapper package never substitutes for native ownership. The reader accepts only these registered layouts; another platform or layout needs an explicitly reviewed adapter. Version metadata is observed, not newly admitted.
 
@@ -100,9 +100,33 @@ Each expected pin remains attached to its declaration and full path. references 
 
 Container currentInputIdentitySuccessor.rows and sequence currentDeclarationSuccessor source/fixture/config pins remain separate claims beside original inputs. They do not replace historical rows or prove revised diagnostic semantics. Other successor observations, stdout, diagnostic tuples, closures and private receipt/runtime paths stay opaque and byte-bound to the owning JSON. No recursive pin discovery follows those historical paths. Original gates continue to validate all semantic, compiler, conditional and version boundaries.
 
-coverage lists the registered filenames and future unregistered matching filenames. Unknown files are not parsed or followed; their appearance invalidates an old proposal and identifies a review gap. This is filename coverage, not complete policy coverage or authentication of unknown file contents. --check regenerates and compares the entire proposal, including implementation/gate/JSON bytes, selected owners and dependency membership. A schemaVersion 1 proposal must be regenerated. A current-inputs result always has acceptance: none.
+coverage lists the registered filenames and future unregistered matching filenames. Unknown files are not parsed or followed; their appearance invalidates an old proposal and identifies a review gap. This is filename coverage, not complete policy coverage or authentication of unknown file contents. --check regenerates and compares the entire proposal, including implementation/gate/JSON bytes, selected owners and dependency membership. SchemaVersion 1 and 2 proposals must be regenerated. A current-inputs result always has acceptance: none.
 
 Review changed or missing rows with the original strict actor before making any separate baseline change. Keep original evidence, complete local/push/PR gates and independent review. Human/fork onboarding (#52), remaining policy workflows (#53) and device/host/full-Spine/performance acceptance (#54) stay open. This workflow reduces manual comparison work; no measured check-time speedup is claimed.
+
+## Inline compiler policies and conditional relationships
+
+Add --inline-policies to the existing compiler command when maintaining its registered inline policies. Repeat the flag on --check; a saved proposal never enables a mode by itself. Both default and inline proposals now use schemaVersion 3, so regenerate older artifacts. The default command remains available without authenticating the additional inline source registry.
+
+~~~powershell
+node tools/prepare-compiler-maintenance.mjs --inline-policies > ../inline-policy-proposal.json
+node tools/prepare-compiler-maintenance.mjs --check "$(Resolve-Path ../inline-policy-proposal.json)" --inline-policies
+~~~
+
+The opt-in registry covers 14 data adapters in ten original gate files:
+
+| Adapter | Review output | Still required from the original gate |
+| --- | --- | --- |
+| Mouse input and Spine import inline inventories (2) | Compiler/fixture digest-only comparisons, saved/installed version equality and authenticated literal spans | Complete schema, suppression, named-case, diagnostic and compiler execution checks |
+| Saved native-host relations (8) | Reader/saved platform and architecture equality, exact branch span and metadata/binary selector links | Current-host native owner/version/executable checks, unconditional library comparisons and replay |
+| Container declaration successors (3) | Historical and successor pins kept separately; agreement with the corresponding JSON claims | Kind, product-review hash, full input membership, fallback rules and diagnostic successor checks |
+| Sequence playback successor (1) | Source-pin agreement and the registered negative-lane relationship | Successor provenance, fixture/configuration, original output, named tuples and actual diagnostic selection |
+
+Complete gate byte counts and SHA-256 identities are authenticated before reading any initializer. Only the reviewed JSON literals are decoded; source spans use UTF-8 byte offsets with an exclusive end, never UTF-16 character positions. The tool does not import the gates, evaluate JavaScript or parse arbitrary conditions. Source edits outside a literal, comment lookalikes and changed condition expressions all require a new reviewed source registration. Their refusal establishes source authentication, not general JavaScript parser coverage.
+
+Native host equality describes only the saved metadata/binary branch. It neither skips nor passes the rest of the gate. The reader still observes the fixed Windows x64 bundle; a different reader host does not change the selected compiler owner or establish compatibility. Historical and inline expectations share the reverse-reference index while retaining their own origins and comparison strength. A data disagreement is reported without selecting an effective input or replacing history. Every conditional record has admission: not-evaluated, and the complete proposal retains acceptance: none.
+
+For a target-file or JSON-claim change, regenerate the proposal and review its differences alongside the unchanged strict gate. For a gate-source change, review that gate and its tests first, then explicitly update the fixed source registration and adapters as needed; there is no automatic pin refresh or fallback parser. Update the English/Chinese explanation, run actual controls, obtain independent review and retain full local/push/PR checks. This bounded registry does not migrate arbitrary inline expressions, other source-policy transformations or the complete acceptance system. Human/fork and device/performance limits remain open.
 
 ## Test catalog scope
 
