@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 // Exercise actual diagnostics and HTTP access boundaries without engine changes.
 import {test} from 'node:test';
+import vm from 'node:vm';
+import {fingerprintFile} from '../../tools/lib/file-identity.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -89,4 +91,64 @@ test('package ownership rejects same-version foreign targets and accepts contain
   assert.equal(localPackage(root,alias,'robust-predicates','3.0.3'),fs.realpathSync(owner));
   assert.throws(()=>localPackage(root,alias,'robust-predicates','0.0.0'));
  }finally{fs.rmSync(root,{recursive:true,force:true});fs.rmSync(foreign,{recursive:true,force:true});}
+});
+
+// Execute the actual standalone diagnostic renderer, without invoking the full
+// compiler gate. Only the known checkout prefix may become a portable token.
+const typeGateSource=fs.readFileSync(new URL('../../tools/check-types.mjs',import.meta.url),'utf8');
+const diagnosticStart='const nsTools = {portableMessage: ';
+const diagnosticOffset=typeGateSource.indexOf(diagnosticStart);
+assert.ok(diagnosticOffset>=0);
+const diagnosticEnd=typeGateSource.indexOf(', sourceCases:',diagnosticOffset);
+assert.ok(diagnosticEnd>diagnosticOffset);
+const portableDiagnostic=vm.runInNewContext('('+typeGateSource.slice(diagnosticOffset+diagnosticStart.length,diagnosticEnd)+')');
+
+test('type diagnostics recognize the compiler-escaped Unicode checkout owner',()=>{
+ const root='C:/work/冷缓存 fresh contributor';
+ const escaped='C:/work/'+String.fromCharCode(92)+'u51B7'+String.fromCharCode(92)+'u7F13'+String.fromCharCode(92)+'u5B58 fresh contributor';
+ const suffix='/packages/engine/dist/index';
+ assert.equal(portableDiagnostic('typeof import("'+escaped+suffix+'")',root,'win32'),'typeof import("<SDK_ROOT>'+suffix+'")');
+ assert.equal(portableDiagnostic('typeof import("'+root+suffix+'")',root,'win32'),'typeof import("<SDK_ROOT>'+suffix+'")');
+ assert.equal(portableDiagnostic('typeof import("'+('/home/'+String.fromCharCode(92)+'u51B7 cache')+suffix+'")','/home/冷 cache','linux'),'typeof import("<SDK_ROOT>'+suffix+'")');
+});
+test('type diagnostic owner recognition rejects sibling and foreign absolute roots',()=>{
+ for(const foreign of ['C:/work/sdk-other/packages/x','D:/work/sdk/packages/x']){
+  assert.throws(()=>portableDiagnostic('typeof import("'+foreign+'")','C:/work/sdk','win32'),/unclassified absolute path/);
+ }
+ assert.throws(()=>portableDiagnostic('typeof import("/home/other/pkg")','/home/sdk','linux'),/unclassified absolute path/);
+});
+test('type diagnostic portability preserves message and relative path bytes',()=>{
+ const suffix='/packages/CaseSensitive/'+String.fromCharCode(92)+'u4E2D';
+ const message='ERROR typeof import("c:/WORK/sdk'+suffix+'") details';
+ assert.equal(portableDiagnostic(message,'C:/work/sdk','win32'),'ERROR typeof import("<SDK_ROOT>'+suffix+'") details');
+ assert.equal(portableDiagnostic('plain diagnostic','C:/work/sdk','win32'),'plain diagnostic');
+ assert.throws(()=>portableDiagnostic('typeof import("/HOME/sdk/pkg")','/home/sdk','linux'),/unclassified absolute path/);
+});
+
+test('ticket diagnostic projection authenticates the selected file and exact escaped namespace',()=>{
+ const fixture=fs.realpathSync.native(fs.mkdtempSync(path.join(os.tmpdir(),'egret 中文 namespace ')));
+ const selected='packages/engine/dist/index.d.ts';
+ try{
+  fs.mkdirSync(path.join(fixture,path.dirname(selected)),{recursive:true});
+  fs.writeFileSync(path.join(fixture,selected),'export {};\n');
+  const pin=fingerprintFile(fixture,selected);
+  const source=fs.readFileSync(new URL('../../tools/bitmap-binding-ticket-types.mjs',import.meta.url),'utf8');
+  const begin=source.indexOf('function projectNamespace(output){');
+  const end=source.indexOf('\nif(inventory.schemaVersion',begin);
+  assert.ok(begin>=0&&end>begin);
+  const project=vm.runInNewContext('('+source.slice(begin,end)+')',{
+   root:fixture,inventory:{inputPins:[pin]},fingerprintFile,
+   equal:(a,b)=>JSON.stringify(a)===JSON.stringify(b),fail:message=>{throw Error(message);}
+  });
+  const owner=fixture.replaceAll(String.fromCharCode(92),'/');
+  const escaped=owner.replace('中文',String.fromCharCode(92)+'u4E2D'+String.fromCharCode(92)+'u6587');
+  const quoted='"'+escaped+'/packages/engine/dist/index"';
+  assert.equal(project('typeof import('+quoted+')'),'typeof import("<repo>/packages/engine/dist/index")');
+  const sibling='"'+escaped+'-other/packages/engine/dist/index"';
+  assert.equal(project(sibling),sibling);
+  const suffix='"'+escaped+'/packages/engine/dist/Other"';
+  assert.equal(project(suffix),suffix);
+  fs.writeFileSync(path.join(fixture,selected),'export const changed: number;\n');
+  assert.throws(()=>project(quoted),/namespace declaration owner differs/);
+ }finally{fs.rmSync(fixture,{recursive:true,force:true});}
 });

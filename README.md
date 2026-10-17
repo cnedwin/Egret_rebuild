@@ -16,7 +16,7 @@ Years later, as times change and technology advances, many developers continue t
 
 Start with the [getting-started guide](knowledge-base/en/docs/getting-started.md). With pinned Node 26.7.0 and pnpm 11.25.0, run `pnpm setup:dev`, `pnpm check:quick`, then `pnpm example:browser`. The same guide covers complete prerequisites, expected visuals and troubleshooting.
 
-Report problems through [Issues](https://github.com/cnedwin/Egret_rebuild/issues), ask and discuss in [Discussions](https://github.com/cnedwin/Egret_rebuild/discussions), and follow [Milestones](https://github.com/cnedwin/Egret_rebuild/milestones). This first M0 delivery adds environment and collaboration foundations without new engine capabilities.
+Report problems through [Issues](https://github.com/cnedwin/Egret_rebuild/issues), ask and discuss in [Discussions](https://github.com/cnedwin/Egret_rebuild/discussions), and follow the [public M0–M4 board](https://github.com/users/cnedwin/projects/2) and [Milestones](https://github.com/cnedwin/Egret_rebuild/milestones). [First contribution: newcomer rehearsal](https://github.com/cnedwin/Egret_rebuild/issues/52) includes scope, verification and the review contact. M0 improves environment and collaboration without new engine capabilities.
 
 ## What we are building
 

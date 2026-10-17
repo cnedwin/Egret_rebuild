@@ -16,7 +16,7 @@ Years later, as times change and technology advances, many developers continue t
 
 先阅读[上手指南](knowledge-base/Cns/docs/getting-started.md)，使用固定 Node 26.7.0 和 pnpm 11.25.0 运行 `pnpm setup:dev`、`pnpm check:quick`、`pnpm example:browser`。完整工具要求、预期画面及故障处理都在同一指南中。
 
-通过 [Issues](https://github.com/cnedwin/Egret_rebuild/issues) 报告问题，通过 [Discussions](https://github.com/cnedwin/Egret_rebuild/discussions) 提问和讨论；查看 [Milestones](https://github.com/cnedwin/Egret_rebuild/milestones) 了解阶段。M0 首批改造提供环境与协作基础，不新增引擎能力。
+通过 [Issues](https://github.com/cnedwin/Egret_rebuild/issues) 报告问题，通过 [Discussions](https://github.com/cnedwin/Egret_rebuild/discussions) 提问和讨论；查看[公开 M0–M4 看板](https://github.com/users/cnedwin/projects/2)和 [Milestones](https://github.com/cnedwin/Egret_rebuild/milestones) 了解状态与阶段。[首次贡献：新人演练](https://github.com/cnedwin/Egret_rebuild/issues/52)包含范围、验证步骤与评审入口。M0 完善环境与协作基础，不新增引擎能力。
 
 
 ## 我们正在构建的产品

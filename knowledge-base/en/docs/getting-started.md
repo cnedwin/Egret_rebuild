@@ -31,7 +31,7 @@ For a first code edit, change a displayed heading in `examples/resource-scene/in
 
 ## First contribution
 
-1. Check the public milestones and Issues. Before claiming a `good first issue`, confirm it has a code entry, expected result, verification command and reviewer.
+1. Check the [public board](https://github.com/users/cnedwin/projects/2), milestones and Issues. [Issue #52](https://github.com/cnedwin/Egret_rebuild/issues/52) is the bounded newcomer entry. Before claiming a `good first issue`, confirm it has a code entry, expected result, verification command and reviewer.
 2. Fork, create a branch and make a focused change. Questions, reproduction samples, translations and device testing are welcome.
 3. Run `pnpm check:quick` during iteration. It builds, checks actual package boundaries, exercises onboarding tools and runs the headless example; it is not the merge gate.
 4. Open a draft PR with the problem, behavior, verification, compatibility and sources/AI assistance. English or Chinese drafts are accepted. Maintainers help complete bilingual content and current ledgers; historical evidence is never regenerated.
@@ -44,3 +44,26 @@ Edwin (`@cnedwin`) is the current integration contact. CODEOWNERS routes review 
 Contributors may request translation/metadata assistance in the PR. The final integrated tree must be checked after those updates. Public CI runs without repository write permission; initial fork contributions may need maintainer approval to run. Missing/failed/cancelled required jobs cannot produce the final `M0 / merge-ready` pass.
 
 This delivery does not close M0: human newcomer rehearsal, full device/budget decisions, risk-based incremental checks, comprehensive ledger decoupling and legacy fixed-Node browser-tool migration remain open. Historical Node 24.19.0 collectors retain their original profiles; use them only with the recorded environment, never as proof of Node 26 compatibility.
+
+## Rehearse the first contribution
+
+Use your own fork for an actual contribution. On GitHub choose Fork, copy that fork's clone URL, clone it and create a branch such as `docs/onboarding-note`. Record `git rev-parse HEAD` before editing. Keep the upstream repository as the PR base and your fork/branch as the head; do not push directly to upstream main. A local clone using the maintainer account does not validate an external fork's first-run approval path.
+
+Follow the environment and example steps above, then record this compact checklist in [Issue #52](https://github.com/cnedwin/Egret_rebuild/issues/52) or the draft PR:
+
+| Step | Record and expected result |
+| --- | --- |
+| Environment | OS, Node/pnpm/PowerShell/Git versions and parent/child Node from doctor; redact personal paths |
+| Install | Base commit, whether the dependency store was empty, exit result, download time and setup time; no manual package aliases |
+| Run | Resources Ready, Frame Completed, Input Ready; two pilots, fixed text, successful outfit change and 0.125-second step |
+| Edit | Change only the local heading, reload, observe the change; repeat setup preserves that edit; use a useful correction for the real PR |
+| Check | Quick result and full merge result separately; include the first failure and its repair, not just the final success |
+| Submit and review | Fork/head/base, PR and CI links, any approval wait, reviewer role and integration outcome; AI and human review are distinct |
+
+Provisional process targets for the next rehearsals are five minutes for setup on a prepared Windows machine, one minute for quick checks, and thirty minutes for the full merge job. Record downloads, initial tool installation, user work and review queues separately; these are investigation thresholds, not a speed guarantee or permission to skip checks. No review-response deadline is promised without staffed coverage.
+
+### Current integration obstacle
+
+Quick checks do not prepare shared source/localization metadata; a final candidate still needs current-ledger integration. The technical rehearsal also found a separate full-type-gate failure in a Chinese-character checkout, repaired by recognizing the compiler-escaped checkout prefix without changing diagnostic suffixes or historical fingerprints. Until [Issue #53](https://github.com/cnedwin/Egret_rebuild/issues/53) is completed, ask the integration contact for current-metadata preparation before pushing; include a sanitized diff or reproduction in the Issue if the hook blocks your first push. Do not disable hooks, manually refresh historical evidence, or describe the first-PR path as frictionless. The maintainer prepares the integration candidate and reruns the full gate after bilingual/metadata changes.
+
+If the example never becomes Ready, provide the selected backend, failed step and sanitized diagnostics. If a phone, mini-game host or font workload is unavailable, record it as unexecuted. The [M0 result record](m0-community-foundations.md) keeps technical rehearsal, independent human onboarding and device validation separate.

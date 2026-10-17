@@ -330,8 +330,8 @@
       "zh": "CONTRIBUTING.zh-CN.md",
       "en": "CONTRIBUTING.md",
       "kind": "public_reading",
-      "enSha256": "6bfdbc423024e5a2cdbc04febf20f2c6722a64e44d074e356880d6550d014734",
-      "zhSha256": "d6aa85ab3dd116147299a870f7bf227cda9a9631310c65120f294570b1a97aed"
+      "enSha256": "50c3be5beb591fb8dc4057c30160dca448bb94d990971053759fe4c9161e187b",
+      "zhSha256": "42f3f3e52ce57624e3ceec96801995620752918614cce9dd7ff4d6a2437207b1"
     },
     {
       "zh": "docs/evidence/texture-a1.zh-CN.md",
@@ -1107,8 +1107,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "1215bd7bd665ff8778609df5d62efe21304df94151184f6d265cbbce9d28b110",
-      "zhSha256": "420f4d7df51dafa1a9f5eec66130c2fbceb3985e58d6a48e221cf232a76df210"
+      "enSha256": "5c8758861533d753b0bebb98c5e9e935ca715e99778123a47ad8d0d8a771129a",
+      "zhSha256": "942428643ce4c25f38b4a5ba1ab9c34f087752d0f8431ffef570ebf31ea05c49"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -1830,22 +1830,22 @@
       "en": "knowledge-base/en/docs/getting-started.md",
       "zh": "knowledge-base/Cns/docs/getting-started.md",
       "kind": "public_reading",
-      "enSha256": "3a9b1064814b1129b38c657cbe704a75390dbc1f0cd7f92573fe5091d832cad6",
-      "zhSha256": "7061e21faacf49681c97b57031ad1335792a5f05adad817793abb295dbbaae09"
+      "enSha256": "f463e061b76b6c7c3ab5630bddb4803fdbb1ff3068646bc9ae89ccfca0e96134",
+      "zhSha256": "81aea3510357243c3e545e6d8eaf784edbde26736d8e3b08812ab1dd0bf106eb"
     },
     {
       "en": "knowledge-base/en/docs/m0-community-foundations.md",
       "zh": "knowledge-base/Cns/docs/m0-community-foundations.md",
       "kind": "public_reading",
-      "enSha256": "af2fc5805f4e87ba62e354928670bd3a979f3936ce9eb5a8386d3552972d4b28",
-      "zhSha256": "79696692ca0f0e02a3d5accdc50499b32a27aebfb0560bce1614435dbe05ebf8"
+      "enSha256": "a1f2785cf468a76c5a4cd24c3c901bd84d104e8271157efeda2a3f0761c037fb",
+      "zhSha256": "4a52170fcd3f069a2ca5f087acaceb94e5b6aeb3f8e1cf627dd50a776cca7384"
     },
     {
       "en": "knowledge-base/en/docs/architecture-and-engineering-plan.md",
       "zh": "knowledge-base/Cns/docs/architecture-and-engineering-plan.md",
       "kind": "public_reading",
-      "enSha256": "e05cd4cfbef98550e67825da5be2ba69e22234787b9b2fb0bb5ac5e23fcc35bd",
-      "zhSha256": "963097957b38e8c45f206f5e71ff0dca76f93a287f85e7a72fac91f0628955f7"
+      "enSha256": "5bb78228ab2960f3c55a064c129d1f16b4ee2c1903ab7d845e49b170183ac0a2",
+      "zhSha256": "f5fd21b71b767c83b321d6c810948666a3d18a0bae1af2d3d3a9c8d9a713ecee"
     }
   ],
   "registries": [
@@ -2683,7 +2683,7 @@
     },
     {
       "path": "tools/check-types.mjs",
-      "sha256": "085c06cbe6a90003d22c6bbca3d26960d8bcf8ba052487292b5775dd2c2f9277"
+      "sha256": "13080da8e72418df9b8e8279d09b53e36839a5826953f84143c5787d1d1bff7a"
     },
     {
       "path": "packages/runtime/src/NineSliceGeometry2D.ts",
@@ -3279,7 +3279,7 @@
     },
     {
       "path": "tools/bitmap-binding-ticket-types.mjs",
-      "sha256": "dfbb7a9f0a32cb3152724a051b971626663369fb2fd06228d5d335b7d735434c"
+      "sha256": "57ed148c4e654d1eb8da46991a9b7902123a6e1d673efe1de05a0c5657f02879"
     },
     {
       "path": "tools/prepared-resource-groups/native-fixture.mjs",
