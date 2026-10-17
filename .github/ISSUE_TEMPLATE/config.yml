@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 'Questions and design / 问答与设计'
+    url: https://github.com/cnedwin/Egret_rebuild/discussions
+    about: 'Ask or discuss before implementation / 实现前提问或讨论'

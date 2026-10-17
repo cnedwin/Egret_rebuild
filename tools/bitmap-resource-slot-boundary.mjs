@@ -38,7 +38,7 @@ function brsbAtlasPackageSuccessor(expected, raw) {
 }
 
 function pinCheck(pin,code){const raw=read(pin.path);if(brsbAtlasPackageSuccessor(pin,raw))return;if(raw.length!==pin.bytes||hash(raw)!==pin.sha256)brsbFail(code,'Changed complete source identity: '+pin.path);}
-const policyPin={"path":"tools/bitmap-resource-slot-policy.json","bytes":14722,"sha256":"4842eb32adefb7bfb3427f508f19d37da77db489f188ca38e7ef3501fa6e5ffd"};
+const policyPin={"path":"tools/bitmap-resource-slot-policy.json","bytes":14666,"sha256":"cc3bb84f11989c12b3875f721a26e6429044411a0d74fc9929c41bbb283754c0"};
 pinCheck(policyPin,'BRS_BOUNDARY_POLICY_IDENTITY');
 const policy=JSON.parse(read(policyPin.path));
 const brsbTypes=policy.types;

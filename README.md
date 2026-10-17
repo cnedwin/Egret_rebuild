@@ -12,6 +12,12 @@ Years later, as times change and technology advances, many developers continue t
 
 多年以后，时代变迁，技术革新，依然有很多开发者在鼓励我们。我希望借助 AI 和社区的力量，重建这个游戏引擎。
 
+## Run and contribute
+
+Start with the [getting-started guide](knowledge-base/en/docs/getting-started.md). With pinned Node 26.7.0 and pnpm 11.25.0, run `pnpm setup:dev`, `pnpm check:quick`, then `pnpm example:browser`. The same guide covers complete prerequisites, expected visuals and troubleshooting.
+
+Report problems through [Issues](https://github.com/cnedwin/Egret_rebuild/issues), ask and discuss in [Discussions](https://github.com/cnedwin/Egret_rebuild/discussions), and follow [Milestones](https://github.com/cnedwin/Egret_rebuild/milestones). This first M0 delivery adds environment and collaboration foundations without new engine capabilities.
+
 ## What we are building
 
 Egret Engine is an open-source game-engine rebuild for creators working with AI and for developers bringing mobile-game experience to the Web. The product centers on complex 2D interfaces and lightweight 3D, with a small rendering/runtime foundation, explicit resource ownership and a shared project model for code, visual tools and agents.
@@ -79,12 +85,13 @@ Focused behavior, strict consumers and the recorded desktop Canvas/WebGPU compos
 
 ## Build and try the current playground
 
-Use the recorded Node.js 24.19.0, pnpm 11.25.0 and TypeScript 7.0.2 toolchain. From the repository root:
+The selected development Node.js version is **26.7.0**, pinned exactly in `package.json`, `.node-version` and `.nvmrc`. Keep pnpm 11.25.0 and TypeScript 7.0.2 unchanged. Select Node 26.7.0 in your terminal and verify `node --version` before running the commands below.
 
-    pnpm install --frozen-lockfile --ignore-scripts
-    git config --local core.hooksPath .githooks
-    node tools/verify.mjs
-    node examples/headless.mjs
+This is a toolchain transition. Historical Node 24.19.0 results retain their original environment, and several fixed-rig browser collectors still require that version. Complete repository and browser qualification on Node 26.7.0 remains pending; changing the version pin does not establish compatibility. From the repository root:
+
+    pnpm setup:dev
+    pnpm check:quick
+    pnpm example:browser
 
 The [resource replacement example](examples/bitmap-resource-slot/README.md) composes a persistent Bitmap, transformed clipping and independent Buttons; its bounded desktop Canvas/WebGPU checks are recorded in the linked evidence. Try the [layout example](examples/linear-layout/README.md) for explicit planning and Button composition, the [two-button example](examples/bitmap-button/README.md) for Canvas/WebGPU interaction, or the [atlas playground](examples/anchored-atlas-playback/README.md) for resources and animation. Their guides describe the local HTTP server and supported browser paths.
 

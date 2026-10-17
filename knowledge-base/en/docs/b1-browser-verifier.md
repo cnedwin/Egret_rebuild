@@ -6,7 +6,9 @@
 
 ## Run the command
 
-Use Node.js **v24.19.0** without added execution flags, the repository's **pnpm 11.25.0 / TypeScript 7.0.2** configuration and an installed **Playwright 1.62.1 / playwright-core 1.62.1** package pair. Install Microsoft Edge separately for the **msedge** channel. These are the current reproducibility profile, not a latest-version recommendation. The tool installs no dependencies.
+Use Node.js **v26.7.0** without added execution flags, the repository's **pnpm 11.25.0 / TypeScript 7.0.2** configuration and an installed **Playwright 1.62.1 / playwright-core 1.62.1** package pair. Install Microsoft Edge separately for the **msedge** channel. These are the current reproducibility profile, not a latest-version recommendation. The tool installs no dependencies.
+
+Current Node 26 admission and CPU refusal checks are requalified; the real B1 browser matrix on Node 26 remains OPEN. Earlier Node 24 browser receipts retain their original source and environment identities.
 
 Build the repository with its existing `node tools/build.mjs`, then run from the repository root:
 

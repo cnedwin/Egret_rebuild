@@ -1,0 +1,24 @@
+name: 'Setup help / 环境问题'
+description: 'Get help running the project / 获取上手帮助'
+body:
+  - type: markdown
+    attributes:
+      value: 'English or Chinese is welcome. Do not include credentials or private projects. / 可用中英文填写，请勿提交凭据或私有工程。'
+  - type: textarea
+    id: command
+    attributes:
+      label: 'Command and failure / 命令与失败现象'
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: 'Node, pnpm, PowerShell and OS / 工具版本与系统'
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: 'Relevant doctor output (remove personal paths) / 诊断输出（移除个人路径）'
+    validations:
+      required: true

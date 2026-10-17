@@ -59,8 +59,8 @@ async function admit(argv) {
     throw new SetupRefusal('CLI_OPTIONS_INVALID', 'Installed-tool and output paths must be absolute');
   }
   if (options['--channel'] !== 'msedge') throw new SetupRefusal('CHANNEL_UNSUPPORTED', 'Only the selected msedge channel is admitted');
-  if (process.version !== 'v24.19.0' || process.execArgv.length !== 0) {
-    throw new SetupRefusal('NODE_PROFILE_INVALID', 'Node.js v24.19.0 without added execution flags is required');
+  if (process.version !== 'v26.7.0' || process.execArgv.length !== 0) {
+    throw new SetupRefusal('NODE_PROFILE_INVALID', 'Node.js v26.7.0 without added execution flags is required');
   }
   const repository = await realpath(resolve(directory, '..'));
   let output;

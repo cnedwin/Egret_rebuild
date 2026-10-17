@@ -21,12 +21,11 @@
 
 ## 复现现有核心检查
 
-使用 Node.js 24.19.0、pnpm 11.25.0 和 TypeScript 7.0.2，在仓库根目录执行：
+使用 Node.js 26.7.0、pnpm 11.25.0 和 TypeScript 7.0.2，在仓库根目录执行：
 
-    pnpm install --frozen-lockfile --ignore-scripts
-    git config --local core.hooksPath .githooks
-    node tools/verify.mjs
-    node examples/headless.mjs
+    pnpm setup:dev
+    pnpm check:quick
+    pnpm example:browser
 
 每次推送前运行完整 node tools/prepush.mjs，完成公开结构、代码／类型／依赖边界、无界面示例和知识库检查。提交前钩子检查暂存原始字节，推送前钩子检查干净的已提交快照。按正常流程修复失败。渲染改动还需执行 [AGENTS](AGENTS.zh-CN.md) 中适用的真实浏览器检查。
 
@@ -51,3 +50,7 @@
 prepush 不启动浏览器。按改动选取已定义的 Canvas/WebGPU 检查，并记录实际环境和结果；复用旧结果时，明确核对相关身份未变。源码公开、浏览器行为、目标设备性能与远端 CI 分别记录。
 
 私有执行输出、依赖缓存和生成文件不进入公开清单。原始证据、历史源码身份及上游法律原件保留来源。远端交付流程见[发布指南](PUBLICATION.zh-CN.md)。
+
+## M0 上手与协作入口
+
+以[上手指南](knowledge-base/Cns/docs/getting-started.md)为当前环境、贡献分工与评审边界入口。安装固定 PowerShell 7.6.5。贡献草稿允许单语，维护方协助补齐双语及当前元数据；最终公开交付与主干仍须通过完整门禁。

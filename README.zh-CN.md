@@ -12,6 +12,13 @@ Years later, as times change and technology advances, many developers continue t
 
 多年以后，时代变迁，技术革新，依然有很多开发者在鼓励我们。我希望借助 AI 和社区的力量，重建这个游戏引擎。
 
+## 快速开始与参与
+
+先阅读[上手指南](knowledge-base/Cns/docs/getting-started.md)，使用固定 Node 26.7.0 和 pnpm 11.25.0 运行 `pnpm setup:dev`、`pnpm check:quick`、`pnpm example:browser`。完整工具要求、预期画面及故障处理都在同一指南中。
+
+通过 [Issues](https://github.com/cnedwin/Egret_rebuild/issues) 报告问题，通过 [Discussions](https://github.com/cnedwin/Egret_rebuild/discussions) 提问和讨论；查看 [Milestones](https://github.com/cnedwin/Egret_rebuild/milestones) 了解阶段。M0 首批改造提供环境与协作基础，不新增引擎能力。
+
+
 ## 我们正在构建的产品
 
 白鹭引擎面向使用 AI 创作游戏的新创作者，也服务于希望将手游制作经验带到 Web 的开发者。产品以复杂二维界面和轻量三维内容为中心，通过精简的渲染与运行时、明确的资源所有权，以及代码、可视化工具和 Agent 共用的工程模型，支撑持续创作。
@@ -79,12 +86,13 @@ Years later, as times change and technology advances, many developers continue t
 
 ## 构建与运行示例
 
-使用已记录的 Node.js 24.19.0、pnpm 11.25.0 和 TypeScript 7.0.2 工具链，在仓库根目录执行：
+开发环境指定使用 **Node.js 26.7.0**，在 `package.json`、`.node-version` 和 `.nvmrc` 中固定精确版本。pnpm 11.25.0 与 TypeScript 7.0.2 保持不变。执行下列命令前，请在终端选择 Node 26.7.0 并通过 `node --version` 确认。
 
-    pnpm install --frozen-lockfile --ignore-scripts
-    git config --local core.hooksPath .githooks
-    node tools/verify.mjs
-    node examples/headless.mjs
+当前处于工具链切换阶段。历史 Node 24.19.0 验证结果保留原始环境，部分固定环境浏览器采集工具仍限定该版本。Node 26.7.0 下的完整仓库与浏览器验证尚待完成，修改版本配置不等于兼容性已通过。在仓库根目录执行：
+
+    pnpm setup:dev
+    pnpm check:quick
+    pnpm example:browser
 
 [资源替换示例](examples/bitmap-resource-slot/README.zh-CN.md)组合持久 Bitmap、变换裁剪及独立按钮，其限定桌面 Canvas/WebGPU 检查已记录在所链接证据中。[布局示例](examples/linear-layout/README.zh-CN.md)展示显式规划与按钮组合；[双按钮示例](examples/bitmap-button/README.zh-CN.md)展示 Canvas/WebGPU 交互，[图集示例](examples/anchored-atlas-playback/README.zh-CN.md)展示资源与动画。各自指南说明本地 HTTP 服务与支持的浏览器运行方式。
 

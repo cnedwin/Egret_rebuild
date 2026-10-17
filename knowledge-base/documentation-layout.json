@@ -2021,6 +2021,33 @@
       "currentEnSha256": "1e754f62a6d57201c9b1806e3eb2bf74a313c0688087f4b8e474ca6ba2e2ef9d",
       "currentZhSha256": "205f522c9a05e70ffac227b214ce26654e54f7ac7463d9602a958796b75966c8",
       "currentEngineeringPreview": "0.61.0"
+    },
+    {
+      "newEn": "knowledge-base/en/docs/getting-started.md",
+      "newZh": "knowledge-base/Cns/docs/getting-started.md",
+      "kind": "public_reading",
+      "action": "add-current-pair",
+      "status": "CURRENT_READING_SOURCE",
+      "currentEnSha256": "3a9b1064814b1129b38c657cbe704a75390dbc1f0cd7f92573fe5091d832cad6",
+      "currentZhSha256": "7061e21faacf49681c97b57031ad1335792a5f05adad817793abb295dbbaae09"
+    },
+    {
+      "newEn": "knowledge-base/en/docs/m0-community-foundations.md",
+      "newZh": "knowledge-base/Cns/docs/m0-community-foundations.md",
+      "kind": "public_reading",
+      "action": "add-current-pair",
+      "status": "CURRENT_READING_SOURCE",
+      "currentEnSha256": "db9ffa6940a29ab8ba993977afa883c73a73d855b584bb5f8ff3870384f162b1",
+      "currentZhSha256": "99bfe67899b69522de73a5d27577eeff08d3cf368ecb7fec311cd9ca00923c57"
+    },
+    {
+      "newEn": "knowledge-base/en/docs/architecture-and-engineering-plan.md",
+      "newZh": "knowledge-base/Cns/docs/architecture-and-engineering-plan.md",
+      "kind": "public_reading",
+      "action": "add-current-pair",
+      "status": "CURRENT_READING_SOURCE",
+      "currentEnSha256": "e05cd4cfbef98550e67825da5be2ba69e22234787b9b2fb0bb5ac5e23fcc35bd",
+      "currentZhSha256": "963097957b38e8c45f206f5e71ff0dca76f93a287f85e7a72fac91f0628955f7"
     }
   ],
   "registries": [

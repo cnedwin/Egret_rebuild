@@ -68,10 +68,11 @@ if(process.argv.includes('--probe-host')){
   const index=process.argv.indexOf('--probe-host'),name=process.argv[index+1]??'process';
   const probe=new vm.SourceTextModule(name==='Math.random'?'void Math.random;':`void globalThis[${JSON.stringify(name)}];`,{context});
   await probe.link(()=>{throw Error('Unexpected probe import');});await probe.evaluate();
+  if(deniedHostAccesses.length)throw Error(`Denied host access: ${deniedHostAccesses[0]}`);
 }else if(rootAudit){
   const entry=realpathSync(path.join(builtDirectory,'index.js'));
   const project=loadEsm(entry);await project.link(linker);await project.evaluate();
-  if(deniedHostAccesses.length)throw Error('Denied hosts were accessed');
+  if(deniedHostAccesses.length)throw Error(`Denied host access: ${deniedHostAccesses[0]}`);
   if(authorityAudit&&instrumentedEntries.length!==authorityEntries.length)throw Error('Incomplete store authority audit');
   // The primary run evaluates unmodified built source. The separate authority run
   // intercepts these four first-party entries only and discloses that instrumentation.
@@ -87,7 +88,7 @@ if(process.argv.includes('--probe-host')){
   let literal;
   foundation.namespace.visit('true',{onLiteralValue(value){literal=value;},onError(){throw Error('Visitor audit error');}},{disallowComments:true,allowTrailingComma:false,allowEmptyContent:false});
   if(literal!==true)throw Error('Visitor audit failed');
-  if(deniedHostAccesses.length)throw Error('Denied hosts were accessed');
+  if(deniedHostAccesses.length)throw Error(`Denied host access: ${deniedHostAccesses[0]}`);
   // This foundation has no project-store implementation. Record the actual authority surface,
   // rather than presenting a literal false as an allocation detector.
   const storeAuthorityExports=Object.keys(foundation.namespace).filter(name=>/Store|History|commit/.test(name));

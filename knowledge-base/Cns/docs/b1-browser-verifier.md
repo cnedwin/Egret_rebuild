@@ -6,7 +6,9 @@
 
 ## 运行命令
 
-使用不附加执行参数的 Node.js **v24.19.0**、仓库的 **pnpm 11.25.0／TypeScript 7.0.2** 配置，以及已安装的 **Playwright 1.62.1／playwright-core 1.62.1** 配套包。另行安装 Microsoft Edge，以使用 **msedge** 通道。这些版本是当前复现配置，不表示推荐采用最新版本。工具不会安装依赖。
+使用不附加执行参数的 Node.js **v26.7.0**、仓库的 **pnpm 11.25.0／TypeScript 7.0.2** 配置，以及已安装的 **Playwright 1.62.1／playwright-core 1.62.1** 配套包。另行安装 Microsoft Edge，以使用 **msedge** 通道。这些版本是当前复现配置，不表示推荐采用最新版本。工具不会安装依赖。
+
+当前 Node 26 准入与 CPU 拒绝检查已重新验证；Node 26 下真实 B1 浏览器矩阵仍为 OPEN。原 Node 24 浏览器回执保留其源码及环境身份。
 
 先通过现有 `node tools/build.mjs` 构建仓库，再在仓库根目录运行：
 
