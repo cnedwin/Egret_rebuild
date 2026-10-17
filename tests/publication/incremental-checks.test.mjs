@@ -433,3 +433,66 @@ test('JSON selectors fail closed and decode duplicate keys without losing litera
   f.put(file,JSON.stringify(valid));assert.equal(m.prepareBaselineReview(f.root).policyLinks.length,3);
  }finally{f.close();}
 });
+
+
+// Synthetic snapshot comparison units are separate from actual collector evidence.
+const snapshotTool=()=>import('../../tools/prepare-snapshot-maintenance.mjs');
+function snapshotFixture(){
+ const pin={path:'same.js',bytes:1,sha256:'a'.repeat(64)};
+ return {schemaVersion:1,sourceOnly:true,owners:Object.fromEntries(['repository','compiler','compiler-native','project-json','foundation'].map(x=>[x,path.resolve('synthetic',x)])),aliases:[],buildResolutions:[],importMap:{},inventory:[{owner:'repository',...pin},{owner:'foundation',...pin}],modules:[],routes:[]};
+}
+test('snapshot comparison retains owner identity and reports added removed and changed inputs',async()=>{
+ const {compareSnapshots}=await snapshotTool(),before=snapshotFixture(),after=structuredClone(before);
+ after.inventory[0].sha256='b'.repeat(64);after.inventory.splice(1,1);after.inventory.push({...before.inventory[1],path:'new.js'});
+ const r=compareSnapshots('atlas-frame',before,after);
+ assert.deepEqual(r.changes.map(x=>[x.owner,x.path,x.change]),[['foundation','new.js','added'],['foundation','same.js','removed'],['repository','same.js','changed']]);
+ assert.equal(r.counts.changed,1);assert.equal(r.counts.removed,1);assert.equal(r.counts.added,1);
+});
+test('snapshot comparison has no implied changes without a baseline',async()=>{
+ const {compareSnapshots}=await snapshotTool();const r=compareSnapshots('atlas-frame',null,snapshotFixture());
+ assert.equal(r.comparison,'not-provided');assert.deepEqual(r.changes,[]);assert.equal(r.counts.observed,2);
+});
+test('snapshot owners and non-inventory structure remain independent review differences',async()=>{
+ const {compareSnapshots}=await snapshotTool(),before=snapshotFixture(),after=structuredClone(before);
+ after.owners.foundation=path.resolve('relocated');after.aliases.push({alias:'observed change'});after.routes.push({route:'/changed'});
+ const r=compareSnapshots('atlas-frame',before,after);
+ assert.equal(r.ownerChanges.length,1);assert.equal(r.ownerChanges[0].owner,'foundation');assert.deepEqual(r.structureChanges,['aliases','routes']);assert.deepEqual(r.changes,[]);
+});
+test('snapshot identity refuses duplicates foreign owners path aliases and unsupported schemas',async()=>{
+ const {compareSnapshots}=await snapshotTool();assert.throws(()=>compareSnapshots(['atlas-frame'],null,snapshotFixture()));
+ for(const mutate of [s=>s.inventory.push(s.inventory[0]),s=>s.inventory[0].sha256=['a'.repeat(64)],s=>s.inventory[0].owner='foreign',s=>s.inventory[0].path='../escape',s=>s.inventory[0].path='dir\\same.js',s=>s.sourceOnly=false,s=>s.owners.foreign=path.resolve('foreign'),s=>s.extra=true,s=>s.modules.push({owner:'foreign',path:'same.js'})]){
+  const s=snapshotFixture();mutate(s);assert.throws(()=>compareSnapshots('atlas-frame',null,s));
+ }
+});
+test('resource snapshot row roles remain visible even when raw bytes agree',async()=>{
+ const {compareSnapshots}=await snapshotTool();
+ const s={schemaVersion:1,kind:'RESOURCE_SCENE_SOURCE_SNAPSHOT_NO_BROWSER',sourceOnly:true,owners:Object.fromEntries(['sdk','application','foundation'].map(x=>[x,path.resolve('synthetic',x)])),helperBootstrap:{},collectorImplementation:{},foundationAdmission:{},authoredImportMap:{},servedOriginalHTML:{},inventory:[{owner:'sdk',path:'same.js',bytes:1,sha256:'a'.repeat(64),roles:['source']}],modules:[],closures:{},routes:[],limits:{},moduleBytes:1,routeBytes:1,acceptance:{}};
+ const after=structuredClone(s);after.inventory[0].roles.push('module');after.acceptance.changed=true;
+ const r=compareSnapshots('resource-scene',s,after);assert.equal(r.changes[0].change,'changed');assert.deepEqual(r.structureChanges,['acceptance']);
+});
+test('baseline proposal is comparison data and never follows nested artifact or owner paths',async()=>{
+ const {readSnapshotBaseline}=await snapshotTool();const root=fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(),'egret snapshot ')));
+ try{
+  const file=path.join(root,'baseline.json'),snapshot=snapshotFixture();
+  fs.writeFileSync(file,JSON.stringify({kind:'snapshot-maintenance',schemaVersion:1,family:'atlas-frame',status:'untrusted-success',snapshot,baseline:{path:path.join(root,'does-not-exist.json')}}));
+  const r=readSnapshotBaseline('atlas-frame',file);assert.deepEqual(r.snapshot,snapshot);assert.equal(r.pin.bytes,fs.statSync(file).size);
+  fs.writeFileSync(file,'{"schemaVersion":1,"schema\\u0056ersion":1}');assert.throws(()=>readSnapshotBaseline('atlas-frame',file),/Duplicate/);
+ }finally{fs.rmSync(root,{recursive:true,force:true});}
+});
+test('snapshot options allow only explicit families baseline and check modes',async()=>{
+ const {parseSnapshotOptions}=await snapshotTool();
+ assert.deepEqual(parseSnapshotOptions(['--family','atlas-frame']),{family:'atlas-frame'});
+ assert.deepEqual(parseSnapshotOptions(['--check',path.resolve('proposal.json')]),{check:path.resolve('proposal.json')});
+ for(const args of [[],['--family','foreign'],['--family','atlas-frame','--family','atlas-frame'],['--family','atlas-frame','--baseline','relative.json'],['--check',path.resolve('proposal.json'),'--family','atlas-frame'],['--family','atlas-frame','--collector',path.resolve('evil.mjs')]])assert.throws(()=>parseSnapshotOptions(args));
+});
+
+test('snapshot collection is CLI-only and refuses preloaded Node processes',async()=>{
+ const tool=await snapshotTool();assert.equal(tool.prepareSnapshotReview,undefined);assert.equal(tool.runSnapshotMaintenance,undefined);
+ const root=fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(),'egret snapshot preload ')));
+ try{
+  const preload=path.join(root,'preload.mjs');fs.writeFileSync(preload,'export {};');
+  const {pathToFileURL,fileURLToPath}=await import('node:url');
+  const run=spawnSync(process.execPath,['--import',pathToFileURL(preload).href,fileURLToPath(new URL('../../tools/prepare-snapshot-maintenance.mjs',import.meta.url)),'--family','resource-scene'],{encoding:'utf8'});
+  assert.notEqual(run.status,0);assert.match(run.stderr,/Fresh Node CLI/);assert.equal(run.stdout,'');
+ }finally{fs.rmSync(root,{recursive:true,force:true});}
+});

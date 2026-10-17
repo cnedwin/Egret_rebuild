@@ -53,6 +53,27 @@ references is a path-sorted reverse index of every supported pin occurrence. For
 
 Resource-scene and atlas-frame source collectors use their existing multi-owner snapshot procedures. They include external package ownership, dynamic module closures and original asset evidence, so they are not folded into the single-repository pin reader. Continue using the [advanced browser workflow](getting-started.md) and [resource browser workflow](resource-browser-workflow.md) for their supported suites, and the owner-specific source tools where applicable. Keep original snapshots and oracles intact. Compiler/dependency migration, conditional admission, semantic/types/native checks, human/fork onboarding and device/performance acceptance remain separate work. Every publication still requires independent review, actual controls, bilingual checks and the complete local/push/PR gates.
 
+## Multi-owner snapshot maintenance
+
+Use tools/prepare-snapshot-maintenance.mjs for the existing resource-scene and atlas-frame source collectors. The wrapper collects the current checkout, compares an optional prior snapshot or proposal, and prints review material to stdout. It never installs a new baseline or changes a collector. Existing emitted artifacts and exact installed dependencies are prerequisites; run the documented setup/build separately. No build, browser, server or product/compiler module is executed by this workflow. Trusted collector and identity-helper code is executed to read the existing source closure.
+
+PowerShell 7 examples (keep artifacts outside the checkout):
+
+~~~powershell
+node tools/prepare-snapshot-maintenance.mjs --family resource-scene > ../resource-snapshot.json
+node tools/prepare-snapshot-maintenance.mjs --check "$(Resolve-Path ../resource-snapshot.json)"
+node tools/prepare-snapshot-maintenance.mjs --family resource-scene --baseline "$(Resolve-Path ../resource-snapshot.json)" > ../resource-comparison.json
+node tools/prepare-snapshot-maintenance.mjs --family atlas-frame > ../atlas-snapshot.json
+~~~
+
+Without a baseline, the proposal explicitly reports comparison: not-provided. With one, changes are keyed by owner plus complete logical path. Added, removed and changed rows preserve both records, including resource-scene roles. Identical paths from different owners remain separate. Owner-root spelling or relocation appears separately; it is never normalized into a replacement fingerprint. structureChanges identifies other changed top-level fields, including module edges, routes, closures, aliases, build resolutions and acceptance metadata; the complete current snapshot remains available for inspection.
+
+The wrapper supports the current resource-scene SDK/application/foundation owners and Atlas repository/compiler/compiler-native/project-json/foundation owners. Resource application and SDK both use the current checkout; split application roots remain with the original collector. Atlas uses the ordinary collection selector and retains the original Windows x64 compiler limitation. A historical Atlas snapshot has no scenario discriminator: structural compatibility does not authenticate its scenario or provenance. This command does not add cross-platform compiler admission or migrate other compiler/source-boundary rules.
+
+Only the explicitly supplied baseline JSON file is read. Its historical owner roots and any nested baseline reference are data, never read targets. A prior proposal supplies its saved snapshot only; a saved success or review label grants no authority. Duplicate decoded JSON keys, unsupported top-level schemas/owner sets, duplicate inventory keys, invalid paths and undeclared module owners are refused. Artifact inputs are limited to 16 MiB. Comparison uses the saved record ordering conservatively; harmless reordering can still require review. These checks are bounded structural validation, not full semantic validation of historical module/route metadata.
+
+--check rereads the selected baseline artifact, re-runs the current source collector and compares the entire regenerated proposal, including its differences and implementation pins. Generator, parser, identity helper, collector and baseline bytes are bound and rechecked during collection; collection and recheck are private to a fresh direct Node CLI invocation with empty execArgv, NODE_OPTIONS and NODE_PATH. Exported helpers only compare or parse data; they do not collect. This execution contract does not isolate a caller that manipulates process globals. A changed input, added collected file or edited proposal requires regeneration and review. This is freshness checking within the existing collector scope, not hostile-process isolation or a repository-wide dependency map. A current-inputs result still has acceptance: none. Native execution continues through the existing advanced/resource browser workflows and their separate reviewed inputs, controls, cleanup and device requirements.
+
 ## Test catalog scope
 
 The proposed catalog enumerates the complete current top-level tests/*.test.mjs membership. Unchanged tests retain their reviewed package ownership only while their declared support, all four package manifests/graph and full-runner schedules remain unchanged. Changed or new tests and changed/missing support become shared. Manifest or schedule changes conservatively make all tests shared. Removed tests are listed; missing support stays explicit in unavailable inputs, and available support is retained. Existing shared tests are never automatically promoted to a narrower package.
