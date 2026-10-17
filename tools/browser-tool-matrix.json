@@ -90,18 +90,38 @@
       "reason": "Retained fixed experimental profile and original admission/retirement contract; not a current contributor setup command. Its original observation domain is not silently replaced by another suite."
     }
   ],
-  "advanced": [
+  "advanced": [],
+  "resourceFamilies": [
     {
-      "script": "tools/verify-prepared-resource-groups.mjs",
-      "status": "Separate source/snapshot and browser acceptance required; not covered by the current entry suites."
+      "id": "prepared-groups",
+      "entry": "tools/browser-resources.mjs",
+      "cases": 6,
+      "scope": "Two backends; ordinary and both assigned stale-layer controls."
     },
     {
-      "script": "tools/verify-atlas-frame.mjs",
-      "status": "Separate source/snapshot and browser acceptance required; not covered by the current entry suites."
+      "id": "atlas",
+      "entry": "tools/browser-resources.mjs",
+      "cases": 8,
+      "scope": "Two backends; ordinary, two assigned geometry controls and versioned importer."
     },
+    {
+      "id": "png",
+      "entry": "tools/browser-resources.mjs",
+      "cases": 1,
+      "scope": "BIP1 Canvas/WebGPU PNG profile; explicit original source and actual evidence required."
+    }
+  ],
+  "separateProfiles": [
     {
       "script": "tools/verify-browser-png.mjs",
-      "status": "Separate source/snapshot and browser acceptance required; not covered by the current entry suites."
+      "profiles": [
+        "nine-slice-bitmap",
+        "display-container-remove-children",
+        "display-container-child-index",
+        "display-container-add-child-at",
+        "display-anchor-offsets"
+      ],
+      "status": "Original separately admitted schemas remain available; the BIP1 family receipt does not requalify them."
     }
   ]
 }

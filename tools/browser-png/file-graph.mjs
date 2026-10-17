@@ -17,6 +17,12 @@ function requireGraph(condition, code, details = {}) {
     throw error;
   }
 }
+/** Current setup uses one exact physical hoisted owner for every PNG profile. */
+export function verifyBrowserPngDependencyOwner(root, dependencyRoot) {
+  const contained = ownerRelativePath(root, realpathSync(dependencyRoot));
+  requireGraph(contained === 'node_modules/robust-predicates', 'DEPENDENCY_OWNER', { path: dependencyRoot });
+  return contained;
+}
 function freezeData(value) {
   if (value && typeof value === 'object') {
     for (const item of Object.values(value)) freezeData(item);
@@ -307,9 +313,7 @@ export function freezeBrowserPngGraph({ repositoryRoot, collectorFiles, fixtureP
       const engine = packageRecords.get('@egret/engine');
       requireGraph(engine.data.dependencies?.[name] === '3.0.3', 'DEPENDENCY_VERSION');
       const linkPath = path.join(root, 'packages', 'engine', 'node_modules', name), dependencyRoot = realpathSync(linkPath);
-      const contained = ownerRelativePath(root, dependencyRoot);
-      requireGraph(literalScene ? contained === 'node_modules/' + name
-        : contained.startsWith('node_modules/.pnpm/') && contained.endsWith('/node_modules/' + name), 'DEPENDENCY_OWNER', { path: dependencyRoot });
+      const contained = verifyBrowserPngDependencyOwner(root, dependencyRoot);
       const manifest = rawFileFingerprint(dependencyRoot, 'package.json'), data = jsonBody(manifest);
       requireGraph(data.name === name && data.version === engine.data.dependencies[name] && data.type === 'module'
         && data.exports === './index.js' && data.types === 'index.d.ts', 'DEPENDENCY_MANIFEST');

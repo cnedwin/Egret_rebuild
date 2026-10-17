@@ -43,7 +43,7 @@ Edwin (`@cnedwin`) is the current integration contact. CODEOWNERS routes review 
 
 Contributors may request translation/metadata assistance in the PR. The final integrated tree must be checked after those updates. Public CI runs without repository write permission; initial fork contributions may need maintainer approval to run. Missing/failed/cancelled required jobs cannot produce the final `M0 / merge-ready` pass.
 
-M0 remains open for independent human/fork rehearsal, scenario/device budgets and remaining advanced collector migration. Current ledger generation, local risk-selected feedback and eight browser entries are available below; complete merge checks remain mandatory.
+M0 remains open for independent human/fork rehearsal, scenario/device budgets and separately admitted historical profiles. Current ledger generation, local risk-selected feedback and eight browser entries are available below; complete merge checks remain mandatory.
 
 ## Rehearse the first contribution
 
@@ -93,7 +93,7 @@ node tools/browser-verify.mjs --suite resource-scene --playwright <absolute-inst
 
 Use bitmap-slot in both commands for that suite. Build with the selected toolchain before preparation. Preparation does not launch a browser or approve its output: review the complete source closure, owners, imports and original oracle first, then provide the reviewed raw digest explicitly. The collector recomputes its complete closure before native execution; changed source/build inputs require a new snapshot and review. Do not automatically pipe an unreviewed generated digest into execution. Resource-scene retains its fixed Edge 155.0.4283.45/font reference; another browser version is not automatically accepted.
 
-Output parents must already exist and selected files/directories must be new and outside input owners. The entry refuses extra Node flags, NODE_OPTIONS/NODE_PATH, wrong versions, changed snapshots and missing completion receipts. It records failures, does not download browsers and preserves original pixel/control assertions. Desktop subsets do not prove mobile, general Chinese-font performance or complete engine capability. Consult tools/browser-tool-matrix.json: prepared-group, atlas and PNG still need distinct fixture/configuration admission migration; fixed Node 24.19.0 experiments retain historical status and cannot be replaced by these suites. Rendering changes still require their affected domains. Independent OS process retirement is not certified by the wrapper.
+Output parents must already exist and selected files/directories must be new and outside input owners. The entry refuses extra Node flags, NODE_OPTIONS/NODE_PATH, wrong versions, changed snapshots and missing completion receipts. It records failures, does not download browsers and preserves original pixel/control assertions. Desktop subsets do not prove mobile, general Chinese-font performance or complete engine capability. Consult tools/browser-tool-matrix.json: prepared-group, atlas and BIP1 PNG use the [resource-family workflow](resource-browser-workflow.md) with separate fixture/configuration admission; fixed Node 24.19.0 experiments retain historical status and cannot be replaced by these suites. Rendering changes still require their affected domains. Independent OS process retirement is not certified by the wrapper.
 
 ## Risk-selected local feedback
 
