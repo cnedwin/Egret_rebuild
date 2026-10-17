@@ -1830,22 +1830,22 @@
       "en": "knowledge-base/en/docs/getting-started.md",
       "zh": "knowledge-base/Cns/docs/getting-started.md",
       "kind": "public_reading",
-      "enSha256": "0922c06023c17db00d2496e85a9151621cf13c64585c26a51dd7e1c72531c884",
-      "zhSha256": "010da16e7e73f23951e85c09a0a5c742def6748a297d6b30a760a2d33d491785"
+      "enSha256": "5becccc82154c3618bd3f8958264da92d465d584e9be894dff28e207b06e09dc",
+      "zhSha256": "90aa6f7262b39a04f290365c107e180453d63b4a5592e8bc974a146c7e8f9a53"
     },
     {
       "en": "knowledge-base/en/docs/m0-community-foundations.md",
       "zh": "knowledge-base/Cns/docs/m0-community-foundations.md",
       "kind": "public_reading",
-      "enSha256": "75c8e346d96596426f43770012e09472b6a3b4aadfa295fdeb040ed67f516e32",
-      "zhSha256": "8612003b5b1c0aefc83a7312c10c3fa04a3ec6644d8a43f3bebe4c7c03e091cc"
+      "enSha256": "38f930cfce862da178ddae0ada449c1573c1ed9d02f355f4823698890a734350",
+      "zhSha256": "42e5a262b36e5e4eb1022ca2186b2f44be9f4d3949b5b37de384bdaf1960da7a"
     },
     {
       "en": "knowledge-base/en/docs/architecture-and-engineering-plan.md",
       "zh": "knowledge-base/Cns/docs/architecture-and-engineering-plan.md",
       "kind": "public_reading",
-      "enSha256": "c0fa5efab218db8defae3050cbe774bf7e583ff2bebd229a517077f341cd10e0",
-      "zhSha256": "11836b21768b2238d494c70be4446664c490afcbb4ffe2f92c220d75c8ab2ed9"
+      "enSha256": "c6f44aba28e138620f1506ebe6c904ebe64681e27897ef7ba157f3b794a7a72a",
+      "zhSha256": "bc4d827062cbf0475c2d3e39d96225adb305a17ba6e31b4dec91b57506106811"
     },
     {
       "en": "knowledge-base/en/docs/resource-browser-workflow.md",
@@ -1865,8 +1865,15 @@
       "en": "knowledge-base/en/docs/dependency-aware-checks.md",
       "zh": "knowledge-base/Cns/docs/dependency-aware-checks.md",
       "kind": "public_reading",
-      "enSha256": "b7323b19826136aaf7c992beae492f26662c9e1efcaf52fbb1e123953c356b7a",
-      "zhSha256": "bd37cfe28ca3075b684c8d825d5919599bb879ed7ae24783c90b25e00940bc3b"
+      "enSha256": "725c575e996506bc94ae9731480d5c1d5bf252df64c07abd4865ea2be2b0c0bf",
+      "zhSha256": "eb008d5aab3b13499d82bb58ffa49944d357593938c5a8ba10a56e0d07a3acf9"
+    },
+    {
+      "en": "knowledge-base/en/docs/check-maintenance.md",
+      "zh": "knowledge-base/Cns/docs/check-maintenance.md",
+      "kind": "public_reading",
+      "enSha256": "409fbd92b8b135787b9be4929867bb07330911ca82c829a4dcafa6468d0cbc4d",
+      "zhSha256": "35e417cc116373ade052b251f960e6e07485399cc8d1c7ed28db09d63dbb8698"
     }
   ],
   "registries": [
@@ -3456,7 +3463,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "e9ac56d2a6168e8ffcf471535a20b6b8bc9cc98236a2c2873f5c027aa4ac696b"
+      "sha256": "cd72cefe9035c177d491a9c65f15ab95ed8e0115783e8143744a44260004df36"
     },
     {
       "path": "tools/browser-resources.mjs",
@@ -3481,6 +3488,10 @@
     {
       "path": "tools/incremental-dependencies.mjs",
       "sha256": "efabc3c0b91a6b39cc1543d19f1734229fe48e1711c110f725d7402c2de1f887"
+    },
+    {
+      "path": "tools/prepare-check-maintenance.mjs",
+      "sha256": "62bbc524cd78bb117c8c7a40f5c5e796467feae433ff99cb0b0bf9c95e137d08"
     }
   ],
   "historicalSemanticReview": {
