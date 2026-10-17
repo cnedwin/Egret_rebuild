@@ -509,23 +509,51 @@ function compilerFixture(){
  const root=fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(),'egret compiler maintenance ')));
  const put=(file,body)=>{fs.mkdirSync(path.dirname(path.join(root,file)),{recursive:true});fs.writeFileSync(path.join(root,file),body);};
  const pin=file=>{const raw=fs.readFileSync(path.join(root,file));return {path:file,bytes:raw.length,sha256:createHash('sha256').update(raw).digest('hex')};};
- const specs=[['atlas-import','ATLAS_IMPORT'],['bitmap-resource-slot','BITMAP_RESOURCE_SLOT'],['bitmap-binding-ticket','BITMAP_BINDING_TICKET'],['linear-layout','LINEAR_LAYOUT']];
+ const names=['atlas-import','atlas-frame','bitmap-resource-slot','bitmap-binding-ticket','linear-layout','bitmap-button','display-anchor-offsets','display-container-add-child-at','display-container-child-index','display-container-remove-children','nine-slice-bitmap'];
+ const nativeNames=names.slice(2,-1),specs=names.map(name=>[name,name.replaceAll('-','_').toUpperCase()]);
+ const native='node_modules/@typescript/typescript-win32-x64/';
+ for(const file of ['lib/lib.es5.d.ts','lib/tsc.exe'])put(native+file,'native fixture');
+ put('node_modules/typescript/lib/lib.es5.d.ts','native fixture');
+ const nativePin=file=>({...pin(native+file),path:file});
  for(const file of ['tools/prepare-compiler-maintenance.mjs','tools/prepare-check-maintenance.mjs','tools/lib/file-identity.mjs','packages/engine/dist/index.d.ts'])put(file,'// Synthetic nonexecuting fixture\n');
  for(const [name,version]of [['typescript','7.0.2'],['@typescript/typescript-win32-x64','7.0.2'],['jsonc-parser','3.3.1']]){
   put('node_modules/'+name+'/package.json',JSON.stringify({name,version,...(name.startsWith('@typescript/')?{exports:{'./package.json':'./package.json'}}:{})}));put('node_modules/'+name+'/index.js','throw Error("must never execute compiler or dependency");\n');
  }
  for(const [name,kind]of specs){
   put('tools/'+name+'-types.mjs','throw Error("must never execute strict gate");\n');
-  const v={...(name==='atlas-import'?{}:{schemaVersion:1}),kind:kind+'_ACTUAL_STRICT_DIAGNOSTICS',status:'OBSERVED_FROZEN_TS7_DIAGNOSTICS',inputPins:['tools/'+name+'-types.mjs','packages/engine/dist/index.d.ts','node_modules/typescript/index.js','node_modules/@typescript/typescript-win32-x64/index.js'].map(pin)};
+  const v={...(['atlas-import','atlas-frame'].includes(name)?{}:{schemaVersion:1}),kind:kind+'_ACTUAL_STRICT_DIAGNOSTICS',status:'OBSERVED_FROZEN_TS7_DIAGNOSTICS',inputPins:['tools/'+name+'-types.mjs','packages/engine/dist/index.d.ts','node_modules/typescript/index.js','node_modules/@typescript/typescript-win32-x64/index.js'].map(pin)};
+  if(nativeNames.includes(name)){v.nativeLibraryPins=[nativePin('lib/lib.es5.d.ts')];v.originalCompilerObservation={platform:'win32',arch:'x64',version:'7.0.2',nativePackage:'@typescript/typescript-win32-x64',nativeMetadataPin:nativePin('package.json'),nativeBinaryPin:nativePin('lib/tsc.exe')};}
+  if(name.startsWith('display-container-'))v.currentInputIdentitySuccessor={rows:[pin('packages/engine/dist/index.d.ts')]};
   if(name==='atlas-import')v.sourcePolicy={jsoncPins:[pin('node_modules/jsonc-parser/index.js')]};
+  put('tests/types/'+name+'-diagnostic-expectations.json',JSON.stringify(v));
+ }
+ put('tools/check-types.mjs','throw Error("never run legacy gate");');
+ put('node_modules/typescript/bin/tsc','throw Error("never execute compiler");');
+ put('tests/types/sample.ts','export {};');put('tests/types/tsconfig.sample.json','{}');
+ const fixture=pin('tests/types/sample.ts'),config=pin('tests/types/tsconfig.sample.json');
+ for(const name of ['browser-png','spritesheet','sequence-playback','byte-writer','nine-slice','scene3d']){
+  put('tools/'+name+'-types.mjs','throw Error("never run gate");');
+  let v={schemaVersion:1};
+  if(['browser-png','spritesheet','sequence-playback'].includes(name)){
+   Object.assign(v,{kind:name.replaceAll('-','_').toUpperCase()+'_ACTUAL_STRICT_CONSUMER_DIAGNOSTICS',compiler:{pins:[pin('node_modules/typescript/index.js'),config]},configurationPins:[config]});
+   if(name==='browser-png'){v.productPins=[pin('packages/engine/dist/index.d.ts')];v.lanes=[{sourcePin:fixture,configPin:config}];}
+   else v.groups=[{fixture,config}];
+   if(name==='sequence-playback'){v.status='SAVED_ACTUAL_DATA_FROZEN_REUSABLE_GATE_NOT_RUN';v.compiler.observedNative={platform:'win32',arch:'x64',package:'@typescript/typescript-win32-x64',pins:[nativePin('package.json'),nativePin('lib/tsc.exe')]};v.currentDeclarationSuccessor={sourcePins:[pin('packages/engine/dist/index.d.ts')],fixture,config};}
+  }else if(name==='scene3d'){
+   v.status='OBSERVED_FROZEN_TS7_DIAGNOSTICS';v.compiler={packageSHA256:pin('node_modules/typescript/package.json').sha256,tscSHA256:pin('node_modules/typescript/bin/tsc').sha256};v.fixtureSHA256={};
+   for(const lane of ['positive','web-positive','negative','web-negative','import-negative','web-dom-free-negative']){const f='tests/types/scene3d-'+lane+'.ts';put(f,'export {};');v.fixtureSHA256[f]=pin(f).sha256;}
+  }else{
+   v.scope=(name==='byte-writer'?'BW1':'NS1')+' actual strict consumer diagnostic inventory';v.positive={fixture};v.groups={negative:{fixture},'import-negative':{fixture}};
+   if(name==='nine-slice'){v.configurationPins=[config];v.compiler={platform:'win32',arch:'x64',wrapperPins:[pin('node_modules/typescript/index.js')],nativePlatform:{package:{...nativePin('package.json'),path:'@typescript/typescript-win32-x64/package.json'},executable:{...nativePin('lib/tsc.exe'),path:'@typescript/typescript-win32-x64/lib/tsc.exe'}}};}
+  }
   put('tests/types/'+name+'-diagnostic-expectations.json',JSON.stringify(v));
  }
  return {root,put,pin,close:()=>fs.rmSync(root,{recursive:true,force:true})};
 }
-test('compiler preparation retains four declaration owners and shared raw references without execution',async()=>{
+test('compiler preparation retains registered declaration owners and shared raw references without execution',async()=>{
  const m=await compilerTool(),f=compilerFixture();try{
-  const p=m.prepareCompilerReview(f.root);assert.equal(p.status,'review-required');assert.equal(p.acceptance,'none');assert.equal(p.declarations.length,5);
-  const row=p.references.find(x=>x.owner==='compiler'&&x.path==='index.js');assert.equal(row.references.length,4);assert.equal(row.identity,'same');assert.equal(p.dependencies.length,3);
+  const p=m.prepareCompilerReview(f.root);assert.equal(p.status,'review-required');assert.equal(p.acceptance,'none');assert.equal(p.coverage.registered.length,17);assert.deepEqual(p.coverage.unregistered,[]);
+  const row=p.references.find(x=>x.owner==='compiler'&&x.path==='index.js');assert.equal(row.references.length,15);assert.equal(row.identity,'same');assert.equal(p.dependencies.length,3);
   assert.equal(m.verifyCompilerProposal(f.root,p).status,'current-inputs');
  }finally{f.close();}
 });
@@ -546,16 +574,16 @@ test('compiler registry refuses duplicate keys paths unsupported owners and coer
 test('compiler raw comparisons preserve independent historical expectations and reject tampering',async()=>{
  const m=await compilerTool(),f=compilerFixture();try{
   const file='tests/types/linear-layout-diagnostic-expectations.json',v=JSON.parse(fs.readFileSync(path.join(f.root,file)));v.inputPins.find(x=>x.path==='node_modules/typescript/index.js').sha256='0'.repeat(64);f.put(file,JSON.stringify(v));
-  const p=m.prepareCompilerReview(f.root),r=p.references.find(x=>x.owner==='compiler'&&x.path==='index.js');assert.equal(r.identity,'different');assert.equal(r.references.filter(x=>x.matches).length,3);
+  const p=m.prepareCompilerReview(f.root),r=p.references.find(x=>x.owner==='compiler'&&x.path==='index.js');assert.equal(r.identity,'different');assert.equal(r.references.filter(x=>x.matches).length,14);
   p.acceptance='PASS';assert.throws(()=>m.verifyCompilerProposal(f.root,p),/changed/);
  }finally{f.close();}
 });
 
 
-test('compiler observations bind uninterpreted native fields and gate source bytes',async()=>{
+test('compiler observations bind uninterpreted provenance fields and gate source bytes',async()=>{
  const m=await compilerTool(),f=compilerFixture();try{
   const p=m.prepareCompilerReview(f.root),file='tests/types/linear-layout-diagnostic-expectations.json',v=JSON.parse(fs.readFileSync(path.join(f.root,file)));
-  v.nativeLibraryPins=[{path:'never-follow-this-historical-path'}];f.put(file,JSON.stringify(v));assert.throws(()=>m.verifyCompilerProposal(f.root,p),/changed/);
+  v.originalCompilerObservation.setupReceiptPin={path:'never-follow-this-historical-path'};f.put(file,JSON.stringify(v));assert.throws(()=>m.verifyCompilerProposal(f.root,p),/changed/);
   const fresh=m.prepareCompilerReview(f.root);assert.equal(fresh.status,'review-required');f.put('tools/linear-layout-types.mjs','throw Error("changed source is not executed");');assert.throws(()=>m.verifyCompilerProposal(f.root,fresh),/changed/);
  }finally{f.close();}
 });
@@ -573,5 +601,42 @@ test('compiler metadata reader refuses redirected or conditional native exports'
  const m=await compilerTool(),f=compilerFixture();try{
   const file='node_modules/@typescript/typescript-win32-x64/package.json',v=JSON.parse(fs.readFileSync(path.join(f.root,file)));
   for(const exports of [{'./package.json':'./alternate.json'},{'./package.json':{default:'./package.json'}}]){f.put(file,JSON.stringify({...v,exports}));assert.throws(()=>m.prepareCompilerReview(f.root),/export mapping/);}
+ }finally{f.close();}
+});
+
+
+test('native declarations retain explicit owners and historical expectations',async()=>{
+ const m=await compilerTool(),f=compilerFixture();try{
+  const p=m.prepareCompilerReview(f.root),row=p.references.find(x=>x.owner==='compiler-native'&&x.path==='lib/lib.es5.d.ts');assert.equal(row.references.length,8);assert.equal(row.identity,'same');
+  f.put('node_modules/typescript/lib/lib.es5.d.ts','wrapper drift');const wrapper=m.prepareCompilerReview(f.root);assert.equal(wrapper.references.find(x=>x.owner==='compiler-native'&&x.path==='lib/lib.es5.d.ts').identity,'same');assert.throws(()=>m.verifyCompilerProposal(f.root,p),/changed/);
+  f.put('node_modules/@typescript/typescript-win32-x64/lib/lib.es5.d.ts','native drift');const changed=m.prepareCompilerReview(f.root);assert.equal(changed.references.find(x=>x.owner==='compiler-native'&&x.path==='lib/lib.es5.d.ts').identity,'different');
+  fs.unlinkSync(path.join(f.root,'node_modules/@typescript/typescript-win32-x64/lib/lib.es5.d.ts'));assert.equal(m.prepareCompilerReview(f.root).references.find(x=>x.owner==='compiler-native'&&x.path==='lib/lib.es5.d.ts').identity,'missing');
+ }finally{f.close();}
+});
+test('native selectors fail closed on platform path duplicates and absent lists',async()=>{
+ const m=await compilerTool(),f=compilerFixture();try{
+  const file='tests/types/linear-layout-diagnostic-expectations.json',raw=fs.readFileSync(path.join(f.root,file));
+  for(const mutate of [v=>delete v.nativeLibraryPins,v=>v.nativeLibraryPins.push(v.nativeLibraryPins[0]),v=>v.nativeLibraryPins[0].path='lib/lib.dom.d.ts',v=>v.nativeLibraryPins[0].path='../lib.es5.d.ts',v=>v.originalCompilerObservation.platform='linux',v=>v.originalCompilerObservation.nativePackage='foreign',v=>v.originalCompilerObservation.nativeBinaryPin.path='index.js']){f.put(file,raw);assert.equal(m.prepareCompilerReview(f.root).acceptance,'none');const v=JSON.parse(raw);mutate(v);f.put(file,JSON.stringify(v));assert.throws(()=>m.prepareCompilerReview(f.root));}
+  f.put(file,raw);const ns='tests/types/nine-slice-diagnostic-expectations.json',v=JSON.parse(fs.readFileSync(path.join(f.root,ns)));v.compiler.nativePlatform.package.path='node_modules/@typescript/typescript-win32-x64/package.json';f.put(ns,JSON.stringify(v));assert.throws(()=>m.prepareCompilerReview(f.root));
+ }finally{f.close();}
+});
+test('legacy digest expectations never invent bytes or follow provenance paths',async()=>{
+ const m=await compilerTool(),f=compilerFixture();try{
+  const file='tests/types/scene3d-diagnostic-expectations.json',v=JSON.parse(fs.readFileSync(path.join(f.root,file)));v.compiler.packageSHA256='0'.repeat(64);f.put(file,JSON.stringify(v));
+  const legacy='tests/types/spritesheet-diagnostic-expectations.json',s=JSON.parse(fs.readFileSync(path.join(f.root,legacy)));s.observedProvenance={physicalOwnerObservations:[{path:'C:/private/never-follow',sha256:'untrusted'}]};f.put(legacy,JSON.stringify(s));
+  const p=m.prepareCompilerReview(f.root),row=p.declarations.find(x=>x.selector==='compiler.packageSHA256').rows[0];assert.equal(row.comparison,'sha256-only');assert.equal(row.identity,'different');assert.equal(Object.hasOwn(row.expected,'bytes'),false);assert(!p.inputs.some(x=>x.path.includes('private')));
+  v.fixtureSHA256['tests/types/foreign.ts']='0'.repeat(64);f.put(file,JSON.stringify(v));assert.throws(()=>m.prepareCompilerReview(f.root),/fixture/i);
+ }finally{f.close();}
+});
+test('registered coverage records new inventory names without reading or trusting their content',async()=>{
+ const m=await compilerTool(),f=compilerFixture();try{
+  const p=m.prepareCompilerReview(f.root);f.put('tests/types/future-diagnostic-expectations.json','not parsed');assert.throws(()=>m.verifyCompilerProposal(f.root,p),/changed/);const next=m.prepareCompilerReview(f.root);assert.deepEqual(next.coverage.unregistered,['tests/types/future-diagnostic-expectations.json']);assert.equal(next.acceptance,'none');
+  fs.unlinkSync(path.join(f.root,'tests/types/atlas-frame-diagnostic-expectations.json'));assert.throws(()=>m.prepareCompilerReview(f.root),/missing/i);
+ }finally{f.close();}
+});
+test('registered successors stay separate from original raw expectations',async()=>{
+ const m=await compilerTool(),f=compilerFixture();try{
+  const file='tests/types/display-container-child-index-diagnostic-expectations.json',v=JSON.parse(fs.readFileSync(path.join(f.root,file)));v.inputPins.find(x=>x.path==='packages/engine/dist/index.d.ts').sha256='0'.repeat(64);f.put(file,JSON.stringify(v));
+  const p=m.prepareCompilerReview(f.root),groups=p.declarations.filter(x=>x.owner===file);assert.equal(groups.find(x=>x.selector==='inputPins').rows.find(x=>x.path==='packages/engine/dist/index.d.ts').identity,'different');assert.equal(groups.find(x=>x.selector==='currentInputIdentitySuccessor.rows').rows[0].identity,'same');assert.equal(p.acceptance,'none');
  }finally{f.close();}
 });
