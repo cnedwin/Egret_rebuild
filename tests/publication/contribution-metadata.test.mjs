@@ -7,11 +7,11 @@ import os from 'node:os';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
-import {planMetadata,writeMetadata,checkIntegrated} from '../../tools/contribution-metadata.mjs';
+import {planMetadata,writeMetadata,checkIntegrated,isolatedGitEnvironment} from '../../tools/contribution-metadata.mjs';
 const hash=b=>createHash('sha256').update(b).digest('hex');
 function fixture(){
  const root=fs.realpathSync.native(fs.mkdtempSync(path.join(os.tmpdir(),'egret 贡献 ledger ')));
- const git=(...args)=>{const r=spawnSync('git',args,{cwd:root,encoding:'utf8'});assert.equal(r.status,0,r.stderr);return r.stdout.trim();};
+ const git=(...args)=>{const r=spawnSync('git',args,{cwd:root,encoding:'utf8',env:{...isolatedGitEnvironment(),GIT_CONFIG_GLOBAL:path.join(root,'.git','isolated-global.conf'),GIT_CONFIG_NOSYSTEM:'1'}});assert.equal(r.status,0,r.stderr);return r.stdout.trim();};
  const put=(f,s)=>{fs.mkdirSync(path.dirname(path.join(root,f)),{recursive:true});fs.writeFileSync(path.join(root,f),s);};
  put('guide.md','# Guide\n');put('guide.zh-CN.md','# 指南\n');put('tool.mjs','export const value=1;\n');
  const pin=f=>({path:f,bytes:fs.statSync(path.join(root,f)).size,sha256:hash(fs.readFileSync(path.join(root,f)))});
@@ -59,4 +59,20 @@ test('private and generated files cannot enter public contribution declarations'
   f.put('contributions/private.json',JSON.stringify({schemaVersion:1,files:[{path:'work/private.mjs',originRole:'Private fixture; never publish.'}],documents:[]}));
   assert.throws(()=>planMetadata(f.root,{base:f.base}),/excluded/);
  }finally{f.close();}
+});
+
+test('hook-local Git ownership cannot redirect a fixture or metadata read to another repository',()=>{
+ const owner=fixture(),previous=new Map(['GIT_DIR','GIT_WORK_TREE','GIT_INDEX_FILE','GIT_COMMON_DIR'].map(k=>[k,process.env[k]]));let other;
+ const index=fs.readFileSync(path.join(owner.root,'.git/index'));
+ try{
+  process.env.GIT_DIR=path.join(owner.root,'.git');process.env.GIT_COMMON_DIR=process.env.GIT_DIR;
+  process.env.GIT_WORK_TREE=owner.root;process.env.GIT_INDEX_FILE=path.join(owner.root,'.git/index');
+  other=fixture();other.put('tool.mjs','export const value=9;\n');
+  assert.ok(planMetadata(other.root,{base:other.base}).changed.includes('tool.mjs'));
+  assert.equal(owner.git('rev-parse','HEAD'),owner.base);
+  assert.deepEqual(fs.readFileSync(path.join(owner.root,'.git/index')),index);
+ }finally{
+  for(const [k,v]of previous)if(v===undefined)delete process.env[k];else process.env[k]=v;
+  other?.close();owner.close();
+ }
 });

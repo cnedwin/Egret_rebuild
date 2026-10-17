@@ -14,7 +14,14 @@ const excluded=p=>p.split('/').some(x=>excludedParts.has(x.toLowerCase())||/^\.e
 const hash=b=>createHash('sha256').update(b).digest('hex');
 const encode=v=>canonicalTextBytes(JSON.stringify(v,null,2)).toString('utf8');
 const preserved=p=>/^(?:knowledge-base\/(?:evidence|experiments)\/|third-party\/|tests\/types\/.*(?:expectation|inventory))/.test(p)||/(?:^|\/)(?:LICENSE|NOTICE|COPYING)(?:[.-]|$)/i.test(p);
-function git(root,args){const r=spawnSync('git',args,{cwd:root,encoding:'utf8',windowsHide:true,maxBuffer:32*1024*1024,env:{...process.env,GIT_OPTIONAL_LOCKS:'0'}});if(r.error||r.status!==0)throw Error('Git metadata input failed: '+(r.stderr??r.error));return r.stdout;}
+/** Resolve Git against the explicit cwd, never an inherited hook's owner/index. */
+export function isolatedGitEnvironment(input=process.env){
+ const env={...input};
+ const local=new Set(['GIT_ALTERNATE_OBJECT_DIRECTORIES','GIT_CONFIG','GIT_CONFIG_PARAMETERS','GIT_CONFIG_COUNT','GIT_OBJECT_DIRECTORY','GIT_DIR','GIT_WORK_TREE','GIT_IMPLICIT_WORK_TREE','GIT_GRAFT_FILE','GIT_INDEX_FILE','GIT_NO_REPLACE_OBJECTS','GIT_REPLACE_REF_BASE','GIT_PREFIX','GIT_SHALLOW_FILE','GIT_COMMON_DIR','GIT_NAMESPACE']);
+ for(const key of Object.keys(env))if(local.has(key.toUpperCase())||/^GIT_CONFIG_(?:KEY|VALUE)_/i.test(key))delete env[key];
+ return {...env,GIT_OPTIONAL_LOCKS:'0'};
+}
+function git(root,args){const r=spawnSync('git',args,{cwd:root,encoding:'utf8',windowsHide:true,maxBuffer:32*1024*1024,env:isolatedGitEnvironment()});if(r.error||r.status!==0)throw Error('Git metadata input failed: '+(r.stderr??r.error));return r.stdout;}
 function shape(name,value){
  const copy=structuredClone(value);
  if(name==='source-origin.json')for(const row of copy.files){delete row.bytes;delete row.sha256;}

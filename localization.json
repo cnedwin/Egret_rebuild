@@ -1837,8 +1837,8 @@
       "en": "knowledge-base/en/docs/m0-community-foundations.md",
       "zh": "knowledge-base/Cns/docs/m0-community-foundations.md",
       "kind": "public_reading",
-      "enSha256": "80cf1f13c5ef84193cbde15d09e684ad09d08e3228cb12015b2ce87958a16888",
-      "zhSha256": "eef325412c1e775875966b6312104b74139ded819e2b7491d4611f5e115e8157"
+      "enSha256": "160840bdbe5c34661f3f04af3cd954838ee9e8878305e11b763a14669b31c88b",
+      "zhSha256": "63bd87025a68bb2b690a6099901a754d93e5ae528c68b747a1101f2d6b70fe2e"
     },
     {
       "en": "knowledge-base/en/docs/architecture-and-engineering-plan.md",
@@ -3411,11 +3411,11 @@
     },
     {
       "path": "tools/contribution-metadata.mjs",
-      "sha256": "c0f1298cd30a6715c4127dec2044477bd2d3a6c165082f12f3cab6579b626b10"
+      "sha256": "9c1dcc1cb22a5392c0f85fee53212544b78882ef64d4a9d86ff8336495f3ab3e"
     },
     {
       "path": "tests/publication/contribution-metadata.test.mjs",
-      "sha256": "93233d89ad2469982e917834a825dd6d3d2c78e0cfb9d32816217cb698c9af6d"
+      "sha256": "d3f4089e1f12530b2d6880c8d546595a02d099458e5bf1a3cc3a42e26685ec3a"
     },
     {
       "path": "tools/browser-verify.mjs",

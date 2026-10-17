@@ -2112,7 +2112,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 138808,
-      "sha256": "bd309b3e134c79f43bd8de6105ef75ec14c6968ebd43d3183f5a980bc3f71f24",
+      "sha256": "4d4b21af9caf4165c0cca8bce1bc9d8ca9d70ab675fe592599bcda61a782f3ab",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "96f03d149b77da006a9b881e1f8f76fd93368746d5aabdd4c64d4cda1e7b62ba",
+      "sha256": "21e22afbb194681d6d5b3322c66463364e7387e902c81b36ad97d336529ced11",
       "bytes": 334640,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -10460,8 +10460,8 @@
     {
       "path": "knowledge-base/Cns/docs/m0-community-foundations.md",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
-      "bytes": 16388,
-      "sha256": "eef325412c1e775875966b6312104b74139ded819e2b7491d4611f5e115e8157"
+      "bytes": 17018,
+      "sha256": "63bd87025a68bb2b690a6099901a754d93e5ae528c68b747a1101f2d6b70fe2e"
     },
     {
       "path": "knowledge-base/en/docs/getting-started.md",
@@ -10472,8 +10472,8 @@
     {
       "path": "knowledge-base/en/docs/m0-community-foundations.md",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
-      "bytes": 19495,
-      "sha256": "80cf1f13c5ef84193cbde15d09e684ad09d08e3228cb12015b2ce87958a16888"
+      "bytes": 20269,
+      "sha256": "160840bdbe5c34661f3f04af3cd954838ee9e8878305e11b763a14669b31c88b"
     },
     {
       "path": "tests/publication/m0-foundations.test.mjs",
@@ -10526,14 +10526,14 @@
     {
       "path": "tools/contribution-metadata.mjs",
       "originRole": "First-party M0 deterministic current-metadata integration; AI-assisted from the approved plan; Apache-2.0.",
-      "bytes": 9083,
-      "sha256": "c0f1298cd30a6715c4127dec2044477bd2d3a6c165082f12f3cab6579b626b10"
+      "bytes": 9739,
+      "sha256": "9c1dcc1cb22a5392c0f85fee53212544b78882ef64d4a9d86ff8336495f3ab3e"
     },
     {
       "path": "tests/publication/contribution-metadata.test.mjs",
       "originRole": "First-party M0 independent Git-branch and metadata integrity controls; AI-assisted; Apache-2.0.",
-      "bytes": 5286,
-      "sha256": "93233d89ad2469982e917834a825dd6d3d2c78e0cfb9d32816217cb698c9af6d"
+      "bytes": 6380,
+      "sha256": "d3f4089e1f12530b2d6880c8d546595a02d099458e5bf1a3cc3a42e26685ec3a"
     },
     {
       "path": "tools/browser-verify.mjs",
