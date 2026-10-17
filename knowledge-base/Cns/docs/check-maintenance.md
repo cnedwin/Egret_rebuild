@@ -83,18 +83,26 @@ node tools/prepare-snapshot-maintenance.mjs --check "$(Resolve-Path ../split-sna
 
 ## 已登记编译器输入维护
 
-使用独立的只读入口 tools/prepare-compiler-maintenance.mjs，检查 Atlas 导入、BitmapResourceSlot、BitmapBindingTicket 和 LinearLayout 四份严格检查 JSON 清单。它读取各自的 inputPins 与 Atlas 的 sourcePolicy.jsoncPins，保留五组独立声明；不导入严格门禁、编译器或依赖模块，也不改写诊断和基线。
+使用只读入口 tools/prepare-compiler-maintenance.mjs 检查显式登记的编译器声明。它不导入严格门禁、编译器或依赖模块，不改写诊断和基线。先通过正常上手流程安装固定依赖并构建既有产物。
 
 ~~~powershell
 node tools/prepare-compiler-maintenance.mjs > ../compiler-proposal.json
 node tools/prepare-compiler-maintenance.mjs --check "$(Resolve-Path ../compiler-proposal.json)"
 ~~~
 
-已安装的 typescript、@typescript/typescript-win32-x64 和 jsonc-parser 分别保留规范所有者及完整原始文件清单。仓库直接选择与从包装包解析的原生包所有者必须一致，读取后再次检查所选所有者与清单成员。因此，即使历史指纹未提及新增的依赖文件，新增文件仍会使旧提案失效。内部链接、非普通文件、大小写别名、JSON 重复键、不支持的选择字段/路径和畸形原始身份都会被拒绝。必须已安装 Windows x64 包；在其他宿主读取它不证明编译器兼容性。版本只是观察到的元数据，不代表新版本获准使用。
+schemaVersion 2 提案覆盖当前 tests/types 下全部 17 份 diagnostic-expectations JSON 记录中的选定字段。登记 11 份 inputPins 清单：Atlas 导入/帧布局、BitmapResourceSlot、BitmapBindingTicket、LinearLayout、BitmapButton、显示锚点偏移、三项容器操作和九宫格 Bitmap；Atlas 的 sourcePolicy.jsoncPins 单独保留。历史格式适配器覆盖浏览器 PNG、SpriteSheet、序列帧播放、ByteWriter、九宫格和 scene3d，读取各自已登记的编译器/配置/产品/夹具指纹；最后三类绑定 tools/check-types.mjs 作为严格检查入口。此目录不包含全部内联编译器策略或独立实验。
 
-每个预期指纹都保留原声明与完整逻辑路径。references 按当前所有者相对输入聚合全部预期，彼此矛盾的历史指纹不会合并成单一替代值。声明文件缺失会明确显示；必要所有者、元数据、门禁或 JSON 文件缺失则拒绝准备。声明、门禁、实现、所选所有者、依赖清单成员或观察文件变化都会使 --check 失效。新提案中可呈现历史指纹不匹配，不视为准备错误；是否准入仍由原门禁决定。
+八组 nativeLibraryPins 仅属于 compiler-native，保留原有 lib/lib.es*.d.ts 和装饰器声明路径。分别核对已保存的 win32/x64 包身份及固定元数据/二进制指纹。序列帧播放和历史九宫格采用各自明确的原生指纹路径写法。包装包中的同名文件或相同字节不能代替原生所有者。读取器仅接受已登记布局；其他平台或布局需显式评审适配器。版本元数据只作观察，不代表准入新版本。
 
-只解释列出的选择字段。nativeLibraryPins、原始编译器观察、诊断、消息投影和分组闭包等其他字段由 JSON 所有者原始字节绑定，不会单独解释或重放，因此本流程不是完整的历史原生边界迁移。完整安装清单属于当前观察，不是这些声明经过认证的替代品。保留全部原有严格重放、源码策略、版本检查、hooks 与 CI。current-inputs 只表示这些维护输入仍一致，始终为 acceptance: none。真人/fork 上手（#52）、其余策略流程（#53）以及设备/宿主/完整 Spine/性能验收（#54）继续开放。
+已安装的 typescript、@typescript/typescript-win32-x64 和 jsonc-parser 分别拥有规范目录及完整原始文件清单。仓库直接解析与包装包相对解析的原生包必须一致。读取后再次核对所选所有者、文件清单和诊断目录成员。即使历史指纹未提及，新增依赖文件也会使提案过期。拒绝内部链接、非普通文件、大小写别名、JSON 重复键、无效登记字段及不支持的输入路径。必须安装 Windows x64 依赖包；在其他宿主读取它不证明编译器兼容性。
+
+每项预期指纹始终关联原声明及完整路径。references 按所有者相对路径汇总全部预期身份及比较方式。scene3d 的摘要记录使用 sha256-only，不补造预期字节数；其他登记指纹同时比较字节数和 SHA-256。声明文件缺失会明确列出，必要所有者、元数据、门禁/JSON 文件缺失则拒绝准备。新提案中可以存在历史不匹配：准备流程不决定门禁准入，也不建议自动替换。
+
+容器的 currentInputIdentitySuccessor.rows，以及序列帧 currentDeclarationSuccessor 的源码/夹具/配置指纹，与原始输入并列保留。它们不替换历史行，也不证明后续诊断语义。其他后续观察、标准输出、诊断元组、闭包及私有回执/运行时路径保持不解释状态，由所属 JSON 原始字节绑定。不会递归发现指纹并访问历史路径。全部语义、编译器、条件及版本边界继续由原门禁验证。
+
+coverage 列出登记文件名，以及将来新增但未登记的匹配文件名。不解析或跟随未知文件；它们的出现会使旧提案过期，并指出待评审缺口。这是文件名覆盖，不代表全部策略覆盖或对未知文件内容的认证。--check 重新生成并比较整个提案，包括实现/门禁/JSON 字节、所选所有者和依赖成员。schemaVersion 1 提案须重新生成。current-inputs 结果始终保持 acceptance: none。
+
+单独修改基线之前，结合原严格入口评审变化或缺失行。保留原始证据、完整本地/推送/PR 门禁及独立评审。真人/外部 fork 上手（#52）、其他策略流程（#53）和设备/宿主/完整 Spine/性能验收（#54）继续开放。此流程减少手工比较工作，不宣称实测检查提速。
 
 ## 测试清单范围
 
