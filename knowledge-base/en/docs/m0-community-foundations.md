@@ -9,7 +9,7 @@ M0 increments implement environment, contribution and community foundations. Eng
 | Package | This increment | Remaining M0 acceptance |
 | --- | --- | --- |
 | A Independent onboarding | Read-only doctor, repeatable setup, local visual example, bilingual guide | Independent human newcomer rehearsal and supported-environment timing targets |
-| B Practical contributions | Templates, quick/full checks, current-ledger generation, four current browser entries and public CI | Risk-based selection, advanced collector migration and external-fork rehearsal |
+| B Practical contributions | Templates, quick/full checks, current-ledger generation, risk-selected local feedback, eight browser entries and public CI | Remaining advanced admission migration and external-fork rehearsal; full merge gates retained |
 | C Sustained collaboration | Discussions, Topics, five public Milestones, linked public Project, scoped Issues and maintainer routing | Human participation and staffed response targets; API Project automation still lacks permission |
 
 ## Environment and verification
@@ -42,7 +42,7 @@ Independent AI review identified and repaired four issues: file allowlist aliase
 
 Initial onboarding tests reproduced missing tools before implementation, then passed diagnostics and HTTP access checks. Clean setup exposed a hardcoded old-Node pnpm wrapper and implicit dependency layout; the documented selected runtime and explicit setup address these causes. The Canvas example was actually opened in the in-app browser, with ready resources/frame/input, blue outfit replacement and a 0.125-second animation step observed. This is an onboarding smoke test, not the fixed-browser graphics acceptance matrix. Full local gates, independent review and remote CI must pass before integration; PR checks carry their exact candidate results.
 
-M0 remains open for architecture/scenario/budget freezing, human rehearsal, risk-based incremental selection and remaining host/tool migration. Use the [getting-started guide](getting-started.md) and [public milestones](https://github.com/cnedwin/Egret_rebuild/milestones).
+M0 remains open for architecture/scenario/budget freezing, human rehearsal, broader dependency-aware engine-test selection and remaining host/tool migration. Use the [getting-started guide](getting-started.md) and [public milestones](https://github.com/cnedwin/Egret_rebuild/milestones).
 
 The [architecture and engineering plan](architecture-and-engineering-plan.md) retains the complete M0–M4 scope and acceptance criteria. This increment implements only the foundation subset above.
 
@@ -80,8 +80,8 @@ Preview-package publication requires explicit release scope, export/type/import 
 | Obligation | Current boundary and next action |
 | --- | --- |
 | Independent human and external fork | No uninvolved participant is available in this run. Keep #52 open; a volunteer completes the public checklist and maintainer handles first-run CI approval |
-| Controlled metadata integration and risk selection | Current-ledger derivation and maintainer integration are implemented below; full hooks remain. Risk-based incremental selection remains engineering work in #53, not a permission/device blocker |
-| Active browser-tool migration | Canvas/WebGPU/B1/text have actual Node 26 results below. Advanced source/snapshot domains remain in #53; historical profiles are labeled and are not equivalent replacements |
+| Controlled metadata integration and risk selection | Current ledgers and conservative local selection are implemented. Full push/merge gates remain; broader risk-based engine test selection requires separate dependency and refusal evidence |
+| Active browser-tool migration | Eight current suites have recorded Node 26 results. Prepared-group, atlas and PNG configuration admission remain engineering work in #53; historical domains stay separate |
 | Scenario/Spine/device/budget freeze | #54 requires authorized representative assets, exact version/feature decisions and target tiers. No connected target-phone session; unavailable device rows stay unexecuted; do not invent numerical budgets |
 | API Project automation | Scoped token query is denied; manual/browser maintenance of the public board works. No wider token was issued |
 | Staffing | @cnedwin is the integration contact; no second human reviewer or response SLA is presumed |
@@ -116,3 +116,28 @@ Logs, original screenshots/results and failure attempts are retained outside the
 Final local full gates, behavioral/dependency refusal controls, independent final review, PR checks and the merged tree are recorded against the delivered candidate in its PR. Review findings and passing structural checks do not constitute human newcomer, external-fork or phone acceptance. #53 remains open for incremental selection and advanced domains; #52/#54 retain human/fork and scenario/device obligations.
 
 The first actual committed push was refused: Git hook-local environment variables redirected a temporary Git fixture to the integration checkout metadata. No push completed and source files were unchanged. The tested commit and index were restored while preserving the erroneous fixture commit separately. Git operations now remove inherited repository-local configuration and resolve their explicitly selected owner; fixtures also isolate global/system configuration. A two-repository control first reproduced the failure, then proved the foreign HEAD/index stayed unchanged and metadata reads belonged to the requested fixture. All nine focused tests pass. Final delivery requires the complete real push hook again; the earlier author-run full pass alone is insufficient.
+
+## Advanced collectors and local risk selection — 2026-10-17
+
+Baseline: Main c2356af49133a0b32477b21a48c93f2b9f738c3b (PR #60). This increment changes contributor tooling and bilingual readings; engine source, public APIs, dependencies, hooks and required CI jobs are unchanged. The current [guide](getting-started.md) describes explicit snapshot preparation/review and conservative local selection. Complete push and merge checks remain mandatory.
+
+Real Node 26.7.0 / Playwright-core 1.62.1 / Edge 155.0.4283.45 runs used Windows x64, default headless launch and no extra flags:
+
+| Current suite | Observed scope |
+| --- | --- |
+| hit-test | Accepted desktop HT1 Canvas subset; 6 contexts including 5 assigned controls |
+| mouse-input | Accepted desktop primary mouse Canvas subset; 7 contexts including 6 assigned controls |
+| resource-scene | Accepted finite Canvas/WebGPU scene; 2 ordinary and 5 negative contexts, 64 retained raw frames; fixed font reference only |
+| bitmap-slot | Accepted bounded Canvas/WebGPU composition; 4 contexts, 28 ordinary and 28 control checkpoints, 30 ordinary and 30 control raw frames |
+
+Preparation separately checked 407 resource-scene and 227 bitmap-slot inventory records, then supplied reviewed raw snapshot identities for native execution. Preparation itself reports reviewed=false and browserRun=false. Source review was performed by AI; it is not human approval. Wrapper identities are bounded; original complete closure, pixel/control and cleanup checks still run inside each collector.
+
+The initial mouse run failed before browser launch because its exact historical module allowlist omitted ten current transitive public-root modules: atlas placement/layout, ByteWriter, nine-slice geometry/bitmap, SpriteSheet, bitmap resource slot/binding ticket/button and sequence playback. The migration adds only those exact emitted paths. It does not add wildcard imports, change product behavior, alter reference pixels or remove the six controls. The repaired native run passed; the failed collection remains retained.
+
+Local selector controls cover committed/staged/unstaged reading edits, untracked files, unknown paths, metadata/policy, renames and invalid/unrelated bases. An initial temporary Git fixture was blocked by sandbox metadata permissions; the authorized isolated run distinguishes that environment limit from assertions. The orphan-branch fixture was corrected because git switch --orphan already clears tracked files. Both failures remain in execution logs. Selection does not cache or authorize merge acceptance.
+
+Prepared-resource-groups, atlas and PNG configuration/fixture admission migration remain engineering work, not device or permission blockers. Historical texture/sequence/SpriteSheet profiles remain separate. Independent human/fork onboarding, phones, mini-game hosts, general Chinese-font performance, full Spine and scenario/device budgets remain unverified. Final full gates, independent AI review and actual protected integration are recorded in this increment's PR.
+
+Independent AI review identified two additional wrapper/selection gaps. Opposing staged and working-tree edits could hide a risky file in a net diff; the selector now keeps base-to-HEAD, HEAD-to-index and index-to-worktree records separately. A truncated native receipt could retain a success headline while omitting controls or failing its baseline; completion now requires the exact context/control schedule and a clean baseline. Both focused regressions failed before the repairs and passed afterwards. Wrong snapshot digest, modified snapshot closure and reused snapshot output were also refused; a digest mismatch created no output directory. These repairs do not change the original collectors' pixel or control rules.
+
+The first PR #61 Windows CI attempt stopped before project checks: the public PowerShell release metadata request exceeded the anonymous GitHub API limit. Linux and macOS CPU jobs passed; merge-ready correctly failed. The install step now authenticates only that metadata request with the existing read-only job token, scoped to the install step. The archive download receives no authorization header; exact version and SHA-256 verification remain mandatory. No job, required check or branch protection was removed. Remote acceptance requires a successful new run; the earlier failure is retained in Actions run 39008127523.

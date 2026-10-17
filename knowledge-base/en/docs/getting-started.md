@@ -43,7 +43,7 @@ Edwin (`@cnedwin`) is the current integration contact. CODEOWNERS routes review 
 
 Contributors may request translation/metadata assistance in the PR. The final integrated tree must be checked after those updates. Public CI runs without repository write permission; initial fork contributions may need maintainer approval to run. Missing/failed/cancelled required jobs cannot produce the final `M0 / merge-ready` pass.
 
-M0 remains open for independent human/fork rehearsal, scenario/device budgets, risk-based incremental selection and advanced collector migration. Current ledger generation and four browser entries are available as described below; complete merge checks remain mandatory.
+M0 remains open for independent human/fork rehearsal, scenario/device budgets and remaining advanced collector migration. Current ledger generation, local risk-selected feedback and eight browser entries are available below; complete merge checks remain mandatory.
 
 ## Rehearse the first contribution
 
@@ -78,12 +78,34 @@ node tools/prepush.mjs --integrated
 
 Set EGRET_METADATA_BASE to that same commit when running prepush if its default merge base differs. Commit the integrated ledgers with the reviewed content. CI uses the PR base SHA and refuses stale integrated metadata; it never writes back to contributor branches. Any new content, declaration or base requires regeneration and fresh checks. The generator changes only current derived fields and registered additions; unrelated old source rows and all historical objects are retained. Deletions, renames, provenance changes to existing rows and historical/schema changes need a separate reviewed migration. Byte hashing remains exact. Generation does not certify translation quality, source rights or behavior.
 
-For the four current browser suites, install Playwright and playwright-core **1.62.1** in a separate tool directory and use Windows x64, Node **26.7.0** and installed Edge:
+For current browser checks, install Playwright and playwright-core **1.62.1** in a separate tool directory and use Windows x64, Node **26.7.0** and installed Edge:
 
 ```text
 node tools/browser-verify.mjs --suite canvas --playwright <absolute-installed-playwright-package> --output <absolute-fresh-directory-outside-repository>
 ```
 
-Suite choices are canvas, webgpu, b1 and text. The output parent must already exist; the selected child directory must not exist or overlap the repository/package inputs. The entry refuses extra Node flags, NODE_OPTIONS/NODE_PATH, wrong versions and missing completion receipts. It records failures and does not download a browser or weaken existing pixel/control assertions. The text suite covers its fixed WC1 Canvas subset only. Check `tools/browser-tool-matrix.json` before selecting a collector: advanced source/snapshot gates keep their separate contracts; Node 24.19.0 experimental collectors are explicitly historical and do not certify the current runtime. The four current suites do not replace those experiments' comparison domains or independent OS process-retirement requirements. A rendering change must still satisfy its affected domain, even when that requires a separate tool migration.
+Direct suites are canvas, webgpu, b1, text, hit-test and mouse-input. Resource-scene and bitmap-slot additionally require a reviewed source snapshot:
 
-If the example never becomes Ready, provide the selected backend, failed step and sanitized diagnostics. If a phone, mini-game host or font workload is unavailable, record it as unexecuted. The [M0 result record](m0-community-foundations.md) keeps technical rehearsal, independent human onboarding and device validation separate.
+```text
+node tools/browser-prepare.mjs --suite resource-scene --output <absolute-new-snapshot-file-outside-repository>
+node tools/browser-verify.mjs --suite resource-scene --playwright <absolute-installed-playwright-package> --output <absolute-fresh-directory-outside-repository> --snapshot <absolute-reviewed-snapshot-file> --snapshot-sha256 <reviewed-raw-sha256>
+```
+
+Use bitmap-slot in both commands for that suite. Build with the selected toolchain before preparation. Preparation does not launch a browser or approve its output: review the complete source closure, owners, imports and original oracle first, then provide the reviewed raw digest explicitly. The collector recomputes its complete closure before native execution; changed source/build inputs require a new snapshot and review. Do not automatically pipe an unreviewed generated digest into execution. Resource-scene retains its fixed Edge 155.0.4283.45/font reference; another browser version is not automatically accepted.
+
+Output parents must already exist and selected files/directories must be new and outside input owners. The entry refuses extra Node flags, NODE_OPTIONS/NODE_PATH, wrong versions, changed snapshots and missing completion receipts. It records failures, does not download browsers and preserves original pixel/control assertions. Desktop subsets do not prove mobile, general Chinese-font performance or complete engine capability. Consult tools/browser-tool-matrix.json: prepared-group, atlas and PNG still need distinct fixture/configuration admission migration; fixed Node 24.19.0 experiments retain historical status and cannot be replaced by these suites. Rendering changes still require their affected domains. Independent OS process retirement is not certified by the wrapper.
+
+## Risk-selected local feedback
+
+```text
+node tools/check-incremental.mjs --base origin/main --explain
+node tools/check-incremental.mjs --base origin/main
+```
+
+The first command prints paths, reasons and the selected profile without running checks. In a fork, fetch upstream and use its target ref instead. The base must resolve to an ancestor of HEAD; missing/unrelated refs fail. Omitting --base uses the merge base of HEAD and origin/main. Committed, staged, unstaged and nonignored untracked inputs are all considered.
+
+Only modified existing README/CONTRIBUTING reading editions or Markdown files directly under knowledge-base/en/docs and knowledge-base/Cns/docs select documentation feedback. That runs doctor, raw-byte hygiene, derived publication/bilingual checks, selector controls and read-only knowledge-base validation. Additions, deletions, renames, policy, source metadata, code, tests, dependencies, configuration, unknown paths and an empty change set select the full prepush. This conservative first version does not select individual engine tests or cache previous acceptance. It is most useful before maintainer ledger integration, which itself selects the full gate.
+
+pnpm check:quick remains available for build/boundary/onboarding feedback. Neither local feedback command replaces the complete committed push hook, integrated merge gate, affected browser acceptance or independent source/bilingual review. A local PASS is not a merge receipt.
+
+If an example never becomes Ready, report backend, failed step and sanitized diagnostics. Missing human participation, phones, mini-game hosts and font workloads remain unexecuted in the [M0 result record](m0-community-foundations.md).

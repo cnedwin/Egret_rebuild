@@ -172,6 +172,17 @@ function installPairObserver() {
 
 // Exact existing Canvas/root closure plus the finite MI1 modules; no prefixes/wildcards.
 const allowedModules = new Set([
+  // M0 current public-root closure: reviewed exact additions, no wildcard or new public entry.
+  "packages/runtime/dist/bitmapAtlasPlacement.js",
+  "packages/runtime/dist/atlasFrameLayout.js",
+  "packages/runtime/dist/ByteWriter.js",
+  "packages/runtime/dist/NineSliceGeometry2D.js",
+  "packages/runtime/dist/NineSliceBitmap.js",
+  "packages/runtime/dist/spriteSheet.js",
+  "packages/engine/dist/bitmapResourceSlot.js",
+  "packages/engine/dist/bitmapBindingTicket.js",
+  "packages/engine/dist/bitmapButton.js",
+  "packages/engine/dist/sequencePlayback.js",
   ...['ImageData2D', 'index', 'TexturedGeometry2D', 'TexturedRenderFrame2D'].map(name => `packages/contracts/dist/${name}.js`),
   ...['assetGroup', 'closeHost', 'createEngine', 'createEngineForProfile', 'Engine', 'gameClock', 'index', 'mouseInput', 'startEngine', 'surfaceOwnership', 'tween'].map(name => `packages/engine/dist/${name}.js`),
   ...['mouseInputFactoryState', 'textFieldFactoryState', 'texturedFrameState'].map(name => `packages/engine/dist/internal/${name}.js`),

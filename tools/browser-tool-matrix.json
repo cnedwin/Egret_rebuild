@@ -25,6 +25,32 @@
       "id": "text",
       "script": "tools/verify-canvas-text-canvas.mjs",
       "channel": false
+    },
+    {
+      "id": "hit-test",
+      "script": "tools/verify-hit-test-canvas.mjs",
+      "channel": true,
+      "repository": true
+    },
+    {
+      "id": "mouse-input",
+      "script": "tools/verify-mouse-input-canvas.mjs",
+      "channel": true,
+      "repository": true
+    },
+    {
+      "id": "resource-scene",
+      "script": "tools/verify-resource-scene.mjs",
+      "channel": false,
+      "repository": true,
+      "snapshot": true
+    },
+    {
+      "id": "bitmap-slot",
+      "script": "tools/verify-bitmap-resource-slot.mjs",
+      "channel": true,
+      "repository": true,
+      "snapshot": true
     }
   ],
   "historical": [
@@ -66,32 +92,16 @@
   ],
   "advanced": [
     {
-      "script": "tools/verify-resource-scene.mjs",
-      "status": "Separate source/snapshot and browser acceptance required; not covered by the four current entry suites."
-    },
-    {
-      "script": "tools/verify-bitmap-resource-slot.mjs",
-      "status": "Separate source/snapshot and browser acceptance required; not covered by the four current entry suites."
-    },
-    {
       "script": "tools/verify-prepared-resource-groups.mjs",
-      "status": "Separate source/snapshot and browser acceptance required; not covered by the four current entry suites."
+      "status": "Separate source/snapshot and browser acceptance required; not covered by the current entry suites."
     },
     {
       "script": "tools/verify-atlas-frame.mjs",
-      "status": "Separate source/snapshot and browser acceptance required; not covered by the four current entry suites."
+      "status": "Separate source/snapshot and browser acceptance required; not covered by the current entry suites."
     },
     {
       "script": "tools/verify-browser-png.mjs",
-      "status": "Separate source/snapshot and browser acceptance required; not covered by the four current entry suites."
-    },
-    {
-      "script": "tools/verify-hit-test-canvas.mjs",
-      "status": "Separate source/snapshot and browser acceptance required; not covered by the four current entry suites."
-    },
-    {
-      "script": "tools/verify-mouse-input-canvas.mjs",
-      "status": "Separate source/snapshot and browser acceptance required; not covered by the four current entry suites."
+      "status": "Separate source/snapshot and browser acceptance required; not covered by the current entry suites."
     }
   ]
 }
