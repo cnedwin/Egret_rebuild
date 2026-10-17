@@ -29,7 +29,7 @@ const policyRegistrations=[
  {owner:'tools/atlas-import-boundary.mjs',binding:'inventoryPin',target:'tests/types/atlas-import-diagnostic-expectations.json',kind:'ATLAS_IMPORT_ACTUAL_STRICT_DIAGNOSTICS',selectors:['sourcePolicy.modules','sourcePolicy.configurationPins']}
 ];
 // Parse JSON once, then reject duplicate decoded object keys at every depth.
-function uniqueJSON(text){
+export function uniqueJSON(text){
  const value=JSON.parse(text),tokens=text.match(/"(?:\\.|[^"\\])*"|[{}\[\]:,]|true|false|null|-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/g);let at=0;
  function visit(depth){
   if(depth>128)throw Error('Unsupported JSON nesting');

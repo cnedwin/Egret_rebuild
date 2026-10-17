@@ -53,6 +53,27 @@ references 是按完整路径排序的反向引用索引，保留受支持指纹
 
 resource-scene 和 atlas-frame 源码采集器继续使用已有的多所有者快照流程，涉及外部包归属、动态模块闭包和原始资源证据，因此不合并进单仓库指纹读取器。继续按[进阶浏览器流程](getting-started.md)、[资源浏览器流程](resource-browser-workflow.md)处理受支持套件，必要时使用所属源码工具；保留原始快照和数值预期。编译器/依赖迁移、条件准入、语义/类型/原生检查、真人/fork 上手和设备/性能验收仍是独立工作。每次发布仍需独立评审、真实对照、双语检查及完整本地/推送/PR 门禁。
 
+## 多所有者快照维护
+
+使用 tools/prepare-snapshot-maintenance.mjs 复用现有 resource-scene 和 atlas-frame 源码采集器。入口采集当前检出目录，可与先前快照或提案比较，并将评审材料输出到标准输出；不会安装新基线或修改采集器。运行前须已有编译产物和精确安装的依赖，环境准备与构建按既有流程单独执行。本流程不构建、不启动浏览器或服务器，也不执行产品或编译器模块；仅执行可信采集器及身份辅助代码，读取现有源码闭包。
+
+PowerShell 7 示例（产物保存在检出目录外）：
+
+~~~powershell
+node tools/prepare-snapshot-maintenance.mjs --family resource-scene > ../resource-snapshot.json
+node tools/prepare-snapshot-maintenance.mjs --check "$(Resolve-Path ../resource-snapshot.json)"
+node tools/prepare-snapshot-maintenance.mjs --family resource-scene --baseline "$(Resolve-Path ../resource-snapshot.json)" > ../resource-comparison.json
+node tools/prepare-snapshot-maintenance.mjs --family atlas-frame > ../atlas-snapshot.json
+~~~
+
+没有基线时，提案明确标记 comparison: not-provided。提供基线后，以所有者和完整逻辑路径联合标识变化。新增、移除和变更条目保留前后记录，包括 resource-scene 的角色信息；不同所有者下的相同路径保持独立。所有者根目录的写法或位置变化单独显示，不通过路径归一化替换指纹。structureChanges 标识其他发生变化的顶层字段，包括模块导入边、路由、闭包、别名、构建解析和验收元数据；完整当前快照仍保留以供检查。
+
+入口支持当前 resource-scene 的 SDK/application/foundation 所有者，以及 Atlas 的 repository/compiler/compiler-native/project-json/foundation 所有者。资源场景的应用和 SDK 均使用当前检出目录，分离应用根目录仍由原采集器处理。Atlas 使用 ordinary 采集选择项，并保留原有 Windows x64 编译器限制。历史 Atlas 快照没有场景标识，因此结构兼容不能证明其场景或来源。此命令不增加跨平台编译器准入，也不迁移其他编译器或源码边界规则。
+
+只读取明确指定的基线 JSON 文件；其中的历史所有者路径及嵌套基线引用均为数据，不作为读取目标。先前提案只提供已保存的快照，成功或评审标签不授予任何权限。转义解码后重复的 JSON 键、不支持的顶层结构或所有者集合、重复清单键、非法路径及未声明的模块所有者都会被拒绝。输入产物上限为 16 MiB。记录顺序按保存形式保守比较，无害的重排也可能需要评审。这些检查属于有限结构验证，不是对历史模块或路由元数据的完整语义验证。
+
+--check 会重读指定基线文件，重新调用当前源码采集器，并比较完整重建提案，包括差异和实现指纹。生成器、解析器、身份辅助代码、采集器和基线字节均被绑定并在采集过程中复查；采集和重检仅供独立直接启动的 Node CLI 使用，要求 execArgv、NODE_OPTIONS 和 NODE_PATH 为空。导出的辅助函数只比较或解析数据，不执行采集。该执行约定不隔离主动修改进程全局状态的调用者。输入变化、新增被采集文件或提案编辑均需重新生成和评审。这是在现有采集范围内检查输入新鲜度，不构成对抗并发恶意进程的隔离，也不是全仓依赖图。current-inputs 结果仍明确 acceptance: none。原生执行继续使用既有进阶/资源浏览器流程，分别满足输入评审、对照、清理及设备要求。
+
 ## 测试清单范围
 
 候选清单枚举当前顶层 tests/*.test.mjs 的完整成员。只有测试、已声明辅助文件、四包清单/依赖图及完整门禁调度均未改变时，才保留已有的包归属。新增或修改的测试、辅助文件变化或缺失均改为共享；包清单或调度变化时，保守地将全部测试设为共享。删除的测试单独列出；缺失辅助文件仍出现在 unavailable 输入中，现存辅助文件继续保留。已有共享测试不会被自动缩小为单包归属。

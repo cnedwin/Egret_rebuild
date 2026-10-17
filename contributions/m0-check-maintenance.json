@@ -13,6 +13,11 @@
     {
       "path": "knowledge-base/Cns/docs/check-maintenance.md",
       "originRole": "First-party M0 bilingual maintainer workflow; Apache-2.0."
+    },
+    {
+      "path": "tools/prepare-snapshot-maintenance.mjs",
+      "originRole": "First-party M0 multi-owner source snapshot review workflow; independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
     }
   ],
   "documents": [
