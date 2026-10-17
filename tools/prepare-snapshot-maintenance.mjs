@@ -75,34 +75,44 @@ export function readSnapshotBaseline(family,file){
 function inputs(family){
  return ['tools/prepare-snapshot-maintenance.mjs','tools/prepare-check-maintenance.mjs','tools/lib/file-identity.mjs',specFor(family).collector].sort().map(file=>fingerprintFile(ROOT,file));
 }
-async function prepareSnapshotReview(family,baseline){
+async function prepareSnapshotReview(family,baseline,applicationRoot){
  specFor(family);const beforeInputs=inputs(family);
+ const selected=applicationRoot??ROOT;physicalPathKey(selected);
+ requireThat(!applicationRoot||family==='resource-scene','Application root is resource-scene only');
+ const application=fs.realpathSync(selected);requireThat(fs.statSync(application).isDirectory(),'Application directory required');
  const previous=baseline?readSnapshotBaseline(family,baseline):null;
  // Fixed trusted collectors read source bytes; product and compiler modules are never evaluated.
  const result=family==='resource-scene'
-  ?await (await import('./resource-scene-boundary.mjs')).collectResourceSceneSource({repository:ROOT,applicationRoot:ROOT})
+  ?await (await import('./resource-scene-boundary.mjs')).collectResourceSceneSource({repository:ROOT,applicationRoot:application})
   :await (await import('./atlas-frame/boundary.mjs')).collectAtlasFrameSource(ROOT,'ordinary');
+ requireThat(fs.realpathSync(selected)===application,'Selected application owner changed during collection');
+ if(family==='resource-scene')requireThat(result.snapshot.owners.application===application,'Collected application owner differs');
  const snapshot=result.snapshot,difference=compareSnapshots(family,previous?.snapshot??null,snapshot);
  requireThat(equal(beforeInputs,inputs(family)),'Maintenance implementation changed during collection');
  if(previous)requireThat(equal(previous.pin,readArtifact(baseline).pin),'Baseline artifact changed during collection');
  return {schemaVersion:1,kind:'snapshot-maintenance',family,status:'review-required',acceptance:'none',repository:ROOT,baseline:previous?.pin??null,inputs:beforeInputs,snapshot,difference,
-  limits:['Current checkout only; no build or browser run','Historical snapshots are comparison data, not authenticated acceptance','Atlas frame collection retains its Windows x64 installed compiler requirement','Source closure and raw identity do not prove semantic, native or performance correctness']};
+  limits:['Current SDK and explicitly selected application only; no build or browser run','Historical snapshots are comparison data, not authenticated acceptance','Atlas frame collection retains its Windows x64 installed compiler requirement','Source closure and raw identity do not prove semantic, native or performance correctness']};
 }
 export function parseSnapshotOptions(args){
  const result={};
  for(let i=0;i<args.length;i+=2){
-  const key=args[i]?.slice(2);requireThat(['--family','--baseline','--check'].includes(args[i])&&args[i+1]&&!Object.hasOwn(result,key),'Unique named options required');result[key]=args[i+1];
+  const key=args[i]?.slice(2);requireThat(['--family','--baseline','--check','--application-root'].includes(args[i])&&args[i+1]&&!Object.hasOwn(result,key),'Unique named options required');result[key]=args[i+1];
  }
- if(result.check){requireThat(keys(result,['check']),'Check mode takes only its proposal');physicalPathKey(result.check);}
+ if(result.check){requireThat(keys(result,result['application-root']?['check','application-root']:['check']),'Check mode takes only its proposal');physicalPathKey(result.check);}
  else {requireThat(Object.hasOwn(result,'family'),'Snapshot family required');specFor(result.family);if(result.baseline)physicalPathKey(result.baseline);}
+ if(result['application-root']){physicalPathKey(result['application-root']);requireThat(!result.family||result.family==='resource-scene','Application root is resource-scene only');}
  return result;
 }
 async function runSnapshotMaintenance(args){
  const options=parseSnapshotOptions(args);
- if(!options.check)return prepareSnapshotReview(options.family,options.baseline);
+ if(!options.check)return prepareSnapshotReview(options.family,options.baseline,options['application-root']);
  const saved=readArtifact(options.check),proposal=saved.value;
  requireThat(proposal?.kind==='snapshot-maintenance'&&proposal.schemaVersion===1&&proposal.status==='review-required','Review proposal required');
- const current=await prepareSnapshotReview(proposal.family,proposal.baseline?.path);
+ // Saved owner labels do not authorize access to an external application.
+ const selected=options['application-root']??ROOT;
+ requireThat(!options['application-root']||proposal.family==='resource-scene','Application root is resource-scene only');
+ if(proposal.family==='resource-scene')requireThat(fs.realpathSync(selected)===proposal.snapshot?.owners?.application,'Explicit application root must match the proposal');
+ const current=await prepareSnapshotReview(proposal.family,proposal.baseline?.path,options['application-root']);
  requireThat(equal(saved.pin,readArtifact(options.check).pin),'Proposal artifact changed during collection');
  requireThat(equal(proposal,current),'Snapshot proposal inputs or content changed');
  return {status:'current-inputs',acceptance:'none; independent review and complete gates remain required'};
