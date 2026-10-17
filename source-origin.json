@@ -2112,7 +2112,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 138808,
-      "sha256": "c9d92d2ab532f688fe1c4a45e383d62001e62188dabd89500408c334f0065a4c",
+      "sha256": "2df701fd50f47ae45d713831701875b5288c4043fe0e64c9121e63f9a99a163f",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "c92676b1257aaaf2cd4de6cfa2be02c12c661da9980271599cce44f866d65284",
+      "sha256": "596c35106f17044a732e6741b6b563146e7e82200b16fd6ce58e4269f853de4f",
       "bytes": 334041,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -9992,8 +9992,8 @@
     {
       "path": "tests/publication/repository-hygiene.test.mjs",
       "originRole": "Independent first-party repository identity tooling or paired publication material",
-      "bytes": 13977,
-      "sha256": "43298a3fca4500eb840f583ff06d3d6c54e69fa8da5bcbdd8bc360a98151a6e2"
+      "bytes": 14216,
+      "sha256": "9acb87975bdb0568bf911da5f98083d70f20fc6ccb22521c734250b29153695b"
     },
     {
       "path": "tests/publication/text-writers.test.mjs",
@@ -10436,8 +10436,8 @@
     {
       "path": ".github/workflows/ci.yml",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
-      "bytes": 2724,
-      "sha256": "6b415616bbfd58542c603b016c45a35621985e790609a4c94961d13c248bee7f"
+      "bytes": 3213,
+      "sha256": "e7c74f9c60229498e03551409cd45d1360a8e22291e575fe019c769a818bca8a"
     },
     {
       "path": ".node-version",
@@ -10460,8 +10460,8 @@
     {
       "path": "knowledge-base/Cns/docs/m0-community-foundations.md",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
-      "bytes": 4411,
-      "sha256": "99bfe67899b69522de73a5d27577eeff08d3cf368ecb7fec311cd9ca00923c57"
+      "bytes": 4948,
+      "sha256": "79696692ca0f0e02a3d5accdc50499b32a27aebfb0560bce1614435dbe05ebf8"
     },
     {
       "path": "knowledge-base/en/docs/getting-started.md",
@@ -10472,8 +10472,8 @@
     {
       "path": "knowledge-base/en/docs/m0-community-foundations.md",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
-      "bytes": 5370,
-      "sha256": "db9ffa6940a29ab8ba993977afa883c73a73d855b584bb5f8ff3870384f162b1"
+      "bytes": 6046,
+      "sha256": "af2fc5805f4e87ba62e354928670bd3a979f3936ce9eb5a8386d3552972d4b28"
     },
     {
       "path": "tests/publication/m0-foundations.test.mjs",

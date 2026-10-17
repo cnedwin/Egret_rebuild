@@ -61,11 +61,14 @@ function snapshot(root) {
 async function fixture(autocrlf, body) {
   const parent = path.join(tmpdir(), 'egret-repository-hygiene-regressions');
   mkdirSync(parent, { recursive: true });
-  const physicalParent = realpathSync(parent);
-  const owner = realpathSync(mkdtempSync(path.join(physicalParent, 'case-')));
-  const root = path.join(owner, 'repo');
+  // Native resolution expands Windows 8.3 aliases, matching the asynchronous gate.
+  // Ordinary realpathSync can preserve a short spelling of the same directory.
+  const physicalParent = realpathSync.native(parent);
+  const owner = realpathSync.native(mkdtempSync(path.join(physicalParent, 'case-')));
+  const rootPath = path.join(owner, 'repo');
   const template = path.join(owner, 'empty-template');
-  mkdirSync(root); mkdirSync(template);
+  mkdirSync(rootPath); mkdirSync(template);
+  const root = realpathSync.native(rootPath);
   const environment = {
     GIT_CONFIG_GLOBAL: path.join(owner, 'global.conf'),
     GIT_CONFIG_NOSYSTEM: '1',
@@ -133,7 +136,7 @@ async function fixture(autocrlf, body) {
     for (const [name, value] of previous) {
       if (value === undefined) delete process.env[name]; else process.env[name] = value;
     }
-    const resolved = realpathSync(owner), relative = path.relative(physicalParent, resolved);
+    const resolved = realpathSync.native(owner), relative = path.relative(physicalParent, resolved);
     assert.equal(resolved, owner);
     assert.equal(path.dirname(resolved), physicalParent);
     assert.ok(relative && relative !== '..' && !relative.startsWith('..' + path.sep) && !path.isAbsolute(relative));

@@ -36,6 +36,8 @@ The authenticated repository connection lacks Project permissions. Discussions, 
 
 ## Validation record
 
+The first public Windows CI run exposed a temporary-directory fixture issue: ordinary synchronous realpath preserved a Windows 8.3 short spelling while the asynchronous gate expanded it. The differing synchronous/native path spellings were observed locally with a real short path, but the original fixture suite still passed locally; the public runner remains the decisive reproduction environment. The fixture now obtains its complete physical owner and repository root through native realpath; CI also selects canonical TEMP/TMP before checks. No byte normalization, case folding of logical keys, or alias acceptance was added. The failed CI run remains visible in PR #51.
+
 Independent AI review identified and repaired four issues: file allowlist aliases, foreign dependency ownership, conflicting installation steps and missing pnpm diagnostics. Regression tests cover the failures.
 
 Initial onboarding tests reproduced missing tools before implementation, then passed diagnostics and HTTP access checks. Clean setup exposed a hardcoded old-Node pnpm wrapper and implicit dependency layout; the documented selected runtime and explicit setup address these causes. The Canvas example was actually opened in the in-app browser, with ready resources/frame/input, blue outfit replacement and a 0.125-second animation step observed. This is an onboarding smoke test, not the fixed-browser graphics acceptance matrix. Full local gates, independent review and remote CI must pass before integration; PR checks carry their exact candidate results.

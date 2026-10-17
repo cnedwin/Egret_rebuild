@@ -32,6 +32,13 @@ jobs:
           $target = Join-Path $env:RUNNER_TEMP 'egret-pwsh'
           Expand-Archive $archive $target
           $target | Out-File $env:GITHUB_PATH -Append -Encoding utf8
+      - name: Select canonical temporary directory
+        shell: pwsh
+        run: |
+          $temporary = node -p "require('node:fs').realpathSync.native(require('node:os').tmpdir())"
+          if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $temporary -PathType Container)) { throw 'Cannot resolve temporary directory' }
+          "TEMP=$temporary" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+          "TMP=$temporary" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
       - name: Install pinned package manager
         run: npm install --global pnpm@11.25.0 --ignore-scripts
       - name: Clean setup
