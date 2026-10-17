@@ -205,3 +205,139 @@ test('behavior feedback precedes frozen admission without bypassing any gate',()
  assert.ok(position('tests/project.test.mjs')<position('tools/spritesheet-boundary.mjs'));
  assert.ok(position('tools/spritesheet-boundary.mjs')<position('tools/check-types.mjs'));
 });
+
+
+// Maintenance proposals are review inputs, never gate acceptance or writable baselines.
+const maintenance=()=>import('../../tools/prepare-check-maintenance.mjs');
+function maintenanceFixture(){
+ const f=dependencyFixture();
+ for(const file of ['tools/prepare-check-maintenance.mjs','tools/lib/file-identity.mjs'])f.put(file,fs.readFileSync(new URL('../../'+file,import.meta.url)));
+ return f;
+}
+function baselineFixture(){
+ const f=maintenanceFixture();
+ for(const name of ['contracts','runtime','engine','project'])for(const area of ['src','dist',...(name==='engine'?['web','rendering']:[])])fs.mkdirSync(path.join(f.root,'packages',name,area),{recursive:true});
+ const pin=f.pin('packages/project/src/value.ts');
+ f.put('tools/spritesheet-boundary.mjs','const graphPins = '+JSON.stringify([pin])+';\nconst configurationPins = [];\nconst ss1AtlasGraphSuccessor = [];\n');
+ f.put('tools/browser-png-boundary.mjs','const acceptedSnapshot = '+JSON.stringify({graph:[pin],stablePins:[]})+';\nconst atlasGraphSuccessor = [];\n');
+ f.put('tools/sequence-playback-boundary.mjs','const seqpbPackages = [];\nconst seqpbStableEntries = '+JSON.stringify([pin])+';\nconst seqpbConfigurations = [];\n');
+ return f;
+}
+test('baseline proposals retain distinct declaration references and never edit source',async()=>{
+ const m=await maintenance(),f=baselineFixture();try{
+  const original=fs.readFileSync(path.join(f.root,'tools/spritesheet-boundary.mjs'));
+  f.put('packages/project/src/value.ts','export const value = 2;\n');
+  const p=m.prepareBaselineReview(f.root);assert.equal(p.status,'review-required');
+  const rows=p.declarations.flatMap(x=>x.rows).filter(x=>x.expected.path==='packages/project/src/value.ts');
+  assert.equal(rows.length,3);assert.ok(rows.every(x=>x.identity==='different'&&x.current.sha256!==x.expected.sha256));
+  assert.deepEqual(fs.readFileSync(path.join(f.root,'tools/spritesheet-boundary.mjs')),original);
+  assert.equal(m.verifyMaintenanceProposal(f.root,p),true);
+ }finally{f.close();}
+});
+test('baseline proposal recheck rejects new ignored output and changed owner bytes',async()=>{
+ const m=await maintenance(),f=baselineFixture();try{
+  const p=m.prepareBaselineReview(f.root);f.put('packages/project/dist/new.js','export {};\n');
+  assert.throws(()=>m.verifyMaintenanceProposal(f.root,p),/changed/i);fs.unlinkSync(path.join(f.root,'packages/project/dist/new.js'));
+  f.put('tools/spritesheet-boundary.mjs',fs.readFileSync(path.join(f.root,'tools/spritesheet-boundary.mjs'),'utf8')+'// changed owner\n');
+  assert.throws(()=>m.verifyMaintenanceProposal(f.root,p),/changed/i);
+ }finally{f.close();}
+});
+test('baseline parser refuses duplicate or executable declarations without evaluating them',async()=>{
+ const m=await maintenance(),f=baselineFixture();try{
+  const file='tools/spritesheet-boundary.mjs',original=fs.readFileSync(path.join(f.root,file),'utf8');
+  f.put(file,original+'const graphPins = [];\n');assert.throws(()=>m.prepareBaselineReview(f.root),/declaration/i);
+  f.put(file,original.replace(/const graphPins = .*;/,'const graphPins = (()=>{throw Error("EXECUTED");})();'));
+  assert.throws(()=>m.prepareBaselineReview(f.root),e=>!/EXECUTED$/.test(e.message)&&/JSON|declaration/i.test(e.message));
+ }finally{f.close();}
+});
+test('baseline missing paths are distinct from wrong spelling and malformed pins',async()=>{
+ const m=await maintenance(),f=baselineFixture();try{
+  fs.unlinkSync(path.join(f.root,'packages/project/src/value.ts'));
+  assert.ok(m.prepareBaselineReview(f.root).declarations.flatMap(x=>x.rows).some(x=>x.identity==='missing'));
+  f.put('packages/project/src/Value.ts','export {};\n');assert.throws(()=>m.prepareBaselineReview(f.root),/spelling/i);
+  fs.unlinkSync(path.join(f.root,'packages/project/src/Value.ts'));
+  f.put('tools/spritesheet-boundary.mjs','const graphPins = [{"path":"../foreign","bytes":0,"sha256":"'+ '0'.repeat(64)+'"}];\nconst configurationPins = [];\nconst ss1AtlasGraphSuccessor = [];\n');
+  assert.throws(()=>m.prepareBaselineReview(f.root),/path|identity/i);
+ }finally{f.close();}
+});
+test('unchanged catalog proposal preserves reviewed ownership and cannot approve itself',async()=>{
+ const m=await maintenance(),f=maintenanceFixture();try{
+  const p=m.prepareCatalogReview(f.root);assert.equal(p.status,'review-required');assert.deepEqual(p.catalog,f.catalog);
+  assert.equal(m.verifyMaintenanceProposal(f.root,p),true);p.status='accepted';assert.throws(()=>m.verifyMaintenanceProposal(f.root,p),/changed|proposal/i);
+ }finally{f.close();}
+});
+test('changed and new tests become shared while unrelated ownership survives',async()=>{
+ const m=await maintenance(),f=maintenanceFixture();try{
+  f.put('tests/engine.test.mjs','// changed\n');f.put('tests/new.test.mjs','// new\n');
+  const p=m.prepareCatalogReview(f.root);assert.equal(p.catalog.tests.find(x=>x.file.path==='tests/engine.test.mjs').packages,null);
+  assert.equal(p.catalog.tests.find(x=>x.file.path==='tests/new.test.mjs').packages,null);
+  assert.deepEqual(p.catalog.tests.find(x=>x.file.path==='tests/project.test.mjs').packages,['project']);
+  assert.deepEqual(JSON.parse(fs.readFileSync(path.join(f.root,'tools/incremental-test-catalog.json'))),f.catalog);
+  fs.unlinkSync(path.join(f.root,'tests/shared.test.mjs'));assert.throws(()=>m.verifyMaintenanceProposal(f.root,p),/changed/i);
+ }finally{f.close();}
+});
+test('support drift or absence demotes its owner and stays visible in proposal inputs',async()=>{
+ const m=await maintenance(),f=maintenanceFixture();try{
+  const helper='tests/helpers.mjs';f.put(helper,'export {};\n');f.catalog.tests.find(x=>x.file.path==='tests/engine.test.mjs').support=[f.pin(helper)];
+  f.put('tools/incremental-test-catalog.json',JSON.stringify(f.catalog));f.put(helper,'// changed\n');
+  let p=m.prepareCatalogReview(f.root);assert.equal(p.catalog.tests.find(x=>x.file.path==='tests/engine.test.mjs').packages,null);
+  fs.unlinkSync(path.join(f.root,helper));p=m.prepareCatalogReview(f.root);assert.ok(p.unavailable.includes(helper));
+  assert.equal(p.catalog.tests.find(x=>x.file.path==='tests/engine.test.mjs').packages,null);
+  f.put(helper,'// returned\n');assert.throws(()=>m.verifyMaintenanceProposal(f.root,p),/changed/i);
+ }finally{f.close();}
+});
+test('manifest and full-runner changes conservatively clear all package ownership',async()=>{
+ const m=await maintenance(),f=maintenanceFixture();try{
+  f.put('tools/verify.mjs','// changed schedule\n');let p=m.prepareCatalogReview(f.root);assert.ok(p.catalog.tests.every(x=>x.packages===null));
+  f.put('tools/verify.mjs','export {};\n');const file='packages/project/package.json';f.put(file,fs.readFileSync(path.join(f.root,file),'utf8')+'\n');
+  p=m.prepareCatalogReview(f.root);assert.ok(p.catalog.tests.every(x=>x.packages===null));
+ }finally{f.close();}
+});
+
+test('maintenance proposals bind the generator and raw identity helper',async()=>{
+ const m=await maintenance(),f=maintenanceFixture();try{
+  const p=m.prepareCatalogReview(f.root);f.put('tools/lib/file-identity.mjs','// changed helper\n');
+  assert.throws(()=>m.verifyMaintenanceProposal(f.root,p),/changed/i);
+ }finally{f.close();}
+});
+
+
+test('baseline reader refuses comment and template decoys and accepts indented real JSON',async()=>{
+ const m=await maintenance(),f=baselineFixture();try{
+  const file='tools/spritesheet-boundary.mjs',original=fs.readFileSync(path.join(f.root,file),'utf8');
+  f.put(file,original.replace('const graphPins','  const graphPins'));assert.equal(m.prepareBaselineReview(f.root).declarations[0].rows.length,1);
+  for(const decoy of ['/*\nconst graphPins = [];\n*/\n','const decoy = '+String.fromCharCode(96)+'\nconst graphPins = [];\n'+String.fromCharCode(96)+';\n']){
+   f.put(file,decoy+original.replace(/const graphPins = .*;/,'  const graphPins = dangerous();'));
+   assert.throws(()=>m.prepareBaselineReview(f.root),/declaration/i);
+   f.put(file,decoy+original.replace(/const graphPins = .*;\n/,''));
+   assert.throws(()=>m.prepareBaselineReview(f.root),/declaration/i);
+  }
+  f.put(file,'const literal = '+JSON.stringify('escaped " and /* comment */ // { }')+';\n'+original);assert.equal(m.prepareBaselineReview(f.root).declarations[0].rows.length,1);
+  for(const prefix of ['}\n','(]\n','/* unfinished\n',"'unfinished\\\n",'const ratio = 2 / 1;\n','const regex = /x/;\n']){
+   f.put(file,prefix+original);assert.throws(()=>m.prepareBaselineReview(f.root),/declaration/i);
+  }
+  f.put(file,'function nested(){\n'+original+'}\n');assert.throws(()=>m.prepareBaselineReview(f.root),/declaration/i);
+ }finally{f.close();}
+});
+
+test('raw pin field order does not imply baseline drift or catalog demotion',async()=>{
+ const m=await maintenance(),f=baselineFixture();try{
+  const reorder=pin=>({sha256:pin.sha256,bytes:pin.bytes,path:pin.path});
+  const file='tools/spritesheet-boundary.mjs',original=fs.readFileSync(path.join(f.root,file),'utf8');
+  f.put(file,original.replace(/const graphPins = .*;/,'const graphPins = '+JSON.stringify([reorder(f.pin('packages/project/src/value.ts'))])+';'));
+  assert.equal(m.prepareBaselineReview(f.root).declarations[0].rows[0].identity,'same');
+  for(const item of Object.values(f.catalog.packages))item.manifest=reorder(item.manifest);
+  f.catalog.policy=f.catalog.policy.map(reorder);for(const row of f.catalog.tests){row.file=reorder(row.file);row.support=row.support.map(reorder);}
+  f.put('tools/incremental-test-catalog.json',JSON.stringify(f.catalog));
+  assert.deepEqual(m.prepareCatalogReview(f.root).catalog.tests.map(x=>x.packages),f.catalog.tests.map(x=>x.packages));
+ }finally{f.close();}
+});
+
+test('complete graph proposals expose unlisted code separately from named successor rows',async()=>{
+ const m=await maintenance(),f=baselineFixture();try{
+  const file='packages/project/dist/new.js';f.put(file,'export {};\n');
+  const p=m.prepareBaselineReview(f.root);assert.equal(p.graphCoverage.length,2);
+  for(const group of p.graphCoverage){assert.ok(group.unlisted.some(pin=>pin.path===file));assert.ok(group.successorBinding);}
+  assert.equal(p.declarations.filter(x=>x.binding.includes('Successor')).length,2);
+ }finally{f.close();}
+});

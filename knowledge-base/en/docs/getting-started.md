@@ -111,3 +111,5 @@ pnpm check:quick remains available for build/boundary/onboarding feedback. Neith
 If an example never becomes Ready, report backend, failed step and sanitized diagnostics. Missing human participation, phones, mini-game hosts and font workloads remain unexecuted in the [M0 result record](m0-community-foundations.md).
 
 Texture, frame-animation and SpriteSheet changes use the [current historical-domain workflow](historical-browser-workflow.md). Start with setup/headless results; ask maintainers to prepare original review evidence and external process-retirement validation.
+
+Maintainers can prepare raw baseline differences and conservative catalog candidates with the [check maintenance workflow](check-maintenance.md). Proposals remain review-required and do not replace current source admission or full gates.

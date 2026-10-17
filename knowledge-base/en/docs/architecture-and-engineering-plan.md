@@ -409,3 +409,5 @@ These sources are pinned to one Main commit. They establish existing implementat
 
 
 M0 local verification now has a [package dependency selection contract](dependency-aware-checks.md). Keep full push/merge checks; any future reduction of those gates requires its own evidence and review.
+
+Maintainers can prepare raw baseline differences and conservative catalog candidates with the [check maintenance workflow](check-maintenance.md). Proposals remain review-required and do not replace current source admission or full gates.

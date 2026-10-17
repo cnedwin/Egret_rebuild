@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tools/prepare-check-maintenance.mjs",
+      "originRole": "First-party M0 review-preparation tool, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "knowledge-base/en/docs/check-maintenance.md",
+      "originRole": "First-party M0 bilingual maintainer workflow; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/check-maintenance.md",
+      "originRole": "First-party M0 bilingual maintainer workflow; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/check-maintenance.md",
+      "zh": "knowledge-base/Cns/docs/check-maintenance.md"
+    }
+  ]
+}
