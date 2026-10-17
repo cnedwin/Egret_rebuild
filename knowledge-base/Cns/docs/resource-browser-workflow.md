@@ -12,7 +12,7 @@
 | atlas | Canvas 与 WebGPU textured-2D，各含普通、rotation-sign、trim-y-constant、atlas-import-v1：八项 | 独立健康/故障副本、真实编译记录和快照；导入器另存实际公开规划器调用 |
 | png | BIP1 Canvas/WebGPU PNG 解码、组合、保存帧回放及两个错误基准反例 | 原始源码/实际执行证据、完整模块图和准入记录 |
 
-这三类资源验证补充已有八个浏览器套件，全部列定案例通过后才能判定该类型完成。旧纹理/序列帧/SpriteSheet 采集器，以及基于 PNG 入口的九宫格、容器、锚点附加配置，保留自己的 schema 与验收义务；BIP1 不自动证明这些范围通过。
+这三类资源验证补充已有八个浏览器套件，全部列定案例通过后才能判定该类型完成。下述五种附加固定场景套件保留独立 schema 与证据，不能由 BIP1 代为验收。旧纹理/序列帧/SpriteSheet 采集器继续保留原验收义务。
 
 ## 准备与复核
 
@@ -43,7 +43,7 @@ node tools/browser-resources.mjs prepare --suite png --playwright <已安装-Pla
 
 输入包含 schemaVersion=1、sourceFilesRoot、graphInputs、reviewPins、proofBindings 和 runtime。sourceFilesRoot 与 graphInputs.repositoryRoot 指向当前工作区。graphInputs 列出精确采集角色/路由、编码素材身份和固定步骤身份。runtime 指定并校验实际 Node 可执行文件、已安装 Playwright 入口、Edge 可执行文件及声明的包清单。路径按原采集器要求使用绝对路径或完整所有者相对路径，禁止仅比较文件名或规范化字节摘要。
 
-reviewPins 必须包含以下十一个角色：
+BIP1（`--suite png`）的 reviewPins 必须包含以下十一个角色：
 
 | 源码评审 | 实际证据评审 |
 | --- | --- |
@@ -52,6 +52,24 @@ reviewPins 必须包含以下十一个角色：
 每个角色指向原始文件、字节数与 SHA-256。proofBindings 通过明确 JSON 指针将已接受身份映射到当前模块图，包含原所有者指针或候选所有者清单指针。准备器生成模块图和准入文件，再调用原准入验证器；不创建任何 PASS_SOURCE 或 PASS_ACTUAL 结论。缺失、过期或未接受证据会在浏览器启动前阻断准备。
 
 构建评审必须绑定当前工作区、真实成功执行的标准构建，以及 image/BrowserTextureProvider 的四个当前 JS/声明身份。旧缺失入口红测保留历史身份。原源码、素材或测试证据只有在完整原始字节和所有者核对后才能保留；新执行命令与变化的文件需单独记录。复制旧构建评审不能证明当前构建资格。
+
+## 五种附加固定场景
+
+使用相同的 PNG 证据命令，将 `--suite png` 替换为下表中的精确套件名。每份准备清单包含一个完整配置，不能只选其中的个别步骤。这些场景复用 PNG 采集基础设施，但不执行 PNG 图片解码。
+
+| 套件 | 主案例后端数 / 原始回读数 | 附加检查 |
+| --- | --- | --- |
+| nine-slice-bitmap | WebGPU：1 / 3 | 两项 Canvas 拒绝测试，不声明 Canvas 正向渲染通过 |
+| display-container-remove-children | Canvas + WebGPU：2 / 6 | 移除子节点并回放移除前的保存帧 |
+| display-container-child-index | Canvas + WebGPU：2 / 6 | 查询、重排并回放保存帧 |
+| display-container-add-child-at | Canvas + WebGPU：2 / 10 | 独立 Canvas 错误索引反例：额外两次原始回读 |
+| display-anchor-offsets | Canvas + WebGPU：2 / 10 | 独立 Canvas 错误锚点反例：额外两次原始回读 |
+
+五种配置均保留原有 24 × 24 固定 RGBA 比较，通道容差为零。主回读数包含保存帧回放；反例回读不计入主案例。包装入口在原采集断言之外检查配置身份、完整计数、上下文退出及反例清理。九宫格的 Canvas 拒绝测试不会被记为 Canvas 渲染成功。
+
+每种配置要求恰好八个原始角色：源码评审 `plan、productSource、collectorSource`，实际证据评审 `missingEntryRed、cpu、build、strictTypes、policy`。graphInputs.profile 须等于所选套件，绑定该配置自己的夹具、判定基准、步骤、当前产品源码及实际 JS/声明构建产物。全部实际证据评审必须注明当前工作区。新评审可核验固定的历史缺失入口红测证据，但须明确保留其原执行所有者与日期，并说明没有重新执行该红测。修改旧评审的所有者或生成 PASS 标签不构成核验。当前构建、行为、类型和策略执行须各自保留命令、结果与原始身份。
+
+首次贡献时，与维护者确定受影响配置，提供提交、环境和可复现改动，请求八角色证据准备及独立源码评审，不手工编写批准结论。准备后先复核输出清单与原证据，再将摘要传给 `run`。角色缺失、借用其他配置证据、步骤不完整或原始输入变化都会在原生启动前停止。每次失败保留独立输出目录。
 
 ## 排障与验收
 

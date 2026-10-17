@@ -11,11 +11,22 @@ import {assertBrowserEnvironment} from './browser-verify.mjs';
 import {strictJSON} from './atlas-frame/boundary.mjs';
 const ROOT=fs.realpathSync(fileURLToPath(new URL('..',import.meta.url)));
 const MATRIX=JSON.parse(fs.readFileSync(new URL('./browser-tool-matrix.json',import.meta.url)));
-const SCRIPTS={'prepared-groups':'tools/verify-prepared-resource-groups.mjs',atlas:'tools/verify-atlas-frame.mjs',png:'tools/verify-browser-png.mjs'};
+// Each literal scene retains its original admission domain and comparison schedule.
+const PNG_PROFILES={
+ 'nine-slice-bitmap':{renders:3,backends:['webgpu'],canvasRefusals:2},
+ 'display-container-remove-children':{renders:6,backends:['canvas','webgpu']},
+ 'display-container-child-index':{renders:6,backends:['canvas','webgpu']},
+ 'display-container-add-child-at':{renders:10,backends:['canvas','webgpu'],control:'wrong-index-control'},
+ 'display-anchor-offsets':{renders:10,backends:['canvas','webgpu'],control:'wrong-pivot-control'},
+};
+const isPngSuite=suite=>suite==='png'||Object.hasOwn(PNG_PROFILES,suite);
+const pngProfile=suite=>suite==='png'?'browser-png':suite;
+const pngStatus=suite=>suite==='png'?'BIP1_NATIVE_SOURCE_AND_ACTUAL_INPUTS_ADMITTED':suite.toUpperCase().replaceAll('-','_')+'_NATIVE_SOURCE_AND_ACTUAL_INPUTS_ADMITTED';
+const SCRIPTS={'prepared-groups':'tools/verify-prepared-resource-groups.mjs',atlas:'tools/verify-atlas-frame.mjs',png:'tools/verify-browser-png.mjs',...Object.fromEntries(Object.keys(PNG_PROFILES).map(key=>[key,'tools/verify-browser-png.mjs']))};
 const requireThat=(ok,message)=>{if(!ok)throw Error(message);};
 const equal=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
 export function resourceCases(suite){
- if(suite==='png')return [{profile:'png',kind:'ordinary'}];
+ if(isPngSuite(suite))return [{profile:suite,kind:'ordinary'}];
  const profiles=suite==='prepared-groups'?['canvas-2d','webgpu-scene-textured']:suite==='atlas'?['canvas-2d','webgpu-textured-2d']:null;
  requireThat(profiles,'Unknown resource family');
  const kinds=suite==='atlas'?['ordinary','rotation-sign','trim-y-constant','atlas-import-v1']:['ordinary','manual-old-A-outer','manual-old-B-trim'];
@@ -24,9 +35,9 @@ export function resourceCases(suite){
 export function parseResourceOptions(args){
  const [action,...rest]=args;requireThat(['prepare','run'].includes(action),'Expected prepare or run');
  const options={action};for(let i=0;i<rest.length;i+=2){const key=rest[i];requireThat(/^--[a-z][a-z0-9-]*$/.test(key)&&rest[i+1]&&!Object.hasOwn(options,key.slice(2)),'Unique named options required');options[key.slice(2)]=rest[i+1];}
- const keys=action==='run'?['action','manifest','sha256']:['action','suite','playwright','output',...(options.suite==='png'?['evidence','evidence-sha256']:[])];
+ const keys=action==='run'?['action','manifest','sha256']:['action','suite','playwright','output',...(isPngSuite(options.suite)?['evidence','evidence-sha256']:[])];
  requireThat(equal(Object.keys(options).sort(),keys.sort()),'Exact options required; PNG needs original evidence and digest');
- for(const key of action==='run'?['manifest']:['playwright','output',...(options.suite==='png'?['evidence']:[])])requireThat(path.isAbsolute(options[key]),'Absolute '+key+' required');
+ for(const key of action==='run'?['manifest']:['playwright','output',...(isPngSuite(options.suite)?['evidence']:[])])requireThat(path.isAbsolute(options[key]),'Absolute '+key+' required');
  for(const key of ['sha256','evidence-sha256'])if(options[key])requireThat(/^[a-f0-9]{64}$/.test(options[key]),'Lowercase SHA-256 required');
  if(action==='prepare')resourceCases(options.suite);return options;
 }
@@ -37,9 +48,15 @@ function save(file,data){fs.writeFileSync(file,canonicalTextBytes(JSON.stringify
 function outside(owner,target){requireThat(!samePhysicalPath(owner,target),'Output overlaps input owner');let inside=false;try{ownerRelativePath(owner,target);inside=true;}catch{}requireThat(!inside,'Output inside input owner');}
 function currentInputs(suite){
  const files=['tools/browser-resources.mjs','tools/browser-verify.mjs','tools/browser-tool-matrix.json','tools/lib/file-identity.mjs','tools/atlas-frame/boundary.mjs',SCRIPTS[suite]];
- const dirs=suite==='atlas'?['tools/atlas-frame','tools/atlas-import']:suite==='png'?['tools/browser-png']:['tools/prepared-resource-groups'];
- for(const directory of dirs)for(const name of fs.readdirSync(path.join(ROOT,directory)))if(name.endsWith('.mjs'))files.push(directory+'/'+name);
+ const dirs=suite==='atlas'?['tools/atlas-frame','tools/atlas-import']:isPngSuite(suite)?['tools/browser-png',...(suite==='png'?[]:['tools/'+suite+'-native'])]:['tools/prepared-resource-groups'];
+ for(const directory of dirs)for(const name of fs.readdirSync(path.join(ROOT,directory)))if(name.endsWith('.mjs')||name==='schedule.json')files.push(directory+'/'+name);
  return [...new Set(files)].sort().map(file=>pin(path.join(ROOT,file)));
+}
+/** Preserve the exact original package entry for each admitted producer schema. */
+export function validateResourceRuntime(suite,evidence,installed){
+ requireThat(isPngSuite(suite),'Unknown PNG suite');
+ const entry=suite==='png'?'index.js':'index.mjs';
+ requireThat(samePhysicalPath(evidence.runtime?.nodeExecutable?.path??'',process.execPath)&&samePhysicalPath(evidence.runtime?.playwrightEntry?.path??'',path.join(installed,entry)),'Evidence runtime selection differs');
 }
 function environment(playwright){
  assertBrowserEnvironment(process.env);
@@ -62,7 +79,7 @@ export function verifyAtlasCollectorCopy(owner,kind){
 }
 /** Check the reviewed raw identities without requiring still-fresh output directories. */
 export function verifyResourceCasePins(suite,row){
- const keys=suite==='png'?['admission']:suite==='atlas'?['config','snapshot','preparation']:suite==='prepared-groups'?['config','snapshot']:null;
+ const keys=isPngSuite(suite)?['admission']:suite==='atlas'?['config','snapshot','preparation']:suite==='prepared-groups'?['config','snapshot']:null;
  requireThat(keys,'Unknown resource family');for(const key of keys)readPin(row[key]);
 }
 /** Validate the whole family before starting any child; a partial list never earns family credit. */
@@ -75,8 +92,9 @@ export function validateResourceManifest(manifest){
  const root=manifest.outputOwner;requireThat(path.isAbsolute(root)&&samePhysicalPath(root,fs.realpathSync(root)),'Canonical manifest owner');outside(ROOT,root);
  for(const row of manifest.cases){
   ownerRelativePath(root,row.output);requireThat(!fs.existsSync(row.output),'Fresh native output required');
-  if(manifest.suite==='png'){
+  if(isPngSuite(manifest.suite)){
    const admission=strictJSON(readPin(row.admission));requireThat(samePhysicalPath(admission.sourceFilesRoot,ROOT)&&samePhysicalPath(admission.outputOwner,path.dirname(row.output)),'PNG admission owner differs');
+   requireThat(admission.status===pngStatus(manifest.suite)&&(manifest.suite==='png'||admission.graphInputs?.profile===manifest.suite),'PNG profile admission differs');
   }else{
    ownerRelativePath(root,row.config.path);ownerRelativePath(root,row.snapshot.path);
    const config=strictJSON(readPin(row.config));readPin(row.snapshot);
@@ -93,8 +111,21 @@ export function validateResourceManifest(manifest){
 export function validateResourceCompletion(suite,scenario,receipt){
  const empty=value=>Array.isArray(value)&&value.length===0;
  requireThat(receipt?.status==='PASS','Resource completion did not pass');
- if(suite==='png'){
+ if(isPngSuite(suite)){
   requireThat(receipt.node?.version==='v'+MATRIX.node&&receipt.browserVersion&&receipt.primaryOccurred===false&&empty(receipt.cleanupErrors)&&empty(receipt.pendingTicketIds)&&receipt.beforeAfterGraphStable===true&&receipt.sourceAndInstalledRuntimePinsStable===true&&receipt.browserCloseFulfilled===true&&receipt.serverCloseFulfilled===true,'Incomplete PNG receipt');
+  if(suite!=='png'){
+   const spec=PNG_PROFILES[suite],count=spec.backends.length;
+   requireThat(equal(scenario,{profile:suite,kind:'ordinary'})&&receipt.profile===suite&&equal(receipt.contextRetirement?.map(x=>x.backend),spec.backends)&&receipt.contextRetirement.every(x=>x.closeFulfilled===true),'PNG profile or context retirement differs');
+   requireThat(receipt.renderedSubmissions===spec.renders&&receipt.completeRawReadbacks===spec.renders&&receipt.newCaptures===spec.renders-count&&receipt.savedReplays===count&&receipt.pixelsCompared===spec.renders*576&&receipt.channelsCompared===spec.renders*2304&&receipt.actualNativeMainCases===count&&receipt.actualNativeMainPasses===count&&receipt.positiveCanvasSubmissions===(spec.canvasRefusals?0:spec.renders/2),'Incomplete literal scene main schedule');
+   if(spec.canvasRefusals)requireThat(receipt.canvasRefusalCases===spec.canvasRefusals,'Canvas refusal is not positive Canvas acceptance');
+   if(spec.control){
+    requireThat(receipt.actualNegativeControlCases===1&&receipt.actualNegativeControlPasses===1&&receipt.additionalControlSubmissions===2&&receipt.additionalControlReadbacks===2&&receipt.wrongOracleControls?.length===1,'Incomplete literal scene control schedule');
+    const control=receipt.wrongOracleControls[0],retirement=control.retirement;
+    requireThat(control.id==='C1'&&control.backend==='canvas'&&control.pass===true&&control.baselinePass===true&&control.expected==='literal-mismatch'&&Number.isSafeInteger(control.mismatchedChannels)&&control.mismatchedChannels>0&&control.additionalSubmissions===2&&control.additionalReadbacks===2&&control.mainCredit===0,'Wrong literal scene control');
+    requireThat(retirement?.backend==='canvas'&&retirement.mode===spec.control&&retirement.primaryOccurred===false&&empty(retirement.cleanupErrors)&&retirement.pendingTickets===0&&retirement.tickets?.length>0&&retirement.tickets.every(x=>x.settled===true&&x.fulfilled===true)&&retirement.newCaptures===2&&retirement.savedReplays===0&&retirement.scopeState==='closed'&&retirement.allSceneNodesDisposed===true&&empty(retirement.diagnostics)&&retirement.ports?.length===1&&retirement.ports.every(x=>x.renderSubmissions===2&&x.close==='fulfilled'&&x.safeHostReturn===true&&x.engineDisposeFulfilled===true&&x.quarantine===false),'Incomplete literal scene control retirement');
+   }else requireThat(empty(receipt.wrongOracleControls),'Unexpected literal scene control');
+   return;
+  }
   requireThat(equal(receipt.contextRetirement?.map(x=>x.backend),['canvas','webgpu'])&&receipt.contextRetirement.every(x=>x.closeFulfilled)&&receipt.renderedSubmissions===6&&receipt.completeRawReadbacks===6&&receipt.newCaptures===4&&receipt.savedReplays===2&&equal(receipt.wrongOracleControls?.map(x=>x.backend),['canvas','webgpu'])&&receipt.wrongOracleControls.every(x=>x.pass),'Incomplete PNG completion schedule');return;
  }
  requireThat(receipt.environment?.node==='v'+MATRIX.node&&receipt.environment?.browserVersion&&receipt.environment?.playwrightVersion===MATRIX.playwright&&equal(receipt.nativeScenario,scenario)&&empty(receipt.failures)&&receipt.pendingOriginalTasks===0,'Incomplete resource receipt');
@@ -111,19 +142,20 @@ export async function prepareResources(options){
  requireThat(samePhysicalPath(parent,fs.realpathSync(parent))&&!fs.existsSync(output),'Fresh output under canonical existing parent required');
  for(const owner of [ROOT,runtime.installed,runtime.core])outside(owner,output);
  const inputs=currentInputs(options.suite);let evidence;
- if(options.suite==='png'){const p=pin(options.evidence);requireThat(p.sha256===options['evidence-sha256'],'Original evidence digest differs');evidence=strictJSON(readPin(p));}
+ if(isPngSuite(options.suite)){const p=pin(options.evidence);requireThat(p.sha256===options['evidence-sha256'],'Original evidence digest differs');evidence=strictJSON(readPin(p));}
  fs.mkdirSync(output);const cases=[];
  for(const scenario of resourceCases(options.suite)){
   const id=scenario.profile+'-'+scenario.kind,caseRoot=path.join(output,id);fs.mkdirSync(caseRoot);
-  if(options.suite==='png'){
+  if(isPngSuite(options.suite)){
    requireThat(evidence.schemaVersion===1&&samePhysicalPath(evidence.sourceFilesRoot,ROOT)&&samePhysicalPath(evidence.graphInputs?.repositoryRoot??'',ROOT),'Evidence must select current repository');
-   requireThat(samePhysicalPath(evidence.runtime?.nodeExecutable?.path??'',process.execPath)&&samePhysicalPath(evidence.runtime?.playwrightEntry?.path??'',path.join(runtime.installed,'index.js')),'Evidence runtime selection differs');
+   validateResourceRuntime(options.suite,evidence,runtime.installed);
+   requireThat(options.suite==='png'||evidence.graphInputs.profile===options.suite,'Original evidence selects another PNG profile');
    const {freezeBrowserPngGraph}=await import('./browser-png/file-graph.mjs');
    const {admitBrowserPngCollection}=await import('./browser-png/collector.mjs');
    const graphPath=path.join(caseRoot,'graph.json');save(graphPath,freezeBrowserPngGraph(evidence.graphInputs));
    const admissionPath=path.join(caseRoot,'admission.json');
-   save(admissionPath,{...evidence,status:'BIP1_NATIVE_SOURCE_AND_ACTUAL_INPUTS_ADMITTED',outputOwner:caseRoot,graphPin:pin(graphPath)});
-   const nativeOutput=path.join(caseRoot,'native-output'),admission=pin(admissionPath);admitBrowserPngCollection(admission,nativeOutput);
+   save(admissionPath,{...evidence,status:pngStatus(options.suite),outputOwner:caseRoot,graphPin:pin(graphPath)});
+   const nativeOutput=path.join(caseRoot,'native-output'),admission=pin(admissionPath);admitBrowserPngCollection(admission,nativeOutput,pngProfile(options.suite));
    cases.push({...scenario,admission,output:nativeOutput});
   }else{
    let prepared;
@@ -146,11 +178,11 @@ export async function runResources(options){
  for(const row of manifest.cases){
   verifyResourceCasePins(manifest.suite,row);
   let script,args,cwd=ROOT;
-  if(manifest.suite==='png'){script=path.join(ROOT,SCRIPTS.png);args=['--admission',row.admission.path,'--output',row.output];}
+  if(isPngSuite(manifest.suite)){script=path.join(ROOT,SCRIPTS.png);args=[...(manifest.suite==='png'?[]:['--'+manifest.suite]),'--admission',row.admission.path,'--output',row.output];}
   else{const config=strictJSON(readPin(row.config));cwd=config.repositoryRoot;script=path.join(cwd,SCRIPTS[manifest.suite]);args=['--config',row.config.path,'--config-sha256',row.config.sha256];}
   const log=path.join(path.dirname(row.output),'capture');
   child(script,args,log,cwd);
-  const receiptPath=path.join(row.output,manifest.suite==='png'?'result.json':'report.json'),receipt=json(receiptPath);
+  const receiptPath=path.join(row.output,isPngSuite(manifest.suite)?'result.json':'report.json'),receipt=json(receiptPath);
   validateResourceCompletion(manifest.suite,{profile:row.profile,kind:row.kind},receipt);
   results.push({profile:row.profile,kind:row.kind,receipt:pin(receiptPath),status:'PASS'});
  }
@@ -160,6 +192,6 @@ export async function runResources(options){
  save(path.join(manifest.outputOwner,'result.json'),report);return report;
 }
 if(process.argv[1]&&samePhysicalPath(path.resolve(process.argv[1]),fileURLToPath(import.meta.url))){
- if(process.argv.slice(2).join(' ')==='--help')console.log('prepare --suite prepared-groups|atlas|png --playwright <absolute package> --output <fresh absolute directory> [PNG only: --evidence <absolute original evidence JSON> --evidence-sha256 <sha256>]\nReview the complete manifest, snapshots and original evidence, then: run --manifest <absolute manifest.json> --sha256 <reviewed digest>');
+ if(process.argv.slice(2).join(' ')==='--help')console.log('prepare --suite prepared-groups|atlas|png|nine-slice-bitmap|display-container-remove-children|display-container-child-index|display-container-add-child-at|display-anchor-offsets --playwright <absolute package> --output <fresh absolute directory> [PNG and literal scene suites: --evidence <absolute original evidence JSON> --evidence-sha256 <sha256>]\nReview the complete manifest, snapshots and original evidence, then: run --manifest <absolute manifest.json> --sha256 <reviewed digest>');
  else{const options=parseResourceOptions(process.argv.slice(2));console.log(JSON.stringify(await (options.action==='prepare'?prepareResources(options):runResources(options))));}
 }

@@ -86,3 +86,42 @@ test('PNG graph admits the current hoisted owner and rejects old or foreign owne
   for(const relative of ['node_modules/.pnpm/robust-predicates@3.0.3/node_modules/robust-predicates','foreign/node_modules/robust-predicates'])assert.throws(()=>verifyBrowserPngDependencyOwner(root,path.join(root,relative)),/DEPENDENCY_OWNER/);
  }finally{fs.rmSync(root,{recursive:true,force:true});}
 });
+
+
+test('five literal PNG scenes require explicit evidence and retain their exact suite identity',async()=>{
+ const {resourceCases,parseResourceOptions,verifyResourceCasePins}=await api();
+ for(const suite of ['nine-slice-bitmap','display-container-remove-children','display-container-child-index','display-container-add-child-at','display-anchor-offsets']){
+  assert.deepEqual(resourceCases(suite),[{profile:suite,kind:'ordinary'}]);
+  const args=['prepare','--suite',suite,'--playwright',path.resolve('pw'),'--output',path.resolve('out')];
+  assert.throws(()=>parseResourceOptions(args),/Exact options/);
+  assert.equal(parseResourceOptions([...args,'--evidence',path.resolve('evidence.json'),'--evidence-sha256','a'.repeat(64)]).suite,suite);
+  assert.throws(()=>verifyResourceCasePins(suite,{admission:{path:path.resolve('absent-review.json'),bytes:0,sha256:'a'.repeat(64)}}));
+ }
+});
+
+test('literal scene receipts cannot borrow BIP1 credit or omit a control or retirement',async()=>{
+ const {validateResourceCompletion}=await api();
+ for(const suite of ['nine-slice-bitmap','display-container-remove-children','display-container-child-index','display-container-add-child-at','display-anchor-offsets']){
+  const nine=suite==='nine-slice-bitmap',control=['display-container-add-child-at','display-anchor-offsets'].includes(suite),backends=nine?['webgpu']:['canvas','webgpu'],renders=nine?3:control?10:6;
+  const retirement={backend:'canvas',mode:suite==='display-anchor-offsets'?'wrong-pivot-control':'wrong-index-control',primaryOccurred:false,cleanupErrors:[],pendingTickets:0,tickets:[{settled:true,fulfilled:true}],newCaptures:2,savedReplays:0,scopeState:'closed',allSceneNodesDisposed:true,diagnostics:[],ports:[{renderSubmissions:2,close:'fulfilled',safeHostReturn:true,engineDisposeFulfilled:true,quarantine:false}]};
+  const receipt={status:'PASS',profile:suite,node:{version:'v26.7.0'},browserVersion:'test',primaryOccurred:false,cleanupErrors:[],pendingTicketIds:[],beforeAfterGraphStable:true,sourceAndInstalledRuntimePinsStable:true,browserCloseFulfilled:true,serverCloseFulfilled:true,contextRetirement:backends.map(backend=>({backend,closeFulfilled:true})),renderedSubmissions:renders,completeRawReadbacks:renders,newCaptures:renders-backends.length,savedReplays:backends.length,pixelsCompared:renders*576,channelsCompared:renders*2304,actualNativeMainCases:backends.length,actualNativeMainPasses:backends.length,positiveCanvasSubmissions:nine?0:renders/2,...(nine?{canvasRefusalCases:2}:{}),...(control?{actualNegativeControlCases:1,actualNegativeControlPasses:1,additionalControlSubmissions:2,additionalControlReadbacks:2}:{}),wrongOracleControls:control?[{id:'C1',backend:'canvas',pass:true,baselinePass:true,expected:'literal-mismatch',mismatchedChannels:128,additionalSubmissions:2,additionalReadbacks:2,mainCredit:0,retirement}]:[]};
+  validateResourceCompletion(suite,{profile:suite,kind:'ordinary'},receipt);
+  for(const patch of [{profile:'browser-png'},{completeRawReadbacks:renders-1},{channelsCompared:0},{actualNativeMainPasses:0},{pendingTicketIds:[1]},{contextRetirement:[]}])assert.throws(()=>validateResourceCompletion(suite,{profile:suite,kind:'ordinary'},{...receipt,...patch}));
+  if(nine)for(const patch of [{canvasRefusalCases:1},{positiveCanvasSubmissions:1}])assert.throws(()=>validateResourceCompletion(suite,{profile:suite,kind:'ordinary'},{...receipt,...patch}));
+  if(control){
+   for(const patch of [{wrongOracleControls:[]},{additionalControlReadbacks:0},{actualNegativeControlPasses:0}])assert.throws(()=>validateResourceCompletion(suite,{profile:suite,kind:'ordinary'},{...receipt,...patch}));
+   for(const patch of [{baselinePass:false},{mainCredit:1},{mismatchedChannels:0},{retirement:{...retirement,pendingTickets:1}},{retirement:{...retirement,ports:[{...retirement.ports[0],quarantine:true}]}}])assert.throws(()=>validateResourceCompletion(suite,{profile:suite,kind:'ordinary'},{...receipt,wrongOracleControls:[{...receipt.wrongOracleControls[0],...patch}]}));
+  }
+ }
+});
+
+test('literal scenes preserve the original ESM Playwright entry without widening BIP1',async()=>{
+ const {validateResourceRuntime}=await api();assert.equal(typeof validateResourceRuntime,'function');
+ const installed=path.resolve('installed-playwright'),node=process.execPath;
+ for(const suite of ['png','nine-slice-bitmap','display-container-remove-children','display-container-child-index','display-container-add-child-at','display-anchor-offsets']){
+  const entry=suite==='png'?'index.js':'index.mjs';
+  const evidence={runtime:{nodeExecutable:{path:node},playwrightEntry:{path:path.join(installed,entry)}}};
+  validateResourceRuntime(suite,evidence,installed);
+  for(const wrong of [path.join(installed,suite==='png'?'index.mjs':'index.js'),path.resolve('foreign-playwright',entry)])assert.throws(()=>validateResourceRuntime(suite,{runtime:{...evidence.runtime,playwrightEntry:{path:wrong}}},installed),/runtime selection/);
+ }
+});

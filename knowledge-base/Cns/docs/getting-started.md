@@ -93,7 +93,7 @@ node tools/browser-verify.mjs --suite resource-scene --playwright <absolute-inst
 
 验证 bitmap-slot 时，将两条命令中的套件名均替换为 bitmap-slot。准备前使用选定工具链构建。准备步骤不启动浏览器，也不批准生成结果；先复核完整源码闭包、所有者、导入及原有判定标准，再显式提供已复核的原始摘要。采集器会在原生执行前重新计算完整闭包；源码或构建输入变化后必须重新生成并复核快照。不要把未经复核的生成摘要自动传入执行。resource-scene 保留固定 Edge 155.0.4283.45 与字体参考，不自动接纳其他浏览器版本。
 
-输出父目录须已存在，选定文件或目录须为新建且位于输入所有者之外。入口拒绝额外 Node 参数、NODE_OPTIONS/NODE_PATH、错误版本、变化的快照及缺失完成记录；保留失败，不下载浏览器，不放宽原有像素/反例断言。桌面子集不证明手机、通用中文字体性能或完整引擎能力。查看 tools/browser-tool-matrix.json：prepared-group、atlas、BIP1 PNG 使用[资源类型验证流程](resource-browser-workflow.md)，保留独立夹具/配置准入；固定 Node 24.19.0 实验保留历史身份，不能被这些套件替代。渲染变更仍须验证受影响范围，包装入口不证明独立操作系统进程退出。
+输出父目录须已存在，选定文件或目录须为新建且位于输入所有者之外。入口拒绝额外 Node 参数、NODE_OPTIONS/NODE_PATH、错误版本、变化的快照及缺失完成记录；保留失败，不下载浏览器，不放宽原有像素/反例断言。桌面子集不证明手机、通用中文字体性能或完整引擎能力。查看 tools/browser-tool-matrix.json：prepared-group、atlas、BIP1 PNG 和五种独立准入的固定场景配置 使用[资源类型验证流程](resource-browser-workflow.md)，保留独立夹具/配置准入；固定 Node 24.19.0 实验保留历史身份，不能被这些套件替代。渲染变更仍须验证受影响范围，包装入口不证明独立操作系统进程退出。
 
 ## 按风险选择本地反馈
 
