@@ -2037,8 +2037,8 @@
       "kind": "public_reading",
       "action": "add-current-pair",
       "status": "CURRENT_READING_SOURCE",
-      "currentEnSha256": "a1f2785cf468a76c5a4cd24c3c901bd84d104e8271157efeda2a3f0761c037fb",
-      "currentZhSha256": "4a52170fcd3f069a2ca5f087acaceb94e5b6aeb3f8e1cf627dd50a776cca7384"
+      "currentEnSha256": "1bf5af0aa6ca2f024ce73b842d7977d9142de703c3957394ba6ab27211b22220",
+      "currentZhSha256": "14d60aa23c05855700fc970a91615617587cd29f70dcf9091f26060c6f006531"
     },
     {
       "newEn": "knowledge-base/en/docs/architecture-and-engineering-plan.md",

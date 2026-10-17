@@ -79,8 +79,13 @@ function diagnostics(output, sourceFile = negativeFile) {
   for (const row of rows) {
     // Only the exact current repository prefix changes. Preserve complete message
     // wording and continuation indentation; never strip arbitrary diagnostic text.
+    // Derive the compiler's escaped spelling from this owner only. Keep the
+    // trailing separator so a sibling checkout cannot acquire its identity.
+    const compilerRoot = slashRoot.replace(/[^\x20-\x7e]/g, unit =>
+      '\\u' + unit.charCodeAt(0).toString(16).toUpperCase().padStart(4, '0'));
     row.message = row.message.replaceAll(slashRoot + '/', '<repo>/')
-      .replaceAll(root + path.sep, '<repo>/');
+      .replaceAll(root + path.sep, '<repo>/')
+      .replaceAll(compilerRoot + '/', '<repo>/');
     if ([2307, 2688, 6053, 5083, 18003].includes(row.code)) throw new Error('F2_TYPES_SETUP_DIAGNOSTIC');
   }
   assert(rows.length > 0, 'F2_TYPES_NEGATIVE_DIAGNOSTICS_REQUIRED');

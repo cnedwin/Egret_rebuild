@@ -152,3 +152,23 @@ test('ticket diagnostic projection authenticates the selected file and exact esc
   assert.throws(()=>project(quoted),/namespace declaration owner differs/);
  }finally{fs.rmSync(fixture,{recursive:true,force:true});}
 });
+
+
+test('Spine diagnostic tuples recognize only the exact compiler-escaped checkout owner',()=>{
+ const source=fs.readFileSync(new URL('../../tools/verify-spine-f2-source.mjs',import.meta.url),'utf8');
+ const begin=source.indexOf('function diagnostics(output, sourceFile = negativeFile) {');
+ const end=source.indexOf('\nconst expected = expectations();',begin);
+ assert.ok(begin>=0&&end>begin);
+ const owner='C:/work/冷 cache';
+ const selected='knowledge-base/experiments/spine-f2/type-tests/negative.ts';
+ const parse=vm.runInNewContext('('+source.slice(begin,end)+')',{root:owner,slashRoot:owner,path:path.win32,negativeFile:selected,assert});
+ const escaped='C:/work/'+String.fromCharCode(92)+'u51B7 cache';
+ const message='Namespace "'+escaped+'/packages/Case/index" has no export.';
+ const rows=parse(selected+'(2,3): error TS2694: '+message+'\n');
+ assert.equal(rows[0].message,'Namespace "<repo>/packages/Case/index" has no export.');
+ assert.equal(rows[0].file,selected);
+ for(const foreign of [escaped+'-other','D:/other']){
+  const original='Namespace "'+foreign+'/packages/Case/index" has no export.';
+  assert.equal(parse(selected+'(2,3): error TS2694: '+original+'\n')[0].message,original);
+ }
+});

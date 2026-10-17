@@ -2112,7 +2112,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 138808,
-      "sha256": "fb782969e6f70b0b9676ecefb8bd8cf93bcb0f8a10291e7c9698cdd003b13c02",
+      "sha256": "5c52a2fe1871fef5cb86a2898c9882c3d1c6c64199738428d795ab11a72c9e61",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "361b94da2baa610b53a0725ad2ac8e1b25fe45eeb917e000ee1c81e35b2ede49",
+      "sha256": "339ff89de9587ddbb7cf6a9798f09427aec59295c85681f37bb68300bbba8cc2",
       "bytes": 334041,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -9188,8 +9188,8 @@
     },
     {
       "path": "tools/verify-spine-f2-source.mjs",
-      "bytes": 8883,
-      "sha256": "86bd8025ad2f145040f6816a0053d616e6b1654943474eb201b9e28a8ad51fa9",
+      "bytes": 9233,
+      "sha256": "c89f006452f7c97fd4a44e5e3b91f23e06b4e42e4b57d945337c8742a6bb77d3",
       "originRole": "Original first-party Egret F2-A code, tests, literal assets, type consumers or public reading; no upstream Spine payload.",
       "identityHistory": [
         {
@@ -10460,8 +10460,8 @@
     {
       "path": "knowledge-base/Cns/docs/m0-community-foundations.md",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
-      "bytes": 12382,
-      "sha256": "4a52170fcd3f069a2ca5f087acaceb94e5b6aeb3f8e1cf627dd50a776cca7384"
+      "bytes": 12989,
+      "sha256": "14d60aa23c05855700fc970a91615617587cd29f70dcf9091f26060c6f006531"
     },
     {
       "path": "knowledge-base/en/docs/getting-started.md",
@@ -10472,14 +10472,14 @@
     {
       "path": "knowledge-base/en/docs/m0-community-foundations.md",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
-      "bytes": 14816,
-      "sha256": "a1f2785cf468a76c5a4cd24c3c901bd84d104e8271157efeda2a3f0761c037fb"
+      "bytes": 15491,
+      "sha256": "1bf5af0aa6ca2f024ce73b842d7977d9142de703c3957394ba6ab27211b22220"
     },
     {
       "path": "tests/publication/m0-foundations.test.mjs",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
-      "bytes": 9719,
-      "sha256": "daf66b641527612b52542778a9b09c0ed4cdd9749e5ab1d303bdccb5c5adf9d9"
+      "bytes": 10931,
+      "sha256": "b04be1861931cbff0111ce9cfe313feeb780cd630a932c9256de0bc5f8fa98ab"
     },
     {
       "path": "tools/check-quick.mjs",

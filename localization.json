@@ -1837,8 +1837,8 @@
       "en": "knowledge-base/en/docs/m0-community-foundations.md",
       "zh": "knowledge-base/Cns/docs/m0-community-foundations.md",
       "kind": "public_reading",
-      "enSha256": "a1f2785cf468a76c5a4cd24c3c901bd84d104e8271157efeda2a3f0761c037fb",
-      "zhSha256": "4a52170fcd3f069a2ca5f087acaceb94e5b6aeb3f8e1cf627dd50a776cca7384"
+      "enSha256": "1bf5af0aa6ca2f024ce73b842d7977d9142de703c3957394ba6ab27211b22220",
+      "zhSha256": "14d60aa23c05855700fc970a91615617587cd29f70dcf9091f26060c6f006531"
     },
     {
       "en": "knowledge-base/en/docs/architecture-and-engineering-plan.md",
@@ -2723,7 +2723,7 @@
     },
     {
       "path": "tools/verify-spine-f2-source.mjs",
-      "sha256": "86bd8025ad2f145040f6816a0053d616e6b1654943474eb201b9e28a8ad51fa9"
+      "sha256": "c89f006452f7c97fd4a44e5e3b91f23e06b4e42e4b57d945337c8742a6bb77d3"
     },
     {
       "path": "tools/spine-f2-source-boundary.mjs",
