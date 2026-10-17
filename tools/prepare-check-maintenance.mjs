@@ -21,6 +21,38 @@ const registrations=[
  ['tools/sequence-playback-boundary.mjs','seqpbStableEntries'],
  ['tools/sequence-playback-boundary.mjs','seqpbConfigurations']
 ];
+
+// Explicit selectors keep historical transforms and third-party owners separate.
+const policyRegistrations=[
+ {owner:'tools/bitmap-resource-slot-boundary.mjs',binding:'policyPin',target:'tools/bitmap-resource-slot-policy.json',kind:'BITMAP_RESOURCE_SLOT_FINITE_INTERFACE_POLICY',selectors:['packages','configurations','stableEntries','oldRootPins','oldEngineDeclarationPin','workspacePins']},
+ {owner:'tools/bitmap-binding-ticket-boundary.mjs',binding:'policyPin',target:'tools/bitmap-binding-ticket-policy.json',kind:'BITMAP_BINDING_TICKET_FINITE_INTERFACE_POLICY',selectors:['packages','configurations','stableEntries','oldRootPins','oldEngineDeclarationPin','workspacePins','selectedProductPins']},
+ {owner:'tools/atlas-import-boundary.mjs',binding:'inventoryPin',target:'tests/types/atlas-import-diagnostic-expectations.json',kind:'ATLAS_IMPORT_ACTUAL_STRICT_DIAGNOSTICS',selectors:['sourcePolicy.modules','sourcePolicy.configurationPins']}
+];
+// Parse JSON once, then reject duplicate decoded object keys at every depth.
+function uniqueJSON(text){
+ const value=JSON.parse(text),tokens=text.match(/"(?:\\.|[^"\\])*"|[{}\[\]:,]|true|false|null|-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/g);let at=0;
+ function visit(depth){
+  if(depth>128)throw Error('Unsupported JSON nesting');
+  const token=tokens[at++];
+  if(token==='{'||token==='['){
+   const end=token==='{'?'}':']',keys=new Set();
+   while(tokens[at]!==end){
+    if(token==='{'){const key=JSON.parse(tokens[at++]);if(keys.has(key))throw Error('Duplicate JSON key');keys.add(key);at++;}
+    visit(depth+1);if(tokens[at]===',')at++;
+   }at++;
+  }
+ }
+ visit(0);return value;
+}
+function repositoryPin(pin){
+ validPin(pin);const file=pin.path;
+ const allowed=/^(?:package\.json|pnpm-lock\.yaml|pnpm-workspace\.yaml|tsconfig(?:\.[A-Za-z0-9-]+)?\.json)$/.test(file)
+  ||/^tests\/types\/[A-Za-z0-9_.-]+\.json$/.test(file)
+  ||/^packages\/(?:contracts|engine|project|runtime)\/(?:(?:src|dist|web|rendering|tests)\/.+\.(?:ts|js)|package\.json|tsconfig(?:\.[A-Za-z0-9-]+)?\.json)$/.test(file);
+ if(!allowed||file.split('/').some(x=>x.toLowerCase()==='node_modules'||x.startsWith('.')))throw Error('Unsupported repository pin owner: '+file);
+ return pin;
+}
+
 const equal=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
 const samePin=(a,b)=>a===null||b===null?a===b:a.path===b.path&&a.bytes===b.bytes&&a.sha256===b.sha256;
 function validPin(pin){
@@ -89,7 +121,7 @@ function declaration(text,name){
  if(stack.length||!/^\s*$/.test(prefix.slice(prefix.lastIndexOf('\n')+1)))refuse();
  const match=text.slice(at).split(/\r?\n/,1)[0].match(new RegExp('^const\\s+'+name+'\\s*=\\s*(.*);\\s*$'));
  if(!match)throw Error('Unsupported JSON declaration: '+name);
- try{return JSON.parse(match[1]);}catch{throw Error('Unsupported JSON declaration: '+name);}
+ try{return uniqueJSON(match[1]);}catch{throw Error('Unsupported JSON declaration: '+name);}
 }
 function codeInventory(root){
  const result=[];
@@ -106,7 +138,14 @@ function codeInventory(root){
  return result.sort();
 }
 export function prepareBaselineReview(root){
- const read=reader(root),owners=new Map(),declarations=[];
+ const read=reader(root),owners=new Map(),declarations=[],policyLinks=[],successorPairs=[];
+ const ownerText=file=>{if(!owners.has(file))owners.set(file,read.text(file));return owners.get(file);};
+ const row=expected=>{const current=read.pin(expected.path);return {expected,current,identity:current===null?'missing':samePin(expected,current)?'same':'different'};};
+ function add(owner,binding,pins,comparison='raw-identity'){
+  if(!Array.isArray(pins))throw Error('Expected declared pin array: '+binding);
+  const seen=new Set();for(const pin of pins){repositoryPin(pin);if(seen.has(pin.path))throw Error('Duplicate declared path: '+pin.path);seen.add(pin.path);}
+  declarations.push({owner,binding,comparison,rows:pins.map(row)});
+ }
  for(const [owner,binding,member]of registrations){
   if(!owners.has(owner))owners.set(owner,read.text(owner));
   const value=declaration(owners.get(owner),binding),pins=member?value[member]:value;
@@ -118,16 +157,52 @@ export function prepareBaselineReview(root){
   });
   declarations.push({owner,binding:binding+(member?'.'+member:''),rows});
  }
+ for(const spec of policyRegistrations){
+  const expected=validPin(declaration(ownerText(spec.owner),spec.binding));
+  if(expected.path!==spec.target)throw Error('Registered policy target path differs');
+  policyLinks.push({owner:spec.owner,binding:spec.binding,row:row(expected)});
+  const value=uniqueJSON(read.text(spec.target));
+  if(value.kind!==spec.kind||(spec.binding==='policyPin'?value.schemaVersion!==1:value.status!=='OBSERVED_FROZEN_TS7_DIAGNOSTICS'))throw Error('Unsupported policy schema: '+spec.target);
+  for(const selector of spec.selectors){
+   let pins=value;for(const part of selector.split('.')){if(!pins||!Object.hasOwn(pins,part))throw Error('Missing policy selector: '+selector);pins=pins[part];}
+   const transformed=selector==='oldRootPins'||selector==='oldEngineDeclarationPin';
+   add(spec.target,selector,selector==='oldEngineDeclarationPin'?[pins]:pins,transformed?'transformed-baseline-raw-observation':'raw-identity');
+  }
+ }
+ for(const owner of ['tools/spritesheet-boundary.mjs','tools/browser-png-boundary.mjs']){
+  const binding='imageResidencySuccessors',pairs=declaration(ownerText(owner),binding),seen=new Set();
+  if(!Array.isArray(pairs))throw Error('Expected successor pair array');
+  const rows=pairs.map(pair=>{
+   if(!pair||!equal(Object.keys(pair).sort(),['base','current','path']))throw Error('Malformed successor pair');
+   for(const arm of ['base','current'])if(!pair[arm]||!equal(Object.keys(pair[arm]).sort(),['bytes','sha256']))throw Error('Malformed successor arm');
+   const base=repositoryPin({path:pair.path,...pair.base}),successor=repositoryPin({path:pair.path,...pair.current});
+   if(seen.has(pair.path))throw Error('Duplicate successor path');seen.add(pair.path);
+   const current=read.pin(pair.path),baseMatches=samePin(base,current),successorMatches=samePin(successor,current);
+   return {path:pair.path,base,successor,current,identity:current===null?'missing':baseMatches&&successorMatches?'both':baseMatches?'base':successorMatches?'current':'neither'};
+  });
+  successorPairs.push({owner,binding,comparison:'raw-pair-observation-only',rows});
+ }
  const inventory=codeInventory(root);for(const file of inventory)read.pin(file);
  const graphCoverage=[
   ['tools/spritesheet-boundary.mjs','graphPins','ss1AtlasGraphSuccessor'],
-  ['tools/browser-png-boundary.mjs','acceptedSnapshot.graph','atlasGraphSuccessor']
+  ['tools/browser-png-boundary.mjs','acceptedSnapshot.graph','atlasGraphSuccessor'],
+  ['tests/types/atlas-import-diagnostic-expectations.json','sourcePolicy.modules',null]
  ].map(([owner,baseBinding,successorBinding])=>{
   const declared=new Set(declarations.filter(x=>x.owner===owner&&(x.binding===baseBinding||x.binding===successorBinding)).flatMap(x=>x.rows.map(row=>row.expected.path)));
   return {owner,baseBinding,successorBinding,unlisted:inventory.filter(file=>!declared.has(file)).map(file=>read.pin(file))};
  });
+ // Many declarations can reference one path; retain every selector and pair arm.
+ const byPath=new Map();
+ function reference(expected,owner,binding,branch,comparison){
+  if(!byPath.has(expected.path))byPath.set(expected.path,{path:expected.path,current:read.pin(expected.path),references:[]});
+  byPath.get(expected.path).references.push({owner,binding,branch,comparison,expected});
+ }
+ for(const group of declarations)for(const item of group.rows)reference(item.expected,group.owner,group.binding,'expected',group.comparison??'raw-identity');
+ for(const group of policyLinks)reference(group.row.expected,group.owner,group.binding,'expected','policy-owner-link');
+ for(const group of successorPairs)for(const item of group.rows){reference(item.base,group.owner,group.binding,'base',group.comparison);reference(item.successor,group.owner,group.binding,'current',group.comparison);}
+ const references=[...byPath.values()].sort((a,b)=>a.path<b.path?-1:a.path>b.path?1:0);
  const inputs=read.finish();if(!equal(inventory,codeInventory(root)))throw Error('Package inventory changed during preparation');
- return {schemaVersion:1,kind:'source-baseline',status:'review-required',scope:'Registered repository-owned declarations only; raw differences are not gate failures.',excluded:['Compiler dependency owners','Host base/current successor-pair evaluation','BRS/BBT/resource/atlas and other policies','Semantic/public/type/native acceptance'],declarations,graphCoverage,inventory,inputs};
+ return {schemaVersion:1,kind:'source-baseline',status:'review-required',scope:'Registered repository-owned declarations only; raw differences are not gate failures.',excluded:['Compiler and third-party dependency owners including Atlas inputPins/jsoncPins','Host group admission, inverse transforms and hard-coded package successors','Resource-scene/atlas-frame multi-owner snapshots and other unregistered policies','Semantic/public/type/native acceptance'],declarations,policyLinks,successorPairs,graphCoverage,references,inventory,inputs};
 }
 function testNames(root){
  present(root,'tests/__egret_inventory_probe__');

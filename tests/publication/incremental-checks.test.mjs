@@ -221,6 +221,14 @@ function baselineFixture(){
  f.put('tools/spritesheet-boundary.mjs','const graphPins = '+JSON.stringify([pin])+';\nconst configurationPins = [];\nconst ss1AtlasGraphSuccessor = [];\n');
  f.put('tools/browser-png-boundary.mjs','const acceptedSnapshot = '+JSON.stringify({graph:[pin],stablePins:[]})+';\nconst atlasGraphSuccessor = [];\n');
  f.put('tools/sequence-playback-boundary.mjs','const seqpbPackages = [];\nconst seqpbStableEntries = '+JSON.stringify([pin])+';\nconst seqpbConfigurations = [];\n');
+ const extra=f.pin('packages/engine/src/value.ts');
+ for(const [stem,kind]of [['bitmap-resource-slot','BITMAP_RESOURCE_SLOT_FINITE_INTERFACE_POLICY'],['bitmap-binding-ticket','BITMAP_BINDING_TICKET_FINITE_INTERFACE_POLICY']]){
+  const policy={schemaVersion:1,kind,packages:[],configurations:[],stableEntries:[extra],oldRootPins:[extra],oldEngineDeclarationPin:extra,workspacePins:[],...(stem==='bitmap-binding-ticket'?{selectedProductPins:[extra]}:{})};
+  f.put('tools/'+stem+'-policy.json',JSON.stringify(policy));f.put('tools/'+stem+'-boundary.mjs','const policyPin = '+JSON.stringify(f.pin('tools/'+stem+'-policy.json'))+';\n');
+ }
+ f.put('tests/types/atlas-import-diagnostic-expectations.json',JSON.stringify({kind:'ATLAS_IMPORT_ACTUAL_STRICT_DIAGNOSTICS',status:'OBSERVED_FROZEN_TS7_DIAGNOSTICS',sourcePolicy:{modules:[extra],configurationPins:[]}}));
+ f.put('tools/atlas-import-boundary.mjs','const inventoryPin = '+JSON.stringify(f.pin('tests/types/atlas-import-diagnostic-expectations.json'))+';\n');
+ for(const owner of ['tools/spritesheet-boundary.mjs','tools/browser-png-boundary.mjs'])f.put(owner,fs.readFileSync(path.join(f.root,owner),'utf8')+'const imageResidencySuccessors = '+JSON.stringify([{path:extra.path,base:{bytes:0,sha256:'0'.repeat(64)},current:{bytes:extra.bytes,sha256:extra.sha256}}])+';\n');
  return f;
 }
 test('baseline proposals retain distinct declaration references and never edit source',async()=>{
@@ -336,8 +344,92 @@ test('raw pin field order does not imply baseline drift or catalog demotion',asy
 test('complete graph proposals expose unlisted code separately from named successor rows',async()=>{
  const m=await maintenance(),f=baselineFixture();try{
   const file='packages/project/dist/new.js';f.put(file,'export {};\n');
-  const p=m.prepareBaselineReview(f.root);assert.equal(p.graphCoverage.length,2);
-  for(const group of p.graphCoverage){assert.ok(group.unlisted.some(pin=>pin.path===file));assert.ok(group.successorBinding);}
+  const p=m.prepareBaselineReview(f.root);assert.equal(p.graphCoverage.length,3);
+  for(const group of p.graphCoverage){assert.ok(group.unlisted.some(pin=>pin.path===file));assert.ok(group.baseBinding);}
   assert.equal(p.declarations.filter(x=>x.binding.includes('Successor')).length,2);
+ }finally{f.close();}
+});
+
+
+test('additional JSON baselines retain boundary links, selectors and transformed history',async()=>{
+ const m=await maintenance(),f=baselineFixture();try{
+  const p=m.prepareBaselineReview(f.root);assert.equal(p.policyLinks.length,3);
+  assert.ok(p.policyLinks.every(x=>x.row.identity==='same'));
+  const rows=p.declarations.filter(x=>x.owner==='tools/bitmap-binding-ticket-policy.json');assert.equal(rows.length,7);
+  assert.equal(rows.find(x=>x.binding==='oldEngineDeclarationPin').comparison,'transformed-baseline-raw-observation');
+  assert.equal(p.declarations.find(x=>x.binding==='sourcePolicy.modules').rows.length,1);
+  assert.equal(m.verifyMaintenanceProposal(f.root,p),true);
+ }finally{f.close();}
+});
+
+test('policy replacement is exposed as a link difference and invalidates old proposals',async()=>{
+ const m=await maintenance(),f=baselineFixture();try{
+  const p=m.prepareBaselineReview(f.root),file='tools/bitmap-resource-slot-policy.json';
+  f.put(file,fs.readFileSync(path.join(f.root,file),'utf8')+'\n');
+  assert.throws(()=>m.verifyMaintenanceProposal(f.root,p),/changed/);
+  assert.equal(m.prepareBaselineReview(f.root).policyLinks.find(x=>x.owner==='tools/bitmap-resource-slot-boundary.mjs').row.identity,'different');
+  f.put('tools/bitmap-resource-slot-boundary.mjs','const policyPin = '+JSON.stringify(f.pin('tools/bitmap-binding-ticket-policy.json'))+';\n');
+  assert.throws(()=>m.prepareBaselineReview(f.root),/policy.*path/i);
+ }finally{f.close();}
+});
+
+test('policy schemas, duplicate JSON keys, duplicate paths and foreign owners fail closed',async()=>{
+ const m=await maintenance(),f=baselineFixture();try{
+  const file='tools/bitmap-resource-slot-policy.json',raw=fs.readFileSync(path.join(f.root,file),'utf8'),v=JSON.parse(raw);
+  for(const changed of [raw.replace('"schemaVersion":1','"schemaVersion":2'),raw.replace('"schemaVersion":1','"schemaVersion":1,"schemaVersion":1'),JSON.stringify({...v,stableEntries:[...v.stableEntries,...v.stableEntries]}),JSON.stringify({...v,stableEntries:[{...v.stableEntries[0],path:'node_modules/external/index.js'}]})]){
+   f.put(file,changed);assert.throws(()=>m.prepareBaselineReview(f.root),/schema|Duplicate|owner/i);
+  }
+ }finally{f.close();}
+});
+
+test('Host pair observations distinguish base, current, neither and missing without admission',async()=>{
+ const m=await maintenance(),f=baselineFixture();try{
+  const target='packages/engine/src/value.ts',original=fs.readFileSync(path.join(f.root,target));
+  let p=m.prepareBaselineReview(f.root);assert.equal(p.successorPairs.length,2);assert.ok(p.successorPairs.every(x=>x.rows[0].identity==='current'));
+  f.put(target,'');p=m.prepareBaselineReview(f.root);assert.ok(p.successorPairs.every(x=>x.rows[0].identity==='neither'));
+  for(const owner of ['tools/spritesheet-boundary.mjs','tools/browser-png-boundary.mjs'])f.put(owner,fs.readFileSync(path.join(f.root,owner),'utf8').replace('"base":{"bytes":0,"sha256":"'+'0'.repeat(64)+'"}', '"base":{"bytes":0,"sha256":"'+f.pin(target).sha256+'"}'));
+  p=m.prepareBaselineReview(f.root);assert.ok(p.successorPairs.every(x=>x.rows[0].identity==='base'));
+  fs.unlinkSync(path.join(f.root,target));p=m.prepareBaselineReview(f.root);assert.ok(p.successorPairs.every(x=>x.rows[0].identity==='missing'));f.put(target,original);
+ }finally{f.close();}
+});
+
+test('raw reference index preserves every duplicate-owner declaration and pair branch',async()=>{
+ const m=await maintenance(),f=baselineFixture();try{
+  const p=m.prepareBaselineReview(f.root),row=p.references.find(x=>x.path==='packages/engine/src/value.ts');
+  assert.ok(row.references.some(x=>x.owner==='tools/bitmap-resource-slot-policy.json'&&x.binding==='oldEngineDeclarationPin'));
+  assert.ok(row.references.some(x=>x.owner==='tools/bitmap-binding-ticket-policy.json'&&x.binding==='selectedProductPins'));
+  assert.equal(row.references.filter(x=>x.branch==='base').length,2);assert.equal(row.references.filter(x=>x.branch==='current').length,2);
+  assert.equal(row.references.find(x=>x.binding==='oldEngineDeclarationPin').comparison,'transformed-baseline-raw-observation');
+ }finally{f.close();}
+});
+
+test('excluded dependency payloads stay bound but are not read as repository pins',async()=>{
+ const m=await maintenance(),f=baselineFixture();try{
+  const file='tests/types/atlas-import-diagnostic-expectations.json',v=JSON.parse(fs.readFileSync(path.join(f.root,file)));
+  v.inputPins=[{path:'node_modules/not-installed/compiler',bytes:0,sha256:'0'.repeat(64)}];v.sourcePolicy.jsoncPins=v.inputPins;f.put(file,JSON.stringify(v));
+  const p=m.prepareBaselineReview(f.root);assert.ok(!p.inputs.some(x=>x.path.includes('node_modules')));
+  v.inputPins[0].bytes=1;f.put(file,JSON.stringify(v));assert.throws(()=>m.verifyMaintenanceProposal(f.root,p),/changed/);
+ }finally{f.close();}
+});
+
+
+test('Host pairs refuse hidden path overrides, malformed arms and duplicate paths',async()=>{
+ const m=await maintenance(),f=baselineFixture();try{
+  const file='tools/spritesheet-boundary.mjs',raw=fs.readFileSync(path.join(f.root,file),'utf8'),pin=f.pin('packages/engine/src/value.ts'),arm={bytes:pin.bytes,sha256:pin.sha256},pair={path:pin.path,base:arm,current:arm};
+  const install=pairs=>f.put(file,raw.replace(/const imageResidencySuccessors = .*;/,'const imageResidencySuccessors = '+JSON.stringify(pairs)+';'));
+  for(const pairs of [[{...pair,base:{...arm,path:pin.path}}],[{...pair,current:{bytes:-1,sha256:pin.sha256}}],[pair,pair],[{...pair,path:'work/private.ts'}]]){
+   install(pairs);assert.throws(()=>m.prepareBaselineReview(f.root),/arm|identity|Duplicate|owner/i);
+  }
+  install([pair]);assert.equal(m.prepareBaselineReview(f.root).successorPairs[0].rows[0].identity,'both');
+ }finally{f.close();}
+});
+
+test('JSON selectors fail closed and decode duplicate keys without losing literal content',async()=>{
+ const m=await maintenance(),f=baselineFixture();try{
+  const file='tools/bitmap-binding-ticket-policy.json',raw=fs.readFileSync(path.join(f.root,file),'utf8'),v=JSON.parse(raw);
+  delete v.selectedProductPins;f.put(file,JSON.stringify(v));assert.throws(()=>m.prepareBaselineReview(f.root),/selector/i);
+  f.put(file,raw.replace('"schemaVersion":1','"schemaVersion":1,"schema\\u0056ersion":1'));assert.ok(fs.readFileSync(path.join(f.root,file),'utf8').includes('schema\\u0056ersion'));assert.throws(()=>m.prepareBaselineReview(f.root),/Duplicate/i);
+  const valid=JSON.parse(raw);valid.uninterpreted={literal:'escaped " \\ and { [ ] }',numeric:1.5e-12,nested:[null,true,false,{unicode:'汉字'}]};
+  f.put(file,JSON.stringify(valid));assert.equal(m.prepareBaselineReview(f.root).policyLinks.length,3);
  }finally{f.close();}
 });
