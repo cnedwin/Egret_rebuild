@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tools/contribution-metadata.mjs",
+      "originRole": "First-party M0 deterministic current-metadata integration; AI-assisted from the approved plan; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/publication/contribution-metadata.test.mjs",
+      "originRole": "First-party M0 independent Git-branch and metadata integrity controls; AI-assisted; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/browser-verify.mjs",
+      "originRole": "First-party M0 browser environment selection and migration controls; AI-assisted from the approved plan; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/browser-tool-matrix.json",
+      "originRole": "First-party M0 browser environment selection and migration controls; AI-assisted from the approved plan; Apache-2.0."
+    },
+    {
+      "path": "tests/publication/browser-tools.test.mjs",
+      "originRole": "First-party M0 browser environment selection and migration controls; AI-assisted from the approved plan; Apache-2.0.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

@@ -106,3 +106,7 @@ B1 命令用于受影响的 B1 场景渲染，详见[有界验证器](knowledge-
 
 每个用例须先在新子进程完成真实、无钩子的基线，再使用独立指派子进程，并在恢复后使用另一个新的无钩子基线子进程。注销钩子，在普通调用者／Scope／Engine 清理之前恢复原型描述符，并在每个子进程前后核对源码、编译产物、配置、单元与权限文件的完整字节以及属于当前克隆的包别名。注销钩子不卸载模块缓存。尚未取得句柄的构造故障不得虚构 Bitmap 退役；真实构造成功后发生裁剪／终止故障，只使用已捕获的原始 disposer，并保留主要原因与次要清理错误。这些单元不增加产品导出或依赖，不授权任意私有导入，也不授权普通示例／公开行为测试私有导入；不能证明物理 OOM、GC、安全性或渲染器验收。
 <!-- SS1-PRIVILEGED-UNIT-POLICY-END -->
+
+## M0 当前元数据集成
+
+贡献者修改内容和独立的 contributions/*.json 声明。普通完整 prepush 只读验证推导出的当前元数据，不修改共享账本；维护者对最终候选运行 tools/contribution-metadata.mjs --base <target-base> --write、--check 及 tools/prepush.mjs --integrated。EGRET_METADATA_BASE 为 prepush 选择同一确切基线，CI 使用 PR 基线 SHA。生成器仅作为 localization.json、knowledge-base/documentation-layout.json 与 source-origin.json 的受限规范写入入口，保留历史对象，拒绝受保护/私有输入，不刷新无关过期来源行。内容/基线变化会使集成失效。完整 hooks、独立来源与双语评审仍为必需。当前浏览器套件使用 tools/browser-verify.mjs；进阶/历史工具保留独立验收范围。参见[贡献流程](knowledge-base/Cns/docs/getting-started.md#贡献元数据与浏览器检查)。

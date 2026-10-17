@@ -1,5 +1,7 @@
 # 公共 SequencePlayer 不透明像素浏览器验证器
 
+历史采集配置：下文 Node 24.19.0 指令保留此实验的原始协议，不是当前上手入口，也不证明 Node 26 兼容。请通过[当前指南](../../knowledge-base/Cns/docs/getting-started.md#贡献元数据与浏览器检查)和 tools/browser-tool-matrix.json 选择活跃套件。它们不替代本采集工具的比较范围；影响本范围的变更需要单独评审迁移。
+
 [English](README.md) | 简体中文
 
 本第一方工具是公共 [SequencePlayer 合同](../../knowledge-base/Cns/docs/显式时间序列播放器契约.md) 的验证器。它使用 root 公共入口的 `egret.createSequenceClip` 和 `egret.SequencePlayer`，以及选定的 `/web` 或 `/webgpu` 公共宿主入口，不导入私有 sampler，也不手工赋值 Bitmap 裁剪区域。另行审阅的公共播放器新观察及其确切源码身份见[契约验收段](../../knowledge-base/Cns/docs/显式时间序列播放器契约.md#已记录验收--2026-10-10)；此前 Bitmap 证据保持为独立前置验证。

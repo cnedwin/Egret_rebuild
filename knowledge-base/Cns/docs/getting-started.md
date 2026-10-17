@@ -43,7 +43,7 @@ Edwin（`@cnedwin`）是当前集成联系人。CODEOWNERS 用于路由评审请
 
 贡献者可在 PR 中请求翻译或元数据协助，补齐后的最终集成树必须重新检查。公开 CI 不授予仓库写权限；首次 fork 贡献可能需要维护者批准运行。必需 job 缺失、失败或取消时，最终 `M0 / merge-ready` 不得通过。
 
-本次交付不关闭 M0：人类新人演练、完整设备/预算决策、按风险的增量检查、全面账本解耦和旧固定 Node 浏览器工具迁移仍未完成。历史 Node 24.19.0 采集工具保留原配置，只能在原记录环境使用，不能证明 Node 26 兼容。
+M0 的独立真人/fork 演练、场景/设备预算、按风险的增量选择及进阶采集工具迁移仍未完成。下文的当前账本生成与四个浏览器入口已可用；完整合并检查仍为必需。
 
 ## 完整演练首次贡献
 
@@ -62,8 +62,28 @@ Edwin（`@cnedwin`）是当前集成联系人。CODEOWNERS 用于路由评审请
 
 后续演练的暂定流程目标为：已准备工具的 Windows 机器上安装五分钟、快速检查一分钟、完整合并 job 三十分钟。下载、初始工具安装、用户操作及评审排队分别记录；这是排查阈值，不是速度保证，也不允许省略检查。没有人员覆盖时不承诺评审响应期限。
 
-### 当前集成障碍
+## 贡献元数据与浏览器检查
 
-快速检查不准备共享来源/本地化元数据，最终候选仍需当前账本集成。技术复演还发现独立的中文目录完整类型门禁故障，现通过识别编译器转义的仓库前缀修复，不改动诊断后缀或历史指纹。在 [Issue #53](https://github.com/cnedwin/Egret_rebuild/issues/53) 完成前，推送前请联系集成人准备当前元数据；若首次推送被 hook 阻断，可先在 Issue 附脱敏差异或复现。不要禁用 hooks、手工刷新历史证据，或把首次 PR 流程描述为无障碍。维护者完成双语和元数据后，重新验证最终集成候选。
+修改已有文件时只改内容，不手改共享哈希。新增文件使用独立命名的 `contributions/<change-name>.json`：包含 `schemaVersion: 1`、由 `path`/`originRole` 组成的 `files` 数组（关键代码加 `criticalComment: true`），以及新增阅读文档的 `documents` 数组，配对格式为 `{en, zh}`。两种语言的路径均须在 files 中声明。使用完整仓库相对路径，说明作者、许可证、参考来源和 AI 辅助。现有 `contributions/m0-tooling.json` 可供参考结构，不应照抄其来源声明。每项贡献使用独立文件名，不修改其他贡献的声明。
+
+普通完整 prepush 从与 origin/main 的 Git 合并基点只读推导当前发布元数据，贡献者无需手改 localization.json、source-origin.json 或 documentation-layout.json。保持 origin/main 可用且及时更新；使用 fork 时，添加并获取上游仓库，将 EGRET_METADATA_BASE 设为确切目标基线提交进行验证。单语草稿可以讨论，但推送 hook 仍要求最终阅读文档配对；需要翻译协助时应在交付前提出。
+
+完成内容、来源及双语评审后，集成人选择最终基线并运行：
+
+```text
+node tools/contribution-metadata.mjs --base <target-base-commit> --write
+node tools/contribution-metadata.mjs --base <target-base-commit> --check
+node tools/prepush.mjs --integrated
+```
+
+若 prepush 默认合并基点不同，运行时将 EGRET_METADATA_BASE 设为同一提交。将生成的账本与评审后的内容一起提交。CI 使用 PR 基线 SHA，拒绝过期的集成元数据，不回写贡献者分支。内容、声明或基线变化后须重新生成并验证。生成器只更新当前派生字段及已声明新增项，保留无关旧来源行和全部历史对象。删除、重命名、已有来源声明及历史/结构变更需单独评审迁移。哈希继续按原始字节计算；生成不证明翻译质量、来源权利或行为正确。
+
+四个当前浏览器套件使用 Windows x64、Node **26.7.0** 和已安装 Edge。在独立工具目录安装 Playwright 与 playwright-core **1.62.1** 后运行：
+
+```text
+node tools/browser-verify.mjs --suite canvas --playwright <absolute-installed-playwright-package> --output <absolute-fresh-directory-outside-repository>
+```
+
+套件可选 canvas、webgpu、b1、text。输出父目录须已存在，选定子目录须不存在，且不能与仓库/包输入重叠。入口拒绝额外 Node 参数、NODE_OPTIONS/NODE_PATH、错误版本及缺失完成记录；保留失败，不下载浏览器，不放宽既有像素/反例断言。文字套件只覆盖固定 WC1 Canvas 子集。选择工具前查看 `tools/browser-tool-matrix.json`：进阶源码/快照检查保留独立契约，Node 24.19.0 实验采集工具明确标为历史环境，不能证明当前运行时。四个当前套件不替代这些实验的比较范围或独立操作系统进程退出要求。渲染变更仍须满足受影响范围，必要时须另行迁移相应工具。
 
 若示例始终未就绪，请提供选择的后端、失败步骤和脱敏诊断。手机、小游戏宿主或字体工作负载不可用时标为未执行。[M0 结果记录](m0-community-foundations.md)分别呈现技术复演、独立人类上手与设备验证。

@@ -55,6 +55,6 @@ prepush 不启动浏览器。按改动选取已定义的 Canvas/WebGPU 检查，
 
 以[上手指南](knowledge-base/Cns/docs/getting-started.md)为当前环境、贡献分工与评审边界入口。安装固定 PowerShell 7.6.5。贡献草稿允许单语，维护方协助补齐双语及当前元数据；最终公开交付与主干仍须通过完整门禁。
 
-通过[公开看板](https://github.com/users/cnedwin/projects/2)了解实时状态，通过 [Issue #52](https://github.com/cnedwin/Egret_rebuild/issues/52)开始首次贡献。可参与事项必须明确入口、预期结果、检查与评审联系人；阻塞事项写明缺少的依赖和下一步。维护者审查证据后更新状态，Issue/PR 标签本身不证明验收。[新人清单](knowledge-base/Cns/docs/getting-started.md#完整演练首次贡献)包含当前元数据障碍和集成求助方式。
+通过[公开看板](https://github.com/users/cnedwin/projects/2)了解实时状态，通过 [Issue #52](https://github.com/cnedwin/Egret_rebuild/issues/52)开始首次贡献。可参与事项必须明确入口、预期结果、检查与评审联系人；阻塞事项写明缺少的依赖和下一步。维护者审查证据后更新状态，Issue/PR 标签本身不证明验收。[新人清单](knowledge-base/Cns/docs/getting-started.md#完整演练首次贡献)说明贡献声明与维护者集成流程。
 
 按[架构计划](knowledge-base/Cns/docs/architecture-and-engineering-plan.md)选择评审范围：纯文字变更需要内容/链接/双语评审；环境/CI/验证变更需要干净环境及拒绝路径证据；渲染/资源/动画变更另需受影响的真实浏览器检查。这些附加评审不替代必需的完整 pre-push 门禁，不能从维护者账户 CI 推断外部 fork、真人或设备结果。

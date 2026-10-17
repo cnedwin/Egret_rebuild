@@ -1,6 +1,7 @@
 import {readFile,readdir,stat,lstat} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import path from 'node:path';
+import {planMetadata} from './contribution-metadata.mjs';
 import {fileURLToPath} from 'node:url';
 import {logicalPath,fingerprintFile,samePhysicalPath,ownerRelativePath} from './lib/file-identity.mjs';
 const sha=b=>createHash('sha256').update(b).digest('hex');
@@ -90,7 +91,7 @@ function parity(a,b,location,issues,pathPairs){
 }
 
 /** Checks current file identities and structure; it cannot certify prose meaning or authorization. */
-export async function checkPublication(inputRoot){
+export async function checkPublication(inputRoot,derivedInventory){
  const root=path.resolve(inputRoot),issues=[],files=[],retainedOriginals=new Set();
  async function walk(dir){for(const e of await readdir(dir,{withFileTypes:true})){
   const full=path.join(dir,e.name),rel=path.relative(root,full).replaceAll('\\','/');
@@ -106,7 +107,7 @@ export async function checkPublication(inputRoot){
   }
  }}
  await walk(root);
- const inventory=JSON.parse(await readFile(path.join(root,'localization.json'),'utf8'));
+ const inventory=derivedInventory??JSON.parse(await readFile(path.join(root,'localization.json'),'utf8'));
  if(inventory.schemaVersion!==1||inventory.semanticReview?.status!=='reviewed_with_scope')issues.push('missing scoped semantic review record');
  documentationLayout(inventory,files,retainedOriginals,issues);
  const pathPairs=inventoryPathPairs(inventory);
@@ -180,7 +181,11 @@ export async function checkPublication(inputRoot){
 }
 const script=fileURLToPath(import.meta.url);
 if(process.argv[1]&&samePhysicalPath(path.resolve(process.argv[1]),script)){
- const result=await checkPublication(fileURLToPath(new URL('..',import.meta.url)));
+ const args=process.argv.slice(2);
+ if(args.length>1||args.length===1&&args[0]!=='--contribution')throw Error('Only --contribution is supported');
+ const root=fileURLToPath(new URL('..',import.meta.url));
+ const derived=args.length?JSON.parse(planMetadata(root,{base:process.env.EGRET_METADATA_BASE||undefined}).outputs['localization.json']):undefined;
+ const result=await checkPublication(root,derived);
  if(result.issues.length){console.error(JSON.stringify(result,null,2));process.exitCode=1;}
  else console.log(JSON.stringify({...result,scope:'Structural identities/parity/links only; author review supplies translation meaning and public-content authorization.'}));
 }
