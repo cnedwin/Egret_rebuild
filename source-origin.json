@@ -295,8 +295,8 @@
     {
       "path": "AGENTS.md",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "sha256": "97d8fb79592603e72d21f43912c5f00c389b2423df0b72e833cf7687a9609c3b",
-      "bytes": 20390,
+      "sha256": "9eb105748a14ecbb3941c4aaa7d535133c844244f22ee31e421c288bbdc97ed0",
+      "bytes": 22062,
       "previousRevisionSha256": "7c2716d3a678406ce905b8cd7fd9ef3552bca4e37b8e9456b63b871e4170e0c1",
       "previousLayoutPath": "AGENTS.en.md",
       "previousLayoutSha256": "7e4ccd840b8b23896f9d9e92fe8173693ef37e415d3cebbebb3bfafded8158c5",
@@ -325,8 +325,8 @@
     },
     {
       "path": "AGENTS.zh-CN.md",
-      "sha256": "e03a5c73219457aa25719be03342b25976c9f74b3e86c98f7edef19ad26f4739",
-      "bytes": 17879,
+      "sha256": "6ab564e7d5479027f283e676a4c7f9fc21d08058ebff47e6c023c56d835c5b91",
+      "bytes": 19397,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousPublicSha256": "d133cdcd7d1f41fe0ce26bee63568cd0c4f23c6e6e7f9828d0768e95f53a05b4",
       "previousRevisionSha256": "f3551dd36ebc3023f8c846f0cdd876b7204c214c7c041e6496271d20c091046c",
@@ -622,8 +622,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/CHANGELOG.md",
-      "bytes": 16731,
-      "sha256": "247307e059c093bb9ecd61c1908d888957b51aef196004235f9ea2cb88a4ff3d",
+      "bytes": 17156,
+      "sha256": "1a2fc1045aeb8598af72008ac567f81aa2216ddc0824f24b4025625b75c26450",
       "identityHistory": [
         {
           "bytes": 25611,
@@ -2112,7 +2112,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 138808,
-      "sha256": "35073b3fb2382482b5d93043f2db280ed097bfe6de586a314a61cc8d5c3aa5b4",
+      "sha256": "9faa6160e21fbc3fd9f90ea2cbf3661e12aaa7a1dd3e2edc417dc6cd61a01003",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -2153,8 +2153,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/CHANGELOG.md",
-      "bytes": 18791,
-      "sha256": "232efacdd180c98fd475afb2a696a4793234de17c21328dfa3b17f3a3c4ef83c",
+      "bytes": 19282,
+      "sha256": "1b351d09db303e3489c15a0237b42b0f6da710000dff0d4cc74efd4a594ff568",
       "identityHistory": [
         {
           "bytes": 31389,
@@ -3786,8 +3786,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "3c903418b12332fb1b6d10adfc757462162664c36ba2569059635eb50a6db994",
-      "bytes": 338174,
+      "sha256": "594c0cdae91012318fd52f20c79697b3fe9e31f163fd32e51b1eb0493a1bc9fc",
+      "bytes": 339180,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -4399,8 +4399,8 @@
     },
     {
       "path": "packages/engine/web/WebGPUHost.ts",
-      "sha256": "d3d75dbdb3e1fe906301344e06ac25275189e8f7fe481abff1b98563f9fc832a",
-      "bytes": 92002,
+      "sha256": "bf33f8aa63f14103ff947f79f77527a28dfd0cf15468cc84abda6c8cd15007e0",
+      "bytes": 102838,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousLayoutPath": "packages/engine/web/WebGPUHost.ts",
       "previousLayoutSha256": "f07f59068f1c65f1247500ca8665747bb957d99e07286b16e3d6d08be3da51bc",
@@ -4860,8 +4860,8 @@
     {
       "path": "README.md",
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
-      "sha256": "5c8758861533d753b0bebb98c5e9e935ca715e99778123a47ad8d0d8a771129a",
-      "bytes": 11647,
+      "sha256": "7a4455486e042b70ec6c6c3d826f32e9bb57d0101c5bcd6de2d62dd96353e609",
+      "bytes": 12021,
       "previousRevisionSha256": "199156443d499d5012f1224263a1a3ee9994e5ba38ee067bceeb2ad865ae8167",
       "previousLayoutPath": "README.en.md",
       "previousLayoutSha256": "f40ec41ca699cd0b9138fbdf4a268080038f583ae11e78c4f37093a6b7095f57",
@@ -5003,8 +5003,8 @@
     },
     {
       "path": "README.zh-CN.md",
-      "sha256": "942428643ce4c25f38b4a5ba1ab9c34f087752d0f8431ffef570ebf31ea05c49",
-      "bytes": 10767,
+      "sha256": "50caffb8b968ca8e3829fbcae079369942668f21cc6ac3f3f427f795ed2d7829",
+      "bytes": 11073,
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "previousPublicSha256": "7ec80b8575a700b6a2628eb0322f2e770bb2284859f68ec5e0eb6530154a6699",
       "previousRevisionSha256": "7a1d72019db7cb6075d7c3a3bd4075f7c069d527b6e31d992a69333cb126b6c3",
@@ -5171,8 +5171,8 @@
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "bytes": 109925,
-      "sha256": "44538865cd79f5df76882461d21622b54216aba6663b43b45bebef065e199b9b",
+      "bytes": 110573,
+      "sha256": "c0f6cb9a698b9d27ab4516db21e43c9e1d9f434a99a60a873b919717e27898cb",
       "originRole": "Independent first-party Egret explicit-area picking, bounded verification or paired documentation; CPU and finite-policy evidence with separate browser and whole-engine admission.",
       "identityHistory": [
         {
@@ -5427,8 +5427,8 @@
     },
     {
       "path": "tests/webgpu-host.test.mjs",
-      "sha256": "0ce58696a3ae1dc3672720d0bc86a859db43b467cd4047b280f7c76ded22f3f8",
-      "bytes": 44820,
+      "sha256": "09e8f3bdefb7fdd1ee02d51339231890e64910f8553bd226e1b2970f393b80f8",
+      "bytes": 45715,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousLayoutPath": "tests/webgpu-host.test.mjs",
       "previousLayoutSha256": "7598ef8704504c4133754fc5bb7ce34422867bf0ad59d97c5bfb083c04a0eecb"
@@ -5478,8 +5478,8 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "bytes": 147087,
-      "sha256": "e679b9354f6ce86a38b9f196e90a936c119b5bd3082fbaff45ac3e6a418e8d91",
+      "bytes": 148425,
+      "sha256": "3ba7f163b91736f4e4e65d1dfc135011fddf2a4c6b4c18e782e6a9a09c5a8bef",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "identityHistory": [
         {
@@ -5728,8 +5728,8 @@
     },
     {
       "path": "tests/webgpu-mesh-host.test.mjs",
-      "bytes": 97845,
-      "sha256": "94f85335d4210db1721e0894a49d255c33edb94a26ec5f027533ab4e65b690fc",
+      "bytes": 102058,
+      "sha256": "ae14379ce729c3e1574136ed045fe6e1702e533a13cea113e057725a15d12a5b",
       "originRole": "First-party explicit-time sequence work package; public verifier reuses independently authored first-party opaque collector mechanisms.",
       "identityHistory": [
         {
@@ -6098,8 +6098,8 @@
     {
       "path": "packages/engine/web/prepareTexturedSubmission2D.ts",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 15910,
-      "sha256": "09dd19bff3b2262dbbfe6cb7b478579e31cc2d579f6d27c328eb9de259b8d89b",
+      "bytes": 17192,
+      "sha256": "71dd8092df666f38ab7fa214ea9ec34fa2eaf13b5cf4cc039326308767fb9820",
       "identityHistory": [
         {
           "bytes": 12147,
@@ -6382,8 +6382,8 @@
     {
       "path": "tests/b1-webgpu-verifier.test.mjs",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 24646,
-      "sha256": "affd3ed73dabd6b9776238f2214b08fe5db4833cdaad68db8cda224c76513d8b",
+      "bytes": 24647,
+      "sha256": "391bffacbf543052711c50cf58aaa10052b7260c17222da94f1213b72226fc04",
       "identityHistory": [
         {
           "bytes": 17519,
@@ -6771,8 +6771,8 @@
     {
       "path": "tests/textured-frame-legacy-hosts.test.mjs",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 21959,
-      "sha256": "74176208df82eb5d75a5b3290c22d56de9eaec582b8cd4df5c5bf3ded9d54d30"
+      "bytes": 23293,
+      "sha256": "3cc5d1073e7a0858ae8702b1c2151a2906d402198bc0ee6f2154ef64afd3e4e2"
     },
     {
       "path": "tests/textured-frame-private-map.test.mjs",
@@ -6819,8 +6819,8 @@
     {
       "path": "tests/textured-webgpu-host.test.mjs",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 41517,
-      "sha256": "a352e47049a1782a2d1c3093211c146bece994e3d8d6136003711afda3b6ce9e",
+      "bytes": 42670,
+      "sha256": "9ed1c49bec112530b5fb08557d95c3210913f5902ac22e7dbab6e551fda38d68",
       "identityHistory": [
         {
           "bytes": 41204,
@@ -6892,8 +6892,8 @@
     {
       "path": "tests/webgpu-image-host.test.mjs",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 40132,
-      "sha256": "c2272f72258efbe7b41b14540923d5ce9dc559782ffd59a49d819708b9905546",
+      "bytes": 40806,
+      "sha256": "99dd5ecda1e506ca21bd988559cc2c880cec56685c37b7f24b2133c4aa29f002",
       "identityHistory": [
         {
           "bytes": 39831,
@@ -7033,8 +7033,8 @@
     {
       "path": "tools/verify-webgpu-b1.mjs",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 48744,
-      "sha256": "2656237a8ac60648142412662b593f5c35da268c7c8833c89107046a2725231a",
+      "bytes": 48879,
+      "sha256": "f28e3fa468338b62ad203c49cf07518a100f58a873f15635bbe4635dc965783d",
       "identityHistory": [
         {
           "bytes": 38603,
@@ -8153,8 +8153,8 @@
     },
     {
       "path": "tests/scene3d-public-host.test.mjs",
-      "bytes": 25465,
-      "sha256": "240f0037b511737974abd6dffcce4b4ff0a013f41c5a8a6bce368960a9c7f459",
+      "bytes": 28336,
+      "sha256": "a4b7cfe4d76fefacfbbc662d2ced108a40bc312572476c73327f4c535a718ee8",
       "originRole": "First-party independent public scene3d implementation, bounded verification or paired public reading/derived register."
     },
     {
@@ -8935,8 +8935,8 @@
     },
     {
       "path": "tools/verify-textured-scene-webgpu.mjs",
-      "bytes": 44651,
-      "sha256": "46f8c4da1bf1c18286c2210d2fe0bb3f396d8f196bf3148f81dfc8f06e583ff4",
+      "bytes": 44951,
+      "sha256": "2fd89243377d3866424e85e8230623eefb3da3267ec30f85834943908b0f714c",
       "originRole": "First-party combined-host browser oracle, original synthetic readback or public successor.",
       "identityHistory": [
         {
@@ -9797,8 +9797,8 @@
     },
     {
       "path": "tests/spritesheet-boundaries.test.mjs",
-      "bytes": 13272,
-      "sha256": "6d295053d70412f2b749e613facb42767027cca7144f8d50fbd1576223c8f8f8",
+      "bytes": 14534,
+      "sha256": "6dd5021a254a0aed404a50bd5e55ce1a2335bfff958b74ac2b9c226303b81fd0",
       "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review.",
       "identityHistory": [
         {
@@ -9876,8 +9876,8 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "bytes": 103978,
-      "sha256": "22dabfbc9316b809351c6cab5f700a21e613715344c5adf8856772b8d4f4bae9",
+      "bytes": 108340,
+      "sha256": "83f6f1646609bedceed441a5deb0fbf82000664a3a02d1f1abda3f1dc44d6822",
       "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review.",
       "identityHistory": [
         {
@@ -10099,8 +10099,8 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "bytes": 106288,
-      "sha256": "964b282df1889fc09caa5ba3e5a56906a00c6672143c5f188854de90164b0a74",
+      "bytes": 110292,
+      "sha256": "2a82563fd88fd1d7e4b5a5d29a7519fba3336efc6b8c378099a7c7128475b683",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
       "identityHistory": [
         {
@@ -10161,8 +10161,8 @@
     },
     {
       "path": "tools/atlas-import-boundary.mjs",
-      "bytes": 10072,
-      "sha256": "8fecff30c2bf0d105a92df35c1e7c083ef1dcdfdae749fe033ea32407762fddd",
+      "bytes": 13730,
+      "sha256": "5a1ca46d7a97558bc7c4388a71d7236a22ee4ef642dbf4b0b08e685932c2b639",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
       "identityHistory": [
         {
@@ -10303,26 +10303,26 @@
     },
     {
       "path": "tests/fixtures/gpu-image-residency.mjs",
-      "bytes": 22994,
-      "sha256": "ec734a18c64c51fa21f70735351f5a6b0461c445672c204124234f5f9806caad",
+      "bytes": 24322,
+      "sha256": "3bb0127490a2fbf03683f24c28475795294d6b84b8409aad36720f5be7bff178",
       "originRole": "First-party experimental WebGPU image-residency contract, controlled evidence or paired publication metadata; Apache-2.0."
     },
     {
       "path": "tests/gpu-image-residency.test.mjs",
-      "bytes": 26554,
-      "sha256": "5a6a4f58519344bee8a7318f92c18b45353efa84e0dee5c7ee217e578d2e6b92",
+      "bytes": 26742,
+      "sha256": "d42063e09e2b099642eda439a78cd381edcf2b4484b8211f2b90cf0cf67177a1",
       "originRole": "First-party experimental WebGPU image-residency contract, controlled evidence or paired publication metadata; Apache-2.0."
     },
     {
       "path": "tests/gpu-image-residency-lifecycle.test.mjs",
-      "bytes": 29304,
-      "sha256": "1887446632fabf23f7de4183743834523622ac4ccd85cbf839f390231a209d82",
+      "bytes": 29989,
+      "sha256": "a890415a8f4ae689c159d5e30a5cad4895b0fafdd0e24a8533bdc673c9d84d0b",
       "originRole": "First-party experimental WebGPU image-residency contract, controlled evidence or paired publication metadata; Apache-2.0."
     },
     {
       "path": "tests/browser-png-boundaries.test.mjs",
-      "bytes": 13635,
-      "sha256": "36a869fbea2349e4e696b44b1518eed945fae8f870327700b88f378ab74374f6",
+      "bytes": 14944,
+      "sha256": "dcfaea96e7d92060cbbec6861f90dc0c1ae90939c9608b10b6202587e69fd6a0",
       "originRole": "First-party experimental WebGPU image-residency contract, controlled evidence or paired publication metadata; Apache-2.0."
     },
     {
@@ -10574,8 +10574,8 @@
     {
       "path": "tests/publication/incremental-checks.test.mjs",
       "originRole": "First-party M0 risk-selected contributor feedback and advanced browser admission; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 60475,
-      "sha256": "c6335d07fbeca5221f518997a4ead00bd5974ccea4688b91b67622d4c405b251"
+      "bytes": 62864,
+      "sha256": "5c19dbcc8c6553348e001c09c4016cbdc7f677b50e3690afdf8639122d49b486"
     },
     {
       "path": "contributions/m0-advanced-tooling.json",
@@ -10664,8 +10664,8 @@
     {
       "path": "tools/incremental-test-catalog.json",
       "originRole": "First-party M0 dependency-aware feedback and bilingual documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 63445,
-      "sha256": "a8266504cd9ebe160f6a3d5ef78daf12732c9a67c25bad2fdb312dfe04b3ca64"
+      "bytes": 65731,
+      "sha256": "d9a69d24dccb1c6c3869fdb0f44dc19d8351648264bf7e0447d1c2e6bfbab260"
     },
     {
       "path": "knowledge-base/en/docs/dependency-aware-checks.md",
@@ -10688,20 +10688,20 @@
     {
       "path": "tools/prepare-check-maintenance.mjs",
       "originRole": "First-party M0 review-preparation tool, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 18422,
-      "sha256": "7946e67fc70abd8f5850930fa79ece16d2efb217b2ddd614ed55187259ec321e"
+      "bytes": 18914,
+      "sha256": "f58f2066c167f8bab50d0d4f68701a59edb6ee382a9f4d8f7a25b4f488711ceb"
     },
     {
       "path": "knowledge-base/en/docs/check-maintenance.md",
       "originRole": "First-party M0 bilingual maintainer workflow; Apache-2.0.",
-      "bytes": 24577,
-      "sha256": "9ea7633f599662b234f784e8201c7e0da1a5561beb33e574bcafd94542a57e87"
+      "bytes": 25119,
+      "sha256": "f0986d3dec776aac44fe9b18385cab9ff8f23fa8516dbf17f172b6eb7d641638"
     },
     {
       "path": "knowledge-base/Cns/docs/check-maintenance.md",
       "originRole": "First-party M0 bilingual maintainer workflow; Apache-2.0.",
-      "bytes": 21569,
-      "sha256": "a83e6c9b3369c4bfd58f95ea6700a1bcb7728b2bf3ab84e08d4c1577ca3c98e6"
+      "bytes": 22008,
+      "sha256": "21207e56298531b0a975d5a04c7c8e4e8c124427059432025204d1b2e18f9e57"
     },
     {
       "path": "contributions/m0-check-maintenance.json",
@@ -10738,6 +10738,126 @@
       "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
       "bytes": 611,
       "sha256": "93e75289e44a4f6021ceb875c51f8fbaf8a992af45ffb56ba21892ed672fc9be"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/warm-submission-contract.md",
+      "originRole": "First-party warm-submission contract and evidence, authored with AI assistance; Apache-2.0.",
+      "bytes": 7019,
+      "sha256": "efaf6d6797ccc8bec60cdda7ae12d0c1b442c430c8b47bdd26e7303383d96e87"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/warm-submission-evidence.md",
+      "originRole": "First-party warm-submission contract and evidence, authored with AI assistance; Apache-2.0.",
+      "bytes": 5954,
+      "sha256": "0a2b99167d53e42fa5edf87f33f5fd220c481111f58fdaf360aafdae73843c22"
+    },
+    {
+      "path": "knowledge-base/en/docs/warm-submission-contract.md",
+      "originRole": "First-party warm-submission contract and evidence, authored with AI assistance; Apache-2.0.",
+      "bytes": 7925,
+      "sha256": "6f5665873c445b008da49d0949f13cd316ee1c42045883792334c3603409af01"
+    },
+    {
+      "path": "knowledge-base/en/docs/warm-submission-evidence.md",
+      "originRole": "First-party warm-submission contract and evidence, authored with AI assistance; Apache-2.0.",
+      "bytes": 6739,
+      "sha256": "8d4e0dd997fba935e249cfd0f5cd7810b4b1c76b9792646ec43001021bada781"
+    },
+    {
+      "path": "packages/engine/web/webgpuBindingCache.ts",
+      "originRole": "First-party private WebGPU reuse implementation, independently authored with AI assistance; Apache-2.0.",
+      "bytes": 9982,
+      "sha256": "22bc0399ce8c9401e103746c7aa24cac073204c852cc2cd3bc27bf8be7513b81"
+    },
+    {
+      "path": "packages/engine/web/webgpuBufferPool.ts",
+      "originRole": "First-party private WebGPU reuse implementation, independently authored with AI assistance; Apache-2.0.",
+      "bytes": 18097,
+      "sha256": "a96a3f4655b178a814d3988ab6886255bb34b9613ba84b885854df4c53840957"
+    },
+    {
+      "path": "tests/atlas-import-boundary.test.mjs",
+      "originRole": "First-party bounded verification tools and fixtures, authored with AI assistance; Apache-2.0.",
+      "bytes": 7759,
+      "sha256": "531393e313a2c88c719b5c5551c80d9b199e04917b5ce98124b1990e106a49dc"
+    },
+    {
+      "path": "tests/webgpu-submission-binding-private.test.mjs",
+      "originRole": "First-party bounded verification tools and fixtures, authored with AI assistance; Apache-2.0.",
+      "bytes": 11757,
+      "sha256": "49432ea8e639cf4e89642248874ae8670b7f25d733c77081c09a33386bdc1b56"
+    },
+    {
+      "path": "tests/webgpu-submission-buffer-private.test.mjs",
+      "originRole": "First-party bounded verification tools and fixtures, authored with AI assistance; Apache-2.0.",
+      "bytes": 13219,
+      "sha256": "e53bd0145018f6dd70a9f57871d675f17bfbdd6f4c98da3a4c901c3c9c449fcb"
+    },
+    {
+      "path": "tests/webgpu-submission-controls.test.mjs",
+      "originRole": "First-party bounded verification tools and fixtures, authored with AI assistance; Apache-2.0.",
+      "bytes": 5369,
+      "sha256": "1ea6dff61918f607d9fa7689a5d148a5044facdaf6fed11350e1cf772fb2cb28"
+    },
+    {
+      "path": "tests/webgpu-submission-precedence.test.mjs",
+      "originRole": "First-party bounded verification tools and fixtures, authored with AI assistance; Apache-2.0.",
+      "bytes": 14323,
+      "sha256": "9f5df2a37c38dd7609b25d807662b9a8c08325d2e06b9c00f5efa5f18304476e"
+    },
+    {
+      "path": "tests/webgpu-submission-preparation.test.mjs",
+      "originRole": "First-party bounded verification tools and fixtures, authored with AI assistance; Apache-2.0.",
+      "bytes": 2308,
+      "sha256": "af40427a7f072e7ed3889406b5366944005722167fbda8a655c7a8aeb8cad31a"
+    },
+    {
+      "path": "tests/webgpu-submission-return-order.test.mjs",
+      "originRole": "First-party bounded verification tools and fixtures, authored with AI assistance; Apache-2.0.",
+      "bytes": 2597,
+      "sha256": "e3ceb4282383cc6a5a767b4fcc55b6ea0b5585c6e1821affa780a15976101448"
+    },
+    {
+      "path": "tests/webgpu-submission-reuse-lifecycle.test.mjs",
+      "originRole": "First-party bounded verification tools and fixtures, authored with AI assistance; Apache-2.0.",
+      "bytes": 16212,
+      "sha256": "35fd48b178c08fa3f246c7824dd1bc1458cceed2c962ba9a99b8d3cb04069c46"
+    },
+    {
+      "path": "tests/webgpu-submission-reuse.test.mjs",
+      "originRole": "First-party bounded verification tools and fixtures, authored with AI assistance; Apache-2.0.",
+      "bytes": 15252,
+      "sha256": "62989d6938a255eb9dc8b052cf44e2fab1665e048e4b4c5d743934380ec2d8ce"
+    },
+    {
+      "path": "tools/verify-warm-submission-controls.mjs",
+      "originRole": "First-party bounded verification tools and fixtures, authored with AI assistance; Apache-2.0.",
+      "bytes": 16853,
+      "sha256": "6943baa24085b347d00add8abcb30b4cf4ea84e6139ecdb896d0486dd475242d"
+    },
+    {
+      "path": "tools/verify-webgpu-submission-reuse.mjs",
+      "originRole": "First-party bounded verification tools and fixtures, authored with AI assistance; Apache-2.0.",
+      "bytes": 39721,
+      "sha256": "476549f029978061f88185ece9b6f340f5a651d8663971aba16300162399414a"
+    },
+    {
+      "path": "tools/webgpu-submission-reuse/fixture.mjs",
+      "originRole": "First-party bounded verification tools and fixtures, authored with AI assistance; Apache-2.0.",
+      "bytes": 19540,
+      "sha256": "ec6aa02baf30f21e84d289650a6ebeff305adc8b8f7e32e1bda4ca86538f2792"
+    },
+    {
+      "path": "tools/webgpu-submission-reuse/oracle.mjs",
+      "originRole": "First-party bounded verification tools and fixtures, authored with AI assistance; Apache-2.0.",
+      "bytes": 5953,
+      "sha256": "ec4e8b0e767f83210c99128d08c93a4d1f1e6ff00778c230cdfb9fc6656b06c4"
+    },
+    {
+      "path": "contributions/m1-warm-submission.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 4054,
+      "sha256": "9df8dbe6139e12403d4acc71006f276a1c6eae9987766a957da192757d5d2c91"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",

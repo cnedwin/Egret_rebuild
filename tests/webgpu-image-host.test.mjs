@@ -221,12 +221,18 @@ for(const allocation of ['crop','uniform'])test(`native ${allocation} allocation
  h.renderFrame(input);await f.pump();assert.equal((await ticket).serial,1);await f.close(h);
 });
 
-test('out-of-order image settlements retain distinct resident sources and release exact pending uploads',async()=>{
- const f=fixture(),h=f.host({maxPendingFrames:3,maxPendingUploadBytes:224});await f.ready(h);h.renderFrame(frame([command(0,undefined,{alpha:.25})]));h.renderFrame(frame([command(0,undefined,{alpha:.75})]));
- assert.equal(h.getStatus().pendingUploadBytes,224);f.fences[1].resolve();f.pops.slice(9,12).forEach(p=>p.resolve(null));await tick();assert.deepEqual(f.textures.map(t=>t.destroyed),[0,0]);assert.equal(h.getStatus().pendingUploadBytes,112);
- // Each frame() creates a distinct source identity, so each successful crop remains resident.
- h.renderFrame(frame());assert.deepEqual(f.textures.map(t=>t.destroyed),[0,0,0]);await f.pump();assert.deepEqual(f.textures.map(t=>t.destroyed),[0,0,0]);assert.equal(h.getStatus().pendingUploadBytes,0);assert.ok(f.buffers.every(b=>b.destroyed===1));
- await f.close(h);assert.deepEqual(f.textures.map(t=>t.destroyed),[1,1,1]);
+test('out-of-order image settlements reuse only settled buffers and release exact pending uploads',async()=>{
+ const f=fixture(),h=f.host({maxPendingFrames:3,maxPendingUploadBytes:224});await f.ready(h);
+ h.renderFrame(frame([command(0,undefined,{alpha:.25})]));const first=f.buffers.slice();
+ h.renderFrame(frame([command(0,undefined,{alpha:.75})]));const second=f.buffers.slice(first.length);
+ assert.equal(first.length,2);assert.equal(second.length,2);assert.ok(second.every(buffer=>!first.includes(buffer)),'pending submissions use disjoint buffers');
+ assert.equal(h.getStatus().pendingUploadBytes,224);f.fences[1].resolve();f.pops.slice(9,12).forEach(p=>p.resolve(null));await tick();assert.deepEqual(f.textures.map(t=>t.destroyed),[0,0]);assert.equal(h.getStatus().pendingUploadBytes,112);assert.ok(f.buffers.every(b=>b.destroyed===0));
+ // Each frame() creates a distinct source identity; only the second frame's
+ // settled vertex/uniform pair is available while the first remains pending.
+ h.renderFrame(frame());const writes=f.calls.filter(c=>c[0]==='writeBuffer').slice(-2);
+ assert.equal(f.buffers.length,4);assert.equal(writes[0][1],second[0]);assert.equal(writes[1][1],second[1]);assert.equal(h.getStatus().pendingUploadBytes,224);
+ assert.deepEqual(f.textures.map(t=>t.destroyed),[0,0,0]);await f.pump();assert.deepEqual(f.textures.map(t=>t.destroyed),[0,0,0]);assert.equal(h.getStatus().pendingUploadBytes,0);assert.ok(f.buffers.every(b=>b.destroyed===0));
+ await f.close(h);assert.deepEqual(f.textures.map(t=>t.destroyed),[1,1,1]);assert.ok(f.buffers.every(b=>b.destroyed===1));await h.close();assert.ok(f.buffers.every(b=>b.destroyed===1));
 });
 
 for(const boundary of ['viewGetter','binding'])test(`${boundary} reentrant close retains already returned image ownership through settlement`,async()=>{

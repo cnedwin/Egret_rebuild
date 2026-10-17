@@ -20,11 +20,15 @@ import { TexturedPreparationBudget2D } from '../rendering/texturedPreparationBud
 import { TexturedMeshPackingAllocationError } from '../rendering/packTexturedMesh2D.js';
 import { runOwnedPreparationScope } from '../rendering/ownedPreparationFailure2D.js';
 import { planTexturedImageProjections } from './imageProjections2D.js';
-import { prepareTexturedSubmission2D, planTexturedSubmissionStorage2D, packTexturedSubmission2D, isTexturedSubmissionAdmissionError2D } from './prepareTexturedSubmission2D.js';
+import { planTexturedSubmissionStorage2D, packTexturedDrawPayloads2D, materializeTexturedSubmission2D, isTexturedSubmissionAdmissionError2D } from './prepareTexturedSubmission2D.js';
 import type { PackedTexturedDraw2D, TexturedSubmissionOwnerSnapshot2D } from './prepareTexturedSubmission2D.js';
 import { admitTexturedWebGPUOptions } from './texturedWebGPUOptions.js';
 import type { TexturedWebGPUHostOptions, TexturedWebGPUConfiguration } from './texturedWebGPUOptions.js';
 import { createWebGPUTexturedPipeline } from './webgpuTexturedPass.js';
+import { createWebGPUBufferPool } from './webgpuBufferPool.js';
+import type { BufferHandle, BufferReusePlan, BufferReturnPlan, SubmissionBufferLease, SubmissionBufferRequest } from './webgpuBufferPool.js';
+import { createWebGPUBindingCache } from './webgpuBindingCache.js';
+import type { DrawBindingCandidate, DrawBindingKey } from './webgpuBindingCache.js';
 export type { TexturedWebGPUHostOptions } from './texturedWebGPUOptions.js';
 
 export type WebGPUHostState = 'new' | 'starting' | 'active' | 'stopped' | 'failed' | 'closing' | 'closed';
@@ -54,12 +58,12 @@ type Ticket = ReturnType<typeof deferred<WebGPUReadback>> & { bound: boolean };
 type PackedDraw = PackedTexturedDraw2D;
 interface SharedSubmissionPlan2D {
     frame: RenderFrame2D | TexturedRenderFrame2D; width: number; height: number; draws: PackedDraw[];
-    upload: number; geometryBytes: number; projectionPlan: ProjectionPlan2D; projections: Uint8Array<ArrayBuffer>[];
-    rowPitch: number; staging: number; output: number; ticket: Ticket | undefined; scene: SceneAdmission | undefined;
+    upload: number; geometryBytes: number; projectionPlan: ProjectionPlan2D; projections: (Uint8Array<ArrayBuffer> | undefined)[];
+    rowPitch: number; staging: number; output: number; ticket: Ticket | undefined; scene: SceneAdmission | undefined; imagePlan: ImageResidencyPlan;
 }
 // READY metadata never retains an image, frame, projection, record or callback.
 interface ImageResidencyEntry {
-    epoch: object; bucket: Map<string, ImageResidencyEntry>; cropKey: string; bytes: number;
+    identity: object; epoch: object; bucket: Map<string, ImageResidencyEntry>; cropKey: string; bytes: number;
     resource: OwnedWebGPUTexture | undefined; view: GPUTextureView | undefined;
     pinCount: number; previous: ImageResidencyEntry | undefined; next: ImageResidencyEntry | undefined;
     state: 'cold' | 'ready' | 'detached';
@@ -78,8 +82,11 @@ interface Submission {
     serial: number; upload: number; readback: number; textureBytes: number; geometryBytes: number;
     sceneBytes: number; uniformBytes: number; depthBytes: number;
     resources: OwnedWebGPUBuffer[]; textures: OwnedWebGPUTexture[]; views: GPUTextureView[]; bindings: GPUBindGroup[];
-    frame: RenderFrame2D | TexturedRenderFrame2D | undefined; projectionPlan: ProjectionPlan2D | undefined; projections: Uint8Array<ArrayBuffer>[]; draws: PackedDraw[];
+    frame: RenderFrame2D | TexturedRenderFrame2D | undefined; projectionPlan: ProjectionPlan2D | undefined; projections: (Uint8Array<ArrayBuffer> | undefined)[]; draws: PackedDraw[];
     imageUse: ImageResidencyUse | undefined;
+    bufferPlan: BufferReusePlan; bufferClaimed: boolean; bufferLeases: (SubmissionBufferLease | undefined)[];
+    bufferReturns: BufferReturnPlan | undefined; retiring: boolean;
+    bindingCandidates: (DrawBindingCandidate & { image: ImageResidencyEntry | undefined })[];
     scene: SceneValue | undefined; meshes: PackedMesh[]; sceneDraws: SceneUploadDraw[];
     outcome: Promise<void>; completion: Promise<void>; failure: EgretError | undefined; unsafe: boolean; retired: boolean;
 }
@@ -143,6 +150,12 @@ class WebGPUHostImplementation implements WebGPUHost {
     private pendingDepthBytes = 0;
     private readonly ledger = new Set<Submission>();
     private readonly imageEpoch = {};
+    private readonly bufferPool = createWebGPUBufferPool(this.imageEpoch);
+    private readonly bindingCache = createWebGPUBindingCache(this.imageEpoch);
+    // Detached allocations retain an explicit owner even when an earlier native
+    // destroy throws. Unknown destruction is charged permanently and never retried.
+    private readonly bufferCleanup = new Set<BufferHandle>();
+    private closingBuffers: readonly BufferHandle[] = [];
     private imageEnabled = false;
     private imageRevision = {};
     private readonly imageDirectory = new WeakMap<ImageData2D, Map<string, ImageResidencyEntry>>();
@@ -526,14 +539,14 @@ class WebGPUHostImplementation implements WebGPUHost {
         const createView = this.method(texture, 'createView', gate);
         gate(); const result = createView(); candidate.entry.view = result; record.views.push(result); gate(); return { texture, view: result };
     }
-    private planImageResidency(p: SharedSubmissionPlan2D): ImageResidencyPlan {
+    private planImageResidency(projectionPlan: ProjectionPlan2D, draws: readonly PackedDraw[]): ImageResidencyPlan {
         this.active();
         const hits = new Map<number, ImageResidencyEntry>(), candidates = new Map<number, ImageResidencyCandidate>();
         const buckets = new Map<ImageData2D, Map<string, ImageResidencyEntry>>();
         let bytes = 0;
-        for (const draw of p.draws) {
+        for (const draw of draws) {
             if (draw.kind === 'rect' || draw.packed.vertexCount === 0 || hits.has(draw.viewIndex) || candidates.has(draw.viewIndex)) continue;
-            const view = p.projectionPlan.views[draw.viewIndex]!, region = view.region;
+            const view = projectionPlan.views[draw.viewIndex]!, region = view.region;
             const cropKey = `${region.x},${region.y},${region.width},${region.height}`;
             let bucket = this.imageDirectory.get(view.image) ?? buckets.get(view.image);
             if (!bucket) { bucket = new Map(); buckets.set(view.image, bucket); }
@@ -541,7 +554,7 @@ class WebGPUHostImplementation implements WebGPUHost {
             if (this.imageEnabled && entry?.epoch === this.imageEpoch && entry.state === 'ready') hits.set(draw.viewIndex, entry);
             else {
                 candidates.set(draw.viewIndex, { image: view.image, viewIndex: draw.viewIndex, transferred: false,
-                    entry: { epoch: this.imageEpoch, bucket, cropKey, bytes: view.byteLength, resource: undefined,
+                    entry: { identity: {}, epoch: this.imageEpoch, bucket, cropKey, bytes: view.byteLength, resource: undefined,
                         view: undefined, pinCount: 0, previous: undefined, next: undefined, state: 'cold' } });
                 bytes += view.byteLength;
             }
@@ -556,6 +569,10 @@ class WebGPUHostImplementation implements WebGPUHost {
         return { epoch: this.imageEpoch, revision: this.imageRevision, victims, bytes,
             use: { epoch: this.imageEpoch, hits, candidates, reserved: 0, pinned: false, finished: false, touchedQueue: false } };
     }
+    private assertImagePlanCurrent(plan: ImageResidencyPlan): void {
+        this.active();
+        if (!this.imageEnabled || plan.epoch !== this.imageEpoch || plan.revision !== this.imageRevision) throw new TypeError('stale image plan');
+    }
     private unlinkImageResidency(entry: ImageResidencyEntry): void {
         if (entry.previous) entry.previous.next = entry.next; else this.imageOldest = entry.next;
         if (entry.next) entry.next.previous = entry.previous; else this.imageNewest = entry.previous;
@@ -566,13 +583,17 @@ class WebGPUHostImplementation implements WebGPUHost {
         if (this.imageNewest) this.imageNewest.next = entry; else this.imageOldest = entry;
         this.imageNewest = entry;
     }
-    private destroyReadyImage(entry: ImageResidencyEntry): void {
-        // Register the cache owner before removing any lookup/LRU ownership.
+    private detachReadyImage(entry: ImageResidencyEntry): void {
         this.imageCleanup.add(entry);
+        this.bindingCache.invalidateTexture(entry.identity);
         if (entry.state === 'ready') {
             entry.bucket.delete(entry.cropKey); this.unlinkImageResidency(entry);
             entry.state = 'detached'; this.readyCount--; this.imageRevision = {};
         }
+    }
+    private destroyReadyImage(entry: ImageResidencyEntry): void {
+        // Registration and dependent-binding invalidation precede native cleanup.
+        this.detachReadyImage(entry);
         const resource = entry.resource!;
         if (resource.cleaned) return;
         const failures = cleanupWebGPUTexture(resource);
@@ -593,12 +614,9 @@ class WebGPUHostImplementation implements WebGPUHost {
         use.pinned = true;
         for (const entry of use.hits.values()) { this.unlinkImageResidency(entry); this.appendImageResidency(entry); }
         this.imageRevision = {};
-        for (const entry of plan.victims) {
-            this.active();
-            this.destroyReadyImage(entry);
-            this.active();
-        }
-        this.active();
+        // This phase only transfers metadata. Buffer leases must be attached and
+        // claimed before any victim's captured native destroy can reenter.
+        for (const entry of plan.victims) this.detachReadyImage(entry);
         use.reserved = plan.bytes; this.reservedImageBytes += plan.bytes;
         return use;
     }
@@ -613,9 +631,12 @@ class WebGPUHostImplementation implements WebGPUHost {
         this.writeTexture!({ texture: owned.texture, mipLevel: 0, origin: { x: 0, y: 0, z: 0 }, aspect: 'all' }, record.projections[viewIndex]!, { offset: 0, bytesPerRow: 4 * projection.region.width, rowsPerImage: projection.region.height }, { width: projection.region.width, height: projection.region.height, depthOrArrayLayers: 1 });
         gate(); return owned;
     }
-    private isImagePromotionEligible(record: Submission): boolean {
+    private isReuseEligible(record: Submission): boolean {
         return this.state === 'active' && this.imageEnabled && !this.firstFailure && !this.unsafe && !this.finalizing
-            && !record.failure && !record.unsafe && record.imageUse?.epoch === this.imageEpoch;
+            && !record.failure && !record.unsafe;
+    }
+    private isImagePromotionEligible(record: Submission): boolean {
+        return this.isReuseEligible(record) && record.imageUse?.epoch === this.imageEpoch;
     }
     private finishImageResidency(record: Submission, allowPromotion: boolean): void {
         const use = record.imageUse;
@@ -658,6 +679,7 @@ class WebGPUHostImplementation implements WebGPUHost {
     }
     private invalidateImageResidency(): void {
         this.imageEnabled = false; this.imageRevision = {};
+        this.bufferPool.invalidate(); this.bindingCache.invalidate();
     }
     private closeImageResidency(): void {
         this.invalidateImageResidency();
@@ -673,6 +695,69 @@ class WebGPUHostImplementation implements WebGPUHost {
             try { this.destroyReadyImage(entry); }
             catch (cause) { this.fail('WEBGPU_RENDER_FAILED', cause, 'cleanup', null, true); }
         }
+    }
+
+    private planBuffers(p: SharedSubmissionPlan2D): BufferReusePlan {
+        const requests: SubmissionBufferRequest[] = [];
+        const add = (role: SubmissionBufferRequest['role'], usage: SubmissionBufferRequest['usage'], byteLength: number): void => {
+            if (byteLength > 0) requests.push({ id: requests.length, role, usage, byteLength });
+        };
+        // Preserve the native allocation order and exact sizes of every route.
+        for (const draw of p.draws) {
+            if (draw.packed.data.byteLength === 0) continue;
+            add('vertex', 40, draw.packed.data.byteLength);
+            if (draw.kind !== 'rect') add('uniform', 72, 16);
+        }
+        if (p.scene) {
+            for (const mesh of p.scene.meshes) { add('vertex', 40, mesh.vertexBytes); add('index', 24, mesh.indexBytes); }
+            for (const _draw of p.scene.draws) add('uniform', 72, 64);
+        }
+        return this.bufferPool.plan(requests);
+    }
+    private submissionBuffer(record: Submission, requestId: number, gate: () => void): SubmissionBufferLease {
+        gate();
+        const existing = record.bufferLeases[requestId];
+        if (existing) return existing;
+        const request = record.bufferPlan.requests[requestId]!;
+        const resource = this.ownedBuffer(request.byteLength, request.usage, record, gate);
+        const lease = this.bufferPool.registerCreated(request, resource);
+        // Slots are preallocated before admission commits, in request order.
+        // Transfer from the raw owner without a post-registration allocation.
+        record.bufferLeases[requestId] = lease;
+        record.resources.length--;
+        return lease;
+    }
+    private submissionBinding(record: Submission, key: DrawBindingKey, entries: GPUBindGroupEntry[],
+        image: ImageResidencyEntry | undefined, gate: () => void): GPUBindGroup {
+        gate();
+        const binding = this.bindingCache.lookup(key) ?? this.bindGroup!({ layout: key.layout, entries });
+        // The record owns the returned binding before checking a native callback's state.
+        record.bindings.push(binding); record.bindingCandidates.push({ key, binding, image });
+        gate(); return binding;
+    }
+    private destroyPooledBuffer(handle: BufferHandle): void {
+        this.bufferCleanup.add(handle);
+        this.bindingCache.invalidateBuffer(handle.identity);
+        this.bufferPool.detach(handle);
+        if (handle.resource.cleaned) return;
+        const failures = cleanupWebGPUBuffer(handle.resource);
+        this.bufferPool.destroyed(handle, failures.length === 0);
+        if (failures.length) { this.proofFailed(failures[0]); throw failures[0]; }
+        this.bufferCleanup.delete(handle);
+    }
+    private closeBuffers(): void {
+        this.bufferPool.invalidate(); this.bindingCache.clear();
+        this.closingBuffers = this.bufferPool.detachIdleForClose();
+        for (const handle of this.closingBuffers) {
+            try { this.destroyPooledBuffer(handle); }
+            catch (cause) { this.fail('WEBGPU_RENDER_FAILED', cause, 'cleanup', null, true); }
+        }
+        for (const handle of this.bufferCleanup) {
+            if (handle.resource.cleaned) continue;
+            try { this.destroyPooledBuffer(handle); }
+            catch (cause) { this.fail('WEBGPU_RENDER_FAILED', cause, 'cleanup', null, true); }
+        }
+        this.closingBuffers = [];
     }
 
     private ownedDepth(width: number, height: number, record: Submission, gate: () => void): GPUTextureView {
@@ -804,18 +889,19 @@ class WebGPUHostImplementation implements WebGPUHost {
             };
             capacity();
             if (this.lastSerial === Number.MAX_SAFE_INTEGER) throw new ClassifiedWebGPUFailure('WEBGPU_SERIAL_EXHAUSTED');
-            // Retain all crops P, copying sequentially with only one full-source clone M live.
-            // Coverage does not refund admission, even when no GPU texture needs realization.
-            let projections: Uint8Array<ArrayBuffer>[];
+            // Logical admission remains unchanged. Only covered READY hits skip copying;
+            // cold and zero-coverage crops retain their original preparation order.
+            const imagePlan = this.planImageResidency(projectionPlan, draws);
+            let projections: (Uint8Array<ArrayBuffer> | undefined)[];
             try {
-                projections = projectionPlan.views.map(view => copyProjectionPixels(view, 'premultiplied'));
+                projections = projectionPlan.views.map((view, index) => imagePlan.use.hits.has(index) ? undefined : copyProjectionPixels(view, 'premultiplied'));
                 for (const draw of draws) if (draw.kind === 'image' && draw.packed.vertexCount > 0) draw.uniform = new Float32Array([draw.alpha, 0, 0, 0]);
             } catch (cause) { throw new ClassifiedWebGPUFailure('WEBGPU_FRAME_INVALID', cause); }
             // Only whole admitted frames reach the trusted scene allocations.
             // Reentrant stop/close is observed again before any ledger mutation.
             if (scene) this.packScene(scene);
             this.active(); capacity();
-            return { ...copied, draws, upload, geometryBytes: 0, projectionPlan, projections, rowPitch, staging, output, ticket, scene };
+            return { ...copied, draws, upload, geometryBytes: 0, projectionPlan, projections, rowPitch, staging, output, ticket, scene, imagePlan };
         } catch (cause) {
             if (this.state !== 'active') throw this.stateError();
             if (cause instanceof ClassifiedWebGPUFailure) throw cause.publicError;
@@ -857,9 +943,12 @@ class WebGPUHostImplementation implements WebGPUHost {
                 const projectionPlan = planTexturedImageProjections(frame);
                 const draws = prepareTexturedDraws2D(admitted, options, budget);
                 const ticket = this.ticket && !this.ticket.bound ? this.ticket : undefined;
-                const plan = prepareTexturedSubmission2D({ admitted, draws, projectionPlan, options, hardware: this.limits,
-                    owner: this.texturedOwnerSnapshot(), readback: ticket !== undefined }, budget, () => this.texturedOwnerSnapshot());
-                return { ...plan, ticket };
+                const storage = planTexturedSubmissionStorage2D({ admitted, draws, projectionPlan, options, hardware: this.limits,
+                    owner: this.texturedOwnerSnapshot(), readback: ticket !== undefined });
+                const payload = packTexturedDrawPayloads2D(storage, budget);
+                const imagePlan = this.planImageResidency(projectionPlan, payload.draws);
+                const plan = materializeTexturedSubmission2D(payload, new Set(imagePlan.use.hits.keys()), () => this.texturedOwnerSnapshot());
+                return { ...plan, ticket, imagePlan };
             }, failure => { ownedFailure = failure; });
         } catch (cause) {
             // Stop/close/terminal state wins even when a concurrent owned allocation throws.
@@ -914,9 +1003,11 @@ class WebGPUHostImplementation implements WebGPUHost {
                 scene.depthBytes = storage.sceneStorage!.depthBytes;
                 // Whole admission precedes both domains' payload allocations.
                 this.packScene(scene, sceneFailures); this.active();
-                const plan = packTexturedSubmission2D(storage, budget, () => this.texturedSceneOwnerSnapshot(), undefined, () => this.active());
+                const payload = packTexturedDrawPayloads2D(storage, budget, undefined, () => this.active());
+                const imagePlan = this.planImageResidency(projectionPlan, payload.draws);
+                const plan = materializeTexturedSubmission2D(payload, new Set(imagePlan.use.hits.keys()), () => this.texturedSceneOwnerSnapshot(), undefined, () => this.active());
                 this.active();
-                return { ...plan, ticket, scene };
+                return { ...plan, ticket, scene, imagePlan };
             }, failure => { ownedFailure = failure; });
         } catch (cause) {
             if (this.state !== 'active') throw this.stateError();
@@ -955,9 +1046,14 @@ class WebGPUHostImplementation implements WebGPUHost {
     }
     /** One queue, scope, fence, readback and retirement owner for every supported plan. */
     private submitPrepared(p: SharedSubmissionPlan2D): undefined {
-        const imagePlan = this.planImageResidency(p);
+        const imagePlan = p.imagePlan;
+        this.assertImagePlanCurrent(imagePlan);
+        const bufferPlan = this.planBuffers(p);
+        const bufferLeases: (SubmissionBufferLease | undefined)[] = new Array(bufferPlan.requests.length).fill(undefined);
+        for (const lease of bufferPlan.leases) bufferLeases[lease.requestId] = lease;
+        this.assertImagePlanCurrent(imagePlan);
         const serial = ++this.lastSerial, done = deferred<void>();
-        const record: Submission = { serial, upload: p.upload, readback: p.staging + p.output, textureBytes: p.projectionPlan.projectionBytes, geometryBytes: p.geometryBytes, sceneBytes: p.scene?.sceneBytes ?? 0, uniformBytes: p.scene?.uniformBytes ?? 0, depthBytes: p.scene?.depthBytes ?? 0, resources: [], textures: [], views: [], bindings: [], imageUse: undefined, frame: p.frame, projectionPlan: p.projectionPlan, projections: p.projections, draws: p.draws, scene: p.scene?.scene, meshes: p.scene?.meshes ?? [], sceneDraws: p.scene?.draws ?? [], outcome: done.promise, completion: done.promise, failure: undefined, unsafe: false, retired: false };
+        const record: Submission = { serial, upload: p.upload, readback: p.staging + p.output, textureBytes: p.projectionPlan.projectionBytes, geometryBytes: p.geometryBytes, sceneBytes: p.scene?.sceneBytes ?? 0, uniformBytes: p.scene?.uniformBytes ?? 0, depthBytes: p.scene?.depthBytes ?? 0, resources: [], textures: [], views: [], bindings: [], imageUse: undefined, bufferPlan, bufferClaimed: false, bufferLeases, bufferReturns: undefined, retiring: false, bindingCandidates: [], frame: p.frame, projectionPlan: p.projectionPlan, projections: p.projections, draws: p.draws, scene: p.scene?.scene, meshes: p.scene?.meshes ?? [], sceneDraws: p.scene?.draws ?? [], outcome: done.promise, completion: done.promise, failure: undefined, unsafe: false, retired: false };
         this.ledger.add(record); this.pendingUploadBytes += record.upload; this.pendingReadbackBytes += record.readback; this.pendingTextureBytes += record.textureBytes;
         this.pendingSceneBytes += record.sceneBytes; this.pendingUniformBytes += record.uniformBytes; this.pendingDepthBytes += record.depthBytes;
         this.pendingGeometryBytes += record.geometryBytes;
@@ -967,7 +1063,13 @@ class WebGPUHostImplementation implements WebGPUHost {
         const outcomes: Promise<unknown>[] = []; let touchedQueue = false, synchronous: EgretError | undefined, result: WebGPUReadback | undefined, staging: OwnedWebGPUBuffer | undefined, submitted = false;
         const gate = (): void => this.active();
         try {
+            // Every match and victim has an owner before the first native call.
+            for (const handle of bufferPlan.victims) this.bufferCleanup.add(handle);
             const imageUse = this.beginImageResidency(record, imagePlan);
+            this.bufferPool.claim(bufferPlan); record.bufferClaimed = true;
+            for (const entry of imagePlan.victims) { gate(); this.destroyReadyImage(entry); gate(); }
+            for (const handle of bufferPlan.victims) { gate(); this.destroyPooledBuffer(handle); gate(); }
+            let bufferRequest = 0;
             this.scoped(serial, 'frame', outcomes as Promise<void>[], gate, () => {
                 const oldWidth = this.surface.width; gate(); const oldHeight = this.surface.height; gate();
                 if (oldWidth !== p.width) { this.surface.width = p.width; gate(); }
@@ -983,13 +1085,18 @@ class WebGPUHostImplementation implements WebGPUHost {
                 const bindings = new Map<PackedDraw, GPUBindGroup>();
                 for (const draw of p.draws) {
                     if (draw.packed.data.byteLength === 0) continue;
-                    const vertex = this.ownedBuffer(draw.packed.data.byteLength, 32 | 8, record, gate);
+                    const vertex = this.submissionBuffer(record, bufferRequest++, gate).handle.resource;
                     vertices.set(draw, vertex); touchedQueue = true; this.write!(vertex.buffer, 0, draw.packed.data as Float32Array<ArrayBuffer>); gate();
                     if (draw.kind !== 'rect') {
-                        const uniform = this.ownedBuffer(16, 64 | 8, record, gate);
+                        const lease = this.submissionBuffer(record, bufferRequest++, gate), uniform = lease.handle.resource;
                         touchedQueue = true; this.write!(uniform.buffer, 0, draw.uniform!); gate();
-                        gate(); const binding = this.bindGroup!({ layout: draw.kind === 'mesh' ? this.texturedLayout! : this.imageLayout!, entries: [{ binding: 0, resource: realized.get(draw.viewIndex)!.view }, { binding: 1, resource: this.sampler! }, { binding: 2, resource: { buffer: uniform.buffer, offset: 0, size: 16 } }] });
-                        record.bindings.push(binding); bindings.set(draw, binding); gate();
+                        const image = imageUse.hits.get(draw.viewIndex) ?? imageUse.candidates.get(draw.viewIndex)!.entry;
+                        const view = realized.get(draw.viewIndex)!.view;
+                        const key: DrawBindingKey = { session: this.imageEpoch, layout: draw.kind === 'mesh' ? this.texturedLayout! : this.imageLayout!,
+                            texture: image.identity, view, sampler: this.sampler!, uniform: lease.handle, offset: 0, size: 16 };
+                        const binding = this.submissionBinding(record, key, [{ binding: 0, resource: view }, { binding: 1, resource: this.sampler! },
+                            { binding: 2, resource: { buffer: uniform.buffer, offset: 0, size: 16 } }], image, gate);
+                        bindings.set(draw, binding);
                     }
                 }
                 let meshes: Map<PackedMesh, { vertex: OwnedWebGPUBuffer | undefined; index: OwnedWebGPUBuffer | undefined }> | undefined;
@@ -1001,17 +1108,19 @@ class WebGPUHostImplementation implements WebGPUHost {
                     // RGB remains the packer's encoded float32 payload; the
                     // opaque mesh pipeline adds no color-space conversion.
                     for (const mesh of p.scene.meshes) {
-                        const vertex = mesh.vertexBytes > 0 ? this.ownedBuffer(mesh.vertexBytes, 32 | 8, record, gate) : undefined;
-                        const index = mesh.indexBytes > 0 ? this.ownedBuffer(mesh.indexBytes, 16 | 8, record, gate) : undefined;
+                        const vertex = mesh.vertexBytes > 0 ? this.submissionBuffer(record, bufferRequest++, gate).handle.resource : undefined;
+                        const index = mesh.indexBytes > 0 ? this.submissionBuffer(record, bufferRequest++, gate).handle.resource : undefined;
                         meshes.set(mesh, { vertex, index });
                         if (vertex) { touchedQueue = true; this.write!(vertex.buffer, 0, mesh.vertices); gate(); }
                         if (index) { touchedQueue = true; this.write!(index.buffer, 0, mesh.indices); gate(); }
                     }
                     for (const draw of p.scene.draws) {
-                        const uniform = this.ownedBuffer(64, 64 | 8, record, gate);
+                        const lease = this.submissionBuffer(record, bufferRequest++, gate), uniform = lease.handle.resource;
                         touchedQueue = true; this.write!(uniform.buffer, 0, draw.uniform); gate();
-                        const binding = this.bindGroup!({ layout: this.meshLayout!, entries: [{ binding: 0, resource: { buffer: uniform.buffer, offset: 0, size: 64 } }] });
-                        record.bindings.push(binding); sceneBindings.set(draw, binding); gate();
+                        const key: DrawBindingKey = { session: this.imageEpoch, layout: this.meshLayout!, texture: undefined, view: undefined,
+                            sampler: undefined, uniform: lease.handle, offset: 0, size: 64 };
+                        const binding = this.submissionBinding(record, key, [{ binding: 0, resource: { buffer: uniform.buffer, offset: 0, size: 64 } }], undefined, gate);
+                        sceneBindings.set(draw, binding);
                     }
                 }
                 const depth = p.scene ? this.ownedDepth(p.width, p.height, record, gate) : undefined;
@@ -1105,35 +1214,82 @@ class WebGPUHostImplementation implements WebGPUHost {
         }).catch(cause => { record.unsafe = true; throw this.fail('WEBGPU_READBACK_FAILED', cause, 'readback', record.serial, true); }));
     }
     private retire(record: Submission): void {
-        if (record.retired) return;
-        record.retired = true;
-        for (const resource of record.resources) {
-            for (const cause of cleanupWebGPUBuffer(resource)) {
-                // Completion safety is independent of an already recorded rendering failure.
-                const cleanupFailure = this.fail('WEBGPU_RENDER_FAILED', cause, 'cleanup', record.serial, true);
-                record.unsafe = true;
-                record.failure ??= cleanupFailure;
+        if (record.retired || record.retiring) return;
+        record.retiring = true;
+        const failed = (cause: unknown): void => {
+            const failure = this.fail('WEBGPU_RENDER_FAILED', cause, 'cleanup', record.serial, true);
+            record.failure ??= failure; record.unsafe = true;
+        };
+        const cleanLease = (index: number): void => {
+            const lease = record.bufferLeases[index];
+            if (!lease) return;
+            try { this.destroyPooledBuffer(lease.handle); } catch (cause) { failed(cause); }
+            // The persistent detached owner retains unknown destruction. If its
+            // registration failed before cleanup, keep this record's exact slot.
+            if (lease.handle.resource.cleaned) record.bufferLeases[index] = undefined;
+        };
+        try {
+            if (!record.bufferClaimed) record.bufferLeases.fill(undefined);
+            if (!record.bufferReturns && this.isReuseEligible(record)) {
+                const leases = record.bufferLeases.filter((lease): lease is SubmissionBufferLease => lease !== undefined);
+                // Any later metadata failure leaves this exact reservation and
+                // every lease reachable from the unretired ledger record.
+                record.bufferReturns = this.bufferPool.reserveReturns(leases);
             }
-        }
-        for (const resource of record.textures) {
-            let candidateOwned = false;
-            if (record.imageUse) for (const candidate of record.imageUse.candidates.values()) {
-                if (candidate.entry.resource === resource) { candidateOwned = true; break; }
+            const retained = new Set(record.bufferReturns?.retained);
+            for (const resource of record.resources) for (const cause of cleanupWebGPUBuffer(resource)) failed(cause);
+            for (let index = 0; index < record.bufferLeases.length; index++) {
+                const lease = record.bufferLeases[index];
+                if (lease && !retained.has(lease.handle)) cleanLease(index);
             }
-            if (candidateOwned) continue;
-            for (const cause of cleanupWebGPUTexture(resource)) {
-                const cleanupFailure = this.fail('WEBGPU_RENDER_FAILED', cause, 'cleanup', record.serial, true);
-                record.unsafe = true;
-                record.failure ??= cleanupFailure;
+            for (const resource of record.textures) {
+                let candidateOwned = false;
+                if (record.imageUse) for (const candidate of record.imageUse.candidates.values()) {
+                    if (candidate.entry.resource === resource) { candidateOwned = true; break; }
+                }
+                if (candidateOwned) continue;
+                for (const cause of cleanupWebGPUTexture(resource)) failed(cause);
             }
-        }
-        this.finishImageResidency(record, !this.finalizing);
-        this.ledger.delete(record); this.pendingUploadBytes -= record.upload; this.pendingReadbackBytes -= record.readback; this.pendingTextureBytes -= record.textureBytes;
-        this.pendingSceneBytes -= record.sceneBytes; this.pendingUniformBytes -= record.uniformBytes; this.pendingDepthBytes -= record.depthBytes;
-        this.pendingGeometryBytes -= record.geometryBytes;
-        record.resources.length = 0; record.textures.length = 0; record.views.length = 0; record.bindings.length = 0;
-        record.projections.length = 0; record.draws.length = 0; record.frame = undefined; record.projectionPlan = undefined;
-        record.meshes.length = 0; record.sceneDraws.length = 0; record.scene = undefined;
+            this.finishImageResidency(record, !this.finalizing);
+            if (record.bufferReturns) {
+                let published = false;
+                if (this.isReuseEligible(record)) {
+                    try { this.bufferPool.publishReturns(record.bufferReturns); published = true; }
+                    catch (cause) { failed(cause); }
+                }
+                if (published) {
+                    // The pool is now the sole native owner. Clear only the
+                    // transferred slots before any subsequent metadata work.
+                    for (let index = 0; index < record.bufferLeases.length; index++) {
+                        const lease = record.bufferLeases[index];
+                        if (lease && retained.has(lease.handle)) record.bufferLeases[index] = undefined;
+                    }
+                    record.bufferReturns = undefined;
+                } else {
+                    this.bufferPool.cancelReturns(record.bufferReturns);
+                    record.bufferReturns = undefined;
+                    for (let index = 0; index < record.bufferLeases.length; index++) cleanLease(index);
+                    retained.clear();
+                }
+            }
+            if (this.isReuseEligible(record)) {
+                try {
+                    this.bindingCache.publish(record.bindingCandidates.filter(candidate => retained.has(candidate.key.uniform)
+                        && (!candidate.image || candidate.image.state === 'ready' && !candidate.image.resource!.cleaned)));
+                } catch (cause) { failed(cause); }
+            }
+            // An uncompleted ownership transfer must retain both its ledger
+            // charge and record for explicit close; never silently drop it.
+            if (record.bufferLeases.some(lease => lease !== undefined)) throw new TypeError('Unfinished buffer cleanup');
+            this.ledger.delete(record); this.pendingUploadBytes -= record.upload; this.pendingReadbackBytes -= record.readback; this.pendingTextureBytes -= record.textureBytes;
+            this.pendingSceneBytes -= record.sceneBytes; this.pendingUniformBytes -= record.uniformBytes; this.pendingDepthBytes -= record.depthBytes;
+            this.pendingGeometryBytes -= record.geometryBytes;
+            record.resources.length = 0; record.textures.length = 0; record.views.length = 0; record.bindings.length = 0;
+            record.projections.length = 0; record.draws.length = 0; record.frame = undefined; record.projectionPlan = undefined;
+            record.meshes.length = 0; record.sceneDraws.length = 0; record.scene = undefined;
+            record.bufferLeases.length = 0; record.bindingCandidates.length = 0; record.retired = true;
+        } catch (cause) { failed(cause); throw cause; }
+        finally { record.retiring = false; }
     }
     public requestReadback(): Promise<WebGPUReadback> {
         try { this.active(); if (!this.options.enableReadback) throw error('WEBGPU_READBACK_DISABLED'); if (this.ticket) throw error('WEBGPU_READBACK_PENDING'); this.ticket = { ...deferred<WebGPUReadback>(), bound: false }; return this.ticket.promise; }
@@ -1158,7 +1314,11 @@ class WebGPUHostImplementation implements WebGPUHost {
         await Promise.allSettled([...this.ledger].map(record => record.outcome));
         if (this.fence && !this.unsafe) { try { await observed(this.fence()); } catch (cause) { this.proofFailed(cause); } }
         this.finalizing = true;
-        for (const record of [...this.ledger]) this.retire(record);
+        for (const record of [...this.ledger]) {
+            try { this.retire(record); }
+            catch (cause) { this.fail('WEBGPU_RENDER_FAILED', cause, 'cleanup', record.serial, true); }
+        }
+        this.closeBuffers();
         this.closeImageResidency();
         if (this.configured) { this.configured = false; try { this.unconfigure!(); } catch (cause) { this.proofFailed(cause); } }
         if (this.removeListener) { const remove = this.removeListener; this.removeListener = undefined; try { remove(); } catch (cause) { this.proofFailed(cause); } }

@@ -143,6 +143,10 @@ test('SS1-P00 current complete built graph satisfies SpriteSheet source/emission
   accepted(check(['--root', repository]));
 });
 const controls = [
+  { name: 'SS1-M11 source mutation cannot mix with unchanged helper emissions', file: 'packages/engine/web/webgpuBufferPool.ts', code: 'SS1_BOUNDARY_SOURCE_OWNER',
+    mutate: bytes => Buffer.concat([bytes, Buffer.from('// unaccepted warm submission source\n')]) },
+  { name: 'SS1-M11 helper emission rejects equal-size wrong hash', file: 'packages/engine/dist/web/webgpuBindingCache.js', code: 'SS1_BOUNDARY_SOURCE_OWNER',
+    mutate: bytes => { const changed = Buffer.from(bytes); changed[0] ^= 1; assert.equal(changed.length, bytes.length); return changed; } },
   { name: 'SS1-P01 private original Bitmap port cannot escape a public root', file: 'packages/runtime/src/index.ts', code: 'SS1_BOUNDARY_PRIVATE_PORT',
     mutate: bytes => Buffer.concat([bytes, Buffer.from('\nexport { spriteSheetBitmapOperations as spriteSheetAssembly } from "./Bitmap.js";\n')]) },
   { name: 'SS1-P02 erased SpriteSheet cannot become an emitted value', file: 'packages/runtime/dist/spriteSheet.js', code: 'SS1_BOUNDARY_TYPE_VALUE',
@@ -203,3 +207,14 @@ test('SS1-P copy cannot be relabelled with another owner token', () => isolated(
     rejected(verify(), 'SS1_BOUNDARY_COPY');
   } finally { writeFileSync(file, before); assert.deepEqual(inventory(fixture), baseline); accepted(verify()); }
 }));
+
+for (const relative of ['packages/engine/dist/web/webgpuBufferPool.d.ts', 'packages/engine/web/webgpuBindingCache.ts'])
+  test('SS1-M11 incomplete whole successor refuses missing ' + relative, () => isolated(({ fixture, verify, baseline }) => {
+    const file = path.join(fixture, relative), before = readFileSync(file);
+    try {
+      rmSync(file);
+      const current = inventory(fixture);
+      assert.deepEqual(baseline.filter(row => !current.some(now => now.path === row.path)).map(row => row.path), [relative]);
+      rejected(verify(), 'SS1_BOUNDARY_SOURCE_OWNER');
+    } finally { writeFileSync(file, before); assert.deepEqual(inventory(fixture), baseline); accepted(verify()); }
+  }));

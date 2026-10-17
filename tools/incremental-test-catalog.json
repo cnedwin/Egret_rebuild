@@ -259,6 +259,15 @@
     },
     {
       "file": {
+        "path": "tests/atlas-import-boundary.test.mjs",
+        "bytes": 7759,
+        "sha256": "531393e313a2c88c719b5c5551c80d9b199e04917b5ce98124b1990e106a49dc"
+      },
+      "packages": null,
+      "support": []
+    },
+    {
+      "file": {
         "path": "tests/atlas-import-composition.test.mjs",
         "bytes": 21132,
         "sha256": "d24c8c56f39edeadab113a827970dc2579920c260f898152e7f3b28cec183053"
@@ -289,8 +298,8 @@
     {
       "file": {
         "path": "tests/b1-webgpu-verifier.test.mjs",
-        "bytes": 24646,
-        "sha256": "affd3ed73dabd6b9776238f2214b08fe5db4833cdaad68db8cda224c76513d8b"
+        "bytes": 24647,
+        "sha256": "391bffacbf543052711c50cf58aaa10052b7260c17222da94f1213b72226fc04"
       },
       "packages": null,
       "support": []
@@ -508,8 +517,8 @@
     {
       "file": {
         "path": "tests/boundaries.test.mjs",
-        "bytes": 109925,
-        "sha256": "44538865cd79f5df76882461d21622b54216aba6663b43b45bebef065e199b9b"
+        "bytes": 110573,
+        "sha256": "c0f6cb9a698b9d27ab4516db21e43c9e1d9f434a99a60a873b919717e27898cb"
       },
       "packages": null,
       "support": []
@@ -548,8 +557,8 @@
     {
       "file": {
         "path": "tests/browser-png-boundaries.test.mjs",
-        "bytes": 13635,
-        "sha256": "36a869fbea2349e4e696b44b1518eed945fae8f870327700b88f378ab74374f6"
+        "bytes": 14944,
+        "sha256": "dcfaea96e7d92060cbbec6861f90dc0c1ae90939c9608b10b6202587e69fd6a0"
       },
       "packages": null,
       "support": []
@@ -1006,8 +1015,8 @@
     {
       "file": {
         "path": "tests/gpu-image-residency-lifecycle.test.mjs",
-        "bytes": 29304,
-        "sha256": "1887446632fabf23f7de4183743834523622ac4ccd85cbf839f390231a209d82"
+        "bytes": 29989,
+        "sha256": "a890415a8f4ae689c159d5e30a5cad4895b0fafdd0e24a8533bdc673c9d84d0b"
       },
       "packages": null,
       "support": []
@@ -1015,8 +1024,8 @@
     {
       "file": {
         "path": "tests/gpu-image-residency.test.mjs",
-        "bytes": 26554,
-        "sha256": "5a6a4f58519344bee8a7318f92c18b45353efa84e0dee5c7ee217e578d2e6b92"
+        "bytes": 26742,
+        "sha256": "d42063e09e2b099642eda439a78cd381edcf2b4484b8211f2b90cf0cf67177a1"
       },
       "packages": null,
       "support": []
@@ -1623,8 +1632,8 @@
     {
       "file": {
         "path": "tests/scene3d-public-host.test.mjs",
-        "bytes": 25465,
-        "sha256": "240f0037b511737974abd6dffcce4b4ff0a013f41c5a8a6bce368960a9c7f459"
+        "bytes": 28336,
+        "sha256": "a4b7cfe4d76fefacfbbc662d2ced108a40bc312572476c73327f4c535a718ee8"
       },
       "packages": null,
       "support": []
@@ -1780,8 +1789,8 @@
     {
       "file": {
         "path": "tests/spritesheet-boundaries.test.mjs",
-        "bytes": 13272,
-        "sha256": "6d295053d70412f2b749e613facb42767027cca7144f8d50fbd1576223c8f8f8"
+        "bytes": 14534,
+        "sha256": "6dd5021a254a0aed404a50bd5e55ce1a2335bfff958b74ac2b9c226303b81fd0"
       },
       "packages": null,
       "support": []
@@ -2179,8 +2188,8 @@
     {
       "file": {
         "path": "tests/textured-frame-legacy-hosts.test.mjs",
-        "bytes": 21959,
-        "sha256": "74176208df82eb5d75a5b3290c22d56de9eaec582b8cd4df5c5bf3ded9d54d30"
+        "bytes": 23293,
+        "sha256": "3cc5d1073e7a0858ae8702b1c2151a2906d402198bc0ee6f2154ef64afd3e4e2"
       },
       "packages": null,
       "support": []
@@ -2251,8 +2260,8 @@
     {
       "file": {
         "path": "tests/textured-webgpu-host.test.mjs",
-        "bytes": 41517,
-        "sha256": "a352e47049a1782a2d1c3093211c146bece994e3d8d6136003711afda3b6ce9e"
+        "bytes": 42670,
+        "sha256": "9ed1c49bec112530b5fb08557d95c3210913f5902ac22e7dbab6e551fda38d68"
       },
       "packages": null,
       "support": []
@@ -2287,8 +2296,8 @@
     {
       "file": {
         "path": "tests/webgpu-host.test.mjs",
-        "bytes": 44820,
-        "sha256": "0ce58696a3ae1dc3672720d0bc86a859db43b467cd4047b280f7c76ded22f3f8"
+        "bytes": 45715,
+        "sha256": "09e8f3bdefb7fdd1ee02d51339231890e64910f8553bd226e1b2970f393b80f8"
       },
       "packages": null,
       "support": []
@@ -2296,8 +2305,8 @@
     {
       "file": {
         "path": "tests/webgpu-image-host.test.mjs",
-        "bytes": 40132,
-        "sha256": "c2272f72258efbe7b41b14540923d5ce9dc559782ffd59a49d819708b9905546"
+        "bytes": 40806,
+        "sha256": "99dd5ecda1e506ca21bd988559cc2c880cec56685c37b7f24b2133c4aa29f002"
       },
       "packages": null,
       "support": []
@@ -2314,8 +2323,8 @@
     {
       "file": {
         "path": "tests/webgpu-mesh-host.test.mjs",
-        "bytes": 97845,
-        "sha256": "94f85335d4210db1721e0894a49d255c33edb94a26ec5f027533ab4e65b690fc"
+        "bytes": 102058,
+        "sha256": "ae14379ce729c3e1574136ed045fe6e1702e533a13cea113e057725a15d12a5b"
       },
       "packages": null,
       "support": []
@@ -2349,6 +2358,78 @@
       "packages": [
         "engine"
       ],
+      "support": []
+    },
+    {
+      "file": {
+        "path": "tests/webgpu-submission-binding-private.test.mjs",
+        "bytes": 11757,
+        "sha256": "49432ea8e639cf4e89642248874ae8670b7f25d733c77081c09a33386bdc1b56"
+      },
+      "packages": null,
+      "support": []
+    },
+    {
+      "file": {
+        "path": "tests/webgpu-submission-buffer-private.test.mjs",
+        "bytes": 13219,
+        "sha256": "e53bd0145018f6dd70a9f57871d675f17bfbdd6f4c98da3a4c901c3c9c449fcb"
+      },
+      "packages": null,
+      "support": []
+    },
+    {
+      "file": {
+        "path": "tests/webgpu-submission-controls.test.mjs",
+        "bytes": 5369,
+        "sha256": "1ea6dff61918f607d9fa7689a5d148a5044facdaf6fed11350e1cf772fb2cb28"
+      },
+      "packages": null,
+      "support": []
+    },
+    {
+      "file": {
+        "path": "tests/webgpu-submission-precedence.test.mjs",
+        "bytes": 14323,
+        "sha256": "9f5df2a37c38dd7609b25d807662b9a8c08325d2e06b9c00f5efa5f18304476e"
+      },
+      "packages": null,
+      "support": []
+    },
+    {
+      "file": {
+        "path": "tests/webgpu-submission-preparation.test.mjs",
+        "bytes": 2308,
+        "sha256": "af40427a7f072e7ed3889406b5366944005722167fbda8a655c7a8aeb8cad31a"
+      },
+      "packages": null,
+      "support": []
+    },
+    {
+      "file": {
+        "path": "tests/webgpu-submission-return-order.test.mjs",
+        "bytes": 2597,
+        "sha256": "e3ceb4282383cc6a5a767b4fcc55b6ea0b5585c6e1821affa780a15976101448"
+      },
+      "packages": null,
+      "support": []
+    },
+    {
+      "file": {
+        "path": "tests/webgpu-submission-reuse-lifecycle.test.mjs",
+        "bytes": 16212,
+        "sha256": "35fd48b178c08fa3f246c7824dd1bc1458cceed2c962ba9a99b8d3cb04069c46"
+      },
+      "packages": null,
+      "support": []
+    },
+    {
+      "file": {
+        "path": "tests/webgpu-submission-reuse.test.mjs",
+        "bytes": 15252,
+        "sha256": "62989d6938a255eb9dc8b052cf44e2fab1665e048e4b4c5d743934380ec2d8ce"
+      },
+      "packages": null,
       "support": []
     }
   ],

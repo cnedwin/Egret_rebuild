@@ -6,6 +6,11 @@ import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
+// One reviewed M1.1 group: all eleven raw identities must match before graph derivation.
+const m11WarmSubmissionGraphSuccessor = [{"path":"packages/engine/web/WebGPUHost.ts","bytes":102838,"sha256":"bf33f8aa63f14103ff947f79f77527a28dfd0cf15468cc84abda6c8cd15007e0"},{"path":"packages/engine/dist/web/WebGPUHost.js","bytes":96436,"sha256":"f6f1727bdd06903f66dcb5918476c0c0c9d5d5f93cf9acb714c4d6e5b7cc3615"},{"path":"packages/engine/web/prepareTexturedSubmission2D.ts","bytes":17192,"sha256":"71dd8092df666f38ab7fa214ea9ec34fa2eaf13b5cf4cc039326308767fb9820"},{"path":"packages/engine/dist/web/prepareTexturedSubmission2D.js","bytes":11567,"sha256":"3bde4c2c3eb9570eedb6d6519776425224f6e35a52fb21ec5664448451fff485"},{"path":"packages/engine/dist/web/prepareTexturedSubmission2D.d.ts","bytes":6946,"sha256":"df22e84d752cfc96083920bf5ea01edd28947056c0c007d8023c0e53bb1fd5ee"},{"path":"packages/engine/web/webgpuBufferPool.ts","bytes":18097,"sha256":"a96a3f4655b178a814d3988ab6886255bb34b9613ba84b885854df4c53840957"},{"path":"packages/engine/dist/web/webgpuBufferPool.js","bytes":14951,"sha256":"8692118b05b645d50c15f68a77ecca7b839165f2653f980c4dfbe1ec937caef1"},{"path":"packages/engine/dist/web/webgpuBufferPool.d.ts","bytes":2052,"sha256":"54ffe7bd4fd62fca0ecec2f250fd8cd2dfbfbcfe3724df3ddf8f341c95dcfb27"},{"path":"packages/engine/web/webgpuBindingCache.ts","bytes":9982,"sha256":"22bc0399ce8c9401e103746c7aa24cac073204c852cc2cd3bc27bf8be7513b81"},{"path":"packages/engine/dist/web/webgpuBindingCache.js","bytes":8374,"sha256":"74bcda1b46f7ec63e46cb9a412c97ee353763d21e1375053663567ebdcfabea3"},{"path":"packages/engine/dist/web/webgpuBindingCache.d.ts","bytes":1018,"sha256":"6f7476892b229d2f478736cdb0b5a6c2640e462807d209d990665444ba856397"}];
+const m11WarmSubmissionReplacementPaths = ["packages/engine/web/WebGPUHost.ts","packages/engine/dist/web/WebGPUHost.js","packages/engine/web/prepareTexturedSubmission2D.ts","packages/engine/dist/web/prepareTexturedSubmission2D.js","packages/engine/dist/web/prepareTexturedSubmission2D.d.ts"];
+const m11WarmSubmissionAdditionPaths = ["packages/engine/web/webgpuBufferPool.ts","packages/engine/dist/web/webgpuBufferPool.js","packages/engine/dist/web/webgpuBufferPool.d.ts","packages/engine/web/webgpuBindingCache.ts","packages/engine/dist/web/webgpuBindingCache.js","packages/engine/dist/web/webgpuBindingCache.d.ts"];
+
 const packages = ['contracts', 'runtime', 'engine', 'project'];
 const factory = 'createBrowserTextureProvider';
 const erased = ['BrowserPngDecodeOptions', 'BrowserPngPorts', 'BrowserTextureProviderOptions', 'BrowserTextureProvider'];
@@ -253,6 +258,24 @@ function configurationNames(root) {
   return names.sort();
 }
 
+
+function m11WarmSubmissionGraph(base, actual) {
+  const rows = m11WarmSubmissionGraphSuccessor, replacements = m11WarmSubmissionReplacementPaths, additions = m11WarmSubmissionAdditionPaths;
+  const expectedPaths = [...replacements, ...additions], present = new Map(actual.map(row => [row.path, row])), basePaths = new Set(base.map(row => row.path));
+  if (rows.length !== 11 || !equal(rows.map(row => row.path).sort(), [...expectedPaths].sort())
+      || rows.some(row => !equal(Object.keys(row).sort(), ['bytes', 'path', 'sha256']) || !Number.isSafeInteger(row.bytes) || row.bytes < 0 || !/^[a-f0-9]{64}$/.test(row.sha256))
+      || replacements.some(file => !basePaths.has(file)) || additions.some(file => basePaths.has(file))) {
+    return { failure: issue('BIP_BOUNDARY_FINGERPRINT', 'tools/browser-png-boundary.mjs', 'Invalid finite M1.1 successor declaration') };
+  }
+  if (!additions.some(file => present.has(file))) return {};
+  for (const row of rows) {
+    if (!present.has(row.path)) return { failure: issue('BIP_BOUNDARY_SOURCE_INVENTORY', row.path, 'Incomplete M1.1 successor') };
+    if (!equal(present.get(row.path), row)) return { failure: issue('BIP_BOUNDARY_FINGERPRINT', row.path, 'M1.1 whole-group raw identity differs') };
+  }
+  const reviewed = new Map(rows.map(row => [row.path, row]));
+  return { graph: [...base.map(row => reviewed.get(row.path) ?? row), ...additions.map(file => reviewed.get(file))] };
+}
+
 function surfaceRules(root, id, snapshot) {
   // Public entry leaks are diagnosed before generic raw fingerprint drift.
   for (const file of snapshot.publicEntries) {
@@ -309,14 +332,20 @@ function surfaceRules(root, id, snapshot) {
     const current = JSON.parse(read(root, expected.path, id));
     if (!equal(current, expected.value)) return issue('BIP_BOUNDARY_AMBIENT', expected.path, 'The retained DOM-free core, explicit DOM web configuration or strict compiler options changed');
   }
-  const expectedGraph = admittedAtlasSuccessor ? [...snapshot.graph, ...atlasGraphSuccessor] : snapshot.graph;
-  const actual = graphFiles(root, id), wanted = new Map(expectedGraph.map(row => [row.path, row]));
+  const originalGraph = admittedAtlasSuccessor ? [...snapshot.graph, ...atlasGraphSuccessor] : snapshot.graph;
+  const currentGraph = originalGraph.map(row => {
+    const pair = imageResidencySuccessors.find(pair => pair.path === row.path);
+    return pair && equal(row, { path: row.path, ...pair.base }) ? { path: row.path, ...pair.current } : row;
+  });
+  const actual = graphFiles(root, id), warm = admittedAtlasSuccessor ? m11WarmSubmissionGraph(currentGraph, actual) : {};
+  if (warm.failure) return warm.failure;
+  const expectedGraph = warm.graph ?? originalGraph, wanted = new Map(expectedGraph.map(row => [row.path, row]));
   for (const row of actual) if (!wanted.has(row.path)) return issue('BIP_BOUNDARY_SOURCE_INVENTORY', row.path, 'Unlisted source or emitted module');
   const present = new Set(actual.map(row => row.path));
   for (const row of expectedGraph) if (!present.has(row.path)) return issue('BIP_BOUNDARY_SOURCE_INVENTORY', row.path, 'A retained source or emitted module is missing');
   for (const row of actual) if (!equal(row, wanted.get(row.path)) && !imageResidencySuccessor(row, wanted.get(row.path))) return issue('BIP_BOUNDARY_FINGERPRINT', row.path, 'Raw source/emitted byte identity differs after the semantic rules');
   // All old or all reviewed current Host rows are required; mixed pairs are refused.
-  if (!['base', 'current'].some(version => imageResidencySuccessors.every(row =>
+  if (!warm.graph && !['base', 'current'].some(version => imageResidencySuccessors.every(row =>
     equal(wanted.get(row.path), { path: row.path, ...row.base })
       && equal(actual.find(current => current.path === row.path), { path: row.path, ...row[version] })))) {
     return issue('BIP_BOUNDARY_FINGERPRINT', 'packages/engine/web/WebGPUHost.ts', 'The complete Host source/emission successor pair differs');
@@ -347,8 +376,7 @@ export async function checkBrowserPngBoundaries(root, options = {}) {
         ?? receipt.baseline.find(row => !receipt.current.some(current => current.path === row.path));
       return { issues: [issue('BIP_BOUNDARY_COPY', changed?.path ?? '.browser-png-policy-copy.json', 'Full copied baseline raw bytes differ')] };
     }
-    const atlas = atlasPackageSuccessor(id.fingerprintFile(owner, 'packages/project/package.json'), acceptedSnapshot.stablePins.find(pin => pin.path === 'packages/project/package.json'));
-    return { issues: [], files: acceptedSnapshot.graph.length + (atlas ? atlasGraphSuccessor.length : 0), mode: copy ? 'owned-copy' : 'repository' };
+    return { issues: [], files: graphFiles(owner, id).length, mode: copy ? 'owned-copy' : 'repository' };
   } catch (cause) {
     return { issues: [issue('BIP_BOUNDARY_OWNER', '.browser-png-policy-copy.json', cause instanceof Error ? cause.message : 'Owner input failed')] };
   }

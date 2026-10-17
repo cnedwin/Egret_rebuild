@@ -24,6 +24,10 @@ Egret Engine is an open-source game-engine rebuild for creators working with AI 
 
 The repository contains an executable engineering preview. Display trees, resource leases, animation, browser input and selected Canvas/WebGPU rendering paths are available within their documented contracts. Full UI tooling, complete Spine support, target-platform SDKs and automated legacy-project migration remain in development.
 
+## In review — M1.1 warm submission
+
+The current M1.1 candidate reduces repeated image preparation, buffer creation and binding creation. Public APIs and original admission remain unchanged. See the [contract](knowledge-base/en/docs/warm-submission-contract.md) and [verification status](knowledge-base/en/docs/warm-submission-evidence.md); no frame-time or mobile performance improvement is claimed.
+
 ## Current version — 0.61.0
 
 The **0.61.0 engineering preview** adds an internal image cache with per-Host ownership, reusing exact cropped GPU images after safe completion. Its LRU mechanism keeps a 32 MiB logical image pool and at most 256 ready entries, preserving existing public admission, rendering profiles and lifecycle management. It adds no public API or dependency.
@@ -87,7 +91,7 @@ Focused behavior, strict consumers and the recorded desktop Canvas/WebGPU compos
 
 The selected development Node.js version is **26.7.0**, pinned exactly in `package.json`, `.node-version` and `.nvmrc`. Keep pnpm 11.25.0 and TypeScript 7.0.2 unchanged. Select Node 26.7.0 in your terminal and verify `node --version` before running the commands below.
 
-This is a toolchain transition. Historical Node 24.19.0 results retain their original environment, and several fixed-rig browser collectors still require that version. Complete repository and browser qualification on Node 26.7.0 remains pending; changing the version pin does not establish compatibility. From the repository root:
+Current contributor and migrated browser workflows use Node 26.7.0. Historical Node 24.19.0 receipts retain their original environment. Each browser family still requires its own current inputs and actual execution; changing a version pin alone establishes no compatibility. From the repository root:
 
     pnpm setup:dev
     pnpm check:quick

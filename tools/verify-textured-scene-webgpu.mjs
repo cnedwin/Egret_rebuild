@@ -30,6 +30,12 @@ const ENTRIES = ['packages/engine/dist/index.js', 'packages/engine/dist/renderin
   'packages/engine/dist/web/scene3d.js', 'packages/engine/dist/web/webgpu.js'];
 // Current source identities must be supplied explicitly; no implicit acceptance of drift.
 const PRODUCT_PATHS = [
+  "packages/engine/web/webgpuBufferPool.ts",
+  "packages/engine/dist/web/webgpuBufferPool.js",
+  "packages/engine/dist/web/webgpuBufferPool.d.ts",
+  "packages/engine/web/webgpuBindingCache.ts",
+  "packages/engine/dist/web/webgpuBindingCache.js",
+  "packages/engine/dist/web/webgpuBindingCache.d.ts",
   "packages/engine/web/prepareTexturedSubmission2D.ts",
   "packages/engine/web/WebGPUHost.ts",
   "packages/engine/web/b1.ts",

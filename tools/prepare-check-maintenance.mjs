@@ -17,6 +17,9 @@ const registrations=[
  ['tools/browser-png-boundary.mjs','acceptedSnapshot','graph'],
  ['tools/browser-png-boundary.mjs','acceptedSnapshot','stablePins'],
  ['tools/browser-png-boundary.mjs','atlasGraphSuccessor'],
+ ['tools/spritesheet-boundary.mjs','m11WarmSubmissionGraphSuccessor'],
+ ['tools/browser-png-boundary.mjs','m11WarmSubmissionGraphSuccessor'],
+ ['tools/atlas-import-boundary.mjs','m11WarmSubmissionGraphSuccessor'],
  ['tools/sequence-playback-boundary.mjs','seqpbPackages'],
  ['tools/sequence-playback-boundary.mjs','seqpbStableEntries'],
  ['tools/sequence-playback-boundary.mjs','seqpbConfigurations']
@@ -184,12 +187,14 @@ export function prepareBaselineReview(root){
  }
  const inventory=codeInventory(root);for(const file of inventory)read.pin(file);
  const graphCoverage=[
-  ['tools/spritesheet-boundary.mjs','graphPins','ss1AtlasGraphSuccessor'],
-  ['tools/browser-png-boundary.mjs','acceptedSnapshot.graph','atlasGraphSuccessor'],
-  ['tests/types/atlas-import-diagnostic-expectations.json','sourcePolicy.modules',null]
- ].map(([owner,baseBinding,successorBinding])=>{
-  const declared=new Set(declarations.filter(x=>x.owner===owner&&(x.binding===baseBinding||x.binding===successorBinding)).flatMap(x=>x.rows.map(row=>row.expected.path)));
-  return {owner,baseBinding,successorBinding,unlisted:inventory.filter(file=>!declared.has(file)).map(file=>read.pin(file))};
+  ['tools/spritesheet-boundary.mjs','graphPins','ss1AtlasGraphSuccessor','tools/spritesheet-boundary.mjs'],
+  ['tools/browser-png-boundary.mjs','acceptedSnapshot.graph','atlasGraphSuccessor','tools/browser-png-boundary.mjs'],
+  ['tests/types/atlas-import-diagnostic-expectations.json','sourcePolicy.modules',null,'tools/atlas-import-boundary.mjs']
+ ].map(([owner,baseBinding,successorBinding,warmOwner])=>{
+  const warmSuccessor={owner:warmOwner,binding:'m11WarmSubmissionGraphSuccessor'};
+  const declared=new Set(declarations.filter(x=>x.owner===owner&&(x.binding===baseBinding||x.binding===successorBinding)
+   || x.owner===warmSuccessor.owner&&x.binding===warmSuccessor.binding).flatMap(x=>x.rows.map(row=>row.expected.path)));
+  return {owner,baseBinding,successorBinding,warmSuccessor,unlisted:inventory.filter(file=>!declared.has(file)).map(file=>read.pin(file))};
  });
  // Many declarations can reference one path; retain every selector and pair arm.
  const byPath=new Map();

@@ -110,3 +110,13 @@ B1 命令用于受影响的 B1 场景渲染，详见[有界验证器](knowledge-
 ## M0 当前元数据集成
 
 贡献者修改内容和独立的 contributions/*.json 声明。普通完整 prepush 只读验证推导出的当前元数据，不修改共享账本；维护者对最终候选运行 tools/contribution-metadata.mjs --base <target-base> --write、--check 及 tools/prepush.mjs --integrated。EGRET_METADATA_BASE 为 prepush 选择同一确切基线，CI 使用 PR 基线 SHA。生成器仅作为 localization.json、knowledge-base/documentation-layout.json 与 source-origin.json 的受限规范写入入口，保留历史对象，拒绝受保护/私有输入，不刷新无关过期来源行。内容/基线变化会使集成失效。完整 hooks、独立来源与双语评审仍为必需。当前浏览器套件使用 tools/browser-verify.mjs；进阶/历史工具保留独立验收范围。参见[贡献流程](knowledge-base/Cns/docs/getting-started.md#贡献元数据与浏览器检查)。
+
+## M1.1 热提交 UNIT
+
+私有缓冲池和绑定辅助模块只管理元数据；WebGPUHost 仍是提交、证明与清理的唯一责任主体。遵循[契约](knowledge-base/Cns/docs/warm-submission-contract.md)，保持公开签名、冷路径错误优先级与逻辑准入不变。不得仅凭 fence 发布可复用分配，也不得把闲置保留当成原生销毁。
+
+仅 tests/webgpu-submission-buffer-private.test.mjs、tests/webgpu-submission-binding-private.test.mjs，以及 tests/webgpu-submission-controls.test.mjs 中的私有绑定保留案例，可直接导入 packages/engine/dist/web/webgpuBufferPool.js 与 webgpuBindingCache.js。这些明确标为 UNIT，不增加产品导出、任意 loader 或公开示例权限。同步 prototype 控制必须在 finally 中恢复精确 descriptor。
+
+tests/webgpu-submission-preparation.test.mjs 与 tests/webgpu-submission-precedence.test.mjs 使用真实公开 SDK 帧和受控 GPU 端口。同步 Float32Array／Uint8Array 构造故障与裁剪计数必须恢复原全局 descriptor；裁剪计数在进入原生 error scope 前结束。其结果只证明受控操作顺序／次数，不证明物理 OOM、总分配或速度。
+
+B1 源码检查后继仅允许两个指定辅助模块发射文件中的 19 个完整原生方法捕获 initializer。保留原生未链接模块构造、有界字面量导入图、精确捕获消费、指定词法拒绝和原有十三案例调度。该许可不允许动态代码构造，也不是通用 Function 例外。

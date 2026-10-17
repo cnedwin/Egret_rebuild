@@ -7,6 +7,11 @@ import {fingerprintFile, samePhysicalPath} from './lib/file-identity.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const inventoryPin = {"path":"tests/types/atlas-import-diagnostic-expectations.json","bytes":254943,"sha256":"3d59e24a78708bd0d85f06d6124bced00d5687afcc494d1e919dce1fc9a985c6"};
+// One reviewed M1.1 group: all eleven raw identities must match before graph derivation.
+const m11WarmSubmissionGraphSuccessor = [{"path":"packages/engine/web/WebGPUHost.ts","bytes":102838,"sha256":"bf33f8aa63f14103ff947f79f77527a28dfd0cf15468cc84abda6c8cd15007e0"},{"path":"packages/engine/dist/web/WebGPUHost.js","bytes":96436,"sha256":"f6f1727bdd06903f66dcb5918476c0c0c9d5d5f93cf9acb714c4d6e5b7cc3615"},{"path":"packages/engine/web/prepareTexturedSubmission2D.ts","bytes":17192,"sha256":"71dd8092df666f38ab7fa214ea9ec34fa2eaf13b5cf4cc039326308767fb9820"},{"path":"packages/engine/dist/web/prepareTexturedSubmission2D.js","bytes":11567,"sha256":"3bde4c2c3eb9570eedb6d6519776425224f6e35a52fb21ec5664448451fff485"},{"path":"packages/engine/dist/web/prepareTexturedSubmission2D.d.ts","bytes":6946,"sha256":"df22e84d752cfc96083920bf5ea01edd28947056c0c007d8023c0e53bb1fd5ee"},{"path":"packages/engine/web/webgpuBufferPool.ts","bytes":18097,"sha256":"a96a3f4655b178a814d3988ab6886255bb34b9613ba84b885854df4c53840957"},{"path":"packages/engine/dist/web/webgpuBufferPool.js","bytes":14951,"sha256":"8692118b05b645d50c15f68a77ecca7b839165f2653f980c4dfbe1ec937caef1"},{"path":"packages/engine/dist/web/webgpuBufferPool.d.ts","bytes":2052,"sha256":"54ffe7bd4fd62fca0ecec2f250fd8cd2dfbfbcfe3724df3ddf8f341c95dcfb27"},{"path":"packages/engine/web/webgpuBindingCache.ts","bytes":9982,"sha256":"22bc0399ce8c9401e103746c7aa24cac073204c852cc2cd3bc27bf8be7513b81"},{"path":"packages/engine/dist/web/webgpuBindingCache.js","bytes":8374,"sha256":"74bcda1b46f7ec63e46cb9a412c97ee353763d21e1375053663567ebdcfabea3"},{"path":"packages/engine/dist/web/webgpuBindingCache.d.ts","bytes":1018,"sha256":"6f7476892b229d2f478736cdb0b5a6c2640e462807d209d990665444ba856397"}];
+const m11WarmSubmissionReplacementPaths = ["packages/engine/web/WebGPUHost.ts","packages/engine/dist/web/WebGPUHost.js","packages/engine/web/prepareTexturedSubmission2D.ts","packages/engine/dist/web/prepareTexturedSubmission2D.js","packages/engine/dist/web/prepareTexturedSubmission2D.d.ts"];
+const m11WarmSubmissionAdditionPaths = ["packages/engine/web/webgpuBufferPool.ts","packages/engine/dist/web/webgpuBufferPool.js","packages/engine/dist/web/webgpuBufferPool.d.ts","packages/engine/web/webgpuBindingCache.ts","packages/engine/dist/web/webgpuBindingCache.js","packages/engine/dist/web/webgpuBindingCache.d.ts"];
+
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 function refuse(code, detail) { const error = new Error(code + ': ' + detail); error.code = code; throw error; }
 function readInventory() {
@@ -61,6 +66,22 @@ function named(text) {
   return declarations;
 }
 function modulePaths(relative) { return readdirSync(path.join(root, relative), {withFileTypes:true}).flatMap(entry => entry.name==='node_modules'?[]:entry.isDirectory()?modulePaths(relative+'/'+entry.name):entry.isFile()&&/\.(?:ts|js)$/.test(entry.name)?[relative+'/'+entry.name]:[]); }
+
+function m11WarmSubmissionGraph(base, actualNames) {
+  const rows=m11WarmSubmissionGraphSuccessor, replacements=m11WarmSubmissionReplacementPaths, additions=m11WarmSubmissionAdditionPaths;
+  const expectedPaths=[...replacements,...additions], present=new Set(actualNames), basePaths=new Set(base.map(row=>row.path));
+  if (rows.length!==11 || !same(rows.map(row=>row.path).sort(),[...expectedPaths].sort())
+      || rows.some(row=>!same(Object.keys(row).sort(),['bytes','path','sha256']) || !Number.isSafeInteger(row.bytes) || row.bytes<0 || !/^[a-f0-9]{64}$/.test(row.sha256))
+      || replacements.some(file=>!basePaths.has(file)) || additions.some(file=>basePaths.has(file))) refuse('ATLAS_SOURCE_IDENTITY','Invalid finite M1.1 successor declaration');
+  if (!additions.some(file=>present.has(file))) return undefined;
+  for (const row of rows) {
+    if (!present.has(row.path)) refuse('ATLAS_SOURCE_FILES','Incomplete M1.1 successor: '+row.path);
+    checkPin(row,'ATLAS_SOURCE_IDENTITY');
+  }
+  const reviewed=new Map(rows.map(row=>[row.path,row]));
+  return [...base.map(row=>reviewed.get(row.path)??row),...additions.map(file=>reviewed.get(file))];
+}
+
 export function runAtlasImportBoundary() {
   const inventory=readInventory(), policy=inventory.sourcePolicy;
   authenticateAliases();
@@ -103,11 +124,13 @@ export function runAtlasImportBoundary() {
   for (const [local,upstream,value] of [['OPEN_OBJECT','OpenBraceToken',1],['CLOSE_OBJECT','CloseBraceToken',2],['OPEN_ARRAY','OpenBracketToken',3],['CLOSE_ARRAY','CloseBracketToken',4],['STRING','StringLiteral',10],['LINE_COMMENT','LineCommentTrivia',12],['BLOCK_COMMENT','BlockCommentTrivia',13],['UNKNOWN','Unknown',16],['EOF','EOF',17]]) {
     if (!new RegExp('\\b'+upstream+'\\s*=\\s*'+value+'\\b').test(declaration)||!new RegExp('\\b'+local+'\\s*:\\s*SyntaxKind\\s*=\\s*'+value+'\\b').test(source)) refuse('ATLAS_SOURCE_ENUM','retained public enum value differs: '+local);
   }
-  if (!same(modulePaths('packages').sort(),policy.modules.map(p=>p.path).sort())) refuse('ATLAS_SOURCE_FILES','product source/emission/declaration inventory changed');
+  const actualNames=modulePaths('packages');
+  const effectiveModules=m11WarmSubmissionGraph(policy.modules,actualNames)??policy.modules;
+  if (!same(actualNames.sort(),effectiveModules.map(p=>p.path).sort())) refuse('ATLAS_SOURCE_FILES','product source/emission/declaration inventory changed');
   // Semantic policy guards above identify the assigned route refusals. Identity
   // checks then retain Spine, geometry, Host and every accepted product module.
-  for (const pin of [...policy.modules,...policy.configurationPins,...policy.jsoncPins]) checkPin(pin,'ATLAS_SOURCE_IDENTITY');
-  console.log('Atlas import Source boundary PASS: '+policy.modules.length+' exact source/emission/declaration files; two optional values, sixteen erased types, four local built aliases. No product or browser execution.');
+  for (const pin of [...effectiveModules,...policy.configurationPins,...policy.jsoncPins]) checkPin(pin,'ATLAS_SOURCE_IDENTITY');
+  console.log('Atlas import Source boundary PASS: '+effectiveModules.length+' exact source/emission/declaration files; two optional values, sixteen erased types, four local built aliases. No product or browser execution.');
 }
 if (process.argv[1] && samePhysicalPath(path.resolve(process.argv[1]), fileURLToPath(import.meta.url), process.platform)) {
   if (process.argv.length!==2) refuse('ATLAS_SOURCE_ARGUMENTS','direct CLI accepts no arguments');

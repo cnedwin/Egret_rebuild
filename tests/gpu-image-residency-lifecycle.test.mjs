@@ -106,27 +106,31 @@ test('L03 multiple warm readers keep shared pins until every reader settles', as
 
 test('SUPPORT H05 retiring projection charge survives noncandidate cleanup callback', async () => {
   await withGpu(async f => {
-    const h = f.host({ maxPendingFrames: 4 }); await f.ready(h);
+    const h = f.host({ maxPendingFrames: 4, enableReadback: true }); await f.ready(h);
     const views = Array.from({ length: 4 }, () => view(image(1024, 1024))), full = frame(views);
-    // Each frame charges all four4MiB crops while one covered draw supplies
-    // the noncandidate buffer callback. Image allocation is only4MiB per frame,
+    // Each frame charges all four 4 MiB crops; one covered draw keeps upload
+    // at 112 bytes. Genuine readback staging supplies the transient callback.
+    // Image allocation is only 4 MiB per frame,
     // so the refusal below discriminates original P rather than external Q.
     full.commands = full.commands.map((command, i) => ({ ...command, alpha: i === 0 ? 1 : 0 }));
+    const ticket = h.requestReadback(); ticket.catch(() => {});
     const cold = frame(), a = f.capture(() => h.renderFrame(full)), b = f.capture(() => h.renderFrame(full)); admitted(a); admitted(b);
     assert.equal(a.textures.length, 1); assert.equal(b.textures.length, 1); assert.equal(f.logicalBytes, 8388608);
     assert.equal(h.getStatus().pendingFrames, 2); assert.equal(h.getStatus().pendingUploadBytes, 224);
-    const target = a.buffers[0]; let observation, entered = 0;
+    const target = a.buffers.find(buffer => buffer.descriptor.usage === 9);
+    assert.ok(target, 'the readback creates genuine transient staging');
+    let observation, entered = 0;
     f.hooks.destroyBuffer = buffer => {
       if (buffer !== target || entered) return; entered++;
       const before = snapshot(f, h), nested = f.capture(() => h.renderFrame(cold));
       observation = { before, nested, after: snapshot(f, h) };
     };
-    await a.finish(); delete f.hooks.destroyBuffer;
-    assert.equal(entered, 1, 'the original noncandidate retirement hook must actually execute');
+    await a.finish(); await ticket; delete f.hooks.destroyBuffer;
+    assert.equal(entered, 1, 'the transient staging retirement hook must actually execute');
     assert.equal(observation.before.status.pendingFrames, 2); assert.equal(observation.before.status.pendingUploadBytes, 224);
     assert.equal(observation.nested.threw, true); assert.ok(code('BACKPRESSURE')(observation.nested.error));
     assert.deepEqual(observation.after, observation.before, 'retiring16MiB plus pending16MiB leaves no4B quota or native/status mutation');
-    assert.equal(target.destroyed, 1); assert.equal(h.getStatus().pendingFrames, 1); assert.equal(h.getStatus().pendingUploadBytes, 112);
+    assert.equal(target.destroyed, 1); assert.equal(target.unmapped, 1); assert.equal(h.getStatus().pendingFrames, 1); assert.equal(h.getStatus().pendingUploadBytes, 112);
     const accepted = f.capture(() => h.renderFrame(cold)); admitted(accepted);
     assert.equal(h.getStatus().lastSerial, 3); assert.equal(h.getStatus().pendingFrames, 2);
     await accepted.finish(); await b.finish(); await h.whenIdle(); await f.close(h);
@@ -239,16 +243,20 @@ test('SUPPORT R01 queued loss is distinct from delivered notification and synchr
 
 for (const terminal of ['stop', 'close', 'uncaptured', 'throw']) test('R02 noncandidate cleanup ' + terminal + ' suppresses promotion', async () => {
   await withGpu(async f => {
-    const h = f.host(); await f.ready(h); const cause = { cleanup: terminal }; let count = 0, closing;
+    const h = f.host({ enableReadback: true }); await f.ready(h); const cause = { cleanup: terminal }; let count = 0, closing;
     if (terminal === 'uncaptured' || terminal === 'throw') f.allowUnsafe(h);
-    f.hooks.destroyBuffer = () => {
-      if (count++) return;
+    f.hooks.destroyBuffer = buffer => {
+      if (buffer.descriptor.usage !== 9 || count) return; count++;
       if (terminal === 'stop') h.stop();
       if (terminal === 'close') { closing = h.close(); closing.catch(() => {}); }
       if (terminal === 'uncaptured') f.emitError(cause);
       if (terminal === 'throw') throw cause;
     };
-    const r = f.capture(() => h.renderFrame(frame())); admitted(r); await r.finish(); assert.ok(count > 0);
+    const ticket = h.requestReadback(); ticket.catch(() => {});
+    const r = f.capture(() => h.renderFrame(frame())); admitted(r); await r.finish(); await Promise.allSettled([ticket]);
+    assert.equal(count, 1, 'the genuine staging cleanup must trigger before promotion');
+    const staging = r.buffers.find(buffer => buffer.descriptor.usage === 9);
+    assert.equal(staging.destroyed, 1); assert.equal(staging.unmapped, 1);
     assert.equal(r.textures[0].destroyed, 1, 'failed/nonactive qualification cannot publish READY');
     delete f.hooks.destroyBuffer;
     if (terminal === 'throw') { assert.equal(h.getStatus().firstFailure.cause, cause); await f.close(h, true, cause); }

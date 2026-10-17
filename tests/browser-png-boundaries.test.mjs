@@ -150,6 +150,8 @@ const cases = [
   ['dependency drift', 'packages/engine/package.json', 'BIP_BOUNDARY_DAG', jsonEdit(value => { value.dependencies['bip-unapproved'] = '1.0.0'; })],
   ['unlisted source', 'packages/engine/web/bip-policy-unlisted.ts', 'BIP_BOUNDARY_SOURCE_INVENTORY', () => Buffer.from('export {};\n')],
   ['unlisted emission', 'packages/engine/dist/web/bip-policy-unlisted.js', 'BIP_BOUNDARY_SOURCE_INVENTORY', () => Buffer.from('export {};\n')],
+  ['M1.1 source mutation cannot mix with unchanged helper emissions', 'packages/engine/web/webgpuBufferPool.ts', 'BIP_BOUNDARY_FINGERPRINT', append('// unaccepted warm submission source\n')],
+  ['M1.1 helper emission equal-size wrong hash', 'packages/engine/dist/web/webgpuBindingCache.js', 'BIP_BOUNDARY_FINGERPRINT', bytes => { const changed = Buffer.from(bytes); changed[0] ^= 1; assert.equal(changed.length, bytes.length); return changed; }],
   ['same-path Host source wrong bytes', 'packages/engine/web/WebGPUHost.ts', 'BIP_BOUNDARY_FINGERPRINT', append('// unaccepted Host bytes\n')],
   ['same-path Host emission equal-size wrong hash', 'packages/engine/dist/web/WebGPUHost.js', 'BIP_BOUNDARY_FINGERPRINT', bytes => { const changed = Buffer.from(bytes); changed[0] ^= 1; assert.equal(changed.length, bytes.length); return changed; }],
   ['illegal public cache export', 'packages/engine/src/index.ts', 'BIP_BOUNDARY_FINGERPRINT', append('export { imageResidencyCache } from "../web/WebGPUHost.js";\n')],
@@ -201,3 +203,16 @@ test('BIP-P copy cannot be relabelled with another owner token', async () => {
     } finally { writeFileSync(file, before); assert.deepEqual(inventory(root), baseline); assert.deepEqual((await run()).issues, []); }
   });
 });
+
+for (const relative of ['packages/engine/dist/web/webgpuBufferPool.d.ts', 'packages/engine/web/webgpuBindingCache.ts'])
+  test('BIP-M11 incomplete whole successor refuses missing ' + relative, async () => {
+    const check = await checker();
+    await isolated(check, async ({ root, run, baseline }) => {
+      const file = path.join(root, relative), before = readFileSync(file);
+      try {
+        rmSync(file); const current = inventory(root);
+        assert.deepEqual(baseline.filter(row => !current.some(now => now.path === row.path)).map(row => row.path), [relative]);
+        assert.deepEqual((await run()).issues.map(issue => [issue.code, issue.path]), [['BIP_BOUNDARY_SOURCE_INVENTORY', relative]]);
+      } finally { writeFileSync(file, before); assert.deepEqual(inventory(root), baseline); assert.deepEqual((await run()).issues, []); }
+    });
+  });
