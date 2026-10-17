@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tools/incremental-dependencies.mjs",
+      "originRole": "First-party M0 dependency-aware feedback and bilingual documentation, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/incremental-test-catalog.json",
+      "originRole": "First-party M0 dependency-aware feedback and bilingual documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/dependency-aware-checks.md",
+      "originRole": "First-party M0 dependency-aware feedback and bilingual documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/dependency-aware-checks.md",
+      "originRole": "First-party M0 dependency-aware feedback and bilingual documentation, independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/dependency-aware-checks.md",
+      "zh": "knowledge-base/Cns/docs/dependency-aware-checks.md"
+    }
+  ]
+}
