@@ -42,9 +42,17 @@ function ss1AtlasPackageSuccessor(expected, raw) {
 }
 
 const ss1AtlasGraphSuccessor = [{"path":"packages/project/dist/atlas/index.d.ts","bytes":491,"sha256":"9393ab919b1072d4c1f057b9a26fcaa38eaee950cc3c746ad4aac31c00c33f0b"},{"path":"packages/project/dist/atlas/index.js","bytes":173,"sha256":"a456071c6197d60a76de988719413fef7e81170cf993576b738ebe6e44aea88f"},{"path":"packages/project/dist/atlas/input.d.ts","bytes":806,"sha256":"e6ecd38ec234bf1b58c226937356c5173912f6429196d210a07813ab424ddc75"},{"path":"packages/project/dist/atlas/input.js","bytes":6640,"sha256":"6a3586152d7e26d53c6e0fbcda27997a61d43f673c4162349fa27e457b73efa8"},{"path":"packages/project/dist/atlas/json.d.ts","bytes":753,"sha256":"7d49c80cd9d76e62859f6e807fa61c0e3a09cae890147d33e6a1a51dfeef9810"},{"path":"packages/project/dist/atlas/json.js","bytes":7131,"sha256":"30dfdee2df12e4a5a128510315937ea14f234556b905657804fa93ba2eda78b4"},{"path":"packages/project/dist/atlas/plan.d.ts","bytes":169,"sha256":"e0d008c1120ee2e00c71afac27d6acc5a63f1f62a99ff5a8d36ed16d6aae8c77"},{"path":"packages/project/dist/atlas/plan.js","bytes":13391,"sha256":"f9d6f97fb433c35fd91c9cefbc5d94498b93e40476dc11f360a6fc3ad52002a4"},{"path":"packages/project/dist/atlas/types.d.ts","bytes":4795,"sha256":"6d87509408d64a0ab706bef9d2188b072595f4758269a866aad227792d91e4e5"},{"path":"packages/project/dist/atlas/types.js","bytes":44,"sha256":"01ae2a5b120382f9a648ced7ee8507493a134f216d100fc61600c6c9738235d2"},{"path":"packages/project/src/atlas/index.ts","bytes":495,"sha256":"182930a58f07ab8acfb415aaad53f705b9178f2229b6bb5a9c872cdece96f065"},{"path":"packages/project/src/atlas/input.ts","bytes":7012,"sha256":"4193cd78d88a030f4af1a28e5f920788ab210bb47bbc70d49fa720febf784748"},{"path":"packages/project/src/atlas/json.ts","bytes":7206,"sha256":"041010cc3adfc83acb42b081a94a57aefdc38997ce18bef0317ff2351c8661ef"},{"path":"packages/project/src/atlas/plan.ts","bytes":13063,"sha256":"d06ca255f7f6e7ad56da2a7d22f3d6af149c51ea62efdcc8e5832c5a4b2759ef"},{"path":"packages/project/src/atlas/types.ts","bytes":4560,"sha256":"e83a07146ac069144d6abff1080e8df49fa7e1e35d8c45ccb792e5eb4e875315"}];
+// Preserve historical graph rows; only these complete raw Host successors are admitted.
+const imageResidencySuccessors = [{"path":"packages/engine/web/WebGPUHost.ts","base":{"bytes":80902,"sha256":"c0e9555e692e19d42ecc0bf443764c5c301d6f76febcf4d16f57c17853254e49"},"current":{"bytes":92002,"sha256":"d3d75dbdb3e1fe906301344e06ac25275189e8f7fe481abff1b98563f9fc832a"}},{"path":"packages/engine/dist/web/WebGPUHost.js","base":{"bytes":75520,"sha256":"cf5fa99195f808ecedeaa1fcabc51a7c5910d71fbcf7b0145f70a5d1c08db0e7"},"current":{"bytes":85885,"sha256":"6287b56f10c6899c12dc6a05a0b40f188c74e22f1b92e4c55dae9f80d29d834b"}}];
+function ss1ImageResidencySuccessor(expected, raw) {
+  return imageResidencySuccessors.some(row => expected.path === row.path
+    && expected.bytes === row.base.bytes && expected.sha256 === row.base.sha256
+    && raw.length === row.current.bytes && hash(raw) === row.current.sha256);
+}
+
 function pin(root, expected, code) {
   const bytes = read(root, expected.path);
-  if (ss1AtlasPackageSuccessor(expected, bytes)) return;
+  if (ss1AtlasPackageSuccessor(expected, bytes) || ss1ImageResidencySuccessor(expected, bytes)) return;
   if (bytes.length !== expected.bytes || hash(bytes) !== expected.sha256) failure(code, 'Identity changed: ' + expected.path);
 }
 
@@ -255,6 +263,12 @@ function run() {
     ? [...graphPins, ...ss1AtlasGraphSuccessor] : graphPins;
   if (!equal(actualNames.sort(), expectedGraph.map(item => item.path).sort())) failure('SS1_BOUNDARY_SOURCE_OWNER', 'Complete four-package source/emission path inventory changed');
   for (const expected of expectedGraph) pin(root, expected, 'SS1_BOUNDARY_SOURCE_OWNER');
+  // Neither one-sided base/current mixture is a reviewed complete Host successor.
+  const hostRows = imageResidencySuccessors.map(row => ({ row, raw: read(root, row.path) }));
+  if (!['base', 'current'].some(version => hostRows.every(({ row, raw }) =>
+    raw.length === row[version].bytes && hash(raw) === row[version].sha256))) {
+    failure('SS1_BOUNDARY_SOURCE_OWNER', 'The complete Host source/emission successor pair differs');
+  }
   compiler(root, owned);
   if (owned) {
     if (!equal(inventory(root), owned.pins)) failure('SS1_BOUNDARY_COPY', 'Successful full snapshot differs from receipt');

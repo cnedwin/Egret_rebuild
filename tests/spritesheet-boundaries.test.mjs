@@ -156,6 +156,12 @@ const controls = [
       config.compilerOptions.lib = ['ES2022', 'DOM'];
       return Buffer.from(JSON.stringify(config) + '\n');
     } },
+  { name: 'SS1-P05 exact Host source rejects same-path wrong bytes', file: 'packages/engine/web/WebGPUHost.ts', code: 'SS1_BOUNDARY_SOURCE_OWNER',
+    mutate: bytes => Buffer.concat([bytes, Buffer.from('// unaccepted Host bytes\n')]) },
+  { name: 'SS1-P06 exact Host emission rejects equal-size wrong hash', file: 'packages/engine/dist/web/WebGPUHost.js', code: 'SS1_BOUNDARY_SOURCE_OWNER',
+    mutate: bytes => { const changed = Buffer.from(bytes); changed[0] ^= 1; assert.equal(changed.length, bytes.length); return changed; } },
+  { name: 'SS1-P07 cache export cannot extend the public root', file: 'packages/engine/src/index.ts', code: 'SS1_BOUNDARY_ROOT_VALUES',
+    mutate: bytes => Buffer.concat([bytes, Buffer.from('export { imageResidencyCache } from "../web/WebGPUHost.js";\n')]) },
 ];
 for (const control of controls) test(control.name, t => isolated(({ fixture, verify, baseline }) => {
   const file = path.join(fixture, control.file), before = readFileSync(file);
@@ -173,4 +179,27 @@ for (const control of controls) test(control.name, t => isolated(({ fixture, ver
     assert.deepEqual(inventory(fixture), baseline, 'Complete original snapshot hash identity restored');
     accepted(verify());
   }
+}));
+
+// Complete original copies surround inventory and ownership refusals as well.
+for (const missing of [false, true]) test('SS1-P inventory ' + (missing ? 'missing Host module' : 'extra module'), () => isolated(({ fixture, verify, baseline }) => {
+  const relative = missing ? 'packages/engine/dist/web/WebGPUHost.js' : 'packages/engine/dist/web/image-residency-unlisted.js';
+  const file = path.join(fixture, relative), before = missing ? readFileSync(file) : undefined;
+  try {
+    if (missing) rmSync(file); else writeFileSync(file, 'export {};\n');
+    const current = inventory(fixture);
+    assert.deepEqual(current.filter(row => !baseline.some(old => old.path === row.path)).map(row => row.path), missing ? [] : [relative]);
+    assert.deepEqual(baseline.filter(row => !current.some(now => now.path === row.path)).map(row => row.path), missing ? [relative] : []);
+    rejected(verify(), 'SS1_BOUNDARY_SOURCE_OWNER');
+  } finally {
+    if (missing) writeFileSync(file, before); else rmSync(file);
+    assert.deepEqual(inventory(fixture), baseline); accepted(verify());
+  }
+}));
+test('SS1-P copy cannot be relabelled with another owner token', () => isolated(({ fixture, verify, baseline }) => {
+  const file = path.join(fixture, '.spritesheet-policy-copy.json'), before = readFileSync(file);
+  try {
+    const receipt = JSON.parse(before); receipt.token = randomUUID(); writeFileSync(file, JSON.stringify(receipt) + '\n');
+    rejected(verify(), 'SS1_BOUNDARY_COPY');
+  } finally { writeFileSync(file, before); assert.deepEqual(inventory(fixture), baseline); accepted(verify()); }
 }));

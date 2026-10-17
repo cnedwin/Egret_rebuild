@@ -150,6 +150,9 @@ const cases = [
   ['dependency drift', 'packages/engine/package.json', 'BIP_BOUNDARY_DAG', jsonEdit(value => { value.dependencies['bip-unapproved'] = '1.0.0'; })],
   ['unlisted source', 'packages/engine/web/bip-policy-unlisted.ts', 'BIP_BOUNDARY_SOURCE_INVENTORY', () => Buffer.from('export {};\n')],
   ['unlisted emission', 'packages/engine/dist/web/bip-policy-unlisted.js', 'BIP_BOUNDARY_SOURCE_INVENTORY', () => Buffer.from('export {};\n')],
+  ['same-path Host source wrong bytes', 'packages/engine/web/WebGPUHost.ts', 'BIP_BOUNDARY_FINGERPRINT', append('// unaccepted Host bytes\n')],
+  ['same-path Host emission equal-size wrong hash', 'packages/engine/dist/web/WebGPUHost.js', 'BIP_BOUNDARY_FINGERPRINT', bytes => { const changed = Buffer.from(bytes); changed[0] ^= 1; assert.equal(changed.length, bytes.length); return changed; }],
+  ['illegal public cache export', 'packages/engine/src/index.ts', 'BIP_BOUNDARY_FINGERPRINT', append('export { imageResidencyCache } from "../web/WebGPUHost.js";\n')],
 ];
 test('BIP-P00 genuine current build satisfies the standalone source policy', async () => {
   const check = await checker();
@@ -174,5 +177,27 @@ for (const [name, relative, code, mutate] of cases) test('BIP-P ' + name, { time
       assert.deepEqual((await run()).issues, [], 'Restored genuine policy baseline');
     } catch (cause) { cleanup = { cause }; }
     finish(primary, cleanup);
+  });
+});
+
+test('BIP-P missing retained Host module refuses the exact inventory', async () => {
+  const check = await checker();
+  await isolated(check, async ({ root, run, baseline }) => {
+    const relative = 'packages/engine/dist/web/WebGPUHost.js', file = path.join(root, relative), before = readFileSync(file);
+    try {
+      rmSync(file); const current = inventory(root);
+      assert.deepEqual(baseline.filter(row => !current.some(now => now.path === row.path)).map(row => row.path), [relative]);
+      assert.deepEqual((await run()).issues.map(issue => [issue.code, issue.path]), [['BIP_BOUNDARY_SOURCE_INVENTORY', relative]]);
+    } finally { writeFileSync(file, before); assert.deepEqual(inventory(root), baseline); assert.deepEqual((await run()).issues, []); }
+  });
+});
+test('BIP-P copy cannot be relabelled with another owner token', async () => {
+  const check = await checker();
+  await isolated(check, async ({ root, run, baseline }) => {
+    const file = path.join(root, '.browser-png-policy-copy.json'), before = readFileSync(file);
+    try {
+      const receipt = JSON.parse(before); receipt.token = randomUUID(); writeFileSync(file, JSON.stringify(receipt) + '\n');
+      assert.deepEqual((await run()).issues.map(issue => [issue.code, issue.path]), [['BIP_BOUNDARY_OWNER', '.browser-png-policy-copy.json']]);
+    } finally { writeFileSync(file, before); assert.deepEqual(inventory(root), baseline); assert.deepEqual((await run()).issues, []); }
   });
 });

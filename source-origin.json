@@ -401,8 +401,8 @@
     {
       "path": "DOCUMENTATION.md",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
-      "sha256": "d978e0b3ffe077a00cc21ed5c8fb9f1a3197e404fdc831789673546c6206559a",
-      "bytes": 12942,
+      "sha256": "109215a7ac70770371da05ca51177f322cd6a48126866a37e9a6bac3bbfe2a12",
+      "bytes": 13153,
       "previousRevisionSha256": "ef35dafcd765aeacdce5c0d14362dc5f30319b84dd3d1693d9d6a769f7162f99",
       "previousLayoutPath": "DOCUMENTATION.en.md",
       "previousLayoutSha256": "4921b952a38aa70c692db7b37cda758e6e58942ea097761ee72d36f42a6ae31b",
@@ -432,14 +432,19 @@
           "bytes": 7111,
           "sha256": "a90bcbb5e52442fa75f7bd7ad46dcba19abc8d78dcb0b9e9948c5f54e0a03be8",
           "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
+        },
+        {
+          "bytes": 12942,
+          "sha256": "d978e0b3ffe077a00cc21ed5c8fb9f1a3197e404fdc831789673546c6206559a",
+          "scope": "Preserved current identity before the experimental 0.61.0 image-residency documentation successor."
         }
       ]
     },
     {
       "path": "DOCUMENTATION.zh-CN.md",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
-      "sha256": "6806b018dfa8cfd3b187a537a5878e05a106b90b8043d341ce202beaeba0ba8a",
-      "bytes": 11713,
+      "sha256": "c314136f50d530428252716fdc1c7c750f7869d5470a9d4dcf6631934e936f90",
+      "bytes": 11908,
       "previousRevisionSha256": "22f3073e3a0096efc4c92fce0aed95a81bdbaa6b1e50ed6432a1ed597c86a8d4",
       "previousLayoutPath": "DOCUMENTATION.md",
       "previousLayoutSha256": "421ba91329f03b9ace090842a7eeaabce268c8cce6ec89d7ccd05b6b15e44bfd",
@@ -469,6 +474,11 @@
           "bytes": 6806,
           "sha256": "4275596c6abb8c11e319f2b968b57b40ebca9e768df72525c3a7a32449cdcc92",
           "scope": "Preserved identity before the 0.31 resource acquisition groups preparation."
+        },
+        {
+          "bytes": 11713,
+          "sha256": "6806b018dfa8cfd3b187a537a5878e05a106b90b8043d341ce202beaeba0ba8a",
+          "scope": "Preserved current identity before the experimental 0.61.0 image-residency documentation successor."
         }
       ]
     },
@@ -612,8 +622,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/CHANGELOG.md",
-      "bytes": 15979,
-      "sha256": "ac70914743e675ccc25db0a25d765eb49ea81aaf8367ed60765d056503a98794",
+      "bytes": 16731,
+      "sha256": "247307e059c093bb9ecd61c1908d888957b51aef196004235f9ea2cb88a4ff3d",
       "identityHistory": [
         {
           "bytes": 25611,
@@ -721,6 +731,11 @@
           "bytes": 61229,
           "sha256": "19a8d0330265302f87dc011700175d9ad384dee262ec40b5bc7e7d3ffe85608f",
           "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+        },
+        {
+          "bytes": 15979,
+          "sha256": "ac70914743e675ccc25db0a25d765eb49ea81aaf8367ed60765d056503a98794",
+          "scope": "Preserved current identity before the experimental 0.61.0 image-residency documentation successor."
         }
       ]
     },
@@ -811,8 +826,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/core-progress.md",
-      "bytes": 11596,
-      "sha256": "13565b349fc347c8473372aa486f1b24c3c4df74d8307714109322a08a60846b",
+      "bytes": 12338,
+      "sha256": "ad30f56fddef12abbaaff422495175399bb439bc270d80da7dfc37d2a538a797",
       "identityHistory": [
         {
           "bytes": 12315,
@@ -883,6 +898,11 @@
           "bytes": 33449,
           "sha256": "2928cea33c19dd353563e4a131af97c3a3ec5f16f6a0fe804157d45b7ef02951",
           "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+        },
+        {
+          "bytes": 11596,
+          "sha256": "13565b349fc347c8473372aa486f1b24c3c4df74d8307714109322a08a60846b",
+          "scope": "Preserved current identity before the experimental 0.61.0 image-residency documentation successor."
         }
       ]
     },
@@ -1400,8 +1420,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/Cns/README.md",
-      "bytes": 8573,
-      "sha256": "3b48b35db7a766dd46bdd8a9128979f443d31b98b0a23dabc31a79eb89f6111e",
+      "bytes": 9464,
+      "sha256": "43e3461cfcb97432883b228703f0d29e48f6242af1f7b0c5fd35a42245516268",
       "identityHistory": [
         {
           "bytes": 6319,
@@ -1520,14 +1540,19 @@
           "bytes": 36744,
           "sha256": "bbf48371034b7494cba0e6ad91d70ed9cfa3a30eb7501319a6e2815176008f3b",
           "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+        },
+        {
+          "bytes": 8573,
+          "sha256": "3b48b35db7a766dd46bdd8a9128979f443d31b98b0a23dabc31a79eb89f6111e",
+          "scope": "Preserved current identity before the experimental 0.61.0 image-residency documentation successor."
         }
       ]
     },
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/Cns/registry/交付.json",
-      "bytes": 369186,
-      "sha256": "4117989cf3fefad766b780a7cdbd1b70f3a69a91fc89051f0876bb1af1621e4a",
+      "bytes": 375674,
+      "sha256": "f793eb035bac70b616f9db5b0f0b36cba2ea3eb4c79b1aac5c47dc2c3d3e0906",
       "identityHistory": [
         {
           "bytes": 50664,
@@ -1661,6 +1686,16 @@
           "bytes": 147162,
           "sha256": "1c7426d8a9ff38cd238664d44f4f0470f9eacf3da6544b8b5bf37dd250c26c99",
           "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+        },
+        {
+          "bytes": 369186,
+          "sha256": "4117989cf3fefad766b780a7cdbd1b70f3a69a91fc89051f0876bb1af1621e4a",
+          "scope": "Preserved current identity before the experimental 0.61.0 image-residency documentation successor."
+        },
+        {
+          "bytes": 374370,
+          "sha256": "8f5233fdb33549ce27e9f3364643d540279fe5c7e325b659fdcc403ecc69c521",
+          "scope": "Preserved publication cutoff before independently accepted finite desktop-result reconciliation."
         }
       ]
     },
@@ -1691,8 +1726,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/Cns/registry/来源.json",
-      "bytes": 388318,
-      "sha256": "45a1d19d826cecc677d27a1554232ac35a924135fa948cd072205cb1d1f5a85a",
+      "bytes": 394318,
+      "sha256": "aec96441f7e58382ca4d0ca835170b109af918c015b352361376f13f695b36f1",
       "identityHistory": [
         {
           "bytes": 74667,
@@ -1821,14 +1856,24 @@
           "bytes": 161878,
           "sha256": "bebd0ac64cc354ca3947cd8f94a551af9797438cc3e81ee217d2c62186256b00",
           "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+        },
+        {
+          "bytes": 388318,
+          "sha256": "45a1d19d826cecc677d27a1554232ac35a924135fa948cd072205cb1d1f5a85a",
+          "scope": "Preserved current identity before the experimental 0.61.0 image-residency documentation successor."
+        },
+        {
+          "bytes": 393029,
+          "sha256": "71686abbc29d16f39238facc343a9d4fad35256ce546cef708964b0def119c11",
+          "scope": "Preserved publication cutoff before independently accepted finite desktop-result reconciliation."
         }
       ]
     },
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/Cns/registry/需求.json",
-      "bytes": 55324,
-      "sha256": "22aae9a7830f9f519c21bd450691cdf352a9e6d281b990fddffded2aa347279e",
+      "bytes": 55388,
+      "sha256": "39a9f363a4c705a039aaacd5b27c8ceff3946c417e4ef31bd163aa84514d2bc3",
       "identityHistory": [
         {
           "bytes": 13892,
@@ -1890,6 +1935,11 @@
           "bytes": 38366,
           "sha256": "1b74764004777d1ad3c427a4b1919da5ceb3d2609e6e072f7e57708c6a8388e8",
           "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+        },
+        {
+          "bytes": 55324,
+          "sha256": "22aae9a7830f9f519c21bd450691cdf352a9e6d281b990fddffded2aa347279e",
+          "scope": "Preserved current identity before the experimental 0.61.0 image-residency documentation successor."
         }
       ]
     },
@@ -1920,8 +1970,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/Cns/当前版本.json",
-      "bytes": 316022,
-      "sha256": "204790bfacf17106f1da7503f1657b3b756d2bc9c51f82f687c5337e1d73597c",
+      "bytes": 320644,
+      "sha256": "ccdb398a54f90e859d5c8a905662b071db6407fd2c69a34bd62769f4db02bd2f",
       "identityHistory": [
         {
           "bytes": 31425,
@@ -2045,14 +2095,36 @@
           "bytes": 124593,
           "sha256": "707bdf8caedbbf114ec7da78233160f18b1150aa56b258c82f081b46b8a5adc5",
           "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+        },
+        {
+          "bytes": 316022,
+          "sha256": "204790bfacf17106f1da7503f1657b3b756d2bc9c51f82f687c5337e1d73597c",
+          "scope": "Preserved current identity before the experimental 0.61.0 image-residency documentation successor."
+        },
+        {
+          "bytes": 319496,
+          "sha256": "80f8518c239573d4a836cebce94ab3aaad7167903d28240a9195f6e71a9e34ad",
+          "scope": "Preserved publication cutoff before independently accepted finite desktop-result reconciliation."
         }
       ]
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
-      "bytes": 136391,
-      "sha256": "266bdc2cd4e751009135e4b71b001bed4a25a5ebf8bf44a6970be81f20a3befa"
+      "bytes": 137467,
+      "sha256": "cd21a82ff4f74ee112e5ef956a9eb29da54a2b145e248df88e69fcee2e0b8a7c",
+      "identityHistory": [
+        {
+          "bytes": 136391,
+          "sha256": "266bdc2cd4e751009135e4b71b001bed4a25a5ebf8bf44a6970be81f20a3befa",
+          "scope": "Preserved current identity before the experimental 0.61.0 image-residency documentation successor."
+        },
+        {
+          "bytes": 137467,
+          "sha256": "50a2803b39acb4ac46501cbe419f2e3e533b92a3b892f9e816096fa339179542",
+          "scope": "Preserved publication cutoff before independently accepted finite desktop-result reconciliation."
+        }
+      ]
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -2081,8 +2153,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/CHANGELOG.md",
-      "bytes": 17925,
-      "sha256": "e66d3a5d0897729dd3e3d3484e75e6350c2032c2df2d3d1fe058e3e8603e6d65",
+      "bytes": 18791,
+      "sha256": "232efacdd180c98fd475afb2a696a4793234de17c21328dfa3b17f3a3c4ef83c",
       "identityHistory": [
         {
           "bytes": 31389,
@@ -2190,6 +2262,11 @@
           "bytes": 70953,
           "sha256": "ec4f89dfbd1cec1c7ed0f575df0e540956e2921596c4c1dc5552f31eb5fc6b51",
           "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+        },
+        {
+          "bytes": 17925,
+          "sha256": "e66d3a5d0897729dd3e3d3484e75e6350c2032c2df2d3d1fe058e3e8603e6d65",
+          "scope": "Preserved current identity before the experimental 0.61.0 image-residency documentation successor."
         }
       ]
     },
@@ -2202,8 +2279,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/en/current-version.json",
-      "bytes": 317327,
-      "sha256": "2ae899cf1eddf08e8ec174b3c14197e2f80cf92ba112bfe1fb092ca880bcf46c",
+      "bytes": 321957,
+      "sha256": "717c3a7067570dff50af5d9c7628ddb9bd0ab159896b17781b24237cabce1b1c",
       "identityHistory": [
         {
           "bytes": 31946,
@@ -2327,6 +2404,16 @@
           "bytes": 125478,
           "sha256": "369370ef361d0ab5b657d0be7d4d19abd3358a0331414ffaf85ed5ba39053431",
           "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+        },
+        {
+          "bytes": 317327,
+          "sha256": "2ae899cf1eddf08e8ec174b3c14197e2f80cf92ba112bfe1fb092ca880bcf46c",
+          "scope": "Preserved current identity before the experimental 0.61.0 image-residency documentation successor."
+        },
+        {
+          "bytes": 320808,
+          "sha256": "a2ac8cb105dbb0465a572716e4dc541c34074202f1d03b879418ac84b340e694",
+          "scope": "Preserved publication cutoff before independently accepted finite desktop-result reconciliation."
         }
       ]
     },
@@ -2459,8 +2546,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/core-progress.md",
-      "bytes": 13185,
-      "sha256": "ac32601e9c407b4bcfffe707ca43f7a19ed67d0f8f6cf3582b8d2f8d96d1f8c0",
+      "bytes": 14041,
+      "sha256": "503576a5cbb378a8d8db65a725f5124e5aca6fabe8fa5d9e63028037cfd795bd",
       "identityHistory": [
         {
           "bytes": 14004,
@@ -2531,6 +2618,11 @@
           "bytes": 37257,
           "sha256": "759a972beddcffb99e5819f002d975b70ae02c07fbdb3ad02a825c63999f6b5c",
           "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+        },
+        {
+          "bytes": 13185,
+          "sha256": "ac32601e9c407b4bcfffe707ca43f7a19ed67d0f8f6cf3582b8d2f8d96d1f8c0",
+          "scope": "Preserved current identity before the experimental 0.61.0 image-residency documentation successor."
         }
       ]
     },
@@ -3000,8 +3092,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/en/README.md",
-      "bytes": 9761,
-      "sha256": "bc9156845e1d8cfc93e43ee816b95f27ac20ad6efbe12abf91f8e6ea39dfe73d",
+      "bytes": 10781,
+      "sha256": "82e285238c2b4f5ba55e5398070456b5c8b3177938a95248bfdb71c144cf9047",
       "identityHistory": [
         {
           "bytes": 7397,
@@ -3125,6 +3217,11 @@
           "bytes": 40417,
           "sha256": "790751edc5b7e66e6031f9e24e920a18a544f3623db0a4bedcf7de1fac073ee3",
           "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+        },
+        {
+          "bytes": 9761,
+          "sha256": "bc9156845e1d8cfc93e43ee816b95f27ac20ad6efbe12abf91f8e6ea39dfe73d",
+          "scope": "Preserved current identity before the experimental 0.61.0 image-residency documentation successor."
         }
       ]
     },
@@ -3149,8 +3246,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/en/registry/deliverables.json",
-      "bytes": 376632,
-      "sha256": "f76a96bcab7b82f253f7c1bda21aa4eb84ba139e0327577f9e711462f0b9e4f7",
+      "bytes": 383261,
+      "sha256": "608956519ff1065cf203446222c22597f623eeb2d19f336890b506a468947a74",
       "identityHistory": [
         {
           "bytes": 54446,
@@ -3289,6 +3386,16 @@
           "bytes": 152893,
           "sha256": "6e546c7920f944515816f537a4564fcb46e34f001b0e992154a353798c80ae90",
           "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+        },
+        {
+          "bytes": 376632,
+          "sha256": "f76a96bcab7b82f253f7c1bda21aa4eb84ba139e0327577f9e711462f0b9e4f7",
+          "scope": "Preserved current identity before the experimental 0.61.0 image-residency documentation successor."
+        },
+        {
+          "bytes": 381952,
+          "sha256": "86376f67cbdefb3239df6cf7ddb3afe00e7b35333ceb8311183c209c4ca6d54b",
+          "scope": "Preserved publication cutoff before independently accepted finite desktop-result reconciliation."
         }
       ]
     },
@@ -3301,8 +3408,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/en/registry/requirements.json",
-      "bytes": 57704,
-      "sha256": "052154a434a6d5c0b9fdb5f42d6d8da6e70384b6c584160a96b1d4d1060fc1dc",
+      "bytes": 57768,
+      "sha256": "a0df6a823fa2e81669caad82ed58f637745e46c4e6aa7d3ff946d7ddc48aaf12",
       "identityHistory": [
         {
           "bytes": 15989,
@@ -3364,14 +3471,19 @@
           "bytes": 40582,
           "sha256": "3e4b3bea1cd6991377e8c4a08693e544023158f3c4851e48ad0e24f5f0b9995f",
           "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+        },
+        {
+          "bytes": 57704,
+          "sha256": "052154a434a6d5c0b9fdb5f42d6d8da6e70384b6c584160a96b1d4d1060fc1dc",
+          "scope": "Preserved current identity before the experimental 0.61.0 image-residency documentation successor."
         }
       ]
     },
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "knowledge-base/en/registry/sources.json",
-      "bytes": 398872,
-      "sha256": "e4fc7e5b84c9ebd30b545fc7de076acd5faa0ed2269f4514340bad6002869135",
+      "bytes": 404958,
+      "sha256": "4b864773be047fdee678ef7764c0eb6554f6949005a4f2fabfc487a31638b7b3",
       "identityHistory": [
         {
           "bytes": 82270,
@@ -3500,6 +3612,16 @@
           "bytes": 171222,
           "sha256": "b94eb644fbcc8cf2e6001c8545c453fcd50d1c718702b0912b5e4730634a41f6",
           "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+        },
+        {
+          "bytes": 398872,
+          "sha256": "e4fc7e5b84c9ebd30b545fc7de076acd5faa0ed2269f4514340bad6002869135",
+          "scope": "Preserved current identity before the experimental 0.61.0 image-residency documentation successor."
+        },
+        {
+          "bytes": 403665,
+          "sha256": "ae1ea91bee6eac03bb827d77dda731f247ffb0a1d6b3b3526c63712d21f970e9",
+          "scope": "Preserved publication cutoff before independently accepted finite desktop-result reconciliation."
         }
       ]
     },
@@ -3530,8 +3652,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/README.md",
-      "bytes": 2766,
-      "sha256": "b971b08257838330c2fdd0a3cd712754c2edc93a3b1fc70a1030f4d0c1238433",
+      "bytes": 3638,
+      "sha256": "1acef867ca888d639cabdfc55e2a43d7429d909db4ed3c66a2b326b1e3ac046b",
       "identityHistory": [
         {
           "bytes": 899,
@@ -3572,14 +3694,19 @@
           "bytes": 16394,
           "sha256": "0f2e47a615ec417bc87104dd71ad3a23b8b9871a1be1a927a363e128a4793530",
           "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+        },
+        {
+          "bytes": 2766,
+          "sha256": "b971b08257838330c2fdd0a3cd712754c2edc93a3b1fc70a1030f4d0c1238433",
+          "scope": "Preserved current identity before the experimental 0.61.0 image-residency documentation successor."
         }
       ]
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/README.zh-CN.md",
-      "bytes": 2253,
-      "sha256": "e953cdac876b1302f1c223cc2bb93ff89ffeb50cacf63d0627cf1b0a48e90803",
+      "bytes": 3013,
+      "sha256": "82270231e80751a8b63cf6ba1a150a976c4bcef3ba83e2aa31053e2ee4d08bcb",
       "identityHistory": [
         {
           "bytes": 637,
@@ -3620,6 +3747,11 @@
           "bytes": 15264,
           "sha256": "f2a11a2b2e21688ff09f5d43597890e1713af9b6d973ce21ae209e821eaf1458",
           "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+        },
+        {
+          "bytes": 2253,
+          "sha256": "e953cdac876b1302f1c223cc2bb93ff89ffeb50cacf63d0627cf1b0a48e90803",
+          "scope": "Preserved current identity before the experimental 0.61.0 image-residency documentation successor."
         }
       ]
     },
@@ -3654,8 +3786,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "6daf8f0cb198b1c83f4158c66c454d9e9ce60bfce8b04129dd06842c9b1e4bf2",
-      "bytes": 331962,
+      "sha256": "e8edb4d37f234df5bc8eb600014cb6b227a453f9b5b9e7a5f2a0c9dc4cb159ba",
+      "bytes": 332676,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -3830,6 +3962,21 @@
           "bytes": 240252,
           "sha256": "7439adcf2d3e7e2a288f110b991dd3ff204a41edb8e7020757817f47b1e5f98d",
           "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+        },
+        {
+          "bytes": 331962,
+          "sha256": "6daf8f0cb198b1c83f4158c66c454d9e9ce60bfce8b04129dd06842c9b1e4bf2",
+          "scope": "Preserved current identity before the experimental 0.61.0 image-residency documentation successor."
+        },
+        {
+          "bytes": 332676,
+          "sha256": "60a2ea6961ee18fc3e698ac7dc204cfd6eef92af51d9471c0aa40dc831e54236",
+          "scope": "Preserved documentation application cutoff before exact current retained critical-comment identity refresh."
+        },
+        {
+          "bytes": 332676,
+          "sha256": "dc7668880598d4c5ee24722d1e4dff36be42b899b761700ae135575368eef30b",
+          "scope": "Preserved publication cutoff before independently accepted finite desktop-result reconciliation."
         }
       ]
     },
@@ -4252,8 +4399,8 @@
     },
     {
       "path": "packages/engine/web/WebGPUHost.ts",
-      "sha256": "c0e9555e692e19d42ecc0bf443764c5c301d6f76febcf4d16f57c17853254e49",
-      "bytes": 80902,
+      "sha256": "d3d75dbdb3e1fe906301344e06ac25275189e8f7fe481abff1b98563f9fc832a",
+      "bytes": 92002,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousLayoutPath": "packages/engine/web/WebGPUHost.ts",
       "previousLayoutSha256": "f07f59068f1c65f1247500ca8665747bb957d99e07286b16e3d6d08be3da51bc",
@@ -4262,6 +4409,11 @@
           "bytes": 74888,
           "sha256": "2679e634e35c3841daa499f59cb3279087b33245267af187ae78995a29019c72",
           "scope": "Preserved identity before textured scene host 0.39.0."
+        },
+        {
+          "bytes": 80902,
+          "sha256": "c0e9555e692e19d42ecc0bf443764c5c301d6f76febcf4d16f57c17853254e49",
+          "scope": "Preserved current identity before the experimental 0.61.0 image-residency documentation successor."
         }
       ]
     },
@@ -4708,8 +4860,8 @@
     {
       "path": "README.md",
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
-      "sha256": "dd5b06ee72b2b1bb48613714b15de461cae0df6d336731be0b601cf849c4f1f7",
-      "bytes": 9386,
+      "sha256": "130c975f560c3e9ebc8762429ae419e9c6aaea87d8213bf3aa56aead068f88f9",
+      "bytes": 10392,
       "previousRevisionSha256": "199156443d499d5012f1224263a1a3ee9994e5ba38ee067bceeb2ad865ae8167",
       "previousLayoutPath": "README.en.md",
       "previousLayoutSha256": "f40ec41ca699cd0b9138fbdf4a268080038f583ae11e78c4f37093a6b7095f57",
@@ -4841,13 +4993,18 @@
           "bytes": 80195,
           "sha256": "8014f170772d0ebf1bb84096033cf17b1246e45df3fc4bf50a9d8884816fa74b",
           "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+        },
+        {
+          "bytes": 9386,
+          "sha256": "dd5b06ee72b2b1bb48613714b15de461cae0df6d336731be0b601cf849c4f1f7",
+          "scope": "Preserved current identity before the experimental 0.61.0 image-residency documentation successor."
         }
       ]
     },
     {
       "path": "README.zh-CN.md",
-      "sha256": "95a33e81a777e4ed523ff337b23037bd9c680bcdf5a2b2039cee6c448a21e8ab",
-      "bytes": 8712,
+      "sha256": "c98449b839f67ff2ff188a68a8735c8af1dc845e53580af700f4f989425a557d",
+      "bytes": 9609,
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "previousPublicSha256": "7ec80b8575a700b6a2628eb0322f2e770bb2284859f68ec5e0eb6530154a6699",
       "previousRevisionSha256": "7a1d72019db7cb6075d7c3a3bd4075f7c069d527b6e31d992a69333cb126b6c3",
@@ -4986,6 +5143,11 @@
           "bytes": 79296,
           "sha256": "d6e1a270856a587149d193a07e68485765e8b150602c25b8f7b1d048c56b2f09",
           "scope": "Preserved recorded origin identity before the finite 0.45 SpriteSheet curation; older historical scopes remain unchanged."
+        },
+        {
+          "bytes": 8712,
+          "sha256": "95a33e81a777e4ed523ff337b23037bd9c680bcdf5a2b2039cee6c448a21e8ab",
+          "scope": "Preserved current identity before the experimental 0.61.0 image-residency documentation successor."
         }
       ]
     },
@@ -6220,8 +6382,8 @@
     {
       "path": "tests/b1-webgpu-verifier.test.mjs",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 21544,
-      "sha256": "29d5908d78bb7f7f0cd5a241daa3053711bd44b72cd205529a6689c5ab29b530",
+      "bytes": 24646,
+      "sha256": "affd3ed73dabd6b9776238f2214b08fe5db4833cdaad68db8cda224c76513d8b",
       "identityHistory": [
         {
           "bytes": 17519,
@@ -6232,6 +6394,11 @@
           "bytes": 21544,
           "sha256": "d2c048b56c196ff0b15305a8edb08fcaae0cbe86307b32ccbec3130440af4140",
           "scope": "Preserved before exact static pin assertion successor."
+        },
+        {
+          "bytes": 21544,
+          "sha256": "29d5908d78bb7f7f0cd5a241daa3053711bd44b72cd205529a6689c5ab29b530",
+          "scope": "Preserved current identity before the experimental 0.61.0 image-residency documentation successor."
         }
       ]
     },
@@ -6652,8 +6819,15 @@
     {
       "path": "tests/textured-webgpu-host.test.mjs",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 41204,
-      "sha256": "6556d44556f995736658552ecae0b56d994fa5a877fadc8408c0d709071056ae"
+      "bytes": 41517,
+      "sha256": "a352e47049a1782a2d1c3093211c146bece994e3d8d6136003711afda3b6ce9e",
+      "identityHistory": [
+        {
+          "bytes": 41204,
+          "sha256": "6556d44556f995736658552ecae0b56d994fa5a877fadc8408c0d709071056ae",
+          "scope": "Preserved current identity before the experimental 0.61.0 image-residency documentation successor."
+        }
+      ]
     },
     {
       "path": "tests/textured-webgpu-types.test.mjs",
@@ -6718,8 +6892,15 @@
     {
       "path": "tests/webgpu-image-host.test.mjs",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 39831,
-      "sha256": "158b1560f0bb95c3a8a58ddc0322bc89bc78a3947bfbc5b139679d7b1ab8b24e"
+      "bytes": 40132,
+      "sha256": "c2272f72258efbe7b41b14540923d5ce9dc559782ffd59a49d819708b9905546",
+      "identityHistory": [
+        {
+          "bytes": 39831,
+          "sha256": "158b1560f0bb95c3a8a58ddc0322bc89bc78a3947bfbc5b139679d7b1ab8b24e",
+          "scope": "Preserved current identity before the experimental 0.61.0 image-residency documentation successor."
+        }
+      ]
     },
     {
       "path": "tests/webgpu-image-pass.test.mjs",
@@ -6852,8 +7033,8 @@
     {
       "path": "tools/verify-webgpu-b1.mjs",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 48355,
-      "sha256": "4cf10a34ce7f00cd44a835b81a1491a09de4e1eaf97d93b0952dc4aa784abc30",
+      "bytes": 48746,
+      "sha256": "6eccd892191a6594d4d8c79b776c217bdf0d60a699cc86ff03735bbcf58c9066",
       "identityHistory": [
         {
           "bytes": 38603,
@@ -6874,6 +7055,11 @@
           "bytes": 48332,
           "sha256": "b9f964458887c23411d92ee91441337ce3559ec7a8e91b9697a1737246719a3f",
           "scope": "Preserved identity before actual browser successor curation."
+        },
+        {
+          "bytes": 48355,
+          "sha256": "4cf10a34ce7f00cd44a835b81a1491a09de4e1eaf97d93b0952dc4aa784abc30",
+          "scope": "Preserved current identity before the experimental 0.61.0 image-residency documentation successor."
         }
       ]
     },
@@ -8750,8 +8936,15 @@
     {
       "path": "tools/verify-textured-scene-webgpu.mjs",
       "bytes": 45404,
-      "sha256": "11b4392791e2ba7c5c95c2c9a615b7af91ac5b5ea3db3d37ddba03d9c32340b9",
-      "originRole": "First-party combined-host browser oracle, original synthetic readback or public successor."
+      "sha256": "a97c9f5ed2159b27394961df63d07202d43caf09d15286a43f9dc040aca986b0",
+      "originRole": "First-party combined-host browser oracle, original synthetic readback or public successor.",
+      "identityHistory": [
+        {
+          "bytes": 45404,
+          "sha256": "11b4392791e2ba7c5c95c2c9a615b7af91ac5b5ea3db3d37ddba03d9c32340b9",
+          "scope": "Preserved current identity before the experimental 0.61.0 image-residency documentation successor."
+        }
+      ]
     },
     {
       "path": "tools/textured-scene-webgpu/index.html",
@@ -9604,9 +9797,16 @@
     },
     {
       "path": "tests/spritesheet-boundaries.test.mjs",
-      "bytes": 10888,
-      "sha256": "6d7f15a113eea42630078185d909f2c7e9c8e2223a70f08a5b7fee0a1d9380d2",
-      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
+      "bytes": 13272,
+      "sha256": "6d295053d70412f2b749e613facb42767027cca7144f8d50fbd1576223c8f8f8",
+      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review.",
+      "identityHistory": [
+        {
+          "bytes": 10888,
+          "sha256": "6d7f15a113eea42630078185d909f2c7e9c8e2223a70f08a5b7fee0a1d9380d2",
+          "scope": "Preserved current identity before the experimental 0.61.0 image-residency documentation successor."
+        }
+      ]
     },
     {
       "path": "tests/spritesheet-fault-child.mjs",
@@ -9676,9 +9876,16 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "bytes": 102581,
-      "sha256": "8c020a5f04a20c93b549c08d20bddc68af3e26b6a873259dcfb75a113b1a0f71",
-      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
+      "bytes": 103976,
+      "sha256": "d43aba86b12f157e77f6cdad11aebc12951a724f843fe89472e6686a0ce3311b",
+      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review.",
+      "identityHistory": [
+        {
+          "bytes": 102581,
+          "sha256": "8c020a5f04a20c93b549c08d20bddc68af3e26b6a873259dcfb75a113b1a0f71",
+          "scope": "Preserved current identity before the experimental 0.61.0 image-residency documentation successor."
+        }
+      ]
     },
     {
       "path": "tools/spritesheet-types.mjs",
@@ -9892,15 +10099,29 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "bytes": 104796,
-      "sha256": "8d4a6fd68e8ed348ff9f7f32a8df7ca0f3cc921fe7350eaa420f69dabd9a1704",
-      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+      "bytes": 106286,
+      "sha256": "f829431b0cce2ec34fb987c03c0c5f5ccdf4727f3b8a26947e146bd23ffa3a23",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
+      "identityHistory": [
+        {
+          "bytes": 104796,
+          "sha256": "8d4a6fd68e8ed348ff9f7f32a8df7ca0f3cc921fe7350eaa420f69dabd9a1704",
+          "scope": "Preserved current identity before the experimental 0.61.0 image-residency documentation successor."
+        }
+      ]
     },
     {
       "path": "tests/types/atlas-import-diagnostic-expectations.json",
       "bytes": 255007,
-      "sha256": "49eb0ef3e09162f87f9abbd8d727ce823f522638a2e091a44762e1617aa3dc17",
-      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+      "sha256": "2eb84961bfb7cee39a94dbe6439f5c16be4e961b4c72758ac3ee22e697e45628",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
+      "identityHistory": [
+        {
+          "bytes": 255007,
+          "sha256": "49eb0ef3e09162f87f9abbd8d727ce823f522638a2e091a44762e1617aa3dc17",
+          "scope": "Preserved current identity before the experimental 0.61.0 image-residency documentation successor."
+        }
+      ]
     },
     {
       "path": "tests/types/atlas-import-import-negative.ts",
@@ -9941,14 +10162,28 @@
     {
       "path": "tools/atlas-import-boundary.mjs",
       "bytes": 10072,
-      "sha256": "7af4653657a9c9b015d3eac0e170c49065e331795894e3e38e886bebdaa8232f",
-      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+      "sha256": "3f12c928026766c2bc825a08ae674fc2583ec7782d5d0017866524aee5553d31",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
+      "identityHistory": [
+        {
+          "bytes": 10072,
+          "sha256": "7af4653657a9c9b015d3eac0e170c49065e331795894e3e38e886bebdaa8232f",
+          "scope": "Preserved current identity before the experimental 0.61.0 image-residency documentation successor."
+        }
+      ]
     },
     {
       "path": "tools/atlas-import-types.mjs",
       "bytes": 6001,
-      "sha256": "c013f098d84808d5552e0d31e8b8887ea4c7272ac85fb5e15c3714c8563cd96f",
-      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+      "sha256": "410a10b2bd88bb3fff54721f9b85c777fbc258e17d5b880652f79ca0d456c77e",
+      "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
+      "identityHistory": [
+        {
+          "bytes": 6001,
+          "sha256": "c013f098d84808d5552e0d31e8b8887ea4c7272ac85fb5e15c3714c8563cd96f",
+          "scope": "Preserved current identity before the experimental 0.61.0 image-residency documentation successor."
+        }
+      ]
     },
     {
       "path": "tests/atlas-import-composition.test.mjs",
@@ -10027,6 +10262,68 @@
       "bytes": 3538,
       "sha256": "8eebf61aa2cb5127870f4cbad129d18f9dc8cfd00a62eb01c1379a7bc3bad03e",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
+    },
+    {
+      "path": "knowledge-base/en/docs/gpu-image-residency-contract.md",
+      "bytes": 10659,
+      "sha256": "654c411a62a2b94c945efd6c5fad172c235e195f089880eeef45119c987ec2d3",
+      "originRole": "First-party experimental WebGPU image-residency contract, controlled evidence or paired publication metadata; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/gpu-image-residency-contract.md",
+      "bytes": 9098,
+      "sha256": "d5e0665911ba369b3befb583b88dfbb08fdf957793ae71dc121f72ce41ce5992",
+      "originRole": "First-party experimental WebGPU image-residency contract, controlled evidence or paired publication metadata; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/gpu-image-residency-evidence.md",
+      "bytes": 10523,
+      "sha256": "1e754f62a6d57201c9b1806e3eb2bf74a313c0688087f4b8e474ca6ba2e2ef9d",
+      "originRole": "First-party experimental WebGPU image-residency contract, controlled evidence or paired publication metadata; Apache-2.0.",
+      "identityHistory": [
+        {
+          "bytes": 8735,
+          "sha256": "7cb88355e1a5d30cf6c835e6809aec1dd24a57bf5f653df195e3ee4bac4e15e9",
+          "scope": "Preserved publication cutoff before independently accepted finite desktop-result reconciliation."
+        }
+      ]
+    },
+    {
+      "path": "knowledge-base/Cns/docs/gpu-image-residency-evidence.md",
+      "bytes": 9266,
+      "sha256": "205f522c9a05e70ffac227b214ce26654e54f7ac7463d9602a958796b75966c8",
+      "originRole": "First-party experimental WebGPU image-residency contract, controlled evidence or paired publication metadata; Apache-2.0.",
+      "identityHistory": [
+        {
+          "bytes": 7696,
+          "sha256": "2e023ce74a1c83038df71e29c790e1911fd4bc12f59b02186ea9863cf5cae1e1",
+          "scope": "Preserved publication cutoff before independently accepted finite desktop-result reconciliation."
+        }
+      ]
+    },
+    {
+      "path": "tests/fixtures/gpu-image-residency.mjs",
+      "bytes": 22994,
+      "sha256": "ec734a18c64c51fa21f70735351f5a6b0461c445672c204124234f5f9806caad",
+      "originRole": "First-party experimental WebGPU image-residency contract, controlled evidence or paired publication metadata; Apache-2.0."
+    },
+    {
+      "path": "tests/gpu-image-residency.test.mjs",
+      "bytes": 26554,
+      "sha256": "5a6a4f58519344bee8a7318f92c18b45353efa84e0dee5c7ee217e578d2e6b92",
+      "originRole": "First-party experimental WebGPU image-residency contract, controlled evidence or paired publication metadata; Apache-2.0."
+    },
+    {
+      "path": "tests/gpu-image-residency-lifecycle.test.mjs",
+      "bytes": 29304,
+      "sha256": "1887446632fabf23f7de4183743834523622ac4ccd85cbf839f390231a209d82",
+      "originRole": "First-party experimental WebGPU image-residency contract, controlled evidence or paired publication metadata; Apache-2.0."
+    },
+    {
+      "path": "tests/browser-png-boundaries.test.mjs",
+      "bytes": 13635,
+      "sha256": "36a869fbea2349e4e696b44b1518eed945fae8f870327700b88f378ab74374f6",
+      "originRole": "First-party experimental WebGPU image-residency contract, controlled evidence or paired publication metadata; Apache-2.0."
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",
@@ -29151,6 +29448,411 @@
       "documentation-layout",
       "localization",
       "source-origin"
+    ]
+  },
+  "gpuImageResidencyWorkPackage": {
+    "engineeringPreview": "0.61.0",
+    "sourceId": "S115",
+    "deliverableId": "V066",
+    "date": "2026-10-17",
+    "status": "SOURCE_UNIT_FOCUSED_RETAINED_FINITE_NATIVE_ACCEPTED_FINAL_GATES_DELIVERY_PENDING",
+    "scopeStatus": "EXPERIMENTAL_INTERNAL_EXACT_CROP_IMAGE_RESIDENCY",
+    "contract": "en/docs/gpu-image-residency-contract.md",
+    "evidence": "en/docs/gpu-image-residency-evidence.md",
+    "productSource": "packages/engine/web/WebGPUHost.ts",
+    "newPackageSubpaths": 0,
+    "newSDKRuntimeExports": 0,
+    "newSDKTypeExports": 0,
+    "newRuntimeCodeDependency": false,
+    "packageVersionUnchanged": "0.0.0",
+    "hostProtocolChanged": false,
+    "hostProtocolVersion": "1.0",
+    "logicalImagePoolBytes": 33554432,
+    "maxReadyEntries": 256,
+    "unit": {
+      "status": "INDEPENDENTLY_ACCEPTED_SOURCE_CONTROL_AND_ACTUAL_UNIT_RESULT",
+      "healthyBeforeCases": 110,
+      "restoredAfterCases": 110,
+      "distinctCases": 110,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "healthyWitnessPeakBytes": 29361124,
+      "assignedWitnessPeakBytes": 33555432,
+      "assignedExcessBytes": 1000,
+      "restoredWitnessPeakBytes": 29361124,
+      "healthyRestoredWitnessBytesIdentical": true,
+      "allThreeWitnessesSafeClose": true,
+      "allThreeWitnessesTerminalQ": 0,
+      "independentResultReview": {
+        "bytes": 7941,
+        "sha256": "653d71025182dabc53c7a774531a2d7939c4311e6f39930940cafe08bd0d1073",
+        "identityOnlyNotDistributed": true,
+        "openFindings": 0
+      },
+      "physicalVRAMClaim": false,
+      "performanceClaim": false
+    },
+    "newCacheSpecificNativeMatrix": "DEFERRED_OPEN",
+    "newNativeCollectorAccepted": false,
+    "newNativeMatrixAccepted": false,
+    "manualTimerEvidence": "MANUAL_TIMEOUT_AUTHORITY_ONLY_NOT_ACTUAL_ELAPSED_17MS",
+    "actualDeviceLossRecovery": "UNVERIFIED",
+    "targetDevicePerformance": "UNVERIFIED",
+    "physicalGPUReclamation": "UNVERIFIED",
+    "completeUI_P04": "OPEN",
+    "fullSpineR020V020": "OPEN",
+    "complete3D": "OPEN",
+    "migrationR008V006": "OPEN",
+    "firstPartyLicense": "Apache-2.0",
+    "remoteCIPassClaim": false,
+    "historicalCutoffsPreserved": true,
+    "retainedFocused": {
+      "status": "INDEPENDENTLY_ACCEPTED_SOURCE_AND_FOCUSED_RESULTS",
+      "changedSourceFiles": 12,
+      "ordinaryLifetimeTests": 2,
+      "ordinaryLifetimePass": 2,
+      "strictAccepted": true,
+      "negativeCompilerTuples": 7,
+      "importNegativeCompilerTuples": 4,
+      "sourcePairControlsAccepted": true,
+      "preliminaryFocused": {
+        "tests": 180,
+        "pass": 179,
+        "fail": 1,
+        "obsoleteIdleExpectationRepaired": true
+      },
+      "final180PassClaim": false,
+      "fullFourteenStageAcceptance": "PENDING",
+      "independentReview": {
+        "bytes": 12217,
+        "sha256": "381af830f63268f7ff3f359447c8908cf9194df26581c9d85989ae41420f859f",
+        "identityOnlyNotDistributed": true,
+        "openFindings": 0
+      }
+    },
+    "selectedExistingNative": {
+      "status": "INDEPENDENTLY_ACCEPTED_FINITE_SAVED_RESULTS",
+      "atlasImportCanvasWebGPU": {
+        "profiles": 2,
+        "fullFrames": 4,
+        "width": 24,
+        "height": 16,
+        "comparedChannels": 6144,
+        "differences": 0,
+        "tolerance": 0
+      },
+      "combinedTexturedScene": {
+        "frames": 2,
+        "width": 64,
+        "height": 64,
+        "literalPixels": 24,
+        "comparedChannels": 96,
+        "differences": 0,
+        "tolerance": 0,
+        "wholeFrameComparison": false,
+        "oracleOnlyControl": "EXPECTED_PIXEL_REJECTION",
+        "extraNativeControlFrames": 0
+      },
+      "totalReadbacks": 6,
+      "totalRetainedRGBABytes": 38912,
+      "nativeHitOrUploadCountClaim": false,
+      "cooperativeCleanupAccepted": true,
+      "actualLaunchedExecutableIdentity": "UNBOUND",
+      "osDescendantRetirement": "UNBOUND",
+      "environment": {
+        "node": "24.19.0",
+        "platform": "Windows x64",
+        "edge": "155.0.4283.45",
+        "playwright": "1.62.1",
+        "channel": "msedge",
+        "callerAddedFlags": false
+      },
+      "independentResultReview": {
+        "bytes": 8440,
+        "sha256": "2d721e04295062d1e2c71d5ca9a9062d46ae1f7ecea05051bd29be4ea2cea341",
+        "identityOnlyNotDistributed": true,
+        "openFindings": 0
+      }
+    },
+    "optionalReplay": "NOT_RUN_AT_CURRENT_SOURCE",
+    "otherHistoricalNative": "NOT_RUN_AT_CURRENT_SOURCE",
+    "finalNormalPrepush": "PENDING",
+    "committedSnapshotPushHook": "PENDING",
+    "actualGitDelivery": "PENDING"
+  },
+  "gpuImageResidencyMetadataSuccessor": {
+    "status": "CURRENT_READING_IDENTITIES_FINAL_REVIEW_GATES_DELIVERY_PENDING",
+    "previousSourceOrigin": {
+      "path": "source-origin.json",
+      "bytes": 1296922,
+      "sha256": "10c6466d0528a3075b3a3756dccfd050dac9e05dec90806c98c96b994c0f305c",
+      "present": true
+    },
+    "previousCurrentFileRecords": [
+      {
+        "path": "README.md",
+        "bytes": 9386,
+        "sha256": "dd5b06ee72b2b1bb48613714b15de461cae0df6d336731be0b601cf849c4f1f7"
+      },
+      {
+        "path": "README.zh-CN.md",
+        "bytes": 8712,
+        "sha256": "95a33e81a777e4ed523ff337b23037bd9c680bcdf5a2b2039cee6c448a21e8ab"
+      },
+      {
+        "path": "DOCUMENTATION.md",
+        "bytes": 12942,
+        "sha256": "d978e0b3ffe077a00cc21ed5c8fb9f1a3197e404fdc831789673546c6206559a"
+      },
+      {
+        "path": "DOCUMENTATION.zh-CN.md",
+        "bytes": 11713,
+        "sha256": "6806b018dfa8cfd3b187a537a5878e05a106b90b8043d341ce202beaeba0ba8a"
+      },
+      {
+        "path": "knowledge-base/README.md",
+        "bytes": 2766,
+        "sha256": "b971b08257838330c2fdd0a3cd712754c2edc93a3b1fc70a1030f4d0c1238433"
+      },
+      {
+        "path": "knowledge-base/README.zh-CN.md",
+        "bytes": 2253,
+        "sha256": "e953cdac876b1302f1c223cc2bb93ff89ffeb50cacf63d0627cf1b0a48e90803"
+      },
+      {
+        "path": "knowledge-base/en/README.md",
+        "bytes": 9761,
+        "sha256": "bc9156845e1d8cfc93e43ee816b95f27ac20ad6efbe12abf91f8e6ea39dfe73d"
+      },
+      {
+        "path": "knowledge-base/Cns/README.md",
+        "bytes": 8573,
+        "sha256": "3b48b35db7a766dd46bdd8a9128979f443d31b98b0a23dabc31a79eb89f6111e"
+      },
+      {
+        "path": "knowledge-base/en/docs/core-progress.md",
+        "bytes": 13185,
+        "sha256": "ac32601e9c407b4bcfffe707ca43f7a19ed67d0f8f6cf3582b8d2f8d96d1f8c0"
+      },
+      {
+        "path": "knowledge-base/Cns/docs/core-progress.md",
+        "bytes": 11596,
+        "sha256": "13565b349fc347c8473372aa486f1b24c3c4df74d8307714109322a08a60846b"
+      },
+      {
+        "path": "knowledge-base/en/CHANGELOG.md",
+        "bytes": 17925,
+        "sha256": "e66d3a5d0897729dd3e3d3484e75e6350c2032c2df2d3d1fe058e3e8603e6d65"
+      },
+      {
+        "path": "knowledge-base/Cns/CHANGELOG.md",
+        "bytes": 15979,
+        "sha256": "ac70914743e675ccc25db0a25d765eb49ea81aaf8367ed60765d056503a98794"
+      },
+      {
+        "path": "knowledge-base/Cns/registry/来源.json",
+        "bytes": 388318,
+        "sha256": "45a1d19d826cecc677d27a1554232ac35a924135fa948cd072205cb1d1f5a85a"
+      },
+      {
+        "path": "knowledge-base/Cns/registry/交付.json",
+        "bytes": 369186,
+        "sha256": "4117989cf3fefad766b780a7cdbd1b70f3a69a91fc89051f0876bb1af1621e4a"
+      },
+      {
+        "path": "knowledge-base/Cns/registry/需求.json",
+        "bytes": 55324,
+        "sha256": "22aae9a7830f9f519c21bd450691cdf352a9e6d281b990fddffded2aa347279e"
+      },
+      {
+        "path": "knowledge-base/Cns/当前版本.json",
+        "bytes": 316022,
+        "sha256": "204790bfacf17106f1da7503f1657b3b756d2bc9c51f82f687c5337e1d73597c"
+      },
+      {
+        "path": "knowledge-base/en/registry/sources.json",
+        "bytes": 398872,
+        "sha256": "e4fc7e5b84c9ebd30b545fc7de076acd5faa0ed2269f4514340bad6002869135"
+      },
+      {
+        "path": "knowledge-base/en/registry/deliverables.json",
+        "bytes": 376632,
+        "sha256": "f76a96bcab7b82f253f7c1bda21aa4eb84ba139e0327577f9e711462f0b9e4f7"
+      },
+      {
+        "path": "knowledge-base/en/registry/requirements.json",
+        "bytes": 57704,
+        "sha256": "052154a434a6d5c0b9fdb5f42d6d8da6e70384b6c584160a96b1d4d1060fc1dc"
+      },
+      {
+        "path": "knowledge-base/en/current-version.json",
+        "bytes": 317327,
+        "sha256": "2ae899cf1eddf08e8ec174b3c14197e2f80cf92ba112bfe1fb092ca880bcf46c"
+      },
+      {
+        "path": "knowledge-base/documentation-layout.json",
+        "bytes": 136391,
+        "sha256": "266bdc2cd4e751009135e4b71b001bed4a25a5ebf8bf44a6970be81f20a3befa"
+      },
+      {
+        "path": "localization.json",
+        "bytes": 331962,
+        "sha256": "6daf8f0cb198b1c83f4158c66c454d9e9ce60bfce8b04129dd06842c9b1e4bf2"
+      },
+      {
+        "path": "packages/engine/web/WebGPUHost.ts",
+        "bytes": 80902,
+        "sha256": "c0e9555e692e19d42ecc0bf443764c5c301d6f76febcf4d16f57c17853254e49"
+      },
+      {
+        "path": "tests/b1-webgpu-verifier.test.mjs",
+        "bytes": 21544,
+        "sha256": "29d5908d78bb7f7f0cd5a241daa3053711bd44b72cd205529a6689c5ab29b530"
+      },
+      {
+        "path": "tests/spritesheet-boundaries.test.mjs",
+        "bytes": 10888,
+        "sha256": "6d7f15a113eea42630078185d909f2c7e9c8e2223a70f08a5b7fee0a1d9380d2"
+      },
+      {
+        "path": "tests/textured-webgpu-host.test.mjs",
+        "bytes": 41204,
+        "sha256": "6556d44556f995736658552ecae0b56d994fa5a877fadc8408c0d709071056ae"
+      },
+      {
+        "path": "tests/types/atlas-import-diagnostic-expectations.json",
+        "bytes": 255007,
+        "sha256": "49eb0ef3e09162f87f9abbd8d727ce823f522638a2e091a44762e1617aa3dc17"
+      },
+      {
+        "path": "tests/webgpu-image-host.test.mjs",
+        "bytes": 39831,
+        "sha256": "158b1560f0bb95c3a8a58ddc0322bc89bc78a3947bfbc5b139679d7b1ab8b24e"
+      },
+      {
+        "path": "tools/atlas-import-boundary.mjs",
+        "bytes": 10072,
+        "sha256": "7af4653657a9c9b015d3eac0e170c49065e331795894e3e38e886bebdaa8232f"
+      },
+      {
+        "path": "tools/atlas-import-types.mjs",
+        "bytes": 6001,
+        "sha256": "c013f098d84808d5552e0d31e8b8887ea4c7272ac85fb5e15c3714c8563cd96f"
+      },
+      {
+        "path": "tools/browser-png-boundary.mjs",
+        "bytes": 104796,
+        "sha256": "8d4a6fd68e8ed348ff9f7f32a8df7ca0f3cc921fe7350eaa420f69dabd9a1704"
+      },
+      {
+        "path": "tools/spritesheet-boundary.mjs",
+        "bytes": 102581,
+        "sha256": "8c020a5f04a20c93b549c08d20bddc68af3e26b6a873259dcfb75a113b1a0f71"
+      },
+      {
+        "path": "tools/verify-textured-scene-webgpu.mjs",
+        "bytes": 45404,
+        "sha256": "11b4392791e2ba7c5c95c2c9a615b7af91ac5b5ea3db3d37ddba03d9c32340b9"
+      },
+      {
+        "path": "tools/verify-webgpu-b1.mjs",
+        "bytes": 48355,
+        "sha256": "4cf10a34ce7f00cd44a835b81a1491a09de4e1eaf97d93b0952dc4aa784abc30"
+      }
+    ],
+    "historicalWorkPackagesPreserved": true,
+    "fileInventoryScope": "Current named changed source, controlled tests, retained checks and paired publication metadata; source-origin excludes itself.",
+    "metadataDependencyOrder": [
+      "paired-readings",
+      "Chinese-authorities-and-English-views",
+      "documentation-layout",
+      "localization",
+      "source-origin"
+    ],
+    "localizationSuccessorReason": "Exact inventory and registry authority hashes for the new paired readings and changed current metadata, plus the existing accepted Host critical-comment row; existing publication schema unchanged.",
+    "currentCodePins": [
+      {
+        "path": "packages/engine/web/WebGPUHost.ts",
+        "bytes": 92002,
+        "sha256": "d3d75dbdb3e1fe906301344e06ac25275189e8f7fe481abff1b98563f9fc832a"
+      },
+      {
+        "path": "tests/fixtures/gpu-image-residency.mjs",
+        "bytes": 22994,
+        "sha256": "ec734a18c64c51fa21f70735351f5a6b0461c445672c204124234f5f9806caad"
+      },
+      {
+        "path": "tests/gpu-image-residency.test.mjs",
+        "bytes": 26554,
+        "sha256": "5a6a4f58519344bee8a7318f92c18b45353efa84e0dee5c7ee217e578d2e6b92"
+      },
+      {
+        "path": "tests/gpu-image-residency-lifecycle.test.mjs",
+        "bytes": 29304,
+        "sha256": "1887446632fabf23f7de4183743834523622ac4ccd85cbf839f390231a209d82"
+      },
+      {
+        "path": "tests/b1-webgpu-verifier.test.mjs",
+        "bytes": 24646,
+        "sha256": "affd3ed73dabd6b9776238f2214b08fe5db4833cdaad68db8cda224c76513d8b"
+      },
+      {
+        "path": "tests/browser-png-boundaries.test.mjs",
+        "bytes": 13635,
+        "sha256": "36a869fbea2349e4e696b44b1518eed945fae8f870327700b88f378ab74374f6"
+      },
+      {
+        "path": "tests/spritesheet-boundaries.test.mjs",
+        "bytes": 13272,
+        "sha256": "6d295053d70412f2b749e613facb42767027cca7144f8d50fbd1576223c8f8f8"
+      },
+      {
+        "path": "tests/textured-webgpu-host.test.mjs",
+        "bytes": 41517,
+        "sha256": "a352e47049a1782a2d1c3093211c146bece994e3d8d6136003711afda3b6ce9e"
+      },
+      {
+        "path": "tests/types/atlas-import-diagnostic-expectations.json",
+        "bytes": 255007,
+        "sha256": "2eb84961bfb7cee39a94dbe6439f5c16be4e961b4c72758ac3ee22e697e45628"
+      },
+      {
+        "path": "tests/webgpu-image-host.test.mjs",
+        "bytes": 40132,
+        "sha256": "c2272f72258efbe7b41b14540923d5ce9dc559782ffd59a49d819708b9905546"
+      },
+      {
+        "path": "tools/atlas-import-boundary.mjs",
+        "bytes": 10072,
+        "sha256": "3f12c928026766c2bc825a08ae674fc2583ec7782d5d0017866524aee5553d31"
+      },
+      {
+        "path": "tools/atlas-import-types.mjs",
+        "bytes": 6001,
+        "sha256": "410a10b2bd88bb3fff54721f9b85c777fbc258e17d5b880652f79ca0d456c77e"
+      },
+      {
+        "path": "tools/browser-png-boundary.mjs",
+        "bytes": 106286,
+        "sha256": "f829431b0cce2ec34fb987c03c0c5f5ccdf4727f3b8a26947e146bd23ffa3a23"
+      },
+      {
+        "path": "tools/spritesheet-boundary.mjs",
+        "bytes": 103976,
+        "sha256": "d43aba86b12f157e77f6cdad11aebc12951a724f843fe89472e6686a0ce3311b"
+      },
+      {
+        "path": "tools/verify-textured-scene-webgpu.mjs",
+        "bytes": 45404,
+        "sha256": "a97c9f5ed2159b27394961df63d07202d43caf09d15286a43f9dc040aca986b0"
+      },
+      {
+        "path": "tools/verify-webgpu-b1.mjs",
+        "bytes": 48746,
+        "sha256": "6eccd892191a6594d4d8c79b776c217bdf0d60a699cc86ff03735bbcf58c9066"
+      }
     ]
   }
 }

@@ -21,6 +21,7 @@ Egret connects complex 2D interfaces and lightweight 3D with a rendering/runtime
 | Creation and compatibility | [AI/project interfaces](docs/ai-creation-and-engineering-interfaces.md) |
 | Creation and compatibility | [Spine support](docs/spine-animation-support-and-acceptance.md) |
 | Creation and compatibility | [Legacy migration](docs/legacy-project-migration.md) |
+| Current integration | [Experimental WebGPU image residency](docs/gpu-image-residency-contract.md) · [Evidence](docs/gpu-image-residency-evidence.md) |
 | Current integration | [Atlas import planner](docs/atlas-import-plan-contract.md) · [Evidence](docs/atlas-import-plan-evidence.md) |
 | Current integration | [Atlas-frame layout](docs/atlas-frame-layout-contract.md) · [Evidence](docs/atlas-frame-layout-evidence.md) |
 | Current integration | [Prepared resource groups](docs/prepared-resource-groups-spec.md) |
@@ -29,6 +30,12 @@ Egret connects complex 2D interfaces and lightweight 3D with a rendering/runtime
 | Status and participation | [Changelog](CHANGELOG.md) |
 | Status and participation | [Contributing](https://github.com/cnedwin/Egret_rebuild/blob/main/CONTRIBUTING.md) |
 | Sources | [Acknowledgements](https://github.com/cnedwin/Egret_rebuild/blob/main/ACKNOWLEDGEMENTS.md) |
+
+## Experimental WebGPU image residency — 0.61.0
+
+The **0.61.0 engineering preview** adds an internal image cache with per-Host ownership, reusing exact cropped GPU images after safe completion. Its LRU mechanism keeps a 32 MiB logical image pool and at most 256 ready entries, preserving existing public admission, rendering profiles and lifecycle management. It adds no public API or dependency.
+
+Read the [contract](docs/gpu-image-residency-contract.md) and [evidence and limits](docs/gpu-image-residency-evidence.md). Controlled specification/ownership results and any current desktop regression results have separate scopes. The new dedicated cache browser matrix remains deferred and OPEN. Physical GPU memory, performance, target devices and actual device-loss recovery remain unverified. Workspace packages remain private 0.0.0; Host protocol remains 1.0.
 
 ## Atlas import planning — 0.60.0
 

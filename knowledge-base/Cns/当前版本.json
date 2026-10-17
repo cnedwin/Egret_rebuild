@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "version": "0.60.0",
+  "version": "0.61.0",
   "updatedAt": "2026-10-17",
-  "title": "0.60.0 可选图集导入规划",
-  "stage": "有限严格元数据规划、SDK/CPU 及所选有限 R2 Native 结果已接受；最终公开审查、集成门禁与 Git 交付待完成，完整 P04/Spine/迁移/物理性能保持开放。",
+  "title": "0.61.0 实验性 WebGPU 图像驻留",
+  "stage": "内部缓存源码、受控测试、保留聚焦检查与所选有限桌面回归已接受；最终门禁与交付待完成。完整产品能力和目标设备验收仍开放。",
   "publication": "public_source_engineering_preview",
   "registries": {
     "requirements": "Cns/registry/需求.json",
@@ -568,7 +568,7 @@
     "contract": "Cns/docs/显示内容边界契约.md",
     "evidence": "Cns/docs/显示内容边界证据.md"
   },
-  "latestEngineeringPreview": "0.60.0",
+  "latestEngineeringPreview": "0.61.0",
   "texturedMesh2DImplementation": {
     "version": "0.23.0",
     "status": "bounded_increment_implemented",
@@ -8736,5 +8736,137 @@
       }
     ],
     "currentPinScope": "CURRENT_NAMED_CODE_AND_READING_BYTES_ONLY_NO_METADATA_SELF_HASH"
+  },
+  "gpuImageResidencyWorkPackage": {
+    "engineeringPreview": "0.61.0",
+    "sourceId": "S115",
+    "deliverableId": "V066",
+    "date": "2026-10-17",
+    "status": "SOURCE_UNIT_FOCUSED_RETAINED_FINITE_NATIVE_ACCEPTED_FINAL_GATES_DELIVERY_PENDING",
+    "scopeStatus": "EXPERIMENTAL_INTERNAL_EXACT_CROP_IMAGE_RESIDENCY",
+    "contract": "Cns/docs/gpu-image-residency-contract.md",
+    "evidence": "Cns/docs/gpu-image-residency-evidence.md",
+    "productSource": "packages/engine/web/WebGPUHost.ts",
+    "newPackageSubpaths": 0,
+    "newSDKRuntimeExports": 0,
+    "newSDKTypeExports": 0,
+    "newRuntimeCodeDependency": false,
+    "packageVersionUnchanged": "0.0.0",
+    "hostProtocolChanged": false,
+    "hostProtocolVersion": "1.0",
+    "logicalImagePoolBytes": 33554432,
+    "maxReadyEntries": 256,
+    "unit": {
+      "status": "INDEPENDENTLY_ACCEPTED_SOURCE_CONTROL_AND_ACTUAL_UNIT_RESULT",
+      "healthyBeforeCases": 110,
+      "restoredAfterCases": 110,
+      "distinctCases": 110,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "healthyWitnessPeakBytes": 29361124,
+      "assignedWitnessPeakBytes": 33555432,
+      "assignedExcessBytes": 1000,
+      "restoredWitnessPeakBytes": 29361124,
+      "healthyRestoredWitnessBytesIdentical": true,
+      "allThreeWitnessesSafeClose": true,
+      "allThreeWitnessesTerminalQ": 0,
+      "independentResultReview": {
+        "bytes": 7941,
+        "sha256": "653d71025182dabc53c7a774531a2d7939c4311e6f39930940cafe08bd0d1073",
+        "identityOnlyNotDistributed": true,
+        "openFindings": 0
+      },
+      "physicalVRAMClaim": false,
+      "performanceClaim": false
+    },
+    "newCacheSpecificNativeMatrix": "DEFERRED_OPEN",
+    "newNativeCollectorAccepted": false,
+    "newNativeMatrixAccepted": false,
+    "manualTimerEvidence": "MANUAL_TIMEOUT_AUTHORITY_ONLY_NOT_ACTUAL_ELAPSED_17MS",
+    "actualDeviceLossRecovery": "UNVERIFIED",
+    "targetDevicePerformance": "UNVERIFIED",
+    "physicalGPUReclamation": "UNVERIFIED",
+    "completeUI_P04": "OPEN",
+    "fullSpineR020V020": "OPEN",
+    "complete3D": "OPEN",
+    "migrationR008V006": "OPEN",
+    "firstPartyLicense": "Apache-2.0",
+    "remoteCIPassClaim": false,
+    "historicalCutoffsPreserved": true,
+    "retainedFocused": {
+      "status": "INDEPENDENTLY_ACCEPTED_SOURCE_AND_FOCUSED_RESULTS",
+      "changedSourceFiles": 12,
+      "ordinaryLifetimeTests": 2,
+      "ordinaryLifetimePass": 2,
+      "strictAccepted": true,
+      "negativeCompilerTuples": 7,
+      "importNegativeCompilerTuples": 4,
+      "sourcePairControlsAccepted": true,
+      "preliminaryFocused": {
+        "tests": 180,
+        "pass": 179,
+        "fail": 1,
+        "obsoleteIdleExpectationRepaired": true
+      },
+      "final180PassClaim": false,
+      "fullFourteenStageAcceptance": "PENDING",
+      "independentReview": {
+        "bytes": 12217,
+        "sha256": "381af830f63268f7ff3f359447c8908cf9194df26581c9d85989ae41420f859f",
+        "identityOnlyNotDistributed": true,
+        "openFindings": 0
+      }
+    },
+    "selectedExistingNative": {
+      "status": "INDEPENDENTLY_ACCEPTED_FINITE_SAVED_RESULTS",
+      "atlasImportCanvasWebGPU": {
+        "profiles": 2,
+        "fullFrames": 4,
+        "width": 24,
+        "height": 16,
+        "comparedChannels": 6144,
+        "differences": 0,
+        "tolerance": 0
+      },
+      "combinedTexturedScene": {
+        "frames": 2,
+        "width": 64,
+        "height": 64,
+        "literalPixels": 24,
+        "comparedChannels": 96,
+        "differences": 0,
+        "tolerance": 0,
+        "wholeFrameComparison": false,
+        "oracleOnlyControl": "EXPECTED_PIXEL_REJECTION",
+        "extraNativeControlFrames": 0
+      },
+      "totalReadbacks": 6,
+      "totalRetainedRGBABytes": 38912,
+      "nativeHitOrUploadCountClaim": false,
+      "cooperativeCleanupAccepted": true,
+      "actualLaunchedExecutableIdentity": "UNBOUND",
+      "osDescendantRetirement": "UNBOUND",
+      "environment": {
+        "node": "24.19.0",
+        "platform": "Windows x64",
+        "edge": "155.0.4283.45",
+        "playwright": "1.62.1",
+        "channel": "msedge",
+        "callerAddedFlags": false
+      },
+      "independentResultReview": {
+        "bytes": 8440,
+        "sha256": "2d721e04295062d1e2c71d5ca9a9062d46ae1f7ecea05051bd29be4ea2cea341",
+        "identityOnlyNotDistributed": true,
+        "openFindings": 0
+      }
+    },
+    "optionalReplay": "NOT_RUN_AT_CURRENT_SOURCE",
+    "otherHistoricalNative": "NOT_RUN_AT_CURRENT_SOURCE",
+    "finalNormalPrepush": "PENDING",
+    "committedSnapshotPushHook": "PENDING",
+    "actualGitDelivery": "PENDING"
   }
 }

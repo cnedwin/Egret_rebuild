@@ -326,8 +326,8 @@ try {
   assert.deepEqual(packageExports['./scene3d'], { types: './dist/rendering/scene3d.d.ts', import: './dist/rendering/scene3d.js' });
   assert.deepEqual(packageExports['./webgpu/scene3d'], { types: './dist/web/scene3d.d.ts', import: './dist/web/scene3d.js' });
   const currentHost = await identity(resolve(repository, 'packages/engine/web/WebGPUHost.ts'));
-  assert.equal(currentHost.bytes, 80902, 'Native acceptance must bind the current reviewed shared scene/textured Host; historical identities remain separate');
-  assert.equal(currentHost.sha256, 'c0e9555e692e19d42ecc0bf443764c5c301d6f76febcf4d16f57c17853254e49');
+  assert.equal(currentHost.bytes, 92002, 'Native acceptance must bind the current reviewed shared scene/textured Host; historical identities remain separate');
+  assert.equal(currentHost.sha256, 'd3d75dbdb3e1fe906301344e06ac25275189e8f7fe481abff1b98563f9fc832a');
   report.publicRoute = { entries: entryNames.slice(0, 3), packageExports: { './scene3d': packageExports['./scene3d'], './webgpu/scene3d': packageExports['./webgpu/scene3d'] },
     hostSource: currentHost, privateDiagnostic: 'packages/engine/dist/web/webgpuMeshPass.js', allowedModules: [...allowedModules].sort() };
   const emitted = [...served.values()].reduce((sum, value) => sum + value.body.length, 0); assert.ok(emitted <= 4 * 1024 * 1024);

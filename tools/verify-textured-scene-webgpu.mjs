@@ -37,8 +37,8 @@ const EXPECTED_PRODUCT = [
   },
   {
     "path": "packages/engine/web/WebGPUHost.ts",
-    "bytes": 80902,
-    "sha256": "c0e9555e692e19d42ecc0bf443764c5c301d6f76febcf4d16f57c17853254e49"
+    "bytes": 92002,
+    "sha256": "d3d75dbdb3e1fe906301344e06ac25275189e8f7fe481abff1b98563f9fc832a"
   },
   {
     "path": "packages/engine/web/b1.ts",
@@ -62,8 +62,8 @@ const EXPECTED_PRODUCT = [
   },
   {
     "path": "packages/engine/dist/web/WebGPUHost.js",
-    "bytes": 75520,
-    "sha256": "cf5fa99195f808ecedeaa1fcabc51a7c5910d71fbcf7b0145f70a5d1c08db0e7"
+    "bytes": 85885,
+    "sha256": "6287b56f10c6899c12dc6a05a0b40f188c74e22f1b92e4c55dae9f80d29d834b"
   },
   {
     "path": "packages/engine/dist/web/WebGPUHost.d.ts",
