@@ -784,13 +784,19 @@ try{
   const nsFrozenInventory = {"path":"tests/types/nine-slice-diagnostic-expectations.json","bytes":27106,"sha256":"9f6922706a8f846802e6704a6eafed7bd5b3154fb9b0beedfd9c5b4ed7922705"};
   const nsTools = {portableMessage: function portableMessage(message, repository, platform) {
   if (typeof message !== 'string') throw Error('NS1 message is not a string');
-  const variants = [...new Set([repository, repository.replaceAll('\\', '/'), repository.replaceAll('/', '\\')])].sort((a, b) => b.length - a.length);
+  // TypeScript escapes non-ASCII UTF-16 units in quoted import types. Match only
+  // spellings derived from the complete known owner; do not decode the message.
+  const compilerSpelling = value => value.replace(/[^\x20-\x7e]/g, unit =>
+    '\\u' + unit.charCodeAt(0).toString(16).toUpperCase().padStart(4, '0'));
+  const owners = [repository, repository.replaceAll('\\', '/'), repository.replaceAll('/', '\\')];
+  const variants = [...new Set(owners.flatMap(owner => [owner, compilerSpelling(owner)]))].sort((a, b) => b.length - a.length);
   let result = message;
   for (const variant of variants) {
-    const escaped = variant.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    result = result.replace(new RegExp(escaped, platform === 'win32' ? 'gi' : 'g'), '<SDK_ROOT>');
+    const escaped = variant.replace(/[.*+?^$()|[\]{}\\]/g, '\\$&');
+    // A root prefix cannot authorize a sibling such as sdk-other.
+    result = result.replace(new RegExp(escaped + '(?=[\\\\/])', platform === 'win32' ? 'gi' : 'g'), '<SDK_ROOT>');
   }
-  if (/[A-Za-z]:[\\/]|file:\/\/|\/(?:Users|home|tmp|private)\//.test(result)) throw Error('NS1 unclassified absolute path in diagnostic message');
+  if (/[A-Za-z]:[\\/]|file:\/\/|\/(?:Users|home|tmp|private)\//i.test(result)) throw Error('NS1 unclassified absolute path in diagnostic message');
   return result;
 }, sourceCases: function sourceCases(text, marker, file) {
   if (!marker) return [];

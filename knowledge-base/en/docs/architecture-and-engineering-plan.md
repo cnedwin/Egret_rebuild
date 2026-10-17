@@ -2,9 +2,9 @@
 
 English | [中文](../../Cns/docs/architecture-and-engineering-plan.md)
 
-2026-10-17 · Plan version 3 · M0–M4
+2026-10-17 · Plan version 4 · M0–M4
 
-The implementation baseline is Main `030a34646774dea6c46cc947b55186da9265a6c8` (engineering preview 0.61.0). This plan defines target architecture, code disposition, dependencies and acceptance; it does not claim those capabilities are implemented. M0 environment, onboarding and collaboration foundations are in execution. New engine features remain paused. The [M0 delivery record](m0-community-foundations.md) separates this first increment from remaining acceptance.
+The implementation baseline is Main `030a34646774dea6c46cc947b55186da9265a6c8` (engineering preview 0.61.0). This plan defines target architecture, code disposition, dependencies and acceptance; it does not claim those capabilities are implemented. The first M0 infrastructure delivery merged as Main `26136df66a493eb721e0780148de4bdc8ed4fb87` through PR #51. The public board and technical newcomer rehearsal extend that baseline; new engine features remain paused. The [M0 delivery record](m0-community-foundations.md) distinguishes verified infrastructure, human/device constraints and outstanding engineering acceptance.
 
 The selected environment pins Node 26.7.0, pnpm 11.25.0, TypeScript 7.0.2 and PowerShell 7.6.5. Historical evidence retains its original environment. Current check and browser-tool migration status is in the M0 record.
 

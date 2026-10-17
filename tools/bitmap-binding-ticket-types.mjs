@@ -38,8 +38,15 @@ function projectNamespace(output){
  // Authenticate the complete selected declaration before replacing its exact quoted owner.
  const selected=inventory.inputPins.find(pin=>pin.path==='packages/engine/dist/index.d.ts');
  if(!selected||!equal(fingerprintFile(root,selected.path),selected))fail('namespace declaration owner differs');
- const prefix='"'+root.replaceAll('\\','/')+'/packages/engine/dist/index"';
- return output.replaceAll(prefix,'"<repo>/packages/engine/dist/index"');
+ // Accept only the compiler's spelling of this authenticated, quoted namespace.
+ // Leave every other diagnostic byte, suffix and owner significant.
+ const owner=root.replaceAll('\\','/');
+ const escaped=owner.replace(/[^\x20-\x7e]/g,unit=>'\\u'+unit.charCodeAt(0).toString(16).toUpperCase().padStart(4,'0'));
+ for(const spelling of new Set([owner,escaped])){
+  const prefix='"'+spelling+'/packages/engine/dist/index"';
+  output=output.replaceAll(prefix,'"<repo>/packages/engine/dist/index"');
+ }
+ return output;
 }
 if(inventory.schemaVersion!==1||inventory.kind!=='BITMAP_BINDING_TICKET_ACTUAL_STRICT_DIAGNOSTICS'||inventory.status!=='OBSERVED_FROZEN_TS7_DIAGNOSTICS')fail('actual original compiler observation is pending or malformed');
 if(!equal(inventory.tupleFormat,['file','line','column','code','message'])||!equal(inventory.groups?.map(row=>row.lane),['positive','negative']))fail('malformed lane inventory');
