@@ -4,6 +4,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
+import {createHash} from 'node:crypto';
+import * as selector from '../../tools/check-incremental.mjs';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {selectChecks} from '../../tools/check-incremental.mjs';
@@ -56,4 +58,150 @@ test('opposing index/worktree and commit/index edits cannot cancel a risky chang
   f.git('add','tools/example.mjs');
   assert.equal(selectChecks(f.root,{base:f.base}).profile,'full');
  }finally{f.close();}
+});
+
+
+function dependencyFixture(){
+ const f=fixture();
+ const pin=file=>{const raw=fs.readFileSync(path.join(f.root,file));return {path:file,bytes:raw.length,sha256:createHash('sha256').update(raw).digest('hex')};};
+ const graph={contracts:[],runtime:['contracts'],engine:['contracts','runtime'],project:['contracts']};
+ const packages={};
+ for(const [name,deps]of Object.entries(graph)){
+  const manifest='packages/'+name+'/package.json';
+  f.put(manifest,JSON.stringify({name:'@egret/'+name,dependencies:Object.fromEntries(deps.map(d=>['@egret/'+d,'workspace:*']))}));
+  f.put('packages/'+name+'/src/value.ts','export const value = 1;\n'.replace('\\n','\n'));
+  packages[name]={manifest:pin(manifest),dependencies:deps};
+ }
+ const tests=[];
+ for(const [name,deps]of [['engine',['engine']],['runtime',['runtime']],['project',['project']],['shared',null]]){
+  const file='tests/'+name+'.test.mjs';f.put(file,'export {};\n');tests.push({file:pin(file),packages:deps,support:[]});
+ }
+ tests.sort((a,b)=>a.file.path.localeCompare(b.file.path));
+ const policy=['tools/prepush.mjs','tools/test.mjs','tools/verify.mjs'].map(file=>{f.put(file,'export {};\n');return pin(file);});
+ const catalog={schemaVersion:1,packages,tests,policy};
+ f.put('tools/incremental-test-catalog.json',JSON.stringify(catalog));
+ f.git('add','.');f.git('-c','user.name=Fixture','-c','user.email=fixture@example.invalid','commit','-qm','catalog');
+ return {...f,base:f.git('rev-parse','HEAD'),catalog,pin};
+}
+
+test('package changes propagate to reverse dependents and retain shared tests',()=>{
+ const f=dependencyFixture();try{
+  for(const [name,affected,wanted]of [
+   ['engine',['engine'],['engine','shared']],
+   ['runtime',['engine','runtime'],['engine','runtime','shared']],
+   ['project',['project'],['project','shared']],
+  ]){
+   const file='packages/'+name+'/src/value.ts',original=fs.readFileSync(path.join(f.root,file));
+   f.put(file,'export const value = 2;\n');const p=selectChecks(f.root,{base:f.base});
+   assert.equal(p.profile,'dependency');assert.deepEqual(p.affectedPackages,affected);
+   assert.deepEqual(p.selectedTests,wanted.map(x=>'tests/'+x+'.test.mjs'));
+   assert.ok(p.omittedTests.length>0);fs.writeFileSync(path.join(f.root,file),original);
+  }
+  f.put('packages/contracts/src/value.ts','export const value = 2;\n');
+  assert.equal(selectChecks(f.root,{base:f.base}).profile,'full','shared contracts affect every package');
+ }finally{f.close();}
+});
+
+test('dependency feedback refuses stale ownership, test bytes and incomplete membership',()=>{
+ const f=dependencyFixture();try{
+  f.put('packages/project/src/value.ts','export const value = 2;\n');
+  f.git('update-index','--assume-unchanged','tests/engine.test.mjs');
+  f.put('tests/engine.test.mjs','throw Error("changed omitted test");\n');
+  assert.equal(selectChecks(f.root,{base:f.base}).profile,'full');
+  f.put('tests/engine.test.mjs','export {};\n');f.git('update-index','--no-assume-unchanged','tests/engine.test.mjs');
+  f.put('tests/new.test.mjs','export {};\n');assert.equal(selectChecks(f.root,{base:f.base}).profile,'full');fs.unlinkSync(path.join(f.root,'tests/new.test.mjs'));
+  f.git('update-index','--assume-unchanged','packages/engine/package.json');
+  f.put('packages/engine/package.json',JSON.stringify({name:'@egret/engine',dependencies:{'@egret/project':'workspace:*'}}));
+  assert.equal(selectChecks(f.root,{base:f.base}).profile,'full');
+ }finally{f.close();}
+});
+
+test('source selection includes all Git layers and rejects configuration and new source',()=>{
+ const f=dependencyFixture();try{
+  f.put('packages/engine/src/value.ts','export const value = 2;\n');f.git('add','packages/engine/src/value.ts');
+  f.put('packages/engine/src/value.ts','export const value = 3;\n');
+  f.put('packages/project/src/value.ts','export const value = 2;\n');
+  let p=selectChecks(f.root,{base:f.base});assert.equal(p.profile,'dependency');assert.deepEqual(p.affectedPackages,['engine','project']);
+  assert.ok(p.changes.some(x=>x.layer==='staged'));assert.ok(p.changes.some(x=>x.layer==='working'));
+  f.put('packages/project/src/new.ts','export {};\n');assert.equal(selectChecks(f.root,{base:f.base}).profile,'full');fs.unlinkSync(path.join(f.root,'packages/project/src/new.ts'));
+  f.put('tsconfig.json','{}\n');assert.equal(selectChecks(f.root,{base:f.base}).profile,'full');
+ }finally{f.close();}
+});
+
+test('dependency commands retain complete compilation, strict and source boundaries',()=>{
+ assert.equal(typeof selector.feedbackCommands,'function');
+ const commands=selector.feedbackCommands({profile:'dependency',selectedTests:['tests/project.test.mjs']});
+ const flat=commands.map(x=>x.join(' ')).join('\n');
+ for(const script of ['build','check-boundaries','spritesheet-boundary','sequence-playback-boundary','browser-png-boundary','bitmap-resource-slot-boundary','bitmap-binding-ticket-boundary','resource-scene-boundary','atlas-frame/boundary','atlas-import-boundary','check-types','browser-png-types','verify-spine-f2-source'])assert.ok(flat.includes('tools/'+script+'.mjs'),script);
+ assert.ok(flat.includes('--test tests/project.test.mjs'));assert.ok(!flat.includes('tools/test.mjs'));
+ assert.deepEqual(selector.feedbackCommands({profile:'full'}),[['tools/prepush.mjs']]);
+});
+
+
+test('hidden worktree and sparse-index flags cannot omit another changed package',()=>{
+ const f=dependencyFixture();try{
+  f.put('packages/engine/src/value.ts','export const value = 2;\n');
+  for(const [set,unset]of [['--assume-unchanged','--no-assume-unchanged'],['--skip-worktree','--no-skip-worktree']]){
+   f.git('update-index',set,'packages/project/src/value.ts');
+   f.put('packages/project/src/value.ts','export const value = 3;\n');
+   assert.equal(selectChecks(f.root,{base:f.base}).profile,'full');
+   f.git('update-index',unset,'packages/project/src/value.ts');
+  }
+ }finally{f.close();}
+});
+
+test('feedback identity binds raw worktree bytes and opposing index content',()=>{
+ const f=dependencyFixture();try{
+  const a=selector.feedbackIdentity(f.root);
+  f.put('packages/engine/src/value.ts','export const value = 2;\n');
+  const b=selector.feedbackIdentity(f.root);assert.notEqual(a,b);
+  f.git('add','packages/engine/src/value.ts');
+  const c=selector.feedbackIdentity(f.root);assert.notEqual(b,c);
+  f.put('packages/engine/src/value.ts','export const value = 1;\n'.replace('\\n','\n'));
+  assert.notEqual(a,selector.feedbackIdentity(f.root));
+ }finally{f.close();}
+});
+
+
+test('accepted runner schedule changes invalidate the earlier dependency catalog',()=>{
+ const f=dependencyFixture();try{
+  f.put('tools/verify.mjs','throw Error("new mandatory lane");\n');f.git('add','tools/verify.mjs');
+  f.git('-c','user.name=Fixture','-c','user.email=fixture@example.invalid','commit','-qm','new gate');
+  const base=f.git('rev-parse','HEAD');f.put('packages/project/src/value.ts','export const value = 2;\n');
+  assert.equal(selectChecks(f.root,{base}).profile,'full');
+ }finally{f.close();}
+});
+
+test('unbound example-import test closures remain shared in the current catalog',()=>{
+ const catalog=JSON.parse(fs.readFileSync(new URL('../../tools/incremental-test-catalog.json',import.meta.url)));
+ for(const name of ['prepared-outfit-coordinator-heldout','resource-scene-gpu','resource-scene-session','resource-scene-session-heldout']){
+  const row=catalog.tests.find(x=>x.file.path==='tests/'+name+'.test.mjs');assert.equal(row.packages,null,name);
+ }
+});
+
+
+test('execution binding refuses a package change after initial selection',()=>{
+ const f=dependencyFixture();try{
+  f.put('packages/project/src/value.ts','export const value = 2;\n');const plan=selectChecks(f.root,{base:f.base});
+  assert.equal(typeof selector.bindFeedback,'function');assert.equal(typeof selector.bindFeedback(f.root,plan),'string');
+  f.put('packages/engine/src/value.ts','export const value = 3;\n');
+  assert.throws(()=>selector.bindFeedback(f.root,plan),/selection changed/i);
+ }finally{f.close();}
+});
+
+test('dependency feedback preserves every publication regression in the full gate',()=>{
+ const source=fs.readFileSync(new URL('../../tools/prepush.mjs',import.meta.url),'utf8');
+ const expected=[...source.matchAll(/'((?:tests\/publication\/)[^']+\.test\.mjs)'/g)].map(x=>x[1]);
+ const commands=selector.feedbackCommands({profile:'dependency',selectedTests:['tests/project.test.mjs']});
+ assert.ok(expected.length>1);
+ for(const name of expected)assert.ok(commands.some(args=>args[0]==='--test'&&args.includes(name)),name);
+});
+
+test('behavior feedback precedes frozen admission without bypassing any gate',()=>{
+ const commands=selector.feedbackCommands({profile:'dependency',selectedTests:['tests/project.test.mjs']});
+ const position=name=>commands.findIndex(args=>args.includes(name));
+ assert.ok(position('tools/build.mjs')<position('tools/check-boundaries.mjs'));
+ assert.ok(position('tools/check-boundaries.mjs')<position('tests/project.test.mjs'));
+ assert.ok(position('tests/project.test.mjs')<position('tools/spritesheet-boundary.mjs'));
+ assert.ok(position('tools/spritesheet-boundary.mjs')<position('tools/check-types.mjs'));
 });

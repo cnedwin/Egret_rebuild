@@ -2,7 +2,7 @@
 
 English | [中文](../../Cns/docs/architecture-and-engineering-plan.md)
 
-2026-10-17 · Plan version 9 · M0–M4
+2026-10-17 · Plan version 10 · M0–M4
 
 The implementation baseline is Main `030a34646774dea6c46cc947b55186da9265a6c8` (engineering preview 0.61.0). This plan defines target architecture, code disposition, dependencies and acceptance; it does not claim those capabilities are implemented. The first M0 infrastructure delivery merged as Main `26136df66a493eb721e0780148de4bdc8ed4fb87` through PR #51. The public board and technical newcomer rehearsal extend that baseline; new engine features remain paused. The [M0 delivery record](m0-community-foundations.md) distinguishes verified infrastructure, human/device constraints and outstanding engineering acceptance.
 
@@ -406,3 +406,6 @@ These sources are pinned to one Main commit. They establish existing implementat
 - [Image projection and crops](https://github.com/cnedwin/Egret_rebuild/blob/030a34646774dea6c46cc947b55186da9265a6c8/packages/engine/web/imageProjections2D.ts)
 - [Prepared resources and replacement](https://github.com/cnedwin/Egret_rebuild/blob/030a34646774dea6c46cc947b55186da9265a6c8/knowledge-base/en/docs/prepared-resource-groups-spec.md)
 - [Repository rules](https://github.com/cnedwin/Egret_rebuild/blob/030a34646774dea6c46cc947b55186da9265a6c8/AGENTS.md)
+
+
+M0 local verification now has a [package dependency selection contract](dependency-aware-checks.md). Keep full push/merge checks; any future reduction of those gates requires its own evidence and review.

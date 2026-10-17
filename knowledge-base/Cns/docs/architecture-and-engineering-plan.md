@@ -2,7 +2,7 @@
 
 [English](../../en/docs/architecture-and-engineering-plan.md) | 中文
 
-2026-10-17 · 计划版本 9 · M0–M4
+2026-10-17 · 计划版本 10 · M0–M4
 
 实现基线为主干 `030a34646774dea6c46cc947b55186da9265a6c8`（工程预览 0.61.0）。本计划定义目标架构、代码取舍、依赖与验收，不表示这些能力已实现。M0 首批基础设施已通过 PR #51 合并为主干 `26136df66a493eb721e0780148de4bdc8ed4fb87`。公开看板与新人技术复演在此基础上继续推进，新引擎功能开发仍暂停。[M0 交付记录](m0-community-foundations.md)分别列出已验证基础设施、真人/设备限制及未完成工程验收。
 
@@ -406,3 +406,6 @@ M4 只关闭已声明的 2D/UI/动画/资源核心范围，不能宣布整个引
 - [图像投影与裁切](https://github.com/cnedwin/Egret_rebuild/blob/030a34646774dea6c46cc947b55186da9265a6c8/packages/engine/web/imageProjections2D.ts)
 - [资源替换与准备组](https://github.com/cnedwin/Egret_rebuild/blob/030a34646774dea6c46cc947b55186da9265a6c8/knowledge-base/en/docs/prepared-resource-groups-spec.md)
 - [现有仓库规则](https://github.com/cnedwin/Egret_rebuild/blob/030a34646774dea6c46cc947b55186da9265a6c8/AGENTS.md)
+
+
+M0 本地验证现有[包依赖选择契约](dependency-aware-checks.md)。保留完整推送/合并检查；将来缩减这些门禁需要独立证据和评审。
