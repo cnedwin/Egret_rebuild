@@ -9,7 +9,7 @@ import { createRequire } from 'node:module';
 import { createServer } from 'node:http';
 import { CASES, CALIBRATION, HELD_OUT, definition } from './fixtures.mjs';
 import { verifyTexturedPixels, verifyTransparentReset, TexturedPixelAssertion } from './oracle.mjs';
-import { ALIAS, REGISTRY, REGISTRY_SOURCE, ENTRIES, CONTROL_IDS, LIMITS, sha256, descriptor, incomplete, isIncomplete, requirePolicy, fault,
+import { ALIAS, REGISTRY, REGISTRY_SOURCE, ENTRIES, CONTROL_IDS, LIMITS, inputByteLimit, sha256, descriptor, incomplete, isIncomplete, requirePolicy, fault,
   inside, samePath, freshOutput, directoryChain, readIdentity, artifactStore, chosenMap, collectPublicGraph, makeCopy,
   captureRegistry, rereadRegistry, rereadAll } from './native-files.mjs';
 
@@ -28,11 +28,11 @@ const CONTROL_CHECKS=[
 const budgets=Object.freeze({perOperationMs:20000,operationMs:240000,closeMs:280000,hardMs:295000,
   windows:37,positiveCases:21,positiveObservations:27,controlWindows:16,controlObservations:19,inputBytes:536870912,...LIMITS});
 
-function options(args){requirePolicy(args.length===6,'CLI_OPTIONS');const result=Object.create(null);
-  for(let i=0;i<args.length;i+=2){const key=args[i],value=args[i+1];requirePolicy(['--playwright','--channel','--output'].includes(key)&&!Object.hasOwn(result,key)
+function options(args){requirePolicy(args.length===8,'CLI_OPTIONS');const result=Object.create(null);
+  for(let i=0;i<args.length;i+=2){const key=args[i],value=args[i+1];requirePolicy(['--playwright','--channel','--output','--freeze'].includes(key)&&!Object.hasOwn(result,key)
     &&typeof value==='string'&&value.length>0&&value.length<=32768,'CLI_OPTIONS');result[key]=value;}
-  requirePolicy(result['--channel']==='msedge'&&path.isAbsolute(result['--playwright'])&&path.isAbsolute(result['--output']),'CLI_PROFILE');
-  requirePolicy(process.version==='v24.19.0'&&process.execArgv.length===0,'NODE_PROFILE');return result;}
+  requirePolicy(result['--channel']==='msedge'&&path.isAbsolute(result['--playwright'])&&path.isAbsolute(result['--output'])&&path.isAbsolute(result['--freeze']),'CLI_PROFILE');
+  requirePolicy(process.version==='v26.7.0'&&process.execArgv.length===0,'NODE_PROFILE');return result;}
 function expectedRoles(id){return definition(id).scenario==='retained'?['reset-before','replay-first','replay-second','reset-after']:['sample'];}
 function publicCleanup(window){const close=window?.scene?.cleanup;
   return window?.status==='SCENE_COMPLETED'&&window.deviceAcquired&&window.cleanup.deviceDestroyed&&window.cleanup.lossSettled&&window.cleanup.failures.length===0
@@ -135,7 +135,7 @@ export async function main(argv){
     requirePolicy(robust.name==='robust-predicates'&&robust.version==='3.0.3','FOUNDATIONAL_PROFILE');
     report.installedTrees=[await bounded(bindInstalledTree(installed,'installed-playwright-tree'),'pin-playwright'),
       await bounded(bindInstalledTree(path.dirname(coreMetadataPath),'installed-playwright-core-tree'),'pin-playwright-core')];
-    const freezeDirectory=path.join(repository,'work/textured-webgpu-freeze');await directoryChain(freezeDirectory);
+    const freezeDirectory=await realpath(cli['--freeze']);requirePolicy(!inside(repository,freezeDirectory)&&!inside(freezeDirectory,repository),'FREEZE_OWNER');await directoryChain(freezeDirectory);
     const frozen=await loadJSON(path.join(freezeDirectory,'collection-inputs.json'),'collection-freeze'),selectors=await loadJSON(path.join(freezeDirectory,'control-selectors.json'),'control-freeze');
     await store.json('collection-freeze.json',frozen);await store.json('control-freeze.json',selectors);
     requirePolicy(frozen.schemaVersion===1&&frozen.ready===true&&selectors.schemaVersion===1&&selectors.ready===true,'FINAL_SOURCE_CONTROL_FREEZE_PENDING');
@@ -145,20 +145,20 @@ export async function main(argv){
     const freezePaths=new Set();for(const expected of frozen.files){
       requirePolicy(typeof expected.relative==='string'&&!path.isAbsolute(expected.relative)&&!expected.relative.includes('\\')&&!expected.relative.split('/').includes('..')
         &&!freezePaths.has(expected.relative)&&Number.isSafeInteger(expected.bytes)&&expected.bytes>=0&&/^[a-f0-9]{64}$/.test(expected.sha256),'FROZEN_FILE_SCHEMA');
-      freezePaths.add(expected.relative);const item=await pin(path.join(repository,expected.relative),'root-frozen-final-input');
+      freezePaths.add(expected.relative);const item=await pin(path.join(repository,expected.relative),'root-frozen-final-input',inputByteLimit(expected.relative));
       requirePolicy(inside(repository,item.path)&&item.bytes===expected.bytes&&item.sha256===expected.sha256,'FROZEN_FILE_CHANGED',{relative:expected.relative});}
     for(const relative of[...HARNESS,...OWN_FILES,'pnpm-lock.yaml','source-origin.json'])requirePolicy(freezePaths.has(relative),'FROZEN_REQUIRED_FILE',{relative});
-    const selectedBuildReceipt='work/textured-webgpu-freeze/build-receipt.json';
+    const selectedBuildReceipt='build-receipt.json';
     requirePolicy(frozen.buildReceipt?.relative===selectedBuildReceipt&&Number.isSafeInteger(frozen.buildReceipt.bytes)&&frozen.buildReceipt.bytes>0
       &&/^[a-f0-9]{64}$/.test(frozen.buildReceipt.sha256),'BUILD_RECEIPT_SCHEMA');
-    const build=await pin(path.join(repository,selectedBuildReceipt),'root-selected-build-receipt');
-    requirePolicy(samePath(build.path,path.join(repository,selectedBuildReceipt))&&inside(repository,build.path)
+    const build=await pin(path.join(freezeDirectory,selectedBuildReceipt),'root-selected-build-receipt');
+    requirePolicy(samePath(build.path,path.join(freezeDirectory,selectedBuildReceipt))&&inside(freezeDirectory,build.path)
       &&build.bytes===frozen.buildReceipt.bytes&&build.sha256===frozen.buildReceipt.sha256,'BUILD_RECEIPT_CHANGED');
     const actualBuild=JSON.parse(build.body.toString('utf8'));
     requirePolicy(actualBuild.schemaVersion==='textured-public-build/1'&&actualBuild.successfulExecution===true&&actualBuild.exitCode===0
       &&actualBuild.signal===null&&actualBuild.error===null&&actualBuild.rawCaptureComplete===true&&actualBuild.sourceStable===true
       &&JSON.stringify(actualBuild.command)===JSON.stringify(['node','tools/build.mjs']),'BUILD_RECEIPT_SCHEMA');
-    requirePolicy(actualBuild.runtime?.node==='v24.19.0'&&actualBuild.runtime?.compiler==='7.0.2'
+    requirePolicy(actualBuild.runtime?.node==='v26.7.0'&&actualBuild.runtime?.compiler==='7.0.2'
       &&actualBuild.runtime?.packageManager==='pnpm@11.25.0'
       &&actualBuild.runtime.nodeExecutable?.bytes===report.environment.nodeExecutable.bytes
       &&actualBuild.runtime.nodeExecutable?.sha256===report.environment.nodeExecutable.sha256,'BUILD_RUNTIME_CHANGED');
@@ -175,7 +175,7 @@ export async function main(argv){
         const key=process.platform==='win32'?relative.toLowerCase():relative;
         requirePolicy(!seen.has(key),'BUILD_INPUT_DUPLICATE');seen.add(key);
         const installed=label==='source'&&relative.startsWith('node_modules/');
-        const maximum=installed?134217728:LIMITS.moduleBytes;
+        const maximum=installed?134217728:inputByteLimit(relative);
         vectorBytes+=expected.bytes;
         requirePolicy(expected.bytes<=maximum&&vectorBytes<=budgets.inputBytes,'BUILD_VECTOR_BYTES');
         const requested=path.join(repository,relative),current=await pin(requested,'actual-build-'+label,maximum);

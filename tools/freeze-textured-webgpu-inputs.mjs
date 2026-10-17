@@ -5,11 +5,15 @@ import { spawnSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { CONTROL_IDS, ENTRIES, REGISTRY, LIMITS, sha256, samePath, inside, directoryChain,
+import { CONTROL_IDS, ENTRIES, REGISTRY, LIMITS, inputByteLimit, sha256, samePath, inside, directoryChain,
   readIdentity, requirePolicy, fault, collectPublicGraph, literalImports } from './textured-webgpu/native-files.mjs';
 
 const repository=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
-const GENERATED='work/textured-webgpu-freeze',RECEIPT=GENERATED+'/build-receipt.json';
+const args=process.argv.slice(2);
+requirePolicy(args.length===2&&args[0]==='--output'&&path.isAbsolute(args[1]),'FREEZE_EXPLICIT_OUTPUT');
+const OUTPUT=path.resolve(args[1]);
+requirePolicy(!inside(repository,OUTPUT)&&!inside(OUTPUT,repository),'FREEZE_EXTERNAL_OUTPUT');
+const RECEIPT='build-receipt.json';
 const TEMPLATE='tools/textured-webgpu/collection-inputs.json',RECIPES='tools/textured-webgpu/control-selectors.json';
 const SELF='tools/freeze-textured-webgpu-inputs.mjs';
 const HARNESS=['examples/textured-webgpu/main.mjs','examples/textured-webgpu/fixtures.mjs','examples/textured-webgpu/index.html',
@@ -37,12 +41,12 @@ const stable=(before,after)=>JSON.stringify(before)===JSON.stringify(after);
 const relativeOf=item=>{requirePolicy(inside(repository,item.path),'FREEZE_INPUT_CONTAINMENT');
   return path.relative(repository,item.path).split(path.sep).join('/');};
 const rowOf=item=>({relative:relativeOf(item),bytes:item.bytes,sha256:item.sha256});
-async function exact(relative,maxBytes=LIMITS.moduleBytes){const requested=path.join(repository,relative),item=await readIdentity(requested,maxBytes);
+async function exact(relative,maxBytes=inputByteLimit(relative)){const requested=path.join(repository,relative),item=await readIdentity(requested,maxBytes);
   requirePolicy(samePath(requested,item.path),'FREEZE_EXACT_PATH',{relative});return item;}
 async function json(relative){return JSON.parse((await exact(relative)).body.toString('utf8'));}
 async function save(relative,value){const body=Buffer.from(JSON.stringify(value)+'\n');
   requirePolicy(body.length<=LIMITS.moduleBytes,'FREEZE_JSON_BYTES',{relative,bytes:body.length});
-  await writeFile(path.join(repository,relative),body,{flag:'wx'});return rowOf(await exact(relative));}
+  await writeFile(path.join(OUTPUT,relative),body,{flag:'wx'});const item=await readIdentity(path.join(OUTPUT,relative));return {relative,bytes:item.bytes,sha256:item.sha256};}
 
 // Enumerate every .ts/.json compiler input in the four fixed referenced packages, including schemas/configs.
 // Installed dependencies, emissions and incremental build state are separately excluded from this source inventory.
@@ -96,11 +100,11 @@ async function emittedInventory(){const rows=[];let count=0,total=0;
         requirePolicy(samePath(item.path,file),'FREEZE_EMITTED_ALIAS');total+=item.bytes;
         requirePolicy(total<=BUILD.inputBytes,'FREEZE_EMITTED_BYTES');rows.push(rowOf(item));}}}
   for(const name of PACKAGES)await visit(path.join(repository,'packages',name,'dist'));return sortRows(rows);}
-async function profile(){requirePolicy(process.argv.length===2&&process.execArgv.length===0&&process.version==='v24.19.0','FREEZE_NODE_PROFILE');
+async function profile(){requirePolicy(process.argv.length===4&&process.execArgv.length===0&&process.version==='v26.7.0','FREEZE_NODE_PROFILE');
   for(const [key,value]of Object.entries(process.env))requirePolicy(!LOADER_ENV.has(key.toUpperCase())||!value,'FREEZE_LOADER_ENV',{key});
   await directoryChain(repository);
   const root=await json('package.json'),compiler=JSON.parse((await readIdentity(path.join(repository,'node_modules/typescript/package.json'))).body.toString('utf8'));
-  requirePolicy(root.packageManager==='pnpm@11.25.0'&&root.engines?.node==='24.19.0'&&root.devDependencies?.typescript==='7.0.2'
+  requirePolicy(root.packageManager==='pnpm@11.25.0'&&root.engines?.node==='26.7.0'&&root.devDependencies?.typescript==='7.0.2'
     &&compiler.name==='typescript'&&compiler.version==='7.0.2','FREEZE_BUILD_PROFILE');
   const config=await json('tsconfig.json');requirePolicy(JSON.stringify(config.references?.map(row=>row.path))===JSON.stringify(REFERENCES),'FREEZE_FIXED_BUILD_REFERENCES');
   const template=await json(TEMPLATE),recipes=await json(RECIPES);
@@ -113,8 +117,7 @@ async function profile(){requirePolicy(process.argv.length===2&&process.execArgv
 
 async function main(){const recipes=await profile();
   // Never overwrite a previous successful or failed attempt, and never write ready:true into tracked templates.
-  const work=path.join(repository,'work');try{await mkdir(work);}catch(error){if(error?.code!=='EEXIST')throw error;}
-  await directoryChain(work);const output=path.join(repository,GENERATED);await mkdir(output);await directoryChain(output);
+  await directoryChain(path.dirname(OUTPUT));const output=OUTPUT;await mkdir(output);await directoryChain(output);
   const sourceBefore=await buildInputs(),emittedBefore=await emittedInventory(),nodeBefore=await nodeIdentity(),startedAtUTC=new Date().toISOString(),began=Date.now();
   // Preserve necessary OS variables only after the loader-affecting profile has been admitted.
   const admittedEnvironment={...process.env};
@@ -132,7 +135,7 @@ async function main(){const recipes=await profile();
     command:['node','tools/build.mjs'],cwdRelative:'.',runtime:{node:process.version,compiler:'7.0.2',packageManager:'pnpm@11.25.0',nodeExecutable:nodeAfter},bounds:BUILD,installedBounds:INSTALLED,
     exitCode:result.status,signal:result.signal,error:result.error?{...fault(result.error),code:result.error.code??null}:null,
     rawCaptureComplete:!result.error,sourceStable:sourceAfter!==null&&stable(sourceBefore,sourceAfter),sourceBefore,sourceAfter,emittedBefore,emittedAfter,observationFailures,
-    stdout:rowOf(await exact(GENERATED+'/build.stdout.bin',BUILD.inputBytes)),stderr:rowOf(await exact(GENERATED+'/build.stderr.bin',BUILD.inputBytes)),
+    stdout:{name:'build.stdout.bin',bytes:stdout.length,sha256:sha256(stdout)},stderr:{name:'build.stderr.bin',bytes:stderr.length,sha256:sha256(stderr)},
     scope:'Actual fixed bounded build only; no tests, native execution or OS descendant-retirement claim'};
   const buildReceipt=await save(RECEIPT,receipt);requirePolicy(successfulExecution,'FREEZE_BUILD_FAILED',{receipt:RECEIPT});
   const retained=new Map();let total=0;
@@ -157,13 +160,13 @@ async function main(){const recipes=await profile();
   const shader={sourceRelative,emissionRelative,literal,sha256:sha256(Buffer.from(literal))};
   requirePolicy(retained.has(sourceRelative)&&retained.size>0&&retained.size<=512,'FREEZE_FINAL_FILE_COUNT');
   requirePolicy(stable(sourceAfter,await buildInputs())&&stable(emittedAfter,await emittedInventory())&&stable(nodeAfter,await nodeIdentity()),'FREEZE_BUILD_OUTPUT_CHANGED');
-  for(const expected of retained.values()){const actual=rowOf(await readIdentity(path.join(repository,expected.relative)));
+  for(const expected of retained.values()){const actual=rowOf(await readIdentity(path.join(repository,expected.relative),inputByteLimit(expected.relative)));
     requirePolicy(stable(expected,actual),'FREEZE_FINAL_READBACK',{relative:expected.relative});}
-  const currentReceipt=rowOf(await exact(RECEIPT));requirePolicy(stable(buildReceipt,currentReceipt),'FREEZE_RECEIPT_CHANGED');
-  await save(GENERATED+'/control-selectors.json',{schemaVersion:1,ready:true,controls,nativeExecuted:false});
+  const receiptRead=await readIdentity(path.join(OUTPUT,RECEIPT));const currentReceipt={relative:RECEIPT,bytes:receiptRead.bytes,sha256:receiptRead.sha256};requirePolicy(stable(buildReceipt,currentReceipt),'FREEZE_RECEIPT_CHANGED');
+  await save('control-selectors.json',{schemaVersion:1,ready:true,controls,nativeExecuted:false});
   // Publish the ready collection manifest last. Its own hash is never recursively included in files.
-  await save(GENERATED+'/collection-inputs.json',{schemaVersion:1,ready:true,entries:ENTRIES,files:sortRows([...retained.values()]),buildReceipt,shader,
+  await save('collection-inputs.json',{schemaVersion:1,ready:true,entries:ENTRIES,files:sortRows([...retained.values()]),buildReceipt,shader,
     nativeExecuted:false,sourceBuildAttestedHere:false,issuer:SELF});
-  process.stdout.write('Actual build succeeded; native collection inputs are ready in '+GENERATED+'/. Native has not run.\n');
+  process.stdout.write('Actual build succeeded; native collection inputs are ready in '+OUTPUT+'/. Native has not run.\n');
 }
 try{await main();}catch(error){process.stderr.write(JSON.stringify(fault(error))+'\n');process.exitCode=1;}

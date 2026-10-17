@@ -1511,8 +1511,8 @@
       "newEn": "tools/sequence-player/README.md",
       "kind": "public_reading",
       "action": "new-first-party-pair",
-      "currentZhSha256": "649cecada889ed58b9933f615ce6c54e154744a77d91406f8c6d94bcbb356665",
-      "currentEnSha256": "c80ed2f484ea9a6a37a27e09aeac35d3f5420b118198a5afea31069c35adaa2a"
+      "currentZhSha256": "ab807daa45ed0fd54fdb4def69bd072d838640e6cb5e5e108c53eb37214f5eb1",
+      "currentEnSha256": "facbbdc37581fdf887366138a313b339b97eb8a9b45d510017738eac3b97780f"
     },
     {
       "newZh": "knowledge-base/Cns/docs/自有纹理几何与Mesh2D契约.md",
@@ -2028,8 +2028,8 @@
       "kind": "public_reading",
       "action": "add-current-pair",
       "status": "CURRENT_READING_SOURCE",
-      "currentEnSha256": "062908f9f2faffd8524da30768f52a9a2f2c61142b6c54c556e2acc8fca25952",
-      "currentZhSha256": "a65472aed4714b59d7716b4165eee57268fbcf0b0c0c984b4b5238e4d3dab720"
+      "currentEnSha256": "4d8ca6724a645ac2dc85eea84c08629a075a71457fb0076dabb69b575980696d",
+      "currentZhSha256": "2a549eb9e0a33e8335d476458a13a4d1e6e5b9b644211749858878c7047f5cd3"
     },
     {
       "newEn": "knowledge-base/en/docs/m0-community-foundations.md",
@@ -2037,8 +2037,8 @@
       "kind": "public_reading",
       "action": "add-current-pair",
       "status": "CURRENT_READING_SOURCE",
-      "currentEnSha256": "d020785e3f565820302d94f461566b7ad4ac032e2edfda0c1915d2c3cc286562",
-      "currentZhSha256": "990191aab0af6bc6e1e0f59e41a4129ef0c1bda2e8a5250a633324bfd5ca9443"
+      "currentEnSha256": "4f4e2fa9b75e96674e7f679999c5504d3ec026ade2b46616d6c77b7ef993d673",
+      "currentZhSha256": "68402085100a5bb8442d5fca4c9c621ea83838203c2dde490e13cd5895c5bb1a"
     },
     {
       "newEn": "knowledge-base/en/docs/architecture-and-engineering-plan.md",
@@ -2046,8 +2046,8 @@
       "kind": "public_reading",
       "action": "add-current-pair",
       "status": "CURRENT_READING_SOURCE",
-      "currentEnSha256": "a3a9832f79e67b548796bc49388ffd33ef8a944649dd1fa8c2525c007a1ffc9f",
-      "currentZhSha256": "cf39874eff177338284405635e7bb4a56cf888cc2f429d52c04ac8b14aaa101f"
+      "currentEnSha256": "a38cb65878b55b5e6a5bc742b35df94c3b4bf0b0043f790385758ad4b3f97741",
+      "currentZhSha256": "cacd0717948b11fcf96b25e1510b44ccd97fa444b049c489d60d8c60849d04d2"
     }
   ],
   "registries": [

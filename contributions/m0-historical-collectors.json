@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tools/browser-history.mjs",
+      "originRole": "First-party M0 historical-domain tooling and tests, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/browser-history-build.mjs",
+      "originRole": "First-party M0 historical-domain tooling and tests, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/publication/historical-browser-tools.test.mjs",
+      "originRole": "First-party M0 historical-domain tooling and tests, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "knowledge-base/en/docs/historical-browser-workflow.md",
+      "originRole": "First-party bilingual contributor guide, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/historical-browser-workflow.md",
+      "originRole": "First-party bilingual contributor guide, authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/historical-browser-workflow.md",
+      "zh": "knowledge-base/Cns/docs/historical-browser-workflow.md"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 # 公共 SequencePlayer 不透明像素浏览器验证器
 
-历史采集配置：下文 Node 24.19.0 指令保留此实验的原始协议，不是当前上手入口，也不证明 Node 26 兼容。请通过[当前指南](../../knowledge-base/Cns/docs/getting-started.md#贡献元数据与浏览器检查)和 tools/browser-tool-matrix.json 选择活跃套件。它们不替代本采集工具的比较范围；影响本范围的变更需要单独评审迁移。
+当前工具使用 Node 26.7.0，请遵循[准备/评审/执行指南](../../knowledge-base/Cns/docs/historical-browser-workflow.md)。此前 Node 24 记录保留原始范围，下述固定预期、准入及外部进程退出要求继续有效。
 
 [English](README.md) | 简体中文
 
@@ -8,7 +8,7 @@
 
 ## 前置条件与命令
 
-使用已安装的 Node.js 24.19.0、Playwright 及相邻 playwright-core 1.62.1、标准安装的 Microsoft Edge，以及仓库固定依赖。collector 不安装依赖、不下载文件。先在仓库根目录运行 `node tools/build.mjs` 构建当前源码；依赖准备见[仓库指南](../../README.zh-CN.md)。
+使用已安装的 Node.js 26.7.0、Playwright 及相邻 playwright-core 1.62.1、标准安装的 Microsoft Edge，以及仓库固定依赖。collector 不安装依赖、不下载文件。先在仓库根目录运行 `node tools/build.mjs` 构建当前源码；依赖准备见[仓库指南](../../README.zh-CN.md)。
 
 在仓库根目录执行：
 
@@ -18,7 +18,7 @@ node tools/sequence-player/collector.mjs --playwright <installed module> --chann
 
 两个路径占位符都须替换为绝对路径；包含空格时加引号。`--playwright` 指定已安装的 `playwright` 包目录，相邻目录须为 `playwright-core`。输出父目录须已存在，候选目录须尚不存在，并且位于仓库与两个已安装模块根目录之外。每次尝试使用新目录，不能覆盖旧结果。
 
-collector 保留原 Windows x64 / Node.js 24.19.0 / Playwright 1.62.1 准入范围和标准 Edge 可执行文件位置。它以默认选项无头启动已安装的 `msedge`，不增加 flags。每次尝试记录实际浏览器版本、OS release 与 WebGPU adapter 观察。该固定环境范围不能推广为可移植或全设备验收。已记录的公共播放器原生尝试只验收当时设备配置下的固定不透明子集；运行时的阅读文件身份与后续仅阅读变更保持区分。
+collector 使用当前 Windows x64 / Node.js 26.7.0 / Playwright 1.62.1 准入范围和标准 Edge 可执行文件位置。它以默认选项无头启动已安装的 `msedge`，不增加 flags。每次尝试记录实际浏览器版本、OS release 与 WebGPU adapter 观察。该固定环境范围不能推广为可移植或全设备验收。已记录的公共播放器原生尝试只验收当时设备配置下的固定不透明子集；运行时的阅读文件身份与后续仅阅读变更保持区分。
 
 ## 固定观察范围
 

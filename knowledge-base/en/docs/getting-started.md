@@ -109,3 +109,5 @@ Only modified existing README/CONTRIBUTING reading editions or Markdown files di
 pnpm check:quick remains available for build/boundary/onboarding feedback. Neither local feedback command replaces the complete committed push hook, integrated merge gate, affected browser acceptance or independent source/bilingual review. A local PASS is not a merge receipt.
 
 If an example never becomes Ready, report backend, failed step and sanitized diagnostics. Missing human participation, phones, mini-game hosts and font workloads remain unexecuted in the [M0 result record](m0-community-foundations.md).
+
+Texture, frame-animation and SpriteSheet changes use the [current historical-domain workflow](historical-browser-workflow.md). Start with setup/headless results; ask maintainers to prepare original review evidence and external process-retirement validation.

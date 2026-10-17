@@ -1,6 +1,6 @@
 # 命名 SpriteSheet 不透明像素浏览器验证器
 
-历史采集配置：下文 Node 24.19.0 指令保留此实验的原始协议，不是当前上手入口，也不证明 Node 26 兼容。请通过[当前指南](../../knowledge-base/Cns/docs/getting-started.md#贡献元数据与浏览器检查)和 tools/browser-tool-matrix.json 选择活跃套件。它们不替代本采集工具的比较范围；影响本范围的变更需要单独评审迁移。
+当前工具使用 Node 26.7.0，请遵循[准备/评审/执行指南](../../knowledge-base/Cns/docs/historical-browser-workflow.md)。此前 Node 24 记录保留原始范围，下述固定预期、准入及外部进程退出要求继续有效。
 
 [English](README.md) | 简体中文
 
@@ -10,7 +10,7 @@
 
 ## 调用与前置条件
 
-使用已评审的实际 Windows x64 环境：已安装 Node24.19.0、TypeScript7.0.2、Playwright 与相邻 playwright-core1.62.1，以及正常 Microsoft Edge。真实工作区安装遵循[仓库指南](../../README.md)。独立所有者构建并评审当前源码，接受所有有限通道后提供准入记录。Collector 不执行安装、构建、下载、Git 或编译器。
+使用已评审的实际 Windows x64 环境：已安装 Node26.7.0、TypeScript7.0.2、Playwright 与相邻 playwright-core1.62.1，以及正常 Microsoft Edge。真实工作区安装遵循[仓库指南](../../README.md)。独立所有者构建并评审当前源码，接受所有有限通道后提供准入记录。Collector 不执行安装、构建、下载、Git 或编译器。
 
 在仓库根目录调用：
 
@@ -32,7 +32,7 @@ Collector 读取 `spritesheet-native-admission/1`，状态 `ROOT_FROZEN_REVIEWED
 
 `reviews.plan/product/build/cpu/types/policy/units/example/nativeSource` 均提供明确固定、已接受且 numeric open0 的 review。CPU、types、policy、units、example、build 要求实际 verdict。Product 使用明确 `sourcePinsPointer`；`nativeSource` 用同字段指向当前全部七个 `tools/spritesheet` 文件。缺失、未来、未完成或不匹配的评审在启动前拒绝；源码接受不能虚构实际通道结果。确切 schema1 计划记录的 kind 为 SPRITESHEET_SS1_FINITE_INDEPENDENT_IMPLEMENTATION_PLAN_SOURCE_REVIEW，结论放在 status PASS_SOURCE_PLAN，且没有 verdict 字段；此适配仅限 native-plan 角色。其它角色保持 verdict 检查。当前产品身份指针为 /reviewedPins；/reviewedFiles 包含名称，不是身份行。
 
-精确20配置条目保留根 manifests／lock／workspace／strict configs、build／project-format 工具和 schema、四 SDK 包 manifests／configs、Engine rendering／web configs，以及两个逻辑 TypeScript 包／启动器文件。七个 compiler-owner 条目保留已绑定外部 Node、四个 TypeScript 包／启动器文件和原生 Windows 包／可执行文件。固定 pnpm7.0.2 逻辑／物理关系只接受这些已知所有者，不把原物理条目转换为虚构逻辑身份。
+精确20配置条目保留根 manifests／lock／workspace／strict configs、build／project-format 工具和 schema、四 SDK 包 manifests／configs、Engine rendering／web configs，以及两个逻辑 TypeScript 包／启动器文件。七个 compiler-owner 条目保留已绑定外部 Node、四个 TypeScript 包／启动器文件和原生 Windows 包／可执行文件。固定提升安装7.0.2 逻辑／物理关系只接受这些已知所有者，不把原物理条目转换为虚构逻辑身份。
 
 启动前及完整退役后记录四个编译器目录关系与六个指定文件，要求相同端点、字节和 hash。四个已保存工作区别名须在前后指向当前仓库自有包与原包 pin。保存原始 owner 观察、完整选定输入身份及稳定比较。缺失、变化、读取失败或未观察均为 `INCOMPLETE`，即使旧物理文件 hash 仍相同。它们是来源／构建回读，不是签名、安全认证或系统进程退役证明。
 
@@ -65,3 +65,5 @@ Clip 时长为 `.125/.25/.125`，真实时钟 maxDelta`.5`，`advanceTime(0)` �
 继承预算为每操作20秒、收集240秒、退役280秒、硬截止295秒，以及外部 owner 至多300秒 watchdog，并保留有限事件／模块／输入／输出预算。独立评审的外部 Windows Job owner 另存原始流／EOF、进程 assignment、active-zero／Job closure 与退役事实；Collector 关闭不能独自证明系统进程退役。
 
 只有完整实际尝试才能输出 `PASS_SPRITESHEET_OPAQUE_SUBSET`／exit0、`FAIL_SPRITESHEET_OPAQUE_SUBSET`／exit1 或 `INCOMPLETE`／exit2。原始提交数包含重放。本环境不证明 alpha 校准、插值、物理 OOM／GC、硬件 scanout、手机／浏览器矩阵、吞吐、授权权益、完整 Spine R020／V020 或迁移 R008／V006。
+
+在当前提升安装中，保留的四条编译器目录记录将两个物理归属各列两次，均为自映射，不代表四个不同别名。

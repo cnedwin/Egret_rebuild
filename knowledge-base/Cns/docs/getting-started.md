@@ -109,3 +109,5 @@ node tools/check-incremental.mjs --base origin/main
 pnpm check:quick 仍可用于构建、依赖边界和上手工具反馈。两种本地反馈均不替代完整的已提交推送 hook、集成合并检查、受影响浏览器验收及独立来源/双语评审。本地 PASS 不是合并凭据。
 
 示例未就绪时报告后端、失败步骤和脱敏诊断。缺少真人参与、手机、小游戏宿主或字体工作负载时，在 [M0 结果记录](m0-community-foundations.md)中保留未执行状态。
+
+纹理、序列帧和 SpriteSheet 变更使用[当前历史验证范围流程](historical-browser-workflow.md)。新人先提供环境/无窗口结果；原始评审证据和外部进程退出验证由维护者协助准备。
