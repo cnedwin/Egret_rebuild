@@ -1,6 +1,6 @@
 # Public SequencePlayer opaque browser verifier
 
-Historical collector profile: the Node 24.19.0 instructions below preserve this experiment’s original protocol. They are not the current onboarding path or proof of Node 26 compatibility. Use [the current guide](../../knowledge-base/en/docs/getting-started.md#contribution-metadata-and-browser-checks) and tools/browser-tool-matrix.json to select an active suite. Those suites do not replace this collector’s comparison domain; changes affecting this domain require a separately reviewed migration.
+Current tooling uses Node 26.7.0. Follow the [prepare/review/run guide](../../knowledge-base/en/docs/historical-browser-workflow.md). Previous Node 24 receipts retain their original scope; the fixed oracle, admission and external-retirement requirements below remain mandatory.
 
 English | [简体中文](README.zh-CN.md)
 
@@ -8,7 +8,7 @@ This first-party tool verifies the public [SequencePlayer contract](../../knowle
 
 ## Run prerequisites and command
 
-Use an existing installed Node.js 24.19.0, Playwright and adjacent playwright-core 1.62.1, standard installed Microsoft Edge, and the repository's pinned dependencies. The collector installs nothing and downloads nothing. Build the current source first with `node tools/build.mjs` from the checkout root. See the [repository guide](../../README.md) for dependency setup.
+Use an existing installed Node.js 26.7.0, Playwright and adjacent playwright-core 1.62.1, standard installed Microsoft Edge, and the repository's pinned dependencies. The collector installs nothing and downloads nothing. Build the current source first with `node tools/build.mjs` from the checkout root. See the [repository guide](../../README.md) for dependency setup.
 
 From the repository root:
 
@@ -18,7 +18,7 @@ node tools/sequence-player/collector.mjs --playwright <installed module> --chann
 
 Replace both path placeholders with absolute paths; quote paths containing spaces. `--playwright` selects the installed `playwright` package directory, whose sibling must be `playwright-core`. The output parent must already exist. The candidate directory must not exist and must be outside the repository and both installed module roots. Each attempt uses a fresh directory and cannot overwrite a prior result.
 
-The collector retains the original Windows x64 / Node.js 24.19.0 / Playwright 1.62.1 admission profile and standard Edge executable location. It launches installed `msedge` headlessly with default options and no extra flags. Actual browser version, OS release and WebGPU adapter observations are recorded per attempt. This is a fixed rig qualification, not portable or device-wide acceptance. The recorded public-player native attempt accepted only the fixed opaque subset on its recorded rig; the original execution-time reading-file identities and subsequent reading-only updates are distinct.
+The collector uses the current Windows x64 / Node.js 26.7.0 / Playwright 1.62.1 admission profile and standard Edge executable location. It launches installed `msedge` headlessly with default options and no extra flags. Actual browser version, OS release and WebGPU adapter observations are recorded per attempt. This is a fixed rig qualification, not portable or device-wide acceptance. The recorded public-player native attempt accepted only the fixed opaque subset on its recorded rig; the original execution-time reading-file identities and subsequent reading-only updates are distinct.
 
 ## Fixed observation scope
 

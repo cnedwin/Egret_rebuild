@@ -11,6 +11,8 @@ export const REGISTRY_SOURCE='packages/engine/src/internal/texturedFrameState.ts
 export const ENTRIES=['packages/engine/dist/index.js','packages/engine/dist/web/webgpu.js'];
 export const CONTROL_IDS=['C01-no-op-mesh','C02-reverse-painter','C03-omit-light-alpha','C04-omit-opacity','C05-detach-light','C06-remove-clip','C07-double-premultiply','C08-wrong-crop','C09-wrong-UV','C10-nominal-DPR','C11-wrong-clear','C12-channel-order'];
 export const LIMITS=Object.freeze({modules:128,moduleBytes:1048576,graphBytes:4194304,artifactBytes:4194304,totalArtifactBytes:16777216,eventsPerWindow:128,requestsPerWindow:512});
+// The growing source ledger is metadata, never a served JavaScript module.
+export const inputByteLimit=relative=>relative==='source-origin.json'?4194304:LIMITS.moduleBytes;
 const privateRefusals=new WeakSet();
 const ownedGraphs=new WeakSet(),ownedCopies=new WeakSet(),ownedCaptures=new WeakSet();
 export function incomplete(reason,details={},cause){const error=new Error('TEXTURED_COLLECTOR_INCOMPLETE:'+reason,{cause});

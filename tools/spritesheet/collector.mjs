@@ -147,13 +147,13 @@ function equalInventories(left, right) {
   }) && keys.size === right.length;
 }
 async function installedCompilerMapping(root) {
-  // This reviewed Windows rig has two fixed pnpm owners, not a general alias resolver.
+  // The current setup has two exact hoisted owners; retain logical/physical rechecks.
   const typescriptAlias = path.join(root, 'node_modules/typescript');
-  const typescriptRoot = path.join(root, 'node_modules/.pnpm/typescript@7.0.2/node_modules/typescript');
+  const typescriptRoot = path.join(root, 'node_modules/typescript');
   const nativeRoot = path.join(root,
-    'node_modules/.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64');
+    'node_modules/@typescript/typescript-win32-x64');
   const nativeAlias = path.join(root,
-    'node_modules/.pnpm/typescript@7.0.2/node_modules/@typescript/typescript-win32-x64');
+    'node_modules/@typescript/typescript-win32-x64');
   const directoryPaths = [[typescriptAlias, typescriptRoot], [typescriptRoot, typescriptRoot],
     [nativeAlias, nativeRoot], [nativeRoot, nativeRoot]];
   for (const [alias, expected] of directoryPaths)
@@ -459,7 +459,7 @@ const hardTimer = setTimeout(() => {
 
 try {
   const cli = options(process.argv.slice(2));
-  requireValue(process.platform === 'win32' && process.arch === 'x64' && process.version === 'v24.19.0', 'Reviewed Windows x64 / Node24.19.0 runtime only');
+  requireValue(process.platform === 'win32' && process.arch === 'x64' && process.version === 'v26.7.0', 'Reviewed Windows x64 / Node26.7.0 runtime only');
   const pwPath = await bounded('Playwright realpath', () => realpath(cli['--playwright']));
   const corePath = await bounded('Playwright core realpath', () => realpath(path.join(pwPath, '../playwright-core')));
   const parent = await bounded('output parent realpath', () => realpath(path.dirname(cli['--output']))), candidate = path.join(parent, path.basename(cli['--output']));
@@ -481,7 +481,7 @@ try {
   requireValue(pwMeta.name === 'playwright' && pwMeta.version === '1.62.1' && coreMeta.name === 'playwright-core' && coreMeta.version === '1.62.1', 'Reviewed installed Playwright versions only');
   for (const file of [process.execPath, path.join(process.env['ProgramFiles(x86)'] ?? 'C:/Program Files (x86)', 'Microsoft/Edge/Application/msedge.exe'),
     ...['package.json', 'pnpm-lock.yaml', 'packages/engine/package.json', 'packages/runtime/package.json', 'packages/contracts/package.json',
-      'node_modules/.pnpm/robust-predicates@3.0.3/node_modules/robust-predicates/package.json', 'node_modules/.pnpm/robust-predicates@3.0.3/node_modules/robust-predicates/LICENSE'].map(name => path.join(repositoryRoot, name))]) {
+      'node_modules/robust-predicates/package.json', 'node_modules/robust-predicates/LICENSE'].map(name => path.join(repositoryRoot, name))]) {
     pin(await bounded('selected source/runtime identity', () => identity(file)), 'selected-source-runtime-package');
   }
   const aliases = {

@@ -1,6 +1,6 @@
 # Named SpriteSheet opaque browser verifier
 
-Historical collector profile: the Node 24.19.0 instructions below preserve this experiment’s original protocol. They are not the current onboarding path or proof of Node 26 compatibility. Use [the current guide](../../knowledge-base/en/docs/getting-started.md#contribution-metadata-and-browser-checks) and tools/browser-tool-matrix.json to select an active suite. Those suites do not replace this collector’s comparison domain; changes affecting this domain require a separately reviewed migration.
+Current tooling uses Node 26.7.0. Follow the [prepare/review/run guide](../../knowledge-base/en/docs/historical-browser-workflow.md). Previous Node 24 receipts retain their original scope; the fixed oracle, admission and external-retirement requirements below remain mandatory.
 
 English | [简体中文](README.zh-CN.md)
 
@@ -10,7 +10,7 @@ The original source-candidate record classified syntax, browser execution and in
 
 ## Invocation and prerequisites
 
-Use the reviewed installed Windows x64 rig: Node 24.19.0, TypeScript 7.0.2, Playwright and adjacent playwright-core 1.62.1, and normal Microsoft Edge. Follow the [repository setup guide](../../README.md) for the genuine workspace installation. A separate owner builds and reviews current source, accepts all finite lanes, and supplies admission. The collector does not install, build, download, invoke Git or run a compiler.
+Use the reviewed installed Windows x64 rig: Node 26.7.0, TypeScript 7.0.2, Playwright and adjacent playwright-core 1.62.1, and normal Microsoft Edge. Follow the [repository setup guide](../../README.md) for the genuine workspace installation. A separate owner builds and reviews current source, accepts all finite lanes, and supplies admission. The collector does not install, build, download, invoke Git or run a compiler.
 
 From the checkout root:
 
@@ -32,7 +32,7 @@ The pinned producer has schema `spritesheet-sdk-build-inventory/1` and preserves
 
 `reviews.plan/product/build/cpu/types/policy/units/example/nativeSource` each supply an exact pinned accepted review, numeric open0. CPU/types/policy/units/example/build require an actual verdict. Product uses explicit `sourcePinsPointer`; `nativeSource` uses the same field for all seven current `tools/spritesheet` paths. Missing, future, incomplete or mismatched reviews refuse before launch. Source acceptance never invents an actual lane result. The exact schema1 plan record with kind SPRITESHEET_SS1_FINITE_INDEPENDENT_IMPLEMENTATION_PLAN_SOURCE_REVIEW uses status PASS_SOURCE_PLAN and has no verdict field; this adapter applies only to the native-plan role. All other roles retain their verdict checks. The current product identity pointer is /reviewedPins; /reviewedFiles contains names, not identity rows.
 
-The exact twenty configuration rows retain root manifests/lock/workspace/strict configs, build/project-format tools/schema, four SDK package manifests/configs, Engine rendering/web configs, and the two logical TypeScript package/launcher files. Seven compiler-owner rows retain the bound external Node plus four TypeScript package/launcher files and the native Windows package/executable. Fixed pnpm7.0.2 logical/physical relationships admit only these known owners; original physical rows are not converted into invented logical identities.
+The exact twenty configuration rows retain root manifests/lock/workspace/strict configs, build/project-format tools/schema, four SDK package manifests/configs, Engine rendering/web configs, and the two logical TypeScript package/launcher files. Seven compiler-owner rows retain the bound external Node plus four TypeScript package/launcher files and the native Windows package/executable. Fixed hoisted 7.0.2 logical/physical relationships admit only these known owners; original physical rows are not converted into invented logical identities.
 
 Four compiler directory relationships and six assigned compiler files are observed before launch and after full retirement; the same endpoints, bytes and hashes are required. All four saved workspace aliases must resolve to their own current checkout packages and original package pins before/after. Raw owner observations, complete selected-input identities and their stable comparisons are saved. Missing, changed, failed or unobserved ownership yields `INCOMPLETE` even if an old physical file still hashes correctly. These checks are source/build readback, not signatures, security attestation or OS process-retirement proof.
 
@@ -65,3 +65,5 @@ Acquire readback before rendering and register idle before awaiting both. Settle
 Inherited budgets are 20s per operation,240s collection,280s retirement,295s hard deadline, and an at-most300s external owner watchdog, with finite event/module/input/output budgets. A separate reviewed external Windows Job owner must save raw streams/EOF, process assignment, active-zero/Job closure and retirement facts. Collector closure alone proves no OS process retirement.
 
 Only completed actual attempts emit `PASS_SPRITESHEET_OPAQUE_SUBSET`/exit0, `FAIL_SPRITESHEET_OPAQUE_SUBSET`/exit1, or `INCOMPLETE`/exit2. Raw submission counts include replay. This rig establishes no alpha calibration, interpolation, physical OOM/GC, hardware scanout, phone/browser matrix, throughput, entitlement, full Spine R020/V020 or migration R008/V006 acceptance.
+
+In the current hoisted layout, the retained four compiler-directory rows represent two physical owners twice; each is a self mapping. They do not prove four distinct aliases.

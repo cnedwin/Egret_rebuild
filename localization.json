@@ -1128,8 +1128,8 @@
       "zh": "tools/sequence-player/README.zh-CN.md",
       "en": "tools/sequence-player/README.md",
       "kind": "public_reading",
-      "enSha256": "c80ed2f484ea9a6a37a27e09aeac35d3f5420b118198a5afea31069c35adaa2a",
-      "zhSha256": "649cecada889ed58b9933f615ce6c54e154744a77d91406f8c6d94bcbb356665"
+      "enSha256": "facbbdc37581fdf887366138a313b339b97eb8a9b45d510017738eac3b97780f",
+      "zhSha256": "ab807daa45ed0fd54fdb4def69bd072d838640e6cb5e5e108c53eb37214f5eb1"
     },
     {
       "zh": "knowledge-base/Cns/docs/显示坐标查询契约.md",
@@ -1438,8 +1438,8 @@
       "en": "tools/sequence-playback/README.md",
       "zh": "tools/sequence-playback/README.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "c9aa059f462a51a4c16afe7c6eb5fa0ed26ccdc0a7eb12e3638db031218229cd",
-      "zhSha256": "026edac5f6757a746dd4e4d63b77a049b8bbaa59b4e0c3323ec6a153f3cdd854"
+      "enSha256": "56c9e84397e6aa994e3796d5530ecf614f606f6701ee7a988a5d5b79d5d98b3d",
+      "zhSha256": "765f3e70281b54cc425eae8ebd03c9574edb32e94aa86b9999d8def9fd51dc0e"
     },
     {
       "en": "knowledge-base/en/docs/spritesheet-contract.md",
@@ -1459,8 +1459,8 @@
       "en": "tools/spritesheet/README.md",
       "zh": "tools/spritesheet/README.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "1624447bb2689ad76bfdfbec04a6aae4a82b5d50ecea74c465a22acc0746e617",
-      "zhSha256": "f27e182379013fd9246df46f8cd583c7794e6c2f1a07e126274146e44fd676a4"
+      "enSha256": "0706391e810a0fb05b68a257debfa4a40e56b76bb7e766f246ed48307bc594f5",
+      "zhSha256": "0ee3bf4edc7b07cab0ee12db7858d3caa0c76a42082860e120b307eca89ff414"
     },
     {
       "en": "knowledge-base/en/docs/repository-identity-and-line-endings.md",
@@ -1830,22 +1830,22 @@
       "en": "knowledge-base/en/docs/getting-started.md",
       "zh": "knowledge-base/Cns/docs/getting-started.md",
       "kind": "public_reading",
-      "enSha256": "062908f9f2faffd8524da30768f52a9a2f2c61142b6c54c556e2acc8fca25952",
-      "zhSha256": "a65472aed4714b59d7716b4165eee57268fbcf0b0c0c984b4b5238e4d3dab720"
+      "enSha256": "4d8ca6724a645ac2dc85eea84c08629a075a71457fb0076dabb69b575980696d",
+      "zhSha256": "2a549eb9e0a33e8335d476458a13a4d1e6e5b9b644211749858878c7047f5cd3"
     },
     {
       "en": "knowledge-base/en/docs/m0-community-foundations.md",
       "zh": "knowledge-base/Cns/docs/m0-community-foundations.md",
       "kind": "public_reading",
-      "enSha256": "d020785e3f565820302d94f461566b7ad4ac032e2edfda0c1915d2c3cc286562",
-      "zhSha256": "990191aab0af6bc6e1e0f59e41a4129ef0c1bda2e8a5250a633324bfd5ca9443"
+      "enSha256": "4f4e2fa9b75e96674e7f679999c5504d3ec026ade2b46616d6c77b7ef993d673",
+      "zhSha256": "68402085100a5bb8442d5fca4c9c621ea83838203c2dde490e13cd5895c5bb1a"
     },
     {
       "en": "knowledge-base/en/docs/architecture-and-engineering-plan.md",
       "zh": "knowledge-base/Cns/docs/architecture-and-engineering-plan.md",
       "kind": "public_reading",
-      "enSha256": "a3a9832f79e67b548796bc49388ffd33ef8a944649dd1fa8c2525c007a1ffc9f",
-      "zhSha256": "cf39874eff177338284405635e7bb4a56cf888cc2f429d52c04ac8b14aaa101f"
+      "enSha256": "a38cb65878b55b5e6a5bc742b35df94c3b4bf0b0043f790385758ad4b3f97741",
+      "zhSha256": "cacd0717948b11fcf96b25e1510b44ccd97fa444b049c489d60d8c60849d04d2"
     },
     {
       "en": "knowledge-base/en/docs/resource-browser-workflow.md",
@@ -1853,6 +1853,13 @@
       "kind": "public_reading",
       "enSha256": "5511203d27d44737d562bfd326aa90fb4b73c3d77ee7333382f7b25dc9522912",
       "zhSha256": "bcfd9530c0c978d8e874770da10c64ab4c7eefc0aff7d2f5dc0685206be3a1cf"
+    },
+    {
+      "en": "knowledge-base/en/docs/historical-browser-workflow.md",
+      "zh": "knowledge-base/Cns/docs/historical-browser-workflow.md",
+      "kind": "public_reading",
+      "enSha256": "63e3bfdf83da62ba69ba0551cc77311d9e53375dd0aabde74f383edc0742c5a5",
+      "zhSha256": "a50f509a9454402957557b0e083baa52d43d6d527ee8c562c40ab82e2a41e13a"
     }
   ],
   "registries": [
@@ -2646,7 +2653,7 @@
     },
     {
       "path": "tools/verify-textured-scene-webgpu.mjs",
-      "sha256": "a97c9f5ed2159b27394961df63d07202d43caf09d15286a43f9dc040aca986b0"
+      "sha256": "46f8c4da1bf1c18286c2210d2fe0bb3f396d8f196bf3148f81dfc8f06e583ff4"
     },
     {
       "path": "tools/textured-scene-webgpu/main.mjs",
@@ -2810,7 +2817,7 @@
     },
     {
       "path": "tools/prepush.mjs",
-      "sha256": "e084a8eb44f89b565d298de063e3a377991b91321819c2b5ea6b8e01da28941d"
+      "sha256": "bb8b8c0adc7f5d269d5ac73d7288740b5e4a95fcf988f273fda4b2ccf4fcf18d"
     },
     {
       "path": "packages/engine/web/image.ts",
@@ -3451,6 +3458,18 @@
     {
       "path": "tests/publication/resource-browser-tools.test.mjs",
       "sha256": "e80eb0db5d68a06ee40b7410773bca5e508e208e71f4177e134f9eac7bae6756"
+    },
+    {
+      "path": "tools/browser-history.mjs",
+      "sha256": "8ea721291babf18796509d099a908fe8cc2f91aa1f64b1ecafdc1b06203e3d8a"
+    },
+    {
+      "path": "tools/browser-history-build.mjs",
+      "sha256": "60ca9ba8cd69c9068e501bd7e2632164c9b73297ed3ad91912360313c46479d7"
+    },
+    {
+      "path": "tests/publication/historical-browser-tools.test.mjs",
+      "sha256": "12861915a9d831beddcc8d1c50db60a88181d7b225c1100d70cdc407bb108d44"
     }
   ],
   "historicalSemanticReview": {

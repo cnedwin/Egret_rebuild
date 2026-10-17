@@ -129,7 +129,7 @@ const hardTimer = setTimeout(() => {
 
 try {
   const cli = options(process.argv.slice(2));
-  requireValue(process.platform === 'win32' && process.arch === 'x64' && process.version === 'v24.19.0', 'Reviewed Windows x64 / Node24.19.0 runtime only');
+  requireValue(process.platform === 'win32' && process.arch === 'x64' && process.version === 'v26.7.0', 'Reviewed Windows x64 / Node26.7.0 runtime only');
   const pwPath = await bounded('Playwright realpath', () => realpath(cli['--playwright']));
   const corePath = await bounded('Playwright core realpath', () => realpath(path.join(pwPath, '../playwright-core')));
   const parent = await bounded('output parent realpath', () => realpath(path.dirname(cli['--output']))), candidate = path.join(parent, path.basename(cli['--output']));
@@ -148,15 +148,16 @@ try {
   requireValue(pwMeta.name === 'playwright' && pwMeta.version === '1.62.1' && coreMeta.name === 'playwright-core' && coreMeta.version === '1.62.1', 'Reviewed installed Playwright versions only');
   for (const file of [process.execPath, 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',
     ...['package.json', 'pnpm-lock.yaml', 'packages/engine/package.json', 'packages/runtime/package.json', 'packages/contracts/package.json',
-      'node_modules/.pnpm/robust-predicates@3.0.3/node_modules/robust-predicates/package.json', 'node_modules/.pnpm/robust-predicates@3.0.3/node_modules/robust-predicates/LICENSE'].map(name => path.join(repositoryRoot, name))]) {
+      'node_modules/robust-predicates/package.json', 'node_modules/robust-predicates/LICENSE'].map(name => path.join(repositoryRoot, name))]) {
     pin(await bounded('selected source/runtime identity', () => identity(file)), 'selected-source-runtime-package');
   }
   const aliases = {
+    '#egret-mouse-input': path.join(repositoryRoot, 'packages/engine/dist/mouseInput.js'),
     '#egret-textured-frame-state': path.join(repositoryRoot, 'packages/engine/dist/internal/texturedFrameState.js'),
     '@egret/contracts': path.join(repositoryRoot, 'packages/contracts/dist/index.js'), '@egret/runtime': path.join(repositoryRoot, 'packages/runtime/dist/index.js'),
     '@egret/engine': path.join(repositoryRoot, 'packages/engine/dist/index.js'), '@egret/engine/web': path.join(repositoryRoot, 'packages/engine/dist/web/index.js'),
     '@egret/engine/webgpu': path.join(repositoryRoot, 'packages/engine/dist/web/webgpu.js'),
-    'robust-predicates': path.join(repositoryRoot, 'node_modules/.pnpm/robust-predicates@3.0.3/node_modules/robust-predicates/index.js'),
+    'robust-predicates': path.join(repositoryRoot, 'node_modules/robust-predicates/index.js'),
   };
   const graph = await bounded('seal admitted emitted ESM/source graph', () => sealGraph({ repositoryRoot, aliases,
     entryPaths: { canvas: [aliases['@egret/engine'], aliases['@egret/engine/web']], webgpu: [aliases['@egret/engine'], aliases['@egret/engine/webgpu']] } }));

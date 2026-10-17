@@ -28,70 +28,21 @@ const ALIASES = Object.freeze({
 });
 const ENTRIES = ['packages/engine/dist/index.js', 'packages/engine/dist/rendering/scene3d.js',
   'packages/engine/dist/web/scene3d.js', 'packages/engine/dist/web/webgpu.js'];
-// Fixed first-party identities project implementation-candidate-r2; no private receipt is a runtime prerequisite.
-const EXPECTED_PRODUCT = [
-  {
-    "path": "packages/engine/web/prepareTexturedSubmission2D.ts",
-    "bytes": 15910,
-    "sha256": "09dd19bff3b2262dbbfe6cb7b478579e31cc2d579f6d27c328eb9de259b8d89b"
-  },
-  {
-    "path": "packages/engine/web/WebGPUHost.ts",
-    "bytes": 92002,
-    "sha256": "d3d75dbdb3e1fe906301344e06ac25275189e8f7fe481abff1b98563f9fc832a"
-  },
-  {
-    "path": "packages/engine/web/b1.ts",
-    "bytes": 2883,
-    "sha256": "18d37f790210bf99797e8832d670ab40cd923c5d67ba0eaf35a9501ae13bbf63"
-  },
-  {
-    "path": "packages/engine/web/scene3d.ts",
-    "bytes": 1484,
-    "sha256": "f1e659b0eee592caf9eef33974e5468c802884d251c933c7df9ade108fb2d7b3"
-  },
-  {
-    "path": "packages/engine/dist/web/prepareTexturedSubmission2D.js",
-    "bytes": 10783,
-    "sha256": "38254f2d88f1c4456d2e2a471d2cabdbccbcfd087cc88294e109e602da6d7df0"
-  },
-  {
-    "path": "packages/engine/dist/web/prepareTexturedSubmission2D.d.ts",
-    "bytes": 6120,
-    "sha256": "6d314807ea5f7a558134cdd5f9e0d197f4e8c3e52ed72d08cf4a0329841c81c0"
-  },
-  {
-    "path": "packages/engine/dist/web/WebGPUHost.js",
-    "bytes": 85885,
-    "sha256": "6287b56f10c6899c12dc6a05a0b40f188c74e22f1b92e4c55dae9f80d29d834b"
-  },
-  {
-    "path": "packages/engine/dist/web/WebGPUHost.d.ts",
-    "bytes": 4489,
-    "sha256": "3901c425c45da83e0a4331ea3945e318335abd78798dd3da6f3ea8be9b802576"
-  },
-  {
-    "path": "packages/engine/dist/web/b1.js",
-    "bytes": 1408,
-    "sha256": "ea0b12fe3693be7d3b1a2dc80c5768045e826e6278428ddca6e9006e66150c2e"
-  },
-  {
-    "path": "packages/engine/dist/web/b1.d.ts",
-    "bytes": 2093,
-    "sha256": "110e6403cef059c24bc4a83192010ec89a41eaafaff215e549ac00b7865345c4"
-  },
-  {
-    "path": "packages/engine/dist/web/scene3d.js",
-    "bytes": 471,
-    "sha256": "84c56083682a75cad68c065da06700cc18d448278144f130411d709fdc7e6f4b"
-  },
-  {
-    "path": "packages/engine/dist/web/scene3d.d.ts",
-    "bytes": 1280,
-    "sha256": "e2533624b4e0035d837e50bc963e1e39e665685daafa5ca1577d894b15085416"
-  }
-];
-const LIMITS = Object.freeze({ modules: 256, moduleBytes: 1048576, graphBytes: 8388608,
+// Current source identities must be supplied explicitly; no implicit acceptance of drift.
+const PRODUCT_PATHS = [
+  "packages/engine/web/prepareTexturedSubmission2D.ts",
+  "packages/engine/web/WebGPUHost.ts",
+  "packages/engine/web/b1.ts",
+  "packages/engine/web/scene3d.ts",
+  "packages/engine/dist/web/prepareTexturedSubmission2D.js",
+  "packages/engine/dist/web/prepareTexturedSubmission2D.d.ts",
+  "packages/engine/dist/web/WebGPUHost.js",
+  "packages/engine/dist/web/WebGPUHost.d.ts",
+  "packages/engine/dist/web/b1.js",
+  "packages/engine/dist/web/b1.d.ts",
+  "packages/engine/dist/web/scene3d.js",
+  "packages/engine/dist/web/scene3d.d.ts"
+];const LIMITS = Object.freeze({ modules: 256, moduleBytes: 1048576, graphBytes: 8388608,
   identities: 8192, inputBytes: 805306368, artifactBytes: 4194304, totalArtifactBytes: 33554432,
   events: 128, requests: 512, installedFiles: 4096, installedTreeBytes: 536870912 });
 const BUDGETS = Object.freeze({ operationMs: 210000, cleanupMs: 260000, hardMs: 280000, perOperationMs: 20000, nativeWindowMs: 170000 });
@@ -107,15 +58,15 @@ function policy(condition, reason, details = {}) {
   if (!condition) { const error = new Error('COMBINED_VERIFIER:' + reason); error.reason = reason; error.details = details; throw error; }
 }
 function options(argv) {
-  policy(argv.length === 6, 'CLI_OPTIONS');
+  policy(argv.length === 10, 'CLI_OPTIONS');
   const values = Object.create(null);
   for (let index = 0; index < argv.length; index += 2) {
     const key = argv[index], value = argv[index + 1];
-    policy(['--playwright', '--channel', '--output'].includes(key) && !Object.hasOwn(values, key)
+    policy(['--playwright', '--channel', '--output', '--snapshot', '--snapshot-sha256'].includes(key) && !Object.hasOwn(values, key)
       && typeof value === 'string' && value.length > 0, 'CLI_OPTIONS');
     values[key] = value;
   }
-  policy(values['--channel'] === 'msedge' && path.isAbsolute(values['--playwright']) && path.isAbsolute(values['--output']), 'CLI_PROFILE');
+  policy(values['--channel'] === 'msedge' && path.isAbsolute(values['--playwright']) && path.isAbsolute(values['--output']) && path.isAbsolute(values['--snapshot']) && /^[a-f0-9]{64}$/.test(values['--snapshot-sha256']), 'CLI_PROFILE');
   return values;
 }
 async function readIdentity(file, maximum = LIMITS.moduleBytes) {
@@ -328,7 +279,7 @@ async function main(argv) {
     launch: { channel: 'msedge', headless: true, callerAddedFlags: [], deviceScaleFactor: 1, freshContext: true },
     environment: { node: process.version, platform: process.platform, architecture: process.arch, browserVersion: null,
       browserExecutableIdentity: 'UNBOUND by public channel API' }, limits: LIMITS, budgets: BUDGETS,
-    source: { expectedProduct: EXPECTED_PRODUCT, actualProduct: [], importMap: { imports: ALIASES }, graph: null, tools: [] },
+    source: { expectedProduct: PRODUCT_PATHS, actualProduct: [], importMap: { imports: ALIASES }, graph: null, tools: [] },
     installedTools: [], positives: [], sensitivity: { status: 'NOT_RUN', id: 'CHNC01', rendererMutation: 'none', newBrowserFrames: 0 },
     native: null, requests: [], browserEvents: [], failure: null, cleanupFailures: [],
     rawCheck: { status: 'NOT_RUN', expectedObservations: 2, expectedPixelsPerObservation: 12, observations: 0, checkedPixels: 0 },
@@ -411,7 +362,7 @@ async function main(argv) {
   }, BUDGETS.hardMs);
   try {
     const cli = options(argv);
-    policy(process.version === 'v24.19.0', 'NODE_PROFILE');
+    policy(process.version === 'v26.7.0', 'NODE_PROFILE');
     repository = await realpath(repositoryCandidate);
     output = await freshOutput(cli['--output'], repository);
     store = artifactStore(output);
@@ -436,7 +387,12 @@ async function main(argv) {
       && engineMetadata.exports?.['./webgpu']?.import === './dist/web/webgpu.js'
       && engineMetadata.imports?.[REGISTRY_ALIAS]?.import === './dist/internal/texturedFrameState.js'
       && engineMetadata.dependencies?.['robust-predicates'] === '3.0.3', 'PUBLIC_ROUTING_PROFILE');
-    for (const expected of EXPECTED_PRODUCT) {
+    const snapshotRaw=await pin(cli['--snapshot'],'reviewed-current-snapshot');
+    policy(snapshotRaw.sha256===cli['--snapshot-sha256'],'REVIEWED_SNAPSHOT_DIGEST');
+    const snapshot=JSON.parse(snapshotRaw.body.toString('utf8'));
+    policy(snapshot.suite==='textured-scene'&&samePath(snapshot.repository,repository)&&Array.isArray(snapshot.inputs),'REVIEWED_SNAPSHOT_OWNER');
+    const expectedProducts=PRODUCT_PATHS.map(name=>{const row=snapshot.inputs.find(x=>samePath(x.path,path.join(repository,name)));policy(row,'REVIEWED_PRODUCT_MISSING');return {...row,path:name};});
+    for (const expected of expectedProducts) {
       const item = await pin(path.join(repository, expected.path), 'accepted-product-cutoff');
       policy(samePath(item.path, path.join(repository, expected.path)) && item.bytes === expected.bytes && item.sha256 === expected.sha256, 'ACCEPTED_PRODUCT_IDENTITY', { expected, actual: descriptor(item) });
       report.source.actualProduct.push({ relative: expected.path, ...descriptor(item) });

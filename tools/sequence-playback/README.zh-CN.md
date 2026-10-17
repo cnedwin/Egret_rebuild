@@ -1,6 +1,6 @@
 # 公开 SequencePlayback 不透明像素浏览器验证器
 
-历史采集配置：下文 Node 24.19.0 指令保留此实验的原始协议，不是当前上手入口，也不证明 Node 26 兼容。请通过[当前指南](../../knowledge-base/Cns/docs/getting-started.md#贡献元数据与浏览器检查)和 tools/browser-tool-matrix.json 选择活跃套件。它们不替代本采集工具的比较范围；影响本范围的变更需要单独评审迁移。
+当前工具使用 Node 26.7.0，请遵循[准备/评审/执行指南](../../knowledge-base/Cns/docs/historical-browser-workflow.md)。此前 Node 24 记录保留原始范围，下述固定预期、准入及外部进程退出要求继续有效。
 
 [English](README.md) | 简体中文
 
@@ -10,7 +10,7 @@
 
 ## 前提与运行入口
 
-使用已评审的 Windows x64 环境：已安装 Node.js24.19.0、TypeScript7.0.2、Playwright及相邻 playwright-core1.62.1、正常安装的 Microsoft Edge、真实工作区依赖。安装参见[仓库说明](../../README.zh-CN.md)。工具不安装、不构建、不下载；独立执行方须构建当前源码、审查源码／构建记录，再冻结准入输入。
+使用已评审的 Windows x64 环境：已安装 Node.js26.7.0、TypeScript7.0.2、Playwright及相邻 playwright-core1.62.1、正常安装的 Microsoft Edge、真实工作区依赖。安装参见[仓库说明](../../README.zh-CN.md)。工具不安装、不构建、不下载；独立执行方须构建当前源码、审查源码／构建记录，再冻结准入输入。
 
 从工作区根目录：
 
@@ -43,9 +43,9 @@ Pins 为普通 `{path,bytes,sha256}`，长度为非负安全整数，哈希为�
 
 产品路径：`packages/engine/src/sequencePlaybackTypes.ts`、`sequencePlayback.ts`、`Engine.ts`、`index.ts`。精确二十个配置路径：根 `package.json/pnpm-lock.yaml/pnpm-workspace.yaml/tsconfig.json/tsconfig.base.json`，`tools/build.mjs`、`tools/generate-project-format.mjs`、`packages/contracts/schema/project-format.schema.json`，四个 SDK 的包清单和 `tsconfig.json`，Engine `tsconfig.rendering.json/tsconfig.web.json`，以及逻辑路径 `node_modules/typescript/bin/tsc` 与 `node_modules/typescript/package.json`。
 
-两个编译器配置路径和四个 TypeScript owner 条目（`package.json`、`bin/tsc`、`lib/tsc.js`、`lib/getExePath.js`）通过真实 `node_modules/typescript` Junction 解析到 `node_modules/.pnpm/typescript@7.0.2/node_modules/typescript`。精确平台 owner 是 `node_modules/.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64`；TypeScript 包相邻的平台 Junction 必须指向这里，并核对 `package.json` 和 `lib/tsc.exe` pins。包名／版本、launcher 元数据、Windows/x64 元数据必须一致。只有已核对的保存构建／collector Node 文件允许位于工作区外；没有通用 alias 或外部文件授权。保存原条目不变，分别对指定物理 owner 核对字节／哈希。
+两个编译器配置路径和四个 TypeScript owner 条目解析到精确的提升安装归属 node_modules/typescript；平台归属固定为 node_modules/@typescript/typescript-win32-x64，并绑定 package.json 和 lib/tsc.exe。包名、7.0.2 版本、launcher 和 Windows/x64 元数据必须一致；只有已核对的保存构建/collector Node 可在工作区外，旧 pnpm 存储归属不会被隐式接纳。
 
-浏览器启动前，`compiler-owner-before.json` 和 `admission-binding.json` 记录四条固定目录关系（两个逻辑 alias 及各自物理 owner 的自映射），以及六个指定逻辑文件路径的期望／观测物理 pins。两个逻辑编译器配置文件包含在这六个路径中。Fixture／context／browser／回环服务退役后，collector 重新解析同样四条目录关系和六条文件关系，写入 `compiler-owner-after.json`，再要求端点及字节／哈希身份不变，之后才能标记 `identitiesStable` 或任何 `PASS` 状态。关系缺失、变化、读取失败或未观察均为 `INCOMPLETE`，即使原物理文件哈希仍然相同。这是固定 owner 读回检查，不是通用 resolver 或 OS 物理进程退役证明。
+浏览器启动前，`compiler-owner-before.json` 和 `admission-binding.json` 记录四条固定目录关系（两种归属在保留格式中各记录两次；提升安装下四条均为自映射），以及六个指定逻辑文件路径的期望／观测物理 pins。两个逻辑编译器配置文件包含在这六个路径中。Fixture／context／browser／回环服务退役后，collector 重新解析同样四条目录关系和六条文件关系，写入 `compiler-owner-after.json`，再要求端点及字节／哈希身份不变，之后才能标记 `identitiesStable` 或任何 `PASS` 状态。关系缺失、变化、读取失败或未观察均为 `INCOMPLETE`，即使原物理文件哈希仍然相同。这是固定 owner 读回检查，不是通用 resolver 或 OS 物理进程退役证明。
 
 `build.inventoryPin` 指向保存对象，schema为 `sequence-playback-sdk-build-inventory/1`、status为 `ROOT_FROZEN_ACTUAL_SDK_BUILD_INVENTORY`，显式 `repositoryRoot` 与实际工作区一致。其嵌套 `build` 含精确 `receiptPin/jobPin/stdoutPin/stderrPin/runtimePin`。五个记录数组 `productSourcePins/sdkSourcePins/sdkEmittedPins/configurationPins/compilerOwnerPins` 必须与准入保留相同路径／字节／哈希集合，再通过固定的逻辑到物理身份检查。该关联须独立接受，不能仅用任意当前哈希填写。
 

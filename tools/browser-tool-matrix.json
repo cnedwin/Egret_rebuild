@@ -53,43 +53,7 @@
       "snapshot": true
     }
   ],
-  "historical": [
-    {
-      "script": "tools/freeze-textured-webgpu-inputs.mjs",
-      "originalNode": "24.19.0",
-      "reason": "Retained fixed experimental profile and original admission/retirement contract; not a current contributor setup command. Its original observation domain is not silently replaced by another suite."
-    },
-    {
-      "script": "tools/verify-textured-webgpu.mjs",
-      "originalNode": "24.19.0",
-      "reason": "Public CLI forwarding to the historical textured-webgpu collector; the same original domain and migration obligations apply."
-    },
-    {
-      "script": "tools/textured-webgpu/collector.mjs",
-      "originalNode": "24.19.0",
-      "reason": "Retained fixed experimental profile and original admission/retirement contract; not a current contributor setup command. Its original observation domain is not silently replaced by another suite."
-    },
-    {
-      "script": "tools/verify-textured-scene-webgpu.mjs",
-      "originalNode": "24.19.0",
-      "reason": "Retained fixed experimental profile and original admission/retirement contract; not a current contributor setup command. Its original observation domain is not silently replaced by another suite."
-    },
-    {
-      "script": "tools/sequence-player/collector.mjs",
-      "originalNode": "24.19.0",
-      "reason": "Retained fixed experimental profile and original admission/retirement contract; not a current contributor setup command. Its original observation domain is not silently replaced by another suite."
-    },
-    {
-      "script": "tools/sequence-playback/collector.mjs",
-      "originalNode": "24.19.0",
-      "reason": "Retained fixed experimental profile and original admission/retirement contract; not a current contributor setup command. Its original observation domain is not silently replaced by another suite."
-    },
-    {
-      "script": "tools/spritesheet/collector.mjs",
-      "originalNode": "24.19.0",
-      "reason": "Retained fixed experimental profile and original admission/retirement contract; not a current contributor setup command. Its original observation domain is not silently replaced by another suite."
-    }
-  ],
+  "historical": [],
   "advanced": [],
   "resourceFamilies": [
     {
@@ -171,6 +135,48 @@
       "canvasRefusals": 0,
       "status": "Explicit current prepare/review/run suite; eight original evidence roles required; no credit borrowed from BIP1.",
       "scope": "Canvas/WebGPU literal scene and saved replay; separate two-read Canvas control; no PNG decoding."
+    }
+  ],
+  "migratedHistorical": [
+    {
+      "id": "textured-webgpu",
+      "script": "tools/verify-textured-webgpu.mjs",
+      "entry": "tools/browser-history.mjs",
+      "originalNode": "24.19.0",
+      "currentNode": "26.7.0",
+      "status": "Explicit current workflow; original domain/admission and external OS retirement remain required."
+    },
+    {
+      "id": "textured-scene",
+      "script": "tools/verify-textured-scene-webgpu.mjs",
+      "entry": "tools/browser-history.mjs",
+      "originalNode": "24.19.0",
+      "currentNode": "26.7.0",
+      "status": "Explicit current workflow; original domain/admission and external OS retirement remain required."
+    },
+    {
+      "id": "sequence-player",
+      "script": "tools/sequence-player/collector.mjs",
+      "entry": "tools/browser-history.mjs",
+      "originalNode": "24.19.0",
+      "currentNode": "26.7.0",
+      "status": "Explicit current workflow; original domain/admission and external OS retirement remain required."
+    },
+    {
+      "id": "sequence-playback",
+      "script": "tools/sequence-playback/collector.mjs",
+      "entry": "tools/browser-history.mjs",
+      "originalNode": "24.19.0",
+      "currentNode": "26.7.0",
+      "status": "Explicit current workflow; original domain/admission and external OS retirement remain required."
+    },
+    {
+      "id": "spritesheet",
+      "script": "tools/spritesheet/collector.mjs",
+      "entry": "tools/browser-history.mjs",
+      "originalNode": "24.19.0",
+      "currentNode": "26.7.0",
+      "status": "Explicit current workflow; original domain/admission and external OS retirement remain required."
     }
   ]
 }
