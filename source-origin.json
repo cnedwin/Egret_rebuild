@@ -2112,7 +2112,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 138808,
-      "sha256": "67de68b9e0d1ed8ecc5872061b73259704931eec345f846fa961c8e809306479",
+      "sha256": "07d25c3479fcb3d36a5d8ac0abd3c7f7fd0657f8504ee53b43b165a889cf0d2a",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "ae03518ff794624a37a1470c6f58ad5ad42d2bc7b377e10848dabf40a2dbe0c3",
+      "sha256": "c93b605804ceb6eb6bf87e9ddd55060324170430467355d2ddb2e0131379a034",
       "bytes": 335079,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -10436,8 +10436,8 @@
     {
       "path": ".github/workflows/ci.yml",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
-      "bytes": 3366,
-      "sha256": "8d699a0cb86d9babe6d11c676f89f310099c3e6308e9c55ebb1b012560b63850"
+      "bytes": 3666,
+      "sha256": "eb15dd0e4ecbdf13ac806597b262cc7a62c4753943b237ffd952fc7cae5cad64"
     },
     {
       "path": ".node-version",
@@ -10460,8 +10460,8 @@
     {
       "path": "knowledge-base/Cns/docs/m0-community-foundations.md",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
-      "bytes": 20387,
-      "sha256": "6661287d99adf8b1c37f6a1ca0ccc75afc6f5fbad9a655248545058b7404ad34"
+      "bytes": 20900,
+      "sha256": "5f4fadfcaec4f958397fd38f3ac2d19a946fbb3925b9a5b2bc2c89c412509bc7"
     },
     {
       "path": "knowledge-base/en/docs/getting-started.md",
@@ -10472,8 +10472,8 @@
     {
       "path": "knowledge-base/en/docs/m0-community-foundations.md",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
-      "bytes": 24083,
-      "sha256": "22d35d9c9df9ed2a118622a70b8201a9363fb69cde67dee8b37f13f74cb1b09d"
+      "bytes": 24709,
+      "sha256": "89fbb447c1c47f9c41dc0b8d3d09c560aa4b54a263adfa39c713bf0ebbb02878"
     },
     {
       "path": "tests/publication/m0-foundations.test.mjs",

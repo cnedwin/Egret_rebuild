@@ -23,8 +23,12 @@ jobs:
           node-version-file: .node-version
       - name: Install exact PowerShell
         shell: pwsh
+        env:
+          GH_RELEASE_TOKEN: ${{ github.token }}
         run: |
-          $release = Invoke-RestMethod https://api.github.com/repos/PowerShell/PowerShell/releases/tags/v7.6.5
+          # Authenticate public metadata with the read-only job token; never forward it to the archive URL.
+          $headers = @{ Authorization = "Bearer $env:GH_RELEASE_TOKEN"; Accept = "application/vnd.github+json" }
+          $release = Invoke-RestMethod -Headers $headers https://api.github.com/repos/PowerShell/PowerShell/releases/tags/v7.6.5
           $asset = $release.assets | Where-Object name -eq 'PowerShell-7.6.5-win-x64.zip'
           if (-not $asset -or $asset.digest -notmatch '^sha256:[0-9a-f]{64}$') { throw 'Missing verified PowerShell asset' }
           $archive = Join-Path $env:RUNNER_TEMP 'pwsh.zip'
