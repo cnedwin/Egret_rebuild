@@ -1830,22 +1830,22 @@
       "en": "knowledge-base/en/docs/getting-started.md",
       "zh": "knowledge-base/Cns/docs/getting-started.md",
       "kind": "public_reading",
-      "enSha256": "2ac813556adbe84d65b4e42bf37a07d0187c0371870d8864e3f0fa63f12610dd",
-      "zhSha256": "ad88d11f3ce060b6be65cfc950747fb0e52f963404f1dac2cb213839678f3aaa"
+      "enSha256": "22195afc60fab85d443566102bea25f6cb5d4a3233cd5080fab485bc3ab19abb",
+      "zhSha256": "52f4aa59ff603ecbea0ccffb274bd541d8ac7f3feed64b6bc2e9739caf9227e6"
     },
     {
       "en": "knowledge-base/en/docs/m0-community-foundations.md",
       "zh": "knowledge-base/Cns/docs/m0-community-foundations.md",
       "kind": "public_reading",
-      "enSha256": "160840bdbe5c34661f3f04af3cd954838ee9e8878305e11b763a14669b31c88b",
-      "zhSha256": "63bd87025a68bb2b690a6099901a754d93e5ae528c68b747a1101f2d6b70fe2e"
+      "enSha256": "22d35d9c9df9ed2a118622a70b8201a9363fb69cde67dee8b37f13f74cb1b09d",
+      "zhSha256": "6661287d99adf8b1c37f6a1ca0ccc75afc6f5fbad9a655248545058b7404ad34"
     },
     {
       "en": "knowledge-base/en/docs/architecture-and-engineering-plan.md",
       "zh": "knowledge-base/Cns/docs/architecture-and-engineering-plan.md",
       "kind": "public_reading",
-      "enSha256": "b3a33d0f49778bb77efdbee1402c6b009d0accd3a26517bf918cc78b96a344a8",
-      "zhSha256": "8a1d5f3e916bc55157230da025f01223599d661927e523ffa1afd372b05caf4b"
+      "enSha256": "fad9a3dc56ad4e63b9ecc33fb7dba3838e41096ca07b222aa9363cf8018a0cd7",
+      "zhSha256": "38fd18ab1affce8fe73d23b94930090c489ea24ad29fee618938f889ff992111"
     }
   ],
   "registries": [
@@ -2571,7 +2571,7 @@
     },
     {
       "path": "tools/verify-mouse-input-canvas.mjs",
-      "sha256": "0bcbb2a8c5f0f6511bd0c5d0f582e65fed198291f7170cfbc073226e73ae5a31"
+      "sha256": "4b3fb02b4845f12ecf8a0b08f19bc8c58dd4d452d275736abee4560a723869e7"
     },
     {
       "path": "tools/mouse-input-canvas-contract.mjs",
@@ -2803,7 +2803,7 @@
     },
     {
       "path": "tools/prepush.mjs",
-      "sha256": "14dc9cf9d5f6701fd0c524cccbfc606ba6fda2c7ac194b31b0fe513fa4d5f185"
+      "sha256": "832bca043315b064fe8ddd9e6f93fba3f24cddd8cc60a915ff006c6cca1396d8"
     },
     {
       "path": "packages/engine/web/image.ts",
@@ -3419,11 +3419,23 @@
     },
     {
       "path": "tools/browser-verify.mjs",
-      "sha256": "101aaf96f43116f4c0adf9a201e1ee22e03735bb38ed1b6ab415c1a95a7b2311"
+      "sha256": "6582a9bca56246f5c6efecaef70ceff67afade96ac3192e83206203f15b72ad6"
     },
     {
       "path": "tests/publication/browser-tools.test.mjs",
-      "sha256": "56c0b9492662738edc74b32ab9ec694eb5007868d849d12ea0d967d176f8cd82"
+      "sha256": "06e198dbf0cf709391606a85b137887ee68d31600df302327e79a896c637251f"
+    },
+    {
+      "path": "tools/check-incremental.mjs",
+      "sha256": "e420521dd3b28a4464fc00a3244e0334071403bc0f9657d5bfaed138d5c8af8e"
+    },
+    {
+      "path": "tools/browser-prepare.mjs",
+      "sha256": "d83bc3a54e47a5de8094e2ae15e1ca82e7ebcae9db8c5a7c6ea25de837c296b2"
+    },
+    {
+      "path": "tests/publication/incremental-checks.test.mjs",
+      "sha256": "7a7906da6a637c025058cff5b2dd22ea6206b6820fc5feb965ce7f54a07e7d5d"
     }
   ],
   "historicalSemanticReview": {

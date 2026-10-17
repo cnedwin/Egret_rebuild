@@ -43,7 +43,7 @@ Edwin（`@cnedwin`）是当前集成联系人。CODEOWNERS 用于路由评审请
 
 贡献者可在 PR 中请求翻译或元数据协助，补齐后的最终集成树必须重新检查。公开 CI 不授予仓库写权限；首次 fork 贡献可能需要维护者批准运行。必需 job 缺失、失败或取消时，最终 `M0 / merge-ready` 不得通过。
 
-M0 的独立真人/fork 演练、场景/设备预算、按风险的增量选择及进阶采集工具迁移仍未完成。下文的当前账本生成与四个浏览器入口已可用；完整合并检查仍为必需。
+M0 尚有独立真人/fork 演练、场景/设备预算及剩余进阶采集工具迁移未完成。下文提供当前账本生成、本地风险选择及八个浏览器入口，完整合并检查仍强制执行。
 
 ## 完整演练首次贡献
 
@@ -78,12 +78,34 @@ node tools/prepush.mjs --integrated
 
 若 prepush 默认合并基点不同，运行时将 EGRET_METADATA_BASE 设为同一提交。将生成的账本与评审后的内容一起提交。CI 使用 PR 基线 SHA，拒绝过期的集成元数据，不回写贡献者分支。内容、声明或基线变化后须重新生成并验证。生成器只更新当前派生字段及已声明新增项，保留无关旧来源行和全部历史对象。删除、重命名、已有来源声明及历史/结构变更需单独评审迁移。哈希继续按原始字节计算；生成不证明翻译质量、来源权利或行为正确。
 
-四个当前浏览器套件使用 Windows x64、Node **26.7.0** 和已安装 Edge。在独立工具目录安装 Playwright 与 playwright-core **1.62.1** 后运行：
+当前浏览器检查使用 Windows x64、Node **26.7.0** 和已安装 Edge，在独立工具目录安装 Playwright 与 playwright-core **1.62.1** 后运行：
 
 ```text
 node tools/browser-verify.mjs --suite canvas --playwright <absolute-installed-playwright-package> --output <absolute-fresh-directory-outside-repository>
 ```
 
-套件可选 canvas、webgpu、b1、text。输出父目录须已存在，选定子目录须不存在，且不能与仓库/包输入重叠。入口拒绝额外 Node 参数、NODE_OPTIONS/NODE_PATH、错误版本及缺失完成记录；保留失败，不下载浏览器，不放宽既有像素/反例断言。文字套件只覆盖固定 WC1 Canvas 子集。选择工具前查看 `tools/browser-tool-matrix.json`：进阶源码/快照检查保留独立契约，Node 24.19.0 实验采集工具明确标为历史环境，不能证明当前运行时。四个当前套件不替代这些实验的比较范围或独立操作系统进程退出要求。渲染变更仍须满足受影响范围，必要时须另行迁移相应工具。
+直接运行的套件为 canvas、webgpu、b1、text、hit-test、mouse-input。resource-scene 和 bitmap-slot 还需要已复核的源码快照：
 
-若示例始终未就绪，请提供选择的后端、失败步骤和脱敏诊断。手机、小游戏宿主或字体工作负载不可用时标为未执行。[M0 结果记录](m0-community-foundations.md)分别呈现技术复演、独立人类上手与设备验证。
+```text
+node tools/browser-prepare.mjs --suite resource-scene --output <absolute-new-snapshot-file-outside-repository>
+node tools/browser-verify.mjs --suite resource-scene --playwright <absolute-installed-playwright-package> --output <absolute-fresh-directory-outside-repository> --snapshot <absolute-reviewed-snapshot-file> --snapshot-sha256 <reviewed-raw-sha256>
+```
+
+验证 bitmap-slot 时，将两条命令中的套件名均替换为 bitmap-slot。准备前使用选定工具链构建。准备步骤不启动浏览器，也不批准生成结果；先复核完整源码闭包、所有者、导入及原有判定标准，再显式提供已复核的原始摘要。采集器会在原生执行前重新计算完整闭包；源码或构建输入变化后必须重新生成并复核快照。不要把未经复核的生成摘要自动传入执行。resource-scene 保留固定 Edge 155.0.4283.45 与字体参考，不自动接纳其他浏览器版本。
+
+输出父目录须已存在，选定文件或目录须为新建且位于输入所有者之外。入口拒绝额外 Node 参数、NODE_OPTIONS/NODE_PATH、错误版本、变化的快照及缺失完成记录；保留失败，不下载浏览器，不放宽原有像素/反例断言。桌面子集不证明手机、通用中文字体性能或完整引擎能力。查看 tools/browser-tool-matrix.json：prepared-group、atlas、PNG 仍需独立的夹具/配置准入迁移；固定 Node 24.19.0 实验保留历史身份，不能被这些套件替代。渲染变更仍须验证受影响范围，包装入口不证明独立操作系统进程退出。
+
+## 按风险选择本地反馈
+
+```text
+node tools/check-incremental.mjs --base origin/main --explain
+node tools/check-incremental.mjs --base origin/main
+```
+
+第一条命令只输出路径、理由和所选检查，不执行验证。使用 fork 时先获取 upstream，再选择它的目标引用。基线必须解析为 HEAD 的祖先，缺失或无关引用会失败；省略 --base 时使用 HEAD 与 origin/main 的合并基点。已提交、暂存、未暂存及未被忽略的未跟踪输入均参与选择。
+
+仅修改现有 README/CONTRIBUTING 阅读版本，或 knowledge-base/en/docs、knowledge-base/Cns/docs 直属 Markdown 时，选择文档反馈：执行 doctor、原始字节规范、派生发布/双语检查、选择器反例及知识库只读验证。新增、删除、重命名、策略、来源元数据、代码、测试、依赖、配置、未知路径及空变更集均选择完整 prepush。首版保守规则不选择单个引擎测试，也不复用旧验收缓存；主要用于维护者集成账本前的文档迭代，账本集成本身会选择完整门禁。
+
+pnpm check:quick 仍可用于构建、依赖边界和上手工具反馈。两种本地反馈均不替代完整的已提交推送 hook、集成合并检查、受影响浏览器验收及独立来源/双语评审。本地 PASS 不是合并凭据。
+
+示例未就绪时报告后端、失败步骤和脱敏诊断。缺少真人参与、手机、小游戏宿主或字体工作负载时，在 [M0 结果记录](m0-community-foundations.md)中保留未执行状态。
