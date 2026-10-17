@@ -8137,6 +8137,170 @@
         ],
         "currentPinScope": "CURRENT_NAMED_CODE_AND_READING_BYTES_ONLY_NO_METADATA_SELF_HASH"
       }
+    },
+    {
+      "id": "V066",
+      "kind": "engineering_preview",
+      "status": "in_progress",
+      "requirementIds": [
+        "R003",
+        "R004"
+      ],
+      "sourceIds": [
+        "S115"
+      ],
+      "dependsOn": [
+        "V065"
+      ],
+      "owner": "project",
+      "dueDate": null,
+      "title": "0.61.0 实验性 WebGPU 图像驻留",
+      "doc": "Cns/docs/gpu-image-residency-contract.md",
+      "artifacts": [
+        "Cns/docs/gpu-image-residency-contract.md",
+        "Cns/docs/gpu-image-residency-evidence.md"
+      ],
+      "implementation": "内部缓存采用每 Host 独立所有权与精确裁剪身份，保持现有公开接口、包版本和宿主协议。",
+      "acceptance": "源码与同一组 110 项受控行为/寿命测试的两次执行、因果预算对照、保留聚焦检查及所选有限桌面回归已分别接受。完整门禁、公开审查和实际交付仍待完成；新增 Native 矩阵延期并开放，完整产品与目标设备验收另列。",
+      "acceptanceCriteria": [
+        "精确会话、图像身份和裁剪键",
+        "安全提升、读者固定、碰撞和瞬态资源所有权",
+        "逻辑额度与同步确定性驱逐",
+        "受控因果反例与正常恢复",
+        "当前保留检查、双语公开审查及实际交付分开记录"
+      ],
+      "verification": {
+        "engineeringPreview": "0.61.0",
+        "sourceId": "S115",
+        "deliverableId": "V066",
+        "date": "2026-10-17",
+        "status": "SOURCE_UNIT_FOCUSED_RETAINED_FINITE_NATIVE_ACCEPTED_FINAL_GATES_DELIVERY_PENDING",
+        "scopeStatus": "EXPERIMENTAL_INTERNAL_EXACT_CROP_IMAGE_RESIDENCY",
+        "contract": "Cns/docs/gpu-image-residency-contract.md",
+        "evidence": "Cns/docs/gpu-image-residency-evidence.md",
+        "productSource": "packages/engine/web/WebGPUHost.ts",
+        "newPackageSubpaths": 0,
+        "newSDKRuntimeExports": 0,
+        "newSDKTypeExports": 0,
+        "newRuntimeCodeDependency": false,
+        "packageVersionUnchanged": "0.0.0",
+        "hostProtocolChanged": false,
+        "hostProtocolVersion": "1.0",
+        "logicalImagePoolBytes": 33554432,
+        "maxReadyEntries": 256,
+        "unit": {
+          "status": "INDEPENDENTLY_ACCEPTED_SOURCE_CONTROL_AND_ACTUAL_UNIT_RESULT",
+          "healthyBeforeCases": 110,
+          "restoredAfterCases": 110,
+          "distinctCases": 110,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0,
+          "healthyWitnessPeakBytes": 29361124,
+          "assignedWitnessPeakBytes": 33555432,
+          "assignedExcessBytes": 1000,
+          "restoredWitnessPeakBytes": 29361124,
+          "healthyRestoredWitnessBytesIdentical": true,
+          "allThreeWitnessesSafeClose": true,
+          "allThreeWitnessesTerminalQ": 0,
+          "independentResultReview": {
+            "bytes": 7941,
+            "sha256": "653d71025182dabc53c7a774531a2d7939c4311e6f39930940cafe08bd0d1073",
+            "identityOnlyNotDistributed": true,
+            "openFindings": 0
+          },
+          "physicalVRAMClaim": false,
+          "performanceClaim": false
+        },
+        "newCacheSpecificNativeMatrix": "DEFERRED_OPEN",
+        "newNativeCollectorAccepted": false,
+        "newNativeMatrixAccepted": false,
+        "manualTimerEvidence": "MANUAL_TIMEOUT_AUTHORITY_ONLY_NOT_ACTUAL_ELAPSED_17MS",
+        "actualDeviceLossRecovery": "UNVERIFIED",
+        "targetDevicePerformance": "UNVERIFIED",
+        "physicalGPUReclamation": "UNVERIFIED",
+        "completeUI_P04": "OPEN",
+        "fullSpineR020V020": "OPEN",
+        "complete3D": "OPEN",
+        "migrationR008V006": "OPEN",
+        "firstPartyLicense": "Apache-2.0",
+        "remoteCIPassClaim": false,
+        "historicalCutoffsPreserved": true,
+        "retainedFocused": {
+          "status": "INDEPENDENTLY_ACCEPTED_SOURCE_AND_FOCUSED_RESULTS",
+          "changedSourceFiles": 12,
+          "ordinaryLifetimeTests": 2,
+          "ordinaryLifetimePass": 2,
+          "strictAccepted": true,
+          "negativeCompilerTuples": 7,
+          "importNegativeCompilerTuples": 4,
+          "sourcePairControlsAccepted": true,
+          "preliminaryFocused": {
+            "tests": 180,
+            "pass": 179,
+            "fail": 1,
+            "obsoleteIdleExpectationRepaired": true
+          },
+          "final180PassClaim": false,
+          "fullFourteenStageAcceptance": "PENDING",
+          "independentReview": {
+            "bytes": 12217,
+            "sha256": "381af830f63268f7ff3f359447c8908cf9194df26581c9d85989ae41420f859f",
+            "identityOnlyNotDistributed": true,
+            "openFindings": 0
+          }
+        },
+        "selectedExistingNative": {
+          "status": "INDEPENDENTLY_ACCEPTED_FINITE_SAVED_RESULTS",
+          "atlasImportCanvasWebGPU": {
+            "profiles": 2,
+            "fullFrames": 4,
+            "width": 24,
+            "height": 16,
+            "comparedChannels": 6144,
+            "differences": 0,
+            "tolerance": 0
+          },
+          "combinedTexturedScene": {
+            "frames": 2,
+            "width": 64,
+            "height": 64,
+            "literalPixels": 24,
+            "comparedChannels": 96,
+            "differences": 0,
+            "tolerance": 0,
+            "wholeFrameComparison": false,
+            "oracleOnlyControl": "EXPECTED_PIXEL_REJECTION",
+            "extraNativeControlFrames": 0
+          },
+          "totalReadbacks": 6,
+          "totalRetainedRGBABytes": 38912,
+          "nativeHitOrUploadCountClaim": false,
+          "cooperativeCleanupAccepted": true,
+          "actualLaunchedExecutableIdentity": "UNBOUND",
+          "osDescendantRetirement": "UNBOUND",
+          "environment": {
+            "node": "24.19.0",
+            "platform": "Windows x64",
+            "edge": "155.0.4283.45",
+            "playwright": "1.62.1",
+            "channel": "msedge",
+            "callerAddedFlags": false
+          },
+          "independentResultReview": {
+            "bytes": 8440,
+            "sha256": "2d721e04295062d1e2c71d5ca9a9062d46ae1f7ecea05051bd29be4ea2cea341",
+            "identityOnlyNotDistributed": true,
+            "openFindings": 0
+          }
+        },
+        "optionalReplay": "NOT_RUN_AT_CURRENT_SOURCE",
+        "otherHistoricalNative": "NOT_RUN_AT_CURRENT_SOURCE",
+        "finalNormalPrepush": "PENDING",
+        "committedSnapshotPushHook": "PENDING",
+        "actualGitDelivery": "PENDING"
+      }
     }
   ],
   "spineF1ClockPortableReplaySuccessor": {

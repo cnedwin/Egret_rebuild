@@ -48,9 +48,9 @@
       "action": "move-pair",
       "previousZhSha256": "307647eb71a1d1da7fa2423937b32459c5c22b4e355698d149fb7bca23cda053",
       "previousEnSha256": "8c112cb88f191a32591c76cbf0cc497486cf19efa1bc2fce0438a0be08e99d13",
-      "currentZhSha256": "6806b018dfa8cfd3b187a537a5878e05a106b90b8043d341ce202beaeba0ba8a",
-      "currentEnSha256": "d978e0b3ffe077a00cc21ed5c8fb9f1a3197e404fdc831789673546c6206559a",
-      "currentEngineeringPreview": "0.60.0"
+      "currentZhSha256": "c314136f50d530428252716fdc1c7c750f7869d5470a9d4dcf6631934e936f90",
+      "currentEnSha256": "109215a7ac70770371da05ca51177f322cd6a48126866a37e9a6bac3bbfe2a12",
+      "currentEngineeringPreview": "0.61.0"
     },
     {
       "oldZh": "examples/canvas-scene/README.md",
@@ -85,9 +85,9 @@
       "action": "move-pair",
       "previousZhSha256": "f43625255269c8801af0929179a9aab32cbca58094e4a842797e39171fc549b0",
       "previousEnSha256": "e8b100ccbd9d0fb99237a564f484f7fa6dbf008191570fa58f3e481c05c3e9f9",
-      "currentZhSha256": "ac70914743e675ccc25db0a25d765eb49ea81aaf8367ed60765d056503a98794",
-      "currentEnSha256": "e66d3a5d0897729dd3e3d3484e75e6350c2032c2df2d3d1fe058e3e8603e6d65",
-      "currentEngineeringPreview": "0.60.0"
+      "currentZhSha256": "247307e059c093bb9ecd61c1908d888957b51aef196004235f9ea2cb88a4ff3d",
+      "currentEnSha256": "232efacdd180c98fd475afb2a696a4793234de17c21328dfa3b17f3a3c4ef83c",
+      "currentEngineeringPreview": "0.61.0"
     },
     {
       "oldZh": "knowledge-base/CONTRIBUTING.md",
@@ -843,9 +843,9 @@
       "action": "move-pair",
       "previousZhSha256": "372e5b07d4980eb45d8338424c8d970b7725e324e6b3397916944b0529c55ec7",
       "previousEnSha256": "ed88646659467d718a30c3bfff14b41c28debbcb786e7bf816ee68819f612887",
-      "currentZhSha256": "3b48b35db7a766dd46bdd8a9128979f443d31b98b0a23dabc31a79eb89f6111e",
-      "currentEnSha256": "bc9156845e1d8cfc93e43ee816b95f27ac20ad6efbe12abf91f8e6ea39dfe73d",
-      "currentEngineeringPreview": "0.60.0"
+      "currentZhSha256": "43e3461cfcb97432883b228703f0d29e48f6242af1f7b0c5fd35a42245516268",
+      "currentEnSha256": "82e285238c2b4f5ba55e5398070456b5c8b3177938a95248bfdb71c144cf9047",
+      "currentEngineeringPreview": "0.61.0"
     },
     {
       "oldZh": "knowledge-base/templates/实现来源记录.md",
@@ -964,9 +964,9 @@
       "action": "move-pair",
       "previousZhSha256": "803a40dd8bfd0f98ade51c8ba736790509aae12a6e045a8ea688b3ff5d01cdcf",
       "previousEnSha256": "40a2ef2f686aba4a10279c417dfe17879bb6396b3b80dd75b26bd09c87d665f9",
-      "currentZhSha256": "95a33e81a777e4ed523ff337b23037bd9c680bcdf5a2b2039cee6c448a21e8ab",
-      "currentEnSha256": "dd5b06ee72b2b1bb48613714b15de461cae0df6d336731be0b601cf849c4f1f7",
-      "currentEngineeringPreview": "0.60.0"
+      "currentZhSha256": "c98449b839f67ff2ff188a68a8735c8af1dc845e53580af700f4f989425a557d",
+      "currentEnSha256": "130c975f560c3e9ebc8762429ae419e9c6aaea87d8213bf3aa56aead068f88f9",
+      "currentEngineeringPreview": "0.61.0"
     },
     {
       "oldZh": "knowledge-base/docs/WebGPU矩形执行合同.md",
@@ -1086,9 +1086,9 @@
       "action": "move-pair",
       "previousZhSha256": "61639f120f4ed3aa77c4ffd41cf377e447dcac20e9562322c103e2e6b44c3990",
       "previousEnSha256": "60c77a11dc614191ba1d98fa488301a344839cc672df01e2c632048d85e8d376",
-      "currentZhSha256": "13565b349fc347c8473372aa486f1b24c3c4df74d8307714109322a08a60846b",
-      "currentEnSha256": "ac32601e9c407b4bcfffe707ca43f7a19ed67d0f8f6cf3582b8d2f8d96d1f8c0",
-      "currentEngineeringPreview": "0.60.0"
+      "currentZhSha256": "ad30f56fddef12abbaaff422495175399bb439bc270d80da7dfc37d2a538a797",
+      "currentEnSha256": "503576a5cbb378a8d8db65a725f5124e5aca6fabe8fa5d9e63028037cfd795bd",
+      "currentEngineeringPreview": "0.61.0"
     },
     {
       "oldZh": "knowledge-base/docs/3d-foundation.md",
@@ -1963,9 +1963,9 @@
       "action": "add-current-pair",
       "engineeringPreview": "0.60.0",
       "status": "CURRENT_READING_SOURCE",
-      "currentEnSha256": "b971b08257838330c2fdd0a3cd712754c2edc93a3b1fc70a1030f4d0c1238433",
-      "currentZhSha256": "e953cdac876b1302f1c223cc2bb93ff89ffeb50cacf63d0627cf1b0a48e90803",
-      "currentEngineeringPreview": "0.60.0"
+      "currentEnSha256": "1acef867ca888d639cabdfc55e2a43d7429d909db4ed3c66a2b326b1e3ac046b",
+      "currentZhSha256": "82270231e80751a8b63cf6ba1a150a976c4bcef3ba83e2aa31053e2ee4d08bcb",
+      "currentEngineeringPreview": "0.61.0"
     },
     {
       "newEn": "knowledge-base/en/docs/atlas-import-plan-contract.md",
@@ -1999,6 +1999,28 @@
       "currentEnSha256": "96f784e3d2937cad0e7d877c9fc3e1fdf400cadb6757f8162617f1a66bc2145b",
       "currentZhSha256": "8eebf61aa2cb5127870f4cbad129d18f9dc8cfd00a62eb01c1379a7bc3bad03e",
       "currentEngineeringPreview": "0.60.0"
+    },
+    {
+      "newEn": "knowledge-base/en/docs/gpu-image-residency-contract.md",
+      "newZh": "knowledge-base/Cns/docs/gpu-image-residency-contract.md",
+      "kind": "public_reading",
+      "action": "add-current-pair",
+      "engineeringPreview": "0.61.0",
+      "status": "CURRENT_READING_SOURCE",
+      "currentEnSha256": "654c411a62a2b94c945efd6c5fad172c235e195f089880eeef45119c987ec2d3",
+      "currentZhSha256": "d5e0665911ba369b3befb583b88dfbb08fdf957793ae71dc121f72ce41ce5992",
+      "currentEngineeringPreview": "0.61.0"
+    },
+    {
+      "newEn": "knowledge-base/en/docs/gpu-image-residency-evidence.md",
+      "newZh": "knowledge-base/Cns/docs/gpu-image-residency-evidence.md",
+      "kind": "public_reading",
+      "action": "add-current-pair",
+      "engineeringPreview": "0.61.0",
+      "status": "CURRENT_READING_SOURCE",
+      "currentEnSha256": "1e754f62a6d57201c9b1806e3eb2bf74a313c0688087f4b8e474ca6ba2e2ef9d",
+      "currentZhSha256": "205f522c9a05e70ffac227b214ce26654e54f7ac7463d9602a958796b75966c8",
+      "currentEngineeringPreview": "0.61.0"
     }
   ],
   "registries": [

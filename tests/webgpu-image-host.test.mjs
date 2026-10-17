@@ -67,7 +67,10 @@ test('image submission uses tight premultiplied crops, per-draw opacity and pain
  assert.deepEqual(bindings[0].entries.map(e=>e.binding),[0,1,2]);assert.equal(bindings[0].entries[1].resource,f.sampler);assert.deepEqual(bindings[0].entries[2].resource,{buffer:uniforms[0],offset:0,size:16});
  assert.equal(h.getStatus().pendingUploadBytes,624); // 2*144 + 3*(96+16)
  h.renderFrame(frame([command(0,full)],[source]));assert.equal(f.textures.length,3);assert.notEqual(f.textures[0],f.textures[2]);assert.ok(f.textures.every(t=>t.destroyed===0));
- await f.pump();await h.whenIdle();assert.ok(f.textures.every(t=>t.destroyed===1));await f.close(h);assert.ok(f.textures.every(t=>t.destroyed===1));
+ await f.pump();await h.whenIdle();
+ // The first proven source/crop wins residency; its later cold duplicate retires.
+ assert.deepEqual(f.textures.map(t=>t.destroyed),[0,0,1]);
+ await f.close(h);assert.ok(f.textures.every(t=>t.destroyed===1));
 });
 
 test('startup captures nearest sampler, both pipelines and the exact auto layout in the original scope batch',async()=>{
@@ -218,9 +221,12 @@ for(const allocation of ['crop','uniform'])test(`native ${allocation} allocation
  h.renderFrame(input);await f.pump();assert.equal((await ticket).serial,1);await f.close(h);
 });
 
-test('out-of-order image settlements retire only their own textures and release exact pending uploads',async()=>{
+test('out-of-order image settlements retain distinct resident sources and release exact pending uploads',async()=>{
  const f=fixture(),h=f.host({maxPendingFrames:3,maxPendingUploadBytes:224});await f.ready(h);h.renderFrame(frame([command(0,undefined,{alpha:.25})]));h.renderFrame(frame([command(0,undefined,{alpha:.75})]));
- assert.equal(h.getStatus().pendingUploadBytes,224);f.fences[1].resolve();f.pops.slice(9,12).forEach(p=>p.resolve(null));await tick();assert.deepEqual(f.textures.map(t=>t.destroyed),[0,1]);assert.equal(h.getStatus().pendingUploadBytes,112);h.renderFrame(frame());assert.deepEqual(f.textures.map(t=>t.destroyed),[0,1,0]);await f.pump();assert.deepEqual(f.textures.map(t=>t.destroyed),[1,1,1]);assert.equal(h.getStatus().pendingUploadBytes,0);await f.close(h);
+ assert.equal(h.getStatus().pendingUploadBytes,224);f.fences[1].resolve();f.pops.slice(9,12).forEach(p=>p.resolve(null));await tick();assert.deepEqual(f.textures.map(t=>t.destroyed),[0,0]);assert.equal(h.getStatus().pendingUploadBytes,112);
+ // Each frame() creates a distinct source identity, so each successful crop remains resident.
+ h.renderFrame(frame());assert.deepEqual(f.textures.map(t=>t.destroyed),[0,0,0]);await f.pump();assert.deepEqual(f.textures.map(t=>t.destroyed),[0,0,0]);assert.equal(h.getStatus().pendingUploadBytes,0);assert.ok(f.buffers.every(b=>b.destroyed===1));
+ await f.close(h);assert.deepEqual(f.textures.map(t=>t.destroyed),[1,1,1]);
 });
 
 for(const boundary of ['viewGetter','binding'])test(`${boundary} reentrant close retains already returned image ownership through settlement`,async()=>{

@@ -7,7 +7,7 @@ import {fileURLToPath} from 'node:url';
 import {fingerprintFile, samePhysicalPath, ownerRelativePath} from './lib/file-identity.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
-const inventoryPin = {"path":"tests/types/atlas-import-diagnostic-expectations.json","bytes":255007,"sha256":"49eb0ef3e09162f87f9abbd8d727ce823f522638a2e091a44762e1617aa3dc17"};
+const inventoryPin = {"path":"tests/types/atlas-import-diagnostic-expectations.json","bytes":255007,"sha256":"2eb84961bfb7cee39a94dbe6439f5c16be4e961b4c72758ac3ee22e697e45628"};
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 function refuse(code, detail) { const error = new Error(code + ': ' + detail); error.code = code; throw error; }
 function readInventory() {

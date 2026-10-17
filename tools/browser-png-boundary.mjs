@@ -30,6 +30,14 @@ function atlasPackageSuccessor(actual, expected) {
     && actual.sha256 === '4b4380142316c6ab2f0727eab44c80eff2a21640c701871c6ace3a0ab1b276af';
 }
 
+// Preserve the accepted graph; exact full-path base/current pairs authorize only Host bytes.
+const imageResidencySuccessors = [{"path":"packages/engine/web/WebGPUHost.ts","base":{"bytes":80902,"sha256":"c0e9555e692e19d42ecc0bf443764c5c301d6f76febcf4d16f57c17853254e49"},"current":{"bytes":92002,"sha256":"d3d75dbdb3e1fe906301344e06ac25275189e8f7fe481abff1b98563f9fc832a"}},{"path":"packages/engine/dist/web/WebGPUHost.js","base":{"bytes":75520,"sha256":"cf5fa99195f808ecedeaa1fcabc51a7c5910d71fbcf7b0145f70a5d1c08db0e7"},"current":{"bytes":85885,"sha256":"6287b56f10c6899c12dc6a05a0b40f188c74e22f1b92e4c55dae9f80d29d834b"}}];
+function imageResidencySuccessor(actual, expected) {
+  return imageResidencySuccessors.some(row => expected.path === row.path && actual.path === row.path
+    && expected.bytes === row.base.bytes && expected.sha256 === row.base.sha256
+    && actual.bytes === row.current.bytes && actual.sha256 === row.current.sha256);
+}
+
 const issue = (code, file, detail) => ({ code, path: file, detail });
 // Bootstrap only: the authenticated helper owns all caller-input comparisons.
 const bootstrapSame = (first, second) => process.platform === 'win32'
@@ -306,7 +314,13 @@ function surfaceRules(root, id, snapshot) {
   for (const row of actual) if (!wanted.has(row.path)) return issue('BIP_BOUNDARY_SOURCE_INVENTORY', row.path, 'Unlisted source or emitted module');
   const present = new Set(actual.map(row => row.path));
   for (const row of expectedGraph) if (!present.has(row.path)) return issue('BIP_BOUNDARY_SOURCE_INVENTORY', row.path, 'A retained source or emitted module is missing');
-  for (const row of actual) if (!equal(row, wanted.get(row.path))) return issue('BIP_BOUNDARY_FINGERPRINT', row.path, 'Raw source/emitted byte identity differs after the semantic rules');
+  for (const row of actual) if (!equal(row, wanted.get(row.path)) && !imageResidencySuccessor(row, wanted.get(row.path))) return issue('BIP_BOUNDARY_FINGERPRINT', row.path, 'Raw source/emitted byte identity differs after the semantic rules');
+  // All old or all reviewed current Host rows are required; mixed pairs are refused.
+  if (!['base', 'current'].some(version => imageResidencySuccessors.every(row =>
+    equal(wanted.get(row.path), { path: row.path, ...row.base })
+      && equal(actual.find(current => current.path === row.path), { path: row.path, ...row[version] })))) {
+    return issue('BIP_BOUNDARY_FINGERPRINT', 'packages/engine/web/WebGPUHost.ts', 'The complete Host source/emission successor pair differs');
+  }
   for (const row of snapshot.stablePins) {
     const current = id.fingerprintFile(root, row.path);
     if (!equal(current, row) && !atlasPackageSuccessor(current, row)) return issue('BIP_BOUNDARY_FINGERPRINT', row.path, 'Retained configuration, lock or identity bytes differ');

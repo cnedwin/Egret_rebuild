@@ -318,6 +318,10 @@ test('L01 geometry is unique within one frame, per pending replay, and retires o
     await one.finish(); status(h, { serial: 2, frames: 0, geometry: 0, upload: 0 });
     await two.finish(); await one.finish(); status(h, { serial: 2, frames: 0, geometry: 0, upload: 0 });
     const repeat = f.proof(() => h.renderTexturedFrame(a.repeated)); admitted(repeat); status(h, { serial: 3, frames: 1, geometry: 204, upload: 224 }); await repeat.finish();
+    assert.ok(f.buffers.every(b => b.destroyed === 1));
+    // Out-of-order proof elects the second cold texture; replay borrows that winner.
+    assert.equal(f.textures.length, 2); assert.deepEqual(f.textures.map(t => t.destroyed), [1, 0]);
+    const closing = observe(h.close()); await f.pump(); await closing;
     assert.ok(f.buffers.every(b => b.destroyed === 1)); assert.ok(f.textures.every(t => t.destroyed === 1));
   }));
 });

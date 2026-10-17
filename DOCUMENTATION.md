@@ -30,6 +30,9 @@ The 0.56 resource-slot increment combines recoverable binding replacement with a
 
 ## Subsystem reference
 
+- [Experimental WebGPU image residency contract](knowledge-base/en/docs/gpu-image-residency-contract.md)
+- [Experimental WebGPU image residency evidence](knowledge-base/en/docs/gpu-image-residency-evidence.md)
+
 - [Atlas import planning contract](knowledge-base/en/docs/atlas-import-plan-contract.md)
 - [Atlas import planning evidence](knowledge-base/en/docs/atlas-import-plan-evidence.md)
 - [Atlas import composition example](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/atlas-import-playback/README.md)

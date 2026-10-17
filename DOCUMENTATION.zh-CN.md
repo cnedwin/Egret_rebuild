@@ -30,6 +30,9 @@
 
 ## 子系统参考
 
+- [实验性 WebGPU 图像驻留契约](knowledge-base/Cns/docs/gpu-image-residency-contract.md)
+- [实验性 WebGPU 图像驻留证据](knowledge-base/Cns/docs/gpu-image-residency-evidence.md)
+
 - [图集导入计划契约](knowledge-base/Cns/docs/atlas-import-plan-contract.md)
 - [图集导入计划证据](knowledge-base/Cns/docs/atlas-import-plan-evidence.md)
 - [图集导入组合示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/atlas-import-playback/README.md)

@@ -18,7 +18,13 @@ Years later, as times change and technology advances, many developers continue t
 
 当前仓库提供可运行的工程预览。显示树、资源租约、动画、浏览器输入及部分 Canvas/WebGPU 渲染路径，均有各自的接口契约和验证范围。完整 UI 工具、完整 Spine 支持、目标平台 SDK 和旧工程自动迁移仍在开发中。
 
-## 当前版本 — 0.60.0
+## 当前版本 — 0.61.0
+
+**0.61.0 工程预览**增加由各 WebGPU Host 独立管理的内部图像缓存，复用已安全完成的精确裁剪 GPU 图像。LRU 机制维持 32 MiB 逻辑图像池和最多 256 个可复用条目，保留原公开准入、渲染模式与生命周期管理，不增加公开 API 或依赖。
+
+参阅[契约](knowledge-base/Cns/docs/gpu-image-residency-contract.md)及[证据与限制](knowledge-base/Cns/docs/gpu-image-residency-evidence.md)。受控规格/所有权结果和实际当前桌面回归结果具有各自范围。新增缓存专用浏览器矩阵延期并保持 OPEN。物理 GPU 内存、性能、目标设备与实际 device-loss 恢复仍未验证。工作区包仍为 private、版本 0.0.0，Host 协议仍为 1.0。
+
+## 图集导入规划 — 0.60.0
 
 **0.60.0 工程预览**将受支持的单页图集元数据与显式 PNG 绑定转换为标准 SpriteSheet、SequenceClip 输入。可选 `@egret/project/atlas` 入口复用既有动画和资源所有权模型，生成的计划可通过公开 Engine 工厂进行组合。
 
@@ -58,6 +64,7 @@ Years later, as times change and technology advances, many developers continue t
 
 | Version / 版本 | Main change | 主要变化 |
 | --- | --- | --- |
+| 0.61.0 | Internal WebGPU image cache with per-Host ownership | 各 Host 独立管理的 WebGPU 内部图像缓存 |
 | 0.60.0 | Strict single-page atlas metadata planning with explicit PNG binding | 严格单页图集元数据规划与显式 PNG 绑定 |
 | 0.59.0 | Normalized trimmed and clockwise90 atlas frames with stable logical dimensions | 标准化裁边与顺时针90度图集帧，保持逻辑尺寸 |
 | 0.58.0 | Atomic multi-Bitmap binding and prepared two-layer outfits | 多 Bitmap 原子绑定与双层组合换装 |
