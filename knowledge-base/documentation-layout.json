@@ -2037,8 +2037,8 @@
       "kind": "public_reading",
       "action": "add-current-pair",
       "status": "CURRENT_READING_SOURCE",
-      "currentEnSha256": "42183ea7c604e33da20dead489480bfba2f66505de26683e33973110896b20e7",
-      "currentZhSha256": "c712e4437f804c77d04d9e4ceb5839289f9460e3f47d7e2ee472b2549d25e202"
+      "currentEnSha256": "1faf249ae8cc1be648fb6ea1ca04adc7ed2586d1ba4a2dab7859ba24cffeadf7",
+      "currentZhSha256": "afe788d246187fe722aec98a8ac79767c63d0d7828884319460e144b426034fb"
     },
     {
       "newEn": "knowledge-base/en/docs/architecture-and-engineering-plan.md",
@@ -2046,8 +2046,8 @@
       "kind": "public_reading",
       "action": "add-current-pair",
       "status": "CURRENT_READING_SOURCE",
-      "currentEnSha256": "1c852d869b7cb522ea497618aaa5eb138b60d5a05ace987eda6a1c9916537e90",
-      "currentZhSha256": "ea6db16aacf4aa698a9ca6d254d74c7911bf4ef9ee93f141427cfccf7159a586"
+      "currentEnSha256": "099f81e5a6b0b84bc513001f783f6cb28a68aeb45e9de4ccb927002493312dea",
+      "currentZhSha256": "c66c5ba50cfcf95615fd79f7c58de2dbcf6403623af86d3cbada5a7f35464531"
     }
   ],
   "registries": [

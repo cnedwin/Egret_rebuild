@@ -496,3 +496,82 @@ test('snapshot collection is CLI-only and refuses preloaded Node processes',asyn
   assert.notEqual(run.status,0);assert.match(run.stderr,/Fresh Node CLI/);assert.equal(run.stdout,'');
  }finally{fs.rmSync(root,{recursive:true,force:true});}
 });
+
+
+test('split application selection requires explicit absolute resource-family authority',async()=>{
+ const {parseSnapshotOptions}=await snapshotTool(),app=path.resolve('separate app'),proposal=path.resolve('proposal.json');
+ assert.deepEqual(parseSnapshotOptions(['--family','resource-scene','--application-root',app]),{family:'resource-scene','application-root':app});
+ assert.deepEqual(parseSnapshotOptions(['--check',proposal,'--application-root',app]),{check:proposal,'application-root':app});
+ for(const args of [['--family','atlas-frame','--application-root',app],['--family','resource-scene','--application-root','relative'],['--check',proposal,'--application-root','relative']])assert.throws(()=>parseSnapshotOptions(args));
+});
+const compilerTool=()=>import('../../tools/prepare-compiler-maintenance.mjs');
+function compilerFixture(){
+ const root=fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(),'egret compiler maintenance ')));
+ const put=(file,body)=>{fs.mkdirSync(path.dirname(path.join(root,file)),{recursive:true});fs.writeFileSync(path.join(root,file),body);};
+ const pin=file=>{const raw=fs.readFileSync(path.join(root,file));return {path:file,bytes:raw.length,sha256:createHash('sha256').update(raw).digest('hex')};};
+ const specs=[['atlas-import','ATLAS_IMPORT'],['bitmap-resource-slot','BITMAP_RESOURCE_SLOT'],['bitmap-binding-ticket','BITMAP_BINDING_TICKET'],['linear-layout','LINEAR_LAYOUT']];
+ for(const file of ['tools/prepare-compiler-maintenance.mjs','tools/prepare-check-maintenance.mjs','tools/lib/file-identity.mjs','packages/engine/dist/index.d.ts'])put(file,'// Synthetic nonexecuting fixture\n');
+ for(const [name,version]of [['typescript','7.0.2'],['@typescript/typescript-win32-x64','7.0.2'],['jsonc-parser','3.3.1']]){
+  put('node_modules/'+name+'/package.json',JSON.stringify({name,version,...(name.startsWith('@typescript/')?{exports:{'./package.json':'./package.json'}}:{})}));put('node_modules/'+name+'/index.js','throw Error("must never execute compiler or dependency");\n');
+ }
+ for(const [name,kind]of specs){
+  put('tools/'+name+'-types.mjs','throw Error("must never execute strict gate");\n');
+  const v={...(name==='atlas-import'?{}:{schemaVersion:1}),kind:kind+'_ACTUAL_STRICT_DIAGNOSTICS',status:'OBSERVED_FROZEN_TS7_DIAGNOSTICS',inputPins:['tools/'+name+'-types.mjs','packages/engine/dist/index.d.ts','node_modules/typescript/index.js','node_modules/@typescript/typescript-win32-x64/index.js'].map(pin)};
+  if(name==='atlas-import')v.sourcePolicy={jsoncPins:[pin('node_modules/jsonc-parser/index.js')]};
+  put('tests/types/'+name+'-diagnostic-expectations.json',JSON.stringify(v));
+ }
+ return {root,put,pin,close:()=>fs.rmSync(root,{recursive:true,force:true})};
+}
+test('compiler preparation retains four declaration owners and shared raw references without execution',async()=>{
+ const m=await compilerTool(),f=compilerFixture();try{
+  const p=m.prepareCompilerReview(f.root);assert.equal(p.status,'review-required');assert.equal(p.acceptance,'none');assert.equal(p.declarations.length,5);
+  const row=p.references.find(x=>x.owner==='compiler'&&x.path==='index.js');assert.equal(row.references.length,4);assert.equal(row.identity,'same');assert.equal(p.dependencies.length,3);
+  assert.equal(m.verifyCompilerProposal(f.root,p).status,'current-inputs');
+ }finally{f.close();}
+});
+test('compiler input edits additions missing files and owner metadata invalidate prior proposals',async()=>{
+ const m=await compilerTool(),f=compilerFixture();try{
+  const p=m.prepareCompilerReview(f.root);f.put('node_modules/typescript/new.js','new');assert.throws(()=>m.verifyCompilerProposal(f.root,p),/changed/);
+  const fresh=m.prepareCompilerReview(f.root);assert.ok(fresh.dependencies.find(x=>x.owner==='compiler').inventory.some(x=>x.path==='new.js'));
+  fs.unlinkSync(path.join(f.root,'node_modules/typescript/index.js'));const missing=m.prepareCompilerReview(f.root);assert.equal(missing.references.find(x=>x.owner==='compiler'&&x.path==='index.js').identity,'missing');
+  f.put('node_modules/typescript/package.json',JSON.stringify({name:'foreign',version:'7.0.2'}));assert.throws(()=>m.prepareCompilerReview(f.root),/package name/);
+ }finally{f.close();}
+});
+test('compiler registry refuses duplicate keys paths unsupported owners and coerced raw pins',async()=>{
+ const m=await compilerTool(),f=compilerFixture();try{
+  const file='tests/types/linear-layout-diagnostic-expectations.json',raw=fs.readFileSync(path.join(f.root,file),'utf8'),v=JSON.parse(raw);
+  for(const value of [raw.replace('"schemaVersion":1','"schemaVersion":1,"schemaVersion":1'),JSON.stringify({...v,inputPins:[v.inputPins[0],v.inputPins[0]]}),JSON.stringify({...v,inputPins:[{...v.inputPins[0],path:'node_modules/foreign/index.js'}]}),JSON.stringify({...v,inputPins:[{...v.inputPins[0],sha256:[v.inputPins[0].sha256]}]})]){f.put(file,value);assert.throws(()=>m.prepareCompilerReview(f.root));}
+ }finally{f.close();}
+});
+test('compiler raw comparisons preserve independent historical expectations and reject tampering',async()=>{
+ const m=await compilerTool(),f=compilerFixture();try{
+  const file='tests/types/linear-layout-diagnostic-expectations.json',v=JSON.parse(fs.readFileSync(path.join(f.root,file)));v.inputPins.find(x=>x.path==='node_modules/typescript/index.js').sha256='0'.repeat(64);f.put(file,JSON.stringify(v));
+  const p=m.prepareCompilerReview(f.root),r=p.references.find(x=>x.owner==='compiler'&&x.path==='index.js');assert.equal(r.identity,'different');assert.equal(r.references.filter(x=>x.matches).length,3);
+  p.acceptance='PASS';assert.throws(()=>m.verifyCompilerProposal(f.root,p),/changed/);
+ }finally{f.close();}
+});
+
+
+test('compiler observations bind uninterpreted native fields and gate source bytes',async()=>{
+ const m=await compilerTool(),f=compilerFixture();try{
+  const p=m.prepareCompilerReview(f.root),file='tests/types/linear-layout-diagnostic-expectations.json',v=JSON.parse(fs.readFileSync(path.join(f.root,file)));
+  v.nativeLibraryPins=[{path:'never-follow-this-historical-path'}];f.put(file,JSON.stringify(v));assert.throws(()=>m.verifyCompilerProposal(f.root,p),/changed/);
+  const fresh=m.prepareCompilerReview(f.root);assert.equal(fresh.status,'review-required');f.put('tools/linear-layout-types.mjs','throw Error("changed source is not executed");');assert.throws(()=>m.verifyCompilerProposal(f.root,fresh),/changed/);
+ }finally{f.close();}
+});
+test('compiler inventory rejects internal links and mismatched wrapper-native resolution',async()=>{
+ const m=await compilerTool(),f=compilerFixture();try{
+  const nested=path.join(f.root,'node_modules/typescript/linked');fs.symlinkSync(path.join(f.root,'packages'),nested,process.platform==='win32'?'junction':'dir');
+  assert.throws(()=>m.prepareCompilerReview(f.root),/Nonregular/);fs.unlinkSync(nested);
+  const alternate='node_modules/typescript/node_modules/@typescript/typescript-win32-x64';f.put(alternate+'/package.json',JSON.stringify({name:'@typescript/typescript-win32-x64',version:'7.0.2'}));
+  assert.throws(()=>m.prepareCompilerReview(f.root),/native owners differ|Nonregular/);
+ }finally{f.close();}
+});
+
+
+test('compiler metadata reader refuses redirected or conditional native exports',async()=>{
+ const m=await compilerTool(),f=compilerFixture();try{
+  const file='node_modules/@typescript/typescript-win32-x64/package.json',v=JSON.parse(fs.readFileSync(path.join(f.root,file)));
+  for(const exports of [{'./package.json':'./alternate.json'},{'./package.json':{default:'./package.json'}}]){f.put(file,JSON.stringify({...v,exports}));assert.throws(()=>m.prepareCompilerReview(f.root),/export mapping/);}
+ }finally{f.close();}
+});

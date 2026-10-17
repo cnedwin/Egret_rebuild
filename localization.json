@@ -1837,15 +1837,15 @@
       "en": "knowledge-base/en/docs/m0-community-foundations.md",
       "zh": "knowledge-base/Cns/docs/m0-community-foundations.md",
       "kind": "public_reading",
-      "enSha256": "42183ea7c604e33da20dead489480bfba2f66505de26683e33973110896b20e7",
-      "zhSha256": "c712e4437f804c77d04d9e4ceb5839289f9460e3f47d7e2ee472b2549d25e202"
+      "enSha256": "1faf249ae8cc1be648fb6ea1ca04adc7ed2586d1ba4a2dab7859ba24cffeadf7",
+      "zhSha256": "afe788d246187fe722aec98a8ac79767c63d0d7828884319460e144b426034fb"
     },
     {
       "en": "knowledge-base/en/docs/architecture-and-engineering-plan.md",
       "zh": "knowledge-base/Cns/docs/architecture-and-engineering-plan.md",
       "kind": "public_reading",
-      "enSha256": "1c852d869b7cb522ea497618aaa5eb138b60d5a05ace987eda6a1c9916537e90",
-      "zhSha256": "ea6db16aacf4aa698a9ca6d254d74c7911bf4ef9ee93f141427cfccf7159a586"
+      "enSha256": "099f81e5a6b0b84bc513001f783f6cb28a68aeb45e9de4ccb927002493312dea",
+      "zhSha256": "c66c5ba50cfcf95615fd79f7c58de2dbcf6403623af86d3cbada5a7f35464531"
     },
     {
       "en": "knowledge-base/en/docs/resource-browser-workflow.md",
@@ -1872,8 +1872,8 @@
       "en": "knowledge-base/en/docs/check-maintenance.md",
       "zh": "knowledge-base/Cns/docs/check-maintenance.md",
       "kind": "public_reading",
-      "enSha256": "7d27002719ce3924446edd8ffeaae80a7c2a5876b9d117f47a91b7d9ca660dbe",
-      "zhSha256": "6e24bc017518bbc97532efd36e840b8d610fcc6a30f105012150c469d47ae9c6"
+      "enSha256": "d207813cc9cd8bacccd82ec24dc035a0c85ccb7ec1c03fb02ac6fc0e30220ee0",
+      "zhSha256": "556bdcae0ed8526dc371a0afb00eaf052a358a83ac376c84c43d806bc23d0504"
     }
   ],
   "registries": [
@@ -3463,7 +3463,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "f07f124919a53b14ffdbf4ea70b6abbf0a166384a934c5b1afa5ef744775a751"
+      "sha256": "da85b850cd8ae3eba61fc04fc874ee9f880125710b674b49d7587ffc6e5ab9a0"
     },
     {
       "path": "tools/browser-resources.mjs",
@@ -3495,7 +3495,11 @@
     },
     {
       "path": "tools/prepare-snapshot-maintenance.mjs",
-      "sha256": "b2e2cd027133488089a341b62cf03ef7c71bf920ce1649b8b5b5b06e9a6737e0"
+      "sha256": "7fd3dddfa04db1d7d9b5ba133c914740b134b84627fc6d41770d454caa05acb8"
+    },
+    {
+      "path": "tools/prepare-compiler-maintenance.mjs",
+      "sha256": "7b9790d87b2bda0d03097a0b00c8f08462b9221b20cfbe87a5430ef0ed8283fd"
     }
   ],
   "historicalSemanticReview": {

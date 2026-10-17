@@ -43,7 +43,7 @@ node tools/prepare-check-maintenance.mjs --check ../catalog-proposal.json
 | tools/bitmap-binding-ticket-policy.json | 上述六项，另加 selectedProductPins |
 | tests/types/atlas-import-diagnostic-expectations.json | sourcePolicy.modules、sourcePolicy.configurationPins |
 
-原有和新增所有者共登记 24 项普通指纹声明、三条策略文件引用，以及两项独立表示的 Host 成对声明。数量说明当前实现的登记范围，不代表仓库全部义务。JSON 重复键（含转义后同名的键）、畸形选择字段/指纹及单个声明内重复路径都会被拒绝，不会递归收集新增 JSON 字段。新增选择字段只接受规定的工作区配置、四包源码/产物/类型测试和 tests/types 配置范围，拒绝依赖及私有路径。Atlas 的 inputPins、编译器字段和 jsoncPins 仍随整个 JSON 文件的原始字节被绑定，但不会被作为依赖所有者文件读取，也不会解释为验收证据。
+原有和新增所有者共登记 24 项普通指纹声明、三条策略文件引用，以及两项独立表示的 Host 成对声明。数量说明当前实现的登记范围，不代表仓库全部义务。JSON 重复键（含转义后同名的键）、畸形选择字段/指纹及单个声明内重复路径都会被拒绝，不会递归收集新增 JSON 字段。新增选择字段只接受规定的工作区配置、四包源码/产物/类型测试和 tests/types 配置范围，拒绝依赖及私有路径。在此单仓库读取器中，Atlas 的 inputPins、编译器字段和 jsoncPins 仅由 JSON 文件原始字节绑定。下方独立的已登记编译器流程会读取选定的依赖输入；两种流程都不授予验收。
 
 四组 oldRootPins/oldEngineDeclarationPin 标注 comparison: transformed-baseline-raw-observation。真实门禁会去除指定新增内容后再与历史基线比较，因此这里的原始差异不意味着应更新旧指纹；必须查看原有变换并单独验证预期接口。必需的 JSON 所有者文件缺失会拒绝准备，声明目标缺失则继续在条目中显示。
 
@@ -55,7 +55,7 @@ resource-scene 和 atlas-frame 源码采集器继续使用已有的多所有者�
 
 ## 多所有者快照维护
 
-使用 tools/prepare-snapshot-maintenance.mjs 复用现有 resource-scene 和 atlas-frame 源码采集器。入口采集当前检出目录，可与先前快照或提案比较，并将评审材料输出到标准输出；不会安装新基线或修改采集器。运行前须已有编译产物和精确安装的依赖，环境准备与构建按既有流程单独执行。本流程不构建、不启动浏览器或服务器，也不执行产品或编译器模块；仅执行可信采集器及身份辅助代码，读取现有源码闭包。
+使用 tools/prepare-snapshot-maintenance.mjs 复用现有 resource-scene 和 atlas-frame 源码采集器。入口采集当前 SDK 与选定应用，可与先前快照或提案比较，并将评审材料输出到标准输出；不会安装新基线或修改采集器。运行前须已有编译产物和精确安装的依赖，环境准备与构建按既有流程单独执行。本流程不构建、不启动浏览器或服务器，也不执行产品或编译器模块；仅执行可信采集器及身份辅助代码，读取现有源码闭包。
 
 PowerShell 7 示例（产物保存在检出目录外）：
 
@@ -68,11 +68,33 @@ node tools/prepare-snapshot-maintenance.mjs --family atlas-frame > ../atlas-snap
 
 没有基线时，提案明确标记 comparison: not-provided。提供基线后，以所有者和完整逻辑路径联合标识变化。新增、移除和变更条目保留前后记录，包括 resource-scene 的角色信息；不同所有者下的相同路径保持独立。所有者根目录的写法或位置变化单独显示，不通过路径归一化替换指纹。structureChanges 标识其他发生变化的顶层字段，包括模块导入边、路由、闭包、别名、构建解析和验收元数据；完整当前快照仍保留以供检查。
 
-入口支持当前 resource-scene 的 SDK/application/foundation 所有者，以及 Atlas 的 repository/compiler/compiler-native/project-json/foundation 所有者。资源场景的应用和 SDK 均使用当前检出目录，分离应用根目录仍由原采集器处理。Atlas 使用 ordinary 采集选择项，并保留原有 Windows x64 编译器限制。历史 Atlas 快照没有场景标识，因此结构兼容不能证明其场景或来源。此命令不增加跨平台编译器准入，也不迁移其他编译器或源码边界规则。
+包装入口支持 resource-scene 的 SDK/application/foundation 所有者，以及 Atlas 的 repository/compiler/compiler-native/project-json/foundation 所有者。资源应用默认使用当前 SDK 检出目录；可通过 --application-root 明确指定独立应用的绝对目录。原采集器仍要求既有应用布局、原始资源与一致的采集器实现，只支持现有 resource-scene 布局，不表示支持任意游戏工程。Atlas 使用 ordinary 采集选择，并保留原有 Windows x64 编译器限制。历史 Atlas 快照没有场景区分字段，结构兼容不证明场景或来源。本命令不增加跨平台编译器准入，也不改变其他编译器/源码边界规则。
+
+分离应用的 --check 同样要求显式提供 --application-root。采集前，指定路径的规范目录必须与已保存应用标签一致；省略、指定其他根目录或伪造标签都会被拒绝。采集后重新解析该路径，并核对返回的应用所有者。读取范围由调用者明确选择，不由快照中的所有者标签决定。
+
+~~~powershell
+node tools/prepare-snapshot-maintenance.mjs --family resource-scene --application-root "$(Resolve-Path ../application)" > ../split-snapshot.json
+node tools/prepare-snapshot-maintenance.mjs --check "$(Resolve-Path ../split-snapshot.json)" --application-root "$(Resolve-Path ../application)"
+~~~
 
 只读取明确指定的基线 JSON 文件；其中的历史所有者路径及嵌套基线引用均为数据，不作为读取目标。先前提案只提供已保存的快照，成功或评审标签不授予任何权限。转义解码后重复的 JSON 键、不支持的顶层结构或所有者集合、重复清单键、非法路径及未声明的模块所有者都会被拒绝。输入产物上限为 16 MiB。记录顺序按保存形式保守比较，无害的重排也可能需要评审。这些检查属于有限结构验证，不是对历史模块或路由元数据的完整语义验证。
 
 --check 会重读指定基线文件，重新调用当前源码采集器，并比较完整重建提案，包括差异和实现指纹。生成器、解析器、身份辅助代码、采集器和基线字节均被绑定并在采集过程中复查；采集和重检仅供独立直接启动的 Node CLI 使用，要求 execArgv、NODE_OPTIONS 和 NODE_PATH 为空。导出的辅助函数只比较或解析数据，不执行采集。该执行约定不隔离主动修改进程全局状态的调用者。输入变化、新增被采集文件或提案编辑均需重新生成和评审。这是在现有采集范围内检查输入新鲜度，不构成对抗并发恶意进程的隔离，也不是全仓依赖图。current-inputs 结果仍明确 acceptance: none。原生执行继续使用既有进阶/资源浏览器流程，分别满足输入评审、对照、清理及设备要求。
+
+## 已登记编译器输入维护
+
+使用独立的只读入口 tools/prepare-compiler-maintenance.mjs，检查 Atlas 导入、BitmapResourceSlot、BitmapBindingTicket 和 LinearLayout 四份严格检查 JSON 清单。它读取各自的 inputPins 与 Atlas 的 sourcePolicy.jsoncPins，保留五组独立声明；不导入严格门禁、编译器或依赖模块，也不改写诊断和基线。
+
+~~~powershell
+node tools/prepare-compiler-maintenance.mjs > ../compiler-proposal.json
+node tools/prepare-compiler-maintenance.mjs --check "$(Resolve-Path ../compiler-proposal.json)"
+~~~
+
+已安装的 typescript、@typescript/typescript-win32-x64 和 jsonc-parser 分别保留规范所有者及完整原始文件清单。仓库直接选择与从包装包解析的原生包所有者必须一致，读取后再次检查所选所有者与清单成员。因此，即使历史指纹未提及新增的依赖文件，新增文件仍会使旧提案失效。内部链接、非普通文件、大小写别名、JSON 重复键、不支持的选择字段/路径和畸形原始身份都会被拒绝。必须已安装 Windows x64 包；在其他宿主读取它不证明编译器兼容性。版本只是观察到的元数据，不代表新版本获准使用。
+
+每个预期指纹都保留原声明与完整逻辑路径。references 按当前所有者相对输入聚合全部预期，彼此矛盾的历史指纹不会合并成单一替代值。声明文件缺失会明确显示；必要所有者、元数据、门禁或 JSON 文件缺失则拒绝准备。声明、门禁、实现、所选所有者、依赖清单成员或观察文件变化都会使 --check 失效。新提案中可呈现历史指纹不匹配，不视为准备错误；是否准入仍由原门禁决定。
+
+只解释列出的选择字段。nativeLibraryPins、原始编译器观察、诊断、消息投影和分组闭包等其他字段由 JSON 所有者原始字节绑定，不会单独解释或重放，因此本流程不是完整的历史原生边界迁移。完整安装清单属于当前观察，不是这些声明经过认证的替代品。保留全部原有严格重放、源码策略、版本检查、hooks 与 CI。current-inputs 只表示这些维护输入仍一致，始终为 acceptance: none。真人/fork 上手（#52）、其余策略流程（#53）以及设备/宿主/完整 Spine/性能验收（#54）继续开放。
 
 ## 测试清单范围
 
