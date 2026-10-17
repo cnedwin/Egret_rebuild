@@ -323,15 +323,15 @@
       "zh": "AGENTS.zh-CN.md",
       "en": "AGENTS.md",
       "kind": "public_reading",
-      "enSha256": "b1b236d076f872687ce243013d7d6cd192c3c285a903cff1d6ddff751dadb3dc",
-      "zhSha256": "fcdbb24501a7cb13d1a89321f471620b81578fd03a5ba247e3b61d9547390094"
+      "enSha256": "97d8fb79592603e72d21f43912c5f00c389b2423df0b72e833cf7687a9609c3b",
+      "zhSha256": "e03a5c73219457aa25719be03342b25976c9f74b3e86c98f7edef19ad26f4739"
     },
     {
       "zh": "CONTRIBUTING.zh-CN.md",
       "en": "CONTRIBUTING.md",
       "kind": "public_reading",
-      "enSha256": "50c3be5beb591fb8dc4057c30160dca448bb94d990971053759fe4c9161e187b",
-      "zhSha256": "42f3f3e52ce57624e3ceec96801995620752918614cce9dd7ff4d6a2437207b1"
+      "enSha256": "712a26ad00b7c34f56d2be025053c23d8a8e5f798edcd8bfb75eeca7b71e73e2",
+      "zhSha256": "2ca7f84a2d9e0f3716c83784f44bd8cd7eb6379357896478e207dcd030744f01"
     },
     {
       "zh": "docs/evidence/texture-a1.zh-CN.md",
@@ -1128,8 +1128,8 @@
       "zh": "tools/sequence-player/README.zh-CN.md",
       "en": "tools/sequence-player/README.md",
       "kind": "public_reading",
-      "enSha256": "8ffd5731b60619323ef76ec9441f56f2bfced7fea041221193e651de2972d245",
-      "zhSha256": "209f248275b52695b64a837c69aabc10f98cbc3999b4cb76599fde1a59477b53"
+      "enSha256": "c80ed2f484ea9a6a37a27e09aeac35d3f5420b118198a5afea31069c35adaa2a",
+      "zhSha256": "649cecada889ed58b9933f615ce6c54e154744a77d91406f8c6d94bcbb356665"
     },
     {
       "zh": "knowledge-base/Cns/docs/显示坐标查询契约.md",
@@ -1438,8 +1438,8 @@
       "en": "tools/sequence-playback/README.md",
       "zh": "tools/sequence-playback/README.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "2069dc2316b1e7db733d2ef2a4f8e7d8840329a95fe35be774b9d87a91097e4c",
-      "zhSha256": "efa4deb8150e81142abc9308a3f619d2af68b0cee609296ba914f11cc9158a88"
+      "enSha256": "c9aa059f462a51a4c16afe7c6eb5fa0ed26ccdc0a7eb12e3638db031218229cd",
+      "zhSha256": "026edac5f6757a746dd4e4d63b77a049b8bbaa59b4e0c3323ec6a153f3cdd854"
     },
     {
       "en": "knowledge-base/en/docs/spritesheet-contract.md",
@@ -1459,8 +1459,8 @@
       "en": "tools/spritesheet/README.md",
       "zh": "tools/spritesheet/README.zh-CN.md",
       "kind": "public_reading",
-      "enSha256": "69b1a2d518150d4e56cc50943eb63ac75816f37cb4c659aab3410551dbd8e661",
-      "zhSha256": "ee7381d3e0b355afb6e50eab9b5824dbbad50690d4b145fead241d4471f823fd"
+      "enSha256": "1624447bb2689ad76bfdfbec04a6aae4a82b5d50ecea74c465a22acc0746e617",
+      "zhSha256": "f27e182379013fd9246df46f8cd583c7794e6c2f1a07e126274146e44fd676a4"
     },
     {
       "en": "knowledge-base/en/docs/repository-identity-and-line-endings.md",
@@ -1830,22 +1830,22 @@
       "en": "knowledge-base/en/docs/getting-started.md",
       "zh": "knowledge-base/Cns/docs/getting-started.md",
       "kind": "public_reading",
-      "enSha256": "f463e061b76b6c7c3ab5630bddb4803fdbb1ff3068646bc9ae89ccfca0e96134",
-      "zhSha256": "81aea3510357243c3e545e6d8eaf784edbde26736d8e3b08812ab1dd0bf106eb"
+      "enSha256": "2ac813556adbe84d65b4e42bf37a07d0187c0371870d8864e3f0fa63f12610dd",
+      "zhSha256": "ad88d11f3ce060b6be65cfc950747fb0e52f963404f1dac2cb213839678f3aaa"
     },
     {
       "en": "knowledge-base/en/docs/m0-community-foundations.md",
       "zh": "knowledge-base/Cns/docs/m0-community-foundations.md",
       "kind": "public_reading",
-      "enSha256": "1bf5af0aa6ca2f024ce73b842d7977d9142de703c3957394ba6ab27211b22220",
-      "zhSha256": "14d60aa23c05855700fc970a91615617587cd29f70dcf9091f26060c6f006531"
+      "enSha256": "160840bdbe5c34661f3f04af3cd954838ee9e8878305e11b763a14669b31c88b",
+      "zhSha256": "63bd87025a68bb2b690a6099901a754d93e5ae528c68b747a1101f2d6b70fe2e"
     },
     {
       "en": "knowledge-base/en/docs/architecture-and-engineering-plan.md",
       "zh": "knowledge-base/Cns/docs/architecture-and-engineering-plan.md",
       "kind": "public_reading",
-      "enSha256": "5bb78228ab2960f3c55a064c129d1f16b4ee2c1903ab7d845e49b170183ac0a2",
-      "zhSha256": "f5fd21b71b767c83b321d6c810948666a3d18a0bae1af2d3d3a9c8d9a713ecee"
+      "enSha256": "b3a33d0f49778bb77efdbee1402c6b009d0accd3a26517bf918cc78b96a344a8",
+      "zhSha256": "8a1d5f3e916bc55157230da025f01223599d661927e523ffa1afd372b05caf4b"
     }
   ],
   "registries": [
@@ -2455,7 +2455,7 @@
     },
     {
       "path": "tools/verify-canvas-text-canvas.mjs",
-      "sha256": "e97e8c0c9320d23caece696f8a05c156ee09f27e960428612f6dd04d5f0100ca"
+      "sha256": "af7122f6371683958beea0d397a97bb4a145a121f39ad45e660ece145f9b9857"
     },
     {
       "path": "tools/canvas-text-canvas-contract.mjs",
@@ -2779,7 +2779,7 @@
     },
     {
       "path": "tools/check-publication.mjs",
-      "sha256": "1f4169c9e7db0cf2ceebe74f077f13c4b1f39a8a2747b6271a710d59a934e319"
+      "sha256": "73226b25e34ac9deef575af9620227f9472ea4c11ef827da1efd0abf72e0d4c6"
     },
     {
       "path": "tools/spritesheet-types.mjs",
@@ -2803,7 +2803,7 @@
     },
     {
       "path": "tools/prepush.mjs",
-      "sha256": "33e434c1e187d5cea411ae03a1576c819c1fecc17638b3db4a31403eeac514b7"
+      "sha256": "14dc9cf9d5f6701fd0c524cccbfc606ba6fda2c7ac194b31b0fe513fa4d5f185"
     },
     {
       "path": "packages/engine/web/image.ts",
@@ -3408,6 +3408,22 @@
     {
       "path": "packages/project/src/atlas/plan.ts",
       "sha256": "d06ca255f7f6e7ad56da2a7d22f3d6af149c51ea62efdcc8e5832c5a4b2759ef"
+    },
+    {
+      "path": "tools/contribution-metadata.mjs",
+      "sha256": "9c1dcc1cb22a5392c0f85fee53212544b78882ef64d4a9d86ff8336495f3ab3e"
+    },
+    {
+      "path": "tests/publication/contribution-metadata.test.mjs",
+      "sha256": "d3f4089e1f12530b2d6880c8d546595a02d099458e5bf1a3cc3a42e26685ec3a"
+    },
+    {
+      "path": "tools/browser-verify.mjs",
+      "sha256": "101aaf96f43116f4c0adf9a201e1ee22e03735bb38ed1b6ab415c1a95a7b2311"
+    },
+    {
+      "path": "tests/publication/browser-tools.test.mjs",
+      "sha256": "56c0b9492662738edc74b32ab9ec694eb5007868d849d12ea0d967d176f8cd82"
     }
   ],
   "historicalSemanticReview": {

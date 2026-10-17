@@ -17,6 +17,7 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           persist-credentials: false
+          fetch-depth: 0
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version-file: .node-version
@@ -44,7 +45,9 @@ jobs:
       - name: Clean setup
         run: pnpm setup:dev
       - name: Full merge checks
-        run: pnpm check:merge
+        env:
+          EGRET_METADATA_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: node tools/prepush.mjs --integrated
   cpu:
     strategy:
       fail-fast: false

@@ -24,8 +24,8 @@
       "action": "move-pair",
       "previousZhSha256": "ca2be6243c614a900ed12f1b46649155f215a4827e04818e025bad8d03f8af9e",
       "previousEnSha256": "7e72f6245d7c86551dc2640356416b8b06a2d80872f262daf227f98142eac7ae",
-      "currentZhSha256": "fcdbb24501a7cb13d1a89321f471620b81578fd03a5ba247e3b61d9547390094",
-      "currentEnSha256": "b1b236d076f872687ce243013d7d6cd192c3c285a903cff1d6ddff751dadb3dc"
+      "currentZhSha256": "e03a5c73219457aa25719be03342b25976c9f74b3e86c98f7edef19ad26f4739",
+      "currentEnSha256": "97d8fb79592603e72d21f43912c5f00c389b2423df0b72e833cf7687a9609c3b"
     },
     {
       "oldZh": "CONTRIBUTING.md",
@@ -36,8 +36,8 @@
       "action": "move-pair",
       "previousZhSha256": "9de14fd2a1e74069ec8718ebaa0d39a13afce4b836a2eba5bb521c94f1df5dda",
       "previousEnSha256": "f7feb36d983e8da309bbe161a51b398c7233e1cac9678572fc8ce0f2941af2b7",
-      "currentZhSha256": "42f3f3e52ce57624e3ceec96801995620752918614cce9dd7ff4d6a2437207b1",
-      "currentEnSha256": "50c3be5beb591fb8dc4057c30160dca448bb94d990971053759fe4c9161e187b"
+      "currentZhSha256": "2ca7f84a2d9e0f3716c83784f44bd8cd7eb6379357896478e207dcd030744f01",
+      "currentEnSha256": "712a26ad00b7c34f56d2be025053c23d8a8e5f798edcd8bfb75eeca7b71e73e2"
     },
     {
       "oldZh": "DOCUMENTATION.md",
@@ -1511,8 +1511,8 @@
       "newEn": "tools/sequence-player/README.md",
       "kind": "public_reading",
       "action": "new-first-party-pair",
-      "currentZhSha256": "c1657341c0e0837cc1f3fc1605216127e18720710b4ebc8ec7b9267545deba70",
-      "currentEnSha256": "095c8889535f22d2b4a743c9990f81cb0c2a49ac9ed4c2bda8d232403dbc4066"
+      "currentZhSha256": "649cecada889ed58b9933f615ce6c54e154744a77d91406f8c6d94bcbb356665",
+      "currentEnSha256": "c80ed2f484ea9a6a37a27e09aeac35d3f5420b118198a5afea31069c35adaa2a"
     },
     {
       "newZh": "knowledge-base/Cns/docs/自有纹理几何与Mesh2D契约.md",
@@ -2028,8 +2028,8 @@
       "kind": "public_reading",
       "action": "add-current-pair",
       "status": "CURRENT_READING_SOURCE",
-      "currentEnSha256": "f463e061b76b6c7c3ab5630bddb4803fdbb1ff3068646bc9ae89ccfca0e96134",
-      "currentZhSha256": "81aea3510357243c3e545e6d8eaf784edbde26736d8e3b08812ab1dd0bf106eb"
+      "currentEnSha256": "2ac813556adbe84d65b4e42bf37a07d0187c0371870d8864e3f0fa63f12610dd",
+      "currentZhSha256": "ad88d11f3ce060b6be65cfc950747fb0e52f963404f1dac2cb213839678f3aaa"
     },
     {
       "newEn": "knowledge-base/en/docs/m0-community-foundations.md",
@@ -2037,8 +2037,8 @@
       "kind": "public_reading",
       "action": "add-current-pair",
       "status": "CURRENT_READING_SOURCE",
-      "currentEnSha256": "1bf5af0aa6ca2f024ce73b842d7977d9142de703c3957394ba6ab27211b22220",
-      "currentZhSha256": "14d60aa23c05855700fc970a91615617587cd29f70dcf9091f26060c6f006531"
+      "currentEnSha256": "160840bdbe5c34661f3f04af3cd954838ee9e8878305e11b763a14669b31c88b",
+      "currentZhSha256": "63bd87025a68bb2b690a6099901a754d93e5ae528c68b747a1101f2d6b70fe2e"
     },
     {
       "newEn": "knowledge-base/en/docs/architecture-and-engineering-plan.md",
@@ -2046,8 +2046,8 @@
       "kind": "public_reading",
       "action": "add-current-pair",
       "status": "CURRENT_READING_SOURCE",
-      "currentEnSha256": "5bb78228ab2960f3c55a064c129d1f16b4ee2c1903ab7d845e49b170183ac0a2",
-      "currentZhSha256": "f5fd21b71b767c83b321d6c810948666a3d18a0bae1af2d3d3a9c8d9a713ecee"
+      "currentEnSha256": "b3a33d0f49778bb77efdbee1402c6b009d0accd3a26517bf918cc78b96a344a8",
+      "currentZhSha256": "8a1d5f3e916bc55157230da025f01223599d661927e523ffa1afd372b05caf4b"
     }
   ],
   "registries": [

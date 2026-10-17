@@ -1,5 +1,7 @@
 # Public SequencePlayer opaque browser verifier
 
+Historical collector profile: the Node 24.19.0 instructions below preserve this experiment’s original protocol. They are not the current onboarding path or proof of Node 26 compatibility. Use [the current guide](../../knowledge-base/en/docs/getting-started.md#contribution-metadata-and-browser-checks) and tools/browser-tool-matrix.json to select an active suite. Those suites do not replace this collector’s comparison domain; changes affecting this domain require a separately reviewed migration.
+
 English | [简体中文](README.zh-CN.md)
 
 This first-party tool verifies the public [SequencePlayer contract](../../knowledge-base/en/docs/sequence-player-contract.md). It exercises `egret.createSequenceClip` and `egret.SequencePlayer` from the root public entry, plus the selected `/web` or `/webgpu` public host entry. It never imports a private sampler or manually assigns the Bitmap crop. The separately reviewed fresh public-player observation and its exact source identities are recorded in the [contract acceptance section](../../knowledge-base/en/docs/sequence-player-contract.md#recorded-acceptance--2026-10-10); earlier Bitmap evidence remains a distinct prerequisite.

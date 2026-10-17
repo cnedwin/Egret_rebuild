@@ -1,5 +1,7 @@
 # 公开 SequencePlayback 不透明像素浏览器验证器
 
+历史采集配置：下文 Node 24.19.0 指令保留此实验的原始协议，不是当前上手入口，也不证明 Node 26 兼容。请通过[当前指南](../../knowledge-base/Cns/docs/getting-started.md#贡献元数据与浏览器检查)和 tools/browser-tool-matrix.json 选择活跃套件。它们不替代本采集工具的比较范围；影响本范围的变更需要单独评审迁移。
+
 [English](README.md) | 简体中文
 
 这个第一方工具观察真实 Engine 时钟驱动公开实例方法 `engine.createSequencePlayback`，随后显式捕获、渲染并重放不可变帧。仅使用 `@egret/engine` 和所选 `/web` 或 `/webgpu` 公开宿主，不使用显式 player、私有 sampler、产品 stub 或手工 crop。既有 `tools/sequence-player` 结果保留历史边界，不能作为新控制器验收。

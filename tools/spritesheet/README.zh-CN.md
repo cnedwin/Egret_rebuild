@@ -1,5 +1,7 @@
 # 命名 SpriteSheet 不透明像素浏览器验证器
 
+历史采集配置：下文 Node 24.19.0 指令保留此实验的原始协议，不是当前上手入口，也不证明 Node 26 兼容。请通过[当前指南](../../knowledge-base/Cns/docs/getting-started.md#贡献元数据与浏览器检查)和 tools/browser-tool-matrix.json 选择活跃套件。它们不替代本采集工具的比较范围；影响本范围的变更需要单独评审迁移。
+
 [English](README.md) | 简体中文
 
 此第一方 Apache-2.0 验证器将公共 `createSpriteSheet` 与现有 Engine 时钟序列控制器组合。一个原创 CPU 图集和一个资源管理器签发的租约支持两个真实、由调用者持有的 Bitmap：动画角色与静态命名图标。选定的公共 Canvas／WebGPU Host 渲染真实捕获帧。不使用产品私有导入、复制的校验器、显式播放器、渲染器补丁或第三方素材。

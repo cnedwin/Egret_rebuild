@@ -64,7 +64,7 @@ function readSavedArtifact(descriptor){
   const body=fs.readFileSync(path.join(output,saved.name));requireValue(body.length===saved.bytes&&sha256(body)===saved.sha256,'Actual durable saved artifact reread');return body;
 }
 try{
-  requireValue(process.execArgv.length===0&&process.version==='v24.19.0','Exact selected CLI/runtime');
+  requireValue(process.execArgv.length===0&&process.version==='v26.7.0','Exact selected CLI/runtime');
   requireValue(process.platform==='win32','Selected Windows Edge slice');
   for(const name of ['NODE_OPTIONS','NODE_PATH','NODE_TEST_CONTEXT','NODE_TEST_WORKER_ID'])requireValue(!process.env[name],'No loader injection');
   const selected=parseCollectorArgs(process.argv.slice(2),ROOT),nonce=randomBytes(16).toString('hex');output=selected.output;

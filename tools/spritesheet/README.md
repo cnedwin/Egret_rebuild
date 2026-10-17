@@ -1,5 +1,7 @@
 # Named SpriteSheet opaque browser verifier
 
+Historical collector profile: the Node 24.19.0 instructions below preserve this experiment’s original protocol. They are not the current onboarding path or proof of Node 26 compatibility. Use [the current guide](../../knowledge-base/en/docs/getting-started.md#contribution-metadata-and-browser-checks) and tools/browser-tool-matrix.json to select an active suite. Those suites do not replace this collector’s comparison domain; changes affecting this domain require a separately reviewed migration.
+
 English | [简体中文](README.zh-CN.md)
 
 This first-party Apache-2.0 verifier composes public `createSpriteSheet` with the existing Engine-clock sequence controller. One original CPU atlas and one manager-issued lease supply two genuine caller-owned Bitmaps: the animated actor and a static named icon. The selected public Canvas and WebGPU hosts render captured authentic frames. It uses no private product import, copied validator, explicit player, renderer patch or third-party asset.

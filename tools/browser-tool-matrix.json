@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "node": "26.7.0",
+  "playwright": "1.62.1",
+  "platform": "win32",
+  "architecture": "x64",
+  "channel": "msedge",
+  "current": [
+    {
+      "id": "canvas",
+      "script": "tools/verify-canvas.mjs",
+      "channel": true
+    },
+    {
+      "id": "webgpu",
+      "script": "tools/verify-webgpu.mjs",
+      "channel": true
+    },
+    {
+      "id": "b1",
+      "script": "tools/verify-webgpu-b1.mjs",
+      "channel": true
+    },
+    {
+      "id": "text",
+      "script": "tools/verify-canvas-text-canvas.mjs",
+      "channel": false
+    }
+  ],
+  "historical": [
+    {
+      "script": "tools/freeze-textured-webgpu-inputs.mjs",
+      "originalNode": "24.19.0",
+      "reason": "Retained fixed experimental profile and original admission/retirement contract; not a current contributor setup command. Its original observation domain is not silently replaced by another suite."
+    },
+    {
+      "script": "tools/verify-textured-webgpu.mjs",
+      "originalNode": "24.19.0",
+      "reason": "Public CLI forwarding to the historical textured-webgpu collector; the same original domain and migration obligations apply."
+    },
+    {
+      "script": "tools/textured-webgpu/collector.mjs",
+      "originalNode": "24.19.0",
+      "reason": "Retained fixed experimental profile and original admission/retirement contract; not a current contributor setup command. Its original observation domain is not silently replaced by another suite."
+    },
+    {
+      "script": "tools/verify-textured-scene-webgpu.mjs",
+      "originalNode": "24.19.0",
+      "reason": "Retained fixed experimental profile and original admission/retirement contract; not a current contributor setup command. Its original observation domain is not silently replaced by another suite."
+    },
+    {
+      "script": "tools/sequence-player/collector.mjs",
+      "originalNode": "24.19.0",
+      "reason": "Retained fixed experimental profile and original admission/retirement contract; not a current contributor setup command. Its original observation domain is not silently replaced by another suite."
+    },
+    {
+      "script": "tools/sequence-playback/collector.mjs",
+      "originalNode": "24.19.0",
+      "reason": "Retained fixed experimental profile and original admission/retirement contract; not a current contributor setup command. Its original observation domain is not silently replaced by another suite."
+    },
+    {
+      "script": "tools/spritesheet/collector.mjs",
+      "originalNode": "24.19.0",
+      "reason": "Retained fixed experimental profile and original admission/retirement contract; not a current contributor setup command. Its original observation domain is not silently replaced by another suite."
+    }
+  ],
+  "advanced": [
+    {
+      "script": "tools/verify-resource-scene.mjs",
+      "status": "Separate source/snapshot and browser acceptance required; not covered by the four current entry suites."
+    },
+    {
+      "script": "tools/verify-bitmap-resource-slot.mjs",
+      "status": "Separate source/snapshot and browser acceptance required; not covered by the four current entry suites."
+    },
+    {
+      "script": "tools/verify-prepared-resource-groups.mjs",
+      "status": "Separate source/snapshot and browser acceptance required; not covered by the four current entry suites."
+    },
+    {
+      "script": "tools/verify-atlas-frame.mjs",
+      "status": "Separate source/snapshot and browser acceptance required; not covered by the four current entry suites."
+    },
+    {
+      "script": "tools/verify-browser-png.mjs",
+      "status": "Separate source/snapshot and browser acceptance required; not covered by the four current entry suites."
+    },
+    {
+      "script": "tools/verify-hit-test-canvas.mjs",
+      "status": "Separate source/snapshot and browser acceptance required; not covered by the four current entry suites."
+    },
+    {
+      "script": "tools/verify-mouse-input-canvas.mjs",
+      "status": "Separate source/snapshot and browser acceptance required; not covered by the four current entry suites."
+    }
+  ]
+}
