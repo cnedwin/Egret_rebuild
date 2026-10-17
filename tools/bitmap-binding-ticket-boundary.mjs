@@ -38,7 +38,7 @@ function bbtbAtlasPackageSuccessor(expected, raw) {
 }
 
 function pinCheck(pin,code){const raw=read(pin.path);if(bbtbAtlasPackageSuccessor(pin,raw))return;if(raw.length!==pin.bytes||hash(raw)!==pin.sha256)bbtbFail(code,'Changed complete source identity: '+pin.path);}
-const policyPin={"path":"tools/bitmap-binding-ticket-policy.json","bytes":17818,"sha256":"7ce0ebb22e6e018f2d498ccc24d6fcda46a48254542178e22d604c5fa109c9c0"};
+const policyPin={"path":"tools/bitmap-binding-ticket-policy.json","bytes":17762,"sha256":"81fb8a30379ae85782fb4eff61c25a890ab1f4a79404b4ea9bb8b3f1468de6e5"};
 pinCheck(policyPin,'BBT_BOUNDARY_POLICY_IDENTITY');
 const policy=JSON.parse(read(policyPin.path));
 const bbtbTypes=policy.types;

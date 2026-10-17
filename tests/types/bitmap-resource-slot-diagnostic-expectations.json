@@ -30,11 +30,7 @@
       "bytes": 3087,
       "sha256": "3722b30210616a13a3213ded11575ba6b2dbab10c32a5ef67afca8513e27017e"
     },
-    {
-      "path": "package.json",
-      "bytes": 762,
-      "sha256": "b522c278e5f0b4070fec73da2aa336da5c57a4dc189c0855d9e5770f879009bd"
-    },
+    {"path":"package.json","bytes":1108,"sha256":"16a969b9a50653b1733893c59ee4cd1d29845208c11bd182036bc585372834d0"},
     {
       "path": "packages/contracts/dist/CancellationSignal.d.ts",
       "bytes": 558,

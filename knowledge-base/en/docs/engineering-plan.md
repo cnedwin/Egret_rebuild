@@ -2,6 +2,8 @@
 
 English | [简体中文](../../Cns/docs/工程规划.md)
 
+The current M0–M4 architecture and delivery sequence is defined in the [architecture and engineering plan](architecture-and-engineering-plan.md). The [M0 foundation increment](m0-community-foundations.md) records execution and remaining acceptance. The work-package mapping below preserves existing requirement and delivery IDs; it does not authorize new engine work before M0 decisions are frozen.
+
 The engineering plan turns Egret's product scope into dependent, reviewable work packages. A package establishes an observable capability, fixes its ownership and failure contract, demonstrates it through public consumers, and records the evidence needed for the next package. The sequence connects runnable rendering, resources and animation, UI and hosts, project tools and complete migration.
 
 ## Current baseline and remaining delivery

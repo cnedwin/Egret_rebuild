@@ -30,7 +30,7 @@ const helperURL=pathToFileURL(helperFile),helperRaw=readFileSync(helperFile);
 if(physicalAPI.relative(helperFile,fileURLToPath(helperURL))!==''||helperRaw.length!==5065||hash(helperRaw)!=='999b355c6e0d03f17853ee05f33abc9fecbb34ad80607963e11f913a4f815569')bootstrapFail('BBT_TYPES_HELPER','Shared helper raw bootstrap differs');
 const {fingerprintFile,logicalPath,samePhysicalPath,ownerRelativePath}=await import(helperURL.href);
 if(!samePhysicalPath(root,declaredRoot,platform))bootstrapFail('BBT_TYPES_INPUT','Physical owner differs');
-const inventoryPin={"path":"tests/types/bitmap-binding-ticket-diagnostic-expectations.json","bytes":64589,"sha256":"127c40e89c1a60e93ad269c6a367816fdb49c25eb3fed170e547851d8ae4ad33"};
+const inventoryPin={"path":"tests/types/bitmap-binding-ticket-diagnostic-expectations.json","bytes":64561,"sha256":"23c64c1b550b2a375c27d8d46c1a4815f1a909971b3e571469dfdaacbd113e8c"};
 if(!equal(fingerprintFile(root,inventoryPin.path),inventoryPin))fail('changed observed inventory');
 const inventory=JSON.parse(readFileSync(path.join(root,inventoryPin.path),'utf8'));
 if(!equal(inventory.messageProjection,{kind:'EXACT_QUOTED_AUTHENTICATED_OWNER_NAMESPACE',literalSuffix:'packages/engine/dist/index',replacement:'<repo>',originalRawPreserved:true,scope:'Only the exact double-quoted authenticated repository owner prefix in the selected root namespace message; all other diagnostic bytes and paths remain significant.'}))fail('unknown diagnostic projection');

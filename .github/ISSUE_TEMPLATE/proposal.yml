@@ -1,0 +1,18 @@
+name: 'Feature proposal / 功能建议'
+description: 'Describe a concrete use case / 描述具体使用场景'
+body:
+  - type: markdown
+    attributes:
+      value: 'English or Chinese is welcome. Do not include credentials or private projects. / 可用中英文填写，请勿提交凭据或私有工程。'
+  - type: textarea
+    id: need
+    attributes:
+      label: 'Problem and intended result / 问题与预期结果'
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: 'Scope and alternatives / 范围和备选方案'
+    validations:
+      required: true

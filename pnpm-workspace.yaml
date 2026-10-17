@@ -2,3 +2,5 @@ packages:
   - packages/*
 allowBuilds:
   '*': false
+# Preserve the physical dependency layout required by current source collectors.
+nodeLinker: hoisted

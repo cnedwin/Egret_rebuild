@@ -258,7 +258,7 @@ const observe=value=>{const promise=Promise.resolve(value);promise.catch(()=>{})
 const EVENTS=[];
 function record(kind,fields={}){assert.ok(EVENTS.length<LIMITS.events,'event quota');const event={kind,...fields};validateData(event);EVENTS.push(event);}
 function validateData(value,depth=0){assert.ok(depth<=LIMITS.depth);if(typeof value==='string')assert.ok(value.length<=LIMITS.stringUnits);else if(typeof value==='number')assert.equal(Number.isFinite(value),true);else if(value!==null&&typeof value==='object'){for(const [key,item]of Object.entries(value)){assert.ok(key.length<=LIMITS.stringUnits);validateData(item,depth+1);}}else assert.ok(value===null||typeof value==='boolean');}
-assert.equal(process.version,'v24.19.0','fixed tested Node version');
+assert.equal(process.version,'v26.7.0','fixed tested Node version');
 assert.equal(process.argv.length,3,'exact Node/file/case argv');
 const CASE=process.argv[2];assert.ok(FIXED_CASES.includes(CASE));
 const PROGRAM=normal(fileURLToPath(import.meta.url));
@@ -415,7 +415,7 @@ const hash=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
 const canonical=value=>normalize(fs.realpathSync(value));
 function fileDescriptor(file){file=normalize(file);assert.equal(canonical(file),file);const stat=fs.lstatSync(file);assert.ok(stat.isFile()&&!stat.isSymbolicLink());const bytes=fs.readFileSync(file);return {path:file,bytes:bytes.length,sha256:hash(bytes)};}
 function exclusiveDirectory(file){assert.equal(typeof file,'string');assert.equal(path.isAbsolute(file),true);assert.equal(normalize(file),file,'canonical output spelling');const parent=path.dirname(file);assert.equal(canonical(parent),normalize(parent));let current=path.parse(parent).root;for(const part of normalize(parent).slice(current.length).split('/').filter(Boolean)){current=path.join(current,part);assert.equal(fs.lstatSync(current).isSymbolicLink(),false,'output parent alias');}assert.equal(fs.existsSync(file),false,'destination already exists');fs.mkdirSync(file);assert.equal(canonical(file),file);return file;}
-// Node v24.19.0 serializes default process-worker options into execArgv.
+// Node v26.7.0 serializes default process-worker options into execArgv.
 // Accept the complete observed profile only; these configuration values
 // alone do not enable tracing, CPU profiling or the inspector. Driver flags
 // remain separately constructed and never inherit this worker profile.
@@ -431,7 +431,7 @@ const PINNED_PROCESS_WORKER_OPTIONS = Object.freeze([
   "--secure-heap-min=2",
   "--stack-trace-limit=10",
   "--test-isolation=process",
-  "--network-family-autoselection-attempt-timeout=250",
+  "--network-family-autoselection-attempt-timeout=500",
   "--experimental-addon-modules",
   "--heapsnapshot-near-heap-limit=0",
   "--heap-prof-interval=524288",
@@ -451,7 +451,7 @@ function callerEnvironment(){
   settingPresence.TS_NODE_PREFIX=names.some(name=>name.toUpperCase().startsWith('TS_NODE'));
   settingPresence.BABEL_PREFIX=names.some(name=>name.toUpperCase().startsWith('BABEL'));
   assert.equal(Object.values(settingPresence).some(Boolean),false,'unsupported inherited loader configuration');
-  assert.equal(process.version,'v24.19.0');
+  assert.equal(process.version,'v26.7.0');
   const context={NODE_TEST_CONTEXT:{present:Object.hasOwn(process.env,'NODE_TEST_CONTEXT'),value:null},NODE_TEST_WORKER_ID:{present:Object.hasOwn(process.env,'NODE_TEST_WORKER_ID')},NODE_DISABLE_COMPILE_CACHE:{present:Object.hasOwn(process.env,'NODE_DISABLE_COMPILE_CACHE')},EGRET_B1_TRACE_EVIDENCE_DIR:{present:Object.hasOwn(process.env,'EGRET_B1_TRACE_EVIDENCE_DIR')}};
   if(context.NODE_TEST_CONTEXT.present){assert.ok(process.env.NODE_TEST_CONTEXT==='child-v8','unsupported actual test context');context.NODE_TEST_CONTEXT.value='child-v8';}
   if(context.NODE_TEST_CONTEXT.present)assert.deepEqual([...process.execArgv].sort(),[...PINNED_PROCESS_WORKER_OPTIONS].sort(),'unsupported process-worker Node options');
@@ -504,7 +504,7 @@ function decodeRepositoryURLs(transport,repository){
 }
 function validateReceipt(receipt,program,worker,pid,environment){
   exactKeys(receipt,['schemaVersion','caseId','pid','ppid','node','execArgv','argv','cwd','program','config','context','environment','status','operationTimedOut','cleanupTimedOut','driverCallbackFailure','assertionFailure','cleanupFailures','cleanupOutcomes','unhandledRejections','forbiddenAttempts','syntheticThrows','startupEvidence','staticEdges','dynamicEdges','staticClosures','divisionWitnesses','events']);
-  assert.equal(receipt.schemaVersion,1);assert.equal(receipt.caseId,program.caseId);assert.equal(receipt.pid,pid);assert.equal(receipt.ppid,worker.pid);assert.equal(receipt.node,'v24.19.0');
+  assert.equal(receipt.schemaVersion,1);assert.equal(receipt.caseId,program.caseId);assert.equal(receipt.pid,pid);assert.equal(receipt.ppid,worker.pid);assert.equal(receipt.node,'v26.7.0');
   assert.deepEqual(receipt.execArgv,program.execArgv);assert.ok(Array.isArray(receipt.argv));assert.equal(receipt.argv.length,3);
   // Preserve raw argv evidence; only executable/script paths admit OS separator spelling.
   for(let index=0;index<2;index++){assert.equal(typeof receipt.argv[index],'string');assert.equal(normalize(receipt.argv[index]),canonical(receipt.argv[index]));}

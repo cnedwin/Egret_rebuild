@@ -1,0 +1,80 @@
+name: M0
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: m0-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      - name: Install exact PowerShell
+        shell: pwsh
+        run: |
+          $release = Invoke-RestMethod https://api.github.com/repos/PowerShell/PowerShell/releases/tags/v7.6.5
+          $asset = $release.assets | Where-Object name -eq 'PowerShell-7.6.5-win-x64.zip'
+          if (-not $asset -or $asset.digest -notmatch '^sha256:[0-9a-f]{64}$') { throw 'Missing verified PowerShell asset' }
+          $archive = Join-Path $env:RUNNER_TEMP 'pwsh.zip'
+          Invoke-WebRequest $asset.browser_download_url -OutFile $archive
+          if ((Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant() -ne $asset.digest.Substring(7)) { throw 'PowerShell checksum mismatch' }
+          $target = Join-Path $env:RUNNER_TEMP 'egret-pwsh'
+          Expand-Archive $archive $target
+          $target | Out-File $env:GITHUB_PATH -Append -Encoding utf8
+      - name: Select canonical temporary directory
+        shell: pwsh
+        run: |
+          $temporary = node -p "require('node:fs').realpathSync.native(require('node:os').tmpdir())"
+          if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $temporary -PathType Container)) { throw 'Cannot resolve temporary directory' }
+          "TEMP=$temporary" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+          "TMP=$temporary" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+      - name: Install pinned package manager
+        run: npm install --global pnpm@11.25.0 --ignore-scripts
+      - name: Clean setup
+        run: pnpm setup:dev
+      - name: Full merge checks
+        run: pnpm check:merge
+  cpu:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      - run: npm install --global pnpm@11.25.0 --ignore-scripts
+      - run: pnpm install --frozen-lockfile --ignore-scripts
+      - run: pnpm build
+      - name: Declared portable CPU suite
+        run: node --test tests/matrix4.test.mjs tests/display-tree.test.mjs
+      - run: node examples/headless.mjs
+  merge-ready:
+    name: M0 / merge-ready
+    if: ${{ always() }}
+    needs: [windows, cpu]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require all declared jobs
+        env:
+          WINDOWS_RESULT: ${{ needs.windows.result }}
+          CPU_RESULT: ${{ needs.cpu.result }}
+        run: |
+          test "$WINDOWS_RESULT" = success
+          test "$CPU_RESULT" = success

@@ -198,7 +198,7 @@ function seqpbRun() {
   }
   for (const pin of seqpbStableEntries) seqpbPin(root, pin, 'SEQP_BOUNDARY_DEFAULT_ENTRY_IDENTITY');
   for (const pin of seqpbConfigurations) seqpbPin(root, pin, 'SEQP_BOUNDARY_CONFIGURATION_DAG');
-  for (const pin of [{"path":"package.json","bytes":762,"sha256":"b522c278e5f0b4070fec73da2aa336da5c57a4dc189c0855d9e5770f879009bd"},{"path":"pnpm-workspace.yaml","bytes":51,"sha256":"f51d3d153b0f3cdbb82186bd1c3eea9066f4e3a15828985952feeee965a75534"},{"path":"pnpm-lock.yaml","bytes":9017,"sha256":"79383095fd4bb2bb4682a12f9651d9a876a01fc6dc1326d09bc0ad587db23084"}]) seqpbPin(root, pin, 'SEQP_BOUNDARY_PACKAGE_DAG');
+  for (const pin of [{"path":"package.json","bytes":1108,"sha256":"16a969b9a50653b1733893c59ee4cd1d29845208c11bd182036bc585372834d0"},{"path":"pnpm-workspace.yaml","bytes":152,"sha256":"ef6a20dff8ed4d47463ce64622472de5e72ae4515bf56bdd0c09f034e59c66ff"},{"path":"pnpm-lock.yaml","bytes":9017,"sha256":"79383095fd4bb2bb4682a12f9651d9a876a01fc6dc1326d09bc0ad587db23084"}]) seqpbPin(root, pin, 'SEQP_BOUNDARY_PACKAGE_DAG');
   if (owned) {
     if (JSON.stringify(seqpbInventory(root)) !== JSON.stringify(owned.pins)) seqpbFail('SEQP_BOUNDARY_COPY', 'Full successful snapshot differs from receipt');
     const sourceNames = new Set();

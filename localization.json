@@ -330,8 +330,8 @@
       "zh": "CONTRIBUTING.zh-CN.md",
       "en": "CONTRIBUTING.md",
       "kind": "public_reading",
-      "enSha256": "fc1e98d3803b54c069c90e2990028b2a66aab4696a11d246aa5109dc12f7dd86",
-      "zhSha256": "d2acebaaa96e28ee7007bb78d7448e53ea9d2464b1c06ca38671ad2505b160cd"
+      "enSha256": "6bfdbc423024e5a2cdbc04febf20f2c6722a64e44d074e356880d6550d014734",
+      "zhSha256": "d6aa85ab3dd116147299a870f7bf227cda9a9631310c65120f294570b1a97aed"
     },
     {
       "zh": "docs/evidence/texture-a1.zh-CN.md",
@@ -456,8 +456,8 @@
       "zh": "knowledge-base/Cns/docs/b1-browser-verifier.md",
       "en": "knowledge-base/en/docs/b1-browser-verifier.md",
       "kind": "public_reading",
-      "enSha256": "bd0ab4b1b0e7cad9a11c25bc738d034ec32317e50890e1b3e8e04a331aef413f",
-      "zhSha256": "f6855060c303af00b3f8b3ea8119583435c52b20e615aaae038839881563e5b8"
+      "enSha256": "69477c245903b98453ac06558dd0189860437a806e147d27cddef16fc86219ab",
+      "zhSha256": "6beaaf0b50b6374c6d79a139ce3f70b97157af314ab8a438834c566f980edabf"
     },
     {
       "zh": "knowledge-base/Cns/docs/b1-host-contract.md",
@@ -610,8 +610,8 @@
       "zh": "knowledge-base/Cns/docs/工程规划.md",
       "en": "knowledge-base/en/docs/engineering-plan.md",
       "kind": "public_reading",
-      "enSha256": "62b010c8d9ecf76708e23d3a4cb04127915621b0fa0d0368810950974459a524",
-      "zhSha256": "986e204454a94328f2bfd3d6baee9abdb97ad65a54b2ca3247b2d61145fcf345"
+      "enSha256": "f9b632a0699939058886e42258684de4affdb802553ec7a008df8f23a2414d18",
+      "zhSha256": "c69c0fe5c1c8768cfbf79abcd97ef4792cc4fef122ab61b268059119c6b43c6f"
     },
     {
       "zh": "knowledge-base/Cns/docs/术语表.md",
@@ -1107,8 +1107,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "130c975f560c3e9ebc8762429ae419e9c6aaea87d8213bf3aa56aead068f88f9",
-      "zhSha256": "c98449b839f67ff2ff188a68a8735c8af1dc845e53580af700f4f989425a557d"
+      "enSha256": "1215bd7bd665ff8778609df5d62efe21304df94151184f6d265cbbce9d28b110",
+      "zhSha256": "420f4d7df51dafa1a9f5eec66130c2fbceb3985e58d6a48e221cf232a76df210"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -1818,6 +1818,34 @@
       "kind": "public_reading",
       "enSha256": "1e754f62a6d57201c9b1806e3eb2bf74a313c0688087f4b8e474ca6ba2e2ef9d",
       "zhSha256": "205f522c9a05e70ffac227b214ce26654e54f7ac7463d9602a958796b75966c8"
+    },
+    {
+      "en": ".github/pull_request_template.md",
+      "zh": ".github/pull_request_template.zh-CN.md",
+      "kind": "public_reading",
+      "enSha256": "8b87b7efa74573ddd82b5c22c401e976b167aa9cf548482b9f28415839d2a18d",
+      "zhSha256": "2bf818c961ffde0d6a848c40b919b7989d22ddf1ad23c01cb46e8c4e384d87b0"
+    },
+    {
+      "en": "knowledge-base/en/docs/getting-started.md",
+      "zh": "knowledge-base/Cns/docs/getting-started.md",
+      "kind": "public_reading",
+      "enSha256": "3a9b1064814b1129b38c657cbe704a75390dbc1f0cd7f92573fe5091d832cad6",
+      "zhSha256": "7061e21faacf49681c97b57031ad1335792a5f05adad817793abb295dbbaae09"
+    },
+    {
+      "en": "knowledge-base/en/docs/m0-community-foundations.md",
+      "zh": "knowledge-base/Cns/docs/m0-community-foundations.md",
+      "kind": "public_reading",
+      "enSha256": "af2fc5805f4e87ba62e354928670bd3a979f3936ce9eb5a8386d3552972d4b28",
+      "zhSha256": "79696692ca0f0e02a3d5accdc50499b32a27aebfb0560bce1614435dbe05ebf8"
+    },
+    {
+      "en": "knowledge-base/en/docs/architecture-and-engineering-plan.md",
+      "zh": "knowledge-base/Cns/docs/architecture-and-engineering-plan.md",
+      "kind": "public_reading",
+      "enSha256": "e05cd4cfbef98550e67825da5be2ba69e22234787b9b2fb0bb5ac5e23fcc35bd",
+      "zhSha256": "963097957b38e8c45f206f5e71ff0dca76f93a287f85e7a72fac91f0628955f7"
     }
   ],
   "registries": [
@@ -2225,7 +2253,7 @@
     },
     {
       "path": "tools/verify-webgpu-b1.mjs",
-      "sha256": "6eccd892191a6594d4d8c79b776c217bdf0d60a699cc86ff03735bbcf58c9066"
+      "sha256": "2656237a8ac60648142412662b593f5c35da268c7c8833c89107046a2725231a"
     },
     {
       "path": "tools/b1-webgpu/fixture.mjs",
@@ -2559,7 +2587,7 @@
     },
     {
       "path": "tests/webgpu-mesh-host.test.mjs",
-      "sha256": "974834c8e72eae63321568fed79bbfca0659e0e35fac4fda8cdb2f9f9b35caf4"
+      "sha256": "94f85335d4210db1721e0894a49d255c33edb94a26ec5f027533ab4e65b690fc"
     },
     {
       "path": "packages/project/src/spine/index.ts",
@@ -2775,7 +2803,7 @@
     },
     {
       "path": "tools/prepush.mjs",
-      "sha256": "270daf1b4ede28710d4809b58cfb6a037c1c1c4bd8df12985da6499ecb1a24e0"
+      "sha256": "33e434c1e187d5cea411ae03a1576c819c1fecc17638b3db4a31403eeac514b7"
     },
     {
       "path": "packages/engine/web/image.ts",
@@ -2787,7 +2815,7 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "sha256": "f829431b0cce2ec34fb987c03c0c5f5ccdf4727f3b8a26947e146bd23ffa3a23"
+      "sha256": "964b282df1889fc09caa5ba3e5a56906a00c6672143c5f188854de90164b0a74"
     },
     {
       "path": "tools/browser-png-types.mjs",
@@ -2935,11 +2963,11 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "sha256": "d43aba86b12f157e77f6cdad11aebc12951a724f843fe89472e6686a0ce3311b"
+      "sha256": "22dabfbc9316b809351c6cab5f700a21e613715344c5adf8856772b8d4f4bae9"
     },
     {
       "path": "tools/sequence-playback-boundary.mjs",
-      "sha256": "bc9be907952a9113833886db51a94edd6eddb2e6886d7b6311b4ddea164503bd"
+      "sha256": "4950c9c692e28a32a2954dd34296ea667766961c21f7a786515ff580ea2fb651"
     },
     {
       "path": "tests/display-container-remove-children-api.test.mjs",
@@ -3111,7 +3139,7 @@
     },
     {
       "path": "tools/bitmap-resource-slot-boundary.mjs",
-      "sha256": "57209d8fc725359450b4661ad6075e03d349b68f08a3dbf85f83d3de355f80ae"
+      "sha256": "248938a3cd9045690b65905e245fb8110d986097e0914223b6e550af1a5e7374"
     },
     {
       "path": "tools/verify-bitmap-resource-slot.mjs",
@@ -3247,11 +3275,11 @@
     },
     {
       "path": "tools/bitmap-binding-ticket-boundary.mjs",
-      "sha256": "45f0cc0fcff89dae302e4fccd0dedf013bca97c76af0529261c3f1a81715bf5b"
+      "sha256": "62f66fe94740f2ff80d9174d68e337d687006034ea5c546e1ee32264ce021992"
     },
     {
       "path": "tools/bitmap-binding-ticket-types.mjs",
-      "sha256": "1831745ff95be3c102b2e471539cda8726de0d999592f18499d8b909bd102766"
+      "sha256": "dfbb7a9f0a32cb3152724a051b971626663369fb2fd06228d5d335b7d735434c"
     },
     {
       "path": "tools/prepared-resource-groups/native-fixture.mjs",

@@ -1,0 +1,24 @@
+name: 'Bug report / 缺陷'
+description: 'Report incorrect behavior / 报告行为错误'
+body:
+  - type: markdown
+    attributes:
+      value: 'English or Chinese is welcome. Do not include credentials or private projects. / 可用中英文填写，请勿提交凭据或私有工程。'
+  - type: textarea
+    id: behavior
+    attributes:
+      label: 'Expected and actual behavior / 预期与实际行为'
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 'Minimal reproduction / 最小复现步骤'
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: 'Version, OS and backend / 版本、系统和后端'
+    validations:
+      required: true

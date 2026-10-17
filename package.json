@@ -4,7 +4,9 @@
   "private": true,
   "type": "module",
   "packageManager": "pnpm@11.25.0",
-  "engines": { "node": "24.19.0" },
+  "engines": {
+    "node": "26.7.0"
+  },
   "scripts": {
     "build": "node tools/build.mjs",
     "test": "node tools/test.mjs",
@@ -12,8 +14,22 @@
     "check:types": "node tools/check-types.mjs",
     "example": "node examples/headless.mjs",
     "verify": "node tools/verify.mjs",
-    "verify:spine-f2-source": "node tools/verify-spine-f2-source.mjs"
+    "verify:spine-f2-source": "node tools/verify-spine-f2-source.mjs",
+    "doctor": "node tools/doctor.mjs",
+    "setup:dev": "node tools/setup-dev.mjs",
+    "example:browser": "node tools/serve-example.mjs",
+    "check:quick": "node tools/check-quick.mjs",
+    "check:merge": "node tools/prepush.mjs",
+    "test:onboarding": "node --test tests/publication/m0-foundations.test.mjs"
   },
-  "devDependencies": { "@egret/contracts": "workspace:*", "@egret/runtime": "workspace:*", "jsonc-parser": "3.3.1", "typescript": "7.0.2" },
-  "dependencies": { "@egret/engine": "workspace:*", "@egret/project": "workspace:*" }
+  "devDependencies": {
+    "@egret/contracts": "workspace:*",
+    "@egret/runtime": "workspace:*",
+    "jsonc-parser": "3.3.1",
+    "typescript": "7.0.2"
+  },
+  "dependencies": {
+    "@egret/engine": "workspace:*",
+    "@egret/project": "workspace:*"
+  }
 }

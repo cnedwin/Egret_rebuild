@@ -21,12 +21,11 @@ Use Issues and PRs for repository contributions. A proposal's recorded status ch
 
 ## Reproducing existing core checks
 
-Use Node.js 24.19.0, pnpm 11.25.0 and TypeScript 7.0.2. From the repository root:
+Use Node.js 26.7.0, pnpm 11.25.0 and TypeScript 7.0.2. From the repository root:
 
-    pnpm install --frozen-lockfile --ignore-scripts
-    git config --local core.hooksPath .githooks
-    node tools/verify.mjs
-    node examples/headless.mjs
+    pnpm setup:dev
+    pnpm check:quick
+    pnpm example:browser
 
 Before every push, run the complete node tools/prepush.mjs. It includes publication, code/type/boundary, headless and knowledge-base checks. The pre-commit hook checks staged raw bytes and the pre-push hook checks the clean committed snapshot. Fix failures through this normal flow. Rendering changes additionally require the affected actual-browser checks in [AGENTS](AGENTS.md).
 
@@ -51,3 +50,7 @@ Maintain complete English and Chinese readings. Keep knowledge-base editions in 
 The prepush checks do not start a browser. Select the documented Canvas/WebGPU gates according to the change and retain their actual environments and results. Earlier results can be reused only for explicitly compared unchanged identities. Source publication, browser behavior, target-device performance and remote CI have separate records.
 
 Private execution, dependency caches and generated files are excluded from the public inventory. Raw evidence, historical source identities and upstream legal originals retain their provenance. [The publication guide](PUBLICATION.md) describes remote delivery.
+
+## M0 onboarding and collaboration
+
+Use the [getting-started guide](knowledge-base/en/docs/getting-started.md) for current environment, contribution responsibilities and review boundaries. Install pinned PowerShell 7.6.5. Drafts may use one language; maintainers help complete both editions and current metadata. Final publication and Main integration still require full gates.
