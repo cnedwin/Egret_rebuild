@@ -410,4 +410,4 @@ These sources are pinned to one Main commit. They establish existing implementat
 
 M0 local verification now has a [package dependency selection contract](dependency-aware-checks.md). Keep full push/merge checks; any future reduction of those gates requires its own evidence and review.
 
-Maintainers can prepare raw baseline differences and conservative catalog candidates with the [check maintenance workflow](check-maintenance.md). Proposals remain review-required and do not replace current source admission or full gates.
+Maintainers can prepare raw baseline differences and conservative catalog candidates with the [check maintenance workflow](check-maintenance.md). Proposals remain review-required and do not replace current source admission or full gates. The registry includes BRS/BBT policy fields and Atlas import source/configuration fields, preserves transformed historical baselines and raw Host pairs, and provides reverse references for shared maintenance. Remaining multi-owner/compiler/conditional-admission workflows stay explicit; no engine feature or merge gate is changed.
