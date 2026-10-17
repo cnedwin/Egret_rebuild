@@ -12,7 +12,7 @@ This M0 workflow prepares, reviews and runs existing resource collectors. It cha
 | atlas | Canvas and WebGPU textured-2D, each with ordinary, rotation-sign, trim-y-constant and atlas-import-v1: eight cases | Disposable healthy/assigned copies, actual compiler receipts and snapshots; importer also records the actual public planner call |
 | png | BIP1 Canvas/WebGPU PNG decoding, composition, saved replay and two wrong-oracle controls | Original source/actual evidence, complete module graph and admission |
 
-These resource families complement the eight existing browser suites. A family completes only after every listed case passes. Historical texture/sequence/SpriteSheet collectors and additional PNG-based nine-slice/container/anchor profiles retain their own schemas and acceptance obligations. BIP1 does not silently certify those profiles.
+These resource families complement the eight existing browser suites. A family completes only after every listed case passes. The five additional literal-scene suites below retain separate schemas and evidence; BIP1 cannot certify them. Historical texture/sequence/SpriteSheet collectors retain their original acceptance obligations.
 
 ## Prepare and review
 
@@ -43,7 +43,7 @@ node tools/browser-resources.mjs prepare --suite png --playwright <absolute-inst
 
 The input contains schemaVersion=1, sourceFilesRoot, graphInputs, reviewPins, proofBindings and runtime. sourceFilesRoot and graphInputs.repositoryRoot select the current checkout. graphInputs lists the exact collector roles/routes, encoded fixture pins and literal schedule pin. runtime names and pins the actual Node executable, installed Playwright entry, Edge executable and its declared package inventory. Paths are absolute or complete owner-relative paths as required by the original collector; basename matching and byte normalization are forbidden.
 
-reviewPins contains exactly eleven roles:
+For BIP1 (`--suite png`), reviewPins contains exactly eleven roles:
 
 | Source review | Actual evidence review |
 | --- | --- |
@@ -52,6 +52,24 @@ reviewPins contains exactly eleven roles:
 Each role points to its original file, bytes and SHA-256. proofBindings explicitly maps accepted JSON pointers to current graph files, including their original owner pointer or candidate owner-manifest pointer. The producer creates the graph and admission, then runs the original admission validator; it does not create any PASS_SOURCE or PASS_ACTUAL verdict. Missing, stale or unaccepted evidence blocks preparation before browser launch.
 
 The build review must bind the current checkout, a genuinely executed successful stock build and exactly four current image/BrowserTextureProvider JS/declaration pins. Historical missing-entry RED remains historical. Unchanged original source, fixture or test evidence may be retained only after complete raw-byte/owner verification; newly executed commands and changed files need their own records. A copied old build review is not current build qualification.
+
+## Five additional literal scenes
+
+Select one exact suite below with the same PNG evidence command, replacing only `--suite png`. Each prepared manifest contains one complete profile, not a selection of its individual steps. These scenes share the PNG collector infrastructure but do not decode PNG images.
+
+| Suite | Main backend cases / raw reads | Additional checks |
+| --- | --- | --- |
+| nine-slice-bitmap | WebGPU: 1 / 3 | Two Canvas refusal cases; no positive Canvas claim |
+| display-container-remove-children | Canvas + WebGPU: 2 / 6 | Remove children and replay the saved pre-removal frame |
+| display-container-child-index | Canvas + WebGPU: 2 / 6 | Query/reorder and replay the saved frame |
+| display-container-add-child-at | Canvas + WebGPU: 2 / 10 | Separate Canvas wrong-index control: two extra raw reads |
+| display-anchor-offsets | Canvas + WebGPU: 2 / 10 | Separate Canvas wrong-pivot control: two extra raw reads |
+
+All five use the original 24 × 24 literal RGBA comparison with zero channel tolerance. Their main read counts include saved replay; control reads earn no main-case credit. The wrapper checks profile identity, complete counts, context retirement and control cleanup in addition to the original collector's assertions. Nine-slice Canvas refusal is never reported as successful Canvas rendering.
+
+Each profile requires exactly eight original roles: source reviews `plan, productSource, collectorSource`, and actual-evidence reviews `missingEntryRed, cpu, build, strictTypes, policy`. Set graphInputs.profile to the selected suite; bind its own fixture, oracle and schedule, current product sources and actual JS/declaration build outputs. Every actual-evidence review must name the current checkout. A new review may qualify pinned historical missing-entry RED evidence, explicitly retaining its original execution owner and date and stating that it was not rerun. Changing an old review's owner or generating a PASS label is not qualification. Current build, behavior, type and policy executions need their own retained commands, results and raw pins.
+
+For a first contribution, select the affected profile with a maintainer. Supply your commit, environment and reproducible change; ask for the eight-role evidence preparation and independent source review rather than hand-authoring approvals. After preparation, review the printed manifest and original evidence before passing its digest to `run`. Missing roles, another profile's evidence, partial schedules or stale raw inputs stop before native launch. Keep every failed attempt in a separate output directory.
 
 ## Troubleshooting and acceptance
 

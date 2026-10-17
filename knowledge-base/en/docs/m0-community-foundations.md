@@ -9,7 +9,7 @@ M0 increments implement environment, contribution and community foundations. Eng
 | Package | This increment | Remaining M0 acceptance |
 | --- | --- | --- |
 | A Independent onboarding | Read-only doctor, repeatable setup, local visual example, bilingual guide | Independent human newcomer rehearsal and supported-environment timing targets |
-| B Practical contributions | Templates, quick/full checks, current-ledger generation, risk-selected local feedback, eight browser entries, three resource families and public CI | Separately admitted historical/additional profiles and external-fork rehearsal; full merge gates retained |
+| B Practical contributions | Templates, quick/full checks, current-ledger generation, risk-selected local feedback, eight browser entries, three resource families, five additional literal-scene profiles and public CI | Historical profile migration and external-fork rehearsal; full merge gates retained |
 | C Sustained collaboration | Discussions, Topics, five public Milestones, linked public Project, scoped Issues and maintainer routing | Human participation and staffed response targets; API Project automation still lacks permission |
 
 ## Environment and verification
@@ -81,7 +81,7 @@ Preview-package publication requires explicit release scope, export/type/import 
 | --- | --- |
 | Independent human and external fork | No uninvolved participant is available in this run. Keep #52 open; a volunteer completes the public checklist and maintainer handles first-run CI approval |
 | Controlled metadata integration and risk selection | Current ledgers and conservative local selection are implemented. Full push/merge gates remain; broader risk-based engine test selection requires separate dependency and refusal evidence |
-| Active browser-tool migration | Eight current suites and prepared-group, atlas and BIP1 PNG families have recorded Node 26 results. Historical domains and additional PNG profiles retain separate acceptance in #53 |
+| Active browser-tool migration | Eight current suites, three resource families and five additional literal-scene profiles have recorded Node 26 results. Historical texture/sequence/SpriteSheet domains retain separate migration acceptance in #53 |
 | Scenario/Spine/device/budget freeze | #54 requires authorized representative assets, exact version/feature decisions and target tiers. No connected target-phone session; unavailable device rows stay unexecuted; do not invent numerical budgets |
 | API Project automation | Scoped token query is denied; manual/browser maintenance of the public board works. No wider token was issued |
 | Staffing | @cnedwin is the integration contact; no second human reviewer or response SLA is presumed |
@@ -161,3 +161,24 @@ Independent AI source review found and repaired a truncated-receipt gap and raw-
 Earlier failures remain retained: Windows sandbox denial of disposable package links, a preparation that refused changed source, a policy run that refused a changing Git inventory, and the original PNG layout refusal. Successful retries use fresh output owners; no failed receipt or historical source identity was rewritten. Raw native artifacts and reviews remain outside the public tree; final full local gates, actual push, PR checks and protected Main integration are recorded in the delivered PR.
 
 The BIP1 result does not requalify the five additional PNG profiles or historical texture/sequence/SpriteSheet domains. Independent human onboarding, external-fork approval, phones/mini-game hosts, general Chinese-font performance, full Spine and scenario/device budgets remain open. Current automation does not certify independent OS-level process retirement. Full M0 is not complete; #52, #53 and #54 retain their stated remaining obligations.
+
+
+## Additional PNG-entry profiles — 2026-10-17
+
+Baseline: Main cf038de9ec75901188b8f8a3d3b70f5b6c4bb7e4 (PR #62). Five existing literal scenes now use the explicit prepare/review/run suites in the [resource verification guide](resource-browser-workflow.md). The adapter preserves original source/actual evidence, schedules, exact pixel oracles and cleanup. Engine source, APIs, dependencies and original collectors are unchanged. These scenes do not decode PNG images despite sharing its collector entry.
+
+Actual Windows x64 execution used Node 26.7.0, Playwright/core 1.62.1 and Edge 155.0.4283.45, with default launch settings:
+
+| Profile | Actual result |
+| --- | --- |
+| Nine-slice bitmap | One WebGPU main case; three full raw reads; two Canvas refusals; no positive Canvas acceptance |
+| Remove children | Two main backend cases; six full raw reads |
+| Child index | Two main backend cases; six full raw reads |
+| Indexed insertion | Two main backend cases; ten main raw reads plus two separate Canvas control reads |
+| Anchor offsets | Two main backend cases; ten main raw reads plus two separate Canvas control reads |
+
+Total: nine main backend cases, 35 main and four additional control reads. All original 24 × 24 comparisons use zero channel tolerance. Main/context/control retirement completed without pending tickets or cleanup errors. Source and actual-evidence review was performed independently by AI; it is not human approval. Historical missing-entry RED was qualified by its original pinned execution, not rerun or rewritten as a current failure.
+
+Ten adapter regression tests passed, including profile selection, exact evidence options, truncated counts, missing controls and unsafe control retirement. The newly added tests first failed against the previous adapter. All 11 prelaunch controls refused missing roles, wrong manifest digests and cross-profile evidence. Current build, 66 focused API/behavior tests, complete strict-type checks and package/source boundaries passed separately. The first preparation exposed the distinct original Playwright entries: BIP1 uses index.js, while these five profiles use index.mjs. The adapter now preserves each exact entry and refuses the other or a foreign owner. The first native attempt was blocked by Windows sandbox Edge profile/pipe access before rendering. The successful retry used a fresh reviewed owner and authorized browser execution, without extra launch flags or relaxed assertions. Native artifacts, source/evidence reviews and failed attempts remain outside the public tree. Final complete local gates, actual push, protected CI and Main integration are recorded in the PR.
+
+The maintained guide separates routine contributor steps from maintainer-assisted evidence preparation. It identifies the eight roles and current source/build bindings without asking newcomers to fabricate approvals or modify historical ledgers. Full push and merge gates remain required. This delivery does not close historical texture/sequence/SpriteSheet migration, independent human/fork onboarding (#52), target-phone/mini-game validation, general Chinese-font performance, full Spine or scenario/device budgets (#54). No new engine feature was developed, and full M0 remains open.

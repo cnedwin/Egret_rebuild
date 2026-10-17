@@ -113,15 +113,64 @@
   ],
   "separateProfiles": [
     {
+      "id": "nine-slice-bitmap",
+      "entry": "tools/browser-resources.mjs",
       "script": "tools/verify-browser-png.mjs",
-      "profiles": [
-        "nine-slice-bitmap",
-        "display-container-remove-children",
-        "display-container-child-index",
-        "display-container-add-child-at",
-        "display-anchor-offsets"
-      ],
-      "status": "Original separately admitted schemas remain available; the BIP1 family receipt does not requalify them."
+      "cases": 1,
+      "mainCases": 1,
+      "mainReadbacks": 3,
+      "controlReadbacks": 0,
+      "canvasRefusals": 2,
+      "status": "Explicit current prepare/review/run suite; eight original evidence roles required; no credit borrowed from BIP1.",
+      "scope": "WebGPU literal nine-slice scene and Canvas refusal only; no PNG decoding."
+    },
+    {
+      "id": "display-container-remove-children",
+      "entry": "tools/browser-resources.mjs",
+      "script": "tools/verify-browser-png.mjs",
+      "cases": 1,
+      "mainCases": 2,
+      "mainReadbacks": 6,
+      "controlReadbacks": 0,
+      "canvasRefusals": 0,
+      "status": "Explicit current prepare/review/run suite; eight original evidence roles required; no credit borrowed from BIP1.",
+      "scope": "Canvas/WebGPU literal scene and saved replay; no PNG decoding."
+    },
+    {
+      "id": "display-container-child-index",
+      "entry": "tools/browser-resources.mjs",
+      "script": "tools/verify-browser-png.mjs",
+      "cases": 1,
+      "mainCases": 2,
+      "mainReadbacks": 6,
+      "controlReadbacks": 0,
+      "canvasRefusals": 0,
+      "status": "Explicit current prepare/review/run suite; eight original evidence roles required; no credit borrowed from BIP1.",
+      "scope": "Canvas/WebGPU literal scene and saved replay; no PNG decoding."
+    },
+    {
+      "id": "display-container-add-child-at",
+      "entry": "tools/browser-resources.mjs",
+      "script": "tools/verify-browser-png.mjs",
+      "cases": 1,
+      "mainCases": 2,
+      "mainReadbacks": 10,
+      "controlReadbacks": 2,
+      "canvasRefusals": 0,
+      "status": "Explicit current prepare/review/run suite; eight original evidence roles required; no credit borrowed from BIP1.",
+      "scope": "Canvas/WebGPU literal scene and saved replay; separate two-read Canvas control; no PNG decoding."
+    },
+    {
+      "id": "display-anchor-offsets",
+      "entry": "tools/browser-resources.mjs",
+      "script": "tools/verify-browser-png.mjs",
+      "cases": 1,
+      "mainCases": 2,
+      "mainReadbacks": 10,
+      "controlReadbacks": 2,
+      "canvasRefusals": 0,
+      "status": "Explicit current prepare/review/run suite; eight original evidence roles required; no credit borrowed from BIP1.",
+      "scope": "Canvas/WebGPU literal scene and saved replay; separate two-read Canvas control; no PNG decoding."
     }
   ]
 }

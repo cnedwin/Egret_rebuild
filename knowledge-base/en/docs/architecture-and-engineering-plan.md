@@ -2,13 +2,13 @@
 
 English | [中文](../../Cns/docs/architecture-and-engineering-plan.md)
 
-2026-10-17 · Plan version 7 · M0–M4
+2026-10-17 · Plan version 8 · M0–M4
 
 The implementation baseline is Main `030a34646774dea6c46cc947b55186da9265a6c8` (engineering preview 0.61.0). This plan defines target architecture, code disposition, dependencies and acceptance; it does not claim those capabilities are implemented. The first M0 infrastructure delivery merged as Main `26136df66a493eb721e0780148de4bdc8ed4fb87` through PR #51. The public board and technical newcomer rehearsal extend that baseline; new engine features remain paused. The [M0 delivery record](m0-community-foundations.md) distinguishes verified infrastructure, human/device constraints and outstanding engineering acceptance.
 
 The selected environment pins Node 26.7.0, pnpm 11.25.0, TypeScript 7.0.2 and PowerShell 7.6.5. Historical evidence retains its original environment. Current check and browser-tool migration status is in the M0 record.
 
-M0 contribution tooling separates content/declarations from maintainer-generated current ledgers. CI checks integration against its explicit PR base without branch write permissions. Eight current browser suites use the Node 26.7.0 entry; resource-scene and bitmap-slot require separately reviewed source snapshots. Local risk selection shortens feedback only for modifications to existing reading documents; all other changes select full checks. Actual pushes and merge CI retain the complete gate. Prepared-group, atlas and BIP1 PNG use the [resource-family workflow](resource-browser-workflow.md), preserving original source/actual admission and complete family schedules. Additional PNG-based profiles and historical fixed-Node experiments retain separate acceptance obligations. No engine feature work resumes before the remaining M0 decisions and acceptance.
+M0 contribution tooling separates content/declarations from maintainer-generated current ledgers. CI checks integration against its explicit PR base without branch write permissions. Eight current browser suites use the Node 26.7.0 entry; resource-scene and bitmap-slot require separately reviewed source snapshots. Local risk selection shortens feedback only for modifications to existing reading documents; all other changes select full checks. Actual pushes and merge CI retain the complete gate. Prepared-group, atlas and BIP1 PNG use the [resource-family workflow](resource-browser-workflow.md), preserving original source/actual admission and complete family schedules. Five additional literal-scene profiles now use that workflow with separate eight-role admission and actual Node 26 results. Nine-slice retains WebGPU rendering and Canvas refusal only; the other four retain both backends, with separate controls for indexed insertion and anchor offsets. Historical fixed-Node experiments still require their own migration acceptance. No engine feature work resumes before the remaining M0 decisions and acceptance.
 
 ## 1. Objectives, scope and tradeoffs
 

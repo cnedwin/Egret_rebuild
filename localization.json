@@ -1830,29 +1830,29 @@
       "en": "knowledge-base/en/docs/getting-started.md",
       "zh": "knowledge-base/Cns/docs/getting-started.md",
       "kind": "public_reading",
-      "enSha256": "cd8522f1bba7d0df920e4860dd23e39d73a30a013a28f9d1a66ca4c5269f8aa8",
-      "zhSha256": "9eda42285cf752eb3d64d83c971f1ac3abbf3746799ec3c2c57e7d56bedf367d"
+      "enSha256": "062908f9f2faffd8524da30768f52a9a2f2c61142b6c54c556e2acc8fca25952",
+      "zhSha256": "a65472aed4714b59d7716b4165eee57268fbcf0b0c0c984b4b5238e4d3dab720"
     },
     {
       "en": "knowledge-base/en/docs/m0-community-foundations.md",
       "zh": "knowledge-base/Cns/docs/m0-community-foundations.md",
       "kind": "public_reading",
-      "enSha256": "f3c2da6b7601dd45f5e441fd376392aa99f4fc47977c7cb904b2dc219ba6e3cf",
-      "zhSha256": "92506cf9c7cc05d86e806d03aa8af68b8394a0f26235f13101ea0596ba70c1d9"
+      "enSha256": "d020785e3f565820302d94f461566b7ad4ac032e2edfda0c1915d2c3cc286562",
+      "zhSha256": "990191aab0af6bc6e1e0f59e41a4129ef0c1bda2e8a5250a633324bfd5ca9443"
     },
     {
       "en": "knowledge-base/en/docs/architecture-and-engineering-plan.md",
       "zh": "knowledge-base/Cns/docs/architecture-and-engineering-plan.md",
       "kind": "public_reading",
-      "enSha256": "1eacd612d10a67c7a4b117bccbaa402398215c77ce0f080e1d671058858b1884",
-      "zhSha256": "2cd6a3a7281c75d6be8479be6b4db9ad1c70642c3904c1a96b2e1a8dea056b23"
+      "enSha256": "a3a9832f79e67b548796bc49388ffd33ef8a944649dd1fa8c2525c007a1ffc9f",
+      "zhSha256": "cf39874eff177338284405635e7bb4a56cf888cc2f429d52c04ac8b14aaa101f"
     },
     {
       "en": "knowledge-base/en/docs/resource-browser-workflow.md",
       "zh": "knowledge-base/Cns/docs/resource-browser-workflow.md",
       "kind": "public_reading",
-      "enSha256": "bf47034fdcc47e319842c0f8931dcb08d1c8dc8b494a7e32619e05f5770b7d57",
-      "zhSha256": "4b416aa2704ff2acecb1989284e408e81c92d41d76c5b935cd3b76ec01ee483d"
+      "enSha256": "5511203d27d44737d562bfd326aa90fb4b73c3d77ee7333382f7b25dc9522912",
+      "zhSha256": "bcfd9530c0c978d8e874770da10c64ab4c7eefc0aff7d2f5dc0685206be3a1cf"
     }
   ],
   "registries": [
@@ -3446,11 +3446,11 @@
     },
     {
       "path": "tools/browser-resources.mjs",
-      "sha256": "eb11614d935117978f2eea2ae97e562111e699e80f2d7e4880ed6e11d2bba6a2"
+      "sha256": "5cfbcd7b11604fe67cb4b695e6b3c2190dacde3aea6d3479eca01f42dc6c041b"
     },
     {
       "path": "tests/publication/resource-browser-tools.test.mjs",
-      "sha256": "f1b706e5ffac9813f8f1cb98a55090fd1811ad455671644e72b2763e2b759c86"
+      "sha256": "e80eb0db5d68a06ee40b7410773bca5e508e208e71f4177e134f9eac7bae6756"
     }
   ],
   "historicalSemanticReview": {
