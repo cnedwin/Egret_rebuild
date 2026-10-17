@@ -9,7 +9,7 @@ M0 increments implement environment, contribution and community foundations. Eng
 | Package | This increment | Remaining M0 acceptance |
 | --- | --- | --- |
 | A Independent onboarding | Read-only doctor, repeatable setup, local visual example, bilingual guide | Independent human newcomer rehearsal and supported-environment timing targets |
-| B Practical contributions | Templates, quick/full checks, current-ledger generation, risk-selected local feedback, eight browser entries and public CI | Remaining advanced admission migration and external-fork rehearsal; full merge gates retained |
+| B Practical contributions | Templates, quick/full checks, current-ledger generation, risk-selected local feedback, eight browser entries, three resource families and public CI | Separately admitted historical/additional profiles and external-fork rehearsal; full merge gates retained |
 | C Sustained collaboration | Discussions, Topics, five public Milestones, linked public Project, scoped Issues and maintainer routing | Human participation and staffed response targets; API Project automation still lacks permission |
 
 ## Environment and verification
@@ -81,7 +81,7 @@ Preview-package publication requires explicit release scope, export/type/import 
 | --- | --- |
 | Independent human and external fork | No uninvolved participant is available in this run. Keep #52 open; a volunteer completes the public checklist and maintainer handles first-run CI approval |
 | Controlled metadata integration and risk selection | Current ledgers and conservative local selection are implemented. Full push/merge gates remain; broader risk-based engine test selection requires separate dependency and refusal evidence |
-| Active browser-tool migration | Eight current suites have recorded Node 26 results. Prepared-group, atlas and PNG configuration admission remain engineering work in #53; historical domains stay separate |
+| Active browser-tool migration | Eight current suites and prepared-group, atlas and BIP1 PNG families have recorded Node 26 results. Historical domains and additional PNG profiles retain separate acceptance in #53 |
 | Scenario/Spine/device/budget freeze | #54 requires authorized representative assets, exact version/feature decisions and target tiers. No connected target-phone session; unavailable device rows stay unexecuted; do not invent numerical budgets |
 | API Project automation | Scoped token query is denied; manual/browser maintenance of the public board works. No wider token was issued |
 | Staffing | @cnedwin is the integration contact; no second human reviewer or response SLA is presumed |
@@ -136,8 +136,28 @@ The initial mouse run failed before browser launch because its exact historical 
 
 Local selector controls cover committed/staged/unstaged reading edits, untracked files, unknown paths, metadata/policy, renames and invalid/unrelated bases. An initial temporary Git fixture was blocked by sandbox metadata permissions; the authorized isolated run distinguishes that environment limit from assertions. The orphan-branch fixture was corrected because git switch --orphan already clears tracked files. Both failures remain in execution logs. Selection does not cache or authorize merge acceptance.
 
-Prepared-resource-groups, atlas and PNG configuration/fixture admission migration remain engineering work, not device or permission blockers. Historical texture/sequence/SpriteSheet profiles remain separate. Independent human/fork onboarding, phones, mini-game hosts, general Chinese-font performance, full Spine and scenario/device budgets remain unverified. Final full gates, independent AI review and actual protected integration are recorded in this increment's PR.
+At this increment's cutoff, prepared-resource-groups, atlas and PNG configuration/fixture admission migration remained engineering work; the following resource increment records their delivery. Historical texture/sequence/SpriteSheet profiles remain separate. Independent human/fork onboarding, phones, mini-game hosts, general Chinese-font performance, full Spine and scenario/device budgets remain unverified. Final full gates, independent AI review and actual protected integration are recorded in this increment's PR.
 
 Independent AI review identified two additional wrapper/selection gaps. Opposing staged and working-tree edits could hide a risky file in a net diff; the selector now keeps base-to-HEAD, HEAD-to-index and index-to-worktree records separately. A truncated native receipt could retain a success headline while omitting controls or failing its baseline; completion now requires the exact context/control schedule and a clean baseline. Both focused regressions failed before the repairs and passed afterwards. Wrong snapshot digest, modified snapshot closure and reused snapshot output were also refused; a digest mismatch created no output directory. These repairs do not change the original collectors' pixel or control rules.
 
 The first PR #61 Windows CI attempt stopped before project checks: the public PowerShell release metadata request exceeded the anonymous GitHub API limit. Linux and macOS CPU jobs passed; merge-ready correctly failed. The install step now authenticates only that metadata request with the existing read-only job token, scoped to the install step. The archive download receives no authorization header; exact version and SHA-256 verification remain mandatory. No job, required check or branch protection was removed. Remote acceptance requires a successful new run; the earlier failure is retained in Actions run 39008127523.
+
+## Resource-family workflow — 2026-10-17
+
+Baseline: Main 0ebf183540ab1b58a91b36df7b9df4b8aa052cf9 (PR #61). The [resource guide](resource-browser-workflow.md) provides complete-family preparation, independent review and execution for prepared groups, atlas and BIP1 PNG. Preparation reports reviewed=false and browserRun=false. Contributors use original producers instead of hand-authoring configuration; PNG evidence remains maintainer-assisted. No engine package, API or dependency version changes.
+
+Actual final collections used Windows x64, Node 26.7.0, Playwright/core 1.62.1 and Edge 155.0.4283.45, default headless launch without extra flags:
+
+| Family | Recorded result |
+| --- | --- |
+| prepared-groups | All six cases passed across Canvas and WebGPU; 54 raw readbacks, both stale-layer controls and complete collector retirement |
+| atlas | All eight cases passed across Canvas and WebGPU; 34 raw readbacks, both assigned geometry controls and both importer compositions; 12 genuine disposable builds |
+| BIP1 PNG | Six submitted/raw readbacks: four new captures and two saved replays; both wrong-oracle controls passed; no pending tickets or cleanup errors |
+
+Seven tool tests cover exact arguments/schedules, incomplete receipts, copied dependency drift, raw JSON reserialization, changed returned read bytes and dependency-owner boundaries. PNG CPU tests include all 99 public/behavior/lifecycle/assets/terminal cases; 22 policy controls and 39 observer units also passed. Build and strict-type checks passed separately. The policy suite validates the existing product boundary, not the new graph-owner repair; that repair has its own focused controls and actual preparation/native evidence. Missing PNG review roles and an incorrect manifest digest were refused before browser launch.
+
+Independent AI source review found and repaired a truncated-receipt gap and raw-identity gaps between admission, individual child launches and final completion. Reviewed reads now hash the returned bytes; each case is rechecked before its child and all cases before family completion. Actual PNG preparation also exposed an old isolated dependency-owner assumption; admission now requires the exact current hoisted physical owner, keeping version, manifest, route and raw-byte checks. The old layout and foreign nested owner are refused. Source review was AI review, not human approval.
+
+Earlier failures remain retained: Windows sandbox denial of disposable package links, a preparation that refused changed source, a policy run that refused a changing Git inventory, and the original PNG layout refusal. Successful retries use fresh output owners; no failed receipt or historical source identity was rewritten. Raw native artifacts and reviews remain outside the public tree; final full local gates, actual push, PR checks and protected Main integration are recorded in the delivered PR.
+
+The BIP1 result does not requalify the five additional PNG profiles or historical texture/sequence/SpriteSheet domains. Independent human onboarding, external-fork approval, phones/mini-game hosts, general Chinese-font performance, full Spine and scenario/device budgets remain open. Current automation does not certify independent OS-level process retirement. Full M0 is not complete; #52, #53 and #54 retain their stated remaining obligations.
