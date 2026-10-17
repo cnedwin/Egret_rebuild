@@ -134,6 +134,10 @@ The proposed catalog enumerates the complete current top-level tests/*.test.mjs 
 
 The proposal binds the old catalog, generator, identity helper, manifests, schedules, tests and declared helpers. It does not infer new import closures. Maintainers independently review the proposed changes, source ownership and actual selected behavior before installing the catalog through the canonical repository writer and refreshing current provenance. A generated catalog is review material even when its bytes equal the existing one. It is never automatically consumed by the selector. The complete publication lane and all shared tests remain required; narrowing or caching expensive shared checks is outside this increment.
 
+## Maintenance scope after M0 engineering entry
+
+The registered workflows are a finite delivered maintenance surface. Unsupported inline expressions or policies continue through their original source review and full gates; exhaustive automation is not a prerequisite for [M1](m1-rendering-resource-plan.md). Add support only when a concrete contribution or scheduled product change needs it. Issue #53 is evaluated against its original acceptance criteria and retained execution records, not a growing requirement to automate every future policy. Its historical open-status statements below retain their original cutoff; the current M0 record and issue carry the latest status. Human/fork and device/asset acceptance remain separate.
+
 ## Review and delivery
 
 1. Build and prepare proposals; inspect changed/missing rows and the supported scope.

@@ -2,15 +2,17 @@
 
 [English](../../en/docs/m0-community-foundations.md) | 中文
 
-## 交付范围
+## 当前范围 — 2026-10-18
 
-M0 各轮增量实现环境、贡献与社区基础。引擎包源码、公共行为及依赖版本不变。Node 改为 26.7.0；pnpm 11.25.0、TypeScript 7.0.2 继续固定；完整 Windows 工具链使用 PowerShell 7.6.5。既有工程预览 0.61.0 与本次基础设施交付分别标注。
+截至 PR #71 的 M0 基础设施已合入 main ca62c980f372683dcb156bc5c284f4036a60f4cc。环境固定 Node 26.7.0、pnpm 11.25.0、TypeScript 7.0.2 和 PowerShell 7.6.5。这些增量未改变引擎包行为，产品仍为工程预览 0.61.0。[M1 计划](m1-rendering-resource-plan.md)定义后续工程准入，不宣称完整 M0 已验收。
 
-| 交付包 | 本次增量 | 剩余 M0 验收 |
+| 交付包 | 已交付技术范围 | 剩余验收 |
 | --- | --- | --- |
-| A 独立上手 | 只读 doctor、可重复 setup、本地可视示例、双语指南 | 独立人类新人演练及支持环境耗时目标 |
-| B 实用贡献流程 | 模板、快速/完整检查、当前账本生成、本地风险选择、八个浏览器入口、三类资源采集、五种附加固定场景配置及公开 CI | 历史配置迁移与外部 fork 演练；保留完整合并门禁 |
-| C 持续协作 | Discussions、Topics、五个公开里程碑、已关联公开 Project、范围明确的 Issues 与维护人路由 | 真人参与及有人承担的响应目标；API Project 自动化仍缺权限 |
+| A 独立上手 | doctor/setup、中文/空格路径干净复演、可视示例和双语指南 | #52 的独立真人/fork 演练；单机耗时记录不是普遍承诺 |
+| B 实用贡献 | 受控当前账本、独立声明、依赖感知本地检查、当前/资源/历史 Node 26 流程、有界维护工具、公开 CI 及受保护 main | 关闭 #53 前逐项对应原始验收与留存执行记录；任何特定验证范围缺失的证据继续明确列出，完整合并门禁保留 |
+| C 持续协作 | Discussions、已关联公开 Project、M0–M4 里程碑及范围明确的 Issues、实际维护人路由 | 独立参与者及有人员支撑的响应目标；Project API 自动化尚不可用，但不阻塞已运行看板 |
+
+继续扩展通用维护自动化不是 M1 前置条件。未登记策略沿用既有评审/门禁，仅在具体计划变更需要时补充工具。真人、设备与素材权利缺口继续开放；下文保留各历史日期、失败及交付截止点，不重写为当前结果。
 
 ## 环境与验证
 
@@ -42,7 +44,7 @@ M0 各轮增量实现环境、贡献与社区基础。引擎包源码、公共�
 
 上手测试先复现工具缺失，再通过诊断及 HTTP 访问检查。干净安装发现 pnpm 包装器固定旧 Node 和隐含依赖布局，现通过明确运行时和公开 setup 处理原因。已在应用内浏览器实际打开 Canvas 示例，观察资源/画面/交互就绪、蓝色换装和 0.125 秒动画单步。这是上手冒烟检查，不是固定浏览器图形验收矩阵。合并前必须通过完整本地门禁、独立评审和远程 CI，具体候选结果由 PR 检查承载。
 
-M0 的架构/场景/预算冻结、人类新人演练、更广的依赖感知引擎测试选择及剩余宿主/工具迁移保持未完成。参见[上手指南](getting-started.md)和[公开里程碑](https://github.com/cnedwin/Egret_rebuild/milestones)。
+M0 继续保留完整架构/设备/素材资格与独立真人/fork 演练未完成。依赖感知反馈及当前历史验证范围入口迁移已在声明范围交付；完整合并门禁和各范围专属证据仍是必需。参见[上手指南](getting-started.md)和[公开里程碑](https://github.com/cnedwin/Egret_rebuild/milestones)。
 
 [整体架构与工程计划](architecture-and-engineering-plan.md)保留完整 M0–M4 范围与验收标准，本次只实现上述基础子集。
 
@@ -50,7 +52,7 @@ M0 的架构/场景/预算冻结、人类新人演练、更广的依赖感知引
 
 [公开 Project](https://github.com/users/cnedwin/projects/2)已关联仓库 Projects 页。Delivery 视图显示 Status、Milestone 和标签。Backlog 表示未排期，Ready 表示范围明确可参与，In Progress 表示正在推进，In Review 表示候选待检查/评审，Blocked 必须写明依赖，Done 必须有验收证据。Issue 正文定义范围、依赖、验收和集成联系人；里程碑对应 M0–M4。看板作为实时状态源，不在各份文档重复维护易变进度。不虚构参与人、日期或额外维护者。
 
-新人入口 [#52](https://github.com/cnedwin/Egret_rebuild/issues/52) 标注 `good first issue` 与 `help wanted`，提供文件入口、预期结果、验证和评审联系人。[#53](https://github.com/cnedwin/Egret_rebuild/issues/53)保留贡献门禁/账本工程；[#54](https://github.com/cnedwin/Egret_rebuild/issues/54)保留场景、Spine 与设备预算冻结。M1–M4 分别对应完整工作包 [#55](https://github.com/cnedwin/Egret_rebuild/issues/55)、[#56](https://github.com/cnedwin/Egret_rebuild/issues/56)、[#57](https://github.com/cnedwin/Egret_rebuild/issues/57)、[#58](https://github.com/cnedwin/Egret_rebuild/issues/58)，不表示获准在 M0 验收前启动引擎开发。已合并基础设施 [PR #51](https://github.com/cnedwin/Egret_rebuild/pull/51)提供已交付证据。
+新人入口 [#52](https://github.com/cnedwin/Egret_rebuild/issues/52) 标注 `good first issue` 与 `help wanted`，提供文件入口、预期结果、验证和评审联系人。[#53](https://github.com/cnedwin/Egret_rebuild/issues/53)保留贡献门禁/账本工程；[#54](https://github.com/cnedwin/Egret_rebuild/issues/54)保留场景、Spine 与设备预算冻结。M1–M4 分别对应完整工作包 [#55](https://github.com/cnedwin/Egret_rebuild/issues/55)、[#56](https://github.com/cnedwin/Egret_rebuild/issues/56)、[#57](https://github.com/cnedwin/Egret_rebuild/issues/57)、[#58](https://github.com/cnedwin/Egret_rebuild/issues/58)，遵循 [M1 计划](m1-rendering-resource-plan.md)修订后的工程准入；完整 M0 真人/设备验收仍单独保留。已合并基础设施 [PR #51](https://github.com/cnedwin/Egret_rebuild/pull/51)提供已交付证据。
 
 ### 新人流程技术复演
 
@@ -79,14 +81,13 @@ M0 定义衔接条件，不宣称网站或可安装预览包已发布。后续�
 
 | 义务 | 当前边界与下一步 |
 | --- | --- |
-| 独立人类与外部 fork | 本轮没有未参与搭建的参与者；#52 保持开放，志愿者执行公开清单，维护者处理首次 CI 批准 |
-| 受控元数据集成与风险选择 | 已实现当前账本与保守的本地选择；完整推送/合并门禁保留。更广的按风险引擎测试选择需要独立的依赖与拒绝证据 |
-| 活跃浏览器工具迁移 | 八个当前套件、三类资源组和五种附加固定场景配置均已有真实 Node 26 结果；历史纹理/序列帧/SpriteSheet 范围在 #53 保留独立迁移验收 |
-| 场景/Spine/设备/预算冻结 | #54 需要授权代表素材、精确版本/特性取舍与目标档位；没有已连接目标手机测试会话，不可用设备行保持未执行，不编造数值预算 |
-| API Project 自动化 | 限定令牌查询被拒；公开看板可经人工/浏览器维护，没有签发更大权限令牌 |
-| 人员安排 | @cnedwin 是集成联系人，不预设第二位人类评审者或响应 SLA |
+| 独立真人/外部 fork | #52 在未参与搭建的志愿者完成公开流程前保持开放；AI 执行和维护者账户 CI 不能替代 |
+| 贡献维护验收 | #53 有限地对应原验收条件与 PR #60–#71 证据，仅关闭有证据的工程范围，具体缺失证明继续保留；不增加通用解析器或全部策略自动化要求 |
+| 渲染器相关验证 | 当前 Node 26 入口迁移已交付；每个新渲染器仍须取得新的适用源码/浏览器/退出验收，旧采集结果不能证明新像素 |
+| 场景、Spine 与目标档位 | M1 桌面契约和目标在其计划中固定；#54 保留精确 Editor 导出、按版本完整清单、分发资格及不可用设备/宿主预算和结果，不因规划而授予支持声明 |
+| Project API 与人员 | 看板可运行，API 自动化缺少权限；@cnedwin 是集成联系人，不虚构第二位真人评审或响应 SLA |
 
-完整 M0 继续开放。本轮交付社区基础设施、可复现证据及发布衔接条件，不增加引擎功能，也不证明产品性能。
+完整 M0 保持开放。经评审的工程准入允许独立 M1 工作，缺少的真人/设备证据不改写为通过。
 
 诊断修复仅限验证工具。TypeScript 在引用的导入类型中把非 ASCII UTF-16 单元写成 Unicode 转义。转换器只从完整已知仓库 owner 推导可接受写法，并要求后随路径分隔符；sdk-other 之类的相邻 owner 不能匹配 sdk。原诊断后缀、逻辑文件键、文件原始字节和冻结的预期诊断元组均不变。针对转义 owner、相邻前缀及大小写敏感外部路径的控制先失败，修复后全部九项上手测试通过。这不授权任意诊断解码或为指纹做路径归一化。
 
