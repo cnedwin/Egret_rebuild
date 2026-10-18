@@ -248,3 +248,17 @@ for (const [relative, mode] of [["packages/contracts/src/SharedGeometry2D.ts","m
       rejected(verify(), 'SS1_BOUNDARY_SOURCE_OWNER');
     } finally { writeFileSync(file, before); assert.deepEqual(inventory(fixture), baseline); accepted(verify()); }
   }));
+
+// M1.4 controls retain a fresh complete source-file copy before each assigned change.
+for (const [relative,mode] of [["packages/engine/dist/web/webgl2.d.ts","missing"],["packages/engine/dist/web/sharedRetentionLedger.js","missing"],["packages/engine/web/prepareSharedSubmission2D.ts","same-size-hash"],["packages/engine/package.json","extra-export"]])
+ test('SS1-M14 complete successor refuses '+mode+' '+relative,()=>isolated(({fixture,verify,baseline})=>{
+  const file=path.join(fixture,relative),before=readFileSync(file);
+  try{
+   if(mode==='missing')rmSync(file);
+   else if(mode==='extra-export'){const value=JSON.parse(before);value.exports['./unreviewed']={types:'./dist/index.d.ts',import:'./dist/index.js'};writeFileSync(file,JSON.stringify(value,null,2)+'\n');}
+   else{const altered=Buffer.from(before);altered[0]^=1;writeFileSync(file,altered);}
+   const now=inventory(fixture),prior=new Map(baseline.map(row=>[row.path,row]));
+   assert.deepEqual([...now.filter(row=>JSON.stringify(row)!==JSON.stringify(prior.get(row.path))).map(row=>row.path),...baseline.filter(row=>!now.some(current=>current.path===row.path)).map(row=>row.path)],[relative]);
+   rejected(verify(),mode==='extra-export'?'SS1_BOUNDARY_CONFIGURATION_DAG':'SS1_BOUNDARY_SOURCE_OWNER');
+  }finally{writeFileSync(file,before);assert.deepEqual(inventory(fixture),baseline);accepted(verify());}
+ }));

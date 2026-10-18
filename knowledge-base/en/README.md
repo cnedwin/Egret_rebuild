@@ -21,6 +21,8 @@ Egret connects complex 2D interfaces and lightweight 3D with a rendering/runtime
 | Creation and compatibility | [AI/project interfaces](docs/ai-creation-and-engineering-interfaces.md) |
 | Creation and compatibility | [Spine support](docs/spine-animation-support-and-acceptance.md) |
 | Creation and compatibility | [Legacy migration](docs/legacy-project-migration.md) |
+| Current integration | [M1 rendering/resource plan](docs/m1-rendering-resource-plan.md) |
+| Current integration | [M1.4 WebGL2 executor](docs/webgl2-executor-contract.md) · [Evidence](docs/webgl2-executor-evidence.md) |
 | Current integration | [Experimental WebGPU image residency](docs/gpu-image-residency-contract.md) · [Evidence](docs/gpu-image-residency-evidence.md) |
 | Current integration | [Atlas import planner](docs/atlas-import-plan-contract.md) · [Evidence](docs/atlas-import-plan-evidence.md) |
 | Current integration | [Atlas-frame layout](docs/atlas-frame-layout-contract.md) · [Evidence](docs/atlas-frame-layout-evidence.md) |

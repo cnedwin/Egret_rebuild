@@ -249,3 +249,20 @@ for (const [relative, mode] of [["packages/contracts/src/SharedGeometry2D.ts","m
       } finally {writeFileSync(file,before);assert.deepEqual(inventory(root),baseline);assert.deepEqual((await run()).issues,[]);}
     });
   });
+
+// M1.4 controls retain a fresh complete source-file copy before each assigned change.
+for (const [relative,mode] of [["packages/engine/dist/web/webgl2.d.ts","missing"],["packages/engine/dist/web/sharedRetentionLedger.js","missing"],["packages/engine/web/prepareSharedSubmission2D.ts","same-size-hash"],["packages/engine/package.json","extra-export"]])
+ test('BIP-M14 complete successor refuses '+mode+' '+relative,async ()=>{
+  const check=await checker();
+  await isolated(check,async ({root,run,baseline})=>{
+  const file=path.join(root,relative),before=readFileSync(file);
+  try{
+   if(mode==='missing')rmSync(file);
+   else if(mode==='extra-export'){const value=JSON.parse(before);value.exports['./unreviewed']={types:'./dist/index.d.ts',import:'./dist/index.js'};writeFileSync(file,JSON.stringify(value,null,2)+'\n');}
+   else{const altered=Buffer.from(before);altered[0]^=1;writeFileSync(file,altered);}
+   const now=inventory(root),prior=new Map(baseline.map(row=>[row.path,row]));
+   assert.deepEqual([...now.filter(row=>JSON.stringify(row)!==JSON.stringify(prior.get(row.path))).map(row=>row.path),...baseline.filter(row=>!now.some(current=>current.path===row.path)).map(row=>row.path)],[relative]);
+   assert.deepEqual((await run()).issues.map(issue=>[issue.code,issue.path]),[[mode==='missing'?'BIP_BOUNDARY_SOURCE_INVENTORY':mode==='extra-export'?'BIP_BOUNDARY_EXPORT_MAP':'BIP_BOUNDARY_FINGERPRINT',relative]]);
+  }finally{writeFileSync(file,before);assert.deepEqual(inventory(root),baseline);assert.deepEqual((await run()).issues,[]);}
+ });
+ });

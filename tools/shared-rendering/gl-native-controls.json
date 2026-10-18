@@ -1,0 +1,223 @@
+[
+  {
+    "id": "N01-encoded-average",
+    "caseId": "B00-black-white",
+    "pointId": "wx0.5-wy0.5",
+    "file": "packages/engine/dist/web/sharedWebGL2Shaders.js",
+    "from": "void main() {\n    // One fixed program: a solid draw takes this branch without fetching a page.\n    if (pageExecution.z == 0u) { fragmentColor = tinted(vec4(1.0)); }\n    else { fragmentColor = tinted(sampled(vertexUV)); }\n}",
+    "to": "vec3 wrongEncode(vec3 value) {\n    return mix(12.92 * value, 1.055 * pow(value, vec3(1.0 / 2.4)) - vec3(0.055),\n        greaterThan(value, vec3(0.0031308)));\n}\nvec4 encodedTap(ivec2 index) {\n    vec4 value = regionTap(index); return vec4(wrongEncode(value.rgb), value.a);\n}\nvoid main() {\n    if (pageExecution.z == 0u) { fragmentColor = tinted(vec4(1.0)); }\n    else if (packedTurnDomain.w == 1u || samplerPolicy.z == 0u) { fragmentColor = tinted(sampled(vertexUV)); }\n    else {\n        vec2 q = vertexUV * vec2(logicalTrim.xy) - vec2(0.5);\n        ivec2 base = ivec2(floor(q)); vec2 weight = fract(q);\n        vec4 encodedAverage = mix(mix(encodedTap(base), encodedTap(base + ivec2(1, 0)), weight.x),\n            mix(encodedTap(base + ivec2(0, 1)), encodedTap(base + ivec2(1, 1)), weight.x), weight.y);\n        fragmentColor = tinted(vec4(decoded(encodedAverage.rgb), encodedAverage.a));\n    }\n}",
+    "implementation": "For the opaque black/white witness, re-encode each decoded canonical tap, interpolate encoded RGB, then decode once. Retain the original alternate path so required sampler bindings remain live.",
+    "status": "SOURCE_BOUND_GL_CONTROL",
+    "original": {
+      "bytes": 7710,
+      "sha256": "023fd410c2da53495c3ec8c960718e51aeb9ea5f222b5f81ac8bdad134b0fb71"
+    },
+    "changed": {
+      "bytes": 8384,
+      "sha256": "a39745b830ab87b305ebf44148e08d214a47e294f92e0847d4cf8f15e198a6b6"
+    }
+  },
+  {
+    "id": "N02-missing-source-decode",
+    "caseId": "A01-alpha-flat",
+    "pointId": "nongray-a255",
+    "file": "packages/engine/dist/rendering/sharedColor2D.js",
+    "from": "a * decodeSharedSRGB(source[offset + channel] / 255)",
+    "to": "a * (source[offset + channel] / 255)",
+    "implementation": "Omit source sRGB decode while retaining source alpha, encoding, cap and all other channel operations.",
+    "status": "SOURCE_BOUND_GL_CONTROL",
+    "original": {
+      "bytes": 1274,
+      "sha256": "bbb350458e5a4a417fa073ea506da66f68df79c523c21259f68c72d4940148a5"
+    },
+    "changed": {
+      "bytes": 1258,
+      "sha256": "25440fa54640a066b92054ef374da44b0d896dea1a59e7feca51c4600f24954f"
+    }
+  },
+  {
+    "id": "N03-missing-dark",
+    "caseId": "B03-two-color-alpha",
+    "pointId": "dark-only-black",
+    "file": "packages/engine/dist/web/sharedWebGL2Shaders.js",
+    "from": "(vec3(a) - v) * materialDark.rgb",
+    "to": "(vec3(a) - v) * (viewportOpacity.z < 0.0 ? materialDark.rgb : vec3(0.0))",
+    "implementation": "Omit only material dark on admitted nonnegative opacity; the impossible negative-opacity branch keeps the uniform active so linked ABI qualification remains meaningful.",
+    "status": "SOURCE_BOUND_GL_CONTROL",
+    "original": {
+      "bytes": 7710,
+      "sha256": "023fd410c2da53495c3ec8c960718e51aeb9ea5f222b5f81ac8bdad134b0fb71"
+    },
+    "changed": {
+      "bytes": 7750,
+      "sha256": "ee235d299a0f21401211d6d7a7f143723dd0b95e8212b9fa2a81e33ec3a0334d"
+    }
+  },
+  {
+    "id": "N04-double-pma",
+    "caseId": "A01-alpha-flat",
+    "pointId": "white-a128",
+    "file": "packages/engine/dist/web/sharedWebGL2Shaders.js",
+    "from": "vec3 p = clamp(value.rgb, vec3(0.0), vec3(a));",
+    "to": "vec3 p = a * clamp(value.rgb, vec3(0.0), vec3(a));",
+    "implementation": "Apply sampled alpha to already premultiplied RGB a second time; keep output alpha unchanged.",
+    "status": "SOURCE_BOUND_GL_CONTROL",
+    "original": {
+      "bytes": 7710,
+      "sha256": "023fd410c2da53495c3ec8c960718e51aeb9ea5f222b5f81ac8bdad134b0fb71"
+    },
+    "changed": {
+      "bytes": 7714,
+      "sha256": "ed784da43a5d2a7bf2a90ab45f05ac8d60a6508a57474bd315efdeea0c6f2c6f"
+    }
+  },
+  {
+    "id": "N05-no-trim-coverage",
+    "caseId": "C00-singleton-trim",
+    "pointId": "single-bounded-left",
+    "file": "packages/engine/dist/web/sharedWebGL2Shaders.js",
+    "from": "* (coverage.x * coverage.y);",
+    "to": "* 1.0;",
+    "implementation": "Omit bounded-region virtual trim coverage after the content sample.",
+    "status": "SOURCE_BOUND_GL_CONTROL",
+    "original": {
+      "bytes": 7710,
+      "sha256": "023fd410c2da53495c3ec8c960718e51aeb9ea5f222b5f81ac8bdad134b0fb71"
+    },
+    "changed": {
+      "bytes": 7688,
+      "sha256": "9b6442337d4c618d1d6d7f78f796d9e56ce236b9561be6dfc1144e66870131df"
+    }
+  },
+  {
+    "id": "N06-page-clamp-for-region",
+    "caseId": "H00-size-pair",
+    "pointId": "H-16x16-bounded-left",
+    "file": "packages/engine/dist/web/sharedWebGL2Shaders.js",
+    "from": "vec2 c = clamp(r, trim + vec2(0.5), trim + size - vec2(0.5));",
+    "to": "vec2 c = q;",
+    "implementation": "Use logical edge coordinates as continuous content coordinates, exposing the blue page neighbor at the selected untrimmed red-region edge.",
+    "status": "SOURCE_BOUND_GL_CONTROL",
+    "original": {
+      "bytes": 7710,
+      "sha256": "023fd410c2da53495c3ec8c960718e51aeb9ea5f222b5f81ac8bdad134b0fb71"
+    },
+    "changed": {
+      "bytes": 7660,
+      "sha256": "df46e27e2e07d3de64924d1c800a6ef79c04127ed4c4d6d507cb86987fc0c1b4"
+    }
+  },
+  {
+    "id": "N07-css-multiply",
+    "caseId": "F02-order-and-factor",
+    "pointId": "factor-transparent-white",
+    "file": "packages/engine/dist/web/sharedWebGL2Shaders.js",
+    "from": "case 'multiply-factor': return [774, 771, 1, 771];",
+    "to": "case 'multiply-factor': return [1, 771, 1, 771];",
+    "implementation": "Replace the factor-multiply source factor with one, yielding source-over for the selected opaque-white layers over transparent black.",
+    "status": "SOURCE_BOUND_GL_CONTROL",
+    "original": {
+      "bytes": 7710,
+      "sha256": "023fd410c2da53495c3ec8c960718e51aeb9ea5f222b5f81ac8bdad134b0fb71"
+    },
+    "changed": {
+      "bytes": 7708,
+      "sha256": "8d7ed5fb6f7a417282b8201f44fcfa7c9c8d24635b6fd7c294cb47d9f47115ac"
+    }
+  },
+  {
+    "id": "N08-skip-transparent-resolve",
+    "caseId": "A01-alpha-flat",
+    "pointId": "white-a128",
+    "file": "packages/engine/dist/web/sharedWebGL2Shaders.js",
+    "from": "a * encoded(c / a)",
+    "to": "encoded(c)",
+    "implementation": "Output encoded internal PMA RGB instead of the transparent canvas resolve; retain alpha.",
+    "status": "SOURCE_BOUND_GL_CONTROL",
+    "original": {
+      "bytes": 7710,
+      "sha256": "023fd410c2da53495c3ec8c960718e51aeb9ea5f222b5f81ac8bdad134b0fb71"
+    },
+    "changed": {
+      "bytes": 7702,
+      "sha256": "b08e973715d0d3b6cd18a205d1b762a3567c1721ffc8181e77d96e3ca4a50186"
+    }
+  },
+  {
+    "id": "N09-b1-decode-after-interpolation",
+    "caseId": "G00-linear-b1-ui0",
+    "pointId": "p0",
+    "file": "packages/engine/dist/web/sharedWebGL2Scene.js",
+    "from": "export const SHARED_GL_SCENE_VERTEX = `#version 300 es\nprecision highp float;\nprecision highp int;\nlayout(location = 0) in vec3 aPosition;\nlayout(location = 1) in vec3 aLinearColor;\nlayout(std140) uniform SceneDraw {\n    mat4 uMVP;\n};\nout highp vec3 vLinearColor;\nvoid main() {\n    vec4 clip = uMVP * vec4(aPosition, 1.0);\n    gl_Position = vec4(clip.xy, 2.0 * clip.z - clip.w, clip.w);\n    vLinearColor = aLinearColor;\n}\n`;\n// Linear opaque RGB is encoded by the SRGB8_ALPHA8 working attachment on each write.\n// Final canvas transfer is the Host's single shared resolve, never another scene resolve.\nexport const SHARED_GL_SCENE_FRAGMENT = `#version 300 es\nprecision highp float;\nprecision highp int;\nin highp vec3 vLinearColor;\nlayout(location = 0) out vec4 outColor;\nvoid main() {\n    outColor = vec4(vLinearColor, 1.0);\n}\n`;\n",
+    "to": "export const SHARED_GL_SCENE_VERTEX = `#version 300 es\nprecision highp float;\nprecision highp int;\nlayout(location = 0) in vec3 aPosition;\nlayout(location = 1) in vec3 aLinearColor;\nlayout(std140) uniform SceneDraw {\n    mat4 uMVP;\n};\nout highp vec3 vLinearColor;\nvoid main() {\n    vec4 clip = uMVP * vec4(aPosition, 1.0);\n    gl_Position = vec4(clip.xy, 2.0 * clip.z - clip.w, clip.w);\n    vLinearColor = mix(12.92 * aLinearColor,\n        1.055 * pow(aLinearColor, vec3(1.0 / 2.4)) - vec3(0.055),\n        greaterThan(aLinearColor, vec3(0.0031308)));\n}\n`;\n// Linear opaque RGB is encoded by the SRGB8_ALPHA8 working attachment on each write.\n// Final canvas transfer is the Host's single shared resolve, never another scene resolve.\nexport const SHARED_GL_SCENE_FRAGMENT = `#version 300 es\nprecision highp float;\nprecision highp int;\nin highp vec3 vLinearColor;\nlayout(location = 0) out vec4 outColor;\nvoid main() {\n    outColor = vec4(mix(vLinearColor / 12.92,\n        pow((vLinearColor + vec3(0.055)) / 1.055, vec3(2.4)),\n        greaterThan(vLinearColor, vec3(0.04045))), 1.0);\n}\n`;\n",
+    "implementation": "One contiguous scene vertex/fragment declaration span substitutes encoded interpolation: re-encode the decoded f32 vertices, then decode fragment RGB. Projection, depth mapping and linked block layout remain unchanged.",
+    "status": "SOURCE_BOUND_GL_CONTROL",
+    "original": {
+      "bytes": 6335,
+      "sha256": "2b15e7eda79f6ec6f79d09fe5196a5454b3593d101781f32e59cc492e8e9279b"
+    },
+    "changed": {
+      "bytes": 6591,
+      "sha256": "7867fa68b1b7b97ae3531338646775dd28fa63e4b8e2342b5e53f63ea19127d7"
+    }
+  },
+  {
+    "id": "N10-GL-row-normalization-omitted",
+    "caseId": "A00-endpoints",
+    "pointId": "red",
+    "file": "packages/engine/dist/web/WebGL2Host.js",
+    "from": "for (let y = 0; y < Math.floor(height / 2); y++)",
+    "to": "for (let y = 0; y < 0; y++)",
+    "implementation": "Omit only top-left row normalization after actual PBO extraction; native readPixels and bytes remain unchanged.",
+    "status": "SOURCE_BOUND_GL_CONTROL",
+    "witness": {
+      "id": "N10-GL-row-normalization-omitted",
+      "caseId": "A00-endpoints",
+      "pointId": "red",
+      "channel": 0,
+      "T": 0,
+      "expectedCorrectRGBA": [
+        255,
+        0,
+        0,
+        255
+      ],
+      "expectedWrongRGBA": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "delta": 255,
+      "requiredMargin": 16,
+      "eligible": true,
+      "model": "The original A00 red point (52,8) reads transparent-clear top-left row247 if native bottom-left rows are not normalized; all A00 rectangles occupy y=[0,16)."
+    },
+    "original": {
+      "sha256": "7a48a8f1048d7d65845d723c10879c14a54eb8aaf6a4701ce8c527a5c260b72b",
+      "bytes": 54757
+    },
+    "changed": {
+      "sha256": "d123abf0a86fb3cebe7a4ad78aa240f40faa9be6e0fea096d7a8f049b4c2bfab",
+      "bytes": 54736
+    }
+  },
+  {
+    "id": "N11-painter-reorder",
+    "caseId": "F02-order-and-factor",
+    "pointId": "A-B-A",
+    "file": "packages/engine/dist/rendering/preparedSharedBatches2D.js",
+    "from": "const plan = { draws: [], logicalDraws: input, logicalSpans: [], bytes: 0, released: false, transferred: false };",
+    "to": "input = [...input].sort((a, b) => 'barrier' in a || 'barrier' in b ? 0 : (a.prepared.pageIndex ?? -1) - (b.prepared.pageIndex ?? -1));\n    const plan = { draws: [], logicalDraws: input, logicalSpans: [], bytes: 0, released: false, transferred: false };",
+    "implementation": "Sort the selected barrier-free physical draw inputs by source page, turning A-B-A into A-A-B while preserving the same geometry and colors.",
+    "status": "SOURCE_BOUND_GL_CONTROL",
+    "original": {
+      "bytes": 3326,
+      "sha256": "6690664da548935ae8a9406436b5719ea6a8681b00c16d788914bba38c3eb036"
+    },
+    "changed": {
+      "bytes": 3465,
+      "sha256": "e8e489ede59fb68800eeecf763df7a4ee3d0334c3d21e6bda1215cafe03a1a9c"
+    }
+  }
+]

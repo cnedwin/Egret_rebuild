@@ -33,13 +33,30 @@ function read(file){logicalPath(file);const pin=fingerprintFile(root,file),raw=r
 
 // Retain the historical pin and admit only the reviewed optional-entry successor.
 // This is one complete path and two exact raw identities, never a path wildcard.
+// Only the two reviewed optional GL entries extend this exact historical package.
+// Reconstruct its full predecessor; unrelated fields and routes remain byte-bound.
+function m14EnginePackageSuccessor(expected, raw) {
+  const bytes = Buffer.from(raw);
+  if (expected?.path !== 'packages/engine/package.json' || expected.bytes !== 1567
+      || expected.sha256 !== 'e01d48a51c0845783afeec93ffcc7674c7980797cd6a9c58cc74ec3f13d2e0c5' || bytes.length !== 1799
+      || createHash('sha256').update(bytes).digest('hex') !== 'c106c84b479f88ac1570418a21672b6148b1bdd0b870631198c359d467f2f0c7') return false;
+  const value = JSON.parse(bytes.toString('utf8'));
+  const entries = {"./webgl2":{"types":"./dist/web/webgl2.d.ts","import":"./dist/web/webgl2.js"},"./webgl2/scene3d":{"types":"./dist/web/webgl2Scene3d.d.ts","import":"./dist/web/webgl2Scene3d.js"}};
+  for (const [name, mapping] of Object.entries(entries)) {
+    if (JSON.stringify(value.exports[name]) !== JSON.stringify(mapping)) return false;
+    delete value.exports[name];
+  }
+  const prior = Buffer.from(JSON.stringify(value, null, 2) + '\n');
+  return prior.length === expected.bytes && createHash('sha256').update(prior).digest('hex') === expected.sha256;
+}
+
 function bbtbAtlasPackageSuccessor(expected, raw) {
   return expected?.path === 'packages/project/package.json'
     && expected.bytes === 397 && expected.sha256 === '295e6bc8d81a4647f5b99355ea27879563ced216fa2af406c65cc78b95f40945'
     && raw.length === 503 && hash(raw) === '4b4380142316c6ab2f0727eab44c80eff2a21640c701871c6ace3a0ab1b276af';
 }
 
-function pinCheck(pin,code){const raw=read(pin.path);if(bbtbAtlasPackageSuccessor(pin,raw))return;if(raw.length!==pin.bytes||hash(raw)!==pin.sha256)bbtbFail(code,'Changed complete source identity: '+pin.path);}
+function pinCheck(pin,code){const raw=read(pin.path);if(m14EnginePackageSuccessor(pin,raw)||bbtbAtlasPackageSuccessor(pin,raw))return;if(raw.length!==pin.bytes||hash(raw)!==pin.sha256)bbtbFail(code,'Changed complete source identity: '+pin.path);}
 const policyPin={"path":"tools/bitmap-binding-ticket-policy.json","bytes":17762,"sha256":"81fb8a30379ae85782fb4eff61c25a890ab1f4a79404b4ea9bb8b3f1468de6e5"};
 pinCheck(policyPin,'BBT_BOUNDARY_POLICY_IDENTITY');
 const policy=JSON.parse(read(policyPin.path));

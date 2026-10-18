@@ -1087,3 +1087,4 @@ await (await import('./atlas-import-types.mjs')).runAtlasImportTypes();
 
 // Preserve every existing strict lane before the shared-profile consumers.
 await import('./shared-render-types.mjs');
+await import('./shared-webgl2-types.mjs');

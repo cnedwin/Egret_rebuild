@@ -1,0 +1,27 @@
+{
+  "schemaVersion":1,
+  "width":256,"height":256,
+  "fixedPolicy":{"operationMs":60000,"pageTotalMs":90000,"restoreMs":10000,"fenceMs":30000,"maxPendingFrames":2,"lossEventMs":5000},
+  "cases":[
+    {"id":"L01-immediate-dirty","scene":false,"loss":false,"observations":[
+      {"id":"ticket-A","alphaMode":"premultiplied","points":[{"id":"A-red","x":64,"y":60,"rgba":[255,0,0,255]},{"id":"B-still-clear","x":192,"y":60,"rgba":[0,0,0,0]},{"id":"clear","x":8,"y":8,"rgba":[0,0,0,0]}]},
+      {"id":"default-B","alphaMode":"premultiplied","points":[{"id":"A-cleared","x":64,"y":60,"rgba":[0,0,0,0]},{"id":"B-green","x":192,"y":60,"rgba":[0,255,0,255]},{"id":"clear","x":8,"y":8,"rgba":[0,0,0,0]}]},
+      {"id":"ticket-B","alphaMode":"premultiplied","points":[{"id":"A-cleared","x":64,"y":60,"rgba":[0,0,0,0]},{"id":"B-green","x":192,"y":60,"rgba":[0,255,0,255]},{"id":"clear","x":8,"y":8,"rgba":[0,0,0,0]}]}
+    ]},
+    {"id":"L02-depth-planes-order","scene":true,"loss":false,"observations":[
+      {"id":"depth","alphaMode":"opaque","points":[{"id":"before-near-clipped","x":56,"y":52,"rgba":[0,0,0,255]},{"id":"inside-near","x":136,"y":52,"rgba":[0,255,0,255]},{"id":"inside-far","x":216,"y":52,"rgba":[0,0,255,255]},{"id":"beyond-far-clipped","x":56,"y":132,"rgba":[0,0,0,255]},{"id":"near-before-far","x":136,"y":132,"rgba":[255,0,0,255]},{"id":"far-before-near","x":216,"y":132,"rgba":[255,0,0,255]},{"id":"exact-far-clear-greater","x":56,"y":212,"rgba":[0,0,0,255]},{"id":"exact-near","x":136,"y":212,"rgba":[0,255,0,255]},{"id":"clear","x":8,"y":8,"rgba":[0,0,0,255]}]}
+    ]},
+    {"id":"L03-real-loss-replay","scene":false,"loss":true,"closeRace":false,"observations":[
+      {"id":"restored-saved-A","alphaMode":"premultiplied","points":[{"id":"saved-A-red","x":64,"y":60,"rgba":[255,0,0,255]},{"id":"live-B-absent","x":192,"y":60,"rgba":[0,0,0,0]},{"id":"clear","x":8,"y":8,"rgba":[0,0,0,0]}]},
+      {"id":"restored-live-B","alphaMode":"premultiplied","points":[{"id":"saved-A-absent","x":64,"y":60,"rgba":[0,0,0,0]},{"id":"live-B-green","x":192,"y":60,"rgba":[0,255,0,255]},{"id":"clear","x":8,"y":8,"rgba":[0,0,0,0]}]}
+    ]},
+    {"id":"L04-close-versus-real-restore","scene":false,"loss":true,"closeRace":true,"observations":[]}
+  ],
+  "oracle":"All samples are interior constant endpoint colors or clear. Every compared channel has fixed tolerance 0. Orthographic near=1/far=3 maps z to (z+3)/2 before the fixed GL remap. z=-0.5/-3.5 are outside; z=-1.5/-2.5 are inside; z=-3 equals clear reverse depth 0 and fails strict GREATER. Both overlapping draw orders must retain near red. No sampled SDK output defines an expected value.",
+  "wrongModelWitnesses":[
+    {"id":"omit-depth-remap","observation":"depth","point":"beyond-far-clipped","channel":0,"correct":0,"wrong":255,"tolerance":0,"margin":255},
+    {"id":"forward-or-disabled-depth","observation":"depth","point":"near-before-far","channel":0,"correct":255,"wrong":0,"tolerance":0,"margin":255},
+    {"id":"omit-dirty-state-reset","observation":"ticket-A","point":"A-red","channel":0,"correct":255,"wrong":0,"tolerance":0,"margin":255}
+  ],
+  "limits":["Fixed wrong-model values are source-derived separations; this collector does not execute product mutants.","Four finite actual SDK contexts; not M1.5 sustained recovery, physical device-loss, cross-device or timing evidence."]
+}

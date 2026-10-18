@@ -43,6 +43,8 @@ for (const [name, allowed] of Object.entries(expected)) {
     } : {
       '.': {types:'./dist/index.d.ts',import:'./dist/index.js'},
       './webgpu': {types:'./dist/web/webgpu.d.ts',import:'./dist/web/webgpu.js'},
+      './webgl2': {types:'./dist/web/webgl2.d.ts',import:'./dist/web/webgl2.js'},
+      './webgl2/scene3d': {types:'./dist/web/webgl2Scene3d.d.ts',import:'./dist/web/webgl2Scene3d.js'},
       './web': {types:'./dist/web/index.d.ts',import:'./dist/web/index.js'},
       './text': {types:'./dist/text.d.ts',import:'./dist/text.js'},
       './layout': {types:'./dist/layout.d.ts',import:'./dist/layout.js'},
@@ -72,7 +74,18 @@ for (const [name, allowed] of Object.entries(expected)) {
     // Raw triple-slash references are compiler dependencies, even though ordinary
     // comments are removed below. Project declarations must stay DOM/Node-free.
     if (name === 'project' && (/\b(?:HTMLElement|HTMLCanvasElement|Document|Window|Navigator|NodeJS|GPUDevice)\b/.test(code) || /\/\/\/\s*<reference\s+(?:lib\s*=\s*["']dom(?:\.iterable)?["']|types\s*=\s*["']node["'])/i.test(raw))) throw new Error(`${path.relative(root, file)}: host ambient dependency`);
-    if ((web ? /\b(?:process|Buffer|require)\b|["']node:/ : forbidden).test(code)) throw new Error(`${path.relative(root, file)}: host ambient dependency`);
+    // WebGL resource kinds use the quoted spelling Buffer; it is not the Node
+    // global. Only these eight literals in five named files have this exception.
+    const glKindLiterals = name === 'engine' ? {
+      'web/webgl2Native.ts': 2, 'dist/web/webgl2Native.js': 1, 'dist/web/webgl2Native.d.ts': 1,
+      'web/WebGL2Host.ts': 2, 'dist/web/WebGL2Host.js': 2,
+    }[path.relative(dir,file).split(path.sep).join('/')] : undefined;
+    let ambientCode = code;
+    if (glKindLiterals !== undefined) {
+      if ((code.match(/(['"])Buffer\1/g) ?? []).length !== glKindLiterals) throw new Error('M14: exact native Buffer kind literal count mismatch: '+path.relative(root,file));
+      ambientCode = code.replace(/(['"])Buffer\1/g, '""');
+    }
+    if ((web ? /\b(?:process|Buffer|require)\b|["']node:/ : forbidden).test(ambientCode)) throw new Error(path.relative(root,file)+': host ambient dependency');
     // Consume complete ordinary quoted strings before recognizing import clauses.
     // This bounded lexical scan retains the existing import policies and reasons.
     for (const match of code.matchAll(/"(?:\\(?:\r\n|[\s\S])|[^"\\\r\n])*"|'(?:\\(?:\r\n|[\s\S])|[^'\\\r\n])*'|\b(?:from\s*|import\s*\(\s*|import\s*)["']([^"']+)["']/g)) {
@@ -92,9 +105,9 @@ for (const [name, allowed] of Object.entries(expected)) {
         if(name!=='engine'||!['web/input.ts','web/MouseInput.ts','dist/web/input.js','dist/web/input.d.ts','dist/web/MouseInput.js','dist/web/MouseInput.d.ts'].includes(relative))
           throw new Error('MI1: private mouse input alias imported outside exact browser ports: '+relative);
       } else if (imported === '#egret-textured-frame-state') {
-        // Only these two first-party adapters may share the Engine-owned registry.
+        // Only these three first-party adapters may share the Engine-owned registry.
         const relative = path.relative(dir, file).split(path.sep).join('/');
-        if (name !== 'engine' || !['web/CanvasHost.ts', 'web/WebGPUHost.ts', 'dist/web/CanvasHost.js', 'dist/web/WebGPUHost.js'].includes(relative)) throw new Error(`${file}: private textured registry import outside approved adapters`);
+        if (name !== 'engine' || !['web/CanvasHost.ts', 'web/WebGPUHost.ts', 'web/WebGL2Host.ts', 'dist/web/CanvasHost.js', 'dist/web/WebGPUHost.js', 'dist/web/WebGL2Host.js'].includes(relative)) throw new Error(`${file}: private textured registry import outside approved adapters`);
       } else if (imported === '@egret/runtime/text') {
         const relative = path.relative(dir, file).split(path.sep).join('/');
         if (name !== 'engine' || !['src/text.ts', 'dist/text.js', 'dist/text.d.ts'].includes(relative)) throw new Error(`${file}: unapproved/deep package import ${imported}`);
@@ -451,8 +464,8 @@ for(const relative of ['web/webgpu.ts','dist/web/webgpu.d.ts','dist/web/webgpu.j
   sharedForward(text,'createSharedWebGPUHost',false,'./WebGPUHost.js',file);
   if(!relative.endsWith('.js'))for(const name of sharedGPUTypes)sharedForward(text,name,true,'./WebGPUHost.js',file);
 }
-const privateSharedGPU = ["MeshPacking3DError","MeshPacking3DErrorCode","MeshPacking3DErrorOrigin","PackedMeshGeometry3D","PackedSharedDraw2D","PackedSharedEntry2D","PreparedSharedBarrier2D","PreparedSharedBatchPlan2D","PreparedSharedDraw2D","PreparedSharedEntry2D","PreparedSharedFrame2D","RetentionBufferRequest","RetentionHandle","RetentionLease","RetentionPlan","RetentionRequest","RetentionReturnPlan","RetentionTargetRequest","SHARED_BLENDS","SharedB1BuiltinProtocol","SharedDrawCommand2D","SharedOwnerSnapshot2D","SharedPoint2D","SharedPreparationError","SharedPreparationOptions2D","SharedSceneStorage2D","SharedStorageError2D","SharedSubmissionStorage2D","SharedWebGPUConfiguration","WebGPURetentionPool","admitSharedWebGPUOptions","checkSharedCapacity2D","copySharedPagePixels","createSharedResolvePipeline","createSharedWebGPUMeshPipeline","createSharedWebGPUPipeline","createWebGPURetentionPool","decodeSharedSRGB","encodeSharedSRGB","encodeSharedWebGPUMesh","getBuiltinSharedB1Protocol","getSharedMeshPacking3DErrorOrigin","isBuiltinSharedB1Protocol","materializeSharedPages2D","packSharedDraws2D","packSharedMeshGeometry3D","packSharedSubmission2D","planSharedSubmission2D","prepareSharedBatches2D","prepareSharedDraws2D","qualifySharedUV","sharedFailure"];
-const privateSharedModules = ["packSharedDraws2D","packSharedMeshGeometry3D","prepareSharedDraws2D","prepareSharedSubmission2D","preparedSharedBatches2D","sharedB1","sharedColor2D","sharedWebGPUOptions","webgpuRetentionPool","webgpuSharedMeshPass","webgpuSharedPass","webgpuSharedResolvePass"];
+const privateSharedGPU = ["SharedStorageLimits2D","SharedStorageFees2D","SharedReadbackLayout2D","SharedStoragePlan2D","planSharedStorageFees2D","withSharedReadbackLayout2D","createRetentionLedger","RetentionRequestBase","KeyedRetentionRequest","LedgerHandle","LedgerLease","LedgerPlan","LedgerReturnPlan","RetentionLedgerStatus","RetentionSettlement","RetentionLedger","MeshPacking3DError","MeshPacking3DErrorCode","MeshPacking3DErrorOrigin","PackedMeshGeometry3D","PackedSharedDraw2D","PackedSharedEntry2D","PreparedSharedBarrier2D","PreparedSharedBatchPlan2D","PreparedSharedDraw2D","PreparedSharedEntry2D","PreparedSharedFrame2D","RetentionBufferRequest","RetentionHandle","RetentionLease","RetentionPlan","RetentionRequest","RetentionReturnPlan","RetentionTargetRequest","SHARED_BLENDS","SharedB1BuiltinProtocol","SharedDrawCommand2D","SharedOwnerSnapshot2D","SharedPoint2D","SharedPreparationError","SharedPreparationOptions2D","SharedSceneStorage2D","SharedStorageError2D","SharedSubmissionStorage2D","SharedWebGPUConfiguration","WebGPURetentionPool","admitSharedWebGPUOptions","checkSharedCapacity2D","copySharedPagePixels","createSharedResolvePipeline","createSharedWebGPUMeshPipeline","createSharedWebGPUPipeline","createWebGPURetentionPool","decodeSharedSRGB","encodeSharedSRGB","encodeSharedWebGPUMesh","getBuiltinSharedB1Protocol","getSharedMeshPacking3DErrorOrigin","isBuiltinSharedB1Protocol","materializeSharedPages2D","packSharedDraws2D","packSharedMeshGeometry3D","packSharedSubmission2D","planSharedSubmission2D","prepareSharedBatches2D","prepareSharedDraws2D","qualifySharedUV","sharedFailure"];
+const privateSharedModules = ["sharedSubmissionStorage2D","sharedRetentionLedger","packSharedDraws2D","packSharedMeshGeometry3D","prepareSharedDraws2D","prepareSharedSubmission2D","preparedSharedBatches2D","sharedB1","sharedColor2D","sharedWebGPUOptions","webgpuRetentionPool","webgpuSharedMeshPass","webgpuSharedPass","webgpuSharedResolvePass"];
 for(const [entry,values,stem]of meshEntries) {
   const text=readFileSync(path.join(root,stem+'.d.ts'),'utf8')+'\n'+readFileSync(path.join(root,stem+'.js'),'utf8');
   for(const name of [...privateSharedGPU,...privateSharedModules])if(name in values||new RegExp('\\b'+name+'\\b').test(text))throw new Error('M13: private shared helper leaked: '+entry+'/'+name);
@@ -1090,6 +1103,149 @@ for (const file of [...files(path.join(root,'packages/engine/src')),...files(pat
     if (!typeHost || !/\bimport\s+type\s*\{\s*SceneFrame3D\s*\}\s*$/.test(before)) throw new Error('S3D1: scene entry imported outside approved closure: '+relative);
   }
 }
+// M14_WEBGL2_BOUNDARY_BEGIN
+// Two explicit facades share the original CPU preparation and authority. These
+// finite additions leave all retained WebGPU closure/capture policies intact.
+const glValues = ['createSharedWebGL2Host'];
+const glTypes = ['SharedWebGL2HostOptions','SharedWebGL2Host','SharedWebGL2HostStatus','SharedWebGL2Readback','WebGL2HostState','WebGL2HostErrorCode','WebGL2HostFailure','WebGL2HostDiagnostic','WebGL2HostStatus'];
+const glSceneValues = ['createSharedSceneWebGL2Host'];
+const glSceneTypes = ['SharedSceneWebGL2Host','SharedSceneWebGL2HostOptions'];
+const glFacade = await import('@egret/engine/webgl2');
+const glSceneFacade = await import('@egret/engine/webgl2/scene3d');
+const glHostModule = await import(new URL('../packages/engine/dist/web/WebGL2Host.js',import.meta.url));
+if (!sceneEqual(Object.keys(glFacade),glValues) || !sceneEqual(Object.keys(glSceneFacade),glSceneValues)
+    || glFacade.createSharedWebGL2Host !== glHostModule.createSharedWebGL2Host
+    || glSceneFacade.createSharedSceneWebGL2Host !== glHostModule.createSharedSceneWebGL2HostInternal)
+  throw new Error('M14: exact WebGL2 runtime facade mismatch');
+const glFacadeRules = [
+  ['webgl2', "export { createSharedWebGL2Host } from './WebGL2Host.js';", "export type { SharedWebGL2HostOptions } from './sharedWebGL2Options.js'; export type { SharedWebGL2Host, SharedWebGL2HostStatus, SharedWebGL2Readback, WebGL2HostState, WebGL2HostErrorCode, WebGL2HostFailure, WebGL2HostDiagnostic, WebGL2HostStatus } from './webgl2Types.js';"],
+  ['webgl2Scene3d', "export { createSharedSceneWebGL2HostInternal as createSharedSceneWebGL2Host } from './WebGL2Host.js';", "export type { SharedSceneWebGL2Host } from './webgl2Types.js'; export type { SharedSceneWebGL2HostOptions } from './sharedWebGL2Options.js';"],
+];
+for (const [stem,valueClause,typeClauses] of glFacadeRules) {
+  for (const [directory,suffix] of [['web','.ts'],['dist/web','.js'],['dist/web','.d.ts']]) {
+    const file='packages/engine/'+directory+'/'+stem+suffix;
+    const expected=(valueClause+(suffix==='.js'?'':typeClauses)).replace(/\s+/g,'');
+    if (sceneRead(file).replace(/\s+/g,'')!==expected) throw new Error('M14: exact WebGL2 forwarding/type erasure mismatch: '+file);
+  }
+}
+const glModuleNames = ['webgl2','webgl2Scene3d','WebGL2Host','webgl2Types','webgl2Native','sharedWebGL2Options','sharedWebGL2Arena','sharedWebGL2Shaders','sharedWebGL2Scene'];
+const glPrivateNames = ['createSharedSceneWebGL2HostInternal','SharedGLHost','GLNativeKind','GLNativeOwner','GLNativeSession','glFailure','isGLFailure',
+  'SharedWebGL2Configuration','admitSharedWebGL2Options','SharedWebGL2ArenaStrides','SharedWebGL2ArenaPlan','SharedWebGL2ArenaOwner','qualifySharedWebGL2Alignment','planSharedWebGL2Arenas','checkSharedWebGL2ArenaCapacity',
+  'sharedWebGL2VertexSource','sharedWebGL2FragmentSource','sharedWebGL2ResolveVertexSource','sharedWebGL2ResolveFragmentSource','sharedWebGL2BlendFactors',
+  'SharedGLScenePreparationReason','SharedGLScenePreparationError','SharedGLSceneAdmission','SharedGLSceneDraw','PreparedSharedGLScene','admitSharedGLScene','prepareSharedGLScene','SHARED_GL_SCENE_LAYOUT','SHARED_GL_SCENE_VERTEX','SHARED_GL_SCENE_FRAGMENT'];
+const glOtherEntryFiles = [
+  ...Object.entries(assetGroupSourceEntries).map(([name,source])=>[name,source]),
+  ['engine/layout','packages/engine/src/layout.ts'],['engine/web/input','packages/engine/web/input.ts'],['engine/web/image','packages/engine/web/image.ts'],
+  ['engine/scene3d','packages/engine/rendering/scene3d.ts'],['engine/webgpu/scene3d','packages/engine/web/scene3d.ts'],
+  ['project/spine','packages/project/src/spine/index.ts'],['project/atlas','packages/project/src/atlas/index.ts'],
+];
+for (const [entry,source] of glOtherEntryFiles) {
+  const emitted=source.replace('/src/','/dist/').replace('/web/','/dist/web/').replace('/rendering/','/dist/rendering/').replace(/\.ts$/,'');
+  const text=[sceneRead(source),sceneRead(emitted+'.js'),sceneRead(emitted+'.d.ts')].join('\n');
+  for (const name of [...glValues,...glTypes,...glSceneValues,...glSceneTypes,...glPrivateNames,...glModuleNames])
+    if (new RegExp('\\b'+name+'\\b').test(text)) throw new Error('M14: explicit-only WebGL2 name leaked: '+entry+'/'+name);
+}
+for (const [entry,values,stem] of [['webgl2',glFacade,'packages/engine/dist/web/webgl2'],['webgl2/scene3d',glSceneFacade,'packages/engine/dist/web/webgl2Scene3d']]) {
+  const text=sceneRead(stem+'.d.ts')+'\n'+sceneRead(stem+'.js');
+  for (const name of [...sceneForbiddenNames,...privateSharedModules])
+    if (name in values || new RegExp('\\b'+name+'\\b').test(text)) throw new Error('M14: retained private authority leaked: '+entry+'/'+name);
+}
+// Literal lists are reviewed policy, not a graph learned from product files.
+// Keep duplicate clauses: source type edges and runtime edges have separate counts.
+const glEdges = (statics,dynamics=[]) => [...statics.map(target=>['static',target]),...dynamics.map(target=>['dynamic',target])]
+  .sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
+const m14WebGL2LiteralClosure = {
+  'packages/engine/web/webgl2.ts': glEdges(['./WebGL2Host.js','./sharedWebGL2Options.js','./webgl2Types.js']),
+  'packages/engine/dist/web/webgl2.js': glEdges(['./WebGL2Host.js']),
+  'packages/engine/dist/web/webgl2.d.ts': glEdges(['./WebGL2Host.js','./sharedWebGL2Options.js','./webgl2Types.js']),
+  'packages/engine/web/webgl2Scene3d.ts': glEdges(['./WebGL2Host.js','./webgl2Types.js','./sharedWebGL2Options.js']),
+  'packages/engine/dist/web/webgl2Scene3d.js': glEdges(['./WebGL2Host.js']),
+  'packages/engine/dist/web/webgl2Scene3d.d.ts': glEdges(['./WebGL2Host.js','./webgl2Types.js','./sharedWebGL2Options.js']),
+  'packages/engine/web/WebGL2Host.ts': glEdges([
+    '@egret/contracts','@egret/contracts','#egret-textured-frame-state','./sharedWebGL2Options.js','./sharedWebGL2Options.js','./webgl2Types.js','../rendering/sceneFrame3D.js','./sharedWebGL2Scene.js','./webgl2Types.js',
+    '../rendering/prepareSharedDraws2D.js','../rendering/prepareRectangles2D.js','../rendering/packSharedDraws2D.js','../rendering/preparedBatches2D.js','../rendering/preparedSharedBatches2D.js','../rendering/preparedSharedBatches2D.js','../rendering/sharedColor2D.js','../rendering/ownedPreparationFailure2D.js',
+    './sharedSubmissionStorage2D.js','./sharedSubmissionStorage2D.js','./sharedWebGL2Arena.js','./sharedWebGL2Arena.js','./sharedRetentionLedger.js','./sharedRetentionLedger.js','./webgl2Native.js','./webgl2Native.js','./sharedWebGL2Shaders.js',
+  ],['./sharedWebGL2Scene.js','./sharedWebGL2Scene.js']),
+  'packages/engine/dist/web/WebGL2Host.js': glEdges([
+    '@egret/contracts','#egret-textured-frame-state','./sharedWebGL2Options.js','../rendering/prepareSharedDraws2D.js','../rendering/prepareRectangles2D.js','../rendering/packSharedDraws2D.js','../rendering/preparedBatches2D.js','../rendering/preparedSharedBatches2D.js','../rendering/sharedColor2D.js','../rendering/ownedPreparationFailure2D.js',
+    './sharedSubmissionStorage2D.js','./sharedWebGL2Arena.js','./sharedRetentionLedger.js','./webgl2Native.js','./sharedWebGL2Shaders.js',
+  ],['./sharedWebGL2Scene.js']),
+  'packages/engine/dist/web/WebGL2Host.d.ts': glEdges(['./sharedWebGL2Options.js','./webgl2Types.js','./webgl2Types.js']),
+  'packages/engine/web/webgl2Types.ts': glEdges(['@egret/contracts','../rendering/sceneFrame3D.js']),
+  'packages/engine/dist/web/webgl2Types.js': glEdges([]),
+  'packages/engine/dist/web/webgl2Types.d.ts': glEdges(['@egret/contracts','../rendering/sceneFrame3D.js']),
+  'packages/engine/web/webgl2Native.ts': glEdges(['@egret/runtime','./webgl2Types.js']),
+  'packages/engine/dist/web/webgl2Native.js': glEdges(['@egret/runtime']),
+  'packages/engine/dist/web/webgl2Native.d.ts': glEdges(['@egret/runtime','./webgl2Types.js']),
+  'packages/engine/web/sharedWebGL2Options.ts': glEdges(['../rendering/prepareSharedDraws2D.js','./sharedSubmissionStorage2D.js','./webgl2Types.js']),
+  'packages/engine/dist/web/sharedWebGL2Options.js': glEdges([]),
+  'packages/engine/dist/web/sharedWebGL2Options.d.ts': glEdges(['../rendering/prepareSharedDraws2D.js','./sharedSubmissionStorage2D.js','./webgl2Types.js']),
+  'packages/engine/web/sharedWebGL2Arena.ts': glEdges(['../rendering/packSharedDraws2D.js','../rendering/ownedPreparationFailure2D.js','./sharedSubmissionStorage2D.js']),
+  'packages/engine/dist/web/sharedWebGL2Arena.js': glEdges(['../rendering/ownedPreparationFailure2D.js','./sharedSubmissionStorage2D.js']),
+  'packages/engine/dist/web/sharedWebGL2Arena.d.ts': glEdges(['../rendering/packSharedDraws2D.js']),
+  'packages/engine/web/sharedWebGL2Shaders.ts': glEdges(['@egret/contracts']),
+  'packages/engine/dist/web/sharedWebGL2Shaders.js': glEdges([]),
+  'packages/engine/dist/web/sharedWebGL2Shaders.d.ts': glEdges(['@egret/contracts']),
+  'packages/engine/web/sharedWebGL2Scene.ts': glEdges(['../rendering/sceneFrame3D.js','../rendering/sceneFrame3D.js','../rendering/packSharedMeshGeometry3D.js','../rendering/packSharedMeshGeometry3D.js','../rendering/ownedPreparationFailure2D.js']),
+  'packages/engine/dist/web/sharedWebGL2Scene.js': glEdges(['../rendering/sceneFrame3D.js','../rendering/packSharedMeshGeometry3D.js','../rendering/ownedPreparationFailure2D.js']),
+  'packages/engine/dist/web/sharedWebGL2Scene.d.ts': glEdges(['../rendering/sceneFrame3D.js','../rendering/sceneFrame3D.js','../rendering/packSharedMeshGeometry3D.js']),
+};
+const glTargets = new Set(glModuleNames.flatMap(name=>['web/'+name+'.js','dist/web/'+name+'.js']));
+for (const directory of ['src','rendering','web','dist']) for (const file of files(path.join(root,'packages/engine',directory))) {
+  if (!/\.(?:ts|js)$/.test(file)) continue;
+  const relative=path.relative(root,file).split(path.sep).join('/'),code=sceneRead(relative);
+  for (const [,imported] of sceneGraphEdges(code)) {
+    if (!imported.startsWith('.')) continue;
+    const target=path.relative(path.join(root,'packages/engine'),path.resolve(path.dirname(file),imported)).split(path.sep).join('/');
+    if (glTargets.has(target) && !Object.hasOwn(m14WebGL2LiteralClosure,relative))
+      throw new Error('M14: WebGL2 module imported outside exact optional closure: '+relative);
+  }
+}
+// One erased typeof import plus one guarded runtime import in source; only the
+// guarded runtime import remains after emission. No caller-provided scene plugin.
+for (const file of ['packages/engine/web/WebGL2Host.ts','packages/engine/dist/web/WebGL2Host.js']) {
+  const compact=sceneRead(file).replace(/\s+/g,'');
+  const guarded="if(this.sceneMode){this.sceneFunctions=awaitimport('./sharedWebGL2Scene.js');this.generationGate(token);}";
+  if (compact.split(guarded).length!==2) throw new Error('M14: scene module must remain in the fixed private mode guard: '+file);
+}
+const glNativeMethods = [
+  'getContextAttributes','getError','isContextLost','getParameter','getShaderPrecisionFormat',
+  'getFramebufferAttachmentParameter','checkFramebufferStatus','bindFramebuffer','bindBuffer',
+  'bufferData','bufferSubData','getBufferSubData','readPixels','shaderSource','attachShader',
+  'getShaderParameter','getProgramParameter','getShaderInfoLog','getProgramInfoLog',
+  'getUniformBlockIndex','getActiveUniformBlockParameter','getUniformIndices','getActiveUniforms',
+  'getUniformLocation','useProgram','clientWaitSync','activeTexture','bindTexture','bindRenderbuffer',
+  'bindVertexArray','bindSampler','bindBufferRange','enable','disable','colorMask','depthMask','depthFunc',
+  'clearDepth','clearColor','clear','viewport','scissor','depthRange','blendEquationSeparate','blendFuncSeparate',
+  'pixelStorei','texParameteri','texStorage2D','texSubImage2D','renderbufferStorage','framebufferTexture2D',
+  'framebufferRenderbuffer','drawBuffers','readBuffer','compileShader','linkProgram','detachShader',
+  'uniformBlockBinding','uniform1i','uniform1f','uniform2f','enableVertexAttribArray',
+  'disableVertexAttribArray','vertexAttribPointer','vertexAttribDivisor','drawArrays','drawElements','flush',
+];
+const glNativeKinds = ['Buffer','Texture','Renderbuffer','Framebuffer','Shader','Program','VertexArray','Sync'];
+for (const file of ['packages/engine/web/webgl2Native.ts','packages/engine/dist/web/webgl2Native.js']) {
+  const code=sceneRead(file),typed=file.endsWith('.ts');
+  for (const [name,expected] of [['METHODS',glNativeMethods],['KINDS',glNativeKinds]]) {
+    const rows=[...code.matchAll(new RegExp('\\bconst\\s+'+name+'(?:\\s*:\\s*readonly\\s+GLNativeKind\\[\\])?\\s*=\\s*\\[([^\\]]*)\\](?:\\s+as\\s+const)?\\s*;','g'))];
+    const literal=rows[0]?.[1],actual=literal===undefined?[]:[...literal.matchAll(/'([^']+)'/g)].map(match=>match[1]);
+    if (rows.length!==1 || literal.replace(/'[^']*'|\s|,/g,'') || JSON.stringify(actual)!==JSON.stringify(expected)
+        || (code.match(new RegExp('\\b'+name+'\\b','g'))??[]).length!==2)
+      throw new Error('M14: finite native method/kind list mismatch: '+file+'/'+name);
+  }
+  const capture = "for(const name of [...METHODS,...KINDS.flatMap(kind=>[kind==='Sync'?'fenceSync':'create'+kind,'delete'+kind])]){"+
+    (typed?"const candidate=(context as unknown as Record<string,unknown>)[name];":"const candidate=context[name];")+
+    "gate();if(typeof candidate!=='function')throw new TypeError(name);"+
+    (typed?"const call=candidate.bind(context) as (...args:unknown[])=>unknown;":"const call=candidate.bind(context);")+
+    "this.calls.set(name,call);Object.defineProperty(captured,name,{value:"+
+    (typed?"(...args:unknown[]):unknown=>":"(...args)=>")+
+    "{gate();const value=call(...args);gate();return value;}});}";
+  if (code.replace(/\s+/g,'').split(capture.replace(/\s+/g,'')).length!==2
+      || /\bReflect\b|\bObject\s*\.\s*(?:keys|values|entries|getOwnPropertyNames|getOwnPropertyDescriptors|getPrototypeOf)\s*\(|\bfor\s*\([^)]*\bin\b|\b(?:eval|Function)\s*\(/.test(code))
+    throw new Error('M14: finite native capture block mismatch: '+file);
+}
+// M14_WEBGL2_BOUNDARY_END
+
+
 const sceneLiteralClosure = {
   "packages/engine/rendering/sceneFrame3D.ts": [
     [
@@ -2882,7 +3038,15 @@ const m13SharedRenderingLiteralClosure = {
     ],
     [
       "static",
-      "./imageProjections2D.js"
+      "./sharedSubmissionStorage2D.js"
+    ],
+    [
+      "static",
+      "./sharedSubmissionStorage2D.js"
+    ],
+    [
+      "static",
+      "./sharedSubmissionStorage2D.js"
     ],
     [
       "static",
@@ -2900,7 +3064,11 @@ const m13SharedRenderingLiteralClosure = {
     ],
     [
       "static",
-      "../rendering/sharedColor2D.js"
+      "./sharedSubmissionStorage2D.js"
+    ],
+    [
+      "static",
+      "./sharedSubmissionStorage2D.js"
     ]
   ],
   "packages/engine/dist/web/sharedB1.d.ts": [
@@ -2972,7 +3140,48 @@ const m13SharedRenderingLiteralClosure = {
       "./webgpuLifetime.js"
     ]
   ],
-  "packages/engine/dist/web/webgpuRetentionPool.js": [],
+  "packages/engine/dist/web/webgpuRetentionPool.js": [["static", "./sharedRetentionLedger.js"]],
+  "packages/engine/web/sharedSubmissionStorage2D.ts": [
+    [
+      "static",
+      "../rendering/ownedPreparationFailure2D.js"
+    ],
+    [
+      "static",
+      "../rendering/prepareSharedDraws2D.js"
+    ],
+    [
+      "static",
+      "../rendering/sharedColor2D.js"
+    ],
+    [
+      "static",
+      "./imageProjections2D.js"
+    ]
+  ],
+  "packages/engine/dist/web/sharedSubmissionStorage2D.js": [
+    [
+      "static",
+      "../rendering/ownedPreparationFailure2D.js"
+    ],
+    [
+      "static",
+      "../rendering/sharedColor2D.js"
+    ]
+  ],
+  "packages/engine/dist/web/sharedSubmissionStorage2D.d.ts": [
+    [
+      "static",
+      "../rendering/prepareSharedDraws2D.js"
+    ],
+    [
+      "static",
+      "./imageProjections2D.js"
+    ]
+  ],
+  "packages/engine/web/sharedRetentionLedger.ts": [],
+  "packages/engine/dist/web/sharedRetentionLedger.js": [],
+  "packages/engine/dist/web/sharedRetentionLedger.d.ts": [],
   "packages/engine/dist/web/webgpuSharedMeshPass.d.ts": [],
   "packages/engine/dist/web/webgpuSharedMeshPass.js": [],
   "packages/engine/dist/web/webgpuSharedPass.d.ts": [
@@ -3303,11 +3512,23 @@ const m13SharedRenderingLiteralClosure = {
     ],
     [
       "static",
-      "../rendering/sharedColor2D.js"
+      "./imageProjections2D.js"
     ],
     [
       "static",
-      "./imageProjections2D.js"
+      "./sharedSubmissionStorage2D.js"
+    ],
+    [
+      "static",
+      "./sharedSubmissionStorage2D.js"
+    ],
+    [
+      "static",
+      "./sharedSubmissionStorage2D.js"
+    ],
+    [
+      "static",
+      "./sharedSubmissionStorage2D.js"
     ],
     [
       "static",
@@ -3361,10 +3582,8 @@ const m13SharedRenderingLiteralClosure = {
     ]
   ],
   "packages/engine/web/webgpuRetentionPool.ts": [
-    [
-      "static",
-      "./webgpuLifetime.js"
-    ]
+    ["static", "./sharedRetentionLedger.js"],
+    ["static", "./webgpuLifetime.js"]
   ],
   "packages/engine/web/webgpuSharedMeshPass.ts": [],
   "packages/engine/web/webgpuSharedPass.ts": [
@@ -3511,7 +3730,7 @@ function sceneGraphEdges(code) {
     .map(match=>[/^import\s*\(/.test(match[0])?'dynamic':'static',match[1]])
     .sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
 }
-for (const [file,edges] of Object.entries({...sceneLiteralClosure,...m13SharedRenderingLiteralClosure})) {
+for (const [file,edges] of Object.entries({...sceneLiteralClosure,...m13SharedRenderingLiteralClosure,...m14WebGL2LiteralClosure})) {
   const code=sceneRead(file);
   if (JSON.stringify(sceneGraphEdges(code))!==JSON.stringify(edges)) throw new Error('S3D1: scene entry imported outside approved closure: '+file);
   // Non-literal dynamic imports cannot hide an additional dependency edge.

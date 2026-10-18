@@ -36,6 +36,9 @@ const registrations=[
 
 // Only these complete reviewed source revisions permit post-preamble JSON reads.
 const m13SourceOwners = [{"path":"tools/spritesheet-boundary.mjs","bytes":149677,"sha256":"5f4885f894b2b6d304a1f6c5fb685a86d28fbb510eb0335c615e71e2f65a4bae"},{"path":"tools/browser-png-boundary.mjs","bytes":151624,"sha256":"3a3db5f44bd79bc9f2ba11b393facd85533b52e93dbd17213076b8d6754d7ad4"},{"path":"tools/atlas-import-boundary.mjs","bytes":54233,"sha256":"6646d8fbf1a9baf248d4122195e5f3023c7c385470d876e106942ef828d2558b"},{"path":"tools/bitmap-resource-slot-boundary.mjs","bytes":29569,"sha256":"5bd40db8add4af6a15b0c5ce7415a77b663620984d074104c0849b6595390c6a"},{"path":"tools/bitmap-binding-ticket-boundary.mjs","bytes":33706,"sha256":"65b356be737202f018b2c5cb1813538762e07af19c950b782fbbde782dbaa556"},{"path":"tools/sequence-playback-boundary.mjs","bytes":35428,"sha256":"898af8561932a01f5ba9b6de243feb6340557342e8d0a4afa171530e2ee531cd"}];
+// Exact M1.4 source revisions preserve the previous sealed owners above.
+const m14SourceOwners = [{"path":"tools/spritesheet-boundary.mjs","bytes":161018,"sha256":"ef34a3adf751069637682833caddd72efb7f1940a2d23e5cf2f1652eef5ecc75"},{"path":"tools/sequence-playback-boundary.mjs","bytes":36688,"sha256":"3a5cbef25992645aae0d3060a4680b1a496b0bb48a5ab10e671d0739932838d5"},{"path":"tools/browser-png-boundary.mjs","bytes":163335,"sha256":"ed175200cc2957f671b83b7082e98e6598018a9e636050ac9d305c8a3e8f0569"},{"path":"tools/bitmap-resource-slot-boundary.mjs","bytes":30824,"sha256":"ceedb70bb26730fd8bc44990d169f7ea5f25b8362daf4557ee853e46e592a277"},{"path":"tools/bitmap-binding-ticket-boundary.mjs","bytes":34961,"sha256":"f57422e49f5197cd5c5ef66c76bc8cde2c6a36571b8bae5de9f89c24832591ab"},{"path":"tools/atlas-import-boundary.mjs","bytes":65640,"sha256":"d3994b788efa4e9eafeeed4a37f6ed4935af2946e7efc42ed35b9d9e4d5c6239"},{"path":"tools/browser-png-boundary.mjs","bytes":163653,"sha256":"0fa3391e5831ab6c2c9889622ffd51e36b678d2aa93822ff69b51b30679b4e33"}];
+const m14GraphRegistrations = [["tools/spritesheet-boundary.mjs","m14WebGL2GraphSuccessor"],["tools/browser-png-boundary.mjs","m14WebGL2GraphSuccessor"],["tools/atlas-import-boundary.mjs","m14WebGL2GraphSuccessor"]];
 const m13PairRegistrations = [
  ['tools/sequence-playback-boundary.mjs','m13SequenceInterfaceSuccessor','raw-pair-observation-only'],
  ['tools/bitmap-resource-slot-boundary.mjs','m13InterfaceProjectedSuccessor','transformed-pair-raw-observation-only'],
@@ -165,9 +168,10 @@ export function prepareBaselineReview(root){
   const text=ownerText(owner);
   try{return declaration(text,binding);}catch(cause){
    const allowed=registrations.some(row=>row[0]===owner&&row[1]===binding&&binding.startsWith('m13'))
-    || m13PairRegistrations.some(row=>row[0]===owner&&row[1]===binding);
-   const reviewed=m13SourceOwners.find(row=>row.path===owner);
-   if(!allowed||!reviewed||!samePin(read.pin(owner),reviewed))throw cause;
+    || m13PairRegistrations.some(row=>row[0]===owner&&row[1]===binding)
+    || m14GraphRegistrations.some(row=>row[0]===owner&&row[1]===binding);
+   const reviewed=[...m13SourceOwners,...m14SourceOwners].filter(row=>row.path===owner);
+   if(!allowed||!reviewed.some(row=>samePin(read.pin(owner),row)))throw cause;
    // Raw source authority precedes extraction; no caller-selected parser fallback.
    const lines=text.split(/\r?\n/).filter(line=>line.startsWith('const '+binding+' = '));
    if(lines.length!==1||!lines[0].endsWith(';'))throw Error('Missing or ambiguous reviewed M1.3 declaration');
@@ -228,6 +232,12 @@ export function prepareBaselineReview(root){
   });
   successorPairs.push({owner,binding,comparison,rows});
  }
+ // Historical owners without this later declaration remain readable as history.
+ // Current post-preamble extraction still requires one exact reviewed raw owner.
+ for(const [owner,binding]of m14GraphRegistrations){
+  if(!ownerText(owner).includes('const '+binding))continue;
+  add(owner,binding,registeredDeclaration(owner,binding));
+ }
  const inventory=codeInventory(root);for(const file of inventory)read.pin(file);
  const graphCoverage=[
   ['tools/spritesheet-boundary.mjs','graphPins','ss1AtlasGraphSuccessor','tools/spritesheet-boundary.mjs'],
@@ -237,11 +247,13 @@ export function prepareBaselineReview(root){
   const warmSuccessor={owner:warmOwner,binding:'m11WarmSubmissionGraphSuccessor'};
   const incrementalSuccessor={owner:warmOwner,binding:'m12IncrementalRenderingGraphSuccessor'};
   const sharedSuccessor={owner:warmOwner,binding:'m13SharedRenderingGraphSuccessor'};
+  const webglSuccessor={owner:warmOwner,binding:'m14WebGL2GraphSuccessor'};
   const declared=new Set(declarations.filter(x=>x.owner===owner&&(x.binding===baseBinding||x.binding===successorBinding)
    || x.owner===warmSuccessor.owner&&x.binding===warmSuccessor.binding
    || x.owner===incrementalSuccessor.owner&&x.binding===incrementalSuccessor.binding
-   || x.owner===sharedSuccessor.owner&&x.binding===sharedSuccessor.binding).flatMap(x=>x.rows.map(row=>row.expected.path)));
-  return {owner,baseBinding,successorBinding,warmSuccessor,incrementalSuccessor,sharedSuccessor,unlisted:inventory.filter(file=>!declared.has(file)).map(file=>read.pin(file))};
+   || x.owner===sharedSuccessor.owner&&x.binding===sharedSuccessor.binding
+   || x.owner===webglSuccessor.owner&&x.binding===webglSuccessor.binding).flatMap(x=>x.rows.map(row=>row.expected.path)));
+  return {owner,baseBinding,successorBinding,warmSuccessor,incrementalSuccessor,sharedSuccessor,webglSuccessor,unlisted:inventory.filter(file=>!declared.has(file)).map(file=>read.pin(file))};
  });
  // Many declarations can reference one path; retain every selector and pair arm.
  const byPath=new Map();

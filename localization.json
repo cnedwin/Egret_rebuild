@@ -323,8 +323,8 @@
       "zh": "AGENTS.zh-CN.md",
       "en": "AGENTS.md",
       "kind": "public_reading",
-      "enSha256": "ea8e8ff98db4621d3240288c217558f2d3b829309d5b671447ebd23abd0da6d0",
-      "zhSha256": "36753d2bf0121110abbf74c93b592b83b2ae468064ba27a971f65de6601ac123"
+      "enSha256": "033a638bcd7ce7e1e9720bf64551ba5feaefba4c46733421511676cdf5b157c3",
+      "zhSha256": "a248b2f8a5201be4f4261666e35b9cddbc3b0aadec23762ddfa187b1b6f88a5a"
     },
     {
       "zh": "CONTRIBUTING.zh-CN.md",
@@ -1023,8 +1023,8 @@
       "zh": "knowledge-base/Cns/README.md",
       "en": "knowledge-base/en/README.md",
       "kind": "public_reading",
-      "enSha256": "82e285238c2b4f5ba55e5398070456b5c8b3177938a95248bfdb71c144cf9047",
-      "zhSha256": "43e3461cfcb97432883b228703f0d29e48f6242af1f7b0c5fd35a42245516268"
+      "enSha256": "02822dbc295040d41d39176c5130078d86c422ed70a501afed236605430c317c",
+      "zhSha256": "7e170e30431214971948f4600f61cc8cb1f4e8ee9598c426e4301d84bb91c6f7"
     },
     {
       "zh": "knowledge-base/Cns/templates/ADR决策记录.md",
@@ -1107,8 +1107,8 @@
       "zh": "README.zh-CN.md",
       "en": "README.md",
       "kind": "public_reading",
-      "enSha256": "9345e6c2e08e4453608aad5eb6778bb73cda929e01414d4693a1b380b1398859",
-      "zhSha256": "0142c44ab81eb4e802e53f69e22bf0d601f86d2ca9dcf3f1f7e0eecad6ec6c00"
+      "enSha256": "b67380f74fd7e7db877a9c2b497aecb4cac49aa786ec8688b728d35097587dd8",
+      "zhSha256": "04033dcb935a154b9b46b5ec85ce295c7cb6be1c43b85254ede56efa84b343f2"
     },
     {
       "zh": "knowledge-base/Cns/docs/显式时间序列播放器契约.md",
@@ -1879,8 +1879,8 @@
       "en": "knowledge-base/en/docs/m1-rendering-resource-plan.md",
       "zh": "knowledge-base/Cns/docs/m1-rendering-resource-plan.md",
       "kind": "public_reading",
-      "enSha256": "4b588d76e151407ae76541333979b34181ca4e015aad78faabb2b95bebe5079f",
-      "zhSha256": "394a2db218c29f87863c9631f3443f7d5743935ccbba161985cb384f17484819"
+      "enSha256": "c908aecb5ff00a1683d940e62803bd54660ec8d8170af616d00cd902e5d76728",
+      "zhSha256": "f7bfca9c505c73a0d3e43c31a44d6416af1d6f81d87f34216ffd0087e3d6f1c1"
     },
     {
       "en": "knowledge-base/en/docs/warm-submission-contract.md",
@@ -1921,8 +1921,22 @@
       "en": "knowledge-base/en/docs/shared-rendering-evidence.md",
       "zh": "knowledge-base/Cns/docs/shared-rendering-evidence.md",
       "kind": "public_reading",
-      "enSha256": "ff2760a9db684ddd2ed90b04a45f3b3be8321e3483da2b63fc856e34b6d3d20e",
-      "zhSha256": "f9116b19cfec3672362114ac305d4cfed5eb38b64e157d258ff6709a1cf0663b"
+      "enSha256": "a1aa67a76906fa086a311e0d0a82ad83454f383b6f6598c63184dc202da9237b",
+      "zhSha256": "d6d57ec07921d94c8264abe0fe81303ffb2a2fa69b9ed246abe86a548a3aa2fb"
+    },
+    {
+      "en": "knowledge-base/en/docs/webgl2-executor-contract.md",
+      "zh": "knowledge-base/Cns/docs/webgl2-executor-contract.md",
+      "kind": "public_reading",
+      "enSha256": "3dd22296542c987c0372aa56b6e0af1c54a8e04045c7d6b0fc1f1fda8248be57",
+      "zhSha256": "f34258093be34d5b5ef0fe8bdddc96abf59e7abd9595d5da4016ad1e52af1a80"
+    },
+    {
+      "en": "knowledge-base/en/docs/webgl2-executor-evidence.md",
+      "zh": "knowledge-base/Cns/docs/webgl2-executor-evidence.md",
+      "kind": "public_reading",
+      "enSha256": "0a7871b0e68da5ec9eee7f60a230b43aa6555c0358c4ddcc7fff08681606e556",
+      "zhSha256": "462a98e20870fc5c22ce986792471a37c36ef41c66df3854821b2503af7dad7e"
     }
   ],
   "registries": [
@@ -2330,7 +2344,7 @@
     },
     {
       "path": "tools/verify-webgpu-b1.mjs",
-      "sha256": "510c469e86f0f4e09de0ad16febd67cd8862bb99f8796113bd4ce0bc12cc5cc8"
+      "sha256": "a69c376cd69d98e79c9c2b3c4e0cff3fe907cac53d6e21bccbc10bbcc5d77570"
     },
     {
       "path": "tools/b1-webgpu/fixture.mjs",
@@ -2664,7 +2678,7 @@
     },
     {
       "path": "tests/webgpu-mesh-host.test.mjs",
-      "sha256": "af6ec9791f5223d732805e52b4ef106398b05d409decddbe1ab89e204f7efcd3"
+      "sha256": "49b1a10ed38e7f58fd14ff3308b39f01d37d5054fcda2fa98955b1dd72b76130"
     },
     {
       "path": "packages/project/src/spine/index.ts",
@@ -2748,11 +2762,11 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "sha256": "31f995b558e1d1b770359493dcd6123b8c7d9238702e1f5fbf5f58292ec6dbb6"
+      "sha256": "231433019c83e8e1ce93fb08d1919da791b53db84183e44a8c3389e81565104a"
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "sha256": "92df8cc0972a6a483caee30f985cf115bdb15508126e62d1ad9fb021dd3438c7"
+      "sha256": "dabac804a4e7c1ad8bc41342c27067287b6aa98f7af63c0448103c5e6c00dca6"
     },
     {
       "path": "tests/byte-writer-boundaries.test.mjs",
@@ -2760,7 +2774,7 @@
     },
     {
       "path": "tools/check-types.mjs",
-      "sha256": "64d5996ebf925b8b2eda7e04d20e939e399d50953da0023a48ffd02223985093"
+      "sha256": "c85407cbdc9c6222cbf240de21e82afd37725e6c8a68bed9ca0d098d7b6dc343"
     },
     {
       "path": "packages/runtime/src/NineSliceGeometry2D.ts",
@@ -2864,7 +2878,7 @@
     },
     {
       "path": "tools/sequence-playback-types.mjs",
-      "sha256": "42a0bad83c5f68f74d2b1e26bd9c5183be9e94e1cb4c36a01a4b60c373e4a6ea"
+      "sha256": "904cc980cc1ae6bc8542ea37cf5f876020c8ba5576fd6f3066536e35de33c6b6"
     },
     {
       "path": "tools/check-repository-hygiene.mjs",
@@ -2892,11 +2906,11 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "sha256": "3a3db5f44bd79bc9f2ba11b393facd85533b52e93dbd17213076b8d6754d7ad4"
+      "sha256": "0fa3391e5831ab6c2c9889622ffd51e36b678d2aa93822ff69b51b30679b4e33"
     },
     {
       "path": "tools/browser-png-types.mjs",
-      "sha256": "aa63d9f1c0b2b2f8b3098c6962b1d55844bee708515e72efcc1e3cbfb1190719"
+      "sha256": "3569e8936fa3ab850072540dbc8acf4b4c57533df7e82b45e81f29ffc63dad9e"
     },
     {
       "path": "tools/browser-png/native-observer.mjs",
@@ -2924,7 +2938,7 @@
     },
     {
       "path": "tests/project-boundaries.test.mjs",
-      "sha256": "2e5b958983b79ce61cdfc4a1b9e003b1717db947a4119abeb69641438c6a847b"
+      "sha256": "4a78a71180ebc5c9c45efcfc3858cd6980a4e9a47025562b4482fc9a13872d59"
     },
     {
       "path": "knowledge-base/experiments/spine-f2-core/src/types.ts",
@@ -3028,7 +3042,7 @@
     },
     {
       "path": "tools/nine-slice-bitmap-types.mjs",
-      "sha256": "c9429686409ad41513640bf6bc1a5a7a8e834463739998d694fe76ad7baf06cb"
+      "sha256": "2c6dce51e524035def92f3bea9e8dab4c5107ca75d7d4a9441e85fb9520a8020"
     },
     {
       "path": "tools/nine-slice-bitmap-native/fixture.mjs",
@@ -3040,11 +3054,11 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "sha256": "5f4885f894b2b6d304a1f6c5fb685a86d28fbb510eb0335c615e71e2f65a4bae"
+      "sha256": "ef34a3adf751069637682833caddd72efb7f1940a2d23e5cf2f1652eef5ecc75"
     },
     {
       "path": "tools/sequence-playback-boundary.mjs",
-      "sha256": "898af8561932a01f5ba9b6de243feb6340557342e8d0a4afa171530e2ee531cd"
+      "sha256": "3a5cbef25992645aae0d3060a4680b1a496b0bb48a5ab10e671d0739932838d5"
     },
     {
       "path": "tests/display-container-remove-children-api.test.mjs",
@@ -3056,7 +3070,7 @@
     },
     {
       "path": "tools/display-container-remove-children-types.mjs",
-      "sha256": "0114c56923843c8d2456bfd6ae7f9988d739f51c07ea4ced346e8bc1ec03064c"
+      "sha256": "df1dd4a369ac4d19f892aed8d684e5097f86935f470e6f02deed48c5c3f20159"
     },
     {
       "path": "tools/display-container-remove-children-native/fixture.mjs",
@@ -3084,7 +3098,7 @@
     },
     {
       "path": "tools/display-container-child-index-types.mjs",
-      "sha256": "23dcb3eccb938b0f0b2847715ba3a989bef86d05b40b4d35fda7c564f5d58fb1"
+      "sha256": "eea91a2a74aaf1a7d210a923106afd305e0028bd29a24482f9669a368d2c689f"
     },
     {
       "path": "tools/display-container-child-index-native/fixture.mjs",
@@ -3128,11 +3142,11 @@
     },
     {
       "path": "tools/display-anchor-offsets-types.mjs",
-      "sha256": "fd4f28d45b4324473e5887ec5236811cd00d6bd98498192c44c88252515f562c"
+      "sha256": "04fcc94308c627433412348d9088fb98d032808d9029ef5e8fc154cf28868ae4"
     },
     {
       "path": "tools/display-container-add-child-at-types.mjs",
-      "sha256": "4c95f93cae5b8bbc0336b2a8d9dcd50dbbe1789b08aa8b80cd5154043d3524b1"
+      "sha256": "64d67885a2c91e19beda887da12a44d09938d71afceff3c001a6cf51c4523563"
     },
     {
       "path": "tools/display-anchor-offsets-native/fixture.mjs",
@@ -3184,7 +3198,7 @@
     },
     {
       "path": "tools/bitmap-button-types.mjs",
-      "sha256": "a3b39cd4b01a07925acb380561ca7234cf7a8d954b83a75c5b0a1a3821eaf9aa"
+      "sha256": "74c55fbc100d49ed03278b2d8eb85d4833379a8219c932fce5325ec9cd448fe1"
     },
     {
       "path": "packages/engine/src/layout.ts",
@@ -3196,7 +3210,7 @@
     },
     {
       "path": "tools/linear-layout-types.mjs",
-      "sha256": "5714975b76d8a9d5173f0e01bf9b0008485ecbdb1eaf7028cad2fea7f1ae484e"
+      "sha256": "1d9a07307a4725eb8234cbb062f23474c2c4ce28ef0a43706a041cecbe246085"
     },
     {
       "path": "examples/linear-layout/main.mjs",
@@ -3212,11 +3226,11 @@
     },
     {
       "path": "tools/bitmap-resource-slot-types.mjs",
-      "sha256": "cfce369d4a6eb4644305f47ae1ae4375d67f22173581a69bfd0fe1974fd1c5c9"
+      "sha256": "2f1c767bc1701c5bcf087b7eb48857006334ffc36c205a82cf81d9fa2b857315"
     },
     {
       "path": "tools/bitmap-resource-slot-boundary.mjs",
-      "sha256": "5bd40db8add4af6a15b0c5ce7415a77b663620984d074104c0849b6595390c6a"
+      "sha256": "ceedb70bb26730fd8bc44990d169f7ea5f25b8362daf4557ee853e46e592a277"
     },
     {
       "path": "tools/verify-bitmap-resource-slot.mjs",
@@ -3352,11 +3366,11 @@
     },
     {
       "path": "tools/bitmap-binding-ticket-boundary.mjs",
-      "sha256": "65b356be737202f018b2c5cb1813538762e07af19c950b782fbbde782dbaa556"
+      "sha256": "f57422e49f5197cd5c5ef66c76bc8cde2c6a36571b8bae5de9f89c24832591ab"
     },
     {
       "path": "tools/bitmap-binding-ticket-types.mjs",
-      "sha256": "cca972eaedd8ad923b0c740dcd79426bdf9377f16d1d5276f561b617463a89c9"
+      "sha256": "1e80a8a04ae0b35dd1084762172aed96e966fe3a3e9e47a86da383cd853bfb32"
     },
     {
       "path": "tools/prepared-resource-groups/native-fixture.mjs",
@@ -3440,7 +3454,7 @@
     },
     {
       "path": "tools/atlas-frame-types.mjs",
-      "sha256": "41558243e07ef344833bc046ccbb25652486413253c5b37f7e711035f3d466ab"
+      "sha256": "002227332c279a289cfff8048ca8081beabb802126b42b5df3bb6fbec0ec1707"
     },
     {
       "path": "tools/atlas-frame/author-assets.mjs",
@@ -3512,7 +3526,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "85700c582b1d2273aefdc500b3212e201bcc592fde6742414ca4ec30c9d2d1d2"
+      "sha256": "b9c0b22746d2a57a514a9f20a248218e0faf09fbe55db7d9290cf3e3bf393861"
     },
     {
       "path": "tools/browser-resources.mjs",
@@ -3540,7 +3554,7 @@
     },
     {
       "path": "tools/prepare-check-maintenance.mjs",
-      "sha256": "e39607b0f274805367a847691e9b2e985a5e138189e0baa9d13ab463c76bf34c"
+      "sha256": "abe3eb62d000baddd74c5204d3e0df063cfbbbb28a23d65b44ea986c7c418e8c"
     },
     {
       "path": "tools/prepare-snapshot-maintenance.mjs",
@@ -3548,7 +3562,7 @@
     },
     {
       "path": "tools/prepare-compiler-maintenance.mjs",
-      "sha256": "d46ad8c6bfefd958c4d14c89c27a17b11ec7563d50262a52d0cafc8b9b92c4d8"
+      "sha256": "4c6bc095c0df88741fa2e8d3cd3d2d1e7c573cf34f89e55abeba71a736db25db"
     },
     {
       "path": "packages/engine/web/webgpuBindingCache.ts",
@@ -3620,7 +3634,7 @@
     },
     {
       "path": "packages/engine/web/prepareSharedSubmission2D.ts",
-      "sha256": "038f73a7c15f23e04edbb747d20f4c7481181362fe0eb3c70d9adc25acb87fbf"
+      "sha256": "c8f233f4214c597fe7554ef98b09c9bb88c09d1f81e792e59313987167f3f45e"
     },
     {
       "path": "packages/engine/web/sharedB1.ts",
@@ -3632,7 +3646,7 @@
     },
     {
       "path": "packages/engine/web/webgpuRetentionPool.ts",
-      "sha256": "81dca1718924ec872ef5fa9d19b068ac575dee1a5285e56650f583d18d2ca05b"
+      "sha256": "d8451fd234dc92b41142d7c003fc41b9c1781bcae9271ac07b6e7f8dc0b45e1f"
     },
     {
       "path": "packages/engine/web/webgpuSharedMeshPass.ts",
@@ -3661,6 +3675,50 @@
     {
       "path": "tools/spritesheet/collector.mjs",
       "sha256": "329033ca057349c90847ff2e75f805e3f3fd03f76d81103efd89e661281326b0"
+    },
+    {
+      "path": "packages/engine/web/WebGL2Host.ts",
+      "sha256": "91ec2fd22e4c7f357c0ddbf19299a5f9d7c43b853b8128c94cd9ee1d4ee7b966"
+    },
+    {
+      "path": "packages/engine/web/sharedRetentionLedger.ts",
+      "sha256": "92f72b9e9229015b06cd0ae1b0e7a5ae59ab91e8e7770a0909155c0a82171d3d"
+    },
+    {
+      "path": "packages/engine/web/sharedSubmissionStorage2D.ts",
+      "sha256": "fd2a435b888b46950303cc2e1fa4df091c83aaaa63ccf073dbd45a811a0a3f4a"
+    },
+    {
+      "path": "packages/engine/web/sharedWebGL2Arena.ts",
+      "sha256": "dc5af7f50245247524378f47fc72050874bcd768a2dc3793169c677ec21169b4"
+    },
+    {
+      "path": "packages/engine/web/sharedWebGL2Options.ts",
+      "sha256": "4c625fe8cb3fb31e4a4f0c7a28d78ec250fc85ae721d483534484837120846a5"
+    },
+    {
+      "path": "packages/engine/web/sharedWebGL2Scene.ts",
+      "sha256": "f1876aa0a6b3a39585c11a536779f8ae3ecdbcb17125db0ef3a9e59fc4664af4"
+    },
+    {
+      "path": "packages/engine/web/sharedWebGL2Shaders.ts",
+      "sha256": "91427c456aadb24882edfaf663d77bb85b9e121a8d14cb2be87b9bd9e6f2d176"
+    },
+    {
+      "path": "packages/engine/web/webgl2.ts",
+      "sha256": "6e0712b110de5525a569283719926ce845c2b2303581442e53f74ace174f8ced"
+    },
+    {
+      "path": "packages/engine/web/webgl2Native.ts",
+      "sha256": "1d145a22b4e4c9ad7162c51c5227eba442a76fc50b2e2c0c9c8cf3bab1ebbb53"
+    },
+    {
+      "path": "packages/engine/web/webgl2Scene3d.ts",
+      "sha256": "5778ae48acac3236112e7ccc767660a5cd7cfcc4c751347ac92340b855bb929f"
+    },
+    {
+      "path": "packages/engine/web/webgl2Types.ts",
+      "sha256": "d22918ff669dc7d257fb1bfd28efb70f21f2ff070f07eb27ebf36225b4f091ef"
     }
   ],
   "historicalSemanticReview": {
