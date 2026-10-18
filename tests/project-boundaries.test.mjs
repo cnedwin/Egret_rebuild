@@ -6,6 +6,7 @@ import {createRequire} from 'node:module';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 import {ownerRelativePath,samePhysicalPath} from '../tools/lib/file-identity.mjs';
+import {selectM13StrictSuccessor} from '../tools/lib/m13-strict-successor.mjs';
 
 const repository=fileURLToPath(new URL('..',import.meta.url));
 const parent=path.join(repository,'work');
@@ -82,6 +83,7 @@ function prepareTypeFixture({root}) {
     'packages/engine/tests/geometry-contract-types.ts',
     'packages/engine/tests/profile-contract-types.ts',
     'package.json','pnpm-lock.yaml','tsconfig.base.json',
+    'tools/shared-render-types.mjs','tools/lib/m13-strict-successor.mjs','tools/m13-strict-successors.json',
     'tools/check-types.mjs','tools/atlas-import-types.mjs','tools/atlas-frame-types.mjs','tools/sequence-playback-types.mjs','tools/bitmap-resource-slot-types.mjs','tools/bitmap-binding-ticket-types.mjs',
     'tools/spritesheet-types.mjs','tools/nine-slice-bitmap-types.mjs','tools/display-container-remove-children-types.mjs','tools/display-container-child-index-types.mjs','tools/display-container-add-child-at-types.mjs','tools/display-anchor-offsets-types.mjs','tools/bitmap-button-types.mjs','tools/linear-layout-types.mjs','tools/lib/file-identity.mjs',
   ]) copy(relative);
@@ -210,3 +212,145 @@ for(const [label,file]of [
  assert.ok(refused.stderr.includes('source/config/compiler identity changed: '+file));
  assert.doesNotMatch(refused.stdout,/Sequence playback types PASS/);
 }));
+
+// M1.3 finite compiler successor controls use the complete owned fixture.
+for (const [label, file, suffix, reason] of [
+  ['new declaration', 'packages/contracts/dist/SharedMaterial2D.d.ts', '\n// unregistered shared declaration\n',
+    'source/config/compiler identity changed: packages/contracts/dist/SharedMaterial2D.d.ts'],
+  ['source-only split', 'packages/runtime/src/sharedFrameCapture.ts', '\n// unregistered shared source\n',
+    'source/config/compiler identity changed: packages/runtime/src/sharedFrameCapture.ts'],
+  ['observation data', 'tools/m13-strict-successors.json', '\n', 'changed successor data'],
+]) test('M1.3 strict successor rejects ' + label + ' between genuine complete baselines', () => isolated(fixture => {
+  prepareTypeFixture(fixture);
+  const healthy = result => {
+    assert.ifError(result.error);
+    assert.equal(result.signal, null);
+    assert.equal(result.status, 0, result.stdout + result.stderr);
+    for (const lane of ['positive', 'negative', 'import-negative'])
+      assert.ok(result.stdout.includes('Sequence playback ' + lane + ' live exact diagnostics'), result.stdout);
+    assert.match(result.stdout, /Sequence playback types PASS/);
+  };
+  healthy(run(['tools/sequence-playback-types.mjs'], fixture.root));
+  const original = readFileSync(path.join(fixture.root, file));
+  let refused;
+  try {
+    fixture.write(file, original.toString('utf8') + suffix);
+    refused = run(['tools/sequence-playback-types.mjs'], fixture.root);
+  } finally {
+    fixture.write(file, original.toString('utf8'));
+    assert.deepEqual(readFileSync(path.join(fixture.root, file)), original);
+  }
+  // Restoration is proved even when a later refusal assertion detects a regression.
+  healthy(run(['tools/sequence-playback-types.mjs'], fixture.root));
+  assert.ifError(refused.error);
+  assert.equal(refused.signal, null);
+  assert.equal(refused.status, 1, refused.stdout + refused.stderr);
+  assert.ok(refused.stderr.includes(reason), refused.stderr);
+  assert.doesNotMatch(refused.stderr, /ERR_MODULE_NOT_FOUND|SyntaxError/);
+  assert.doesNotMatch(refused.stdout, /Sequence playback types PASS/);
+}));
+
+// M1.3 finite compiler successor controls use the complete owned fixture.
+const m13Healthy = (owner, result) => {
+  assert.ifError(result.error);
+  assert.equal(result.signal, null);
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  assert.match(result.stdout, /strict public consumers PASS/);
+  const lanes = owner === 'atlas-import' ? ['positive', 'negative', 'import-negative'] : ['positive', 'negative'];
+  for (const lane of lanes) assert.ok(result.stdout.includes(lane), result.stdout);
+};
+test('M1.3 Atlas successor still authenticates the exact historical lib/lib.d.ts', () => isolated(fixture => {
+  prepareTypeFixture(fixture);
+  const gate = 'tools/atlas-import-types.mjs';
+  m13Healthy('atlas-import', run([gate], fixture.root));
+  const relative = 'node_modules/@typescript/typescript-' + process.platform + '-' + process.arch + '/lib/lib.d.ts';
+  const absolute = path.join(fixture.root, relative), original = readFileSync(absolute);
+  assert.equal(ownerRelativePath(realpathSync(fixture.root), realpathSync(absolute)), relative);
+  let refused;
+  try {
+    rmSync(absolute);
+    refused = run([gate], fixture.root);
+  } finally { writeFileSync(absolute, original); }
+  assert.deepEqual(readFileSync(absolute), original);
+  m13Healthy('atlas-import', run([gate], fixture.root));
+  assert.ifError(refused.error);
+  assert.equal(refused.signal, null);
+  assert.equal(refused.status, 1, refused.stdout + refused.stderr);
+  assert.match(refused.stderr, /File spelling differs from its portable identity: .*lib\/lib\.d\.ts/);
+  assert.doesNotMatch(refused.stderr, /ERR_MODULE_NOT_FOUND|SyntaxError/);
+}));
+test('M1.3 strict successor rejects a byte-identical foreign SDK alias owner', () => isolated(fixture => {
+  prepareTypeFixture(fixture);
+  const gate = 'tools/bitmap-resource-slot-types.mjs';
+  const real = path.join(fixture.root, 'packages/runtime'), foreign = path.join(fixture.root, 'foreign-runtime');
+  const alias = path.join(fixture.root, 'node_modules/@egret/runtime');
+  cpSync(real, foreign, {recursive:true});
+  assert.deepEqual(readFileSync(path.join(real,'dist/index.d.ts')),readFileSync(path.join(foreign,'dist/index.d.ts')));
+  m13Healthy('bitmap-resource-slot', run([gate], fixture.root));
+  let refused;
+  try {
+    assert.equal(ownerRelativePath(realpathSync(fixture.root),realpathSync(alias)),'packages/runtime');
+    rmSync(alias,{recursive:true,force:false});
+    symlinkSync(foreign,alias,'junction');
+    refused = run([gate], fixture.root);
+  } finally {
+    if (existsSync(alias)) {
+      assert.equal(ownerRelativePath(realpathSync(fixture.root),realpathSync(alias)),'foreign-runtime');
+      rmSync(alias,{recursive:true,force:false});
+    }
+    symlinkSync(real,alias,'junction');
+  }
+  assert.equal(ownerRelativePath(realpathSync(fixture.root),realpathSync(alias)),'packages/runtime');
+  m13Healthy('bitmap-resource-slot', run([gate], fixture.root));
+  assert.ifError(refused.error);
+  assert.equal(refused.signal, null);
+  assert.equal(refused.status, 1, refused.stdout + refused.stderr);
+  assert.match(refused.stderr, /foreign SDK alias runtime/);
+  assert.doesNotMatch(refused.stderr, /ERR_MODULE_NOT_FOUND|SyntaxError/);
+}));
+for (const owner of ['bitmap-resource-slot','linear-layout']) {
+  test('M1.3 ' + owner + ' keeps its historical self row immutable', () => isolated(fixture => {
+    prepareTypeFixture(fixture);
+    const gate = 'tools/' + owner + '-types.mjs';
+    const file = 'tests/types/' + owner + '-diagnostic-expectations.json';
+    const original = readFileSync(path.join(fixture.root,file));
+    m13Healthy(owner, run([gate], fixture.root));
+    const inventory = JSON.parse(original), row = inventory.inputPins.find(row=>row.path===gate);
+    assert.ok(row);
+    row.bytes++;
+    let refused;
+    try {
+      fixture.write(file,JSON.stringify(inventory,null,2)+'\n');
+      refused = run([gate],fixture.root);
+    } finally { fixture.write(file,original.toString('utf8')); }
+    assert.deepEqual(readFileSync(path.join(fixture.root,file)),original);
+    m13Healthy(owner,run([gate],fixture.root));
+    assert.ifError(refused.error);
+    assert.equal(refused.signal,null);
+    assert.equal(refused.status,1,refused.stdout+refused.stderr);
+    assert.match(refused.stderr,/historical inventory changed/);
+    assert.doesNotMatch(refused.stderr,/ERR_MODULE_NOT_FOUND|SyntaxError/);
+  }));
+  test('M1.3 ' + owner + ' rejects gate-byte drift across its actual compiler replay checkpoint', () => isolated(fixture => {
+    prepareTypeFixture(fixture);
+    const gate = 'tools/' + owner + '-types.mjs';
+    const inventory = JSON.parse(readFileSync(path.join(fixture.root,'tests/types/'+owner+'-diagnostic-expectations.json'),'utf8'));
+    const selected = selectM13StrictSuccessor(fixture.root,owner,inventory);
+    assert.ok(selected);
+    // The selected owner spans an actual complete compiler run; then a single
+    // gate file changes before its next metadata checkpoint. This is a source
+    // admission witness, not a timed concurrent-process race claim.
+    m13Healthy(owner,run([gate],fixture.root));
+    const original = readFileSync(path.join(fixture.root,gate));
+    let caught;
+    try {
+      fixture.write(gate,original.toString('utf8')+'\n// gate changed after selection\n');
+      try { selected.recheck(); } catch (error) { caught=error; }
+    } finally { fixture.write(gate,original.toString('utf8')); }
+    assert.deepEqual(readFileSync(path.join(fixture.root,gate)),original);
+    selected.recheck();
+    m13Healthy(owner,run([gate],fixture.root));
+    assert.ok(caught instanceof Error);
+    assert.ok(caught.message.includes('source/config/compiler identity changed: '+gate),caught?.message);
+  }));
+}

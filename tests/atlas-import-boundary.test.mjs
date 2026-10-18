@@ -117,3 +117,27 @@ test('ATLAS-M12 tampered M1.1 predecessor is refused before current graph deriva
   const result=run();rejected(result,'ATLAS_SOURCE_IDENTITY');assert.match(result.stderr,/M1\.1 predecessor digest differs/);
  }finally{writeFileSync(file,before);assert.deepEqual(inventory(root),baseline);accepted(run());}
 }));
+
+for (const [relative, mode] of [["packages/contracts/src/SharedGeometry2D.ts","missing"],["packages/runtime/dist/sharedFrameCapture.js","missing"],["packages/engine/dist/web/webgpuRetentionPool.d.ts","missing"],["packages/engine/rendering/prepareSharedDraws2D.ts","mixed-source"],["packages/engine/dist/rendering/sharedColor2D.js","same-size-hash"]])
+ test('ATLAS-M13 complete group refuses '+mode+' '+relative,()=>isolated(({root,run,baseline})=>{
+  const file=path.join(root,relative),before=readFileSync(file);
+  try{
+   if(mode==='missing')rmSync(file);
+   else if(mode==='mixed-source')writeFileSync(file,Buffer.concat([before,Buffer.from('\n// unaccepted shared source\n')]));
+   else{const altered=Buffer.from(before);altered[0]^=1;assert.equal(altered.length,before.length);writeFileSync(file,altered);}
+   const now=inventory(root),prior=new Map(baseline.map(row=>[row.path,row]));
+   assert.deepEqual([...now.filter(row=>JSON.stringify(row)!==JSON.stringify(prior.get(row.path))).map(row=>row.path),...baseline.filter(row=>!now.some(current=>current.path===row.path)).map(row=>row.path)],[relative]);
+   rejected(run(),mode==='missing'?'ATLAS_SOURCE_FILES':'ATLAS_SOURCE_IDENTITY');
+  }finally{writeFileSync(file,before);assert.deepEqual(inventory(root),baseline);accepted(run());}
+ }));
+test('ATLAS-M13 tampered M1.2 predecessor cannot authorize the current graph',()=>isolated(({root,run,baseline})=>{
+ const relative='tools/atlas-import-boundary.mjs',file=path.join(root,relative),before=readFileSync(file),text=before.toString('utf8');
+ const match=/const m12IncrementalRenderingGraphSuccessor = (\[[^\n]+\]);/.exec(text);assert.ok(match);
+ const original=match[1],rows=JSON.parse(original);rows[0].sha256=(rows[0].sha256[0]==='0'?'1':'0')+rows[0].sha256.slice(1);
+ try{
+  writeFileSync(file,text.replace(original,JSON.stringify(rows)));
+  const prior=new Map(baseline.map(row=>[row.path,row]));
+  assert.deepEqual(inventory(root).filter(row=>JSON.stringify(row)!==JSON.stringify(prior.get(row.path))).map(row=>row.path),[relative]);
+  const result=run();rejected(result,'ATLAS_SOURCE_IDENTITY');assert.match(result.stderr,/M1\.2 predecessor digest differs/);
+ }finally{writeFileSync(file,before);assert.deepEqual(inventory(root),baseline);accepted(run());}
+}));

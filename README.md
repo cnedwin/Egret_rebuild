@@ -24,7 +24,13 @@ Egret Engine is an open-source game-engine rebuild for creators working with AI 
 
 The repository contains an executable engineering preview. Display trees, resource leases, animation, browser input and selected Canvas/WebGPU rendering paths are available within their documented contracts. Full UI tooling, complete Spine support, target-platform SDKs and automated legacy-project migration remain in development.
 
-## In progress — M1.2 incremental rendering
+## In progress — M1.3 shared rendering
+
+M1.3 adds an explicit shared profile for texture pages and logical regions, two-color materials, ordered 2D composition and finite linear B1 scene/UI rendering. Its fixed desktop native pixel matrix has passed; complete regression and protected integration are still pending. Read the [contract](knowledge-base/en/docs/shared-render-profile-contract.md), [actual results and limits](knowledge-base/en/docs/shared-rendering-evidence.md), and [M1 plan](knowledge-base/en/docs/m1-rendering-resource-plan.md).
+
+## Functional delivery — M1.2 incremental rendering
+
+The functional changes were merged through [PR #74](https://github.com/cnedwin/Egret_rebuild/pull/74), main `9f899dbe92c5e4d448d3408c3dca2f4c9ade847f`. Formal performance acceptance remains open.
 
 M1.2 adds bounded reuse of display capture and rendering preparation, with adjacent compatible batching that preserves painter order. Recorded correctness and native operation counts have separate acceptance from frame-time performance, which remains open. See the [evidence and limits](knowledge-base/en/docs/incremental-frame-preparation-evidence.md). See the [contract](knowledge-base/en/docs/incremental-frame-preparation-contract.md) and [M1 plan](knowledge-base/en/docs/m1-rendering-resource-plan.md).
 
@@ -78,7 +84,8 @@ Focused behavior, strict consumers and the recorded desktop Canvas/WebGPU compos
 
 | Version / 版本 | Main change | 主要变化 |
 | --- | --- | --- |
-| M1.2 candidate | Incremental capture and adjacent batching; performance acceptance open | 增量捕获与相邻合批；性能验收未完成 |
+| M1.3 candidate | Shared texture pages, linear color and ordered scene/UI composition; full integration pending | 共享纹理页、线性颜色与有序场景/UI 合成；完整集成待完成 |
+| M1.2 | Incremental capture and adjacent batching delivered; performance acceptance open | 增量捕获与相邻合批已交付；性能验收未完成 |
 | M1.1 | Completion-safe GPU buffer and binding reuse | 安全完成后的 GPU 缓冲与绑定复用 |
 | 0.61.0 | Internal WebGPU image cache with per-Host ownership | 各 Host 独立管理的 WebGPU 内部图像缓存 |
 | 0.60.0 | Strict single-page atlas metadata planning with explicit PNG binding | 严格单页图集元数据规划与显式 PNG 绑定 |

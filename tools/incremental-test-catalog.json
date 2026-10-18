@@ -260,8 +260,8 @@
     {
       "file": {
         "path": "tests/atlas-import-boundary.test.mjs",
-        "bytes": 9756,
-        "sha256": "d52d0d7a8d7ab2f0d133e224ea7c4e6b1601bc9b47632f884cabd9e9940776fc"
+        "bytes": 12034,
+        "sha256": "0fb491bd6a19ceb5844b459573652308725a7044e19500c62d44ac559d32c52e"
       },
       "packages": null,
       "support": []
@@ -298,8 +298,8 @@
     {
       "file": {
         "path": "tests/b1-webgpu-verifier.test.mjs",
-        "bytes": 24647,
-        "sha256": "c0294406c7f3d95cedc187f0c1bd7c596d6fc24404a2cfb0dd1a364f3a7424ed"
+        "bytes": 25499,
+        "sha256": "8e2a6e42b11d6e879c94ab2d522292de52711cb8b131bdaf9bd00f2d2d584880"
       },
       "packages": null,
       "support": []
@@ -326,8 +326,8 @@
     {
       "file": {
         "path": "tests/bitmap-binding-ticket-boundaries.test.mjs",
-        "bytes": 7740,
-        "sha256": "6cfd04e897e4f0c40899b93fdd601471301806a07be621129bd2090a75e3f6e3"
+        "bytes": 9384,
+        "sha256": "eb83d02787e39b741976d5177e70518ba9f74e103d27fe8d1769c1d230424287"
       },
       "packages": null,
       "support": []
@@ -526,8 +526,8 @@
     {
       "file": {
         "path": "tests/boundaries.test.mjs",
-        "bytes": 112809,
-        "sha256": "d502d38e836162db1c07e60178499066504ff8cacae220a7e5cae1f092ffc2bd"
+        "bytes": 133527,
+        "sha256": "92df8cc0972a6a483caee30f985cf115bdb15508126e62d1ad9fb021dd3438c7"
       },
       "packages": null,
       "support": []
@@ -566,8 +566,8 @@
     {
       "file": {
         "path": "tests/browser-png-boundaries.test.mjs",
-        "bytes": 16677,
-        "sha256": "4a7335d2759465de40653d29829293bfc68be1e30f8916388c8be0cbb9443007"
+        "bytes": 18286,
+        "sha256": "38cdb1031844ce0682539c2df2e61521d0932377d1bd7be20aaa793a55298a5d"
       },
       "packages": null,
       "support": []
@@ -1489,8 +1489,8 @@
     {
       "file": {
         "path": "tests/project-boundaries.test.mjs",
-        "bytes": 18106,
-        "sha256": "75ed052fc5ac9a69a016aa1befd8beaf69473aeb6b0213d2af699ddc32ce9d36"
+        "bytes": 26136,
+        "sha256": "2e5b958983b79ce61cdfc4a1b9e003b1717db947a4119abeb69641438c6a847b"
       },
       "packages": null,
       "support": []
@@ -1621,8 +1621,8 @@
     {
       "file": {
         "path": "tests/resource-scene-boundary.test.mjs",
-        "bytes": 8923,
-        "sha256": "253640b105c83cef54943835c280aca0b6438c47ae373276faa91af46275d896"
+        "bytes": 9136,
+        "sha256": "d4f55e13c7b67461220ebbe121d13c60e279d75322f24b6da01daa690542621a"
       },
       "packages": null,
       "support": []
@@ -1755,8 +1755,8 @@
     {
       "file": {
         "path": "tests/sequence-playback-boundaries.test.mjs",
-        "bytes": 10270,
-        "sha256": "03d191b69370f0e49163e4b4134645b8f1d314412c03175769aa8a1434992f40"
+        "bytes": 11104,
+        "sha256": "955e7f9873fc396914e30f4b01f92d3eeaf6ad413c262f47f21536dbbaccfe09"
       },
       "packages": null,
       "support": []
@@ -1814,6 +1814,69 @@
     },
     {
       "file": {
+        "path": "tests/shared-capture-budgets.test.mjs",
+        "bytes": 13362,
+        "sha256": "c09564bce7b256a82759f2cf9e7b278811a07cb17ebca91e782ad1458a038428"
+      },
+      "packages": null,
+      "support": []
+    },
+    {
+      "file": {
+        "path": "tests/shared-frame-capture.test.mjs",
+        "bytes": 54974,
+        "sha256": "b427e8c3d431eebc92a092815b01f2645f71686f7a087da017fc1053cc1ab93a"
+      },
+      "packages": null,
+      "support": []
+    },
+    {
+      "file": {
+        "path": "tests/shared-native-reference.test.mjs",
+        "bytes": 2381,
+        "sha256": "5daf7e9889b13f696ed49be2ef686cfe4c5cf99013181a2283cd92dd01a99a83"
+      },
+      "packages": null,
+      "support": []
+    },
+    {
+      "file": {
+        "path": "tests/shared-render-inputs-entry.test.mjs",
+        "bytes": 3187,
+        "sha256": "393389d8966695fef1397e23ea3744c53645465be137a81dbc8bf7dbbad2cafb"
+      },
+      "packages": null,
+      "support": []
+    },
+    {
+      "file": {
+        "path": "tests/shared-render-inputs.test.mjs",
+        "bytes": 34255,
+        "sha256": "414b8171a4c80d741d512e758bdbf9c6786890f091ef8a0b37b2278b2f7322dc"
+      },
+      "packages": null,
+      "support": []
+    },
+    {
+      "file": {
+        "path": "tests/shared-retention-private.test.mjs",
+        "bytes": 13516,
+        "sha256": "f7e64c824862f0a14bff29a6b2dbad46baf39016b921197767f7bbebb13641a3"
+      },
+      "packages": null,
+      "support": []
+    },
+    {
+      "file": {
+        "path": "tests/shared-webgpu-controls.test.mjs",
+        "bytes": 32403,
+        "sha256": "6b9799189e1dce19528dbe511871877d271972dfb886dbf5e3ed85504e7be718"
+      },
+      "packages": null,
+      "support": []
+    },
+    {
+      "file": {
         "path": "tests/spine-import-plan.test.mjs",
         "bytes": 51590,
         "sha256": "9276a3133d9f8f0533762a1662437b9eaaa6505dba7c5a6fbd6b6070a270a678"
@@ -1849,8 +1912,8 @@
     {
       "file": {
         "path": "tests/spritesheet-boundaries.test.mjs",
-        "bytes": 16306,
-        "sha256": "99427dc1642fda59cf45deb33ff817d444016f9db405266302d1171a39ec6df7"
+        "bytes": 17746,
+        "sha256": "2179a763146126fe623a39deea06ad6f71edd00b7d8e1422ce1d959f1b64b508"
       },
       "packages": null,
       "support": []
@@ -1858,8 +1921,8 @@
     {
       "file": {
         "path": "tests/spritesheet-fault.test.mjs",
-        "bytes": 8158,
-        "sha256": "e2fbf7c024a26a7464ab6ea87e6f100d468b1f5a32cfee268999ea25f5e8a994"
+        "bytes": 8642,
+        "sha256": "a8f028e0d2175ca131fa65b465f8aaf5066cc285c1eb2a5d453e333dcc3566d8"
       },
       "packages": null,
       "support": []
@@ -2311,8 +2374,8 @@
     {
       "file": {
         "path": "tests/textured-scene-webgpu-host.test.mjs",
-        "bytes": 34775,
-        "sha256": "95d1caa1649be0d498b06e4ad02360ac58a4b52fe3a889fd32b6c9fd6b5dd924"
+        "bytes": 34800,
+        "sha256": "5354c70c9c62445064f500f918e9feb1392b1b1eb3d2db67901ea3b2b172f218"
       },
       "packages": null,
       "support": []
@@ -2320,8 +2383,8 @@
     {
       "file": {
         "path": "tests/textured-webgpu-host.test.mjs",
-        "bytes": 42859,
-        "sha256": "a853880fde72dc650b885153e5abefb7ac7008ca446ca99e80ea75e74ef09220"
+        "bytes": 42885,
+        "sha256": "427065844f3bbedd4e7500986e06ea458926b4da80e72ab6e8c8474f638b360c"
       },
       "packages": null,
       "support": []
@@ -2329,8 +2392,8 @@
     {
       "file": {
         "path": "tests/textured-webgpu-types.test.mjs",
-        "bytes": 10866,
-        "sha256": "96db490c597b3215e75d46946872e3cecaa7d6c9e74a29e52ca4f897c3c98f79"
+        "bytes": 10896,
+        "sha256": "a9804079b3c4e8136201e80335b997d2ff4ba3150d22055689084a388231f06f"
       },
       "packages": null,
       "support": []
@@ -2383,8 +2446,8 @@
     {
       "file": {
         "path": "tests/webgpu-mesh-host.test.mjs",
-        "bytes": 102232,
-        "sha256": "0a1b67ce065db41075f6cd77e9ac92f316f6a6560b49282207a886ce6fa98d96"
+        "bytes": 106645,
+        "sha256": "af6ec9791f5223d732805e52b4ef106398b05d409decddbe1ab89e204f7efcd3"
       },
       "packages": null,
       "support": []

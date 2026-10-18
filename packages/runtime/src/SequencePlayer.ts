@@ -36,7 +36,7 @@ export class SequencePlayer {
     // Authenticate before reading even frozen-looking public clip dimensions.
     sampleSequenceClip(clip, 0, { mode });
     const { image, sourceRect } = snapshot;
-    if (sourceRect.x !== 0 || sourceRect.y !== 0
+    if (snapshot.viewRegion !== null || sourceRect.x !== 0 || sourceRect.y !== 0
       || sourceRect.width !== image.width || sourceRect.height !== image.height
       || clip.atlasWidth !== image.width || clip.atlasHeight !== image.height) {
       throw new EgretError('SEQ_ATLAS_MISMATCH');

@@ -12,7 +12,10 @@ import {isMainThread, threadId} from 'node:worker_threads';
 // authored before the minimal Host port. Hashes identify input bytes only.
 const CASE_ORDER = Object.freeze(['S01','N01','N02','N03','N04','N05','P01','P02','R01','C01','C02','C03','C04']);
 const PROTOCOL_KEYS = Object.freeze(['version','createSceneFrame3D','isSceneFrame3D','getScene3DErrorOrigin','packMeshGeometry3D','getMeshPacking3DErrorOrigin','createWebGPUMeshPipeline','encodeWebGPUMesh']);
-const QUOTAS = Object.freeze({modules:2048,fileBytes:1048576,sourceBytes:16777216,tokens:1048576,depth:256,stdoutBytes:1048576,stderrBytes:1048576,receiptBytes:262144,events:4096,stringUnits:2048,operationMs:10000,closeMs:5000,retirementMs:5000,workerMs:300000});
+// Historical receipt capacity: 262144 bytes. The fixed 1 MiB output allocation
+// preserves every event; it is not a worst-case event-length proof. All other
+// event, string, node, depth, module and deadline bounds remain independent.
+const QUOTAS = Object.freeze({modules:2048,fileBytes:1048576,sourceBytes:16777216,tokens:1048576,depth:256,stdoutBytes:1048576,stderrBytes:1048576,receiptBytes:1048576,events:4096,stringUnits:2048,operationMs:10000,closeMs:5000,retirementMs:5000,workerMs:300000});
 
 // Literal generated source will contain the closed parser, mock and scenarios.
 // The Stage A author seals these unexecuted bytes for independent review.
@@ -210,7 +213,7 @@ function fixture() {
   FIXTURES.push(f);return Object.assign(f,{device,queue,context,canvas});
 }
 
-const LIMITS={modules:2048,fileBytes:1048576,sourceBytes:16777216,tokens:1048576,depth:256,events:4096,stringUnits:2048,receiptBytes:262144};
+const LIMITS={modules:2048,fileBytes:1048576,sourceBytes:16777216,tokens:1048576,depth:256,events:4096,stringUnits:2048,receiptBytes:1048576};
 const digest=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
 const normal=file=>path.resolve(file).replaceAll('\\','/');
 function exactFile(file,requireSingleLink=false){const canonical=normal(file);assert.equal(file,canonical,'canonical file');let current=path.parse(canonical).root;for(const part of canonical.slice(current.length).split('/').filter(Boolean)){current=path.join(current,part);assert.equal(fs.lstatSync(current).isSymbolicLink(),false,'symlink alias');}assert.equal(normal(fs.realpathSync(canonical)),canonical,'realpath alias');const stat=fs.lstatSync(canonical);assert.equal(stat.isFile(),true);if(requireSingleLink)assert.equal(stat.nlink,1,'hardlink alias');assert.ok(stat.size<=LIMITS.fileBytes);const bytes=fs.readFileSync(canonical);return {path:canonical,bytes:bytes.length,sha256:digest(bytes)};}
@@ -268,7 +271,7 @@ const PROGRAM_IDENTITY=exactFile(PROGRAM,true),CONFIG_IDENTITY=exactFile(CONFIG_
 const config=boundedJSON(fs.readFileSync(CONFIG_PATH,'utf8'));
 ownKeys(config,['schemaVersion','caseId','repository','entries','packages','files','metadata','sceneFiles','gpuFiles']);
 assert.equal(config.schemaVersion,1);assert.equal(config.caseId,CASE);assert.equal(normal(process.cwd()),config.repository);
-ownKeys(config.entries,['core','canvas','webgpu','host','b1']);
+ownKeys(config.entries,['core','canvas','webgpu','host','b1','sharedB1']);
 ownKeys(config.packages,['@egret/contracts','@egret/runtime','@egret/engine','robust-predicates','#egret-textured-frame-state','#egret-mouse-input']);
 assert.ok(Array.isArray(config.files)&&config.files.length<=LIMITS.modules);
 const FILES=new Map();let sourceBytes=0;
@@ -309,8 +312,8 @@ function resolveTarget(specifier,parent){
   assert.ok(url&&url.protocol==='file:','closed module resolution');const file=normal(fileURLToPath(url));assert.equal(pathToFileURL(file).href,url.href,'URL alias');assert.ok(FILES.has(file),'target in actual finite manifest');return url.href;
 }
 // These complete initializers capture existing native methods; they do not
-// construct executable code. Admission remains fixed to two current modules.
-const intrinsicCaptureStatements={
+// construct executable code. Historical statements remain explicit below.
+const historicalIntrinsicCaptureStatements={
   'webgpuBufferPool.js':[
     'const mapGet = Function.prototype.call.bind(Map.prototype.get);',
     'const mapSet = Function.prototype.call.bind(Map.prototype.set);',
@@ -333,6 +336,16 @@ const intrinsicCaptureStatements={
     "const setSize = Function.prototype.call.bind(Object.getOwnPropertyDescriptor(Set.prototype, 'size').get);",
     'const setForEach = Function.prototype.call.bind(Set.prototype.forEach);']
 };
+
+// The original ten pool captures moved to the one mixed-kind authority. The
+// legacy buffer facade captures only its two WeakMap methods.
+const intrinsicCaptureStatements={
+  ...historicalIntrinsicCaptureStatements,
+  'webgpuBufferPool.js':[
+    'const weakGet = Function.prototype.call.bind(WeakMap.prototype.get);',
+    'const weakSet = Function.prototype.call.bind(WeakMap.prototype.set);'],
+  'webgpuRetentionPool.js':[...historicalIntrinsicCaptureStatements['webgpuBufferPool.js']],
+};
 function captureOffsets(source,statements){
   const offsets=new Set();
   for(const statement of statements){const at=source.indexOf(statement);assert.ok(at>=0,'exact intrinsic capture statement');assert.equal(source.lastIndexOf(statement),at,'unique intrinsic capture statement');offsets.add(at+statement.indexOf('Function'));}
@@ -350,6 +363,11 @@ function staticInspection(){
   assert.throws(()=>resolveTarget('#egret-mouse-input/other',mouseParent));
   assert.equal(typeof vm.SourceTextModule,'function');const budget={tokens:0};const inspected=new Map();
   const selectedAnchors=new Map([[config.entries.host,['((color >>> 16) & 255) / 255 * alpha','((color >>> 8) & 255) / 255 * alpha','(color & 255) / 255 * alpha']],[pathToFileURL(config.repository+'/packages/engine/dist/web/webgpuPass.js').href,['((group.color >>> 16) & 255) / 255 * alpha','((group.color >>> 8) & 255) / 255 * alpha','(group.color & 255) / 255 * alpha']],[pathToFileURL(config.repository+'/packages/engine/dist/web/imageProjections2D.js').href,['Math.floor((pixels[offset] * alpha + 127) / 255)','Math.floor((pixels[offset + 1] * alpha + 127) / 255)','Math.floor((pixels[offset + 2] * alpha + 127) / 255)']],[pathToFileURL(config.repository+'/packages/runtime/dist/sequenceClip.js').href,['Math.floor((high - low) / 2)']],[pathToFileURL(config.repository+'/packages/runtime/dist/NineSliceGeometry2D.js').href,['(source - trailing) / source']],[pathToFileURL(config.repository+'/packages/engine/dist/rendering/preparedFrameCache2D.js').href,['Math.floor((Number.MAX_SAFE_INTEGER - 7) / 8)','(MAX_BYTES - 1024) / 8']]]);
+
+  // The M1.3 expressions are complete, unique source literals, not a slash rule.
+  selectedAnchors.get(config.entries.host).push('((c >>> 16) & 255) / 255','((c >>> 8) & 255) / 255','(c & 255) / 255');
+  selectedAnchors.set(pathToFileURL(config.repository+'/packages/engine/dist/rendering/sharedColor2D.js').href,['((value + 0.055) / 1.055) ** 2.4','decodeSharedSRGB((code + 1) / 255)']);
+  selectedAnchors.set(pathToFileURL(config.repository+'/packages/engine/dist/rendering/prepareSharedDraws2D.js').href,['decodeSharedSRGB(((color >>> 16) & 255) / 255)','decodeSharedSRGB(((color >>> 8) & 255) / 255)','decodeSharedSRGB((color & 255) / 255)','(p.x + x) / page.width','(p.y + y) / page.height']);
   // A selected division token never grants general closing-delimiter admission.
   const expression='Math.floor((high - low) / 2)',slash=expression.indexOf('/');
   assert.throws(()=>scanSource(expression,{tokens:0},new Set()),{message:'unselected ambiguous slash after delimiter'});
@@ -358,7 +376,7 @@ function staticInspection(){
   assert.throws(()=>scanSource('(other) /= 2;',{tokens:0},new Set([8])),{message:/^no slash-equals closing-delimiter exception/});
   assert.throws(()=>scanSource('{} / 2;',{tokens:0},new Set([3])),{message:/^no closing-brace division exception/});
   assert.throws(()=>scanSource('/* '+expression+' */',{tokens:0},new Set([3+slash])),{message:/^every selected unique division token consumed/});
-  const capture=intrinsicCaptureStatements['webgpuBufferPool.js'][0],captureAt=capture.indexOf('Function');
+  const capture=historicalIntrinsicCaptureStatements['webgpuBufferPool.js'][0],captureAt=capture.indexOf('Function');
   assert.throws(()=>scanSource(capture,{tokens:0},new Set()),{message:'unsupported executable facility'});
   assert.deepEqual(scanSource(capture,{tokens:0},new Set(),captureOffsets(capture,[capture])),{statics:[],dynamic:[]});
   for(const altered of [capture.replace('call.bind','call.apply'),capture.replace('Map.prototype.get','Map.prototype.set')])assert.throws(()=>captureOffsets(altered,[capture]),{message:'exact intrinsic capture statement'});
@@ -367,17 +385,21 @@ function staticInspection(){
   for(const facility of ['Function("return 1")','new Function("return 1")','eval("1")','require("node:fs")'])assert.throws(()=>scanSource(capture+';'+facility,{tokens:0},new Set(),new Set([captureAt])),{message:'unsupported executable facility'});
   function visit(url){if(inspected.has(url))return;const file=normal(fileURLToPath(url));const descriptor=FILES.get(file);assert.ok(descriptor);const bytes=fs.readFileSync(file);assert.equal(digest(bytes),descriptor.sha256);const source=new TextDecoder('utf-8',{fatal:true}).decode(bytes);
     // Native construction precedes the finite literal exception. No linking or
-    // evaluation occurs; the thirteen locations in six files are source-bound data.
+    // evaluation occurs; the twenty-three locations in eight files are source-bound data.
     const module=new vm.SourceTextModule(source,{identifier:url});assert.equal(module.status,'unlinked');const admitted=new Set(),anchors=[];for(const anchor of selectedAnchors.get(url)??[]){const offset=source.indexOf(anchor);assert.ok(offset>=0);assert.equal(source.lastIndexOf(anchor),offset,'unique complete expression');const slash=offset+anchor.indexOf('/');assert.equal(source[slash],'/');admitted.add(slash);anchors.push({expression:anchor,byteOffset:Buffer.byteLength(source.slice(0,offset)),slashByteOffset:Buffer.byteLength(source.slice(0,slash))});}if(anchors.length)divisionWitnesses.push({url,sha256:descriptor.sha256,constructed:true,linked:false,evaluated:false,anchors});const name=Object.keys(intrinsicCaptureStatements).find(name=>url===pathToFileURL(config.repository+'/packages/engine/dist/web/'+name).href);const statements=name?intrinsicCaptureStatements[name]:[];const captures=captureOffsets(source,statements);const lexical=scanSource(source,budget,admitted,captures);if(statements.length)record('INTRINSIC_CAPTURES',{url,sha256:descriptor.sha256,statements});const requests=module.moduleRequests;assert.ok(Array.isArray(requests));const specs=[];
     for(const request of requests){assert.deepEqual(Object.keys(request).sort(),['attributes','phase','specifier']);assert.equal(typeof request.specifier,'string');assert.equal(request.phase,'evaluation');assert.equal(request.attributes!==null&&typeof request.attributes==='object',true);assert.deepEqual(Object.keys(request.attributes),[]);specs.push(request.specifier);}
     assert.deepEqual([...new Set(lexical.statics)],specs,'independent lexical/static-request crosscheck');inspected.set(url,requests);
-    for(const specifier of lexical.dynamic){assert.equal(url,config.entries.host,'only Host dynamic edge');assert.equal(specifier,'./b1.js');dynamicEdges.push({parent:url,specifier,url:resolveTarget(specifier,url)});}
+    for(const specifier of lexical.dynamic){assert.equal(url,config.entries.host,'only Host dynamic edge');assert.ok(specifier==='./b1.js'||specifier==='./sharedB1.js','only two exact Host dynamic targets');dynamicEdges.push({parent:url,specifier,url:resolveTarget(specifier,url)});}
     for(const specifier of specs){const target=resolveTarget(specifier,url);staticEdges.push({parent:url,specifier,url:target});if(!target.startsWith('node:'))visit(target);}
     assert.deepEqual(exactFile(file),descriptor);
   }
+  // The retained legacy facade is no longer a Host runtime dependency. Inspect
+  // its exact two captures separately, without linking/evaluation or relabelling
+  // it as reachable from a public entry.
+  visit(pathToFileURL(config.repository+'/packages/engine/dist/web/webgpuBufferPool.js').href);
   for(const [name,entry]of Object.entries(config.entries)){visit(entry);const reachable=new Set();function walk(url){if(reachable.has(url))return;reachable.add(url);for(const edge of staticEdges.filter(e=>e.parent===url))if(!edge.url.startsWith('node:'))walk(edge.url);}walk(entry);
     if(name==='core'||name==='canvas')assert.equal([...reachable].some(url=>sceneURLs.has(url)||gpuURLs.has(url)),false,'core/Canvas static prohibition');if(name==='webgpu'||name==='host')assert.equal([...reachable].some(url=>sceneURLs.has(url)),false,'ordinary static scene prohibition');staticClosures.push({name,modules:[...reachable].sort()});}
-  assert.equal(dynamicEdges.length,1);assert.deepEqual(dynamicEdges[0],{parent:config.entries.host,specifier:'./b1.js',url:config.entries.b1});assert.equal(divisionWitnesses.length,6);assert.equal(divisionWitnesses.reduce((count,item)=>count+item.anchors.length,0),13);assert.equal(EVENTS.filter(e=>e.kind==='INTRINSIC_CAPTURES').length,2);assert.equal(EVENTS.filter(e=>e.kind==='INTRINSIC_CAPTURES').reduce((n,e)=>n+e.statements.length,0),19);record('STATIC_ONLY',{modules:inspected.size,tokens:budget.tokens,constructed:true,linked:false,evaluated:false});
+  assert.equal(dynamicEdges.length,2);assert.deepEqual([...dynamicEdges].sort((a,b)=>a.specifier<b.specifier?-1:1),[{parent:config.entries.host,specifier:'./b1.js',url:config.entries.b1},{parent:config.entries.host,specifier:'./sharedB1.js',url:config.entries.sharedB1}]);assert.equal(divisionWitnesses.length,8);assert.equal(divisionWitnesses.reduce((count,item)=>count+item.anchors.length,0),23);assert.equal(EVENTS.filter(e=>e.kind==='INTRINSIC_CAPTURES').length,3);assert.equal(EVENTS.filter(e=>e.kind==='INTRINSIC_CAPTURES').reduce((n,e)=>n+e.statements.length,0),21);record('STATIC_ONLY',{modules:inspected.size,tokens:budget.tokens,constructed:true,linked:false,evaluated:false});
 }
 function installHooks(){hooks=registerHooks({
   resolve(specifier,context,nextResolve){assert.ok(context.parentURL===pathToFileURL(PROGRAM).href||context.parentURL?.startsWith('file:')&&FILES.has(normal(fileURLToPath(context.parentURL))),'source-bound import parent');const target=resolveTarget(specifier,context.parentURL);record('RESOLVE_ATTEMPT',{parent:context.parentURL??null,specifier,url:target});if(forbidden.has(target)){forbiddenAttempts++;record('FORBIDDEN_ATTEMPT',{phase:'resolve',url:target});throw SENTINEL;}const result=nextResolve(specifier,context);assert.equal(result.url,target,'actual canonical resolver join');record('RESOLVE_RETURN',{parent:context.parentURL??null,specifier,url:result.url});return result;},
@@ -388,8 +410,8 @@ function installHooks(){hooks=registerHooks({
 const imported=url=>observe(import(url));
 async function ordinaryLifecycle(namespace,acquire){const f=fixture();f.device.limits.maxUniformBufferBindingSize=16;const h=namespace.createWebGPUHost({canvas:f.canvas,device:acquire?{kind:'acquire'}:{kind:'borrow',device:f.device},enableReadback:true});f.host=h;sceneFree(h);const start=observe(h.start());assert.equal(h.start(),start);await start;assert.deepEqual(f.events.filter(e=>e.kind==='pipeline').map(e=>e.pipeline),['rect','image']);const ticket=observe(h.requestReadback());assert.equal(h.renderFrame({frameId:1,width:1,height:1,clearColor:0,clearAlpha:1,commands:[]}),undefined);const idle=observe(h.whenIdle());const readback=await ticket;await idle;assert.equal(readback.serial,1);assert.equal(readback.bytes.byteLength,4);assert.equal(f.events.filter(e=>e.kind==='pass').length,1);assert.equal(f.events.filter(e=>e.kind==='submit').length,1);await observe(h.close());assert.equal(h.getStatus().state,'closed');assert.equal(h.getStatus().cleanupOutcome,'safe');assert.equal(f.deviceDestroyed,acquire?1:0);sceneFree(h);record('ORDINARY_LIFECYCLE',{ownership:acquire?'acquire':'borrow',uniformLimit:16,closed:true});}
 async function positiveBehavior(namespace,cold){const cpu=await imported(pathToFileURL(config.sceneFiles.find(file=>file.endsWith('/sceneFrame3D.js'))).href);const packing=await imported(pathToFileURL(config.sceneFiles.find(file=>file.endsWith('/packMeshGeometry3D.js'))).href);const mesh=await imported(pathToFileURL(config.sceneFiles.find(file=>file.endsWith('/webgpuMeshPass.js'))).href);const geometry=await imported(pathToFileURL(config.sceneFiles.find(file=>file.endsWith('/meshGeometry3D.js'))).href);const matrix=await imported(pathToFileURL(config.sceneFiles.find(file=>file.endsWith('/matrix4.js'))).href);const core=await imported(config.entries.core);const ordinary=await imported(config.entries.webgpu);const references={...cpu,...packing,...mesh};const protocol=protocolAssertions(namespace,references);record('AUTHENTIC_PROTOCOL',{sevenActualReferences:true,stableIdentity:true,predicateNoReads:true});if(cold){const scene=protocol.createSceneFrame3D({projection:PROJECTION,draws:[{geometry:geometry.createMeshGeometry3D(TRIANGLE),modelView:matrix.createMatrix4(MATRIX_IDENTITY)}]});const ticket=observe(cold.h.requestReadback());assert.equal(cold.h.renderSceneFrame(scene,{frameId:1,width:1,height:1,clearColor:0,clearAlpha:1,commands:[]}),undefined,'COLD01 actual cold host scene submission');const idle=observe(cold.h.whenIdle());assert.equal((await ticket).serial,1);await idle;assert.equal(cold.f.events.filter(e=>e.kind==='pass').length,2);assert.equal(cold.f.events.filter(e=>e.kind==='submit').length,1);await observe(cold.h.close());assert.equal(cold.f.deviceDestroyed,0);record('COLD_LIFECYCLE',{readback:true,twoPasses:true,closed:true});}await hostBehaviorAssertions(namespace.createB1WebGPUHost,protocol,{...core,...geometry,...matrix,...ordinary},fixture);record('HOST_BEHAVIORS',{namedAssertions:18});}
-async function runtimeCase(){installHooks();if(CASE==='N01'||CASE==='N02'){const namespace=await imported(CASE==='N01'?config.entries.core:config.entries.canvas);for(const key of ['createB1WebGPUHost','createB1WebGPUHostInternal','getBuiltinB1Protocol','isBuiltinB1Protocol','createSceneFrame3D','createWebGPUHost','createTexturedWebGPUHost'])assert.equal(Object.hasOwn(namespace,key),false);record('FACADE_NEGATIVE',{entry:CASE==='N01'?'core':'canvas'});}
-  else if(CASE==='N03'||CASE==='N04'||CASE==='N05'){const namespace=await imported(config.entries.webgpu);assert.deepEqual(Object.keys(namespace),['createTexturedWebGPUHost','createWebGPUHost']);if(CASE==='N03'){const f=fixture(),h=namespace.createWebGPUHost({canvas:f.canvas,device:{kind:'borrow',device:f.device}});f.host=h;sceneFree(h);assert.equal(f.events.length,0);await observe(h.close());record('FACTORY_NEGATIVE',{wholePrototypeChain:true});}else await ordinaryLifecycle(namespace,CASE==='N05');}
+async function runtimeCase(){installHooks();if(CASE==='N01'||CASE==='N02'){const namespace=await imported(CASE==='N01'?config.entries.core:config.entries.canvas);for(const key of ['createB1WebGPUHost','createB1WebGPUHostInternal','getBuiltinB1Protocol','isBuiltinB1Protocol','createSceneFrame3D','createWebGPUHost','createTexturedWebGPUHost','createSharedWebGPUHost','createSharedSceneWebGPUHost'])assert.equal(Object.hasOwn(namespace,key),false);record('FACADE_NEGATIVE',{entry:CASE==='N01'?'core':'canvas'});}
+  else if(CASE==='N03'||CASE==='N04'||CASE==='N05'){const namespace=await imported(config.entries.webgpu);assert.deepEqual(Object.keys(namespace),['createSharedWebGPUHost','createTexturedWebGPUHost','createWebGPUHost']);if(CASE==='N03'){const f=fixture(),h=namespace.createWebGPUHost({canvas:f.canvas,device:{kind:'borrow',device:f.device}});f.host=h;sceneFree(h);assert.equal(f.events.length,0);await observe(h.close());record('FACTORY_NEGATIVE',{wholePrototypeChain:true});}else await ordinaryLifecycle(namespace,CASE==='N05');}
   else if(CASE==='P01'){const namespace=await imported(config.entries.b1);record('EXPLICIT_ENTRY_CACHED',{url:config.entries.b1});await positiveBehavior(namespace);}
   else {const hostNamespace=await imported(config.entries.host);assert.equal(EVENTS.some(e=>e.url===config.entries.b1),false,'genuine cold B1 module');const f=fixture();coldHost=hostNamespace.createB1WebGPUHostInternal({canvas:f.canvas,device:{kind:'borrow',device:f.device},enableReadback:true});f.host=coldHost;const start=observe(coldHost.start());assert.equal(coldHost.start(),start,'cached starting Promise');
     if(CASE==='P02'){await start;assert.equal(EVENTS.some(e=>e.kind==='LOAD_RETURN'&&e.url===config.entries.b1),true,'actual cold unchanged B1 load');assert.equal(coldHost.getStatus().state,'active');const namespace=await imported(config.entries.b1);await positiveBehavior(namespace,{f,h:coldHost});}
@@ -516,10 +538,10 @@ function sourceInventory(repository){const files=[],metadata=[],packages={};let 
   packages['#egret-textured-frame-state']=canonical(repository+'/packages/engine/dist/internal/texturedFrameState.js');
   packages['#egret-mouse-input']=canonical(repository+'/packages/engine/dist/mouseInput.js');
   const entry=relative=>pathToFileURL(canonical(repository+'/'+relative)).href;
-  const entries={core:entry('packages/engine/dist/index.js'),canvas:entry('packages/engine/dist/web/index.js'),webgpu:entry('packages/engine/dist/web/webgpu.js'),host:entry('packages/engine/dist/web/WebGPUHost.js'),b1:entry('packages/engine/dist/web/b1.js')};
+  const entries={core:entry('packages/engine/dist/index.js'),canvas:entry('packages/engine/dist/web/index.js'),webgpu:entry('packages/engine/dist/web/webgpu.js'),host:entry('packages/engine/dist/web/WebGPUHost.js'),b1:entry('packages/engine/dist/web/b1.js'),sharedB1:entry('packages/engine/dist/web/sharedB1.js')};
   // CPU image projections are shared by Canvas and WebGPU, outside the GPU-only category.
-  const sceneNames=['b1.js','sceneFrame3D.js','packMeshGeometry3D.js','meshGeometry3D.js','matrix4.js','projection3D.js','webgpuMeshPass.js'];const gpuNames=['WebGPUHost.js','webgpu.js','webgpuPass.js','webgpuImagePass.js','webgpuLifetime.js','webgpuBufferPool.js','webgpuBindingCache.js','webgpuMeshPass.js','b1.js'];
-  const sceneFiles=files.filter(d=>sceneNames.includes(path.basename(d.path))&&d.path.startsWith(repository+'/packages/engine/dist/')).map(d=>d.path).sort();const gpuFiles=files.filter(d=>gpuNames.includes(path.basename(d.path))&&d.path.startsWith(repository+'/packages/engine/dist/')).map(d=>d.path).sort();assert.equal(sceneFiles.length,7);assert.equal(gpuFiles.length,9);assert.equal(new Set(files.map(d=>d.path)).size,files.length);assert.ok(files.length<=QUOTAS.modules);assert.ok(files.every(d=>d.bytes<=QUOTAS.fileBytes));assert.ok(files.reduce((sum,d)=>sum+d.bytes,0)<=QUOTAS.sourceBytes);files.sort((a,b)=>a.path.localeCompare(b.path));return {repository,entries,packages,files,metadata,sceneFiles,gpuFiles};
+  const sceneNames=['b1.js','sceneFrame3D.js','packMeshGeometry3D.js','meshGeometry3D.js','matrix4.js','projection3D.js','webgpuMeshPass.js','sharedB1.js','packSharedMeshGeometry3D.js','webgpuSharedMeshPass.js'];const gpuNames=['WebGPUHost.js','webgpu.js','webgpuPass.js','webgpuImagePass.js','webgpuLifetime.js','webgpuBufferPool.js','webgpuBindingCache.js','webgpuMeshPass.js','b1.js','prepareSharedSubmission2D.js','sharedB1.js','sharedWebGPUOptions.js','webgpuRetentionPool.js','webgpuSharedMeshPass.js','webgpuSharedPass.js','webgpuSharedResolvePass.js'];
+  const sceneFiles=files.filter(d=>sceneNames.includes(path.basename(d.path))&&d.path.startsWith(repository+'/packages/engine/dist/')).map(d=>d.path).sort();const gpuFiles=files.filter(d=>gpuNames.includes(path.basename(d.path))&&d.path.startsWith(repository+'/packages/engine/dist/')).map(d=>d.path).sort();assert.equal(sceneFiles.length,10);assert.equal(gpuFiles.length,16);assert.equal(new Set(files.map(d=>d.path)).size,files.length);assert.ok(files.length<=QUOTAS.modules);assert.ok(files.every(d=>d.bytes<=QUOTAS.fileBytes));assert.ok(files.reduce((sum,d)=>sum+d.bytes,0)<=QUOTAS.sourceBytes);files.sort((a,b)=>a.path.localeCompare(b.path));return {repository,entries,packages,files,metadata,sceneFiles,gpuFiles};
 }
 function strictJSON(bytes){assert.ok(bytes.length<=QUOTAS.receiptBytes);const text=new TextDecoder('utf-8',{fatal:true}).decode(bytes);let offset=0,nodes=0;const space=()=>{while(/[\t\n\r ]/.test(text[offset]??'')&&offset<text.length)offset++;};function string(){assert.equal(text[offset++],'"');const begin=offset-1;while(offset<text.length){const c=text[offset++];if(c==='"'){const value=JSON.parse(text.slice(begin,offset));assert.ok(value.length<=QUOTAS.stringUnits);return value;}assert.ok(c.charCodeAt(0)>=32);if(c==='\\'){const e=text[offset++];assert.ok('"\\/bfnrtu'.includes(e));if(e==='u'){assert.match(text.slice(offset,offset+4),/^[0-9a-fA-F]{4}$/);offset+=4;}}}throw Error('incomplete JSON string');}
   function value(depth){assert.ok(depth<=QUOTAS.depth&&++nodes<=65536);space();const c=text[offset];if(c==='"')return string();if(c==='{'){offset++;const result={},keys=new Set();space();if(text[offset]==='}'){offset++;return result;}for(;;){space();const key=string();assert.equal(keys.has(key),false,'duplicate receipt key');keys.add(key);space();assert.equal(text[offset++],':');Object.defineProperty(result,key,{value:value(depth+1),enumerable:true});space();const end=text[offset++];if(end==='}')return result;assert.equal(end,',');}}if(c==='['){offset++;const result=[];space();if(text[offset]===']'){offset++;return result;}for(;;){result.push(value(depth+1));space();const end=text[offset++];if(end===']')return result;assert.equal(end,',');}}for(const [literal,answer]of [['true',true],['false',false],['null',null]])if(text.startsWith(literal,offset)){offset+=literal.length;return answer;}const match=/^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/.exec(text.slice(offset));assert.ok(match);offset+=match[0].length;const answer=Number(match[0]);assert.equal(Number.isFinite(answer),true);return answer;}const result=value(0);space();assert.equal(offset,text.length);return result;
@@ -719,9 +741,29 @@ test('B1 fixed thirteen-case emitted loading and owned host contract', {timeout:
     const staticReceipt=results[0].receipt;
     assert.equal(staticReceipt.events.some(e=>e.kind==='STATIC_ONLY'&&e.linked===false&&e.evaluated===false),true);
     const resolved=results.slice(1).flatMap(result=>result.receipt.events.filter(e=>e.kind==='RESOLVE_RETURN'));
-    for(const edge of staticReceipt.staticEdges)assert.equal(resolved.some(event=>event.parent===edge.parent&&event.specifier===edge.specifier&&event.url===edge.url),true,'unobserved static request '+edge.parent+' '+edge.specifier);
+    const runtimeRoots=['core','canvas','webgpu','host','b1'];
+    assert.deepEqual(staticReceipt.staticClosures.map(row=>row.name),[...runtimeRoots,'sharedB1']);
+    const runtimeParents=new Set(staticReceipt.staticClosures.filter(row=>runtimeRoots.includes(row.name)).flatMap(row=>row.modules));
+    const staticOnlyEdges=staticReceipt.staticEdges.filter(edge=>!runtimeParents.has(edge.parent));
+    const staticOnlyParents=[...new Set(staticOnlyEdges.map(edge=>edge.parent))].sort();
+    const staticURL=file=>pathToFileURL(repository+'/packages/engine/dist/'+file).href;
+    assert.deepEqual(staticOnlyParents,[staticURL('rendering/packSharedMeshGeometry3D.js'),staticURL('web/sharedB1.js'),staticURL('web/webgpuBufferPool.js')].sort(),'exact additional unlinked-only parents');
+    const inspectionRequests=[
+      ['web/webgpuBufferPool.js','./webgpuRetentionPool.js','web/webgpuRetentionPool.js'],
+      ['web/sharedB1.js','../rendering/sceneFrame3D.js','rendering/sceneFrame3D.js'],
+      ['web/sharedB1.js','../rendering/packSharedMeshGeometry3D.js','rendering/packSharedMeshGeometry3D.js'],
+      ['web/sharedB1.js','./webgpuSharedMeshPass.js','web/webgpuSharedMeshPass.js'],
+      ['web/sharedB1.js','./WebGPUHost.js','web/WebGPUHost.js'],
+      ['rendering/packSharedMeshGeometry3D.js','./sharedColor2D.js','rendering/sharedColor2D.js'],
+      ['rendering/packSharedMeshGeometry3D.js','./meshGeometry3D.js','rendering/meshGeometry3D.js']
+    ].map(([parent,specifier,url])=>[staticURL(parent),specifier,staticURL(url)]);
+    const edgeOrder=(a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b));
+    assert.deepEqual(staticOnlyEdges.map(({parent,specifier,url})=>[parent,specifier,url]).sort(edgeOrder),inspectionRequests.sort(edgeOrder),'exact additional unlinked-only requests');
+    for(const edge of staticReceipt.staticEdges.filter(edge=>runtimeParents.has(edge.parent)))assert.equal(resolved.some(event=>event.parent===edge.parent&&event.specifier===edge.specifier&&event.url===edge.url),true,'unobserved static request '+edge.parent+' '+edge.specifier);
+    const staticOnlyInspection={roots:[staticURL('web/sharedB1.js'),staticURL('web/webgpuBufferPool.js')],parents:staticOnlyParents,requests:7,linked:false,evaluated:false};
+
     assert.equal(results.length,13);assert.equal(attemptLedger.length,13);assert.equal(trace.failure(),null);
-    const slot={schemaVersion:1,status:'PASSED',schedule:CASE_ORDER,...accounting(),staticRequestCorroboration:true,results:results.map(result=>({caseId:result.caseId,status:result.status,pid:result.pid})),traceFailure:null};
+    const slot={schemaVersion:1,status:'PASSED',schedule:CASE_ORDER,...accounting(),staticRequestCorroboration:true,corroboratedRoots:runtimeRoots,staticOnlyInspection,results:results.map(result=>({caseId:result.caseId,status:result.status,pid:result.pid})),traceFailure:null};
     writeData(output+'/slot.json',slot);
     assert.equal(trace.emit('SLOT_FINISHED',{status:'PASSED',attempts:attemptLedger.length,schedule:CASE_ORDER,slot:fileDescriptor(output+'/slot.json')}),true,'final output failed');
   }catch(cause){

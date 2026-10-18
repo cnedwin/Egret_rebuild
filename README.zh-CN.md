@@ -25,7 +25,13 @@ Years later, as times change and technology advances, many developers continue t
 
 当前仓库提供可运行的工程预览。显示树、资源租约、动画、浏览器输入及部分 Canvas/WebGPU 渲染路径，均有各自的接口契约和验证范围。完整 UI 工具、完整 Spine 支持、目标平台 SDK 和旧工程自动迁移仍在开发中。
 
-## 开发中 — M1.2 增量渲染
+## 开发中 — M1.3 共享渲染
+
+M1.3 为纹理页与逻辑区域、明暗双色材质、有序 2D 合成及有限线性 B1 场景/UI 渲染增加显式共享配置。固定桌面原生像素矩阵已通过，完整回归和受保护集成仍待完成。参阅[契约](knowledge-base/Cns/docs/shared-render-profile-contract.md)、[实测结果与边界](knowledge-base/Cns/docs/shared-rendering-evidence.md)及 [M1 计划](knowledge-base/Cns/docs/m1-rendering-resource-plan.md)。
+
+## 功能已交付 — M1.2 增量渲染
+
+功能改动已通过 [PR #74](https://github.com/cnedwin/Egret_rebuild/pull/74) 合并，主干提交为 `9f899dbe92c5e4d448d3408c3dca2f4c9ade847f`；正式性能验收继续开放。
 
 M1.2 为显示捕获和渲染准备增加有界复用，并在保留绘制顺序的前提下合并相邻兼容批次。已记录的正确性与原生操作计数分别验收，帧耗时性能验收仍未完成。参阅[验证记录与边界](knowledge-base/Cns/docs/incremental-frame-preparation-evidence.md)。参阅[契约](knowledge-base/Cns/docs/incremental-frame-preparation-contract.md)及 [M1 计划](knowledge-base/Cns/docs/m1-rendering-resource-plan.md)。
 
@@ -79,7 +85,8 @@ M1.1 已通过 [PR #73](https://github.com/cnedwin/Egret_rebuild/pull/73) 合并
 
 | Version / 版本 | Main change | 主要变化 |
 | --- | --- | --- |
-| M1.2 candidate | Incremental capture and adjacent batching; performance acceptance open | 增量捕获与相邻合批；性能验收未完成 |
+| M1.3 candidate | Shared texture pages, linear color and ordered scene/UI composition; full integration pending | 共享纹理页、线性颜色与有序场景/UI 合成；完整集成待完成 |
+| M1.2 | Incremental capture and adjacent batching delivered; performance acceptance open | 增量捕获与相邻合批已交付；性能验收未完成 |
 | M1.1 | Completion-safe GPU buffer and binding reuse | 安全完成后的 GPU 缓冲与绑定复用 |
 | 0.61.0 | Internal WebGPU image cache with per-Host ownership | 各 Host 独立管理的 WebGPU 内部图像缓存 |
 | 0.60.0 | Strict single-page atlas metadata planning with explicit PNG binding | 严格单页图集元数据规划与显式 PNG 绑定 |

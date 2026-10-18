@@ -76,3 +76,47 @@ test('hook-local Git ownership cannot redirect a fixture or metadata read to ano
   other?.close();owner.close();
  }
 });
+
+
+test('new frozen compiler observations require exact reviewed bytes and remain immutable across bases',()=>{
+ const f=fixture();try{
+  const file='tests/types/new-diagnostic-expectations.json',body='{"observed":true}\n';
+  f.put(file,body);
+  const row={path:file,bytes:Buffer.byteLength(body),sha256:hash(Buffer.from(body)),originRole:'Reviewed first-party actual compiler observation; Apache-2.0.'};
+  f.put('contributions/frozen.json',JSON.stringify({schemaVersion:1,files:[],documents:[],frozenInputs:[row]}));
+  const plan=planMetadata(f.root,{base:f.base});
+  assert.deepEqual(JSON.parse(plan.outputs['source-origin.json']).files.find(x=>x.path===file),row);
+  writeMetadata(f.root,plan);checkIntegrated(f.root,planMetadata(f.root,{base:f.base}));
+  f.git('add','.');f.git('-c','user.name=Fixture','-c','user.email=fixture@example.invalid','commit','-qm','frozen observation');
+  const accepted=f.git('rev-parse','HEAD');
+  checkIntegrated(f.root,planMetadata(f.root,{base:accepted}));
+  f.put(file,'{"observed":false}\n');
+  assert.throws(()=>planMetadata(f.root,{base:accepted}),/frozen.*identity/i);
+  const changed={...row,bytes:fs.statSync(path.join(f.root,file)).size,sha256:hash(fs.readFileSync(path.join(f.root,file)))};
+  f.put('contributions/frozen.json',JSON.stringify({schemaVersion:1,files:[],documents:[],frozenInputs:[changed]}));
+  assert.throws(()=>planMetadata(f.root,{base:accepted}),/frozen.*baseline/i);
+ }finally{f.close();}
+});
+
+test('frozen compiler registration rejects wrong digests, duplicate paths and other preserved domains',()=>{
+ const f=fixture();try{
+  const file='tests/types/new-diagnostic-expectations.json',body='{}\n';f.put(file,body);
+  const row={path:file,bytes:Buffer.byteLength(body),sha256:hash(Buffer.from(body)),originRole:'Reviewed first-party compiler fixture; Apache-2.0.'};
+  const put=rows=>f.put('contributions/frozen.json',JSON.stringify({schemaVersion:1,files:[],documents:[],frozenInputs:rows}));
+  put([{...row,sha256:'0'.repeat(64)}]);assert.throws(()=>planMetadata(f.root,{base:f.base}),/frozen.*identity/i);
+  put([row,row]);assert.throws(()=>planMetadata(f.root,{base:f.base}),/duplicate.*frozen/i);
+  for(const other of ['knowledge-base/evidence/raw.json','third-party/NOTICE','work/new-diagnostic-expectations.json','tests/types/ordinary.json']){
+   f.put(other,body);put([{...row,path:other}]);assert.throws(()=>planMetadata(f.root,{base:f.base}),/frozen.*path/i);fs.unlinkSync(path.join(f.root,other));
+  }
+ }finally{f.close();}
+});
+
+test('new frozen registration cannot relabel an unregistered original already present at the base',()=>{
+ const f=fixture();try{
+  const file='tests/types/old-diagnostic-expectations.json',body='{}\n';f.put(file,body);
+  f.git('add',file);f.git('-c','user.name=Fixture','-c','user.email=fixture@example.invalid','commit','-qm','old unregistered original');
+  const base=f.git('rev-parse','HEAD');
+  f.put('contributions/frozen.json',JSON.stringify({schemaVersion:1,files:[],documents:[],frozenInputs:[{path:file,bytes:Buffer.byteLength(body),sha256:hash(Buffer.from(body)),originRole:'Reviewed first-party compiler fixture; Apache-2.0.'}]}));
+  assert.throws(()=>planMetadata(f.root,{base}),/frozen.*already.*base/i);
+ }finally{f.close();}
+});

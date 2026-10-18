@@ -172,6 +172,12 @@ function installPairObserver() {
 
 // Exact existing Canvas/root closure plus the finite MI1 modules; no prefixes/wildcards.
 const allowedModules = new Set([
+  // M1 current root/Canvas closure: five exact CPU modules; GPU entries remain excluded.
+  "packages/contracts/dist/SharedGeometry2D.js",
+  "packages/contracts/dist/SharedMaterial2D.js",
+  "packages/contracts/dist/SharedRenderFrame2D.js",
+  "packages/runtime/dist/frameCaptureCache.js",
+  "packages/runtime/dist/sharedFrameCapture.js",
   // M0 current public-root closure: reviewed exact additions, no wildcard or new public entry.
   "packages/runtime/dist/bitmapAtlasPlacement.js",
   "packages/runtime/dist/atlasFrameLayout.js",

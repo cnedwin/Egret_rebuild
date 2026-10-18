@@ -19,6 +19,12 @@ if (helperRaw.length !== 5065 || hash(helperRaw) !== '999b355c6e0d03f17853ee05f3
 const { fingerprintFile, logicalPath, ownerRelativePath, samePhysicalPath } = await import(pathToFileURL(helperFile).href);
 if (!equal(fingerprintFile(root, 'tools/lib/file-identity.mjs'), {path:'tools/lib/file-identity.mjs',bytes:helperRaw.length,sha256:hash(helperRaw)})) fail('shared helper physical identity differs');
 const inventory = JSON.parse(readFileSync(path.join(root, 'tests/types/display-anchor-offsets-diagnostic-expectations.json'), 'utf8'));
+// Preserve the immutable predecessor and authenticate the complete M1.3 successor.
+const m13HelperPin = fingerprintFile(root, 'tools/lib/m13-strict-successor.mjs');
+if (m13HelperPin.bytes !== 10785 || m13HelperPin.sha256 !== '61a14bb8be2162d861a26b822ded713c552b4032d755e291578b225cd13ef337') throw Error('M1.3 strict helper changed before import');
+const { selectM13StrictSuccessor } = await import('./lib/m13-strict-successor.mjs');
+const m13 = selectM13StrictSuccessor(root, 'display-anchor-offsets', inventory);
+
 const lanes = ['positive', 'negative'];
 const expectedInputs = [
   "tools/lib/file-identity.mjs",
@@ -159,7 +165,7 @@ if (inventory.schemaVersion !== 1 || inventory.kind !== 'DISPLAY_ANCHOR_OFFSETS_
   || !equal(inventory.tupleFormat, ['file','line','column','code','message'])
   || !equal(inventory.inputPins?.map(row => row.path), expectedInputs)
   || !equal(inventory.nativeLibraryPins?.map(row => row.path), expectedNativeLibraries)) fail('original observations or complete current inputs are malformed');
-for (const row of inventory.inputPins) {
+for (const row of m13?.inputPins ?? inventory.inputPins) {
   if (logicalPath(row.path) !== row.path || !equal(fingerprintFile(root, row.path), row)) fail('changed complete raw input: ' + row.path);
 }
 const wrapperOwner = realpathSync(path.join(root, 'node_modules/typescript'));
@@ -223,6 +229,7 @@ function tuplesFrom(raw) {
   return tuples;
 }
 for (const group of inventory.groups) {
+  m13?.recheck();
   const file = 'tests/types/display-anchor-offsets-' + group.lane + '.ts';
   const config = 'tests/types/tsconfig.display-anchor-offsets-' + group.lane + '.json';
   const expectedExit = group.lane === 'positive' ? 0 : 1;
@@ -260,14 +267,15 @@ for (const group of inventory.groups) {
     || !Buffer.isBuffer(result.stderr) || result.stderr.length !== 0) fail('compiler setup/exit/stderr failure');
   const tuples = tuplesFrom(result.stdout);
   if (tuples.some(tuple=>tuple[0]!==file || tuple[3]===2307 || /[A-Za-z]:[\\/]|file:\/\//.test(tuple[4]))
-    || !equal(tuples,group.tuples) || tuples.length !== cases.length
+    || !equal(tuples,m13?.group(group.lane).tuples ?? group.tuples) || tuples.length !== cases.length
     || !equal(tuples.map(tuple=>tuple[1]),cases.map(row=>row.line))) fail('missing, extra, unrelated or changed complete diagnostic');
   // Freeze the current raw streams and complete tuples in a lane-specific receipt.
+  m13?.verifyClosure(group.lane);
   console.log('DisplayObject.anchorOffsetX/anchorOffsetY exact strict lane receipt: ' + JSON.stringify({
     lane: group.lane, args, exitCode: result.status, signal: result.signal, timeout: false,
     stdout: { bytes: result.stdout.length, sha256: hash(result.stdout) },
     stderr: { bytes: result.stderr.length, sha256: hash(result.stderr) },
-    tuples, inputCount: inventory.inputPins.length, compiler: currentCompilerObservation,
+    tuples, inputCount: (m13?.inputPins ?? inventory.inputPins).length, compiler: currentCompilerObservation,
   }));
 }
 console.log('DisplayObject.anchorOffsetX/anchorOffsetY strict public consumers PASS; runtime and host acceptance remain separate.');

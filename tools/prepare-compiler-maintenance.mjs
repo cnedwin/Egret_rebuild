@@ -13,7 +13,7 @@ const ROOT=fs.realpathSync(fileURLToPath(new URL('..',import.meta.url)));
 const strictNames=['atlas-import','atlas-frame','bitmap-resource-slot','bitmap-binding-ticket','linear-layout','bitmap-button','display-anchor-offsets','display-container-add-child-at','display-container-child-index','display-container-remove-children','nine-slice-bitmap'];
 const nativeNames=new Set(['bitmap-resource-slot','bitmap-binding-ticket','linear-layout','bitmap-button','display-anchor-offsets','display-container-add-child-at','display-container-child-index','display-container-remove-children']);
 const legacyNames=['browser-png','spritesheet','sequence-playback','byte-writer','nine-slice','scene3d'];
-const registry=[...strictNames,...legacyNames];
+const registry=[...strictNames,...legacyNames,'shared-render'];
 const gate=name=>['byte-writer','nine-slice','scene3d'].includes(name)?'tools/check-types.mjs':'tools/'+name+'-types.mjs';
 const inventoryPath=name=>'tests/types/'+name+'-diagnostic-expectations.json';
 const nativeName='@typescript/typescript-win32-x64';
@@ -132,6 +132,8 @@ const inlineSources=[
 // This one reviewed gate revision retains its original raw authority above.
 // It adds no caller-selected parser or source permission.
 const inlineSourceSuccessors = [{"path":"tools/sequence-playback-types.mjs","base":{"bytes":17296,"sha256":"8b2d266f7aacd680f7a1581afb2ea1a1381f02fc44cd70b340ee8961c7584222"},"current":{"bytes":18474,"sha256":"e9388c73080d4db112b3260e17bdfc7d1ff1ca6130fa8cccdae7d3b60084ba6b"}}];
+// M1.3 source revisions retain every original and M1.2 tuple above.
+const m13InlineSourceSuccessors = [{"path":"tools/check-types.mjs","base":{"bytes":94916,"sha256":"13080da8e72418df9b8e8279d09b53e36839a5826953f84143c5787d1d1bff7a"},"current":{"bytes":121118,"sha256":"64d5996ebf925b8b2eda7e04d20e939e399d50953da0023a48ffd02223985093"}},{"path":"tools/bitmap-resource-slot-types.mjs","base":{"bytes":10489,"sha256":"454abe1eb4fafc7c805e8c806d61e6f592e8c7a5345fd4a2d23316b5b500bf73"},"current":{"bytes":11184,"sha256":"cfce369d4a6eb4644305f47ae1ae4375d67f22173581a69bfd0fe1974fd1c5c9"}},{"path":"tools/bitmap-binding-ticket-types.mjs","base":{"bytes":13171,"sha256":"57ed148c4e654d1eb8da46991a9b7902123a6e1d673efe1de05a0c5657f02879"},"current":{"bytes":13887,"sha256":"cca972eaedd8ad923b0c740dcd79426bdf9377f16d1d5276f561b617463a89c9"}},{"path":"tools/linear-layout-types.mjs","base":{"bytes":10385,"sha256":"02a691c2e66eb7d817bcf8dea1a70f908337d9b064b36797f3fea0c2a06e73a8"},"current":{"bytes":11073,"sha256":"5714975b76d8a9d5173f0e01bf9b0008485ecbdb1eaf7028cad2fea7f1ae484e"}},{"path":"tools/bitmap-button-types.mjs","base":{"bytes":16544,"sha256":"792ea25c61a5815f32df80bc5cfe5a1f646452ca927e0022ee7f43d6deaf1e4a"},"current":{"bytes":17175,"sha256":"a3b39cd4b01a07925acb380561ca7234cf7a8d954b83a75c5b0a1a3821eaf9aa"}},{"path":"tools/display-anchor-offsets-types.mjs","base":{"bytes":15885,"sha256":"fee3a36afb7516c991775c052abc0889541f8a9cf9174ea526c428470fee56c1"},"current":{"bytes":16526,"sha256":"fd4f28d45b4324473e5887ec5236811cd00d6bd98498192c44c88252515f562c"}},{"path":"tools/display-container-add-child-at-types.mjs","base":{"bytes":17991,"sha256":"267a68a830c4394dc63dfd7fde01c5b9f4ed5b773704bd31f90d2199898d7643"},"current":{"bytes":18718,"sha256":"4c95f93cae5b8bbc0336b2a8d9dcd50dbbe1789b08aa8b80cd5154043d3524b1"}},{"path":"tools/display-container-child-index-types.mjs","base":{"bytes":16406,"sha256":"692faad618a5ffb05d6bcfbd98d97bc3f6806b87040a29cc6836345d3b9a6a6a"},"current":{"bytes":17112,"sha256":"23dcb3eccb938b0f0b2847715ba3a989bef86d05b40b4d35fda7c564f5d58fb1"}},{"path":"tools/display-container-remove-children-types.mjs","base":{"bytes":14624,"sha256":"b20a666a9ccaf770ef1b2d9dbc3c086809f45f35aefc02366388a50c09818578"},"current":{"bytes":15268,"sha256":"0114c56923843c8d2456bfd6ae7f9988d739f51c07ea4ced346e8bc1ec03064c"}},{"path":"tools/sequence-playback-types.mjs","base":{"bytes":18474,"sha256":"e9388c73080d4db112b3260e17bdfc7d1ff1ca6130fa8cccdae7d3b60084ba6b"},"current":{"bytes":19255,"sha256":"42a0bad83c5f68f74d2b1e26bd9c5183be9e94e1cb4c36a01a4b60c373e4a6ea"}}];
 const inlineInventories=[
  ['mouseTypeExpectations','mouse-input',['positive','negative','import-negative','dom-free-negative']],
  ['spineTypeExpectations','spine-import-plan',['positive','negative','import-negative']]
@@ -190,7 +192,12 @@ export function prepareCompilerReview(root,options={}){
   const addList=(selector,locate)=>add(file,selector,list(selector),locate);
   const addOne=(selector,locate)=>add(file,selector,[list(selector)],locate);
   const noField=key=>!Object.hasOwn(value,key);
-  if(strictNames.includes(name)){
+  if(name==='shared-render'){
+   requireThat(value.schemaVersion===1&&value.kind==='SHARED_RENDER_ACTUAL_STRICT_DIAGNOSTICS'&&value.status==='OBSERVED_TS7_DIAGNOSTICS'
+    &&value.compilerVersion==='7.0.2'&&equal(value.tupleFormat,['file','line','column','code']),'Unsupported shared strict schema');
+   requireThat(Array.isArray(value.inputPins)&&equal(value.inputPins.map(row=>row.path),["tests/types/shared-render-positive.ts","tests/types/shared-render-negative.ts","tests/types/tsconfig.shared-render-positive.json","tests/types/tsconfig.shared-render-negative.json","tests/types/tsconfig.dom-free.json","tests/types/tsconfig.json","tsconfig.base.json"]),'Unsupported shared strict inputs');
+   addList('inputPins');
+  }else if(strictNames.includes(name)){
    requireThat(value.kind===kind+'_ACTUAL_STRICT_DIAGNOSTICS'&&value.status==='OBSERVED_FROZEN_TS7_DIAGNOSTICS'&&(['atlas-import','atlas-frame'].includes(name)?noField('schemaVersion'):value.schemaVersion===1),'Unsupported registered diagnostic schema');
    addList('inputPins');
    if(name==='atlas-import')addList('sourcePolicy.jsoncPins',expected=>{const location=target(expected.path);requireThat(location.owner==='project-json','Atlas JSON parser owner required');return location;});
@@ -239,10 +246,13 @@ export function prepareCompilerReview(root,options={}){
    const current=observe('repository',expected.path),successor=inlineSourceSuccessors.find(row=>row.path===expected.path);
    if(successor)requireThat(equal(expected,{path:successor.path,...successor.base}),'Inline successor base differs');
    const newer=successor?{path:successor.path,...successor.current}:null;
-   requireThat(equal(current,expected)||newer!==null&&equal(current,newer),'Unreviewed inline policy source: '+expected.path);
+   const shared=m13InlineSourceSuccessors.find(row=>row.path===expected.path);
+   requireThat(shared&&equal({path:shared.path,...shared.base},newer??expected),'M1.3 inline predecessor differs');
+   const latest={path:shared.path,...shared.current};
+   requireThat(equal(current,expected)||newer!==null&&equal(current,newer)||equal(current,latest),'Unreviewed inline policy source: '+expected.path);
    const raw=fs.readFileSync(path.join(root,expected.path));requireThat(raw.length===current.bytes&&createHash('sha256').update(raw).digest('hex')===current.sha256,'Inline source changed while reading');
    texts.set(expected.path,new TextDecoder('utf-8',{fatal:true}).decode(raw));sources.push(current);
-   if(successor)sourceRevisions.push({base:expected,successor:newer,current,selection:equal(current,expected)?'base':'current',admission:'not-evaluated'});
+   sourceRevisions.push({base:expected,predecessor:newer,successor:latest,current,selection:equal(current,expected)?'base':newer!==null&&equal(current,newer)?'predecessor':'current',admission:'not-evaluated'});
   }
   function span(owner,start,end){const text=texts.get(owner),raw=Buffer.from(text.slice(start,end));return {owner,startByte:Buffer.byteLength(text.slice(0,start)),endByte:Buffer.byteLength(text.slice(0,end)),bytes:raw.length,sha256:createHash('sha256').update(raw).digest('hex')};}
   // Only JSON initializers in authenticated revisions are supported. This is
@@ -277,7 +287,7 @@ export function prepareCompilerReview(root,options={}){
   }
   const sequence=gate('sequence-playback'),expected=literal(sequence,'expectedCurrentSourcePins');add(sequence,'expectedCurrentSourcePins',expected);
   conditions.push({kind:'sequence-negative-successor',gate:sequence,inventory:inventoryPath('sequence-playback'),lane:'negative',sourceAgreement:equal(expected,records.get('sequence-playback').currentDeclarationSuccessor.sourcePins),selector:'currentDeclarationSuccessor.sourcePins',admission:'not-evaluated'});
-  if(sourceRevisions.find(row=>row.current.path===sequence)?.selection==='current'){
+  if(['predecessor','current'].includes(sourceRevisions.find(row=>row.current.path===sequence)?.selection)){
    const incremental=literal(sequence,'m12IncrementalSourcePins');add(sequence,'m12IncrementalSourcePins',incremental);
    const current=expected.map(row=>observe('repository',row.path));
    conditions.push({kind:'sequence-source-successor',gate:sequence,baseBinding:'expectedCurrentSourcePins',currentBinding:'m12IncrementalSourcePins',
@@ -299,7 +309,7 @@ export function prepareCompilerReview(root,options={}){
  requireThat(fs.realpathSync(selectedRoot)===root&&equal(resolution,resolveOwners(root)),'Compiler owner resolution changed during collection');
  requireThat(equal(coverage,coverageNow()),'Diagnostic inventory membership changed during collection');
  return {schemaVersion:3,kind:'compiler-maintenance',status:'review-required',acceptance:'none',repository:root,resolution,coverage,dependencies,declarations,references,inputs,inlinePolicies,
-  limits:['Explicit selectors in 17 registered diagnostic JSON records; unknown inventory names are coverage gaps','Observed Windows x64 dependency bundle; no host compatibility or compiler execution claim','Eight native library lists and fixed metadata/binary observations are compared under their explicit native owner',
+  limits:['Explicit selectors in 18 registered diagnostic JSON records; unknown inventory names are coverage gaps','Observed Windows x64 dependency bundle; no host compatibility or compiler execution claim','Eight native library lists and fixed metadata/binary observations are compared under their explicit native owner',
    'Selected successor pins remain separate claims; other successor semantics, diagnostics, private receipts and provenance are byte-bound but not interpreted',
    'Digest-only expectations retain their original comparison strength; complete dependency inventory does not authenticate historical declarations','No baseline update, diagnostic replay, version admission, browser or device acceptance']};
 }

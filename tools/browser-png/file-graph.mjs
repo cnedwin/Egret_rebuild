@@ -353,10 +353,11 @@ export function freezeBrowserPngGraph({ repositoryRoot, collectorFiles, fixtureP
     modules.set(route, module);
     const text = new TextDecoder('utf-8', { fatal: true }).decode(Buffer.from(record.bodyBase64, 'base64'));
     for (const imported of literalImports(text, filename)) {
-      // This existing public host's single literal lazy B1 route is sealed even
-      // when the native fixture never takes its owner-gated initialization arm.
+      // Seal this exact Host's two literal lazy scene routes, including their
+      // full dependency closures even when the fixture does not initialize them.
       requireGraph(imported.kind === 'static' || (imported.kind === 'dynamic-literal'
-        && filename === 'packages/engine/dist/web/WebGPUHost.js' && imported.specifier === './b1.js'),
+        && filename === 'packages/engine/dist/web/WebGPUHost.js'
+        && (imported.specifier === './b1.js' || imported.specifier === './sharedB1.js')),
       'DYNAMIC_IMPORT_UNADMITTED', { path: filename, specifier: imported.specifier });
       const target = resolveProduct(imported.specifier, filename, 'import');
       const to = typeof target === 'object' ? visitDependency(target) : visitProduct(target);

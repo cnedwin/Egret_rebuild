@@ -9,7 +9,7 @@ import path from 'node:path';
 
 const repository = fileURLToPath(new URL('..', import.meta.url));
 const parent = path.join(repository, 'work');
-const gpuValues = ['createTexturedWebGPUHost', 'createWebGPUHost'];
+const gpuValues = ['createSharedWebGPUHost', 'createTexturedWebGPUHost', 'createWebGPUHost'];
 const gpuTypes = ['TexturedWebGPUHost', 'TexturedWebGPUHostOptions', 'TexturedWebGPUHostStatus'];
 const checked = (result, status, reason) => {
   assert.ifError(result.error);
@@ -66,7 +66,7 @@ function isolated(action) {
   }
 }
 
-test('T01 actual public facades expose exactly two lexical GPU factories and preserve root/Canvas isolation', async () => {
+test('T01 actual public facades expose exactly three lexical GPU factories and preserve root/Canvas isolation', async () => {
   const gpu = await import('@egret/engine/webgpu');
   const root = await import('@egret/engine');
   const canvas = await import('@egret/engine/web');
@@ -80,7 +80,7 @@ test('T01 actual public facades expose exactly two lexical GPU factories and pre
   for (const name of gpuTypes) assert.equal(Object.hasOwn(gpu, name), false, `${name} is type-only`);
 });
 
-test('T02 actual-copy valid two-factory graph is admitted by the unchanged production boundary checker', t => isolated(f => {
+test('T02 actual-copy valid three-factory graph is admitted by the unchanged production boundary checker', t => isolated(f => {
   checked(f.check(), 0);
   t.diagnostic(`Actual four-package graph, four existing workspace bindings to owned package copies, unmodified checker SHA256 ${f.checkerHash}; no GPU execution.`);
 }));

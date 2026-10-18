@@ -62,7 +62,8 @@ const modeDefinitions=[
   {name:'removed-diamond-clip',fixture:'nested',assertion:'diamond-outside',file:'web/WebGPUHost.js',from:'prepareMixedDraws2D(copied.frame,',to:'prepareMixedDraws2D({ ...copied.frame, commands: copied.frame.commands.map(command => ({ ...command, clips: [] })) },'},
   {name:'double-premultiply',fixture:'painter',assertion:'painter-overlap',file:'web/webgpuPass.js',from:'data[offset++] = red;\n            data[offset++] = green;\n            data[offset++] = blue;',to:'data[offset++] = red * alpha;\n            data[offset++] = green * alpha;\n            data[offset++] = blue * alpha;'},
   {name:'translated',fixture:'painter',assertion:'painter-colored-interior',file:'web/webgpuPass.js',from:'data[offset++] = p.x;',to:'data[offset++] = p.x + 16 / width;'},
-  {name:'missing-clear',fixture:'red-clear',assertion:'empty-nonzero-clear',file:'web/WebGPUHost.js',from:"loadOp: 'clear'",to:"loadOp: 'load'"},
+  // Mutate only the legacy encoded attachment; shared working and resolve clears stay intact.
+  {name:'missing-clear',fixture:'red-clear',assertion:'empty-nonzero-clear',file:'web/WebGPUHost.js',from:"const attachment = { view, loadOp: 'clear', storeOp: 'store', clearValue: { r: ((color >>> 16) & 255) / 255 * alpha, g: ((color >>> 8) & 255) / 255 * alpha, b: (color & 255) / 255 * alpha, a: alpha } };",to:"const attachment = { view, loadOp: 'load', storeOp: 'store', clearValue: { r: ((color >>> 16) & 255) / 255 * alpha, g: ((color >>> 8) & 255) / 255 * alpha, b: (color & 255) / 255 * alpha, a: alpha } };"},
   {name:'nominal-dpr-substitution',fixture:'dpr',assertion:'nominal-dpr-boundary-marker',file:'web/webgpuPass.js',from:'data[offset++] = p.x;',to:'data[offset++] = (p.x + 1) * (width / 10.2) / 1.5 - 1'}
 ];
 // Nominal-DPR substitution mutates the final upload after valid CPU projection;

@@ -16,11 +16,17 @@ const helper=readFileSync(path.join(root,'tools/lib/file-identity.mjs'));
 if(helper.length!==5065||hash(helper)!=='999b355c6e0d03f17853ee05f33abc9fecbb34ad80607963e11f913a4f815569')fail('shared identity helper changed before import');
 const {fingerprintFile,logicalPath,ownerRelativePath,samePhysicalPath}=await import(pathToFileURL(path.join(root,'tools/lib/file-identity.mjs')).href);
 const inventory=JSON.parse(readFileSync(path.join(root,'tests/types/linear-layout-diagnostic-expectations.json'),'utf8'));
+// Preserve the immutable predecessor and authenticate the complete M1.3 successor.
+const m13HelperPin = fingerprintFile(root, 'tools/lib/m13-strict-successor.mjs');
+if (m13HelperPin.bytes !== 10785 || m13HelperPin.sha256 !== '61a14bb8be2162d861a26b822ded713c552b4032d755e291578b225cd13ef337') throw Error('M1.3 strict helper changed before import');
+const { selectM13StrictSuccessor } = await import('./lib/m13-strict-successor.mjs');
+const m13 = selectM13StrictSuccessor(root, 'linear-layout', inventory);
+
 if(inventory.schemaVersion!==1||inventory.kind!=='LINEAR_LAYOUT_ACTUAL_STRICT_DIAGNOSTICS'||inventory.status!=='OBSERVED_FROZEN_TS7_DIAGNOSTICS')fail('actual original compiler observation is pending or malformed');
 if(!equal(inventory.tupleFormat,['file','line','column','code','message'])||!equal(inventory.groups?.map(row=>row.lane),['positive','negative']))fail('malformed lane inventory');
 const requiredInputs=['tools/lib/file-identity.mjs','node_modules/typescript/package.json','node_modules/typescript/bin/tsc','node_modules/typescript/lib/tsc.js','node_modules/typescript/lib/getExePath.js','package.json','pnpm-lock.yaml','tsconfig.base.json','tests/types/linear-layout-positive.ts','tests/types/linear-layout-negative.ts','tests/types/tsconfig.linear-layout-positive.json','tests/types/tsconfig.linear-layout-negative.json','packages/contracts/package.json','packages/runtime/package.json','packages/engine/package.json','packages/engine/dist/layout.d.ts','packages/engine/dist/layoutTypes.d.ts'];
 if(!Array.isArray(inventory.inputPins)||new Set(inventory.inputPins.map(row=>row.path)).size!==inventory.inputPins.length||requiredInputs.some(key=>!inventory.inputPins.some(row=>row.path===key)))fail('incomplete exact input closure');
-for(const pin of inventory.inputPins)if(logicalPath(pin.path)!==pin.path||!equal(fingerprintFile(root,pin.path),pin))fail('changed original input '+pin.path);
+for(const pin of m13?.inputPins ?? inventory.inputPins)if(logicalPath(pin.path)!==pin.path||!equal(fingerprintFile(root,pin.path),pin))fail('changed original input '+pin.path);
 for(const name of ['contracts','runtime','engine'])if(!samePhysicalPath(realpathSync(path.join(root,'node_modules/@egret',name)),realpathSync(path.join(root,'packages',name)),process.platform))fail('foreign public alias '+name);
 const wrapperOwner=realpathSync(path.join(root,'node_modules/typescript'));
 const wrapper=JSON.parse(readFileSync(path.join(wrapperOwner,'package.json'),'utf8'));
@@ -51,6 +57,7 @@ function tuplesFrom(raw){
  return tuples;
 }
 for(const group of inventory.groups){
+ m13?.recheck();
  const lane=group.lane,file='tests/types/linear-layout-'+lane+'.ts',config='tests/types/tsconfig.linear-layout-'+lane+'.json';
  const source=readFileSync(path.join(root,file),'utf8');
  if(/@ts-(?:expect-error|ignore|nocheck)\b/.test(source))fail('suppressed diagnostics');
@@ -71,7 +78,7 @@ for(const group of inventory.groups){
  }
  const args=['node_modules/typescript/bin/tsc','--noEmit','--project',config,'--pretty','false'];
  const result=spawnSync(process.execPath,args,{cwd:root,timeout:60000,maxBuffer:4*1024*1024});
- if(result.error||result.signal!==null||result.status!==expectedExit||!Buffer.isBuffer(result.stdout)||!Buffer.isBuffer(result.stderr)||result.stderr.length!==0||!equal(tuplesFrom(result.stdout),group.tuples))fail('actual replay setup/exit/output mismatch');
+ if(result.error||result.signal!==null||result.status!==expectedExit||!Buffer.isBuffer(result.stdout)||!Buffer.isBuffer(result.stderr)||result.stderr.length!==0||!equal(tuplesFrom(result.stdout),m13?.group(lane).tuples ?? group.tuples))fail('actual replay setup/exit/output mismatch');
  // Discover the actual declaration and standard-library closure independently.
  const listed=spawnSync(process.execPath,['node_modules/typescript/bin/tsc','--project',config,'--listFilesOnly','--pretty','false'],{cwd:root,timeout:60000,maxBuffer:4*1024*1024});
  if(listed.error||listed.signal!==null||listed.status!==0||listed.stderr.length!==0)fail('actual closure listing failed');
@@ -83,8 +90,9 @@ for(const group of inventory.groups){
   else {const key=ownerRelativePath(root,absolute,process.platform);if(key.endsWith('.d.ts'))dts.push(fingerprintFile(root,key));else if(key!==file)fail('unexpected source in compiler closure');}
  }
  dts.sort((left,right)=>left.path.localeCompare(right.path));libraries.sort((left,right)=>left.path.localeCompare(right.path));
- if(!equal(dts,group.declarationPins)||!equal(libraries,[...inventory.nativeLibraryPins].sort((left,right)=>left.path.localeCompare(right.path))))fail('changed complete declaration/library closure');
- for(const pin of dts)if(!inventory.inputPins.some(input=>equal(input,pin)))fail('declaration absent from authenticated inventory');
- console.log('LinearLayout exact strict lane receipt: '+JSON.stringify({lane,args,exitCode:result.status,timeout:false,stdout:rawPin(result.stdout),stderr:rawPin(result.stderr),tuples:group.tuples,declarationCount:dts.length,compiler:{version:native.version,platform:process.platform,arch:process.arch,nativePackage:nativeName,nativeMetadataPin:fingerprintFile(nativeOwner,'package.json'),nativeBinaryPin:fingerprintFile(nativeOwner,binary)}}));
+ if(!equal(dts,m13?.group(lane).declarationPins ?? group.declarationPins)||!equal(libraries,[...inventory.nativeLibraryPins].sort((left,right)=>left.path.localeCompare(right.path))))fail('changed complete declaration/library closure');
+ for(const pin of dts)if(!(m13?.inputPins ?? inventory.inputPins).some(input=>equal(input,pin)))fail('declaration absent from authenticated inventory');
+ m13?.verifyClosure(lane,listed);
+ console.log('LinearLayout exact strict lane receipt: '+JSON.stringify({lane,args,exitCode:result.status,timeout:false,stdout:rawPin(result.stdout),stderr:rawPin(result.stderr),tuples:m13?.group(lane).tuples ?? group.tuples,declarationCount:dts.length,compiler:{version:native.version,platform:process.platform,arch:process.arch,nativePackage:nativeName,nativeMetadataPin:fingerprintFile(nativeOwner,'package.json'),nativeBinaryPin:fingerprintFile(nativeOwner,binary)}}));
 }
 console.log('LinearLayout strict public consumers PASS; source, runtime, browser and delivery remain separate.');

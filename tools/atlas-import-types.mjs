@@ -7,6 +7,11 @@ import {fileURLToPath} from 'node:url';
 import {fingerprintFile, samePhysicalPath, ownerRelativePath} from './lib/file-identity.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
+// Preserve the immutable predecessor and authenticate the complete M1.3 successor.
+const m13HelperPin = fingerprintFile(root, 'tools/lib/m13-strict-successor.mjs');
+if (m13HelperPin.bytes !== 10785 || m13HelperPin.sha256 !== '61a14bb8be2162d861a26b822ded713c552b4032d755e291578b225cd13ef337') throw Error('M1.3 strict helper changed before import');
+const { selectM13StrictSuccessor } = await import('./lib/m13-strict-successor.mjs');
+
 const inventoryPin = {"path":"tests/types/atlas-import-diagnostic-expectations.json","bytes":254943,"sha256":"3d59e24a78708bd0d85f06d6124bced00d5687afcc494d1e919dce1fc9a985c6"};
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 function refuse(code, detail) { const error = new Error(code + ': ' + detail); error.code = code; throw error; }
@@ -42,10 +47,11 @@ export function parseAtlasImportDiagnostics(raw) {
 }
 export function runAtlasImportTypes() {
   const inventory = readInventory();
+  const m13 = selectM13StrictSuccessor(root, 'atlas-import', inventory);
   if (inventory.kind !== 'ATLAS_IMPORT_ACTUAL_STRICT_DIAGNOSTICS' || inventory.status !== 'OBSERVED_FROZEN_TS7_DIAGNOSTICS'
       || !same(inventory.groups.map(g => g.lane), ['positive', 'negative', 'import-negative'])) refuse('ATLAS_TYPES_OBSERVATION', 'actual three-lane observation required');
   authenticateAliases();
-  const verify = () => { for (const pin of inventory.inputPins) checkPin(pin, 'ATLAS_TYPES_IDENTITY'); };
+  const verify = () => { m13?.recheck(); for (const pin of m13?.inputPins ?? inventory.inputPins) checkPin(pin, 'ATLAS_TYPES_IDENTITY'); };
   verify();
   const environment = {...process.env};
   for (const key of Object.keys(environment)) if (/^(?:NODE_OPTIONS|NODE_PATH|NODE_V8_COVERAGE|NODE_COMPILE_CACHE|NODE_REPL_EXTERNAL_MODULE|NODE_TEST_CONTEXT|NODE_TEST_WORKER_ID|DOTNET_STARTUP_HOOKS|DOTNET_ADDITIONAL_DEPS|DOTNET_SHARED_STORE)$/i.test(key)) delete environment[key];
@@ -62,13 +68,14 @@ export function runAtlasImportTypes() {
     process.stdout.write(result.stdout ?? ''); process.stderr.write(result.stderr ?? '');
     verify();
     if (result.error || result.signal || result.status !== group.expectedExit || result.stderr !== ''
-        || !same(parseAtlasImportDiagnostics(result.stdout), group.tuples)) refuse('ATLAS_TYPES_TUPLES', 'actual exit/file/line/column/code/full-message mismatch: ' + group.lane);
+        || !same(parseAtlasImportDiagnostics(result.stdout), m13?.group(group.lane).tuples ?? group.tuples)) refuse('ATLAS_TYPES_TUPLES', 'actual exit/file/line/column/code/full-message mismatch: ' + group.lane);
     const listed = spawnSync(process.execPath, ['node_modules/typescript/bin/tsc', '-p', group.config.path, '--listFilesOnly', '--pretty', 'false'], {cwd:root, env:environment, encoding:'utf8', windowsHide:true, timeout:60000, maxBuffer:4194304});
     if (listed.error || listed.signal || listed.status !== 0 || listed.stderr !== '') refuse('ATLAS_TYPES_CLOSURE', 'actual compiler closure listing failed');
     const closure = listed.stdout.split(/\r?\n/).filter(Boolean).map(file => ownerRelativePath(root, realpathSync(file), process.platform)).sort();
-    if (!same(closure, group.closure)) refuse('ATLAS_TYPES_CLOSURE', 'declaration/library/source closure changed');
+    if (!same(closure, m13?.group(group.lane).closure ?? group.closure)) refuse('ATLAS_TYPES_CLOSURE', 'declaration/library/source closure changed');
+    m13?.verifyClosure(group.lane, listed);
     verify();
-    console.log('Atlas import strict ' + group.lane + ' PASS ' + JSON.stringify(group.tuples));
+    console.log('Atlas import strict ' + group.lane + ' PASS ' + JSON.stringify(m13?.group(group.lane).tuples ?? group.tuples));
   }
   console.log('Atlas import strict public consumers PASS; runtime and browser acceptance remain separate.');
 }

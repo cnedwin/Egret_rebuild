@@ -1,13 +1,15 @@
 import { recordVisualChange, VISUAL_CONTENT, VISUAL_BINDING } from "./displayVisualState.js";
-import type { TexturedGeometry2D, TextureRegion2D } from "@egret/contracts";
+import type { TexturedGeometry2D, SharedGeometry2D, TextureRegion2D, TextureViewRegion2D } from "@egret/contracts";
 import type { AssetLease } from "./AssetLease.js";
 import type { DisplayObject } from "./DisplayObject.js";
 import type { Texture } from "./Texture.js";
 
 export interface MeshCaptureState {
   readonly lease: AssetLease<Texture>;
-  readonly geometry: TexturedGeometry2D;
+  readonly geometry: TexturedGeometry2D | SharedGeometry2D;
   readonly sourceRect: TextureRegion2D;
+  readonly viewRegion: TextureViewRegion2D | null;
+  readonly regionOnly: boolean;
 }
 
 // One authoritative content slot; resource classes remain type-only imports.

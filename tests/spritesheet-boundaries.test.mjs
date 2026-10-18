@@ -234,3 +234,17 @@ for (const relative of ["packages/engine/dist/rendering/preparedBatches2D.d.ts",
       rejected(verify(), 'SS1_BOUNDARY_SOURCE_OWNER');
     } finally { writeFileSync(file, before); assert.deepEqual(inventory(fixture), baseline); accepted(verify()); }
   }));
+
+// M1.3 controls operate on a complete genuine owned copy and restore every byte.
+for (const [relative, mode] of [["packages/contracts/src/SharedGeometry2D.ts","missing"],["packages/runtime/dist/sharedFrameCapture.js","missing"],["packages/engine/dist/web/webgpuRetentionPool.d.ts","missing"],["packages/engine/rendering/prepareSharedDraws2D.ts","mixed-source"],["packages/engine/dist/rendering/sharedColor2D.js","same-size-hash"]])
+  test('SS1-M13 complete group refuses ' + mode + ' ' + relative, () => isolated(({ fixture, verify, baseline }) => {
+    const file = path.join(fixture, relative), before = readFileSync(file);
+    try {
+      if (mode === 'missing') rmSync(file);
+      else if (mode === 'mixed-source') writeFileSync(file, Buffer.concat([before, Buffer.from('\n// unaccepted shared source\n')]));
+      else { const altered=Buffer.from(before); altered[0]^=1; assert.equal(altered.length,before.length); writeFileSync(file,altered); }
+      const now=inventory(fixture), prior=new Map(baseline.map(row=>[row.path,row]));
+      assert.deepEqual([...now.filter(row=>JSON.stringify(row)!==JSON.stringify(prior.get(row.path))).map(row=>row.path),...baseline.filter(row=>!now.some(current=>current.path===row.path)).map(row=>row.path)],[relative]);
+      rejected(verify(), 'SS1_BOUNDARY_SOURCE_OWNER');
+    } finally { writeFileSync(file, before); assert.deepEqual(inventory(fixture), baseline); accepted(verify()); }
+  }));

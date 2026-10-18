@@ -125,3 +125,90 @@ test('literal scenes preserve the original ESM Playwright entry without widening
   for(const wrong of [path.join(installed,suite==='png'?'index.mjs':'index.js'),path.resolve('foreign-playwright',entry)])assert.throws(()=>validateResourceRuntime(suite,{runtime:{...evidence.runtime,playwrightEntry:{path:wrong}}},installed),/runtime selection/);
  }
 });
+
+
+// SOURCE controls: synthetic complete owners exercise the real graph reader;
+// they do not evaluate product modules or claim native rendering evidence.
+async function withPngLazyGraph(run){
+ const {freezeBrowserPngGraph}=await import('../../tools/browser-png/file-graph.mjs');
+ const {createHash}=await import('node:crypto');
+ const temporary=fs.mkdtempSync(path.join(os.tmpdir(),'egret-png-lazy-graph-'));
+ const owner=path.join(temporary,'owner');fs.mkdirSync(owner);
+ const write=(relative,body)=>{const file=path.join(owner,relative);fs.mkdirSync(path.dirname(file),{recursive:true});fs.writeFileSync(file,body);};
+ const pin=file=>{const bytes=fs.readFileSync(file);return {path:file,bytes:bytes.length,sha256:createHash('sha256').update(bytes).digest('hex')};};
+ const json=(relative,value)=>write(relative,JSON.stringify(value)+'\n');
+ const product=(relative,body)=>{
+  const emitted='packages/engine/dist/'+relative;
+  const source='packages/engine/'+(relative.startsWith('web/')||relative.startsWith('rendering/')?'':'src/')+relative.replace(/\.js$/,'.ts');
+  write(emitted,body);write(emitted.replace(/\.js$/,'.d.ts'),'export {};\n');write(source,body);
+ };
+ try{
+  for(const relative of ['pnpm-workspace.yaml','pnpm-lock.yaml','tools/build.mjs','tools/lib/file-identity.mjs'])write(relative,'// source graph fixture\n');
+  json('package.json',{private:true,type:'module'});json('tsconfig.json',{});json('tsconfig.base.json',{});
+  for(const name of ['contracts','runtime','engine','project']){
+   const exports=name==='engine'?Object.fromEntries([['.','index'],['./web','web/index'],['./web/image','web/image'],['./webgpu','web/webgpu']].map(([key,value])=>[key,{import:'./dist/'+value+'.js',types:'./dist/'+value+'.d.ts'}])):{};
+   json('packages/'+name+'/package.json',{name:'@egret/'+name,type:'module',exports});
+   json('packages/'+name+'/tsconfig.json',{extends:'../../tsconfig.base.json',compilerOptions:{rootDir:'src',outDir:'dist'}});
+  }
+  for(const part of ['web','rendering'])json('packages/engine/tsconfig.'+part+'.json',{extends:'../../tsconfig.base.json',compilerOptions:{rootDir:part,outDir:'dist/'+part}});
+  product('index.js','export const core = true;\n');
+  product('web/index.js','export const canvas = true;\n');
+  product('web/image.js','export const image = true;\n');
+  product('web/webgpu.js',"export { createWebGPUHost } from './WebGPUHost.js';\n");
+  product('web/WebGPUHost.js',"export { other } from './OtherHost.js';\nexport function createWebGPUHost() {}\nexport const scene = () => import('./b1.js');\nexport const sharedScene = () => import('./sharedB1.js');\n");
+  product('web/OtherHost.js','export const other = true;\n');
+  product('web/b1.js',"export { scene } from '../rendering/sceneSupport.js';\n");
+  product('web/sharedB1.js',"export { shared } from '../rendering/sharedSceneSupport.js';\n");
+  product('rendering/sceneSupport.js','export const scene = true;\n');
+  product('rendering/sharedSceneSupport.js','export const shared = true;\n');
+  write('tools/browser-png/fixture.mjs',"import '@egret/engine';\nimport '@egret/engine/web/image';\nimport './native-observer.mjs';\n");
+  write('tools/browser-png/native-observer.mjs','export const observer = true;\n');
+  const fixturePins=['a','b'].map((name,index)=>{const file=path.join(temporary,name+'.png');fs.writeFileSync(file,Buffer.from([137,80,78,71,13,10,26,10,index]));return {...pin(file),route:'/original-'+name+'.png'};});
+  const schedule=path.join(temporary,'schedule.json');fs.writeFileSync(schedule,JSON.stringify({backends:['canvas','webgpu'],fixtures:fixturePins.map(({route,bytes,sha256})=>({route,bytes,sha256}))}));
+  const input={repositoryRoot:owner,collectorFiles:[{path:'tools/browser-png/fixture.mjs',role:'fixture',route:'/fixture.mjs'},{path:'tools/browser-png/native-observer.mjs',role:'native-observer',route:'/native-observer.mjs'}],fixturePins,schedulePin:pin(schedule)};
+  await run({owner,pin,graph:()=>freezeBrowserPngGraph(input)});
+ }finally{fs.rmSync(temporary,{recursive:true,force:true});}
+}
+
+function assertPngLazyClosure(graph,owner,pin){
+ const host='/packages/engine/dist/web/WebGPUHost.js';
+ assert.deepEqual(graph.importEdges.filter(row=>row.kind==='dynamic-literal').map(({from,specifier,to})=>({from,specifier,to})),[
+  {from:host,specifier:'./b1.js',to:'/packages/engine/dist/web/b1.js'},
+  {from:host,specifier:'./sharedB1.js',to:'/packages/engine/dist/web/sharedB1.js'},
+ ]);
+ const canvas=graph.backendClosures.find(row=>row.backend==='canvas').moduleRoutes;
+ const webgpu=graph.backendClosures.find(row=>row.backend==='webgpu').moduleRoutes;
+ for(const [entry,leaf] of [['web/b1.js','rendering/sceneSupport.js'],['web/sharedB1.js','rendering/sharedSceneSupport.js']]){
+  const route='/packages/engine/dist/'+entry,target='/packages/engine/dist/'+leaf;
+  assert.ok(graph.importEdges.some(row=>row.from===route&&row.kind==='static'&&row.to===target));
+  for(const relative of [entry,leaf]){
+   const emitted='packages/engine/dist/'+relative,source='packages/engine/'+relative.replace(/\.js$/,'.ts');
+   assert.ok(webgpu.includes('/'+emitted));assert.ok(!canvas.includes('/'+emitted));
+   assert.ok(graph.moduleRoutes.some(row=>row.route==='/'+emitted));
+   for(const [file,role] of [[emitted,'emitted-module'],[emitted.replace(/\.js$/,'.d.ts'),'declaration'],[source,'source']]){
+    const row=graph.filePins.find(value=>value.owner==='repository'&&value.path===file),actual=pin(path.join(owner,file));
+    assert.ok(row,file);assert.ok(row.roles.includes(role),file);assert.equal(row.bytes,actual.bytes,file);assert.equal(row.sha256,actual.sha256,file);
+   }
+  }
+ }
+}
+
+test('SOURCE PNG graph seals both exact Host lazy branches and their full source closures',async()=>{
+ await withPngLazyGraph(({graph,owner,pin})=>assertPngLazyClosure(graph(),owner,pin));
+});
+
+for(const [label,importer,specifier] of [
+ ['other Host target','packages/engine/dist/web/WebGPUHost.js','../rendering/sharedSceneSupport.js'],
+ ['legacy target from another importer','packages/engine/dist/web/OtherHost.js','./b1.js'],
+ ['shared target from another importer','packages/engine/dist/web/OtherHost.js','./sharedB1.js'],
+])test('SOURCE PNG graph rejects '+label+' after a complete fresh baseline',async()=>{
+ await withPngLazyGraph(({graph,owner,pin})=>{
+  const baseline=graph();assertPngLazyClosure(baseline,owner,pin);
+  const file=path.join(owner,importer),original=fs.readFileSync(file);
+  try{
+   fs.writeFileSync(file,Buffer.concat([original,Buffer.from('export const unadmitted = () => import('+JSON.stringify(specifier)+');\n')]));
+   assert.throws(()=>graph(),error=>error.code==='BIP_GRAPH_DYNAMIC_IMPORT_UNADMITTED'&&error.details.path===importer&&error.details.specifier===specifier);
+  }finally{fs.writeFileSync(file,original);}
+  assert.deepEqual(graph(),baseline,'Restoration retains the complete original graph');
+ });
+});

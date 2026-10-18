@@ -234,7 +234,7 @@ export async function collectResourceSceneSource({repository,applicationRoot=rep
       const {specifier,dynamic}=edge;let next;
       if(dynamic){
         const mainRecipe=owner==='application'&&relative===EXAMPLE+'main.mjs'&&specifier==='./gpu-scene.mjs';
-        const sdkProtocol=owner==='sdk'&&relative==='packages/engine/dist/web/WebGPUHost.js'&&specifier==='./b1.js';
+        const sdkProtocol=owner==='sdk'&&relative==='packages/engine/dist/web/WebGPUHost.js'&&(specifier==='./b1.js'||specifier==='./sharedB1.js');
         if(!mainRecipe&&!sdkProtocol)fail('RS_IMPORT','Unselected dynamic import: '+key+' -> '+specifier);
       }
       if(/^\.\.?\//.test(specifier)){

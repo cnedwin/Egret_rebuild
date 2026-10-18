@@ -48,11 +48,13 @@ export function planMetadata(root,{base}={}){
  const registered=new Map(origin.files.map(row=>[row.path,row]));
  if(registered.size!==origin.files.length)throw Error('Duplicate source declaration');
  const declarationPaths=git(root,['ls-files','--cached','--others','--exclude-standard','-z','--','contributions']).split('\0').filter(Boolean).sort();
- const declared=new Set();
+ const declared=new Set(),frozen=new Set();
+ const originalRows=new Map(baseline['source-origin.json'].files.map(row=>[row.path,row]));
+ let originalCompilerPaths;
  for(const f of declarationPaths){
   if(!/^contributions\/[a-z0-9-]+\.json$/.test(f))throw Error('Invalid contribution declaration path');
   observe(f);const d=JSON.parse(fs.readFileSync(path.join(root,f),'utf8'));
-  if(d.schemaVersion!==1||!Array.isArray(d.files)||!Array.isArray(d.documents)||Object.keys(d).some(k=>!['schemaVersion','files','documents'].includes(k)))throw Error('Invalid contribution declaration');
+  if(d.schemaVersion!==1||!Array.isArray(d.files)||!Array.isArray(d.documents)||(d.frozenInputs!==undefined&&!Array.isArray(d.frozenInputs))||Object.keys(d).some(k=>!['schemaVersion','files','documents','frozenInputs'].includes(k)))throw Error('Invalid contribution declaration');
   for(const row of d.files){
    logicalPath(row.path);
    if(excluded(row.path))throw Error('An excluded input cannot be declared: '+row.path);
@@ -63,6 +65,25 @@ export function planMetadata(root,{base}={}){
    else if(registered.get(row.path).originRole!==row.originRole)throw Error('Existing source declaration differs: '+row.path);
    if(row.criticalComment&&!loc.criticalComments.some(x=>x.path===row.path))loc.criticalComments.push({path:row.path});
   }
+  // New compiler observations have an explicit first-registration path. Their
+  // reviewed raw tuple is immutable thereafter; old files cannot be relabelled.
+  for(const row of d.frozenInputs??[]){
+   if(!row||typeof row.path!=='string'||!/^tests\/types\/[a-z0-9-]+-diagnostic-expectations\.json$/.test(row.path))throw Error('Invalid frozen compiler path');
+   logicalPath(row.path);
+   if(declared.has(row.path))throw Error('Duplicate frozen compiler declaration: '+row.path);
+   if(Object.keys(row).sort().join(',')!=='bytes,originRole,path,sha256'||!Number.isSafeInteger(row.bytes)||row.bytes<0||!/^[a-f0-9]{64}$/.test(row.sha256)||typeof row.originRole!=='string'||row.originRole.length<12)throw Error('Invalid frozen compiler declaration');
+   const actual=observe(row.path);
+   if(actual.bytes!==row.bytes||actual.sha256!==row.sha256)throw Error('Frozen compiler identity differs: '+row.path);
+   const previous=originalRows.get(row.path);
+   if(previous){
+    if(previous.bytes!==row.bytes||previous.sha256!==row.sha256||previous.originRole!==row.originRole)throw Error('Frozen compiler baseline differs: '+row.path);
+   }else{
+    originalCompilerPaths??=new Set(git(root,['ls-tree','-r','--name-only','-z',commit,'--','tests/types']).split('\0').filter(Boolean));
+    if(originalCompilerPaths.has(row.path))throw Error('Frozen compiler input already exists at base: '+row.path);
+    const entry={...row};origin.files.push(entry);registered.set(row.path,entry);
+   }
+   declared.add(row.path);frozen.add(row.path);
+  }
   for(const pair of d.documents){
    if(Object.keys(pair).sort().join(',')!=='en,zh'||!declared.has(pair.en)||!declared.has(pair.zh))throw Error('Document pair requires declared sources');
    if(!loc.documents.some(x=>x.en===pair.en&&x.zh===pair.zh))loc.documents.push({...pair,kind:'public_reading'});
@@ -72,7 +93,7 @@ export function planMetadata(root,{base}={}){
  const refresh=new Set([...changed,...declared,...declarationPaths]);
  for(const f of refresh){
   if(LEDGERS.includes(f))continue;
-  if(preserved(f))throw Error('Changed preserved input requires a separate reviewed process: '+f);
+  if(preserved(f)&&!frozen.has(f))throw Error('Changed preserved input requires a separate reviewed process: '+f);
   if(!registered.has(f))throw Error('Missing source declaration: '+f);
   Object.assign(registered.get(f),observe(f));
  }

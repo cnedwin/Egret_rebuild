@@ -24,11 +24,25 @@ const registrations=[
  ['tools/browser-png-boundary.mjs','m12IncrementalRenderingGraphSuccessor'],
  ['tools/atlas-import-boundary.mjs','m12IncrementalRenderingGraphSuccessor'],
  ['tools/bitmap-binding-ticket-boundary.mjs','m12IncrementalOwnershipSuccessor'],
+ ['tools/spritesheet-boundary.mjs','m13SharedRenderingGraphSuccessor'],
+ ['tools/browser-png-boundary.mjs','m13SharedRenderingGraphSuccessor'],
+ ['tools/atlas-import-boundary.mjs','m13SharedRenderingGraphSuccessor'],
+ ['tools/bitmap-resource-slot-boundary.mjs','m13InterfaceRawSuccessor'],
+ ['tools/bitmap-binding-ticket-boundary.mjs','m13InterfaceRawSuccessor'],
  ['tools/sequence-playback-boundary.mjs','seqpbPackages'],
  ['tools/sequence-playback-boundary.mjs','seqpbStableEntries'],
  ['tools/sequence-playback-boundary.mjs','seqpbConfigurations']
 ];
 
+// Only these complete reviewed source revisions permit post-preamble JSON reads.
+const m13SourceOwners = [{"path":"tools/spritesheet-boundary.mjs","bytes":149677,"sha256":"5f4885f894b2b6d304a1f6c5fb685a86d28fbb510eb0335c615e71e2f65a4bae"},{"path":"tools/browser-png-boundary.mjs","bytes":151624,"sha256":"3a3db5f44bd79bc9f2ba11b393facd85533b52e93dbd17213076b8d6754d7ad4"},{"path":"tools/atlas-import-boundary.mjs","bytes":54233,"sha256":"6646d8fbf1a9baf248d4122195e5f3023c7c385470d876e106942ef828d2558b"},{"path":"tools/bitmap-resource-slot-boundary.mjs","bytes":29569,"sha256":"5bd40db8add4af6a15b0c5ce7415a77b663620984d074104c0849b6595390c6a"},{"path":"tools/bitmap-binding-ticket-boundary.mjs","bytes":33706,"sha256":"65b356be737202f018b2c5cb1813538762e07af19c950b782fbbde782dbaa556"},{"path":"tools/sequence-playback-boundary.mjs","bytes":35428,"sha256":"898af8561932a01f5ba9b6de243feb6340557342e8d0a4afa171530e2ee531cd"}];
+const m13PairRegistrations = [
+ ['tools/sequence-playback-boundary.mjs','m13SequenceInterfaceSuccessor','raw-pair-observation-only'],
+ ['tools/bitmap-resource-slot-boundary.mjs','m13InterfaceProjectedSuccessor','transformed-pair-raw-observation-only'],
+ ['tools/bitmap-resource-slot-boundary.mjs','m13InterfaceStableSuccessor','raw-pair-observation-only'],
+ ['tools/bitmap-binding-ticket-boundary.mjs','m13InterfaceProjectedSuccessor','transformed-pair-raw-observation-only'],
+ ['tools/bitmap-binding-ticket-boundary.mjs','m13InterfaceStableSuccessor','raw-pair-observation-only']
+];
 // Explicit selectors keep historical transforms and third-party owners separate.
 const policyRegistrations=[
  {owner:'tools/bitmap-resource-slot-boundary.mjs',binding:'policyPin',target:'tools/bitmap-resource-slot-policy.json',kind:'BITMAP_RESOURCE_SLOT_FINITE_INTERFACE_POLICY',selectors:['packages','configurations','stableEntries','oldRootPins','oldEngineDeclarationPin','workspacePins']},
@@ -147,6 +161,19 @@ function codeInventory(root){
 export function prepareBaselineReview(root){
  const read=reader(root),owners=new Map(),declarations=[],policyLinks=[],successorPairs=[];
  const ownerText=file=>{if(!owners.has(file))owners.set(file,read.text(file));return owners.get(file);};
+ function registeredDeclaration(owner,binding){
+  const text=ownerText(owner);
+  try{return declaration(text,binding);}catch(cause){
+   const allowed=registrations.some(row=>row[0]===owner&&row[1]===binding&&binding.startsWith('m13'))
+    || m13PairRegistrations.some(row=>row[0]===owner&&row[1]===binding);
+   const reviewed=m13SourceOwners.find(row=>row.path===owner);
+   if(!allowed||!reviewed||!samePin(read.pin(owner),reviewed))throw cause;
+   // Raw source authority precedes extraction; no caller-selected parser fallback.
+   const lines=text.split(/\r?\n/).filter(line=>line.startsWith('const '+binding+' = '));
+   if(lines.length!==1||!lines[0].endsWith(';'))throw Error('Missing or ambiguous reviewed M1.3 declaration');
+   return uniqueJSON(lines[0].slice(('const '+binding+' = ').length,-1));
+  }
+ }
  const row=expected=>{const current=read.pin(expected.path);return {expected,current,identity:current===null?'missing':samePin(expected,current)?'same':'different'};};
  function add(owner,binding,pins,comparison='raw-identity'){
   if(!Array.isArray(pins))throw Error('Expected declared pin array: '+binding);
@@ -155,7 +182,7 @@ export function prepareBaselineReview(root){
  }
  for(const [owner,binding,member]of registrations){
   if(!owners.has(owner))owners.set(owner,read.text(owner));
-  const value=declaration(owners.get(owner),binding),pins=member?value[member]:value;
+  const value=registeredDeclaration(owner,binding),pins=member?value[member]:value;
   if(!Array.isArray(pins))throw Error('Expected declared pin array: '+binding);
   const seen=new Set(),rows=pins.map(expected=>{
    validPin(expected);if(seen.has(expected.path))throw Error('Duplicate declared path: '+expected.path);seen.add(expected.path);
@@ -189,6 +216,18 @@ export function prepareBaselineReview(root){
   });
   successorPairs.push({owner,binding,comparison:'raw-pair-observation-only',rows});
  }
+ for(const [owner,binding,comparison]of m13PairRegistrations){
+  const pairs=registeredDeclaration(owner,binding),seen=new Set();
+  if(!Array.isArray(pairs))throw Error('Expected registered M1.3 pair array');
+  const rows=pairs.map(pair=>{
+   if(!pair||!equal(Object.keys(pair).sort(),['base','current']))throw Error('Malformed M1.3 successor pair');
+   const base=repositoryPin(pair.base),successor=repositoryPin(pair.current);
+   if(base.path!==successor.path||seen.has(base.path))throw Error('M1.3 successor path differs or repeats');seen.add(base.path);
+   const current=read.pin(base.path),baseMatches=samePin(base,current),successorMatches=samePin(successor,current);
+   return {path:base.path,base,successor,current,identity:current===null?'missing':baseMatches&&successorMatches?'both':baseMatches?'base':successorMatches?'current':'neither'};
+  });
+  successorPairs.push({owner,binding,comparison,rows});
+ }
  const inventory=codeInventory(root);for(const file of inventory)read.pin(file);
  const graphCoverage=[
   ['tools/spritesheet-boundary.mjs','graphPins','ss1AtlasGraphSuccessor','tools/spritesheet-boundary.mjs'],
@@ -197,10 +236,12 @@ export function prepareBaselineReview(root){
  ].map(([owner,baseBinding,successorBinding,warmOwner])=>{
   const warmSuccessor={owner:warmOwner,binding:'m11WarmSubmissionGraphSuccessor'};
   const incrementalSuccessor={owner:warmOwner,binding:'m12IncrementalRenderingGraphSuccessor'};
+  const sharedSuccessor={owner:warmOwner,binding:'m13SharedRenderingGraphSuccessor'};
   const declared=new Set(declarations.filter(x=>x.owner===owner&&(x.binding===baseBinding||x.binding===successorBinding)
    || x.owner===warmSuccessor.owner&&x.binding===warmSuccessor.binding
-   || x.owner===incrementalSuccessor.owner&&x.binding===incrementalSuccessor.binding).flatMap(x=>x.rows.map(row=>row.expected.path)));
-  return {owner,baseBinding,successorBinding,warmSuccessor,incrementalSuccessor,unlisted:inventory.filter(file=>!declared.has(file)).map(file=>read.pin(file))};
+   || x.owner===incrementalSuccessor.owner&&x.binding===incrementalSuccessor.binding
+   || x.owner===sharedSuccessor.owner&&x.binding===sharedSuccessor.binding).flatMap(x=>x.rows.map(row=>row.expected.path)));
+  return {owner,baseBinding,successorBinding,warmSuccessor,incrementalSuccessor,sharedSuccessor,unlisted:inventory.filter(file=>!declared.has(file)).map(file=>read.pin(file))};
  });
  // Many declarations can reference one path; retain every selector and pair arm.
  const byPath=new Map();

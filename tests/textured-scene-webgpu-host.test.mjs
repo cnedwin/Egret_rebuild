@@ -89,7 +89,7 @@ test('CH01 exact opt-in capability starts four independent roles and a genuine p
   });
   await withCombinedGPU(async f=>{
     for (const factory of [gpu.createWebGPUHost,gpu.createTexturedWebGPUHost,sceneGPU.createSceneWebGPUHost]) noCombinedMethod(f.keep(factory(f.options())));
-    assert.deepEqual(Object.keys(gpu).sort(),['createTexturedWebGPUHost','createWebGPUHost']);
+    assert.deepEqual(Object.keys(gpu).sort(),['createSharedWebGPUHost','createTexturedWebGPUHost','createWebGPUHost']);
     assert.equal(Object.hasOwn(egret,'createTexturedSceneWebGPUHost'),false);
     assert.deepEqual(f.calls,[]);
   });

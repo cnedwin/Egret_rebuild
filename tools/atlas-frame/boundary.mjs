@@ -275,7 +275,7 @@ export async function collectAtlasFrameSource(repository,kind='ordinary'){
     const record={owner,path:relative,route,bytes:input.pin.bytes,sha256:input.pin.sha256,edges:[]};modules.set(key,record);
     for(const edge of moduleImports(decode(input.raw))){
       const {specifier,dynamic}=edge;
-      requireThat(!dynamic||(owner==='repository'&&relative==='packages/engine/dist/web/WebGPUHost.js'&&specifier==='./b1.js'),'Unregistered dynamic module edge '+key);
+      requireThat(!dynamic||(owner==='repository'&&relative==='packages/engine/dist/web/WebGPUHost.js'&&(specifier==='./b1.js'||specifier==='./sharedB1.js')),'Unregistered dynamic module edge '+key);
       let next;
       if(/^\.\.?\//.test(specifier)){
         const target=identity.ownerRelativePath(owners.get(owner),path.resolve(owners.get(owner),path.dirname(relative),specifier));next=[owner,target];

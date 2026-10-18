@@ -1,4 +1,5 @@
-import type { Point2D, Rectangle2D } from '@egret/contracts';
+import { isSharedMaterial2D } from '@egret/contracts';
+import type { Point2D, Rectangle2D, SharedMaterial2D } from '@egret/contracts';
 import { registerDisplayHitNode, readDisplayHitState, writeDisplayHitArea, writeDisplayTouchEnabled } from './displayHitState.js';
 import { queryDisplayBounds } from './displayBounds.js';
 import type { BoundsQueryOptions } from './displayBounds.js';
@@ -85,6 +86,24 @@ export class DisplayObject extends EventDispatcher {
     if (typeof value !== 'boolean') throw new EgretError('DISPLAY_VALUE_INVALID');
     const state = visualOf(this), changed = !sameVisualValue(state.visible, value);
     state.visible = value;
+    if (changed) recordVisualChange(this, VISUAL_APPEARANCE);
+  }
+  /** A complete material value overrides the nearest inherited value. */
+  public get sharedMaterial(): SharedMaterial2D | null { return visualOf(this).sharedMaterial; }
+  public set sharedMaterial(value: SharedMaterial2D | null) {
+    assertVisualMutable(this);
+    if (value !== null && !isSharedMaterial2D(value)) throw new EgretError('DISPLAY_VALUE_INVALID');
+    const state = visualOf(this), changed = state.sharedMaterial !== value;
+    state.sharedMaterial = value;
+    if (changed) recordVisualChange(this, VISUAL_APPEARANCE);
+  }
+  /** An ordering boundary is metadata, not another display or resource owner. */
+  public get renderBoundary(): 'none' | 'isolate' { return visualOf(this).renderBoundary; }
+  public set renderBoundary(value: 'none' | 'isolate') {
+    assertVisualMutable(this);
+    if (value !== 'none' && value !== 'isolate') throw new EgretError('DISPLAY_VALUE_INVALID');
+    const state = visualOf(this), changed = state.renderBoundary !== value;
+    state.renderBoundary = value;
     if (changed) recordVisualChange(this, VISUAL_APPEARANCE);
   }
   public get clipRect():Rectangle2D|undefined { return visualOf(this).clipRect; }

@@ -88,7 +88,10 @@ function externalNew(target) {
   catch (cause) { if (cause.message === 'Destination belongs to repository') throw cause; }
   requireThat(!fs.existsSync(selected), 'Fresh private destination required'); return selected;
 }
-const collector = read(repository, 'tools/resource-scene-boundary.mjs', {bytes:25753,sha256:'10c52ae5f7c33d1550c9231956297bb041c7a8cb67af8c19b0fdf41842bc4cd4'});
+// Retain the original collector identity; M1.3 adds only the exact Host sharedB1 edge.
+const historicalCollectorSource = {bytes:25753,sha256:'10c52ae5f7c33d1550c9231956297bb041c7a8cb67af8c19b0fdf41842bc4cd4'};
+const m13CollectorSourceSuccessor = {"bytes":25784,"sha256":"bc0ce6ccb3ae4ceed8797a4350fa9a7c4303d5e1091b2d7847837d8073abec8b"};
+const collector = read(repository, 'tools/resource-scene-boundary.mjs', m13CollectorSourceSuccessor);
 const { collectResourceSceneSource } = await import(pathToFileURL(path.join(repository, 'tools/resource-scene-boundary.mjs')).href);
 const collected = await collectResourceSceneSource({repository});
 const routes = new Map([...collected.routes].filter(([url]) => ![

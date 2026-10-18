@@ -293,10 +293,10 @@ import {Mesh2D} from '@egret/engine';
 type MeshEqual<A, B> = GeometryEqual<A, B>;
 type MeshAssert<T extends true> = T;
 type MeshConstructorArguments = MeshAssert<MeshEqual<
-  ConstructorParameters<typeof Mesh2D>,
+  ConstructorParameters<typeof Mesh2D<TexturedGeometry2D>>,
   [textureLease: AssetLease<Texture>, geometry: TexturedGeometry2D]
 >>;
-type MeshInstance = MeshAssert<MeshEqual<InstanceType<typeof Mesh2D>, Mesh2D>>;
+type MeshInstance = MeshAssert<MeshEqual<InstanceType<typeof Mesh2D<TexturedGeometry2D>>, Mesh2D>>;
 type MeshTextureGetter = MeshAssert<MeshEqual<Mesh2D['textureLease'], AssetLease<Texture> | undefined>>;
 type MeshGeometryGetter = MeshAssert<MeshEqual<Mesh2D['geometry'], TexturedGeometry2D | undefined>>;
 type MeshSetContent = MeshAssert<MeshEqual<
@@ -309,6 +309,11 @@ type MeshBoundsInherited = MeshAssert<MeshEqual<Mesh2D['getBounds'], DisplayObje
 type MeshBoundsExactCallable = MeshAssert<MeshEqual<Mesh2D['getBounds'], BoundsPositiveCallable>>;
 const meshExactConstructor: new (textureLease: AssetLease<Texture>, geometry: TexturedGeometry2D) => Mesh2D = Mesh2D;
 const meshPositive: Mesh2D = new meshExactConstructor(textureBorrow, geometryValue);
+const meshInferred = new Mesh2D(textureBorrow, geometryValue);
+type MeshInferenceExact = MeshAssert<MeshEqual<typeof meshInferred, Mesh2D<TexturedGeometry2D>>>;
+const meshInferredDefault: Mesh2D = meshInferred;
+meshInferred.setContent(textureBorrow, geometryValue);
+void meshInferredDefault;
 const meshPositiveDisplay: DisplayObject = meshPositive;
 const meshPositiveLease: AssetLease<Texture> | undefined = meshPositive.textureLease;
 const meshPositiveGeometry: TexturedGeometry2D | undefined = meshPositive.geometry;
@@ -319,8 +324,8 @@ meshPositive.dispose();
 void meshPositiveDisplay; void meshPositiveLease; void meshPositiveGeometry; void meshPositiveBounds;
 
 // Task 5: exact opt-in types; append without replacing accepted legacy fixtures.
-import {TEXTURED_FRAME_PROFILE_2D as ProfileLiteral, createEngineForProfile as ProfileFactory} from '@egret/engine';
-import type {TexturedFrameProfile2D as ProfileType, TexturedMeshCommand2D as ProfileMesh, TexturedRenderCommand2D as ProfileCommand, TexturedRenderFrame2D as ProfileFrame, TexturedRenderHostAdapter as ProfileHost, Engine as ProfileEngine, EngineOptions as ProfileEngineOptions, FrameOptions2D as ProfileOptions, HostAdapter as ProfileHostBase, Matrix2D as ProfileMatrix, ClipRectangle2D as ProfileClip, TextureRegion2D as ProfileRegion, ImageData2D as ProfileImage, TexturedGeometry2D as ProfileGeometry, RenderCommand2D as ProfileLegacyCommand, RectangleCommand2D as ProfileRect, ImageCommand2D as ProfileImageCommand, RenderFrame2D as ProfileLegacyFrame} from '@egret/engine';
+import {TEXTURED_FRAME_PROFILE_2D as ProfileLiteral, SHARED_FRAME_PROFILE_2D as SharedProfileLiteral, createEngineForProfile as ProfileFactory} from '@egret/engine';
+import type {SharedFrameProfile2D as SharedProfileType, TexturedFrameProfile2D as ProfileType, TexturedMeshCommand2D as ProfileMesh, TexturedRenderCommand2D as ProfileCommand, TexturedRenderFrame2D as ProfileFrame, TexturedRenderHostAdapter as ProfileHost, Engine as ProfileEngine, EngineOptions as ProfileEngineOptions, FrameOptions2D as ProfileOptions, HostAdapter as ProfileHostBase, Matrix2D as ProfileMatrix, ClipRectangle2D as ProfileClip, TextureRegion2D as ProfileRegion, ImageData2D as ProfileImage, TexturedGeometry2D as ProfileGeometry, RenderCommand2D as ProfileLegacyCommand, RectangleCommand2D as ProfileRect, ImageCommand2D as ProfileImageCommand, RenderFrame2D as ProfileLegacyFrame} from '@egret/engine';
 import {collectTexturedFrameContent as ProfileCollect} from '../../packages/runtime/dist/index.js';
 import type {CapturedTexturedContent2D as ProfileContent, Stage as ProfileStage} from '../../packages/runtime/dist/index.js';
 import type {ContractsProfileType, ContractsProfileMesh, ContractsProfileCommand, ContractsProfileFrame, ContractsProfileHost} from '../../packages/engine/tests/profile-contract-types.js';
@@ -345,7 +350,7 @@ type ProfileHostFields = {readonly texturedFrameProfile: ProfileType; renderText
 type ProfileHostNewKeys = ProfileAssert<ProfileEqual<Exclude<keyof ProfileHost, keyof ProfileHostBase>, keyof ProfileHostFields>>;
 type ProfileHostExact = ProfileAssert<ProfileEqual<Pick<ProfileHost, keyof ProfileHostFields>, ProfileHostFields>>;
 type ProfileHostPortExact = ProfileAssert<ProfileEqual<ProfileHost['renderTexturedFrame'], (frame: ProfileFrame) => undefined>>;
-type ProfileFactoryExact = ProfileAssert<ProfileEqual<typeof ProfileFactory, (options: ProfileEngineOptions, profile: ProfileType) => Promise<ProfileEngine>>>;
+type ProfileFactoryExact = ProfileAssert<ProfileEqual<typeof ProfileFactory, (options: ProfileEngineOptions, profile: ProfileType | SharedProfileType) => Promise<ProfileEngine>>>;
 type ProfileEngineAdvertisement = ProfileAssert<ProfileEqual<Pick<ProfileEngine, 'texturedFrameProfile'>, {readonly texturedFrameProfile: ProfileType | undefined}>>;
 type ProfileEngineNewCapture = ProfileAssert<ProfileEqual<ProfileEngine['captureTexturedFrame'], (options: ProfileOptions) => ProfileFrame>>;
 type ProfileEngineNewRender = ProfileAssert<ProfileEqual<ProfileEngine['renderTexturedFrame'], (options: ProfileOptions) => ProfileFrame>>;
@@ -368,6 +373,8 @@ const profilePositiveCaptured: ProfileFrame = profilePositiveEngine.captureTextu
 const profilePositiveRendered: ProfileFrame = profilePositiveEngine.renderTexturedFrame(profilePositiveOptions);
 const profilePositiveHostReturn: undefined = profilePositiveHost.renderTexturedFrame(profilePositiveCaptured);
 const profilePositiveFactory: Promise<ProfileEngine> = ProfileFactory({host: profilePositiveHost}, ProfileLiteral);
+const sharedProfilePositiveFactory: Promise<ProfileEngine> = ProfileFactory({host: profilePositiveHost}, SharedProfileLiteral);
+void sharedProfilePositiveFactory;
 const profilePositiveContent: ProfileContent = ProfileCollect(profilePositiveStage);
 void profileExhaustion; void profileLegacyExhaustion; void profilePositiveRendered;
 void profilePositiveHostReturn; void profilePositiveFactory; void profilePositiveContent;
