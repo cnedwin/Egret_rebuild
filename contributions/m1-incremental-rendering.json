@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "knowledge-base/Cns/docs/incremental-frame-preparation-contract.md",
+      "originRole": "First-party incremental rendering contract and contributor workflow, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/incremental-frame-preparation-evidence.md",
+      "originRole": "First-party incremental-rendering execution summary and acceptance boundaries, authored with AI assistance and independently reviewed; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/incremental-frame-preparation-contract.md",
+      "originRole": "First-party incremental rendering contract and contributor workflow, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/incremental-frame-preparation-evidence.md",
+      "originRole": "First-party incremental-rendering execution summary and acceptance boundaries, authored with AI assistance and independently reviewed; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/rendering/preparedBatches2D.ts",
+      "criticalComment": true,
+      "originRole": "First-party bounded capture, preparation and ordered batching implementation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/rendering/preparedFrameCache2D.ts",
+      "criticalComment": true,
+      "originRole": "First-party bounded capture, preparation and ordered batching implementation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "packages/runtime/src/frameCaptureCache.ts",
+      "criticalComment": true,
+      "originRole": "First-party bounded capture, preparation and ordered batching implementation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/bitmap-binding-ticket-boundaries.test.mjs",
+      "originRole": "First-party complete-owner source-admission controls, independently authored and reviewed with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/incremental-batch-private.test.mjs",
+      "originRole": "First-party incremental-rendering behavior and bounded UNIT fixtures, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/incremental-frame-cache-private.test.mjs",
+      "originRole": "First-party incremental-rendering behavior and bounded UNIT fixtures, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/incremental-frame-capture.test.mjs",
+      "originRole": "First-party incremental-rendering behavior and bounded UNIT fixtures, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/incremental-preparation-batching.test.mjs",
+      "originRole": "First-party incremental-rendering behavior and bounded UNIT fixtures, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/incremental-preparation-private.test.mjs",
+      "originRole": "First-party incremental-rendering behavior and bounded UNIT fixtures, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/incremental-rendering-tool.test.mjs",
+      "originRole": "First-party incremental-rendering behavior and bounded UNIT fixtures, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/incremental-rendering/observe-windows.ps1",
+      "criticalComment": true,
+      "originRole": "First-party finite incremental-rendering verification tools and fixture, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/incremental-rendering/workload.mjs",
+      "criticalComment": true,
+      "originRole": "First-party finite incremental-rendering verification tools and fixture, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/verify-incremental-rendering.mjs",
+      "criticalComment": true,
+      "originRole": "First-party finite incremental-rendering verification tools and fixture, authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/incremental-frame-preparation-contract.md",
+      "zh": "knowledge-base/Cns/docs/incremental-frame-preparation-contract.md"
+    },
+    {
+      "en": "knowledge-base/en/docs/incremental-frame-preparation-evidence.md",
+      "zh": "knowledge-base/Cns/docs/incremental-frame-preparation-evidence.md"
+    }
+  ]
+}

@@ -4,7 +4,15 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
-## M1.1 candidate — warm WebGPU submission
+## M1.2 candidate — incremental ordered frame preparation
+
+M1.2 reuses unchanged display transforms, clipping and prepared geometry, then merges compatible adjacent draws without changing painter order or public APIs. Current resources still undergo complete admission, and saved frames remain isolated from later edits. The fixed native operation fixture records 991 baseline draws and 155 candidate draws per frame.
+
+Read the [contract](docs/incremental-frame-preparation-contract.md) and [evidence and limits](docs/incremental-frame-preparation-evidence.md). Operation counts do not establish elapsed-time improvements. The baseline reaches its two-frame in-flight limit during the fixed native warm-up, so the five-pair performance comparison and M1.2 acceptance remain open. Full publication gates and repository delivery are separate.
+
+## M1.1 delivered — warm WebGPU submission
+
+Merged through [PR #73](https://github.com/cnedwin/Egret_rebuild/pull/73), main `fa88111f5e73503e1804f92a9f444207110b773c`. Earlier evidence retains its recorded cutoff; delivery does not extend its performance or platform claims.
 
 M1.1 adds completion-safe vertex/index/uniform buffer reuse and complete-key binding reuse, and avoids covered warm image crop copies. The bounded caches preserve original admission, painter order and public APIs. Read the [contract](docs/warm-submission-contract.md) and [current evidence](docs/warm-submission-evidence.md). Actual operation counts, native image checks, performance and repository delivery remain separate acceptance domains.
 

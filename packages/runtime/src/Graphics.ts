@@ -1,6 +1,6 @@
 import type { DisplayObject } from "./DisplayObject.js";
 import { EgretError } from "./EgretError.js";
-import { assertVisualMutable, color, unit, copyRect, visualOf } from "./displayVisualState.js";
+import { assertVisualMutable, color, unit, copyRect, visualOf, recordVisualChange, VISUAL_CONTENT } from "./displayVisualState.js";
 
 /** Drawing state belongs to one node; every primitive snapshots its fill. */
 export class Graphics {
@@ -20,6 +20,7 @@ export class Graphics {
     const rect = copyRect({ x, y, width, height }, "GRAPHICS_VALUE_INVALID");
     if (!this.fill) throw new EgretError("GRAPHICS_FILL_REQUIRED");
     visualOf(this.owner).primitives.push({ rect, ...this.fill });
+    recordVisualChange(this.owner, VISUAL_CONTENT);
     return this;
   }
 
@@ -31,7 +32,9 @@ export class Graphics {
 
   public clear(): void {
     assertVisualMutable(this.owner);
-    visualOf(this.owner).primitives = [];
+    const state = visualOf(this.owner), changed = state.primitives.length !== 0;
+    state.primitives = [];
     this.fill = undefined;
+    if (changed) recordVisualChange(this.owner, VISUAL_CONTENT);
   }
 }

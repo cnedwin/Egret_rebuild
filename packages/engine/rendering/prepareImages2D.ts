@@ -1,3 +1,5 @@
+import { readPreparedStage2D, tryReplayPreparedStage2D, acceptPreparedStage2D, publishPreparedStage2D } from './preparedFrameCache2D.js';
+import type { PreparedCacheSlot2D } from './preparedFrameCache2D.js';
 import { noteOwnedPreparationFailure } from './ownedPreparationFailure2D.js';
 import type { ImageCommand2D, TextureRegion2D } from '@egret/contracts';
 import { Preparation, coordinate, same, POLYGON_LIMIT, GeometryPreparationError, clipPolygon2D, finishPolygonWinding2D } from './prepareRectangles2D.js';
@@ -48,8 +50,15 @@ export function normalizeImagePolygon(points: readonly ImagePoint2D[], options: 
     const preparation = new Preparation(options), normalized = normalize(preparation, points);
     return { points: normalized, edgeTests: preparation.edgeTests };
 }
-export function prepareImage2D(command: ImageCommand2D, width: number, height: number, options: RectanglePreparationOptions, budget?: PreparationBudget2D): PreparedImage2D {
+export function prepareImage2D(command: ImageCommand2D, width: number, height: number, options: RectanglePreparationOptions, budget?: PreparationBudget2D, cacheSlot?: PreparedCacheSlot2D): PreparedImage2D {
     coordinate(options.pixelRatio);
+    const cached = readPreparedStage2D<Pick<PreparedImage2D, 'points' | 'pointIndices' | 'edgeTests'>>(cacheSlot, 'geometry');
+    if (cached && cached.cost.predicates <= options.maxClipEdgeTests && cached.cost.preparedVertices <= options.maxPreparedVertices
+        && cached.cost.preparedVertices <= 4294967295 && tryReplayPreparedStage2D(budget, cached.cost)) {
+        acceptPreparedStage2D(cacheSlot);
+        // Rebind this frame's image table address; the cache retains only geometry.
+        return { ...cached.value, imageIndex: command.imageIndex, sourceRect: command.sourceRect, alpha: command.alpha };
+    }
     const preparation = new Preparation(options, budget), corners = preparation.corners(command);
     const uv = [[0, 0], [1, 0], [1, 1], [0, 1]] as const;
     let polygon = normalize(preparation, corners.map((point, i) => ({ ...point, u: uv[i]![0], v: uv[i]![1] })));
@@ -61,5 +70,8 @@ export function prepareImage2D(command: ImageCommand2D, width: number, height: n
     const vertices = polygon.length ? (polygon.length - 2) * 3 : 0;
     if (vertices > options.maxPreparedVertices || vertices > 4294967295) fail('budget');
     budget?.admitPreparedVertices(vertices);
-    return { points: polygon, pointIndices: polygon.map((_point, index) => index), imageIndex: command.imageIndex, sourceRect: command.sourceRect, alpha: command.alpha, edgeTests: preparation.edgeTests };
+    const result = { points: polygon, pointIndices: polygon.map((_point, index) => index), imageIndex: command.imageIndex, sourceRect: command.sourceRect, alpha: command.alpha, edgeTests: preparation.edgeTests };
+    publishPreparedStage2D(cacheSlot, 'geometry', { points: result.points, pointIndices: result.pointIndices, edgeTests: result.edgeTests },
+        { preparedVertices: vertices, predicates: preparation.edgeTests, tupleComparisons: 0 });
+    return result;
 }

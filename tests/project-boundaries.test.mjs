@@ -190,3 +190,23 @@ test('real compiler negatives with unchanged error count reject incorrect expect
   }
   write('tests/types/project-negative.ts',original);
 }));
+
+// Each identity refusal follows a fresh complete sequence compiler baseline.
+for(const [label,file]of [
+ ['implementation','packages/runtime/src/DisplayObject.ts'],
+ ['declaration','packages/runtime/dist/DisplayObject.d.ts'],
+])test('sequence source successor rejects an unregistered '+label+' after its genuine baseline',()=>isolated(fixture=>{
+ prepareTypeFixture(fixture);
+ const baseline=run(['tools/sequence-playback-types.mjs'],fixture.root);
+ assert.ifError(baseline.error);assert.equal(baseline.status,0,baseline.stdout+baseline.stderr);
+ assert.match(baseline.stdout,/Sequence playback positive live exact diagnostics/);
+ assert.match(baseline.stdout,/Sequence playback negative live exact diagnostics/);
+ assert.match(baseline.stdout,/Sequence playback import-negative live exact diagnostics/);
+ assert.match(baseline.stdout,/Sequence playback types PASS/);
+ const original=readFileSync(path.join(fixture.root,file));
+ fixture.write(file,original.toString('utf8')+'\n// unregistered source identity\n');
+ const refused=run(['tools/sequence-playback-types.mjs'],fixture.root);
+ assert.ifError(refused.error);assert.equal(refused.status,1,refused.stdout+refused.stderr);
+ assert.ok(refused.stderr.includes('source/config/compiler identity changed: '+file));
+ assert.doesNotMatch(refused.stdout,/Sequence playback types PASS/);
+}));

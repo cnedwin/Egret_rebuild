@@ -143,6 +143,10 @@ test('SS1-P00 current complete built graph satisfies SpriteSheet source/emission
   accepted(check(['--root', repository]));
 });
 const controls = [
+  { name: 'SS1-M12 runtime source cannot mix with unchanged emission', file: 'packages/runtime/src/frameCapture.ts', code: 'SS1_BOUNDARY_SOURCE_OWNER',
+    mutate: bytes => Buffer.concat([bytes, Buffer.from('// unaccepted incremental capture source\n')]) },
+  { name: 'SS1-M12 new helper emission rejects equal-size wrong hash', file: 'packages/engine/dist/rendering/preparedFrameCache2D.js', code: 'SS1_BOUNDARY_SOURCE_OWNER',
+    mutate: bytes => { const changed = Buffer.from(bytes); changed[0] ^= 1; assert.equal(changed.length, bytes.length); return changed; } },
   { name: 'SS1-M11 source mutation cannot mix with unchanged helper emissions', file: 'packages/engine/web/webgpuBufferPool.ts', code: 'SS1_BOUNDARY_SOURCE_OWNER',
     mutate: bytes => Buffer.concat([bytes, Buffer.from('// unaccepted warm submission source\n')]) },
   { name: 'SS1-M11 helper emission rejects equal-size wrong hash', file: 'packages/engine/dist/web/webgpuBindingCache.js', code: 'SS1_BOUNDARY_SOURCE_OWNER',
@@ -215,6 +219,18 @@ for (const relative of ['packages/engine/dist/web/webgpuBufferPool.d.ts', 'packa
       rmSync(file);
       const current = inventory(fixture);
       assert.deepEqual(baseline.filter(row => !current.some(now => now.path === row.path)).map(row => row.path), [relative]);
+      rejected(verify(), 'SS1_BOUNDARY_SOURCE_OWNER');
+    } finally { writeFileSync(file, before); assert.deepEqual(inventory(fixture), baseline); accepted(verify()); }
+  }));
+
+// Every new path participates in the complete M1.2 group, including declarations.
+for (const relative of ["packages/engine/dist/rendering/preparedBatches2D.d.ts","packages/engine/dist/rendering/preparedBatches2D.js","packages/engine/dist/rendering/preparedFrameCache2D.d.ts","packages/engine/dist/rendering/preparedFrameCache2D.js","packages/engine/rendering/preparedBatches2D.ts","packages/engine/rendering/preparedFrameCache2D.ts","packages/runtime/dist/frameCaptureCache.d.ts","packages/runtime/dist/frameCaptureCache.js","packages/runtime/src/frameCaptureCache.ts"])
+  test('SS1-M12 missing exact new path ' + relative, () => isolated(({ fixture, verify, baseline }) => {
+    const file = path.join(fixture, relative), before = readFileSync(file);
+    try {
+      rmSync(file); const current = inventory(fixture);
+      assert.deepEqual(baseline.filter(row => !current.some(now => now.path === row.path)).map(row => row.path), [relative]);
+      assert.deepEqual(current, baseline.filter(row => row.path !== relative));
       rejected(verify(), 'SS1_BOUNDARY_SOURCE_OWNER');
     } finally { writeFileSync(file, before); assert.deepEqual(inventory(fixture), baseline); accepted(verify()); }
   }));

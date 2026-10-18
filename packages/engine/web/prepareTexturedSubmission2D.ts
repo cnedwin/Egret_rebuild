@@ -1,5 +1,6 @@
 import { IMAGE_LIMITS_2D } from '@egret/contracts';
 import type { TexturedRenderFrame2D } from '@egret/contracts';
+import type { PreparedBatchDraw2D } from '../rendering/preparedBatches2D.js';
 import type { TexturedFrameAdmission2D, PreparedTexturedDraw2D } from '../rendering/prepareTexturedDraws2D.js';
 import type { TexturedPreparationBudget2D } from '../rendering/texturedPreparationBudget2D.js';
 import { packImageVertices2D } from '../rendering/packImageVertices2D.js';
@@ -45,10 +46,7 @@ export interface TexturedSubmissionStorage2D {
     readonly drawStorage: readonly TexturedDrawStorage2D[]; readonly rowPitch: number; readonly staging: number; readonly output: number;
     readonly sceneStorage?: JointSceneStorage2D;
 }
-export type PackedTexturedDraw2D =
-    { readonly kind: 'rect'; readonly packed: PackedRectangles2D } |
-    { readonly kind: 'image'; readonly packed: PackedImage2D; readonly viewIndex: number; readonly alpha: number; uniform: Float32Array<ArrayBuffer> | undefined } |
-    { readonly kind: 'mesh'; readonly packed: PackedTexturedMesh2D; readonly viewIndex: number; readonly alpha: number; uniform: Float32Array<ArrayBuffer> | undefined };
+export type PackedTexturedDraw2D = PreparedBatchDraw2D;
 export interface TexturedSubmissionPlan2D {
     readonly frame: TexturedRenderFrame2D; readonly width: number; readonly height: number;
     readonly draws: PackedTexturedDraw2D[]; readonly upload: number; readonly geometryBytes: number;
@@ -58,7 +56,7 @@ export interface TexturedSubmissionPlan2D {
 /** This seam is private. The real host always selects the captured first-party table. */
 export interface TexturedPayloadOperations2D {
     pack(draw: PreparedTexturedDraw2D, width: number, height: number, admittedVertexBytes: number,
-        budget: TexturedPreparationBudget2D): PackedRectangles2D | PackedImage2D | PackedTexturedMesh2D;
+        budget: TexturedPreparationBudget2D, preparedCommandIndices?: number[]): PackedRectangles2D | PackedImage2D | PackedTexturedMesh2D;
     copy(view: ProjectionView2D): Uint8Array<ArrayBuffer>;
     uniform(alpha: number): Float32Array<ArrayBuffer>;
 }
@@ -175,10 +173,10 @@ export function planTexturedSubmissionStorage2D(request: TexturedSubmissionReque
     return storage;
 }
 const FIRST_PARTY_OPERATIONS: TexturedPayloadOperations2D = Object.freeze({
-    pack(draw: PreparedTexturedDraw2D, width: number, height: number, bytes: number, budget: TexturedPreparationBudget2D) {
-        if (draw.kind === 'rect') return packWebGPUVertices(draw.prepared, width, height, { maxUploadBytes: bytes, maxBufferSize: bytes }, budget);
-        if (draw.kind === 'image') return packImageVertices2D(draw.prepared, width, height, bytes, budget);
-        return packTexturedMesh2D(draw.prepared, width, height, bytes, budget);
+    pack(draw: PreparedTexturedDraw2D, width: number, height: number, bytes: number, budget: TexturedPreparationBudget2D, preparedCommandIndices?: number[]) {
+        if (draw.kind === 'rect') return packWebGPUVertices(draw.prepared, width, height, { maxUploadBytes: bytes, maxBufferSize: bytes }, budget, preparedCommandIndices, draw.cacheSlot);
+        if (draw.kind === 'image') return packImageVertices2D(draw.prepared, width, height, bytes, budget, draw.cacheSlot);
+        return packTexturedMesh2D(draw.prepared, width, height, bytes, budget, draw.cacheSlot);
     },
     copy: (view: ProjectionView2D) => copyProjectionPixels(view, 'premultiplied'),
     uniform: (alpha: number) => new Float32Array([alpha, 0, 0, 0]),
@@ -195,14 +193,27 @@ export function packTexturedDrawPayloads2D(storage: TexturedSubmissionStorage2D,
     const draws: PackedTexturedDraw2D[] = [];
     for (let i = 0; i < request.draws.length; i++) {
         const draw = request.draws[i]!, bytes = storage.drawStorage[i]!.vertexBytes;
-        const packed = operations.pack(draw, storage.width, storage.height, bytes, budget);
+        const rangeSources: number[] = [];
+        const packed = operations.pack(draw, storage.width, storage.height, bytes, budget, rangeSources);
         checkActive?.();
-        if (draw.kind === 'rect') draws.push({ kind: 'rect', packed: packed as PackedRectangles2D });
+        if (draw.kind === 'rect') {
+            const rectangles = packed as PackedRectangles2D;
+            // The real dispatcher and packer supply both filtering levels. A
+            // controlled private pack seam without provenance simply cannot merge.
+            const rangeCommands = rangeSources.map(index => draw.commandIndices?.[index] ?? -1);
+            if (rangeSources.length === rectangles.ranges.length && rangeCommands.every(index => Number.isSafeInteger(index)
+                && index >= 0 && request.admitted.frame.commands[index]?.kind === 'rect')) {
+                const rangeClips = rangeCommands.map(index => request.admitted.frame.commands[index]!.clips);
+                draws.push({ kind: 'rect', packed: rectangles, rangeCommands, rangeClips });
+            } else draws.push({ kind: 'rect', packed: rectangles });
+        }
         else {
             const record = request.admitted.commands[draw.commandIndex]!, viewIndex = request.projectionPlan.commandViews[draw.commandIndex]!;
             // Only type erasure joins the three packers; no caller data chooses this dispatch.
-            if (draw.kind === 'image') draws.push({ kind: 'image', packed: packed as PackedImage2D, viewIndex, alpha: record.command.alpha, uniform: undefined });
-            else draws.push({ kind: 'mesh', packed: packed as PackedTexturedMesh2D, viewIndex, alpha: record.command.alpha, uniform: undefined });
+            const command = record.command;
+            const crop = command.kind === 'rect' ? undefined : command.sourceRect;
+            if (draw.kind === 'image') draws.push({ kind: 'image', packed: packed as PackedImage2D, viewIndex, alpha: command.alpha, clips: command.clips, ...(crop ? { crop } : {}), uniform: undefined });
+            else draws.push({ kind: 'mesh', packed: packed as PackedTexturedMesh2D, viewIndex, alpha: command.alpha, clips: command.clips, ...(crop ? { crop } : {}), uniform: undefined });
         }
     }
     return { storage, draws };

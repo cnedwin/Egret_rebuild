@@ -128,6 +128,8 @@ function append(text) { return bytes => Buffer.concat([bytes, Buffer.from(text, 
 function jsonEdit(change) { return bytes => { const value = JSON.parse(bytes); change(value); return Buffer.from(JSON.stringify(value, null, 2) + '\n'); }; }
 const adapter = 'packages/engine/web/BrowserTextureProvider.ts';
 const cases = [
+  ['M1.2 runtime source with unchanged emission', 'packages/runtime/src/frameCapture.ts', 'BIP_BOUNDARY_FINGERPRINT', append('// unaccepted incremental capture source\n')],
+  ['M1.2 new helper emission equal-size wrong hash', 'packages/engine/dist/rendering/preparedFrameCache2D.js', 'BIP_BOUNDARY_FINGERPRINT', bytes => { const changed = Buffer.from(bytes); changed[0] ^= 1; assert.equal(changed.length, bytes.length); return changed; }],
   ['root factory leak', 'packages/engine/src/index.ts', 'BIP_BOUNDARY_NONOPTIONAL_LEAK', append("\nexport { createBrowserTextureProvider } from '../web/image.js';\n")],
   ['root erased type leak', 'packages/runtime/src/index.ts', 'BIP_BOUNDARY_NONOPTIONAL_LEAK', append('\nexport interface BrowserTextureProvider {}\n')],
   ['extra optional value', 'packages/engine/web/image.ts', 'BIP_BOUNDARY_FACADE', append('\nexport const bipExtraRuntime = 1;\n')],
@@ -212,6 +214,20 @@ for (const relative of ['packages/engine/dist/web/webgpuBufferPool.d.ts', 'packa
       try {
         rmSync(file); const current = inventory(root);
         assert.deepEqual(baseline.filter(row => !current.some(now => now.path === row.path)).map(row => row.path), [relative]);
+        assert.deepEqual((await run()).issues.map(issue => [issue.code, issue.path]), [['BIP_BOUNDARY_SOURCE_INVENTORY', relative]]);
+      } finally { writeFileSync(file, before); assert.deepEqual(inventory(root), baseline); assert.deepEqual((await run()).issues, []); }
+    });
+  });
+
+for (const relative of ["packages/engine/dist/rendering/preparedBatches2D.d.ts","packages/engine/dist/rendering/preparedBatches2D.js","packages/engine/dist/rendering/preparedFrameCache2D.d.ts","packages/engine/dist/rendering/preparedFrameCache2D.js","packages/engine/rendering/preparedBatches2D.ts","packages/engine/rendering/preparedFrameCache2D.ts","packages/runtime/dist/frameCaptureCache.d.ts","packages/runtime/dist/frameCaptureCache.js","packages/runtime/src/frameCaptureCache.ts"])
+  test('BIP-M12 missing exact new path ' + relative, async () => {
+    const check = await checker();
+    await isolated(check, async ({ root, run, baseline }) => {
+      const file = path.join(root, relative), before = readFileSync(file);
+      try {
+        rmSync(file); const current = inventory(root);
+        assert.deepEqual(baseline.filter(row => !current.some(now => now.path === row.path)).map(row => row.path), [relative]);
+        assert.deepEqual(current, baseline.filter(row => row.path !== relative));
         assert.deepEqual((await run()).issues.map(issue => [issue.code, issue.path]), [['BIP_BOUNDARY_SOURCE_INVENTORY', relative]]);
       } finally { writeFileSync(file, before); assert.deepEqual(inventory(root), baseline); assert.deepEqual((await run()).issues, []); }
     });

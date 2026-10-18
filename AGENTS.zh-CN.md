@@ -120,3 +120,14 @@ B1 命令用于受影响的 B1 场景渲染，详见[有界验证器](knowledge-
 tests/webgpu-submission-preparation.test.mjs 与 tests/webgpu-submission-precedence.test.mjs 使用真实公开 SDK 帧和受控 GPU 端口。同步 Float32Array／Uint8Array 构造故障与裁剪计数必须恢复原全局 descriptor；裁剪计数在进入原生 error scope 前结束。其结果只证明受控操作顺序／次数，不证明物理 OOM、总分配或速度。
 
 B1 源码检查后继仅允许两个指定辅助模块发射文件中的 19 个完整原生方法捕获 initializer。保留原生未链接模块构造、有界字面量导入图、精确捕获消费、指定词法拒绝和原有十三案例调度。该许可不允许动态代码构造，也不是通用 Function 例外。
+
+## M1.2 增量渲染单元
+
+`tests/incremental-batch-private.test.mjs` 是 CPU UNIT，只使用构建后的私有 `engine/dist/rendering/preparedBatches2D.js` helper。合成 packed 数组验证拼接保留上限和有序来源关系，不证明公开准入或原生性能。在 `tests/incremental-preparation-batching.test.mjs` 中，仅明确标注的构造故障单元可以同步拦截 `Float32Array`，目标限于八图合批的精确拼接分配或原四元素 uniform 构造；必须在 `finally` 中恢复完整全局 descriptor，再进行异步完成观察和正常清理。公开行为使用真实 SDK 值及受控 GPU 端口。该权限不增加产品导出、任意 loader 或物理内存耗尽结论。
+
+新增 CPU UNIT 文件仅允许导入以下精确的已构建私有模块：
+
+- `tests/incremental-frame-cache-private.test.mjs`：`packages/runtime/dist/frameCaptureCache.js` 与 `packages/runtime/dist/displayVisualState.js`。所有权来自公开 SDK 构造的真实 Engine、Stage 和 Sprite。读取辅助模块的逻辑账本，以及在溢出前设置私有修订号，仅限这些 UNIT 用例。字节额度可能先于条目额度生效，须如实记录实际触达的限制。
+- `tests/incremental-preparation-private.test.mjs`：`packages/engine/dist/rendering/preparedFrameCache2D.js`、同一 rendering 目录中的 `prepareMixedDraws2D.js`、`prepareTexturedDraws2D.js`、`prepareRectangles2D.js`、`prepareImages2D.js`、`prepareTexturedMesh2D.js`、`packImageVertices2D.js`、`packTexturedMesh2D.js`、`texturedPreparationBudget2D.js`，以及 `packages/engine/dist/web/webgpuPass.js`。资源通过公开 SDK 构造。测试验证真实准备流程、完整键、本帧索引、逻辑计费、原子预算回放与终止失效。
+
+上述权限不允许加载器拦截、增加产品导出或在普通公开示例中导入私有模块。逻辑计费不证明实际内存用量或运行速度。

@@ -260,8 +260,8 @@
     {
       "file": {
         "path": "tests/atlas-import-boundary.test.mjs",
-        "bytes": 7759,
-        "sha256": "531393e313a2c88c719b5c5551c80d9b199e04917b5ce98124b1990e106a49dc"
+        "bytes": 9756,
+        "sha256": "d52d0d7a8d7ab2f0d133e224ea7c4e6b1601bc9b47632f884cabd9e9940776fc"
       },
       "packages": null,
       "support": []
@@ -299,7 +299,7 @@
       "file": {
         "path": "tests/b1-webgpu-verifier.test.mjs",
         "bytes": 24647,
-        "sha256": "391bffacbf543052711c50cf58aaa10052b7260c17222da94f1213b72226fc04"
+        "sha256": "c0294406c7f3d95cedc187f0c1bd7c596d6fc24404a2cfb0dd1a364f3a7424ed"
       },
       "packages": null,
       "support": []
@@ -322,6 +322,15 @@
           "sha256": "20e7dd30f54b3a81d35f666c8370e7f014e4559c68222727bc88fd377efc1af7"
         }
       ]
+    },
+    {
+      "file": {
+        "path": "tests/bitmap-binding-ticket-boundaries.test.mjs",
+        "bytes": 7740,
+        "sha256": "6cfd04e897e4f0c40899b93fdd601471301806a07be621129bd2090a75e3f6e3"
+      },
+      "packages": null,
+      "support": []
     },
     {
       "file": {
@@ -517,8 +526,8 @@
     {
       "file": {
         "path": "tests/boundaries.test.mjs",
-        "bytes": 110573,
-        "sha256": "c0f6cb9a698b9d27ab4516db21e43c9e1d9f434a99a60a873b919717e27898cb"
+        "bytes": 112809,
+        "sha256": "d502d38e836162db1c07e60178499066504ff8cacae220a7e5cae1f092ffc2bd"
       },
       "packages": null,
       "support": []
@@ -557,8 +566,8 @@
     {
       "file": {
         "path": "tests/browser-png-boundaries.test.mjs",
-        "bytes": 14944,
-        "sha256": "dcfaea96e7d92060cbbec6861f90dc0c1ae90939c9608b10b6202587e69fd6a0"
+        "bytes": 16677,
+        "sha256": "4a7335d2759465de40653d29829293bfc68be1e30f8916388c8be0cbb9443007"
       },
       "packages": null,
       "support": []
@@ -1089,13 +1098,10 @@
     {
       "file": {
         "path": "tests/image-mixed-draws.test.mjs",
-        "bytes": 10932,
-        "sha256": "527660ca42350cda7b3486d00c2e840b608b9e4c4bdb0e3796ad1fcfb61ccb92"
+        "bytes": 10951,
+        "sha256": "b95962f4233ebfcd32e13b9ec6542307cc1d7ec6f27d5cbe5985b798d811d02b"
       },
-      "packages": [
-        "contracts",
-        "engine"
-      ],
+      "packages": null,
       "support": [
         {
           "path": "tests/fixtures/image-affine-oracles.mjs",
@@ -1114,6 +1120,60 @@
         "contracts",
         "engine"
       ],
+      "support": []
+    },
+    {
+      "file": {
+        "path": "tests/incremental-batch-private.test.mjs",
+        "bytes": 3038,
+        "sha256": "036de87124e62f882af652fceca9bc4abaf8e883d3c462a498de0181397dc5fb"
+      },
+      "packages": null,
+      "support": []
+    },
+    {
+      "file": {
+        "path": "tests/incremental-frame-cache-private.test.mjs",
+        "bytes": 17261,
+        "sha256": "23c0e601c77a8a053bc706213328321c25cd90edeaa7adb9e117023b731b4349"
+      },
+      "packages": null,
+      "support": []
+    },
+    {
+      "file": {
+        "path": "tests/incremental-frame-capture.test.mjs",
+        "bytes": 25988,
+        "sha256": "9e768a16ab6fd3596dd05b0b2290adab4903d8500835899f045002b09a3304f4"
+      },
+      "packages": null,
+      "support": []
+    },
+    {
+      "file": {
+        "path": "tests/incremental-preparation-batching.test.mjs",
+        "bytes": 17661,
+        "sha256": "a4acc3b2319efe41e15974b7b89e331fcfe540eab02ce86fa6c3e7afcea568c9"
+      },
+      "packages": null,
+      "support": []
+    },
+    {
+      "file": {
+        "path": "tests/incremental-preparation-private.test.mjs",
+        "bytes": 29498,
+        "sha256": "603e308ea07a3ed0e5669c4f28e506f9e5256fb8f0883d6fc78eef2a9bd93285"
+      },
+      "packages": null,
+      "support": []
+    },
+    {
+      "file": {
+        "path": "tests/incremental-rendering-tool.test.mjs",
+        "bytes": 16795,
+        "sha256": "776d883b818ff8d71f41968644ec84a12356a2767ff200b59620a14875d8e5e5"
+      },
+      "packages": null,
       "support": []
     },
     {
@@ -1429,8 +1489,8 @@
     {
       "file": {
         "path": "tests/project-boundaries.test.mjs",
-        "bytes": 16764,
-        "sha256": "5348a416b20a1481c280fb98344b61d0b3f1f175cf49dcfa7f8da136f0e2f2c2"
+        "bytes": 18106,
+        "sha256": "75ed052fc5ac9a69a016aa1befd8beaf69473aeb6b0213d2af699ddc32ce9d36"
       },
       "packages": null,
       "support": []
@@ -1789,8 +1849,8 @@
     {
       "file": {
         "path": "tests/spritesheet-boundaries.test.mjs",
-        "bytes": 14534,
-        "sha256": "6dd5021a254a0aed404a50bd5e55ce1a2335bfff958b74ac2b9c226303b81fd0"
+        "bytes": 16306,
+        "sha256": "99427dc1642fda59cf45deb33ff817d444016f9db405266302d1171a39ec6df7"
       },
       "packages": null,
       "support": []
@@ -2260,8 +2320,8 @@
     {
       "file": {
         "path": "tests/textured-webgpu-host.test.mjs",
-        "bytes": 42670,
-        "sha256": "9ed1c49bec112530b5fb08557d95c3210913f5902ac22e7dbab6e551fda38d68"
+        "bytes": 42859,
+        "sha256": "a853880fde72dc650b885153e5abefb7ac7008ca446ca99e80ea75e74ef09220"
       },
       "packages": null,
       "support": []
@@ -2323,8 +2383,8 @@
     {
       "file": {
         "path": "tests/webgpu-mesh-host.test.mjs",
-        "bytes": 102058,
-        "sha256": "ae14379ce729c3e1574136ed045fe6e1702e533a13cea113e057725a15d12a5b"
+        "bytes": 102232,
+        "sha256": "0a1b67ce065db41075f6cd77e9ac92f316f6a6560b49282207a886ce6fa98d96"
       },
       "packages": null,
       "support": []
@@ -2408,8 +2468,8 @@
     {
       "file": {
         "path": "tests/webgpu-submission-return-order.test.mjs",
-        "bytes": 2597,
-        "sha256": "e3ceb4282383cc6a5a767b4fcc55b6ea0b5585c6e1821affa780a15976101448"
+        "bytes": 2860,
+        "sha256": "4711f9a60370dfd1ee69f33950c705c6140fbaf680378cbcb9e51d53219aff4a"
       },
       "packages": null,
       "support": []
@@ -2417,8 +2477,8 @@
     {
       "file": {
         "path": "tests/webgpu-submission-reuse-lifecycle.test.mjs",
-        "bytes": 16212,
-        "sha256": "35fd48b178c08fa3f246c7824dd1bc1458cceed2c962ba9a99b8d3cb04069c46"
+        "bytes": 16494,
+        "sha256": "a6bc1691b8cbcc7777b08f50071972b6b635f36c179b4a7f6ca1d7b6f0b7d5df"
       },
       "packages": null,
       "support": []
@@ -2426,8 +2486,8 @@
     {
       "file": {
         "path": "tests/webgpu-submission-reuse.test.mjs",
-        "bytes": 15252,
-        "sha256": "62989d6938a255eb9dc8b052cf44e2fab1665e048e4b4c5d743934380ec2d8ce"
+        "bytes": 15871,
+        "sha256": "791ec8087e4b9930d682ca3eb2f08965c3ea38cf55d4ed7ee444d954b653ab75"
       },
       "packages": null,
       "support": []

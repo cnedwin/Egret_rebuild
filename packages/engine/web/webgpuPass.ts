@@ -1,4 +1,6 @@
 import { noteOwnedPreparationFailure } from '../rendering/ownedPreparationFailure2D.js';
+import { readPreparedStage2D, tryReplayPreparedStage2D, acceptPreparedStage2D, publishPreparedStage2D, copyPreparedPacking2D } from '../rendering/preparedFrameCache2D.js';
+import type { PreparedCacheSlot2D } from '../rendering/preparedFrameCache2D.js';
 import type { PreparedRectangles2D, PreparationBudget2D } from '../rendering/prepareRectangles2D.js';
 import { packedPosition2D } from '../rendering/packedPosition2D.js';
 import { packedOrientation } from '../rendering/packedOrientation.js';
@@ -6,10 +8,19 @@ import { packedOrientation } from '../rendering/packedOrientation.js';
 export class WebGPUPackingError extends Error {
     public constructor(public readonly reason: 'precision' | 'budget' | 'device', cause: unknown = undefined) { super(`WebGPU packing ${reason}`, { cause }); }
 }
-export function packWebGPUVertices(prepared: PreparedRectangles2D, width: number, height: number, limits: { readonly maxUploadBytes: number; readonly maxBufferSize: number }, budget?: PreparationBudget2D): {
-    data: Float32Array; ranges: readonly { firstVertex: number; vertexCount: number }[]; collapsedTriangles: number; maxBackingDisplacement: number;
+export function packWebGPUVertices(prepared: PreparedRectangles2D, width: number, height: number, limits: { readonly maxUploadBytes: number; readonly maxBufferSize: number }, budget?: PreparationBudget2D, preparedCommandIndices?: number[], cacheSlot?: PreparedCacheSlot2D): {
+    data: Float32Array<ArrayBuffer>; ranges: readonly { firstVertex: number; vertexCount: number }[]; collapsedTriangles: number; maxBackingDisplacement: number;
 } {
-    let maxBackingDisplacement = 0, collapsedTriangles = 0, vertices = 0;
+    const cached = readPreparedStage2D<ReturnType<typeof packWebGPUVertices>>(cacheSlot, 'packing');
+    if (cached && cached.value.data.byteLength <= limits.maxUploadBytes && cached.value.data.byteLength <= limits.maxBufferSize
+        && tryReplayPreparedStage2D(budget, cached.cost)) {
+        // The same original packing position still allocates its submission copy.
+        const packed = copyPreparedPacking2D(cached.value);
+        if (preparedCommandIndices && cached.commandIndices) for (const index of cached.commandIndices) preparedCommandIndices.push(index);
+        acceptPreparedStage2D(cacheSlot); return packed;
+    }
+    let maxBackingDisplacement = 0, collapsedTriangles = 0, vertices = 0, predicates = 0;
+    const localCommandIndices: number[] = [];
     // Ordinary scratch preserves converted bits; no typed storage exists before both byte checks.
     const points = prepared.points.map(point => {
         const represented = packedPosition2D(point, width, height, maxBackingDisplacement);
@@ -20,18 +31,20 @@ export function packWebGPUVertices(prepared: PreparedRectangles2D, width: number
     });
     const ranges: { firstVertex: number; vertexCount: number }[] = [];
     const groups: { indices: number[]; color: number; alpha: number }[] = [];
-    for (const command of prepared.commands) {
+    for (let commandIndex = 0; commandIndex < prepared.commands.length; commandIndex++) {
+        const command = prepared.commands[commandIndex]!;
         const indices: number[] = [], firstVertex = vertices;
         for (let i = 1; i + 1 < command.pointIndices.length; i++) {
             const a = command.pointIndices[0]!, b = command.pointIndices[i]!, c = command.pointIndices[i + 1]!;
             const p = points[a]!, q = points[b]!, r = points[c]!;
+            predicates++;
             const sign = packedOrientation(p.x, p.y, q.x, q.y, r.x, r.y, budget);
             if (!Number.isFinite(sign) || sign > 0) throw noteOwnedPreparationFailure(new WebGPUPackingError('precision'));
             if (sign === 0) { collapsedTriangles++; continue; }
             if (vertices > 4294967295 - 3) throw noteOwnedPreparationFailure(new WebGPUPackingError('device'));
             vertices += 3; indices.push(a, b, c);
         }
-        if (vertices !== firstVertex) { ranges.push({ firstVertex, vertexCount: vertices - firstVertex }); groups.push({ indices, color: command.color, alpha: command.alpha }); }
+        if (vertices !== firstVertex) { ranges.push({ firstVertex, vertexCount: vertices - firstVertex }); groups.push({ indices, color: command.color, alpha: command.alpha }); localCommandIndices.push(commandIndex); preparedCommandIndices?.push(commandIndex); }
     }
     if (vertices > Math.floor(Number.MAX_SAFE_INTEGER / 24) || vertices > Math.floor(limits.maxUploadBytes / 24)) throw noteOwnedPreparationFailure(new WebGPUPackingError('budget'));
     if (vertices > Math.floor(limits.maxBufferSize / 24)) throw noteOwnedPreparationFailure(new WebGPUPackingError('device'));
@@ -41,7 +54,9 @@ export function packWebGPUVertices(prepared: PreparedRectangles2D, width: number
         const alpha = group.alpha, red = ((group.color >>> 16) & 255) / 255 * alpha, green = ((group.color >>> 8) & 255) / 255 * alpha, blue = (group.color & 255) / 255 * alpha;
         for (const index of group.indices) { const p = points[index]!; data[offset++] = p.x; data[offset++] = p.y; data[offset++] = red; data[offset++] = green; data[offset++] = blue; data[offset++] = alpha; }
     }
-    return { data, ranges, collapsedTriangles, maxBackingDisplacement };
+    const result = { data, ranges, collapsedTriangles, maxBackingDisplacement };
+    publishPreparedStage2D(cacheSlot, 'packing', result, { preparedVertices: 0, predicates, tupleComparisons: 0 }, localCommandIndices);
+    return result;
 }
 const SHADER = `
 struct VertexOutput { @builtin(position) position: vec4<f32>, @location(0) @interpolate(flat) color: vec4<f32>, }

@@ -311,6 +311,9 @@ test('H04/L02 painter barriers preserve order, shared crop and per-command bindi
 
 test('L01 geometry charges stay per pending replay while settled buffers return out of order', async () => {
   await withFrames(a => withGPU(async f => {
+    // Keep both logical draws executable so the original four-buffer reuse
+    // and out-of-order retirement assertions remain meaningful after batching.
+    f.limits.maxBufferSize = 96;
     const h = await active(f, { maxPendingGeometryBytes: 408 });
     const one = f.proof(() => h.renderTexturedFrame(a.triangle)); admitted(one); const first = f.buffers.slice();
     const two = f.proof(() => h.renderTexturedFrame(a.triangle)); admitted(two); const second = f.buffers.slice(first.length);

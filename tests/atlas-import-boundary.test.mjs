@@ -82,6 +82,9 @@ function isolated(action){
 
 test('ATLAS-M11 full genuine owner copy satisfies source actor',()=>isolated(({root,run,baseline})=>{assert.deepEqual(inventory(root),baseline);accepted(run());}));
 const controls=[
+ ['M1.2 runtime source with unchanged emission','packages/runtime/src/frameCapture.ts','ATLAS_SOURCE_IDENTITY',raw=>Buffer.concat([raw,Buffer.from('// unaccepted incremental capture source\n')])],
+ ['M1.2 equal-size new helper emission','packages/engine/dist/rendering/preparedFrameCache2D.js','ATLAS_SOURCE_IDENTITY',raw=>{const changed=Buffer.from(raw);changed[0]^=1;assert.equal(changed.length,raw.length);return changed;}],
+ ...["packages/engine/dist/rendering/preparedBatches2D.d.ts","packages/engine/dist/rendering/preparedBatches2D.js","packages/engine/dist/rendering/preparedFrameCache2D.d.ts","packages/engine/dist/rendering/preparedFrameCache2D.js","packages/engine/rendering/preparedBatches2D.ts","packages/engine/rendering/preparedFrameCache2D.ts","packages/runtime/dist/frameCaptureCache.d.ts","packages/runtime/dist/frameCaptureCache.js","packages/runtime/src/frameCaptureCache.ts"].map(file=>['M1.2 missing exact new path '+file,file,'ATLAS_SOURCE_FILES',undefined]),
  ['source mutation mixed with unchanged emissions','packages/engine/web/webgpuBufferPool.ts','ATLAS_SOURCE_IDENTITY',raw=>Buffer.concat([raw,Buffer.from('// unaccepted warm submission source\n')])],
  ['equal-size helper emission hash','packages/engine/dist/web/webgpuBindingCache.js','ATLAS_SOURCE_IDENTITY',raw=>{const changed=Buffer.from(raw);changed[0]^=1;assert.equal(changed.length,raw.length);return changed;}],
  ['missing private declaration','packages/engine/dist/web/webgpuBufferPool.d.ts','ATLAS_SOURCE_FILES',undefined],
@@ -100,4 +103,17 @@ for(const [name,relative,code,mutate]of controls)test('ATLAS-M11 '+name,()=>isol
   if(existed)writeFileSync(file,before);else rmSync(file);
   assert.deepEqual(inventory(root),baseline,'Complete original snapshot restored');accepted(run());
  }
+}));
+
+// The current 62 rows cannot hide a changed historical predecessor row.
+test('ATLAS-M12 tampered M1.1 predecessor is refused before current graph derivation',()=>isolated(({root,run,baseline})=>{
+ const relative='tools/atlas-import-boundary.mjs',file=path.join(root,relative),before=readFileSync(file);
+ const original='bf33f8aa63f14103ff947f79f77527a28dfd0cf15468cc84abda6c8cd15007e0';
+ const text=before.toString('utf8');assert.equal(text.split(original).length,2);
+ try{
+  writeFileSync(file,text.replace(original,'af33f8aa63f14103ff947f79f77527a28dfd0cf15468cc84abda6c8cd15007e0'));
+  const prior=new Map(baseline.map(row=>[row.path,row]));
+  assert.deepEqual(inventory(root).filter(row=>JSON.stringify(row)!==JSON.stringify(prior.get(row.path))).map(row=>row.path),[relative]);
+  const result=run();rejected(result,'ATLAS_SOURCE_IDENTITY');assert.match(result.stderr,/M1\.1 predecessor digest differs/);
+ }finally{writeFileSync(file,before);assert.deepEqual(inventory(root),baseline);accepted(run());}
 }));

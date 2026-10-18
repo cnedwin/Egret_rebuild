@@ -2,12 +2,15 @@ import { noteOwnedPreparationFailure } from './ownedPreparationFailure2D.js';
 import type { ClipRectangle2D } from '@egret/contracts';
 import type { RectangleFrame2D } from './RectangleFrame2D.js';
 import { orient2d } from 'robust-predicates';
+import { readPreparedStage2D, tryReplayPreparedStage2D, acceptPreparedStage2D, publishPreparedStage2D } from './preparedFrameCache2D.js';
+import type { PreparedCacheContext2D, PreparedStageCost2D } from './preparedFrameCache2D.js';
 
 export interface PreparedPoint2D { readonly x: number; readonly y: number; }
 /** Private structural seam; the opted-in dispatcher supplies one first-party ledger. */
 export interface PreparationBudget2D {
     admitPreparedVertices(count: number): void;
     admitPredicate(): void;
+    tryReplayStageCost?(cost: PreparedStageCost2D): boolean;
 }
 /** Private polygon policy; omission retains the legacy XY cache and corner limit. */
 export interface PolygonClipPolicy2D<P extends PreparedPoint2D> {
@@ -171,7 +174,8 @@ export function clipPolygon2D<P extends PreparedPoint2D>(preparation: Preparatio
     }
     return subject;
 }
-export function prepareRectangles2D(frame: RectangleFrame2D, width: number, height: number, options: RectanglePreparationOptions, budget?: PreparationBudget2D): PreparedRectangles2D {
+export function prepareRectangles2D(frame: RectangleFrame2D, width: number, height: number, options: RectanglePreparationOptions, budget?: PreparationBudget2D, commandIndices?: number[],
+    cache?: PreparedCacheContext2D, sourceCommandIndices?: readonly number[]): PreparedRectangles2D {
     // A clear-only frame still consumes nominal DPR, so its envelope is unconditional.
     coordinate(options.pixelRatio);
     const preparation = new Preparation(options, budget);
@@ -179,20 +183,42 @@ export function prepareRectangles2D(frame: RectangleFrame2D, width: number, heig
     const commands: { pointIndices: number[]; color: number; alpha: number }[] = [];
     const viewport = [{ x: 0, y: 0 }, { x: width, y: 0 }, { x: width, y: height }, { x: 0, y: height }];
     let vertices = 0;
-    for (const command of frame.commands) {
-        let polygon = preparation.rectangle(command);
-        // Preflight all clips even when an earlier clip or alpha already removes coverage.
-        const clips = command.clips.map(clip => preparation.rectangle(clip));
-        for (const clip of clips) polygon = preparation.intersect(polygon, clip);
-        polygon = preparation.intersect(polygon, viewport);
-        if (!polygon.length || command.alpha === 0) continue;
-        const fanVertices = (polygon.length - 2) * 3;
-        if (fanVertices > options.maxPreparedVertices - vertices || fanVertices > 4294967295 - vertices) fail('budget');
-        budget?.admitPreparedVertices(fanVertices);
+    for (let commandIndex = 0; commandIndex < frame.commands.length; commandIndex++) {
+        const command = frame.commands[commandIndex]!;
+        const slot = cache?.cache.slot(cache, [command], width, height, undefined, undefined, false, sourceCommandIndices?.[commandIndex] ?? commandIndex);
+        const cached = readPreparedStage2D<{ readonly polygon: readonly PreparedPoint2D[] }>(slot, 'geometry');
+        const previousPredicates = preparation.edgeTests;
+        let polygon: readonly PreparedPoint2D[], fanVertices: number, hit = false;
+        if (cached && cached.cost.predicates <= options.maxClipEdgeTests - preparation.edgeTests
+            && cached.cost.preparedVertices <= options.maxPreparedVertices - vertices
+            && cached.cost.preparedVertices <= 4294967295 - vertices
+            && tryReplayPreparedStage2D(budget, cached.cost)) {
+            polygon = cached.value.polygon; fanVertices = cached.cost.preparedVertices;
+            preparation.edgeTests += cached.cost.predicates; hit = true;
+            acceptPreparedStage2D(slot);
+        } else {
+            let computed = preparation.rectangle(command);
+            // Preflight all clips even when an earlier clip or alpha already removes coverage.
+            const clips = command.clips.map(clip => preparation.rectangle(clip));
+            for (const clip of clips) computed = preparation.intersect(computed, clip);
+            computed = preparation.intersect(computed, viewport);
+            polygon = command.alpha === 0 ? [] : computed;
+            fanVertices = polygon.length ? (polygon.length - 2) * 3 : 0;
+            if (polygon.length) {
+                if (fanVertices > options.maxPreparedVertices - vertices || fanVertices > 4294967295 - vertices) fail('budget');
+                budget?.admitPreparedVertices(fanVertices);
+            }
+        }
         vertices += fanVertices;
-        const pointIndices: number[] = [];
-        for (const point of polygon) { pointIndices.push(points.length); points.push(point); }
-        commands.push({ pointIndices, color: command.color, alpha: command.alpha });
+        if (polygon.length) {
+            const pointIndices: number[] = [];
+            for (const point of polygon) { pointIndices.push(points.length); points.push(point); }
+            commands.push({ pointIndices, color: command.color, alpha: command.alpha });
+            // Retain the actual source ordinal, including holes from empty commands.
+            commandIndices?.push(commandIndex);
+        }
+        if (!hit) publishPreparedStage2D(slot, 'geometry', { polygon },
+            { preparedVertices: fanVertices, predicates: preparation.edgeTests - previousPredicates, tupleComparisons: 0 });
     }
     return { points, commands, edgeTests: preparation.edgeTests };
 }

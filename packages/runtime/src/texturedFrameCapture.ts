@@ -16,6 +16,10 @@ import { assertTextFieldScope, readTextFieldState } from './textDisplayState.js'
 import { CaptureImageBudget } from './imageFrameBudget.js';
 import { TexturedCaptureBudget } from './texturedFrameBudget.js';
 import { EgretError } from './EgretError.js';
+import { abandonCaptureSession, beginCaptureNode, beginCaptureSession, completeCaptureNode, publishCaptureSession,
+  readCaptureDerived, rememberCaptureBase, rememberCaptureBitmap, rememberCaptureClips, rememberCaptureMesh,
+  rememberCaptureRectangle, rememberCaptureText } from './frameCaptureCache.js';
+import type { CaptureClipChain } from './frameCaptureCache.js';
 
 export interface CapturedTexturedContent2D {
   readonly commands: readonly TexturedRenderCommand2D[];
@@ -31,7 +35,7 @@ interface AdmittedNode {
   readonly textContentBounds: Rectangle2D | undefined;
 }
 interface Cursor { readonly node: DisplayObject; readonly children: number; nextChild: number; }
-interface ClipChain { readonly previous: ClipChain | undefined; readonly clip: ClipRectangle2D; readonly depth: number; }
+type ClipChain = CaptureClipChain;
 interface VisibleCursor extends Cursor { readonly matrix: Matrix2D; readonly alpha: number; readonly clips: ClipChain | undefined; }
 
 function checkNode(node: DisplayObject, parent: DisplayObjectContainer | undefined, engine: EngineContext, seen: Set<DisplayObject>): void {
@@ -120,90 +124,106 @@ export function collectTexturedFrameContent(stage: Stage): CapturedTexturedConte
   const budget = new TexturedCaptureBudget();
   const metadata = admitTree(stage, engine, budget);
   engine.assertOpen();
-  const commands: TexturedRenderCommand2D[] = [], geometries: TexturedGeometry2D[] = [];
-  const geometryIndexes = new Map<TexturedGeometry2D, number>();
-  const images = new CaptureImageBudget(), seen = new Set<DisplayObject>(), stack: VisibleCursor[] = [];
+  const session = beginCaptureSession(stage, 'textured');
+  try {
+    const commands: TexturedRenderCommand2D[] = [], geometries: TexturedGeometry2D[] = [];
+    const geometryIndexes = new Map<TexturedGeometry2D, number>();
+    const images = new CaptureImageBudget(), seen = new Set<DisplayObject>(), stack: VisibleCursor[] = [];
 
-  function enter(node: DisplayObject, parent: DisplayObjectContainer | undefined, parentMatrix: Matrix2D, parentAlpha: number, inheritedClips: ClipChain | undefined): void {
-    checkNode(node, parent, engine, seen);
-    const admitted = metadata.get(node), state = visualOf(node);
-    if (admitted === undefined || state.primitives !== admitted.primitives || state.primitives.length !== admitted.primitiveCount) throw new EgretError('DISPLAY_TREE_INVARIANT');
-    if (!state.visible || state.alpha === 0) return;
-    const alpha = parentAlpha * state.alpha;
-    if (alpha === 0) return;
-    if (!finite(alpha)) throw new EgretError('FRAME_TRANSFORM_INVALID');
-    const matrix = checkedMatrix(composeDisplayTransform(parentMatrix, state));
-    let clips = inheritedClips;
-    if (state.clipRect !== undefined) {
-      const rect = rectangle(matrix, state.clipRect);
-      if (rect.width === 0 || rect.height === 0) return;
-      clips = { previous: clips, clip: Object.freeze({ matrix, rect }), depth: (clips?.depth ?? 0) + 1 };
-    }
-    function commandClips(): readonly ClipRectangle2D[] {
-      // Both debits precede output/clip allocation. Every occurrence is charged.
-      budget.admitEmission(clips?.depth ?? 0);
-      return flattenClips(clips);
-    }
-    for (let i = 0; i < admitted.primitiveCount; i++) {
-      const primitive = admitted.primitives[i]!;
-      const rect = rectangle(matrix, primitive.rect), effective = alpha * primitive.alpha;
-      if (rect.width === 0 || rect.height === 0 || effective === 0) continue;
-      const commandClipRecords = commandClips();
-      const command = Object.freeze({ kind: 'rect' as const, matrix, rect, color: primitive.color, alpha: effective, clips: commandClipRecords });
-      commands.push(command);
-    }
-    const bitmap = bitmapCaptureState(node);
-    if ((bitmap !== undefined) !== admitted.bitmapOccupied) throw new EgretError('DISPLAY_TREE_INVARIANT');
-    if (bitmap !== undefined) {
-      const placement = bitmap.layout === undefined ? undefined : bitmapAtlasPlacement(bitmap, matrix);
-      const bitmapMatrix = placement?.matrix ?? matrix;
-      const rect = rectangle(bitmapMatrix, placement?.rect ?? { x: 0, y: 0, width: bitmap.width, height: bitmap.height });
-      const snapshot = readBitmapImage(bitmap.lease);
-      const imageIndex = images.register(snapshot.image, bitmap.sourceRect);
-      const commandClipRecords = commandClips();
-      const command = Object.freeze({ kind: 'image' as const, matrix: bitmapMatrix, rect, alpha, clips: commandClipRecords, imageIndex, sourceRect: bitmap.sourceRect });
-      commands.push(command);
-    }
-    const mesh = readMeshState(node);
-    if (mesh?.geometry !== admitted.meshGeometry) throw new EgretError('DISPLAY_TREE_INVARIANT');
-    if (mesh !== undefined) {
-      const snapshot = readMeshCaptureImage(mesh);
-      referencedTuples(matrix, mesh.geometry);
-      const imageIndex = images.register(snapshot.image, mesh.sourceRect);
-      // Geometry table order follows first emission, independently of Pass A.
-      let geometryIndex = geometryIndexes.get(mesh.geometry);
-      const commandClipRecords = commandClips();
-      if (geometryIndex === undefined) {
-        geometryIndex = geometries.length;
-        geometryIndexes.set(mesh.geometry, geometryIndex);
-        geometries.push(mesh.geometry);
+    function enter(node: DisplayObject, parent: DisplayObjectContainer | undefined, parentMatrix: Matrix2D, parentAlpha: number, inheritedClips: ClipChain | undefined): void {
+      checkNode(node, parent, engine, seen);
+      const admitted = metadata.get(node), state = visualOf(node);
+      if (admitted === undefined || state.primitives !== admitted.primitives || state.primitives.length !== admitted.primitiveCount) throw new EgretError('DISPLAY_TREE_INVARIANT');
+      if (!state.visible || state.alpha === 0) return;
+      const alpha = parentAlpha * state.alpha;
+      if (alpha === 0) return;
+      if (!finite(alpha)) throw new EgretError('FRAME_TRANSFORM_INVALID');
+      const cached = readCaptureDerived(session, node, state, parentMatrix, parentAlpha, undefined, inheritedClips);
+      const draft = cached === undefined ? beginCaptureNode(session, node, state, parentMatrix, parentAlpha, undefined, inheritedClips) : undefined;
+      const matrix = cached?.matrix ?? checkedMatrix(composeDisplayTransform(parentMatrix, state));
+      let clips = cached === undefined ? inheritedClips : cached.texturedClips;
+      if (cached === undefined && state.clipRect !== undefined) {
+        const rect = rectangle(matrix, state.clipRect);
+        if (rect.width === 0 || rect.height === 0) return;
+        clips = { previous: clips, clip: Object.freeze({ matrix, rect }), depth: (clips?.depth ?? 0) + 1 };
       }
-      commands.push(Object.freeze({ kind: 'mesh', matrix, alpha, clips: commandClipRecords, imageIndex, sourceRect: mesh.sourceRect, geometryIndex }));
-    }
-    const text = readTextFieldState(node);
-    if (text?.committed?.contentBounds !== admitted.textContentBounds) throw new EgretError('DISPLAY_TREE_INVARIANT');
-    if (text !== undefined) {
-      assertTextFieldScope(text.scope);
-      const committed = text.committed;
-      if (committed?.lease !== undefined && committed.raster !== undefined && committed.sourceRect !== undefined) {
-        const rect = rectangle(matrix, committed.raster);
+      rememberCaptureBase(draft, matrix, undefined, clips);
+      function commandClips(): readonly ClipRectangle2D[] {
+        // Both debits precede output/clip allocation. Every occurrence is charged.
+        budget.admitEmission(clips?.depth ?? 0);
+        const records = cached?.commandClips ?? flattenClips(clips);
+        rememberCaptureClips(draft, records);
+        return records;
+      }
+      for (let i = 0; i < admitted.primitiveCount; i++) {
+        const primitive = admitted.primitives[i]!;
+        const rect = cached?.rectangles[i] ?? rectangle(matrix, primitive.rect), effective = alpha * primitive.alpha;
+        rememberCaptureRectangle(draft, rect);
+        if (rect.width === 0 || rect.height === 0 || effective === 0) continue;
         const commandClipRecords = commandClips();
-        const snapshot = readBitmapImage(committed.lease);
-        const imageIndex = images.register(snapshot.image, committed.sourceRect);
-        commands.push(Object.freeze({ kind: 'image', matrix, rect, alpha, clips: commandClipRecords,
-          imageIndex, sourceRect: committed.sourceRect }));
+        const command = Object.freeze({ kind: 'rect' as const, matrix, rect, color: primitive.color, alpha: effective, clips: commandClipRecords });
+        commands.push(command);
       }
+      const bitmap = bitmapCaptureState(node);
+      if ((bitmap !== undefined) !== admitted.bitmapOccupied) throw new EgretError('DISPLAY_TREE_INVARIANT');
+      if (bitmap !== undefined) {
+        const placement = cached?.bitmapRect !== undefined || bitmap.layout === undefined ? undefined : bitmapAtlasPlacement(bitmap, matrix);
+        const bitmapMatrix = cached?.bitmapMatrix ?? placement?.matrix ?? matrix;
+        const rect = cached?.bitmapRect ?? rectangle(bitmapMatrix, placement?.rect ?? { x: 0, y: 0, width: bitmap.width, height: bitmap.height });
+        rememberCaptureBitmap(draft, bitmapMatrix, rect);
+        const snapshot = readBitmapImage(bitmap.lease);
+        const imageIndex = images.register(snapshot.image, bitmap.sourceRect);
+        const commandClipRecords = commandClips();
+        const command = Object.freeze({ kind: 'image' as const, matrix: bitmapMatrix, rect, alpha, clips: commandClipRecords, imageIndex, sourceRect: bitmap.sourceRect });
+        commands.push(command);
+      }
+      const mesh = readMeshState(node);
+      if (mesh?.geometry !== admitted.meshGeometry) throw new EgretError('DISPLAY_TREE_INVARIANT');
+      if (mesh !== undefined) {
+        const snapshot = readMeshCaptureImage(mesh);
+        // Current resource entitlement still precedes the cached arithmetic proof.
+        if (cached?.meshChecked !== true) referencedTuples(matrix, mesh.geometry);
+        rememberCaptureMesh(draft);
+        const imageIndex = images.register(snapshot.image, mesh.sourceRect);
+        // Geometry table order follows first emission, independently of Pass A.
+        let geometryIndex = geometryIndexes.get(mesh.geometry);
+        const commandClipRecords = commandClips();
+        if (geometryIndex === undefined) {
+          geometryIndex = geometries.length;
+          geometryIndexes.set(mesh.geometry, geometryIndex);
+          geometries.push(mesh.geometry);
+        }
+        commands.push(Object.freeze({ kind: 'mesh', matrix, alpha, clips: commandClipRecords, imageIndex, sourceRect: mesh.sourceRect, geometryIndex }));
+      }
+      const text = readTextFieldState(node);
+      if (text?.committed?.contentBounds !== admitted.textContentBounds) throw new EgretError('DISPLAY_TREE_INVARIANT');
+      if (text !== undefined) {
+        assertTextFieldScope(text.scope);
+        const committed = text.committed;
+        if (committed?.lease !== undefined && committed.raster !== undefined && committed.sourceRect !== undefined) {
+          const rect = cached?.textRect ?? rectangle(matrix, committed.raster);
+          rememberCaptureText(draft, rect);
+          const commandClipRecords = commandClips();
+          const snapshot = readBitmapImage(committed.lease);
+          const imageIndex = images.register(snapshot.image, committed.sourceRect);
+          commands.push(Object.freeze({ kind: 'image', matrix, rect, alpha, clips: commandClipRecords,
+            imageIndex, sourceRect: committed.sourceRect }));
+        }
+      }
+      completeCaptureNode(draft, state);
+      stack.push({ node, matrix, alpha, clips, children: childCountOf(node), nextChild: 0 });
     }
-    stack.push({ node, matrix, alpha, clips, children: childCountOf(node), nextChild: 0 });
-  }
-  enter(stage, undefined, { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 }, 1, undefined);
-  while (stack.length !== 0) {
-    const cursor = stack[stack.length - 1]!;
-    if (cursor.nextChild === cursor.children) { stack.pop(); continue; }
-    const child = childAtOf(cursor.node, cursor.nextChild++);
-    if (child === undefined) throw new EgretError('DISPLAY_TREE_INVARIANT');
-    enter(child, cursor.node as DisplayObjectContainer, cursor.matrix, cursor.alpha, cursor.clips);
-  }
-  engine.assertOpen();
-  return Object.freeze({ commands: Object.freeze(commands), images: images.finish() ?? Object.freeze([]), geometries: Object.freeze(geometries) });
+    enter(stage, undefined, { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 }, 1, undefined);
+    while (stack.length !== 0) {
+      const cursor = stack[stack.length - 1]!;
+      if (cursor.nextChild === cursor.children) { stack.pop(); continue; }
+      const child = childAtOf(cursor.node, cursor.nextChild++);
+      if (child === undefined) throw new EgretError('DISPLAY_TREE_INVARIANT');
+      enter(child, cursor.node as DisplayObjectContainer, cursor.matrix, cursor.alpha, cursor.clips);
+    }
+    engine.assertOpen();
+    // No partial traversal becomes a reusable result; Engine frame identity is separate.
+    publishCaptureSession(session);
+    return Object.freeze({ commands: Object.freeze(commands), images: images.finish() ?? Object.freeze([]), geometries: Object.freeze(geometries) });
+  } finally { abandonCaptureSession(session); }
 }

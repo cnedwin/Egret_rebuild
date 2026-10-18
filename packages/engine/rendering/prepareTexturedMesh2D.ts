@@ -1,3 +1,5 @@
+import { readPreparedStage2D, tryReplayPreparedStage2D, acceptPreparedStage2D, publishPreparedStage2D } from './preparedFrameCache2D.js';
+import type { PreparedCacheSlot2D } from './preparedFrameCache2D.js';
 import { noteOwnedPreparationFailure } from './ownedPreparationFailure2D.js';
 import type { Matrix2D, TexturedGeometry2D, TexturedMeshCommand2D } from '@egret/contracts';
 import { Preparation, GeometryPreparationError, coordinate, clipPolygon2D } from './prepareRectangles2D.js';
@@ -56,8 +58,19 @@ function referencedPoint(geometry: TexturedGeometry2D, index: number): MeshPoint
 }
 /** Consume authentic admitted geometry; its whole source count was charged by metadata admission. */
 export function prepareTexturedMesh2D(command: TexturedMeshCommand2D, geometry: TexturedGeometry2D,
-    width: number, height: number, options: RectanglePreparationOptions, budget: TexturedPreparationBudget2D): PreparedMesh2D {
-    const ratio = coordinate(options.pixelRatio), preparation = new Preparation(options, budget);
+    width: number, height: number, options: RectanglePreparationOptions, budget: TexturedPreparationBudget2D, cacheSlot?: PreparedCacheSlot2D): PreparedMesh2D {
+    const ratio = coordinate(options.pixelRatio);
+    const cached = readPreparedStage2D<PreparedMesh2D>(cacheSlot, 'geometry');
+    if (cached && cached.cost.predicates <= options.maxClipEdgeTests && cached.cost.preparedVertices <= options.maxPreparedVertices
+        && cached.cost.preparedVertices <= 4294967295 && tryReplayPreparedStage2D(budget, cached.cost)) {
+        acceptPreparedStage2D(cacheSlot); return cached.value;
+    }
+    let previousTuples: number | undefined;
+    if (cacheSlot) {
+        try { previousTuples = budget.snapshot().tupleComparisonsCharged; }
+        catch { cacheSlot = undefined; } // Optional accounting alone may degrade to cold work.
+    }
+    const preparation = new Preparation(options, budget);
     const matrix = command.matrix;
     admitMatrix(matrix);
     // Every authored clip is numerically preflighted before the first indexed tuple,
@@ -95,5 +108,14 @@ export function prepareTexturedMesh2D(command: TexturedMeshCommand2D, geometry: 
         preparedVerticesCharged += fanVertices;
         polygons.push(polygon);
     }
-    return { polygons, sourceTrianglesCharged: geometry.triangleCount, preparedVerticesCharged, counters: Object.freeze(counters) };
+    const result = { polygons, sourceTrianglesCharged: geometry.triangleCount, preparedVerticesCharged, counters: Object.freeze(counters) };
+    if (previousTuples !== undefined) {
+        // Only the optional cost snapshot is caught; original geometry and result
+        // construction above retain their original failure provenance.
+        let tuples: number | undefined;
+        try { tuples = budget.snapshot().tupleComparisonsCharged - previousTuples; } catch { /* Skip this optional publication. */ }
+        if (tuples !== undefined) publishPreparedStage2D(cacheSlot, 'geometry', result,
+            { preparedVertices: preparedVerticesCharged, predicates: preparation.edgeTests, tupleComparisons: tuples });
+    }
+    return result;
 }

@@ -3,10 +3,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { withGpu, frame, view, image, submitSafe, admitted } from './fixtures/gpu-image-residency.mjs';
+// Keep the original 4096-buffer pressure with real adjacent material barriers.
+const separateImages = input => ({ ...input, commands: input.commands.map((command, index) =>
+  ({ ...command, alpha: index % 2 === 0 ? 1 : .5 })) });
 test('B05 mixed cold and warm buffers return in request order before FIFO pressure eviction', async () => {
   await withGpu(async f => {
     const h = f.host(); await f.ready(h); const one = view(image());
-    const seed = await submitSafe(f, h, frame(Array(2048).fill(one)));
+    const seed = await submitSafe(f, h, separateImages(frame(Array(2048).fill(one))));
     assert.equal(f.buffers.length, 4096);
     const rect = { kind: 'rect', matrix: { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 },
       rect: { x: 0, y: 0, width: 1, height: 1 }, color: 0xff0000, alpha: 1, clips: [] };
@@ -17,7 +20,7 @@ test('B05 mixed cold and warm buffers return in request order before FIFO pressu
     const warmUniform = f.calls.slice(secondStart).find(call => call[0] === 'writeBuffer' && call[1].descriptor.usage === 72)[1];
     assert.equal(warmUniform, seed.buffers[1], 'the later request actually leases the oldest warm uniform');
     await second.finish(); await h.whenIdle();
-    const many = frame(Array(2047).fill(one)), thirdStart = f.calls.length;
+    const many = separateImages(frame(Array(2047).fill(one))), thirdStart = f.calls.length;
     const third = f.capture(() => h.renderFrame({ ...many, commands: [rect, rect, ...many.commands] })); admitted(third);
     const destroyed = f.calls.slice(thirdStart).filter(call => call[0] === 'destroyBuffer').map(call => call[1]);
     assert.equal(destroyed.length, 1);

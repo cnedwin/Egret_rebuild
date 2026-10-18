@@ -1,3 +1,5 @@
+import { readPreparedStage2D, tryReplayPreparedStage2D, acceptPreparedStage2D, publishPreparedStage2D, copyPreparedPacking2D } from './preparedFrameCache2D.js';
+import type { PreparedCacheSlot2D } from './preparedFrameCache2D.js';
 import { noteOwnedPreparationFailure } from './ownedPreparationFailure2D.js';
 import { GeometryPreparationError } from './prepareRectangles2D.js';
 import { packedPosition2D } from './packedPosition2D.js';
@@ -27,12 +29,20 @@ function component(value: number): number {
 }
 /** Pack admitted full-tuple polygons into one nonindexed 32-byte vertex layout. */
 export function packTexturedMesh2D(prepared: PreparedMesh2D, width: number, height: number,
-    admittedVertexBytes: number, budget: TexturedPreparationBudget2D): PackedTexturedMesh2D {
+    admittedVertexBytes: number, budget: TexturedPreparationBudget2D, cacheSlot?: PreparedCacheSlot2D): PackedTexturedMesh2D {
     // The upper reservation survives all f32 collapses and must precede conversion/payload work.
     const reservedVertices = prepared.preparedVerticesCharged;
     if (!Number.isSafeInteger(admittedVertexBytes) || admittedVertexBytes < 0 ||
         !Number.isSafeInteger(reservedVertices) || reservedVertices < 0 ||
         reservedVertices > Math.floor(admittedVertexBytes / 32) || reservedVertices > 4294967295) fail('budget');
+    const cached = readPreparedStage2D<PackedTexturedMesh2D>(cacheSlot, 'packing');
+    if (cached && cached.value.data.byteLength <= admittedVertexBytes && tryReplayPreparedStage2D(budget, cached.cost)) {
+        let result: PackedTexturedMesh2D;
+        try { result = copyPreparedPacking2D(cached.value); }
+        catch (original) { throw noteOwnedPreparationFailure(new TexturedMeshPackingAllocationError(original)); }
+        acceptPreparedStage2D(cacheSlot); return result;
+    }
+    let predicates = 0;
     let maxBackingDisplacement = 0, maxUVDisplacement = 0, maxLightColorDisplacement = 0;
     let packedCollapsedTriangles = 0, vertexCount = 0;
     // Convert each shared polygon corner once: XY, UV and all four light channels.
@@ -52,6 +62,7 @@ export function packTexturedMesh2D(prepared: PreparedMesh2D, width: number, heig
         for (let i = 1; i + 1 < polygon.length; i++) {
             const p = polygon[0]!, q = polygon[i]!, r = polygon[i + 1]!;
             // Backing Y flips in NDC: negative is valid, zero collapses, positive reverses.
+            predicates++;
             const sign = packedOrientation(p.x, p.y, q.x, q.y, r.x, r.y, budget);
             if (!Number.isFinite(sign) || sign > 0) fail('precision');
             if (sign === 0) { packedCollapsedTriangles++; continue; }
@@ -71,8 +82,10 @@ export function packTexturedMesh2D(prepared: PreparedMesh2D, width: number, heig
             data[offset++] = point.r; data[offset++] = point.g; data[offset++] = point.b; data[offset++] = point.a;
         }
     } catch (original) { throw noteOwnedPreparationFailure(new TexturedMeshPackingAllocationError(original)); }
-    return { data, vertexCount, sourceTrianglesCharged: prepared.sourceTrianglesCharged,
+    const result = { data, vertexCount, sourceTrianglesCharged: prepared.sourceTrianglesCharged,
         preparedVerticesCharged: reservedVertices,
         counters: Object.freeze({ ...prepared.counters, packedCollapsedTriangles: prepared.counters.packedCollapsedTriangles + packedCollapsedTriangles }),
         maxBackingDisplacement, maxUVDisplacement, maxLightColorDisplacement };
+    publishPreparedStage2D(cacheSlot, 'packing', result, { preparedVertices: 0, predicates, tupleComparisons: 0 });
+    return result;
 }

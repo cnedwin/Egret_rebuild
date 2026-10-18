@@ -1,3 +1,4 @@
+import { recordVisualChange, VISUAL_CONTENT, VISUAL_BINDING } from './displayVisualState.js';
 import type { AtlasFrameLayout } from './atlasFrameLayout.js';
 import type { DisplayObject } from './DisplayObject.js';
 import type { AssetLease } from './AssetLease.js';
@@ -13,12 +14,18 @@ export interface BitmapCaptureState {
 }
 
 // One authoritative slot table, moved from Bitmap without duplicating geometry.
-// All references to display/resource classes are erased type-only imports.
+// Resource references remain type-only; revisions retain no resource ownership.
 const states = new WeakMap<object, BitmapCaptureState | undefined>();
+const readPublishedState = states.get.bind(states);
 
 /** A registered cleared slot remains different from an unregistered receiver. */
 export function hasBitmapState(value: unknown): boolean { return states.has(value as object); }
 /** Read cached metadata only; this port grants no live image entitlement. */
 export function readBitmapState(node: DisplayObject): BitmapCaptureState | undefined { return states.get(node); }
 /** Bitmap alone writes its slot, preserving existing mutation/lifetime guards. */
-export function writeBitmapState(node: DisplayObject, value: BitmapCaptureState | undefined): void { states.set(node, value); }
+export function writeBitmapState(node: DisplayObject, value: BitmapCaptureState | undefined): void {
+  const changed = readPublishedState(node) !== value;
+  states.set(node, value);
+  // Single writes, batch commits and conditional rollback share this publication.
+  if (changed) recordVisualChange(node, VISUAL_CONTENT | VISUAL_BINDING);
+}

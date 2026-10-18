@@ -114,7 +114,9 @@ for (const boundary of ['beforeBuffer', 'writeBuffer', 'binding', 'encoder', 'fi
   test('B08 warm native ' + boundary + ' throw keeps first cause and cleans every captured owner once', async () => {
     await withGpu(async f => {
       const h = f.host(); await f.ready(h); const original = frame(); await submitSafe(f, h, original);
-      const input = { ...original, commands: [original.commands[0], original.commands[0]] }, cause = { boundary }; let invoked = 0;
+      // The second alpha keeps two physical draws, including the warm first pair
+      // and a genuinely cold second binding/allocation for the assigned fault.
+      const input = { ...original, commands: [original.commands[0], { ...original.commands[0], alpha: .5 }] }, cause = { boundary }; let invoked = 0;
       f.hooks[boundary] = () => { invoked++; throw cause; };
       const record = f.capture(() => h.renderFrame(input));
       assert.equal(record.threw, true); assert.ok(code('RENDER_FAILED')(record.error)); assert.equal(record.error.cause, cause);
@@ -182,7 +184,8 @@ for (const terminal of ['stop', 'close', 'uncaptured', 'throw']) test('B08 warm 
     const h = f.host(); await f.ready(h); const input = frame(); await submitSafe(f, h, input); armed = true;
     if (terminal === 'throw') f.allowUnsafe(h);
     try {
-      const record = f.capture(() => h.renderFrame({ ...input, commands: [input.commands[0], input.commands[0]] }));
+      // Preserve a second physical allocation while the first warm pair is leased.
+      const record = f.capture(() => h.renderFrame({ ...input, commands: [input.commands[0], { ...input.commands[0], alpha: .5 }] }));
       assert.equal(record.threw, true); assert.ok(code('RENDER_FAILED')(record.error)); assert.equal(reads, 1); assert.ok(native);
       await record.finish();
       if (terminal === 'throw') { assert.equal(record.error.cause, cause); await f.close(h, true, cause); }

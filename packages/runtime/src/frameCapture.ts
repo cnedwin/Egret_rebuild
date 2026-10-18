@@ -2,7 +2,7 @@ import { bitmapAtlasPlacement } from './bitmapAtlasPlacement.js';
 import type { Matrix2D, Rectangle2D, RectangleCommand2D, ClipRectangle2D, RenderCommand2D, ImageData2D } from "@egret/contracts";
 import type { Stage } from "./Stage.js";
 import type { DisplayObject } from "./DisplayObject.js";
-import { childrenOf, isStageRoot } from "./displayTreeState.js";
+import { childrenOf, isStageRoot, isTerminated } from "./displayTreeState.js";
 import { visualOf, finite } from "./displayVisualState.js";
 import { EgretError } from "./EgretError.js";
 import { bitmapCaptureState, readBitmapImage } from "./Bitmap.js";
@@ -11,6 +11,9 @@ import { assertTextFieldScope, readTextFieldState } from './textDisplayState.js'
 import { engineOf } from "./ownership.js";
 import { CaptureImageBudget } from "./imageFrameBudget.js";
 import { composeDisplayTransform } from './displayTransform.js';
+import { abandonCaptureSession, beginCaptureNode, beginCaptureSession, completeCaptureNode, publishCaptureSession,
+  readCaptureDerived, rememberCaptureBase, rememberCaptureBitmap, rememberCaptureRectangle, rememberCaptureText } from './frameCaptureCache.js';
+import type { CaptureSession } from './frameCaptureCache.js';
 
 export interface CapturedContent2D {
   readonly commands: readonly RenderCommand2D[];
@@ -38,7 +41,7 @@ function geometry(matrix: Matrix2D, rect: Rectangle2D): Rectangle2D {
 }
 
 /** Both ports share one painter traversal and the unchanged rectangle arithmetic. */
-function capture(stage: Stage, mode: "content" | "rectangles"): CapturedContent2D {
+function capture(stage: Stage, mode: "content" | "rectangles", session?: CaptureSession): CapturedContent2D {
   const commands: RenderCommand2D[] = [];
   const budget = mode === "content" ? new CaptureImageBudget() : undefined;
   const pending: {
@@ -57,15 +60,21 @@ function capture(stage: Stage, mode: "content" | "rectangles"): CapturedContent2
     const entry = pending.pop()!;
     const s = visualOf(entry.node);
     if (!s.visible || s.alpha === 0) continue;
-    const matrix = checked(composeDisplayTransform(entry.matrix, s));
+    const cached = readCaptureDerived(session, entry.node, s, entry.matrix, entry.alpha, entry.clips, undefined);
+    const draft = cached === undefined ? beginCaptureNode(session, entry.node, s, entry.matrix, entry.alpha, entry.clips, undefined) : undefined;
+    const matrix = cached?.matrix ?? checked(composeDisplayTransform(entry.matrix, s));
     const alpha = entry.alpha * s.alpha;
-    const clips = s.clipRect === undefined ? entry.clips : Object.freeze([
+    const clips = cached?.ordinaryClips ?? (s.clipRect === undefined ? entry.clips : Object.freeze([
       ...entry.clips,
       Object.freeze({ matrix, rect: geometry(matrix, s.clipRect) }),
-    ]);
+    ]));
     if (clips.some(clip => clip.rect.width === 0 || clip.rect.height === 0)) continue;
+    rememberCaptureBase(draft, matrix, clips, undefined);
+    let primitiveIndex = 0;
     for (const primitive of s.primitives) {
-      const rect = geometry(matrix, primitive.rect);
+      const rect = cached?.rectangles[primitiveIndex] ?? geometry(matrix, primitive.rect);
+      primitiveIndex++;
+      rememberCaptureRectangle(draft, rect);
       const effective = alpha * primitive.alpha;
       if (rect.width === 0 || rect.height === 0 || effective === 0) continue;
       commands.push(Object.freeze({
@@ -76,9 +85,10 @@ function capture(stage: Stage, mode: "content" | "rectangles"): CapturedContent2
     if (bitmap !== undefined) {
       // Cached geometry is checked before effective-alpha suppression or lease
       // resolution. A cleared slot needs neither geometry nor entitlement.
-      const placement = bitmap.layout === undefined ? undefined : bitmapAtlasPlacement(bitmap, matrix);
-      const bitmapMatrix = placement?.matrix ?? matrix;
-      const rect = geometry(bitmapMatrix, placement?.rect ?? { x: 0, y: 0, width: bitmap.width, height: bitmap.height });
+      const placement = cached?.bitmapRect !== undefined || bitmap.layout === undefined ? undefined : bitmapAtlasPlacement(bitmap, matrix);
+      const bitmapMatrix = cached?.bitmapMatrix ?? placement?.matrix ?? matrix;
+      const rect = cached?.bitmapRect ?? geometry(bitmapMatrix, placement?.rect ?? { x: 0, y: 0, width: bitmap.width, height: bitmap.height });
+      rememberCaptureBitmap(draft, bitmapMatrix, rect);
       if (alpha !== 0) {
         const snapshot = readBitmapImage(bitmap.lease);
         if (mode === "rectangles") throw new EgretError("FRAME_IMAGE_UNSUPPORTED");
@@ -98,7 +108,8 @@ function capture(stage: Stage, mode: "content" | "rectangles"): CapturedContent2
       assertTextFieldScope(text.scope);
       const committed = text.committed;
       if (committed?.lease !== undefined && committed.raster !== undefined && committed.sourceRect !== undefined) {
-        const rect = geometry(matrix, committed.raster);
+        const rect = cached?.textRect ?? geometry(matrix, committed.raster);
+        rememberCaptureText(draft, rect);
         if (mode === 'rectangles') throw new EgretError('FRAME_IMAGE_UNSUPPORTED');
         const snapshot = readBitmapImage(committed.lease);
         const sourceRect = committed.sourceRect;
@@ -106,6 +117,7 @@ function capture(stage: Stage, mode: "content" | "rectangles"): CapturedContent2
         commands.push(Object.freeze({ kind: 'image', matrix, rect, alpha, clips, imageIndex, sourceRect }));
       }
     }
+    completeCaptureNode(draft, s);
     const children = childrenOf(entry.node);
     for (let i = children.length - 1; i >= 0; i--) {
       pending.push({ node: children[i]!, matrix, alpha, clips });
@@ -120,9 +132,16 @@ export function collectFrameContent(stage: Stage): CapturedContent2D {
   if (!isStageRoot(stage)) throw new EgretError("FRAME_STAGE_INVALID");
   const engine = engineOf(stage)!;
   engine.assertOpen();
-  const content = capture(stage, "content");
-  engine.assertOpen();
-  return content;
+  // Legacy ordinary capture does not refuse a disposed Stage. Keep its values,
+  // but never establish a new cache after that root's terminal transition.
+  const session = isTerminated(stage) ? undefined : beginCaptureSession(stage, 'ordinary');
+  try {
+    const content = capture(stage, "content", session);
+    engine.assertOpen();
+    // Derived state is published only after the collector's existing open check.
+    publishCaptureSession(session);
+    return content;
+  } finally { abandonCaptureSession(session); }
 }
 
 /** Legacy input behavior is retained; its mode rejects every emitted image. */

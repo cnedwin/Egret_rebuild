@@ -236,9 +236,17 @@ for (const [entry, values, emittedEntry] of [
 const nineSliceBitmapDeclaration = readFileSync(path.join(root, 'packages/runtime/dist/NineSliceBitmap.d.ts'), 'utf8');
 const nineSliceBitmapDeclaredNames = [...nineSliceBitmapDeclaration.matchAll(/\bexport\s+(?:declare\s+)?(?:type|interface|function|const|class|enum)\s+(\w+)/g)].map(match => match[1]).sort();
 if (JSON.stringify(nineSliceBitmapDeclaredNames) !== JSON.stringify(['NineSliceBitmap', 'NineSliceBitmapOptions'])) throw new Error('runtime: NLB1 exact leaf declaration surface mismatch');
-const meshStateSource = readFileSync(path.join(root, 'packages/runtime/src/meshDisplayState.ts'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/[^\n]*/g, '');
+// The content slot may publish only this exact private visual revision edge.
+// Resource/display classes remain type-only; other imports keep their refusal.
+const meshRevisionImport = 'import { recordVisualChange, VISUAL_CONTENT, VISUAL_BINDING } from "./displayVisualState.js";';
+const meshSourceRaw = readFileSync(path.join(root, 'packages/runtime/src/meshDisplayState.ts'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/[^\n]*/g, '');
+const meshEmittedRaw = readFileSync(path.join(root, 'packages/runtime/dist/meshDisplayState.js'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/[^\n]*/g, '');
+const revisionSourceCount = meshSourceRaw.split(meshRevisionImport).length - 1;
+const revisionEmittedCount = meshEmittedRaw.split(meshRevisionImport).length - 1;
+if (revisionSourceCount > 1 || revisionSourceCount !== revisionEmittedCount) throw new Error('runtime: Mesh revision import must match source and emission exactly once');
+const meshStateSource = meshSourceRaw.replace(meshRevisionImport, '');
 for (const match of meshStateSource.matchAll(/\bimport\b/g)) if (!/^import\s+type\b/.test(meshStateSource.slice(match.index))) throw new Error('runtime: Mesh state source imports must be type-only');
-const meshStateEmitted = readFileSync(path.join(root, 'packages/runtime/dist/meshDisplayState.js'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/[^\n]*/g, '');
+const meshStateEmitted = meshEmittedRaw.replace(meshRevisionImport, '');
 if (/\bimport\b|\bexport\s*(?:\*|\{[^}]*\})\s*from\s*["']/.test(meshStateEmitted)) throw new Error('runtime: Mesh state emitted value import/backedge');
 const meshStateDeclaration = readFileSync(path.join(root, 'packages/runtime/dist/meshDisplayState.d.ts'), 'utf8');
 const meshStateNames = [...meshStateDeclaration.matchAll(/\bexport\s+(?:declare\s+)?(?:type|interface|function|const|class|enum)\s+(\w+)/g)].map(match => match[1]).sort();
@@ -1104,6 +1112,18 @@ const sceneLiteralClosure = {
     ],
     [
       "static",
+      "../rendering/preparedBatches2D.js"
+    ],
+    [
+      "static",
+      "../rendering/preparedBatches2D.js"
+    ],
+    [
+      "static",
+      "../rendering/preparedFrameCache2D.js"
+    ],
+    [
+      "static",
       "../rendering/prepareMixedDraws2D.js"
     ],
     [
@@ -1282,6 +1302,14 @@ const sceneLiteralClosure = {
     ],
     [
       "static",
+      "./preparedFrameCache2D.js"
+    ],
+    [
+      "static",
+      "./preparedFrameCache2D.js"
+    ],
+    [
+      "static",
       "./prepareImages2D.js"
     ],
     [
@@ -1308,6 +1336,14 @@ const sceneLiteralClosure = {
     ],
     [
       "static",
+      "./preparedFrameCache2D.js"
+    ],
+    [
+      "static",
+      "./preparedFrameCache2D.js"
+    ],
+    [
+      "static",
       "./prepareRectangles2D.js"
     ],
     [
@@ -1320,6 +1356,10 @@ const sceneLiteralClosure = {
     ]
   ],
   "packages/engine/rendering/prepareMixedDraws2D.ts": [
+    [
+      "static",
+      "./preparedFrameCache2D.js"
+    ],
     [
       "static",
       "./prepareImages2D.js"
@@ -1348,6 +1388,14 @@ const sceneLiteralClosure = {
     ],
     [
       "static",
+      "./preparedFrameCache2D.js"
+    ],
+    [
+      "static",
+      "./preparedFrameCache2D.js"
+    ],
+    [
+      "static",
       "./RectangleFrame2D.js"
     ],
     [
@@ -1360,6 +1408,10 @@ const sceneLiteralClosure = {
     ]
   ],
   "packages/engine/rendering/prepareTexturedDraws2D.ts": [
+    [
+      "static",
+      "./preparedFrameCache2D.js"
+    ],
     [
       "static",
       "./prepareImages2D.js"
@@ -1397,6 +1449,10 @@ const sceneLiteralClosure = {
     [
       "static",
       "./ownedPreparationFailure2D.js"
+    ],
+    [
+      "static",
+      "./preparedFrameCache2D.js"
     ],
     [
       "static",
@@ -1441,6 +1497,10 @@ const sceneLiteralClosure = {
     [
       "static",
       "../rendering/packTexturedMesh2D.js"
+    ],
+    [
+      "static",
+      "../rendering/preparedBatches2D.js"
     ],
     [
       "static",
@@ -1494,6 +1554,14 @@ const sceneLiteralClosure = {
     ],
     [
       "static",
+      "../rendering/preparedFrameCache2D.js"
+    ],
+    [
+      "static",
+      "../rendering/preparedFrameCache2D.js"
+    ],
+    [
+      "static",
       "../rendering/prepareRectangles2D.js"
     ]
   ],
@@ -1541,6 +1609,14 @@ const sceneLiteralClosure = {
     ],
     [
       "static",
+      "./preparedFrameCache2D.js"
+    ],
+    [
+      "static",
+      "./preparedFrameCache2D.js"
+    ],
+    [
+      "static",
       "./prepareRectangles2D.js"
     ],
     [
@@ -1556,6 +1632,14 @@ const sceneLiteralClosure = {
     [
       "static",
       "./ownedPreparationFailure2D.js"
+    ],
+    [
+      "static",
+      "./preparedFrameCache2D.js"
+    ],
+    [
+      "static",
+      "./preparedFrameCache2D.js"
     ],
     [
       "static",
@@ -1706,6 +1790,14 @@ const sceneLiteralClosure = {
     [
       "static",
       "../rendering/packTexturedMesh2D.js"
+    ],
+    [
+      "static",
+      "../rendering/preparedBatches2D.js"
+    ],
+    [
+      "static",
+      "../rendering/preparedFrameCache2D.js"
     ],
     [
       "static",
@@ -1876,10 +1968,18 @@ const sceneLiteralClosure = {
     ],
     [
       "static",
+      "./preparedFrameCache2D.js"
+    ],
+    [
+      "static",
       "./prepareRectangles2D.js"
     ]
   ],
   "packages/engine/dist/rendering/packImageVertices2D.d.ts": [
+    [
+      "static",
+      "./preparedFrameCache2D.js"
+    ],
     [
       "static",
       "./prepareImages2D.js"
@@ -1904,10 +2004,18 @@ const sceneLiteralClosure = {
     ],
     [
       "static",
+      "./preparedFrameCache2D.js"
+    ],
+    [
+      "static",
       "./prepareRectangles2D.js"
     ]
   ],
   "packages/engine/dist/rendering/packTexturedMesh2D.d.ts": [
+    [
+      "static",
+      "./preparedFrameCache2D.js"
+    ],
     [
       "static",
       "./prepareTexturedMesh2D.js"
@@ -1930,6 +2038,10 @@ const sceneLiteralClosure = {
   "packages/engine/dist/rendering/prepareMixedDraws2D.d.ts": [
     [
       "static",
+      "./preparedFrameCache2D.js"
+    ],
+    [
+      "static",
       "./prepareImages2D.js"
     ],
     [
@@ -1948,10 +2060,18 @@ const sceneLiteralClosure = {
     ],
     [
       "static",
+      "./preparedFrameCache2D.js"
+    ],
+    [
+      "static",
       "robust-predicates"
     ]
   ],
   "packages/engine/dist/rendering/prepareRectangles2D.d.ts": [
+    [
+      "static",
+      "./preparedFrameCache2D.js"
+    ],
     [
       "static",
       "./RectangleFrame2D.js"
@@ -1976,6 +2096,10 @@ const sceneLiteralClosure = {
     ]
   ],
   "packages/engine/dist/rendering/prepareTexturedDraws2D.d.ts": [
+    [
+      "static",
+      "./preparedFrameCache2D.js"
+    ],
     [
       "static",
       "./prepareImages2D.js"
@@ -2008,6 +2132,10 @@ const sceneLiteralClosure = {
     ]
   ],
   "packages/engine/dist/rendering/texturedPreparationBudget2D.d.ts": [
+    [
+      "static",
+      "./preparedFrameCache2D.js"
+    ],
     [
       "static",
       "./prepareRectangles2D.js"
@@ -2066,6 +2194,10 @@ const sceneLiteralClosure = {
     ],
     [
       "static",
+      "../rendering/preparedBatches2D.js"
+    ],
+    [
+      "static",
       "../rendering/prepareTexturedDraws2D.js"
     ],
     [
@@ -2108,9 +2240,17 @@ const sceneLiteralClosure = {
     [
       "static",
       "../rendering/packedPosition2D.js"
+    ],
+    [
+      "static",
+      "../rendering/preparedFrameCache2D.js"
     ]
   ],
   "packages/engine/dist/web/webgpuPass.d.ts": [
+    [
+      "static",
+      "../rendering/preparedFrameCache2D.js"
+    ],
     [
       "static",
       "../rendering/prepareRectangles2D.js"
@@ -2167,10 +2307,18 @@ const sceneLiteralClosure = {
     ],
     [
       "static",
+      "./preparedFrameCache2D.js"
+    ],
+    [
+      "static",
       "./prepareRectangles2D.js"
     ]
   ],
   "packages/engine/dist/rendering/prepareImages2D.d.ts": [
+    [
+      "static",
+      "./preparedFrameCache2D.js"
+    ],
     [
       "static",
       "./prepareRectangles2D.js"
@@ -2187,6 +2335,10 @@ const sceneLiteralClosure = {
     ],
     [
       "static",
+      "./preparedFrameCache2D.js"
+    ],
+    [
+      "static",
       "./prepareRectangles2D.js"
     ],
     [
@@ -2195,6 +2347,10 @@ const sceneLiteralClosure = {
     ]
   ],
   "packages/engine/dist/rendering/prepareTexturedMesh2D.d.ts": [
+    [
+      "static",
+      "./preparedFrameCache2D.js"
+    ],
     [
       "static",
       "./prepareRectangles2D.js"
@@ -2236,6 +2392,56 @@ const sceneLiteralClosure = {
     [
       "static",
       "./webgpuBufferPool.js"
+    ]
+  ],
+  "packages/engine/rendering/preparedBatches2D.ts": [
+    [
+      "static",
+      "./packImageVertices2D.js"
+    ],
+    [
+      "static",
+      "./packTexturedMesh2D.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/engine/dist/rendering/preparedBatches2D.js": [],
+  "packages/engine/dist/rendering/preparedBatches2D.d.ts": [
+    [
+      "static",
+      "./packImageVertices2D.js"
+    ],
+    [
+      "static",
+      "./packTexturedMesh2D.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/engine/rendering/preparedFrameCache2D.ts": [
+    [
+      "static",
+      "./prepareRectangles2D.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ]
+  ],
+  "packages/engine/dist/rendering/preparedFrameCache2D.js": [],
+  "packages/engine/dist/rendering/preparedFrameCache2D.d.ts": [
+    [
+      "static",
+      "./prepareRectangles2D.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
     ]
   ]
 };

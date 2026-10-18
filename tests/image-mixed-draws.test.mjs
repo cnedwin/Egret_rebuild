@@ -56,7 +56,7 @@ mixed('rectangle_only_mixed_preparation_retains_literal_legacy_values',()=>{
  let imageReads=0;const trusted={...f};Object.defineProperty(trusted,'images',{get(){imageReads++;throw Error('image table must not be read');}});
  const draws=prepareMixedDraws2D(trusted,4,4,opts);
  assert.equal(imageReads,0);
- assert.deepEqual(draws,[{kind:'rect',prepared:{points:[{x:1,y:0},{x:3,y:0},{x:3,y:4},{x:1,y:4}],commands:[{pointIndices:[0,1,2,3],color:0xff0000,alpha:.5}],edgeTests:122}}]);
+ assert.deepEqual(draws,[{kind:'rect',commandIndices:[0],prepared:{points:[{x:1,y:0},{x:3,y:0},{x:3,y:4},{x:1,y:4}],commands:[{pointIndices:[0,1,2,3],color:0xff0000,alpha:.5}],edgeTests:122}}]);
  const packed=packWebGPUVertices(draws[0].prepared,4,4,{maxUploadBytes:144,maxBufferSize:144});
  assert.deepEqual(Array.from(packed.data),[-.5,1,.5,0,0,.5,.5,1,.5,0,0,.5,.5,-1,.5,0,0,.5,-.5,1,.5,0,0,.5,.5,-1,.5,0,0,.5,-.5,-1,.5,0,0,.5]);
  assert.deepEqual(packed.ranges,[{firstVertex:0,vertexCount:6}]);
