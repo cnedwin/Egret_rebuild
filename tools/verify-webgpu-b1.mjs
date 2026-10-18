@@ -209,12 +209,12 @@ const allowedModules = new Set([
   ...['mouseInputFactoryState', 'textFieldFactoryState', 'texturedFrameState'].map(name => `packages/engine/dist/internal/${name}.js`),
   ...['admitTexturedFrame2D', 'copyFrame2D', 'copyMixedFrame2D', 'imageFrameBudget', 'matrix4', 'meshGeometry3D', 'ownedPreparationFailure2D',
     'packedOrientation', 'packedPosition2D', 'packImageVertices2D', 'packMeshGeometry3D', 'packTexturedMesh2D', 'prepareImages2D', 'prepareMixedDraws2D',
-    'prepareRectangles2D', 'prepareTexturedDraws2D', 'prepareTexturedMesh2D', 'projection3D', 'sceneFrame3D', 'scene3d', 'texturedPreparationBudget2D'].map(name => `packages/engine/dist/rendering/${name}.js`),
+    'prepareRectangles2D', 'prepareTexturedDraws2D', 'prepareTexturedMesh2D', 'preparedFrameCache2D', 'preparedBatches2D', 'projection3D', 'sceneFrame3D', 'scene3d', 'texturedPreparationBudget2D'].map(name => `packages/engine/dist/rendering/${name}.js`),
   ...['b1', 'imageProjections2D', 'prepareTexturedSubmission2D', 'scene3d', 'texturedWebGPUOptions', 'WebGPUHost', 'webgpuImagePass', 'webgpuLifetime',
     'webgpuMeshPass', 'webgpuPass', 'webgpuTexturedPass', 'webgpuBufferPool', 'webgpuBindingCache'].map(name => `packages/engine/dist/web/${name}.js`),
   ...['AssetLease', 'AssetManager', 'assetManagerOwnerState', 'AssetRef', 'Bitmap', 'bitmapDisplayState', 'ByteReader', 'CancellationController',
     'coordinateInverse', 'diagnostics', 'displayBounds', 'displayCoordinates', 'displayHitState', 'displayHitTest', 'displayInputOperations', 'DisplayObject', 'DisplayObjectContainer',
-    'displayTransform', 'displayTreeState', 'displayVisualState', 'EgretError', 'Event', 'EventDispatcher', 'frameCapture', 'Graphics', 'imageFrameBudget',
+    'displayTransform', 'displayTreeState', 'displayVisualState', 'EgretError', 'Event', 'EventDispatcher', 'frameCapture', 'frameCaptureCache', 'Graphics', 'imageFrameBudget',
     'index', 'Mesh2D', 'meshCaptureSnapshot', 'meshDisplayState', 'ownership', 'Scope', 'sequenceClip', 'SequencePlayer', 'Sprite', 'Stage',
     'textDisplayState', 'Texture', 'texturedFrameBudget', 'texturedFrameCapture'].map(name => `packages/runtime/dist/${name}.js`),
   // Exact current public literal closure; no additional entries or resolver aliases.
@@ -326,8 +326,8 @@ try {
   assert.deepEqual(packageExports['./scene3d'], { types: './dist/rendering/scene3d.d.ts', import: './dist/rendering/scene3d.js' });
   assert.deepEqual(packageExports['./webgpu/scene3d'], { types: './dist/web/scene3d.d.ts', import: './dist/web/scene3d.js' });
   const currentHost = await identity(resolve(repository, 'packages/engine/web/WebGPUHost.ts'));
-  assert.equal(currentHost.bytes, 102838, 'Native acceptance must bind the current reviewed shared scene/textured Host; historical identities remain separate');
-  assert.equal(currentHost.sha256, 'bf33f8aa63f14103ff947f79f77527a28dfd0cf15468cc84abda6c8cd15007e0');
+  assert.equal(currentHost.bytes, 104705, 'Native acceptance must bind the current reviewed shared scene/textured Host; historical identities remain separate');
+  assert.equal(currentHost.sha256, 'e9d172d17cc9f45109dae7b7038485d63d2c8e572efd88fb74af918812045d1d');
   report.publicRoute = { entries: entryNames.slice(0, 3), packageExports: { './scene3d': packageExports['./scene3d'], './webgpu/scene3d': packageExports['./webgpu/scene3d'] },
     hostSource: currentHost, privateDiagnostic: 'packages/engine/dist/web/webgpuMeshPass.js', allowedModules: [...allowedModules].sort() };
   const emitted = [...served.values()].reduce((sum, value) => sum + value.body.length, 0); assert.ok(emitted <= 4 * 1024 * 1024);
@@ -421,7 +421,9 @@ try {
   server = createServer((request, response) => {
     const pathname = new URL(request.url, 'http://localhost').pathname, value = served.get(pathname);
     const observed = { method: request.method, pathname, status: value && request.method === 'GET' ? 200 : 404, bytes: value?.body.length ?? 0, sha256: value?.identity.sha256 ?? null };
-    if (report.requests.length >= 1024) { report.requestOverflow = true; response.writeHead(429); response.end(); return; }
+    // Three M1.2 helper modules add one request each in the original nine windows.
+    // Preserve the old request allowance and its remaining headroom.
+    if (report.requests.length >= 1024 + 3 * 9) { report.requestOverflow = true; response.writeHead(429); response.end(); return; }
     report.requests.push(observed);
     if (!value || request.method !== 'GET') { response.writeHead(404); response.end('Unselected resource'); return; }
     response.writeHead(200, { 'content-type': value.contentType, 'cache-control': 'no-store' }); response.end(value.body);

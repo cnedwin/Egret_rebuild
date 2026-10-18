@@ -57,7 +57,8 @@ if(manifest.exports['./webgpu'].import!=='./dist/web/webgpu.js'||manifest.export
 
 const modeDefinitions=[
   {name:'no-op',fixture:'painter',assertion:'painter-colored-interior',file:'web/webgpuPass.js',from:'pass.draw(range.vertexCount, 1, range.firstVertex, 0);',to:'void range;'},
-  {name:'reversed-order',fixture:'painter',assertion:'painter-overlap',file:'web/webgpuPass.js',from:'for (const range of ranges)',to:'for (const range of [...ranges].reverse())'},
+  // Reverse complete logical color/geometry blocks before adjacent ranges merge.
+  {name:'reversed-order',fixture:'painter',assertion:'painter-overlap',file:'web/webgpuPass.js',from:'for (const group of groups)',to:'for (const group of [...groups].reverse())'},
   {name:'removed-diamond-clip',fixture:'nested',assertion:'diamond-outside',file:'web/WebGPUHost.js',from:'prepareMixedDraws2D(copied.frame,',to:'prepareMixedDraws2D({ ...copied.frame, commands: copied.frame.commands.map(command => ({ ...command, clips: [] })) },'},
   {name:'double-premultiply',fixture:'painter',assertion:'painter-overlap',file:'web/webgpuPass.js',from:'data[offset++] = red;\n            data[offset++] = green;\n            data[offset++] = blue;',to:'data[offset++] = red * alpha;\n            data[offset++] = green * alpha;\n            data[offset++] = blue * alpha;'},
   {name:'translated',fixture:'painter',assertion:'painter-colored-interior',file:'web/webgpuPass.js',from:'data[offset++] = p.x;',to:'data[offset++] = p.x + 16 / width;'},

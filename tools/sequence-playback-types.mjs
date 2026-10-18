@@ -187,12 +187,25 @@ const seqpTrials = seqpInventory.groups.map(group => {
   // Preserve and validate every historical named tuple above before selecting
   // the separately authenticated current Bitmap-shape negative vector.
   const expectedCurrentSourcePins = [{"path":"packages/runtime/src/DisplayObject.ts","bytes":5566,"sha256":"e50f33d0d107ffa9176854ad08f8e153ca6991af1604adf3affd6497d7d156b3"},{"path":"packages/runtime/dist/DisplayObject.d.ts","bytes":2555,"sha256":"508cab574f1552cbfd3af464173b03fdb83f7ec774872bc658bca6a3ceb3c732"}];
+  // M1.2 changes implementation revisions only; the inherited declaration and
+  // every saved negative tuple remain the original observed values.
+  const m12IncrementalSourcePins = [{"path":"packages/runtime/src/DisplayObject.ts","bytes":7011,"sha256":"3cb67df2b19e006674e60bb60c990198005d3e1446c85a9f78e62a6fc44a6817"},{"path":"packages/runtime/dist/DisplayObject.d.ts","bytes":2555,"sha256":"508cab574f1552cbfd3af464173b03fdb83f7ec774872bc658bca6a3ceb3c732"}];
   const successor = seqpInventory.currentDeclarationSuccessor;
   if (successor?.schemaVersion !== 1 || successor.kind !== 'ANCHOR_INHERITED_BITMAP_CURRENT_NEGATIVE_DIAGNOSTIC_SUCCESSOR'
     || successor.status !== 'SAVED_GENUINE_CURRENT_COMPILER_OBSERVATION_NEW_GATE_NOT_RUN'
     || successor.lane !== 'negative' || successor.expectedExit !== 1
     || !seqpEqual(successor.sourcePins, expectedCurrentSourcePins)) seqpFail('current source successor changed');
-  for (const pin of expectedCurrentSourcePins) seqpReadPin(pin);
+  if (!seqpEqual(seqpPinPaths(m12IncrementalSourcePins), seqpPinPaths(expectedCurrentSourcePins))
+    || !seqpEqual(m12IncrementalSourcePins[1], expectedCurrentSourcePins[1])) seqpFail('incremental source successor shape changed');
+  // Select a complete recorded pair. Neither a source-only match nor an
+  // unchanged declaration can authorize any unregistered implementation.
+  const actualCurrentSourcePins = expectedCurrentSourcePins.map(pin => {
+    const bytes = readFileSync(path.join(seqpRoot, pin.path));
+    return { path: pin.path, bytes: bytes.length, sha256: seqpHash(bytes) };
+  });
+  const currentSourcePins = seqpEqual(actualCurrentSourcePins, expectedCurrentSourcePins)
+    ? expectedCurrentSourcePins : m12IncrementalSourcePins;
+  for (const pin of currentSourcePins) seqpReadPin(pin);
   let currentCases = group.cases;
   if (group.lane === 'negative') {
     const expectedRaw = {"bytes":4133,"sha256":"6c19f988695b1e37c5e756c79596da4f60ad0ecb5cba90d2a619260ac9a85e86"};
@@ -217,7 +230,7 @@ const seqpTrials = seqpInventory.groups.map(group => {
     }
     currentCases = successor.cases;
   }
-  return { group, file, config, currentCases, currentSourcePins: expectedCurrentSourcePins };
+  return { group, file, config, currentCases, currentSourcePins };
 });
 
 const seqpEnvironment = { ...process.env };

@@ -1,4 +1,5 @@
 import { noteOwnedPreparationFailure } from './ownedPreparationFailure2D.js';
+import type { PreparedStageCost2D } from './preparedFrameCache2D.js';
 import { GeometryPreparationError, coordinate, finishPolygonWinding2D } from './prepareRectangles2D.js';
 import type { Preparation, PreparedPoint2D, PreparationBudget2D, PolygonClipPolicy2D } from './prepareRectangles2D.js';
 
@@ -60,6 +61,17 @@ export class TexturedPreparationBudget2D implements PreparationBudget2D {
     }
     public admitTupleComparison(): void {
         this.#tupleComparisonsCharged = admit(1, this.#tupleComparisonsCharged, this.#limits.maxTupleComparisons);
+    }
+    /** A rejected replay changes no dimension; the original stage then decides its first error. */
+    public tryReplayStageCost(cost: PreparedStageCost2D): boolean {
+        const vertices = cost.preparedVertices, predicates = cost.predicates, tuples = cost.tupleComparisons;
+        if (!Number.isSafeInteger(vertices) || vertices < 0 || vertices > this.#limits.maxPreparedVertices - this.#preparedVerticesCharged
+            || !Number.isSafeInteger(predicates) || predicates < 0 || predicates > this.#limits.maxClipEdgeTests - this.#predicatesCharged
+            || !Number.isSafeInteger(tuples) || tuples < 0 || tuples > this.#limits.maxTupleComparisons - this.#tupleComparisonsCharged) return false;
+        this.#preparedVerticesCharged += vertices;
+        this.#predicatesCharged += predicates;
+        this.#tupleComparisonsCharged += tuples;
+        return true;
     }
     public snapshot(): Readonly<TexturedPreparationSnapshot2D> {
         return Object.freeze({

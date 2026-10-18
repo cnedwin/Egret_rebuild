@@ -3,6 +3,7 @@ import type { Texture } from './Texture.js';
 import type { Bitmap } from './Bitmap.js';
 import type { Diagnostic } from "@egret/contracts";
 import { EgretError } from "./EgretError.js";
+import { recordVisualChange, VISUAL_BINDING } from "./displayVisualState.js";
 import { assertLive, captureChildInsertion, childrenOf, isDisplayNode, prepareCapturedInsertionTree, publishCapturedInsertionTree, validateCapturedInsertionNode, validateCapturedInsertionRoots, validateCapturedInsertionSource } from "./displayTreeState.js";
 import type { CapturedInsertionNode, PreparedInsertionTree } from "./displayTreeState.js";
 import type { DisplayObjectContainer } from "./DisplayObjectContainer.js";
@@ -98,7 +99,11 @@ export function validateBinding(value: object, engine: EngineContext): readonly 
 
 /** Commit only values returned by callback-free validation, without intervening hooks. */
 export function commitBinding(values: readonly object[], engine: EngineContext): void {
-  for (const value of values) engines.set(value, engine);
+  for (const value of values) {
+    const changed = readInsertionEngine(value) !== engine;
+    engines.set(value, engine);
+    if (changed) recordVisualChange(value, VISUAL_BINDING);
+  }
 }
 
 export function bind(value: object, engine: EngineContext): void {
@@ -187,7 +192,11 @@ export function prepareChildInsertion(receiver: DisplayObjectContainer, child: D
 /** Straight-line commit has no hook, validation, explicit allocation or ownership write. */
 export function publishPreparedChildInsertion(plan: PreparedChildInsertion): void {
   if (plan.engine !== undefined) {
-    for (let index = 0; index < plan.stagedBindings.length; index++) writeInsertionEngine(plan.stagedBindings[index]!, plan.engine);
+    for (let index = 0; index < plan.stagedBindings.length; index++) {
+      const node = plan.stagedBindings[index]!;
+      writeInsertionEngine(node, plan.engine);
+      recordVisualChange(node, VISUAL_BINDING);
+    }
   }
   publishCapturedInsertionTree(plan.tree);
 }

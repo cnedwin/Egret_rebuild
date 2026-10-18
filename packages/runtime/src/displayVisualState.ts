@@ -3,6 +3,7 @@ import type { DisplayObject } from "./DisplayObject.js";
 import { assertLive, isDisplayNode } from "./displayTreeState.js";
 import { engineOf } from "./ownership.js";
 import { EgretError } from "./EgretError.js";
+import { invalidateCaptureNode } from "./frameCaptureCache.js";
 
 export interface Primitive {
   readonly rect: Rectangle2D;
@@ -11,6 +12,11 @@ export interface Primitive {
 }
 
 export interface VisualState {
+  structureRevision: number;
+  transformRevision: number;
+  appearanceRevision: number;
+  contentRevision: number;
+  bindingRevision: number;
   x: number;
   y: number;
   anchorOffsetX: number;
@@ -26,9 +32,47 @@ export interface VisualState {
 
 // Authoritative per-node visual state excludes overridable public accessors.
 const states = new WeakMap<DisplayObject, VisualState>();
+const readRevisionState = states.get.bind(states);
+const sameValue = Object.is;
+
+export const VISUAL_STRUCTURE = 1;
+export const VISUAL_TRANSFORM = 2;
+export const VISUAL_APPEARANCE = 4;
+export const VISUAL_CONTENT = 8;
+export const VISUAL_BINDING = 16;
+// Never publish MAX_SAFE_INTEGER: invalidate every old key before restarting.
+const REVISION_RESTART = 9007199254740990;
+
+/**
+ * Publish after the original authoritative write. No lifecycle check, callback or
+ * explicit allocation may enter tree/ticket commits or terminal cleanup here.
+ * Non-display affinity values have no visual state and need no capture revision.
+ */
+export function recordVisualChange(node: object, changes: number): void {
+  const state = readRevisionState(node as DisplayObject);
+  if (state === undefined) return;
+  if (((changes & VISUAL_STRUCTURE) !== 0 && state.structureRevision >= REVISION_RESTART)
+    || ((changes & VISUAL_TRANSFORM) !== 0 && state.transformRevision >= REVISION_RESTART)
+    || ((changes & VISUAL_APPEARANCE) !== 0 && state.appearanceRevision >= REVISION_RESTART)
+    || ((changes & VISUAL_CONTENT) !== 0 && state.contentRevision >= REVISION_RESTART)
+    || ((changes & VISUAL_BINDING) !== 0 && state.bindingRevision >= REVISION_RESTART)) {
+    invalidateCaptureNode(node as DisplayObject);
+    state.structureRevision = 0;
+    state.transformRevision = 0;
+    state.appearanceRevision = 0;
+    state.contentRevision = 0;
+    state.bindingRevision = 0;
+  }
+  if ((changes & VISUAL_STRUCTURE) !== 0) state.structureRevision++;
+  if ((changes & VISUAL_TRANSFORM) !== 0) state.transformRevision++;
+  if ((changes & VISUAL_APPEARANCE) !== 0) state.appearanceRevision++;
+  if ((changes & VISUAL_CONTENT) !== 0) state.contentRevision++;
+  if ((changes & VISUAL_BINDING) !== 0) state.bindingRevision++;
+}
 
 export function registerVisual(node: DisplayObject): void {
   states.set(node, {
+    structureRevision: 0, transformRevision: 0, appearanceRevision: 0, contentRevision: 0, bindingRevision: 0,
     x: 0, y: 0, scaleX: 1, scaleY: 1, rotation: 0, alpha: 1,
     anchorOffsetX: 0, anchorOffsetY: 0,
     visible: true, clipRect: undefined, primitives: [],
@@ -55,7 +99,9 @@ export function writeAnchorOffset(receiver: unknown, axis: AnchorAxis, value: un
   const state = anchorState(receiver);
   assertVisualMutable(receiver as DisplayObject);
   if (!finite(value)) throw new EgretError("DISPLAY_VALUE_INVALID");
+  const changed = !sameValue(state[axis], value);
   state[axis] = value;
+  if (changed) recordVisualChange(receiver as DisplayObject, VISUAL_TRANSFORM);
 }
 
 export function assertVisualMutable(node: DisplayObject): void {

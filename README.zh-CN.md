@@ -25,9 +25,13 @@ Years later, as times change and technology advances, many developers continue t
 
 当前仓库提供可运行的工程预览。显示树、资源租约、动画、浏览器输入及部分 Canvas/WebGPU 渲染路径，均有各自的接口契约和验证范围。完整 UI 工具、完整 Spine 支持、目标平台 SDK 和旧工程自动迁移仍在开发中。
 
-## 评审中 — M1.1 提交复用
+## 开发中 — M1.2 增量渲染
 
-当前 M1.1 候选减少重复图像准备、缓冲创建与绑定创建，保留公开 API 和原准入规则。参阅[契约](knowledge-base/Cns/docs/warm-submission-contract.md)与[验证状态](knowledge-base/Cns/docs/warm-submission-evidence.md)；尚不宣称帧耗时或移动端性能提升。
+M1.2 为显示捕获和渲染准备增加有界复用，并在保留绘制顺序的前提下合并相邻兼容批次。已记录的正确性与原生操作计数分别验收，帧耗时性能验收仍未完成。参阅[验证记录与边界](knowledge-base/Cns/docs/incremental-frame-preparation-evidence.md)。参阅[契约](knowledge-base/Cns/docs/incremental-frame-preparation-contract.md)及 [M1 计划](knowledge-base/Cns/docs/m1-rendering-resource-plan.md)。
+
+## 已交付 — M1.1 提交复用
+
+M1.1 已通过 [PR #73](https://github.com/cnedwin/Egret_rebuild/pull/73) 合并，主干提交为 `fa88111f5e73503e1804f92a9f444207110b773c`。它减少重复图像准备、缓冲创建与绑定创建，保留公开 API 和原准入规则。参阅[契约](knowledge-base/Cns/docs/warm-submission-contract.md)与[验证状态](knowledge-base/Cns/docs/warm-submission-evidence.md)；尚不宣称帧耗时或移动端性能提升。
 
 ## 当前版本 — 0.61.0
 
@@ -75,6 +79,8 @@ Years later, as times change and technology advances, many developers continue t
 
 | Version / 版本 | Main change | 主要变化 |
 | --- | --- | --- |
+| M1.2 candidate | Incremental capture and adjacent batching; performance acceptance open | 增量捕获与相邻合批；性能验收未完成 |
+| M1.1 | Completion-safe GPU buffer and binding reuse | 安全完成后的 GPU 缓冲与绑定复用 |
 | 0.61.0 | Internal WebGPU image cache with per-Host ownership | 各 Host 独立管理的 WebGPU 内部图像缓存 |
 | 0.60.0 | Strict single-page atlas metadata planning with explicit PNG binding | 严格单页图集元数据规划与显式 PNG 绑定 |
 | 0.59.0 | Normalized trimmed and clockwise90 atlas frames with stable logical dimensions | 标准化裁边与顺时针90度图集帧，保持逻辑尺寸 |

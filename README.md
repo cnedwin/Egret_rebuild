@@ -24,9 +24,13 @@ Egret Engine is an open-source game-engine rebuild for creators working with AI 
 
 The repository contains an executable engineering preview. Display trees, resource leases, animation, browser input and selected Canvas/WebGPU rendering paths are available within their documented contracts. Full UI tooling, complete Spine support, target-platform SDKs and automated legacy-project migration remain in development.
 
-## In review — M1.1 warm submission
+## In progress — M1.2 incremental rendering
 
-The current M1.1 candidate reduces repeated image preparation, buffer creation and binding creation. Public APIs and original admission remain unchanged. See the [contract](knowledge-base/en/docs/warm-submission-contract.md) and [verification status](knowledge-base/en/docs/warm-submission-evidence.md); no frame-time or mobile performance improvement is claimed.
+M1.2 adds bounded reuse of display capture and rendering preparation, with adjacent compatible batching that preserves painter order. Recorded correctness and native operation counts have separate acceptance from frame-time performance, which remains open. See the [evidence and limits](knowledge-base/en/docs/incremental-frame-preparation-evidence.md). See the [contract](knowledge-base/en/docs/incremental-frame-preparation-contract.md) and [M1 plan](knowledge-base/en/docs/m1-rendering-resource-plan.md).
+
+## Delivered — M1.1 warm submission
+
+M1.1 was merged through [PR #73](https://github.com/cnedwin/Egret_rebuild/pull/73), main `fa88111f5e73503e1804f92a9f444207110b773c`. It reduces repeated image preparation, buffer creation and binding creation. Public APIs and original admission remain unchanged. See the [contract](knowledge-base/en/docs/warm-submission-contract.md) and [verification status](knowledge-base/en/docs/warm-submission-evidence.md); no frame-time or mobile performance improvement is claimed.
 
 ## Current version — 0.61.0
 
@@ -74,6 +78,8 @@ Focused behavior, strict consumers and the recorded desktop Canvas/WebGPU compos
 
 | Version / 版本 | Main change | 主要变化 |
 | --- | --- | --- |
+| M1.2 candidate | Incremental capture and adjacent batching; performance acceptance open | 增量捕获与相邻合批；性能验收未完成 |
+| M1.1 | Completion-safe GPU buffer and binding reuse | 安全完成后的 GPU 缓冲与绑定复用 |
 | 0.61.0 | Internal WebGPU image cache with per-Host ownership | 各 Host 独立管理的 WebGPU 内部图像缓存 |
 | 0.60.0 | Strict single-page atlas metadata planning with explicit PNG binding | 严格单页图集元数据规划与显式 PNG 绑定 |
 | 0.59.0 | Normalized trimmed and clockwise90 atlas frames with stable logical dimensions | 标准化裁边与顺时针90度图集帧，保持逻辑尺寸 |

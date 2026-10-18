@@ -5,6 +5,8 @@ import {readFileSync,readdirSync,lstatSync,realpathSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import path from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
+// Preserve the frozen policy; only this complete source/emission pair may succeed it.
+const m12IncrementalOwnershipSuccessor = [{"path":"packages/runtime/dist/ownership.js","bytes":6711,"sha256":"a26b1fcd8232dc000ed45fc522784668cb5c69b35d187cea21419cf6b3da7b52"},{"path":"packages/runtime/src/ownership.ts","bytes":9594,"sha256":"0b3bdfbba67ba6e9e30a31b7384c3379fc3fb0352b7be8e7425956372bfbbbfd"}];
 const declaredRoot=fileURLToPath(new URL('..',import.meta.url));
 const root=realpathSync(declaredRoot);
 const platform=process.platform==='win32'?'win32':process.platform;
@@ -154,6 +156,24 @@ function oldEngineDeclaration(raw){
  if(imports.length!==1)bbtbFail('BBT_BOUNDARY_ENGINE_METHOD','One erased method-result import required');
  lines.splice(imports[0],1);return Buffer.from(lines.join('\n'),'utf8');
 }
+function m12SelectedProductPins() {
+ const paths = ['packages/runtime/src/ownership.ts', 'packages/runtime/dist/ownership.js'];
+ const prior = policy.selectedProductPins.filter(row => paths.includes(row.path));
+ const tuples = [...prior].sort((a,b)=>a.path<b.path?-1:a.path>b.path?1:0).map(row=>[row.path,row.bytes,row.sha256]);
+ const rows = m12IncrementalOwnershipSuccessor;
+ if (prior.length!==2 || hash(Buffer.from(JSON.stringify(tuples)))!=='f32e7e99a5d08e707b38da86a23e355cf76349426c8a6312b6e455c69f790a7f'
+     || rows.length!==2 || !equal(rows.map(row=>row.path).sort(),[...paths].sort())
+     || rows.some(row=>!equal(Object.keys(row).sort(),['bytes','path','sha256']) || !Number.isSafeInteger(row.bytes) || row.bytes<0 || !/^[a-f0-9]{64}$/.test(row.sha256))) {
+  bbtbFail('BBT_BOUNDARY_SELECTED_PRODUCT_IDENTITY','Invalid finite M1.2 ownership predecessor or successor');
+ }
+ const actual = new Map(paths.map(file=>{const raw=read(file);return [file,{bytes:raw.length,sha256:hash(raw)}];}));
+ const matches = group=>group.every(row=>actual.get(row.path).bytes===row.bytes&&actual.get(row.path).sha256===row.sha256);
+ if (matches(prior)) return policy.selectedProductPins;
+ if (!matches(rows)) bbtbFail('BBT_BOUNDARY_SELECTED_PRODUCT_IDENTITY','Complete M1.2 ownership source/emission pair differs');
+ const reviewed = new Map(rows.map(row=>[row.path,row]));
+ return policy.selectedProductPins.map(row=>reviewed.get(row.path)??row);
+}
+
 function run(){
  if(policy.schemaVersion!==1||policy.kind!=='BITMAP_BINDING_TICKET_FINITE_INTERFACE_POLICY'||!equal(bbtbTypes,['BitmapBindingTicket']))bbtbFail('BBT_BOUNDARY_POLICY_IDENTITY','Exact finite policy schema required');
  // Assigned exposure rules run before generic pinned-identity refusals.
@@ -189,7 +209,7 @@ function run(){
   const expectedIncoming=file==='packages/engine/src/Engine.ts'?2:1;
   if(incoming.length!==expectedIncoming)bbtbFail('BBT_BOUNDARY_CORE_CLOSURE','Exact ordinary Engine-to-core value/type edges required: '+file);
  }
- for(const pin of policy.selectedProductPins)pinCheck(pin,'BBT_BOUNDARY_SELECTED_PRODUCT_IDENTITY');
+ for(const pin of m12SelectedProductPins())pinCheck(pin,'BBT_BOUNDARY_SELECTED_PRODUCT_IDENTITY');
  // Complete raw readback catches source drift during this bounded inspection.
  for(const [file,pin] of seen){const now=fingerprintFile(root,file);if(!equal(now,pin))bbtbFail('BBT_BOUNDARY_SOURCE_DRIFT',file);}
  console.log('BBT_BOUNDARY_PASS '+JSON.stringify({scope:'finite source/emission policy only',method:'Engine.captureBitmapBindings',erasedTypes:bbtbTypes,unchangedDefaultRuntimeValues:policy.rootValues.length,readFiles:seen.size,productExecution:false}));

@@ -11,6 +11,10 @@ const vertices = calls => calls.filter(c => c[0] === 'setVertexBuffer').map(c =>
 const bindings = calls => calls.filter(c => c[0] === 'setBindGroup').map(c => c[2]);
 const writes = (calls, usage) => calls.filter(c => c[0] === 'writeBuffer' && c[1].descriptor.usage === usage);
 const floats = call => [...new Float32Array(call[3].buffer, call[3].byteOffset, call[3].byteLength / 4)];
+// Alternating visible alpha is a real material barrier. These pool-pressure
+// controls require the original number of physical draws after adjacent batching.
+const separateImages = input => ({ ...input, commands: input.commands.map((command, index) =>
+  ({ ...command, alpha: index % 2 === 0 ? 1 : .5 })) });
 const sameRefs = (actual, expected) => {
   assert.ok(expected.length > 0, 'reuse comparison requires an observed selection');
   assert.equal(actual.length, expected.length);
@@ -133,7 +137,7 @@ test('B01 combined genuine textured scene reuses seven eligible buffers and thre
 
 test('B04 G03 2049 legal image draws retain at most 4096 eligible buffers and warm selections remain valid', async () => {
   await withGpu(async f => {
-    const h = f.host(); await f.ready(h); const one = view(image()), input = frame(Array(2049).fill(one));
+    const h = f.host(); await f.ready(h); const one = view(image()), input = separateImages(frame(Array(2049).fill(one)));
     const first = await observed(f, h, input);
     assert.equal(vertices(first).length, 2049); assert.equal(bindings(first).length, 2049);
     assert.equal(eligible(f).length, 4098); assert.equal(eligible(f).filter(b => b.destroyed === 0).length, 4096);
@@ -182,7 +186,7 @@ test('B05 B07 G02 buffer eviction invalidates old image binding and busy victim 
   await withGpu(async f => {
     const h = f.host(); await f.ready(h); const a = view(image()), b = view(image());
     const first = await observed(f, h, frame([a])), originalUniform = writes(first, 72)[0][1], originalImage = imagesOf(f)[0];
-    await observed(f, h, frame(Array(2048).fill(b)));
+    await observed(f, h, separateImages(frame(Array(2048).fill(b))));
     assert.equal(eligible(f).length, 4096); assert.ok(eligible(f).every(buffer => buffer.destroyed === 0));
     const rect = { kind: 'rect', matrix: { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 },
       rect: { x: 0, y: 0, width: 1, height: 1 }, color: 0xff0000, alpha: 1, clips: [] };
@@ -211,7 +215,10 @@ test('G03 cold collision retains only winner texture dependent bindings when bot
     const startB = f.calls.length, b = f.capture(() => h.renderFrame(input)); admitted(b); const callsB = f.calls.slice(startB);
     await b.finish(); await a.finish(); await h.whenIdle();
     assert.equal(a.textures[0].destroyed, 1); assert.equal(b.textures[0].destroyed, 0);
-    const next = await observed(f, h, { ...input, commands: [input.commands[0], input.commands[0]] });
+    const next = await observed(f, h, separateImages({ ...input, commands: [input.commands[0], input.commands[0]] }));
+    assert.equal(vertices(callsA).length, 1); assert.equal(bindings(callsA).length, 1);
+    assert.equal(vertices(callsB).length, 1); assert.equal(bindings(callsB).length, 1);
+    assert.equal(vertices(next).length, 2); assert.equal(bindings(next).length, 2);
     sameRefs(vertices(next), [vertices(callsB)[0], vertices(callsA)[0]]);
     assert.equal(bindings(next)[0], bindings(callsB)[0]); assert.notEqual(bindings(next)[1], bindings(callsA)[0]);
     assert.ok(bindings(next).every(group => group.descriptor.entries[0].resource.texture === b.textures[0]));

@@ -129,6 +129,9 @@ const inlineSources=[
   "sha256": "8b2d266f7aacd680f7a1581afb2ea1a1381f02fc44cd70b340ee8961c7584222"
  }
 ];
+// This one reviewed gate revision retains its original raw authority above.
+// It adds no caller-selected parser or source permission.
+const inlineSourceSuccessors = [{"path":"tools/sequence-playback-types.mjs","base":{"bytes":17296,"sha256":"8b2d266f7aacd680f7a1581afb2ea1a1381f02fc44cd70b340ee8961c7584222"},"current":{"bytes":18474,"sha256":"e9388c73080d4db112b3260e17bdfc7d1ff1ca6130fa8cccdae7d3b60084ba6b"}}];
 const inlineInventories=[
  ['mouseTypeExpectations','mouse-input',['positive','negative','import-negative','dom-free-negative']],
  ['spineTypeExpectations','spine-import-plan',['positive','negative','import-negative']]
@@ -230,12 +233,16 @@ export function prepareCompilerReview(root,options={}){
  }
  let inlinePolicies=null;
  if(includeInline){
-  const sources=[],texts=new Map(),literals=[],conditions=[],observations=[];
+  const sources=[],sourceRevisions=[],texts=new Map(),literals=[],conditions=[],observations=[];
   // Authenticate the complete original bytes before examining any initializer.
   for(const expected of inlineSources){
-   const current=observe('repository',expected.path);requireThat(equal(current,expected),'Unreviewed inline policy source: '+expected.path);
-   const raw=fs.readFileSync(path.join(root,expected.path));requireThat(raw.length===expected.bytes&&createHash('sha256').update(raw).digest('hex')===expected.sha256,'Inline source changed while reading');
+   const current=observe('repository',expected.path),successor=inlineSourceSuccessors.find(row=>row.path===expected.path);
+   if(successor)requireThat(equal(expected,{path:successor.path,...successor.base}),'Inline successor base differs');
+   const newer=successor?{path:successor.path,...successor.current}:null;
+   requireThat(equal(current,expected)||newer!==null&&equal(current,newer),'Unreviewed inline policy source: '+expected.path);
+   const raw=fs.readFileSync(path.join(root,expected.path));requireThat(raw.length===current.bytes&&createHash('sha256').update(raw).digest('hex')===current.sha256,'Inline source changed while reading');
    texts.set(expected.path,new TextDecoder('utf-8',{fatal:true}).decode(raw));sources.push(current);
+   if(successor)sourceRevisions.push({base:expected,successor:newer,current,selection:equal(current,expected)?'base':'current',admission:'not-evaluated'});
   }
   function span(owner,start,end){const text=texts.get(owner),raw=Buffer.from(text.slice(start,end));return {owner,startByte:Buffer.byteLength(text.slice(0,start)),endByte:Buffer.byteLength(text.slice(0,end)),bytes:raw.length,sha256:createHash('sha256').update(raw).digest('hex')};}
   // Only JSON initializers in authenticated revisions are supported. This is
@@ -270,7 +277,14 @@ export function prepareCompilerReview(root,options={}){
   }
   const sequence=gate('sequence-playback'),expected=literal(sequence,'expectedCurrentSourcePins');add(sequence,'expectedCurrentSourcePins',expected);
   conditions.push({kind:'sequence-negative-successor',gate:sequence,inventory:inventoryPath('sequence-playback'),lane:'negative',sourceAgreement:equal(expected,records.get('sequence-playback').currentDeclarationSuccessor.sourcePins),selector:'currentDeclarationSuccessor.sourcePins',admission:'not-evaluated'});
-  inlinePolicies={sources,literals,observations,conditions,limits:['Raw data relationships only; original schema, kind, review hash, tuple, closure and execution obligations remain with their gates','Native host equality concerns saved metadata/binary pins only; libraries and current-host owner/version checks remain separate','Fixed Windows x64 bundle observations never select the actual host compiler or decide admission','Any gate-source byte change requires a separately reviewed registry update; no parser fallback or automatic fingerprint refresh']};
+  if(sourceRevisions.find(row=>row.current.path===sequence)?.selection==='current'){
+   const incremental=literal(sequence,'m12IncrementalSourcePins');add(sequence,'m12IncrementalSourcePins',incremental);
+   const current=expected.map(row=>observe('repository',row.path));
+   conditions.push({kind:'sequence-source-successor',gate:sequence,baseBinding:'expectedCurrentSourcePins',currentBinding:'m12IncrementalSourcePins',
+    pathsAgreement:equal(expected.map(row=>row.path),incremental.map(row=>row.path)),unchangedDeclaration:equal(expected[1],incremental[1]),
+    completeBaseMatch:equal(current,expected),completeCurrentMatch:equal(current,incremental),admission:'not-evaluated'});
+  }
+  inlinePolicies={sources,sourceRevisions,literals,observations,conditions,limits:['Raw data relationships only; original schema, kind, review hash, tuple, closure and execution obligations remain with their gates','Native host equality concerns saved metadata/binary pins only; libraries and current-host owner/version checks remain separate','Fixed Windows x64 bundle observations never select the actual host compiler or decide admission','Any gate-source byte change requires a separately reviewed registry update; no parser fallback or automatic fingerprint refresh']};
  }
  const reverse=new Map();
  for(const group of declarations)for(const row of group.rows){

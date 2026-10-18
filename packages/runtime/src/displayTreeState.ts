@@ -2,6 +2,8 @@ import type { DisplayObject } from "./DisplayObject.js";
 import type { DisplayObjectContainer } from "./DisplayObjectContainer.js";
 import type { Stage } from "./Stage.js";
 import { EgretError } from "./EgretError.js";
+import { recordVisualChange, VISUAL_STRUCTURE } from "./displayVisualState.js";
+import { invalidateCaptureNode, clearCaptureStage } from "./frameCaptureCache.js";
 
 // Internal state authority: validation/commit never uses overridable getters
 // or public removeChild. Public subclass hooks run only during preflight.
@@ -14,6 +16,7 @@ const childLists = new WeakMap<DisplayObjectContainer, DisplayObject[]>();
 const readChildList = childLists.get.bind(childLists);
 const readParent = parents.get.bind(parents);
 const deleteParent = parents.delete.bind(parents);
+const readStageRoot = roots.has.bind(roots);
 
 export function registerNode(node: DisplayObject): void { nodes.add(node); }
 export function registerContainer(node: DisplayObjectContainer): void { childLists.set(node, []); }
@@ -79,6 +82,8 @@ export function detachNode(child: DisplayObject): void {
   if (index < 0) throw new EgretError("DISPLAY_TREE_INVARIANT");
   list.splice(index, 1);
   parents.delete(child);
+  recordVisualChange(parent, VISUAL_STRUCTURE);
+  recordVisualChange(child, VISUAL_STRUCTURE);
 }
 
 /** Caller has completed validation; mutation has no subclass callbacks. */
@@ -86,6 +91,8 @@ export function attachNode(parent: DisplayObjectContainer, child: DisplayObject)
   detachNode(child);
   listOf(parent).push(child);
   parents.set(child, parent);
+  recordVisualChange(parent, VISUAL_STRUCTURE);
+  recordVisualChange(child, VISUAL_STRUCTURE);
 }
 
 export function removeNode(parent: DisplayObjectContainer, child: DisplayObject): void {
@@ -105,9 +112,14 @@ export function detachChildren(parent: DisplayObjectContainer): void {
   // Keep descendants, cleanup owners and permanent Engine affinity unchanged.
   for (let index = 0; index < list.length; index++) {
     const child = list[index];
-    if (child !== undefined) deleteParent(child);
+    if (child !== undefined) {
+      deleteParent(child);
+      recordVisualChange(child, VISUAL_STRUCTURE);
+    }
   }
+  const changed = list.length !== 0;
   list.length = 0;
+  if (changed) recordVisualChange(parent, VISUAL_STRUCTURE);
 }
 
 export function setNodeIndex(parent: DisplayObjectContainer, child: DisplayObject, index: number): void {
@@ -117,10 +129,18 @@ export function setNodeIndex(parent: DisplayObjectContainer, child: DisplayObjec
   if (previous < 0) throw new EgretError("DISPLAY_TREE_INVARIANT");
   list.splice(previous, 1);
   list.splice(index, 0, child);
+  if (previous !== index) {
+    recordVisualChange(parent, VISUAL_STRUCTURE);
+    recordVisualChange(child, VISUAL_STRUCTURE);
+  }
 }
 
 export function terminateNode(node: DisplayObject): void {
   terminated.add(node);
+  // Retire derived values before listener cleanup can reenter; no resource cleanup is owned here.
+  invalidateCaptureNode(node);
+  if (readStageRoot(node)) clearCaptureStage(node as Stage);
+  recordVisualChange(node, VISUAL_STRUCTURE);
   detachNode(node);
 }
 
@@ -338,4 +358,10 @@ export function publishCapturedInsertionTree(plan: PreparedInsertionTree): void 
   if (plan.sourceReplacement !== undefined) insertionWriteChildren(plan.capture.oldParent!, plan.sourceReplacement);
   if (plan.targetReplacement !== undefined) insertionWriteChildren(plan.capture.receiver, plan.targetReplacement);
   if (plan.parentChanged) insertionWriteParent(plan.capture.child, plan.capture.receiver);
+  // All source/target/edge authority is visible before its allocation-free revisions.
+  if (plan.sourceReplacement !== undefined) recordVisualChange(plan.capture.oldParent!, VISUAL_STRUCTURE);
+  if (plan.targetReplacement !== undefined) {
+    recordVisualChange(plan.capture.receiver, VISUAL_STRUCTURE);
+    recordVisualChange(plan.capture.child, VISUAL_STRUCTURE);
+  }
 }

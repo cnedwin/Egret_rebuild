@@ -6,6 +6,9 @@ import { copyMixedFrame2D } from '../rendering/copyMixedFrame2D.js';
 import { FrameCopyError, FrameInputReadError } from '../rendering/copyFrame2D.js';
 import { GeometryPreparationError } from '../rendering/prepareRectangles2D.js';
 import { prepareMixedDraws2D } from '../rendering/prepareMixedDraws2D.js';
+import { PreparedBatchScratch2D, prepareAdjacentBatches2D } from '../rendering/preparedBatches2D.js';
+import { PreparedFrameCache2D } from '../rendering/preparedFrameCache2D.js';
+import type { PreparedBatchPlan2D } from '../rendering/preparedBatches2D.js';
 import { ImagePackingAllocationError, packImageVertices2D } from '../rendering/packImageVertices2D.js';
 import { packWebGPUVertices, WebGPUPackingError, createWebGPURectanglePipeline, encodeWebGPURectangles } from './webgpuPass.js';
 import { createWebGPUImagePipeline, encodeWebGPUImage } from './webgpuImagePass.js';
@@ -79,6 +82,7 @@ interface ImageResidencyUse {
     reserved: number; pinned: boolean; finished: boolean; touchedQueue: boolean;
 }
 interface Submission {
+    batchPlan: PreparedBatchPlan2D;
     serial: number; upload: number; readback: number; textureBytes: number; geometryBytes: number;
     sceneBytes: number; uniformBytes: number; depthBytes: number;
     resources: OwnedWebGPUBuffer[]; textures: OwnedWebGPUTexture[]; views: GPUTextureView[]; bindings: GPUBindGroup[];
@@ -149,6 +153,8 @@ class WebGPUHostImplementation implements WebGPUHost {
     private pendingUniformBytes = 0;
     private pendingDepthBytes = 0;
     private readonly ledger = new Set<Submission>();
+    private readonly batchScratch = new PreparedBatchScratch2D();
+    private readonly preparationCache = new PreparedFrameCache2D();
     private readonly imageEpoch = {};
     private readonly bufferPool = createWebGPUBufferPool(this.imageEpoch);
     private readonly bindingCache = createWebGPUBindingCache(this.imageEpoch);
@@ -272,9 +278,9 @@ class WebGPUHostImplementation implements WebGPUHost {
             throw new ClassifiedWebGPUFailure('WEBGPU_START_CANCELLED', this.firstFailure?.cause);
         }
     }
-    private proofFailed(cause: unknown): void { this.invalidateImageResidency(); if (!this.unsafe) { this.unsafe = true; this.unsafeCause = cause; } }
+    private proofFailed(cause: unknown): void { this.preparationCache.clear(); this.invalidateImageResidency(); if (!this.unsafe) { this.unsafe = true; this.unsafeCause = cause; } }
     private fail(code: WebGPUHostErrorCode, cause: unknown, phase: WebGPUHostFailure['phase'], serial: number | null, unsafe = false): EgretError {
-        this.invalidateImageResidency();
+        this.preparationCache.clear(); this.invalidateImageResidency();
         const failure = Object.freeze({ code, cause, phase, serial });
         if (unsafe) this.proofFailed(cause);
         if (this.firstFailure === null) this.firstFailure = failure;
@@ -834,7 +840,8 @@ class WebGPUHostImplementation implements WebGPUHost {
             // before existing UI packing consumes its remaining upload budget.
             const reserved = scene ? scene.sceneBytes + scene.uniformBytes : 0;
             if (reserved > this.options.maxUploadBytes) throw new ClassifiedWebGPUFailure('WEBGPU_FRAME_BUDGET');
-            const prepared = prepareMixedDraws2D(copied.frame, copied.width, copied.height, this.options);
+            const preparation = this.preparationCache.context(scene ? 2 : 0, this.options);
+            const prepared = prepareMixedDraws2D(copied.frame, copied.width, copied.height, this.options, preparation);
             let projectionPlan: ProjectionPlan2D;
             let projectionFailure: ImageProjectionError | undefined;
             try {
@@ -855,11 +862,14 @@ class WebGPUHostImplementation implements WebGPUHost {
                 const remainingUpload = this.options.maxUploadBytes - upload;
                 if (draw.kind === 'rect') {
                     // Preserve rectangle caller-budget-before-device precedence without a concat copy.
-                    const packed = packWebGPUVertices(draw.prepared, copied.width, copied.height, { maxUploadBytes: remainingUpload, maxBufferSize: this.limits.maxBufferSize });
-                    upload += packed.data.byteLength; draws.push({ kind: 'rect', packed });
+                    const rangeSources: number[] = [];
+                    const packed = packWebGPUVertices(draw.prepared, copied.width, copied.height, { maxUploadBytes: remainingUpload, maxBufferSize: this.limits.maxBufferSize }, undefined, rangeSources, draw.cacheSlot);
+                    const rangeCommands = rangeSources.map(index => draw.commandIndices[index]!);
+                    const rangeClips = rangeCommands.map(index => copied.frame.commands[index]!.clips);
+                    upload += packed.data.byteLength; draws.push({ kind: 'rect', packed, rangeCommands, rangeClips });
                 } else {
                     let packed: ReturnType<typeof packImageVertices2D>;
-                    try { packed = packImageVertices2D(draw.prepared, copied.width, copied.height, Math.min(remainingUpload, this.limits.maxBufferSize)); }
+                    try { packed = packImageVertices2D(draw.prepared, copied.width, copied.height, Math.min(remainingUpload, this.limits.maxBufferSize), undefined, draw.cacheSlot); }
                     catch (cause) {
                         if (cause instanceof ImagePackingAllocationError) throw new ClassifiedWebGPUFailure('WEBGPU_FRAME_INVALID', cause.original);
                         // This conversion is confined to the trusted packer, never a GPU/caller throw.
@@ -873,7 +883,7 @@ class WebGPUHostImplementation implements WebGPUHost {
                         upload += 16;
                     }
                     const command = copied.frame.commands[draw.commandIndex]!;
-                    draws.push({ kind: 'image', packed, viewIndex: projectionPlan.commandViews[draw.commandIndex]!, alpha: command.alpha, uniform: undefined });
+                    draws.push({ kind: 'image', packed, viewIndex: projectionPlan.commandViews[draw.commandIndex]!, alpha: command.alpha, clips: command.clips, ...(command.kind === 'image' ? { crop: command.sourceRect } : {}), uniform: undefined });
                 }
             }
             let rowPitch = 0, staging = 0, output = 0;
@@ -941,7 +951,7 @@ class WebGPUHostImplementation implements WebGPUHost {
                 const admitted = admitTexturedFrame2D(frame, options, budget);
                 // Register every image/Mesh crop before preparation can suppress coverage.
                 const projectionPlan = planTexturedImageProjections(frame);
-                const draws = prepareTexturedDraws2D(admitted, options, budget);
+                const draws = prepareTexturedDraws2D(admitted, options, budget, this.preparationCache.context(1, options));
                 const ticket = this.ticket && !this.ticket.bound ? this.ticket : undefined;
                 const storage = planTexturedSubmissionStorage2D({ admitted, draws, projectionPlan, options, hardware: this.limits,
                     owner: this.texturedOwnerSnapshot(), readback: ticket !== undefined });
@@ -992,7 +1002,7 @@ class WebGPUHostImplementation implements WebGPUHost {
                 const budget = new TexturedPreparationBudget2D(options);
                 const admitted = admitTexturedFrame2D(frame, options, budget);
                 const projectionPlan = planTexturedImageProjections(frame);
-                const draws = prepareTexturedDraws2D(admitted, options, budget);
+                const draws = prepareTexturedDraws2D(admitted, options, budget, this.preparationCache.context(3, options));
                 // Reserve this exact ticket once; preparation may request a later one.
                 const ticket = this.ticket && !this.ticket.bound ? this.ticket : undefined;
                 const storage = planTexturedSubmissionStorage2D({ admitted, draws, projectionPlan, options, hardware: this.limits,
@@ -1046,6 +1056,17 @@ class WebGPUHostImplementation implements WebGPUHost {
     }
     /** One queue, scope, fence, readback and retirement owner for every supported plan. */
     private submitPrepared(p: SharedSubmissionPlan2D): undefined {
+        // All original logical admission, packing and per-draw uniform allocations
+        // have finished. Extra concat storage has a separate bounded CPU owner.
+        const batchPlan = prepareAdjacentBatches2D(p.draws, this.limits.maxBufferSize, this.batchScratch);
+        try {
+            this.active();
+            return this.submitBatched({ ...p, draws: batchPlan.draws }, batchPlan);
+        } finally {
+            if (!batchPlan.transferred) this.batchScratch.release(batchPlan);
+        }
+    }
+    private submitBatched(p: SharedSubmissionPlan2D, batchPlan: PreparedBatchPlan2D): undefined {
         const imagePlan = p.imagePlan;
         this.assertImagePlanCurrent(imagePlan);
         const bufferPlan = this.planBuffers(p);
@@ -1053,8 +1074,8 @@ class WebGPUHostImplementation implements WebGPUHost {
         for (const lease of bufferPlan.leases) bufferLeases[lease.requestId] = lease;
         this.assertImagePlanCurrent(imagePlan);
         const serial = ++this.lastSerial, done = deferred<void>();
-        const record: Submission = { serial, upload: p.upload, readback: p.staging + p.output, textureBytes: p.projectionPlan.projectionBytes, geometryBytes: p.geometryBytes, sceneBytes: p.scene?.sceneBytes ?? 0, uniformBytes: p.scene?.uniformBytes ?? 0, depthBytes: p.scene?.depthBytes ?? 0, resources: [], textures: [], views: [], bindings: [], imageUse: undefined, bufferPlan, bufferClaimed: false, bufferLeases, bufferReturns: undefined, retiring: false, bindingCandidates: [], frame: p.frame, projectionPlan: p.projectionPlan, projections: p.projections, draws: p.draws, scene: p.scene?.scene, meshes: p.scene?.meshes ?? [], sceneDraws: p.scene?.draws ?? [], outcome: done.promise, completion: done.promise, failure: undefined, unsafe: false, retired: false };
-        this.ledger.add(record); this.pendingUploadBytes += record.upload; this.pendingReadbackBytes += record.readback; this.pendingTextureBytes += record.textureBytes;
+        const record: Submission = { batchPlan, serial, upload: p.upload, readback: p.staging + p.output, textureBytes: p.projectionPlan.projectionBytes, geometryBytes: p.geometryBytes, sceneBytes: p.scene?.sceneBytes ?? 0, uniformBytes: p.scene?.uniformBytes ?? 0, depthBytes: p.scene?.depthBytes ?? 0, resources: [], textures: [], views: [], bindings: [], imageUse: undefined, bufferPlan, bufferClaimed: false, bufferLeases, bufferReturns: undefined, retiring: false, bindingCandidates: [], frame: p.frame, projectionPlan: p.projectionPlan, projections: p.projections, draws: p.draws, scene: p.scene?.scene, meshes: p.scene?.meshes ?? [], sceneDraws: p.scene?.draws ?? [], outcome: done.promise, completion: done.promise, failure: undefined, unsafe: false, retired: false };
+        this.ledger.add(record); batchPlan.transferred = true; this.pendingUploadBytes += record.upload; this.pendingReadbackBytes += record.readback; this.pendingTextureBytes += record.textureBytes;
         this.pendingSceneBytes += record.sceneBytes; this.pendingUniformBytes += record.uniformBytes; this.pendingDepthBytes += record.depthBytes;
         this.pendingGeometryBytes += record.geometryBytes;
         // Bind precisely the unbound ticket whose capacity this preflight reserved.
@@ -1287,7 +1308,8 @@ class WebGPUHostImplementation implements WebGPUHost {
             record.resources.length = 0; record.textures.length = 0; record.views.length = 0; record.bindings.length = 0;
             record.projections.length = 0; record.draws.length = 0; record.frame = undefined; record.projectionPlan = undefined;
             record.meshes.length = 0; record.sceneDraws.length = 0; record.scene = undefined;
-            record.bufferLeases.length = 0; record.bindingCandidates.length = 0; record.retired = true;
+            record.bufferLeases.length = 0; record.bindingCandidates.length = 0;
+            this.batchScratch.release(record.batchPlan); record.retired = true;
         } catch (cause) { failed(cause); throw cause; }
         finally { record.retiring = false; }
     }
@@ -1305,6 +1327,7 @@ class WebGPUHostImplementation implements WebGPUHost {
     public close(): Promise<void> {
         if (this.closing) return this.closing;
         this.invalidateImageResidency();
+        this.preparationCache.clear();
         const barrier = deferred<void>(); this.closing = barrier.promise; this.state = 'closing'; this.cleanupOutcome = 'pending'; this.cancelTicket(error('WEBGPU_CLOSED'));
         this.cleanup().then(barrier.resolve, barrier.reject); return barrier.promise;
     }

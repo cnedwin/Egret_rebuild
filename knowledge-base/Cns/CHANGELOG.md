@@ -4,7 +4,15 @@
 
 下列版本号标识工程检查点；工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。各检查点的验收范围以子系统契约和证据为准。
 
-## M1.1 候选 — WebGPU 提交复用
+## M1.2 候选 — 增量有序帧准备
+
+M1.2 复用未变化的显示变换、裁剪和已准备几何，并在保持绘制顺序及公开 API 的前提下合并相邻兼容绘制。当前资源仍执行完整准入，保存帧保持与后续修改隔离。固定原生操作场景记录的每帧 draw 为基线 991、候选 155。
+
+参阅[契约](docs/incremental-frame-preparation-contract.md)及[验证记录与边界](docs/incremental-frame-preparation-evidence.md)。操作计数不能证明耗时提升。基线在固定原生预热中达到两帧在途上限，因此五对性能比较与 M1.2 验收仍未完成。完整发布门禁和仓库交付分别记录。
+
+## M1.1 已交付 — WebGPU 提交复用
+
+已通过 [PR #73](https://github.com/cnedwin/Egret_rebuild/pull/73) 合并，主干提交为 `fa88111f5e73503e1804f92a9f444207110b773c`。早期证据保留原记录截止点；仓库交付不扩大其性能或平台支持声明。
 
 M1.1 增加安全完成后的顶点、索引、uniform 缓冲复用及完整键绑定复用，并省去已覆盖热图像的裁剪复制。有限缓存保留原准入规则、绘制顺序与公开 API。参阅[契约](docs/warm-submission-contract.md)及[当前证据](docs/warm-submission-evidence.md)。实际操作计数、原生图像验证、性能与仓库交付分别验收。
 

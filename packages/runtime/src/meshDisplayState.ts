@@ -1,3 +1,4 @@
+import { recordVisualChange, VISUAL_CONTENT, VISUAL_BINDING } from "./displayVisualState.js";
 import type { TexturedGeometry2D, TextureRegion2D } from "@egret/contracts";
 import type { AssetLease } from "./AssetLease.js";
 import type { DisplayObject } from "./DisplayObject.js";
@@ -9,8 +10,9 @@ export interface MeshCaptureState {
   readonly sourceRect: TextureRegion2D;
 }
 
-// One authoritative content slot; erased imports avoid a display-class backedge.
+// One authoritative content slot; resource classes remain type-only imports.
 const states = new WeakMap<object, MeshCaptureState | undefined>();
+const readPublishedState = states.get.bind(states);
 
 /** Slot registration survives cleanup; it is not display-class identity. */
 export function hasMeshState(value: unknown): boolean { return states.has(value as object); }
@@ -19,4 +21,9 @@ export function hasMeshState(value: unknown): boolean { return states.has(value 
 export function readMeshState(node: DisplayObject): MeshCaptureState | undefined { return states.get(node); }
 
 /** Authentic Mesh2D/NineSliceBitmap operations publish only privately admitted content. */
-export function writeMeshState(node: DisplayObject, value: MeshCaptureState | undefined): void { states.set(node, value); }
+export function writeMeshState(node: DisplayObject, value: MeshCaptureState | undefined): void {
+  const changed = readPublishedState(node) !== value;
+  states.set(node, value);
+  // Mesh replacement, NineSlice resize and cleanup share this publication.
+  if (changed) recordVisualChange(node, VISUAL_CONTENT | VISUAL_BINDING);
+}
