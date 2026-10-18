@@ -13,7 +13,7 @@ const seqpInventoryPath = 'tests/types/sequence-playback-diagnostic-expectations
 const seqpInventory = JSON.parse(readFileSync(path.join(seqpRoot, seqpInventoryPath), 'utf8'));
 // Preserve the immutable predecessor and authenticate the complete M1.3 successor.
 const m13HelperPin = fingerprintFile(seqpRoot, 'tools/lib/m13-strict-successor.mjs');
-if (m13HelperPin.bytes !== 10785 || m13HelperPin.sha256 !== '61a14bb8be2162d861a26b822ded713c552b4032d755e291578b225cd13ef337') throw Error('M1.3 strict helper changed before import');
+if (m13HelperPin.bytes !== 11980 || m13HelperPin.sha256 !== '7f4a82751f0e9e5b3f1b9de5a17816b20cd169ed02f9130b1a7c3989c547b634') throw Error('M1.3 strict helper changed before import');
 const { selectM13StrictSuccessor } = await import('./lib/m13-strict-successor.mjs');
 const m13 = selectM13StrictSuccessor(seqpRoot, 'sequence-playback', seqpInventory);
 

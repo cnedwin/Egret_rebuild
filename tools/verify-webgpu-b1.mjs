@@ -223,6 +223,9 @@ const allowedModules = new Set([
   'packages/engine/node_modules/robust-predicates/index.js',
   ...['incircle', 'insphere', 'orient2d', 'orient3d', 'util'].map(name => `packages/engine/node_modules/robust-predicates/esm/${name}.js`),
 ]);
+// M1.4 adds only the two concrete private extraction dependencies; the bound is unchanged.
+allowedModules.add('packages/engine/dist/web/sharedRetentionLedger.js');
+allowedModules.add('packages/engine/dist/web/sharedSubmissionStorage2D.js');
 // M1.3 adds only the reviewed current literal closure, with the same 128-module bound.
 for (const name of ["packages/contracts/dist/SharedGeometry2D.js","packages/contracts/dist/SharedMaterial2D.js","packages/contracts/dist/SharedRenderFrame2D.js","packages/engine/dist/rendering/packSharedDraws2D.js","packages/engine/dist/rendering/packSharedMeshGeometry3D.js","packages/engine/dist/rendering/prepareSharedDraws2D.js","packages/engine/dist/rendering/preparedSharedBatches2D.js","packages/engine/dist/rendering/sharedColor2D.js","packages/engine/dist/web/prepareSharedSubmission2D.js","packages/engine/dist/web/sharedB1.js","packages/engine/dist/web/sharedWebGPUOptions.js","packages/engine/dist/web/webgpuRetentionPool.js","packages/engine/dist/web/webgpuSharedMeshPass.js","packages/engine/dist/web/webgpuSharedPass.js","packages/engine/dist/web/webgpuSharedResolvePass.js","packages/runtime/dist/sharedFrameCapture.js"]) allowedModules.add(name);
 const registryName = 'packages/engine/dist/internal/texturedFrameState.js';

@@ -137,3 +137,33 @@ B1 源码检查后继保留历史上的 19 个捕获，当前仅准入三个指�
 仅 `tests/shared-retention-private.test.mjs` 可直接导入构建后的私有辅助模块 `packages/engine/dist/web/webgpuRetentionPool.js`。这些明确标注的元数据 UNIT 用例使用不执行原生操作的自有资源端口，验证统一字节与数量上限、精确兼容性、归还预留顺序、真实租约和终止后的清理归属。它们不调用原生 GPU 方法，不增加产品导出或加载拦截，也不证明物理分配或浏览器验收。普通公开行为测试与示例继续使用公开 SDK 入口。
 
 可选的共享原生采集器在普通场景中仅使用构建后的公开 SDK 入口。其十一项指定反例只可在采集器私有服务副本中改动一个已记录引擎产物，不得修改产品文件或数值参考。必须匹配已评审的唯一源码锚点及修改前后完整原始字节身份，执行新的健康基线、指定数值失败和健康恢复，并保留 RGBA、背景截图与清理记录。当前入口为 `tools/browser-verify.mjs --suite shared-webgpu`，参阅[共享契约](knowledge-base/Cns/docs/shared-render-profile-contract.md)。这些反例不增加公开的私有辅助模块访问或通用加载权限。
+
+## M1.4 共享保留账本单元验证
+
+仅 `tests/shared-retention-ledger-private.test.mjs` 可直接导入构建后的私有辅助模块 `packages/engine/dist/web/sharedRetentionLedger.js`。这些元数据 UNIT 用例使用不执行原生操作的分配身份，验证完整的后端兼容键、真实的整块分配租约、统一保留上限、互不重复的快照计费，以及已销毁、上下文已失效、清理结果未知三种独立结算。后端封装负责描述符验证，Host 负责原生完成证据和清理。测试不调用原生方法，不增加公开导出或加载拦截，也不证明物理内存用量或浏览器恢复。既有 M1.3 私有单元权限保持不变。
+
+## M1.4 共享存储单元
+
+仅 `tests/shared-storage-private.test.mjs` 可直接导入构建后的私有 `packages/engine/dist/web/sharedSubmissionStorage2D.js` 与 `packages/engine/dist/web/prepareSharedSubmission2D.js`。这些 CPU UNIT 用例使用有界的模拟已准备元数据，检查逻辑费用、具体读回布局、容量及原有 WebGPU 拒绝顺序；冷页复制见证使用真实公开 ImageData2D。测试仅可在自身元数据上设置属性 getter，以观察设备、待处理状态及源复制读取之前的拒绝。该许可不增加产品导出、全局拦截、加载钩子或原生访问，也不证明公开帧准入、浏览器像素或性能。普通行为测试与示例继续使用公开 SDK 入口。
+
+## M1.4 WebGL2 选项与 arena 单元验证
+
+仅 `tests/shared-webgl2-private.test.mjs` 可直接导入构建后的私有模块 `packages/engine/dist/web/sharedWebGL2Options.js` 与 `packages/engine/dist/web/sharedWebGL2Arena.js`。这些 CPU UNIT 用例使用不执行原生操作的 canvas 对象、自有选项上的 getter、小型类型化载荷及有界的合成已打包元数据，验证有序快照、有限标量范围、精确区间算术和纯 pending 容量检查。仅含数值的 byteLength 与 pending 计数夹具属于算术对照，不是可上传载荷或已接受的公开帧。测试不调用 canvas 或 GL 方法，不增加全局拦截、加载钩子或公开导出，也不证明原生分配、公开 Host 准入、恢复、像素或性能。公开行为测试与示例继续使用真实的公开 SDK 值。
+
+## M1.4 WebGL2 公开行为与源码边界
+
+WebGL2 仅使用显式构建入口 `@egret/engine/webgl2` 与 `@egret/engine/webgl2/scene3d`。前者导出 `createSharedWebGL2Host` 及九个擦除类型，后者导出 `createSharedSceneWebGL2Host` 及两个擦除类型。根入口与 Canvas 入口不加载 WebGL2 模块。场景模式采用固定的第一方装配，复用既有场景身份验证与打包辅助模块；仅启用私有场景模式的 Host 加载该精确场景模块。调用者提供的 shader、场景插件或原生对象均不是 SDK 输入。
+
+`tests/shared-webgl2-controls.test.mjs` 与 `tests/fixtures/gl-shared-rendering.mjs` 使用构建后的公开 SDK 入口、真实 Engine 捕获，以及测试自有的 canvas、GL 和事件端口。属性 getter、指定故障、完成延迟与重入回调仅作用于这些自有端口／选项。形似帧的对象只用于拒绝对照，不能作为已接受夹具。除下述精确时钟对照外，这些单元不增加私有产品导入、加载钩子、全局／原型拦截或测试导出。它们证明受控准入、命令顺序、逻辑所有权与生命周期结果；真实浏览器像素、原生丢失／恢复及性能需要独立证据。既有选项／arena、共享存储与保留资源 UNIT 权限保持不变。
+
+仅 `tests/shared-webgl2-controls.test.mjs` 中明确标记的单调截止时间对照，可临时用测试自有单调时钟替换完整的 `globalThis.performance` 描述符，在不等待实际时间的情况下跨过保持不变的 30 秒 Host sync 截止时间或已配置的恢复截止时间，包括独立恢复尝试与重复丢失事件的处理。必须在 `finally` 中、普通清理之前恢复原始完整描述符，并把对照限定在指定用例内。该许可不允许其他全局／原型拦截、缩短产品截止时间、原生故障模拟或性能结论。
+
+源码边界固定两个公开导出映射、九个 WebGL2 模块的源码／产物／声明全部依赖边、Host 的精确注册表导入及受场景模式约束的导入。原生捕获仅限 `webgl2Native` 中枚举的 68 个方法，以及八类资源的创建／删除操作；捕获逐一读取具名方法并绑定其所属上下文。该许可不允许枚举原生上下文／原型、计算式依赖发现、动态代码构造或通用拦截。既有 WebGPU 捕获、闭包与验证器额度继续独立适用。源码检查与原始 WebGL 前置验证不代表 SDK 验收或恢复已完成。
+
+<!-- M14-NATIVE-PUBLIC-BEGIN -->
+## M1.4 有限公开原生采集器
+
+可选的 `tools/verify-shared-webgl2.mjs` 采集器，其普通夹具只使用构建后的公开 SDK 入口。保持不变的三十例标量参考矩阵与十一个指定反例共使用 63 个全新 context。每个反例先验证唯一源码锚点、原始／变更原始字节身份及不变的字面量 import 图，再只修改采集器私有服务副本中的一个已记录引擎产物；要求全新健康基线、指定数值失败与健康还原。保留原有共享 WebGPU 用例目录、反例和标量参考，以及原始 RGBA、黑白背景截图与清理记录。该工具不增加产品导出、公开夹具的私有 helper 导入、原生拦截或通用 loader 权限。像素验收、原生恢复／深度／状态检查、计时及交付分别记录。
+
+单独的 `tools/verify-shared-webgl2-lifetime.mjs` 夹具使用真实公开 SDK 值与自有 canvas，设置固定脏状态并调用真实 `WEBGL_lose_context` 扩展。四 context／六读回／24 点／96 通道计划覆盖即时提交、固定深度／状态、一次恢复／重放及一次先关闭后恢复竞争。不增加私有产品导入、拦截或合成失效证明。保留精确零容差端点与清理观察；M1.5 持续恢复及计时分别验收。
+<!-- M14-NATIVE-PUBLIC-END -->

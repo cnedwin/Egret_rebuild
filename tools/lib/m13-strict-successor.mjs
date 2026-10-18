@@ -26,6 +26,22 @@ function tuples(raw){
  return rows;
 }
 
+// Only the two explicit WebGL2 exports may select this reviewed package revision.
+const m14EnginePackageBase = {"path":"packages/engine/package.json","bytes":1567,"sha256":"e01d48a51c0845783afeec93ffcc7674c7980797cd6a9c58cc74ec3f13d2e0c5"};
+const m14EnginePackageCurrent = {"path":"packages/engine/package.json","bytes":1799,"sha256":"c106c84b479f88ac1570418a21672b6148b1bdd0b870631198c359d467f2f0c7"};
+function m14EnginePackagePin(owner, expected) {
+ if (!equal(expected, m14EnginePackageBase)) return expected;
+ const actual = fingerprintFile(owner, expected.path);
+ if (!equal(actual, m14EnginePackageCurrent)) return expected;
+ const raw = readFileSync(path.join(owner, expected.path));
+ if (raw.length !== actual.bytes || hash(raw) !== actual.sha256) throw Error('M1.4 engine package changed during read');
+ const value = JSON.parse(raw);
+ delete value.exports['./webgl2']; delete value.exports['./webgl2/scene3d'];
+ const predecessor = Buffer.from(JSON.stringify(value, null, 2) + '\n');
+ if (predecessor.length !== expected.bytes || hash(predecessor) !== expected.sha256) throw Error('M1.4 engine package predecessor differs');
+ return actual;
+}
+
 /** Old inventories remain immutable; only a complete recorded group selects new rows. */
 export function selectM13StrictSuccessor(root,id,inventory){
  if(!IDS.includes(id))fail('unknown owner');
@@ -55,7 +71,7 @@ export function selectM13StrictSuccessor(root,id,inventory){
  if(historicalGate&&!equal(inventory.inputPins.find(row=>row.path===historicalGate.path),historicalGate))fail('historical self-gate row changed');
  const currentGate=historicalGate?fingerprintFile(root,historicalGate.path):undefined;
  let inputPins=(inventory.inputPins??[]).map(row=>row.path===historicalGate?.path?currentGate
-  :owner.replacementPaths.includes(row.path)?pin(row.path):row);
+  :owner.replacementPaths.includes(row.path)?pin(row.path):row).map(row=>m14EnginePackagePin(root,row));
  for(const file of new Set(owner.groups.flatMap(group=>group.repositoryClosure.filter(file=>file.endsWith('.d.ts')))))
   if(!inputPins.some(row=>row.path===file))inputPins.push(pin(file));
  const wrapperOwner=realpathSync(path.join(root,'node_modules/typescript'));

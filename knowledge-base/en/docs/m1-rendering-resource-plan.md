@@ -4,6 +4,10 @@ English | [中文](../../Cns/docs/m1-rendering-resource-plan.md)
 
 2026-10-18 · Revision 4 · Design and acceptance targets, not completed capabilities
 
+## Current implementation follow-up
+
+2026-10-18: M1.3 was delivered through [PR #75](https://github.com/cnedwin/Egret_rebuild/pull/75), main `10a37d9dfdeb8762eced73577282127d1c4e4bde`. M1.4 now has implemented optional WebGL2 entries and recorded finite desktop results; independently reviewed finite results remain distinct from the pending complete gates and protected delivery in the [contract](webgl2-executor-contract.md) and [evidence](webgl2-executor-evidence.md). The original baseline, work-package definitions and acceptance targets below remain historical planning context. M1.5 and formal M1.2 timing still require execution; M2/M3 remain design work only at this checkpoint.
+
 ## Purpose and entry
 
 Build a reusable rendering and resource foundation for complex 2D interfaces, atlas animation and the later complete Spine adapter. Preserve familiar display, resource and game-time concepts while removing repeated preparation and GPU allocation. The baseline is main ca62c980f372683dcb156bc5c284f4036a60f4cc, engineering preview 0.61.0. The [architecture plan](architecture-and-engineering-plan.md) remains the program specification; this document defines the finite M1 work packages and their shared acceptance.

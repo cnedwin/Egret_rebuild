@@ -80,3 +80,9 @@ A source-only inspection also identified older module and lazy-import assumption
 Run on the selected toolchain with the installed dependency owner and a new private output directory. No browser download or permissive graphics flag is required. Input/cleanup uncertainty is INCOMPLETE; an actual numeric mismatch is FAIL. A wrong model succeeds as a control only through its assigned numeric failure, never through an exception or startup failure.
 
 The implementation and fixtures are independently authored first-party Apache-2.0 work with AI assistance and separate source review. Existing third-party dependencies and notices are retained. Available desktop evidence does not close the human/fork rehearsal in [#52](https://github.com/cnedwin/Egret_rebuild/issues/52) or device/asset qualifications in [#54](https://github.com/cnedwin/Egret_rebuild/issues/54).
+
+## M1.3 delivery follow-up
+
+2026-10-18 delivery follow-up: M1.3 was merged through [PR #75](https://github.com/cnedwin/Egret_rebuild/pull/75) at main `10a37d9dfdeb8762eced73577282127d1c4e4bde`. The retained merged-PR receipt and main verification agree with the reviewed tree `f049b755be64a62ccbe8d80e1e40a31a284b1e45`; the main read-back verified 144 selected blobs. This statement records delivery after the earlier 05:08:50 UTC and 06:39:00 UTC cutoffs. Their original results, failures and then-pending statuses remain unchanged above.
+
+The later [M1.4 WebGL2 evidence](webgl2-executor-evidence.md) is a separate work package. M1.3 delivery does not close M1.4 acceptance, M1.5 recovery, M1.2 timing, full Spine or the remaining target-device/release qualifications.

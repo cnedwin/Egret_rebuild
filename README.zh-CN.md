@@ -23,11 +23,15 @@ Years later, as times change and technology advances, many developers continue t
 
 白鹭引擎面向使用 AI 创作游戏的新创作者，也服务于希望将手游制作经验带到 Web 的开发者。产品以复杂二维界面和轻量三维内容为中心，通过精简的渲染与运行时、明确的资源所有权，以及代码、可视化工具和 Agent 共用的工程模型，支撑持续创作。
 
-当前仓库提供可运行的工程预览。显示树、资源租约、动画、浏览器输入及部分 Canvas/WebGPU 渲染路径，均有各自的接口契约和验证范围。完整 UI 工具、完整 Spine 支持、目标平台 SDK 和旧工程自动迁移仍在开发中。
+当前仓库提供可运行的工程预览。显示树、资源租约、动画、浏览器输入及部分 Canvas/WebGPU/WebGL2 渲染路径，均有各自的接口契约和验证范围。完整 UI 工具、完整 Spine 支持、目标平台 SDK 和旧工程自动迁移仍在开发中。
 
-## 开发中 — M1.3 共享渲染
+## 已实现 — M1.4 WebGL2 执行器
 
-M1.3 为纹理页与逻辑区域、明暗双色材质、有序 2D 合成及有限线性 B1 场景/UI 渲染增加显式共享配置。固定桌面原生像素矩阵已通过，完整回归和受保护集成仍待完成。参阅[契约](knowledge-base/Cns/docs/shared-render-profile-contract.md)、[实测结果与边界](knowledge-base/Cns/docs/shared-rendering-evidence.md)及 [M1 计划](knowledge-base/Cns/docs/m1-rendering-resource-plan.md)。
+M1.4 在共享渲染协议之上实现可选的 `@egret/engine/webgl2` 与 `@egret/engine/webgl2/scene3d` 入口。已记录的桌面验证覆盖固定像素矩阵及有限生命周期／深度／状态场景。这些结果不证明移动端支持、帧耗时性能或持续恢复。参阅[契约](knowledge-base/Cns/docs/webgl2-executor-contract.md)、[已观察结果与边界](knowledge-base/Cns/docs/webgl2-executor-evidence.md)及 [M1 计划](knowledge-base/Cns/docs/m1-rendering-resource-plan.md)。
+
+## 已交付 — M1.3 共享渲染
+
+M1.3 共享纹理页、线性颜色及有序场景/UI 合成已通过 [PR #75](https://github.com/cnedwin/Egret_rebuild/pull/75) 交付，main `10a37d9dfdeb8762eced73577282127d1c4e4bde`。[带日期的证据后续记录](knowledge-base/Cns/docs/shared-rendering-evidence.md#m13-交付后续记录)保留较早编写截止时点及其原始待完成状态。
 
 ## 功能已交付 — M1.2 增量渲染
 
@@ -85,7 +89,8 @@ M1.1 已通过 [PR #73](https://github.com/cnedwin/Egret_rebuild/pull/73) 合并
 
 | Version / 版本 | Main change | 主要变化 |
 | --- | --- | --- |
-| M1.3 candidate | Shared texture pages, linear color and ordered scene/UI composition; full integration pending | 共享纹理页、线性颜色与有序场景/UI 合成；完整集成待完成 |
+| M1.4 | Implemented optional shared WebGL2 executor with finite desktop verification | 已实现可选共享 WebGL2 执行器，具有有限桌面验证 |
+| M1.3 | Shared texture pages and linear scene/UI composition delivered through PR #75 | 共享纹理页与线性场景/UI 合成已通过 PR #75 交付 |
 | M1.2 | Incremental capture and adjacent batching delivered; performance acceptance open | 增量捕获与相邻合批已交付；性能验收未完成 |
 | M1.1 | Completion-safe GPU buffer and binding reuse | 安全完成后的 GPU 缓冲与绑定复用 |
 | 0.61.0 | Internal WebGPU image cache with per-Host ownership | 各 Host 独立管理的 WebGPU 内部图像缓存 |

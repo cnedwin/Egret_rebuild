@@ -21,6 +21,8 @@
 | 创作与兼容 | [AI 与工程接口](docs/AI创作与工程接口.md) |
 | 创作与兼容 | [Spine 支持](docs/Spine动画支持需求与验收.md) |
 | 创作与兼容 | [旧工程迁移](docs/旧工程迁移.md) |
+| 当前集成 | [M1 渲染与资源计划](docs/m1-rendering-resource-plan.md) |
+| 当前集成 | [M1.4 WebGL2 执行器](docs/webgl2-executor-contract.md) · [证据](docs/webgl2-executor-evidence.md) |
 | 当前集成 | [实验性 WebGPU 图像驻留](docs/gpu-image-residency-contract.md) · [证据](docs/gpu-image-residency-evidence.md) |
 | 当前集成 | [图集导入规划](docs/atlas-import-plan-contract.md) · [证据](docs/atlas-import-plan-evidence.md) |
 | 当前集成 | [图集帧布局](docs/atlas-frame-layout-contract.md) · [证据](docs/atlas-frame-layout-evidence.md) |

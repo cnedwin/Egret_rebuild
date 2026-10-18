@@ -43,6 +43,14 @@
     "./web/text": {
       "types": "./dist/web/text.d.ts",
       "import": "./dist/web/text.js"
+    },
+    "./webgl2": {
+      "types": "./dist/web/webgl2.d.ts",
+      "import": "./dist/web/webgl2.js"
+    },
+    "./webgl2/scene3d": {
+      "types": "./dist/web/webgl2Scene3d.d.ts",
+      "import": "./dist/web/webgl2Scene3d.js"
     }
   },
   "dependencies": {

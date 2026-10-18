@@ -25,7 +25,24 @@ if (inventory.schemaVersion !== 1 || inventory.kind !== 'BROWSER_PNG_ACTUAL_STRI
   || inventory.compiler.entry !== 'node_modules/typescript/bin/tsc'
   || !equal(inventory.lanes?.map(row => row.lane), lanes)) failure('wrong observed inventory or compiler');
 
+// Only the two explicit WebGL2 exports may select this reviewed package revision.
+const m14EnginePackageBase = {"path":"packages/engine/package.json","bytes":1567,"sha256":"e01d48a51c0845783afeec93ffcc7674c7980797cd6a9c58cc74ec3f13d2e0c5"};
+const m14EnginePackageCurrent = {"path":"packages/engine/package.json","bytes":1799,"sha256":"c106c84b479f88ac1570418a21672b6148b1bdd0b870631198c359d467f2f0c7"};
+function m14EnginePackagePin(owner, expected) {
+ if (!equal(expected, m14EnginePackageBase)) return expected;
+ const actual = fingerprintFile(owner, expected.path);
+ if (!equal(actual, m14EnginePackageCurrent)) return expected;
+ const raw = readFileSync(path.join(owner, expected.path));
+ if (raw.length !== actual.bytes || hash(raw) !== actual.sha256) throw Error('M1.4 engine package changed during read');
+ const value = JSON.parse(raw);
+ delete value.exports['./webgl2']; delete value.exports['./webgl2/scene3d'];
+ const predecessor = Buffer.from(JSON.stringify(value, null, 2) + '\n');
+ if (predecessor.length !== expected.bytes || hash(predecessor) !== expected.sha256) throw Error('M1.4 engine package predecessor differs');
+ return actual;
+}
+
 function checkPin(pin) {
+  pin = m14EnginePackagePin(root, pin);
   logicalPath(pin.path);
   if (!Number.isSafeInteger(pin.bytes) || pin.bytes < 0 || !/^[0-9a-f]{64}$/.test(pin.sha256)) failure('malformed raw pin');
   const actual = fingerprintFile(root, pin.path);

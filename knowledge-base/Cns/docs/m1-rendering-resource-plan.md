@@ -4,6 +4,10 @@
 
 2026-10-18 · 版本 4 · 设计与验收目标，不代表能力已完成
 
+## 当前实现后续记录
+
+2026-10-18：M1.3 已通过 [PR #75](https://github.com/cnedwin/Egret_rebuild/pull/75) 交付，main `10a37d9dfdeb8762eced73577282127d1c4e4bde`。M1.4 已实现可选 WebGL2 入口并记录有限桌面结果；已独立复核的有限结果与尚待完成的完整门禁及受保护交付分别记录，参见[契约](webgl2-executor-contract.md)与[证据](webgl2-executor-evidence.md)。下文原有基线、工作包定义及验收目标继续作为历史规划背景。M1.5 与正式 M1.2 计时仍须执行；本次节点的 M2/M3 仅开展设计。
+
 ## 目标与准入
 
 为复杂二维界面、图集动画及后续完整 Spine 适配建立可复用的渲染和资源基础。保留熟悉的显示、资源和游戏时间概念，减少重复准备和 GPU 分配。基线为 main ca62c980f372683dcb156bc5c284f4036a60f4cc，工程预览 0.61.0。[整体架构计划](architecture-and-engineering-plan.md)继续作为项目规格，本文规定有限的 M1 工作包及共享验收。

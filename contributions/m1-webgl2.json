@@ -1,0 +1,174 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "knowledge-base/Cns/docs/webgl2-executor-contract.md",
+      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/webgl2-executor-evidence.md",
+      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/webgl2-executor-contract.md",
+      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/webgl2-executor-evidence.md",
+      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/web/WebGL2Host.ts",
+      "criticalComment": true,
+      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/web/sharedRetentionLedger.ts",
+      "criticalComment": true,
+      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/web/sharedSubmissionStorage2D.ts",
+      "criticalComment": true,
+      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/web/sharedWebGL2Arena.ts",
+      "criticalComment": true,
+      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/web/sharedWebGL2Options.ts",
+      "criticalComment": true,
+      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/web/sharedWebGL2Scene.ts",
+      "criticalComment": true,
+      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/web/sharedWebGL2Shaders.ts",
+      "criticalComment": true,
+      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/web/webgl2.ts",
+      "criticalComment": true,
+      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/web/webgl2Native.ts",
+      "criticalComment": true,
+      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/web/webgl2Scene3d.ts",
+      "criticalComment": true,
+      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/web/webgl2Types.ts",
+      "criticalComment": true,
+      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
+    },
+    {
+      "path": "tests/fixtures/gl-shared-rendering.mjs",
+      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
+    },
+    {
+      "path": "tests/shared-retention-ledger-private.test.mjs",
+      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
+    },
+    {
+      "path": "tests/shared-storage-private.test.mjs",
+      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
+    },
+    {
+      "path": "tests/shared-webgl2-controls.test.mjs",
+      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
+    },
+    {
+      "path": "tests/shared-webgl2-private.test.mjs",
+      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
+    },
+    {
+      "path": "tests/types/shared-webgl2-negative.ts",
+      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
+    },
+    {
+      "path": "tests/types/shared-webgl2-positive.ts",
+      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
+    },
+    {
+      "path": "tests/types/tsconfig.shared-webgl2-negative.json",
+      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
+    },
+    {
+      "path": "tests/types/tsconfig.shared-webgl2-positive.json",
+      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/gl-collector.mjs",
+      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/gl-lifetime-cases.json",
+      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/gl-lifetime-collector.mjs",
+      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/gl-lifetime-source.mjs",
+      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/gl-lifetime-window.mjs",
+      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/gl-native-controls.json",
+      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/gl-native-source.mjs",
+      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/gl-native-window.mjs",
+      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
+    },
+    {
+      "path": "tools/shared-webgl2-types.mjs",
+      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
+    },
+    {
+      "path": "tools/verify-shared-webgl2-lifetime.mjs",
+      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
+    },
+    {
+      "path": "tools/verify-shared-webgl2.mjs",
+      "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/webgl2-executor-contract.md",
+      "zh": "knowledge-base/Cns/docs/webgl2-executor-contract.md"
+    },
+    {
+      "en": "knowledge-base/en/docs/webgl2-executor-evidence.md",
+      "zh": "knowledge-base/Cns/docs/webgl2-executor-evidence.md"
+    }
+  ],
+  "frozenInputs": [
+    {
+      "path": "tests/types/shared-webgl2-diagnostic-expectations.json",
+      "bytes": 6319,
+      "sha256": "4029dc80d2943bd709dcb5d07a3eb2c61dc270cf5e5e0fa21d518f085f1c744a",
+      "originRole": "First-party actual unsuppressed TypeScript 7.0.2 WebGL2 compiler observations; 26 diagnostic tuples recorded from public built consumers with raw inputs preserved; Apache-2.0."
+    }
+  ]
+}

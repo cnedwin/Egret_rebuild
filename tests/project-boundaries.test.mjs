@@ -47,12 +47,12 @@ function isolated(action) {
     assert.deepEqual(readFileSync(path.join(root,'node_modules/@egret/contracts/dist/index.js')), contractsRoot);
     write('node_modules/@egret/contracts/dist/index.js', "export * from '../../../../packages/contracts/dist/index.js';\n");
     assert.deepEqual(readFileSync(path.join(root,'packages/contracts/dist/index.js')), contractsRoot);
-    // The explicit scene facade must share the original geometry/scene registries.
+    // The explicit scene and GL facades share original registries and Host factories.
     // Bridge only the resolution copy; source and emitted package bytes stay real.
-    for(const name of ['matrix4','meshGeometry3D','sceneFrame3D']) {
-      const relative='packages/engine/dist/rendering/'+name+'.js';
+    for(const name of ['rendering/matrix4','rendering/meshGeometry3D','rendering/sceneFrame3D','web/WebGL2Host']) {
+      const relative='packages/engine/dist/'+name+'.js';
       const actual=readFileSync(path.join(root,relative));
-      const resolution='node_modules/@egret/engine/dist/rendering/'+name+'.js';
+      const resolution='node_modules/@egret/engine/dist/'+name+'.js';
       assert.deepEqual(readFileSync(path.join(root,resolution)),actual);
       write(resolution,"export * from '../../../../../"+relative+"';\n");
       assert.deepEqual(readFileSync(path.join(root,relative)),actual);
@@ -83,7 +83,7 @@ function prepareTypeFixture({root}) {
     'packages/engine/tests/geometry-contract-types.ts',
     'packages/engine/tests/profile-contract-types.ts',
     'package.json','pnpm-lock.yaml','tsconfig.base.json',
-    'tools/shared-render-types.mjs','tools/lib/m13-strict-successor.mjs','tools/m13-strict-successors.json',
+    'tools/shared-render-types.mjs','tools/shared-webgl2-types.mjs','tools/lib/m13-strict-successor.mjs','tools/m13-strict-successors.json',
     'tools/check-types.mjs','tools/atlas-import-types.mjs','tools/atlas-frame-types.mjs','tools/sequence-playback-types.mjs','tools/bitmap-resource-slot-types.mjs','tools/bitmap-binding-ticket-types.mjs',
     'tools/spritesheet-types.mjs','tools/nine-slice-bitmap-types.mjs','tools/display-container-remove-children-types.mjs','tools/display-container-child-index-types.mjs','tools/display-container-add-child-at-types.mjs','tools/display-anchor-offsets-types.mjs','tools/bitmap-button-types.mjs','tools/linear-layout-types.mjs','tools/lib/file-identity.mjs',
   ]) copy(relative);
@@ -137,6 +137,23 @@ test('actual package copies with one contracts identity bridge preserve approved
   assert.match(result.stdout,/Boundary check PASS/);
 }));
 
+// The fresh genuine baseline must share the factory before testing duplicate identity.
+test('copied WebGL2 Host identity refuses an unbridged resolution copy and restores the baseline',()=>isolated(({root,write,check})=>{
+  const relative='node_modules/@egret/engine/dist/web/WebGL2Host.js';
+  const canonical=path.join(root,'packages/engine/dist/web/WebGL2Host.js');
+  const original=readFileSync(canonical),bridge=readFileSync(path.join(root,relative));
+  const baseline=check();assert.ifError(baseline.error);assert.equal(baseline.status,0,baseline.stdout+baseline.stderr);
+  try {
+    write(relative,original.toString('utf8'));
+    assert.deepEqual(readFileSync(canonical),original);
+    const refused=check();assert.ifError(refused.error);assert.equal(refused.status,1,refused.stdout+refused.stderr);
+    assert.match(refused.stderr,/M14: exact WebGL2 runtime facade mismatch/);
+  } finally {
+    write(relative,bridge.toString('utf8'));assert.deepEqual(readFileSync(path.join(root,relative)),bridge);
+    assert.deepEqual(readFileSync(canonical),original);
+    const restored=check();assert.ifError(restored.error);assert.equal(restored.status,0,restored.stdout+restored.stderr);
+  }
+}));
 const manifest=(fixture,name,mutate)=>fixture.edit(`packages/${name}/package.json`,raw=>{const pkg=JSON.parse(raw);mutate(pkg);return JSON.stringify(pkg);});
 const mutations=[
   ['duplicate contracts module identity',f=>f.write('node_modules/@egret/contracts/dist/index.js',readFileSync(path.join(f.root,'packages/contracts/dist/index.js'),'utf8')),/engine: image contract identity mismatch: IMAGE_LIMITS_2D/],
@@ -354,3 +371,24 @@ for (const owner of ['bitmap-resource-slot','linear-layout']) {
     assert.ok(caught.message.includes('source/config/compiler identity changed: '+gate),caught?.message);
   }));
 }
+
+// A complete current consumer baseline precedes each exact package drift.
+for (const [label, change] of [
+ ['extra export', value=>{value.exports['./unreviewed']='./dist/index.js';}],
+ ['changed WebGL2 target', value=>{value.exports['./webgl2'].import='./dist/index.js';}],
+ ['changed dependency', value=>{value.dependencies['robust-predicates']='3.0.4';}],
+]) test('M1.4 strict package successor refuses '+label+' after a complete baseline',()=>isolated(fixture=>{
+ prepareTypeFixture(fixture);
+ const args=['tools/display-container-remove-children-types.mjs'];
+ const healthy=()=>{const r=run(args,fixture.root);assert.ifError(r.error);assert.equal(r.signal,null);assert.equal(r.status,0,r.stdout+r.stderr);};
+ healthy();
+ const file='packages/engine/package.json',raw=readFileSync(path.join(fixture.root,file));
+ const value=JSON.parse(raw);change(value);
+ let rejected;
+ try {fixture.write(file,JSON.stringify(value,null,2)+'\n');rejected=run(args,fixture.root);}
+ finally {fixture.write(file,raw.toString('utf8'));assert.deepEqual(readFileSync(path.join(fixture.root,file)),raw);}
+ healthy();
+ assert.ifError(rejected.error);assert.equal(rejected.signal,null);assert.equal(rejected.status,1,rejected.stdout+rejected.stderr);
+ assert.match(rejected.stderr,/source\/config\/compiler identity changed: packages\/engine\/package\.json/);
+ assert.doesNotMatch(rejected.stderr,/ERR_MODULE_NOT_FOUND|SyntaxError/);
+}));

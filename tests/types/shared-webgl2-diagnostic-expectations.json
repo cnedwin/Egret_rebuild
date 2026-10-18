@@ -1,0 +1,345 @@
+{
+  "schemaVersion": 1,
+  "kind": "SHARED_WEBGL2_ACTUAL_STRICT_DIAGNOSTICS",
+  "status": "OBSERVED_TS7_DIAGNOSTICS",
+  "compilerVersion": "7.0.2",
+  "tupleFormat": [
+    "file",
+    "line",
+    "column",
+    "code"
+  ],
+  "inputPins": [
+    {
+      "path": "tests/types/shared-webgl2-positive.ts",
+      "bytes": 5516,
+      "sha256": "b7ed3a18cb54eedf9833dd35e42cbd3c4340ec800e2e18c2e0da3c3dc1449cda"
+    },
+    {
+      "path": "tests/types/shared-webgl2-negative.ts",
+      "bytes": 4684,
+      "sha256": "ac79d447948ce4acdc3f1ae283c37adc3e84c8da9c9cdad0a76eeffea3a407ba"
+    },
+    {
+      "path": "tests/types/tsconfig.shared-webgl2-positive.json",
+      "bytes": 325,
+      "sha256": "2979e495f258c3131d7d4904bf0c2b3b121e46582b9f3f1df5c19bb822a42847"
+    },
+    {
+      "path": "tests/types/tsconfig.shared-webgl2-negative.json",
+      "bytes": 325,
+      "sha256": "7b31b76f9a094167dd53cf33360ba5c7720b21f1bb43ecfeefb47344be2d4d7e"
+    },
+    {
+      "path": "tests/types/tsconfig.json",
+      "bytes": 224,
+      "sha256": "e378996174db2020f9c416fb0599ea1182b3ca3265b3dc56012a688fd3252ad9"
+    },
+    {
+      "path": "tsconfig.base.json",
+      "bytes": 446,
+      "sha256": "b7a31fb9f93a93e20bfdcf33c135acb45cb3a6895a8b3e7006bd85214ddc1008"
+    }
+  ],
+  "preservedSharedPins": [
+    {
+      "path": "tools/shared-render-types.mjs",
+      "bytes": 4158,
+      "sha256": "d1205aa1ac54000592df4af7cf2168477380551e7c77ab71f4412a83e72c1177"
+    },
+    {
+      "path": "tests/types/shared-render-diagnostic-expectations.json",
+      "bytes": 4949,
+      "sha256": "8fef809da2e338db8b8fba202161aca0ae5335b40db1b98548a210ec1023ddcf"
+    },
+    {
+      "path": "tests/types/shared-render-positive.ts",
+      "bytes": 8866,
+      "sha256": "29e8dd6b038db263e5086b95991d6e4b77ec91a71ea0d0fadf61198b5fd2302f"
+    },
+    {
+      "path": "tests/types/shared-render-negative.ts",
+      "bytes": 6125,
+      "sha256": "b2914db9f55239a4e1280c6a54958f31484d02a9d59376462844eb2cd3f28001"
+    },
+    {
+      "path": "tests/types/tsconfig.shared-render-positive.json",
+      "bytes": 286,
+      "sha256": "4b42cb02d0e60a5bbeebe741fa87d76825dfcad22e4675abcfcc697c16600211"
+    },
+    {
+      "path": "tests/types/tsconfig.shared-render-negative.json",
+      "bytes": 286,
+      "sha256": "11c196671112a6b6d992ca0cb5b1111228e8a652272e57e5c21989e7ae584335"
+    },
+    {
+      "path": "tests/types/tsconfig.dom-free.json",
+      "bytes": 56,
+      "sha256": "24bc13fae1f9d98b5d2dc212c9fb4f1f926aeb956f706d8269acbd617c900b49"
+    }
+  ],
+  "cases": [
+    {
+      "name": "GL-N01",
+      "line": 17
+    },
+    {
+      "name": "GL-N02",
+      "line": 19
+    },
+    {
+      "name": "GL-N03",
+      "line": 21
+    },
+    {
+      "name": "GL-N04",
+      "line": 25
+    },
+    {
+      "name": "GL-N05",
+      "line": 27
+    },
+    {
+      "name": "GL-N06",
+      "line": 29
+    },
+    {
+      "name": "GL-N07",
+      "line": 31
+    },
+    {
+      "name": "GL-N08",
+      "line": 33
+    },
+    {
+      "name": "GL-N09",
+      "line": 35
+    },
+    {
+      "name": "GL-N10",
+      "line": 37
+    },
+    {
+      "name": "GL-N11",
+      "line": 41
+    },
+    {
+      "name": "GL-N12",
+      "line": 43
+    },
+    {
+      "name": "GL-N13",
+      "line": 45
+    },
+    {
+      "name": "GL-N14",
+      "line": 47
+    },
+    {
+      "name": "GL-N15",
+      "line": 51
+    },
+    {
+      "name": "GL-N16",
+      "line": 53
+    },
+    {
+      "name": "GL-N17",
+      "line": 58
+    },
+    {
+      "name": "GL-N18",
+      "line": 60
+    },
+    {
+      "name": "GL-N19",
+      "line": 62
+    },
+    {
+      "name": "GL-N20",
+      "line": 64
+    },
+    {
+      "name": "GL-N21",
+      "line": 69
+    },
+    {
+      "name": "GL-N22",
+      "line": 71
+    },
+    {
+      "name": "GL-N23",
+      "line": 73
+    },
+    {
+      "name": "GL-N24",
+      "line": 75
+    },
+    {
+      "name": "GL-N25",
+      "line": 79
+    },
+    {
+      "name": "GL-N26",
+      "line": 84
+    }
+  ],
+  "tuples": [
+    [
+      "tests/types/shared-webgl2-negative.ts",
+      17,
+      8,
+      2339
+    ],
+    [
+      "tests/types/shared-webgl2-negative.ts",
+      19,
+      15,
+      2339
+    ],
+    [
+      "tests/types/shared-webgl2-negative.ts",
+      21,
+      12,
+      2551
+    ],
+    [
+      "tests/types/shared-webgl2-negative.ts",
+      25,
+      26,
+      2741
+    ],
+    [
+      "tests/types/shared-webgl2-negative.ts",
+      27,
+      36,
+      2353
+    ],
+    [
+      "tests/types/shared-webgl2-negative.ts",
+      29,
+      36,
+      2353
+    ],
+    [
+      "tests/types/shared-webgl2-negative.ts",
+      31,
+      36,
+      2322
+    ],
+    [
+      "tests/types/shared-webgl2-negative.ts",
+      33,
+      26,
+      2379
+    ],
+    [
+      "tests/types/shared-webgl2-negative.ts",
+      35,
+      31,
+      2345
+    ],
+    [
+      "tests/types/shared-webgl2-negative.ts",
+      37,
+      41,
+      2322
+    ],
+    [
+      "tests/types/shared-webgl2-negative.ts",
+      41,
+      10,
+      2540
+    ],
+    [
+      "tests/types/shared-webgl2-negative.ts",
+      43,
+      10,
+      2540
+    ],
+    [
+      "tests/types/shared-webgl2-negative.ts",
+      45,
+      20,
+      2540
+    ],
+    [
+      "tests/types/shared-webgl2-negative.ts",
+      47,
+      25,
+      2540
+    ],
+    [
+      "tests/types/shared-webgl2-negative.ts",
+      51,
+      12,
+      2540
+    ],
+    [
+      "tests/types/shared-webgl2-negative.ts",
+      53,
+      9,
+      2322
+    ],
+    [
+      "tests/types/shared-webgl2-negative.ts",
+      58,
+      9,
+      2322
+    ],
+    [
+      "tests/types/shared-webgl2-negative.ts",
+      60,
+      9,
+      2322
+    ],
+    [
+      "tests/types/shared-webgl2-negative.ts",
+      62,
+      14,
+      2540
+    ],
+    [
+      "tests/types/shared-webgl2-negative.ts",
+      64,
+      11,
+      2540
+    ],
+    [
+      "tests/types/shared-webgl2-negative.ts",
+      69,
+      26,
+      2740
+    ],
+    [
+      "tests/types/shared-webgl2-negative.ts",
+      71,
+      26,
+      2740
+    ],
+    [
+      "tests/types/shared-webgl2-negative.ts",
+      73,
+      8,
+      2551
+    ],
+    [
+      "tests/types/shared-webgl2-negative.ts",
+      75,
+      13,
+      2554
+    ],
+    [
+      "tests/types/shared-webgl2-negative.ts",
+      79,
+      9,
+      2322
+    ],
+    [
+      "tests/types/shared-webgl2-negative.ts",
+      84,
+      11,
+      2540
+    ]
+  ]
+}

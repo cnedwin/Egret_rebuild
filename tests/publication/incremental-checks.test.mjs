@@ -697,6 +697,39 @@ test('sealed inline declarations preserve digest strength source spans and condi
   assert(inline.conditions.filter(x=>x.kind==='container-successor').every(x=>x.historyAgreement&&x.successorAgreement));assert.equal(inline.conditions.find(x=>x.kind==='sequence-negative-successor').sourceAgreement,true);
  }finally{f.close();}
 });
+// UNIT: admit one appended checker import without moving or replacing inline history.
+test('M1.4 compiler maintenance admits only the exact appended WebGL2 checker revision',async()=>{
+ const m=await compilerTool(),f=inlineCompilerFixture();try{
+  const file='tools/check-types.mjs',raw=fs.readFileSync(path.join(f.root,file));
+  const suffix=Buffer.from("await import('./shared-webgl2-types.mjs');\n"),prior=raw.subarray(0,raw.length-suffix.length);
+  const identity=body=>({path:file,bytes:body.length,sha256:createHash('sha256').update(body).digest('hex')});
+  const oldPin={path:file,bytes:121118,sha256:'64d5996ebf925b8b2eda7e04d20e939e399d50953da0023a48ffd02223985093'};
+  const newPin={path:file,bytes:121161,sha256:'c85407cbdc9c6222cbf240de21e82afd37725e6c8a68bed9ca0d098d7b6dc343'};
+  assert.deepEqual(raw.subarray(raw.length-suffix.length),suffix);assert.deepEqual(identity(prior),oldPin);assert.deepEqual(identity(raw),newPin);
+  const collect=()=>m.prepareCompilerReview(f.root,{inlinePolicies:true}),current=collect();
+  const revision=current.inlinePolicies.sourceRevisions.find(row=>row.current.path===file);
+  assert.equal(revision.base.bytes,94916);assert.equal(revision.base.sha256,'13080da8e72418df9b8e8279d09b53e36839a5826953f84143c5787d1d1bff7a');
+  assert.equal(revision.predecessor,null);assert.deepEqual(revision.successor,oldPin);assert.deepEqual(revision.m14Successor,newPin);
+  assert.equal(revision.selection,'m14-current');assert.equal(revision.admission,'not-evaluated');
+  f.put(file,prior);const previous=collect();
+  assert.equal(previous.inlinePolicies.sourceRevisions.find(row=>row.current.path===file).selection,'current');
+  assert.deepEqual(previous.inlinePolicies.literals,current.inlinePolicies.literals);
+  assert.deepEqual(previous.declarations.filter(row=>row.owner===file),current.declarations.filter(row=>row.owner===file));
+  assert.throws(()=>m.verifyCompilerProposal(f.root,current,{inlinePolicies:true}),/changed/);
+  f.put(file,raw);assert.equal(m.verifyCompilerProposal(f.root,current,{inlinePolicies:true}).status,'current-inputs');
+  const literal=current.inlinePolicies.literals.find(row=>row.owner===file),changedLiteral=Buffer.from(raw);changedLiteral[literal.startByte]^=1;
+  const variants=[Buffer.concat([raw,suffix]),Buffer.concat([suffix,prior]),Buffer.from(raw.toString().replace('./shared-webgl2-types.mjs','./shared-webgl2-typez.mjs')),changedLiteral,Buffer.concat([raw,Buffer.from('// unreviewed drift\n')])];
+  for(const altered of variants){
+   f.put(file,raw);const baseline=collect();
+   assert.equal(m.verifyCompilerProposal(f.root,baseline,{inlinePolicies:true}).status,'current-inputs');
+   f.put(file,altered);
+   assert.throws(collect,/Unreviewed inline policy source: tools\/check-types\.mjs/);
+   assert.throws(()=>m.verifyCompilerProposal(f.root,baseline,{inlinePolicies:true}));
+  }
+  f.put(file,raw);assert.equal(m.verifyCompilerProposal(f.root,current,{inlinePolicies:true}).status,'current-inputs');
+ }finally{f.close();}
+});
+
 test('any registered gate byte change refuses opt-in extraction and invalidates default freshness',async()=>{
  const m=await compilerTool(),f=inlineCompilerFixture();try{
   const paths=m.prepareCompilerReview(f.root,{inlinePolicies:true}).inlinePolicies.sources.map(x=>x.path);
@@ -753,7 +786,7 @@ test('M1.2 compiler maintenance keeps both complete sequence source pairs and sa
   const baseline=collect(),condition=baseline.inlinePolicies.conditions.find(row=>row.kind==='sequence-source-successor');
   assert.deepEqual([condition.pathsAgreement,condition.unchangedDeclaration,condition.completeBaseMatch,condition.completeCurrentMatch],[true,true,false,false]);
   assert.equal(condition.admission,'not-evaluated');
-  const revision=baseline.inlinePolicies.sourceRevisions.find(row=>row.current.path==='tools/sequence-playback-types.mjs');assert.equal(revision.selection,'current');assert.notDeepEqual(revision.base,revision.current);
+  const revision=baseline.inlinePolicies.sourceRevisions.find(row=>row.current.path==='tools/sequence-playback-types.mjs');assert.equal(revision.selection,'m14-strict-current');assert.notDeepEqual(revision.base,revision.current);
   assert.equal(revision.base.bytes,17296);assert.equal(revision.base.sha256,'8b2d266f7aacd680f7a1581afb2ea1a1381f02fc44cd70b340ee8961c7584222');
   const groups=baseline.declarations.filter(row=>row.owner==='tools/sequence-playback-types.mjs');
   assert.equal(groups.find(row=>row.selector==='expectedCurrentSourcePins').rows[0].identity,'different');
@@ -829,5 +862,48 @@ test('shared compiler maintenance admits only its seven fixed raw input roles',a
   f.put(file,JSON.stringify({...value,inputPins:[...value.inputPins.slice(0,6),{...value.inputPins[6],path:'tests/types/foreign.json'}]}));assert.throws(()=>m.prepareCompilerReview(f.root),/shared strict inputs/);
   f.put(file,JSON.stringify({...value,tupleFormat:['file','line','code']}));assert.throws(()=>m.prepareCompilerReview(f.root),/shared strict schema/);
   f.put(file,raw);assert.equal(m.verifyCompilerProposal(f.root,p).status,'current-inputs');
+ }finally{f.close();}
+});
+
+// UNIT: this finite inventory extension retains every older declaration and pair arm.
+test('M1.4 maintenance records only the three named WebGL2 graph successors',async()=>{
+ const m=await maintenance(),f=baselineFixture();try{
+  const file='packages/engine/web/webgl2.ts';f.put(file,'export {};\n');const current=f.pin(file);
+  const owners=["tools/spritesheet-boundary.mjs","tools/browser-png-boundary.mjs","tools/atlas-import-boundary.mjs"],binding='m14WebGL2GraphSuccessor';
+  const historical=m.prepareBaselineReview(f.root);
+  for(const owner of owners)f.put(owner,fs.readFileSync(path.join(f.root,owner),'utf8')+'const '+binding+' = '+JSON.stringify([current])+';\n');
+  const complete=m.prepareBaselineReview(f.root);
+  assert.deepEqual(complete.declarations.filter(row=>row.binding!==binding),historical.declarations);
+  assert.deepEqual(complete.successorPairs,historical.successorPairs);
+  assert.deepEqual(complete.declarations.filter(row=>row.binding===binding).map(row=>row.owner),owners);
+  for(const [index,coverage]of complete.graphCoverage.entries()){assert.deepEqual(coverage.webglSuccessor,{owner:owners[index],binding});assert.equal(coverage.unlisted.some(row=>row.path===file),false);}
+  assert.equal(m.verifyMaintenanceProposal(f.root,complete),true);
+  for(const owner of owners){
+   const raw=fs.readFileSync(path.join(f.root,owner));
+   try{
+    const baseline=m.prepareBaselineReview(f.root);assert.equal(m.verifyMaintenanceProposal(f.root,baseline),true);
+    f.put(owner,Buffer.concat([raw,Buffer.from('const '+binding+' = [];\n')]));
+    assert.throws(()=>m.prepareBaselineReview(f.root),/ambiguous/);assert.throws(()=>m.verifyMaintenanceProposal(f.root,baseline));
+   }finally{f.put(owner,raw);assert.equal(m.verifyMaintenanceProposal(f.root,complete),true);}
+  }
+ }finally{f.close();}
+});
+
+// UNIT: bootstrap succession never changes the retained inline compiler observations.
+test('M1.4 strict bootstrap preserves complete sequence history and refuses unrelated bytes',async()=>{
+ const m=await compilerTool(),f=inlineCompilerFixture();try{
+  const file='tools/sequence-playback-types.mjs',raw=fs.readFileSync(path.join(f.root,file)),text=raw.toString();
+  const before="m13HelperPin.bytes !== 10785 || m13HelperPin.sha256 !== '61a14bb8be2162d861a26b822ded713c552b4032d755e291578b225cd13ef337'",after="m13HelperPin.bytes !== 11980 || m13HelperPin.sha256 !== '7f4a82751f0e9e5b3f1b9de5a17816b20cd169ed02f9130b1a7c3989c547b634'";
+  assert.equal(text.split(after).length,2);const prior=Buffer.from(text.replace(after,before));
+  assert.equal(prior.length,19255);assert.equal(createHash('sha256').update(prior).digest('hex'),'42a0bad83c5f68f74d2b1e26bd9c5183be9e94e1cb4c36a01a4b60c373e4a6ea');
+  const collect=()=>m.prepareCompilerReview(f.root,{inlinePolicies:true}),current=collect();
+  assert.equal(current.inlinePolicies.sourceRevisions.find(row=>row.current.path===file).selection,'m14-strict-current');
+  f.put(file,prior);const historical=collect();assert.equal(historical.inlinePolicies.sourceRevisions.find(row=>row.current.path===file).selection,'current');
+  assert.deepEqual(historical.inlinePolicies.literals,current.inlinePolicies.literals);assert.deepEqual(historical.inlinePolicies.conditions,current.inlinePolicies.conditions);
+  assert.throws(()=>m.verifyCompilerProposal(f.root,current,{inlinePolicies:true}),/changed/);
+  f.put(file,raw);const baseline=collect();assert.equal(m.verifyCompilerProposal(f.root,baseline,{inlinePolicies:true}).status,'current-inputs');
+  f.put(file,Buffer.concat([raw,Buffer.from('// unreviewed strict source\n')]));
+  assert.throws(collect,/Unreviewed inline policy source/);assert.throws(()=>m.verifyCompilerProposal(f.root,baseline,{inlinePolicies:true}));
+  f.put(file,raw);assert.equal(m.verifyCompilerProposal(f.root,current,{inlinePolicies:true}).status,'current-inputs');
  }finally{f.close();}
 });

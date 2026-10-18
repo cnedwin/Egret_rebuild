@@ -34,6 +34,23 @@ const equal = (first, second) => JSON.stringify(first) === JSON.stringify(second
 // This exact metadata successor adds one separately reviewed pure planner entry.
 // The original package/graph snapshots remain unchanged for their old branch.
 const atlasGraphSuccessor = [{"path":"packages/project/dist/atlas/index.d.ts","bytes":491,"sha256":"9393ab919b1072d4c1f057b9a26fcaa38eaee950cc3c746ad4aac31c00c33f0b"},{"path":"packages/project/dist/atlas/index.js","bytes":173,"sha256":"a456071c6197d60a76de988719413fef7e81170cf993576b738ebe6e44aea88f"},{"path":"packages/project/dist/atlas/input.d.ts","bytes":806,"sha256":"e6ecd38ec234bf1b58c226937356c5173912f6429196d210a07813ab424ddc75"},{"path":"packages/project/dist/atlas/input.js","bytes":6640,"sha256":"6a3586152d7e26d53c6e0fbcda27997a61d43f673c4162349fa27e457b73efa8"},{"path":"packages/project/dist/atlas/json.d.ts","bytes":753,"sha256":"7d49c80cd9d76e62859f6e807fa61c0e3a09cae890147d33e6a1a51dfeef9810"},{"path":"packages/project/dist/atlas/json.js","bytes":7131,"sha256":"30dfdee2df12e4a5a128510315937ea14f234556b905657804fa93ba2eda78b4"},{"path":"packages/project/dist/atlas/plan.d.ts","bytes":169,"sha256":"e0d008c1120ee2e00c71afac27d6acc5a63f1f62a99ff5a8d36ed16d6aae8c77"},{"path":"packages/project/dist/atlas/plan.js","bytes":13391,"sha256":"f9d6f97fb433c35fd91c9cefbc5d94498b93e40476dc11f360a6fc3ad52002a4"},{"path":"packages/project/dist/atlas/types.d.ts","bytes":4795,"sha256":"6d87509408d64a0ab706bef9d2188b072595f4758269a866aad227792d91e4e5"},{"path":"packages/project/dist/atlas/types.js","bytes":44,"sha256":"01ae2a5b120382f9a648ced7ee8507493a134f216d100fc61600c6c9738235d2"},{"path":"packages/project/src/atlas/index.ts","bytes":495,"sha256":"182930a58f07ab8acfb415aaad53f705b9178f2229b6bb5a9c872cdece96f065"},{"path":"packages/project/src/atlas/input.ts","bytes":7012,"sha256":"4193cd78d88a030f4af1a28e5f920788ab210bb47bbc70d49fa720febf784748"},{"path":"packages/project/src/atlas/json.ts","bytes":7206,"sha256":"041010cc3adfc83acb42b081a94a57aefdc38997ce18bef0317ff2351c8661ef"},{"path":"packages/project/src/atlas/plan.ts","bytes":13063,"sha256":"d06ca255f7f6e7ad56da2a7d22f3d6af149c51ea62efdcc8e5832c5a4b2759ef"},{"path":"packages/project/src/atlas/types.ts","bytes":4560,"sha256":"e83a07146ac069144d6abff1080e8df49fa7e1e35d8c45ccb792e5eb4e875315"}];
+// Only the two reviewed optional GL entries extend this exact historical package.
+// Reconstruct its full predecessor; unrelated fields and routes remain byte-bound.
+function m14EnginePackageSuccessor(expected, raw) {
+  const bytes = Buffer.from(raw);
+  if (expected?.path !== 'packages/engine/package.json' || expected.bytes !== 1567
+      || expected.sha256 !== 'e01d48a51c0845783afeec93ffcc7674c7980797cd6a9c58cc74ec3f13d2e0c5' || bytes.length !== 1799
+      || createHash('sha256').update(bytes).digest('hex') !== 'c106c84b479f88ac1570418a21672b6148b1bdd0b870631198c359d467f2f0c7') return false;
+  const value = JSON.parse(bytes.toString('utf8'));
+  const entries = {"./webgl2":{"types":"./dist/web/webgl2.d.ts","import":"./dist/web/webgl2.js"},"./webgl2/scene3d":{"types":"./dist/web/webgl2Scene3d.d.ts","import":"./dist/web/webgl2Scene3d.js"}};
+  for (const [name, mapping] of Object.entries(entries)) {
+    if (JSON.stringify(value.exports[name]) !== JSON.stringify(mapping)) return false;
+    delete value.exports[name];
+  }
+  const prior = Buffer.from(JSON.stringify(value, null, 2) + '\n');
+  return prior.length === expected.bytes && createHash('sha256').update(prior).digest('hex') === expected.sha256;
+}
+
 function atlasPackageSuccessor(actual, expected) {
   return expected?.path === 'packages/project/package.json'
     && expected.bytes === 397 && expected.sha256 === '295e6bc8d81a4647f5b99355ea27879563ced216fa2af406c65cc78b95f40945'
@@ -271,7 +288,34 @@ const m13SharedRenderingReplacementPaths = ["packages/contracts/dist/index.d.ts"
 const m13SharedRenderingAdditionPaths = ["packages/contracts/dist/SharedGeometry2D.d.ts","packages/contracts/dist/SharedGeometry2D.js","packages/contracts/dist/SharedMaterial2D.d.ts","packages/contracts/dist/SharedMaterial2D.js","packages/contracts/dist/SharedRenderFrame2D.d.ts","packages/contracts/dist/SharedRenderFrame2D.js","packages/contracts/dist/TextureViewRegion2D.d.ts","packages/contracts/dist/TextureViewRegion2D.js","packages/contracts/src/SharedGeometry2D.ts","packages/contracts/src/SharedMaterial2D.ts","packages/contracts/src/SharedRenderFrame2D.ts","packages/contracts/src/TextureViewRegion2D.ts","packages/engine/dist/rendering/packSharedDraws2D.d.ts","packages/engine/dist/rendering/packSharedDraws2D.js","packages/engine/dist/rendering/packSharedMeshGeometry3D.d.ts","packages/engine/dist/rendering/packSharedMeshGeometry3D.js","packages/engine/dist/rendering/prepareSharedDraws2D.d.ts","packages/engine/dist/rendering/prepareSharedDraws2D.js","packages/engine/dist/rendering/preparedSharedBatches2D.d.ts","packages/engine/dist/rendering/preparedSharedBatches2D.js","packages/engine/dist/rendering/sharedColor2D.d.ts","packages/engine/dist/rendering/sharedColor2D.js","packages/engine/dist/web/prepareSharedSubmission2D.d.ts","packages/engine/dist/web/prepareSharedSubmission2D.js","packages/engine/dist/web/sharedB1.d.ts","packages/engine/dist/web/sharedB1.js","packages/engine/dist/web/sharedWebGPUOptions.d.ts","packages/engine/dist/web/sharedWebGPUOptions.js","packages/engine/dist/web/webgpuRetentionPool.d.ts","packages/engine/dist/web/webgpuRetentionPool.js","packages/engine/dist/web/webgpuSharedMeshPass.d.ts","packages/engine/dist/web/webgpuSharedMeshPass.js","packages/engine/dist/web/webgpuSharedPass.d.ts","packages/engine/dist/web/webgpuSharedPass.js","packages/engine/dist/web/webgpuSharedResolvePass.d.ts","packages/engine/dist/web/webgpuSharedResolvePass.js","packages/engine/rendering/packSharedDraws2D.ts","packages/engine/rendering/packSharedMeshGeometry3D.ts","packages/engine/rendering/prepareSharedDraws2D.ts","packages/engine/rendering/preparedSharedBatches2D.ts","packages/engine/rendering/sharedColor2D.ts","packages/engine/web/prepareSharedSubmission2D.ts","packages/engine/web/sharedB1.ts","packages/engine/web/sharedWebGPUOptions.ts","packages/engine/web/webgpuRetentionPool.ts","packages/engine/web/webgpuSharedMeshPass.ts","packages/engine/web/webgpuSharedPass.ts","packages/engine/web/webgpuSharedResolvePass.ts","packages/runtime/dist/sharedFrameCapture.d.ts","packages/runtime/dist/sharedFrameCapture.js","packages/runtime/src/sharedFrameCapture.ts"];
 const m13SharedRenderingPredecessor = {"members":543,"sha256":"1f22b06628aec4db4132ae927591d6696db559aef5f56b3239cfb49585e77ccf"};
 
-function m13SharedRenderingGraph(base, actual) {
+// One finite M1.4 group follows the complete retained M1.3 metadata graph.
+const m14WebGL2GraphSuccessor = [{"path":"packages/engine/dist/web/WebGL2Host.d.ts","bytes":665,"sha256":"3b51c6ae792915e859275be243bd0e7df0c914202e8ef42456934b1912756dc3"},{"path":"packages/engine/dist/web/WebGL2Host.js","bytes":54757,"sha256":"7a48a8f1048d7d65845d723c10879c14a54eb8aaf6a4701ce8c527a5c260b72b"},{"path":"packages/engine/dist/web/prepareSharedSubmission2D.d.ts","bytes":1660,"sha256":"f02a88429f727a18304ac7ef693b6b607d9f04b0bd1478a221166f3695f4cad2"},{"path":"packages/engine/dist/web/prepareSharedSubmission2D.js","bytes":2433,"sha256":"6c2952fa06328f3ed9cc34f1e3903e40168b5a43f0dbf19f40a5fc5764efdb19"},{"path":"packages/engine/dist/web/sharedRetentionLedger.d.ts","bytes":2743,"sha256":"9d2bfcd3bd8e5299bea4b1a5f0cbdf03c6d22364077956a9aa5c57e2c88977e7"},{"path":"packages/engine/dist/web/sharedRetentionLedger.js","bytes":15225,"sha256":"ba48ebf48bf249c924574c1d30a175425c2247ba365f2e542371d2d928dbdbf4"},{"path":"packages/engine/dist/web/sharedSubmissionStorage2D.d.ts","bytes":2999,"sha256":"bb95ec9783ba65c32d1fe98c62dbb11b14f7f0436fa8ba43e2bfe8a533027735"},{"path":"packages/engine/dist/web/sharedSubmissionStorage2D.js","bytes":3471,"sha256":"0719954c23db588e503a28276c9988e561b4fc9e00358cdcdf1ab6b4136593ea"},{"path":"packages/engine/dist/web/sharedWebGL2Arena.d.ts","bytes":1605,"sha256":"73892a1e4c7eb7dd58aca9573183c257e53aa6c1def3ae642a273936d661ea38"},{"path":"packages/engine/dist/web/sharedWebGL2Arena.js","bytes":3304,"sha256":"4e2c75ed21e078b40c94f44dc1c207fb88465e131d7a08b22b044c1053e0594b"},{"path":"packages/engine/dist/web/sharedWebGL2Options.d.ts","bytes":1235,"sha256":"e16117f557d92417e715881230be700685dfbafdb18ef6fa2d215fdfdd0f9b58"},{"path":"packages/engine/dist/web/sharedWebGL2Options.js","bytes":2690,"sha256":"e121b191a3baf3eceeb9bca503b9ef7ab8fa424fdd16b27fdcb166031d7b43c7"},{"path":"packages/engine/dist/web/sharedWebGL2Scene.d.ts","bytes":3729,"sha256":"65304c87d4ee611cbda76421cf08e69b2da4e681656c7977c558d2d910eb612d"},{"path":"packages/engine/dist/web/sharedWebGL2Scene.js","bytes":6335,"sha256":"2b15e7eda79f6ec6f79d09fe5196a5454b3593d101781f32e59cc492e8e9279b"},{"path":"packages/engine/dist/web/sharedWebGL2Shaders.d.ts","bytes":7717,"sha256":"dfd62c72efd1801b9cddd691ff73263d3d00a3456cd52de44e29b91f65696365"},{"path":"packages/engine/dist/web/sharedWebGL2Shaders.js","bytes":7710,"sha256":"023fd410c2da53495c3ec8c960718e51aeb9ea5f222b5f81ac8bdad134b0fb71"},{"path":"packages/engine/dist/web/webgl2.d.ts","bytes":368,"sha256":"ae1d8b326ec93291192f7a66aa15a13385b745a3ffbede9f2d6cec8bf8e912fe"},{"path":"packages/engine/dist/web/webgl2.js","bytes":212,"sha256":"9066a6f5484253907edd13708287dbedd26a98e1433fcfb42ec811d79384cba8"},{"path":"packages/engine/dist/web/webgl2Native.d.ts","bytes":1838,"sha256":"e97b827bab186395a43e2597cdd53ca44e90f926771f4b624a8fd2d550df461a"},{"path":"packages/engine/dist/web/webgl2Native.js","bytes":13816,"sha256":"a0d813ce485e6dc5fcf871ec3c049a966ed735cd8ed2c45c0a266ab933092361"},{"path":"packages/engine/dist/web/webgl2Scene3d.d.ts","bytes":286,"sha256":"237b301485efef257b7485157f10ad29b1f22d9d0f19bd99732f635bde0ab97d"},{"path":"packages/engine/dist/web/webgl2Scene3d.js","bytes":182,"sha256":"ecc8f10f7a4713482a6b32b3bec6592218c833ad13fa312ef603c4871104cc17"},{"path":"packages/engine/dist/web/webgl2Types.d.ts","bytes":3985,"sha256":"98081b30cdcc76cb2657c35eecf344675c475a4e1e59006a4392a396e2e5bcf9"},{"path":"packages/engine/dist/web/webgl2Types.js","bytes":50,"sha256":"f23ed0e3ec3565377a88a6aedd9dd23a737a70c449a23fc3c6fb2c5065456f2f"},{"path":"packages/engine/dist/web/webgpuRetentionPool.d.ts","bytes":2643,"sha256":"65a6e4cfe32663a9ef8d77da581aceebbd349632566562cf393e99a4a465e428"},{"path":"packages/engine/dist/web/webgpuRetentionPool.js","bytes":3189,"sha256":"e13ded227c22d25048dad13d82bc75898b377528d72c81d85cd90cf4fdb3255e"},{"path":"packages/engine/web/WebGL2Host.ts","bytes":50299,"sha256":"91ec2fd22e4c7f357c0ddbf19299a5f9d7c43b853b8128c94cd9ee1d4ee7b966"},{"path":"packages/engine/web/prepareSharedSubmission2D.ts","bytes":3317,"sha256":"c8f233f4214c597fe7554ef98b09c9bb88c09d1f81e792e59313987167f3f45e"},{"path":"packages/engine/web/sharedRetentionLedger.ts","bytes":19448,"sha256":"92f72b9e9229015b06cd0ae1b0e7a5ae59ab91e8e7770a0909155c0a82171d3d"},{"path":"packages/engine/web/sharedSubmissionStorage2D.ts","bytes":5164,"sha256":"fd2a435b888b46950303cc2e1fa4df091c83aaaa63ccf073dbd45a811a0a3f4a"},{"path":"packages/engine/web/sharedWebGL2Arena.ts","bytes":4422,"sha256":"dc5af7f50245247524378f47fc72050874bcd768a2dc3793169c677ec21169b4"},{"path":"packages/engine/web/sharedWebGL2Options.ts","bytes":3878,"sha256":"4c625fe8cb3fb31e4a4f0c7a28d78ec250fc85ae721d483534484837120846a5"},{"path":"packages/engine/web/sharedWebGL2Scene.ts","bytes":7603,"sha256":"f1876aa0a6b3a39585c11a536779f8ae3ecdbcb17125db0ef3a9e59fc4664af4"},{"path":"packages/engine/web/sharedWebGL2Shaders.ts","bytes":7797,"sha256":"91427c456aadb24882edfaf663d77bb85b9e121a8d14cb2be87b9bd9e6f2d176"},{"path":"packages/engine/web/webgl2.ts","bytes":452,"sha256":"6e0712b110de5525a569283719926ce845c2b2303581442e53f74ace174f8ced"},{"path":"packages/engine/web/webgl2Native.ts","bytes":13885,"sha256":"1d145a22b4e4c9ad7162c51c5227eba442a76fc50b2e2c0c9c8cf3bab1ebbb53"},{"path":"packages/engine/web/webgl2Scene3d.ts","bytes":282,"sha256":"5778ae48acac3236112e7ccc767660a5cd7cfcc4c751347ac92340b855bb929f"},{"path":"packages/engine/web/webgl2Types.ts","bytes":3976,"sha256":"d22918ff669dc7d257fb1bfd28efb70f21f2ff070f07eb27ebf36225b4f091ef"},{"path":"packages/engine/web/webgpuRetentionPool.ts","bytes":5838,"sha256":"d8451fd234dc92b41142d7c003fc41b9c1781bcae9271ac07b6e7f8dc0b45e1f"}];
+const m14WebGL2ReplacementPaths = ["packages/engine/dist/web/prepareSharedSubmission2D.d.ts","packages/engine/dist/web/prepareSharedSubmission2D.js","packages/engine/dist/web/webgpuRetentionPool.d.ts","packages/engine/dist/web/webgpuRetentionPool.js","packages/engine/web/prepareSharedSubmission2D.ts","packages/engine/web/webgpuRetentionPool.ts"];
+const m14WebGL2AdditionPaths = ["packages/engine/dist/web/WebGL2Host.d.ts","packages/engine/dist/web/WebGL2Host.js","packages/engine/dist/web/sharedRetentionLedger.d.ts","packages/engine/dist/web/sharedRetentionLedger.js","packages/engine/dist/web/sharedSubmissionStorage2D.d.ts","packages/engine/dist/web/sharedSubmissionStorage2D.js","packages/engine/dist/web/sharedWebGL2Arena.d.ts","packages/engine/dist/web/sharedWebGL2Arena.js","packages/engine/dist/web/sharedWebGL2Options.d.ts","packages/engine/dist/web/sharedWebGL2Options.js","packages/engine/dist/web/sharedWebGL2Scene.d.ts","packages/engine/dist/web/sharedWebGL2Scene.js","packages/engine/dist/web/sharedWebGL2Shaders.d.ts","packages/engine/dist/web/sharedWebGL2Shaders.js","packages/engine/dist/web/webgl2.d.ts","packages/engine/dist/web/webgl2.js","packages/engine/dist/web/webgl2Native.d.ts","packages/engine/dist/web/webgl2Native.js","packages/engine/dist/web/webgl2Scene3d.d.ts","packages/engine/dist/web/webgl2Scene3d.js","packages/engine/dist/web/webgl2Types.d.ts","packages/engine/dist/web/webgl2Types.js","packages/engine/web/WebGL2Host.ts","packages/engine/web/sharedRetentionLedger.ts","packages/engine/web/sharedSubmissionStorage2D.ts","packages/engine/web/sharedWebGL2Arena.ts","packages/engine/web/sharedWebGL2Options.ts","packages/engine/web/sharedWebGL2Scene.ts","packages/engine/web/sharedWebGL2Shaders.ts","packages/engine/web/webgl2.ts","packages/engine/web/webgl2Native.ts","packages/engine/web/webgl2Scene3d.ts","packages/engine/web/webgl2Types.ts"];
+const m14WebGL2Predecessor = {"members":594,"sha256":"57f1515618b992e972157d9dcdf572567bd2c7739fadff2c0574d851000b5868"};
+function m14WebGL2Graph(root, base, actual) {
+  const present = new Map(actual.map(row => [row.path, row]));
+  const currentPackage = readFileSync(path.join(root, 'packages/engine/package.json'));
+  if (!m14WebGL2AdditionPaths.some(file => present.has(file)) && !m14EnginePackageSuccessor({"path":"packages/engine/package.json","bytes":1567,"sha256":"e01d48a51c0845783afeec93ffcc7674c7980797cd6a9c58cc74ec3f13d2e0c5"}, currentPackage)) return {};
+  const serialized = JSON.stringify([...base].sort((a,b) => a.path < b.path ? -1 : a.path > b.path ? 1 : 0).map(row => [row.path,row.bytes,row.sha256]));
+  if (base.length !== m14WebGL2Predecessor.members || createHash('sha256').update(serialized).digest('hex') !== m14WebGL2Predecessor.sha256) { return { failure: issue('BIP_BOUNDARY_FINGERPRINT', 'tools/browser-png-boundary.mjs', 'M1.3 predecessor digest differs') }; }
+  const rows = m14WebGL2GraphSuccessor, replacements = m14WebGL2ReplacementPaths, additions = m14WebGL2AdditionPaths;
+  const paths = new Set(base.map(row => row.path)), selected = [...replacements,...additions];
+  if (rows.length !== 39 || replacements.length !== 6 || additions.length !== 33 || new Set(selected).size !== 39
+      || !equal(rows.map(row => row.path).sort(), [...selected].sort())
+      || rows.some(row => !equal(Object.keys(row).sort(), ['bytes','path','sha256']) || !Number.isSafeInteger(row.bytes) || row.bytes < 0 || !/^[a-f0-9]{64}$/.test(row.sha256))
+      || replacements.some(file => !paths.has(file)) || additions.some(file => paths.has(file))) { return { failure: issue('BIP_BOUNDARY_FINGERPRINT', 'tools/browser-png-boundary.mjs', 'Invalid finite M1.4 successor declaration') }; }
+  const selectedRows = new Map(rows.map(row => [row.path,row]));
+  const graph = [...base.map(row => selectedRows.get(row.path) ?? row),...additions.map(file => selectedRows.get(file))];
+  // Authenticate every unchanged predecessor and every new arm before selection.
+  for (const row of graph) {
+    if (!present.has(row.path)) { return { failure: issue('BIP_BOUNDARY_SOURCE_INVENTORY', row.path, 'Incomplete M1.4 successor: ' + row.path) }; }
+    if (!equal(present.get(row.path), row)) { return { failure: issue('BIP_BOUNDARY_FINGERPRINT', row.path, 'M1.4 whole-group raw identity differs') }; }
+  }
+  return { graph };
+}
+
+function m13SharedRenderingGraph(root, base, actual) {
   const present = new Map(actual.map(row => [row.path, row]));
   if (!m13SharedRenderingAdditionPaths.some(file => present.has(file))) return {};
   // Fixed three-stage metadata derivation. No prior raw branch is bypassed.
@@ -302,12 +346,14 @@ function m13SharedRenderingGraph(base, actual) {
       || replacements.some(file => !paths.has(file)) || additions.some(file => paths.has(file))) {
     return { failure: issue('BIP_BOUNDARY_FINGERPRINT', 'tools/browser-png-boundary.mjs', 'Invalid finite M1.3 successor declaration') };
   }
+  const selectedRows = new Map(rows.map(row => [row.path, row]));
+  const graph = [...predecessor.map(row => selectedRows.get(row.path) ?? row), ...additions.map(file => selectedRows.get(file))];
+  const webgl = m14WebGL2Graph(root, graph, actual);
+  if (webgl.failure || webgl.graph) return webgl;
   for (const row of rows) {
     if (!present.has(row.path)) { return { failure: issue('BIP_BOUNDARY_SOURCE_INVENTORY', row.path, 'Incomplete M1.3 successor: ' + row.path) }; }
     if (!equal(present.get(row.path), row)) { return { failure: issue('BIP_BOUNDARY_FINGERPRINT', row.path, 'M1.3 whole-group raw identity differs') }; }
   }
-  const selectedRows = new Map(rows.map(row => [row.path, row]));
-  const graph = [...predecessor.map(row => selectedRows.get(row.path) ?? row), ...additions.map(file => selectedRows.get(file))];
   return { graph };
 }
 
@@ -402,6 +448,13 @@ function surfaceRules(root, id, snapshot) {
       projectedExports = {...value.exports}; delete projectedExports['./atlas'];
       admittedAtlasSuccessor = true;
     }
+    // Semantic projection preserves assigned export/DAG refusals before raw identity.
+    // Whole-package admission still requires the exact successor at the final pin check.
+    if (name === 'engine' && equal(value.exports, {...expectedPackage.exports,
+      './webgl2': {types:'./dist/web/webgl2.d.ts', import:'./dist/web/webgl2.js'},
+      './webgl2/scene3d': {types:'./dist/web/webgl2Scene3d.d.ts', import:'./dist/web/webgl2Scene3d.js'}})) {
+      projectedExports = {...value.exports}; delete projectedExports['./webgl2']; delete projectedExports['./webgl2/scene3d'];
+    }
     if (!equal(projectedExports, expectedPackage.exports)) return issue('BIP_BOUNDARY_EXPORT_MAP', file, 'Existing public routes and the one optional image route must remain exact');
     if (!equal(value.dependencies ?? {}, expectedPackage.dependencies ?? {})
       || !equal(value.imports ?? {}, expectedPackage.imports ?? {}) || !equal(value.devDependencies ?? {}, expectedPackage.devDependencies ?? {})) {
@@ -424,7 +477,7 @@ function surfaceRules(root, id, snapshot) {
     const pair = imageResidencySuccessors.find(pair => pair.path === row.path);
     return pair && equal(row, { path: row.path, ...pair.base }) ? { path: row.path, ...pair.current } : row;
   });
-  const actual = graphFiles(root, id), shared = admittedAtlasSuccessor ? m13SharedRenderingGraph(currentGraph, actual) : {};
+  const actual = graphFiles(root, id), shared = admittedAtlasSuccessor ? m13SharedRenderingGraph(root, currentGraph, actual) : {};
   if (shared.failure) return shared.failure;
   const incremental = shared.graph ? shared : admittedAtlasSuccessor ? m12IncrementalRenderingGraph(currentGraph, actual) : {};
   if (incremental.failure) return incremental.failure;
@@ -443,7 +496,7 @@ function surfaceRules(root, id, snapshot) {
   }
   for (const row of snapshot.stablePins) {
     const current = id.fingerprintFile(root, row.path);
-    if (!equal(current, row) && !atlasPackageSuccessor(current, row)) return issue('BIP_BOUNDARY_FINGERPRINT', row.path, 'Retained configuration, lock or identity bytes differ');
+    if (!equal(current, row) && !atlasPackageSuccessor(current, row) && !m14EnginePackageSuccessor(row, read(root,row.path,id))) return issue('BIP_BOUNDARY_FINGERPRINT', row.path, 'Retained configuration, lock or identity bytes differ');
   }
   return undefined;
 }

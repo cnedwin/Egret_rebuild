@@ -22,11 +22,15 @@ Report problems through [Issues](https://github.com/cnedwin/Egret_rebuild/issues
 
 Egret Engine is an open-source game-engine rebuild for creators working with AI and for developers bringing mobile-game experience to the Web. The product centers on complex 2D interfaces and lightweight 3D, with a small rendering/runtime foundation, explicit resource ownership and a shared project model for code, visual tools and agents.
 
-The repository contains an executable engineering preview. Display trees, resource leases, animation, browser input and selected Canvas/WebGPU rendering paths are available within their documented contracts. Full UI tooling, complete Spine support, target-platform SDKs and automated legacy-project migration remain in development.
+The repository contains an executable engineering preview. Display trees, resource leases, animation, browser input and selected Canvas/WebGPU/WebGL2 rendering paths are available within their documented contracts. Full UI tooling, complete Spine support, target-platform SDKs and automated legacy-project migration remain in development.
 
-## In progress — M1.3 shared rendering
+## Implemented — M1.4 WebGL2 executor
 
-M1.3 adds an explicit shared profile for texture pages and logical regions, two-color materials, ordered 2D composition and finite linear B1 scene/UI rendering. Its fixed desktop native pixel matrix has passed; complete regression and protected integration are still pending. Read the [contract](knowledge-base/en/docs/shared-render-profile-contract.md), [actual results and limits](knowledge-base/en/docs/shared-rendering-evidence.md), and [M1 plan](knowledge-base/en/docs/m1-rendering-resource-plan.md).
+M1.4 implements the optional `@egret/engine/webgl2` and `@egret/engine/webgl2/scene3d` entries over the shared render profile. Recorded desktop verification covers the fixed pixel matrix and finite lifetime/depth/state scenarios. These results do not establish mobile support, frame-time performance or sustained recovery. Read the [contract](knowledge-base/en/docs/webgl2-executor-contract.md), [observed results and limits](knowledge-base/en/docs/webgl2-executor-evidence.md), and [M1 plan](knowledge-base/en/docs/m1-rendering-resource-plan.md).
+
+## Delivered — M1.3 shared rendering
+
+M1.3 shared texture pages, linear color and ordered scene/UI composition were delivered through [PR #75](https://github.com/cnedwin/Egret_rebuild/pull/75), main `10a37d9dfdeb8762eced73577282127d1c4e4bde`. The [dated evidence follow-up](knowledge-base/en/docs/shared-rendering-evidence.md#m13-delivery-follow-up) preserves the earlier authoring cutoffs and their original pending states.
 
 ## Functional delivery — M1.2 incremental rendering
 
@@ -84,7 +88,8 @@ Focused behavior, strict consumers and the recorded desktop Canvas/WebGPU compos
 
 | Version / 版本 | Main change | 主要变化 |
 | --- | --- | --- |
-| M1.3 candidate | Shared texture pages, linear color and ordered scene/UI composition; full integration pending | 共享纹理页、线性颜色与有序场景/UI 合成；完整集成待完成 |
+| M1.4 | Implemented optional shared WebGL2 executor with finite desktop verification | 已实现可选共享 WebGL2 执行器，具有有限桌面验证 |
+| M1.3 | Shared texture pages and linear scene/UI composition delivered through PR #75 | 共享纹理页与线性场景/UI 合成已通过 PR #75 交付 |
 | M1.2 | Incremental capture and adjacent batching delivered; performance acceptance open | 增量捕获与相邻合批已交付；性能验收未完成 |
 | M1.1 | Completion-safe GPU buffer and binding reuse | 安全完成后的 GPU 缓冲与绑定复用 |
 | 0.61.0 | Internal WebGPU image cache with per-Host ownership | 各 Host 独立管理的 WebGPU 内部图像缓存 |

@@ -80,3 +80,9 @@ Canvas 的原始输入证据较弱：保留了收集器、包装器和矩阵身�
 使用选定工具链、已安装依赖的真实目录及新的私有输出目录。不需要下载浏览器或增加宽松图形参数。输入或清理情况不确定时记为 INCOMPLETE，实际数值不符记为 FAIL；错误模型必须实际触发指定数值失败，异常或启动失败不能充当成功的反例。
 
 实现与测试素材均为 AI 辅助独立编写、经过单独源码评审的第一方 Apache-2.0 工作。既有第三方依赖和声明继续保留。当前桌面证据不关闭 [#52](https://github.com/cnedwin/Egret_rebuild/issues/52) 的真人/fork 演练或 [#54](https://github.com/cnedwin/Egret_rebuild/issues/54) 的设备与素材资格。
+
+## M1.3 交付后续记录
+
+2026-10-18 交付后续：M1.3 已通过 [PR #75](https://github.com/cnedwin/Egret_rebuild/pull/75) 合并至 main `10a37d9dfdeb8762eced73577282127d1c4e4bde`。保留的已合并 PR 记录及 main 验证与已审查 tree `f049b755be64a62ccbe8d80e1e40a31a284b1e45` 一致；main 回读验证了 144 个选定 blob。此说明记录早期 05:08:50 UTC 与 06:39:00 UTC 截止之后的交付；上文原有结果、失败及当时待完成状态不变。
+
+后续 [M1.4 WebGL2 证据](webgl2-executor-evidence.md)属于单独工作包。M1.3 交付不关闭 M1.4 验收、M1.5 恢复、M1.2 计时、完整 Spine 或剩余目标设备／发布资格。
