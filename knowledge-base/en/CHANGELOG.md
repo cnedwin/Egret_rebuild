@@ -4,7 +4,15 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
-## M1.2 candidate — incremental ordered frame preparation
+## M1.3 candidate — shared texture pages and rendering
+
+An explicit shared profile separates source pages, logical texture regions, material state and completed-frame identity. Several atlas regions share a canonical upload; trim/rotation, nine-slice, two-color tint, ordered boundaries and bounded target reuse support complex 2D interfaces. The finite linear B1 path composes opaque 3D with shared UI before one final output conversion. Existing color profiles remain available.
+
+The 100 focused checks, 24 strict negatives and fixed desktop matrix of 30 positive scenes plus 11 numerical control triples pass in their recorded scope. Complete regression and protected integration remain pending. Read the [contract](docs/shared-render-profile-contract.md) and [results and limitations](docs/shared-rendering-evidence.md). No performance, phone or complete Spine claim follows from these results.
+
+## M1.2 functional delivery — incremental ordered frame preparation
+
+Merged through [PR #74](https://github.com/cnedwin/Egret_rebuild/pull/74), main `9f899dbe92c5e4d448d3408c3dca2f4c9ade847f`; formal performance acceptance remains open. The earlier candidate observations below retain their own cutoff.
 
 M1.2 reuses unchanged display transforms, clipping and prepared geometry, then merges compatible adjacent draws without changing painter order or public APIs. Current resources still undergo complete admission, and saved frames remain isolated from later edits. The fixed native operation fixture records 991 baseline draws and 155 candidate draws per frame.
 

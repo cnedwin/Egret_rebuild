@@ -66,6 +66,8 @@ Edwin（`@cnedwin`）是当前集成联系人。CODEOWNERS 用于路由评审请
 
 修改已有文件时只改内容，不手改共享哈希。新增文件使用独立命名的 `contributions/<change-name>.json`：包含 `schemaVersion: 1`、由 `path`/`originRole` 组成的 `files` 数组（关键代码加 `criticalComment: true`），以及新增阅读文档的 `documents` 数组，配对格式为 `{en, zh}`。两种语言的路径均须在 files 中声明。使用完整仓库相对路径，说明作者、许可证、参考来源和 AI 辅助。现有 `contributions/m0-tooling.json` 可供参考结构，不应照抄其来源声明。每项贡献使用独立文件名，不修改其他贡献的声明。
 
+新增的实际编译器观察使用贡献声明中的可选 `frozenInputs` 数组。每行只能包含 `path`、`bytes`、`sha256` 和 `originRole`，仅接纳 `tests/types/<name>-diagnostic-expectations.json`。登记前须独立评审真实、未抑制的编译器输出。声明的原始字节身份必须一致；文件须不存在于所选基线，或已在该基线以相同身份和来源说明登记。后续内容或身份变化会被拒绝。既有证据、法律原件及其他受保护范围继续排除。此流程只登记新的观察，不重新生成历史诊断，也不证明诊断含义。
+
 普通完整 prepush 从与 origin/main 的 Git 合并基点只读推导当前发布元数据，贡献者无需手改 localization.json、source-origin.json 或 documentation-layout.json。保持 origin/main 可用且及时更新；使用 fork 时，添加并获取上游仓库，将 EGRET_METADATA_BASE 设为确切目标基线提交进行验证。单语草稿可以讨论，但推送 hook 仍要求最终阅读文档配对；需要翻译协助时应在交付前提出。
 
 完成内容、来源及双语评审后，集成人选择最终基线并运行：
@@ -84,7 +86,7 @@ node tools/prepush.mjs --integrated
 node tools/browser-verify.mjs --suite canvas --playwright <absolute-installed-playwright-package> --output <absolute-fresh-directory-outside-repository>
 ```
 
-直接运行的套件为 canvas、webgpu、b1、text、hit-test、mouse-input。resource-scene 和 bitmap-slot 还需要已复核的源码快照：
+直接运行的套件为 canvas、webgpu、b1、text、hit-test、mouse-input 和 shared-webgpu。共享套件执行固定的 30 场景像素矩阵和 11 项指定数值反例，其有限范围见[共享渲染记录](shared-rendering-evidence.md)。resource-scene 和 bitmap-slot 还需要已复核的源码快照：
 
 ```text
 node tools/browser-prepare.mjs --suite resource-scene --output <absolute-new-snapshot-file-outside-repository>

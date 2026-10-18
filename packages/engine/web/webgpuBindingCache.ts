@@ -8,7 +8,7 @@ export interface DrawBindingKey {
     readonly sampler: GPUSampler | undefined;
     readonly uniform: BufferHandle;
     readonly offset: 0;
-    readonly size: 16 | 64;
+    readonly size: 16 | 64 | 128;
 }
 export interface DrawBindingCandidate {
     readonly key: DrawBindingKey;

@@ -28,3 +28,6 @@ export function createSceneWebGPUHost(options: SceneWebGPUHostOptions): SceneWeb
 export function createTexturedSceneWebGPUHost(options: TexturedWebGPUHostOptions): TexturedSceneWebGPUHost {
     return createTexturedB1WebGPUHost(options);
 }
+
+export { createSharedSceneWebGPUHost } from './sharedB1.js';
+export type { SharedSceneWebGPUHost, SharedSceneWebGPUHostOptions } from './WebGPUHost.js';

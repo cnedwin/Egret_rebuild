@@ -1,4 +1,20 @@
-import { readOwnedTexturedFrame } from '#egret-textured-frame-state';
+import type { SharedRenderFrame2D, SharedRenderHostAdapter } from '@egret/contracts';
+import { SHARED_FRAME_PROFILE_2D } from '@egret/contracts';
+import { admitSharedWebGPUOptions } from './sharedWebGPUOptions.js';
+import type { SharedWebGPUHostOptions, SharedSceneWebGPUHostOptions, SharedWebGPUConfiguration } from './sharedWebGPUOptions.js';
+import { prepareSharedDraws2D, SharedPreparationError } from '../rendering/prepareSharedDraws2D.js';
+import { planSharedSubmission2D, packSharedSubmission2D, materializeSharedPages2D, checkSharedCapacity2D, SharedStorageError2D } from './prepareSharedSubmission2D.js';
+import type { SharedSubmissionStorage2D, SharedOwnerSnapshot2D } from './prepareSharedSubmission2D.js';
+import type { PackedSharedDraw2D } from '../rendering/packSharedDraws2D.js';
+import { prepareSharedBatches2D } from '../rendering/preparedSharedBatches2D.js';
+import type { PreparedSharedBatchPlan2D } from '../rendering/preparedSharedBatches2D.js';
+import { decodeSharedSRGB } from '../rendering/sharedColor2D.js';
+import { createSharedWebGPUPipeline, SHARED_BLENDS } from './webgpuSharedPass.js';
+import { createSharedResolvePipeline } from './webgpuSharedResolvePass.js';
+import { createWebGPURetentionPool } from './webgpuRetentionPool.js';
+import type { RetentionHandle, RetentionLease, RetentionPlan, RetentionReturnPlan, RetentionRequest } from './webgpuRetentionPool.js';
+export type { SharedWebGPUHostOptions, SharedSceneWebGPUHostOptions } from './sharedWebGPUOptions.js';
+import { readOwnedTexturedFrame, readOwnedSharedFrame } from '#egret-textured-frame-state';
 import type { ImageData2D, RenderFrame2D, RenderHostAdapter, TexturedRenderFrame2D, TexturedRenderHostAdapter } from '@egret/contracts';
 import { IMAGE_LIMITS_2D, TEXTURED_FRAME_PROFILE_2D } from '@egret/contracts';
 import { EgretError } from '@egret/runtime';
@@ -28,8 +44,7 @@ import type { PackedTexturedDraw2D, TexturedSubmissionOwnerSnapshot2D } from './
 import { admitTexturedWebGPUOptions } from './texturedWebGPUOptions.js';
 import type { TexturedWebGPUHostOptions, TexturedWebGPUConfiguration } from './texturedWebGPUOptions.js';
 import { createWebGPUTexturedPipeline } from './webgpuTexturedPass.js';
-import { createWebGPUBufferPool } from './webgpuBufferPool.js';
-import type { BufferHandle, BufferReusePlan, BufferReturnPlan, SubmissionBufferLease, SubmissionBufferRequest } from './webgpuBufferPool.js';
+import type { SubmissionBufferLease, SubmissionBufferRequest } from './webgpuBufferPool.js';
 import { createWebGPUBindingCache } from './webgpuBindingCache.js';
 import type { DrawBindingCandidate, DrawBindingKey } from './webgpuBindingCache.js';
 export type { TexturedWebGPUHostOptions } from './texturedWebGPUOptions.js';
@@ -56,8 +71,17 @@ export interface WebGPUHostStatus { readonly state: WebGPUHostState; readonly la
 export interface WebGPUHost extends RenderHostAdapter { readonly surface: HTMLCanvasElement; start(): Promise<void>; stop(): void; close(): Promise<void>; renderFrame(frame: RenderFrame2D): undefined; whenIdle(): Promise<void>; requestReadback(): Promise<WebGPUReadback>; getStatus(): WebGPUHostStatus; setTimeout(callback: () => void, delayMs: number): () => void; }
 export interface TexturedWebGPUHostStatus { readonly host: WebGPUHostStatus; readonly pendingGeometryBytes: number; }
 export interface TexturedWebGPUHost extends WebGPUHost, Pick<TexturedRenderHostAdapter, 'texturedFrameProfile' | 'renderTexturedFrame'> { getTexturedStatus(): TexturedWebGPUHostStatus; }
+export interface SharedWebGPUReadback extends Omit<WebGPUReadback,'alphaMode'> { readonly alphaMode:'premultiplied'|'opaque'; }
+export interface SharedWebGPUHostStatus { readonly host:WebGPUHostStatus; readonly pendingGeometryBytes:number; readonly pendingColorBytes:number; readonly pendingCanonicalBytes:number; }
+export interface SharedWebGPUHost extends Pick<WebGPUHost,'surface'|'start'|'stop'|'close'|'whenIdle'|'getStatus'|'setTimeout'>, Pick<SharedRenderHostAdapter,'sharedFrameProfile'|'renderSharedFrame'> {
+    requestReadback():Promise<SharedWebGPUReadback>; getSharedStatus():SharedWebGPUHostStatus;
+}
+export interface SharedSceneWebGPUHost extends SharedWebGPUHost {
+    renderSceneSharedFrame(scene:SceneValue,overlay:SharedRenderFrame2D):undefined;
+    getSceneStatus():{readonly host:WebGPUHostStatus;readonly pendingSceneBytes:number;readonly pendingUniformBytes:number;readonly pendingDepthBytes:number};
+}
 type Configuration = Required<Omit<WebGPUHostOptions, 'canvas' | 'device' | 'onDiagnostic'>>;
-type Ticket = ReturnType<typeof deferred<WebGPUReadback>> & { bound: boolean };
+type Ticket = ReturnType<typeof deferred<SharedWebGPUReadback>> & { bound: boolean };
 type PackedDraw = PackedTexturedDraw2D;
 interface SharedSubmissionPlan2D {
     frame: RenderFrame2D | TexturedRenderFrame2D; width: number; height: number; draws: PackedDraw[];
@@ -66,7 +90,7 @@ interface SharedSubmissionPlan2D {
 }
 // READY metadata never retains an image, frame, projection, record or callback.
 interface ImageResidencyEntry {
-    identity: object; epoch: object; bucket: Map<string, ImageResidencyEntry>; cropKey: string; bytes: number;
+    format: 'rgba8unorm'|'rgba8unorm-srgb'; identity: object; epoch: object; bucket: Map<string, ImageResidencyEntry>; cropKey: string; bytes: number;
     resource: OwnedWebGPUTexture | undefined; view: GPUTextureView | undefined;
     pinCount: number; previous: ImageResidencyEntry | undefined; next: ImageResidencyEntry | undefined;
     state: 'cold' | 'ready' | 'detached';
@@ -74,6 +98,10 @@ interface ImageResidencyEntry {
 interface ImageResidencyCandidate {
     image: ImageData2D; viewIndex: number; entry: ImageResidencyEntry; transferred: boolean;
 }
+// Rectangles have no sampled-page demand and need no synthetic vertex count.
+type ImageResidencyDraw = { readonly kind:'rect' } | {
+    readonly kind:'image'|'mesh'; readonly packed:{readonly vertexCount:number}; readonly viewIndex:number;
+};
 interface ImageResidencyPlan {
     epoch: object; revision: object; victims: ImageResidencyEntry[]; bytes: number; use: ImageResidencyUse;
 }
@@ -81,15 +109,23 @@ interface ImageResidencyUse {
     epoch: object; hits: Map<number, ImageResidencyEntry>; candidates: Map<number, ImageResidencyCandidate>;
     reserved: number; pinned: boolean; finished: boolean; touchedQueue: boolean;
 }
+/** Preallocated ownership until a returned target is registered or destroyed. */
+interface RawTargetSlot {
+    readonly requestId: number;
+    texture: GPUTexture | undefined;
+    destroy: (() => void) | undefined;
+    cleanupAttempted: boolean;
+}
 interface Submission {
-    batchPlan: PreparedBatchPlan2D;
+    batchPlan: PreparedBatchPlan2D | PreparedSharedBatchPlan2D;
+    shared?: { frame:SharedRenderFrame2D; draws:PackedSharedDraw2D[]; colorBytes:number; canonicalBytes:number; rawTargets:RawTargetSlot[] };
     serial: number; upload: number; readback: number; textureBytes: number; geometryBytes: number;
     sceneBytes: number; uniformBytes: number; depthBytes: number;
     resources: OwnedWebGPUBuffer[]; textures: OwnedWebGPUTexture[]; views: GPUTextureView[]; bindings: GPUBindGroup[];
     frame: RenderFrame2D | TexturedRenderFrame2D | undefined; projectionPlan: ProjectionPlan2D | undefined; projections: (Uint8Array<ArrayBuffer> | undefined)[]; draws: PackedDraw[];
     imageUse: ImageResidencyUse | undefined;
-    bufferPlan: BufferReusePlan; bufferClaimed: boolean; bufferLeases: (SubmissionBufferLease | undefined)[];
-    bufferReturns: BufferReturnPlan | undefined; retiring: boolean;
+    bufferPlan: RetentionPlan; bufferClaimed: boolean; bufferLeases: (RetentionLease | undefined)[];
+    bufferReturns: RetentionReturnPlan | undefined; retiring: boolean;
     bindingCandidates: (DrawBindingCandidate & { image: ImageResidencyEntry | undefined })[];
     scene: SceneValue | undefined; meshes: PackedMesh[]; sceneDraws: SceneUploadDraw[];
     outcome: Promise<void>; completion: Promise<void>; failure: EgretError | undefined; unsafe: boolean; retired: boolean;
@@ -106,13 +142,18 @@ class ClassifiedWebGPUFailure {
 }
 function isObject(value: unknown): value is object { return typeof value === 'object' && value !== null; }
 // Neither an options field nor a caller-supplied callback selects this mode.
+const SHARED_MODE=Symbol('owned shared host mode'), SHARED_SCENE_MODE=Symbol('owned shared scene mode');
+const SHARED_OPTIONS=new WeakMap<object,SharedWebGPUConfiguration>();
+const SHARED_SCENE_OWNERS=new WeakSet<object>();
 const B1_MODE = Symbol('owned B1 host mode');
 const TEXTURED_MODE = Symbol('owned textured host mode');
 const TEXTURED_SCENE_MODE = Symbol('owned textured scene host mode');
 const TEXTURED_OWNERS = new WeakSet<object>();
 const TEXTURED_OPTIONS = new WeakMap<object, TexturedWebGPUConfiguration>();
 const B1_PROTOCOL_FIELDS = ['version', 'createSceneFrame3D', 'isSceneFrame3D', 'getScene3DErrorOrigin', 'packMeshGeometry3D', 'getMeshPacking3DErrorOrigin', 'createWebGPUMeshPipeline', 'encodeWebGPUMesh'] as const;
-type BuiltinFunctions = Omit<B1BuiltinProtocol, 'version'>;
+type BuiltinFunctions = Omit<B1BuiltinProtocol,'version'|'createWebGPUMeshPipeline'> & {
+    createWebGPUMeshPipeline(shader:(d:GPUShaderModuleDescriptor)=>GPUShaderModule,pipeline:(d:GPURenderPipelineDescriptor)=>Promise<GPURenderPipeline>,format:'rgba8unorm'|'bgra8unorm'|'rgba8unorm-srgb'):Promise<GPURenderPipeline>;
+};
 type SceneValue = ReturnType<BuiltinFunctions['createSceneFrame3D']>;
 type PackedMesh = ReturnType<BuiltinFunctions['packMeshGeometry3D']>;
 interface SceneUploadDraw { mesh: PackedMesh; uniform: Float32Array<ArrayBuffer>; }
@@ -126,7 +167,7 @@ const B1_OWNERS = new WeakSet<object>();
 const B1_FUNCTIONS = new WeakMap<object, BuiltinFunctions>();
 
 /** The sole lifecycle/submission authority; resource helpers only record settled ownership. */
-class WebGPUHostImplementation implements WebGPUHost {
+class WebGPUHostImplementation {
     public readonly surface: HTMLCanvasElement;
     private readonly options: Configuration;
     private readonly borrowed: GPUDevice | undefined;
@@ -149,6 +190,8 @@ class WebGPUHostImplementation implements WebGPUHost {
     private pendingReadbackBytes = 0;
     private pendingTextureBytes = 0;
     private pendingGeometryBytes = 0;
+    private pendingColorBytes=0;
+    private pendingCanonicalBytes=0;
     private pendingSceneBytes = 0;
     private pendingUniformBytes = 0;
     private pendingDepthBytes = 0;
@@ -156,12 +199,12 @@ class WebGPUHostImplementation implements WebGPUHost {
     private readonly batchScratch = new PreparedBatchScratch2D();
     private readonly preparationCache = new PreparedFrameCache2D();
     private readonly imageEpoch = {};
-    private readonly bufferPool = createWebGPUBufferPool(this.imageEpoch);
+    private readonly bufferPool = createWebGPURetentionPool(this.imageEpoch);
     private readonly bindingCache = createWebGPUBindingCache(this.imageEpoch);
     // Detached allocations retain an explicit owner even when an earlier native
     // destroy throws. Unknown destruction is charged permanently and never retried.
-    private readonly bufferCleanup = new Set<BufferHandle>();
-    private closingBuffers: readonly BufferHandle[] = [];
+    private readonly bufferCleanup = new Set<RetentionHandle>();
+    private closingBuffers: readonly RetentionHandle[] = [];
     private imageEnabled = false;
     private imageRevision = {};
     private readonly imageDirectory = new WeakMap<ImageData2D, Map<string, ImageResidencyEntry>>();
@@ -189,6 +232,10 @@ class WebGPUHostImplementation implements WebGPUHost {
     private meshPipeline: GPURenderPipeline | undefined;
     private meshLayout: GPUBindGroupLayout | undefined;
     private sampler: GPUSampler | undefined;
+    private readonly sharedPipelines=new Map<string,{pipeline:GPURenderPipeline;layout:GPUBindGroupLayout}>();
+    private readonly sharedSamplers=new Map<string,GPUSampler>();
+    private resolvePipeline:GPURenderPipeline|undefined;
+    private resolveLayout:GPUBindGroupLayout|undefined;
     private push: ((filter: GPUErrorFilter) => void) | undefined;
     private pop: (() => Promise<GPUError | null>) | undefined;
     private write: GPUQueue['writeBuffer'] | undefined;
@@ -204,8 +251,13 @@ class WebGPUHostImplementation implements WebGPUHost {
     private readonly lossCell: { notify?: (cause: unknown) => void } = {};
     private timers: { set: typeof globalThis.setTimeout; clear: typeof globalThis.clearTimeout } | undefined;
 
-    public constructor(input: WebGPUHostOptions, mode?: typeof B1_MODE | typeof TEXTURED_MODE | typeof TEXTURED_SCENE_MODE) {
-        if (mode === TEXTURED_MODE || mode === TEXTURED_SCENE_MODE) {
+    public constructor(input: WebGPUHostOptions, mode?: typeof B1_MODE | typeof TEXTURED_MODE | typeof TEXTURED_SCENE_MODE | typeof SHARED_MODE | typeof SHARED_SCENE_MODE) {
+        if(mode===SHARED_MODE||mode===SHARED_SCENE_MODE){
+            try{const admitted=admitSharedWebGPUOptions(input,mode===SHARED_SCENE_MODE);
+                this.surface=admitted.surface;Object.defineProperty(this,'surface',{writable:false,configurable:false});
+                this.options=admitted.configuration;this.borrowed=admitted.borrowed;this.callback=admitted.callback;SHARED_OPTIONS.set(this,admitted.configuration);
+            }catch(cause){throw error('WEBGPU_OPTIONS_INVALID',cause);}
+        }else if (mode === TEXTURED_MODE || mode === TEXTURED_SCENE_MODE) {
             try {
                 const admitted = admitTexturedWebGPUOptions(input);
                 this.surface = admitted.surface; Object.defineProperty(this, 'surface', { writable: false, configurable: false });
@@ -234,6 +286,14 @@ class WebGPUHostImplementation implements WebGPUHost {
             this.surface = canvas; Object.defineProperty(this, 'surface', { writable: false, configurable: false });
             this.options = Object.freeze(values); this.borrowed = borrowed; this.callback = callback;
         } catch (cause) { throw error('WEBGPU_OPTIONS_INVALID', cause); }
+        }
+        if(mode===SHARED_MODE||mode===SHARED_SCENE_MODE){
+            Object.defineProperties(this,{sharedFrameProfile:{value:SHARED_FRAME_PROFILE_2D,enumerable:true},
+                renderSharedFrame:{value:(frame:SharedRenderFrame2D):undefined=>this.renderSharedOwnedFrame(frame),enumerable:true},
+                getSharedStatus:{value:():SharedWebGPUHostStatus=>Object.freeze({host:this.getStatus(),pendingGeometryBytes:this.pendingGeometryBytes,pendingColorBytes:this.pendingColorBytes,pendingCanonicalBytes:this.pendingCanonicalBytes}),enumerable:true}});
+            if(mode===SHARED_SCENE_MODE){B1_OWNERS.add(this);SHARED_SCENE_OWNERS.add(this);
+                Object.defineProperties(this,{renderSceneSharedFrame:{value:(scene:SceneValue,overlay:SharedRenderFrame2D):undefined=>this.renderSharedOwnedFrame(overlay,scene),enumerable:true},
+                    getSceneStatus:{value:()=>Object.freeze({host:this.getStatus(),pendingSceneBytes:this.pendingSceneBytes,pendingUniformBytes:this.pendingUniformBytes,pendingDepthBytes:this.pendingDepthBytes}),enumerable:true}});}
         }
         if (mode === B1_MODE || mode === TEXTURED_SCENE_MODE) {
             // Keep mode and the captured function table in module-owned weak
@@ -322,11 +382,10 @@ class WebGPUHostImplementation implements WebGPUHost {
                 stage = 'WEBGPU_START_FAILED';
                 // Observe the literal import immediately. The existing starting
                 // barrier drains it even when a loader boundary calls stop/close.
-                const loading = observed(import('./b1.js'));
-                const namespace = await loading;
-                gate();
-                const getter = namespace.getBuiltinB1Protocol; gate();
-                const predicate = namespace.isBuiltinB1Protocol; gate();
+                const shared=SHARED_SCENE_OWNERS.has(this);
+                const namespace=await (shared?observed(import('./sharedB1.js')):observed(import('./b1.js')));gate();
+                const getter=shared?(namespace as typeof import('./sharedB1.js')).getBuiltinSharedB1Protocol:(namespace as typeof import('./b1.js')).getBuiltinB1Protocol;gate();
+                const predicate=shared?(namespace as typeof import('./sharedB1.js')).isBuiltinSharedB1Protocol:(namespace as typeof import('./b1.js')).isBuiltinB1Protocol;gate();
                 if (typeof getter !== 'function' || typeof predicate !== 'function') throw new TypeError('B1 built-in exports');
                 const protocol = getter(); gate();
                 if (!predicate(protocol)) throw new TypeError('B1 built-in identity');
@@ -340,7 +399,7 @@ class WebGPUHostImplementation implements WebGPUHost {
                     if (!descriptor || !Object.hasOwn(descriptor, 'value') || !descriptor.enumerable || descriptor.writable || descriptor.configurable) throw new TypeError('B1 built-in descriptor');
                     const value: unknown = descriptor.value;
                     if (key === 'version') {
-                        if (value !== 'egret.internal.b1/1') throw new TypeError('B1 built-in version');
+                        if (value !== (shared?'egret.internal.shared-b1/1':'egret.internal.b1/1')) throw new TypeError('B1 built-in version');
                     } else {
                         if (typeof value !== 'function') throw new TypeError('B1 built-in function');
                         // Capture each actual function once into the owner table.
@@ -404,7 +463,7 @@ class WebGPUHostImplementation implements WebGPUHost {
             const limits = device.limits; gate();
             const captured: Record<string, number> = {};
             for (const key of ['maxTextureDimension2D', 'maxBufferSize', 'maxVertexBuffers', 'maxVertexAttributes', 'maxVertexBufferArrayStride', 'maxColorAttachments', 'maxColorAttachmentBytesPerSample', 'maxBindGroups', 'maxBindingsPerBindGroup', 'maxSampledTexturesPerShaderStage', 'maxSamplersPerShaderStage', 'maxUniformBuffersPerShaderStage', 'maxUniformBufferBindingSize', 'maxBindGroupsPlusVertexBuffers', 'maxInterStageShaderVariables'] as const) { captured[key] = limits[key]; gate(); if (!Number.isSafeInteger(captured[key]) || captured[key]! <= 0) throw new ClassifiedWebGPUFailure('WEBGPU_DEVICE_LIMIT'); }
-            if (captured['maxVertexBuffers']! < 1 || captured['maxVertexAttributes']! < (TEXTURED_OWNERS.has(this) ? 3 : 2) || captured['maxVertexBufferArrayStride']! < (TEXTURED_OWNERS.has(this) ? 32 : 24) || captured['maxColorAttachments']! < 1 || captured['maxColorAttachmentBytesPerSample']! < 4 || captured['maxBindGroups']! < 1 || captured['maxBindingsPerBindGroup']! < 3 || captured['maxSampledTexturesPerShaderStage']! < 1 || captured['maxSamplersPerShaderStage']! < 1 || captured['maxUniformBuffersPerShaderStage']! < 1 || captured['maxUniformBufferBindingSize']! < (B1_OWNERS.has(this) ? 64 : 16) || captured['maxBindGroupsPlusVertexBuffers']! < 2 || captured['maxInterStageShaderVariables']! < (TEXTURED_OWNERS.has(this) ? 2 : 1)) throw new ClassifiedWebGPUFailure('WEBGPU_DEVICE_LIMIT');
+            if (captured['maxVertexBuffers']! < 1 || captured['maxVertexAttributes']! < (SHARED_OPTIONS.has(this)?4:TEXTURED_OWNERS.has(this)?3:2) || captured['maxVertexBufferArrayStride']! < (SHARED_OPTIONS.has(this)?44:TEXTURED_OWNERS.has(this)?32:24) || captured['maxColorAttachments']! < 1 || captured['maxColorAttachmentBytesPerSample']! < 4 || captured['maxBindGroups']! < 1 || captured['maxBindingsPerBindGroup']! < 3 || captured['maxSampledTexturesPerShaderStage']! < 1 || captured['maxSamplersPerShaderStage']! < 1 || captured['maxUniformBuffersPerShaderStage']! < 1 || captured['maxUniformBufferBindingSize']! < (SHARED_OPTIONS.has(this)?128:B1_OWNERS.has(this)?64:16) || captured['maxBindGroupsPlusVertexBuffers']! < 2 || captured['maxInterStageShaderVariables']! < (SHARED_OPTIONS.has(this)?3:TEXTURED_OWNERS.has(this)?2:1)) throw new ClassifiedWebGPUFailure('WEBGPU_DEVICE_LIMIT');
             this.limits = { maxTextureDimension2D: captured['maxTextureDimension2D']!, maxBufferSize: captured['maxBufferSize']! };
             const scopes: Promise<void>[] = [];
             const pipelines: Promise<GPURenderPipeline>[] = [];
@@ -420,6 +479,14 @@ class WebGPUHostImplementation implements WebGPUHost {
             let synchronous: { readonly cause: unknown } | undefined;
             try {
                 this.scoped(null, 'startup', scopes, gate, () => {
+                    if(SHARED_OPTIONS.has(this)){
+                        for(const sampled of [false,true])for(const blend of SHARED_BLENDS)createSharedWebGPUPipeline(capturedShader,capturedPipeline,sampled,blend);
+                        createSharedResolvePipeline(capturedShader,capturedPipeline,this.format,SHARED_OPTIONS.get(this)!.outputAlpha==='opaque');
+                        if(builtin)builtin.createWebGPUMeshPipeline(capturedShader,capturedPipeline,'rgba8unorm-srgb');
+                        for(const filter of ['nearest','linear'] as const)for(const u of ['clamp-to-edge','repeat','mirror-repeat'] as const)for(const v of ['clamp-to-edge','repeat','mirror-repeat'] as const){
+                            const value=sampler({addressModeU:u,addressModeV:v,addressModeW:'clamp-to-edge',minFilter:filter,magFilter:filter,mipmapFilter:'nearest',lodMinClamp:0,lodMaxClamp:0,maxAnisotropy:1});
+                            this.sharedSamplers.set(filter+':'+u+':'+v,value);gate();}
+                    }else{
                     createWebGPURectanglePipeline(capturedShader, capturedPipeline, this.format);
                     createWebGPUImagePipeline(capturedShader, capturedPipeline, this.format);
                     // The same captured boundary immediately owns this third
@@ -428,7 +495,7 @@ class WebGPUHostImplementation implements WebGPUHost {
                     if (TEXTURED_OWNERS.has(this)) createWebGPUTexturedPipeline(capturedShader, capturedPipeline, this.format);
                     gate();
                     this.sampler = sampler({ addressModeU: 'clamp-to-edge', addressModeV: 'clamp-to-edge', addressModeW: 'clamp-to-edge', magFilter: 'nearest', minFilter: 'nearest', mipmapFilter: 'nearest', lodMinClamp: 0, lodMaxClamp: 0, maxAnisotropy: 1 });
-                    gate();
+                    gate();}
                 });
             } catch (cause) {
                 // Occurrence is independent of the arbitrary thrown value, including undefined.
@@ -444,6 +511,11 @@ class WebGPUHostImplementation implements WebGPUHost {
             // Scope outcomes do not select pipeline roles. Their own ordered
             // results retain the old two/three roles and add scene2/textured3.
             const roles = outcomes.slice(scopes.length) as PromiseFulfilledResult<GPURenderPipeline>[];
+            if(SHARED_OPTIONS.has(this)){
+                let index=0;for(const sampled of [false,true])for(const blend of SHARED_BLENDS){const value=roles[index++]!.value;const layout=this.method(value,'getBindGroupLayout',gate)(0);gate();this.sharedPipelines.set((sampled?'sampled:':'solid:')+blend,{pipeline:value,layout});}
+                this.resolvePipeline=roles[index++]!.value;this.resolveLayout=this.method(this.resolvePipeline,'getBindGroupLayout',gate)(0);gate();
+                if(builtin){this.meshPipeline=roles[index]!.value;this.meshLayout=this.method(this.meshPipeline,'getBindGroupLayout',gate)(0);gate();}
+            }else{
             this.pipeline = roles[0]!.value;
             this.imagePipeline = roles[1]!.value;
             // Auto group0 is valid only after image pipeline settlement; no scopes span an await.
@@ -458,6 +530,7 @@ class WebGPUHostImplementation implements WebGPUHost {
                 this.texturedPipeline = roles[builtin ? 3 : 2]!.value;
                 const texturedLayout = this.method(this.texturedPipeline, 'getBindGroupLayout', gate);
                 this.texturedLayout = texturedLayout(0); gate();
+            }
             }
             const configureScopes: Promise<void>[] = [];
             let configureFailure: { readonly cause: unknown } | undefined;
@@ -513,7 +586,7 @@ class WebGPUHostImplementation implements WebGPUHost {
         gate();
         // A throwing external configure may already have changed the leased context.
         this.configured = true;
-        this.configure!({ device: this.device!, format: this.format, colorSpace: 'srgb', alphaMode: 'premultiplied', usage: 16 | (this.options.enableReadback ? 1 : 0) });
+        this.configure!({ device: this.device!, format: this.format, colorSpace: 'srgb', alphaMode: SHARED_OPTIONS.get(this)?.outputAlpha ?? 'premultiplied', usage: 16 | (this.options.enableReadback ? 1 : 0) });
         gate();
     }
     private ownedBuffer(size: number, usage: number, record: Submission, gate: () => void): OwnedWebGPUBuffer {
@@ -530,7 +603,7 @@ class WebGPUHostImplementation implements WebGPUHost {
     }
     private ownedTexture(view: ProjectionView2D, record: Submission, gate: () => void, candidate: ImageResidencyCandidate): { texture: GPUTexture; view: GPUTextureView } {
         gate();
-        const texture = this.texture!({ size: { width: view.region.width, height: view.region.height, depthOrArrayLayers: 1 }, dimension: '2d', format: 'rgba8unorm', mipLevelCount: 1, sampleCount: 1, usage: 2 | 4 });
+        const texture = this.texture!({ size: { width: view.region.width, height: view.region.height, depthOrArrayLayers: 1 }, dimension: '2d', format: candidate.entry.format, mipLevelCount: 1, sampleCount: 1, usage: 2 | 4 });
         // Register the returned object before any gate or cleanup/view getter can reenter close.
         const resource: OwnedWebGPUTexture = { texture, destroy: () => { throw new TypeError('uncaptured texture destroy'); }, cleaned: false };
         record.textures.push(resource);
@@ -545,7 +618,7 @@ class WebGPUHostImplementation implements WebGPUHost {
         const createView = this.method(texture, 'createView', gate);
         gate(); const result = createView(); candidate.entry.view = result; record.views.push(result); gate(); return { texture, view: result };
     }
-    private planImageResidency(projectionPlan: ProjectionPlan2D, draws: readonly PackedDraw[]): ImageResidencyPlan {
+    private planImageResidency(projectionPlan:ProjectionPlan2D,draws:readonly ImageResidencyDraw[],shared=false):ImageResidencyPlan {
         this.active();
         const hits = new Map<number, ImageResidencyEntry>(), candidates = new Map<number, ImageResidencyCandidate>();
         const buckets = new Map<ImageData2D, Map<string, ImageResidencyEntry>>();
@@ -553,14 +626,14 @@ class WebGPUHostImplementation implements WebGPUHost {
         for (const draw of draws) {
             if (draw.kind === 'rect' || draw.packed.vertexCount === 0 || hits.has(draw.viewIndex) || candidates.has(draw.viewIndex)) continue;
             const view = projectionPlan.views[draw.viewIndex]!, region = view.region;
-            const cropKey = `${region.x},${region.y},${region.width},${region.height}`;
+            const cropKey = (shared?'shared:egret.alpha8-capped-srgb-pma8/1:rgba8unorm-srgb:':'')+`${region.x},${region.y},${region.width},${region.height}`;
             let bucket = this.imageDirectory.get(view.image) ?? buckets.get(view.image);
             if (!bucket) { bucket = new Map(); buckets.set(view.image, bucket); }
             const entry = bucket.get(cropKey);
             if (this.imageEnabled && entry?.epoch === this.imageEpoch && entry.state === 'ready') hits.set(draw.viewIndex, entry);
             else {
                 candidates.set(draw.viewIndex, { image: view.image, viewIndex: draw.viewIndex, transferred: false,
-                    entry: { identity: {}, epoch: this.imageEpoch, bucket, cropKey, bytes: view.byteLength, resource: undefined,
+                    entry: { format:shared?'rgba8unorm-srgb':'rgba8unorm', identity: {}, epoch: this.imageEpoch, bucket, cropKey, bytes: view.byteLength, resource: undefined,
                         view: undefined, pinCount: 0, previous: undefined, next: undefined, state: 'cold' } });
                 bytes += view.byteLength;
             }
@@ -703,10 +776,10 @@ class WebGPUHostImplementation implements WebGPUHost {
         }
     }
 
-    private planBuffers(p: SharedSubmissionPlan2D): BufferReusePlan {
-        const requests: SubmissionBufferRequest[] = [];
+    private planBuffers(p: SharedSubmissionPlan2D): RetentionPlan {
+        const requests: RetentionRequest[] = [];
         const add = (role: SubmissionBufferRequest['role'], usage: SubmissionBufferRequest['usage'], byteLength: number): void => {
-            if (byteLength > 0) requests.push({ id: requests.length, role, usage, byteLength });
+            if (byteLength > 0) requests.push({ kind:'buffer', id: requests.length, role, usage, byteLength });
         };
         // Preserve the native allocation order and exact sizes of every route.
         for (const draw of p.draws) {
@@ -723,15 +796,16 @@ class WebGPUHostImplementation implements WebGPUHost {
     private submissionBuffer(record: Submission, requestId: number, gate: () => void): SubmissionBufferLease {
         gate();
         const existing = record.bufferLeases[requestId];
-        if (existing) return existing;
+        if (existing) return existing as SubmissionBufferLease;
         const request = record.bufferPlan.requests[requestId]!;
+        if(request.kind!=='buffer')throw new TypeError('Expected buffer lease');
         const resource = this.ownedBuffer(request.byteLength, request.usage, record, gate);
         const lease = this.bufferPool.registerCreated(request, resource);
         // Slots are preallocated before admission commits, in request order.
         // Transfer from the raw owner without a post-registration allocation.
         record.bufferLeases[requestId] = lease;
         record.resources.length--;
-        return lease;
+        return lease as SubmissionBufferLease;
     }
     private submissionBinding(record: Submission, key: DrawBindingKey, entries: GPUBindGroupEntry[],
         image: ImageResidencyEntry | undefined, gate: () => void): GPUBindGroup {
@@ -741,12 +815,14 @@ class WebGPUHostImplementation implements WebGPUHost {
         record.bindings.push(binding); record.bindingCandidates.push({ key, binding, image });
         gate(); return binding;
     }
-    private destroyPooledBuffer(handle: BufferHandle): void {
+    // The historical method name is retained, but the single cleanup path is
+    // kind-aware for mixed target/buffer victims, returns and terminal close.
+    private destroyPooledBuffer(handle: RetentionHandle): void {
         this.bufferCleanup.add(handle);
-        this.bindingCache.invalidateBuffer(handle.identity);
+        if(handle.kind==='buffer')this.bindingCache.invalidateBuffer(handle.identity);
         this.bufferPool.detach(handle);
         if (handle.resource.cleaned) return;
-        const failures = cleanupWebGPUBuffer(handle.resource);
+        const failures = handle.kind==='buffer'?cleanupWebGPUBuffer(handle.resource):cleanupWebGPUTexture(handle.resource);
         this.bufferPool.destroyed(handle, failures.length === 0);
         if (failures.length) { this.proofFailed(failures[0]); throw failures[0]; }
         this.bufferCleanup.delete(handle);
@@ -780,7 +856,7 @@ class WebGPUHostImplementation implements WebGPUHost {
         const createView = this.method(texture, 'createView', gate);
         const view = createView(); record.views.push(view); gate(); return view;
     }
-    private admitScene(value: unknown): SceneAdmission {
+    private admitScene(value: unknown, deferDevice = false): SceneAdmission {
         const functions = B1_FUNCTIONS.get(this);
         // Only the actual CPU module's identity predicate grants access to
         // immutable fields. Foreign objects/proxies receive no property reads.
@@ -793,11 +869,11 @@ class WebGPUHostImplementation implements WebGPUHost {
             const vertexBytes = 24 * geometry.vertexCount, indexBytes = 4 * geometry.indexCount;
             cpuBytes += 8 * (6 * geometry.vertexCount + geometry.indexCount);
             sceneBytes += vertexBytes + indexBytes;
-            if (vertexBytes > this.limits.maxBufferSize || indexBytes > this.limits.maxBufferSize) throw new ClassifiedWebGPUFailure('WEBGPU_DEVICE_LIMIT');
+            if (!deferDevice && (vertexBytes > this.limits.maxBufferSize || indexBytes > this.limits.maxBufferSize)) throw new ClassifiedWebGPUFailure('WEBGPU_DEVICE_LIMIT');
         }
         if (![cpuBytes, sceneBytes, uniformBytes].every(Number.isSafeInteger) || cpuBytes > B1_LIMITS.cpu || sceneBytes > B1_LIMITS.scene || uniformBytes > B1_LIMITS.uniform) throw new ClassifiedWebGPUFailure('WEBGPU_FRAME_BUDGET');
         if (cpuBytes !== scene.cpuLogicalBytes || sceneBytes !== scene.sceneBytes || uniformBytes !== scene.uniformBytes) throw new ClassifiedWebGPUFailure('WEBGPU_FRAME_INVALID');
-        if (count > 0 && 64 > this.limits.maxBufferSize) throw new ClassifiedWebGPUFailure('WEBGPU_DEVICE_LIMIT');
+        if (!deferDevice && count > 0 && 64 > this.limits.maxBufferSize) throw new ClassifiedWebGPUFailure('WEBGPU_DEVICE_LIMIT');
         return { scene, functions, sceneBytes, uniformBytes, depthBytes: 0, meshes: [], draws: [] };
     }
     private packScene(plan: SceneAdmission, trustedFailures?: WeakSet<object>): void {
@@ -1035,8 +1111,10 @@ class WebGPUHostImplementation implements WebGPUHost {
     }
     private renderTexturedOwnedFrame(input: TexturedRenderFrame2D): undefined {
         this.active(); if (this.busy) throw error('WEBGPU_REENTRANT');
+        if(SHARED_OPTIONS.has(this))throw error('WEBGPU_FRAME_PROFILE_UNSUPPORTED');
         this.busy = true; this.cpu = deferred<void>();
         try {
+            if(readOwnedSharedFrame(input)!==undefined)throw error('WEBGPU_FRAME_PROFILE_UNSUPPORTED');
             const frame = readOwnedTexturedFrame(input);
             if (frame === undefined) throw error('WEBGPU_FRAME_INVALID');
             return this.submitPrepared(this.preflightTextured(frame));
@@ -1049,10 +1127,170 @@ class WebGPUHostImplementation implements WebGPUHost {
         if (this.busy) throw error('WEBGPU_REENTRANT'); this.active(); this.busy = true; this.cpu = deferred<void>();
         try {
             // Preserve the legacy busy/state priority, then refuse the new owned protocol.
-            if (readOwnedTexturedFrame(input) !== undefined) throw error('WEBGPU_FRAME_PROFILE_UNSUPPORTED');
+            if (SHARED_OPTIONS.has(this) || readOwnedSharedFrame(input)!==undefined || readOwnedTexturedFrame(input) !== undefined) throw error('WEBGPU_FRAME_PROFILE_UNSUPPORTED');
             const p = arguments.length === 2 ? this.preflight(input, sceneInput) : this.preflight(input);
             return this.submitPrepared(p);
         } finally { this.busy = false; this.cpu.resolve(); }
+    }
+    private sharedOwnerSnapshot():SharedOwnerSnapshot2D {
+        this.active();return {...this.texturedSceneOwnerSnapshot(),pendingSceneBytes:this.pendingSceneBytes,pendingUniformBytes:this.pendingUniformBytes,pendingDepthBytes:this.pendingDepthBytes,pendingColorBytes:this.pendingColorBytes,pendingCanonicalBytes:this.pendingCanonicalBytes};
+    }
+    private renderSharedOwnedFrame(input:SharedRenderFrame2D,sceneInput?:SceneValue):undefined {
+        this.active();if(this.busy)throw error('WEBGPU_REENTRANT');
+        this.busy=true;this.cpu=deferred<void>();
+        let batch:PreparedSharedBatchPlan2D|undefined;
+        try{
+            let ownedFailure:object|undefined;
+            const trusted=new WeakSet<object>();
+            const refuse:(code:WebGPUHostErrorCode)=>never=code=>{const failure=new ClassifiedWebGPUFailure(code);trusted.add(failure);throw failure;};
+            let admitted:{storage:SharedSubmissionStorage2D;imagePlan:ImageResidencyPlan;projections:(Uint8Array<ArrayBuffer>|undefined)[];canonicalBytes:number;scene:SceneAdmission|undefined;ticket:Ticket|undefined;batch:PreparedSharedBatchPlan2D};
+            try{admitted=runOwnedPreparationScope(()=>{
+                const options=SHARED_OPTIONS.get(this);if(!options)refuse('WEBGPU_FRAME_PROFILE_UNSUPPORTED');
+                const frame=readOwnedSharedFrame(input);
+                if(!frame)refuse('WEBGPU_FRAME_PROFILE_UNSUPPORTED');
+                const functions=B1_FUNCTIONS.get(this);
+                if(arguments.length===2&&(!SHARED_SCENE_OWNERS.has(this)||!functions?.isSceneFrame3D(sceneInput)))refuse('WEBGPU_FRAME_INVALID');
+                if(frame.outputAlpha!==options.outputAlpha||frame.outputRepresentation!==(options.outputAlpha==='opaque'?'egret.srgb-opaque-unorm8/1':'egret.srgb-premultiplied-unorm8/1'))refuse('WEBGPU_FRAME_PROFILE_UNSUPPORTED');
+                if(options.outputAlpha==='opaque'&&frame.clearAlpha!==1)refuse('WEBGPU_FRAME_INVALID');
+                const width=Math.ceil(frame.width*options.pixelRatio),height=Math.ceil(frame.height*options.pixelRatio);
+                if(!Number.isSafeInteger(width)||!Number.isSafeInteger(height)||width<=0||height<=0||width>4294967295||height>4294967295||width>Math.floor(options.maxBackingPixels/height))refuse('WEBGPU_BACKING_LIMIT');
+                let scene:SceneAdmission|undefined;
+                if(arguments.length===2){try{scene=this.admitScene(sceneInput,true);}catch(cause){if(cause instanceof ClassifiedWebGPUFailure)trusted.add(cause);throw cause;}scene.depthBytes=4*width*height;}
+                const prepared=prepareSharedDraws2D(frame,width,height,options),ticket=this.ticket&&!this.ticket.bound?this.ticket:undefined;
+                // The storage planner completes joint logical fees before device/pending checks.
+                const sceneBufferBytes=scene?scene.scene.geometries.flatMap(geometry=>[24*geometry.vertexCount,4*geometry.indexCount]):[];
+                if(scene&&scene.scene.draws.length>0)sceneBufferBytes.push(64);
+                const storage=planSharedSubmission2D(prepared,options,{...this.limits,sceneBufferBytes},this.sharedOwnerSnapshot(),ticket!==undefined,scene);
+                if(scene)this.packScene(scene,trusted);this.active();
+                const packed=packSharedSubmission2D(prepared);this.active();
+                const demands:ImageResidencyDraw[]=[];
+                for(const entry of packed){if('barrier' in entry)continue;const viewIndex=entry.prepared.pageIndex;
+                    if(viewIndex===undefined)demands.push({kind:'rect'});
+                    else demands.push({kind:entry.prepared.command.kind==='mesh'?'mesh':'image',packed:{vertexCount:entry.vertexCount},viewIndex});}
+                const imagePlan=this.planImageResidency(storage.projectionPlan,demands,true);
+                const pages=materializeSharedPages2D(storage,new Set(imagePlan.use.candidates.keys()),this.sharedOwnerSnapshot());this.active();
+                checkSharedCapacity2D(storage,this.sharedOwnerSnapshot(),pages.canonicalBytes);
+                batch=prepareSharedBatches2D(packed,this.limits.maxBufferSize,this.batchScratch);this.active();
+                return {storage,imagePlan,...pages,scene,ticket,batch};
+            },failure=>{ownedFailure=failure;});}
+            catch(cause){
+                if(this.state!=='active')throw this.stateError();
+                if(cause instanceof ClassifiedWebGPUFailure&&trusted.has(cause))throw cause.publicError;
+                if(cause===ownedFailure){
+                    if(cause instanceof SharedPreparationError)throw error(cause.reason==='profile'?'WEBGPU_FRAME_PROFILE_UNSUPPORTED':cause.reason==='budget'?'WEBGPU_FRAME_BUDGET':cause.reason==='precision'?'WEBGPU_PRECISION_UNSUPPORTED':'WEBGPU_FRAME_INVALID',cause);
+                    if(cause instanceof SharedStorageError2D)throw error(cause.reason==='device'?'WEBGPU_DEVICE_LIMIT':cause.reason==='backpressure'?'WEBGPU_BACKPRESSURE':cause.reason==='serial'?'WEBGPU_SERIAL_EXHAUSTED':'WEBGPU_FRAME_BUDGET',cause);
+                    if(cause instanceof GeometryPreparationError)throw this.ownedTexturedPreparationError(cause);
+                }
+                throw error('WEBGPU_FRAME_INVALID',cause);
+            }
+            return this.submitShared(admitted);
+        }finally{if(batch&&!batch.transferred)this.batchScratch.release(batch);this.busy=false;this.cpu.resolve();}
+    }
+    private submissionTarget(record:Submission,requestId:number,gate:()=>void):{resource:OwnedWebGPUTexture;view:GPUTextureView} {
+        gate();const request=record.bufferPlan.requests[requestId]!;
+        if(request.kind==='buffer')throw new TypeError('Expected target lease');
+        let lease=record.bufferLeases[requestId];
+        if(!lease){
+            const raw=record.shared?.rawTargets.find(slot=>slot.requestId===requestId);
+            if(!raw)throw new TypeError('Missing raw target owner');
+            // The slot already exists: retain the returned native object before
+            // allocating its registered wrapper or reading any external method.
+            raw.texture=this.texture!({size:{width:request.width,height:request.height,depthOrArrayLayers:1},dimension:'2d',format:request.format,mipLevelCount:1,sampleCount:1,usage:request.usage});
+            const texture=raw.texture;
+            try{raw.destroy=this.method(texture,'destroy',()=>undefined);}catch(cause){record.unsafe=true;this.proofFailed(cause);throw cause;}gate();
+            const resource:OwnedWebGPUTexture={texture,destroy:raw.destroy,cleaned:false};
+            lease=this.bufferPool.registerCreated(request,resource);record.bufferLeases[requestId]=lease;
+            // Only the completed, recorded registration transfers ownership.
+            raw.texture=undefined;raw.destroy=undefined;
+        }
+        if(lease.handle.kind==='buffer')throw new TypeError('Target lease kind');
+        const resource=lease.handle.resource,view=this.method(resource.texture,'createView',gate)();record.views.push(view);gate();return {resource,view};
+    }
+    private submitShared(p:{storage:SharedSubmissionStorage2D;imagePlan:ImageResidencyPlan;projections:(Uint8Array<ArrayBuffer>|undefined)[];canonicalBytes:number;scene:SceneAdmission|undefined;ticket:Ticket|undefined;batch:PreparedSharedBatchPlan2D}):undefined {
+        const {storage,imagePlan,scene,batch}=p,{prepared}=storage,{frame,width,height}=prepared;
+        this.assertImagePlanCurrent(imagePlan);
+        const requests:RetentionRequest[]=[];
+        const buffer=(role:SubmissionBufferRequest['role'],usage:SubmissionBufferRequest['usage'],byteLength:number):void=>{if(byteLength>0)requests.push({kind:'buffer',id:requests.length,role,usage,byteLength});};
+        for(const draw of batch.draws){buffer('vertex',40,draw.data.byteLength);buffer('uniform',72,128);}
+        if(scene){for(const mesh of scene.meshes){buffer('vertex',40,mesh.vertexBytes);buffer('index',24,mesh.indexBytes);}for(const draw of scene.draws)buffer('uniform',72,draw.uniform.byteLength);}
+        const colorId=requests.length;
+        requests.push({kind:'color',id:colorId,width,height,format:'rgba8unorm-srgb',usage:20,byteLength:storage.colorBytes,sampleCount:1,mipLevelCount:1,depthOrArrayLayers:1,recipe:'egret.srgb-pma8-target/1'});
+        const depthId=scene?requests.length:undefined;
+        if(scene)requests.push({kind:'depth',id:depthId!,width,height,format:'depth32float',usage:16,byteLength:scene.depthBytes,sampleCount:1,mipLevelCount:1,depthOrArrayLayers:1,recipe:'egret.shared-reverse-depth/1'});
+        const bufferPlan=this.bufferPool.plan(requests),bufferLeases:(RetentionLease|undefined)[]=new Array(requests.length).fill(undefined);
+        for(const lease of bufferPlan.leases)bufferLeases[lease.requestId]=lease;
+        const rawTargets:RawTargetSlot[]=[{requestId:colorId,texture:undefined,destroy:undefined,cleanupAttempted:false}];
+        if(depthId!==undefined)rawTargets.push({requestId:depthId,texture:undefined,destroy:undefined,cleanupAttempted:false});
+        this.assertImagePlanCurrent(imagePlan);checkSharedCapacity2D(storage,this.sharedOwnerSnapshot(),p.canonicalBytes);
+        const serial=++this.lastSerial,done=deferred<void>();
+        const record:Submission={batchPlan:batch,shared:{frame,draws:batch.draws,colorBytes:storage.colorBytes,canonicalBytes:p.canonicalBytes,rawTargets},
+            serial,upload:storage.upload,readback:storage.staging+storage.output,textureBytes:prepared.pageBytes,geometryBytes:prepared.geometryBytes,
+            sceneBytes:scene?.sceneBytes??0,uniformBytes:scene?.uniformBytes??0,depthBytes:scene?.depthBytes??0,
+            resources:[],textures:[],views:[],bindings:[],frame:undefined,projectionPlan:storage.projectionPlan,projections:p.projections,draws:[],imageUse:undefined,
+            bufferPlan,bufferClaimed:false,bufferLeases,bufferReturns:undefined,retiring:false,bindingCandidates:[],scene:scene?.scene,meshes:scene?.meshes??[],sceneDraws:scene?.draws??[],
+            outcome:done.promise,completion:done.promise,failure:undefined,unsafe:false,retired:false};
+        this.ledger.add(record);batch.transferred=true;
+        this.pendingUploadBytes+=record.upload;this.pendingReadbackBytes+=record.readback;this.pendingTextureBytes+=record.textureBytes;this.pendingGeometryBytes+=record.geometryBytes;
+        this.pendingSceneBytes+=record.sceneBytes;this.pendingUniformBytes+=record.uniformBytes;this.pendingDepthBytes+=record.depthBytes;
+        // Active targets and retained canonical CPU arrays have separate ledgers.
+        // Neither is an upload byte or a second idle retention allowance.
+        this.pendingColorBytes+=storage.colorBytes;this.pendingCanonicalBytes+=p.canonicalBytes;
+        const ticket=p.ticket;if(ticket)ticket.bound=true;
+        const outcomes:Promise<unknown>[]=[];let touchedQueue=false,synchronous:EgretError|undefined,staging:OwnedWebGPUBuffer|undefined,submitted=false;
+        const gate=():void=>this.active();
+        try{
+            for(const handle of bufferPlan.victims)this.bufferCleanup.add(handle);
+            const imageUse=this.beginImageResidency(record,imagePlan);
+            this.bufferPool.claim(bufferPlan);record.bufferClaimed=true;
+            for(const entry of imagePlan.victims){gate();this.destroyReadyImage(entry);gate();}
+            for(const handle of bufferPlan.victims){gate();this.destroyPooledBuffer(handle);gate();}
+            this.scoped(serial,'frame',outcomes as Promise<void>[],gate,()=>{
+                const oldWidth=this.surface.width;gate();const oldHeight=this.surface.height;gate();
+                if(oldWidth!==width){this.surface.width=width;gate();}if(oldHeight!==height){this.surface.height=height;gate();}
+                const actualWidth=this.surface.width;gate();const actualHeight=this.surface.height;gate();if(actualWidth!==width||actualHeight!==height)throw new Error('Canvas rejected dimensions');
+                if(oldWidth!==width||oldHeight!==height)this.configureSurface(gate);
+                const realized=new Map<number,{texture:GPUTexture;view:GPUTextureView}>();
+                for(const draw of batch.draws){const index=draw.prepared.pageIndex;if(index!==undefined&&!realized.has(index))realized.set(index,this.realizeImageResidency(record,imageUse,index,gate));}
+                let requestId=0;const vertices=new Map<PackedSharedDraw2D,OwnedWebGPUBuffer>(),bindings=new Map<PackedSharedDraw2D,GPUBindGroup>();
+                for(const draw of batch.draws){const vertex=this.submissionBuffer(record,requestId++,gate).handle.resource,lease=this.submissionBuffer(record,requestId++,gate),uniform=lease.handle.resource;
+                    vertices.set(draw,vertex);touchedQueue=true;this.write!(vertex.buffer,0,draw.data);gate();this.write!(uniform.buffer,0,draw.uniform);gate();
+                    const source=draw.prepared,index=source.pageIndex,sampled=index!==undefined,role=this.sharedPipelines.get((sampled?'sampled:':'solid:')+source.material.blend)!;
+                    const image=sampled?imageUse.hits.get(index)??imageUse.candidates.get(index)!.entry:undefined;
+                    const view=sampled?realized.get(index)!.view:undefined,sampler=sampled?this.sharedSamplers.get(source.material.filter+':'+source.material.addressU+':'+source.material.addressV):undefined;
+                    const key:DrawBindingKey={session:this.imageEpoch,layout:role.layout,texture:image?.identity,view,sampler,uniform:lease.handle,offset:0,size:128};
+                    const entries:GPUBindGroupEntry[]=[{binding:0,resource:{buffer:uniform.buffer,offset:0,size:128}}];if(sampled)entries.push({binding:1,resource:view!},{binding:2,resource:sampler!});
+                    bindings.set(draw,this.submissionBinding(record,key,entries,image,gate));
+                }
+                const meshes=new Map<PackedMesh,{vertex:OwnedWebGPUBuffer|undefined;index:OwnedWebGPUBuffer|undefined}>(),sceneBindings=new Map<SceneUploadDraw,GPUBindGroup>();
+                if(scene){for(const mesh of scene.meshes){const vertex=mesh.vertexBytes?this.submissionBuffer(record,requestId++,gate).handle.resource:undefined,index=mesh.indexBytes?this.submissionBuffer(record,requestId++,gate).handle.resource:undefined;meshes.set(mesh,{vertex,index});
+                        if(vertex){touchedQueue=true;this.write!(vertex.buffer,0,mesh.vertices);gate();}if(index){touchedQueue=true;this.write!(index.buffer,0,mesh.indices);gate();}}
+                    for(const draw of scene.draws){const lease=this.submissionBuffer(record,requestId++,gate);touchedQueue=true;this.write!(lease.handle.resource.buffer,0,draw.uniform);gate();
+                        const key:DrawBindingKey={session:this.imageEpoch,layout:this.meshLayout!,texture:undefined,view:undefined,sampler:undefined,uniform:lease.handle,offset:0,size:64};
+                        sceneBindings.set(draw,this.submissionBinding(record,key,[{binding:0,resource:{buffer:lease.handle.resource.buffer,offset:0,size:64}}],undefined,gate));}}
+                const color=this.submissionTarget(record,colorId,gate),depth=depthId===undefined?undefined:this.submissionTarget(record,depthId,gate);
+                const resolveBinding=this.bindGroup!({layout:this.resolveLayout!,entries:[{binding:0,resource:color.view}]});record.bindings.push(resolveBinding);gate();
+                staging=ticket?this.ownedBuffer(storage.staging,9,record,gate):undefined;
+                const texture=this.currentTexture!();gate();const canvasView=this.method(texture,'createView',gate)();gate();
+                const encoder=this.encoder!();gate();const begin=this.method(encoder,'beginRenderPass',gate),finish=this.method(encoder,'finish',gate),copy=ticket?this.method(encoder,'copyTextureToBuffer',gate):undefined;
+                const c=frame.clearColor,a=frame.clearAlpha;
+                const attachment:GPURenderPassColorAttachment={view:color.view,loadOp:'clear',storeOp:'store',clearValue:{r:a*decodeSharedSRGB(((c>>>16)&255)/255),g:a*decodeSharedSRGB(((c>>>8)&255)/255),b:a*decodeSharedSRGB((c&255)/255),a}};
+                const capture=(pass:GPURenderPassEncoder,keys:readonly (keyof GPURenderPassEncoder)[]):GPURenderPassEncoder=>{const captured={} as GPURenderPassEncoder;for(const key of keys){const method=this.method(pass,key,gate) as (...args:unknown[])=>unknown;Object.defineProperty(captured,key,{value:(...args:unknown[])=>{gate();const result=method(...args);gate();return result;}});}return captured;};
+                if(scene){const raw=begin({colorAttachments:[attachment],depthStencilAttachment:{view:depth!.view,depthClearValue:0,depthLoadOp:'clear',depthStoreOp:'store'}});gate();
+                    const pass=capture(raw,scene.draws.some(draw=>draw.mesh.indexCount>0)?['setPipeline','setViewport','setScissorRect','setVertexBuffer','setIndexBuffer','setBindGroup','drawIndexed']:[]),end=this.method(raw,'end',gate);
+                    for(const draw of scene.draws)if(draw.mesh.indexCount>0){const mesh=meshes.get(draw.mesh)!;scene.functions.encodeWebGPUMesh(pass,this.meshPipeline!,mesh.vertex!.buffer,mesh.index!.buffer,sceneBindings.get(draw)!,draw.mesh.indexCount,width,height);}end();gate();}
+                const raw=begin({colorAttachments:[scene?{view:color.view,loadOp:'load',storeOp:'store'}:attachment]});gate();
+                const pass=capture(raw,batch.draws.length?['setPipeline','setViewport','setScissorRect','setVertexBuffer','setBindGroup','draw']:[]),end=this.method(raw,'end',gate);
+                for(const draw of batch.draws){const role=this.sharedPipelines.get((draw.prepared.pageIndex===undefined?'solid:':'sampled:')+draw.prepared.material.blend)!;
+                    pass.setPipeline(role.pipeline);pass.setViewport(0,0,width,height,0,1);pass.setScissorRect(0,0,width,height);pass.setVertexBuffer(0,vertices.get(draw)!.buffer);pass.setBindGroup(0,bindings.get(draw)!);pass.draw(draw.vertexCount);}
+                end();gate();
+                const resolveRaw=begin({colorAttachments:[{view:canvasView,loadOp:'clear',storeOp:'store',clearValue:{r:0,g:0,b:0,a:0}}]});gate();
+                const resolve=capture(resolveRaw,['setPipeline','setViewport','setScissorRect','setBindGroup','draw']),endResolve=this.method(resolveRaw,'end',gate);
+                resolve.setPipeline(this.resolvePipeline!);resolve.setViewport(0,0,width,height,0,1);resolve.setScissorRect(0,0,width,height);resolve.setBindGroup(0,resolveBinding);resolve.draw(3);endResolve();gate();
+                if(staging){try{copy!({texture},{buffer:staging.buffer,bytesPerRow:storage.rowPitch,rowsPerImage:height},{width,height,depthOrArrayLayers:1});}catch(cause){throw new ClassifiedWebGPUFailure('WEBGPU_READBACK_FAILED',cause,this.fail('WEBGPU_READBACK_FAILED',cause,'readback',serial));}gate();}
+                const commands=finish();gate();touchedQueue=true;this.submit!([commands]);submitted=true;gate();
+            });
+        }catch(cause){synchronous=cause instanceof ClassifiedWebGPUFailure?cause.publicError:this.fail('WEBGPU_RENDER_FAILED',cause,'frame',serial);record.failure=synchronous;}
+        return this.finishSubmission(record,ticket,done,outcomes,touchedQueue,synchronous,submitted,staging,frame.frameId,width,height,storage.rowPitch,storage.output);
     }
     /** One queue, scope, fence, readback and retirement owner for every supported plan. */
     private submitPrepared(p: SharedSubmissionPlan2D): undefined {
@@ -1070,7 +1308,7 @@ class WebGPUHostImplementation implements WebGPUHost {
         const imagePlan = p.imagePlan;
         this.assertImagePlanCurrent(imagePlan);
         const bufferPlan = this.planBuffers(p);
-        const bufferLeases: (SubmissionBufferLease | undefined)[] = new Array(bufferPlan.requests.length).fill(undefined);
+        const bufferLeases: (RetentionLease | undefined)[] = new Array(bufferPlan.requests.length).fill(undefined);
         for (const lease of bufferPlan.leases) bufferLeases[lease.requestId] = lease;
         this.assertImagePlanCurrent(imagePlan);
         const serial = ++this.lastSerial, done = deferred<void>();
@@ -1081,7 +1319,7 @@ class WebGPUHostImplementation implements WebGPUHost {
         // Bind precisely the unbound ticket whose capacity this preflight reserved.
         const ticket = p.ticket;
         if (ticket) ticket.bound = true;
-        const outcomes: Promise<unknown>[] = []; let touchedQueue = false, synchronous: EgretError | undefined, result: WebGPUReadback | undefined, staging: OwnedWebGPUBuffer | undefined, submitted = false;
+        const outcomes: Promise<unknown>[] = []; let touchedQueue = false, synchronous: EgretError | undefined, staging: OwnedWebGPUBuffer | undefined, submitted = false;
         const gate = (): void => this.active();
         try {
             // Every match and victim has an owner before the first native call.
@@ -1194,9 +1432,13 @@ class WebGPUHostImplementation implements WebGPUHost {
             synchronous = cause instanceof ClassifiedWebGPUFailure ? cause.publicError : this.fail('WEBGPU_RENDER_FAILED', cause, 'frame', serial);
             record.failure = synchronous;
         }
+        return this.finishSubmission(record,ticket,done,outcomes,touchedQueue,synchronous,submitted,staging,p.frame.frameId,p.width,p.height,p.rowPitch,p.output);
+    }
+    private finishSubmission(record:Submission,ticket:Ticket|undefined,done:ReturnType<typeof deferred<void>>,outcomes:Promise<unknown>[],touchedQueue:boolean,synchronous:EgretError|undefined,submitted:boolean,staging:OwnedWebGPUBuffer|undefined,frameId:number,width:number,height:number,rowPitch:number,output:number):undefined {
+        const serial=record.serial;let result:SharedWebGPUReadback|undefined;
         // No asynchronous readback closure is formed inside the current-texture scope.
         if (submitted && staging && !synchronous) {
-            try { outcomes.push(this.readPixels(staging, record, p.frame.frameId, p.width, p.height, p.rowPitch, p.output).then(value => { result = value; })); }
+            try { outcomes.push(this.readPixels(staging, record, frameId, width, height, rowPitch, output).then(value => { result = value; })); }
             catch (cause) { record.unsafe = true; synchronous = this.fail('WEBGPU_READBACK_FAILED', cause, 'readback', serial, true); record.failure = synchronous; }
         }
         // A successful/attempted write is queue work even if encoding prevented submit.
@@ -1225,13 +1467,13 @@ class WebGPUHostImplementation implements WebGPUHost {
         if (synchronous) throw synchronous;
         return undefined;
     }
-    private readPixels(staging: OwnedWebGPUBuffer, record: Submission, frameId: number, width: number, height: number, rowPitch: number, output: number): Promise<WebGPUReadback> {
+    private readPixels(staging: OwnedWebGPUBuffer, record: Submission, frameId: number, width: number, height: number, rowPitch: number, output: number): Promise<SharedWebGPUReadback> {
         const mapping = observed(staging.map(1));
         return observed(mapping.then(() => {
             staging.mapped = true; const mapped = new Uint8Array(staging.mappedRange()), bytes = new Uint8Array(output);
             for (let y = 0; y < height; y++) bytes.set(mapped.subarray(y * rowPitch, y * rowPitch + width * 4), y * width * 4);
             if (this.format === 'bgra8unorm') for (let i = 0; i < bytes.length; i += 4) { const blue = bytes[i]!; bytes[i] = bytes[i + 2]!; bytes[i + 2] = blue; }
-            return Object.freeze({ serial: record.serial, frameId, width, height, format: 'rgba8unorm' as const, sourceFormat: this.format, colorSpace: 'srgb' as const, alphaMode: 'premultiplied' as const, bytes });
+            return Object.freeze({ serial: record.serial, frameId, width, height, format: 'rgba8unorm' as const, sourceFormat: this.format, colorSpace: 'srgb' as const, alphaMode: SHARED_OPTIONS.get(this)?.outputAlpha ?? 'premultiplied' as const, bytes });
         }).catch(cause => { record.unsafe = true; throw this.fail('WEBGPU_READBACK_FAILED', cause, 'readback', record.serial, true); }));
     }
     private retire(record: Submission): void {
@@ -1252,7 +1494,7 @@ class WebGPUHostImplementation implements WebGPUHost {
         try {
             if (!record.bufferClaimed) record.bufferLeases.fill(undefined);
             if (!record.bufferReturns && this.isReuseEligible(record)) {
-                const leases = record.bufferLeases.filter((lease): lease is SubmissionBufferLease => lease !== undefined);
+                const leases = record.bufferLeases.filter((lease): lease is RetentionLease => lease !== undefined);
                 // Any later metadata failure leaves this exact reservation and
                 // every lease reachable from the unretired ledger record.
                 record.bufferReturns = this.bufferPool.reserveReturns(leases);
@@ -1270,6 +1512,17 @@ class WebGPUHostImplementation implements WebGPUHost {
                 }
                 if (candidateOwned) continue;
                 for (const cause of cleanupWebGPUTexture(resource)) failed(cause);
+            }
+            if (record.shared) for (const raw of record.shared.rawTargets) {
+                if (raw.texture === undefined || raw.cleanupAttempted) continue;
+                // Unknown cleanup is terminal. Keep the exact native owner and
+                // the submission charge; neither close nor a later retire retries.
+                raw.cleanupAttempted = true;
+                try {
+                    if (!raw.destroy) throw new TypeError('Target destruction method was not captured');
+                    raw.destroy();
+                    raw.texture = undefined; raw.destroy = undefined;
+                } catch (cause) { failed(cause); }
             }
             this.finishImageResidency(record, !this.finalizing);
             if (record.bufferReturns) {
@@ -1295,16 +1548,18 @@ class WebGPUHostImplementation implements WebGPUHost {
             }
             if (this.isReuseEligible(record)) {
                 try {
-                    this.bindingCache.publish(record.bindingCandidates.filter(candidate => retained.has(candidate.key.uniform)
+                    this.bindingCache.publish(record.bindingCandidates.filter(candidate => retained.has(candidate.key.uniform as RetentionHandle)
                         && (!candidate.image || candidate.image.state === 'ready' && !candidate.image.resource!.cleaned)));
                 } catch (cause) { failed(cause); }
             }
             // An uncompleted ownership transfer must retain both its ledger
             // charge and record for explicit close; never silently drop it.
             if (record.bufferLeases.some(lease => lease !== undefined)) throw new TypeError('Unfinished buffer cleanup');
+            if (record.shared?.rawTargets.some(raw => raw.texture !== undefined)) throw new TypeError('Unfinished target cleanup');
             this.ledger.delete(record); this.pendingUploadBytes -= record.upload; this.pendingReadbackBytes -= record.readback; this.pendingTextureBytes -= record.textureBytes;
             this.pendingSceneBytes -= record.sceneBytes; this.pendingUniformBytes -= record.uniformBytes; this.pendingDepthBytes -= record.depthBytes;
             this.pendingGeometryBytes -= record.geometryBytes;
+            if(record.shared){this.pendingColorBytes-=record.shared.colorBytes;this.pendingCanonicalBytes-=record.shared.canonicalBytes;record.shared.draws.length=0;delete record.shared;}
             record.resources.length = 0; record.textures.length = 0; record.views.length = 0; record.bindings.length = 0;
             record.projections.length = 0; record.draws.length = 0; record.frame = undefined; record.projectionPlan = undefined;
             record.meshes.length = 0; record.sceneDraws.length = 0; record.scene = undefined;
@@ -1313,8 +1568,8 @@ class WebGPUHostImplementation implements WebGPUHost {
         } catch (cause) { failed(cause); throw cause; }
         finally { record.retiring = false; }
     }
-    public requestReadback(): Promise<WebGPUReadback> {
-        try { this.active(); if (!this.options.enableReadback) throw error('WEBGPU_READBACK_DISABLED'); if (this.ticket) throw error('WEBGPU_READBACK_PENDING'); this.ticket = { ...deferred<WebGPUReadback>(), bound: false }; return this.ticket.promise; }
+    public requestReadback(): Promise<SharedWebGPUReadback> {
+        try { this.active(); if (!this.options.enableReadback) throw error('WEBGPU_READBACK_DISABLED'); if (this.ticket) throw error('WEBGPU_READBACK_PENDING'); this.ticket = { ...deferred<SharedWebGPUReadback>(), bound: false }; return this.ticket.promise; }
         catch (cause) { return observed(Promise.reject(cause)); }
     }
     public whenIdle(): Promise<void> {
@@ -1359,7 +1614,7 @@ class WebGPUHostImplementation implements WebGPUHost {
         return () => { if (!cancelled) { cancelled = true; clear(timer); } };
     }
 }
-export function createWebGPUHost(options: WebGPUHostOptions): WebGPUHost { return new WebGPUHostImplementation(options); }
+export function createWebGPUHost(options: WebGPUHostOptions): WebGPUHost { return new WebGPUHostImplementation(options) as unknown as WebGPUHost; }
 /** Opt-in factory; runtime identity comes exclusively from completed Engine captures. */
 export function createTexturedWebGPUHost(options: TexturedWebGPUHostOptions): TexturedWebGPUHost {
     return new WebGPUHostImplementation(options, TEXTURED_MODE) as unknown as TexturedWebGPUHost;
@@ -1372,3 +1627,6 @@ export function createB1WebGPUHostInternal(options: WebGPUHostOptions): B1WebGPU
 export function createTexturedB1WebGPUHostInternal(options: TexturedWebGPUHostOptions): TexturedB1WebGPUHost {
     return new WebGPUHostImplementation(options, TEXTURED_SCENE_MODE) as unknown as TexturedB1WebGPUHost;
 }
+
+export function createSharedWebGPUHost(options:SharedWebGPUHostOptions):SharedWebGPUHost {return new WebGPUHostImplementation(options,SHARED_MODE) as unknown as SharedWebGPUHost;}
+export function createSharedSceneWebGPUHostInternal(options:SharedSceneWebGPUHostOptions):SharedSceneWebGPUHost {return new WebGPUHostImplementation(options,SHARED_SCENE_MODE) as unknown as SharedSceneWebGPUHost;}

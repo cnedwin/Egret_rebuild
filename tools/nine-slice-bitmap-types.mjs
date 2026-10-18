@@ -9,6 +9,12 @@ import { fingerprintFile, logicalPath, ownerRelativePath, samePhysicalPath } fro
 const root = realpathSync(fileURLToPath(new URL('../', import.meta.url)));
 if (process.argv.length !== 2) throw new TypeError('This type gate accepts no arguments');
 const inventory = JSON.parse(readFileSync(path.join(root, 'tests/types/nine-slice-bitmap-diagnostic-expectations.json'), 'utf8'));
+// Preserve the immutable predecessor and authenticate the complete M1.3 successor.
+const m13HelperPin = fingerprintFile(root, 'tools/lib/m13-strict-successor.mjs');
+if (m13HelperPin.bytes !== 10785 || m13HelperPin.sha256 !== '61a14bb8be2162d861a26b822ded713c552b4032d755e291578b225cd13ef337') throw Error('M1.3 strict helper changed before import');
+const { selectM13StrictSuccessor } = await import('./lib/m13-strict-successor.mjs');
+const m13 = selectM13StrictSuccessor(root, 'nine-slice-bitmap', inventory);
+
 const equal = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 const fail = message => { throw Error('NineSliceBitmap types: ' + message); };
 const lanes = ['positive','negative','import-negative'];
@@ -23,7 +29,7 @@ if (inventory.schemaVersion !== 1 || inventory.kind !== 'NINE_SLICE_BITMAP_ACTUA
   || inventory.status !== 'OBSERVED_FROZEN_TS7_DIAGNOSTICS'
   || !equal(inventory.tupleFormat, ['file','line','column','code','message'])) fail('actual observations are pending or malformed');
 if (!equal(inventory.inputPins?.map(pin => pin.path), expectedInputs)) fail('incomplete compiler/configuration/consumer/declaration inputs');
-for (const pin of inventory.inputPins) {
+for (const pin of m13?.inputPins ?? inventory.inputPins) {
   if (logicalPath(pin.path) !== pin.path || !equal(fingerprintFile(root, pin.path), pin)) fail('changed raw input: ' + pin.path);
 }
 if (JSON.parse(readFileSync(path.join(root, 'node_modules/typescript/package.json'), 'utf8')).version !== '7.0.2') fail('compiler version changed');
@@ -32,6 +38,7 @@ for (const name of ['contracts','runtime','engine','project']) {
 }
 if (!Array.isArray(inventory.groups) || !equal(inventory.groups.map(group => group.lane), lanes)) fail('incomplete consumer lanes');
 for (const group of inventory.groups) {
+  m13?.recheck();
   if (group.expectedExit !== (group.lane === 'positive' ? 0 : 1)) fail('wrong required lane exit');
   if (!Array.isArray(group.cases) || !Array.isArray(group.tuples)
     || group.tuples.some(tuple => !Array.isArray(tuple) || tuple.length !== 5
@@ -69,8 +76,9 @@ for (const group of inventory.groups) {
     else fail('unlocated or unconsumed compiler output');
   }
   if (tuples.some(tuple=>tuple[0]!==file || tuple[3]===2307 || /[A-Za-z]:[\\/]|file:\/\//.test(tuple[4]))
-    || !equal(tuples,group.tuples) || tuples.length!==cases.length
+    || !equal(tuples,m13?.group(group.lane).tuples ?? group.tuples) || tuples.length!==cases.length
     || !equal(tuples.map(tuple=>tuple[1]),cases.map(row=>row.line))) fail('missing, extra, unrelated or changed complete diagnostic');
+  m13?.verifyClosure(group.lane);
   console.log('NineSliceBitmap ' + group.lane + ' exact strict diagnostics: ' + JSON.stringify(tuples));
 }
 console.log('NineSliceBitmap strict public consumers PASS; runtime/browser acceptance remains separate.');

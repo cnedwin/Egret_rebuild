@@ -62,7 +62,7 @@ function isolated(action){
   for(const name of packages)copy(path.join(repository,'packages',name),'packages/'+name);
   const policy=JSON.parse(readFileSync(path.join(repository,'tools/bitmap-binding-ticket-policy.json'),'utf8'));
   const retained=[...policy.packages,...policy.configurations,...policy.stableEntries,...policy.oldRootPins,policy.oldEngineDeclarationPin,...policy.workspacePins,...policy.selectedProductPins];
-  const files=new Set(['tools/bitmap-binding-ticket-boundary.mjs','tools/bitmap-binding-ticket-policy.json','tools/lib/file-identity.mjs',...retained.map(row=>row.path),...policy.entries.flatMap(entry=>[entry.source,entry.js,entry.declaration])]);
+  const files=new Set(['tools/bitmap-resource-slot-boundary.mjs','tools/bitmap-resource-slot-policy.json','tools/bitmap-binding-ticket-boundary.mjs','tools/bitmap-binding-ticket-policy.json','tools/lib/file-identity.mjs',...retained.map(row=>row.path),...policy.entries.flatMap(entry=>[entry.source,entry.js,entry.declaration])]);
   for(const file of files)if(!copied.some(row=>row.path===file))copy(path.join(repository,file),file);
   mkdirSync(path.join(root,'node_modules/@egret'),{recursive:true});
   for(const name of packages)symlinkSync(path.join(root,'packages',name),path.join(root,'node_modules/@egret',name),process.platform==='win32'?'junction':'dir');
@@ -95,4 +95,21 @@ for(const [name,relative,code,mutate]of controls)test('BBT-M12 '+name,()=>isolat
   assert.deepEqual(inventory(root).filter(row=>JSON.stringify(row)!==JSON.stringify(prior.get(row.path))).map(row=>row.path),[relative]);
   rejected(run(),code);
  }finally{writeFileSync(file,before);assert.deepEqual(inventory(root),baseline);accepted(run());}
+}));
+
+for(const [family,relative,code]of [
+ ['bitmap-binding-ticket','packages/engine/src/Engine.ts','BBT_BOUNDARY_SELECTED_PRODUCT_IDENTITY'],
+ ['bitmap-binding-ticket','packages/engine/dist/Engine.d.ts','BBT_BOUNDARY_ENGINE_PUBLIC_DECLARATION'],
+ ['bitmap-resource-slot','packages/engine/src/Engine.ts','BRS_BOUNDARY_DEFAULT_ENTRY_IDENTITY'],
+ ['bitmap-resource-slot','packages/engine/dist/Engine.d.ts','BRS_BOUNDARY_ENGINE_PUBLIC_DECLARATION'],
+])test('M13 interface group preserves '+family+' refusal for '+relative,()=>isolated(({root,baseline})=>{
+ const execute=()=>spawnSync(process.execPath,[path.join(root,'tools/'+family+'-boundary.mjs')],{cwd:root,env:environment,windowsHide:true,encoding:'utf8',timeout:30000,maxBuffer:8*1024*1024});
+ const healthy=()=>{const result=execute();assert.ifError(result.error);assert.equal(result.signal,null);assert.equal(result.status,0,result.stdout+result.stderr);assert.equal(result.stderr,'');assert.ok(result.stdout.startsWith(family==='bitmap-binding-ticket'?'BBT_BOUNDARY_PASS ':'BRS_BOUNDARY_PASS '));};
+ healthy();const file=path.join(root,relative),before=readFileSync(file);
+ try{
+  writeFileSync(file,Buffer.concat([before,Buffer.from('\n// unregistered shared interface identity\n')]));
+  const prior=new Map(baseline.map(row=>[row.path,row]));
+  assert.deepEqual(inventory(root).filter(row=>JSON.stringify(row)!==JSON.stringify(prior.get(row.path))).map(row=>row.path),[relative]);
+  rejected(execute(),code);
+ }finally{writeFileSync(file,before);assert.deepEqual(inventory(root),baseline);healthy();}
 }));

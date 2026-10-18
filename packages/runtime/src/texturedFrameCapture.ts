@@ -1,3 +1,4 @@
+import { isSharedGeometry2D } from '@egret/contracts';
 import { bitmapAtlasPlacement } from './bitmapAtlasPlacement.js';
 import type { ClipRectangle2D, ImageData2D, Matrix2D, Rectangle2D, TexturedGeometry2D, TexturedRenderCommand2D } from '@egret/contracts';
 import type { Stage } from './Stage.js';
@@ -57,6 +58,8 @@ function admitTree(stage: Stage, engine: EngineContext, budget: TexturedCaptureB
     if (bitmapOccupied) budget.admitAuthoringUnits(1);
     const mesh = readMeshState(node);
     const meshGeometry = mesh?.geometry;
+    // Preserve the old hidden-inclusive geometry qualification point.
+    if (isSharedGeometry2D(meshGeometry)) throw new EgretError('FRAME_PROFILE_METADATA_UNSUPPORTED');
     if (meshGeometry !== undefined) {
       budget.admitAuthoringUnits(1);
       budget.admitSourceTriangles(meshGeometry.triangleCount);
@@ -160,6 +163,7 @@ export function collectTexturedFrameContent(stage: Stage): CapturedTexturedConte
         const rect = cached?.rectangles[i] ?? rectangle(matrix, primitive.rect), effective = alpha * primitive.alpha;
         rememberCaptureRectangle(draft, rect);
         if (rect.width === 0 || rect.height === 0 || effective === 0) continue;
+        if (state.sharedMaterial !== null || state.renderBoundary !== 'none') throw new EgretError('FRAME_PROFILE_METADATA_UNSUPPORTED');
         const commandClipRecords = commandClips();
         const command = Object.freeze({ kind: 'rect' as const, matrix, rect, color: primitive.color, alpha: effective, clips: commandClipRecords });
         commands.push(command);
@@ -172,6 +176,7 @@ export function collectTexturedFrameContent(stage: Stage): CapturedTexturedConte
         const rect = cached?.bitmapRect ?? rectangle(bitmapMatrix, placement?.rect ?? { x: 0, y: 0, width: bitmap.width, height: bitmap.height });
         rememberCaptureBitmap(draft, bitmapMatrix, rect);
         const snapshot = readBitmapImage(bitmap.lease);
+        if (snapshot.viewRegion !== null || state.sharedMaterial !== null || state.renderBoundary !== 'none') throw new EgretError('FRAME_PROFILE_METADATA_UNSUPPORTED');
         const imageIndex = images.register(snapshot.image, bitmap.sourceRect);
         const commandClipRecords = commandClips();
         const command = Object.freeze({ kind: 'image' as const, matrix: bitmapMatrix, rect, alpha, clips: commandClipRecords, imageIndex, sourceRect: bitmap.sourceRect });
@@ -182,16 +187,17 @@ export function collectTexturedFrameContent(stage: Stage): CapturedTexturedConte
       if (mesh !== undefined) {
         const snapshot = readMeshCaptureImage(mesh);
         // Current resource entitlement still precedes the cached arithmetic proof.
-        if (cached?.meshChecked !== true) referencedTuples(matrix, mesh.geometry);
+        if (cached?.meshChecked !== true) referencedTuples(matrix, admitted.meshGeometry!);
+        if (snapshot.viewRegion !== null || state.sharedMaterial !== null || state.renderBoundary !== 'none') throw new EgretError('FRAME_PROFILE_METADATA_UNSUPPORTED');
         rememberCaptureMesh(draft);
         const imageIndex = images.register(snapshot.image, mesh.sourceRect);
         // Geometry table order follows first emission, independently of Pass A.
-        let geometryIndex = geometryIndexes.get(mesh.geometry);
+        let geometryIndex = geometryIndexes.get(admitted.meshGeometry!);
         const commandClipRecords = commandClips();
         if (geometryIndex === undefined) {
           geometryIndex = geometries.length;
-          geometryIndexes.set(mesh.geometry, geometryIndex);
-          geometries.push(mesh.geometry);
+          geometryIndexes.set(admitted.meshGeometry!, geometryIndex);
+          geometries.push(admitted.meshGeometry!);
         }
         commands.push(Object.freeze({ kind: 'mesh', matrix, alpha, clips: commandClipRecords, imageIndex, sourceRect: mesh.sourceRect, geometryIndex }));
       }
@@ -205,11 +211,13 @@ export function collectTexturedFrameContent(stage: Stage): CapturedTexturedConte
           rememberCaptureText(draft, rect);
           const commandClipRecords = commandClips();
           const snapshot = readBitmapImage(committed.lease);
+          if (snapshot.viewRegion !== null || state.sharedMaterial !== null || state.renderBoundary !== 'none') throw new EgretError('FRAME_PROFILE_METADATA_UNSUPPORTED');
           const imageIndex = images.register(snapshot.image, committed.sourceRect);
           commands.push(Object.freeze({ kind: 'image', matrix, rect, alpha, clips: commandClipRecords,
             imageIndex, sourceRect: committed.sourceRect }));
         }
       }
+      if (state.sharedMaterial !== null || state.renderBoundary !== 'none') throw new EgretError('FRAME_PROFILE_METADATA_UNSUPPORTED');
       completeCaptureNode(draft, state);
       stack.push({ node, matrix, alpha, clips, children: childCountOf(node), nextChild: 0 });
     }

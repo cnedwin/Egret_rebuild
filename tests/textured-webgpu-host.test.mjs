@@ -29,7 +29,7 @@ test('H01 public textured WebGPU factory exists after legacy host baseline', asy
     assert.equal(f.pipelines.length, 2); assert.equal(old.getStatus().lastSerial, 1);
     // This is the one required missing-API assertion, after real setup/baseline.
     assert.equal(typeof gpu.createTexturedWebGPUHost, 'function', 'missing createTexturedWebGPUHost');
-    assert.deepEqual(Object.keys(gpu).sort(), ['createTexturedWebGPUHost', 'createWebGPUHost']);
+    assert.deepEqual(Object.keys(gpu).sort(), ['createSharedWebGPUHost', 'createTexturedWebGPUHost', 'createWebGPUHost']);
     assert.equal(Object.hasOwn(egret, 'createTexturedWebGPUHost'), false);
   }));
 });

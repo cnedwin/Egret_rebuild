@@ -115,7 +115,7 @@ function receipt(status) {
     advisoryCount: events.filter(row => row.kind === 'console' && row.disposition === 'advisory').length,
     artifacts: [...artifacts.values()].filter(row => row.name !== 'result.json'),
     budgets: { perOperationMs: 20000, operationMs: 240000, closeMs: 280000, hardMs: 295000, requiredOuterJobWatchdogMs: 300000,
-      events: 128, requests: 2048, fixtureEventsPerList: 128, selectedModules: 128, emittedBytes: 4194304, installedFiles: 4096, inputBytes: 536870912, outputBytes: 16777216 },
+      events: 128, requests: 2048, fixtureEventsPerList: 128, selectedModules: 256, emittedBytes: 4194304, installedFiles: 4096, inputBytes: 536870912, outputBytes: 16777216 },
     processOwnership: 'Separate external Windows Job/process-retirement receipt required; collector closure does not attest OS process retirement' };
 }
 const hardTimer = setTimeout(() => {
@@ -159,7 +159,8 @@ try {
     '@egret/engine/webgpu': path.join(repositoryRoot, 'packages/engine/dist/web/webgpu.js'),
     'robust-predicates': path.join(repositoryRoot, 'node_modules/robust-predicates/index.js'),
   };
-  const graph = await bounded('seal admitted emitted ESM/source graph', () => sealGraph({ repositoryRoot, aliases,
+  // Bound this complete dual-backend union without changing the helper's narrower default.
+  const graph = await bounded('seal admitted emitted ESM/source graph', () => sealGraph({ repositoryRoot, aliases, maxModules: 256,
     entryPaths: { canvas: [aliases['@egret/engine'], aliases['@egret/engine/web']], webgpu: [aliases['@egret/engine'], aliases['@egret/engine/webgpu']] } }));
   graph.inventory.forEach(row => pin(row, row.role));
   requireValue([...inputs.values()].reduce((sum, row) => sum + row.bytes, 0) <= 536870912, 'Aggregate input byte budget');

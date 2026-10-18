@@ -125,7 +125,8 @@ test('type diagnostic portability preserves message and relative path bytes',()=
  assert.throws(()=>portableDiagnostic('typeof import("/HOME/sdk/pkg")','/home/sdk','linux'),/unclassified absolute path/);
 });
 
-test('ticket diagnostic projection authenticates the selected file and exact escaped namespace',()=>{
+// Both routes invoke the actual projection function with explicit selection context.
+for(const selectedM13 of [false,true]) test('ticket diagnostic projection authenticates the selected file and exact escaped namespace'+(selectedM13?' with explicit M1.3 inputs':''),()=>{
  const fixture=fs.realpathSync.native(fs.mkdtempSync(path.join(os.tmpdir(),'egret 中文 namespace ')));
  const selected='packages/engine/dist/index.d.ts';
  try{
@@ -137,7 +138,8 @@ test('ticket diagnostic projection authenticates the selected file and exact esc
   const end=source.indexOf('\nif(inventory.schemaVersion',begin);
   assert.ok(begin>=0&&end>begin);
   const project=vm.runInNewContext('('+source.slice(begin,end)+')',{
-   root:fixture,inventory:{inputPins:[pin]},fingerprintFile,
+   // An empty predecessor inventory proves the M1.3 route selects its own pin.
+   root:fixture,inventory:{inputPins:selectedM13?[]:[pin]},m13:selectedM13?{inputPins:[pin]}:null,fingerprintFile,
    equal:(a,b)=>JSON.stringify(a)===JSON.stringify(b),fail:message=>{throw Error(message);}
   });
   const owner=fixture.replaceAll(String.fromCharCode(92),'/');

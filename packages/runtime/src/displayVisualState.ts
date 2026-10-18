@@ -1,4 +1,4 @@
-import type { Rectangle2D } from "@egret/contracts";
+import type { Rectangle2D, SharedMaterial2D } from "@egret/contracts";
 import type { DisplayObject } from "./DisplayObject.js";
 import { assertLive, isDisplayNode } from "./displayTreeState.js";
 import { engineOf } from "./ownership.js";
@@ -26,6 +26,8 @@ export interface VisualState {
   rotation: number;
   alpha: number;
   visible: boolean;
+  sharedMaterial: SharedMaterial2D | null;
+  renderBoundary: 'none' | 'isolate';
   clipRect: Rectangle2D | undefined;
   primitives: Primitive[];
 }
@@ -75,7 +77,7 @@ export function registerVisual(node: DisplayObject): void {
     structureRevision: 0, transformRevision: 0, appearanceRevision: 0, contentRevision: 0, bindingRevision: 0,
     x: 0, y: 0, scaleX: 1, scaleY: 1, rotation: 0, alpha: 1,
     anchorOffsetX: 0, anchorOffsetY: 0,
-    visible: true, clipRect: undefined, primitives: [],
+    visible: true, sharedMaterial: null, renderBoundary: 'none', clipRect: undefined, primitives: [],
   });
 }
 

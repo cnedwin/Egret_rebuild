@@ -77,6 +77,7 @@ function capture(stage: Stage, mode: "content" | "rectangles", session?: Capture
       rememberCaptureRectangle(draft, rect);
       const effective = alpha * primitive.alpha;
       if (rect.width === 0 || rect.height === 0 || effective === 0) continue;
+      if (s.sharedMaterial !== null || s.renderBoundary !== 'none') throw new EgretError('FRAME_PROFILE_METADATA_UNSUPPORTED');
       commands.push(Object.freeze({
         kind: "rect", matrix, rect, color: primitive.color, alpha: effective, clips,
       }));
@@ -92,6 +93,7 @@ function capture(stage: Stage, mode: "content" | "rectangles", session?: Capture
       if (alpha !== 0) {
         const snapshot = readBitmapImage(bitmap.lease);
         if (mode === "rectangles") throw new EgretError("FRAME_IMAGE_UNSUPPORTED");
+        if (snapshot.viewRegion !== null || s.sharedMaterial !== null || s.renderBoundary !== 'none') throw new EgretError('FRAME_PROFILE_METADATA_UNSUPPORTED');
         const sourceRect = Object.freeze({ ...bitmap.sourceRect });
         const imageIndex = budget!.register(snapshot.image, sourceRect);
         commands.push(Object.freeze({ kind: "image", matrix: bitmapMatrix, rect, alpha, clips, imageIndex, sourceRect }));
@@ -112,11 +114,14 @@ function capture(stage: Stage, mode: "content" | "rectangles", session?: Capture
         rememberCaptureText(draft, rect);
         if (mode === 'rectangles') throw new EgretError('FRAME_IMAGE_UNSUPPORTED');
         const snapshot = readBitmapImage(committed.lease);
+        if (snapshot.viewRegion !== null || s.sharedMaterial !== null || s.renderBoundary !== 'none') throw new EgretError('FRAME_PROFILE_METADATA_UNSUPPORTED');
         const sourceRect = committed.sourceRect;
         const imageIndex = budget!.register(snapshot.image, sourceRect);
         commands.push(Object.freeze({ kind: 'image', matrix, rect, alpha, clips, imageIndex, sourceRect }));
       }
     }
+    // Empty visible nodes still carry metadata, after all prior content checks.
+    if (alpha !== 0 && (s.sharedMaterial !== null || s.renderBoundary !== 'none')) throw new EgretError('FRAME_PROFILE_METADATA_UNSUPPORTED');
     completeCaptureNode(draft, s);
     const children = childrenOf(entry.node);
     for (let i = children.length - 1; i >= 0; i--) {

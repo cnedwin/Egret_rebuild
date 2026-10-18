@@ -48,13 +48,18 @@ function assertHealthy(value,applicationRoot){
   assert.ok(!value.snapshot.closures.canvas.some(key=>/gpu-scene|WebGPU|webgpu|foundation:/.test(key)));
   assert.ok(value.snapshot.closures.gpu.includes('application:'+example+'gpu-scene.mjs'));
   assert.ok(value.snapshot.closures.gpu.includes('sdk:packages/engine/dist/web/scene3d.js'));
-  const b1='sdk:packages/engine/dist/web/b1.js';
+  const b1='sdk:packages/engine/dist/web/b1.js',sharedB1='sdk:packages/engine/dist/web/sharedB1.js';
   const host=value.snapshot.modules.find(row=>row.owner==='sdk'&&row.path==='packages/engine/dist/web/WebGPUHost.js');
   assert.ok(host,'the genuine emitted WebGPUHost is in the collected closure');
-  assert.deepEqual(host.edges.filter(edge=>edge.dynamic),[{specifier:'./b1.js',dynamic:true,target:b1,route:'/packages/engine/dist/web/b1.js'}]);
-  assert.ok(value.snapshot.closures.gpu.includes(b1));assert.ok(value.snapshot.closures.webgpu.includes(b1));
-  assert.ok(!value.snapshot.closures.canvas.includes(b1));
-  assert.ok(value.routes.has('/packages/engine/dist/web/b1.js'));
+  assert.deepEqual(host.edges.filter(edge=>edge.dynamic),[
+    {specifier:'./sharedB1.js',dynamic:true,target:sharedB1,route:'/packages/engine/dist/web/sharedB1.js'},
+    {specifier:'./b1.js',dynamic:true,target:b1,route:'/packages/engine/dist/web/b1.js'},
+  ]);
+  for(const key of [b1,sharedB1]) {
+    assert.ok(value.snapshot.closures.gpu.includes(key));assert.ok(value.snapshot.closures.webgpu.includes(key));
+    assert.ok(!value.snapshot.closures.canvas.includes(key));
+    assert.ok(value.routes.has('/'+key.slice('sdk:'.length)));
+  }
   assert.equal(value.snapshot.foundationAdmission.name,'robust-predicates');assert.equal(value.snapshot.foundationAdmission.version,'3.0.3');
   assert.ok(value.routes.has('/packages/engine/node_modules/robust-predicates/index.js'));
   assert.ok([...value.routes.keys()].every(key=>!key.startsWith('/m/')));

@@ -1,5 +1,5 @@
-import { isTexturedGeometry2D } from "@egret/contracts";
-import type { TexturedGeometry2D, TextureRegion2D } from "@egret/contracts";
+import { isTexturedGeometry2D, isSharedGeometry2D } from "@egret/contracts";
+import type { TexturedGeometry2D, SharedGeometry2D, TextureRegion2D, TextureViewRegion2D } from "@egret/contracts";
 import { isAssetLease, readAssetLeaseValue } from "./AssetLease.js";
 import type { AssetLease } from "./AssetLease.js";
 import { DisplayObject } from "./DisplayObject.js";
@@ -22,8 +22,8 @@ function assertMesh(value: unknown): void {
   if (!hasIdentity(value as object)) throw new EgretError("MESH_INVALID");
 }
 
-function contentState(lease: AssetLease<Texture>, geometry: TexturedGeometry2D, sourceRect: TextureRegion2D): MeshCaptureState {
-  return Object.freeze({ lease, geometry, sourceRect });
+function contentState(lease: AssetLease<Texture>, geometry: TexturedGeometry2D | SharedGeometry2D, sourceRect: TextureRegion2D, viewRegion: TextureViewRegion2D | null): MeshCaptureState {
+  return Object.freeze({ lease, geometry, sourceRect, viewRegion, regionOnly: false });
 }
 
 /** Entitlement and live Texture authority never use public resource getters. */
@@ -34,7 +34,7 @@ function readMeshTexture(lease: AssetLease<Texture>): TextureSnapshot2D {
 }
 
 /** Identity, display lifetime and Engine lifetime precede the mutation guard. */
-function beginMutation(node: Mesh2D): EngineContext {
+function beginMutation(node: Mesh2D<TexturedGeometry2D | SharedGeometry2D>): EngineContext {
   assertMesh(node);
   assertLive(node);
   const engine = engineOf(node)!;
@@ -45,24 +45,24 @@ function beginMutation(node: Mesh2D): EngineContext {
 }
 
 /** Reentry or terminal cleanup cannot resurrect a previously observed slot. */
-function revalidateMutation(node: Mesh2D, engine: EngineContext, previous: MeshCaptureState | undefined): void {
+function revalidateMutation(node: Mesh2D<TexturedGeometry2D | SharedGeometry2D>, engine: EngineContext, previous: MeshCaptureState | undefined): void {
   assertLive(node);
   engine.assertOpen();
   if (readMeshState(node) !== previous) throw new EgretError("MESH_MUTATION_REENTRANT");
 }
 
 /** A display leaf borrowing an exact lease and an immutable owned geometry. */
-export class Mesh2D extends DisplayObject {
-  public constructor(textureLease: AssetLease<Texture>, geometry: TexturedGeometry2D) {
+export class Mesh2D<G extends TexturedGeometry2D | SharedGeometry2D = TexturedGeometry2D> extends DisplayObject {
+  public constructor(textureLease: AssetLease<Texture>, geometry: G) {
     super();
     // Geometry authentication outranks every lease identity or entitlement read.
-    if (!isTexturedGeometry2D(geometry)) throw new EgretError("MESH_GEOMETRY_INVALID");
+    if (!isTexturedGeometry2D(geometry) && !isSharedGeometry2D(geometry)) throw new EgretError("MESH_GEOMETRY_INVALID");
     if (!isAssetLease(textureLease)) throw new EgretError("MESH_LEASE_INVALID");
     const snapshot = readMeshTexture(textureLease);
     const engine = engineOf(textureLease)!;
     engine.assertOpen();
     commitBinding([this], engine);
-    writeMeshState(this, contentState(textureLease, geometry, snapshot.sourceRect));
+    writeMeshState(this, contentState(textureLease, geometry, snapshot.sourceRect, snapshot.viewRegion));
     registerIdentity(this);
   }
 
@@ -72,23 +72,23 @@ export class Mesh2D extends DisplayObject {
     return readMeshState(this)?.lease;
   }
 
-  public get geometry(): TexturedGeometry2D | undefined {
+  public get geometry(): G | undefined {
     assertMesh(this);
-    return readMeshState(this)?.geometry;
+    return readMeshState(this)?.geometry as G | undefined;
   }
 
-  public setContent(textureLease: AssetLease<Texture>, geometry: TexturedGeometry2D): void {
+  public setContent(textureLease: AssetLease<Texture>, geometry: G): void {
     const engine = beginMutation(this);
     try {
       const previous = readMeshState(this);
-      if (!isTexturedGeometry2D(geometry)) throw new EgretError("MESH_GEOMETRY_INVALID");
+      if (!isTexturedGeometry2D(geometry) && !isSharedGeometry2D(geometry)) throw new EgretError("MESH_GEOMETRY_INVALID");
       if (!isAssetLease(textureLease)) throw new EgretError("MESH_LEASE_INVALID");
       // Foreign Engine affinity wins even when that lease or Texture is retired.
       if (engineOf(textureLease) !== engine) throw new EgretError("ENGINE_MISMATCH");
       const snapshot = readMeshTexture(textureLease);
       revalidateMutation(this, engine, previous);
       // Publish all borrowed content together; no callbacks occur at commit.
-      writeMeshState(this, contentState(textureLease, geometry, snapshot.sourceRect));
+      writeMeshState(this, contentState(textureLease, geometry, snapshot.sourceRect, snapshot.viewRegion));
     } finally {
       mutations.delete(this);
     }

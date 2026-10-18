@@ -84,7 +84,7 @@ function readAtlas(engine: EngineContext, lease: AssetLease<Texture>, expectedIm
   engine.assertOpen();
   const snapshot = readBitmapImage(lease);
   const { image, sourceRect } = snapshot;
-  if (sourceRect.x !== 0 || sourceRect.y !== 0
+  if (snapshot.viewRegion !== null || sourceRect.x !== 0 || sourceRect.y !== 0
     || sourceRect.width !== image.width || sourceRect.height !== image.height
     || (expectedImage !== undefined && image !== expectedImage)) {
     throw new EgretError("SPRITE_SHEET_ATLAS_INVALID");

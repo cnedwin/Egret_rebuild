@@ -24,8 +24,8 @@
       "action": "move-pair",
       "previousZhSha256": "ca2be6243c614a900ed12f1b46649155f215a4827e04818e025bad8d03f8af9e",
       "previousEnSha256": "7e72f6245d7c86551dc2640356416b8b06a2d80872f262daf227f98142eac7ae",
-      "currentZhSha256": "9140eb7f1fad6f0f2a448943f601433cc72f0e38803854ef76579a65208c3cfb",
-      "currentEnSha256": "ed4b18c57578946cf95ac6bbded78f8fe6ff195fbe4aeb5b3abb47e26b56ed80"
+      "currentZhSha256": "36753d2bf0121110abbf74c93b592b83b2ae468064ba27a971f65de6601ac123",
+      "currentEnSha256": "ea8e8ff98db4621d3240288c217558f2d3b829309d5b671447ebd23abd0da6d0"
     },
     {
       "oldZh": "CONTRIBUTING.md",
@@ -85,8 +85,8 @@
       "action": "move-pair",
       "previousZhSha256": "f43625255269c8801af0929179a9aab32cbca58094e4a842797e39171fc549b0",
       "previousEnSha256": "e8b100ccbd9d0fb99237a564f484f7fa6dbf008191570fa58f3e481c05c3e9f9",
-      "currentZhSha256": "9780cadc319db584c0307d30b93db8c83653b1b582fe72fe045a969f40c5af5d",
-      "currentEnSha256": "0e1a46f0c0e9d4c3313494fb3acf61591726dedd4a457cffefbb0235725a3bda",
+      "currentZhSha256": "b33106716a24c6928c7164db89fee2331e634102bba20346abd194e9986b2da2",
+      "currentEnSha256": "e5433e72356827eb31e3b66d3a8d8d6b344dff4983ab80a5a40e3f44bb76e3ab",
       "currentEngineeringPreview": "0.61.0"
     },
     {
@@ -964,8 +964,8 @@
       "action": "move-pair",
       "previousZhSha256": "803a40dd8bfd0f98ade51c8ba736790509aae12a6e045a8ea688b3ff5d01cdcf",
       "previousEnSha256": "40a2ef2f686aba4a10279c417dfe17879bb6396b3b80dd75b26bd09c87d665f9",
-      "currentZhSha256": "ad55fc7fafa5f583e254f13a551732be909dbca793935527929d1c85ba78e5e8",
-      "currentEnSha256": "1ba0b5eddfac9c33783a49cf4cf7cb39cde33c376ef782cd5f66a02058a8a367",
+      "currentZhSha256": "0142c44ab81eb4e802e53f69e22bf0d601f86d2ca9dcf3f1f7e0eecad6ec6c00",
+      "currentEnSha256": "9345e6c2e08e4453608aad5eb6778bb73cda929e01414d4693a1b380b1398859",
       "currentEngineeringPreview": "0.61.0"
     },
     {
@@ -2028,8 +2028,8 @@
       "kind": "public_reading",
       "action": "add-current-pair",
       "status": "CURRENT_READING_SOURCE",
-      "currentEnSha256": "3b2d66edd675cc00e8918d3522869cf9e1fb176eb4fbda5e9e88712dfefa328c",
-      "currentZhSha256": "8f36e9ea53d56d5e2d3d0115c1ceb72345fa6599c6840561504c4f06104dc21d"
+      "currentEnSha256": "7fd6bec572bc4fd237733ad89902637a6eab19b34ac8a5c3945a5b0cc9f85f10",
+      "currentZhSha256": "227ac229082650d40ee79cd79ce9de30c1b78e2618e56bf0ebc3f0712f3b1429"
     },
     {
       "newEn": "knowledge-base/en/docs/m0-community-foundations.md",

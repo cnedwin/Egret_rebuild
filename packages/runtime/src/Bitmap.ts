@@ -1,6 +1,6 @@
 import { captureAtlasFrameLayout, copyAtlasFrameLayout } from './atlasFrameLayout.js';
 import type { SequenceRegion } from './sequenceClip.js';
-import type { TextureRegion2D } from "@egret/contracts";
+import type { TextureRegion2D, TextureViewRegion2D } from "@egret/contracts";
 import { isAssetLease, readAssetLeaseValue } from "./AssetLease.js";
 import { AssetLease } from "./AssetLease.js";
 import { DisplayObject } from "./DisplayObject.js";
@@ -102,7 +102,9 @@ function operationsFor(context: EngineContext): ResourceTargetOperations {
       const snapshot = readBitmapImage(lease);
       // Use the captured intrinsic; no late public setter or freeze callback.
       const state: BitmapCaptureState = freezeResourceOperations({
-        lease, sourceRect: snapshot.sourceRect, width: snapshot.sourceRect.width, height: snapshot.sourceRect.height,
+        lease, sourceRect: snapshot.sourceRect, viewRegion: snapshot.viewRegion,
+        width: snapshot.viewRegion?.logicalWidth ?? snapshot.sourceRect.width,
+        height: snapshot.viewRegion?.logicalHeight ?? snapshot.sourceRect.height,
       });
       preparedStates.set(state, { bitmap, state });
       return state;
@@ -182,8 +184,9 @@ function operationsFor(context: EngineContext): ResourceTargetOperations {
       const states: BitmapCaptureState[] = [];
       for (let index = 0; index < snapshots.length; index++) {
         const snapshot = snapshots[index]!;
-        states.push(freezeResourceOperations({ lease: leases[index]!, sourceRect: snapshot.sourceRect,
-          width: snapshot.sourceRect.width, height: snapshot.sourceRect.height }));
+        states.push(freezeResourceOperations({ lease: leases[index]!, sourceRect: snapshot.sourceRect, viewRegion: snapshot.viewRegion,
+          width: snapshot.viewRegion?.logicalWidth ?? snapshot.sourceRect.width,
+          height: snapshot.viewRegion?.logicalHeight ?? snapshot.sourceRect.height }));
       }
       const prepared = freezeResourceOperations({});
       batchPreparedStates.set(prepared, freezeResourceOperations({ captured, states: freezeResourceOperations(states) }));
@@ -229,8 +232,9 @@ function assertBitmap(value: unknown): void {
   if (!hasBitmapState(value as object)) throw new EgretError("BITMAP_INVALID");
 }
 
-function captureState(lease: AssetLease<Texture>, sourceRect: TextureRegion2D): BitmapCaptureState {
-  return Object.freeze({ lease, sourceRect, width: sourceRect.width, height: sourceRect.height });
+function captureState(lease: AssetLease<Texture>, sourceRect: TextureRegion2D, viewRegion: TextureViewRegion2D | null = null): BitmapCaptureState {
+  return Object.freeze({ lease, sourceRect, viewRegion,
+    width: viewRegion?.logicalWidth ?? sourceRect.width, height: viewRegion?.logicalHeight ?? sourceRect.height });
 }
 
 /** Shared lease/crop guard starts after the established lifecycle priority. */
@@ -306,7 +310,7 @@ export class Bitmap extends DisplayObject {
     const engine = engineOf(textureLease)!;
     engine.assertOpen();
     commitBinding([this], engine);
-    writeBitmapState(this, captureState(textureLease, snapshot.sourceRect));
+    writeBitmapState(this, captureState(textureLease, snapshot.sourceRect, snapshot.viewRegion));
     // Genuine Engine registration is private; custom runtime contexts own their callback.
     engine.registerBitmapResourceTarget?.(this, operationsFor(engine));
   }
@@ -339,7 +343,7 @@ export class Bitmap extends DisplayObject {
       const snapshot = readBitmapImage(value);
       revalidateMutation(this, engine, previous);
       // Every successful assignment, including the same lease, resets the crop.
-      writeBitmapState(this, captureState(value, snapshot.sourceRect));
+      writeBitmapState(this, captureState(value, snapshot.sourceRect, snapshot.viewRegion));
     } finally {
       mutations.delete(this);
     }
@@ -361,6 +365,7 @@ export class Bitmap extends DisplayObject {
       }
       // Entitlement and live-view authority precede every external field read.
       const snapshot = readBitmapImage(previous.lease);
+      if (snapshot.viewRegion !== null) throw new EgretError("TEXTURE_VIEW_REGION_IMMUTABLE");
       if (value === undefined) {
         revalidateMutation(this, engine, previous);
         writeBitmapState(this, captureState(previous.lease, snapshot.sourceRect));
@@ -414,7 +419,9 @@ export function applyBitmapAtlasFrame(bitmap: Bitmap, region: SequenceRegion): v
   try {
     const previous = readBitmapState(bitmap);
     if (previous === undefined) throw new EgretError('BITMAP_TEXTURE_REQUIRED');
-    readBitmapImage(previous.lease);
+    const initial = readBitmapImage(previous.lease);
+    // Internal atlas bridges obey the same immutable-view rule as public crop.
+    if (initial.viewRegion !== null) throw new EgretError("TEXTURE_VIEW_REGION_IMMUTABLE");
     const fields = readRegion(region);
     const captured = captureAtlasFrameLayout(region, (source, key) => {
       try {
@@ -429,7 +436,7 @@ export function applyBitmapAtlasFrame(bitmap: Bitmap, region: SequenceRegion): v
     const sourceRect = copyRegion(snapshot.sourceRect, fields);
     const layout = copyAtlasFrameLayout(captured, sourceRect.width, sourceRect.height,
       () => { throw new EgretError('BITMAP_REGION_INVALID'); });
-    const next = freezeAtlasState({ lease: previous.lease, sourceRect, layout,
+    const next = freezeAtlasState({ lease: previous.lease, sourceRect, layout, viewRegion: null,
       width: layout.sourceWidth, height: layout.sourceHeight });
     revalidateMutation(bitmap, engine, previous);
     readBitmapImage(previous.lease);

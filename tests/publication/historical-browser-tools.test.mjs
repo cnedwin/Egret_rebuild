@@ -54,3 +54,132 @@ test('mixed-scene success with incomplete final retirement is refused',()=>{
  assert.doesNotThrow(()=>tool.validateHistoryCompletion('textured-scene',receipt));
  for(const key of ['browserClosed','identitiesStable','artifactsStable','cooperativeAPIClosure']){const bad=structuredClone(receipt);bad.lifecycle[key]=false;assert.throws(()=>tool.validateHistoryCompletion('textured-scene',bad));}
 });
+
+
+// Execute the actual finite collector policy in isolation. SDK modules are read
+// as inert source bytes; neither the native entry nor emitted SDK code executes.
+const { runInNewContext } = await import('node:vm');
+const { createHash } = await import('node:crypto');
+const { fileURLToPath, pathToFileURL } = await import('node:url');
+const repository = fs.realpathSync(fileURLToPath(new URL('../../', import.meta.url)));
+async function currentMixedCollectorPolicy() {
+ const source = fs.readFileSync(path.join(repository, 'tools/verify-textured-scene-webgpu.mjs'), 'utf8');
+ const start = source.indexOf('const REGISTRY = '), end = source.indexOf('function numericFault(cause)');
+ assert.ok(start >= 0 && end > start, 'The actual finite collection policy must be present');
+ return runInNewContext(source.slice(start, end) + '\n({ collectGraph, ENTRIES })', {
+  path, process, URL, TextDecoder, createHash,
+  readFile: fs.promises.readFile, realpath: fs.promises.realpath, lstat: fs.promises.lstat,
+ }, { timeout: 1000 });
+}
+function assertTwoMixedLazyEdges(graph) {
+ assert.deepEqual(Array.from(graph.dynamicEdges, row => [row.parent, row.specifier, row.url]).sort((a, b) => a[1].localeCompare(b[1])), [
+  ['packages/engine/dist/web/WebGPUHost.js', './b1.js', '/packages/engine/dist/web/b1.js'],
+  ['packages/engine/dist/web/WebGPUHost.js', './sharedB1.js', '/packages/engine/dist/web/sharedB1.js'],
+ ]);
+}
+test('the mixed-scene collector seals both current lazy B1 closures without evaluating the SDK', async t => {
+ const policy = await currentMixedCollectorPolicy(), pins = [];
+ const graph = await policy.collectGraph(repository, fs.realpathSync(path.join(repository, 'packages/engine/node_modules/robust-predicates')), (row, role) => pins.push({ ...row, role }));
+ assertTwoMixedLazyEdges(graph);
+ assert.ok(graph.modules.size <= 256); assert.ok(graph.totalBytes <= 8388608);
+ assert.ok(graph.modules.has('/packages/engine/dist/web/sharedB1.js'));
+ for (const row of graph.modules.values()) {
+  for (const edge of row.edges) assert.ok(graph.modules.has(edge.url), 'Every transitive import is retained');
+  assert.ok(pins.some(pin => pin.path === row.path && pin.sha256 === row.sha256));
+  if (row.firstParty) assert.ok(pins.some(pin => pin.role === 'public-source' && pin.path === row.source.path && pin.sha256 === row.source.sha256));
+ }
+ t.diagnostic('Actual mixed emitted closure: ' + graph.modules.size + ' modules; SDK code was never evaluated');
+});
+function putFixture(root, relative, body) {
+ const file = path.join(root, relative); fs.mkdirSync(path.dirname(file), { recursive: true }); fs.writeFileSync(file, body);
+}
+function mixedFixture(root) {
+ const entries = {
+  'src/index': "export * from './Engine.js';\n",
+  'src/Engine': "import './internal/texturedFrameState.js';\n",
+  'src/internal/texturedFrameState': 'export const registry = {};\n',
+  'rendering/scene3d': 'export const scene = true;\n',
+  'web/scene3d': "export * from './WebGPUHost.js';\n",
+  'web/webgpu': "export * from './WebGPUHost.js';\n",
+  'web/WebGPUHost': "import '#egret-textured-frame-state';\nimport('./b1.js');\nimport('./sharedB1.js');\n",
+  'web/b1': 'export const legacy = true;\n',
+  'web/sharedB1': "export * from './sharedLeaf.js';\n",
+  'web/sharedLeaf': 'export const shared = true;\n',
+  'web/other': 'export const other = true;\n',
+ };
+ for (const [name, body] of Object.entries(entries)) {
+  putFixture(root, 'packages/engine/' + name + '.ts', body);
+  putFixture(root, 'packages/engine/dist/' + name.replace(/^src\//, '') + '.js', body);
+ }
+ fs.mkdirSync(path.join(root, 'robust'), { recursive: true });
+}
+const mixedRefusals = [
+ ['unknown Host target', 'web/WebGPUHost', "import '#egret-textured-frame-state';\nimport('./b1.js');\nimport('./other.js');\n", 'DYNAMIC_EDGE_BOUND'],
+ ['different importer', 'web/sharedB1', "import('./b1.js');\n", 'DYNAMIC_EDGE_BOUND'],
+ ['missing required lazy edge', 'web/WebGPUHost', "import '#egret-textured-frame-state';\nimport('./b1.js');\n", 'GRAPH_REQUIRED_IDENTITIES'],
+ ['duplicate legacy edge cannot substitute for shared B1', 'web/WebGPUHost', "import '#egret-textured-frame-state';\nimport('./b1.js');\nimport('./b1.js');\n", 'GRAPH_REQUIRED_IDENTITIES'],
+];
+for (const [name, target, mutant, reason] of mixedRefusals) test('mixed-scene lazy admission refuses ' + name + ' after a fresh healthy closure', async t => {
+ const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'egret-mixed-graph-')));
+ t.after(() => fs.rmSync(root, { recursive: true, force: true })); mixedFixture(root);
+ const policy = await currentMixedCollectorPolicy();
+ const collect = () => policy.collectGraph(root, path.join(root, 'robust'), () => {});
+ const before = await collect(); assertTwoMixedLazyEdges(before);
+ assert.ok(before.modules.has('/packages/engine/dist/web/sharedLeaf.js'));
+ const file = path.join(root, 'packages/engine/dist/' + target + '.js'), original = fs.readFileSync(file);
+ try {
+  fs.writeFileSync(file, mutant);
+  await assert.rejects(collect(), error => error.reason === reason);
+ } finally { fs.writeFileSync(file, original); }
+ assertTwoMixedLazyEdges(await collect());
+});
+async function actualSequenceGraph(suite) {
+ const source = fs.readFileSync(path.join(repository, 'tools', suite, 'collector.mjs'), 'utf8');
+ const start = source.indexOf('  const aliases = {'), graphStart = source.indexOf('  const graph = await bounded(', start);
+ const end = source.indexOf('} }));', graphStart);
+ assert.ok(start >= 0 && graphStart > start && end > graphStart, 'The actual alias and collection call must be present');
+ const helper = await import(pathToFileURL(path.join(repository, 'tools', suite, 'file-graph.mjs')).href);
+ let selected;
+ const graph = await runInNewContext('(async () => {\n' + source.slice(start, end + 6) + '\nreturn graph; })()', {
+  repositoryRoot: repository, path,
+  bounded: (_label, operation) => operation(),
+  sealGraph: options => { selected = options; return helper.sealGraph(options); },
+ }, { timeout: 1000 });
+ const budget = source.match(/budgets: (\{[^}]+\})/);
+ assert.ok(budget, 'The actual report budget must be present');
+ const reportedBudget = runInNewContext('(' + budget[1] + ')', {}, { timeout: 1000 });
+ return { graph, selected, helper, reportedBudget };
+}
+for (const suite of ['sequence-player', 'sequence-playback', 'spritesheet']) test(suite + ' collector admits the complete current union while retaining count and byte refusals', async t => {
+ const { graph, selected, helper, reportedBudget } = await actualSequenceGraph(suite);
+ assert.equal(reportedBudget.selectedModules, selected.maxModules, 'Reported module budget must match the actual admitted collection');
+ assert.equal(reportedBudget.emittedBytes, 4194304, 'The original emitted-byte budget is retained');
+ assert.ok(graph.modules.length > 128 && graph.modules.length <= 256);
+ assert.ok(graph.totalBytes <= 4194304);
+ assert.ok(graph.closures.canvas.every(file => !/[\\/]WebGPUHost\.js$|[\\/]sharedB1\.js$/.test(file)));
+ assert.ok(graph.closures.webgpu.some(file => /[\\/]sharedB1\.js$/.test(file)));
+ for (const row of graph.modules) for (const edge of row.edges) assert.ok(graph.modules.some(candidate => candidate.path === edge.target));
+ await assert.rejects(helper.sealGraph({ repositoryRoot: repository, aliases: selected.aliases, entryPaths: selected.entryPaths }), /Module-count budget exceeded/);
+ const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'egret-sequence-graph-')));
+ t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+ for (let index = 0; index < 257; index++) {
+  const body = index === 256 ? 'export const end = true;\n' : "import './m" + (index + 1) + ".js';\n";
+  putFixture(root, 'packages/runtime/dist/m' + index + '.js', body);
+  putFixture(root, 'packages/runtime/src/m' + index + '.ts', body);
+ }
+ const options = { repositoryRoot: root, aliases: {}, entryPaths: { webgpu: [path.join(root, 'packages/runtime/dist/m0.js')] }, maxModules: selected.maxModules };
+ const lastAdmitted = path.join(root, 'packages/runtime/dist/m255.js'), originalEdge = fs.readFileSync(lastAdmitted);
+ fs.writeFileSync(lastAdmitted, 'export const end = true;\n');
+ assert.equal((await helper.sealGraph(options)).modules.length, 256);
+ fs.writeFileSync(lastAdmitted, originalEdge);
+ await assert.rejects(helper.sealGraph(options), /Module-count budget exceeded/);
+ fs.writeFileSync(lastAdmitted, 'export const end = true;\n');
+ assert.equal((await helper.sealGraph(options)).modules.length, 256);
+ const firstModule = path.join(root, 'packages/runtime/dist/m0.js'), originalFirst = fs.readFileSync(firstModule);
+ try {
+  fs.writeFileSync(firstModule, ' '.repeat(4194305));
+  await assert.rejects(helper.sealGraph(options), /Module-byte budget exceeded/);
+ } finally { fs.writeFileSync(firstModule, originalFirst); }
+ assert.equal((await helper.sealGraph(options)).modules.length, 256);
+ t.diagnostic('Actual dual-backend union: ' + graph.modules.length + ' modules; original helper default and 4 MiB cap remain enforced');
+});

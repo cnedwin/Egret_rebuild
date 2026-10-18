@@ -22,6 +22,11 @@
       "channel": true
     },
     {
+      "id": "shared-webgpu",
+      "script": "tools/verify-shared-webgpu.mjs",
+      "channel": true
+    },
+    {
       "id": "text",
       "script": "tools/verify-canvas-text-canvas.mjs",
       "channel": false

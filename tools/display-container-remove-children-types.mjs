@@ -19,6 +19,12 @@ if (helperRaw.length !== 5065 || hash(helperRaw) !== '999b355c6e0d03f17853ee05f3
 const { fingerprintFile, logicalPath, ownerRelativePath, samePhysicalPath } = await import(pathToFileURL(helperFile).href);
 if (!equal(fingerprintFile(root, 'tools/lib/file-identity.mjs'), {path:'tools/lib/file-identity.mjs',bytes:helperRaw.length,sha256:hash(helperRaw)})) fail('shared helper physical identity differs');
 const inventory = JSON.parse(readFileSync(path.join(root, 'tests/types/display-container-remove-children-diagnostic-expectations.json'), 'utf8'));
+// Preserve the immutable predecessor and authenticate the complete M1.3 successor.
+const m13HelperPin = fingerprintFile(root, 'tools/lib/m13-strict-successor.mjs');
+if (m13HelperPin.bytes !== 10785 || m13HelperPin.sha256 !== '61a14bb8be2162d861a26b822ded713c552b4032d755e291578b225cd13ef337') throw Error('M1.3 strict helper changed before import');
+const { selectM13StrictSuccessor } = await import('./lib/m13-strict-successor.mjs');
+const m13 = selectM13StrictSuccessor(root, 'display-container-remove-children', inventory);
+
 const lanes = ['positive', 'negative'];
 const expectedInputs = [
   "tools/lib/file-identity.mjs",
@@ -167,8 +173,8 @@ if (currentInputSuccessor?.kind !== 'ANCHOR_CURRENT_DECLARATION_IDENTITY_SUCCESS
   || !equal(currentInputSuccessor.rows, currentDeclarationRows)
   || !equal(inventory.inputPins.find(row=>row.path===historicalDeclaration.path), historicalDeclaration))
   fail('current declaration input successor differs');
-for (const row of inventory.inputPins) {
-  const effective = currentDeclarationRows.find(current=>current.path===row.path) ?? row;
+for (const row of m13?.inputPins ?? inventory.inputPins) {
+  const effective = m13 ? row : currentDeclarationRows.find(current=>current.path===row.path) ?? row;
   if (logicalPath(row.path) !== row.path || !equal(fingerprintFile(root, row.path), effective))
     fail('changed complete raw input: ' + row.path);
 }
@@ -215,6 +221,7 @@ function tuplesFrom(raw) {
   return tuples;
 }
 for (const group of inventory.groups) {
+  m13?.recheck();
   const file = 'tests/types/display-container-remove-children-' + group.lane + '.ts';
   const config = 'tests/types/tsconfig.display-container-remove-children-' + group.lane + '.json';
   const expectedExit = group.lane === 'positive' ? 0 : 1;
@@ -243,8 +250,9 @@ for (const group of inventory.groups) {
     || !Buffer.isBuffer(result.stderr) || result.stderr.length !== 0) fail('compiler setup/exit/stderr failure');
   const tuples = tuplesFrom(result.stdout);
   if (tuples.some(tuple=>tuple[0]!==file || tuple[3]===2307 || /[A-Za-z]:[\\/]|file:\/\//.test(tuple[4]))
-    || !equal(tuples,group.tuples) || tuples.length !== cases.length
+    || !equal(tuples,m13?.group(group.lane).tuples ?? group.tuples) || tuples.length !== cases.length
     || !equal(tuples.map(tuple=>tuple[1]),cases.map(row=>row.line))) fail('missing, extra, unrelated or changed complete diagnostic');
+  m13?.verifyClosure(group.lane);
   console.log('DisplayObjectContainer.removeChildren ' + group.lane + ' exact strict diagnostics: ' + JSON.stringify(tuples));
 }
 console.log('DisplayObjectContainer.removeChildren strict public consumers PASS; runtime and host acceptance remain separate.');

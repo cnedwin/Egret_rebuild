@@ -19,6 +19,12 @@ if(helperRaw.length!==5065||hash(helperRaw)!=='999b355c6e0d03f17853ee05f33abc9fe
 const {fingerprintFile,logicalPath,ownerRelativePath,samePhysicalPath}=await import(pathToFileURL(helperFile).href);
 if(!equal(fingerprintFile(root,'tools/lib/file-identity.mjs'),{path:'tools/lib/file-identity.mjs',bytes:helperRaw.length,sha256:hash(helperRaw)}))fail('shared helper physical identity differs');
 const inventory=JSON.parse(readFileSync(path.join(root,'tests/types/bitmap-button-diagnostic-expectations.json'),'utf8'));
+// Preserve the immutable predecessor and authenticate the complete M1.3 successor.
+const m13HelperPin = fingerprintFile(root, 'tools/lib/m13-strict-successor.mjs');
+if (m13HelperPin.bytes !== 10785 || m13HelperPin.sha256 !== '61a14bb8be2162d861a26b822ded713c552b4032d755e291578b225cd13ef337') throw Error('M1.3 strict helper changed before import');
+const { selectM13StrictSuccessor } = await import('./lib/m13-strict-successor.mjs');
+const m13 = selectM13StrictSuccessor(root, 'bitmap-button', inventory);
+
 const expectedInputPaths=[
   "tools/lib/file-identity.mjs",
   "node_modules/typescript/package.json",
@@ -244,7 +250,7 @@ if(inventory.schemaVersion!==1||inventory.kind!=='BITMAP_BUTTON_ACTUAL_STRICT_DI
  ||!equal(inventory.inputPins?.map(row=>row.path),expectedInputPaths)
  ||!equal(inventory.nativeLibraryPins?.map(row=>row.path),expectedLibraryPaths)
  ||!equal(inventory.groups?.map(group=>group.lane),['positive','negative']))fail('malformed frozen complete input/diagnostic inventory');
-for(const row of inventory.inputPins){
+for(const row of m13?.inputPins ?? inventory.inputPins){
  if(logicalPath(row.path)!==row.path||!equal(fingerprintFile(root,row.path),row))fail('changed raw current input: '+row.path);
 }
 const wrapperOwner=realpathSync(path.join(root,'node_modules/typescript'));
@@ -299,6 +305,7 @@ function tuplesFrom(raw){
  return tuples;
 }
 for(const group of inventory.groups){
+  m13?.recheck();
  const file='tests/types/bitmap-button-'+group.lane+'.ts';
  const config='tests/types/tsconfig.bitmap-button-'+group.lane+'.json';
  const expectedExit=group.lane==='positive'?0:1;
@@ -326,8 +333,9 @@ for(const group of inventory.groups){
   ||!Buffer.isBuffer(result.stderr)||result.stderr.length!==0)fail('compiler setup/exit/stderr failure');
  const tuples=tuplesFrom(result.stdout);
  if(tuples.some(tuple=>tuple[0]!==file||tuple[3]===2307||/[A-Za-z]:[\\/]|file:\/\//.test(tuple[4]))
-  ||!equal(tuples,group.tuples))fail('missing, duplicate, extra or changed complete diagnostic tuple');
+  ||!equal(tuples,m13?.group(group.lane).tuples ?? group.tuples))fail('missing, duplicate, extra or changed complete diagnostic tuple');
+ m13?.verifyClosure(group.lane);
  console.log('BitmapButton exact strict lane receipt: '+JSON.stringify({lane:group.lane,args,exitCode:result.status,signal:result.signal,timeout:false,
-  stdout:{bytes:result.stdout.length,sha256:hash(result.stdout)},stderr:{bytes:result.stderr.length,sha256:hash(result.stderr)},tuples,inputCount:inventory.inputPins.length,compiler:currentCompiler}));
+  stdout:{bytes:result.stdout.length,sha256:hash(result.stdout)},stderr:{bytes:result.stderr.length,sha256:hash(result.stderr)},tuples,inputCount:(m13?.inputPins ?? inventory.inputPins).length,compiler:currentCompiler}));
 }
 console.log('BitmapButton strict public consumers PASS; runtime, browser and delivery acceptance remain separate.');

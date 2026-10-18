@@ -1,0 +1,297 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "knowledge-base/Cns/docs/shared-render-profile-contract.md",
+      "originRole": "First-party shared rendering specification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/shared-rendering-evidence.md",
+      "originRole": "First-party shared-rendering documentation and execution boundaries, authored with AI assistance and reviewed separately; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/shared-render-profile-contract.md",
+      "originRole": "First-party shared rendering specification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/shared-rendering-evidence.md",
+      "originRole": "First-party shared-rendering documentation and execution boundaries, authored with AI assistance and reviewed separately; Apache-2.0."
+    },
+    {
+      "path": "packages/contracts/src/SharedGeometry2D.ts",
+      "criticalComment": true,
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "packages/contracts/src/SharedMaterial2D.ts",
+      "criticalComment": true,
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "packages/contracts/src/SharedRenderFrame2D.ts",
+      "criticalComment": true,
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "packages/contracts/src/TextureViewRegion2D.ts",
+      "criticalComment": true,
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/rendering/packSharedDraws2D.ts",
+      "criticalComment": true,
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/rendering/packSharedMeshGeometry3D.ts",
+      "criticalComment": true,
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/rendering/preparedSharedBatches2D.ts",
+      "criticalComment": true,
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/rendering/prepareSharedDraws2D.ts",
+      "criticalComment": true,
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/rendering/sharedColor2D.ts",
+      "criticalComment": true,
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/web/prepareSharedSubmission2D.ts",
+      "criticalComment": true,
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/web/sharedB1.ts",
+      "criticalComment": true,
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/web/sharedWebGPUOptions.ts",
+      "criticalComment": true,
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/web/webgpuRetentionPool.ts",
+      "criticalComment": true,
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/web/webgpuSharedMeshPass.ts",
+      "criticalComment": true,
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/web/webgpuSharedPass.ts",
+      "criticalComment": true,
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/web/webgpuSharedResolvePass.ts",
+      "criticalComment": true,
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "packages/runtime/src/NineSliceBitmap.ts",
+      "criticalComment": true,
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "packages/runtime/src/sharedFrameCapture.ts",
+      "criticalComment": true,
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/fixtures/gpu-shared-rendering.mjs",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/resource-scene-boundary.test.mjs",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/shared-capture-budgets.test.mjs",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/shared-frame-capture.test.mjs",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/shared-native-reference.test.mjs",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/shared-render-inputs-entry.test.mjs",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/shared-render-inputs.test.mjs",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/shared-retention-private.test.mjs",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/shared-webgpu-controls.test.mjs",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/types/shared-render-negative.ts",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/types/shared-render-positive.ts",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/types/tsconfig.shared-render-negative.json",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/types/tsconfig.shared-render-positive.json",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/atlas-frame-types.mjs",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/bitmap-button-types.mjs",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/bitmap-resource-slot-types.mjs",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/browser-png-types.mjs",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/display-anchor-offsets-types.mjs",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/display-container-add-child-at-types.mjs",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/display-container-child-index-types.mjs",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/display-container-remove-children-types.mjs",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/lib/m13-strict-successor.mjs",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/linear-layout-types.mjs",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/m13-strict-successors.json",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/nine-slice-bitmap-types.mjs",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/resource-scene-boundary.mjs",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/sequence-playback/collector.mjs",
+      "originRole": "Original Egret first-party sequence playback, tests, tooling or paired publication metadata; Apache-2.0, with AI-assisted authorship and evidence-bounded independent review.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/sequence-player/collector.mjs",
+      "originRole": "First-party explicit-time sequence work package; public verifier reuses independently authored first-party opaque collector mechanisms.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/shared-render-types.mjs",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/check-native-cases.mjs",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/collector.mjs",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/native-cases.json",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/native-controls.json",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/native-source.mjs",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/native-window.mjs",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/oracle.mjs",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/spritesheet/collector.mjs",
+      "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/verify-prepared-resource-groups.mjs",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/verify-resource-scene.mjs",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/verify-shared-webgpu.mjs",
+      "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tools/verify-textured-scene-webgpu.mjs",
+      "originRole": "First-party combined-host browser oracle, original synthetic readback or public successor.",
+      "criticalComment": true
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/shared-render-profile-contract.md",
+      "zh": "knowledge-base/Cns/docs/shared-render-profile-contract.md"
+    },
+    {
+      "en": "knowledge-base/en/docs/shared-rendering-evidence.md",
+      "zh": "knowledge-base/Cns/docs/shared-rendering-evidence.md"
+    }
+  ],
+  "frozenInputs": [
+    {
+      "path": "tests/types/shared-render-diagnostic-expectations.json",
+      "bytes": 4949,
+      "sha256": "8fef809da2e338db8b8fba202161aca0ae5335b40db1b98548a210ec1023ddcf",
+      "originRole": "First-party actual unsuppressed shared-rendering compiler observations, recorded and independently reviewed with AI assistance; Apache-2.0."
+    }
+  ]
+}

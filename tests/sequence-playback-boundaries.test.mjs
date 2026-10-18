@@ -165,3 +165,16 @@ for (const control of seqpcControls) test(control.name, t => seqpcIsolated(({ fi
     seqpcAccepted(check());
   }
 }));
+
+for(const [relative,code]of [
+ ['packages/contracts/dist/index.d.ts','SEQP_BOUNDARY_DEFAULT_ENTRY_IDENTITY'],
+ ['packages/engine/dist/Engine.d.ts','SEQP_BOUNDARY_ENGINE_METHOD'],
+])test('SQP-M13 exact interface identity rejects one changed '+relative,()=>seqpcIsolated(({fixture,check,baseline})=>{
+ const file=path.join(fixture,relative),before=readFileSync(file);
+ try{
+  writeFileSync(file,Buffer.concat([before,Buffer.from('\n// unregistered shared interface identity\n')]));
+  const prior=new Map(baseline.map(row=>[row.path,row]));
+  assert.deepEqual(seqpcInventory(fixture).filter(row=>JSON.stringify(row)!==JSON.stringify(prior.get(row.path))).map(row=>row.path),[relative]);
+  seqpcRejected(check(),code);
+ }finally{writeFileSync(file,before);assert.deepEqual(seqpcInventory(fixture),baseline);seqpcAccepted(check());}
+}));

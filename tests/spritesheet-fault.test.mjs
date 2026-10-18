@@ -64,10 +64,13 @@ function aliases() {
 }
 const initialAliases = aliases();
 const initialSdk = sdkSnapshot();
-for (const [relative, bytes, sha256] of [
+const historicalModulePins = [
   ['packages/runtime/dist/Bitmap.js', 20300, '473606fd7d65c1c41c1d6bb4625cf5f3f5b2c0fc90adf5e94b80dac4f75a8892'],
   ['packages/runtime/dist/spriteSheet.js', 11792, 'e7cd446abde11eb22e77881768a685067ea2d83ff2a0d10d62de784fefbcd7fd'],
-]) assert.deepEqual(pin(relative), { path: relative, bytes, sha256 }, 'original qualified compiled module');
+];
+const m13ModulePins = [["packages/runtime/dist/Bitmap.js",21049,"b7d91499cb36d73c6b0b0767ec90080b2acaec52a2d0ccf0a785d793b48b6544"],["packages/runtime/dist/spriteSheet.js",11824,"5f15aca4af6961cfd65f0e4c5243f7f81ccac9267056815d2401226b4d8dd00d"]];
+const qualifiedModulePins = historicalModulePins.every(([relative,bytes,sha256])=>JSON.stringify(pin(relative))===JSON.stringify({path:relative,bytes,sha256}))?historicalModulePins:m13ModulePins;
+for(const [relative,bytes,sha256]of qualifiedModulePins)assert.deepEqual(pin(relative),{path:relative,bytes,sha256},'one complete qualified compiled pair');
 
 function unchanged() {
   assert.deepEqual(aliases(), initialAliases, 'workspace aliases unchanged');

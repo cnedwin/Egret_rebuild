@@ -223,6 +223,8 @@ const allowedModules = new Set([
   'packages/engine/node_modules/robust-predicates/index.js',
   ...['incircle', 'insphere', 'orient2d', 'orient3d', 'util'].map(name => `packages/engine/node_modules/robust-predicates/esm/${name}.js`),
 ]);
+// M1.3 adds only the reviewed current literal closure, with the same 128-module bound.
+for (const name of ["packages/contracts/dist/SharedGeometry2D.js","packages/contracts/dist/SharedMaterial2D.js","packages/contracts/dist/SharedRenderFrame2D.js","packages/engine/dist/rendering/packSharedDraws2D.js","packages/engine/dist/rendering/packSharedMeshGeometry3D.js","packages/engine/dist/rendering/prepareSharedDraws2D.js","packages/engine/dist/rendering/preparedSharedBatches2D.js","packages/engine/dist/rendering/sharedColor2D.js","packages/engine/dist/web/prepareSharedSubmission2D.js","packages/engine/dist/web/sharedB1.js","packages/engine/dist/web/sharedWebGPUOptions.js","packages/engine/dist/web/webgpuRetentionPool.js","packages/engine/dist/web/webgpuSharedMeshPass.js","packages/engine/dist/web/webgpuSharedPass.js","packages/engine/dist/web/webgpuSharedResolvePass.js","packages/runtime/dist/sharedFrameCapture.js"]) allowedModules.add(name);
 const registryName = 'packages/engine/dist/internal/texturedFrameState.js';
 const registrySourceName = 'packages/engine/src/internal/texturedFrameState.ts';
 const descriptor = (path, body) => ({ path, bytes: body.length, sha256: hash(body) });
@@ -326,10 +328,12 @@ try {
   assert.deepEqual(packageExports['./scene3d'], { types: './dist/rendering/scene3d.d.ts', import: './dist/rendering/scene3d.js' });
   assert.deepEqual(packageExports['./webgpu/scene3d'], { types: './dist/web/scene3d.d.ts', import: './dist/web/scene3d.js' });
   const currentHost = await identity(resolve(repository, 'packages/engine/web/WebGPUHost.ts'));
-  assert.equal(currentHost.bytes, 104705, 'Native acceptance must bind the current reviewed shared scene/textured Host; historical identities remain separate');
-  assert.equal(currentHost.sha256, 'e9d172d17cc9f45109dae7b7038485d63d2c8e572efd88fb74af918812045d1d');
+  const historicalM12HostSource = { bytes: 104705, sha256: 'e9d172d17cc9f45109dae7b7038485d63d2c8e572efd88fb74af918812045d1d' };
+  const m13HostSourceSuccessor = {"bytes":134474,"sha256":"73c33a00ed99283e1e4d70867308ebc3550c905df881a1d79c714d6c80bbe5a0"};
+  assert.equal(currentHost.bytes, m13HostSourceSuccessor.bytes, 'Native acceptance binds the reviewed M1.3 Host successor');
+  assert.equal(currentHost.sha256, m13HostSourceSuccessor.sha256);
   report.publicRoute = { entries: entryNames.slice(0, 3), packageExports: { './scene3d': packageExports['./scene3d'], './webgpu/scene3d': packageExports['./webgpu/scene3d'] },
-    hostSource: currentHost, privateDiagnostic: 'packages/engine/dist/web/webgpuMeshPass.js', allowedModules: [...allowedModules].sort() };
+    hostSource: currentHost, historicalM12HostSource, m13HostSourceSuccessor, privateDiagnostic: 'packages/engine/dist/web/webgpuMeshPass.js', allowedModules: [...allowedModules].sort() };
   const emitted = [...served.values()].reduce((sum, value) => sum + value.body.length, 0); assert.ok(emitted <= 4 * 1024 * 1024);
   // Bind matching first-party source files without scanning unrelated repository files.
   for (const url of served.keys()) {
@@ -418,12 +422,15 @@ try {
     registryResolution: report.registryResolution, registryCaptureObservations: report.registryCaptureObservations,
     registryRecordingFailures: report.registryRecordingFailures, registryFailures: report.registryFailures,
     registryFailure: report.registryFailure, registryRecordingScope: report.registryRecordingScope });
+  // Nine fixed windows each own at most 128 SDK modules, three companions,
+  // one HTML page and one favicon request. The historical allowance was 1051.
+  const requestCapacity = { windows:9, modulesPerWindow:128, companions:3, html:1, favicon:1, historical:1024+3*9 };
+  const requestLimit = requestCapacity.windows * (requestCapacity.modulesPerWindow + requestCapacity.companions + requestCapacity.html + requestCapacity.favicon);
+  report.requestCapacity = {...requestCapacity,current:requestLimit};
   server = createServer((request, response) => {
     const pathname = new URL(request.url, 'http://localhost').pathname, value = served.get(pathname);
     const observed = { method: request.method, pathname, status: value && request.method === 'GET' ? 200 : 404, bytes: value?.body.length ?? 0, sha256: value?.identity.sha256 ?? null };
-    // Three M1.2 helper modules add one request each in the original nine windows.
-    // Preserve the old request allowance and its remaining headroom.
-    if (report.requests.length >= 1024 + 3 * 9) { report.requestOverflow = true; response.writeHead(429); response.end(); return; }
+    if (report.requests.length >= requestLimit) { report.requestOverflow = true; response.writeHead(429); response.end(); return; }
     report.requests.push(observed);
     if (!value || request.method !== 'GET') { response.writeHead(404); response.end('Unselected resource'); return; }
     response.writeHead(200, { 'content-type': value.contentType, 'cache-control': 'no-store' }); response.end(value.body);

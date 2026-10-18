@@ -92,6 +92,17 @@ function checkCompilerPin(pin) {
   const actual = installedPin(compilerOwner, relative);
   if (actual.bytes !== pin.bytes || actual.sha256 !== pin.sha256) failure('changed stock compiler input: ' + pin.path);
 }
+// M1.3 preserves the complete historical inventory. Only this authentic Texture
+// source/declaration pair selects the single observed structural-error wording.
+// This local successor does not claim a newly frozen full compiler closure.
+const m13TextureSourcePairs = [{"path":"packages/runtime/src/Texture.ts","base":{"bytes":4149,"sha256":"35e564962d77300cdab9738201cebdb4cc52d01b6c2559ef5734ce79c7795820"},"current":{"bytes":8333,"sha256":"3dbaac58fd9f2b744896801039d247a45e51e64d2afa51c1a2a6acf8bc47159f"}},{"path":"packages/runtime/dist/Texture.d.ts","base":{"bytes":1055,"sha256":"77c4e29aa324f4b3bc8dd47d296802c2bfff0cf7a9303271b29b8bb7e73da0d3"},"current":{"bytes":1388,"sha256":"04aebb73bf1c3001edab3ec5f20bf2e66fef582dd3b1f57ecf560f4895ed83a2"}}];
+const m13TextureDiagnosticSuccessor = {"lane":"negative","index":24,"base":{"file":"tests/types/browser-png-negative.ts","line":73,"column":18,"code":2740,"message":"Type '{}' is missing the following properties from type 'Texture': textureBrand, imageData, sourceRect, width, and 3 more."},"current":{"file":"tests/types/browser-png-negative.ts","line":73,"column":18,"code":2740,"message":"Type '{}' is missing the following properties from type 'Texture': textureBrand, imageData, sourceRect, viewRegion, and 4 more."}};
+function textureIdentityBranch() {
+  const actual = m13TextureSourcePairs.map(row => fingerprintFile(root, row.path));
+  for (const branch of ['base', 'current'])
+    if (actual.every((row, index) => equal(row, { path: m13TextureSourcePairs[index].path, ...m13TextureSourcePairs[index][branch] }))) return branch;
+  failure('unregistered or mixed Texture source/declaration identity');
+}
 const names = new Set();
 function markers(group) {
   const text = new TextDecoder('utf-8', { fatal: true }).decode(readFileSync(path.join(root, group.sourcePin.path)));
@@ -119,8 +130,13 @@ for (const group of inventory.lanes) {
   checkPin(group.sourcePin); checkPin(group.configPin); markers(group);
   if (!Array.isArray(group.diagnostics) || (negative ? group.diagnostics.length === 0 : group.diagnostics.length !== 0)) failure('wrong observed lane diagnostics');
 }
+const textureSuccessorGroup = inventory.lanes.find(group => group.lane === m13TextureDiagnosticSuccessor.lane);
+if (!equal(textureSuccessorGroup?.diagnostics[m13TextureDiagnosticSuccessor.index], m13TextureDiagnosticSuccessor.base))
+  failure('historical Texture diagnostic differs');
+const textureBranch = textureIdentityBranch();
 function unchanged() {
   checkPin(inventoryPin); checkPin(selfPin);
+  if (textureIdentityBranch() !== textureBranch) failure('Texture source/declaration branch changed during replay');
   for (const pin of inventory.productPins) checkPin(pin);
   for (const pin of inventory.configurationPins) checkPin(pin);
   for (const group of inventory.lanes) { checkPin(group.sourcePin); checkPin(group.configPin); }
@@ -171,7 +187,10 @@ for (const group of inventory.lanes) {
     throw result.error ?? new Error('Browser PNG types: compiler settlement refused in ' + group.lane);
   }
   const observed = parseDiagnostics(result.stdout ?? Buffer.alloc(0));
-  if (!equal(observed, group.diagnostics) || observed.some(row => row.file !== group.sourcePin.path)
+  const expected = textureBranch === 'current' && group.lane === m13TextureDiagnosticSuccessor.lane
+    ? group.diagnostics.map((row, index) => index === m13TextureDiagnosticSuccessor.index ? m13TextureDiagnosticSuccessor.current : row)
+    : group.diagnostics;
+  if (!equal(observed, expected) || observed.some(row => row.file !== group.sourcePin.path)
     || new Set(observed.map(row => JSON.stringify(row))).size !== observed.length) failure('changed/missing/extra/duplicate complete diagnostics in ' + group.lane);
   console.log('Browser PNG ' + group.lane + ' exact diagnostic replay: ' + JSON.stringify(observed));
 }

@@ -345,8 +345,17 @@ test('S05 ordinary native fixture factory imports use only the exact public port
 });
 test('S06 collector pins the current Host and retains both schedules separately', async () => {
   const source = await readFile(cli, 'utf8');
-  assert.match(source, /currentHost\.bytes, 104705/);
-  assert.ok(source.includes('e9d172d17cc9f45109dae7b7038485d63d2c8e572efd88fb74af918812045d1d'));
+  const historical = source.match(/^  const historicalM12HostSource = (\{[^\n]+\});$/m);
+  const current = source.match(/^  const m13HostSourceSuccessor = (\{[^\n]+\});$/m);
+  assert.ok(historical && current, 'Both exact Host identity declarations are retained');
+  // Evaluate only these two bounded metadata literals, never the native collector.
+  const identities = runInNewContext(historical[0] + '\n' + current[0] + '\n({historicalM12HostSource,m13HostSourceSuccessor})', {}, { timeout: 1000 });
+  assert.deepEqual(JSON.parse(JSON.stringify(identities)), {
+    historicalM12HostSource: { bytes: 104705, sha256: 'e9d172d17cc9f45109dae7b7038485d63d2c8e572efd88fb74af918812045d1d' },
+    m13HostSourceSuccessor: { bytes: 134474, sha256: '73c33a00ed99283e1e4d70867308ebc3550c905df881a1d79c714d6c80bbe5a0' },
+  });
+  assert.match(source, /assert\.equal\(currentHost\.bytes, m13HostSourceSuccessor\.bytes,/);
+  assert.match(source, /assert\.equal\(currentHost\.sha256, m13HostSourceSuccessor\.sha256\)/);
   assert.match(source, /allowedModules\.has\(name\)/);
   assert.match(source, /maximumSubmittedFrames: 11/); assert.match(source, /maximumSubmittedFrames: 3/);
   assert.match(source, /baselinePixelComparisons !== 14/); assert.match(source, /window\.frames\.reduce\([^\n]*8214/);

@@ -119,7 +119,7 @@ B1 命令用于受影响的 B1 场景渲染，详见[有界验证器](knowledge-
 
 tests/webgpu-submission-preparation.test.mjs 与 tests/webgpu-submission-precedence.test.mjs 使用真实公开 SDK 帧和受控 GPU 端口。同步 Float32Array／Uint8Array 构造故障与裁剪计数必须恢复原全局 descriptor；裁剪计数在进入原生 error scope 前结束。其结果只证明受控操作顺序／次数，不证明物理 OOM、总分配或速度。
 
-B1 源码检查后继仅允许两个指定辅助模块发射文件中的 19 个完整原生方法捕获 initializer。保留原生未链接模块构造、有界字面量导入图、精确捕获消费、指定词法拒绝和原有十三案例调度。该许可不允许动态代码构造，也不是通用 Function 例外。
+B1 源码检查后继保留历史上的 19 个捕获，当前仅准入三个指定辅助模块发射文件中的 21 个完整原生方法捕获 initializer。原缓冲区门面作为未链接模块接受检查；该检查不代表运行时执行。七条精确的仅静态导入边覆盖该门面及共享 B1 准备辅助模块；原有五个运行时入口闭包中的每条导入边仍须有实际解析证据。保留原生未链接模块构造、精确捕获消费、指定词法拒绝和原有十三案例调度。采集器的请求与收据容量是有限的验证边界，与产品资源预算分开。该许可不允许动态代码构造，也不是通用 Function 例外。
 
 ## M1.2 增量渲染单元
 
@@ -131,3 +131,9 @@ B1 源码检查后继仅允许两个指定辅助模块发射文件中的 19 个�
 - `tests/incremental-preparation-private.test.mjs`：`packages/engine/dist/rendering/preparedFrameCache2D.js`、同一 rendering 目录中的 `prepareMixedDraws2D.js`、`prepareTexturedDraws2D.js`、`prepareRectangles2D.js`、`prepareImages2D.js`、`prepareTexturedMesh2D.js`、`packImageVertices2D.js`、`packTexturedMesh2D.js`、`texturedPreparationBudget2D.js`，以及 `packages/engine/dist/web/webgpuPass.js`。资源通过公开 SDK 构造。测试验证真实准备流程、完整键、本帧索引、逻辑计费、原子预算回放与终止失效。
 
 上述权限不允许加载器拦截、增加产品导出或在普通公开示例中导入私有模块。逻辑计费不证明实际内存用量或运行速度。
+
+## M1.3 共享保留资源单元验证
+
+仅 `tests/shared-retention-private.test.mjs` 可直接导入构建后的私有辅助模块 `packages/engine/dist/web/webgpuRetentionPool.js`。这些明确标注的元数据 UNIT 用例使用不执行原生操作的自有资源端口，验证统一字节与数量上限、精确兼容性、归还预留顺序、真实租约和终止后的清理归属。它们不调用原生 GPU 方法，不增加产品导出或加载拦截，也不证明物理分配或浏览器验收。普通公开行为测试与示例继续使用公开 SDK 入口。
+
+可选的共享原生采集器在普通场景中仅使用构建后的公开 SDK 入口。其十一项指定反例只可在采集器私有服务副本中改动一个已记录引擎产物，不得修改产品文件或数值参考。必须匹配已评审的唯一源码锚点及修改前后完整原始字节身份，执行新的健康基线、指定数值失败和健康恢复，并保留 RGBA、背景截图与清理记录。当前入口为 `tools/browser-verify.mjs --suite shared-webgpu`，参阅[共享契约](knowledge-base/Cns/docs/shared-render-profile-contract.md)。这些反例不增加公开的私有辅助模块访问或通用加载权限。

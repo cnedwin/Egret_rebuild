@@ -20,9 +20,13 @@ export { IMAGE_LIMITS_2D, createImageData2D, isImageData2D, copyImageData2DPixel
 export type { ImageData2DInput, ImageData2D, TextureRegion2D } from '@egret/contracts';
 export { createTexturedGeometry2D, isTexturedGeometry2D } from '@egret/contracts';
 export type { TexturedFloatArray2D, TexturedIndexArray2D, TexturedGeometry2DInput, TexturedGeometry2D } from '@egret/contracts';
+export { createSharedMaterial2D, createSharedGeometry2D } from '@egret/contracts';
+export type { SharedMaterialInput2D, SharedMaterial2D, SharedFloatArray2D, SharedIndexArray2D, SharedGeometryInput2D, SharedGeometry2D, TextureViewRegionInput2D, TextureViewRegion2D } from '@egret/contracts';
 export { TEXTURED_FRAME_PROFILE_2D } from '@egret/contracts';
 export type { TexturedFrameProfile2D, TexturedMeshCommand2D, TexturedRenderCommand2D, TexturedRenderFrame2D, TexturedRenderHostAdapter } from '@egret/contracts';
-export { Texture, createTexture, isTexture, Bitmap, Mesh2D } from '@egret/runtime';
+export { SHARED_FRAME_PROFILE_2D } from '@egret/contracts';
+export type { SharedFrameProfile2D, SharedOutputAlpha2D, SharedFrameOptions2D, SharedPage2D, SharedRegion2D, SharedDrawState2D, SharedRectangleCommand2D, SharedImageCommand2D, SharedMeshCommand2D, SharedBarrierCommand2D, SharedRenderCommand2D, SharedRenderFrame2D, SharedRenderHostAdapter } from '@egret/contracts';
+export { Texture, createTexture, createTextureView, isTexture, Bitmap, Mesh2D } from '@egret/runtime';
 export { createSequenceClip, SequencePlayer } from '@egret/runtime';
 export type { SequenceFrameInput, SequenceClipInput, SequenceClip, SequenceRegion, SequenceSample, SequencePlaybackMode } from '@egret/runtime';
 export { ByteReader, BYTE_READER_LIMITS } from "@egret/runtime";

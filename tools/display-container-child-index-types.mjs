@@ -19,6 +19,12 @@ if (helperRaw.length !== 5065 || hash(helperRaw) !== '999b355c6e0d03f17853ee05f3
 const { fingerprintFile, logicalPath, ownerRelativePath, samePhysicalPath } = await import(pathToFileURL(helperFile).href);
 if (!equal(fingerprintFile(root, 'tools/lib/file-identity.mjs'), {path:'tools/lib/file-identity.mjs',bytes:helperRaw.length,sha256:hash(helperRaw)})) fail('shared helper physical identity differs');
 const inventory = JSON.parse(readFileSync(path.join(root, 'tests/types/display-container-child-index-diagnostic-expectations.json'), 'utf8'));
+// Preserve the immutable predecessor and authenticate the complete M1.3 successor.
+const m13HelperPin = fingerprintFile(root, 'tools/lib/m13-strict-successor.mjs');
+if (m13HelperPin.bytes !== 10785 || m13HelperPin.sha256 !== '61a14bb8be2162d861a26b822ded713c552b4032d755e291578b225cd13ef337') throw Error('M1.3 strict helper changed before import');
+const { selectM13StrictSuccessor } = await import('./lib/m13-strict-successor.mjs');
+const m13 = selectM13StrictSuccessor(root, 'display-container-child-index', inventory);
+
 const lanes = ['positive', 'negative'];
 const expectedInputs = [
   "tools/lib/file-identity.mjs",
@@ -167,8 +173,8 @@ if (currentInputSuccessor?.kind !== 'ANCHOR_CURRENT_DECLARATION_IDENTITY_SUCCESS
   || !equal(currentInputSuccessor.rows, currentDeclarationRows)
   || !equal(inventory.inputPins.find(row=>row.path===historicalDeclaration.path), historicalDeclaration))
   fail('current declaration input successor differs');
-for (const row of inventory.inputPins) {
-  const effective = currentDeclarationRows.find(current=>current.path===row.path) ?? row;
+for (const row of m13?.inputPins ?? inventory.inputPins) {
+  const effective = m13 ? row : currentDeclarationRows.find(current=>current.path===row.path) ?? row;
   if (logicalPath(row.path) !== row.path || !equal(fingerprintFile(root, row.path), effective))
     fail('changed complete raw input: ' + row.path);
 }
@@ -217,6 +223,7 @@ function tuplesFrom(raw) {
   return tuples;
 }
 for (const group of inventory.groups) {
+  m13?.recheck();
   const file = 'tests/types/display-container-child-index-' + group.lane + '.ts';
   const config = 'tests/types/tsconfig.display-container-child-index-' + group.lane + '.json';
   const expectedExit = group.lane === 'positive' ? 0 : 1;
@@ -243,7 +250,7 @@ for (const group of inventory.groups) {
       || !equal(currentOriginal.stdout, expectedCurrentRaw) || currentOriginal.stderr?.bytes !== 0
       || currentOriginal.stderr.sha256 !== 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
       || currentOriginal.receiptSHA256 !== 'e8aa592ca1cb74d8cf651e71ceaaf0737a04ebcdecc3446fd9998b57f4803484'
-      || !equal(successor.declarationPin, fingerprintFile(root, 'packages/runtime/dist/DisplayObject.d.ts'))
+      || !equal(successor.declarationPin, m13 ? currentDeclarationRows[0] : fingerprintFile(root, 'packages/runtime/dist/DisplayObject.d.ts'))
       || typeof successor.originalStdout !== 'string') fail('current declaration successor provenance differs');
     const currentRaw = Buffer.from(successor.originalStdout, 'utf8');
     if (currentRaw.length !== expectedCurrentRaw.bytes || hash(currentRaw) !== expectedCurrentRaw.sha256
@@ -251,6 +258,7 @@ for (const group of inventory.groups) {
       fail('current complete unsuppressed successor output differs');
     currentExpectedTuples = successor.tuples;
   }
+  if (m13) currentExpectedTuples = m13.group(group.lane).tuples;
   const source = readFileSync(path.join(root, file), 'utf8');
   if (/@ts-(?:expect-error|ignore|nocheck)\b/.test(source)) fail('suppressed source diagnostics');
   const cases = source.split('\n').flatMap((line,index) => {
@@ -267,6 +275,7 @@ for (const group of inventory.groups) {
   if (tuples.some(tuple=>tuple[0]!==file || tuple[3]===2307 || /[A-Za-z]:[\\/]|file:\/\//.test(tuple[4]))
     || !equal(tuples,currentExpectedTuples) || tuples.length !== cases.length
     || !equal(tuples.map(tuple=>tuple[1]),cases.map(row=>row.line))) fail('missing, extra, unrelated or changed complete diagnostic');
+  m13?.verifyClosure(group.lane);
   console.log('DisplayObjectContainer.getChildIndex ' + group.lane + ' exact strict diagnostics: ' + JSON.stringify(tuples));
 }
 console.log('DisplayObjectContainer.getChildIndex strict public consumers PASS; runtime and host acceptance remain separate.');

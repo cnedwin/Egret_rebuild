@@ -6,11 +6,17 @@ import { readFileSync, realpathSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { logicalPath, ownerRelativePath } from './lib/file-identity.mjs';
+import { fingerprintFile, logicalPath, ownerRelativePath } from './lib/file-identity.mjs';
 
 const seqpRoot = fileURLToPath(new URL('../', import.meta.url));
 const seqpInventoryPath = 'tests/types/sequence-playback-diagnostic-expectations.json';
 const seqpInventory = JSON.parse(readFileSync(path.join(seqpRoot, seqpInventoryPath), 'utf8'));
+// Preserve the immutable predecessor and authenticate the complete M1.3 successor.
+const m13HelperPin = fingerprintFile(seqpRoot, 'tools/lib/m13-strict-successor.mjs');
+if (m13HelperPin.bytes !== 10785 || m13HelperPin.sha256 !== '61a14bb8be2162d861a26b822ded713c552b4032d755e291578b225cd13ef337') throw Error('M1.3 strict helper changed before import');
+const { selectM13StrictSuccessor } = await import('./lib/m13-strict-successor.mjs');
+const m13 = selectM13StrictSuccessor(seqpRoot, 'sequence-playback', seqpInventory);
+
 const seqpFail = message => { throw Error('Sequence playback types: ' + message); };
 const seqpEqual = (left, right) => JSON.stringify(left) === JSON.stringify(right);
 const seqpPinPaths = pins => pins.map(pin => pin.path);
@@ -203,8 +209,8 @@ const seqpTrials = seqpInventory.groups.map(group => {
     const bytes = readFileSync(path.join(seqpRoot, pin.path));
     return { path: pin.path, bytes: bytes.length, sha256: seqpHash(bytes) };
   });
-  const currentSourcePins = seqpEqual(actualCurrentSourcePins, expectedCurrentSourcePins)
-    ? expectedCurrentSourcePins : m12IncrementalSourcePins;
+  const currentSourcePins = m13 ? expectedCurrentSourcePins.map(pin => m13.pin(pin.path))
+    : seqpEqual(actualCurrentSourcePins, expectedCurrentSourcePins) ? expectedCurrentSourcePins : m12IncrementalSourcePins;
   for (const pin of currentSourcePins) seqpReadPin(pin);
   let currentCases = group.cases;
   if (group.lane === 'negative') {
@@ -230,6 +236,7 @@ const seqpTrials = seqpInventory.groups.map(group => {
     }
     currentCases = successor.cases;
   }
+  if (m13) currentCases = currentCases.map((item, index) => ({...item, tuple:m13.group(group.lane).tuples[index]}));
   return { group, file, config, currentCases, currentSourcePins };
 });
 
@@ -238,6 +245,7 @@ for (const key of Object.keys(seqpEnvironment)) {
   if (/^(?:NODE_OPTIONS|NODE_PATH|NODE_V8_COVERAGE|NODE_COMPILE_CACHE|NODE_REPL_EXTERNAL_MODULE|NODE_TEST_CONTEXT|NODE_TEST_WORKER_ID|DOTNET_STARTUP_HOOKS|DOTNET_ADDITIONAL_DEPS|DOTNET_SHARED_STORE)$/i.test(key)) delete seqpEnvironment[key];
 }
 function seqpRecheck(trial) {
+  m13?.recheck();
   for (const pin of seqpInventory.compiler.pins) seqpReadPin(pin);
   for (const pin of seqpNativeCurrentPins) seqpReadPin(pin, seqpNativeRoot);
   for (const pin of seqpInventory.configurationPins) seqpReadPin(pin);
@@ -261,6 +269,7 @@ for (const trial of seqpTrials) {
   const expected = trial.currentCases.map(item => item.tuple);
   if (observed.some(item => item[0] !== trial.file) || new Set(observed.map(item => JSON.stringify(item))).size !== observed.length
     || !seqpEqual(observed, expected)) seqpFail('missing/extra/duplicate or changed complete diagnostic in ' + trial.group.lane);
+  m13?.verifyClosure(trial.group.lane);
   console.log('Sequence playback ' + trial.group.lane + ' live exact diagnostics: ' + JSON.stringify(
     trial.currentCases.map((item, index) => ({ name: item.name, expected: item.tuple, actual: observed[index] }))));
 }

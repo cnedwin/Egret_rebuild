@@ -232,3 +232,20 @@ for (const relative of ["packages/engine/dist/rendering/preparedBatches2D.d.ts",
       } finally { writeFileSync(file, before); assert.deepEqual(inventory(root), baseline); assert.deepEqual((await run()).issues, []); }
     });
   });
+
+// M1.3 admission requires the full source/emission/declaration group.
+for (const [relative, mode] of [["packages/contracts/src/SharedGeometry2D.ts","missing"],["packages/runtime/dist/sharedFrameCapture.js","missing"],["packages/engine/dist/web/webgpuRetentionPool.d.ts","missing"],["packages/engine/rendering/prepareSharedDraws2D.ts","mixed-source"],["packages/engine/dist/rendering/sharedColor2D.js","same-size-hash"]])
+  test('BIP-M13 complete group refuses ' + mode + ' ' + relative, async () => {
+    const check=await checker();
+    await isolated(check, async ({root,run,baseline})=>{
+      const file=path.join(root,relative), before=readFileSync(file);
+      try {
+        if(mode==='missing')rmSync(file);
+        else if(mode==='mixed-source')writeFileSync(file,Buffer.concat([before,Buffer.from('\n// unaccepted shared source\n')]));
+        else {const altered=Buffer.from(before);altered[0]^=1;assert.equal(altered.length,before.length);writeFileSync(file,altered);}
+        const now=inventory(root),prior=new Map(baseline.map(row=>[row.path,row]));
+        assert.deepEqual([...now.filter(row=>JSON.stringify(row)!==JSON.stringify(prior.get(row.path))).map(row=>row.path),...baseline.filter(row=>!now.some(current=>current.path===row.path)).map(row=>row.path)],[relative]);
+        assert.deepEqual((await run()).issues.map(issue=>[issue.code,issue.path]),[[mode==='missing'?'BIP_BOUNDARY_SOURCE_INVENTORY':'BIP_BOUNDARY_FINGERPRINT',relative]]);
+      } finally {writeFileSync(file,before);assert.deepEqual(inventory(root),baseline);assert.deepEqual((await run()).issues,[]);}
+    });
+  });

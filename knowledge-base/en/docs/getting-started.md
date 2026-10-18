@@ -66,6 +66,8 @@ Provisional process targets for the next rehearsals are five minutes for setup o
 
 Existing-file contributions edit content, not shared hashes. New files add a uniquely named `contributions/<change-name>.json` declaration with `schemaVersion: 1`, a `files` array of `path`/`originRole` entries (`criticalComment: true` for critical code), and a `documents` array of `{en, zh}` pairs for new reading documents. Declare both document paths in files. Use complete repository-relative paths and explain authorship, license, references and AI assistance. The existing `contributions/m0-tooling.json` is a structural example, not a source statement to copy. Choose a separate filename for each contribution; do not edit another contribution's declaration.
 
+New actual compiler observations use the optional `frozenInputs` array in a contribution declaration. Each row contains exactly `path`, `bytes`, `sha256` and `originRole`; only `tests/types/<name>-diagnostic-expectations.json` is admitted. Independent review must verify the actual unsuppressed compiler output before registration. The declared raw identity must match, the file must be absent from the selected base unless already registered there with the same identity and source statement, and later content or identity changes are refused. Existing evidence, legal originals and unrelated preserved domains remain excluded. This records a new observation; it neither regenerates historical diagnostics nor certifies their meaning.
+
 The normal full prepush derives current publication metadata read-only from the Git merge base with origin/main. It does not require contributors to edit localization.json, source-origin.json or documentation-layout.json. Keep origin/main available and current; in a fork, add/fetch the upstream repository and set EGRET_METADATA_BASE to the exact target-base commit for validation. A one-language draft may be discussed, but the push hook still requires paired final readings. Ask for translation help before delivery if needed.
 
 After content, source and bilingual review, the integrator selects the final base and runs:
@@ -84,7 +86,7 @@ For current browser checks, install Playwright and playwright-core **1.62.1** in
 node tools/browser-verify.mjs --suite canvas --playwright <absolute-installed-playwright-package> --output <absolute-fresh-directory-outside-repository>
 ```
 
-Direct suites are canvas, webgpu, b1, text, hit-test and mouse-input. Resource-scene and bitmap-slot additionally require a reviewed source snapshot:
+Direct suites are canvas, webgpu, b1, text, hit-test, mouse-input and shared-webgpu. The shared suite runs the fixed 30-case pixel matrix and 11 assigned numerical controls; see the [shared rendering record](shared-rendering-evidence.md) for its finite scope. Resource-scene and bitmap-slot additionally require a reviewed source snapshot:
 
 ```text
 node tools/browser-prepare.mjs --suite resource-scene --output <absolute-new-snapshot-file-outside-repository>

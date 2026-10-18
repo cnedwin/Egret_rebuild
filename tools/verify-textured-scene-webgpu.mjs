@@ -240,14 +240,17 @@ async function collectGraph(repository, robustRoot, retain) {
       const edge = { ...imported, url: selectedURL };
       row.edges.push(edge);
       if (edge.dynamic) {
-        policy(relative === HOST && imported.specifier === './b1.js' && selectedURL === '/packages/engine/dist/web/b1.js', 'DYNAMIC_EDGE_BOUND', { parent: relative, ...edge });
+        // Only the current Host's two fixed B1 routes may introduce lazy dependencies.
+        policy(relative === HOST && ((imported.specifier === './b1.js' && selectedURL === '/packages/engine/dist/web/b1.js')
+          || (imported.specifier === './sharedB1.js' && selectedURL === '/packages/engine/dist/web/sharedB1.js')), 'DYNAMIC_EDGE_BOUND', { parent: relative, ...edge });
         dynamicEdges.push({ parent: relative, ...edge });
       }
       await visit(selectedURL);
     }
   }
   for (const entry of ENTRIES) await visit('/' + entry);
-  policy(dynamicEdges.length === 1 && modules.has('/' + ENGINE) && modules.has('/' + HOST) && modules.has('/' + REGISTRY), 'GRAPH_REQUIRED_IDENTITIES');
+  policy(dynamicEdges.length === 2 && new Set(dynamicEdges.map(edge => edge.url)).size === 2
+    && modules.has('/' + ENGINE) && modules.has('/' + HOST) && modules.has('/' + REGISTRY), 'GRAPH_REQUIRED_IDENTITIES');
   const engine = modules.get('/' + ENGINE), host = modules.get('/' + HOST), registry = modules.get('/' + REGISTRY);
   const engineEdges = engine.edges.filter(edge => edge.url === '/' + REGISTRY), hostEdges = host.edges.filter(edge => edge.url === '/' + REGISTRY);
   policy(engineEdges.length === 1 && engineEdges[0].specifier === './internal/texturedFrameState.js'

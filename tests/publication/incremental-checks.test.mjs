@@ -218,16 +218,16 @@ function baselineFixture(){
  const f=maintenanceFixture();
  for(const name of ['contracts','runtime','engine','project'])for(const area of ['src','dist',...(name==='engine'?['web','rendering']:[])])fs.mkdirSync(path.join(f.root,'packages',name,area),{recursive:true});
  const pin=f.pin('packages/project/src/value.ts');
- f.put('tools/spritesheet-boundary.mjs','const graphPins = '+JSON.stringify([pin])+';\nconst configurationPins = [];\nconst ss1AtlasGraphSuccessor = [];\nconst m11WarmSubmissionGraphSuccessor = [];\nconst m12IncrementalRenderingGraphSuccessor = [];\n');
- f.put('tools/browser-png-boundary.mjs','const acceptedSnapshot = '+JSON.stringify({graph:[pin],stablePins:[]})+';\nconst atlasGraphSuccessor = [];\nconst m11WarmSubmissionGraphSuccessor = [];\nconst m12IncrementalRenderingGraphSuccessor = [];\n');
- f.put('tools/sequence-playback-boundary.mjs','const seqpbPackages = [];\nconst seqpbStableEntries = '+JSON.stringify([pin])+';\nconst seqpbConfigurations = [];\n');
+ f.put('tools/spritesheet-boundary.mjs','const graphPins = '+JSON.stringify([pin])+';\nconst configurationPins = [];\nconst ss1AtlasGraphSuccessor = [];\nconst m11WarmSubmissionGraphSuccessor = [];\nconst m12IncrementalRenderingGraphSuccessor = [];\nconst m13SharedRenderingGraphSuccessor = [];\n');
+ f.put('tools/browser-png-boundary.mjs','const acceptedSnapshot = '+JSON.stringify({graph:[pin],stablePins:[]})+';\nconst atlasGraphSuccessor = [];\nconst m11WarmSubmissionGraphSuccessor = [];\nconst m12IncrementalRenderingGraphSuccessor = [];\nconst m13SharedRenderingGraphSuccessor = [];\n');
+ f.put('tools/sequence-playback-boundary.mjs','const seqpbPackages = [];\nconst seqpbStableEntries = '+JSON.stringify([pin])+';\nconst seqpbConfigurations = [];\nconst m13SequenceInterfaceSuccessor = [];\n');
  const extra=f.pin('packages/engine/src/value.ts');
  for(const [stem,kind]of [['bitmap-resource-slot','BITMAP_RESOURCE_SLOT_FINITE_INTERFACE_POLICY'],['bitmap-binding-ticket','BITMAP_BINDING_TICKET_FINITE_INTERFACE_POLICY']]){
   const policy={schemaVersion:1,kind,packages:[],configurations:[],stableEntries:[extra],oldRootPins:[extra],oldEngineDeclarationPin:extra,workspacePins:[],...(stem==='bitmap-binding-ticket'?{selectedProductPins:[extra]}:{})};
-  f.put('tools/'+stem+'-policy.json',JSON.stringify(policy));f.put('tools/'+stem+'-boundary.mjs','const policyPin = '+JSON.stringify(f.pin('tools/'+stem+'-policy.json'))+';\n'+(stem==='bitmap-binding-ticket'?'const m12IncrementalOwnershipSuccessor = [];\n':''));
+  f.put('tools/'+stem+'-policy.json',JSON.stringify(policy));f.put('tools/'+stem+'-boundary.mjs','const policyPin = '+JSON.stringify(f.pin('tools/'+stem+'-policy.json'))+';\n'+(stem==='bitmap-binding-ticket'?'const m12IncrementalOwnershipSuccessor = [];\n':'')+'const m13InterfaceRawSuccessor = [];\nconst m13InterfaceProjectedSuccessor = [];\nconst m13InterfaceStableSuccessor = [];\n');
  }
  f.put('tests/types/atlas-import-diagnostic-expectations.json',JSON.stringify({kind:'ATLAS_IMPORT_ACTUAL_STRICT_DIAGNOSTICS',status:'OBSERVED_FROZEN_TS7_DIAGNOSTICS',sourcePolicy:{modules:[extra],configurationPins:[]}}));
- f.put('tools/atlas-import-boundary.mjs','const inventoryPin = '+JSON.stringify(f.pin('tests/types/atlas-import-diagnostic-expectations.json'))+';\nconst m11WarmSubmissionGraphSuccessor = [];\nconst m12IncrementalRenderingGraphSuccessor = [];\n');
+ f.put('tools/atlas-import-boundary.mjs','const inventoryPin = '+JSON.stringify(f.pin('tests/types/atlas-import-diagnostic-expectations.json'))+';\nconst m11WarmSubmissionGraphSuccessor = [];\nconst m12IncrementalRenderingGraphSuccessor = [];\nconst m13SharedRenderingGraphSuccessor = [];\n');
  for(const owner of ['tools/spritesheet-boundary.mjs','tools/browser-png-boundary.mjs'])f.put(owner,fs.readFileSync(path.join(f.root,owner),'utf8')+'const imageResidencySuccessors = '+JSON.stringify([{path:extra.path,base:{bytes:0,sha256:'0'.repeat(64)},current:{bytes:extra.bytes,sha256:extra.sha256}}])+';\n');
  return f;
 }
@@ -346,7 +346,20 @@ test('complete graph proposals expose unlisted code separately from named succes
   const file='packages/project/dist/new.js';f.put(file,'export {};\n');
   const p=m.prepareBaselineReview(f.root);assert.equal(p.graphCoverage.length,3);
   for(const group of p.graphCoverage){assert.ok(group.unlisted.some(pin=>pin.path===file));assert.ok(group.baseBinding);}
-  assert.equal(p.declarations.filter(x=>x.binding.includes('Successor')).length,9);
+  const successors=p.declarations.filter(x=>x.binding.includes('Successor')).map(x=>[x.owner,x.binding]);
+  const historical=[
+   ['tools/spritesheet-boundary.mjs','ss1AtlasGraphSuccessor'],
+   ['tools/browser-png-boundary.mjs','atlasGraphSuccessor'],
+   ...['tools/spritesheet-boundary.mjs','tools/browser-png-boundary.mjs','tools/atlas-import-boundary.mjs'].map(owner=>[owner,'m11WarmSubmissionGraphSuccessor']),
+   ...['tools/spritesheet-boundary.mjs','tools/browser-png-boundary.mjs','tools/atlas-import-boundary.mjs'].map(owner=>[owner,'m12IncrementalRenderingGraphSuccessor']),
+   ['tools/bitmap-binding-ticket-boundary.mjs','m12IncrementalOwnershipSuccessor']
+  ];
+  const shared=[
+   ...['tools/spritesheet-boundary.mjs','tools/browser-png-boundary.mjs','tools/atlas-import-boundary.mjs'].map(owner=>[owner,'m13SharedRenderingGraphSuccessor']),
+   ...['tools/bitmap-resource-slot-boundary.mjs','tools/bitmap-binding-ticket-boundary.mjs'].map(owner=>[owner,'m13InterfaceRawSuccessor'])
+  ];
+  assert.deepEqual(successors.filter(([,binding])=>!binding.startsWith('m13')),historical);
+  assert.deepEqual(successors.filter(([,binding])=>binding.startsWith('m13')),shared);
  }finally{f.close();}
 });
 
@@ -368,7 +381,8 @@ test('policy replacement is exposed as a link difference and invalidates old pro
   f.put(file,fs.readFileSync(path.join(f.root,file),'utf8')+'\n');
   assert.throws(()=>m.verifyMaintenanceProposal(f.root,p),/changed/);
   assert.equal(m.prepareBaselineReview(f.root).policyLinks.find(x=>x.owner==='tools/bitmap-resource-slot-boundary.mjs').row.identity,'different');
-  f.put('tools/bitmap-resource-slot-boundary.mjs','const policyPin = '+JSON.stringify(f.pin('tools/bitmap-binding-ticket-policy.json'))+';\n');
+  const owner='tools/bitmap-resource-slot-boundary.mjs',ownerSource=fs.readFileSync(path.join(f.root,owner),'utf8');
+  f.put(owner,ownerSource.replace(/^const policyPin = .*;$/m,'const policyPin = '+JSON.stringify(f.pin('tools/bitmap-binding-ticket-policy.json'))+';'));
   assert.throws(()=>m.prepareBaselineReview(f.root),/policy.*path/i);
  }finally{f.close();}
 });
@@ -385,11 +399,16 @@ test('policy schemas, duplicate JSON keys, duplicate paths and foreign owners fa
 test('Host pair observations distinguish base, current, neither and missing without admission',async()=>{
  const m=await maintenance(),f=baselineFixture();try{
   const target='packages/engine/src/value.ts',original=fs.readFileSync(path.join(f.root,target));
-  let p=m.prepareBaselineReview(f.root);assert.equal(p.successorPairs.length,2);assert.ok(p.successorPairs.every(x=>x.rows[0].identity==='current'));
-  f.put(target,'');p=m.prepareBaselineReview(f.root);assert.ok(p.successorPairs.every(x=>x.rows[0].identity==='neither'));
+  const historicalPairs=proposal=>{
+   const pairs=proposal.successorPairs.filter(row=>row.binding==='imageResidencySuccessors');
+   assert.deepEqual(pairs.map(row=>row.owner),['tools/spritesheet-boundary.mjs','tools/browser-png-boundary.mjs']);
+   assert.ok(pairs.every(row=>row.rows.length===1));return pairs;
+  };
+  let p=m.prepareBaselineReview(f.root);assert.equal(p.successorPairs.length,7);assert.ok(historicalPairs(p).every(x=>x.rows[0].identity==='current'));
+  f.put(target,'');p=m.prepareBaselineReview(f.root);assert.ok(historicalPairs(p).every(x=>x.rows[0].identity==='neither'));
   for(const owner of ['tools/spritesheet-boundary.mjs','tools/browser-png-boundary.mjs'])f.put(owner,fs.readFileSync(path.join(f.root,owner),'utf8').replace('"base":{"bytes":0,"sha256":"'+'0'.repeat(64)+'"}', '"base":{"bytes":0,"sha256":"'+f.pin(target).sha256+'"}'));
-  p=m.prepareBaselineReview(f.root);assert.ok(p.successorPairs.every(x=>x.rows[0].identity==='base'));
-  fs.unlinkSync(path.join(f.root,target));p=m.prepareBaselineReview(f.root);assert.ok(p.successorPairs.every(x=>x.rows[0].identity==='missing'));f.put(target,original);
+  p=m.prepareBaselineReview(f.root);assert.ok(historicalPairs(p).every(x=>x.rows[0].identity==='base'));
+  fs.unlinkSync(path.join(f.root,target));p=m.prepareBaselineReview(f.root);assert.ok(historicalPairs(p).every(x=>x.rows[0].identity==='missing'));f.put(target,original);
  }finally{f.close();}
 });
 
@@ -548,11 +567,15 @@ function compilerFixture(){
   }
   put('tests/types/'+name+'-diagnostic-expectations.json',JSON.stringify(v));
  }
+ put('tools/shared-render-types.mjs','throw Error("never execute shared gate");');
+ const sharedInputs=["tests/types/shared-render-positive.ts","tests/types/shared-render-negative.ts","tests/types/tsconfig.shared-render-positive.json","tests/types/tsconfig.shared-render-negative.json","tests/types/tsconfig.dom-free.json","tests/types/tsconfig.json","tsconfig.base.json"];
+ for(const file of sharedInputs)put(file,file.endsWith('.ts')?'export {};':'{}');
+ put('tests/types/shared-render-diagnostic-expectations.json',JSON.stringify({schemaVersion:1,kind:'SHARED_RENDER_ACTUAL_STRICT_DIAGNOSTICS',status:'OBSERVED_TS7_DIAGNOSTICS',compilerVersion:'7.0.2',tupleFormat:['file','line','column','code'],inputPins:sharedInputs.map(pin),cases:[],tuples:[]}));
  return {root,put,pin,close:()=>fs.rmSync(root,{recursive:true,force:true})};
 }
 test('compiler preparation retains registered declaration owners and shared raw references without execution',async()=>{
  const m=await compilerTool(),f=compilerFixture();try{
-  const p=m.prepareCompilerReview(f.root);assert.equal(p.status,'review-required');assert.equal(p.acceptance,'none');assert.equal(p.coverage.registered.length,17);assert.deepEqual(p.coverage.unregistered,[]);
+  const p=m.prepareCompilerReview(f.root);assert.equal(p.status,'review-required');assert.equal(p.acceptance,'none');assert.equal(p.coverage.registered.length,18);assert.deepEqual(p.coverage.unregistered,[]);
   const row=p.references.find(x=>x.owner==='compiler'&&x.path==='index.js');assert.equal(row.references.length,15);assert.equal(row.identity,'same');assert.equal(p.dependencies.length,3);
   assert.equal(m.verifyCompilerProposal(f.root,p).status,'current-inputs');
  }finally{f.close();}
@@ -667,7 +690,7 @@ test('inline policy mode is explicit on preparation and freshness checking',asyn
 });
 test('sealed inline declarations preserve digest strength source spans and conditional review limits',async()=>{
  const m=await compilerTool(),f=inlineCompilerFixture();try{
-  const p=m.prepareCompilerReview(f.root,{inlinePolicies:true}),inline=p.inlinePolicies;assert.equal(inline.sources.length,10);assert.equal(inline.literals.length,10);assert.equal(inline.conditions.length,13);assert.equal(inline.sourceRevisions.length,1);
+  const p=m.prepareCompilerReview(f.root,{inlinePolicies:true}),inline=p.inlinePolicies;assert.equal(inline.sources.length,10);assert.equal(inline.literals.length,10);assert.equal(inline.conditions.length,13);assert.equal(inline.sourceRevisions.length,10);
   for(const literal of [...inline.literals,...inline.conditions.filter(x=>x.branch).map(x=>x.branch)]){const raw=fs.readFileSync(path.join(f.root,literal.owner)),selected=raw.subarray(literal.startByte,literal.endByte);assert.equal(selected.length,literal.bytes);assert.equal(createHash('sha256').update(selected).digest('hex'),literal.sha256);}
   const rows=p.declarations.filter(x=>x.owner==='tools/check-types.mjs').flatMap(x=>x.rows);assert.equal(rows.length,11);assert(rows.every(x=>x.comparison==='sha256-only'&&!Object.hasOwn(x.expected,'bytes')));
   const native=inline.conditions.filter(x=>x.kind==='saved-native-host');assert.equal(native.length,8);assert(native.every(x=>x.admission==='not-evaluated'&&x.savedHost.platform==='win32'&&x.readerHost.platform===process.platform));
@@ -703,7 +726,7 @@ test('M1.1 maintenance keeps three explicit successor owners and cross-owner gra
   for(const owner of owners){const raw=fs.readFileSync(path.join(f.root,owner),'utf8');f.put(owner,raw.replace('const m11WarmSubmissionGraphSuccessor = [];','const m11WarmSubmissionGraphSuccessor = '+JSON.stringify([pin])+';'));}
   const unlisted='packages/engine/web/unregistered.ts';f.put(unlisted,'export {};\n');
   const p=m.prepareBaselineReview(f.root);
-  assert.equal(p.declarations.length,31);assert.equal(p.policyLinks.length,3);assert.equal(p.successorPairs.length,2);
+  assert.equal(p.declarations.length,36);assert.equal(p.policyLinks.length,3);assert.equal(p.successorPairs.length,7);
   assert.deepEqual(p.declarations.filter(row=>row.binding==='m11WarmSubmissionGraphSuccessor').map(row=>row.owner),owners);
   for(const [index,coverage]of p.graphCoverage.entries()){
    assert.deepEqual(coverage.warmSuccessor,{owner:owners[index],binding:'m11WarmSubmissionGraphSuccessor'});
@@ -728,13 +751,14 @@ test('M1.2 compiler maintenance keeps both complete sequence source pairs and sa
   for(const file of [source,declaration])f.put(file,fs.readFileSync(new URL('../../'+file,import.meta.url)));
   const collect=()=>m.prepareCompilerReview(f.root,{inlinePolicies:true});
   const baseline=collect(),condition=baseline.inlinePolicies.conditions.find(row=>row.kind==='sequence-source-successor');
-  assert.deepEqual([condition.pathsAgreement,condition.unchangedDeclaration,condition.completeBaseMatch,condition.completeCurrentMatch],[true,true,false,true]);
+  assert.deepEqual([condition.pathsAgreement,condition.unchangedDeclaration,condition.completeBaseMatch,condition.completeCurrentMatch],[true,true,false,false]);
   assert.equal(condition.admission,'not-evaluated');
-  const revision=baseline.inlinePolicies.sourceRevisions[0];assert.equal(revision.selection,'current');assert.notDeepEqual(revision.base,revision.current);
+  const revision=baseline.inlinePolicies.sourceRevisions.find(row=>row.current.path==='tools/sequence-playback-types.mjs');assert.equal(revision.selection,'current');assert.notDeepEqual(revision.base,revision.current);
   assert.equal(revision.base.bytes,17296);assert.equal(revision.base.sha256,'8b2d266f7aacd680f7a1581afb2ea1a1381f02fc44cd70b340ee8961c7584222');
   const groups=baseline.declarations.filter(row=>row.owner==='tools/sequence-playback-types.mjs');
   assert.equal(groups.find(row=>row.selector==='expectedCurrentSourcePins').rows[0].identity,'different');
-  assert(groups.find(row=>row.selector==='m12IncrementalSourcePins').rows.every(row=>row.identity==='same'));
+  assert(groups.find(row=>row.selector==='m12IncrementalSourcePins').rows.every(row=>row.identity==='different'));
+  assert.equal(revision.predecessor.bytes,18474);assert.equal(revision.predecessor.sha256,'e9388c73080d4db112b3260e17bdfc7d1ff1ca6130fa8cccdae7d3b60084ba6b');
   assert.equal(baseline.inlinePolicies.conditions.find(row=>row.kind==='sequence-negative-successor').sourceAgreement,true);
   for(const file of [source,declaration]){
    const raw=fs.readFileSync(path.join(f.root,file));
@@ -759,7 +783,7 @@ test('M1.2 maintenance retains complete successor owners and historical cross-ow
   f.put(bbt,fs.readFileSync(path.join(f.root,bbt),'utf8').replace('const m12IncrementalOwnershipSuccessor = [];','const m12IncrementalOwnershipSuccessor = '+JSON.stringify([owned])+';'));
   const extra='packages/runtime/src/unreviewed.ts';f.put(extra,'export {};\n');
   const p=m.prepareBaselineReview(f.root);
-  assert.equal(p.status,'review-required');assert.equal(p.declarations.length,31);assert.equal(p.policyLinks.length,3);assert.equal(p.successorPairs.length,2);
+  assert.equal(p.status,'review-required');assert.equal(p.declarations.length,36);assert.equal(p.policyLinks.length,3);assert.equal(p.successorPairs.length,7);
   assert.deepEqual(p.declarations.filter(row=>row.binding==='m12IncrementalRenderingGraphSuccessor').map(row=>row.owner),owners);
   assert.deepEqual(p.declarations.filter(row=>row.binding==='m12IncrementalOwnershipSuccessor').map(row=>row.owner),[bbt]);
   for(const [index,coverage]of p.graphCoverage.entries()){
@@ -776,5 +800,34 @@ test('M1.2 maintenance retains complete successor owners and historical cross-ow
   assert.equal(m.verifyMaintenanceProposal(f.root,p),true);
   f.put(file,'export const changed = 1;\n');assert.throws(()=>m.verifyMaintenanceProposal(f.root,p),/changed/);
   assert.ok(m.prepareBaselineReview(f.root).declarations.filter(row=>row.binding==='m12IncrementalRenderingGraphSuccessor').every(row=>row.rows[0].identity==='different'));
+ }finally{f.close();}
+});
+
+// UNIT: exact M1.3 registration is raw review data, not source/strict acceptance.
+test('M1.3 maintenance retains complete graph groups and both interface pair arms',async()=>{
+ const m=await maintenance(),f=baselineFixture();try{
+  const file='packages/contracts/src/SharedGeometry2D.ts';f.put(file,'export {};\n');const current=f.pin(file),base={...current,bytes:0,sha256:'0'.repeat(64)};
+  const owners=['tools/spritesheet-boundary.mjs','tools/browser-png-boundary.mjs','tools/atlas-import-boundary.mjs'];
+  for(const owner of owners)f.put(owner,fs.readFileSync(path.join(f.root,owner),'utf8').replace('const m13SharedRenderingGraphSuccessor = [];','const m13SharedRenderingGraphSuccessor = '+JSON.stringify([current])+';'));
+  const interfaces=[['tools/sequence-playback-boundary.mjs','m13SequenceInterfaceSuccessor'],['tools/bitmap-resource-slot-boundary.mjs','m13InterfaceStableSuccessor'],['tools/bitmap-binding-ticket-boundary.mjs','m13InterfaceProjectedSuccessor']];
+  for(const [owner,binding]of interfaces)f.put(owner,fs.readFileSync(path.join(f.root,owner),'utf8').replace('const '+binding+' = [];','const '+binding+' = '+JSON.stringify([{base,current}])+';'));
+  const p=m.prepareBaselineReview(f.root);assert.equal(p.declarations.length,36);assert.equal(p.successorPairs.length,7);
+  for(const [i,coverage]of p.graphCoverage.entries()){assert.deepEqual(coverage.sharedSuccessor,{owner:owners[i],binding:'m13SharedRenderingGraphSuccessor'});assert.equal(coverage.unlisted.some(row=>row.path===file),false);}
+  const refs=p.references.find(row=>row.path===file).references;assert.equal(refs.length,9);assert.equal(refs.filter(row=>row.branch==='base').length,3);assert.equal(refs.filter(row=>row.branch==='current').length,3);
+  assert.equal(p.successorPairs.filter(group=>interfaces.some(([owner,binding])=>owner===group.owner&&binding===group.binding)).every(group=>group.rows[0].identity==='current'),true);
+  const [owner,binding]=interfaces[0],raw=fs.readFileSync(path.join(f.root,owner),'utf8');
+  f.put(owner,raw+'const '+binding+' = [];\n');assert.throws(()=>m.prepareBaselineReview(f.root),/ambiguous/);f.put(owner,raw);
+  f.put(owner,raw.replace(JSON.stringify([{base,current}]),JSON.stringify([{base,current:{...current,path:'packages/contracts/src/Other.ts'}}])));assert.throws(()=>m.prepareBaselineReview(f.root),/path differs/);f.put(owner,raw);
+  assert.equal(m.verifyMaintenanceProposal(f.root,p),true);
+ }finally{f.close();}
+});
+
+test('shared compiler maintenance admits only its seven fixed raw input roles',async()=>{
+ const m=await compilerTool(),f=compilerFixture();try{
+  const file='tests/types/shared-render-diagnostic-expectations.json',raw=fs.readFileSync(path.join(f.root,file),'utf8'),value=JSON.parse(raw),p=m.prepareCompilerReview(f.root);
+  const rows=p.declarations.find(row=>row.owner===file&&row.selector==='inputPins').rows;assert.equal(rows.length,7);assert(rows.every(row=>row.identity==='same'));
+  f.put(file,JSON.stringify({...value,inputPins:[...value.inputPins.slice(0,6),{...value.inputPins[6],path:'tests/types/foreign.json'}]}));assert.throws(()=>m.prepareCompilerReview(f.root),/shared strict inputs/);
+  f.put(file,JSON.stringify({...value,tupleFormat:['file','line','code']}));assert.throws(()=>m.prepareCompilerReview(f.root),/shared strict schema/);
+  f.put(file,raw);assert.equal(m.verifyCompilerProposal(f.root,p).status,'current-inputs');
  }finally{f.close();}
 });
