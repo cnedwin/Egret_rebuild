@@ -2,7 +2,7 @@
 
 [English](PUBLICATION.md) | 简体中文
 
-公开仓库为 [cnedwin/Egret_rebuild](https://github.com/cnedwin/Egret_rebuild)，main 是集成分支。工程预览 0.54.0 已通过 PR #42 合入主干。工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。源码公开与生产版引擎交付采用各自的验收条件。
+公开仓库为 [cnedwin/Egret_rebuild](https://github.com/cnedwin/Egret_rebuild)，main 是集成分支。工程预览 0.61.0 已通过 PR #50 合入主干。工作区包仍为 private、版本 0.0.0，宿主协议为 1.0。源码公开与生产版引擎交付采用各自的验收条件。
 
 ## 准备贡献
 

@@ -22,17 +22,19 @@
 
 参阅[契约](gpu-image-residency-contract.md)及[证据与限制](gpu-image-residency-evidence.md)。受控规格/所有权结果和实际当前桌面回归结果具有各自范围。新增缓存专用浏览器矩阵延期并保持 OPEN。物理 GPU 内存、性能、目标设备与实际 device-loss 恢复仍未验证。工作区包仍为 private、版本 0.0.0，Host 协议仍为 1.0。
 
-## 图集导入规划 — 0.60.0 候选
+0.61 增量已通过 [PR #50](https://github.com/cnedwin/Egret_rebuild/pull/50) 交付，Main 为 `030a34646774dea6c46cc947b55186da9265a6c8`。
+
+## 图集导入规划 — 0.60.0
 
 **0.60.0 工程预览**增加可选 `@egret/project/atlas` 入口，以一个显式 PNG 绑定规划严格单页 Aseprite stable-marker JSON-array。两个运行时值与十六个擦除类型为既有 SpriteSheet、SequenceClip 工厂生成自有、冻结的输入。精确 profile 为 `aseprite-json-array-1.3.18.6-v1`；exporter 输出兼容性、声明 hash 与许可资格仍未验证。
 
 参阅[契约](atlas-import-plan-contract.md)及[证据与限制](atlas-import-plan-evidence.md)。
 
-已独立接受的保存结果分别为聚焦 planner 47/47、较早正常 SDK 核心 3625/3625 与单独 F2 160/160，以及独立 CPU firstGREEN 5/5；这些重叠范围不相加。独立审查还接受所选新增 Native Canvas/WebGPU 四次读回结果。最终集成门禁/prepush 及 0.60 Git/远端交付仍待完成。工作区包仍为 private、版本 0.0.0，Host 协议仍为 1.0。
+已独立接受的保存结果分别为聚焦 planner 47/47、较早正常 SDK 核心 3625/3625 与单独 F2 160/160，以及独立 CPU firstGREEN 5/5；这些重叠范围不相加。独立审查还接受所选新增 Native Canvas/WebGPU 四次读回结果。截至当时的编写截止点，最终集成门禁/prepush 及 0.60 Git/远端交付仍待完成；0.60 增量随后已通过 [PR #49](https://github.com/cnedwin/Egret_rebuild/pull/49) 交付，Main 为 `8d94620d1134d347bf4cc08d2ef8d76c46c6b308`。工作区包仍为 private、版本 0.0.0，Host 协议仍为 1.0。
 
 前一 0.59 增量已通过 [PR #48](https://github.com/cnedwin/Egret_rebuild/pull/48) 交付，Main 为 `44f49f9d97a7baebc400fd4940541529dc33d147`。较早 0.59 读物和证据保留原编写截止点，新增交付说明不改写它们。未报告远端 status 或 check run，不据此推断 CI 通过。
 
-## 标准化图集帧 — 0.59.0 候选
+## 标准化图集帧 — 0.59.0
 
 显式 `'trim-rotation-v1'` profile 通过一个擦除的 readonly `AtlasFrameLayout` 类型扩展现有 SpriteSheet 和 SequenceClip 工厂。带透明裁边及顺时针90度打包的 crop 通过 Bitmap、SequencePlayer 和 SequencePlayback 保留原始逻辑画布。两个 frame collector 均以 `M * S` 合成图像放置，parent clip、anchor 和 child 坐标仍使用原 display matrix。默认/undefined profile 保留原矩形路径。完整输入、精确 lease 与所有权规则见[契约](atlas-frame-layout-contract.md)、[证据](atlas-frame-layout-evidence.md)和[示例](https://github.com/cnedwin/Egret_rebuild/blob/main/examples/trimmed-atlas-playback/README.md)。
 
