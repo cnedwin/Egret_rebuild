@@ -19,8 +19,8 @@ Use English comments for responsibilities and contracts that are easy to misunde
 1. Review the contribution's public scope, sources, dependencies and attribution.
 2. Complete both reading editions and synchronize registry views, links and current identities.
 3. Complete critical English comments and review their technical meaning.
-4. Run node tools/prepush.mjs on the final candidate. It includes publication structure, build, boundaries, types, behavior, headless examples and knowledge-base checks.
-5. Commit the reviewed files with the repository hooks enabled. The pre-commit hook checks staged raw bytes; the pre-push hook runs the complete checks on the clean committed snapshot.
+4. Run affected local feedback while editing. Complete node tools/prepush.mjs --integrated on the final merge candidate; it retains publication, build, boundaries, types, behavior, examples and knowledge-base checks.
+5. Commit the reviewed files with the repository hooks enabled. The pre-commit hook checks staged raw bytes; the pre-push hook runs node tools/check-push.mjs --committed for environment, clean bytes, source/bilingual publication and knowledge-base structure. It does not repeat engine merge checks.
 6. Verify the pushed commit, PR and merged content as actual remote actions.
 
 Enable hooks with git config --local core.hooksPath .githooks. Checks use exact bytes and the [repository path and line-ending policy](repository-identity-and-line-endings.md).

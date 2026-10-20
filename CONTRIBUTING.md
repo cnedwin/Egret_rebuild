@@ -27,7 +27,7 @@ Use Node.js 26.7.0, pnpm 11.25.0 and TypeScript 7.0.2. From the repository root:
     pnpm check:quick
     pnpm example:browser
 
-Before every push, run the complete node tools/prepush.mjs. It includes publication, code/type/boundary, headless and knowledge-base checks. The pre-commit hook checks staged raw bytes and the pre-push hook checks the clean committed snapshot. Fix failures through this normal flow. Rendering changes additionally require the affected actual-browser checks in [AGENTS](AGENTS.md).
+During development, use `node tools/check-incremental.mjs --base origin/main` for affected behavioral feedback. Before pushing, review sources, both reading editions and critical English comments. The commit hook checks text bytes; the push hook runs `node tools/check-push.mjs --committed` on the clean committed snapshot. Complete `pnpm check:merge` / integrated CI, independent review and affected actual-browser evidence remain required before merge. See the delivery tiers in the [engineering plan](knowledge-base/en/docs/architecture-and-engineering-plan.md).
 
 ## Engineering and API policies
 
@@ -57,4 +57,4 @@ Use the [getting-started guide](knowledge-base/en/docs/getting-started.md) for c
 
 Follow the [public board](https://github.com/users/cnedwin/projects/2) for live status and [Issue #52](https://github.com/cnedwin/Egret_rebuild/issues/52) for a first contribution. Each available item must name its entry point, expected result, checks and review contact. Blocked items record the missing dependency and next action. Maintainers update status after reviewing evidence; an Issue/PR label alone never certifies acceptance. The [newcomer checklist](knowledge-base/en/docs/getting-started.md#rehearse-the-first-contribution) explains the contributor declaration and maintainer integration workflow.
 
-Classify review scope using the [architecture plan](knowledge-base/en/docs/architecture-and-engineering-plan.md): wording-only changes need content/link/bilingual review; setup/CI/verification changes need clean-environment and refusal-path evidence; rendering/resource/animation changes additionally need affected actual-browser checks. These review additions do not replace the mandatory full pre-push gate. No external-fork, human or device result may be inferred from maintainer-account CI.
+Classify review scope using the [architecture plan](knowledge-base/en/docs/architecture-and-engineering-plan.md): wording-only changes need content/link/bilingual review; setup/CI/verification changes need clean-environment and refusal-path evidence; rendering/resource/animation changes additionally need affected actual-browser checks. These review additions do not replace the mandatory complete merge gate. No external-fork, human or device result may be inferred from maintainer-account CI.

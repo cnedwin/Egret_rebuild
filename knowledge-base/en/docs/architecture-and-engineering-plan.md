@@ -2,11 +2,11 @@
 
 English | [中文](../../Cns/docs/architecture-and-engineering-plan.md)
 
-2026-10-18 · Plan version 11 · M0–M4
+2026-10-20 · Plan version 12 · M0–M4
 
 The product baseline remains engineering preview 0.61.0. M0 infrastructure through [PR #71](https://github.com/cnedwin/Egret_rebuild/pull/71) is integrated at main ca62c980f372683dcb156bc5c284f4036a60f4cc. This plan defines target architecture and acceptance, not completed product capabilities. The [M0 record](m0-community-foundations.md) separates delivered engineering from independent human/fork and target-device obligations.
 
-The environment pins Node 26.7.0, pnpm 11.25.0, TypeScript 7.0.2 and PowerShell 7.6.5. Current-ledger generation, dependency-aware local feedback and current/resource/historical browser-tool workflows are available within their documented scope. Historical evidence keeps its original bytes and environment. Actual push and merge CI retain the complete gate; changed rendering additionally needs independent real-browser evidence.
+The environment pins Node 26.7.0, pnpm 11.25.0, TypeScript 7.0.2 and PowerShell 7.6.5. Current-ledger generation, dependency-aware local feedback and current/resource/historical browser-tool workflows are available within their documented scope. Historical evidence keeps its original bytes and environment. Push checks protect committed publication structure; merge CI retains the complete gate; changed rendering additionally needs independent real-browser evidence.
 
 The [M1 implementation plan](m1-rendering-resource-plan.md) defines the engineering entry, five complete work packages, shared contracts, desktop measurement targets and remaining external rows. This revision permits M1 after reviewed engineering entry while keeping complete M0 community acceptance open. Maintenance automation grows only to resolve a concrete contribution or planned product defect; exhaustive automation is not an entry condition.
 
@@ -408,6 +408,29 @@ These sources are pinned to one Main commit. They establish existing implementat
 - [Repository rules](https://github.com/cnedwin/Egret_rebuild/blob/030a34646774dea6c46cc947b55186da9265a6c8/AGENTS.md)
 
 
-M0 local verification now has a [package dependency selection contract](dependency-aware-checks.md). Keep full push/merge checks; any future reduction of those gates requires its own evidence and review.
+M0 local verification now has a [package dependency selection contract](dependency-aware-checks.md). Use the delivery tiers below; complete protected merge checks remain mandatory.
 
 Maintainers can prepare raw baseline differences and conservative catalog candidates with the [check maintenance workflow](check-maintenance.md). Proposals remain review-required and do not replace current source admission or full gates. The registry includes BRS/BBT policy fields and Atlas import source/configuration fields, preserves transformed historical baselines and raw Host pairs, and provides reverse references for shared maintenance. Resource-scene and Atlas multi-owner snapshots now have a separate read-only comparison and freshness workflow through their original collectors. Owner/path identity, record roles and non-inventory structure remain distinct. The resource snapshot workflow now supports an explicitly selected separate application root, required again on recheck. The compiler workflow now registers selected fields in all 17 current diagnostic JSON inventories, including eight native standard-library lists, explicit legacy adapters and digest-only comparisons. It preserves separate historical/successor claims, observes three installed dependency owners and flags unregistered inventory names. This is review preparation; diagnostic semantics, other provenance fields, inline policies and all conditional admission retain their established gates.  An explicit inline mode now authenticates ten original gate revisions and reports two inline inventories plus twelve conditional data relationships. It preserves native-host, historical/successor and negative-lane distinctions without deciding admission; source revision changes require reviewed registration. Human/device acceptance remains open. No engine feature or merge gate is changed.
+
+## Delivery tiers and current implementation
+
+2026-10-20: local feedback, a clean committed push and protected merge qualification have separate responsibilities. This revision changes scheduling, not product acceptance targets.
+
+| Tier | Required work | Meaning |
+| --- | --- | --- |
+| Development | Environment, text hygiene, build and package boundaries, selected behavioral tests; unknown or stale selection runs all top-level behavior tests | Feedback on the current working tree; no reusable acceptance receipt |
+| Push | Clean committed snapshot, environment, source/publication and bilingual structure, knowledge-base checks | Safe review submission; does not qualify engine behavior |
+| Merge | Complete integrated publication, build, source/type/boundary and behavior checks, examples and independent source/results/bilingual review; affected real-browser correctness evidence | Qualification of the actual candidate under existing branch protection |
+| Milestone/release | Sustained recovery, paired performance and required target-device qualification | Separate acceptance rows; missing or failed rows remain OPEN |
+
+The push hook calls `node tools/check-push.mjs --committed`. `pnpm check:merge` / `node tools/prepush.mjs --integrated` remain complete checks. CI keeps all required job names and PR/main coverage, and uses `pnpm setup:dev --no-build` to avoid the duplicate setup build. Default contributor setup still builds. No hook bypass or branch-protection reduction is part of this change.
+
+A rendering/resource change must provide relevant actual-browser correctness and lifecycle evidence before merge. Failures in drawing, cancellation, ownership or recovery block the affected capability. Long-run/performance failures block their corresponding milestone and stable-release claims. Risk in shared lifetime/recovery code may require sustained tests before merge as well. This revision does not declare the unfinished M1.5 or M1.2 acceptance complete.
+
+Before sustained runs, verify startup, loading/cancellation, one loss/recovery, shutdown and report persistence in a short real-browser path. Bind each result to its product/tool snapshot and environment. Freeze that snapshot, not unrelated workspaces; formal performance measurements require an environment free of competing workloads. Reuse a result only after checking its actual dependencies and environment; never join interrupted runs into one qualified duration.
+
+Keep one capability specification, acceptance table and bilingual result summary per complete work package. Review the package independently and review subsequent fixes by impact. Preserve raw historical evidence. Current source hashes identify builds and observations; they are not substitutes for API, dependency and behavior checks. Existing historical source-bound validators remain in the complete gate in this first migration, so ordinary source changes can still require reviewed admission updates. Do not create a new maintenance-automation backlog; consolidate only the current records needed by a concrete engine delivery.
+
+GitHub work items describe a contributor-visible outcome, dependencies, entry files, acceptance and review responsibility. Update existing M1/community items and keep community PRs distinct; do not close unfinished human/device acceptance to simplify the board.
+
+Development feedback within 1–2 minutes and ordinary PR feedback within 5–10 minutes are optimization targets, not measured results or permission to skip checks. Record actual duration separately.

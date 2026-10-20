@@ -7,7 +7,9 @@ import {localPackage} from './lib/local-package.mjs';
 import {samePhysicalPath} from './lib/file-identity.mjs';
 import {spawnSync} from 'node:child_process';
 import {inspectEnvironment,repository} from './doctor.mjs';
-if(process.argv.length!==2)throw Error('Usage: pnpm setup:dev');
+const options=process.argv.slice(2);
+if(options.length>1||options.some(option=>option!=='--no-build'))throw Error('Usage: pnpm setup:dev [--no-build]');
+const build=!options.includes('--no-build');
 const prerequisites=inspectEnvironment(repository,{preinstall:true});
 if(!prerequisites.ok){console.error(JSON.stringify(prerequisites,null,2));process.exit(1);}
 const cli=process.env.npm_execpath;
@@ -46,5 +48,6 @@ if(process.platform==='win32'&&process.arch==='x64'){
  else {fs.mkdirSync(path.dirname(destination),{recursive:true});fs.symlinkSync(source,destination,process.platform==='win32'?'junction':'dir');}
 }
 run(process.execPath,['tools/doctor.mjs']);
-run(process.execPath,['tools/build.mjs']);
-console.log('Setup complete. Run pnpm check:quick, then pnpm example:browser.');
+// CI immediately runs the complete merge check, which owns its single build.
+if(build)run(process.execPath,['tools/build.mjs']);
+console.log(build?'Setup complete. Run pnpm check:quick, then pnpm example:browser.':'Setup complete without a build. Run the complete merge check before acceptance.');

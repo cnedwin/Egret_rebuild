@@ -2,17 +2,17 @@
 
 English | [中文](../../Cns/docs/m1-rendering-resource-plan.md)
 
-2026-10-18 · Revision 4 · Design and acceptance targets, not completed capabilities
+2026-10-20 · Revision 5 · Design and acceptance targets, not completed capabilities
 
 ## Current implementation follow-up
 
-2026-10-18: M1.3 was delivered through [PR #75](https://github.com/cnedwin/Egret_rebuild/pull/75), main `10a37d9dfdeb8762eced73577282127d1c4e4bde`. M1.4 now has implemented optional WebGL2 entries and recorded finite desktop results; independently reviewed finite results remain distinct from the pending complete gates and protected delivery in the [contract](webgl2-executor-contract.md) and [evidence](webgl2-executor-evidence.md). The original baseline, work-package definitions and acceptance targets below remain historical planning context. M1.5 and formal M1.2 timing still require execution; M2/M3 remain design work only at this checkpoint.
+2026-10-20: M1.3 and M1.4 were delivered through [PR #75](https://github.com/cnedwin/Egret_rebuild/pull/75) and [PR #77](https://github.com/cnedwin/Egret_rebuild/pull/77). M1.5 implementation is in progress and has not been merged. Its C6 sustained WebGL2/WebGPU cases stopped at a network-completion assertion whose cause is not yet established; the other five recorded cases completed their stated scope. Overall M1.5 acceptance and M1.2 formal paired timing remain OPEN. M2/M3 implementation has not started.
 
 ## Purpose and entry
 
 Build a reusable rendering and resource foundation for complex 2D interfaces, atlas animation and the later complete Spine adapter. Preserve familiar display, resource and game-time concepts while removing repeated preparation and GPU allocation. The baseline is main ca62c980f372683dcb156bc5c284f4036a60f4cc, engineering preview 0.61.0. The [architecture plan](architecture-and-engineering-plan.md) remains the program specification; this document defines the finite M1 work packages and their shared acceptance.
 
-M1 engineering entry requires reproducible setup and existing behavior, active protected PR CI, controlled current-ledger integration, independently reviewed shared contracts and the scenario/measurement profile below. It does not require complete automation of every historical maintenance policy. All original full push/merge gates remain mandatory. Each changed rendering package additionally requires its affected real-browser checks.
+M1 engineering entry requires reproducible setup and existing behavior, active protected PR CI, controlled current-ledger integration, independently reviewed shared contracts and the scenario/measurement profile below. It does not require complete automation of every historical maintenance policy. The architecture plan’s delivery tiers apply; complete protected merge gates remain mandatory. Each changed rendering package additionally requires its affected real-browser checks.
 
 Complete M0 community acceptance remains distinct: an uninvolved human/fork rehearsal is still open in [#52](https://github.com/cnedwin/Egret_rebuild/issues/52); unavailable devices, authorized Editor exports and distribution qualification remain tracked in [#54](https://github.com/cnedwin/Egret_rebuild/issues/54). These conditions block the corresponding support/release claims and dependent tests, not independent M1 engineering. M0 stays open until its outstanding acceptance is met. Changing this dependency is an explicit planning decision, not a retroactive pass.
 
@@ -86,8 +86,17 @@ Spine's [official runtime guide](https://esotericsoftware.com/spine-runtimes) an
 
 ## Verification and delivery
 
-For every package: define expected behavior and failure cases; observe meaningful regression failures before implementation; run focused and complete checks; independently review source, results and both languages; execute affected browser matrices; then use normal commit/push hooks and protected PR CI. A source review is not execution; AI review is not human onboarding.
+For every package, define behavior and failure cases, run affected local checks, independently review the complete source/results/bilingual package, and qualify the final candidate through complete protected merge checks and affected real-browser correctness evidence. Keep long-run, performance and platform acceptance separate. Use the architecture plan’s delivery tiers; local push checks do not repeat complete merge execution.
 
 Historical source/diagnostic records remain immutable. A changed renderer receives a reviewed current admission or versioned successor, with preserved historical reference. Buffer-pool changes relocate equivalent destruction/reentry/failure controls to actual eviction/close rather than deleting them. Do not refresh all hashes to make a gate green. If an affected verifier cannot admit the new behavior, migrate that verifier as part of the same behavior package and validate its refusal cases.
 
 The PR records the base/candidate, measured scope, failures/repairs and final main tree. No release package or public website is implied. M1 closes only when all its required executable rows pass; unavailable platforms remain unaccepted. M2/M3 and complete production readiness are separate milestones.
+
+## Current closeout sequence
+
+1. Deliver the bounded workflow simplification with protected checks and paired plans. Do not expand maintenance automation.
+2. Diagnose C6 with a short reproducible network/cleanup path; verify the collector’s complete output path before sustained execution. Preserve all original incomplete records.
+3. Close M1.5 as resource loading/cancellation/ownership plus recoverable WebGL2/WebGPU scenes. Retain the existing 100-cycle, ten-loss and 30-minute requirements for each required sustained backend.
+4. Complete M1.2 with valid paired baseline/candidate measurements under the declared workloads and budgets. Unavailable GPU timing and external devices remain explicitly unmeasured.
+
+These are connected outcomes within existing M1, not additional helper-sized milestones. A functional merge cannot close an outstanding milestone acceptance row.

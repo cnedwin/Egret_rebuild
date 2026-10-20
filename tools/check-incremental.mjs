@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-// Local feedback only: actual pushes and merge CI always retain the complete gate.
+// Local feedback only: protected merge CI retains the complete acceptance gate.
 import fs from 'node:fs';
 import {createHash} from 'node:crypto';
 import {sourcePackage,dependencySelection} from './incremental-dependencies.mjs';
@@ -40,7 +40,7 @@ export function selectChecks(root,{base}={}){
  if(!changes.length)reasons.push('No changed eligible files; no cached pass is assumed');
  let dependency;
  if(!reasons.length&&changedPackages.length){try{dependency=dependencySelection(root,changedPackages);}catch(error){reasons.push('Dependency selection unavailable: '+error.message);}}
- return {schemaVersion:2,base:commit,profile:reasons.length?'full':dependency?'dependency':'documentation',changes,reasons,...dependency,mergeGate:'full prepush and protected CI remain mandatory'};
+ return {schemaVersion:2,base:commit,profile:reasons.length?'full':dependency?'dependency':'documentation',changes,reasons,...dependency,mergeGate:'complete prepush remains the manual merge check; protected CI is mandatory'};
 }
 export function runIncremental(args){
  let base,explain=false;
@@ -59,19 +59,16 @@ export function runIncremental(args){
  }
  if(before!==null&&before!==feedbackIdentity(repository))throw Error('Inputs changed during local feedback; prepare a new selection');
  // This is feedback, never a reusable acceptance receipt; final gates re-read the tree.
- console.log('Selected local feedback PASS ('+plan.profile+'); complete pre-push and merge checks remain required.');return plan;
+ console.log('Selected local feedback PASS ('+plan.profile+'); complete merge checks remain required.');return plan;
 }
-// All non-behavior verification lanes remain complete; only test-file scheduling narrows.
+// Development feedback checks current behavior without reopening historical evidence.
+// Conservative selection still falls back to all behavior; it never grants merge acceptance.
 export function feedbackCommands(plan){
- if(plan.profile==='full')return [['tools/prepush.mjs']];
- const common=[['tools/doctor.mjs'],['tools/check-repository-hygiene.mjs'],['tools/check-publication.mjs','--contribution'],['--test','tests/publication/incremental-checks.test.mjs']];
- const kb=['pwsh','-NoProfile','-File','knowledge-base/tools/Validate-KnowledgeBase.ps1','-CheckOnly'];
- if(plan.profile==='documentation')return [...common,kb];
- if(plan.profile!=='dependency'||!Array.isArray(plan.selectedTests)||!plan.selectedTests.length)throw Error('Unknown feedback profile');
- // Give behavioral diagnostics before immutable source admission; all checks still must pass.
- const scripts=['build','check-boundaries','spritesheet-boundary','sequence-playback-boundary','browser-png-boundary','bitmap-resource-slot-boundary','bitmap-binding-ticket-boundary','resource-scene-boundary','atlas-frame/boundary','atlas-import-boundary','check-types','browser-png-types'];
- const publication=["tests/publication/historical-browser-tools.test.mjs","tests/publication/resource-browser-tools.test.mjs","tests/publication/incremental-checks.test.mjs","tests/publication/browser-tools.test.mjs","tests/publication/contribution-metadata.test.mjs","tests/publication/m0-foundations.test.mjs","tests/publication/check-publication.test.mjs","tests/publication/knowledge-base-check-only.test.mjs","tests/publication/file-case.test.mjs","tests/publication/file-identity.test.mjs","tests/publication/repository-hygiene.test.mjs","tests/publication/text-writers.test.mjs","tests/publication/powershell-comments.test.mjs"];
- return [...common.slice(0,3),['--test',...publication],...scripts.slice(0,2).map(x=>['tools/'+x+'.mjs']),['--test',...plan.selectedTests],...scripts.slice(2).map(x=>['tools/'+x+'.mjs']),['tools/verify-spine-f2-source.mjs'],['examples/headless.mjs'],['examples/nine-slice-bitmap-headless.mjs'],kb];
+ const common=[['tools/doctor.mjs'],['tools/check-repository-hygiene.mjs']];
+ if(plan.profile==='documentation')return [...common,['tools/check-publication.mjs','--contribution'],['pwsh','-NoProfile','-File','knowledge-base/tools/Validate-KnowledgeBase.ps1','-CheckOnly']];
+ if(plan.profile!=='full'&&(plan.profile!=='dependency'||!Array.isArray(plan.selectedTests)||!plan.selectedTests.length))throw Error('Unknown feedback profile');
+ const behavior=plan.profile==='full'?['tools/test.mjs']:['--test',...plan.selectedTests];
+ return [...common,['tools/build.mjs'],['tools/check-boundaries.mjs'],behavior,['examples/headless.mjs'],['examples/nine-slice-bitmap-headless.mjs']];
 }
 // Capture inputs before reselecting: edits between planning and execution cannot hide.
 export function bindFeedback(root,plan){
