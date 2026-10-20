@@ -1462,8 +1462,8 @@
     {
       "file": {
         "path": "tests/prepared-resource-oracle.test.mjs",
-        "bytes": 7306,
-        "sha256": "fefa66c229bbc12bd712121ee6c16610571428b453dfc61cb6b40773607f32fd"
+        "bytes": 9380,
+        "sha256": "8813a35f41934e83af625093204158218c163dc2a37e188955b3074b637620ec"
       },
       "packages": null,
       "support": []
@@ -1921,8 +1921,8 @@
     {
       "file": {
         "path": "tests/spritesheet-fault.test.mjs",
-        "bytes": 8642,
-        "sha256": "a8f028e0d2175ca131fa65b465f8aaf5066cc285c1eb2a5d453e333dcc3566d8"
+        "bytes": 9069,
+        "sha256": "93bcff76c3bd781929d783a47c6b945fc9d23397750ad6d1358ab64634ddce18"
       },
       "packages": null,
       "support": []

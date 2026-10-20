@@ -78,10 +78,25 @@ export const IMPORTS=Object.freeze({
   '@egret/engine/webgpu':'../../packages/engine/dist/web/webgpu.js',
   '@egret/runtime':'../../packages/runtime/dist/index.js',
   '@egret/contracts':'../../packages/contracts/dist/index.js',
+  '@egret/contracts/resources':'../../packages/contracts/dist/resources/index.js',
   '#egret-mouse-input':'../../packages/engine/dist/mouseInput.js',
   '#egret-textured-frame-state':'../../packages/engine/dist/internal/texturedFrameState.js',
   'robust-predicates':'../../packages/engine/node_modules/robust-predicates/index.js',
 });
+// Fixed authored entry policy is shared by source collection and metadata refusal controls.
+export function validateAtlasFrameEntries(rootMetadata){
+  const aliasTargets=new Map(Object.entries(IMPORTS).map(([name,target])=>[name,name==='robust-predicates'?['foundation','index.js']:
+    ['repository',path.posix.normalize(path.posix.join(APP,target))]]));
+  for(const [name,target]of aliasTargets){
+    if(name==='robust-predicates')continue;
+    const packageName=name.startsWith('#')?'engine':name.split('/')[1];
+    const subpath=name==='@egret/'+packageName?'.':'./'+name.slice(('@egret/'+packageName+'/').length);
+    const metadata=name.startsWith('#')?rootMetadata.engine.imports?.[name]:rootMetadata[packageName].exports?.[subpath];
+    const expected='./'+target[1].slice(('packages/'+packageName+'/').length);
+    requireThat(metadata?.import===expected&&metadata?.types===expected.replace(/\.js$/,'.d.ts'),'Public entry/alias declaration differs '+name);
+  }
+  return aliasTargets;
+}
 export const PUBLIC_TEXT=Object.freeze([
   APP+'session.mjs',APP+'image.mjs',APP+'main.mjs',APP+'index.html',APP+'README.md',APP+'README.zh-CN.md',
   'tools/verify-atlas-frame.mjs','tools/atlas-frame/boundary.mjs','tools/atlas-frame/scenario.mjs',
@@ -250,16 +265,7 @@ export async function collectAtlasFrameSource(repository,kind='ordinary'){
   requireThat(scripts.length===2&&scripts[0][1]===' type="importmap"'&&scripts[1][1]===' type="module" src="./main.mjs"'&&scripts[1][2]==='','Fixed authored HTML scripts required');
   const importMap=JSON.parse(scripts[0][2]);equal(importMap,{imports:IMPORTS},'Authored fixed import map differs');
   requireThat(scripts[0][2].replace(/\s/g,'')===JSON.stringify(importMap),'Duplicate map key or noncanonical import spelling');
-  const aliasTargets=new Map(Object.entries(IMPORTS).map(([name,target])=>[name,name==='robust-predicates'?['foundation','index.js']:
-    ['repository',path.posix.normalize(path.posix.join(APP,target))]]));
-  for(const [name,target]of aliasTargets){
-    if(name==='robust-predicates')continue;
-    const packageName=name.startsWith('#')?'engine':name.split('/')[1];
-    const subpath=name==='@egret/'+packageName?'.':'./'+name.slice(('@egret/'+packageName+'/').length);
-    const metadata=name.startsWith('#')?rootMetadata.engine.imports?.[name]:rootMetadata[packageName].exports?.[subpath];
-    const expected='./'+target[1].slice(('packages/'+packageName+'/').length);
-    requireThat(metadata?.import===expected&&metadata?.types===expected.replace(/\.js$/,'.d.ts'),'Public entry/alias declaration differs '+name);
-  }
+  const aliasTargets=validateAtlasFrameEntries(rootMetadata);
   const appModules=new Set(importer?['examples/atlas-import-playback/session.mjs',APP+'image.mjs','tools/atlas-import/native-fixture.mjs','tools/atlas-import/scenario.mjs']:[APP+'main.mjs',APP+'session.mjs',APP+'image.mjs','tools/atlas-frame/native-fixture.mjs','tools/atlas-frame/scenario.mjs']);
   function visit(owner,relative){
     identity.logicalPath(relative);const key=owner+':'+relative;if(modules.has(key))return modules.get(key);

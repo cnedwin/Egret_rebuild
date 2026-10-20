@@ -46,6 +46,14 @@ node tools/browser-history.mjs prepare --suite spritesheet --playwright <absolut
 
 Use sequence-playback for the other original admission schema. The current exact dependency owners are hoisted node_modules/typescript, node_modules/@typescript/typescript-win32-x64 and node_modules/robust-predicates. Logical paths remain distinct from physical paths; raw hashes are never normalized. Before/after compiler and workspace owner observations remain mandatory.
 
+## Current resource-entry source compatibility
+
+The M1.5 Engine root also reaches the exact `@egret/contracts/resources` entry. The retained mixed-scene and sequence-family maps and authored examples include that one entry. Their finite readers recognize the already reviewed regular-expression forms in the resource path validator; original literal-import, containment, private-alias and quota refusals remain in place.
+
+The original textured freeze and collector explicitly select the closed `m15-textured` source profile, bounded to 132 modules for the reviewed current complete closure. The helper's historical `LIMITS.modules = 128` and default profile remain unchanged; unknown profiles are refused. In particular, the independent incremental-rendering callers continue to use their original default and require their own affected-source review. The 1 MiB per-module, 4 MiB graph, 4/16 MiB artifact, 128-event and 512-request limits are unchanged, as are all native cases, controls, pixel tolerances and retirement requirements.
+
+A fresh original freeze still owns complete current source/emission/edge identities and before/after verification. The source-profile change grants no native acceptance. Results recorded before this helper changed retain their exact earlier identities; affected-domain review must determine which observations remain applicable and which need a fresh run.
+
 ## Results and limits
 
 The runner rechecks current source membership, raw identities, installed runtime, original admission and freeze inputs before launch and after collection. Modified inputs require fresh preparation and review. It saves complete child logs and process status. Its PASS_BOUNDED_COLLECTOR means only the complete selected collector passed; native assertions still determine pixel, replay and resource-lifetime acceptance.

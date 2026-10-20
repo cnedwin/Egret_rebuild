@@ -212,3 +212,99 @@ for(const [label,importer,specifier] of [
   assert.deepEqual(graph(),baseline,'Restoration retains the complete original graph');
  });
 });
+
+// M15-RESOURCE-READER-IDENTITY-BEGIN
+test('both resource native readers select only the reviewed complete boundary bytes', async t => {
+ const {runInNewContext}=await import('node:vm');
+ const {createHash}=await import('node:crypto');
+ const identity=await import('../../tools/lib/file-identity.mjs');
+ const repository=fs.realpathSync(fileURLToPath(new URL('../../',import.meta.url)));
+ const root=fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(),'egret-resource-reader-')));
+ t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
+ const relative='tools/resource-scene-boundary.mjs', original=fs.readFileSync(path.join(repository,relative));
+ fs.mkdirSync(path.join(root,'tools'));
+ const fixture=path.join(root,relative);fs.writeFileSync(fixture,original);
+ for(const [tool,reader,next,selection] of [
+  ['verify-resource-scene.mjs','function rawInput(','function newExternal(','const boundary='],
+  ['verify-prepared-resource-groups.mjs','function read(','function externalNew(','const collector = '],
+ ]){
+  const source=fs.readFileSync(path.join(repository,'tools',tool),'utf8');
+  const constantsStart=source.indexOf('const hash = '),constantsEnd=source.indexOf(tool==='verify-resource-scene.mjs'?'const args = ':'const argumentsMap = ');
+  const readerStart=source.indexOf(reader),readerEnd=source.indexOf(next,readerStart);
+  const pinsStart=source.indexOf('const historicalCollectorSource = '),callStart=source.indexOf(selection,pinsStart),callEnd=source.indexOf('\n',callStart);
+  assert.ok(constantsStart>=0&&constantsEnd>constantsStart&&readerStart>=0&&readerEnd>readerStart&&pinsStart>=0&&callStart>pinsStart&&callEnd>callStart);
+  const code=source.slice(constantsStart,constantsEnd)+source.slice(readerStart,readerEnd)
+   +'\n(owner)=>{const repository=owner,applicationRoot=owner;\n'+source.slice(pinsStart,callEnd)
+   +'\nreturn '+(tool==='verify-resource-scene.mjs'?'boundary':'collector')+';}';
+  const select=runInNewContext(code,{fs,path,process,TextDecoder,createHash,identity},{timeout:1000});
+  const healthy=()=>assert.deepEqual(Buffer.from(select(root).raw),original);
+  const refusalWithRestoration=(exercise,label)=>{
+   const failures=[];
+   try{healthy();}catch(error){failures.push(error);}
+   if(failures.length===0){try{exercise();}catch(error){failures.push(error);}}
+   try{fs.writeFileSync(fixture,original);}catch(error){failures.push(error);}
+   try{healthy();}catch(error){failures.push(error);}
+   if(failures.length)throw new AggregateError(failures,tool+' '+label+' refusal, restoration and complete baseline');
+  };
+  const altered=Buffer.from(original);altered[0]^=1;
+  refusalWithRestoration(()=>{fs.writeFileSync(fixture,altered);assert.throws(()=>select(root),/Selected raw identity|Selected raw input differs/);},'same-length altered');
+  refusalWithRestoration(()=>{fs.appendFileSync(fixture,'\n');assert.throws(()=>select(root),/Selected raw identity|Selected raw input differs/);},'appended');
+  refusalWithRestoration(()=>{fs.unlinkSync(fixture);assert.throws(()=>select(root));},'missing');
+ }
+});
+// M15-RESOURCE-READER-IDENTITY-END
+
+// Evaluate only the unchanged scalar reader/gate fragments; no SDK, server or browser is started.
+test('M15 font patch native collector records and admits only exact reviewed versions',async()=>{
+ const {runInNewContext}=await import('node:vm');
+ const source=fs.readFileSync(new URL('../../tools/verify-resource-scene.mjs',import.meta.url),'utf8');
+ const lines=source.split('\n').filter(line=>line.includes('report.environment.browserVersion=browser.version();'));
+ assert.equal(lines.length,1);
+ const code='version=>{const report={environment:{}},browser={version:()=>version};const requireThat=(value,message)=>{if(!value)throw new Error(message);};'+lines[0]+';return report.environment.browserVersion;}';
+ const select=runInNewContext(code,{},{timeout:1000});
+ for(const version of ['155.0.4283.45','155.0.4283.62'])assert.equal(select(version),version);
+ for(const version of ['155.0.4283.61','155.0.4283.63','155.0.4283.620','155.0.4283.62 ','156.0.0.0',null])assert.throws(()=>select(version),/Approved fixed-font Edge version differs/);
+});
+test('M15 font patch readers authenticate exact current oracle bytes before evaluation',async t=>{
+ const {runInNewContext}=await import('node:vm');const {createHash}=await import('node:crypto');
+ const identity=await import('../../tools/lib/file-identity.mjs');
+ const repository=fs.realpathSync(fileURLToPath(new URL('../../',import.meta.url)));
+ const root=fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(),'egret-font-oracle-')));
+ t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
+ const relative='tools/prepared-resource-groups/oracle.mjs',original=fs.readFileSync(path.join(repository,relative));
+ const fixture=path.join(root,relative);fs.mkdirSync(path.dirname(fixture),{recursive:true});fs.writeFileSync(fixture,original);
+ const actualPin={path:fixture,bytes:original.length,sha256:createHash('sha256').update(original).digest('hex')};
+ for(const [relativeTool,readerEndAnchor,selectionEndAnchor,resultName] of [
+  ['tools/prepared-resource-groups/prepare-native-config.mjs','const preparerRelative=','const fixtureRelative=','oracle'],
+  ['tools/verify-prepared-resource-groups.mjs','function externalNew(','// Raw authentication','oracleInput'],
+ ]){
+  const source=fs.readFileSync(path.join(repository,relativeTool),'utf8');
+  const constantStart=source.indexOf('const hash'),constantEnd=source.indexOf('const physical');
+  const readerStart=source.indexOf('function read('),readerEnd=source.indexOf(readerEndAnchor,readerStart);
+  const selectionStart=source.indexOf("const oracleRelative='"),selectionEnd=source.indexOf(selectionEndAnchor,selectionStart);
+  assert.ok(constantStart>=0&&constantEnd>constantStart&&readerStart>=0&&readerEnd>readerStart&&selectionStart>=0&&selectionEnd>selectionStart);
+  const code=source.slice(constantStart,constantEnd)+source.slice(readerStart,readerEnd)
+   +'\n(repository,pin)=>{const config={oracle:pin};\n'+source.slice(selectionStart,selectionEnd)+'\nreturn '+resultName+';}';
+  const select=runInNewContext(code,{fs,path,process,TextDecoder,createHash,identity},{timeout:1000});
+  const healthy=()=>assert.deepEqual(Buffer.from(select(root,actualPin).raw),original);
+  const refusal=mutate=>{
+   const failures=[];
+   try{healthy();}catch(error){failures.push(error);}
+   if(failures.length===0){try{mutate();assert.throws(()=>select(root,actualPin));}catch(error){failures.push(error);}}
+   try{fs.writeFileSync(fixture,original);}catch(error){failures.push(error);}
+   try{healthy();}catch(error){failures.push(error);}
+   if(failures.length)throw new AggregateError(failures,relativeTool+' oracle refusal, restoration and complete baseline');
+  };
+  refusal(()=>{const wrong=Buffer.from(original);wrong[0]^=1;fs.writeFileSync(fixture,wrong);});
+  refusal(()=>fs.unlinkSync(fixture));
+  if(resultName==='oracleInput'){
+   const wrong=Buffer.from(original);wrong[0]^=1;
+   const failures=[];
+   try{healthy();}catch(error){failures.push(error);}
+   if(failures.length===0){try{fs.writeFileSync(fixture,wrong);const matchingBadPin={...actualPin,sha256:createHash('sha256').update(wrong).digest('hex')};assert.throws(()=>select(root,matchingBadPin),/oracle config pin differs/);}catch(error){failures.push(error);}}
+   try{fs.writeFileSync(fixture,original);}catch(error){failures.push(error);}
+   try{healthy();}catch(error){failures.push(error);}
+   if(failures.length)throw new AggregateError(failures,relativeTool+' matching bad pin refusal, restoration and complete baseline');
+  }
+ }
+});

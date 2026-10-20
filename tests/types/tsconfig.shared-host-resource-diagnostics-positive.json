@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.web.json",
+  "compilerOptions": {
+    "types": [],
+    "strict": true,
+    "noEmit": true,
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
+    "skipLibCheck": false
+  },
+  "include": [
+    "shared-host-resource-diagnostics-positive.ts"
+  ]
+}

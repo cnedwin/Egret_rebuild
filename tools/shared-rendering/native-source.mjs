@@ -13,6 +13,7 @@ export const SHARED_NATIVE_ENTRIES=Object.freeze({
   '@egret/engine/scene3d':'packages/engine/dist/rendering/scene3d.js',
   '@egret/engine/webgpu/scene3d':'packages/engine/dist/web/scene3d.js',
   '@egret/contracts':'packages/contracts/dist/index.js',
+  '@egret/contracts/resources':'packages/contracts/dist/resources/index.js',
   '@egret/runtime':'packages/runtime/dist/index.js',
   '#egret-textured-frame-state':'packages/engine/dist/internal/texturedFrameState.js',
   'robust-predicates':'vendor/robust-predicates/index.js',

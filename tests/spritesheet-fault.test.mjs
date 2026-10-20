@@ -69,7 +69,10 @@ const historicalModulePins = [
   ['packages/runtime/dist/spriteSheet.js', 11792, 'e7cd446abde11eb22e77881768a685067ea2d83ff2a0d10d62de784fefbcd7fd'],
 ];
 const m13ModulePins = [["packages/runtime/dist/Bitmap.js",21049,"b7d91499cb36d73c6b0b0767ec90080b2acaec52a2d0ccf0a785d793b48b6544"],["packages/runtime/dist/spriteSheet.js",11824,"5f15aca4af6961cfd65f0e4c5243f7f81ccac9267056815d2401226b4d8dd00d"]];
-const qualifiedModulePins = historicalModulePins.every(([relative,bytes,sha256])=>JSON.stringify(pin(relative))===JSON.stringify({path:relative,bytes,sha256}))?historicalModulePins:m13ModulePins;
+// M1.5 adds candidate capture; the captured original SpriteSheet operation port is unchanged.
+const m15ModulePins = [['packages/runtime/dist/Bitmap.js',23075,'075a6f146714c98fec748aeabe52e3cf38d0213eb6a4f868d7fb846bb59196b8'],['packages/runtime/dist/spriteSheet.js',11824,'5f15aca4af6961cfd65f0e4c5243f7f81ccac9267056815d2401226b4d8dd00d']];
+const qualifiedModulePins = [historicalModulePins,m13ModulePins,m15ModulePins].find(pair=>pair.every(([relative,bytes,sha256])=>JSON.stringify(pin(relative))===JSON.stringify({path:relative,bytes,sha256})));
+assert.ok(qualifiedModulePins, 'one complete qualified compiled pair');
 for(const [relative,bytes,sha256]of qualifiedModulePins)assert.deepEqual(pin(relative),{path:relative,bytes,sha256},'one complete qualified compiled pair');
 
 function unchanged() {

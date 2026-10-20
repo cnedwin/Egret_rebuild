@@ -7,6 +7,7 @@ import path from 'node:path';
 import {tmpdir} from 'node:os';
 import {fileURLToPath} from 'node:url';
 import {collectResourceSceneSource} from '../tools/resource-scene-boundary.mjs';
+import * as resourceSceneBoundary from '../tools/resource-scene-boundary.mjs';
 
 const repository=fileURLToPath(new URL('../',import.meta.url));
 const example='examples/resource-scene/';
@@ -42,6 +43,13 @@ function assertHealthy(value,applicationRoot){
   assert.equal(value.snapshot.acceptance.independentSourceReviewRequired,true);
   assert.deepEqual(value.routes.get('/'+example+'index.html').bytes,read(applicationRoot,example+'index.html'));
   assert.equal(value.snapshot.servedOriginalHTML.rewritten,false);
+  const resourceTarget='sdk:packages/contracts/dist/resources/index.js';
+  assert.equal(value.snapshot.authoredImportMap.imports['@egret/contracts/resources'],'../../packages/contracts/dist/resources/index.js');
+  assert.equal(value.snapshot.modules.filter(row=>row.owner+':'+row.path===resourceTarget).length,1);
+  const resourceEdges=value.snapshot.modules.flatMap(row=>row.edges.filter(edge=>edge.specifier==='@egret/contracts/resources'));
+  assert.ok(resourceEdges.length>0);assert.ok(resourceEdges.every(edge=>edge.target===resourceTarget));
+  assert.ok(value.snapshot.closures.canvas.includes(resourceTarget));
+  assert.deepEqual(value.routes.get('/packages/contracts/dist/resources/index.js').bytes,read(repository,'packages/contracts/dist/resources/index.js'));
   assert.ok(value.snapshot.modules.length>20&&value.snapshot.modules.length<=192);
   assert.ok(value.snapshot.closures.canvas.includes('application:'+example+'main.mjs'));
   assert.ok(value.snapshot.closures.canvas.includes('application:'+example+'session.mjs'));
@@ -123,3 +131,21 @@ test('an additional literal Main dynamic import is refused',()=>sourceControl(ro
 test('the GPU recipe cannot become a static Canvas dependency',()=>sourceControl(root=>{
   alter(root,example+'main.mjs',text=>"import './gpu-scene.mjs';\n"+text);
 },'RS_IMPORT','Static Canvas closure crossed'));
+
+test('selected resource public entry refuses wrong runtime/types targets without broad fallback',()=>{
+  assert.equal(typeof resourceSceneBoundary.validateResourceSceneEntries,'function','M15_RESOURCE_SCENE_ENTRY_POLICY_MISSING');
+  const actual=Object.fromEntries(['engine','runtime','contracts'].map(name=>
+    [name,JSON.parse(read(repository,'packages/'+name+'/package.json'))]));
+  const validate=resourceSceneBoundary.validateResourceSceneEntries;
+  for(const mutate of [
+    metadata=>{metadata.contracts.exports['./resources'].import='./dist/index.js';},
+    metadata=>{metadata.contracts.exports['./resources'].types='./dist/index.d.ts';},
+    metadata=>{delete metadata.contracts.exports['./resources'];},
+    metadata=>{delete metadata.contracts.exports['./resources'];metadata.contracts.exports['./*']={import:'./dist/resources/index.js',types:'./dist/resources/index.d.ts'};},
+  ]){
+    assert.doesNotThrow(()=>validate(actual));
+    const changed=structuredClone(actual);mutate(changed);
+    assert.throws(()=>validate(changed),error=>error.code==='RS_PACKAGE'&&error.message.includes('@egret/contracts/resources'));
+    assert.doesNotThrow(()=>validate(actual));
+  }
+});

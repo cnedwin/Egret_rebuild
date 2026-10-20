@@ -7,7 +7,7 @@ import type { DisplayObject } from './DisplayObject.js';
 import type { DisplayObjectContainer } from './DisplayObjectContainer.js';
 import type { EngineContext } from './ownership.js';
 import type { Primitive } from './displayVisualState.js';
-import type { BitmapCaptureState } from './bitmapDisplayState.js';
+import type { BitmapCaptureState, BitmapCaptureView } from './bitmapDisplayState.js';
 import type { MeshCaptureState } from './meshDisplayState.js';
 import type { TextFieldDisplayState } from './textDisplayState.js';
 import { assertLive, childAtOf, childCountOf, isDisplayNode, isStageRoot, parentOf } from './displayTreeState.js';
@@ -108,14 +108,14 @@ function checkNode(node: DisplayObject, parent: DisplayObjectContainer | undefin
 }
 
 /** All-tree metadata and geometry admission precedes any visible resource use. */
-function admitTree(stage: Stage, engine: EngineContext, budget: CaptureBudget): Map<DisplayObject, AdmittedNode> {
+function admitTree(stage: Stage, engine: EngineContext, budget: CaptureBudget, readBitmap: BitmapCaptureView['read']): Map<DisplayObject, AdmittedNode> {
   const admitted = new Map<DisplayObject, AdmittedNode>(), seen = new Set<DisplayObject>(), stack: Cursor[] = [];
   function enter(node: DisplayObject, parent: DisplayObjectContainer | undefined): void {
     budget.node();
     checkNode(node, parent, engine, seen);
     const primitives = visualOf(node).primitives;
     budget.authoring(primitives.length);
-    const bitmap = bitmapCaptureState(node), mesh = readMeshState(node), text = readTextFieldState(node);
+    const bitmap = readBitmap(node), mesh = readMeshState(node), text = readTextFieldState(node);
     if (bitmap !== undefined) budget.authoring(1);
     if (mesh !== undefined) { budget.authoring(1); budget.geometry(mesh.geometry); }
     if (text?.committed !== undefined) budget.authoring(1);
@@ -209,10 +209,19 @@ function bitmapRect(bitmap: BitmapCaptureState, material: SharedMaterial2D): Rec
 
 /** Cold, iterative capture. All mutable owners stay inside this invocation. */
 export function collectSharedFrameContent(stage: Stage): CapturedSharedContent2D {
+  return captureSharedContent(stage, bitmapCaptureState);
+}
+
+/** Runtime-private fixed Bitmap assembly; never forwarded by a package root. */
+export function collectPreparedSharedFrameContent(stage: Stage, view: BitmapCaptureView): CapturedSharedContent2D {
+  return captureSharedContent(stage, view.read);
+}
+
+function captureSharedContent(stage: Stage, readBitmap: BitmapCaptureView['read']): CapturedSharedContent2D {
   if (!isStageRoot(stage)) throw new EgretError('FRAME_STAGE_INVALID');
   const engine = engineOf(stage)!;
   engine.assertOpen();
-  const budget = new CaptureBudget(), admitted = admitTree(stage, engine, budget);
+  const budget = new CaptureBudget(), admitted = admitTree(stage, engine, budget, readBitmap);
   engine.assertOpen();
   const commands: SharedRenderCommand2D[] = [], pages: SharedPage2D[] = [], regions: SharedRegion2D[] = [];
   const materials: SharedMaterial2D[] = [], geometries: Geometry[] = [];
@@ -283,7 +292,7 @@ export function collectSharedFrameContent(stage: Stage): CapturedSharedContent2D
     checkNode(node, parent, engine, seen);
     const metadata = admitted.get(node), state = visualOf(node);
     if (metadata === undefined || state.primitives !== metadata.primitives || state.primitives.length !== metadata.primitiveCount
-      || bitmapCaptureState(node) !== metadata.bitmap || readMeshState(node) !== metadata.mesh || readTextFieldState(node) !== metadata.text) {
+      || readBitmap(node) !== metadata.bitmap || readMeshState(node) !== metadata.mesh || readTextFieldState(node) !== metadata.text) {
       throw new EgretError('DISPLAY_TREE_INVARIANT');
     }
     const explicit = state.renderBoundary === 'isolate' ? open('explicit-enter') : undefined;

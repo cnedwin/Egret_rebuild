@@ -26,7 +26,7 @@ const CONTROL_CHECKS=[
   [['N06-diamond','clip-outside-top']],[['N01-a128','alpha-128']],[['N05-palette','crop-green']],[['N05-palette','crop-green']],
   [['N07-diamond','TEXTURED_NATIVE_METADATA_INVALID']],[['N10-replay02','N10-reset-after','reset-after']],[['N06-diamond','clip-inside-top']]];
 const budgets=Object.freeze({perOperationMs:20000,operationMs:240000,closeMs:280000,hardMs:295000,
-  windows:37,positiveCases:21,positiveObservations:27,controlWindows:16,controlObservations:19,inputBytes:536870912,...LIMITS});
+  windows:37,positiveCases:21,positiveObservations:27,controlWindows:16,controlObservations:19,inputBytes:536870912,...LIMITS,modules:132});
 
 function options(args){requirePolicy(args.length===8,'CLI_OPTIONS');const result=Object.create(null);
   for(let i=0;i<args.length;i+=2){const key=args[i],value=args[i+1];requirePolicy(['--playwright','--channel','--output','--freeze'].includes(key)&&!Object.hasOwn(result,key)
@@ -186,7 +186,7 @@ export async function main(argv){
         'tools/build.mjs','tools/generate-project-format.mjs','tools/freeze-textured-webgpu-inputs.mjs','source-origin.json'])
         requirePolicy(seen.has(required),'BUILD_REQUIRED_INPUT',{relative:required});
     }
-    const graph=await bounded(collectPublicGraph(repository,retain),'collect-public-graph');
+    const graph=await bounded(collectPublicGraph(repository,retain,'m15-textured'),'collect-public-graph');
     for(const item of identities.values())if(item.roles.some(role=>role==='original-emission'||role==='original-source')){
       const relative=path.relative(repository,item.path).replaceAll(path.sep,'/');
       // Foundational physical paths may use the pnpm store; freeze their physical relative path too.

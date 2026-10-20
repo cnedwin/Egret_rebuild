@@ -24,6 +24,12 @@ Egret Engine is an open-source game-engine rebuild for creators working with AI 
 
 The repository contains an executable engineering preview. Display trees, resource leases, animation, browser input and selected Canvas/WebGPU/WebGL2 rendering paths are available within their documented contracts. Full UI tooling, complete Spine support, target-platform SDKs and automated legacy-project migration remain in development.
 
+## M1.5 — resource recovery validation
+
+M1.5 connects resource manifests and dependency-aware groups to shared resource ownership, bounded loading with integrity checks, staged uploads and unified WebGL2/WebGPU device recovery. Seven fixed desktop recovery cases passed on Windows / Chrome for Testing 157.0.8103.6; WebGL2 and WebGPU each completed 100 resource cycles, ten native loss/recovery cycles and a 30-minute foreground run. Both the fixed recovery results and the affected browser regression have passed independent review.
+
+Verification cutoff: 2026-10-20. At this checkpoint, final package review and protected M1.5 merge checks still required completion; M1.2 formal paired performance acceptance also remained open. See the [verification scope and evidence](knowledge-base/en/docs/resource-recovery-evidence.md). Delivery is recorded in the repository's [pull requests](https://github.com/cnedwin/Egret_rebuild/pulls).
+
 ## Implemented — M1.4 WebGL2 executor
 
 M1.4 implements the optional `@egret/engine/webgl2` and `@egret/engine/webgl2/scene3d` entries over the shared render profile. Recorded desktop verification covers the fixed pixel matrix and finite lifetime/depth/state scenarios. These results do not establish mobile support, frame-time performance or sustained recovery. Read the [contract](knowledge-base/en/docs/webgl2-executor-contract.md), [observed results and limits](knowledge-base/en/docs/webgl2-executor-evidence.md), and [M1 plan](knowledge-base/en/docs/m1-rendering-resource-plan.md).
@@ -88,6 +94,7 @@ Focused behavior, strict consumers and the recorded desktop Canvas/WebGPU compos
 
 | Version / 版本 | Main change | 主要变化 |
 | --- | --- | --- |
+| M1.5 recovery verification / 资源恢复验证 · 2026-10-20 | Seven fixed desktop recovery cases verified; [scope and remaining work](knowledge-base/en/docs/resource-recovery-evidence.md) | 七项固定桌面恢复验证完成；[范围与剩余工作](knowledge-base/Cns/docs/resource-recovery-evidence.md) |
 | M1.4 | Implemented optional shared WebGL2 executor with finite desktop verification | 已实现可选共享 WebGL2 执行器，具有有限桌面验证 |
 | M1.3 | Shared texture pages and linear scene/UI composition delivered through PR #75 | 共享纹理页与线性场景/UI 合成已通过 PR #75 交付 |
 | M1.2 | Incremental capture and adjacent batching delivered; performance acceptance open | 增量捕获与相邻合批已交付；性能验收未完成 |

@@ -86,7 +86,7 @@ node tools/prepush.mjs --integrated
 node tools/browser-verify.mjs --suite canvas --playwright <absolute-installed-playwright-package> --output <absolute-fresh-directory-outside-repository>
 ```
 
-直接运行的套件为 canvas、webgpu、b1、text、hit-test、mouse-input 和 shared-webgpu。共享套件执行固定的 30 场景像素矩阵和 11 项指定数值反例，其有限范围见[共享渲染记录](shared-rendering-evidence.md)。resource-scene 和 bitmap-slot 还需要已复核的源码快照：
+直接运行的套件为 canvas、webgpu、b1、text、hit-test、mouse-input、shared-webgpu 和 resource-recovery。[资源恢复契约](resource-recovery-contract.md#运行集成恢复采集器)说明了独立的七项前台运行案例、固定上限与完成记录。共享套件执行固定的 30 场景像素矩阵和 11 项指定数值反例，其有限范围见[共享渲染记录](shared-rendering-evidence.md)。resource-scene 和 bitmap-slot 还需要已复核的源码快照：
 
 ```text
 node tools/browser-prepare.mjs --suite resource-scene --output <absolute-new-snapshot-file-outside-repository>

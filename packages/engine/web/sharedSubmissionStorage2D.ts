@@ -1,5 +1,6 @@
 import type { PreparedSharedFrame2D } from '../rendering/prepareSharedDraws2D.js';
 import { copySharedPagePixels } from '../rendering/sharedColor2D.js';
+import type { SharedPageCopyDiagnostics2D } from '../rendering/sharedColor2D.js';
 import { noteOwnedPreparationFailure } from '../rendering/ownedPreparationFailure2D.js';
 import type { ProjectionPlan2D } from './imageProjections2D.js';
 
@@ -45,10 +46,17 @@ export function checkSharedCapacity2D(storage:SharedStoragePlan2D,owner:SharedOw
     if(!Number.isSafeInteger(owner.serial)||owner.serial<0||owner.serial>=Number.MAX_SAFE_INTEGER)fail('serial');
 }
 /** Only current READY identities authorize omitted whole-page copies. */
-export function materializeSharedPages2D(storage:SharedSubmissionStorage2D,cold:ReadonlySet<number>,owner:SharedOwnerSnapshot2D):{projections:(Uint8Array<ArrayBuffer>|undefined)[];canonicalBytes:number} {
+export function materializeSharedPages2D(storage:SharedSubmissionStorage2D,cold:ReadonlySet<number>,owner:SharedOwnerSnapshot2D,diagnostics?:SharedPageCopyDiagnostics2D):{projections:(Uint8Array<ArrayBuffer>|undefined)[];canonicalBytes:number} {
     let canonicalBytes=0,sourceCopy=0;
     for(const index of cold){const bytes=storage.projectionPlan.views[index]!.byteLength;canonicalBytes+=bytes;sourceCopy=Math.max(sourceCopy,bytes);}
     checkSharedCapacity2D(storage,owner,canonicalBytes,sourceCopy);
-    const projections=storage.projectionPlan.views.map((view,index)=>cold.has(index)?copySharedPagePixels(view.image):undefined);
-    return {projections,canonicalBytes};
+    const before=diagnostics?.canonicalBytes;
+    try {
+        const projections=storage.projectionPlan.views.map((view,index)=>cold.has(index)?copySharedPagePixels(view.image,diagnostics):undefined);
+        return {projections,canonicalBytes};
+    } catch(cause) {
+        // No returned projection array owns the earlier completed copies on this exit.
+        if(diagnostics)diagnostics.canonicalBytes=before!;
+        throw cause;
+    }
 }

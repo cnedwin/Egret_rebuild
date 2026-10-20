@@ -1,0 +1,1520 @@
+{
+  "schemaVersion": 1,
+  "kind": "RESOURCE_RECOVERY_ACTUAL_STRICT_DIAGNOSTICS",
+  "status": "OBSERVED_TS7_DIAGNOSTICS",
+  "scope": "Seven unchanged public consumer pairs. Observed tuples are compiler evidence; this inventory does not establish runtime or native acceptance.",
+  "compilerVersion": "7.0.2",
+  "tupleFormat": [
+    "file",
+    "line",
+    "column",
+    "code"
+  ],
+  "inputPins": [
+    {
+      "path": "tests/types/resources-group-positive.ts",
+      "bytes": 1227,
+      "sha256": "a7fca32ac1ae4ae64755eba012b4bc90150b478a572d28dc44ee21935335a5c4"
+    },
+    {
+      "path": "tests/types/resources-group-negative.ts",
+      "bytes": 1440,
+      "sha256": "9c361169254187e0e28c36b72453a34965ec1b1588ed09f237dbb0440b1c6729"
+    },
+    {
+      "path": "tests/types/tsconfig.resources-group-positive.json",
+      "bytes": 152,
+      "sha256": "3c1f76727899403df74326d585ee5dbd78180d227698f53dc3c25f5bc31c0fa3"
+    },
+    {
+      "path": "tests/types/tsconfig.resources-group-negative.json",
+      "bytes": 152,
+      "sha256": "a379190a123c677788e402bd4bebe75750f08fd9773955bde995337451fca1ab"
+    },
+    {
+      "path": "tests/types/manifest-browser-positive.ts",
+      "bytes": 2534,
+      "sha256": "d996e0a906e08a26e113f61c4d65b2bb5fed25f9469e90ecd0ee1b4b9b605f99"
+    },
+    {
+      "path": "tests/types/manifest-browser-negative.ts",
+      "bytes": 3177,
+      "sha256": "7e7d58fb1cd4e64c16fc9e1af5083fd0568ff65ff2c33ebc30eebca8d11c0c96"
+    },
+    {
+      "path": "tests/types/tsconfig.manifest-browser-positive.json",
+      "bytes": 553,
+      "sha256": "3e5653bafbfeb37518ea5136de9521cc959440d1382be57bb0ee84b287153c04"
+    },
+    {
+      "path": "tests/types/tsconfig.manifest-browser-negative.json",
+      "bytes": 553,
+      "sha256": "905e5171d4c479e928d846f1d3b55423e3022059751ca87a5624c9d223b6b513"
+    },
+    {
+      "path": "tests/types/candidate-shared-frame-positive.ts",
+      "bytes": 1844,
+      "sha256": "9076ba872805e03b7b1e732627c04e9274be6ffce13fc3112d3acf345c5539e7"
+    },
+    {
+      "path": "tests/types/candidate-shared-frame-negative.ts",
+      "bytes": 1759,
+      "sha256": "547c8b230d2db32ad26fb7c7de1a3f7244af68c549bf093795ba318e4eba2695"
+    },
+    {
+      "path": "tests/types/tsconfig.candidate-shared-frame-positive.json",
+      "bytes": 290,
+      "sha256": "88d984da44d50b7de9e7f23d1ce1decd887a567a3ed3ad85f25a545946fedad6"
+    },
+    {
+      "path": "tests/types/tsconfig.candidate-shared-frame-negative.json",
+      "bytes": 290,
+      "sha256": "df8be8cc02ea7d151d20cb9779d081b065dfd81d6c4ef640c435a7f25641bc7a"
+    },
+    {
+      "path": "tests/types/manifest-resource-diagnostics-positive.ts",
+      "bytes": 3454,
+      "sha256": "3afd9dbb70176f67d9938bff122214bcd3639e5d1ea2918450de0d62217377be"
+    },
+    {
+      "path": "tests/types/manifest-resource-diagnostics-negative.ts",
+      "bytes": 1884,
+      "sha256": "83219f743f3443c5a622a7ff14244720f6aa8c8dc6398b4cf23ace296dc2d612"
+    },
+    {
+      "path": "tests/types/tsconfig.manifest-resource-diagnostics-positive.json",
+      "bytes": 540,
+      "sha256": "77499739596f7a4fd89706bcc68fd03b4fe63b20053ac85929f8a8a2fae82cc8"
+    },
+    {
+      "path": "tests/types/tsconfig.manifest-resource-diagnostics-negative.json",
+      "bytes": 540,
+      "sha256": "1e5d0b87dd8e0e7249f84179765a57bf017ab4a0d3778740c99cece096343bc9"
+    },
+    {
+      "path": "tests/types/shared-frame-upload-gpu-positive.ts",
+      "bytes": 5576,
+      "sha256": "8a3b224d2df2b1034a88194d49e8d1fdd4199aa56460f84dd561282635dfdb07"
+    },
+    {
+      "path": "tests/types/shared-frame-upload-gpu-negative.ts",
+      "bytes": 3642,
+      "sha256": "d1e137bc35b3ad80227fe4e114e4f62292047974231e510850c0bfcdb4d276d7"
+    },
+    {
+      "path": "tests/types/tsconfig.shared-frame-upload-gpu-positive.json",
+      "bytes": 291,
+      "sha256": "0d9b1683ce54ebcadedbc92736c3b704e2a1c5aee5d8cd6316944b0742b930ca"
+    },
+    {
+      "path": "tests/types/tsconfig.shared-frame-upload-gpu-negative.json",
+      "bytes": 291,
+      "sha256": "5ceee882725c0ea51b80df038ee374d166b2f42586715a378f7c1e2e8bb0bc00"
+    },
+    {
+      "path": "tests/types/shared-frame-upload-webgl2-positive.ts",
+      "bytes": 3009,
+      "sha256": "46fbc0a3b93a3ea204b955ebbfe01e357330ed4056d5496d66119341debcadf9"
+    },
+    {
+      "path": "tests/types/shared-frame-upload-webgl2-negative.ts",
+      "bytes": 4301,
+      "sha256": "0c986988a5fbc2aa5088bb33312199926f114516b5b59e8912a51b8f09f3b146"
+    },
+    {
+      "path": "tests/types/tsconfig.shared-frame-upload-webgl2-positive.json",
+      "bytes": 312,
+      "sha256": "d63918bbb93667dc7d60b213973e4f5dd61da390cf2f850a440fcd1ba46bd97e"
+    },
+    {
+      "path": "tests/types/tsconfig.shared-frame-upload-webgl2-negative.json",
+      "bytes": 312,
+      "sha256": "4b978ef175826fb474b6d915b4dab814fcbf65ed8a6693c2d4fac4d9db7cdade"
+    },
+    {
+      "path": "tests/types/shared-host-resource-diagnostics-positive.ts",
+      "bytes": 1909,
+      "sha256": "fdbb7c1e516e1924fa68a34b1db66c263d0ef2ab0a3fd203e3f43c9cfb947dc0"
+    },
+    {
+      "path": "tests/types/shared-host-resource-diagnostics-negative.ts",
+      "bytes": 824,
+      "sha256": "e96e99b8d24adb6badefa5d965d156b32a2af08ca81e50a7c2ab0253ba4f583b"
+    },
+    {
+      "path": "tests/types/tsconfig.shared-host-resource-diagnostics-positive.json",
+      "bytes": 300,
+      "sha256": "2831c638156a4c2773e2b366b2f82404b1a1e520d8c31c802d328570c215c09e"
+    },
+    {
+      "path": "tests/types/tsconfig.shared-host-resource-diagnostics-negative.json",
+      "bytes": 300,
+      "sha256": "b01344e6cdd9079cf5a63de75994091df43f334f2b12256168bd7c57d5fb82fc"
+    },
+    {
+      "path": "tests/types/tsconfig.dom-free.json",
+      "bytes": 56,
+      "sha256": "24bc13fae1f9d98b5d2dc212c9fb4f1f926aeb956f706d8269acbd617c900b49"
+    },
+    {
+      "path": "tests/types/tsconfig.web.json",
+      "bytes": 94,
+      "sha256": "ebd9c73f69f0a3ee587bf6a07a49a33218cdea845d3a243c2df22a89fb18568d"
+    },
+    {
+      "path": "tests/types/tsconfig.json",
+      "bytes": 224,
+      "sha256": "e378996174db2020f9c416fb0599ea1182b3ca3265b3dc56012a688fd3252ad9"
+    },
+    {
+      "path": "tsconfig.base.json",
+      "bytes": 446,
+      "sha256": "b7a31fb9f93a93e20bfdcf33c135acb45cb3a6895a8b3e7006bd85214ddc1008"
+    }
+  ],
+  "pairs": [
+    {
+      "pair": "resources-group",
+      "domFree": true,
+      "cases": [
+        {
+          "name": "resources-group-N01",
+          "line": 13,
+          "statement": "const wrongBinding: ManifestAssetBinding<string> = image;"
+        },
+        {
+          "name": "resources-group-N02",
+          "line": 14,
+          "statement": "const widenedBinding: ManifestAssetBinding<unknown> = image;"
+        },
+        {
+          "name": "resources-group-N03",
+          "line": 15,
+          "statement": "const forged: ManifestBinding = {};"
+        },
+        {
+          "name": "resources-group-N04",
+          "line": 16,
+          "statement": "const wrongLease: AssetLease<Texture> = group.get(text);"
+        },
+        {
+          "name": "resources-group-N05",
+          "line": 17,
+          "statement": "const wrongReady: Promise<readonly AssetLease<Texture>[]> = group.ready;"
+        },
+        {
+          "name": "resources-group-N06",
+          "line": 18,
+          "statement": "engine.createManifestGroup(scope, manifest, ['e_image'], [image], { priority: 'urgent' });"
+        },
+        {
+          "name": "resources-group-N07",
+          "line": 19,
+          "statement": "engine.createManifestGroup(scope, manifest, ['e_image'], [image], { concurrency: 16 });"
+        },
+        {
+          "name": "resources-group-N08",
+          "line": 20,
+          "statement": "engine.createManifestGroup(scope, manifest, ['e_image'], [image.ref]);"
+        },
+        {
+          "name": "resources-group-N09",
+          "line": 21,
+          "statement": "group.get(image.ref);"
+        },
+        {
+          "name": "resources-group-N10",
+          "line": 22,
+          "statement": "group.ready = Promise.resolve();"
+        },
+        {
+          "name": "resources-group-N11",
+          "line": 23,
+          "statement": "const counterfeitTyped: ManifestAssetBinding<Texture> = { ref: image.ref };"
+        }
+      ],
+      "tuples": [
+        [
+          "tests/types/resources-group-negative.ts",
+          13,
+          7,
+          2375
+        ],
+        [
+          "tests/types/resources-group-negative.ts",
+          14,
+          7,
+          2375
+        ],
+        [
+          "tests/types/resources-group-negative.ts",
+          15,
+          7,
+          2741
+        ],
+        [
+          "tests/types/resources-group-negative.ts",
+          16,
+          7,
+          2375
+        ],
+        [
+          "tests/types/resources-group-negative.ts",
+          17,
+          7,
+          2322
+        ],
+        [
+          "tests/types/resources-group-negative.ts",
+          18,
+          69,
+          2322
+        ],
+        [
+          "tests/types/resources-group-negative.ts",
+          19,
+          69,
+          2353
+        ],
+        [
+          "tests/types/resources-group-negative.ts",
+          20,
+          59,
+          2741
+        ],
+        [
+          "tests/types/resources-group-negative.ts",
+          21,
+          11,
+          2739
+        ],
+        [
+          "tests/types/resources-group-negative.ts",
+          22,
+          7,
+          2540
+        ],
+        [
+          "tests/types/resources-group-negative.ts",
+          23,
+          7,
+          2741
+        ]
+      ]
+    },
+    {
+      "pair": "manifest-browser",
+      "domFree": false,
+      "cases": [
+        {
+          "name": "manifest-browser-N01",
+          "line": 17,
+          "statement": "createManifestByteSource({}, bindings, { baseUrl: 'https://resources.example.test/project/' });"
+        },
+        {
+          "name": "manifest-browser-N02",
+          "line": 19,
+          "statement": "createManifestByteSource(manifest, bindings, {});"
+        },
+        {
+          "name": "manifest-browser-N03",
+          "line": 21,
+          "statement": "createManifestByteSource(manifest, bindings, { baseUrl: 'https://resources.example.test/project/', networkRetries: 2 });"
+        },
+        {
+          "name": "manifest-browser-N04",
+          "line": 23,
+          "statement": "createManifestByteSource(manifest, bindings, { baseUrl: 'https://resources.example.test/project/', digest() {} });"
+        },
+        {
+          "name": "manifest-browser-N05",
+          "line": 25,
+          "statement": "createManifestByteSource(manifest, bindings, { baseUrl: 'https://resources.example.test/project/', fetch });"
+        },
+        {
+          "name": "manifest-browser-N06",
+          "line": 27,
+          "statement": "createManifestByteSource(manifest, bindings, { baseUrl: 'https://resources.example.test/project/', deadlineMs: undefined });"
+        },
+        {
+          "name": "manifest-browser-N07",
+          "line": 29,
+          "statement": "const fake: ManifestByteSource = { profile: 'manifest-sha256-browser-v1', isClosed: false, readBytes: () => Promise.resolve(new Uint8Array(new ArrayBuffer(0))), close: () => Promise.resolve() };"
+        },
+        {
+          "name": "manifest-browser-N08",
+          "line": 31,
+          "statement": "createManifestTextureProvider({});"
+        },
+        {
+          "name": "manifest-browser-N09",
+          "line": 33,
+          "statement": "const wrongProvider: AssetProvider<Texture> = source;"
+        },
+        {
+          "name": "manifest-browser-N10",
+          "line": 35,
+          "statement": "options.networkRetries = 1;"
+        },
+        {
+          "name": "manifest-browser-N11",
+          "line": 37,
+          "statement": "source.profile = 'manifest-sha256-browser-v1';"
+        },
+        {
+          "name": "manifest-browser-N12",
+          "line": 39,
+          "statement": "source.isClosed = true;"
+        },
+        {
+          "name": "manifest-browser-N13",
+          "line": 41,
+          "statement": "const synchronous: void = source.close();"
+        },
+        {
+          "name": "manifest-browser-N14",
+          "line": 43,
+          "statement": "createManifestTextureProvider(source, { onDecodeSettled() {} });"
+        },
+        {
+          "name": "manifest-browser-N15",
+          "line": 45,
+          "statement": "const wrongResult: Promise<Texture> = source.readBytes(ref, context);"
+        },
+        {
+          "name": "manifest-browser-N16",
+          "line": 47,
+          "statement": "source.readBytes(ref);"
+        },
+        {
+          "name": "manifest-browser-N17",
+          "line": 49,
+          "statement": "source.close(true);"
+        }
+      ],
+      "tuples": [
+        [
+          "tests/types/manifest-browser-negative.ts",
+          17,
+          26,
+          2740
+        ],
+        [
+          "tests/types/manifest-browser-negative.ts",
+          19,
+          46,
+          2741
+        ],
+        [
+          "tests/types/manifest-browser-negative.ts",
+          21,
+          100,
+          2322
+        ],
+        [
+          "tests/types/manifest-browser-negative.ts",
+          23,
+          100,
+          2353
+        ],
+        [
+          "tests/types/manifest-browser-negative.ts",
+          25,
+          100,
+          2353
+        ],
+        [
+          "tests/types/manifest-browser-negative.ts",
+          27,
+          46,
+          2379
+        ],
+        [
+          "tests/types/manifest-browser-negative.ts",
+          29,
+          7,
+          2739
+        ],
+        [
+          "tests/types/manifest-browser-negative.ts",
+          31,
+          31,
+          2740
+        ],
+        [
+          "tests/types/manifest-browser-negative.ts",
+          33,
+          7,
+          2739
+        ],
+        [
+          "tests/types/manifest-browser-negative.ts",
+          35,
+          9,
+          2540
+        ],
+        [
+          "tests/types/manifest-browser-negative.ts",
+          37,
+          8,
+          2540
+        ],
+        [
+          "tests/types/manifest-browser-negative.ts",
+          39,
+          8,
+          2540
+        ],
+        [
+          "tests/types/manifest-browser-negative.ts",
+          41,
+          7,
+          2322
+        ],
+        [
+          "tests/types/manifest-browser-negative.ts",
+          43,
+          41,
+          2353
+        ],
+        [
+          "tests/types/manifest-browser-negative.ts",
+          45,
+          7,
+          2322
+        ],
+        [
+          "tests/types/manifest-browser-negative.ts",
+          47,
+          8,
+          2554
+        ],
+        [
+          "tests/types/manifest-browser-negative.ts",
+          49,
+          14,
+          2554
+        ]
+      ]
+    },
+    {
+      "pair": "candidate-shared-frame",
+      "domFree": true,
+      "cases": [
+        {
+          "name": "candidate-shared-frame-N01",
+          "line": 11,
+          "statement": "engine.capturePreparedSharedFrame();"
+        },
+        {
+          "name": "candidate-shared-frame-N02",
+          "line": 13,
+          "statement": "engine.capturePreparedSharedFrame(ticket);"
+        },
+        {
+          "name": "candidate-shared-frame-N03",
+          "line": 15,
+          "statement": "engine.capturePreparedSharedFrame(null, options);"
+        },
+        {
+          "name": "candidate-shared-frame-N04",
+          "line": 17,
+          "statement": "engine.capturePreparedSharedFrame(overrides, options);"
+        },
+        {
+          "name": "candidate-shared-frame-N05",
+          "line": 19,
+          "statement": "engine.capturePreparedSharedFrame(ticket, options, overrides);"
+        },
+        {
+          "name": "candidate-shared-frame-N06",
+          "line": 21,
+          "statement": "engine.capturePreparedSharedFrame(options, ticket);"
+        },
+        {
+          "name": "candidate-shared-frame-N07",
+          "line": 23,
+          "statement": "engine.capturePreparedSharedFrame(ticket, null);"
+        },
+        {
+          "name": "candidate-shared-frame-N08",
+          "line": 25,
+          "statement": "engine.capturePreparedSharedFrame(ticket, { width: 8, height: 8, overrides });"
+        },
+        {
+          "name": "candidate-shared-frame-N09",
+          "line": 27,
+          "statement": "const promise: Promise<SharedRenderFrame2D> = engine.capturePreparedSharedFrame(ticket, options);"
+        },
+        {
+          "name": "candidate-shared-frame-N10",
+          "line": 29,
+          "statement": "engine.capturePreparedSharedFrame(ticket, options).ready;"
+        },
+        {
+          "name": "candidate-shared-frame-N11",
+          "line": 31,
+          "statement": "frame.frameId = 10;"
+        },
+        {
+          "name": "candidate-shared-frame-N12",
+          "line": 33,
+          "statement": "frame.commands.push(frame.commands[0]!);"
+        },
+        {
+          "name": "candidate-shared-frame-N13",
+          "line": 35,
+          "statement": "ticket.candidateBindings;"
+        },
+        {
+          "name": "candidate-shared-frame-N14",
+          "line": 37,
+          "statement": "ticket.commit(frame);"
+        }
+      ],
+      "tuples": [
+        [
+          "tests/types/candidate-shared-frame-negative.ts",
+          11,
+          8,
+          2554
+        ],
+        [
+          "tests/types/candidate-shared-frame-negative.ts",
+          13,
+          8,
+          2554
+        ],
+        [
+          "tests/types/candidate-shared-frame-negative.ts",
+          15,
+          35,
+          2345
+        ],
+        [
+          "tests/types/candidate-shared-frame-negative.ts",
+          17,
+          35,
+          2739
+        ],
+        [
+          "tests/types/candidate-shared-frame-negative.ts",
+          19,
+          52,
+          2554
+        ],
+        [
+          "tests/types/candidate-shared-frame-negative.ts",
+          21,
+          35,
+          2739
+        ],
+        [
+          "tests/types/candidate-shared-frame-negative.ts",
+          23,
+          43,
+          2345
+        ],
+        [
+          "tests/types/candidate-shared-frame-negative.ts",
+          25,
+          66,
+          2353
+        ],
+        [
+          "tests/types/candidate-shared-frame-negative.ts",
+          27,
+          7,
+          2739
+        ],
+        [
+          "tests/types/candidate-shared-frame-negative.ts",
+          29,
+          52,
+          2339
+        ],
+        [
+          "tests/types/candidate-shared-frame-negative.ts",
+          31,
+          7,
+          2540
+        ],
+        [
+          "tests/types/candidate-shared-frame-negative.ts",
+          33,
+          16,
+          2339
+        ],
+        [
+          "tests/types/candidate-shared-frame-negative.ts",
+          35,
+          8,
+          2339
+        ],
+        [
+          "tests/types/candidate-shared-frame-negative.ts",
+          37,
+          15,
+          2554
+        ]
+      ]
+    },
+    {
+      "pair": "manifest-resource-diagnostics",
+      "domFree": false,
+      "cases": [
+        {
+          "name": "manifest-resource-diagnostics-N01",
+          "line": 5,
+          "statement": "import type { ManifestByteSourceStatus as ForbiddenCoreStatus } from '@egret/engine'; // MDR-N01 optional types are not core exports."
+        },
+        {
+          "name": "manifest-resource-diagnostics-N02",
+          "line": 12,
+          "statement": "ordinary.getStatus();"
+        },
+        {
+          "name": "manifest-resource-diagnostics-N03",
+          "line": 14,
+          "statement": "const inventedSubtype:ManifestTextureProvider=ordinary;"
+        },
+        {
+          "name": "manifest-resource-diagnostics-N04",
+          "line": 16,
+          "statement": "s.current.jobs=1;"
+        },
+        {
+          "name": "manifest-resource-diagnostics-N05",
+          "line": 18,
+          "statement": "s.highWater.ownedEncodedBytes=0;"
+        },
+        {
+          "name": "manifest-resource-diagnostics-N06",
+          "line": 20,
+          "statement": "p.current.activeDecodes=0;"
+        },
+        {
+          "name": "manifest-resource-diagnostics-N07",
+          "line": 22,
+          "statement": "p.highWater.materializedCpuBytes=0;"
+        },
+        {
+          "name": "manifest-resource-diagnostics-N08",
+          "line": 24,
+          "statement": "s.current=s.highWater;"
+        },
+        {
+          "name": "manifest-resource-diagnostics-N09",
+          "line": 26,
+          "statement": "p.saturated=false;"
+        },
+        {
+          "name": "manifest-resource-diagnostics-N10",
+          "line": 28,
+          "statement": "source.getStatus({reset:true});"
+        },
+        {
+          "name": "manifest-resource-diagnostics-N11",
+          "line": 30,
+          "statement": "provider.getStatus(()=>{});"
+        },
+        {
+          "name": "manifest-resource-diagnostics-N12",
+          "line": 32,
+          "statement": "s.current.refs;"
+        },
+        {
+          "name": "manifest-resource-diagnostics-N13",
+          "line": 34,
+          "statement": "p.current.bitmapLogicalBytes.close();"
+        },
+        {
+          "name": "manifest-resource-diagnostics-N14",
+          "line": 36,
+          "statement": "p.events;"
+        },
+        {
+          "name": "manifest-resource-diagnostics-N15",
+          "line": 38,
+          "statement": "const byteCount:number=s.saturated;"
+        },
+        {
+          "name": "manifest-resource-diagnostics-N16",
+          "line": 40,
+          "statement": "const asyncStatus:Promise<ManifestTextureProviderStatus>=provider.getStatus();"
+        }
+      ],
+      "tuples": [
+        [
+          "tests/types/manifest-resource-diagnostics-negative.ts",
+          5,
+          15,
+          2305
+        ],
+        [
+          "tests/types/manifest-resource-diagnostics-negative.ts",
+          12,
+          10,
+          2339
+        ],
+        [
+          "tests/types/manifest-resource-diagnostics-negative.ts",
+          14,
+          7,
+          2741
+        ],
+        [
+          "tests/types/manifest-resource-diagnostics-negative.ts",
+          16,
+          11,
+          2540
+        ],
+        [
+          "tests/types/manifest-resource-diagnostics-negative.ts",
+          18,
+          13,
+          2540
+        ],
+        [
+          "tests/types/manifest-resource-diagnostics-negative.ts",
+          20,
+          11,
+          2540
+        ],
+        [
+          "tests/types/manifest-resource-diagnostics-negative.ts",
+          22,
+          13,
+          2540
+        ],
+        [
+          "tests/types/manifest-resource-diagnostics-negative.ts",
+          24,
+          3,
+          2540
+        ],
+        [
+          "tests/types/manifest-resource-diagnostics-negative.ts",
+          26,
+          3,
+          2540
+        ],
+        [
+          "tests/types/manifest-resource-diagnostics-negative.ts",
+          28,
+          18,
+          2554
+        ],
+        [
+          "tests/types/manifest-resource-diagnostics-negative.ts",
+          30,
+          20,
+          2554
+        ],
+        [
+          "tests/types/manifest-resource-diagnostics-negative.ts",
+          32,
+          11,
+          2339
+        ],
+        [
+          "tests/types/manifest-resource-diagnostics-negative.ts",
+          34,
+          30,
+          2339
+        ],
+        [
+          "tests/types/manifest-resource-diagnostics-negative.ts",
+          36,
+          3,
+          2339
+        ],
+        [
+          "tests/types/manifest-resource-diagnostics-negative.ts",
+          38,
+          7,
+          2322
+        ],
+        [
+          "tests/types/manifest-resource-diagnostics-negative.ts",
+          40,
+          7,
+          2739
+        ]
+      ]
+    },
+    {
+      "pair": "shared-frame-upload-gpu",
+      "domFree": false,
+      "cases": [
+        {
+          "name": "shared-frame-upload-gpu-N01",
+          "line": 26,
+          "statement": "const forged: SharedFrameUpload = { ready: Promise.resolve(ready), submit: () => submission, dispose() {} };"
+        },
+        {
+          "name": "shared-frame-upload-gpu-N02",
+          "line": 28,
+          "statement": "host.stageSharedFrame({ profile: 'egret.shared-frame2d/1' });"
+        },
+        {
+          "name": "shared-frame-upload-gpu-N03",
+          "line": 30,
+          "statement": "host.stageSharedFrame(frame, { allocator: {} });"
+        },
+        {
+          "name": "shared-frame-upload-gpu-N04",
+          "line": 32,
+          "statement": "host.stageSharedFrame(frame, { signal: {} });"
+        },
+        {
+          "name": "shared-frame-upload-gpu-N05",
+          "line": 34,
+          "statement": "sceneHost.stageSceneSharedFrame(frame, scene);"
+        },
+        {
+          "name": "shared-frame-upload-gpu-N06",
+          "line": 36,
+          "statement": "host.stageSceneSharedFrame(scene, frame);"
+        },
+        {
+          "name": "shared-frame-upload-gpu-N07",
+          "line": 38,
+          "statement": "const promised: Promise<SharedFrameUpload> = host.stageSharedFrame(frame);"
+        },
+        {
+          "name": "shared-frame-upload-gpu-N08",
+          "line": 40,
+          "statement": "upload.ready = Promise.resolve(ready);"
+        },
+        {
+          "name": "shared-frame-upload-gpu-N09",
+          "line": 42,
+          "statement": "ready.generation = 2;"
+        },
+        {
+          "name": "shared-frame-upload-gpu-N10",
+          "line": 44,
+          "statement": "submission.serial = 4;"
+        },
+        {
+          "name": "shared-frame-upload-gpu-N11",
+          "line": 46,
+          "statement": "status.attempt = 3;"
+        },
+        {
+          "name": "shared-frame-upload-gpu-N12",
+          "line": 48,
+          "statement": "sharedRead.generation = 4;"
+        },
+        {
+          "name": "shared-frame-upload-gpu-N13",
+          "line": 50,
+          "statement": "legacyRead.generation;"
+        },
+        {
+          "name": "shared-frame-upload-gpu-N14",
+          "line": 52,
+          "statement": "legacy.recover();"
+        },
+        {
+          "name": "shared-frame-upload-gpu-N15",
+          "line": 54,
+          "statement": "engine.stageSharedFrame(frame);"
+        },
+        {
+          "name": "shared-frame-upload-gpu-N16",
+          "line": 56,
+          "statement": "canvasHost.getSessionStatus();"
+        },
+        {
+          "name": "shared-frame-upload-gpu-N17",
+          "line": 58,
+          "statement": "const mode: SharedWebGPUHostOptions = { canvas, recovery: { mode: 'retry-forever' } };"
+        },
+        {
+          "name": "shared-frame-upload-gpu-N18",
+          "line": 60,
+          "statement": "const scheduler: SharedWebGPUHostOptions = { canvas, uploadScheduler() {} };"
+        },
+        {
+          "name": "shared-frame-upload-gpu-N19",
+          "line": 62,
+          "statement": "host.recover({ lost: Promise.resolve({}) });"
+        },
+        {
+          "name": "shared-frame-upload-gpu-N20",
+          "line": 64,
+          "statement": "upload.submit(frame);"
+        }
+      ],
+      "tuples": [
+        [
+          "tests/types/shared-frame-upload-gpu-negative.ts",
+          26,
+          7,
+          2741
+        ],
+        [
+          "tests/types/shared-frame-upload-gpu-negative.ts",
+          28,
+          23,
+          2740
+        ],
+        [
+          "tests/types/shared-frame-upload-gpu-negative.ts",
+          30,
+          32,
+          2353
+        ],
+        [
+          "tests/types/shared-frame-upload-gpu-negative.ts",
+          32,
+          32,
+          2739
+        ],
+        [
+          "tests/types/shared-frame-upload-gpu-negative.ts",
+          34,
+          33,
+          2739
+        ],
+        [
+          "tests/types/shared-frame-upload-gpu-negative.ts",
+          36,
+          6,
+          2551
+        ],
+        [
+          "tests/types/shared-frame-upload-gpu-negative.ts",
+          38,
+          7,
+          2739
+        ],
+        [
+          "tests/types/shared-frame-upload-gpu-negative.ts",
+          40,
+          8,
+          2540
+        ],
+        [
+          "tests/types/shared-frame-upload-gpu-negative.ts",
+          42,
+          7,
+          2540
+        ],
+        [
+          "tests/types/shared-frame-upload-gpu-negative.ts",
+          44,
+          12,
+          2540
+        ],
+        [
+          "tests/types/shared-frame-upload-gpu-negative.ts",
+          46,
+          8,
+          2540
+        ],
+        [
+          "tests/types/shared-frame-upload-gpu-negative.ts",
+          48,
+          12,
+          2540
+        ],
+        [
+          "tests/types/shared-frame-upload-gpu-negative.ts",
+          50,
+          12,
+          2339
+        ],
+        [
+          "tests/types/shared-frame-upload-gpu-negative.ts",
+          52,
+          8,
+          2339
+        ],
+        [
+          "tests/types/shared-frame-upload-gpu-negative.ts",
+          54,
+          8,
+          2339
+        ],
+        [
+          "tests/types/shared-frame-upload-gpu-negative.ts",
+          56,
+          12,
+          2339
+        ],
+        [
+          "tests/types/shared-frame-upload-gpu-negative.ts",
+          58,
+          61,
+          2322
+        ],
+        [
+          "tests/types/shared-frame-upload-gpu-negative.ts",
+          60,
+          54,
+          2353
+        ],
+        [
+          "tests/types/shared-frame-upload-gpu-negative.ts",
+          62,
+          16,
+          2322
+        ],
+        [
+          "tests/types/shared-frame-upload-gpu-negative.ts",
+          64,
+          15,
+          2554
+        ]
+      ]
+    },
+    {
+      "pair": "shared-frame-upload-webgl2",
+      "domFree": false,
+      "cases": [
+        {
+          "name": "shared-frame-upload-webgl2-N01",
+          "line": 13,
+          "statement": "type RootUpload = root.SharedFrameUpload;"
+        },
+        {
+          "name": "shared-frame-upload-webgl2-N02",
+          "line": 15,
+          "statement": "type CanvasStatus = canvasEntry.SharedDeviceSessionStatus<WebGL2HostFailure>;"
+        },
+        {
+          "name": "shared-frame-upload-webgl2-N03",
+          "line": 19,
+          "statement": "host.recover();"
+        },
+        {
+          "name": "shared-frame-upload-webgl2-N04",
+          "line": 21,
+          "statement": "engine.stageSharedFrame(frame);"
+        },
+        {
+          "name": "shared-frame-upload-webgl2-N05",
+          "line": 23,
+          "statement": "host.stageSceneSharedFrame(scene,frame);"
+        },
+        {
+          "name": "shared-frame-upload-webgl2-N06",
+          "line": 25,
+          "statement": "sceneHost.stageSceneSharedFrame(scene);"
+        },
+        {
+          "name": "shared-frame-upload-webgl2-N07",
+          "line": 27,
+          "statement": "host.stageSharedFrame(old);"
+        },
+        {
+          "name": "shared-frame-upload-webgl2-N08",
+          "line": 29,
+          "statement": "host.stageSharedFrame({});"
+        },
+        {
+          "name": "shared-frame-upload-webgl2-N09",
+          "line": 31,
+          "statement": "canvasEntry.createCanvasHost({canvas}).stageSharedFrame(frame);"
+        },
+        {
+          "name": "shared-frame-upload-webgl2-N10",
+          "line": 33,
+          "statement": "createSharedWebGL2Host({canvas,gl:{} as WebGL2RenderingContext});"
+        },
+        {
+          "name": "shared-frame-upload-webgl2-N11",
+          "line": 35,
+          "statement": "createSharedWebGL2Host({canvas,recovery:{mode:'manual'}});"
+        },
+        {
+          "name": "shared-frame-upload-webgl2-N12",
+          "line": 37,
+          "statement": "host.stageSharedFrame(frame,{schedule:() => {}});"
+        },
+        {
+          "name": "shared-frame-upload-webgl2-N13",
+          "line": 39,
+          "statement": "host.stageSharedFrame(frame,{timeoutMs:1});"
+        },
+        {
+          "name": "shared-frame-upload-webgl2-N14",
+          "line": 43,
+          "statement": "const forged: SharedFrameUpload = {ready,submit,dispose(){}};"
+        },
+        {
+          "name": "shared-frame-upload-webgl2-N15",
+          "line": 49,
+          "statement": "status.state = 'ready';"
+        },
+        {
+          "name": "shared-frame-upload-webgl2-N16",
+          "line": 51,
+          "statement": "status.generation = 1;"
+        },
+        {
+          "name": "shared-frame-upload-webgl2-N17",
+          "line": 53,
+          "statement": "status.attempt = 0;"
+        },
+        {
+          "name": "shared-frame-upload-webgl2-N18",
+          "line": 55,
+          "statement": "status.firstFailure = null;"
+        },
+        {
+          "name": "shared-frame-upload-webgl2-N19",
+          "line": 57,
+          "statement": "status.generationFailure = null;"
+        },
+        {
+          "name": "shared-frame-upload-webgl2-N20",
+          "line": 59,
+          "statement": "ticket.ready = Promise.resolve(ready);"
+        },
+        {
+          "name": "shared-frame-upload-webgl2-N21",
+          "line": 61,
+          "statement": "ready.frameId = 1;"
+        },
+        {
+          "name": "shared-frame-upload-webgl2-N22",
+          "line": 63,
+          "statement": "submission.serial = 1;"
+        },
+        {
+          "name": "shared-frame-upload-webgl2-N23",
+          "line": 65,
+          "statement": "submission.completed = Promise.resolve();"
+        },
+        {
+          "name": "shared-frame-upload-webgl2-N24",
+          "line": 67,
+          "statement": "options.signal = signal;"
+        },
+        {
+          "name": "shared-frame-upload-webgl2-N25",
+          "line": 69,
+          "statement": "const arbitrary: SharedDeviceSessionState = 'arbitrary';"
+        },
+        {
+          "name": "shared-frame-upload-webgl2-N26",
+          "line": 74,
+          "statement": "const stage: SharedWebGL2Host['stageSharedFrame'] = async () => ({} as SharedFrameUpload);"
+        }
+      ],
+      "tuples": [
+        [
+          "tests/types/shared-frame-upload-webgl2-negative.ts",
+          13,
+          24,
+          2694
+        ],
+        [
+          "tests/types/shared-frame-upload-webgl2-negative.ts",
+          15,
+          33,
+          2694
+        ],
+        [
+          "tests/types/shared-frame-upload-webgl2-negative.ts",
+          19,
+          8,
+          2339
+        ],
+        [
+          "tests/types/shared-frame-upload-webgl2-negative.ts",
+          21,
+          10,
+          2339
+        ],
+        [
+          "tests/types/shared-frame-upload-webgl2-negative.ts",
+          23,
+          8,
+          2551
+        ],
+        [
+          "tests/types/shared-frame-upload-webgl2-negative.ts",
+          25,
+          13,
+          2554
+        ],
+        [
+          "tests/types/shared-frame-upload-webgl2-negative.ts",
+          27,
+          25,
+          2740
+        ],
+        [
+          "tests/types/shared-frame-upload-webgl2-negative.ts",
+          29,
+          25,
+          2740
+        ],
+        [
+          "tests/types/shared-frame-upload-webgl2-negative.ts",
+          31,
+          42,
+          2339
+        ],
+        [
+          "tests/types/shared-frame-upload-webgl2-negative.ts",
+          33,
+          34,
+          2353
+        ],
+        [
+          "tests/types/shared-frame-upload-webgl2-negative.ts",
+          35,
+          34,
+          2353
+        ],
+        [
+          "tests/types/shared-frame-upload-webgl2-negative.ts",
+          37,
+          32,
+          2353
+        ],
+        [
+          "tests/types/shared-frame-upload-webgl2-negative.ts",
+          39,
+          32,
+          2353
+        ],
+        [
+          "tests/types/shared-frame-upload-webgl2-negative.ts",
+          43,
+          9,
+          2741
+        ],
+        [
+          "tests/types/shared-frame-upload-webgl2-negative.ts",
+          49,
+          10,
+          2540
+        ],
+        [
+          "tests/types/shared-frame-upload-webgl2-negative.ts",
+          51,
+          10,
+          2540
+        ],
+        [
+          "tests/types/shared-frame-upload-webgl2-negative.ts",
+          53,
+          10,
+          2540
+        ],
+        [
+          "tests/types/shared-frame-upload-webgl2-negative.ts",
+          55,
+          10,
+          2540
+        ],
+        [
+          "tests/types/shared-frame-upload-webgl2-negative.ts",
+          57,
+          10,
+          2540
+        ],
+        [
+          "tests/types/shared-frame-upload-webgl2-negative.ts",
+          59,
+          10,
+          2540
+        ],
+        [
+          "tests/types/shared-frame-upload-webgl2-negative.ts",
+          61,
+          9,
+          2540
+        ],
+        [
+          "tests/types/shared-frame-upload-webgl2-negative.ts",
+          63,
+          14,
+          2540
+        ],
+        [
+          "tests/types/shared-frame-upload-webgl2-negative.ts",
+          65,
+          14,
+          2540
+        ],
+        [
+          "tests/types/shared-frame-upload-webgl2-negative.ts",
+          67,
+          11,
+          2540
+        ],
+        [
+          "tests/types/shared-frame-upload-webgl2-negative.ts",
+          69,
+          9,
+          2322
+        ],
+        [
+          "tests/types/shared-frame-upload-webgl2-negative.ts",
+          74,
+          67,
+          2739
+        ]
+      ]
+    },
+    {
+      "pair": "shared-host-resource-diagnostics",
+      "domFree": false,
+      "cases": [
+        {
+          "name": "shared-host-resource-diagnostics-N01",
+          "line": 6,
+          "statement": "status.current.pending.frames = 0;"
+        },
+        {
+          "name": "shared-host-resource-diagnostics-N02",
+          "line": 7,
+          "statement": "status.current.cpu.temporaryBytes = 0;"
+        },
+        {
+          "name": "shared-host-resource-diagnostics-N03",
+          "line": 8,
+          "statement": "status.current.images.readyBytes = 0;"
+        },
+        {
+          "name": "shared-host-resource-diagnostics-N04",
+          "line": 9,
+          "statement": "status.current.reusable.leasedEntries = 0;"
+        },
+        {
+          "name": "shared-host-resource-diagnostics-N05",
+          "line": 10,
+          "statement": "status.current.unknownNative.objects = 0;"
+        },
+        {
+          "name": "shared-host-resource-diagnostics-N06",
+          "line": 11,
+          "statement": "status.highWater.cpu.scratchBytes = 0;"
+        },
+        {
+          "name": "shared-host-resource-diagnostics-N07",
+          "line": 12,
+          "statement": "status.totals.pageWriteCalls = 0;"
+        },
+        {
+          "name": "shared-host-resource-diagnostics-N08",
+          "line": 13,
+          "statement": "status.saturated = false;"
+        },
+        {
+          "name": "shared-host-resource-diagnostics-N09",
+          "line": 14,
+          "statement": "status.reset();"
+        },
+        {
+          "name": "shared-host-resource-diagnostics-N10",
+          "line": 15,
+          "statement": "status.current.images.device;"
+        },
+        {
+          "name": "shared-host-resource-diagnostics-N11",
+          "line": 16,
+          "statement": "ordinary.getStatus().resources;"
+        },
+        {
+          "name": "shared-host-resource-diagnostics-N12",
+          "line": 17,
+          "statement": "engine.getResourceStatus();"
+        },
+        {
+          "name": "shared-host-resource-diagnostics-N13",
+          "line": 18,
+          "statement": "const nativeObject: object = status.current.images.allocatedLogicalBytes;"
+        }
+      ],
+      "tuples": [
+        [
+          "tests/types/shared-host-resource-diagnostics-negative.ts",
+          6,
+          24,
+          2540
+        ],
+        [
+          "tests/types/shared-host-resource-diagnostics-negative.ts",
+          7,
+          20,
+          2540
+        ],
+        [
+          "tests/types/shared-host-resource-diagnostics-negative.ts",
+          8,
+          23,
+          2540
+        ],
+        [
+          "tests/types/shared-host-resource-diagnostics-negative.ts",
+          9,
+          25,
+          2540
+        ],
+        [
+          "tests/types/shared-host-resource-diagnostics-negative.ts",
+          10,
+          30,
+          2540
+        ],
+        [
+          "tests/types/shared-host-resource-diagnostics-negative.ts",
+          11,
+          22,
+          2540
+        ],
+        [
+          "tests/types/shared-host-resource-diagnostics-negative.ts",
+          12,
+          15,
+          2540
+        ],
+        [
+          "tests/types/shared-host-resource-diagnostics-negative.ts",
+          13,
+          8,
+          2540
+        ],
+        [
+          "tests/types/shared-host-resource-diagnostics-negative.ts",
+          14,
+          8,
+          2339
+        ],
+        [
+          "tests/types/shared-host-resource-diagnostics-negative.ts",
+          15,
+          23,
+          2339
+        ],
+        [
+          "tests/types/shared-host-resource-diagnostics-negative.ts",
+          16,
+          22,
+          2339
+        ],
+        [
+          "tests/types/shared-host-resource-diagnostics-negative.ts",
+          17,
+          8,
+          2339
+        ],
+        [
+          "tests/types/shared-host-resource-diagnostics-negative.ts",
+          18,
+          7,
+          2322
+        ]
+      ]
+    }
+  ]
+}

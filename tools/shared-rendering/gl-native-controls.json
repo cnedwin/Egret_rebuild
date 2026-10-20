@@ -27,12 +27,12 @@
     "implementation": "Omit source sRGB decode while retaining source alpha, encoding, cap and all other channel operations.",
     "status": "SOURCE_BOUND_GL_CONTROL",
     "original": {
-      "bytes": 1274,
-      "sha256": "bbb350458e5a4a417fa073ea506da66f68df79c523c21259f68c72d4940148a5"
+      "bytes": 2455,
+      "sha256": "4e3c221cb075be46b90454719c04f3886bed2dd10fd048bdef5273ebda7962b0"
     },
     "changed": {
-      "bytes": 1258,
-      "sha256": "25440fa54640a066b92054ef374da44b0d896dea1a59e7feca51c4600f24954f"
+      "bytes": 2439,
+      "sha256": "fcf80efd53635df7f7fd776c95b8489bbf86b27b2788076b8733efb2b2b32077"
     }
   },
   {
@@ -194,12 +194,12 @@
       "model": "The original A00 red point (52,8) reads transparent-clear top-left row247 if native bottom-left rows are not normalized; all A00 rectangles occupy y=[0,16)."
     },
     "original": {
-      "sha256": "7a48a8f1048d7d65845d723c10879c14a54eb8aaf6a4701ce8c527a5c260b72b",
-      "bytes": 54757
+      "sha256": "3f2489e7d215299a467e387ee1e66311722939c17c55f6abcb108f15a3e9624e",
+      "bytes": 91664
     },
     "changed": {
-      "sha256": "d123abf0a86fb3cebe7a4ad78aa240f40faa9be6e0fea096d7a8f049b4c2bfab",
-      "bytes": 54736
+      "sha256": "62c9d562cc8ab83ceadb6e66a3981adc517dc8742e3dda7e7ca06ba55649703c",
+      "bytes": 91643
     }
   },
   {

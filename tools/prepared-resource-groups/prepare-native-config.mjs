@@ -54,7 +54,10 @@ const playwrightRoot=fs.realpathSync(argumentsMap.get('--playwright'));
 requireThat(fs.statSync(playwrightRoot).isDirectory(),'Existing Playwright package directory required');
 const runnerRelative='tools/verify-prepared-resource-groups.mjs',runner=read(repository,runnerRelative);
 const oracleRelative='tools/prepared-resource-groups/oracle.mjs';
-const oracle=read(repository,oracleRelative,{bytes:7944,sha256:'d213b1c082ccb3290866928c8180be6af43de11101e6213d367fd227c86d526c'});
+// Preserve the original oracle identity; current admission selects the reviewed exact font-patch successor.
+const historicalOracleSource = {bytes:7944,sha256:'d213b1c082ccb3290866928c8180be6af43de11101e6213d367fd227c86d526c'};
+const m15FontPatchOracleSourceSuccessor = {bytes:8179,sha256:'fdf9291378bace50f7e887cc20977c32b5ceba6ea184c5632d5a926e675a244c'};
+const oracle=read(repository,oracleRelative,m15FontPatchOracleSourceSuccessor);
 const fixtureRelative='tools/prepared-resource-groups/native-fixture.mjs';
 const fixture=read(repository,fixtureRelative,{bytes:20027,sha256:'0de059155c414c6f8e494c8501f6ff3b4e24d0581f9ec86e238e421738767b77'});
 const fixtureEdges=['@egret/engine/web','./source.mjs','./dependencies.mjs','./session.mjs','../resource-scene/gpu-scene.mjs','./application.mjs'];

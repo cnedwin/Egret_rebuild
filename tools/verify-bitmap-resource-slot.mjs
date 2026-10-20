@@ -149,6 +149,7 @@ const sdkAliases = new Map(Object.entries({
   '@egret/engine/web/input': ['sdk', 'packages/engine/dist/web/input.js'],
   '@egret/runtime': ['sdk', 'packages/runtime/dist/index.js'],
   '@egret/contracts': ['sdk', 'packages/contracts/dist/index.js'],
+  '@egret/contracts/resources': ['sdk', 'packages/contracts/dist/resources/index.js'],
   '#egret-mouse-input': ['sdk', 'packages/engine/dist/mouseInput.js'],
   '#egret-textured-frame-state': ['sdk', 'packages/engine/dist/internal/texturedFrameState.js'],
 }));
@@ -233,6 +234,7 @@ const expectedAuthoredImports = {
   '@egret/engine/web/input': '../../packages/engine/dist/web/input.js',
   '@egret/runtime': '../../packages/runtime/dist/index.js',
   '@egret/contracts': '../../packages/contracts/dist/index.js',
+  '@egret/contracts/resources': '../../packages/contracts/dist/resources/index.js',
   '#egret-mouse-input': '../../packages/engine/dist/mouseInput.js',
   '#egret-textured-frame-state': '../../packages/engine/dist/internal/texturedFrameState.js',
   'robust-predicates': '../../packages/engine/node_modules/robust-predicates/index.js',

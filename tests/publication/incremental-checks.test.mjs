@@ -665,9 +665,11 @@ test('registered successors stay separate from original raw expectations',async(
 
 
 // Genuine source bytes authenticate extraction; synthetic dependencies are never executed.
-function inlineCompilerFixture(){
+const m15BootstrapBefore="m13HelperPin.bytes !== 11980 || m13HelperPin.sha256 !== '7f4a82751f0e9e5b3f1b9de5a17816b20cd169ed02f9130b1a7c3989c547b634'";
+const m15BootstrapAfter="m13HelperPin.bytes !== 12701 || m13HelperPin.sha256 !== '0c8ae45e31b879ca8e84633091f3a5e938d7712c4f2dff7cf1af3013859b91ad'";
+function inlineCompilerFixture({m15=false}={}){
  const f=compilerFixture();
- for(const name of ['check-types','bitmap-resource-slot-types','bitmap-binding-ticket-types','linear-layout-types','bitmap-button-types','display-anchor-offsets-types','display-container-add-child-at-types','display-container-child-index-types','display-container-remove-children-types','sequence-playback-types'])f.put('tools/'+name+'.mjs',fs.readFileSync(new URL('../../tools/'+name+'.mjs',import.meta.url)));
+ for(const name of ['check-types','bitmap-resource-slot-types','bitmap-binding-ticket-types','linear-layout-types','bitmap-button-types','display-anchor-offsets-types','display-container-add-child-at-types','display-container-child-index-types','display-container-remove-children-types','sequence-playback-types']){const raw=fs.readFileSync(new URL('../../tools/'+name+'.mjs',import.meta.url));f.put('tools/'+name+'.mjs',m15?raw:Buffer.from(raw.toString().replace(m15BootstrapAfter,m15BootstrapBefore)));}
  for(const [family,lanes]of [['mouse-input',['positive','negative','import-negative','dom-free-negative']],['spine-import-plan',['positive','negative','import-negative']]])for(const lane of lanes){const file='tests/types/'+family+'-'+lane+'.ts';f.put(file,fs.readFileSync(new URL('../../'+file,import.meta.url)));}
  for(const name of ['display-container-add-child-at','display-container-child-index','display-container-remove-children','sequence-playback']){
   const file='tests/types/'+name+'-diagnostic-expectations.json',v=JSON.parse(fs.readFileSync(path.join(f.root,file))),original=JSON.parse(fs.readFileSync(new URL('../../'+file,import.meta.url)));
@@ -696,9 +698,37 @@ test('sealed inline declarations preserve digest strength source spans and condi
   assert(inline.conditions.filter(x=>x.kind==='container-successor').every(x=>x.historyAgreement&&x.successorAgreement));assert.equal(inline.conditions.find(x=>x.kind==='sequence-negative-successor').sourceAgreement,true);
  }finally{f.close();}
 });
+// Project only the genuine reviewed M1.5 bytes to the historical fixture.
+function m15InlineGateHistory(raw){
+ const file='tools/check-types.mjs',identity=body=>({bytes:body.length,sha256:createHash('sha256').update(body).digest('hex')});
+ const pins={"m13":{"bytes":121118,"sha256":"64d5996ebf925b8b2eda7e04d20e939e399d50953da0023a48ffd02223985093"},"m14":{"bytes":121161,"sha256":"c85407cbdc9c6222cbf240de21e82afd37725e6c8a68bed9ca0d098d7b6dc343"},"delegate":{"bytes":121293,"sha256":"a4cde570d560924537f8caabb7fa8a9b5059241fedda6edfc4968dba443a7e2e"},"scene":{"bytes":141012,"sha256":"b584aa0dc9368285380a3f1569b49430e6fceee3f994a2be4d37acbbc1e9785e"}};
+ assert([pins.m14,pins.delegate,pins.scene].some(pin=>JSON.stringify(identity(raw))===JSON.stringify(pin)));
+ let text=raw.toString(),scene=null;
+ if(JSON.stringify(identity(raw))===JSON.stringify(pins.scene)){
+  scene=raw;
+  const lines=text.split('\n'),first=lines.findIndex(line=>line==='// The separately observed M1.5 closure retains the complete M1.3 table above.');
+  assert(first>=0);assert.equal(lines[first+1].startsWith('const sceneDomM15Successor = '),true);
+  assert.equal(lines[first+5],"const sceneDomLabel = sceneDomM15Selected ? 'S3D1 M1.5' : 'S3D1 M1.3';");
+  lines.splice(first,6);
+  text=lines.filter(line=>!line.includes("throw Error(sceneDomLabel+' incomplete declaration markers')")).join('\n')
+   .replace('sceneDomM13Selected = sceneDomM15Selected || existsSync','sceneDomM13Selected = existsSync')
+   .replaceAll('sceneDomSuccessor.','sceneDomM13Successor.').replaceAll("Error(sceneDomLabel+'","Error('S3D1 M1.3");
+ }
+ let delegate=null,m14=Buffer.from(text);
+ if(JSON.stringify(identity(m14))!==JSON.stringify(pins.m14)){
+  delegate=m14;assert.deepEqual(identity(delegate),pins.delegate);
+  const suffix=Buffer.from("\n// Preserve every retained strict lane before the seven M1.5 public consumer pairs.\nawait import('./resource-recovery-types.mjs');\n");assert(delegate.subarray(delegate.length-suffix.length).equals(suffix));m14=delegate.subarray(0,delegate.length-suffix.length);
+ }
+ assert.deepEqual(identity(m14),pins.m14);
+ const suffix=Buffer.from("await import('./shared-webgl2-types.mjs');\n");assert(m14.subarray(m14.length-suffix.length).equals(suffix));
+ const m13=m14.subarray(0,m14.length-suffix.length);assert.deepEqual(identity(m13),pins.m13);
+ return {file,pins,scene,delegate,m14,m13};
+}
+
 // UNIT: admit one appended checker import without moving or replacing inline history.
 test('M1.4 compiler maintenance admits only the exact appended WebGL2 checker revision',async()=>{
  const m=await compilerTool(),f=inlineCompilerFixture();try{
+  f.put('tools/check-types.mjs',m15InlineGateHistory(fs.readFileSync(path.join(f.root,'tools/check-types.mjs'))).m14);
   const file='tools/check-types.mjs',raw=fs.readFileSync(path.join(f.root,file));
   const suffix=Buffer.from("await import('./shared-webgl2-types.mjs');\n"),prior=raw.subarray(0,raw.length-suffix.length);
   const identity=body=>({path:file,bytes:body.length,sha256:createHash('sha256').update(body).digest('hex')});
@@ -1036,4 +1066,158 @@ test('verify rejects unknown and duplicate options before starting children',()=
  for(const args of [['--no-build','--no-build'],['--skip-tests'],['--integrated']])withMergeRunner(({run,calls})=>{
   assert.notEqual(run('verify',args).status,0);assert.deepEqual(calls(),[]);
  });
+});
+
+// UNIT: genuine current gate bytes and both exact historical inverses; no compiler execution.
+test('M1.5 strict bootstrap admits nine exact revisions and preserves both predecessor stages',async()=>{
+ const m=await compilerTool(),f=inlineCompilerFixture({m15:true});try{
+  const expected=[{"path":"tools/bitmap-resource-slot-types.mjs","predecessor":{"bytes":11184,"sha256":"2f1c767bc1701c5bcf087b7eb48857006334ffc36c205a82cf81d9fa2b857315"},"current":{"bytes":11184,"sha256":"c97f8b75d9103477c7f5e5932f0fb75e588d42eec31a73e6f66327fae9275eaf"}},{"path":"tools/bitmap-binding-ticket-types.mjs","predecessor":{"bytes":13887,"sha256":"1e80a8a04ae0b35dd1084762172aed96e966fe3a3e9e47a86da383cd853bfb32"},"current":{"bytes":13887,"sha256":"b36874eaab10b6c275424584d062b599f8e14a215336a7722e9a3783190a8782"}},{"path":"tools/linear-layout-types.mjs","predecessor":{"bytes":11073,"sha256":"1d9a07307a4725eb8234cbb062f23474c2c4ce28ef0a43706a041cecbe246085"},"current":{"bytes":11073,"sha256":"89cf1e6e5fd099871ff0d7388df1b0b6e6accd36c78aef9aa33e1e5426fa71c3"}},{"path":"tools/bitmap-button-types.mjs","predecessor":{"bytes":17175,"sha256":"74c55fbc100d49ed03278b2d8eb85d4833379a8219c932fce5325ec9cd448fe1"},"current":{"bytes":17175,"sha256":"919546bc07a51a78d499ae070618d7000e2d87774ad4af3c8a540b395924bbb8"}},{"path":"tools/display-anchor-offsets-types.mjs","predecessor":{"bytes":16526,"sha256":"04fcc94308c627433412348d9088fb98d032808d9029ef5e8fc154cf28868ae4"},"current":{"bytes":16526,"sha256":"9d37f5989501d97094b25a0d9130f98c906cdc60bea4b1f9a042279b7279f90c"}},{"path":"tools/display-container-add-child-at-types.mjs","predecessor":{"bytes":18718,"sha256":"64d67885a2c91e19beda887da12a44d09938d71afceff3c001a6cf51c4523563"},"current":{"bytes":18718,"sha256":"f25ded3a21e455bfc45d5181025d7fd6dcd43cd666a08bc246855fce4452ee91"}},{"path":"tools/display-container-child-index-types.mjs","predecessor":{"bytes":17112,"sha256":"eea91a2a74aaf1a7d210a923106afd305e0028bd29a24482f9669a368d2c689f"},"current":{"bytes":17112,"sha256":"fb2d518381df6f41795f198c5b353b03fc194361151bbdd5963fde78e7f38929"}},{"path":"tools/display-container-remove-children-types.mjs","predecessor":{"bytes":15268,"sha256":"df1dd4a369ac4d19f892aed8d684e5097f86935f470e6f02deed48c5c3f20159"},"current":{"bytes":15268,"sha256":"f03e8cfc77240d8ea40021333bf13e56cc15e0e0f469442fd6a72dee7e5bd31b"}},{"path":"tools/sequence-playback-types.mjs","predecessor":{"bytes":19255,"sha256":"904cc980cc1ae6bc8542ea37cf5f876020c8ba5576fd6f3066536e35de33c6b6"},"current":{"bytes":19255,"sha256":"6dffcc40c3654db9c9faa2f9983eafea7b6e91960aab20f279b0f5caba9a66be"}}];
+  const collect=()=>m.prepareCompilerReview(f.root,{inlinePolicies:true}),current=collect();
+  for(const row of expected){
+   const file=row.path,raw=fs.readFileSync(path.join(f.root,file)),text=raw.toString();
+   assert.deepEqual({bytes:raw.length,sha256:createHash('sha256').update(raw).digest('hex')},row.current);assert.equal(text.split(m15BootstrapAfter).length,2);
+   const revision=current.inlinePolicies.sourceRevisions.find(value=>value.current.path===file);assert.equal(revision.selection,'m15-strict-current');assert.equal(revision.admission,'not-evaluated');
+   assert.deepEqual(revision.m14StrictSuccessor,{path:file,...row.predecessor});assert.deepEqual(revision.m15StrictSuccessor,{path:file,...row.current});
+   const predecessor=Buffer.from(text.replace(m15BootstrapAfter,m15BootstrapBefore));assert.deepEqual({bytes:predecessor.length,sha256:createHash('sha256').update(predecessor).digest('hex')},row.predecessor);
+   f.put(file,predecessor);const historical=collect();assert.equal(historical.inlinePolicies.sourceRevisions.find(value=>value.current.path===file).selection,'m14-strict-current');
+   assert.deepEqual(historical.inlinePolicies.literals,current.inlinePolicies.literals);assert.deepEqual(historical.inlinePolicies.conditions,current.inlinePolicies.conditions);assert.throws(()=>m.verifyCompilerProposal(f.root,current,{inlinePolicies:true}),/changed/);
+   f.put(file,raw);assert.equal(m.verifyCompilerProposal(f.root,current,{inlinePolicies:true}).status,'current-inputs');
+   for(const altered of [Buffer.from(text.replace(m15BootstrapAfter,m15BootstrapAfter.replace('12701','12702'))),Buffer.concat([raw,Buffer.from('// unreviewed M1.5 drift\n')])]){
+    f.put(file,raw);const baseline=collect();assert.equal(m.verifyCompilerProposal(f.root,baseline,{inlinePolicies:true}).status,'current-inputs');
+    f.put(file,altered);assert.throws(collect,/Unreviewed inline policy source/);assert.throws(()=>m.verifyCompilerProposal(f.root,baseline,{inlinePolicies:true}));
+    f.put(file,raw);assert.equal(m.verifyCompilerProposal(f.root,baseline,{inlinePolicies:true}).status,'current-inputs');
+   }
+  }
+ }finally{f.close();}
+});
+
+
+// UNIT: fixed M1.5 roles reuse raw observations; no adapter or SDK is executed.
+test('M1.5 maintenance keeps three graph groups and seventeen pair roles beside all history',async()=>{
+ const m=await maintenance(),f=baselineFixture();try{
+  const owners=['tools/spritesheet-boundary.mjs','tools/browser-png-boundary.mjs','tools/atlas-import-boundary.mjs'];
+  const roles=[["tools/spritesheet-boundary.mjs","m15ResourcePackageSuccessors","raw-pair-observation-only"],["tools/spritesheet-boundary.mjs","m15ResourceAtlasPackageSuccessor","raw-pair-observation-only"],["tools/browser-png-boundary.mjs","m15ResourcePackageSuccessors","raw-pair-observation-only"],["tools/browser-png-boundary.mjs","m15ResourceAtlasPackageSuccessor","raw-pair-observation-only"],["tools/atlas-import-boundary.mjs","m15ResourcePackageSuccessors","raw-pair-observation-only"],["tools/atlas-import-boundary.mjs","m15ResourceAtlasPackageSuccessor","raw-pair-observation-only"],["tools/sequence-playback-boundary.mjs","m15ResourcePackageSuccessors","raw-pair-observation-only"],["tools/sequence-playback-boundary.mjs","m15ResourceAtlasPackageSuccessor","raw-pair-observation-only"],["tools/bitmap-resource-slot-boundary.mjs","m15ResourcePackageSuccessors","raw-pair-observation-only"],["tools/bitmap-resource-slot-boundary.mjs","m15ResourceAtlasPackageSuccessor","raw-pair-observation-only"],["tools/bitmap-binding-ticket-boundary.mjs","m15ResourcePackageSuccessors","raw-pair-observation-only"],["tools/bitmap-binding-ticket-boundary.mjs","m15ResourceAtlasPackageSuccessor","raw-pair-observation-only"],["tools/sequence-playback-boundary.mjs","m15SequenceInterfaceSuccessor","raw-pair-observation-only"],["tools/bitmap-resource-slot-boundary.mjs","m15InterfaceRawSuccessor","raw-pair-observation-only"],["tools/bitmap-resource-slot-boundary.mjs","m15InterfaceProjectedSuccessor","transformed-pair-raw-observation-only"],["tools/bitmap-binding-ticket-boundary.mjs","m15InterfaceRawSuccessor","raw-pair-observation-only"],["tools/bitmap-binding-ticket-boundary.mjs","m15InterfaceProjectedSuccessor","transformed-pair-raw-observation-only"]],graphBinding='m15ResourceRecoveryGraphSuccessor';
+  const file='packages/contracts/src/ResourceManifest.ts';f.put(file,'export {};\n');
+  const current=f.pin(file),base={...current,bytes:0,sha256:'0'.repeat(64)},pair={base,current};
+  const historical=m.prepareBaselineReview(f.root);
+  for(const owner of owners)f.put(owner,fs.readFileSync(path.join(f.root,owner),'utf8')+'const '+graphBinding+' = '+JSON.stringify([current])+';\n');
+  for(const [owner,binding]of roles)f.put(owner,fs.readFileSync(path.join(f.root,owner),'utf8')+'const '+binding+' = '+JSON.stringify([pair])+';\n');
+  const collect=()=>m.prepareBaselineReview(f.root),complete=collect();
+  assert.equal(complete.status,'review-required');assert.equal(complete.declarations.length,39);assert.equal(complete.successorPairs.length,24);
+  assert.deepEqual(complete.declarations.filter(row=>row.binding!==graphBinding),historical.declarations);
+  assert.deepEqual(complete.successorPairs.filter(row=>!roles.some(([owner,binding])=>row.owner===owner&&row.binding===binding)),historical.successorPairs);
+  assert.deepEqual(complete.declarations.filter(row=>row.binding===graphBinding).map(row=>row.owner),owners);
+  for(const [index,coverage]of complete.graphCoverage.entries()){assert.deepEqual(coverage.resourceRecoverySuccessor,{owner:owners[index],binding:graphBinding});assert.equal(coverage.unlisted.some(row=>row.path===file),false);}
+  for(const [owner,binding,comparison]of roles){
+   const group=complete.successorPairs.find(row=>row.owner===owner&&row.binding===binding);
+   assert.equal(group.comparison,comparison);assert.equal(group.rows.length,1);assert.equal(group.rows[0].identity,'current');assert.deepEqual(group.rows[0].base,base);assert.deepEqual(group.rows[0].successor,current);
+  }
+  const refs=complete.references.find(row=>row.path===file).references;
+  assert.equal(refs.length,37);assert.equal(refs.filter(row=>row.branch==='base').length,17);assert.equal(refs.filter(row=>row.branch==='current').length,17);
+  assert.equal(m.verifyMaintenanceProposal(f.root,complete),true);
+  for(const [owner,binding]of roles){
+   const raw=fs.readFileSync(path.join(f.root,owner),'utf8'),line='const '+binding+' = '+JSON.stringify([pair])+';';
+   assert.equal(raw.split(line).length,2);
+   const variants=[
+    raw+'\nconst '+binding+' = [];\n',
+    raw.replace(line,'const '+binding+' = '+JSON.stringify([pair,pair])+';'),
+    raw.replace(line,'const '+binding+' = '+JSON.stringify([{base,current:{...current,path:'packages/contracts/src/Other.ts'}}])+';'),
+    raw.replace(line,'const '+binding+' = '+JSON.stringify([{...pair,extra:true}])+';'),
+    raw.replace(line,'const '+binding+' = '+JSON.stringify([{base,current:{...current,sha256:'invalid'}}])+';')
+   ];
+   for(const altered of variants){
+    f.put(owner,raw);const baseline=collect();assert.equal(m.verifyMaintenanceProposal(f.root,baseline),true);
+    f.put(owner,altered);assert.throws(collect);assert.throws(()=>m.verifyMaintenanceProposal(f.root,baseline));
+    f.put(owner,raw);assert.equal(m.verifyMaintenanceProposal(f.root,baseline),true);
+   }
+  }
+  for(const owner of owners){
+   const raw=fs.readFileSync(path.join(f.root,owner),'utf8'),line='const '+graphBinding+' = '+JSON.stringify([current])+';';
+   for(const altered of [raw+'\nconst '+graphBinding+' = [];\n',raw.replace(line,'const '+graphBinding+' = '+JSON.stringify([current,current])+';')]){
+    const baseline=collect();assert.equal(m.verifyMaintenanceProposal(f.root,baseline),true);
+    f.put(owner,altered);assert.throws(collect);assert.throws(()=>m.verifyMaintenanceProposal(f.root,baseline));
+    f.put(owner,raw);assert.equal(m.verifyMaintenanceProposal(f.root,baseline),true);
+   }
+  }
+  const extra='packages/contracts/src/unregistered-m15.ts';f.put(extra,'export {};\n');
+  assert.throws(()=>m.verifyMaintenanceProposal(f.root,complete),/changed/);
+  assert(collect().graphCoverage.every(row=>row.unlisted.some(pin=>pin.path===extra)));
+  fs.unlinkSync(path.join(f.root,extra));assert.equal(m.verifyMaintenanceProposal(f.root,complete),true);
+ }finally{f.close();}
+});
+
+// UNIT: genuine adapter bytes authenticate exceptional JSON extraction, not gate acceptance.
+test('M1.5 maintenance reads six exact source owners and refuses unreviewed post-preamble extraction',async()=>{
+ const m=await maintenance(),f=baselineFixture();try{
+  const expected=[{"path":"tools/spritesheet-boundary.mjs","bytes":185549,"sha256":"bfb4fb02f29cd66442a6f5124c1e209d87b305550ec5a48978c104f09163fb3f"},{"path":"tools/browser-png-boundary.mjs","bytes":191467,"sha256":"ce40f1363774bec52a053a5a0b2001aab2f3e4701b49e822e1a61097c7a4299d"},{"path":"tools/atlas-import-boundary.mjs","bytes":90249,"sha256":"4dee83aecfeb345647356ee3a8f5aef36e6b984333dcd8699ff40bfd7de6d581"},{"path":"tools/sequence-playback-boundary.mjs","bytes":43012,"sha256":"2d95757ddd9c3a6d1762fd44ba02461ef92504690f2e1e4c342a5f6d71f10a62"},{"path":"tools/bitmap-resource-slot-boundary.mjs","bytes":38244,"sha256":"1a4046d1bd5003714ca030ade053f412c98ca1f787d35357b823a12005e791a3"},{"path":"tools/bitmap-binding-ticket-boundary.mjs","bytes":44823,"sha256":"690d56e1eb726d55990d6a8cd37b2215b1f3bb44430ca5c54abc67cdcffe8026"}];
+  for(const pin of expected){
+   const raw=fs.readFileSync(new URL('../../'+pin.path,import.meta.url));
+   assert.deepEqual({path:pin.path,bytes:raw.length,sha256:createHash('sha256').update(raw).digest('hex')},pin);
+   f.put(pin.path,raw);
+  }
+  for(const file of ['tools/bitmap-resource-slot-policy.json','tools/bitmap-binding-ticket-policy.json','tests/types/atlas-import-diagnostic-expectations.json','packages/engine/dist/Engine.d.ts','packages/contracts/package.json','packages/engine/package.json','packages/project/package.json'])f.put(file,fs.readFileSync(new URL('../../'+file,import.meta.url)));
+  const collect=()=>m.prepareBaselineReview(f.root),baseline=collect();
+  assert.equal(baseline.status,'review-required');
+  const graphs=baseline.declarations.filter(row=>row.binding==='m15ResourceRecoveryGraphSuccessor');
+  assert.equal(graphs.length,3);assert(graphs.every(row=>row.rows.length===98));
+  const newPairs=baseline.successorPairs.filter(row=>row.binding.startsWith('m15'));
+  assert.equal(newPairs.length,17);assert.equal(newPairs.reduce((sum,row)=>sum+row.rows.length,0),52);
+  assert(newPairs.filter(row=>row.binding.startsWith('m15Resource')).every(row=>row.rows.every(value=>value.identity==='current')));
+  for(const row of newPairs.filter(row=>row.binding==='m15InterfaceProjectedSuccessor')){
+   assert.equal(row.comparison,'transformed-pair-raw-observation-only');assert.equal(row.rows[0].identity,'neither');
+   assert.equal(row.rows[0].current.bytes,4824);
+  }
+  assert.equal(m.verifyMaintenanceProposal(f.root,baseline),true);
+  for(const pin of expected){
+   const raw=fs.readFileSync(path.join(f.root,pin.path),'utf8');
+   // Ordinary preamble parsing remains allowed; any byte drift still invalidates the saved proposal.
+   f.put(pin.path,raw+'\n// unreviewed source drift\n');assert.throws(()=>m.verifyMaintenanceProposal(f.root,baseline));
+   f.put(pin.path,raw);assert.equal(m.verifyMaintenanceProposal(f.root,baseline),true);
+   const binding=pin.path.includes('sequence-playback')?'m15SequenceInterfaceSuccessor':pin.path.includes('bitmap-')?'m15InterfaceRawSuccessor':'m15ResourceRecoveryGraphSuccessor';
+   const anchor='const '+binding+' = ';assert.equal(raw.split(anchor).length,2);
+   f.put(pin.path,raw.replace(anchor,'const unreviewedPrefix = /m15/;\n'+anchor));
+   assert.throws(collect,/Unsupported declaration preamble/);assert.throws(()=>m.verifyMaintenanceProposal(f.root,baseline));
+   f.put(pin.path,raw);assert.equal(m.verifyMaintenanceProposal(f.root,baseline),true);
+  }
+ }finally{f.close();}
+});
+
+// UNIT: genuine complete source revisions; no strict gate or compiler is executed.
+test('M1.5 inline maintenance preserves delegate and scene revisions with exact historical inverses',async()=>{
+ const m=await compilerTool(),f=inlineCompilerFixture({m15:true});try{
+  const file='tools/check-types.mjs',raw=fs.readFileSync(path.join(f.root,file)),history=m15InlineGateHistory(raw);
+  assert(history.scene&&history.delegate);assert.deepEqual(history.scene,raw);
+  const collect=()=>m.prepareCompilerReview(f.root,{inlinePolicies:true});
+  const stages=[['m13','current'],['m14','m14-current'],['delegate','m15-delegate-current'],['scene','m15-scene-current']];
+  let original=null;
+  for(const [stage,selection]of stages){
+   f.put(file,history[stage]);const p=collect(),revision=p.inlinePolicies.sourceRevisions.find(row=>row.current.path===file);
+   assert.equal(revision.selection,selection);assert.equal(revision.admission,'not-evaluated');
+   assert.deepEqual(revision.successor,{path:file,...history.pins.m13});assert.deepEqual(revision.m14Successor,{path:file,...history.pins.m14});
+   assert.deepEqual(revision.m15DelegateSuccessor,{path:file,...history.pins.delegate});assert.deepEqual(revision.m15SceneSuccessor,{path:file,...history.pins.scene});
+   const literals=p.inlinePolicies.literals.filter(row=>row.owner===file).map(({binding,bytes,sha256})=>({binding,bytes,sha256})),declarations=p.declarations.filter(row=>row.owner===file);
+   if(original===null)original={literals,declarations};else assert.deepEqual({literals,declarations},original);
+   for(const row of p.inlinePolicies.literals.filter(row=>row.owner===file)){const value=history[stage].subarray(row.startByte,row.endByte);assert.equal(value.length,row.bytes);assert.equal(createHash('sha256').update(value).digest('hex'),row.sha256);}
+   assert.equal(m.verifyCompilerProposal(f.root,p,{inlinePolicies:true}).status,'current-inputs');
+  }
+  f.put(file,raw);const baseline=collect(),text=raw.toString();
+  const variants=[
+   Buffer.concat([raw,Buffer.from("await import('./resource-recovery-types.mjs');\n")]),
+   Buffer.from(text.replace("await import('./resource-recovery-types.mjs');","await import('./resource-recovery-typez.mjs');")),
+   Buffer.from(text.replace('"name":"m15-browser-dom-01"','"name":"m15-browser-dom-XX"')),
+   Buffer.from(text.replace('sharedFrameUpload.d.ts','sharedFrameUploaz.d.ts')),
+   Buffer.concat([raw,Buffer.from('// unreviewed inline scene drift\n')])
+  ];
+  for(const altered of variants){
+   assert.notDeepEqual(altered,raw);f.put(file,raw);const before=collect(),plain=m.prepareCompilerReview(f.root);
+   assert.equal(m.verifyCompilerProposal(f.root,before,{inlinePolicies:true}).status,'current-inputs');
+   try{
+    f.put(file,altered);assert.throws(collect,/Unreviewed inline policy source: tools\/check-types\.mjs/);
+    assert.throws(()=>m.verifyCompilerProposal(f.root,before,{inlinePolicies:true}));assert.throws(()=>m.verifyCompilerProposal(f.root,plain),/changed/);
+   }finally{
+    f.put(file,raw);assert.deepEqual(fs.readFileSync(path.join(f.root,file)),raw);assert.equal(m.verifyCompilerProposal(f.root,before,{inlinePolicies:true}).status,'current-inputs');assert.deepEqual(collect(),before);
+   }
+  }
+  assert.equal(m.verifyCompilerProposal(f.root,baseline,{inlinePolicies:true}).status,'current-inputs');
+ }finally{f.close();}
 });

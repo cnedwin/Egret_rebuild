@@ -3,6 +3,9 @@
 import fs from 'node:fs';import path from 'node:path';import {fileURLToPath} from 'node:url';
 import {spawnSync} from 'node:child_process';import {createRequire} from 'node:module';
 import {fingerprintFile,samePhysicalPath,ownerRelativePath,canonicalTextBytes} from './lib/file-identity.mjs';
+import assert from 'node:assert/strict';
+import {validateRecoveryAccounting} from './shared-rendering/resource-recovery-collector.mjs';
+import {compareRecoveryPixels,screenshotRGBA} from './shared-rendering/resource-recovery-oracle.mjs';
 const root=fileURLToPath(new URL('..',import.meta.url));
 const matrix=JSON.parse(fs.readFileSync(new URL('./browser-tool-matrix.json',import.meta.url),'utf8'));
 export function parseBrowserOptions(args){
@@ -16,6 +19,12 @@ export function parseBrowserOptions(args){
 /** Refuse inherited loaders before creating outputs or spawning a collector. */
 export function assertBrowserEnvironment(env){
  for(const key of Object.keys(env))if(['NODE_OPTIONS','NODE_PATH'].includes(key.toUpperCase())&&env[key])throw Error('Inherited Node loader configuration is not accepted: '+key);
+}
+
+/** The longer foreground run is the sole exception to the existing timeout. */
+export function browserTimeoutForSuite(suite){
+ if(!matrix.current.some(row=>row.id===suite))throw Error('Unknown current browser suite');
+ return suite==='resource-recovery'?4920000:300000;
 }
 
 // Fixed reviewed schedule. Reading the fixture data below never imports the SDK.
@@ -123,8 +132,94 @@ function sharedCompletion(receipt,output){
  return {status:receipt.status,browser:receipt.browser};
 }
 
+const recoveryCases=[{id:'C01-gl-primary',backend:'gl',mode:'sustained'},{id:'C02-gpu-primary',backend:'gpu',mode:'sustained'},
+ {id:'C03-gpu-borrowed',backend:'gpu',mode:'borrowed-retained'},{id:'C04-gl-loss-close',backend:'gl',mode:'loss-close'},
+ {id:'C05-gl-restore-close',backend:'gl',mode:'restore-close'},{id:'C06-gpu-loss-close',backend:'gpu',mode:'loss-close'},
+ {id:'C07-gpu-acquire-close',backend:'gpu',mode:'restore-close'}];
+const recoveryCycleModes=['replace','cancel-before-fetch','cancel-native-decode','cancel-native-upload','binding-conflict'];
+function recoveryObservations(def){
+ const rows=[];let variant='a',atlas=0,interaction=false,input=0;
+ const add=(channel,label,kind='scene',pageIds=[])=>rows.push({channel,label,kind,state:{variant,atlas,interaction},pageIds});
+ const click=()=>{atlas=1-atlas;interaction=!interaction;add('readback','input-'+input++);};
+ const pages=(start,count)=>Array.from({length:count},(_,index)=>'e_p'+String(start+index).padStart(2,'0'));
+ add('readback','startup-first');click();
+ if(def.mode==='sustained'){
+  for(const [pass,start,count]of[['first',0,16],['second',16,16],['third',32,8]])add('readback','pressure-'+pass,'pressure',pages(start,count));
+  add('presentation','pressure-cancel-preserves-third','pressure',pages(32,8));add('readback','pressure-revisit','pressure',pages(0,16));add('readback','pressure-return-to-scene');
+  for(let slot=0;slot<120;slot++){
+   if(slot<110){const round=Math.floor(slot/11),within=slot%11;
+    if(within===10)add('readback','loss-'+round+(round%2?'-reload':'-retained'));
+    else{const index=round*10+within,mode=recoveryCycleModes[index%5];add('readback','cycle-'+index+'-old');
+     if(mode==='replace'){add('presentation','cycle-'+index+'-new-before-commit');variant=variant==='a'?'b':'a';add('readback','cycle-'+index+'-new');}
+     else{add('presentation','cycle-'+index+'-refused-presentation');add('readback','cycle-'+index+'-old-preserved');}}
+   }click();
+  }
+ }else if(def.mode==='borrowed-retained')add('readback','loss-0-retained');
+ return rows;
+}
+function resourceRecoveryCompletion(output){
+ const need=(value,label)=>{if(!value)throw Error('Incomplete resource recovery receipt: '+label);};
+ const empty=value=>Array.isArray(value)&&value.length===0;
+ const finite=value=>typeof value==='number'&&Number.isFinite(value)&&value>=0;
+ const namePattern=/^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/;
+ const read=name=>{need(namePattern.test(name),'artifact name');const stat=fs.lstatSync(path.join(output,name));need(stat.isFile()&&!stat.isSymbolicLink()&&stat.size>0&&stat.size<=16777216,'artifact extent');fingerprintFile(output,name);return fs.readFileSync(path.join(output,name));};
+ const receipt=JSON.parse(read('report.json')),index=JSON.parse(read('artifacts.json'));
+ need(receipt.schemaVersion===2&&receipt.status==='COMPLETE'&&receipt.acceptanceStatus==='COMPLETE'&&receipt.observedStatus==='COMPLETE','status');
+ need(receipt.node==='v'+matrix.node&&typeof receipt.browser==='string'&&receipt.browser.length>0,'environment');
+ assert.deepEqual(receipt.launch,{channel:matrix.channel,headless:false,additionalFlags:[],viewport:{width:256,height:256},deviceScaleFactor:1});
+ assert.deepEqual(receipt.cases,recoveryCases);need(Array.isArray(receipt.runs)&&receipt.runs.length===7,'seven runs');assert.deepEqual(receipt.runs.map(row=>row.id),recoveryCases.map(row=>row.id));
+ need(empty(receipt.errors)&&empty(receipt.cleanupFailures)&&receipt.browserClosed===true&&receipt.serverClosed===true&&receipt.inputsStable===true&&!receipt.eventOverflow,'outer cleanup');
+ need(Array.isArray(receipt.requests)&&receipt.requests.length>0&&receipt.requests.every(row=>row.status===200),'server receipts');need(Number.isSafeInteger(receipt.allJsGzipBytes)&&receipt.allJsGzipBytes>0&&receipt.allJsGzipBytes<=1048576,'gzip budget');
+ need(Array.isArray(receipt.coverageGaps)&&receipt.coverageGaps.length===2,'two gaps');assert.deepEqual(receipt.coverageGaps.map(row=>row.id),['C-SOURCE-RETAINED-PEAK','C-PRIVATE-RESIDENCY-PEAK']);
+ for(const gap of receipt.coverageGaps){need(gap.status==='CLOSED','open diagnostic gap');assert.deepEqual(gap.evidence,receipt.runs.map(run=>({caseId:run.id,native:run.native,accountingStatus:'COMPLETE'})));}
+ need(index.schemaVersion===1&&Array.isArray(index.artifacts)&&index.artifacts.length>0&&index.artifacts.length<=2048,'artifact index');
+ const inventory=new Map();let bytes=0;for(const pin of index.artifacts){need(namePattern.test(pin.name)&&pin.name!=='artifacts.json'&&!inventory.has(pin.name),'unique artifact name');need(Number.isSafeInteger(pin.bytes)&&pin.bytes>0&&pin.bytes<=16777216&&/^[a-f0-9]{64}$/.test(pin.sha256),'artifact pin');bytes+=pin.bytes;inventory.set(pin.name,pin);}need(bytes<=536870912,'artifact total');
+ assert.deepEqual(fs.readdirSync(output).sort(),[...inventory.keys(),'artifacts.json'].sort());
+ const verified=new Map();function artifact(pin,name){need(pin?.name===name,'named artifact');assert.deepEqual(pin,inventory.get(name));if(!verified.has(name)){const body=read(name),actual=fingerprintFile(output,name);need(actual.bytes===pin.bytes&&actual.sha256===pin.sha256,'changed artifact '+name);verified.set(name,true);return body;}return fs.readFileSync(path.join(output,name));}
+ artifact(inventory.get('report.json'),'report.json');artifact(receipt.inputs,'input-closure.json');const catalog=JSON.parse(artifact(receipt.catalog,'fixed-catalog.json'));
+ assert.deepEqual([catalog.schemaVersion,catalog.width,catalog.height,catalog.profile],[1,256,256,'egret.shared-frame2d/1']);assert.deepEqual(catalog.cycleOrder,recoveryCycleModes);
+ assert.deepEqual(catalog.policy,{cycles:100,losses:10,foregroundMs:1800000,slotMs:15000,slots:120,networkMbps:10,latencyMs:80,coldTargetMs:5000,retainedTargetMs:2000,reloadTargetMs:5000,maxJsGzipBytes:1048576,maxInitialAssetBytes:4194304,maxDecodedCpuBytes:134217728,maxReadyBytes:33554432,maxReadyEntries:256,maxReusableBytes:33554432,maxInFlightUploadBytes:67108864,maxTemporaryBytes:33554432});
+ assert.deepEqual(catalog.variants,{a:['e_a0','e_a1'],b:['e_b0','e_b1']});assert.deepEqual(catalog.pressure,Array.from({length:40},(_,i)=>({id:'e_p'+String(i).padStart(2,'0'),rgba:[i*5+20,240-i*4,80,255]})));
+ assert.deepEqual(catalog.references?.base,[{id:'resource-0',x:24,y:24,key:'resource0'},{id:'resource-1',x:72,y:24,key:'resource1'},
+  {id:'mesh',x:136,y:24,rgba:[0,255,255,255]},{id:'atlas',x:200,y:24,key:'atlas'},{id:'clip-inside',x:24,y:88,rgba:[0,0,255,255]},
+  {id:'clip-outside',x:64,y:88,rgba:[0,0,0,255]},{id:'transparent-order',x:120,y:88,rgba:[188,0,188,255],tolerance:1},
+  {id:'b1',x:136,y:152,rgba:[255,0,255,255]},{id:'text-block',x:18,y:212,rgba:[255,255,255,255]},{id:'text-space',x:38,y:212,rgba:[0,0,0,255]},
+  {id:'interaction',x:208,y:216,key:'interaction'},{id:'clear',x:248,y:248,rgba:[0,0,0,255]}]);
+ need(Array.isArray(catalog.slots)&&catalog.slots.length===120,'slot count');for(let i=0;i<120;i++){const within=i%11,round=Math.floor(i/11),expected=i>=110?{index:i,atMs:i*15000,kind:'interaction'}:within===10?{index:i,atMs:i*15000,kind:'loss',lossIndex:round,reload:round%2===1}:{index:i,atMs:i*15000,kind:'cycle',cycleIndex:round*10+within,mode:recoveryCycleModes[(round*10+within)%5]};assert.deepEqual(catalog.slots[i],expected);}
+ for(const [i,run]of receipt.runs.entries()){
+  const def=recoveryCases[i];need(run.status==='COMPLETE'&&run.nativeStatus==='COMPLETE'&&run.contextClosed===true&&!run.failure&&!run.overflow&&empty(run.pageErrors)&&empty(run.cleanup)&&run.pendingNativeRequestsAtRealmDisposal===0,'run cleanup');need(Array.isArray(run.console)&&!run.console.some(row=>row.type==='error'),'console errors');
+  assert.deepEqual(run.networkConditions,{method:'Network.emulateNetworkConditions',latency:80,downloadBytesPerSecond:1250000,uploadBytesPerSecond:1250000,cacheDisabled:true,clearBrowserCache:true,serviceWorkers:'block',bypassServiceWorker:true});
+  const native=JSON.parse(artifact(run.native,def.id+'-native.json'));assert.deepEqual(validateRecoveryAccounting(native,def),run.accounting);
+  const cleanup=native.cleanup;need(empty(cleanup.errors)&&empty(cleanup.pending)&&cleanup.providerPending===0&&cleanup.liveProviderValues===0&&cleanup.disposalExactlyOnce===true&&cleanup.nativeObserverValid===true&&cleanup.finalDiagnosticsValid===true,'original owners');
+  need(cleanup.finalHost?.state==='closed'&&cleanup.finalHost.cleanupOutcome==='safe'&&cleanup.finalSession?.state==='closed','Host close');need(cleanup.png?.pending===0&&cleanup.png.issued>0&&!cleanup.png.overflow&&!cleanup.png.untracked&&empty(cleanup.png.failures),'PNG settlement');need(cleanup.pressure?.restored===true&&!cleanup.pressure.active&&!cleanup.pressure.overflow&&empty(cleanup.pressure.failures),'pressure observer restoration');
+  if(def.backend==='gpu'&&def.mode!=='borrowed-retained'){const a=cleanup.acquisitions;need(a?.restored===true&&a.pendingRequests===0&&a.pendingLost===0&&!a.overflow&&!a.untracked&&empty(a.failures),'actual acquisition drain');if(def.mode==='sustained')need(a.requests?.length===11&&a.devices?.length===11&&new Set(a.devices.map(row=>row.id)).size===11,'eleven actual generations');}
+  need(Array.isArray(native.checks)&&native.checks.length>0&&native.checks.every(row=>row.pass===true)&&!native.failure&&!native.accountingFailure&&!native.sampleFailure,'native checks');need(Array.isArray(native.visibility)&&native.visibility.length>0&&native.visibility.every(row=>row.state==='visible'&&row.focused===true),'foreground');
+  need(finite(native.startup?.interactionMatchedAt)&&native.startup.interactionMatchedAt<=5000&&finite(native.startup.firstFrameAt)&&native.startup.firstFrameAt<=native.startup.interactionMatchedAt,'cold timing');
+  need(native.interactions?.length===(def.mode==='sustained'?121:1)&&native.interactions.every(row=>row.trusted===true&&finite(row.dispatchedAt)&&finite(row.matchedAt)&&row.matchedAt>=row.dispatchedAt),'trusted inputs');
+  if(def.mode==='sustained'){
+   need(native.cycles?.length===100&&native.losses?.length===10&&native.foreground?.requiredMs===1800000&&finite(native.foreground.startedAt)&&finite(native.foreground.finishedAt)&&native.foreground.finishedAt-native.foreground.startedAt>=1800000,'primary schedule');
+   for(const [n,row]of native.cycles.entries()){need(row.index===n&&row.mode===recoveryCycleModes[n%5]&&finite(row.startedAt)&&finite(row.finishedAt)&&row.finishedAt>=row.startedAt,'cycle schedule');if(row.mode==='replace'){const p=row.publication;need(finite(p?.readyAt)&&p.readyAt<=p.commitStartedAt&&p.commitStartedAt<=p.submittedAt&&p.submittedAt<=p.completedAt&&p.completedAt<=p.matchedAt,'publication phase order');}else need(typeof row.refusal?.message==='string','assigned refusal');}
+  }else need(native.cycles?.length===0&&native.losses?.length===1,'separate case schedule');
+  for(const [n,row]of native.losses.entries()){need(row.index===n&&row.reload===(def.mode==='sustained'&&n%2===1)&&finite(row.lostAt)&&row.lostAt>=row.requestedAt,'native loss');if(def.mode==='sustained'||def.mode==='borrowed-retained'){need(row.targetMs===(row.reload?5000:2000)&&finite(row.elapsedMs)&&row.elapsedMs<=row.targetMs&&row.elapsedMs===row.matchedAt-row.lostAt&&row.readyAt<=row.matchedAt,'recovery timing');}else need(finite(row.closedAt)&&row.closedAt>=row.lostAt,'loss/restore close');}
+  const expected=recoveryObservations(def);for(const [channel,key]of[['readback','observations'],['presentation','presentations']]){
+   const selected=expected.filter(row=>row.channel===channel);need(run[key]?.length===selected.length,'complete '+channel+' schedule');
+   for(const [n,row]of run[key].entries()){
+    assert.deepEqual({channel,label:row.label,kind:row.kind,state:row.state,pageIds:row.pageIds},selected[n]);const raw=artifact(row.raw,def.id+'-'+row.label+(channel==='readback'?'.rgba':'.png'));const pixels=channel==='readback'?raw:screenshotRGBA(raw);
+    if(channel==='readback'){need(raw.length===262144,'RGBA extent');const rb=row.metadata;need(rb?.width===256&&rb.height===256&&rb.format==='rgba8unorm'&&rb.colorSpace==='srgb'&&rb.alphaMode==='opaque'&&['rgba8unorm','bgra8unorm'].includes(rb.sourceFormat),'readback shape');for(const key of ['frameId','serial','generation'])need(Number.isSafeInteger(rb[key])&&rb[key]>0,'readback identity');}
+    const compared=compareRecoveryPixels(catalog,row,pixels);need(compared.pass===true,'reference pixels');assert.deepEqual({samples:row.samples,invalidAlpha:row.invalidAlpha,pass:row.pass},compared);
+   }
+  }
+  need(run.checkpoints?.length===(def.mode==='sustained'?111:def.mode==='borrowed-retained'?2:1),'network checkpoints');assert.deepEqual(run.checkpoints.map(row=>row.kind),['startup',...(def.mode==='sustained'?catalog.slots.filter(row=>row.kind!=='interaction').map(row=>row.kind):def.mode==='borrowed-retained'?['loss']:[])]);need(run.checkpoints.every(row=>row.caseId===def.id&&row.network?.status==='COMPLETE'),'network checkpoint success');need(run.checkpoints[0].network.initialAssetBytes<=4194304,'initial assets');
+  const network=JSON.parse(artifact(inventory.get(def.id+'-network.json'),def.id+'-network.json'));assert.deepEqual(network,run.network);need(network.length>0&&network.filter(row=>row.phase==='response').every(row=>!row.fromDiskCache&&!row.fromServiceWorker),'uncached network');
+  const bootstrap=JSON.parse(artifact(inventory.get(def.id+'-bootstrap.json'),def.id+'-bootstrap.json'));need(bootstrap.allJsGzipBytes===receipt.allJsGzipBytes&&Number.isSafeInteger(bootstrap.inlineJsGzipBytes)&&bootstrap.inlineJsGzipBytes>0&&bootstrap.allJsGzipBytes+bootstrap.inlineJsGzipBytes<=1048576,'bootstrap gzip');
+ }
+ for(const [name,pin]of inventory)artifact(pin,name);
+ return {status:'COMPLETE',browser:receipt.browser};
+}
+
 /** A zero exit is necessary, but never substitutes for a suite completion receipt. */
 export function readCompletion(suite,output,stdout){
+ if(suite==='resource-recovery')return resourceRecoveryCompletion(output);
  const receipt=suite==='canvas'?JSON.parse(stdout):JSON.parse(fs.readFileSync(path.join(output,['resource-scene','bitmap-slot'].includes(suite)?'report.json':'result.json'),'utf8'));
  if(suite==='canvas'){
   if(!receipt.browser||receipt.playwright!==matrix.playwright||receipt.channel!==matrix.channel||receipt.headless!==true||receipt.pointerPixelsChanged!==true||!receipt.checks?.length||receipt.counterexample?.failed!==true||receipt.unexpectedErrors?.length!==0)throw Error('Incomplete Canvas receipt');
@@ -187,7 +282,7 @@ export function runBrowser(args){
  fs.mkdirSync(output);const childOutput=path.join(output,'artifacts');
  const childArgs=[path.join(root,selected.script),'--playwright',installed,...(selected.repository?['--repository',root]:[]),...(selected.snapshot?['--snapshot',options.snapshot]:[]),...(selected.channel?['--channel',matrix.channel]:[]),'--output',childOutput];
  const started=new Date().toISOString();
- const result=spawnSync(process.execPath,childArgs,{cwd:root,windowsHide:true,encoding:'utf8',timeout:300000,maxBuffer:64*1024*1024});
+ const result=spawnSync(process.execPath,childArgs,{cwd:root,windowsHide:true,encoding:'utf8',timeout:browserTimeoutForSuite(options.suite),maxBuffer:64*1024*1024});
  fs.writeFileSync(path.join(output,'stdout.log'),result.stdout??'');fs.writeFileSync(path.join(output,'stderr.log'),result.stderr??'');
  const stable=(!snapshotPin||JSON.stringify(fingerprintFile(path.dirname(options.snapshot),path.basename(options.snapshot)))===JSON.stringify(snapshotPin))&&pins.every(pin=>JSON.stringify(fingerprintFile(root,pin.path))===JSON.stringify(pin))&&JSON.stringify(fingerprintFile(installed,'package.json'))===JSON.stringify(packagePin)&&JSON.stringify(fingerprintFile(core,'package.json'))===JSON.stringify(corePin);
  let completion=null,completionError=null;try{completion=readCompletion(options.suite,childOutput,result.stdout??'');}catch(error){completionError=error.message;}

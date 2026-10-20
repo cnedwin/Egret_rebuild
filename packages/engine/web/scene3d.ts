@@ -31,3 +31,6 @@ export function createTexturedSceneWebGPUHost(options: TexturedWebGPUHostOptions
 
 export { createSharedSceneWebGPUHost } from './sharedB1.js';
 export type { SharedSceneWebGPUHost, SharedSceneWebGPUHostOptions } from './WebGPUHost.js';
+
+export type { SharedDeviceSessionState, SharedDeviceSessionStatus, SharedHostResourceStatus } from './sharedDeviceSession.js';
+export type { SharedFrameUploadOptions, SharedFrameUploadReady, SharedFrameSubmission, SharedFrameUpload } from './sharedFrameUpload.js';

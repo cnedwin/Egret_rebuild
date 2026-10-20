@@ -26,12 +26,12 @@
     "to": "a * (source[offset + channel] / 255)",
     "implementation": "Omit source sRGB decode while retaining source alpha, encoding, cap and all other channel operations.",
     "original": {
-      "bytes": 1274,
-      "sha256": "bbb350458e5a4a417fa073ea506da66f68df79c523c21259f68c72d4940148a5"
+      "bytes": 2455,
+      "sha256": "4e3c221cb075be46b90454719c04f3886bed2dd10fd048bdef5273ebda7962b0"
     },
     "changed": {
-      "bytes": 1258,
-      "sha256": "25440fa54640a066b92054ef374da44b0d896dea1a59e7feca51c4600f24954f"
+      "bytes": 2439,
+      "sha256": "fcf80efd53635df7f7fd776c95b8489bbf86b27b2788076b8733efb2b2b32077"
     },
     "status": "SOURCE_BOUND_CONTROL_NATIVE_OPEN"
   },
@@ -166,16 +166,16 @@
     "caseId": "A00-endpoints",
     "pointId": "red",
     "file": "packages/engine/dist/web/WebGPUHost.js",
-    "from": "if (this.format === 'bgra8unorm')",
-    "to": "if (this.format !== 'bgra8unorm')",
+    "from": "if (format === 'bgra8unorm')",
+    "to": "if (format !== 'bgra8unorm')",
     "implementation": "Invert the actual storage-format normalization condition so the final raw R/B channels are swapped for either accepted storage format.",
     "original": {
-      "bytes": 129453,
-      "sha256": "3429adbfda2791d4fadba34eed30633e642c6f98ba5faaf182d2799b47034966"
+      "bytes": 187333,
+      "sha256": "edfd58cc7facae99f49541d906224bff1df9f32f49a26a630d2de70c5040752d"
     },
     "changed": {
-      "bytes": 129453,
-      "sha256": "c3bb89a914bedaecc655573cc42ef678f4eec21128ab8537fea33a3b84b0f152"
+      "bytes": 187333,
+      "sha256": "f47d01b93898fe2fd4256fa5f05d0b63b6f282503c7020ea2cf4aa16061f9cbe"
     },
     "status": "SOURCE_BOUND_CONTROL_NATIVE_OPEN"
   },

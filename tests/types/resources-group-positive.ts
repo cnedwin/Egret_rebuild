@@ -1,0 +1,20 @@
+import type { AssetLease, Engine, Scope, Texture, AssetType } from '@egret/engine';
+import type { AdmittedResourceManifest } from '@egret/contracts/resources';
+import { createManifestAssetBinding } from '@egret/engine/resources';
+import type { ManifestAssetBinding, ManifestBinding, ManifestAssetGroup, ManifestGroupOptions } from '@egret/engine/resources';
+
+declare const engine: Engine;
+declare const scope: Scope;
+declare const manifest: AdmittedResourceManifest;
+declare const textureType: AssetType<Texture>;
+declare const textType: AssetType<string>;
+const image: ManifestAssetBinding<Texture> = createManifestAssetBinding(manifest, 'e_image', textureType);
+const text: ManifestAssetBinding<string> = createManifestAssetBinding(manifest, 'e_text', textType);
+const bindings: readonly ManifestBinding[] = [image, text];
+const options: ManifestGroupOptions = { priority: 'background' };
+const group: ManifestAssetGroup = engine.createManifestGroup(scope, manifest, ['e_image', 'e_text'], bindings, options);
+const done: Promise<void> = group.ready;
+const imageLease: AssetLease<Texture> = group.get(image);
+const textLease: AssetLease<string> = group.get(text);
+void done; void imageLease; void textLease;
+group.dispose();

@@ -47,6 +47,20 @@ function isolated(action) {
     assert.deepEqual(readFileSync(path.join(root,'node_modules/@egret/contracts/dist/index.js')), contractsRoot);
     write('node_modules/@egret/contracts/dist/index.js', "export * from '../../../../packages/contracts/dist/index.js';\n");
     assert.deepEqual(readFileSync(path.join(root,'packages/contracts/dist/index.js')), contractsRoot);
+    // The optional metadata entry must use the same genuine admission registry.
+    // Only the resolution copy is a bridge; canonical source/emission stays real.
+    const resourceEntry = 'packages/contracts/dist/resources/index.js';
+    const resourceBytes = readFileSync(path.join(root,resourceEntry));
+    assert.deepEqual(readFileSync(path.join(root,'node_modules/@egret/contracts/dist/resources/index.js')),resourceBytes);
+    write('node_modules/@egret/contracts/dist/resources/index.js',"export * from '../../../../../packages/contracts/dist/resources/index.js';\n");
+    assert.deepEqual(readFileSync(path.join(root,resourceEntry)),resourceBytes);
+    // Manifest bindings also retain one canonical private owner across the
+    // optional Engine and browser resolution copies. No binding is synthesized.
+    const bindingEntry = 'packages/engine/dist/manifestResourceState.js';
+    const bindingBytes = readFileSync(path.join(root,bindingEntry));
+    assert.deepEqual(readFileSync(path.join(root,'node_modules/@egret/engine/dist/manifestResourceState.js')),bindingBytes);
+    write('node_modules/@egret/engine/dist/manifestResourceState.js',"export * from '../../../../packages/engine/dist/manifestResourceState.js';\n");
+    assert.deepEqual(readFileSync(path.join(root,bindingEntry)),bindingBytes);
     // The explicit scene and GL facades share original registries and Host factories.
     // Bridge only the resolution copy; source and emitted package bytes stay real.
     for(const name of ['rendering/matrix4','rendering/meshGeometry3D','rendering/sceneFrame3D','web/WebGL2Host']) {
@@ -83,7 +97,8 @@ function prepareTypeFixture({root}) {
     'packages/engine/tests/geometry-contract-types.ts',
     'packages/engine/tests/profile-contract-types.ts',
     'package.json','pnpm-lock.yaml','tsconfig.base.json',
-    'tools/shared-render-types.mjs','tools/shared-webgl2-types.mjs','tools/lib/m13-strict-successor.mjs','tools/m13-strict-successors.json',
+    'tools/shared-render-types.mjs','tools/shared-webgl2-types.mjs','tools/lib/m13-strict-successor.mjs','tools/m13-strict-successors.json','tools/m15-strict-successors.json',
+    'tools/resource-recovery-types.mjs','tests/types/resource-recovery-diagnostic-expectations.json',
     'tools/check-types.mjs','tools/atlas-import-types.mjs','tools/atlas-frame-types.mjs','tools/sequence-playback-types.mjs','tools/bitmap-resource-slot-types.mjs','tools/bitmap-binding-ticket-types.mjs',
     'tools/spritesheet-types.mjs','tools/nine-slice-bitmap-types.mjs','tools/display-container-remove-children-types.mjs','tools/display-container-child-index-types.mjs','tools/display-container-add-child-at-types.mjs','tools/display-anchor-offsets-types.mjs','tools/bitmap-button-types.mjs','tools/linear-layout-types.mjs','tools/lib/file-identity.mjs',
   ]) copy(relative);
@@ -267,6 +282,41 @@ for (const [label, file, suffix, reason] of [
   assert.doesNotMatch(refused.stdout, /Sequence playback types PASS/);
 }));
 
+// M1.5 additions preserve the historical M1.3 refusal controls above.
+for (const [label, file, suffix, reason] of [
+  ['observation data', 'tools/m15-strict-successors.json', '\n', 'changed successor data'],
+  ['manifest declaration', 'packages/engine/dist/manifestResourceTypes.d.ts', '\n// unregistered manifest declaration\n',
+    'source/config/compiler identity changed: packages/engine/dist/manifestResourceTypes.d.ts'],
+]) test('M1.5 strict successor rejects ' + label + ' between genuine complete baselines', () => isolated(fixture => {
+  prepareTypeFixture(fixture);
+  const healthy = result => {
+    assert.ifError(result.error);
+    assert.equal(result.signal, null);
+    assert.equal(result.status, 0, result.stdout + result.stderr);
+    for (const lane of ['positive', 'negative', 'import-negative'])
+      assert.ok(result.stdout.includes('Sequence playback ' + lane + ' live exact diagnostics'), result.stdout);
+    assert.match(result.stdout, /Sequence playback types PASS/);
+  };
+  healthy(run(['tools/sequence-playback-types.mjs'], fixture.root));
+  const original = readFileSync(path.join(fixture.root, file));
+  let refused;
+  try {
+    fixture.write(file, original.toString('utf8') + suffix);
+    refused = run(['tools/sequence-playback-types.mjs'], fixture.root);
+  } finally {
+    fixture.write(file, original.toString('utf8'));
+    assert.deepEqual(readFileSync(path.join(fixture.root, file)), original);
+  }
+  // Restoration is proved even when a later refusal assertion detects a regression.
+  healthy(run(['tools/sequence-playback-types.mjs'], fixture.root));
+  assert.ifError(refused.error);
+  assert.equal(refused.signal, null);
+  assert.equal(refused.status, 1, refused.stdout + refused.stderr);
+  assert.ok(refused.stderr.includes(reason), refused.stderr);
+  assert.doesNotMatch(refused.stderr, /ERR_MODULE_NOT_FOUND|SyntaxError/);
+  assert.doesNotMatch(refused.stdout, /Sequence playback types PASS/);
+}));
+
 // M1.3 finite compiler successor controls use the complete owned fixture.
 const m13Healthy = (owner, result) => {
   assert.ifError(result.error);
@@ -391,4 +441,129 @@ for (const [label, change] of [
  assert.ifError(rejected.error);assert.equal(rejected.signal,null);assert.equal(rejected.status,1,rejected.stdout+rejected.stderr);
  assert.match(rejected.stderr,/source\/config\/compiler identity changed: packages\/engine\/package\.json/);
  assert.doesNotMatch(rejected.stderr,/ERR_MODULE_NOT_FOUND|SyntaxError/);
+}));
+
+// M1.5 total-gate registration controls: independent literal schedule, genuine
+// compiler baselines, one assigned refusal, and an exact restored baseline.
+const m15StrictExpectedStdout=[
+  'Resource recovery strict resources-group positive PASS: 0 actual diagnostics.',
+  'Resource recovery strict resources-group negative PASS: 11 actual diagnostics.',
+  'Resource recovery strict manifest-browser positive PASS: 0 actual diagnostics.',
+  'Resource recovery strict manifest-browser negative PASS: 17 actual diagnostics.',
+  'Resource recovery strict candidate-shared-frame positive PASS: 0 actual diagnostics.',
+  'Resource recovery strict candidate-shared-frame negative PASS: 14 actual diagnostics.',
+  'Resource recovery strict manifest-resource-diagnostics positive PASS: 0 actual diagnostics.',
+  'Resource recovery strict manifest-resource-diagnostics negative PASS: 16 actual diagnostics.',
+  'Resource recovery strict shared-frame-upload-gpu positive PASS: 0 actual diagnostics.',
+  'Resource recovery strict shared-frame-upload-gpu negative PASS: 20 actual diagnostics.',
+  'Resource recovery strict shared-frame-upload-webgl2 positive PASS: 0 actual diagnostics.',
+  'Resource recovery strict shared-frame-upload-webgl2 negative PASS: 26 actual diagnostics.',
+  'Resource recovery strict shared-host-resource-diagnostics positive PASS: 0 actual diagnostics.',
+  'Resource recovery strict shared-host-resource-diagnostics negative PASS: 13 actual diagnostics.',
+  'Resource recovery types PASS: seven public consumer pairs, 117 exact unsuppressed refusals; runtime/native acceptance is separate.',
+].join('\n')+'\n';
+const m15StrictHealthy=result=>{
+  assert.ifError(result.error);
+  assert.equal(result.signal,null);
+  assert.equal(result.status,0,result.stdout+result.stderr);
+  assert.equal(result.stderr,'');
+  assert.equal(result.stdout.replaceAll('\r\n','\n'),m15StrictExpectedStdout);
+};
+for(const control of [
+  {
+    name:'consumer-byte identity',
+    file:'tests/types/resources-group-negative.ts',
+    mutate:original=>original.toString('utf8')+'\n// assigned strict input drift\n',
+    reason:/^AssertionError \[ERR_ASSERTION\]: M1\.5 strict input changed: tests\/types\/resources-group-negative\.ts$/m,
+    stdout:'',
+  },
+  {
+    name:'same-count wrong diagnostic code',
+    file:'tests/types/resource-recovery-diagnostic-expectations.json',
+    mutate:original=>{
+      const value=JSON.parse(original.toString('utf8'));
+      assert.equal(value.pairs[0].pair,'resources-group');
+      assert.equal(value.pairs[0].tuples.length,11);
+      assert.equal(value.pairs[0].tuples[0][3],2375);
+      value.pairs[0].tuples[0][3]=9999;
+      assert.equal(value.pairs[0].tuples.length,11);
+      return JSON.stringify(value,null,2)+'\n';
+    },
+    reason:/^AssertionError \[ERR_ASSERTION\]: M1\.5 exact diagnostic tuples mismatch: resources-group negative$/m,
+    // The original positive compiler must complete before the actual negative
+    // compiler reports a tuple that differs from the one altered expectation.
+    stdout:'Resource recovery strict resources-group positive PASS: 0 actual diagnostics.\n',
+  },
+  {
+    name:'missing diagnostic tuple',
+    file:'tests/types/resource-recovery-diagnostic-expectations.json',
+    mutate:original=>{
+      const value=JSON.parse(original.toString('utf8'));
+      assert.equal(value.pairs[0].pair,'resources-group');
+      assert.equal(value.pairs[0].tuples.length,11);
+      assert.deepEqual(value.pairs[0].tuples.pop(),['tests/types/resources-group-negative.ts',23,7,2741]);
+      assert.equal(value.pairs[0].tuples.length,10);
+      return JSON.stringify(value,null,2)+'\n';
+    },
+    reason:/^AssertionError \[ERR_ASSERTION\]: M1\.5 diagnostic tuple count mismatch: resources-group$/m,
+    stdout:'',
+  },
+]) test('M1.5 seven-pair strict gate rejects '+control.name+' between complete genuine baselines',()=>isolated(fixture=>{
+  prepareTypeFixture(fixture);
+  const args=['tools/resource-recovery-types.mjs'];
+  m15StrictHealthy(run(args,fixture.root));
+  const original=readFileSync(path.join(fixture.root,control.file));
+  let refused;
+  try{
+    fixture.write(control.file,control.mutate(original));
+    refused=run(args,fixture.root);
+  }finally{
+    fixture.write(control.file,original.toString('utf8'));
+    assert.deepEqual(readFileSync(path.join(fixture.root,control.file)),original);
+    // Restoration is executed even if mutation or process invocation throws.
+    m15StrictHealthy(run(args,fixture.root));
+  }
+  assert.ifError(refused.error);
+  assert.equal(refused.signal,null);
+  assert.equal(refused.status,1,refused.stdout+refused.stderr);
+  assert.match(refused.stderr,control.reason);
+  assert.doesNotMatch(refused.stderr,/ERR_MODULE_NOT_FOUND|SyntaxError/);
+  assert.equal(refused.stdout.replaceAll('\r\n','\n'),control.stdout);
+  assert.doesNotMatch(refused.stdout,/Resource recovery types PASS/);
+}));
+
+// Preserve the complete five-lane PNG consumer replay around each assigned refusal.
+for (const control of [
+  { name: 'mixed provider declarations', file: 'packages/engine/dist/web/BrowserTextureProvider.d.ts',
+    mutate: raw => raw.toString('utf8') + '// assigned PNG declaration identity drift\n',
+    reason: /unregistered or mixed M1\.5 PNG product identity/, compilerStarted: false },
+  { name: 'same-count incorrect diagnostic code', file: 'tests/types/browser-png-diagnostic-expectations.json',
+    mutate: raw => {
+      const value = JSON.parse(raw), group = value.lanes.find(row => row.lane === 'negative');
+      assert.ok(group.diagnostics.length > 1); assert.notEqual(group.diagnostics[0].code, 9999);
+      group.diagnostics[0].code = 9999; return JSON.stringify(value, null, 2) + '\n';
+    }, reason: /changed\/missing\/extra\/duplicate complete diagnostics in negative/, compilerStarted: true },
+]) test('M1.5 PNG strict successor rejects ' + control.name + ' between genuine complete baselines', () => isolated(fixture => {
+  prepareTypeFixture(fixture);
+  for (const relative of ['tools/browser-png-types.mjs', 'tsconfig.json']) {
+    fixture.write(relative, readFileSync(path.join(repository, relative), 'utf8'));
+  }
+  const args = ['tools/browser-png-types.mjs'];
+  const healthy = () => {
+    const result = run(args, fixture.root);
+    assert.ifError(result.error); assert.equal(result.signal, null); assert.equal(result.status, 0, result.stdout + result.stderr);
+    assert.equal(result.stderr, '');
+    const lanes = [...result.stdout.matchAll(/^Browser PNG ([-a-z]+) exact diagnostic replay: /gm)].map(row => row[1]);
+    assert.deepEqual(lanes, ['positive', 'negative', 'import-negative', 'dom-free-positive', 'dom-free-negative']);
+    assert.match(result.stdout, /Browser PNG strict consumers PASS; runtime, policy and native acceptance are separate\./);
+  };
+  healthy();
+  const raw = readFileSync(path.join(fixture.root, control.file)); let refused;
+  try { fixture.write(control.file, control.mutate(raw)); refused = run(args, fixture.root); }
+  finally { fixture.write(control.file, raw.toString('utf8')); assert.deepEqual(readFileSync(path.join(fixture.root, control.file)), raw); healthy(); }
+  assert.ifError(refused.error); assert.equal(refused.signal, null); assert.equal(refused.status, 1, refused.stdout + refused.stderr);
+  assert.match(refused.stderr, control.reason); assert.doesNotMatch(refused.stderr, /ERR_MODULE_NOT_FOUND|SyntaxError/);
+  if (control.compilerStarted) assert.match(refused.stdout, /^Browser PNG positive exact diagnostic replay: \[\]$/m);
+  else assert.equal(refused.stdout, '');
+  assert.doesNotMatch(refused.stdout, /Browser PNG strict consumers PASS/);
 }));

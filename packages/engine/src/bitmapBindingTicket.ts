@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 import { EgretError, Scope } from '@egret/runtime';
-import type { AssetLease, Bitmap, EngineContext, Texture } from '@egret/runtime';
+import type { AssetLease, Bitmap, CapturedSharedContent2D, EngineContext, Stage, Texture } from '@egret/runtime';
 
 /** Publishes borrowed group members once; owns no initial or candidate lease. */
 export interface BitmapBindingTicket {
@@ -15,6 +15,10 @@ export interface BitmapBindingContext {
 }
 export interface BitmapBindingOwner {
   capture(scope: unknown, targets: unknown): BitmapBindingTicket;
+  readPreparedForCapture(ticket: unknown): Readonly<{
+    validate(): void;
+    captureContent(stage: Stage): CapturedSharedContent2D;
+  }>;
   close(): void;
 }
 const APPLY = Reflect.apply, FREEZE = Object.freeze, IS_ARRAY = Array.isArray;
@@ -115,7 +119,7 @@ function commit(record: TicketRecord): void {
     record.prepared = undefined; record.captured = undefined; record.phase = 'committed';
   } catch (cause) { observeRefusal(record, cause); throw cause; }
 }
-function handleFor(record: TicketRecord): BitmapBindingTicket {
+function handleFor(record: TicketRecord, handles: WeakMap<object, TicketRecord>): BitmapBindingTicket {
   const receiver = (value: unknown): void => {
     if (value !== handle) throw new EgretError('BITMAP_BINDING_INVALID');
   };
@@ -124,10 +128,13 @@ function handleFor(record: TicketRecord): BitmapBindingTicket {
     commit(): void { receiver(this); commit(record); },
     dispose(): void { receiver(this); dispose(record); },
   });
+  handles.set(handle, record);
   return handle;
 }
 export function createBitmapBindingOwner(context: BitmapBindingContext, targets: WeakMap<Bitmap, Operations>): BitmapBindingOwner {
   const inventory = new Set<TicketRecord>();
+  // Exact handles point back to the sole existing record, including terminal records.
+  const handles = new WeakMap<object, TicketRecord>();
   return FREEZE({
     capture(scope: unknown, input: unknown): BitmapBindingTicket {
       assertLifetime(context, scope);
@@ -145,11 +152,25 @@ export function createBitmapBindingOwner(context: BitmapBindingContext, targets:
       const captured = operations!.captureBatch(snapshot as readonly Bitmap[]);
       const record: TicketRecord = { context, scope, operations: operations!, inventory,
         phase: 'captured', conflict: false, reading: false, captured, prepared: undefined, publication: undefined, count: snapshot.length };
-      const handle = handleFor(record);
+      const handle = handleFor(record, handles);
       inventory.add(record);
       try { APPLY(SCOPE_USE, scope, [handle]); }
       catch (cause) { dispose(record); throw cause; }
       return handle;
+    },
+    readPreparedForCapture(ticket: unknown) {
+      context.assertOpen();
+      const record = handles.get(ticket as object);
+      if (record === undefined) throw new EgretError('BITMAP_BINDING_INVALID');
+      assertOperation(record, 'prepared');
+      return FREEZE({
+        validate(): void { assertOperation(record, 'prepared'); },
+        captureContent(stage: Stage): CapturedSharedContent2D {
+          assertOperation(record, 'prepared');
+          try { return record.operations.capturePreparedSharedContent(stage, record.captured!, record.prepared!); }
+          catch (cause) { observeRefusal(record, cause); throw cause; }
+        },
+      });
     },
     close(): void {
       const records = [...inventory];

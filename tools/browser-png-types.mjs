@@ -41,7 +41,32 @@ function m14EnginePackagePin(owner, expected) {
  return actual;
 }
 
+// M1.5 keeps all historical diagnostics and image facade identities. Only the
+// complete reviewed package/provider source, emission and declaration group may
+// select this finite raw-input successor; this is not a new full compiler closure.
+const m15PngProductPairs = [{"path":"packages/engine/package.json","base":{"bytes":1567,"sha256":"e01d48a51c0845783afeec93ffcc7674c7980797cd6a9c58cc74ec3f13d2e0c5"},"current":{"bytes":2167,"sha256":"be2a5a1e13136e99111ebc0fdfa657e4067fbba79647eeb93431395210516143"}},{"path":"packages/engine/web/BrowserTextureProvider.ts","base":{"bytes":26925,"sha256":"f3653ea77a29979f43f18c95405223ad1d2a72a647d40391705668f9ea504993"},"current":{"bytes":38735,"sha256":"19a7a5c531372a93a88d52bd1885ccfc77054ca21821ac93a301ed5cfff2ef39"}},{"path":"packages/engine/dist/web/BrowserTextureProvider.js","base":{"bytes":26201,"sha256":"06f49a72039f95d0fd3c23bb409db658672bb10b512b4ca9b256064b419e1d90"},"current":{"bytes":37211,"sha256":"4daad43034281f0038220a4c1fa5238b1a67c8fe09870ef0717b53b50c5a15dd"}},{"path":"packages/engine/dist/web/BrowserTextureProvider.d.ts","base":{"bytes":1130,"sha256":"44418045d02c256a6814b74abdda44b5ed1f1433618479a4aade9ddc08f30257"},"current":{"bytes":2366,"sha256":"5304af807252f688b48b3b0bd4864bc3b7a020803fff375367fa4f172c0f45d2"}}];
+function m15ProductIdentityBranch() {
+  const actual = m15PngProductPairs.map(row => fingerprintFile(root, row.path));
+  const matches = actual.map((row, index) => equal(row, { path: m15PngProductPairs[index].path, ...m15PngProductPairs[index].current }));
+  if (!matches.some(Boolean)) return 'historical';
+  if (!matches.every(Boolean)) failure('unregistered or mixed M1.5 PNG product identity');
+  const row = m15PngProductPairs[0], raw = readFileSync(path.join(root, row.path));
+  if (raw.length !== row.current.bytes || hash(raw) !== row.current.sha256) failure('M1.5 engine package changed during read');
+  const value = JSON.parse(raw);
+  delete value.exports['./resources']; delete value.exports['./web/resources'];
+  delete value.imports['#egret-manifest-resources'];
+  const predecessor = Buffer.from(JSON.stringify(value, null, 2) + '\n');
+  if (predecessor.length !== m14EnginePackageCurrent.bytes || hash(predecessor) !== m14EnginePackageCurrent.sha256) failure('M1.5 engine package predecessor differs');
+  return 'current';
+}
+const m15ProductBranch = m15ProductIdentityBranch();
+function m15ProductPin(expected) {
+  const pair = m15PngProductPairs.find(row => equal(expected, { path: row.path, ...row.base }));
+  return pair && m15ProductBranch === 'current' ? { path: pair.path, ...pair.current } : expected;
+}
+
 function checkPin(pin) {
+  pin = m15ProductPin(pin);
   pin = m14EnginePackagePin(root, pin);
   logicalPath(pin.path);
   if (!Number.isSafeInteger(pin.bytes) || pin.bytes < 0 || !/^[0-9a-f]{64}$/.test(pin.sha256)) failure('malformed raw pin');
@@ -152,6 +177,7 @@ if (!equal(textureSuccessorGroup?.diagnostics[m13TextureDiagnosticSuccessor.inde
   failure('historical Texture diagnostic differs');
 const textureBranch = textureIdentityBranch();
 function unchanged() {
+  if (m15ProductIdentityBranch() !== m15ProductBranch) failure('M1.5 PNG product branch changed during replay');
   checkPin(inventoryPin); checkPin(selfPin);
   if (textureIdentityBranch() !== textureBranch) failure('Texture source/declaration branch changed during replay');
   for (const pin of inventory.productPins) checkPin(pin);

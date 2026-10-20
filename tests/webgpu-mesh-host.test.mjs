@@ -272,7 +272,7 @@ const config=boundedJSON(fs.readFileSync(CONFIG_PATH,'utf8'));
 ownKeys(config,['schemaVersion','caseId','repository','entries','packages','files','metadata','sceneFiles','gpuFiles']);
 assert.equal(config.schemaVersion,1);assert.equal(config.caseId,CASE);assert.equal(normal(process.cwd()),config.repository);
 ownKeys(config.entries,['core','canvas','webgpu','host','b1','sharedB1']);
-ownKeys(config.packages,['@egret/contracts','@egret/runtime','@egret/engine','robust-predicates','#egret-textured-frame-state','#egret-mouse-input']);
+ownKeys(config.packages,['@egret/contracts','@egret/runtime','@egret/engine','robust-predicates','#egret-textured-frame-state','#egret-mouse-input','#egret-manifest-resources','@egret/contracts/resources']);
 assert.ok(Array.isArray(config.files)&&config.files.length<=LIMITS.modules);
 const FILES=new Map();let sourceBytes=0;
 for(const descriptor of config.files){ownKeys(descriptor,['path','bytes','sha256']);assert.equal(FILES.has(descriptor.path),false);assert.deepEqual(exactFile(descriptor.path),descriptor);sourceBytes+=descriptor.bytes;assert.ok(sourceBytes<=LIMITS.sourceBytes);FILES.set(descriptor.path,descriptor);}
@@ -303,6 +303,12 @@ function resolveTarget(specifier,parent){
     assert.ok(parent===pathToFileURL(config.repository+'/packages/engine/dist/web/MouseInput.js').href,'exact mouse input adapter parent');
     assert.ok(Object.hasOwn(config.packages,specifier),'literal mouse input mapping');
     const target=config.packages[specifier];assert.ok(FILES.has(target),'mouse input in actual finite manifest');
+    return pathToFileURL(target).href;
+  }
+  if(specifier==='#egret-manifest-resources'){
+    assert.equal(parent,pathToFileURL(config.repository+'/packages/engine/dist/web/ManifestByteSource.js').href,'exact manifest resource adapter parent');
+    assert.ok(Object.hasOwn(config.packages,specifier),'literal manifest resource mapping');
+    const target=config.packages[specifier];assert.ok(FILES.has(target),'manifest resource in actual finite manifest');
     return pathToFileURL(target).href;
   }
   assert.ok(typeof specifier==='string'&&!specifier.includes('?')&&!specifier.includes('#'));
@@ -361,6 +367,11 @@ function staticInspection(){
   assert.equal(resolveTarget('#egret-mouse-input',mouseParent),mouseTarget);
   for(const parent of [config.entries.core,config.entries.canvas,config.entries.host,pathToFileURL(config.repository+'/packages/engine/dist/web/input.js').href])assert.throws(()=>resolveTarget('#egret-mouse-input',parent),{message:'exact mouse input adapter parent'});
   assert.throws(()=>resolveTarget('#egret-mouse-input/other',mouseParent));
+  const manifestParent=pathToFileURL(config.repository+'/packages/engine/dist/web/ManifestByteSource.js').href;
+  const manifestTarget=pathToFileURL(config.repository+'/packages/engine/dist/manifestResourceState.js').href;
+  assert.equal(resolveTarget('#egret-manifest-resources',manifestParent),manifestTarget);
+  for(const parent of [config.entries.core,config.entries.canvas,config.entries.host,mouseParent])assert.throws(()=>resolveTarget('#egret-manifest-resources',parent),{code:'ERR_ASSERTION',message:/^exact manifest resource adapter parent(?:\n|$)/});
+  for(const alias of ['#egret-manifest-resources/other','#egret-manifest-resources-extra'])assert.throws(()=>resolveTarget(alias,manifestParent));
   assert.equal(typeof vm.SourceTextModule,'function');const budget={tokens:0};const inspected=new Map();
   const selectedAnchors=new Map([[config.entries.host,['((color >>> 16) & 255) / 255 * alpha','((color >>> 8) & 255) / 255 * alpha','(color & 255) / 255 * alpha']],[pathToFileURL(config.repository+'/packages/engine/dist/web/webgpuPass.js').href,['((group.color >>> 16) & 255) / 255 * alpha','((group.color >>> 8) & 255) / 255 * alpha','(group.color & 255) / 255 * alpha']],[pathToFileURL(config.repository+'/packages/engine/dist/web/imageProjections2D.js').href,['Math.floor((pixels[offset] * alpha + 127) / 255)','Math.floor((pixels[offset + 1] * alpha + 127) / 255)','Math.floor((pixels[offset + 2] * alpha + 127) / 255)']],[pathToFileURL(config.repository+'/packages/runtime/dist/sequenceClip.js').href,['Math.floor((high - low) / 2)']],[pathToFileURL(config.repository+'/packages/runtime/dist/NineSliceGeometry2D.js').href,['(source - trailing) / source']],[pathToFileURL(config.repository+'/packages/engine/dist/rendering/preparedFrameCache2D.js').href,['Math.floor((Number.MAX_SAFE_INTEGER - 7) / 8)','(MAX_BYTES - 1024) / 8']]]);
 
@@ -368,6 +379,8 @@ function staticInspection(){
   selectedAnchors.get(config.entries.host).push('((c >>> 16) & 255) / 255','((c >>> 8) & 255) / 255','(c & 255) / 255');
   selectedAnchors.set(pathToFileURL(config.repository+'/packages/engine/dist/rendering/sharedColor2D.js').href,['((value + 0.055) / 1.055) ** 2.4','decodeSharedSRGB((code + 1) / 255)']);
   selectedAnchors.set(pathToFileURL(config.repository+'/packages/engine/dist/rendering/prepareSharedDraws2D.js').href,['decodeSharedSRGB(((color >>> 16) & 255) / 255)','decodeSharedSRGB(((color >>> 8) & 255) / 255)','decodeSharedSRGB((color & 255) / 255)','(p.x + x) / page.width','(p.y + y) / page.height']);
+  // One SHA-256 padding calculation is admitted only in its exact resource module.
+  selectedAnchors.set(pathToFileURL(config.repository+'/packages/contracts/dist/resources/sha256.js').href,['Math.ceil((length + 9) / 64)']);
   // A selected division token never grants general closing-delimiter admission.
   const expression='Math.floor((high - low) / 2)',slash=expression.indexOf('/');
   assert.throws(()=>scanSource(expression,{tokens:0},new Set()),{message:'unselected ambiguous slash after delimiter'});
@@ -385,7 +398,7 @@ function staticInspection(){
   for(const facility of ['Function("return 1")','new Function("return 1")','eval("1")','require("node:fs")'])assert.throws(()=>scanSource(capture+';'+facility,{tokens:0},new Set(),new Set([captureAt])),{message:'unsupported executable facility'});
   function visit(url){if(inspected.has(url))return;const file=normal(fileURLToPath(url));const descriptor=FILES.get(file);assert.ok(descriptor);const bytes=fs.readFileSync(file);assert.equal(digest(bytes),descriptor.sha256);const source=new TextDecoder('utf-8',{fatal:true}).decode(bytes);
     // Native construction precedes the finite literal exception. No linking or
-    // evaluation occurs; the twenty-three locations in eight files are source-bound data.
+    // evaluation occurs; the twenty-four locations in nine files are source-bound data.
     const module=new vm.SourceTextModule(source,{identifier:url});assert.equal(module.status,'unlinked');const admitted=new Set(),anchors=[];for(const anchor of selectedAnchors.get(url)??[]){const offset=source.indexOf(anchor);assert.ok(offset>=0);assert.equal(source.lastIndexOf(anchor),offset,'unique complete expression');const slash=offset+anchor.indexOf('/');assert.equal(source[slash],'/');admitted.add(slash);anchors.push({expression:anchor,byteOffset:Buffer.byteLength(source.slice(0,offset)),slashByteOffset:Buffer.byteLength(source.slice(0,slash))});}if(anchors.length)divisionWitnesses.push({url,sha256:descriptor.sha256,constructed:true,linked:false,evaluated:false,anchors});const name=Object.keys(intrinsicCaptureStatements).find(name=>url===pathToFileURL(config.repository+'/packages/engine/dist/web/'+name).href);const statements=name?intrinsicCaptureStatements[name]:[];const captures=captureOffsets(source,statements);const lexical=scanSource(source,budget,admitted,captures);if(statements.length)record('INTRINSIC_CAPTURES',{url,sha256:descriptor.sha256,statements});const requests=module.moduleRequests;assert.ok(Array.isArray(requests));const specs=[];
     for(const request of requests){assert.deepEqual(Object.keys(request).sort(),['attributes','phase','specifier']);assert.equal(typeof request.specifier,'string');assert.equal(request.phase,'evaluation');assert.equal(request.attributes!==null&&typeof request.attributes==='object',true);assert.deepEqual(Object.keys(request.attributes),[]);specs.push(request.specifier);}
     assert.deepEqual([...new Set(lexical.statics)],specs,'independent lexical/static-request crosscheck');inspected.set(url,requests);
@@ -399,7 +412,7 @@ function staticInspection(){
   visit(pathToFileURL(config.repository+'/packages/engine/dist/web/webgpuBufferPool.js').href);
   for(const [name,entry]of Object.entries(config.entries)){visit(entry);const reachable=new Set();function walk(url){if(reachable.has(url))return;reachable.add(url);for(const edge of staticEdges.filter(e=>e.parent===url))if(!edge.url.startsWith('node:'))walk(edge.url);}walk(entry);
     if(name==='core'||name==='canvas')assert.equal([...reachable].some(url=>sceneURLs.has(url)||gpuURLs.has(url)),false,'core/Canvas static prohibition');if(name==='webgpu'||name==='host')assert.equal([...reachable].some(url=>sceneURLs.has(url)),false,'ordinary static scene prohibition');staticClosures.push({name,modules:[...reachable].sort()});}
-  assert.equal(dynamicEdges.length,2);assert.deepEqual([...dynamicEdges].sort((a,b)=>a.specifier<b.specifier?-1:1),[{parent:config.entries.host,specifier:'./b1.js',url:config.entries.b1},{parent:config.entries.host,specifier:'./sharedB1.js',url:config.entries.sharedB1}]);assert.equal(divisionWitnesses.length,8);assert.equal(divisionWitnesses.reduce((count,item)=>count+item.anchors.length,0),23);assert.equal(EVENTS.filter(e=>e.kind==='INTRINSIC_CAPTURES').length,3);assert.equal(EVENTS.filter(e=>e.kind==='INTRINSIC_CAPTURES').reduce((n,e)=>n+e.statements.length,0),21);record('STATIC_ONLY',{modules:inspected.size,tokens:budget.tokens,constructed:true,linked:false,evaluated:false});
+  assert.equal(dynamicEdges.length,2);assert.deepEqual([...dynamicEdges].sort((a,b)=>a.specifier<b.specifier?-1:1),[{parent:config.entries.host,specifier:'./b1.js',url:config.entries.b1},{parent:config.entries.host,specifier:'./sharedB1.js',url:config.entries.sharedB1}]);assert.equal(divisionWitnesses.length,9);assert.equal(divisionWitnesses.reduce((count,item)=>count+item.anchors.length,0),24);assert.equal(EVENTS.filter(e=>e.kind==='INTRINSIC_CAPTURES').length,3);assert.equal(EVENTS.filter(e=>e.kind==='INTRINSIC_CAPTURES').reduce((n,e)=>n+e.statements.length,0),21);record('STATIC_ONLY',{modules:inspected.size,tokens:budget.tokens,constructed:true,linked:false,evaluated:false});
 }
 function installHooks(){hooks=registerHooks({
   resolve(specifier,context,nextResolve){assert.ok(context.parentURL===pathToFileURL(PROGRAM).href||context.parentURL?.startsWith('file:')&&FILES.has(normal(fileURLToPath(context.parentURL))),'source-bound import parent');const target=resolveTarget(specifier,context.parentURL);record('RESOLVE_ATTEMPT',{parent:context.parentURL??null,specifier,url:target});if(forbidden.has(target)){forbiddenAttempts++;record('FORBIDDEN_ATTEMPT',{phase:'resolve',url:target});throw SENTINEL;}const result=nextResolve(specifier,context);assert.equal(result.url,target,'actual canonical resolver join');record('RESOLVE_RETURN',{parent:context.parentURL??null,specifier,url:result.url});return result;},
@@ -534,9 +547,13 @@ function sourceInventory(repository){const files=[],metadata=[],packages={};let 
   for(const name of ['contracts','runtime','engine']){const root=repository+'/packages/'+name;const meta=fileDescriptor(root+'/package.json');metadata.push(meta);const data=JSON.parse(fs.readFileSync(meta.path,'utf8'));assert.equal(data.name,'@egret/'+name);assert.equal(data.type,'module');assert.deepEqual(data.exports['.'],{types:'./dist/index.d.ts',import:'./dist/index.js'});packages[data.name]=canonical(root+'/dist/index.js');collect(root+'/dist');}
   const dependency=canonical(repository+'/packages/engine/node_modules/robust-predicates');const meta=fileDescriptor(dependency+'/package.json');metadata.push(meta);const data=JSON.parse(fs.readFileSync(meta.path,'utf8'));assert.equal(data.name,'robust-predicates');assert.equal(data.version,'3.0.3');assert.equal(data.type,'module');assert.equal(data.exports,'./index.js');packages['robust-predicates']=canonical(dependency+'/index.js');files.push(fileDescriptor(dependency+'/index.js'));collect(dependency+'/esm');
   const engine=JSON.parse(fs.readFileSync(repository+'/packages/engine/package.json','utf8'));assert.deepEqual(engine.exports['./web'],{types:'./dist/web/index.d.ts',import:'./dist/web/index.js'});assert.deepEqual(engine.exports['./webgpu'],{types:'./dist/web/webgpu.d.ts',import:'./dist/web/webgpu.js'});assert.equal(engine.dependencies['robust-predicates'],'3.0.3');
-  assert.deepEqual(engine.imports,{'#egret-textured-frame-state':{types:'./dist/internal/texturedFrameState.d.ts',import:'./dist/internal/texturedFrameState.js'},'#egret-mouse-input':{types:'./dist/mouseInput.d.ts',import:'./dist/mouseInput.js'}});
+  assert.deepEqual(engine.imports,{'#egret-textured-frame-state':{types:'./dist/internal/texturedFrameState.d.ts',import:'./dist/internal/texturedFrameState.js'},'#egret-mouse-input':{types:'./dist/mouseInput.d.ts',import:'./dist/mouseInput.js'},'#egret-manifest-resources':{types:'./dist/manifestResourceState.d.ts',import:'./dist/manifestResourceState.js'}});
   packages['#egret-textured-frame-state']=canonical(repository+'/packages/engine/dist/internal/texturedFrameState.js');
   packages['#egret-mouse-input']=canonical(repository+'/packages/engine/dist/mouseInput.js');
+  packages['#egret-manifest-resources']=canonical(repository+'/packages/engine/dist/manifestResourceState.js');
+  const contracts=JSON.parse(fs.readFileSync(repository+'/packages/contracts/package.json','utf8'));
+  assert.deepEqual(contracts.exports['./resources'],{types:'./dist/resources/index.d.ts',import:'./dist/resources/index.js'});
+  packages['@egret/contracts/resources']=canonical(repository+'/packages/contracts/dist/resources/index.js');
   const entry=relative=>pathToFileURL(canonical(repository+'/'+relative)).href;
   const entries={core:entry('packages/engine/dist/index.js'),canvas:entry('packages/engine/dist/web/index.js'),webgpu:entry('packages/engine/dist/web/webgpu.js'),host:entry('packages/engine/dist/web/WebGPUHost.js'),b1:entry('packages/engine/dist/web/b1.js'),sharedB1:entry('packages/engine/dist/web/sharedB1.js')};
   // CPU image projections are shared by Canvas and WebGPU, outside the GPU-only category.

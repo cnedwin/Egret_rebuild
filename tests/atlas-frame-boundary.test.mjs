@@ -10,6 +10,7 @@ import { spawnSync } from 'node:child_process';
 import { moduleImports, assignedMutation, strictJSON, HASH, parseCollectorArguments, validateConfig,
   authenticateIdentity, readPinned, verifyAssignedDiff, BUILD_PACKAGES, WORKSPACE_ALIASES, IMPORTS, validateBuildPackage } from '../tools/atlas-frame/boundary.mjs';
 import * as identity from '../tools/lib/file-identity.mjs';
+import * as atlasFrameBoundary from '../tools/atlas-frame/boundary.mjs';
 const root=fileURLToPath(new URL('..',import.meta.url));
 test('direct source boundary CLI refuses extra arguments before collecting SDK/browser inputs',()=>{
   const entry=path.join(root,'tools/atlas-frame/boundary.mjs');
@@ -122,4 +123,35 @@ test('authenticated identity preserves complete authored path and raw bytes',asy
     fs.writeFileSync(path.join(temp,'nested','same.mjs'),'a\n');assert.throws(()=>readPinned(identity,temp,'nested/same.mjs',actual));
     assert.throws(()=>identity.ownerRelativePath(temp,path.join(path.dirname(temp),'same.mjs')));
   }finally{fs.rmSync(temp,{recursive:true});}
+});
+
+test('genuine atlas source closure resolves one authenticated optional resource entry',async()=>{
+  const {snapshot,routes}=await atlasFrameBoundary.collectAtlasFrameSource(root);
+  const target='repository:packages/contracts/dist/resources/index.js';
+  assert.equal(snapshot.sourceOnly,true);
+  assert.equal(snapshot.importMap.imports['@egret/contracts/resources'],'../../packages/contracts/dist/resources/index.js');
+  assert.equal(snapshot.modules.filter(row=>row.owner+':'+row.path===target).length,1);
+  const edges=snapshot.modules.flatMap(row=>row.edges.filter(edge=>edge.specifier==='@egret/contracts/resources'));
+  assert.ok(edges.length>0);assert.ok(edges.every(edge=>edge.target===target));
+  assert.deepEqual(routes.get('/packages/contracts/dist/resources/index.js').bytes,
+    fs.readFileSync(path.join(root,'packages/contracts/dist/resources/index.js')));
+  assert.deepEqual(routes.get('/examples/trimmed-atlas-playback/index.html').bytes,
+    fs.readFileSync(path.join(root,'examples/trimmed-atlas-playback/index.html')));
+});
+test('atlas fixed resource export refuses runtime/types redirection and wildcard fallback',()=>{
+  assert.equal(typeof atlasFrameBoundary.validateAtlasFrameEntries,'function','M15_ATLAS_FRAME_ENTRY_POLICY_MISSING');
+  const actual=Object.fromEntries(['engine','runtime','contracts'].map(name=>
+    [name,JSON.parse(fs.readFileSync(path.join(root,'packages/'+name+'/package.json')))]));
+  const validate=atlasFrameBoundary.validateAtlasFrameEntries;
+  for(const mutate of [
+    metadata=>{metadata.contracts.exports['./resources'].import='./dist/index.js';},
+    metadata=>{metadata.contracts.exports['./resources'].types='./dist/index.d.ts';},
+    metadata=>{delete metadata.contracts.exports['./resources'];},
+    metadata=>{delete metadata.contracts.exports['./resources'];metadata.contracts.exports['./*']={import:'./dist/resources/index.js',types:'./dist/resources/index.d.ts'};},
+  ]){
+    const healthy=validate(actual);assert.deepEqual(healthy.get('@egret/contracts/resources'),['repository','packages/contracts/dist/resources/index.js']);
+    const changed=structuredClone(actual);mutate(changed);
+    assert.throws(()=>validate(changed),/Public entry\/alias declaration differs @egret\/contracts\/resources/);
+    assert.deepEqual(validate(actual).get('@egret/contracts/resources'),['repository','packages/contracts/dist/resources/index.js']);
+  }
 });

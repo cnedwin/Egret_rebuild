@@ -81,7 +81,7 @@ function status(host) {
   const value = host.getSharedStatus();
   assert.ok(Object.isFrozen(value)); assert.ok(Object.isFrozen(value.host));
   assert.deepEqual(Object.keys(value).sort(),
-    ['host', 'pendingCanonicalBytes', 'pendingColorBytes', 'pendingGeometryBytes']);
+    ['host', 'pendingCanonicalBytes', 'pendingColorBytes', 'pendingGeometryBytes', 'resources']);
   return value;
 }
 function refusal(f, host, run, code) {

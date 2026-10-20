@@ -197,7 +197,7 @@ function acquire(promise, label, assign) {
     error => { record.settled = true; throw error; }));
   acquisitions.push(record); return record.promise;
 }
-const aliases = { '#egret-textured-frame-state': 'packages/engine/dist/internal/texturedFrameState.js', '@egret/contracts': 'packages/contracts/dist/index.js', '@egret/runtime': 'packages/runtime/dist/index.js',
+const aliases = { '#egret-textured-frame-state': 'packages/engine/dist/internal/texturedFrameState.js', '@egret/contracts': 'packages/contracts/dist/index.js', '@egret/contracts/resources': 'packages/contracts/dist/resources/index.js', '@egret/runtime': 'packages/runtime/dist/index.js',
   '@egret/engine': 'packages/engine/dist/index.js', '@egret/engine/scene3d': 'packages/engine/dist/rendering/scene3d.js',
   '@egret/engine/webgpu/scene3d': 'packages/engine/dist/web/scene3d.js', 'robust-predicates': 'packages/engine/node_modules/robust-predicates/index.js' };
 const entryNames = ['packages/engine/dist/index.js', 'packages/engine/dist/rendering/scene3d.js',
@@ -228,6 +228,150 @@ allowedModules.add('packages/engine/dist/web/sharedRetentionLedger.js');
 allowedModules.add('packages/engine/dist/web/sharedSubmissionStorage2D.js');
 // M1.3 adds only the reviewed current literal closure, with the same 128-module bound.
 for (const name of ["packages/contracts/dist/SharedGeometry2D.js","packages/contracts/dist/SharedMaterial2D.js","packages/contracts/dist/SharedRenderFrame2D.js","packages/engine/dist/rendering/packSharedDraws2D.js","packages/engine/dist/rendering/packSharedMeshGeometry3D.js","packages/engine/dist/rendering/prepareSharedDraws2D.js","packages/engine/dist/rendering/preparedSharedBatches2D.js","packages/engine/dist/rendering/sharedColor2D.js","packages/engine/dist/web/prepareSharedSubmission2D.js","packages/engine/dist/web/sharedB1.js","packages/engine/dist/web/sharedWebGPUOptions.js","packages/engine/dist/web/webgpuRetentionPool.js","packages/engine/dist/web/webgpuSharedMeshPass.js","packages/engine/dist/web/webgpuSharedPass.js","packages/engine/dist/web/webgpuSharedResolvePass.js","packages/runtime/dist/sharedFrameCapture.js"]) allowedModules.add(name);
+// Preserve the historical scanner policy; only this exact M1.5 raw closure selects 133.
+const historicalSourceModuleLimit = 128;
+const m15SourceModuleLimit = 133;
+const m15ModuleIdentities = new Map([
+  ["packages/engine/dist/index.js", { bytes: 1358, sha256: "96afca247999dc46d1321ce15138fbe01fffde0aafbb76fb48440a09b67ca082" }],
+  ["packages/engine/dist/rendering/copyMixedFrame2D.js", { bytes: 3818, sha256: "e7f1f60a683a5afe7e49fffa9294e53278c43910b1f0613ce1f50fa47f10468c" }],
+  ["packages/engine/dist/web/webgpuRetentionPool.js", { bytes: 3300, sha256: "72531b85727976d7de55a5a7cbd4a68d16ab28ca4ab5b13b26eaf4157f901c48" }],
+  ["packages/engine/dist/web/webgpuSharedResolvePass.js", { bytes: 1522, sha256: "eb5c2334da94a6e71970ab99df7a07932ab631b92641535215b889f8833cb2ef" }],
+  ["packages/engine/dist/web/webgpuSharedPass.js", { bytes: 6534, sha256: "efc042e1867ff8e052babdb9f5c1205761d8f9c25b6f4597a7175fbe91dec199" }],
+  ["packages/engine/dist/rendering/sharedColor2D.js", { bytes: 2455, sha256: "4e3c221cb075be46b90454719c04f3886bed2dd10fd048bdef5273ebda7962b0" }],
+  ["packages/engine/dist/rendering/preparedSharedBatches2D.js", { bytes: 3326, sha256: "6690664da548935ae8a9406436b5719ea6a8681b00c16d788914bba38c3eb036" }],
+  ["packages/engine/dist/web/prepareSharedSubmission2D.js", { bytes: 2433, sha256: "6c2952fa06328f3ed9cc34f1e3903e40168b5a43f0dbf19f40a5fc5764efdb19" }],
+  ["packages/engine/dist/rendering/prepareSharedDraws2D.js", { bytes: 13524, sha256: "19db787c5805700203e8eb7f8f8c4e82fe3ceb03b320e905a3879081352a78d1" }],
+  ["packages/engine/dist/web/sharedWebGPUOptions.js", { bytes: 3853, sha256: "8bcdf60791f837ef3a489807a0e7e75d7ef905dffc187ffb008ea1bcdcc70eb7" }],
+  ["packages/runtime/dist/bitmapDisplayState.js", { bytes: 1066, sha256: "fd50bff484322b93d54755698a1928edd46526a1f8a57816928499fc36b9bd73" }],
+  ["packages/runtime/dist/atlasFrameLayout.js", { bytes: 1991, sha256: "a1e35328e4f911087b80b268e0c82c71b620bc1837401fea0db8269febc95eee" }],
+  ["packages/runtime/dist/texturedFrameBudget.js", { bytes: 1542, sha256: "f8287dcba0eeebcd898c055b62e1249754d2c121b09f8734a55aaf248c54f2c3" }],
+  ["packages/runtime/dist/meshCaptureSnapshot.js", { bytes: 610, sha256: "65a2523739ba5ec960290fe217cc7dcaad58729438ccbf77663d7306d5c3bd56" }],
+  ["packages/runtime/dist/frameCaptureCache.js", { bytes: 15981, sha256: "b041688739321426600fb1ad1a2dfd005ebcdca93d3e5beb90d2dab8219757f0" }],
+  ["packages/runtime/dist/displayTransform.js", { bytes: 1258, sha256: "c508f3c99d02453c24ee705ec07af136ebb1591333fcab0be2537a27690a0e05" }],
+  ["packages/runtime/dist/imageFrameBudget.js", { bytes: 1802, sha256: "f7b61124a43c7b9621698c03efbd9e565b83977e839a0e737afe1827d1d54ac0" }],
+  ["packages/runtime/dist/textDisplayState.js", { bytes: 1185, sha256: "b61cab464a2c46a9bda0cec4d6dea3561c2588d675eef2bb8b80dab4bd332156" }],
+  ["packages/runtime/dist/meshDisplayState.js", { bytes: 978, sha256: "867eeb0aed95cb6d28fafe3ab02560acaf428086c89df0d61da9313b2a63ef55" }],
+  ["packages/runtime/dist/bitmapAtlasPlacement.js", { bytes: 1753, sha256: "55aa9193fd9cfa060e45b10ad02e7d60a3ee83fdafef9f67a80347de741e7cb2" }],
+  ["packages/runtime/dist/assetManagerOwnerState.js", { bytes: 2888, sha256: "9db66146430152ab5a0d07f704d9b27f5daa70834981ac33b5e9eb1194de563a" }],
+  ["packages/runtime/dist/displayHitTest.js", { bytes: 6873, sha256: "7ec9518b01bed802d0c254d13906c9920655b77d34626af17d0d87e0f5332196" }],
+  ["packages/runtime/dist/displayVisualState.js", { bytes: 4036, sha256: "92dd463f12869fded4ca7cdf38e18ac4fdceff0809a6368ce48c6ca8e9110814" }],
+  ["packages/runtime/dist/displayCoordinates.js", { bytes: 3352, sha256: "f2604e5359839916ae9cba2582ce896e069a69d013664b3e7ee95f85378df890" }],
+  ["packages/runtime/dist/displayBounds.js", { bytes: 7900, sha256: "648a056edd70cbd8ffa2e6bb45f03e6e6c42f8f9a03708d52eaa227157786231" }],
+  ["packages/runtime/dist/displayHitState.js", { bytes: 3388, sha256: "13da7621b9ff3091980084c5a8df9b8f86a80843d8eb097882c37d68068dd96c" }],
+  ["packages/runtime/dist/displayTreeState.js", { bytes: 15727, sha256: "e0f8ab70550bfc4a879c29b475f2374bf342d831c643ee18cef8744fec1c79aa" }],
+  ["packages/runtime/dist/ownership.js", { bytes: 6711, sha256: "a26b1fcd8232dc000ed45fc522784668cb5c69b35d187cea21419cf6b3da7b52" }],
+  ["packages/engine/dist/surfaceOwnership.js", { bytes: 615, sha256: "e37243cf059c239fb8a56beddcd0020c2f9a0df80db1017012443e72748f75be" }],
+  ["packages/engine/dist/bitmapButton.js", { bytes: 13700, sha256: "1e6540a6ad9c25749dda3d404df2571fd16a053be13849b89b1dda4d44237b77" }],
+  ["packages/engine/dist/rendering/copyFrame2D.js", { bytes: 6229, sha256: "cea039426a697ebb5acd60b6c18d6d372299d339fce2cfe818caec6545dc5595" }],
+  ["packages/engine/dist/rendering/prepareRectangles2D.js", { bytes: 11969, sha256: "c937d387f44241ce6d9d5c6f7fe28ce6e9fcf29e1dfdf0ad65197667aff11fd9" }],
+  ["packages/engine/dist/rendering/prepareMixedDraws2D.js", { bytes: 3234, sha256: "b5925f98de56982a203a22529a45aa72604e18cb4083ce5e261a185594dc6feb" }],
+  ["packages/engine/dist/rendering/preparedBatches2D.js", { bytes: 8234, sha256: "6f2ef1c01d8bef89ae3bc604ed961807532faf83010aee363edec6f8da5c5d48" }],
+  ["packages/engine/node_modules/robust-predicates/esm/incircle.js", { bytes: 26758, sha256: "784e4c897b00289869c9a9e51e0281ac550853e399a8df664afaf29494fe85b5" }],
+  ["packages/engine/node_modules/robust-predicates/esm/orient3d.js", { bytes: 13368, sha256: "6e122bc0c0b461d0cdf37e2caa458a823556630a20b044069e57391641acd97a" }],
+  ["packages/engine/node_modules/robust-predicates/esm/orient2d.js", { bytes: 5281, sha256: "ba1af2b1ea71924fa2e0a3e50b8972d3a83ab9a9f406dd73e851c9763a8eb741" }],
+  ["packages/contracts/dist/resources/sha256.js", { bytes: 5264, sha256: "076bd16070e02ce539aacb2e420c665eb62655431fa208e1293d09e6a86a939f" }],
+  ["packages/engine/dist/rendering/prepareTexturedMesh2D.js", { bytes: 7492, sha256: "f7f1bde2bd2fadffc4acc7d9c4e2b779c76f5673023fa4e72c04e59d944a6cfe" }],
+  ["packages/engine/dist/rendering/packedOrientation.js", { bytes: 340, sha256: "4f4b2c5125997952cf18cb5b4cfe655fe7d2ae4cb399a03bc633bf58261eae83" }],
+  ["packages/engine/dist/rendering/packedPosition2D.js", { bytes: 573, sha256: "68258e7949e85b2b5c5771b1045e5261d63ff330e67c81e89e958a19773c0d16" }],
+  ["packages/engine/dist/rendering/prepareImages2D.js", { bytes: 4494, sha256: "6dd60d19ca7e3da67baa42f31ebbbd88f2b3555e041092ae29c54fe5f8a00809" }],
+  ["packages/engine/node_modules/robust-predicates/index.js", { bytes: 233, sha256: "1e26fb2e616a0fa84dadb3a15633d9743671884d82f1abb124e20292fd0ab86d" }],
+  ["packages/engine/dist/rendering/imageFrameBudget.js", { bytes: 1625, sha256: "fc7e689d10b3827144609a8c8629e0d8e154f3e1ffaea2345efcf9241a76e6d9" }],
+  ["packages/engine/dist/web/sharedRetentionLedger.js", { bytes: 17028, sha256: "ca080bdf2a99acc6a2485bd2df427b711d7f35913036702eac5103af80326858" }],
+  ["packages/engine/dist/web/sharedSubmissionStorage2D.js", { bytes: 3778, sha256: "81c4c37de3347fbe762881c3f3f7108eda030027e5a3633600d6ab43309511e5" }],
+  ["packages/engine/dist/rendering/packSharedDraws2D.js", { bytes: 3322, sha256: "2e10b9fc3defc1dad671a1540f99f8670852325bba4a080496a549c706068778" }],
+  ["packages/runtime/dist/coordinateInverse.js", { bytes: 4201, sha256: "7cc84087cf8d2d8e92b3c5f1f560d8feacc4cea4cfe1f6511248a7bda86cd69a" }],
+  ["packages/engine/dist/internal/mouseInputFactoryState.js", { bytes: 4356, sha256: "bfb0f749f658c2365e8d8a3605f0de8269e2d27cb978a689ef6f3af0b149bbe9" }],
+  ["packages/contracts/dist/resources/manifestAdmission.js", { bytes: 16232, sha256: "39604bb6f530d229e576f0122e53d90d1b05270b2ae229322fe0f402e3d7c715" }],
+  ["packages/engine/dist/web/webgpuTexturedPass.js", { bytes: 2090, sha256: "1afe7ae7e5162415d83c8f0dff55712ef19dc04192eab8bbf67f666f82718c47" }],
+  ["packages/engine/dist/web/texturedWebGPUOptions.js", { bytes: 2744, sha256: "7457fc91a6dd24946d92d05a3c3a43c77d1b3ba2bf12feed1488b358ce7be8f2" }],
+  ["packages/engine/dist/web/prepareTexturedSubmission2D.js", { bytes: 12690, sha256: "14c5baa8c8ac5bcb970173cea5e8094dd0ad3a5f4aa8b9650b252562d4a12434" }],
+  ["packages/engine/dist/rendering/ownedPreparationFailure2D.js", { bytes: 1082, sha256: "2c762d5297f10925364d7ccffe77e654ddbc7238d48423c96675f1fa9fe6f338" }],
+  ["packages/engine/dist/rendering/packTexturedMesh2D.js", { bytes: 5253, sha256: "2b2812f97af50299451c2205dbe9acbdf169bb846dc41b4b964dc081039f8733" }],
+  ["packages/engine/dist/rendering/texturedPreparationBudget2D.js", { bytes: 5977, sha256: "eeb48a6701001b53159567a87a43bafbe1300810dc3ceee176a6b9e6c4090e9f" }],
+  ["packages/engine/dist/rendering/prepareTexturedDraws2D.js", { bytes: 2645, sha256: "313d56811af0cccba4b7708b4eac3ea58f2fb8f42f71b2c17e652edaa6cf0e91" }],
+  ["packages/engine/dist/rendering/admitTexturedFrame2D.js", { bytes: 6594, sha256: "9a1890c7402a5b92cd20b6d66b322a1e39e1ca729a6d53589d0042f193060c55" }],
+  ["packages/engine/dist/web/webgpuLifetime.js", { bytes: 2256, sha256: "5e71a326c3cb4cb2cc76acd16ddf7b5c6390542e037364fd204fbcf041fdeb1f" }],
+  ["packages/engine/dist/web/imageProjections2D.js", { bytes: 6102, sha256: "f7e8ec0c7d13cef5050bfc087297ea02c893775ad1773603b7ca643d64c8f14c" }],
+  ["packages/engine/dist/web/webgpuImagePass.js", { bytes: 2380, sha256: "1dd032650be95493d088f47cdc7b56e153ed7b4fb7410feef2420b1b74a88ffe" }],
+  ["packages/engine/dist/web/webgpuPass.js", { bytes: 6136, sha256: "07d77f142cc280b34eb85b7c0ab5c6f9f21b92e1be1696a6572436959f527bd2" }],
+  ["packages/engine/dist/rendering/packImageVertices2D.js", { bytes: 3851, sha256: "d133289551bc3514cc3c5a42661abd32377371f480669bb13547fe7df9b0f30f" }],
+  ["packages/engine/dist/rendering/preparedFrameCache2D.js", { bytes: 19934, sha256: "5e969f7d89fff8a9e7b5cb54daac0c027441c498890dee00d63d3ccc5d57f8e2" }],
+  ["packages/engine/dist/web/webgpuBindingCache.js", { bytes: 8374, sha256: "74bcda1b46f7ec63e46cb9a412c97ee353763d21e1375053663567ebdcfabea3" }],
+  ["packages/engine/node_modules/robust-predicates/esm/insphere.js", { bytes: 23925, sha256: "6782ad663d713b0da8d0710d88123a89ad388a6359c4bc81ed89ac5f682a12ea" }],
+  ["packages/engine/dist/manifestResourceState.js", { bytes: 2387, sha256: "46662790efbb2fb844034da7782df72213f1fe8a46a404d6ad54f1b4396a0417" }],
+  ["packages/engine/dist/web/webgpuSharedMeshPass.js", { bytes: 2753, sha256: "f178dcba92a940500b1f65f61e7f4ce1501cafb18e557106c8932983bb60f96f" }],
+  ["packages/runtime/dist/Event.js", { bytes: 2393, sha256: "d6b60b43d3768d67424d907410c832594b554d870185c6f9d871f62853edce7a" }],
+  ["packages/runtime/dist/Scope.js", { bytes: 4811, sha256: "773d15a4e82f268ea00a16f7bb1746705845364b5f0c1e2adeabbd8fd7707647" }],
+  ["packages/runtime/dist/EgretError.js", { bytes: 508, sha256: "34693e8147cb8142260471f4f80897ebd59a409486026ab0931b6f7523cf2f9f" }],
+  ["packages/runtime/dist/CancellationController.js", { bytes: 2112, sha256: "f2a27aee08b35e3ca17b7feb3f8166c3efc388e38d70f3f0c9b0ef13455e24c7" }],
+  ["packages/engine/dist/startEngine.js", { bytes: 1275, sha256: "e250a877eeb8523473963504646e1c80c16ceb2c326b3f10788c0ee4550c23bc" }],
+  ["packages/engine/dist/sequencePlayback.js", { bytes: 12959, sha256: "d608693c9d2a6219feba89fe5e357e2a4325331417a6e66fa41692896ad3980d" }],
+  ["packages/engine/dist/mouseInput.js", { bytes: 18823, sha256: "57e636eab8f68308e868ca6b9fb249879d3e214507c25d912379c97461ece03f" }],
+  ["packages/engine/dist/manifestAssetGroup.js", { bytes: 16305, sha256: "d30b5f3233bc6022de5ed7a581ad1f651825470efb6e19b7875f62a8a4514d50" }],
+  ["packages/engine/dist/assetGroup.js", { bytes: 11120, sha256: "86627b3431b17f52b70877ef6d8e8e32713e61dfac9a930825e5b640c1a08a3c" }],
+  ["packages/engine/dist/internal/textFieldFactoryState.js", { bytes: 1108, sha256: "fa69fb138980f01bfda9cf70214705a89f88de52435a8d59abe51a2e729c7568" }],
+  ["packages/engine/dist/tween.js", { bytes: 12172, sha256: "e9a1f3588e21fed0e49285a2c89eb8ea48557759242cb2a3128890399426444d" }],
+  ["packages/engine/dist/gameClock.js", { bytes: 9342, sha256: "fe76c89615b916f29e9287bff189d0d4b6da88936a94e3e9f058f9e19a4187ec" }],
+  ["packages/engine/dist/internal/texturedFrameState.js", { bytes: 975, sha256: "1fb9cc9e234a5bfe5a914f613fbb0dac8019840343f5df02fa4ec3d78b900300" }],
+  ["packages/engine/dist/closeHost.js", { bytes: 2440, sha256: "4a486e51396da8014487febfa29b465e8351023dd2169bd568f66f22383b83a7" }],
+  ["packages/engine/dist/bitmapBindingTicket.js", { bytes: 7431, sha256: "3024b2d5e809b4e304796fd22ccc1bdaecad3a87080701d757bb64b822f81e42" }],
+  ["packages/engine/dist/bitmapResourceSlot.js", { bytes: 10956, sha256: "27a628aa27688f37f789455d4be4e802a7d7e46bd88bd6279304a2f9cfd2b73e" }],
+  ["packages/engine/dist/web/sharedB1.js", { bytes: 1116, sha256: "7b6b48c2abeb2c6a3f05c8a32d1d620e62f98dbe963e962fb9a6ce3e45ea1a85" }],
+  ["packages/engine/dist/web/b1.js", { bytes: 1408, sha256: "ea0b12fe3693be7d3b1a2dc80c5768045e826e6278428ddca6e9006e66150c2e" }],
+  ["packages/engine/dist/rendering/sceneFrame3D.js", { bytes: 10022, sha256: "c059e09ddf929c3f27c1bbe40fd3fba9237931b23ee2192bec66fb70d1a5bb80" }],
+  ["packages/engine/dist/rendering/meshGeometry3D.js", { bytes: 5964, sha256: "a380f7b31f445d5d9ea341283d04159910158ea23a3dcc464fed6cb2167bae7b" }],
+  ["packages/engine/dist/rendering/matrix4.js", { bytes: 4112, sha256: "3e816beceb6b79aed81bfbcdda765258a2da8ba6a0a12bcea42d151c87846f21" }],
+  ["packages/contracts/dist/index.js", { bytes: 540, sha256: "f90933caf2643c0d4aa688eff5264160a7e931ee54b94c80163e1535e398ebce" }],
+  ["packages/runtime/dist/index.js", { bytes: 1708, sha256: "c8cbc112cd5597e0729c34368954d74a94511638d3efab1fec78603e2f7007f5" }],
+  ["packages/engine/dist/createEngineForProfile.js", { bytes: 3663, sha256: "f8ef8b3e4f154fa3da1ecab1d8253e83fe06f164f79709d6349d2c4821bcc4e7" }],
+  ["packages/engine/dist/createEngine.js", { bytes: 1347, sha256: "dcb5a5185202248ebd401799bfe5e1fec9e5d4e9f6ad6c9d836145db2ebd243c" }],
+  ["packages/engine/dist/Engine.js", { bytes: 21169, sha256: "61e9613b37d886859d2f11ed23b889684b24a0aba39b4d8f324fb2d5a003f933" }],
+  ["packages/engine/dist/web/webgpuMeshPass.js", { bytes: 2743, sha256: "5cae311c66b2c5dbf6b27c9195c7e80eb759e96395ebaa03f49630ab30ac722f" }],
+  ["packages/engine/dist/web/scene3d.js", { bytes: 532, sha256: "7d95b104c9e547fef5a6b479cc713ad753ce702286d1b4724ccf300725e0a14a" }],
+  ["packages/engine/dist/rendering/scene3d.js", { bytes: 1324, sha256: "4d71aed1486089f3da2c59fcb3d81b8067008c63d1565e89b9d3f74d419b247c" }],
+  ["packages/runtime/dist/EventDispatcher.js", { bytes: 7218, sha256: "573e357a5018379b244f1cc1cd26e51951b7b7ad4421e5c840a82031868abcb7" }],
+  ["packages/runtime/dist/DisplayObject.js", { bytes: 7658, sha256: "0f8e18b08432736d24d93b71a75806bca09a84f07b7887b4b82677d33fccd44f" }],
+  ["packages/runtime/dist/DisplayObjectContainer.js", { bytes: 8630, sha256: "f379a1da5a940710864a92b00349aa6d11b1de2b580b06f8f736c8131321a673" }],
+  ["packages/runtime/dist/Stage.js", { bytes: 1170, sha256: "06a06d17ec70f30ddc16692eb2fc7434cbf609e07f05328c48e48b72674e864d" }],
+  ["packages/engine/dist/rendering/packSharedMeshGeometry3D.js", { bytes: 4927, sha256: "06832d2e3abfad0803778177869b667530ca8f10642af02ed52292b76100e908" }],
+  ["packages/engine/dist/web/WebGPUHost.js", { bytes: 187333, sha256: "edfd58cc7facae99f49541d906224bff1df9f32f49a26a630d2de70c5040752d" }],
+  ["packages/engine/dist/rendering/packMeshGeometry3D.js", { bytes: 4841, sha256: "e0eb4837fbafa972a3b44ad114d839287842b5e64768b07adfdb4c2e8f7c5ac4" }],
+  ["packages/engine/dist/rendering/projection3D.js", { bytes: 7347, sha256: "a270ffda327bc88043f5dfc79e25437940a1ad7c02a21d8459b30b995dc05cde" }],
+  ["packages/contracts/dist/SharedRenderFrame2D.js", { bytes: 263, sha256: "73eb564457e0e23af0dbe6b0170c1707d52d4320706eb9e3b4dfee48c38aacf7" }],
+  ["packages/contracts/dist/TexturedRenderFrame2D.js", { bytes: 200, sha256: "735bcac8275f424e48829e167f0cebd21ab30817755650c24f4ffd88fa9620a8" }],
+  ["packages/contracts/dist/SharedGeometry2D.js", { bytes: 8593, sha256: "0b5ba021999903be40c9ba97206e07cb9f633ea3248efc33f7f0e9dbc3e74302" }],
+  ["packages/contracts/dist/SharedMaterial2D.js", { bytes: 7517, sha256: "5eed01974eb0856bec1628f542c5fa759c123f0b25446504b16bb57856dcc5f6" }],
+  ["packages/contracts/dist/TexturedGeometry2D.js", { bytes: 7696, sha256: "b3cdb387cb84078bf67769b8f6861cec4c904d256e79f0be151fdc8d38cc98aa" }],
+  ["packages/contracts/dist/ImageData2D.js", { bytes: 5361, sha256: "08bd03f81a5b789a37d4ac84c647b59945273dd22a70305b9440ae66321fdfcd" }],
+  ["packages/runtime/dist/spriteSheet.js", { bytes: 11824, sha256: "5f15aca4af6961cfd65f0e4c5243f7f81ccac9267056815d2401226b4d8dd00d" }],
+  ["packages/runtime/dist/NineSliceBitmap.js", { bytes: 6749, sha256: "b30062f359b294fba6bf32421779f42c23c7bdc63b20df00d7f66379f56696f8" }],
+  ["packages/runtime/dist/NineSliceGeometry2D.js", { bytes: 5487, sha256: "06373188c1f7abf86e593387c7ddc3c7ce745927be39bb06b6af840ddc404126" }],
+  ["packages/runtime/dist/ByteWriter.js", { bytes: 7375, sha256: "19ab3ae8e6213fd83f915e5ea8dd4baf5e9d1960e021fcf4a12d39b934f2df76" }],
+  ["packages/contracts/dist/resources/index.js", { bytes: 283, sha256: "2ea27b7090a99051f53c9a314142b34a01ac4f2831fce3435c0e7ccdc26335ea" }],
+  ["packages/runtime/dist/displayInputOperations.js", { bytes: 3210, sha256: "650e7037c3024c2efefd39e32bbf2d946560fc0495a21db2797a762cd36992e4" }],
+  ["packages/runtime/dist/SequencePlayer.js", { bytes: 3069, sha256: "1a5de3251dd6e98b63afa02b1a6e3105538c89671b27d32ba7a69c972c37715f" }],
+  ["packages/runtime/dist/sequenceClip.js", { bytes: 8216, sha256: "87a1aaf749638e90f5ace7a01b8b604ad8994c1ece39593c963be678519b2925" }],
+  ["packages/runtime/dist/Mesh2D.js", { bytes: 4604, sha256: "4e813aeb81bae9d15102aa383f8618d49767eb68046143eabbaddd71d5e52950" }],
+  ["packages/runtime/dist/Bitmap.js", { bytes: 23075, sha256: "075a6f146714c98fec748aeabe52e3cf38d0213eb6a4f868d7fb846bb59196b8" }],
+  ["packages/runtime/dist/Texture.js", { bytes: 7579, sha256: "fc0b399b96874a836c899d1bdae2fb48e70e7ad831fdfa5aeb32ebcecd32e00e" }],
+  ["packages/runtime/dist/sharedFrameCapture.js", { bytes: 19247, sha256: "81358a25a54262dca6439fee2710cc9b4255f43bd3e9b1aad6894f675f3028bc" }],
+  ["packages/runtime/dist/texturedFrameCapture.js", { bytes: 14352, sha256: "1f1520b64e3fbd174bd15cd803415c36ebfd932113d804188bdc6ee5c7c0452b" }],
+  ["packages/runtime/dist/frameCapture.js", { bytes: 8393, sha256: "0ea5d699ed3dbaff63904ed5fcb0cb1b99f10b9c5357740e6186f7dc6a8f9e72" }],
+  ["packages/runtime/dist/Graphics.js", { bytes: 1448, sha256: "c4637f250e7059ca46a313898d5afbbf283b2a164cbcabb9b3fd729fd69afeff" }],
+  ["packages/runtime/dist/Sprite.js", { bytes: 464, sha256: "75d96bf10122f2371ee9dcb5369336bfc9295dba8a8d350f49af19745a67cd24" }],
+  ["packages/runtime/dist/AssetRef.js", { bytes: 1218, sha256: "71f8764d8e825d946a308f6d75528bff9e2622780fb0625a8c662e202e46f024" }],
+  ["packages/runtime/dist/AssetLease.js", { bytes: 2698, sha256: "db4e5a3f9c29554eca36480e9f4e42e4aa63008f0ada90b09a9302db5f097e0f" }],
+  ["packages/runtime/dist/AssetManager.js", { bytes: 17534, sha256: "c84c30bf6487b95e176a20caec5f16828fb8a71374fc5428d123506913a46340" }],
+  ["packages/runtime/dist/diagnostics.js", { bytes: 549, sha256: "32711ffa07c5bfcedc4775756d3180d1c6969086d082be623d6bd1a40eab796f" }],
+  ["packages/runtime/dist/ByteReader.js", { bytes: 6839, sha256: "c8fd39e01476ff6961925a70caa90749cb808713bd89f8066f6340f0fdf2092a" }],
+  ["packages/engine/node_modules/robust-predicates/esm/util.js", { bytes: 3606, sha256: "7b6ed8737cbee96fb413a312e6aaadd84ce9e9594847949f7b4bc8b3dac2cd14" }],
+]);
+assert.equal(m15ModuleIdentities.size, m15SourceModuleLimit, 'M1.5 source closure table is incomplete');
+for (const name of m15ModuleIdentities.keys()) allowedModules.add(name);
+function assertCurrentClosure() {
+  assert.deepEqual([...served.keys()].map(url => url.slice(1)).sort(), [...m15ModuleIdentities.keys()].sort(),
+    'M1.5 complete emitted closure membership changed');
+}
 const registryName = 'packages/engine/dist/internal/texturedFrameState.js';
 const registrySourceName = 'packages/engine/src/internal/texturedFrameState.ts';
 const descriptor = (path, body) => ({ path, bytes: body.length, sha256: hash(body) });
@@ -241,16 +385,55 @@ function imported(source) {
   const names = [...source.matchAll(/(?:^|\n)\s*(?:import|export)\s+(?:[^'";]*?\bfrom\s+)?['"]([^'"\r\n]+)['"]/g)].map(match => match[1]);
   names.push(...[...source.matchAll(/\bimport\s*\(\s*['"]([^'"\r\n]+)['"]\s*\)/g)].map(match => match[1])); return names;
 }
+
+// Derive requests from each actual selected map. A negative window loads both
+// original Engine modules and selected copied scene/Host modules at distinct URLs.
+// This reuses the collector's literal scanner; it does not admit new served code.
+function deriveRequestCapacity(routes, publicMaps) {
+  const modes=['baseline','N1','N2','N3','N4','N5','S1','S2','SN1'];
+  assert.equal(JSON.stringify(publicMaps.map(row=>row.mode)),JSON.stringify(modes.slice(0,6)),'Fixed public maps required for request accounting');
+  const perWindow=modes.map(mode=>{
+    const copied=/^N[1-5]$/.test(mode),prefix=copied?'/copy/'+mode+'/':'/';
+    const selected=publicMaps.find(row=>row.mode===(copied?mode:'baseline')).map,visited=new Set();
+    function visit(url) {
+      if(visited.has(url))return;
+      const value=routes.get(url);assert.ok(value&&value.contentType==='text/javascript','Selected request route must already be served: '+url);
+      assert.ok(!url.startsWith('/copy/')||url.startsWith(prefix),'Foreign negative copy in selected request closure');
+      visited.add(url);
+      for(const specifier of imported(value.body.toString('utf8'))){
+        const relative=specifier.startsWith('./')||specifier.startsWith('../');
+        const scope=copied&&url.startsWith(prefix)?selected.scopes?.[prefix]:undefined;
+        const target=relative?new URL(specifier,'http://b1-request.invalid'+url).pathname:scope?.[specifier]??selected.imports[specifier];
+        assert.ok(typeof target==='string'&&target.startsWith('/')&&!target.startsWith('//'),'Unmapped selected request dependency: '+specifier);
+        visit(target);
+      }
+    }
+    visit('/fixture.mjs');
+    // The fixture's sole template import is this fixed private WGSL probe.
+    visit(prefix+'packages/engine/dist/web/webgpuMeshPass.js');
+    const modules=[...visited].filter(url=>/^\/(?:copy\/N[1-5]\/)?packages\//.test(url));
+    const companions=[...visited].filter(url=>!modules.includes(url)).sort();
+    assert.equal(JSON.stringify(companions),JSON.stringify(['/fixture.mjs','/oracle.mjs','/public-composition-oracle.mjs']),'Fixed companion closure required');
+    const html=copied?'/index-'+mode+'.html':'/index.html';assert.equal(routes.get(html)?.contentType,'text/html');
+    return {mode,modules:modules.length,companions:companions.length,html:1,favicon:1,routes:[html,...visited].sort(),limit:visited.size+2};
+  });
+  return {windows:modes.length,historical:1051,previous:1197,perWindow,current:perWindow.reduce((sum,row)=>sum+row.limit,0),
+    basis:'One request per reachable selected URL in each fixed window, plus its HTML and one historical favicon allowance; not observed browser traffic.'};
+}
 function dependency(specifier, parent) {
   return resolveB1Dependency(specifier, parent, { repository, aliases });
 }
 async function collect(name) {
   const url = '/' + name; if (served.has(url)) return;
   assert.ok(allowedModules.has(name), `Unapproved public native dependency: ${name}`);
-  assert.ok(served.size < 128, 'Finite emitted closure exceeded');
+  assert.ok(m15ModuleIdentities.has(name), `Unapproved M1.5 native dependency: ${name}`);
+  assert.ok(served.size < m15SourceModuleLimit, 'Finite emitted closure exceeded');
   const path = resolve(repository, name), physical = await realpath(path);
   assert.ok(physical.startsWith(repository + sep), 'Selected dependency escaped repository');
   const body = await readFile(physical); assert.ok(body.length <= 1024 * 1024);
+  const expected = m15ModuleIdentities.get(name);
+  assert.equal(body.length, expected.bytes, `M1.5 emitted byte length changed: ${name}`);
+  assert.equal(hash(body), expected.sha256, `M1.5 emitted raw identity changed: ${name}`);
   served.set(url, { body, contentType: 'text/javascript', identity: descriptor(name, body) });
   const bound = await identity(physical); assert.equal(bound.bytes, body.length); assert.equal(bound.sha256, hash(body), 'Emitted bytes changed during capture');
   for (const child of imported(body.toString('utf8'))) await collect(dependency(child, name));
@@ -327,16 +510,19 @@ try {
     resolve(repository, 'package.json'), resolve(repository, 'pnpm-lock.yaml'), resolve(repository, 'tsconfig.json'),
     ...['engine', 'contracts', 'runtime'].map(name => resolve(repository, `packages/${name}/package.json`))]) await identity(path);
   for (const name of entryNames) await collect(name);
+  assertCurrentClosure();
   const packageExports = JSON.parse((await readFile(resolve(repository, 'packages/engine/package.json'))).toString('utf8')).exports;
   assert.deepEqual(packageExports['./scene3d'], { types: './dist/rendering/scene3d.d.ts', import: './dist/rendering/scene3d.js' });
   assert.deepEqual(packageExports['./webgpu/scene3d'], { types: './dist/web/scene3d.d.ts', import: './dist/web/scene3d.js' });
   const currentHost = await identity(resolve(repository, 'packages/engine/web/WebGPUHost.ts'));
   const historicalM12HostSource = { bytes: 104705, sha256: 'e9d172d17cc9f45109dae7b7038485d63d2c8e572efd88fb74af918812045d1d' };
   const m13HostSourceSuccessor = {"bytes":134474,"sha256":"73c33a00ed99283e1e4d70867308ebc3550c905df881a1d79c714d6c80bbe5a0"};
-  assert.equal(currentHost.bytes, m13HostSourceSuccessor.bytes, 'Native acceptance binds the reviewed M1.3 Host successor');
-  assert.equal(currentHost.sha256, m13HostSourceSuccessor.sha256);
+  const m15HostSourceSuccessor = {"bytes":189815,"sha256":"f84a1de242e8b3efefc1bb4ccb344cb02b659d355b512c071cfccf7c1943bf10"};
+  assert.equal(currentHost.bytes, m15HostSourceSuccessor.bytes, 'Native acceptance binds the reviewed M1.5 Host successor');
+  assert.equal(currentHost.sha256, m15HostSourceSuccessor.sha256);
   report.publicRoute = { entries: entryNames.slice(0, 3), packageExports: { './scene3d': packageExports['./scene3d'], './webgpu/scene3d': packageExports['./webgpu/scene3d'] },
-    hostSource: currentHost, historicalM12HostSource, m13HostSourceSuccessor, privateDiagnostic: 'packages/engine/dist/web/webgpuMeshPass.js', allowedModules: [...allowedModules].sort() };
+    hostSource: currentHost, historicalM12HostSource, m13HostSourceSuccessor, m15HostSourceSuccessor,
+    sourceCollection: { historicalModuleLimit: historicalSourceModuleLimit, currentModuleLimit: m15SourceModuleLimit, exactModules: [...m15ModuleIdentities].map(([path, value]) => ({ path, ...value })) }, privateDiagnostic: 'packages/engine/dist/web/webgpuMeshPass.js', allowedModules: [...allowedModules].sort() };
   const emitted = [...served.values()].reduce((sum, value) => sum + value.body.length, 0); assert.ok(emitted <= 4 * 1024 * 1024);
   // Bind matching first-party source files without scanning unrelated repository files.
   for (const url of served.keys()) {
@@ -425,11 +611,11 @@ try {
     registryResolution: report.registryResolution, registryCaptureObservations: report.registryCaptureObservations,
     registryRecordingFailures: report.registryRecordingFailures, registryFailures: report.registryFailures,
     registryFailure: report.registryFailure, registryRecordingScope: report.registryRecordingScope });
-  // Nine fixed windows each own at most 128 SDK modules, three companions,
-  // one HTML page and one favicon request. The historical allowance was 1051.
-  const requestCapacity = { windows:9, modulesPerWindow:128, companions:3, html:1, favicon:1, historical:1024+3*9 };
-  const requestLimit = requestCapacity.windows * (requestCapacity.modulesPerWindow + requestCapacity.companions + requestCapacity.html + requestCapacity.favicon);
-  report.requestCapacity = {...requestCapacity,current:requestLimit};
+  // Preserve historical 1051/1197 receipts; the current quota follows all nine
+  // complete selected closures, including their original and copied URL union.
+  const requestCapacity = deriveRequestCapacity(served, report.publicImportMaps);
+  const requestLimit = requestCapacity.current;
+  report.requestCapacity = requestCapacity;
   server = createServer((request, response) => {
     const pathname = new URL(request.url, 'http://localhost').pathname, value = served.get(pathname);
     const observed = { method: request.method, pathname, status: value && request.method === 'GET' ? 200 : 404, bytes: value?.body.length ?? 0, sha256: value?.identity.sha256 ?? null };

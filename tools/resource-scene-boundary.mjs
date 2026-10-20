@@ -23,6 +23,7 @@ const MAP=Object.freeze({
   '@egret/runtime':'../../packages/runtime/dist/index.js',
   '@egret/runtime/text':'../../packages/runtime/dist/text/index.js',
   '@egret/contracts':'../../packages/contracts/dist/index.js',
+  '@egret/contracts/resources':'../../packages/contracts/dist/resources/index.js',
   '#egret-mouse-input':'../../packages/engine/dist/mouseInput.js',
   '#egret-textured-frame-state':'../../packages/engine/dist/internal/texturedFrameState.js',
   'robust-predicates':'../../packages/engine/node_modules/robust-predicates/index.js',
@@ -122,6 +123,19 @@ function moduleImports(source){
   return result;
 }
 
+// Fixed authored entry policy is shared by source collection and metadata refusal controls.
+export function validateResourceSceneEntries(metadata){
+  for(const [name,target]of Object.entries(MAP)){
+    if(name==='robust-predicates')continue;
+    const internal=name.startsWith('#'),packageName=internal?'engine':name.split('/')[1];
+    const prefix='../../packages/'+packageName+'/';
+    const subpath=name==='@egret/'+packageName?'.':'./'+name.slice(('@egret/'+packageName+'/').length);
+    const declaration=internal?metadata.engine.imports?.[name]:metadata[packageName].exports?.[subpath];
+    const expected='./'+target.slice(prefix.length);
+    if(!target.startsWith(prefix)||declaration?.import!==expected||declaration?.types!==expected.replace(/\.js$/,'.d.ts'))fail('RS_PACKAGE','Selected public/internal entry differs: '+name);
+  }
+}
+
 /** Collect exact original bytes; callers must separately review the resulting snapshot. */
 export async function collectResourceSceneSource({repository,applicationRoot=repository}={}){
   if(!absoluteInput(repository)||!absoluteInput(applicationRoot))fail('RS_OWNER','Full absolute input owners required');
@@ -187,15 +201,7 @@ export async function collectResourceSceneSource({repository,applicationRoot=rep
     const actual=metadata[name].dependencies??{},expected=dependencies[name];
     if(!exactKeys(actual,Object.keys(expected))||Object.keys(expected).some(key=>actual[key]!==expected[key]))fail('RS_PACKAGE','Dependency contract differs: '+name);
   }
-  for(const [name,target]of Object.entries(MAP)){
-    if(name==='robust-predicates')continue;
-    const internal=name.startsWith('#'),packageName=internal?'engine':name.split('/')[1];
-    const prefix='../../packages/'+packageName+'/';
-    const subpath=name==='@egret/'+packageName?'.':'./'+name.slice(('@egret/'+packageName+'/').length);
-    const declaration=internal?metadata.engine.imports?.[name]:metadata[packageName].exports?.[subpath];
-    const expected='./'+target.slice(prefix.length);
-    if(!target.startsWith(prefix)||declaration?.import!==expected||declaration?.types!==expected.replace(/\.js$/,'.d.ts'))fail('RS_PACKAGE','Selected public/internal entry differs: '+name);
-  }
+  validateResourceSceneEntries(metadata);
   for(const key of ['package.json','pnpm-lock.yaml','pnpm-workspace.yaml','tsconfig.base.json','tsconfig.json',
     'packages/engine/tsconfig.json','packages/engine/tsconfig.web.json','packages/engine/tsconfig.rendering.json',
     'packages/runtime/tsconfig.json','tools/build.mjs',HELPER,'LICENSE'])pinned('sdk',key,'build-or-source-provenance');

@@ -14,15 +14,16 @@ export interface WebGPURetentionPool {
     reserveReturns(leases: readonly RetentionLease[]): RetentionReturnPlan;
     publishReturns(plan: RetentionReturnPlan): readonly RetentionHandle[];
     cancelReturns(plan: RetentionReturnPlan): readonly RetentionHandle[];
-    detach(handle: RetentionHandle): void; destroyed(handle: RetentionHandle, succeeded: boolean): void;
+    detach(handle: RetentionHandle): void; destroyed(handle: RetentionHandle, succeeded: boolean): void; contextInvalidated(handle: RetentionHandle): void;
     invalidate(): void; detachIdleForClose(): readonly RetentionHandle[];
 }
 
 import { createRetentionLedger } from './sharedRetentionLedger.js';
+import type { RetentionLedgerDiagnostics } from './sharedRetentionLedger.js';
 
 /** Preserve WebGPU descriptor admission while sharing callback-free lease ownership. */
-export function createWebGPURetentionPool(session: object): WebGPURetentionPool {
-    const ledger = createRetentionLedger<RetentionRequest, OwnedWebGPUBuffer | OwnedWebGPUTexture>(session);
+export function createWebGPURetentionPool(session: object, diagnostics?:RetentionLedgerDiagnostics): WebGPURetentionPool {
+    const ledger = createRetentionLedger<RetentionRequest, OwnedWebGPUBuffer | OwnedWebGPUTexture>(session,diagnostics);
     function validateRequest(request: RetentionRequest): void {
         if (!Number.isSafeInteger(request.id) || request.id < 0 || !Number.isSafeInteger(request.byteLength)
             || request.byteLength <= 0 || request.byteLength % 4 !== 0) throw new TypeError('Invalid retention request');
@@ -67,6 +68,7 @@ export function createWebGPURetentionPool(session: object): WebGPURetentionPool 
         cancelReturns: plan => ledger.cancelReturns(plan) as readonly RetentionHandle[],
         detach: handle => ledger.detach(handle),
         destroyed: (handle, succeeded) => ledger.settled(handle, succeeded ? 'destroyed' : 'unknown'),
+        contextInvalidated: handle => ledger.settled(handle, 'context-invalidated'),
         invalidate: () => ledger.invalidate(),
         detachIdleForClose: () => ledger.detachIdleForClose() as readonly RetentionHandle[],
     };

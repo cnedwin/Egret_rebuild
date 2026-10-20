@@ -4,6 +4,12 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## M1.5 recovery verification — 2026-10-20
+
+M1.5 adds resource manifests, dependency-aware loading and shared resource ownership, with bounded integrity-checked loading, staged uploads and unified WebGL2/WebGPU recovery. Its seven fixed recovery cases on Windows / Chrome for Testing 157.0.8103.6 and the affected browser regression have passed independent review. WebGL2 and WebGPU each completed 100 resource cycles, ten native loss/recovery cycles and 30 minutes of foreground operation. At this verification cutoff, final package review, protected M1.5 merge checks and M1.2 formal performance acceptance still required completion. See the [verification record](docs/resource-recovery-evidence.md).
+
+Workflow simplification was separately merged through [PR #78](https://github.com/cnedwin/Egret_rebuild/pull/78). Delivery is recorded in the repository's [pull requests](https://github.com/cnedwin/Egret_rebuild/pulls); earlier entries retain their recorded cutoffs.
+
 ## M1.3 candidate — shared texture pages and rendering
 
 An explicit shared profile separates source pages, logical texture regions, material state and completed-frame identity. Several atlas regions share a canonical upload; trim/rotation, nine-slice, two-color tint, ordered boundaries and bounded target reuse support complex 2D interfaces. The finite linear B1 path composes opaque 3D with shared UI before one final output conversion. Existing color profiles remain available.

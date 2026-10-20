@@ -33,7 +33,7 @@ Bitmap 资源槽借用应用的初始服装绑定，只拥有后续新获取的�
 
 Ahem 覆盖固定的 `X X`/`XX` 场景。原始 Noto Sans SC normal-400 发布者子集用于指定的 `左侧 已选择` 和 `右侧 已选择`，保留原始 WOFF2、发布者 CSS 以及 OFL 和版权声明。FontFace 成员身份、精确选中的字体和 load/check 结果用于确认应用准备状态；通用覆盖及 Canvas 内部字体选择另有证据要求。
 
-[可移植参考元数据](https://github.com/cnedwin/Egret_rebuild/blob/main/tools/resource-scene/reference/manifest.json)记录两份没有使用白鹭或应用生成的原始 Canvas RGBA 测量。它们仅适用于 Edge 155.0.4283.45、Playwright 1.62.1、Windows build 10.0.26300/x64、记录的字体和 12px 场景。固定源区域 (4,4,64,16) 按声明的基线推导，平移 (68,4) 到场景区域 (72,8,64,16)。白字源 alpha 在预设黑色或蓝色背景上合成。仅半透明文字 RGB 允许一个字节的 UNORM 舍入差异；不透明 RGB、alpha 和字面点严格相等，不进行画面对齐或调色拟合。
+[可移植参考元数据](https://github.com/cnedwin/Egret_rebuild/blob/main/tools/resource-scene/reference/manifest.json)记录两份没有使用白鹭或应用生成的原始 Canvas RGBA 测量。原始测量保留 Edge 155.0.4283.45、Playwright 1.62.1、Windows build 10.0.26300/x64、记录的字体和 12px 场景。另一次直接 Canvas 测量在 Edge 155.0.4283.62 上复现了完全一致的两份完整参考缓冲及每个字符串的十二项度量。因此当前准入仅接受这两个精确浏览器版本，其他环境字段保持不变；原 manifest 和参考数据不作修改。参考等价本身不代表新的原生场景验收通过。固定源区域 (4,4,64,16) 按声明的基线推导，平移 (68,4) 到场景区域 (72,8,64,16)。白字源 alpha 在预设黑色或蓝色背景上合成。仅半透明文字 RGB 允许一个字节的 UNORM 舍入差异；不透明 RGB、alpha 和字面点严格相等，不进行画面对齐或调色拟合。
 
 ## 重建与关闭
 

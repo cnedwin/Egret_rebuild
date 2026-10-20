@@ -172,6 +172,9 @@ function installPairObserver() {
 
 // Exact existing Canvas/root closure plus the finite MI1 modules; no prefixes/wildcards.
 const allowedModules = new Set([
+  // Exact M1.5 CPU resource admission closure; no browser byte/decode provider.
+  'packages/engine/dist/manifestAssetGroup.js', 'packages/engine/dist/manifestResourceState.js',
+  'packages/contracts/dist/resources/index.js', 'packages/contracts/dist/resources/manifestAdmission.js', 'packages/contracts/dist/resources/sha256.js',
   // M1 current root/Canvas closure: five exact CPU modules; GPU entries remain excluded.
   "packages/contracts/dist/SharedGeometry2D.js",
   "packages/contracts/dist/SharedMaterial2D.js",
@@ -210,16 +213,18 @@ try {
   const entries = {
     '@egret/engine': path.join(repository, 'packages/engine/dist/index.js'), '@egret/engine/web': path.join(repository, 'packages/engine/dist/web/index.js'),
     '@egret/engine/web/input': path.join(repository, 'packages/engine/dist/web/input.js'), '@egret/runtime': path.join(repository, 'packages/runtime/dist/index.js'),
-    '@egret/contracts': path.join(repository, 'packages/contracts/dist/index.js'), '#egret-textured-frame-state': path.join(repository, 'packages/engine/dist/internal/texturedFrameState.js'),
+    '@egret/contracts': path.join(repository, 'packages/contracts/dist/index.js'), '@egret/contracts/resources': path.join(repository, 'packages/contracts/dist/resources/index.js'), '#egret-textured-frame-state': path.join(repository, 'packages/engine/dist/internal/texturedFrameState.js'),
     '#egret-mouse-input': path.join(repository, 'packages/engine/dist/mouseInput.js'),
   };
+  const resourcesPackagePath = path.join(repository, 'packages/contracts/package.json'), resourcesPackage = JSON.parse(await readFile(resourcesPackagePath, 'utf8'));
+  if (resourcesPackage.name !== '@egret/contracts' || resourcesPackage.exports?.['./resources']?.import !== './dist/resources/index.js' || resourcesPackage.exports['./resources'].types !== './dist/resources/index.d.ts') throw new Error('Genuine published contracts/resources package subpath');
   graph = await helper.sealGraph({ repositoryRoot: repository, entryPaths: { canvas: [entries['@egret/engine'], entries['@egret/engine/web'], entries['@egret/engine/web/input']] }, aliases: entries, maxModules: 128, maxBytes: 4194304 });
   for (const module of graph.modules) {
     const relative = path.relative(repository, module.path).replaceAll(path.sep, '/');
     if (!allowedModules.has(relative)) throw new Error('Exact MI1 module allowlist refuses: ' + relative);
   }
   report.inputs.before = [...graph.inventory, ...await Promise.all(artifactPaths.map(name => pin(path.join(applicationRoot, name), 'native-package'))),
-    await pin(helperPath, 'shared-exact-graph-helper'), await pin(path.join(repository, 'packages/engine/package.json'), 'package-private-alias-contract')].sort((a, b) => a.path.localeCompare(b.path));
+    await pin(helperPath, 'shared-exact-graph-helper'), await pin(path.join(repository, 'packages/engine/package.json'), 'package-private-alias-contract'), await pin(resourcesPackagePath, 'contracts-resources-package-subpath')].sort((a, b) => a.path.localeCompare(b.path));
   if (report.inputs.before.length > 256) throw new Error('Finite input inventory exceeded');
   report.sdkGraph = { modules: graph.modules, closures: graph.closures, totalBytes: graph.totalBytes };
   const app = Object.fromEntries(await Promise.all(['index.html', 'main.mjs', 'scene.mjs'].map(async name => [name, await readFile(path.join(applicationRoot, 'examples/mouse-input', name), 'utf8')])));

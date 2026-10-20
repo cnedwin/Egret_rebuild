@@ -14,6 +14,11 @@ export interface BitmapCaptureState {
   readonly height: number;
 }
 
+/** Call-local internal read view; it grants no lease or published-state authority. */
+export interface BitmapCaptureView {
+  read(node: DisplayObject): BitmapCaptureState | undefined;
+}
+
 // One authoritative slot table, moved from Bitmap without duplicating geometry.
 // Resource references remain type-only; revisions retain no resource ownership.
 const states = new WeakMap<object, BitmapCaptureState | undefined>();

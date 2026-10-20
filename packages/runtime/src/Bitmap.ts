@@ -5,9 +5,12 @@ import { isAssetLease, readAssetLeaseValue } from "./AssetLease.js";
 import { AssetLease } from "./AssetLease.js";
 import { DisplayObject } from "./DisplayObject.js";
 import { hasBitmapState, readBitmapState, writeBitmapState } from "./bitmapDisplayState.js";
-import type { BitmapCaptureState } from "./bitmapDisplayState.js";
+import type { BitmapCaptureState, BitmapCaptureView } from "./bitmapDisplayState.js";
 export type { BitmapCaptureState } from "./bitmapDisplayState.js";
-import { assertLive, isTerminated } from "./displayTreeState.js";
+import { assertLive, isStageRoot, isTerminated } from "./displayTreeState.js";
+import type { Stage } from './Stage.js';
+import { collectPreparedSharedFrameContent } from './sharedFrameCapture.js';
+import type { CapturedSharedContent2D } from './sharedFrameCapture.js';
 import { EgretError } from "./EgretError.js";
 import { claimOwner, ownerOf, commitBinding, engineOf } from "./ownership.js";
 import type { EngineContext } from "./ownership.js";
@@ -210,6 +213,35 @@ function operationsFor(context: EngineContext): ResourceTargetOperations {
       batchPreparedStates.delete(prepared);
       for (let index = 0; index < entry.targets.length; index++) writeBitmapState(entry.targets[index]!, candidate.states[index]!);
       return publication;
+    },
+    capturePreparedSharedContent(stage: Stage, captured: object, prepared: object): CapturedSharedContent2D {
+      const entry = capturedBatch(captured), candidate = batchPreparedStates.get(prepared);
+      if (candidate === undefined || candidate.captured !== captured) throw new EgretError('BITMAP_RESOURCE_PREPARED_INVALID');
+      const validate = (): void => {
+        if (batchCaptures.get(captured) !== entry || batchPreparedStates.get(prepared) !== candidate) {
+          throw new EgretError('BITMAP_RESOURCE_PREPARED_INVALID');
+        }
+        if (!isStageRoot(stage)) throw new EgretError('FRAME_STAGE_INVALID');
+        affinity(stage);
+        batchAffinity(entry.targets); batchLife(entry.targets);
+        for (let index = 0; index < entry.targets.length; index++) {
+          if (mutations.has(entry.targets[index]!)) throw new EgretError('BITMAP_MUTATION_REENTRANT');
+        }
+        expectedBatch(entry);
+        oldBatchImages(entry);
+        for (let index = 0; index < candidate.states.length; index++) batchImage(candidate.states[index]!.lease);
+      };
+      validate();
+      const selected = new Map<DisplayObject, BitmapCaptureState>();
+      for (let index = 0; index < entry.targets.length; index++) selected.set(entry.targets[index]!, candidate.states[index]!);
+      // The completed map never escapes this frozen view or receives another write.
+      // Whole states preserve crop, logical dimensions, rotation and atlas metadata.
+      const view: BitmapCaptureView = freezeResourceOperations({
+        read(node: DisplayObject): BitmapCaptureState | undefined { return selected.get(node) ?? readBitmapState(node); },
+      });
+      const content = collectPreparedSharedFrameContent(stage, view);
+      validate();
+      return content;
     },
     clearBatchIfCurrent(publication: object): void {
       const entry = batchPublications.get(publication);
