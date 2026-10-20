@@ -24,8 +24,8 @@
       "action": "move-pair",
       "previousZhSha256": "ca2be6243c614a900ed12f1b46649155f215a4827e04818e025bad8d03f8af9e",
       "previousEnSha256": "7e72f6245d7c86551dc2640356416b8b06a2d80872f262daf227f98142eac7ae",
-      "currentZhSha256": "83ef3b1c9f4ea76163597b618c233490bc3fe14c767e3c73627cb04992c58004",
-      "currentEnSha256": "88ba0530c327e33096c278965bbbe53580cd86529fee9e6a17b517962a43dfb0"
+      "currentZhSha256": "6eded58ec7c5909ad478cb055187f69b6e5e8868670fd6d3cfdd9e8b1d968a49",
+      "currentEnSha256": "cd8b9c528083efddcbf35aac973530a3c65923fcf5de75120a8de5d36ea963ee"
     },
     {
       "oldZh": "CONTRIBUTING.md",
@@ -85,8 +85,8 @@
       "action": "move-pair",
       "previousZhSha256": "f43625255269c8801af0929179a9aab32cbca58094e4a842797e39171fc549b0",
       "previousEnSha256": "e8b100ccbd9d0fb99237a564f484f7fa6dbf008191570fa58f3e481c05c3e9f9",
-      "currentZhSha256": "b33106716a24c6928c7164db89fee2331e634102bba20346abd194e9986b2da2",
-      "currentEnSha256": "e5433e72356827eb31e3b66d3a8d8d6b344dff4983ab80a5a40e3f44bb76e3ab",
+      "currentZhSha256": "9e663a16f329dc75e80d4038e74958a757b906e34870075274b2b7ae17ea74dd",
+      "currentEnSha256": "a11d37cdad58e9190e3b0d1d39166af95ea8fb0d96f64befd6cb6623258110bc",
       "currentEngineeringPreview": "0.61.0"
     },
     {
@@ -964,8 +964,8 @@
       "action": "move-pair",
       "previousZhSha256": "803a40dd8bfd0f98ade51c8ba736790509aae12a6e045a8ea688b3ff5d01cdcf",
       "previousEnSha256": "40a2ef2f686aba4a10279c417dfe17879bb6396b3b80dd75b26bd09c87d665f9",
-      "currentZhSha256": "04033dcb935a154b9b46b5ec85ce295c7cb6be1c43b85254ede56efa84b343f2",
-      "currentEnSha256": "b67380f74fd7e7db877a9c2b497aecb4cac49aa786ec8688b728d35097587dd8",
+      "currentZhSha256": "0cc7b4440f4f8a53c7d878f434cd048d58f75d173e8afbdf4213464c3840b1f1",
+      "currentEnSha256": "4b6ad958f4b87212ac7ad71ec9e427efee2707293bb1121df8cd8d709fa4f0b7",
       "currentEngineeringPreview": "0.61.0"
     },
     {
@@ -1303,8 +1303,8 @@
       "action": "move-pair",
       "previousZhSha256": "852b4de3543ae953391688b959531a660395cffa46ed2041bd72e71f215af54a",
       "previousEnSha256": "8748365aa21b0d473b380b366f5d6695f10612c7bbafc9ae742c551f07f6fc15",
-      "currentZhSha256": "3d4407434d660f444958cccd9d25348323a6721708f545f872caf919dee40961",
-      "currentEnSha256": "8ad85b7191fb43b30158dd66d7c82c902e52ca84eb8f50a1736889fb715a79d1"
+      "currentZhSha256": "d1a8ce0a3a936cdd2ef9a3f4cdd7c2f3f58ce957ce407b1c138d9c841a2555ce",
+      "currentEnSha256": "5b1a5fa83806fb8f5a2d6e89431c93cad8d61abe18ee1ab6830500ffdf982cf4"
     },
     {
       "newZh": "knowledge-base/Cns/docs/Spine动画支持需求与验收.md",
@@ -1861,8 +1861,8 @@
       "newZh": "knowledge-base/Cns/docs/resource-scene-integration.md",
       "kind": "public_reading",
       "action": "add-current-pair",
-      "currentEnSha256": "41ed75dbb20dc238dbf82b557a7f4539a8a2a372ed9ba1f3774cc994d04844df",
-      "currentZhSha256": "8eccdd518b4944621dee49ea8ec851ad7faa5a1d279609601c91d76860741792",
+      "currentEnSha256": "efaf4599cacfbbe3741d9496903d34125eb90160bc7855da1e114f381170ecf8",
+      "currentZhSha256": "e8f3424cf73c51b9bdb890f8eeb175697f8e476718f6650a357133999ef56721",
       "engineeringPreview": "0.57.0",
       "status": "CURRENT_READING_SOURCE"
     },
@@ -1881,8 +1881,8 @@
       "newZh": "knowledge-base/Cns/docs/prepared-resource-groups-evidence.md",
       "kind": "public_reading",
       "action": "add-current-pair",
-      "currentEnSha256": "4799edb8e647bae0a23226e148322c39e2dc6eb642da5e1d3fc9b6b8d3c177a1",
-      "currentZhSha256": "c53eafd0e6f5b9d0a4ecde20d039bb55b423191e00a144b23a55b724f47166ba",
+      "currentEnSha256": "51f92b0d9d3eb1a24b7f8a920beb40bc13fded5c21d694d87cc6ded1caeb7e81",
+      "currentZhSha256": "862604e4cf1c5886edf52b33326a213788366b0cb5e60b1fbaafd99e8fa151f3",
       "engineeringPreview": "0.58.0",
       "status": "CURRENT_READING_SOURCE"
     },
@@ -2028,8 +2028,8 @@
       "kind": "public_reading",
       "action": "add-current-pair",
       "status": "CURRENT_READING_SOURCE",
-      "currentEnSha256": "f9e3c210ba92c7c0c63414055126249d5d4d6eaa080cfbc7355e1072427ec62d",
-      "currentZhSha256": "628358879742939b4226e1bfdd8ff8867d4d76b2e940ad41f5fbdeecbd8c16f9"
+      "currentEnSha256": "7d2508456bbf82742399b93a73f7c06469bdc967cb0f1fa8db66d0bdfef4141a",
+      "currentZhSha256": "60175c787f06f5c4f55956c51fc973a5825ddf8c91c274da7c2f37b279364125"
     },
     {
       "newEn": "knowledge-base/en/docs/m0-community-foundations.md",

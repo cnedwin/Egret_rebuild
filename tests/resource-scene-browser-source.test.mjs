@@ -24,6 +24,7 @@ const expectedMap=Object.freeze({
   '@egret/runtime':'../../packages/runtime/dist/index.js',
   '@egret/runtime/text':'../../packages/runtime/dist/text/index.js',
   '@egret/contracts':'../../packages/contracts/dist/index.js',
+  '@egret/contracts/resources':'../../packages/contracts/dist/resources/index.js',
   '#egret-mouse-input':'../../packages/engine/dist/mouseInput.js',
   '#egret-textured-frame-state':'../../packages/engine/dist/internal/texturedFrameState.js',
   'robust-predicates':'../../packages/engine/node_modules/robust-predicates/index.js',
@@ -42,7 +43,7 @@ function originalMap(html){
 }
 function exactMap(value){
   assert.deepEqual(Object.keys(value),['imports'],'no scopes or additional import-map authority');
-  assert.deepEqual(value.imports,expectedMap,'all fourteen exact original aliases');
+  assert.deepEqual(value.imports,expectedMap,'all fifteen exact selected aliases');
 }
 function canvasPort(){
   const draws=[],contexts=[];
@@ -113,10 +114,18 @@ test('P02 browser composition has genuine public prerequisites and finite source
   await t.test('the original authored map is exact and its runtime-text/scopes/wildcard controls reject',()=>{
     const baseline=originalMap(read(example+'index.html'));exactMap(baseline);
     for(const change of [value=>{delete value.imports['@egret/runtime/text'];},
+      value=>{delete value.imports['@egret/contracts/resources'];},
+      value=>{value.imports['@egret/contracts/resources']='../../packages/contracts/dist/index.js';},
       value=>{value.scopes={'/':{'@egret/engine':'./other.mjs'}};},
       value=>{value.imports['@egret/engine/']='../../packages/engine/dist/';}]){
-      exactMap(originalMap(read(example+'index.html')));
-      const bad=structuredClone(baseline);change(bad);assert.throws(()=>exactMap(bad),{code:'ERR_ASSERTION'});
+      const failures=[];
+      try{exactMap(originalMap(read(example+'index.html')));}catch(error){failures.push(error);}
+      if(failures.length===0){
+        try{const bad=structuredClone(baseline);change(bad);assert.throws(()=>exactMap(bad),{code:'ERR_ASSERTION'});}
+        catch(error){failures.push(error);}
+      }
+      try{exactMap(originalMap(read(example+'index.html')));}catch(error){failures.push(error);}
+      if(failures.length)throw new AggregateError(failures,'authored map refusal and complete baseline');
     }
   });
   await t.test('browser main exists and its literal imports preserve the public/static Canvas boundary',()=>{

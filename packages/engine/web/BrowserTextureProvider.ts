@@ -3,6 +3,7 @@ import { createImageData2D, IMAGE_LIMITS_2D } from '@egret/contracts';
 import type { CancellationSignal, ImageData2D } from '@egret/contracts';
 import { createTexture, Texture, EgretError } from '@egret/runtime';
 import type { AssetProvider, AssetRef, AssetLoadContext } from '@egret/runtime';
+import type { ManifestPngOwner, ManifestPngJob } from './ManifestByteSource.js';
 
 export interface BrowserPngDecodeOptions {
     readonly imageOrientation: 'from-image';
@@ -22,6 +23,29 @@ export interface BrowserTextureProvider extends AssetProvider<Texture> {
     readonly isClosed: boolean;
     close(): Promise<void>;
 }
+interface ManifestTextureProviderCounters {
+    readonly jobs: number;
+    readonly encodedCreditBytes: number;
+    readonly ownedEncodedBytes: number;
+    readonly blobLogicalBytes: number;
+    readonly activeDecodes: number;
+    readonly bitmapLogicalBytes: number;
+    readonly rasterLogicalBytes: number;
+    readonly readbackCpuBytes: number;
+    readonly materializedCpuBytes: number;
+    readonly quarantinedJobs: number;
+    readonly unknownNativeObjects: number;
+}
+export interface ManifestTextureProviderStatus {
+    readonly current: ManifestTextureProviderCounters;
+    readonly highWater: ManifestTextureProviderCounters;
+    readonly saturated: boolean;
+}
+export interface ManifestTextureProvider extends BrowserTextureProvider {
+    getStatus(): ManifestTextureProviderStatus;
+}
+/** Fixed private assembly options; no public lifecycle callbacks. */
+export interface ManifestPngProviderOptions { readonly ports?: BrowserPngPorts; }
 
 // Normal-realm intrinsics protect byte admission from instance getters/species.
 const Bytes = Uint8Array;
@@ -40,6 +64,9 @@ const resizableGetter = Object.getOwnPropertyDescriptor(ArrayBuffer.prototype, '
 const detachedGetter = Object.getOwnPropertyDescriptor(ArrayBuffer.prototype, 'detached')?.get;
 const setBytes = typedPrototype.set;
 const MAX_JOBS = 4, MAX_BYTES = 8_388_608, MAX_TOTAL_BYTES = 33_554_432, MAX_CHUNKS = 1_024;
+const statusFields = ['jobs', 'encodedCreditBytes', 'ownedEncodedBytes', 'blobLogicalBytes', 'activeDecodes',
+    'bitmapLogicalBytes', 'rasterLogicalBytes', 'readbackCpuBytes', 'materializedCpuBytes', 'quarantinedJobs', 'unknownNativeObjects'] as const;
+type MutableProviderCounters = { -readonly [K in keyof ManifestTextureProviderCounters]: number };
 type Operation = (...args: never[]) => unknown;
 type RecordValue = Record<string, unknown>;
 interface PngSize { readonly width: number; readonly height: number; }
@@ -53,6 +80,18 @@ interface CapturedPorts {
     readonly nativeClose: Operation | undefined;
 }
 interface SuppliedMethods { readonly receiver: object; readonly decode: Operation; readonly canvas: Operation; }
+/** Scalars only: original Job references remain the sole resource owners. */
+interface JobDiagnostics {
+    blobBytes: number;
+    decodeActive: boolean;
+    bitmapBytes: number;
+    bitmapUnsafe: boolean;
+    surfaceWidth: number | undefined;
+    surfaceHeight: number | undefined;
+    surfaceUnsafe: boolean;
+    readbackBytes: number;
+    materializedBytes: number;
+}
 interface Job {
     settled: boolean;
     credit: number;
@@ -62,6 +101,7 @@ interface Job {
     bitmapClose: Operation | undefined;
     canvas: object | undefined;
     uncertainSurface: object | undefined;
+    readonly diagnostics: JobDiagnostics | undefined;
 }
 function fault(code: string, cause: unknown): EgretError {
     return new EgretError('WEB_PNG_' + code, { cause });
@@ -184,8 +224,19 @@ function capturePorts(supplied: SuppliedMethods | undefined): CapturedPorts {
 
 /** Caller owns async close; managers own issued Textures and their final demand. */
 export function createBrowserTextureProvider(options: BrowserTextureProviderOptions): BrowserTextureProvider {
+    return assembleBrowserTextureProvider(options);
+}
+
+/** Called only by the authenticated optional resource entry. */
+export function createManifestPngTextureProvider(owner: ManifestPngOwner, options: ManifestPngProviderOptions): ManifestTextureProvider {
+    return assembleBrowserTextureProvider(options, owner);
+}
+
+function assembleBrowserTextureProvider(options: ManifestPngProviderOptions, owner: ManifestPngOwner): ManifestTextureProvider;
+function assembleBrowserTextureProvider(options: BrowserTextureProviderOptions): BrowserTextureProvider;
+function assembleBrowserTextureProvider(options: BrowserTextureProviderOptions | ManifestPngProviderOptions, owner?: ManifestPngOwner): BrowserTextureProvider {
     if (!record(options)) throw fault('OPTIONS_INVALID', new TypeError('PNG provider options must be a record'));
-    const reader = descriptor(options, 'readBytes'), supplied = descriptor(options, 'ports');
+    const reader = owner === undefined ? descriptor(options, 'readBytes') : undefined, supplied = descriptor(options, 'ports');
     let suppliedMethods: SuppliedMethods | undefined;
     if (supplied !== undefined) {
         if (!record(supplied)) throw fault('OPTIONS_INVALID', new TypeError('PNG ports must be a record'));
@@ -193,14 +244,51 @@ export function createBrowserTextureProvider(options: BrowserTextureProviderOpti
         if (!functionValue(decode) || !functionValue(canvas)) throw fault('OPTIONS_INVALID', new TypeError('PNG port methods required'));
         suppliedMethods = { receiver: supplied, decode, canvas };
     }
-    if (!functionValue(reader)) throw fault('OPTIONS_INVALID', new TypeError('PNG reader must be a function'));
+    if (owner === undefined && !functionValue(reader)) throw fault('OPTIONS_INVALID', new TypeError('PNG reader must be a function'));
     const readBytesOperation = reader;
     const ports = capturePorts(suppliedMethods);
-    let closed = false, occupied = 0, encoded = 0;
+    let closed = false, occupied = 0, encoded = 0, manifestAdmissions = 0;
     let closePromise: Promise<void> | undefined;
     let resolveClose: (() => void) | undefined, rejectClose: ((cause: unknown) => void) | undefined;
     const jobs: Job[] = [], handles = new WeakSet<object>(), issued = new WeakMap<Texture, boolean>();
+    const manifestRuns = new Map<ManifestPngJob, Job | undefined>();
+    const highWater: MutableProviderCounters = { jobs: 0, encodedCreditBytes: 0, ownedEncodedBytes: 0, blobLogicalBytes: 0,
+        activeDecodes: 0, bitmapLogicalBytes: 0, rasterLogicalBytes: 0, readbackCpuBytes: 0, materializedCpuBytes: 0,
+        quarantinedJobs: 0, unknownNativeObjects: 0 };
+    let saturated = false;
     let provider: BrowserTextureProvider;
+    function currentStatus(): ManifestTextureProviderCounters {
+        const current: MutableProviderCounters = { jobs: occupied, encodedCreditBytes: encoded, ownedEncodedBytes: 0, blobLogicalBytes: 0,
+            activeDecodes: 0, bitmapLogicalBytes: 0, rasterLogicalBytes: 0, readbackCpuBytes: 0, materializedCpuBytes: 0,
+            quarantinedJobs: 0, unknownNativeObjects: 0 };
+        for (const job of jobs) {
+            const info = job.diagnostics!;
+            if (job.bytes !== undefined) current.ownedEncodedBytes += job.credit;
+            current.blobLogicalBytes += info.blobBytes;
+            if (info.decodeActive) current.activeDecodes++;
+            if (job.bitmap !== undefined) {
+                current.bitmapLogicalBytes += info.bitmapBytes;
+                if (info.bitmapUnsafe) current.unknownNativeObjects++;
+            }
+            if (job.canvas !== undefined) {
+                if (info.surfaceWidth !== undefined && info.surfaceHeight !== undefined) current.rasterLogicalBytes += 4 * info.surfaceWidth * info.surfaceHeight;
+                if (info.surfaceUnsafe) current.unknownNativeObjects++;
+            } else if (job.uncertainSurface !== undefined) current.unknownNativeObjects++;
+            current.readbackCpuBytes += info.readbackBytes;
+            current.materializedCpuBytes += info.materializedBytes;
+            if (job.settled) current.quarantinedJobs++;
+        }
+        return current;
+    }
+    function sampleStatus(): void {
+        if (owner === undefined) return;
+        const current = currentStatus();
+        for (const key of statusFields) {
+            const value = current[key];
+            if (value > Number.MAX_SAFE_INTEGER) { highWater[key] = Number.MAX_SAFE_INTEGER; saturated = true; }
+            else if (value > highWater[key]) highWater[key] = value;
+        }
+    }
     function gate(): void { if (closed) throw fault('PROVIDER_CLOSED', new TypeError('PNG provider is closed')); }
     function checkpoint(signal: CancellationSignal): void {
         gate();
@@ -221,7 +309,7 @@ export function createBrowserTextureProvider(options: BrowserTextureProviderOpti
         try { return apply(operation, receiver, args); } catch (cause) { throw fault(code, cause); }
     }
     function closeWhenSettled(): void {
-        if (!closed || closePromise === undefined || jobs.some(job => !job.settled)) return;
+        if (!closed || closePromise === undefined || manifestAdmissions !== 0 || manifestRuns.size !== 0 || jobs.some(job => !job.settled)) return;
         // jobs retain admission order; quarantine reasons retain observation order.
         const reasons = jobs.flatMap(job => job.reasons);
         if (reasons.length) rejectClose!(new EgretError('WEB_PNG_CLOSE_INCOMPLETE', { cause: reasons[0], cleanupErrors: reasons }));
@@ -231,8 +319,12 @@ export function createBrowserTextureProvider(options: BrowserTextureProviderOpti
     function retire(job: Job): unknown[] {
         const cleanup: unknown[] = [];
         if (job.bitmap !== undefined && job.bitmapClose !== undefined) {
-            try { apply(job.bitmapClose, job.bitmap, []); job.bitmap = undefined; job.bitmapClose = undefined; }
-            catch (cause) { cleanup.push(cause); retain(job, cause); }
+            try {
+                apply(job.bitmapClose, job.bitmap, []); job.bitmap = undefined; job.bitmapClose = undefined;
+                if (job.diagnostics) { job.diagnostics.bitmapBytes = 0; job.diagnostics.bitmapUnsafe = false; }
+                sampleStatus();
+            }
+            catch (cause) { if (job.diagnostics) job.diagnostics.bitmapUnsafe = true; cleanup.push(cause); retain(job, cause); sampleStatus(); }
         }
         if (job.canvas !== undefined) {
             let clean = true;
@@ -241,9 +333,12 @@ export function createBrowserTextureProvider(options: BrowserTextureProviderOpti
                 try {
                     (job.canvas as RecordValue)[key] = 0;
                     if ((job.canvas as RecordValue)[key] !== 0) throw new TypeError('Canvas retirement reset was not accepted');
-                } catch (cause) { clean = false; cleanup.push(cause); retain(job, cause); }
+                    if (job.diagnostics) { if (key === 'width') job.diagnostics.surfaceWidth = 0; else job.diagnostics.surfaceHeight = 0; }
+                    sampleStatus();
+                } catch (cause) { if (job.diagnostics) job.diagnostics.surfaceUnsafe = true; clean = false; cleanup.push(cause); retain(job, cause); sampleStatus(); }
             }
             if (clean) job.canvas = undefined;
+            sampleStatus();
         }
         return cleanup;
     }
@@ -251,10 +346,11 @@ export function createBrowserTextureProvider(options: BrowserTextureProviderOpti
         if (!record(value)) throw fault('BITMAP_INVALID', new TypeError('Decoded bitmap object required'));
         if (handles.has(value)) { const cause = new TypeError('Bitmap identity was already observed'); retain(job, cause); throw fault('BITMAP_INVALID', cause); }
         handles.add(value); job.bitmap = value;
+        sampleStatus();
         let close: unknown;
         try { close = ports.nativeClose ?? descriptor(value, 'close'); }
-        catch (error) { retain(job, (error as EgretError).cause); throw error; }
-        if (!functionValue(close)) { const cause = new TypeError('Decoded bitmap cannot be closed'); retain(job, cause); throw fault('BITMAP_INVALID', cause); }
+        catch (error) { if (job.diagnostics) job.diagnostics.bitmapUnsafe = true; retain(job, (error as EgretError).cause); sampleStatus(); throw error; }
+        if (!functionValue(close)) { if (job.diagnostics) job.diagnostics.bitmapUnsafe = true; const cause = new TypeError('Decoded bitmap cannot be closed'); retain(job, cause); sampleStatus(); throw fault('BITMAP_INVALID', cause); }
         job.bitmapClose = close;
         return value;
     }
@@ -264,21 +360,31 @@ export function createBrowserTextureProvider(options: BrowserTextureProviderOpti
         handles.add(value);
         let connected: unknown;
         try { connected = descriptor(value, 'isConnected'); }
-        catch (error) { job.uncertainSurface = value; retain(job, (error as EgretError).cause); throw error; }
-        if (connected !== false) { job.uncertainSurface = value; const cause = new TypeError('Fresh unattached Canvas required'); retain(job, cause); throw fault('SURFACE_INVALID', cause); }
-        job.canvas = value; return value;
+        catch (error) { job.uncertainSurface = value; retain(job, (error as EgretError).cause); sampleStatus(); throw error; }
+        if (connected !== false) { job.uncertainSurface = value; const cause = new TypeError('Fresh unattached Canvas required'); retain(job, cause); sampleStatus(); throw fault('SURFACE_INVALID', cause); }
+        job.canvas = value; sampleStatus(); return value;
     }
     function state(target: object, key: string, value: unknown, signal: CancellationSignal): void {
         try { (target as RecordValue)[key] = value; } catch (cause) { throw fault('RASTER_FAILED', cause); }
         checkpoint(signal);
         if (read(target, key, signal) !== value) throw fault('RASTER_FAILED', new TypeError('Canvas state assignment was not accepted'));
     }
-    async function load(this: BrowserTextureProvider, ref: AssetRef<Texture>, context: AssetLoadContext): Promise<Texture> {
+    function settled(job: Job): void {
+        job.settled = true;
+        if (job.reasons.length === 0) { occupied--; encoded -= job.credit; job.bytes = undefined; jobs.splice(jobs.indexOf(job), 1); }
+        sampleStatus();
+        closeWhenSettled();
+    }
+    async function loadActual(this: BrowserTextureProvider, ref: AssetRef<Texture>, context: AssetLoadContext, token?: ManifestPngJob): Promise<Texture> {
         if (this !== provider) throw fault('PROVIDER_INVALID', new TypeError('Exact PNG provider receiver required'));
         gate();
         if (occupied >= MAX_JOBS) throw fault('JOB_LIMIT', new RangeError('PNG occupied job limit'));
-        const job: Job = { settled: false, credit: 0, bytes: undefined, reasons: [], bitmap: undefined, bitmapClose: undefined, canvas: undefined, uncertainSurface: undefined };
+        const job: Job = { settled: false, credit: 0, bytes: undefined, reasons: [], bitmap: undefined, bitmapClose: undefined, canvas: undefined, uncertainSurface: undefined,
+            diagnostics: owner === undefined ? undefined : { blobBytes: 0, decodeActive: false, bitmapBytes: 0, bitmapUnsafe: false,
+                surfaceWidth: undefined, surfaceHeight: undefined, surfaceUnsafe: false, readbackBytes: 0, materializedBytes: 0 } };
         occupied++; jobs.push(job);
+        if (token !== undefined) manifestRuns.set(token, job);
+        sampleStatus();
         let image: ImageData2D | undefined, primaryOccurred = false, primary: EgretError | undefined, capturedSignal: CancellationSignal | undefined;
         try {
             if (!record(context)) throw fault('CONTEXT_INVALID', new TypeError('PNG context must be a record'));
@@ -292,7 +398,9 @@ export function createBrowserTextureProvider(options: BrowserTextureProviderOpti
             const signal = signalValue as CancellationSignal;
             capturedSignal = signal;
             checkpoint(signal);
-            const sourcePending = resolvePromise(call(readBytesOperation, options, [ref, context], 'READ_FAILED'));
+            const sourcePending = token === undefined
+                ? resolvePromise(call(readBytesOperation as Operation, options, [ref, context], 'READ_FAILED'))
+                : owner!.readActual(token);
             let sourceTransition: EgretError | undefined;
             try { checkpoint(signal); } catch (cause) { sourceTransition = cause as EgretError; }
             let source: unknown;
@@ -305,18 +413,33 @@ export function createBrowserTextureProvider(options: BrowserTextureProviderOpti
             checkpoint(signal);
             if (binary.length > MAX_BYTES || encoded + binary.length > MAX_TOTAL_BYTES) throw fault('INPUT_LIMIT', new RangeError('PNG encoded payload limit'));
             job.credit = binary.length; encoded += binary.length;
-            try { job.bytes = new Bytes(binary.length); apply(setBytes, job.bytes, [new Bytes(binary.backing, binary.offset, binary.length)]); }
+            sampleStatus();
+            try { job.bytes = new Bytes(binary.length); sampleStatus(); apply(setBytes, job.bytes, [new Bytes(binary.backing, binary.offset, binary.length)]); }
             catch (cause) { throw fault('BYTES_INVALID', cause); }
             const size = preflight(job.bytes); checkpoint(signal);
             let blob: Blob;
             try { blob = new ports.blob([job.bytes], { type: 'image/png' }); } catch (cause) { throw fault('BLOB_FAILED', cause); }
+            // One successful native Blob construction from one exact byte array.
+            // This known logical payload needs no additional Blob.size getter.
+            if (job.diagnostics) job.diagnostics.blobBytes = binary.length;
+            sampleStatus();
             checkpoint(signal);
             const decodeOptions: BrowserPngDecodeOptions = freeze({ imageOrientation: 'from-image', premultiplyAlpha: 'none', colorSpaceConversion: 'none' });
-            const decodePending = resolvePromise(call(ports.decode, ports.decodeReceiver, [blob, decodeOptions], 'DECODE_FAILED'));
             let decodeTransition: EgretError | undefined;
-            try { checkpoint(signal); } catch (cause) { decodeTransition = cause as EgretError; }
             let decoded: unknown;
-            try { decoded = await decodePending; } catch (cause) { throw fault('DECODE_FAILED', cause); }
+            if (token !== undefined) await owner!.decode(token);
+            try {
+                if (token !== undefined) checkpoint(signal);
+                if (job.diagnostics) job.diagnostics.decodeActive = true;
+                sampleStatus();
+                const decodePending = resolvePromise(call(ports.decode, ports.decodeReceiver, [blob, decodeOptions], 'DECODE_FAILED'));
+                try { checkpoint(signal); } catch (cause) { decodeTransition = cause as EgretError; }
+                try { decoded = await decodePending; } catch (cause) { throw fault('DECODE_FAILED', cause); }
+            } finally {
+                if (job.diagnostics) job.diagnostics.decodeActive = false;
+                sampleStatus();
+                if (token !== undefined) owner!.decoded(token);
+            }
             // Always capture retirement; its refusal cannot replace an observed primary.
             let picture: object;
             try { picture = bitmap(job, decoded); }
@@ -326,13 +449,35 @@ export function createBrowserTextureProvider(options: BrowserTextureProviderOpti
             }
             if (decodeTransition !== undefined) throw decodeTransition;
             checkpoint(signal);
-            const width = read(picture, 'width', signal), height = read(picture, 'height', signal);
+            let width: unknown, height: unknown;
+            try { width = read(picture, 'width', signal); height = read(picture, 'height', signal); }
+            catch (cause) {
+                // Cancellation alone does not classify a healthy acquired object
+                // as unknown; failed original dimension qualification does.
+                if (job.diagnostics && cause instanceof EgretError && cause.code === 'WEB_PNG_DESCRIPTOR_READ_FAILED') job.diagnostics.bitmapUnsafe = true;
+                sampleStatus(); throw cause;
+            }
             if (width !== size.width || height !== size.height || !safeInteger(width) || !safeInteger(height)) {
+                if (job.diagnostics) job.diagnostics.bitmapUnsafe = true;
+                sampleStatus();
                 throw fault('BITMAP_INVALID', new TypeError('Bitmap dimensions must match admitted IHDR'));
             }
+            if (job.diagnostics) job.diagnostics.bitmapBytes = 4 * size.width * size.height;
+            sampleStatus();
             checkpoint(signal);
             const canvas = surface(job, call(ports.canvas, ports.canvasReceiver, [], 'RASTER_FAILED')); checkpoint(signal);
-            state(canvas, 'width', size.width, signal); state(canvas, 'height', size.height, signal);
+            try {
+                state(canvas, 'width', size.width, signal);
+                if (job.diagnostics) job.diagnostics.surfaceWidth = size.width;
+                sampleStatus();
+                state(canvas, 'height', size.height, signal);
+                if (job.diagnostics) job.diagnostics.surfaceHeight = size.height;
+                sampleStatus();
+            } catch (cause) {
+                if (job.diagnostics && cause instanceof EgretError
+                    && (cause.code === 'WEB_PNG_RASTER_FAILED' || cause.code === 'WEB_PNG_DESCRIPTOR_READ_FAILED')) job.diagnostics.surfaceUnsafe = true;
+                sampleStatus(); throw cause;
+            }
             const getContext = read(canvas, 'getContext', signal);
             if (!functionValue(getContext)) throw fault('SURFACE_INVALID', new TypeError('Canvas 2d operation required'));
             const drawing = call(getContext, canvas, ['2d', { alpha: true, colorSpace: 'srgb', willReadFrequently: true }], 'RASTER_FAILED'); checkpoint(signal);
@@ -356,13 +501,21 @@ export function createBrowserTextureProvider(options: BrowserTextureProviderOpti
             let readback: ReturnType<typeof fixedBacking>;
             try { readback = fixedBacking(data, 'Uint8ClampedArray'); } catch (cause) { throw fault('READBACK_INVALID', cause); }
             if (readback.length !== 4 * size.width * size.height) throw fault('READBACK_INVALID', new RangeError('Tight RGBA readback byte length required'));
-            checkpoint(signal);
-            try { image = createImageData2D({ width: size.width, height: size.height, pixels: new Bytes(readback.backing, readback.offset, readback.length) }); }
-            catch (cause) { throw fault('VALUE_INVALID', cause); }
+            if (job.diagnostics) job.diagnostics.readbackBytes = readback.length;
+            sampleStatus();
+            try {
+                checkpoint(signal);
+                try { image = createImageData2D({ width: size.width, height: size.height, pixels: new Bytes(readback.backing, readback.offset, readback.length) }); }
+                catch (cause) { throw fault('VALUE_INVALID', cause); }
+                if (job.diagnostics) job.diagnostics.materializedBytes = image.byteLength;
+                sampleStatus();
+            } finally { if (job.diagnostics) job.diagnostics.readbackBytes = 0; sampleStatus(); }
             // Canvas output is browser-normalized straight sRGB; never rewrite channels.
             checkpoint(signal);
         } catch (cause) { primaryOccurred = true; primary = cause instanceof EgretError ? cause : fault('VALUE_INVALID', cause); }
+        finally { if (job.diagnostics) job.diagnostics.blobBytes = 0; sampleStatus(); }
         const cleanup = retire(job);
+        let handedOff = false;
         try {
             if (primaryOccurred) throw new EgretError(primary!.code, { cause: primary!.cause, cleanupErrors: cleanup });
             if (cleanup.length) throw new EgretError('WEB_PNG_CLEANUP_FAILED', { cause: cleanup[0], cleanupErrors: cleanup });
@@ -371,16 +524,64 @@ export function createBrowserTextureProvider(options: BrowserTextureProviderOpti
             checkpoint(capturedSignal!);
             let value: Texture;
             try { value = createTexture(image); } catch (cause) { throw fault('VALUE_INVALID', cause); }
-            issued.set(value, false); return value;
+            issued.set(value, false); handedOff = true; return value;
         } finally {
-            job.settled = true;
-            if (job.reasons.length === 0) { occupied--; encoded -= job.credit; job.bytes = undefined; jobs.splice(jobs.indexOf(job), 1); }
-            closeWhenSettled();
+            // In fixed manifest mode the outer publication/late-value retirement
+            // is part of this same original job, so its credit cannot leave yet.
+            if (!handedOff && job.diagnostics) job.diagnostics.materializedBytes = 0;
+            sampleStatus();
+            if (token === undefined) settled(job);
         }
+    }
+    function load(this: BrowserTextureProvider, ref: AssetRef<Texture>, context: AssetLoadContext): Promise<Texture> {
+        if (owner === undefined) return apply(loadActual, this, [ref, context]) as Promise<Texture>;
+        let token: ManifestPngJob;
+        try {
+            if (this !== provider) throw fault('PROVIDER_INVALID', new TypeError('Exact PNG provider receiver required'));
+            gate();
+            if (occupied + manifestAdmissions >= MAX_JOBS) throw fault('JOB_LIMIT', new RangeError('PNG occupied job limit'));
+            // begin captures caller-owned context/listener operations. Reserve
+            // this provider admission before any of those can re-enter it.
+            manifestAdmissions++;
+            try {
+                token = owner.begin(ref, context);
+                manifestRuns.set(token, undefined);
+            } finally { manifestAdmissions--; closeWhenSettled(); }
+        } catch (cause) { return Promise.reject(cause); }
+        if (closed) owner.cancel(token, fault('PROVIDER_CLOSED', new TypeError('PNG provider is closed')));
+        const run = loadActual.call(provider, ref, token.context, token);
+        const disposal = provider.dispose;
+        void run.then(value => {
+            try {
+                if (!owner.publish(token, value)) {
+                    try { apply(disposal, provider, [value]); }
+                    catch (cause) { const job = manifestRuns.get(token); if (job) retain(job, cause); }
+                }
+            } finally {
+                // The original publication/late-disposal callback has finished
+                // owning this genuine value. Retain no new reference for status.
+                const job = manifestRuns.get(token);
+                if (job?.diagnostics) job.diagnostics.materializedBytes = 0;
+                sampleStatus();
+            }
+        }, cause => owner.reject(token, cause)).then(() => {
+            const job = manifestRuns.get(token);
+            manifestRuns.delete(token);
+            if (job) settled(job);
+            owner.finish(token);
+            closeWhenSettled();
+        });
+        return owner.publication<Texture>(token);
     }
     provider = freeze({
         profile: 'png-rgb-rgba8-browser-normalized-v1',
         get isClosed(): boolean { if (this !== provider) throw fault('PROVIDER_INVALID', new TypeError('Exact PNG provider receiver required')); return closed; },
+        ...(owner === undefined ? {} : {
+            getStatus(this: BrowserTextureProvider): ManifestTextureProviderStatus {
+                if (this !== provider) throw fault('PROVIDER_INVALID', new TypeError('Exact PNG provider receiver required'));
+                return freeze({ current: freeze(currentStatus()), highWater: freeze({ ...highWater }), saturated });
+            },
+        }),
         load,
         dispose(this: BrowserTextureProvider, value: Texture): void {
             if (this !== provider) throw fault('PROVIDER_INVALID', new TypeError('Exact PNG provider receiver required'));
@@ -393,6 +594,9 @@ export function createBrowserTextureProvider(options: BrowserTextureProviderOpti
             if (closePromise === undefined) {
                 closed = true;
                 closePromise = new Promise<void>((resolve, reject) => { resolveClose = resolve; rejectClose = reject; });
+                if (owner !== undefined) {
+                    for (const token of manifestRuns.keys()) owner.cancel(token, fault('PROVIDER_CLOSED', new TypeError('PNG provider is closed')));
+                }
                 closeWhenSettled();
             }
             return closePromise;

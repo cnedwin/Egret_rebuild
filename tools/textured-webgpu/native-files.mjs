@@ -6,6 +6,8 @@ import path from 'node:path';
 import { createHash } from 'node:crypto';
 
 export const ALIAS='#egret-textured-frame-state';
+// Lexical recognition is separate from each collector's exact parent/target admission.
+export const MANIFEST_ALIAS='#egret-manifest-resources';
 export const REGISTRY='packages/engine/dist/internal/texturedFrameState.js';
 export const REGISTRY_SOURCE='packages/engine/src/internal/texturedFrameState.ts';
 export const ENTRIES=['packages/engine/dist/index.js','packages/engine/dist/web/webgpu.js'];
@@ -56,6 +58,24 @@ export function artifactStore(output){let total=0;const records=new Map();
 function tokens(text){const out=[];let index=0;while(index<text.length){const start=index,char=text[index];
   if(/\s/.test(char)){index++;continue;}if(text.startsWith('//',index)){index=text.indexOf('\n',index+2);if(index<0)break;continue;}
   if(text.startsWith('/*',index)){const end=text.indexOf('*/',index+2);requirePolicy(end>=0,'MODULE_COMMENT');index=end+2;continue;}
+  // These exact expression prefixes cannot end a division operand. The logical-or
+  // pair must be contiguous punctuation; quoted lookalikes retain ordinary scanning.
+  const previous=out.at(-1),beforePrevious=out.at(-2);
+  const regexpStart=previous?.kind==='punctuation'&&(['(','!'].includes(previous.value)
+    ||previous.value==='|'&&beforePrevious?.kind==='punctuation'&&beforePrevious.value==='|'&&beforePrevious.end===previous.start);
+  if(char==='/'&&regexpStart){
+    index++;let inClass=false,closed=false;
+    while(index<text.length){const value=text[index++];
+      requirePolicy(!/[\r\n\u2028\u2029]/.test(value),'MODULE_REGEXP');
+      if(value==='\\'){requirePolicy(index<text.length&&!/[\r\n\u2028\u2029]/.test(text[index]),'MODULE_REGEXP');index++;continue;}
+      if(value==='[')inClass=true;else if(value===']')inClass=false;
+      else if(value==='/'&&!inClass){closed=true;break;}
+    }
+    requirePolicy(closed&&!inClass,'MODULE_REGEXP');const flags=new Set();
+    while(index<text.length&&/[A-Za-z]/.test(text[index])){const flag=text[index++];
+      requirePolicy('dgimsuy'.includes(flag)&&!flags.has(flag),'MODULE_REGEXP');flags.add(flag);}
+    out.push({kind:'regexp',value:'',start,end:index});continue;
+  }
   if(char==='"'||char==="'"){index++;while(index<text.length&&text[index]!==char){if(text[index]==='\\')index++;index++;}
     requirePolicy(index<text.length,'MODULE_STRING');index++;out.push({kind:'string',value:text.slice(start+1,index-1),start,end:index});continue;}
   if(char==='`'){index++;while(index<text.length&&text[index]!=='`'){if(text[index]==='\\')index++;index++;}
@@ -66,7 +86,7 @@ function tokens(text){const out=[];let index=0;while(index<text.length){const st
 }
 export function literalImports(text){const lexical=tokens(text),result=[];
   const admit=token=>{requirePolicy(token?.kind==='string'&&token.value.length>0&&!/[\\\s?%:\0]/.test(token.value),'MODULE_IMPORT_LITERAL');
-    requirePolicy(!token.value.includes('#')||token.value===ALIAS,'MODULE_PRIVATE_ALIAS_UNKNOWN',{specifier:token.value});result.push(token.value);};
+    requirePolicy(!token.value.includes('#')||token.value===ALIAS||token.value===MANIFEST_ALIAS,'MODULE_PRIVATE_ALIAS_UNKNOWN',{specifier:token.value});result.push(token.value);};
   for(let index=0;index<lexical.length;index++){const token=lexical[index];if(token.kind!=='word')continue;
     if(token.value==='import'){const next=lexical[index+1];requirePolicy(next?.value!=='.','MODULE_IMPORT_META');
       if(next?.value==='('){admit(lexical[index+2]);requirePolicy(lexical[index+3]?.value===')','MODULE_DYNAMIC_IMPORT');}
@@ -81,7 +101,7 @@ const ENGINE='packages/engine/dist/Engine.js';
 export function sourceCounterpart(relative){const match=/^packages\/(contracts|runtime|engine)\/dist\/(.+)\.js$/.exec(relative);
   if(!match)return null;const [,name,tail]=match;return `packages/${name}/${name==='engine'&&/^(web|rendering)\//.test(tail)?'':'src/'}${tail}.ts`;}
 export function aliases(){return {[ALIAS]:'/'+REGISTRY,'@egret/engine':'/'+ENTRIES[0],'@egret/engine/webgpu':'/'+ENTRIES[1],
-  '@egret/contracts':'/packages/contracts/dist/index.js','@egret/runtime':'/packages/runtime/dist/index.js','robust-predicates':'/packages/engine/node_modules/robust-predicates/index.js'};}
+  '@egret/contracts':'/packages/contracts/dist/index.js','@egret/contracts/resources':'/packages/contracts/dist/resources/index.js','@egret/runtime':'/packages/runtime/dist/index.js','robust-predicates':'/packages/engine/node_modules/robust-predicates/index.js'};}
 export function chosenMap(mode){requirePolicy(mode==='baseline'||CONTROL_IDS.includes(mode),'MAP_MODE');const imports=aliases(),scopes={};
   if(mode!=='baseline'){const prefix='/copy/'+mode+'/';scopes[prefix]={[ALIAS]:prefix+REGISTRY,'@egret/engine':prefix+ENTRIES[0],'@egret/engine/webgpu':prefix+ENTRIES[1]};}
   return {imports,scopes};
@@ -99,13 +119,18 @@ export function resolveSelected(specifier,parent,mode,map){const selectedPrefix=
     requirePolicy(url.startsWith(prefix)&&!url.includes('%'),'RELATIVE_MODULE_ESCAPE',{parent,specifier,url});return url;}
   requirePolicy(Object.hasOwn(effective,specifier),'BARE_IMPORT_UNKNOWN',{parent,specifier});return effective[specifier];
 }
-export async function collectPublicGraph(repository,retain){const root=await realpath(repository),modules=new Map();let total=0,sourceRegistry;
+export async function collectPublicGraph(repository,retain,sourceProfile='historical'){
+  // Only the original textured freeze/collector select this bounded M1.5 source successor.
+  // Shared parser consumers and the independent M1.2 caller retain their existing policy.
+  requirePolicy(sourceProfile==='historical'||sourceProfile==='m15-textured','GRAPH_SOURCE_PROFILE');
+  const moduleLimit=sourceProfile==='m15-textured'?132:LIMITS.modules;
+  const root=await realpath(repository),modules=new Map();let total=0,sourceRegistry;
   const map=chosenMap('baseline'),robustRoot=await realpath(path.join(root,'packages/engine/node_modules/robust-predicates'));
   async function visit(relative){const logical=path.join(root,relative),physical=await realpath(logical);
     requirePolicy(inside(root,physical)&&relative.endsWith('.js'),'GRAPH_CONTAINMENT',{relative,physical});
     if(/^packages\/(engine|runtime|contracts)\/dist\//.test(relative))requirePolicy(samePath(physical,logical),'EMISSION_EXACT_PATH',{relative,physical});
     requirePolicy(!/(?:^|\/)CanvasHost\.js$|(?:^|\/)canvas\.js$/.test(relative),'TEXTURED_CANVAS_MODULE',{relative});
-    if(modules.has(relative))return;requirePolicy(modules.size<LIMITS.modules,'GRAPH_MODULE_COUNT');
+    if(modules.has(relative))return;requirePolicy(modules.size<moduleLimit,'GRAPH_MODULE_COUNT');
     const item=await readIdentity(logical);total+=item.bytes;requirePolicy(total<=LIMITS.graphBytes,'GRAPH_TOTAL_BYTES');
     const text=new TextDecoder('utf-8',{fatal:true}).decode(item.body),record={relative,url:'/'+relative,...item,edges:[]};modules.set(relative,record);retain(item,'original-emission');
     const source=sourceCounterpart(relative);if(source!==null){

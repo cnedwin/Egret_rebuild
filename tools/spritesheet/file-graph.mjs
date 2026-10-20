@@ -22,6 +22,7 @@ export async function identity(file, maxBytes = 134217728) {
 // not arbitrary JavaScript. Ambiguous templates/imports fail closed; there is
 // no package resolver, bundler, evaluation, install or remote fallback.
 function tokens(text) {
+  const regexpPolicy = condition => { if (!condition) throw new Error('Invalid module regular expression'); };
   const out = [];
   let index = 0;
   while (index < text.length) {
@@ -34,6 +35,24 @@ function tokens(text) {
       const end = text.indexOf('*/', index + 2);
       if (end < 0) throw new Error('Unterminated module comment');
       index = end + 2; continue;
+    }
+    // These exact expression prefixes cannot end a division operand. The logical-or
+    // pair must be contiguous punctuation; quoted lookalikes retain ordinary scanning.
+    const previous=out.at(-1),beforePrevious=out.at(-2);
+    const regexpStart=previous?.kind==='punctuation'&&(['(','!'].includes(previous.value)
+      ||previous.value==='|'&&beforePrevious?.kind==='punctuation'&&beforePrevious.value==='|'&&beforePrevious.end===previous.start);
+    if(char==='/'&&regexpStart){
+      index++;let inClass=false,closed=false;
+      while(index<text.length){const value=text[index++];
+        regexpPolicy(!/[\r\n\u2028\u2029]/.test(value));
+        if(value==='\\'){regexpPolicy(index<text.length&&!/[\r\n\u2028\u2029]/.test(text[index]));index++;continue;}
+        if(value==='[')inClass=true;else if(value===']')inClass=false;
+        else if(value==='/'&&!inClass){closed=true;break;}
+      }
+      regexpPolicy(closed&&!inClass);const flags=new Set();
+      while(index<text.length&&/[A-Za-z]/.test(text[index])){const flag=text[index++];
+        regexpPolicy('dgimsuy'.includes(flag)&&!flags.has(flag));flags.add(flag);}
+      out.push({kind:'regexp',value:'',start,end:index});continue;
     }
     if (char === '"' || char === "'") {
       index++;

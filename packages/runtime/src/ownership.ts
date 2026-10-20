@@ -1,6 +1,8 @@
 import type { AssetLease } from './AssetLease.js';
 import type { Texture } from './Texture.js';
 import type { Bitmap } from './Bitmap.js';
+import type { Stage } from './Stage.js';
+import type { CapturedSharedContent2D } from './sharedFrameCapture.js';
 import type { Diagnostic } from "@egret/contracts";
 import { EgretError } from "./EgretError.js";
 import { recordVisualChange, VISUAL_BINDING } from "./displayVisualState.js";
@@ -24,6 +26,7 @@ export interface EngineContext {
     captureBatch(targets: readonly Bitmap[]): object;
     prepareBatch(captured: object, members: readonly AssetLease<Texture>[]): object;
     commitBatch(captured: object, prepared: object): object;
+    capturePreparedSharedContent(stage: Stage, captured: object, prepared: object): CapturedSharedContent2D;
     clearBatchIfCurrent(publication: object): void;
   }>) => void;
   assertOpen(): void;

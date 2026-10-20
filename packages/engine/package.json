@@ -51,6 +51,14 @@
     "./webgl2/scene3d": {
       "types": "./dist/web/webgl2Scene3d.d.ts",
       "import": "./dist/web/webgl2Scene3d.js"
+    },
+    "./resources": {
+      "types": "./dist/resources.d.ts",
+      "import": "./dist/resources.js"
+    },
+    "./web/resources": {
+      "types": "./dist/web/resources.d.ts",
+      "import": "./dist/web/resources.js"
     }
   },
   "dependencies": {
@@ -66,6 +74,10 @@
     "#egret-mouse-input": {
       "types": "./dist/mouseInput.d.ts",
       "import": "./dist/mouseInput.js"
+    },
+    "#egret-manifest-resources": {
+      "types": "./dist/manifestResourceState.d.ts",
+      "import": "./dist/manifestResourceState.js"
     }
   }
 }

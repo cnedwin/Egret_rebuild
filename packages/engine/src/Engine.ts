@@ -21,6 +21,10 @@ import { registerTextFieldEngine } from './internal/textFieldFactoryState.js';
 import { createAssetGroupOwner } from './assetGroup.js';
 import type { AssetGroupOwner } from './assetGroup.js';
 import type { AssetGroup, AssetGroupOptions } from './assetGroupTypes.js';
+import { createManifestAssetGroupOwner } from './manifestAssetGroup.js';
+import type { ManifestAssetGroupOwner } from './manifestAssetGroup.js';
+import type { ManifestAssetGroup, ManifestBinding, ManifestGroupOptions } from './manifestResourceTypes.js';
+import type { AdmittedResourceManifest } from '@egret/contracts/resources';
 import { createMouseInputOwner } from './mouseInput.js';
 import type { MouseInputOwner } from './mouseInput.js';
 import { createSequencePlaybackOwner } from './sequencePlayback.js';
@@ -66,6 +70,7 @@ export class Engine {
   readonly #tweenOwner: TweenOwner;
   readonly #sequencePlaybackOwner: SequencePlaybackOwner;
   readonly #assetGroupOwner: AssetGroupOwner;
+  readonly #manifestAssetGroupOwner: ManifestAssetGroupOwner;
   readonly #bitmapResourceSlotOwner: BitmapResourceSlotOwner;
   readonly #bitmapBindingOwner: BitmapBindingOwner;
   readonly #bitmapResourceTargets = new WeakMap<Bitmap, Parameters<NonNullable<EngineContext['registerBitmapResourceTarget']>>[1]>();
@@ -170,6 +175,12 @@ export class Engine {
       report: this.#context.report,
       captureCleanup: this.#context.captureCleanup,
     }, assetGroupOperations!);
+    this.#manifestAssetGroupOwner = createManifestAssetGroupOwner({
+      assertOpen: this.#context.assertOpen,
+      isEngineScope: (scope: unknown): scope is Scope => typeof scope === 'object' && scope !== null && this.#engineScopes.has(scope as Scope),
+      report: this.#context.report,
+      captureCleanup: this.#context.captureCleanup,
+    }, assetGroupOperations!);
   }
 
   static {
@@ -200,12 +211,17 @@ export class Engine {
     return this.executeSharedFrame(options, false);
   }
 
+  /** Capture a prepared binding view without publishing it to the live scene. */
+  public capturePreparedSharedFrame(ticket: BitmapBindingTicket, options: SharedFrameOptions2D): SharedRenderFrame2D {
+    return this.executeSharedFrame(options, false, [ticket]);
+  }
+
   public renderSharedFrame(options: SharedFrameOptions2D): SharedRenderFrame2D {
     return this.executeSharedFrame(options, true);
   }
 
   /** Share the existing lifecycle barrier and ID sequence without changing old options. */
-  private executeSharedFrame(options: SharedFrameOptions2D, render: boolean): SharedRenderFrame2D {
+  private executeSharedFrame(options: SharedFrameOptions2D, render: boolean, candidate?: readonly [BitmapBindingTicket]): SharedRenderFrame2D {
     this.#context.assertOpen();
     if (this.frameBusy) throw new EgretError('FRAME_REENTRANT');
     if (this.#gameClockOwner.isBusy()) throw new EgretError('CLOCK_REENTRANT');
@@ -214,7 +230,9 @@ export class Engine {
     try {
       const renderer = this.sharedRenderer;
       if (render && renderer === undefined) throw new EgretError('RENDERER_REQUIRED');
+      const prepared = candidate === undefined ? undefined : this.#bitmapBindingOwner.readPreparedForCapture(candidate[0]);
       let width: unknown, height: unknown, colorInput: unknown, alphaInput: unknown, outputInput: unknown;
+      let optionsFailed = false, optionsCause: unknown;
       try {
         width = options.width;
         height = options.height;
@@ -223,8 +241,13 @@ export class Engine {
         outputInput = options.outputAlpha;
       } catch (cause) {
         // Even a caller-thrown EgretError is an external read failure here.
-        throw new EgretError('INVALID_FRAME_OPTIONS', { cause });
+        if (prepared === undefined) throw new EgretError('INVALID_FRAME_OPTIONS', { cause });
+        optionsFailed = true; optionsCause = cause;
       }
+      // Candidate lifetime/phase wins even when an option getter threw undefined.
+      // Binding, target and entitlement preflight waits for valid options below.
+      prepared?.validate();
+      if (optionsFailed) throw new EgretError('INVALID_FRAME_OPTIONS', { cause: optionsCause });
       const outputAlpha = outputInput === undefined ? 'premultiplied' : outputInput;
       const clearColor = colorInput === undefined ? 0 : colorInput;
       const clearAlpha = alphaInput === undefined ? (outputAlpha === 'opaque' ? 1 : 0) : alphaInput;
@@ -235,8 +258,9 @@ export class Engine {
         || (outputAlpha !== 'opaque' && outputAlpha !== 'premultiplied')
         || (outputAlpha === 'opaque' && clearAlpha !== 1)) throw new EgretError('INVALID_FRAME_OPTIONS');
       this.#context.assertOpen();
-      const content = collectSharedFrameContent(this.stage);
+      const content = prepared === undefined ? collectSharedFrameContent(this.stage) : prepared.captureContent(this.stage);
       this.#context.assertOpen();
+      prepared?.validate();
       if (!Number.isSafeInteger(this.nextFrameId) || this.nextFrameId <= 0) throw new EgretError('FRAME_ID_EXHAUSTED');
       const frame = freezeSharedFrame({
         profile: SHARED_FRAME_PROFILE_2D, colorRecipe: 'egret.linear-srgb-pma/1',
@@ -370,6 +394,11 @@ export class Engine {
     return this.#assetGroupOwner.create<T>(scope, refs, options);
   }
 
+  /** Acquire an admitted dependency closure with independent group-owned leases. */
+  public createManifestGroup(scope: Scope, manifest: AdmittedResourceManifest, roots: readonly string[], bindings: readonly ManifestBinding[], options?: ManifestGroupOptions): ManifestAssetGroup {
+    return this.#manifestAssetGroupOwner.create(scope, manifest, roots, bindings, options);
+  }
+
   /** Every caller shares one close promise, including reentrant cleanup callbacks. */
   public dispose(): Promise<void> {
     if (this.closePromise !== undefined) return this.closePromise;
@@ -378,6 +407,8 @@ export class Engine {
     this.closePromise = new Promise<void>((resolve, reject) => { resolveClose = resolve; rejectClose = reject; });
     // Cache the result before abort/cleanup/diagnostic callbacks can reenter.
     this.#currentState = "closing";
+    // Revoke every manifest group before cleanup callbacks can reenter.
+    this.#manifestAssetGroupOwner.close();
     this.#bitmapBindingOwner.close();
     this.#bitmapResourceSlotOwner.close();
     // Retire browser input before the remaining callback-capable owners or idle wait.

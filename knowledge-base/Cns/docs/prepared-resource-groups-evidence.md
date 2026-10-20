@@ -61,6 +61,6 @@
 node tools/prepared-resource-groups/prepare-native-config.mjs --playwright <absolute-playwright-1.62.1-directory> --workdir <existing-external-directory> --profile canvas-2d --kind ordinary
 ```
 
-工具写入新的配置并打印快照与实际运行命令。先捕获并核对完整输入快照，再实际运行。分别覆盖两种模式（`canvas-2d`、`webgpu-scene-textured`）及三个场景（`ordinary`、`manual-old-A-outer`、`manual-old-B-trim`）。源码身份、完整原始工具包清单、真实可信鼠标操作、完整原始读回和所有者退役均保留在验证器中。参考环境不同会拒绝固定中文比较。
+工具写入新的配置并打印快照与实际运行命令。先捕获并核对完整输入快照，再实际运行。分别覆盖两种模式（`canvas-2d`、`webgpu-scene-textured`）及三个场景（`ordinary`、`manual-old-A-outer`、`manual-old-B-trim`）。源码身份、完整原始工具包清单、真实可信鼠标操作、完整原始读回和所有者退役均保留在验证器中。原有记录的环境保持不变。独立的直接 Canvas 复测在 Edge 155.0.4283.62 上得到了完全一致的两份完整中文参考缓冲及每个字符串的十二项度量。当前 oracle 仅准入 Edge 155.0.4283.45 和 155.0.4283.62，其他参考环境字段保持不变；未覆盖版本、其他环境及参考字节被修改时仍拒绝比较。必须使用新配置和经评审的快照绑定当前 oracle 身份。补丁版本的参考等价与新的原生应用验收分开记录。
 
 仓库完整检查、强制钩子、GitHub PR／Main 交付与远端 CI 属于独立证据阶段。本记录不代表 CI 通过或完整 P03 验收。通用依赖清单及更多 3D／Spine／音频消费者、完整 UI、生产宿主、通用排版、手机能耗／性能、GPU 物理峰值和完整旧工程迁移仍保持开放。

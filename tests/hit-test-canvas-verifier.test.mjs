@@ -97,7 +97,7 @@ checked('HC25 an assigned control witness cannot excuse a disposed active scene'
 checked('HC26 an assigned control witness cannot excuse reference pixel corruption',()=>{const f=fixture(),c=f.report.contexts[4];c.rows[1].steps[0].referenceFeedback=gray;assert.equal(contract.inspectControl(c,recipe).status,'INVALID_CONTROL');});
 checked('HC27 close cannot reset the last observed frame behind a refreshed saved-row hash',async()=>{const f=fixture(),c=f.report.contexts[0],row=c.rows.at(-1);for(const field of ['before','after','afterProbe'])row[field].lastFrameId=1;refreshRows(f,c);const result=await contract.admitCollection(f.report,{recipe,readArtifact:f.readArtifact});assert.equal(result.status,'FAIL_NATIVE_BASELINE');assert.equal(result.issues.some(i=>i.row==='B10'&&i.code==='BEFORE_SNAPSHOT'),true);});
 checked('HC28 original public import aliases cannot be masked by sealed-route rewriting',()=>{
-  const original={'@egret/engine':'/packages/engine/dist/index.js','@egret/engine/web':'/packages/engine/dist/web/index.js','@egret/runtime':'/packages/runtime/dist/index.js','@egret/contracts':'/packages/contracts/dist/index.js','#egret-textured-frame-state':'/packages/engine/dist/internal/texturedFrameState.js'};
+  const original={'@egret/engine':'/packages/engine/dist/index.js','@egret/engine/web':'/packages/engine/dist/web/index.js','@egret/runtime':'/packages/runtime/dist/index.js','@egret/contracts':'/packages/contracts/dist/index.js','@egret/contracts/resources':'/packages/contracts/dist/resources/index.js','#egret-textured-frame-state':'/packages/engine/dist/internal/texturedFrameState.js'};
   const served=Object.fromEntries(Object.keys(original).map((key,index)=>[key,'/m/'+String(index).padStart(4,'0')+'.js']));
   const html=map=>'<script type="importmap">'+JSON.stringify({imports:map})+'</script>';
   assert.deepEqual(contract.projectImportMap(html(original),served).adaptation,{original:{imports:original},served:{imports:served}});
@@ -108,3 +108,21 @@ checked('HC29 only the exact native Canvas readback warning is retained as an ad
 checked('HC30 unknown warnings and an error with the advisory text remain fatal',async()=>{for(const [type,message] of [['warning','Unknown native warning'],['warning',readbackAdvisory+' '],['error',readbackAdvisory]]){const record=contract.classifyConsole(type,message);assert.deepEqual(record,{bucket:'errors',record:{kind:'CONSOLE_'+type,message}});const f=fixture();f.report.contexts[0].errors=[record.record];assert.equal((await contract.admitCollection(f.report,{recipe,readArtifact:f.readArtifact})).status,'INCOMPLETE');}});
 checked('HC31 relabeling an unknown warning as an advisory does not admit the collection',async()=>{const f=fixture();f.report.contexts[0].advisories=[{kind:'CANVAS2D_READBACK_ADVISORY',message:'Unknown native warning'}];assert.equal((await contract.admitCollection(f.report,{recipe,readArtifact:f.readArtifact})).status,'INCOMPLETE');});
 checked('HC32 a diagnostic budget overflow remains incomplete even for exact advisories',async()=>{for(const capped of [false,true]){const f=fixture();f.report.contexts[0].advisories=Array.from({length:recipe.bounds.records+(capped?0:1)},()=>({kind:'CANVAS2D_READBACK_ADVISORY',message:readbackAdvisory}));if(capped)f.report.contexts[0].recordOverflow=true;assert.equal((await contract.admitCollection(f.report,{recipe,readArtifact:f.readArtifact})).status,'INCOMPLETE');}});
+
+checked('HC33 actual public HTML resources alias cannot be omitted or redirected before projection',async()=>{
+  async function baseline(){
+    const source=await readFile(new URL('../examples/hit-test/index.html',import.meta.url),'utf8'),maps=[...source.matchAll(/<script type="importmap">([^<]*)<\/script>/g)];
+    assert.equal(maps.length,1);const original=JSON.parse(maps[0][1]);
+    assert.equal(original.imports['@egret/contracts/resources'],'/packages/contracts/dist/resources/index.js');
+    const served=Object.fromEntries(Object.keys(original.imports).map((key,index)=>[key,'/m/'+String(index).padStart(4,'0')+'.js']));
+    assert.deepEqual(contract.projectImportMap(source,served).adaptation,{original,served:{imports:served}});
+    return {source,original,served,anchor:maps[0][0]};
+  }
+  for(const mutate of [map=>{delete map['@egret/contracts/resources'];},map=>{map['@egret/contracts/resources']='/packages/contracts/dist/index.js';}]){
+    const fixture=await baseline(),altered=structuredClone(fixture.original);mutate(altered.imports);
+    const failures=[];
+    try{assert.throws(()=>contract.projectImportMap(fixture.source.replace(fixture.anchor,'<script type="importmap">'+JSON.stringify(altered)+'</script>'),fixture.served),/original.*alias/i);}catch(cause){failures.push(cause);}
+    try{await baseline();}catch(cause){failures.push(cause);}
+    if(failures.length)throw new AggregateError(failures,'Hit-test resources alias refusal/restoration');
+  }
+});

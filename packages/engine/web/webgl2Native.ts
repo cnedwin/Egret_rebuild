@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 import { EgretError } from '@egret/runtime';
 import type { WebGL2HostErrorCode } from './webgl2Types.js';
+import type { NativeUnknownDiagnostics } from './sharedRetentionLedger.js';
+export interface GLNativeResourceDiagnostics {pageBytes:number;highPageBytes:number;reservedPageBytes:number;highReservedPageBytes:number;unknown:NativeUnknownDiagnostics;totals:{pageWriteCalls:number;pageWriteBytes:number};saturated:boolean;}
 
 export type GLNativeKind = 'Buffer' | 'Texture' | 'Renderbuffer' | 'Framebuffer' | 'Shader' | 'Program' | 'VertexArray' | 'Sync';
 export interface GLNativeOwner {
@@ -10,6 +12,7 @@ export interface GLNativeOwner {
     outcome: 'owned' | 'deleted' | 'context-invalidated' | 'unknown';
     cleanupCause?: unknown;
     accounting: 'native'|'retention';
+    readonly page?:boolean;diagnosticPageOwned?:boolean;diagnosticUnknown?:boolean;
 }
 const failures = new WeakSet<object>();
 export function glFailure(code: WebGL2HostErrorCode, cause?: unknown): EgretError {
@@ -42,7 +45,7 @@ export class GLNativeSession {
     public cleanupFailure: {readonly cause:unknown}|undefined;
     public recordOwners: GLNativeOwner[]|undefined;
     private readonly calls = new Map<string, (...args: unknown[]) => unknown>();
-    public constructor(public readonly context: WebGL2RenderingContext, private readonly gate: () => void) {
+    public constructor(public readonly context: WebGL2RenderingContext, private readonly gate: () => void, private readonly diagnostics?:GLNativeResourceDiagnostics) {
         const captured = Object.create(null) as WebGL2RenderingContext;
         // Capture only the finite methods used by this executor. Never enumerate a native context.
         for (const name of [...METHODS, ...KINDS.flatMap(kind => [kind === 'Sync' ? 'fenceSync' : 'create'+kind, 'delete'+kind])]) {
@@ -51,7 +54,15 @@ export class GLNativeSession {
             const call = candidate.bind(context) as (...args: unknown[]) => unknown;
             this.calls.set(name, call);
             Object.defineProperty(captured, name, { value: (...args: unknown[]): unknown => {
-                gate(); const value = call(...args); gate(); return value;
+                gate(); const value = call(...args);
+                // Observe the real page write before the existing post-call gate can throw.
+                if(name==='texSubImage2D'&&this.diagnostics){
+                    const state=this.diagnostics,bytes=(args[4] as number)*(args[5] as number)*4;
+                    if(state.totals.pageWriteCalls===Number.MAX_SAFE_INTEGER||bytes>Number.MAX_SAFE_INTEGER-state.totals.pageWriteBytes)state.saturated=true;
+                    state.totals.pageWriteCalls=Math.min(Number.MAX_SAFE_INTEGER,state.totals.pageWriteCalls+1);
+                    state.totals.pageWriteBytes=Math.min(Number.MAX_SAFE_INTEGER,state.totals.pageWriteBytes+bytes);
+                }
+                gate(); return value;
             } });
         }
         // Constants are fixed WebGL2 specification tokens, independent of mutable context properties.
@@ -83,24 +94,39 @@ export class GLNativeSession {
         };
         Object.assign(captured, constants); this.gl = captured;
     }
-    public create(kind: GLNativeKind, bytes = 0, parameter?: number): GLNativeOwner {
+    /** Observe original owner transitions; established unknown remains a once-only obligation. */
+    public observeResource(owner:GLNativeOwner):void {
+        const diagnostics=this.diagnostics;if(!diagnostics)return;
+        const page=owner.page===true&&owner.value!==undefined&&(owner.outcome==='owned'||owner.outcome==='unknown');
+        if(page!==!!owner.diagnosticPageOwned){diagnostics.pageBytes+=(page?1:-1)*owner.bytes;owner.diagnosticPageOwned=page;diagnostics.highPageBytes=Math.max(diagnostics.highPageBytes,diagnostics.pageBytes);}
+        const unknown=owner.outcome==='unknown'&&owner.accounting==='native';
+        if(unknown&&!owner.diagnosticUnknown){
+            const state=diagnostics.unknown,bytes=state.knownLogicalBytes+owner.bytes,objects=state.objects+1;
+            if(bytes>Number.MAX_SAFE_INTEGER||objects>Number.MAX_SAFE_INTEGER)state.saturated=true;
+            state.knownLogicalBytes=Math.min(Number.MAX_SAFE_INTEGER,bytes);state.objects=Math.min(Number.MAX_SAFE_INTEGER,objects);
+            state.highKnownLogicalBytes=Math.max(state.highKnownLogicalBytes,state.knownLogicalBytes);state.highObjects=Math.max(state.highObjects,state.objects);
+            owner.diagnosticUnknown=true;
+        }
+    }
+    public create(kind: GLNativeKind, bytes = 0, parameter?: number, page?:{reservedPageBytes:number}): GLNativeOwner {
         this.gate();
-        const owner: GLNativeOwner = {kind, bytes, value:undefined, outcome:'owned',accounting:'native'};
+        const owner: GLNativeOwner = {kind, bytes, value:undefined, outcome:'owned',accounting:'native',page:page!==undefined};
         // The slot exists before the native call; registration cannot lose a returned object.
         this.owners.add(owner);
         this.recordOwners?.push(owner);
         const call = this.calls.get(kind === 'Sync' ? 'fenceSync' : 'create'+kind)!;
         let value:unknown;
         try{value = kind === 'Sync' ? call(37143,0) : kind === 'Shader' ? call(parameter) : call();}
-        catch(cause){owner.outcome='unknown';owner.cleanupCause=cause;this.cleanupFailure??={cause};throw cause;}
+        catch(cause){owner.outcome='unknown';owner.cleanupCause=cause;this.cleanupFailure??={cause};this.observeResource(owner);throw cause;}
         if (value !== null && typeof value === 'object') owner.value = value;
         else { owner.outcome = 'deleted'; this.owners.delete(owner); throw new Error('WebGL2 allocation returned null: '+kind); }
-        this.gate(); return owner;
+        if(page){page.reservedPageBytes-=bytes;if(this.diagnostics)this.diagnostics.reservedPageBytes-=bytes;}
+        this.observeResource(owner);this.gate(); return owner;
     }
     public cleanup(owner: GLNativeOwner): boolean {
         if (owner.outcome !== 'owned') return owner.outcome !== 'unknown';
-        if (!owner.value) { owner.outcome = 'deleted'; this.owners.delete(owner); return true; }
-        if (this.invalidated) { owner.outcome = 'context-invalidated'; this.owners.delete(owner); return true; }
+        if (!owner.value) { owner.outcome = 'deleted'; this.observeResource(owner);this.owners.delete(owner); return true; }
+        if (this.invalidated) { owner.outcome = 'context-invalidated';this.observeResource(owner); this.owners.delete(owner); return true; }
         // Mark before invoking externally controlled code; a thrown deletion is never retried/refunded.
         owner.outcome = 'unknown';
         try {
@@ -111,13 +137,14 @@ export class GLNativeSession {
             else if (error === 0) owner.outcome = 'deleted';
             else owner.cleanupCause = error;
         } catch (cause) { owner.cleanupCause = cause; }
+        this.observeResource(owner);
         if (owner.outcome !== 'unknown') this.owners.delete(owner);
         else this.cleanupFailure??={cause:owner.cleanupCause};
         return owner.outcome !== 'unknown';
     }
     public lose(): void {
         this.invalidated = true;
-        for (const owner of this.owners) if (owner.outcome === 'owned') { owner.outcome = 'context-invalidated'; this.owners.delete(owner); }
+        for (const owner of this.owners) if (owner.outcome === 'owned') { owner.outcome = 'context-invalidated';this.observeResource(owner); this.owners.delete(owner); }
     }
     public cleanupAll(): boolean {
         let safe = true;

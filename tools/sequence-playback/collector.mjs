@@ -439,6 +439,7 @@ try {
   const aliases = {
     '#egret-textured-frame-state': path.join(repositoryRoot, 'packages/engine/dist/internal/texturedFrameState.js'),
     '#egret-mouse-input': path.join(repositoryRoot, 'packages/engine/dist/mouseInput.js'),
+    '@egret/contracts/resources': path.join(repositoryRoot, 'packages/contracts/dist/resources/index.js'),
     '@egret/contracts': path.join(repositoryRoot, 'packages/contracts/dist/index.js'), '@egret/runtime': path.join(repositoryRoot, 'packages/runtime/dist/index.js'),
     '@egret/engine': path.join(repositoryRoot, 'packages/engine/dist/index.js'), '@egret/engine/web': path.join(repositoryRoot, 'packages/engine/dist/web/index.js'),
     '@egret/engine/webgpu': path.join(repositoryRoot, 'packages/engine/dist/web/webgpu.js'),

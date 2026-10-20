@@ -6,7 +6,9 @@ English | [中文](../../Cns/docs/m1-rendering-resource-plan.md)
 
 ## Current implementation follow-up
 
-2026-10-20: M1.3 and M1.4 were delivered through [PR #75](https://github.com/cnedwin/Egret_rebuild/pull/75) and [PR #77](https://github.com/cnedwin/Egret_rebuild/pull/77). M1.5 implementation is in progress and has not been merged. Its C6 sustained WebGL2/WebGPU cases stopped at a network-completion assertion whose cause is not yet established; the other five recorded cases completed their stated scope. Overall M1.5 acceptance and M1.2 formal paired timing remain OPEN. M2/M3 implementation has not started.
+Verification cutoff: 2026-10-20. M1.3 and M1.4 were delivered through [PR #75](https://github.com/cnedwin/Egret_rebuild/pull/75) and [PR #77](https://github.com/cnedwin/Egret_rebuild/pull/77). M1.5 has completed independent review of its seven fixed desktop recovery cases. The affected browser regression completed all twenty-four suites and thirty-six actual calls with independent result review. Final package review and protected merge checks remained outstanding at this checkpoint, followed by M1.2 formal paired performance acceptance.
+
+The [verification record](resource-recovery-evidence.md) defines the measured environment, original attempts and remaining limits. Delivery is recorded in the repository's [pull requests](https://github.com/cnedwin/Egret_rebuild/pulls). M2/M3 implementation has not started.
 
 ## Purpose and entry
 
@@ -94,9 +96,12 @@ The PR records the base/candidate, measured scope, failures/repairs and final ma
 
 ## Current closeout sequence
 
-1. Deliver the bounded workflow simplification with protected checks and paired plans. Do not expand maintenance automation.
-2. Diagnose C6 with a short reproducible network/cleanup path; verify the collector’s complete output path before sustained execution. Preserve all original incomplete records.
-3. Close M1.5 as resource loading/cancellation/ownership plus recoverable WebGL2/WebGPU scenes. Retain the existing 100-cycle, ten-loss and 30-minute requirements for each required sustained backend.
-4. Complete M1.2 with valid paired baseline/candidate measurements under the declared workloads and budgets. Unavailable GPU timing and external devices remain explicitly unmeasured.
+The following status uses the 2026-10-20 verification cutoff. Delivery and merge results are recorded in the corresponding PRs.
 
-These are connected outcomes within existing M1, not additional helper-sized milestones. A functional merge cannot close an outstanding milestone acceptance row.
+| Outcome | Verified status and next step |
+| --- | --- |
+| Workflow integration and fixed recovery verification | Completed: workflow [PR #78](https://github.com/cnedwin/Egret_rebuild/pull/78) and independently reviewed C7 results. |
+| M1.5 regression and protected integration | Browser regression is complete: twenty-four suites and thirty-six actual calls independently reviewed. Complete final source/result/bilingual review and complete protected merge checks. The [evidence record](resource-recovery-evidence.md) retains the exact scope and original failures. |
+| M1.2 performance and M1 closeout | Obtain valid paired baseline/candidate measurements under the declared workloads and budgets. Then reconcile all M1 acceptance rows and design M2/M3. |
+
+These are connected outcomes within existing M1. A functional merge cannot close an outstanding performance or platform acceptance row. Unavailable GPU timing, external devices, authorized Editor content and human onboarding remain explicitly unaccepted where evidence is missing.

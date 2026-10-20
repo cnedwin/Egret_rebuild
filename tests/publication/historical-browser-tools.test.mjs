@@ -66,7 +66,7 @@ async function currentMixedCollectorPolicy() {
  const source = fs.readFileSync(path.join(repository, 'tools/verify-textured-scene-webgpu.mjs'), 'utf8');
  const start = source.indexOf('const REGISTRY = '), end = source.indexOf('function numericFault(cause)');
  assert.ok(start >= 0 && end > start, 'The actual finite collection policy must be present');
- return runInNewContext(source.slice(start, end) + '\n({ collectGraph, ENTRIES })', {
+ return runInNewContext(source.slice(start, end) + '\n({ collectGraph, ENTRIES, literalImports })', {
   path, process, URL, TextDecoder, createHash,
   readFile: fs.promises.readFile, realpath: fs.promises.realpath, lstat: fs.promises.lstat,
  }, { timeout: 1000 });
@@ -83,6 +83,7 @@ test('the mixed-scene collector seals both current lazy B1 closures without eval
  assertTwoMixedLazyEdges(graph);
  assert.ok(graph.modules.size <= 256); assert.ok(graph.totalBytes <= 8388608);
  assert.ok(graph.modules.has('/packages/engine/dist/web/sharedB1.js'));
+ assert.ok(graph.modules.has('/packages/contracts/dist/resources/index.js'));
  for (const row of graph.modules.values()) {
   for (const edge of row.edges) assert.ok(graph.modules.has(edge.url), 'Every transitive import is retained');
   assert.ok(pins.some(pin => pin.path === row.path && pin.sha256 === row.sha256));
@@ -158,6 +159,7 @@ for (const suite of ['sequence-player', 'sequence-playback', 'spritesheet']) tes
  assert.ok(graph.totalBytes <= 4194304);
  assert.ok(graph.closures.canvas.every(file => !/[\\/]WebGPUHost\.js$|[\\/]sharedB1\.js$/.test(file)));
  assert.ok(graph.closures.webgpu.some(file => /[\\/]sharedB1\.js$/.test(file)));
+ assert.ok(graph.modules.some(row => row.path.endsWith(path.join('contracts', 'dist', 'resources', 'index.js'))));
  for (const row of graph.modules) for (const edge of row.edges) assert.ok(graph.modules.some(candidate => candidate.path === edge.target));
  await assert.rejects(helper.sealGraph({ repositoryRoot: repository, aliases: selected.aliases, entryPaths: selected.entryPaths }), /Module-count budget exceeded/);
  const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'egret-sequence-graph-')));
@@ -183,3 +185,94 @@ for (const suite of ['sequence-player', 'sequence-playback', 'spritesheet']) tes
  assert.equal((await helper.sealGraph(options)).modules.length, 256);
  t.diagnostic('Actual dual-backend union: ' + graph.modules.length + ' modules; original helper default and 4 MiB cap remain enforced');
 });
+
+// M15-HISTORICAL-RESOURCE-LEXER-BEGIN
+// Actual tool-source readers only; no emitted SDK code or native collector executes.
+for (const suite of ['mixed-scene', 'sequence-player', 'sequence-playback', 'spritesheet']) {
+ test(suite + ' reader admits current resource regex data while preserving import refusals', async () => {
+  let read;
+  if (suite === 'mixed-scene') {
+   const policy = await currentMixedCollectorPolicy();
+   read = source => Array.from(policy.literalImports(source), row => row.specifier);
+  } else {
+   const source = fs.readFileSync(path.join(repository, 'tools', suite, 'file-graph.mjs'), 'utf8');
+   const begin = source.indexOf('function tokens(text) {'), end = source.indexOf('function sourceCounterpart(');
+   assert.ok(begin >= 0 && end > begin, 'The actual original reader must be present');
+   const reader = runInNewContext(source.slice(begin, end) + '\nimports', {}, { timeout: 1000 });
+   read = source => Array.from(reader(source), row => row.value);
+  }
+  const actualPath = path.join(repository, 'packages/contracts/dist/resources/manifestAdmission.js');
+  const actual = fs.readFileSync(actualPath, 'utf8');
+  const healthy = () => {
+   const current = fs.readFileSync(actualPath, 'utf8');
+   assert.equal(current, actual, 'the genuine resource source remains byte-identical');
+   assert.deepEqual(read(current), ['./sha256.js']);
+   assert.deepEqual(read("import './healthy.js';"), ['./healthy.js']);
+  };
+  healthy();
+  for (const row of [
+  {
+    "label": "actual path class",
+    "source": "if (/[\\\\\\u0000-\\u001f\\u007f:*?\"<>|%#]/u.test(path)) refuse(); import './after.js';",
+    "expected": [
+      "./after.js"
+    ]
+  },
+  {
+    "label": "escaped and class slashes",
+    "source": "if (/['\"/\\\\]\\/x/iu.test(path)) refuse(); import('./after.js');",
+    "expected": [
+      "./after.js"
+    ]
+  },
+  {
+    "label": "regex import text",
+    "source": "if (bad || /import\\(['\"]ignored['\"]\\)/u.test(path)) refuse(); import './after.js';",
+    "expected": [
+      "./after.js"
+    ]
+  },
+  {
+    "label": "unary not",
+    "source": "const valid = !/['\"/\\\\]/u.test(path); import('./after.js');",
+    "expected": [
+      "./after.js"
+    ]
+  },
+  {
+    "label": "division and quoted prefix",
+    "source": "const value = '(' / import('./after.js') / right;",
+    "expected": [
+      "./after.js"
+    ]
+  }
+]) {
+   healthy();
+   assert.deepEqual(read(row.source), row.expected, row.label);
+  }
+  for (const bad of [
+  "if (/unterminated",
+  "if (/[unterminated/",
+  "if (/escaped\\",
+  "if (/line\nnext/)",
+  "if (/x/uu.test(path)) {}",
+  "if (bad || /x/v.test(path)) {}",
+  "const valid = !/[unterminated/",
+  "const value = '||' / import(name) / right;",
+  "const value = '!' / import(name) / right;",
+  "import(name);",
+  "import('./after.js', {});",
+  "import.meta.url;",
+  "const value = `import('./hidden.js')`;"
+]) {
+   const failures = [];
+   try { healthy(); } catch (error) { failures.push(error); }
+   if (failures.length === 0) {
+    try { assert.throws(() => read(bad)); } catch (error) { failures.push(error); }
+   }
+   try { healthy(); } catch (error) { failures.push(error); }
+   if (failures.length) throw new AggregateError(failures, suite + ' literal refusal and genuine source baseline');
+  }
+ });
+}
+// M15-HISTORICAL-RESOURCE-LEXER-END

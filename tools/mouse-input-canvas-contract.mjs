@@ -45,7 +45,7 @@ export function restoreControlRoute(routes, route, original, projection) {
   if (projection) projection.servedCopyRestored = hash(routes.get(route).bytes) === projection.served.originalSHA256;
 }
 
-// Application JavaScript imports three public entries; these four exact transitive
+// Application JavaScript imports three public entries; these five exact transitive
 // aliases allow the ordinary repository-root HTTP example to resolve emitted SDK code.
 export const EXAMPLE_IMPORTS = Object.freeze({
   '@egret/engine': '../../packages/engine/dist/index.js',
@@ -53,11 +53,12 @@ export const EXAMPLE_IMPORTS = Object.freeze({
   '@egret/engine/web/input': '../../packages/engine/dist/web/input.js',
   '@egret/runtime': '../../packages/runtime/dist/index.js',
   '@egret/contracts': '../../packages/contracts/dist/index.js',
+  '@egret/contracts/resources': '../../packages/contracts/dist/resources/index.js',
   '#egret-textured-frame-state': '../../packages/engine/dist/internal/texturedFrameState.js',
   '#egret-mouse-input': '../../packages/engine/dist/mouseInput.js',
 });
 
-/** Admit exactly the example's three public entries and four transitive aliases. */
+/** Admit exactly the example's three public entries and five transitive aliases. */
 export function projectImportMap(html, imports) {
   const matches = [...html.matchAll(/<script type="importmap">([\s\S]*?)<\/script>/g)];
   const expected = EXAMPLE_IMPORTS;

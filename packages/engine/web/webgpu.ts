@@ -5,3 +5,6 @@ export type { TexturedWebGPUHost, TexturedWebGPUHostOptions, TexturedWebGPUHostS
 
 export { createSharedWebGPUHost } from './WebGPUHost.js';
 export type { SharedWebGPUHost, SharedWebGPUHostOptions, SharedWebGPUHostStatus, SharedWebGPUReadback } from './WebGPUHost.js';
+
+export type { SharedDeviceSessionState, SharedDeviceSessionStatus, SharedHostResourceStatus } from './sharedDeviceSession.js';
+export type { SharedFrameUploadOptions, SharedFrameUploadReady, SharedFrameSubmission, SharedFrameUpload } from './sharedFrameUpload.js';

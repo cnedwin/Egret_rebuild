@@ -1,0 +1,834 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/anchored-atlas-playback/index.html",
+      "originRole": "First-party retained browser fixture or policy control; M1.5 resource module compatibility preserves its existing reference scene, refusal cases and verification scope, Apache-2.0."
+    },
+    {
+      "path": "examples/bitmap-button/index.html",
+      "originRole": "First-party retained browser fixture or policy control; M1.5 resource module compatibility preserves its existing reference scene, refusal cases and verification scope, Apache-2.0."
+    },
+    {
+      "path": "examples/bitmap-resource-slot/index.html",
+      "originRole": "First-party retained browser fixture or policy control; M1.5 resource module compatibility preserves its existing reference scene, refusal cases and verification scope, Apache-2.0."
+    },
+    {
+      "path": "examples/linear-layout/index.html",
+      "originRole": "First-party retained browser fixture or policy control; M1.5 resource module compatibility preserves its existing reference scene, refusal cases and verification scope, Apache-2.0."
+    },
+    {
+      "path": "examples/prepared-resource-groups/index.html",
+      "originRole": "First-party retained browser fixture or policy control; M1.5 resource module compatibility preserves its existing reference scene, refusal cases and verification scope, Apache-2.0."
+    },
+    {
+      "path": "examples/resource-scene/index.html",
+      "originRole": "First-party retained browser fixture or policy control; M1.5 resource module compatibility preserves its existing reference scene, refusal cases and verification scope, Apache-2.0."
+    },
+    {
+      "path": "examples/trimmed-atlas-playback/index.html",
+      "originRole": "First-party retained browser fixture or policy control; M1.5 resource module compatibility preserves its existing reference scene, refusal cases and verification scope, Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/prepared-resource-groups-evidence.md",
+      "originRole": "First-party resource scene verification documentation, independently maintained with AI assistance under Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/resource-recovery-contract.md",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/resource-recovery-evidence.md",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/resource-scene-integration.md",
+      "originRole": "First-party resource scene verification documentation, independently maintained with AI assistance under Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/prepared-resource-groups-evidence.md",
+      "originRole": "First-party resource scene verification documentation, independently maintained with AI assistance under Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/resource-recovery-contract.md",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/resource-recovery-evidence.md",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/resource-scene-integration.md",
+      "originRole": "First-party resource scene verification documentation, independently maintained with AI assistance under Apache-2.0."
+    },
+    {
+      "path": "packages/contracts/src/ResourceManifest.ts",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/contracts/src/resources/index.ts",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0."
+    },
+    {
+      "path": "packages/contracts/src/resources/manifestAdmission.ts",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/contracts/src/resources/sha256.ts",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/bitmapBindingTicket.ts",
+      "originRole": "First-party existing bitmap binding or browser image provider extended for M1.5 staged resource ownership and bounded loading diagnostics; independently authored with AI assistance and separate review, Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/manifestAssetGroup.ts",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/manifestResourceState.ts",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/manifestResourceTypes.ts",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/resources.ts",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/BrowserTextureProvider.ts",
+      "originRole": "First-party existing bitmap binding or browser image provider extended for M1.5 staged resource ownership and bounded loading diagnostics; independently authored with AI assistance and separate review, Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/ManifestByteSource.ts",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/resources.ts",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/sharedDeviceSession.ts",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/web/sharedFrameUpload.ts",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/project/src/resources/index.ts",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0."
+    },
+    {
+      "path": "packages/project/src/resources/manifest.ts",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/atlas-frame-boundary.test.mjs",
+      "originRole": "First-party retained browser fixture or policy control; M1.5 resource module compatibility preserves its existing reference scene, refusal cases and verification scope, Apache-2.0."
+    },
+    {
+      "path": "tests/candidate-shared-frame-fixture.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/candidate-shared-frame-host-control.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/candidate-shared-frame.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/fixtures/resource-manifest.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/fixtures/shared-frame-upload-gpu.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/legacy-smoke-resource-map.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/manifest-asset-group-heldout.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/manifest-asset-group.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/manifest-browser-fixtures.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/manifest-byte-source.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/manifest-resource-diagnostics.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/manifest-texture-provider.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/native-import-lexer.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/prepared-resource-oracle.test.mjs",
+      "originRole": "First-party fixed reference and environment refusal regression tests, independently authored with AI assistance under Apache-2.0."
+    },
+    {
+      "path": "tests/resource-manifest-bounded-admission.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/resource-manifest-builder-io-child.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/resource-manifest-builder-io-unit.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/resource-manifest-sha-unit.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/resource-manifest.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/resource-recovery-window-policy.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/resource-scene-browser-source.test.mjs",
+      "originRole": "First-party retained browser fixture or policy control; M1.5 resource module compatibility preserves its existing reference scene, refusal cases and verification scope, Apache-2.0."
+    },
+    {
+      "path": "tests/shared-device-session.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/shared-frame-upload-gl-fixture.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/shared-frame-upload-webgl2.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/shared-frame-upload-webgpu.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/shared-host-resource-diagnostics.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/types/candidate-shared-frame-negative.ts",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/types/candidate-shared-frame-positive.ts",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/types/manifest-browser-negative.ts",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/types/manifest-browser-positive.ts",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/types/manifest-resource-diagnostics-negative.ts",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/types/manifest-resource-diagnostics-positive.ts",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/types/resources-group-negative.ts",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/types/resources-group-positive.ts",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/types/shared-frame-upload-gpu-negative.ts",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/types/shared-frame-upload-gpu-positive.ts",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/types/shared-frame-upload-webgl2-negative.ts",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/types/shared-frame-upload-webgl2-positive.ts",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/types/shared-host-resource-diagnostics-negative.ts",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/types/shared-host-resource-diagnostics-positive.ts",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/types/tsconfig.candidate-shared-frame-negative.json",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/types/tsconfig.candidate-shared-frame-positive.json",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/types/tsconfig.manifest-browser-negative.json",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/types/tsconfig.manifest-browser-positive.json",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/types/tsconfig.manifest-resource-diagnostics-negative.json",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/types/tsconfig.manifest-resource-diagnostics-positive.json",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/types/tsconfig.resources-group-negative.json",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/types/tsconfig.resources-group-positive.json",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/types/tsconfig.shared-frame-upload-gpu-negative.json",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/types/tsconfig.shared-frame-upload-gpu-positive.json",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/types/tsconfig.shared-frame-upload-webgl2-negative.json",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/types/tsconfig.shared-frame-upload-webgl2-positive.json",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/types/tsconfig.shared-host-resource-diagnostics-negative.json",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tests/types/tsconfig.shared-host-resource-diagnostics-positive.json",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0."
+    },
+    {
+      "path": "tools/build-resource-manifest.mjs",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/m15-strict-successors.json",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0."
+    },
+    {
+      "path": "tools/prepared-resource-groups/oracle.mjs",
+      "originRole": "First-party bounded resource scene reference verification tool, independently authored with AI assistance under Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/prepared-resource-groups/prepare-native-config.mjs",
+      "originRole": "First-party bounded resource scene reference verification tool, independently authored with AI assistance under Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/resource-recovery-types.mjs",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/author-resource-recovery-assets.mjs",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/asset-pins.json",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/a0.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/a1.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/atlas.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/b0.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/b1.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p00.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p01.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p02.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p03.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p04.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p05.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p06.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p07.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p08.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p09.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p10.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p11.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p12.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p13.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p14.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p15.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p16.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p17.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p18.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p19.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p20.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p21.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p22.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p23.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p24.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p25.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p26.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p27.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p28.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p29.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p30.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p31.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p32.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p33.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p34.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p35.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p36.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p37.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p38.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p39.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/white.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/builder-receipt.json",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/catalog.json",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/manifest.json",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/project.json",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/a0.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/a1.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/atlas.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/b0.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/b1.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p00.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p01.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p02.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p03.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p04.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p05.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p06.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p07.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p08.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p09.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p10.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p11.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p12.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p13.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p14.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p15.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p16.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p17.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p18.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p19.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p20.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p21.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p22.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p23.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p24.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p25.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p26.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p27.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p28.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p29.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p30.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p31.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p32.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p33.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p34.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p35.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p36.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p37.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p38.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p39.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/white.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-collector.mjs",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-observations.mjs",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-oracle.mjs",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-source.mjs",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0."
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-window.mjs",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tools/verify-bitmap-resource-slot.mjs",
+      "originRole": "First-party retained browser fixture or policy control; M1.5 resource module compatibility preserves its existing reference scene, refusal cases and verification scope, Apache-2.0."
+    },
+    {
+      "path": "tools/verify-resource-recovery.mjs",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/resource-recovery-contract.md",
+      "zh": "knowledge-base/Cns/docs/resource-recovery-contract.md"
+    },
+    {
+      "en": "knowledge-base/en/docs/resource-recovery-evidence.md",
+      "zh": "knowledge-base/Cns/docs/resource-recovery-evidence.md"
+    },
+    {
+      "en": "knowledge-base/en/docs/prepared-resource-groups-evidence.md",
+      "zh": "knowledge-base/Cns/docs/prepared-resource-groups-evidence.md"
+    },
+    {
+      "en": "knowledge-base/en/docs/resource-scene-integration.md",
+      "zh": "knowledge-base/Cns/docs/resource-scene-integration.md"
+    }
+  ],
+  "frozenInputs": [
+    {
+      "path": "tests/types/resource-recovery-diagnostic-expectations.json",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 41232,
+      "sha256": "9d6588edad6c5cb124d6e72fe6a97fd40bcc8546587cea46b8c1dd83b364e12d"
+    }
+  ]
+}

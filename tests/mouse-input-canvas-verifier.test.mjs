@@ -1,7 +1,7 @@
 // Collector grammar/evidence units only; these are not browser or SDK acceptance. Apache-2.0.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
+import { mkdtemp, mkdir, readFile, writeFile, rm } from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
 import { createHash } from 'node:crypto';
@@ -32,13 +32,14 @@ test('physical-removal control skips only acquisition slot one and DPR control c
   assert.equal(CONTROLS[5].replacement, 'if (record.pairs.indexOf(pair) !== 1) pair.remove(pair.listener);');
   assert.equal(CONTROLS[4].replacement, 'const globalX = (x - rect.left) * width / rect.width * win.devicePixelRatio;');
 });
-test('exact public entries and four transitive emitted aliases can be projected', () => {
+test('exact public entries and five transitive emitted aliases can be projected', () => {
   const original = { imports: EXAMPLE_IMPORTS };
   const html = '<script type="importmap">' + JSON.stringify(original) + '</script>';
   const imports = Object.fromEntries(Object.keys(EXAMPLE_IMPORTS).map((name, index) => [name, '/m/' + String(index).padStart(4, '0') + '.js']));
-  assert.deepEqual(Object.keys(EXAMPLE_IMPORTS), ['@egret/engine', '@egret/engine/web', '@egret/engine/web/input', '@egret/runtime', '@egret/contracts', '#egret-textured-frame-state', '#egret-mouse-input']);
+  assert.deepEqual(Object.keys(EXAMPLE_IMPORTS), ['@egret/engine', '@egret/engine/web', '@egret/engine/web/input', '@egret/runtime', '@egret/contracts', '@egret/contracts/resources', '#egret-textured-frame-state', '#egret-mouse-input']);
   assert.equal(EXAMPLE_IMPORTS['@egret/runtime'], '../../packages/runtime/dist/index.js');
   assert.equal(EXAMPLE_IMPORTS['@egret/contracts'], '../../packages/contracts/dist/index.js');
+  assert.equal(EXAMPLE_IMPORTS['@egret/contracts/resources'], '../../packages/contracts/dist/resources/index.js');
   assert.equal(EXAMPLE_IMPORTS['#egret-textured-frame-state'], '../../packages/engine/dist/internal/texturedFrameState.js');
   assert.equal(EXAMPLE_IMPORTS['#egret-mouse-input'], '../../packages/engine/dist/mouseInput.js');
   assert.equal(projectImportMap(html, imports).html, '<script type="importmap">' + JSON.stringify({ imports }) + '</script>');
@@ -157,3 +158,30 @@ test('shared graph refuses absent alias selection and unknown alias prefixes', a
   await writeFile(entry, "import { lexicalFixture } from '#egret-mouse-input-extra';\n");
   await assert.rejects(sealGraph({ repositoryRoot: fixture, entryPaths: { canvas: [entry] }, aliases: { '#egret-mouse-input-extra': target } }), /simple literal path/);
 }));
+
+// Fixed-map grammar only; neither this projection nor the lexical fixtures run native input.
+test('actual mouse HTML resources alias and served route require exact independent admission', async () => {
+  async function baseline() {
+    const source = await readFile(new URL('../examples/mouse-input/index.html', import.meta.url), 'utf8');
+    const maps = [...source.matchAll(/<script type="importmap">([\s\S]*?)<\/script>/g)];
+    assert.equal(maps.length, 1); const original = JSON.parse(maps[0][1]);
+    assert.equal(original.imports['@egret/contracts/resources'], '../../packages/contracts/dist/resources/index.js');
+    const served = Object.fromEntries(Object.keys(original.imports).map((key, index) => [key, '/m/' + String(index).padStart(4, '0') + '.js']));
+    const projected = projectImportMap(source, served);
+    assert.deepEqual({ original: projected.original, served: projected.served }, { original, served: { imports: served } });
+    return { source, original, served, anchor: maps[0][0] };
+  }
+  const mutations = [
+    f => { delete f.original.imports['@egret/contracts/resources']; },
+    f => { f.original.imports['@egret/contracts/resources'] = '../../packages/contracts/dist/index.js'; },
+    f => { delete f.served['@egret/contracts/resources']; },
+    f => { f.served['@egret/contracts/resources'] = 'https://example.test/resources.js'; },
+  ];
+  for (const mutate of mutations) {
+    const fixture = await baseline(), altered = structuredClone(fixture); mutate(altered);
+    const failures = [];
+    try { assert.throws(() => projectImportMap(altered.source.replace(altered.anchor, '<script type="importmap">' + JSON.stringify(altered.original) + '</script>'), altered.served), /Exact public import-map/); } catch (cause) { failures.push(cause); }
+    try { await baseline(); } catch (cause) { failures.push(cause); }
+    if (failures.length) throw new AggregateError(failures, 'Mouse resources alias refusal/restoration');
+  }
+});

@@ -1,3 +1,4 @@
+import type { SharedPageCopyDiagnostics2D } from '../rendering/sharedColor2D.js';
 import type { PreparedSharedFrame2D } from '../rendering/prepareSharedDraws2D.js';
 import { packSharedDraws2D } from '../rendering/packSharedDraws2D.js';
 import { noteOwnedPreparationFailure } from '../rendering/ownedPreparationFailure2D.js';
@@ -14,7 +15,7 @@ export { SharedStorageError2D } from './sharedSubmissionStorage2D.js';
 export type { SharedOwnerSnapshot2D, SharedSceneStorage2D } from './sharedSubmissionStorage2D.js';
 export interface SharedSubmissionStorage2D extends NeutralSharedSubmissionStorage2D { readonly options:SharedWebGPUConfiguration; }
 export const checkSharedCapacity2D:(storage:SharedSubmissionStorage2D,owner:SharedOwnerSnapshot2D,canonicalBytes?:number,sourceCopy?:number)=>void=checkSharedStorageCapacity2D;
-export const materializeSharedPages2D:(storage:SharedSubmissionStorage2D,cold:ReadonlySet<number>,owner:SharedOwnerSnapshot2D)=>{projections:(Uint8Array<ArrayBuffer>|undefined)[];canonicalBytes:number}=materializeSharedStoragePages2D;
+export const materializeSharedPages2D:(storage:SharedSubmissionStorage2D,cold:ReadonlySet<number>,owner:SharedOwnerSnapshot2D,diagnostics?:SharedPageCopyDiagnostics2D)=>{projections:(Uint8Array<ArrayBuffer>|undefined)[];canonicalBytes:number}=materializeSharedStoragePages2D;
 function failDevice():never {throw noteOwnedPreparationFailure(new SharedStorageError2D('device'));}
 
 /** Preserve WebGPU fees, 256-byte rows, native checks and pending order before payloads. */

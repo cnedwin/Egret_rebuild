@@ -4,6 +4,9 @@ import {test} from 'node:test';
 import {createHash} from 'node:crypto';
 import path from 'node:path';
 import os from 'node:os';
+import {readFile} from 'node:fs/promises';
+import {fileURLToPath} from 'node:url';
+import {sealGraph} from '../tools/sequence-player/file-graph.mjs';
 import {parseCollectorArgs,admitWindow} from '../tools/canvas-text-canvas-contract.mjs';
 const root=path.join(os.tmpdir(),'egret-main'),installed=path.join(os.tmpdir(),'installed-playwright'),output=path.join(os.tmpdir(),'independent-canvas-output');
 const clone=value=>structuredClone(value),digest=bytes=>createHash('sha256').update(bytes).digest('hex');
@@ -83,4 +86,33 @@ test('readiness must refuse before native measure or Canvas provider context all
 test('held replacement needs retained image authority closed-Scope rejection and idle counters',()=>{
   assert.equal(accept(windowInput('holdRaster')),undefined);
   for(const change of [v=>v.observations[0].savedImageBytesChecked=false,v=>v.observations[0].scopeReason.code='OTHER',v=>v.observations[0].remaining.pendingJobs=1,v=>v.counters.lateImages=0]){const input=windowInput('holdRaster');change(input.value);assert.throws(()=>accept(input),/Canvas evidence/);}
+});
+
+// Source-closure control only: reads emitted bytes without importing/evaluating SDK modules.
+test('Canvas text example seals the exact resources subpath and refuses its absent alias',async()=>{
+  const repository=fileURLToPath(new URL('../',import.meta.url));
+  async function baseline(){
+    const html=await readFile(new URL('../examples/canvas-text/index.html',import.meta.url),'utf8');
+    const maps=[...html.matchAll(/<script type="importmap">([\s\S]*?)<\/script>/g)];
+    assert.equal(maps.length,1);
+    const authored=JSON.parse(maps[0][1]).imports;
+    assert.equal(authored['@egret/contracts/resources'],'/packages/contracts/dist/resources/index.js');
+    const owner=JSON.parse(await readFile(new URL('../packages/contracts/package.json',import.meta.url),'utf8'));
+    assert.equal(owner.name,'@egret/contracts');
+    assert.deepEqual(owner.exports['./resources'],{types:'./dist/resources/index.d.ts',import:'./dist/resources/index.js'});
+    const aliases=Object.fromEntries(Object.entries(authored).map(([key,value])=>{assert.match(value,/^\/packages\//);return[key,path.join(repository,value.slice(1))];}));
+    const entryPaths={canvas:['@egret/engine','@egret/engine/text','@egret/engine/web','@egret/engine/web/text'].map(key=>aliases[key])};
+    const graph=await sealGraph({repositoryRoot:repository,aliases,entryPaths,maxModules:128,maxBytes:4194304});
+    const resources=graph.modules.find(row=>path.resolve(row.path)===path.resolve(aliases['@egret/contracts/resources']));
+    assert.ok(resources,'Genuine contracts/resources emission is in the text Canvas closure');
+    const callers=graph.modules.flatMap(row=>row.edges.filter(edge=>edge.specifier==='@egret/contracts/resources').map(edge=>({parent:path.relative(repository,row.path).replaceAll(path.sep,'/'),target:edge.target})));
+    assert.deepEqual(callers.map(row=>row.parent).sort(),['packages/engine/dist/manifestAssetGroup.js','packages/engine/dist/manifestResourceState.js']);
+    for(const row of callers)assert.equal(path.resolve(row.target),path.resolve(resources.path));
+    return {aliases,entryPaths};
+  }
+  const {aliases,entryPaths}=await baseline(),missing={...aliases};delete missing['@egret/contracts/resources'];
+  const failures=[];
+  try{await assert.rejects(sealGraph({repositoryRoot:repository,aliases:missing,entryPaths,maxModules:128,maxBytes:4194304}),/Unselected bare import: @egret\/contracts\/resources/);}catch(cause){failures.push(cause);}
+  try{await baseline();}catch(cause){failures.push(cause);}
+  if(failures.length)throw new AggregateError(failures,'Canvas text resources alias refusal/restoration');
 });

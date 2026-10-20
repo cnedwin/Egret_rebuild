@@ -167,3 +167,40 @@ WebGL2 仅使用显式构建入口 `@egret/engine/webgl2` 与 `@egret/engine/web
 
 单独的 `tools/verify-shared-webgl2-lifetime.mjs` 夹具使用真实公开 SDK 值与自有 canvas，设置固定脏状态并调用真实 `WEBGL_lose_context` 扩展。四 context／六读回／24 点／96 通道计划覆盖即时提交、固定深度／状态、一次恢复／重放及一次先关闭后恢复竞争。不增加私有产品导入、拦截或合成失效证明。保留精确零容差端点与清理观察；M1.5 持续恢复及计时分别验收。
 <!-- M14-NATIVE-PUBLIC-END -->
+
+<!-- M15-MANIFEST-UNIT-BEGIN -->
+## 资源身份哈希单元验证
+
+`tests/resource-manifest-sha-unit.test.mjs` 仅可直接导入已构建的私有模块 `packages/contracts/dist/resources/sha256.js`，将其 UTF-8 SHA-256 结果与标准字面量向量及独立的 Node/Web Crypto 结果比较。这一限定的 UNIT 权限不新增公开哈希 API，不允许模块钩子、产品修改或更广泛的私有导入。资源清单和项目行为用例使用已构建的可选公开资源入口。哈希匹配只证明受测摘要计算，不证明实际资源字节完整性、浏览器行为或 M1.5 验收通过。
+<!-- M15-MANIFEST-UNIT-END -->
+
+<!-- M15-FOCUSED-IO-BEGIN -->
+## 资源清单工具与受控浏览器单元验证
+
+仅由 `tests/resource-manifest-builder-io-unit.test.mjs` 启动的专用子进程 `tests/resource-manifest-builder-io-child.mjs`，可临时替换 Node `fs.readFileSync`、`readSync`、`openSync`、`closeSync`、`fstatSync` 的精确自有属性描述符，并同步内置 ESM 导出。观察与指定拒绝仅限子进程自有、明确列出的临时夹具路径及已捕获的文件描述符；其他调用原样转交。通过普通模块导入执行一次真实构建工具 CLI，保留真实文件字节与独立 Node crypto；在 `finally` 中恢复所有原始描述符及同步导出，并关闭自有句柄。仅限这些子进程自有夹具文件，可在真实大小观察后立即使用未经替换的 ftruncateSync/writeSync 截断或追加实际字节，以验证真实短读／增长拒绝；不得伪造文件系统返回值。该工具 I/O 单元验证读取前限额与有限分块，不授予私有 SDK 导入、预加载、loader 钩子、原型拦截或原生验收权限。
+
+仅 `tests/manifest-byte-source.test.mjs`、`tests/manifest-texture-provider.test.mjs` 与 `tests/manifest-resource-diagnostics.test.mjs` 可在串行用例中，将 `globalThis.fetch` 的完整自有属性描述符临时替换为测试自有传输。纯夹具辅助文件 `tests/manifest-browser-fixtures.mjs` 提供自有 response/body/reader 对象和受控异步操作，但不修改全局对象。自有工作实际结束后恢复原始描述符全部字段。用例保持真实已构建公开 SDK 对象、未经替换的实际 Web Crypto 与既有 PNG ports；不增加 crypto、时钟、构造器或原型拦截、私有 SDK 导入、模块钩子或公开测试权限。受控传输／解码结果仅证明完整性、顺序、逻辑容量与清理；实际浏览器解码、性能与设备恢复需单独验证。
+<!-- M15-FOCUSED-IO-END -->
+
+<!-- M15-HOST-CONTROLS-BEGIN -->
+## 共享 Host 分阶段上传受控验证
+
+公开行为用例 `tests/shared-frame-upload-webgl2.test.mjs`、`tests/shared-frame-upload-webgpu.test.mjs`、`tests/shared-device-session.test.mjs` 和 `tests/shared-host-resource-diagnostics.test.mjs` 使用真实已构建 SDK 捕获及既有测试自有 GL/GPU/canvas/event ports。其纯辅助文件不增加私有产品导入、模块钩子、产品导出或调度器拦截。GPU 用例可使用既有夹具串行替换 `globalThis.navigator` 完整自有属性描述符的能力，并在自有工作结算后恢复全部原始字段。不授予其他全局对象、构造器或原型替换权限。固定十秒的就绪后持有期限使用实际经过时间验证；原生写入端口观察与普通调度标记只建立受控任务边界，不改变产品调度器。
+
+受控 GPU 分阶段上传不启用恢复。结构化夹具设备不能通过可选恢复或原生丢失身份核验；每个启用恢复的 GPU 代次均须捕获经过原生设备身份核验的观察。真实恢复正例、实际丢失顺序、像素与计时仍属于独立浏览器证据，不得伪造原生 getter 或增加产品测试绕过入口。GL 提取端口保持同步；栅栏成功后的回读失败可区分提交完成与回读，不得虚构异步 GL API。源码、受控、原生与交付结论分别记录。
+<!-- M15-HOST-CONTROLS-END -->
+
+<!-- M15-NATIVE-RECOVERY-POLICY-BEGIN -->
+## 资源恢复原生观察边界
+
+可选的固定 `tools/verify-resource-recovery.mjs` 采集器在隔离的前台浏览器 context 中使用真实已构建公开 SDK 入口。七个用例覆盖两个持续资源／恢复场景、手动借用设备恢复，以及四个真实失效／关闭或恢复／关闭竞争。保留既定计划、独立参考像素、原始读回与截图字节、源码身份、实际原生完成与清理证据。不支持的能力和未解决的观察保持未执行或不完整。逻辑计数、原生调用已发出、像素匹配、计时与物理内存分别取证。
+
+仅 `tools/shared-rendering/resource-recovery-observations.mjs` 可在这些隔离 context 内、Host 捕获原生方法之前安装以下有限观察：
+
+- 既有 PNG ports 使用原始 receiver 和固定参数转发捕获的真实 Window `createImageBitmap` 与 Document `createElement('canvas')` 操作，原样返回原始解码 promise。固定取消安排仅可在原生解码调用之后，释放其捕获的真实夹具 ManifestAssetGroup。不替换全局解码器、fetch、crypto、bitmap 或 canvas 描述符。
+- 自有 GPU 自动获取仅可临时替换 `GPUAdapter.prototype.requestDevice` 精确、可配置的自有数据属性描述符。原样转发原始 receiver、参数、返回值和异常；观察其实际 promise 及捕获的真实 `GPUDevice.prototype.lost` getter。仅通过捕获的真实 `GPUDevice.prototype.destroy` 触发既定代际失效。不允许替换 requestAdapter、读取参数 getter、合成设备／失效或增加适配器描述 getter。恢复时允许使用不同真实适配器；选定适配器的描述信息保持不可用，浏览器 SystemInfo 单独记录。
+- 压力观察仅可临时替换 `WebGL2RenderingContext.prototype.texSubImage2D`、`WebGL2RenderingContext.prototype.deleteTexture`、`GPUQueue.prototype.writeTexture` 和 `GPUTexture.prototype.destroy` 精确、可配置的自有数据属性描述符。使用相同 receiver 和参数调用原始方法一次，保留其原始返回值或异常。GPU 目标纹理身份仅从自有数据属性描述符读取。GL 观察不推断当前绑定的纹理身份；不允许拦截 bindTexture 或 getParameter。
+- 上传观察仅可通过捕获的内建访问器保留实际 Uint8Array 视图长度和前四个字节，不保留参数数组或底层缓冲区。固定暂存取消仅可在原始上传返回之后，中止捕获的夹具 AbortController。不允许任意注入回调、修改调度器／fence 或新增产品观察钩子。
+
+任何替换之前检查全部描述符。压力记录最多 16,384 行、4,096 个对象身份；PNG 记录最多 8,192 行、四个原始 promise；GPU 获取最多十六个请求／设备／适配器身份和 256 个事件。超出上限或观察失败不得替换原始调用结果；继续转发调用、保留不完整状态，不声称已全部排空。只有实际原始工作已结束且 Host 已关闭后，才恢复原始描述符全部字段。结算未知或采集器期限到达时，明确记录清理不完整及 realm 释放，不据此证明原生资源已退役。上述权限不增加私有产品导入、SDK 导出、通用拦截权限，也不扩大既有受控单元测试权限。
+<!-- M15-NATIVE-RECOVERY-POLICY-END -->

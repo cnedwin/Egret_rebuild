@@ -31,6 +31,41 @@ function seqpbRead(root, file) {
 // This is one complete path and two exact raw identities, never a path wildcard.
 // Only the two reviewed optional GL entries extend this exact historical package.
 // Reconstruct its full predecessor; unrelated fields and routes remain byte-bound.
+// Exact M1.5 package successors; all retained package tuples/inverses remain below.
+const m15ResourcePackageSuccessors = [{"base":{"path":"packages/contracts/package.json","bytes":179,"sha256":"fceaef2ae55a77347ce9f99acd2165d36e991d89c76bf0480ff5048f3e7a94a1"},"current":{"path":"packages/contracts/package.json","bytes":319,"sha256":"f40591968003b235cddf38a576c1250a28ef965726750d377f0691a8e6f48e9e"}},{"base":{"path":"packages/engine/package.json","bytes":1567,"sha256":"e01d48a51c0845783afeec93ffcc7674c7980797cd6a9c58cc74ec3f13d2e0c5"},"current":{"path":"packages/engine/package.json","bytes":2167,"sha256":"be2a5a1e13136e99111ebc0fdfa657e4067fbba79647eeb93431395210516143"}},{"base":{"path":"packages/project/package.json","bytes":397,"sha256":"295e6bc8d81a4647f5b99355ea27879563ced216fa2af406c65cc78b95f40945"},"current":{"path":"packages/project/package.json","bytes":621,"sha256":"e6ec9743041ee5489297861ad5ed810021875dae7c041011a0f6d4e754eb6462"}}];
+const m15ResourceAtlasPackageSuccessor = [{"base":{"path":"packages/project/package.json","bytes":503,"sha256":"4b4380142316c6ab2f0727eab44c80eff2a21640c701871c6ace3a0ab1b276af"},"current":{"path":"packages/project/package.json","bytes":621,"sha256":"e6ec9743041ee5489297861ad5ed810021875dae7c041011a0f6d4e754eb6462"}}];
+function m15ResourcePackageSuccessor(expected, raw) {
+  const pair=[...m15ResourcePackageSuccessors,...m15ResourceAtlasPackageSuccessor].find(row=>row.base.path===expected?.path
+    &&row.base.bytes===expected.bytes&&row.base.sha256===expected.sha256);
+  if(!pair)return false;
+  const bytes=Buffer.from(raw),digest=raw=>createHash('sha256').update(raw).digest('hex');
+  if(bytes.length!==pair.current.bytes||digest(bytes)!==pair.current.sha256)return false;
+  const value=JSON.parse(bytes.toString('utf8'));
+  const remove=(key,mapping)=>{if(JSON.stringify(value.exports[key])!==JSON.stringify(mapping))return false;delete value.exports[key];return true;};
+  const resourceIndex={types:'./dist/resources/index.d.ts',import:'./dist/resources/index.js'};
+  if(expected.path==='packages/contracts/package.json') {
+    if(!remove('./resources',resourceIndex))return false;
+  } else if(expected.path==='packages/project/package.json') {
+    if(!remove('./resources',resourceIndex))return false;
+    if(expected.bytes===397&&!remove('./atlas',{types:'./dist/atlas/index.d.ts',import:'./dist/atlas/index.js'}))return false;
+  } else {
+    if(!remove('./resources',{types:'./dist/resources.d.ts',import:'./dist/resources.js'})
+      ||!remove('./web/resources',{types:'./dist/web/resources.d.ts',import:'./dist/web/resources.js'})
+      ||JSON.stringify(value.imports['#egret-manifest-resources'])!==JSON.stringify({types:'./dist/manifestResourceState.d.ts',import:'./dist/manifestResourceState.js'}))return false;
+    delete value.imports['#egret-manifest-resources'];
+    if(!remove('./webgl2',{types:'./dist/web/webgl2.d.ts',import:'./dist/web/webgl2.js'})
+      ||!remove('./webgl2/scene3d',{types:'./dist/web/webgl2Scene3d.d.ts',import:'./dist/web/webgl2Scene3d.js'}))return false;
+  }
+  let predecessor=JSON.stringify(value,null,2)+'\n';
+  if(expected.path==='packages/contracts/package.json'){
+    const expanded="  \"exports\": {\n    \".\": {\n      \"types\": \"./dist/index.d.ts\",\n      \"import\": \"./dist/index.js\"\n    }\n  }",compact="  \"exports\": { \".\": { \"types\": \"./dist/index.d.ts\", \"import\": \"./dist/index.js\" } }";
+    if(predecessor.split(expanded).length!==2)return false;
+    predecessor=predecessor.replace(expanded,compact);
+  }
+  const prior=Buffer.from(predecessor);
+  return prior.length===expected.bytes&&digest(prior)===expected.sha256;
+}
+
 function m14EnginePackageSuccessor(expected, raw) {
   const bytes = Buffer.from(raw);
   if (expected?.path !== 'packages/engine/package.json' || expected.bytes !== 1567
@@ -56,18 +91,34 @@ function seqpbAtlasPackageSuccessor(expected, raw) {
 const m13SequenceInterfaceSuccessor = [{"base":{"path":"packages/contracts/src/index.ts","bytes":1585,"sha256":"75d513766f2d2087ec0a07f097dff7abf5739289f3f9d0bf0e372576467a94c5"},"current":{"path":"packages/contracts/src/index.ts","bytes":2452,"sha256":"dcdc09ded4557146775ee700087cfc2e9b14dc45e30f6d569848cebe0e3583e0"}},{"base":{"path":"packages/contracts/dist/index.js","bytes":304,"sha256":"cd9227c66a8fc34729ecb9a4e462fd432fe5b9be76dc25950f44f3c3725ba95c"},"current":{"path":"packages/contracts/dist/index.js","bytes":540,"sha256":"f90933caf2643c0d4aa688eff5264160a7e931ee54b94c80163e1535e398ebce"}},{"base":{"path":"packages/contracts/dist/index.d.ts","bytes":1619,"sha256":"b714fec938e235591ddfadc53fa72ba183aaea506267aadaebe5abe65e22c10f"},"current":{"path":"packages/contracts/dist/index.d.ts","bytes":2486,"sha256":"955bbf2feaeafdab5b155e3e4875f077c667d074fe6d807a85c9a5fec6f24434"}},{"base":{"path":"packages/runtime/src/index.ts","bytes":3015,"sha256":"d18e00809b0bd48ecb380e33233988225e85cd348935f7fe72617fb2ebdb3bba"},"current":{"path":"packages/runtime/src/index.ts","bytes":3175,"sha256":"49dea0acbe38ef6fde21431b335da2c74e5324d8f607c9b9d6712323d8cf8beb"}},{"base":{"path":"packages/runtime/dist/index.js","bytes":1620,"sha256":"4fd1a98e92b80394a74fe547db1aef39cf663619b61bc5d03be4499d09146eb3"},"current":{"path":"packages/runtime/dist/index.js","bytes":1708,"sha256":"c8cbc112cd5597e0729c34368954d74a94511638d3efab1fec78603e2f7007f5"}},{"base":{"path":"packages/runtime/dist/index.d.ts","bytes":3049,"sha256":"dbfe6572dd526c8bb9c35271f16a1244c93ff9b7474cac813efd1f1e11e6e3d4"},"current":{"path":"packages/runtime/dist/index.d.ts","bytes":3209,"sha256":"80882b9feafe084db79179fc33161c51e655f9748df813619c2869b04377ddeb"}},{"base":{"path":"packages/engine/web/webgpu.ts","bytes":451,"sha256":"84a69d7c3de60a5e3f83cd0d31cb6cd0bcabdebe5553a89abe0fb3f07540c3cb"},"current":{"path":"packages/engine/web/webgpu.ts","bytes":638,"sha256":"5279441b47636a27fc3589102e8bfffeccea1f138915dc4012539b1fd3d8a5df"}},{"base":{"path":"packages/engine/dist/web/webgpu.js","bytes":190,"sha256":"ae83c0c5f2cb2797e81a72ceaac2b7b19060a985fb3bc201b264881a34e62f31"},"current":{"path":"packages/engine/dist/web/webgpu.js","bytes":248,"sha256":"59ff7e9981cbb680644404d113da72878f38e4a135de0c1301bc269cb8109450"}},{"base":{"path":"packages/engine/dist/web/webgpu.d.ts","bytes":409,"sha256":"d2d9e0f5d317dd8ff2a1c536a4fb9c68b0b068da137492daa1e93bddeacc2b8e"},"current":{"path":"packages/engine/dist/web/webgpu.d.ts","bytes":595,"sha256":"3916e5931b13bb607303ca87568454a0fb4eaa37dab9e09c4433ee864d8d0ffa"}},{"base":{"path":"packages/engine/web/scene3d.ts","bytes":1484,"sha256":"f1e659b0eee592caf9eef33974e5468c802884d251c933c7df9ade108fb2d7b3"},"current":{"path":"packages/engine/web/scene3d.ts","bytes":1638,"sha256":"b0621adc967bd2b646d33dcc4704ce2927fd6bd16f24874b489a25c9e9e9d010"}},{"base":{"path":"packages/engine/dist/web/scene3d.js","bytes":471,"sha256":"84c56083682a75cad68c065da06700cc18d448278144f130411d709fdc7e6f4b"},"current":{"path":"packages/engine/dist/web/scene3d.js","bytes":532,"sha256":"7d95b104c9e547fef5a6b479cc713ad753ce702286d1b4724ccf300725e0a14a"}},{"base":{"path":"packages/engine/dist/web/scene3d.d.ts","bytes":1280,"sha256":"e2533624b4e0035d837e50bc963e1e39e665685daafa5ca1577d894b15085416"},"current":{"path":"packages/engine/dist/web/scene3d.d.ts","bytes":1433,"sha256":"54ae3906765ca00ff8a0de7bbbdacd182816aabb03e79edc57ec5b00b099f62c"}},{"base":{"path":"packages/engine/src/index.ts","bytes":3475,"sha256":"c3af513385381ba023c396b9bebc262eb03f300fb2d083e6c76ae08810360cc5"},"current":{"path":"packages/engine/src/index.ts","bytes":4162,"sha256":"c83485f3f51530025dd0567d4f7685930a8171821dd04d6916dfa9f8241d1fad"}},{"base":{"path":"packages/engine/dist/index.js","bytes":1196,"sha256":"d34379ae7b19c048f90b23cc97a819a3037dec8a49ef5c4f330a9e3ed7db6192"},"current":{"path":"packages/engine/dist/index.js","bytes":1358,"sha256":"96afca247999dc46d1321ce15138fbe01fffde0aafbb76fb48440a09b67ca082"}},{"base":{"path":"packages/engine/dist/index.d.ts","bytes":3509,"sha256":"2f18be0cac8dd50528882438002625f23c24ce4945308419dd4f67ffcaf47271"},"current":{"path":"packages/engine/dist/index.d.ts","bytes":4196,"sha256":"74dcf197b05678d39f9946dd49ab5ac20ad2e04cc5aa2ba72ab1c4e9f973d134"}},{"base":{"path":"packages/engine/dist/Engine.d.ts","bytes":3578,"sha256":"2d3861e95f9411f060b7ab0a1febd74ed40e883038f822d4a8df3af0a84cd727"},"current":{"path":"packages/engine/dist/Engine.d.ts","bytes":4164,"sha256":"95cafab27f02fe7cc60ff84f4f2c8e6f0647169a8da14fbd3c7ba343f7f31b4e"}}];
 const m13SequenceInterfacePaths = ["packages/contracts/src/index.ts","packages/contracts/dist/index.js","packages/contracts/dist/index.d.ts","packages/runtime/src/index.ts","packages/runtime/dist/index.js","packages/runtime/dist/index.d.ts","packages/engine/web/webgpu.ts","packages/engine/dist/web/webgpu.js","packages/engine/dist/web/webgpu.d.ts","packages/engine/web/scene3d.ts","packages/engine/dist/web/scene3d.js","packages/engine/dist/web/scene3d.d.ts","packages/engine/src/index.ts","packages/engine/dist/index.js","packages/engine/dist/index.d.ts","packages/engine/dist/Engine.d.ts"];
 function m13SequenceSelected(root){return ["SHARED_FRAME_PROFILE_2D","createSharedGeometry2D","createSharedMaterial2D","createTextureView"].some(name=>new RegExp('\\b'+name+'\\b').test(seqpbRead(root,'packages/engine/src/index.ts').toString('utf8')));}
-function m13SequencePin(root,pin){if(!m13SequenceSelected(root))return pin;return m13SequenceInterfaceSuccessor.find(row=>JSON.stringify(row.base)===JSON.stringify(pin))?.current??pin;}
+// M1.5 changes only these members of the retained complete 16-row interface group.
+const m15SequenceInterfaceSuccessor = [{"base":{"path":"packages/engine/web/webgpu.ts","bytes":638,"sha256":"5279441b47636a27fc3589102e8bfffeccea1f138915dc4012539b1fd3d8a5df"},"current":{"path":"packages/engine/web/webgpu.ts","bytes":904,"sha256":"bc32aef3a8e03cf725a480e5e0c3af3b1fb554a875aca6504e12dbcb9cb54ccb"}},{"base":{"path":"packages/engine/dist/web/webgpu.d.ts","bytes":595,"sha256":"3916e5931b13bb607303ca87568454a0fb4eaa37dab9e09c4433ee864d8d0ffa"},"current":{"path":"packages/engine/dist/web/webgpu.d.ts","bytes":860,"sha256":"9834eb7ee6e69b79598174b1e6b6a086ca676b414a6dd3bcf2f3ab8d3f6cd9fa"}},{"base":{"path":"packages/engine/web/scene3d.ts","bytes":1638,"sha256":"b0621adc967bd2b646d33dcc4704ce2927fd6bd16f24874b489a25c9e9e9d010"},"current":{"path":"packages/engine/web/scene3d.ts","bytes":1904,"sha256":"6c185440ccb4ef077a83bc6f0529334ecba53cbd3aa7e40bf1663ccb0c1757ed"}},{"base":{"path":"packages/engine/dist/web/scene3d.d.ts","bytes":1433,"sha256":"54ae3906765ca00ff8a0de7bbbdacd182816aabb03e79edc57ec5b00b099f62c"},"current":{"path":"packages/engine/dist/web/scene3d.d.ts","bytes":1698,"sha256":"541cb0fa320cf0e807f471116a1466863e7ee7e9f4aea3047c40ea2481474f38"}},{"base":{"path":"packages/engine/dist/Engine.d.ts","bytes":4164,"sha256":"95cafab27f02fe7cc60ff84f4f2c8e6f0647169a8da14fbd3c7ba343f7f31b4e"},"current":{"path":"packages/engine/dist/Engine.d.ts","bytes":4824,"sha256":"67864a735d8a100219821eb9b542346cad169819abc57e2ae4f6a4d5a1b6a7b5"}}];
+function m15SequenceSelected(root){return /capturePreparedSharedFrame|createManifestGroup|manifestResourceTypes/.test(seqpbRead(root,'packages/engine/dist/Engine.d.ts').toString('utf8'));}
+function m15SequencePin(root,pin){
+ if(!m15SequenceSelected(root))return pin;
+ return m15SequenceInterfaceSuccessor.find(row=>JSON.stringify(row.base)===JSON.stringify(pin))?.current??pin;
+}
+function m15SequenceValidate(root){
+ if(!m15SequenceSelected(root))return;
+ const rows=m15SequenceInterfaceSuccessor,same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+ if(rows.length!==5||new Set(rows.map(row=>row.base.path)).size!==5
+  ||rows.some(row=>!m13SequenceInterfaceSuccessor.some(old=>same(old.current,row.base))
+   ||row.base.path!==row.current.path||[row.base,row.current].some(pin=>!same(Object.keys(pin).sort(),['bytes','path','sha256'])||!Number.isSafeInteger(pin.bytes)||pin.bytes<0||!/^[a-f0-9]{64}$/.test(pin.sha256))))
+  seqpbFail('SEQP_BOUNDARY_DEFAULT_ENTRY_IDENTITY','Invalid finite M1.5 interface group');
+}
+function m13SequencePin(root,pin){if(!m13SequenceSelected(root))return pin;return m15SequencePin(root,m13SequenceInterfaceSuccessor.find(row=>JSON.stringify(row.base)===JSON.stringify(pin))?.current??pin);}
 function m13SequenceComplete(root){
  if(!m13SequenceSelected(root))return;
  const rows=m13SequenceInterfaceSuccessor;
  if(rows.length!==16||new Set(m13SequenceInterfacePaths).size!==16||JSON.stringify(rows.map(row=>row.current.path))!==JSON.stringify(m13SequenceInterfacePaths)
     ||rows.some(row=>row.base.path!==row.current.path||[row.base,row.current].some(pin=>JSON.stringify(Object.keys(pin).sort())!==JSON.stringify(['bytes','path','sha256'])||!Number.isSafeInteger(pin.bytes)||pin.bytes<0||!/^[a-f0-9]{64}$/.test(pin.sha256))))seqpbFail('SEQP_BOUNDARY_DEFAULT_ENTRY_IDENTITY','Invalid finite M1.3 interface group');
- for(const row of rows){const bytes=seqpbRead(root,row.current.path);if(bytes.length!==row.current.bytes||seqpbHash(bytes)!==row.current.sha256)seqpbFail('SEQP_BOUNDARY_DEFAULT_ENTRY_IDENTITY','Complete M1.3 interface group differs: '+row.current.path);}
+ m15SequenceValidate(root);
+ for(const row of rows){const pin=m15SequencePin(root,row.current),bytes=seqpbRead(root,pin.path);if(bytes.length!==pin.bytes||seqpbHash(bytes)!==pin.sha256)seqpbFail('SEQP_BOUNDARY_DEFAULT_ENTRY_IDENTITY','Complete M1.3 interface group differs: '+pin.path);}
 }
 function seqpbPin(root, pin, code) {
   pin = m13SequencePin(root, pin);
   const bytes = seqpbRead(root, pin.path);
-  if (m14EnginePackageSuccessor(pin, bytes) || seqpbAtlasPackageSuccessor(pin, bytes)) return;
+  if (m15ResourcePackageSuccessor(pin, bytes) || m14EnginePackageSuccessor(pin, bytes) || seqpbAtlasPackageSuccessor(pin, bytes)) return;
   if (bytes.length !== pin.bytes || seqpbHash(bytes) !== pin.sha256) seqpbFail(code, 'Source identity changed: ' + pin.path);
 }
 

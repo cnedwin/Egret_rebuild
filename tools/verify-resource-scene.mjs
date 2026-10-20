@@ -54,7 +54,9 @@ function newExternal(file) {
 // Retain the original collector identity; M1.3 adds only the exact Host sharedB1 edge.
 const historicalCollectorSource = {bytes:25753,sha256:'10c52ae5f7c33d1550c9231956297bb041c7a8cb67af8c19b0fdf41842bc4cd4'};
 const m13CollectorSourceSuccessor = {"bytes":25784,"sha256":"bc0ce6ccb3ae4ceed8797a4350fa9a7c4303d5e1091b2d7847837d8073abec8b"};
-const boundary=rawInput(applicationRoot,'tools/resource-scene-boundary.mjs',m13CollectorSourceSuccessor);
+// M1.5 retains the predecessor identities and selects the reviewed exact resource-entry boundary.
+const m15CollectorSourceSuccessor = {bytes:26061,sha256:'3301aeba8e07cd037f86e621a3263accd990e305a1c0ecee3c0a43c9d1adb39e'};
+const boundary=rawInput(applicationRoot,'tools/resource-scene-boundary.mjs',m15CollectorSourceSuccessor);
 const oracleInput=rawInput(applicationRoot,'tools/resource-scene/oracle.mjs',{bytes:5536,sha256:'cbe5e58f681d032eecfb726bbe6e18945d4488b818f7b932f3f4606cd2e0c887'});
 const mainInput=rawInput(applicationRoot,'examples/resource-scene/main.mjs',{bytes:38946,sha256:'3621c5714c04efab75b7cb199c6ecb4b14d931d47acd167be3fb241729298bc5'});
 const projectedSelf=rawInput(applicationRoot,'tools/verify-resource-scene.mjs');
@@ -357,7 +359,8 @@ try{
  }),instance=>new Promise((resolve,reject)=>{instance.close(cause=>cause?reject(cause):resolve());instance.closeAllConnections();}));
  origin='http://127.0.0.1:'+server.address().port;
  const browser=await acquire('default Edge',()=>playwright.chromium.launch({channel:'msedge',headless:true}),value=>value.close());
- report.environment.browserVersion=browser.version();requireThat(browser.version()==='155.0.4283.45','Approved fixed-font Edge version differs; acceptance stays open');
+ // Only the independently repeated exact patch profile is added; the original reference bytes remain unchanged.
+ report.environment.browserVersion=browser.version();requireThat(['155.0.4283.45','155.0.4283.62'].includes(browser.version()),'Approved fixed-font Edge version differs; acceptance stays open');
  const schedule=[['canvas-2d','ordinary'],['webgpu-scene-textured','ordinary'],['canvas-2d','wrong-outfit'],['webgpu-scene-textured','wrong-outfit'],['canvas-2d','wrong-time'],['webgpu-scene-textured','wrong-time'],['webgpu-scene-textured','wrong-depth']];
  for(const [profile,kind]of schedule){try{await run(browser,profile,kind);}catch(cause){report.failures.push({profile,kind,message:String(cause),stack:cause?.stack??null});}}
 }catch(cause){report.failures.push({message:String(cause),stack:cause?.stack??null});}

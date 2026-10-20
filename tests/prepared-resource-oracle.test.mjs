@@ -93,3 +93,31 @@ test('unit reference identity byte domain environment and closed names refuse',(
   for(const [profile,frame,control] of [['other','summer-right-pose1','ordinary'],['canvas-2d','other','ordinary'],['canvas-2d','classic-left-pose0','manual-old-A-outer'],['canvas-2d','summer-right-pose1','other']])assert.throws(()=>run(raw,profile,frame,control),isCode('P03_ORACLE_INPUT_INVALID'));
   assert.throws(()=>run(raw,'canvas-2d','summer-right-pose1','ordinary',{environment:{...REFERENCE_ENVIRONMENT,browserVersion:'155.other'}}),isCode('P03_ORACLE_REFERENCE_ENVIRONMENT'));
 });
+
+// The original reference environment and RGBA remain historical; this verifies only the two reviewed exact versions.
+test('M15 font patch accepts both exact reviewed versions with original references',()=>{
+  assert.equal(REFERENCE_ENVIRONMENT.browserVersion,'155.0.4283.45');
+  for(const browserVersion of ['155.0.4283.45','155.0.4283.62'])for(const profile of ['canvas-2d','webgpu-scene-textured']){
+    const result=run(synthetic(profile),profile,'summer-right-pose1','ordinary',{
+      environment:{...REFERENCE_ENVIRONMENT,browserVersion}});
+    assert.equal(result.status,'ORDINARY_DOMAIN_PASS');assert.equal(result.glyph.changedChannels,0);
+    assert.equal(result.nativeAcceptance,'OPEN');
+  }
+});
+test('M15 font patch refuses unreviewed versions other environments and altered references',()=>{
+  const raw=synthetic('canvas-2d'),environment={...REFERENCE_ENVIRONMENT,browserVersion:'155.0.4283.62'};
+  const compare=extra=>run(raw,'canvas-2d','summer-right-pose1','ordinary',{environment,...extra});
+  for(const browserVersion of ['155.0.4283.61','155.0.4283.63','155.0.4283.620','155.0.4283.62 ','156.0.0.0',null]){
+    assert.throws(()=>compare({environment:{...environment,browserVersion}}),isCode('P03_ORACLE_REFERENCE_ENVIRONMENT'));
+  }
+  for(const [key,value] of Object.entries({browser:'Chromium',playwrightVersion:'1.62.2',platform:'linux',arch:'arm64',release:'10.0.26301',browserLanguage:'en-US',extraLaunchFlags:['--disable-gpu']})){
+    assert.throws(()=>compare({environment:{...environment,[key]:value}}),isCode('P03_ORACLE_REFERENCE_ENVIRONMENT'));
+  }
+  const missing={...environment};delete missing.arch;
+  for(const other of [missing,{...environment,unexpected:true}])assert.throws(()=>compare({environment:other}),isCode('P03_ORACLE_REFERENCE_ENVIRONMENT'));
+  for(const side of ['left','right']){
+    const wrong=new Uint8Array(references[side]);wrong[0]^=1;
+    assert.throws(()=>compare({references:{...references,[side]:wrong}}),isCode('P03_ORACLE_REFERENCE_IDENTITY'));
+  }
+  assert.equal(compare({}).status,'ORDINARY_DOMAIN_PASS');
+});

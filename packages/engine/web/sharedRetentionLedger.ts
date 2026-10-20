@@ -16,6 +16,20 @@ export interface RetentionLedgerStatus {
     readonly idleBytes: number; readonly idleEntries: number; readonly reservedBytes: number; readonly reservedEntries: number;
     readonly unknownBytes: number; readonly unknownEntries: number;
 }
+interface RetentionResourceGauges extends RetentionLedgerStatus {
+    readonly leasedBytes: number; readonly leasedEntries: number; readonly detachedBytes: number; readonly detachedEntries: number;
+}
+/** Existing unknown obligations projected without native references. */
+export interface NativeUnknownDiagnostics {
+    knownLogicalBytes:number;objects:number;highKnownLogicalBytes:number;highObjects:number;saturated:boolean;
+}
+/** Fixed-size Host observation shared by successive original generation ledgers. */
+export interface RetentionLedgerDiagnostics {
+    current: {-readonly [K in keyof RetentionResourceGauges]:number};
+    highWater: {-readonly [K in keyof RetentionResourceGauges]:number};
+    saturated:boolean;
+    unknownNative?:NativeUnknownDiagnostics;
+}
 export type RetentionSettlement = 'destroyed' | 'unknown' | 'context-invalidated';
 export interface RetentionLedger<R extends RetentionRequestBase, T extends object> {
     assertActive(): void;
@@ -50,7 +64,7 @@ const MAX_IDLE_ENTRIES = 4096;
 // Hosts borrow one device. Native object identity alone is not an allocation ID.
 const registeredResources = new NativeWeakSet<object>();
 /** Native proofs belong to the Host; confirmed outcomes alone change these charges. */
-export function createRetentionLedger<Request extends RetentionRequestBase, Resource extends object>(session: object): RetentionLedger<Request, Resource> {
+export function createRetentionLedger<Request extends RetentionRequestBase, Resource extends object>(session: object, diagnostics?:RetentionLedgerDiagnostics): RetentionLedger<Request, Resource> {
     type RetentionRequest = Request;
     type RetentionHandle = LedgerHandle<Request, Resource>;
     type RetentionLease = LedgerLease<Request, Resource>;
@@ -86,16 +100,16 @@ export function createRetentionLedger<Request extends RetentionRequestBase, Reso
         readonly nodes: readonly RetentionNode[];
         consumed: boolean;
     }
-    interface Charge { bytes: number; count: number }
+    interface Charge { bytes: number; count: number; bytesKey:keyof RetentionResourceGauges; countKey:keyof RetentionResourceGauges }
 
     const indexes = new NativeMap<string, Bucket>();
     const nodes = new NativeWeakMap<RetentionHandle, RetentionNode>();
     const leaseNodes = new NativeWeakMap<RetentionLease, RetentionNode>();
     const claims = new NativeWeakMap<RetentionPlan, ClaimState>();
     const returns = new NativeWeakMap<RetentionReturnPlan, ReturnState>();
-    const idle: Charge = { bytes: 0, count: 0 }, leased: Charge = { bytes: 0, count: 0 };
-    const reserved: Charge = { bytes: 0, count: 0 }, detached: Charge = { bytes: 0, count: 0 };
-    const unknown: Charge = { bytes: 0, count: 0 };
+    const idle: Charge = { bytes: 0, count: 0, bytesKey:'idleBytes', countKey:'idleEntries' }, leased: Charge = { bytes: 0, count: 0, bytesKey:'leasedBytes', countKey:'leasedEntries' };
+    const reserved: Charge = { bytes: 0, count: 0, bytesKey:'reservedBytes', countKey:'reservedEntries' }, detached: Charge = { bytes: 0, count: 0, bytesKey:'detachedBytes', countKey:'detachedEntries' };
+    const unknown: Charge = { bytes: 0, count: 0, bytesKey:'unknownBytes', countKey:'unknownEntries' };
     let head: RetentionNode | undefined, tail: RetentionNode | undefined;
     let revision: object = {}, active = true;
 
@@ -118,6 +132,20 @@ export function createRetentionLedger<Request extends RetentionRequestBase, Reso
     }
     function charge(total: Charge, node: RetentionNode, direction: 1 | -1): void {
         total.bytes += direction * node.handle.byteLength; total.count += direction;
+        if(diagnostics){
+            const bytes=diagnostics.current[total.bytesKey]+direction*node.handle.byteLength,count=diagnostics.current[total.countKey]+direction;
+            if(bytes>Number.MAX_SAFE_INTEGER||count>Number.MAX_SAFE_INTEGER)diagnostics.saturated=true;
+            diagnostics.current[total.bytesKey]=Math.min(Number.MAX_SAFE_INTEGER,bytes);
+            diagnostics.current[total.countKey]=Math.min(Number.MAX_SAFE_INTEGER,count);
+            diagnostics.highWater[total.bytesKey]=Math.max(diagnostics.highWater[total.bytesKey],diagnostics.current[total.bytesKey]);
+            diagnostics.highWater[total.countKey]=Math.max(diagnostics.highWater[total.countKey],diagnostics.current[total.countKey]);
+            if(total===unknown&&diagnostics.unknownNative){
+                const native=diagnostics.unknownNative,bytes=native.knownLogicalBytes+direction*node.handle.byteLength,objects=native.objects+direction;
+                if(bytes>Number.MAX_SAFE_INTEGER||objects>Number.MAX_SAFE_INTEGER)native.saturated=true;
+                native.knownLogicalBytes=Math.min(Number.MAX_SAFE_INTEGER,bytes);native.objects=Math.min(Number.MAX_SAFE_INTEGER,objects);
+                native.highKnownLogicalBytes=Math.max(native.highKnownLogicalBytes,native.knownLogicalBytes);native.highObjects=Math.max(native.highObjects,native.objects);
+            }
+        }
     }
     function leaseFor(request: RetentionRequest, node: RetentionNode): RetentionLease {
         const lease: RetentionLease = Object.freeze({ requestId: request.id, handle: node.handle, offset: 0, size: request.byteLength });

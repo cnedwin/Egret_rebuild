@@ -295,8 +295,8 @@
     {
       "path": "AGENTS.md",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "sha256": "88ba0530c327e33096c278965bbbe53580cd86529fee9e6a17b517962a43dfb0",
-      "bytes": 32505,
+      "sha256": "cd8b9c528083efddcbf35aac973530a3c65923fcf5de75120a8de5d36ea963ee",
+      "bytes": 40597,
       "previousRevisionSha256": "7c2716d3a678406ce905b8cd7fd9ef3552bca4e37b8e9456b63b871e4170e0c1",
       "previousLayoutPath": "AGENTS.en.md",
       "previousLayoutSha256": "7e4ccd840b8b23896f9d9e92fe8173693ef37e415d3cebbebb3bfafded8158c5",
@@ -325,8 +325,8 @@
     },
     {
       "path": "AGENTS.zh-CN.md",
-      "sha256": "83ef3b1c9f4ea76163597b618c233490bc3fe14c767e3c73627cb04992c58004",
-      "bytes": 29056,
+      "sha256": "6eded58ec7c5909ad478cb055187f69b6e5e8868670fd6d3cfdd9e8b1d968a49",
+      "bytes": 36406,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousPublicSha256": "d133cdcd7d1f41fe0ce26bee63568cd0c4f23c6e6e7f9828d0768e95f53a05b4",
       "previousRevisionSha256": "f3551dd36ebc3023f8c846f0cdd876b7204c214c7c041e6496271d20c091046c",
@@ -503,8 +503,8 @@
     {
       "originRole": "Independent first-party display/frame implementation, public documentation, tests or verification tooling",
       "path": "examples/canvas-scene/index.html",
-      "sha256": "ec6c887f844d49cf883f95756919affc7b8258a286f7fa5ec0dd634afb89b9cb",
-      "bytes": 1018,
+      "sha256": "c0fb47a03f0915819c6b3faa1872413515069aadfbe5badb9f411c503b70153d",
+      "bytes": 1093,
       "previousRevisionSha256": "adb71b35dba2d9cb557240888a15fd35f4944cbe79b3cbda40335fcd56c0df63",
       "previousLayoutPath": "examples/canvas-scene/index.html",
       "previousLayoutSha256": "adb71b35dba2d9cb557240888a15fd35f4944cbe79b3cbda40335fcd56c0df63"
@@ -565,8 +565,8 @@
     },
     {
       "path": "examples/webgpu/index.html",
-      "sha256": "f9beaff113e9e5f2ec77e4893577dd7831a681ab84e50bdc28a5cb282c600bb0",
-      "bytes": 977,
+      "sha256": "9e0dc2ec810516fcc2deee11519aff36ea5570e128d1d6bbde9d801917d2e8d3",
+      "bytes": 1052,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousLayoutPath": "examples/webgpu/index.html",
       "previousLayoutSha256": "7d93185fd2da56aaf9869654c55e73ff97b4bd861468e09559c55edef00b9b95"
@@ -622,8 +622,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/Cns/CHANGELOG.md",
-      "bytes": 19085,
-      "sha256": "b33106716a24c6928c7164db89fee2331e634102bba20346abd194e9986b2da2",
+      "bytes": 19945,
+      "sha256": "9e663a16f329dc75e80d4038e74958a757b906e34870075274b2b7ae17ea74dd",
       "identityHistory": [
         {
           "bytes": 25611,
@@ -796,8 +796,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/b1-browser-verifier.md",
-      "bytes": 6750,
-      "sha256": "6beaaf0b50b6374c6d79a139ce3f70b97157af314ab8a438834c566f980edabf"
+      "bytes": 7434,
+      "sha256": "d1a8ce0a3a936cdd2ef9a3f4cdd7c2f3f58ce957ce407b1c138d9c841a2555ce"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -2112,7 +2112,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 138808,
-      "sha256": "61556b46ed8f2a178ef972675ac1870094b92040b7272e75f25f000aa43cd6bc",
+      "sha256": "0e5672952c3e30e4264ae55a1e469878a818ec65d0828b3cd5e8c6d361659cf3",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -2153,8 +2153,8 @@
     {
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "path": "knowledge-base/en/CHANGELOG.md",
-      "bytes": 21505,
-      "sha256": "e5433e72356827eb31e3b66d3a8d8d6b344dff4983ab80a5a40e3f44bb76e3ab",
+      "bytes": 22479,
+      "sha256": "a11d37cdad58e9190e3b0d1d39166af95ea8fb0d96f64befd6cb6623258110bc",
       "identityHistory": [
         {
           "bytes": 31389,
@@ -2468,8 +2468,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/b1-browser-verifier.md",
-      "bytes": 7501,
-      "sha256": "69477c245903b98453ac06558dd0189860437a806e147d27cddef16fc86219ab"
+      "bytes": 8331,
+      "sha256": "5b1a5fa83806fb8f5a2d6e89431c93cad8d61abe18ee1ab6830500ffdf982cf4"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -3786,8 +3786,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "1b776eb01d8dfd4686a58dd0a9135c5b654dd817904c248a84a0ce8aaaaaa9e8",
-      "bytes": 347232,
+      "sha256": "d16cd47c55fe1bf33c9e7abe66033170a29146d6a44e91e8a0b35a0847f751c4",
+      "bytes": 350281,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -4019,8 +4019,8 @@
     },
     {
       "path": "packages/contracts/package.json",
-      "sha256": "fceaef2ae55a77347ce9f99acd2165d36e991d89c76bf0480ff5048f3e7a94a1",
-      "bytes": 179,
+      "sha256": "f40591968003b235cddf38a576c1250a28ef965726750d377f0691a8e6f48e9e",
+      "bytes": 319,
       "originalSha256": "fceaef2ae55a77347ce9f99acd2165d36e991d89c76bf0480ff5048f3e7a94a1",
       "originRole": "byte-identical prototype whitelist export",
       "previousRevisionSha256": "fceaef2ae55a77347ce9f99acd2165d36e991d89c76bf0480ff5048f3e7a94a1",
@@ -4123,8 +4123,8 @@
     },
     {
       "path": "packages/engine/package.json",
-      "bytes": 1799,
-      "sha256": "c106c84b479f88ac1570418a21672b6148b1bdd0b870631198c359d467f2f0c7",
+      "bytes": 2167,
+      "sha256": "be2a5a1e13136e99111ebc0fdfa657e4067fbba79647eeb93431395210516143",
       "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset.",
       "identityHistory": [
         {
@@ -4261,8 +4261,8 @@
     },
     {
       "path": "packages/engine/src/Engine.ts",
-      "sha256": "69e224758234cdd63fa9610317d267a9cf5d7f304913586521742349c7e43d39",
-      "bytes": 22118,
+      "sha256": "ee2e61e0e038ae425e26bc9913da38b80cfe9117b782f0712c3ebeca51f92cfd",
+      "bytes": 24333,
       "originalSha256": "d5b4fcfc5bcf921d6b75aa4a33d7e71412595e8e377e5ff9b186b19ec6868f58",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "previousPublicSha256": "d5b4fcfc5bcf921d6b75aa4a33d7e71412595e8e377e5ff9b186b19ec6868f58",
@@ -4391,16 +4391,16 @@
     },
     {
       "path": "packages/engine/web/webgpu.ts",
-      "sha256": "5279441b47636a27fc3589102e8bfffeccea1f138915dc4012539b1fd3d8a5df",
-      "bytes": 638,
+      "sha256": "bc32aef3a8e03cf725a480e5e0c3af3b1fb554a875aca6504e12dbcb9cb54ccb",
+      "bytes": 904,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousLayoutPath": "packages/engine/web/webgpu.ts",
       "previousLayoutSha256": "bf0e57d689d4ae60f3a25a11835e3d08aead7549c2c1b72a7cdbdf91da8c0e05"
     },
     {
       "path": "packages/engine/web/WebGPUHost.ts",
-      "sha256": "73c33a00ed99283e1e4d70867308ebc3550c905df881a1d79c714d6c80bbe5a0",
-      "bytes": 134474,
+      "sha256": "f84a1de242e8b3efefc1bb4ccb344cb02b659d355b512c071cfccf7c1943bf10",
+      "bytes": 189815,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousLayoutPath": "packages/engine/web/WebGPUHost.ts",
       "previousLayoutSha256": "f07f59068f1c65f1247500ca8665747bb957d99e07286b16e3d6d08be3da51bc",
@@ -4419,8 +4419,8 @@
     },
     {
       "path": "packages/engine/web/webgpuLifetime.ts",
-      "sha256": "2d4bda7be618e088bb414f9964c25fe0624af5186b41342fe053457567b25512",
-      "bytes": 2109,
+      "sha256": "1aa6128eae8db4e48f77a994a5f7bf269e34226e57b91cf7d553fdd7688d58ce",
+      "bytes": 3464,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousLayoutPath": "packages/engine/web/webgpuLifetime.ts",
       "previousLayoutSha256": "1af60adbf879049962c1d6913ee241a6d32ebcb1e9ecdd5a3733ebbb7ee8f287"
@@ -4735,8 +4735,8 @@
     },
     {
       "path": "packages/runtime/src/ownership.ts",
-      "sha256": "0b3bdfbba67ba6e9e30a31b7384c3379fc3fb0352b7be8e7425956372bfbbbfd",
-      "bytes": 9594,
+      "sha256": "1510c8ae9fb345b9dbd39cf3fb820acd1937ec73729af1ccc87765948194fd18",
+      "bytes": 9816,
       "originalSha256": "0fbd5497c87995998c3d080d4909b3caa9738ec8ee5743120c86e9cdcceeaeab",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "previousPublicSha256": "0fbd5497c87995998c3d080d4909b3caa9738ec8ee5743120c86e9cdcceeaeab",
@@ -4860,8 +4860,8 @@
     {
       "path": "README.md",
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
-      "sha256": "b67380f74fd7e7db877a9c2b497aecb4cac49aa786ec8688b728d35097587dd8",
-      "bytes": 14485,
+      "sha256": "4b6ad958f4b87212ac7ad71ec9e427efee2707293bb1121df8cd8d709fa4f0b7",
+      "bytes": 15735,
       "previousRevisionSha256": "199156443d499d5012f1224263a1a3ee9994e5ba38ee067bceeb2ad865ae8167",
       "previousLayoutPath": "README.en.md",
       "previousLayoutSha256": "f40ec41ca699cd0b9138fbdf4a268080038f583ae11e78c4f37093a6b7095f57",
@@ -5003,8 +5003,8 @@
     },
     {
       "path": "README.zh-CN.md",
-      "sha256": "04033dcb935a154b9b46b5ec85ce295c7cb6be1c43b85254ede56efa84b343f2",
-      "bytes": 13415,
+      "sha256": "0cc7b4440f4f8a53c7d878f434cd048d58f75d173e8afbdf4213464c3840b1f1",
+      "bytes": 14551,
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "previousPublicSha256": "7ec80b8575a700b6a2628eb0322f2e770bb2284859f68ec5e0eb6530154a6699",
       "previousRevisionSha256": "7a1d72019db7cb6075d7c3a3bd4075f7c069d527b6e31d992a69333cb126b6c3",
@@ -5171,8 +5171,8 @@
     },
     {
       "path": "tests/boundaries.test.mjs",
-      "bytes": 150279,
-      "sha256": "dabac804a4e7c1ad8bc41342c27067287b6aa98f7af63c0448103c5e6c00dca6",
+      "bytes": 196076,
+      "sha256": "2279600421485c19981e7d1641bf8a26bb5b04e81894666a633bdbd07e89e46e",
       "originRole": "Independent first-party Egret explicit-area picking, bounded verification or paired documentation; CPU and finite-policy evidence with separate browser and whole-engine admission.",
       "identityHistory": [
         {
@@ -5478,8 +5478,8 @@
     },
     {
       "path": "tools/check-boundaries.mjs",
-      "bytes": 195904,
-      "sha256": "231433019c83e8e1ce93fb08d1919da791b53db84183e44a8c3389e81565104a",
+      "bytes": 242434,
+      "sha256": "3000d49b39831f704796e975559c64ccdd738044df2035a4a78a1e0b48e20c02",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "identityHistory": [
         {
@@ -5537,8 +5537,8 @@
     },
     {
       "path": "tools/check-types.mjs",
-      "bytes": 121161,
-      "sha256": "c85407cbdc9c6222cbf240de21e82afd37725e6c8a68bed9ca0d098d7b6dc343",
+      "bytes": 141012,
+      "sha256": "b584aa0dc9368285380a3f1569b49430e6fceee3f994a2be4d37acbbc1e9785e",
       "originRole": "First-party scoped resource acquisition groups, finite source/type/behavior checks or paired public documentation; actual acceptance scopes are recorded separately.",
       "identityHistory": [
         {
@@ -5627,8 +5627,8 @@
     },
     {
       "path": "tools/verify-webgpu.mjs",
-      "sha256": "d4dcf4328e35fd20f5133b4c92334fc5d3e9648da9736337ecba435f7fa6f254",
-      "bytes": 22673,
+      "sha256": "a417ca0bb4919993f2ac7fccccc85d225fae890a65fd849c148f92202823ef44",
+      "bytes": 22747,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousRevisionSha256": "99e85364bbb2619f8e83e9877e68acce7443bc23b320fe19f7cd953c8b5b9b26",
       "previousLayoutPath": "tools/verify-webgpu.mjs",
@@ -5703,8 +5703,8 @@
     },
     {
       "path": "packages/runtime/src/Bitmap.ts",
-      "bytes": 21487,
-      "sha256": "ce11656e4a4b2e9b60bd3a1d70f31da6cdfd66d7abcbce41e803993a72c1f3fe",
+      "bytes": 23492,
+      "sha256": "8bfbaffa087e502b6b53863f7ae2e63ee00db7eb3642db9b15c1ad2b20917868",
       "originRole": "First-party explicit-time sequence work package; public verifier reuses independently authored first-party opaque collector mechanisms.",
       "identityHistory": [
         {
@@ -5728,8 +5728,8 @@
     },
     {
       "path": "tests/webgpu-mesh-host.test.mjs",
-      "bytes": 106721,
-      "sha256": "49b1a10ed38e7f58fd14ff3308b39f01d37d5054fcda2fa98955b1dd72b76130",
+      "bytes": 108732,
+      "sha256": "72c6c9fdd186f03f66fcc65b097f5da3f3a5712d86970c5a2db48a844de06d73",
       "originRole": "First-party explicit-time sequence work package; public verifier reuses independently authored first-party opaque collector mechanisms.",
       "identityHistory": [
         {
@@ -5746,8 +5746,8 @@
     },
     {
       "path": "examples/sequence-player/index.html",
-      "bytes": 2130,
-      "sha256": "79023e0f9e6a19bdd5e784f74fb73ca3f5b00c8551aaf711bea3f66655bc0257",
+      "bytes": 2205,
+      "sha256": "337ea3bbb12b5db01743744ca8c60e3ccad1607e51588c0aa282338b06d2a587",
       "originRole": "First-party explicit-time sequence work package; public verifier reuses independently authored first-party opaque collector mechanisms."
     },
     {
@@ -5758,8 +5758,8 @@
     },
     {
       "path": "tools/sequence-player/collector.mjs",
-      "bytes": 27908,
-      "sha256": "ad0c3844e8621d1f6b66b0329a30526767b4844feb9a1292a280430513127613",
+      "bytes": 28015,
+      "sha256": "d7ee10c6496ac9948eff6cb59dfcc5d4653a5532cf76ef854904bcdd16fb1745",
       "originRole": "First-party explicit-time sequence work package; public verifier reuses independently authored first-party opaque collector mechanisms."
     },
     {
@@ -5776,8 +5776,8 @@
     },
     {
       "path": "tools/sequence-player/file-graph.mjs",
-      "bytes": 9478,
-      "sha256": "6df225a735bbdb3badabfd751b77a47c84ad6a4b8125a3c37a439161faf957dc",
+      "bytes": 10795,
+      "sha256": "86df4f5a7ace7051fdbd9ab886be141c64b9a939a01b9de137ad07d365d03569",
       "originRole": "First-party explicit-time sequence work package; public verifier reuses independently authored first-party opaque collector mechanisms.",
       "identityHistory": [
         {
@@ -5855,8 +5855,8 @@
     },
     {
       "path": "packages/runtime/src/bitmapDisplayState.ts",
-      "bytes": 1730,
-      "sha256": "3e80270ff9e796f8f492bc9ea7655e8da05cbfbf95782eae4620d34b2a95481f",
+      "bytes": 1918,
+      "sha256": "bd6b5d5f7a607c503fc76a36ba0f2515ee747c76cadc5d886bde8085299af273",
       "originRole": "Independent first-party receiver-local content-bounds work package; no copied historical/competitor implementation or new third-party dependency."
     },
     {
@@ -6135,8 +6135,8 @@
     {
       "path": "packages/project/package.json",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 503,
-      "sha256": "4b4380142316c6ab2f0727eab44c80eff2a21640c701871c6ace3a0ab1b276af",
+      "bytes": 621,
+      "sha256": "e6ec9743041ee5489297861ad5ed810021875dae7c041011a0f6d4e754eb6462",
       "identityHistory": [
         {
           "bytes": 291,
@@ -6382,8 +6382,8 @@
     {
       "path": "tests/b1-webgpu-verifier.test.mjs",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 25499,
-      "sha256": "8e2a6e42b11d6e879c94ab2d522292de52711cb8b131bdaf9bd00f2d2d584880",
+      "bytes": 35282,
+      "sha256": "a5b2038ba0e0c39d88c1db076ea60376844f4f28b3bfe2d78978ce4e60b71349",
       "identityHistory": [
         {
           "bytes": 17519,
@@ -6615,8 +6615,8 @@
     {
       "path": "tests/project-boundaries.test.mjs",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 28814,
-      "sha256": "4a78a71180ebc5c9c45efcfc3858cd6980a4e9a47025562b4482fc9a13872d59",
+      "bytes": 39830,
+      "sha256": "0cda738cf66e42e23ae1916710b9f74cf6b0e9f0ed368a7c37f9e3910cb7600b",
       "identityHistory": [
         {
           "bytes": 13130,
@@ -6972,8 +6972,8 @@
     {
       "path": "tools/textured-webgpu/collector.mjs",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 44148,
-      "sha256": "0547451286415c5c97a6d9fbbedb69b10a62a244c67121be09325ef790a2fc0a"
+      "bytes": 44175,
+      "sha256": "8dbe0d10ed23c062045f49ec6965778399903d2670ba1cd26a973bc5adfe9398"
     },
     {
       "path": "tools/textured-webgpu/control-selectors.json",
@@ -7003,8 +7003,8 @@
     {
       "path": "tools/textured-webgpu/native-files.mjs",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 18611,
-      "sha256": "26c2d6712b43c01ed116f2b3df6015ec5b083732e14b8beccf5597dfe381b78a"
+      "bytes": 20482,
+      "sha256": "f4342c5da95d1c98952e59f0936f9d339c30fcf70327379be65f7615c23a6ce7"
     },
     {
       "path": "tools/textured-webgpu/native-window.mjs",
@@ -7033,8 +7033,8 @@
     {
       "path": "tools/verify-webgpu-b1.mjs",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 50884,
-      "sha256": "a69c376cd69d98e79c9c2b3c4e0cff3fe907cac53d6e21bccbc10bbcc5d77570",
+      "bytes": 74033,
+      "sha256": "448b42488787fbcbccdec5b2bfd48b9f0a9f243981fe62eb3f80df251df18d10",
       "identityHistory": [
         {
           "bytes": 38603,
@@ -7072,8 +7072,8 @@
     {
       "path": "examples/textured-webgpu/index.html",
       "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope.",
-      "bytes": 937,
-      "sha256": "f62c80de64aee83124c728419a2d071e655d622afddfe3d98594bf5a5dc0d572"
+      "bytes": 1012,
+      "sha256": "19c7f15b6612f86fd3a8d04515002b2260ff1c74950adab277cae980430db823"
     },
     {
       "path": "examples/textured-webgpu/main.mjs",
@@ -7126,8 +7126,8 @@
     {
       "path": "tools/freeze-textured-webgpu-inputs.mjs",
       "originRole": "Independent first-party fixed build/freeze reproduction; existing graph and native verifier are reused within their recorded limits.",
-      "bytes": 17623,
-      "sha256": "8343c164e7696bd825e20e92197034dd7f4cf85c58fbb3f419f3a2b41b63ddbb"
+      "bytes": 17638,
+      "sha256": "e978dadd2fa8006700fd79ed2c907cf4e463580f5630eaf3a5a6d774b56b695e"
     },
     {
       "path": "packages/engine/src/text.ts",
@@ -7589,8 +7589,8 @@
     },
     {
       "path": "examples/canvas-text/index.html",
-      "bytes": 2499,
-      "sha256": "8ad452c9c0d7341b29e198648b396535ae45852c078917b291df0e04ec024ec7",
+      "bytes": 2580,
+      "sha256": "57b99c441215a3ed150d6b8037a250de5411580ebacbb4766701fe48a4876151",
       "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
     },
     {
@@ -7613,8 +7613,8 @@
     },
     {
       "path": "tests/canvas-text-canvas-verifier.test.mjs",
-      "bytes": 10939,
-      "sha256": "8625566574c064e5ff3d01b3e126aec72110ecaea1a4b81829e9d47d30ec3875",
+      "bytes": 13713,
+      "sha256": "075c1dcbd15147478f31f53f7d2dae4c89efd4896907a96c866c88430365fc31",
       "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
     },
     {
@@ -7715,8 +7715,8 @@
     },
     {
       "path": "tools/verify-canvas-text-canvas.mjs",
-      "bytes": 26031,
-      "sha256": "af7122f6371683958beea0d397a97bb4a145a121f39ad45e660ece145f9b9857",
+      "bytes": 26535,
+      "sha256": "92f42613273d946c0f28bee4f098625d6369e76543bb48b63552d8ede5d753b8",
       "originRole": "Independent first-party Canvas text implementation, bounded verification or paired public documentation; version and environment-bound subset."
     },
     {
@@ -7847,8 +7847,8 @@
     },
     {
       "path": "examples/hit-test/index.html",
-      "bytes": 1820,
-      "sha256": "ae2d4c7ea4935094121b90f2e2f6b11ed68dbf3beef481c56c074a2bea970281",
+      "bytes": 1895,
+      "sha256": "abffc87a8acb1c5ca685168354b24d66479f4cee09160319c7a6275245b5719e",
       "originRole": "First-party thin Canvas picking application, finite verification/policy or paired public documentation; execution and capability limits are recorded separately."
     },
     {
@@ -7984,20 +7984,20 @@
     },
     {
       "path": "tools/verify-hit-test-canvas.mjs",
-      "bytes": 22001,
-      "sha256": "4e36ae17c6d6ec6dc995e08618a252a6d795b15e3d43d33a3149ac3167deb257",
+      "bytes": 22699,
+      "sha256": "3201259a1e0dac136be54bf447c1f5360c82e5a7a3ee977201af1fb99d4ed4a0",
       "originRole": "Independently authored first-party finite Canvas picking verification; saved execution scope and limits are recorded separately."
     },
     {
       "path": "tools/hit-test-canvas-contract.mjs",
-      "bytes": 19188,
-      "sha256": "48368bef4475ff488ecc694768161cc604e6195f723631287e75d22e64884fad",
+      "bytes": 19262,
+      "sha256": "4819be1c5a738ad72e5577ea30eb3416f362c4a3e0d2029225d05d05a1b2914a",
       "originRole": "Independently authored first-party finite Canvas picking verification; saved execution scope and limits are recorded separately."
     },
     {
       "path": "tests/hit-test-canvas-verifier.test.mjs",
-      "bytes": 17974,
-      "sha256": "44430e9798c6ad698c756cdccdd824a5ac6f4fdac66e0a4d2359cfff49261b8c",
+      "bytes": 19531,
+      "sha256": "595f32aa5f275ba8b63e50bcde3fa4197a20a864b1d85b2467b7588502f6472f",
       "originRole": "Independently authored first-party finite Canvas picking verification; saved execution scope and limits are recorded separately."
     },
     {
@@ -8127,8 +8127,8 @@
     },
     {
       "path": "packages/engine/web/scene3d.ts",
-      "bytes": 1638,
-      "sha256": "b0621adc967bd2b646d33dcc4704ce2927fd6bd16f24874b489a25c9e9e9d010",
+      "bytes": 1904,
+      "sha256": "6c185440ccb4ef077a83bc6f0529334ecba53cbd3aa7e40bf1663ccb0c1757ed",
       "originRole": "First-party independent public scene3d implementation, bounded verification or paired public reading/derived register.",
       "identityHistory": [
         {
@@ -8264,8 +8264,8 @@
     },
     {
       "path": "examples/scene3d/index.html",
-      "bytes": 1549,
-      "sha256": "fd82f34b12b1ba35bea0d52fdf1df405fe3b3cad4e61ff6513195616ed376b01",
+      "bytes": 1624,
+      "sha256": "7abaf1302b8f0943cb45eb0e55952a6a43f123bdd8fbec774fea6c83d228957b",
       "originRole": "First-party independent public scene3d implementation, bounded verification or paired public reading/derived register."
     },
     {
@@ -8427,26 +8427,26 @@
     },
     {
       "path": "tools/verify-mouse-input-canvas.mjs",
-      "bytes": 30970,
-      "sha256": "a6ff59fa8b23361dce62d01c35920d5965b6a820fb7b1e25ff9f94f313e22ae3",
+      "bytes": 31932,
+      "sha256": "7ad51a650b89f5514c82c00ec8c511ea75ad1f389f8693573d99f70d301f38fe",
       "originRole": "First-party independent primary mouse implementation, bounded verification, paired public reading or derived register."
     },
     {
       "path": "tools/mouse-input-canvas-contract.mjs",
-      "bytes": 22451,
-      "sha256": "48e1874e197d28848205189d08ed4cfec468107cdefb29c426bae6b07bcaee1c",
+      "bytes": 22535,
+      "sha256": "732f2ba1e54b44fd474474aff490e3d4bac5896663fb34310c66a5b8e7089eb6",
       "originRole": "First-party independent primary mouse implementation, bounded verification, paired public reading or derived register."
     },
     {
       "path": "tests/mouse-input-canvas-verifier.test.mjs",
-      "bytes": 13243,
-      "sha256": "e62f0ceeef954ee494adf696512366d0ad386a5c2b294c6f1b8f1069183f97ae",
+      "bytes": 15358,
+      "sha256": "c6b464ec1527329e760711f2060176097c22ab99f60b198c000536effcae6d0f",
       "originRole": "First-party independent primary mouse implementation, bounded verification, paired public reading or derived register."
     },
     {
       "path": "examples/mouse-input/index.html",
-      "bytes": 1366,
-      "sha256": "6f69d5c75ef4acd84546627c4878836b8161ac74f4cdcc1b356c312fcff48fc9",
+      "bytes": 1446,
+      "sha256": "999b0963e50945725145fe73470b7e01f8e6832d4f8e836d04a3f7c989c3c594",
       "originRole": "First-party independent primary mouse implementation, bounded verification, paired public reading or derived register."
     },
     {
@@ -8935,8 +8935,8 @@
     },
     {
       "path": "tools/verify-textured-scene-webgpu.mjs",
-      "bytes": 45218,
-      "sha256": "eea905ba98ca1741630d690307598a9e93879c07441069db08fcb16f8407b0d3",
+      "bytes": 46576,
+      "sha256": "d0f46275f2f0b6a39c6cb1366788981aa09c57e582ababc87571d6d4379b9ed6",
       "originRole": "First-party combined-host browser oracle, original synthetic readback or public successor.",
       "identityHistory": [
         {
@@ -8948,8 +8948,8 @@
     },
     {
       "path": "tools/textured-scene-webgpu/index.html",
-      "bytes": 1024,
-      "sha256": "f7369d055cee764a66153b5ae9476c7324116c1940f1ab079e4a90ac46793a1f",
+      "bytes": 1099,
+      "sha256": "3c6c06b4117ceed499d23bc97fd10fe2be03376b6b43ddfcf85b6b55ea6cb080",
       "originRole": "First-party combined-host browser oracle, original synthetic readback or public successor."
     },
     {
@@ -9635,13 +9635,13 @@
     {
       "path": "tools/sequence-playback-types.mjs",
       "bytes": 19255,
-      "sha256": "904cc980cc1ae6bc8542ea37cf5f876020c8ba5576fd6f3066536e35de33c6b6",
+      "sha256": "6dffcc40c3654db9c9faa2f9983eafea7b6e91960aab20f279b0f5caba9a66be",
       "originRole": "Original Egret first-party sequence playback, tests, tooling or paired publication metadata; Apache-2.0, with AI-assisted authorship and evidence-bounded independent review."
     },
     {
       "path": "tools/sequence-playback-boundary.mjs",
-      "bytes": 36688,
-      "sha256": "3a5cbef25992645aae0d3060a4680b1a496b0bb48a5ab10e671d0739932838d5",
+      "bytes": 43012,
+      "sha256": "2d95757ddd9c3a6d1762fd44ba02461ef92504690f2e1e4c342a5f6d71f10a62",
       "originRole": "Original Egret first-party sequence playback, tests, tooling or paired publication metadata; Apache-2.0, with AI-assisted authorship and evidence-bounded independent review.",
       "identityHistory": [
         {
@@ -9665,8 +9665,8 @@
     },
     {
       "path": "tools/sequence-playback/collector.mjs",
-      "bytes": 49584,
-      "sha256": "2e96366e17d7d65e93c3ff075e6ab9ba7df0dc5a047e8ebe0b33e6884aec2189",
+      "bytes": 49691,
+      "sha256": "4b80b18b7d62c87bac2a648f58639fee00120d3c47cc71b709ed0907c55d5f32",
       "originRole": "Original Egret first-party sequence playback, tests, tooling or paired publication metadata; Apache-2.0, with AI-assisted authorship and evidence-bounded independent review."
     },
     {
@@ -9683,8 +9683,8 @@
     },
     {
       "path": "tools/sequence-playback/file-graph.mjs",
-      "bytes": 9478,
-      "sha256": "6df225a735bbdb3badabfd751b77a47c84ad6a4b8125a3c37a439161faf957dc",
+      "bytes": 10795,
+      "sha256": "86df4f5a7ace7051fdbd9ab886be141c64b9a939a01b9de137ad07d365d03569",
       "originRole": "Original Egret first-party sequence playback, tests, tooling or paired publication metadata; Apache-2.0, with AI-assisted authorship and evidence-bounded independent review."
     },
     {
@@ -9810,14 +9810,14 @@
     },
     {
       "path": "tests/spritesheet-fault-child.mjs",
-      "bytes": 18418,
-      "sha256": "99752564a4b5dd9950648990f28208f0ea243db492757b094af3c64148ae6cf8",
+      "bytes": 18770,
+      "sha256": "33f07e85c98fdad64dda0b249b9ec6586fc8b5011878205c1c42cf4bc22119d9",
       "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
     },
     {
       "path": "tests/spritesheet-fault.test.mjs",
-      "bytes": 8642,
-      "sha256": "a8f028e0d2175ca131fa65b465f8aaf5066cc285c1eb2a5d453e333dcc3566d8",
+      "bytes": 9069,
+      "sha256": "93bcff76c3bd781929d783a47c6b945fc9d23397750ad6d1358ab64634ddce18",
       "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
     },
     {
@@ -9876,8 +9876,8 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "bytes": 161018,
-      "sha256": "ef34a3adf751069637682833caddd72efb7f1940a2d23e5cf2f1652eef5ecc75",
+      "bytes": 185549,
+      "sha256": "bfb4fb02f29cd66442a6f5124c1e209d87b305550ec5a48978c104f09163fb3f",
       "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review.",
       "identityHistory": [
         {
@@ -9895,8 +9895,8 @@
     },
     {
       "path": "tools/spritesheet/collector.mjs",
-      "bytes": 54461,
-      "sha256": "329033ca057349c90847ff2e75f805e3f3fd03f76d81103efd89e661281326b0",
+      "bytes": 54568,
+      "sha256": "3fbc94301fea96217aea9569cd0973d52e2c378a3dfba314bbd3d2efa16e498b",
       "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
     },
     {
@@ -9907,8 +9907,8 @@
     },
     {
       "path": "tools/spritesheet/file-graph.mjs",
-      "bytes": 9478,
-      "sha256": "6df225a735bbdb3badabfd751b77a47c84ad6a4b8125a3c37a439161faf957dc",
+      "bytes": 10795,
+      "sha256": "86df4f5a7ace7051fdbd9ab886be141c64b9a939a01b9de137ad07d365d03569",
       "originRole": "Original Egret first-party named SpriteSheet, tests, tooling or paired public curation; Apache-2.0 with AI-assisted authorship and bounded independent review."
     },
     {
@@ -10087,20 +10087,20 @@
     },
     {
       "path": "tools/bitmap-binding-ticket-boundary.mjs",
-      "bytes": 34961,
-      "sha256": "f57422e49f5197cd5c5ef66c76bc8cde2c6a36571b8bae5de9f89c24832591ab",
+      "bytes": 44823,
+      "sha256": "690d56e1eb726d55990d6a8cd37b2215b1f3bb44430ca5c54abc67cdcffe8026",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
     },
     {
       "path": "tools/bitmap-resource-slot-boundary.mjs",
-      "bytes": 30824,
-      "sha256": "ceedb70bb26730fd8bc44990d169f7ea5f25b8362daf4557ee853e46e592a277",
+      "bytes": 38244,
+      "sha256": "1a4046d1bd5003714ca030ade053f412c98ca1f787d35357b823a12005e791a3",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "bytes": 163653,
-      "sha256": "0fa3391e5831ab6c2c9889622ffd51e36b678d2aa93822ff69b51b30679b4e33",
+      "bytes": 191467,
+      "sha256": "ce40f1363774bec52a053a5a0b2001aab2f3e4701b49e822e1a61097c7a4299d",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
       "identityHistory": [
         {
@@ -10161,8 +10161,8 @@
     },
     {
       "path": "tools/atlas-import-boundary.mjs",
-      "bytes": 65640,
-      "sha256": "d3994b788efa4e9eafeeed4a37f6ed4935af2946e7efc42ed35b9d9e4d5c6239",
+      "bytes": 90249,
+      "sha256": "4dee83aecfeb345647356ee3a8f5aef36e6b984333dcd8699ff40bfd7de6d581",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
       "identityHistory": [
         {
@@ -10175,7 +10175,7 @@
     {
       "path": "tools/atlas-import-types.mjs",
       "bytes": 6689,
-      "sha256": "d7116448d0cf6a58ccba998333b16f9cbd5760beed4a1ff05418befed2a87b29",
+      "sha256": "e1c1447b56839f8bb7f22bcb23426910a07d91d894d3ae53396552630514b90d",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material",
       "identityHistory": [
         {
@@ -10211,8 +10211,8 @@
     },
     {
       "path": "tools/atlas-frame/boundary.mjs",
-      "bytes": 44523,
-      "sha256": "463b7205d8623d6a986d1076db19ec4ea644424ac20b04ea85ab01a18db05175",
+      "bytes": 44843,
+      "sha256": "51ae63b27b6e4deec065ec2e1a7245159f24bc0df60736151ba7a7b619916bcf",
       "originRole": "Independent first-party atlas planning, composition, policy or bilingual publication material"
     },
     {
@@ -10383,7 +10383,7 @@
       "path": "tools/bitmap-binding-ticket-types.mjs",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
       "bytes": 13887,
-      "sha256": "1e80a8a04ae0b35dd1084762172aed96e966fe3a3e9e47a86da383cd853bfb32"
+      "sha256": "b36874eaab10b6c275424584d062b599f8e14a215336a7722e9a3783190a8782"
     },
     {
       "path": "tools/bitmap-resource-slot-policy.json",
@@ -10454,8 +10454,8 @@
     {
       "path": "knowledge-base/Cns/docs/getting-started.md",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
-      "bytes": 12768,
-      "sha256": "628358879742939b4226e1bfdd8ff8867d4d76b2e940ad41f5fbdeecbd8c16f9"
+      "bytes": 12942,
+      "sha256": "60175c787f06f5c4f55956c51fc973a5825ddf8c91c274da7c2f37b279364125"
     },
     {
       "path": "knowledge-base/Cns/docs/m0-community-foundations.md",
@@ -10466,8 +10466,8 @@
     {
       "path": "knowledge-base/en/docs/getting-started.md",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
-      "bytes": 14718,
-      "sha256": "f9e3c210ba92c7c0c63414055126249d5d4d6eaa080cfbc7355e1072427ec62d"
+      "bytes": 14925,
+      "sha256": "7d2508456bbf82742399b93a73f7c06469bdc967cb0f1fa8db66d0bdfef4141a"
     },
     {
       "path": "knowledge-base/en/docs/m0-community-foundations.md",
@@ -10538,20 +10538,20 @@
     {
       "path": "tools/browser-verify.mjs",
       "originRole": "First-party M0 browser environment selection and migration controls; AI-assisted from the approved plan; Apache-2.0.",
-      "bytes": 20846,
-      "sha256": "bfd86e6bebe2c5b8fd277a8efe93924fd47c0bf45ee71d306dcfbd906397f3cd"
+      "bytes": 35204,
+      "sha256": "eae940bda6fa6b0c2da8383b55537cc5abaf1681937e6c31baab51313ad8824e"
     },
     {
       "path": "tools/browser-tool-matrix.json",
       "originRole": "First-party M0 browser environment selection and migration controls; AI-assisted from the approved plan; Apache-2.0.",
-      "bytes": 6109,
-      "sha256": "7ea5665145df498f65dbe36e08054a2a7eeaa93abbb49b8e87ca74f3d1e2bfe1"
+      "bytes": 6231,
+      "sha256": "3c2bf5641a5b16f788ba9ec4cfed51efcadd3924f6bc00aef3f72c69e1fa3597"
     },
     {
       "path": "tests/publication/browser-tools.test.mjs",
       "originRole": "First-party M0 browser environment selection and migration controls; AI-assisted from the approved plan; Apache-2.0.",
-      "bytes": 15315,
-      "sha256": "c125ae1b671e30f70d8dcefb1760f3b58eab1026171d12db6588c84b52b22191"
+      "bytes": 40744,
+      "sha256": "4dda1df0eed2457378b654209eb14ea5de6771c3f2d51e2d2ee5ddf0710ad2c6"
     },
     {
       "path": "contributions/m0-tooling.json",
@@ -10574,8 +10574,8 @@
     {
       "path": "tests/publication/incremental-checks.test.mjs",
       "originRole": "First-party M0 risk-selected contributor feedback and advanced browser admission; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 92214,
-      "sha256": "0fc7f8dc59a285c1ca70481c15e8047546a4c90c9596b7774081af1a2f13f9c2"
+      "bytes": 113127,
+      "sha256": "5bcd987bc5d502183e2d6ad0844aed047dd96aaf35a5a493346f9dfc7c8917b4"
     },
     {
       "path": "contributions/m0-advanced-tooling.json",
@@ -10592,8 +10592,8 @@
     {
       "path": "tests/publication/resource-browser-tools.test.mjs",
       "originRole": "First-party M0 resource collector workflow and documentation; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 18565,
-      "sha256": "6b0f6842a1dd385783f9633dd945ca7e6e00fd09656a8689cba306b19a2623ba"
+      "bytes": 26177,
+      "sha256": "1e3d8a97355f8244757cb2f9cd6bc4bf80d69431aed642a911e3c67e0ec7a9d5"
     },
     {
       "path": "knowledge-base/en/docs/resource-browser-workflow.md",
@@ -10634,20 +10634,20 @@
     {
       "path": "tests/publication/historical-browser-tools.test.mjs",
       "originRole": "First-party M0 historical-domain tooling and tests, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 14619,
-      "sha256": "18180f164206898be840e21ebc3eeec428b62d2d874a9f7dd893d056ea91ee8b"
+      "bytes": 18138,
+      "sha256": "e7634323959c173815d3a2e11f71f6aa278e417b73820719b7480f7485a381eb"
     },
     {
       "path": "knowledge-base/en/docs/historical-browser-workflow.md",
       "originRole": "First-party bilingual contributor guide, authored with AI assistance; Apache-2.0.",
-      "bytes": 6485,
-      "sha256": "63e3bfdf83da62ba69ba0551cc77311d9e53375dd0aabde74f383edc0742c5a5"
+      "bytes": 7878,
+      "sha256": "80c4a4db9661bcb5cbb775536894be2b26399dae9bcbd0c18e41508c0402c5e9"
     },
     {
       "path": "knowledge-base/Cns/docs/historical-browser-workflow.md",
       "originRole": "First-party bilingual contributor guide, authored with AI assistance; Apache-2.0.",
-      "bytes": 5888,
-      "sha256": "a50f509a9454402957557b0e083baa52d43d6d527ee8c562c40ab82e2a41e13a"
+      "bytes": 7078,
+      "sha256": "9b668d9aec5ad915310b959162a99f6b886951e03e2fed9746602aa0aac62521"
     },
     {
       "path": "contributions/m0-historical-collectors.json",
@@ -10665,7 +10665,7 @@
       "path": "tools/incremental-test-catalog.json",
       "originRole": "First-party M0 dependency-aware feedback and bilingual documentation, independently authored with AI assistance; Apache-2.0.",
       "bytes": 69209,
-      "sha256": "77b37cb8daa955b54ab147d32723cd425fcd792e181bfd9d1ec11d4f18d429b2"
+      "sha256": "16299361f0a5ef9bfc1ca4ccac7344b1b936eb8da12611069f12480ab59eaafb"
     },
     {
       "path": "knowledge-base/en/docs/dependency-aware-checks.md",
@@ -10688,8 +10688,8 @@
     {
       "path": "tools/prepare-check-maintenance.mjs",
       "originRole": "First-party M0 review-preparation tool, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 25087,
-      "sha256": "abe3eb62d000baddd74c5204d3e0df063cfbbbb28a23d65b44ea986c7c418e8c"
+      "bytes": 29398,
+      "sha256": "42b9d3d9be3cd01b8bcbd91e0bb586c0c5816d0e871270d8ca374e1a991406a2"
     },
     {
       "path": "knowledge-base/en/docs/check-maintenance.md",
@@ -10718,20 +10718,20 @@
     {
       "path": "tools/prepare-compiler-maintenance.mjs",
       "originRole": "First-party M0 registered compiler input review workflow; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 35477,
-      "sha256": "4c6bc095c0df88741fa2e8d3cd3d2d1e7c573cf34f89e55abeba71a736db25db"
+      "bytes": 42454,
+      "sha256": "66a23b9ed77efd7a8a7b9fe3f1f441864ef56ac013f0f2e3a116c0f76dc7155b"
     },
     {
       "path": "knowledge-base/en/docs/m1-rendering-resource-plan.md",
       "originRole": "First-party M1 architecture and implementation plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 20367,
-      "sha256": "a702b5ed3338bfb9dfb8ba85a959eec8ebbcce6414b3332772ab04f17628395d"
+      "bytes": 20993,
+      "sha256": "7636dae583559c13c5daea8092f8590960cebf877d7cb7c994ec781f9c527d29"
     },
     {
       "path": "knowledge-base/Cns/docs/m1-rendering-resource-plan.md",
       "originRole": "First-party M1 architecture and implementation plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 16970,
-      "sha256": "ab0b7d02f4f877b26c54074ca1c86f999c70917fa84a36f66a3151a31c8b4d66"
+      "bytes": 17543,
+      "sha256": "7a652fd20368b3e362caf7735a567312577bf9de7493a29b3f2f88035e9585f2"
     },
     {
       "path": "contributions/m1-plan.json",
@@ -11042,14 +11042,14 @@
     {
       "path": "packages/engine/rendering/sharedColor2D.ts",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 1343,
-      "sha256": "f5cc919c1a08aed3f8c356543d01946ea2210278f5e810ac58c5d97e14fb9ca8"
+      "bytes": 2797,
+      "sha256": "eb3a0e96e2a77f95da7dcba00ee398a7d64727f3a4e5d7e69cba2ba15b736ccc"
     },
     {
       "path": "packages/engine/web/prepareSharedSubmission2D.ts",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 3317,
-      "sha256": "c8f233f4214c597fe7554ef98b09c9bb88c09d1f81e792e59313987167f3f45e"
+      "bytes": 3440,
+      "sha256": "13bfc654208dde113c2bc6290a4d5a065c5555c82fd5e2bdd1ef1657af8024f5"
     },
     {
       "path": "packages/engine/web/sharedB1.ts",
@@ -11060,14 +11060,14 @@
     {
       "path": "packages/engine/web/sharedWebGPUOptions.ts",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 3941,
-      "sha256": "e86a14e195bae1fbb0f944f7255417cdd59fbb9fb3a622a10ad781c17089751c"
+      "bytes": 4932,
+      "sha256": "e57495a45d6b628cf0a4dea757e6f2ebd3aab32acb0dfdd871ffbc292eb94419"
     },
     {
       "path": "packages/engine/web/webgpuRetentionPool.ts",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 5838,
-      "sha256": "d8451fd234dc92b41142d7c003fc41b9c1781bcae9271ac07b6e7f8dc0b45e1f"
+      "bytes": 6105,
+      "sha256": "4b20bba74b25b9c7fa74b35cd3be4448d8fa3f6640b10eeecd8f643f8bde3a0b"
     },
     {
       "path": "packages/engine/web/webgpuSharedMeshPass.ts",
@@ -11096,8 +11096,8 @@
     {
       "path": "packages/runtime/src/sharedFrameCapture.ts",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 20808,
-      "sha256": "4fc7471adf1e372552cafb4dbd4f4a8f7b2735c4a6bf2c75ee234ba21992bafe"
+      "bytes": 21282,
+      "sha256": "4ef0a109ca0040d56cc71822deb1ea3435b42b06ef0cf328252cb672785917b2"
     },
     {
       "path": "tests/fixtures/gpu-shared-rendering.mjs",
@@ -11108,8 +11108,8 @@
     {
       "path": "tests/resource-scene-boundary.test.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 9136,
-      "sha256": "d4f55e13c7b67461220ebbe121d13c60e279d75322f24b6da01daa690542621a"
+      "bytes": 11173,
+      "sha256": "945a3f261e6e2a6c16d1b19283bb4dd763984541cecae1fae4b60b21ad3ce1f9"
     },
     {
       "path": "tests/shared-capture-budgets.test.mjs",
@@ -11150,8 +11150,8 @@
     {
       "path": "tests/shared-webgpu-controls.test.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 32403,
-      "sha256": "6b9799189e1dce19528dbe511871877d271972dfb886dbf5e3ed85504e7be718"
+      "bytes": 32416,
+      "sha256": "ebd8213a787981dcb207bc4d461859701e8ba5265b321b77f2bdb857e443ef10"
     },
     {
       "path": "tests/types/shared-render-negative.ts",
@@ -11181,61 +11181,61 @@
       "path": "tools/atlas-frame-types.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
       "bytes": 3707,
-      "sha256": "002227332c279a289cfff8048ca8081beabb802126b42b5df3bb6fbec0ec1707"
+      "sha256": "604ff96e9880aff511dbe91181850caab24b0150d32821642bdd32192d3cdc3d"
     },
     {
       "path": "tools/bitmap-button-types.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
       "bytes": 17175,
-      "sha256": "74c55fbc100d49ed03278b2d8eb85d4833379a8219c932fce5325ec9cd448fe1"
+      "sha256": "919546bc07a51a78d499ae070618d7000e2d87774ad4af3c8a540b395924bbb8"
     },
     {
       "path": "tools/bitmap-resource-slot-types.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
       "bytes": 11184,
-      "sha256": "2f1c767bc1701c5bcf087b7eb48857006334ffc36c205a82cf81d9fa2b857315"
+      "sha256": "c97f8b75d9103477c7f5e5932f0fb75e588d42eec31a73e6f66327fae9275eaf"
     },
     {
       "path": "tools/browser-png-types.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 16004,
-      "sha256": "3569e8936fa3ab850072540dbc8acf4b4c57533df7e82b45e81f29ffc63dad9e"
+      "bytes": 18770,
+      "sha256": "cb242a6f1e519688bdd7c94fc04967dbc53d16b0e03a8f2c3b27d4376711a9fe"
     },
     {
       "path": "tools/display-anchor-offsets-types.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
       "bytes": 16526,
-      "sha256": "04fcc94308c627433412348d9088fb98d032808d9029ef5e8fc154cf28868ae4"
+      "sha256": "9d37f5989501d97094b25a0d9130f98c906cdc60bea4b1f9a042279b7279f90c"
     },
     {
       "path": "tools/display-container-add-child-at-types.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
       "bytes": 18718,
-      "sha256": "64d67885a2c91e19beda887da12a44d09938d71afceff3c001a6cf51c4523563"
+      "sha256": "f25ded3a21e455bfc45d5181025d7fd6dcd43cd666a08bc246855fce4452ee91"
     },
     {
       "path": "tools/display-container-child-index-types.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
       "bytes": 17112,
-      "sha256": "eea91a2a74aaf1a7d210a923106afd305e0028bd29a24482f9669a368d2c689f"
+      "sha256": "fb2d518381df6f41795f198c5b353b03fc194361151bbdd5963fde78e7f38929"
     },
     {
       "path": "tools/display-container-remove-children-types.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
       "bytes": 15268,
-      "sha256": "df1dd4a369ac4d19f892aed8d684e5097f86935f470e6f02deed48c5c3f20159"
+      "sha256": "f03e8cfc77240d8ea40021333bf13e56cc15e0e0f469442fd6a72dee7e5bd31b"
     },
     {
       "path": "tools/lib/m13-strict-successor.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 11980,
-      "sha256": "7f4a82751f0e9e5b3f1b9de5a17816b20cd169ed02f9130b1a7c3989c547b634"
+      "bytes": 12701,
+      "sha256": "0c8ae45e31b879ca8e84633091f3a5e938d7712c4f2dff7cf1af3013859b91ad"
     },
     {
       "path": "tools/linear-layout-types.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
       "bytes": 11073,
-      "sha256": "1d9a07307a4725eb8234cbb062f23474c2c4ce28ef0a43706a041cecbe246085"
+      "sha256": "89cf1e6e5fd099871ff0d7388df1b0b6e6accd36c78aef9aa33e1e5426fa71c3"
     },
     {
       "path": "tools/m13-strict-successors.json",
@@ -11247,13 +11247,13 @@
       "path": "tools/nine-slice-bitmap-types.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
       "bytes": 6543,
-      "sha256": "2c6dce51e524035def92f3bea9e8dab4c5107ca75d7d4a9441e85fb9520a8020"
+      "sha256": "8ced9ea2d76188a792923150fe285511424818afcdd1d71af79088f98c54db30"
     },
     {
       "path": "tools/resource-scene-boundary.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 25784,
-      "sha256": "bc0ce6ccb3ae4ceed8797a4350fa9a7c4303d5e1091b2d7847837d8073abec8b"
+      "bytes": 26061,
+      "sha256": "3301aeba8e07cd037f86e621a3263accd990e305a1c0ecee3c0a43c9d1adb39e"
     },
     {
       "path": "tools/shared-render-types.mjs",
@@ -11282,14 +11282,14 @@
     {
       "path": "tools/shared-rendering/native-controls.json",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 10981,
-      "sha256": "6249b6bab9e07e04eb9f967843fc56fe83754565caf516189d767bbe248faec6"
+      "bytes": 10971,
+      "sha256": "a262f3a97542bb81c651113e34a17b2d46e0d560f509b7a64624c950a6b9f38b"
     },
     {
       "path": "tools/shared-rendering/native-source.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 7084,
-      "sha256": "a1356515a4430fd693b54e1d33ae552e682db0c32093871c34b0f5bc27660585"
+      "bytes": 7161,
+      "sha256": "46247c648822c1320448106ce2e4e7500de9f956bf527b0b408bd03e3804eaa9"
     },
     {
       "path": "tools/shared-rendering/native-window.mjs",
@@ -11306,14 +11306,14 @@
     {
       "path": "tools/verify-prepared-resource-groups.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 41569,
-      "sha256": "ec69f6057fb5fca775f68f4ccf1e07ed357cbe2b4735ccd53a6b7d3027738025"
+      "bytes": 42098,
+      "sha256": "fe8476e0decd1332c5f1bd8695fa3b9b4dcf70f384535b221976a9dad07c3982"
     },
     {
       "path": "tools/verify-resource-scene.mjs",
       "originRole": "First-party shared-rendering implementation and verification, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 53007,
-      "sha256": "90d6fc923aa0c98f8ee9b3f93c735ab974e39e7201572c97675304bc74c85e3b"
+      "bytes": 53370,
+      "sha256": "06e99cb26f6c370c84d401b8a9e46318c41517c3d6b70e0dd4b8824f6b084e8f"
     },
     {
       "path": "tools/verify-shared-webgpu.mjs",
@@ -11360,20 +11360,20 @@
     {
       "path": "packages/engine/web/WebGL2Host.ts",
       "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0.",
-      "bytes": 50299,
-      "sha256": "91ec2fd22e4c7f357c0ddbf19299a5f9d7c43b853b8128c94cd9ee1d4ee7b966"
+      "bytes": 84303,
+      "sha256": "e0d7d26866a40084426cdf3ca61625077be2923cfb60b50405498826713886ef"
     },
     {
       "path": "packages/engine/web/sharedRetentionLedger.ts",
       "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0.",
-      "bytes": 19448,
-      "sha256": "92f72b9e9229015b06cd0ae1b0e7a5ae59ab91e8e7770a0909155c0a82171d3d"
+      "bytes": 21975,
+      "sha256": "3062899cf6190f74cb66271411ba103f65b92495d2e48672229538f2ba8d0503"
     },
     {
       "path": "packages/engine/web/sharedSubmissionStorage2D.ts",
       "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0.",
-      "bytes": 5164,
-      "sha256": "fd2a435b888b46950303cc2e1fa4df091c83aaaa63ccf073dbd45a811a0a3f4a"
+      "bytes": 5558,
+      "sha256": "6ea64edd2d567b08a05672d9a24ac5ba8a698814cb358732a8b7cb28a534050c"
     },
     {
       "path": "packages/engine/web/sharedWebGL2Arena.ts",
@@ -11402,26 +11402,26 @@
     {
       "path": "packages/engine/web/webgl2.ts",
       "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0.",
-      "bytes": 452,
-      "sha256": "6e0712b110de5525a569283719926ce845c2b2303581442e53f74ace174f8ced"
+      "bytes": 717,
+      "sha256": "6b018e4a3e9212093f344b64ee0bda8af6e0a5b10d4aee0106dd403ec6725a52"
     },
     {
       "path": "packages/engine/web/webgl2Native.ts",
       "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0.",
-      "bytes": 13885,
-      "sha256": "1d145a22b4e4c9ad7162c51c5227eba442a76fc50b2e2c0c9c8cf3bab1ebbb53"
+      "bytes": 16606,
+      "sha256": "8abb2517448d6175c5e02065846dd4ad3232d9b9fd2b1e11537fa5028e37a8fe"
     },
     {
       "path": "packages/engine/web/webgl2Scene3d.ts",
       "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0.",
-      "bytes": 282,
-      "sha256": "5778ae48acac3236112e7ccc767660a5cd7cfcc4c751347ac92340b855bb929f"
+      "bytes": 547,
+      "sha256": "85c2393126f3fd77c2a8970609b80ce7126c4dd6b147a2b56a659da14b32f882"
     },
     {
       "path": "packages/engine/web/webgl2Types.ts",
       "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0.",
-      "bytes": 3976,
-      "sha256": "d22918ff669dc7d257fb1bfd28efb70f21f2ff070f07eb27ebf36225b4f091ef"
+      "bytes": 4748,
+      "sha256": "e8fd3659b81db986117708d0fac8ffdec0289c6c752d5e78b79336a9ba120a34"
     },
     {
       "path": "tests/fixtures/gl-shared-rendering.mjs",
@@ -11498,8 +11498,8 @@
     {
       "path": "tools/shared-rendering/gl-lifetime-source.mjs",
       "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0.",
-      "bytes": 7896,
-      "sha256": "ebe80914d823296d2f1c1fe13ba4b43c1120f24f63627e4877f2ada62e6ceb0a"
+      "bytes": 7973,
+      "sha256": "a9ee6e2583eec0f9957b7005db3a40285e064abd29fa18694a79491ba304ba57"
     },
     {
       "path": "tools/shared-rendering/gl-lifetime-window.mjs",
@@ -11511,13 +11511,13 @@
       "path": "tools/shared-rendering/gl-native-controls.json",
       "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0.",
       "bytes": 11894,
-      "sha256": "658a2b1188318cb755220800bd1450ff8d57ccaf6c516654651d343fc2be8fc3"
+      "sha256": "044b2acd5d197cdd1917b75accd316cb5ad0f407079151c9515573274b56d549"
     },
     {
       "path": "tools/shared-rendering/gl-native-source.mjs",
       "originRole": "First-party M1.4 shared WebGL2 implementation, finite verification or paired documentation; independently authored with AI assistance and separate source/result review; Apache-2.0.",
-      "bytes": 8859,
-      "sha256": "37b1cad300cdc49cfcfc4b6df5f5851597cb29f4bf1e2aebe23c3953f0c9c698"
+      "bytes": 8936,
+      "sha256": "d8d917bb03a18a18db5aa8a07dc2f1b1b21bdf6b534c8113390aab2c59671799"
     },
     {
       "path": "tools/shared-rendering/gl-native-window.mjs",
@@ -11566,6 +11566,1194 @@
       "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
       "bytes": 285,
       "sha256": "28e4cba732c79323599a8cb3b4221a2e2c9a525665d7128f11b6472eeaf11380"
+    },
+    {
+      "path": "examples/anchored-atlas-playback/index.html",
+      "originRole": "First-party retained browser fixture or policy control; M1.5 resource module compatibility preserves its existing reference scene, refusal cases and verification scope, Apache-2.0.",
+      "bytes": 3037,
+      "sha256": "6585e846197081d6839efea34570155470e21b7701c07f01fd11ffd018bad3b7"
+    },
+    {
+      "path": "examples/bitmap-button/index.html",
+      "originRole": "First-party retained browser fixture or policy control; M1.5 resource module compatibility preserves its existing reference scene, refusal cases and verification scope, Apache-2.0.",
+      "bytes": 3836,
+      "sha256": "e7617d51a91c75765a57318b6c630f2a9340bd4493344d501bbda5229b837dad"
+    },
+    {
+      "path": "examples/bitmap-resource-slot/index.html",
+      "originRole": "First-party retained browser fixture or policy control; M1.5 resource module compatibility preserves its existing reference scene, refusal cases and verification scope, Apache-2.0.",
+      "bytes": 2251,
+      "sha256": "281e59db3004f0aa184e2ee14f9a84b50d9c187e29ee29fdda8eb8ac7c3ae5be"
+    },
+    {
+      "path": "examples/linear-layout/index.html",
+      "originRole": "First-party retained browser fixture or policy control; M1.5 resource module compatibility preserves its existing reference scene, refusal cases and verification scope, Apache-2.0.",
+      "bytes": 5200,
+      "sha256": "11d6bf14abf325301ffce0950d61ffa12a40b3ce3eda743c0d02fdb921fefe1d"
+    },
+    {
+      "path": "examples/prepared-resource-groups/index.html",
+      "originRole": "First-party retained browser fixture or policy control; M1.5 resource module compatibility preserves its existing reference scene, refusal cases and verification scope, Apache-2.0.",
+      "bytes": 3935,
+      "sha256": "71e625212c3fd0322f3c32917bf1f1ae78698f1851aafda64895578bfb8929fe"
+    },
+    {
+      "path": "examples/resource-scene/index.html",
+      "originRole": "First-party retained browser fixture or policy control; M1.5 resource module compatibility preserves its existing reference scene, refusal cases and verification scope, Apache-2.0.",
+      "bytes": 10410,
+      "sha256": "21e2becec2b40d813920ea0c3e21b4dbb05e2fde202172cd059ad116c2f7bd20"
+    },
+    {
+      "path": "examples/trimmed-atlas-playback/index.html",
+      "originRole": "First-party retained browser fixture or policy control; M1.5 resource module compatibility preserves its existing reference scene, refusal cases and verification scope, Apache-2.0.",
+      "bytes": 1629,
+      "sha256": "38e3f0efe8b654559e1667af027062cb7a4befa04622fdbe7d579c2c14a0ce1b"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/prepared-resource-groups-evidence.md",
+      "originRole": "First-party resource scene verification documentation, independently maintained with AI assistance under Apache-2.0.",
+      "bytes": 7169,
+      "sha256": "862604e4cf1c5886edf52b33326a213788366b0cb5e60b1fbaafd99e8fa151f3"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/resource-recovery-contract.md",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "bytes": 29176,
+      "sha256": "3908ee5cd69cb9332f2ad0863d006d07192823754622d943acc79d58f185d1a9"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/resource-recovery-evidence.md",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "bytes": 10253,
+      "sha256": "5f67cdcdbf68ef23ff9d9cc3bc68e243037c258ebe47a99e9a903a8b7b9d8cc8"
+    },
+    {
+      "path": "knowledge-base/Cns/docs/resource-scene-integration.md",
+      "originRole": "First-party resource scene verification documentation, independently maintained with AI assistance under Apache-2.0.",
+      "bytes": 9098,
+      "sha256": "e8f3424cf73c51b9bdb890f8eeb175697f8e476718f6650a357133999ef56721"
+    },
+    {
+      "path": "knowledge-base/en/docs/prepared-resource-groups-evidence.md",
+      "originRole": "First-party resource scene verification documentation, independently maintained with AI assistance under Apache-2.0.",
+      "bytes": 8162,
+      "sha256": "51f92b0d9d3eb1a24b7f8a920beb40bc13fded5c21d694d87cc6ded1caeb7e81"
+    },
+    {
+      "path": "knowledge-base/en/docs/resource-recovery-contract.md",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "bytes": 33314,
+      "sha256": "a1231bfbadd9742d7f7a34bd5e06f2dda0727aa05ef1e56413ea1593cfa829fe"
+    },
+    {
+      "path": "knowledge-base/en/docs/resource-recovery-evidence.md",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "bytes": 11447,
+      "sha256": "1a340234567659fbf5971670ec933e75150f4f56c3caf1140eb3d37c93cc9059"
+    },
+    {
+      "path": "knowledge-base/en/docs/resource-scene-integration.md",
+      "originRole": "First-party resource scene verification documentation, independently maintained with AI assistance under Apache-2.0.",
+      "bytes": 10229,
+      "sha256": "efaf4599cacfbbe3741d9496903d34125eb90160bc7855da1e114f381170ecf8"
+    },
+    {
+      "path": "packages/contracts/src/ResourceManifest.ts",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "bytes": 2059,
+      "sha256": "ff2fa4e6e494507b5d58528b8dabdd033eb5369f577d309fcce566a690e15585"
+    },
+    {
+      "path": "packages/contracts/src/resources/index.ts",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "bytes": 507,
+      "sha256": "a2df37b06a9c313f2c1bb44464f4c96e1c4ef7c7bde1ae234668bc252b561d3a"
+    },
+    {
+      "path": "packages/contracts/src/resources/manifestAdmission.ts",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "bytes": 15728,
+      "sha256": "14df641417569f885e8658561da45dc6c5508380ab2c84f37f22b2ea734c1860"
+    },
+    {
+      "path": "packages/contracts/src/resources/sha256.ts",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "bytes": 4503,
+      "sha256": "acb64d9803f6428a12962e6582f0dd1fcd73336583b4fa1382dda349040821fa"
+    },
+    {
+      "path": "packages/engine/src/bitmapBindingTicket.ts",
+      "originRole": "First-party existing bitmap binding or browser image provider extended for M1.5 staged resource ownership and bounded loading diagnostics; independently authored with AI assistance and separate review, Apache-2.0.",
+      "bytes": 8604,
+      "sha256": "752f57b884d37477730622e4942fa08d321ebf2b250670ad81de7a9812b32179"
+    },
+    {
+      "path": "packages/engine/src/manifestAssetGroup.ts",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "bytes": 16848,
+      "sha256": "8a4542d24f43a6b78809cced4289f29b7909bbd33134a6e426a3fc223dfa7558"
+    },
+    {
+      "path": "packages/engine/src/manifestResourceState.ts",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "bytes": 3180,
+      "sha256": "6467821a0f663aa4cc7ed5f386b4467128758de52ff30ee159bf7b13fcdc24fb"
+    },
+    {
+      "path": "packages/engine/src/manifestResourceTypes.ts",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "bytes": 1012,
+      "sha256": "2c6c3b4c94f375f8f88357a0427c6a235ae04d594fd056fa40cedcf51a888fa1"
+    },
+    {
+      "path": "packages/engine/src/resources.ts",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "bytes": 325,
+      "sha256": "db405ec5a4de624e74b1d0f05950d3527126c341b76b44bbc42ec49718e06d04"
+    },
+    {
+      "path": "packages/engine/web/BrowserTextureProvider.ts",
+      "originRole": "First-party existing bitmap binding or browser image provider extended for M1.5 staged resource ownership and bounded loading diagnostics; independently authored with AI assistance and separate review, Apache-2.0.",
+      "bytes": 38735,
+      "sha256": "19a7a5c531372a93a88d52bd1885ccfc77054ca21821ac93a301ed5cfff2ef39"
+    },
+    {
+      "path": "packages/engine/web/ManifestByteSource.ts",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "bytes": 34760,
+      "sha256": "7a2e05f1523ad89adf1ab46f5f6b902795fb6ff053439d8d4cb7a425f1ea0e32"
+    },
+    {
+      "path": "packages/engine/web/resources.ts",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "bytes": 1909,
+      "sha256": "beebdb71e9a1e03d7c18f6a8f649f451c50d5cccd1b2a89cb10ee99702eb6891"
+    },
+    {
+      "path": "packages/engine/web/sharedDeviceSession.ts",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "bytes": 2330,
+      "sha256": "3ced6459da74722c85b77785ebeb3995dc782a350978b655ad3c9d160c4bf04a"
+    },
+    {
+      "path": "packages/engine/web/sharedFrameUpload.ts",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "bytes": 1014,
+      "sha256": "dfc87a6e689f8d4edb60fc088c3f20785b1d620e4d6241ba303b7805a42646dc"
+    },
+    {
+      "path": "packages/project/src/resources/index.ts",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "bytes": 289,
+      "sha256": "9c911dbc1f244f4e1cb53055c3bdfc3755181a3565d0f9143466c14c9e377e1a"
+    },
+    {
+      "path": "packages/project/src/resources/manifest.ts",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "bytes": 7623,
+      "sha256": "48a9e2ff14d460a472e926d9fb675be25ad4615532db5cf66deaf2e0f35fbff0"
+    },
+    {
+      "path": "tests/atlas-frame-boundary.test.mjs",
+      "originRole": "First-party retained browser fixture or policy control; M1.5 resource module compatibility preserves its existing reference scene, refusal cases and verification scope, Apache-2.0.",
+      "bytes": 13377,
+      "sha256": "b0fa6ae22856c6340bbad20ab2b4acc5ced367ffe18ffb5d75d7712de7050607"
+    },
+    {
+      "path": "tests/candidate-shared-frame-fixture.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 5874,
+      "sha256": "34fa35f994bdceb364788fef7adef57708f72972ab7031739f7f13f1d9889d6a"
+    },
+    {
+      "path": "tests/candidate-shared-frame-host-control.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 1574,
+      "sha256": "6dc65573a2a94fba2f665fd2c20d276ee202fc3f69bb3535df24c9106da0b463"
+    },
+    {
+      "path": "tests/candidate-shared-frame.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 20697,
+      "sha256": "fe8447598afa5f3a01c91d79b9f4046253416fe49c71c02b528167a3a9057e4a"
+    },
+    {
+      "path": "tests/fixtures/resource-manifest.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 3077,
+      "sha256": "8d33762a2b0bc74f00374cf331735384fd3dcbd9650490b0927fabcbdcb30916"
+    },
+    {
+      "path": "tests/fixtures/shared-frame-upload-gpu.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 7923,
+      "sha256": "4957e2cc4c44649f3bb861bf79111484b6daf37fafb78bb2240adeb845552681"
+    },
+    {
+      "path": "tests/legacy-smoke-resource-map.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 4759,
+      "sha256": "911c437aa0c1f7b41494f4bb6766f900e09e3b7ad347f5cd5fe67e0f247d65c9"
+    },
+    {
+      "path": "tests/manifest-asset-group-heldout.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 6603,
+      "sha256": "c40026cbd1808b87b7a46efee41099f0b8a2af7196d8d3ac1d2a689c74ca3bba"
+    },
+    {
+      "path": "tests/manifest-asset-group.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 27513,
+      "sha256": "abebd8fdebcff90ad9dad14505e2a937dad4bb65ada43bdbafbbc011ca6220b1"
+    },
+    {
+      "path": "tests/manifest-browser-fixtures.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 9027,
+      "sha256": "8ea9a93f832af76e4003901ebb9475e2f0ed7b29dc9d5146e2d5a659533ef490"
+    },
+    {
+      "path": "tests/manifest-byte-source.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 34455,
+      "sha256": "bb646f9b7c1b1dd808183d93f3c5f5359652c938d36b9249138cc73c0425c580"
+    },
+    {
+      "path": "tests/manifest-resource-diagnostics.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 23293,
+      "sha256": "1eea45a2a0c7e7a542c76d96ee5515d8499043e2d9e26b21f3233209b1ab89f9"
+    },
+    {
+      "path": "tests/manifest-texture-provider.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 18739,
+      "sha256": "68ee93955b0d41f085c103871ffcec82e0746f863b95c8a5332527ddc48734e2"
+    },
+    {
+      "path": "tests/native-import-lexer.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 9228,
+      "sha256": "11dff2da9a64b5fe02c2d0886edd60a23435f7c1e66bbe5a79726f75499fcc17"
+    },
+    {
+      "path": "tests/prepared-resource-oracle.test.mjs",
+      "originRole": "First-party fixed reference and environment refusal regression tests, independently authored with AI assistance under Apache-2.0.",
+      "bytes": 9380,
+      "sha256": "8813a35f41934e83af625093204158218c163dc2a37e188955b3074b637620ec"
+    },
+    {
+      "path": "tests/resource-manifest-bounded-admission.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 3298,
+      "sha256": "3c7a27123382b0197fd3f05c0a654a9fc5374917957cb2ce7c9ead4f3aea7fce"
+    },
+    {
+      "path": "tests/resource-manifest-builder-io-child.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 5298,
+      "sha256": "b78c4ffc34f5edbe896ef5f9a99bc7b5bb4f1ac7038a542788a9a10ad4b9a07e"
+    },
+    {
+      "path": "tests/resource-manifest-builder-io-unit.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 7406,
+      "sha256": "47538157d271693c1aaf31f485f3b890cd03eb83d7a7ebbd32fcd990c8d991a0"
+    },
+    {
+      "path": "tests/resource-manifest-sha-unit.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 2445,
+      "sha256": "ee06d1461b4ce2b40fae76ceea30d5a9ba40424965281e9d926f4c5b6a31d5a4"
+    },
+    {
+      "path": "tests/resource-manifest.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 25349,
+      "sha256": "bb9b69c124343bbe3bf020007aab5d35c4588af7d57389497d3137302aaf7005"
+    },
+    {
+      "path": "tests/resource-recovery-window-policy.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 10017,
+      "sha256": "6b308c10c796ee8f190d9b5033fd1072f3a493b011876c32862687f07b2617dd"
+    },
+    {
+      "path": "tests/resource-scene-browser-source.test.mjs",
+      "originRole": "First-party retained browser fixture or policy control; M1.5 resource module compatibility preserves its existing reference scene, refusal cases and verification scope, Apache-2.0.",
+      "bytes": 8248,
+      "sha256": "4a90e86c43feda83105137d27b3a030b8a05bec9343dd4d5adc3d29122cbfafe"
+    },
+    {
+      "path": "tests/shared-device-session.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 9522,
+      "sha256": "1d3ace34751e3fcb01e29453ed83a11ff25dc88bfedd9aa7ea51abf522c31e8f"
+    },
+    {
+      "path": "tests/shared-frame-upload-gl-fixture.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 9465,
+      "sha256": "cd2a557280f6aae60573ffe9966bc57d42baafe2fa35cbbec54bc9e15ba86934"
+    },
+    {
+      "path": "tests/shared-frame-upload-webgl2.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 34634,
+      "sha256": "86faac3b7be7532cfa60e19ed8462ab4a4476aa5082e6b5b10dd7d48530154ed"
+    },
+    {
+      "path": "tests/shared-frame-upload-webgpu.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 29687,
+      "sha256": "01eec1a2f71bb0fbc879531836dbd4358958b0d8617bfeef77eff7a5cf9e8ee3"
+    },
+    {
+      "path": "tests/shared-host-resource-diagnostics.test.mjs",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 8953,
+      "sha256": "8919f64bea4f99cbd73e1a3dbd14d287f96fbd5381b30ef6e68e2dc6dbc18ecc"
+    },
+    {
+      "path": "tests/types/candidate-shared-frame-negative.ts",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 1759,
+      "sha256": "547c8b230d2db32ad26fb7c7de1a3f7244af68c549bf093795ba318e4eba2695"
+    },
+    {
+      "path": "tests/types/candidate-shared-frame-positive.ts",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 1844,
+      "sha256": "9076ba872805e03b7b1e732627c04e9274be6ffce13fc3112d3acf345c5539e7"
+    },
+    {
+      "path": "tests/types/manifest-browser-negative.ts",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 3177,
+      "sha256": "7e7d58fb1cd4e64c16fc9e1af5083fd0568ff65ff2c33ebc30eebca8d11c0c96"
+    },
+    {
+      "path": "tests/types/manifest-browser-positive.ts",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 2534,
+      "sha256": "d996e0a906e08a26e113f61c4d65b2bb5fed25f9469e90ecd0ee1b4b9b605f99"
+    },
+    {
+      "path": "tests/types/manifest-resource-diagnostics-negative.ts",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 1884,
+      "sha256": "83219f743f3443c5a622a7ff14244720f6aa8c8dc6398b4cf23ace296dc2d612"
+    },
+    {
+      "path": "tests/types/manifest-resource-diagnostics-positive.ts",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 3454,
+      "sha256": "3afd9dbb70176f67d9938bff122214bcd3639e5d1ea2918450de0d62217377be"
+    },
+    {
+      "path": "tests/types/resources-group-negative.ts",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 1440,
+      "sha256": "9c361169254187e0e28c36b72453a34965ec1b1588ed09f237dbb0440b1c6729"
+    },
+    {
+      "path": "tests/types/resources-group-positive.ts",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 1227,
+      "sha256": "a7fca32ac1ae4ae64755eba012b4bc90150b478a572d28dc44ee21935335a5c4"
+    },
+    {
+      "path": "tests/types/shared-frame-upload-gpu-negative.ts",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 3642,
+      "sha256": "d1e137bc35b3ad80227fe4e114e4f62292047974231e510850c0bfcdb4d276d7"
+    },
+    {
+      "path": "tests/types/shared-frame-upload-gpu-positive.ts",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 5576,
+      "sha256": "8a3b224d2df2b1034a88194d49e8d1fdd4199aa56460f84dd561282635dfdb07"
+    },
+    {
+      "path": "tests/types/shared-frame-upload-webgl2-negative.ts",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 4301,
+      "sha256": "0c986988a5fbc2aa5088bb33312199926f114516b5b59e8912a51b8f09f3b146"
+    },
+    {
+      "path": "tests/types/shared-frame-upload-webgl2-positive.ts",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 3009,
+      "sha256": "46fbc0a3b93a3ea204b955ebbfe01e357330ed4056d5496d66119341debcadf9"
+    },
+    {
+      "path": "tests/types/shared-host-resource-diagnostics-negative.ts",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 824,
+      "sha256": "e96e99b8d24adb6badefa5d965d156b32a2af08ca81e50a7c2ab0253ba4f583b"
+    },
+    {
+      "path": "tests/types/shared-host-resource-diagnostics-positive.ts",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 1909,
+      "sha256": "fdbb7c1e516e1924fa68a34b1db66c263d0ef2ab0a3fd203e3f43c9cfb947dc0"
+    },
+    {
+      "path": "tests/types/tsconfig.candidate-shared-frame-negative.json",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 290,
+      "sha256": "df8be8cc02ea7d151d20cb9779d081b065dfd81d6c4ef640c435a7f25641bc7a"
+    },
+    {
+      "path": "tests/types/tsconfig.candidate-shared-frame-positive.json",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 290,
+      "sha256": "88d984da44d50b7de9e7f23d1ce1decd887a567a3ed3ad85f25a545946fedad6"
+    },
+    {
+      "path": "tests/types/tsconfig.manifest-browser-negative.json",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 553,
+      "sha256": "905e5171d4c479e928d846f1d3b55423e3022059751ca87a5624c9d223b6b513"
+    },
+    {
+      "path": "tests/types/tsconfig.manifest-browser-positive.json",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 553,
+      "sha256": "3e5653bafbfeb37518ea5136de9521cc959440d1382be57bb0ee84b287153c04"
+    },
+    {
+      "path": "tests/types/tsconfig.manifest-resource-diagnostics-negative.json",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 540,
+      "sha256": "1e5d0b87dd8e0e7249f84179765a57bf017ab4a0d3778740c99cece096343bc9"
+    },
+    {
+      "path": "tests/types/tsconfig.manifest-resource-diagnostics-positive.json",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 540,
+      "sha256": "77499739596f7a4fd89706bcc68fd03b4fe63b20053ac85929f8a8a2fae82cc8"
+    },
+    {
+      "path": "tests/types/tsconfig.resources-group-negative.json",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 152,
+      "sha256": "a379190a123c677788e402bd4bebe75750f08fd9773955bde995337451fca1ab"
+    },
+    {
+      "path": "tests/types/tsconfig.resources-group-positive.json",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 152,
+      "sha256": "3c1f76727899403df74326d585ee5dbd78180d227698f53dc3c25f5bc31c0fa3"
+    },
+    {
+      "path": "tests/types/tsconfig.shared-frame-upload-gpu-negative.json",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 291,
+      "sha256": "5ceee882725c0ea51b80df038ee374d166b2f42586715a378f7c1e2e8bb0bc00"
+    },
+    {
+      "path": "tests/types/tsconfig.shared-frame-upload-gpu-positive.json",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 291,
+      "sha256": "0d9b1683ce54ebcadedbc92736c3b704e2a1c5aee5d8cd6316944b0742b930ca"
+    },
+    {
+      "path": "tests/types/tsconfig.shared-frame-upload-webgl2-negative.json",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 312,
+      "sha256": "4b978ef175826fb474b6d915b4dab814fcbf65ed8a6693c2d4fac4d9db7cdade"
+    },
+    {
+      "path": "tests/types/tsconfig.shared-frame-upload-webgl2-positive.json",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 312,
+      "sha256": "d63918bbb93667dc7d60b213973e4f5dd61da390cf2f850a440fcd1ba46bd97e"
+    },
+    {
+      "path": "tests/types/tsconfig.shared-host-resource-diagnostics-negative.json",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 300,
+      "sha256": "b01344e6cdd9079cf5a63de75994091df43f334f2b12256168bd7c57d5fb82fc"
+    },
+    {
+      "path": "tests/types/tsconfig.shared-host-resource-diagnostics-positive.json",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 300,
+      "sha256": "2831c638156a4c2773e2b366b2f82404b1a1e520d8c31c802d328570c215c09e"
+    },
+    {
+      "path": "tools/build-resource-manifest.mjs",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "bytes": 8533,
+      "sha256": "e2b4223280da427fcf5a370fe0a9f0947b90531c2a4532631168d23dac4995c6"
+    },
+    {
+      "path": "tools/m15-strict-successors.json",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "bytes": 467926,
+      "sha256": "f130ab6234fc6fa3f27424c4152f68f243ff3c3921b93324ba92d5fd14a49724"
+    },
+    {
+      "path": "tools/prepared-resource-groups/oracle.mjs",
+      "originRole": "First-party bounded resource scene reference verification tool, independently authored with AI assistance under Apache-2.0.",
+      "bytes": 8179,
+      "sha256": "fdf9291378bace50f7e887cc20977c32b5ceba6ea184c5632d5a926e675a244c"
+    },
+    {
+      "path": "tools/prepared-resource-groups/prepare-native-config.mjs",
+      "originRole": "First-party bounded resource scene reference verification tool, independently authored with AI assistance under Apache-2.0.",
+      "bytes": 8067,
+      "sha256": "5f7beb51710b99fd3b5d2a2af23322c83a0f46007a47ec35a991976be3f59212"
+    },
+    {
+      "path": "tools/resource-recovery-types.mjs",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "bytes": 7227,
+      "sha256": "f6283a0e9525f38a973860e31b0d93e5b561fcd5efeb5abbd984294dca8512ef"
+    },
+    {
+      "path": "tools/shared-rendering/author-resource-recovery-assets.mjs",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "bytes": 6626,
+      "sha256": "9694782e840891eaf575bb0855cfd5c1e19db163f69921aba4210a47fbc38f00"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/asset-pins.json",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 13779,
+      "sha256": "de59e3dbd3ee3a59efe3acfcf5450baf74a0f637dcb1b0ef8628a224244ddc96"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/a0.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 100,
+      "sha256": "a65b6c306f914404f7433162502c57a5dbcc42b0d1f1c5ec19f6d13c25ede823"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/a1.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 99,
+      "sha256": "4c42f58aea56b73964db757a874a3a6e5bc84da67b1c39aa814b7ae27a59fe2f"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/atlas.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 122,
+      "sha256": "c9cccb6ec91a1ec585949f4bb9a158a8bf099b52420896fae510f7bfb1b6b823"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/b0.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 99,
+      "sha256": "d4c2aef8637280a01d23c45f0ef01f8c77cda396c719fe38d9b3967058b7298a"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/b1.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 100,
+      "sha256": "acfa4a815e3af4bd168ac036b0bfa005e227b6e79f583fd3400eb52fc5e39efe"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p00.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1821,
+      "sha256": "dfd2af6da291da2743c50ffa7aa54392fe4c1555d8c78e98c8252d41d87ee5e0"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p01.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1821,
+      "sha256": "0cf0220c8f894af81c595496538c43dc47e096a90c21ed63969bfd586d04cc5e"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p02.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1821,
+      "sha256": "c76f344a8c0b54372e25485aca5a125676f7a6c67fa50aa1202af636a2b92155"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p03.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "e4710dd467d26e9ca0f9d617bc7beb948b6719c9b74e932f77bc68fd8a358299"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p04.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "7985344172b53dc2db366cbfca0386d9e6f7b939d4fd89cf87a66c9b0c3312f6"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p05.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1821,
+      "sha256": "e5c6a27bdad55cae3ec9e2534bc087a044a598cf592dd61b745e2b81b00b3230"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p06.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "38f083a22e36ffbbc394fa44191902c9c52768bf2381c85895272a3004e5675b"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p07.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "106c85832a12bfa25eb7684e586494c35fa9c4ebf6bfe99ffb10c08736075e7c"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p08.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "94172c8a5ab898c3235913bdc7b8063edba86062641b2148b94d937e301b944e"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p09.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "9db63f30868c893f596f0329947e46b07bc930a105cc1cd206de4de6612a8f7b"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p10.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1819,
+      "sha256": "cc7c76b9b03f5955db0d25e4a5b4952467b5f26ca3f019cf8f1093a5dfa977bc"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p11.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1819,
+      "sha256": "035bb1892976d5cea1bd6f52c17200c8b9b35dba7f5e37104d9e91ce18248cab"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p12.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1819,
+      "sha256": "5ecfab64d7e009bb9ad7a0613922f1f0668c9f4fbfb0c208ac8096c6d57e59a6"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p13.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1819,
+      "sha256": "873c72509c791272ae5e855e6152c3caa6c234202bbfb94cdcde3bf17f95907d"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p14.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1819,
+      "sha256": "ee5e34c1fbc60d5b3123c6b7148193921691d30e9a6d76b0fcb2107b4f953959"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p15.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "48d8c548ff3fae7e4fee8ccc53f2f30624cdfaddbe66353c63a3eea56c9f0f86"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p16.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "719d62b39848110aa0e4ac6e649c5d2be3f0bd82b9135dbb97c22b040ce27f22"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p17.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "f5610365454ca2b7681726b71b6d24a6a0f4819a574af7d2edfa4154e874f686"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p18.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "21d1f622a63dfc755aafeca405648c99ffde337ec61c4cb236c36bf85551b11a"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p19.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "eea0640d855c3c6b16dcc168f7ed18942f13cf676f48c7b5aa56e986203a48bc"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p20.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "00a4b03249b40b48262d51e6a94ff4a44679f5688021cd68b1192bad588b181e"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p21.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "6b6a3a3e476f1c2c22e40f03ede275067f00b21d549249fc28ec834f41c59778"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p22.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "8aa2af0c0825d16089e22e258ef68c678493a861c4fcf4fdebda58dfcd9f0039"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p23.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "1de088f52590cb82dae1bc271c8437db787c7fefc69e469e86b68faef5eedf25"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p24.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1819,
+      "sha256": "0956301eea7fb974ee01827f15ea3fed7f55644c34a64413b3cbd45907f3d706"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p25.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1819,
+      "sha256": "245e7fa2a2a7d75804bdaa2547e52b29420aaf1e131431cf86207a95de43be5b"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p26.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "d502deebd42a8d08b07e3cb413adfee237cf53f7c998d8cf028eb6532dce3a57"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p27.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "29a01c77bbe7907facd105e8bea32cbae06911826bbf3adb9a1b6b3931e53bb6"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p28.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "e51aaff42f66b2c7ea7815ed3bcdf05da1857c62a41383b8679270fc4af7f4ba"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p29.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "c6ea01e38e9943caca43c386b66feec4eb96c5cb0652b2a0f1e237d96f28158a"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p30.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "4677774345453eed2b0246a1938b04b5c9775eca03b14b002900ec44146ab98c"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p31.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "7cd9181f246ccb4aabc7cf1a6b539ff6288c3feba4c7f160826e0d2ffe34376a"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p32.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "915c9636a0a8a4f516da099101fb2f32fbc796153ebb05e693f925b0e0c26da8"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p33.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "42947528f945b642f32d3abf572305e7d28ab7bf6cebad421a368f154dff18ad"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p34.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "eb9672538af18e80fc0fd3d66be1fdba8ec886d9d82650fa7803d947a1a48fba"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p35.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "da1db85baca7f27ea3dc9eaf985980d59fa80f13b32a9a270c0a3b71b6d11b00"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p36.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "362e2bcb590ee4dc93b45558d2d3cdb3e1720158253f8f285494a069b777d498"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p37.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "176b620da5b14de9c31506c8dd5fa17239557c48674c75f28e05a15e62ac8730"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p38.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1819,
+      "sha256": "12674a60ce01c4047d2b6235dd19d8599d5f1a10b81333e71b1a51dd2f992e64"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/p39.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1819,
+      "sha256": "4d3e6596b21928a8cc70509aa25fc55704fb9320920ca304f911813f4f706232"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/assets/white.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 70,
+      "sha256": "0cc4acc2e9abb600ff3fa032daa5e68cd6a0be87ec7c9de61dbf366fc87de0fc"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/builder-receipt.json",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 17108,
+      "sha256": "2fdf10eccac14fbef29e3ee898decaadd7cbc5f203fc6800bef39eb1028d3f5f"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/catalog.json",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 36594,
+      "sha256": "d06b4c3dc57f64cc5c19792e18967cfc240bd51b4db0e6349c2ce0e5c3336cd3"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/manifest.json",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 38214,
+      "sha256": "8ce958524f6cc5432f108852511df9491c1d46e89e9ef7cfe0c22480a5daf722"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/project.json",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 67942,
+      "sha256": "937a598b5bb9e27c1e49020630a84eaefad5337e291843aa9f5d82248b675c09"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/a0.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 100,
+      "sha256": "a65b6c306f914404f7433162502c57a5dbcc42b0d1f1c5ec19f6d13c25ede823"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/a1.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 99,
+      "sha256": "4c42f58aea56b73964db757a874a3a6e5bc84da67b1c39aa814b7ae27a59fe2f"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/atlas.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 122,
+      "sha256": "c9cccb6ec91a1ec585949f4bb9a158a8bf099b52420896fae510f7bfb1b6b823"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/b0.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 99,
+      "sha256": "d4c2aef8637280a01d23c45f0ef01f8c77cda396c719fe38d9b3967058b7298a"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/b1.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 100,
+      "sha256": "acfa4a815e3af4bd168ac036b0bfa005e227b6e79f583fd3400eb52fc5e39efe"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p00.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1821,
+      "sha256": "dfd2af6da291da2743c50ffa7aa54392fe4c1555d8c78e98c8252d41d87ee5e0"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p01.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1821,
+      "sha256": "0cf0220c8f894af81c595496538c43dc47e096a90c21ed63969bfd586d04cc5e"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p02.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1821,
+      "sha256": "c76f344a8c0b54372e25485aca5a125676f7a6c67fa50aa1202af636a2b92155"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p03.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "e4710dd467d26e9ca0f9d617bc7beb948b6719c9b74e932f77bc68fd8a358299"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p04.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "7985344172b53dc2db366cbfca0386d9e6f7b939d4fd89cf87a66c9b0c3312f6"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p05.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1821,
+      "sha256": "e5c6a27bdad55cae3ec9e2534bc087a044a598cf592dd61b745e2b81b00b3230"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p06.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "38f083a22e36ffbbc394fa44191902c9c52768bf2381c85895272a3004e5675b"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p07.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "106c85832a12bfa25eb7684e586494c35fa9c4ebf6bfe99ffb10c08736075e7c"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p08.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "94172c8a5ab898c3235913bdc7b8063edba86062641b2148b94d937e301b944e"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p09.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "9db63f30868c893f596f0329947e46b07bc930a105cc1cd206de4de6612a8f7b"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p10.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1819,
+      "sha256": "cc7c76b9b03f5955db0d25e4a5b4952467b5f26ca3f019cf8f1093a5dfa977bc"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p11.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1819,
+      "sha256": "035bb1892976d5cea1bd6f52c17200c8b9b35dba7f5e37104d9e91ce18248cab"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p12.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1819,
+      "sha256": "5ecfab64d7e009bb9ad7a0613922f1f0668c9f4fbfb0c208ac8096c6d57e59a6"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p13.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1819,
+      "sha256": "873c72509c791272ae5e855e6152c3caa6c234202bbfb94cdcde3bf17f95907d"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p14.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1819,
+      "sha256": "ee5e34c1fbc60d5b3123c6b7148193921691d30e9a6d76b0fcb2107b4f953959"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p15.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "48d8c548ff3fae7e4fee8ccc53f2f30624cdfaddbe66353c63a3eea56c9f0f86"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p16.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "719d62b39848110aa0e4ac6e649c5d2be3f0bd82b9135dbb97c22b040ce27f22"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p17.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "f5610365454ca2b7681726b71b6d24a6a0f4819a574af7d2edfa4154e874f686"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p18.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "21d1f622a63dfc755aafeca405648c99ffde337ec61c4cb236c36bf85551b11a"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p19.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "eea0640d855c3c6b16dcc168f7ed18942f13cf676f48c7b5aa56e986203a48bc"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p20.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "00a4b03249b40b48262d51e6a94ff4a44679f5688021cd68b1192bad588b181e"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p21.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "6b6a3a3e476f1c2c22e40f03ede275067f00b21d549249fc28ec834f41c59778"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p22.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "8aa2af0c0825d16089e22e258ef68c678493a861c4fcf4fdebda58dfcd9f0039"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p23.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "1de088f52590cb82dae1bc271c8437db787c7fefc69e469e86b68faef5eedf25"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p24.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1819,
+      "sha256": "0956301eea7fb974ee01827f15ea3fed7f55644c34a64413b3cbd45907f3d706"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p25.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1819,
+      "sha256": "245e7fa2a2a7d75804bdaa2547e52b29420aaf1e131431cf86207a95de43be5b"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p26.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "d502deebd42a8d08b07e3cb413adfee237cf53f7c998d8cf028eb6532dce3a57"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p27.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "29a01c77bbe7907facd105e8bea32cbae06911826bbf3adb9a1b6b3931e53bb6"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p28.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "e51aaff42f66b2c7ea7815ed3bcdf05da1857c62a41383b8679270fc4af7f4ba"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p29.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "c6ea01e38e9943caca43c386b66feec4eb96c5cb0652b2a0f1e237d96f28158a"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p30.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "4677774345453eed2b0246a1938b04b5c9775eca03b14b002900ec44146ab98c"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p31.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "7cd9181f246ccb4aabc7cf1a6b539ff6288c3feba4c7f160826e0d2ffe34376a"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p32.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "915c9636a0a8a4f516da099101fb2f32fbc796153ebb05e693f925b0e0c26da8"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p33.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "42947528f945b642f32d3abf572305e7d28ab7bf6cebad421a368f154dff18ad"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p34.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "eb9672538af18e80fc0fd3d66be1fdba8ec886d9d82650fa7803d947a1a48fba"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p35.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "da1db85baca7f27ea3dc9eaf985980d59fa80f13b32a9a270c0a3b71b6d11b00"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p36.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "362e2bcb590ee4dc93b45558d2d3cdb3e1720158253f8f285494a069b777d498"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p37.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1820,
+      "sha256": "176b620da5b14de9c31506c8dd5fa17239557c48674c75f28e05a15e62ac8730"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p38.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1819,
+      "sha256": "12674a60ce01c4047d2b6235dd19d8599d5f1a10b81333e71b1a51dd2f992e64"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/p39.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 1819,
+      "sha256": "4d3e6596b21928a8cc70509aa25fc55704fb9320920ca304f911813f4f706232"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-assets/sources/white.png",
+      "originRole": "First-party procedural M1.5 resource fixtures and deterministic manifest/build receipts; generated by the reviewed asset author and builder, Apache-2.0.",
+      "bytes": 70,
+      "sha256": "0cc4acc2e9abb600ff3fa032daa5e68cd6a0be87ec7c9de61dbf366fc87de0fc"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-collector.mjs",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "bytes": 43423,
+      "sha256": "06f1a2e55b99ea599de5fcd3b535ea84d54cc60f065d3fc623415a3c72bb9eda"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-observations.mjs",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "bytes": 16210,
+      "sha256": "19a03d737b52cd42db580b5da1d7402863774ac45c5a5c036b31e30344a8e97f"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-oracle.mjs",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "bytes": 4596,
+      "sha256": "38490f48a622e710366801cadcd30e65da0ee637ff261772e3fe417e9e91e892"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-source.mjs",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "bytes": 14677,
+      "sha256": "3c82b0cc88fd795a3ae026e2223111cc4d159c239d4844b75d27f6a96363fe3d"
+    },
+    {
+      "path": "tools/shared-rendering/resource-recovery-window.mjs",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "bytes": 52219,
+      "sha256": "796ea758ff0675facafc607508f5d2179c140d790ada2537e1f507d2eb01a4e1"
+    },
+    {
+      "path": "tools/verify-bitmap-resource-slot.mjs",
+      "originRole": "First-party retained browser fixture or policy control; M1.5 resource module compatibility preserves its existing reference scene, refusal cases and verification scope, Apache-2.0.",
+      "bytes": 37287,
+      "sha256": "f6f1348e70ccf563c54d3d9e8cb57a0ba053e9b8ae328c7fe34ea07328d06c52"
+    },
+    {
+      "path": "tools/verify-resource-recovery.mjs",
+      "originRole": "First-party M1.5 resource identity, loading, staged upload and device recovery implementation, verification or bilingual documentation; independently authored with AI assistance and separate review, Apache-2.0.",
+      "bytes": 149,
+      "sha256": "1d29bdfda9eb364f1f71ecef2fe1dc4e18274af8ca4922344fb7790b8142002f"
+    },
+    {
+      "path": "tests/types/resource-recovery-diagnostic-expectations.json",
+      "originRole": "First-party M1.5 resource, staging and recovery behavior or bounded policy controls; independently authored with AI assistance and separate source/result review, Apache-2.0.",
+      "bytes": 41232,
+      "sha256": "9d6588edad6c5cb124d6e72fe6a97fd40bcc8546587cea46b8c1dd83b364e12d"
+    },
+    {
+      "path": "contributions/m1-resource-recovery.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 55534,
+      "sha256": "d5123e1a91284ce4639bc95df9de7b91565b5bbff83567f2f94e21b029e90a0c"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",

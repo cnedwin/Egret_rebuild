@@ -24,6 +24,7 @@ const ALIASES = Object.freeze({
   '@egret/engine/webgpu': '/packages/engine/dist/web/webgpu.js',
   '@egret/runtime': '/packages/runtime/dist/index.js',
   '@egret/contracts': '/packages/contracts/dist/index.js',
+  '@egret/contracts/resources': '/packages/contracts/dist/resources/index.js',
   'robust-predicates': '/dependency/robust-predicates/index.js',
 });
 const ENTRIES = ['packages/engine/dist/index.js', 'packages/engine/dist/rendering/scene3d.js',
@@ -122,6 +123,24 @@ function tokens(text) {
     if (/\s/.test(character)) { index++; continue; }
     if (text.startsWith('//', index)) { index = text.indexOf('\n', index + 2); if (index < 0) break; continue; }
     if (text.startsWith('/*', index)) { const end = text.indexOf('*/', index + 2); policy(end >= 0, 'MODULE_COMMENT'); index = end + 2; continue; }
+    // These exact expression prefixes cannot end a division operand. The logical-or
+    // pair must be contiguous punctuation; quoted lookalikes retain ordinary scanning.
+    const previous=result.at(-1),beforePrevious=result.at(-2);
+    const regexpStart=previous?.kind==='punctuation'&&(['(','!'].includes(previous.value)
+      ||previous.value==='|'&&beforePrevious?.kind==='punctuation'&&beforePrevious.value==='|'&&beforePrevious.end===previous.start);
+    if(character==='/'&&regexpStart){
+      index++;let inClass=false,closed=false;
+      while(index<text.length){const value=text[index++];
+        policy(!/[\r\n\u2028\u2029]/.test(value),'MODULE_REGEXP');
+        if(value==='\\'){policy(index<text.length&&!/[\r\n\u2028\u2029]/.test(text[index]),'MODULE_REGEXP');index++;continue;}
+        if(value==='[')inClass=true;else if(value===']')inClass=false;
+        else if(value==='/'&&!inClass){closed=true;break;}
+      }
+      policy(closed&&!inClass,'MODULE_REGEXP');const flags=new Set();
+      while(index<text.length&&/[A-Za-z]/.test(text[index])){const flag=text[index++];
+        policy('dgimsuy'.includes(flag)&&!flags.has(flag),'MODULE_REGEXP');flags.add(flag);}
+      result.push({kind:'regexp',value:'',start,end:index});continue;
+    }
     if (character === '"' || character === "'") {
       index++;
       while (index < text.length && text[index] !== character) { if (text[index] === '\\') index++; index++; }
@@ -145,7 +164,7 @@ function tokens(text) {
       continue;
     }
     index++;
-    result.push({ kind: 'punctuation', value: character });
+    result.push({ kind: 'punctuation', value: character, start, end: index });
   }
   return result;
 }

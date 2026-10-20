@@ -20,13 +20,32 @@ function files(dir) {
     return item.isDirectory() ? files(file) : [file];
   });
 }
+// M15: exact named metadata port and one private browser bridge. No deep-path wildcard.
+const m15DeepClauses = {
+  "packages/engine/dist/Engine.d.ts": [{"operation":"import","kind":"type","members":["AdmittedResourceManifest"],"target":"@egret/contracts/resources"}],
+  "packages/engine/dist/manifestAssetGroup.js": [{"operation":"import","kind":"value","members":["isAdmittedResourceManifest"],"target":"@egret/contracts/resources"}],
+  "packages/engine/dist/manifestResourceState.d.ts": [{"operation":"import","kind":"type","members":["AdmittedResourceManifest","ResourceManifestEntry"],"target":"@egret/contracts/resources"}],
+  "packages/engine/dist/manifestResourceState.js": [{"operation":"import","kind":"value","members":["isAdmittedResourceManifest"],"target":"@egret/contracts/resources"}],
+  "packages/engine/dist/web/ManifestByteSource.d.ts": [{"operation":"import","kind":"type","members":["AdmittedResourceManifest","ResourceManifestEntry"],"target":"@egret/contracts/resources"},{"operation":"import","kind":"type","members":["ManifestBinding"],"target":"#egret-manifest-resources"}],
+  "packages/engine/dist/web/ManifestByteSource.js": [{"operation":"import","kind":"value","members":["isAdmittedResourceManifest"],"target":"@egret/contracts/resources"},{"operation":"import","kind":"value","members":["requireManifestBinding","requireManifestAssetRef"],"target":"#egret-manifest-resources"}],
+  "packages/engine/src/Engine.ts": [{"operation":"import","kind":"type","members":["AdmittedResourceManifest"],"target":"@egret/contracts/resources"}],
+  "packages/engine/src/manifestAssetGroup.ts": [{"operation":"import","kind":"value","members":["isAdmittedResourceManifest"],"target":"@egret/contracts/resources"},{"operation":"import","kind":"type","members":["AdmittedResourceManifest","ResourceManifestEntry"],"target":"@egret/contracts/resources"}],
+  "packages/engine/src/manifestResourceState.ts": [{"operation":"import","kind":"value","members":["isAdmittedResourceManifest"],"target":"@egret/contracts/resources"},{"operation":"import","kind":"type","members":["AdmittedResourceManifest","ResourceManifestEntry"],"target":"@egret/contracts/resources"}],
+  "packages/engine/web/ManifestByteSource.ts": [{"operation":"import","kind":"value","members":["isAdmittedResourceManifest"],"target":"@egret/contracts/resources"},{"operation":"import","kind":"type","members":["AdmittedResourceManifest","ResourceManifestEntry"],"target":"@egret/contracts/resources"},{"operation":"import","kind":"value","members":["requireManifestBinding","requireManifestAssetRef"],"target":"#egret-manifest-resources"},{"operation":"import","kind":"type","members":["ManifestBinding"],"target":"#egret-manifest-resources"}],
+  "packages/project/dist/resources/index.d.ts": [{"operation":"export","kind":"type","members":["ResourceBuildDescription","ResourceBuildEntry","ResourceManifestEntry","AdmittedResourceManifest"],"target":"@egret/contracts/resources"}],
+  "packages/project/dist/resources/manifest.d.ts": [{"operation":"import","kind":"type","members":["AdmittedResourceManifest","ResourceBuildDescription"],"target":"@egret/contracts/resources"}],
+  "packages/project/dist/resources/manifest.js": [{"operation":"import","kind":"value","members":["admitResourceManifest","serializeResourceManifest as encodeManifest","validateResourceBuildDescription"],"target":"@egret/contracts/resources"}],
+  "packages/project/src/resources/index.ts": [{"operation":"export","kind":"type","members":["ResourceBuildDescription","ResourceBuildEntry","ResourceManifestEntry","AdmittedResourceManifest"],"target":"@egret/contracts/resources"}],
+  "packages/project/src/resources/manifest.ts": [{"operation":"import","kind":"type","members":["AdmittedResourceManifest","ResourceBuildDescription","ResourceBuildEntry","ResourceManifestResult"],"target":"@egret/contracts/resources"},{"operation":"import","kind":"value","members":["admitResourceManifest","serializeResourceManifest as encodeManifest","validateResourceBuildDescription"],"target":"@egret/contracts/resources"}],
+};
+const m15ClauseKey = row => JSON.stringify([row.operation,row.kind,row.target,[...row.members].sort()]);
 let inspected = 0;
 const forbidden = /\b(?:document|window|HTMLCanvasElement|GPUDevice|process|Buffer|require)\b|["']node:/;
 for (const [name, allowed] of Object.entries(expected)) {
   const dir = path.join(root, "packages", name);
   const pkg = JSON.parse(readFileSync(path.join(dir, "package.json"), "utf8"));
   const dependencies = Object.keys(pkg.dependencies ?? {}).sort();
-  const registryImports = { '#egret-textured-frame-state': { types: './dist/internal/texturedFrameState.d.ts', import: './dist/internal/texturedFrameState.js' }, '#egret-mouse-input': {types:'./dist/mouseInput.d.ts',import:'./dist/mouseInput.js'} };
+  const registryImports = { '#egret-textured-frame-state': { types: './dist/internal/texturedFrameState.d.ts', import: './dist/internal/texturedFrameState.js' }, '#egret-mouse-input': {types:'./dist/mouseInput.d.ts',import:'./dist/mouseInput.js'}, '#egret-manifest-resources': {types:'./dist/manifestResourceState.d.ts',import:'./dist/manifestResourceState.js'} };
   if (name === 'engine') {
     if (JSON.stringify(pkg.imports) !== JSON.stringify(registryImports)) throw new Error('engine: private textured registry mapping mismatch');
   } else if (pkg.imports !== undefined) throw new Error(`${name}: unexpected private import mapping`);
@@ -35,7 +54,8 @@ for (const [name, allowed] of Object.entries(expected)) {
   if (JSON.stringify(internalDependencies) !== JSON.stringify(allowed)) throw new Error(`${name}: dependency DAG mismatch`);
   for (const [dependency, version] of Object.entries(externalAllowed)) if (pkg.dependencies[dependency] !== version) throw new Error(`${name}: external exact pin mismatch`);
   if (!pkg.private || pkg.version !== "0.0.0" || pkg.type !== "module") throw new Error(`${name}: private prototype metadata mismatch`);
-  if (name === 'project' && JSON.stringify(pkg.exports) !== JSON.stringify({'.': {types:'./dist/index.d.ts', import:'./dist/index.js'},'./spine':{types:'./dist/spine/index.d.ts',import:'./dist/spine/index.js'},'./atlas':{types:'./dist/atlas/index.d.ts',import:'./dist/atlas/index.js'}})) throw new Error('project: root export mapping mismatch');
+  if (name === 'contracts' && JSON.stringify(pkg.exports) !== JSON.stringify({'.':{types:'./dist/index.d.ts',import:'./dist/index.js'},'./resources':{types:'./dist/resources/index.d.ts',import:'./dist/resources/index.js'}})) throw new Error('M15: contracts exact export mapping mismatch');
+  if (name === 'project' && JSON.stringify(pkg.exports) !== JSON.stringify({'.': {types:'./dist/index.d.ts', import:'./dist/index.js'},'./spine':{types:'./dist/spine/index.d.ts',import:'./dist/spine/index.js'},'./atlas':{types:'./dist/atlas/index.d.ts',import:'./dist/atlas/index.js'},'./resources':{types:'./dist/resources/index.d.ts',import:'./dist/resources/index.js'}})) throw new Error('project: root export mapping mismatch');
   if (name === 'runtime' || name === 'engine') {
     const textExports = name === 'runtime' ? {
       '.': {types:'./dist/index.d.ts',import:'./dist/index.js'},
@@ -51,6 +71,8 @@ for (const [name, allowed] of Object.entries(expected)) {
       './web/text': {types:'./dist/web/text.d.ts',import:'./dist/web/text.js'},
       './web/input': {types:'./dist/web/input.d.ts',import:'./dist/web/input.js'},
       './web/image': {types:'./dist/web/image.d.ts',import:'./dist/web/image.js'},
+      './resources': {types:'./dist/resources.d.ts',import:'./dist/resources.js'},
+      './web/resources': {types:'./dist/web/resources.d.ts',import:'./dist/web/resources.js'},
       // S3D1_MAP_BEGIN
       './scene3d': {types:'./dist/rendering/scene3d.d.ts',import:'./dist/rendering/scene3d.js'},
       './webgpu/scene3d': {types:'./dist/web/scene3d.d.ts',import:'./dist/web/scene3d.js'},
@@ -75,10 +97,10 @@ for (const [name, allowed] of Object.entries(expected)) {
     // comments are removed below. Project declarations must stay DOM/Node-free.
     if (name === 'project' && (/\b(?:HTMLElement|HTMLCanvasElement|Document|Window|Navigator|NodeJS|GPUDevice)\b/.test(code) || /\/\/\/\s*<reference\s+(?:lib\s*=\s*["']dom(?:\.iterable)?["']|types\s*=\s*["']node["'])/i.test(raw))) throw new Error(`${path.relative(root, file)}: host ambient dependency`);
     // WebGL resource kinds use the quoted spelling Buffer; it is not the Node
-    // global. Only these eight literals in five named files have this exception.
+    // global. Only these ten literals in five named files have this exception.
     const glKindLiterals = name === 'engine' ? {
       'web/webgl2Native.ts': 2, 'dist/web/webgl2Native.js': 1, 'dist/web/webgl2Native.d.ts': 1,
-      'web/WebGL2Host.ts': 2, 'dist/web/WebGL2Host.js': 2,
+      'web/WebGL2Host.ts': 3, 'dist/web/WebGL2Host.js': 3,
     }[path.relative(dir,file).split(path.sep).join('/')] : undefined;
     let ambientCode = code;
     if (glKindLiterals !== undefined) {
@@ -100,6 +122,12 @@ for (const [name, allowed] of Object.entries(expected)) {
           const providerBarrel=['web/text.ts','dist/web/text.js','dist/web/text.d.ts'].includes(relative);
           if ((providerTarget && !providerBarrel) || ['web/text.js','dist/web/text.js'].includes(target)) throw new Error(`${file}: Canvas text opt-in module imported outside its barrel`);
         }
+      } else if (imported === '@egret/contracts/resources' || imported === '#egret-manifest-resources') {
+        const relative=path.relative(root,file).split(path.sep).join('/');
+        const clause=code.slice(0,match.index).match(/\b(import|export)(\s+type)?\s*\{([^{}]+)\}\s*$/);
+        const row=clause && {operation:clause[1],kind:clause[2]?'type':'value',members:clause[3].split(',').map(member=>member.trim().replace(/\s+/g,' ')).filter(Boolean),target:imported};
+        if (!row || !(m15DeepClauses[relative]??[]).some(expected=>m15ClauseKey(expected)===m15ClauseKey(row)))
+          throw new Error('M15: unapproved named resource dependency: '+relative+'/'+imported);
       } else if (imported === '#egret-mouse-input') {
         const relative=path.relative(dir,file).split(path.sep).join('/');
         if(name!=='engine'||!['web/input.ts','web/MouseInput.ts','dist/web/input.js','dist/web/input.d.ts','dist/web/MouseInput.js','dist/web/MouseInput.d.ts'].includes(relative))
@@ -185,7 +213,14 @@ const runtimeFacade = await import(new URL('../packages/runtime/dist/index.js', 
 // Mesh is one runtime singleton. Its slot module and authority stay private on
 // every entry, including type-only declarations and aliased module re-exports.
 const meshPrivate = ['MeshCaptureState', 'hasMeshState', 'readMeshState', 'writeMeshState'];
+const m15ResourceEntries = [
+  ['contracts/resources',await import('@egret/contracts/resources'),'packages/contracts/dist/resources/index'],
+  ['project/resources',await import('@egret/project/resources'),'packages/project/dist/resources/index'],
+  ['engine/resources',await import('@egret/engine/resources'),'packages/engine/dist/resources'],
+  ['engine/web/resources',await import('@egret/engine/web/resources'),'packages/engine/dist/web/resources'],
+];
 const meshEntries = [
+  ...m15ResourceEntries,
   ['contracts', contractsFacade, 'packages/contracts/dist/index'],
   ['root', facade, 'packages/engine/dist/index'],
   ['web', webFacade, 'packages/engine/dist/web/index'],
@@ -230,6 +265,7 @@ for (const [entry, values, prefix, target] of [
 }
 // Other existing public routes keep their current surface and no panel authority.
 for (const [entry, values, emittedEntry] of [
+  ...m15ResourceEntries,
   ['contracts', contractsFacade, 'packages/contracts/dist/index'],
   ['web', webFacade, 'packages/engine/dist/web/index'],
   ['webgpu', gpuFacade, 'packages/engine/dist/web/webgpu'],
@@ -390,10 +426,14 @@ for (const internal of ["collectFrameCommands", "createScope", "createStage", "c
   if (internal in facade) throw new Error(`Internal lifecycle port leaked: ${internal}`);
 }
 // Keep retained private-port reasons above this exact type-only facade check.
+const m15SessionTypes = ['SharedDeviceSessionState','SharedDeviceSessionStatus','SharedHostResourceStatus'];
+const m15UploadTypes = ['SharedFrameUploadOptions','SharedFrameUploadReady','SharedFrameSubmission','SharedFrameUpload'];
+const m15SharedHostTypes = [...m15SessionTypes,...m15UploadTypes];
+const m15SharedHostTypeClauses = "export type { SharedDeviceSessionState, SharedDeviceSessionStatus, SharedHostResourceStatus } from './sharedDeviceSession.js'; export type { SharedFrameUploadOptions, SharedFrameUploadReady, SharedFrameSubmission, SharedFrameUpload } from './sharedFrameUpload.js';";
 const expectedGPUTypeNames = [
   'WebGPUHost', 'WebGPUHostState', 'WebGPUHostErrorCode', 'WebGPUHostFailure',
   'WebGPUHostDiagnostic', 'WebGPUHostOptions', 'WebGPUReadback', 'WebGPUHostStatus',
-  ...publicTexturedGPUTypes, ...sharedGPUTypes,
+  ...publicTexturedGPUTypes, ...sharedGPUTypes, ...m15SharedHostTypes,
 ].sort();
 const gpuDeclaration = readFileSync(path.join(root, 'packages/engine/dist/web/webgpu.d.ts'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/[^\n]*/g, '');
 const actualGPUTypeNames = [...gpuDeclaration.matchAll(/export type\s*\{([^}]+)\}\s*from\s*["'][^"']+["'];?/g)].flatMap(match => match[1].split(',').map(name => name.trim())).sort();
@@ -819,6 +859,10 @@ const assetGroupSourceEntries = {
   webgpu: 'packages/engine/web/webgpu.ts', 'runtime/text': 'packages/runtime/src/text/index.ts',
   'engine/text': 'packages/engine/src/text.ts', 'engine/web/text': 'packages/engine/web/text.ts',
   project: 'packages/project/src/index.ts',
+  'contracts/resources': 'packages/contracts/src/resources/index.ts',
+  'project/resources': 'packages/project/src/resources/index.ts',
+  'engine/resources': 'packages/engine/src/resources.ts',
+  'engine/web/resources': 'packages/engine/web/resources.ts',
 };
 for (const [entry, values, emittedEntry] of [...textEntries, ['project', projectFacade, 'packages/project/dist/index']]) {
   const declaration = assetGroupStrip(readFileSync(path.join(root, emittedEntry + '.d.ts'), 'utf8'));
@@ -919,7 +963,7 @@ const sceneCPUValues = ['createMatrix4','multiplyMatrix4','Math3DError','createM
 const sceneCPUTypes = ['Matrix4','Math3DErrorCode','MeshGeometry3DInput','MeshGeometry3D','MeshGeometry3DErrorCode','MeshGeometry3DErrorOrigin','SceneProjectionInput3D','SceneDrawInput3D','SceneInput3D','SceneDraw3D','SceneFrame3D','Scene3DErrorCode','Scene3DErrorOrigin'];
 const sceneLegacyWebTypes = ['SceneWebGPUHostOptions','SceneWebGPUHostStatus','SceneWebGPUHost'];
 const sceneWebValues = ['createSceneWebGPUHost','createTexturedSceneWebGPUHost','createSharedSceneWebGPUHost'];
-const sceneWebTypes = [...sceneLegacyWebTypes,'TexturedSceneWebGPUHost','TexturedWebGPUHostOptions','SharedSceneWebGPUHost','SharedSceneWebGPUHostOptions'];
+const sceneWebTypes = [...sceneLegacyWebTypes,'TexturedSceneWebGPUHost','TexturedWebGPUHostOptions','SharedSceneWebGPUHost','SharedSceneWebGPUHostOptions',...m15SharedHostTypes];
 const sceneRead = file => assetGroupStrip(readFileSync(path.join(root,file),'utf8'));
 const sceneEqual = (a,b) => JSON.stringify([...a].sort()) === JSON.stringify([...b].sort());
 function sceneExports(code, label) {
@@ -1032,6 +1076,8 @@ const sceneCPURules={
   './sceneFrame3D.js':{value:['createSceneFrame3D','isSceneFrame3D','Scene3DError','getScene3DErrorOrigin'],type:['SceneProjectionInput3D','SceneDrawInput3D','SceneInput3D','SceneDraw3D','SceneFrame3D','Scene3DErrorCode','Scene3DErrorOrigin']},
 };
 const sceneWebTypeRules={
+  './sharedDeviceSession.js':{type:m15SessionTypes},
+  './sharedFrameUpload.js':{type:m15UploadTypes},
   '@egret/contracts':{type:['RenderFrame2D','TexturedRenderFrame2D']},
   '../rendering/scene3d.js':{type:['SceneFrame3D']},
   './webgpu.js':{type:['WebGPUHost','WebGPUHostOptions','WebGPUHostStatus','TexturedWebGPUHost','TexturedWebGPUHostOptions']},
@@ -1124,7 +1170,7 @@ const glFacadeRules = [
 for (const [stem,valueClause,typeClauses] of glFacadeRules) {
   for (const [directory,suffix] of [['web','.ts'],['dist/web','.js'],['dist/web','.d.ts']]) {
     const file='packages/engine/'+directory+'/'+stem+suffix;
-    const expected=(valueClause+(suffix==='.js'?'':typeClauses)).replace(/\s+/g,'');
+    const expected=(valueClause+(suffix==='.js'?'':typeClauses+m15SharedHostTypeClauses)).replace(/\s+/g,'');
     if (sceneRead(file).replace(/\s+/g,'')!==expected) throw new Error('M14: exact WebGL2 forwarding/type erasure mismatch: '+file);
   }
 }
@@ -1232,13 +1278,20 @@ for (const file of ['packages/engine/web/webgl2Native.ts','packages/engine/dist/
         || (code.match(new RegExp('\\b'+name+'\\b','g'))??[]).length!==2)
       throw new Error('M14: finite native method/kind list mismatch: '+file+'/'+name);
   }
+  // The existing post-call gate follows one fixed scalar observation of the
+  // original texSubImage2D return. No new native lookup or invocation is allowed.
+  const pageWriteObservation = "if(name==='texSubImage2D'&&this.diagnostics){const state=this.diagnostics,bytes="+
+    (typed?"(args[4] as number)*(args[5] as number)*4;":"args[4]*args[5]*4;")+
+    "if(state.totals.pageWriteCalls===Number.MAX_SAFE_INTEGER||bytes>Number.MAX_SAFE_INTEGER-state.totals.pageWriteBytes)state.saturated=true;"+
+    "state.totals.pageWriteCalls=Math.min(Number.MAX_SAFE_INTEGER,state.totals.pageWriteCalls+1);"+
+    "state.totals.pageWriteBytes=Math.min(Number.MAX_SAFE_INTEGER,state.totals.pageWriteBytes+bytes);}";
   const capture = "for(const name of [...METHODS,...KINDS.flatMap(kind=>[kind==='Sync'?'fenceSync':'create'+kind,'delete'+kind])]){"+
     (typed?"const candidate=(context as unknown as Record<string,unknown>)[name];":"const candidate=context[name];")+
     "gate();if(typeof candidate!=='function')throw new TypeError(name);"+
     (typed?"const call=candidate.bind(context) as (...args:unknown[])=>unknown;":"const call=candidate.bind(context);")+
     "this.calls.set(name,call);Object.defineProperty(captured,name,{value:"+
     (typed?"(...args:unknown[]):unknown=>":"(...args)=>")+
-    "{gate();const value=call(...args);gate();return value;}});}";
+    "{gate();const value=call(...args);"+pageWriteObservation+"gate();return value;}});}";
   if (code.replace(/\s+/g,'').split(capture.replace(/\s+/g,'')).length!==2
       || /\bReflect\b|\bObject\s*\.\s*(?:keys|values|entries|getOwnPropertyNames|getOwnPropertyDescriptors|getPrototypeOf)\s*\(|\bfor\s*\([^)]*\bin\b|\b(?:eval|Function)\s*\(/.test(code))
     throw new Error('M14: finite native capture block mismatch: '+file);
@@ -3725,12 +3778,126 @@ const m13SharedRenderingLiteralClosure = {
   ]
 };
 
+// M15 semantic successor: named source/emission/declaration import multisets only.
+// Historical S3D1/M13/M14 tables above remain byte-identical; no raw whole-graph pin is renewed.
+const m15ResourceRecoveryLiteralClosure = {
+  "packages/contracts/src/ResourceManifest.ts": [["static","./ProjectFormat.generated.js"]],
+  "packages/contracts/dist/ResourceManifest.js": [],
+  "packages/contracts/dist/ResourceManifest.d.ts": [["static","./ProjectFormat.generated.js"]],
+  "packages/contracts/src/resources/index.ts": [["static","../ResourceManifest.js"],["static","./manifestAdmission.js"]],
+  "packages/contracts/dist/resources/index.js": [["static","./manifestAdmission.js"]],
+  "packages/contracts/dist/resources/index.d.ts": [["static","../ResourceManifest.js"],["static","./manifestAdmission.js"]],
+  "packages/contracts/src/resources/manifestAdmission.ts": [["static","../ProjectFormat.generated.js"],["static","../ResourceManifest.js"],["static","./sha256.js"]],
+  "packages/contracts/dist/resources/manifestAdmission.js": [["static","./sha256.js"]],
+  "packages/contracts/dist/resources/manifestAdmission.d.ts": [["static","../ResourceManifest.js"]],
+  "packages/contracts/src/resources/sha256.ts": [],
+  "packages/contracts/dist/resources/sha256.js": [],
+  "packages/contracts/dist/resources/sha256.d.ts": [],
+  "packages/project/src/resources/index.ts": [["static","./manifest.js"],["static","@egret/contracts/resources"]],
+  "packages/project/dist/resources/index.js": [["static","./manifest.js"]],
+  "packages/project/dist/resources/index.d.ts": [["static","./manifest.js"],["static","@egret/contracts/resources"]],
+  "packages/project/src/resources/manifest.ts": [["static","../api.js"],["static","../diagnostics.js"],["static","../limits.js"],["static","../public.js"],["static","../text-input.js"],["static","@egret/contracts"],["static","@egret/contracts/resources"],["static","@egret/contracts/resources"]],
+  "packages/project/dist/resources/manifest.js": [["static","../api.js"],["static","../diagnostics.js"],["static","../limits.js"],["static","../text-input.js"],["static","@egret/contracts/resources"]],
+  "packages/project/dist/resources/manifest.d.ts": [["static","../public.js"],["static","@egret/contracts"],["static","@egret/contracts/resources"]],
+  "packages/engine/src/resources.ts": [["static","./manifestResourceState.js"],["static","./manifestResourceTypes.js"]],
+  "packages/engine/dist/resources.js": [["static","./manifestResourceState.js"]],
+  "packages/engine/dist/resources.d.ts": [["static","./manifestResourceState.js"],["static","./manifestResourceTypes.js"]],
+  "packages/engine/src/manifestResourceTypes.ts": [["static","@egret/runtime"]],
+  "packages/engine/dist/manifestResourceTypes.js": [],
+  "packages/engine/dist/manifestResourceTypes.d.ts": [["static","@egret/runtime"]],
+  "packages/engine/src/manifestResourceState.ts": [["static","./manifestResourceTypes.js"],["static","./manifestResourceTypes.js"],["static","@egret/contracts/resources"],["static","@egret/contracts/resources"],["static","@egret/runtime"],["static","@egret/runtime"]],
+  "packages/engine/dist/manifestResourceState.js": [["static","@egret/contracts/resources"],["static","@egret/runtime"]],
+  "packages/engine/dist/manifestResourceState.d.ts": [["static","./manifestResourceTypes.js"],["static","./manifestResourceTypes.js"],["static","@egret/contracts/resources"],["static","@egret/runtime"]],
+  "packages/engine/src/manifestAssetGroup.ts": [["static","./assetGroup.js"],["static","./manifestResourceState.js"],["static","./manifestResourceState.js"],["static","./manifestResourceTypes.js"],["static","@egret/contracts/resources"],["static","@egret/contracts/resources"],["static","@egret/runtime"],["static","@egret/runtime"]],
+  "packages/engine/dist/manifestAssetGroup.js": [["static","./manifestResourceState.js"],["static","@egret/contracts/resources"],["static","@egret/runtime"]],
+  "packages/engine/dist/manifestAssetGroup.d.ts": [["static","./assetGroup.js"],["static","./manifestResourceTypes.js"],["static","@egret/runtime"]],
+  "packages/engine/src/Engine.ts": [["static","./assetGroup.js"],["static","./assetGroup.js"],["static","./assetGroupTypes.js"],["static","./bitmapBindingTicket.js"],["static","./bitmapBindingTicket.js"],["static","./bitmapResourceSlot.js"],["static","./bitmapResourceSlot.js"],["static","./closeHost.js"],["static","./gameClock.js"],["static","./gameClock.js"],["static","./gameClockTypes.js"],["static","./internal/textFieldFactoryState.js"],["static","./internal/texturedFrameState.js"],["static","./manifestAssetGroup.js"],["static","./manifestAssetGroup.js"],["static","./manifestResourceTypes.js"],["static","./mouseInput.js"],["static","./mouseInput.js"],["static","./sequencePlayback.js"],["static","./sequencePlayback.js"],["static","./sequencePlaybackTypes.js"],["static","./tween.js"],["static","./tween.js"],["static","./tweenTypes.js"],["static","@egret/contracts"],["static","@egret/contracts"],["static","@egret/contracts"],["static","@egret/contracts/resources"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime"]],
+  "packages/engine/dist/Engine.js": [["static","./assetGroup.js"],["static","./bitmapBindingTicket.js"],["static","./bitmapResourceSlot.js"],["static","./closeHost.js"],["static","./gameClock.js"],["static","./internal/textFieldFactoryState.js"],["static","./internal/texturedFrameState.js"],["static","./manifestAssetGroup.js"],["static","./mouseInput.js"],["static","./sequencePlayback.js"],["static","./tween.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime"]],
+  "packages/engine/dist/Engine.d.ts": [["static","./assetGroupTypes.js"],["static","./bitmapBindingTicket.js"],["static","./bitmapResourceSlot.js"],["static","./gameClock.js"],["static","./gameClockTypes.js"],["static","./manifestResourceTypes.js"],["static","./sequencePlaybackTypes.js"],["static","./tweenTypes.js"],["static","@egret/contracts"],["static","@egret/contracts"],["static","@egret/contracts/resources"],["static","@egret/runtime"],["static","@egret/runtime"]],
+  "packages/engine/src/bitmapBindingTicket.ts": [["static","@egret/runtime"],["static","@egret/runtime"]],
+  "packages/engine/dist/bitmapBindingTicket.js": [["static","@egret/runtime"]],
+  "packages/engine/dist/bitmapBindingTicket.d.ts": [["static","@egret/runtime"],["static","@egret/runtime"]],
+  "packages/engine/web/resources.ts": [["static","./BrowserTextureProvider.js"],["static","./BrowserTextureProvider.js"],["static","./BrowserTextureProvider.js"],["static","./ManifestByteSource.js"],["static","./ManifestByteSource.js"],["static","./ManifestByteSource.js"],["static","./ManifestByteSource.js"],["static","@egret/runtime"]],
+  "packages/engine/dist/web/resources.js": [["static","./BrowserTextureProvider.js"],["static","./ManifestByteSource.js"],["static","./ManifestByteSource.js"],["static","@egret/runtime"]],
+  "packages/engine/dist/web/resources.d.ts": [["static","./BrowserTextureProvider.js"],["static","./BrowserTextureProvider.js"],["static","./ManifestByteSource.js"],["static","./ManifestByteSource.js"],["static","./ManifestByteSource.js"]],
+  "packages/engine/web/ManifestByteSource.ts": [["static","@egret/contracts"],["static","@egret/contracts/resources"],["static","@egret/contracts/resources"],["static","@egret/runtime"],["static","@egret/runtime"],["static","#egret-manifest-resources"],["static","#egret-manifest-resources"]],
+  "packages/engine/dist/web/ManifestByteSource.js": [["static","@egret/contracts/resources"],["static","@egret/runtime"],["static","#egret-manifest-resources"]],
+  "packages/engine/dist/web/ManifestByteSource.d.ts": [["static","@egret/contracts"],["static","@egret/contracts/resources"],["static","@egret/runtime"],["static","@egret/runtime"],["static","#egret-manifest-resources"]],
+  "packages/engine/web/BrowserTextureProvider.ts": [["static","./ManifestByteSource.js"],["static","@egret/contracts"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime"]],
+  "packages/engine/dist/web/BrowserTextureProvider.js": [["static","@egret/contracts"],["static","@egret/runtime"]],
+  "packages/engine/dist/web/BrowserTextureProvider.d.ts": [["static","./ManifestByteSource.js"],["static","@egret/runtime"],["static","@egret/runtime"]],
+  "packages/engine/web/sharedDeviceSession.ts": [],
+  "packages/engine/dist/web/sharedDeviceSession.js": [],
+  "packages/engine/dist/web/sharedDeviceSession.d.ts": [],
+  "packages/engine/web/sharedFrameUpload.ts": [["static","@egret/contracts"]],
+  "packages/engine/dist/web/sharedFrameUpload.js": [],
+  "packages/engine/dist/web/sharedFrameUpload.d.ts": [["static","@egret/contracts"]],
+  "packages/engine/web/WebGPUHost.ts": [["dynamic","./b1.js"],["dynamic","./b1.js"],["dynamic","./b1.js"],["dynamic","./sharedB1.js"],["dynamic","./sharedB1.js"],["dynamic","./sharedB1.js"],["static","../rendering/admitTexturedFrame2D.js"],["static","../rendering/copyFrame2D.js"],["static","../rendering/copyMixedFrame2D.js"],["static","../rendering/ownedPreparationFailure2D.js"],["static","../rendering/packImageVertices2D.js"],["static","../rendering/packSharedDraws2D.js"],["static","../rendering/packTexturedMesh2D.js"],["static","../rendering/preparedBatches2D.js"],["static","../rendering/preparedBatches2D.js"],["static","../rendering/preparedFrameCache2D.js"],["static","../rendering/preparedSharedBatches2D.js"],["static","../rendering/preparedSharedBatches2D.js"],["static","../rendering/prepareMixedDraws2D.js"],["static","../rendering/prepareRectangles2D.js"],["static","../rendering/prepareSharedDraws2D.js"],["static","../rendering/prepareTexturedDraws2D.js"],["static","../rendering/sharedColor2D.js"],["static","../rendering/sharedColor2D.js"],["static","../rendering/texturedPreparationBudget2D.js"],["static","./b1.js"],["static","./imageProjections2D.js"],["static","./imageProjections2D.js"],["static","./imageProjections2D.js"],["static","./prepareSharedSubmission2D.js"],["static","./prepareSharedSubmission2D.js"],["static","./prepareTexturedSubmission2D.js"],["static","./prepareTexturedSubmission2D.js"],["static","./sharedDeviceSession.js"],["static","./sharedFrameUpload.js"],["static","./sharedRetentionLedger.js"],["static","./sharedWebGPUOptions.js"],["static","./sharedWebGPUOptions.js"],["static","./sharedWebGPUOptions.js"],["static","./texturedWebGPUOptions.js"],["static","./texturedWebGPUOptions.js"],["static","./texturedWebGPUOptions.js"],["static","./webgpuBindingCache.js"],["static","./webgpuBindingCache.js"],["static","./webgpuBufferPool.js"],["static","./webgpuImagePass.js"],["static","./webgpuLifetime.js"],["static","./webgpuLifetime.js"],["static","./webgpuPass.js"],["static","./webgpuRetentionPool.js"],["static","./webgpuRetentionPool.js"],["static","./webgpuSharedPass.js"],["static","./webgpuSharedResolvePass.js"],["static","./webgpuTexturedPass.js"],["static","@egret/contracts"],["static","@egret/contracts"],["static","@egret/contracts"],["static","@egret/contracts"],["static","@egret/contracts"],["static","@egret/runtime"],["static","#egret-textured-frame-state"]],
+  "packages/engine/dist/web/WebGPUHost.js": [["dynamic","./b1.js"],["dynamic","./sharedB1.js"],["static","../rendering/admitTexturedFrame2D.js"],["static","../rendering/copyFrame2D.js"],["static","../rendering/copyMixedFrame2D.js"],["static","../rendering/ownedPreparationFailure2D.js"],["static","../rendering/packImageVertices2D.js"],["static","../rendering/packTexturedMesh2D.js"],["static","../rendering/preparedBatches2D.js"],["static","../rendering/preparedFrameCache2D.js"],["static","../rendering/preparedSharedBatches2D.js"],["static","../rendering/prepareMixedDraws2D.js"],["static","../rendering/prepareRectangles2D.js"],["static","../rendering/prepareSharedDraws2D.js"],["static","../rendering/prepareTexturedDraws2D.js"],["static","../rendering/sharedColor2D.js"],["static","../rendering/texturedPreparationBudget2D.js"],["static","./imageProjections2D.js"],["static","./imageProjections2D.js"],["static","./prepareSharedSubmission2D.js"],["static","./prepareTexturedSubmission2D.js"],["static","./sharedWebGPUOptions.js"],["static","./texturedWebGPUOptions.js"],["static","./webgpuBindingCache.js"],["static","./webgpuImagePass.js"],["static","./webgpuLifetime.js"],["static","./webgpuPass.js"],["static","./webgpuRetentionPool.js"],["static","./webgpuSharedPass.js"],["static","./webgpuSharedResolvePass.js"],["static","./webgpuTexturedPass.js"],["static","@egret/contracts"],["static","@egret/contracts"],["static","@egret/runtime"],["static","#egret-textured-frame-state"]],
+  "packages/engine/dist/web/WebGPUHost.d.ts": [["static","./b1.js"],["static","./sharedDeviceSession.js"],["static","./sharedFrameUpload.js"],["static","./sharedWebGPUOptions.js"],["static","./sharedWebGPUOptions.js"],["static","./texturedWebGPUOptions.js"],["static","./texturedWebGPUOptions.js"],["static","@egret/contracts"],["static","@egret/contracts"]],
+  "packages/engine/web/webgpu.ts": [["static","./sharedDeviceSession.js"],["static","./sharedFrameUpload.js"],["static","./WebGPUHost.js"],["static","./WebGPUHost.js"],["static","./WebGPUHost.js"],["static","./WebGPUHost.js"],["static","./WebGPUHost.js"]],
+  "packages/engine/dist/web/webgpu.js": [["static","./WebGPUHost.js"],["static","./WebGPUHost.js"]],
+  "packages/engine/dist/web/webgpu.d.ts": [["static","./sharedDeviceSession.js"],["static","./sharedFrameUpload.js"],["static","./WebGPUHost.js"],["static","./WebGPUHost.js"],["static","./WebGPUHost.js"],["static","./WebGPUHost.js"],["static","./WebGPUHost.js"]],
+  "packages/engine/web/scene3d.ts": [["static","../rendering/scene3d.js"],["static","./b1.js"],["static","./sharedB1.js"],["static","./sharedDeviceSession.js"],["static","./sharedFrameUpload.js"],["static","./webgpu.js"],["static","./webgpu.js"],["static","./WebGPUHost.js"],["static","@egret/contracts"]],
+  "packages/engine/dist/web/scene3d.js": [["static","./b1.js"],["static","./sharedB1.js"]],
+  "packages/engine/dist/web/scene3d.d.ts": [["static","../rendering/scene3d.js"],["static","./sharedB1.js"],["static","./sharedDeviceSession.js"],["static","./sharedFrameUpload.js"],["static","./webgpu.js"],["static","./webgpu.js"],["static","./WebGPUHost.js"],["static","@egret/contracts"]],
+  "packages/engine/web/sharedWebGPUOptions.ts": [["static","./texturedWebGPUOptions.js"],["static","./WebGPUHost.js"]],
+  "packages/engine/dist/web/sharedWebGPUOptions.js": [],
+  "packages/engine/dist/web/sharedWebGPUOptions.d.ts": [["static","./texturedWebGPUOptions.js"],["static","./WebGPUHost.js"]],
+  "packages/engine/web/webgpuLifetime.ts": [],
+  "packages/engine/dist/web/webgpuLifetime.js": [],
+  "packages/engine/dist/web/webgpuLifetime.d.ts": [],
+  "packages/engine/web/webgpuRetentionPool.ts": [["static","./sharedRetentionLedger.js"],["static","./sharedRetentionLedger.js"],["static","./webgpuLifetime.js"]],
+  "packages/engine/dist/web/webgpuRetentionPool.js": [["static","./sharedRetentionLedger.js"]],
+  "packages/engine/dist/web/webgpuRetentionPool.d.ts": [["static","./sharedRetentionLedger.js"],["static","./webgpuLifetime.js"]],
+  "packages/engine/web/WebGL2Host.ts": [["dynamic","./sharedWebGL2Scene.js"],["dynamic","./sharedWebGL2Scene.js"],["static","../rendering/ownedPreparationFailure2D.js"],["static","../rendering/packSharedDraws2D.js"],["static","../rendering/preparedBatches2D.js"],["static","../rendering/preparedSharedBatches2D.js"],["static","../rendering/preparedSharedBatches2D.js"],["static","../rendering/prepareRectangles2D.js"],["static","../rendering/prepareSharedDraws2D.js"],["static","../rendering/sceneFrame3D.js"],["static","../rendering/sharedColor2D.js"],["static","../rendering/sharedColor2D.js"],["static","./sharedDeviceSession.js"],["static","./sharedFrameUpload.js"],["static","./sharedRetentionLedger.js"],["static","./sharedRetentionLedger.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedWebGL2Arena.js"],["static","./sharedWebGL2Arena.js"],["static","./sharedWebGL2Options.js"],["static","./sharedWebGL2Options.js"],["static","./sharedWebGL2Scene.js"],["static","./sharedWebGL2Shaders.js"],["static","./webgl2Native.js"],["static","./webgl2Native.js"],["static","./webgl2Types.js"],["static","./webgl2Types.js"],["static","@egret/contracts"],["static","@egret/contracts"],["static","#egret-textured-frame-state"]],
+  "packages/engine/dist/web/WebGL2Host.js": [["dynamic","./sharedWebGL2Scene.js"],["static","../rendering/ownedPreparationFailure2D.js"],["static","../rendering/packSharedDraws2D.js"],["static","../rendering/preparedBatches2D.js"],["static","../rendering/preparedSharedBatches2D.js"],["static","../rendering/prepareRectangles2D.js"],["static","../rendering/prepareSharedDraws2D.js"],["static","../rendering/sharedColor2D.js"],["static","./sharedRetentionLedger.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedWebGL2Arena.js"],["static","./sharedWebGL2Options.js"],["static","./sharedWebGL2Shaders.js"],["static","./webgl2Native.js"],["static","@egret/contracts"],["static","#egret-textured-frame-state"]],
+  "packages/engine/dist/web/WebGL2Host.d.ts": [["static","./sharedWebGL2Options.js"],["static","./webgl2Types.js"],["static","./webgl2Types.js"]],
+  "packages/engine/web/webgl2Types.ts": [["static","../rendering/sceneFrame3D.js"],["static","./sharedDeviceSession.js"],["static","./sharedFrameUpload.js"],["static","@egret/contracts"]],
+  "packages/engine/dist/web/webgl2Types.js": [],
+  "packages/engine/dist/web/webgl2Types.d.ts": [["static","../rendering/sceneFrame3D.js"],["static","./sharedDeviceSession.js"],["static","./sharedFrameUpload.js"],["static","@egret/contracts"]],
+  "packages/engine/web/webgl2.ts": [["static","./sharedDeviceSession.js"],["static","./sharedFrameUpload.js"],["static","./sharedWebGL2Options.js"],["static","./WebGL2Host.js"],["static","./webgl2Types.js"]],
+  "packages/engine/dist/web/webgl2.js": [["static","./WebGL2Host.js"]],
+  "packages/engine/dist/web/webgl2.d.ts": [["static","./sharedDeviceSession.js"],["static","./sharedFrameUpload.js"],["static","./sharedWebGL2Options.js"],["static","./WebGL2Host.js"],["static","./webgl2Types.js"]],
+  "packages/engine/web/webgl2Scene3d.ts": [["static","./sharedDeviceSession.js"],["static","./sharedFrameUpload.js"],["static","./sharedWebGL2Options.js"],["static","./WebGL2Host.js"],["static","./webgl2Types.js"]],
+  "packages/engine/dist/web/webgl2Scene3d.js": [["static","./WebGL2Host.js"]],
+  "packages/engine/dist/web/webgl2Scene3d.d.ts": [["static","./sharedDeviceSession.js"],["static","./sharedFrameUpload.js"],["static","./sharedWebGL2Options.js"],["static","./WebGL2Host.js"],["static","./webgl2Types.js"]],
+  "packages/runtime/src/Bitmap.ts": [["static","./AssetLease.js"],["static","./AssetLease.js"],["static","./atlasFrameLayout.js"],["static","./bitmapDisplayState.js"],["static","./bitmapDisplayState.js"],["static","./bitmapDisplayState.js"],["static","./DisplayObject.js"],["static","./displayTreeState.js"],["static","./EgretError.js"],["static","./ownership.js"],["static","./ownership.js"],["static","./sequenceClip.js"],["static","./sharedFrameCapture.js"],["static","./sharedFrameCapture.js"],["static","./Stage.js"],["static","./Texture.js"],["static","./Texture.js"],["static","@egret/contracts"]],
+  "packages/runtime/dist/Bitmap.js": [["static","./AssetLease.js"],["static","./AssetLease.js"],["static","./atlasFrameLayout.js"],["static","./bitmapDisplayState.js"],["static","./DisplayObject.js"],["static","./displayTreeState.js"],["static","./EgretError.js"],["static","./ownership.js"],["static","./sharedFrameCapture.js"],["static","./Texture.js"]],
+  "packages/runtime/dist/Bitmap.d.ts": [["static","./AssetLease.js"],["static","./bitmapDisplayState.js"],["static","./bitmapDisplayState.js"],["static","./DisplayObject.js"],["static","./sequenceClip.js"],["static","./Texture.js"],["static","@egret/contracts"]],
+  "packages/runtime/src/sharedFrameCapture.ts": [["static","./Bitmap.js"],["static","./bitmapDisplayState.js"],["static","./DisplayObject.js"],["static","./DisplayObjectContainer.js"],["static","./displayTransform.js"],["static","./displayTreeState.js"],["static","./displayVisualState.js"],["static","./displayVisualState.js"],["static","./EgretError.js"],["static","./meshCaptureSnapshot.js"],["static","./meshDisplayState.js"],["static","./meshDisplayState.js"],["static","./ownership.js"],["static","./ownership.js"],["static","./Stage.js"],["static","./textDisplayState.js"],["static","./textDisplayState.js"],["static","@egret/contracts"],["static","@egret/contracts"]],
+  "packages/runtime/dist/sharedFrameCapture.js": [["static","./Bitmap.js"],["static","./displayTransform.js"],["static","./displayTreeState.js"],["static","./displayVisualState.js"],["static","./EgretError.js"],["static","./meshCaptureSnapshot.js"],["static","./meshDisplayState.js"],["static","./ownership.js"],["static","./textDisplayState.js"],["static","@egret/contracts"]],
+  "packages/runtime/dist/sharedFrameCapture.d.ts": [["static","./bitmapDisplayState.js"],["static","./Stage.js"],["static","@egret/contracts"]],
+  "packages/runtime/src/bitmapDisplayState.ts": [["static","./AssetLease.js"],["static","./atlasFrameLayout.js"],["static","./DisplayObject.js"],["static","./displayVisualState.js"],["static","./Texture.js"],["static","@egret/contracts"]],
+  "packages/runtime/dist/bitmapDisplayState.js": [["static","./displayVisualState.js"]],
+  "packages/runtime/dist/bitmapDisplayState.d.ts": [["static","./AssetLease.js"],["static","./atlasFrameLayout.js"],["static","./DisplayObject.js"],["static","./Texture.js"],["static","@egret/contracts"]],
+  "packages/runtime/src/ownership.ts": [["static","./AssetLease.js"],["static","./assetManagerOwnerState.js"],["static","./Bitmap.js"],["static","./DisplayObject.js"],["static","./DisplayObjectContainer.js"],["static","./displayTreeState.js"],["static","./displayTreeState.js"],["static","./displayVisualState.js"],["static","./EgretError.js"],["static","./Scope.js"],["static","./sharedFrameCapture.js"],["static","./Stage.js"],["static","./Texture.js"],["static","@egret/contracts"]],
+  "packages/runtime/dist/ownership.js": [["static","./displayTreeState.js"],["static","./displayVisualState.js"],["static","./EgretError.js"]],
+  "packages/runtime/dist/ownership.d.ts": [["static","./AssetLease.js"],["static","./assetManagerOwnerState.js"],["static","./Bitmap.js"],["static","./DisplayObject.js"],["static","./DisplayObjectContainer.js"],["static","./displayTreeState.js"],["static","./Scope.js"],["static","./sharedFrameCapture.js"],["static","./Stage.js"],["static","./Texture.js"],["static","@egret/contracts"]],
+  // Diagnostics: exact existing owner and erased CPU-observation edges.
+  "packages/engine/web/webgl2Native.ts": [["static","./sharedRetentionLedger.js"],["static","./webgl2Types.js"],["static","@egret/runtime"]],
+  "packages/engine/dist/web/webgl2Native.js": [["static","@egret/runtime"]],
+  "packages/engine/dist/web/webgl2Native.d.ts": [["static","./sharedRetentionLedger.js"],["static","./webgl2Types.js"],["static","@egret/runtime"]],
+  "packages/engine/web/sharedRetentionLedger.ts": [],
+  "packages/engine/dist/web/sharedRetentionLedger.js": [],
+  "packages/engine/dist/web/sharedRetentionLedger.d.ts": [],
+  "packages/engine/rendering/sharedColor2D.ts": [["static","@egret/contracts"],["static","@egret/contracts"]],
+  "packages/engine/dist/rendering/sharedColor2D.js": [["static","@egret/contracts"]],
+  "packages/engine/dist/rendering/sharedColor2D.d.ts": [["static","@egret/contracts"]],
+  "packages/engine/web/sharedSubmissionStorage2D.ts": [["static","../rendering/ownedPreparationFailure2D.js"],["static","../rendering/prepareSharedDraws2D.js"],["static","../rendering/sharedColor2D.js"],["static","../rendering/sharedColor2D.js"],["static","./imageProjections2D.js"]],
+  "packages/engine/dist/web/sharedSubmissionStorage2D.js": [["static","../rendering/ownedPreparationFailure2D.js"],["static","../rendering/sharedColor2D.js"]],
+  "packages/engine/dist/web/sharedSubmissionStorage2D.d.ts": [["static","../rendering/prepareSharedDraws2D.js"],["static","../rendering/sharedColor2D.js"],["static","./imageProjections2D.js"]],
+  "packages/engine/web/prepareSharedSubmission2D.ts": [["static","../rendering/ownedPreparationFailure2D.js"],["static","../rendering/packSharedDraws2D.js"],["static","../rendering/prepareSharedDraws2D.js"],["static","../rendering/sharedColor2D.js"],["static","./imageProjections2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedWebGPUOptions.js"]],
+  "packages/engine/dist/web/prepareSharedSubmission2D.js": [["static","../rendering/ownedPreparationFailure2D.js"],["static","../rendering/packSharedDraws2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedSubmissionStorage2D.js"]],
+  "packages/engine/dist/web/prepareSharedSubmission2D.d.ts": [["static","../rendering/packSharedDraws2D.js"],["static","../rendering/prepareSharedDraws2D.js"],["static","../rendering/sharedColor2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedWebGPUOptions.js"]],
+};
+
 function sceneGraphEdges(code) {
   return [...code.matchAll(/\b(?:from\s*|import\s*\(\s*|import\s*)['"]([^'"]+)['"]/g)]
     .map(match=>[/^import\s*\(/.test(match[0])?'dynamic':'static',match[1]])
     .sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
 }
-for (const [file,edges] of Object.entries({...sceneLiteralClosure,...m13SharedRenderingLiteralClosure,...m14WebGL2LiteralClosure})) {
+for (const [file,edges] of Object.entries({...sceneLiteralClosure,...m13SharedRenderingLiteralClosure,...m14WebGL2LiteralClosure,...m15ResourceRecoveryLiteralClosure})) {
   const code=sceneRead(file);
   if (JSON.stringify(sceneGraphEdges(code))!==JSON.stringify(edges)) throw new Error('S3D1: scene entry imported outside approved closure: '+file);
   // Non-literal dynamic imports cannot hide an additional dependency edge.
@@ -3999,6 +4166,10 @@ for (const file of ['packages/runtime/src/NineSliceGeometry2D.ts', 'packages/run
 }
 // This exact map is local to NS1; it uses no S3D1/MI1/BR1/BW1 namespaces.
 const ns1OptionalEntries = [
+  ['contracts/resources','@egret/contracts/resources','packages/contracts/src/resources/index.ts','packages/contracts/dist/resources/index'],
+  ['project/resources','@egret/project/resources','packages/project/src/resources/index.ts','packages/project/dist/resources/index'],
+  ['engine/resources','@egret/engine/resources','packages/engine/src/resources.ts','packages/engine/dist/resources'],
+  ['engine/web/resources','@egret/engine/web/resources','packages/engine/web/resources.ts','packages/engine/dist/web/resources'],
   ['contracts', '@egret/contracts', 'packages/contracts/src/index.ts', 'packages/contracts/dist/index'],
   ['project', '@egret/project', 'packages/project/src/index.ts', 'packages/project/dist/index'],
   ['project/spine', '@egret/project/spine', 'packages/project/src/spine/index.ts', 'packages/project/dist/spine/index'],
@@ -4019,4 +4190,163 @@ for (const [label, specifier, source, stem] of ns1OptionalEntries) {
   if (ns1ModuleReference.test(code)) throw new Error('NS1: ' + label + ' root/runtime-only leaf module leaked');
 }
 // NS1_END
+
+// M15_RESOURCE_RECOVERY_BOUNDARY_BEGIN
+// Additive semantic maintenance for the already selected optional assembly.
+// Values continue through public entries; private product units are read as text.
+const m15ResourceSurfaces = [
+  ['contracts/resources','packages/contracts/src/resources/index.ts','packages/contracts/dist/resources/index',
+    ['validateResourceBuildDescription','admitResourceManifest','buildResourceManifest','serializeResourceManifest','isAdmittedResourceManifest','getResourceManifestIdentityInputs'],
+    ['ResourceBuildEntry','ResourceBuildDescription','ResourceManifestEntry','AdmittedResourceManifest','ResourceManifestDiagnosticCode','ResourceManifestDiagnostic','ResourceManifestResult','ResourceManifestIdentityInputs'],
+    {'./manifestAdmission.js':{value:['validateResourceBuildDescription','admitResourceManifest','buildResourceManifest','serializeResourceManifest','isAdmittedResourceManifest','getResourceManifestIdentityInputs']},
+      '../ResourceManifest.js':{type:['ResourceBuildEntry','ResourceBuildDescription','ResourceManifestEntry','AdmittedResourceManifest','ResourceManifestDiagnosticCode','ResourceManifestDiagnostic','ResourceManifestResult','ResourceManifestIdentityInputs']}}],
+  ['project/resources','packages/project/src/resources/index.ts','packages/project/dist/resources/index',
+    ['describeResourceBuild','parseResourceManifest','serializeResourceManifest'],
+    ['ResourceBuildDescription','ResourceBuildEntry','ResourceManifestEntry','AdmittedResourceManifest'],
+    {'./manifest.js':{value:['describeResourceBuild','parseResourceManifest','serializeResourceManifest']},
+      '@egret/contracts/resources':{type:['ResourceBuildDescription','ResourceBuildEntry','ResourceManifestEntry','AdmittedResourceManifest']}}],
+  ['engine/resources','packages/engine/src/resources.ts','packages/engine/dist/resources',
+    ['createManifestAssetBinding'],['ManifestBinding','ManifestAssetBinding','ManifestAssetGroup','ManifestGroupOptions'],
+    {'./manifestResourceState.js':{value:['createManifestAssetBinding']},
+      './manifestResourceTypes.js':{type:['ManifestBinding','ManifestAssetBinding','ManifestAssetGroup','ManifestGroupOptions']}}],
+  ['engine/web/resources','packages/engine/web/resources.ts','packages/engine/dist/web/resources',
+    ['createManifestByteSource','createManifestTextureProvider'],['ManifestByteSource','ManifestByteSourceOptions','ManifestByteSourceStatus','ManifestTextureProvider','ManifestTextureProviderStatus','ManifestTextureProviderOptions'],
+    {'./ManifestByteSource.js':{value:['requireManifestByteSource','createManifestByteSource'],type:['ManifestByteSource','ManifestByteSourceOptions','ManifestByteSourceStatus']},
+      './BrowserTextureProvider.js':{value:['createManifestPngTextureProvider'],type:['BrowserPngPorts','ManifestTextureProvider','ManifestTextureProviderStatus']},
+      '@egret/runtime':{value:['EgretError']}}],
+];
+for (const [entry,source,stem,values,types,rules] of m15ResourceSurfaces) {
+  const namespace=m15ResourceEntries.find(row=>row[0]===entry)[1];
+  if (!sceneEqual(Object.keys(namespace),values)) throw new Error('M15: exact resource runtime surface mismatch: '+entry);
+  for (const file of [source,stem+'.d.ts',stem+'.js']) {
+    const code=sceneRead(file),emitted=file.endsWith('.js');
+    sceneSurface(code,file,values,emitted?[]:types);
+    sceneClauses(code,file,rules);
+    if (entry!=='engine/web/resources') {
+      // These three facades are canonical re-exports, with no local substitute.
+      for (const [target,ports] of Object.entries(rules)) {
+        for (const name of ports.value??[]) sharedForward(code,name,false,target,file);
+        if (!emitted) for (const name of ports.type??[]) sharedForward(code,name,true,target,file);
+      }
+      if (code.replace(/\bexport(?:\s+type)?\s*\{[^}]+\}\s*from\s*['"][^'"]+['"]\s*;?/g,'').trim())
+        throw new Error('M15: resource barrel contains a local implementation: '+file);
+    } else {
+      sharedForward(code,'createManifestByteSource',false,'./ManifestByteSource.js',file);
+      if (!emitted) {
+        for (const name of ['ManifestByteSource','ManifestByteSourceOptions','ManifestByteSourceStatus']) sharedForward(code,name,true,'./ManifestByteSource.js',file);
+        for (const name of ['ManifestTextureProvider','ManifestTextureProviderStatus']) sharedForward(code,name,true,'./BrowserTextureProvider.js',file);
+      }
+    }
+    if (emitted && types.some(name=>new RegExp('\\b'+name+'\\b').test(code.replace(/'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"/g,''))))
+      throw new Error('M15: resource type runtime erasure mismatch: '+file);
+  }
+}
+// Whole-clause multiplicity is independent of the generic per-edge admission.
+for (const [file,expectedClauses] of Object.entries(m15DeepClauses)) {
+  const code=sceneRead(file);
+  const actual=[...code.matchAll(/\b(import|export)(\s+type)?\s*\{([^}]+)\}\s*from\s*['"](@egret\/contracts\/resources|#egret-manifest-resources)['"]/g)]
+    .map(match=>({operation:match[1],kind:match[2]?'type':'value',members:match[3].split(',').map(member=>member.trim().replace(/\s+/g,' ')).filter(Boolean),target:match[4]}));
+  if (!sceneEqual(actual.map(m15ClauseKey),expectedClauses.map(m15ClauseKey)))
+    throw new Error('M15: exact named resource clause mismatch: '+file);
+}
+// Pure metadata and the selected pure SHA unit cannot acquire browser/Node ports.
+for (const file of Object.keys(m15ResourceRecoveryLiteralClosure).filter(file=>
+    file.startsWith('packages/contracts/') || file.startsWith('packages/project/'))) {
+  const raw=readFileSync(path.join(root,file),'utf8'),code=assetGroupStrip(raw);
+  if (/\b(?:fetch|crypto|TextEncoder|TextDecoder|HTMLElement|Document|Window|Navigator|NodeJS|GPUDevice)\b/.test(code)
+      || /\/\/\/\s*<reference\s+(?:lib\s*=\s*["']dom(?:\.iterable)?["']|types\s*=\s*["']node["'])/i.test(raw))
+    throw new Error('M15: resource metadata acquired a host dependency: '+file);
+}
+const m15ErasedLeaves = [
+  ['packages/contracts/src/ResourceManifest.ts','packages/contracts/dist/ResourceManifest',m15ResourceSurfaces[0][4]],
+  ['packages/engine/src/manifestResourceTypes.ts','packages/engine/dist/manifestResourceTypes',m15ResourceSurfaces[2][4]],
+  ['packages/engine/web/sharedDeviceSession.ts','packages/engine/dist/web/sharedDeviceSession',m15SessionTypes],
+  ['packages/engine/web/sharedFrameUpload.ts','packages/engine/dist/web/sharedFrameUpload',m15UploadTypes],
+];
+for (const [source,stem,types] of m15ErasedLeaves) {
+  for (const file of [source,stem+'.d.ts']) sceneSurface(sceneRead(file),file,[],types);
+  if (sceneRead(stem+'.js').replace(/\s+/g,'')!=='export{};')
+    throw new Error('M15: metadata type module contains runtime behavior: '+stem);
+}
+const m15HostFacades=['webgpu','scene3d','webgl2','webgl2Scene3d'];
+for (const stem of m15HostFacades) for (const [directory,suffix] of [['web','.ts'],['dist/web','.d.ts'],['dist/web','.js']]) {
+  const file='packages/engine/'+directory+'/'+stem+suffix,code=sceneRead(file);
+  if (suffix==='.js') {
+    if (m15SharedHostTypes.some(name=>new RegExp('\\b'+name+'\\b').test(code))
+        || /['"]\.\/(?:sharedDeviceSession|sharedFrameUpload)\.js['"]/.test(code))
+      throw new Error('M15: shared Host types acquired a runtime edge: '+file);
+  } else {
+    for (const name of m15SessionTypes) sharedForward(code,name,true,'./sharedDeviceSession.js',file);
+    for (const name of m15UploadTypes) sharedForward(code,name,true,'./sharedFrameUpload.js',file);
+  }
+}
+const m15PublicSourceFiles=[...new Set([
+  ...Object.values(assetGroupSourceEntries),
+  'packages/engine/src/layout.ts','packages/engine/web/text.ts','packages/engine/web/input.ts','packages/engine/web/image.ts',
+  'packages/engine/rendering/scene3d.ts','packages/engine/web/scene3d.ts','packages/engine/web/webgl2.ts','packages/engine/web/webgl2Scene3d.ts',
+  'packages/project/src/spine/index.ts','packages/project/src/atlas/index.ts',
+])];
+const m15PrivateNames=[
+  'createManifestGroupOwner','ManifestGroupOwner','ManifestGroupContext','ManifestBindingState',
+  'requireManifestBinding','requireManifestAssetRef','manifestBindingBrand','manifestBindingValue','manifestGroupBrand',
+  'requireManifestByteSource','ManifestPngOwner','ManifestPngJob','ManifestPngProviderOptions','createManifestPngTextureProvider',
+  'collectPreparedSharedFrameContent','BitmapCaptureView','sharedFrameUploadBrand',
+  'SharedHostResourceCurrent','SharedPageCopyDiagnostics2D','RetentionResourceGauges','RetentionLedgerDiagnostics','NativeUnknownDiagnostics','GLNativeResourceDiagnostics',
+  'ManifestByteSourceCounters','ManifestTextureProviderCounters',
+];
+// Preserve only the four established erased text forwards; later M15 ports stay named.
+const m15RetainedTextTypeStars = {
+  'packages/runtime/src/text/index.ts':'./types.js',
+  'packages/runtime/dist/text/index.d.ts':'./types.js',
+  'packages/engine/src/text.ts':'@egret/runtime/text',
+  'packages/engine/dist/text.d.ts':'@egret/runtime/text',
+};
+for (const source of m15PublicSourceFiles) {
+  const stem=source.replace('/src/','/dist/').replace('/web/','/dist/web/').replace('/rendering/','/dist/rendering/').replace(/\.ts$/,'');
+  for (const file of [source,stem+'.js',stem+'.d.ts']) {
+    const code=sceneRead(file);
+    let wildcardRemainder=code;
+    if (Object.hasOwn(m15RetainedTextTypeStars,file)) {
+      const retained=[...code.matchAll(/\bexport\s+type\s*\*\s+from\s*['"]([^'"]+)['"]\s*;?/g)];
+      if (retained.length!==1 || retained[0][1]!==m15RetainedTextTypeStars[file])
+        throw new Error('M15: retained text type wildcard mismatch: '+file);
+      wildcardRemainder=code.replace(retained[0][0],'');
+    }
+    if (/\bexport\s*(?:type\s*)?\*/.test(wildcardRemainder)) throw new Error('M15: public wildcard export forbidden: '+file);
+    const exported=[...code.matchAll(/\bexport(?:\s+type)?\s*\{([^}]+)\}/g)].map(match=>match[1]).join('\n')
+      + '\n' + [...code.matchAll(/\bexport\s+(?:declare\s+)?(?:type|interface|function|const|let|var|class|enum)\s+(\w+)/g)].map(match=>match[1]).join('\n');
+    for (const name of m15PrivateNames) if (new RegExp('\\b'+name+'\\b').test(exported))
+      throw new Error('M15: private resource/candidate authority exported: '+file+'/'+name);
+    if (source!=='packages/engine/web/resources.ts' && ['ManifestByteSourceStatus','ManifestTextureProvider','ManifestTextureProviderStatus'].some(name=>new RegExp('\\b'+name+'\\b').test(exported)))
+      throw new Error('M15: manifest diagnostics leaked outside the selected resource entry: '+file);
+    if (!m15HostFacades.some(name=>source==='packages/engine/web/'+name+'.ts')
+        && (m15SharedHostTypes.some(name=>new RegExp('\\b'+name+'\\b').test(code))
+          || /['"][^'"]*\/(?:sharedDeviceSession|sharedFrameUpload)\.js['"]/.test(code)))
+      throw new Error('M15: shared Host metadata leaked outside exact optional entries: '+file);
+  }
+}
+// Ordinary PNG assembly has only an erased edge to manifest ownership.
+for (const [file,names] of [
+  ['packages/engine/web/BrowserTextureProvider.ts',['ManifestPngOwner','ManifestPngJob']],
+  ['packages/engine/dist/web/BrowserTextureProvider.d.ts',['ManifestPngOwner']],
+]) {
+  const code=sceneRead(file),clauses=[...code.matchAll(/\bimport(\s+type)?\s*\{([^}]+)\}\s*from\s*['"]\.\/ManifestByteSource\.js['"]/g)];
+  if (clauses.length!==1 || !clauses[0][1] || !sceneEqual(clauses[0][2].split(',').map(name=>name.trim()),names))
+    throw new Error('M15: ordinary PNG manifest dependency must remain erased: '+file);
+}
+if (/\bManifestByteSource\b|['"]\.\/ManifestByteSource\.js['"]/.test(sceneRead('packages/engine/dist/web/BrowserTextureProvider.js')))
+  throw new Error('M15: ordinary PNG runtime acquired manifest source dependency');
+const m15EngineDeclaration=sceneRead('packages/engine/dist/Engine.d.ts').replace(/\s+/g,'');
+for (const signature of [
+  'capturePreparedSharedFrame(ticket:BitmapBindingTicket,options:SharedFrameOptions2D):SharedRenderFrame2D;',
+  'createManifestGroup(scope:Scope,manifest:AdmittedResourceManifest,roots:readonlystring[],bindings:readonlyManifestBinding[],options?:ManifestGroupOptions):ManifestAssetGroup;',
+]) if (m15EngineDeclaration.split(signature).length!==2)
+  throw new Error('M15: exact Engine optional resource/candidate method mismatch');
+for (const file of ['packages/runtime/src/sharedFrameCapture.ts','packages/runtime/dist/sharedFrameCapture.d.ts']) {
+  const code=sceneRead(file);
+  if (!/export\s+(?:declare\s+)?function\s+collectSharedFrameContent\s*\(\s*stage\s*:\s*Stage\s*\)\s*:\s*CapturedSharedContent2D\b/.test(code))
+    throw new Error('M15: public shared traversal acquired candidate authority: '+file);
+}
+// M15_RESOURCE_RECOVERY_BOUNDARY_END
+
 console.log(`Boundary check PASS: four private workspace packages, actual exports resolution, ${inspected} source/build/declaration files, DOM-free core and exact DOM-only web subtree without Node imports/globals.`);

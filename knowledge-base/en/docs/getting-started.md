@@ -86,7 +86,7 @@ For current browser checks, install Playwright and playwright-core **1.62.1** in
 node tools/browser-verify.mjs --suite canvas --playwright <absolute-installed-playwright-package> --output <absolute-fresh-directory-outside-repository>
 ```
 
-Direct suites are canvas, webgpu, b1, text, hit-test, mouse-input and shared-webgpu. The shared suite runs the fixed 30-case pixel matrix and 11 assigned numerical controls; see the [shared rendering record](shared-rendering-evidence.md) for its finite scope. Resource-scene and bitmap-slot additionally require a reviewed source snapshot:
+Direct suites are canvas, webgpu, b1, text, hit-test, mouse-input, shared-webgpu and resource-recovery. The [resource recovery contract](resource-recovery-contract.md#run-the-integrated-recovery-collector) explains its separate seven-case foreground run, fixed limits and completion records. The shared suite runs the fixed 30-case pixel matrix and 11 assigned numerical controls; see the [shared rendering record](shared-rendering-evidence.md) for its finite scope. Resource-scene and bitmap-slot additionally require a reviewed source snapshot:
 
 ```text
 node tools/browser-prepare.mjs --suite resource-scene --output <absolute-new-snapshot-file-outside-repository>

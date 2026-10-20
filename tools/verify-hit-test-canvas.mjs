@@ -79,15 +79,17 @@ const routes=new Map();
 let runnerError;
 try{
   const helper=await import(pathToFileURL(graphPath).href);
-  const entries={engine:path.join(repository,'packages/engine/dist/index.js'),web:path.join(repository,'packages/engine/dist/web/index.js'),runtime:path.join(repository,'packages/runtime/dist/index.js'),contracts:path.join(repository,'packages/contracts/dist/index.js'),state:path.join(repository,'packages/engine/dist/internal/texturedFrameState.js')};
-  graph=await helper.sealGraph({repositoryRoot:repository,entryPaths:{canvas:[entries.engine,entries.web]},aliases:{'@egret/engine':entries.engine,'@egret/engine/web':entries.web,'@egret/runtime':entries.runtime,'@egret/contracts':entries.contracts,'#egret-textured-frame-state':entries.state}});
-  if(graph.inventory.length+appPaths.length+verifierPaths.length+1>256)throw new Error('Finite input inventory exceeded');
-  inputBefore=[...graph.inventory,...await Promise.all(appPaths.map(p=>pin(path.join(applicationRoot,p),'first-party-application'))),...await Promise.all(verifierPaths.map(p=>pin(path.join(applicationRoot,p),'first-party-verifier'))),await pin(graphPath,'existing-unmodified-graph-helper')].sort((a,b)=>a.path.localeCompare(b.path));
+  const entries={engine:path.join(repository,'packages/engine/dist/index.js'),web:path.join(repository,'packages/engine/dist/web/index.js'),runtime:path.join(repository,'packages/runtime/dist/index.js'),contracts:path.join(repository,'packages/contracts/dist/index.js'),resources:path.join(repository,'packages/contracts/dist/resources/index.js'),state:path.join(repository,'packages/engine/dist/internal/texturedFrameState.js')};
+  const resourcesPackagePath=path.join(repository,'packages/contracts/package.json'),resourcesPackage=JSON.parse(await readFile(resourcesPackagePath,'utf8'));
+  if(resourcesPackage.name!=='@egret/contracts'||resourcesPackage.exports?.['./resources']?.import!=='./dist/resources/index.js'||resourcesPackage.exports['./resources'].types!=='./dist/resources/index.d.ts')throw new Error('Genuine published contracts/resources package subpath');
+  graph=await helper.sealGraph({repositoryRoot:repository,entryPaths:{canvas:[entries.engine,entries.web]},aliases:{'@egret/engine':entries.engine,'@egret/engine/web':entries.web,'@egret/runtime':entries.runtime,'@egret/contracts':entries.contracts,'@egret/contracts/resources':entries.resources,'#egret-textured-frame-state':entries.state}});
+  if(graph.inventory.length+appPaths.length+verifierPaths.length+2>256)throw new Error('Finite input inventory exceeded');
+  inputBefore=[...graph.inventory,...await Promise.all(appPaths.map(p=>pin(path.join(applicationRoot,p),'first-party-application'))),...await Promise.all(verifierPaths.map(p=>pin(path.join(applicationRoot,p),'first-party-verifier'))),await pin(graphPath,'existing-unmodified-graph-helper'),await pin(resourcesPackagePath,'contracts-resources-package-subpath')].sort((a,b)=>a.path.localeCompare(b.path));
   report.inputs.before=inputBefore;report.sdkGraph={modules:graph.modules,closures:graph.closures,totalBytes:graph.totalBytes};
   for(const key of ['index.html','main.mjs','application.mjs','scene.mjs'])appSource[key]=await readFile(path.join(applicationRoot,'examples/hit-test',key),'utf8');
   for(const [route,value] of graph.routes)routes.set(route,value);
   routes.set('/reference.mjs',{bytes:await readFile(path.join(applicationRoot,'tests/fixtures/hit-test-canvas/reference.mjs')),contentType:'text/javascript; charset=utf-8'});
-  const imports={'@egret/engine':graph.routeFor(entries.engine),'@egret/engine/web':graph.routeFor(entries.web),'@egret/runtime':graph.routeFor(entries.runtime),'@egret/contracts':graph.routeFor(entries.contracts),'#egret-textured-frame-state':graph.routeFor(entries.state)};
+  const imports={'@egret/engine':graph.routeFor(entries.engine),'@egret/engine/web':graph.routeFor(entries.web),'@egret/runtime':graph.routeFor(entries.runtime),'@egret/contracts':graph.routeFor(entries.contracts),'@egret/contracts/resources':graph.routeFor(entries.resources),'#egret-textured-frame-state':graph.routeFor(entries.state)};
   if(Object.values(imports).some(v=>typeof v!=='string'))throw new Error('Sealed graph import-map route absent');
   for(const id of ['baseline',...recipe.controls.map(c=>c.id)]){
     const projected=projectApplication({scene:appSource['scene.mjs'],application:appSource['application.mjs']},id);

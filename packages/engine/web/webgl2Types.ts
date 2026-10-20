@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 import type { SharedRenderFrame2D, SharedRenderHostAdapter } from '@egret/contracts';
 import type { SceneFrame3D } from '../rendering/sceneFrame3D.js';
+import type { SharedDeviceSessionStatus, SharedHostResourceStatus } from './sharedDeviceSession.js';
+import type { SharedFrameUpload, SharedFrameUploadOptions } from './sharedFrameUpload.js';
 
 export type WebGL2HostState = 'new' | 'starting' | 'active' | 'lost' | 'restoring' | 'stopped' | 'failed' | 'closing' | 'closed';
 export type WebGL2HostErrorCode =
@@ -10,7 +12,9 @@ export type WebGL2HostErrorCode =
     'WEBGL2_FRAME_BUDGET' | 'WEBGL2_BACKPRESSURE' | 'WEBGL2_CONTEXT_LIMIT' | 'WEBGL2_SERIAL_EXHAUSTED' | 'WEBGL2_GENERATION_EXHAUSTED' |
     'WEBGL2_RENDER_FAILED' | 'WEBGL2_VALIDATION' | 'WEBGL2_OUT_OF_MEMORY' | 'WEBGL2_CONTEXT_LOST' | 'WEBGL2_CONTEXT_RESTORING' |
     'WEBGL2_RESTORE_FAILED' | 'WEBGL2_RESTORE_TIMEOUT' | 'WEBGL2_READBACK_DISABLED' | 'WEBGL2_READBACK_PENDING' | 'WEBGL2_READBACK_FAILED' |
-    'WEBGL2_SYNC_FAILED' | 'WEBGL2_SYNC_TIMEOUT' | 'WEBGL2_DIAGNOSTIC_CALLBACK_FAILED' | 'WEBGL2_CLOSE_UNSAFE';
+    'WEBGL2_SYNC_FAILED' | 'WEBGL2_SYNC_TIMEOUT' | 'WEBGL2_DIAGNOSTIC_CALLBACK_FAILED' | 'WEBGL2_CLOSE_UNSAFE' |
+    'WEBGL2_UPLOAD_INVALID' | 'WEBGL2_UPLOAD_OPTIONS_INVALID' | 'WEBGL2_UPLOAD_NOT_READY' | 'WEBGL2_UPLOAD_USED' |
+    'WEBGL2_UPLOAD_DISPOSED' | 'WEBGL2_UPLOAD_ABORTED' | 'WEBGL2_UPLOAD_EXPIRED' | 'WEBGL2_UPLOAD_STALE';
 export interface WebGL2HostFailure {
     readonly code: WebGL2HostErrorCode;
     readonly serial: number | null;
@@ -45,6 +49,7 @@ export interface SharedWebGL2Readback {
     readonly bytes: Uint8Array;
 }
 export interface SharedWebGL2HostStatus {
+    readonly resources: SharedHostResourceStatus;
     readonly host: WebGL2HostStatus;
     readonly pendingGeometryBytes: number;
     readonly pendingColorBytes: number;
@@ -66,10 +71,13 @@ export interface SharedWebGL2Host extends SharedRenderHostAdapter {
     requestReadback(): Promise<SharedWebGL2Readback>;
     getStatus(): WebGL2HostStatus;
     getSharedStatus(): SharedWebGL2HostStatus;
+    getSessionStatus(): SharedDeviceSessionStatus<WebGL2HostFailure>;
+    stageSharedFrame(frame: SharedRenderFrame2D, options?: SharedFrameUploadOptions): SharedFrameUpload;
     setTimeout(callback: () => void, delayMs: number): () => void;
 }
 export interface SharedSceneWebGL2Host extends SharedWebGL2Host {
     renderSceneSharedFrame(scene: SceneFrame3D, overlay: SharedRenderFrame2D): undefined;
+    stageSceneSharedFrame(scene: SceneFrame3D, overlay: SharedRenderFrame2D, options?: SharedFrameUploadOptions): SharedFrameUpload;
     getSceneStatus(): {
         readonly host: WebGL2HostStatus;
         readonly pendingSceneBytes: number;

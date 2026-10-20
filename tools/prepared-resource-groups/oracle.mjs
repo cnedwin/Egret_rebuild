@@ -28,7 +28,11 @@ export const FRAME_CASES=freeze({
 
 function admittedEnvironment(environment){
   if(!exactKeys(environment,Object.keys(REFERENCE_ENVIRONMENT)))fault('REFERENCE_ENVIRONMENT','Original reference environment keys required');
-  for(const key of Object.keys(REFERENCE_ENVIRONMENT))if(!equal(environment[key],REFERENCE_ENVIRONMENT[key]))fault('REFERENCE_ENVIRONMENT','Independent reference unavailable for changed '+key);
+  // Independent direct-Canvas repetition found identical complete references and metrics for this exact patch.
+  for(const key of Object.keys(REFERENCE_ENVIRONMENT)){
+    const admitted=key==='browserVersion'?['155.0.4283.45','155.0.4283.62'].includes(environment[key]):equal(environment[key],REFERENCE_ENVIRONMENT[key]);
+    if(!admitted)fault('REFERENCE_ENVIRONMENT','Independent reference unavailable for changed '+key);
+  }
 }
 function admittedReferences(references){
   if(!exactKeys(references,['left','right']))fault('REFERENCE_IDENTITY','Exactly both original CJK references required');

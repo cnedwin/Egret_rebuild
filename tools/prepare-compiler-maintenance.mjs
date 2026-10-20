@@ -137,9 +137,29 @@ const m13InlineSourceSuccessors = [{"path":"tools/check-types.mjs","base":{"byte
 // M1.4 appends only one strict-checker import. Keep every prior revision and
 // extracted inline span; this exact successor is not a source refresh policy.
 const m14InlineSourceSuccessor = {"path":"tools/check-types.mjs","predecessor":{"bytes":121118,"sha256":"64d5996ebf925b8b2eda7e04d20e939e399d50953da0023a48ffd02223985093"},"current":{"bytes":121161,"sha256":"c85407cbdc9c6222cbf240de21e82afd37725e6c8a68bed9ca0d098d7b6dc343"},"appended":"await import('./shared-webgl2-types.mjs');\n"};
+// M1.5 admits two complete reviewed revisions, with exact inverses to M1.4.
+const m15InlineSourceSuccessor = {"path":"tools/check-types.mjs","predecessor":{"bytes":121161,"sha256":"c85407cbdc9c6222cbf240de21e82afd37725e6c8a68bed9ca0d098d7b6dc343"},"delegate":{"bytes":121293,"sha256":"a4cde570d560924537f8caabb7fa8a9b5059241fedda6edfc4968dba443a7e2e"},"scene":{"bytes":141012,"sha256":"b584aa0dc9368285380a3f1569b49430e6fceee3f994a2be4d37acbbc1e9785e"},"appended":"\n// Preserve every retained strict lane before the seven M1.5 public consumer pairs.\nawait import('./resource-recovery-types.mjs');\n"};
+function m15ScenePredecessor(raw){
+ let text=new TextDecoder('utf-8',{fatal:true}).decode(raw);
+ const start="// The separately observed M1.5 closure retains the complete M1.3 table above.\n",end='const sceneDomM13Selected = ';
+ requireThat(text.split(start).length===2,'M1.5 scene insertion differs');
+ const a=text.indexOf(start),b=text.indexOf(end,a);
+ requireThat(b>a&&b-a===19541,'M1.5 scene insertion span differs');text=text.slice(0,a)+text.slice(b);
+ const changes=[
+  ["const sceneDomM13Selected = sceneDomM15Selected || existsSync","const sceneDomM13Selected = existsSync",1],
+  ["  if(sceneDomM15Selected&&!sceneDomM15Markers.every(file=>existsSync(path.join(root,file))))throw Error(sceneDomLabel+' incomplete declaration markers');\n","",1],
+  ["sceneDomSuccessor.","sceneDomM13Successor.",8],
+  ["Error(sceneDomLabel+'","Error('S3D1 M1.3",5]
+ ];
+ for(const [after,before,count]of changes){requireThat(text.split(after).length===count+1,'M1.5 scene inverse differs');text=text.split(after).join(before);}
+ return Buffer.from(text);
+}
 // These exact strict gate revisions change only the authenticated helper bootstrap.
 const m14StrictSourceSuccessors = [{"path":"tools/bitmap-resource-slot-types.mjs","predecessor":{"bytes":11184,"sha256":"cfce369d4a6eb4644305f47ae1ae4375d67f22173581a69bfd0fe1974fd1c5c9"},"current":{"bytes":11184,"sha256":"2f1c767bc1701c5bcf087b7eb48857006334ffc36c205a82cf81d9fa2b857315"}},{"path":"tools/bitmap-binding-ticket-types.mjs","predecessor":{"bytes":13887,"sha256":"cca972eaedd8ad923b0c740dcd79426bdf9377f16d1d5276f561b617463a89c9"},"current":{"bytes":13887,"sha256":"1e80a8a04ae0b35dd1084762172aed96e966fe3a3e9e47a86da383cd853bfb32"}},{"path":"tools/linear-layout-types.mjs","predecessor":{"bytes":11073,"sha256":"5714975b76d8a9d5173f0e01bf9b0008485ecbdb1eaf7028cad2fea7f1ae484e"},"current":{"bytes":11073,"sha256":"1d9a07307a4725eb8234cbb062f23474c2c4ce28ef0a43706a041cecbe246085"}},{"path":"tools/bitmap-button-types.mjs","predecessor":{"bytes":17175,"sha256":"a3b39cd4b01a07925acb380561ca7234cf7a8d954b83a75c5b0a1a3821eaf9aa"},"current":{"bytes":17175,"sha256":"74c55fbc100d49ed03278b2d8eb85d4833379a8219c932fce5325ec9cd448fe1"}},{"path":"tools/display-anchor-offsets-types.mjs","predecessor":{"bytes":16526,"sha256":"fd4f28d45b4324473e5887ec5236811cd00d6bd98498192c44c88252515f562c"},"current":{"bytes":16526,"sha256":"04fcc94308c627433412348d9088fb98d032808d9029ef5e8fc154cf28868ae4"}},{"path":"tools/display-container-add-child-at-types.mjs","predecessor":{"bytes":18718,"sha256":"4c95f93cae5b8bbc0336b2a8d9dcd50dbbe1789b08aa8b80cd5154043d3524b1"},"current":{"bytes":18718,"sha256":"64d67885a2c91e19beda887da12a44d09938d71afceff3c001a6cf51c4523563"}},{"path":"tools/display-container-child-index-types.mjs","predecessor":{"bytes":17112,"sha256":"23dcb3eccb938b0f0b2847715ba3a989bef86d05b40b4d35fda7c564f5d58fb1"},"current":{"bytes":17112,"sha256":"eea91a2a74aaf1a7d210a923106afd305e0028bd29a24482f9669a368d2c689f"}},{"path":"tools/display-container-remove-children-types.mjs","predecessor":{"bytes":15268,"sha256":"0114c56923843c8d2456bfd6ae7f9988d739f51c07ea4ced346e8bc1ec03064c"},"current":{"bytes":15268,"sha256":"df1dd4a369ac4d19f892aed8d684e5097f86935f470e6f02deed48c5c3f20159"}},{"path":"tools/sequence-playback-types.mjs","predecessor":{"bytes":19255,"sha256":"42a0bad83c5f68f74d2b1e26bd9c5183be9e94e1cb4c36a01a4b60c373e4a6ea"},"current":{"bytes":19255,"sha256":"904cc980cc1ae6bc8542ea37cf5f876020c8ba5576fd6f3066536e35de33c6b6"}}];
 const m14StrictBootstrap = {"before":"m13HelperPin.bytes !== 10785 || m13HelperPin.sha256 !== '61a14bb8be2162d861a26b822ded713c552b4032d755e291578b225cd13ef337'","after":"m13HelperPin.bytes !== 11980 || m13HelperPin.sha256 !== '7f4a82751f0e9e5b3f1b9de5a17816b20cd169ed02f9130b1a7c3989c547b634'"};
+// M1.5 keeps the exact M1.4 predecessor and reverses only its helper bootstrap.
+const m15StrictSourceSuccessors = [{"path":"tools/bitmap-resource-slot-types.mjs","predecessor":{"bytes":11184,"sha256":"2f1c767bc1701c5bcf087b7eb48857006334ffc36c205a82cf81d9fa2b857315"},"current":{"bytes":11184,"sha256":"c97f8b75d9103477c7f5e5932f0fb75e588d42eec31a73e6f66327fae9275eaf"}},{"path":"tools/bitmap-binding-ticket-types.mjs","predecessor":{"bytes":13887,"sha256":"1e80a8a04ae0b35dd1084762172aed96e966fe3a3e9e47a86da383cd853bfb32"},"current":{"bytes":13887,"sha256":"b36874eaab10b6c275424584d062b599f8e14a215336a7722e9a3783190a8782"}},{"path":"tools/linear-layout-types.mjs","predecessor":{"bytes":11073,"sha256":"1d9a07307a4725eb8234cbb062f23474c2c4ce28ef0a43706a041cecbe246085"},"current":{"bytes":11073,"sha256":"89cf1e6e5fd099871ff0d7388df1b0b6e6accd36c78aef9aa33e1e5426fa71c3"}},{"path":"tools/bitmap-button-types.mjs","predecessor":{"bytes":17175,"sha256":"74c55fbc100d49ed03278b2d8eb85d4833379a8219c932fce5325ec9cd448fe1"},"current":{"bytes":17175,"sha256":"919546bc07a51a78d499ae070618d7000e2d87774ad4af3c8a540b395924bbb8"}},{"path":"tools/display-anchor-offsets-types.mjs","predecessor":{"bytes":16526,"sha256":"04fcc94308c627433412348d9088fb98d032808d9029ef5e8fc154cf28868ae4"},"current":{"bytes":16526,"sha256":"9d37f5989501d97094b25a0d9130f98c906cdc60bea4b1f9a042279b7279f90c"}},{"path":"tools/display-container-add-child-at-types.mjs","predecessor":{"bytes":18718,"sha256":"64d67885a2c91e19beda887da12a44d09938d71afceff3c001a6cf51c4523563"},"current":{"bytes":18718,"sha256":"f25ded3a21e455bfc45d5181025d7fd6dcd43cd666a08bc246855fce4452ee91"}},{"path":"tools/display-container-child-index-types.mjs","predecessor":{"bytes":17112,"sha256":"eea91a2a74aaf1a7d210a923106afd305e0028bd29a24482f9669a368d2c689f"},"current":{"bytes":17112,"sha256":"fb2d518381df6f41795f198c5b353b03fc194361151bbdd5963fde78e7f38929"}},{"path":"tools/display-container-remove-children-types.mjs","predecessor":{"bytes":15268,"sha256":"df1dd4a369ac4d19f892aed8d684e5097f86935f470e6f02deed48c5c3f20159"},"current":{"bytes":15268,"sha256":"f03e8cfc77240d8ea40021333bf13e56cc15e0e0f469442fd6a72dee7e5bd31b"}},{"path":"tools/sequence-playback-types.mjs","predecessor":{"bytes":19255,"sha256":"904cc980cc1ae6bc8542ea37cf5f876020c8ba5576fd6f3066536e35de33c6b6"},"current":{"bytes":19255,"sha256":"6dffcc40c3654db9c9faa2f9983eafea7b6e91960aab20f279b0f5caba9a66be"}}];
+const m15StrictBootstrap = {"before":"m13HelperPin.bytes !== 11980 || m13HelperPin.sha256 !== '7f4a82751f0e9e5b3f1b9de5a17816b20cd169ed02f9130b1a7c3989c547b634'","after":"m13HelperPin.bytes !== 12701 || m13HelperPin.sha256 !== '0c8ae45e31b879ca8e84633091f3a5e938d7712c4f2dff7cf1af3013859b91ad'"};
 const inlineInventories=[
  ['mouseTypeExpectations','mouse-input',['positive','negative','import-negative','dom-free-negative']],
  ['spineTypeExpectations','spine-import-plan',['positive','negative','import-negative']]
@@ -258,26 +278,50 @@ export function prepareCompilerReview(root,options={}){
    const webgl=expected.path===m14InlineSourceSuccessor.path?m14InlineSourceSuccessor:null;
    if(webgl)requireThat(equal(latest,{path:webgl.path,...webgl.predecessor}),'M1.4 inline predecessor differs');
    const glLatest=webgl?{path:webgl.path,...webgl.current}:null,glSelected=glLatest!==null&&equal(current,glLatest);
+   const inlineRecovery=expected.path===m15InlineSourceSuccessor.path?m15InlineSourceSuccessor:null;
+   if(inlineRecovery)requireThat(glLatest!==null&&equal(glLatest,{path:inlineRecovery.path,...inlineRecovery.predecessor}),'M1.5 inline predecessor differs');
+   const delegateLatest=inlineRecovery?{path:inlineRecovery.path,...inlineRecovery.delegate}:null,sceneLatest=inlineRecovery?{path:inlineRecovery.path,...inlineRecovery.scene}:null;
+   const delegateSelected=delegateLatest!==null&&equal(current,delegateLatest),sceneSelected=sceneLatest!==null&&equal(current,sceneLatest);
    const strict=m14StrictSourceSuccessors.find(row=>row.path===expected.path),strictLatest=strict?{path:strict.path,...strict.current}:null;
    if(strict)requireThat(equal(latest,{path:strict.path,...strict.predecessor}),'M1.4 strict predecessor differs');
    const strictSelected=strictLatest!==null&&equal(current,strictLatest);
-   requireThat(equal(current,expected)||newer!==null&&equal(current,newer)||equal(current,latest)||glSelected||strictSelected,'Unreviewed inline policy source: '+expected.path);
+   const recovery=m15StrictSourceSuccessors.find(row=>row.path===expected.path),recoveryLatest=recovery?{path:recovery.path,...recovery.current}:null;
+   if(recovery)requireThat(strictLatest!==null&&equal(strictLatest,{path:recovery.path,...recovery.predecessor}),'M1.5 strict predecessor differs');
+   const recoverySelected=recoveryLatest!==null&&equal(current,recoveryLatest);
+   requireThat(equal(current,expected)||newer!==null&&equal(current,newer)||equal(current,latest)||glSelected||delegateSelected||sceneSelected||strictSelected||recoverySelected,'Unreviewed inline policy source: '+expected.path);
    const raw=fs.readFileSync(path.join(root,expected.path));requireThat(raw.length===current.bytes&&createHash('sha256').update(raw).digest('hex')===current.sha256,'Inline source changed while reading');
    // Verify the whole retained M1.3 program after removing the exact final line.
    // Original values and byte offsets remain authoritative for inline extraction.
-   if(glSelected){
-    const suffix=Buffer.from(webgl.appended),before=raw.subarray(0,raw.length-suffix.length);
-    requireThat(raw.subarray(raw.length-suffix.length).equals(suffix)&&before.length===webgl.predecessor.bytes
+   let inlineRaw=raw;
+   if(sceneSelected){
+    inlineRaw=m15ScenePredecessor(inlineRaw);
+    requireThat(inlineRaw.length===inlineRecovery.delegate.bytes&&createHash('sha256').update(inlineRaw).digest('hex')===inlineRecovery.delegate.sha256,'M1.5 scene predecessor bytes differ');
+   }
+   if(delegateSelected||sceneSelected){
+    const suffix=Buffer.from(inlineRecovery.appended),before=inlineRaw.subarray(0,inlineRaw.length-suffix.length);
+    requireThat(inlineRaw.subarray(inlineRaw.length-suffix.length).equals(suffix)&&before.length===inlineRecovery.predecessor.bytes
+     &&createHash('sha256').update(before).digest('hex')===inlineRecovery.predecessor.sha256,'M1.5 inline append differs');inlineRaw=before;
+   }
+   if(glSelected||delegateSelected||sceneSelected){
+    const suffix=Buffer.from(webgl.appended),before=inlineRaw.subarray(0,inlineRaw.length-suffix.length);
+    requireThat(inlineRaw.subarray(inlineRaw.length-suffix.length).equals(suffix)&&before.length===webgl.predecessor.bytes
      &&createHash('sha256').update(before).digest('hex')===webgl.predecessor.sha256,'M1.4 inline append differs');
    }
-   if(strictSelected){
+   let strictRaw=raw;
+   if(recoverySelected){
     const text=new TextDecoder('utf-8',{fatal:true}).decode(raw);
+    requireThat(text.split(m15StrictBootstrap.after).length===2,'M1.5 strict bootstrap differs');
+    strictRaw=Buffer.from(text.replace(m15StrictBootstrap.after,m15StrictBootstrap.before));
+    requireThat(strictRaw.length===recovery.predecessor.bytes&&createHash('sha256').update(strictRaw).digest('hex')===recovery.predecessor.sha256,'M1.5 strict predecessor bytes differ');
+   }
+   if(strictSelected||recoverySelected){
+    const text=new TextDecoder('utf-8',{fatal:true}).decode(strictRaw);
     requireThat(text.split(m14StrictBootstrap.after).length===2,'M1.4 strict bootstrap differs');
     const before=Buffer.from(text.replace(m14StrictBootstrap.after,m14StrictBootstrap.before));
     requireThat(before.length===strict.predecessor.bytes&&createHash('sha256').update(before).digest('hex')===strict.predecessor.sha256,'M1.4 strict predecessor bytes differ');
    }
    texts.set(expected.path,new TextDecoder('utf-8',{fatal:true}).decode(raw));sources.push(current);
-   sourceRevisions.push({base:expected,predecessor:newer,successor:latest,...(webgl?{m14Successor:glLatest}:{}),...(strict?{m14StrictSuccessor:strictLatest}:{}),current,selection:equal(current,expected)?'base':newer!==null&&equal(current,newer)?'predecessor':glSelected?'m14-current':strictSelected?'m14-strict-current':'current',admission:'not-evaluated'});
+   sourceRevisions.push({base:expected,predecessor:newer,successor:latest,...(webgl?{m14Successor:glLatest}:{}),...(inlineRecovery?{m15DelegateSuccessor:delegateLatest,m15SceneSuccessor:sceneLatest}:{}),...(strict?{m14StrictSuccessor:strictLatest}:{}),...(recovery?{m15StrictSuccessor:recoveryLatest}:{}),current,selection:equal(current,expected)?'base':newer!==null&&equal(current,newer)?'predecessor':glSelected?'m14-current':delegateSelected?'m15-delegate-current':sceneSelected?'m15-scene-current':strictSelected?'m14-strict-current':recoverySelected?'m15-strict-current':'current',admission:'not-evaluated'});
   }
   function span(owner,start,end){const text=texts.get(owner),raw=Buffer.from(text.slice(start,end));return {owner,startByte:Buffer.byteLength(text.slice(0,start)),endByte:Buffer.byteLength(text.slice(0,end)),bytes:raw.length,sha256:createHash('sha256').update(raw).digest('hex')};}
   // Only JSON initializers in authenticated revisions are supported. This is
@@ -312,7 +356,7 @@ export function prepareCompilerReview(root,options={}){
   }
   const sequence=gate('sequence-playback'),expected=literal(sequence,'expectedCurrentSourcePins');add(sequence,'expectedCurrentSourcePins',expected);
   conditions.push({kind:'sequence-negative-successor',gate:sequence,inventory:inventoryPath('sequence-playback'),lane:'negative',sourceAgreement:equal(expected,records.get('sequence-playback').currentDeclarationSuccessor.sourcePins),selector:'currentDeclarationSuccessor.sourcePins',admission:'not-evaluated'});
-  if(['predecessor','current','m14-strict-current'].includes(sourceRevisions.find(row=>row.current.path===sequence)?.selection)){
+  if(['predecessor','current','m14-strict-current','m15-strict-current'].includes(sourceRevisions.find(row=>row.current.path===sequence)?.selection)){
    const incremental=literal(sequence,'m12IncrementalSourcePins');add(sequence,'m12IncrementalSourcePins',incremental);
    const current=expected.map(row=>observe('repository',row.path));
    conditions.push({kind:'sequence-source-successor',gate:sequence,baseBinding:'expectedCurrentSourcePins',currentBinding:'m12IncrementalSourcePins',

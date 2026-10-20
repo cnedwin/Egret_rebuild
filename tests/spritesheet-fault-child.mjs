@@ -18,7 +18,10 @@ const historicalPins = [
 ];
 function digest(bytes) { return createHash('sha256').update(bytes).digest('hex'); }
 const m13Pins = [[bitmapUrl,21049,'b7d91499cb36d73c6b0b0767ec90080b2acaec52a2d0ccf0a785d793b48b6544'],[sheetUrl,11824,'5f15aca4af6961cfd65f0e4c5243f7f81ccac9267056815d2401226b4d8dd00d']];
-const pins = historicalPins.every(([url,bytes,sha])=>{const raw=readFileSync(url);return raw.length===bytes&&digest(raw)===sha;})?historicalPins:m13Pins;
+// Admit the same complete M1.5 pair as the parent before installing the original one-module hook.
+const m15Pins = [[bitmapUrl,23075,'075a6f146714c98fec748aeabe52e3cf38d0213eb6a4f868d7fb846bb59196b8'],[sheetUrl,11824,'5f15aca4af6961cfd65f0e4c5243f7f81ccac9267056815d2401226b4d8dd00d']];
+const pins = [historicalPins,m13Pins,m15Pins].find(pair=>pair.every(([url,bytes,sha])=>{const raw=readFileSync(url);return raw.length===bytes&&digest(raw)===sha;}));
+assert.ok(pins, 'SS1_UNIT_COMPLETE_QUALIFIED_PAIR');
 function assertDisk() {
   for (const [url, bytes, sha] of pins) {
     const actual = readFileSync(url);

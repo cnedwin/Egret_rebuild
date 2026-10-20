@@ -15,6 +15,10 @@
     "./atlas": {
       "types": "./dist/atlas/index.d.ts",
       "import": "./dist/atlas/index.js"
+    },
+    "./resources": {
+      "types": "./dist/resources/index.d.ts",
+      "import": "./dist/resources/index.js"
     }
   },
   "dependencies": {

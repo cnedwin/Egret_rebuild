@@ -142,7 +142,7 @@ async function main(){const recipes=await profile();
   const retain=item=>{const row=rowOf(item),prior=retained.get(row.relative);
     requirePolicy(!prior||prior.bytes===row.bytes&&prior.sha256===row.sha256,'FREEZE_CHANGED_DURING_GRAPH');
     if(!prior){total+=row.bytes;requirePolicy(total<=BUILD.inputBytes,'FREEZE_GRAPH_INPUT_BYTES');retained.set(row.relative,row);}};
-  const graph=await collectPublicGraph(repository,retain);
+  const graph=await collectPublicGraph(repository,retain,'m15-textured');
   for(const relative of [...HARNESS,...OWN,'pnpm-lock.yaml','source-origin.json',SELF,TEMPLATE,RECIPES])retain(await exact(relative));
   const controls=recipes.controls.map((recipe,index)=>{const {id,checks,target,before,after}=recipe;
     requirePolicy(id===CONTROL_IDS[index]&&typeof target==='string'&&target.startsWith('packages/engine/dist/')&&target!==REGISTRY

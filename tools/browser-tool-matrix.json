@@ -27,6 +27,11 @@
       "channel": true
     },
     {
+      "id": "resource-recovery",
+      "script": "tools/verify-resource-recovery.mjs",
+      "channel": true
+    },
+    {
       "id": "text",
       "script": "tools/verify-canvas-text-canvas.mjs",
       "channel": false

@@ -24,8 +24,8 @@ export function projectImportMap(html,imports){
   const maps=[...html.matchAll(/<script type="importmap">([^<]*)<\/script>/g)];
   if(maps.length!==1)throw new Error('HTML import-map anchor is not unique');
   const original=JSON.parse(maps[0][1]);
-  const expected={'@egret/engine':'/packages/engine/dist/index.js','@egret/engine/web':'/packages/engine/dist/web/index.js','@egret/runtime':'/packages/runtime/dist/index.js','@egret/contracts':'/packages/contracts/dist/index.js','#egret-textured-frame-state':'/packages/engine/dist/internal/texturedFrameState.js'};
-  if(original===null||typeof original!=='object'||!same(Object.keys(original),['imports'])||original.imports===null||typeof original.imports!=='object'||!same(Object.keys(original.imports).sort(),Object.keys(expected).sort())||Object.entries(expected).some(([key,value])=>original.imports[key]!==value))throw new Error('Original public import-map aliases do not match the selected five entry paths');
+  const expected={'@egret/engine':'/packages/engine/dist/index.js','@egret/engine/web':'/packages/engine/dist/web/index.js','@egret/runtime':'/packages/runtime/dist/index.js','@egret/contracts':'/packages/contracts/dist/index.js','@egret/contracts/resources':'/packages/contracts/dist/resources/index.js','#egret-textured-frame-state':'/packages/engine/dist/internal/texturedFrameState.js'};
+  if(original===null||typeof original!=='object'||!same(Object.keys(original),['imports'])||original.imports===null||typeof original.imports!=='object'||!same(Object.keys(original.imports).sort(),Object.keys(expected).sort())||Object.entries(expected).some(([key,value])=>original.imports[key]!==value))throw new Error('Original public import-map aliases do not match the selected six entry paths');
   return{html:html.replace(maps[0][0],'<script type="importmap">'+JSON.stringify({imports})+'</script>'),adaptation:{original,served:{imports}}};
 }
 

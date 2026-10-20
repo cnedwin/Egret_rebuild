@@ -91,7 +91,9 @@ function externalNew(target) {
 // Retain the original collector identity; M1.3 adds only the exact Host sharedB1 edge.
 const historicalCollectorSource = {bytes:25753,sha256:'10c52ae5f7c33d1550c9231956297bb041c7a8cb67af8c19b0fdf41842bc4cd4'};
 const m13CollectorSourceSuccessor = {"bytes":25784,"sha256":"bc0ce6ccb3ae4ceed8797a4350fa9a7c4303d5e1091b2d7847837d8073abec8b"};
-const collector = read(repository, 'tools/resource-scene-boundary.mjs', m13CollectorSourceSuccessor);
+// M1.5 retains the predecessor identities and selects the reviewed exact resource-entry boundary.
+const m15CollectorSourceSuccessor = {bytes:26061,sha256:'3301aeba8e07cd037f86e621a3263accd990e305a1c0ecee3c0a43c9d1adb39e'};
+const collector = read(repository, 'tools/resource-scene-boundary.mjs', m15CollectorSourceSuccessor);
 const { collectResourceSceneSource } = await import(pathToFileURL(path.join(repository, 'tools/resource-scene-boundary.mjs')).href);
 const collected = await collectResourceSceneSource({repository});
 const routes = new Map([...collected.routes].filter(([url]) => ![
@@ -126,9 +128,12 @@ if(config.expectedPhase==='RED')equal({path:absent[0],code:config.caseContract.m
   {path:'examples/prepared-resource-groups/application.mjs',code:'P03_MISSING_PREPARED_RESOURCE_APPLICATION'},'Application-only missing module contract differs');
 requireThat(exactKeys(config.oracle,['path','bytes','sha256'])&&path.isAbsolute(config.oracle.path),'Exact independent oracle identity required');
 const oracleRelative='tools/prepared-resource-groups/oracle.mjs';
+// Preserve the original oracle identity; current admission selects the reviewed exact font-patch successor.
+const historicalOracleSource = {bytes:7944,sha256:'d213b1c082ccb3290866928c8180be6af43de11101e6213d367fd227c86d526c'};
+const m15FontPatchOracleSourceSuccessor = {bytes:8179,sha256:'fdf9291378bace50f7e887cc20977c32b5ceba6ea184c5632d5a926e675a244c'};
 requireThat(identity.ownerRelativePath(repository,config.oracle.path)===oracleRelative,'Only repository-owned independent oracle path admitted');
 equal({bytes:config.oracle.bytes,sha256:config.oracle.sha256},
-  {bytes:7944,sha256:'d213b1c082ccb3290866928c8180be6af43de11101e6213d367fd227c86d526c'},'Original independent oracle config pin differs');
+  m15FontPatchOracleSourceSuccessor,'Original independent oracle config pin differs');
 const oracleInput=read(repository,oracleRelative,config.oracle);
 // Raw authentication and strict identity precede any oracle evaluation.
 const {comparePreparedFrame}=await import(pathToFileURL(path.join(repository,oracleRelative)).href);

@@ -34,7 +34,7 @@ report.head=execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).
 report.node=process.version;
 const passSource=await readFile(resolve(root,'packages/engine/web/webgpuPass.ts'),'utf8');
 report.wgslHash=hash(passSource.match(/const SHADER = `([\s\S]*?)`;/)[1]);
-const entries={'#egret-textured-frame-state':'packages/engine/dist/internal/texturedFrameState.js','@egret/engine':'packages/engine/dist/index.js','@egret/engine/web':'packages/engine/dist/web/index.js','@egret/runtime':'packages/runtime/dist/index.js','@egret/contracts':'packages/contracts/dist/index.js'};
+const entries={'#egret-textured-frame-state':'packages/engine/dist/internal/texturedFrameState.js','@egret/engine':'packages/engine/dist/index.js','@egret/engine/web':'packages/engine/dist/web/index.js','@egret/runtime':'packages/runtime/dist/index.js','@egret/contracts':'packages/contracts/dist/index.js','@egret/contracts/resources':'packages/contracts/dist/resources/index.js'};
 async function closure(entry) {
   const visited=new Set();
   async function walk(file){if(visited.has(file))return;visited.add(file);

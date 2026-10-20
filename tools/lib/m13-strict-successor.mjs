@@ -7,6 +7,8 @@ import {spawnSync} from 'node:child_process';
 import path from 'node:path';
 import {fingerprintFile,ownerRelativePath,samePhysicalPath} from './file-identity.mjs';
 const DATA={path:'tools/m13-strict-successors.json',bytes:449376,sha256:'c7843db0289d7535c0196379631e5da9ba1b6a1edef7ac996a3793900f7139c7'};
+const M15_DATA={"path":"tools/m15-strict-successors.json","bytes":467926,"sha256":"f130ab6234fc6fa3f27424c4152f68f243ff3c3921b93324ba92d5fd14a49724"};
+const M15_SELECTION=['packages/contracts/dist/ResourceManifest.d.ts','packages/engine/dist/manifestResourceTypes.d.ts'];
 const IDS=['atlas-frame','atlas-import','bitmap-resource-slot','bitmap-binding-ticket','linear-layout','bitmap-button',
  'display-anchor-offsets','display-container-add-child-at','display-container-child-index','display-container-remove-children',
  'nine-slice-bitmap','sequence-playback'];
@@ -46,9 +48,12 @@ function m14EnginePackagePin(owner, expected) {
 export function selectM13StrictSuccessor(root,id,inventory){
  if(!IDS.includes(id))fail('unknown owner');
  const helperPin=fingerprintFile(root,'tools/lib/m13-strict-successor.mjs');
- const dataPin=fingerprintFile(root,DATA.path);if(!equal(dataPin,DATA))fail('changed successor data');
- const data=JSON.parse(readFileSync(path.join(root,DATA.path),'utf8'));
- if(data.schemaVersion!==1||data.kind!=='M13_FINITE_STRICT_DECLARATION_SUCCESSORS'
+ const selected=M15_SELECTION.some(file=>existsSync(path.join(root,file)))?M15_DATA:DATA;
+ if(!equal(fingerprintFile(root,DATA.path),DATA))fail('changed successor data');
+ const dataPin=fingerprintFile(root,selected.path);if(!equal(dataPin,selected))fail('changed successor data');
+ const data=JSON.parse(readFileSync(path.join(root,selected.path),'utf8'));
+ if(selected===M15_DATA&&(!equal(data.predecessor,DATA)||!equal(data.selectionPaths,M15_SELECTION)))fail('changed M1.5 predecessor or selection');
+ if(data.schemaVersion!==1||data.kind!==(selected===M15_DATA?'M15_FINITE_STRICT_DECLARATION_SUCCESSORS':'M13_FINITE_STRICT_DECLARATION_SUCCESSORS')
   ||data.status!=='ACTUAL_OBSERVATIONS_PENDING_GATE_REPLAY'||!equal(data.owners.map(row=>row.id),IDS)
   ||data.evidence.identitiesStable!==true||data.evidence.lanes!==28)fail('unobserved or incomplete successor');
  const owner=data.owners.find(row=>row.id===id);
@@ -100,7 +105,7 @@ export function selectM13StrictSuccessor(root,id,inventory){
  const libraryPaths=[...new Set(owner.groups.flatMap(group=>group.nativeLibraryClosure))];
  function recheck(){
   if(!equal(fingerprintFile(root,'tools/lib/m13-strict-successor.mjs'),helperPin)
-   ||!equal(fingerprintFile(root,DATA.path),DATA)||!equal(fingerprintFile(root,owner.inventory.path),owner.inventory))fail('successor/history changed during replay');
+   ||!equal(fingerprintFile(root,DATA.path),DATA)||!equal(fingerprintFile(root,selected.path),selected)||!equal(fingerprintFile(root,owner.inventory.path),owner.inventory))fail('successor/history changed during replay');
   for(const row of [...inputPins,...selectedPins,...sourcePins])if(!equal(fingerprintFile(root,row.path),row))fail('source/config/compiler identity changed: '+row.path);
   for(const row of data.compiler.wrapper)if(!equal(fingerprintFile(wrapperOwner,row.path),row))fail('compiler wrapper changed during replay');
   for(const row of [...currentNativePins,...atlasPortable])if(!equal(fingerprintFile(nativeOwner,row.path),row))fail('selected native artifact changed');
