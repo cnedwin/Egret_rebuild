@@ -4,13 +4,19 @@ English | [简体中文](../../Cns/docs/resource-recovery-evidence.md)
 
 2026-10-20 · M1.5 · Verification checkpoint
 
+## Delivery follow-up — 2026-10-21
+
+[PR #79](https://github.com/cnedwin/Egret_rebuild/pull/79) merged M1.5 into main `4924b471b52927184252191055f902c30c29af52`. [CI run 39455045264](https://github.com/cnedwin/Egret_rebuild/actions/runs/39455045264) qualified candidate `bd8df26a1bd268ec72b7d86a7136bf610fbe3457`: macOS CPU, Ubuntu CPU, Windows and M0 / merge-ready all completed successfully. The Windows integrated gate passed **290 publication, 4,528 core and 160 Spine F2 tests**, with zero failures, cancellations and skips in each group.
+
+Together with independent source/result review, the seven fixed C7 recovery cases and twenty-four affected browser suites (thirty-six actual calls), this records M1.5 desktop engineering delivery. The earlier full local attempt remains FAIL; the later successful complete CI is a separate execution. The original verification cutoff and its pending states below remain historical records. Formal paired M1.2 performance, unavailable devices and the other external qualifications remain open.
+
 ## Delivered behavior and acceptance boundary
 
-The implementation connects canonical resource manifests, dependency-aware groups, bounded byte loading and integrity checks, staged frame uploads, and generation-aware shared WebGL2/WebGPU recovery. The [contract](resource-recovery-contract.md) defines the interfaces, ownership and fixed acceptance profile. This record does not yet qualify the complete M1.5 package or formal M1.2 performance.
+The implementation connects canonical resource manifests, dependency-aware groups, bounded byte loading and integrity checks, staged frame uploads, and generation-aware shared WebGL2/WebGPU recovery. The [contract](resource-recovery-contract.md) defines the interfaces, ownership and fixed acceptance profile. The dated follow-up above records M1.5 desktop engineering delivery; formal M1.2 performance and the external qualifications below remain separate.
 
 The code builds on Egret's existing AssetManager, leases, capture registry and Host lifecycle. Source, tests and procedural PNG fixtures are independently authored first-party work with AI assistance, under Apache-2.0. Existing third-party dependency and font notices remain applicable. No Chromium implementation is incorporated into the engine.
 
-## Verified results
+## Verification snapshot — 2026-10-20
 
 Verification cutoff: 2026-10-20, after all twenty-four planned browser suites completed thirty-six actual calls with PASS. All twenty-four suites have completed independent result review, including the final eight suites. This table records that checkpoint; delivery and merge results are recorded in the repository's [pull requests](https://github.com/cnedwin/Egret_rebuild/pulls).
 
@@ -66,10 +72,10 @@ The narrow repairs preserve original identities and controls. The PNG checker ch
 | Nine-slice headless example | Two frames with preserved saved geometry, one load and one disposal, closed Scope and zero timers. Native pixels were not verified by this example. |
 | Knowledge base | 225 records, 407 Markdown files, 2,595 links and 1,573 references checked, with zero issues at that recorded state. Later documentation edits require the normal final check. |
 
-These saved focused and follow-up results have stable recorded inputs and empty stderr. They close twenty-three named local evidence roles without changing the failed aggregate into a pass. The recorder includes compiled .js and .d.ts files in its declared source/tool/test/example trees. It omits the knowledge-base tree and entries named node_modules, ending in .tsbuildinfo or containing .generated.; selected compiler and dependency owners are captured separately. Separately bound source, diagnostic and build evidence retains its stated scope rather than becoming retroactive snapshots. A fresh complete protected CI run is still required for the final merge candidate.
+These saved focused and follow-up results have stable recorded inputs and empty stderr. They close twenty-three named local evidence roles without changing the failed aggregate into a pass. The recorder includes compiled .js and .d.ts files in its declared source/tool/test/example trees. It omits the knowledge-base tree and entries named node_modules, ending in .tsbuildinfo or containing .generated.; selected compiler and dependency owners are captured separately. Separately bound source, diagnostic and build evidence retains its stated scope rather than becoming retroactive snapshots. At that original checkpoint, a fresh complete protected CI run was still required; the later completed run is recorded in the delivery follow-up above.
 
 ## Remaining qualification
 
-At the verification cutoff above, all planned browser results have passed independent review. Final package source/result/bilingual review and complete protected merge checks remain outstanding. Delivery is recorded in the actual PR history; no new release version is declared here.
+At the original verification cutoff above, all planned browser results had passed independent review, while final package source/result/bilingual review and protected merge checks were still outstanding. Those delivery requirements subsequently completed through PR #79, as recorded above. No new release version is declared here.
 
 Formal paired M1.2 timing follows a stable M1.5 candidate. Functional checks, operation counts and C7 duration results do not substitute for that measurement. Physical RAM/VRAM reclamation, OS process retirement, phone power/thermal behavior, unavailable hosts, full Spine and complete UI remain outside this result. Each browser suite retains its own sampled-pixel or full-region boundary; the combined regression is not a general full-frame RGB equivalence claim.

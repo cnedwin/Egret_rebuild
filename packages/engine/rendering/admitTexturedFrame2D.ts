@@ -52,7 +52,7 @@ function crop(region: TextureRegion2D, image: ImageData2D): void {
 
 /** Admit an already owner-authenticated frame. This helper grants no frame authority. */
 export function admitTexturedFrame2D(frame: TexturedRenderFrame2D, options: TexturedFrameAdmissionOptions2D,
-    budget: TexturedPreparationBudget2D): TexturedFrameAdmission2D {
+    budget: TexturedPreparationBudget2D, reuseValidatedClips = false): TexturedFrameAdmission2D {
     if (frame.profile !== TEXTURED_FRAME_PROFILE_2D || !Number.isSafeInteger(frame.frameId) || frame.frameId <= 0 ||
         !Number.isFinite(frame.width) || frame.width <= 0 || !Number.isFinite(frame.height) || frame.height <= 0) fail('invalid');
     color(frame.clearColor); alpha(frame.clearAlpha);
@@ -88,28 +88,60 @@ export function admitTexturedFrame2D(frame: TexturedRenderFrame2D, options: Text
     }
     const commands: AdmittedTexturedCommand2D[] = [];
     let clipsCharged = 0, sourceCharged = 0;
-    for (let commandIndex = 0; commandIndex < commandCount; commandIndex++) {
-        const command = frame.commands[commandIndex]!;
-        if (command.kind !== 'rect' && command.kind !== 'image' && command.kind !== 'mesh') fail('invalid');
-        const geometry = command.kind === 'mesh' ? frame.geometries[index(command.geometryIndex, geometryCount)]! : undefined;
-        if (geometry !== undefined) {
-            // Storage deduplication never discounts repeated source work; debit before matrix/indices.
-            if (geometry.triangleCount > options.maxSourceTriangles - sourceCharged) fail('budget');
-            budget.admitSourceTriangles(geometry.triangleCount);
-            sourceCharged += geometry.triangleCount;
-        }
-        matrix(command.matrix); alpha(command.alpha);
-        const image = command.kind === 'rect' ? undefined : frame.images[index(command.imageIndex, imageCount)]!;
-        if (image !== undefined && command.kind !== 'rect') crop(command.sourceRect, image);
-        if (command.kind === 'rect') color(command.color);
-        if (command.kind !== 'mesh') rectangle(command.matrix, command.rect, ratio);
-        const clipCount = length(command.clips.length, Math.min(262144, options.maxClipRectangles) - clipsCharged);
-        clipsCharged += clipCount;
-        for (let i = 0; i < clipCount; i++) {
-            const clip: ClipRectangle2D = command.clips[i]!;
-            rectangle(clip.matrix, clip.rect, ratio);
-        }
-        commands.push({ command, commandIndex, ...(image === undefined ? {} : { image }), ...(geometry === undefined ? {} : { geometry }) });
+    // Only the ordinary Host selects this after owned-frame authentication, with
+    // immutable first-party clips, captured options and its fresh stock ledger.
+    // Direct/default and scene/B1 calls keep every original numeric read.
+    let validatedClips: ClipRectangle2D[] | undefined;
+    let validatedClipCount = 0;
+    if (reuseValidatedClips) {
+        try { validatedClips = []; }
+        catch { /* Optional scratch allocation cannot replace required admission. */ }
     }
-    return { frame, width, height, uniqueGeometryBytes, commands };
+    try {
+        for (let commandIndex = 0; commandIndex < commandCount; commandIndex++) {
+            const command = frame.commands[commandIndex]!;
+            if (command.kind !== 'rect' && command.kind !== 'image' && command.kind !== 'mesh') fail('invalid');
+            const geometry = command.kind === 'mesh' ? frame.geometries[index(command.geometryIndex, geometryCount)]! : undefined;
+            if (geometry !== undefined) {
+                // Storage deduplication never discounts repeated source work; debit before matrix/indices.
+                if (geometry.triangleCount > options.maxSourceTriangles - sourceCharged) fail('budget');
+                budget.admitSourceTriangles(geometry.triangleCount);
+                sourceCharged += geometry.triangleCount;
+            }
+            matrix(command.matrix); alpha(command.alpha);
+            const image = command.kind === 'rect' ? undefined : frame.images[index(command.imageIndex, imageCount)]!;
+            if (image !== undefined && command.kind !== 'rect') crop(command.sourceRect, image);
+            if (command.kind === 'rect') color(command.color);
+            if (command.kind !== 'mesh') rectangle(command.matrix, command.rect, ratio);
+            const clipCount = length(command.clips.length, Math.min(262144, options.maxClipRectangles) - clipsCharged);
+            clipsCharged += clipCount;
+            for (let i = 0; i < clipCount; i++) {
+                const clip: ClipRectangle2D = command.clips[i]!;
+                let validated = false;
+                if (validatedClips !== undefined) {
+                    for (let retained = 0; retained < validatedClipCount; retained++) {
+                        if (validatedClips[retained] === clip) { validated = true; break; }
+                    }
+                }
+                if (!validated) {
+                    // Required validation stays outside optional storage catches.
+                    rectangle(clip.matrix, clip.rect, ratio);
+                    if (validatedClips !== undefined && validatedClipCount < 64) {
+                        try { validatedClips[validatedClipCount] = clip; validatedClipCount++; }
+                        catch {
+                            // Drop only optional reuse; subsequent occurrences keep the original path.
+                            validatedClips.length = 0; validatedClips = undefined; validatedClipCount = 0;
+                        }
+                    }
+                }
+            }
+            commands.push({ command, commandIndex, ...(image === undefined ? {} : { image }), ...(geometry === undefined ? {} : { geometry }) });
+        }
+        return { frame, width, height, uniqueGeometryBytes, commands };
+    } finally {
+        // Internal indexed storage invokes no caller-overridable array method.
+        // Release all successful references on both ordinary and exceptional exits.
+        if (validatedClips !== undefined) validatedClips.length = 0;
+        validatedClips = undefined;
+    }
 }

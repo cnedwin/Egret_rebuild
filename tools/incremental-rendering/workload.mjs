@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
-// Fixed M1.2 input fixture; no browser access, private SDK import,
-// native instrumentation, scheduling, readback, or timing is performed here.
+// Fixed M1.2 input fixture and injected Host timing delegate. No browser access,
+// private SDK import, native instrumentation, scheduling or readback.
+// Timing uses only the collector-supplied clock.
 // Inject the namespace from built public @egret/engine and a caller-created Host:
 //   const fixture = await createWorkload({ sdk, host, variant: 'scale' });
 // The caller owns any GPU device borrowed by that Host. This fixture owns the
@@ -203,6 +204,54 @@ export async function createWorkload({ sdk, host, variant = 'scale' }) {
   }
 }
 
+/** A collector-owned public adapter; original Host methods keep their receiver and ownership. */
+export function createHostTimingDelegate(host, now) {
+  const apply = Reflect.apply, renderer = host.renderTexturedFrame;
+  const start = host.start, stop = host.stop, close = host.close, timeout = host.setTimeout, legacy = host.renderFrame;
+  if (typeof renderer !== 'function' || typeof close !== 'function' || typeof timeout !== 'function' || typeof now !== 'function'
+    || start !== undefined && typeof start !== 'function' || stop !== undefined && typeof stop !== 'function'
+    || legacy !== undefined && typeof legacy !== 'function') throw Error('HOST_DELEGATE_PORT');
+  let active, observedFrame, clockFailure;
+  function stamp(row, field) {
+    // A clock observation must not replace an exception from the real renderer.
+    try { row[field] = now(); } catch (cause) { clockFailure = cause; }
+  }
+  const adapter = Object.freeze({
+    surface: host.surface, texturedFrameProfile: host.texturedFrameProfile,
+    ...(start === undefined ? {} : { start() { return apply(start, host, []); } }),
+    ...(stop === undefined ? {} : { stop() { return apply(stop, host, []); } }),
+    close() { return apply(close, host, []); },
+    setTimeout(callback, delayMs) { return apply(timeout, host, [callback, delayMs]); },
+    ...(legacy === undefined ? {} : { renderFrame(frame) { return apply(legacy, host, [frame]); } }),
+    renderTexturedFrame(frame) {
+      const row = active;
+      if (row === undefined) return apply(renderer, host, [frame]);
+      const first = row.hostCalls++ === 0;
+      if (first) { observedFrame = frame; stamp(row, 'hostEnter'); }
+      try { return apply(renderer, host, [frame]); }
+      finally { if (first) stamp(row, 'hostExit'); }
+    },
+  });
+  return Object.freeze({ host: adapter,
+    begin(row) {
+      if (active !== undefined) throw Error('HOST_OBSERVATION_ACTIVE');
+      row.hostEnter = NaN; row.hostExit = NaN; row.hostCalls = 0; row.hostFrameId = -1;
+      active = row; observedFrame = undefined; clockFailure = undefined;
+    },
+    end(frame) {
+      const row = active, captured = observedFrame, failure = clockFailure;
+      active = undefined; observedFrame = undefined; clockFailure = undefined;
+      // A failed Engine call retains its original failure; the caller saves its partial row.
+      if (frame === undefined) return;
+      if (!row || row.hostCalls !== 1) throw Error('HOST_CALL_COUNT');
+      if (captured !== frame || !Number.isSafeInteger(frame.frameId) || frame.frameId <= 0) throw Error('HOST_FRAME_IDENTITY');
+      if (failure !== undefined || !Number.isFinite(row.hostEnter) || !Number.isFinite(row.hostExit)
+        || row.hostEnter < 0 || row.hostExit < row.hostEnter) throw Error('HOST_CLOCK');
+      row.hostFrameId = frame.frameId;
+    },
+  });
+}
+
 /** Fixed storage only. Callers supply actual timestamps; no samples are invented. */
 export function createSampleStore() {
   const ordinal = new Float64Array(SAMPLE_CAPACITY), rafTimestamp = new Float64Array(SAMPLE_CAPACITY);
@@ -216,16 +265,45 @@ export function createSampleStore() {
     get length() { return length; },
     // Flag bit 0: page visible; bit 1: document has focus. These are page-level
     // observations, not proof of OS foreground, lack of occlusion, or scanout.
+    // Preserve each clock's raw values and ordering; independently sampled RAF
+    // timestamps do not impose an ordering on performance.now CPU observations.
     append(frameOrdinal, raf, beforeUpdate, afterUpdate, beforeRender, afterRender, visible, focused) {
       if (length === SAMPLE_CAPACITY) throw new Error('SAMPLE_CAPACITY');
       if (frameOrdinal !== length || !Number.isFinite(raf) || !Number.isFinite(beforeUpdate) || !Number.isFinite(afterUpdate) ||
-          !Number.isFinite(beforeRender) || !Number.isFinite(afterRender) || raf < 0 || beforeUpdate < raf ||
+          !Number.isFinite(beforeRender) || !Number.isFinite(afterRender) || raf < 0 || beforeUpdate < 0 ||
           afterUpdate < beforeUpdate || beforeRender < afterUpdate || afterRender < beforeRender ||
           (length > 0 && raf <= rafTimestamp[length - 1]) || typeof visible !== 'boolean' || typeof focused !== 'boolean') throw new Error('SAMPLE_INVALID');
       ordinal[length] = frameOrdinal; rafTimestamp[length] = raf;
       updateStart[length] = beforeUpdate; updateEnd[length] = afterUpdate;
       renderStart[length] = beforeRender; renderEnd[length] = afterRender;
       flags[length] = (visible ? 1 : 0) | (focused ? 2 : 0); length++;
+    },
+  });
+}
+
+/** Fixed admission decisions; a full Host never consumes a workload ordinal. */
+export function capacityDecision(current, entry, start, duration) {
+  if (current?.state !== 'active' || current.firstFailure !== null || current.callbackFailureCount !== 0
+    || !Number.isSafeInteger(current.pendingFrames) || current.pendingFrames < 0 || current.pendingFrames > 2
+    || ![entry,start,duration].every(Number.isFinite) || start < 0 || entry < start || duration <= 0) throw Error('CAPACITY_STATE');
+  return entry - start >= duration ? 3 : current.pendingFrames === 2 ? 2 : 1;
+}
+export const CALLBACK_COLUMNS = Object.freeze(['index','rafTimestamp','entry','decision','pending','ordinal','frameId',
+  'updateStart','updateEnd','captureStart','captureEnd','renderStart','renderEnd','hostEnter','hostExit','hostCalls','hostFrameId','exit','flags']);
+/** Raw bounded callback columns. NaN marks absent components, never a zero CPU sample. */
+export function createCallbackStore() {
+  const columns = Object.fromEntries(CALLBACK_COLUMNS.map(name => [name, new Float64Array(SAMPLE_CAPACITY).fill(NaN)]));
+  let length = 0;
+  return Object.freeze({ columns, capacity:SAMPLE_CAPACITY, get length(){return length;},
+    append(row) {
+      if (length === SAMPLE_CAPACITY) throw Error('CALLBACK_CAPACITY');
+      if (row.index !== length || length && !Number.isFinite(columns.exit[length-1])) throw Error('CALLBACK_ORDER');
+      for (const name of CALLBACK_COLUMNS) if (name !== 'exit') columns[name][length] = row[name];
+      return length++;
+    },
+    finish(index, exit) {
+      if (index !== length-1 || Number.isFinite(columns.exit[index]) || !Number.isFinite(exit) || exit < columns.entry[index]) throw Error('CALLBACK_FINISH');
+      columns.exit[index] = exit;
     },
   });
 }

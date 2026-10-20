@@ -87,8 +87,12 @@
         ]
       ],
       "target": "packages/engine/dist/rendering/prepareTexturedMesh2D.js",
-      "before": "        for (const clip of clips)\n            polygon = clipPolygon2D(preparation, polygon, clip, policy.normalize, attachTexturedMeshAttributes2D, policy);",
-      "after": "        for (const clip of clips)\n            clipPolygon2D(preparation, polygon, clip, policy.normalize, attachTexturedMeshAttributes2D, policy);"
+      "before": "        for (const clip of clips)\n            polygon = preparation.tryContainedClip(polygon, clip, 'mesh') ?? clipPolygon2D(preparation, polygon, clip, policy.normalize, attachTexturedMeshAttributes2D, policy, containedClipping ? 'mesh' : undefined);",
+      "after": "        for (const clip of clips)\n            preparation.tryContainedClip(polygon, clip, 'mesh') ?? clipPolygon2D(preparation, polygon, clip, policy.normalize, attachTexturedMeshAttributes2D, policy, containedClipping ? 'mesh' : undefined);",
+      "historicalM15": {
+        "before": "        for (const clip of clips)\n            polygon = clipPolygon2D(preparation, polygon, clip, policy.normalize, attachTexturedMeshAttributes2D, policy);",
+        "after": "        for (const clip of clips)\n            clipPolygon2D(preparation, polygon, clip, policy.normalize, attachTexturedMeshAttributes2D, policy);"
+      }
     },
     {
       "id": "C07-double-premultiply",

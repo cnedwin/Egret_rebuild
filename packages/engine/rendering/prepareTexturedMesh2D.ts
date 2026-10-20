@@ -3,7 +3,7 @@ import type { PreparedCacheSlot2D } from './preparedFrameCache2D.js';
 import { noteOwnedPreparationFailure } from './ownedPreparationFailure2D.js';
 import type { Matrix2D, TexturedGeometry2D, TexturedMeshCommand2D } from '@egret/contracts';
 import { Preparation, GeometryPreparationError, coordinate, clipPolygon2D } from './prepareRectangles2D.js';
-import type { CrossingAttributes, RectanglePreparationOptions } from './prepareRectangles2D.js';
+import type { CrossingAttributes, RectanglePreparationOptions, ClipRectanglePreparationContext2D } from './prepareRectangles2D.js';
 import { createMeshClipPolicy2D } from './texturedPreparationBudget2D.js';
 import type { MeshPoint2D, TexturedPreparationBudget2D } from './texturedPreparationBudget2D.js';
 
@@ -58,7 +58,8 @@ function referencedPoint(geometry: TexturedGeometry2D, index: number): MeshPoint
 }
 /** Consume authentic admitted geometry; its whole source count was charged by metadata admission. */
 export function prepareTexturedMesh2D(command: TexturedMeshCommand2D, geometry: TexturedGeometry2D,
-    width: number, height: number, options: RectanglePreparationOptions, budget: TexturedPreparationBudget2D, cacheSlot?: PreparedCacheSlot2D): PreparedMesh2D {
+    width: number, height: number, options: RectanglePreparationOptions, budget: TexturedPreparationBudget2D, cacheSlot?: PreparedCacheSlot2D, containedClipping = false,
+    clipContext?: ClipRectanglePreparationContext2D): PreparedMesh2D {
     const ratio = coordinate(options.pixelRatio);
     const cached = readPreparedStage2D<PreparedMesh2D>(cacheSlot, 'geometry');
     if (cached && cached.cost.predicates <= options.maxClipEdgeTests && cached.cost.preparedVertices <= options.maxPreparedVertices
@@ -70,12 +71,12 @@ export function prepareTexturedMesh2D(command: TexturedMeshCommand2D, geometry: 
         try { previousTuples = budget.snapshot().tupleComparisonsCharged; }
         catch { cacheSlot = undefined; } // Optional accounting alone may degrade to cold work.
     }
-    const preparation = new Preparation(options, budget);
+    const preparation = new Preparation(options, budget, containedClipping);
     const matrix = command.matrix;
     admitMatrix(matrix);
     // Every authored clip is numerically preflighted before the first indexed tuple,
     // even for empty geometry, alpha zero, authored degeneracy or singular transforms.
-    const clips = command.clips.map(clip => preparation.rectangle(clip));
+    const clips = command.clips.map(clip => preparation.clipRectangle(clip, clipContext));
     const viewport = [{ x: 0, y: 0 }, { x: coordinate(width), y: 0 },
         { x: coordinate(width), y: coordinate(height) }, { x: 0, y: coordinate(height) }];
     const policy = createMeshClipPolicy2D(budget), polygons: MeshPoint2D[][] = [];
@@ -97,8 +98,8 @@ export function prepareTexturedMesh2D(command: TexturedMeshCommand2D, geometry: 
         if (represented !== authored * rank) fail('precision');
         // Winding and crossings transport complete XY/UV/light tuples, including collinear attributes.
         let polygon = policy.normalize(preparation, transformed);
-        for (const clip of clips) polygon = clipPolygon2D(preparation, polygon, clip, policy.normalize, attachTexturedMeshAttributes2D, policy);
-        polygon = clipPolygon2D(preparation, polygon, viewport, policy.normalize, attachTexturedMeshAttributes2D, policy);
+        for (const clip of clips) polygon = preparation.tryContainedClip(polygon, clip, 'mesh') ?? clipPolygon2D(preparation, polygon, clip, policy.normalize, attachTexturedMeshAttributes2D, policy, containedClipping ? 'mesh' : undefined);
+        polygon = preparation.tryContainedClip(polygon, viewport, 'mesh') ?? clipPolygon2D(preparation, polygon, viewport, policy.normalize, attachTexturedMeshAttributes2D, policy, containedClipping ? 'mesh' : undefined);
         if (polygon.length === 0) { counters.clippedCollapsedTriangles++; continue; }
         if (command.alpha === 0) continue;
         const fanVertices = (polygon.length - 2) * 3;

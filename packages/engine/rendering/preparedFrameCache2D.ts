@@ -25,6 +25,7 @@ export interface PreparedCacheSlot2D { readonly kind: 'prepared-cache-slot'; }
 type Stage = 'geometry' | 'packing';
 interface Key {
     readonly address: number;
+    readonly identity: number;
     numbers: number[];
     image: ImageData2D | undefined;
     geometry: TexturedGeometry2D | undefined;
@@ -36,6 +37,7 @@ interface SlotOwner {
     readonly call: object;
     readonly observation: object;
     key: Key | undefined;
+    matchedIdentity: number;
     mode: 'full' | 'rearm' | 'probe' | 'disabled';
 }
 interface Entry {
@@ -127,12 +129,12 @@ function copy<T>(value: T, seen: Map<object, unknown>): T {
     return result as T;
 }
 /** Copy only the validated private numeric sequence, preserving signed zero. */
-function copyKey(key: Key): Key {
+function copyKey(key: Key, identity: number): Key {
     const numbers: number[] = [];
     for (let index = 0; index < key.numbers.length; index++) numbers[index] = key.numbers[index]!;
-    return { address: key.address, numbers, image: key.image, geometry: key.geometry, resourceBytes: key.resourceBytes };
+    return { address: key.address, identity, numbers, image: key.image, geometry: key.geometry, resourceBytes: key.resourceBytes };
 }
-function keySize(key: Key): number { return sum(sum(32 + 8 * 5, 24 + key.numbers.length * 8), key.resourceBytes); }
+function keySize(key: Key): number { return sum(sum(32 + 8 * 6, 24 + key.numbers.length * 8), key.resourceBytes); }
 function addressOf(context: PreparedCacheContext2D, run: boolean, ordinal: number): number {
     if (!Number.isSafeInteger(ordinal) || ordinal < 0 || ordinal > Math.floor((Number.MAX_SAFE_INTEGER - 7) / 8)) throw TOO_LARGE;
     // The ordinal selects one candidate, never a resource or value identity.
@@ -176,7 +178,7 @@ function buildKey(context: PreparedCacheContext2D, commands: readonly TexturedRe
             resourceBytes = sum(resourceBytes, sum(24, 8 * array.length));
         }
     }
-    return { address, numbers: values, image, geometry, resourceBytes };
+    return { address, identity: 0, numbers: values, image, geometry, resourceBytes };
 }
 
 /** One Host owns the combined geometry/packing allowance and its terminal clear. */
@@ -189,6 +191,7 @@ export class PreparedFrameCache2D {
     private reserved = 0;
     private peakBytes = 0;
     private peakEntries = 0;
+    private nextKeyIdentity = 1;
     public constructor() { try { if (slots !== undefined && contexts !== undefined) this.candidates = new NativeMap<number, Entry>(); } catch { /* Cold operation remains available. */ } }
     public context(profile: 0 | 1 | 2 | 3, settings: PreparedCacheSettings2D): PreparedCacheContext2D | undefined {
         if (!this.candidates || !contexts) return undefined;
@@ -206,7 +209,7 @@ export class PreparedFrameCache2D {
             const call = apply(weakGet, contexts, [context]) as object | undefined;
             if (call === undefined) return undefined;
             const address = addressOf(context, run, ordinal);
-            const selected: SlotOwner = { cache: this, address, call, observation: {}, key: undefined, mode: 'full' };
+            const selected: SlotOwner = { cache: this, address, call, observation: {}, key: undefined, matchedIdentity: 0, mode: 'full' };
             const prior = get(this.candidates, address);
             if (prior?.probe && prior.key) {
                 const wasObserved = prior.observation === true, previousCall = prior.lastCall;
@@ -240,7 +243,14 @@ export class PreparedFrameCache2D {
     private find(selected: SlotOwner): Entry | undefined {
         if (!this.candidates || !selected.key || selected.mode === 'probe' || selected.mode === 'disabled') return undefined;
         const entry = get(this.candidates, selected.address);
-        return entry?.key && !entry.probe && equal(entry.key, selected.key) ? entry : undefined;
+        if (!entry || !entry.key || entry.probe) { selected.matchedIdentity = 0; return undefined; }
+        const key = entry.key;
+        // Only repeat comparisons of the same successful owned key may be skipped.
+        // A numeric identity keeps no retired key, resource or stage alive in a slot.
+        if (key.identity !== 0 && key.identity === selected.matchedIdentity) return entry;
+        if (!equal(key, selected.key)) { selected.matchedIdentity = 0; return undefined; }
+        selected.matchedIdentity = key.identity;
+        return entry;
     }
     private unlink(entry: Entry): void {
         if (entry.previous) entry.previous.next = entry.next; else this.oldest = entry.next;
@@ -280,7 +290,7 @@ export class PreparedFrameCache2D {
         if (retained.numbers.length !== current.numbers.length) {
             this.remove(entry); selected.mode = 'disabled'; return;
         }
-        const bytes = 256 + 72 + 24 + 8 * retained.numbers.length, previousBytes = entry.bytes;
+        const bytes = 256 + 80 + 24 + 8 * retained.numbers.length, previousBytes = entry.bytes;
         for (let index = 0; index < retained.numbers.length; index++) retained.numbers[index] = current.numbers[index]!;
         // The probe keeps only charged numeric metadata. Release all strong
         // resource/payload ownership before refunding those logical charges.
@@ -331,10 +341,13 @@ export class PreparedFrameCache2D {
             // Reserve before allocating cache-owned copies. The original required
             // geometry/typed payload already succeeded outside this optional scope.
             this.reserved = bytes; this.peakBytes = Math.max(this.peakBytes, this.bytes + bytes);
-            const ownedKey = retainedKey ?? copyKey(key);
+            // Exact transfers retain identity; fresh keys never reuse a number.
+            // Exhaustion uses zero, which always takes the original full comparison.
+            const ownedKey = retainedKey ?? copyKey(key, this.nextKeyIdentity < Number.MAX_SAFE_INTEGER ? this.nextKeyIdentity++ : 0);
             const owned = copy(source, new NativeMap<object, unknown>());
             // The original 256-byte fixed bookkeeping allowance also covers the
             // extra fields and two empty stamps: 128 + 32 + 32 + 48 = 240 bytes.
+            // The remaining 16 bytes also cover the cache-wide identity counter.
             // Variable numeric storage, resource ownership and stages pay extra.
             const entry: Entry = { key: ownedKey, geometry: stage === 'geometry' ? owned : other,
                 packing: stage === 'packing' ? owned : other,

@@ -3892,12 +3892,18 @@ const m15ResourceRecoveryLiteralClosure = {
   "packages/engine/dist/web/prepareSharedSubmission2D.d.ts": [["static","../rendering/packSharedDraws2D.js"],["static","../rendering/prepareSharedDraws2D.js"],["static","../rendering/sharedColor2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedWebGPUOptions.js"]],
 };
 
+// M1.2 keeps the four retained tables above unchanged. The existing stock-ledger
+// check makes this one previously erased dependency a runtime static edge.
+const m12IncrementalRenderingLiteralClosure = {
+  "packages/engine/dist/rendering/prepareTexturedDraws2D.js": [["static","./prepareImages2D.js"],["static","./prepareRectangles2D.js"],["static","./prepareTexturedMesh2D.js"],["static","./texturedPreparationBudget2D.js"]],
+};
+
 function sceneGraphEdges(code) {
   return [...code.matchAll(/\b(?:from\s*|import\s*\(\s*|import\s*)['"]([^'"]+)['"]/g)]
     .map(match=>[/^import\s*\(/.test(match[0])?'dynamic':'static',match[1]])
     .sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
 }
-for (const [file,edges] of Object.entries({...sceneLiteralClosure,...m13SharedRenderingLiteralClosure,...m14WebGL2LiteralClosure,...m15ResourceRecoveryLiteralClosure})) {
+for (const [file,edges] of Object.entries({...sceneLiteralClosure,...m13SharedRenderingLiteralClosure,...m14WebGL2LiteralClosure,...m15ResourceRecoveryLiteralClosure,...m12IncrementalRenderingLiteralClosure})) {
   const code=sceneRead(file);
   if (JSON.stringify(sceneGraphEdges(code))!==JSON.stringify(edges)) throw new Error('S3D1: scene entry imported outside approved closure: '+file);
   // Non-literal dynamic imports cannot hide an additional dependency edge.

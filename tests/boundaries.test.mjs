@@ -536,7 +536,12 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
       "packages/engine/dist/web/prepareSharedSubmission2D.js": [["static","../rendering/ownedPreparationFailure2D.js"],["static","../rendering/packSharedDraws2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedSubmissionStorage2D.js"]],
       "packages/engine/dist/web/prepareSharedSubmission2D.d.ts": [["static","../rendering/packSharedDraws2D.js"],["static","../rendering/prepareSharedDraws2D.js"],["static","../rendering/sharedColor2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedSubmissionStorage2D.js"],["static","./sharedWebGPUOptions.js"]]
     };
-    for (const [file,edges] of Object.entries({...sceneGraph,...m13SharedGraph,...m14FixtureGraph})) {
+    // M1.2: the reviewed stock-ledger check adds this one emitted static edge.
+    // Keep the retained fixture graphs intact; do not derive policy from the checker.
+    const m12FixtureGraph = {
+      "packages/engine/dist/rendering/prepareTexturedDraws2D.js": [["static","./prepareImages2D.js"],["static","./prepareRectangles2D.js"],["static","./prepareTexturedMesh2D.js"],["static","./texturedPreparationBudget2D.js"]],
+    };
+    for (const [file,edges] of Object.entries({...sceneGraph,...m13SharedGraph,...m14FixtureGraph,...m12FixtureGraph})) {
       if (Object.hasOwn(m15FixtureGraph,file)) continue; // Completed after the retained facade scaffolds below.
       const original=existsSync(path.join(root,file))?readFileSync(path.join(root,file),'utf8'):'';
       const present=[...original.matchAll(/\b(?:from\s*|import\s*\(\s*|import\s*)['"]([^'"]+)['"]/g)].map(match=>match[1]);

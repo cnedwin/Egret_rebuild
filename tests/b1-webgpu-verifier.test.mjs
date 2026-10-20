@@ -355,12 +355,15 @@ test('S06 collector pins the current Host and retains both schedules separately'
     m13HostSourceSuccessor: { bytes: 134474, sha256: '73c33a00ed99283e1e4d70867308ebc3550c905df881a1d79c714d6c80bbe5a0' },
   });
   const successor = source.match(/^  const m15HostSourceSuccessor = (\{[^\n]+\});$/m);
-  assert.ok(successor, 'The exact current Host successor must be explicit');
-  const selected = JSON.parse(successor[1]);
+  assert.ok(successor, 'The historical M1.5 Host successor remains explicit');
+  assert.deepEqual(JSON.parse(successor[1]), { bytes: 189815, sha256: 'f84a1de242e8b3efefc1bb4ccb344cb02b659d355b512c071cfccf7c1943bf10' });
+  const performance = source.match(/^  const m12PerformanceHostSourceSuccessor = (\{[^\n]+\});$/m);
+  assert.ok(performance, 'The reviewed performance Host successor must be explicit');
+  const selected = JSON.parse(performance[1]);
   const currentHost = await readFile(join(repository, 'packages/engine/web/WebGPUHost.ts'));
   assert.deepEqual(selected, { bytes: currentHost.length, sha256: createHash('sha256').update(currentHost).digest('hex') });
-  assert.match(source, /assert\.equal\(currentHost\.bytes, m15HostSourceSuccessor\.bytes,/);
-  assert.match(source, /assert\.equal\(currentHost\.sha256, m15HostSourceSuccessor\.sha256\)/);
+  assert.match(source, /assert\.equal\(currentHost\.bytes, m12PerformanceHostSourceSuccessor\.bytes,/);
+  assert.match(source, /assert\.equal\(currentHost\.sha256, m12PerformanceHostSourceSuccessor\.sha256\)/);
   assert.match(source, /allowedModules\.has\(name\)/);
   assert.match(source, /maximumSubmittedFrames: 11/); assert.match(source, /maximumSubmittedFrames: 3/);
   assert.match(source, /baselinePixelComparisons !== 14/); assert.match(source, /window\.frames\.reduce\([^\n]*8214/);
@@ -373,7 +376,7 @@ async function emittedClosurePolicy({ selectedReadFile = readFile } = {}) {
   const { resolveB1Dependency } = await import(pathToFileURL(join(repository, 'tools/b1-webgpu/registryProvenance.mjs')).href);
   const served = new Map();
   // Evaluate only the verifier's policy declarations and collector, never emitted SDK code or main().
-  const policy = runInNewContext(source.slice(start, end) + '\n({ aliases, entryNames, allowedModules, m15ModuleIdentities, historicalSourceModuleLimit, m15SourceModuleLimit, assertCurrentClosure, collect, deriveRequestCapacity:typeof deriveRequestCapacity==="function"?deriveRequestCapacity:undefined })', {
+  const policy = runInNewContext(source.slice(start, end) + '\n({ aliases, entryNames, allowedModules, m15ModuleIdentities, m12PerformanceModuleSuccessors, currentModuleIdentities, historicalSourceModuleLimit, m15SourceModuleLimit, assertCurrentClosure, collect, deriveRequestCapacity:typeof deriveRequestCapacity==="function"?deriveRequestCapacity:undefined })', {
     repository: await realpath(repository), sep, assert, resolve, readFile: selectedReadFile, realpath, resolveB1Dependency, URL,
     served, identities: new Map(), hash: body => createHash('sha256').update(body).digest('hex'),
   }, { timeout: 1000 });
@@ -391,6 +394,14 @@ async function emittedClosurePolicy({ selectedReadFile = readFile } = {}) {
   assert.equal(policy.historicalSourceModuleLimit, 128);
   assert.equal(policy.m15SourceModuleLimit, 133);
   assert.equal(policy.m15ModuleIdentities.size, 133);
+  assert.equal(policy.currentModuleIdentities.size, 133);
+  assert.deepEqual([...policy.m12PerformanceModuleSuccessors.keys()].sort(), ["packages/engine/dist/rendering/admitTexturedFrame2D.js","packages/engine/dist/rendering/prepareImages2D.js","packages/engine/dist/rendering/prepareRectangles2D.js","packages/engine/dist/rendering/prepareTexturedDraws2D.js","packages/engine/dist/rendering/prepareTexturedMesh2D.js","packages/engine/dist/rendering/preparedFrameCache2D.js","packages/engine/dist/web/WebGPUHost.js"]);
+  for (const [name, successor] of policy.m12PerformanceModuleSuccessors) {
+    assert.ok(policy.m15ModuleIdentities.has(name), 'A successor cannot add a module');
+    assert.notEqual(successor.sha256, policy.m15ModuleIdentities.get(name).sha256);
+    assert.deepEqual(policy.currentModuleIdentities.get(name), successor);
+  }
+  assert.equal(policy.m15ModuleIdentities.get('packages/engine/dist/web/WebGPUHost.js').sha256, 'edfd58cc7facae99f49541d906224bff1df9f32f49a26a630d2de70c5040752d');
   assert.match(source, /served\.size < m15SourceModuleLimit/);
   assert.match(source, /body\.length <= 1024 \* 1024/);
   assert.match(source, /emitted <= 4 \* 1024 \* 1024/);
@@ -430,12 +441,12 @@ test('S09 the actual 133-module closure cannot admit a 134th real file even afte
   const extra = 'packages/engine/dist/web/BrowserTextureProvider.js';
   const body = await readFile(join(repository, extra));
   assert.equal(policy.allowedModules.has(extra), false);
-  assert.equal(policy.m15ModuleIdentities.has(extra), false);
+  assert.equal(policy.currentModuleIdentities.has(extra), false);
   const failures = [];
   try {
     // This test-owned policy mutation reaches the independent count guard with a real file.
     policy.allowedModules.add(extra);
-    policy.m15ModuleIdentities.set(extra, { bytes: body.length, sha256: createHash('sha256').update(body).digest('hex') });
+    policy.currentModuleIdentities.set(extra, { bytes: body.length, sha256: createHash('sha256').update(body).digest('hex') });
     await assert.rejects(policy.collect(extra), error => error.message === 'Finite emitted closure exceeded');
     assert.equal(policy.served.size, 133);
     assert.equal(policy.served.has('/' + extra), false);
@@ -444,7 +455,7 @@ test('S09 the actual 133-module closure cannot admit a 134th real file even afte
   } finally {
     for (const restore of [
       () => policy.allowedModules.delete(extra),
-      () => policy.m15ModuleIdentities.delete(extra),
+      () => policy.currentModuleIdentities.delete(extra),
     ]) {
       try { restore(); } catch (cause) { failures.push(cause); }
     }
@@ -471,7 +482,7 @@ test('S10 a same-length changed emitted byte is refused before capture and exact
     } });
     await assert.rejects(policy.collect(target), error => {
       assert.equal(error.code, 'ERR_ASSERTION');
-      assert.match(error.message, /^M1\.5 emitted raw identity changed: packages\/engine\/dist\/index\.js(?:\r?\n|$)/);
+      assert.match(error.message, /^Current emitted raw identity changed: packages\/engine\/dist\/index\.js(?:\r?\n|$)/);
       return true;
     });
     assert.equal(policy.served.size, 0);

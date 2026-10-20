@@ -25,11 +25,13 @@ Years later, as times change and technology advances, many developers continue t
 
 当前仓库提供可运行的工程预览。显示树、资源租约、动画、浏览器输入及部分 Canvas/WebGPU/WebGL2 渲染路径，均有各自的接口契约和验证范围。完整 UI 工具、完整 Spine 支持、目标平台 SDK 和旧工程自动迁移仍在开发中。
 
-## M1.5 — 资源恢复验证
+## 已交付 — M1.5 资源清单与恢复
 
 M1.5 将资源清单与依赖感知资源组接入共享资源所有权、有界加载与完整性校验、分阶段上传，以及统一的 WebGL2/WebGPU 设备恢复。七项固定桌面恢复验证已在 Windows / Chrome for Testing 157.0.8103.6 上通过；WebGL2 与 WebGPU 各完成 100 次资源循环、十次原生丢失与恢复循环及 30 分钟前台运行。固定恢复结果与受影响的浏览器回归均已通过独立评审。
 
-验证截止点：2026-10-20。在此检查点，最终工作包评审和 M1.5 受保护合并门禁仍待完成，M1.2 正式成对性能验收也仍开放。参阅[验证范围与证据](knowledge-base/Cns/docs/resource-recovery-evidence.md)。交付情况以仓库的 [PR 记录](https://github.com/cnedwin/Egret_rebuild/pulls)为准。
+交付后续记录 — 2026-10-21：[PR #79](https://github.com/cnedwin/Egret_rebuild/pull/79) 已合入 main `4924b471b52927184252191055f902c30c29af52`。[CI 执行 39455045264](https://github.com/cnedwin/Egret_rebuild/actions/runs/39455045264) 的四个作业全部成功；Windows 完整集成门禁通过 290 项发布检查、4,528 项核心测试及 160 项 Spine F2 测试，各组失败、取消和跳过均为零。M1.2 正式成对性能验收继续开放。
+
+[验证范围与证据](knowledge-base/Cns/docs/resource-recovery-evidence.md)保留此前失败和未完成的执行，并另行记录已完成的交付。
 
 ## 已实现 — M1.4 WebGL2 执行器
 
@@ -44,6 +46,8 @@ M1.3 共享纹理页、线性颜色及有序场景/UI 合成已通过 [PR #75](h
 功能改动已通过 [PR #74](https://github.com/cnedwin/Egret_rebuild/pull/74) 合并，主干提交为 `9f899dbe92c5e4d448d3408c3dca2f4c9ade847f`；正式性能验收继续开放。
 
 M1.2 为显示捕获和渲染准备增加有界复用，并在保留绘制顺序的前提下合并相邻兼容批次。已记录的正确性与原生操作计数分别验收，帧耗时性能验收仍未完成。参阅[验证记录与边界](knowledge-base/Cns/docs/incremental-frame-preparation-evidence.md)。参阅[契约](knowledge-base/Cns/docs/incremental-frame-preparation-contract.md)及 [M1 计划](knowledge-base/Cns/docs/m1-rendering-resource-plan.md)。
+
+当前后续工作：有界裁剪复用、同槽缓存查找及几何准备优化保留已验证的输出和工作预算。此前完成的正式计时未达到目标；最新候选通过原生预检、像素及操作计数检查，但计时诊断因前台窗口切换中断，尚无有效候选成对计时或新一轮正式计时结果，M1.2 性能验收继续开放。
 
 ## 已交付 — M1.1 提交复用
 
@@ -95,6 +99,7 @@ M1.1 已通过 [PR #73](https://github.com/cnedwin/Egret_rebuild/pull/73) 合并
 
 | Version / 版本 | Main change | 主要变化 |
 | --- | --- | --- |
+| M1.5 delivered / 已交付 · 2026-10-21 | Resource manifests, shared resource loading and device recovery delivered through [PR #79](https://github.com/cnedwin/Egret_rebuild/pull/79); formal M1.2 performance remains open | 资源清单、共享资源加载与设备恢复通过 [PR #79](https://github.com/cnedwin/Egret_rebuild/pull/79) 交付；M1.2 正式性能仍开放 |
 | M1.5 recovery verification / 资源恢复验证 · 2026-10-20 | Seven fixed desktop recovery cases verified; [scope and remaining work](knowledge-base/en/docs/resource-recovery-evidence.md) | 七项固定桌面恢复验证完成；[范围与剩余工作](knowledge-base/Cns/docs/resource-recovery-evidence.md) |
 | M1.4 | Implemented optional shared WebGL2 executor with finite desktop verification | 已实现可选共享 WebGL2 执行器，具有有限桌面验证 |
 | M1.3 | Shared texture pages and linear scene/UI composition delivered through PR #75 | 共享纹理页与线性场景/UI 合成已通过 PR #75 交付 |

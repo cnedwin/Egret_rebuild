@@ -120,12 +120,12 @@ test('UNIT P04 ordinal selects one candidate and full values authorize replaceme
 test('UNIT P05 one entry owns both stages, copies their records and counts shared allowance', () => {
   const { cache, context } = setup(); const selected = slot(context, rect());
   const value = { marker: 1 }; publish(selected, value);
-  // Policy arithmetic: 256 base + 288 complete key + 56 stage + 40 value + 56 cost.
-  assert.equal(cache.snapshot().bytes, 696); assert.equal(cache.snapshot().entries, 1);
+  // Policy arithmetic: 256 base + 296 complete key + 56 stage + 40 value + 56 cost.
+  assert.equal(cache.snapshot().bytes, 704); assert.equal(cache.snapshot().entries, 1);
   value.marker = 9; assert.equal(read(selected).value.marker, 1);
   const data = new Float32Array([3]); publishPreparedStage2D(selected, 'packing', { data }, ZERO);
   // Packing adds 56 stage + 40 record + 56 view + 4 backing + 56 cost.
-  assert.equal(cache.snapshot().bytes, 908); assert.equal(cache.snapshot().entries, 1);
+  assert.equal(cache.snapshot().bytes, 916); assert.equal(cache.snapshot().entries, 1);
   data[0] = 99; assert.equal(readPreparedStage2D(selected, 'packing').value.data[0], 3);
   assert.equal(read(selected).value.marker, 1); assert.equal(cache.snapshot().reservedBytes, 0);
 });
@@ -135,7 +135,9 @@ test('UNIT P06 LRU bounds all profiles together at 4096 and accepted hits touch 
   for (let ordinal = 0; ordinal < 4096; ordinal++) {
     const current = slot(context, rect(), { ordinal }); selected.push(current); publish(current, { marker: ordinal });
   }
-  assert.equal(cache.snapshot().entries, 4096); acceptPreparedStage2D(selected[0]);
+  assert.equal(cache.snapshot().entries, 4096);
+  assert.equal(read(selected[1]).value.marker, 1, 'Prime the soon-to-be-evicted slot without touching LRU order');
+  acceptPreparedStage2D(selected[0]);
   const extra = slot(cache.context(2, OPTIONS), rect(), { ordinal: 4096 }); publish(extra);
   assert.equal(cache.snapshot().entries, 4096); assert.equal(cache.snapshot().peakEntries, 4096);
   assert.equal(read(selected[1]), undefined); assert.equal(read(selected[0]).value.marker, 0);
@@ -144,23 +146,27 @@ test('UNIT P06 LRU bounds all profiles together at 4096 and accepted hits touch 
 
 test('UNIT P07 exact 16 MiB candidate reserves before owned copy and typed cap overflow stays optional', () => {
   const { cache, context } = setup(); const selected = slot(context, rect());
-  // 752 bytes are this explicit key/stage/data-view record; all remaining bytes are typed backing.
-  publishPreparedStage2D(selected, 'packing', { data: new Float32Array((CAP - 752) / 4) }, ZERO);
+  // 760 bytes are this explicit key/stage/data-view record; all remaining bytes are typed backing.
+  publishPreparedStage2D(selected, 'packing', { data: new Float32Array((CAP - 760) / 4) }, ZERO);
   assert.equal(cache.snapshot().bytes, CAP); assert.equal(cache.snapshot().peakBytes, CAP);
   assert.equal(cache.snapshot().entries, 1); assert.equal(cache.snapshot().reservedBytes, 0);
   const overflow = slot(context, rect(), { ordinal: 1 });
   // Float32 backing grows by four bytes; this is its smallest representable over-cap case.
-  publishPreparedStage2D(overflow, 'packing', { data: new Float32Array((CAP - 752) / 4 + 1) }, ZERO);
+  publishPreparedStage2D(overflow, 'packing', { data: new Float32Array((CAP - 760) / 4 + 1) }, ZERO);
   assert.equal(readPreparedStage2D(overflow, 'packing'), undefined);
   assert.ok(readPreparedStage2D(selected, 'packing')); assert.equal(cache.snapshot().bytes, CAP);
   assert.equal(cache.snapshot().enabled, true);
   publish(overflow); assert.equal(cache.snapshot().entries, 1); assert.equal(readPreparedStage2D(selected, 'packing'), undefined);
-  assert.equal(cache.snapshot().bytes, 696);
+  assert.equal(cache.snapshot().bytes, 704);
 });
 
 test('UNIT P08 clear disables publication through existing slots and releases searchable references', () => {
   const { cache, context } = setup(); const selected = slot(context, rect()); publish(selected);
+  assert.equal(read(selected).value.marker, 1, 'Prime the slot before terminal invalidation');
+  publishPreparedStage2D(selected, 'packing', { data: new Float32Array([2]) }, ZERO);
+  assert.equal(readPreparedStage2D(selected, 'packing').value.data[0], 2);
   cache.clear(); assert.equal(read(selected), undefined); publish(selected);
+  assert.equal(readPreparedStage2D(selected, 'packing'), undefined); acceptPreparedStage2D(selected);
   assert.equal(cache.context(1, OPTIONS), undefined); assert.equal(cache.slot(context, [rect()], 16, 16), undefined);
   assert.deepEqual([cache.snapshot().entries, cache.snapshot().bytes, cache.snapshot().reservedBytes, cache.snapshot().enabled], [0, 0, 0, false]);
   assert.equal(read({ kind: 'prepared-cache-slot' }), undefined);
@@ -296,9 +302,9 @@ test('UNIT P05a cross-stage owned source reuse charges both independently retain
     geometryStage.value.data[0] = 7;
     assert.deepEqual(Array.from(packingStage.value.data), [1, 2], 'Packing owns a separate backing');
     assert.equal(cache.snapshot().entries, 1); assert.equal(cache.snapshot().reservedBytes, 0);
-    // 256 base + 288 key + two separately owned stages, each containing:
+    // 256 base + 296 key + two separately owned stages, each containing:
     // 56 stage + 40 value record + 56 view + 8 backing + 56 cost = 216.
-    assert.equal(cache.snapshot().bytes, 976, 'Independent owned copies cannot share one logical byte charge');
+    assert.equal(cache.snapshot().bytes, 984, 'Independent owned copies cannot share one logical byte charge');
   } finally {
     cache.clear();
     assert.deepEqual([cache.snapshot().entries, cache.snapshot().bytes, cache.snapshot().reservedBytes], [0, 0, 0]);
@@ -323,7 +329,7 @@ test('UNIT P16 changing calls release both owned stages into one fully charged n
       assert.equal(read(selected), undefined, 'Second and continuing replacement misses retain no geometry stage');
       assert.equal(readPreparedStage2D(selected, 'packing'), undefined, 'Packing in the same call cannot rearm the probe');
       // Rectangle key: 24 numbers. No resource or stage is retained by a probe.
-      assert.equal(cache.snapshot().bytes, 256 + 72 + 24 + 8 * 24);
+      assert.equal(cache.snapshot().bytes, 256 + 80 + 24 + 8 * 24);
       assert.equal(cache.snapshot().entries, 1); assert.equal(cache.snapshot().reservedBytes, 0);
       assert.ok(cache.snapshot().peakBytes <= CAP);
     }
@@ -361,7 +367,7 @@ test('UNIT P17 stages and duplicate slots count one call; stale publication cann
     const notYetStable = slot(context(), command(4)); produce(notYetStable, 4);
     assert.equal(read(notYetStable), undefined, 'A stale producer cannot mark the unpublished newer numbers successful');
     assert.equal(readPreparedStage2D(notYetStable, 'packing'), undefined);
-    assert.equal(cache.snapshot().bytes, 544);
+    assert.equal(cache.snapshot().bytes, 552);
 
     const restored = slot(context(), command(4));
     assert.equal(read(restored), undefined, 'An observed stable probe permits only complete cold production');
@@ -390,13 +396,13 @@ test('UNIT P18 probe rearming retains current resource identity, signed zero, ac
     produce(next(a, 0), 0); produce(next(a, 1), 1);
     const probe = next(a, 2); produce(probe, 2); absent(probe);
     // Image key: 27 numbers; equal-size image identities are not retained by the probe.
-    assert.equal(cache.snapshot().bytes, 568);
+    assert.equal(cache.snapshot().bytes, 576);
     const current = next(b, 2); absent(current); produce(current, 200);
     assert.equal(read(current).value.marker, 200);
     assert.deepEqual(Array.from(readPreparedStage2D(current, 'packing').value.data), [200, 2]);
     absent(next(a, 2));
     const readOnlyReplacement = next(a, 2); produce(readOnlyReplacement, 300); absent(readOnlyReplacement);
-    assert.equal(cache.snapshot().bytes, 568, 'Read alone did not reset the rearmed replacement marker');
+    assert.equal(cache.snapshot().bytes, 576, 'Read alone did not reset the rearmed replacement marker');
 
     const accepted = next(b, 2); absent(accepted); produce(accepted, 400);
     assert.equal(read(accepted).value.marker, 400); acceptPreparedStage2D(accepted);
@@ -421,7 +427,7 @@ test('UNIT P18 probe rearming retains current resource identity, signed zero, ac
     assert.equal(read(freshLength).value.marker, 801);
     produce(next(b, 4, -0, clips), 802);
     const terminalProbe = next(b, 5, -0, clips); produce(terminalProbe, 803); absent(terminalProbe);
-    assert.equal(cache.snapshot().bytes, 648, 'The ten extra clip numbers remain charged');
+    assert.equal(cache.snapshot().bytes, 656, 'The ten extra clip numbers remain charged');
     cache.clear(); produce(terminalProbe, 999); produce(current, 999); absent(terminalProbe); absent(current);
     assert.equal(cache.context(1, OPTIONS), undefined);
     assert.deepEqual([cache.snapshot().entries, cache.snapshot().bytes, cache.snapshot().reservedBytes, cache.snapshot().enabled], [0, 0, 0, false]);
@@ -429,4 +435,91 @@ test('UNIT P18 probe rearming retains current resource identity, signed zero, ac
     cache.clear();
     assert.deepEqual([cache.snapshot().entries, cache.snapshot().bytes, cache.snapshot().reservedBytes], [0, 0, 0]);
   }
+});
+
+test('UNIT P19 a warm slot reads current stages after exact-key transfer and rejects a new key', () => {
+  const { cache, context } = setup();
+  const command = rect({ clips: Array.from({ length: 8 }, (_, index) => ({ matrix: matrix(), rect: { x: index / 16, y: 0, width: 12, height: 12 } })) });
+  const first = slot(context, command);
+  try {
+    publish(first, { marker: 1 });
+    publishPreparedStage2D(first, 'packing', { data: new Float32Array([1]) }, ZERO);
+    const warm = slot(cache.context(1, OPTIONS), command);
+    const oldGeometry = read(warm), oldPacking = readPreparedStage2D(warm, 'packing');
+    assert.equal(oldGeometry.value.marker, 1); assert.equal(oldPacking.value.data[0], 1);
+    acceptPreparedStage2D(warm);
+
+    const same = slot(cache.context(1, OPTIONS), structuredClone(command));
+    publish(same, { marker: 2 });
+    assert.equal(read(warm).value.marker, 2, 'A key match never pins the old Entry or geometry');
+    assert.equal(readPreparedStage2D(warm, 'packing'), oldPacking, 'Unchanged other-stage ownership transfers');
+    publishPreparedStage2D(same, 'packing', { data: new Float32Array([3]) }, ZERO);
+    assert.equal(readPreparedStage2D(warm, 'packing').value.data[0], 3);
+    assert.equal(oldGeometry.value.marker, 1); assert.equal(oldPacking.value.data[0], 1);
+
+    const changed = structuredClone(command); changed.clips[7].matrix.tx = 0.25;
+    const replacement = slot(cache.context(1, OPTIONS), changed);
+    assert.equal(read(replacement), undefined, 'A new slot still compares the entire ordered clip key');
+    publish(replacement, { marker: 4 });
+    assert.equal(read(replacement).value.marker, 4);
+    assert.equal(read(warm), undefined); assert.equal(readPreparedStage2D(warm, 'packing'), undefined);
+  } finally { cache.clear(); }
+});
+
+test('UNIT P20 reentrant replay cannot let an old slot touch a replacement, probe or rearmed key', () => {
+  const cache = new PreparedFrameCache2D(), pixels = image();
+  const command = tx => imageCommand({ matrix: { ...matrix(), tx } });
+  const next = tx => slot(cache.context(1, OPTIONS), command(tx), { image: pixels });
+  try {
+    const first = next(0); prepareImage2D(command(0), 16, 16, OPTIONS, ledger(), first);
+    const warm = next(0), retained = read(warm); assert.ok(retained);
+    let replacement, replayed = 0;
+    const result = prepareImage2D(command(0), 16, 16, OPTIONS, {
+      admitPreparedVertices() { assert.fail('Warm replay must not enter cold preparation'); },
+      admitPredicate() { assert.fail('Warm replay must not enter cold preparation'); },
+      tryReplayStageCost(cost) {
+        replayed++; assert.deepEqual(cost, retained.cost);
+        replacement = next(1); prepareImage2D(command(1), 16, 16, OPTIONS, ledger(), replacement);
+        assert.ok(read(replacement)); return true;
+      },
+    }, warm);
+    assert.equal(replayed, 1); assert.equal(result.points, retained.value.points, 'Already-read successful geometry remains the current call result');
+    assert.equal(read(warm), undefined);
+
+    const probe = next(2); prepareImage2D(command(2), 16, 16, OPTIONS, ledger(), probe);
+    assert.equal(read(probe), undefined, 'The old slot did not reset replacement history during reentrant accept');
+    assert.equal(read(replacement), undefined, 'The formerly successful identity cannot authorize a numeric probe');
+    const rearmed = next(2); prepareImage2D(command(2), 16, 16, OPTIONS, ledger(), rearmed);
+    assert.ok(read(rearmed)); assert.equal(read(replacement), undefined); assert.equal(read(warm), undefined);
+
+    const current = next(2), beforeClear = read(current); assert.ok(beforeClear);
+    const afterClear = prepareImage2D(command(2), 16, 16, OPTIONS, {
+      admitPreparedVertices() { assert.fail('Warm replay must not enter cold preparation'); },
+      admitPredicate() { assert.fail('Warm replay must not enter cold preparation'); },
+      tryReplayStageCost(cost) { assert.deepEqual(cost, beforeClear.cost); cache.clear(); return true; },
+    }, current);
+    assert.equal(afterClear.points, beforeClear.value.points);
+    assert.equal(read(current), undefined); assert.equal(cache.snapshot().enabled, false);
+    assert.deepEqual([cache.snapshot().entries, cache.snapshot().bytes, cache.snapshot().reservedBytes], [0, 0, 0]);
+  } finally { cache.clear(); }
+});
+
+test('UNIT P21 exhausted numeric key identities stay on full comparison without reusing a slot match', () => {
+  const cache = new PreparedFrameCache2D();
+  // UNIT-only near-exhaustion state on the existing private cache instance;
+  // no loader interception, product hook or new export is needed.
+  cache.nextKeyIdentity = Number.MAX_SAFE_INTEGER - 1;
+  const next = tx => slot(cache.context(1, OPTIONS), rect({ matrix: { ...matrix(), tx } }));
+  try {
+    const last = next(0); publish(last, { marker: 0 }); assert.equal(read(last).value.marker, 0); acceptPreparedStage2D(last);
+    assert.equal(cache.nextKeyIdentity, Number.MAX_SAFE_INTEGER);
+    const firstFallback = next(1); assert.equal(read(firstFallback), undefined);
+    publish(firstFallback, { marker: 1 }); assert.equal(read(firstFallback).value.marker, 1); acceptPreparedStage2D(firstFallback);
+    assert.equal(read(last), undefined);
+    const secondFallback = next(2); assert.equal(read(secondFallback), undefined, 'Zero is not a reusable match identity');
+    publish(secondFallback, { marker: 2 }); assert.equal(read(secondFallback).value.marker, 2); acceptPreparedStage2D(secondFallback);
+    assert.equal(read(firstFallback), undefined); assert.equal(read(next(1)), undefined);
+    assert.equal(cache.nextKeyIdentity, Number.MAX_SAFE_INTEGER, 'The exhausted counter neither wraps nor advances');
+    assert.equal(read(next(2)).value.marker, 2, 'Exact values still hit through the original comparison');
+  } finally { cache.clear(); }
 });

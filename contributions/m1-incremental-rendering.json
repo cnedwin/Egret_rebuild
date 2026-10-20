@@ -71,6 +71,10 @@
       "originRole": "First-party finite incremental-rendering verification tools and fixture, authored with AI assistance; Apache-2.0."
     },
     {
+      "path": "tools/textured-webgpu/native-files.mjs",
+      "originRole": "Independent first-party Egret textured-Mesh work package; existing reused infrastructure and dependency notices retain their recorded scope."
+    },
+    {
       "path": "tools/verify-incremental-rendering.mjs",
       "criticalComment": true,
       "originRole": "First-party finite incremental-rendering verification tools and fixture, authored with AI assistance; Apache-2.0."

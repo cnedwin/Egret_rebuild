@@ -170,14 +170,24 @@
     "to": "if (format !== 'bgra8unorm')",
     "implementation": "Invert the actual storage-format normalization condition so the final raw R/B channels are swapped for either accepted storage format.",
     "original": {
-      "bytes": 187333,
-      "sha256": "edfd58cc7facae99f49541d906224bff1df9f32f49a26a630d2de70c5040752d"
+      "bytes": 187635,
+      "sha256": "c23ac47a7a5176ac91f56d70055ae2cf00b9bf22ba2ff2323b0e6019ec6853f3"
     },
     "changed": {
-      "bytes": 187333,
-      "sha256": "f47d01b93898fe2fd4256fa5f05d0b63b6f282503c7020ea2cf4aa16061f9cbe"
+      "bytes": 187635,
+      "sha256": "e061248c56941086910968c46ac83f6b6fc7b61818625234c0f9518689a275f8"
     },
-    "status": "SOURCE_BOUND_CONTROL_NATIVE_OPEN"
+    "status": "SOURCE_BOUND_CONTROL_NATIVE_OPEN",
+    "historicalM15": {
+      "original": {
+        "bytes": 187333,
+        "sha256": "edfd58cc7facae99f49541d906224bff1df9f32f49a26a630d2de70c5040752d"
+      },
+      "changed": {
+        "bytes": 187333,
+        "sha256": "f47d01b93898fe2fd4256fa5f05d0b63b6f282503c7020ea2cf4aa16061f9cbe"
+      }
+    }
   },
   {
     "id": "N11-painter-reorder",

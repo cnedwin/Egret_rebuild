@@ -3,7 +3,7 @@ import type { PreparedCacheSlot2D } from './preparedFrameCache2D.js';
 import { noteOwnedPreparationFailure } from './ownedPreparationFailure2D.js';
 import type { ImageCommand2D, TextureRegion2D } from '@egret/contracts';
 import { Preparation, coordinate, same, POLYGON_LIMIT, GeometryPreparationError, clipPolygon2D, finishPolygonWinding2D } from './prepareRectangles2D.js';
-import type { RectanglePreparationOptions, CrossingAttributes, PreparationBudget2D } from './prepareRectangles2D.js';
+import type { RectanglePreparationOptions, CrossingAttributes, PreparationBudget2D, ClipRectanglePreparationContext2D } from './prepareRectangles2D.js';
 
 export interface ImagePoint2D { readonly x: number; readonly y: number; readonly u: number; readonly v: number; }
 export interface PreparedImage2D {
@@ -50,7 +50,8 @@ export function normalizeImagePolygon(points: readonly ImagePoint2D[], options: 
     const preparation = new Preparation(options), normalized = normalize(preparation, points);
     return { points: normalized, edgeTests: preparation.edgeTests };
 }
-export function prepareImage2D(command: ImageCommand2D, width: number, height: number, options: RectanglePreparationOptions, budget?: PreparationBudget2D, cacheSlot?: PreparedCacheSlot2D): PreparedImage2D {
+export function prepareImage2D(command: ImageCommand2D, width: number, height: number, options: RectanglePreparationOptions, budget?: PreparationBudget2D, cacheSlot?: PreparedCacheSlot2D, containedClipping = false,
+    clipContext?: ClipRectanglePreparationContext2D): PreparedImage2D {
     coordinate(options.pixelRatio);
     const cached = readPreparedStage2D<Pick<PreparedImage2D, 'points' | 'pointIndices' | 'edgeTests'>>(cacheSlot, 'geometry');
     if (cached && cached.cost.predicates <= options.maxClipEdgeTests && cached.cost.preparedVertices <= options.maxPreparedVertices
@@ -59,13 +60,14 @@ export function prepareImage2D(command: ImageCommand2D, width: number, height: n
         // Rebind this frame's image table address; the cache retains only geometry.
         return { ...cached.value, imageIndex: command.imageIndex, sourceRect: command.sourceRect, alpha: command.alpha };
     }
-    const preparation = new Preparation(options, budget), corners = preparation.corners(command);
+    const preparation = new Preparation(options, budget, containedClipping), corners = preparation.corners(command);
     const uv = [[0, 0], [1, 0], [1, 1], [0, 1]] as const;
     let polygon = normalize(preparation, corners.map((point, i) => ({ ...point, u: uv[i]![0], v: uv[i]![1] })));
     // Every clip is preflighted even for singular, empty or zero-alpha commands.
-    const clips = command.clips.map(clip => preparation.rectangle(clip));
-    for (const clip of clips) polygon = clipPolygon2D(preparation, polygon, clip, normalize, attach);
-    polygon = clipPolygon2D(preparation, polygon, [{ x: 0, y: 0 }, { x: width, y: 0 }, { x: width, y: height }, { x: 0, y: height }], normalize, attach);
+    const clips = command.clips.map(clip => preparation.clipRectangle(clip, clipContext));
+    for (const clip of clips) polygon = preparation.tryContainedClip(polygon, clip, 'image') ?? clipPolygon2D(preparation, polygon, clip, normalize, attach, undefined, containedClipping ? 'image' : undefined);
+    const viewport = [{ x: 0, y: 0 }, { x: width, y: 0 }, { x: width, y: height }, { x: 0, y: height }];
+    polygon = preparation.tryContainedClip(polygon, viewport, 'image') ?? clipPolygon2D(preparation, polygon, viewport, normalize, attach, undefined, containedClipping ? 'image' : undefined);
     if (command.alpha === 0) polygon = [];
     const vertices = polygon.length ? (polygon.length - 2) * 3 : 0;
     if (vertices > options.maxPreparedVertices || vertices > 4294967295) fail('budget');

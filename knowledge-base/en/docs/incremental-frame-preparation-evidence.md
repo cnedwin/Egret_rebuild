@@ -2,9 +2,105 @@
 
 English | [中文](../../Cns/docs/incremental-frame-preparation-evidence.md)
 
-2026-10-18 · Engineering candidate; performance acceptance remains open
+2026-10-21 · Functional delivery recorded; formal performance remains OPEN
 
-## Status and implemented scope
+## Current verification checkpoint — 2026-10-21
+
+M1.2 functionality and M1.5 were delivered through [PR #74](https://github.com/cnedwin/Egret_rebuild/pull/74) and [PR #79](https://github.com/cnedwin/Egret_rebuild/pull/79). The latest candidate includes seven changed existing rendering/Host source files and is frozen under the second schema-6 preparation. Its preflight, correctness and operation-count stages passed independent final raw-result review. Diagnostics stopped on an environment qualification failure, and formal timing did not start. **M1.2 formal performance remains OPEN.** The original completed schema-5 `FAIL_TIMING_TARGET` and earlier schema-6 observations below remain unchanged.
+
+### Latest frozen candidate: functional checks and environment limit
+
+Verification cutoff: 2026-10-20T19:59:54.746Z (2026-10-21 local date). The fresh recipe includes the admission reuse, corner-array removal and per-edge clipping changes alongside the earlier bounded preparation changes.
+
+| Stage | Actual result | Scope |
+| --- | --- | --- |
+| Preflight | PASS; 2 trials | Both frozen SDK roles, in fixed order |
+| Correctness | PASS; 6 trials | 7 paired checkpoints / 14 RGBA readbacks |
+| Operation counts | PASS; 6 trials / 24 frames | 991 baseline versus 155 candidate draws per frame |
+| Diagnostic | INCOMPLETE; baseline static passed, candidate static was disqualified | OS foreground qualification failed; no valid pair |
+| Formal timing | NOT STARTED | All 30 trials remain unexecuted for this recipe |
+
+Final independent review hashed every recorded artifact and enumerated input with physical-path deduplication. All nine preflight/correctness RGBA pairs were byte-identical, and all twenty-four operation traces were retallied. Safe Host closure, zero pending operations and cooperative browser/context/server closure are recorded. These are finite functional/count results; OS descendant retirement and physical GPU/memory release remain unbound.
+
+The first attempt with this recipe had already stopped at `OBSERVER_FIRST_FOREGROUND` before any frame or readback. The separate recovery passed preflight, correctness and counts, then stopped at `OS_FOREGROUND_QUALIFICATION` during the static candidate diagnostic. Its raw observer records fifteen non-browser foreground samples between elapsed 73636.4883 and 90770.2322 ms. Native work and cleanup completed, but that does not qualify the timing samples. No budget verdict or speedup is derived from the disqualified data; sparse/full diagnostics and formal timing did not run. Both original failures, the intervening successful stages and their raw records are preserved.
+
+### First schema-6 observations
+
+| Stage | Actual recorded result | Boundary |
+| --- | --- | --- |
+| Preflight | PASS; 2 trials | The selected frozen SDK/browser pair only |
+| Correctness | PASS; 6 trials, 7 matched pairs / 14 RGBA readbacks | Declared checkpoints, not every frame |
+| Operation counts | PASS; 6 trials, 24 frames, 991 to 155 draws per frame | Draw reduction, not elapsed-time acceptance |
+| Diagnostic | PASS_DIAGNOSTIC; 6 trials, one pair per state | Complete diagnostic execution, not five-pair formal timing |
+
+Candidate diagnostic p95 values (ms, rounded) were: static Host 5.0 / update-through-render 7.9 / capture 3.6; sparse 6.2 / 9.7 / 4.1; full 11.2 / 15.3 / 3.4. These are individual diagnostic runs, not five-run medians; separate percentiles are not additive. A diagnostic Host value above 4 ms does not prove isolated preparation failure. Pure preparation and GPU time remain unmeasured. The runs use the frozen recipe preceding the later admission/corner changes; their results cannot be transferred to changed sources.
+
+### Later source changes and private CPU diagnostics
+
+The admission change passed independent source/result review: the original focused run retained 69 passes and 4 expected read-count failures; after integration, the build succeeded and six existing suites passed all 249 tests. The corner-generation refactor retained all 10 baseline characterization tests, then passed 133 tests in five existing suites after its successful build. These are controlled CPU results, not native pixel or performance acceptance.
+
+Three separate optimized-only Node profiles each retained 212 calls, 208 complete equality checks and zero errors. All three saved output/budget records have the same complete binary identity; the first two also received independent result review. In the first two profiles, corners had 323.000 ms and 100.415 ms of inclusive sampled attribution, pooled across 160 optimized calls per profile. These are separate profiler observations, not paired performance trials or per-frame percentiles. All results are retained for comparison, affecting memory lifetime and GC; inclusive stack times overlap. They neither partition browser Host time nor establish a measured native speedup.
+
+Per-edge contained clipping has been integrated under the existing trusted preparation boundary and independently reviewed. The original focused run retained 58 passes and 14 expected failures; after the successful build, the focused run passed all 177 tests with stable inputs. The third private CPU profile follows that change. Neither focused results nor this profile qualify native pixels or formal timing. The [contract](incremental-frame-preparation-contract.md) retains every original fee and fallback boundary.
+
+## Completed schema-5 checkpoint — 2026-10-21
+
+M1.2 functional engineering was delivered through [PR #74](https://github.com/cnedwin/Egret_rebuild/pull/74), main `9f899dbe92c5e4d448d3408c3dca2f4c9ade847f`. M1.5 was subsequently delivered through [PR #79](https://github.com/cnedwin/Egret_rebuild/pull/79), main `4924b471b52927184252191055f902c30c29af52`. **M1.2 formal performance acceptance remains OPEN.** The following completed checks belong to the new runs-2 sequence, bound to the prepared-3 schema-5 recipe; the original 2026-10-18 results and E1–E11 identities below remain historical evidence.
+
+The new comparison binds the unchanged complete M1.1 reference and a stable post-M1.5 candidate to recipe schema 5. Both roles used Chrome for Testing 157.0.8103.6 on Windows, with Node 26.7.0 and Playwright/core 1.62.1. The preparation copies 450/579 non-evidence files respectively, including 139/182 source files, and separately binds two provided build-evidence files per snapshot. Original source/emission identities and build-record provenance were checked; copying these files is not an independent recompilation. The new recipe and manifest identities are recorded in E12.
+
+| Schema-5 stage | Recorded result at this cutoff | Boundary |
+| --- | --- | --- |
+| Preflight | PASS; two trials, one per SDK | Execution and environment qualification for this fixed comparison |
+| Correctness | PASS; six trials; seven matched RGBA pairs, fourteen full readbacks total | Static, sparse and full-update checkpoints; no all-frame pixel coverage claim |
+| Operation counts | PASS; six trials, twenty-four frames; 991 baseline draws / 155 candidate draws per frame | Operation reduction, not a frame-rate or elapsed-time result |
+| Diagnostic | PASS; six completed trials, one pair per state | Execution and environment qualification passed; diagnostic samples are separate from formal timing acceptance |
+| Timing | COMPLETE; thirty trials; FAIL_TIMING_TARGET | Execution and environment passed; measured performance targets were not all met |
+
+The new correctness samples match byte-for-byte across the SDKs. Sparse ordinals 0, 1, 99 and 990 share the static output hash; these samples establish paired output equivalence, not visible sparse changes or pixel coverage of every sparse frame. Full-update ordinals 0 and 1 include different output hashes. The new operation counts remain 991/155 in each of the static, sparse and full states. These results do not establish elapsed-time gains.
+
+This completed schema-5 batch used capacity pacing under `egret.m1-2-capacity-paced/1`. Only a callback with fewer than two pending frames advances the workload. All callbacks and complete leading/interior/terminal wall-window gaps remain recorded. Admitted, stalled and closing CPU cohorts are separate; the original count-based RAF cadence remains alongside the duration-weighted wall-gap p95/p99 at 16.7/33.4 ms. Measurement coverage changes do not change the rendering API or existing CPU/native budgets.
+
+Six diagnostic trials precede thirty timing trials: three states, five timing pairs per state, each with 30 seconds warm-up and 60 seconds measurement. Ordinary timing budget misses and unavailable comparisons remain in the fixed schedule; execution, integrity, environment, native, deadline or cleanup failures stop it. Preserve every trial and the median-of-five aggregates without selecting a faster baseline or dropping misses.
+
+For this completed schema-5 batch, the 4 ms preparation row was assessed only through a containing timing Engine span: a role/state's median of five Engine p95 values at or below 4 ms establishes an upper bound; a larger or unavailable value does not establish preparation failure. Isolated preparation and actual GPU time remain unmeasured. Functional checks, C7 duration and reduced draw counts do not substitute for paired timing. Diagnostic and timing execution are complete. The measured targets were not all met; the actual timing aggregates are recorded below. Independent final-result review is complete with zero result-integrity findings; the failed performance targets remain unchanged.
+
+## Completed schema-5 timing: targets not met
+
+The runs-2 timing sequence completed all thirty scheduled trials under the unchanged prepared-3 recipe. Its result is `FAIL_TIMING_TARGET`, with runtime execution and environment qualification reported as PASS. This is a completed measurement with unmet targets, not an interrupted execution. All five trials per role/state contribute to the specified median-of-five summaries; individual successful trials do not replace those aggregates. Independent review of source/result correspondence is complete with zero result-integrity findings. It recomputed all 72 warm/measurement capacity windows and the five-trial medians, preserving every recorded miss.
+
+The table gives medians of per-trial p95/p99 values in milliseconds. Values are displayed to four decimal places for readability; acceptance uses the unrounded records.
+
+| State / SDK | Engine p95 | RAF p95 / p99 | Wall-gap p95 / p99 |
+| --- | ---: | ---: | ---: |
+| static / baseline | 20.2000 | 25.1000 / 37.5000 | 25.1000 / 46.9000 |
+| static / candidate | 8.1000 | 12.6000 / 12.6000 | 11.6000 / 13.6000 |
+| sparse / baseline | 19.7000 | 25.1000 / 37.3000 | 25.1000 / 44.3000 |
+| sparse / candidate | 9.6000 | 16.6000 / 16.7000 | 13.2000 / 16.0000 |
+| full / baseline | 19.7000 | 25.1000 / 37.5000 | 25.4000 / 47.6000 |
+| full / candidate | 21.4000 | 29.2000 / 33.3000 | 25.4000 / 44.5000 |
+
+Candidate Engine p95 medians are 8.100000023841858, 9.599999964237213 and 21.400000035762787 ms for static, sparse and full respectively; all exceed the 8 ms target. Both cadence criteria pass for candidate static and sparse. Full fails both: its count-based RAF p95 exceeds 16.7 ms, and duration-weighted wall-gap p95/p99 exceed 16.7/33.4 ms. The baseline misses the Engine and both cadence targets in all three states.
+
+The full-dirty update-through-render p95 medians are 20.30000001192093 ms for baseline and 22.399999976158142 ms for candidate. Their recorded ratio is **1.1034482740396065**, above the **1.10** limit. The containing 4 ms preparation upper bound is unestablished (`null`) in every role/state; this is not a direct measurement or a failure verdict for isolated preparation. Isolated preparation and GPU time remain UNMEASURED, and overall D60 remains INCOMPLETE. M1.2 engineering acceptance therefore remains OPEN.
+
+The later contained-clipping candidate is outside these frozen inputs. Its separate focused checks are recorded below and must not be attributed to this thirty-trial comparison. The original results and fixed budgets remain unchanged.
+
+## Contained-clipping candidate: focused checks
+
+A later candidate integrates five reviewed source changes and additions to one existing test file. Its original focused run recorded 34 passes and 10 failures out of 44 tests. After integration, the recorded build exited 0; eight existing test files then passed all 228 tests, with zero failures, cancellations or skips and stable observed inputs. These execution records are retained in E14.
+
+These checks are separate from the completed prepared-3 / runs-2 measurement above. At this follow-up cutoff, the candidate has no completed new native or timing result in this record. Targeted test success does not establish raster equivalence, preparation-time improvement or performance acceptance; those require new evidence bound to the changed candidate.
+
+## Preserved first schema-5 diagnostic and collector correction
+
+The first schema-5 sequence completed baseline static diagnosis but stopped in candidate static with `SAMPLE_INVALID`. Its candidate record remains INCOMPLETE: 117 accepted samples and 187 callbacks, with no completed measurement-window end. The failure occurred after render returned and before the next sample was appended; no replacement sample or completed window was added retrospectively.
+
+Independent review traced the rejection to an unsupported cross-API ordering assumption: a separately sampled `performance.now()` value was approximately 0.1 ms below the callback's RAF timestamp, while the CPU phase sequence and RAF's own sequence remained ordered. The repair replaces three cross-API ordering predicates with nonnegative checks, preserving each sequence's own ordering, raw values, callback/sample binding, bounds and all acceptance budgets. This is a collector correction, not evidence of a renderer failure or of unrelated browser time origins. Cooperative cleanup was complete with no recorded cleanup failures; the aggregate error label does not establish a cleanup failure.
+
+The three new regression cases first produced 38/41. The initial correction run produced 40/41 because a test expected exact `32` instead of the actual binary floating subtraction `32.000000000000014`; using the original subtraction produced 41/41 with exit 0. These earlier results and the original failed diagnostic remain preserved in E13. The corrected tools are bound to the fresh prepared-3 recipe, and the new runs-2 diagnostic completed all six trials. Diagnostic completion and tool tests do not establish the thirty-trial timing targets.
+
+## Original status and implemented scope — 2026-10-18
 
 M1.2 implements incremental capture, bounded preparation reuse and adjacent batching, with the recorded correctness and lifecycle results below. **Performance acceptance remains OPEN, and the M1.2 milestone is not closed.** This record describes candidate 4 and its completed local integrated gates. It does not establish a merged release or production readiness.
 
@@ -73,3 +169,84 @@ These raw fingerprints identify the retained local execution records summarized 
 | E10 | Native diagnostic 1 | 2858 | `f3db70e08cdb29c940b5febd30627cac722dd2686a52473acb080f1af6a88072` |
 | E10 | Native diagnostic 2 | 2858 | `d5a17d82df793fc98b5d36171da10d4a97766a3f646adc9dd518658e6846c250` |
 | E11 | Complete integrated prepush 2 | 920792 | `c191130451cb7e29d644333e4e8985ef9569e304a0ab8c3b113cdb7b3cd25417` |
+
+## Schema-5 current receipt identities — E12
+
+E12 identifies the completed prepared-3 / runs-2 records, including the timing result with unmet targets. E13 retains the earlier incomplete diagnostic and actual correction checks; none replaces the original E1–E11 records.
+
+| ID | Record | Bytes | SHA-256 |
+| --- | --- | ---: | --- |
+| E12 | Schema-5 recipe (prepared-3) | 12051 | `ee4af29e5f66f997b23a042612e78e6e500a3a1a4ae8f37a5ee5cef60eecf863` |
+| E12 | Prepared baseline SDK manifest | 182814 | `5089695dd016371c903d1f719bb2d0ec3d8dcca4bc59e0269e2dd50cca7af32a` |
+| E12 | Prepared candidate SDK manifest | 223550 | `684523c1125c8b41a3036bb692f3d4c615487a96d9ab292071e0fb076c68abf0` |
+| E12 | Schema-5 runs-2 preflight summary | 2775 | `5183bad52de07f6bb5e8ea7a36de36bd93a81d231c05d8f111781d2fe1e165ae` |
+| E12 | Schema-5 runs-2 correctness summary | 5645 | `6603554e31de96d00bce6cce06d1faeb5a013e2a42bc664fabea47131291df6b` |
+| E12 | Schema-5 runs-2 counts summary | 4743 | `191bfa281de566ea25cdfb48ccb2cdea78516ea5a882e9d1fdc5df9e79348991` |
+| E12 | Schema-5 runs-2 diagnostic summary | 16403 | `f5a361c5345cd7e92aad74dbed04f2cd64360fbe6176cc28b89d22c6aca76adc` |
+| E12 | Schema-5 runs-2 timing summary (FAIL_TIMING_TARGET) | 73218 | `de886f24a196fb7d1d1b2c0b99b6d4f4b5004c00c9ba89ac987b4e330a2dd5fe` |
+| E12 | Independent final result review (valid complete results; targets failed) | 146712 | `72ab73497c913549acfffbbf3eca8569fe0b3bdd5372d6bd9cfc6a42eef147a2` |
+
+## Preserved diagnostic correction records — E13
+
+| ID | Record | Bytes | SHA-256 |
+| --- | --- | ---: | --- |
+| E13 | First schema-5 diagnostic comparison (INCOMPLETE) | 89768 | `3549fc31667b3f7f702af14a8261f01a10b69b2688c139c80f996be9da89c77c` |
+| E13 | First schema-5 candidate diagnostic report (SAMPLE_INVALID) | 74735 | `c1044b9134116a9c3ebd9b12f2c3f4c62124b04c63d6cb3e4f8bfd124f6e2b0f` |
+| E13 | Independent clock-observation diagnosis and correction review | 21824 | `24fc7cf8e8b00c762d547b5a53d0806ca310adc1a19c5def21b20b586629f385` |
+| E13 | m12-clock-red-1 (38/41) | 2018 | `002b6a742d3598743697e14e8a44ababb915d8d911abf12ae8c2594ad2be369a` |
+| E13 | m12-clock-green-1 (40/41) | 2026 | `ae15d99212da819e4f43b40bbea91ca7564e41e4dbd2069ecb7a1d241840a6fa` |
+| E13 | m12-clock-green-2 (41/41) | 2026 | `1eb8ab7a2e283eb5a063b5e20b7ab6f71bf65c22a1ce66112761fd8b6270673e` |
+
+## Separate candidate check records — E14
+
+| ID | Record | Bytes | SHA-256 |
+| --- | --- | ---: | --- |
+| E14 | Contained-clipping independent source review | 10217 | `9cbbfb5141cf9fc780964a6c2194a5cf77ad3f7695e8e4e84095a41ea224591f` |
+| E14 | Original focused tests: 34 passed / 10 failed | 2036 | `4954bd9e3950fe2ef8245b59478650381da48b02679715fab5a0d2a515fe2731` |
+| E14 | Candidate build log | 44 | `166710cb105690b244b48c5dcc5672a4c0bc8280e995ae7d2f5bd46141491cea` |
+| E14 | Candidate build exit | 2 | `9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa` |
+| E14 | Eight test-file run: 228 passed | 2372 | `c7bb8a08f94ca5093ab0a0d90ecbae0ab9d8debcc8bbbe0d09ea566f657fc33f` |
+
+## Later observation identities — E15
+
+| Record | Bytes | SHA-256 |
+| --- | ---: | --- |
+| Schema-6 preflight summary | 2775 | `5fee0dafceea734f8b3ec2af1ab297782b20ce8f179b707ce00b6d986b1acc69` |
+| Schema-6 correctness summary | 5645 | `de93de254af99d3acbf56b4184bae5dd077ceeb8aeddbbe9fc96246c4ae9d100` |
+| Schema-6 operation-count summary | 4743 | `7e958ac32619b7781aff7f520f398294cdf90c9e6bc2a985fd3ad340cbcc02be` |
+| Schema-6 diagnostic summary | 16414 | `79caa2ef006f6b4b66a423143b5a1ec4bf55fbc35291c5a375345c53795e214c` |
+| Admission source/result review | 15768 | `b8f5eb1dd53a29a7b50ffa445b4bb2bccaa9991086d13a4523c377de400b73dc` |
+| Corners source/result review | 9279 | `a338269013548180a868df948118283bc03f60a56714cd2927ccde9dff27a99c` |
+| Second optimized-only CPU profile review | 3668 | `42729f4a7b80b5dad9575eb6afc0cfc31a46d1a6d6d40cfe83bcf53db6d27b77` |
+| Per-edge source/result review | 18902 | `22751d22084d00a95124428ad35be5c32f8f28c0da6145ccded8953152e6ce10` |
+| Third optimized-only CPU profile record | 114267 | `d3f37a2f385a50ebde3c40c2cef95826c20bfc43db009626cb50549e9d8235f3` |
+
+## Latest frozen-candidate receipt identities — E16
+
+| Record | Bytes | SHA-256 |
+| --- | ---: | --- |
+| Recovered preflight summary | 2775 | `722da558ad81f8c83f21959e4a5f7c31e32e04652ab9e937edb2310d4214befa` |
+| Recovered correctness summary | 5645 | `ed7cb09f682fd8da5a078501ff2762eac57d50f5c0c311b62cab06db8d206562` |
+| Recovered operation-count summary | 4743 | `0907312410a7a18f811afc0e7ccd029476b3a804db634812603bd8c700a96012` |
+| Interrupted diagnostic summary | 4245 | `aa4a39e9d06d67ca03956d2b74cae550dae9e390a786fce10b0f0c7052946f83` |
+| Final raw-result independent review | 51600 | `7431f487672e1364a6e8aaaf0e384f0f13e83a60d6fc2d8de40c4cddd4828a7b` |
+| Preserved first-foreground refusal summary | 1859 | `f6f9b469bd32553c67e0186fee261008c82a92ff423b2f14db155b169a0f4077` |
+
+## E17 — Affected desktop regression, 2026-10-21
+
+The six existing collectors passed for the final seven-source implementation on Windows, Node 26.7.0 and Edge 155.0.4283.62. They retain their original fixtures, pixel targets, assigned controls and cleanup requirements. These are functional regression results; the schema-6 timing interruption in E16 and the historical schema-5 target failure remain unchanged.
+
+| Collector | Verified scope | Original result identity (bytes / SHA-256) |
+|---|---|---|
+| Ordinary WebGPU | Fixed pixel/composition matrix and assigned controls | 2611216 / 7dee3c38e8720b5ca81c85a5d7a2d70144ed06ca90bfd9be6a82faa11ac21c5e |
+| B1 scene composition | 7 positive frames, 5 counterexamples, 11 submitted frames | 835040 / 1c98c7be104d0596a7a16a86a12a6aac9d77662c1691f9d35ed4ad376e0a781d |
+| Shared WebGPU | 30 cases and 11 control triples in 63 contexts | 2358374 / fa239bad565ceb07bd66f2ddd92ea56011bafcc828a48321b935826f814db81b |
+| Shared WebGL2 | 30 cases and 11 control triples in 63 contexts | 2030649 / 97453cde77810eb490a6b65f2839c6af56e5b507060b64d7715c962899d19a3f |
+| Textured WebGPU | 11 calibration cases, 10 held-out cases, 12 sensitive controls | 3627670 / 445032f28148480d6e288961135e1612197c757fe9c4aebf24c74c5f9c43a4f9 |
+| Textured scene composition | Two frames, 24 zero-tolerance points and the original sensitivity control | 188550 / 1d8d748fc1e980022c9521475984354e439371a4290c5a86bf85135e1580f9bd |
+
+The B1 and shared WebGPU collectors first refused stale M1.5 Host identities before browser creation; textured preparation first refused the superseded C06 source selector. Those attempts remain retained. Reviewed current successors preserve the historical identities and original mutation effects. The repaired existing tool regressions passed 58/58; the existing maintenance regression passed 86/86. No collector failure was converted into a passing pixel result.
+
+This checkpoint records actual collector completion. Independent result review and the complete local/protected merge gates are tracked separately before delivery. These desktop functional results do not establish M1.2 elapsed-time targets, phone support, sustained recovery or independent OS-process retirement. M1.2 performance acceptance remains OPEN.
+
+Initial complete local runs also refused outdated dependency declarations in the existing checker and isolated fixture, and one unlisted exact division expression in B1 static inspection. Those failed execution records are retained. The declarations were corrected without changing product source, parser rules, control targets or quotas. Four selected boundary controls and the complete thirteen-case B1 loading/Host slot then passed; complete local regression and protected CI remain separate delivery requirements.

@@ -298,8 +298,8 @@
     {
       "file": {
         "path": "tests/b1-webgpu-verifier.test.mjs",
-        "bytes": 25499,
-        "sha256": "8e2a6e42b11d6e879c94ab2d522292de52711cb8b131bdaf9bd00f2d2d584880"
+        "bytes": 36716,
+        "sha256": "52ca5b22b17c4f581ff0be0d264d2641670b5721f96f58ca0118114186ecb036"
       },
       "packages": null,
       "support": []
@@ -526,8 +526,8 @@
     {
       "file": {
         "path": "tests/boundaries.test.mjs",
-        "bytes": 133527,
-        "sha256": "92df8cc0972a6a483caee30f985cf115bdb15508126e62d1ad9fb021dd3438c7"
+        "bytes": 196526,
+        "sha256": "2c28be8e768c87b203f6624ec648f295bb7566dac82c696ca683794123c6ea8e"
       },
       "packages": null,
       "support": []
@@ -1002,12 +1002,10 @@
     {
       "file": {
         "path": "tests/geometry-webgpu-numeric.test.mjs",
-        "bytes": 5428,
-        "sha256": "4ab922fdcc92b79712674ec328f166dc439534822ee988fa9cf32b655ef9b4a9"
+        "bytes": 12740,
+        "sha256": "3eb3173f6424cd7bfcc82eae5f758359b04c370f03555dc00267efe4e641c13e"
       },
-      "packages": [
-        "engine"
-      ],
+      "packages": null,
       "support": []
     },
     {
@@ -1161,8 +1159,8 @@
     {
       "file": {
         "path": "tests/incremental-preparation-private.test.mjs",
-        "bytes": 29498,
-        "sha256": "603e308ea07a3ed0e5669c4f28e506f9e5256fb8f0883d6fc78eef2a9bd93285"
+        "bytes": 35800,
+        "sha256": "e8f8dfddeac4bf36633a1ca2d92c5f2c6badd23baaadb9a1ff92a24b947b4de0"
       },
       "packages": null,
       "support": []
@@ -1170,8 +1168,8 @@
     {
       "file": {
         "path": "tests/incremental-rendering-tool.test.mjs",
-        "bytes": 16795,
-        "sha256": "776d883b818ff8d71f41968644ec84a12356a2767ff200b59620a14875d8e5e5"
+        "bytes": 56428,
+        "sha256": "61cea921206e96b5c3532141dcf6c3195a97f6b4713ece8e4a9a2c583d258974"
       },
       "packages": null,
       "support": []
@@ -2265,8 +2263,8 @@
     {
       "file": {
         "path": "tests/textured-frame-admission.test.mjs",
-        "bytes": 49816,
-        "sha256": "af85ccf61d6993f44cccdcfb3b2b3f73f4ce06763dd8de29c655f3081400137d"
+        "bytes": 59503,
+        "sha256": "3e39ceb66748c2b3bc00d01f7645ae0f877607b1ddfbdb2492b15b1abfa6a1f3"
       },
       "packages": null,
       "support": []
@@ -2356,8 +2354,8 @@
     {
       "file": {
         "path": "tests/textured-preparation-budget.test.mjs",
-        "bytes": 20371,
-        "sha256": "c50f692772985a41ab40b9211b46a0cc495bbeb33ef9452e284eac5360f8ab03"
+        "bytes": 59976,
+        "sha256": "0242376aa27d6cb5f5f92cda8ac03204222e3dbd19e46e1ce7f566f8e0dd8bf6"
       },
       "packages": null,
       "support": []
@@ -2446,8 +2444,8 @@
     {
       "file": {
         "path": "tests/webgpu-mesh-host.test.mjs",
-        "bytes": 106645,
-        "sha256": "af6ec9791f5223d732805e52b4ef106398b05d409decddbe1ab89e204f7efcd3"
+        "bytes": 108965,
+        "sha256": "5de19697d49760acf1f119f051d723615bb3354d1b69f9ed720d702bf7f6a822"
       },
       "packages": null,
       "support": []

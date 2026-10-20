@@ -367,10 +367,24 @@ const m15ModuleIdentities = new Map([
   ["packages/engine/node_modules/robust-predicates/esm/util.js", { bytes: 3606, sha256: "7b6ed8737cbee96fb413a312e6aaadd84ce9e9594847949f7b4bc8b3dac2cd14" }],
 ]);
 assert.equal(m15ModuleIdentities.size, m15SourceModuleLimit, 'M1.5 source closure table is incomplete');
-for (const name of m15ModuleIdentities.keys()) allowedModules.add(name);
+// Only these reviewed performance emissions supersede the retained M1.5 pins.
+// The public closure membership, module ceiling and all native controls stay fixed.
+const m12PerformanceModuleSuccessors = new Map([
+  ["packages/engine/dist/web/WebGPUHost.js", { bytes: 187635, sha256: "c23ac47a7a5176ac91f56d70055ae2cf00b9bf22ba2ff2323b0e6019ec6853f3" }],
+  ["packages/engine/dist/rendering/admitTexturedFrame2D.js", { bytes: 8673, sha256: "9f021d73fd9ba1db2feceb92e360bfe1003f92a2cbda563401bb3b9ce740f8b0" }],
+  ["packages/engine/dist/rendering/prepareRectangles2D.js", { bytes: 20840, sha256: "401732bc01b2385b7aab673d518a4e44d3772beb77c57d63f9a6c46c0035841c" }],
+  ["packages/engine/dist/rendering/prepareImages2D.js", { bytes: 4821, sha256: "82f93f3c93665c0d69d300b19b4e673779cd450727e784fb17d21c9d5af36589" }],
+  ["packages/engine/dist/rendering/prepareTexturedMesh2D.js", { bytes: 7762, sha256: "28796314e7b0d1fc8acceaa6fbe6c8805040b531b4df0772c207acd0123429e3" }],
+  ["packages/engine/dist/rendering/prepareTexturedDraws2D.js", { bytes: 4612, sha256: "b81bcaa01006be0fe1eb3f18d5a93e51f354e5de79923f7d918e3f9976e085c4" }],
+  ["packages/engine/dist/rendering/preparedFrameCache2D.js", { bytes: 20873, sha256: "86349c8ffdaf461604181d9808cff2e98282742abb8950590ec92d8c81b87822" }],
+]);
+assert.equal(m12PerformanceModuleSuccessors.size, 7);
+for (const name of m12PerformanceModuleSuccessors.keys()) assert.ok(m15ModuleIdentities.has(name), 'Performance successor must retain M1.5 membership');
+const currentModuleIdentities = new Map([...m15ModuleIdentities, ...m12PerformanceModuleSuccessors]);
+for (const name of currentModuleIdentities.keys()) allowedModules.add(name);
 function assertCurrentClosure() {
-  assert.deepEqual([...served.keys()].map(url => url.slice(1)).sort(), [...m15ModuleIdentities.keys()].sort(),
-    'M1.5 complete emitted closure membership changed');
+  assert.deepEqual([...served.keys()].map(url => url.slice(1)).sort(), [...currentModuleIdentities.keys()].sort(),
+    'Current complete emitted closure membership changed');
 }
 const registryName = 'packages/engine/dist/internal/texturedFrameState.js';
 const registrySourceName = 'packages/engine/src/internal/texturedFrameState.ts';
@@ -426,14 +440,14 @@ function dependency(specifier, parent) {
 async function collect(name) {
   const url = '/' + name; if (served.has(url)) return;
   assert.ok(allowedModules.has(name), `Unapproved public native dependency: ${name}`);
-  assert.ok(m15ModuleIdentities.has(name), `Unapproved M1.5 native dependency: ${name}`);
+  assert.ok(currentModuleIdentities.has(name), `Unapproved current native dependency: ${name}`);
   assert.ok(served.size < m15SourceModuleLimit, 'Finite emitted closure exceeded');
   const path = resolve(repository, name), physical = await realpath(path);
   assert.ok(physical.startsWith(repository + sep), 'Selected dependency escaped repository');
   const body = await readFile(physical); assert.ok(body.length <= 1024 * 1024);
-  const expected = m15ModuleIdentities.get(name);
-  assert.equal(body.length, expected.bytes, `M1.5 emitted byte length changed: ${name}`);
-  assert.equal(hash(body), expected.sha256, `M1.5 emitted raw identity changed: ${name}`);
+  const expected = currentModuleIdentities.get(name);
+  assert.equal(body.length, expected.bytes, `Current emitted byte length changed: ${name}`);
+  assert.equal(hash(body), expected.sha256, `Current emitted raw identity changed: ${name}`);
   served.set(url, { body, contentType: 'text/javascript', identity: descriptor(name, body) });
   const bound = await identity(physical); assert.equal(bound.bytes, body.length); assert.equal(bound.sha256, hash(body), 'Emitted bytes changed during capture');
   for (const child of imported(body.toString('utf8'))) await collect(dependency(child, name));
@@ -518,11 +532,12 @@ try {
   const historicalM12HostSource = { bytes: 104705, sha256: 'e9d172d17cc9f45109dae7b7038485d63d2c8e572efd88fb74af918812045d1d' };
   const m13HostSourceSuccessor = {"bytes":134474,"sha256":"73c33a00ed99283e1e4d70867308ebc3550c905df881a1d79c714d6c80bbe5a0"};
   const m15HostSourceSuccessor = {"bytes":189815,"sha256":"f84a1de242e8b3efefc1bb4ccb344cb02b659d355b512c071cfccf7c1943bf10"};
-  assert.equal(currentHost.bytes, m15HostSourceSuccessor.bytes, 'Native acceptance binds the reviewed M1.5 Host successor');
-  assert.equal(currentHost.sha256, m15HostSourceSuccessor.sha256);
+  const m12PerformanceHostSourceSuccessor = {"bytes":190117,"sha256":"f3d324c1357ecce0f2f4067d017d2ae88886c5e26fe7458df0b5d16e59fdfb93"};
+  assert.equal(currentHost.bytes, m12PerformanceHostSourceSuccessor.bytes, 'Native acceptance binds the reviewed performance Host successor');
+  assert.equal(currentHost.sha256, m12PerformanceHostSourceSuccessor.sha256);
   report.publicRoute = { entries: entryNames.slice(0, 3), packageExports: { './scene3d': packageExports['./scene3d'], './webgpu/scene3d': packageExports['./webgpu/scene3d'] },
-    hostSource: currentHost, historicalM12HostSource, m13HostSourceSuccessor, m15HostSourceSuccessor,
-    sourceCollection: { historicalModuleLimit: historicalSourceModuleLimit, currentModuleLimit: m15SourceModuleLimit, exactModules: [...m15ModuleIdentities].map(([path, value]) => ({ path, ...value })) }, privateDiagnostic: 'packages/engine/dist/web/webgpuMeshPass.js', allowedModules: [...allowedModules].sort() };
+    hostSource: currentHost, historicalM12HostSource, m13HostSourceSuccessor, m15HostSourceSuccessor, m12PerformanceHostSourceSuccessor,
+    sourceCollection: { historicalModuleLimit: historicalSourceModuleLimit, currentModuleLimit: m15SourceModuleLimit, exactModules: [...currentModuleIdentities].map(([path, value]) => ({ path, ...value })) }, privateDiagnostic: 'packages/engine/dist/web/webgpuMeshPass.js', allowedModules: [...allowedModules].sort() };
   const emitted = [...served.values()].reduce((sum, value) => sum + value.body.length, 0); assert.ok(emitted <= 4 * 1024 * 1024);
   // Bind matching first-party source files without scanning unrelated repository files.
   for (const url of served.keys()) {
