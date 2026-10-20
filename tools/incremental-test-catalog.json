@@ -2559,8 +2559,8 @@
   "policy": [
     {
       "path": "tools/prepush.mjs",
-      "bytes": 2109,
-      "sha256": "bb8b8c0adc7f5d269d5ac73d7288740b5e4a95fcf988f273fda4b2ccf4fcf18d"
+      "bytes": 2150,
+      "sha256": "3361ad25ffb8eaefe1e2fb649a4527f596a04c4cd0fb0915991d277515dac5ab"
     },
     {
       "path": "tools/test.mjs",
@@ -2569,8 +2569,8 @@
     },
     {
       "path": "tools/verify.mjs",
-      "bytes": 870,
-      "sha256": "1eb6002b379dad28ecf6e4d735f281343e900e664901f56bfb585f2ee9667b03"
+      "bytes": 1095,
+      "sha256": "adc19cbe13775919c63ea26e4a14b1381b9fe2da34a44d7ccc2a4f955c9c6cbd"
     }
   ]
 }

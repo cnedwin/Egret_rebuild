@@ -9,7 +9,7 @@
 
 新创作第一方文本通过 `tools/write-repository-text.mjs --path <owner-relative-file>` 或 `knowledge-base/tools/Write-CanonicalText.ps1 -RelativePath <owner-relative-file> -Text <text>` 写入，采用不带 BOM 的 UTF-8、LF 和一个末尾换行，保留内部空行及 Markdown 硬换行空格。不得用 `Environment.NewLine` 序列化仓库文本。原始指纹严格保留字节，计算哈希时不得规范化 EOL、BOM、Unicode 或空白；不得对上游／法律原件、原始回执、封存源码快照或历史证据运行创作格式化器。仅刷新确有修改且经过评审的当前文件身份。
 
-通过 `git config --local core.hooksPath .githooks` 启用两个仓库本地钩子，并保留其 Git 可执行模式。pre-commit 检查工作／未跟踪文本及实际暂存字节；pre-push 对干净已提交快照运行完整 `node tools/prepush.mjs --committed`。准备修改时还须运行普通 `node tools/prepush.mjs`。修复失败并完成独立源码／结果与双语评审后再交付，不能以跳过钩子或放宽字节检查替代修复。
+通过 `git config --local core.hooksPath .githooks` 启用两个仓库本地钩子，保留其 Git 可执行模式。pre-commit 检查工作/未跟踪及暂存文本字节。pre-push 对干净已提交快照运行 `node tools/check-push.mjs --committed`，检查环境、来源/公开内容、双语及知识库结构。完整 `node tools/prepush.mjs --integrated`、独立源码/结果与双语评审以及必需浏览器证据仍是合并要求，不得绕过钩子或削弱字节规范。
 
 知识库验证采用 `-CheckOnly`。分别记录源码、保存的执行、完整本机门禁、实际推送／PR／Main 和远端 CI，保留早先失败与待完成截止点。阅读[仓库规范](knowledge-base/Cns/docs/仓库路径身份与换行规范.md)与[限定证据](knowledge-base/Cns/docs/仓库路径与换行验证记录.md)。
 修改已有第一方文本时，必须通过标准写入器序列化完整的新文件；向旧 CRLF 前缀追加标准文本仍违反新编写文件规范。历史 pin 只有在全部原字节保持一致时才享有未修改豁免；保留原件、封存证据及法律／上游文件保持不变。
@@ -79,7 +79,7 @@ AI 辅助贡献注明实际范围、资料与作者复核。保留参考出处�
 
 公开简介英文优先，随后附中文。完整阅读版本分别放在 `knowledge-base/en/` 与 `knowledge-base/Cns/`，英文目录使用英文文件名。英文登记册视图从中文权威记录生成并保持只读，ID、状态、数字与来源一致。共享实验代码、原始证据、历史源码身份及上游许可原件保留出处。
 
-每次推送 GitHub 前，复核来源归属、公开内容及完整双语版本，补齐关键代码英文注释，更新当前文档身份并执行 `node tools/prepush.mjs`。该命令检查公开结构、核心／类型／包边界、headless 行为及知识库结构，不启动浏览器。结构检查不能代替翻译质量复核或公开批准。
+每次推送 GitHub 前，复核来源、公开内容、双语版本及关键英文注释，然后完成已提交快照的推送检查。完整集成合并门禁保留代码/类型/包边界、headless 行为和知识库检查。两种命令都不启动浏览器，也不证明翻译含义正确；采用工程计划中的当前交付分层。
 
 克隆后，贡献者与 CI 必须执行 `git config --local core.hooksPath .githooks` 启用同一推送钩子；应修复失败而非绕过钩子。详见[双语规范](knowledge-base/Cns/docs/双语文档与推送前检查.md)及[目录规范](knowledge-base/Cns/docs/documentation-layout.md)。
 
@@ -91,7 +91,7 @@ node tools/verify-webgpu.mjs --playwright <installed-playwright-module> --channe
 node tools/verify-webgpu-b1.mjs --playwright "<absolute-installed-playwright-package-directory>" --channel msedge --output "<absolute-new-output-directory-outside-repository>"
 ```
 
-B1 命令用于受影响的 B1 场景渲染，详见[有界验证器](knowledge-base/Cns/docs/b1-browser-verifier.md)。使用已接受的固定依赖，浏览器默认启动且不附加 flags。沿用未变构建的已有证据时须明确比对身份；推送前仍须重新通过完整 prepush。
+B1 命令用于受影响的 B1 场景渲染，详见[有界验证器](knowledge-base/Cns/docs/b1-browser-verifier.md)。使用已接受的固定依赖，浏览器默认启动且不附加 flags。沿用未变构建的已有证据时须明确比对身份；合并候选仍须重新通过完整集成 prepush。
 
 发现与登记路径在 Windows 按大小写不敏感方式排除私有执行、依赖及生成目录，清单不能覆盖排除规则。普通公开 AGENTS 文件仍有效；只有两个封存的 Three r186 研究构建精确路径／哈希保留既定例外。
 

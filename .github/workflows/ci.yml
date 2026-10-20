@@ -47,7 +47,7 @@ jobs:
       - name: Install pinned package manager
         run: npm install --global pnpm@11.25.0 --ignore-scripts
       - name: Clean setup
-        run: pnpm setup:dev
+        run: pnpm setup:dev --no-build
       - name: Full merge checks
         env:
           EGRET_METADATA_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}

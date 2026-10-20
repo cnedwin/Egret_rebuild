@@ -27,7 +27,7 @@
     pnpm check:quick
     pnpm example:browser
 
-每次推送前运行完整 node tools/prepush.mjs，完成公开结构、代码／类型／依赖边界、无界面示例和知识库检查。提交前钩子检查暂存原始字节，推送前钩子检查干净的已提交快照。按正常流程修复失败。渲染改动还需执行 [AGENTS](AGENTS.zh-CN.md) 中适用的真实浏览器检查。
+开发时使用 `node tools/check-incremental.mjs --base origin/main` 获取受影响行为反馈。推送前审阅来源、两种阅读版本和关键英文注释。提交钩子检查文本字节，推送钩子对干净已提交快照运行 `node tools/check-push.mjs --committed`。合并前仍需完整 `pnpm check:merge` / 集成 CI、独立评审及受影响的实际浏览器证据，详见[工程计划](knowledge-base/Cns/docs/architecture-and-engineering-plan.md)的交付分层。
 
 ## 工程与 API 规范
 
@@ -57,4 +57,4 @@ prepush 不启动浏览器。按改动选取已定义的 Canvas/WebGPU 检查，
 
 通过[公开看板](https://github.com/users/cnedwin/projects/2)了解实时状态，通过 [Issue #52](https://github.com/cnedwin/Egret_rebuild/issues/52)开始首次贡献。可参与事项必须明确入口、预期结果、检查与评审联系人；阻塞事项写明缺少的依赖和下一步。维护者审查证据后更新状态，Issue/PR 标签本身不证明验收。[新人清单](knowledge-base/Cns/docs/getting-started.md#完整演练首次贡献)说明贡献声明与维护者集成流程。
 
-按[架构计划](knowledge-base/Cns/docs/architecture-and-engineering-plan.md)选择评审范围：纯文字变更需要内容/链接/双语评审；环境/CI/验证变更需要干净环境及拒绝路径证据；渲染/资源/动画变更另需受影响的真实浏览器检查。这些附加评审不替代必需的完整 pre-push 门禁，不能从维护者账户 CI 推断外部 fork、真人或设备结果。
+按[架构计划](knowledge-base/Cns/docs/architecture-and-engineering-plan.md)选择评审范围：纯文字变更需要内容/链接/双语评审；环境/CI/验证变更需要干净环境及拒绝路径证据；渲染/资源/动画变更另需受影响的真实浏览器检查。这些附加评审不替代必需的完整合并门禁，不能从维护者账户 CI 推断外部 fork、真人或设备结果。

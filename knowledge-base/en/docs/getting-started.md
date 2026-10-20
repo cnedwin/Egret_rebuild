@@ -35,7 +35,7 @@ For a first code edit, change a displayed heading in `examples/resource-scene/in
 2. Fork, create a branch and make a focused change. Questions, reproduction samples, translations and device testing are welcome.
 3. Run `pnpm check:quick` during iteration. It builds, checks actual package boundaries, exercises onboarding tools and runs the headless example; it is not the merge gate.
 4. Open a draft PR with the problem, behavior, verification, compatibility and sources/AI assistance. English or Chinese drafts are accepted. Maintainers help complete bilingual content and current ledgers; historical evidence is never regenerated.
-5. Before public delivery/Main merge, complete `pnpm check:merge`, bilingual review and any affected real-browser verification. Existing hooks still enforce the full gate; this first M0 delivery does not remove that obligation.
+5. Before public delivery/Main merge, complete `pnpm check:merge`, bilingual review and any affected real-browser verification. The push hook checks a clean committed snapshot and publication structure; complete engine checks remain the protected merge requirement.
 
 ## Review and current boundaries
 
@@ -106,7 +106,7 @@ node tools/check-incremental.mjs --base origin/main
 
 The first command prints paths, reasons and the selected profile without running checks. In a fork, fetch upstream and use its target ref instead. The base must resolve to an ancestor of HEAD; missing/unrelated refs fail. Omitting --base uses the merge base of HEAD and origin/main. Committed, staged, unstaged and nonignored untracked inputs are all considered.
 
-Existing reading-only edits select document feedback. Existing package TypeScript edits can use [dependency-aware local checks](dependency-aware-checks.md): package impact selects reviewed behavioral tests while keeping shared tests, complete build, strict types and source boundaries. New, unknown, configuration, test, metadata and tool changes fall back to full prepush; stale catalogs and hidden index flags also refuse reduction. No previous acceptance is cached.
+Existing reading-only edits select document feedback. Existing package TypeScript edits can use [dependency-aware local checks](dependency-aware-checks.md): selected/shared behavioral tests follow package impact after a complete build and generic dependency boundary. New/unknown/configuration/test/tool changes or stale catalogs run all top-level behavior tests instead of recursively invoking full prepush. Complete source/type/publication qualification remains in merge CI; local success is not milestone acceptance.
 
 pnpm check:quick remains available for build/boundary/onboarding feedback. Neither local feedback command replaces the complete committed push hook, integrated merge gate, affected browser acceptance or independent source/bilingual review. A local PASS is not a merge receipt.
 

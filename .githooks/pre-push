@@ -1,3 +1,3 @@
 #!/bin/sh
-# Enable with: git config --local core.hooksPath .githooks
-exec node tools/prepush.mjs --committed
+# Publication feedback only; protected CI retains complete merge checks.
+exec node tools/check-push.mjs --committed

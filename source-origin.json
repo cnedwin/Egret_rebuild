@@ -251,8 +251,8 @@
     {
       "path": ".githooks/pre-push",
       "originRole": "New first-party bilingual documentation or publication tooling",
-      "sha256": "5ea5edc866957509d25ae122337dfcc23248d72278ecc47c6606f9ce2b886b7d",
-      "bytes": 109,
+      "sha256": "e42d3d5defec9bee6fef6da4a4425a579fe936dd93bf3a73a3cfed4808363033",
+      "bytes": 126,
       "previousRevisionSha256": "372e3377f8d29c40a68ac54ec55124abdea50d761366d93eaeb97eb898f04561",
       "previousLayoutPath": ".githooks/pre-push",
       "previousLayoutSha256": "372e3377f8d29c40a68ac54ec55124abdea50d761366d93eaeb97eb898f04561"
@@ -295,8 +295,8 @@
     {
       "path": "AGENTS.md",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "sha256": "033a638bcd7ce7e1e9720bf64551ba5feaefba4c46733421511676cdf5b157c3",
-      "bytes": 32477,
+      "sha256": "88ba0530c327e33096c278965bbbe53580cd86529fee9e6a17b517962a43dfb0",
+      "bytes": 32505,
       "previousRevisionSha256": "7c2716d3a678406ce905b8cd7fd9ef3552bca4e37b8e9456b63b871e4170e0c1",
       "previousLayoutPath": "AGENTS.en.md",
       "previousLayoutSha256": "7e4ccd840b8b23896f9d9e92fe8173693ef37e415d3cebbebb3bfafded8158c5",
@@ -325,8 +325,8 @@
     },
     {
       "path": "AGENTS.zh-CN.md",
-      "sha256": "a248b2f8a5201be4f4261666e35b9cddbc3b0aadec23762ddfa187b1b6f88a5a",
-      "bytes": 29027,
+      "sha256": "83ef3b1c9f4ea76163597b618c233490bc3fe14c767e3c73627cb04992c58004",
+      "bytes": 29056,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousPublicSha256": "d133cdcd7d1f41fe0ce26bee63568cd0c4f23c6e6e7f9828d0768e95f53a05b4",
       "previousRevisionSha256": "f3551dd36ebc3023f8c846f0cdd876b7204c214c7c041e6496271d20c091046c",
@@ -358,16 +358,16 @@
     {
       "path": "CONTRIBUTING.md",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "sha256": "712a26ad00b7c34f56d2be025053c23d8a8e5f798edcd8bfb75eeca7b71e73e2",
-      "bytes": 6334,
+      "sha256": "ed023fd34ab97bdaafa07be6c92a815395c37cec90b7e49b04c2e6d40e5114b7",
+      "bytes": 6520,
       "previousRevisionSha256": "cfd1f60cfae8c262a8897e78b542e7f3036c3d492b5bbab79bdd80be80677e4d",
       "previousLayoutPath": "CONTRIBUTING.en.md",
       "previousLayoutSha256": "ea91269863610b03cc682a3656d77b55325631c6b897efb0c6bcb534d5ac5fee"
     },
     {
       "path": "CONTRIBUTING.zh-CN.md",
-      "sha256": "2ca7f84a2d9e0f3716c83784f44bd8cd7eb6379357896478e207dcd030744f01",
-      "bytes": 5281,
+      "sha256": "03a3db36ebfa0d88957e3f9edb5a09dc729ae8134f020f56dccacba23c300b35",
+      "bytes": 5417,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousPublicSha256": "da6292f0408cc88f776b7d113924b364dd045b94d3a7541e85d71e1964ed4dae",
       "previousRevisionSha256": "373de5c518c0208d972ceef4c331d8ae81853102ca6aee8dbd1f90064c57bec8",
@@ -1054,8 +1054,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/Cns/docs/双语文档与推送前检查.md",
-      "bytes": 7166,
-      "sha256": "cabdf49de67a9af98d305554048799a9e436d0f1f6f829963552ccadc6055209"
+      "bytes": 2838,
+      "sha256": "42b187e00dca7e721ee67f8a67718265098d49f3e149fc12085d4acf668db818"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -2112,7 +2112,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 138808,
-      "sha256": "fa705e91ba75078f4a4a36b8b5868c5ddb0440d360d6b4f996828842563fea7d",
+      "sha256": "61556b46ed8f2a178ef972675ac1870094b92040b7272e75f25f000aa43cd6bc",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -2486,8 +2486,8 @@
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/en/docs/bilingual-documentation-and-prepush-checks.md",
-      "bytes": 9207,
-      "sha256": "32e21df2d3e183d349e276d26ac73498c481e84522dfff1e11951a0683243878"
+      "bytes": 3340,
+      "sha256": "b6be6eb8f949ea6feee7522f06b00336ad109cb3cae16416470011ee3e4d98bc"
     },
     {
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
@@ -3786,8 +3786,8 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "68fddbf5559f94b1b79020bec382ad60ca0142abe0b72d59f9436e4b2bd1f103",
-      "bytes": 347098,
+      "sha256": "1b776eb01d8dfd4686a58dd0a9135c5b654dd817904c248a84a0ce8aaaaaa9e8",
+      "bytes": 347232,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
       "previousLayoutSha256": "72f2cb551134e948a04f5ec3260c72eda669a53843efdbae9405674a21013123",
@@ -5591,8 +5591,8 @@
     {
       "path": "tools/prepush.mjs",
       "originRole": "New first-party bilingual documentation or publication tooling",
-      "sha256": "bb8b8c0adc7f5d269d5ac73d7288740b5e4a95fcf988f273fda4b2ccf4fcf18d",
-      "bytes": 2109,
+      "sha256": "3361ad25ffb8eaefe1e2fb649a4527f596a04c4cd0fb0915991d277515dac5ab",
+      "bytes": 2150,
       "previousRevisionSha256": "8ba8600f86c5a0722f9eb2a6ae030a353e8034c36d2e5af3288165fd3c864aa4",
       "previousLayoutPath": "tools/prepush.mjs",
       "previousLayoutSha256": "8ba8600f86c5a0722f9eb2a6ae030a353e8034c36d2e5af3288165fd3c864aa4"
@@ -5636,8 +5636,8 @@
     },
     {
       "path": "tools/verify.mjs",
-      "sha256": "1eb6002b379dad28ecf6e4d735f281343e900e664901f56bfb585f2ee9667b03",
-      "bytes": 870,
+      "sha256": "adc19cbe13775919c63ea26e4a14b1381b9fe2da34a44d7ccc2a4f955c9c6cbd",
+      "bytes": 1095,
       "originalSha256": "9c789b762d598c72040992d8ffb9041f75180d39b7556761365ef0998d5b0b4a",
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "previousRevisionSha256": "9c789b762d598c72040992d8ffb9041f75180d39b7556761365ef0998d5b0b4a",
@@ -10436,8 +10436,8 @@
     {
       "path": ".github/workflows/ci.yml",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
-      "bytes": 3666,
-      "sha256": "eb15dd0e4ecbdf13ac806597b262cc7a62c4753943b237ffd952fc7cae5cad64"
+      "bytes": 3677,
+      "sha256": "a6108be8d123090a57f7d27ab090bed8c7236315ad62c2b4e031f8fdb347c378"
     },
     {
       "path": ".node-version",
@@ -10454,8 +10454,8 @@
     {
       "path": "knowledge-base/Cns/docs/getting-started.md",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
-      "bytes": 12704,
-      "sha256": "227ac229082650d40ee79cd79ce9de30c1b78e2618e56bf0ebc3f0712f3b1429"
+      "bytes": 12768,
+      "sha256": "628358879742939b4226e1bfdd8ff8867d4d76b2e940ad41f5fbdeecbd8c16f9"
     },
     {
       "path": "knowledge-base/Cns/docs/m0-community-foundations.md",
@@ -10466,8 +10466,8 @@
     {
       "path": "knowledge-base/en/docs/getting-started.md",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
-      "bytes": 14629,
-      "sha256": "7fd6bec572bc4fd237733ad89902637a6eab19b34ac8a5c3945a5b0cc9f85f10"
+      "bytes": 14718,
+      "sha256": "f9e3c210ba92c7c0c63414055126249d5d4d6eaa080cfbc7355e1072427ec62d"
     },
     {
       "path": "knowledge-base/en/docs/m0-community-foundations.md",
@@ -10502,8 +10502,8 @@
     {
       "path": "tools/setup-dev.mjs",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
-      "bytes": 4035,
-      "sha256": "87aa2b84712f83f5c6c5bb2fe4691d646cc6ad5ae5b769dbc293fbd6deb38e71"
+      "bytes": 4343,
+      "sha256": "b59d8b6bec62d516e0ad7ac289739286d60afe0c3c46a4bd24efb44bad910efd"
     },
     {
       "path": "tools/lib/local-package.mjs",
@@ -10514,14 +10514,14 @@
     {
       "path": "knowledge-base/Cns/docs/architecture-and-engineering-plan.md",
       "originRole": "First-party M0 tools, verification, configuration or documentation; AI-assisted from approved plan; Apache-2.0.",
-      "bytes": 55355,
-      "sha256": "6e99b94e20a562a7ccb01dea322955c8af1e0ddc2bacc134a3d0d80c9c6c8aa5"
+      "bytes": 58251,
+      "sha256": "16f3138c375dc92827e3f82efb8885c8d50cc6f4e229f50912e7e893b3a3c22f"
     },
     {
       "path": "knowledge-base/en/docs/architecture-and-engineering-plan.md",
       "originRole": "First-party M0 tools, verification, configuration or documentation; AI-assisted from approved plan; Apache-2.0.",
-      "bytes": 64540,
-      "sha256": "a9afab40602ed1335327d2ab410b9a6ba3b3c89e5df778eb45d0034280d3bafd"
+      "bytes": 68101,
+      "sha256": "89e8075fc580c76586b6fedc0c6817bf8db2ecf068b728242e72c07cbc39f2df"
     },
     {
       "path": "tools/contribution-metadata.mjs",
@@ -10562,8 +10562,8 @@
     {
       "path": "tools/check-incremental.mjs",
       "originRole": "First-party M0 risk-selected contributor feedback and advanced browser admission; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 7842,
-      "sha256": "49eaa1fe625713f551e97eef24ee0b2a0289f5e7eff307b0bd221e298c786b17"
+      "bytes": 6757,
+      "sha256": "279018dc5457c9f81f6554f5e67ee17ffbffc3cdcca626ed1da14d33a7c3a603"
     },
     {
       "path": "tools/browser-prepare.mjs",
@@ -10574,8 +10574,8 @@
     {
       "path": "tests/publication/incremental-checks.test.mjs",
       "originRole": "First-party M0 risk-selected contributor feedback and advanced browser admission; independently authored with AI assistance; Apache-2.0.",
-      "bytes": 81604,
-      "sha256": "b9c0b22746d2a57a514a9f20a248218e0faf09fbe55db7d9290cf3e3bf393861"
+      "bytes": 92214,
+      "sha256": "0fc7f8dc59a285c1ca70481c15e8047546a4c90c9596b7774081af1a2f13f9c2"
     },
     {
       "path": "contributions/m0-advanced-tooling.json",
@@ -10664,20 +10664,20 @@
     {
       "path": "tools/incremental-test-catalog.json",
       "originRole": "First-party M0 dependency-aware feedback and bilingual documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 69208,
-      "sha256": "b8570dbc0d0ba6cffca13c8a9cfcb4343bf37356f72ea09dd93f32bf0a5235cb"
+      "bytes": 69209,
+      "sha256": "77b37cb8daa955b54ab147d32723cd425fcd792e181bfd9d1ec11d4f18d429b2"
     },
     {
       "path": "knowledge-base/en/docs/dependency-aware-checks.md",
       "originRole": "First-party M0 dependency-aware feedback and bilingual documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 6611,
-      "sha256": "725c575e996506bc94ae9731480d5c1d5bf252df64c07abd4865ea2be2b0c0bf"
+      "bytes": 6840,
+      "sha256": "95db2f429585b1e977f5e5b69012fff7ffa82e0d2091c4a82b1a162110ae6630"
     },
     {
       "path": "knowledge-base/Cns/docs/dependency-aware-checks.md",
       "originRole": "First-party M0 dependency-aware feedback and bilingual documentation, independently authored with AI assistance; Apache-2.0.",
-      "bytes": 5805,
-      "sha256": "eb008d5aab3b13499d82bb58ffa49944d357593938c5a8ba10a56e0d07a3acf9"
+      "bytes": 5997,
+      "sha256": "b76df36fbf7901b99b6353538f34db4a549aaf82d36f0211ea859498dac13b21"
     },
     {
       "path": "contributions/m0-dependency-feedback.json",
@@ -10724,14 +10724,14 @@
     {
       "path": "knowledge-base/en/docs/m1-rendering-resource-plan.md",
       "originRole": "First-party M1 architecture and implementation plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 19521,
-      "sha256": "c908aecb5ff00a1683d940e62803bd54660ec8d8170af616d00cd902e5d76728"
+      "bytes": 20367,
+      "sha256": "a702b5ed3338bfb9dfb8ba85a959eec8ebbcce6414b3332772ab04f17628395d"
     },
     {
       "path": "knowledge-base/Cns/docs/m1-rendering-resource-plan.md",
       "originRole": "First-party M1 architecture and implementation plan, authored with AI assistance; Apache-2.0.",
-      "bytes": 16318,
-      "sha256": "f7bfca9c505c73a0d3e43c31a44d6416af1d6f81d87f34216ffd0087e3d6f1c1"
+      "bytes": 16970,
+      "sha256": "ab0b7d02f4f877b26c54074ca1c86f999c70917fa84a36f66a3151a31c8b4d66"
     },
     {
       "path": "contributions/m1-plan.json",
@@ -11554,6 +11554,18 @@
       "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
       "bytes": 10737,
       "sha256": "1c8f1cc78788cc6c707eeb15a86fa1a925ce9d31643150e55abc923fbdf9af86"
+    },
+    {
+      "path": "tools/check-push.mjs",
+      "originRole": "First-party lightweight clean-snapshot publication checks; complete engine qualification remains in protected merge CI.",
+      "bytes": 1059,
+      "sha256": "28b201d43bd84b7eb05b2b770a044a9a7d57e72416cd971452f08579736ca3dd"
+    },
+    {
+      "path": "contributions/workflow-simplification.json",
+      "originRole": "First-party contribution declarations; source and authorship statements are reviewed separately.",
+      "bytes": 285,
+      "sha256": "28e4cba732c79323599a8cb3b4221a2e2c9a525665d7128f11b6472eeaf11380"
     }
   ],
   "fileListScope": "Current identities of an explicitly listed, version-bound subset of code, configuration, documentation, licenses and evidence. This list excludes source-origin itself and does not claim a complete repository provenance inventory. Unlisted research and upstream assets retain their separate notices and records. Historical original/previous hashes retain their original scopes.",

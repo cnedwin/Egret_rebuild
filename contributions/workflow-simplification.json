@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "tools/check-push.mjs",
+      "originRole": "First-party lightweight clean-snapshot publication checks; complete engine qualification remains in protected merge CI.",
+      "criticalComment": true
+    }
+  ],
+  "documents": []
+}

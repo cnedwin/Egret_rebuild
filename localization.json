@@ -323,15 +323,15 @@
       "zh": "AGENTS.zh-CN.md",
       "en": "AGENTS.md",
       "kind": "public_reading",
-      "enSha256": "033a638bcd7ce7e1e9720bf64551ba5feaefba4c46733421511676cdf5b157c3",
-      "zhSha256": "a248b2f8a5201be4f4261666e35b9cddbc3b0aadec23762ddfa187b1b6f88a5a"
+      "enSha256": "88ba0530c327e33096c278965bbbe53580cd86529fee9e6a17b517962a43dfb0",
+      "zhSha256": "83ef3b1c9f4ea76163597b618c233490bc3fe14c767e3c73627cb04992c58004"
     },
     {
       "zh": "CONTRIBUTING.zh-CN.md",
       "en": "CONTRIBUTING.md",
       "kind": "public_reading",
-      "enSha256": "712a26ad00b7c34f56d2be025053c23d8a8e5f798edcd8bfb75eeca7b71e73e2",
-      "zhSha256": "2ca7f84a2d9e0f3716c83784f44bd8cd7eb6379357896478e207dcd030744f01"
+      "enSha256": "ed023fd34ab97bdaafa07be6c92a815395c37cec90b7e49b04c2e6d40e5114b7",
+      "zhSha256": "03a3db36ebfa0d88957e3f9edb5a09dc729ae8134f020f56dccacba23c300b35"
     },
     {
       "zh": "docs/evidence/texture-a1.zh-CN.md",
@@ -477,8 +477,8 @@
       "zh": "knowledge-base/Cns/docs/双语文档与推送前检查.md",
       "en": "knowledge-base/en/docs/bilingual-documentation-and-prepush-checks.md",
       "kind": "public_reading",
-      "enSha256": "def2471ea0eceacaf42dd012d52f24475befd2c87ada94cff98d14cbd298fa68",
-      "zhSha256": "8b5039c96fe8f8036798952de7acbe0a099d9431dd19ef83c04abff8d19bbb36"
+      "enSha256": "b6be6eb8f949ea6feee7522f06b00336ad109cb3cae16416470011ee3e4d98bc",
+      "zhSha256": "42b187e00dca7e721ee67f8a67718265098d49f3e149fc12085d4acf668db818"
     },
     {
       "zh": "knowledge-base/Cns/docs/bitmap-region-contract.md",
@@ -1830,8 +1830,8 @@
       "en": "knowledge-base/en/docs/getting-started.md",
       "zh": "knowledge-base/Cns/docs/getting-started.md",
       "kind": "public_reading",
-      "enSha256": "7fd6bec572bc4fd237733ad89902637a6eab19b34ac8a5c3945a5b0cc9f85f10",
-      "zhSha256": "227ac229082650d40ee79cd79ce9de30c1b78e2618e56bf0ebc3f0712f3b1429"
+      "enSha256": "f9e3c210ba92c7c0c63414055126249d5d4d6eaa080cfbc7355e1072427ec62d",
+      "zhSha256": "628358879742939b4226e1bfdd8ff8867d4d76b2e940ad41f5fbdeecbd8c16f9"
     },
     {
       "en": "knowledge-base/en/docs/m0-community-foundations.md",
@@ -1844,8 +1844,8 @@
       "en": "knowledge-base/en/docs/architecture-and-engineering-plan.md",
       "zh": "knowledge-base/Cns/docs/architecture-and-engineering-plan.md",
       "kind": "public_reading",
-      "enSha256": "a9afab40602ed1335327d2ab410b9a6ba3b3c89e5df778eb45d0034280d3bafd",
-      "zhSha256": "6e99b94e20a562a7ccb01dea322955c8af1e0ddc2bacc134a3d0d80c9c6c8aa5"
+      "enSha256": "89e8075fc580c76586b6fedc0c6817bf8db2ecf068b728242e72c07cbc39f2df",
+      "zhSha256": "16f3138c375dc92827e3f82efb8885c8d50cc6f4e229f50912e7e893b3a3c22f"
     },
     {
       "en": "knowledge-base/en/docs/resource-browser-workflow.md",
@@ -1865,8 +1865,8 @@
       "en": "knowledge-base/en/docs/dependency-aware-checks.md",
       "zh": "knowledge-base/Cns/docs/dependency-aware-checks.md",
       "kind": "public_reading",
-      "enSha256": "725c575e996506bc94ae9731480d5c1d5bf252df64c07abd4865ea2be2b0c0bf",
-      "zhSha256": "eb008d5aab3b13499d82bb58ffa49944d357593938c5a8ba10a56e0d07a3acf9"
+      "enSha256": "95db2f429585b1e977f5e5b69012fff7ffa82e0d2091c4a82b1a162110ae6630",
+      "zhSha256": "b76df36fbf7901b99b6353538f34db4a549aaf82d36f0211ea859498dac13b21"
     },
     {
       "en": "knowledge-base/en/docs/check-maintenance.md",
@@ -1879,8 +1879,8 @@
       "en": "knowledge-base/en/docs/m1-rendering-resource-plan.md",
       "zh": "knowledge-base/Cns/docs/m1-rendering-resource-plan.md",
       "kind": "public_reading",
-      "enSha256": "c908aecb5ff00a1683d940e62803bd54660ec8d8170af616d00cd902e5d76728",
-      "zhSha256": "f7bfca9c505c73a0d3e43c31a44d6416af1d6f81d87f34216ffd0087e3d6f1c1"
+      "enSha256": "a702b5ed3338bfb9dfb8ba85a959eec8ebbcce6414b3332772ab04f17628395d",
+      "zhSha256": "ab0b7d02f4f877b26c54074ca1c86f999c70917fa84a36f66a3151a31c8b4d66"
     },
     {
       "en": "knowledge-base/en/docs/warm-submission-contract.md",
@@ -2894,7 +2894,7 @@
     },
     {
       "path": "tools/prepush.mjs",
-      "sha256": "bb8b8c0adc7f5d269d5ac73d7288740b5e4a95fcf988f273fda4b2ccf4fcf18d"
+      "sha256": "3361ad25ffb8eaefe1e2fb649a4527f596a04c4cd0fb0915991d277515dac5ab"
     },
     {
       "path": "packages/engine/web/image.ts",
@@ -3242,7 +3242,7 @@
     },
     {
       "path": "tools/verify.mjs",
-      "sha256": "1eb6002b379dad28ecf6e4d735f281343e900e664901f56bfb585f2ee9667b03"
+      "sha256": "adc19cbe13775919c63ea26e4a14b1381b9fe2da34a44d7ccc2a4f955c9c6cbd"
     },
     {
       "path": "examples/resource-scene/gpu-scene.mjs",
@@ -3518,7 +3518,7 @@
     },
     {
       "path": "tools/check-incremental.mjs",
-      "sha256": "49eaa1fe625713f551e97eef24ee0b2a0289f5e7eff307b0bd221e298c786b17"
+      "sha256": "279018dc5457c9f81f6554f5e67ee17ffbffc3cdcca626ed1da14d33a7c3a603"
     },
     {
       "path": "tools/browser-prepare.mjs",
@@ -3526,7 +3526,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "b9c0b22746d2a57a514a9f20a248218e0faf09fbe55db7d9290cf3e3bf393861"
+      "sha256": "0fc7f8dc59a285c1ca70481c15e8047546a4c90c9596b7774081af1a2f13f9c2"
     },
     {
       "path": "tools/browser-resources.mjs",
@@ -3719,6 +3719,10 @@
     {
       "path": "packages/engine/web/webgl2Types.ts",
       "sha256": "d22918ff669dc7d257fb1bfd28efb70f21f2ff070f07eb27ebf36225b4f091ef"
+    },
+    {
+      "path": "tools/check-push.mjs",
+      "sha256": "28b201d43bd84b7eb05b2b770a044a9a7d57e72416cd971452f08579736ca3dd"
     }
   ],
   "historicalSemanticReview": {
