@@ -751,3 +751,177 @@ test('P05 PRIVATE UNIT previous storage refusal thrown from a payload operation 
     privateOperations([], { throwPack: previous.value })), value => replayObserved.push(value)));
   assert.equal(replay.value, previous.value); assert.deepEqual(replayObserved, []);
 });
+
+// P06 controls the existing private helper only. Read-count fixtures below are
+// test-owned accessors, not authenticated frames or permission to enable reuse
+// for arbitrary private callers. The production opt-in belongs to the ordinary
+// Host's immutable-frame/stock-ledger chain; no globals or prototypes are changed.
+function countedAdmissionClip() {
+  const reads = { matrix: 0, rect: 0 };
+  const rect = Object.freeze({ x: 0, y: 0, width: 8, height: 8 });
+  const clip = Object.freeze({
+    get matrix() { reads.matrix++; return IDENTITY; },
+    get rect() { reads.rect++; return rect; },
+  });
+  return { clip, reads };
+}
+function clipAdmissionFrame(clips) {
+  return unitFrame({ commands: Object.freeze([rectCommand({ clips: Object.freeze(clips) })]) });
+}
+
+test('P06 genuine eight shared clips preserve rect image mesh admission and all fees', async () => {
+  await genuine([ownedGeometry(), ownedGeometry()], async f => {
+    const nodes = [];
+    try {
+      let parent = f.engine.stage;
+      for (let i = 0; i < 8; i++) {
+        const node = new egret.Sprite(); nodes.push(node);
+        node.clipRect = { x: 0, y: 0, width: 8, height: 8 };
+        parent.addChild(node); parent = node;
+      }
+      for (const mesh of f.meshes) parent.addChild(mesh);
+      const rectangle = new egret.Sprite(); nodes.push(rectangle);
+      rectangle.graphics.beginFill(0x112233).drawRect(2, 2, 4, 4); parent.addChild(rectangle);
+      const bitmap = new egret.Bitmap(f.meshes[0].textureLease); nodes.push(bitmap); parent.addChild(bitmap);
+      const frame = f.engine.captureTexturedFrame({ width: 8, height: 8 });
+      assert.deepEqual(frame.commands.map(command => command.kind), ['mesh', 'mesh', 'rect', 'image']);
+      for (const command of frame.commands) {
+        assert.equal(command.clips.length, 8);
+        for (let i = 0; i < 8; i++) {
+          assert.equal(command.clips[i], frame.commands[0].clips[i]);
+          for (const value of [command.clips[i], command.clips[i].matrix, command.clips[i].rect]) {
+            assert.equal(Object.isFrozen(value), true);
+          }
+        }
+      }
+      for (const pixelRatio of [1, 2]) {
+        const options = { ...FRAME_OPTIONS, pixelRatio, maxClipRectangles: 32 };
+        const coldBudget = ledger(), hotBudget = ledger();
+        const cold = admission()(frame, options, coldBudget, false);
+        const hot = admission()(frame, options, hotBudget, true);
+        assert.deepEqual(hot, cold);
+        assert.equal(hot.frame, frame);
+        assert.deepEqual(hot.commands.map(record => record.commandIndex), [0, 1, 2, 3]);
+        assert.deepEqual(hotBudget.snapshot(), coldBudget.snapshot());
+        assert.deepEqual(hotBudget.snapshot(), { sourceTrianglesCharged: 2,
+          preparedVerticesCharged: 0, predicatesCharged: 0, tupleComparisonsCharged: 0 });
+        for (const reuse of [false, true]) {
+          reason(() => admission()(frame, { ...options, maxClipRectangles: 31 }, ledger(), reuse), 'budget');
+        }
+      }
+    } finally {
+      const failures = [];
+      for (let i = nodes.length - 1; i >= 0; i--) {
+        try { nodes[i].dispose(); } catch (cause) { failures.push(cause); }
+      }
+      if (failures.length) throw new AggregateError(failures, 'P06 public capture cleanup failed');
+    }
+  });
+});
+
+test('P06 PRIVATE UNIT explicit reuse skips only repeat successful clip numeric reads', () => {
+  const observed = countedAdmissionClip(), frame = clipAdmissionFrame([observed.clip, observed.clip, observed.clip]);
+  const coldBudget = ledger(), hotBudget = ledger();
+  const cold = admission()(frame, FRAME_OPTIONS, coldBudget, false);
+  assert.deepEqual(observed.reads, { matrix: 3, rect: 3 });
+  const hot = admission()(frame, FRAME_OPTIONS, hotBudget, true);
+  assert.deepEqual(observed.reads, { matrix: 4, rect: 4 });
+  assert.deepEqual(hot, cold); assert.deepEqual(hotBudget.snapshot(), coldBudget.snapshot());
+});
+
+test('P06 PRIVATE UNIT only first 64 identities are retained and entry 65 remains cold', () => {
+  const observed = Array.from({ length: 65 }, () => countedAdmissionClip());
+  const clips = observed.map(row => row.clip);
+  const frame = clipAdmissionFrame([...clips, ...clips, clips[0]]);
+  const result = admission()(frame, FRAME_OPTIONS, ledger(), true);
+  assert.equal(result.commands[0].command.clips.length, 131);
+  assert.deepEqual(observed.map(row => row.reads.matrix), [...Array(64).fill(1), 2]);
+  assert.deepEqual(observed.map(row => row.reads.rect), [...Array(64).fill(1), 2]);
+  // A new successful call must validate all first occurrences again.
+  admission()(frame, FRAME_OPTIONS, ledger(), true);
+  assert.deepEqual(observed.map(row => row.reads.matrix), [...Array(64).fill(2), 4]);
+});
+
+test('P06 PRIVATE UNIT success and original failure leave no reuse for the next call', () => {
+  const observed = countedAdmissionClip(), frame = clipAdmissionFrame([observed.clip, observed.clip]);
+  admission()(frame, FRAME_OPTIONS, ledger(), true);
+  assert.equal(observed.reads.matrix, 1);
+  const sentinel = new Error('P06 original clip read'), failures = [];
+  const broken = { get matrix() { failures.push('matrix'); throw sentinel; },
+    get rect() { assert.fail('rect must not be read after matrix throws'); } };
+  const badFrame = clipAdmissionFrame([observed.clip, observed.clip, broken]);
+  for (let attempt = 0; attempt < 2; attempt++) {
+    assert.throws(() => admission()(badFrame, FRAME_OPTIONS, ledger(), true), cause => cause === sentinel);
+  }
+  assert.equal(observed.reads.matrix, 3); assert.deepEqual(failures, ['matrix', 'matrix']);
+  admission()(frame, FRAME_OPTIONS, ledger(), true);
+  assert.equal(observed.reads.matrix, 4);
+});
+
+test('P06 PRIVATE UNIT a later call must validate the same clip under its new ratio', () => {
+  const clip = Object.freeze({ matrix: IDENTITY,
+    rect: Object.freeze({ x: 600000, y: 0, width: 1, height: 1 }) });
+  const frame = clipAdmissionFrame([clip, clip]);
+  admission()(frame, FRAME_OPTIONS, ledger(), true);
+  reason(() => admission()(frame, { ...FRAME_OPTIONS, pixelRatio: 2 }, ledger(), true), 'range');
+  admission()(frame, FRAME_OPTIONS, ledger(), true);
+});
+
+test('P06 PRIVATE UNIT shared clips never discount occurrence or source admission', () => {
+  for (const reuse of [false, true]) {
+    const observed = countedAdmissionClip(), geometry = ownedGeometry(), image = ownedImage();
+    const clips = Object.freeze([observed.clip, observed.clip]);
+    const frame = unitFrame({ commands: [meshCommand({ clips }), meshCommand({ clips })],
+      images: [image], geometries: [geometry] });
+    const budget = ledger(2);
+    assertAdmission(admission()(frame, { ...FRAME_OPTIONS, maxClipRectangles: 4 }, budget, reuse), frame, 204);
+    assert.deepEqual(budget.snapshot(), { sourceTrianglesCharged: 2,
+      preparedVerticesCharged: 0, predicatesCharged: 0, tupleComparisonsCharged: 0 });
+    const beforeClips = observed.reads.matrix, clipBudget = ledger(2);
+    reason(() => admission()(frame, { ...FRAME_OPTIONS, maxClipRectangles: 3 }, clipBudget, reuse), 'budget');
+    assert.equal(clipBudget.snapshot().sourceTrianglesCharged, 2);
+    assert.equal(observed.reads.matrix - beforeClips, reuse ? 1 : 2);
+    const beforeSource = observed.reads.matrix, sourceBudget = ledger(1);
+    reason(() => admission()(frame, { ...FRAME_OPTIONS, maxSourceTriangles: 1 }, sourceBudget, reuse), 'budget');
+    assert.equal(sourceBudget.snapshot().sourceTrianglesCharged, 1);
+    assert.equal(observed.reads.matrix - beforeSource, reuse ? 1 : 2);
+  }
+});
+
+test('P06 PRIVATE UNIT invalid first clip and later different clip retain original first failure', () => {
+  for (const reuse of [false, true]) {
+    const valid = Object.freeze({ matrix: IDENTITY, rect: Object.freeze({ x: 0, y: 0, width: 1, height: 1 }) });
+    const invalid = Object.freeze({ matrix: Object.freeze({ ...IDENTITY, a: 2 ** 21 }), rect: valid.rect });
+    const poison = { get matrix() { assert.fail('later clip must not be examined after first range failure'); } };
+    for (const clips of [[invalid, poison], [valid, valid, invalid, poison]]) {
+      // Zero alpha and empty geometry still require every reached clip validation.
+      const budget = ledger();
+      reason(() => admission()(unitWithMesh(emptyGeometry(), meshCommand({ alpha: 0, clips })),
+        FRAME_OPTIONS, budget, reuse), 'range');
+      assert.deepEqual(budget.snapshot(), { sourceTrianglesCharged: 0,
+        preparedVerticesCharged: 0, predicatesCharged: 0, tupleComparisonsCharged: 0 });
+    }
+  }
+});
+
+test('P06 PRIVATE UNIT default and false preserve repeated getter custom callback and exact throw', () => {
+  for (const selection of ['omitted', false]) {
+    const trace = [], sentinel = new Error('P06 second clip getter'), budget = ledger();
+    const original = budget.admitSourceTriangles;
+    budget.admitSourceTriangles = function (count) {
+      trace.push('source:' + count); return original.call(this, count);
+    };
+    let reads = 0;
+    const clip = { get matrix() {
+      trace.push('clip:' + (++reads)); if (reads === 2) throw sentinel; return IDENTITY;
+    }, rect: { x: 0, y: 0, width: 1, height: 1 } };
+    const frame = unitFrame({ commands: [meshCommand({ clips: [clip] }), meshCommand({ clips: [clip] })],
+      images: [ownedImage()], geometries: [ownedGeometry()] });
+    const run = selection === 'omitted'
+      ? () => admission()(frame, FRAME_OPTIONS, budget)
+      : () => admission()(frame, FRAME_OPTIONS, budget, selection);
+    assert.throws(run, cause => cause === sentinel);
+    assert.deepEqual(trace, ['source:1', 'clip:1', 'source:1', 'clip:2']);
+    assert.equal(budget.snapshot().sourceTrianglesCharged, 2);
+  }
+});

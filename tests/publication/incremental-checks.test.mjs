@@ -667,9 +667,10 @@ test('registered successors stay separate from original raw expectations',async(
 // Genuine source bytes authenticate extraction; synthetic dependencies are never executed.
 const m15BootstrapBefore="m13HelperPin.bytes !== 11980 || m13HelperPin.sha256 !== '7f4a82751f0e9e5b3f1b9de5a17816b20cd169ed02f9130b1a7c3989c547b634'";
 const m15BootstrapAfter="m13HelperPin.bytes !== 12701 || m13HelperPin.sha256 !== '0c8ae45e31b879ca8e84633091f3a5e938d7712c4f2dff7cf1af3013859b91ad'";
-function inlineCompilerFixture({m15=false}={}){
+const m12BootstrapAfter="m13HelperPin.bytes !== 13504 || m13HelperPin.sha256 !== '1945cc3687ab540cba20d335485f55363daddc59b675f6a87dface2f9a97146d'";
+function inlineCompilerFixture({m15=false,m12=false}={}){
  const f=compilerFixture();
- for(const name of ['check-types','bitmap-resource-slot-types','bitmap-binding-ticket-types','linear-layout-types','bitmap-button-types','display-anchor-offsets-types','display-container-add-child-at-types','display-container-child-index-types','display-container-remove-children-types','sequence-playback-types']){const raw=fs.readFileSync(new URL('../../tools/'+name+'.mjs',import.meta.url));f.put('tools/'+name+'.mjs',m15?raw:Buffer.from(raw.toString().replace(m15BootstrapAfter,m15BootstrapBefore)));}
+ for(const name of ['check-types','bitmap-resource-slot-types','bitmap-binding-ticket-types','linear-layout-types','bitmap-button-types','display-anchor-offsets-types','display-container-add-child-at-types','display-container-child-index-types','display-container-remove-children-types','sequence-playback-types']){const current=fs.readFileSync(new URL('../../tools/'+name+'.mjs',import.meta.url)),raw=Buffer.from(current.toString().replace(m12BootstrapAfter,m15BootstrapAfter));f.put('tools/'+name+'.mjs',m12?current:m15?raw:Buffer.from(raw.toString().replace(m15BootstrapAfter,m15BootstrapBefore)));}
  for(const [family,lanes]of [['mouse-input',['positive','negative','import-negative','dom-free-negative']],['spine-import-plan',['positive','negative','import-negative']]])for(const lane of lanes){const file='tests/types/'+family+'-'+lane+'.ts';f.put(file,fs.readFileSync(new URL('../../'+file,import.meta.url)));}
  for(const name of ['display-container-add-child-at','display-container-child-index','display-container-remove-children','sequence-playback']){
   const file='tests/types/'+name+'-diagnostic-expectations.json',v=JSON.parse(fs.readFileSync(path.join(f.root,file))),original=JSON.parse(fs.readFileSync(new URL('../../'+file,import.meta.url)));
@@ -1146,12 +1147,24 @@ test('M1.5 maintenance keeps three graph groups and seventeen pair roles beside 
  }finally{f.close();}
 });
 
+// Undo only the bounded insertion; the retained complete source pin authenticates history.
+function m12BoundaryHistory(raw,owner){
+ const text=raw.toString(),start='// M12-PREPARATION-HOTPATH-BEGIN\n',end='// M12-PREPARATION-HOTPATH-END\n';
+ if(!text.includes(start))return raw;
+ assert.equal(text.split(start).length,2);assert.equal(text.split(end).length,2);
+ const call=owner.includes('browser-png')?'  const optimized=m12PreparationHotPathGraph(graph,actual);\n  if(optimized!==undefined)return optimized;\n'
+  :owner.includes('atlas-import')?'  const optimized=m12PreparationHotPathGraph(graph,actualNames);\n  if(optimized!==undefined)return optimized;\n'
+  :'  const optimized=m12PreparationHotPathGraph(root,graph,actualNames);\n  if(optimized!==undefined)return optimized;\n';
+ const a=text.indexOf(start),b=text.indexOf(end,a)+end.length,remainder=text.slice(0,a)+text.slice(b);
+ assert.equal(remainder.split(call).length,2);return Buffer.from(remainder.replace(call,''));
+}
+
 // UNIT: genuine adapter bytes authenticate exceptional JSON extraction, not gate acceptance.
 test('M1.5 maintenance reads six exact source owners and refuses unreviewed post-preamble extraction',async()=>{
  const m=await maintenance(),f=baselineFixture();try{
   const expected=[{"path":"tools/spritesheet-boundary.mjs","bytes":185549,"sha256":"bfb4fb02f29cd66442a6f5124c1e209d87b305550ec5a48978c104f09163fb3f"},{"path":"tools/browser-png-boundary.mjs","bytes":191467,"sha256":"ce40f1363774bec52a053a5a0b2001aab2f3e4701b49e822e1a61097c7a4299d"},{"path":"tools/atlas-import-boundary.mjs","bytes":90249,"sha256":"4dee83aecfeb345647356ee3a8f5aef36e6b984333dcd8699ff40bfd7de6d581"},{"path":"tools/sequence-playback-boundary.mjs","bytes":43012,"sha256":"2d95757ddd9c3a6d1762fd44ba02461ef92504690f2e1e4c342a5f6d71f10a62"},{"path":"tools/bitmap-resource-slot-boundary.mjs","bytes":38244,"sha256":"1a4046d1bd5003714ca030ade053f412c98ca1f787d35357b823a12005e791a3"},{"path":"tools/bitmap-binding-ticket-boundary.mjs","bytes":44823,"sha256":"690d56e1eb726d55990d6a8cd37b2215b1f3bb44430ca5c54abc67cdcffe8026"}];
   for(const pin of expected){
-   const raw=fs.readFileSync(new URL('../../'+pin.path,import.meta.url));
+   const raw=m12BoundaryHistory(fs.readFileSync(new URL('../../'+pin.path,import.meta.url)),pin.path);
    assert.deepEqual({path:pin.path,bytes:raw.length,sha256:createHash('sha256').update(raw).digest('hex')},pin);
    f.put(pin.path,raw);
   }
@@ -1219,5 +1232,87 @@ test('M1.5 inline maintenance preserves delegate and scene revisions with exact 
    }
   }
   assert.equal(m.verifyCompilerProposal(f.root,baseline,{inlinePolicies:true}).status,'current-inputs');
+ }finally{f.close();}
+});
+
+// UNIT: current metadata extraction and original history are distinct; no SDK or gate executes.
+test('M1.2 hotpath metadata keeps three exact current graph owners beside immutable M1.5 sources',async()=>{
+ const m=await maintenance(),f=baselineFixture();try{
+  const owners=[{"path":"tools/spritesheet-boundary.mjs","bytes":192053,"sha256":"67bae4ef2c9d0f5bdd4b3258aa9f598afd4651a29a29b3f2739d0f3bd913c26e"},{"path":"tools/browser-png-boundary.mjs","bytes":197894,"sha256":"4af5b70b9a6598db42ecb0cbc9231e6cbe761d1abddbe47a0535642df422632d"},{"path":"tools/atlas-import-boundary.mjs","bytes":96758,"sha256":"337276ddb1db531fc87bbb1d57b288f922a979e2280fc26f9ab5e2a7dd12da49"}];
+  for(const row of owners){const raw=fs.readFileSync(new URL('../../'+row.path,import.meta.url));assert.deepEqual({path:row.path,bytes:raw.length,sha256:createHash('sha256').update(raw).digest('hex')},row);f.put(row.path,raw);}
+  for(const file of ['tests/types/atlas-import-diagnostic-expectations.json','packages/engine/dist/Engine.d.ts','packages/contracts/package.json','packages/engine/package.json','packages/project/package.json'])f.put(file,fs.readFileSync(new URL('../../'+file,import.meta.url)));
+  const collect=()=>m.prepareBaselineReview(f.root),current=collect(),groups=current.declarations.filter(row=>row.binding==='m12PreparationHotPathGraphSuccessor');
+  assert.equal(current.status,'review-required');assert.equal(groups.length,3);assert(groups.every(row=>row.rows.length===20));
+  for(const [index,coverage]of current.graphCoverage.entries())assert.deepEqual(coverage.preparationHotPathSuccessor,{owner:owners[index].path,binding:'m12PreparationHotPathGraphSuccessor'});
+  assert.equal(m.verifyMaintenanceProposal(f.root,current),true);
+  for(const row of owners){
+   const raw=fs.readFileSync(path.join(f.root,row.path));f.put(row.path,Buffer.concat([raw,Buffer.from('// unreviewed hotpath source\n')]));
+   assert.throws(collect,/Unsupported declaration preamble/);assert.throws(()=>m.verifyMaintenanceProposal(f.root,current));
+   f.put(row.path,raw);assert.equal(m.verifyMaintenanceProposal(f.root,current),true);
+  }
+  for(const row of owners)f.put(row.path,m12BoundaryHistory(fs.readFileSync(path.join(f.root,row.path)),row.path));
+  const historical=collect();assert.equal(historical.declarations.some(row=>row.binding==='m12PreparationHotPathGraphSuccessor'),false);
+  assert.deepEqual(historical.declarations,current.declarations.filter(row=>row.binding!=='m12PreparationHotPathGraphSuccessor'));
+  assert.deepEqual(historical.successorPairs,current.successorPairs);assert.equal(m.verifyMaintenanceProposal(f.root,historical),true);
+ }finally{f.close();}
+});
+
+// Execute only the exact tool-local metadata selector, with real retained JSON declarations.
+test('M1.2 hotpath PNG selector admits a complete group and preserves assigned missing or drift paths',()=>{
+ const text=fs.readFileSync(new URL('../../tools/browser-png-boundary.mjs',import.meta.url),'utf8');
+ const literal=name=>{const anchor='const '+name+' = ',lines=text.split('\n').filter(line=>line.startsWith(anchor));assert.equal(lines.length,1);return JSON.parse(lines[0].slice(anchor.length,-1));};
+ let base=[...literal('acceptedSnapshot').graph,...literal('atlasGraphSuccessor')];
+ const pairs=literal('imageResidencySuccessors');base=base.map(row=>{const pair=pairs.find(pair=>pair.path===row.path);return pair&&row.bytes===pair.base.bytes&&row.sha256===pair.base.sha256?{path:row.path,...pair.current}:row;});
+ for(const prefix of ['m11WarmSubmission','m12IncrementalRendering','m13SharedRendering','m14WebGL2','m15ResourceRecovery']){const rows=new Map(literal(prefix+'GraphSuccessor').map(row=>[row.path,row]));base=[...base.map(row=>rows.get(row.path)??row),...literal(prefix+'AdditionPaths').map(file=>rows.get(file))];}
+ const digest=rows=>createHash('sha256').update(JSON.stringify([...rows].sort((a,b)=>a.path<b.path?-1:a.path>b.path?1:0).map(row=>[row.path,row.bytes,row.sha256]))).digest('hex');
+ assert.equal(base.length,669);assert.equal(digest(base),'06427ebc44a664071cde2396f7c474fe074107aaa07dbe7d69192634a37accc5');
+ const start='// M12-PREPARATION-HOTPATH-BEGIN\n',end='// M12-PREPARATION-HOTPATH-END\n';assert.equal(text.split(start).length,2);assert.equal(text.split(end).length,2);
+ const block=text.slice(text.indexOf(start)+start.length,text.indexOf(end)),context={createHash,issue:(code,path,message)=>({code,path,message})};
+ vm.runInNewContext(block+'\nglobalThis.run=m12PreparationHotPathGraph;',context,{filename:'browser-png-hotpath-selector.mjs'});
+ const rows=literal('m12PreparationHotPathGraphSuccessor'),selected=new Map(rows.map(row=>[row.path,row])),complete=base.map(row=>selected.get(row.path)??row),clone=value=>JSON.parse(JSON.stringify(value));
+ assert.equal(context.run(base,base),undefined);assert.deepEqual(clone(context.run(base,complete).graph),complete);
+ const target=rows[0].path,old=base.find(row=>row.path===target);
+ assert.equal(context.run(base,complete.filter(row=>row.path!==target)).failure.code,'BIP_BOUNDARY_SOURCE_INVENTORY');
+ assert.equal(context.run(base,complete.filter(row=>row.path!==target)).failure.path,target);
+ for(const altered of [complete.map(row=>row.path===target?old:row),complete.map(row=>row.path===target?{...row,sha256:'0'.repeat(64)}:row)]){
+  const result=context.run(base,altered);assert.equal(result.failure.code,'BIP_BOUNDARY_FINGERPRINT');assert.equal(result.failure.path,target);
+ }
+ const changedBase=base.map((row,index)=>index===0?{...row,sha256:'0'.repeat(64)}:row);
+ assert.equal(context.run(changedBase,complete).failure.path,'tools/browser-png-boundary.mjs');
+ assert.deepEqual(clone(context.run(base,complete).graph),complete);
+});
+
+test('M1.2 NineSlice source mapping is exact to owner history and current bytes',()=>{
+ const f=fixture();try{
+  const text=fs.readFileSync(new URL('../../tools/lib/m13-strict-successor.mjs',import.meta.url),'utf8'),start='// M12-NINE-SLICE-SOURCE-BEGIN\n',end='// M12-NINE-SLICE-SOURCE-END\n';
+  assert.equal(text.split(start).length,2);assert.equal(text.split(end).length,2);
+  const context={root:f.root,M15_DATA:{},DATA:{},equal:(a,b)=>JSON.stringify(a)===JSON.stringify(b),fingerprintFile:(root,file)=>{assert.equal(root,f.root);const raw=fs.readFileSync(path.join(root,file));return {path:file,bytes:raw.length,sha256:createHash('sha256').update(raw).digest('hex')};}};
+  vm.runInNewContext(text.slice(text.indexOf(start)+start.length,text.indexOf(end))+'\nglobalThis.pair=m12NineSliceHostSource;globalThis.run=(version,id,row)=>m12NineSliceHostPin(root,version===15?M15_DATA:DATA,id,row);',context,{filename:'strict-source-pair.mjs'});
+  const pair=JSON.parse(JSON.stringify(context.pair)),file=pair.base.path,raw=fs.readFileSync(new URL('../../'+file,import.meta.url));f.put(file,raw);
+  assert.deepEqual(context.fingerprintFile(f.root,file),pair.current);
+  assert.deepEqual(JSON.parse(JSON.stringify(context.run(15,'nine-slice-bitmap',pair.base))),pair.current);
+  assert.deepEqual(context.run(13,'nine-slice-bitmap',pair.base),pair.base);assert.deepEqual(context.run(15,'atlas-frame',pair.base),pair.base);
+  const unknown={...pair.base,sha256:'0'.repeat(64)};assert.deepEqual(context.run(15,'nine-slice-bitmap',unknown),unknown);
+  f.put(file,Buffer.concat([raw,Buffer.from('// source drift\n')]));assert.deepEqual(context.run(15,'nine-slice-bitmap',pair.base),pair.base);
+  f.put(file,raw);assert.deepEqual(JSON.parse(JSON.stringify(context.run(15,'nine-slice-bitmap',pair.base))),pair.current);
+ }finally{f.close();}
+});
+
+test('M1.2 strict bootstrap keeps nine exact current sources and reverses only its one helper literal',async()=>{
+ const m=await compilerTool(),f=inlineCompilerFixture({m12:true});try{
+  const expected=[{"path":"tools/bitmap-resource-slot-types.mjs","predecessor":{"bytes":11184,"sha256":"c97f8b75d9103477c7f5e5932f0fb75e588d42eec31a73e6f66327fae9275eaf"},"current":{"bytes":11184,"sha256":"5cbcfca86177eb0aa54f56cd983f7a5e19abd63c55ee4e48b2992b21e8192a73"}},{"path":"tools/bitmap-binding-ticket-types.mjs","predecessor":{"bytes":13887,"sha256":"b36874eaab10b6c275424584d062b599f8e14a215336a7722e9a3783190a8782"},"current":{"bytes":13887,"sha256":"f0dd9853bed93b45309d79a0467580cc3987002ec95bb32e7973ed5bc2ca2ffe"}},{"path":"tools/linear-layout-types.mjs","predecessor":{"bytes":11073,"sha256":"89cf1e6e5fd099871ff0d7388df1b0b6e6accd36c78aef9aa33e1e5426fa71c3"},"current":{"bytes":11073,"sha256":"652dc088598643c35fd634e6dd4e690a2dd7d33e8bd46772eca3f0c94527fbe5"}},{"path":"tools/bitmap-button-types.mjs","predecessor":{"bytes":17175,"sha256":"919546bc07a51a78d499ae070618d7000e2d87774ad4af3c8a540b395924bbb8"},"current":{"bytes":17175,"sha256":"5fb489ad2d499cef1d25c1b4c029a111eb5fc10c38c9ad0cdfe69bc2845bda8c"}},{"path":"tools/display-anchor-offsets-types.mjs","predecessor":{"bytes":16526,"sha256":"9d37f5989501d97094b25a0d9130f98c906cdc60bea4b1f9a042279b7279f90c"},"current":{"bytes":16526,"sha256":"bdfc458dc1099dbe310b3b86311976218ba6dda7ac8ef46626508cd09c44b37f"}},{"path":"tools/display-container-add-child-at-types.mjs","predecessor":{"bytes":18718,"sha256":"f25ded3a21e455bfc45d5181025d7fd6dcd43cd666a08bc246855fce4452ee91"},"current":{"bytes":18718,"sha256":"84023d6cff36cf114a4d6f86e6a0283dc5469c40620f6e8ce64c080293840c89"}},{"path":"tools/display-container-child-index-types.mjs","predecessor":{"bytes":17112,"sha256":"fb2d518381df6f41795f198c5b353b03fc194361151bbdd5963fde78e7f38929"},"current":{"bytes":17112,"sha256":"d94078006335a45570a2600ce023bcb6719b2437254c016b75696e3aa717cec1"}},{"path":"tools/display-container-remove-children-types.mjs","predecessor":{"bytes":15268,"sha256":"f03e8cfc77240d8ea40021333bf13e56cc15e0e0f469442fd6a72dee7e5bd31b"},"current":{"bytes":15268,"sha256":"843096048a860a5ebccc39efb84bdc2611de44413e6c3194ede1343ddc1aa5fc"}},{"path":"tools/sequence-playback-types.mjs","predecessor":{"bytes":19255,"sha256":"6dffcc40c3654db9c9faa2f9983eafea7b6e91960aab20f279b0f5caba9a66be"},"current":{"bytes":19255,"sha256":"0cc3ddd75379e11a30a80738437c99eca53481cc2335c4d2129efca5e4b624b3"}}],collect=()=>m.prepareCompilerReview(f.root,{inlinePolicies:true}),current=collect();
+  assert.equal(expected.length,9);
+  for(const row of expected){
+   const raw=fs.readFileSync(path.join(f.root,row.path)),text=raw.toString(),identity=body=>({bytes:body.length,sha256:createHash('sha256').update(body).digest('hex')});
+   assert.deepEqual(identity(raw),row.current);assert.equal(text.split(m12BootstrapAfter).length,2);
+   const revision=current.inlinePolicies.sourceRevisions.find(value=>value.current.path===row.path);assert.equal(revision.selection,'m12-hotpath-strict-current');assert.equal(revision.admission,'not-evaluated');
+   assert.deepEqual(revision.m12HotPathStrictSuccessor,{path:row.path,...row.current});
+   const predecessor=Buffer.from(text.replace(m12BootstrapAfter,m15BootstrapAfter));assert.deepEqual(identity(predecessor),row.predecessor);
+   f.put(row.path,predecessor);const historical=collect();assert.equal(historical.inlinePolicies.sourceRevisions.find(value=>value.current.path===row.path).selection,'m15-strict-current');
+   assert.deepEqual(historical.inlinePolicies.literals,current.inlinePolicies.literals);assert.deepEqual(historical.inlinePolicies.conditions,current.inlinePolicies.conditions);
+   f.put(row.path,raw);assert.equal(m.verifyCompilerProposal(f.root,current,{inlinePolicies:true}).status,'current-inputs');
+   const altered=Buffer.concat([raw,Buffer.from('// unreviewed current strict source\n')]);f.put(row.path,altered);assert.throws(collect,/Unreviewed inline policy source/);assert.throws(()=>m.verifyCompilerProposal(f.root,current,{inlinePolicies:true}));
+   f.put(row.path,raw);assert.equal(m.verifyCompilerProposal(f.root,current,{inlinePolicies:true}).status,'current-inputs');
+  }
  }finally{f.close();}
 });

@@ -6,7 +6,7 @@ import { createServer } from 'node:http';
 import { spawn, spawnSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { logicalPath, fingerprintFile, samePhysicalPath, ownerRelativePath, canonicalTextBytes } from './lib/file-identity.mjs';
+import { logicalPath, fingerprintFile, samePhysicalPath, ownerRelativePath, canonicalTextBytes, physicalPathKey } from './lib/file-identity.mjs';
 import { collectPublicGraph, chosenMap, captureRegistry, rereadRegistry, directoryChain, freshOutput,
   artifactStore, sha256, REGISTRY } from './textured-webgpu/native-files.mjs';
 
@@ -15,7 +15,7 @@ const HERE = path.join(CHECKOUT, 'tools/incremental-rendering');
 const NODE = fs.realpathSync(process.execPath);
 const PROFILE_SPEC = 'knowledge-base/en/docs/m1-rendering-resource-plan.md';
 const TOOL_MEMBERS = ['tests/incremental-rendering-tool.test.mjs', 'tools/incremental-rendering/observe-windows.ps1',
-  'tools/incremental-rendering/workload.mjs', 'tools/verify-incremental-rendering.mjs'];
+  'tools/incremental-rendering/workload.mjs', 'tools/textured-webgpu/native-files.mjs', 'tools/verify-incremental-rendering.mjs'];
 const OBSERVATION_SECONDS = 30;
 const WIDTH = 1024, HEIGHT = 768, RGBA_BYTES = WIDTH * HEIGHT * 4;
 const fault = error => ({ name: error?.name ?? 'Unknown', message: String(error?.message ?? error).slice(0, 16000) });
@@ -25,15 +25,16 @@ function requireObservation(value, reason) {
 }
 function inside(owner, value) { try { ownerRelativePath(owner, value); return true; } catch { return samePhysicalPath(owner, value); } }
 function options(argv) {
-  requireValue(argv.length === 10, 'CLI_REQUIRES_MODE_REPOSITORY_PLAYWRIGHT_POWERSHELL_OUTPUT');
+  requireValue((argv.length === 10 || argv.length === 12), 'CLI_REQUIRES_MODE_REPOSITORY_PLAYWRIGHT_POWERSHELL_OUTPUT');
   const result = Object.create(null);
   for (let i = 0; i < argv.length; i += 2) {
     const key = argv[i], value = argv[i + 1];
-    requireValue(['--mode', '--repository', '--playwright', '--powershell', '--output'].includes(key) && !Object.hasOwn(result, key)
+    requireValue(['--mode', '--repository', '--playwright', '--powershell', '--output', '--executable'].includes(key) && !Object.hasOwn(result, key)
       && typeof value === 'string' && value.length > 0, 'CLI_OPTIONS'); result[key] = value;
   }
   requireValue(result['--mode'] === 'preflight', 'SINGLE_SDK_FORM_REQUIRES_PREFLIGHT');
   for (const key of ['--repository', '--playwright', '--powershell', '--output']) requireValue(path.isAbsolute(result[key]), 'ABSOLUTE_' + key);
+  if (result['--executable'] !== undefined) physicalPathKey(result['--executable']);
   return result;
 }
 
@@ -45,7 +46,7 @@ async function runPreflight({ deadline, mode = 'preflight', state = 'preflight',
   globalThis.preflightReport = report;
   const pending = new Set(), acquisitions = [];
   let device, host, workload, canvas, loss, lossInfo, errorListener, retiring = false, destroyRequested = false, stopPhase, nativeCounter;
-  let visibilityListener, focusListener, blurListener, dprSamples = 0, sampleState;
+  let visibilityListener, focusListener, blurListener, dprSamples = 0, sampleState, hostTiming;
   const errorRow = error => ({ name: error?.name ?? 'Unknown', code: error?.code ?? null, message: String(error?.message ?? error).slice(0, 12000) });
   const check = (value, reason) => { if (!value) { const error = Error(reason); error.observationFailure = true; throw error; } };
   const event = (list, value) => { if (list.length < 128) list.push(value); else report.eventOverflow = true; };
@@ -127,16 +128,26 @@ async function runPreflight({ deadline, mode = 'preflight', state = 'preflight',
     check(saved?.retained === true, 'ARTIFACT_RETAINED'); return saved.pin;
   }
   async function retainSamples(cleanup = false) {
-    const { samples, captureStart, captureEnd } = sampleState;
-    const columns = { ...samples.columns, ...(captureStart ? { captureStart, captureEnd } : {}) }, saved = {};
+    const { samples, captureStart, captureEnd, hostEnter, hostExit } = sampleState;
+    const columns = { ...samples.columns, ...(captureStart ? { captureStart, captureEnd } : {}), ...(hostEnter ? { hostEnter, hostExit } : {}) }, saved = {};
     for (const [name, values] of Object.entries(columns)) {
       const selected = values.subarray(0, samples.length), format = values instanceof Uint8Array ? 'uint8' : 'float64-le';
-      if (samples.length) saved[name] = { format, length: samples.length, raw: await saveBytes('samples-' + name + (format === 'uint8' ? '.u8' : '.f64'),
+      saved[name] = { format, length: samples.length, raw: await saveBytes('samples-' + name + (format === 'uint8' ? '.u8' : '.f64'),
         new Uint8Array(selected.buffer, selected.byteOffset, selected.byteLength), format, cleanup) };
     }
+    for (const { row, store } of sampleState.callbackStores) {
+      const savedCallbacks = {};
+      for (const [name, values] of Object.entries(store.columns)) {
+        const selected=values.subarray(0,store.length);
+        savedCallbacks[name]={format:'float64-le',length:store.length,raw:await saveBytes(row.label+'-callbacks-'+name+'.f64',new Uint8Array(selected.buffer,selected.byteOffset,selected.byteLength),'float64-le',cleanup)};
+      }
+      row.callbacks={length:store.length,capacity:store.capacity,columns:savedCallbacks,
+        epilogue:'Callback span ends immediately before the final timestamp-store epilogue and return.'};
+    }
     report.samples = { length: samples.length, capacity: samples.capacity, byteOrder: 'little-endian', columns: saved,
-      firstRaf: report.windows[1]?.firstRaf ?? null, boundaryRaf: report.windows[1]?.boundaryRaf ?? null,
+      firstRaf: samples.length ? samples.columns.rafTimestamp[0] : null, boundaryRaf: report.windows[1]?.boundaryRaf ?? null,
       primarySpan: mode === 'diagnostic' ? 'updateStart through actual Host return; capture and Host separately retained' : 'updateStart through Engine return',
+      hostObservation: mode === 'timing' ? 'engine-host-span/1: two added clocks around the actual Host inside the Engine call; observation overhead is not subtracted' : null,
       allActualSamplesRetained: true, droppedSamples: 0, partial: cleanup };
   }
   // Wrappers exist only in the separate counts mode. Every call first reaches the
@@ -277,7 +288,10 @@ async function runPreflight({ deadline, mode = 'preflight', state = 'preflight',
     host = gpu.createTexturedWebGPUHost({ canvas, device: { kind: 'borrow', device }, pixelRatio: 1, maxPendingFrames: 2,
       enableReadback: mode === 'preflight' || mode === 'correctness',
       onDiagnostic: value => event(report.diagnostics, { code: value.code, phase: value.phase, serial: value.serial }) });
-    await bounded(acquire(fixture.createWorkload({ sdk, host, variant: mode === 'preflight' ? 'preflight' : 'scale' }),
+    // The Engine still captures/registers the frame and calls its real Host once.
+    // Both timing roles include the same public-delegate observation overhead.
+    hostTiming = mode === 'timing' ? fixture.createHostTimingDelegate(host, () => performance.now()) : undefined;
+    await bounded(acquire(fixture.createWorkload({ sdk, host: hostTiming?.host ?? host, variant: mode === 'preflight' ? 'preflight' : 'scale' }),
       'workload', value => { workload = value; }, value => value.close()), 'workload');
     workload.reset(state);
     const imageIds = new WeakMap(workload.images.map((image, index) => [image, index])), geometryIds = new WeakMap([[workload.geometry, 0]]);
@@ -331,9 +345,10 @@ async function runPreflight({ deadline, mode = 'preflight', state = 'preflight',
       }
     } else {
       const samples = fixture.createSampleStore(), captureStart = mode === 'diagnostic' ? new Float64Array(65536) : null,
-        captureEnd = mode === 'diagnostic' ? new Float64Array(65536) : null;
+        captureEnd = mode === 'diagnostic' ? new Float64Array(65536) : null,
+        hostEnter = mode === 'timing' ? new Float64Array(65536) : null, hostExit = mode === 'timing' ? new Float64Array(65536) : null;
       check(new Uint8Array(new Float64Array([1]).buffer)[7] === 63, 'LITTLE_ENDIAN_REQUIRED');
-      sampleState = { samples, captureStart, captureEnd };
+      sampleState = { samples, captureStart, captureEnd, hostEnter, hostExit, callbackStores: [] };
       // Timer and empty-call observations are outside both windows and are never subtracted.
       const resolution = new Float64Array(10000), overhead = new Float64Array(10000), empty = () => {};
       for (let i = 0; i < 10000; i++) { const a = performance.now(); const b = performance.now(); resolution[i] = b - a; const c = performance.now(); empty(); overhead[i] = performance.now() - c; }
@@ -372,79 +387,74 @@ async function runPreflight({ deadline, mode = 'preflight', state = 'preflight',
         || report.priming.afterIdle.lastSerial !== 2 || report.priming.afterIdle.firstFailure || report.priming.afterIdle.callbackFailureCount !== 0
         || Object.values(report.priming.afterIdle.pending).some(value => value !== 0)) throw Error('INCOMPLETE:PRIMING_OBSERVATION');
       async function phase(label, duration, measured) {
-        const boundary = surfaceBoundary(label + '-before');
-        const windowRow = { label, durationMs: duration, startedUtcMs: null, finishedUtcMs: null, firstRaf: null, boundaryRaf: null, count: 0,
-          firstFrameId: null, lastFrameId: null, before: boundary };
-        if (!measured) windowRow.observations = [];
-        report.windows.push(windowRow);
-        const operation = new Promise((resolve, reject) => {
-          let request, stopped = false, attempted = -1, attemptedRaf, attemptedUtc;
-          const stop = error => { if (stopped) return; stopped = true; cancelAnimationFrame(request); stopPhase = undefined; error ? reject(error) : resolve(); };
-          stopPhase = () => stop(Error('INCOMPLETE:PHASE_CANCELLED'));
-          const frame = timestamp => {
-            if (stopped) return;
-            try {
-              foreground(); const now = Date.now(); if (now >= deadline) throw Error('INCOMPLETE:PHASE_DEADLINE');
-              if (windowRow.firstRaf === null) { windowRow.firstRaf = timestamp; windowRow.startedUtcMs = now; }
-              if (timestamp - windowRow.firstRaf >= duration) {
-                windowRow.boundaryRaf = timestamp; windowRow.finishedUtcMs = now; stop(); return;
+        const boundary=surfaceBoundary(label+'-before'), callbacks=fixture.createCallbackStore();
+        const windowRow={label,durationMs:duration,startedUtcMs:null,finishedUtcMs:null,firstRaf:null,boundaryRaf:null,count:0,
+          requestedAt:null,startEntry:null,endEntry:null,firstFrameId:null,lastFrameId:null,before:boundary};
+        if(!measured)windowRow.observations=[];
+        report.windows.push(windowRow);sampleState.callbackStores.push({row:windowRow,store:callbacks});
+        const operation=new Promise((resolve,reject)=>{
+          let request,stopped=false;
+          const stop=error=>{if(stopped)return;stopped=true;cancelAnimationFrame(request);stopPhase=undefined;error?reject(error):resolve();};
+          stopPhase=()=>stop(Error('INCOMPLETE:PHASE_CANCELLED'));
+          const frame=timestamp=>{
+            const entry=performance.now();if(stopped)return;
+            const row={index:callbacks.length,rafTimestamp:timestamp,entry,decision:4,pending:NaN,ordinal:-1,frameId:-1,
+              updateStart:NaN,updateEnd:NaN,captureStart:NaN,captureEnd:NaN,renderStart:NaN,renderEnd:NaN,hostEnter:NaN,hostExit:NaN,hostCalls:0,hostFrameId:-1,flags:0};
+            let slot,observation;
+            try{
+              if(windowRow.startEntry===null){windowRow.startEntry=entry;windowRow.firstRaf=timestamp;windowRow.startedUtcMs=Date.now();}
+              row.flags=foreground();if(Date.now()>=deadline)throw Error('INCOMPLETE:PHASE_DEADLINE');
+              const current=host.getStatus();row.pending=current.pendingFrames;
+              row.decision=fixture.capacityDecision(current,entry,windowRow.startEntry,duration);
+              if(row.decision===3){windowRow.endEntry=entry;windowRow.boundaryRaf=timestamp;windowRow.finishedUtcMs=Date.now();}
+              else if(row.decision===1){
+                if(!measured&&windowRow.count<4){observation={ordinal:windowRow.count,rafTimestamp:timestamp,startedUtcMs:Date.now(),finishedUtcMs:null,frameId:null,before:status(),after:null,failure:null};windowRow.observations.push(observation);}
+                row.ordinal=windowRow.count;row.updateStart=performance.now();workload.advance();row.updateEnd=performance.now();
+                let rendered;
+                if(mode==='diagnostic'){
+                  row.captureStart=performance.now();rendered=workload.capture();row.captureEnd=performance.now();
+                  row.renderStart=performance.now();host.renderTexturedFrame(rendered);row.renderEnd=performance.now();
+                }else{
+                  row.renderStart=performance.now();hostTiming.begin(row);
+                  try{rendered=workload.render();}finally{hostTiming.end(rendered);}
+                  row.renderEnd=performance.now();
+                }
+                row.frameId=rendered.frameId;
+                if(measured){samples.append(row.ordinal,timestamp,row.updateStart,row.updateEnd,row.renderStart,row.renderEnd,true,true);
+                  if(captureStart){captureStart[row.ordinal]=row.captureStart;captureEnd[row.ordinal]=row.captureEnd;}
+                  if(hostEnter){hostEnter[row.ordinal]=row.hostEnter;hostExit[row.ordinal]=row.hostExit;}}
+                if(windowRow.firstFrameId===null)windowRow.firstFrameId=row.frameId;windowRow.lastFrameId=row.frameId;windowRow.count++;
+                if(observation){observation.frameId=row.frameId;observation.after=status();observation.finishedUtcMs=Date.now();}
               }
-              const index = windowRow.count; attempted = index; attemptedRaf = timestamp; attemptedUtc = now;
-              const a = performance.now(); workload.advance(); const b = performance.now();
-              let rendered, x, y, c, d;
-              if (mode === 'diagnostic') {
-                x = performance.now(); rendered = workload.capture(); y = performance.now();
-                c = performance.now(); host.renderTexturedFrame(rendered); d = performance.now();
-              } else { c = performance.now(); rendered = workload.render(); d = performance.now(); }
-              if (measured) {
-                samples.append(index, timestamp, a, b, c, d, true, true);
-                if (captureStart) { captureStart[index] = x; captureEnd[index] = y; }
-              }
-              if (windowRow.firstFrameId === null) windowRow.firstFrameId = rendered.frameId;
-              windowRow.lastFrameId = rendered.frameId; windowRow.count++; attempted = -1;
-              request = requestAnimationFrame(observedFrame);
-            } catch (error) {
-              if (attempted >= 0) {
-                windowRow.failedAttempt = { ordinal: attempted, rafTimestamp: attemptedRaf, startedUtcMs: attemptedUtc, endedAt: performance.now(), failure: errorRow(error) };
-                try { windowRow.failedAttempt.status = status(); } catch (statusError) { windowRow.failedAttempt.statusFailure = errorRow(statusError); }
-              }
+              slot=callbacks.append(row);
+              if(row.decision===3)stop();else request=requestAnimationFrame(frame);
+              // This final clock excludes only its timestamp-store epilogue and return.
+              callbacks.finish(slot,performance.now());
+            }catch(error){
+              if(observation){observation.failure=errorRow(error);observation.finishedUtcMs=Date.now();}
+              windowRow.failedAttempt={ordinal:row.ordinal,rafTimestamp:timestamp,entry,endedAt:performance.now(),failure:errorRow(error)};
+              try{if(slot===undefined){row.decision=4;slot=callbacks.append(row);}callbacks.finish(slot,performance.now());}
+              catch(recordError){windowRow.recordingFailure=errorRow(recordError);}
               stop(error);
             }
           };
-          // Measurement schedules the original callback directly. Only warm-up
-          // uses this bounded status wrapper; no observation enters a successful
-          // measured callback or its continuous update-to-render span.
-          const observedFrame = measured ? frame : timestamp => {
-            let observation;
-            try {
-              if (!stopped && windowRow.count < 4 && (windowRow.firstRaf === null || timestamp - windowRow.firstRaf < duration)) {
-                observation = { ordinal: windowRow.count, rafTimestamp: timestamp, startedUtcMs: Date.now(),
-                  finishedUtcMs: null, frameId: null, before: status(), after: null, failure: null };
-                windowRow.observations.push(observation);
-              }
-              frame(timestamp);
-              if (observation) {
-                observation.frameId = windowRow.lastFrameId; observation.after = status(); observation.finishedUtcMs = Date.now();
-                observation.failure = windowRow.failedAttempt?.failure ?? null;
-              }
-            } catch (error) {
-              if (observation) { observation.failure = errorRow(error); observation.finishedUtcMs = Date.now(); }
-              stop(error);
-            }
-          };
-          request = requestAnimationFrame(observedFrame);
+          windowRow.requestedAt=performance.now();request=requestAnimationFrame(frame);
         });
-        await bounded(observe(operation), label, false, duration + 10000);
-        windowRow.after = surfaceBoundary(label + '-after');
+        await bounded(observe(operation),label,false,duration+10000);
+        windowRow.after=surfaceBoundary(label+'-after');
       }
       await phase('warm', 30000, false);
+      report.windows[0].drainStartedAt=performance.now();
       await bounded(observe(host.whenIdle()), 'warm-idle');
+      report.windows[0].drainFinishedAt=performance.now();
       const resetStart = Date.now(); workload.reset(state); const resetFrame = workload.render(); await bounded(observe(host.whenIdle()), 'reset-idle');
       const inventory = workload.inspect(resetFrame);
       check(inventory.logicalNodes === 10000 && inventory.commands === 991 && inventory.clipReferences === 7928 && inventory.sourceTriangles === 4992, 'RESET_RECIPE');
       report.reset = { startedUtcMs: resetStart, finishedUtcMs: Date.now(), frameId: resetFrame.frameId, step: workload.step, inventory, status: status() };
       await phase('measure', 60000, true);
+      report.windows[1].drainStartedAt=performance.now();
       await bounded(observe(host.whenIdle()), 'measurement-idle');
+      report.windows[1].drainFinishedAt=performance.now();
       check(!status().firstFailure && Object.values(status().pending).every(value => value === 0), 'MEASUREMENT_IDLE');
       await retainSamples();
     }
@@ -500,6 +510,7 @@ async function main(args, formal) {
     && samePhysicalPath(process.execPath, fs.realpathSync(NODE)) && process.execArgv.length === 0, 'PINNED_NODE');
   for (const [key, value] of Object.entries(process.env)) requireValue(!/^(NODE_OPTIONS|NODE_PATH)$/i.test(key) || !value, 'NODE_ENVIRONMENT');
   requireValue(path.isAbsolute(args['--powershell']), 'POWERSHELL_ABSOLUTE');
+  const browserChoice=formal?.loaded.recipe.browser??captureRecipeBrowser(args['--executable']);verifyRecipeBrowser(browserChoice);
   const PWSH = fs.realpathSync(args['--powershell']);
   requireValue(samePhysicalPath(PWSH, args['--powershell']) && fs.lstatSync(PWSH).isFile(), 'POWERSHELL_EXECUTABLE');
   await directoryChain(path.dirname(PWSH));
@@ -574,7 +585,7 @@ async function main(args, formal) {
     const value = retain(repository, relative);
     requireValue(value.pin.bytes === item.bytes && value.pin.sha256 === item.sha256, 'GRAPH_CAPTURE_STABILITY');
   };
-  const graph = await collectPublicGraph(repository, retainSdk), importMap = chosenMap('baseline');
+  const graph = await collectPublicGraph(repository, retainSdk, formal?.loaded.recipe.fixed.sourceProfile ?? 'historical'), importMap = chosenMap('baseline');
   const registry = await captureRegistry({ repository, graph, map: importMap });
   const dependencyRelative = 'packages/engine/node_modules/robust-predicates/package.json';
   const dependencyFile = retain(repository, dependencyRelative), dependency = JSON.parse(dependencyFile.body);
@@ -617,7 +628,7 @@ async function main(args, formal) {
         : { role: 'working-tree-candidate', baseMain: manifest.baseMain, baseMainTree: manifest.baseMainTree,
           workingTree: manifest.workingTree, buildReceipt: manifest.buildReceipt }),
       graphModules: graph.modules.size, graphBytes: graph.totalBytes },
-    launch: { channel: 'msedge', headless: false, callerAddedFlags: [], viewport: { width: WIDTH, height: HEIGHT }, deviceScaleFactor: 1 },
+    launch: { ...browserChoice, headless: false, callerAddedFlags: [], viewport: { width: WIDTH, height: HEIGHT }, deviceScaleFactor: 1 },
     environment: { node: process.version, playwright: '1.62.1', playwrightCore: '1.62.1', powershell: version.stdout.trim(), driverAssociation: 'UNMEASURED' },
     frames: [], requests: [], browserEvents: [], cleanupFailures: [], failure: null,
     lifecycle: { contextClosed: false, browserClosed: false, serverClosed: false, inputsStable: false, artifactsStable: false, osDescendantRetirement: 'UNBOUND' },
@@ -689,6 +700,7 @@ async function main(args, formal) {
     const first = powers[0].acLineStatus;
     requireValue((formal ? first === 1 : [0,1].includes(first)) && powers.every(row => row.acLineStatus === first), 'POWER_SOURCE_STABLE');
     report.environment.browserExecutable = { path: start.executable, bytes: start.executableBytes, sha256: start.executableSha256, version: start.fileVersion };
+    if(browserChoice.executable)requireValue(samePhysicalPath(start.executable,browserChoice.executable.path)&&start.executableBytes===browserChoice.executable.bytes&&start.executableSha256===browserChoice.executable.sha256,'OBSERVED_BROWSER_IDENTITY');
     if (formal) report.environment.driverAssociation = 'UNKNOWN; actual selected adapter fields and complete OS display-driver inventory are retained';
     report.observation.qualified = true;
   }
@@ -717,7 +729,8 @@ async function main(args, formal) {
     await bounded(new Promise((resolve, reject) => { server.once('error', reject); server.listen(0, '127.0.0.1', resolve); }), 'SERVER');
     const origin = 'http://127.0.0.1:' + server.address().port;
     const playwright = await bounded(import(pathToFileURL(path.join(playwrightRoot, 'index.mjs')).href), 'PLAYWRIGHT_IMPORT');
-    await bounded(acquire(playwright.chromium.launch({ channel: 'msedge', headless: false }), 'browser', value => {
+    verifyRecipeBrowser(browserChoice);
+    await bounded(acquire(playwright.chromium.launch({ ...(browserChoice.executable?{executablePath:browserChoice.executable.path}:{channel:'msedge'}), headless: false }), 'browser', value => {
       browser = value; browser.on('disconnected', () => { if (!closeRequested && !retiring) report.unexpectedDisconnect = true; });
     }, value => value.close()), 'BROWSER');
     await bounded(acquire(browser.newContext({ viewport: { width: WIDTH, height: HEIGHT }, deviceScaleFactor: 1 }), 'context', value => { context = value; }, value => value.close()), 'CONTEXT');
@@ -751,12 +764,13 @@ async function main(args, formal) {
         && row.base64.length <= Math.ceil(4194304 / 3) * 4, 'WINDOW_ARTIFACT_SOURCE');
       const validCounts = args['--mode'] === 'counts' && /^counts-(?:[0-3]|partial)\.json$/.test(row.name) && row.format === 'json';
       const validTimer = ['diagnostic','timing'].includes(args['--mode']) && /^timer-(resolution|empty-call)\.f64$/.test(row.name) && row.format === 'float64-le';
-      const validSample = ['diagnostic','timing'].includes(args['--mode']) && /^samples-(ordinal|rafTimestamp|updateStart|updateEnd|renderStart|renderEnd|captureStart|captureEnd)\.f64$/.test(row.name)
-        && row.format === 'float64-le' && (args['--mode'] === 'diagnostic' || !/capture/.test(row.name));
+      const validSample = ['diagnostic','timing'].includes(args['--mode']) && /^samples-(ordinal|rafTimestamp|updateStart|updateEnd|renderStart|renderEnd|captureStart|captureEnd|hostEnter|hostExit)\.f64$/.test(row.name)
+        && row.format === 'float64-le' && (args['--mode'] === 'diagnostic' ? !/host/.test(row.name) : !/capture/.test(row.name));
       const validFlags = ['diagnostic','timing'].includes(args['--mode']) && row.name === 'samples-flags.u8' && row.format === 'uint8';
-      requireValue(validCounts || validTimer || validSample || validFlags, 'WINDOW_ARTIFACT_MEMBER');
+      const validCallback = ['diagnostic','timing'].includes(args['--mode']) && /^(warm|measure)-callbacks-(index|rafTimestamp|entry|decision|pending|ordinal|frameId|updateStart|updateEnd|captureStart|captureEnd|renderStart|renderEnd|hostEnter|hostExit|hostCalls|hostFrameId|exit|flags)\.f64$/.test(row.name) && row.format === 'float64-le';
+      requireValue(validCounts || validTimer || validSample || validFlags || validCallback, 'WINDOW_ARTIFACT_MEMBER');
       const raw = Buffer.from(row.base64, 'base64');
-      requireValue(raw.length > 0 && raw.toString('base64') === row.base64 && (row.format !== 'float64-le' || raw.length % 8 === 0), 'WINDOW_ARTIFACT_TRANSFER');
+      requireValue((raw.length > 0 || validSample || validFlags || validCallback) && raw.toString('base64') === row.base64 && (row.format !== 'float64-le' || raw.length % 8 === 0), 'WINDOW_ARTIFACT_TRANSFER');
       const pin = await artifacts.save(row.name, raw); return { retained: true, pin };
     })())), 'WINDOW_ARTIFACT_BINDING');
     await bounded(page.goto(origin + '/index.html', { waitUntil: 'load' }), 'NAVIGATION');
@@ -838,12 +852,13 @@ async function main(args, formal) {
       const saved = report.native.samples, phases = report.native.windows;
       requireValue(saved?.allActualSamplesRetained && saved.droppedSamples === 0 && phases.length === 2
         && phases[0].label === 'warm' && phases[0].durationMs === 30000 && phases[1].label === 'measure' && phases[1].durationMs === 60000
-        && phases.every(row => row.count > 1 && row.boundaryRaf - row.firstRaf >= row.durationMs
-          && row.lastFrameId - row.firstFrameId + 1 === row.count)
+        && phases.every(row => Number.isSafeInteger(row.count) && row.count >= 0 && row.endEntry - row.startEntry >= row.durationMs
+          && (row.count ? row.lastFrameId - row.firstFrameId + 1 === row.count : row.firstFrameId === null && row.lastFrameId === null)
+          && Number.isFinite(row.drainStartedAt) && row.drainStartedAt >= row.endEntry && row.drainFinishedAt >= row.drainStartedAt)
         && phases[1].count === saved.length && report.native.reset.step === 0
-        && report.native.reset.frameId === phases[0].lastFrameId + 1 && phases[1].firstFrameId === report.native.reset.frameId + 1, 'TIMING_WINDOW_STRUCTURE');
+        && report.native.reset.frameId === (phases[0].lastFrameId ?? 2) + 1 && (!phases[1].count || phases[1].firstFrameId === report.native.reset.frameId + 1), 'TIMING_WINDOW_STRUCTURE');
       const names = ['ordinal','rafTimestamp','updateStart','updateEnd','renderStart','renderEnd','flags',
-        ...(mode === 'diagnostic' ? ['captureStart','captureEnd'] : [])];
+        ...(mode === 'diagnostic' ? ['captureStart','captureEnd'] : ['hostEnter','hostExit'])];
       requireValue(sameJson(Object.keys(saved.columns).sort(), names.sort()), 'SAMPLE_MEMBERS');
       const columns = {};
       for (const [name, value] of Object.entries(saved.columns)) {
@@ -853,9 +868,20 @@ async function main(args, formal) {
         requireValue(value.format === (isByte ? 'uint8' : 'float64-le') && raw.length === saved.length * (isByte ? 1 : 8), 'SAMPLE_FORMAT');
         columns[name] = Array.from({ length: saved.length }, (_, index) => isByte ? raw[index] : raw.readDoubleLE(index * 8));
       }
-      requireValue(columns.rafTimestamp[0] === saved.firstRaf && saved.boundaryRaf === phases[1].boundaryRaf, 'SAMPLE_WINDOW_LINK');
-      report.metrics = summarizeSamples(columns, saved.length, saved.boundaryRaf);
-      report.metrics.scope = mode === 'diagnostic' ? 'Separate fresh-capture and actual Host diagnostic window' : 'Actual update plus fresh Engine main window';
+      requireValue((saved.length ? columns.rafTimestamp[0] : null) === saved.firstRaf && saved.boundaryRaf === phases[1].boundaryRaf, 'SAMPLE_WINDOW_LINK');
+      for(const phase of phases){
+        const stored=phase.callbacks;requireValue(stored?.capacity===65536&&Number.isSafeInteger(stored.length)&&stored.length>=2&&stored.length<=65536,'CALLBACK_STORAGE');
+        const callbacks={};
+        const names=['index','rafTimestamp','entry','decision','pending','ordinal','frameId','updateStart','updateEnd','captureStart','captureEnd','renderStart','renderEnd','hostEnter','hostExit','hostCalls','hostFrameId','exit','flags'];
+        requireValue(sameJson(Object.keys(stored.columns).sort(),names.slice().sort()),'CALLBACK_MEMBERS');
+        for(const name of names){const value=stored.columns[name],pin=artifacts.records.get(value.raw.name);requireValue(pin?.bytes===value.raw.bytes&&pin.sha256===value.raw.sha256&&value.length===stored.length&&value.format==='float64-le','CALLBACK_ARTIFACT');
+          const raw=fs.readFileSync(path.join(output,pin.name));requireValue(raw.length===stored.length*8,'CALLBACK_FORMAT');callbacks[name]=Array.from({length:stored.length},(_,index)=>raw.readDoubleLE(index*8));}
+        const admittedIndices=callbacks.decision.flatMap((decision,index)=>decision===1?[index]:[]);
+        const warmColumns=Object.fromEntries(Object.keys(columns).map(name=>[name,admittedIndices.map(index=>callbacks[name][index])]));
+        const metrics=summarizeCapacityWindow({requestedAt:phase.requestedAt,start:phase.startEntry,end:phase.endEntry,durationMs:phase.durationMs,length:stored.length,columns:callbacks},phase.label==='measure'?columns:warmColumns,phase.count,phase.boundaryRaf);
+        if(phase.label==='measure')report.metrics=metrics;else report.warmMetrics=metrics;
+      }
+      report.metrics.scope = mode === 'diagnostic' ? 'Separate fresh-capture and actual Host diagnostic window' : 'Actual update plus fresh Engine main window with nested actual Host upper bound; two-clock/delegate overhead retained';
     }
     requireValue(report.requests.filter(row => row.url === '/' + REGISTRY && row.status === 200).length === 1, 'ACTUAL_SHARED_REGISTRY_REQUEST');
     requireValue(!report.browserEvents.length && !report.eventOverflow && !report.requestOverflow && !report.observerOutputOverflow, 'BROWSER_EVENTS');
@@ -865,6 +891,7 @@ async function main(args, formal) {
         && report.native.surface.cssWidth === WIDTH && report.native.surface.cssHeight === HEIGHT, 'PROFILE_TWO_QUALIFICATION');
       report.environmentQualification = 'PASS'; report.environmentReason = null;
       report.status = 'PASS_' + mode.toUpperCase();
+      if(mode==='timing'){report.budgets=timingBudgets(report.metrics);report.status=Object.values(report.budgets).some(value=>value===false)?'FAIL_TIMING_TARGET':Object.values(report.budgets).some(value=>value===null)?'INCOMPLETE_TIMING_COMPARISON':'PASS_TIMING';}
     } else {
       report.environmentQualification = report.native.surface.windowDprExactlyRequested ? 'PASS' : 'INCOMPLETE';
       report.environmentReason = report.native.surface.windowDprExactlyRequested ? null : 'ACTUAL_WINDOW_DPR_DIFFERS_FROM_REQUESTED';
@@ -891,6 +918,7 @@ async function main(args, formal) {
     });
     if (pending.size) await cleanup('pending', () => bounded(Promise.allSettled([...pending]), 'PENDING_DRAIN', cleanupDeadline));
     await cleanup('inputs', async () => {
+      verifyRecipeBrowser(browserChoice);
       for (const before of inputs.values()) {
         const after = fingerprintFile(before.owner, before.path);
         requireValue(after.bytes === before.bytes && after.sha256 === before.sha256, 'INPUT_CHANGED:' + before.path);
@@ -937,7 +965,7 @@ export function publicSummary(report) {
   const state = value => ['preflight','static','sparse','full'].includes(value) ? value : null;
   const role = value => ['baseline','candidate'].includes(value) ? value : null;
   const status = value => ['PASS_PREFLIGHT','PASS_CORRECTNESS','PASS_COUNTS','PASS_DIAGNOSTIC','PASS_TIMING',
-    'FAIL','FAIL_TIMING_TARGET','INCOMPLETE','INCOMPLETE_ENVIRONMENT','PREPARED'].includes(value) ? value : 'INCOMPLETE';
+    'FAIL','FAIL_TIMING_TARGET','INCOMPLETE_TIMING_COMPARISON','INCOMPLETE','INCOMPLETE_ENVIRONMENT','PREPARED'].includes(value) ? value : 'INCOMPLETE';
   const version = value => typeof value === 'string' && /^v?[0-9]+(?:\.[0-9]+){1,3}$/.test(value) ? value : null;
   const trial = value => value ? { mode: MODES.includes(value.mode) ? value.mode : null, state: state(value.state),
     role: role(value.role), round: number(value.round) } : null;
@@ -946,9 +974,14 @@ export function publicSummary(report) {
     const result = {};
     for (const name of ['update','engine','updateThroughRender','intervals','capture','host']) if (value[name])
       result[name] = Object.fromEntries(['count','p50','p95','p99'].map(key => [key, number(value[name][key])]));
+    if(value.wallGapCoverage)result.wallGapCoverage=Object.fromEntries(['count','wallMs','p95','p99','maximum'].map(key=>[key,number(value.wallGapCoverage[key])]));
+    if(value.window)result.window=Object.fromEntries(['requestedMs','observedMs','overrunMs','requestDelayMs'].map(key=>[key,number(value.window[key])]));
+    if(value.callbackCpu)result.callbackCpu=Object.fromEntries(['admitted','stalled','closing'].map(key=>[key,value.callbackCpu[key]?Object.fromEntries(['count','p50','p95','p99'].map(field=>[field,number(value.callbackCpu[key][field])])):null]));
+    for(const name of ['admittedFrames','stalledCallbacks','throughputPerSecond'])if(value[name]!==undefined)result[name]=number(value[name]);
     if (value.crossWindowInterval !== undefined) result.crossWindowInterval = number(value.crossWindowInterval);
     return result;
   };
+  const budgets=value=>value?Object.fromEntries(['cadence','wallGapCoverage','engineCpu'].map(key=>[key,boolean(value[key])])):null;
   const result = { schema: 'egret.incremental-native-public-summary/1',
     mode: MODES.includes(report.mode) ? report.mode : null, status: status(report.status), profileVersion: number(report.profileVersion),
     trial: trial(report.trial), sourceManifest: pin(report.source?.manifest), recipe: pin(report.recipe),
@@ -965,32 +998,37 @@ export function publicSummary(report) {
       powerSamples: number(report.observation?.powerSamples), frameWindowCovered: boolean(report.observation?.frameWindowCovered) },
     cleanup: { cooperativeAPIClosure: boolean(report.lifecycle?.cooperativeAPIClosure), hostSafe: boolean(report.native?.cleanup?.hostSafe),
       failures: report.cleanupFailures?.length ?? null, nativeFailures: report.native?.cleanup?.failures?.length ?? null },
-    frameCount: report.native?.frames?.length ?? null, metrics: metrics(report.metrics),
+    frameCount: report.native?.frames?.length ?? null, metrics: metrics(report.metrics), budgets:budgets(report.budgets),
     frames: (report.frames ?? []).map(row => ({ ordinal: number(row.ordinal), raw: pin(row.raw), nonBlackPixels: number(row.nonBlackPixels) })),
     artifacts: (report.artifacts ?? []).map(pin), failurePresent: !!report.failure || !!report.failures?.length,
     limits: ['A fixed public projection of private local evidence; machine paths, command lines, process IDs and raw errors are excluded.',
       'Raw report hashes do not publish their private contents. No GPU timing, physical-memory retirement or continuous focus is inferred.'] };
   if (report.runs) {
-    result.runs = report.runs.map(row => ({ trial: trial(row.trial), status: status(row.status), report: pin(row.report), metrics: metrics(row.metrics) }));
+    result.runs = report.runs.map(row => ({ trial: trial(row.trial), status: status(row.status), report: pin(row.report), metrics: metrics(row.metrics), budgets:budgets(row.budgets), executionComplete:boolean(row.executionComplete) }));
     result.comparisons = (report.comparisons ?? []).map(row => ({ round: number(row.round), state: state(row.state),
       environment: row.environment === 'PASS' ? 'PASS' : 'INCOMPLETE',
       pixels: row.pixels?.map(value => ({ ordinal: number(value.ordinal), bytes: number(value.bytes), sha256: hash(value.sha256), byteExact: boolean(value.byteExact) })),
       actualDraws: row.actualDraws?.map(values => values.map(number)) }));
     const expected = MODES.includes(report.mode) ? buildTrialSchedule(report.mode) : [];
     result.environmentQualification = expected.length > 0 && report.runs.length === expected.length
-      && sameJson(report.runs.map(row => row.trial), expected) && report.runs.every(row => row.status === 'PASS_' + report.mode.toUpperCase())
+      && sameJson(report.runs.map(row => row.trial), expected) && report.runs.every(row => row.status === 'PASS_' + report.mode.toUpperCase() || report.mode==='timing'&&COMPLETED_TIMING_STATUSES.includes(row.status)&&row.executionComplete===true)
       && report.comparisons?.length === expected.length / 2 && report.comparisons.every(row => row.environment === 'PASS') ? 'PASS' : 'INCOMPLETE';
+    if(report.executionStatus==='COMPLETE'&&result.environmentQualification==='PASS'&&report.runs.every(row=>row.executionComplete===true))result.runtimeExecution='PASS';
   }
   if (report.timing) {
     const medians = {};
     for (const stateName of STATES) {
       medians[stateName] = {};
       for (const roleName of ['baseline','candidate']) medians[stateName][roleName] = Object.fromEntries(
-        ['updateThroughRenderP95','engineP95','intervalP95','intervalP99'].map(key => [key, number(report.timing.medians?.[stateName]?.[roleName]?.[key])]));
+        ['updateThroughRenderP95','engineP95','hostP95','intervalP95','intervalP99','wallGapP95','wallGapP99'].map(key => [key, number(report.timing.medians?.[stateName]?.[roleName]?.[key])]));
     }
-    result.timing = { medians, fullDirtyRatio: number(report.timing.fullDirtyRatio),
+    result.timing = { medians, budgets:Object.fromEntries(STATES.map(stateName=>[stateName,Object.fromEntries(['baseline','candidate'].map(roleName=>[roleName,budgets(report.timing.budgets?.[stateName]?.[roleName])]))])), fullDirtyRatio: number(report.timing.fullDirtyRatio),
       fullDirtyRatioAccepted: boolean(report.timing.fullDirtyRatioAccepted), candidateCadenceAccepted: boolean(report.timing.candidateCadenceAccepted),
-      candidateEngineAccepted: boolean(report.timing.candidateEngineAccepted), overallD60: 'INCOMPLETE', gpu: 'UNMEASURED' };
+      candidateEngineAccepted: boolean(report.timing.candidateEngineAccepted), candidateWallCoverageAccepted:boolean(report.timing.candidateWallCoverageAccepted),
+      preparationUpperBoundSatisfied:report.timing.preparationUpperBoundSatisfied===true?true:null,
+      preparationUpperBounds:Object.fromEntries(STATES.map(stateName=>[stateName,Object.fromEntries(['baseline','candidate'].map(roleName=>{const value=report.timing.preparationUpperBounds?.[stateName]?.[roleName];return [roleName,{upperBoundMs:number(value?.upperBoundMs),satisfied:value?.satisfied===true?true:null}];}))])),
+      hostObservation:report.timing.hostObservation==='engine-host-span/1'?'engine-host-span/1':null,
+      preparationMeasurement:'UNMEASURED; any satisfied row uses only the containing synchronous Host median-p95 upper bound within the same five-pair Engine timing window.', overallD60: 'INCOMPLETE', gpu: 'UNMEASURED' };
   }
   if (report.firstMismatch) result.firstMismatch = { kind: ['raw-rgba','public-values-or-fees'].includes(report.firstMismatch.kind)
     ? report.firstMismatch.kind : null, state: state(report.firstMismatch.state), ordinal: number(report.firstMismatch.ordinal),
@@ -1020,8 +1058,8 @@ export function validatePrimingObservation(native) {
   }
   requireValue(Object.values(prime.frames[0].before.pending).every(value => value === 0)
     && active(prime.afterIdle, 2) && Object.values(prime.afterIdle.pending).every(value => value === 0), 'PRIMING_DRAIN');
-  requireValue(warm?.label === 'warm' && warm.firstFrameId === 3, 'PRIMING_WARM_FRAME');
-  requireValue(Number.isSafeInteger(warm.count) && warm.count > 0 && Array.isArray(warm.observations)
+  requireValue(warm?.label === 'warm' && (warm.count === 0 ? warm.firstFrameId === null : warm.firstFrameId === 3), 'PRIMING_WARM_FRAME');
+  requireValue(Number.isSafeInteger(warm.count) && warm.count >= 0 && Array.isArray(warm.observations)
     && warm.observations.length === Math.min(4, warm.count), 'WARM_OBSERVATION_COUNT');
   for (let index = 0; index < warm.observations.length; index++) {
     const row = warm.observations[index];
@@ -1046,6 +1084,7 @@ const PROCESS_STARTED = Date.now();
 const STATES = ['static', 'sparse', 'full'];
 const MODES = ['preflight', 'correctness', 'counts', 'diagnostic', 'timing'];
 const FIXED_RECIPE = Object.freeze({
+  pacing: 'capacity-paced/1', hostObservation: 'engine-host-span/1', sourceProfile: 'm12-recipe5', arithmeticToleranceMs: 0.000001, callbackCapacity: 65536,
   profileVersion: 2, width: 1024, height: 768, renderPixelRatio: 1, requestedDeviceScaleFactor: 1,
   maxPendingFrames: 2, primingFrames: 2, warmObservationCapacity: 4, warmMs: 30000, measurementMs: 60000, rounds: 5, sampleCapacity: 65536,
   operationMs: 150000, cleanupMs: 30000, hardMs: 190000, correctnessRawCap: 50331648,
@@ -1063,23 +1102,38 @@ function fields(value, expected, reason) {
 function validPin(pin) { fields(pin,['path','bytes','sha256'],'RECIPE_PIN');
   requireValue(typeof pin.path==='string' && Number.isSafeInteger(pin.bytes) && pin.bytes>0 && /^[a-f0-9]{64}$/.test(pin.sha256),'RECIPE_PIN'); }
 export function validateRecipe(recipe) {
-  fields(recipe,['schema','baseline','candidate','fixed','schedules','tools','profileSpec'],'RECIPE_FIELDS');
-  requireValue(recipe.schema==='egret.incremental-native-recipe/4' && sameJson(recipe.fixed,FIXED_RECIPE),'RECIPE_FIXED');
+  fields(recipe,['schema','baseline','candidate','fixed','schedules','tools','profileSpec','browser'],'RECIPE_FIELDS');
+  requireValue(recipe.schema==='egret.incremental-native-recipe/6' && sameJson(recipe.fixed,FIXED_RECIPE),'RECIPE_FIXED');
+  validateRecipeBrowser(recipe.browser);
   requireValue(sameJson(recipe.schedules,Object.fromEntries(MODES.map(mode=>[mode,buildTrialSchedule(mode)]))),'RECIPE_SCHEDULES');
   for(const role of ['baseline','candidate']) {
     fields(recipe[role],['root','manifest'],'RECIPE_ROLE'); requireValue(path.isAbsolute(recipe[role].root),'RECIPE_ROOT'); validPin(recipe[role].manifest);
     requireValue(recipe[role].manifest.path==='manifest.json','RECIPE_MANIFEST');
   }
   requireValue(!samePhysicalPath(recipe.baseline.root,recipe.candidate.root),'RECIPE_DISTINCT_ROOTS');
-  requireValue(Array.isArray(recipe.tools) && recipe.tools.length===4,'RECIPE_TOOLS');
+  requireValue(Array.isArray(recipe.tools) && recipe.tools.length===TOOL_MEMBERS.length,'RECIPE_TOOLS');
   const expected=TOOL_MEMBERS;
   requireValue(sameJson(recipe.tools.map(x=>x.path).sort(),expected),'RECIPE_TOOL_MEMBERS');
   for(const pin of recipe.tools) validPin(pin);
   validPin(recipe.profileSpec); requireValue(recipe.profileSpec.path===PROFILE_SPEC,'RECIPE_AMENDMENT');
   return recipe;
 }
-export function createFixedRecipe(baseline, candidate) {
-  const recipe = { schema: 'egret.incremental-native-recipe/4', baseline, candidate,
+function validateRecipeBrowser(browser) {
+  if (Object.hasOwn(browser ?? {}, 'channel')) { fields(browser,['channel'],'RECIPE_BROWSER');requireValue(browser.channel==='msedge','RECIPE_BROWSER'); }
+  else { fields(browser,['executable'],'RECIPE_BROWSER');validPin(browser.executable);physicalPathKey(browser.executable.path); }
+}
+export function captureRecipeBrowser(executable) {
+  if (executable === undefined) return {channel:'msedge'};
+  physicalPathKey(executable);const file=fs.realpathSync(executable),pin=fingerprintFile(path.dirname(file),path.basename(file));
+  return {executable:{path:file,bytes:pin.bytes,sha256:pin.sha256}};
+}
+export function verifyRecipeBrowser(browser) {
+  validateRecipeBrowser(browser);
+  if (browser.executable) requireValue(sameJson(captureRecipeBrowser(browser.executable.path),browser),'RECIPE_BROWSER_CHANGED');
+  return browser;
+}
+export function createFixedRecipe(baseline, candidate, executable) {
+  const recipe = { schema: 'egret.incremental-native-recipe/6', baseline, candidate, browser: captureRecipeBrowser(executable),
     fixed: structuredClone(FIXED_RECIPE), schedules: Object.fromEntries(MODES.map(mode => [mode, buildTrialSchedule(mode)])),
     tools: TOOL_MEMBERS.map(file => fingerprintFile(CHECKOUT, file)), profileSpec: fingerprintFile(CHECKOUT, PROFILE_SPEC) };
   return validateRecipe(recipe);
@@ -1099,15 +1153,19 @@ export function nearestRank(values, quantile) {
     && quantile>0 && quantile<=1,'SAMPLES');
   const sorted=[...values].sort((a,b)=>a-b); return sorted[Math.ceil(quantile*sorted.length)-1];
 }
-function quantiles(values) { return {count:values.length,p50:nearestRank(values,.5),p95:nearestRank(values,.95),p99:nearestRank(values,.99)}; }
+function quantiles(values) { if (!values.length) return null; return {count:values.length,p50:nearestRank(values,.5),p95:nearestRank(values,.95),p99:nearestRank(values,.99)}; }
+// RAF cadence and performance.now spans retain independent raw clock domains.
+// Do not clamp offsets or impose cross-domain ordering on quantized observations.
 export function summarizeSamples(columns,length,boundary) {
-  requireValue(Number.isSafeInteger(length)&&length>1&&length<=65536,'SAMPLE_LENGTH');
+  requireValue(Number.isSafeInteger(length)&&length>=0&&length<=65536,'SAMPLE_LENGTH');
   const names=['ordinal','rafTimestamp','updateStart','updateEnd','renderStart','renderEnd','flags'];
   requireValue(names.every(name=>columns[name]?.length===length),'SAMPLE_COLUMNS');
-  const update=[],engine=[],total=[],intervals=[],capture=[];
+  const update=[],engine=[],total=[],intervals=[],capture=[],host=[];
+  const hasHost=columns.hostEnter!==undefined||columns.hostExit!==undefined;
+  requireValue(!hasHost||!columns.captureStart&&columns.hostEnter?.length===length&&columns.hostExit?.length===length,'SAMPLE_HOST_COLUMNS');
   for(let i=0;i<length;i++) {
     const [ordinal,raf,a,b,c,d,flags]=names.map(name=>columns[name][i]);
-    requireValue(ordinal===i && [raf,a,b,c,d].every(Number.isFinite) && raf>=0 && a>=raf && b>=a && c>=b && d>=c,'SAMPLE_ORDER');
+    requireValue(ordinal===i && [raf,a,b,c,d].every(Number.isFinite) && raf>=0 && a>=0 && b>=a && c>=b && d>=c,'SAMPLE_ORDER');
     requireValue(flags===3,'FOREGROUND');
     if(i) { requireValue(raf>columns.rafTimestamp[i-1],'SAMPLE_RAF'); intervals.push(raf-columns.rafTimestamp[i-1]); }
     update.push(b-a);engine.push(d-c);total.push(d-a);
@@ -1115,33 +1173,91 @@ export function summarizeSamples(columns,length,boundary) {
       const x=columns.captureStart[i],y=columns.captureEnd[i];
       requireValue(Number.isFinite(x)&&Number.isFinite(y)&&x>=b&&y>=x&&c>=y,'SAMPLE_CAPTURE_ORDER');capture.push(y-x);
     }
+    if(hasHost){const x=columns.hostEnter[i],y=columns.hostExit[i];requireValue(Number.isFinite(x)&&Number.isFinite(y)&&x>=c&&y>=x&&y<=d,'SAMPLE_HOST_ORDER');host.push(y-x);}
   }
-  requireValue(Number.isFinite(boundary)&&boundary>columns.rafTimestamp[length-1],'SAMPLE_BOUNDARY');
+  requireValue(Number.isFinite(boundary)&&boundary>=0&&(!length||boundary>columns.rafTimestamp[length-1]),'SAMPLE_BOUNDARY');
   return {update:quantiles(update),engine:quantiles(engine),updateThroughRender:quantiles(total),intervals:quantiles(intervals),
-    crossWindowInterval:boundary-columns.rafTimestamp[length-1],...(capture.length?{capture:quantiles(capture),host:quantiles(engine)}:{})};
+    crossWindowInterval:length?boundary-columns.rafTimestamp[length-1]:null,...(capture.length?{capture:quantiles(capture),host:quantiles(engine)}:hasHost?{host:quantiles(host)}:{})};
 }
-export function aggregateTiming(results) {
-  const expected=buildTrialSchedule('timing');
-  requireValue(results.length===30 && new Set(results.map(x=>x.trial.id)).size===30
-    && expected.every((trial,i)=>sameJson(results[i].trial,trial)&&results[i].status==='PASS_TIMING'),'COMPLETE_TIMING');
-  const medians={};
-  for(const state of STATES) {
-    medians[state]={};
-    for(const role of ['baseline','candidate']) {
-      const rows=results.filter(x=>x.trial.state===state&&x.trial.role===role);
-      requireValue(rows.length===5,'COMPLETE_TIMING');
-      const median=selector=>nearestRank(rows.map(selector),.5);
-      medians[state][role]={updateThroughRenderP95:median(x=>x.metrics.updateThroughRender.p95),
-        engineP95:median(x=>x.metrics.engine.p95),intervalP95:median(x=>x.metrics.intervals.p95),intervalP99:median(x=>x.metrics.intervals.p99)};
+export function weightedGapQuantile(gaps, wallMs, quantile) {
+  requireValue(Array.isArray(gaps)&&gaps.length>0&&gaps.every(value=>Number.isFinite(value)&&value>=0)
+    &&Number.isFinite(wallMs)&&wallMs>0&&quantile>0&&quantile<=1,'WALL_GAPS');
+  const sum=gaps.reduce((total,value)=>total+value,0);
+  requireValue(Math.abs(sum-wallMs)<=FIXED_RECIPE.arithmeticToleranceMs,'WALL_PARTITION');
+  const sorted=gaps.filter(value=>value>0).sort((a,b)=>a-b);let weight=0;
+  for(const value of sorted){weight+=value;if(weight>=quantile*wallMs)return value;}
+  requireValue(quantile===1&&sorted.length>0,'WALL_QUANTILE');return sorted.at(-1);
+}
+export function summarizeCapacityWindow(observation, columns, admitted, boundaryRaf) {
+  const {requestedAt,start,end,durationMs,length,columns:callbacks}=observation;
+  const names=['index','rafTimestamp','entry','decision','pending','ordinal','frameId','updateStart','updateEnd','captureStart','captureEnd','renderStart','renderEnd','hostEnter','hostExit','hostCalls','hostFrameId','exit','flags'];
+  requireValue([requestedAt,start,end,durationMs].every(Number.isFinite)&&requestedAt>=0&&start>=requestedAt&&durationMs>0&&end-start>=durationMs,'CALLBACK_WINDOW');
+  requireValue(Number.isSafeInteger(length)&&length>=2&&length<=65536&&names.every(name=>callbacks[name]?.length===length),'CALLBACK_COLUMNS');
+  requireValue(callbacks.entry[0]===start&&callbacks.entry[length-1]===end&&callbacks.rafTimestamp[length-1]===boundaryRaf,'CALLBACK_BOUNDARY');
+  const cohorts={admitted:[],stalled:[],closing:[]},entries=[];let ordinal=0,previousFrame;
+  for(let index=0;index<length;index++){
+    const row=Object.fromEntries(names.map(name=>[name,callbacks[name][index]]));
+    requireValue(row.index===index&&[row.entry,row.rafTimestamp,row.exit].every(Number.isFinite)&&row.rafTimestamp>=0&&row.entry>=0
+      &&row.exit>=row.entry&&(!index||row.entry>=callbacks.exit[index-1]&&row.rafTimestamp>callbacks.rafTimestamp[index-1]),'CALLBACK_ORDER');
+    requireValue(row.flags===3&&Number.isSafeInteger(row.pending)&&row.pending>=0&&row.pending<=2,'CALLBACK_CAPACITY_STATE');
+    const decision=row.entry-start>=durationMs?3:row.pending===2?2:1;
+    requireValue(row.decision===decision&&(decision===3?index===length-1:index<length-1),'CALLBACK_DECISION');
+    if(decision===1){
+      requireValue(row.ordinal===ordinal&&Number.isSafeInteger(row.frameId)&&row.frameId>0&&(!ordinal||row.frameId===previousFrame+1),'CALLBACK_ADMISSION');
+      for(const name of ['ordinal','rafTimestamp','updateStart','updateEnd','renderStart','renderEnd','flags'])requireValue(row[name]===columns[name]?.[ordinal],'CALLBACK_SAMPLE_LINK');
+      requireValue(row.updateStart>=row.entry&&row.exit>=row.renderEnd,'CALLBACK_COMPONENT_ORDER');
+      if(columns.captureStart){requireValue(row.captureStart===columns.captureStart[ordinal]&&row.captureEnd===columns.captureEnd[ordinal],'CALLBACK_CAPTURE_LINK');}
+      else requireValue(Number.isNaN(row.captureStart)&&Number.isNaN(row.captureEnd),'CALLBACK_ABSENT_CAPTURE');
+      if(columns.hostEnter){requireValue(row.hostCalls===1&&row.hostFrameId===row.frameId&&row.hostEnter===columns.hostEnter[ordinal]&&row.hostExit===columns.hostExit[ordinal],'CALLBACK_HOST_LINK');}
+      else requireValue(row.hostCalls===0&&row.hostFrameId===-1&&Number.isNaN(row.hostEnter)&&Number.isNaN(row.hostExit),'CALLBACK_ABSENT_HOST');
+      entries.push(row.entry);previousFrame=row.frameId;ordinal++;cohorts.admitted.push(row.exit-row.entry);
+    }else{
+      requireValue(row.ordinal===-1&&row.frameId===-1&&row.hostCalls===0&&row.hostFrameId===-1&&['updateStart','updateEnd','captureStart','captureEnd','renderStart','renderEnd','hostEnter','hostExit'].every(name=>Number.isNaN(row[name])),'CALLBACK_ABSENT_COMPONENT');
+      cohorts[decision===2?'stalled':'closing'].push(row.exit-row.entry);
     }
   }
-  const denominator=medians.full.baseline.updateThroughRenderP95;
-  requireValue(denominator>0,'SAMPLES_BASELINE_ZERO');
-  const fullDirtyRatio=medians.full.candidate.updateThroughRenderP95/denominator;
-  return {aggregation:'Median of five per-trial nearest-rank quantiles; every trial retained',medians,fullDirtyRatio,
-    fullDirtyRatioAccepted:fullDirtyRatio<=1.10,
-    candidateCadenceAccepted:STATES.every(state=>medians[state].candidate.intervalP95<=16.7&&medians[state].candidate.intervalP99<=33.4),
-    candidateEngineAccepted:STATES.every(state=>medians[state].candidate.engineP95<=8),
+  requireValue(ordinal===admitted&&cohorts.closing.length===1,'CALLBACK_COUNTS');
+  const base=summarizeSamples(columns,admitted,boundaryRaf),wallMs=end-start;
+  const gaps=entries.length?[entries[0]-start,...entries.slice(1).map((entry,index)=>entry-entries[index]),end-entries.at(-1)]:[wallMs];
+  const p95=weightedGapQuantile(gaps,wallMs,.95),p99=weightedGapQuantile(gaps,wallMs,.99);
+  return {...base,admittedFrames:admitted,comparisonEligible:admitted>=2,executionIntegrity:'COMPLETE',
+    window:{requestedAt,start,end,requestedMs:durationMs,observedMs:wallMs,overrunMs:wallMs-durationMs,requestDelayMs:start-requestedAt},
+    wallGapCoverage:{count:gaps.length,gaps,wallMs,p95,p99,maximum:Math.max(...gaps)},
+    callbackCpu:{...Object.fromEntries(Object.entries(cohorts).map(([key,values])=>[key,quantiles(values)])),
+      epilogue:'The final timestamp store and return follow the recorded callback-end clock and are not measured.'},
+    stalledCallbacks:cohorts.stalled.length,throughputPerSecond:admitted*1000/wallMs};
+}
+export function timingBudgets(metrics) {
+  return {cadence:metrics.intervals?metrics.intervals.p95<=16.7&&metrics.intervals.p99<=33.4:null,
+    wallGapCoverage:metrics.wallGapCoverage.p95<=16.7&&metrics.wallGapCoverage.p99<=33.4,
+    engineCpu:metrics.engine?metrics.engine.p95<=8:null};
+}
+const COMPLETED_TIMING_STATUSES=['PASS_TIMING','FAIL_TIMING_TARGET','INCOMPLETE_TIMING_COMPARISON'];
+export function aggregateTiming(results) {
+  const expected=buildTrialSchedule('timing');
+  requireValue(results.length===30&&new Set(results.map(row=>row.trial.id)).size===30
+    &&expected.every((trial,index)=>sameJson(results[index].trial,trial)&&COMPLETED_TIMING_STATUSES.includes(results[index].status)),'COMPLETE_TIMING');
+  const medians={},budgets={};
+  for(const state of STATES){medians[state]={};budgets[state]={};for(const role of ['baseline','candidate']){
+    const rows=results.filter(row=>row.trial.state===state&&row.trial.role===role);requireValue(rows.length===5,'COMPLETE_TIMING');
+    const median=select=>{const values=rows.map(select);return values.every(value=>Number.isFinite(value)&&value>=0)?nearestRank(values,.5):null;};
+    const values={updateThroughRenderP95:median(row=>row.metrics.updateThroughRender?.p95),engineP95:median(row=>row.metrics.engine?.p95),hostP95:median(row=>row.metrics.host?.p95),
+      intervalP95:median(row=>row.metrics.intervals?.p95),intervalP99:median(row=>row.metrics.intervals?.p99),
+      wallGapP95:median(row=>row.metrics.wallGapCoverage?.p95),wallGapP99:median(row=>row.metrics.wallGapCoverage?.p99)};
+    medians[state][role]=values;budgets[state][role]={cadence:values.intervalP95===null||values.intervalP99===null?null:values.intervalP95<=16.7&&values.intervalP99<=33.4,
+      wallGapCoverage:values.wallGapP95===null||values.wallGapP99===null?null:values.wallGapP95<=16.7&&values.wallGapP99<=33.4,
+      engineCpu:values.engineP95===null?null:values.engineP95<=8};
+  }}
+  const eligible=results.filter(row=>row.trial.state==='full').every(row=>row.metrics.comparisonEligible===true),denominator=medians.full.baseline.updateThroughRenderP95,numerator=medians.full.candidate.updateThroughRenderP95;
+  const fullDirtyRatio=eligible&&denominator!==null&&denominator>0&&numerator!==null?numerator/denominator:null;
+  const all=key=>STATES.some(state=>budgets[state].candidate[key]===null)?null:STATES.every(state=>budgets[state].candidate[key]);
+  // The original preparation budget concerns Host preparation, separately from capture.
+  // Recipe 6 measures its containing Host span inside all five actual Engine trials.
+  const preparationUpperBounds=Object.fromEntries(STATES.map(state=>[state,Object.fromEntries(['baseline','candidate'].map(role=>{const upperBoundMs=medians[state][role].hostP95;return [role,{upperBoundMs,satisfied:upperBoundMs!==null&&upperBoundMs<=4?true:null}];}))]));
+  const preparationUpperBoundSatisfied=STATES.every(state=>preparationUpperBounds[state].candidate.satisfied===true)?true:null;
+  return {aggregation:'Median of five per-trial quantiles, separately by role and workload; every trial and budget miss retained',medians,budgets,fullDirtyRatio,
+    fullDirtyRatioAccepted:fullDirtyRatio===null?null:fullDirtyRatio<=1.10,candidateCadenceAccepted:all('cadence'),candidateWallCoverageAccepted:all('wallGapCoverage'),candidateEngineAccepted:all('engineCpu'),
+    hostObservation:'engine-host-span/1',preparationUpperBounds,preparationUpperBoundSatisfied,preparationUpperBoundBasis:'Median of five timing Host p95 spans nested in the same Engine calls, each containing Host preparation, packing and submit; values above 4 ms do not establish a preparation-budget failure. Observation overhead remains in the Engine span.',
     purePreparation:'UNMEASURED_IN_MAIN_WINDOW',gpu:'UNMEASURED',overallD60:'INCOMPLETE'};
 }
 export function readPinned(owner,pin) {
@@ -1155,7 +1271,7 @@ export function loadRecipe(file,baseline,candidate) {
   requireValue(pin.bytes<1048576,'RECIPE_SIZE');
   const raw=readPinned(owner,pin),parsed=JSON.parse(raw);
   requireValue(raw.equals(canonicalTextBytes(JSON.stringify(parsed,null,2))),'RECIPE_CANONICAL_RAW');
-  const recipe=validateRecipe(parsed);
+  const recipe=validateRecipe(parsed);verifyRecipeBrowser(recipe.browser);
   for(const role of ['baseline','candidate']) {
     requireValue(samePhysicalPath(recipe[role].root,fs.realpathSync(recipe[role].root)),'RECIPE_ROOT_ALIAS');
     if(role==='baseline'&&baseline) requireValue(samePhysicalPath(baseline,recipe[role].root),'RECIPE_BASELINE_ARGUMENT');
@@ -1204,7 +1320,7 @@ async function runBatch(args) {
   try {
     for(const trial of schedule) {
       loadRecipe(loaded.file);
-      const descriptor={schema:'egret.incremental-native-trial/3',trial,recipe:loaded.file,recipePin:loaded.pin,playwright:args['--playwright'],powershell:args['--powershell'],output:path.join(output,trial.id)};
+      const descriptor={schema:'egret.incremental-native-trial/3',trial,recipe:loaded.file,recipePin:loaded.pin,browser:loaded.recipe.browser,playwright:args['--playwright'],powershell:args['--powershell'],output:path.join(output,trial.id)};
       const file=path.join(output,trial.id+'.input.json');fs.writeFileSync(file,canonicalTextBytes(JSON.stringify(descriptor)),{flag:'wx'});
       const pin=fingerprintFile(output,path.basename(file)),processResult=await spawnTrial(descriptor,pin,file);
       const row={trial,input:{owner:output,...pin},process:processResult,report:null};result.runs.push(row);
@@ -1216,10 +1332,12 @@ async function runBatch(args) {
       }
       if(processResult.code===1&&processResult.signal===null&&!processResult.hard&&!processResult.failure)
         requireObservation(row.status!=='FAIL','TRIAL_OBSERVATION_FAILED');
-      requireValue(processResult.code===0&&!processResult.hard&&!processResult.failure,'TRIAL_PROCESS');
+      const budgetOnly=mode==='timing'&&COMPLETED_TIMING_STATUSES.includes(row.status);
+      requireValue((processResult.code===0||processResult.code===1&&budgetOnly)&&processResult.signal===null&&!processResult.hard&&!processResult.failure,'TRIAL_PROCESS');
       const reportPin=fingerprintFile(descriptor.output,'report.json');row.report={owner:descriptor.output,...reportPin};
       const report=JSON.parse(readPinned(descriptor.output,reportPin));row.status=report.status;row.metrics=report.metrics;row.details=report;
-      requireValue(report.status==='PASS_'+mode.toUpperCase()&&report.environmentQualification==='PASS'&&report.lifecycle.cooperativeAPIClosure,'TRIAL_INCOMPLETE');
+      requireValue((report.status==='PASS_'+mode.toUpperCase()||mode==='timing'&&COMPLETED_TIMING_STATUSES.includes(report.status))&&report.runtimeExecution==='PASS'&&report.environmentQualification==='PASS'&&report.lifecycle.cooperativeAPIClosure,'TRIAL_INCOMPLETE');
+      row.executionComplete=true;row.budgets=report.budgets;
       if(result.runs.length%2===0) {
         const pair=result.runs.slice(-2),a=pair.find(x=>x.trial.role==='baseline'),b=pair.find(x=>x.trial.role==='candidate');
         requireValue(sameJson(pairEnvironment(a.details),pairEnvironment(b.details)),'PAIRED_ENVIRONMENT_CHANGED');
@@ -1257,8 +1375,7 @@ async function runBatch(args) {
     }
     if(mode==='correctness')requireValue(result.comparisons.reduce((sum,x)=>sum+x.pixels.reduce((s,p)=>s+p.bytes*2,0),0)===44040192,'EXACT_14_RGBA');
     if(mode==='timing')result.timing=aggregateTiming(result.runs);
-    if(mode==='diagnostic')result.preparationUpperBounds=result.runs.map(row=>({trial:row.trial,hostP95:row.metrics.host.p95,
-      status:row.metrics.host.p95<=4?'UPPER_BOUND_SATISFIED_FOR_THIS_DIAGNOSTIC_WINDOW':'PURE_PREPARATION_UNMEASURED'}));
+    if(mode==='diagnostic')result.diagnosticHostObservations=result.runs.map(row=>({trial:row.trial,hostP95:row.metrics.host?.p95??null,scope:'HOST_ONLY_NOT_ENGINE_PREPARATION'}));
     loadRecipe(loaded.file);
     for (const run of result.runs) {
       readPinned(run.report.owner,run.report);
@@ -1266,7 +1383,8 @@ async function runBatch(args) {
       readPinned(run.report.owner,run.details.observation.raw);
     }
     result.status='PASS_'+mode.toUpperCase();
-    if(mode==='timing'&&(!result.timing.fullDirtyRatioAccepted||!result.timing.candidateCadenceAccepted||!result.timing.candidateEngineAccepted))result.status='FAIL_TIMING_TARGET';
+    result.executionStatus='COMPLETE';
+    if(mode==='timing'){const outcomes=[result.timing.fullDirtyRatioAccepted,result.timing.candidateCadenceAccepted,result.timing.candidateEngineAccepted,result.timing.candidateWallCoverageAccepted];result.status=outcomes.some(value=>value===false)?'FAIL_TIMING_TARGET':outcomes.some(value=>value===null)?'INCOMPLETE_TIMING_COMPARISON':'PASS_TIMING';}
   } catch(error) {result.failures.push(fault(error));result.status=error.observationFailure?'FAIL':'INCOMPLETE';}
   finally {
     for(const row of result.runs)delete row.details;
@@ -1283,11 +1401,12 @@ const BUILD_LINE = /^Project format check PASS \(21 definitions\)\.[\r\n]*$/;
 const PREPARE_KEYS = ['--baseline', '--candidate', '--baseline-build-log', '--baseline-build-exit',
   '--candidate-build-log', '--candidate-build-exit', '--output'];
 export function prepareOptions(argv) {
-  requireValue(argv.length === 15 && argv[0] === '--prepare', 'PREPARE_CLI'); const result = {};
+  requireValue((argv.length === 15 || argv.length === 17) && argv[0] === '--prepare', 'PREPARE_CLI'); const result = {};
   for (let i = 1; i < argv.length; i += 2) {
-    requireValue(PREPARE_KEYS.includes(argv[i]) && !Object.hasOwn(result, argv[i]) && typeof argv[i + 1] === 'string', 'PREPARE_CLI');
-    requireValue(path.isAbsolute(argv[i + 1]), 'PREPARE_ABSOLUTE'); result[argv[i]] = argv[i + 1];
+    requireValue([...PREPARE_KEYS,'--executable'].includes(argv[i]) && !Object.hasOwn(result, argv[i]) && typeof argv[i + 1] === 'string', 'PREPARE_CLI');
+    requireValue(path.isAbsolute(argv[i + 1]), 'PREPARE_ABSOLUTE');if(argv[i]==='--executable')physicalPathKey(argv[i+1]); result[argv[i]] = argv[i + 1];
   }
+  requireValue(PREPARE_KEYS.every(key=>Object.hasOwn(result,key)),'PREPARE_CLI');
   return result;
 }
 function strictText(raw, reason) {
@@ -1376,7 +1495,7 @@ function verifySnapshotMembership(repository, files, generated, links, hasManife
   for (const row of files) readPinned(repository, { path: row.target, bytes: row.bytes, sha256: row.sha256 });
   for (const row of generated) readPinned(repository, row);
 }
-function publicEntriesFor(repository) {
+export function publicEntriesFor(repository) {
   const imports = {}, publicEntries = [];
   const target = (name, value) => {
     requireValue(typeof value === 'string' && value.startsWith('./'), 'PACKAGE_EXPORT_TARGET');
@@ -1392,7 +1511,8 @@ function publicEntriesFor(repository) {
       imports[specifier] = '/' + javascript; publicEntries.push({ specifier, javascript, declaration });
     }
     for (const [specifier, value] of Object.entries(manifest.imports ?? {})) {
-      requireValue(['#egret-textured-frame-state', '#egret-mouse-input'].includes(specifier) && !Object.hasOwn(imports, specifier), 'PACKAGE_PRIVATE_ALIAS');
+      requireValue(['#egret-textured-frame-state', '#egret-mouse-input', '#egret-manifest-resources'].includes(specifier) && !Object.hasOwn(imports, specifier), 'PACKAGE_PRIVATE_ALIAS');
+      if(specifier==='#egret-manifest-resources')requireValue(name==='engine'&&value.import==='./dist/manifestResourceState.js'&&value.types==='./dist/manifestResourceState.d.ts','PACKAGE_PRIVATE_ALIAS_TARGET');
       imports[specifier] = '/' + target(name, value.import); target(name, value.types);
     }
   }
@@ -1446,7 +1566,7 @@ async function prepareSnapshots(args) {
   try {
     const runtimePin = fingerprintFile(path.dirname(NODE), path.basename(NODE));
     const preparationRuntime = { node: process.version, executable: NODE, ...runtimePin };
-    const tools = [...TOOL_MEMBERS, PROFILE_SPEC, 'tools/lib/file-identity.mjs', 'tools/textured-webgpu/native-files.mjs', 'tools/browser-tool-matrix.json']
+    const tools = [...TOOL_MEMBERS, PROFILE_SPEC, 'tools/lib/file-identity.mjs', 'tools/browser-tool-matrix.json']
       .map(relative => fingerprintFile(CHECKOUT, relative));
     const captured = {}, records = {};
     for (const role of ['baseline','candidate']) {
@@ -1495,7 +1615,7 @@ async function prepareSnapshots(args) {
       const graph = await collectPublicGraph(owner, item => {
         const row = byTarget.get(ownerRelativePath(owner, item.path));
         requireValue(row?.bytes === item.bytes && row.sha256 === item.sha256, 'PREPARE_GRAPH_MEMBER');
-      });
+      }, FIXED_RECIPE.sourceProfile);
       const registry = await captureRegistry({ repository: owner, graph, map: chosenMap('baseline') });
       requireValue((await rereadRegistry(registry)).accepted, 'PREPARE_REGISTRY_CHANGED');
       const generated = ['SNAPSHOT.md','browser-import-map.json','evidence/provided-build-receipt.json'].map(file => fingerprintFile(owner, file));
@@ -1516,7 +1636,7 @@ async function prepareSnapshots(args) {
     for (const row of result.snapshots) {
       const manifest = JSON.parse(strictText(readPinned(row.owner, row.manifest), 'MANIFEST_UTF8')); verifyBuiltSnapshot(row.owner, manifest);
     }
-    const recipe = createFixedRecipe(...result.snapshots.map(row => ({ root: row.owner, manifest: row.manifest })));
+    const recipe = createFixedRecipe(...result.snapshots.map(row => ({ root: row.owner, manifest: row.manifest })),args['--executable']);
     save(output, 'recipe.json', recipe); result.recipe = fingerprintFile(output, 'recipe.json'); loadRecipe(path.join(output, 'recipe.json'));
     stableOriginals();
     for (const row of result.snapshots) verifyBuiltSnapshot(row.owner, JSON.parse(strictText(readPinned(row.owner, row.manifest), 'MANIFEST_UTF8')));
@@ -1534,13 +1654,13 @@ async function dispatch(argv) {
   requireValue(process.platform==='win32'&&process.arch==='x64'&&process.version==='v26.7.0'&&samePhysicalPath(process.execPath,fs.realpathSync(NODE))&&process.execArgv.length===0,'PINNED_NODE');
   for(const [key,value] of Object.entries(process.env))requireValue(!/^(NODE_OPTIONS|NODE_PATH)$/i.test(key)||!value,'NODE_ENVIRONMENT');
   if(argv[0]==='--prepare')return prepareSnapshots(prepareOptions(argv));
-  if(argv.length===10&&argv.includes('--repository'))return main(options(argv));
+  if((argv.length===10||argv.length===12)&&argv.includes('--repository'))return main(options(argv));
   if(argv.length===4&&argv[0]==='--trial'&&argv[2]==='--trial-sha256') {
     const file=argv[1];requireValue(path.isAbsolute(file)&&/^[a-f0-9]{64}$/.test(argv[3]),'TRIAL_INPUT');
     const pin=fingerprintFile(path.dirname(file),path.basename(file));requireValue(pin.sha256===argv[3]&&pin.bytes<1048576,'TRIAL_INPUT_PIN');
-    const descriptor=JSON.parse(readPinned(path.dirname(file),pin));fields(descriptor,['schema','trial','recipe','recipePin','playwright','powershell','output'],'TRIAL_FIELDS');
+    const descriptor=JSON.parse(readPinned(path.dirname(file),pin));fields(descriptor,['schema','trial','recipe','recipePin','browser','playwright','powershell','output'],'TRIAL_FIELDS');
     requireValue(descriptor.schema==='egret.incremental-native-trial/3','TRIAL_SCHEMA');
-    const loaded=loadRecipe(descriptor.recipe);requireValue(sameJson(loaded.pin,descriptor.recipePin),'TRIAL_RECIPE_PIN');
+    const loaded=loadRecipe(descriptor.recipe);requireValue(sameJson(loaded.pin,descriptor.recipePin),'TRIAL_RECIPE_PIN');requireValue(sameJson(loaded.recipe.browser,descriptor.browser),'TRIAL_BROWSER_PIN');
     requireValue(buildTrialSchedule(descriptor.trial.mode).some(x=>sameJson(x,descriptor.trial)),'TRIAL_SCHEDULE');
     return main({'--mode':descriptor.trial.mode,'--repository':loaded.recipe[descriptor.trial.role].root,'--playwright':descriptor.playwright,'--powershell':descriptor.powershell,'--output':descriptor.output},{...descriptor,loaded});
   }

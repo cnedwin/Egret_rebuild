@@ -2,13 +2,21 @@
 
 English | [中文](../../Cns/docs/m1-rendering-resource-plan.md)
 
-2026-10-20 · Revision 5 · Design and acceptance targets, not completed capabilities
+2026-10-21 · Revision 6 · Design and acceptance targets, not completed capabilities
 
 ## Current implementation follow-up
 
 Verification cutoff: 2026-10-20. M1.3 and M1.4 were delivered through [PR #75](https://github.com/cnedwin/Egret_rebuild/pull/75) and [PR #77](https://github.com/cnedwin/Egret_rebuild/pull/77). M1.5 has completed independent review of its seven fixed desktop recovery cases. The affected browser regression completed all twenty-four suites and thirty-six actual calls with independent result review. Final package review and protected merge checks remained outstanding at this checkpoint, followed by M1.2 formal paired performance acceptance.
 
 The [verification record](resource-recovery-evidence.md) defines the measured environment, original attempts and remaining limits. Delivery is recorded in the repository's [pull requests](https://github.com/cnedwin/Egret_rebuild/pulls). M2/M3 implementation has not started.
+
+### M1.2 formal performance follow-up — 2026-10-21
+
+M1.2 functional engineering was delivered through [PR #74](https://github.com/cnedwin/Egret_rebuild/pull/74), and [M1.5 PR #79](https://github.com/cnedwin/Egret_rebuild/pull/79) has merged. Formal M1.2 performance remains OPEN. The completed schema-5 batch retains its valid `FAIL_TIMING_TARGET`, every original sample and unchanged budget.
+
+The latest candidate changes seven existing rendering/Host source files and is frozen in a fresh schema-6 recipe. Preflight (two trials), correctness (six) and operation counts (six) passed with independent final raw-result review. Its diagnostic sequence stopped after baseline static passed and candidate static failed sampled OS foreground qualification. Native cleanup completed, but the candidate timing data is disqualified; sparse/full diagnostics and the thirty formal timing trials did not run. This is an environment limitation, not a completed performance comparison.
+
+The next step is a qualified foreground session for the existing fixed diagnostic and formal timing protocol, while preserving both foreground refusals and the original schema-5 failure. The [evidence record](incremental-frame-preparation-evidence.md) separates source changes, controlled checks, finite native results and performance acceptance; no new budget or measurement shortcut is introduced.
 
 ## Purpose and entry
 
@@ -74,9 +82,25 @@ These are initial engineering acceptance targets. They are not measured results,
 
 Profile 2 clarifies rendering inputs prospectively. Earlier runs rejected by the exact window-DPR condition retain their original incomplete status. New qualification requires a fresh recipe and paired measurements; it does not reinterpret prior results.
 
-Recipe schema 4 adds a fixed initialization before each diagnostic or timing trial: submit exactly two fresh frames at the initial state, without advancing the workload or awaiting between submissions, then wait once for both submissions to retire. Require no Host failure and zero pending frame, upload, readback and geometry charges before the full 30-second warm-up begins. Two submissions match the unchanged two-frame in-flight limit; no retry or additional priming is permitted. Record initial submissions separately and observe only the first four warm attempts plus any failed attempt. These observations never choose frames or alter scheduling; the successful 60-second measurement path adds no status reads, per-frame waits or sample filtering. Initialization remains inside the original overall deadline. This defines an initialized-start comparison, not startup latency or proof that cold initialization caused an earlier failure. Earlier schema-3 failures remain incomplete and require a fresh recipe for new measurements.
+### Next measurement protocol — schema 6
+
+Recipe schema 6 retains explicit capacity pacing under `egret.m1-2-capacity-paced/1` and adds `engine-host-span/1`. On each real animation callback, submit one fresh frame and advance the next workload ordinal only while fewer than two submissions are pending. A full Host produces a recorded stall without changing the workload. The original two-frame initialization and joint retirement, 30-second warm-up, 60-second measurement, five pairs per state and native ownership rules remain unchanged. Six diagnostic trials and thirty timing trials are separate fixed batches. The fixed schedule is not rerun selectively to remove misses.
+
+Complete callback-entry windows retain leading, interior and terminal waiting. Admitted-frame CPU and original count-based RAF cadence remain separate from stalled/closing callback observations and their recording epilogue. The [incremental preparation contract](incremental-frame-preparation-contract.md) specifies the additional duration-weighted complete-gap p95/p99 criterion at 16.7/33.4 ms. This is new coverage semantics, not a reinterpretation of earlier cadence. Median-of-five aggregation remains separate by state and role, with all individual results retained.
+
+Ordinary timing budget misses and unavailable comparisons continue through the fixed schedule; execution, integrity, environment, native, deadline or cleanup failures stop it. In every admitted timing call, a public HostAdapter delegate observes exactly one actual Host call within the existing workload.render → Engine → Host path. Both roles retain Host entry/exit clocks and callback/frame links in warm-up and measurement; delegate and two-clock overhead remains in Engine and callback CPU spans without subtraction. Capture remains outside the nested Host span and inside Engine time.
+
+For each role/state, compute each run's Host p95 and then its five-run median. The containing Host span includes preparation, packing, encoding and submission. A candidate state's median ≤ 4 ms establishes its preparation upper bound; larger or missing bounds remain unestablished, not preparation failures. All three candidate states must establish the bound. Pure preparation and GPU time remain unmeasured without direct evidence. The Engine p95 ≤ 8 ms, cadence, wall-gap coverage and full-dirty ratio ≤ 1.10 criteria remain unchanged. No additional FPS, sample-count, stall-share or CPU budget is introduced. Historical schema-3/4 incomplete runs and the completed schema-5 performance failure retain their original identities and outcomes; formal acceptance needs fresh actual same-browser paired results.
+
+Historical executions and original recipes remain in the [incremental preparation evidence](incremental-frame-preparation-evidence.md), with original failures unchanged.
 
 Record draw counts and batch-break reasons, copied/uploaded bytes, native allocations, logical residence/in-flight/temporary peaks and p50/p95/p99 CPU/frame times. Separate animation, capture, geometry, packing and upload preparation. Capture full relevant image regions with predeclared tolerances; font-region comparisons separate layout correctness from antialiasing differences. Hardware/driver/browser changes create a new baseline, not a continuation of an old speed comparison.
+
+### Bounded implementation changes before the next measurement
+
+The current changes are limited to seven existing rendering/Host source files and retain the reviewed bounded preparation optimizations. Ordinary TEXTURED Host preparation can bypass repeated clipping only for a normalized polygon fully contained in a canonical axis-aligned clip, with the original logical fees replayed atomically. The same trusted preparation call can reuse at most 64 successful clip-rectangle results and clears that scratch context in finally before packing. These clipping changes do not enable direct/custom callbacks or other profiles. The geometry/packing cache can reuse a successful same-slot key comparison through a resource-free numeric identity while still looking up the current entry and checking probe state on every access; each owned key/probe includes its additional 8-byte charge. The [preparation contract](incremental-frame-preparation-contract.md) defines the fallback, lifetime and charging boundaries. Source review and focused checks do not establish browser pixels or performance; fresh native validation and the complete fixed timing batch remain required.
+
+Repeated numeric clip admission is now reused only within the ordinary TEXTURED Host's own immutable frame/options chain, with a 64-reference call-local bound and original per-occurrence fees and source callbacks. Corner generation removes temporary arrays while preserving all numeric checks, getter order and late determinant admission. Both changes have independent source review and focused checks. Per-edge contained clipping also retains the same ownership and atomic-fee rules and has independent review plus 177 passing focused tests. The latest source-bound native correctness and count checks passed; diagnostic environment qualification and formal performance remain open. No new rendering profile or public API is added.
 
 ## Spine input and asset boundary
 
@@ -96,12 +120,12 @@ The PR records the base/candidate, measured scope, failures/repairs and final ma
 
 ## Current closeout sequence
 
-The following status uses the 2026-10-20 verification cutoff. Delivery and merge results are recorded in the corresponding PRs.
+The following status is updated through 2026-10-21, including the later M1.5 delivery. Earlier verification cutoffs remain in their dated records; delivery and merge results are recorded in the corresponding PRs.
 
 | Outcome | Verified status and next step |
 | --- | --- |
 | Workflow integration and fixed recovery verification | Completed: workflow [PR #78](https://github.com/cnedwin/Egret_rebuild/pull/78) and independently reviewed C7 results. |
-| M1.5 regression and protected integration | Browser regression is complete: twenty-four suites and thirty-six actual calls independently reviewed. Complete final source/result/bilingual review and complete protected merge checks. The [evidence record](resource-recovery-evidence.md) retains the exact scope and original failures. |
-| M1.2 performance and M1 closeout | Obtain valid paired baseline/candidate measurements under the declared workloads and budgets. Then reconcile all M1 acceptance rows and design M2/M3. |
+| M1.5 regression and protected integration | Delivered through [PR #79](https://github.com/cnedwin/Egret_rebuild/pull/79), main `4924b471b52927184252191055f902c30c29af52`. Twenty-four browser suites / thirty-six actual calls and C7 have independent review. Complete protected CI passed 290 publication, 4,528 core and 160 F2 tests, with no failures, skips or cancellations. The [evidence record](resource-recovery-evidence.md) preserves the finite scope and original failures. |
+| M1.2 performance and M1 closeout | Keep the completed schema-5 performance failure. Use one fresh schema-6 recipe for six diagnostic and thirty formal timing trials, five pairs per state, after the bounded implementation changes. Report every result and five-run medians against existing budgets, wall-gap coverage and the nested Host preparation upper bound; then reconcile M1 and design M2/M3. The latest frozen recipe passed preflight, correctness and counts but its diagnostic sequence was interrupted by foreground qualification. Formal timing has not started and performance remains OPEN. |
 
 These are connected outcomes within existing M1. A functional merge cannot close an outstanding performance or platform acceptance row. Unavailable GPU timing, external devices, authorized Editor content and human onboarding remain explicitly unaccepted where evidence is missing.

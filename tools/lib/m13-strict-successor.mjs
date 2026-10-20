@@ -44,6 +44,15 @@ function m14EnginePackagePin(owner, expected) {
  return actual;
 }
 
+// M12-NINE-SLICE-SOURCE-BEGIN
+// This one source identity leaves the retained declaration and compiler observations unchanged.
+const m12NineSliceHostSource = {"base":{"path":"packages/engine/web/WebGPUHost.ts","bytes":189815,"sha256":"f84a1de242e8b3efefc1bb4ccb344cb02b659d355b512c071cfccf7c1943bf10"},"current":{"path":"packages/engine/web/WebGPUHost.ts","bytes":190117,"sha256":"f3d324c1357ecce0f2f4067d017d2ae88886c5e26fe7458df0b5d16e59fdfb93"}};
+function m12NineSliceHostPin(root,selected,id,row){
+ if(selected!==M15_DATA||id!=='nine-slice-bitmap'||!equal(row,m12NineSliceHostSource.base))return row;
+ return equal(fingerprintFile(root,row.path),m12NineSliceHostSource.current)?m12NineSliceHostSource.current:row;
+}
+// M12-NINE-SLICE-SOURCE-END
+
 /** Old inventories remain immutable; only a complete recorded group selects new rows. */
 export function selectM13StrictSuccessor(root,id,inventory){
  if(!IDS.includes(id))fail('unknown owner');
@@ -101,7 +110,7 @@ export function selectM13StrictSuccessor(root,id,inventory){
  });
  if(!observedHost&&atlasNative.length)inputPins=inputPins.filter(row=>!row.path.startsWith(observedNativePrefix));
  const currentNativePins=['package.json','lib/tsc'+(process.platform==='win32'?'.exe':'')].map(file=>fingerprintFile(nativeOwner,file));
- const sourcePins=owner.sourcePaths.map(pin),selectedPins=owner.inputPaths.map(pin);
+ const sourcePins=owner.sourcePaths.map(pin).map(row=>m12NineSliceHostPin(root,selected,id,row)),selectedPins=owner.inputPaths.map(pin);
  const libraryPaths=[...new Set(owner.groups.flatMap(group=>group.nativeLibraryClosure))];
  function recheck(){
   if(!equal(fingerprintFile(root,'tools/lib/m13-strict-successor.mjs'),helperPin)

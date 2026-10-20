@@ -35,7 +35,7 @@ if(!equal(fingerprintFile(root,inventoryPin.path),inventoryPin))fail('changed ob
 const inventory=JSON.parse(readFileSync(path.join(root,inventoryPin.path),'utf8'));
 // Preserve the immutable predecessor and authenticate the complete M1.3 successor.
 const m13HelperPin = fingerprintFile(root, 'tools/lib/m13-strict-successor.mjs');
-if (m13HelperPin.bytes !== 12701 || m13HelperPin.sha256 !== '0c8ae45e31b879ca8e84633091f3a5e938d7712c4f2dff7cf1af3013859b91ad') throw Error('M1.3 strict helper changed before import');
+if (m13HelperPin.bytes !== 13504 || m13HelperPin.sha256 !== '1945cc3687ab540cba20d335485f55363daddc59b675f6a87dface2f9a97146d') throw Error('M1.3 strict helper changed before import');
 const { selectM13StrictSuccessor } = await import('./lib/m13-strict-successor.mjs');
 const m13 = selectM13StrictSuccessor(root, 'bitmap-binding-ticket', inventory);
 

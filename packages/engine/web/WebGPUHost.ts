@@ -1348,10 +1348,13 @@ class WebGPUHostImplementation {
             return runOwnedPreparationScope(() => {
                 const options = TEXTURED_OPTIONS.get(this)!;
                 const budget = new TexturedPreparationBudget2D(options);
-                const admitted = admitTexturedFrame2D(frame, options, budget);
+                // Owned immutable clips may reuse only successful validation in this call.
+                const admitted = admitTexturedFrame2D(frame, options, budget, true);
                 // Register every image/Mesh crop before preparation can suppress coverage.
                 const projectionPlan = planTexturedImageProjections(frame);
-                const draws = prepareTexturedDraws2D(admitted, options, budget, this.preparationCache.context(1, options));
+                // Only this ordinary TEXTURED path owns the ledger and enables contained clipping.
+                // Direct helpers, MIXED, shared rendering and scene/B1 keep their original path.
+                const draws = prepareTexturedDraws2D(admitted, options, budget, this.preparationCache.context(1, options), true);
                 const ticket = this.ticket && !this.ticket.bound ? this.ticket : undefined;
                 const storage = planTexturedSubmissionStorage2D({ admitted, draws, projectionPlan, options, hardware: this.limits,
                     owner: this.texturedOwnerSnapshot(), readback: ticket !== undefined });

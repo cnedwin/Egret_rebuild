@@ -120,10 +120,10 @@ export function resolveSelected(specifier,parent,mode,map){const selectedPrefix=
   requirePolicy(Object.hasOwn(effective,specifier),'BARE_IMPORT_UNKNOWN',{parent,specifier});return effective[specifier];
 }
 export async function collectPublicGraph(repository,retain,sourceProfile='historical'){
-  // Only the original textured freeze/collector select this bounded M1.5 source successor.
-  // Shared parser consumers and the independent M1.2 caller retain their existing policy.
-  requirePolicy(sourceProfile==='historical'||sourceProfile==='m15-textured','GRAPH_SOURCE_PROFILE');
-  const moduleLimit=sourceProfile==='m15-textured'?132:LIMITS.modules;
+  // Named consumers opt into bounded source successors; the historical default
+  // and every byte, import, registry and containment check remain unchanged.
+  requirePolicy(['historical','m15-textured','m12-recipe5'].includes(sourceProfile),'GRAPH_SOURCE_PROFILE');
+  const moduleLimit=sourceProfile==='historical'?LIMITS.modules:132;
   const root=await realpath(repository),modules=new Map();let total=0,sourceRegistry;
   const map=chosenMap('baseline'),robustRoot=await realpath(path.join(root,'packages/engine/node_modules/robust-predicates'));
   async function visit(relative){const logical=path.join(root,relative),physical=await realpath(logical);

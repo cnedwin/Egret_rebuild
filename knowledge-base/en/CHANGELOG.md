@@ -4,6 +4,16 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## M1.2 preparation follow-up — 2026-10-21
+
+Bounded clip validation and rectangle reuse, same-slot cache lookup, fewer temporary corner arrays and contained-edge handling reduce repeated preparation work while retaining original work budgets and failure order. Public APIs are unchanged. Native preflight, pixels and operation counts passed for the candidate; the fixed count remains 991 baseline and 155 candidate draws per frame. The historical formal timing batch missed its targets. The latest diagnostic was interrupted by foreground-window changes, so no valid candidate timing pair or new formal timing batch is available. M1.2 acceptance remains open; see the [evidence and limits](docs/incremental-frame-preparation-evidence.md).
+
+## M1.5 delivery — 2026-10-21
+
+Resource manifests, dependency-aware shared loading, staged uploads and unified WebGL2/WebGPU recovery were delivered through [PR #79](https://github.com/cnedwin/Egret_rebuild/pull/79), main `4924b471b52927184252191055f902c30c29af52`. All four jobs in [CI run 39455045264](https://github.com/cnedwin/Egret_rebuild/actions/runs/39455045264) succeeded. The Windows integrated gate passed 290 publication tests, 4,528 core tests and 160 Spine F2 tests; each group recorded zero failures, cancellations and skips.
+
+The seven fixed C7 recovery cases and twenty-four affected browser suites (thirty-six calls) have actual results and independent review. M1.2 formal paired performance and external platform/device qualification remain open. The [verification record](docs/resource-recovery-evidence.md) preserves the earlier cutoff and failed local attempt alongside this later completed delivery.
+
 ## M1.5 recovery verification — 2026-10-20
 
 M1.5 adds resource manifests, dependency-aware loading and shared resource ownership, with bounded integrity-checked loading, staged uploads and unified WebGL2/WebGPU recovery. Its seven fixed recovery cases on Windows / Chrome for Testing 157.0.8103.6 and the affected browser regression have passed independent review. WebGL2 and WebGPU each completed 100 resource cycles, ten native loss/recovery cycles and 30 minutes of foreground operation. At this verification cutoff, final package review, protected M1.5 merge checks and M1.2 formal performance acceptance still required completion. See the [verification record](docs/resource-recovery-evidence.md).
@@ -22,7 +32,7 @@ Merged through [PR #74](https://github.com/cnedwin/Egret_rebuild/pull/74), main 
 
 M1.2 reuses unchanged display transforms, clipping and prepared geometry, then merges compatible adjacent draws without changing painter order or public APIs. Current resources still undergo complete admission, and saved frames remain isolated from later edits. The fixed native operation fixture records 991 baseline draws and 155 candidate draws per frame.
 
-Read the [contract](docs/incremental-frame-preparation-contract.md) and [evidence and limits](docs/incremental-frame-preparation-evidence.md). Operation counts do not establish elapsed-time improvements. The baseline reaches its two-frame in-flight limit during the fixed native warm-up, so the five-pair performance comparison and M1.2 acceptance remain open. Full publication gates and repository delivery are separate.
+Read the [contract](docs/incremental-frame-preparation-contract.md) and [evidence and limits](docs/incremental-frame-preparation-evidence.md). Operation counts do not establish elapsed-time improvements. At that earlier cutoff, the baseline reached its two-frame in-flight limit during warm-up. Later completed timing and the current candidate are recorded above; M1.2 performance acceptance remains open. Full publication gates and repository delivery are separate.
 
 ## M1.1 delivered — warm WebGPU submission
 
