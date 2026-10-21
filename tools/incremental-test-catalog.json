@@ -298,8 +298,8 @@
     {
       "file": {
         "path": "tests/b1-webgpu-verifier.test.mjs",
-        "bytes": 36716,
-        "sha256": "52ca5b22b17c4f581ff0be0d264d2641670b5721f96f58ca0118114186ecb036"
+        "bytes": 36764,
+        "sha256": "8bf9d35ba5d9637b3a0d29cdb14458d4b6b2e4f7ed66c299502dd96b4a3a0f98"
       },
       "packages": null,
       "support": []
@@ -1141,8 +1141,8 @@
     {
       "file": {
         "path": "tests/incremental-frame-capture.test.mjs",
-        "bytes": 25988,
-        "sha256": "9e768a16ab6fd3596dd05b0b2290adab4903d8500835899f045002b09a3304f4"
+        "bytes": 29613,
+        "sha256": "bd97c27582cca96c3c44bfe57e5d7ed5c7fa5ee13475447e633a53bbef35dfe7"
       },
       "packages": null,
       "support": []
@@ -1159,8 +1159,8 @@
     {
       "file": {
         "path": "tests/incremental-preparation-private.test.mjs",
-        "bytes": 35800,
-        "sha256": "e8f8dfddeac4bf36633a1ca2d92c5f2c6badd23baaadb9a1ff92a24b947b4de0"
+        "bytes": 41523,
+        "sha256": "da442f50bc809a0a23a539626d581b4a28bc5c6b59eeb628f63114f564b45bd3"
       },
       "packages": null,
       "support": []

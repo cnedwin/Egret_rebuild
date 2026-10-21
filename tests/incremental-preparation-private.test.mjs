@@ -523,3 +523,102 @@ test('UNIT P21 exhausted numeric key identities stay on full comparison without 
     assert.equal(read(next(2)).value.marker, 2, 'Exact values still hit through the original comparison');
   } finally { cache.clear(); }
 });
+
+// Characterization: the old implementation already owns independent scratch
+// keys. These controls protect that behavior when a hit borrows numeric storage.
+test('UNIT P22 a held complete slot survives later numeric probes and exact-value restoration', () => {
+  for (const replacement of ['numbers', 'resource']) {
+    const cache = new PreparedFrameCache2D(), a = image(), b = image();
+    const next = (tx, resource = a) => slot(cache.context(1, OPTIONS), imageCommand({ matrix: { ...matrix(), tx } }), { image: resource });
+    const produce = (selected, marker) => {
+      publish(selected, { marker });
+      publishPreparedStage2D(selected, 'packing', { data: new Float32Array([marker, -0]) }, ZERO);
+    };
+    try {
+      produce(next(0), 10);
+      const held = next(0); assert.equal(read(held).value.marker, 10);
+      if (replacement === 'numbers') { produce(next(1), 20); produce(next(2), 30); }
+      else { produce(next(0, b), 20); produce(next(0), 30); }
+      assert.equal(read(held), undefined); assert.equal(cache.snapshot().bytes, 576);
+      produce(next(3, b), 40);
+      assert.equal(read(held), undefined, 'Mutating probe observations cannot rewrite the held complete key');
+      produce(next(0), 50); assert.equal(read(held), undefined);
+      const restored = next(0); assert.equal(read(restored), undefined);
+      produce(restored, 60);
+      assert.equal(read(held).value.marker, 60, 'The held key still denotes the original exact values and resource');
+      assert.deepEqual(Array.from(readPreparedStage2D(held, 'packing').value.data), [60, -0]);
+      assert.equal(cache.snapshot().reservedBytes, 0); assert.ok(cache.snapshot().peakBytes <= CAP);
+      cache.clear(); assert.equal(read(held), undefined); produce(held, 99);
+      assert.deepEqual([cache.snapshot().entries, cache.snapshot().bytes, cache.snapshot().reservedBytes], [0, 0, 0]);
+    } finally { cache.clear(); }
+  }
+});
+
+test('UNIT P23 a differing key preserves one ordered field read and stops at the first invalid number', () => {
+  const { cache, context } = setup();
+  const original = rect({ clips: [{ matrix: matrix(), rect: region() }] });
+  publish(slot(context, original));
+  try {
+    for (const invalid of [false, true]) {
+      const command = structuredClone(original); command.matrix.a = 2;
+      const observed = [], expected = [];
+      for (const [name, value, fields] of [
+        ['matrix', command.matrix, ['a', 'b', 'c', 'd', 'tx', 'ty']],
+        ['rect', command.rect, ['x', 'y', 'width', 'height']],
+        ['clip.matrix', command.clips[0].matrix, ['a', 'b', 'c', 'd', 'tx', 'ty']],
+        ['clip.rect', command.clips[0].rect, ['x', 'y', 'width', 'height']],
+      ]) for (const field of fields) {
+        const label = name + '.' + field, saved = value[field]; expected.push(label);
+        Object.defineProperty(value, field, { enumerable: true, get() {
+          observed.push(label);
+          if (invalid && label === 'clip.rect.width') return NaN;
+          if (invalid && label === 'clip.rect.height') assert.fail('Later getter must not run after the invalid number');
+          return saved;
+        } });
+      }
+      const selected = cache.slot(context, [command], 16, 16);
+      assert.deepEqual(observed, invalid ? expected.slice(0, -1) : expected);
+      if (invalid) assert.equal(selected, undefined);
+      else { assert.ok(selected); assert.equal(read(selected), undefined); }
+    }
+    assert.equal(read(slot(context, original)).value.marker, 1, 'Neither optional attempt changes the successful entry');
+  } finally { cache.clear(); }
+});
+
+test('UNIT P24 matching scan cannot memoize a key replaced or cleared by a later input read', () => {
+  for (const action of ['replace', 'clear']) {
+    const { cache, context } = setup(); const original = rect(); publish(slot(context, original), { marker: 1 });
+    const command = structuredClone(original); let reads = 0;
+    Object.defineProperty(command, 'alpha', { enumerable: true, get() {
+      reads++;
+      if (action === 'clear') cache.clear();
+      else publish(slot(cache.context(1, OPTIONS), rect({ color: 7 })), { marker: 2 });
+      return 1;
+    } });
+    try {
+      const selected = cache.slot(context, [command], 16, 16);
+      assert.equal(reads, 1); assert.equal(read(selected), undefined);
+      if (action === 'clear') { publish(selected); assert.equal(cache.snapshot().enabled, false); assert.equal(cache.snapshot().bytes, 0); }
+      else assert.equal(read(slot(context, rect({ color: 7 }))).value.marker, 2);
+    } finally { cache.clear(); }
+  }
+});
+
+test('UNIT P25 stable probe rearm keeps its historical second input walk and failed-observation boundary', () => {
+  const cache = new PreparedFrameCache2D();
+  const next = command => cache.slot(cache.context(1, OPTIONS), [command], 16, 16);
+  const command = tx => rect({ matrix: { ...matrix(), tx } });
+  try {
+    for (const tx of [0, 1, 2]) publish(next(command(tx)), { marker: tx });
+    assert.equal(cache.snapshot().bytes, 552);
+    const unstable = command(2); let reads = 0;
+    Object.defineProperty(unstable.matrix, 'a', { enumerable: true, get() {
+      reads++; if (reads === 2) throw Error('Original second rearm read'); return 1;
+    } });
+    assert.equal(next(unstable), undefined); assert.equal(reads, 2);
+    const unconfirmed = next(command(2)); publish(unconfirmed, { marker: 3 });
+    assert.equal(read(unconfirmed), undefined, 'A failed rearm cannot confirm its numerical observation');
+    const recovery = next(command(2)); assert.equal(read(recovery), undefined); publish(recovery, { marker: 4 });
+    assert.equal(read(recovery).value.marker, 4); assert.equal(cache.snapshot().reservedBytes, 0);
+  } finally { cache.clear(); }
+});

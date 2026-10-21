@@ -1879,8 +1879,8 @@
       "en": "knowledge-base/en/docs/m1-rendering-resource-plan.md",
       "zh": "knowledge-base/Cns/docs/m1-rendering-resource-plan.md",
       "kind": "public_reading",
-      "enSha256": "c15ec3027f69e70719384ed456bd6929cdd00d655efb5e7487d441e7aef8c513",
-      "zhSha256": "11fa9d9454172f704f2a22355734592de776cefcfab098e96b575fec77074371"
+      "enSha256": "459f5b9f69ec28fc53107f59c1c3a6077e073d9e20b9cefc77241087691cabdd",
+      "zhSha256": "e00981f30265a32ce2da0f28b19a97dc3d0b4a9054b8c62041fe50e8f2f08c49"
     },
     {
       "en": "knowledge-base/en/docs/warm-submission-contract.md",
@@ -1900,15 +1900,15 @@
       "en": "knowledge-base/en/docs/incremental-frame-preparation-contract.md",
       "zh": "knowledge-base/Cns/docs/incremental-frame-preparation-contract.md",
       "kind": "public_reading",
-      "enSha256": "4015bba952f26e64737e1d98b0d635d63046b503b752788fca6475d7c1980d51",
-      "zhSha256": "86f278ac5e0e0db8d61ed5d54db09c3915a64855697d0746a963f22ba60066c3"
+      "enSha256": "8ea7d8ba73287d0fa47cbc48b088585ff82b95c59e1487f705152d78c6094cef",
+      "zhSha256": "bccdf6481b89462b54c092c7685dc15ecf72d0fc78e0bb665a1b1716fed3388b"
     },
     {
       "en": "knowledge-base/en/docs/incremental-frame-preparation-evidence.md",
       "zh": "knowledge-base/Cns/docs/incremental-frame-preparation-evidence.md",
       "kind": "public_reading",
-      "enSha256": "9a90ec32f4b84bf9706c1a0fc07ff079c6be65d7a6742bd52a57cff917a3f004",
-      "zhSha256": "54d933f91e14c50b8f8d478351b355eee6d72cd3dff27ecc3b19d09c48eaa13d"
+      "enSha256": "dc3377fff67b445d880eb462c38fe4f6ec0e7deb928cae237a59fe8f10bd0ad0",
+      "zhSha256": "2987b227cbb922cebccf0c1277c48eb8b32e863cc683772109345422e8043d4d"
     },
     {
       "en": "knowledge-base/en/docs/shared-render-profile-contract.md",
@@ -2358,7 +2358,7 @@
     },
     {
       "path": "tools/verify-webgpu-b1.mjs",
-      "sha256": "b64094538d1b7a501a6cb95b2b6cda35ff92b24bdfd9646e5e8c0effc715db34"
+      "sha256": "ff61e8bf2210eb704cacc0eb360ebd23bb64ab503e157feedfde8741d10a1a39"
     },
     {
       "path": "tools/b1-webgpu/fixture.mjs",
@@ -2370,7 +2370,7 @@
     },
     {
       "path": "tests/b1-webgpu-verifier.test.mjs",
-      "sha256": "52ca5b22b17c4f581ff0be0d264d2641670b5721f96f58ca0118114186ecb036"
+      "sha256": "8bf9d35ba5d9637b3a0d29cdb14458d4b6b2e4f7ed66c299502dd96b4a3a0f98"
     },
     {
       "path": "packages/runtime/src/SequencePlayer.ts",
@@ -2480,7 +2480,7 @@
     },
     {
       "path": "packages/runtime/src/texturedFrameCapture.ts",
-      "sha256": "47f633f1f8507c61c3fea359ae390e26ee584f1adbffd522b9ef7ebe86e9bf6d"
+      "sha256": "b245c0df9d3a05455a56e69e96352d6f98193e6c8bc3b7f644c3aeec70329734"
     },
     {
       "path": "packages/engine/src/text.ts",
@@ -2892,7 +2892,7 @@
     },
     {
       "path": "tools/sequence-playback-types.mjs",
-      "sha256": "0cc3ddd75379e11a30a80738437c99eca53481cc2335c4d2129efca5e4b624b3"
+      "sha256": "4b0dccd9c27eeb4ae049a80048e978f821fde744c712530a6d342dcad8abaf35"
     },
     {
       "path": "tools/check-repository-hygiene.mjs",
@@ -2920,7 +2920,7 @@
     },
     {
       "path": "tools/browser-png-boundary.mjs",
-      "sha256": "4af5b70b9a6598db42ecb0cbc9231e6cbe761d1abddbe47a0535642df422632d"
+      "sha256": "76ff8a040936e5eace5eff3c94f3da733d512328f0fde507b958c8d32012413e"
     },
     {
       "path": "tools/browser-png-types.mjs",
@@ -3056,7 +3056,7 @@
     },
     {
       "path": "tools/nine-slice-bitmap-types.mjs",
-      "sha256": "a9909bdc6fb7dbd24bff67085ca6fb283d3a9da4f3cdbeab1dafc03f167326d7"
+      "sha256": "35bf51a177014a8967366b6981e94850ecf532cf54efa4f6fa174a58bcff619a"
     },
     {
       "path": "tools/nine-slice-bitmap-native/fixture.mjs",
@@ -3068,7 +3068,7 @@
     },
     {
       "path": "tools/spritesheet-boundary.mjs",
-      "sha256": "67bae4ef2c9d0f5bdd4b3258aa9f598afd4651a29a29b3f2739d0f3bd913c26e"
+      "sha256": "ecab5b53ef95905ccc0d497d22ae21f0fdcdb722af9a131fcdc8f33a28322345"
     },
     {
       "path": "tools/sequence-playback-boundary.mjs",
@@ -3084,7 +3084,7 @@
     },
     {
       "path": "tools/display-container-remove-children-types.mjs",
-      "sha256": "843096048a860a5ebccc39efb84bdc2611de44413e6c3194ede1343ddc1aa5fc"
+      "sha256": "08abd88096100f2dc45f0b197cdde72baf55bfff93e34c6f1e508c7ef0fa7514"
     },
     {
       "path": "tools/display-container-remove-children-native/fixture.mjs",
@@ -3112,7 +3112,7 @@
     },
     {
       "path": "tools/display-container-child-index-types.mjs",
-      "sha256": "d94078006335a45570a2600ce023bcb6719b2437254c016b75696e3aa717cec1"
+      "sha256": "74c3722cb43b203b46e7aed2f442f34e220849be55a92dc165e48af29c156a0f"
     },
     {
       "path": "tools/display-container-child-index-native/fixture.mjs",
@@ -3156,11 +3156,11 @@
     },
     {
       "path": "tools/display-anchor-offsets-types.mjs",
-      "sha256": "bdfc458dc1099dbe310b3b86311976218ba6dda7ac8ef46626508cd09c44b37f"
+      "sha256": "ec55c864f05220560e9bf1dec478bb4ec9654cdf643230d2fe029dcfc9e2633a"
     },
     {
       "path": "tools/display-container-add-child-at-types.mjs",
-      "sha256": "84023d6cff36cf114a4d6f86e6a0283dc5469c40620f6e8ce64c080293840c89"
+      "sha256": "39dbbc65ab64ddc2f9f4cf92333f689d8a8998e20277d9a327bf7ecd179e9fbe"
     },
     {
       "path": "tools/display-anchor-offsets-native/fixture.mjs",
@@ -3212,7 +3212,7 @@
     },
     {
       "path": "tools/bitmap-button-types.mjs",
-      "sha256": "5fb489ad2d499cef1d25c1b4c029a111eb5fc10c38c9ad0cdfe69bc2845bda8c"
+      "sha256": "38049fb026e9602a5666709a6995a83d619e55f4ff69c777bd282fcc4f13a594"
     },
     {
       "path": "packages/engine/src/layout.ts",
@@ -3224,7 +3224,7 @@
     },
     {
       "path": "tools/linear-layout-types.mjs",
-      "sha256": "652dc088598643c35fd634e6dd4e690a2dd7d33e8bd46772eca3f0c94527fbe5"
+      "sha256": "aecf36d5290b8691cb08b838a008767300f1d62793dfaf3a482ff349cf87f369"
     },
     {
       "path": "examples/linear-layout/main.mjs",
@@ -3240,7 +3240,7 @@
     },
     {
       "path": "tools/bitmap-resource-slot-types.mjs",
-      "sha256": "5cbcfca86177eb0aa54f56cd983f7a5e19abd63c55ee4e48b2992b21e8192a73"
+      "sha256": "e368d684d0fcaa7ad64539464110f8313cd8e17f2769421cd534953064317629"
     },
     {
       "path": "tools/bitmap-resource-slot-boundary.mjs",
@@ -3384,7 +3384,7 @@
     },
     {
       "path": "tools/bitmap-binding-ticket-types.mjs",
-      "sha256": "f0dd9853bed93b45309d79a0467580cc3987002ec95bb32e7973ed5bc2ca2ffe"
+      "sha256": "c59ec5a76da98fae8389671152ef38ae07653ce6b8680443b3a05c89061753f9"
     },
     {
       "path": "tools/prepared-resource-groups/native-fixture.mjs",
@@ -3468,7 +3468,7 @@
     },
     {
       "path": "tools/atlas-frame-types.mjs",
-      "sha256": "72edacd808de05acf0fb26b3c10450db031e3028709c7a3c95104a4d54ee7894"
+      "sha256": "1d21f3f85559efadc7cb4ba6c4663b9317ecaee423e7b684fd367d6cc146374a"
     },
     {
       "path": "tools/atlas-frame/author-assets.mjs",
@@ -3540,7 +3540,7 @@
     },
     {
       "path": "tests/publication/incremental-checks.test.mjs",
-      "sha256": "ba9488c5ca50ad0c79ea53762ae7c8875ea7a2bcb404df6a04b1a4f0165d71fa"
+      "sha256": "fcb6fa20907c5fa05f6bda1b0ec5a8be96a402255649be7d1e8b663b39529dd7"
     },
     {
       "path": "tools/browser-resources.mjs",
@@ -3568,7 +3568,7 @@
     },
     {
       "path": "tools/prepare-check-maintenance.mjs",
-      "sha256": "c17a2b44fe710b44cf069ae3579a9f8937593c7985f4adfee35498289eeedfda"
+      "sha256": "38d014fce71562097d522058f5748b7debd0d070acd4f81126d7c9ce2fa35ebc"
     },
     {
       "path": "tools/prepare-snapshot-maintenance.mjs",
@@ -3576,7 +3576,7 @@
     },
     {
       "path": "tools/prepare-compiler-maintenance.mjs",
-      "sha256": "865a21cc551d8754ce4fa535fddbbd8e25a68bb674f76f707150231c0709feab"
+      "sha256": "44115c20a1a82dc5ed6606530d1dd4822d42a242666651464ee77bce1ae17cba"
     },
     {
       "path": "packages/engine/web/webgpuBindingCache.ts",
@@ -3592,7 +3592,7 @@
     },
     {
       "path": "packages/engine/rendering/preparedFrameCache2D.ts",
-      "sha256": "dc47aaeb3366345a93427b309b35af0bd741cdee71aafc69808133a0a1d2ef61"
+      "sha256": "77af2d03ae6d46c61cbe17292ac2f5cd713fa96fbe00b7e1b8cd19b816d6d473"
     },
     {
       "path": "packages/runtime/src/frameCaptureCache.ts",

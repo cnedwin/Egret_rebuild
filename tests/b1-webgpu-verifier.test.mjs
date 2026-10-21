@@ -395,7 +395,7 @@ async function emittedClosurePolicy({ selectedReadFile = readFile } = {}) {
   assert.equal(policy.m15SourceModuleLimit, 133);
   assert.equal(policy.m15ModuleIdentities.size, 133);
   assert.equal(policy.currentModuleIdentities.size, 133);
-  assert.deepEqual([...policy.m12PerformanceModuleSuccessors.keys()].sort(), ["packages/engine/dist/rendering/admitTexturedFrame2D.js","packages/engine/dist/rendering/prepareImages2D.js","packages/engine/dist/rendering/prepareRectangles2D.js","packages/engine/dist/rendering/prepareTexturedDraws2D.js","packages/engine/dist/rendering/prepareTexturedMesh2D.js","packages/engine/dist/rendering/preparedFrameCache2D.js","packages/engine/dist/web/WebGPUHost.js"]);
+  assert.deepEqual([...policy.m12PerformanceModuleSuccessors.keys()].sort(), ["packages/engine/dist/rendering/admitTexturedFrame2D.js","packages/engine/dist/rendering/prepareImages2D.js","packages/engine/dist/rendering/prepareRectangles2D.js","packages/engine/dist/rendering/prepareTexturedDraws2D.js","packages/engine/dist/rendering/prepareTexturedMesh2D.js","packages/engine/dist/rendering/preparedFrameCache2D.js","packages/engine/dist/web/WebGPUHost.js","packages/runtime/dist/texturedFrameCapture.js"]);
   for (const [name, successor] of policy.m12PerformanceModuleSuccessors) {
     assert.ok(policy.m15ModuleIdentities.has(name), 'A successor cannot add a module');
     assert.notEqual(successor.sha256, policy.m15ModuleIdentities.get(name).sha256);

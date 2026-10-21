@@ -6,9 +6,9 @@ English | [中文](../../Cns/docs/incremental-frame-preparation-evidence.md)
 
 ## Current verification checkpoint — 2026-10-21
 
-M1.2 functionality and M1.5 were delivered through [PR #74](https://github.com/cnedwin/Egret_rebuild/pull/74) and [PR #79](https://github.com/cnedwin/Egret_rebuild/pull/79). The latest candidate includes seven changed existing rendering/Host source files and is frozen under the second schema-6 preparation. Its preflight, correctness and operation-count stages passed independent final raw-result review. Diagnostics stopped on an environment qualification failure, and formal timing did not start. **M1.2 formal performance remains OPEN.** The original completed schema-5 `FAIL_TIMING_TARGET` and earlier schema-6 observations below remain unchanged.
+M1.2 functional engineering, M1.5 and the bounded refinement in [PR #80](https://github.com/cnedwin/Egret_rebuild/pull/80) have been delivered. The subsequent capture-record and preparation-key changes passed independent source/result review, build and 156 focused tests. Schema-6 sequence 6 completed qualification and all 30 formal timing trials; independent review confirmed the valid `FAIL_TIMING_TARGET`. Fully dirty Engine p95 is 10.3 ms against 8 ms; Host p95 of 7.7 ms leaves the preparation upper bound unestablished, without proving a pure-preparation failure. Six existing browser regression suites passed independent result review. **M1.2 and D60 formal performance remain OPEN; complete delivery gates remain pending.** E19 records these current results. The earlier sequence-5 diagnostic checkpoint, original completed schema-5 failure and interrupted schema-6 sequences retain their original evidence below.
 
-### Latest frozen candidate: functional checks and environment limit
+### Earlier frozen candidate: functional checks and environment limits
 
 Verification cutoff: 2026-10-20T19:59:54.746Z (2026-10-21 local date). The fresh recipe includes the admission reuse, corner-array removal and per-edge clipping changes alongside the earlier bounded preparation changes.
 
@@ -250,3 +250,69 @@ The B1 and shared WebGPU collectors first refused stale M1.5 Host identities bef
 This checkpoint records actual collector completion. Independent result review and the complete local/protected merge gates are tracked separately before delivery. These desktop functional results do not establish M1.2 elapsed-time targets, phone support, sustained recovery or independent OS-process retirement. M1.2 performance acceptance remains OPEN.
 
 Initial complete local runs also refused outdated dependency declarations in the existing checker and isolated fixture, and one unlisted exact division expression in B1 static inspection. Those failed execution records are retained. The declarations were corrected without changing product source, parser rules, control targets or quotas. Four selected boundary controls and the complete thirteen-case B1 loading/Host slot then passed; complete local regression and protected CI remain separate delivery requirements.
+
+## E18 — Completed diagnostics and the next bounded CPU changes, 2026-10-21
+
+Schema-6 sequence 5 completed preflight 2/2, correctness 6/6, counts 6/6 and diagnostics 6/6. Independent review retained the frozen recipe, original inputs/artifacts, nine byte-identical RGBA pairs, twenty-four operation traces and complete raw timing/environment/cleanup records. Per-frame draw counts remain baseline 991 and candidate 155; these counts do not establish performance. The earlier sequence-4 command was refused before browser creation or any measured trial because it selected the original repository instead of the prepared snapshot; that failed attempt remains separate.
+
+Each diagnostic state has one baseline/candidate pair, each with 30 seconds of warm-up and 60 seconds of measurement. Rounded candidate p95 observations are:
+
+| State | Capture (ms) | Host (ms) | Continuous update-through-render (ms) |
+| --- | ---: | ---: | ---: |
+| Static | 3.6 | 4.8 | 7.7 |
+| Exactly 1% changed | 3.9 | 5.4 | 8.7 |
+| Fully dirty | 4.0 | 8.4 | 12.2 |
+
+The last column spans update, separate fresh capture and Host; it is neither formal timing Engine p95 nor the sum of separate percentiles. Diagnostics passed their recorded environment qualification and cooperative cleanup; OS descendant/physical GPU retirement remains unbound. The thirty formal trials were not started. Host ≤ 4 ms is sufficient evidence of preparation ≤ 4 ms within the relevant measurement scope; Host > 4 ms leaves that bound unestablished, not a failed pure-preparation measurement. Required CPU admission, geometry, packing, materialization, batching and upload preparation cannot be omitted from any later direct preparation measurement. Pure preparation and actual GPU time remain unmeasured.
+
+A separate private browser CPU sample completed candidate/static and candidate/full with the actual Engine → WebGPU Host path. Each retained the original 30/60-second workload windows and a whole-entry CDP profile covering initialization, warm-up, measurement, transfer and cleanup. Page qualification remained; this private sample did not run the formal OS foreground/power/driver observer. It is not a formal pair or timing result. Static/full capture inclusive sampled attribution was 30.734/20.354 seconds; preparation-cache slot attribution was 10.945/9.265 seconds, over whole profiles of about 90.742/90.674 seconds. Parent/child attribution overlaps and frame counts differ, so these values cannot be added or converted into p95 or expected speedup. Original profile samples, GC attribution and raw execution remain intact.
+
+This evidence selects two limited changes: per-call capture admission/cursor reuse while preserving both actual-tree passes, and ordered complete-key scanning with immutable ready arrays and separately owned mutable probes. Hidden eligibility, current resources, error order, cache lifetime and original quotas remain required. Baseline characterizations passed 24/24 capture and 26/26 cache tests; these were passing behavior records, not RED. Both reviewed sources were then integrated, the build exited 0, and all 156 focused tests passed with stable recorded inputs and zero failures/cancellations/skips. Independent source/result review found no blockers. The sequence-5/profile inputs precede these two changes; their values do not transfer to the new implementation. New native results and formal performance measurements remain pending and will be recorded separately. No threshold, public profile or acceptance target changes.
+
+| Record | Bytes | SHA-256 |
+| --- | ---: | --- |
+| Sequence 5 frozen recipe | 12096 | `cc1a02b88a81a3ef6ed838bd66cd77aa643e608ca74d74a65b7d62510f958799` |
+| Sequence 5 diagnostic summary | 16200 | `aae5d35bf8f8e128350e1db1e8d90fc819bf9a812d7014647cf22afbf77b33cf` |
+| Sequence 5 independent result review | 35433 | `0d85c50072ca8ac6cf7dbbaafab4f1269b08327d78772c6e0d65ff653d14f9c2` |
+| Private browser CPU sampling result | 2490 | `963ade042e6b531f2e5da39784ad4ce2becf574050057d33f91e6d05998448cc` |
+| Private sampling independent result review | 35891 | `d3b79b3d80d393bae06d33956329005cebb5cf9ad39ff3206ea2231dae82c861` |
+| Two-source integration/focused-result review | 10043 | `b7745f1e9db127aa395e7a51a8fa25a2dce9d2df8ddcd4ab8329ba471650bbab` |
+
+## E19 — Complete formal batch after capture and cache-key changes, 2026-10-21
+
+Sequence 6 used the reviewed frozen two-source candidate. Preflight (2 trials), correctness (6), operation counts (6) and diagnostic timing (6) completed successfully. The separate formal batch completed all 30 trials, five baseline/candidate pairs for each state, with runtime execution and all 15 paired environment qualifications passing. Its actual result is `FAIL_TIMING_TARGET`, exit 1. No missed target was discarded, and no budget or workload changed. Independent qualification and raw timing-result reviews are complete with no integrity findings; the timing failure is valid.
+
+The table reports the median of five per-run p95 measurements, rounded to one decimal place. The baseline is the original M1.2 baseline; this comparison does not isolate the incremental contribution of the latest two changes from the previously delivered optimizations.
+
+| State | Baseline Engine CPU (ms) | Candidate Engine CPU (ms) | Candidate Host (ms) | CPU target ≤ 8 ms |
+| --- | ---: | ---: | ---: | --- |
+| Static | 19.8 | 5.0 | 2.4 | Met |
+| Exactly 1% changed | 19.6 | 6.4 | 3.4 | Met |
+| Fully dirty | 19.4 | 10.3 | 7.7 | Not met |
+
+All three candidate states meet the aggregated cadence and duration-weighted wall-gap criteria. The full-dirty update-through-render ratio is 0.55224 relative to the baseline, within the unchanged 1.10 regression limit. This relative improvement does not waive the absolute CPU target: full-dirty Engine p95 remains 2.3 ms above 8 ms. Engine includes capture and synchronous Host work but excludes the separately measured update.
+
+The containing Host span establishes preparation ≤ 4 ms for static and sparse states only. Full-dirty Host p95 of 7.7 ms leaves the preparation upper bound unestablished; it does not prove pure preparation exceeded 4 ms. Pure preparation and GPU time remain unmeasured. Desktop D60 and formal M1.2 acceptance remain OPEN. Six existing browser regression suites have completed with independent result review; complete delivery gates remain pending. No new PR or merge is claimed here.
+
+| Public summary or independent review | Bytes | SHA-256 |
+| --- | ---: | --- |
+| preflight | 2775 | `0d100c759f2d9d0adf44c130d9d5026b2a50faeaf8ffdeb82d2bc5cf026701cb` |
+| correctness | 5645 | `5c550c3e1e2443a51e891aff621398e5d972e7ad902d0f5367b6dd363f94284d` |
+| counts | 4743 | `4771fc6f342c71ebb736c835cd9ba37539ef8bab5a30480a3dec79b6ca9c73a8` |
+| diagnostic | 16198 | `a5ebaf7f10f2fc30f304ddce57f95879d266d309d5e3b624f3290867f9702eea` |
+| timing | 77276 | `fca0970e723624ddb0ee3c37170da85f455c28f27a9c218ca4aa288f3a09583b` |
+| Qualification independent result review | 38139 | `c85ad708dae78cb9f1232f7c5bbc853886769c87cfc7e778ad0992e766008167` |
+| Formal timing independent result review | 55398 | `043b75d8e3bca126c4184a62a8d60ddff0bde2085e352ac46574469e76ed87fc` |
+
+Six existing browser regression suites completed with exit 0 and independent saved-result review, with no open findings. The results below apply to their recorded frozen inputs and original finite pixel/refusal and cooperative-cleanup checks. Shared WebGPU/WebGL2 are additional executed regression coverage. The WebGPU verifier's supplementary synthetic assertion check and textured-scene oracle-only sensitivity check are not additional native renderer-mutation results. These functional results do not establish universal whole-frame pixel equivalence, independent OS/physical-GPU retirement, device coverage or performance acceptance. The valid sequence-6 `FAIL_TIMING_TARGET` and M1.2/D60 OPEN status are unchanged; complete delivery gates remain pending.
+
+| Saved result or independent review | Status | Bytes | SHA-256 |
+| --- | --- | ---: | --- |
+| WebGPU verifier | PASS | 2611244 | `cd2bd9fd92b7a0b47adcfaa6c60bf19f26ea404bd8bf470cf6ed5c53268b6758` |
+| B1 composition | PASS | 835040 | `6f70fe3ce40d94889bf5c76035d92609546c396be56310618c59542fe3127bb6` |
+| Shared WebGPU | PASS | 2358522 | `4c42c46644ba65266e89227798444c69da94fb747a529d91ed6c4c34ad8d39f4` |
+| Shared WebGL2 | PASS | 2030751 | `a2b5611d80ee9bc63c7aceb1a60c063edfb86fb4487d866f785fd7abb41eab4c` |
+| Textured WebGPU history | PASS | 3633484 | `b6dc2622fa8cf7b5ae4271f82e6a3f8b352ff7adc9a5207229ceed19055c33d7` |
+| Textured scene history | PASS | 188619 | `cd1ab455201319152a16e2c3d0ffe87d17f303c8cd0cf9b57aac88a49682cafd` |
+| Four-suite independent result review | 0 findings | 10206 | `d929db4ed2f8143766f8dffc252ba6c0873e5b937af9f5d2b62485afd0b9a8cc` |
+| Two-history-suite independent result review | 0 findings | 74500 | `83db78367e1e4a127d5eca8bbd9018aebfb9439e46ad4e7d8a9aee1b1666922e` |

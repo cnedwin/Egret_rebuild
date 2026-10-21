@@ -21,7 +21,7 @@ if (!equal(fingerprintFile(root, 'tools/lib/file-identity.mjs'), {path:'tools/li
 const inventory = JSON.parse(readFileSync(path.join(root, 'tests/types/display-container-add-child-at-diagnostic-expectations.json'), 'utf8'));
 // Preserve the immutable predecessor and authenticate the complete M1.3 successor.
 const m13HelperPin = fingerprintFile(root, 'tools/lib/m13-strict-successor.mjs');
-if (m13HelperPin.bytes !== 13504 || m13HelperPin.sha256 !== '1945cc3687ab540cba20d335485f55363daddc59b675f6a87dface2f9a97146d') throw Error('M1.3 strict helper changed before import');
+if (m13HelperPin.bytes !== 14254 || m13HelperPin.sha256 !== '01ac10f3471436f5b5a72ae01abe4813f7843a331a2b071e74c281ee3d3aaa0d') throw Error('M1.3 strict helper changed before import');
 const { selectM13StrictSuccessor } = await import('./lib/m13-strict-successor.mjs');
 const m13 = selectM13StrictSuccessor(root, 'display-container-add-child-at', inventory);
 

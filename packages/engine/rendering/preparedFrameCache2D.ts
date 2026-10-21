@@ -140,43 +140,82 @@ function addressOf(context: PreparedCacheContext2D, run: boolean, ordinal: numbe
     // The ordinal selects one candidate, never a resource or value identity.
     return 8 * ordinal + 2 * context.profile + (run ? 1 : 0);
 }
-/** The same ordered numeric walk builds full keys and observes numeric probes. */
-function visitNumbers(context: PreparedCacheContext2D, commands: readonly TexturedRenderCommand2D[], width: number, height: number,
-    run: boolean, visit: (value: number, index: number) => void): number {
-    let length = 0;
-    const append = (value: number): void => {
-        if (!Number.isFinite(value) || length >= (MAX_BYTES - 1024) / 8) throw new RangeError('Optional cache key');
-        visit(value, length++);
-    };
-    const matrix = (value: TexturedRenderCommand2D['matrix']): void => {
-        append(value.a); append(value.b); append(value.c); append(value.d); append(value.tx); append(value.ty);
-    };
-    const rectangle = (value: RectangleCommand2D['rect']): void => { append(value.x); append(value.y); append(value.width); append(value.height); };
-    const settings = context.settings;
-    append(context.profile); append(width); append(height); append(settings.pixelRatio);
-    append(settings.maxPreparedVertices); append(settings.maxClipEdgeTests);
-    append(settings.maxSourceTriangles ?? 0); append(settings.maxTupleComparisons ?? 0);
-    append(run ? 1 : 0); append(commands.length);
-    for (const command of commands) {
-        append(command.kind === 'rect' ? 0 : command.kind === 'image' ? 1 : 2); matrix(command.matrix);
-        if (command.kind !== 'mesh') rectangle(command.rect);
-        append(command.alpha);
-        if (command.kind === 'rect') append(command.color); else rectangle(command.sourceRect);
-        append(command.clips.length);
-        for (const clip of command.clips) { matrix(clip.matrix); rectangle(clip.rect); }
+interface NumericScan {
+    readonly mode: 'build' | 'compare' | 'probe';
+    readonly reference: number[] | undefined;
+    numbers: number[] | undefined;
+    length: number;
+    stable: boolean;
+}
+/** Each value is validated before reading the next caller field. A mismatch
+ * copies only the already-validated prefix, never re-reading caller records. */
+function appendNumber(scan: NumericScan, value: number): void {
+    const index = scan.length;
+    if (!Number.isFinite(value) || index >= (MAX_BYTES - 1024) / 8) throw new RangeError('Optional cache key');
+    if (scan.mode === 'probe') {
+        const numbers = scan.reference!;
+        if (index >= numbers.length) scan.stable = false;
+        else { if (!sameNumber(numbers[index], value)) scan.stable = false; numbers[index] = value; }
+    } else {
+        let numbers = scan.numbers;
+        if (numbers === undefined) {
+            const reference = scan.reference!;
+            if (index < reference.length && sameNumber(reference[index], value)) { scan.length++; return; }
+            numbers = [];
+            for (let prior = 0; prior < index; prior++) numbers[prior] = reference[prior]!;
+            scan.numbers = numbers; scan.stable = false;
+        }
+        numbers[index] = value;
     }
-    return length;
+    scan.length++;
+}
+function scanMatrix(scan: NumericScan, value: TexturedRenderCommand2D['matrix']): void {
+    appendNumber(scan, value.a); appendNumber(scan, value.b); appendNumber(scan, value.c);
+    appendNumber(scan, value.d); appendNumber(scan, value.tx); appendNumber(scan, value.ty);
+}
+function scanRectangle(scan: NumericScan, value: RectangleCommand2D['rect']): void {
+    appendNumber(scan, value.x); appendNumber(scan, value.y); appendNumber(scan, value.width); appendNumber(scan, value.height);
+}
+/** One ordered walk builds scratch keys, compares ready keys or updates probes.
+ * Ready numeric arrays are immutable; only probe-owned storage is overwritten. */
+function scanNumbers(context: PreparedCacheContext2D, commands: readonly TexturedRenderCommand2D[], width: number, height: number,
+    run: boolean, mode: NumericScan['mode'], reference?: number[]): NumericScan {
+    const scan: NumericScan = { mode, reference, numbers: mode === 'build' ? [] : undefined, length: 0, stable: true };
+    const settings = context.settings;
+    appendNumber(scan, context.profile); appendNumber(scan, width); appendNumber(scan, height); appendNumber(scan, settings.pixelRatio);
+    appendNumber(scan, settings.maxPreparedVertices); appendNumber(scan, settings.maxClipEdgeTests);
+    appendNumber(scan, settings.maxSourceTriangles ?? 0); appendNumber(scan, settings.maxTupleComparisons ?? 0);
+    appendNumber(scan, run ? 1 : 0); appendNumber(scan, commands.length);
+    for (const command of commands) {
+        appendNumber(scan, command.kind === 'rect' ? 0 : command.kind === 'image' ? 1 : 2); scanMatrix(scan, command.matrix);
+        if (command.kind !== 'mesh') scanRectangle(scan, command.rect);
+        appendNumber(scan, command.alpha);
+        if (command.kind === 'rect') appendNumber(scan, command.color); else scanRectangle(scan, command.sourceRect);
+        appendNumber(scan, command.clips.length);
+        for (const clip of command.clips) { scanMatrix(scan, clip.matrix); scanRectangle(scan, clip.rect); }
+    }
+    if (mode === 'compare' && scan.numbers === undefined) {
+        if (scan.length === reference!.length) scan.numbers = reference;
+        else {
+            const numbers: number[] = [];
+            for (let index = 0; index < scan.length; index++) numbers[index] = reference![index]!;
+            scan.numbers = numbers; scan.stable = false;
+        }
+    }
+    return scan;
 }
 function buildKey(context: PreparedCacheContext2D, commands: readonly TexturedRenderCommand2D[], width: number, height: number,
-    image: ImageData2D | undefined, geometry: TexturedGeometry2D | undefined, run: boolean, address: number): Key {
-    const values: number[] = [];
-    visitNumbers(context, commands, width, height, run, (value, index) => { values[index] = value; });
+    image: ImageData2D | undefined, geometry: TexturedGeometry2D | undefined, run: boolean, address: number, reference?: Key): Key {
+    const values = scanNumbers(context, commands, width, height, run, reference ? 'compare' : 'build', reference?.numbers).numbers!;
     let resourceBytes = image === undefined ? 0 : sum(32 + 8 * 8, image.byteLength);
     if (geometry !== undefined) {
         resourceBytes = sum(resourceBytes, sum(32 + 8 * 8, geometry.logicalByteLength));
-        for (const array of [geometry.positions, geometry.uvs, geometry.lightColors, geometry.indices]) {
-            resourceBytes = sum(resourceBytes, sum(24, 8 * array.length));
-        }
+        // Preserve the original reference-read order before inspecting lengths.
+        const positions = geometry.positions, uvs = geometry.uvs, lightColors = geometry.lightColors, indices = geometry.indices;
+        resourceBytes = sum(resourceBytes, sum(24, 8 * positions.length));
+        resourceBytes = sum(resourceBytes, sum(24, 8 * uvs.length));
+        resourceBytes = sum(resourceBytes, sum(24, 8 * lightColors.length));
+        resourceBytes = sum(resourceBytes, sum(24, 8 * indices.length));
     }
     return { address, identity: 0, numbers: values, image, geometry, resourceBytes };
 }
@@ -218,23 +257,24 @@ export class PreparedFrameCache2D {
                 prior.observation = selected.observation; prior.lastCall = call;
                 selected.mode = 'probe';
                 const numbers = prior.key.numbers;
-                let stable = true;
-                const length = visitNumbers(context, commands, width, height, run, (value, index) => {
-                    if (index >= numbers.length) { stable = false; return; }
-                    if (!sameNumber(numbers[index], value)) stable = false;
-                    numbers[index] = value;
-                });
-                if (length !== numbers.length) {
+                const observed = scanNumbers(context, commands, width, height, run, 'probe', numbers);
+                if (observed.length !== numbers.length) {
                     // Never grow retained storage during observation, and never
                     // let this slot's later packing re-create the discarded entry.
                     this.remove(prior); selected.mode = 'disabled';
-                } else if (stable && wasObserved && previousCall !== call) selected.mode = 'rearm';
+                } else if (observed.stable && wasObserved && previousCall !== call) selected.mode = 'rearm';
             }
             if (selected.mode === 'full' || selected.mode === 'rearm') {
-                // This scratch key is never retained directly. Only successful
-                // publication reserves and copies complete owned key authority.
-                selected.key = buildKey(context, commands, width, height, image, geometry, run, address);
+                // Complete keys remain independent of caller records. A match
+                // may borrow immutable ready numbers; publication owns its key.
+                // Rearm deliberately keeps its original second caller-data walk.
+                const comparison = selected.mode === 'full' && !prior?.probe ? prior?.key : undefined;
+                selected.key = buildKey(context, commands, width, height, image, geometry, run, address, comparison);
                 if (keySize(selected.key) > MAX_BYTES - 256) return undefined;
+                const current = this.candidates ? get(this.candidates, address) : undefined;
+                if (comparison && comparison.identity !== 0 && selected.key.numbers === comparison.numbers
+                    && selected.key.image === comparison.image && selected.key.geometry === comparison.geometry
+                    && current?.key === comparison && !current.probe) selected.matchedIdentity = comparison.identity;
             }
             const slot: PreparedCacheSlot2D = { kind: 'prepared-cache-slot' };
             apply(weakSet, slots, [slot, selected]); return slot;
@@ -290,15 +330,20 @@ export class PreparedFrameCache2D {
         if (retained.numbers.length !== current.numbers.length) {
             this.remove(entry); selected.mode = 'disabled'; return;
         }
-        const bytes = 256 + 80 + 24 + 8 * retained.numbers.length, previousBytes = entry.bytes;
-        for (let index = 0; index < retained.numbers.length; index++) retained.numbers[index] = current.numbers[index]!;
-        // The probe keeps only charged numeric metadata. Release all strong
-        // resource/payload ownership before refunding those logical charges.
-        retained.image = undefined; retained.geometry = undefined; retained.resourceBytes = 0;
-        entry.geometry = undefined; entry.packing = undefined; entry.geometryBytes = 0; entry.packingBytes = 0;
+        const bytes = 256 + 80 + 24 + 8 * retained.numbers.length;
+        // Ready numbers may be borrowed by older complete slots. Release the old
+        // entry, then reserve and copy independent probe storage before publishing.
+        // No later observation may mutate those older complete numeric keys.
+        this.remove(entry);
+        this.reserved = bytes; this.peakBytes = Math.max(this.peakBytes, this.bytes + bytes);
+        const numbers: number[] = [];
+        for (let index = 0; index < current.numbers.length; index++) numbers[index] = current.numbers[index]!;
+        entry.key = { address: retained.address, identity: retained.identity, numbers,
+            image: undefined, geometry: undefined, resourceBytes: 0 };
+        entry.geometryBytes = 0; entry.packingBytes = 0;
         entry.probe = true; entry.replacedWithoutHit = true; entry.lastCall = selected.call; entry.observation = true;
-        entry.bytes = bytes; this.bytes -= previousBytes - bytes;
-        if (entry !== this.newest) { this.unlink(entry); this.append(entry); }
+        entry.bytes = bytes;
+        set(this.candidates!, retained.address, entry); this.append(entry); this.entries++; this.bytes += bytes; this.reserved = 0;
     }
     public publish<T>(selected: SlotOwner, stage: Stage, value: T, cost: PreparedStageCost2D, commandIndices?: readonly number[]): void {
         if (!this.candidates || !validCost(cost) || selected.mode === 'disabled') return;
