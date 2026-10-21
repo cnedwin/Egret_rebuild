@@ -4,6 +4,10 @@
 
 白鹭引擎以渲染与运行时为基础，将复杂二维界面、轻量三维内容、资源与动画、创作工具及工程自动化连接起来。知识库说明各部分之间的关系，以及相应的验证方式。
 
+## M2–M4 架构与社区交付
+
+[M2–M4 架构与社区交付](docs/m2-m4-delivery-plan.md) · [M2](docs/m2-spine-content-plan.md) · [M3](docs/m3-ui-text-input-plan.md) · [M4](docs/m4-core-acceptance-plan.md)
+
 ## 从这里开始
 
 | 主题 | 阅读 |

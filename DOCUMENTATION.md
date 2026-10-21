@@ -6,6 +6,10 @@ Read the product documents in the order below, then follow the relevant subsyste
 
 The 0.56 resource-slot increment combines recoverable binding replacement with a recorded desktop Canvas/WebGPU example. The specification, evidence and example define its current behavior and verification scope.
 
+## M2–M4 architecture and community delivery
+
+[M2–M4 architecture and community delivery](knowledge-base/en/docs/m2-m4-delivery-plan.md) · [M2](knowledge-base/en/docs/m2-spine-content-plan.md) · [M3](knowledge-base/en/docs/m3-ui-text-input-plan.md) · [M4](knowledge-base/en/docs/m4-core-acceptance-plan.md)
+
 ## Product and engineering
 
 | Topic | Document |

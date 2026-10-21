@@ -6,6 +6,10 @@
 
 0.56 资源槽增量组合了可恢复绑定替换及已记录的桌面 Canvas/WebGPU 示例，所链接规格、证据与示例限定当前行为及核验范围。
 
+## M2–M4 架构与社区交付
+
+[M2–M4 架构与社区交付](knowledge-base/Cns/docs/m2-m4-delivery-plan.md) · [M2](knowledge-base/Cns/docs/m2-spine-content-plan.md) · [M3](knowledge-base/Cns/docs/m3-ui-text-input-plan.md) · [M4](knowledge-base/Cns/docs/m4-core-acceptance-plan.md)
+
 ## 产品与工程
 
 | 主题 | 文档 |

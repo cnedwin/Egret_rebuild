@@ -19,6 +19,10 @@ Years later, as times change and technology advances, many developers continue t
 通过 [Issues](https://github.com/cnedwin/Egret_rebuild/issues) 报告问题，通过 [Discussions](https://github.com/cnedwin/Egret_rebuild/discussions) 提问和讨论；查看[公开 M0–M4 看板](https://github.com/users/cnedwin/projects/2)和 [Milestones](https://github.com/cnedwin/Egret_rebuild/milestones) 了解状态与阶段。[首次贡献：新人演练](https://github.com/cnedwin/Egret_rebuild/issues/52)包含范围、验证步骤与评审入口。M0 完善环境与协作基础，不新增引擎能力。
 
 
+## M2–M4 架构与社区交付
+
+[M2–M4 路线](knowledge-base/Cns/docs/m2-m4-delivery-plan.md)衔接完整 Spine／内容、UI／文字／输入及混合核心验收。从 [M2 #56](https://github.com/cnedwin/Egret_rebuild/issues/56)、[M3 #57](https://github.com/cnedwin/Egret_rebuild/issues/57) 或 [M4 #58](https://github.com/cnedwin/Egret_rebuild/issues/58) 选择完整工作包，每项说明代码入口、依赖和可评审验收。
+
 ## 我们正在构建的产品
 
 白鹭引擎面向使用 AI 创作游戏的新创作者，也服务于希望将手游制作经验带到 Web 的开发者。产品以复杂二维界面和轻量三维内容为中心，通过精简的渲染与运行时、明确的资源所有权，以及代码、可视化工具和 Agent 共用的工程模型，支撑持续创作。
@@ -47,7 +51,7 @@ M1.3 共享纹理页、线性颜色及有序场景/UI 合成已通过 [PR #75](h
 
 M1.2 为显示捕获和渲染准备增加有界复用，并在保留绘制顺序的前提下合并相邻兼容批次。已记录的正确性与原生操作计数分别验收，帧耗时性能验收仍未完成。参阅[验证记录与边界](knowledge-base/Cns/docs/incremental-frame-preparation-evidence.md)。参阅[契约](knowledge-base/Cns/docs/incremental-frame-preparation-contract.md)及 [M1 计划](knowledge-base/Cns/docs/m1-rendering-resource-plan.md)。
 
-当前后续工作：有界裁剪复用、同槽缓存查找及几何准备优化保留已验证的输出和工作预算。此前完成的正式计时未达到目标；最新候选通过原生预检、像素及操作计数检查，但计时诊断因前台窗口切换中断，尚无有效候选成对计时或新一轮正式计时结果，M1.2 性能验收继续开放。
+当前交付 — 2026-10-21：[PR #81](https://github.com/cnedwin/Egret_rebuild/pull/81) 已在 `f9801b7` 合入 main，必需 CI 全部通过。六套浏览器回归及完整固定 30 次计时批次均经独立复核。静态／稀疏／全脏 Engine p95 中位数为 5.0／6.4／10.3 ms，全脏仍超过 8 ms。M1.2 性能继续 OPEN，GPU 时间未测量。
 
 ## 已交付 — M1.1 提交复用
 

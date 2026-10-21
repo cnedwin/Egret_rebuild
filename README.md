@@ -18,6 +18,10 @@ Start with the [getting-started guide](knowledge-base/en/docs/getting-started.md
 
 Report problems through [Issues](https://github.com/cnedwin/Egret_rebuild/issues), ask and discuss in [Discussions](https://github.com/cnedwin/Egret_rebuild/discussions), and follow the [public M0–M4 board](https://github.com/users/cnedwin/projects/2) and [Milestones](https://github.com/cnedwin/Egret_rebuild/milestones). [First contribution: newcomer rehearsal](https://github.com/cnedwin/Egret_rebuild/issues/52) includes scope, verification and the review contact. M0 improves environment and collaboration without new engine capabilities.
 
+## M2–M4 architecture and community delivery
+
+The [M2–M4 roadmap](knowledge-base/en/docs/m2-m4-delivery-plan.md) connects complete Spine/content, UI/text/input and mixed core acceptance. Choose a complete work package from [M2 #56](https://github.com/cnedwin/Egret_rebuild/issues/56), [M3 #57](https://github.com/cnedwin/Egret_rebuild/issues/57) or [M4 #58](https://github.com/cnedwin/Egret_rebuild/issues/58); each lists code entry points, dependencies and reviewable acceptance.
+
 ## What we are building
 
 Egret Engine is an open-source game-engine rebuild for creators working with AI and for developers bringing mobile-game experience to the Web. The product centers on complex 2D interfaces and lightweight 3D, with a small rendering/runtime foundation, explicit resource ownership and a shared project model for code, visual tools and agents.
@@ -46,7 +50,7 @@ The functional changes were merged through [PR #74](https://github.com/cnedwin/E
 
 M1.2 adds bounded reuse of display capture and rendering preparation, with adjacent compatible batching that preserves painter order. Recorded correctness and native operation counts have separate acceptance from frame-time performance, which remains open. See the [evidence and limits](knowledge-base/en/docs/incremental-frame-preparation-evidence.md). See the [contract](knowledge-base/en/docs/incremental-frame-preparation-contract.md) and [M1 plan](knowledge-base/en/docs/m1-rendering-resource-plan.md).
 
-Current follow-up: bounded clip reuse, same-slot cache lookup and geometry preparation changes preserve the tested output and work limits. The completed historical timing batch missed its targets. The latest candidate passed native preflight, pixel and operation-count checks, but its timing diagnostic was interrupted by foreground-window changes. No valid candidate timing pair or new formal timing batch is available; M1.2 performance acceptance remains open.
+Current delivery — 2026-10-21: [PR #81](https://github.com/cnedwin/Egret_rebuild/pull/81) is merged at `f9801b7`, with all required CI jobs passed. Six browser regression suites and the complete fixed 30-trial timing batch were independently reviewed. Static/sparse/full-dirty Engine median-p95 is 5.0/6.4/10.3 ms; full-dirty still exceeds 8 ms. M1.2 performance remains OPEN; GPU time is unmeasured.
 
 ## Delivered — M1.1 warm submission
 

@@ -4,6 +4,10 @@ English | [简体中文](../Cns/README.md)
 
 Egret connects complex 2D interfaces and lightweight 3D with a rendering/runtime core, resource and animation systems, creation tools and project automation. This knowledge base explains how those parts fit together and how the project verifies them.
 
+## M2–M4 architecture and community delivery
+
+[M2–M4 architecture and community delivery](docs/m2-m4-delivery-plan.md) · [M2](docs/m2-spine-content-plan.md) · [M3](docs/m3-ui-text-input-plan.md) · [M4](docs/m4-core-acceptance-plan.md)
+
 ## Start here
 
 | Topic | Read |
