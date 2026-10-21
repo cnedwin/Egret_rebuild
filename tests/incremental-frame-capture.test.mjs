@@ -450,3 +450,88 @@ test('IC13 ordinary: disposing the genuine Stage before first capture preserves 
     assert.equal(a.lease.value, a.texture, 'Stage cleanup does not consume the caller resource lease');
   });
 });
+
+
+// This public runtime context can act at the boundary between capture passes.
+// It authenticates ordinary nodes without forging private state or instrumenting collectors.
+import { createStage, collectTexturedFrameContent } from '@egret/runtime';
+function withInterPassCapture(run) {
+  let pending, remaining = 0;
+  const context = {
+    assertOpen() {
+      if (pending !== undefined && --remaining === 0) {
+        const action = pending; pending = undefined;
+        action();
+      }
+    },
+    report() {}, captureCleanup() {},
+  };
+  const stage = createStage(context), nodes = [];
+  const fixture = {
+    stage,
+    sprite(parent = stage, x = 0, color) {
+      const node = new egret.Sprite(); nodes.push(node);
+      node.x = x;
+      if (color !== undefined) rectangle(node, color);
+      parent.addChild(node);
+      return node;
+    },
+    afterAdmission(action) { pending = action; remaining = 2; },
+    capture() { return collectTexturedFrameContent(stage); },
+  };
+  try { return run(fixture); }
+  finally {
+    pending = undefined;
+    for (let index = nodes.length - 1; index >= 0; index--) nodes[index].dispose();
+    stage.dispose();
+  }
+}
+const capturedRect = (color, tx) => ({ kind: 'rect', matrix: matrix(tx, 0),
+  rect: { x: 0, y: 0, width: 1, height: 1 }, color, alpha: 1, clips: [] });
+
+test('IC14 textured: the second pass rereads current edges after a runtime context action', () => {
+  withInterPassCapture(f => {
+    const left = f.sprite(f.stage, 10), right = f.sprite(f.stage, 20);
+    const red = f.sprite(left, 1, 0xff0000), green = f.sprite(left, 2, 0x00ff00);
+    f.sprite(right, 3, 0x0000ff);
+    const before = f.capture();
+    const original = [capturedRect(0xff0000, 11), capturedRect(0x00ff00, 12), capturedRect(0x0000ff, 23)];
+    assert.deepEqual(before.commands, original);
+    f.afterAdmission(() => {
+      left.removeChild(green);
+      right.addChild(red);
+      f.stage.setChildIndex(right, 0);
+    });
+    const changed = f.capture();
+    const expected = [capturedRect(0x0000ff, 23), capturedRect(0xff0000, 21)];
+    assert.deepEqual(changed.commands, expected);
+    assert.deepEqual(f.capture().commands, expected, 'cursor and visited state belong only to one capture');
+    right.visible = false;
+    assert.deepEqual(f.capture().commands, []);
+    right.visible = true;
+    assert.deepEqual(f.capture().commands, expected);
+    assert.deepEqual(before.commands, original, 'previously saved output does not change');
+    for (const frame of [before, changed]) {
+      for (const value of [frame, frame.commands, frame.images, frame.geometries,
+        ...frame.commands.flatMap(command => [command, command.matrix, command.rect, command.clips])]) {
+        assert.ok(Object.isFrozen(value));
+      }
+    }
+  });
+});
+
+test('IC15 textured: inter-pass new nodes refuse and exact context errors do not poison later capture', () => {
+  withInterPassCapture(f => {
+    f.sprite(f.stage, 1, 0xff0000);
+    const before = f.capture();
+    f.afterAdmission(() => { f.sprite(f.stage, 2, 0x00ff00); });
+    assert.throws(() => f.capture(), errorCode('DISPLAY_TREE_INVARIANT'));
+    const expected = [capturedRect(0xff0000, 1), capturedRect(0x00ff00, 2)];
+    assert.deepEqual(f.capture().commands, expected, 'a failed pass cannot publish partial capture state');
+    const sentinel = new Error('independent context stopped capture');
+    f.afterAdmission(() => { throw sentinel; });
+    assert.throws(() => f.capture(), error => error === sentinel);
+    assert.deepEqual(f.capture().commands, expected);
+    assert.deepEqual(before.commands, [capturedRect(0xff0000, 1)]);
+  });
+});

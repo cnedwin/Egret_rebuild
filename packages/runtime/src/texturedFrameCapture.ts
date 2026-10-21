@@ -29,29 +29,39 @@ export interface CapturedTexturedContent2D {
 }
 
 interface AdmittedNode {
+  readonly node: DisplayObject;
   readonly primitives: readonly Primitive[];
   readonly primitiveCount: number;
   readonly bitmapOccupied: boolean;
   readonly meshGeometry: TexturedGeometry2D | undefined;
   readonly textContentBounds: Rectangle2D | undefined;
+  children: number;
+  nextChild: number;
+  visited: boolean;
+  matrix: Matrix2D | undefined;
+  alpha: number;
+  clips: ClipChain | undefined;
 }
-interface Cursor { readonly node: DisplayObject; readonly children: number; nextChild: number; }
 type ClipChain = CaptureClipChain;
-interface VisibleCursor extends Cursor { readonly matrix: Matrix2D; readonly alpha: number; readonly clips: ClipChain | undefined; }
 
-function checkNode(node: DisplayObject, parent: DisplayObjectContainer | undefined, engine: EngineContext, seen: Set<DisplayObject>): void {
-  if (!isDisplayNode(node) || seen.has(node) || parentOf(node) !== parent) throw new EgretError('DISPLAY_TREE_INVARIANT');
+function checkNode(node: DisplayObject, parent: DisplayObjectContainer | undefined, engine: EngineContext,
+  metadata: Map<DisplayObject, AdmittedNode>, visiblePass: boolean): AdmittedNode | undefined {
+  if (!isDisplayNode(node)) throw new EgretError('DISPLAY_TREE_INVARIANT');
+  const admitted = metadata.get(node);
+  if ((visiblePass ? admitted?.visited === true : admitted !== undefined) || parentOf(node) !== parent) throw new EgretError('DISPLAY_TREE_INVARIANT');
   assertLive(node);
   if (engineOf(node) !== engine) throw new EgretError('ENGINE_MISMATCH');
-  seen.add(node);
+  // This marker is local to this capture and precedes every visibility exit.
+  if (visiblePass && admitted !== undefined) admitted.visited = true;
+  return admitted;
 }
 
 /** Complete all-tree metadata admission before any visible payload or resource read. */
 function admitTree(stage: Stage, engine: EngineContext, budget: TexturedCaptureBudget): Map<DisplayObject, AdmittedNode> {
-  const metadata = new Map<DisplayObject, AdmittedNode>(), seen = new Set<DisplayObject>(), stack: Cursor[] = [];
+  const metadata = new Map<DisplayObject, AdmittedNode>(), stack: AdmittedNode[] = [];
   function enter(node: DisplayObject, parent: DisplayObjectContainer | undefined): void {
     budget.admitNode();
-    checkNode(node, parent, engine, seen);
+    checkNode(node, parent, engine, metadata, false);
     const primitives = visualOf(node).primitives;
     budget.admitAuthoringUnits(primitives.length);
     const bitmapOccupied = bitmapCaptureState(node) !== undefined;
@@ -68,8 +78,14 @@ function admitTree(stage: Stage, engine: EngineContext, budget: TexturedCaptureB
     // Retain geometry identity only; hidden lease/Texture pairs never enter this map.
     const textContentBounds = readTextFieldState(node)?.committed?.contentBounds;
     if (textContentBounds !== undefined) budget.admitAuthoringUnits(1);
-    metadata.set(node, { primitives, primitiveCount: primitives.length, bitmapOccupied, meshGeometry, textContentBounds });
-    stack.push({ node, children: childCountOf(node), nextChild: 0 });
+    // No child is entered until this callback-free metadata admission completes.
+    // The same record supplies identity admission and the two temporary cursors.
+    const admitted: AdmittedNode = { node, primitives, primitiveCount: primitives.length, bitmapOccupied,
+      meshGeometry, textContentBounds, children: 0, nextChild: 0, visited: false,
+      matrix: undefined, alpha: 0, clips: undefined };
+    metadata.set(node, admitted);
+    admitted.children = childCountOf(node);
+    stack.push(admitted);
   }
   enter(stage, undefined);
   while (stack.length !== 0) {
@@ -131,11 +147,10 @@ export function collectTexturedFrameContent(stage: Stage): CapturedTexturedConte
   try {
     const commands: TexturedRenderCommand2D[] = [], geometries: TexturedGeometry2D[] = [];
     const geometryIndexes = new Map<TexturedGeometry2D, number>();
-    const images = new CaptureImageBudget(), seen = new Set<DisplayObject>(), stack: VisibleCursor[] = [];
+    const images = new CaptureImageBudget(), stack: AdmittedNode[] = [];
 
     function enter(node: DisplayObject, parent: DisplayObjectContainer | undefined, parentMatrix: Matrix2D, parentAlpha: number, inheritedClips: ClipChain | undefined): void {
-      checkNode(node, parent, engine, seen);
-      const admitted = metadata.get(node), state = visualOf(node);
+      const admitted = checkNode(node, parent, engine, metadata, true), state = visualOf(node);
       if (admitted === undefined || state.primitives !== admitted.primitives || state.primitives.length !== admitted.primitiveCount) throw new EgretError('DISPLAY_TREE_INVARIANT');
       if (!state.visible || state.alpha === 0) return;
       const alpha = parentAlpha * state.alpha;
@@ -219,7 +234,10 @@ export function collectTexturedFrameContent(stage: Stage): CapturedTexturedConte
       }
       if (state.sharedMaterial !== null || state.renderBoundary !== 'none') throw new EgretError('FRAME_PROFILE_METADATA_UNSUPPORTED');
       completeCaptureNode(draft, state);
-      stack.push({ node, matrix, alpha, clips, children: childCountOf(node), nextChild: 0 });
+      // Runtime contexts can act between passes: reread edges and reset the cursor.
+      admitted.matrix = matrix; admitted.alpha = alpha; admitted.clips = clips;
+      admitted.children = childCountOf(node); admitted.nextChild = 0;
+      stack.push(admitted);
     }
     enter(stage, undefined, { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 }, 1, undefined);
     while (stack.length !== 0) {
@@ -227,7 +245,7 @@ export function collectTexturedFrameContent(stage: Stage): CapturedTexturedConte
       if (cursor.nextChild === cursor.children) { stack.pop(); continue; }
       const child = childAtOf(cursor.node, cursor.nextChild++);
       if (child === undefined) throw new EgretError('DISPLAY_TREE_INVARIANT');
-      enter(child, cursor.node as DisplayObjectContainer, cursor.matrix, cursor.alpha, cursor.clips);
+      enter(child, cursor.node as DisplayObjectContainer, cursor.matrix!, cursor.alpha, cursor.clips);
     }
     engine.assertOpen();
     // No partial traversal becomes a reusable result; Engine frame identity is separate.

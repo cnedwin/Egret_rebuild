@@ -53,6 +53,15 @@ function m12NineSliceHostPin(root,selected,id,row){
 }
 // M12-NINE-SLICE-SOURCE-END
 
+// M12-CAPTURE-SOURCE-BEGIN
+// All twelve existing consumers retain their declarations and compiler observations.
+const m12CaptureSource = {"base":{"path":"packages/runtime/src/texturedFrameCapture.ts","bytes":14886,"sha256":"47f633f1f8507c61c3fea359ae390e26ee584f1adbffd522b9ef7ebe86e9bf6d"},"current":{"path":"packages/runtime/src/texturedFrameCapture.ts","bytes":15606,"sha256":"b245c0df9d3a05455a56e69e96352d6f98193e6c8bc3b7f644c3aeec70329734"}};
+function m12CaptureSourcePin(root,selected,row){
+ if(selected!==M15_DATA||!equal(row,m12CaptureSource.base))return row;
+ return equal(fingerprintFile(root,row.path),m12CaptureSource.current)?m12CaptureSource.current:row;
+}
+// M12-CAPTURE-SOURCE-END
+
 /** Old inventories remain immutable; only a complete recorded group selects new rows. */
 export function selectM13StrictSuccessor(root,id,inventory){
  if(!IDS.includes(id))fail('unknown owner');
@@ -110,7 +119,7 @@ export function selectM13StrictSuccessor(root,id,inventory){
  });
  if(!observedHost&&atlasNative.length)inputPins=inputPins.filter(row=>!row.path.startsWith(observedNativePrefix));
  const currentNativePins=['package.json','lib/tsc'+(process.platform==='win32'?'.exe':'')].map(file=>fingerprintFile(nativeOwner,file));
- const sourcePins=owner.sourcePaths.map(pin).map(row=>m12NineSliceHostPin(root,selected,id,row)),selectedPins=owner.inputPaths.map(pin);
+ const sourcePins=owner.sourcePaths.map(pin).map(row=>m12NineSliceHostPin(root,selected,id,row)).map(row=>m12CaptureSourcePin(root,selected,row)),selectedPins=owner.inputPaths.map(pin);
  const libraryPaths=[...new Set(owner.groups.flatMap(group=>group.nativeLibraryClosure))];
  function recheck(){
   if(!equal(fingerprintFile(root,'tools/lib/m13-strict-successor.mjs'),helperPin)

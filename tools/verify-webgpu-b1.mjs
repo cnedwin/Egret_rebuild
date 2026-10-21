@@ -376,9 +376,10 @@ const m12PerformanceModuleSuccessors = new Map([
   ["packages/engine/dist/rendering/prepareImages2D.js", { bytes: 4821, sha256: "82f93f3c93665c0d69d300b19b4e673779cd450727e784fb17d21c9d5af36589" }],
   ["packages/engine/dist/rendering/prepareTexturedMesh2D.js", { bytes: 7762, sha256: "28796314e7b0d1fc8acceaa6fbe6c8805040b531b4df0772c207acd0123429e3" }],
   ["packages/engine/dist/rendering/prepareTexturedDraws2D.js", { bytes: 4612, sha256: "b81bcaa01006be0fe1eb3f18d5a93e51f354e5de79923f7d918e3f9976e085c4" }],
-  ["packages/engine/dist/rendering/preparedFrameCache2D.js", { bytes: 20873, sha256: "86349c8ffdaf461604181d9808cff2e98282742abb8950590ec92d8c81b87822" }],
+  ["packages/engine/dist/rendering/preparedFrameCache2D.js", { bytes: 23608, sha256: "b28b5313bbf1ace8d741d686b72a59d3385c5b56591dcd363e68ab92a0bae294" }],
+  ["packages/runtime/dist/texturedFrameCapture.js", { bytes: 15193, sha256: "987bfb7d35185b57ddbf3aed8a73933b2b6c2a5cc0fe4beb31f016feef6dbf85" }],
 ]);
-assert.equal(m12PerformanceModuleSuccessors.size, 7);
+assert.equal(m12PerformanceModuleSuccessors.size, 8);
 for (const name of m12PerformanceModuleSuccessors.keys()) assert.ok(m15ModuleIdentities.has(name), 'Performance successor must retain M1.5 membership');
 const currentModuleIdentities = new Map([...m15ModuleIdentities, ...m12PerformanceModuleSuccessors]);
 for (const name of currentModuleIdentities.keys()) allowedModules.add(name);
