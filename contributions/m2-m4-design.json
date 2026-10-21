@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "knowledge-base/en/docs/m2-m4-delivery-plan.md",
+      "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/m2-m4-delivery-plan.md",
+      "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/m2-spine-content-plan.md",
+      "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/m2-spine-content-plan.md",
+      "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/m3-ui-text-input-plan.md",
+      "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/m3-ui-text-input-plan.md",
+      "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/m4-core-acceptance-plan.md",
+      "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/m4-core-acceptance-plan.md",
+      "originRole": "First-party M2-M4 architecture and community delivery plan, authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/m2-m4-delivery-plan.md",
+      "zh": "knowledge-base/Cns/docs/m2-m4-delivery-plan.md"
+    },
+    {
+      "en": "knowledge-base/en/docs/m2-spine-content-plan.md",
+      "zh": "knowledge-base/Cns/docs/m2-spine-content-plan.md"
+    },
+    {
+      "en": "knowledge-base/en/docs/m3-ui-text-input-plan.md",
+      "zh": "knowledge-base/Cns/docs/m3-ui-text-input-plan.md"
+    },
+    {
+      "en": "knowledge-base/en/docs/m4-core-acceptance-plan.md",
+      "zh": "knowledge-base/Cns/docs/m4-core-acceptance-plan.md"
+    }
+  ]
+}

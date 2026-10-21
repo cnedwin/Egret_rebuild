@@ -2,13 +2,15 @@
 
 English | [中文](../../Cns/docs/architecture-and-engineering-plan.md)
 
-2026-10-20 · Plan version 12 · M0–M4
+2026-10-21 · Plan version 13 · M0–M4
 
 The product baseline remains engineering preview 0.61.0. M0 infrastructure through [PR #71](https://github.com/cnedwin/Egret_rebuild/pull/71) is integrated at main ca62c980f372683dcb156bc5c284f4036a60f4cc. This plan defines target architecture and acceptance, not completed product capabilities. The [M0 record](m0-community-foundations.md) separates delivered engineering from independent human/fork and target-device obligations.
 
 The environment pins Node 26.7.0, pnpm 11.25.0, TypeScript 7.0.2 and PowerShell 7.6.5. Current-ledger generation, dependency-aware local feedback and current/resource/historical browser-tool workflows are available within their documented scope. Historical evidence keeps its original bytes and environment. Push checks protect committed publication structure; merge CI retains the complete gate; changed rendering additionally needs independent real-browser evidence.
 
 The [M1 implementation plan](m1-rendering-resource-plan.md) defines the engineering entry, five complete work packages, shared contracts, desktop measurement targets and remaining external rows. This revision permits M1 after reviewed engineering entry while keeping complete M0 community acceptance open. Maintenance automation grows only to resolve a concrete contribution or planned product defect; exhaustive automation is not an entry condition.
+
+The [M2–M4 detailed roadmap](m2-m4-delivery-plan.md) now defines shared contracts, subsystem work packages, community entry points and acceptance dependencies. M1 interfaces are delivered through PR #81; M1.2 formal performance remains OPEN. M2/M3 design and independent work may proceed on reviewed delivered interfaces while M4 performance closure still requires M1.2. This distinction supersedes any blanket requirement below to wait for complete M1 closure before design. New plans do not authorize new engine implementation in this documentation increment.
 
 ## 1. Objectives, scope and tradeoffs
 
