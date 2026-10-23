@@ -62,6 +62,21 @@ function m3PointerPackageSuccessor(expected, raw) {
 }
 // M3-POINTER-PACKAGE-END
 
+// M31-UI-SUCCESSOR-BEGIN
+// Exact current UI identities preserve all preceding package and source groups.
+const m31UiPackagePairs = [{"base":{"path":"packages/engine/package.json","bytes":2494,"sha256":"65d0583089d297c3e9d0cc39fb653a9d3642b04081f34d5341b6f5d74a9f1951"},"current":{"path":"packages/engine/package.json","bytes":2591,"sha256":"817ff4de665885cae85bb3563aeb80f2955eda5c9fda3d0954e1a0a7c513bcc5"}},{"base":{"path":"packages/runtime/package.json","bytes":471,"sha256":"97b2d4678df4fd137b681a54511ce625935accfc3014da4800902f4a241c8db1"},"current":{"path":"packages/runtime/package.json","bytes":568,"sha256":"cb9822d5bbc457edf1256a98d2a7437ee8e13bc58caffe9914afdaa9345ef8c3"}}];
+const m31UiSourcePairs = [{"base":{"path":"packages/engine/dist/Engine.js","bytes":21169,"sha256":"61e9613b37d886859d2f11ed23b889684b24a0aba39b4d8f324fb2d5a003f933"},"current":{"path":"packages/engine/dist/Engine.js","bytes":22046,"sha256":"42ea7f41b79061115a2ed3ac9312163201ca0a942627c8279b3484bf5a9b5239"}},{"base":{"path":"packages/engine/src/Engine.ts","bytes":24333,"sha256":"ee2e61e0e038ae425e26bc9913da38b80cfe9117b782f0712c3ebeca51f92cfd"},"current":{"path":"packages/engine/src/Engine.ts","bytes":25315,"sha256":"ad13f34fd2229c081dd185322918a0043624eed36a8a06f69d7915991aa2110d"}}];
+function m31UiPackageSuccessor(expected,raw){
+ const pair=m31UiPackagePairs.find(pair=>pair.base.path===expected?.path),digest=raw=>createHash('sha256').update(raw).digest('hex');
+ if(!pair||raw.length!==pair.current.bytes||digest(raw)!==pair.current.sha256)return false;
+ const value=JSON.parse(raw.toString('utf8'));
+ if(JSON.stringify(value.exports['./ui'])!==JSON.stringify({types:'./dist/ui/index.d.ts',import:'./dist/ui/index.js'}))return false;
+ delete value.exports['./ui'];const predecessor=Buffer.from(JSON.stringify(value,null,2)+'\n');
+ if(predecessor.length!==pair.base.bytes||digest(predecessor)!==pair.base.sha256)return false;
+ return JSON.stringify(expected)===JSON.stringify(pair.base)||m3PointerPackageSuccessor(expected,predecessor);
+}
+// M31-UI-SUCCESSOR-END
+
 function m15ResourcePackageSuccessor(expected, raw) {
   const pair=[...m15ResourcePackageSuccessors,...m15ResourceAtlasPackageSuccessor].find(row=>row.base.path===expected?.path
     &&row.base.bytes===expected.bytes&&row.base.sha256===expected.sha256);
@@ -147,10 +162,11 @@ function m13SequenceComplete(root){
 const m21ContentConfigurationPairs = [{"base":{"path":"package.json","bytes":1108,"sha256":"16a969b9a50653b1733893c59ee4cd1d29845208c11bd182036bc585372834d0"},"current":{"path":"package.json","bytes":1130,"sha256":"716cda606f58987f784aee2a64e46cf0c2e0130e84157d2a869879b4c3ae7c40"}},{"base":{"path":"pnpm-lock.yaml","bytes":9017,"sha256":"79383095fd4bb2bb4682a12f9651d9a876a01fc6dc1326d09bc0ad587db23084"},"current":{"path":"pnpm-lock.yaml","bytes":9271,"sha256":"061742afdc492e6e1721798dcc1b1539f8e4fd9d0274fa7c5fd9091917e57338"}}];
 function seqpbPin(root, pin, code) {
   pin = m13SequencePin(root, pin);
+  pin = m31UiSourcePairs.find(pair=>JSON.stringify(pair.base)===JSON.stringify(pin))?.current??pin;
   const bytes = seqpbRead(root, pin.path);
   const content=m21ContentConfigurationPairs.find(pair=>JSON.stringify(pair.base)===JSON.stringify(pin));
   if(content&&bytes.length===content.current.bytes&&seqpbHash(bytes)===content.current.sha256)pin=content.current;
-  if (m3PointerPackageSuccessor(pin, bytes) || m15ResourcePackageSuccessor(pin, bytes) || m14EnginePackageSuccessor(pin, bytes) || seqpbAtlasPackageSuccessor(pin, bytes)) return;
+  if (m31UiPackageSuccessor(pin, bytes) || m3PointerPackageSuccessor(pin, bytes) || m15ResourcePackageSuccessor(pin, bytes) || m14EnginePackageSuccessor(pin, bytes) || seqpbAtlasPackageSuccessor(pin, bytes)) return;
   if (bytes.length !== pin.bytes || seqpbHash(bytes) !== pin.sha256) seqpbFail(code, 'Source identity changed: ' + pin.path);
 }
 

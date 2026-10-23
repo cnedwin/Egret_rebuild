@@ -1,3 +1,4 @@
+import { assertManagedEdgeMutable, assertManagedChildrenMutable, cleanupManagedWrapper, managedTerminal } from './ui/managedState.js';
 import { DisplayObject } from "./DisplayObject.js";
 import { registerDisplayHitContainer, readDisplayTouchChildren, writeDisplayTouchChildren } from './displayHitState.js';
 import { EgretError } from "./EgretError.js";
@@ -19,6 +20,7 @@ export class DisplayObjectContainer extends DisplayObject {
 
   /** Subclass hooks run in preflight; final binding and reparenting use internal state. */
   public addChild<T extends DisplayObject>(child: T): T {
+    assertManagedEdgeMutable(this, child);
     // A bound receiver's existing descendants already share its permanent
     // affinity: every attach/bind validates before commit and detach retains it.
     // Preserve whole-tree checks for a receiver that starts unbound, even if a
@@ -41,6 +43,7 @@ export class DisplayObjectContainer extends DisplayObject {
     }
     // Re-read state and both current trees after callback-capable preflight.
     // Validation, binding and internal detach/attach below invoke no user code.
+    assertManagedEdgeMutable(this, child);
     const finalEngine = engineInSubtree(this) ?? engineInSubtree(child);
     finalEngine?.assertOpen();
     assertLive(this);
@@ -60,6 +63,7 @@ export class DisplayObjectContainer extends DisplayObject {
 
   /** Insert at an inclusive index; subclass callbacks finish before one private plan. */
   public addChildAt<T extends DisplayObject>(child: T, index: number): T {
+    assertManagedEdgeMutable(this, child);
     // Authenticate and apply this API's fixed refusal order before any display hook.
     assertContainer(this);
     const receiverWasBound = engineOf(this) !== undefined;
@@ -82,6 +86,7 @@ export class DisplayObjectContainer extends DisplayObject {
       preflightBinding(child, engine);
     }
     // No earlier tree/list/binding plan survives these callback-capable preflights.
+    assertManagedEdgeMutable(this, child);
     const plan = prepareChildInsertion(this, child, index);
     publishPreparedChildInsertion(plan);
     return child;
@@ -89,6 +94,7 @@ export class DisplayObjectContainer extends DisplayObject {
 
   /** Detach without disposing or transferring the cleanup owner. */
   public removeChild<T extends DisplayObject>(child: T): T {
+    assertManagedEdgeMutable(this, child);
     engineOf(this)?.assertOpen(); assertLive(this); assertLive(child);
     removeNode(this, child);
     return child;
@@ -96,6 +102,7 @@ export class DisplayObjectContainer extends DisplayObject {
 
   /** Detach every direct child without disposing nodes or transferring owners. */
   public removeChildren(): void {
+    assertManagedChildrenMutable(this);
     // Authenticate before reading affinity; preserve Engine-first life checks.
     assertContainer(this);
     engineOf(this)?.assertOpen(); assertLive(this);
@@ -120,10 +127,12 @@ export class DisplayObjectContainer extends DisplayObject {
   }
 
   public setChildIndex(child: DisplayObject, index: number): void {
+    assertManagedEdgeMutable(this, child);
     this.assertUsable();
     assertLive(this);
     this.validateIndex(index);
     engineOf(this)?.assertOpen();
+    assertManagedEdgeMutable(this, child);
     setNodeIndex(this, child, index);
   }
 
@@ -133,6 +142,7 @@ export class DisplayObjectContainer extends DisplayObject {
 
   public override dispose(): void {
     if (isTerminated(this)) return;
+    if (!managedTerminal(this)) assertManagedChildrenMutable(this);
     const boundary = disposalBoundaries.get(this) ?? { owner: ownerOf(this) };
     const engine = engineOf(this);
     const failures: unknown[] = [];
@@ -161,7 +171,7 @@ export class DisplayObjectContainer extends DisplayObject {
       }
       disposalBoundaries.set(child, boundary);
       try {
-        child.dispose();
+        if (!cleanupManagedWrapper(child)) child.dispose();
       } catch (cause) {
         recordFailure(cause);
       } finally {

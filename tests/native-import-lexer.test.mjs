@@ -54,7 +54,7 @@ test('native import reader refuses malformed regexes in the two added expression
 
 
 // Current source-closure controls; SDK modules are inert bytes, never evaluated.
-test('textured source profile admits the genuine current 132 while default 128 still refuses', async () => {
+test('textured source profile admits the genuine current 134 while historical 128 and 132 still refuse', async () => {
   const fs = await import('node:fs');
   const { fileURLToPath } = await import('node:url');
   const { collectPublicGraph, LIMITS, sourceCounterpart } = await import('../tools/textured-webgpu/native-files.mjs');
@@ -66,16 +66,20 @@ test('textured source profile admits the genuine current 132 while default 128 s
     const graph = await collectPublicGraph(root, (row, role) => pins.push({path:row.path,bytes:row.bytes,sha256:row.sha256,role}), profile);
     return {graph,pins};
   };
-  const before = await capture('m15-textured');
-  assert.equal(before.graph.modules.size, 132);
+  const before = await capture('m31-textured');
+  assert.equal(before.graph.modules.size, 134);
   assert.ok(before.graph.modules.has('packages/contracts/dist/resources/index.js'));
+  assert.ok(before.graph.modules.has('packages/runtime/dist/ui/managedState.js'));
+  assert.ok(before.graph.modules.has('packages/engine/dist/internal/uiFactoryState.js'));
+  assert.ok(!before.graph.modules.has('packages/engine/dist/ui/uiRoot.js'));
+  assert.ok(!before.graph.modules.has('packages/runtime/dist/ui/layout.js'));
   for (const row of before.graph.modules.values()) {
     for (const edge of row.edges) assert.ok(before.graph.modules.has(edge.url.slice(1)));
     const source = sourceCounterpart(row.relative);
     if (source) assert.ok(before.pins.some(pin => pin.role === 'original-source' && pin.path === path.join(root, source)));
   }
   const summary = value => ({modules:[...value.graph.modules.values()].map(row => [row.relative, row.bytes, row.sha256, row.edges]),inputs:value.pins});
-  const healthy = async () => assert.deepEqual(summary(await capture('m15-textured')), summary(before));
+  const healthy = async () => assert.deepEqual(summary(await capture('m31-textured')), summary(before));
   const refusalWithBaseline = async (exercise, label) => {
     const failures = [];
     try { await healthy(); } catch (error) { failures.push(error); }
@@ -88,7 +92,12 @@ test('textured source profile admits the genuine current 132 while default 128 s
   await refusalWithBaseline(
     () => assert.rejects(collectPublicGraph(root, () => {}), error => error.reason === 'GRAPH_MODULE_COUNT'),
     'default source profile refusal and complete baseline');
-  for (const profile of ['unknown', 'm15-textured-extra', 133, null]) {
+  for (const historical of ['m15-textured', 'm12-recipe5']) {
+    await refusalWithBaseline(
+      () => assert.rejects(collectPublicGraph(root, () => {}, historical), error => error.reason === 'GRAPH_MODULE_COUNT'),
+      'historical source profile remains bounded: ' + historical);
+  }
+  for (const profile of ['unknown', 'm15-textured-extra', 'm31-textured-extra', 134, null]) {
     await refusalWithBaseline(
       () => assert.rejects(collectPublicGraph(root, () => {}, profile), error => error.reason === 'GRAPH_SOURCE_PROFILE'),
       'closed source profile refusal and complete baseline: ' + String(profile));
@@ -134,4 +143,45 @@ test('textured 132/133 source boundary rejects an actual extra module and restor
   try { fs.writeFileSync(last, original); } catch (error) { failures.push(error); }
   try { assert.deepEqual(summary(await collect()), summary(before)); } catch (error) { failures.push(error); }
   if (failures.length) throw new AggregateError(failures, '132/133 refusal, local restoration and complete baseline');
+});
+
+test('textured 134/135 UI successor source boundary rejects an actual extra module and restores the complete fixture', async t => {
+  const fs = await import('node:fs'), os = await import('node:os'), path = await import('node:path');
+  const { collectPublicGraph } = await import('../tools/textured-webgpu/native-files.mjs');
+  const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'egret-textured-source-cap-')));
+  t.after(() => fs.rmSync(root, {recursive:true,force:true}));
+  const put = (relative, body) => {
+    const file = path.join(root, relative); fs.mkdirSync(path.dirname(file), {recursive:true}); fs.writeFileSync(file, body);
+  };
+  const module = (name, body) => {
+    put('packages/engine/dist/' + name + '.js', body);
+    put('packages/engine/' + (name.startsWith('web/') ? '' : 'src/') + name + '.ts', body);
+  };
+  fs.mkdirSync(path.join(root, 'packages/engine/node_modules/robust-predicates'), {recursive:true});
+  module('index', "export * from './Engine.js';\n");
+  module('Engine', "import './internal/texturedFrameState.js';\nimport './r0.js';\n");
+  module('internal/texturedFrameState', 'export const registry = {};\n');
+  module('web/webgpu', "export * from './WebGPUHost.js';\n");
+  module('web/WebGPUHost', "import '#egret-textured-frame-state';\n");
+  for (let index = 0; index < 130; index++) module('r' + index,
+    index < 128 ? "import './r" + (index + 1) + ".js';\n" : 'export const end = true;\n');
+  const collect = async () => {
+    const pins = [];
+    const graph = await collectPublicGraph(root, (row, role) => pins.push({path:row.path,bytes:row.bytes,sha256:row.sha256,role}), 'm31-textured');
+    return {graph,pins};
+  };
+  const summary = value => ({modules:[...value.graph.modules.values()].map(row => [row.relative, row.bytes, row.sha256, row.edges]),inputs:value.pins});
+  const before = await collect(); assert.equal(before.graph.modules.size, 134);
+  const last = path.join(root, 'packages/engine/dist/r128.js'), original = fs.readFileSync(last);
+  const failures = [];
+  try { assert.deepEqual(summary(await collect()), summary(before)); } catch (error) { failures.push(error); }
+  if (failures.length === 0) {
+    try {
+      fs.writeFileSync(last, "import './r129.js';\n");
+      await assert.rejects(collect(), error => error.reason === 'GRAPH_MODULE_COUNT');
+    } catch (error) { failures.push(error); }
+  }
+  try { fs.writeFileSync(last, original); } catch (error) { failures.push(error); }
+  try { assert.deepEqual(summary(await collect()), summary(before)); } catch (error) { failures.push(error); }
+  if (failures.length) throw new AggregateError(failures, '134/135 refusal, local restoration and complete baseline');
 });

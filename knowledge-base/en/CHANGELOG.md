@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## M3.1 committed UI panels — 2026-10-23
+
+M3.1 adds an owned UI root with explicit prepare/commit, automatic row/column layout, stable-key variable-height lists and bounded asynchronous row recycling. Multiple panels share the existing renderer, input router and resource owners. Read the [UI panel contract](docs/ui-data-panel.md). Full controls, paragraphs, focus/IME, gestures, mobile qualification and performance acceptance remain open.
+
 ## M2.1 content build foundation — 2026-10-23
 
 M2.1 adds verified PNG/atlas/sequence source builds, persistent cache reuse, dependency invalidation and immutable generations adopted through the existing project transaction. Sources and old generations remain intact. See the [content build contract](docs/content-build-pipeline.md). Complete Spine, fonts and target variants remain open.

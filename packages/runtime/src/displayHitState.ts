@@ -1,3 +1,4 @@
+import { assertManagedMutable } from './ui/managedState.js';
 import type { Rectangle2D } from '@egret/contracts';
 import type { DisplayObject } from './DisplayObject.js';
 import { EgretError } from './EgretError.js';
@@ -31,6 +32,7 @@ export function readDisplayHitState(receiver: unknown): DisplayHitState {
 }
 
 function live(node: DisplayObject): void {
+  assertManagedMutable(node);
   assertLive(node);
   engineOf(node)?.assertOpen();
 }

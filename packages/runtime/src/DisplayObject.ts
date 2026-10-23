@@ -1,3 +1,4 @@
+import { assertManagedMutable } from './ui/managedState.js';
 import { isSharedMaterial2D } from '@egret/contracts';
 import type { Point2D, Rectangle2D, SharedMaterial2D } from '@egret/contracts';
 import { registerDisplayHitNode, readDisplayHitState, writeDisplayHitArea, writeDisplayTouchEnabled } from './displayHitState.js';
@@ -150,6 +151,7 @@ export class DisplayObject extends EventDispatcher {
   /** Mark terminal before removing listeners, so callback reentry sees disposal. */
   public dispose(): void {
     if (isTerminated(this)) return;
+    assertManagedMutable(this);
     terminateNode(this);
     this.clearListeners();
   }

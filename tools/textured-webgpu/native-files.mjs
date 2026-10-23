@@ -122,8 +122,10 @@ export function resolveSelected(specifier,parent,mode,map){const selectedPrefix=
 export async function collectPublicGraph(repository,retain,sourceProfile='historical'){
   // Named consumers opt into bounded source successors; the historical default
   // and every byte, import, registry and containment check remain unchanged.
-  requirePolicy(['historical','m15-textured','m12-recipe5'].includes(sourceProfile),'GRAPH_SOURCE_PROFILE');
-  const moduleLimit=sourceProfile==='historical'?LIMITS.modules:132;
+  requirePolicy(['historical','m15-textured','m12-recipe5','m31-textured'].includes(sourceProfile),'GRAPH_SOURCE_PROFILE');
+  // The UI successor adds only the eager ownership bridge and managed markers.
+  // Historical profiles retain their original finite admission budgets.
+  const moduleLimit=sourceProfile==='historical'?LIMITS.modules:sourceProfile==='m31-textured'?134:132;
   const root=await realpath(repository),modules=new Map();let total=0,sourceRegistry;
   const map=chosenMap('baseline'),robustRoot=await realpath(path.join(root,'packages/engine/node_modules/robust-predicates'));
   async function visit(relative){const logical=path.join(root,relative),physical=await realpath(logical);

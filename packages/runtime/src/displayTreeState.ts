@@ -365,3 +365,41 @@ export function publishCapturedInsertionTree(plan: PreparedInsertionTree): void 
     recordVisualChange(plan.capture.child, VISUAL_STRUCTURE);
   }
 }
+
+/** UI-only preallocated list replacement, after complete private validation. */
+export interface UiTreeReplacement {
+  readonly parent: DisplayObjectContainer;
+  readonly previous: readonly DisplayObject[];
+  readonly next: DisplayObject[];
+}
+export function captureUiChildren(parent: DisplayObjectContainer): DisplayObject[] {
+  return copyInsertionList(listOf(parent));
+}
+export function validateUiChildren(parent: DisplayObjectContainer, expected: readonly DisplayObject[]): boolean {
+  const actual = readChildList(parent);
+  if (actual === undefined || actual.length !== expected.length) return false;
+  for (let index = 0; index < actual.length; index++) {
+    if (actual[index] !== expected[index] || readParent(actual[index]!) !== parent) return false;
+  }
+  return true;
+}
+export function publishUiTree(replacements: readonly UiTreeReplacement[]): void {
+  for (let index = 0; index < replacements.length; index++) {
+    const item = replacements[index]!;
+    for (let childIndex = 0; childIndex < item.previous.length; childIndex++) {
+      const child = item.previous[childIndex]!;
+      deleteParent(child);
+      recordVisualChange(child, VISUAL_STRUCTURE);
+    }
+    insertionWriteChildren(item.parent, item.next);
+    recordVisualChange(item.parent, VISUAL_STRUCTURE);
+  }
+  for (let index = 0; index < replacements.length; index++) {
+    const item = replacements[index]!;
+    for (let childIndex = 0; childIndex < item.next.length; childIndex++) {
+      const child = item.next[childIndex]!;
+      insertionWriteParent(child, item.parent);
+      recordVisualChange(child, VISUAL_STRUCTURE);
+    }
+  }
+}

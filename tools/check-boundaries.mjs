@@ -22,6 +22,13 @@ function files(dir) {
 }
 // M15: exact named metadata port and one private browser bridge. No deep-path wildcard.
 const m15DeepClauses = {
+  // M3.1: exact optional UI value and erased assembly clauses only.
+  "packages/engine/src/internal/uiFactoryState.ts": [{"operation":"import","kind":"type","members":["createUiDisplayOperations","UiDisplayOperations"],"target":"@egret/runtime/ui"}],
+  "packages/engine/dist/internal/uiFactoryState.d.ts": [{"operation":"import","kind":"type","members":["createUiDisplayOperations","UiDisplayOperations"],"target":"@egret/runtime/ui"}],
+  "packages/engine/src/ui/types.ts": [{"operation":"import","kind":"type","members":["UiLayoutNode","UiDirtyKind","UiLayoutBox"],"target":"@egret/runtime/ui"}],
+  "packages/engine/dist/ui/types.d.ts": [{"operation":"import","kind":"type","members":["UiLayoutNode","UiDirtyKind","UiLayoutBox"],"target":"@egret/runtime/ui"}],
+  "packages/engine/src/ui/uiRoot.ts": [{"operation":"import","kind":"value","members":["captureUiLayout","planUiLayout","UiHeightIndex","createUiDisplayOperations"],"target":"@egret/runtime/ui"},{"operation":"import","kind":"type","members":["UiLayoutTree","UiLayoutNode","UiLayoutPlan","UiLayoutBox","UiDisplayUpdate"],"target":"@egret/runtime/ui"}],
+  "packages/engine/dist/ui/uiRoot.js": [{"operation":"import","kind":"value","members":["captureUiLayout","planUiLayout","UiHeightIndex","createUiDisplayOperations"],"target":"@egret/runtime/ui"}],
   // M2.1: exact optional content adapter clauses; no general deep-import allowance.
   "packages/project/src/resources/content.ts": [{"operation":"import","kind":"type","members":["AdmittedResourceManifest","ResourceBuildPlanDescription","ResourceBuildSourceEntry","ResourceManifestResult"],"target":"@egret/contracts/resources"},{"operation":"import","kind":"value","members":["buildResourceManifest","evaluateResourceBuildKeys","validateResourceBuildPlanDescription"],"target":"@egret/contracts/resources"}],
   "packages/project/dist/resources/content.js": [{"operation":"import","kind":"value","members":["buildResourceManifest","evaluateResourceBuildKeys","validateResourceBuildPlanDescription"],"target":"@egret/contracts/resources"}],
@@ -65,6 +72,7 @@ for (const [name, allowed] of Object.entries(expected)) {
       '.': {types:'./dist/index.d.ts',import:'./dist/index.js'},
       './text': {types:'./dist/text/index.d.ts',import:'./dist/text/index.js'},
       './input': {types:'./dist/input/index.d.ts',import:'./dist/input/index.js'},
+      './ui': {types:'./dist/ui/index.d.ts',import:'./dist/ui/index.js'},
     } : {
       '.': {types:'./dist/index.d.ts',import:'./dist/index.js'},
       './webgpu': {types:'./dist/web/webgpu.d.ts',import:'./dist/web/webgpu.js'},
@@ -76,6 +84,7 @@ for (const [name, allowed] of Object.entries(expected)) {
       './web/text': {types:'./dist/web/text.d.ts',import:'./dist/web/text.js'},
       './web/input': {types:'./dist/web/input.d.ts',import:'./dist/web/input.js'},
       './input': {types:'./dist/input.d.ts',import:'./dist/input.js'},
+      './ui': {types:'./dist/ui/index.d.ts',import:'./dist/ui/index.js'},
       './web/pointer': {types:'./dist/web/pointer.d.ts',import:'./dist/web/pointer.js'},
       './web/image': {types:'./dist/web/image.d.ts',import:'./dist/web/image.js'},
       './resources': {types:'./dist/resources.d.ts',import:'./dist/resources.js'},
@@ -129,7 +138,7 @@ for (const [name, allowed] of Object.entries(expected)) {
           const providerBarrel=['web/text.ts','dist/web/text.js','dist/web/text.d.ts'].includes(relative);
           if ((providerTarget && !providerBarrel) || ['web/text.js','dist/web/text.js'].includes(target)) throw new Error(`${file}: Canvas text opt-in module imported outside its barrel`);
         }
-      } else if (imported === '@egret/contracts/resources' || imported === '#egret-manifest-resources') {
+      } else if (imported === '@egret/contracts/resources' || imported === '#egret-manifest-resources' || imported === '@egret/runtime/ui') {
         const relative=path.relative(root,file).split(path.sep).join('/');
         const clause=code.slice(0,match.index).match(/\b(import|export)(\s+type)?\s*\{([^{}]+)\}\s*$/);
         const row=clause && {operation:clause[1],kind:clause[2]?'type':'value',members:clause[3].split(',').map(member=>member.trim().replace(/\s+/g,' ')).filter(Boolean),target:imported};
@@ -3916,12 +3925,73 @@ const m12IncrementalRenderingLiteralClosure = {
   "packages/engine/dist/rendering/prepareTexturedDraws2D.js": [["static","./prepareImages2D.js"],["static","./prepareRectangles2D.js"],["static","./prepareTexturedMesh2D.js"],["static","./texturedPreparationBudget2D.js"]],
 };
 
+// M3.1 finite named source/emission/declaration successor; retained tables stay intact.
+const m31UiLiteralClosure = {
+  "packages/engine/src/Engine.ts": [["static","./assetGroup.js"],["static","./assetGroup.js"],["static","./assetGroupTypes.js"],["static","./bitmapBindingTicket.js"],["static","./bitmapBindingTicket.js"],["static","./bitmapResourceSlot.js"],["static","./bitmapResourceSlot.js"],["static","./closeHost.js"],["static","./gameClock.js"],["static","./gameClock.js"],["static","./gameClockTypes.js"],["static","./internal/textFieldFactoryState.js"],["static","./internal/texturedFrameState.js"],["static","./internal/uiFactoryState.js"],["static","./internal/uiFactoryState.js"],["static","./manifestAssetGroup.js"],["static","./manifestAssetGroup.js"],["static","./manifestResourceTypes.js"],["static","./mouseInput.js"],["static","./mouseInput.js"],["static","./sequencePlayback.js"],["static","./sequencePlayback.js"],["static","./sequencePlaybackTypes.js"],["static","./tween.js"],["static","./tween.js"],["static","./tweenTypes.js"],["static","@egret/contracts"],["static","@egret/contracts"],["static","@egret/contracts"],["static","@egret/contracts/resources"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime"]],
+  "packages/engine/dist/Engine.js": [["static","./assetGroup.js"],["static","./bitmapBindingTicket.js"],["static","./bitmapResourceSlot.js"],["static","./closeHost.js"],["static","./gameClock.js"],["static","./internal/textFieldFactoryState.js"],["static","./internal/texturedFrameState.js"],["static","./internal/uiFactoryState.js"],["static","./manifestAssetGroup.js"],["static","./mouseInput.js"],["static","./sequencePlayback.js"],["static","./tween.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime"]],
+  "packages/engine/dist/Engine.d.ts": [["static","./assetGroupTypes.js"],["static","./bitmapBindingTicket.js"],["static","./bitmapResourceSlot.js"],["static","./gameClock.js"],["static","./gameClockTypes.js"],["static","./manifestResourceTypes.js"],["static","./sequencePlaybackTypes.js"],["static","./tweenTypes.js"],["static","@egret/contracts"],["static","@egret/contracts"],["static","@egret/contracts/resources"],["static","@egret/runtime"],["static","@egret/runtime"]],
+  "packages/runtime/src/DisplayObject.ts": [["static","./displayBounds.js"],["static","./displayBounds.js"],["static","./displayCoordinates.js"],["static","./displayCoordinates.js"],["static","./displayHitState.js"],["static","./DisplayObjectContainer.js"],["static","./displayTreeState.js"],["static","./displayVisualState.js"],["static","./EgretError.js"],["static","./EventDispatcher.js"],["static","./ownership.js"],["static","./ui/managedState.js"],["static","@egret/contracts"],["static","@egret/contracts"]],
+  "packages/runtime/dist/DisplayObject.js": [["static","./displayBounds.js"],["static","./displayCoordinates.js"],["static","./displayHitState.js"],["static","./displayTreeState.js"],["static","./displayVisualState.js"],["static","./EgretError.js"],["static","./EventDispatcher.js"],["static","./ownership.js"],["static","./ui/managedState.js"],["static","@egret/contracts"]],
+  "packages/runtime/dist/DisplayObject.d.ts": [["static","./displayBounds.js"],["static","./displayCoordinates.js"],["static","./DisplayObjectContainer.js"],["static","./EventDispatcher.js"],["static","./ownership.js"],["static","@egret/contracts"]],
+  "packages/runtime/src/DisplayObjectContainer.ts": [["static","./displayHitState.js"],["static","./DisplayObject.js"],["static","./displayTreeState.js"],["static","./EgretError.js"],["static","./ownership.js"],["static","./ui/managedState.js"]],
+  "packages/runtime/dist/DisplayObjectContainer.js": [["static","./displayHitState.js"],["static","./DisplayObject.js"],["static","./displayTreeState.js"],["static","./EgretError.js"],["static","./ownership.js"],["static","./ui/managedState.js"]],
+  "packages/runtime/dist/DisplayObjectContainer.d.ts": [["static","./DisplayObject.js"],["static","./ownership.js"]],
+  "packages/runtime/src/Scope.ts": [["static","./CancellationController.js"],["static","./EgretError.js"],["static","./ownership.js"],["static","./ownership.js"],["static","./ui/managedState.js"],["static","@egret/contracts"]],
+  "packages/runtime/dist/Scope.js": [["static","./CancellationController.js"],["static","./EgretError.js"],["static","./ownership.js"],["static","./ui/managedState.js"]],
+  "packages/runtime/dist/Scope.d.ts": [["static","./ownership.js"],["static","@egret/contracts"]],
+  "packages/runtime/src/displayHitState.ts": [["static","./DisplayObject.js"],["static","./displayTreeState.js"],["static","./displayVisualState.js"],["static","./EgretError.js"],["static","./ownership.js"],["static","./ui/managedState.js"],["static","@egret/contracts"]],
+  "packages/runtime/dist/displayHitState.js": [["static","./displayTreeState.js"],["static","./displayVisualState.js"],["static","./EgretError.js"],["static","./ownership.js"],["static","./ui/managedState.js"]],
+  "packages/runtime/dist/displayHitState.d.ts": [["static","./DisplayObject.js"],["static","@egret/contracts"]],
+  "packages/runtime/src/displayTreeState.ts": [["static","./DisplayObject.js"],["static","./DisplayObjectContainer.js"],["static","./displayVisualState.js"],["static","./EgretError.js"],["static","./frameCaptureCache.js"],["static","./Stage.js"]],
+  "packages/runtime/dist/displayTreeState.js": [["static","./displayVisualState.js"],["static","./EgretError.js"],["static","./frameCaptureCache.js"]],
+  "packages/runtime/dist/displayTreeState.d.ts": [["static","./DisplayObject.js"],["static","./DisplayObjectContainer.js"],["static","./Stage.js"]],
+  "packages/runtime/src/displayVisualState.ts": [["static","./DisplayObject.js"],["static","./displayTreeState.js"],["static","./EgretError.js"],["static","./frameCaptureCache.js"],["static","./ownership.js"],["static","./ui/managedState.js"],["static","@egret/contracts"]],
+  "packages/runtime/dist/displayVisualState.js": [["static","./displayTreeState.js"],["static","./EgretError.js"],["static","./frameCaptureCache.js"],["static","./ownership.js"],["static","./ui/managedState.js"]],
+  "packages/runtime/dist/displayVisualState.d.ts": [["static","./DisplayObject.js"],["static","@egret/contracts"]],
+  "packages/engine/src/pointerInput.ts": [["static","./internal/mouseInputFactoryState.js"],["static","./internal/uiFactoryState.js"],["static","./mouseInput.js"],["static","./pointerInputTypes.js"],["static","./pointerInputTypes.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime/input"],["static","@egret/runtime/input"]],
+  "packages/engine/dist/pointerInput.js": [["static","./internal/mouseInputFactoryState.js"],["static","./internal/uiFactoryState.js"],["static","@egret/runtime"],["static","@egret/runtime/input"]],
+  "packages/engine/dist/pointerInput.d.ts": [["static","./pointerInputTypes.js"],["static","./pointerInputTypes.js"]],
+  "packages/engine/src/internal/uiFactoryState.ts": [["static","../pointerInputTypes.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],
+  "packages/engine/dist/internal/uiFactoryState.js": [["static","@egret/runtime"]],
+  "packages/engine/dist/internal/uiFactoryState.d.ts": [["static","../pointerInputTypes.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],
+  "packages/runtime/src/ui/index.ts": [["static","./displayCommit.js"],["static","./displayCommit.js"],["static","./heightIndex.js"],["static","./layout.js"],["static","./types.js"]],
+  "packages/runtime/dist/ui/index.js": [["static","./displayCommit.js"],["static","./heightIndex.js"],["static","./layout.js"]],
+  "packages/runtime/dist/ui/index.d.ts": [["static","./displayCommit.js"],["static","./displayCommit.js"],["static","./heightIndex.js"],["static","./layout.js"],["static","./types.js"]],
+  "packages/runtime/src/ui/managedState.ts": [["static","../DisplayObject.js"],["static","../displayTreeState.js"],["static","../EgretError.js"]],
+  "packages/runtime/dist/ui/managedState.js": [["static","../displayTreeState.js"],["static","../EgretError.js"]],
+  "packages/runtime/dist/ui/managedState.d.ts": [["static","../DisplayObject.js"]],
+  "packages/runtime/src/ui/displayCommit.ts": [["static","../displayHitState.js"],["static","../DisplayObject.js"],["static","../DisplayObjectContainer.js"],["static","../displayTreeState.js"],["static","../displayTreeState.js"],["static","../displayVisualState.js"],["static","../EgretError.js"],["static","../ownership.js"],["static","../Scope.js"],["static","../Stage.js"],["static","./managedState.js"],["static","@egret/contracts"]],
+  "packages/runtime/dist/ui/displayCommit.js": [["static","../displayHitState.js"],["static","../DisplayObjectContainer.js"],["static","../displayTreeState.js"],["static","../displayVisualState.js"],["static","../EgretError.js"],["static","../ownership.js"],["static","../Scope.js"],["static","./managedState.js"]],
+  "packages/runtime/dist/ui/displayCommit.d.ts": [["static","../DisplayObject.js"],["static","../DisplayObjectContainer.js"],["static","../Scope.js"],["static","../Stage.js"],["static","@egret/contracts"]],
+  "packages/runtime/src/ui/layout.ts": [["static","../EgretError.js"],["static","./types.js"]],
+  "packages/runtime/dist/ui/layout.js": [["static","../EgretError.js"]],
+  "packages/runtime/dist/ui/layout.d.ts": [["static","./types.js"]],
+  "packages/runtime/src/ui/heightIndex.ts": [["static","../EgretError.js"],["static","./types.js"]],
+  "packages/runtime/dist/ui/heightIndex.js": [["static","../EgretError.js"]],
+  "packages/runtime/dist/ui/heightIndex.d.ts": [["static","./types.js"]],
+  "packages/runtime/src/ui/types.ts": [],
+  "packages/runtime/dist/ui/types.js": [],
+  "packages/runtime/dist/ui/types.d.ts": [],
+  "packages/engine/src/ui/index.ts": [["static","./types.js"],["static","./uiRoot.js"]],
+  "packages/engine/dist/ui/index.js": [["static","./uiRoot.js"]],
+  "packages/engine/dist/ui/index.d.ts": [["static","./types.js"],["static","./uiRoot.js"]],
+  "packages/engine/src/ui/types.ts": [["static","../Engine.js"],["static","../pointerInputTypes.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],
+  "packages/engine/dist/ui/types.js": [],
+  "packages/engine/dist/ui/types.d.ts": [["static","../Engine.js"],["static","../pointerInputTypes.js"],["static","@egret/contracts"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],
+  "packages/engine/src/ui/uiRoot.ts": [["static","../internal/uiFactoryState.js"],["static","../pointerInputTypes.js"],["static","./types.js"],["static","./virtualList.js"],["static","./virtualList.js"],["static","@egret/runtime"],["static","@egret/runtime"],["static","@egret/runtime/ui"],["static","@egret/runtime/ui"]],
+  "packages/engine/dist/ui/uiRoot.js": [["static","../internal/uiFactoryState.js"],["static","./virtualList.js"],["static","@egret/runtime"],["static","@egret/runtime/ui"]],
+  "packages/engine/dist/ui/uiRoot.d.ts": [["static","./types.js"]],
+  "packages/engine/src/ui/virtualList.ts": [["static","./types.js"],["static","@egret/runtime"]],
+  "packages/engine/dist/ui/virtualList.js": [["static","@egret/runtime"]],
+  "packages/engine/dist/ui/virtualList.d.ts": [["static","./types.js"]],
+};
+
 function sceneGraphEdges(code) {
   return [...code.matchAll(/\b(?:from\s*|import\s*\(\s*|import\s*)['"]([^'"]+)['"]/g)]
     .map(match=>[/^import\s*\(/.test(match[0])?'dynamic':'static',match[1]])
     .sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
 }
-for (const [file,edges] of Object.entries({...sceneLiteralClosure,...m13SharedRenderingLiteralClosure,...m14WebGL2LiteralClosure,...m15ResourceRecoveryLiteralClosure,...m12IncrementalRenderingLiteralClosure})) {
+for (const [file,edges] of Object.entries({...sceneLiteralClosure,...m13SharedRenderingLiteralClosure,...m14WebGL2LiteralClosure,...m15ResourceRecoveryLiteralClosure,...m12IncrementalRenderingLiteralClosure,...m31UiLiteralClosure})) {
   const code=sceneRead(file);
   if (JSON.stringify(sceneGraphEdges(code))!==JSON.stringify(edges)) throw new Error('S3D1: scene entry imported outside approved closure: '+file);
   // Non-literal dynamic imports cannot hide an additional dependency edge.
@@ -4269,7 +4339,7 @@ for (const [entry,source,stem,values,types,rules] of m15ResourceSurfaces) {
 // Whole-clause multiplicity is independent of the generic per-edge admission.
 for (const [file,expectedClauses] of Object.entries(m15DeepClauses)) {
   const code=sceneRead(file);
-  const actual=[...code.matchAll(/\b(import|export)(\s+type)?\s*\{([^}]+)\}\s*from\s*['"](@egret\/contracts\/resources|#egret-manifest-resources)['"]/g)]
+  const actual=[...code.matchAll(/\b(import|export)(\s+type)?\s*\{([^}]+)\}\s*from\s*['"](@egret\/contracts\/resources|#egret-manifest-resources|@egret\/runtime\/ui)['"]/g)]
     .map(match=>({operation:match[1],kind:match[2]?'type':'value',members:match[3].split(',').map(member=>member.trim().replace(/\s+/g,' ')).filter(Boolean),target:match[4]}));
   if (!sceneEqual(actual.map(m15ClauseKey),expectedClauses.map(m15ClauseKey)))
     throw new Error('M15: exact named resource clause mismatch: '+file);
@@ -4373,5 +4443,52 @@ for (const file of ['packages/runtime/src/sharedFrameCapture.ts','packages/runti
     throw new Error('M15: public shared traversal acquired candidate authority: '+file);
 }
 // M15_RESOURCE_RECOVERY_BOUNDARY_END
+
+
+// M3.1 optional UI uses the existing exact surface and literal-edge mechanisms.
+// Retained predecessor fixtures remove their own helpers. UI uses permanent imports only.
+const uiRead=file=>readFileSync(path.join(root,file),'utf8').replace(/\/\*[\s\S]*?\*\//g,'').replace(/\/\/[^\n]*/g,'').trim();
+const uiSame=(a,b)=>JSON.stringify([...a].sort())===JSON.stringify([...b].sort());
+const uiGraphEdges=code=>[...code.matchAll(/\b(?:from\s*|import\s*\(\s*|import\s*)['"]([^'"]+)['"]/g)].map(match=>['literal',match[1]]);
+const uiValues=['createUiRoot'];
+const uiTypes=['LayoutNode','UiInvalidationKind','UiLimits','VirtualRecord','VirtualDataSource','RowBindContext','RowBinding','RowUnbindInfo','RowRetention','UiRowPointerNotification','UiRootOptions','UiPreparation','UiCommitResult','UiRowSnapshot','UiCounters','VirtualListSnapshot','UiSnapshot','VirtualListHandle','UiRoot'];
+const runtimeUiValues=['UiHeightIndex','captureUiLayout','createUiDisplayOperations','planUiLayout'];
+for(const [entry,values]of [['engine',await import('@egret/engine/ui')],['runtime',await import('@egret/runtime/ui')]])
+  if(!uiSame(Object.keys(values),entry==='engine'?uiValues:runtimeUiValues))throw new Error('M3.1: exact optional UI values mismatch: '+entry);
+for(const [file,typed]of [['packages/engine/src/ui/index.ts',true],['packages/engine/dist/ui/index.js',false],['packages/engine/dist/ui/index.d.ts',true]]){
+  const expected="export{createUiRoot}from'./uiRoot.js';"+(typed?"exporttype{"+uiTypes.join(',')+"}from'./types.js';":'');
+  if(uiRead(file).replace(/\s+/g,'').replaceAll('"',"'")!==expected)throw new Error('M3.1: exact optional UI facade mismatch: '+file);
+}
+for(const [label,values,stem]of textEntries){
+  const declaration=uiRead(stem+'.d.ts');
+  for(const name of [...uiValues,...uiTypes,...runtimeUiValues])
+    if(name in values||new RegExp('\\b'+name+'\\b').test(declaration))throw new Error('M3.1: optional UI leaked outside its entry: '+label+'/'+name);
+}
+const uiFactoryAllowed={
+  'src/Engine.ts':1,'src/pointerInput.ts':1,'src/ui/uiRoot.ts':1,
+  'dist/Engine.js':1,'dist/pointerInput.js':1,'dist/ui/uiRoot.js':1,
+};
+const managedStateAllowed=['DisplayObject','DisplayObjectContainer','Scope','displayHitState','displayVisualState'];
+for(const pkg of ['runtime','engine'])for(const file of [...files(path.join(root,'packages',pkg,'src')),...files(path.join(root,'packages',pkg,'dist'))]){
+  if(!/\.(?:ts|js)$/.test(file))continue;
+  const relative=path.relative(path.join(root,'packages',pkg),file).split(path.sep).join('/'),body=uiRead('packages/'+pkg+'/'+relative);
+  for(const [,target]of uiGraphEdges(body))if(target.startsWith('.')){
+    const resolved=path.relative(path.join(root,'packages',pkg),path.resolve(path.dirname(file),target)).split(path.sep).join('/');
+    if(pkg==='engine'&&/^(?:src|dist)\/internal\/uiFactoryState\.js$/.test(resolved)&&!Object.hasOwn(uiFactoryAllowed,relative))
+      throw new Error('M3.1: private UI authority imported outside named modules: '+relative);
+    if(pkg==='runtime'&&/^(?:src|dist)\/ui\//.test(resolved)&&!relative.includes('/ui/')){
+      const layer=relative.startsWith('src/')?'src':'dist';
+      if(resolved!==layer+'/ui/managedState.js'||!managedStateAllowed.some(name=>relative===layer+'/'+name+(layer==='src'?'.ts':'.js')))
+        throw new Error('M3.1: root runtime acquired optional UI logic: '+relative);
+    }
+    if(pkg==='engine'&&/^(?:src|dist)\/ui\//.test(resolved)&&!relative.includes('/ui/'))
+      throw new Error('M3.1: root engine acquired optional UI logic: '+relative);
+  }
+}
+for(const file of ['packages/runtime/src/ui/managedState.ts','packages/runtime/dist/ui/managedState.js','packages/engine/src/internal/uiFactoryState.ts','packages/engine/dist/internal/uiFactoryState.js']){
+  const body=uiRead(file);
+  if(/\b(?:setTimeout|setInterval|queueMicrotask|requestAnimationFrame|fetch|Worker|Date|performance)\b/.test(body)||/\bimport\s*\(/.test(body))
+    throw new Error('M3.1: eager UI authority acquired automatic host work: '+file);
+}
 
 console.log(`Boundary check PASS: four private workspace packages, actual exports resolution, ${inspected} source/build/declaration files, DOM-free core and exact DOM-only web subtree without Node imports/globals.`);

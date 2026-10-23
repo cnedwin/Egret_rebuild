@@ -61,6 +61,9 @@ const m15PairRegistrations = [["tools/spritesheet-boundary.mjs","m15ResourcePack
 const m3PointerSourceOwners = [{"path":"tools/spritesheet-boundary.mjs","bytes":202670,"sha256":"0da3517e80ae80562655bfcd98e6468c9a9f9ed16fde4b590f357cc4195365c4"},{"path":"tools/sequence-playback-boundary.mjs","bytes":45750,"sha256":"220c68bd0afcf72fc41ba75bf67844c75293b51c885023e5ad41a1c312a0bea9"},{"path":"tools/browser-png-boundary.mjs","bytes":209858,"sha256":"2fcd26757382cabb4c28ea8bb0652b6867c550add31f1c514661ce860a4f0ba0"},{"path":"tools/bitmap-resource-slot-boundary.mjs","bytes":40977,"sha256":"f6b5f7f4cae9c7eff328f5e7e6f53de7db23c977a587bfd0b76c9ee2e1112146"},{"path":"tools/bitmap-binding-ticket-boundary.mjs","bytes":47556,"sha256":"2b85a5206b2cfad092ecb42d1200b3e87d9a916a38529087862a94933bdbc4a6"},{"path":"tools/atlas-import-boundary.mjs","bytes":107421,"sha256":"6c670e346640165395fd0019b4fa7edd259fa844da70f8a04a9dabbdb597ae8f"}];
 // M2.1 admits only the six reviewed current boundary source owners.
 const m21ContentSourceOwners = [{"path":"tools/spritesheet-boundary.mjs","bytes":207646,"sha256":"4d51b7456094eed65c2db387d4f1407e8366360d78739e996e2c309bca5cb965"},{"path":"tools/sequence-playback-boundary.mjs","bytes":46593,"sha256":"f4bc56c5a4acb32126d9cd58138be1a61d0d977eab46fa3aba55ca964c5eca8b"},{"path":"tools/browser-png-boundary.mjs","bytes":214947,"sha256":"cf8a143d063995ba1f015e4d90fb72715257d3c1098c776df03ab63cb9b34498"},{"path":"tools/bitmap-resource-slot-boundary.mjs","bytes":41778,"sha256":"a03103fe528dda7292b80292e4a559f11ff54985de768ed49fdeb3d27aa3dc14"},{"path":"tools/bitmap-binding-ticket-boundary.mjs","bytes":48357,"sha256":"04e760910bee4ce84e4285a3ce9eae9eced72ecc1381c8c59fe0679762c2b0b1"},{"path":"tools/atlas-import-boundary.mjs","bytes":112375,"sha256":"88283e42d8081c407ff9cc0238a5eb8557c6f964a529549fac0df10f582a8e9b"}];
+const m31UiSourceOwners = [{"path":"tools/spritesheet-boundary.mjs","bytes":220067,"sha256":"b534701cdbcd7d0ef14019005234d29e69d5686999450654929b4524d09068b1"},{"path":"tools/sequence-playback-boundary.mjs","bytes":48793,"sha256":"fa09b4b2acaca3c70f0b4583b34dae3cf7a12b5de9fe754ee8bfe9815dca85dc"},{"path":"tools/browser-png-boundary.mjs","bytes":227685,"sha256":"dee49b3e1128b22bd999b367b178977825a0658744ed98f3893100ba8144093e"},{"path":"tools/bitmap-resource-slot-boundary.mjs","bytes":43941,"sha256":"d35fe029b5a4b94f7af3bbc151936a4c65d1bbb778dd412c48317156aaf57a67"},{"path":"tools/bitmap-binding-ticket-boundary.mjs","bytes":50520,"sha256":"f35e0311de99c1fd8030a67631dcdadecd03423d9cb966d54099b6d7e5bf28f9"},{"path":"tools/atlas-import-boundary.mjs","bytes":124821,"sha256":"d850cb52e476c323f63da1eca82a6e7e5bfda87a0ee80287dffab39a421595d4"}];
+const m31UiGraphRegistrations = [["tools/spritesheet-boundary.mjs","m31UiAdditionPins"],["tools/browser-png-boundary.mjs","m31UiAdditionPins"],["tools/atlas-import-boundary.mjs","m31UiAdditionPins"]];
+const m31UiPairRegistrations = [["tools/spritesheet-boundary.mjs","m31UiPackagePairs","raw-pair-observation-only"],["tools/spritesheet-boundary.mjs","m31UiSourcePairs","raw-pair-observation-only"],["tools/sequence-playback-boundary.mjs","m31UiPackagePairs","raw-pair-observation-only"],["tools/sequence-playback-boundary.mjs","m31UiSourcePairs","raw-pair-observation-only"],["tools/browser-png-boundary.mjs","m31UiPackagePairs","raw-pair-observation-only"],["tools/browser-png-boundary.mjs","m31UiSourcePairs","raw-pair-observation-only"],["tools/bitmap-resource-slot-boundary.mjs","m31UiPackagePairs","raw-pair-observation-only"],["tools/bitmap-resource-slot-boundary.mjs","m31UiSourcePairs","raw-pair-observation-only"],["tools/bitmap-binding-ticket-boundary.mjs","m31UiPackagePairs","raw-pair-observation-only"],["tools/bitmap-binding-ticket-boundary.mjs","m31UiSourcePairs","raw-pair-observation-only"],["tools/atlas-import-boundary.mjs","m31UiPackagePairs","raw-pair-observation-only"],["tools/atlas-import-boundary.mjs","m31UiSourcePairs","raw-pair-observation-only"]];
 const m3PointerGraphRegistrations = [["tools/spritesheet-boundary.mjs","m3PointerGraphSuccessor"],["tools/browser-png-boundary.mjs","m3PointerGraphSuccessor"],["tools/atlas-import-boundary.mjs","m3PointerGraphSuccessor"]];
 const m3PointerPairRegistrations = [["tools/spritesheet-boundary.mjs","m3PointerPackageSuccessors","raw-pair-observation-only"],["tools/sequence-playback-boundary.mjs","m3PointerPackageSuccessors","raw-pair-observation-only"],["tools/browser-png-boundary.mjs","m3PointerPackageSuccessors","raw-pair-observation-only"],["tools/bitmap-resource-slot-boundary.mjs","m3PointerPackageSuccessors","raw-pair-observation-only"],["tools/bitmap-binding-ticket-boundary.mjs","m3PointerPackageSuccessors","raw-pair-observation-only"],["tools/atlas-import-boundary.mjs","m3PointerPackageSuccessors","raw-pair-observation-only"]];
 // Explicit selectors keep historical transforms and third-party owners separate.
@@ -190,9 +193,11 @@ export function prepareBaselineReview(root){
     || m15GraphRegistrations.some(row=>row[0]===owner&&row[1]===binding)
     || m12PreparationGraphRegistrations.some(row=>row[0]===owner&&row[1]===binding)
     || m15PairRegistrations.some(row=>row[0]===owner&&row[1]===binding)
+    || m31UiGraphRegistrations.some(row=>row[0]===owner&&row[1]===binding)
+    || m31UiPairRegistrations.some(row=>row[0]===owner&&row[1]===binding)
     || m3PointerGraphRegistrations.some(row=>row[0]===owner&&row[1]===binding)
     || m3PointerPairRegistrations.some(row=>row[0]===owner&&row[1]===binding);
-   const reviewed=[...m13SourceOwners,...m14SourceOwners,...m15SourceOwners,...m15CancellationSourceOwners,...m15DiagnosticSourceOwners,...m12PreparationSourceOwners,...m3PointerSourceOwners,...m21ContentSourceOwners].filter(row=>row.path===owner);
+   const reviewed=[...m13SourceOwners,...m14SourceOwners,...m15SourceOwners,...m15CancellationSourceOwners,...m15DiagnosticSourceOwners,...m12PreparationSourceOwners,...m3PointerSourceOwners,...m21ContentSourceOwners,...m31UiSourceOwners].filter(row=>row.path===owner);
    if(!allowed||!reviewed.some(row=>samePin(read.pin(owner),row)))throw cause;
    // Raw source authority precedes extraction; no caller-selected parser fallback.
    const lines=text.split(/\r?\n/).filter(line=>line.startsWith('const '+binding+' = '));
@@ -242,7 +247,7 @@ export function prepareBaselineReview(root){
   });
   successorPairs.push({owner,binding,comparison:'raw-pair-observation-only',rows});
  }
- for(const [owner,binding,comparison]of [...m13PairRegistrations,...m3PointerPairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m15PairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding))]){
+ for(const [owner,binding,comparison]of [...m13PairRegistrations,...m31UiPairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m3PointerPairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding)),...m15PairRegistrations.filter(([owner,binding])=>ownerText(owner).includes('const '+binding))]){
   const pairs=registeredDeclaration(owner,binding),seen=new Set();
   if(!Array.isArray(pairs))throw Error('Expected registered M1.3 pair array');
   const rows=pairs.map(pair=>{
@@ -256,7 +261,7 @@ export function prepareBaselineReview(root){
  }
  // Historical owners without this later declaration remain readable as history.
  // Current post-preamble extraction still requires one exact reviewed raw owner.
- for(const [owner,binding]of [...m14GraphRegistrations,...m15GraphRegistrations,...m12PreparationGraphRegistrations,...m3PointerGraphRegistrations]){
+ for(const [owner,binding]of [...m14GraphRegistrations,...m15GraphRegistrations,...m12PreparationGraphRegistrations,...m3PointerGraphRegistrations,...m31UiGraphRegistrations]){
   if(!ownerText(owner).includes('const '+binding))continue;
   add(owner,binding,registeredDeclaration(owner,binding));
  }
@@ -273,6 +278,7 @@ export function prepareBaselineReview(root){
    const resourceRecoverySuccessor={owner:warmOwner,binding:'m15ResourceRecoveryGraphSuccessor'};
    const preparationHotPathSuccessor={owner:warmOwner,binding:'m12PreparationHotPathGraphSuccessor'};
    const pointerSuccessor={owner:warmOwner,binding:'m3PointerGraphSuccessor'};
+   const uiSuccessor=ownerText(warmOwner).includes('const m31UiAdditionPins')?{owner:warmOwner,binding:'m31UiAdditionPins'}:undefined;
   const declared=new Set(declarations.filter(x=>x.owner===owner&&(x.binding===baseBinding||x.binding===successorBinding)
    || x.owner===warmSuccessor.owner&&x.binding===warmSuccessor.binding
    || x.owner===incrementalSuccessor.owner&&x.binding===incrementalSuccessor.binding
@@ -280,8 +286,9 @@ export function prepareBaselineReview(root){
    || x.owner===webglSuccessor.owner&&x.binding===webglSuccessor.binding
     || x.owner===resourceRecoverySuccessor.owner&&x.binding===resourceRecoverySuccessor.binding
     || x.owner===preparationHotPathSuccessor.owner&&x.binding===preparationHotPathSuccessor.binding
-    || x.owner===pointerSuccessor.owner&&x.binding===pointerSuccessor.binding).flatMap(x=>x.rows.map(row=>row.expected.path)));
-  return {owner,baseBinding,successorBinding,warmSuccessor,incrementalSuccessor,sharedSuccessor,webglSuccessor,resourceRecoverySuccessor,preparationHotPathSuccessor,pointerSuccessor,unlisted:inventory.filter(file=>!declared.has(file)).map(file=>read.pin(file))};
+    || x.owner===pointerSuccessor.owner&&x.binding===pointerSuccessor.binding
+    || uiSuccessor&&x.owner===uiSuccessor.owner&&x.binding===uiSuccessor.binding).flatMap(x=>x.rows.map(row=>row.expected.path)));
+  return {owner,baseBinding,successorBinding,warmSuccessor,incrementalSuccessor,sharedSuccessor,webglSuccessor,resourceRecoverySuccessor,preparationHotPathSuccessor,pointerSuccessor,...(uiSuccessor?{uiSuccessor}:{}),unlisted:inventory.filter(file=>!declared.has(file)).map(file=>read.pin(file))};
  });
  // Many declarations can reference one path; retain every selector and pair arm.
  const byPath=new Map();

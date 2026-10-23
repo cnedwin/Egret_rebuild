@@ -1,3 +1,4 @@
+import { assertManagedMutable } from './ui/managedState.js';
 import type { Rectangle2D, SharedMaterial2D } from "@egret/contracts";
 import type { DisplayObject } from "./DisplayObject.js";
 import { assertLive, isDisplayNode } from "./displayTreeState.js";
@@ -107,6 +108,7 @@ export function writeAnchorOffset(receiver: unknown, axis: AnchorAxis, value: un
 }
 
 export function assertVisualMutable(node: DisplayObject): void {
+  assertManagedMutable(node);
   assertLive(node);
   engineOf(node)?.assertOpen();
 }

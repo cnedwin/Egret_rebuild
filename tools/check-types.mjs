@@ -141,6 +141,17 @@ try {
   });
   console.log('Tween individual unsuppressed diagnostic receipts: '+JSON.stringify(tweenReceipts));
 
+  // M3.1 retains each observed unsuppressed misuse tuple in the existing lane.
+  const uiCases = [{"name":"optional-entry-only","line":461,"column":19,"code":2339},{"name":"preparation-type-only","line":463,"column":18,"code":2339},{"name":"nonforgeable-preparation","line":465,"column":7,"code":2741},{"name":"required-list-source","line":467,"column":7,"code":2322},{"name":"unsupported-layout-kind","line":469,"column":51,"code":2322},{"name":"asynchronous-measure","line":471,"column":66,"code":2322},{"name":"immutable-snapshot","line":473,"column":20,"code":2540},{"name":"immutable-rows","line":475,"column":25,"code":2339},{"name":"invalid-retention-reason","line":477,"column":42,"code":2345},{"name":"unavailable-resource-total","line":479,"column":7,"code":2322}];
+  const uiMarkers=raw.split(/\r?\n/).flatMap((line,index)=>{const match=line.match(/@ts-expect-error UI_CASE ([\w-]+)/);return match?[{name:match[1],line:index+2}]:[];});
+  if(JSON.stringify(uiMarkers)!==JSON.stringify(uiCases.map(({name,line})=>({name,line})))||(raw.match(/UI_CASE/g)??[]).length!==10)throw Error('UI exact negative membership changed');
+  const uiReceipts=uiCases.map(expected=>{
+    const found=observedGeometry.filter(actual=>actual.file==='tests/types/invalid.generated.ts'&&actual.line===expected.line);
+    if(found.length!==1||found[0].column!==expected.column||found[0].code!==expected.code)throw Error('UI unsuppressed exact diagnostic changed: '+expected.name);
+    return {name:expected.name,actual:found[0]};
+  });
+  console.log('UI individual unsuppressed diagnostic receipts: '+JSON.stringify(uiReceipts));
+
   console.log(`Type fixtures PASS: positive + ${expected} checked negative assertions (${count} actual compiler errors).`);
 } finally {
   rmSync(invalid, { force: true });

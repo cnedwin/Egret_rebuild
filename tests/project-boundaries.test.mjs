@@ -171,6 +171,12 @@ test('copied WebGL2 Host identity refuses an unbridged resolution copy and resto
 }));
 const manifest=(fixture,name,mutate)=>fixture.edit(`packages/${name}/package.json`,raw=>{const pkg=JSON.parse(raw);mutate(pkg);return JSON.stringify(pkg);});
 const mutations=[
+  ['unknown UI named import',f=>f.edit('packages/engine/src/ui/uiRoot.ts',raw=>raw.replace('captureUiLayout, planUiLayout, UiHeightIndex, createUiDisplayOperations','captureUiLayout, planUiLayout, UiHeightIndex, createUiDisplayOperations, hiddenUiAuthority')),/unapproved named resource dependency/],
+  ['unapproved UI importer',f=>f.write('packages/engine/src/uiProbe.ts',"import type {UiLayoutNode} from '@egret/runtime/ui';\n"),/unapproved named resource dependency/],
+  ['UI private deep package',f=>f.write('packages/engine/src/uiProbe.ts',"import '@egret/runtime/ui/managedState';\n"),/unapproved\/deep package import/],
+  ['eager runtime UI logic',f=>f.write('packages/runtime/src/uiProbe.ts',"import type {UiLayoutTree} from './ui/types.js';\n"),/M3.1: root runtime acquired optional UI logic/],
+  ['eager engine UI logic',f=>f.write('packages/engine/src/uiProbe.ts',"import type {UiRoot} from './ui/types.js';\n"),/M3.1: root engine acquired optional UI logic/],
+  ['foreign private UI factory importer',f=>f.write('packages/engine/src/uiProbe.ts',"import {requireUiEngine} from './internal/uiFactoryState.js';\n"),/M3.1: private UI authority imported outside named modules/],
   ['duplicate contracts module identity',f=>f.write('node_modules/@egret/contracts/dist/index.js',readFileSync(path.join(f.root,'packages/contracts/dist/index.js'),'utf8')),/engine: image contract identity mismatch: IMAGE_LIMITS_2D/],
   ['range pin',f=>manifest(f,'project',pkg=>{pkg.dependencies['jsonc-parser']='^3.3.1';}),/project: external exact pin mismatch/],
   ...['constructor','toString','__proto__'].map(name=>[`inherited dependency ${name}`,f=>manifest(f,'project',pkg=>{Object.defineProperty(pkg.dependencies,name,{value:'1.0.0',enumerable:true});}),/project: dependency DAG mismatch/]),
@@ -285,6 +291,10 @@ for (const [label, file, suffix, reason] of [
 // M1.5 additions preserve the historical M1.3 refusal controls above.
 for (const [label, file, suffix, reason] of [
   ['observation data', 'tools/m15-strict-successors.json', '\n', 'changed successor data'],
+  ['UI managed source', 'packages/runtime/src/DisplayObject.ts', '\n// unregistered UI managed source\n',
+    'source/config/compiler identity changed: packages/runtime/src/DisplayObject.ts'],
+  ['UI tree declaration', 'packages/runtime/dist/displayTreeState.d.ts', '\n// unregistered UI tree declaration\n',
+    'source/config/compiler identity changed: packages/runtime/dist/displayTreeState.d.ts'],
   ['content plan declaration', 'packages/contracts/dist/ResourceManifest.d.ts', '\n// unregistered content plan declaration\n',
     'source/config/compiler identity changed: packages/contracts/dist/ResourceManifest.d.ts'],
   ['content tool lock', 'pnpm-lock.yaml', '\n', 'source/config/compiler identity changed: pnpm-lock.yaml'],
@@ -428,6 +438,7 @@ for (const owner of ['bitmap-resource-slot','linear-layout']) {
 // A complete current consumer baseline precedes each exact package drift.
 for (const [label, change] of [
  ['extra export', value=>{value.exports['./unreviewed']='./dist/index.js';}],
+ ['changed UI target', value=>{value.exports['./ui'].import='./dist/index.js';}],
  ['changed WebGL2 target', value=>{value.exports['./webgl2'].import='./dist/index.js';}],
  ['changed dependency', value=>{value.dependencies['robust-predicates']='3.0.4';}],
 ]) test('M1.4 strict package successor refuses '+label+' after a complete baseline',()=>isolated(fixture=>{

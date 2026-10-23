@@ -210,3 +210,7 @@ WebGL2 仅使用显式构建入口 `@egret/engine/webgl2` 与 `@egret/engine/web
 可选入口 @egret/engine/input 和 @egret/engine/web/pointer 遵循[多触点契约](knowledge-base/Cns/docs/multi-pointer-input.md)。保留旧 MI1 入口与真实 Engine/Scope/Stage 权限，核心状态位于无 DOM 的 runtime 输入模块。运行时端口单元序列、真实公共 Engine 行为及实际浏览器证据须分别报告。
 
 仅 tests/browser-pointer.test.mjs 可以将其明确声明、由测试拥有的 WebIDL/Window/Document/Canvas/EventTarget/PointerEvent/CSS/矩形端口安装为对应的完整全局属性描述符，串行执行，并在真实 Engine 清理后精确恢复。指定监听/捕获失败与重入仅发生在这些测试拥有的端口上。不允许替换真实原生原型、导入私有 SDK、增加产品测试导出或据此证明物理设备能力。浏览器示例与实际采集使用普通公共 SDK 入口且不拦截原生操作。
+
+## M3.1 托管 UI 单元验证
+
+仅 `tests/ui-display-commit.test.mjs`、`tests/ui-layout-unit.test.mjs` 和 `tests/ui-height-index-unit.test.mjs` 可直接使用构建后的可选 `@egret/runtime/ui` 组合入口，验证有界数值与托管发布单元。运行时身份测试使用真实公共运行时对象和测试自有上下文；输入数组 getter/Proxy 仅用于准入控制，不作为被接受的 Engine 外观。不得引入私有模块导入、原型或全局拦截及新增测试 API。公共生命周期、布局和列表测试使用真实 Engine/Scope 及 `@egret/engine/ui`。单元结果不能证明浏览器像素、物理内存、手机输入或性能通过。

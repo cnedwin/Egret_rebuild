@@ -30,12 +30,17 @@ test('example server exposes only allowlisted files and handles missing/bad requ
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'egret server 中文 '));
  fs.mkdirSync(path.join(root,'examples/resource-scene'),{recursive:true});
  fs.writeFileSync(path.join(root,'examples/resource-scene/index.html'),'<h1>example</h1>');
+  fs.mkdirSync(path.join(root,'examples/ui-data-panel'),{recursive:true});
+  for (const name of ['index.html','main.mjs','fixture.mjs','verify.mjs']) fs.writeFileSync(path.join(root,'examples/ui-data-panel',name),name);
  fs.writeFileSync(path.join(root,'.env'),'SECRET');
  const server=createExampleServer(root);
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
  const url='http://127.0.0.1:'+server.address().port;
  try {
   assert.equal(await (await fetch(url+'/')).text(),'<h1>example</h1>');
+    for (const name of ['index.html','main.mjs','fixture.mjs']) assert.equal(await (await fetch(url+'/examples/ui-data-panel/'+name)).text(),name);
+    assert.equal((await fetch(url+'/examples/ui-data-panel/verify.mjs')).status,404);
+    assert.equal((await fetch(url+'/vendor/robust-predicates/package.json')).status,404);
   assert.equal((await fetch(url+'/.env')).status,404);
   assert.equal((await fetch(url+'/package.json')).status,404);
   assert.equal((await fetch(url+'/examples/resource-scene/missing.mjs')).status,404);

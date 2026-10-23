@@ -395,7 +395,28 @@ const m21ContentModuleSuccessors = new Map([
 ]);
 assert.equal(m21ContentModuleSuccessors.size, 2);
 for (const name of m21ContentModuleSuccessors.keys()) assert.ok(m15ModuleIdentities.has(name), 'Content successor must retain M1.5 membership');
-const currentModuleIdentities = new Map([...m15ModuleIdentities, ...m12PerformanceModuleSuccessors, ...m33MouseCompatibilityModuleSuccessor, ...m21ContentModuleSuccessors]);
+// M3.1 retains every historical identity and changes only this exact default closure.
+// The optional UI assembly remains outside these four native entry points.
+const m31UiModuleSuccessors = new Map([
+  ["packages/engine/dist/Engine.js", { bytes: 22046, sha256: "42ea7f41b79061115a2ed3ac9312163201ca0a942627c8279b3484bf5a9b5239" }],
+  ["packages/runtime/dist/Scope.js", { bytes: 4927, sha256: "f49aff05fbef7adde7e96bb36f968ea2cbfb64b2875ba10a6c07f9455d1307ab" }],
+  ["packages/runtime/dist/displayTreeState.js", { bytes: 17075, sha256: "c7f4b2dc7895c9f14c532be2ef752fe54d7eeefba0716f2bf549e460864b0b0f" }],
+  ["packages/runtime/dist/displayVisualState.js", { bytes: 4129, sha256: "a3740df92ab4e1e2b8807674f5e79f2d07bf39bba18a4d6150249c0a22f7b998" }],
+  ["packages/runtime/dist/DisplayObject.js", { bytes: 7755, sha256: "581492976c85f3f8abb3c44039c06a4aa6fcf6e8153d4b174fa67d25249fd7aa" }],
+  ["packages/runtime/dist/displayHitState.js", { bytes: 3481, sha256: "99cbbb70f8c223fbbdf59bf892c4a216f45effa38d22a50f7aa18c9b6adba4d6" }],
+  ["packages/runtime/dist/DisplayObjectContainer.js", { bytes: 9277, sha256: "ec71cbae41ffda303f40ec404ede643e798c97bc3e421083873c5ad5ce15acc6" }],
+]);
+assert.equal(m31UiModuleSuccessors.size, 7);
+for (const name of m31UiModuleSuccessors.keys()) assert.ok(m15ModuleIdentities.has(name), 'UI successor must retain M1.5 membership');
+const m31UiModuleAdditions = new Map([
+  ["packages/runtime/dist/ui/managedState.js", { bytes: 1630, sha256: "40e519e12a711fde43556cf6f15d02214448dfc5e037eb070c215bd811e4ff62" }],
+  ["packages/engine/dist/internal/uiFactoryState.js", { bytes: 4420, sha256: "0a67b4189539e30baae0e7c7befc58fdeec6fdc357b352f93cecbd511cd06046" }],
+]);
+assert.equal(m31UiModuleAdditions.size, 2);
+for (const name of m31UiModuleAdditions.keys()) assert.ok(!m15ModuleIdentities.has(name), 'UI addition must be a new exact dependency');
+const m31SourceModuleLimit = 135;
+const currentModuleIdentities = new Map([...m15ModuleIdentities, ...m12PerformanceModuleSuccessors, ...m33MouseCompatibilityModuleSuccessor, ...m21ContentModuleSuccessors, ...m31UiModuleSuccessors, ...m31UiModuleAdditions]);
+assert.equal(currentModuleIdentities.size, m31SourceModuleLimit, 'M3.1 current closure table is incomplete');
 for (const name of currentModuleIdentities.keys()) allowedModules.add(name);
 function assertCurrentClosure() {
   assert.deepEqual([...served.keys()].map(url => url.slice(1)).sort(), [...currentModuleIdentities.keys()].sort(),
@@ -456,7 +477,7 @@ async function collect(name) {
   const url = '/' + name; if (served.has(url)) return;
   assert.ok(allowedModules.has(name), `Unapproved public native dependency: ${name}`);
   assert.ok(currentModuleIdentities.has(name), `Unapproved current native dependency: ${name}`);
-  assert.ok(served.size < m15SourceModuleLimit, 'Finite emitted closure exceeded');
+  assert.ok(served.size < m31SourceModuleLimit, 'Finite emitted closure exceeded');
   const path = resolve(repository, name), physical = await realpath(path);
   assert.ok(physical.startsWith(repository + sep), 'Selected dependency escaped repository');
   const body = await readFile(physical); assert.ok(body.length <= 1024 * 1024);
@@ -552,7 +573,7 @@ try {
   assert.equal(currentHost.sha256, m12PerformanceHostSourceSuccessor.sha256);
   report.publicRoute = { entries: entryNames.slice(0, 3), packageExports: { './scene3d': packageExports['./scene3d'], './webgpu/scene3d': packageExports['./webgpu/scene3d'] },
     hostSource: currentHost, historicalM12HostSource, m13HostSourceSuccessor, m15HostSourceSuccessor, m12PerformanceHostSourceSuccessor,
-    sourceCollection: { historicalModuleLimit: historicalSourceModuleLimit, currentModuleLimit: m15SourceModuleLimit, exactModules: [...currentModuleIdentities].map(([path, value]) => ({ path, ...value })) }, privateDiagnostic: 'packages/engine/dist/web/webgpuMeshPass.js', allowedModules: [...allowedModules].sort() };
+    sourceCollection: { historicalModuleLimit: historicalSourceModuleLimit, m15ModuleLimit: m15SourceModuleLimit, currentModuleLimit: m31SourceModuleLimit, exactModules: [...currentModuleIdentities].map(([path, value]) => ({ path, ...value })) }, privateDiagnostic: 'packages/engine/dist/web/webgpuMeshPass.js', allowedModules: [...allowedModules].sort() };
   const emitted = [...served.values()].reduce((sum, value) => sum + value.body.length, 0); assert.ok(emitted <= 4 * 1024 * 1024);
   // Bind matching first-party source files without scanning unrelated repository files.
   for (const url of served.keys()) {

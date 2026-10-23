@@ -186,7 +186,7 @@ export async function main(argv){
         'tools/build.mjs','tools/generate-project-format.mjs','tools/freeze-textured-webgpu-inputs.mjs','source-origin.json'])
         requirePolicy(seen.has(required),'BUILD_REQUIRED_INPUT',{relative:required});
     }
-    const graph=await bounded(collectPublicGraph(repository,retain,'m15-textured'),'collect-public-graph');
+    const graph=await bounded(collectPublicGraph(repository,retain,'m31-textured'),'collect-public-graph');
     for(const item of identities.values())if(item.roles.some(role=>role==='original-emission'||role==='original-source')){
       const relative=path.relative(repository,item.path).replaceAll(path.sep,'/');
       // Foundational physical paths may use the pnpm store; freeze their physical relative path too.
