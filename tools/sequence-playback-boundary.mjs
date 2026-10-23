@@ -143,9 +143,13 @@ function m13SequenceComplete(root){
  m15SequenceValidate(root);
  for(const row of rows){const pin=m15SequencePin(root,row.current),bytes=seqpbRead(root,pin.path);if(bytes.length!==pin.bytes||seqpbHash(bytes)!==pin.sha256)seqpbFail('SEQP_BOUNDARY_DEFAULT_ENTRY_IDENTITY','Complete M1.3 interface group differs: '+pin.path);}
 }
+// M2.1 dev-only dependency identities; historical package and lock pins remain intact.
+const m21ContentConfigurationPairs = [{"base":{"path":"package.json","bytes":1108,"sha256":"16a969b9a50653b1733893c59ee4cd1d29845208c11bd182036bc585372834d0"},"current":{"path":"package.json","bytes":1130,"sha256":"716cda606f58987f784aee2a64e46cf0c2e0130e84157d2a869879b4c3ae7c40"}},{"base":{"path":"pnpm-lock.yaml","bytes":9017,"sha256":"79383095fd4bb2bb4682a12f9651d9a876a01fc6dc1326d09bc0ad587db23084"},"current":{"path":"pnpm-lock.yaml","bytes":9271,"sha256":"061742afdc492e6e1721798dcc1b1539f8e4fd9d0274fa7c5fd9091917e57338"}}];
 function seqpbPin(root, pin, code) {
   pin = m13SequencePin(root, pin);
   const bytes = seqpbRead(root, pin.path);
+  const content=m21ContentConfigurationPairs.find(pair=>JSON.stringify(pair.base)===JSON.stringify(pin));
+  if(content&&bytes.length===content.current.bytes&&seqpbHash(bytes)===content.current.sha256)pin=content.current;
   if (m3PointerPackageSuccessor(pin, bytes) || m15ResourcePackageSuccessor(pin, bytes) || m14EnginePackageSuccessor(pin, bytes) || seqpbAtlasPackageSuccessor(pin, bytes)) return;
   if (bytes.length !== pin.bytes || seqpbHash(bytes) !== pin.sha256) seqpbFail(code, 'Source identity changed: ' + pin.path);
 }

@@ -387,7 +387,15 @@ const m33MouseCompatibilityModuleSuccessor = new Map([
 ]);
 assert.equal(m33MouseCompatibilityModuleSuccessor.size, 1);
 for (const name of m33MouseCompatibilityModuleSuccessor.keys()) assert.ok(m15ModuleIdentities.has(name), 'Mouse compatibility successor must retain M1.5 membership');
-const currentModuleIdentities = new Map([...m15ModuleIdentities, ...m12PerformanceModuleSuccessors, ...m33MouseCompatibilityModuleSuccessor]);
+// M2 content adds build-plan helpers only in these two existing resource modules.
+// Keep all historical pins, closure membership and native/request budgets unchanged.
+const m21ContentModuleSuccessors = new Map([
+  ["packages/contracts/dist/resources/index.js", { bytes: 348, sha256: "33e0fd9874ac06a2455af14a36b36e4caec75e318718c03755195961340d0ff2" }],
+  ["packages/contracts/dist/resources/manifestAdmission.js", { bytes: 18139, sha256: "552bdb9c52612564614943667322b73892e7dbcb1b506a2f102d758da335e0f5" }],
+]);
+assert.equal(m21ContentModuleSuccessors.size, 2);
+for (const name of m21ContentModuleSuccessors.keys()) assert.ok(m15ModuleIdentities.has(name), 'Content successor must retain M1.5 membership');
+const currentModuleIdentities = new Map([...m15ModuleIdentities, ...m12PerformanceModuleSuccessors, ...m33MouseCompatibilityModuleSuccessor, ...m21ContentModuleSuccessors]);
 for (const name of currentModuleIdentities.keys()) allowedModules.add(name);
 function assertCurrentClosure() {
   assert.deepEqual([...served.keys()].map(url => url.slice(1)).sort(), [...currentModuleIdentities.keys()].sort(),

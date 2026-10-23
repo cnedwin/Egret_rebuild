@@ -85,8 +85,8 @@
       "action": "move-pair",
       "previousZhSha256": "f43625255269c8801af0929179a9aab32cbca58094e4a842797e39171fc549b0",
       "previousEnSha256": "e8b100ccbd9d0fb99237a564f484f7fa6dbf008191570fa58f3e481c05c3e9f9",
-      "currentZhSha256": "4d1ce1657f84bb9ea8a726a8a1a926f5bd30a3600235aad01d9d0c6c7482e1b3",
-      "currentEnSha256": "2917249c9633d5383c247a08c0cd90c14b826e8cac5f1bf75dba0c60c99e98e8",
+      "currentZhSha256": "605a61bd353392acc0182383855e7b16b6b84c5203e5ba679afefb7a1b27513b",
+      "currentEnSha256": "78646ea11e3b32e58f161b06d78a63550de86c70864ab6da9acf22688f93ef50",
       "currentEngineeringPreview": "0.61.0"
     },
     {
@@ -964,8 +964,8 @@
       "action": "move-pair",
       "previousZhSha256": "803a40dd8bfd0f98ade51c8ba736790509aae12a6e045a8ea688b3ff5d01cdcf",
       "previousEnSha256": "40a2ef2f686aba4a10279c417dfe17879bb6396b3b80dd75b26bd09c87d665f9",
-      "currentZhSha256": "7aa661cc1cbbbb325383706f72f4876aa822555ced68c67a7f92936f8619e8f8",
-      "currentEnSha256": "3bfe74c03e0537ca7360d13c317d5c9ff69f25f373eb469a2f058e18d32703f1",
+      "currentZhSha256": "58e36ae84003173e545726a4ac96756c191df88b5fe0270d455d7dbbfde749d1",
+      "currentEnSha256": "7380bc464bec582776a37be71f534204391e5d99a26930fbe766ab19bd34441e",
       "currentEngineeringPreview": "0.61.0"
     },
     {

@@ -563,3 +563,42 @@ test('S13 actual request handler accepts every necessary route and retains finit
   assert.equal(value.report.requests.length,1247);assert.notEqual(value.report.requestOverflow,true);
   assert.equal(request('/index.html'),429);assert.equal(value.report.requestOverflow,true);assert.equal(value.report.requests.length,1247);
 });
+
+
+test('S14 content-build successors retain exact historical membership and current bytes', async () => {
+  const source = await readFile(cli, 'utf8');
+  const declaration = source.match(/const m21ContentModuleSuccessors = new Map\((\[[\s\S]*?\n\])\);/);
+  assert.ok(declaration, 'The reviewed two-file content successor must remain explicit');
+  const entries = runInNewContext(declaration[1], {}, { timeout: 1000 });
+  assert.deepEqual(JSON.parse(JSON.stringify(entries)), [
+    ['packages/contracts/dist/resources/index.js', { bytes: 348, sha256: '33e0fd9874ac06a2455af14a36b36e4caec75e318718c03755195961340d0ff2' }],
+    ['packages/contracts/dist/resources/manifestAdmission.js', { bytes: 18139, sha256: '552bdb9c52612564614943667322b73892e7dbcb1b506a2f102d758da335e0f5' }],
+  ]);
+  const policy = await completeCurrentClosure();
+  assert.deepEqual(JSON.parse(JSON.stringify(policy.m15ModuleIdentities.get(entries[0][0]))),
+    { bytes: 283, sha256: '2ea27b7090a99051f53c9a314142b34a01ac4f2831fce3435c0e7ccdc26335ea' });
+  assert.deepEqual(JSON.parse(JSON.stringify(policy.m15ModuleIdentities.get(entries[1][0]))),
+    { bytes: 16232, sha256: '39604bb6f530d229e576f0122e53d90d1b05270b2ae229322fe0f402e3d7c715' });
+  for (const [name, successor] of entries) {
+    assert.deepEqual(JSON.parse(JSON.stringify(policy.currentModuleIdentities.get(name))), JSON.parse(JSON.stringify(successor)));
+  }
+});
+
+for (const target of ['packages/contracts/dist/resources/index.js', 'packages/contracts/dist/resources/manifestAdmission.js']) {
+  test('S15 content-build successor refuses an unknown same-length byte: ' + target, async () => {
+    await completeCurrentClosure();
+    const original = await readFile(join(repository, target));
+    const policy = await emittedClosurePolicy({ selectedReadFile: async (...args) => {
+      const value = await readFile(...args);
+      if (resolve(args[0]) !== resolve(repository, target)) return value;
+      const copy = Buffer.from(value); copy[0] ^= 1;
+      assert.equal(copy.length, original.length);
+      return copy;
+    } });
+    await assert.rejects(policy.collect(target), error => error.code === 'ERR_ASSERTION' &&
+      error.message.startsWith('Current emitted raw identity changed: ' + target));
+    assert.equal(policy.served.size, 0, 'Changed successor must be refused before capture');
+    assert.deepEqual(await readFile(join(repository, target)), original);
+    await completeCurrentClosure();
+  });
+}

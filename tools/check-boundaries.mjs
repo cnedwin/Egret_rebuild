@@ -22,6 +22,10 @@ function files(dir) {
 }
 // M15: exact named metadata port and one private browser bridge. No deep-path wildcard.
 const m15DeepClauses = {
+  // M2.1: exact optional content adapter clauses; no general deep-import allowance.
+  "packages/project/src/resources/content.ts": [{"operation":"import","kind":"type","members":["AdmittedResourceManifest","ResourceBuildPlanDescription","ResourceBuildSourceEntry","ResourceManifestResult"],"target":"@egret/contracts/resources"},{"operation":"import","kind":"value","members":["buildResourceManifest","evaluateResourceBuildKeys","validateResourceBuildPlanDescription"],"target":"@egret/contracts/resources"}],
+  "packages/project/dist/resources/content.js": [{"operation":"import","kind":"value","members":["buildResourceManifest","evaluateResourceBuildKeys","validateResourceBuildPlanDescription"],"target":"@egret/contracts/resources"}],
+  "packages/project/dist/resources/content.d.ts": [{"operation":"import","kind":"type","members":["AdmittedResourceManifest","ResourceBuildPlanDescription"],"target":"@egret/contracts/resources"}],
   "packages/engine/dist/Engine.d.ts": [{"operation":"import","kind":"type","members":["AdmittedResourceManifest"],"target":"@egret/contracts/resources"}],
   "packages/engine/dist/manifestAssetGroup.js": [{"operation":"import","kind":"value","members":["isAdmittedResourceManifest"],"target":"@egret/contracts/resources"}],
   "packages/engine/dist/manifestResourceState.d.ts": [{"operation":"import","kind":"type","members":["AdmittedResourceManifest","ResourceManifestEntry"],"target":"@egret/contracts/resources"}],
@@ -32,10 +36,10 @@ const m15DeepClauses = {
   "packages/engine/src/manifestAssetGroup.ts": [{"operation":"import","kind":"value","members":["isAdmittedResourceManifest"],"target":"@egret/contracts/resources"},{"operation":"import","kind":"type","members":["AdmittedResourceManifest","ResourceManifestEntry"],"target":"@egret/contracts/resources"}],
   "packages/engine/src/manifestResourceState.ts": [{"operation":"import","kind":"value","members":["isAdmittedResourceManifest"],"target":"@egret/contracts/resources"},{"operation":"import","kind":"type","members":["AdmittedResourceManifest","ResourceManifestEntry"],"target":"@egret/contracts/resources"}],
   "packages/engine/web/ManifestByteSource.ts": [{"operation":"import","kind":"value","members":["isAdmittedResourceManifest"],"target":"@egret/contracts/resources"},{"operation":"import","kind":"type","members":["AdmittedResourceManifest","ResourceManifestEntry"],"target":"@egret/contracts/resources"},{"operation":"import","kind":"value","members":["requireManifestBinding","requireManifestAssetRef"],"target":"#egret-manifest-resources"},{"operation":"import","kind":"type","members":["ManifestBinding"],"target":"#egret-manifest-resources"}],
-  "packages/project/dist/resources/index.d.ts": [{"operation":"export","kind":"type","members":["ResourceBuildDescription","ResourceBuildEntry","ResourceManifestEntry","AdmittedResourceManifest"],"target":"@egret/contracts/resources"}],
+  "packages/project/dist/resources/index.d.ts": [{"operation":"export","kind":"type","members":["ResourceBuildPlanDescription"],"target":"@egret/contracts/resources"},{"operation":"export","kind":"type","members":["ResourceBuildDescription","ResourceBuildEntry","ResourceManifestEntry","AdmittedResourceManifest"],"target":"@egret/contracts/resources"}],
   "packages/project/dist/resources/manifest.d.ts": [{"operation":"import","kind":"type","members":["AdmittedResourceManifest","ResourceBuildDescription"],"target":"@egret/contracts/resources"}],
   "packages/project/dist/resources/manifest.js": [{"operation":"import","kind":"value","members":["admitResourceManifest","serializeResourceManifest as encodeManifest","validateResourceBuildDescription"],"target":"@egret/contracts/resources"}],
-  "packages/project/src/resources/index.ts": [{"operation":"export","kind":"type","members":["ResourceBuildDescription","ResourceBuildEntry","ResourceManifestEntry","AdmittedResourceManifest"],"target":"@egret/contracts/resources"}],
+  "packages/project/src/resources/index.ts": [{"operation":"export","kind":"type","members":["ResourceBuildPlanDescription"],"target":"@egret/contracts/resources"},{"operation":"export","kind":"type","members":["ResourceBuildDescription","ResourceBuildEntry","ResourceManifestEntry","AdmittedResourceManifest"],"target":"@egret/contracts/resources"}],
   "packages/project/src/resources/manifest.ts": [{"operation":"import","kind":"type","members":["AdmittedResourceManifest","ResourceBuildDescription","ResourceBuildEntry","ResourceManifestResult"],"target":"@egret/contracts/resources"},{"operation":"import","kind":"value","members":["admitResourceManifest","serializeResourceManifest as encodeManifest","validateResourceBuildDescription"],"target":"@egret/contracts/resources"}],
 };
 const m15ClauseKey = row => JSON.stringify([row.operation,row.kind,row.target,[...row.members].sort()]);
@@ -3804,9 +3808,12 @@ const m15ResourceRecoveryLiteralClosure = {
   "packages/contracts/src/resources/sha256.ts": [],
   "packages/contracts/dist/resources/sha256.js": [],
   "packages/contracts/dist/resources/sha256.d.ts": [],
-  "packages/project/src/resources/index.ts": [["static","./manifest.js"],["static","@egret/contracts/resources"]],
-  "packages/project/dist/resources/index.js": [["static","./manifest.js"]],
-  "packages/project/dist/resources/index.d.ts": [["static","./manifest.js"],["static","@egret/contracts/resources"]],
+  "packages/project/src/resources/index.ts": [["static","./content.js"],["static","./content.js"],["static","./manifest.js"],["static","@egret/contracts/resources"],["static","@egret/contracts/resources"]],
+  "packages/project/dist/resources/index.js": [["static","./content.js"],["static","./manifest.js"]],
+  "packages/project/dist/resources/index.d.ts": [["static","./content.js"],["static","./content.js"],["static","./manifest.js"],["static","@egret/contracts/resources"],["static","@egret/contracts/resources"]],
+  "packages/project/src/resources/content.ts": [["static","../api.js"],["static","../diagnostics.js"],["static","../limits.js"],["static","../live-input.js"],["static","../paths.js"],["static","../public.js"],["static","@egret/contracts"],["static","@egret/contracts/resources"],["static","@egret/contracts/resources"]],
+  "packages/project/dist/resources/content.js": [["static","../api.js"],["static","../diagnostics.js"],["static","../limits.js"],["static","../live-input.js"],["static","../paths.js"],["static","@egret/contracts/resources"]],
+  "packages/project/dist/resources/content.d.ts": [["static","../public.js"],["static","@egret/contracts"],["static","@egret/contracts/resources"]],
   "packages/project/src/resources/manifest.ts": [["static","../api.js"],["static","../diagnostics.js"],["static","../limits.js"],["static","../public.js"],["static","../text-input.js"],["static","@egret/contracts"],["static","@egret/contracts/resources"],["static","@egret/contracts/resources"]],
   "packages/project/dist/resources/manifest.js": [["static","../api.js"],["static","../diagnostics.js"],["static","../limits.js"],["static","../text-input.js"],["static","@egret/contracts/resources"]],
   "packages/project/dist/resources/manifest.d.ts": [["static","../public.js"],["static","@egret/contracts"],["static","@egret/contracts/resources"]],
@@ -4213,15 +4220,16 @@ for (const [label, specifier, source, stem] of ns1OptionalEntries) {
 // Values continue through public entries; private product units are read as text.
 const m15ResourceSurfaces = [
   ['contracts/resources','packages/contracts/src/resources/index.ts','packages/contracts/dist/resources/index',
-    ['validateResourceBuildDescription','admitResourceManifest','buildResourceManifest','serializeResourceManifest','isAdmittedResourceManifest','getResourceManifestIdentityInputs'],
-    ['ResourceBuildEntry','ResourceBuildDescription','ResourceManifestEntry','AdmittedResourceManifest','ResourceManifestDiagnosticCode','ResourceManifestDiagnostic','ResourceManifestResult','ResourceManifestIdentityInputs'],
-    {'./manifestAdmission.js':{value:['validateResourceBuildDescription','admitResourceManifest','buildResourceManifest','serializeResourceManifest','isAdmittedResourceManifest','getResourceManifestIdentityInputs']},
-      '../ResourceManifest.js':{type:['ResourceBuildEntry','ResourceBuildDescription','ResourceManifestEntry','AdmittedResourceManifest','ResourceManifestDiagnosticCode','ResourceManifestDiagnostic','ResourceManifestResult','ResourceManifestIdentityInputs']}}],
+    ['validateResourceBuildPlanDescription','evaluateResourceBuildKeys','validateResourceBuildDescription','admitResourceManifest','buildResourceManifest','serializeResourceManifest','isAdmittedResourceManifest','getResourceManifestIdentityInputs'],
+    ['ResourceBuildSourceEntry','ResourceBuildPlanDescription','ResourceBuildKeyEntry','ResourceBuildKeyPlan','ResourceBuildEntry','ResourceBuildDescription','ResourceManifestEntry','AdmittedResourceManifest','ResourceManifestDiagnosticCode','ResourceManifestDiagnostic','ResourceManifestResult','ResourceManifestIdentityInputs'],
+    {'./manifestAdmission.js':{value:['validateResourceBuildPlanDescription','evaluateResourceBuildKeys','validateResourceBuildDescription','admitResourceManifest','buildResourceManifest','serializeResourceManifest','isAdmittedResourceManifest','getResourceManifestIdentityInputs']},
+      '../ResourceManifest.js':{type:['ResourceBuildSourceEntry','ResourceBuildPlanDescription','ResourceBuildKeyEntry','ResourceBuildKeyPlan','ResourceBuildEntry','ResourceBuildDescription','ResourceManifestEntry','AdmittedResourceManifest','ResourceManifestDiagnosticCode','ResourceManifestDiagnostic','ResourceManifestResult','ResourceManifestIdentityInputs']}}],
   ['project/resources','packages/project/src/resources/index.ts','packages/project/dist/resources/index',
-    ['describeResourceBuild','parseResourceManifest','serializeResourceManifest'],
-    ['ResourceBuildDescription','ResourceBuildEntry','ResourceManifestEntry','AdmittedResourceManifest'],
+    ['describeResourceBuild','parseResourceManifest','serializeResourceManifest','describeContentRecipes','bindContentArtifacts','createContentAdoption'],
+    ['ResourceBuildPlanDescription','ResourceBuildDescription','ResourceBuildEntry','ResourceManifestEntry','AdmittedResourceManifest','ContentProducer','ContentOutputFile','ContentOutput','ContentBoundOutput','ContentArtifactBinding','ContentAdoptionOptions'],
     {'./manifest.js':{value:['describeResourceBuild','parseResourceManifest','serializeResourceManifest']},
-      '@egret/contracts/resources':{type:['ResourceBuildDescription','ResourceBuildEntry','ResourceManifestEntry','AdmittedResourceManifest']}}],
+      './content.js':{value:['describeContentRecipes','bindContentArtifacts','createContentAdoption'],type:['ContentProducer','ContentOutputFile','ContentOutput','ContentBoundOutput','ContentArtifactBinding','ContentAdoptionOptions']},
+      '@egret/contracts/resources':{type:['ResourceBuildPlanDescription','ResourceBuildDescription','ResourceBuildEntry','ResourceManifestEntry','AdmittedResourceManifest']}}],
   ['engine/resources','packages/engine/src/resources.ts','packages/engine/dist/resources',
     ['createManifestAssetBinding'],['ManifestBinding','ManifestAssetBinding','ManifestAssetGroup','ManifestGroupOptions'],
     {'./manifestResourceState.js':{value:['createManifestAssetBinding']},

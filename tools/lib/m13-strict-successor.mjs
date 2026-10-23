@@ -80,6 +80,91 @@ function m33PointerInputPin(root,selected,id,row){
 }
 // M33-POINTER-INPUT-CURRENT-END
 
+// M2.1 adds only the selected resource plan metadata, key functions and pngjs dev pin.
+// Historical inputs, compiler closures and diagnostic observations remain intact.
+const m21ResourceCurrent = [
+ {"base":{"path":"package.json","bytes":1108,"sha256":"16a969b9a50653b1733893c59ee4cd1d29845208c11bd182036bc585372834d0"},"current":{"path":"package.json","bytes":1130,"sha256":"716cda606f58987f784aee2a64e46cf0c2e0130e84157d2a869879b4c3ae7c40"}},
+ {"base":{"path":"pnpm-lock.yaml","bytes":9017,"sha256":"79383095fd4bb2bb4682a12f9651d9a876a01fc6dc1326d09bc0ad587db23084"},"current":{"path":"pnpm-lock.yaml","bytes":9271,"sha256":"061742afdc492e6e1721798dcc1b1539f8e4fd9d0274fa7c5fd9091917e57338"}},
+ {
+  "base": {
+   "path": "packages/contracts/dist/ResourceManifest.d.ts",
+   "bytes": 2165,
+   "sha256": "9deb851da529346c2ddeeb33a6cdc052941f08528d38e1c48ccc0569159d17b4"
+  },
+  "current": {
+   "path": "packages/contracts/dist/ResourceManifest.d.ts",
+   "bytes": 2890,
+   "sha256": "8e8ab318a772ffc6be3a04cead885f5f3f625de0d6b87088a2a9b32b4031e8d4"
+  }
+ },
+ {
+  "base": {
+   "path": "packages/contracts/dist/resources/index.d.ts",
+   "bytes": 503,
+   "sha256": "73963d013dcb1cc360d77841e21b13116c01286fa2bfe221eb9879bcca5de737"
+  },
+  "current": {
+   "path": "packages/contracts/dist/resources/index.d.ts",
+   "bytes": 669,
+   "sha256": "7d150a28016365de169fe8f61a74c8a1d6ab8f11ebfb0fe53a2bb653eb647adc"
+  }
+ },
+ {
+  "base": {
+   "path": "packages/contracts/dist/resources/manifestAdmission.d.ts",
+   "bytes": 935,
+   "sha256": "c770ee9adc1a2ed2c10de9a18e3adb53b17a7f765a7d2f452f6b8bd164289c31"
+  },
+  "current": {
+   "path": "packages/contracts/dist/resources/manifestAdmission.d.ts",
+   "bytes": 1259,
+   "sha256": "880db4a26ec673f0704dfe68378d8ecead13fe08d09bf11307879df4794e9e57"
+  }
+ },
+ {
+  "base": {
+   "path": "packages/contracts/src/ResourceManifest.ts",
+   "bytes": 2059,
+   "sha256": "ff2fa4e6e494507b5d58528b8dabdd033eb5369f577d309fcce566a690e15585"
+  },
+  "current": {
+   "path": "packages/contracts/src/ResourceManifest.ts",
+   "bytes": 2762,
+   "sha256": "a916c212cf9101e69f36f3781e08298928e0761c5cfa9d767302afcba3d070d3"
+  }
+ },
+ {
+  "base": {
+   "path": "packages/contracts/src/resources/index.ts",
+   "bytes": 507,
+   "sha256": "a2df37b06a9c313f2c1bb44464f4c96e1c4ef7c7bde1ae234668bc252b561d3a"
+  },
+  "current": {
+   "path": "packages/contracts/src/resources/index.ts",
+   "bytes": 673,
+   "sha256": "1da43be85f42ab602c6809cbc7e047de351e3c2b6da15b148ab1109d88cd6e0a"
+  }
+ },
+ {
+  "base": {
+   "path": "packages/contracts/src/resources/manifestAdmission.ts",
+   "bytes": 15728,
+   "sha256": "14df641417569f885e8658561da45dc6c5508380ab2c84f37f22b2ea734c1860"
+  },
+  "current": {
+   "path": "packages/contracts/src/resources/manifestAdmission.ts",
+   "bytes": 18245,
+   "sha256": "432b0ae0ff4e493010a4abd829398aea44d2cb23ba3d18b8507b045fb942d6be"
+  }
+ }
+];
+function m21ResourcePin(root,selected,id,row){
+ if(selected!==M15_DATA||!IDS.includes(id))return row;
+ const revision=m21ResourceCurrent.find(pair=>equal(pair.base,row));
+ if(!revision)return row;
+ return equal(fingerprintFile(root,row.path),revision.current)?revision.current:row;
+}
+
 /** Old inventories remain immutable; only a complete recorded group selects new rows. */
 export function selectM13StrictSuccessor(root,id,inventory){
  if(!IDS.includes(id))fail('unknown owner');
@@ -100,7 +185,7 @@ export function selectM13StrictSuccessor(root,id,inventory){
  if(!data.selectionPaths.some(file=>existsSync(path.join(root,file))))return null;
  const pins=new Map(data.inputs.map(row=>[row.path,row]));
  const nativePins=new Map(data.nativeLibraries.map(row=>[row.path,row]));
- const pin=file=>{const row=pins.get(file);if(!row)fail('unregistered selected input '+file);return m33PointerInputPin(root,selected,id,row);};
+ const pin=file=>{const row=pins.get(file);if(!row)fail('unregistered selected input '+file);return m21ResourcePin(root,selected,id,m33PointerInputPin(root,selected,id,row));};
  // Only these two predecessor inventories included their own gate bytes.
  // Their immutable historical rows remain provenance. The outer compiler
  // maintenance closure pins the current gate; this snapshot also rejects
@@ -112,7 +197,7 @@ export function selectM13StrictSuccessor(root,id,inventory){
  if(historicalGate&&!equal(inventory.inputPins.find(row=>row.path===historicalGate.path),historicalGate))fail('historical self-gate row changed');
  const currentGate=historicalGate?fingerprintFile(root,historicalGate.path):undefined;
  let inputPins=(inventory.inputPins??[]).map(row=>row.path===historicalGate?.path?currentGate
-  :owner.replacementPaths.includes(row.path)?pin(row.path):row).map(row=>m14EnginePackagePin(root,row)).map(row=>m33PointerInputPin(root,selected,id,row));
+  :owner.replacementPaths.includes(row.path)?pin(row.path):row).map(row=>m14EnginePackagePin(root,row)).map(row=>m33PointerInputPin(root,selected,id,row)).map(row=>m21ResourcePin(root,selected,id,row));
  for(const file of new Set(owner.groups.flatMap(group=>group.repositoryClosure.filter(file=>file.endsWith('.d.ts')))))
   if(!inputPins.some(row=>row.path===file))inputPins.push(pin(file));
  const wrapperOwner=realpathSync(path.join(root,'node_modules/typescript'));
@@ -187,5 +272,6 @@ export function selectM13StrictSuccessor(root,id,inventory){
   if(!equal(repository,selected.repositoryClosure)||!equal(libraries,selected.nativeLibraryClosure))fail('actual complete compiler closure changed');
   recheck();
  }
- return {inputPins,pin,group,recheck,verifyClosure};
+ const compilerPins=inventory.compiler?.pins?.map(row=>m21ResourcePin(root,selected,id,row));
+ return {inputPins,compilerPins,pin,group,recheck,verifyClosure};
 }

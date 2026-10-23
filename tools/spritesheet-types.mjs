@@ -20,7 +20,13 @@ const inventoryPin = { path: inventoryPath, bytes: inventoryBytes.length, sha256
 const selfBytes = readFileSync(fileURLToPath(import.meta.url));
 const selfPin = { path: 'tools/spritesheet-types.mjs', bytes: selfBytes.length, sha256: hash(selfBytes) };
 
+// The pngjs dev-only addition preserves the frozen compiler and consumer observations.
+const m21ContentLock = {base:{path:'pnpm-lock.yaml',bytes:9017,sha256:'79383095fd4bb2bb4682a12f9651d9a876a01fc6dc1326d09bc0ad587db23084'},current:{path:'pnpm-lock.yaml',bytes:9271,sha256:'061742afdc492e6e1721798dcc1b1539f8e4fd9d0274fa7c5fd9091917e57338'}};
 function readPin(pin, owner = root) {
+  if (owner === root && equal(pin,m21ContentLock.base)) {
+    const raw=readFileSync(path.join(root,pin.path));
+    if (raw.length===m21ContentLock.current.bytes && hash(raw)===m21ContentLock.current.sha256) pin=m21ContentLock.current;
+  }
   if (!pin || typeof pin.path !== 'string' || path.isAbsolute(pin.path) || pin.path.includes('\\')
     || pin.path.split('/').some(part => !part || part === '.' || part === '..')
     || !Number.isSafeInteger(pin.bytes) || pin.bytes < 0 || !/^[0-9a-f]{64}$/.test(pin.sha256)) fail('invalid relative input pin');

@@ -120,3 +120,18 @@ test('new frozen registration cannot relabel an unregistered original already pr
   assert.throws(()=>planMetadata(f.root,{base}),/frozen.*already.*base/i);
  }finally{f.close();}
 });
+
+
+test('first pngjs license registration preserves its exact reviewed upstream bytes',()=>{
+ const f=fixture();try{
+  const file='third-party/pngjs-7.0.0.LICENSE',body=fs.readFileSync(new URL('../../third-party/pngjs-7.0.0.LICENSE',import.meta.url));
+  f.put(file,body);const row={path:file,bytes:body.length,sha256:hash(body),originRole:'Unmodified upstream pngjs 7.0.0 MIT license; reviewed build-only dependency.'};
+  f.put('contributions/pngjs-content.json',JSON.stringify({schemaVersion:1,files:[],documents:[],frozenInputs:[row]}));
+  const plan=planMetadata(f.root,{base:f.base});writeMetadata(f.root,plan);checkIntegrated(f.root,planMetadata(f.root,{base:f.base}));
+  assert.deepEqual(JSON.parse(plan.outputs['source-origin.json']).files.find(x=>x.path===file),row);
+  f.put(file,Buffer.concat([body,Buffer.from('changed')]));assert.throws(()=>planMetadata(f.root,{base:f.base}),/frozen|reviewed|license/i);
+  f.put(file,body);const wrong={...row,path:'third-party/unreviewed.LICENSE'};f.put(wrong.path,body);
+  f.put('contributions/pngjs-content.json',JSON.stringify({schemaVersion:1,files:[],documents:[],frozenInputs:[wrong]}));
+  assert.throws(()=>planMetadata(f.root,{base:f.base}),/frozen|reviewed|license/i);
+ }finally{f.close();}
+});

@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## M2.1 content build foundation — 2026-10-23
+
+M2.1 adds verified PNG/atlas/sequence source builds, persistent cache reuse, dependency invalidation and immutable generations adopted through the existing project transaction. Sources and old generations remain intact. See the [content build contract](docs/content-build-pipeline.md). Complete Spine, fonts and target variants remain open.
+
 ## M3.3 multi-contact foundation — 2026-10-23
 
 M3.3 provides an optional DOM-free contact router and Engine/browser entries for independent multi-touch sessions, capture, cancellation and viewport/lifetime cleanup. The two-region example and reproducible desktop collector are included. Focused regression passes 176 tests. Read the [contract and evidence](docs/multi-pointer-input.md). Full M3.3 focus/IME, M3.4 gestures and physical Android/iPhone acceptance remain open.

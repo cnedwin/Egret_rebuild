@@ -128,6 +128,8 @@ function append(text) { return bytes => Buffer.concat([bytes, Buffer.from(text, 
 function jsonEdit(change) { return bytes => { const value = JSON.parse(bytes); change(value); return Buffer.from(JSON.stringify(value, null, 2) + '\n'); }; }
 const adapter = 'packages/engine/web/BrowserTextureProvider.ts';
 const cases = [
+  ['M2.1 content source rejects unreviewed bytes', 'packages/project/src/resources/content.ts', 'BIP_BOUNDARY_FINGERPRINT', append('// unreviewed content source\n')],
+  ['M2.1 pngjs version drift', 'package.json', 'BIP_BOUNDARY_DAG', jsonEdit(value => { value.devDependencies.pngjs = '7.0.1'; })],
   ['M1.2 runtime source with unchanged emission', 'packages/runtime/src/frameCapture.ts', 'BIP_BOUNDARY_FINGERPRINT', append('// unaccepted incremental capture source\n')],
   ['M1.2 new helper emission equal-size wrong hash', 'packages/engine/dist/rendering/preparedFrameCache2D.js', 'BIP_BOUNDARY_FINGERPRINT', bytes => { const changed = Buffer.from(bytes); changed[0] ^= 1; assert.equal(changed.length, bytes.length); return changed; }],
   ['root factory leak', 'packages/engine/src/index.ts', 'BIP_BOUNDARY_NONOPTIONAL_LEAK', append("\nexport { createBrowserTextureProvider } from '../web/image.js';\n")],

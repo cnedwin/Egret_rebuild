@@ -143,6 +143,8 @@ test('SS1-P00 current complete built graph satisfies SpriteSheet source/emission
   accepted(check(['--root', repository]));
 });
 const controls = [
+  { name: 'SS1-M21 content source rejects unreviewed bytes', file: 'packages/project/src/resources/content.ts', code: 'SS1_BOUNDARY_SOURCE_OWNER',
+    mutate: bytes => Buffer.concat([bytes, Buffer.from('// unreviewed content source\n')]) },
   { name: 'SS1-M12 runtime source cannot mix with unchanged emission', file: 'packages/runtime/src/frameCapture.ts', code: 'SS1_BOUNDARY_SOURCE_OWNER',
     mutate: bytes => Buffer.concat([bytes, Buffer.from('// unaccepted incremental capture source\n')]) },
   { name: 'SS1-M12 new helper emission rejects equal-size wrong hash', file: 'packages/engine/dist/rendering/preparedFrameCache2D.js', code: 'SS1_BOUNDARY_SOURCE_OWNER',

@@ -13,7 +13,7 @@ const seqpInventoryPath = 'tests/types/sequence-playback-diagnostic-expectations
 const seqpInventory = JSON.parse(readFileSync(path.join(seqpRoot, seqpInventoryPath), 'utf8'));
 // Preserve the immutable predecessor and authenticate the complete M1.3 successor.
 const m13HelperPin = fingerprintFile(seqpRoot, 'tools/lib/m13-strict-successor.mjs');
-if (m13HelperPin.bytes !== 16190 || m13HelperPin.sha256 !== '6410f814c90eaf001850a35ff74e826ca994e39cea7434b10a94dda165a01b88') throw Error('M1.3 strict helper changed before import');
+if (m13HelperPin.bytes !== 19535 || m13HelperPin.sha256 !== '7e458ff6c264079df2db6178014b4cea65b2067906484d2bf794c41e0e28c074') throw Error('M1.3 strict helper changed before import');
 const { selectM13StrictSuccessor } = await import('./lib/m13-strict-successor.mjs');
 const m13 = selectM13StrictSuccessor(seqpRoot, 'sequence-playback', seqpInventory);
 
@@ -89,7 +89,7 @@ if (seqpInventory.schemaVersion !== 1 || seqpInventory.kind !== 'SEQUENCE_PLAYBA
 const seqpCompilerPaths = ['node_modules/typescript/package.json', 'node_modules/typescript/bin/tsc',
   'node_modules/typescript/lib/tsc.js', 'node_modules/typescript/lib/getExePath.js', 'pnpm-lock.yaml'];
 if (!seqpEqual(seqpPinPaths(seqpInventory.compiler.pins), seqpCompilerPaths)) seqpFail('wrong compiler owner inventory');
-for (const pin of seqpInventory.compiler.pins) seqpReadPin(pin);
+for (const pin of m13?.compilerPins ?? seqpInventory.compiler.pins) seqpReadPin(pin);
 const seqpMetadata = JSON.parse(readFileSync(path.join(seqpRoot, seqpCompilerPaths[0]), 'utf8'));
 if (seqpMetadata.name !== 'typescript' || seqpMetadata.version !== '7.0.2'
   || !seqpEqual(seqpMetadata.bin, { tsc: './bin/tsc' })
@@ -246,7 +246,7 @@ for (const key of Object.keys(seqpEnvironment)) {
 }
 function seqpRecheck(trial) {
   m13?.recheck();
-  for (const pin of seqpInventory.compiler.pins) seqpReadPin(pin);
+  for (const pin of m13?.compilerPins ?? seqpInventory.compiler.pins) seqpReadPin(pin);
   for (const pin of seqpNativeCurrentPins) seqpReadPin(pin, seqpNativeRoot);
   for (const pin of seqpInventory.configurationPins) seqpReadPin(pin);
   seqpReadPin(trial.group.fixture);

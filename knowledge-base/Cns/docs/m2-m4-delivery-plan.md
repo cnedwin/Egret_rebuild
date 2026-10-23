@@ -12,6 +12,8 @@
 
 子系统主计划为 [M2 Spine／内容](m2-spine-content-plan.md)、[M3 UI／文字／输入](m3-ui-text-input-plan.md)、[M4 核心验收](m4-core-acceptance-plan.md)。它们细化[整体架构计划](architecture-and-engineering-plan.md)，原始契约与失败测量继续保留。
 
+M2.1 已有首批从源文件到构建产物的实现，覆盖 PNG、有限单页图集配置和序列帧，并接入持久缓存与项目采用。当前范围和证据参阅[内容构建契约](content-build-pipeline.md)。完整 Spine、字体和目标变体验收继续开放，保留既有十一个工作包。
+
 ## 架构选择
 
 | 方案 | 后果 | 决策 |

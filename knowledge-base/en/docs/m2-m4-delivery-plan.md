@@ -12,6 +12,8 @@ Make the existing core usable for animation-rich, complex-interface games throug
 
 The authoritative subsystem plans are [M2 Spine/content](m2-spine-content-plan.md), [M3 UI/text/input](m3-ui-text-input-plan.md) and [M4 core acceptance](m4-core-acceptance-plan.md). They extend the [architecture plan](architecture-and-engineering-plan.md); original contracts and failed measurements remain preserved.
 
+M2.1 now has a first source-to-build implementation for PNG, a finite single-page atlas profile and sequences, with persistent cache and project adoption. See the [content build contract](content-build-pipeline.md) for current scope and evidence. Full Spine/font/variant acceptance remains open; the existing eleven work packages are retained.
+
 ## Architectural choice
 
 | Approach | Consequence | Decision |

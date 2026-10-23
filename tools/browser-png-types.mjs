@@ -87,7 +87,10 @@ function m15ProductPin(expected) {
   return pair && m15ProductBranch === 'current' ? { path: pair.path, ...pair.current } : expected;
 }
 
+// M2.1 changes only the dev-only lock input; compiler observations remain frozen.
+const m21ContentLock = {"base":{"path":"pnpm-lock.yaml","bytes":9017,"sha256":"79383095fd4bb2bb4682a12f9651d9a876a01fc6dc1326d09bc0ad587db23084"},"current":{"path":"pnpm-lock.yaml","bytes":9271,"sha256":"061742afdc492e6e1721798dcc1b1539f8e4fd9d0274fa7c5fd9091917e57338"}};
 function checkPin(pin) {
+  if(equal(pin,m21ContentLock.base)&&equal(fingerprintFile(root,pin.path),m21ContentLock.current))pin=m21ContentLock.current;
   pin = m15ProductPin(pin);
   pin = m14EnginePackagePin(root, pin);
   if(m33PngPackageSelected&&equal(pin,m33PngEnginePackage.base))pin=m33PngEnginePackage.current;

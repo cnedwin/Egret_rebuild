@@ -26,6 +26,7 @@
     "@egret/contracts": "workspace:*",
     "@egret/runtime": "workspace:*",
     "jsonc-parser": "3.3.1",
+    "pngjs": "7.0.0",
     "typescript": "7.0.2"
   },
   "dependencies": {

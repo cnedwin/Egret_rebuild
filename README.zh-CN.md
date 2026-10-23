@@ -23,6 +23,10 @@ Years later, as times change and technology advances, many developers continue t
 
 [M2–M4 路线](knowledge-base/Cns/docs/m2-m4-delivery-plan.md)衔接完整 Spine／内容、UI／文字／输入及混合核心验收。从 [M2 #56](https://github.com/cnedwin/Egret_rebuild/issues/56)、[M3 #57](https://github.com/cnedwin/Egret_rebuild/issues/57) 或 [M4 #58](https://github.com/cnedwin/Egret_rebuild/issues/58) 选择完整工作包，每项说明代码入口、依赖和可评审验收。
 
+## M2.1 内容构建基础
+
+M2.1 增加经过字节验证的 PNG／图集／序列帧构建、持久缓存复用、依赖失效和通过现有项目事务采用的不可变代次，保留源文件与旧代次。参阅[内容构建契约](knowledge-base/Cns/docs/content-build-pipeline.md)。完整 Spine、字体和目标变体继续开放。
+
 ## M3.3 多触点基础
 
 M3.3 增加可选 DOM-free 触点路由及 Engine／浏览器入口，支持独立多触点会话、捕获、取消，以及视口和生命周期清理。附双区域示例与可复现桌面采集器，定向回归通过 176 项。参阅[契约与证据](knowledge-base/Cns/docs/multi-pointer-input.md)。完整 M3.3 焦点／IME、M3.4 手势及 Android／iPhone 真机验收继续开放。

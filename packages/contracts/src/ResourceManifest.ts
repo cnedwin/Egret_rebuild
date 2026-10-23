@@ -2,17 +2,36 @@
 import type { EntityId, JsonObject, ProjectFile, ProjectId, ProjectVersionPins } from './ProjectFormat.generated.js';
 
 declare const admittedManifestBrand: unique symbol;
-export interface ResourceBuildEntry {
+export interface ResourceBuildSourceEntry {
   readonly id: EntityId;
   readonly resourceKind: string;
   readonly source: ProjectFile;
-  readonly artifact: ProjectFile;
   readonly importer: { readonly id: string; readonly version: string };
   readonly settings: JsonObject;
   readonly artifactFormatVersion: string;
   readonly targetProfile: string;
   readonly dependencies: readonly EntityId[];
   readonly provenance: JsonObject;
+}
+export interface ResourceBuildEntry extends ResourceBuildSourceEntry {
+  readonly artifact: ProjectFile;
+}
+export interface ResourceBuildPlanDescription {
+  readonly format: 'egret.resource-build-plan/1';
+  readonly projectId: ProjectId;
+  readonly targetProfile: string;
+  readonly versions: ProjectVersionPins;
+  readonly entries: readonly ResourceBuildSourceEntry[];
+}
+export interface ResourceBuildKeyEntry extends ResourceBuildSourceEntry {
+  readonly buildKey: string;
+}
+export interface ResourceBuildKeyPlan {
+  readonly format: 'egret.resource-build-keys/1';
+  readonly projectId: ProjectId;
+  readonly targetProfile: string;
+  readonly versions: ProjectVersionPins;
+  readonly entries: readonly ResourceBuildKeyEntry[];
 }
 export interface ResourceBuildDescription {
   readonly format: 'egret.resource-build/1';

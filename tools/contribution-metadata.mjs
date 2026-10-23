@@ -8,6 +8,8 @@ import {createHash} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 import {logicalPath,fingerprintFile,canonicalTextBytes,samePhysicalPath} from './lib/file-identity.mjs';
 const LEDGERS=['localization.json','knowledge-base/documentation-layout.json','source-origin.json'];
+// One reviewed new legal original; historical legal files still cannot be refreshed.
+const PNGJS_LICENSE={path:'third-party/pngjs-7.0.0.LICENSE',bytes:1150,sha256:'be75ef59c5cf59715588a17a82dff7dd3e83c4dba3c458676bb9311e05fbedc5'};
 // Declarations cannot publish private/generated trees; legal originals use a separate review.
 const excludedParts=new Set(['.superpowers','.agents','.codex','.git','work','node_modules','dist','build','pnpm-store','.pnpm-store','private','raw-logs','traces','screenshots','counterexample-trees']);
 const excluded=p=>p.split('/').some(x=>excludedParts.has(x.toLowerCase())||/^\.env(?:\.|$)/i.test(x))||p.toLowerCase().endsWith('.tsbuildinfo');
@@ -68,7 +70,8 @@ export function planMetadata(root,{base}={}){
   // New compiler observations have an explicit first-registration path. Their
   // reviewed raw tuple is immutable thereafter; old files cannot be relabelled.
   for(const row of d.frozenInputs??[]){
-   if(!row||typeof row.path!=='string'||!/^tests\/types\/[a-z0-9-]+-diagnostic-expectations\.json$/.test(row.path))throw Error('Invalid frozen compiler path');
+   if(!row||typeof row.path!=='string'||!( /^tests\/types\/[a-z0-9-]+-diagnostic-expectations\.json$/.test(row.path)||row.path===PNGJS_LICENSE.path))throw Error('Invalid frozen compiler or reviewed license path');
+   if(row.path===PNGJS_LICENSE.path&&(row.bytes!==PNGJS_LICENSE.bytes||row.sha256!==PNGJS_LICENSE.sha256))throw Error('Reviewed license identity differs');
    logicalPath(row.path);
    if(declared.has(row.path))throw Error('Duplicate frozen compiler declaration: '+row.path);
    if(Object.keys(row).sort().join(',')!=='bytes,originRole,path,sha256'||!Number.isSafeInteger(row.bytes)||row.bytes<0||!/^[a-f0-9]{64}$/.test(row.sha256)||typeof row.originRole!=='string'||row.originRole.length<12)throw Error('Invalid frozen compiler declaration');
@@ -78,7 +81,7 @@ export function planMetadata(root,{base}={}){
    if(previous){
     if(previous.bytes!==row.bytes||previous.sha256!==row.sha256||previous.originRole!==row.originRole)throw Error('Frozen compiler baseline differs: '+row.path);
    }else{
-    originalCompilerPaths??=new Set(git(root,['ls-tree','-r','--name-only','-z',commit,'--','tests/types']).split('\0').filter(Boolean));
+    originalCompilerPaths??=new Set(git(root,['ls-tree','-r','--name-only','-z',commit,'--','tests/types','third-party']).split('\0').filter(Boolean));
     if(originalCompilerPaths.has(row.path))throw Error('Frozen compiler input already exists at base: '+row.path);
     const entry={...row};origin.files.push(entry);registered.set(row.path,entry);
    }
