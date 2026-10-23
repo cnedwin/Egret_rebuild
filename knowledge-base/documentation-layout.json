@@ -36,8 +36,8 @@
       "action": "move-pair",
       "previousZhSha256": "9de14fd2a1e74069ec8718ebaa0d39a13afce4b836a2eba5bb521c94f1df5dda",
       "previousEnSha256": "f7feb36d983e8da309bbe161a51b398c7233e1cac9678572fc8ce0f2941af2b7",
-      "currentZhSha256": "03a3db36ebfa0d88957e3f9edb5a09dc729ae8134f020f56dccacba23c300b35",
-      "currentEnSha256": "ed023fd34ab97bdaafa07be6c92a815395c37cec90b7e49b04c2e6d40e5114b7"
+      "currentZhSha256": "73149c598d6a1875c86c8dbfc3622f9be4ad69bd69bc51fa02e7e55c03b045fa",
+      "currentEnSha256": "c9cc0c4b53828547a1df7c72bcff00ab27391e3be67aa23401d7999f3b216dbf"
     },
     {
       "oldZh": "DOCUMENTATION.md",

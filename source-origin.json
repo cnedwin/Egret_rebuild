@@ -358,16 +358,16 @@
     {
       "path": "CONTRIBUTING.md",
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
-      "sha256": "ed023fd34ab97bdaafa07be6c92a815395c37cec90b7e49b04c2e6d40e5114b7",
-      "bytes": 6520,
+      "sha256": "c9cc0c4b53828547a1df7c72bcff00ab27391e3be67aa23401d7999f3b216dbf",
+      "bytes": 6773,
       "previousRevisionSha256": "cfd1f60cfae8c262a8897e78b542e7f3036c3d492b5bbab79bdd80be80677e4d",
       "previousLayoutPath": "CONTRIBUTING.en.md",
       "previousLayoutSha256": "ea91269863610b03cc682a3656d77b55325631c6b897efb0c6bcb534d5ac5fee"
     },
     {
       "path": "CONTRIBUTING.zh-CN.md",
-      "sha256": "03a3db36ebfa0d88957e3f9edb5a09dc729ae8134f020f56dccacba23c300b35",
-      "bytes": 5417,
+      "sha256": "73149c598d6a1875c86c8dbfc3622f9be4ad69bd69bc51fa02e7e55c03b045fa",
+      "bytes": 5645,
       "originRole": "Independent first-party WebGPU implementation, tests, tooling or public documentation; previous original hashes retain historical scope.",
       "previousPublicSha256": "da6292f0408cc88f776b7d113924b364dd045b94d3a7541e85d71e1964ed4dae",
       "previousRevisionSha256": "373de5c518c0208d972ceef4c331d8ae81853102ca6aee8dbd1f90064c57bec8",
@@ -2112,7 +2112,7 @@
       "originRole": "International documentation navigation or first-party publication tooling; historical evidence remains separately versioned.",
       "path": "knowledge-base/documentation-layout.json",
       "bytes": 138808,
-      "sha256": "64827f9a45fd659a6a04f580216e714dea86dd9fe47caa772917f7aea1960561",
+      "sha256": "302e0279d2f421a4f12493b3578401c8446c465a33194f61d33bd1480c2a59d5",
       "identityHistory": [
         {
           "bytes": 136391,
@@ -3786,7 +3786,7 @@
     {
       "originRole": "Original first-party Egret F2-A source planning, strict development verification or paired public curation; external libraries retain their separate licenses.",
       "path": "localization.json",
-      "sha256": "f96d7a3e342440ade733ce912d1c584e27ca07988589ca2ef71e7afdd7c3320b",
+      "sha256": "9cb5b5cc331da4650f9274061590ca62fc7e095a0779c8ae9425ffb92c814d29",
       "bytes": 360682,
       "previousRevisionSha256": "27eccf67ea4b83cf33d3451b214c81030ecbcb0d05ee7e4c3e736038bf072a50",
       "previousLayoutPath": "localization.json",
@@ -10436,8 +10436,8 @@
     {
       "path": ".github/workflows/ci.yml",
       "originRole": "First-party M0 environment, onboarding, collaboration or current configuration maintenance; AI-assisted from the approved M0 plan; Apache-2.0.",
-      "bytes": 3677,
-      "sha256": "a6108be8d123090a57f7d27ab090bed8c7236315ad62c2b4e031f8fdb347c378"
+      "bytes": 3761,
+      "sha256": "61ed7aa86bca9ee2005f6df7cdb8ca8aabaffe1dd3505463c577d9c8ea14e97d"
     },
     {
       "path": ".node-version",
