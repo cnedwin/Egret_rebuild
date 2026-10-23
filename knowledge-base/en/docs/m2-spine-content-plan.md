@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/m2-spine-content-plan.md)
 
-Design proposal · 2026-10-21 · No implementation or new acceptance is claimed.
+Design proposal · 2026-10-23 · No implementation or new acceptance is claimed.
 
 ## Outcome and entry conditions
 
@@ -60,6 +60,16 @@ The initial playback profile is concrete and versioned; these defaults are work 
 - Dispatch the committed event queue after advancement, before UI layout. Callback-triggered animation mutations apply at the next advancement boundary; disposal immediately suppresses later callbacks for that instance. Report listener exceptions through the existing error path without replaying already delivered events or rolling back committed time. Hidden instances advance by default; disabling visual work does not disable required events or physics.
 
 The instance policy records these limits at construction. Applications may choose different positive bounded limits through an explicit profile; changes require equivalent reference tests and cannot weaken a published support row. No hidden RAF/timer loop is added.
+
+### Advance failure and staged-operation contract
+
+M2.2 owns the following state and publication rules; M2.1 checks the selected upstream runtime against them. Validate tick identity, elapsed time and admitted segment limits before ordinary advancement. Ordinary advancement mutates one instance; it does not clone the complete skeleton/physics state every frame to promise general rollback. On an unexpected mid-advance failure, mark that instance faulted, suppress the uncommitted event batch and new geometry, and retain only its last successfully published visual snapshot. Faulted instances reject further advancement until explicitly rebuilt from admitted history or reset by the application; report that mutable semantic state was not rolled back. Other instances and the game clock continue. Previously delivered events remain delivered, and retained frames remain immutable. Listener errors after commitment keep the separate existing listener-error policy.
+
+Seek and resource replacement use private candidates and keep the active instance untouched until success. Geometry publication is a separate commit domain: failed allocation/conversion never publishes a partial frame or silently rolls back already committed animation time/events. M2.3 defines the diagnostic and retained-snapshot behavior for that failure; M2.4 verifies it together with resource replacement. A whole-instance fault and a graphics publication failure must not be reported as the same state.
+
+Replay history includes ordered track/mix, skin/attachment, rate, root transform and admitted external constraint/physics inputs with game-time/tick identity. Unsupported direct upstream mutations invalidate replay eligibility. History has an explicit byte/command bound; eviction moves the earliest reconstructible point only when a qualified complete checkpoint exists, otherwise seeks requiring lost history are refused. No unbounded command log or inferred wall-clock input is allowed. The package records exact limits before exposing replay APIs; the existing segment/event limits still apply.
+
+Acceptance adds a genuine mid-advance fault, prevalidation refusal, geometry-publication failure after semantic commitment, event-listener failure, cancelled candidate and missing-history seek. Assert each instance state, old/new snapshot, time and event outcome; verify unaffected instances still advance. Fixed ordinary updates must show that complete instance cloning is not part of the hot path. These are behavioral/allocation checks, not performance acceptance.
 
 ### 3. One graphics path, with explicit compatibility
 
@@ -130,7 +140,7 @@ M2.1 freezes artifact/diagnostic interfaces. M2.2 and M2.3 agree the draw/instan
 
 ## Community contribution and verification
 
-Keep issue #56 as the M2 parent and create at most these four child work packages. Each issue has a behavior deliverable, interface dependencies, source areas, reference assets, focused reproduction, reviewer and explicit external blockers. A contributor can own pipeline tooling, playback, rendering or fixture authoring without maintaining global ledgers. Subtasks inside an issue are checklists, not a proliferation of standalone tickets.
+Keep issue #56 as the M2 parent and retain its existing four child work packages (#83–#86). Each issue has a behavior deliverable, interface dependencies, source areas, reference assets, focused reproduction, reviewer and explicit external blockers. A contributor can own pipeline tooling, playback, rendering or fixture authoring without maintaining global ledgers. Subtasks inside an issue are checklists, not a proliferation of standalone tickets.
 
 Use the existing entry commands: `pnpm setup:dev`, `pnpm check:quick`, then `node tools/check-incremental.mjs --base origin/main`. The proposed importer/player APIs above are not available commands. Final merge retains independent review, the existing complete merge checks, bilingual documentation, source/asset notices and affected real-browser evidence. Do not repeat unrelated C7/legacy suites merely because a barrel transitively imports an unchanged helper.
 

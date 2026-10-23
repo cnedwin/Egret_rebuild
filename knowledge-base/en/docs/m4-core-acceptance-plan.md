@@ -2,7 +2,7 @@
 
 English | [简体中文](../../Cns/docs/m4-core-acceptance-plan.md)
 
-Design proposal · 2026-10-21 · Parent: [M4 #58](https://github.com/cnedwin/Egret_rebuild/issues/58)
+Design proposal · 2026-10-23 · Parent: [M4 #58](https://github.com/cnedwin/Egret_rebuild/issues/58)
 
 ## 1. Outcome and scope
 
@@ -11,6 +11,8 @@ M4 demonstrates that the declared 2D rendering, complex UI, animation and resour
 M4 retains the established scope: complex UI, complete Spine for the selected version, sequence animation, resource replacement and the existing bounded 3D background composition. It does not add imported or animated 3D characters, a general material/VFX system, a world editor, native Runtime or new platform SDKs. Those remain product obligations with subsequent implementation and acceptance plans.
 
 The deliverable is a qualified core preview with a precise capability matrix, editable example, measurements and migration notes. Completion does not mean the full all-in-one creation platform or complete one-click legacy migration is available.
+
+M4.3 must name its delivered scope as a complex 2D UI/animation/resource core preview with bounded 3D-background composition. It does not qualify general 3D scene assets, materials, animated characters or effects, native SDKs or the all-in-one editor. Those product capabilities remain explicit later roadmap work; completing M4 cannot close them.
 
 ## 2. Starting point and dependencies
 
@@ -125,6 +127,16 @@ Record download bytes, cache state and actual traffic shaping; the first-interac
 
 X-D60/1 uses explicit memory ceilings that partly coincide with M1 for a conservative initial target. Its scene and asset composition are different, so M1's memory or startup evidence cannot qualify X. Missing budget evidence stays OPEN; it cannot be replaced by fixture construction or functional success.
 
+### Measurement ownership and exact spans
+
+M4.1 owns the scene declaration; M4.2 owns measurement definitions and the independent result review. Keep the original M1 workload, collector span and failed results unchanged. X uses a separate whole-engine CPU measure: include engine input routing, animation advancement, queued engine event work, style/measure/layout, transforms/clips, capture, preparation/packing and synchronous upload/encoding/submission. Include scenario callback work occurring inside those intervals rather than subtracting guessed costs. Only the predeclared external fixture/application mutation generator is outside this measure, and its duration is reported separately. If engine work is deferred across tasks or workers, attribute all active CPU intervals to their logical update, avoid nested double-counting, and report worker CPU and elapsed readiness separately. Waiting for network/GPU is not CPU work; frame gaps, readiness and response still include their observable effects. An uninstrumented required phase leaves whole-engine acceptance OPEN.
+
+Compute p95 from per-update whole-engine samples; report phase distributions for attribution, never sum phase p95 values. Preserve the X target of 8 ms and preparation target of 4 ms, and record their exact boundaries before collection. Freeze the changed properties, values, mutation order, animation clock and input schedule for static/sparse/full-dirty. The static state has frozen animation; warm animated performance is represented by the declared advancing states and cannot be inferred from static caching. Fix list viewport/minimum row height/overscan so the 32-row reference view plus any retained focused row stays within the 48-container total; count descendant UI nodes in the 600-visible-node allowance.
+
+Correctness, performance and lifecycle runs may use different instrumentation and schedules, but final acceptance uses the same qualified source/artifact identities and complete selected scene semantics. Reduced development fixtures are explicitly labelled and cannot replace X or required L rows. Discover cost and correctness risks on the first executable mixed slice; retain final combined acceptance after all required features are present. Do not compare builds with different feature coverage as an optimization pair.
+
+Keep portable owned-allocation/cache counters, replacement peaks and cleanup trends distinct from optional browser/process heap or physical GPU observations. Account for retained old/new generations and provider scratch/storage once in their declared classes; do not add overlapping JS/Wasm/asset ledgers into a fictitious physical total. Unavailable physical measurements remain unmeasured. Proposed X ceilings remain targets until the integrated workload establishes them.
+
 ## 6. Performance and external boundaries
 
 For the original M1 D60 workload, retain Engine p95 ≤ 8 ms, preparation p95 ≤ 4 ms, frame-interval p95/p99 ≤ 16.7/33.4 ms and the fixed relative-regression criterion. The Engine span includes capture and synchronous Host work, excluding workload update. GPU p95 ≤ 8 ms is separate and remains unmeasured without real GPU evidence.
@@ -156,6 +168,6 @@ Likewise, `packages/project/src/legacy-res-plan.ts` and related planners remain 
 
 Keep parent #58 with three linked work packages. Each package has one specification, shared interface decisions and one acceptance summary; several reviewable PRs are allowed without turning every helper or collector into a task.
 
-The design-stage entry is open for interface, scenario, documentation and asset-provenance feedback. Implementation begins after the corresponding interfaces are reviewed. Contributors can take a complete package or a bounded contribution within it with the maintainer; dependency and owner status remain readable in Issues and Milestones. When Projects permission is available, mirror those same Issues and statuses into the existing board.
+The design-stage entry is open for interface, scenario, documentation and asset-provenance feedback. Implementation begins after the corresponding interfaces are reviewed. Contributors can take a complete package or a bounded contribution within it with the maintainer; dependency and owner status remain readable in Issues and Milestones. Projects access was restored on 2026-10-21; maintain those same Issues and statuses in the existing board.
 
 M4 closes only when M4.1–M4.3 and all required prerequisite/profile rows pass. Experimental publication with explicit limitations may precede closure. Full 3D, native/minigame platform delivery, the integrated AI workbench and complete migration keep their own subsequent product plans.
