@@ -1,0 +1,151 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "examples/sequence-controls/PROVENANCE.md",
+      "originRole": "First-party sequence controls, shared lifecycle integration, original programmatic reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/sequence-controls/PROVENANCE.zh-CN.md",
+      "originRole": "First-party sequence controls, shared lifecycle integration, original programmatic reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/sequence-controls/README.md",
+      "originRole": "First-party sequence controls, shared lifecycle integration, original programmatic reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/sequence-controls/README.zh-CN.md",
+      "originRole": "First-party sequence controls, shared lifecycle integration, original programmatic reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/sequence-controls/author.mjs",
+      "originRole": "First-party sequence controls, shared lifecycle integration, original programmatic reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/sequence-controls/fixture.mjs",
+      "originRole": "First-party sequence controls, shared lifecycle integration, original programmatic reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/sequence-controls/fixture.test.mjs",
+      "originRole": "First-party sequence controls, shared lifecycle integration, original programmatic reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/sequence-controls/index.html",
+      "originRole": "First-party sequence controls, shared lifecycle integration, original programmatic reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/sequence-controls/main.mjs",
+      "originRole": "First-party sequence controls, shared lifecycle integration, original programmatic reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/sequence-controls/selection.mjs",
+      "originRole": "First-party sequence controls, shared lifecycle integration, original programmatic reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/sequence-controls/sources/atlas.json",
+      "originRole": "First-party sequence controls, shared lifecycle integration, original programmatic reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/sequence-controls/sources/decimal-atlas.json",
+      "originRole": "First-party sequence controls, shared lifecycle integration, original programmatic reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/sequence-controls/sources/generate-png.mjs",
+      "originRole": "First-party sequence controls, shared lifecycle integration, original programmatic reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/sequence-controls/sources/page.png",
+      "originRole": "First-party sequence controls, shared lifecycle integration, original programmatic reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/sequence-controls/sources/recipe.json",
+      "originRole": "First-party sequence controls, shared lifecycle integration, original programmatic reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/sequence-controls/verification-summary.json",
+      "originRole": "First-party sequence controls, shared lifecycle integration, original programmatic reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "examples/sequence-controls/verify.mjs",
+      "originRole": "First-party sequence controls, shared lifecycle integration, original programmatic reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/Cns/docs/sequence-controls.md",
+      "originRole": "First-party sequence controls, shared lifecycle integration, original programmatic reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "knowledge-base/en/docs/sequence-controls.md",
+      "originRole": "First-party sequence controls, shared lifecycle integration, original programmatic reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "packages/engine/src/animation/index.ts",
+      "originRole": "First-party sequence controls, shared lifecycle integration, original programmatic reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/animation/sequenceController.ts",
+      "originRole": "First-party sequence controls, shared lifecycle integration, original programmatic reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/animation/sequenceCoordinator.ts",
+      "originRole": "First-party sequence controls, shared lifecycle integration, original programmatic reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/animation/sequenceInput.ts",
+      "originRole": "First-party sequence controls, shared lifecycle integration, original programmatic reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/animation/sequenceMath.ts",
+      "originRole": "First-party sequence controls, shared lifecycle integration, original programmatic reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/animation/types.ts",
+      "originRole": "First-party sequence controls, shared lifecycle integration, original programmatic reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/internal/sequenceControllerFactoryState.ts",
+      "originRole": "First-party sequence controls, shared lifecycle integration, original programmatic reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "packages/engine/src/sequenceTargetClaims.ts",
+      "originRole": "First-party sequence controls, shared lifecycle integration, original programmatic reference fixtures and documentation, independently authored with AI assistance; Apache-2.0.",
+      "criticalComment": true
+    },
+    {
+      "path": "tests/sequence-controller-fixture.mjs",
+      "originRole": "First-party sequence controls, shared lifecycle integration, original programmatic reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/sequence-controller-integration.test.mjs",
+      "originRole": "First-party sequence controls, shared lifecycle integration, original programmatic reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/sequence-controller-lifecycle.test.mjs",
+      "originRole": "First-party sequence controls, shared lifecycle integration, original programmatic reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    },
+    {
+      "path": "tests/sequence-controller.test.mjs",
+      "originRole": "First-party sequence controls, shared lifecycle integration, original programmatic reference fixtures and documentation, independently authored with AI assistance; Apache-2.0."
+    }
+  ],
+  "documents": [
+    {
+      "en": "knowledge-base/en/docs/sequence-controls.md",
+      "zh": "knowledge-base/Cns/docs/sequence-controls.md"
+    },
+    {
+      "en": "examples/sequence-controls/README.md",
+      "zh": "examples/sequence-controls/README.zh-CN.md"
+    },
+    {
+      "en": "examples/sequence-controls/PROVENANCE.md",
+      "zh": "examples/sequence-controls/PROVENANCE.zh-CN.md"
+    }
+  ]
+}

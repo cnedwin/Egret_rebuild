@@ -1,0 +1,98 @@
+{
+  "format": "egret.content-build-recipe/1",
+  "targetProfile": "web-shared/1",
+  "recipes": [
+    {
+      "resourceId": "e_page",
+      "sourceFileId": "f_page",
+      "importer": {
+        "id": "egret.png",
+        "version": "1.0.0"
+      },
+      "settings": {},
+      "artifactFormatVersion": "png/1",
+      "dependencies": [],
+      "provenance": {
+        "origin": "original programmatic four-color fixture",
+        "license": "Apache-2.0",
+        "notice": "Synthetic Aseprite 1.3.18.6 metadata profile; no exporter qualification."
+      }
+    },
+    {
+      "resourceId": "e_atlas",
+      "sourceFileId": "f_atlas",
+      "importer": {
+        "id": "egret.aseprite-atlas",
+        "version": "1.0.0"
+      },
+      "settings": {
+        "pageName": "page.png"
+      },
+      "artifactFormatVersion": "egret.atlas/1",
+      "dependencies": [
+        "e_page"
+      ],
+      "provenance": {
+        "origin": "original programmatic four-color fixture",
+        "license": "Apache-2.0",
+        "notice": "Synthetic Aseprite 1.3.18.6 metadata profile; no exporter qualification."
+      }
+    },
+    {
+      "resourceId": "e_sequence",
+      "sourceFileId": "f_atlas",
+      "importer": {
+        "id": "egret.sequence",
+        "version": "1.0.0"
+      },
+      "settings": {},
+      "artifactFormatVersion": "egret.sequence/1",
+      "dependencies": [
+        "e_atlas"
+      ],
+      "provenance": {
+        "origin": "original programmatic four-color fixture",
+        "license": "Apache-2.0",
+        "notice": "Synthetic Aseprite 1.3.18.6 metadata profile; no exporter qualification."
+      }
+    },
+    {
+      "resourceId": "e_decimal_atlas",
+      "sourceFileId": "f_decimal",
+      "importer": {
+        "id": "egret.aseprite-atlas",
+        "version": "1.0.0"
+      },
+      "settings": {
+        "pageName": "page.png"
+      },
+      "artifactFormatVersion": "egret.atlas/1",
+      "dependencies": [
+        "e_page"
+      ],
+      "provenance": {
+        "origin": "original programmatic four-color fixture",
+        "license": "Apache-2.0",
+        "notice": "Synthetic Aseprite 1.3.18.6 metadata profile; no exporter qualification."
+      }
+    },
+    {
+      "resourceId": "e_decimal_sequence",
+      "sourceFileId": "f_decimal",
+      "importer": {
+        "id": "egret.sequence",
+        "version": "1.0.0"
+      },
+      "settings": {},
+      "artifactFormatVersion": "egret.sequence/1",
+      "dependencies": [
+        "e_decimal_atlas"
+      ],
+      "provenance": {
+        "origin": "original programmatic four-color fixture",
+        "license": "Apache-2.0",
+        "notice": "Synthetic Aseprite 1.3.18.6 metadata profile; no exporter qualification."
+      }
+    }
+  ]
+}

@@ -152,6 +152,17 @@ try {
   });
   console.log('UI individual unsuppressed diagnostic receipts: '+JSON.stringify(uiReceipts));
 
+  // Match every optional sequence-control misuse to its actual compiler tuple.
+  const sequenceControlCases = [{"name":"optional-entry-only","line":489,"column":21,"code":2339},{"name":"controller-type-only","line":491,"column":23,"code":2551},{"name":"unknown-profile","line":493,"column":59,"code":2322},{"name":"invalid-repeat-kind","line":495,"column":95,"code":2322},{"name":"numeric-marker-id","line":497,"column":106,"code":2322},{"name":"invalid-callback-return","line":499,"column":97,"code":2322},{"name":"invalid-seek-replay","line":501,"column":42,"code":2322},{"name":"immutable-state","line":503,"column":24,"code":2540},{"name":"nonforgeable-controller","line":505,"column":7,"code":2741},{"name":"discriminated-completion","line":509,"column":11,"code":2339}];
+  const sequenceControlMarkers=raw.split(/\r?\n/).flatMap((line,index)=>{const match=line.match(/@ts-expect-error SEQUENCE_CONTROL_CASE ([\w-]+)/);return match?[{name:match[1],line:index+2}]:[];});
+  if(JSON.stringify(sequenceControlMarkers)!==JSON.stringify(sequenceControlCases.map(({name,line})=>({name,line})))||(raw.match(/SEQUENCE_CONTROL_CASE/g)??[]).length!==10)throw Error('Sequence control exact negative membership changed');
+  const sequenceControlReceipts=sequenceControlCases.map(expected=>{
+    const found=observedGeometry.filter(actual=>actual.file==='tests/types/invalid.generated.ts'&&actual.line===expected.line);
+    if(found.length!==1||found[0].column!==expected.column||found[0].code!==expected.code)throw Error('Sequence control unsuppressed exact diagnostic changed: '+expected.name);
+    return {name:expected.name,actual:found[0]};
+  });
+  console.log('Sequence control individual unsuppressed diagnostic receipts: '+JSON.stringify(sequenceControlReceipts));
+
   console.log(`Type fixtures PASS: positive + ${expected} checked negative assertions (${count} actual compiler errors).`);
 } finally {
   rmSync(invalid, { force: true });

@@ -179,3 +179,26 @@ test('Spine diagnostic tuples recognize only the exact compiler-escaped checkout
   assert.equal(parse(selected+'(2,3): error TS2694: '+original+'\n')[0].message,original);
  }
 });
+
+test('sequence example serves bounded generated artifacts without exposing other work',async()=>{
+ const root=fs.mkdtempSync(path.join(os.tmpdir(),'egret sequence example '));
+ const prefix='work/sequence-controls/run-Ab12Cd',hash='a'.repeat(64);
+ const allowed=['examples/sequence-controls/index.html','examples/sequence-controls/main.mjs',
+  'examples/sequence-controls/selection.mjs','examples/sequence-controls/fixture.mjs',
+  prefix+'/browser-config.json',prefix+'/candidate.json',
+  prefix+'/build/generations/'+hash+'/manifest.json',prefix+'/build/blobs/sha256/'+hash];
+ const refused=['examples/sequence-controls/author.mjs','examples/sequence-controls/verify.mjs',
+  prefix+'/private.json',prefix+'/source.png','work/other/candidate.json',
+  'work/sequence-controls/run-Ab12Cd-more/candidate.json',
+  prefix+'/build/generations/'+hash+'/private.json',prefix+'/build/blobs/sha256/not-a-hash'];
+ for(const file of [...allowed,...refused]){fs.mkdirSync(path.dirname(path.join(root,file)),{recursive:true});fs.writeFileSync(path.join(root,file),file);}
+ const server=createExampleServer(root);
+ await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
+ const url='http://127.0.0.1:'+server.address().port;
+ try{
+  for(const file of allowed){const response=await fetch(url+'/'+file);assert.equal(response.status,200,file);assert.equal(await response.text(),file);}
+  for(const file of refused)assert.equal((await fetch(url+'/'+file)).status,404,file);
+  assert.equal((await fetch(url+'/'+prefix+'/candidate.json',{method:'HEAD'})).status,200);
+  assert.equal((await fetch(url+'/'+prefix+'/candidate.json',{method:'POST'})).status,405);
+ }finally{await new Promise(resolve=>server.close(resolve));fs.rmSync(root,{recursive:true,force:true});}
+});

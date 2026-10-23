@@ -145,6 +145,8 @@ const cases = [
   }],
   ['erased type gains runtime value', 'packages/engine/dist/web/image.js', 'BIP_BOUNDARY_TYPE_VALUE', append('\nexport const BrowserPngPorts = 1;\n')],
   ['wrong existing route', 'packages/engine/package.json', 'BIP_BOUNDARY_EXPORT_MAP', jsonEdit(value => { value.exports['./web/image'].import = './dist/web/index.js'; })],
+  ['wrong animation route', 'packages/engine/package.json', 'BIP_BOUNDARY_EXPORT_MAP', jsonEdit(value => { value.exports['./animation'].import = './dist/animation/types.js'; })],
+  ['extra animation mapping field', 'packages/engine/package.json', 'BIP_BOUNDARY_EXPORT_MAP', jsonEdit(value => { value.exports['./animation'].default = './dist/animation/index.js'; })],
   ['wrong UI route', 'packages/engine/package.json', 'BIP_BOUNDARY_EXPORT_MAP', jsonEdit(value => { value.exports['./ui'].import = './dist/ui/types.js'; })],
   ['extra UI mapping field', 'packages/engine/package.json', 'BIP_BOUNDARY_EXPORT_MAP', jsonEdit(value => { value.exports['./ui'].default = './dist/ui/index.js'; })],
   ['Node import', adapter, 'BIP_BOUNDARY_DAG', append("\nimport { readFileSync } from 'node:fs';\n")],

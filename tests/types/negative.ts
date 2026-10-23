@@ -478,3 +478,36 @@ uiNegativeRoot.list('rows').retain('key','selection');
 // @ts-expect-error UI_CASE unavailable-resource-total
 const uiNegativeDemand: number = uiNegativeSnapshot.counters.resourceDemands;
 void uiNegativePreparation; void uiNegativeNoSource; void uiNegativeGrid; void uiNegativeMeasure; void uiNegativeDemand;
+
+// Misuse must produce actual diagnostics in the existing unsuppressed consumer lane.
+import * as SequenceControlRoot from '@egret/engine';
+import * as SequenceControlPublic from '@egret/engine/animation';
+import type {SequenceController as NegativeSequenceController, SequenceControllerOptions as NegativeSequenceOptions, SequenceControllerStatus as NegativeSequenceStatus, SequenceControllerEvent as NegativeSequenceEvent} from '@egret/engine/animation';
+declare const negativeSequence: NegativeSequenceController;
+declare const negativeSequenceStatus: NegativeSequenceStatus;
+// @ts-expect-error SEQUENCE_CONTROL_CASE optional-entry-only
+SequenceControlRoot.createSequenceController;
+// @ts-expect-error SEQUENCE_CONTROL_CASE controller-type-only
+SequenceControlPublic.SequenceController;
+// @ts-expect-error SEQUENCE_CONTROL_CASE unknown-profile
+const negativeSequenceProfile: NegativeSequenceOptions = {profile: 'egret.sequence-control/2'};
+// @ts-expect-error SEQUENCE_CONTROL_CASE invalid-repeat-kind
+const negativeSequenceRepeat: NegativeSequenceOptions = {profile: 'egret.sequence-control/1', totalPlays: 'forever'};
+// @ts-expect-error SEQUENCE_CONTROL_CASE numeric-marker-id
+const negativeSequenceMarker: NegativeSequenceOptions = {profile: 'egret.sequence-control/1', markers: [{id: 1, timeSeconds: 0}]};
+// @ts-expect-error SEQUENCE_CONTROL_CASE invalid-callback-return
+const negativeSequenceCallback: NegativeSequenceOptions = {profile: 'egret.sequence-control/1', onEvent: () => true};
+// @ts-expect-error SEQUENCE_CONTROL_CASE invalid-seek-replay
+negativeSequence.seek({timeSeconds: 0.5, replayEvents: 'yes'});
+// @ts-expect-error SEQUENCE_CONTROL_CASE immutable-state
+negativeSequenceStatus.state = 'running';
+// @ts-expect-error SEQUENCE_CONTROL_CASE nonforgeable-controller
+const negativeSequenceFake: NegativeSequenceController = {profile:'egret.sequence-control/1', start(){}, pause(){}, resume(){}, setRate(){}, seek(){}, stop(){}, dispose(){}, getStatus(){ return negativeSequenceStatus; }};
+function negativeSequenceNarrow(event: NegativeSequenceEvent): void {
+  if (event.kind === 'complete') {
+    // @ts-expect-error SEQUENCE_CONTROL_CASE discriminated-completion
+    event.markerIndex;
+  }
+}
+void negativeSequenceProfile; void negativeSequenceRepeat; void negativeSequenceMarker;
+void negativeSequenceCallback; void negativeSequenceFake; void negativeSequenceNarrow;

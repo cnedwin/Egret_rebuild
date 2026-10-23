@@ -185,3 +185,44 @@ test('textured 134/135 UI successor source boundary rejects an actual extra modu
   try { assert.deepEqual(summary(await collect()), summary(before)); } catch (error) { failures.push(error); }
   if (failures.length) throw new AggregateError(failures, '134/135 refusal, local restoration and complete baseline');
 });
+
+test('textured 136/137 sequence successor source boundary rejects an actual extra module and restores the complete fixture', async t => {
+  const fs = await import('node:fs'), os = await import('node:os'), path = await import('node:path');
+  const { collectPublicGraph } = await import('../tools/textured-webgpu/native-files.mjs');
+  const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'egret-textured-source-cap-')));
+  t.after(() => fs.rmSync(root, {recursive:true,force:true}));
+  const put = (relative, body) => {
+    const file = path.join(root, relative); fs.mkdirSync(path.dirname(file), {recursive:true}); fs.writeFileSync(file, body);
+  };
+  const module = (name, body) => {
+    put('packages/engine/dist/' + name + '.js', body);
+    put('packages/engine/' + (name.startsWith('web/') ? '' : 'src/') + name + '.ts', body);
+  };
+  fs.mkdirSync(path.join(root, 'packages/engine/node_modules/robust-predicates'), {recursive:true});
+  module('index', "export * from './Engine.js';\n");
+  module('Engine', "import './internal/texturedFrameState.js';\nimport './r0.js';\n");
+  module('internal/texturedFrameState', 'export const registry = {};\n');
+  module('web/webgpu', "export * from './WebGPUHost.js';\n");
+  module('web/WebGPUHost', "import '#egret-textured-frame-state';\n");
+  for (let index = 0; index < 132; index++) module('r' + index,
+    index < 130 ? "import './r" + (index + 1) + ".js';\n" : 'export const end = true;\n');
+  const collect = async () => {
+    const pins = [];
+    const graph = await collectPublicGraph(root, (row, role) => pins.push({path:row.path,bytes:row.bytes,sha256:row.sha256,role}), 'm22-sequence-textured');
+    return {graph,pins};
+  };
+  const summary = value => ({modules:[...value.graph.modules.values()].map(row => [row.relative, row.bytes, row.sha256, row.edges]),inputs:value.pins});
+  const before = await collect(); assert.equal(before.graph.modules.size, 136);
+  const last = path.join(root, 'packages/engine/dist/r130.js'), original = fs.readFileSync(last);
+  const failures = [];
+  try { assert.deepEqual(summary(await collect()), summary(before)); } catch (error) { failures.push(error); }
+  if (failures.length === 0) {
+    try {
+      fs.writeFileSync(last, "import './r131.js';\n");
+      await assert.rejects(collect(), error => error.reason === 'GRAPH_MODULE_COUNT');
+    } catch (error) { failures.push(error); }
+  }
+  try { fs.writeFileSync(last, original); } catch (error) { failures.push(error); }
+  try { assert.deepEqual(summary(await collect()), summary(before)); } catch (error) { failures.push(error); }
+  if (failures.length) throw new AggregateError(failures, '136/137 refusal, local restoration and complete baseline');
+});

@@ -22,6 +22,10 @@ Report problems through [Issues](https://github.com/cnedwin/Egret_rebuild/issues
 
 The [M2–M4 roadmap](knowledge-base/en/docs/m2-m4-delivery-plan.md) connects complete Spine/content, UI/text/input and mixed core acceptance. Choose a complete work package from [M2 #56](https://github.com/cnedwin/Egret_rebuild/issues/56), [M3 #57](https://github.com/cnedwin/Egret_rebuild/issues/57) or [M4 #58](https://github.com/cnedwin/Egret_rebuild/issues/58); each lists code entry points, dependencies and reviewable acceptance.
 
+## M2.2 sequence controls
+
+The optional animation entry adds rate, finite total plays, ordered markers and explicit silent/replaying seek, sharing the existing clock and resource ownership. Legacy and new playback cannot simultaneously claim the same Bitmap. See the [sequence-control contract](knowledge-base/en/docs/sequence-controls.md). Complete Spine and M2.2 acceptance remain open.
+
 ## M3.1 committed UI panels
 
 M3.1 adds an owned UI root with explicit prepare/commit, automatic row/column layout, stable-key variable-height lists and bounded asynchronous row recycling. Multiple panels share the existing renderer, input router and resource owners. Read the [UI panel contract](knowledge-base/en/docs/ui-data-panel.md). Full controls, paragraphs, focus/IME, gestures, mobile qualification and performance acceptance remain open.

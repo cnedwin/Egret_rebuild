@@ -4,6 +4,10 @@ English | [简体中文](../Cns/CHANGELOG.md)
 
 Version labels below identify engineering checkpoints; workspace packages remain private 0.0.0 and the host protocol remains 1.0. Subsystem contracts and evidence state each checkpoint's acceptance scope.
 
+## M2.2 sequence controls — 2026-10-23
+
+The optional animation entry adds rate, finite total plays, ordered markers and explicit silent/replaying seek, sharing the existing clock and resource ownership. Legacy and new playback cannot simultaneously claim the same Bitmap. See the [sequence-control contract](docs/sequence-controls.md). Complete Spine and M2.2 acceptance remain open.
+
 ## M3.1 committed UI panels — 2026-10-23
 
 M3.1 adds an owned UI root with explicit prepare/commit, automatic row/column layout, stable-key variable-height lists and bounded asynchronous row recycling. Multiple panels share the existing renderer, input router and resource owners. Read the [UI panel contract](docs/ui-data-panel.md). Full controls, paragraphs, focus/IME, gestures, mobile qualification and performance acceptance remain open.

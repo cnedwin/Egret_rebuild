@@ -66,11 +66,27 @@ function m3PointerPackageSuccessor(expected, raw) {
 }
 // M3-POINTER-PACKAGE-END
 
+// M22-SEQUENCE-SUCCESSOR-BEGIN
+// Exact optional sequence profile; preceding source/package groups remain immutable.
+const m22SequencePackagePairs = [{"base":{"path":"packages/engine/package.json","bytes":2591,"sha256":"817ff4de665885cae85bb3563aeb80f2955eda5c9fda3d0954e1a0a7c513bcc5"},"current":{"path":"packages/engine/package.json","bytes":2709,"sha256":"3fba4431f23b5ccb6da6f13a023ecd5229550f1ca8ead591521e69eeb3960fa9"}}];
+const m22SequenceSourcePairs = [{"base":{"path":"packages/engine/src/Engine.ts","bytes":25315,"sha256":"ad13f34fd2229c081dd185322918a0043624eed36a8a06f69d7915991aa2110d"},"current":{"path":"packages/engine/src/Engine.ts","bytes":26196,"sha256":"8a97531660d2d7d748574492b14fdd53e3a1a49af65fa6003cf4d3bfdb8e9653"}},{"base":{"path":"packages/engine/dist/Engine.js","bytes":22046,"sha256":"42ea7f41b79061115a2ed3ac9312163201ca0a942627c8279b3484bf5a9b5239"},"current":{"path":"packages/engine/dist/Engine.js","bytes":22833,"sha256":"115934363fe32ef2ed8f8279a4c04595155c2f664d8cc62dd54fff10ecebe822"}},{"base":{"path":"packages/engine/src/sequencePlayback.ts","bytes":13644,"sha256":"dd72d68e12037cbfe4fb47d20e3133ed07ec1af14f88cb76bab1d3241a35c4f6"},"current":{"path":"packages/engine/src/sequencePlayback.ts","bytes":13879,"sha256":"8673bd380e3c0b4e2b535dc11f4698867d42bb6331788d37b65bf81f8754c4d6"}},{"base":{"path":"packages/engine/dist/sequencePlayback.js","bytes":12959,"sha256":"d608693c9d2a6219feba89fe5e357e2a4325331417a6e66fa41692896ad3980d"},"current":{"path":"packages/engine/dist/sequencePlayback.js","bytes":13139,"sha256":"2ff3c2561326a8d101720becf3a9444448e22c698f8c342222dd96335fbabe6e"}},{"base":{"path":"packages/engine/dist/sequencePlayback.d.ts","bytes":819,"sha256":"acca205bef6b10938ea7ab0e6e3c8e193a161bfe8cc42efc5ace0e4476b007d7"},"current":{"path":"packages/engine/dist/sequencePlayback.d.ts","bytes":933,"sha256":"4297f7a6267b3ff97aa61e0001321f9f20352334ab2862ca4bfb5fe1c08f853d"}}];
+function m22SequencePackageSuccessor(expected,raw){
+ const pair=m22SequencePackagePairs.find(pair=>pair.base.path===expected?.path),digest=raw=>createHash('sha256').update(raw).digest('hex');
+ if(!pair||raw.length!==pair.current.bytes||digest(raw)!==pair.current.sha256)return false;
+ const value=JSON.parse(raw.toString('utf8'));
+ if(JSON.stringify(value.exports['./animation'])!==JSON.stringify({types:'./dist/animation/index.d.ts',import:'./dist/animation/index.js'}))return false;
+ delete value.exports['./animation'];const previous=Buffer.from(JSON.stringify(value,null,2)+'\n');
+ if(previous.length!==pair.base.bytes||digest(previous)!==pair.base.sha256)return false;
+ return JSON.stringify(expected)===JSON.stringify(pair.base)||m31UiPackageSuccessor(expected,previous);
+}
+// M22-SEQUENCE-SUCCESSOR-END
+
 // M31-UI-SUCCESSOR-BEGIN
 // Exact current UI identities preserve all preceding package and source groups.
 const m31UiPackagePairs = [{"base":{"path":"packages/engine/package.json","bytes":2494,"sha256":"65d0583089d297c3e9d0cc39fb653a9d3642b04081f34d5341b6f5d74a9f1951"},"current":{"path":"packages/engine/package.json","bytes":2591,"sha256":"817ff4de665885cae85bb3563aeb80f2955eda5c9fda3d0954e1a0a7c513bcc5"}},{"base":{"path":"packages/runtime/package.json","bytes":471,"sha256":"97b2d4678df4fd137b681a54511ce625935accfc3014da4800902f4a241c8db1"},"current":{"path":"packages/runtime/package.json","bytes":568,"sha256":"cb9822d5bbc457edf1256a98d2a7437ee8e13bc58caffe9914afdaa9345ef8c3"}}];
 const m31UiSourcePairs = [{"base":{"path":"packages/engine/dist/Engine.js","bytes":21169,"sha256":"61e9613b37d886859d2f11ed23b889684b24a0aba39b4d8f324fb2d5a003f933"},"current":{"path":"packages/engine/dist/Engine.js","bytes":22046,"sha256":"42ea7f41b79061115a2ed3ac9312163201ca0a942627c8279b3484bf5a9b5239"}},{"base":{"path":"packages/engine/src/Engine.ts","bytes":24333,"sha256":"ee2e61e0e038ae425e26bc9913da38b80cfe9117b782f0712c3ebeca51f92cfd"},"current":{"path":"packages/engine/src/Engine.ts","bytes":25315,"sha256":"ad13f34fd2229c081dd185322918a0043624eed36a8a06f69d7915991aa2110d"}}];
 function m31UiPackageSuccessor(expected,raw){
+ if(m22SequencePackageSuccessor(expected,raw))return true;
  const pair=m31UiPackagePairs.find(pair=>pair.base.path===expected?.path),digest=raw=>createHash('sha256').update(raw).digest('hex');
  if(!pair||raw.length!==pair.current.bytes||digest(raw)!==pair.current.sha256)return false;
  const value=JSON.parse(raw.toString('utf8'));
@@ -136,7 +152,7 @@ function bbtbAtlasPackageSuccessor(expected, raw) {
 
 // M2.1 dev-only dependency identities; historical package and lock pins remain intact.
 const m21ContentConfigurationPairs = [{"base":{"path":"package.json","bytes":1108,"sha256":"16a969b9a50653b1733893c59ee4cd1d29845208c11bd182036bc585372834d0"},"current":{"path":"package.json","bytes":1130,"sha256":"716cda606f58987f784aee2a64e46cf0c2e0130e84157d2a869879b4c3ae7c40"}},{"base":{"path":"pnpm-lock.yaml","bytes":9017,"sha256":"79383095fd4bb2bb4682a12f9651d9a876a01fc6dc1326d09bc0ad587db23084"},"current":{"path":"pnpm-lock.yaml","bytes":9271,"sha256":"061742afdc492e6e1721798dcc1b1539f8e4fd9d0274fa7c5fd9091917e57338"}}];
-function pinCheck(pin,code){const raw=read(pin.path);pin=m31UiSourcePairs.find(pair=>equal(pair.base,pin))?.current??pin;const content=m21ContentConfigurationPairs.find(pair=>equal(pair.base,pin));if(content&&raw.length===content.current.bytes&&hash(raw)===content.current.sha256)pin=content.current;if(m31UiPackageSuccessor(pin,raw)||m3PointerPackageSuccessor(pin,raw)||m15ResourcePackageSuccessor(pin,raw)||m14EnginePackageSuccessor(pin,raw)||bbtbAtlasPackageSuccessor(pin,raw))return;if(raw.length!==pin.bytes||hash(raw)!==pin.sha256)bbtbFail(code,'Changed complete source identity: '+pin.path);}
+function pinCheck(pin,code){const raw=read(pin.path);pin=m31UiSourcePairs.find(pair=>equal(pair.base,pin))?.current??pin;pin=m22SequenceSourcePairs.find(pair=>equal(pair.base,pin))?.current??pin;const content=m21ContentConfigurationPairs.find(pair=>equal(pair.base,pin));if(content&&raw.length===content.current.bytes&&hash(raw)===content.current.sha256)pin=content.current;if(m31UiPackageSuccessor(pin,raw)||m3PointerPackageSuccessor(pin,raw)||m15ResourcePackageSuccessor(pin,raw)||m14EnginePackageSuccessor(pin,raw)||bbtbAtlasPackageSuccessor(pin,raw))return;if(raw.length!==pin.bytes||hash(raw)!==pin.sha256)bbtbFail(code,'Changed complete source identity: '+pin.path);}
 const policyPin={"path":"tools/bitmap-binding-ticket-policy.json","bytes":17762,"sha256":"81fb8a30379ae85782fb4eff61c25a890ab1f4a79404b4ea9bb8b3f1468de6e5"};
 pinCheck(policyPin,'BBT_BOUNDARY_POLICY_IDENTITY');
 const policy=JSON.parse(read(policyPin.path));

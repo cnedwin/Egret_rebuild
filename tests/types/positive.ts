@@ -467,3 +467,33 @@ ownedUi.setTree(uiTree);
 const uiRetention = ownedUi.list('rows').retain('first','composition');
 uiRetention.release();
 void uiResourceDemands;
+
+// Sequence controls are optional and preserve DOM-free application composition.
+import {createSequenceController} from '@egret/engine/animation';
+import type {SequenceController, SequenceControllerOptions, SequenceControllerStatus, SequenceControllerEvent, SequenceSeekRequest} from '@egret/engine/animation';
+import type {Engine as SequenceControlEngine, Scope as SequenceControlScope, Bitmap as SequenceControlBitmap, SequenceClip as SequenceControlClip} from '@egret/engine';
+declare const sequenceControlEngine: SequenceControlEngine;
+declare const sequenceControlScope: SequenceControlScope;
+declare const sequenceControlBitmap: SequenceControlBitmap;
+declare const sequenceControlClip: SequenceControlClip;
+const sequenceControlOptions: SequenceControllerOptions = {
+  profile: 'egret.sequence-control/1', totalPlays: 2, rate: 1,
+  markers: [{id: 'step', timeSeconds: 0.25}],
+  onEvent(event: SequenceControllerEvent): undefined {
+    if (event.kind === 'marker') { const id: string = event.id; void id; }
+    else { const plays: number = event.totalPlays; void plays; }
+    return undefined;
+  },
+};
+const sequenceControl: SequenceController = createSequenceController(sequenceControlEngine, sequenceControlScope, sequenceControlBitmap, sequenceControlClip, sequenceControlOptions);
+sequenceControl.start();
+sequenceControl.pause();
+sequenceControl.setRate(2);
+sequenceControl.resume();
+const sequenceSeek: SequenceSeekRequest = {timeSeconds: 0.5, replayEvents: true};
+sequenceControl.seek(sequenceSeek);
+const sequenceControlStatus: SequenceControllerStatus = sequenceControl.getStatus();
+const sequenceControlIssue: string | undefined = sequenceControlStatus.lastIssue?.code;
+sequenceControl.stop();
+sequenceControl.dispose();
+void sequenceControlIssue;

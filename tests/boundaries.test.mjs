@@ -13,7 +13,7 @@ const ownedParent = path.resolve(repository, 'work');
 const dependencies = { contracts: [], runtime: ['@egret/contracts'], engine: ['@egret/contracts', '@egret/runtime'], project: ['@egret/contracts'] };
 
 // Synthetic facades prove tool policy/resolution only, never core or native behavior.
-function fixture({ imported, subtree = 'engine/rendering', declared = false, missingImageExport = false, missingGeometryExport, missingGeometryType, missingMesh, splitMesh = false, meshLeak, meshModuleLeak, meshWrongEntry, meshStateSourceValueImport = false, meshStateEmittedValueImport = false, profileLeak, profileModuleLeak, missingTexturedPort, missingProfileFactory = false, profileRegistryImport = false, registryLegitimateHosts = false, registryMapMutation, registryImporterProbe, hitTestMutation, mouseInputMutation, spineImportMutation, combinedSceneMutation, sharedMutation, /* S3D1_OPTIONS_BEGIN */ scene3dMutation /* S3D1_OPTIONS_END */ }, run) {
+function fixture({ imported, subtree = 'engine/rendering', declared = false, missingImageExport = false, missingGeometryExport, missingGeometryType, missingMesh, splitMesh = false, meshLeak, meshModuleLeak, meshWrongEntry, meshStateSourceValueImport = false, meshStateEmittedValueImport = false, profileLeak, profileModuleLeak, missingTexturedPort, missingProfileFactory = false, profileRegistryImport = false, registryLegitimateHosts = false, registryMapMutation, registryImporterProbe, hitTestMutation, mouseInputMutation, spineImportMutation, combinedSceneMutation, sharedMutation, sequenceMutation, /* S3D1_OPTIONS_BEGIN */ scene3dMutation /* S3D1_OPTIONS_END */ }, run) {
   mkdirSync(ownedParent, { recursive: true });
   const root = mkdtempSync(path.join(ownedParent, 'egret-boundary-policy-'));
   function write(relative, content) {
@@ -44,6 +44,7 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
         './web': {types:'./dist/web/index.d.ts',import:'./dist/web/index.js'},
         './text': {types:'./dist/text.d.ts',import:'./dist/text.js'},
         './layout': {types:'./dist/layout.d.ts',import:'./dist/layout.js'},
+        './animation': {types:'./dist/animation/index.d.ts',import:'./dist/animation/index.js'},
         './web/text': {types:'./dist/web/text.d.ts',import:'./dist/web/text.js'},
         './web/input': {types:'./dist/web/input.d.ts',import:'./dist/web/input.js'},
         './input': {types:'./dist/input.d.ts',import:'./dist/input.js'},
@@ -61,7 +62,7 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
       write(`packages/${name}/tsconfig.json`, { extends: '../../tsconfig.base.json', ...(name === 'project' ? {compilerOptions:{rootDir:'src',outDir:'dist'}} : {}), references: allowed.map(value => ({ path: `../${value.slice('@egret/'.length)}` })) });
       write(`packages/${name}/src/index.ts`, 'export {};\n');
       write(`packages/${name}/dist/index.js`, 'export {};\n');
-      const exports = name === 'engine' ? { '.': './index.js', './web': './web.js', './webgpu':'./webgpu.js', './webgl2':'./webgl2.js', './webgl2/scene3d':'./webgl2-scene3d.js', './text':'./text.js', './layout':'./layout.js', './web/text':'./web-text.js', './web/image':'./web-image.js', './resources':'./resources.js', './web/resources':'./web-resources.js', './ui':'./ui.js', /* S3D1_FIXTURE_RESOLVER_BEGIN */ './scene3d':'./scene3d.js', './webgpu/scene3d':'./scene3d-web.js' /* S3D1_FIXTURE_RESOLVER_END */ }
+      const exports = name === 'engine' ? { '.': './index.js', './web': './web.js', './webgpu':'./webgpu.js', './webgl2':'./webgl2.js', './webgl2/scene3d':'./webgl2-scene3d.js', './text':'./text.js', './layout':'./layout.js', './animation':'./animation.js', './web/text':'./web-text.js', './web/image':'./web-image.js', './resources':'./resources.js', './web/resources':'./web-resources.js', './ui':'./ui.js', /* S3D1_FIXTURE_RESOLVER_BEGIN */ './scene3d':'./scene3d.js', './webgpu/scene3d':'./scene3d-web.js' /* S3D1_FIXTURE_RESOLVER_END */ }
         : name === 'runtime' ? { '.': './index.js', './text':'./text.js', './ui':'./ui.js' } : name === 'project' ? {'.':'./index.js','./spine':'./spine.js','./resources':'./resources.js'} : {'.':'./index.js','./resources':'./resources.js'};
       write(`node_modules/@egret/${name}/package.json`, { name: `@egret/${name}`, type: 'module', exports });
       write(`node_modules/@egret/${name}/index.js`, 'export {};\n');
@@ -838,6 +839,628 @@ function fixture({ imported, subtree = 'engine/rendering', declared = false, mis
       for(const target of present){const index=needed.findIndex(edge=>edge[1]===target);if(index>=0)needed.splice(index,1);}
       write(file,original+'\n'+needed.map(([,target])=>'import '+(file.endsWith('.ts')?'type {UiFixtureType} from ':'')+JSON.stringify(target)+';').join('\n')+'\n');
     }
+    // Synthetic exact sequence facades and literal edges establish policy only.
+    const m22FixtureGraph = {
+  "packages/engine/src/Engine.ts": [
+    [
+      "static",
+      "./assetGroup.js"
+    ],
+    [
+      "static",
+      "./assetGroup.js"
+    ],
+    [
+      "static",
+      "./assetGroupTypes.js"
+    ],
+    [
+      "static",
+      "./bitmapBindingTicket.js"
+    ],
+    [
+      "static",
+      "./bitmapBindingTicket.js"
+    ],
+    [
+      "static",
+      "./bitmapResourceSlot.js"
+    ],
+    [
+      "static",
+      "./bitmapResourceSlot.js"
+    ],
+    [
+      "static",
+      "./closeHost.js"
+    ],
+    [
+      "static",
+      "./gameClock.js"
+    ],
+    [
+      "static",
+      "./gameClock.js"
+    ],
+    [
+      "static",
+      "./gameClockTypes.js"
+    ],
+    [
+      "static",
+      "./internal/sequenceControllerFactoryState.js"
+    ],
+    [
+      "static",
+      "./internal/sequenceControllerFactoryState.js"
+    ],
+    [
+      "static",
+      "./internal/textFieldFactoryState.js"
+    ],
+    [
+      "static",
+      "./internal/texturedFrameState.js"
+    ],
+    [
+      "static",
+      "./internal/uiFactoryState.js"
+    ],
+    [
+      "static",
+      "./internal/uiFactoryState.js"
+    ],
+    [
+      "static",
+      "./manifestAssetGroup.js"
+    ],
+    [
+      "static",
+      "./manifestAssetGroup.js"
+    ],
+    [
+      "static",
+      "./manifestResourceTypes.js"
+    ],
+    [
+      "static",
+      "./mouseInput.js"
+    ],
+    [
+      "static",
+      "./mouseInput.js"
+    ],
+    [
+      "static",
+      "./sequencePlayback.js"
+    ],
+    [
+      "static",
+      "./sequencePlayback.js"
+    ],
+    [
+      "static",
+      "./sequencePlaybackTypes.js"
+    ],
+    [
+      "static",
+      "./sequenceTargetClaims.js"
+    ],
+    [
+      "static",
+      "./tween.js"
+    ],
+    [
+      "static",
+      "./tween.js"
+    ],
+    [
+      "static",
+      "./tweenTypes.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ],
+    [
+      "static",
+      "@egret/contracts/resources"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/Engine.js": [
+    [
+      "static",
+      "./assetGroup.js"
+    ],
+    [
+      "static",
+      "./bitmapBindingTicket.js"
+    ],
+    [
+      "static",
+      "./bitmapResourceSlot.js"
+    ],
+    [
+      "static",
+      "./closeHost.js"
+    ],
+    [
+      "static",
+      "./gameClock.js"
+    ],
+    [
+      "static",
+      "./internal/sequenceControllerFactoryState.js"
+    ],
+    [
+      "static",
+      "./internal/textFieldFactoryState.js"
+    ],
+    [
+      "static",
+      "./internal/texturedFrameState.js"
+    ],
+    [
+      "static",
+      "./internal/uiFactoryState.js"
+    ],
+    [
+      "static",
+      "./manifestAssetGroup.js"
+    ],
+    [
+      "static",
+      "./mouseInput.js"
+    ],
+    [
+      "static",
+      "./sequencePlayback.js"
+    ],
+    [
+      "static",
+      "./sequenceTargetClaims.js"
+    ],
+    [
+      "static",
+      "./tween.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/Engine.d.ts": [
+    [
+      "static",
+      "./assetGroupTypes.js"
+    ],
+    [
+      "static",
+      "./bitmapBindingTicket.js"
+    ],
+    [
+      "static",
+      "./bitmapResourceSlot.js"
+    ],
+    [
+      "static",
+      "./gameClock.js"
+    ],
+    [
+      "static",
+      "./gameClockTypes.js"
+    ],
+    [
+      "static",
+      "./manifestResourceTypes.js"
+    ],
+    [
+      "static",
+      "./sequencePlaybackTypes.js"
+    ],
+    [
+      "static",
+      "./tweenTypes.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ],
+    [
+      "static",
+      "@egret/contracts/resources"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/src/sequencePlayback.ts": [
+    [
+      "static",
+      "./gameClockTypes.js"
+    ],
+    [
+      "static",
+      "./sequencePlaybackTypes.js"
+    ],
+    [
+      "static",
+      "./sequenceTargetClaims.js"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/sequencePlayback.js": [
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/sequencePlayback.d.ts": [
+    [
+      "static",
+      "./gameClockTypes.js"
+    ],
+    [
+      "static",
+      "./sequencePlaybackTypes.js"
+    ],
+    [
+      "static",
+      "./sequenceTargetClaims.js"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/src/sequenceTargetClaims.ts": [
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/sequenceTargetClaims.js": [
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/sequenceTargetClaims.d.ts": [
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/src/internal/sequenceControllerFactoryState.ts": [
+    [
+      "static",
+      "../gameClockTypes.js"
+    ],
+    [
+      "static",
+      "../sequenceTargetClaims.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/internal/sequenceControllerFactoryState.js": [
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/internal/sequenceControllerFactoryState.d.ts": [
+    [
+      "static",
+      "../gameClockTypes.js"
+    ],
+    [
+      "static",
+      "../sequenceTargetClaims.js"
+    ],
+    [
+      "static",
+      "@egret/contracts"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/src/animation/index.ts": [
+    [
+      "static",
+      "./sequenceController.js"
+    ],
+    [
+      "static",
+      "./types.js"
+    ]
+  ],
+  "packages/engine/dist/animation/index.js": [
+    [
+      "static",
+      "./sequenceController.js"
+    ]
+  ],
+  "packages/engine/dist/animation/index.d.ts": [
+    [
+      "static",
+      "./sequenceController.js"
+    ],
+    [
+      "static",
+      "./types.js"
+    ]
+  ],
+  "packages/engine/src/animation/sequenceController.ts": [
+    [
+      "static",
+      "../Engine.js"
+    ],
+    [
+      "static",
+      "../gameClockTypes.js"
+    ],
+    [
+      "static",
+      "../internal/sequenceControllerFactoryState.js"
+    ],
+    [
+      "static",
+      "../internal/sequenceControllerFactoryState.js"
+    ],
+    [
+      "static",
+      "./sequenceCoordinator.js"
+    ],
+    [
+      "static",
+      "./sequenceCoordinator.js"
+    ],
+    [
+      "static",
+      "./sequenceInput.js"
+    ],
+    [
+      "static",
+      "./sequenceInput.js"
+    ],
+    [
+      "static",
+      "./sequenceMath.js"
+    ],
+    [
+      "static",
+      "./sequenceMath.js"
+    ],
+    [
+      "static",
+      "./types.js"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/animation/sequenceController.js": [
+    [
+      "static",
+      "../internal/sequenceControllerFactoryState.js"
+    ],
+    [
+      "static",
+      "./sequenceCoordinator.js"
+    ],
+    [
+      "static",
+      "./sequenceInput.js"
+    ],
+    [
+      "static",
+      "./sequenceMath.js"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/animation/sequenceController.d.ts": [
+    [
+      "static",
+      "../Engine.js"
+    ],
+    [
+      "static",
+      "./types.js"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/src/animation/sequenceCoordinator.ts": [
+    [
+      "static",
+      "../gameClockTypes.js"
+    ],
+    [
+      "static",
+      "../internal/sequenceControllerFactoryState.js"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/animation/sequenceCoordinator.js": [
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/animation/sequenceCoordinator.d.ts": [
+    [
+      "static",
+      "../gameClockTypes.js"
+    ],
+    [
+      "static",
+      "../internal/sequenceControllerFactoryState.js"
+    ]
+  ],
+  "packages/engine/src/animation/sequenceInput.ts": [
+    [
+      "static",
+      "./sequenceMath.js"
+    ],
+    [
+      "static",
+      "./types.js"
+    ],
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/animation/sequenceInput.js": [
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/animation/sequenceInput.d.ts": [
+    [
+      "static",
+      "./sequenceMath.js"
+    ],
+    [
+      "static",
+      "./types.js"
+    ]
+  ],
+  "packages/engine/src/animation/sequenceMath.ts": [
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/animation/sequenceMath.js": [
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/animation/sequenceMath.d.ts": [],
+  "packages/engine/src/animation/types.ts": [
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ],
+  "packages/engine/dist/animation/types.js": [],
+  "packages/engine/dist/animation/types.d.ts": [
+    [
+      "static",
+      "@egret/runtime"
+    ]
+  ]
+};
+    for(const [file,edges]of Object.entries(m22FixtureGraph)){
+      const existing=existsSync(path.join(root,file))?readFileSync(path.join(root,file),'utf8'):'';
+      const present=[...existing.matchAll(/\b(?:from\s*|import\s*\(\s*|import\s*)['"]([^'"]+)['"]/g)].map(match=>match[1]);
+      const needed=[...edges];for(const target of present){const index=needed.findIndex(edge=>edge[1]===target);if(index>=0)needed.splice(index,1);}
+      write(file,existing+'\n'+needed.map(([,target])=>'import '+(file.endsWith('.ts')?'type {SequenceFixtureType} from ':'')+JSON.stringify(target)+';').join('\n')+'\n');
+    }
+    const sequenceTypes=["SequenceMarker","SequenceControllerOptions","SequenceControllerState","SequenceEventSource","SequenceControllerEvent","SequenceSeekRequest","SequenceControllerStatus","SequenceController"];
+    for(const [file,typed]of [['packages/engine/src/animation/index.ts',true],['packages/engine/dist/animation/index.js',false],['packages/engine/dist/animation/index.d.ts',true]])write(file,"export {createSequenceController} from './sequenceController.js';\n"+(typed?"export type {"+sequenceTypes.join(',')+"} from './types.js';\n":''));
+    write('packages/engine/dist/animation/types.js','export {};\n');
+    write('node_modules/@egret/engine/animation.js','export function createSequenceController() {}\n');
+    if(sequenceMutation){
+      const baseline=spawnSync(process.execPath,['tools/check-boundaries.mjs'],{cwd:root,encoding:'utf8'});
+      assert.equal(baseline.status,0,'fresh sequence policy baseline: '+baseline.stdout+baseline.stderr);
+      const edits={
+        'extra-value':['node_modules/@egret/engine/animation.js','export const extraSequence=1;\n'],
+        'extra-type':['packages/engine/dist/animation/index.d.ts','export interface ExtraSequence {}\n'],
+        'types-value':['packages/engine/dist/animation/types.js','export const badSequenceType=1;\n'],
+        'root-type':['packages/engine/dist/index.d.ts','export interface SequenceController {}\n'],
+        'root-edge':['packages/engine/src/ProbeSequence.ts',"import './animation/sequenceController.js';\n"],
+        'factory-edge':['packages/engine/src/ProbeSequence.ts',"import './internal/sequenceControllerFactoryState.js';\n"],
+        'claims-edge':['packages/engine/src/ProbeSequence.ts',"import './sequenceTargetClaims.js';\n"],
+        'host-timer':['packages/engine/src/animation/sequenceController.ts','const badSequenceTimer=setTimeout(()=>{},1);\n'],
+      };
+      const [file,addition]=edits[sequenceMutation];write(file,(existsSync(path.join(root,file))?readFileSync(path.join(root,file),'utf8'):'')+addition);
+    }
     // M15_FIXTURE_SCAFFOLD_END
     if(sharedMutation) {
       const baseline=spawnSync(process.execPath,['tools/check-boundaries.mjs'],{cwd:root,encoding:'utf8'});assert.ifError(baseline.error);
@@ -1429,3 +2052,5 @@ for(const [name,reason]of [
     assert.equal(result.status,1,result.stdout+result.stderr);assert.ok(result.stderr.includes(reason),result.stderr);
   });
 });
+
+for(const [mutation,refusal]of [["extra-value","M2.2: exact optional sequence values mismatch"],["extra-type","M2.2: exact optional sequence facade mismatch"],["types-value","M2.2: sequence types acquired runtime values"],["root-type","M2.2: sequence authority leaked outside optional entry"],["root-edge","M2.2: default engine acquired optional sequence logic"],["factory-edge","M2.2: private sequence factory imported outside named modules"],["claims-edge","M2.2: private sequence claims imported outside named modules"],["host-timer","M2.2: sequence controller acquired automatic host work"]])test('M2.2 sequence policy '+mutation+' retains exact refusal',()=>{fixture({imported:'robust-predicates',sequenceMutation:mutation},result=>{assert.equal(result.status,1,result.stdout+result.stderr);assert.ok(result.stderr.includes(refusal),result.stderr);});});
